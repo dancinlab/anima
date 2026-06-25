@@ -7,6 +7,7 @@ core/ 가 substrate 엔진(~12)이 연구 잔재 ~400개에 파묻혀 있던 걸
 - Phase D: `core/phi/` 165개 = 얽힘 커서 이번 범위 제외(deferred).
 검증: 각 phase 후 dangling-ref grep clean + `hexa check cli/anima.hexa`·generator·g_gates·bytegpt_decode·engine_cli·brain 전부 parse OK. core/ 429→212. CLAUDE.md 패키징 불변식("추론 pod = core/ self-contained, state 의존 0")에 한 걸음 더. cli/ 는 이미 clean(6개 전부 정당), 루트 naming 은 의미상-버전/거버넌스-강제라 rename 0(`.bak` 1건만 제거).
 
+- **fix(docs/clm_decode): H_1400 'free is a NOOP' 거짓 ROOT CAUSE 주석 교정 — 다세션 오진단 유발원 제거**: `clm_decode.hexa:310` 주석이 'hexa 런타임 farr_free=NOOP·matmul 출력 영구소비'라 주장했으나 **거짓**(hexa-lang root-fix 워크플로 + runtime.c 직접 검증으로 falsified). 두 할당자 혼동: (1) 컴파일러 bump 할당자(`runtime.c:1027` 진짜 noop·farr 미사용) vs (2) farr-scope `HXFARR_CALLOC`(`runtime.c:6231` @convergence ossified `FARR-NOOP-FREE-DECODE-LEAK`=`__libc_calloc/free` 진짜 회수 + `:6347` device cudaFree). farr는 (2)를 쓰므로 `t_free(mm)`는 host+device 둘 다 실제 회수 = matmul 출력은 누수 아님·**고칠 runtime 결함 없음**. 이 거짓 주석이 '마지막 한 조각=runtime noop-free fix' 오진단을 여러 세션 유발. 교정: 진실 반영 + scratch-reuse를 leak-fix가 아닌 **perf(alloc-churn 감소)**로 재프레임. 잔여 303M GPU 증가는 별개 device-side(cudaMalloc slot) 질문=GPU 재측정 대상. comment-only·byteeq 무관.
 ## docs(core·ARCHITECTURE): byte-mouth DECODER-SELECTION-MAP SSOT 박제 + 두 디코더 farr 누수 일관성 검증
 
 "디코더가 둘인데 어느 걸 고쳐야 하나" 혼선(clm303 ConvMoE on `clm_decode` ⊥ ByteGPT-303M on `bytegpt_decode` — 둘 다 303M 이라 작업이 엇갈림)을 단일 SSOT 로 종결. 새 파일·날짜·버전 난립 없이 `ARCHITECTURE.json` core/ 트리에 update-in-place 노드 1개(`DECODER-SELECTION-MAP (SSOT)`) 추가(commons c4 · a_core_engine_map lockstep).
