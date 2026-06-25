@@ -305,16 +305,21 @@ fn _clmd_load(path: string) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// H_1400 — STREAMING / BOUNDED ConvMoE decode (the memory-blowup FIX).
+// H_1400 — STREAMING / BOUNDED ConvMoE decode (per-step alloc-churn reduction).
 // ------------------------------------------------------------------------
-// ROOT CAUSE (measured, /usr/bin/time -l): the hexa runtime is a one-shot
-// BUMP allocator — `free()` is a NOOP and `farr_free` releases the handle slot
-// but NEVER returns the backing buffer bytes (self/runtime.c "Cycle 53 —
-// mmap-backed bump allocator. malloc never frees; free is a noop"). So every
-// per-step `t_zeros` and every internal `forge_dispatch_matmul` output PERMA-
-// NENTLY consumes memory until process exit, regardless of the careful `t_free`
-// calls in _clmd_fwd_logits. At d768/T24 that is ~63 MB/step (303M ConvMoE
-// cout=5008 → ~300 MB/step), linear in GEN → OOM by GEN≈24 (H_1392 WALL).
+// NOTE (corrected 2026-06-25 — the prior "ROOT CAUSE: free is a NOOP" claim was
+// FALSIFIED by the hexa-lang root-fix workflow + direct runtime.c read): farr
+// buffers do NOT use the compiler bump allocator. The old comment conflated TWO
+// distinct hexa-lang allocators — (1) the COMPILER bump allocator hxlcl_malloc
+// (self/runtime.c:1027 "free is a noop", mmap-backed) which farr does NOT use,
+// and (2) the FARR-scope allocator (self/runtime.c:6231 @convergence
+// "FARR-NOOP-FREE-DECODE-LEAK", HXFARR_CALLOC=__libc_calloc / HXFARR_FREE=
+// __libc_free on glibc) which farr DOES use and which genuinely reclaims host
+// bytes + cudaFrees the device mirror (runtime.c:6347 hexa_farr_free). So
+// `t_free(mm)` IS a real free on BOTH sides — the per-step matmul output is NOT a
+// leak, and there is NO hexa-lang runtime free defect to fix. (Any residual 303M
+// GPU memory growth is a SEPARATE device-side question — cudaMalloc input/slot
+// accumulation — to be attributed by GPU re-measurement, not this host farr path.)
 //
 // THE FIX (anima-side, byte-exact): the per-step churn is dominated (~92 %) by
 // the conv WEIGHT TRANSPOSE `Wt` (re-built every step though the weights never
