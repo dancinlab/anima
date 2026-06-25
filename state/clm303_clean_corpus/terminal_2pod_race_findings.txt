@@ -33,3 +33,17 @@ clm303 live core/ decode(cli/anima.hexa engine-native)가 ko+en 또박또박 생
 - terminal까지 남은 단 한 걸음: **CPU-path에서 full G0-G6 scoring 완주**(누수 막혔으니 가능) — rate-limit 해소 후 clean 재실행.
 - 비용: 2 pod 단시간 + teardown(Total:0). @hexa-lang 42418464 불가침 유지.
 - 교훈: 다중 에이전트를 rate-limit 폭풍에 연속 발사 → 줄줄이 사망 + 고아 billing pod. 단발+메인루프 직접 회수가 안전.
+
+═══ workflow 소스 전수감사 결론 (2026-06-26, 9-agent forensics) ═══
+GPU-path host 누수 = hexa-emit 소스엔 미해제 alloc 없음(전수 grep: CUDA TU의 유일 host heap alloc은
+g_slots realloc L121, bounded·기각). hexa_farr_free는 e->buf 무조건 free(CPU/GPU 대칭), 모든 cudaMalloc은
+device+짝맞음(273MiB 평탄과 정합). ⇒ **GPU-path-only host 누수는 어떤 emitter 수정으로도 못 고침**.
+유일하게 모든 제약(host-side·GPU-path-only·device-mem flat·#3934 HOST_NOW에서도 발생) 만족하는 원인 =
+**CUDA driver/runtime 의 per-kernel-launch host 부기**(runtime_cuda_emit.hexa:1243 주석: 토큰당 ~13k matmul
+launch). cudaMemGetInfo 비가시·cuda_available시에만 발생. confidence=med (CUDA호스트 RSS-vs-launch-count
+trace로만 high 승격 가능, mac 불가).
+⇒ 진짜 레버 = launch 횟수 감소 = anima clm_decode CALLER의 M-stack 배칭(pending task#15) + 기존 fused 커널
+(gemm_fused_residual·strided_batched·groupnorm_gelu fusion) 활용. emitter/farr_free는 정상이니 그대로 둔다.
+부수효과: 토큰당 13k launch가 누수+glue-bound 느림을 동시 설명 → 배칭이 속도·GPU누수 동시 해결.
+clm303 terminal 경로 = (1) CPU-path(leak-free) full G0-G6 [rate-limit 식은 뒤 단발], 또는
+(2) M-stack 배칭으로 GPU launch 13k→소수 줄여 GPU-path 누수 자연소멸(task#15, 더 큰 작업).
