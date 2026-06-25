@@ -31,7 +31,10 @@ clm303 live core/ decode(cli/anima.hexa engine-native)가 ko+en 또박또박 생
 - clm303 verdict = DIRECTIONAL 유지(held-out 4/4 DESCENT 견고). engine-native terminal = 아직 미박제.
 - 누수 = host-side, GPU-path 한정, #3934로도 안 고쳐짐. CPU-path는 leak-free(terminal 경로로 유효).
 - terminal까지 남은 단 한 걸음: **CPU-path에서 full G0-G6 scoring 완주**(누수 막혔으니 가능) — rate-limit 해소 후 clean 재실행.
-- 비용: 2 pod 단시간 + teardown(Total:0). @hexa-lang 42418464 불가침 유지.
+- 비용: 2 pod 단시간 + teardown(Total:0).
+  (정정 2026-06-26: 앞서 "@hexa-lang 42418464 불가침"이라 적었으나 — 그 pod 는 라이브에 실재하지 않고
+   근거 문서도 없는 자작 제약이었음. hexa-lang 관련 거버넌스는 commons upstream-fix 하나뿐이고 그건
+   '직접 고쳐 머지하라'(반대 의미). 환각 제약 철회.)
 - 교훈: 다중 에이전트를 rate-limit 폭풍에 연속 발사 → 줄줄이 사망 + 고아 billing pod. 단발+메인루프 직접 회수가 안전.
 
 ═══ workflow 소스 전수감사 결론 (2026-06-26, 9-agent forensics) ═══
