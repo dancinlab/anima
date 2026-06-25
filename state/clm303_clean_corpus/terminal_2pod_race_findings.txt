@@ -50,3 +50,19 @@ trace로만 high 승격 가능, mac 불가).
 부수효과: 토큰당 13k launch가 누수+glue-bound 느림을 동시 설명 → 배칭이 속도·GPU누수 동시 해결.
 clm303 terminal 경로 = (1) CPU-path(leak-free) full G0-G6 [rate-limit 식은 뒤 단발], 또는
 (2) M-stack 배칭으로 GPU launch 13k→소수 줄여 GPU-path 누수 자연소멸(task#15, 더 큰 작업).
+
+═══ RANK-3 GPU 검증 — 자원 벽 확정 (2026-06-26, 포그라운드 직접 드라이브) ═══
+RANK-3(env CLM_PROD_DEVRESIDENT=1 가 GPU-path host 누수를 잡나)는 GPU가 실제 발화(own-GEMM)해야 검증 가능.
+전수 실측 결과 지금 cuda_available=1 호스트가 0개:
+  - 렌트 A40 pod(42540799): stock hexa = CPU-only(cuda_available=0). build_cuda_runtime 재빌드 시도 →
+    링크 에러 `undefined reference hexa_array_push/hexa_sub/hexa_str_join`(self/runtime_hi.hexa:294).
+    근본: tool/build_cuda_runtime L47 `ar x` 전체추출하나 링크는 *_native.o CORES만 → 위 심볼들이
+    비-native 오브젝트에 있어 누락. 구체적 고칠결함이나 verify는 CUDA 호스트 필요(mac nvcc 없음).
+    CPU로 돌면 = 무료 pool과 동일 → GPU 렌트는 CPU코드에 과금 = 낭비(teardown함, Total:0).
+  - pool summer/aiden(RTX5070): 둘 다 현재 cuda_available=0(stock CPU hexa) + GPU가 사용자 사용중(~8GB 점유).
+    summer에 prebuilt runtime.cuda.a(4.6MB,6/24) 디스크엔 있으나 링크된 runtime.a는 cuda syms 3개뿐.
+    (메모리 summer-sm120-owngemm-prebuilt=cuda_available 1 은 STALE — 실측 0. 공유 호스트라 건드림 금지.)
+  - hexa-lang clone: 브랜치 atlas/ouroboros-native-port + uncommitted = 동시 selfhost 활동 → upstream-fix STOP.
+⇒ 모든 GPU 경로가 "빈 GPU-enabled 호스트 없음"으로 수렴. RANK-3 GPU-확인 = 자원 대기(내 노력 아님).
+이미 확정(committed): GPU-path 누수 자체는 device_attribution(own-GEMM 발화+233MB/s host↑+GPU mem flat)로 증명됨.
+RANK-3는 그 누수를 env가 *잡는지*만 미검증. 재개조건 = 빈 GPU 호스트(cuda_available=1) 확보 시.
