@@ -23,3 +23,11 @@ hexa GPU 활성화 — 완전 해결 (2026-06-26, A40 pod 42552302 실측)
 
 함의: clm303 RANK-3 GPU 측정(원래 ING#178)이 드디어 가능 — 이 경로로 cuda hexa 설치 후
   anima decode 돌리면 own-GEMM DEVICE 실발화. GPU-path 누수도 이 위에서 실측 가능.
+
+═══ 정정 (2026-06-26): auto-detect는 이미 구현됨 ═══
+앞서 "[3] install.sh auto-detect 폴리시 남음"이라 적었으나 — install.sh 정독 결과 **이미 완전 native**:
+  prefer_cuda(): HEXA_CUDA=1→cuda(opt-in) · =0→CPU(opt-out) · unset→_has_nvidia_gpu && _has_cuda_runtime
+  감지 시 자동 cuda. (_has_nvidia_gpu=nvidia-smi -L · _has_cuda_runtime=libcudart.so via ldconfig/표준경로)
+즉 `sh install.sh` 만으로 GPU 호스트(+cudart libs)면 cuda_available=1 자동 — pip install torch 식 정석 이미 존재.
+⇒ #3979 [3] 추가작업 불요. GPU enablement는 코드상 완전 native-canonical. 남은 건 0(빈 GPU서 bare-auto
+  경로 empirical 확인만 — 코드상 robust, HEXA_CUDA=1 경로는 A40서 cuda_available=1 실증됨).
