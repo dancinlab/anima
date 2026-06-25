@@ -1,0 +1,31 @@
+clm303 terminal 2-pod race — 발견 (2026-06-25, 두 에이전트 rate-limit 사망 → 메인루프 직접 회수+teardown)
+========================================================================================
+
+배경: clm303 잔여 누수 = HOST-side·GPU-path 한정(앞서 귀속, GPU mem flat·host RSS ~233MB/s).
+2경로 병렬 race로 terminal 시도 → 둘 다 에이전트가 API rate-limit("temporarily limiting, not usage")로 사망,
+pod는 살아남아(billing) 메인루프에서 직접 ground-truth + harvest + teardown.
+
+═══ 경로 C: #3934 device-resident GPU 재측정 (pod 42534038, 2×A40) ═══
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path 확인. host RSS trajectory (rss_traj2.txt, ~202s):
+  39.0 → 39.9 → 40.8 → 42.1 → 43.4 → 55.9 → 57.0 → 57.9 → 58.7 GB   (GPU mem 273 MiB 고정)
+  = host +19.6GB ≈ 97 MB/s 여전히 상승.
+**VERDICT: #3934 device-resident(HOST_NOW→DEVICE_KEEP)는 host-RSS 누수를 고치지 못함 — FALSIFIED.**
+(이전 233MB/s보다 느려졌으나 평탄 아님. disposition 전환만으론 불충분.)
+→ 남은 1순위 후보 = anima flame_mm.hexa 중간-farr free 가 주석처리됨(L92/L132/L161, mm_extract/mm 출력 미해제)
+   = ANIMA-side fix (hexa-lang 아님). GPU-path 한정 이유는 추가 조사 필요(CPU는 같은 mm()도 flat).
+
+═══ 경로 B: CPU-path leak-free G0-G6 (pod 42533641, CPU 251G box) ═══
+SYSMEM 17/251G **평탄**(누수 0 확정) · CUDA 없음(올바른 farr CPU oracle path, no OWN-GEMM).
+clm303 live core/ decode(cli/anima.hexa engine-native)가 ko+en 또박또박 생성:
+  gen_en.txt: "John Galt is the primary male hero of Atlas Shrugged..." (coherent 영어 위키 산문)
+  gen_ko.txt: "제임스 얼 카터 주니어(, 1924년 10월 1일~)는 민주당 출신 미국의 제39대 대통령..." (유창한 한국어)
+**VERDICT: CPU-path는 leak-free + clm303 G0-coherence 거동 확인(engine-native, live core/).**
+  단 (a) 이 coherence는 overfit 모델의 암기-재생(held-out 4/4 NO-DESCENT와 정합 — 표면 또박또박 ≠ 일반화),
+      (b) 전체 G0-G6 점수(kwr·G1·G2·G6·a7b_pass)는 에이전트 사망으로 미수확(gen은 됐으나 scoring 미완).
+
+═══ 종합 ═══
+- clm303 verdict = DIRECTIONAL 유지(held-out 4/4 DESCENT 견고). engine-native terminal = 아직 미박제.
+- 누수 = host-side, GPU-path 한정, #3934로도 안 고쳐짐. CPU-path는 leak-free(terminal 경로로 유효).
+- terminal까지 남은 단 한 걸음: **CPU-path에서 full G0-G6 scoring 완주**(누수 막혔으니 가능) — rate-limit 해소 후 clean 재실행.
+- 비용: 2 pod 단시간 + teardown(Total:0). @hexa-lang 42418464 불가침 유지.
+- 교훈: 다중 에이전트를 rate-limit 폭풍에 연속 발사 → 줄줄이 사망 + 고아 billing pod. 단발+메인루프 직접 회수가 안전.
