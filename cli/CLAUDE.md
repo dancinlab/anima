@@ -9,15 +9,28 @@
 | `train.hexa` | **production canonical 트레이너** (`a_train_flame_forge`) | hexa-native flame/forge own-GEMM | 엔진-네이티브 (진짜 최종 아키텍처) |
 | `train.py` | **REFERENCE + BRIDGE** (torch Lane-P, `a_clm_gen_pipeline`) | torch/CUDA | DIRECTIONAL only (torch 미러) |
 | `anima.hexa` | 추론/평가 단일 진입 (`eval`/chat, `a_engine_native_learning`) | hexa-native | 엔진-네이티브 terminal |
+| `eval_pod.sh` | **fresh GPU pod 측정-발사기** — import-closure 15 lane `.hexa` 번들 + core/cli/ckpt push + nesting 제거 + detached `anima eval` + 회수를 한 명령으로. pod 휘발 반복검사용 | bash glue (`hexa cloud`) | 측정 orchestrator (verdict 자격은 호출하는 `anima.hexa` 엔진-네이티브가 보유; 이 스크립트 자체는 발사기) |
 
 - `train.py` 는 **production 아님** — 388M GPU 학습이 현재 torch 경로뿐이라 BRIDGE 로 쓴다. 그 ckpt 의 verdict 는 `.clm` 을 CORE 엔진(`anima eval`)에 올려 frozen bar 재측정해야 성립(`a_engine_native_learning`).
 - `train.hexa` 가 PUBLIC production 트레이너 — `.py` 트레이너를 production 으로 박제 금지(`a_train_flame_forge` dont).
 
-## 🔒 PARITY 불변식 (BLOCKING — 사용자 지시: "2개는 구현기준 동일해야된다")
+## 🔒 PARITY 불변식 (2-tier — 사용자 지시 "2개는 구현기준 동일" 의 정밀화, 2026-06-25 device-decode 측정 교훈)
 
-**`train.hexa` 와 `train.py` 는 학습 기준(레시피·가드·측정)이 byte-faithful 동일해야 한다.** 한쪽에 기능을 추가하면 같은 PR 에서 다른 쪽에도 반영(lockstep). 한쪽에만 있는 학습 레버/가드 = parity 위반.
+> 재프레임: hexa·py 는 **대등한 두 production 이 아니다** — `train.hexa`/`core/*.hexa` = production canonical(verdict 권위), `train.py`/torch = **수치 golden oracle**(DIRECTIONAL, `a_engine_native_learning`·`reference-match`). 정답지의 일은 *수치 커널 검증*이지 *커리큘럼 복제*가 아니다. 그래서 parity 는 두 tier 로 분리한다:
 
-### parity 체크리스트 (둘 다 가져야 하는 기준)
+### Tier-1 — 수치 커널 byte-golden (🔒 BLOCKING · 정답지의 본질)
+**hexa 의 forward / CE / decode-logits 수치는 torch·numpy(math.log) golden 과 성분별 byte-match 해야 한다** — 작은 CI fixture 로(고정 ckpt·고정 입력, GPU pod 불필요). 이게 hexa own-GEMM(어린 자작 GEMM)을 신뢰하게 하는 단 하나의 장치다. 이 tier 가 잡은 실제 결함(전부 정답지 diff 로만 드러남): `dt_ln` 급수 발산(engine CE overfit 은폐) · device `dirty_host` clobber · own-GEMM TF32 decode 발산(2026-06-25). 발산 시 **첫 발산점만 정렬해 정직 기록**(reference-match), hexa 가 틀리면 hexa 를 고친다(정답지는 자(尺)).
+
+| Tier-1 항목 | golden | 게이트 |
+|---|---|---|
+| forward / CE 수치 | numpy `math.log` mirror (dt_ln-immune) · torch fp32 fwd | byte/4자리 일치 (CI fixture) |
+| decode logits | torch golden(`h1464_torch_golden.py` 류) 3-way | host==device==torch byte-exact |
+| post-serialize held-out DESCENT | `verify_clm_v2.py descent` (held-out, math.log) | model_ce < uniform ∧ < shuffle |
+
+### Tier-2 — 학습 레버 lockstep (🟡 권장 · non-blocking)
+학습 *레시피·가드·커리큘럼* 레버는 양쪽에 두는 걸 권장하되 byte-parity 강제 아님 — 정답지(py)는 이 레버들을 검증할 의무가 없다(production=hexa 가 소유). 한쪽에만 있으면 **`parity-drift: <레버>` 라벨**로 산출물에 명시(은폐 금지), blocking 은 아님. (drift 가 수치 커널에 새면 그건 Tier-1 위반으로 승격.)
+
+#### Tier-2 레버 체크리스트 (권장 lockstep)
 
 | 기준 | 의미 | 근거 규칙 |
 |---|---|---|
@@ -30,8 +43,9 @@
 | **balanced 샘플링** | `--sample proportional` = byte∝노출 (작은 셀 과반복 암기 방지) | `a_chat_registers` |
 | minibatch | `--batch-size` (grad accumulation) | parity |
 | bf16 | `--bf16` autocast(py) ⇔ forge TF32/BF16-TC own-GEMM 경로(hexa, 런타임-선택) | parity (초월 축, 아래) |
-| post-serialize held-out DESCENT 게이트 | 직렬화 직후 `verify_clm_v2.py descent` (overfit 탐지, dt_ln-immune) | `a_clm_gen_pipeline` |
 | mid-measure 1-6 (DIRECTIONAL) | `--mid-measure-every` 곡선 (held-out CE per register + gauge proxy) | `a_train_inline_gauge` |
+
+(post-serialize held-out DESCENT 게이트는 Tier-1 로 승격 — 수치 커널 검증이므로.)
 
 ### 정직한 초월 축 (byte-parity 불가, 명시 보존 — `reference-match`)
 
@@ -47,3 +61,18 @@ clm303 사고: 코퍼스 굶주림(ko-SNS 4MB 1칸 ~120× 반복) + held-out 모
 - 학습은 torch(`train.py`)여도 됨 — 단 **verdict 는 `.clm` → `anima eval` 엔진-네이티브 재측정**(`a_engine_native_learning`).
 - train-loss / lossF≈0 = 암기, 능력 아님 → **held-out CE 로만 품질 판정**(`a_savant_train`).
 - 엔진 `clm_forward_ce` 는 dt_ln 버그로 overfit 을 GREEN 으로 가림 → `.clm` 품질은 numpy mirror(`verify_clm_v2.py` math.log)로 교차검증.
+
+## 측정-발사 (`eval_pod.sh`) — 반복 검사 박제
+
+`anima eval` 의 엔진-네이티브 verdict 는 GPU pod 에서 도는데(decode glue-bound·farr fix 필요), pod 는 휘발이라 매번 import-closure 를 손으로 push 하는 고고학을 반복하게 된다. `eval_pod.sh` 가 그 절차를 한 명령으로 박제한다.
+
+```bash
+# live pod(hexa stable ≥ v0.311.0)이 있을 때:
+cli/eval_pod.sh <pod_id>                       # clm303_clean 기본 · --gen 5
+cli/eval_pod.sh <pod_id> path/to/foo.clm --gen 3
+cli/eval_pod.sh <pod_id> --bootstrap --harvest state/clm303_clean_corpus/engine_eval.txt
+```
+
+- import-closure = core/*.hexa + cli/anima.hexa 가 부르는 **15 top-level lane**(`AESTHETIC BRAIN BRIDGE CHANNEL DREAM EMBODIMENT HEXAD HIVE-MIND INTENT METACOG NARRATIVE OTHER-MIND SAVANT TIME WAKE`)의 `.hexa` 만(데이터 제외 ≈9.3MB) + `core/ cli/ stdlib/` + ckpt. 빠지면 `[module_loader] FATAL module not found`.
+- 절차·필요파일·함정(core/core nesting · farr OOM · provisioning 실패 · glue-bound 속도)·재현 SSOT = [`state/clm303_clean_corpus/EVAL_KIT.md`](../state/clm303_clean_corpus/EVAL_KIT.md).
+- ⚠️ `eval_pod.sh` 는 **발사 orchestrator**(bash glue) — verdict 자격은 그것이 호출하는 `anima.hexa`(엔진-네이티브)에 있다. 스크립트가 verdict 를 만드는 게 아니다(`a_engine_native_learning`).
