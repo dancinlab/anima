@@ -1,3 +1,12 @@
+## refactor(core): 연구잔재 evac — core/ 429→212, production 엔진만 잔류 (preserve-state 불변식)
+
+core/ 가 substrate 엔진(~12)이 연구 잔재 ~400개에 파묻혀 있던 걸 import-safe 하게 정리. `cli/anima.hexa`+`cli/train.hexa` 진입점에서 transitively 도달하는 **production import-closure 10개**(pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·DECODER/flame_mm)는 절대 안 건드리고, 클로저 밖 연구잔재만 repo-root `state/` 로 이동(삭제 0, git mv 보존):
+- Phase A: `core/DECODER/state/` pod-하베스트 63개 → `state/decoder_research/` (preserve-state 명백 위반 해소; .hexa import 0 = 무위험).
+- Phase B: `core/h<NNNN>_*.hexa` 가설 프로브 91개 → `state/core_research_probes/` (보호 엔진 import 0 검증, 91/91 안전).
+- Phase C: `core/DECODER/*.hexa` 연구 스크립트 40 + .md 22 + .py 1 = 63개 → `state/decoder_research/` (flame_mm.hexa만 잔류=protected).
+- Phase D: `core/phi/` 165개 = 얽힘 커서 이번 범위 제외(deferred).
+검증: 각 phase 후 dangling-ref grep clean + `hexa check cli/anima.hexa`·generator·g_gates·bytegpt_decode·engine_cli·brain 전부 parse OK. core/ 429→212. CLAUDE.md 패키징 불변식("추론 pod = core/ self-contained, state 의존 0")에 한 걸음 더. cli/ 는 이미 clean(6개 전부 정당), 루트 naming 은 의미상-버전/거버넌스-강제라 rename 0(`.bak` 1건만 제거).
+
 ## docs(core·ARCHITECTURE): byte-mouth DECODER-SELECTION-MAP SSOT 박제 + 두 디코더 farr 누수 일관성 검증
 
 "디코더가 둘인데 어느 걸 고쳐야 하나" 혼선(clm303 ConvMoE on `clm_decode` ⊥ ByteGPT-303M on `bytegpt_decode` — 둘 다 303M 이라 작업이 엇갈림)을 단일 SSOT 로 종결. 새 파일·날짜·버전 난립 없이 `ARCHITECTURE.json` core/ 트리에 update-in-place 노드 1개(`DECODER-SELECTION-MAP (SSOT)`) 추가(commons c4 · a_core_engine_map lockstep).
