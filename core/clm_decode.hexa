@@ -162,7 +162,7 @@ fn _clmd_conv1d(x: int, w: int, b: int, y_out: int,
         }
         t2 = t2 + 1
     }
-    t_free(xcol); t_free(Wt)
+    t_free(xcol); t_free(Wt); t_free(mm)   // mm = forge_dispatch_matmul output: was leaked
 }
 
 // clm_forward_ce — load the .clm at `path`, run the CLMConvMoE inference forward
