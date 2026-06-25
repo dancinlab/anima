@@ -4974,5 +4974,236 @@
         }
       ]
     }
-  ]
+  ],
+  "convergence": {
+    "note": "재발방지 학습 SSOT (인라인 마커 이관)",
+    "records": [
+      {
+        "id": "brace-clobber-on-section-graft",
+        "source": "core/engine_cli.hexa",
+        "state": "ossified",
+        "value": "mc_shuffle_auroc closing brace was dropped when §FieldLibido (#2490) was grafted in a messy worktree rebase, leaving engine_cli.hexa unparseable on origin/main → repo-wide hexa-run/verify wall mistaken for a toolchain regression",
+        "threshold": "after grafting a new § section into engine_cli.hexa, run hexa run core/engine_cli_smoke.hexa to RC=0 (or the real-code brace scanner) BEFORE merge — never trust raw {} counts (comment/string braces mask a real drop)"
+      },
+      {
+        "id": "RUNPOD_CKPT_LABEL_VS_R2_POLICY",
+        "source": "scripts/ckpt_name_lint.hexa",
+        "state": "ossified",
+        "value": "Enforces shared/config/ckpt_policy.json naming_convention — alm/clm/step_ prefix required; v\\\\d+ forbidden (feedback_no_version_in_filename); tmp/temp/testN/final_ flagged. Violations block promotion to production label"
+      },
+      {
+        "id": "RUNPOD_R2_POST_TRAINING_ONLY",
+        "source": "scripts/ckpt_backup_hook.hexa",
+        "state": "ossified",
+        "value": "rclone copy ckpt to R2 ONLY after training exits. In-training rclone+torch.save exceeded MFS session quota (r3 crash)"
+      },
+      {
+        "id": "RUNPOD_POD_TERMINATED_WITHOUT_R2_UPLOAD",
+        "source": "scripts/ckpt_backup_hook.hexa",
+        "state": "ossified",
+        "value": "Post-save hook — called by trainer at every save_every boundary. Pod death between saves loses ≤save_every steps, never full run. Idempotent via .r2_uploaded / .r2_uploading markers; safe to re-run on resume"
+      },
+      {
+        "id": "ALM_70B_PREFLIGHT_40_GATE",
+        "source": "training/alm_70b_preflight.hexa",
+        "state": "ossified",
+        "value": "40 individual checks (10 HW + 8 SW + 4 base + 3 corpus + 7 FSDP + 3 R2 + 3 NCCL + 2 dry-run). ALL 40 must PASS before launch. STRICT=1 elevates WARN→FAIL. On-pod checks SKIP locally; operator must re-run on pod before firing."
+      },
+      {
+        "id": "RUNPOD_PEFT_TORCH_INCOMPAT",
+        "source": "training/alm_a1_preflight.hexa",
+        "state": "ossified",
+        "value": "peft>=0.19 needs torch.float8_e8m0fnu (torch 2.6+). Pod base image has torch 2.4.1. Pin peft==0.13.2 transformers==4.45.2"
+      },
+      {
+        "id": "RUNPOD_OPERATOR_HF_TOKEN_GATE",
+        "source": "training/alm_a1_preflight.hexa",
+        "state": "ossified",
+        "value": "HF_TOKEN unset → FAIL (not SKIP). Local preflight returns FAIL string so caller can route: dev=non-blocking, runner=fail-closed. Never treat local SKIP as pass for HF-authed ops"
+      },
+      {
+        "id": "RUNPOD_GRAPHQL_PORTS_DRIFT",
+        "source": "training/alm_a1_preflight.hexa",
+        "state": "ossified",
+        "value": "pod.ports=String, runtime.ports=Object. SSH → runtime{ports{...}}"
+      },
+      {
+        "id": "RUNPOD_MFS_DF_LIES",
+        "source": "training/alm_a1_preflight.hexa",
+        "state": "ossified",
+        "value": "df shows TB free but MooseFS per-session quota silently limits writes. dd 20GB preflight test mandatory"
+      },
+      {
+        "id": "RUNPOD_SMOKE_PASS_VS_LAUNCH_READY_GAP",
+        "source": "training/alm_a1_preflight.hexa",
+        "state": "ossified",
+        "value": "Preflight emits two-tier report: LOCAL SKIP (nvidia-smi, SSH without HOST_ID) is non-blocking; POD FAIL (HF_TOKEN, disk, GPU bf16) is blocking. Caller must distinguish smoke PASS from launch_ready"
+      },
+      {
+        "id": "RUNPOD_RUST_OVERLAY_CONFLICT",
+        "source": "training/anima_entrypoint.hexa",
+        "state": "ossified",
+        "value": "rustup/cargo under /root/ loses state on pod restart — install under /opt/rustup /opt/cargo"
+      },
+      {
+        "id": "RUNPOD_HEXA_BINARIES",
+        "source": "training/anima_entrypoint.hexa",
+        "state": "ossified",
+        "value": "/usr/local/bin/hexa (Rust interp), hexa_cc (C transpiler), hexa_v2 (C stage1) — switch explicitly per round"
+      },
+      {
+        "id": "A2_TOOL_CORPUS_CLEAN_20260417",
+        "source": "training/build_tool_corpus_clean.hexa",
+        "state": "provisional"
+      },
+      {
+        "id": "A2_TOOL_CORPUS_MIXED_V2_20260418",
+        "source": "training/build_tool_corpus_mixed.hexa",
+        "state": "provisional"
+      },
+      {
+        "id": "C4_F1_TC_BF16_WMMA_KERNEL",
+        "source": "training/c4_fused_kernels.hexa",
+        "state": "ossified",
+        "value": "bf16 WMMA 16x16x16 variant of F1 fused QKV projection. fp32 I/O, bf16 internal, fp32 accumulator. Grid is warp-per-tile (bx=32,by=1). Slot-split at tile granularity (DhH%16==0 invariant). Reference: hxcuda_matmul_bf16_kernel."
+      },
+      {
+        "id": "C4_NVRTC_OWN_MODULE",
+        "source": "training/c4_fused_kernels.hexa",
+        "state": "ossified",
+        "value": "C4 fused kernels load into G_C4_MODULE separate from cuda_kernels.hexa G_K_MODULE — small-model runs pay zero NVRTC cost. Risk 7.5 mitigation in design doc §7.5"
+      },
+      {
+        "id": "CUDA_ERROR_700_STRIDE_LOOP",
+        "source": "training/cuda_kernels.hexa",
+        "state": "ossified",
+        "value": "D>1024 → cuLaunchKernelEx 700 (illegal address). Fixed with stride-loop + blockDim cap 1024 in rms_norm/softmax/ce_loss. Commit 79f5c33b"
+      },
+      {
+        "id": "RUNPOD_H100_SM90_NVRTC",
+        "source": "training/cuda_kernels.hexa",
+        "state": "ossified",
+        "value": "H100 SM90 target. NVRTC compile flags must include -arch=sm_90. cudaPeekAtLastError() after each launch for diagnosis"
+      },
+      {
+        "id": "QWEN72B_POD_ONLY_DOWNLOAD",
+        "source": "training/download_qwen72b.hexa",
+        "state": "ossified",
+        "value": "72B base (145 GB) downloads ONLY on pod, never locally. Home 80 Mbps = 4-5h vs datacenter 1 Gbps = 20-30 min. Local Mac disk pressure (283 GB free) insufficient. GATE_LOCAL=1 bypass required if download accidentally triggered locally per reference:reference_gate_wrapper"
+      },
+      {
+        "id": "QWEN72B_RESUME_SAFE",
+        "source": "training/download_qwen72b.hexa",
+        "state": "ossified",
+        "value": "huggingface-cli --resume-download is idempotent. Partial download = safe to re-run. Each shard downloaded independently; .incomplete marker files auto-cleaned on full success. DO NOT manually delete partial shards — resume recovers them"
+      },
+      {
+        "id": "RUNPOD_H100_2GPU_FSDP",
+        "source": "training/fsdp_shard.hexa",
+        "state": "ossified",
+        "value": "fp32 7B=28GB exceeds single H100 80GB with activations+grads+optim. 2xH100 layer-wise sharding required. Pod cost $5.98/hr"
+      },
+      {
+        "id": "ALM13B_A2_CHAIN_DEPENDENCY",
+        "source": "training/launch_alm_13b.hexa",
+        "state": "ossified",
+        "value": "13B intermediate refuses to launch unless A1 step_3000 + A2-Orch step_3000 + A2-Tool step_1500 adapters ALL present (local or R2). Missing any link in the chain means the merged-base semantics break, and the intermediate de-risk signal becomes invalid"
+      },
+      {
+        "id": "ALM13B_BORDERLINE_ONLY_TRIGGER",
+        "source": "training/launch_alm_13b.hexa",
+        "state": "ossified",
+        "value": "13B intermediate MUST only fire when A2 eval hire_sim in [0.85, 0.93). If >=0.93 launch 70B direct (13B adds cost without signal). If <0.85 halt + redesign (13B would carry broken recipe forward). Operator or watcher must verify eval band before invocation"
+      },
+      {
+        "id": "ALM13B_PARAMETER_CLASS_NAMING",
+        "source": "training/launch_alm_13b.hexa",
+        "state": "ossified",
+        "value": "13b in run_id/ckpt path is a parameter-class ID for intermediate scale (between 14B production and 70B target). Base model is literally Qwen2.5-14B-Instruct. Not a version number per feedback_no_version_in_filename"
+      },
+      {
+        "id": "A2_ORCH_A1_ADAPTER_DEPENDENCY",
+        "source": "training/launch_alm_a2_orch.hexa",
+        "state": "ossified",
+        "value": "A2-Orch refuses to launch if A1 step_3000 adapter is neither in local /workspace/ckpt_alm14b_phi_a1_*/step_3000/ NOR in R2 anima-models/alm14b/a1_20260416/step_3000/. No partial-train A1 tolerated — A2 stacks on A1 final only"
+      },
+      {
+        "id": "A2_ORCH_SAME_POD_REUSE_POLICY",
+        "source": "training/launch_alm_a2_orch.hexa",
+        "state": "ossified",
+        "value": "A2-Orch reuses A1 pod lnzliav2e8du6i post-A1-completion. H100 cap 2/2 already reached per feedback_h100_authorized — spinning Pod B would require user override. Reuse saves $36 launch-time cost and respects cap"
+      },
+      {
+        "id": "A2_ORCH_RUNTIME_FLAG_CONTRACT",
+        "source": "training/launch_alm_a2_orch.hexa",
+        "state": "ossified",
+        "value": "ORCH_OR_ENABLED=1 env + --consciousness-loss toggle enable Orch-OR latent path in train_alm_14b.hexa. Runner exports these before exec. Trainer with ORCH_OR_ENABLED unset degrades to A1-merged-base continuation (no new regularizer)"
+      },
+      {
+        "id": "A2_TOOL_CORPUS_SSOT",
+        "source": "training/launch_alm_a2_tool.hexa",
+        "state": "ossified",
+        "value": "Tool corpus is training/corpus_tool/seed_tool_corpus.jsonl (50 examples, 10 categories, synthetic deterministic via training/build_tool_corpus.hexa). Launcher refuses if missing + auto-regens via build_tool_corpus.hexa. Never use external corpus — violates AN2 license-clean"
+      },
+      {
+        "id": "A2_TOOL_GATE_ALREADY_PASSED",
+        "source": "training/launch_alm_a2_tool.hexa",
+        "state": "ossified",
+        "value": "state/tool_use_gate_20260416.json confirms avg_score=0.933 completion=0.867 on r9 LoRA — gate PASSED before A2-Tool runs. A2-Tool round is consolidation (reusable adapter), not gating. Lenient judge is gate-authoritative (deterministic_strict optional)"
+      },
+      {
+        "id": "A2_TOOL_CLEAN_LAUNCHER_20260418",
+        "source": "training/launch_alm_a2_tool_clean.hexa",
+        "state": "provisional"
+      },
+      {
+        "id": "A2_TOOL_CLEAN_CORPUS_SSOT_20260418",
+        "source": "training/launch_alm_a2_tool_clean.hexa",
+        "state": "provisional",
+        "value": "Tool corpus is training/corpus_tool/clean_tool_corpus_*.jsonl — 1140 lines (dryrun) or 7500 lines (full), 100% schema-valid, 0 malformed, canonical names enforced, 300 __no_tool__ hard negatives. Built by training/build_tool_corpus_clean.hexa. NEVER use mixed_tool_corpus.jsonl (92% malformed, polluted)."
+      },
+      {
+        "id": "A2_TOOL_CLEAN_BASE_FORBIDDEN_20260418",
+        "source": "training/launch_alm_a2_tool_clean.hexa",
+        "state": "provisional",
+        "value": "NEVER warm-start this LoRA from any a2_tool_mixed checkpoint. Base must be vanilla Qwen2.5-14B-Instruct, optionally warm-started ONLY from A2-Orch clean adapter (r2:anima-models/alm14b/a2_20260416_orch/step_3000/)."
+      },
+      {
+        "id": "A2_TOOL_CLEAN_JUDGE_FIX_TRADEOFF_20260418",
+        "source": "training/launch_alm_a2_tool_clean.hexa",
+        "state": "provisional",
+        "value": "per project_judge_fix_breakthrough: lenient rubric already lifted hire_sim 0.5333→0.867 WITHOUT retraining. This A2-Tool clean retrain is still justified ONLY if we need a reusable production adapter; if judge fix alone suffices for gate, this run is OPTIONAL. B4 prep only — do not auto-fire."
+      },
+      {
+        "id": "RUNPOD_SM90_ARCH_DETECT",
+        "source": "training/native/build.hexa",
+        "state": "ossified",
+        "value": "H100=sm_90, A100=sm_80, 4090=sm_89, 3090=sm_86. nvidia-smi GPU name match for arch selection"
+      },
+      {
+        "id": "RUNPOD_SILENT_CPU_FALLBACK",
+        "source": "training/native/build.hexa",
+        "state": "ossified",
+        "value": "build_cpu path emits gcc -lm binary without libcudart/libcublas — MUST NOT be silently selected for GPU training rounds. Mode='cpu' or 'cpu-test' flags an explicit fallback; GPU training orchestrator must verify mode != cpu* and post-link ldd shows libcudart"
+      },
+      {
+        "id": "RUNPOD_FP8_MONKEY_PATCH_DEAD_END",
+        "source": "training/train_alm_lora.hexa",
+        "state": "ossified",
+        "value": "transformer_engine.Linear monkey-patch before from_pretrained randomizes all 48 layers (loss=15). FP8 retrofit on HF-based LoRA is dead end — stay bf16"
+      },
+      {
+        "id": "RUNPOD_H100_TRAINING_ONLY",
+        "source": "training/train_alm_lora.hexa",
+        "state": "ossified",
+        "value": "H100 for training only. A100/4090=runtime/inference. No quantization (4/8-bit/GPTQ/AWQ/bnb forbidden)"
+      },
+      {
+        "id": "RUNPOD_CKPT_CORRUPTION_ZERO_BYTE",
+        "source": "training/train_alm_lora.hexa",
+        "state": "ossified",
+        "value": "Killed during torch.save → 0-byte .pt. Safe pattern: write .tmp then os.replace (atomic rename)"
+      }
+    ]
+  }
 }

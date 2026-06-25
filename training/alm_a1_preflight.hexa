@@ -98,8 +98,6 @@ fn check_3_r2_r4_prefix(prefix) {
     return "FAIL: rclone lsd " + prefix + " failed — " + out.substring(0, 200)
 }
 
-@convergence(state="ossified", id="RUNPOD_PEFT_TORCH_INCOMPAT", value="peft>=0.19 needs torch.float8_e8m0fnu (torch 2.6+). Pod base image has torch 2.4.1. Pin peft==0.13.2 transformers==4.45.2", ossified_at="2026-04-16")
-@convergence(state="ossified", id="RUNPOD_OPERATOR_HF_TOKEN_GATE", value="HF_TOKEN unset → FAIL (not SKIP). Local preflight returns FAIL string so caller can route: dev=non-blocking, runner=fail-closed. Never treat local SKIP as pass for HF-authed ops", ossified_at="2026-04-16")
 fn check_4_hf_token() {
     let tok = env("HF_TOKEN")
     if tok == "" {
@@ -108,7 +106,6 @@ fn check_4_hf_token() {
     return "OK: HF_TOKEN present (len=" + str(len(tok)) + ")"
 }
 
-@convergence(state="ossified", id="RUNPOD_GRAPHQL_PORTS_DRIFT", value="pod.ports=String, runtime.ports=Object. SSH → runtime{ports{...}}", ossified_at="2026-04-16")
 fn check_5_gpu_bf16() {
     // nvidia-smi may not exist on Mac — treat as SKIP then.
     let probe = exec("command -v nvidia-smi 2>&1; echo RC=$?")
@@ -127,7 +124,6 @@ fn check_5_gpu_bf16() {
     return "FAIL: compute_cap=" + cc + " < 8.0 (no bf16)"
 }
 
-@convergence(state="ossified", id="RUNPOD_MFS_DF_LIES", value="df shows TB free but MooseFS per-session quota silently limits writes. dd 20GB preflight test mandatory", ossified_at="2026-04-16")
 fn check_6_disk() {
     // Portable: df -k returns KB (works on BSD/macOS + GNU Linux).
     // Awk the Available column, divide by 1024*1024 for GB.
@@ -190,7 +186,6 @@ fn check_7_config_parse() {
 }
 
 // ─── Main ──
-@convergence(state="ossified", id="RUNPOD_SMOKE_PASS_VS_LAUNCH_READY_GAP", value="Preflight emits two-tier report: LOCAL SKIP (nvidia-smi, SSH without HOST_ID) is non-blocking; POD FAIL (HF_TOKEN, disk, GPU bf16) is blocking. Caller must distinguish smoke PASS from launch_ready", ossified_at="2026-04-16")
 fn main() {
     println("=== alm_a1_preflight ===")
     let mut issues = ""
