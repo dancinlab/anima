@@ -1,3 +1,10 @@
+## research(clm303): 잔여 누수 HOST-vs-DEVICE 귀속 — HOST-side GPU-path 확정 (device·runtime-noop 둘 다 FALSIFIED)
+
+clm303 303M anima eval 의 잔여 메모리 증가(이전 ~94GB)를 GPU 재측정으로 정밀 귀속. pod 42521890(2×A40, own-GEMM DEVICE path 확인)에서 동일 decode 의 host RSS 와 GPU device mem trajectory 를 35s 간격 2-sample:
+- host RSS: 112.8GB → 120.9GB (+8.15GB/35s ≈ **233 MB/s 폭증**)
+- GPU device mem: 273 MiB → 273 MiB (**delta 0, 완전 평탄**)
+⇒ 누수는 **100% HOST-side, GPU-path 한정**. "device cudaMalloc slot 누적"(med-conf) FALSIFIED(GPU mem 불변), "runtime farr noop-free"(거짓 주석 기인) 도 별도 FALSIFIED(#2622). CPU-path 는 이전 6-agent 워크플로가 FLAT(leak 0) 확정 → 범인 = **flame_mm GPU-seam 의 host staging 할당**(RFC-040, per-matmul host buffer 미해제). clm303 verdict=DIRECTIONAL 유지(held-out 4/4 DESCENT). **terminal 워크어라운드: CPU-path(cuda_available=0)는 flat 이라 engine-native G0-G6 완주 가능**(느리나 leak-free, byte-identical own-GEMM CPU farr). harvest=`state/clm303_clean_corpus/device_attribution_remeasure.txt`. pod teardown(Total:0), GPU ~$1.
+
 ## refactor(core): 연구잔재 evac — core/ 429→212, production 엔진만 잔류 (preserve-state 불변식)
 
 core/ 가 substrate 엔진(~12)이 연구 잔재 ~400개에 파묻혀 있던 걸 import-safe 하게 정리. `cli/anima.hexa`+`cli/train.hexa` 진입점에서 transitively 도달하는 **production import-closure 10개**(pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·DECODER/flame_mm)는 절대 안 건드리고, 클로저 밖 연구잔재만 repo-root `state/` 로 이동(삭제 0, git mv 보존):
