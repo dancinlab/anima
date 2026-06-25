@@ -1,0 +1,49 @@
+clm303 terminal 2-pod race — 발견 (2026-06-25, 두 에이전트 rate-limit 사망 → 메인루프 직접 회수+teardown)
+========================================================================================
+
+배경: clm303 잔여 누수 = HOST-side·GPU-path 한정(앞서 귀속, GPU mem flat·host RSS ~233MB/s).
+2경로 병렬 race로 terminal 시도 → 둘 다 에이전트가 API rate-limit("temporarily limiting, not usage")로 사망,
+pod는 살아남아(billing) 메인루프에서 직접 ground-truth + harvest + teardown.
+
+═══ 경로 C: #3934 device-resident GPU 재측정 (pod 42534038, 2×A40) ═══
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path 확인. host RSS trajectory (rss_traj2.txt, ~202s):
+  39.0 → 39.9 → 40.8 → 42.1 → 43.4 → 55.9 → 57.0 → 57.9 → 58.7 GB   (GPU mem 273 MiB 고정)
+  = host +19.6GB ≈ 97 MB/s 여전히 상승.
+**VERDICT: #3934 device-resident(HOST_NOW→DEVICE_KEEP)는 host-RSS 누수를 고치지 못함 — FALSIFIED.**
+(이전 233MB/s보다 느려졌으나 평탄 아님. disposition 전환만으론 불충분.)
+→ flame_mm 후보 = FALSIFIED (2026-06-25 직접 확인): L90-92/129-132/159-161 의 farr_free(A)는 *주석*
+   (mm_packed_gemv/_t/_outer_add 가 대체해 없앤 옛 extract-copy-free 패턴의 documentation)일 뿐, 살아있는
+   미해제 free 아님. fused 함수는 out 하나만 할당(호출자 free)·중간 A 미생성. ⇒ flame_mm 엔 고칠 누수 없음.
+   GPU-path host 누수 후보 전수 FALSIFIED(runtime-noop·device-cudaMalloc·pinned-host·#3934-devresident·flame_mm)
+   → 진짜 원인 = hexa-lang runtime device-path farr 수명주기 미확정 영역, mac 검증불가 = 현재 막힘.
+   terminal 유일 경로 = CPU-path(leak-free) full G0-G6 완주(별도 pod).
+
+═══ 경로 B: CPU-path leak-free G0-G6 (pod 42533641, CPU 251G box) ═══
+SYSMEM 17/251G **평탄**(누수 0 확정) · CUDA 없음(올바른 farr CPU oracle path, no OWN-GEMM).
+clm303 live core/ decode(cli/anima.hexa engine-native)가 ko+en 또박또박 생성:
+  gen_en.txt: "John Galt is the primary male hero of Atlas Shrugged..." (coherent 영어 위키 산문)
+  gen_ko.txt: "제임스 얼 카터 주니어(, 1924년 10월 1일~)는 민주당 출신 미국의 제39대 대통령..." (유창한 한국어)
+**VERDICT: CPU-path는 leak-free + clm303 G0-coherence 거동 확인(engine-native, live core/).**
+  단 (a) 이 coherence는 overfit 모델의 암기-재생(held-out 4/4 NO-DESCENT와 정합 — 표면 또박또박 ≠ 일반화),
+      (b) 전체 G0-G6 점수(kwr·G1·G2·G6·a7b_pass)는 에이전트 사망으로 미수확(gen은 됐으나 scoring 미완).
+
+═══ 종합 ═══
+- clm303 verdict = DIRECTIONAL 유지(held-out 4/4 DESCENT 견고). engine-native terminal = 아직 미박제.
+- 누수 = host-side, GPU-path 한정, #3934로도 안 고쳐짐. CPU-path는 leak-free(terminal 경로로 유효).
+- terminal까지 남은 단 한 걸음: **CPU-path에서 full G0-G6 scoring 완주**(누수 막혔으니 가능) — rate-limit 해소 후 clean 재실행.
+- 비용: 2 pod 단시간 + teardown(Total:0). @hexa-lang 42418464 불가침 유지.
+- 교훈: 다중 에이전트를 rate-limit 폭풍에 연속 발사 → 줄줄이 사망 + 고아 billing pod. 단발+메인루프 직접 회수가 안전.
+
+═══ workflow 소스 전수감사 결론 (2026-06-26, 9-agent forensics) ═══
+GPU-path host 누수 = hexa-emit 소스엔 미해제 alloc 없음(전수 grep: CUDA TU의 유일 host heap alloc은
+g_slots realloc L121, bounded·기각). hexa_farr_free는 e->buf 무조건 free(CPU/GPU 대칭), 모든 cudaMalloc은
+device+짝맞음(273MiB 평탄과 정합). ⇒ **GPU-path-only host 누수는 어떤 emitter 수정으로도 못 고침**.
+유일하게 모든 제약(host-side·GPU-path-only·device-mem flat·#3934 HOST_NOW에서도 발생) 만족하는 원인 =
+**CUDA driver/runtime 의 per-kernel-launch host 부기**(runtime_cuda_emit.hexa:1243 주석: 토큰당 ~13k matmul
+launch). cudaMemGetInfo 비가시·cuda_available시에만 발생. confidence=med (CUDA호스트 RSS-vs-launch-count
+trace로만 high 승격 가능, mac 불가).
+⇒ 진짜 레버 = launch 횟수 감소 = anima clm_decode CALLER의 M-stack 배칭(pending task#15) + 기존 fused 커널
+(gemm_fused_residual·strided_batched·groupnorm_gelu fusion) 활용. emitter/farr_free는 정상이니 그대로 둔다.
+부수효과: 토큰당 13k launch가 누수+glue-bound 느림을 동시 설명 → 배칭이 속도·GPU누수 동시 해결.
+clm303 terminal 경로 = (1) CPU-path(leak-free) full G0-G6 [rate-limit 식은 뒤 단발], 또는
+(2) M-stack 배칭으로 GPU launch 13k→소수 줄여 GPU-path 누수 자연소멸(task#15, 더 큰 작업).
