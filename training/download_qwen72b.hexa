@@ -50,8 +50,6 @@ fn log_err(msg) {
     println("[download_qwen72b ERR] " + msg)
 }
 
-@convergence(state="ossified", id="QWEN72B_POD_ONLY_DOWNLOAD", value="72B base (145 GB) downloads ONLY on pod, never locally. Home 80 Mbps = 4-5h vs datacenter 1 Gbps = 20-30 min. Local Mac disk pressure (283 GB free) insufficient. GATE_LOCAL=1 bypass required if download accidentally triggered locally per reference:reference_gate_wrapper", ossified_at="2026-04-17")
-@convergence(state="ossified", id="QWEN72B_RESUME_SAFE", value="huggingface-cli --resume-download is idempotent. Partial download = safe to re-run. Each shard downloaded independently; .incomplete marker files auto-cleaned on full success. DO NOT manually delete partial shards — resume recovers them", ossified_at="2026-04-17")
 fn main() {
     log_info("=== Qwen2.5-72B-Instruct base download ===")
     log_info("target = " + TARGET_DIR)

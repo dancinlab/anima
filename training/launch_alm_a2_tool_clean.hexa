@@ -1,5 +1,4 @@
 // training/launch_alm_a2_tool_clean.hexa — A2-Tool CLEAN retrain launcher
-// @convergence state=provisional id=A2_TOOL_CLEAN_LAUNCHER_20260418
 //                 value="W5 clean corpus retrain launcher. Emits pod-side
 //                        bash runner that fine-tunes fresh tool-use LoRA
 //                        on vanilla Qwen2.5-14B-Instruct (optionally warm-
@@ -72,9 +71,6 @@ fn log_err(msg) {
     println("[launch_alm_a2_tool_clean ERR] " + msg)
 }
 
-@convergence(state="provisional", id="A2_TOOL_CLEAN_CORPUS_SSOT_20260418", value="Tool corpus is training/corpus_tool/clean_tool_corpus_*.jsonl — 1140 lines (dryrun) or 7500 lines (full), 100% schema-valid, 0 malformed, canonical names enforced, 300 __no_tool__ hard negatives. Built by training/build_tool_corpus_clean.hexa. NEVER use mixed_tool_corpus.jsonl (92% malformed, polluted).", created_at="2026-04-18")
-@convergence(state="provisional", id="A2_TOOL_CLEAN_BASE_FORBIDDEN_20260418", value="NEVER warm-start this LoRA from any a2_tool_mixed checkpoint. Base must be vanilla Qwen2.5-14B-Instruct, optionally warm-started ONLY from A2-Orch clean adapter (r2:anima-models/alm14b/a2_20260416_orch/step_3000/).", created_at="2026-04-18")
-@convergence(state="provisional", id="A2_TOOL_CLEAN_JUDGE_FIX_TRADEOFF_20260418", value="per project_judge_fix_breakthrough: lenient rubric already lifted hire_sim 0.5333→0.867 WITHOUT retraining. This A2-Tool clean retrain is still justified ONLY if we need a reusable production adapter; if judge fix alone suffices for gate, this run is OPTIONAL. B4 prep only — do not auto-fire.", created_at="2026-04-18")
 fn main() {
     let config_text = ""
     if file_exists(SIDECAR_PATH) {

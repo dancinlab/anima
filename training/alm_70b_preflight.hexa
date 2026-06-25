@@ -571,7 +571,6 @@ fn d2_accelerate_launch_help() {
 }
 
 // ─── Main ──
-@convergence(state="ossified", id="ALM_70B_PREFLIGHT_40_GATE", value="40 individual checks (10 HW + 8 SW + 4 base + 3 corpus + 7 FSDP + 3 R2 + 3 NCCL + 2 dry-run). ALL 40 must PASS before launch. STRICT=1 elevates WARN→FAIL. On-pod checks SKIP locally; operator must re-run on pod before firing.", ossified_at="2026-04-17")
 fn main() {
     println("=== ALM 70B preflight (40 checks) ===")
     let pod = is_pod()
