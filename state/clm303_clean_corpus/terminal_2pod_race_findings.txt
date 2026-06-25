@@ -11,8 +11,12 @@ pod는 살아남아(billing) 메인루프에서 직접 ground-truth + harvest + 
   = host +19.6GB ≈ 97 MB/s 여전히 상승.
 **VERDICT: #3934 device-resident(HOST_NOW→DEVICE_KEEP)는 host-RSS 누수를 고치지 못함 — FALSIFIED.**
 (이전 233MB/s보다 느려졌으나 평탄 아님. disposition 전환만으론 불충분.)
-→ 남은 1순위 후보 = anima flame_mm.hexa 중간-farr free 가 주석처리됨(L92/L132/L161, mm_extract/mm 출력 미해제)
-   = ANIMA-side fix (hexa-lang 아님). GPU-path 한정 이유는 추가 조사 필요(CPU는 같은 mm()도 flat).
+→ flame_mm 후보 = FALSIFIED (2026-06-25 직접 확인): L90-92/129-132/159-161 의 farr_free(A)는 *주석*
+   (mm_packed_gemv/_t/_outer_add 가 대체해 없앤 옛 extract-copy-free 패턴의 documentation)일 뿐, 살아있는
+   미해제 free 아님. fused 함수는 out 하나만 할당(호출자 free)·중간 A 미생성. ⇒ flame_mm 엔 고칠 누수 없음.
+   GPU-path host 누수 후보 전수 FALSIFIED(runtime-noop·device-cudaMalloc·pinned-host·#3934-devresident·flame_mm)
+   → 진짜 원인 = hexa-lang runtime device-path farr 수명주기 미확정 영역, mac 검증불가 = 현재 막힘.
+   terminal 유일 경로 = CPU-path(leak-free) full G0-G6 완주(별도 pod).
 
 ═══ 경로 B: CPU-path leak-free G0-G6 (pod 42533641, CPU 251G box) ═══
 SYSMEM 17/251G **평탄**(누수 0 확정) · CUDA 없음(올바른 farr CPU oracle path, no OWN-GEMM).
