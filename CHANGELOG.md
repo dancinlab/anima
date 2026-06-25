@@ -1,3 +1,12 @@
+## refactor(core): 연구잔재 evac — core/ 429→212, production 엔진만 잔류 (preserve-state 불변식)
+
+core/ 가 substrate 엔진(~12)이 연구 잔재 ~400개에 파묻혀 있던 걸 import-safe 하게 정리. `cli/anima.hexa`+`cli/train.hexa` 진입점에서 transitively 도달하는 **production import-closure 10개**(pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·DECODER/flame_mm)는 절대 안 건드리고, 클로저 밖 연구잔재만 repo-root `state/` 로 이동(삭제 0, git mv 보존):
+- Phase A: `core/DECODER/state/` pod-하베스트 63개 → `state/decoder_research/` (preserve-state 명백 위반 해소; .hexa import 0 = 무위험).
+- Phase B: `core/h<NNNN>_*.hexa` 가설 프로브 91개 → `state/core_research_probes/` (보호 엔진 import 0 검증, 91/91 안전).
+- Phase C: `core/DECODER/*.hexa` 연구 스크립트 40 + .md 22 + .py 1 = 63개 → `state/decoder_research/` (flame_mm.hexa만 잔류=protected).
+- Phase D: `core/phi/` 165개 = 얽힘 커서 이번 범위 제외(deferred).
+검증: 각 phase 후 dangling-ref grep clean + `hexa check cli/anima.hexa`·generator·g_gates·bytegpt_decode·engine_cli·brain 전부 parse OK. core/ 429→212. CLAUDE.md 패키징 불변식("추론 pod = core/ self-contained, state 의존 0")에 한 걸음 더. cli/ 는 이미 clean(6개 전부 정당), 루트 naming 은 의미상-버전/거버넌스-강제라 rename 0(`.bak` 1건만 제거).
+
 - **fix(docs/clm_decode): H_1400 'free is a NOOP' 거짓 ROOT CAUSE 주석 교정 — 다세션 오진단 유발원 제거**: `clm_decode.hexa:310` 주석이 'hexa 런타임 farr_free=NOOP·matmul 출력 영구소비'라 주장했으나 **거짓**(hexa-lang root-fix 워크플로 + runtime.c 직접 검증으로 falsified). 두 할당자 혼동: (1) 컴파일러 bump 할당자(`runtime.c:1027` 진짜 noop·farr 미사용) vs (2) farr-scope `HXFARR_CALLOC`(`runtime.c:6231` @convergence ossified `FARR-NOOP-FREE-DECODE-LEAK`=`__libc_calloc/free` 진짜 회수 + `:6347` device cudaFree). farr는 (2)를 쓰므로 `t_free(mm)`는 host+device 둘 다 실제 회수 = matmul 출력은 누수 아님·**고칠 runtime 결함 없음**. 이 거짓 주석이 '마지막 한 조각=runtime noop-free fix' 오진단을 여러 세션 유발. 교정: 진실 반영 + scratch-reuse를 leak-fix가 아닌 **perf(alloc-churn 감소)**로 재프레임. 잔여 303M GPU 증가는 별개 device-side(cudaMalloc slot) 질문=GPU 재측정 대상. comment-only·byteeq 무관.
 ## docs(core·ARCHITECTURE): byte-mouth DECODER-SELECTION-MAP SSOT 박제 + 두 디코더 farr 누수 일관성 검증
 
