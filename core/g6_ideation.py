@@ -186,6 +186,146 @@ def g6_frame_guard(frames, known):
     return leaks
 
 
+# ── BEST-OF-K + scoring arms (lockstep with g6_ideation.hexa — 2-production parity) ──
+# These 4 pub fns were ABSENT from this py mirror (a89a F3 2-production drift); ported here
+# byte-for-byte from g6_ideation.hexa. Decode enters via the SAME generator L3 mouth as the
+# hexa engine: the hexa g6_* fns call gen_clm_ideate / gen_clm_ideate_W / gen_auto_ideate;
+# the py twins take the corresponding decode primitives from core/clm_decode.py /
+# core/bytegpt_decode.py (the byte-parity-proven ports) — so the SCORING logic (kwr-gate,
+# is_falsifiable, greedy jaccard distinctness) is identical, only the decode binding differs
+# by the language's native mouth handle. (a_core_engine_map: still the ONE typed slot.)
+
+def _clm_ideate(ckpt, frame, gen, top_k, temp, seed_rng):
+    """g6_ideation.hexa::gen_clm_ideate twin — CLM-only seeded top-k (core/clm_decode.py)."""
+    import clm_decode as _clm
+    return _clm.clm_decode_topk_sampled(ckpt, frame, gen, top_k, temp, seed_rng)["text"]
+
+
+def _clm_ideate_W(W, frame, gen, top_k, temp, seed_rng):
+    """g6_ideation.hexa::gen_clm_ideate_W twin — loaded-W seeded top-k (core/clm_decode.py)."""
+    import clm_decode as _clm
+    return _clm.clm_decode_topk_sampled_W(W, frame, gen, top_k, temp, seed_rng)["text"]
+
+
+def _auto_ideate(ckpt, frame, gen, top_k, temp, seed_rng):
+    """g6_ideation.hexa::gen_auto_ideate twin — MOUTH-SNIFF dispatch (.clm OR ByteGPT)."""
+    import clm_decode as _clm
+    import bytegpt_decode as _bg
+    if _bg.bg_is_bytegpt(ckpt):
+        return _bg.bytegpt_decode_topk_sampled_ranged(ckpt, frame, gen, top_k, temp, seed_rng)["text"]
+    return _clm.clm_decode_topk_sampled(ckpt, frame, gen, top_k, temp, seed_rng)["text"]
+
+
+def g6_decode_best_of_k(ckpt, frame, gen, k, base_seed, known):
+    """g6_ideation.hexa::g6_decode_best_of_k — best-of-K (offsets [0,101,202]) by (fals,kwr).
+    Decode = CLM-only gen_clm_ideate twin (H_1381 best-of-K study)."""
+    offsets = [0, 101, 202]
+    best = ""; best_fals = -1; best_kwr = -1.0
+    kk = k if k < 3 else 3
+    for oi in range(kk):
+        o = _clm_ideate(ckpt, frame, gen, 40, 0.7, base_seed + offsets[oi])
+        kwr = _g6_known_word_ratio(o, known)
+        fals = 1 if (kwr >= 0.5 and _g6_is_falsifiable(o, known)) else 0
+        if fals > best_fals or (fals == best_fals and kwr > best_kwr):
+            best_fals = fals; best_kwr = kwr; best = o
+    return best
+
+
+def g6_decode_best_of_k_W(W, frame, gen, k, base_seed, known):
+    """g6_ideation.hexa::g6_decode_best_of_k_W — loaded-W twin (load .clm ONCE for the arm)."""
+    offsets = [0, 101, 202]
+    best = ""; best_fals = -1; best_kwr = -1.0
+    kk = k if k < 3 else 3
+    for oi in range(kk):
+        o = _clm_ideate_W(W, frame, gen, 40, 0.7, base_seed + offsets[oi])
+        kwr = _g6_known_word_ratio(o, known)
+        fals = 1 if (kwr >= 0.5 and _g6_is_falsifiable(o, known)) else 0
+        if fals > best_fals or (fals == best_fals and kwr > best_kwr):
+            best_fals = fals; best_kwr = kwr; best = o
+    return best
+
+
+def g6_score_arm(ckpt, frames, gen, k, base_seed, best_of_k, known):
+    """g6_ideation.hexa::g6_score_arm — CLM-only DIST/FALS arm. dist = greedy jaccard<=0.5."""
+    texts = []; word_sets = []; fals = 0
+    for f in frames:
+        if best_of_k:
+            o = g6_decode_best_of_k(ckpt, f, gen, k, base_seed, known)
+        else:
+            o = _clm_ideate(ckpt, f, gen, 40, 0.7, base_seed)
+        texts.append(o)
+        if _g6_known_word_ratio(o, known) >= 0.5:
+            word_sets.append(_g6_words(o))
+            if _g6_is_falsifiable(o, known):
+                fals += 1
+    kept = []
+    for ws in word_sets:
+        ok = True
+        for kk in kept:
+            if _g6_jaccard(ws, kk) > 0.5:
+                ok = False
+        if ok:
+            kept.append(ws)
+    return {"dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts}
+
+
+def g6_score_arm_auto(ckpt, frames, gen, base_seed, known, ideate=None):
+    """g6_ideation.hexa::g6_score_arm_auto — CANONICAL mouth-agnostic G6 scoring op.
+    IDENTICAL DIST/FALS/coherent logic to g6_score_arm, decode via the single typed entry
+    gen_auto_ideate (sniffs .clm OR ByteGPT) — the op g_gates.g_eval_g6 calls (no dead inline
+    duplicate). base_seed parameterizes the per-frame RNG (seeded base_seed+i; base_seed=7
+    reproduces the old inline g_eval_g6 path frame-for-frame). `ideate` lets the g_gates _Mouth
+    pass its pre-loaded-weight ideate (== gen_*_ideate_W: load ONCE for the arm); default =
+    _auto_ideate (per-call sniff). The scoring is byte-identical either way."""
+    if ideate is None:
+        ideate = lambda f, g, sr: _auto_ideate(ckpt, f, g, 40, 0.7, sr)
+    texts = []; word_sets = []; fals = 0
+    for i in range(len(frames)):
+        o = ideate(frames[i], gen, base_seed + i)
+        texts.append(o)
+        if _g6_known_word_ratio(o, known) >= 0.5:
+            word_sets.append(_g6_words(o))
+            if _g6_is_falsifiable(o, known):
+                fals += 1
+    kept = []
+    for ws in word_sets:
+        ok = True
+        for kk in kept:
+            if _g6_jaccard(ws, kk) > 0.5:
+                ok = False
+        if ok:
+            kept.append(ws)
+    return {"dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts}
+
+
+def g6_sampler_selftest():
+    """g6_ideation.hexa::g6_sampler_selftest -> generator.hexa::gen_g6_sampler_selftest.
+    Exercise the engine's seeded top-k sampler on a SYNTHETIC peaked logits vector (NO model
+    forward — fast, deterministic, smoke-safe). Returns {deterministic, diverse, in_topk}
+    proving the best-of-K DEPTH lever. Uses the byte-parity clm_decode.py sampler primitives
+    (_topk_sample / _mix32) — the py twin of clmd_topk_sample_pub / clmd_mix32_pub."""
+    import numpy as _np
+    import clm_decode as _clm
+    v = 6
+    lg = _np.array([1.0, 3.0, 2.0, 0.5, 5.0, 4.0], dtype=_np.float64)
+    a, _ = _clm._topk_sample(lg, v, 3, 0.7, _clm._mix32(7))
+    b, _ = _clm._topk_sample(lg, v, 3, 0.7, _clm._mix32(7))
+    deterministic = (a == b)
+    offs = [0, 101, 202]
+    draws = []
+    for o in offs:
+        t, _ = _clm._topk_sample(lg, v, 5, 0.7, _clm._mix32(7 + o))
+        draws.append(t)
+    diverse = not (draws[0] == draws[1] and draws[1] == draws[2])
+    in_topk = True
+    s = _clm._mix32(11)
+    for _ in range(40):
+        t, s = _clm._topk_sample(lg, v, 3, 0.7, s)
+        if t != 1 and t != 4 and t != 5:
+            in_topk = False
+    return {"deterministic": deterministic, "diverse": diverse, "in_topk": in_topk}
+
+
 def g6_detector_calibration(known):
     """g6_ideation.hexa::g6_detector_calibration — frozen 10-string (5 pos/5 neg)."""
     pos = ["if consciousness increases, the emit rate measured at the boundary rises",
