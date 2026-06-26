@@ -1,10 +1,14 @@
 name: autotag
 
-# main push 마다 Conventional Commits 기준으로 다음 SemVer 태그를 자동 생성한다.
+# main push 시 Conventional Commits 기준으로 다음 SemVer 태그를 자동 생성한다 —
+# 단, **release-worthy 커밋(feat/fix/perf/BREAKING)이 있을 때만**(hexa-lang 참고).
 #   feat! / BREAKING CHANGE  → major  (vX+1.0.0)
 #   feat:                    → minor  (vX.Y+1.0)
-#   그 외 전부 (fix/docs/...) → patch  (vX.Y.Z+1)   ← 매 push 최소 1칸 보장
-# install.hexa(최신 v* 태그 빌드)가 이 태그를 그대로 소비 → 누구나 동일 최신 빌드.
+#   fix: / perf:             → patch  (vX.Y.Z+1)
+#   docs/chore/ci/refactor/style/test-only → 태그 안 함 (= 릴리즈 안 함)
+# 이게 릴리즈 빈도 게이트다 — "수정마다 릴리즈"가 아니라 "의미있는 변경만". install.hexa
+# (최신 v* 태그 빌드)는 직전 검증된 의미버전을 그대로 소비(stale 아님). 태그=release.yml
+# install-smoke→GitHub Release 트리거. GITHUB_TOKEN 푸시 태그는 워크플로 재트리거 안 함.
 # GITHUB_TOKEN 으로 푸시한 태그는 다른 워크플로를 재트리거하지 않음(루프 방지).
 
 on:
@@ -50,6 +54,19 @@ jobs:
             range="HEAD"
           fi
           msgs="$(git log --format='%s%x1f%b%x1e' "$range")"
+
+          # ── RELEASE-WORTHY GATE (hexa-lang 참고) ─────────────────────
+          # feat/fix/perf/BREAKING 커밋이 없으면(docs/chore/ci/refactor/style/test-only)
+          # 태그를 찍지 않는다 → "수정마다 릴리즈"가 아니라 "의미있는 변경만 릴리즈".
+          # install.hexa 는 직전 검증된 v* 태그를 그대로 유지(stale 아님, 그게 최신 의미버전).
+          # release.yml(install-smoke → GitHub Release)는 이 태그에만 발사되므로,
+          # 이 게이트가 곧 릴리즈 빈도 게이트다.
+          subjects="$(git log --format='%s' "$range")"
+          if ! grep -qiE '^(feat|fix|perf)(\([^)]*\))?!?:' <<<"$subjects" \
+             && ! grep -q 'BREAKING CHANGE' <<<"$msgs"; then
+            echo "no release-worthy commit (feat/fix/perf/BREAKING) since ${last} — skip tag (docs/chore/ci/refactor-only)."
+            exit 0
+          fi
 
           # ── ATLAS-PATCH HOOK (hexa-lang) ─────────────────────────────
           # 기본 generic: 아래 줄은 no-op. hexa-lang 에서는 atlas builtin 추가가
