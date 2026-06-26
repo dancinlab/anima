@@ -1,0 +1,33 @@
+hexa GPU 활성화 — 완전 해결 (2026-06-26, A40 pod 42552302 실측)
+================================================================
+결론: GPU는 canonical 설치 경로로 이미 정상 작동. 코드 결함 0.
+
+  $ HEXA_CUDA=1 sh install.sh
+    → "HEXA_CUDA=1 → preferring cuBLAS-enabled asset (GPU-accelerated)"
+    → fetch releases/latest/download/hexa-linux-x86_64-cuda.tar.gz
+    → "✓ cuda asset — keeping tarball's cuBLAS runtime.a"
+    → .cuda-runtime marker DROPPED
+  $ hexa run 'fn main(){print(cuda_available())}'  →  1   (A40 실측)
+
+세션 내내 GPU 못 켠 진짜 이유 (전부 측정 아티팩트/잘못된 경로):
+  1. 정석 opt-in 경로(HEXA_CUDA=1 install.sh)를 안 씀 — stock CPU install + 수동 stage 빌드만 시도.
+  2. stable v0.321.0 -cuda asset이 stale(swap-fix 이전, runtime.a=704KB CPU). 현재 test/latest는
+     fresh(runtime.a=2.47MB cuda, cuda-objs=1, swap 정상).
+  3. cuda_available 확인을 `hexa gpu`(바이너리 self-probe=CPU 부트스트랩, 항상 0)로 봐서 오판.
+     진짜는 install(.cuda-runtime marker)+`hexa run`(prebuilt cuda runtime.a 링크) 경로.
+  4. 빌드/패키징/소비링크 3단계 다 정상(CI 로그+pod 빌드로 확인): runtime.cuda.a 생성→
+     stage_precompile_package swap→os_clang -lcudart/-lcuda/-lcudadevrt.
+
+남은 native-canonical 폴리시(#3979): install.sh가 HEXA_CUDA=1 opt-in 없이도 GPU 자동감지
+  (L198에 감지로직 있으나 opt-in 게이트) → pip install torch 식 auto. = [3] 폴리시만 남음.
+
+함의: clm303 RANK-3 GPU 측정(원래 ING#178)이 드디어 가능 — 이 경로로 cuda hexa 설치 후
+  anima decode 돌리면 own-GEMM DEVICE 실발화. GPU-path 누수도 이 위에서 실측 가능.
+
+═══ 정정 (2026-06-26): auto-detect는 이미 구현됨 ═══
+앞서 "[3] install.sh auto-detect 폴리시 남음"이라 적었으나 — install.sh 정독 결과 **이미 완전 native**:
+  prefer_cuda(): HEXA_CUDA=1→cuda(opt-in) · =0→CPU(opt-out) · unset→_has_nvidia_gpu && _has_cuda_runtime
+  감지 시 자동 cuda. (_has_nvidia_gpu=nvidia-smi -L · _has_cuda_runtime=libcudart.so via ldconfig/표준경로)
+즉 `sh install.sh` 만으로 GPU 호스트(+cudart libs)면 cuda_available=1 자동 — pip install torch 식 정석 이미 존재.
+⇒ #3979 [3] 추가작업 불요. GPU enablement는 코드상 완전 native-canonical. 남은 건 0(빈 GPU서 bare-auto
+  경로 empirical 확인만 — 코드상 robust, HEXA_CUDA=1 경로는 A40서 cuda_available=1 실증됨).

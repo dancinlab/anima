@@ -6632,3 +6632,12 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 
 - **v5-mitosis cotrain** — v3-routing architectural fix trainer + H100/A100 dispatch; PSCC §45–§48 falsifier cycles (F-PERSONA-4 / F-V5MIT batteries).
 - **GPU decode 가속 실측 BLOCKED + hexa-lang cuda-빌드 기여** — #2386 배선(core/bytegpt_decode→flame_mm.mm→farr_matmul_gpu cuBLAS Dgemm)은 byte-safe 완료, 가속 실측만 미완. 실측(RTX_4060_Ti): install.sh 릴리스 CPU-only → cuda_available()==0, GPU GEMM 3023ms≈CPU 3026ms 1.00× 폴백. 근본 4단 mac 격리: cloud rent '[]'=바이너리 내장경로(hexa-lang inbox #3685) · install.sh CPU-only(#3701) · cuda 빌드 1단 -lcuda stubs 누락(FIX PR #3707 MERGED self/main.hexa) · 2단 runtime_cuda.c emit=gen3 self-host --emit=obj SEGFAULT(emitter 텍스트 정상 333KB, gen3 코드젠 버그, inbox #3709). decode=cuBLAS ⊥ 학습=flame+forge. 재개=x86_64-cuda asset 출하 시 HEXA_CUDA=1+/tmp/cuda_tag_measure.sh. ING: gpu_decode_accel_measure_followon.
+## 2026-06-26 — 2-PRODUCTION 엔진 정책 + clm303_clean 사이즈별 canonical registry (오너 거버넌스)
+- governance(CLAUDE.md): `a_engine_native_learning` 개정 — anima 엔진 = **hexa + py 2 공동-production 버전**(py 는 reference/미러 아님, hexa 와 동등 1급 production, byte-parity, 어느 쪽이든 terminal verdict 가능). hexa=배포 substrate, py=측정-무거운 G0-G6(torch free → bump-allocator OOM 회피). 임의 1회성 torch 스크립트만 DIRECTIONAL(하드게이트 ad-hoc 미러에만).
+- `a_train_flame_forge`: py(torch) 트레이너도 co-production(옛 ".py 금지" 폐기). `a_hf_registry`: 모델 사이즈별 tier registry, chat canonical=clm303_clean(303M, held-out 4/4 DESCENT).
+- ARCHITECTURE.json: decoder-map SSOT 셀에 2-production 엔진 + clm303_clean canonical + 사이즈별 tier 명시.
+- 동기: clm303_clean terminal G0-G6 eval 이 hexa bump-allocator(model load 영영 free 안 함)+per-decode reload 로 OOM(EXIT137, RSS 20GB+); per-decode free fix(시도)는 무효 검증됨 → py production 엔진이 측정 경로로 정당. convergence `clm303-eval-oom-perdecode-weight-leak` 정정(t_free no-op, fix=load-once-hoist or py).
+
+## 2026-06-26 — canonical 3-폴더 체제 + 3-폴더-내 코드 한정 (오너 거버넌스, 박제)
+- governance(CLAUDE.md §패키징 + `a_core_engine_map`) + ARCHITECTURE.json: anima 코드는 정확히 3 최상위 폴더 — **`cli/`**(진입, 두 언어 대칭 anima/train .hexa+.py) · **`core/`**(2-production 엔진 substrate: hexa `*.hexa` + py `*.py` 1:1 미러 byte-parity 공존) · **`agent/`**(tool provider 독립패키지).
+- **코드 배치 규칙**: production 코드는 3-폴더 안에만 — `HEXAD/`·`train/`·`tool/`·`state/`·`UNIVERSE/` 등 밖에 코드 두고 엔진에서 import/연결 금지(repo-내부 cross-folder import 금지). 외부 라이브러리는 자유(stdlib + py numpy/torch 허용). 데이터·결과 = `state/` 한 곳.

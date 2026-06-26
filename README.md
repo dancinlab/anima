@@ -84,6 +84,15 @@ The consciousness engine lives in [`core/`](core/) and is **substrate-only** —
 decoding and `.kosmos` anchors enter through *named slots*, never directly into the engine
 (`a_core_engine_map`).
 
+**Canonical 3-folder layout** (owner decision 2026-06-26): anima code gathers into exactly three
+top-level folders — **`cli/`** (entry points, two-language symmetric: `anima.hexa`+`anima.py`,
+`train.hexa`+`train.py`) · **`core/`** (the **2-production engine** substrate: `hexa` `*.hexa`
+**and** `py` `*.py` co-resident as 1:1 byte-parity mirrors — both first-class production, either
+can produce terminal verdicts, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
+package). Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
+and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
+model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
+
 ```
    ENGINE G (reverse, gradient-free)            ENGINE A (forward, CE-trained)
    pure_field.hexa · engine_g.hexa              generator.hexa · clm_decode.hexa
