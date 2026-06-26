@@ -1,0 +1,110 @@
+ByteGPT-303M (H_1129) — G0-G6 measurement via the PY 2-production engine ON POOL HOST
+=======================================================================================
+date          : 2026-06-26
+ckpt          : h1129.bin (ByteGPT-303M, English-dominant emergence model; torch-REF G1 GREEN)
+ckpt sha256   : 5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e
+                (mini source == summer remote, verified identical)
+header sniff  : 5x u32 [256, d=1024, L=24, H=16, block] -> mouth_kind = bytegpt
+engine        : core/*.py  (the byte-parity-proven 2-production mirror; per core/CLAUDE.md
+                the 10-file import-closure is 10/10 byte-parity COMPLETE -> py engine is a
+                legitimate terminal-verdict-eligible PRODUCTION engine, not a torch-mirror).
+                py source = worktree clm303-noverfit-retrain/core/{g_gates,bytegpt_decode,
+                clm_decode,generator,g6_ideation,...}.py
+host          : summer  (summer-B650M-K, RTX 5070 box — pool host; pure python+numpy, NO GPU/hexa)
+python        : 3.12.3
+numpy         : 2.4.4
+mouth path    : bytegpt_decode (header sniff -> gen_bytegpt_backend; O(gen^2) no-KV-cache)
+compute       : numpy on 12 cores, ~1100-1180% CPU, RSS ~2.4 GB bounded (NO OOM)
+
+WHY POOL + PY ENGINE (both hexa substrates blocked):
+  - hexa `anima eval` blocked on BOTH: mini = 303M OOM ; pool x86_64 = codegen bug emits no
+    gen_auto_ideate prototype.
+  - py engine sidesteps both: hexa-independent (codegen bug N/A) + bounded RAM (no OOM).
+  - mini stays light (heavy-on-pool directive; mini already hit swap RED twice) -> ran on summer.
+
+=======================================================================================
+RUN 1 — full G0-G6, CLI as prescribed: g_gates.py <ckpt> gen_en.txt --gen 0
+=======================================================================================
+exact cmd : cd ~/anima_pyeng/core && PYTHONPATH=. python3 -u g_gates.py \
+            ~/anima_pyeng/h1129.bin ~/anima_pyeng/gen_en.txt --gen 0
+wall-time : ~55 min on summer (full G0,G1,G2,G5,G6 decode set)
+
+*** BUDGET NOTE (IMPORTANT) ***
+  g_gates.g_eval_all (line 382) resolves `--gen 0` to _default_gen()=40 BEFORE passing it
+  to the gate fns (lines 384-389). So g_eval_g1 received gen=40, and its ladder
+  `g_single = gen if (0<gen<80) else 80` yields 40/40 — NOT the h1129-native 80/120 ladder.
+  => This RUN 1 G1 is the gen=40 SHORT-BUDGET measurement (the same budget artifact CLAUDE.md
+     a_engine_native_learning flags DIRECTIONAL in the clm303_clean precedent). The true
+     native 80/120 G1 is RUN 2 below.
+
+------------------------------------------------------------------------
+ANIMA G0-G6 — py production engine (core/g_gates.py)  gen=40
+------------------------------------------------------------------------
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.857', '0.857', '1.000', '1.000', '1.000']
+G1 RECOMBINATION pass=False  max_single=0  best_k=4  best_distinct=1        <- gen=40 short budget
+G2 NOVELTY       pass=True  n_novel=51  control_novel=0  coherent=12  have_corpus=True
+G3 PHILOSOPHY    ok=True    continuity=0.999950  impostor_cos=0.000000  (architecture read)
+G4 PROVENANCE    N/A     (process gate — not a decode eval)
+G5 NON-FAB       L1_pass=True  l1_rate=0.0556   |  L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0
+------------------------------------------------------------------------
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+detector calibration (advisory >=8/10): 10/10
+------------------------------------------------------------------------
+
+=======================================================================================
+RUN 2 — G1 at the TRUE h1129-native 80/120 ladder (the answer the user wants)
+=======================================================================================
+why  : RUN 1's --gen 0 never reached g_eval_g1's 80/120 ladder (resolved to 40 first).
+       RUN 2 calls the SAME production g_eval_g1 + _Mouth + bytegpt_decode with gen=0
+       passed DIRECTLY to the gate, so the native ladder fires: g_single=80, g_comp=120.
+       (Not a decode-bypass side-harness — same production decode + same g_eval_g1 fn,
+        only the driver-level gen-resolution quirk is bypassed to reach the documented ladder.)
+exact cmd : cd ~/anima_pyeng/core && PYTHONPATH=. python3 -u g1_native.py ~/anima_pyeng/h1129.bin
+            (g1_native.py: r = g_gates.g_eval_g1(_Mouth(ckpt), 0, _g6_dict_load()))
+wall-time : ~26 min on summer (5 single@80 + composite k=2..5 @120; 120-tok O(gen^2) ~9x heavier)
+
+=== g_eval_g1 at NATIVE 80/120 ladder (gen=0 direct -> g_single=80, g_comp=120) ===
+PASS: False
+max_single: 2
+best_k: 4  best_distinct: 2
+--- per-k ladder (k, distinct, kwr, coherent>=0.5, clears) ---
+k=2  distinct=0  kwr=0.909  coherent=True  clears=False
+k=3  distinct=0  kwr=0.952  coherent=True  clears=False
+k=4  distinct=2  kwr=0.950  coherent=True  clears=False
+k=5  distinct=1  kwr=1.000  coherent=True  clears=False
+=== G1 verdict at 80/120: FAIL ===
+
+  clears criterion = distinct>=2 AND distinct>max_single AND kwr>=0.50.
+  max_single=2, so a composite must reach distinct>=3 to clear. Best composite distinct=2
+  (k=4) == max_single -> never strictly greater -> NO k clears -> G1 FAIL.
+  Coherence is healthy (kwr 0.909-1.000, all coherent). The failure is specifically a lack of
+  RECOMBINATION LIFT: composites never produce MORE distinct concepts than the best single.
+
+=======================================================================================
+VERDICT
+=======================================================================================
+a7b_pass (G0 AND G1 AND G2) = FAIL  (on BOTH gen=40 and native-80/120 budgets; G1 is the failing gate)
+  G0 PASS (5/5 coherent) · G2 PASS (51 novel, control 0) · G1 FAIL · G6 FAIL (dist=6>=5 but fals=0<1)
+
+G1 RECOMBINATION = FAIL even at the native 80/120 ladder via the byte-parity py 2-production engine.
+  This DIVERGES from the torch-REFERENCE G1 GREEN. The longer budget (40 -> 80/120) raised both
+  single and composite coverage (max_single 0->2, best_distinct 1->2) but composite never exceeded
+  single -> no recombination lift. So the divergence is NOT a budget artifact — it persists at the
+  full native budget.
+
+VERDICT LABEL (a_engine_native, honest):
+  py 2-production engine measured (decode byte-parity proven on tiny-synthetic sha 4e7145fe; the
+  10-file closure is 10/10 byte-parity COMPLETE) — STRONGER than a torch-mirror DIRECTIONAL,
+  BUT the wired-hexa-CLI single-entry cross-check ON h1129 is still BLOCKED by the x86_64 codegen
+  bug (no gen_auto_ideate prototype) + 303M OOM on mini. So this is NOT yet the fully-wired terminal
+  verdict; it is "py-engine measured, wired-CLI cross-check pending the hexa codegen fix".
+  byte-parity is proven for the decode ALGORITHM (same code path transfers to h1129 by construction),
+  not directly re-cross-checked on h1129 itself (h1129 can't run through the hexa CLI yet).
+
+BLOCKERS / NOTES:
+  - First attempt on aiden (--gen 0) ran ~80 min then was KILLED (empty log) by a shared-host
+    collision: a different agent launched a competing `--gen 80` run on aiden. Moved to free host
+    summer (a_break_the_wall: don't re-fire the contended host).
+  - hexa-CLI cross-check on h1129 remains blocked (codegen + OOM) — that single-entry wired
+    confirmation is the only step left to promote this from "py-engine measured" to terminal.

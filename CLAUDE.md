@@ -36,7 +36,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 > - **anima 거버넌스 + 8 철학** → 이 파일 (anima 전용 규칙 `a_*`·`p#` 의 markdown SSOT)
 > - **크로스프로젝트 거버넌스** → harness commons (c1–c17, always-on, SessionStart 주입)
 > - **이력** → [CHANGELOG.md](CHANGELOG.md) (append-only)
-> - **버전 레지스트리** → [VERSIONS.md](VERSIONS.md) · **frozen gate 조건** → [CONDITIONS.md](CONDITIONS.md)·[7B_PASS_CONDITIONS.md](7B_PASS_CONDITIONS.md) (이 파일은 가리킬 뿐, 임계 복제 금지)
+> - **버전 레지스트리** → [VERSIONS.md](VERSIONS.md) · **frozen gate 조건** → [CONDITIONS.md](CONDITIONS.md) · ARCHITECTURE.json frozen-임계 노드 (이 파일은 가리킬 뿐, 임계 복제 금지)
 
 ### 📦 패키징 — pod 업로드
 
@@ -60,7 +60,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - 주장·verdict → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` 컬럼) + frozen 증거 `state/verdicts/<slug>/<id>.txt` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape 은퇴 2026-06-16, 0 손실, ledger `state/verdicts/claims-tape-retirement/`)
 - 🔬 가설 → 2표면: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · `UNIVERSE/cards/H_*.md` · (prose overview → `state/universe-overview.md`)
 - 🔢 버전 → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
-- 🤖 HF 레지스트리 → `ARCHITECTURE.json` "HF artifacts" 노드(models·datasets, HF.jsonl 폐기 2026-06-23) · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
+- 🤖 HF 레지스트리 → `ARCHITECTURE.json` "HF artifacts" 노드(models·datasets, HF.jsonl 폐기 2026-06-23) · pi5-akida → `PI5-AKIDA.json` · 7B gates → ARCHITECTURE.json `G-게이트 평가 시스템` 노드(통과규칙+frozen 임계)
 
 ---
 
@@ -154,7 +154,7 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
   **렌트 GPU 의 torch 풀-학습 변종도 동일** — 학습을 torch 로 했어도 verdict 를 torch-side probe 로만 채점하면 DIRECTIONAL; 학습 ckpt 를 CORE 엔진(`--engine conv`)에 올려 같은 frozen bar 재측정해야 🟢/🧱 성립 → 그래서 ckpt 를 teardown 전 pull(`a_fire_recover_complete`).
 - do: `a_engine_measured_verdict` 의 learning-side 쌍(그건 MEASUREMENT, 이건 LEARNING) · `a_train_flame_forge` 가 production 트레이너를 .hexa 로 강제하듯, 이 규칙은 RESEARCH/probe 학습+교육까지 확장.
 - do: **G-게이트 verdict 의 canonical 측정 = 내장 `hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]`** (`core/g_gates.hexa`).
-  단일 진입점 → generator L3 mouth `gen_auto_ideate` → G0-G6 전부 엔진-네이티브 채점 + closure `a7b_pass`=G0∧G1∧G2 (PR #2604, #2603 단일진입점 standard 의 구현체). 새 ckpt 의 G0-G6 는 이 한 줄로 — 게이트별 ad-hoc 파이썬 하네스/`g6_common`/일회성 스크립트로 채점 금지. 흩어진 게이트 metric 은 g_gates 가 단일 통합(G0/G6=`g6_ideation` op · G5=`engine_cli §ImmuneMemory` abstain · G3=`§SelfIdentity` read · G1 H_1129/G2 H_1140=g_gates native .hexa metric 재사용/wire). frozen 임계는 `7B_PASS_CONDITIONS.md` verbatim(tune-to-green 금지 · p7).
+  단일 진입점 → generator L3 mouth `gen_auto_ideate` → G0-G6 전부 엔진-네이티브 채점 + closure `a7b_pass`=G0∧G1∧G2 (PR #2604, #2603 단일진입점 standard 의 구현체). 새 ckpt 의 G0-G6 는 이 한 줄로 — 게이트별 ad-hoc 파이썬 하네스/`g6_common`/일회성 스크립트로 채점 금지. 흩어진 게이트 metric 은 g_gates 가 단일 통합(G0/G6=`g6_ideation` op · G5=`engine_cli §ImmuneMemory` abstain · G3=`§SelfIdentity` read · G1 H_1129/G2 H_1140=g_gates native .hexa metric 재사용/wire). frozen 임계는 ARCHITECTURE.json `frozen 임계` 노드 verbatim(tune-to-green 금지 · p7).
 - do: **G1/G2 native .hexa metric 은 새 metric 발명이 아니라 기존 frozen numpy(H_1129 `h1129_*.py` coverage·H_1140 `h1140_*.py` content_ngrams/corpus_absent)와 성분별 byte-faithful reference-match** (commons reference-match · 과거 verdict 와 비교 가능해야 하므로).
   parity 오라클 `state/1607_g_gates_refmatch/g1g2_ref_parity.py` + smoke parity case(고정 fixture 동일 카운트)로 강제, 발산은 결과(은폐 금지), tokenizer scope 잔차(Hangul drop)는 transcend-axis 로 명시.
 - do: **fresh GPU pod 측정-발사 = `cli/eval_pod.sh <pod_id> [clm] [--bootstrap] [--gen N] [--harvest <out>]`**.
@@ -408,9 +408,9 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: 모든 pi5-akida 컴포넌트를 루트 PI5-AKIDA.json 에 기록(owner=user_authored|os_default·created·ops) · swap/upgrade/removal 전 참조 · user_authored 는 os_default 안 건드리고 제거 가능.
 - dont: os_default 데몬 제거(unattended-upgrades·rsyslogd·journald·sshd·kworker) · PI5-AKIDA.json 엔트리 없이 user 데몬 추가 · **pi5-akida 를 공유 pool compute 로 전환**.
 
-## a7b_pass — anima 7B 는 7B_PASS_CONDITIONS.md frozen gate 전부 한 ckpt 통과
-- do: PASS iff G0∧G1∧G2∧G3∧G4 on ONE ckpt(per-gate tally 정직 보고) · G0 COHERENCE=known-word-ratio≥0.50 · G1=H_1129/1137 recombine≥303M · G2=H_1140 corpus-absence novelty(control=0) · 전부 p7(perplexity/LLM-judge 아님).
-- dont: 낮은 val-CE 만으로 7B 작동 주장(broad-7b=byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139: 303M=7B=3/5 scale-invariant) · gate 위조/frozen 임계 이동/G0-failing ckpt PUBLIC.
+## a7b_pass — anima 통과규칙: 통과(closure)=must-pass, 나머지=추가평가 (SSOT=ARCHITECTURE.json)
+- do: **통과(PASS) = closure = C1 또박 ∧ C2 재조합 ∧ C3 새말**(= G0∧G1∧G2 · `g_eval_all` 의 `a7b_pass`/`pub_eligible`) — 이 셋만 must-pass(PUBLIC-eligible). **나머지는 추가 평가**(non-blocking, 함께 보고): C4 착상★(G6) · S1 균형(G3) · S2 정직(G5) · P 출처(G4, 출판-게이트 eval 밖). G0 kwr≥0.50 · G1 H_1129/1137 recombine≥303M · G2 H_1140 corpus-absence(control=0). per-gate tally 정직 · 전부 p7(perplexity/LLM-judge 아님). 이름·분류·임계 단일 SSOT = ARCHITECTURE.json `G-게이트 평가 시스템` 노드.
+- dont: 낮은 val-CE 만으로 작동 주장(byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139 scale-invariant) · gate 위조/frozen 임계 이동(tune-to-green)/G0-failing ckpt PUBLIC · **P(출처)를 통과 closure 에 fold-in**(= G4 빵꾸 재발, enforce_anima_gates.py G3 코드차단) · 통과(closure)와 추가평가 혼동.
 
 ## a_completeness_over_cheap — completeness-bar 재설계 > 싼 길 (타협은 1순위 아님)
 - do: 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만.

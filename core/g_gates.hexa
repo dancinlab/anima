@@ -13,7 +13,7 @@
 // + §SelfIdentity); only G1 (H_1129 recombination) and G2 (H_1140 corpus-absence) metrics
 // are wired here as new .hexa ops (they previously lived only in numpy mirrors).
 //
-// FROZEN-FIRST (p7 · 7B_PASS_CONDITIONS.md VERBATIM — NO tune-to-green):
+// FROZEN-FIRST (p7 · ARCHITECTURE.json frozen-ìê³ SSOT VERBATIM — NO tune-to-green):
 //   G0  COHERENCE      kwr >= 0.50 on >= 4/5 single-concept gens
 //   G1  RECOMBINATION  some k: composed_distinct >= 2 AND > max_single AND coherent
 //   G2  NOVELTY        >= 3 distinct coherent corpus-absent n-grams AND control = 0
@@ -431,7 +431,7 @@ pub fn g_eval_g3() -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-//  G4 — PROVENANCE & RECOVERY  (7B_PASS_CONDITIONS.md §G4 VERBATIM — a_hf_*, a_fire_recover_complete)
+//  G4 — PROVENANCE & RECOVERY  (ARCHITECTURE.json frozen-ìê³ SSOT §G4 VERBATIM — a_hf_*, a_fire_recover_complete)
 // ════════════════════════════════════════════════════════════════════════
 // 7B_PASS §G4: "ckpt sha256 recorded; HF-uploaded with a model card + manifest; status honest.
 // PUBLIC only if G0∧G1∧G2 all PASS (closure)." This is a STRUCTURAL / PROCESS gate, NOT a

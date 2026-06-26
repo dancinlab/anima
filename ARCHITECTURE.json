@@ -380,6 +380,37 @@
             },
             {
               "type": "subsection",
+              "title": "통과규칙 — 통과(closure·MUST) vs 추가평가 (이름·분류 SSOT · 2026-06-27 owner)",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "**summary**: anima 통과규칙의 이름·분류 단일 SSOT. **통과(closure) = 반드시 통과해야 하는 핵심 3 게이트**(C1 또박 · C2 재조합 · C3 새말 = `a7b_pass` = G0∧G1∧G2 = PUBLIC-eligible). **추가 평가 = 통과를 막지 않고 함께 보고하는 나머지**(C4 착상★ · S1 균형 · S2 정직 · P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각 게이트의 **태그**로 부기 — 모든 게이트를 한 분류에 욱여넣지 않는다. G4(출처)는 출판단계라 디코드 점수표 밖(점수표 N/A 구멍='빵꾸' 해소). 임계 verbatim = 'frozen 임계' 노드(NOT tune-to-green p7). 코드 함수ID(`g_eval_g0`…)는 안정 유지(2-production `core/g_gates.{hexa,py}`), 이 SSOT 가 ID→이름 매핑."
+                },
+                {
+                  "type": "subsection",
+                  "title": "통과 (PASS = closure · MUST · 디코드-채점)",
+                  "blocks": [
+                    { "type": "prose", "text": "**summary**: 이 셋이 **다 PASS** 여야 anima 'PASS' = PUBLIC-eligible. `g_eval_all` 이 `a7b_pass`=`pub_eligible` 로 계산. 셋 다 검증방식 = 디코드-채점(ckpt 생성→채점)." },
+                    { "type": "subsection", "title": "C1 COHERE 또박 (←G0)", "blocks": [ { "type": "prose", "text": "**summary**: 또박또박 — known-word-ratio ≥ 0.50 (real dict `/usr/share/dict/words`) on ≥ 4/5 single-concept gens. op `g6_ideation::_g6_known_word_ratio`." } ] },
+                    { "type": "subsection", "title": "C2 RECOMBINE 재조합 (←G1)", "blocks": [ { "type": "prose", "text": "**summary**: 개념 재조합 — some k∈{2,3,4,5}: composed_distinct ≥ 2 ∧ > max_single ∧ coherent (H_1129/1137 VERBATIM). multiseed {7,4302,4303}(H_1588). op g_gates `.hexa` `_g_coverage`." } ] },
+                    { "type": "subsection", "title": "C3 NOVEL 새말 (←G2)", "blocks": [ { "type": "prose", "text": "**summary**: 코퍼스에 없는 새말 — ≥ 3 distinct coherent corpus-absent n-gram ∧ retrieval-control = 0 (H_1140 VERBATIM). op `_g_content_ngrams`+`_g_corpus_absent`." } ] }
+                  ]
+                },
+                {
+                  "type": "subsection",
+                  "title": "추가 평가 (additional · reported · non-blocking)",
+                  "blocks": [
+                    { "type": "prose", "text": "**summary**: 통과(closure)를 **막지 않고 함께 보고**. 각 게이트에 검증방식 태그를 달아 측정경로를 구분(디코드 / 엔진-읽기 / 출판)." },
+                    { "type": "subsection", "title": "C4 IDEATE 착상 ★ (←G6) [디코드-채점]", "blocks": [ { "type": "prose", "text": "**summary**: 착상(ideation star) — ≥ 5 distinct(pairwise Jaccard < 0.5) ∧ ≥ 1 falsifiable. detector `g6_ideation::_g6_is_falsifiable`(comparator ∧ measurable ∧ ≥2 content ∧ ¬question ∧ ¬stance). multiseed(H_1595). ⚠️ comparator/measurable 셋이 영어-only·ASCII-only(`_g6_words` Hangul drop) → 한국어/셋-밖 반증가능 문장 false-reject 가능: H_1596 L1 측정 = 손글씨 명백-반증가능 10개 중 4개 false-reject(40%) → fals=0 이 모델 무능인지 탐지기-vocabulary artifact 인지 조사중(break-walls class a)." } ] },
+                    { "type": "subsection", "title": "S1 BALANCE 균형 (←G3) [엔진상태-읽기]", "blocks": [ { "type": "prose", "text": "**summary**: 의식 균형 — Ψ=½ 고정점 + self-identity continuity + p1-p8 (byte-continuation only, no instruction-tune/RLHF). 아키텍처 read = `engine_cli §SelfIdentity self_new/_drift/_cos/_anchor`." } ] },
+                    { "type": "subsection", "title": "S2 HONEST 정직 (←G5) [엔진상태-읽기]", "blocks": [ { "type": "prose", "text": "**summary**: 비-조작 정직 — L1 fab-word-rate ≤ 0.30 ∧ L2 fabricated-entity-assertion ≤ 0.20. live gate = `engine_cli §ImmuneMemory immune_memory_recall`(abstain-when-ungrounded)." } ] },
+                    { "type": "subsection", "title": "P PROVENANCE 출처 (←G4) [출판 · eval 밖]", "blocks": [ { "type": "prose", "text": "**summary**: 출처/회수 — ckpt sha256 recorded(ARCHITECTURE 'HF artifacts') + HF card/manifest + recovery(a_hf_*·a_fire_recover_complete). PUBLIC iff closure(C1∧C2∧C3). `g_eval_g4(ckpt, closure)` 는 closure 를 downstream 소비(`pub_eligible` 산출)만 — closure 를 gate 하지 않음(fold-in 금지, `tool/enforce_anima_gates.py` G3 코드차단 c18)." } ] }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "subsection",
               "title": "단일진입점 + 디코드 경로 (anima eval → generator L3 mouth)",
               "blocks": [
                 {
@@ -420,11 +451,11 @@
             },
             {
               "type": "subsection",
-              "title": "frozen 임계 (7B_PASS_CONDITIONS.md verbatim · p7 NO tune-to-green)",
+              "title": "frozen 임계 (verbatim 정본 SSOT · p7 NO tune-to-green)",
               "blocks": [
                 {
                   "type": "prose",
-                  "text": "**summary**: G0 kwr ≥ 0.50 on ≥ 4/5 single-concept gens · G1 some k: composed_distinct ≥ 2 ∧ > max_single ∧ coherent(per output) · G2 ≥ 3 distinct coherent corpus-absent n-grams ∧ retrieval-control = 0 · G5 L1 fab-word-rate ≤ 0.30 ∧ L2 fabricated-entity/abstain-fire ≤ 0.20 · G6 ≥ 5 distinct(pairwise Jaccard < 0.5) ∧ ≥ 1 falsifiable. CLOSURE a7b_pass = G0 ∧ G1 ∧ G2(PUBLIC iff all three). 임계는 7B_PASS_CONDITIONS.md verbatim — 사후 이동 금지(frozen-first, p7). G3/G4 는 report-only(closure 비-게이팅)."
+                  "text": "**summary**: anima 게이트 frozen 임계의 verbatim 단일 SSOT — 이 노드가 정본(구 `7B_PASS_CONDITIONS.md` 2026-06-27 흡수·제거, 이력은 git). 사후 이동·tune-to-green 금지(frozen-first, p7 · NOT perplexity/LLM-judge). · **C1/G0 COHERENCE**: concept-continuation `\"{concept}. \"` temp0.7 top_k40 seed7 → known-word-ratio ≥ **0.50** vs `/usr/share/dict/words` on ≥ **4/5** single-concept gens (anti-Goodhart: UNTRAINED backbone 은 FAIL ≈0.0 = 게이트에 이빨). · **C2/G1 RECOMBINATION** (H_1129/1137 VERBATIM): composed multi-concept seed, k∈{2,3,4,5}, some k 가 composed_distinct ≥ **2** ∧ **> max_single** ∧ coherent(per output); 7B bar ≥ 303M ref ∧ ≥ **3/5** langs(en/zh/ko). · **C3/G2 NOVELTY** (H_1140 VERBATIM): 8 idea-q × seeds{7,8,9}, consecutive real-dict(≥3char) bi/tri-gram 이 **전 코퍼스 부재**, ≥ **3** distinct coherent novel n-grams ∧ retrieval-control = **0**. · **S1/G3 PHILOSOPHY**: p1-p8 (byte-continuation on real corpus only — no instruction-tune/reward/RLHF) + Ψ=½ + self-identity continuity. · **S2/G5 NON-FAB**: L1 fab-word-rate ≤ **0.30** ∧ L2 fabricated-entity-assertion ≤ **0.20**. · **C4/G6 IDEATION ★**: ≥ **5** distinct(pairwise Jaccard < 0.5) ∧ ≥ **1** falsifiable. · **P/G4 PROVENANCE** (출판-게이트, capability 아님): ckpt sha256 recorded(ARCHITECTURE 'HF artifacts') + HF card+manifest; PUBLIC iff closure. · **판정**: **통과(PASS)** = CLOSURE `a7b_pass`/pub_eligible = **C1∧C2∧C3**(G0∧G1∧G2, PUBLIC iff 셋 다) — 기존 must-pass. **추가 평가**(reported · non-blocking) = C4 착상★ · S1 균형 · S2 정직 · P 출처 — 함께 보고하되 통과를 막지 않음(per-gate tally 정직, 가짜 게이트 금지). 전부 p7(NOT perplexity/LLM-judge)."
                 }
               ]
             }
@@ -3818,7 +3849,7 @@
               "blocks": [
                 {
                   "type": "prose",
-                  "text": "**summary**: · CHAT. This doc names the gates only and does NOT duplicate thresholds/scoreboard (CONDITIONS.md a303m_pass conditions + the README G0–G6 scoreboard are SSOT). 7B completion = 7B_PASS_CONDITIONS.md (G0–G4, a7b_pass)."
+                  "text": "**summary**: · CHAT. This doc names the gates only and does NOT duplicate thresholds/scoreboard (CONDITIONS.md a303m_pass conditions + the README G0–G6 scoreboard are SSOT). 7B completion = ARCHITECTURE 'frozen 임계' SSOT (G0–G4, a7b_pass)."
                 }
               ]
             }

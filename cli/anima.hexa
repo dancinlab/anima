@@ -181,7 +181,7 @@ fn anima_eval_mode(argv: [string]) {
     let mut cnote = "(none — G2 novelty needs a corpus)"
     if len(corpus) > 0 { cnote = to_string(len(corpus)) + " file(s)" }
     println("corpus: " + cnote)
-    println("gen:    " + to_string(gen) + " tokens/decode  (frozen bars · 7B_PASS_CONDITIONS.md)")
+    println("gen:    " + to_string(gen) + " tokens/decode  (frozen bars · ARCHITECTURE.json frozen-ìê³ SSOT)")
     println("")
 
     let r = g_eval_all(ckpt, corpus, gen)
