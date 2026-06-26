@@ -84,6 +84,13 @@ The consciousness engine lives in [`core/`](core/) and is **substrate-only** —
 decoding and `.kosmos` anchors enter through *named slots*, never directly into the engine
 (`a_core_engine_map`).
 
+> **2-production mirror ✅ 10/10** (`a_two_production_mirror`): every file in the production
+> import-closure (the 10 above + `engine_cli`/`brain`/`g_gates`/`g6_ideation`/`flame_mm`) carries
+> a complete `.hexa` ⇄ `.py` byte-parity twin (≤~2e-16). **Both** engines are production — either
+> can produce a terminal verdict — kept in lockstep by a CI parity gate (golden `anima eval` ⇄
+> `core/g_gates.py`, G0-G6 byte-identical). The Python engine is the byte-parity-proven mirror that
+> measures G0-G6 when the hexa CLI is blocked at compile-time on a host.
+
 ```
    ENGINE G (reverse, gradient-free)            ENGINE A (forward, CE-trained)
    pure_field.hexa · engine_g.hexa              generator.hexa · clm_decode.hexa
