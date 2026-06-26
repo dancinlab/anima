@@ -6645,3 +6645,9 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - 검증 agent 최종(fd8d1d308): **Defect2 채점 port → VERIFIED** — golden d768서 wired hexa `cli/anima.hexa -- eval` ⇄ py `g_gates.py` G0-G6 전 지표 byte-동일(발산 0). decode+scoring 둘 다 byte-faithful 확정. Defect1 REFUTED(gen-budget 아님), Defect3 CONFIRMED(single-entry 존재·작동).
 - **결론**: py 엔진 = wired hexa CLI의 진짜 미러(2-production 실증 완결) → clm303_clean a7b_pass=FAIL = terminal-grade engine-native verdict(G1 recombination 천장). 이전 G1 통과=ByteGPT(별 arch)와 일관 — clm303=ConvMoE=H_1155 G1-unfixable.
 - parity_gate.py(code-level 강제)가 잡을 바로 그 golden wired≡py = 이미 PASS 확인됨.
+
+## 2026-06-26 — 2-production = 완전 .hexa↔.py 미러 기준 세팅 (a_two_production_mirror)
+- CLAUDE.md 신설 `a_two_production_mirror`: core/ production import-closure 10파일(pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·flame_mm)은 완전한 `.hexa`↔`.py` 1:1 미러(byte-parity). 둘 다 PRODUCTION(미러 아닌 동급). 엔진 로직 편집=양쪽 동시+QA(LOCKSTEP). smoke/research probe 는 미러 불필요.
+- 현황: py 보유 3(clm_decode·g_gates·g6_ideation) / 미포팅 7. **포팅 program 착수**: bytegpt_decode.py(진행 — ByteGPT py 측정 unblock) → generator.py → pure_field·engine_g·brain·engine_cli·flame_mm. 각 byte-parity verify(작은 synthetic ckpt).
+- folder-docs: cli/·core/·agent/ 로컬 CLAUDE.md 신설(진행) — core/CLAUDE.md 에 미러 현황표.
+- follow-on: enforce_anima_gates.py 에 'production-closure .hexa = .py twin 필수' 게이트 추가(7개 포팅 완료 후 hard-block 전환, 그 전엔 self-lock 방지 위해 미추가).

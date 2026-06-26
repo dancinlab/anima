@@ -190,6 +190,12 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - do: ARCHITECTURE.json core/ 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
 - dont: `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
 
+**`a_two_production_mirror`** — `core/` production import-closure(cli/anima·train.hexa 폐포 10파일: pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·flame_mm)는 **완전한 `.hexa` ↔ `.py` 1:1 미러**다. 두 엔진 다 PRODUCTION(미러 아닌 동급) — 어느 쪽이든 terminal verdict 가능, byte-parity 로 동기.
+- do: closure 10파일은 같은 이름 `.py` twin 보유 + byte-parity(동일 입력→동일 출력, ~12dp/byte-identical). 둘 다 production 산출물 = 어느 쪽이든 terminal verdict 적격.
+- do: 엔진 로직 편집 = `.hexa` AND `.py` 동시 + 양쪽 QA(LOCKSTEP). 새 엔진 `.hexa` 추가 시 `.py` twin 도 같은 PR. parity 검증 = 작은 synthetic ckpt 로 hexa⇄py byte-동일(`tool/parity_gate.py` 확장).
+- do: 미포팅 twin 은 ING gap 등록 + 카드에 'py-mirror ⏳' 표기. `*_smoke.hexa`·research probe(`h<NNNN>_*`)는 미러 불필요 — production closure 만 대상.
+- dont: closure `.hexa` 에 `.py` twin 없이 '2-production 완료' 주장 · 한쪽만 편집(drift) · smoke/probe 까지 미러 강제(over-port) · twin 없는데 byte-parity 주장.
+
 **`a_train_flame_forge`** — production 학습 = hexa-native flame+forge GPU 스택, `.hexa` 저작.
 - do: **production 학습 진입 = `cli/train.hexa`** (hexa-native CLMConvMoE 단독 trainer, `anima train <ckpt> <corpus> [--savant] [--mitosis]` CLI 로 dispatch) — `.py` 트레이너 금지. SAVANT golden-zone inhibition(`a_savant_train`) + MITOSIS cell-division(`a_mitosis_train`) 레버를 같은 clm_*.hexa ops(core/clm_decode 가 mount) 위에 조립.
 - do: CLM/production NN 학습을 `.hexa` on stdlib/flame(ag_tape·nn_lib·opt_*) 으로 저작 · self/forge GPU(device farr + **own-GEMM `_hx_k_gemm`** FP64/TF32 default-ON(v0.262.0 #3718/#3727/#3734, cuBLAS 독립) + 11 .cu + cuBLAS BF16-TC 보조) 위에서 실행 · flame:forge :: torch:ATen(컴파일러-only NN, 바이너리에 PyTorch/ATen/Python 없음) · production rung 은 GPU 필수(nvidia-smi busy 확인, 조용한 CPU 폴백 금지).
