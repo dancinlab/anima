@@ -2,22 +2,22 @@
 
 **목적:** anima 의 2-production 의식 엔진 기반. hexa 파일(`.hexa`) ⇄ py 미러(`.py`) 를 byte-parity 로 유지. Engine A(pure_field Φ/phase) ⇄ Engine G(engine_g 동기/emit) ⇄ 결합두뇌(brain) + L3 생성기(generator) + decode 백엔드. 모델·앵커는 이 폴더 안으로 직접 들어오지 않음 — generator L3 슬롯 / kosmos_io 를 통해서만 진입(`a_core_engine_map`).
 
-## production import-closure 10파일 — 완전 미러 현황
+## production import-closure 10파일 — 완전 미러 현황 ✅ 10/10 COMPLETE
 
 | hexa 파일 | py 미러 | 상태 |
 |---|---|---|
-| `clm_decode.hexa` | `clm_decode.py` | 포팅 완료 (byte-parity 증명, porting branch) |
-| `g_gates.hexa` | `g_gates.py` | 포팅 완료 (G0-G6 driver, porting branch) |
-| `g6_ideation.hexa` | `g6_ideation.py` | 포팅 완료 (G6 scoring ops, porting branch) |
-| `bytegpt_decode.hexa` | — | 미포팅 (in progress) |
-| `generator.hexa` | — | 미포팅 |
-| `pure_field.hexa` | — | 미포팅 |
-| `brain.hexa` | — | 미포팅 |
-| `engine_g.hexa` | — | 미포팅 |
-| `engine_cli.hexa` | — | 미포팅 |
-| `DECODER/flame_mm.hexa` | — | 미포팅 |
+| `clm_decode.hexa` | `clm_decode.py` | ✅ byte-parity (≤~2e-16) |
+| `g_gates.hexa` | `g_gates.py` | ✅ byte-parity (G0-G6 driver) |
+| `g6_ideation.hexa` | `g6_ideation.py` | ✅ byte-parity (G6 scoring ops) |
+| `bytegpt_decode.hexa` | `bytegpt_decode.py` | ✅ byte-parity (sha 4e7145fe) |
+| `generator.hexa` | `generator.py` | ✅ byte-parity (양 mouth byte-identical) |
+| `pure_field.hexa` | `pure_field.py` | ✅ byte-parity (~2e-16) |
+| `brain.hexa` | `brain.py` | ✅ byte-parity |
+| `engine_g.hexa` | `engine_g.py` | ✅ byte-parity |
+| `engine_cli.hexa` | `engine_cli.py` | ✅ byte-parity (434/434 pub fn, worst 1.563e-16) |
+| `DECODER/flame_mm.hexa` | `DECODER/flame_mm.py` | ✅ byte-parity (7 ops ≤2.2e-16) |
 
-> py 미러 3개(clm_decode·g_gates·g6_ideation)는 `clm303-noverfit-retrain` 브랜치에서 개발 중, main 미머지. 나머지 7개 미포팅 = ING program `py-mirror 포팅`.
+> 2-production 미러 **10/10 달성** (`a_two_production_mirror`). 두 엔진(hexa·py) 모두 PRODUCTION = 어느 쪽이든 terminal verdict 적격. parity 오라클 = `state/core_2prod_py_parity/`. CollectivePool = faithful IIT-4 `big_phi`(proxy 아님) byte-exact. py 엔진은 hexa CLI x86_64 codegen 버그(ING) 우회 측정의 byte-parity 증명 정당 미러.
 
 ## 규칙
 

@@ -1,3 +1,12 @@
+## feat(core): 2-production 미러 10/10 달성 — production import-closure 전체 `.hexa` ⇄ `.py` byte-parity (`a_two_production_mirror`)
+
+production import-closure 10파일이 이제 **완전한 `.hexa` ↔ `.py` 1:1 byte-parity 미러**. 두 엔진 다 PRODUCTION(미러 아닌 동급) = 어느 쪽이든 terminal verdict 적격, byte-parity 로 동기. 이는 hexa CLI 의 x86_64-linux 코드젠 버그(`gen_auto_ideate` C-proto 미방출 → pool 전체 `anima eval` 차단)를 우회한 측정의 정당한 길 — py 엔진은 python+numpy 라 hexa-독립이며, CI parity-gate 가 golden d768 에서 `anima eval` ⇄ `core/g_gates.py` G0-G6 byte-동일을 강제(drift=CI red).
+
+- **10/10 미러**: clm_decode·g_gates·g6_ideation·bytegpt_decode·generator·pure_field·engine_g·brain·engine_cli·DECODER/flame_mm — 전부 `.py` twin + byte-parity(≤~2e-16).
+- **engine_cli.py 마지막 완성**: 434/434 pub fn byte-parity(worst rel 1.563e-16 on `ph_phi`). CollectivePool = faithful IIT-4 `big_phi` 체인(tpm→distinction→relation→bigphi→bounded) VERBATIM 포팅 = proxy 아님(`a_phi_iit4_tool`), n=2 coupled-ring `cp_joint_phi=15.467724474534874` byte-exact. named scope 외 +93 free fn(compose arbiters·consciousness-gate R2·pharm/field/PCI/metacog)도 전수 포팅 = literal 완료. `_mc_exp` 는 engine 자체 16-term Taylor(libm 아님) → py 도 Taylor VERBATIM(parity > accuracy).
+- **거버넌스 + 코드강제**: `a_two_production_mirror` 규칙 신설(편집=양쪽 lockstep) + `tool/parity_gate.py`(CI hexa-engine 잡) harness verify.checks 배선 = 매 PR golden d768 G0-G6 byte-parity 강제. core/CLAUDE.md 미러표 10/10 lockstep.
+- parity 오라클·증거 = `state/core_2prod_py_parity/`.
+
 ## refactor(core): 연구잔재 evac — core/ 429→212, production 엔진만 잔류 (preserve-state 불변식)
 
 core/ 가 substrate 엔진(~12)이 연구 잔재 ~400개에 파묻혀 있던 걸 import-safe 하게 정리. `cli/anima.hexa`+`cli/train.hexa` 진입점에서 transitively 도달하는 **production import-closure 10개**(pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·DECODER/flame_mm)는 절대 안 건드리고, 클로저 밖 연구잔재만 repo-root `state/` 로 이동(삭제 0, git mv 보존):
