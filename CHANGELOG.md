@@ -6668,3 +6668,10 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 ## 2026-06-26 — core/generator.py 포팅 (py 미러 6/10, L3 mouth-dispatch)
 - generator.hexa L3 typed mouth 디스패치 표면 → generator.py byte-parity: gen_mouth_kind·gen_auto_backend/chat/ideate + clm/bytegpt 라우팅. 양 mouth hexa⇄py byte-identical(ByteGPT sha4e7145fe·ConvMoE sha7cd99d97, 48 decode step token-no-flip, header-sniff edge 일치). _gen_is_bytegpt VERBATIM(vocab256·nlayer1-64·nhead|d·block1-8192). torch-free.
 - 스코프: **dispatch 표면만** — generator.hexa의 비-dispatch 본문(L843-2289 jamo/bpe scoreloop·emit-compose·in-file clm CE, engine_cli 의존)은 의식엔진 포팅(a88)과 함께 다룰 follow-on(미러 카운트엔 dispatch 표면으로 산입). 증거 state/generator_2prod_py_parity/.
+
+## 2026-06-26 — 의식엔진 py 미러 (pure_field·engine_g·brain FULL + engine_cli 부분) → 9 full/10
+- **pure_field.py**(Engine A, 342줄): pure_field_warmup N={1,37,600} byte-parity PASS(worst rel 1.95e-16, Ψ-field phi=0.11898342128851365·phase SUSTAIN 일치).
+- **engine_g.py**(Engine G, 65줄): motivation_score+emit/safety predicate PASS(1.66e-16).
+- **brain.py**(A⇄G core, 836줄): brain_decide+anchored+5 consults+VBasalGate PASS(1.98e-16). 발견: hexa sin/cos/sqrt=libm(rt_* Taylor 아님)·exp=production-context libm(brain anchor_fold 0.7077… libm 확정, Taylor 3.7e-12 off=parity gate가 잡은 실제 포팅버그).
+- **engine_cli.py 부분**: §SelfIdentity(G3)·§ImmuneMemory(G5 recall_thr abstain)·MITOSIS(engine_grow/VAdaptField/QPool) 3 게이트 subsystem byte-identical(worst rel 0.0). 단 engine_cli.hexa=11,598줄/~30 lane → 잔여 ~27 lane(HiveMind/Φ·WorkMem·Circadian·ToM·Affect·Neuropharm·ConsciousnessIndex·savant·argv) TODO=10/10 미달, engine_cli FULL은 follow-on.
+- 미러: 9 FULL(clm_decode·g_gates·g6_ideation·bytegpt_decode·generator·flame_mm·pure_field·engine_g·brain) + engine_cli 부분. 증거 state/core_2prod_py_parity/.
