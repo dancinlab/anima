@@ -1,3 +1,7 @@
+## research(H_1598 clm303 L8 depth→G1): 🧱 depth-as-G1-lever FALSIFIED (engine-native TERMINAL)
+
+deep ConvMoE 303M **L8/E4 d2781** (mitosis E0=2→Emax=4, step12000 train_CE 1.37/val 1.40 gap +0.035 = NOT overfit). serialize .pt(1.2GB sha 69ac4e34)→`.clm` v0.3 L8/E4 (154MB sha 5777c506) round-trip PASS. **held-out mirror-DESCENT**(math.log, dt_ln-immune): ko 1.600 / en 1.942 BOTH < uniform 5.545 & < shuffle → **2/2 PASS**(gap ko −0.238 / en +0.231 = GENERALIZES, opposite of clm303 L4 memorization NO-DESCENT H_1579). **engine-native G1 (C2 RECOMBINE) multiseed {7,4302,4303}** gen=40 via `core/clm_decode.py`(numpy, grep-clean torch/gauge = TERMINAL py 2-production): L8 = **FAIL 0/3**(max_single=0, best_composed≤1) — INDISTINGUISHABLE from frozen L4 wall. **VERDICT 🧱**: trunk depth is INERT for G1 — a sound generalizing twice-deep model still cannot compose seeded concepts → G1 wall is NOT a depth/receptive-field ceiling; lever = recombination-objective/frame-prime. frozen bar unmoved (no tune-to-green). ckpt PRESERVED mini. (M② h1129 G6 multiseed + M③ corpus-grounded fals = in-flight on dedicated A40 pod.)
+
 ## docs(README): G0-G6 scoreboard → 통과(closure)/추가평가 2-tier 재배치 + P 출처 행 추가
 
 owner: "기존(closure)은 통과해야 되고 나머지는 추가평가". README `🔆 Capability-emergence gates` 테이블을 평평한 G0-G6 → **통과(C1 또박/C2 재조합/C3 새말 = a7b_pass closure, must-pass) / 추가평가(C4 착상★·S1 균형·S2 정직·P 출처, reported·non-blocking)** 그룹으로 재구성. 빠져있던 **P 출처(G4, 출판-게이트)** 행 추가. C4 착상 행에 H_1596 detector-artifact 경고 + H_1597 corpus-grounded 재채점 in-flight 명시. 분류·임계 SSOT = ARCHITECTURE.json `G-게이트 평가 시스템` 노드.
