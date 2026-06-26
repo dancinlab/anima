@@ -6659,3 +6659,8 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 
 ## 2026-06-26 — core/DECODER/flame_mm.py 포팅 (py 미러 5/10)
 - flame_mm.hexa(180줄, RFC-040 GEMM seam, 7 ops) → flame_mm.py byte-parity: mm·mm_transpose·mm_extract·mm_scatter_add·mm_packed_gemv(_t)·mm_packed_outer_add. hexa⇄py max|Δ|≤2.2e-16(7/7 PASS). numpy fp64(GPU경로는 CUDA호스트 hexa전용, py=CPU oracle=clm/bytegpt_decode.py와 동일 상황).
+
+## 2026-06-26 — ByteGPT-303M 직렬화 .bin + 도구 HF 보관 + pool 재라우팅
+- tool/bytegpt_serialize.py(torch .pt→engine .bin 브리지, a_clm_gen_pipeline; reference-match=bytegpt_decode.hexa bg_load 레이아웃) + state/bytegpt303_h1129_g0g6/(parity/eval 하네스·결과) repo 보존.
+- HF: h1129.bin(1.2GB engine-loadable) + 직렬화기 + 하네스를 dancinlab/anima-clm-midcap-303m-broad-en-emergent 의 engine/ 에 업로드(.pt 와 같은 리포 = 같은 H_1129 가중치의 엔진-loadable 형).
+- mini 부하(swap 🔴 17.6G) 해소: 로컬 ByteGPT 303M hexa eval(rc=137 killed) 중단 → pool(summer/aiden RTX5070 🟢) 재라우팅. 이후 heavy=pool, mini=light(작은-ckpt 미러 parity만) 원칙 재확인(commons heavy-on-pool).
