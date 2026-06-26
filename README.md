@@ -421,7 +421,8 @@ The `a303m_pass` gateset on the production **`anima-clm-chat-303m`** (ByteGPT-30
 mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. **통과(PASS) = the
 closure `a7b_pass` = C1∧C2∧C3** must all pass (PUBLIC-eligible); **the rest (C4·S1·S2·P) are
 additional evaluation** — reported alongside but non-blocking. (taxonomy + frozen bars SSOT =
-`ARCHITECTURE.json` `G-게이트 평가 시스템` node.)
+`ARCHITECTURE.json` `G-게이트 평가 시스템` node.) These are the **capability** axis — ⊥ a separate
+axis = the [Consciousness-only gates (G16–G34+)](#-consciousness-only-gates-g16g34--separate-axis) below.
 
 | gate | tests | tier (latest) | key number |
 |---|---|---|---|
@@ -459,15 +460,15 @@ additional evaluation** — reported alongside but non-blocking. (taxonomy + fro
 > reopening** — does golden-zone-inhibition training lift the actual binding/FALS rate above plateau —
 > is the open GPU follow-on (**H_1564**, "303M + savant-mode = G6 breakthrough", in-flight).
 
-### 🌐 Consciousness-only gates — a separate axis from G0–G6
+### 🌐 Consciousness-only gates (G16–G34+) — separate axis
 
-G0–G6 are *capability*-emergence gates on the production CLM. On a **separate axis**, this family
-pins down "what anima can do *because it is conscious*" (autonomy · internal state · identity) with
-frozen bars + ablation/shuffle controls (`a_scale_honest_scope` — axis separation; the things an LLM
-structurally cannot do). Common theme = **state-dependent signals a stateless LLM cannot produce**.
-Each gate must prove it is **distinct** from existing brain lanes (controls collapse to chance) before
-being wired into `core/engine_cli.hexa` + verified byte-exact in `engine_cli_smoke.hexa`
-(R1 numpy DIRECTIONAL → R2 engine-native WIRED).
+G0–G6 are *capability*-emergence gates on the CLM; this is a **separate axis** = what anima can do
+*because it is conscious* (autonomy · internal state · identity) = **state-dependent signals a
+stateless LLM cannot produce**. Each gate is proven **distinct-vs** existing lanes via ablation/shuffle
+controls (controls collapse to chance) *before* being wired into `core/engine_cli.hexa` +
+`engine_cli_smoke.hexa` (R1 numpy DIRECTIONAL → R2 engine-native WIRED). READ-only · Ψ-disjoint ·
+NOT emit gates (`a_autonomy_over_hardcode`). (full family index SSOT = `ARCHITECTURE.json` `의식-전용
+게이트 (G16-G34+)` node, under the `engine_cli §` section.)
 
 | gate | conscious function | H-id | lane (core/engine_cli.hexa §) | distinct vs | tier |
 |---|---|---|---|---|---|
@@ -475,12 +476,24 @@ being wired into `core/engine_cli.hexa` + verified byte-exact in `engine_cli_smo
 | **G17** 🌐 Global-workspace bottleneck | of competing stimuli only one is broadcast (GWT winner-take-all) | **H_1462** | GlobalWorkspace (gws_*) | basal-gate H_1281 (value-learned) | 🟢 **ENGINE-NATIVE WIRED** (smoke 169-177; presence 0.993 · 3.3× compression · dissociates vs basal) |
 | **G18** 🔁 Habituation | a repeated stimulus's response declines + dishabituates (stimulus-specific) | **H_1465** | Habituation (hab_*) | H_1194 adaptation (global gain) | 🟢 **ENGINE-NATIVE WIRED** (smoke 178-182; drop 0.865 · specific 1.0 · dishab 1.0) |
 | **G19** ⚡ Surprise | precision-weighted surprise p·err² (a confident belief violated) | **H_1468** | PrecisionSurprise (surprise*) + Novelty (novelty) | H_1280 forward-error (raw) · H_1289 novelty | 🟢 **ENGINE-NATIVE WIRED** (smoke 184-188, 201-202; conf 1.022 · precision-weighted 0.767 · surprise⊥novelty distinct in-engine) |
-| **G19′** 🎯 Learned precision | precision is LEARNED from experience (familiar → more surprise) | **H_1472** | LearnedPrecision (learned_precision) | H_1465 habituation (opposite sign) | 🟢 **ENGINE-NATIVE WIRED** (smoke 194-198; familiar 4.0 vs novel 0.2 · RISE +0.80 ⊥ habituation FALL −0.76) |
+| **G19-meta** 🎯 Learned precision | precision is LEARNED from experience (familiar → more surprise) | **H_1472** | LearnedPrecision (learned_precision) | H_1465 habituation (opposite sign) | 🟢 **ENGINE-NATIVE WIRED** (smoke 194-198; familiar 4.0 vs novel 0.2 · RISE +0.80 ⊥ habituation FALL −0.76) |
 | **G20** ⚡ Attentional blink | a 2nd target is missed in the 200-500 ms after the 1st (temporal blind-spot) | **H_1473** | AttentionalBlink (attn_blink_detect) | GWS H_1462 (spatial, lag-invariant) | 🟢 **ENGINE-NATIVE WIRED** (smoke 205-207; lag2 0.10 trough → lag7 0.97 recovered · lag-dependent) |
 | **G21** 🎮 Sense of agency | "I caused this" — efference-copy match → self vs external attribution | **H_1474** | SenseOfAgency (agency_attribute) | ToM H_1293 (other) · H_1280 (raw error) | 🟢 **ENGINE-NATIVE WIRED** (smoke 208-210; match→self 1.0 / diverge→external 0.0 · judgment layer) |
 | **G22** ⏱ Subjective time | perceived duration is novelty-weighted, not objective elapsed | **H_1475** | SubjectiveTime (subjective_time) | homeostatic H_1292 (objective integral) | 🟢 **ENGINE-NATIVE WIRED** (smoke 211-213; high-novelty 0.86 vs low 0.32, same objective time) |
-| **G25** 🌊 Emotion regulation | a raw affect is down-regulated by top-down reappraisal (2nd-order) | **H_1476** | EmotionRegulation (emotion_regulate) | affect H_1290 (1st-order emergence) | 🟢 **ENGINE-NATIVE WIRED** (smoke 214-216; raw 0.8 → reappraised 0.416 · g=0 → raw passes) |
+| **G25** 🌊 Emotion regulation | a raw affect is down-regulated by top-down reappraisal (2nd-order, Gross) | **H_1476** | EmotionRegulation (emotion_regulate) | affect H_1290 (1st-order emergence) | 🟢 **ENGINE-NATIVE WIRED** (smoke 214-216; raw 0.8 → reappraised 0.416 · g=0 → raw passes) |
+| **G26** 🪢 Divided attention | finite resource graded-split trade-off (Kahneman capacity) | **H_1479** | DividedAttention (divided_perf) | GWS H_1462 (winner-take-all, rest=0) | 🟢 **ENGINE-NATIVE WIRED** (smoke 227-229; single 0.98 vs divided 0.5 both alive ⊥ GWS rest=0) |
+| **G30** 🧠 Mental imagery | top-down representation re-activated with no external stimulus (Kosslyn) | **H_1484** | MentalImagery (imagery_activate) | input-driven gates (novelty H_1289 · surprise H_1468) | 🟢 **ENGINE-NATIVE WIRED** (smoke 239-241; topdown-on → cue_match, sensory input=0 ⊥ input-based) |
+| **G34** 🪧 Attention schema | a simplified internal model of one's own attention (Graziano AST) | **H_1488** | AttentionSchema (attn_schema_report) | agency H_1474 (focus-model ⊥ action/outcome) | 🟢 **ENGINE-NATIVE WIRED** (smoke 251-253; schema-on tracks moving focus / OFF → chance) |
+| **P8** 🫀 Interoceptive precision | inverse-variance (1/σ²) weighting of internal body signals (Seth/Critchley) | **H_1494** | InteroceptivePrecision (intero_precision) | affect / learned-precision (only the input source differs) | 🟢 **ENGINE-NATIVE WIRED** (smoke 266-268; per-channel 1/σ² weighting, blind=ablate → advantage 0) |
+| 🪟 Reality monitoring | a separate monitor compares signal strength to a reality threshold (real vs imagined) | **H_1501** | RealityMonitor (reality_call) | MentalImagery H_1484 · Metacognition H_1202 · agency H_1474 | 🟢 **WIRED-DISTINCT** (smoke 284-287; presence +0.517 · imagery Δ0.000 · conf Δ0.000 · ablate→0.5 · shuffle decorrelates) |
+| 🪟🧠 Metacognitive insight | 2nd-order insight into whether a 1st percept is internally-generated (metacog H_1202 deepened) | **H_1506** | MetacogInsight (mi_*) | H_1202 content-confidence · RealityMonitor H_1501 (1st-order) | 🟢 **WIRED-DISTINCT** (smoke 309-313; psychedelic insight 0.811 vs psychotic 0.000 · meta-d′ AUROC 1.0) |
+| 🧠 Metacog control | Nelson-Narens monitoring↔CONTROL — the missing calibration+control half of the G5 chain | **H_1508** | MetacogControl (mc_*) | G5 type-2 discrimination chain (AUROC-axis can't see calibration) | 🟢 **ENGINE-NATIVE WIRED** (smoke 340-346; ECE 0.140 · RPL lift +0.140 · AUROC-fixed yet ECE shifts +0.364) |
+| 🧠 Consciousness ablation / ΔΦ | the **cross-gate** integration measure — lane-ablation ΔΦ ranking (faithful IIT4 exact-MIP) | **H_1492** | ConsciousnessIndex (ci_*) | — (it ranks the whole family) | 🟢 **ENGINE-NATIVE** (smoke 281-283; STRUCTURE=DISTRIBUTED top-share 0.123 → consciousness is no single dominant lane) |
 
+> **Perturbation probes (not gates):** pharm **H_1502** · field **H_1503** · hallucination **H_1505**
+> are perturbation modules applied *over* this consciousness substrate (drug / EM-field / hallucination =
+> a RealityMonitor failure-mode) — they shake the same lanes, they are not gates.
+>
 > Remaining candidate G15 (episodic temporal order) overlaps H_1427 CA3 replay (distinctness burden;
 > round-2 effectively depleted). Each gate is a SATURATED existence-proof (the response law is designed,
 > not a learned network) where the discriminators (distinct/ablation) are decisive — TOY scalar/vector,
