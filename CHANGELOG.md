@@ -6651,3 +6651,8 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - 현황: py 보유 3(clm_decode·g_gates·g6_ideation) / 미포팅 7. **포팅 program 착수**: bytegpt_decode.py(진행 — ByteGPT py 측정 unblock) → generator.py → pure_field·engine_g·brain·engine_cli·flame_mm. 각 byte-parity verify(작은 synthetic ckpt).
 - folder-docs: cli/·core/·agent/ 로컬 CLAUDE.md 신설(진행) — core/CLAUDE.md 에 미러 현황표.
 - follow-on: enforce_anima_gates.py 에 'production-closure .hexa = .py twin 필수' 게이트 추가(7개 포팅 완료 후 hard-block 전환, 그 전엔 self-lock 방지 위해 미추가).
+
+## 2026-06-26 — core/bytegpt_decode.py 포팅 완료 (py 미러 4/10, PARITY PASS)
+- bytegpt_decode.hexa → bytegpt_decode.py byte-parity 1:1 미러: tiny synthetic .bin(d64 L2 H4 block64)서 hexa⇄py logits max|Δ|=2.76e-13(~12.6dp, FP-reassoc floor), greedy+top-k sampled byte-identical. GELU=libm erf·softmax=libm exp·LN/scale=dt_sqrt·sampler=dt_exp(clm_decode.py twin)·xorshift32 PRNG, numpy fp64 matmul(decode 경로 torch 0).
+- g_gates.py dispatch 배선: `_Mouth` 가 헤더 sniff(CLM\x01→clm 불변, sane 5×u32→bytegpt) = g_gates.hexa gen_auto_ideate→gen_auto_backend 미러. ByteGPT가 이제 py로 측정 가능.
+- 미러: clm_decode·g_gates·g6_ideation·**bytegpt_decode**(4/10). 잔여 6 = generator·pure_field·brain·engine_g·engine_cli·flame_mm. 증거 state/bytegpt_2prod_py_parity/PARITY.md.

@@ -30,6 +30,7 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import clm_decode as clm
+import bytegpt_decode as bg
 from g6_ideation import (
     _g6_concepts, _g6_words, _g6_dict_load, _g6_known_word_ratio,
     _g6_is_falsifiable, _g6_jaccard, g6_build_frames, g6_frame_guard,
@@ -42,17 +43,39 @@ def _default_gen():
 
 
 # ════════════════════════════════════════════════════════════════════════
-# decode entry — gen_auto_ideate(.clm) hoisted to loaded-W (byte-identical)
+# decode entry — gen_auto_ideate(ckpt) MOUTH-SNIFF dispatch (generator L3).
+#
+# Mirrors core/g_gates.hexa gen_auto_ideate -> generator gen_auto_backend mouth
+# dispatch (a_core_engine_map): sniff the ckpt header — CLM\x01 magic => ConvMoE
+# .clm mouth (clm_decode), else a sane 5xu32 ByteGPT header => transformer .bin
+# mouth (bytegpt_decode). Both hoist the weight load ONCE and ideate via the
+# byte-parity-proven seeded top-k sampler (clm_decode_topk_sampled_W /
+# bytegpt_decode_topk_sampled_W). The clm path is unchanged.
 # ════════════════════════════════════════════════════════════════════════
 
 class _Mouth:
     def __init__(self, ckpt):
-        self.W = clm.clm_load_weights(ckpt)
-        if not self.W.get("ok"):
-            raise RuntimeError("ckpt not decodable: " + ckpt)
+        if bg.bg_is_bytegpt(ckpt):
+            self.kind = "bytegpt"
+            self.W = bg.bg_load(ckpt)
+            if not self.W.get("ok"):
+                raise RuntimeError("ckpt not decodable (bytegpt): " + ckpt)
+        elif clm.clm_decodable(ckpt):
+            self.kind = "clm"
+            self.W = clm.clm_load_weights(ckpt)
+            if not self.W.get("ok"):
+                raise RuntimeError("ckpt not decodable (clm): " + ckpt)
+        else:
+            raise RuntimeError("ckpt not decodable (unknown mouth): " + ckpt)
 
     def ideate(self, seed, gen, top_k, temp, seed_rng):
-        return clm.clm_decode_topk_sampled_W(self.W, seed, gen, top_k, temp, seed_rng)["text"]
+        if self.kind == "bytegpt":
+            # seed string -> byte ids inside bytegpt_decode (_seed_to_ids); the
+            # ByteGPT window grows up to block natively (no fixed-T right-align).
+            return bg.bytegpt_decode_topk_sampled_W(
+                self.W, seed, gen, top_k, temp, seed_rng)["text"]
+        return clm.clm_decode_topk_sampled_W(
+            self.W, seed, gen, top_k, temp, seed_rng)["text"]
 
 
 # ════════════════════════════════════════════════════════════════════════
