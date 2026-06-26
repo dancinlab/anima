@@ -318,7 +318,7 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: · SSOT for \"which mouth → which decoder → which model → production-wired → per-token farr leak status\" (a_core_engine_map lockstep with live code). Both byte-mouth decoders import ONLY at the generator L3 single slot (core/generator.hexa) and are dispatched by ckpt magic header via gen_mouth_kind (generator.hexa:628) → gen_auto_backend (:641) / gen_auto_chat (:684). NO 2nd decode path — per-architecture single typed entry. Two DIFFERENT 303M models exist (clm303 CLMConvMoE on clm_decode vs ByteGPT-303M on bytegpt_decode); this table is the canonical disambiguation."
+              "text": "**summary**: · SSOT for \"which mouth → which decoder → which model → production-wired → per-token farr leak status\" (a_core_engine_map lockstep with live code). Both byte-mouth decoders import ONLY at the generator L3 single slot (core/generator.hexa) and are dispatched by ckpt magic header via gen_mouth_kind (generator.hexa:628) → gen_auto_backend (:641) / gen_auto_chat (:684). NO 2nd decode path — per-architecture single typed entry. Two DIFFERENT 303M models exist (clm303 CLMConvMoE on clm_decode vs ByteGPT-303M on bytegpt_decode); this table is the canonical disambiguation. **2-PRODUCTION ENGINE (2026-06-26 owner decision, a_engine_native_learning): anima maintains TWO co-equal production engine implementations — hexa (core/*.hexa, live daemon substrate) AND py (torch production engine) — both first-class (NOT reference/mirror), kept byte-parity, EITHER can produce terminal verdicts; split by strength (py for measurement-heavy G0-G6 since torch frees memory, avoiding hexa's bump-allocator per-decode-reload OOM; hexa for the deployed substrate). Ad-hoc one-off torch probe scripts are NOT the py production engine = still DIRECTIONAL.** **Chat canonical = clm303_clean (303M CLMConvMoE, held-out 4/4 DESCENT, a_chat_registers 4-cell corpus); models managed SIZE-TIERED, one canonical per tier (a_hf_registry).**"
             },
             {
               "type": "prose",
@@ -4974,5 +4974,16 @@
         }
       ]
     }
-  ]
+  ],
+  "convergence": {
+    "records": [
+      {
+        "id": "clm303-eval-oom-perdecode-weight-leak",
+        "state": "ossified",
+        "value": "clm303 G0-G6 eval OOM(EXIT137·RSS 20GB+ 계단상승) 진짜원인 = hexa bump-allocator가 model load를 영영 free 안 함(t_free no-op) + g_eval_all이 디코드마다 _clmd_load로 303M 통째 reload. 정정: 앞서 박은 'per-decode _clmd_weights_free fix + t_free=real free'는 틀림(검증 EXIT137, agent 실측). per-call free는 bump-allocator서 무효.",
+        "threshold": "진짜 fix = load-once-hoist: g_eval_all이 clm_load_weights(ckpt) 1회 → gen_auto_ideate_W(W,…) 신규 디스패처로 g0..g6 관통 → 끝에 1회 free (인프라 이미 존재: clm_decode_topk_sampled_W·gen_clm_ideate_W·g6_decode_best_of_k_W). 또는 py reference 엔진으로 측정(torch가 free). 새 디코드 진입점이 path별 _clmd_load 반복하면 동일 OOM 재발.",
+        "source": "core/g_gates.hexa"
+      }
+    ]
+  }
 }
