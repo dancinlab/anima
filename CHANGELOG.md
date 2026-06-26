@@ -1,3 +1,11 @@
+## governance(CLAUDE.md): sidecar `## <slug>` + do/dont-only 포맷으로 재저작 — 손실 0
+
+루트 `CLAUDE.md` 를 글로벌 `sidecar` CLI 가 기계적으로 강제하는 commons 포맷(`## <slug> — <title>` 섹션 = `- do:`/`- dont:` 줄만, 둘 다 필수, 200-codepoint 라인 cap)으로 전면 재저작. 직전 상태의 **160+ blocking 위반**(COMMONS-PROSE / COMMONS-NO-DODONT / COMMONS-DODONT-INCOMPLETE / DODONT-LONG)을 **0** 으로 해소.
+
+- **PREAMBLE 보존**: intro·🚦행동전 하드게이트·SSOT 포인터·📦패키징(3-폴더 체제)·Quick reference·철학(p1–p8 표 + p5 보충)·Harness·청구·검증 흐름 + 거버넌스 카테고리 맵을 첫 `## ` 섹션 앞 preamble(린트 면제)에 그대로 보존 — 기존 `## ` 헤딩은 `### ` 로 demote 해 섹션 시작을 막음.
+- **규칙 = 슬러그 섹션**: 각 `a_*` 규칙(+`a1`)을 자체 `## <slug>` 섹션으로 승격(슬러그명 = keyword 트리거 그대로 유지). body 는 `- do:`/`- dont:` 만; 직전 자동분할로 깨졌던 do/dont 문장을 다시 합치고, 200자 초과 디테일(메커니즘·precedent H_*·🔎 자가점검·⚠️ 운영메모·🔒/🔄/🎯 하드게이트·.kosmos 포맷 구조)은 2-칸 들여쓴 continuation 줄로 보존 = **사실 손실 0**.
+- 검증: `sidecar lint` 의 CLAUDE.md COMMONS/DODONT 위반 0 (잔존 ARCH-BIG-CELL·CONVERGENCE-MALFORMED·TOOLKIT-DRIFT 는 ARCHITECTURE.json/TOOLKIT.jsonl 의 기존 부채로 이 변경과 무관). 458→412 줄.
+
 ## research(clm303): 잔여 누수 HOST-vs-DEVICE 귀속 — HOST-side GPU-path 확정 (device·runtime-noop 둘 다 FALSIFIED)
 
 clm303 303M anima eval 의 잔여 메모리 증가(이전 ~94GB)를 GPU 재측정으로 정밀 귀속. pod 42521890(2×A40, own-GEMM DEVICE path 확인)에서 동일 decode 의 host RSS 와 GPU device mem trajectory 를 35s 간격 2-sample:
