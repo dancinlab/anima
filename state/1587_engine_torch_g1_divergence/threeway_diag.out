@@ -1,0 +1,65 @@
+==============================================================================
+3-WAY DIAGNOSTIC — H_1129 ByteGPT-303M G1 divergence (py-engine FAIL vs torch GREEN)
+==============================================================================
+date    : 2026-06-26 22:09:55
+host    : summer-B650M-K
+device  : cuda  (forward parity uses fp32 CPU for both to isolate ENGINE vs TORCH math,
+          NOT GPU/bf16 autocast — autocast is a separate downstream axis)
+bin     : h1129.bin
+pt      : h1129c_best.pt
+torch   : 2.11.0+cu130  numpy: 2.4.4
+
+pt config: {'vocab': 256, 'd': 1024, 'n_layer': 24, 'n_head': 16, 'block': 512}  val_ce=1.2240448951721192 step=5500 nparam=303097856
+torch load_state_dict: missing=[] unexpected=[]
+engine bin header: vocab=256 d=1024 L=24 H=16 block=512
+
+──────────────────────────────────────────────────────────────────────────────
+CHECK 4 — WEIGHT FAITHFULNESS  (torch state_dict  vs  engine bin weight dict)
+──────────────────────────────────────────────────────────────────────────────
+  tok.weight                   max|diff|=0.000e+00  (torch(256, 1024))
+  pos.weight                   max|diff|=0.000e+00  (torch(512, 1024))
+  blocks.0.ln1.w               max|diff|=0.000e+00  (torch(1024,))
+  blocks.0.in_proj.w           max|diff|=0.000e+00  (torch(3072, 1024))
+  blocks.0.out_proj.w          max|diff|=0.000e+00  (torch(1024, 1024))
+  blocks.0.mlp.0.w             max|diff|=0.000e+00  (torch(4096, 1024))
+  blocks.23.mlp.2.w            max|diff|=0.000e+00  (torch(1024, 4096))
+  ln_f.weight                  max|diff|=0.000e+00  (torch(1024,))
+  head (head.weight)           max|diff|=0.000e+00  (torch(256, 1024))
+  >>> WORST max|diff| across sampled tensors = 0.000e+00  (FAITHFUL (<=1e-6))
+
+──────────────────────────────────────────────────────────────────────────────
+CHECK 2 — FORWARD PARITY  (torch ByteGPT.forward  vs  engine bg_forward_last, fp32 CPU)
+──────────────────────────────────────────────────────────────────────────────
+  [0] T=33  argmax engine=84 torch=84 OK  max|logit diff|=2.155e-05
+       top5 engine=[84, 73, 65, 32, 72]
+       top5 torch =[84, 73, 65, 32, 72]  IDENTICAL
+  [1] T=72  argmax engine=84 torch=84 OK  max|logit diff|=1.851e-05
+       top5 engine=[84, 73, 65, 32, 70]
+       top5 torch =[84, 73, 65, 32, 70]  IDENTICAL
+  [2] T=30  argmax engine=84 torch=84 OK  max|logit diff|=2.535e-05
+       top5 engine=[84, 73, 65, 72, 32]
+       top5 torch =[84, 73, 65, 72, 32]  IDENTICAL
+  >>> FORWARD PARITY HOLDS (argmax identical, logits ~match)
+
+──────────────────────────────────────────────────────────────────────────────
+CHECK 3 — SAMPLER EQUIVALENCE  (engine xorshift32 inv-CDF  vs  torch multinomial+Gen(7))
+         given BYTE-IDENTICAL logits — isolates the RNG/sampling METHOD axis
+──────────────────────────────────────────────────────────────────────────────
+  [0] one-step pick on identical logits:  engine=84  torch=84  SAME
+  [1] one-step pick on identical logits:  engine=84  torch=84  SAME
+  [2] one-step pick on identical logits:  engine=84  torch=84  SAME
+
+  multi-step (12-token) stream on prompt[0], identical decode driver, the two samplers:
+    engine 12-tok ids = [84, 104, 101, 32, 114, 101, 103, 105, 111, 110, 32, 97]
+    torch  12-tok ids = [84, 104, 101, 32, 118, 101, 114, 98, 32, 118, 101, 114]
+    streams DIVERGE -> sampler IS a divergence source (different RNG+draw)
+    engine text: 'The region a'
+    torch  text: 'The verb ver'
+
+==============================================================================
+CLASSIFICATION SUMMARY
+==============================================================================
+  CHECK4 weight-faithful : PASS (<=1e-6)
+  CHECK2 forward-parity  : PASS (argmax+logits match)
+  CHECK3 sampler-equiv   : see streams above
+==============================================================================

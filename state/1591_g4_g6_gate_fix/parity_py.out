@@ -1,0 +1,23 @@
+========================================================================
+1591 G4+G6 PARITY FIXTURE (py side)  ckpt=clm_d768_e2l1.clm  gen=24
+========================================================================
+g6_sampler_selftest: {'deterministic': True, 'diverse': True, 'in_topk': True}  -> ALL-TRUE= True
+g6_detector_calibration: 10 /10 (advisory >=8)
+------------------------------------------------------------------------
+(A) G6 base_seed=7  wired arm   dist=4 fals=0 coherent=4
+    G6 base_seed=7  old inline  dist=4 fals=0 coherent=4
+    REPRODUCTION (wired==inline): PASS
+------------------------------------------------------------------------
+(B) G6 multi-seed  seeds=[7, 4302, 4303]  pass=False  0/3 clear  max_fals=0
+      seed=7  dist=4 fals=0 coherent=4 pass=False
+      seed=4302  dist=5 fals=0 coherent=5 pass=False
+      seed=4303  dist=6 fals=0 coherent=6 pass=False
+------------------------------------------------------------------------
+(C) G4 provenance  mouth=clm decodable=True pub_eligible=False
+    sha256 g_eval_g4 == hashlib: PASS 7463282dba823eb67316cbb7…
+    sha256 g_eval_g4 == shasum : PASS
+    bytes  g_eval_g4 == os.stat: PASS (4463478)
+    provenance_ok: True
+========================================================================
+FIXTURE: ALL PASS
+FIXTURE COMPLETE (py snapshot written above)
