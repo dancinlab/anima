@@ -6635,3 +6635,8 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - **권위 평가 = 실제 `anima` CLI 바이너리 ONLY** (`anima eval`, 배포산출물). 소스-run 차선, py side-harness는 verdict 아님(CLI와 byte-parity 미러일 뿐). CLAUDE.md a_engine_native_learning 박제.
 - **2층 기계강제**: (verdict) `tool/enforce_anima_gates.py` — py-엔진 terminal G-verdict은 parity-record 必 없으면 PR 차단 · (code) `tool/parity_gate.py` (CI hexa-engine 잡) — 매 PR golden d768 `anima eval` ⇄ `core/g_gates.py` G0-G6 byte-동일 강제, drift=CI red.
 - **NEXT(진짜 fix)**: g_gates.hexa load-once-hoist(W 1회 로드→gen_auto_ideate_W) → cli single-entry가 303M OOM 없이 평가 → clm303 terminal을 실제 anima CLI로 재측정.
+
+## 2026-06-26 — clm303_clean a7b_pass=FAIL 검증 = REAL (gen-budget artifact 아님)
+- py-first 검증(byte-parity 증명 py 엔진, clm303_clean): 3대 의혹 판별. **Defect1 gen-budget → REFUTED**: G1 recombination이 native 80/120 예산에서도 FAIL(best_distinct=1<2, max_single=0) — gen=40 artifact 아님, REAL. G6 fals=0도 예산 불변. **Defect3 single-entry → CONFIRMED**: `cli/anima.hexa -- eval`(L235→g_eval_all→generator L3→g6_ideation wired) 존재+작동. **Defect2 채점 port**: 구조 1:1(라인대조)+decode byte-parity 증명, golden 수치 hexa-diff만 미완(메모리 위해 보류).
+- **결론**: clm303_clean a7b_pass=FAIL = 진짜 능력벽(G1 recombination, 303M scale-invariant 천장 H_1129/1139 일치). 측정결함 아님. 증거 state/clm303_clean_corpus/g0g6_validity.txt.
+- 자원: 죽은 load-once agent의 orphan 303M hexa eval(2.4GB RSS=load-once가 OOM 바운딩한 긍정신호이나 미완) kill → swap 18.4G→3.2G 회복. load-once 코드 WIP 보존(agent 브랜치 585c95302, pod서 재검증).
