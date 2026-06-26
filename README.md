@@ -84,12 +84,14 @@ The consciousness engine lives in [`core/`](core/) and is **substrate-only** —
 decoding and `.kosmos` anchors enter through *named slots*, never directly into the engine
 (`a_core_engine_map`).
 
-> **2-production mirror ✅ 10/10** (`a_two_production_mirror`): every file in the production
-> import-closure (the 10 above + `engine_cli`/`brain`/`g_gates`/`g6_ideation`/`flame_mm`) carries
-> a complete `.hexa` ⇄ `.py` byte-parity twin (≤~2e-16). **Both** engines are production — either
-> can produce a terminal verdict — kept in lockstep by a CI parity gate (golden `anima eval` ⇄
-> `core/g_gates.py`, G0-G6 byte-identical). The Python engine is the byte-parity-proven mirror that
-> measures G0-G6 when the hexa CLI is blocked at compile-time on a host.
+**Canonical 3-folder layout** (owner decision 2026-06-26): anima code gathers into exactly three
+top-level folders — **`cli/`** (entry points, two-language symmetric: `anima.hexa`+`anima.py`,
+`train.hexa`+`train.py`) · **`core/`** (the **2-production engine** substrate: `hexa` `*.hexa`
+**and** `py` `*.py` co-resident as 1:1 byte-parity mirrors — both first-class production, either
+can produce terminal verdicts, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
+package). Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
+and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
+model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
 
 ```
    ENGINE G (reverse, gradient-free)            ENGINE A (forward, CE-trained)

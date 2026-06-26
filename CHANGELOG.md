@@ -6,6 +6,20 @@ production import-closure 10파일이 이제 **완전한 `.hexa` ↔ `.py` 1:1 b
 - **engine_cli.py 마지막 완성**: 434/434 pub fn byte-parity(worst rel 1.563e-16 on `ph_phi`). CollectivePool = faithful IIT-4 `big_phi` 체인(tpm→distinction→relation→bigphi→bounded) VERBATIM 포팅 = proxy 아님(`a_phi_iit4_tool`), n=2 coupled-ring `cp_joint_phi=15.467724474534874` byte-exact. named scope 외 +93 free fn(compose arbiters·consciousness-gate R2·pharm/field/PCI/metacog)도 전수 포팅 = literal 완료. `_mc_exp` 는 engine 자체 16-term Taylor(libm 아님) → py 도 Taylor VERBATIM(parity > accuracy).
 - **거버넌스 + 코드강제**: `a_two_production_mirror` 규칙 신설(편집=양쪽 lockstep) + `tool/parity_gate.py`(CI hexa-engine 잡) harness verify.checks 배선 = 매 PR golden d768 G0-G6 byte-parity 강제. core/CLAUDE.md 미러표 10/10 lockstep.
 - parity 오라클·증거 = `state/core_2prod_py_parity/`.
+## governance(CLAUDE.md): sidecar `## <slug>` + do/dont-only 포맷으로 재저작 — 손실 0
+
+루트 `CLAUDE.md` 를 글로벌 `sidecar` CLI 가 기계적으로 강제하는 commons 포맷(`## <slug> — <title>` 섹션 = `- do:`/`- dont:` 줄만, 둘 다 필수, 200-codepoint 라인 cap)으로 전면 재저작. 직전 상태의 **160+ blocking 위반**(COMMONS-PROSE / COMMONS-NO-DODONT / COMMONS-DODONT-INCOMPLETE / DODONT-LONG)을 **0** 으로 해소.
+
+- **PREAMBLE 보존**: intro·🚦행동전 하드게이트·SSOT 포인터·📦패키징(3-폴더 체제)·Quick reference·철학(p1–p8 표 + p5 보충)·Harness·청구·검증 흐름 + 거버넌스 카테고리 맵을 첫 `## ` 섹션 앞 preamble(린트 면제)에 그대로 보존 — 기존 `## ` 헤딩은 `### ` 로 demote 해 섹션 시작을 막음.
+- **규칙 = 슬러그 섹션**: 각 `a_*` 규칙(+`a1`)을 자체 `## <slug>` 섹션으로 승격(슬러그명 = keyword 트리거 그대로 유지). body 는 `- do:`/`- dont:` 만; 직전 자동분할로 깨졌던 do/dont 문장을 다시 합치고, 200자 초과 디테일(메커니즘·precedent H_*·🔎 자가점검·⚠️ 운영메모·🔒/🔄/🎯 하드게이트·.kosmos 포맷 구조)은 2-칸 들여쓴 continuation 줄로 보존 = **사실 손실 0**.
+- 검증: `sidecar lint` 의 CLAUDE.md COMMONS/DODONT 위반 0 (잔존 ARCH-BIG-CELL·CONVERGENCE-MALFORMED·TOOLKIT-DRIFT 는 ARCHITECTURE.json/TOOLKIT.jsonl 의 기존 부채로 이 변경과 무관). 458→412 줄.
+
+## research(clm303): 잔여 누수 HOST-vs-DEVICE 귀속 — HOST-side GPU-path 확정 (device·runtime-noop 둘 다 FALSIFIED)
+
+clm303 303M anima eval 의 잔여 메모리 증가(이전 ~94GB)를 GPU 재측정으로 정밀 귀속. pod 42521890(2×A40, own-GEMM DEVICE path 확인)에서 동일 decode 의 host RSS 와 GPU device mem trajectory 를 35s 간격 2-sample:
+- host RSS: 112.8GB → 120.9GB (+8.15GB/35s ≈ **233 MB/s 폭증**)
+- GPU device mem: 273 MiB → 273 MiB (**delta 0, 완전 평탄**)
+⇒ 누수는 **100% HOST-side, GPU-path 한정**. "device cudaMalloc slot 누적"(med-conf) FALSIFIED(GPU mem 불변), "runtime farr noop-free"(거짓 주석 기인) 도 별도 FALSIFIED(#2622). CPU-path 는 이전 6-agent 워크플로가 FLAT(leak 0) 확정 → 범인 = **flame_mm GPU-seam 의 host staging 할당**(RFC-040, per-matmul host buffer 미해제). clm303 verdict=DIRECTIONAL 유지(held-out 4/4 DESCENT). **terminal 워크어라운드: CPU-path(cuda_available=0)는 flat 이라 engine-native G0-G6 완주 가능**(느리나 leak-free, byte-identical own-GEMM CPU farr). harvest=`state/clm303_clean_corpus/device_attribution_remeasure.txt`. pod teardown(Total:0), GPU ~$1.
 
 ## refactor(core): 연구잔재 evac — core/ 429→212, production 엔진만 잔류 (preserve-state 불변식)
 
@@ -6689,3 +6703,12 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - 추가 lane(전부 byte-identical ≤1.3e-16): Osmotic·ImmuneGrow·CLS·Skill·Usage·Affect·Homeostatic·Libido·Allosteric·OtherMind·Consolidating·VAdaptB·WorkMem·VForward·HierGoal·SpatialMap·TransOrder·Circadian·IntervalTimer·PhaseReset·SCN(Kuramoto)·PhaseField·QuorumPhase·CA3Replay·GlobalWorkspace·Habituation+G18-G31 17 scalar gate. 누적 oracle PASS 161 fields.
 - 발견: engine_cli.hexa의 sin(21 sites)이 libm 링크 → exp/ln/sin/cos/sqrt 전부 libm(py math.* 일치, stale PARITY note 정정) · 중복 `_cos`(WM변종+1e-12 vs Hier변종)=lexically-nearest 해소 → _cos_vec/_cos_hier.
 - 잔여 6 lane(heavy numerics, follow-on): CollectivePool(IIT-4 big_phi @2701)·SkillCell(5297)·SkillGradFT(5664)·CPField(5796)·JamoHead(6401)·BpeMerges(6679) + ci_*/topo_* + savant + argv main. engine_cli FULL = 10/10 마지막.
+## 2026-06-26 — 2-PRODUCTION 엔진 정책 + clm303_clean 사이즈별 canonical registry (오너 거버넌스)
+- governance(CLAUDE.md): `a_engine_native_learning` 개정 — anima 엔진 = **hexa + py 2 공동-production 버전**(py 는 reference/미러 아님, hexa 와 동등 1급 production, byte-parity, 어느 쪽이든 terminal verdict 가능). hexa=배포 substrate, py=측정-무거운 G0-G6(torch free → bump-allocator OOM 회피). 임의 1회성 torch 스크립트만 DIRECTIONAL(하드게이트 ad-hoc 미러에만).
+- `a_train_flame_forge`: py(torch) 트레이너도 co-production(옛 ".py 금지" 폐기). `a_hf_registry`: 모델 사이즈별 tier registry, chat canonical=clm303_clean(303M, held-out 4/4 DESCENT).
+- ARCHITECTURE.json: decoder-map SSOT 셀에 2-production 엔진 + clm303_clean canonical + 사이즈별 tier 명시.
+- 동기: clm303_clean terminal G0-G6 eval 이 hexa bump-allocator(model load 영영 free 안 함)+per-decode reload 로 OOM(EXIT137, RSS 20GB+); per-decode free fix(시도)는 무효 검증됨 → py production 엔진이 측정 경로로 정당. convergence `clm303-eval-oom-perdecode-weight-leak` 정정(t_free no-op, fix=load-once-hoist or py).
+
+## 2026-06-26 — canonical 3-폴더 체제 + 3-폴더-내 코드 한정 (오너 거버넌스, 박제)
+- governance(CLAUDE.md §패키징 + `a_core_engine_map`) + ARCHITECTURE.json: anima 코드는 정확히 3 최상위 폴더 — **`cli/`**(진입, 두 언어 대칭 anima/train .hexa+.py) · **`core/`**(2-production 엔진 substrate: hexa `*.hexa` + py `*.py` 1:1 미러 byte-parity 공존) · **`agent/`**(tool provider 독립패키지).
+- **코드 배치 규칙**: production 코드는 3-폴더 안에만 — `HEXAD/`·`train/`·`tool/`·`state/`·`UNIVERSE/` 등 밖에 코드 두고 엔진에서 import/연결 금지(repo-내부 cross-folder import 금지). 외부 라이브러리는 자유(stdlib + py numpy/torch 허용). 데이터·결과 = `state/` 한 곳.

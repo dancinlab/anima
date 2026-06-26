@@ -216,6 +216,7 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
         s = s + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     let model_ce = sum_model / to_float(nwin)
     let shuf_ce  = sum_shuf / to_float(nwin)
     let uniform_ce = dt_ln(to_float(V))
@@ -490,6 +491,33 @@ fn _clmd_scratch_free(sc: Map) {
     t_free(to_int(sc["meanN"])); t_free(to_int(sc["invN"])); t_free(to_int(sc["xhatN"]))
 }
 
+// _clmd_weights_free — release every farr tensor in a weight map W returned by
+// _clmd_load (the full 303M weight-set, ~2-3GB host farr per load). The public
+// decode entries reload W per call; without this free, g_eval_all's ~49 decodes
+// across G0-G6 leak one weight-set each → monotonic host RSS → OOM (was the
+// "fix④" symptom; root cause is this missing free, NOT a hexa-lang runtime defect —
+// t_free is a real __libc_free per the L307+ note, so freeing W reclaims the bytes).
+// Mirrors _clmd_scratch_free. Frees the 9 single tensors + 6 per-layer/expert arrays;
+// the d/E/V/K/L/vd scalars are not tensors.
+fn _clmd_weights_free(W: Map) {
+    t_free(to_int(W["ecW"])); t_free(to_int(W["rW"])); t_free(to_int(W["roW"]))
+    t_free(to_int(W["embed"])); t_free(to_int(W["ecB"]))
+    t_free(to_int(W["rB"])); t_free(to_int(W["roB"]))
+    t_free(to_int(W["noG"])); t_free(to_int(W["noB"]))
+    let tcW = W["tcW"]; let mut i = 0
+    while i < len(tcW) { t_free(to_int(tcW[i])); i = i + 1 }
+    let eW = W["eW"]; let mut j = 0
+    while j < len(eW) { t_free(to_int(eW[j])); j = j + 1 }
+    let tcB = W["tcB"]; let mut bi = 0
+    while bi < len(tcB) { t_free(to_int(tcB[bi])); bi = bi + 1 }
+    let eB = W["eB"]; let mut bj = 0
+    while bj < len(eB) { t_free(to_int(eB[bj])); bj = bj + 1 }
+    let tgG = W["tgG"]; let mut ci = 0
+    while ci < len(tgG) { t_free(to_int(tgG[ci])); ci = ci + 1 }
+    let tgB = W["tgB"]; let mut di = 0
+    while di < len(tgB) { t_free(to_int(tgB[di])); di = di + 1 }
+}
+
 // _clmd_fwd_logits_sc — STREAMING forward: byte-identical to _clmd_fwd_logits but
 // every conv uses the pre-transposed Wt + a reused xcol, and every activation
 // buffer is reused from the scratch record `sc`. Reused buffers that the consuming
@@ -725,6 +753,7 @@ pub fn clm_omega_closure(path: string, corpus: string, nwin_max: int,
         s = s + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     let base_ce = sum_base / to_float(nwin)
     let self_ce = sum_self / to_float(nwin)
     let orac_ce = sum_orac / to_float(nwin)
@@ -781,6 +810,7 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
         g = g + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     return #{ "ok": true, "text": out }
 }
 
@@ -860,13 +890,13 @@ pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: fl
     return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
 }
 
-// clm_load_weights / clm_weights_decodable — H_1400 CROSS-DECODE memory fix. The hexa
-// bump allocator NEVER frees a buffer (see _clmd_scratch_new note), so EACH call to
-// _clmd_load permanently leaks the full model weight set (~10 GB for the 303M ConvMoE).
-// A multi-decode driver (e.g. the G6 FALS re-score = 69 decodes) therefore OOMs across
-// decodes even though each single decode is now bounded. The cure: LOAD ONCE, reuse the
-// W handle-map across every decode (clm_decode_topk_sampled_W). This is NOT a 2nd .clm
-// path — it is the SAME _clmd_load + _clmd_fwd_logits_sc, just with the load hoisted out
+// clm_load_weights / clm_decode_topk_sampled_W — H_1400 load-once perf opt for multi-decode
+// callers. CORRECTED: _clmd_load weight-sets ARE freed per call via _clmd_weights_free
+// (t_free = real __libc_free, see L307+ note) → all single-decode entries (forward_ce,
+// omega_closure, argmax, grounded, topk_sampled) are now RSS-bounded per call. For heavy
+// multi-decode callers (e.g. G6 FALS re-score = 69 decodes) clm_load_weights hoists the
+// load once to avoid repeated ~2-3GB load/free overhead (performance, not OOM correctness).
+// This is NOT a 2nd .clm path — same _clmd_load + _clmd_fwd_logits_sc, load hoisted out
 // of the per-decode loop (a_core_engine_map preserved: still reached only via generator).
 pub fn clm_load_weights(path: string) -> Map {
     if !clm_decodable(path) { return #{ "ok": false } }
@@ -920,7 +950,9 @@ pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
                                top_k: int, temp: float, seed_rng: int) -> Map {
     if !clm_decodable(path) { return #{ "ok": false, "text": "" } }
     let W = _clmd_load(path)
-    return clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng)
+    let result = clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng)
+    _clmd_weights_free(W)   // free the per-call weight-set → bounded RSS (was the eval OOM)
+    return result
 }
 
 // _clmd_find — first byte-offset of `needle` inside `hay` (-1 if absent). Plain
@@ -1026,5 +1058,6 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
         g = g + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm }
 }
