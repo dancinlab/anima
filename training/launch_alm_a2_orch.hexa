@@ -86,9 +86,6 @@ fn log_err(msg) {
 }
 
 // ─── Main ──
-@convergence(state="ossified", id="A2_ORCH_A1_ADAPTER_DEPENDENCY", value="A2-Orch refuses to launch if A1 step_3000 adapter is neither in local /workspace/ckpt_alm14b_phi_a1_*/step_3000/ NOR in R2 anima-models/alm14b/a1_20260416/step_3000/. No partial-train A1 tolerated — A2 stacks on A1 final only", ossified_at="2026-04-17")
-@convergence(state="ossified", id="A2_ORCH_SAME_POD_REUSE_POLICY", value="A2-Orch reuses A1 pod lnzliav2e8du6i post-A1-completion. H100 cap 2/2 already reached per feedback_h100_authorized — spinning Pod B would require user override. Reuse saves $36 launch-time cost and respects cap", ossified_at="2026-04-17")
-@convergence(state="ossified", id="A2_ORCH_RUNTIME_FLAG_CONTRACT", value="ORCH_OR_ENABLED=1 env + --consciousness-loss toggle enable Orch-OR latent path in train_alm_14b.hexa. Runner exports these before exec. Trainer with ORCH_OR_ENABLED unset degrades to A1-merged-base continuation (no new regularizer)", ossified_at="2026-04-17")
 fn main() {
     // Resolve repo root.
     let config_text = ""

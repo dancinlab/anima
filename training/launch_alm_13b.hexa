@@ -74,9 +74,6 @@ fn log_err(msg) {
 }
 
 // ─── Main ──
-@convergence(state="ossified", id="ALM13B_A2_CHAIN_DEPENDENCY", value="13B intermediate refuses to launch unless A1 step_3000 + A2-Orch step_3000 + A2-Tool step_1500 adapters ALL present (local or R2). Missing any link in the chain means the merged-base semantics break, and the intermediate de-risk signal becomes invalid", ossified_at="2026-04-17")
-@convergence(state="ossified", id="ALM13B_BORDERLINE_ONLY_TRIGGER", value="13B intermediate MUST only fire when A2 eval hire_sim in [0.85, 0.93). If >=0.93 launch 70B direct (13B adds cost without signal). If <0.85 halt + redesign (13B would carry broken recipe forward). Operator or watcher must verify eval band before invocation", ossified_at="2026-04-17")
-@convergence(state="ossified", id="ALM13B_PARAMETER_CLASS_NAMING", value="13b in run_id/ckpt path is a parameter-class ID for intermediate scale (between 14B production and 70B target). Base model is literally Qwen2.5-14B-Instruct. Not a version number per feedback_no_version_in_filename", ossified_at="2026-04-17")
 fn main() {
     // Resolve config path.
     let config_text = ""
