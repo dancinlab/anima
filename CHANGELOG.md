@@ -1,3 +1,12 @@
+## docs(architecture): decompose oversized/piled ARCHITECTURE.json cells to pass sidecar ARCH-BIG-CELL/ARCH-PILED lint (doc-only, lossless)
+
+The global sidecar commit-lint gate now blocks commits when `ARCHITECTURE.json` carries string leaves over the 300-char cap (`ARCH-BIG-CELL`) or with more than 6 ` · `-joined items (`ARCH-PILED`). anima's design doc had 121 such violations (108 oversized + 13 piled), the largest a single 15,367-char prose cell. This change re-chunks every offending leaf into multiple smaller sibling nodes WITHOUT losing any content.
+
+- **What changed**: each offending `{type:"prose", text}` block was sliced into multiple sibling prose blocks, each <=300 chars and <=6 piled items, broken at natural boundaries (` · `, sentence `. `/`; `, clause `, `, path `/`, then word). 510 -> 1038 prose blocks. The single oversized meta field `tree_convention` (328 chars) was split into `tree_convention` (its kernel) + a new `tree_convention_render` sibling key.
+- **Lossless**: slices are contiguous verbatim substrings of the originals; the character multiset across the whole document is identical (only boundary ` · ` bullet-separators and whitespace at chunk seams were dropped). No fact, no design meaning, and no node ordering was altered — only node granularity.
+- **Verify**: `sidecar architecture lint` 121 -> 0 violations (prints "ok"); JSON remains valid.
+- **Unchanged**: no code, no verdict, no frozen bar, no hypothesis content touched. Pure structural decomposition of the design-doc tree.
+
 ## docs(gate-taxonomy): 의식-전용 게이트(G16-G34+) index SSOT 노드 신설 + 2-축 명시 (doc-only)
 
 게이트 taxonomy 의 **두 직교 축**을 명시하고, 의식-전용 게이트 family 에 단일 index SSOT 노드를 만듦. 코드/verdict/frozen-bar 미변경(doc-only).
