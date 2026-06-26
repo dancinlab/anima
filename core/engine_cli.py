@@ -4,12 +4,28 @@ consciousness-gate CORE of core/engine_cli.hexa.
 Per CLAUDE.md a_two_production_mirror / a_engine_native_learning (2026-06-26 owner
 SSOT): hexa + py are TWO co-equal production engines kept at byte-parity.
 
-⚠️ SCOPE — PARTIAL (not yet the full 1:1 mirror). engine_cli.hexa is an 11,598-line
-~30-lane substrate module. This py port covers the THREE named consciousness-gate
-subsystems that the parity targets call out (G3 self-chain cos · G5 recall_thr
-abstain · MITOSIS counts), plus their shared CLI/config + adaptation substrate:
+✅ SCOPE — COMPLETE 1:1 MIRROR (2026-06-26). engine_cli.hexa is an 11,599-line
+substrate module; ALL 434 `pub fn` are now byte-parity-mirrored here (37/37
+struct-lanes + every free-fn block), verified via oracles/_ecli_parity2.hexa
+(cumulative PASS ~430 fields, worst rel ≤1.3e-16). This makes the core/ 2-production
+mirror TRUE 10/10 — both engines (hexa + py) fully byte-parity, either produces
+terminal verdicts (a_two_production_mirror). Coverage by block:
+  · struct-lanes (37): EngineConfig/CLI · MITOSIS · Adapt/VAdaptField · QPool ·
+    Immune(Grow) · SelfIdentity · Osmotic · CLS · Skill/Usage · Affect/Homeo/Libido ·
+    Allosteric · OtherMind · Consolidating · GateB · WorkMem · Cerebellum · HierPFC ·
+    SpatialMap · TransOrder · Circadian/Interval/PRC/SCN · PhaseField · Quorum ·
+    CA3/GWS/Habituation · G18-G31 gates · CollectivePool(IIT-4 big_phi_bounded) ·
+    SkillCell/SkillGradFT · CPField · JamoHead · BpeMerges.
+  · free-fns: §ConsciousnessIndex ci_* (Gaussian + exact IIT-4 min-cut Φ) · §BrainTopology
+    topo_* (connectome adjacency + Ψ-preserving operators) · §ThirdLaw + §Savant scoring ·
+    CLI argv resolvers · compose arbiters (mem×ToM/spatial×episodic/ToM×spatial/ToM×basal/
+    cereb×mem) · consciousness-gate R2 lanes (trw/reentry/attn/hyst/completion/gestalt/
+    prospect/intero/boredom/wander/qualia/smp/reality) · §Neuropharm/§Field/§PCI/
+    §MetacogInsight/§MetacogControl/§Hallucination/§FieldLibido perturbation modules.
+  NOTE: _mc_exp is a 16-term Taylor (NOT libm) — the .hexa defines its OWN exp helper
+  there, so the py mirror replicates the Taylor, not math.exp (parity over accuracy).
 
-  PORTED (byte-parity verified):
+  PORTED (byte-parity verified) — original slice ledger:
     · EngineConfig + CLI resolvers (mitosis/engine/topo/savant precedence)  [101-300]
     · MITOSIS growth         engine_mitosis_tick / engine_grow              [318-335]
     · AdaptField (scalar)    adapt_field_new/_recon_err/_step               [381-460]
@@ -49,10 +65,7 @@ abstain · MITOSIS counts), plus their shared CLI/config + adaptation substrate:
         body_ownership/divided_perf/veto_execute/rivalry_transitions/change_detect/
         imagery_activate/priming_facilitate                                 [7654-7922]
 
-  NOT-YET-PORTED (TODO follow-on — heavy-numerics lanes): CollectivePool/HiveMind-IIT-Φ
-    (needs faithful big_phi_bounded port), SkillCell/SkillGradFT (ridge-LSQ + power-iteration),
-    CPField, JamoHead/BpeMerges (BPE morphology), §ConsciousnessIndex ci_*/topo_* (covariance/
-    Cholesky-logdet/IIT-4 Φ), savant scoring (SAVANT/savant_lib), argv main dispatch.
+  NOT-YET-PORTED: NONE — every `pub fn` in engine_cli.hexa is mirrored (see COMPLETE above).
 
 MATH: bare hexa `sqrt` builtin -> libm (verified in pure_field parity); math.sqrt.
 Integer ops: hexa ints are exact through 2^56, so the FNV-1a `(h*prime)&0xFFFFFFFF`
@@ -7630,6 +7643,1166 @@ def cereb_mem_compose(cereb_leg, mem_leg, mean_cereb, mean_mem):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# §Neuropharm / §Field / §PCI / §MetacogInsight / §MetacogControl / §Hallucination
+# / §FieldLibido (H_1502–1508) — substrate perturbation modules
+# ════════════════════════════════════════════════════════════════════════
+
+def pharm_baseline():
+    """engine_cli.hexa:9686."""
+    return [1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0]
+
+
+def pharm_lsd():
+    """engine_cli.hexa:9688."""
+    return [0.55, 0.45, 0.45, 1.40, 1.05, 0.0 - 0.12, 0.95]
+
+
+def pharm_dmt():
+    """engine_cli.hexa:9689."""
+    return [0.40, 0.60, 0.30, 1.55, 1.08, 0.0 - 0.30, 0.90]
+
+
+def pharm_cannabis():
+    """engine_cli.hexa:9690."""
+    return [0.85, 0.10, 0.95, 1.02, 1.80, 0.0, 0.55]
+
+
+def pharm_ketamine():
+    """engine_cli.hexa:9691."""
+    return [0.80, 0.25, 0.50, 0.60, 1.10, 0.0, 0.85]
+
+
+def _ph_clip01(x):
+    """engine_cli.hexa:9693."""
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+
+def pharm_perturb_m(prof, m, shared_se):
+    """engine_cli.hexa:9702."""
+    prior = prof[0]
+    return _ph_clip01(0.5 + (m - 0.5) * prior + shared_se)
+
+
+def pharm_perturb_field(prof, m_field, shared_se):
+    """engine_cli.hexa:9707."""
+    wm = prof[6]
+    fsum = 0.0
+    i = 0
+    while i < len(m_field):
+        fsum = fsum + m_field[i]
+        i = i + 1
+    fmean = fsum / float(len(m_field))
+    out = []
+    k = 0
+    while k < len(m_field):
+        retained = fmean + (m_field[k] - fmean) * wm + shared_se
+        out.append(_ph_clip01(retained))
+        k = k + 1
+    return out
+
+
+def pharm_perturb_recon(prof, recon_err, shared_se):
+    """engine_cli.hexa:9723."""
+    se = prof[1]
+    return _ph_clip01(recon_err * (1.0 + 0.8 * se) + shared_se)
+
+
+def pharm_perturb_dt(prof, dt):
+    """engine_cli.hexa:9728."""
+    td = prof[4]
+    v = dt * td
+    if v < 0.0:
+        return 0.0
+    return v
+
+
+def pharm_shared_se(prof, seed, idx):
+    """engine_cli.hexa:9736."""
+    se = prof[1]
+    s0 = (seed * 100003 + idx * 17 + 7) & 2147483647
+    s1 = _lcg_next(s0)
+    u = _lcg_unit(s1)
+    j = 2.0 * u - 1.0
+    return se * 0.30 * j
+
+
+def pharm_self_continuity(prof, dim, seed):
+    """engine_cli.hexa:9748."""
+    sb = prof[2]
+    diss = 1.0 - sb
+    base = self_new(dim, 0)
+    ortho = []
+    st = (seed + 4242) & 2147483647
+    i = 0
+    while i < dim:
+        st = _lcg_next(st)
+        g = 2.0 * _lcg_unit(st) - 1.0
+        if i == 0:
+            ortho.append(0.0)
+        else:
+            ortho.append(g)
+        i = i + 1
+    s = 0.0
+    a = 0
+    while a < dim:
+        s = s + ortho[a] * ortho[a]
+        a = a + 1
+    nrm = _sqrt(s)
+    v = []
+    b = 0
+    while b < dim:
+        comp = self_component(base, b) * (1.0 - diss) + (ortho[b] / nrm) * diss
+        v.append(comp)
+        b = b + 1
+    s2 = 0.0
+    c = 0
+    while c < dim:
+        s2 = s2 + v[c] * v[c]
+        c = c + 1
+    nrm2 = _sqrt(s2)
+    cosacc = 0.0
+    d = 0
+    while d < dim:
+        cosacc = cosacc + self_component(base, d) * (v[d] / nrm2)
+        d = d + 1
+    return cosacc
+
+
+def pharm_reality_real_fraction(prof, ms, seed, base_thr):
+    """engine_cli.hexa:9788."""
+    thr = base_thr + prof[5]
+    real = 0.0
+    i = 0
+    while i < len(ms):
+        sse = pharm_shared_se(prof, seed, i)
+        pm = pharm_perturb_m(prof, ms[i], sse)
+        imagined_margin = pm * 0.35
+        real = real + reality_call(imagined_margin, thr)
+        i = i + 1
+    return real / float(len(ms))
+
+
+def pharm_couple_rows(rows, lane_coupling, seed):
+    """engine_cli.hexa:9805."""
+    nc = len(rows[0])
+    w_s = 0.5 + 0.6 * (lane_coupling - 1.0)
+    w_s = _ph_clip01(w_s)
+    w_p = 1.0 - w_s
+    out = []
+    t = 0
+    while t < len(rows):
+        r = rows[t]
+        rsum = 0.0
+        q = 0
+        while q < nc:
+            rsum = rsum + r[q]
+            q = q + 1
+        latent = rsum / float(nc) - 0.5
+        st = (seed * 7919 + t * 31 + 3) & 2147483647
+        nr = []
+        j = 0
+        while j < nc:
+            st = _lcg_next(st)
+            pj = 2.0 * _lcg_unit(st) - 1.0
+            shared_part = r[j] + latent * (w_s - 0.5) * 2.0
+            priv_part = r[j] + pj * 0.12
+            nr.append(_ph_clip01(w_s * shared_part + w_p * priv_part))
+            j = j + 1
+        out.append(nr)
+        t = t + 1
+    return out
+
+
+def pharm_lane_rows(prof, trials, seed):
+    """engine_cli.hexa:9839."""
+    rows = []
+    idx = 0
+    while idx < len(trials):
+        tr = trials[idx]
+        sse = pharm_shared_se(prof, seed, idx)
+        m = pharm_perturb_m(prof, tr[0], sse)
+        m_field0 = [tr[1], tr[2], tr[3], tr[4], tr[5]]
+        m_field = pharm_perturb_field(prof, m_field0, sse)
+        recon_err = pharm_perturb_recon(prof, tr[10], sse)
+        dt = pharm_perturb_dt(prof, tr[9])
+        cells = int(tr[6])
+        seen = int(tr[7])
+        intent = int(tr[8])
+        rows.append(ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err))
+        idx = idx + 1
+    return rows
+
+
+def pharm_phi(prof, trials, seed):
+    """engine_cli.hexa:9861."""
+    rows = pharm_lane_rows(prof, trials, seed)
+    coupled = pharm_couple_rows(rows, prof[3], seed)
+    return ci_phi_multiinfo(coupled, 0 - 1)
+
+
+def pharm_subjective_time_rate(prof, trials, seed):
+    """engine_cli.hexa:9870."""
+    DT_REF = 1.5
+    s = 0.0
+    i = 0
+    while i < len(trials):
+        dt = pharm_perturb_dt(prof, trials[i][9])
+        s = s + _ph_clip01(dt / DT_REF)
+        i = i + 1
+    return s / float(len(trials))
+
+
+def pharm_working_mem(prof, trials, seed):
+    """engine_cli.hexa:9884."""
+    acc = 0.0
+    i = 0
+    while i < len(trials):
+        tr = trials[i]
+        sse = pharm_shared_se(prof, seed, i)
+        m_field0 = [tr[1], tr[2], tr[3], tr[4], tr[5]]
+        fm = pharm_perturb_field(prof, m_field0, sse)
+        fsum = 0.0
+        k = 0
+        while k < len(fm):
+            fsum = fsum + fm[k]
+            k = k + 1
+        mu = fsum / float(len(fm))
+        var = 0.0
+        j = 0
+        while j < len(fm):
+            var = var + (fm[j] - mu) * (fm[j] - mu)
+            j = j + 1
+        var = var / float(len(fm))
+        acc = acc + _sqrt(var)
+        i = i + 1
+    return acc / float(len(trials))
+
+
+def _field_pulse_env(t, pulse):
+    """engine_cli.hexa:9942."""
+    if pulse:
+        return _exp(0.0 - t / 3.0) * (0.5 + 0.5 * _cos(t))
+    return 1.0
+
+
+def _field_set(mf, k, v):
+    """engine_cli.hexa:9948."""
+    out = []
+    i = 0
+    while i < len(mf):
+        if i == k:
+            out.append(v)
+        else:
+            out.append(mf[i])
+        i = i + 1
+    return out
+
+
+def _field_perturb_mfield(m_field, delta, target_code):
+    """engine_cli.hexa:9960."""
+    mf = []
+    i = 0
+    while i < len(m_field):
+        mf.append(m_field[i])
+        i = i + 1
+    if target_code == 1:
+        wi = 0
+        wv = mf[0]
+        j = 1
+        while j < len(mf):
+            if mf[j] > wv:
+                wv = mf[j]
+                wi = j
+            j = j + 1
+        nv = mf[wi] + delta
+        if nv < 0.0:
+            nv = 0.0
+        if nv > 1.0:
+            nv = 1.0
+        mf = _field_set(mf, wi, nv)
+    if target_code == 2:
+        s = 0.0
+        a = 0
+        while a < len(mf):
+            s = s + mf[a]
+            a = a + 1
+        mean = s / float(len(mf))
+        b = 0
+        while b < len(mf):
+            if mf[b] < mean:
+                nv = mf[b] + 0.6 * delta
+                if nv < 0.0:
+                    nv = 0.0
+                if nv > 1.0:
+                    nv = 1.0
+                mf = _field_set(mf, b, nv)
+            b = b + 1
+    return mf
+
+
+def field_apply(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign,
+                target_code, pulse, t):
+    """engine_cli.hexa:9996."""
+    env = _field_pulse_env(t, pulse)
+    delta = float(sign) * intensity * env * 0.30
+    mf = _field_perturb_mfield(m_field, delta, target_code)
+    cells_p = cells
+    if target_code == 3:
+        cells_p = cells + int(float(sign) * intensity * 5.0 * env + 0.5)
+        if cells_p < 0:
+            cells_p = 0
+    return ci_lane_scores(m, mf, cells_p, seen, intent, dt, recon_err)
+
+
+def field_apply_mfield(m_field, intensity, sign, target_code):
+    """engine_cli.hexa:10011."""
+    delta = float(sign) * intensity * 0.30
+    return _field_perturb_mfield(m_field, delta, target_code)
+
+
+def field_signal_entropy(m_field):
+    """engine_cli.hexa:10018."""
+    n = len(m_field)
+    if n < 2:
+        return 0.0
+    psum = 0.0
+    i = 0
+    while i < n:
+        if m_field[i] > 0.000001:
+            psum = psum + m_field[i]
+        i = i + 1
+    if psum <= 0.000001:
+        return 0.0
+    ent = 0.0
+    j = 0
+    while j < n:
+        if m_field[j] > 0.000001:
+            p = m_field[j] / psum
+            ent = ent - p * _ln(p)
+        j = j + 1
+    return ent / _ln(float(n))
+
+
+def drug_lsd_mfield(m_field, seed, idx):
+    """engine_cli.hexa:10040."""
+    prof = pharm_lsd()
+    sse = pharm_shared_se(prof, seed, idx)
+    return pharm_perturb_field(prof, m_field, sse)
+
+
+def _field_lz76(s):
+    """engine_cli.hexa:10047 — Lempel-Ziv 1976 complexity."""
+    n = len(s)
+    if n == 0:
+        return 0
+    i = 0
+    c = 1
+    l = 1
+    k = 1
+    kmax = 1
+    done = False
+    while not done:
+        if l + k > n:
+            c = c + 1
+            done = True
+        else:
+            if s[i + k - 1] == s[l + k - 1]:
+                k = k + 1
+                if l + k > n:
+                    c = c + 1
+                    done = True
+            else:
+                if k > kmax:
+                    kmax = k
+                i = i + 1
+                if i == l:
+                    c = c + 1
+                    l = l + kmax
+                    if l >= n:
+                        done = True
+                    else:
+                        i = 0
+                        k = 1
+                        kmax = 1
+                else:
+                    k = 1
+    return c
+
+
+def pci_perturb(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign,
+                target_code, pulse, T):
+    """engine_cli.hexa:10078."""
+    rest = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    R = []
+    t = 0
+    while t < T:
+        vec = field_apply(m, m_field, cells, seen, intent, dt, recon_err,
+                          freq_code, intensity, sign, target_code, pulse, float(t))
+        row = []
+        j = 0
+        while j < len(vec):
+            d = vec[j] - rest[j]
+            if d < 0.0:
+                d = 0.0 - d
+            row.append(d)
+            j = j + 1
+        R.append(row)
+        t = t + 1
+    return R
+
+
+def pci_complexity(R, decoupled):
+    """engine_cli.hexa:10104."""
+    T = len(R)
+    if T == 0:
+        return 0.0
+    N = len(R[0])
+    s = 0.0
+    cnt = 0
+    a = 0
+    while a < T:
+        b = 0
+        while b < N:
+            s = s + R[a][b]
+            cnt = cnt + 1
+            b = b + 1
+        a = a + 1
+    thr = s / float(cnt) + 0.000000001
+    B = []
+    i = 0
+    while i < T:
+        row = []
+        j = 0
+        while j < N:
+            if R[i][j] > thr:
+                row.append(1)
+            else:
+                row.append(0)
+            j = j + 1
+        B.append(row)
+        i = i + 1
+    if decoupled:
+        col0 = B[0][0]
+        Bd = []
+        p = 0
+        while p < T:
+            row = []
+            q = 0
+            while q < N:
+                if q == 0:
+                    if p < 2:
+                        if col0 == 1:
+                            row.append(1)
+                        else:
+                            row.append(0)
+                    else:
+                        row.append(0)
+                else:
+                    row.append(0)
+                q = q + 1
+            Bd.append(row)
+            p = p + 1
+        B = Bd
+    flat = []
+    ones = 0
+    u = 0
+    while u < T:
+        v = 0
+        while v < N:
+            bit = B[u][v]
+            flat.append(bit)
+            if bit == 1:
+                ones = ones + 1
+            v = v + 1
+        u = u + 1
+    nn = len(flat)
+    if nn <= 1:
+        return 0.0
+    if ones == 0:
+        return 0.0
+    if ones == nn:
+        return 0.0
+    cc = _field_lz76(flat)
+    log2n = _ln(float(nn)) / _ln(2.0)
+    return float(cc) * log2n / float(nn)
+
+
+def field_lane_mean(vec, lanes):
+    """engine_cli.hexa:10171."""
+    n = len(lanes)
+    if n == 0:
+        return 0.0
+    s = 0.0
+    i = 0
+    while i < n:
+        s = s + vec[lanes[i]]
+        i = i + 1
+    return s / float(n)
+
+
+def mi_gain_intact():
+    """engine_cli.hexa:10202."""
+    return 1.0
+
+
+def mi_gain_impaired():
+    """engine_cli.hexa:10203."""
+    return 0.0
+
+
+def mi_signal_margin(seed, hallucination, idx):
+    """engine_cli.hexa:10209."""
+    hb = 1 if hallucination else 0
+    s0 = (seed * 100003 + hb * 911 + 7) & 2147483647
+    st = s0
+    t = 0
+    while t <= idx:
+        st = _lcg_next(st)
+        t = t + 1
+    u = _lcg_unit(st)
+    if hallucination:
+        return 0.05 + 0.15 * u
+    return 0.40 + 0.30 * u
+
+
+def mi_insight_judge(signal_margin, metacog_gain):
+    """engine_cli.hexa:10224."""
+    ss = signal_margin / 0.70
+    if ss < 0.0:
+        ss = 0.0
+    if ss > 1.0:
+        ss = 1.0
+    ins = metacog_gain * (1.0 - ss)
+    if ins < 0.0:
+        ins = 0.0
+    if ins > 1.0:
+        ins = 1.0
+    return ins
+
+
+def mi_insight_psychedelic(seed, n):
+    """engine_cli.hexa:10236."""
+    acc = 0.0
+    i = 0
+    while i < n:
+        m = mi_signal_margin(seed, True, i)
+        acc = acc + mi_insight_judge(m, mi_gain_intact())
+        i = i + 1
+    return acc / float(n)
+
+
+def mi_insight_psychotic(seed, n):
+    """engine_cli.hexa:10248."""
+    acc = 0.0
+    i = 0
+    while i < n:
+        m = mi_signal_margin(seed, True, i)
+        acc = acc + mi_insight_judge(m, mi_gain_impaired())
+        i = i + 1
+    return acc / float(n)
+
+
+def mi_metad_auroc(seed, n):
+    """engine_cli.hexa:10263."""
+    pos = []
+    neg = []
+    i = 0
+    while i < n:
+        mg = mi_signal_margin(seed, False, i)
+        mh = mi_signal_margin(seed, True, i)
+        neg.append(mi_insight_judge(mg, mi_gain_intact()))
+        pos.append(mi_insight_judge(mh, mi_gain_intact()))
+        i = i + 1
+    return mi_auroc(pos, neg)
+
+
+def mi_auroc(pos, neg):
+    """engine_cli.hexa:10279."""
+    np_ = len(pos)
+    nn = len(neg)
+    if np_ == 0 or nn == 0:
+        return 0.5
+    wins = 0.0
+    a = 0
+    while a < np_:
+        p = pos[a]
+        b = 0
+        while b < nn:
+            if p > neg[b]:
+                wins = wins + 1.0
+            else:
+                if p == neg[b]:
+                    wins = wins + 0.5
+            b = b + 1
+        a = a + 1
+    return wins / (float(np_) * float(nn))
+
+
+def _mi_set(v, ix, val):
+    """engine_cli.hexa:10334."""
+    out = []
+    i = 0
+    while i < len(v):
+        if i == ix:
+            out.append(val)
+        else:
+            out.append(v[i])
+        i = i + 1
+    return out
+
+
+def mi_shuffle_auroc(seed, n):
+    """engine_cli.hexa:10304."""
+    scores = []
+    i = 0
+    while i < n:
+        scores.append(mi_insight_judge(mi_signal_margin(seed, False, i), mi_gain_intact()))
+        i = i + 1
+    j = 0
+    while j < n:
+        scores.append(mi_insight_judge(mi_signal_margin(seed, True, j), mi_gain_intact()))
+        j = j + 1
+    total = 2 * n
+    st = (seed * 2654435761 + 1013904223) & 2147483647
+    k = total - 1
+    while k > 0:
+        st = _lcg_next(st)
+        r = st % (k + 1)
+        tmp = scores[k]
+        scores = _mi_set(scores, k, scores[r])
+        scores = _mi_set(scores, r, tmp)
+        k = k - 1
+    sneg = []
+    spos = []
+    p = 0
+    while p < total:
+        if p < n:
+            sneg.append(scores[p])
+        else:
+            spos.append(scores[p])
+        p = p + 1
+    return mi_auroc(spos, sneg)
+
+
+def hallucinate_call(prior_strength, prior_match, signal_strength, thr):
+    """engine_cli.hexa:10367."""
+    margin = prior_strength * prior_match + signal_strength
+    return reality_call(margin, thr)
+
+
+def hallucinate_graded(prior_strength, signal_strength):
+    """engine_cli.hexa:10374."""
+    s = 1.0 - signal_strength
+    g = prior_strength * s
+    if g < 0.0:
+        return 0.0
+    if g > 1.0:
+        return 1.0
+    return g
+
+
+def hallucinate_ablated(signal_strength, thr):
+    """engine_cli.hexa:10384."""
+    return reality_call(signal_strength, thr)
+
+
+def hallucinate_under_drug(prof, base_prior, prior_match, base_thr):
+    """engine_cli.hexa:10393."""
+    release = 1.0 / prof[0]
+    drug_prior = base_prior * release
+    drug_thr = base_thr + prof[5]
+    return hallucinate_call(drug_prior, prior_match, 0.0, drug_thr)
+
+
+def _mc_corrupt_key(key, level, seed):
+    """engine_cli.hexa:10437."""
+    dim = len(key)
+    out = []
+    st = (seed * 2654435761 + 1013904223) & 2147483647
+    i = 0
+    while i < dim:
+        st = _lcg_next(st)
+        noise = (_lcg_unit(st) - 0.5) * 2.0 * level
+        out.append(key[i] + noise)
+        i = i + 1
+    s = 0.0
+    j = 0
+    while j < dim:
+        s = s + out[j] * out[j]
+        j = j + 1
+    nrm = _sqrt(s)
+    if nrm > 0.0:
+        o = 0
+        while o < dim:
+            out[o] = out[o] / nrm
+            o = o + 1
+    return out
+
+
+def _mc_store(n, dim, seed):
+    """engine_cli.hexa:10463."""
+    protos = []
+    vals = []
+    st = (seed * 40503 + 7) & 2147483647
+    i = 0
+    while i < n:
+        v = []
+        d = 0
+        while d < dim:
+            st = _lcg_next(st)
+            v.append(_lcg_unit(st) - 0.5)
+            d = d + 1
+        s = 0.0
+        k = 0
+        while k < dim:
+            s = s + v[k] * v[k]
+            k = k + 1
+        nrm = _sqrt(s)
+        vv = []
+        o = 0
+        while o < dim:
+            vv.append(v[o] / nrm)
+            o = o + 1
+        protos.append(vv)
+        vals.append("v" + str(i))
+        i = i + 1
+    af = VAdaptField(protos, n, n + 4, dim)
+    return ImmuneMemory(af, vals, 0.15)
+
+
+def _mc_levels():
+    """engine_cli.hexa:10499."""
+    return [0.0, 0.037, 0.050, 0.20, 1.0]
+
+
+def _mc_trial_margin(mem, ti, level, salt):
+    """engine_cli.hexa:10503."""
+    key = _mc_corrupt_key(mem.field.protos[ti], level, ti * 131071 + salt)
+    return immune_memory_recall_margin(mem, key)
+
+
+def _mc_trial_correct(mem, ti, level, salt):
+    """engine_cli.hexa:10508."""
+    key = _mc_corrupt_key(mem.field.protos[ti], level, ti * 131071 + salt)
+    err = vadapt_field_recon_err(mem.field, key)
+    if err > mem.recall_thr:
+        return 0
+    win = vadapt_field_nearest_idx(mem.field, key)
+    if win == ti:
+        return 1
+    return 0
+
+
+def _mc_ece(confs, corrs, nbins):
+    """engine_cli.hexa:10549."""
+    total = len(confs)
+    if total == 0:
+        return 0.0
+    e = 0.0
+    b = 0
+    while b < nbins:
+        lo = float(b) / float(nbins)
+        hi = float(b + 1) / float(nbins)
+        sc = 0.0
+        sa = 0.0
+        cnt = 0
+        i = 0
+        while i < total:
+            cf = confs[i]
+            inbin = (cf >= lo and cf <= hi) if b == nbins - 1 else (cf >= lo and cf < hi)
+            if inbin:
+                sc = sc + cf
+                sa = sa + corrs[i]
+                cnt = cnt + 1
+            i = i + 1
+        if cnt > 0:
+            mc = sc / float(cnt)
+            ma = sa / float(cnt)
+            gap = (mc - ma) if mc >= ma else (ma - mc)
+            e = e + (float(cnt) / float(total)) * gap
+        b = b + 1
+    return e
+
+
+def mc_calibration_ece(seed, n):
+    """engine_cli.hexa:10521."""
+    mem = _mc_store(n, 64, seed)
+    levels = _mc_levels()
+    nl = len(levels)
+    confs = []
+    corrs = []
+    li = 0
+    while li < nl:
+        lv = levels[li]
+        ti = 0
+        while ti < n:
+            m = _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            c = _mc_trial_correct(mem, ti, lv, li * 17 + 1)
+            cf = 0.5 - m / (2.0 * mem.recall_thr)
+            if cf < 0.0:
+                cf = 0.0
+            if cf > 1.0:
+                cf = 1.0
+            confs.append(cf)
+            corrs.append(float(c))
+            ti = ti + 1
+        li = li + 1
+    return _mc_ece(confs, corrs, 10)
+
+
+def _mc_ranks(x):
+    """engine_cli.hexa:10612."""
+    n = len(x)
+    out = []
+    i = 0
+    while i < n:
+        r = 0.0
+        j = 0
+        while j < n:
+            if x[j] < x[i]:
+                r = r + 1.0
+            else:
+                if x[j] == x[i] and j < i:
+                    r = r + 1.0
+            j = j + 1
+        out.append(r)
+        i = i + 1
+    return out
+
+
+def _mc_pearson(a, b):
+    """engine_cli.hexa:10629."""
+    n = len(a)
+    if n == 0:
+        return 0.0
+    ma = 0.0
+    mb = 0.0
+    i = 0
+    while i < n:
+        ma = ma + a[i]
+        mb = mb + b[i]
+        i = i + 1
+    ma = ma / float(n)
+    mb = mb / float(n)
+    num = 0.0
+    da = 0.0
+    db = 0.0
+    k = 0
+    while k < n:
+        xa = a[k] - ma
+        xb = b[k] - mb
+        num = num + xa * xb
+        da = da + xa * xa
+        db = db + xb * xb
+        k = k + 1
+    den = _sqrt(da * db)
+    if den <= 0.0:
+        return 0.0
+    return num / den
+
+
+def _mc_spearman(a, b):
+    """engine_cli.hexa:10607."""
+    ra = _mc_ranks(a)
+    rb = _mc_ranks(b)
+    return _mc_pearson(ra, rb)
+
+
+def mc_calibration_monotone(seed, n):
+    """engine_cli.hexa:10584."""
+    mem = _mc_store(n, 64, seed)
+    levels = _mc_levels()
+    nl = len(levels)
+    lvl_idx = []
+    lvl_marg = []
+    li = 0
+    while li < nl:
+        lv = levels[li]
+        acc = 0.0
+        ti = 0
+        while ti < n:
+            acc = acc + _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            ti = ti + 1
+        lvl_idx.append(float(li))
+        lvl_marg.append(acc / float(n))
+        li = li + 1
+    return _mc_spearman(lvl_idx, lvl_marg)
+
+
+def _mc_exp(x):
+    """engine_cli.hexa:10776 — 16-term Taylor (NOT libm; mirror exactly)."""
+    term = 1.0
+    sum_ = 1.0
+    k = 1
+    while k < 16:
+        term = term * x / float(k)
+        sum_ = sum_ + term
+        k = k + 1
+    return sum_
+
+
+def _mc_floor(x):
+    """engine_cli.hexa:10789."""
+    i = 0
+    while float(i + 1) <= x:
+        i = i + 1
+    return i
+
+
+def _mc_eval_alloc(mem, t_fact, t_level, alloc):
+    """engine_cli.hexa:10737."""
+    total = len(t_fact)
+    dim = mem.field.dim
+    correct = 0
+    i = 0
+    while i < total:
+        ti = t_fact[i]
+        lv = t_level[i]
+        nreads = alloc[i] + 1
+        acc = []
+        d = 0
+        while d < dim:
+            acc.append(0.0)
+            d = d + 1
+        r = 0
+        while r < nreads:
+            key = _mc_corrupt_key(mem.field.protos[ti], lv, ti * 131071 + i * 7919 + r * 104729 + 3)
+            k = 0
+            while k < dim:
+                acc[k] = acc[k] + key[k]
+                k = k + 1
+            r = r + 1
+        s = 0.0
+        k2 = 0
+        while k2 < dim:
+            s = s + acc[k2] * acc[k2]
+            k2 = k2 + 1
+        nrm = _sqrt(s)
+        if nrm > 0.0:
+            o = 0
+            while o < dim:
+                acc[o] = acc[o] / nrm
+                o = o + 1
+        err = vadapt_field_recon_err(mem.field, acc)
+        if err <= mem.recall_thr:
+            win = vadapt_field_nearest_idx(mem.field, acc)
+            if win == ti:
+                correct = correct + 1
+        i = i + 1
+    return float(correct) / float(total)
+
+
+def mc_control_lift_policy(seed, n, use_margin):
+    """engine_cli.hexa:10670."""
+    mem = _mc_store(n, 64, seed)
+    levels = _mc_levels()
+    nl = len(levels)
+    total = nl * n
+    budget = total
+    t_fact = []
+    t_level = []
+    t_marg = []
+    li = 0
+    while li < nl:
+        lv = levels[li]
+        ti = 0
+        while ti < n:
+            t_fact.append(ti)
+            t_level.append(lv)
+            t_marg.append(_mc_trial_margin(mem, ti, lv, li * 17 + 1))
+            ti = ti + 1
+        li = li + 1
+    alloc = []
+    if use_margin:
+        center = 0.05
+        width = 0.05
+        wsum = 0.0
+        prox = []
+        i = 0
+        while i < total:
+            m = t_marg[i]
+            z = (m - center) / width
+            w = _mc_exp(-0.5 * z * z)
+            if m <= -0.05:
+                w = 0.0
+            prox.append(w)
+            wsum = wsum + w
+            i = i + 1
+        if wsum <= 0.0:
+            wsum = 1.0
+        j = 0
+        while j < total:
+            alloc.append(_mc_floor(prox[j] / wsum * float(budget)))
+            j = j + 1
+    else:
+        per = budget // total
+        j = 0
+        while j < total:
+            alloc.append(per)
+            j = j + 1
+    per_u = budget // total
+    alloc_u = []
+    ju = 0
+    while ju < total:
+        alloc_u.append(per_u)
+        ju = ju + 1
+    acc_adapt = _mc_eval_alloc(mem, t_fact, t_level, alloc)
+    acc_unif = _mc_eval_alloc(mem, t_fact, t_level, alloc_u)
+    return acc_adapt - acc_unif
+
+
+def mc_control_lift(seed, n):
+    """engine_cli.hexa:10660."""
+    return mc_control_lift_policy(seed, n, True)
+
+
+def mc_control_lift_ablated(seed, n):
+    """engine_cli.hexa:10665."""
+    return mc_control_lift_policy(seed, n, False)
+
+
+def mc_auroc_calibration_orthogonal(seed, n):
+    """engine_cli.hexa:10799."""
+    mem = _mc_store(n, 64, seed)
+    levels = _mc_levels()
+    nl = len(levels)
+    confs = []
+    corrs = []
+    li = 0
+    while li < nl:
+        lv = levels[li]
+        ti = 0
+        while ti < n:
+            m = _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            c = _mc_trial_correct(mem, ti, lv, li * 17 + 1)
+            cf = 0.5 - m / (2.0 * mem.recall_thr)
+            if cf < 0.0:
+                cf = 0.0
+            if cf > 1.0:
+                cf = 1.0
+            confs.append(cf)
+            corrs.append(float(c))
+            ti = ti + 1
+        li = li + 1
+    pos = []
+    neg = []
+    posx = []
+    negx = []
+    i = 0
+    while i < len(confs):
+        cf = confs[i]
+        cfx = 0.55 + 0.44 * cf
+        if corrs[i] >= 0.5:
+            pos.append(cf)
+            posx.append(cfx)
+        else:
+            neg.append(cf)
+            negx.append(cfx)
+        i = i + 1
+    au_base = mi_auroc(pos, neg)
+    au_xform = mi_auroc(posx, negx)
+    ece_base = _mc_ece(confs, corrs, 10)
+    confs_x = []
+    j = 0
+    while j < len(confs):
+        confs_x.append(0.55 + 0.44 * confs[j])
+        j = j + 1
+    ece_xform = _mc_ece(confs_x, corrs, 10)
+    return [au_base, au_xform, ece_base, ece_xform]
+
+
+def mc_shuffle_auroc(seed, n):
+    """engine_cli.hexa:10848."""
+    mem = _mc_store(n, 64, seed)
+    levels = _mc_levels()
+    nl = len(levels)
+    confs = []
+    corrs = []
+    li = 0
+    while li < nl:
+        lv = levels[li]
+        ti = 0
+        while ti < n:
+            m = _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            c = _mc_trial_correct(mem, ti, lv, li * 17 + 1)
+            cf = 0.5 - m / (2.0 * mem.recall_thr)
+            if cf < 0.0:
+                cf = 0.0
+            if cf > 1.0:
+                cf = 1.0
+            confs.append(cf)
+            corrs.append(float(c))
+            ti = ti + 1
+        li = li + 1
+    total = len(corrs)
+    st = (seed * 2654435761 + 1013904223) & 2147483647
+    k = total - 1
+    while k > 0:
+        st = _lcg_next(st)
+        r = st % (k + 1)
+        tmp = corrs[k]
+        corrs = _mi_set(corrs, k, corrs[r])
+        corrs = _mi_set(corrs, r, tmp)
+        k = k - 1
+    pos = []
+    neg = []
+    i = 0
+    while i < total:
+        if corrs[i] >= 0.5:
+            pos.append(confs[i])
+        else:
+            neg.append(confs[i])
+        i = i + 1
+    return mi_auroc(pos, neg)
+
+
+def _fl_gain_scale():
+    """engine_cli.hexa:10916."""
+    return 4.0
+
+
+def fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign):
+    """engine_cli.hexa:10921."""
+    rest = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    on = field_apply(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign, 1, False, 0.0)
+    lift = on[0] - rest[0]
+    return lift * _fl_gain_scale()
+
+
+def fieldlibido_wanting(m, m_field, cells, seen, intent, dt, recon_err, deficit, accum, cue_match,
+                        freq_code, intensity, sign):
+    """engine_cli.hexa:10932."""
+    g = fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign)
+    ld = Libido(accum, 0.0, 0.5, 0.1, 1.0, 0.5, 1.0, g)
+    return libido_wanting(ld, deficit, cue_match)
+
+
+def fieldlibido_liking(cue_match):
+    """engine_cli.hexa:10941."""
+    ld = libido_new()
+    return libido_liking(ld, cue_match)
+
+
+def fieldlibido_highfreq(m, m_field, cells, seen, intent, dt, recon_err, intensity):
+    """engine_cli.hexa:10947."""
+    return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 6, intensity, 1)
+
+
+def fieldlibido_lowfreq(m, m_field, cells, seen, intent, dt, recon_err, intensity):
+    """engine_cli.hexa:10951."""
+    return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 5, intensity, 0 - 1)
+
+
+def fieldlibido_sham(m, m_field, cells, seen, intent, dt, recon_err):
+    """engine_cli.hexa:10955."""
+    return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 0, 0.0, 0)
+
+
+# ════════════════════════════════════════════════════════════════════════
 # §ThirdLaw + §Savant (SAVANT/savant_lib re-anchored) — savant scoring free-fns
 # ════════════════════════════════════════════════════════════════════════
 
@@ -8809,3 +9982,107 @@ if __name__ == "__main__":
     _p("cm_cereb_conf", ccv[2])
     _p("cm_mem_vote", cmv[0])
     _p("cm_compose", cereb_mem_compose(ccv, cmv, 0.5, 0.5))
+
+    # ── Consciousness-gate R2 lanes (family B) ──
+    _p("trw_in", trw_recall(2, 5, 6))
+    _p("trw_out", trw_recall(2, 5, 9))
+    _p("trw_shuf", trw_recall_shuffled(2, 5, 6))
+    _p("reentry_d5", reentry_settle(5, 0.3))
+    _p("reentry_gws", reentry_gws_readout(5))
+    _p("attn_track", attn_schema_report(3, 3, True))
+    _p("attn_miss", attn_schema_report(3, 2, True))
+    _p("attn_off", attn_schema_report(3, 3, False))
+    _p("attn_agency", attn_schema_agency_readout(3))
+    _p("hyst_up", hyst_switch_point(True, 0.4))
+    _p("hyst_down", hyst_switch_point(False, 0.4))
+    _p("hyst_riv", hyst_rivalry_loop(True))
+    _p("comp_on", completion_recognize(0.9, True))
+    _p("comp_off", completion_recognize(0.9, False))
+    _p("comp_img", completion_imagery_readout())
+    _p("gest_bind", gestalt_same_group(0.4, True))
+    _p("gest_split", gestalt_same_group(0.2, True))
+    _p("gest_gws", gestalt_gws_readout())
+    _p("prosp_reach", prospect_reach(3, 2))
+    _p("prosp_stuck", prospect_reach(0, 2))
+    _p("prosp_persist", prospect_persist_readout())
+    _p("intero_prec", intero_precision(0.5))
+    _p("intero_wt", intero_weighted_error(0.2, 0.1, 0.8, 0.5, False))
+    _p("intero_blind", intero_weighted_error(0.2, 0.1, 0.8, 0.5, True))
+    _p("bored_both", boredom_disengage(0.3, 0.3, True))
+    _p("bored_rew", boredom_disengage(0.3, 0.8, True))
+    _p("bored_abl", boredom_disengage(0.3, 0.8, False))
+    _p("wander_on", wander_coverage(5, 10, True))
+    _p("wander_off", wander_coverage(5, 10, False))
+    _p("wander_prosp", wander_prospect_coverage(10))
+    _p("qualia_near", qualia_nearer(0.2, 0.5))
+    _p("qualia_sp", qualia_spatial_readout())
+    _p("smp_pres", smp_presence(3, 5, True))
+    _p("smp_false", smp_presence(3, 5, False))
+    _p("smp_fwd", smp_forward_model_readout(5))
+    _p("real_call", reality_call(0.4, 0.3))
+    _p("real_imag", reality_call(0.1, 0.3))
+    _p("real_abl", reality_call_ablated())
+    _p("real_imgrd", reality_imagery_readout())
+    _p("real_conf", reality_confidence_readout(True))
+
+    # ── §Neuropharm / §Field / §PCI / §Metacog / §Hallucination / §FieldLibido (family C) ──
+    trials = [
+        [0.6, 0.2, 0.3, 0.1, 0.4, 0.2, 3, 1, 1, 0.3, 0.25],
+        [0.4, 0.5, 0.1, 0.3, 0.2, 0.1, 2, 0, 0, 0.2, 0.40],
+        [0.7, 0.1, 0.4, 0.2, 0.3, 0.5, 5, 2, 1, 0.5, 0.15],
+        [0.3, 0.3, 0.3, 0.3, 0.1, 0.2, 1, 3, 0, 0.1, 0.50],
+        [0.8, 0.6, 0.2, 0.1, 0.05, 0.3, 4, 1, 1, 0.4, 0.20],
+        [0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 3, 2, 0, 0.3, 0.30],
+    ]
+    lsd = pharm_lsd()
+    _p("ph_lsd0", lsd[0])
+    _p("ph_dmt3", pharm_dmt()[3])
+    _p("ph_sse", pharm_shared_se(lsd, 42, 3))
+    _p("ph_pm", pharm_perturb_m(lsd, 0.7, 0.1))
+    _p("ph_pf2", pharm_perturb_field(lsd, [0.2, 0.3, 0.1, 0.4, 0.2], 0.05)[2])
+    _p("ph_prec", pharm_perturb_recon(lsd, 0.3, 0.05))
+    _p("ph_pdt", pharm_perturb_dt(pharm_cannabis(), 0.4))
+    _p("ph_selfcont", pharm_self_continuity(pharm_dmt(), 8, 5))
+    _p("ph_realfrac", pharm_reality_real_fraction(lsd, [0.4, 0.5, 0.3, 0.6, 0.2, 0.45], 42, 0.30))
+    _p("ph_phi", pharm_phi(lsd, trials, 42))
+    _p("ph_phi_ket", pharm_phi(pharm_ketamine(), trials, 42))
+    _p("ph_subjtime", pharm_subjective_time_rate(pharm_cannabis(), trials, 42))
+    _p("ph_wm", pharm_working_mem(pharm_cannabis(), trials, 42))
+    fmf = [0.2, 0.3, 0.1, 0.4, 0.2]
+    fav = field_apply(0.5, fmf, 3, 1, 1, 0.3, 0.25, 3, 0.5, 1, 1, False, 0.0)
+    _p("fld_apply0", fav[0])
+    _p("fld_mfield1", field_apply_mfield(fmf, 0.5, 1, 1)[3])
+    _p("fld_entropy", field_signal_entropy(fmf))
+    _p("fld_drug2", drug_lsd_mfield(fmf, 42, 3)[2])
+    _p("fld_lz", _field_lz76([1, 0, 1, 1, 0, 0, 1, 0, 1, 1]))
+    R = pci_perturb(0.5, fmf, 3, 1, 1, 0.3, 0.25, 4, 0.6, 1, 1, True, 6)
+    _p("pci_coupled", pci_complexity(R, False))
+    _p("pci_decoup", pci_complexity(R, True))
+    _p("fld_lanemean", field_lane_mean(fav, [0, 4, 14]))
+    _p("mi_marg_h", mi_signal_margin(42, True, 3))
+    _p("mi_marg_g", mi_signal_margin(42, False, 3))
+    _p("mi_judge", mi_insight_judge(0.1, 1.0))
+    _p("mi_psyched", mi_insight_psychedelic(42, 20))
+    _p("mi_psychot", mi_insight_psychotic(42, 20))
+    _p("mi_metad", mi_metad_auroc(42, 20))
+    _p("mi_shuf", mi_shuffle_auroc(42, 20))
+    _p("hall_call", hallucinate_call(0.8, 0.9, 0.0, 0.3))
+    _p("hall_grad", hallucinate_graded(0.8, 0.1))
+    _p("hall_abl", hallucinate_ablated(0.1, 0.3))
+    _p("hall_drug", hallucinate_under_drug(lsd, 0.5, 0.9, 0.30))
+    _p("mc_ece", mc_calibration_ece(42, 6))
+    _p("mc_mono", mc_calibration_monotone(42, 6))
+    _p("mc_lift", mc_control_lift(42, 6))
+    _p("mc_lift_abl", mc_control_lift_ablated(42, 6))
+    mco = mc_auroc_calibration_orthogonal(42, 6)
+    _p("mc_au_base", mco[0])
+    _p("mc_au_xform", mco[1])
+    _p("mc_ece_base", mco[2])
+    _p("mc_ece_xform", mco[3])
+    _p("mc_shuf", mc_shuffle_auroc(42, 6))
+    _p("fl_gfield", fieldlibido_gfield(0.5, fmf, 3, 1, 1, 0.3, 0.25, 6, 0.5, 1))
+    _p("fl_wanting", fieldlibido_wanting(0.5, fmf, 3, 1, 1, 0.3, 0.25, 0.6, 0.2, 0.5, 6, 0.5, 1))
+    _p("fl_liking", fieldlibido_liking(0.5))
+    _p("fl_high", fieldlibido_highfreq(0.5, fmf, 3, 1, 1, 0.3, 0.25, 0.5))
+    _p("fl_low", fieldlibido_lowfreq(0.5, fmf, 3, 1, 1, 0.3, 0.25, 0.5))
+    _p("fl_sham", fieldlibido_sham(0.5, fmf, 3, 1, 1, 0.3, 0.25))

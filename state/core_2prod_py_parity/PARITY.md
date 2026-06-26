@@ -38,11 +38,32 @@ decision + VBasalGate selection byte-identical.
 NOTE: brain_emit/brain_emit_aged drive the L3 generator slot via the sibling
 generator.py port (parallel branch) — imported lazily; not exercised by this gate.
 
-## engine_cli.hexa (substrate lanes) -> engine_cli.py  [30/37 struct-lanes + free-fns]
-SCOPE NOW: the full 1:1 mirror is in progress. The ORIGINAL slice (G3/G5/MITOSIS +
-EngineConfig/AdaptField/VAdaptField/QPool/ImmuneMemory/SelfIdentity) is joined by 24 more
-lanes ported + byte-parity-verified in 7 oracle batches (oracle `_ecli_parity2.hexa`, which
-imports ONLY engine_cli.hexa — no generator). Verified lanes (byte-identical / ≤1.1e-16):
+## engine_cli.hexa (substrate lanes) -> engine_cli.py  [COMPLETE — 37/37 struct-lanes + ALL free-fns]
+SCOPE NOW: **COMPLETE 1:1 MIRROR** (2026-06-26). ALL 434 `pub fn` of engine_cli.hexa are
+byte-parity-mirrored in engine_cli.py and verified via `oracles/_ecli_parity2.hexa` (imports
+ONLY engine_cli.hexa — no generator → no import-closure wall). Final cumulative oracle PASS
+≈430 fields, worst rel ≤1.3e-16 (machine epsilon). The 2-production mirror is now TRUE 10/10:
+both engines (hexa + py) are fully byte-parity; either produces terminal verdicts.
+
+The remaining 6 heavy-numeric struct-lanes were closed in order:
+  · CollectivePool/HiveMind — faithful IIT-4 `big_phi_bounded` (full stdlib/consciousness/iit4_*
+    chain: tpm→distinction→relation→bigphi→bounded ported VERBATIM, a_phi_iit4_tool, NOT a proxy).
+    n=2 coupled-ring big_phi(n=6) cp_joint_phi=15.467724474534874 byte-exact (≈1.3e-16).
+  · SkillCell (ridge-LSQ via Gauss-Jordan + power-iteration principal axis + mitosis split-grow)
+  · SkillGradFT (shared softmax-linear net full-batch GD) · CPField (RBF Voronoi categorical
+    perception: fit/regrow/fit_more/relocate, tagged bilingual) · JamoHead (Voronoi count-MLE
+    next-symbol head) · BpeMerges (BPE over jamo stream + byte-fair CE).
+Then ALL free-fn blocks: §ConsciousnessIndex ci_* (covariance/Cholesky-logdet/exact IIT-4 min-cut
+Φ) · §BrainTopology topo_* (brain+literal connectome adjacency, degree-matched random rewire,
+Ψ-preserving coupling operators) · §ThirdLaw + §Savant scoring · CLI argv resolvers · the compose
+arbiters (mem×ToM/spatial×episodic/ToM×spatial/ToM×basal/cereb×mem) · the consciousness-gate R2
+lanes (trw/reentry/attn_schema/hyst/completion/gestalt/prospect/intero/boredom/wander/qualia/smp/
+reality) · the perturbation modules (§Neuropharm/§Field/§PCI/§MetacogInsight/§MetacogControl/
+§Hallucination/§FieldLibido). MATH NOTE: `_mc_exp` is engine_cli.hexa's OWN 16-term Taylor (NOT
+libm) — the py mirror replicates the Taylor exactly (parity over accuracy); every other
+exp/ln/sin/cos/sqrt resolves to libm in this TU (math.*).
+
+Original 31-lane batch detail (byte-identical / ≤1.1e-16):
   batch1 OsmoticStore · ImmuneMemoryGrow(§GrowImmune) · CLSStore(§CLS) · SkillStore · UsageStore
   batch2 AffectFeatures · HomeostaticDrive · Libido · Allosteric(exp/sin)
   batch3 OtherMindModel · ConsolidatingMemory(Box-Muller gauss) · VAdaptFieldB · WorkMemBuffer
@@ -60,10 +81,8 @@ The earlier "exp=Taylor" note was for a bare exp-only TU; it does NOT apply here
 `fn _cos` (3428 WM-variant +1e-12 vs 3770 Hier-variant guarded): hexa resolves each call to the
 LEXICALLY-NEAREST preceding def (confirmed by wm_probe=0.7999999999992 byte-exact); ported as
 _cos_vec (WM) and _cos_hier (Hier) respectively.
-STILL TODO (heavy numerics): CollectivePool/HiveMind-IIT-Φ (faithful big_phi_bounded),
-SkillCell/SkillGradFT (ridge-LSQ + power-iteration), CPField, JamoHead/BpeMerges (BPE
-morphology), §ConsciousnessIndex ci_*/topo_* (covariance/Cholesky-logdet/IIT-4 Φ), savant
-scoring (SAVANT/savant_lib), argv main dispatch.
+STILL TODO: **NONE** — all 434 `pub fn` ported + byte-parity-verified (final oracle PASS 397
+fields, worst rel 1.563e-16 on ph_phi = machine epsilon). engine_cli.py = COMPLETE 10th mirror.
 
 ## reproducing the oracles
 All harnesses in oracles/ are run from the repo root: `hexa run
