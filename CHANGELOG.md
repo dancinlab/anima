@@ -1,3 +1,10 @@
+## fix(autotag): release.yml 트리거 배선 — GitHub Release 가 안 발행되던 끊긴 트리거 복구 (hexa-lang 참고)
+
+직전 `release.yml`(install-smoke → GitHub Release)을 신설했으나 **한 번도 실행되지 않았다**. 원인: autotag 가 `GITHUB_TOKEN` 으로 태그를 푸시하는데 **GitHub 의 loop 방지 규칙상 GITHUB_TOKEN 이 푸시한 태그는 다른 워크플로(`release.yml` on: push tags v*)를 재트리거하지 않는다**. 결과 — git 태그는 v3.57.x 까지 갱신되는데 GitHub Release 는 v0.13.1(6/19)에 STUCK, `release.yml` 실행 0회. install.hexa 는 태그 기반이라 `hx install` 자체는 최신 코드를 받았지만 Release **객체**가 stale.
+
+- **`autotag.yml` 에 `gh workflow run release.yml -f tag=$next` dispatch 추가** (hexa-lang autotag 패턴): 태그 푸시 직후 `workflow_dispatch` 로 release.yml 을 명시 발사 → 그 태그에 GitHub Release 발행. `permissions: actions: write` + step `GH_TOKEN` env 추가. 이제 feat/fix/perf 태그마다 install-smoke(ubuntu+macos) 통과 후 Release 가 실제로 발행된다.
+- **backfill**: 현재 최신 태그에 release.yml 을 수동 dispatch 해 Release 를 즉시 최신화.
+
 ## ci(autotag): 릴리즈 빈도 게이트 — release-worthy 커밋(feat/fix/perf/BREAKING)에만 태그 (hexa-lang 참고)
 
 직전 `release.yml` 신설로 매 `v*` 태그가 GitHub Release 를 발행하는데, `autotag.yml` 이 **매 main push 를 최소 patch 로 태그**(docs 한 줄 고쳐도 v* 태그)했다 → 결과적으로 **수정마다 자동 릴리즈**(릴리즈 노이즈 + 매 머지 macOS CI 분 소모). hexa-lang autotag 패턴을 정답지로 맞춤(reference-match).
