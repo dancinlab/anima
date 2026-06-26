@@ -228,6 +228,40 @@ def g2_violations():
     return bad
 
 
+# G3 — gate-card taxonomy invariant: PROVENANCE ⊥ capability PASS closure.
+# The 'G4 빵꾸' fix (검증방식 3-카드: CAPABILITY decode / SUBSTRATE read / PROVENANCE publish).
+# The decode-CAPABILITY PASS closure (a7b_pass = G0∧G1∧G2) MUST NEVER fold in the PROVENANCE
+# gate (G4 = sha256/HF/recovery = publish-process, N/A to decode) — that is the hole that made
+# the flat G0-G6 scorecard punch out at G4. Mechanically: in the 2-production g_gates.{py,hexa},
+# every `closure =` assignment must NOT reference the provenance result (r4/g4/prov), and
+# provenance must stay DOWNSTREAM (consume closure as publish-eligibility, not gate it).
+# Current code already complies (closure = r0∧r1∧r2; g_eval_g4(ckpt, closure) reads it after) —
+# this locks the redesign so the hole cannot reappear. NO bypass (c18).
+GATECARD_FILES = ("core/g_gates.py", "core/g_gates.hexa")
+CLOSURE_ASSIGN = re.compile(r"^\s*(?:let\s+)?closure\s*=")
+PROV_IN_CLOSURE = re.compile(r"\b(r4|g4|prov)", re.IGNORECASE)
+
+
+def g3_violations():
+    viols = []
+    for rel in GATECARD_FILES:
+        p = REPO / rel
+        if not p.is_file():
+            continue  # tolerate absence (fresh repo); presence of one engine is enough
+        lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+        # closure assignments, excluding the g_eval_g4(ckpt, closure) call (which correctly
+        # passes closure INTO provenance — the right direction, not a fold-in).
+        assigns = [ln for ln in lines if CLOSURE_ASSIGN.match(ln) and "g_eval_g4" not in ln]
+        if not assigns:
+            viols.append((rel, "no `closure =` capability scorecard found — 3-card gate structure missing"))
+            continue
+        for ln in assigns:
+            rhs = ln.split("=", 1)[1] if "=" in ln else ln
+            if PROV_IN_CLOSURE.search(rhs):
+                viols.append((rel, f"PROVENANCE folded into PASS closure (re-opens the G4 빵꾸): {ln.strip()}"))
+    return viols
+
+
 def main():
     all_mode = "--all" in sys.argv[1:]
     if not HYP.is_file():
@@ -239,9 +273,10 @@ def main():
 
     g1 = g1_violations(rows, scope)
     g2 = g2_violations()  # always whole-repo; cheap structural invariant
+    g3 = g3_violations()  # always whole-repo; gate-card taxonomy invariant (PROVENANCE ⊥ closure)
 
-    if not g1 and not g2:
-        print(f"✅ anima-gates: clean · scope={scope_label} · {len(rows)} hypotheses")
+    if not g1 and not g2 and not g3:
+        print(f"✅ anima-gates: clean · scope={scope_label} · {len(rows)} hypotheses · gate-card invariant OK")
         return 0
 
     print("❌ anima-gates: VIOLATION (CLAUDE.md 하드-게이트 code-level block)")
@@ -261,6 +296,14 @@ def main():
         for f in g2:
             print(f"        · {f}")
         print("     → 코드/결과물은 state/<slug>/ 로 옮기고 jsonl artifacts 로 가리킨다.")
+    if g3:
+        print()
+        print("  [G3] gate-card taxonomy (PROVENANCE ⊥ capability closure) — "
+              "G4(provenance/publish)가 디코드-능력 PASS closure 에 끼어듦 (= G4 빵꾸 재발):")
+        for rel, msg in g3:
+            print(f"        · {rel}: {msg}")
+        print("     → closure 는 디코드-CAPABILITY(G0∧G1∧G2)만; PROVENANCE(G4)는 downstream "
+              "publish-eligibility 로만 (g_eval_g4(ckpt, closure)). 3-카드 분리 유지. (no bypass — c18)")
     return 1
 
 
