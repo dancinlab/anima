@@ -1,3 +1,15 @@
+## refactor(gates): 통과규칙 단일 SSOT = ARCHITECTURE.json (7B_PASS_CONDITIONS.md 흡수·제거) + 통과/추가평가 2-tier 설계
+
+owner 결정(2026-06-27): 평평한 `G0-G6` 통과규칙을 **통과(closure·must-pass) vs 추가평가(reported·non-blocking)** 2-tier 로 재설계하고, frozen 임계·이름·분류를 **ARCHITECTURE.json 한 곳**(`G-게이트 평가 시스템` 노드)에 단일 SSOT 로 통합. 별도 `7B_PASS_CONDITIONS.md` 제거(이력 git).
+
+- **통과(PASS=closure, MUST)** = C1 또박(G0) ∧ C2 재조합(G1) ∧ C3 새말(G2) = `a7b_pass`/`pub_eligible`(PUBLIC-eligible). 디코드-채점.
+- **추가 평가(reported, 통과 안 막음)** = C4 착상★(G6) · S1 균형(G3) · S2 정직(G5) · P 출처(G4). 검증방식(디코드/엔진-읽기/출판)은 각 게이트의 **태그**(모든 게이트를 한 분류에 욱여넣지 않음 — owner "3카드에 굳이 안 넣어도 돼").
+- **G4 빵꾸 해소**: P(출처)는 출판-게이트(eval 밖) → 디코드 점수표 N/A 구멍 0. closure 에 fold-in 금지 = `tool/enforce_anima_gates.py` G3 코드차단(c18, #2640).
+- **frozen 임계 보존**: ARCHITECTURE `frozen 임계` 노드가 verbatim 정본(C1~P 전 게이트 bar + anti-Goodhart + 판정), p7 NOT tune-to-green. 1바이트도 안 바꿈.
+- **lockstep repoint**: core/g_gates.{hexa,py}·cli/anima.hexa(VERBATIM provenance) + CLAUDE.md(a7b_pass + 3 포인터) + README(G0-G6 scoreboard → 통과/추가평가) + CONDITIONS.md + harness.config docs.allow → 전부 ARCHITECTURE SSOT 로. LIVE 참조 0.
+- 트리분리(c4): 통과/추가평가 그룹 아래 C1·C2·C3 / C4·S1·S2·P 각각 잎 노드.
+- C4 착상 노드에 H_1596 L1 측정-artifact 경고 박제: fals detector comparator/measurable 셋이 영어·ASCII-only → 손글씨 명백-반증가능 10개 중 4개 false-reject(40%) → h1129 fals=0 이 모델 무능인지 탐지기 artifact 인지 조사중(verdict-integrity).
+
 ## feat(enforce): G3 gate-card 불변식 — PROVENANCE ⊥ 디코드-능력 PASS closure 코드강제 (G4 빵꾸 재발 차단)
 
 `tool/enforce_anima_gates.py` 자체 하네스(이미 harness verify.checks `anima-gates` 배선·exit-nonzero 기계차단·no-bypass c18)에 **G3 check** 추가. 평평한 `G0-G6` 한 묶음은 검증방식이 섞여 **G4(provenance/publish)가 디코드 점수표의 N/A 구멍("빵꾸")**이 됐다 → 검증방식 3-카드(CAPABILITY 디코드-채점 / SUBSTRATE 엔진-읽기 / PROVENANCE 출판)로 가르고, 그 **핵심 구조 불변식을 코드로 못박음**:

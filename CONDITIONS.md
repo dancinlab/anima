@@ -2,7 +2,7 @@
 
 > SSOT for "what DONE means" per domain, and the plan to fire **all combinations at
 > the 303M sweet spot**. Frozen, deterministic, p7 (NOT perplexity, NOT LLM-judge).
-> Companion to `/7B_PASS_CONDITIONS.md` (the 7B gate set), `DOMAINS.tape` (roster),
+> Companion to the ARCHITECTURE.json `G-게이트 평가 시스템` 노드 (the 7B/통과규칙 gate set), `DOMAINS.tape` (roster),
 > `VERSIONS.md`, and `SIZE.md` (why 303M). Author conditions in English; never fake a
 > gate (a_paper_negative_ok). Roster = ~40 domains; grouped into 7 clusters below.
 

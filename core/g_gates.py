@@ -7,7 +7,7 @@ mouth, load lifted out of the per-decode loop for the ~49 G0-G6 decodes).
 
   gen_auto_ideate(.clm) -> gen_clm_ideate -> clm_decode_topk_sampled(...)   [generator L3]
 
-FROZEN-FIRST bars (7B_PASS_CONDITIONS.md VERBATIM, p7 — NO tune-to-green):
+FROZEN-FIRST bars (ARCHITECTURE.json frozen-ìê³ SSOT VERBATIM, p7 — NO tune-to-green):
   G0 COHERENCE     kwr>=0.50 on >=4/5 single-concept gens
   G1 RECOMBINATION some k: composed_distinct>=2 AND >max_single AND coherent
   G2 NOVELTY       >=3 distinct coherent corpus-absent n-grams AND control=0
@@ -119,7 +119,7 @@ def _g_coverage(text):
     return covered
 
 
-# G1 RECOMBINATION — frozen definition (7B_PASS_CONDITIONS / a7b_pass / H_1129):
+# G1 RECOMBINATION — frozen definition (ARCHITECTURE.json frozen-ìê³ SSOT / a7b_pass / H_1129):
 # for some k in {2,3,4,5}: composed_distinct >= 2 AND > max_single AND coherent(kwr>=0.50).
 # base_seed parameterizes the RNG so the SAME frozen ladder can be re-run over several
 # seeds (g_eval_g1_multiseed below); base_seed=7 reproduces the original single-seed path
@@ -353,7 +353,7 @@ def g_eval_g3():
 
 
 # ════════════════════════════════════════════════════════════════════════
-# G4 — PROVENANCE & RECOVERY  (7B_PASS_CONDITIONS.md §G4 VERBATIM — a_hf_*, a_fire_recover)
+# G4 — PROVENANCE & RECOVERY  (ARCHITECTURE.json frozen-ìê³ SSOT §G4 VERBATIM — a_hf_*, a_fire_recover)
 # ════════════════════════════════════════════════════════════════════════
 # Lockstep mirror of g_gates.hexa::g_eval_g4. STRUCTURAL/process gate (not a decode score):
 # witness the locally-measurable provenance — ckpt sha256 (the §G4 fact named FIRST), byte
