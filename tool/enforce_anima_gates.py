@@ -58,6 +58,39 @@ CORE_DECODE = re.compile(
 )
 DIRECTIONAL = re.compile(r"DIRECTIONAL", re.IGNORECASE)
 
+# 2-production (a_engine_native_learning): the py engine is a CO-EQUAL production engine
+# and CAN bank a terminal G-gate verdict — but ONLY when its SCORING is byte-parity-verified
+# against the WIRED hexa single-entry (cli/anima.hexa eval → core/g_gates.hexa → generator L3).
+# Decode-only byte-parity is NOT enough: a py side-harness that calls clm_decode_* directly and
+# scores with g_gates.py bypasses generator L3, so its G1/G6 numbers can DRIFT from the wired
+# engine (precedent 2026-06-26 clm303_clean: side-harness G1/G6 FAIL @gen=40 was a gen-budget +
+# unverified-scoring artifact). A parity-record = a state/<slug>/ evidence file proving the py
+# G0-G6 SCORING == the wired hexa on a shared ckpt (e.g. golden d768, which hexa runs w/o OOM).
+PARITY_RECORD = re.compile(
+    r"(byte-?parity|scoring[- ]?parity|parity[- ]?gate).{0,400}(PASS|identical|byte-identical)"
+    r"|wired.{0,200}(hexa|anima\s+eval).{0,200}(==|≡|identical|match)",
+    re.IGNORECASE | re.DOTALL,
+)
+# side-harness signature: a .py that DIRECTLY invokes a decode/ideate fn (bypassing the wired
+# cli/anima.hexa single entry) → py production-engine measurement, needs a parity-record.
+SIDE_HARNESS = re.compile(
+    r"clm_decode_(topk_sampled|argmax|grounded)(_W)?\s*\(|gen_clm_ideate|bytegpt_decode_\w+\s*\("
+)
+
+
+def has_parity_record(slug, arts):
+    """True iff a state/<slug>/ evidence file (or listed artifact) records a SCORING byte-parity
+    PASS vs the wired hexa engine — the 2-production gate that lets a py-engine verdict be terminal."""
+    cands = [a for a in arts if a.startswith("state/")]
+    sd = REPO / "state" / slug
+    if sd.is_dir():
+        cands += [str(p.relative_to(REPO)) for p in sd.glob("*.txt")]
+        cands += [str(p.relative_to(REPO)) for p in sd.glob("*.md")]
+    for c in set(cands):
+        if grep_file(c, PARITY_RECORD):
+            return True
+    return False
+
 
 def sh(args):
     try:
@@ -163,7 +196,14 @@ def g1_violations(rows, scope):
                 break
         if not torch_side:
             continue  # neither engine-native-CORE nor torch-side .py → out of mechanical scope
-        # DIRECTIONAL labeled (honest torch-side) → compliant
+        # 2-PRODUCTION exception (a_engine_native_learning): a py-engine (numpy/torch) terminal
+        # G-gate verdict IS allowed — but ONLY with a byte-parity record proving the py SCORING
+        # == the WIRED hexa single-entry on a shared ckpt. This is what BLOCKS a side-harness
+        # (py g_gates.py calling clm_decode_* directly, bypassing cli/anima.hexa → generator L3)
+        # from banking a terminal verdict it never verified.
+        if has_parity_record(slug, arts):
+            continue
+        # DIRECTIONAL labeled (honest unverified torch/py-side) → compliant
         labeled = bool(DIRECTIONAL.search(tier))
         card = d.get("card", "")
         if card and not labeled:

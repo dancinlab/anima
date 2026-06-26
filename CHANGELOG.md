@@ -6629,3 +6629,9 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - **2-production 실증**: `core/clm_decode.py`(+`g_gates.py`·`g6_ideation.py`) = `core/clm_decode.hexa` 의 byte-faithful 1:1 포팅(정답지=clm_decode.hexa+stdlib/flame+runtime.c, 드리프트 미러 g6_common/gauge_lib 재사용 0). byte-parity 게이트 PASS — golden d768 decode byte-identical + CE 15자리(Δ=4e-16), 303M clm303_clean argmax "band"/topk "back" hexa≡py. a_engine_native_learning 2-production 정책이 aspirational→실증.
 - **clm303_clean G0-G6 (engine-native via py mouth, gen=40, frozen bars)**: G0 또박또박 PASS 5/5 · G1 recombination FAIL(max_single=0) · G2 novelty PASS(corpus=로컬proxy=DIRECTIONAL) · G5-L1 PASS · G6 fals=0 FAIL → **a7b_pass=G0∧G1∧G2=FAIL**. clm303_clean=coherent+novel이나 recombination 능력벽(H_1129/1139 scale-invariant 천장 일치). 증거=state/clm303_clean_corpus/g0g6_py.txt. 3일 막힌 측정(hexa bump-allocator OOM) 우회=py 엔진(torch free).
 - **CI**: blacksmith-ci commons 규칙 준수 — ci.yml 전 잡 Blacksmith 러너(hexa-engine=macos-15·lint/json=ubuntu-2204).
+
+## 2026-06-26 — side-harness 차단: 권위평가=실제 anima CLI ONLY + 2층 코드강제
+- **정정(c9)**: clm303_clean G0-G6 = terminal 아니라 DIRECTIONAL. py 측정이 (1) side-harness(g_gates.py→clm_decode_* 직접, generator L3 우회) (2) G1/G6 채점 wired CLI 미대조(decode만 byte-parity) (3) gen=40 = h1129 native 80/120 보다 짧은 budget artifact. 이전 "terminal-grade" 보고 철회.
+- **권위 평가 = 실제 `anima` CLI 바이너리 ONLY** (`anima eval`, 배포산출물). 소스-run 차선, py side-harness는 verdict 아님(CLI와 byte-parity 미러일 뿐). CLAUDE.md a_engine_native_learning 박제.
+- **2층 기계강제**: (verdict) `tool/enforce_anima_gates.py` — py-엔진 terminal G-verdict은 parity-record 必 없으면 PR 차단 · (code) `tool/parity_gate.py` (CI hexa-engine 잡) — 매 PR golden d768 `anima eval` ⇄ `core/g_gates.py` G0-G6 byte-동일 강제, drift=CI red.
+- **NEXT(진짜 fix)**: g_gates.hexa load-once-hoist(W 1회 로드→gen_auto_ideate_W) → cli single-entry가 303M OOM 없이 평가 → clm303 terminal을 실제 anima CLI로 재측정.
