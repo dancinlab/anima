@@ -140,11 +140,61 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install hexa toolchain (released binary)
+      - name: Compute weekly cache-rotation key
+        id: cachekey
+        shell: bash
+        run: echo "week=$(date -u +%Y-%V)" >> "$GITHUB_OUTPUT"
+
+      # ── 캐시 ① 의 toolchain (~/.hx) — 이 잡은 install *무결성* 게이트가 아니라
+      # engine compile/smoke 게이트라 toolchain 캐시 OK (release.yml install-smoke 와
+      # 다름: 거기선 fresh install 가 게이트라 ~/.hx 캐시 금지). 주간 회전 키로
+      # hexa-lang 신릴리즈를 1주 내 자동 흡수(태그가 곧 install.sh 가 깔 최신본).
+      - name: Cache — hexa toolchain (~/.hx)
+        uses: actions/cache@v4
+        with:
+          path: ~/.hx
+          key: hx-toolchain-${{ runner.os }}-${{ runner.arch }}-week-${{ steps.cachekey.outputs.week }}
+          restore-keys: |
+            hx-toolchain-${{ runner.os }}-${{ runner.arch }}-
+
+      # ── 캐시 ② 의 warm-compile (~/.hexa-cache) — 진짜 병목(엔진 import-closure
+      # compile ~12.7min/run 의 aprime_cc codegen). core/** + cli/** 소스 해시로 키 →
+      # 엔진 소스 불변이면 hit(컴파일 스킵), 소스 변경이면 정확히 miss(재컴파일). hexa
+      # 자체 캐시 해시에 toolchain 바이너리가 섞여 toolchain 변경 시 자연 miss(오염無).
+      - name: Cache — hexa warm compile (~/.hexa-cache)
+        uses: actions/cache@v4
+        with:
+          path: ~/.hexa-cache
+          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**') }}
+          restore-keys: |
+            hexa-cache-${{ runner.os }}-${{ runner.arch }}-
+
+      # toolchain 설치 + 캐시 VALIDITY 가드 → fresh fallback.
+      # 캐시된 ~/.hx 가 stale/broken(잘못된 버전·깨진 바이너리)이면 rm -rf 후
+      # canonical fresh curl-install 로 강등(NEVER 잘못된 toolchain 으로 진행).
+      # install.sh 는 idempotent — 캐시 hit 면 재확인만, 가드 fail 시 cold 재설치.
+      - name: Install hexa toolchain (released binary · cache-validity guarded)
         shell: bash
         run: |
           set -euo pipefail
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+          fresh_install() {
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+          }
+          probe() {  # hexa run 은 실파일이 필요(process-sub 불가) → temp .hexa
+            local td tag="$1"; td="$(mktemp -d)"
+            printf 'fn main(){ print("%s") }\n' "$tag" > "$td/probe.hexa"
+            local r; r="$("$HOME/.hx/bin/hexa" run "$td/probe.hexa" 2>/dev/null || true)"
+            rm -rf "$td"; printf '%s' "$r" | grep -q "$tag"
+          }
+          fresh_install
+          # VALIDITY: 복원된(또는 방금 깐) toolchain 이 실제로 도는지 tiny smoke.
+          # 깨졌으면(캐시 corruption) stale ~/.hx + warm-cache 제거 후 fresh 재설치.
+          if ! probe "hx_ok"; then
+            echo "::warning::cached/installed hexa toolchain failed validity smoke — purging ~/.hx + ~/.hexa-cache, fresh re-install"
+            rm -rf "$HOME/.hx" "$HOME/.hexa-cache"
+            fresh_install
+            probe "hx_ok2" || { echo "::error::fresh hexa toolchain still broken"; exit 1; }
+          fi
           echo "$HOME/.hx/bin" >> "$GITHUB_PATH"
 
       - name: Sanity — hexa runs
@@ -156,7 +206,11 @@ jobs:
 
       # 엔진 compile 게이트 — production import-closure 가 컴파일되는지(syntax/codegen
       # drift 차단). 임시 진입파일을 repo 루트에 두어 "core/…" import 가 해소됨.
-      - name: Compile gate — production engine import-closure
+      # warm-compile 캐시 STALE 가드 → cold 재컴파일 fallback. GPU_RUNBOOK 의 stale
+      # ~/.hexa-cache 트랩(중단된 compile 의 빈/12-byte 바이너리가 캐시히트 → degenerate
+      # 출력) 재발 방지: compile 산출이 정상 마커("engine compile OK")가 아니면 해당
+      # hexa_run.* 를 rm 후 cold 재컴파일. 캐시는 속도만 바꾸고 정답은 불변.
+      - name: Compile gate — production engine import-closure (stale-cache guarded)
         shell: bash
         run: |
           set -euo pipefail
@@ -169,7 +223,16 @@ jobs:
           import "core/engine_cli.hexa"
           fn main() { print("engine compile OK") }
           HX
-          hexa run _ci_engine_compile.hexa
+          out="$(hexa run _ci_engine_compile.hexa 2>&1 || true)"
+          if ! printf '%s' "$out" | grep -q "engine compile OK"; then
+            echo "::warning::engine compile produced degenerate output (stale ~/.hexa-cache trap) — purging warm cache + cold recompile"
+            printf '%s\n' "$out" | tail -20
+            rm -f "$HOME"/.hexa-cache/hexa_run.* 2>/dev/null || true
+            out="$(hexa run _ci_engine_compile.hexa 2>&1)"
+            printf '%s' "$out" | grep -q "engine compile OK" \
+              || { echo "::error::engine import-closure compile FAILED even after cold recompile"; printf '%s\n' "$out" | tail -40; rm -f _ci_engine_compile.hexa; exit 1; }
+          fi
+          printf '%s\n' "$out"
           rm -f _ci_engine_compile.hexa
 
       # 거버넌스 enforce (CLAUDE.md 하드게이트 1·6 의 기계강제 — engine-native verdict

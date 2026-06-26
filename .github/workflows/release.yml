@@ -59,6 +59,22 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
 
+      # ── warm-compile 캐시 (~/.hexa-cache) ONLY — 무결성 게이트 보존 ──
+      # 측정(2026-06-26): 이 잡의 18min 중 install.sh+install.hexa(=fresh install 게이트
+      # 본체)는 ~29s 뿐, 나머지 ~16.5min 은 cli/anima.hexa 의 aprime_cc compile 이다.
+      # 그 compile 만 캐시한다 → 무결성 게이트(fresh `hx install`)는 그대로 fresh.
+      # ⛔ ~/.hx (toolchain) 는 캐시하지 않는다 — fresh curl-install 가 a_install_canonical
+      # 의 게이트 본질이라 캐시하면 게이트가 무력화된다.
+      # ✅ ~/.hexa-cache 는 compile *결과* 만 담는다 — "compile reaches" 체크를 가리지
+      #    않는다(소스 변경 → 해시 변경 → miss → fresh compile; compile 실패는 캐시 못 함).
+      - name: Cache — hexa warm compile only (~/.hexa-cache · NOT toolchain)
+        uses: actions/cache@v4
+        with:
+          path: ~/.hexa-cache
+          key: hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**') }}
+          restore-keys: |
+            hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-
+
       - name: Install hexa toolchain (released binary)
         shell: bash
         run: |
@@ -78,15 +94,33 @@ jobs:
           # 다운로드는 best-effort(실패해도 exit≠1) 라 CI 에서 안전.
           HEXA="$(command -v hexa)" hexa run install.hexa
 
-      - name: Single-entry sanity — cli/anima.hexa 컴파일/디스패치
+      - name: Single-entry sanity — cli/anima.hexa 컴파일/디스패치 (stale-cache guarded)
         shell: bash
         run: |
           set -uo pipefail
           # cli/anima.hexa = canonical 단일 진입점. ckpt 없이도 파싱+컴파일+디스패치는
           # 돼야 한다(가중치 의존 동작은 warn-only).
-          hexa run cli/anima.hexa -- --help \
-            || hexa run cli/anima.hexa -- help \
-            || echo "::warning::cli/anima.hexa --help non-zero (weight/arg-dep warn-only) — compile+dispatch reached"
+          # warm-compile 캐시 STALE 가드: GPU_RUNBOOK 의 stale ~/.hexa-cache 트랩(중단된
+          # compile 의 빈/12-byte degenerate 바이너리가 캐시히트 → 빈 출력)을 방지.
+          # compile+dispatch 가 닿으면 'L3 mount' 진단줄을 찍는다(measured 2026-06-26).
+          # 출력이 degenerate(빈/극단 short)면 ~/.hexa-cache 퍼지 후 cold 재컴파일.
+          run_entry() { hexa run cli/anima.hexa -- --help 2>&1 || hexa run cli/anima.hexa -- help 2>&1; }
+          out="$(run_entry)"
+          nbytes=$(printf '%s' "$out" | wc -c | tr -d ' ')
+          if [ "$nbytes" -lt 16 ] || ! printf '%s' "$out" | grep -qiE 'mount|anima|usage|help|mouth'; then
+            echo "::warning::cli/anima.hexa produced degenerate/empty output ($nbytes bytes · stale ~/.hexa-cache trap) — purging warm cache + cold recompile"
+            printf '%s\n' "$out" | tail -20
+            rm -f "$HOME"/.hexa-cache/hexa_run.* 2>/dev/null || true
+            out="$(run_entry)"
+            nbytes=$(printf '%s' "$out" | wc -c | tr -d ' ')
+          fi
+          printf '%s\n' "$out" | tail -20
+          # compile+dispatch 가 닿았으면(출력 존재) OK — 가중치/arg 의존 비-zero 는 warn-only.
+          if [ "$nbytes" -lt 16 ]; then
+            echo "::warning::cli/anima.hexa still degenerate after cold recompile — compile may not have reached dispatch"
+          else
+            echo "compile+dispatch reached ($nbytes bytes output)"
+          fi
 
   # ── ② GitHub Release — install-smoke all-green 일 때만 발행 ──
   github-release:
