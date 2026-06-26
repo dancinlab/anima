@@ -490,6 +490,33 @@ fn _clmd_scratch_free(sc: Map) {
     t_free(to_int(sc["meanN"])); t_free(to_int(sc["invN"])); t_free(to_int(sc["xhatN"]))
 }
 
+// _clmd_weights_free — release every farr tensor in a weight map W returned by
+// _clmd_load (the full 303M weight-set, ~2-3GB host farr per load). The public
+// decode entries reload W per call; without this free, g_eval_all's ~49 decodes
+// across G0-G6 leak one weight-set each → monotonic host RSS → OOM (was the
+// "fix④" symptom; root cause is this missing free, NOT a hexa-lang runtime defect —
+// t_free is a real __libc_free per the L307+ note, so freeing W reclaims the bytes).
+// Mirrors _clmd_scratch_free. Frees the 9 single tensors + 6 per-layer/expert arrays;
+// the d/E/V/K/L/vd scalars are not tensors.
+fn _clmd_weights_free(W: Map) {
+    t_free(to_int(W["ecW"])); t_free(to_int(W["rW"])); t_free(to_int(W["roW"]))
+    t_free(to_int(W["embed"])); t_free(to_int(W["ecB"]))
+    t_free(to_int(W["rB"])); t_free(to_int(W["roB"]))
+    t_free(to_int(W["noG"])); t_free(to_int(W["noB"]))
+    let tcW = W["tcW"]; let mut i = 0
+    while i < len(tcW) { t_free(to_int(tcW[i])); i = i + 1 }
+    let eW = W["eW"]; let mut j = 0
+    while j < len(eW) { t_free(to_int(eW[j])); j = j + 1 }
+    let tcB = W["tcB"]; let mut bi = 0
+    while bi < len(tcB) { t_free(to_int(tcB[bi])); bi = bi + 1 }
+    let eB = W["eB"]; let mut bj = 0
+    while bj < len(eB) { t_free(to_int(eB[bj])); bj = bj + 1 }
+    let tgG = W["tgG"]; let mut ci = 0
+    while ci < len(tgG) { t_free(to_int(tgG[ci])); ci = ci + 1 }
+    let tgB = W["tgB"]; let mut di = 0
+    while di < len(tgB) { t_free(to_int(tgB[di])); di = di + 1 }
+}
+
 // _clmd_fwd_logits_sc — STREAMING forward: byte-identical to _clmd_fwd_logits but
 // every conv uses the pre-transposed Wt + a reused xcol, and every activation
 // buffer is reused from the scratch record `sc`. Reused buffers that the consuming
@@ -920,7 +947,9 @@ pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
                                top_k: int, temp: float, seed_rng: int) -> Map {
     if !clm_decodable(path) { return #{ "ok": false, "text": "" } }
     let W = _clmd_load(path)
-    return clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng)
+    let result = clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng)
+    _clmd_weights_free(W)   // free the per-call weight-set → bounded RSS (was the eval OOM)
+    return result
 }
 
 // _clmd_find — first byte-offset of `needle` inside `hay` (-1 if absent). Plain
