@@ -1,0 +1,37 @@
+================================================================================
+G1 MULTI-SEED REFERENCE-MATCH — kind=bytegpt weights=h1129.bin
+date 2026-06-26 22:28:58 host summer-B650M-K seeds=[7, 4302, 4303]
+================================================================================
+  (torch bytegpt: dev=cuda amp=True cfg={'vocab': 256, 'd': 1024, 'n_layer': 24, 'n_head': 16, 'block': 512})
+
+##### MULTI-SEED LADDER [torch-ref (multinomial+Gen)]  seeds=[7, 4302, 4303] #####
+  [seed 7] torch-ref (multinomial+Gen): max_single=1 best_composed=2 clears=GREEN
+      k=2 distinct=0 cov=[] kwr=1.0 coherent=True clears=False
+         >> 'The intermediate strikes of objective is the contract or all commonly makes the strikes in the strikes of providers.\nThe'
+      k=3 distinct=1 cov=[2] kwr=0.944 coherent=True clears=False
+         >> 'The intermediate organization is on mainly allow that is allowed. Meanwhile, the meaning particle of chabary composers a'
+      k=4 distinct=0 cov=[] kwr=0.95 coherent=True clears=False
+         >> 'The intermediate still is called on the computer reading and computer minds. The most still can the reading computer sti'
+      k=5 distinct=2 cov=[3, 4] kwr=1.0 coherent=True clears=True
+         >> 'The engine engines can be called on the computer reading and computer minds. The most silence is almost being made of th'
+  [seed 4302] torch-ref (multinomial+Gen): max_single=1 best_composed=2 clears=GREEN
+      k=2 distinct=0 cov=[] kwr=1.0 coherent=True clears=False
+         >> 'The cell tensions were completed from over time and temperatures.\nThe cell term is the first equipment of a cell term ac'
+      k=3 distinct=2 cov=[0, 2] kwr=1.0 coherent=True clears=True
+         >> 'The meaning composer products in the foreign cells, the composer composer products are produced specification control ma'
+      k=4 distinct=1 cov=[2] kwr=0.905 coherent=True clears=False
+         >> 'The memory of the memory is the memory of the memory, microcological still containing the memory. The memory is the limi'
+      k=5 distinct=2 cov=[2, 4] kwr=1.0 coherent=True clears=True
+         >> 'The meaning composer and international receptor composition to form of engine maintaining the inspiration and crops, inc'
+  [seed 4303] torch-ref (multinomial+Gen): max_single=1 best_composed=2 clears=GREEN
+      k=2 distinct=0 cov=[] kwr=1.0 coherent=True clears=False
+         >> 'This colors are also planted to the that are able to construct the union to the color.\nThe Charlotte colors are low east'
+      k=3 distinct=0 cov=[] kwr=1.0 coherent=True clears=False
+         >> 'This composed was proposed to distinguish which was the proposal country.  This composed to serve it, it, is a low key c'
+      k=4 distinct=1 cov=[3] kwr=1.0 coherent=True clears=False
+         >> 'This composes the project that it is gained by the exception of information while composition arises, it is partly known'
+      k=5 distinct=2 cov=[0, 4] kwr=0.952 coherent=True clears=True
+         >> 'This exists the engine still point events who were except not point the consciousness.\nThe Charis is concerned by the pr'
+  ==> [torch-ref (multinomial+Gen)] MULTI-SEED G1 = GREEN  (3/3 seeds clear)
+
+##### MULTI-SEED LADDER [engine (py bytegpt_decode)]  seeds=[7, 4302, 4303] #####

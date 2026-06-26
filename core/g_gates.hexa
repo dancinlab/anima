@@ -112,7 +112,14 @@ fn _g_coverage(text: string) -> int {
 // three. coherence kwr = dict-based _g6_known_word_ratio (h1129 known_word_ratio uses the real
 // dict). Decode via the SAME mouth-agnostic L3 entry. The `gen` arg overrides h1129's 80/120
 // fixed budgets ONLY when caller passes a smaller bound (FREEZE (ii)); gen<=0 ⇒ ref 80/120.
+// base_seed parameterizes the RNG so the SAME frozen ladder can be re-run over several seeds
+// (g_eval_g1_multiseed below). base_seed=7 reproduces the original single-seed path byte-for-byte
+// (singles seeded base_seed+s, composed seeded base_seed).
 pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g1_seeded(ckpt, gen, known, 7)
+}
+
+pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
     let cz = _g6_concepts()
     let n = len(cz)
     // ref budgets: single=80, composed=120. honor a smaller caller cap when gen>0.
@@ -123,7 +130,7 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
     let mut s = 0
     while s < n {
         let seed = to_string(cz[s]) + ". "
-        let r = gen_auto_ideate(ckpt, seed, g_single, 40, 0.7, 7 + s)
+        let r = gen_auto_ideate(ckpt, seed, g_single, 40, 0.7, base_seed + s)
         let cov = _g_coverage(to_string(r["text"]))
         if cov > max_single { max_single = cov }
         s = s + 1
@@ -143,7 +150,7 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
             c = c + 1
         }
         seed = seed + ". "
-        let r = gen_auto_ideate(ckpt, seed, g_comp, 40, 0.7, 7)
+        let r = gen_auto_ideate(ckpt, seed, g_comp, 40, 0.7, base_seed)
         let o = to_string(r["text"])
         let cov = _g_coverage(o)
         let kwr = _g6_known_word_ratio(o, known)
@@ -154,8 +161,33 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
         if cov > best_distinct { best_distinct = cov; best_k = k }
         k = k + 1
     }
-    return #{ "pass": pass, "max_single": max_single, "best_k": best_k,
+    return #{ "pass": pass, "max_single": max_single, "base_seed": base_seed, "best_k": best_k,
               "best_distinct": best_distinct, "ks": ks }
+}
+
+// G1 RECOMBINATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — ad13/H_1587:
+// the single-seed (seed 7) ladder is a fragile RNG walk (recombination lift is a sparse single-seed
+// event) so the verdict flips GREEN<->FAIL on an IDENTICAL model purely by the sampler walk. The
+// recombination DEFINITION is UNCHANGED; we ONLY re-run the same frozen ladder over seeds
+// {7, 4302, 4303} (reference-match — the G6 ladders use [4301/4302/4303]; 7 = the H_1129 default)
+// and call GREEN = clears in a MAJORITY of seeds (>=2/3). NOT tune-to-green: no bar moved, the
+// metric is made robust to the exact RNG walk. The single-seed g_eval_g1 stays the frozen default
+// until owner approval flips the default. Lockstep mirror of g_gates.py::g_eval_g1_multiseed.
+pub fn g_eval_g1_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    let seeds = [7, 4302, 4303]
+    let per = []
+    let mut n_green = 0
+    let mut i = 0
+    while i < len(seeds) {
+        let r = g_eval_g1_seeded(ckpt, gen, known, seeds[i])
+        if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
+        per.push(r)
+        i = i + 1
+    }
+    let need = len(seeds) / 2 + 1
+    let pass = n_green >= need
+    return #{ "pass": pass, "n_green": n_green, "n_seeds": len(seeds),
+              "seeds": seeds, "per_seed": per, "status": "proposed, owner-nod-pending" }
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -493,13 +525,15 @@ pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
     let known = _g6_dict_load()
     let g = if gen > 0 { gen } else { _g_default_gen() }
     let r0 = g_eval_g0(ckpt, g, known)
-    let r1 = g_eval_g1(ckpt, g, known)
+    let r1 = g_eval_g1(ckpt, g, known)                      // frozen single-seed default
+    let r1ms = g_eval_g1_multiseed(ckpt, g, known)          // PROPOSED seed-robust refmatch
     let r2 = g_eval_g2(ckpt, g, known, corpus_paths)
     let r3 = g_eval_g3()
     let r5 = g_eval_g5(ckpt, g, known)
     let r6 = g_eval_g6(ckpt, g, known)
+    // closure uses the FROZEN single-seed G1 until owner approves the refmatch flip.
     let closure = to_string(r0["pass"]) == "true" && to_string(r1["pass"]) == "true"
                   && to_string(r2["pass"]) == "true"
-    return #{ "g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
+    return #{ "g0": r0, "g1": r1, "g1_multiseed": r1ms, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
               "closure": closure, "gen": g }
 }

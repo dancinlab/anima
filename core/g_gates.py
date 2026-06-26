@@ -118,7 +118,12 @@ def _g_coverage(text):
     return covered
 
 
-def g_eval_g1(mouth, gen, known):
+# G1 RECOMBINATION — frozen definition (7B_PASS_CONDITIONS / a7b_pass / H_1129):
+# for some k in {2,3,4,5}: composed_distinct >= 2 AND > max_single AND coherent(kwr>=0.50).
+# base_seed parameterizes the RNG so the SAME frozen ladder can be re-run over several
+# seeds (g_eval_g1_multiseed below); base_seed=7 reproduces the original single-seed path
+# byte-for-byte (singles seeded 7+s, composed seeded 7).
+def g_eval_g1(mouth, gen, known, base_seed=7):
     cz = _g6_concepts()
     n = len(cz)
     g_single = gen if (gen > 0 and gen < 80) else 80
@@ -126,7 +131,7 @@ def g_eval_g1(mouth, gen, known):
     max_single = 0
     for s in range(n):
         seed = cz[s] + ". "
-        o = mouth.ideate(seed, g_single, 40, 0.7, 7 + s)
+        o = mouth.ideate(seed, g_single, 40, 0.7, base_seed + s)
         cov = _g_coverage(o)
         if cov > max_single:
             max_single = cov
@@ -138,7 +143,7 @@ def g_eval_g1(mouth, gen, known):
                 seed += ". "
             seed += cz[c]
         seed += ". "
-        o = mouth.ideate(seed, g_comp, 40, 0.7, 7)
+        o = mouth.ideate(seed, g_comp, 40, 0.7, base_seed)
         cov = _g_coverage(o)
         kwr = _g6_known_word_ratio(o, known)
         coherent = kwr >= 0.5
@@ -148,8 +153,30 @@ def g_eval_g1(mouth, gen, known):
             passed = True
         if cov > best_distinct:
             best_distinct = cov; best_k = k
-    return {"pass": passed, "max_single": max_single, "best_k": best_k,
+    return {"pass": passed, "max_single": max_single, "base_seed": base_seed, "best_k": best_k,
             "best_distinct": best_distinct, "ks": ks}
+
+
+# G1 RECOMBINATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — ad13/H_1587:
+# the single-seed (seed 7) ladder is a fragile RNG walk (the recombination lift is a sparse
+# single-seed event), so the verdict can flip GREEN<->FAIL on an identical model purely by the
+# sampler walk. The recombination DEFINITION is UNCHANGED; we ONLY re-run the same frozen ladder
+# over seeds {7, 4302, 4303} (reference-match — the G6 ladders use [4301/4302/4303]; 7 = the
+# H_1129 default) and call GREEN = clears in a MAJORITY of seeds (>=2/3). NOT tune-to-green:
+# no bar moved, the metric is made robust to the exact RNG walk. Applied identically engine-side
+# and torch-reference-side (state/1588_g1_multiseed_refmatch/g1_multiseed.py). The single-seed
+# g_eval_g1 above remains the frozen default until owner approval flips the default here.
+G1_REFMATCH_SEEDS = (7, 4302, 4303)
+
+def g_eval_g1_multiseed(mouth, gen, known, seeds=G1_REFMATCH_SEEDS):
+    per = []
+    for sd in seeds:
+        r = g_eval_g1(mouth, gen, known, base_seed=sd)
+        per.append(r)
+    n_green = sum(1 for r in per if r["pass"])
+    passed = n_green >= (len(seeds) // 2 + 1)   # strict majority of the seed set
+    return {"pass": passed, "n_green": n_green, "n_seeds": len(seeds),
+            "seeds": list(seeds), "per_seed": per, "status": "proposed, owner-nod-pending"}
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -382,13 +409,15 @@ def g_eval_all(ckpt, corpus_paths, gen):
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt)
     r0 = g_eval_g0(mouth, g, known)
-    r1 = g_eval_g1(mouth, g, known)
+    r1 = g_eval_g1(mouth, g, known)                       # frozen single-seed default
+    r1ms = g_eval_g1_multiseed(mouth, g, known)           # PROPOSED seed-robust refmatch
     r2 = g_eval_g2(mouth, g, known, corpus_paths)
     r3 = g_eval_g3()
     r5 = g_eval_g5(mouth, g, known)
     r6 = g_eval_g6(mouth, g, known)
+    # closure uses the FROZEN single-seed G1 until owner approves the refmatch flip.
     closure = bool(r0["pass"]) and bool(r1["pass"]) and bool(r2["pass"])
-    return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
+    return {"g0": r0, "g1": r1, "g1_multiseed": r1ms, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
             "closure": closure, "gen": g,
             "calibration": g6_detector_calibration(known)}
 
@@ -402,8 +431,13 @@ def _fmt(r):
     out.append("G0 COHERENCE     pass=%s  n_coherent=%d/5  ratios=%s"
                % (g0["pass"], g0["n_coherent"], ["%.3f" % x for x in g0["ratios"]]))
     g1 = r["g1"]
-    out.append("G1 RECOMBINATION pass=%s  max_single=%d  best_k=%d  best_distinct=%d"
+    out.append("G1 RECOMBINATION pass=%s  max_single=%d  best_k=%d  best_distinct=%d  (single-seed=7, frozen)"
                % (g1["pass"], g1["max_single"], g1["best_k"], g1["best_distinct"]))
+    g1ms = r.get("g1_multiseed")
+    if g1ms is not None:
+        out.append("G1 multi-seed     pass=%s  %d/%d seeds clear=%s  [%s]"
+                   % (g1ms["pass"], g1ms["n_green"], g1ms["n_seeds"],
+                      [(p["base_seed"], p["pass"]) for p in g1ms["per_seed"]], g1ms["status"]))
     g2 = r["g2"]
     out.append("G2 NOVELTY       pass=%s  n_novel=%d  control_novel=%d  coherent=%d  have_corpus=%s"
                % (g2["pass"], g2["n_novel"], g2["control_novel"], g2["coherent"], g2["have_corpus"]))
