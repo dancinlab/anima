@@ -38,7 +38,13 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 ## 📦 패키징 — pod 업로드
 
-canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `train/`·`bench/`·`agent/`·`state/` 에 의존 0** (substrate 엔진만; 단방향).
+**🗂️ canonical 3-폴더 체제 (2026-06-26 오너 결정):** anima 코드는 정확히 3 최상위 폴더로 모은다 (흩어짐 금지) —
+- **`cli/`** = 진입점. 두 언어 대칭: `anima.hexa`·`anima.py` (chat/eval/consciousness) · `train.hexa`·`train.py` (학습).
+- **`core/`** = 2-production 엔진 substrate. **hexa(`*.hexa`) + py(`*.py`) 둘 다 `core/` 한 곳에 1:1 미러로 공존**(byte-parity, `a_engine_native_learning` 2-production). 같은 디코드/G0-G6 로직의 두 동등 구현(예: `clm_decode.hexa` ⇄ `clm_decode.py`, `g_gates.hexa` ⇄ `g_gates.py`).
+- **`agent/`** = tool provider 독립패키지(`hexa.toml` 보유, `hx install anima-agent`).
+- **production 코드는 3-폴더 안에만 (밖에 두고 import 금지)** — `core/`·`cli/`·`agent/` 밖의 다른 repo 폴더(`HEXAD/`·`train/`·`tool/`·`state/`·`UNIVERSE/` 등)에 **production 코드를 두고 거기서 import/연결하지 않는다**(scatter 금지) — 엔진의 repo-내부 import 폐포는 3-폴더 안에서 닫힌다. **외부 라이브러리는 자유**: 각 언어 stdlib + 서드파티(py 는 **numpy·torch 허용**) — 제약은 *레포 내부* cross-folder(3-폴더 밖 자가 코드 끌어오기)에만 적용. **데이터·결과 = `state/` 한 곳**(흩어짐 금지). 연구 artifact(`state/`·`UNIVERSE/`) + 문서는 코드 아님(3-폴더 밖, 별개).
+
+canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `train/`·`bench/`·`state/` 에 의존 0** (substrate 엔진만; 단방향 · `agent/` 와는 상호독립 패키지).
 
 - **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **릴리즈 매니페스트 = 루트 `hexa.toml`**(`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·의식lane, exclude=state/·UNIVERSE/·*.clm 등 연구artifact/외부가중치).
 - **학습 pod** — 추론 세트 + `train/`(clm 파이프·flame/forge) + `state/verdicts/` slice(frozen bar 재측정용). production 트레이너는 `.hexa` on flame/forge GPU (`a_train_flame_forge`).
@@ -185,7 +191,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 
 ### 🏗️ CORE 엔진 · 학습 substrate
 
-**`a_core_engine_map`** — `core/`(구 CORE/, 2026-06-19 canonical 재구성으로 소문자 통합) 가 A⇄G 의식 엔진 소유. `.clm`/`.kosmos` 는 named slot 으로만 진입.
+**`a_core_engine_map`** — `core/`(canonical 3-폴더 체제의 엔진 폴더)가 A⇄G 의식 엔진 소유. **2-production 언어 공존: hexa(`*.hexa`) + py(`*.py`) 1:1 미러 byte-parity**(`a_engine_native_learning`) — 같은 §섹션·op 를 두 언어로(예 `clm_decode.hexa`⇄`clm_decode.py`). `.clm`/`.kosmos` 는 named slot 으로만 진입.
 - do: `core/` 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · 모델 가중치는 오직 `core/generator.hexa` L3 슬롯으로 진입 — 단, L3 는 **mouth 타입 디스패처**(`gen_mouth_kind`→'bytegpt'|'clm'|'unknown' header sniff)로 **두 mouth 아키텍처**를 받는다: **conv `.clm`**(CLMConvMoE via clm_decode, `CLM\x01` magic + CLMX trailer)는 `gen_clm_backend`/`gen_clm_chat` 으로, **ByteGPT `.bin`**(24-layer GPT-2-class via bytegpt_decode, 5×u32 `[256,d,L,H,block]` header, 검증된 303M ko/en chat trunk)은 `gen_bytegpt_backend`/`gen_bytegpt_chat`(`bytegpt_decode_argmax_ranged` OOM-safe) 으로. 이는 2nd `.clm` 경로가 아니다 — **아키텍처별로 여전히 단일 typed 진입**이고 디스패처(`gen_auto_backend`/`gen_auto_chat`)는 파일 포맷에 따라 어느 단일 진입을 쓸지만 고른다(a_engine_native_learning engine-transform-to-fit). `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
 - do: ARCHITECTURE.json core/ 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
 - dont: `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
