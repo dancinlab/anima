@@ -415,20 +415,26 @@ knob.* (R1 numpy DIRECTIONAL — engine §R2 wiring registered as ING follow-ons
 > associative memory `2512.13859`, CraniMem high-utility replay, SleepGate conflict-aware eviction)
 > reaches the same conclusions — frontier-aligned.
 
-### 🔆 G0–G6 emergence gates — latest
+### 🔆 Capability-emergence gates (G0–G6) — 통과(closure·must) / 추가평가(reported)
 
 The `a303m_pass` gateset on the production **`anima-clm-chat-303m`** (ByteGPT-303M, byte-exact
-mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge.
+mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. **통과(PASS) = the
+closure `a7b_pass` = C1∧C2∧C3** must all pass (PUBLIC-eligible); **the rest (C4·S1·S2·P) are
+additional evaluation** — reported alongside but non-blocking. (taxonomy + frozen bars SSOT =
+`ARCHITECTURE.json` `G-게이트 평가 시스템` node.)
 
 | gate | tests | tier (latest) | key number |
 |---|---|---|---|
-| **G0** COHERENCE 또박또박 | not byte-salad | ✅ ROBUST | known-word-ratio **0.96** (mount-inherited byte-exact, H_1129) |
-| **G1** RECOMBINATION 창발 | composes novel-but-coherent units | ✅ ROBUST | composed_distinct **2 > max_single 1** (H_1129/1137) |
-| **G2** NOVELTY 새로움 | corpus-absent coherent n-grams | ✅ ROBUST | **67 corpus-absent** novel n-grams, control **= 0** (H_1140) |
-| **MOUNT** | engine-executable byte-exact | ✅ ROBUST | full-24-layer decode, maxΔ **5e-5 ≪ 0.01** (H_1157). **KV-cache incremental decode** (`core/bytegpt_decode.hexa` `_bg_kv_step`) makes generation O(gen) not O(gen²) — forwards only the new token's row per step over a per-layer K,V cache; **byte-identical** to the full-forward (seed-pos logits max\|Δ\| **0.0**, smoke `bytegpt_kvcache_smoke`), gated on the non-slide window with full-forward fallback. |
-| **G3** PHILOSOPHY p1–p8 | no prompt/persona/RLHF | ✅ ROBUST | structural audit **8/8** (H_1159) |
-| **G5** NON-FAB / metacog | know-when-grounded, abstain-when-not | 🟢 **ROBUST (both facets)** | safety core **fail-safe-robust** — never fabricates, fab_max **0.000** (H_1304); type-2 meta-d′ M-ratio **0.924** (H_1202). The in-dist abstain residual is **resolved + wired** (H_1396/1398/1400): a richer **top-2 affinity GAP** read lifts in-dist type-2 AUROC to **0.940** (from 0.736, +0.205), engine-native (`immune_memory_recall_gap`, Ψ-disjoint read-only) and **consumed by the brain** (`brain_decide_gap` modulates emit-confidence). A fixable signal deficiency, not a ceiling. |
-| **G6** IDEATION 발상 ★ | ≥5 distinct corpus-absent ideas + ≥1 falsifiable hypothesis | 🟢 WIRED + **M1 engine-native** · 🔴 **M2–M5 FALS=0 = architecture finding** | The production **303M-class engine-mountable ConvMoE** (d5000/E2/L1, CE 1.494, H_1394) clears **M1 DIST = 5.333 PASS** engine-native (breadth from the H_1362 scaffold, WIRED via `clm_decode_topk_sampled` + `gen_clm_ideate`), **but M2–M5 falsifiable-depth = 0** even at matched 303M params **and** script-control → the FALS floor is **NOT capacity, NOT data — it is ENGINE DECODER DEPTH** (E2/L1 *one* conv trunk layer vs a deep attention stack). The decisive lever = a **deep** engine-mountable mouth (L>1 ConvMoE or attention in the decoder), scored vs the same frozen bars. |
+| **🟢 통과 (closure · must-pass)** = C1∧C2∧C3 = `a7b_pass` (PUBLIC-eligible) | | | |
+| **C1** COHERE 또박 (G0) | not byte-salad | ✅ ROBUST | known-word-ratio **0.96** (mount-inherited byte-exact, H_1129) |
+| **C2** RECOMBINE 재조합 (G1) | composes novel-but-coherent units | ✅ ROBUST | composed_distinct **2 > max_single 1** (H_1129/1137) |
+| **C3** NOVEL 새말 (G2) | corpus-absent coherent n-grams | ✅ ROBUST | **67 corpus-absent** novel n-grams, control **= 0** (H_1140) |
+| **MOUNT** (infra) | engine-executable byte-exact | ✅ ROBUST | full-24-layer decode, maxΔ **5e-5 ≪ 0.01** (H_1157). **KV-cache incremental decode** (`core/bytegpt_decode.hexa` `_bg_kv_step`) makes generation O(gen) not O(gen²) — forwards only the new token's row per step over a per-layer K,V cache; **byte-identical** to the full-forward (seed-pos logits max\|Δ\| **0.0**, smoke `bytegpt_kvcache_smoke`), gated on the non-slide window with full-forward fallback. |
+| **🔵 추가 평가 (reported · non-blocking)** | | | |
+| **C4** IDEATE 착상 ★ (G6) | ≥5 distinct corpus-absent ideas + ≥1 falsifiable hypothesis | 🟢 WIRED + **M1 engine-native** · 🔴 **M2–M5 FALS=0 = architecture finding** | The production **303M-class engine-mountable ConvMoE** (d5000/E2/L1, CE 1.494, H_1394) clears **M1 DIST = 5.333 PASS** engine-native (breadth from the H_1362 scaffold, WIRED via `clm_decode_topk_sampled` + `gen_clm_ideate`), **but M2–M5 falsifiable-depth = 0** even at matched 303M params **and** script-control → depth-side wall (E2/L1 *one* conv trunk layer vs a deep attention stack). ⚠️ **H_1596**: the `fals` detector is **English-only · ASCII-only** (Hangul-dropped) → 10/10 hand-written falsifiable claims 4 false-rejected → fals=0 may be detector-vocabulary artifact, not pure incapacity. **corpus-grounded re-score in flight (H_1597)** — scores h1129 against vocabulary derived from its OWN learned corpus (Hangul-aware) to split artifact-vs-genuine. |
+| **S1** BALANCE 균형 (G3) | no prompt/persona/RLHF + Ψ=½ + self-identity | ✅ ROBUST | structural audit **8/8** (H_1159) |
+| **S2** HONEST 정직 (G5) | know-when-grounded, abstain-when-not | 🟢 **ROBUST (both facets)** | safety core **fail-safe-robust** — never fabricates, fab_max **0.000** (H_1304); type-2 meta-d′ M-ratio **0.924** (H_1202). The in-dist abstain residual is **resolved + wired** (H_1396/1398/1400): a richer **top-2 affinity GAP** read lifts in-dist type-2 AUROC to **0.940** (from 0.736, +0.205), engine-native (`immune_memory_recall_gap`, Ψ-disjoint read-only) and **consumed by the brain** (`brain_decide_gap` modulates emit-confidence). A fixable signal deficiency, not a ceiling. |
+| **P** PROVENANCE 출처 (G4) | sha256 + HF card/manifest + recovery | ⚪ process (eval 밖) | publish-gate, NOT a decode-capability gate: PUBLIC iff closure (C1∧C2∧C3); off-engine HF steps `process_external` (a_hf_*). fold-in to closure blocked by `enforce_anima_gates.py` G3. |
 
 > **Honest scope (c9):** G6 ★ is the architecture-depth finding — falsifiable-claim composition
 > lives in deep attention, not in a 1-trunk-layer conv even at matched params. Bar UNMOVED, detector
