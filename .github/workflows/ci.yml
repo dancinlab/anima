@@ -126,3 +126,69 @@ jobs:
           fi
           n=$(echo $changed | wc -w | tr -d ' ')
           echo "explicit-main lint: $n changed .hexa file(s) clean"
+
+  # ── Blacksmith Apple-Silicon 빌드 잡 (gamebox-ci 미러) ───────────────────
+  # WHY: anima 의 진짜 게이트(엔진 compile + 거버넌스 enforce + 스모크)를 로컬
+  # dev Mac 밖 Blacksmith 클라우드 러너로 오프로드 — 로컬은 `git push` 만. macos-15
+  # 핀(NOT -26): hexa-lang release.yml 와 동일 SDK 베이스라인. darwin-arm64 선택 =
+  # dev 패리티 + x86_64-linux HexaVal tag24 툴체인 벽(ING #10) 회피. hexa 는
+  # 릴리즈 바이너리(anima 는 downstream 소비자) — canonical one-liner 설치.
+  hexa-engine:
+    name: engine compile + gates + smoke (darwin-arm64, Blacksmith)
+    runs-on: blacksmith-6vcpu-macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install hexa toolchain (released binary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+          echo "$HOME/.hx/bin" >> "$GITHUB_PATH"
+
+      - name: Sanity — hexa runs
+        shell: bash
+        run: |
+          set -euo pipefail
+          hexa --version || true
+          hexa --help >/dev/null
+
+      # 엔진 compile 게이트 — production import-closure 가 컴파일되는지(syntax/codegen
+      # drift 차단). 임시 진입파일을 repo 루트에 두어 "core/…" import 가 해소됨.
+      - name: Compile gate — production engine import-closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > _ci_engine_compile.hexa <<'HX'
+          import "core/clm_decode.hexa"
+          import "core/bytegpt_decode.hexa"
+          import "core/generator.hexa"
+          import "core/g_gates.hexa"
+          import "core/g6_ideation.hexa"
+          import "core/engine_cli.hexa"
+          fn main() { print("engine compile OK") }
+          HX
+          hexa run _ci_engine_compile.hexa
+          rm -f _ci_engine_compile.hexa
+
+      # 거버넌스 enforce (CLAUDE.md 하드게이트 1·6 의 기계강제 — engine-native verdict
+      # · 가설 2표면). python 만 필요, 가중치 불필요.
+      - name: Governance — enforce_anima_gates (changed)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tool/enforce_anima_gates.py || { echo "::error::enforce_anima_gates FAIL"; exit 1; }
+
+      # 엔진 스모크 — 가중치 없이 compile+logic 도는 것들. 가중치/플랫폼 의존(tag24·
+      # .clm 부재)은 warn-only(정직, CI 거짓-red 방지). hexa stable 에 따라 가변.
+      - name: Smoke — weight-free engine smokes (warn-only)
+        shell: bash
+        run: |
+          set -uo pipefail
+          for s in core/brain_smoke.hexa core/emit_policy_smoke.hexa \
+                   core/g_gates_smoke.hexa core/generator_smoke.hexa \
+                   core/bytegpt_kvcache_smoke.hexa ; do
+            echo "── $s ──"
+            hexa run "$s" || echo "::warning::$s non-zero (weight/platform-dep warn-only)"
+          done
