@@ -216,6 +216,7 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
         s = s + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     let model_ce = sum_model / to_float(nwin)
     let shuf_ce  = sum_shuf / to_float(nwin)
     let uniform_ce = dt_ln(to_float(V))
@@ -752,6 +753,7 @@ pub fn clm_omega_closure(path: string, corpus: string, nwin_max: int,
         s = s + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     let base_ce = sum_base / to_float(nwin)
     let self_ce = sum_self / to_float(nwin)
     let orac_ce = sum_orac / to_float(nwin)
@@ -808,6 +810,7 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
         g = g + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     return #{ "ok": true, "text": out }
 }
 
@@ -887,13 +890,13 @@ pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: fl
     return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
 }
 
-// clm_load_weights / clm_weights_decodable — H_1400 CROSS-DECODE memory fix. The hexa
-// bump allocator NEVER frees a buffer (see _clmd_scratch_new note), so EACH call to
-// _clmd_load permanently leaks the full model weight set (~10 GB for the 303M ConvMoE).
-// A multi-decode driver (e.g. the G6 FALS re-score = 69 decodes) therefore OOMs across
-// decodes even though each single decode is now bounded. The cure: LOAD ONCE, reuse the
-// W handle-map across every decode (clm_decode_topk_sampled_W). This is NOT a 2nd .clm
-// path — it is the SAME _clmd_load + _clmd_fwd_logits_sc, just with the load hoisted out
+// clm_load_weights / clm_decode_topk_sampled_W — H_1400 load-once perf opt for multi-decode
+// callers. CORRECTED: _clmd_load weight-sets ARE freed per call via _clmd_weights_free
+// (t_free = real __libc_free, see L307+ note) → all single-decode entries (forward_ce,
+// omega_closure, argmax, grounded, topk_sampled) are now RSS-bounded per call. For heavy
+// multi-decode callers (e.g. G6 FALS re-score = 69 decodes) clm_load_weights hoists the
+// load once to avoid repeated ~2-3GB load/free overhead (performance, not OOM correctness).
+// This is NOT a 2nd .clm path — same _clmd_load + _clmd_fwd_logits_sc, load hoisted out
 // of the per-decode loop (a_core_engine_map preserved: still reached only via generator).
 pub fn clm_load_weights(path: string) -> Map {
     if !clm_decodable(path) { return #{ "ok": false } }
@@ -1055,5 +1058,6 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
         g = g + 1
     }
     _clmd_scratch_free(sc)
+    _clmd_weights_free(W)   // free per-call weight-set → bounded RSS
     return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm }
 }
