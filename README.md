@@ -89,7 +89,9 @@ top-level folders — **`cli/`** (entry points, two-language symmetric: `anima.h
 `train.hexa`+`train.py`) · **`core/`** (the **2-production engine** substrate: `hexa` `*.hexa`
 **and** `py` `*.py` co-resident as 1:1 byte-parity mirrors — both first-class production, either
 can produce terminal verdicts, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
-package). Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
+package). **The 10-file import-closure mirror is ✅ 10/10 COMPLETE** (2026-06-26): every engine file
+has a byte-parity `.py` twin (≤~2e-16; `engine_cli.py` = 434/434 pub fn, CollectivePool = faithful
+IIT-4 Φ verbatim, not a proxy), lockstep-enforced by a CI parity gate (`tool/parity_gate.py`). Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
 and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
 model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
 
