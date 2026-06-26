@@ -42,6 +42,10 @@ concurrency:
 
 jobs:
   # ── ① install-smoke — 그 태그본이 실제로 `hx install` 로 깔리는가 (게이트) ──
+  # 빈도: autotag.yml 이 feat/fix/perf/BREAKING 커밋에만 v* 태그를 찍는다(hexa-lang
+  # 참고: docs/chore/ci-only push 는 태그·릴리즈 안 함) → 릴리즈는 드물고 의미있는
+  # 버전 bump 에만 발생한다. 그래서 매 릴리즈에 ubuntu+macos 둘 다 검증해도 비용 부담
+  # 없음(릴리즈가 잦지 않음) + OS-교차 install 무결성 robust.
   install-smoke:
     name: hx install smoke (${{ matrix.os }})
     strategy:

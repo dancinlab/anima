@@ -1,3 +1,11 @@
+## ci(autotag): 릴리즈 빈도 게이트 — release-worthy 커밋(feat/fix/perf/BREAKING)에만 태그 (hexa-lang 참고)
+
+직전 `release.yml` 신설로 매 `v*` 태그가 GitHub Release 를 발행하는데, `autotag.yml` 이 **매 main push 를 최소 patch 로 태그**(docs 한 줄 고쳐도 v* 태그)했다 → 결과적으로 **수정마다 자동 릴리즈**(릴리즈 노이즈 + 매 머지 macOS CI 분 소모). hexa-lang autotag 패턴을 정답지로 맞춤(reference-match).
+
+- **`autotag.yml` 에 RELEASE-WORTHY 게이트 추가**: 마지막 태그 이후 커밋 subjects 에 `feat|fix|perf(!)?:` 또는 `BREAKING CHANGE` 가 없으면(= docs/chore/ci/refactor/style/test-only) **태그를 찍지 않고 exit 0** → 릴리즈 안 함. 이게 곧 릴리즈 빈도 게이트 — "수정마다 릴리즈"가 아니라 "의미있는 변경(feat/fix/perf)만 릴리즈". install.hexa 는 직전 검증된 의미버전 태그를 그대로 소비(stale 아님). 헤더 주석의 "매 push 최소 1칸 보장"(구) → 정정.
+- **`release.yml` install-smoke = ubuntu+macos 둘 다 복원**: 릴리즈가 의미버전에만 드물게 발생하므로 매 릴리즈 양-OS 검증해도 비용 부담 없음(직전 임시 ubuntu-only 조건부 matrix 되돌림) + OS-교차 install 무결성 robust.
+- **`a_install_canonical` 갱신**: 릴리즈 빈도·무결성 2단 게이트(autotag release-worthy → release.yml install-smoke) 명시. ARCHITECTURE hexa.toml 노드 lockstep.
+
 ## ci(release): `hx install` 무결성 게이트 + GitHub Release 발행 워크플로 + `a_install_canonical` 거버넌스
 
 anima 의 유일 setup 경로(`hx install anima` → install.hexa 최신 `v*` 태그 self-update → setup.hexa)에 그동안 **검증 구멍**이 있었다 — autotag.yml 이 매 main push 에 `v*` 태그를 찍지만, 그 태그가 실제로 `hx install` 로 깔리는지는 아무도 확인하지 않아 깨진 태그가 install.hexa 의 "최신 v*" 로 그대로 노출될 수 있었다. 이를 release.yml + CLAUDE.md 규칙으로 막음.

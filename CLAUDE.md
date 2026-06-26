@@ -383,7 +383,7 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 
 ## a_install_canonical — setup 은 무조건 `hx install` 단일 경로만 (cli/anima.hexa 단일 진입점)
 - do: anima 설치·세팅은 **오직 `hx install anima`** 한 경로로 — `install.hexa`(최신 `v*` 태그 self-update, tag-pin) → `setup.hexa`(hexa presence verify + ckpt best-effort) 가 SSOT.
-  cli/anima.hexa 는 canonical 단일 진입점(`hexa.toml` entry) = 모든 사용자·pod 가 이 경로로 수렴(interpreted hexa-native, compile 단계 없음). 릴리즈 무결성은 `.github/workflows/release.yml` 이 강제 — 매 `v*` 태그에 install-smoke(ubuntu+macos github-hosted: `hexa run install.hexa` + cli/anima.hexa 단일진입 컴파일) 통과 후에만 GitHub Release 발행 → install.hexa 가 집는 최신 태그가 항상 검증된 것(`release-tag-ci`·`allgreen-promote`). pod 세팅도 `hx install` 경유(수동 rsync 는 추론-pod 페이로드 최적화 한정, setup 경로 아님).
+  cli/anima.hexa 는 canonical 단일 진입점(`hexa.toml` entry) = 모든 사용자·pod 가 이 경로로 수렴(interpreted hexa-native, compile 단계 없음). 릴리즈 빈도·무결성 2단 게이트(hexa-lang 참고): ① `autotag.yml` 이 v* 태그를 **release-worthy 커밋(feat/fix/perf/BREAKING)에만** 찍음(docs/chore/ci/refactor-only push 는 태그·릴리즈 안 함 = 수정마다 릴리즈 아님, 의미버전만) · ② `release.yml` 이 그 v* 태그에 install-smoke(ubuntu+macos github-hosted: `hexa run install.hexa` + cli/anima.hexa 단일진입 컴파일) all-green 후에만 GitHub Release → install.hexa 가 집는 최신 태그는 항상 검증된 의미버전(`release-tag-ci`·`allgreen-promote`). pod 세팅도 `hx install` 경유(수동 rsync 는 추론-pod 페이로드 최적화 한정, setup 경로 아님).
 - dont: 수동 stage-build·raw clone-and-run·ad-hoc 셋업 스크립트 · install.hexa/setup.hexa 우회 · 검증 안 된 태그를 install 최신으로 노출(release.yml install-smoke 게이트 우회) · cli/anima.hexa 외 2nd 진입점 신설.
 
 ## a_hf_complete — HF 등록은 완전하게, 누락 artifact 없이
