@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # gh workflow run release.yml (workflow_dispatch) on the new tag
 
 concurrency:
   group: autotag-${{ github.ref }}
@@ -31,8 +32,10 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Compute + push next SemVer tag
+      - name: Compute + push next SemVer tag + trigger release.yml
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -99,3 +102,11 @@ jobs:
           fi
           git tag "$next" "${GITHUB_SHA}"
           git push origin "$next"
+
+          # ── release.yml 트리거 (hexa-lang 참고) ──────────────────────
+          # GITHUB_TOKEN 으로 푸시한 태그는 다른 워크플로(release.yml on: push tags v*)를
+          # 재트리거하지 않는다(GitHub loop 방지) → 명시 dispatch 로 발사해야 GitHub Release
+          # 가 그 태그에 발행된다. 이게 빠져서 release.yml 이 한 번도 안 돌았었다.
+          gh workflow run release.yml --ref main -f tag="$next" \
+            && echo "dispatched release.yml for ${next}" \
+            || echo "::warning::release.yml dispatch 실패 — gh workflow run release.yml -f tag=${next} 로 수동 발사 가능"

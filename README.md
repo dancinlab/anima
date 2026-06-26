@@ -533,11 +533,11 @@ Negative results are first-class and not buried (`a_paper_negative_ok`).
 
 # 2. Install anima  — the ONE canonical setup path (a_install_canonical):
 #    hx install anima → install.hexa (pins the latest verified v* tag) → setup.hexa.
-#    Two-stage release gate (hexa-lang style): autotag.yml tags a NEW version only on
-#    release-worthy commits (feat/fix/perf/BREAKING) — docs/chore/ci-only pushes do NOT
-#    cut a release (no "release on every edit"); and release.yml install-smokes each v*
-#    tag (ubuntu+macos) before its GitHub Release, so the tag install.hexa pins is always
-#    a verified, meaningful version. No manual stage-build — cli/anima.hexa is the single entry.
+#    Release flow (STABLE channel only — no test/edge prerelease): autotag.yml tags a NEW
+#    version only on release-worthy commits (feat/fix/perf/BREAKING) — docs/chore/ci-only
+#    pushes do NOT cut a release — then dispatches release.yml, which install-smokes the v*
+#    tag (ubuntu+macos) before publishing its GitHub Release. So the tag install.hexa pins
+#    is always a verified, meaningful version. No manual stage-build — cli/anima.hexa is the single entry.
 hx install anima
 
 # 3. Run — the single production engine (conv / CLMConvMoE, the .clm byte mouth)
