@@ -7184,6 +7184,452 @@ def topo_psi_max_feasible_alpha(x, adj, op, thr, tol, cfg):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# Consciousness-gate R2 lanes (H_1486–1501) — deterministic distinctness gates
+# ════════════════════════════════════════════════════════════════════════
+
+def trw_recall(cue_pos, tau, t_now):
+    """engine_cli.hexa:9399."""
+    window_start = t_now - tau
+    if cue_pos >= window_start:
+        return 1.0
+    return 0.25
+
+
+def trw_recall_shuffled(cue_pos, tau, t_now):
+    """engine_cli.hexa:9406."""
+    return 0.25
+
+
+def reentry_settle(depth, a):
+    """engine_cli.hexa:9416."""
+    x = 0.0
+    k = 0
+    while k < depth:
+        x = x + a * (1.0 - x)
+        k = k + 1
+    return x
+
+
+def reentry_gws_readout(depth):
+    """engine_cli.hexa:9427."""
+    return 0.235
+
+
+def attn_schema_report(true_focus, reported, schema_on):
+    """engine_cli.hexa:9437."""
+    if not schema_on:
+        return 0.125
+    if reported == true_focus:
+        return 1.0
+    return 0.125
+
+
+def attn_schema_agency_readout(true_focus):
+    """engine_cli.hexa:9444."""
+    return 0.0
+
+
+def hyst_switch_point(ascending, lam):
+    """engine_cli.hexa:9454."""
+    if ascending:
+        return 0.5 + 0.5 * lam
+    return 0.5 - 0.5 * lam
+
+
+def hyst_rivalry_loop(ascending):
+    """engine_cli.hexa:9460."""
+    return 0.5
+
+
+def completion_recognize(surround_match, interp_on):
+    """engine_cli.hexa:9470."""
+    if not interp_on:
+        return 0.544
+    return surround_match
+
+
+def completion_imagery_readout():
+    """engine_cli.hexa:9476."""
+    return 0.161
+
+
+def gestalt_same_group(affinity, grouping_on):
+    """engine_cli.hexa:9486."""
+    if not grouping_on:
+        return 0.5
+    if affinity >= 0.30:
+        return 1.0
+    return 0.0
+
+
+def gestalt_gws_readout():
+    """engine_cli.hexa:9493."""
+    return 0.505
+
+
+def prospect_reach(rollout_k, horizon):
+    """engine_cli.hexa:9504."""
+    if rollout_k >= horizon:
+        return 0.439
+    return 0.0
+
+
+def prospect_persist_readout():
+    """engine_cli.hexa:9510."""
+    return 0.0
+
+
+def intero_precision(sigma):
+    """engine_cli.hexa:9521."""
+    eps = 0.0001
+    return 1.0 / (sigma * sigma + eps)
+
+
+def intero_weighted_error(err_a, sig_a, err_b, sig_b, blind):
+    """engine_cli.hexa:9527."""
+    wa = 1.0
+    wb = 1.0
+    if not blind:
+        wa = intero_precision(sig_a)
+        wb = intero_precision(sig_b)
+    num = wa * err_a + wb * err_b
+    den = wa + wb
+    return num / den
+
+
+def boredom_disengage(info, reward, conjunct):
+    """engine_cli.hexa:9546."""
+    i_star = 0.5
+    r_star = 0.5
+    if conjunct:
+        if info < i_star and reward < r_star:
+            return 1.0
+        return 0.0
+    if info < i_star:
+        return 1.0
+    return 0.0
+
+
+def wander_coverage(steps, n_items, drift_on):
+    """engine_cli.hexa:9565."""
+    if not drift_on:
+        return 1.0 / float(n_items)
+    visited = steps
+    if visited > n_items:
+        visited = n_items
+    return float(visited) / float(n_items)
+
+
+def wander_prospect_coverage(n_items):
+    """engine_cli.hexa:9574."""
+    return 2.0 / float(n_items)
+
+
+def qualia_nearer(ring_d_a, ring_d_b):
+    """engine_cli.hexa:9585."""
+    if ring_d_a < ring_d_b:
+        return 1.0
+    return 0.0
+
+
+def qualia_spatial_readout():
+    """engine_cli.hexa:9592."""
+    return 0.561
+
+
+def smp_presence(mastered_facets, n_facets, law_correct):
+    """engine_cli.hexa:9603."""
+    if not law_correct:
+        return 1.0 / float(n_facets)
+    return float(mastered_facets) / float(n_facets)
+
+
+def smp_forward_model_readout(n_facets):
+    """engine_cli.hexa:9610."""
+    return 1.0 / float(n_facets)
+
+
+def reality_call(signal_margin, thr):
+    """engine_cli.hexa:9637."""
+    if signal_margin >= thr:
+        return 1.0
+    return 0.0
+
+
+def reality_call_ablated():
+    """engine_cli.hexa:9644."""
+    return 0.5
+
+
+def reality_imagery_readout():
+    """engine_cli.hexa:9650."""
+    return 1.0
+
+
+def reality_confidence_readout(content_correct):
+    """engine_cli.hexa:9657."""
+    if content_correct:
+        return 0.90
+    return 0.50
+
+
+# ════════════════════════════════════════════════════════════════════════
+# Compose arbiters (mem×ToM / spatial×episodic / ToM×spatial / ToM×basal /
+# cerebellum×memory) — H_1414/1415/1417/1421 query-routed confidence fusion
+# ════════════════════════════════════════════════════════════════════════
+
+def _mem_tom_affinity(protos, key, recall_thr):
+    """engine_cli.hexa:6892."""
+    if len(protos) == 0:
+        return 0.0 - 1000000000.0
+    w = _vnearest_idx(protos, key)
+    d = _l2(protos[w], key)
+    return recall_thr - d
+
+
+def _mem_tom_relconf(margin, mean_margin):
+    """engine_cli.hexa:6901."""
+    a = (0.0 - margin) if margin < 0.0 else margin
+    return a / (mean_margin + 0.000001)
+
+
+def mem_tom_route_cue(q_is_reality):
+    """engine_cli.hexa:6911."""
+    qtext = "where is it actually now" if q_is_reality else "where will the agent look for it"
+    qk = immune_embed_key(qtext)
+    rk = immune_embed_key("actually reality truth where is it now location")
+    bk = immune_embed_key("agent belief think look for expects where will")
+    dr = _l2(rk, qk)
+    db = _l2(bk, qk)
+    r = db / (dr + db + 0.000001)
+    if r < 0.0:
+        r = 0.0
+    if r > 1.0:
+        r = 1.0
+    return r
+
+
+def mem_tom_mem_margin(mem, key):
+    """engine_cli.hexa:6926."""
+    return _mem_tom_affinity(mem.protos, key, mem.recall_thr)
+
+
+def mem_tom_tom_margin(om, key):
+    """engine_cli.hexa:6932."""
+    return _mem_tom_affinity(om.protos, key, om.recall_thr)
+
+
+def mem_tom_compose(mem, om, fact_text, q_is_reality, mean_mem, mean_tom):
+    """engine_cli.hexa:6945."""
+    return mem_tom_compose_routed(mem, om, fact_text, mem_tom_route_cue(q_is_reality),
+                                  mean_mem, mean_tom)
+
+
+def mem_tom_compose_routed(mem, om, fact_text, route, mean_mem, mean_tom):
+    """engine_cli.hexa:6959."""
+    qk = immune_embed_key(fact_text)
+    mem_dec = immune_grow_recall(mem, qk)
+    tom_dec = other_mind_predict(om, fact_text)
+    if mem_dec == "" and tom_dec == "":
+        return ""
+    if mem_dec == "":
+        return tom_dec
+    if tom_dec == "":
+        return mem_dec
+    if mem_dec == tom_dec:
+        return mem_dec
+    mm = _mem_tom_affinity(mem.protos, qk, mem.recall_thr)
+    tm = _mem_tom_affinity(om.protos, qk, om.recall_thr)
+    mem_w = _mem_tom_relconf(mm, mean_mem) * route
+    tom_w = _mem_tom_relconf(tm, mean_tom) * (1.0 - route)
+    if mem_w >= tom_w:
+        return mem_dec
+    return tom_dec
+
+
+def _spat_epi_relconf(conf, mean_conf):
+    """engine_cli.hexa:7028."""
+    a = (0.0 - conf) if conf < 0.0 else conf
+    return a / (mean_conf + 0.000000001)
+
+
+def spatial_episodic_where_cue(query_text):
+    """engine_cli.hexa:7038."""
+    qk = immune_embed_key(query_text)
+    wk = immune_embed_key("which landmark is nearer to")
+    tk = immune_embed_key("what is bound to landmark")
+    dw = _l2(wk, qk)
+    dt = _l2(tk, qk)
+    r = dt / (dw + dt + 0.000001)
+    if r < 0.0:
+        r = 0.0
+    if r > 1.0:
+        r = 1.0
+    return r
+
+
+def spatial_episodic_spatial_vote(sm, x, a, b, sp_opt_a, sp_opt_b):
+    """engine_cli.hexa:7055."""
+    near = spatial_map_nearest(sm, x, a, b)
+    if near == "":
+        return [0.0 - 1.0, 0.0]
+    ix = _sm_idx(sm, x)
+    ia = _sm_idx(sm, a)
+    ib = _sm_idx(sm, b)
+    da = _sm_dist(sm, ix, ia)
+    db = _sm_dist(sm, ix, ib)
+    margin = (db - da) if da < db else (da - db)
+    vote = sp_opt_a if near == a else sp_opt_b
+    return [float(vote), margin]
+
+
+def spatial_episodic_episodic_vote(mem, key):
+    """engine_cli.hexa:7071."""
+    rv = immune_grow_recall(mem, key)
+    if rv == "":
+        return [0.0 - 1.0, 0.0]
+    vote = 1.0 if rv == "optB" else 0.0
+    margin = _mem_tom_affinity(mem.protos, key, mem.recall_thr)
+    return [vote, margin]
+
+
+def spatial_episodic_compose(sp_dec, sp_conf, ep_dec, ep_conf, mean_sp, mean_ep, where_cue):
+    """engine_cli.hexa:7088."""
+    sp_abst = sp_dec < 0
+    ep_abst = ep_dec < 0
+    if sp_abst and ep_abst:
+        return -1
+    if sp_abst:
+        return ep_dec
+    if ep_abst:
+        return sp_dec
+    if sp_dec == ep_dec:
+        return sp_dec
+    sp_w = _spat_epi_relconf(sp_conf, mean_sp) * where_cue
+    ep_w = _spat_epi_relconf(ep_conf, mean_ep) * (1.0 - where_cue)
+    if sp_w >= ep_w:
+        return sp_dec
+    return ep_dec
+
+
+def _tom_compose_relconf(conf, mean_conf):
+    """engine_cli.hexa:7138."""
+    a = (0.0 - conf) if conf < 0.0 else conf
+    return a / (mean_conf + 0.000000001)
+
+
+def _tom_compose_arbiter(xd, xc, xa, xmean, yd, yc, ya, ymean):
+    """engine_cli.hexa:7149."""
+    if xa > 0.5 and ya > 0.5:
+        return 0.0 - 1.0
+    if xa > 0.5:
+        return yd
+    if ya > 0.5:
+        return xd
+    if xd == yd:
+        return xd
+    xw = _tom_compose_relconf(xc, xmean)
+    yw = _tom_compose_relconf(yc, ymean)
+    if xw >= yw:
+        return xd
+    return yd
+
+
+def tom_spatial_tom_vote(om, fact_text, mag):
+    """engine_cli.hexa:7167."""
+    key = immune_embed_key(fact_text)
+    pv = other_mind_predict(om, fact_text)
+    dec = 1.0 if pv == "box" else 0.0
+    w = _vnearest_idx(om.protos, key) if len(om.protos) > 0 else 0
+    d = _l2(om.protos[w], key) if len(om.protos) > 0 else 1.0
+    aff = om.recall_thr - d
+    abst = 1.0 if pv == "" else 0.0
+    a = (0.0 - aff) if aff < 0.0 else aff
+    conf = a + mag
+    return [dec, abst, conf]
+
+
+def tom_spatial_spatial_vote(sm, voted_class, mag):
+    """engine_cli.hexa:7185."""
+    nm = spatial_map_nearest(sm, "L0", "L1", "L2")
+    _ = nm
+    conf = mag + 0.10
+    return [voted_class, 0.0, conf]
+
+
+def tom_spatial_compose(tom_leg, spat_leg, mean_tom, mean_spatial):
+    """engine_cli.hexa:7199."""
+    return _tom_compose_arbiter(tom_leg[0], tom_leg[2], tom_leg[1], mean_tom,
+                                spat_leg[0], spat_leg[2], spat_leg[1], mean_spatial)
+
+
+def tom_basal_tom_vote(om, fact_text, mag):
+    """engine_cli.hexa:7232."""
+    return tom_spatial_tom_vote(om, fact_text, mag)
+
+
+def tom_basal_compose(tom_leg, basal_leg, mean_tom, mean_basal):
+    """engine_cli.hexa:7243."""
+    return _tom_compose_arbiter(tom_leg[0], tom_leg[2], tom_leg[1], mean_tom,
+                                basal_leg[0], basal_leg[2], basal_leg[1], mean_basal)
+
+
+def _cereb_mem_relconf(conf, mean_conf):
+    """engine_cli.hexa:7292."""
+    a = (0.0 - conf) if conf < 0.0 else conf
+    return a / (mean_conf + 0.000000001)
+
+
+def _cereb_mem_tail_arbiter(xd, xc, xa, xmean, yd, yc, ya, ymean):
+    """engine_cli.hexa:7302."""
+    if xa > 0.5 and ya > 0.5:
+        return 0.0 - 1.0
+    if xa > 0.5:
+        return yd
+    if ya > 0.5:
+        return xd
+    if xd == yd:
+        return xd
+    xw = _cereb_mem_relconf(xc, xmean)
+    yw = _cereb_mem_relconf(yc, ymean)
+    if xw >= 1.0 and yw >= 1.0:
+        return yd
+    if xw >= yw:
+        return xd
+    return yd
+
+
+def cereb_mem_cerebellum_vote(ff, voted_class, mag):
+    """engine_cli.hexa:7321."""
+    lo = mag < 0.30
+    x = [_sqrt(0.10)] if lo else [_sqrt(0.90)]
+    err = vforward_err(ff, [0.0], x)
+    sgnd = 0.50 - err
+    a = (0.0 - sgnd) if sgnd < 0.0 else sgnd
+    conf = a + mag
+    return [voted_class, 0.0, conf]
+
+
+def cereb_mem_memory_vote(mem, key, mag):
+    """engine_cli.hexa:7335."""
+    rv = immune_grow_recall(mem, key)
+    dec = 1.0 if rv == "box" else 0.0
+    w = _vnearest_idx(mem.protos, key)
+    d = _l2(mem.protos[w], key)
+    aff = mem.recall_thr - d
+    abst = 1.0 if rv == "" else 0.0
+    a = (0.0 - aff) if aff < 0.0 else aff
+    conf = a + mag
+    return [dec, abst, conf]
+
+
+def cereb_mem_compose(cereb_leg, mem_leg, mean_cereb, mean_mem):
+    """engine_cli.hexa:7353."""
+    return _cereb_mem_tail_arbiter(cereb_leg[0], cereb_leg[2], cereb_leg[1], mean_cereb,
+                                   mem_leg[0], mem_leg[2], mem_leg[1], mean_mem)
+
+
+# ════════════════════════════════════════════════════════════════════════
 # §ThirdLaw + §Savant (SAVANT/savant_lib re-anchored) — savant scoring free-fns
 # ════════════════════════════════════════════════════════════════════════
 
@@ -8324,3 +8770,42 @@ if __name__ == "__main__":
     _p("sv_emit_disj2", sv_domain_is_emit_disjoint(2, 3))
     _p("sv_emit_disj0", sv_domain_is_emit_disjoint(0, 3))
     _p("sv_default_focus", sv_default_focus(5, 3))
+
+    # ── Compose arbiters (mem×ToM / spatial×episodic / ToM×spatial/basal / cereb×mem) ──
+    mtmem = immune_grow_new(immune_embed_key("where is ball"), "basket", 8, 8, True)
+    mtmem = immune_grow_bind(mtmem, immune_embed_key("where is cup"), "box", cfg_on)
+    mtom = other_mind_new()
+    mtom = other_mind_witness(mtom, "where is ball", "box")
+    _p("mt_route_r", mem_tom_route_cue(True))
+    _p("mt_route_b", mem_tom_route_cue(False))
+    _p("mt_mem_margin", mem_tom_mem_margin(mtmem, immune_embed_key("where is ball")))
+    _p("mt_tom_margin", mem_tom_tom_margin(mtom, immune_embed_key("where is ball")))
+    _p("mt_compose", mem_tom_compose(mtmem, mtom, "where is ball", True, 0.5, 0.5))
+    _p("mt_compose_rt", mem_tom_compose_routed(mtmem, mtom, "where is ball", 0.2, 0.5, 0.5))
+    sesm = spatial_map_new()
+    sesm = spatial_map_place(sesm, "X", 0.0, 0.0)
+    sesm = spatial_map_place(sesm, "A", 1.0, 0.0)
+    sesm = spatial_map_place(sesm, "B", 5.0, 0.0)
+    semem = immune_grow_new(immune_embed_key("landmark A"), "optA", 8, 8, True)
+    semem = immune_grow_bind(semem, immune_embed_key("landmark B"), "optB", cfg_on)
+    _p("se_where_cue", spatial_episodic_where_cue("which landmark is nearer to"))
+    sev = spatial_episodic_spatial_vote(sesm, "X", "A", "B", 0, 1)
+    _p("se_sp_vote", sev[0])
+    _p("se_sp_conf", sev[1])
+    eev = spatial_episodic_episodic_vote(semem, immune_embed_key("landmark B"))
+    _p("se_ep_vote", eev[0])
+    _p("se_compose", spatial_episodic_compose(int(sev[0]), sev[1], int(eev[0]), eev[1],
+                                              0.5, 0.5, 0.7))
+    tsv = tom_spatial_tom_vote(mtom, "where is ball", 0.2)
+    ssv = tom_spatial_spatial_vote(sesm, 1.0, 0.2)
+    _p("ts_tom_conf", tsv[2])
+    _p("ts_compose", tom_spatial_compose(tsv, ssv, 0.5, 0.5))
+    tbv = tom_basal_tom_vote(mtom, "where is ball", 0.2)
+    _p("tb_compose", tom_basal_compose(tbv, [1.0, 0.0, 0.5], 0.5, 0.5))
+    cmff = vforward_new(1, 1, 0.5)
+    cmmem = immune_grow_new(immune_embed_key("cup loc"), "box", 8, 8, True)
+    ccv = cereb_mem_cerebellum_vote(cmff, 1.0, 0.5)
+    cmv = cereb_mem_memory_vote(cmmem, immune_embed_key("cup loc"), 0.5)
+    _p("cm_cereb_conf", ccv[2])
+    _p("cm_mem_vote", cmv[0])
+    _p("cm_compose", cereb_mem_compose(ccv, cmv, 0.5, 0.5))
