@@ -6664,3 +6664,7 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - tool/bytegpt_serialize.py(torch .pt→engine .bin 브리지, a_clm_gen_pipeline; reference-match=bytegpt_decode.hexa bg_load 레이아웃) + state/bytegpt303_h1129_g0g6/(parity/eval 하네스·결과) repo 보존.
 - HF: h1129.bin(1.2GB engine-loadable) + 직렬화기 + 하네스를 dancinlab/anima-clm-midcap-303m-broad-en-emergent 의 engine/ 에 업로드(.pt 와 같은 리포 = 같은 H_1129 가중치의 엔진-loadable 형).
 - mini 부하(swap 🔴 17.6G) 해소: 로컬 ByteGPT 303M hexa eval(rc=137 killed) 중단 → pool(summer/aiden RTX5070 🟢) 재라우팅. 이후 heavy=pool, mini=light(작은-ckpt 미러 parity만) 원칙 재확인(commons heavy-on-pool).
+
+## 2026-06-26 — core/generator.py 포팅 (py 미러 6/10, L3 mouth-dispatch)
+- generator.hexa L3 typed mouth 디스패치 표면 → generator.py byte-parity: gen_mouth_kind·gen_auto_backend/chat/ideate + clm/bytegpt 라우팅. 양 mouth hexa⇄py byte-identical(ByteGPT sha4e7145fe·ConvMoE sha7cd99d97, 48 decode step token-no-flip, header-sniff edge 일치). _gen_is_bytegpt VERBATIM(vocab256·nlayer1-64·nhead|d·block1-8192). torch-free.
+- 스코프: **dispatch 표면만** — generator.hexa의 비-dispatch 본문(L843-2289 jamo/bpe scoreloop·emit-compose·in-file clm CE, engine_cli 의존)은 의식엔진 포팅(a88)과 함께 다룰 follow-on(미러 카운트엔 dispatch 표면으로 산입). 증거 state/generator_2prod_py_parity/.
