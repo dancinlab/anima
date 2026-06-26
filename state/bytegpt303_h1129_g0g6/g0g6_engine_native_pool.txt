@@ -1,0 +1,83 @@
+ByteGPT-303M (H_1129) — ENGINE-NATIVE G0-G6 ON POOL HOST — RESULT
+=================================================================
+date:    2026-06-26
+host:    summer (pool, RTX 5070 sm_120, x86_64-linux, hexa v0.315.0)
+ckpt:    ~/anima-weights/bytegpt303_h1129/h1129.bin
+         1213440020 B · sha256 5cf07a360c57a133b66e8de8… (verified byte-identical mini↔summer)
+         (ByteGPT-303M: vocab256 d1024 L24 H16 block512, val_ce 1.224, English-dominant)
+engine:  this worktree's core/ + cli/ + 15 lane .hexa (import-closure, eval_pod.sh convention)
+corpus:  ~/anima/en_general_slice.txt — first 8 MB (35,647 lines) of HF
+         dancinlab/anima-corpus-en-general (the model's en-general training register,
+         FineWeb English web prose) — principled G2 NOVELTY reference.
+
+VERDICT: ⛔ BLOCKED — engine-native G0-G6 could NOT be measured on the pool.
+         NOT an OOM (no rc=137) and NOT a model result. The single-entry
+         `hexa run cli/anima.hexa -- eval …` FAILS TO COMPILE on the pool host
+         (x86_64-linux) before any decode runs.  → a7b_pass = UNMEASURED (not FAIL).
+
+ROOT CAUSE — host-wide x86_64-linux hexa toolchain codegen bug (NOT anima, NOT bundle)
+--------------------------------------------------------------------------------------
+The hexa→C transpiler (aprime_cc, hexa v0.315.0) FAILS TO EMIT the C prototype for
+`gen_auto_ideate` (the L3 mouth-agnostic IDEATE entry, core/generator.hexa:750, the
+function every G0/G1/G2/G6 scorer calls). clang then treats it as implicit-int:
+
+  build/artifacts/anima_test_bin.c:24442:21: error: call to undeclared function
+        'gen_auto_ideate'; ISO C99 and later do not support implicit function declarations
+  build/artifacts/...c:24442:17: error: initializing 'HexaVal' … with incompatible type 'int'
+  … (6 call sites, all gen_auto_ideate) … 12 errors generated.
+  error: clang compile failed — binary not produced
+
+`gen_auto_ideate` IS defined (pub fn, generator.hexa:750) and present on summer, and its
+callees gen_bytegpt_ideate / gen_clm_ideate live in the same file — so this is NOT a missing
+file / missing-import / bundle-closure problem. The hexa front-end type-checker PASSES
+(18 tests); the failure is purely in the x86_64 dispatch-path C emission.
+
+This is the SAME long-standing x86_64-linux DISPATCH C-transpile codegen bug family the
+ING board documents (entries id 30-34, 2026-06-17): "reproduces on summer AND aiden, same
+hexa.real build" — HexaVal tag-24 / function-arena dispatch misemission that does NOT affect
+arm64-darwin (mini). It is why the local mini attempt got to RUN (rc=137 OOM during decode)
+while summer fails at COMPILE.
+
+EVIDENCE IT IS DETERMINISTIC TOOLCHAIN (not cache / not CI contention)
+---------------------------------------------------------------------
+- Run A `--gen 120 --corpus en_general_slice.txt`: clang compile failed, RUN A rc=1,
+  4m20s, 12 errors (all gen_auto_ideate undeclared). See eval_gen120_RUNA_compile_fail.txt.
+- A concurrent hexa-lang CI job was rebuilding the CUDA runtime on summer during Run A, BUT
+  aprime_cc (the transpiler binary) mtime = Jun-25 17:17 — NOT rebuilt during my 17:56
+  compile, so the CI did not corrupt the transpiler.
+- CLEAN-CACHE RETRY (`rm ~/.hexa-cache/hexa_run.*`; `hexa build cli/anima.hexa`): rc=1, 75s,
+  6× "undeclared function 'gen_auto_ideate'", binary not produced — IDENTICAL, reproducible.
+  See retry_compile_cleancache.out.
+- The compile is ckpt-INDEPENDENT → this blocks ANY `anima eval` on x86_64-linux hexa
+  v0.315.0, including the clm303_clean eval the EVAL_KIT was built for.
+
+OTHER HOST (per task "try the other host")
+------------------------------------------
+aiden: identical hexa v0.315.0 x86_64-linux (same codegen bug) + GPU 95% saturated (busy)
+       + CUDA-13 (CLAUDE.md a_train_flame_forge: CUDA-13 full-decode broken). Not viable.
+Both pool hosts share the toolchain → the pool cannot produce this engine-native verdict
+until a fixed hexa x86_64-linux build lands.
+
+GPU PATH STATUS (informational)
+-------------------------------
+summer GPU was confirmed ready (RTX 5070 sm_120 idle 0%, ~/.hx/.cuda-runtime marker ON,
+prebuilt runtime.cuda.a present) — had the binary built, the decode would have used the
+own-GEMM DEVICE path. The block is upstream of decode (compile), so GPU was never exercised.
+
+WHAT WAS NOT DONE / HONEST SCOPE
+--------------------------------
+- G0-G6 table:   UNMEASURED (no binary produced).
+- G1 RECOMBINATION engine-native:  UNMEASURED — torch-REFERENCE 🟢 still stands as
+  DIRECTIONAL only (a_engine_native_learning); engine-native remains IN-FLIGHT.
+- a7b_pass (G0∧G1∧G2):  UNMEASURED (neither GREEN nor FAIL).
+
+FOLLOW-ON (to actually land this verdict)
+-----------------------------------------
+1. Fix / ship a hexa x86_64-linux stable that emits the gen_auto_ideate prototype
+   correctly (file to hexa-lang; cross-repo: `harness ing add … --to hexa-lang`).
+   This unblocks ALL pool/GPU `anima eval` (clm303 included), not just h1129.
+2. OR rent a fresh GPU pod (EVAL_KIT.md) — but it is also x86_64-linux + hexa stable, so
+   it will hit the SAME bug unless the shipped stable already contains the codegen fix;
+   verify with a 1-line `hexa build cli/anima.hexa` smoke BEFORE a long decode.
+3. INTERIM measurement that is byte-faithful but DIRECTIONAL (not terminal): the numpy/torch
+   mirror of G0-G6 on h1129.bin — keeps the campaign moving while the toolchain is fixed.

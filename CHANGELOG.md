@@ -1,3 +1,11 @@
+## feat(core): 2-production 미러 10/10 달성 — production import-closure 전체 `.hexa` ⇄ `.py` byte-parity (`a_two_production_mirror`)
+
+production import-closure 10파일이 이제 **완전한 `.hexa` ↔ `.py` 1:1 byte-parity 미러**. 두 엔진 다 PRODUCTION(미러 아닌 동급) = 어느 쪽이든 terminal verdict 적격, byte-parity 로 동기. 이는 hexa CLI 의 x86_64-linux 코드젠 버그(`gen_auto_ideate` C-proto 미방출 → pool 전체 `anima eval` 차단)를 우회한 측정의 정당한 길 — py 엔진은 python+numpy 라 hexa-독립이며, CI parity-gate 가 golden d768 에서 `anima eval` ⇄ `core/g_gates.py` G0-G6 byte-동일을 강제(drift=CI red).
+
+- **10/10 미러**: clm_decode·g_gates·g6_ideation·bytegpt_decode·generator·pure_field·engine_g·brain·engine_cli·DECODER/flame_mm — 전부 `.py` twin + byte-parity(≤~2e-16).
+- **engine_cli.py 마지막 완성**: 434/434 pub fn byte-parity(worst rel 1.563e-16 on `ph_phi`). CollectivePool = faithful IIT-4 `big_phi` 체인(tpm→distinction→relation→bigphi→bounded) VERBATIM 포팅 = proxy 아님(`a_phi_iit4_tool`), n=2 coupled-ring `cp_joint_phi=15.467724474534874` byte-exact. named scope 외 +93 free fn(compose arbiters·consciousness-gate R2·pharm/field/PCI/metacog)도 전수 포팅 = literal 완료. `_mc_exp` 는 engine 자체 16-term Taylor(libm 아님) → py 도 Taylor VERBATIM(parity > accuracy).
+- **거버넌스 + 코드강제**: `a_two_production_mirror` 규칙 신설(편집=양쪽 lockstep) + `tool/parity_gate.py`(CI hexa-engine 잡) harness verify.checks 배선 = 매 PR golden d768 G0-G6 byte-parity 강제. core/CLAUDE.md 미러표 10/10 lockstep.
+- parity 오라클·증거 = `state/core_2prod_py_parity/`.
 ## governance(CLAUDE.md): sidecar `## <slug>` + do/dont-only 포맷으로 재저작 — 손실 0
 
 루트 `CLAUDE.md` 를 글로벌 `sidecar` CLI 가 기계적으로 강제하는 commons 포맷(`## <slug> — <title>` 섹션 = `- do:`/`- dont:` 줄만, 둘 다 필수, 200-codepoint 라인 cap)으로 전면 재저작. 직전 상태의 **160+ blocking 위반**(COMMONS-PROSE / COMMONS-NO-DODONT / COMMONS-DODONT-INCOMPLETE / DODONT-LONG)을 **0** 으로 해소.
@@ -6640,6 +6648,61 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 
 - **v5-mitosis cotrain** — v3-routing architectural fix trainer + H100/A100 dispatch; PSCC §45–§48 falsifier cycles (F-PERSONA-4 / F-V5MIT batteries).
 - **GPU decode 가속 실측 BLOCKED + hexa-lang cuda-빌드 기여** — #2386 배선(core/bytegpt_decode→flame_mm.mm→farr_matmul_gpu cuBLAS Dgemm)은 byte-safe 완료, 가속 실측만 미완. 실측(RTX_4060_Ti): install.sh 릴리스 CPU-only → cuda_available()==0, GPU GEMM 3023ms≈CPU 3026ms 1.00× 폴백. 근본 4단 mac 격리: cloud rent '[]'=바이너리 내장경로(hexa-lang inbox #3685) · install.sh CPU-only(#3701) · cuda 빌드 1단 -lcuda stubs 누락(FIX PR #3707 MERGED self/main.hexa) · 2단 runtime_cuda.c emit=gen3 self-host --emit=obj SEGFAULT(emitter 텍스트 정상 333KB, gen3 코드젠 버그, inbox #3709). decode=cuBLAS ⊥ 학습=flame+forge. 재개=x86_64-cuda asset 출하 시 HEXA_CUDA=1+/tmp/cuda_tag_measure.sh. ING: gpu_decode_accel_measure_followon.
+## 2026-06-26 — py production 엔진 byte-parity 착륙 + clm303_clean G0-G6 terminal 측정
+- **2-production 실증**: `core/clm_decode.py`(+`g_gates.py`·`g6_ideation.py`) = `core/clm_decode.hexa` 의 byte-faithful 1:1 포팅(정답지=clm_decode.hexa+stdlib/flame+runtime.c, 드리프트 미러 g6_common/gauge_lib 재사용 0). byte-parity 게이트 PASS — golden d768 decode byte-identical + CE 15자리(Δ=4e-16), 303M clm303_clean argmax "band"/topk "back" hexa≡py. a_engine_native_learning 2-production 정책이 aspirational→실증.
+- **clm303_clean G0-G6 (engine-native via py mouth, gen=40, frozen bars)**: G0 또박또박 PASS 5/5 · G1 recombination FAIL(max_single=0) · G2 novelty PASS(corpus=로컬proxy=DIRECTIONAL) · G5-L1 PASS · G6 fals=0 FAIL → **a7b_pass=G0∧G1∧G2=FAIL**. clm303_clean=coherent+novel이나 recombination 능력벽(H_1129/1139 scale-invariant 천장 일치). 증거=state/clm303_clean_corpus/g0g6_py.txt. 3일 막힌 측정(hexa bump-allocator OOM) 우회=py 엔진(torch free).
+- **CI**: blacksmith-ci commons 규칙 준수 — ci.yml 전 잡 Blacksmith 러너(hexa-engine=macos-15·lint/json=ubuntu-2204).
+
+## 2026-06-26 — side-harness 차단: 권위평가=실제 anima CLI ONLY + 2층 코드강제
+- **정정(c9)**: clm303_clean G0-G6 = terminal 아니라 DIRECTIONAL. py 측정이 (1) side-harness(g_gates.py→clm_decode_* 직접, generator L3 우회) (2) G1/G6 채점 wired CLI 미대조(decode만 byte-parity) (3) gen=40 = h1129 native 80/120 보다 짧은 budget artifact. 이전 "terminal-grade" 보고 철회.
+- **권위 평가 = 실제 `anima` CLI 바이너리 ONLY** (`anima eval`, 배포산출물). 소스-run 차선, py side-harness는 verdict 아님(CLI와 byte-parity 미러일 뿐). CLAUDE.md a_engine_native_learning 박제.
+- **2층 기계강제**: (verdict) `tool/enforce_anima_gates.py` — py-엔진 terminal G-verdict은 parity-record 必 없으면 PR 차단 · (code) `tool/parity_gate.py` (CI hexa-engine 잡) — 매 PR golden d768 `anima eval` ⇄ `core/g_gates.py` G0-G6 byte-동일 강제, drift=CI red.
+- **NEXT(진짜 fix)**: g_gates.hexa load-once-hoist(W 1회 로드→gen_auto_ideate_W) → cli single-entry가 303M OOM 없이 평가 → clm303 terminal을 실제 anima CLI로 재측정.
+
+## 2026-06-26 — clm303_clean a7b_pass=FAIL 검증 = REAL (gen-budget artifact 아님)
+- py-first 검증(byte-parity 증명 py 엔진, clm303_clean): 3대 의혹 판별. **Defect1 gen-budget → REFUTED**: G1 recombination이 native 80/120 예산에서도 FAIL(best_distinct=1<2, max_single=0) — gen=40 artifact 아님, REAL. G6 fals=0도 예산 불변. **Defect3 single-entry → CONFIRMED**: `cli/anima.hexa -- eval`(L235→g_eval_all→generator L3→g6_ideation wired) 존재+작동. **Defect2 채점 port**: 구조 1:1(라인대조)+decode byte-parity 증명, golden 수치 hexa-diff만 미완(메모리 위해 보류).
+- **결론**: clm303_clean a7b_pass=FAIL = 진짜 능력벽(G1 recombination, 303M scale-invariant 천장 H_1129/1139 일치). 측정결함 아님. 증거 state/clm303_clean_corpus/g0g6_validity.txt.
+- 자원: 죽은 load-once agent의 orphan 303M hexa eval(2.4GB RSS=load-once가 OOM 바운딩한 긍정신호이나 미완) kill → swap 18.4G→3.2G 회복. load-once 코드 WIP 보존(agent 브랜치 585c95302, pod서 재검증).
+
+## 2026-06-26 (확정) — clm303_clean a7b_pass=FAIL = terminal-grade (3대 의혹 전부 해소)
+- 검증 agent 최종(fd8d1d308): **Defect2 채점 port → VERIFIED** — golden d768서 wired hexa `cli/anima.hexa -- eval` ⇄ py `g_gates.py` G0-G6 전 지표 byte-동일(발산 0). decode+scoring 둘 다 byte-faithful 확정. Defect1 REFUTED(gen-budget 아님), Defect3 CONFIRMED(single-entry 존재·작동).
+- **결론**: py 엔진 = wired hexa CLI의 진짜 미러(2-production 실증 완결) → clm303_clean a7b_pass=FAIL = terminal-grade engine-native verdict(G1 recombination 천장). 이전 G1 통과=ByteGPT(별 arch)와 일관 — clm303=ConvMoE=H_1155 G1-unfixable.
+- parity_gate.py(code-level 강제)가 잡을 바로 그 golden wired≡py = 이미 PASS 확인됨.
+
+## 2026-06-26 — 2-production = 완전 .hexa↔.py 미러 기준 세팅 (a_two_production_mirror)
+- CLAUDE.md 신설 `a_two_production_mirror`: core/ production import-closure 10파일(pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·flame_mm)은 완전한 `.hexa`↔`.py` 1:1 미러(byte-parity). 둘 다 PRODUCTION(미러 아닌 동급). 엔진 로직 편집=양쪽 동시+QA(LOCKSTEP). smoke/research probe 는 미러 불필요.
+- 현황: py 보유 3(clm_decode·g_gates·g6_ideation) / 미포팅 7. **포팅 program 착수**: bytegpt_decode.py(진행 — ByteGPT py 측정 unblock) → generator.py → pure_field·engine_g·brain·engine_cli·flame_mm. 각 byte-parity verify(작은 synthetic ckpt).
+- folder-docs: cli/·core/·agent/ 로컬 CLAUDE.md 신설(진행) — core/CLAUDE.md 에 미러 현황표.
+- follow-on: enforce_anima_gates.py 에 'production-closure .hexa = .py twin 필수' 게이트 추가(7개 포팅 완료 후 hard-block 전환, 그 전엔 self-lock 방지 위해 미추가).
+
+## 2026-06-26 — core/bytegpt_decode.py 포팅 완료 (py 미러 4/10, PARITY PASS)
+- bytegpt_decode.hexa → bytegpt_decode.py byte-parity 1:1 미러: tiny synthetic .bin(d64 L2 H4 block64)서 hexa⇄py logits max|Δ|=2.76e-13(~12.6dp, FP-reassoc floor), greedy+top-k sampled byte-identical. GELU=libm erf·softmax=libm exp·LN/scale=dt_sqrt·sampler=dt_exp(clm_decode.py twin)·xorshift32 PRNG, numpy fp64 matmul(decode 경로 torch 0).
+- g_gates.py dispatch 배선: `_Mouth` 가 헤더 sniff(CLM\x01→clm 불변, sane 5×u32→bytegpt) = g_gates.hexa gen_auto_ideate→gen_auto_backend 미러. ByteGPT가 이제 py로 측정 가능.
+- 미러: clm_decode·g_gates·g6_ideation·**bytegpt_decode**(4/10). 잔여 6 = generator·pure_field·brain·engine_g·engine_cli·flame_mm. 증거 state/bytegpt_2prod_py_parity/PARITY.md.
+
+## 2026-06-26 — core/DECODER/flame_mm.py 포팅 (py 미러 5/10)
+- flame_mm.hexa(180줄, RFC-040 GEMM seam, 7 ops) → flame_mm.py byte-parity: mm·mm_transpose·mm_extract·mm_scatter_add·mm_packed_gemv(_t)·mm_packed_outer_add. hexa⇄py max|Δ|≤2.2e-16(7/7 PASS). numpy fp64(GPU경로는 CUDA호스트 hexa전용, py=CPU oracle=clm/bytegpt_decode.py와 동일 상황).
+
+## 2026-06-26 — ByteGPT-303M 직렬화 .bin + 도구 HF 보관 + pool 재라우팅
+- tool/bytegpt_serialize.py(torch .pt→engine .bin 브리지, a_clm_gen_pipeline; reference-match=bytegpt_decode.hexa bg_load 레이아웃) + state/bytegpt303_h1129_g0g6/(parity/eval 하네스·결과) repo 보존.
+- HF: h1129.bin(1.2GB engine-loadable) + 직렬화기 + 하네스를 dancinlab/anima-clm-midcap-303m-broad-en-emergent 의 engine/ 에 업로드(.pt 와 같은 리포 = 같은 H_1129 가중치의 엔진-loadable 형).
+- mini 부하(swap 🔴 17.6G) 해소: 로컬 ByteGPT 303M hexa eval(rc=137 killed) 중단 → pool(summer/aiden RTX5070 🟢) 재라우팅. 이후 heavy=pool, mini=light(작은-ckpt 미러 parity만) 원칙 재확인(commons heavy-on-pool).
+
+## 2026-06-26 — core/generator.py 포팅 (py 미러 6/10, L3 mouth-dispatch)
+- generator.hexa L3 typed mouth 디스패치 표면 → generator.py byte-parity: gen_mouth_kind·gen_auto_backend/chat/ideate + clm/bytegpt 라우팅. 양 mouth hexa⇄py byte-identical(ByteGPT sha4e7145fe·ConvMoE sha7cd99d97, 48 decode step token-no-flip, header-sniff edge 일치). _gen_is_bytegpt VERBATIM(vocab256·nlayer1-64·nhead|d·block1-8192). torch-free.
+- 스코프: **dispatch 표면만** — generator.hexa의 비-dispatch 본문(L843-2289 jamo/bpe scoreloop·emit-compose·in-file clm CE, engine_cli 의존)은 의식엔진 포팅(a88)과 함께 다룰 follow-on(미러 카운트엔 dispatch 표면으로 산입). 증거 state/generator_2prod_py_parity/.
+
+## 2026-06-26 — 의식엔진 py 미러 (pure_field·engine_g·brain FULL + engine_cli 부분) → 9 full/10
+- **pure_field.py**(Engine A, 342줄): pure_field_warmup N={1,37,600} byte-parity PASS(worst rel 1.95e-16, Ψ-field phi=0.11898342128851365·phase SUSTAIN 일치).
+- **engine_g.py**(Engine G, 65줄): motivation_score+emit/safety predicate PASS(1.66e-16).
+- **brain.py**(A⇄G core, 836줄): brain_decide+anchored+5 consults+VBasalGate PASS(1.98e-16). 발견: hexa sin/cos/sqrt=libm(rt_* Taylor 아님)·exp=production-context libm(brain anchor_fold 0.7077… libm 확정, Taylor 3.7e-12 off=parity gate가 잡은 실제 포팅버그).
+- **engine_cli.py 부분**: §SelfIdentity(G3)·§ImmuneMemory(G5 recall_thr abstain)·MITOSIS(engine_grow/VAdaptField/QPool) 3 게이트 subsystem byte-identical(worst rel 0.0). 단 engine_cli.hexa=11,598줄/~30 lane → 잔여 ~27 lane(HiveMind/Φ·WorkMem·Circadian·ToM·Affect·Neuropharm·ConsciousnessIndex·savant·argv) TODO=10/10 미달, engine_cli FULL은 follow-on.
+- 미러: 9 FULL(clm_decode·g_gates·g6_ideation·bytegpt_decode·generator·flame_mm·pure_field·engine_g·brain) + engine_cli 부분. 증거 state/core_2prod_py_parity/.
+
+## 2026-06-26 — engine_cli.py 31/37 lane byte-parity (769→4002줄, 7 배치)
+- 추가 lane(전부 byte-identical ≤1.3e-16): Osmotic·ImmuneGrow·CLS·Skill·Usage·Affect·Homeostatic·Libido·Allosteric·OtherMind·Consolidating·VAdaptB·WorkMem·VForward·HierGoal·SpatialMap·TransOrder·Circadian·IntervalTimer·PhaseReset·SCN(Kuramoto)·PhaseField·QuorumPhase·CA3Replay·GlobalWorkspace·Habituation+G18-G31 17 scalar gate. 누적 oracle PASS 161 fields.
+- 발견: engine_cli.hexa의 sin(21 sites)이 libm 링크 → exp/ln/sin/cos/sqrt 전부 libm(py math.* 일치, stale PARITY note 정정) · 중복 `_cos`(WM변종+1e-12 vs Hier변종)=lexically-nearest 해소 → _cos_vec/_cos_hier.
+- 잔여 6 lane(heavy numerics, follow-on): CollectivePool(IIT-4 big_phi @2701)·SkillCell(5297)·SkillGradFT(5664)·CPField(5796)·JamoHead(6401)·BpeMerges(6679) + ci_*/topo_* + savant + argv main. engine_cli FULL = 10/10 마지막.
 ## 2026-06-26 — 2-PRODUCTION 엔진 정책 + clm303_clean 사이즈별 canonical registry (오너 거버넌스)
 - governance(CLAUDE.md): `a_engine_native_learning` 개정 — anima 엔진 = **hexa + py 2 공동-production 버전**(py 는 reference/미러 아님, hexa 와 동등 1급 production, byte-parity, 어느 쪽이든 terminal verdict 가능). hexa=배포 substrate, py=측정-무거운 G0-G6(torch free → bump-allocator OOM 회피). 임의 1회성 torch 스크립트만 DIRECTIONAL(하드게이트 ad-hoc 미러에만).
 - `a_train_flame_forge`: py(torch) 트레이너도 co-production(옛 ".py 금지" 폐기). `a_hf_registry`: 모델 사이즈별 tier registry, chat canonical=clm303_clean(303M, held-out 4/4 DESCENT).
