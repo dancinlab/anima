@@ -443,4 +443,66 @@ fn main() {
     let cprel = cp_relocate(cpfa, cpX, cppos, cpYb, 0.6666666666666666, 0.5, cpfa.n, cpdim, 4)
     pi("cp_reloc_n", cprel.n)
     pf("cp_reloc_post", cp_posterior(cprel, cpX[7]))
+
+    // ── JamoHead (§KoJamoCountHead H_1316/1321/1351) — Voronoi count-MLE head ──
+    let jhdim = 2
+    let jhvj = 3
+    let jhX = [[0.0, 0.0], [0.2, 0.1], [0.1, 0.2], [3.0, 0.0], [3.1, 0.2], [2.9, 0.1],
+               [0.0, 3.0], [0.1, 2.9], [0.2, 3.1], [3.0, 3.0], [2.9, 3.1], [3.1, 2.9]]
+    let jhY = [0, 0, 0, 1, 1, 1, 2, 2, 2, 0, 0, 0]
+    let jhntr = 9
+    let jhseed = [_sc_vmean(jhX)]
+    let jh0 = jamo_head_new(jhseed, jhvj, jhdim)
+    pi("jh_cells_seed", jamo_head_cells(jh0))
+    let jhg = jamo_head_grow(jh0, jhX, jhY, jhntr, 6, 1, 0.10, 0.5, cfg_on)
+    pi("jh_cells_grown", jamo_head_cells(jhg))
+    let mut jhXte = []
+    let mut jhYte = []
+    let mut jhti = jhntr
+    while jhti < len(jhX) { jhXte = jhXte + [jhX[jhti]]  jhYte = jhYte + [jhY[jhti]]  jhti = jhti + 1 }
+    pf("jh_ce", jamo_head_ce(jhg, jhXte, jhYte))
+    pf("jh_head000", jhg.heads[0][0])
+    pi("jh_argmax0", jamo_head_argmax(jhg, [0.05, 0.05]))
+    pf("jh_recon0", jamo_head_recon_err(jhg, [0.05, 0.05]))
+    let jhsh = jamo_head_shuffle_targets(jhY, jhvj, 4290)
+    pi("jh_shuf2", jhsh[2])
+    pi("jh_shuf5", jhsh[5])
+    let jhg_off = jamo_head_grow(jh0, jhX, jhY, jhntr, 6, 1, 0.10, 0.5, cfg_off)
+    pi("jh_cells_off", jamo_head_cells(jhg_off))
+
+    // ── BpeMerges (§KoMorphologyBpe H_1388) — BPE merges over int stream ──
+    let base_sym = [1, 2, 1, 2, 3, 1, 2, 1, 2, 3, 1, 2, 4, 1, 2, 3]
+    let base_nby = [1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2]
+    let bm = bpe_learn_merges(base_sym, base_nby, 4, 5, 0)
+    pi("bpe_nmerges", len(bm.merges))
+    pi("bpe_vocab", bpe_unit_vocab(bm))
+    pi("bpe_merge0a", bm.merges[0][0])
+    pi("bpe_merge0b", bm.merges[0][1])
+    pi("bpe_merge0nid", bm.merges[0][2])
+    let bap = bpe_apply(bm, base_sym, base_nby)
+    pi("bpe_nunits", bpe_n_units(bap[0]))
+    pi("bpe_unit0", bap[0][0])
+    pi("bpe_nby0", bap[1][0])
+    let bm_sh = bpe_learn_merges(base_sym, base_nby, 4, 5, 99)
+    pi("bpe_sh_merge0a", bm_sh.merges[0][0])
+    let bunits = bap[0]
+    let bnby = bap[1]
+    let mut bfeat = []
+    let mut btgt = []
+    let mut bnbyt = []
+    let mut bi = 0
+    while bi < len(bunits) - 1 {
+        bfeat = bfeat + [[to_float(bunits[bi]), to_float(bnby[bi])]]
+        btgt = btgt + [bunits[bi + 1] % 3]
+        bnbyt = bnbyt + [bnby[bi]]
+        bi = bi + 1
+    }
+    let bjh = jamo_head_grow(jamo_head_new([_sc_vmean(bfeat)], 3, 2), bfeat, btgt,
+                             len(bfeat) - 2, 5, 1, 0.10, 0.5, cfg_on)
+    let mut bXte = []
+    let mut bYte = []
+    let mut bNte = []
+    let mut bj = len(bfeat) - 2
+    while bj < len(bfeat) { bXte = bXte + [bfeat[bj]]  bYte = bYte + [btgt[bj]]  bNte = bNte + [bnbyt[bj]]  bj = bj + 1 }
+    pf("bpe_bfce", bpe_byte_fair_ce(bjh, bXte, bYte, bNte))
 }

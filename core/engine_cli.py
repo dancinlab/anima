@@ -5770,6 +5770,403 @@ def bpe_byte_fair_ce(jh, Xte, Yte, nby_te):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# §ConsciousnessIndex (ci_*) — 15-lane scores + Gaussian/IIT-4 Φ (free-fns)
+# ════════════════════════════════════════════════════════════════════════
+
+def _ci_clip01(x):
+    """engine_cli.hexa:7962."""
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+
+def _ci_abs(x):
+    """engine_cli.hexa:7967."""
+    if x < 0.0:
+        return 0.0 - x
+    return x
+
+
+def ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err):
+    """engine_cli.hexa:7968 — the 15-lane consciousness score vector."""
+    PASS_THR = 0.55
+    f0 = m_field[0]
+    f1 = m_field[0]
+    fi = 1
+    fsum = m_field[0]
+    while fi < len(m_field):
+        v = m_field[fi]
+        fsum = fsum + v
+        if v > f0:
+            f1 = f0
+            f0 = v
+        else:
+            if v > f1:
+                f1 = v
+        fi = fi + 1
+    fmean = fsum / float(len(m_field))
+    fc = float(cells)
+    sc = float(seen)
+    gws = _ci_clip01(f0 - 0.9 * f1 + 0.5)
+    hab = _ci_clip01(1.0 / (1.0 + 0.5 * sc))
+    prec = _ci_clip01(m)
+    perr = recon_err
+    surp = _ci_clip01(prec * perr * perr)
+    drift = _ci_abs(m - fmean)
+    selfi = _ci_clip01(1.0 - drift)
+    lprec = _ci_clip01(m)
+    nov = _ci_clip01(recon_err / (1.0 + 0.5 * sc))
+    blink = _ci_clip01(dt / (1.0 + dt))
+    agency = _ci_clip01(float(intent) * m)
+    stime = _ci_clip01(1.0 - 1.0 / (1.0 + dt))
+    emo = _ci_clip01(1.0 - 2.0 * _ci_abs(m - 0.5))
+    forg = m
+    if m < PASS_THR:
+        forg = 1.0 - m
+    forg = _ci_clip01(forg)
+    body = _ci_clip01(1.0 - _ci_abs(m - fmean))
+    ent = 0.0
+    ei = 0
+    psum = 0.0
+    while ei < len(m_field):
+        pv = m_field[ei]
+        if pv > 0.000001:
+            psum = psum + pv
+        ei = ei + 1
+    if psum > 0.000001:
+        ej = 0
+        while ej < len(m_field):
+            pv = m_field[ej]
+            if pv > 0.000001:
+                p = pv / psum
+                ent = ent - p * _ln(p)
+            ej = ej + 1
+        ent = ent / _ln(float(len(m_field)))
+    divid = _ci_clip01(ent)
+    wont = 0.5
+    if intent == 1:
+        wont = 1.0 - m
+    wont = _ci_clip01(wont)
+    mito = _ci_clip01(1.0 - 1.0 / (1.0 + 0.3 * fc))
+    return [gws, hab, surp, selfi, lprec, nov, blink, agency, stime, emo, forg, body, divid, wont, mito]
+
+
+def _ci_drop_col(row, k):
+    """engine_cli.hexa:8046."""
+    out = []
+    i = 0
+    while i < len(row):
+        if i != k:
+            out.append(row[i])
+        i = i + 1
+    return out
+
+
+def ci_bundle(x, ablate):
+    """engine_cli.hexa:8058."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    s = 0.0
+    cnt = 0
+    t = 0
+    while t < nt:
+        row = x[t]
+        if ablate >= 0:
+            row = _ci_drop_col(row, ablate)
+        j = 0
+        while j < len(row):
+            s = s + row[j]
+            cnt = cnt + 1
+            j = j + 1
+        t = t + 1
+    if cnt == 0:
+        return 0.0
+    return s / float(cnt)
+
+
+def _ci_cov(x):
+    """engine_cli.hexa:8077 — column covariance + ridge."""
+    nt = len(x)
+    nc = len(x[0])
+    mean = []
+    c = 0
+    while c < nc:
+        s = 0.0
+        t = 0
+        while t < nt:
+            s = s + x[t][c]
+            t = t + 1
+        mean.append(s / float(nt))
+        c = c + 1
+    cov = []
+    i = 0
+    while i < nc:
+        rowi = []
+        j = 0
+        while j < nc:
+            s = 0.0
+            t = 0
+            while t < nt:
+                s = s + (x[t][i] - mean[i]) * (x[t][j] - mean[j])
+                t = t + 1
+            v = s / float(nt - 1)
+            if i == j:
+                v = v + 0.000001
+            rowi.append(v)
+            j = j + 1
+        cov.append(rowi)
+        i = i + 1
+    return cov
+
+
+def _ci_logdet_chol(s):
+    """engine_cli.hexa:8113 — ln det via Cholesky."""
+    n = len(s)
+    if n == 0:
+        return 0.0
+    l = []
+    a = 0
+    while a < n:
+        zr = []
+        b = 0
+        while b < n:
+            zr.append(0.0)
+            b = b + 1
+        l.append(zr)
+        a = a + 1
+    ld = 0.0
+    i = 0
+    while i < n:
+        j = 0
+        while j <= i:
+            sum_ = s[i][j]
+            k = 0
+            while k < j:
+                sum_ = sum_ - l[i][k] * l[j][k]
+                k = k + 1
+            if i == j:
+                piv = sum_
+                if piv < 0.000000001:
+                    piv = 0.000000001
+                lii = _sqrt(piv)
+                l[i][j] = lii
+                ld = ld + 2.0 * _ln(lii)
+            else:
+                l[i][j] = sum_ / l[j][j]
+            j = j + 1
+        i = i + 1
+    return ld
+
+
+def ci_phi_multiinfo(x, ablate):
+    """engine_cli.hexa:8153 — Gaussian multi-information Φ."""
+    if len(x) < 2:
+        return 0.0
+    xa = x
+    if ablate >= 0:
+        xx = []
+        t = 0
+        while t < len(x):
+            xx.append(_ci_drop_col(x[t], ablate))
+            t = t + 1
+        xa = xx
+    nc = len(xa[0])
+    if nc < 2:
+        return 0.0
+    cov = _ci_cov(xa)
+    sum_log_diag = 0.0
+    i = 0
+    while i < nc:
+        d = cov[i][i]
+        if d < 0.000000001:
+            d = 0.000000001
+        sum_log_diag = sum_log_diag + _ln(d)
+        i = i + 1
+    logdet = _ci_logdet_chol(cov)
+    phi = 0.5 * (sum_log_diag - logdet)
+    if phi < 0.0:
+        return 0.0
+    return phi
+
+
+def _ci_minfo_subset(x, idx):
+    """engine_cli.hexa:8182."""
+    m = len(idx)
+    if m < 2:
+        return 0.0
+    xs = []
+    t = 0
+    while t < len(x):
+        row = []
+        q = 0
+        while q < m:
+            row.append(x[t][idx[q]])
+            q = q + 1
+        xs.append(row)
+        t = t + 1
+    cov = _ci_cov(xs)
+    sld = 0.0
+    i = 0
+    while i < m:
+        d = cov[i][i]
+        if d < 0.000000001:
+            d = 0.000000001
+        sld = sld + _ln(d)
+        i = i + 1
+    phi = 0.5 * (sld - _ci_logdet_chol(cov))
+    if phi < 0.0:
+        return 0.0
+    return phi
+
+
+def _ci_bit(v, b):
+    """engine_cli.hexa:8249."""
+    x = v
+    i = 0
+    while i < b:
+        x = x // 2
+        i = i + 1
+    return x - (x // 2) * 2
+
+
+def ci_phi_iit4(x, cols):
+    """engine_cli.hexa:8215 — EXACT IIT4-style min-cut MIP Φ (≤8 lanes)."""
+    n = len(cols)
+    if n < 2:
+        return 0.0
+    if n > 8:
+        return 0.0 - 1.0
+    whole = _ci_minfo_subset(x, cols)
+    half = 1
+    e = 0
+    while e < n - 1:
+        half = half * 2
+        e = e + 1
+    best = 0.0
+    first = True
+    amask = 0
+    while amask < half:
+        aidx = [cols[0]]
+        bidx = []
+        bit = 1
+        while bit < n:
+            shifted = _ci_bit(amask, bit - 1)
+            if shifted == 1:
+                aidx.append(cols[bit])
+            else:
+                bidx.append(cols[bit])
+            bit = bit + 1
+        if len(bidx) > 0:
+            ia = _ci_minfo_subset(x, aidx)
+            ib = _ci_minfo_subset(x, bidx)
+            cut = whole - ia - ib
+            if first:
+                best = cut
+                first = False
+            else:
+                if cut < best:
+                    best = cut
+        amask = amask + 1
+    if best < 0.0:
+        return 0.0
+    return best
+
+
+def ci_phi_drop2(x, i, j):
+    """engine_cli.hexa:8275."""
+    if len(x) < 2:
+        return 0.0
+    lo = i
+    hi = j
+    if lo > hi:
+        t = lo
+        lo = hi
+        hi = t
+    xx = []
+    t = 0
+    while t < len(x):
+        r1 = _ci_drop_col(x[t], hi)
+        r2 = _ci_drop_col(r1, lo)
+        xx.append(r2)
+        t = t + 1
+    if len(xx[0]) < 2:
+        return 0.0
+    sld = 0.0
+    cov = _ci_cov(xx)
+    nc = len(xx[0])
+    c = 0
+    while c < nc:
+        d = cov[c][c]
+        if d < 0.000000001:
+            d = 0.000000001
+        sld = sld + _ln(d)
+        c = c + 1
+    phi = 0.5 * (sld - _ci_logdet_chol(cov))
+    if phi < 0.0:
+        return 0.0
+    return phi
+
+
+def ci_pair_interaction(x, i, j):
+    """engine_cli.hexa:8308."""
+    phi0 = ci_phi_multiinfo(x, -1)
+    dphi_i = phi0 - ci_phi_multiinfo(x, i)
+    dphi_j = phi0 - ci_phi_multiinfo(x, j)
+    dphi_ij = phi0 - ci_phi_drop2(x, i, j)
+    sum_singles = dphi_i + dphi_j
+    return [dphi_ij, sum_singles, dphi_ij - sum_singles]
+
+
+def _lcg_ci(s):
+    """engine_cli.hexa:8349."""
+    return (s * 1103515245 + 12345) & 2147483647
+
+
+def _ci_shift_pop(x, seed):
+    """engine_cli.hexa:8319 — per-column circular-shift surrogate."""
+    nt = len(x)
+    nc = len(x[0])
+    out = []
+    t = 0
+    while t < nt:
+        zr = []
+        c = 0
+        while c < nc:
+            zr.append(0.0)
+            c = c + 1
+        out.append(zr)
+        t = t + 1
+    c = 0
+    s = _lcg_ci(seed)
+    while c < nc:
+        s = _lcg_ci(s)
+        off = 1 + (s % (nt - 1))
+        r = 0
+        while r < nt:
+            src = (r + off) % nt
+            out[r][c] = x[src][c]
+            r = r + 1
+        c = c + 1
+    return out
+
+
+def ci_surrogate_phi0(x, seed):
+    """engine_cli.hexa:8353."""
+    if len(x) < 3:
+        return 0.0
+    xs = _ci_shift_pop(x, seed)
+    return ci_phi_multiinfo(xs, -1)
+
+
+def ci_phi_multiinfo_subset_proxy(x, cols):
+    """engine_cli.hexa:8363."""
+    return _ci_minfo_subset(x, cols)
+
+
+# ════════════════════════════════════════════════════════════════════════
 # parity smoke driver — exercises CLI / MITOSIS / G5 / G3 deterministically
 # ════════════════════════════════════════════════════════════════════════
 
@@ -6230,3 +6627,60 @@ if __name__ == "__main__":
     cprel = cp_relocate(cpfa, cpX, cppos, cpYb, 0.6666666666666666, 0.5, cpfa.n, cpdim, 4)
     _p("cp_reloc_n", cprel.n)
     _p("cp_reloc_post", cp_posterior(cprel, cpX[7]))
+
+    # ── JamoHead (§KoJamoCountHead H_1316/1321/1351) — Voronoi count-MLE head ──
+    # synthetic compositional fixture: 2D features in 4 regions, next-symbol vocab 3.
+    jhdim = 2
+    jhvj = 3
+    jhX = [[0.0, 0.0], [0.2, 0.1], [0.1, 0.2], [3.0, 0.0], [3.1, 0.2], [2.9, 0.1],
+           [0.0, 3.0], [0.1, 2.9], [0.2, 3.1], [3.0, 3.0], [2.9, 3.1], [3.1, 2.9]]
+    jhY = [0, 0, 0, 1, 1, 1, 2, 2, 2, 0, 0, 0]
+    jhntr = 9
+    jhseed = [_sc_vmean(jhX)]
+    jh0 = jamo_head_new(jhseed, jhvj, jhdim)
+    _p("jh_cells_seed", jamo_head_cells(jh0))
+    jhg = jamo_head_grow(jh0, jhX, jhY, jhntr, 6, 1, 0.10, 0.5, cfg_on)
+    _p("jh_cells_grown", jamo_head_cells(jhg))
+    jhXte = jhX[jhntr:]
+    jhYte = jhY[jhntr:]
+    _p("jh_ce", jamo_head_ce(jhg, jhXte, jhYte))
+    _p("jh_head000", jhg.heads[0][0])
+    _p("jh_argmax0", jamo_head_argmax(jhg, [0.05, 0.05]))
+    _p("jh_recon0", jamo_head_recon_err(jhg, [0.05, 0.05]))
+    jhsh = jamo_head_shuffle_targets(jhY, jhvj, 4290)
+    _p("jh_shuf2", jhsh[2])
+    _p("jh_shuf5", jhsh[5])
+    jhg_off = jamo_head_grow(jh0, jhX, jhY, jhntr, 6, 1, 0.10, 0.5, cfg_off)
+    _p("jh_cells_off", jamo_head_cells(jhg_off))
+
+    # ── BpeMerges (§KoMorphologyBpe H_1388) — BPE merges over int stream ──
+    base_sym = [1, 2, 1, 2, 3, 1, 2, 1, 2, 3, 1, 2, 4, 1, 2, 3]
+    base_nby = [1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2]
+    bm = bpe_learn_merges(base_sym, base_nby, 4, 5, 0)
+    _p("bpe_nmerges", len(bm.merges))
+    _p("bpe_vocab", bpe_unit_vocab(bm))
+    _p("bpe_merge0a", bm.merges[0][0])
+    _p("bpe_merge0b", bm.merges[0][1])
+    _p("bpe_merge0nid", bm.merges[0][2])
+    bap = bpe_apply(bm, base_sym, base_nby)
+    _p("bpe_nunits", bpe_n_units(bap[0]))
+    _p("bpe_unit0", bap[0][0])
+    _p("bpe_nby0", bap[1][0])
+    bm_sh = bpe_learn_merges(base_sym, base_nby, 4, 5, 99)
+    _p("bpe_sh_merge0a", bm_sh.merges[0][0])
+    # byte-fair CE: build a jamo head over the unit features, score held-out
+    bunits = bap[0]
+    bnby = bap[1]
+    bfeat = []
+    btgt = []
+    bnbyt = []
+    bi = 0
+    while bi < len(bunits) - 1:
+        bfeat.append([float(bunits[bi]), float(bnby[bi])])
+        btgt.append(bunits[bi + 1] % 3)
+        bnbyt.append(bnby[bi])
+        bi = bi + 1
+    bjh = jamo_head_grow(jamo_head_new([_sc_vmean(bfeat)], 3, 2), bfeat, btgt,
+                         len(bfeat) - 2, 5, 1, 0.10, 0.5, cfg_on)
+    _p("bpe_bfce", bpe_byte_fair_ce(bjh, bfeat[len(bfeat) - 2:], btgt[len(btgt) - 2:],
+                                    bnbyt[len(bnbyt) - 2:]))
