@@ -1,3 +1,10 @@
+## ci(release): `hx install` 무결성 게이트 + GitHub Release 발행 워크플로 + `a_install_canonical` 거버넌스
+
+anima 의 유일 setup 경로(`hx install anima` → install.hexa 최신 `v*` 태그 self-update → setup.hexa)에 그동안 **검증 구멍**이 있었다 — autotag.yml 이 매 main push 에 `v*` 태그를 찍지만, 그 태그가 실제로 `hx install` 로 깔리는지는 아무도 확인하지 않아 깨진 태그가 install.hexa 의 "최신 v*" 로 그대로 노출될 수 있었다. 이를 release.yml + CLAUDE.md 규칙으로 막음.
+
+- **`.github/workflows/release.yml` 신설** (`release-tag-ci`·`allgreen-promote`): 매 `v*` 태그 push 에 ① **install-smoke** (ubuntu-latest + macos-15, github-hosted) = 그 태그본을 실제로 `hexa run install.hexa`(canonical setup 경로) 로 깔고 cli/anima.hexa 단일 진입점이 컴파일·디스패치되는지 검증 → ② all-green 일 때만 **GitHub Release** 발행(CHANGELOG 최상단 항목 = 릴리즈 노트). 하나라도 FAIL 이면 Release 미발행 = install.hexa 가 집는 최신 태그가 항상 검증된 것. anima 는 interpreted hexa-native(바이너리 산출물 없음)라 타깃별 빌드 없음, Release 자산 = 소스 아카이브 + 노트. 러너 = github-hosted(Blacksmith 미사용, 오너 비용 지시).
+- **`a_install_canonical` 규칙 신설** (CLAUDE.md): setup·세팅은 무조건 `hx install` 단일 경로(install.hexa→setup.hexa)만 — cli/anima.hexa 가 canonical 단일 진입점(`hexa.toml` entry), 모든 사용자·pod 가 이 경로로 수렴. 수동 stage-build·raw clone-and-run·ad-hoc 셋업·진입점 우회 금지.
+
 ## feat(core): 2-production 미러 10/10 달성 — production import-closure 전체 `.hexa` ⇄ `.py` byte-parity (`a_two_production_mirror`)
 
 production import-closure 10파일이 이제 **완전한 `.hexa` ↔ `.py` 1:1 byte-parity 미러**. 두 엔진 다 PRODUCTION(미러 아닌 동급) = 어느 쪽이든 terminal verdict 적격, byte-parity 로 동기. 이는 hexa CLI 의 x86_64-linux 코드젠 버그(`gen_auto_ideate` C-proto 미방출 → pool 전체 `anima eval` 차단)를 우회한 측정의 정당한 길 — py 엔진은 python+numpy 라 hexa-독립이며, CI parity-gate 가 golden d768 에서 `anima eval` ⇄ `core/g_gates.py` G0-G6 byte-동일을 강제(drift=CI red).
