@@ -1,3 +1,11 @@
+## feat(enforce): G3 gate-card 불변식 — PROVENANCE ⊥ 디코드-능력 PASS closure 코드강제 (G4 빵꾸 재발 차단)
+
+`tool/enforce_anima_gates.py` 자체 하네스(이미 harness verify.checks `anima-gates` 배선·exit-nonzero 기계차단·no-bypass c18)에 **G3 check** 추가. 평평한 `G0-G6` 한 묶음은 검증방식이 섞여 **G4(provenance/publish)가 디코드 점수표의 N/A 구멍("빵꾸")**이 됐다 → 검증방식 3-카드(CAPABILITY 디코드-채점 / SUBSTRATE 엔진-읽기 / PROVENANCE 출판)로 가르고, 그 **핵심 구조 불변식을 코드로 못박음**:
+
+- **불변식**: 2-production `core/g_gates.{py,hexa}` 의 모든 `closure =` 대입은 디코드-CAPABILITY(G0∧G1∧G2)만 참조하고 **PROVENANCE 결과(r4/g4/prov)를 fold-in 하면 안 된다**; provenance 는 downstream publish-eligibility 로만(`g_eval_g4(ckpt, closure)` = closure 를 소비, gate 안 함).
+- **현 코드 준수**: py L470 `closure = r0∧r1∧r2`, hexa L590 동일 → enforcer 통과(false-positive 0). 검증: 정상 exit=0, G4 를 closure 에 주입한 negative-control 은 exit=1 + "PROVENANCE folded into PASS closure (re-opens the G4 빵꾸)" 차단(복원 OK).
+- 효과: G4 구멍이 **재도입 불가**(pr-cycle/CI 기계 거부). frozen 임계(`7B_PASS_CONDITIONS.md`)는 1바이트도 불변(NOT tune-to-green). 새 mnemonic 네이밍(C1-C4/S1-S2/P) 제안은 `state/gate-rename/PROPOSAL.md`(owner-nod 대기) — 구조는 이미 enforce, 이름은 별도 확정 시 lockstep.
+
 ## fix(core/g_gates): G4 + G6 게이트 MEASUREMENT/wiring 무결성 — multi-seed + g6_score_arm_auto reconcile + G4 provenance 배선 (H_1591, lockstep `.hexa`+`.py`)
 
 G1 multi-seed fix(H_1588, cd33878bf)와 **같은 CLASS** — gate DEFINITION 변경(tune-to-green) 아님, G4/G6 가 *어떻게 측정/배선되는지*만 고쳐 verdict 를 신뢰가능하게. 그 G1 fix 를 cherry-pick 해 base 로 깔고 G4+G6 를 그 위에 올림(G1+G4+G6 coherent landing). **NO MERGE**(worktree 브랜치).
