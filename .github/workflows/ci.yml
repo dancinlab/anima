@@ -17,7 +17,7 @@ on:
 
 jobs:
   cdo-validate:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2204
 
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
     # hexa-strict auto-invokes `fn main()`, so a bare top-level `main()` call is a
     # build-fail ("auto-invoke conflict"). Pre-existing files are grandfathered;
     # this gate only fails on files a PR adds/modifies, so the count is monotone-down.
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2204
 
     steps:
       - uses: actions/checkout@v4
