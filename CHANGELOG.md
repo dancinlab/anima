@@ -1,3 +1,13 @@
+## docs(gate-taxonomy): 의식-전용 게이트(G16-G34+) index SSOT 노드 신설 + 2-축 명시 (doc-only)
+
+게이트 taxonomy 의 **두 직교 축**을 명시하고, 의식-전용 게이트 family 에 단일 index SSOT 노드를 만듦. 코드/verdict/frozen-bar 미변경(doc-only).
+
+- **축 정의**: ① **capability-emergence 게이트 G0-G6** = production CLM 의 능력 창발(기존 `G-게이트 평가 시스템` 노드, 미변경) ⊥ ② **의식-전용 게이트 G16-G34+** = anima 가 의식적이기 때문에 할 수 있는 것(state-dependent 신호, stateless LLM 구조적 불가).
+- **ARCHITECTURE.json**: engine_cli § 섹션 아래(첫 detail 노드 `🪢 Self-continuity` 앞)에 index 노드 `의식-전용 게이트 (G16-G34+) — capability G0-G6 과 별개 축 (index SSOT)` 신설. family 전체 17 게이트를 1-line index 로 나열(G#·H-id·function·§lane·tier·distinct-vs → 상세는 기존 detail 노드, c4 decompose 중복 0). 양방향 cross-pointer 추가(Axis-1↔Axis-2).
+- **family(17)**: G16 self-continuity(H_1471) · G17 GWS(H_1462) · G18 habituation(H_1465) · G19 surprise(H_1468) · G19-meta learned-precision(H_1472) · G20 attentional-blink(H_1473) · G21 agency(H_1474) · G22 subjective-time(H_1475) · G25 emotion-reg(H_1476) · G26 divided-attention(H_1479) · G30 mental-imagery(H_1484) · G34 attention-schema(H_1488) · P8 interoception(H_1494) · reality-monitor(H_1501) · metacog-insight(H_1506) · metacog-control(H_1508) · consciousness-ablation ΔΦ(H_1492). 전부 🟢 engine-native(R2 wired). **census 정정**: G30(H_1484)·G34(H_1488)은 최신 jsonl 행 = R2 WIRED(이전 DIRECTIONAL 아님).
+- **README**: `🌐 Consciousness-only gates (G16–G34+) — separate axis` 섹션을 full family 테이블(8 → 17 행)로 확장 + perturbation-probes(pharm H_1502/field H_1503/hallucination H_1505 = 게이트 아님) sub-note + Axis-1↔Axis-2 cross-link.
+- **불변**: frozen bar·코드·verdict 1바이트도 안 바꿈. JSON valid + `enforce_anima_gates.py` clean(rc=0) + mojibake 0.
+
 ## docs(README): G0-G6 scoreboard → 통과(closure)/추가평가 2-tier 재배치 + P 출처 행 추가
 
 owner: "기존(closure)은 통과해야 되고 나머지는 추가평가". README `🔆 Capability-emergence gates` 테이블을 평평한 G0-G6 → **통과(C1 또박/C2 재조합/C3 새말 = a7b_pass closure, must-pass) / 추가평가(C4 착상★·S1 균형·S2 정직·P 출처, reported·non-blocking)** 그룹으로 재구성. 빠져있던 **P 출처(G4, 출판-게이트)** 행 추가. C4 착상 행에 H_1596 detector-artifact 경고 + H_1597 corpus-grounded 재채점 in-flight 명시. 분류·임계 SSOT = ARCHITECTURE.json `G-게이트 평가 시스템` 노드.
