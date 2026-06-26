@@ -6656,3 +6656,6 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - bytegpt_decode.hexa → bytegpt_decode.py byte-parity 1:1 미러: tiny synthetic .bin(d64 L2 H4 block64)서 hexa⇄py logits max|Δ|=2.76e-13(~12.6dp, FP-reassoc floor), greedy+top-k sampled byte-identical. GELU=libm erf·softmax=libm exp·LN/scale=dt_sqrt·sampler=dt_exp(clm_decode.py twin)·xorshift32 PRNG, numpy fp64 matmul(decode 경로 torch 0).
 - g_gates.py dispatch 배선: `_Mouth` 가 헤더 sniff(CLM\x01→clm 불변, sane 5×u32→bytegpt) = g_gates.hexa gen_auto_ideate→gen_auto_backend 미러. ByteGPT가 이제 py로 측정 가능.
 - 미러: clm_decode·g_gates·g6_ideation·**bytegpt_decode**(4/10). 잔여 6 = generator·pure_field·brain·engine_g·engine_cli·flame_mm. 증거 state/bytegpt_2prod_py_parity/PARITY.md.
+
+## 2026-06-26 — core/DECODER/flame_mm.py 포팅 (py 미러 5/10)
+- flame_mm.hexa(180줄, RFC-040 GEMM seam, 7 ops) → flame_mm.py byte-parity: mm·mm_transpose·mm_extract·mm_scatter_add·mm_packed_gemv(_t)·mm_packed_outer_add. hexa⇄py max|Δ|≤2.2e-16(7/7 PASS). numpy fp64(GPU경로는 CUDA호스트 hexa전용, py=CPU oracle=clm/bytegpt_decode.py와 동일 상황).
