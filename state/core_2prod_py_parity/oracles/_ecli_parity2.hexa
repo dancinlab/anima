@@ -369,4 +369,16 @@ fn main() {
     pf("g_change", change_detect(0.3, true))
     pf("g_imagery", imagery_activate(0.8, true))
     pf("g_priming", priming_facilitate(0.7, 0.5))
+
+    // ── CollectivePool / HiveMind (§CollectivePool H_1295) — faithful IIT-4 Φ ──
+    let cp = collective_new([110, 110], 0.6)
+    pf("cp_member0_phi", collective_member_phi(cp, 0))
+    pf("cp_sum_phi", collective_sum_phi(cp))
+    pf("cp_joint_phi", collective_phi(cp))
+    pf("cp_excess", collective_excess(cp))
+    pb("cp_superadd", collective_is_super_additive(cp, 1.0))
+    pf("cp_coherence", collective_coherence(cp))
+    let cp2 = collective_new([30, 90], 0.4)
+    pf("cp2_joint_phi", collective_phi(cp2))
+    pf("cp2_coherence", collective_coherence(cp2))
 }

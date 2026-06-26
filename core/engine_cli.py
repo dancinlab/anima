@@ -3619,6 +3619,1678 @@ def allo_best_fixed_gain(sigma, seed):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# IIT-4 faithful big-Φ chain (stdlib/consciousness/iit4_*.hexa) — needed by
+# CollectivePool. Mirrors iit4_tpm → iit4_distinction → iit4_relation →
+# iit4_bigphi → iit4_bounded VERBATIM (a_phi_iit4_tool — faithful, NOT a proxy).
+# ════════════════════════════════════════════════════════════════════════
+
+def iit4_pow2(k):
+    """iit4_tpm.hexa:53 → pow2_int = 1<<k."""
+    return 1 << k
+
+
+def iit4_bit(state, i):
+    """iit4_tpm.hexa:58 → bit_set."""
+    if (state & (1 << i)) != 0:
+        return 1
+    return 0
+
+
+def iit4_units(mask, n):
+    """iit4_tpm.hexa:63."""
+    out = []
+    i = 0
+    while i < n:
+        if iit4_bit(mask, i) == 1:
+            out.append(i)
+        i = i + 1
+    return out
+
+
+def iit4_expand(compact, units):
+    """iit4_tpm.hexa:75."""
+    out = 0
+    b = 0
+    k = len(units)
+    while b < k:
+        if iit4_bit(compact, b) == 1:
+            out = out + iit4_pow2(units[b])
+        b = b + 1
+    return out
+
+
+def tpm_on(tpm, n, state, unit):
+    """iit4_tpm.hexa:88."""
+    return tpm[state * n + unit]
+
+
+def iit4_marginal_on(tpm, n, fix_mask, fix_state, target):
+    """iit4_tpm.hexa:96."""
+    full = iit4_pow2(n)
+    total = 0.0
+    count = 0
+    s = 0
+    while s < full:
+        ok = 1
+        i = 0
+        while i < n:
+            if iit4_bit(fix_mask, i) == 1:
+                if iit4_bit(s, i) != iit4_bit(fix_state, i):
+                    ok = 0
+            i = i + 1
+        if ok == 1:
+            total = total + tpm_on(tpm, n, s, target)
+            count = count + 1
+        s = s + 1
+    if count == 0:
+        return 0.0
+    return total / float(count)
+
+
+def effect_repertoire(tpm, n, mech_mask, mech_state, purview_mask):
+    """iit4_tpm.hexa:125."""
+    units = iit4_units(purview_mask, n)
+    k = len(units)
+    p_on = []
+    j = 0
+    while j < k:
+        p_on.append(iit4_marginal_on(tpm, n, mech_mask, mech_state, units[j]))
+        j = j + 1
+    nstates = iit4_pow2(k)
+    rep = []
+    cs = 0
+    while cs < nstates:
+        prob = 1.0
+        b = 0
+        while b < k:
+            if iit4_bit(cs, b) == 1:
+                prob = prob * p_on[b]
+            else:
+                prob = prob * (1.0 - p_on[b])
+            b = b + 1
+        rep.append(prob)
+        cs = cs + 1
+    return rep
+
+
+def cause_repertoire(tpm, n, mech_mask, mech_state, purview_mask):
+    """iit4_tpm.hexa:158."""
+    p_units = iit4_units(purview_mask, n)
+    k = len(p_units)
+    m_units = iit4_units(mech_mask, n)
+    mk = len(m_units)
+    nstates = iit4_pow2(k)
+
+    raw = []
+    total = 0.0
+    cs = 0
+    while cs < nstates:
+        pv_abs = iit4_expand(cs, p_units)
+        like = 1.0
+        mi = 0
+        while mi < mk:
+            mu = m_units[mi]
+            p1 = iit4_marginal_on(tpm, n, purview_mask, pv_abs, mu)
+            if iit4_bit(mech_state, mu) == 1:
+                like = like * p1
+            else:
+                like = like * (1.0 - p1)
+            mi = mi + 1
+        raw.append(like)
+        total = total + like
+        cs = cs + 1
+
+    rep = []
+    i = 0
+    while i < nstates:
+        if total > 0.0:
+            rep.append(raw[i] / total)
+        else:
+            rep.append(1.0 / float(nstates))
+        i = i + 1
+    return rep
+
+
+def unconstrained_effect(tpm, n, purview_mask):
+    """iit4_tpm.hexa:199."""
+    return effect_repertoire(tpm, n, 0, 0, purview_mask)
+
+
+def unconstrained_cause(purview_mask, n):
+    """iit4_tpm.hexa:204."""
+    units = iit4_units(purview_mask, n)
+    nstates = iit4_pow2(len(units))
+    u = 1.0 / float(nstates)
+    rep = []
+    i = 0
+    while i < nstates:
+        rep.append(u)
+        i = i + 1
+    return rep
+
+
+def intrinsic_difference(p, q):
+    """iit4_tpm.hexa:221 — ID = max_x p·log2(p/q), [value, state]."""
+    n = len(p)
+    ln2 = _ln(2.0)
+    best_val = 0.0 - 1.0e308
+    best_state = 0
+    x = 0
+    while x < n:
+        px = p[x]
+        term = 0.0
+        if px > 1.0e-12:
+            qx = q[x] + 1.0e-10
+            term = px * (_ln(px) - _ln(qx)) / ln2
+        if term > best_val:
+            best_val = term
+            best_state = x
+        x = x + 1
+    return [best_val, float(best_state)]
+
+
+def iit4_compact_index(abs_state, units):
+    """iit4_distinction.hexa:41."""
+    idx = 0
+    b = 0
+    k = len(units)
+    while b < k:
+        if iit4_bit(abs_state, units[b]) == 1:
+            idx = idx + iit4_pow2(b)
+        b = b + 1
+    return idx
+
+
+def iit4_partitioned_effect(tpm, n, mech_state, m1, z1, m2, z2, purview_mask):
+    """iit4_distinction.hexa:57."""
+    units = iit4_units(purview_mask, n)
+    k = len(units)
+    p_on = []
+    j = 0
+    while j < k:
+        u = units[j]
+        if iit4_bit(z1, u) == 1:
+            pj = iit4_marginal_on(tpm, n, m1, mech_state, u)
+        else:
+            pj = iit4_marginal_on(tpm, n, m2, mech_state, u)
+        p_on.append(pj)
+        j = j + 1
+    nstates = iit4_pow2(k)
+    rep = []
+    cs = 0
+    while cs < nstates:
+        prob = 1.0
+        b = 0
+        while b < k:
+            if iit4_bit(cs, b) == 1:
+                prob = prob * p_on[b]
+            else:
+                prob = prob * (1.0 - p_on[b])
+            b = b + 1
+        rep.append(prob)
+        cs = cs + 1
+    return rep
+
+
+def iit4_part_cause(tpm, n, mech_state, mp, zp):
+    """iit4_distinction.hexa:92."""
+    if mp == 0:
+        return unconstrained_cause(zp, n)
+    return cause_repertoire(tpm, n, mp, mech_state, zp)
+
+
+def iit4_partitioned_cause(tpm, n, mech_state, m1, z1, m2, z2, purview_mask):
+    """iit4_distinction.hexa:100."""
+    cr1 = iit4_part_cause(tpm, n, mech_state, m1, z1)
+    cr2 = iit4_part_cause(tpm, n, mech_state, m2, z2)
+    zu = iit4_units(purview_mask, n)
+    z1u = iit4_units(z1, n)
+    z2u = iit4_units(z2, n)
+    k = len(zu)
+    nstates = iit4_pow2(k)
+    rep = []
+    cs = 0
+    while cs < nstates:
+        pv_abs = iit4_expand(cs, zu)
+        idx1 = iit4_compact_index(pv_abs, z1u)
+        idx2 = iit4_compact_index(pv_abs, z2u)
+        rep.append(cr1[idx1] * cr2[idx2])
+        cs = cs + 1
+    return rep
+
+
+def iit4_phi_at(p, q, xstar):
+    """iit4_distinction.hexa:122."""
+    px = p[xstar]
+    if px <= 1.0e-12:
+        return 0.0
+    qx = q[xstar] + 1.0e-10
+    phi = px * (_ln(px) - _ln(qx)) / _ln(2.0)
+    if phi < 0.0:
+        return 0.0
+    return phi
+
+
+def small_phi_effect(tpm, n, mech_mask, mech_state, purview_mask):
+    """iit4_distinction.hexa:133."""
+    p = effect_repertoire(tpm, n, mech_mask, mech_state, purview_mask)
+    unc = unconstrained_effect(tpm, n, purview_mask)
+    info = intrinsic_difference(p, unc)
+    if info[0] <= 1.0e-12:
+        return [0.0, info[1]]
+    xstar = int(info[1])
+
+    m_units = iit4_units(mech_mask, n)
+    z_units = iit4_units(purview_mask, n)
+    nm = iit4_pow2(len(m_units))
+    nz = iit4_pow2(len(z_units))
+    min_phi = 1.0e308
+    mi = 0
+    while mi < nm:
+        m1 = iit4_expand(mi, m_units)
+        m2 = mech_mask - m1
+        zi = 0
+        while zi < nz:
+            z1 = iit4_expand(zi, z_units)
+            z2 = purview_mask - z1
+            identity = ((m1 == mech_mask) and (z1 == purview_mask)) or ((m1 == 0) and (z1 == 0))
+            if identity == False:
+                q = iit4_partitioned_effect(tpm, n, mech_state, m1, z1, m2, z2, purview_mask)
+                phi_t = iit4_phi_at(p, q, xstar)
+                if phi_t < min_phi:
+                    min_phi = phi_t
+            zi = zi + 1
+        mi = mi + 1
+    if min_phi > 1.0e307:
+        min_phi = 0.0
+    return [min_phi, info[1]]
+
+
+def small_phi_cause(tpm, n, mech_mask, mech_state, purview_mask):
+    """iit4_distinction.hexa:169."""
+    p = cause_repertoire(tpm, n, mech_mask, mech_state, purview_mask)
+    unc = unconstrained_cause(purview_mask, n)
+    info = intrinsic_difference(p, unc)
+    if info[0] <= 1.0e-12:
+        return [0.0, info[1]]
+    xstar = int(info[1])
+
+    m_units = iit4_units(mech_mask, n)
+    z_units = iit4_units(purview_mask, n)
+    nm = iit4_pow2(len(m_units))
+    nz = iit4_pow2(len(z_units))
+    min_phi = 1.0e308
+    mi = 0
+    while mi < nm:
+        m1 = iit4_expand(mi, m_units)
+        m2 = mech_mask - m1
+        zi = 0
+        while zi < nz:
+            z1 = iit4_expand(zi, z_units)
+            z2 = purview_mask - z1
+            identity = ((m1 == mech_mask) and (z1 == purview_mask)) or ((m1 == 0) and (z1 == 0))
+            if identity == False:
+                q = iit4_partitioned_cause(tpm, n, mech_state, m1, z1, m2, z2, purview_mask)
+                phi_t = iit4_phi_at(p, q, xstar)
+                if phi_t < min_phi:
+                    min_phi = phi_t
+            zi = zi + 1
+        mi = mi + 1
+    if min_phi > 1.0e307:
+        min_phi = 0.0
+    return [min_phi, info[1]]
+
+
+def iit4_popcount(mask, n):
+    """iit4_bounded.hexa:36."""
+    c = 0
+    i = 0
+    while i < n:
+        if iit4_bit(mask, i) == 1:
+            c = c + 1
+        i = i + 1
+    return c
+
+
+def mice_effect_bounded(tpm, n, mech_mask, mech_state, cap):
+    """iit4_bounded.hexa:50."""
+    full = iit4_pow2(n)
+    best_phi = 0.0 - 1.0
+    best_pv = 0
+    best_state = 0.0
+    pv = 1
+    while pv < full:
+        if iit4_popcount(pv, n) <= cap:
+            r = small_phi_effect(tpm, n, mech_mask, mech_state, pv)
+            if r[0] > best_phi:
+                best_phi = r[0]
+                best_pv = pv
+                best_state = r[1]
+        pv = pv + 1
+    return [best_phi, float(best_pv), best_state]
+
+
+def mice_cause_bounded(tpm, n, mech_mask, mech_state, cap):
+    """iit4_bounded.hexa:71."""
+    full = iit4_pow2(n)
+    best_phi = 0.0 - 1.0
+    best_pv = 0
+    best_state = 0.0
+    pv = 1
+    while pv < full:
+        if iit4_popcount(pv, n) <= cap:
+            r = small_phi_cause(tpm, n, mech_mask, mech_state, pv)
+            if r[0] > best_phi:
+                best_phi = r[0]
+                best_pv = pv
+                best_state = r[1]
+        pv = pv + 1
+    return [best_phi, float(best_pv), best_state]
+
+
+def distinction_bounded(tpm, n, mech_mask, mech_state, cap):
+    """iit4_bounded.hexa:94."""
+    ce = mice_cause_bounded(tpm, n, mech_mask, mech_state, cap)
+    ee = mice_effect_bounded(tpm, n, mech_mask, mech_state, cap)
+    phi_c = ce[0]
+    phi_e = ee[0]
+    phi_d = phi_c if phi_c < phi_e else phi_e
+    return [phi_d, float(mech_mask), ce[1], ce[2], ee[1], ee[2], phi_c, phi_e]
+
+
+def iit4_distinction_side(d, a_mask, n):
+    """iit4_bigphi.hexa:45."""
+    mech = int(d[1])
+    cpv = int(d[2])
+    epv = int(d[4])
+    in_a = 0
+    in_b = 0
+    u = 0
+    while u < n:
+        involved = (iit4_bit(mech, u) == 1) or (iit4_bit(cpv, u) == 1) or (iit4_bit(epv, u) == 1)
+        if involved:
+            if iit4_bit(a_mask, u) == 1:
+                in_a = 1
+            else:
+                in_b = 1
+        u = u + 1
+    if (in_a == 1) and (in_b == 1):
+        return 0
+    if in_a == 1:
+        return 1
+    return 2
+
+
+def iit4_overlap_congruent(pv_i, state_i, pv_j, state_j, n):
+    """iit4_relation.hexa:37."""
+    units_i = iit4_units(pv_i, n)
+    units_j = iit4_units(pv_j, n)
+    abs_i = iit4_expand(state_i, units_i)
+    abs_j = iit4_expand(state_j, units_j)
+    overlap = 0
+    congruent = 1
+    u = 0
+    while u < n:
+        if (iit4_bit(pv_i, u) == 1) and (iit4_bit(pv_j, u) == 1):
+            overlap = overlap + 1
+            if iit4_bit(abs_i, u) != iit4_bit(abs_j, u):
+                congruent = 0
+        u = u + 1
+    if (overlap > 0) and (congruent == 1):
+        return 1
+    return 0
+
+
+def relation_2nd(d_i, d_j, n):
+    """iit4_relation.hexa:60."""
+    c = iit4_overlap_congruent(int(d_i[2]), int(d_i[3]), int(d_j[2]), int(d_j[3]), n)
+    e = iit4_overlap_congruent(int(d_i[4]), int(d_i[5]), int(d_j[4]), int(d_j[5]), n)
+    if (c == 1) or (e == 1):
+        if d_i[0] < d_j[0]:
+            return d_i[0]
+        return d_j[0]
+    return 0.0
+
+
+def big_phi_bounded(tpm, n, sys_state, max_purview_size):
+    """iit4_bounded.hexa:109 — [big_phi, total, sum_phi_d, sum_phi_r, n_dist]."""
+    full = iit4_pow2(n)
+    cap = max_purview_size
+
+    dists = []
+    sum_d = 0.0
+    m = 1
+    while m < full:
+        d = distinction_bounded(tpm, n, m, sys_state, cap)
+        if d[0] > 1.0e-9:
+            dists.append(d)
+            sum_d = sum_d + d[0]
+        m = m + 1
+    nd = len(dists)
+
+    sum_r = 0.0
+    i = 0
+    while i < nd:
+        j = i + 1
+        while j < nd:
+            r = relation_2nd(dists[i], dists[j], n)
+            if r > 1.0e-9:
+                sum_r = sum_r + r
+            j = j + 1
+        i = i + 1
+    total = sum_d + sum_r
+
+    if n < 2:
+        return [0.0, total, sum_d, sum_r, float(nd)]
+
+    all_mask = full - 1
+    min_loss = 1.0e308
+    a = 1
+    while a < all_mask:
+        if iit4_bit(a, 0) == 1:
+            sides = []
+            surv = 0.0
+            k = 0
+            while k < nd:
+                s = iit4_distinction_side(dists[k], a, n)
+                sides.append(float(s))
+                if s != 0:
+                    surv = surv + dists[k][0]
+                k = k + 1
+            ii = 0
+            while ii < nd:
+                jj = ii + 1
+                while jj < nd:
+                    r = relation_2nd(dists[ii], dists[jj], n)
+                    if r > 1.0e-9:
+                        si = int(sides[ii])
+                        sj = int(sides[jj])
+                        if (si != 0) and (sj != 0) and (si == sj):
+                            surv = surv + r
+                    jj = jj + 1
+                ii = ii + 1
+            loss = total - surv
+            if loss < min_loss:
+                min_loss = loss
+        a = a + 1
+    if min_loss > 1.0e307:
+        min_loss = 0.0
+    if min_loss < 0.0:
+        min_loss = 0.0
+    return [min_loss, total, sum_d, sum_r, float(nd)]
+
+
+# ════════════════════════════════════════════════════════════════════════
+# CollectivePool / HiveMind (§CollectivePool H_1295) — faithful collective-Φ
+# ════════════════════════════════════════════════════════════════════════
+
+class CollectivePool:
+    """engine_cli.hexa:2701."""
+    __slots__ = ("rules", "w", "n")
+
+    def __init__(self, rules, w, n):
+        self.rules = rules
+        self.w = w
+        self.n = n
+
+
+def collective_new(members, w):
+    """engine_cli.hexa:2709."""
+    return CollectivePool(members, w, len(members))
+
+
+def _eca_tpm_n3(rule):
+    """engine_cli.hexa:2715."""
+    nn = 3
+    t = []
+    s = 0
+    while s < 8:
+        i = 0
+        while i < nn:
+            l = iit4_bit(s, (i - 1 + nn) % nn)
+            c = iit4_bit(s, i)
+            r = iit4_bit(s, (i + 1) % nn)
+            idx = 4 * l + 2 * c + r
+            t.append(float(iit4_bit(rule, idx)))
+            i = i + 1
+        s = s + 1
+    return t
+
+
+def _build_tpm_ab(rule_a, rule_b, w):
+    """engine_cli.hexa:2736."""
+    nn = 6
+    full = 64
+    omw = 1.0 - w
+    t = []
+    s = 0
+    while s < full:
+        b0 = iit4_bit(s, 0)
+        b1 = iit4_bit(s, 1)
+        b2 = iit4_bit(s, 2)
+        b3 = iit4_bit(s, 3)
+        b4 = iit4_bit(s, 4)
+        b5 = iit4_bit(s, 5)
+        i = 0
+        while i < nn:
+            rule = rule_a
+            if i >= 3:
+                rule = rule_b
+            l_dec = 0
+            c_dec = 0
+            r_dec = 0
+            if i == 0:
+                l_dec = b2; c_dec = b0; r_dec = b1
+            if i == 1:
+                l_dec = b0; c_dec = b1; r_dec = b2
+            if i == 2:
+                l_dec = b1; c_dec = b2; r_dec = b0
+            if i == 3:
+                l_dec = b5; c_dec = b3; r_dec = b4
+            if i == 4:
+                l_dec = b3; c_dec = b4; r_dec = b5
+            if i == 5:
+                l_dec = b4; c_dec = b5; r_dec = b3
+            idx_dec = 4 * l_dec + 2 * c_dec + r_dec
+            next_dec = iit4_bit(rule, idx_dec)
+            l_cou = 0
+            c_cou = 0
+            r_cou = 0
+            if i == 0:
+                l_cou = b5; c_cou = b0; r_cou = b1
+            if i == 1:
+                l_cou = b0; c_cou = b1; r_cou = b2
+            if i == 2:
+                l_cou = b1; c_cou = b2; r_cou = b3
+            if i == 3:
+                l_cou = b2; c_cou = b3; r_cou = b4
+            if i == 4:
+                l_cou = b3; c_cou = b4; r_cou = b5
+            if i == 5:
+                l_cou = b4; c_cou = b5; r_cou = b0
+            idx_cou = 4 * l_cou + 2 * c_cou + r_cou
+            next_cou = iit4_bit(rule, idx_cou)
+            t.append(omw * float(next_dec) + w * float(next_cou))
+            i = i + 1
+        s = s + 1
+    return t
+
+
+def _build_tpm_ring(rules, w):
+    """engine_cli.hexa:2788."""
+    nblk = len(rules)
+    n = 3 * nblk
+    full = iit4_pow2(n)
+    omw = 1.0 - w
+    t = []
+    s = 0
+    while s < full:
+        i = 0
+        while i < n:
+            g = i // 3
+            j = i % 3
+            base = g * 3
+            rule = rules[g]
+            ld = base + (j + 2) % 3
+            rd = base + (j + 1) % 3
+            idx_dec = 4 * iit4_bit(s, ld) + 2 * iit4_bit(s, i) + iit4_bit(s, rd)
+            next_dec = iit4_bit(rule, idx_dec)
+            lc = (i - 1 + n) % n
+            rc = (i + 1) % n
+            idx_cou = 4 * iit4_bit(s, lc) + 2 * iit4_bit(s, i) + iit4_bit(s, rc)
+            next_cou = iit4_bit(rule, idx_cou)
+            t.append(omw * float(next_dec) + w * float(next_cou))
+            i = i + 1
+        s = s + 1
+    return t
+
+
+def collective_member_phi(cp, idx):
+    """engine_cli.hexa:2822."""
+    r = big_phi_bounded(_eca_tpm_n3(cp.rules[idx]), 3, 0, 3)
+    return r[0]
+
+
+def collective_sum_phi(cp):
+    """engine_cli.hexa:2828."""
+    acc = 0.0
+    i = 0
+    while i < cp.n:
+        acc = acc + collective_member_phi(cp, i)
+        i = i + 1
+    return acc
+
+
+def collective_nmax():
+    """engine_cli.hexa:2844."""
+    return 3
+
+
+def collective_phi(cp):
+    """engine_cli.hexa:2851."""
+    if cp.n == 2:
+        r = big_phi_bounded(_build_tpm_ab(cp.rules[0], cp.rules[1], cp.w), 6, 0, 2)
+        return r[0]
+    if cp.n >= 3 and cp.n <= collective_nmax():
+        r = big_phi_bounded(_build_tpm_ring(cp.rules, cp.w), 3 * cp.n, 0, 2)
+        return r[0]
+    return collective_sum_phi(cp)
+
+
+def collective_excess(cp):
+    """engine_cli.hexa:2867."""
+    return collective_phi(cp) - collective_sum_phi(cp)
+
+
+def collective_is_super_additive(cp, margin):
+    """engine_cli.hexa:2873."""
+    return collective_excess(cp) >= margin
+
+
+def collective_coherence(cp):
+    """engine_cli.hexa:2882."""
+    if cp.n == 2:
+        tpm = _build_tpm_ab(cp.rules[0], cp.rules[1], cp.w)
+        acc = 0.0
+        cnt = 0
+        s = 0
+        while s < 64:
+            base = s * 6
+            i = 0
+            while i < 3:
+                d = tpm[base + i] - tpm[base + i + 3]
+                if d < 0.0:
+                    d = 0.0 - d
+                acc = acc + d
+                cnt = cnt + 1
+                i = i + 1
+            s = s + 1
+        return 1.0 - (acc / float(cnt))
+    if cp.n >= 3 and cp.n <= collective_nmax():
+        nblk = cp.n
+        n = 3 * nblk
+        full = iit4_pow2(n)
+        tpm = _build_tpm_ring(cp.rules, cp.w)
+        acc = 0.0
+        cnt = 0
+        s = 0
+        while s < full:
+            base = s * n
+            g = 0
+            while g < nblk:
+                gn = (g + 1) % nblk
+                c = 0
+                while c < 3:
+                    d = tpm[base + g * 3 + c] - tpm[base + gn * 3 + c]
+                    if d < 0.0:
+                        d = 0.0 - d
+                    acc = acc + d
+                    cnt = cnt + 1
+                    c = c + 1
+                g = g + 1
+            s = s + 1
+        return 1.0 - (acc / float(cnt))
+    return 0.0
+
+
+# ════════════════════════════════════════════════════════════════════════
+# SkillCell (§SkillGrow H_1300) — ridge-LSQ local heads + mitosis Voronoi grow
+# ════════════════════════════════════════════════════════════════════════
+
+def _sc_C():
+    """engine_cli.hexa:5292."""
+    return 4
+
+
+def _sc_SPLIT_THRESH():
+    """engine_cli.hexa:5293."""
+    return 0.05
+
+
+def _sc_GROW_MAX():
+    """engine_cli.hexa:5294."""
+    return 4
+
+
+class SkillCell:
+    """engine_cli.hexa:5297."""
+    __slots__ = ("center", "head_w", "head_b")
+
+    def __init__(self, center, head_w, head_b):
+        self.center = center
+        self.head_w = head_w
+        self.head_b = head_b
+
+
+def _sc_vmean(rows):
+    """engine_cli.hexa:5304."""
+    n = len(rows)
+    d = len(rows[0])
+    out = []
+    j = 0
+    while j < d:
+        s = 0.0
+        i = 0
+        while i < n:
+            s = s + rows[i][j]
+            i = i + 1
+        out.append(s / float(n))
+        j = j + 1
+    return out
+
+
+def _sc_argmax(hw, hb, x):
+    """engine_cli.hexa:5320."""
+    cc = len(hw)
+    d = len(x)
+    best = 0
+    bestv = 0.0
+    c = 0
+    while c < cc:
+        s = hb[c]
+        j = 0
+        while j < d:
+            s = s + hw[c][j] * x[j]
+            j = j + 1
+        if c == 0 or s > bestv:
+            bestv = s
+            best = c
+        c = c + 1
+    return best
+
+
+def _sc_gauss_solve(a, b):
+    """engine_cli.hexa:5338 — Gauss-Jordan with partial pivoting."""
+    n = len(a)
+    m = len(b[0])
+    aug = []
+    i = 0
+    while i < n:
+        aug.append(list(a[i]) + list(b[i]))
+        i = i + 1
+    col = 0
+    while col < n:
+        piv = col
+        pv = _absf(aug[col][col])
+        r = col + 1
+        while r < n:
+            av = _absf(aug[r][col])
+            if av > pv:
+                pv = av
+                piv = r
+            r = r + 1
+        if piv != col:
+            tmp = aug[piv]
+            aug[piv] = aug[col]
+            aug[col] = tmp
+        d = aug[col][col]
+        k = 0
+        while k < n + m:
+            aug[col][k] = aug[col][k] / d
+            k = k + 1
+        r2 = 0
+        while r2 < n:
+            if r2 != col:
+                f = aug[r2][col]
+                k2 = 0
+                while k2 < n + m:
+                    aug[r2][k2] = aug[r2][k2] - f * aug[col][k2]
+                    k2 = k2 + 1
+            r2 = r2 + 1
+        col = col + 1
+    out = []
+    i2 = 0
+    while i2 < n:
+        row = []
+        j = n
+        while j < n + m:
+            row.append(aug[i2][j])
+            j = j + 1
+        out.append(row)
+        i2 = i2 + 1
+    return out
+
+
+def skill_fit_head(x, y):
+    """engine_cli.hexa:5394."""
+    n = len(x)
+    d = len(x[0])
+    cc = _sc_C()
+    lam = 0.001
+    xb = []
+    yy = []
+    i = 0
+    while i < n:
+        xb.append(list(x[i]) + [1.0])
+        oh = []
+        c = 0
+        while c < cc:
+            oh.append(1.0 if c == y[i] else 0.0)
+            c = c + 1
+        yy.append(oh)
+        i = i + 1
+    dp = d + 1
+    amat = []
+    rhs = []
+    a = 0
+    while a < dp:
+        arow = []
+        bcol = 0
+        while bcol < dp:
+            s = 0.0
+            k = 0
+            while k < n:
+                s = s + xb[k][a] * xb[k][bcol]
+                k = k + 1
+            if a == bcol:
+                s = s + lam
+            arow.append(s)
+            bcol = bcol + 1
+        amat.append(arow)
+        rrow = []
+        c2 = 0
+        while c2 < cc:
+            s2 = 0.0
+            k2 = 0
+            while k2 < n:
+                s2 = s2 + xb[k2][a] * yy[k2][c2]
+                k2 = k2 + 1
+            rrow.append(s2)
+            c2 = c2 + 1
+        rhs.append(rrow)
+        a = a + 1
+    sol = _sc_gauss_solve(amat, rhs)
+    hw = []
+    c3 = 0
+    while c3 < cc:
+        wr = []
+        j = 0
+        while j < d:
+            wr.append(sol[j][c3])
+            j = j + 1
+        hw.append(wr)
+        c3 = c3 + 1
+    hb = []
+    c4 = 0
+    while c4 < cc:
+        hb.append(sol[d][c4])
+        c4 = c4 + 1
+    return SkillCell(_sc_vmean(x), hw, hb)
+
+
+def _sc_local_err(hw, hb, x, y):
+    """engine_cli.hexa:5458."""
+    n = len(x)
+    if n == 0:
+        return -1.0
+    bad = 0
+    i = 0
+    while i < n:
+        if _sc_argmax(hw, hb, x[i]) != y[i]:
+            bad = bad + 1
+        i = i + 1
+    return float(bad) / float(n)
+
+
+def _sc_principal_axis(d):
+    """engine_cli.hexa:5472 — top principal axis via power iteration."""
+    n = len(d)
+    dim = len(d[0])
+    cov = []
+    a = 0
+    while a < dim:
+        row = []
+        b = 0
+        while b < dim:
+            s = 0.0
+            k = 0
+            while k < n:
+                s = s + d[k][a] * d[k][b]
+                k = k + 1
+            row.append(s)
+            b = b + 1
+        cov.append(row)
+        a = a + 1
+    v = []
+    j = 0
+    while j < dim:
+        v.append(1.0 / _sqrt(float(dim)))
+        j = j + 1
+    it = 0
+    while it < 50:
+        nv = []
+        r = 0
+        while r < dim:
+            s = 0.0
+            c = 0
+            while c < dim:
+                s = s + cov[r][c] * v[c]
+                c = c + 1
+            nv.append(s)
+            r = r + 1
+        nrm = 0.0
+        q = 0
+        while q < dim:
+            nrm = nrm + nv[q] * nv[q]
+            q = q + 1
+        nrm = _sqrt(nrm)
+        if nrm < 0.000000000001:
+            return v
+        w = 0
+        while w < dim:
+            v[w] = nv[w] / nrm
+            w = w + 1
+        it = it + 1
+    return v
+
+
+def _sc_own(centers, x):
+    """engine_cli.hexa:5519."""
+    n = len(x)
+    out = []
+    i = 0
+    while i < n:
+        out.append(_vnearest_idx(centers, x[i]))
+        i = i + 1
+    return out
+
+
+def _sc_subset_x(owner, x, ci):
+    """engine_cli.hexa:5528."""
+    out = []
+    i = 0
+    while i < len(x):
+        if owner[i] == ci:
+            out.append(x[i])
+        i = i + 1
+    return out
+
+
+def _sc_subset_y(owner, y, ci):
+    """engine_cli.hexa:5534."""
+    out = []
+    i = 0
+    while i < len(y):
+        if owner[i] == ci:
+            out.append(y[i])
+        i = i + 1
+    return out
+
+
+def skill_grow(x, y, cfg):
+    """engine_cli.hexa:5544 — mitosis Voronoi grow of dedicated skill cells."""
+    centers = [_sc_vmean(x)]
+    while True:
+        owner = _sc_own(centers, x)
+        cells = []
+        errs = []
+        ci = 0
+        while ci < len(centers):
+            sx = _sc_subset_x(owner, x, ci)
+            sy = _sc_subset_y(owner, y, ci)
+            if len(sx) == 0:
+                dim = len(x[0])
+                zw = []
+                c = 0
+                while c < _sc_C():
+                    zr = []
+                    j = 0
+                    while j < dim:
+                        zr.append(0.0)
+                        j = j + 1
+                    zw.append(zr)
+                    c = c + 1
+                zb = []
+                c2 = 0
+                while c2 < _sc_C():
+                    zb.append(0.0)
+                    c2 = c2 + 1
+                cells.append(SkillCell(centers[ci], zw, zb))
+                errs.append(-1.0)
+            else:
+                cell = skill_fit_head(sx, sy)
+                cells.append(SkillCell(centers[ci], cell.head_w, cell.head_b))
+                errs.append(_sc_local_err(cell.head_w, cell.head_b, sx, sy))
+            ci = ci + 1
+        worst = 0
+        wv = errs[0]
+        e = 1
+        while e < len(errs):
+            if errs[e] > wv:
+                wv = errs[e]
+                worst = e
+            e = e + 1
+        if wv <= _sc_SPLIT_THRESH() or len(centers) >= _sc_GROW_MAX():
+            return cells
+        grown = engine_mitosis_tick(len(centers), cfg)
+        if grown <= len(centers):
+            return cells
+        sx = _sc_subset_x(owner, x, worst)
+        c0 = _sc_vmean(sx)
+        dmat = []
+        i = 0
+        while i < len(sx):
+            row = []
+            j = 0
+            while j < len(c0):
+                row.append(sx[i][j] - c0[j])
+                j = j + 1
+            dmat.append(row)
+            i = i + 1
+        axis = _sc_principal_axis(dmat)
+        left = []
+        right = []
+        p = 0
+        while p < len(sx):
+            proj = 0.0
+            j2 = 0
+            while j2 < len(axis):
+                proj = proj + dmat[p][j2] * axis[j2]
+                j2 = j2 + 1
+            if proj <= 0.0:
+                left.append(sx[p])
+            else:
+                right.append(sx[p])
+            p = p + 1
+        if len(left) == 0 or len(right) == 0:
+            return cells
+        centers[worst] = _sc_vmean(left)
+        centers.append(_sc_vmean(right))
+
+
+def skill_route(cells, perm, x):
+    """engine_cli.hexa:5629."""
+    if len(cells) == 0:
+        return -1
+    best = 0
+    bestd = _l2(cells[0].center, x)
+    i = 1
+    while i < len(cells):
+        d = _l2(cells[i].center, x)
+        if d < bestd:
+            bestd = d
+            best = i
+        i = i + 1
+    if len(perm) == len(cells):
+        best = perm[best]
+    return _sc_argmax(cells[best].head_w, cells[best].head_b, x)
+
+
+def _sc_softmax_row(z):
+    """engine_cli.hexa:5645."""
+    n = len(z)
+    mx = z[0]
+    i = 1
+    while i < n:
+        if z[i] > mx:
+            mx = z[i]
+        i = i + 1
+    e = []
+    s = 0.0
+    j = 0
+    while j < n:
+        v = _exp(z[j] - mx)
+        e.append(v)
+        s = s + v
+        j = j + 1
+    out = []
+    k = 0
+    while k < n:
+        out.append(e[k] / s)
+        k = k + 1
+    return out
+
+
+# ════════════════════════════════════════════════════════════════════════
+# SkillGradFT (§SkillGradFT H_1300) — shared softmax-linear net (forgetting arm)
+# ════════════════════════════════════════════════════════════════════════
+
+class SkillGradFT:
+    """engine_cli.hexa:5664."""
+    __slots__ = ("w", "b")
+
+    def __init__(self, w, b):
+        self.w = w
+        self.b = b
+
+
+def skill_gradft_new(d, seed):
+    """engine_cli.hexa:5673."""
+    cc = _sc_C()
+    state = seed + 5000
+    w = []
+    c = 0
+    while c < cc:
+        row = []
+        j = 0
+        while j < d:
+            state = (state * 1103515245 + 12345) % 2147483648
+            u = float(state) / 2147483648.0
+            row.append((u - 0.5) * 0.02)
+            j = j + 1
+        w.append(row)
+        c = c + 1
+    b = []
+    c2 = 0
+    while c2 < cc:
+        b.append(0.0)
+        c2 = c2 + 1
+    return SkillGradFT(w, b)
+
+
+def skill_gradft_train(net, x, y):
+    """engine_cli.hexa:5699."""
+    cc = _sc_C()
+    d = len(x[0])
+    n = len(x)
+    lr = 0.20
+    steps = 300
+    w = net.w
+    b = net.b
+    t = 0
+    while t < steps:
+        gw = []
+        gb = []
+        c = 0
+        while c < cc:
+            gr = []
+            j = 0
+            while j < d:
+                gr.append(0.0)
+                j = j + 1
+            gw.append(gr)
+            gb.append(0.0)
+            c = c + 1
+        i = 0
+        while i < n:
+            z = []
+            c2 = 0
+            while c2 < cc:
+                s = b[c2]
+                j2 = 0
+                while j2 < d:
+                    s = s + w[c2][j2] * x[i][j2]
+                    j2 = j2 + 1
+                z.append(s)
+                c2 = c2 + 1
+            p = _sc_softmax_row(z)
+            c3 = 0
+            while c3 < cc:
+                tgt = 1.0 if c3 == y[i] else 0.0
+                diff = p[c3] - tgt
+                j3 = 0
+                while j3 < d:
+                    gw[c3][j3] = gw[c3][j3] + diff * x[i][j3]
+                    j3 = j3 + 1
+                gb[c3] = gb[c3] + diff
+                c3 = c3 + 1
+            i = i + 1
+        c4 = 0
+        while c4 < cc:
+            j4 = 0
+            while j4 < d:
+                w[c4][j4] = w[c4][j4] - lr * (gw[c4][j4] / float(n))
+                j4 = j4 + 1
+            b[c4] = b[c4] - lr * (gb[c4] / float(n))
+            c4 = c4 + 1
+        t = t + 1
+    return SkillGradFT(w, b)
+
+
+def skill_gradft_pred(net, x):
+    """engine_cli.hexa:5759."""
+    return _sc_argmax(net.w, net.b, x)
+
+
+# ════════════════════════════════════════════════════════════════════════
+# CPField (§CategoricalPerception H_1325) — RBF Voronoi categorical-perception
+# ════════════════════════════════════════════════════════════════════════
+
+class CPField:
+    """engine_cli.hexa:5796."""
+    __slots__ = ("protos", "labels", "n")
+
+    def __init__(self, protos, labels, n):
+        self.protos = protos
+        self.labels = labels
+        self.n = n
+
+
+def _cp_centers(dim):
+    """engine_cli.hexa:5803."""
+    c = []
+    i = 0
+    while i < dim:
+        c.append(float(i) / float(dim - 1))
+        i = i + 1
+    return c
+
+
+def cp_embed(x, dim):
+    """engine_cli.hexa:5816."""
+    centers = _cp_centers(dim)
+    width = 0.115
+    v = []
+    nrm = 0.0
+    i = 0
+    while i < dim:
+        d = x - centers[i]
+        e = _exp(-(d * d) / (2.0 * width * width))
+        v.append(e)
+        nrm = nrm + e * e
+        i = i + 1
+    nrm = _sqrt(nrm)
+    out = []
+    j = 0
+    while j < dim:
+        out.append((v[j] / nrm) if nrm > 0.0 else v[j])
+        j = j + 1
+    return out
+
+
+def _cp_owner_idx(cp, key):
+    """engine_cli.hexa:5840."""
+    return _vnearest_idx(cp.protos, key)
+
+
+def cp_fit(X, Y, grow_max, passes):
+    """engine_cli.hexa:5849."""
+    m = len(X)
+    dim = len(X[0])
+    c0 = []
+    q = 0
+    while q < dim:
+        s = 0.0
+        r = 0
+        while r < m:
+            s = s + X[r][q]
+            r = r + 1
+        c0.append(s / float(m))
+        q = q + 1
+    nrm = 0.0
+    a = 0
+    while a < dim:
+        nrm = nrm + c0[a] * c0[a]
+        a = a + 1
+    nrm = _sqrt(nrm)
+    c0n = []
+    b = 0
+    while b < dim:
+        c0n.append((c0[b] / nrm) if nrm > 0.0 else c0[b])
+        b = b + 1
+    seed_stim = 0
+    sd = _l2(X[0], c0n)
+    k = 1
+    while k < m:
+        dd = _l2(X[k], c0n)
+        if dd < sd:
+            sd = dd
+            seed_stim = k
+        k = k + 1
+    cp = CPField([c0n], [Y[seed_stim]], 1)
+    p = 0
+    while p < passes:
+        if cp.n >= 1 + grow_max:
+            return cp
+        worst = -1
+        worstd = 0.0
+        found = False
+        s2 = 0
+        while s2 < m:
+            ow = _cp_owner_idx(cp, X[s2])
+            if cp.labels[ow] != Y[s2]:
+                dist = _l2(X[s2], cp.protos[ow])
+                if (not found) or dist < worstd:
+                    worstd = dist
+                    worst = s2
+                    found = True
+            s2 = s2 + 1
+        if not found:
+            return cp
+        cp = CPField(cp.protos + [X[worst]], cp.labels + [Y[worst]], cp.n + 1)
+        p = p + 1
+    return cp
+
+
+def cp_regrow(cp, X, Y, grow_max, passes):
+    """engine_cli.hexa:5910."""
+    m = len(X)
+    out = CPField(cp.protos, cp.labels, cp.n)
+    base = cp.n
+    p = 0
+    while p < passes:
+        if out.n >= base + grow_max:
+            return out
+        worst = -1
+        worstd = 0.0
+        found = False
+        s2 = 0
+        while s2 < m:
+            ow = _cp_owner_idx(out, X[s2])
+            if out.labels[ow] != Y[s2]:
+                dist = _l2(X[s2], out.protos[ow])
+                if (not found) or dist < worstd:
+                    worstd = dist
+                    worst = s2
+                    found = True
+            s2 = s2 + 1
+        if not found:
+            return out
+        out = CPField(out.protos + [X[worst]], out.labels + [Y[worst]], out.n + 1)
+        p = p + 1
+    return out
+
+
+def cp_posterior(cp, key):
+    """engine_cli.hexa:5940."""
+    beta = 18.0
+    dmin = _l2(cp.protos[0], key)
+    i = 1
+    while i < cp.n:
+        d = _l2(cp.protos[i], key)
+        if d < dmin:
+            dmin = d
+        i = i + 1
+    wsum = 0.0
+    acc = 0.0
+    j = 0
+    while j < cp.n:
+        d = _l2(cp.protos[j], key)
+        w = _exp(-beta * (d - dmin))
+        wsum = wsum + w
+        acc = acc + w * float(cp.labels[j])
+        j = j + 1
+    if wsum > 0.0:
+        return acc / wsum
+    return acc
+
+
+def cp_discrim_curve(cp, X):
+    """engine_cli.hexa:5965."""
+    n = len(X)
+    out = []
+    i = 0
+    while i < n - 1:
+        d = _absf(cp_posterior(cp, X[i]) - cp_posterior(cp, X[i + 1]))
+        out.append(d)
+        i = i + 1
+    return out
+
+
+def cp_peak_loc_idx(curve):
+    """engine_cli.hexa:5979."""
+    best = 0
+    bv = curve[0]
+    i = 1
+    while i < len(curve):
+        if curve[i] > bv:
+            bv = curve[i]
+            best = i
+        i = i + 1
+    return best
+
+
+def cp_peak_count(curve):
+    """engine_cli.hexa:5994."""
+    frac = 0.50
+    n = len(curve)
+    mx = curve[0]
+    a = 1
+    while a < n:
+        if curve[a] > mx:
+            mx = curve[a]
+        a = a + 1
+    if mx <= 0.0:
+        return 0
+    thr = frac * mx
+    cnt = 0
+    t = 0
+    while t < n:
+        if curve[t] >= thr:
+            is_max = False
+            if t == 0:
+                is_max = curve[t] > curve[t + 1]
+            elif t == n - 1:
+                is_max = curve[t] > curve[t - 1]
+            else:
+                is_max = (curve[t] > curve[t - 1]) and (curve[t] > curve[t + 1])
+            if is_max:
+                cnt = cnt + 1
+        t = t + 1
+    return cnt
+
+
+def cp_labels_boundary(positions, boundary):
+    """engine_cli.hexa:6023."""
+    y = []
+    i = 0
+    while i < len(positions):
+        y.append(1 if positions[i] > boundary else 0)
+        i = i + 1
+    return y
+
+
+def cp_labels_shuffle(positions, seed):
+    """engine_cli.hexa:6040."""
+    y = []
+    i = 0
+    while i < len(positions):
+        h = _immune_fnv1a([seed & 255, i, (seed // 256) & 255, i * 7 + 13])
+        y.append((h // 65536) % 2)
+        i = i + 1
+    return y
+
+
+def cp_stimuli(n_stim, dim):
+    """engine_cli.hexa:6054."""
+    X = []
+    i = 0
+    while i < n_stim:
+        X.append(cp_embed(float(i) / float(n_stim - 1), dim))
+        i = i + 1
+    return X
+
+
+def cp_tag_vec(lang, gain, tag_dim):
+    """engine_cli.hexa:6091."""
+    t = []
+    i = 0
+    while i < tag_dim:
+        on = gain if i == lang else 0.0
+        t.append(on)
+        i = i + 1
+    return t
+
+
+def cp_tagged_key(base, lang, gain, tag_dim):
+    """engine_cli.hexa:6104."""
+    return list(base) + cp_tag_vec(lang, gain, tag_dim)
+
+
+def cp_stimuli_tagged(n_stim, dim, lang, gain, tag_dim):
+    """engine_cli.hexa:6110."""
+    base = cp_stimuli(n_stim, dim)
+    X = []
+    i = 0
+    while i < n_stim:
+        X.append(cp_tagged_key(base[i], lang, gain, tag_dim))
+        i = i + 1
+    return X
+
+
+def cp_fit_more(cp0, X, Y, grow_max, passes):
+    """engine_cli.hexa:6129."""
+    m = len(X)
+    cp = cp0
+    p = 0
+    while p < passes:
+        if cp.n >= 1 + grow_max:
+            return cp
+        worst = -1
+        worstd = 0.0
+        found = False
+        s2 = 0
+        while s2 < m:
+            ow = _cp_owner_idx(cp, X[s2])
+            if cp.labels[ow] != Y[s2]:
+                dist = _l2(X[s2], cp.protos[ow])
+                if (not found) or dist < worstd:
+                    worstd = dist
+                    worst = s2
+                    found = True
+            s2 = s2 + 1
+        if not found:
+            return cp
+        cp = CPField(cp.protos + [X[worst]], cp.labels + [Y[worst]], cp.n + 1)
+        p = p + 1
+    return cp
+
+
+def cp_within_cross_margin(curve, n_stim, boundary):
+    """engine_cli.hexa:6159."""
+    np_ = len(curve)
+    cross_sum = 0.0
+    cross_n = 0
+    within_sum = 0.0
+    within_n = 0
+    i = 0
+    while i < np_:
+        mid = (float(i) + 0.5) / float(n_stim - 1)
+        d = _absf(mid - boundary)
+        if d <= 0.12:
+            cross_sum = cross_sum + curve[i]
+            cross_n = cross_n + 1
+        if d >= 0.25:
+            within_sum = within_sum + curve[i]
+            within_n = within_n + 1
+        i = i + 1
+    cross = (cross_sum / float(cross_n)) if cross_n > 0 else 0.0
+    within = (within_sum / float(within_n)) if within_n > 0 else 0.0
+    return cross - within
+
+
+def cp_coherent_peak_near(curve, n_stim, boundary):
+    """engine_cli.hexa:6183."""
+    frac = 0.50
+    tol = 0.12
+    n = len(curve)
+    mx = curve[0]
+    a = 1
+    while a < n:
+        if curve[a] > mx:
+            mx = curve[a]
+        a = a + 1
+    if mx <= 0.0:
+        return False
+    thr = frac * mx
+    t = 0
+    while t < n:
+        if curve[t] >= thr:
+            is_max = False
+            if t == 0:
+                is_max = curve[t] > curve[t + 1]
+            elif t == n - 1:
+                is_max = curve[t] > curve[t - 1]
+            else:
+                is_max = (curve[t] > curve[t - 1]) and (curve[t] > curve[t + 1])
+            if is_max:
+                mid = (float(t) + 0.5) / float(n_stim - 1)
+                if _absf(mid - boundary) <= tol:
+                    return True
+        t = t + 1
+    return False
+
+
+def _cp_source_pos_idx(proto, X):
+    """engine_cli.hexa:6253."""
+    return _vnearest_idx(X, proto)
+
+
+def _cp_drift_pos1(cur, p_new, eta):
+    """engine_cli.hexa:6259."""
+    np_ = cur + eta * (p_new - cur)
+    if (p_new - cur) >= 0.0:
+        if np_ > p_new:
+            np_ = p_new
+    else:
+        if np_ < p_new:
+            np_ = p_new
+    return np_
+
+
+def _cp_advance_pos(pos, p_new, eta, n_phase1):
+    """engine_cli.hexa:6326."""
+    if eta <= 0.0:
+        return pos
+    out = []
+    i = 0
+    while i < len(pos):
+        if i < n_phase1:
+            out.append(_cp_drift_pos1(pos[i], p_new, eta))
+        else:
+            out.append(pos[i])
+        i = i + 1
+    return out
+
+
+def _cp_repack(cp, pos, p_new, eta, n_phase1, dim):
+    """engine_cli.hexa:6341."""
+    if eta <= 0.0:
+        return cp
+    protos = []
+    labels = []
+    i = 0
+    while i < cp.n:
+        if i < n_phase1:
+            np_ = _cp_drift_pos1(pos[i], p_new, eta)
+            protos.append(cp_embed(np_, dim))
+            labels.append(1 if np_ > p_new else 0)
+        else:
+            protos.append(cp.protos[i])
+            labels.append(cp.labels[i])
+        i = i + 1
+    return CPField(protos, labels, cp.n)
+
+
+def cp_relocate(cp0, X, positions, Y2, p_new, eta, n_phase1, dim, grow_max):
+    """engine_cli.hexa:6277."""
+    m = len(X)
+    pos = []
+    ip = 0
+    while ip < cp0.n:
+        pos.append(positions[_cp_source_pos_idx(cp0.protos[ip], X)])
+        ip = ip + 1
+    out = CPField(cp0.protos, cp0.labels, cp0.n)
+    base = cp0.n
+    p = 0
+    while p < grow_max:
+        if out.n >= base + grow_max:
+            return out
+        worst = -1
+        worstd = 0.0
+        found = False
+        s2 = 0
+        while s2 < m:
+            ow = _cp_owner_idx(out, X[s2])
+            if out.labels[ow] != Y2[s2]:
+                dist = _l2(X[s2], out.protos[ow])
+                if (not found) or dist < worstd:
+                    worstd = dist
+                    worst = s2
+                    found = True
+            s2 = s2 + 1
+        if not found:
+            out = _cp_repack(out, pos, p_new, eta, n_phase1, dim)
+            return out
+        out = CPField(out.protos + [X[worst]], out.labels + [Y2[worst]], out.n + 1)
+        pos = pos + [positions[worst]]
+        out = _cp_repack(out, pos, p_new, eta, n_phase1, dim)
+        pos = _cp_advance_pos(pos, p_new, eta, n_phase1)
+        p = p + 1
+    return out
+
+
+# ════════════════════════════════════════════════════════════════════════
 # parity smoke driver — exercises CLI / MITOSIS / G5 / G3 deterministically
 # ════════════════════════════════════════════════════════════════════════
 
@@ -4000,3 +5672,15 @@ if __name__ == "__main__":
     _p("g_change", change_detect(0.3, True))
     _p("g_imagery", imagery_activate(0.8, True))
     _p("g_priming", priming_facilitate(0.7, 0.5))
+
+    # ── CollectivePool / HiveMind (§CollectivePool H_1295) — faithful IIT-4 Φ ──
+    cp = collective_new([110, 110], 0.6)
+    _p("cp_member0_phi", collective_member_phi(cp, 0))
+    _p("cp_sum_phi", collective_sum_phi(cp))
+    _p("cp_joint_phi", collective_phi(cp))
+    _p("cp_excess", collective_excess(cp))
+    _p("cp_superadd", collective_is_super_additive(cp, 1.0))
+    _p("cp_coherence", collective_coherence(cp))
+    cp2 = collective_new([30, 90], 0.4)
+    _p("cp2_joint_phi", collective_phi(cp2))
+    _p("cp2_coherence", collective_coherence(cp2))
