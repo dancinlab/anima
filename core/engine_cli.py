@@ -6167,6 +6167,1540 @@ def ci_phi_multiinfo_subset_proxy(x, cols):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# §BrainTopology (topo_*) — brain-faithful lane placement + connectome Φ
+# ════════════════════════════════════════════════════════════════════════
+
+def _topo_coord(i):
+    """engine_cli.hexa:8385."""
+    if i == 0:
+        return [0.0, 0.30, 0.55]
+    if i == 1:
+        return [-0.55, -0.45, 0.10]
+    if i == 2:
+        return [0.10, 0.45, 0.30]
+    if i == 3:
+        return [0.0, 0.65, 0.20]
+    if i == 4:
+        return [-0.45, 0.55, 0.35]
+    if i == 5:
+        return [0.40, -0.30, -0.10]
+    if i == 6:
+        return [0.50, 0.10, 0.45]
+    if i == 7:
+        return [0.55, 0.0, 0.30]
+    if i == 8:
+        return [0.35, -0.05, 0.05]
+    if i == 9:
+        return [0.0, 0.60, -0.05]
+    if i == 10:
+        return [0.45, 0.55, 0.35]
+    if i == 11:
+        return [-0.50, 0.05, 0.50]
+    if i == 12:
+        return [-0.50, 0.10, 0.45]
+    if i == 13:
+        return [0.0, 0.40, 0.55]
+    return [0.0, -0.20, -0.30]
+
+
+def _topo_hemi(i):
+    """engine_cli.hexa:8403."""
+    if i == 1:
+        return 0 - 1
+    if i == 4:
+        return 0 - 1
+    if i == 11:
+        return 0 - 1
+    if i == 12:
+        return 0 - 1
+    if i == 5:
+        return 1
+    if i == 6:
+        return 1
+    if i == 7:
+        return 1
+    if i == 8:
+        return 1
+    if i == 10:
+        return 1
+    return 0
+
+
+def _topo_dist(a, b):
+    """engine_cli.hexa:8416."""
+    dx = a[0] - b[0]
+    dy = a[1] - b[1]
+    dz = a[2] - b[2]
+    return _sqrt(dx * dx + dy * dy + dz * dz)
+
+
+def _topo_zeros(n):
+    """engine_cli.hexa:8422."""
+    a = []
+    i = 0
+    while i < n:
+        zr = []
+        j = 0
+        while j < n:
+            zr.append(0.0)
+            j = j + 1
+        a.append(zr)
+        i = i + 1
+    return a
+
+
+def _topo_adj(coord_perm, use_perm, perm_backbone):
+    """engine_cli.hexa:8444."""
+    n = 15
+    a = _topo_zeros(n)
+    short_thr = 0.70
+    i = 0
+    while i < n:
+        j = i + 1
+        while j < n:
+            ci = i
+            cj = j
+            ii = i
+            jj = j
+            if use_perm == 1:
+                ii = coord_perm[i]
+                jj = coord_perm[j]
+            hi = _topo_hemi(ii)
+            hj = _topo_hemi(jj)
+            d = _topo_dist(_topo_coord(ii), _topo_coord(jj))
+            same = 0
+            if hi == hj:
+                same = 1
+            if hi == 0:
+                same = 1
+            if hj == 0:
+                same = 1
+            thr = short_thr
+            if same == 0:
+                thr = short_thr * 0.6
+            if d <= thr:
+                a[ci][cj] = 1.0
+                a[cj][ci] = 1.0
+            j = j + 1
+        i = i + 1
+    hubs = [0, 3, 2, 13]
+    peri = [1, 8, 11, 14]
+    if perm_backbone == 1:
+        k = 0
+        while k < 4:
+            hubs[k] = coord_perm[hubs[k]]
+            peri[k] = coord_perm[peri[k]]
+            k = k + 1
+    h1 = 0
+    while h1 < 4:
+        h2 = h1 + 1
+        while h2 < 4:
+            a[hubs[h1]][hubs[h2]] = 1.0
+            a[hubs[h2]][hubs[h1]] = 1.0
+            h2 = h2 + 1
+        a[hubs[h1]][peri[h1]] = 1.0
+        a[peri[h1]][hubs[h1]] = 1.0
+        h1 = h1 + 1
+    return a
+
+
+def _topo_identity_perm():
+    """engine_cli.hexa:8489."""
+    p = []
+    i = 0
+    while i < 15:
+        p.append(i)
+        i = i + 1
+    return p
+
+
+def topo_brain_adjacency():
+    """engine_cli.hexa:8495."""
+    return _topo_adj(_topo_identity_perm(), 0, 0)
+
+
+def topo_lateralize_collapse():
+    """engine_cli.hexa:8499."""
+    a = topo_brain_adjacency()
+    n = 15
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            if i != j:
+                hi = _topo_hemi(i)
+                hj = _topo_hemi(j)
+                if hi != 0:
+                    if hj != 0:
+                        if hi != hj:
+                            a[i][j] = 1.0
+                            a[j][i] = 1.0
+            j = j + 1
+        i = i + 1
+    return a
+
+
+def _topo_lcg_perm(seed):
+    """engine_cli.hexa:8517 — Fisher-Yates over 15 indices."""
+    p = _topo_identity_perm()
+    s = _lcg_ci(seed)
+    k = 14
+    while k > 0:
+        s = _lcg_ci(s)
+        r = s % (k + 1)
+        tmp = p[k]
+        p[k] = p[r]
+        p[r] = tmp
+        k = k - 1
+    return p
+
+
+def topo_shuffle_coords(seed):
+    """engine_cli.hexa:8533."""
+    return _topo_adj(_topo_lcg_perm(seed), 1, 1)
+
+
+def _topo_remove_at(xs, k):
+    """engine_cli.hexa:8607."""
+    out = []
+    i = 0
+    while i < len(xs):
+        if i != k:
+            out.append(xs[i])
+        i = i + 1
+    return out
+
+
+def topo_degree_matched_random(seed):
+    """engine_cli.hexa:8547."""
+    a = topo_brain_adjacency()
+    n = 15
+    m = 0
+    deg = []
+    i = 0
+    while i < n:
+        di = 0
+        j = 0
+        while j < n:
+            if a[i][j] > 0.5:
+                di = di + 1
+            j = j + 1
+        deg.append(di)
+        m = m + di
+        i = i + 1
+    m = m // 2
+    stubs = []
+    i = 0
+    while i < n:
+        c = 0
+        while c < deg[i]:
+            stubs.append(i)
+            c = c + 1
+        i = i + 1
+    r = _topo_zeros(n)
+    placed = 0
+    s = _lcg_ci(seed)
+    nstub = len(stubs)
+    attempts = 0
+    while placed < m:
+        if attempts > 20000:
+            placed = m
+        else:
+            if nstub < 2:
+                s = _lcg_ci(s)
+                aa = s % n
+                s = _lcg_ci(s)
+                bb = s % n
+                if aa != bb:
+                    if r[aa][bb] < 0.5:
+                        r[aa][bb] = 1.0
+                        r[bb][aa] = 1.0
+                        placed = placed + 1
+            else:
+                s = _lcg_ci(s)
+                p1 = s % nstub
+                u = stubs[p1]
+                stubs = _topo_remove_at(stubs, p1)
+                nstub = nstub - 1
+                s = _lcg_ci(s)
+                p2 = s % nstub
+                v = stubs[p2]
+                stubs = _topo_remove_at(stubs, p2)
+                nstub = nstub - 1
+                if u != v:
+                    if r[u][v] < 0.5:
+                        r[u][v] = 1.0
+                        r[v][u] = 1.0
+                        placed = placed + 1
+                    else:
+                        stubs = stubs + [u] + [v]
+                        nstub = nstub + 2
+                else:
+                    stubs = stubs + [u] + [v]
+                    nstub = nstub + 2
+            attempts = attempts + 1
+    return r
+
+
+def _topo_sym_norm(a):
+    """engine_cli.hexa:8614 — D^-1/2 A D^-1/2."""
+    n = len(a)
+    dinv = []
+    i = 0
+    while i < n:
+        d = 0.0
+        j = 0
+        while j < n:
+            d = d + a[i][j]
+            j = j + 1
+        if d > 0.000001:
+            dinv.append(1.0 / _sqrt(d))
+        else:
+            dinv.append(0.0)
+        i = i + 1
+    out = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            out[i][j] = dinv[i] * a[i][j] * dinv[j]
+            j = j + 1
+        i = i + 1
+    return out
+
+
+def topo_apply(x, a, alpha):
+    """engine_cli.hexa:8636 — X' = X·(I + α·Â)ᵀ."""
+    nt = len(x)
+    n = len(a)
+    ahat = _topo_sym_norm(a)
+    mm = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            v = alpha * ahat[i][j]
+            if i == j:
+                v = v + 1.0
+            mm[i][j] = v
+            j = j + 1
+        i = i + 1
+    out = []
+    t = 0
+    while t < nt:
+        row = []
+        i = 0
+        while i < n:
+            s = 0.0
+            j = 0
+            while j < n:
+                s = s + x[t][j] * mm[i][j]
+                j = j + 1
+            row.append(s)
+            i = i + 1
+        out.append(row)
+        t = t + 1
+    return out
+
+
+def _topo_core():
+    """engine_cli.hexa:8673."""
+    return [0, 3, 2, 13, 5, 7, 9, 14]
+
+
+def topo_phi_flat(x, alpha):
+    """engine_cli.hexa:8677."""
+    return ci_phi_iit4(x, _topo_core())
+
+
+def topo_phi_brain(x, alpha):
+    """engine_cli.hexa:8681."""
+    xd = topo_apply(x, topo_brain_adjacency(), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+
+
+def topo_phi_random(x, alpha, seed):
+    """engine_cli.hexa:8685."""
+    xd = topo_apply(x, topo_degree_matched_random(seed), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+
+
+def topo_phi_lateralized(x, alpha):
+    """engine_cli.hexa:8689."""
+    xd = topo_apply(x, topo_lateralize_collapse(), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+
+
+def topo_phi_geometry_shuffled(x, alpha, seed):
+    """engine_cli.hexa:8540."""
+    a = _topo_adj(_topo_lcg_perm(seed), 1, 0)
+    xd = topo_apply(x, a, alpha)
+    return ci_phi_iit4(xd, _topo_core())
+
+
+def topo_phi_coords_shuffled(x, alpha, seed):
+    """engine_cli.hexa:8693."""
+    xd = topo_apply(x, topo_shuffle_coords(seed), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+
+
+def topo_phi_random_mean(x, alpha, seed0, nseed):
+    """engine_cli.hexa:8700."""
+    s = 0.0
+    k = 0
+    while k < nseed:
+        s = s + topo_phi_random(x, alpha, seed0 + k * 7919)
+        k = k + 1
+    if nseed == 0:
+        return 0.0
+    return s / float(nseed)
+
+
+def topo_phi_shuffle_mean(x, alpha, seed0, nseed):
+    """engine_cli.hexa:8707."""
+    s = 0.0
+    k = 0
+    while k < nseed:
+        s = s + topo_phi_coords_shuffled(x, alpha, seed0 + k * 7919)
+        k = k + 1
+    if nseed == 0:
+        return 0.0
+    return s / float(nseed)
+
+
+def topo_phi_geometry_shuffle_mean(x, alpha, seed0, nseed):
+    """engine_cli.hexa:8714."""
+    s = 0.0
+    k = 0
+    while k < nseed:
+        s = s + topo_phi_geometry_shuffled(x, alpha, seed0 + k * 7919)
+        k = k + 1
+    if nseed == 0:
+        return 0.0
+    return s / float(nseed)
+
+
+def topo_phi_hub_ablated(x, alpha, lane):
+    """engine_cli.hexa:8724."""
+    xd = topo_apply(x, topo_brain_adjacency(), alpha)
+    core = _topo_core()
+    phi0 = ci_phi_iit4(xd, core)
+    cols = []
+    i = 0
+    while i < len(core):
+        if core[i] != lane:
+            cols.append(core[i])
+        i = i + 1
+    if len(cols) < 2:
+        return phi0
+    return phi0 - ci_phi_iit4(xd, cols)
+
+
+def topo_literal_adjacency():
+    """engine_cli.hexa:8744 — embedded real Hagmann/BCT connectome (15×15)."""
+    return [
+        [0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0],
+        [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0],
+        [1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+    ]
+
+
+def _topo_copy(a):
+    """engine_cli.hexa:8765."""
+    n = len(a)
+    out = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            out[i][j] = a[i][j]
+            j = j + 1
+        i = i + 1
+    return out
+
+
+def _topo_degree_matched_of(a, seed):
+    """engine_cli.hexa:8775."""
+    n = 15
+    m = 0
+    deg = []
+    i = 0
+    while i < n:
+        di = 0
+        j = 0
+        while j < n:
+            if a[i][j] > 0.5:
+                di = di + 1
+            j = j + 1
+        deg.append(di)
+        m = m + di
+        i = i + 1
+    m = m // 2
+    stubs = []
+    i = 0
+    while i < n:
+        c = 0
+        while c < deg[i]:
+            stubs.append(i)
+            c = c + 1
+        i = i + 1
+    r = _topo_zeros(n)
+    placed = 0
+    s = _lcg_ci(seed)
+    nstub = len(stubs)
+    attempts = 0
+    while placed < m:
+        if attempts > 20000:
+            placed = m
+        else:
+            if nstub < 2:
+                s = _lcg_ci(s)
+                aa = s % n
+                s = _lcg_ci(s)
+                bb = s % n
+                if aa != bb:
+                    if r[aa][bb] < 0.5:
+                        r[aa][bb] = 1.0
+                        r[bb][aa] = 1.0
+                        placed = placed + 1
+            else:
+                s = _lcg_ci(s)
+                p1 = s % nstub
+                u = stubs[p1]
+                stubs = _topo_remove_at(stubs, p1)
+                nstub = nstub - 1
+                s = _lcg_ci(s)
+                p2 = s % nstub
+                v = stubs[p2]
+                stubs = _topo_remove_at(stubs, p2)
+                nstub = nstub - 1
+                if u != v:
+                    if r[u][v] < 0.5:
+                        r[u][v] = 1.0
+                        r[v][u] = 1.0
+                        placed = placed + 1
+                    else:
+                        stubs = stubs + [u] + [v]
+                        nstub = nstub + 2
+                else:
+                    stubs = stubs + [u] + [v]
+                    nstub = nstub + 2
+            attempts = attempts + 1
+    return r
+
+
+def _topo_lateralize_of(a):
+    """engine_cli.hexa:8830."""
+    out = _topo_copy(a)
+    n = 15
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            if i != j:
+                hi = _topo_hemi(i)
+                hj = _topo_hemi(j)
+                if hi != 0:
+                    if hj != 0:
+                        if hi != hj:
+                            out[i][j] = 1.0
+                            out[j][i] = 1.0
+            j = j + 1
+        i = i + 1
+    return out
+
+
+def _topo_relabel(a, seed):
+    """engine_cli.hexa:8851."""
+    p = _topo_lcg_perm(seed)
+    n = 15
+    out = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            out[i][j] = a[p[i]][p[j]]
+            j = j + 1
+        i = i + 1
+    return out
+
+
+def topo_phi_adj(x, a, alpha):
+    """engine_cli.hexa:8864."""
+    return ci_phi_iit4(topo_apply(x, a, alpha), _topo_core())
+
+
+def topo_phi_random_of_mean(x, a, seed0, nseed, alpha):
+    """engine_cli.hexa:8867."""
+    s = 0.0
+    k = 0
+    while k < nseed:
+        s = s + topo_phi_adj(x, _topo_degree_matched_of(a, seed0 + k * 7919), alpha)
+        k = k + 1
+    if nseed == 0:
+        return 0.0
+    return s / float(nseed)
+
+
+def topo_phi_relabel_of_mean(x, a, seed0, nseed, alpha):
+    """engine_cli.hexa:8874."""
+    s = 0.0
+    k = 0
+    while k < nseed:
+        s = s + topo_phi_adj(x, _topo_relabel(a, seed0 + k * 7919), alpha)
+        k = k + 1
+    if nseed == 0:
+        return 0.0
+    return s / float(nseed)
+
+
+def _topo_relabel_perm(a, perm):
+    """engine_cli.hexa:8893."""
+    n = 15
+    out = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            out[i][j] = a[perm[i]][perm[j]]
+            j = j + 1
+        i = i + 1
+    return out
+
+
+def topo_optimal_perm():
+    """engine_cli.hexa:8908."""
+    return [8, 11, 2, 3, 6, 9, 4, 5, 0, 7, 1, 10, 12, 13, 14]
+
+
+def topo_phi_optimal(x, alpha):
+    """engine_cli.hexa:8910."""
+    a = _topo_relabel_perm(topo_brain_adjacency(), topo_optimal_perm())
+    return topo_phi_adj(x, a, alpha)
+
+
+def topo_relabel_beats_brain_count(x, alpha, seed0, nseed):
+    """engine_cli.hexa:8918."""
+    phi_brain = topo_phi_brain(x, alpha)
+    c = 0
+    k = 0
+    while k < nseed:
+        phir = topo_phi_adj(x, _topo_relabel(topo_brain_adjacency(), seed0 + k * 7919), alpha)
+        if phir > phi_brain:
+            c = c + 1
+        k = k + 1
+    return c
+
+
+def topo_optimal_adjacency():
+    """engine_cli.hexa:8940."""
+    return _topo_relabel_perm(topo_brain_adjacency(), topo_optimal_perm())
+
+
+def _topo_mean_col(x, j):
+    """engine_cli.hexa:8944."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    s = 0.0
+    t = 0
+    while t < nt:
+        s = s + x[t][j]
+        t = t + 1
+    return s / float(nt)
+
+
+def topo_func_integration(x, a, alpha):
+    """engine_cli.hexa:8958 — mean pairwise |corr| of diffused lanes."""
+    xd = topo_apply(x, a, alpha)
+    n = 15
+    mu = []
+    sd = []
+    j = 0
+    while j < n:
+        m = _topo_mean_col(xd, j)
+        mu.append(m)
+        nt = len(xd)
+        v = 0.0
+        t = 0
+        while t < nt:
+            d = xd[t][j] - m
+            v = v + d * d
+            t = t + 1
+        if nt > 0:
+            v = v / float(nt)
+        sd.append(_sqrt(v))
+        j = j + 1
+    nt = len(xd)
+    sumr = 0.0
+    npair = 0
+    i = 0
+    while i < n:
+        j = i + 1
+        while j < n:
+            if sd[i] > 0.000001 and sd[j] > 0.000001:
+                cov = 0.0
+                t = 0
+                while t < nt:
+                    cov = cov + (xd[t][i] - mu[i]) * (xd[t][j] - mu[j])
+                    t = t + 1
+                if nt > 0:
+                    cov = cov / float(nt)
+                r = cov / (sd[i] * sd[j])
+                if r < 0.0:
+                    r = 0.0 - r
+                sumr = sumr + r
+                npair = npair + 1
+            j = j + 1
+        i = i + 1
+    if npair == 0:
+        return 0.0
+    return sumr / float(npair)
+
+
+def topo_func_integration_flat(x):
+    """engine_cli.hexa:9003."""
+    return topo_func_integration(x, _topo_zeros(15), 0.0)
+
+
+def ci_lane_scores_coupled(m, m_field, cells, seen, intent, dt, recon_err, adj, alpha, cfg):
+    """engine_cli.hexa:9035."""
+    raw = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    if not cfg.topo_couple:
+        return raw
+    coupled = topo_apply([raw], adj, alpha)
+    return coupled[0]
+
+
+def ci_emit_decision(lanes):
+    """engine_cli.hexa:9052."""
+    gws = lanes[0]
+    lprec = lanes[4]
+    drive = 0.5 * (gws + lprec)
+    return drive >= 0.5
+
+
+def ci_psi_balance(x, adj, alpha, cfg):
+    """engine_cli.hexa:9065."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    pop = topo_apply(x, adj, alpha) if cfg.topo_couple else x
+    emit = 0
+    t = 0
+    while t < nt:
+        if ci_emit_decision(pop[t]):
+            emit = emit + 1
+        t = t + 1
+    return float(emit) / float(nt)
+
+
+def ci_lane_vector_l2_diff(a, b):
+    """engine_cli.hexa:9081."""
+    n = len(a)
+    s = 0.0
+    i = 0
+    while i < n:
+        d = a[i] - b[i]
+        s = s + d * d
+        i = i + 1
+    return _sqrt(s)
+
+
+def ci_emit_drive(lanes):
+    """engine_cli.hexa:9092."""
+    return 0.5 * (lanes[0] + lanes[4])
+
+
+def ci_psi_balance_centered(x, adj, alpha, thr, cfg):
+    """engine_cli.hexa:9105."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    pop = topo_apply(x, adj, alpha) if cfg.topo_couple else x
+    emit = 0
+    t = 0
+    while t < nt:
+        if ci_emit_drive(pop[t]) >= thr:
+            emit = emit + 1
+        t = t + 1
+    return float(emit) / float(nt)
+
+
+def ci_off_median_drive(x):
+    """engine_cli.hexa:9120 — median drive (insertion sort)."""
+    nt = len(x)
+    if nt == 0:
+        return 0.5
+    ds = []
+    t = 0
+    while t < nt:
+        ds.append(ci_emit_drive(x[t]))
+        t = t + 1
+    i = 1
+    while i < nt:
+        key = ds[i]
+        j = i - 1
+        while j >= 0 and ds[j] > key:
+            ds[j + 1] = ds[j]
+            j = j - 1
+        ds[j + 1] = key
+        i = i + 1
+    return ds[nt // 2]
+
+
+def _topo_row_center(a):
+    """engine_cli.hexa:9164."""
+    n = len(a)
+    out = _topo_zeros(n)
+    i = 0
+    while i < n:
+        s = 0.0
+        j = 0
+        while j < n:
+            s = s + a[i][j]
+            j = j + 1
+        mu = s / float(n)
+        j = 0
+        while j < n:
+            out[i][j] = a[i][j] - mu
+            j = j + 1
+        i = i + 1
+    return out
+
+
+def _topo_row_stochastic(a):
+    """engine_cli.hexa:9184."""
+    n = len(a)
+    out = _topo_zeros(n)
+    i = 0
+    while i < n:
+        d = 0.0
+        j = 0
+        while j < n:
+            d = d + a[i][j]
+            j = j + 1
+        if d > 0.000001:
+            j = 0
+            while j < n:
+                out[i][j] = a[i][j] / d
+                j = j + 1
+        else:
+            out[i][i] = 1.0
+        i = i + 1
+    return out
+
+
+def _topo_apply_kernel(x, mm):
+    """engine_cli.hexa:9205."""
+    nt = len(x)
+    n = len(mm)
+    out = []
+    t = 0
+    while t < nt:
+        row = []
+        i = 0
+        while i < n:
+            s = 0.0
+            j = 0
+            while j < n:
+                s = s + x[t][j] * mm[i][j]
+                j = j + 1
+            row.append(s)
+            i = i + 1
+        out.append(row)
+        t = t + 1
+    return out
+
+
+def topo_apply_meancenter(x, a, alpha):
+    """engine_cli.hexa:9228."""
+    n = len(a)
+    ahat = _topo_row_center(_topo_sym_norm(a))
+    mm = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            v = alpha * ahat[i][j]
+            if i == j:
+                v = v + 1.0
+            mm[i][j] = v
+            j = j + 1
+        i = i + 1
+    return _topo_apply_kernel(x, mm)
+
+
+def topo_apply_rowstoch(x, a, alpha):
+    """engine_cli.hexa:9248."""
+    n = len(a)
+    p = _topo_row_stochastic(a)
+    mm = _topo_zeros(n)
+    i = 0
+    while i < n:
+        j = 0
+        while j < n:
+            v = alpha * p[i][j]
+            if i == j:
+                v = v + (1.0 - alpha)
+            mm[i][j] = v
+            j = j + 1
+        i = i + 1
+    return _topo_apply_kernel(x, mm)
+
+
+def _topo_row_l2(r):
+    """engine_cli.hexa:9289."""
+    s = 0.0
+    i = 0
+    while i < len(r):
+        s = s + r[i] * r[i]
+        i = i + 1
+    return _sqrt(s)
+
+
+def topo_apply_renorm(x, a, alpha):
+    """engine_cli.hexa:9268."""
+    coupled = topo_apply(x, a, alpha)
+    nt = len(x)
+    out = []
+    t = 0
+    while t < nt:
+        off_n = _topo_row_l2(x[t])
+        on_n = _topo_row_l2(coupled[t])
+        scale = 1.0
+        if on_n > 0.000000001:
+            scale = off_n / on_n
+        n = len(coupled[t])
+        row = []
+        i = 0
+        while i < n:
+            row.append(coupled[t][i] * scale)
+            i = i + 1
+        out.append(row)
+        t = t + 1
+    return out
+
+
+def topo_apply_op(x, a, alpha, op):
+    """engine_cli.hexa:9298."""
+    if op == 1:
+        return topo_apply_meancenter(x, a, alpha)
+    if op == 2:
+        return topo_apply_rowstoch(x, a, alpha)
+    if op == 3:
+        return topo_apply_renorm(x, a, alpha)
+    return topo_apply(x, a, alpha)
+
+
+def ci_psi_balance_op(x, adj, alpha, op, thr, cfg):
+    """engine_cli.hexa:9310."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    pop = topo_apply_op(x, adj, alpha, op) if cfg.topo_couple else x
+    emit = 0
+    t = 0
+    while t < nt:
+        if ci_emit_drive(pop[t]) >= thr:
+            emit = emit + 1
+        t = t + 1
+    return float(emit) / float(nt)
+
+
+def topo_func_integration_op(x, a, alpha, op):
+    """engine_cli.hexa:9326."""
+    xd = topo_apply_op(x, a, alpha, op)
+    n = 15
+    mu = []
+    sd = []
+    j = 0
+    while j < n:
+        m = _topo_mean_col(xd, j)
+        mu.append(m)
+        nt = len(xd)
+        v = 0.0
+        t = 0
+        while t < nt:
+            d = xd[t][j] - m
+            v = v + d * d
+            t = t + 1
+        if nt > 0:
+            v = v / float(nt)
+        sd.append(_sqrt(v))
+        j = j + 1
+    nt = len(xd)
+    sumr = 0.0
+    npair = 0
+    i = 0
+    while i < n:
+        j = i + 1
+        while j < n:
+            if sd[i] > 0.000001 and sd[j] > 0.000001:
+                cov = 0.0
+                t = 0
+                while t < nt:
+                    cov = cov + (xd[t][i] - mu[i]) * (xd[t][j] - mu[j])
+                    t = t + 1
+                if nt > 0:
+                    cov = cov / float(nt)
+                r = cov / (sd[i] * sd[j])
+                if r < 0.0:
+                    r = 0.0 - r
+                sumr = sumr + r
+                npair = npair + 1
+            j = j + 1
+        i = i + 1
+    if npair == 0:
+        return 0.0
+    return sumr / float(npair)
+
+
+def topo_psi_max_feasible_alpha(x, adj, op, thr, tol, cfg):
+    """engine_cli.hexa:9371."""
+    best = 0.0
+    k = 1
+    while k <= 10:
+        al = float(k) / 10.0
+        psi = ci_psi_balance_op(x, adj, al, op, thr, cfg)
+        dev = (psi - 0.5) if (psi - 0.5) >= 0.0 else (0.5 - psi)
+        if dev <= tol:
+            if al > best:
+                best = al
+        k = k + 1
+    return best
+
+
+# ════════════════════════════════════════════════════════════════════════
+# §ThirdLaw + §Savant (SAVANT/savant_lib re-anchored) — savant scoring free-fns
+# ════════════════════════════════════════════════════════════════════════
+
+def sa_gz_lower():
+    """SAVANT/savant_lib.hexa:77."""
+    return 0.21231792755821914
+
+
+def sa_gz_upper():
+    """SAVANT/savant_lib.hexa:82."""
+    return 0.5
+
+
+def sa_in_golden_zone(I):
+    """SAVANT/savant_lib.hexa:122."""
+    lo = sa_gz_lower()
+    hi = sa_gz_upper()
+    if I < lo:
+        return 0
+    if I > hi:
+        return 0
+    return 1
+
+
+def _tl_sing_thr():
+    """engine_cli.hexa:10978."""
+    return 0.70
+
+
+def third_law_score(d, p, ii):
+    """engine_cli.hexa:10982 — G = D·P/I."""
+    if ii <= 0.0:
+        return 0.0
+    return (d * p) / ii
+
+
+def third_law_singularity(d, p, ii):
+    """engine_cli.hexa:10989."""
+    if third_law_score(d, p, ii) > _tl_sing_thr():
+        return 1
+    return 0
+
+
+def third_law_ability(d, p, ii):
+    """engine_cli.hexa:10998."""
+    if third_law_singularity(d, p, ii) == 1 and sa_in_golden_zone(ii) == 1:
+        return 1
+    return 0
+
+
+def _tl_linspace(a, b, n):
+    """engine_cli.hexa:11004."""
+    out = []
+    if n <= 1:
+        out.append(a)
+        return out
+    step = (b - a) / float(n - 1)
+    i = 0
+    while i < n:
+        out.append(a + step * float(i))
+        i = i + 1
+    return out
+
+
+def third_law_ratio(nD, nP, nI):
+    """engine_cli.hexa:11016."""
+    dg = _tl_linspace(0.05, 0.95, nD)
+    pg = _tl_linspace(0.05, 0.95, nP)
+    ig = _tl_linspace(0.05, 0.95, nI)
+    total = 0
+    sing = 0
+    a = 0
+    while a < nI:
+        ii = ig[a]
+        b = 0
+        while b < nD:
+            d = dg[b]
+            c = 0
+            while c < nP:
+                pp = pg[c]
+                total = total + 1
+                if third_law_singularity(d, pp, ii) == 1:
+                    sing = sing + 1
+                c = c + 1
+            b = b + 1
+        a = a + 1
+    if total == 0:
+        return 0.0
+    return float(sing) / float(total)
+
+
+def third_law_overlap(nD, nP, nI):
+    """engine_cli.hexa:11046."""
+    dg = _tl_linspace(0.05, 0.95, nD)
+    pg = _tl_linspace(0.05, 0.95, nP)
+    ig = _tl_linspace(0.05, 0.95, nI)
+    sing = 0
+    abil = 0
+    a = 0
+    while a < nI:
+        ii = ig[a]
+        b = 0
+        while b < nD:
+            d = dg[b]
+            c = 0
+            while c < nP:
+                pp = pg[c]
+                if third_law_singularity(d, pp, ii) == 1:
+                    sing = sing + 1
+                    if sa_in_golden_zone(ii) == 1:
+                        abil = abil + 1
+                c = c + 1
+            b = b + 1
+        a = a + 1
+    if sing == 0:
+        return 0.0
+    return float(abil) / float(sing)
+
+
+def third_law_i50(nD, nP, nI):
+    """engine_cli.hexa:11077."""
+    dg = _tl_linspace(0.05, 0.95, nD)
+    pg = _tl_linspace(0.05, 0.95, nP)
+    ig = _tl_linspace(0.05, 0.95, nI)
+    rate = []
+    a = 0
+    while a < nI:
+        ii = ig[a]
+        it = 0
+        is_ = 0
+        b = 0
+        while b < nD:
+            d = dg[b]
+            c = 0
+            while c < nP:
+                it = it + 1
+                if third_law_singularity(d, pg[c], ii) == 1:
+                    is_ = is_ + 1
+                c = c + 1
+            b = b + 1
+        rate.append(float(is_) / float(it))
+        a = a + 1
+    k = 0
+    while k < nI - 1:
+        y0 = rate[k]
+        y1 = rate[k + 1]
+        if y0 >= 0.5 and y1 < 0.5:
+            x0 = ig[k]
+            x1 = ig[k + 1]
+            return x0 + (y0 - 0.5) / (y0 - y1) * (x1 - x0)
+        k = k + 1
+    return 0.0 - 1.0
+
+
+def _tl_latch_off_thr():
+    """engine_cli.hexa:11141."""
+    return 0.75
+
+
+def third_law_ability_memoryless(d, p, ii):
+    """engine_cli.hexa:11145."""
+    return third_law_ability(d, p, ii)
+
+
+def third_law_ability_latched(d, p, ii, prev_on):
+    """engine_cli.hexa:11154."""
+    if prev_on == 1:
+        if ii > _tl_latch_off_thr():
+            return 0
+        return 1
+    return third_law_ability(d, p, ii)
+
+
+def third_law_hysteresis_width(d, p, nDown, nUp):
+    """engine_cli.hexa:11167."""
+    dg = _tl_linspace(0.95, 0.05, nDown)
+    latch = 0
+    i_on = 0.0 - 1.0
+    a = 0
+    while a < nDown:
+        ii = dg[a]
+        nl = third_law_ability_latched(d, p, ii, latch)
+        if latch == 0 and nl == 1:
+            i_on = ii
+        latch = nl
+        a = a + 1
+    if i_on < 0.0:
+        return 0.0
+    ug = _tl_linspace(0.05, 0.95, nUp)
+    i_off = 0.0 - 1.0
+    b = 0
+    while b < nUp:
+        ii = ug[b]
+        nl = third_law_ability_latched(d, p, ii, latch)
+        if latch == 1 and nl == 0:
+            i_off = ii
+        latch = nl
+        b = b + 1
+    if i_off < 0.0:
+        return 0.0 - 1.0
+    w = i_off - i_on
+    if w < 0.0:
+        return 0.0 - w
+    return w
+
+
+def sv_gz_lower():
+    """engine_cli.hexa:11245."""
+    return 0.21231792755821914
+
+
+def sv_gz_upper():
+    """engine_cli.hexa:11246."""
+    return 0.5
+
+
+def sv_gz_center():
+    """engine_cli.hexa:11247."""
+    return 0.36787944117144233
+
+
+def sv_si_threshold():
+    """engine_cli.hexa:11248."""
+    return 3.0
+
+
+def sv_in_golden_zone(inh):
+    """engine_cli.hexa:11251."""
+    if inh < sv_gz_lower():
+        return 0
+    if inh > sv_gz_upper():
+        return 0
+    return 1
+
+
+def sv_savant_index(phis):
+    """engine_cli.hexa:11258 — SI = max(Φ)/mean(Φ)."""
+    n = len(phis)
+    if n == 0:
+        return 0.0
+    sum_p = 0.0
+    max_p = phis[0]
+    i = 0
+    while i < n:
+        v = phis[i]
+        sum_p = sum_p + v
+        if v > max_p:
+            max_p = v
+        i = i + 1
+    mean_p = sum_p / float(n)
+    if mean_p <= 0.0:
+        return 0.0
+    return max_p / mean_p
+
+
+def _sv_col_mean(x, c):
+    """engine_cli.hexa:11276."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    s = 0.0
+    t = 0
+    while t < nt:
+        s = s + x[t][c]
+        t = t + 1
+    return s / float(nt)
+
+
+def sv_inhibit_domain(x, lo, hi, inh):
+    """engine_cli.hexa:11302 — shared-latent inhibition operator (inverse-U Φ)."""
+    nt = len(x)
+    ncol = len(x[0]) if nt > 0 else 0
+    w = hi - lo
+    cmean = []
+    c = 0
+    while c < ncol:
+        if c >= lo and c < hi:
+            cmean.append(_sv_col_mean(x, c))
+        else:
+            cmean.append(0.0)
+        c = c + 1
+    gz_lo = sv_gz_lower()
+    NOISE_K = 6.0
+    sig = 1.0 - inh
+    noi = 0.0
+    if inh < gz_lo:
+        noi = NOISE_K * (gz_lo - inh)
+    out = []
+    t = 0
+    while t < nt:
+        srow = 0.0
+        sc = lo
+        while sc < hi:
+            srow = srow + x[t][sc]
+            sc = sc + 1
+        s_t = (srow / float(w)) if w > 0 else 0.0
+        row = []
+        k = 0
+        while k < ncol:
+            raw = x[t][k]
+            if k >= lo and k < hi:
+                base = cmean[k]
+                res = raw - base
+                gated = base + sig * (s_t - base) + noi * res
+                row.append(gated)
+            else:
+                row.append(raw)
+            k = k + 1
+        out.append(row)
+        t = t + 1
+    return out
+
+
+def _sv_domain_cols(lo, hi):
+    """engine_cli.hexa:11358."""
+    cols = []
+    c = lo
+    while c < hi:
+        cols.append(c)
+        c = c + 1
+    return cols
+
+
+def sv_domain_phi(x, lo, hi, inh):
+    """engine_cli.hexa:11367."""
+    pop = sv_inhibit_domain(x, lo, hi, inh)
+    cols = _sv_domain_cols(lo, hi)
+    return ci_phi_iit4(pop, cols)
+
+
+def sv_domain_phis(x, d, w, focus, gz_inh, base_inh):
+    """engine_cli.hexa:11377."""
+    phis = []
+    dom = 0
+    while dom < d:
+        lo = dom * w
+        hi = lo + w
+        inh = gz_inh if dom == focus else base_inh
+        phis.append(sv_domain_phi(x, lo, hi, inh))
+        dom = dom + 1
+    return phis
+
+
+def sv_savant_index_at(x, d, w, focus, gz_inh, base_inh):
+    """engine_cli.hexa:11392."""
+    return sv_savant_index(sv_domain_phis(x, d, w, focus, gz_inh, base_inh))
+
+
+def sv_focus_phi_sweep(x, lo, hi, igrid):
+    """engine_cli.hexa:11398."""
+    out = []
+    i = 0
+    while i < len(igrid):
+        out.append(sv_domain_phi(x, lo, hi, igrid[i]))
+        i = i + 1
+    return out
+
+
+def sv_dphi_peak_inh(phis, igrid):
+    """engine_cli.hexa:11407."""
+    n = len(phis)
+    if n < 2:
+        return 0.0
+    peak_i = igrid[0]
+    peak_abs = 0.0 - 1.0
+    k = 0
+    while k < n:
+        d = 0.0
+        if k == 0:
+            d = (phis[1] - phis[0]) / (igrid[1] - igrid[0])
+        else:
+            if k == n - 1:
+                d = (phis[n - 1] - phis[n - 2]) / (igrid[n - 1] - igrid[n - 2])
+            else:
+                d = (phis[k + 1] - phis[k - 1]) / (igrid[k + 1] - igrid[k - 1])
+        a = d
+        if a < 0.0:
+            a = 0.0 - a
+        if a > peak_abs:
+            peak_abs = a
+            peak_i = igrid[k]
+        k = k + 1
+    return peak_i
+
+
+def sv_savant_trigger(phis, inh, split_rate, cfg):
+    """engine_cli.hexa:11435."""
+    if cfg.savant == False:
+        return 0
+    si = sv_savant_index(phis)
+    si_high = si >= sv_si_threshold()
+    in_gz = sv_in_golden_zone(inh)
+    split_active = split_rate > 0.0
+    if si_high == False:
+        return 0
+    if in_gz != 1:
+        return 0
+    if split_active == False:
+        return 0
+    return 1
+
+
+def ci_psi_balance_savant(x, lo, hi, gz_inh, thr, cfg):
+    """engine_cli.hexa:11454."""
+    nt = len(x)
+    if nt == 0:
+        return 0.0
+    pop = sv_inhibit_domain(x, lo, hi, gz_inh) if cfg.savant else x
+    emit = 0
+    t = 0
+    while t < nt:
+        if ci_emit_drive(pop[t]) >= thr:
+            emit = emit + 1
+        t = t + 1
+    return float(emit) / float(nt)
+
+
+def sv_lane_sync(x, lo, hi):
+    """engine_cli.hexa:11482 — mean pairwise |corr| (Kuramoto-R analogue)."""
+    nt = len(x)
+    if nt < 2:
+        return 0.0
+    mu = []
+    c = lo
+    while c < hi:
+        s = 0.0
+        t = 0
+        while t < nt:
+            s = s + x[t][c]
+            t = t + 1
+        mu.append(s / float(nt))
+        c = c + 1
+    w = hi - lo
+    if w < 2:
+        return 0.0
+    acc = 0.0
+    npair = 0
+    a = 0
+    while a < w:
+        b = a + 1
+        while b < w:
+            cov = 0.0
+            va = 0.0
+            vb = 0.0
+            t = 0
+            while t < nt:
+                da = x[t][lo + a] - mu[a]
+                db = x[t][lo + b] - mu[b]
+                cov = cov + da * db
+                va = va + da * da
+                vb = vb + db * db
+                t = t + 1
+            denom = _sqrt(va) * _sqrt(vb)
+            if denom > 0.0:
+                r = cov / denom
+                if r < 0.0:
+                    r = 0.0 - r
+                acc = acc + r
+                npair = npair + 1
+            b = b + 1
+        a = a + 1
+    if npair == 0:
+        return 0.0
+    return acc / float(npair)
+
+
+def sv_domain_sync(x, lo, hi, inh):
+    """engine_cli.hexa:11532."""
+    pop = sv_inhibit_domain(x, lo, hi, inh)
+    return sv_lane_sync(pop, lo, hi)
+
+
+def sv_sync_sweep(x, lo, hi, igrid):
+    """engine_cli.hexa:11539."""
+    out = []
+    i = 0
+    while i < len(igrid):
+        out.append(sv_domain_sync(x, lo, hi, igrid[i]))
+        i = i + 1
+    return out
+
+
+def sv_psi_sync_proxy(x, lo, hi, inh, r_ref):
+    """engine_cli.hexa:11550."""
+    return sv_domain_sync(x, lo, hi, inh) - r_ref
+
+
+def sv_emit_drive_lanes():
+    """engine_cli.hexa:11569."""
+    return [0, 4]
+
+
+def sv_domain_is_emit_disjoint(focus, w):
+    """engine_cli.hexa:11574."""
+    lo = focus * w
+    hi = lo + w
+    emit = sv_emit_drive_lanes()
+    k = 0
+    while k < len(emit):
+        e = emit[k]
+        if e >= lo and e < hi:
+            return 0
+        k = k + 1
+    return 1
+
+
+def sv_default_focus(d, w):
+    """engine_cli.hexa:11592."""
+    f = 0
+    while f < d:
+        if sv_domain_is_emit_disjoint(f, w) == 1:
+            return f
+        f = f + 1
+    return 0 - 1
+
+
+# ════════════════════════════════════════════════════════════════════════
 # parity smoke driver — exercises CLI / MITOSIS / G5 / G3 deterministically
 # ════════════════════════════════════════════════════════════════════════
 
@@ -6684,3 +8218,75 @@ if __name__ == "__main__":
                          len(bfeat) - 2, 5, 1, 0.10, 0.5, cfg_on)
     _p("bpe_bfce", bpe_byte_fair_ce(bjh, bfeat[len(bfeat) - 2:], btgt[len(btgt) - 2:],
                                     bnbyt[len(bnbyt) - 2:]))
+
+    # ── §ConsciousnessIndex (ci_*) — 15-lane scores + Gaussian/IIT-4 Φ ──
+    cipop = []
+    ci_i = 0
+    while ci_i < 12:
+        mf = [0.1 + 0.05 * float(ci_i), 0.2 + 0.01 * float(ci_i),
+              0.3 - 0.02 * float(ci_i), 0.05 * float(ci_i)]
+        crow = ci_lane_scores(0.3 + 0.04 * float(ci_i), mf, ci_i + 1, ci_i,
+                              ci_i % 2, 0.1 * float(ci_i), 0.15 + 0.03 * float(ci_i))
+        cipop.append(crow)
+        ci_i = ci_i + 1
+    _p("ci_lane_gws", cipop[5][0])
+    _p("ci_lane_ent", cipop[5][12])
+    _p("ci_lane_emo", cipop[5][9])
+    _p("ci_bundle_all", ci_bundle(cipop, -1))
+    _p("ci_bundle_abl3", ci_bundle(cipop, 3))
+    _p("ci_phi_full", ci_phi_multiinfo(cipop, -1))
+    _p("ci_phi_abl0", ci_phi_multiinfo(cipop, 0))
+    _p("ci_phi_iit4", ci_phi_iit4(cipop, [0, 1, 2, 3, 4, 5, 6, 7]))
+    _p("ci_phi_drop2", ci_phi_drop2(cipop, 1, 2))
+    cipi = ci_pair_interaction(cipop, 1, 2)
+    _p("ci_pair_inter", cipi[2])
+    _p("ci_surrogate", ci_surrogate_phi0(cipop, 12345))
+    _p("ci_subset_proxy", ci_phi_multiinfo_subset_proxy(cipop, [0, 1, 2, 3]))
+
+    # ── §BrainTopology (topo_*) — placement + connectome Φ ──
+    cfg_topo = EngineConfig(True, "conv", True, False)
+    badj = topo_brain_adjacency()
+    _p("topo_edge03", badj[0][3])
+    _p("topo_edge01", badj[0][1])
+    _p("topo_lit01", topo_literal_adjacency()[0][1])
+    _p("topo_optperm0", topo_optimal_perm()[0])
+    _p("topo_optadj_28", topo_optimal_adjacency()[2][8])
+    _p("topo_dmr_sum", _topo_row_l2(topo_degree_matched_random(7)[0]))
+    _p("topo_phi_flat", topo_phi_flat(cipop, 0.5))
+    _p("topo_phi_brain", topo_phi_brain(cipop, 0.5))
+    _p("topo_phi_random1", topo_phi_random(cipop, 0.5, 7))
+    _p("topo_phi_lateral", topo_phi_lateralized(cipop, 0.5))
+    _p("topo_phi_coordsh", topo_phi_coords_shuffled(cipop, 0.5, 7))
+    _p("topo_phi_geomsh", topo_phi_geometry_shuffled(cipop, 0.5, 7))
+    _p("topo_phi_rndmean", topo_phi_random_mean(cipop, 0.5, 100, 3))
+    _p("topo_phi_shufmean", topo_phi_shuffle_mean(cipop, 0.5, 100, 3))
+    _p("topo_phi_geomean", topo_phi_geometry_shuffle_mean(cipop, 0.5, 100, 3))
+    _p("topo_phi_huba0", topo_phi_hub_ablated(cipop, 0.5, 0))
+    _p("topo_phi_optimal", topo_phi_optimal(cipop, 0.5))
+    _p("topo_phi_litadj", topo_phi_adj(cipop, topo_literal_adjacency(), 0.5))
+    _p("topo_phi_litrnd", topo_phi_random_of_mean(cipop, topo_literal_adjacency(), 100, 2, 0.5))
+    _p("topo_phi_litrel", topo_phi_relabel_of_mean(cipop, topo_literal_adjacency(), 100, 2, 0.5))
+    _p("topo_beats_brain", topo_relabel_beats_brain_count(cipop, 0.5, 100, 5))
+    _p("topo_funcint", topo_func_integration(cipop, badj, 0.5))
+    _p("topo_funcint_flat", topo_func_integration_flat(cipop))
+    # ── ci coupled / Ψ-balance group ──
+    _p("ci_emit_dec5", ci_emit_decision(cipop[5]))
+    _p("ci_emit_drive5", ci_emit_drive(cipop[5]))
+    _p("ci_psi_off", ci_psi_balance(cipop, badj, 0.5, cfg_on))
+    _p("ci_psi_on", ci_psi_balance(cipop, badj, 0.5, cfg_topo))
+    thr = ci_off_median_drive(cipop)
+    _p("ci_off_median", thr)
+    _p("ci_psi_cent_off", ci_psi_balance_centered(cipop, badj, 0.5, thr, cfg_on))
+    _p("ci_psi_cent_on", ci_psi_balance_centered(cipop, badj, 0.5, thr, cfg_topo))
+    rawlanes = ci_lane_scores_coupled(0.5, [0.2, 0.3, 0.1, 0.4], 3, 2, 1, 0.3, 0.25,
+                                      badj, 0.5, cfg_on)
+    couplanes = ci_lane_scores_coupled(0.5, [0.2, 0.3, 0.1, 0.4], 3, 2, 1, 0.3, 0.25,
+                                       badj, 0.5, cfg_topo)
+    _p("ci_coup_l2diff", ci_lane_vector_l2_diff(rawlanes, couplanes))
+    _p("topo_op_mc", topo_apply_op(cipop, badj, 0.5, 1)[5][0])
+    _p("topo_op_rs", topo_apply_op(cipop, badj, 0.5, 2)[5][0])
+    _p("topo_op_rn", topo_apply_op(cipop, badj, 0.5, 3)[5][0])
+    _p("ci_psi_op1", ci_psi_balance_op(cipop, badj, 0.5, 1, thr, cfg_topo))
+    _p("ci_psi_op2", ci_psi_balance_op(cipop, badj, 0.5, 2, thr, cfg_topo))
+    _p("topo_funcint_op2", topo_func_integration_op(cipop, badj, 0.5, 2))
+    _p("topo_maxalpha", topo_psi_max_feasible_alpha(cipop, badj, 1, thr, 0.1, cfg_topo))

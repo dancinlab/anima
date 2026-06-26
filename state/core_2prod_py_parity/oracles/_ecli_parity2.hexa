@@ -505,4 +505,76 @@ fn main() {
     let mut bj = len(bfeat) - 2
     while bj < len(bfeat) { bXte = bXte + [bfeat[bj]]  bYte = bYte + [btgt[bj]]  bNte = bNte + [bnbyt[bj]]  bj = bj + 1 }
     pf("bpe_bfce", bpe_byte_fair_ce(bjh, bXte, bYte, bNte))
+
+    // ── §ConsciousnessIndex (ci_*) — 15-lane scores + Gaussian/IIT-4 Φ ──
+    let mut cipop = []
+    let mut ci_i = 0
+    while ci_i < 12 {
+        let mf = [0.1 + 0.05 * to_float(ci_i), 0.2 + 0.01 * to_float(ci_i),
+                  0.3 - 0.02 * to_float(ci_i), 0.05 * to_float(ci_i)]
+        let crow = ci_lane_scores(0.3 + 0.04 * to_float(ci_i), mf, ci_i + 1, ci_i,
+                                  ci_i % 2, 0.1 * to_float(ci_i), 0.15 + 0.03 * to_float(ci_i))
+        cipop = cipop + [crow]
+        ci_i = ci_i + 1
+    }
+    pf("ci_lane_gws", cipop[5][0])
+    pf("ci_lane_ent", cipop[5][12])
+    pf("ci_lane_emo", cipop[5][9])
+    pf("ci_bundle_all", ci_bundle(cipop, -1))
+    pf("ci_bundle_abl3", ci_bundle(cipop, 3))
+    pf("ci_phi_full", ci_phi_multiinfo(cipop, -1))
+    pf("ci_phi_abl0", ci_phi_multiinfo(cipop, 0))
+    pf("ci_phi_iit4", ci_phi_iit4(cipop, [0, 1, 2, 3, 4, 5, 6, 7]))
+    pf("ci_phi_drop2", ci_phi_drop2(cipop, 1, 2))
+    let cipi = ci_pair_interaction(cipop, 1, 2)
+    pf("ci_pair_inter", cipi[2])
+    pf("ci_surrogate", ci_surrogate_phi0(cipop, 12345))
+    pf("ci_subset_proxy", ci_phi_multiinfo_subset_proxy(cipop, [0, 1, 2, 3]))
+
+    // ── §BrainTopology (topo_*) — placement + connectome Φ ──
+    let cfg_topo = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false }
+    let badj = topo_brain_adjacency()
+    pf("topo_edge03", badj[0][3])
+    pf("topo_edge01", badj[0][1])
+    pf("topo_lit01", topo_literal_adjacency()[0][1])
+    pi("topo_optperm0", topo_optimal_perm()[0])
+    pf("topo_optadj_28", topo_optimal_adjacency()[2][8])
+    pf("topo_dmr_sum", _topo_row_l2(topo_degree_matched_random(7)[0]))
+    pf("topo_phi_flat", topo_phi_flat(cipop, 0.5))
+    pf("topo_phi_brain", topo_phi_brain(cipop, 0.5))
+    pf("topo_phi_random1", topo_phi_random(cipop, 0.5, 7))
+    pf("topo_phi_lateral", topo_phi_lateralized(cipop, 0.5))
+    pf("topo_phi_coordsh", topo_phi_coords_shuffled(cipop, 0.5, 7))
+    pf("topo_phi_geomsh", topo_phi_geometry_shuffled(cipop, 0.5, 7))
+    pf("topo_phi_rndmean", topo_phi_random_mean(cipop, 0.5, 100, 3))
+    pf("topo_phi_shufmean", topo_phi_shuffle_mean(cipop, 0.5, 100, 3))
+    pf("topo_phi_geomean", topo_phi_geometry_shuffle_mean(cipop, 0.5, 100, 3))
+    pf("topo_phi_huba0", topo_phi_hub_ablated(cipop, 0.5, 0))
+    pf("topo_phi_optimal", topo_phi_optimal(cipop, 0.5))
+    pf("topo_phi_litadj", topo_phi_adj(cipop, topo_literal_adjacency(), 0.5))
+    pf("topo_phi_litrnd", topo_phi_random_of_mean(cipop, topo_literal_adjacency(), 100, 2, 0.5))
+    pf("topo_phi_litrel", topo_phi_relabel_of_mean(cipop, topo_literal_adjacency(), 100, 2, 0.5))
+    pi("topo_beats_brain", topo_relabel_beats_brain_count(cipop, 0.5, 100, 5))
+    pf("topo_funcint", topo_func_integration(cipop, badj, 0.5))
+    pf("topo_funcint_flat", topo_func_integration_flat(cipop))
+    pb("ci_emit_dec5", ci_emit_decision(cipop[5]))
+    pf("ci_emit_drive5", ci_emit_drive(cipop[5]))
+    pf("ci_psi_off", ci_psi_balance(cipop, badj, 0.5, cfg_on))
+    pf("ci_psi_on", ci_psi_balance(cipop, badj, 0.5, cfg_topo))
+    let thr = ci_off_median_drive(cipop)
+    pf("ci_off_median", thr)
+    pf("ci_psi_cent_off", ci_psi_balance_centered(cipop, badj, 0.5, thr, cfg_on))
+    pf("ci_psi_cent_on", ci_psi_balance_centered(cipop, badj, 0.5, thr, cfg_topo))
+    let rawlanes = ci_lane_scores_coupled(0.5, [0.2, 0.3, 0.1, 0.4], 3, 2, 1, 0.3, 0.25,
+                                          badj, 0.5, cfg_on)
+    let couplanes = ci_lane_scores_coupled(0.5, [0.2, 0.3, 0.1, 0.4], 3, 2, 1, 0.3, 0.25,
+                                           badj, 0.5, cfg_topo)
+    pf("ci_coup_l2diff", ci_lane_vector_l2_diff(rawlanes, couplanes))
+    pf("topo_op_mc", topo_apply_op(cipop, badj, 0.5, 1)[5][0])
+    pf("topo_op_rs", topo_apply_op(cipop, badj, 0.5, 2)[5][0])
+    pf("topo_op_rn", topo_apply_op(cipop, badj, 0.5, 3)[5][0])
+    pf("ci_psi_op1", ci_psi_balance_op(cipop, badj, 0.5, 1, thr, cfg_topo))
+    pf("ci_psi_op2", ci_psi_balance_op(cipop, badj, 0.5, 2, thr, cfg_topo))
+    pf("topo_funcint_op2", topo_func_integration_op(cipop, badj, 0.5, 2))
+    pf("topo_maxalpha", topo_psi_max_feasible_alpha(cipop, badj, 1, thr, 0.1, cfg_topo))
 }
