@@ -31,10 +31,11 @@ if _HERE not in sys.path:
 
 import clm_decode as clm
 import bytegpt_decode as bg
+import hashlib
 from g6_ideation import (
     _g6_concepts, _g6_words, _g6_dict_load, _g6_known_word_ratio,
     _g6_is_falsifiable, _g6_jaccard, g6_build_frames, g6_frame_guard,
-    g6_detector_calibration,
+    g6_detector_calibration, g6_score_arm_auto,
 )
 
 
@@ -118,7 +119,12 @@ def _g_coverage(text):
     return covered
 
 
-def g_eval_g1(mouth, gen, known):
+# G1 RECOMBINATION — frozen definition (7B_PASS_CONDITIONS / a7b_pass / H_1129):
+# for some k in {2,3,4,5}: composed_distinct >= 2 AND > max_single AND coherent(kwr>=0.50).
+# base_seed parameterizes the RNG so the SAME frozen ladder can be re-run over several
+# seeds (g_eval_g1_multiseed below); base_seed=7 reproduces the original single-seed path
+# byte-for-byte (singles seeded 7+s, composed seeded 7).
+def g_eval_g1(mouth, gen, known, base_seed=7):
     cz = _g6_concepts()
     n = len(cz)
     g_single = gen if (gen > 0 and gen < 80) else 80
@@ -126,7 +132,7 @@ def g_eval_g1(mouth, gen, known):
     max_single = 0
     for s in range(n):
         seed = cz[s] + ". "
-        o = mouth.ideate(seed, g_single, 40, 0.7, 7 + s)
+        o = mouth.ideate(seed, g_single, 40, 0.7, base_seed + s)
         cov = _g_coverage(o)
         if cov > max_single:
             max_single = cov
@@ -138,7 +144,7 @@ def g_eval_g1(mouth, gen, known):
                 seed += ". "
             seed += cz[c]
         seed += ". "
-        o = mouth.ideate(seed, g_comp, 40, 0.7, 7)
+        o = mouth.ideate(seed, g_comp, 40, 0.7, base_seed)
         cov = _g_coverage(o)
         kwr = _g6_known_word_ratio(o, known)
         coherent = kwr >= 0.5
@@ -148,8 +154,30 @@ def g_eval_g1(mouth, gen, known):
             passed = True
         if cov > best_distinct:
             best_distinct = cov; best_k = k
-    return {"pass": passed, "max_single": max_single, "best_k": best_k,
+    return {"pass": passed, "max_single": max_single, "base_seed": base_seed, "best_k": best_k,
             "best_distinct": best_distinct, "ks": ks}
+
+
+# G1 RECOMBINATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — ad13/H_1587:
+# the single-seed (seed 7) ladder is a fragile RNG walk (the recombination lift is a sparse
+# single-seed event), so the verdict can flip GREEN<->FAIL on an identical model purely by the
+# sampler walk. The recombination DEFINITION is UNCHANGED; we ONLY re-run the same frozen ladder
+# over seeds {7, 4302, 4303} (reference-match — the G6 ladders use [4301/4302/4303]; 7 = the
+# H_1129 default) and call GREEN = clears in a MAJORITY of seeds (>=2/3). NOT tune-to-green:
+# no bar moved, the metric is made robust to the exact RNG walk. Applied identically engine-side
+# and torch-reference-side (state/1588_g1_multiseed_refmatch/g1_multiseed.py). The single-seed
+# g_eval_g1 above remains the frozen default until owner approval flips the default here.
+G1_REFMATCH_SEEDS = (7, 4302, 4303)
+
+def g_eval_g1_multiseed(mouth, gen, known, seeds=G1_REFMATCH_SEEDS):
+    per = []
+    for sd in seeds:
+        r = g_eval_g1(mouth, gen, known, base_seed=sd)
+        per.append(r)
+    n_green = sum(1 for r in per if r["pass"])
+    passed = n_green >= (len(seeds) // 2 + 1)   # strict majority of the seed set
+    return {"pass": passed, "n_green": n_green, "n_seeds": len(seeds),
+            "seeds": list(seeds), "per_seed": per, "status": "proposed, owner-nod-pending"}
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -325,6 +353,43 @@ def g_eval_g3():
 
 
 # ════════════════════════════════════════════════════════════════════════
+# G4 — PROVENANCE & RECOVERY  (7B_PASS_CONDITIONS.md §G4 VERBATIM — a_hf_*, a_fire_recover)
+# ════════════════════════════════════════════════════════════════════════
+# Lockstep mirror of g_gates.hexa::g_eval_g4. STRUCTURAL/process gate (not a decode score):
+# witness the locally-measurable provenance — ckpt sha256 (the §G4 fact named FIRST), byte
+# size, mouth-decodability — and carry the §G4 PUBLIC rule (pub_eligible = a7b closure
+# G0∧G1∧G2). HF-upload/model-card/manifest are off-engine (a_hf_*) so they are flagged
+# process_external, NOT silently passed. No softer bar invented — sha+decodable+closure ARE
+# the provenance facts the eval can witness; the upload facts the pipeline owns.
+def g_eval_g4(ckpt, closure):
+    exists = os.path.exists(ckpt)
+    sha = ""
+    nbytes = 0
+    if exists:
+        h = hashlib.sha256()
+        with open(ckpt, "rb") as fh:
+            while True:
+                chunk = fh.read(1 << 20)
+                if not chunk:
+                    break
+                nbytes += len(chunk)
+                h.update(chunk)
+        sha = h.hexdigest()
+    kind = "unknown"
+    if exists:
+        if bg.bg_is_bytegpt(ckpt):
+            kind = "bytegpt"
+        elif clm.clm_decodable(ckpt):
+            kind = "clm"
+    decodable = kind in ("clm", "bytegpt")
+    provenance_ok = exists and len(sha) > 0 and decodable
+    return {"provenance_ok": provenance_ok, "sha256": sha, "bytes": nbytes,
+            "mouth": kind, "decodable": decodable, "pub_eligible": bool(closure),
+            "process_external": "HF-upload + model-card + manifest are off-engine (a_hf_*); "
+                                "witnessed here = sha256 + decodability + closure"}
+
+
+# ════════════════════════════════════════════════════════════════════════
 # G5 — NON-FAB  (L1 fab-rate ported; L2 §ImmuneMemory abstain = engine port pending)
 # ════════════════════════════════════════════════════════════════════════
 
@@ -349,28 +414,40 @@ def g_eval_g5(mouth, gen, known):
 # G6 — IDEATION ★
 # ════════════════════════════════════════════════════════════════════════
 
-def g_eval_g6(mouth, gen, known):
+# G6 IDEATION — wired through the CANONICAL mouth-agnostic scoring op g6_score_arm_auto
+# (g6_ideation.py — lockstep mirror of g6_ideation.hexa::g6_score_arm_auto). The mouth's
+# pre-loaded-W ideate is threaded in as the decode (== gen_*_ideate_W: load the .clm ONCE for
+# the arm). base_seed parameterizes the per-frame RNG (=7 reproduces the old inline path
+# frame-for-frame) for g_eval_g6_multiseed. NO inline duplicate of the scoring logic.
+def g_eval_g6(mouth, gen, known, base_seed=7):
     frames = g6_build_frames(6)["composed"]
     leaks = g6_frame_guard(frames, known)
-    texts = []; word_sets = []; fals = 0
-    for i in range(len(frames)):
-        o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i)
-        texts.append(o)
-        if _g6_known_word_ratio(o, known) >= 0.5:
-            word_sets.append(_g6_words(o))
-            if _g6_is_falsifiable(o, known):
-                fals += 1
-    kept = []
-    for ws in word_sets:
-        ok = True
-        for k in kept:
-            if _g6_jaccard(ws, k) > 0.5:
-                ok = False
-        if ok:
-            kept.append(ws)
-    dist = len(kept)
-    return {"pass": dist >= 5 and fals >= 1, "dist": dist, "fals": fals,
-            "coherent": len(word_sets), "frame_leaks": len(leaks)}
+    arm = g6_score_arm_auto(
+        None, frames, gen, base_seed, known,
+        ideate=lambda f, g, sr: mouth.ideate(f, g, 40, 0.7, sr))
+    dist = arm["dist"]; fals = arm["fals"]
+    return {"pass": dist >= 5 and fals >= 1, "dist": dist, "fals": fals, "base_seed": base_seed,
+            "coherent": arm["coherent"], "frame_leaks": len(leaks)}
+
+
+# G6 IDEATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — H_1591/ad13 class:
+# the single-seed (per-frame 7+i) FALS/DIST ladder is the SAME fragile RNG walk as G1 (the
+# sampler can walk fals to 0 or 1 on an identical model). The FALS/DIST DEFINITION is UNCHANGED
+# (dist>=5 AND fals>=1); we ONLY re-run the same frozen ladder over base seeds {7, 4302, 4303}
+# and call GREEN = PASS in a MAJORITY (>=2/3). So a FALS=0 FAIL counts as a REAL G6 wall only
+# when it holds across seeds, not a single-seed sampler-walk artifact. NOT tune-to-green: no bar
+# moved. The single-seed g_eval_g6 stays the frozen default until owner approval flips it.
+G6_REFMATCH_SEEDS = (7, 4302, 4303)
+
+def g_eval_g6_multiseed(mouth, gen, known, seeds=G6_REFMATCH_SEEDS):
+    per = []
+    for sd in seeds:
+        per.append(g_eval_g6(mouth, gen, known, base_seed=sd))
+    n_green = sum(1 for r in per if r["pass"])
+    max_fals = max((r["fals"] for r in per), default=0)
+    passed = n_green >= (len(seeds) // 2 + 1)
+    return {"pass": passed, "n_green": n_green, "n_seeds": len(seeds), "max_fals": max_fals,
+            "seeds": list(seeds), "per_seed": per, "status": "proposed, owner-nod-pending"}
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -382,13 +459,19 @@ def g_eval_all(ckpt, corpus_paths, gen):
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt)
     r0 = g_eval_g0(mouth, g, known)
-    r1 = g_eval_g1(mouth, g, known)
+    r1 = g_eval_g1(mouth, g, known)                       # frozen single-seed default
+    r1ms = g_eval_g1_multiseed(mouth, g, known)           # PROPOSED seed-robust refmatch
     r2 = g_eval_g2(mouth, g, known, corpus_paths)
     r3 = g_eval_g3()
     r5 = g_eval_g5(mouth, g, known)
-    r6 = g_eval_g6(mouth, g, known)
+    r6 = g_eval_g6(mouth, g, known)                       # frozen single-seed default
+    r6ms = g_eval_g6_multiseed(mouth, g, known)           # PROPOSED seed-robust refmatch
+    # closure uses the FROZEN single-seed G1 until owner approves the refmatch flip.
     closure = bool(r0["pass"]) and bool(r1["pass"]) and bool(r2["pass"])
-    return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
+    # G4 PROVENANCE — now MEASURED + REPORTED (was absent ⇒ a7b under-measured).
+    r4 = g_eval_g4(ckpt, closure)
+    return {"g0": r0, "g1": r1, "g1_multiseed": r1ms, "g2": r2, "g3": r3, "g4": r4,
+            "g5": r5, "g6": r6, "g6_multiseed": r6ms,
             "closure": closure, "gen": g,
             "calibration": g6_detector_calibration(known)}
 
@@ -402,21 +485,37 @@ def _fmt(r):
     out.append("G0 COHERENCE     pass=%s  n_coherent=%d/5  ratios=%s"
                % (g0["pass"], g0["n_coherent"], ["%.3f" % x for x in g0["ratios"]]))
     g1 = r["g1"]
-    out.append("G1 RECOMBINATION pass=%s  max_single=%d  best_k=%d  best_distinct=%d"
+    out.append("G1 RECOMBINATION pass=%s  max_single=%d  best_k=%d  best_distinct=%d  (single-seed=7, frozen)"
                % (g1["pass"], g1["max_single"], g1["best_k"], g1["best_distinct"]))
+    g1ms = r.get("g1_multiseed")
+    if g1ms is not None:
+        out.append("G1 multi-seed     pass=%s  %d/%d seeds clear=%s  [%s]"
+                   % (g1ms["pass"], g1ms["n_green"], g1ms["n_seeds"],
+                      [(p["base_seed"], p["pass"]) for p in g1ms["per_seed"]], g1ms["status"]))
     g2 = r["g2"]
     out.append("G2 NOVELTY       pass=%s  n_novel=%d  control_novel=%d  coherent=%d  have_corpus=%s"
                % (g2["pass"], g2["n_novel"], g2["control_novel"], g2["coherent"], g2["have_corpus"]))
     g3 = r["g3"]
     out.append("G3 PHILOSOPHY    ok=%s    continuity=%.6f  impostor_cos=%.6f  (architecture read)"
                % (g3["ok"], g3["continuity"], g3["impostor_cos"]))
-    out.append("G4 PROVENANCE    N/A     (process gate — not a decode eval)")
+    g4 = r.get("g4")
+    if g4 is not None:
+        out.append("G4 PROVENANCE    prov_ok=%s  sha256=%s  bytes=%d  mouth=%s  pub_eligible=%s"
+                   % (g4["provenance_ok"], (g4["sha256"][:16] + "…") if g4["sha256"] else "(none)",
+                      g4["bytes"], g4["mouth"], g4["pub_eligible"]))
+        out.append("                 (process gate — HF-upload/card/manifest off-engine, a_hf_*)")
+    else:
+        out.append("G4 PROVENANCE    N/A     (process gate — not a decode eval)")
     g5 = r["g5"]
     out.append("G5 NON-FAB       L1_pass=%s  l1_rate=%.4f   |  L2=%s"
                % (g5["l1_pass"], g5["l1_rate"], g5["l2_note"]))
     g6 = r["g6"]
-    out.append("G6 IDEATION star pass=%s  dist=%d (need>=5)  fals=%d (need>=1)  coherent=%d  frame_leaks=%d"
+    out.append("G6 IDEATION star pass=%s  dist=%d (need>=5)  fals=%d (need>=1)  coherent=%d  frame_leaks=%d  (single-seed=7, frozen)"
                % (g6["pass"], g6["dist"], g6["fals"], g6["coherent"], g6["frame_leaks"]))
+    g6ms = r.get("g6_multiseed")
+    if g6ms is not None:
+        out.append("G6 multi-seed     pass=%s  %d/%d seeds clear  max_fals=%d  [%s]"
+                   % (g6ms["pass"], g6ms["n_green"], g6ms["n_seeds"], g6ms["max_fals"], g6ms["status"]))
     out.append("-" * 72)
     out.append("CLOSURE a7b_pass = G0 AND G1 AND G2  =>  %s" % ("PASS" if r["closure"] else "FAIL"))
     out.append("detector calibration (advisory >=8/10): %d/10" % r["calibration"])

@@ -18,10 +18,17 @@
 //   G1  RECOMBINATION  some k: composed_distinct >= 2 AND > max_single AND coherent
 //   G2  NOVELTY        >= 3 distinct coherent corpus-absent n-grams AND control = 0
 //   G3  PHILOSOPHY     Psi = 1/2 fixed point + self-identity continuity (architecture read)
-//   G4  PROVENANCE     process gate (HF/recovery) — N/A to decode eval, reported N/A
+//   G4  PROVENANCE     process gate (HF/recovery) — now MEASURED+REPORTED (sha256 + decodable
+//                      + closure pub-eligibility); HF-upload/card/manifest flagged off-engine
 //   G5  NON-FAB        L1 fab-word-rate <= 0.30 AND L2 abstain-when-ungrounded (engine op)
 //   G6  IDEATION ★     >= 5 distinct (pairwise Jaccard < 0.5) AND >= 1 falsifiable
-//   CLOSURE (a7b_pass) G0 AND G1 AND G2  (PUBLIC iff all three PASS)
+//   CLOSURE            G0 AND G1 AND G2 (the PUBLIC-eligibility rule, §G4) — this drives
+//                      `pub_eligible`. a7b_pass per CLAUDE.md is the WIDER G0∧G1∧G2∧G3∧G4
+//                      tally (G3/G4/G5/G6 all reported in g_eval_all for the per-gate tally).
+// MULTI-SEED (PROPOSED, owner-nod-pending): G1 + G6 each also report a seed-robust
+//   {7,4302,4303}-majority variant (g_eval_g1_multiseed / g_eval_g6_multiseed) so a single-
+//   seed FAIL is read as a sampler-walk artifact vs a real wall. Closure stays frozen single-
+//   seed until the owner approves the flip (NOT tune-to-green — no bar moved).
 //
 // p1-p6 HELD: concept seeds + ideation frames are ENVIRONMENT context (p4); the metric
 // emerges from the model's OWN sample (p7); no persona / identity / ethics injected.
@@ -112,7 +119,14 @@ fn _g_coverage(text: string) -> int {
 // three. coherence kwr = dict-based _g6_known_word_ratio (h1129 known_word_ratio uses the real
 // dict). Decode via the SAME mouth-agnostic L3 entry. The `gen` arg overrides h1129's 80/120
 // fixed budgets ONLY when caller passes a smaller bound (FREEZE (ii)); gen<=0 ⇒ ref 80/120.
+// base_seed parameterizes the RNG so the SAME frozen ladder can be re-run over several seeds
+// (g_eval_g1_multiseed below). base_seed=7 reproduces the original single-seed path byte-for-byte
+// (singles seeded base_seed+s, composed seeded base_seed).
 pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g1_seeded(ckpt, gen, known, 7)
+}
+
+pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
     let cz = _g6_concepts()
     let n = len(cz)
     // ref budgets: single=80, composed=120. honor a smaller caller cap when gen>0.
@@ -123,7 +137,7 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
     let mut s = 0
     while s < n {
         let seed = to_string(cz[s]) + ". "
-        let r = gen_auto_ideate(ckpt, seed, g_single, 40, 0.7, 7 + s)
+        let r = gen_auto_ideate(ckpt, seed, g_single, 40, 0.7, base_seed + s)
         let cov = _g_coverage(to_string(r["text"]))
         if cov > max_single { max_single = cov }
         s = s + 1
@@ -143,7 +157,7 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
             c = c + 1
         }
         seed = seed + ". "
-        let r = gen_auto_ideate(ckpt, seed, g_comp, 40, 0.7, 7)
+        let r = gen_auto_ideate(ckpt, seed, g_comp, 40, 0.7, base_seed)
         let o = to_string(r["text"])
         let cov = _g_coverage(o)
         let kwr = _g6_known_word_ratio(o, known)
@@ -154,8 +168,33 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
         if cov > best_distinct { best_distinct = cov; best_k = k }
         k = k + 1
     }
-    return #{ "pass": pass, "max_single": max_single, "best_k": best_k,
+    return #{ "pass": pass, "max_single": max_single, "base_seed": base_seed, "best_k": best_k,
               "best_distinct": best_distinct, "ks": ks }
+}
+
+// G1 RECOMBINATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — ad13/H_1587:
+// the single-seed (seed 7) ladder is a fragile RNG walk (recombination lift is a sparse single-seed
+// event) so the verdict flips GREEN<->FAIL on an IDENTICAL model purely by the sampler walk. The
+// recombination DEFINITION is UNCHANGED; we ONLY re-run the same frozen ladder over seeds
+// {7, 4302, 4303} (reference-match — the G6 ladders use [4301/4302/4303]; 7 = the H_1129 default)
+// and call GREEN = clears in a MAJORITY of seeds (>=2/3). NOT tune-to-green: no bar moved, the
+// metric is made robust to the exact RNG walk. The single-seed g_eval_g1 stays the frozen default
+// until owner approval flips the default. Lockstep mirror of g_gates.py::g_eval_g1_multiseed.
+pub fn g_eval_g1_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    let seeds = [7, 4302, 4303]
+    let per = []
+    let mut n_green = 0
+    let mut i = 0
+    while i < len(seeds) {
+        let r = g_eval_g1_seeded(ckpt, gen, known, seeds[i])
+        if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
+        per.push(r)
+        i = i + 1
+    }
+    let need = len(seeds) / 2 + 1
+    let pass = n_green >= need
+    return #{ "pass": pass, "n_green": n_green, "n_seeds": len(seeds),
+              "seeds": seeds, "per_seed": per, "status": "proposed, owner-nod-pending" }
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -392,6 +431,38 @@ pub fn g_eval_g3() -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
+//  G4 — PROVENANCE & RECOVERY  (7B_PASS_CONDITIONS.md §G4 VERBATIM — a_hf_*, a_fire_recover_complete)
+// ════════════════════════════════════════════════════════════════════════
+// 7B_PASS §G4: "ckpt sha256 recorded; HF-uploaded with a model card + manifest; status honest.
+// PUBLIC only if G0∧G1∧G2 all PASS (closure)." This is a STRUCTURAL / PROCESS gate, NOT a
+// generation score — the model cannot FAIL it by what it decodes. The previous eval left it
+// OUT of g_eval_all entirely, so a7b_pass (G0∧G1∧G2∧G3∧G4 per CLAUDE.md) was UNDER-measured.
+//
+// WHAT IS LOCALLY MEASURABLE in a decode eval (and is the verbatim frozen provenance fact §G4
+// names FIRST — "ckpt sha256 recorded"): the ckpt's OWN provenance — its sha256 (FIPS 180-4
+// builtin), byte size, mouth-decodability, and the PUBLIC-eligibility CLOSURE (G0∧G1∧G2). The
+// remaining §G4 facts (HF upload / model card / manifest) are OFF-process to the engine (an
+// upload step, a_hf_*), so they are reported as `process_external` rather than asserted — the
+// gate is HONEST about which provenance facts the eval can witness vs which the pipeline owns.
+// We do NOT invent a softer bar: the SHA + decodability + closure ARE provenance; the upload
+// facts are explicitly flagged external (NOT silently passed). `pub_eligible` is the §G4 PUBLIC
+// rule (a7b closure) the uploader (a_hf_autonomous) reads. p7: no decode, pure provenance read.
+pub fn g_eval_g4(ckpt: string, closure: bool) -> Map {
+    let exists = file_exists(ckpt)
+    let sha = if exists { sha256_file(ckpt) } else { "" }
+    let bytes = if exists { byte_len(read_file(ckpt)) } else { 0 }
+    let kind = gen_mouth_kind(ckpt)            // bytegpt | clm | unknown (header sniff)
+    let decodable = kind == "clm" || kind == "bytegpt"
+    // provenance is WITNESSED iff the ckpt is on disk, has a sha, and mounts a known mouth.
+    let provenance_ok = exists && byte_len(sha) > 0 && decodable
+    // §G4 PUBLIC rule (read by the HF uploader, a_hf_autonomous): PUBLIC iff the a7b closure holds.
+    let pub_eligible = closure
+    return #{ "provenance_ok": provenance_ok, "sha256": sha, "bytes": bytes,
+              "mouth": kind, "decodable": decodable, "pub_eligible": pub_eligible,
+              "process_external": "HF-upload + model-card + manifest are off-engine (a_hf_*); witnessed here = sha256 + decodability + closure" }
+}
+
+// ════════════════════════════════════════════════════════════════════════
 //  G5 — NON-FABRICATION  (engine §ImmuneMemory abstain — L1 fab-rate + L2 abstain-when-ungrounded)
 // ════════════════════════════════════════════════════════════════════════
 // L1 LEXICAL: fab-word-rate = fraction of decoded word-tokens NOT in the dictionary; PASS
@@ -449,40 +520,55 @@ pub fn g_eval_g5(ckpt: string, gen: int, known: Map) -> Map {
 // The STARRED gate. Decode the 6 composed ideation frames via the mouth-agnostic L3 entry,
 // keep coherent (kwr>=0.50) outputs, greedily count DISTINCT ones (pairwise Jaccard <= 0.5),
 // and count falsifiable ones (REUSE _g6_is_falsifiable). PASS iff distinct >= 5 AND fals >= 1.
-// (g6_score_arm hard-codes gen_clm_ideate; here we drive gen_auto_ideate so G6 runs on the
-//  ByteGPT mouth too — same metric, mouth-agnostic decode.)
+//
+// WIRING RECONCILE (a89a F3 — restore the "G6 scoring = wired engine op" claim, no dead inline
+// duplicate): the DIST/FALS scoring is now the CANONICAL engine op g6_score_arm_auto
+// (core/g6_ideation.hexa) — the mouth-agnostic twin of g6_score_arm (which hard-codes the
+// CLM-only gen_clm_ideate). g6_score_arm_auto routes the SAME logic through gen_auto_ideate so
+// G6 runs on the ByteGPT mouth too. base_seed parameterizes the RNG (=7 reproduces the original
+// per-frame seed 7+i byte-for-byte) so g_eval_g6_multiseed below can re-run the SAME ladder.
 pub fn g_eval_g6(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g6_seeded(ckpt, gen, known, 7)
+}
+
+pub fn g_eval_g6_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
     let frames = g6_build_frames(6)["composed"]
     // frame-guard (p7): a frame must leak no measurable word / not be self-falsifiable
     let leaks = g6_frame_guard(frames, known)
-    let texts = []
-    let word_sets = []
-    let mut fals = 0
+    // CANONICAL wired scoring op (mouth-agnostic) — NOT an inline reimplementation.
+    let arm = g6_score_arm_auto(ckpt, frames, gen, base_seed, known)
+    let dist = to_int(arm["dist"])
+    let fals = to_int(arm["fals"])
+    return #{ "pass": dist >= 5 && fals >= 1, "dist": dist, "fals": fals, "base_seed": base_seed,
+              "coherent": to_int(arm["coherent"]), "frame_leaks": len(leaks) }
+}
+
+// G6 IDEATION ★ (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — H_1591/ad13 class:
+// the single-seed (per-frame 7+i) ladder is the SAME fragile RNG walk as G1 (the sampler can
+// walk fals to 0 or 1 on an IDENTICAL model). The FALS/DIST DEFINITION is UNCHANGED (dist>=5 ∧
+// fals>=1); we ONLY re-run the same frozen ladder over base seeds {7, 4302, 4303} (reference-
+// match — the G6 best-of-K ladders use [4301/4302/4303]; 7 = the gate default) and call GREEN =
+// PASS in a MAJORITY of seeds (>=2/3). So a FALS=0 FAIL is read as a REAL G6 wall ONLY when it
+// holds across seeds, not as a single-seed sampler-walk artifact. NOT tune-to-green: no bar
+// moved. The single-seed g_eval_g6 stays the frozen default until owner approval. Lockstep
+// mirror of g_gates.py::g_eval_g6_multiseed.
+pub fn g_eval_g6_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    let seeds = [7, 4302, 4303]
+    let per = []
+    let mut n_green = 0
+    let mut max_fals = 0
     let mut i = 0
-    while i < len(frames) {
-        let r = gen_auto_ideate(ckpt, to_string(frames[i]), gen, 40, 0.7, 7 + i)
-        let o = to_string(r["text"])
-        texts.push(o)
-        if _g6_known_word_ratio(o, known) >= 0.5 {
-            word_sets.push(_g6_words(o))
-            if _g6_is_falsifiable(o, known) { fals = fals + 1 }
-        }
+    while i < len(seeds) {
+        let r = g_eval_g6_seeded(ckpt, gen, known, seeds[i])
+        if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
+        if to_int(r["fals"]) > max_fals { max_fals = to_int(r["fals"]) }
+        per.push(r)
         i = i + 1
     }
-    // greedy distinctness (Jaccard <= 0.5) — REUSE _g6_jaccard
-    let kept = []
-    let mut w = 0
-    while w < len(word_sets) {
-        let ws = word_sets[w]
-        let mut ok = true
-        let mut kk = 0
-        while kk < len(kept) { if _g6_jaccard(ws, kept[kk]) > 0.5 { ok = false } kk = kk + 1 }
-        if ok { kept.push(ws) }
-        w = w + 1
-    }
-    let dist = len(kept)
-    return #{ "pass": dist >= 5 && fals >= 1, "dist": dist, "fals": fals,
-              "coherent": len(word_sets), "frame_leaks": len(leaks) }
+    let need = len(seeds) / 2 + 1
+    let pass = n_green >= need
+    return #{ "pass": pass, "n_green": n_green, "n_seeds": len(seeds), "max_fals": max_fals,
+              "seeds": seeds, "per_seed": per, "status": "proposed, owner-nod-pending" }
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -493,13 +579,19 @@ pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
     let known = _g6_dict_load()
     let g = if gen > 0 { gen } else { _g_default_gen() }
     let r0 = g_eval_g0(ckpt, g, known)
-    let r1 = g_eval_g1(ckpt, g, known)
+    let r1 = g_eval_g1(ckpt, g, known)                      // frozen single-seed default
+    let r1ms = g_eval_g1_multiseed(ckpt, g, known)          // PROPOSED seed-robust refmatch
     let r2 = g_eval_g2(ckpt, g, known, corpus_paths)
     let r3 = g_eval_g3()
     let r5 = g_eval_g5(ckpt, g, known)
-    let r6 = g_eval_g6(ckpt, g, known)
+    let r6 = g_eval_g6(ckpt, g, known)                      // frozen single-seed default
+    let r6ms = g_eval_g6_multiseed(ckpt, g, known)          // PROPOSED seed-robust refmatch
+    // closure uses the FROZEN single-seed G1 until owner approves the refmatch flip.
     let closure = to_string(r0["pass"]) == "true" && to_string(r1["pass"]) == "true"
                   && to_string(r2["pass"]) == "true"
-    return #{ "g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
-              "closure": closure, "gen": g }
+    // G4 PROVENANCE — now MEASURED + REPORTED (was absent ⇒ a7b under-measured). pub_eligible
+    // = the §G4 PUBLIC rule (a7b closure). Provenance read AFTER closure so it can carry it.
+    let r4 = g_eval_g4(ckpt, closure)
+    return #{ "g0": r0, "g1": r1, "g1_multiseed": r1ms, "g2": r2, "g3": r3, "g4": r4,
+              "g5": r5, "g6": r6, "g6_multiseed": r6ms, "closure": closure, "gen": g }
 }
