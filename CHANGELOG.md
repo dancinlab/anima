@@ -1,3 +1,7 @@
+## docs(README): G0-G6 scoreboard → 통과(closure)/추가평가 2-tier 재배치 + P 출처 행 추가
+
+owner: "기존(closure)은 통과해야 되고 나머지는 추가평가". README `🔆 Capability-emergence gates` 테이블을 평평한 G0-G6 → **통과(C1 또박/C2 재조합/C3 새말 = a7b_pass closure, must-pass) / 추가평가(C4 착상★·S1 균형·S2 정직·P 출처, reported·non-blocking)** 그룹으로 재구성. 빠져있던 **P 출처(G4, 출판-게이트)** 행 추가. C4 착상 행에 H_1596 detector-artifact 경고 + H_1597 corpus-grounded 재채점 in-flight 명시. 분류·임계 SSOT = ARCHITECTURE.json `G-게이트 평가 시스템` 노드.
+
 ## refactor(gates): 통과규칙 단일 SSOT = ARCHITECTURE.json (7B_PASS_CONDITIONS.md 흡수·제거) + 통과/추가평가 2-tier 설계
 
 owner 결정(2026-06-27): 평평한 `G0-G6` 통과규칙을 **통과(closure·must-pass) vs 추가평가(reported·non-blocking)** 2-tier 로 재설계하고, frozen 임계·이름·분류를 **ARCHITECTURE.json 한 곳**(`G-게이트 평가 시스템` 노드)에 단일 SSOT 로 통합. 별도 `7B_PASS_CONDITIONS.md` 제거(이력 git).
