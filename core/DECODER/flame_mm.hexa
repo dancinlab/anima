@@ -96,27 +96,19 @@ pub fn mm_scatter_add(P, off, src, n) {
 //   = 77.6 MB at production scale; ~310 MB per 4-token step). The fused loop
 //   is also strictly less work than copy+gemv (no rows·cols write-then-read).
 //
-//   CPU-only path (no cuBLAS dispatch). The cuBLAS Dgemm wraps farr_matmul
-//   which requires index-0 handles — there is no farr_matmul_offset variant
-//   in the hexa-lang RFC-040 surface (verified 2026-05-29: runtime.h has no
-//   *_offset / view / slice API). For the production fire that needs cuBLAS,
-//   the existing mm()-extract path remains available — but the dominant cost
-//   per anima #1317 was the host-side copy, NOT the gemv compute itself.
+//   GPU-aware path via hexa-lang `farr_packed_gemv_offset` (added to RFC-040
+//   AFTER the 2026-05-29 "no *_offset variant" note — that note is now STALE).
+//   The runtime wrapper (runtime_emit_full.hexa:11151) routes rows·cols>8192 to
+//   a CUSTOM reduction kernel `_hx_k_packed_gemv_offset` (runtime_cuda.c:4658/
+//   5510) — NOT cuBLAS Dgemm, so it sidesteps the cuBLAS `[V×1]` illegal-D2H
+//   blocker (BLOCKER_FINDINGS.md ②); small blocks fall back to CPU. It reads the
+//   packed-M offset sub-block directly → no per-token mm_extract churn (#1325).
+//   The CPU fallback is BYTE-IDENTICAL to the prior hand loop (same i-outer
+//   j-inner sequential accumulation — verified max|Δ|=0 on summer 2026-06-26),
+//   so the determinism oracle is preserved on Mac/CPU while CUDA boxes route
+//   the dominant expert gemv [V=151643×d] onto the GPU.
 pub fn mm_packed_gemv(P, off, rows, cols, u) -> int {
-    let out = farr_zeros(rows)
-    let mut i = 0
-    while i < rows {
-        let mut acc = 0.0
-        let base = off + i * cols
-        let mut j = 0
-        while j < cols {
-            acc = acc + farr_get(P, base + j) * farr_get(u, j)
-            j = j + 1
-        }
-        let _ = farr_set(out, i, acc)
-        i = i + 1
-    }
-    return out
+    return farr_packed_gemv_offset(P, off, rows, cols, u)
 }
 
 // mm_packed_gemv_t(P, off, rows, cols, v) → out[cols] handle.
