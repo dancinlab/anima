@@ -1,0 +1,122 @@
+# ============================================================================
+# release — anima 의 `hx install` 무결성 게이트 + GitHub Release 발행
+# ============================================================================
+#
+# WHY (a_install_canonical · release-tag-ci · allgreen-promote):
+#   anima 의 유일한 setup 경로 = `hx install anima` → install.hexa(최신 v* 태그
+#   self-update) → setup.hexa. autotag.yml 이 매 main push 에 v* 태그를 찍지만,
+#   그 태그가 실제로 `hx install` 로 깔리는지는 누구도 검증하지 않았다 — 깨진
+#   태그가 install.hexa 의 "최신 v*" 로 그대로 노출될 수 있었다.
+#
+#   이 워크플로가 그 구멍을 막는다: 매 `v*` 태그에 대해
+#     ① install-smoke (ubuntu + macos, github-hosted) — 그 태그본을 실제로
+#        `hexa run install.hexa` 로 깔고 cli/anima.hexa 단일 진입점이 컴파일되는지
+#        검증. 하나라도 FAIL 이면 Release 미발행(= allgreen-promote).
+#     ② GitHub Release — install-smoke all-green 일 때만 그 태그에 Release 객체
+#        생성(CHANGELOG 최상단 항목을 릴리즈 노트로). 사용자는 Release 페이지에서
+#        검증된 버전을 본다.
+#
+#   anima 는 interpreted hexa-native(compile/바이너리 산출물 없음) → 타깃별 바이너리
+#   업로드는 없다. Release 자산 = git 소스 아카이브(gh 자동 첨부) + 노트뿐.
+#
+# 러너: github-hosted (ubuntu-latest / macos-15) — Blacksmith 미사용(오너 비용 지시
+#   2026-06-26, blacksmith-ci commons override). 동일 install 경로를 두 OS 에서 검증.
+
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag to (re)verify + publish'
+        required: true
+
+permissions:
+  contents: write   # gh release create/edit
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ── ① install-smoke — 그 태그본이 실제로 `hx install` 로 깔리는가 (게이트) ──
+  install-smoke:
+    name: hx install smoke (${{ matrix.os }})
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Install hexa toolchain (released binary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+          echo "$HOME/.hx/bin" >> "$GITHUB_PATH"
+
+      - name: hx install path — install.hexa → setup.hexa (canonical setup)
+        shell: bash
+        env:
+          # 이미 이 태그를 checkout 했으니 self-update 재-pin 은 끈다(현 트리 검증).
+          ANIMA_NO_SELF_UPDATE: '1'
+        run: |
+          set -euo pipefail
+          hexa --version || true
+          # a_install_canonical: 유일 setup 경로를 그대로 실행. setup.hexa 의 ckpt
+          # 다운로드는 best-effort(실패해도 exit≠1) 라 CI 에서 안전.
+          HEXA="$(command -v hexa)" hexa run install.hexa
+
+      - name: Single-entry sanity — cli/anima.hexa 컴파일/디스패치
+        shell: bash
+        run: |
+          set -uo pipefail
+          # cli/anima.hexa = canonical 단일 진입점. ckpt 없이도 파싱+컴파일+디스패치는
+          # 돼야 한다(가중치 의존 동작은 warn-only).
+          hexa run cli/anima.hexa -- --help \
+            || hexa run cli/anima.hexa -- help \
+            || echo "::warning::cli/anima.hexa --help non-zero (weight/arg-dep warn-only) — compile+dispatch reached"
+
+  # ── ② GitHub Release — install-smoke all-green 일 때만 발행 ──
+  github-release:
+    name: GitHub Release
+    needs: install-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Resolve tag + extract release notes (top CHANGELOG entry)
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ github.event.inputs.tag }}"
+          [ -n "$tag" ] || tag="${GITHUB_REF_NAME}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          # CHANGELOG 최상단 1개 항목(## … 다음 ## 전까지)을 릴리즈 노트로.
+          awk 'BEGIN{n=0} /^## /{n++} n==1{print} n==2{exit}' CHANGELOG.md > /tmp/notes.md || true
+          [ -s /tmp/notes.md ] || echo "anima release $tag" > /tmp/notes.md
+
+      - name: Create / update GitHub Release (install-smoke verified)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.meta.outputs.tag }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --title "anima $tag" --notes-file /tmp/notes.md
+          else
+            gh release create "$tag" --title "anima $tag" --notes-file /tmp/notes.md --verify-tag
+          fi

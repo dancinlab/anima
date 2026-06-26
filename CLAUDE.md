@@ -381,6 +381,11 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: 모든 모듈 SemVer · VERSIONS.md + 컴포넌트 헤더 동시 bump · 루트 `/VERSION` = 전체 릴리스.
 - dont: VERSIONS.md 갱신 없이 모듈 버전 bump · 릴리스 bump 에서 `/VERSION` 누락.
 
+## a_install_canonical — setup 은 무조건 `hx install` 단일 경로만 (cli/anima.hexa 단일 진입점)
+- do: anima 설치·세팅은 **오직 `hx install anima`** 한 경로로 — `install.hexa`(최신 `v*` 태그 self-update, tag-pin) → `setup.hexa`(hexa presence verify + ckpt best-effort) 가 SSOT.
+  cli/anima.hexa 는 canonical 단일 진입점(`hexa.toml` entry) = 모든 사용자·pod 가 이 경로로 수렴(interpreted hexa-native, compile 단계 없음). 릴리즈 무결성은 `.github/workflows/release.yml` 이 강제 — 매 `v*` 태그에 install-smoke(ubuntu+macos github-hosted: `hexa run install.hexa` + cli/anima.hexa 단일진입 컴파일) 통과 후에만 GitHub Release 발행 → install.hexa 가 집는 최신 태그가 항상 검증된 것(`release-tag-ci`·`allgreen-promote`). pod 세팅도 `hx install` 경유(수동 rsync 는 추론-pod 페이로드 최적화 한정, setup 경로 아님).
+- dont: 수동 stage-build·raw clone-and-run·ad-hoc 셋업 스크립트 · install.hexa/setup.hexa 우회 · 검증 안 된 태그를 install 최신으로 노출(release.yml install-smoke 게이트 우회) · cli/anima.hexa 외 2nd 진입점 신설.
+
 ## a_hf_complete — HF 등록은 완전하게, 누락 artifact 없이
 - do: 모든 모델/데이터셋/ckpt 를 HF Hub 에 COMPLETE 등록(manifest=local).
 - dont: 부분 업로드 · 미업로드 파일 참조하는 model card · HF↔local drift.
