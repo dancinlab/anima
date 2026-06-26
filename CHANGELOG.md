@@ -6675,3 +6675,8 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - **brain.py**(A⇄G core, 836줄): brain_decide+anchored+5 consults+VBasalGate PASS(1.98e-16). 발견: hexa sin/cos/sqrt=libm(rt_* Taylor 아님)·exp=production-context libm(brain anchor_fold 0.7077… libm 확정, Taylor 3.7e-12 off=parity gate가 잡은 실제 포팅버그).
 - **engine_cli.py 부분**: §SelfIdentity(G3)·§ImmuneMemory(G5 recall_thr abstain)·MITOSIS(engine_grow/VAdaptField/QPool) 3 게이트 subsystem byte-identical(worst rel 0.0). 단 engine_cli.hexa=11,598줄/~30 lane → 잔여 ~27 lane(HiveMind/Φ·WorkMem·Circadian·ToM·Affect·Neuropharm·ConsciousnessIndex·savant·argv) TODO=10/10 미달, engine_cli FULL은 follow-on.
 - 미러: 9 FULL(clm_decode·g_gates·g6_ideation·bytegpt_decode·generator·flame_mm·pure_field·engine_g·brain) + engine_cli 부분. 증거 state/core_2prod_py_parity/.
+
+## 2026-06-26 — engine_cli.py 31/37 lane byte-parity (769→4002줄, 7 배치)
+- 추가 lane(전부 byte-identical ≤1.3e-16): Osmotic·ImmuneGrow·CLS·Skill·Usage·Affect·Homeostatic·Libido·Allosteric·OtherMind·Consolidating·VAdaptB·WorkMem·VForward·HierGoal·SpatialMap·TransOrder·Circadian·IntervalTimer·PhaseReset·SCN(Kuramoto)·PhaseField·QuorumPhase·CA3Replay·GlobalWorkspace·Habituation+G18-G31 17 scalar gate. 누적 oracle PASS 161 fields.
+- 발견: engine_cli.hexa의 sin(21 sites)이 libm 링크 → exp/ln/sin/cos/sqrt 전부 libm(py math.* 일치, stale PARITY note 정정) · 중복 `_cos`(WM변종+1e-12 vs Hier변종)=lexically-nearest 해소 → _cos_vec/_cos_hier.
+- 잔여 6 lane(heavy numerics, follow-on): CollectivePool(IIT-4 big_phi @2701)·SkillCell(5297)·SkillGradFT(5664)·CPField(5796)·JamoHead(6401)·BpeMerges(6679) + ci_*/topo_* + savant + argv main. engine_cli FULL = 10/10 마지막.

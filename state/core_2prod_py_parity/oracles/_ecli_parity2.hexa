@@ -1,0 +1,372 @@
+// _ecli_parity2.hexa — TEMP parity oracle for engine_cli.hexa extended lanes
+// (Osmotic / ImmuneMemoryGrow / CLS / Skill / Usage). Imports ONLY engine_cli.hexa
+// (its own `sin` use links libm in this TU, matching the production compile context).
+import "core/engine_cli.hexa"
+
+fn pb(k: string, v: bool) { println(k + "=" + to_string(v)) }
+fn pf(k: string, v: float) { println(k + "=" + to_string(v)) }
+fn pi(k: string, v: int) { println(k + "=" + to_string(v)) }
+fn ps(k: string, v: string) { println(k + "=" + v) }
+
+fn main() {
+    pb("mit_default", engine_cli_resolve_mitosis([]))
+    pb("mit_noflag", engine_cli_resolve_mitosis(["--no-mitosis"]))
+    pb("mit_on", engine_cli_resolve_mitosis(["--mitosis", "on"]))
+    pb("mit_eqoff", engine_cli_resolve_mitosis(["--mitosis=off"]))
+    ps("engine", engine_cli_resolve_engine([]))
+    pb("topo_default", engine_cli_resolve_topo_couple([]))
+    pb("topo_on", engine_cli_resolve_topo_couple(["--topo-couple", "on"]))
+    pb("savant_default", engine_cli_resolve_savant([]))
+    pb("savant_on", engine_cli_resolve_savant(["--savant=on"]))
+
+    let cfg_on = engine_config_default()
+    let cfg_off = EngineConfig { mitosis: false, engine: "conv", topo_couple: false, savant: false }
+    pi("grow_on", engine_grow(1, 10, cfg_on))
+    pi("grow_off", engine_grow(1, 10, cfg_off))
+
+    let mut af = vadapt_field_new([0.0, 0.0, 0.0, 0.0], 16)
+    let stream = [[0.0, 0.0, 0.0, 0.0], [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0],
+                  [1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.5, 0.5, 0.0, 0.0]]
+    let mut si = 0
+    while si < len(stream) { af = vadapt_field_step(af, stream[si], cfg_on)  si = si + 1 }
+    pi("vaf_cells", vadapt_field_cells(af))
+    pf("vaf_recon_q", vadapt_field_recon_err(af, [0.9, 0.05, 0.0, 0.0]))
+    let dd = vadapt_field_two_recon_err(af, [0.9, 0.05, 0.0, 0.0])
+    pf("vaf_d1", dd[0])
+    pf("vaf_d2", dd[1])
+
+    let mut mem = immune_memory_new_text("capital of france", "Paris", 64)
+    mem = immune_memory_bind_text(mem, "capital of japan", "Tokyo", cfg_on)
+    mem = immune_memory_bind_text(mem, "speed of light", "299792458", cfg_on)
+    pi("im_cells", immune_memory_cells(mem))
+    ps("im_recall_fr", immune_memory_recall_text(mem, "capital of france"))
+    ps("im_recall_jp", immune_memory_recall_text(mem, "capital of japan"))
+    ps("im_abstain", "[" + immune_memory_recall_text(mem, "zzz totally unknown query") + "]")
+    pf("im_margin_known", immune_memory_recall_margin_text(mem, "capital of france"))
+    pf("im_margin_ood", immune_memory_recall_margin_text(mem, "zzz totally unknown query"))
+    pf("im_gap_known", immune_memory_recall_gap_text(mem, "capital of france"))
+
+    let s0 = self_new(8, 0)
+    let mut s = s0
+    let mut tk = 0
+    while tk < 20 { s = self_drift(s, tk, 0.1)  tk = tk + 1 }
+    let anchored = self_anchor(s)
+    pf("self_continuity_cos", self_cos(s, anchored))
+    let s_next = self_drift(s, 20, 0.1)
+    pf("self_adjacent_cos", self_cos(s, s_next))
+    let impostor = self_new(8, 3)
+    pf("self_impostor_cos", self_cos(s, impostor))
+    pi("self_dim", self_dim(s))
+    pf("self_comp0", self_component(s, 0))
+
+    // ── OsmoticStore (H_1569) ──
+    let mut ost = osmotic_store_new([0.0, 0.0, 0.0, 0.0], [0.0, 0.0], 8)
+    ost = osmotic_learn(ost, [1.0, 0.0, 0.0, 0.0], [1.0, 0.0], cfg_on, 1, 0.5, 0.35, -1.0)
+    ost = osmotic_learn(ost, [0.0, 1.0, 0.0, 0.0], [0.0, 1.0], cfg_on, 1, 0.5, 0.35, -1.0)
+    ost = osmotic_learn(ost, [1.0, 0.0, 0.0, 0.0], [0.9, 0.1], cfg_on, 0, 0.0, 0.0, -1.0)
+    pi("osm_cells", osmotic_cells(ost))
+    pb("osm_split_kl", osmotic_should_split(ost, [0.5, 0.5, 0.0, 0.0], [0.4, 0.6], 1, 0.5, 0.35, -1.0))
+    pf("osm_retain_b", osmotic_retains(ost, [0.0, 1.0, 0.0, 0.0], [0.0, 1.0], 0.15))
+
+    // ── ImmuneMemoryGrow (§GrowImmune H_1288) ──
+    let mut mg = immune_grow_new(immune_embed_key("alpha fact"), "A", 2, 4, true)
+    mg = immune_grow_bind(mg, immune_embed_key("beta fact"), "B", cfg_on)
+    mg = immune_grow_bind(mg, immune_embed_key("gamma fact"), "C", cfg_on)
+    mg = immune_grow_bind(mg, immune_embed_key("delta fact"), "D", cfg_on)
+    mg = immune_grow_bind(mg, immune_embed_key("epsilon fact"), "E", cfg_on)
+    pi("mg_cells", immune_grow_cells(mg))
+    ps("mg_recall_e", immune_grow_recall(mg, immune_embed_key("epsilon fact")))
+    ps("mg_recall_ood", "[" + immune_grow_recall(mg, immune_embed_key("zzz nothing")) + "]")
+
+    // ── CLSStore (§CLS H_1532) ──
+    pf("cls_one", cls_one_store_retention(6, 6, 72, 0.30, 0.30))
+    pf("cls_two", cls_two_store_retention(6, 6, 72, 0.30, 0.30, false, false))
+    pf("cls_merge", cls_two_store_retention(6, 6, 72, 0.30, 0.30, true, false))
+    pf("cls_shuffle", cls_two_store_retention(6, 6, 72, 0.30, 0.30, false, true))
+    pf("cls_single", cls_single_encode_retention(6, 6, 72, 0.30, 0.30))
+
+    // ── SkillStore (§SkillStore H_1378) ──
+    let mut ss = skill_store_new("search the web for x", "web_search", 8)
+    ss = skill_store_teach(ss, "read a local file", "file_read", cfg_on)
+    ss = skill_store_teach(ss, "read a local file", "file_read", cfg_on)
+    pi("ss_cells", skill_store_cells(ss))
+    ps("ss_recall_file", skill_recall(ss, "read a local file"))
+    ps("ss_recall_ood", "[" + skill_recall(ss, "qqq unrelated far task") + "]")
+
+    // ── UsageStore (§UsageStore H_1391) ──
+    let mut us = usage_store_new("write json", "file_write", "syntax error", "indent=2", "open|write|close", 8)
+    us = usage_store_teach(us, "send email", "smtp", "auth fail", "use tls", "connect|auth|send", cfg_on)
+    pi("us_cells", usage_store_cells(us))
+    ps("us_recall_arg", usage_recall(us, "send email", "smtp", "auth fail"))
+    ps("us_recall_steps", usage_recall_steps(us, "send email", "smtp", "auth fail"))
+    ps("us_recall_ood", "[" + usage_recall(us, "qqq", "qqq", "qqq") + "]")
+
+    // ── Affect / Homeostatic / Libido shared immune store ──
+    let mut am = immune_grow_new(immune_embed_key("the sky is blue"), "blue", 8, 8, true)
+    am = immune_grow_bind(am, immune_embed_key("grass is green"), "green", cfg_on)
+
+    // ── AffectFeatures (§Affect H_1290) ──
+    let af_f = affect_substrate_features(am, immune_embed_key("the sky is blue"), "blue")
+    pf("aff_val_g", affect_valence(af_f))
+    pf("aff_aro_g", affect_arousal(af_f))
+    pb("aff_emit_g", affect_emit_decision(af_f))
+    let af_ood = affect_substrate_features(am, immune_embed_key("zzz unknown thing"), "")
+    pf("aff_val_o", affect_valence(af_ood))
+    pb("aff_emit_o", affect_emit_decision(af_ood))
+    let af_rd = affect_read(am, immune_embed_key("the sky is blue"), "blue")
+    pf("aff_read0", af_rd[0])
+    pf("aff_read1", af_rd[1])
+    let shuf = affect_shuffle_features([af_f, af_ood], 4290)
+    pf("aff_shuf0_val", affect_valence(shuf[0]))
+
+    // ── HomeostaticDrive (§Hypothalamus H_1292) ──
+    let mut hd = homeo_new()
+    hd = homeo_step(hd, am, immune_embed_key("zzz deprive one"))
+    hd = homeo_step(hd, am, immune_embed_key("zzz deprive two"))
+    hd = homeo_step(hd, am, immune_embed_key("zzz deprive three"))
+    pf("homeo_rise", homeo_last(hd))
+    let hd2 = homeo_step(hd, am, immune_embed_key("the sky is blue"))
+    pf("homeo_reset", homeo_last(hd2))
+    pf("homeo_drive_o", homeo_drive(hd, am, immune_embed_key("zzz deprive four")))
+    let mut hda = homeo_new_ablated()
+    hda = homeo_step(hda, am, immune_embed_key("zzz deprive one"))
+    hda = homeo_step(hda, am, immune_embed_key("zzz deprive two"))
+    hda = homeo_step(hda, am, immune_embed_key("zzz deprive three"))
+    pf("homeo_ablate", homeo_last(hda))
+
+    // ── Libido (§Libido H_1504) ──
+    let cue = immune_embed_key("grass is green")
+    let mut ld = libido_new()
+    ld = libido_step(ld, am, immune_embed_key("zzz deprive lib"), cue)
+    pf("lib_want", libido_last(ld))
+    pf("lib_like", libido_liking(ld, libido_cue_match(am, cue)))
+    let mut ld_da = libido_new_da(1.0)
+    ld_da = libido_step(ld_da, am, immune_embed_key("zzz deprive lib"), cue)
+    pf("lib_want_da", libido_last(ld_da))
+    pf("lib_like_da", libido_liking(ld_da, libido_cue_match(am, cue)))
+    let mut ld_ab = libido_new_ablated()
+    ld_ab = libido_step(ld_ab, am, immune_embed_key("zzz deprive lib"), cue)
+    pf("lib_want_ablate", libido_last(ld_ab))
+
+    // ── Allosteric buffer (§Allosteric H_1509) ──
+    pf("allo_mu_fp", allo_mu(0.5, 1.0, 0.12))
+    pf("allo_mu_dev", allo_mu(0.8, 1.0, 0.12))
+    pf("allo_rms", allo_defend(0.4, 1.0, 0.12, 42, 0))
+    pf("allo_rms_shuf", allo_defend(0.4, 1.0, 0.12, 42, 1))
+    pf("allo_best_fixed", allo_best_fixed_gain(0.12, 42))
+
+    // ── OtherMindModel (§ToM H_1293) ──
+    let mut om = other_mind_new()
+    om = other_mind_witness(om, "ball location", "basket")
+    pi("om_count", other_mind_count(om))
+    ps("om_stale", other_mind_predict(om, "ball location"))
+    om = other_mind_witness(om, "ball location", "box")
+    ps("om_updated", other_mind_predict(om, "ball location"))
+    ps("om_abstain", "[" + other_mind_predict(om, "weather today") + "]")
+
+    // ── ConsolidatingMemory (§SleepReplay H_1228) ──
+    let mut cm = consolidating_memory_new(immune_embed_key("fact one"), "one", 1.0, 8)
+    cm = consolidating_memory_bind_salient(cm, immune_embed_key("fact two"), "two", 0.5, cfg_on)
+    cm = consolidating_memory_bind_salient(cm, immune_embed_key("fact three"), "three", 0.0, cfg_on)
+    pi("cm_cells", consolidating_memory_cells(cm))
+    pf("cm_sal0", consolidating_memory_salience(cm, 0))
+    ps("cm_recall2", consolidating_memory_recall(cm, immune_embed_key("fact two")))
+    let cm_sh = consolidating_shuffle_salience(cm, 999)
+    pf("cm_sh_sal0", consolidating_memory_salience(cm_sh, 0))
+    let gss = consolidating_lcg_gauss(777)
+    pf("cm_gauss_z", gss[0])
+
+    // ── VAdaptFieldB (§GateB H_1208) ──
+    let mut afb = vadapt_fieldB_new(4, 32, 3, 0.34)
+    let walk = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
+    let mut wi = 0
+    while wi < len(walk) { afb = vadapt_fieldB_step(afb, walk[wi], cfg_on)  wi = wi + 1 }
+    pi("afb_cells", vadapt_fieldB_cells(afb))
+    pi("afb_growth", vadapt_fieldB_growth(afb))
+
+    // ── WorkMemBuffer (§WorkMem H_1282) ──
+    let mut wm = wm_buffer_new(3, 0.8, 0.2, 4)
+    wm = wm_buffer_gate_in(wm, [1.0, 0.0, 0.0, 0.0], 1.0)
+    wm = wm_buffer_gate_in(wm, [0.0, 1.0, 0.0, 0.0], 1.0)
+    wm = wm_buffer_gate_in(wm, [0.0, 0.0, 1.0, 0.0], 1.0)
+    pi("wm_slots1", wm_buffer_slots(wm))
+    wm = wm_buffer_distractor(wm, [0.0, 0.0, 0.0, 1.0])
+    pf("wm_total", wm_buffer_total_activation(wm))
+    pf("wm_probe", wm_buffer_probe_score(wm, [1.0, 0.0, 0.0, 0.0]))
+    pi("wm_slots2", wm_buffer_slots(wm))
+
+    // ── VForwardField (§Cerebellum H_1280) ──
+    let mut ff = vforward_new(2, 1, 0.5)
+    pf("vf_err0", vforward_err(ff, [1.0, 0.0], [0.0, 1.0]))
+    ff = vforward_update(ff, [1.0, 0.0], [0.0, 1.0])
+    ff = vforward_update(ff, [1.0, 0.0], [0.0, 1.0])
+    pf("vf_err2", vforward_err(ff, [1.0, 0.0], [0.0, 1.0]))
+    let vfp = vforward_predict(ff, [1.0, 0.0])
+    pf("vf_pred0", vfp[0])
+    pf("vf_pred1", vfp[1])
+    let vfc = vforward_correct([1.0, 1.0], vfp, 0.5)
+    pf("vf_corr0", vfc[0])
+
+    // ── HierGoalStack (§HierPFC H_1294) ──
+    let k1 = immune_embed_key("step one")
+    let k2 = immune_embed_key("step two")
+    let k3 = immune_embed_key("step three")
+    let mut hm = immune_grow_new(k1, "1", 8, 8, true)
+    hm = immune_grow_bind(hm, k2, "2", cfg_on)
+    hm = immune_grow_bind(hm, k3, "3", cfg_on)
+    let mut hs = hier_new([k1, k2, k3])
+    hs = hier_step(hs, hm, k3)
+    pi("hier_ptr_hold", hier_pointer(hs))
+    hs = hier_step(hs, hm, k1)
+    hs = hier_step(hs, hm, k2)
+    hs = hier_step(hs, hm, k3)
+    pi("hier_ptr_done", hier_pointer(hs))
+    pb("hier_complete", hier_complete(hs))
+    pi("hier_flat", hier_flat_emit(hm, [k2, k1]))
+
+    // ── SpatialMap (§PlaceGrid H_1296) ──
+    let mut sm = spatial_map_new()
+    sm = spatial_map_place(sm, "home", 0.0, 0.0)
+    sm = spatial_map_place(sm, "park", 1.0, 0.0)
+    sm = spatial_map_place(sm, "shop", 5.0, 0.0)
+    ps("sm_near", spatial_map_nearest(sm, "home", "park", "shop"))
+    pi("sm_count", spatial_map_count(sm))
+    let sm_sh = spatial_map_shuffle(sm, 12345)
+    ps("sm_near_sh", spatial_map_nearest(sm_sh, "home", "park", "shop"))
+    let mut sm_ab = spatial_map_new_ablated()
+    sm_ab = spatial_map_place(sm_ab, "home", 0.0, 0.0)
+    sm_ab = spatial_map_place(sm_ab, "park", 1.0, 0.0)
+    sm_ab = spatial_map_place(sm_ab, "shop", 5.0, 0.0)
+    ps("sm_near_ab", spatial_map_nearest(sm_ab, "home", "park", "shop"))
+    ps("sm_item", "[" + spatial_map_item_nearest("home", "park", "shop") + "]")
+
+    // ── TransOrder (§TransitiveInf H_1429) ──
+    let mut to = trans_order_new()
+    to = trans_order_premise(to, "A", "B")
+    to = trans_order_premise(to, "B", "C")
+    to = trans_order_premise(to, "C", "D")
+    to = trans_order_integrate(to)
+    ps("to_ac", trans_order_higher(to, "A", "C"))
+    ps("to_ad", trans_order_higher(to, "A", "D"))
+    ps("to_item_ac", "[" + trans_order_item_higher(to, "A", "C") + "]")
+    pi("to_count", trans_order_count(to))
+    let to_sh = trans_order_integrate(trans_order_shuffle(to, 7))
+    ps("to_sh_ac", "[" + trans_order_higher(to_sh, "A", "C") + "]")
+
+    // ── CircadianClock (§Circadian H_1298) ──
+    let mut ck = clock_new()
+    let mut ci = 0
+    while ci < 8 { ck = clock_step(ck)  ci = ci + 1 }
+    pi("clk_count", clock_count(ck))
+    pf("clk_phase8", clock_phase(ck))
+    pb("clk_fire8", clock_fire(ck))
+    ci = 0
+    while ci < 3 { ck = clock_step(ck)  ci = ci + 1 }
+    pf("clk_phase11", clock_phase(ck))
+    pb("clk_fire11", clock_fire(ck))
+    let mut cka = clock_new_ablated()
+    ci = 0
+    while ci < 5 { cka = clock_step(cka)  ci = ci + 1 }
+    pb("clk_fire_ab", clock_fire(cka))
+
+    // ── IntervalTimer (§IntervalTiming H_1299) ──
+    let mut it = itimer_new()
+    it = itimer_observe(it, 0)
+    it = itimer_observe(it, 13)
+    it = itimer_observe(it, 26)
+    it = itimer_observe(it, 39)
+    pf("it_dhat", itimer_dhat(it))
+    pi("it_ticks", itimer_dhat_ticks(it))
+    pi("it_predict", itimer_predict_next(it))
+    ci = 0
+    while ci < 12 { it = itimer_step(it)  ci = ci + 1 }
+    pb("it_fire", itimer_fire(it))
+
+    // ── PhaseResetClock (§PhaseReset H_1301) ──
+    let mut pr = prc_new()
+    ci = 0
+    while ci < 30 { pr = prc_step(pr, 1.0)  ci = ci + 1 }
+    pf("prc_phase", prc_phase(pr))
+    pi("prc_count", prc_count(pr))
+    let pr2 = prc_zeitgeber(pr)
+    pf("prc_phase_zg", prc_phase(pr2))
+
+    // ── SCNNetwork (§SCN H_1302) ──
+    let scn = scn_run(scn_new(4297, 5), 100)
+    pf("scn_order", scn_order(scn))
+    pb("scn_consensus", scn_consensus(scn, 0.9))
+    pf("scn_order_un", scn_order(scn_run(scn_new_uncoupled(4297, 5), 100)))
+    pf("scn_order_fr", scn_order(scn_run(scn_new_frustrated(4297, 5), 100)))
+    pf("scn_order_det", scn_order(scn_run(scn_detune(scn_new(4297, 5), 2.0), 100)))
+
+    // ── PhaseField (§PhaseSyncBinding H_1448) ──
+    let pfld = phasefield_run(phasefield_new(4448, 6), 80)
+    pf("pf_coh", phasefield_coherence(pfld))
+    pb("pf_bound", phasefield_bound(pfld, 0.9))
+    let pfd = phasefield_run(phasefield_new_desync(4448, 6), 80)
+    pf("pf_coh_desync", phasefield_coherence(pfd))
+
+    // ── QuorumPhase (§Quorum H_1510) ──
+    pf("qp_clorder", quorum_cluster_order(quorum_run(quorum_new(1510, 3, 4), 80)))
+    pf("qp_cross_plv", quorum_cross_plv(quorum_new(1510, 3, 4), 16))
+    pf("qp_within_plv", quorum_within_plv(quorum_new(1510, 3, 4), 16))
+    pf("qp_drop", quorum_drop_node_order(1510, 3, 4, 80))
+    pf("qp_nohub", quorum_star_no_hub_order(1510, 3, 4, 80))
+    pf("qp_starbase", quorum_star_baseline_order(1510, 3, 4, 80))
+    let sadj = quorum_shuffle_adj(1510, 3, 4)
+    pf("qp_shuf", quorum_cluster_order(quorum_run(quorum_with_adj(1510, 3, 4, sadj), 80)))
+
+    // ── engine_config_summary ──
+    ps("cfg_summary", engine_config_summary(cfg_on))
+
+    // ── CA3ReplayMemory (§CA3Replay H_1427) ──
+    let mut ca = ca3_replay_new(4, 2)
+    ca = ca3_replay_observe(ca, 0, 1)
+    ca = ca3_replay_observe(ca, 0, 1)
+    ca = ca3_replay_observe(ca, 1, 2)
+    ca = ca3_replay_observe(ca, 1, 2)
+    ca = ca3_replay_observe(ca, 2, 3)
+    pi("ca3_pred0", ca3_replay_predict(ca, 0))
+    pi("ca3_pred2_abstain", ca3_replay_predict(ca, 2))
+    pf("ca3_conf0", ca3_replay_conf(ca, 0))
+    pi("ca3_marginal", ca3_replay_marginal(ca))
+    pi("ca3_pred_ood", ca3_replay_predict(ca, 9))
+
+    // ── GlobalWorkspace (§GWS H_1462) ──
+    let gw = gws_add(gws_add(gws_add(gws_new(1, true, 0.3), 0.9), 0.7), 0.2)
+    pi("gws_winner", gws_winner(gw))
+    pi("gws_count_inh", gws_count(gw))
+    pb("gws_leak1", gws_leak(gw, 1))
+    let gwo = gws_add(gws_add(gws_add(gws_new(3, false, 0.3), 0.9), 0.7), 0.2)
+    pi("gws_count_off", gws_count(gwo))
+
+    // ── Habituation (§Habituation H_1465) ──
+    let mut hb = hab_new(3, 0.2)
+    pf("hab_fresh", hab_response(hb, 0, 1.0))
+    hb = hab_observe(hb, 0)
+    hb = hab_observe(hb, 0)
+    pf("hab_habituated", hab_response(hb, 0, 1.0))
+    pf("hab_other", hab_response(hb, 1, 1.0))
+    hb = hab_reset(hb, 0)
+    pf("hab_reset", hab_response(hb, 0, 1.0))
+
+    // ── G18-G31 scalar gates ──
+    pf("g_surprise", surprise(0.8, 0.5))
+    pf("g_surprise_raw", surprise_raw_error(0.8, 0.5))
+    pf("g_learned_prec", learned_precision(0.1, 5.0, 0.4))
+    pf("g_novelty", novelty(3.0, 0.5))
+    pf("g_blink2", attn_blink_detect(2, 1.0))
+    pf("g_blink1", attn_blink_detect(1, 1.0))
+    pf("g_agency", agency_attribute(0.5, 0.5, 0.5))
+    pf("g_agency_other", agency_other())
+    pf("g_subjtime", subjective_time(11.0, 0.2, 0.06))
+    pf("g_emotion", emotion_regulate(0.8, 0.6, 0.8))
+    pf("g_forget", directed_forget_recall(1.0, 0.7, true))
+    pf("g_body", body_ownership(1.0, 0.95))
+    pf("g_divided", divided_perf(1.0, 1.0))
+    pf("g_veto", veto_execute(1.0, 0.5, false))
+    pi("g_rivalry", rivalry_transitions(10, 0.2))
+    pf("g_change", change_detect(0.3, true))
+    pf("g_imagery", imagery_activate(0.8, true))
+    pf("g_priming", priming_facilitate(0.7, 0.5))
+}

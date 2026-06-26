@@ -38,24 +38,38 @@ decision + VBasalGate selection byte-identical.
 NOTE: brain_emit/brain_emit_aged drive the L3 generator slot via the sibling
 generator.py port (parallel branch) — imported lazily; not exercised by this gate.
 
-## engine_cli.hexa (CORE slice: G3/G5/MITOSIS) -> engine_cli.py  [PARTIAL]
-SCOPE: the 3 named consciousness-gate subsystems + shared CLI/config/adaptation —
-EngineConfig+resolvers, MITOSIS engine_grow, AdaptField/VAdaptField, QPool entropic,
-ImmuneMemory(G5), SelfIdentity(G3). ~27 other lanes NOT yet ported (TODO follow-on).
-oracle (_ecli_parity.hexa, imports only engine_cli.hexa — no generator):
-  · CLI precedence (mitosis/topo/savant flag>env>default) · MITOSIS grow_on=11/off=1
-  · VAdaptField DIM-stream growth (5 cells) + recon-err + top-2 [d1,d2]
-  · ImmuneMemory bind/recall (Paris/Tokyo) + ABSTAIN("") + recall_thr margin -0.15 + gap
-  · SelfIdentity self-chain continuity_cos=1.0 + adjacent + impostor + drift
-RESULT: **PASS** — 27 fields, worst rel = 0.000e+00 (byte-identical). G3 self-chain
-cos, G5 recall_thr abstain, MITOSIS counts all byte-exact.
-NOTE: math finding — hexa `sqrt`=libm but hexa `exp`=rt_exp Taylor (NOT libm); engine_cli
-uses only sqrt (clean), brain uses exp (ported as _rt_exp Taylor).
+## engine_cli.hexa (substrate lanes) -> engine_cli.py  [30/37 struct-lanes + free-fns]
+SCOPE NOW: the full 1:1 mirror is in progress. The ORIGINAL slice (G3/G5/MITOSIS +
+EngineConfig/AdaptField/VAdaptField/QPool/ImmuneMemory/SelfIdentity) is joined by 24 more
+lanes ported + byte-parity-verified in 7 oracle batches (oracle `_ecli_parity2.hexa`, which
+imports ONLY engine_cli.hexa — no generator). Verified lanes (byte-identical / ≤1.1e-16):
+  batch1 OsmoticStore · ImmuneMemoryGrow(§GrowImmune) · CLSStore(§CLS) · SkillStore · UsageStore
+  batch2 AffectFeatures · HomeostaticDrive · Libido · Allosteric(exp/sin)
+  batch3 OtherMindModel · ConsolidatingMemory(Box-Muller gauss) · VAdaptFieldB · WorkMemBuffer
+  batch4 VForwardField(NLMS) · HierGoalStack · SpatialMap · TransOrder
+  batch5 CircadianClock · IntervalTimer · PhaseResetClock(sin) · SCNNetwork(Kuramoto)
+  batch6 PhaseField · QuorumPhase(decentralized Kuramoto) · engine_config_summary(string)
+  batch7 CA3ReplayMemory · GlobalWorkspace · Habituation · surprise + 17 G18-G31 scalar gates
+RESULT per batch: **PASS** (compare.py 12dp); the cumulative oracle ends at PASS ~148 fields,
+worst rel ≤ 1.111e-16 (machine epsilon). The libm-sensitive lanes (Allosteric/SCN/PRC/Quorum
+exp·sin·cos·sqrt·ln over 80-100 step integrations) are byte-identical to 12+dp.
+NOTE — CORRECTED math finding: in this TU engine_cli.hexa's OWN `sin` (21 call sites) links
+libm, so `exp`/`ln`/`sin`/`cos`/`sqrt` ALL resolve to libm (NOT rt_* Taylor). So engine_cli.py
+uses math.* throughout (verified: cm_gauss_z ln/cos, allo_rms exp/sin, scn_order all byte-exact).
+The earlier "exp=Taylor" note was for a bare exp-only TU; it does NOT apply here. Duplicate
+`fn _cos` (3428 WM-variant +1e-12 vs 3770 Hier-variant guarded): hexa resolves each call to the
+LEXICALLY-NEAREST preceding def (confirmed by wm_probe=0.7999999999992 byte-exact); ported as
+_cos_vec (WM) and _cos_hier (Hier) respectively.
+STILL TODO (heavy numerics): CollectivePool/HiveMind-IIT-Φ (faithful big_phi_bounded),
+SkillCell/SkillGradFT (ridge-LSQ + power-iteration), CPField, JamoHead/BpeMerges (BPE
+morphology), §ConsciousnessIndex ci_*/topo_* (covariance/Cholesky-logdet/IIT-4 Φ), savant
+scoring (SAVANT/savant_lib), argv main dispatch.
 
 ## reproducing the oracles
 All harnesses in oracles/ are run from the repo root: `hexa run
 state/core_2prod_py_parity/oracles/<name>.hexa > <name>_hexa.txt`. py side:
 `python3 core/<name>.py > <name>_py.txt`. Compare: `python3 compare.py
 <name>_hexa.txt <name>_py.txt 12`. The brain oracle imports oracles/_brain_core.hexa
-(the generator-free verbatim copy). engine_cli.py is a PARTIAL port (G3/G5/MITOSIS
-core); the other ~27 lanes remain TODO.
+(the generator-free verbatim copy). The engine_cli extended-lane oracle is
+oracles/_ecli_parity2.hexa (imports only engine_cli.hexa); each `hexa run` compile is
+~5 min on mini arm64 (engine_cli.hexa pulls iit4_bigphi/iit4_bounded/savant_lib).
