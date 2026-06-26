@@ -6640,3 +6640,8 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 - py-first 검증(byte-parity 증명 py 엔진, clm303_clean): 3대 의혹 판별. **Defect1 gen-budget → REFUTED**: G1 recombination이 native 80/120 예산에서도 FAIL(best_distinct=1<2, max_single=0) — gen=40 artifact 아님, REAL. G6 fals=0도 예산 불변. **Defect3 single-entry → CONFIRMED**: `cli/anima.hexa -- eval`(L235→g_eval_all→generator L3→g6_ideation wired) 존재+작동. **Defect2 채점 port**: 구조 1:1(라인대조)+decode byte-parity 증명, golden 수치 hexa-diff만 미완(메모리 위해 보류).
 - **결론**: clm303_clean a7b_pass=FAIL = 진짜 능력벽(G1 recombination, 303M scale-invariant 천장 H_1129/1139 일치). 측정결함 아님. 증거 state/clm303_clean_corpus/g0g6_validity.txt.
 - 자원: 죽은 load-once agent의 orphan 303M hexa eval(2.4GB RSS=load-once가 OOM 바운딩한 긍정신호이나 미완) kill → swap 18.4G→3.2G 회복. load-once 코드 WIP 보존(agent 브랜치 585c95302, pod서 재검증).
+
+## 2026-06-26 (확정) — clm303_clean a7b_pass=FAIL = terminal-grade (3대 의혹 전부 해소)
+- 검증 agent 최종(fd8d1d308): **Defect2 채점 port → VERIFIED** — golden d768서 wired hexa `cli/anima.hexa -- eval` ⇄ py `g_gates.py` G0-G6 전 지표 byte-동일(발산 0). decode+scoring 둘 다 byte-faithful 확정. Defect1 REFUTED(gen-budget 아님), Defect3 CONFIRMED(single-entry 존재·작동).
+- **결론**: py 엔진 = wired hexa CLI의 진짜 미러(2-production 실증 완결) → clm303_clean a7b_pass=FAIL = terminal-grade engine-native verdict(G1 recombination 천장). 이전 G1 통과=ByteGPT(별 arch)와 일관 — clm303=ConvMoE=H_1155 G1-unfixable.
+- parity_gate.py(code-level 강제)가 잡을 바로 그 golden wired≡py = 이미 PASS 확인됨.

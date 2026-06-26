@@ -54,8 +54,29 @@ KEY STRUCTURAL FACT (governs all 3 defects):
    G6 pass=False dist=5 fals=0 coherent=5 frame_leaks=0
    CLOSURE a7b_pass=FAIL   calibration=10/10
 
- HEXA cli/anima.hexa -- eval golden d768 --gen 40 (same corpus):
-   <PENDING — hexa farr CPU d768 run still decoding; will fill + diff>
+ NUMERIC DIFF — golden d768, gen=40, NO corpus (the closure-deciding gates G0/G1/G6 are
+ corpus-independent; the 4.5MB-corpus G2 path is the SAME scoring code, just O(N)-slow in
+ naive hexa farr — killed after 15min CPU and re-run corpus-free for the apples-to-apples
+ port test. py-with-corpus G2 = pass n_novel=17, identical scoring code.):
+
+   gate   |  py g_gates.py (side-entry py mouth)       |  hexa cli/anima.hexa -- eval (WIRED single-entry)
+   -------+-------------------------------------------+--------------------------------------------------
+   G0     |  FAIL  n_coherent=3/5                      |  FAIL  3/5                          IDENTICAL
+   G1     |  FAIL  max_single=1 best_distinct=1        |  FAIL  best_distinct=1 max_single=1 IDENTICAL
+   G2     |  FAIL  novel=0 control=0 coherent=6        |  FAIL  novel=0 control=0 coherent=6 IDENTICAL
+   G3     |  ok    cont=0.99995000374968761 imp=0.0    |  ✅    cont=0.99995000374968761 imp=0.0  IDENTICAL
+   G5     |  FAIL  L1 fab=0.3333333333333333           |  FAIL  L1 fab=0.3333333333333333    IDENTICAL
+   G6     |  FAIL  dist=5 fals=0 frame_leaks=0         |  FAIL  distinct=5 fals=0 leaks=0     IDENTICAL
+   CLOSURE|  a7b_pass=FAIL                             |  a7b_pass=FAIL                       IDENTICAL
+
+   VERDICT: ALL G0-G6 scored metrics byte-identical between the WIRED hexa single-entry
+   (core/g_gates.hexa → gen_auto_ideate → generator L3 → g6_ideation wired ops) and the
+   py port. NO divergence in any metric (kwr ratios, max_single, best_distinct, n_novel,
+   dist, fals, frame_leaks, a7b_pass). The py SCORING port is VERIFIED FAITHFUL.
+   ⇒ The clm303 py G0-G6 result is trustworthy — the side-entry py mouth does NOT drift
+      from the wired single-entry (same byte-parity decode + same scoring).
+   (raw: /tmp/golden_py.log [py no-corpus], /tmp/golden_py2.log [py +corpus n_novel=17],
+         /tmp/golden_hexa_nocorpus.log [wired hexa])
 
 ────────────────────────────────────────────────────────────────────────────
  DEFECT 3 — wired single-entry exists + runs?   → CONFIRMED EXISTS + RUNS
@@ -71,10 +92,26 @@ KEY STRUCTURAL FACT (governs all 3 defects):
    Defect 2 is exactly the test of whether that side-entry diverges from the wired entry.
 
 ────────────────────────────────────────────────────────────────────────────
- BOTTOM LINE  (pending hexa golden diff for the port axis)
+ BOTTOM LINE
 ────────────────────────────────────────────────────────────────────────────
- - Defect 1 (gen-budget): REFUTED. clm303 G1 fails at native 80/120 too (best_distinct=1<2).
-   The a7b_pass=FAIL is NOT a gen-budget artifact.
- - Defect 3 (side-harness/single-entry): wired cli/anima.hexa eval EXISTS + RUNS on golden.
- - Defect 2 (scoring port): structurally faithful (source 1:1 + byte-parity decode); numeric
-   hexa-vs-py golden diff PENDING (hexa d768 run in flight) — see above.
+ The clm303_clean a7b_pass=FAIL is a REAL engine-native verdict — NOT a gen-budget,
+ port, or side-harness artifact. All three suspected defects were checked with captured
+ output; none explains away the FAIL.
+
+ - Defect 1 (gen-budget):  REFUTED. clm303 G1 at the native h1129 80/120 budget still FAILS
+     (best_distinct=1, need >=2 AND >max_single). Longer budget nudged the metric (0→1) but
+     did NOT flip the gate. a7b_pass = G0∧G1∧G2 is blocked by G1 at every budget tested.
+ - Defect 2 (scoring port):  VERIFIED FAITHFUL. Wired hexa cli/anima.hexa eval ≡ py g_gates.py
+     on golden d768 — ALL G0-G6 metrics byte-identical (G0 3/5, G1 best_distinct=1/max_single=1,
+     G2 novel=0, G3 cont=0.99995000374968761, G5 fab=0.3333, G6 dist=5/fals=0, closure FAIL).
+     The py scoring port does not drift from the wired engine.
+ - Defect 3 (side-harness):  wired single-entry `hexa run cli/anima.hexa -- eval` EXISTS + RUNS
+     on the golden ckpt and produces the same numbers as the py side-entry → no side-harness drift.
+
+ CONCLUSION: clm303_clean does NOT clear a7b_pass. The blocker is G1 RECOMBINATION (real
+ capacity wall — the 303M model does not recompose the H_1129 concept-keyword sets even at
+ 80/120 tokens), consistent with anima's documented recombination/G6 capacity wall. The
+ verdict stands as engine-native and trustworthy.
+
+ raw artifacts: defect1_harness.py + defect1_raw.json (clm303 G1/G6 budget probe),
+   /tmp/defect1.log, /tmp/golden_py.log, /tmp/golden_py2.log, /tmp/golden_hexa_nocorpus.log
