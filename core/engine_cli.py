@@ -5291,6 +5291,485 @@ def cp_relocate(cp0, X, positions, Y2, p_new, eta, n_phase1, dim, grow_max):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# JamoHead (§KoJamoCountHead H_1316/1321/1351) — Voronoi count-MLE next-sym head
+# ════════════════════════════════════════════════════════════════════════
+
+class JamoHead:
+    """engine_cli.hexa:6401."""
+    __slots__ = ("centers", "heads", "vj", "dim")
+
+    def __init__(self, centers, heads, vj, dim):
+        self.centers = centers
+        self.heads = heads
+        self.vj = vj
+        self.dim = dim
+
+
+def _jh_field(centers, max_cells):
+    """engine_cli.hexa:6409."""
+    return VAdaptField(centers, len(centers), max_cells, len(centers[0]))
+
+
+def _jh_assign(af, X):
+    """engine_cli.hexa:6414."""
+    owner = []
+    i = 0
+    while i < len(X):
+        owner.append(vadapt_field_nearest_idx(af, X[i]))
+        i = i + 1
+    return owner
+
+
+def _jh_counts(Y, owner, k, ntr, vj, laplace):
+    """engine_cli.hexa:6423."""
+    counts = []
+    v = 0
+    while v < vj:
+        counts.append(laplace)
+        v = v + 1
+    total = laplace * float(vj)
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            counts[Y[i]] = counts[Y[i]] + 1.0
+            total = total + 1.0
+        i = i + 1
+    p = []
+    w = 0
+    while w < vj:
+        p.append(counts[w] / total)
+        w = w + 1
+    return p
+
+
+def _jh_owned_ce(Y, owner, k, ntr, p):
+    """engine_cli.hexa:6440."""
+    s = 0.0
+    n = 0
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            s = s - _ln(p[Y[i]] + 0.000000000001)
+            n = n + 1
+        i = i + 1
+    if n == 0:
+        return 0.0
+    return s / float(n)
+
+
+def _jh_owned_count(owner, k, ntr):
+    """engine_cli.hexa:6450."""
+    n = 0
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            n = n + 1
+        i = i + 1
+    return n
+
+
+def _jh_hi_var_axis(X, owner, k, ntr, dim):
+    """engine_cli.hexa:6456."""
+    sum_ = []
+    sq = []
+    d = 0
+    while d < dim:
+        sum_.append(0.0)
+        sq.append(0.0)
+        d = d + 1
+    n = 0
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            a = 0
+            while a < dim:
+                sum_[a] = sum_[a] + X[i][a]
+                sq[a] = sq[a] + X[i][a] * X[i][a]
+                a = a + 1
+            n = n + 1
+        i = i + 1
+    if n == 0:
+        return 0
+    fn2 = float(n)
+    best = 0
+    bestv = -1.0
+    a2 = 0
+    while a2 < dim:
+        mean = sum_[a2] / fn2
+        var = sq[a2] / fn2 - mean * mean
+        if var > bestv:
+            bestv = var
+            best = a2
+        a2 = a2 + 1
+    return best
+
+
+def _jh_owned_median(X, owner, k, ntr, ax):
+    """engine_cli.hexa:6480 — insertion-sort median."""
+    vals = []
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            vals.append(X[i][ax])
+        i = i + 1
+    n = len(vals)
+    if n == 0:
+        return 0.0
+    a = 1
+    while a < n:
+        key = vals[a]
+        b = a - 1
+        while b >= 0 and vals[b] > key:
+            vals[b + 1] = vals[b]
+            b = b - 1
+        vals[b + 1] = key
+        a = a + 1
+    if n % 2 == 1:
+        return vals[n // 2]
+    return (vals[n // 2 - 1] + vals[n // 2]) / 2.0
+
+
+def _jh_half_centroid(X, owner, k, ntr, ax, med, lo, dim):
+    """engine_cli.hexa:6495."""
+    acc = []
+    d = 0
+    while d < dim:
+        acc.append(0.0)
+        d = d + 1
+    n = 0
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            take = (X[i][ax] <= med) if lo else (X[i][ax] > med)
+            if take:
+                a = 0
+                while a < dim:
+                    acc[a] = acc[a] + X[i][a]
+                    a = a + 1
+                n = n + 1
+        i = i + 1
+    if n == 0:
+        return acc
+    out = []
+    a2 = 0
+    while a2 < dim:
+        out.append(acc[a2] / float(n))
+        a2 = a2 + 1
+    return out
+
+
+def _jh_half_count(X, owner, k, ntr, ax, med, lo):
+    """engine_cli.hexa:6516."""
+    n = 0
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            take = (X[i][ax] <= med) if lo else (X[i][ax] > med)
+            if take:
+                n = n + 1
+        i = i + 1
+    return n
+
+
+def jamo_head_new(seed_centers, vj, dim):
+    """engine_cli.hexa:6530."""
+    return JamoHead(seed_centers, [], vj, dim)
+
+
+def jamo_head_cells(jh):
+    """engine_cli.hexa:6535."""
+    return len(jh.centers)
+
+
+def jamo_head_grow(jh, Xtr, Ytr, ntr, grow_max, min_owned, split_thresh_ce, laplace, cfg):
+    """engine_cli.hexa:6541 — error-targeted Voronoi split-grow, mitosis-gated."""
+    dim = jh.dim
+    vj = jh.vj
+    centers = jh.centers
+    af = _jh_field(centers, grow_max)
+    while len(centers) < grow_max:
+        owner = _jh_assign(af, Xtr)
+        nc = len(centers)
+        local_ce = []
+        owned_n = []
+        k = 0
+        while k < nc:
+            cnt = _jh_owned_count(owner, k, ntr)
+            owned_n.append(cnt)
+            if cnt > 0:
+                p = _jh_counts(Ytr, owner, k, ntr, vj, laplace)
+                local_ce.append(_jh_owned_ce(Ytr, owner, k, ntr, p))
+            else:
+                local_ce.append(-1.0)
+            k = k + 1
+        elig = []
+        k2 = 0
+        while k2 < nc:
+            if owned_n[k2] >= min_owned and local_ce[k2] > split_thresh_ce:
+                elig.append(k2)
+            k2 = k2 + 1
+        if len(elig) == 0:
+            break
+        pick = elig[0]
+        bestce = local_ce[elig[0]]
+        ei = 1
+        while ei < len(elig):
+            if local_ce[elig[ei]] > bestce:
+                bestce = local_ce[elig[ei]]
+                pick = elig[ei]
+            ei = ei + 1
+        grown = engine_mitosis_tick(len(centers), cfg)
+        if grown <= len(centers):
+            break
+        ax = _jh_hi_var_axis(Xtr, owner, pick, ntr, dim)
+        med = _jh_owned_median(Xtr, owner, pick, ntr, ax)
+        nlo = _jh_half_count(Xtr, owner, pick, ntr, ax, med, True)
+        nhi = _jh_half_count(Xtr, owner, pick, ntr, ax, med, False)
+        if nlo == 0 or nhi == 0:
+            break
+        c_lo = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, True, dim)
+        c_hi = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, False, dim)
+        new_centers = []
+        ci = 0
+        while ci < len(centers):
+            if ci != pick:
+                new_centers.append(centers[ci])
+            ci = ci + 1
+        new_centers = new_centers + [c_lo, c_hi]
+        centers = new_centers
+        af = _jh_field(centers, grow_max)
+    own_tr = _jh_assign(af, Xtr)
+    heads = []
+    k = 0
+    while k < len(centers):
+        heads.append(_jh_counts(Ytr, own_tr, k, ntr, vj, laplace))
+        k = k + 1
+    return JamoHead(centers, heads, vj, dim)
+
+
+def jamo_head_ce(jh, Xte, Yte):
+    """engine_cli.hexa:6603."""
+    if len(jh.heads) == 0:
+        return 0.0
+    af = _jh_field(jh.centers, len(jh.centers))
+    own_te = _jh_assign(af, Xte)
+    s = 0.0
+    n = 0
+    i = 0
+    while i < len(Xte):
+        s = s - _ln(jh.heads[own_te[i]][Yte[i]] + 0.000000000001)
+        n = n + 1
+        i = i + 1
+    if n == 0:
+        return 0.0
+    return s / float(n)
+
+
+def jamo_head_shuffle_targets(Y, vj, seed):
+    """engine_cli.hexa:6626 — Fisher-Yates LCG position permutation."""
+    n = len(Y)
+    perm = []
+    q = 0
+    while q < n:
+        perm.append(q)
+        q = q + 1
+    s = seed
+    i = n - 1
+    while i > 0:
+        s = (s * 1103515245 + 12345) % 2147483648
+        j = s % (i + 1)
+        tmp = perm[i]
+        perm[i] = perm[j]
+        perm[j] = tmp
+        i = i - 1
+    out = []
+    m = 0
+    while m < n:
+        out.append(Y[perm[m]])
+        m = m + 1
+    return out
+
+
+def jamo_head_argmax(jh, feat):
+    """engine_cli.hexa:6818."""
+    if len(jh.heads) == 0:
+        return -1
+    af = _jh_field(jh.centers, len(jh.centers))
+    owner = vadapt_field_nearest_idx(af, feat)
+    if owner < 0 or owner >= len(jh.heads):
+        return -1
+    row = jh.heads[owner]
+    best = 0
+    bestp = row[0]
+    k = 1
+    while k < len(row):
+        if row[k] > bestp:
+            bestp = row[k]
+            best = k
+        k = k + 1
+    return best
+
+
+def jamo_head_recon_err(jh, feat):
+    """engine_cli.hexa:6842."""
+    if len(jh.heads) == 0:
+        return 1000000000.0
+    af = _jh_field(jh.centers, len(jh.centers))
+    return vadapt_field_recon_err(af, feat)
+
+
+# ════════════════════════════════════════════════════════════════════════
+# BpeMerges (§KoMorphologyBpe H_1388) — BPE merges over jamo stream + byte-fair CE
+# ════════════════════════════════════════════════════════════════════════
+
+class BpeMerges:
+    """engine_cli.hexa:6679."""
+    __slots__ = ("merges", "next_id")
+
+    def __init__(self, merges, next_id):
+        self.merges = merges
+        self.next_id = next_id
+
+
+def _bpe_pair_counts(sym, n):
+    """engine_cli.hexa:6686."""
+    pa = []
+    pb = []
+    pc = []
+    i = 0
+    while i < n - 1:
+        a = sym[i]
+        b = sym[i + 1]
+        found = -1
+        j = 0
+        while j < len(pa):
+            if pa[j] == a and pb[j] == b:
+                found = j
+                j = len(pa)
+            else:
+                j = j + 1
+        if found >= 0:
+            pc[found] = pc[found] + 1
+        else:
+            pa.append(a)
+            pb.append(b)
+            pc.append(1)
+        i = i + 1
+    return [pa, pb, pc]
+
+
+def _bpe_apply_one(sym, nby, a, b, nid):
+    """engine_cli.hexa:6703."""
+    n = len(sym)
+    osym = []
+    onby = []
+    i = 0
+    while i < n:
+        if i < n - 1 and sym[i] == a and sym[i + 1] == b:
+            osym.append(nid)
+            onby.append(nby[i] + nby[i + 1])
+            i = i + 2
+        else:
+            osym.append(sym[i])
+            onby.append(nby[i])
+            i = i + 1
+    return [osym, onby]
+
+
+def bpe_learn_merges(base_sym, base_nby, num_merges, base_vj, rnd_seed):
+    """engine_cli.hexa:6724."""
+    sym = base_sym
+    nby = base_nby
+    next_id = base_vj
+    merges = []
+    s = rnd_seed
+    m = 0
+    while m < num_merges:
+        n = len(sym)
+        if n < 2:
+            m = num_merges
+        else:
+            pc = _bpe_pair_counts(sym, n)
+            pa = pc[0]
+            pbb = pc[1]
+            pcc = pc[2]
+            if len(pa) == 0:
+                m = num_merges
+            else:
+                pick = 0
+                if rnd_seed == 0:
+                    bc = pcc[0]
+                    ba = pa[0]
+                    bb = pbb[0]
+                    k = 1
+                    while k < len(pa):
+                        better = (pcc[k] > bc) \
+                            or (pcc[k] == bc and pa[k] > ba) \
+                            or (pcc[k] == bc and pa[k] == ba and pbb[k] > bb)
+                        if better:
+                            bc = pcc[k]
+                            ba = pa[k]
+                            bb = pbb[k]
+                            pick = k
+                        k = k + 1
+                else:
+                    s = (s * 1103515245 + 12345) % 2147483648
+                    pick = s % len(pa)
+                a = pa[pick]
+                b = pbb[pick]
+                nid = next_id
+                merges = merges + [[a, b, nid]]
+                next_id = next_id + 1
+                re = _bpe_apply_one(sym, nby, a, b, nid)
+                sym = re[0]
+                nby = re[1]
+                m = m + 1
+    return BpeMerges(merges, next_id)
+
+
+def bpe_apply(bm, base_sym, base_nby):
+    """engine_cli.hexa:6770."""
+    sym = base_sym
+    nby = base_nby
+    i = 0
+    while i < len(bm.merges):
+        mr = bm.merges[i]
+        re = _bpe_apply_one(sym, nby, mr[0], mr[1], mr[2])
+        sym = re[0]
+        nby = re[1]
+        i = i + 1
+    return [sym, nby]
+
+
+def bpe_unit_vocab(bm):
+    """engine_cli.hexa:6784."""
+    return bm.next_id
+
+
+def bpe_n_units(unit_sym):
+    """engine_cli.hexa:6787."""
+    return len(unit_sym)
+
+
+def bpe_byte_fair_ce(jh, Xte, Yte, nby_te):
+    """engine_cli.hexa:6795."""
+    if len(jh.heads) == 0:
+        return 0.0
+    af = _jh_field(jh.centers, len(jh.centers))
+    own_te = _jh_assign(af, Xte)
+    s = 0.0
+    tot_bytes = 0
+    i = 0
+    while i < len(Xte):
+        s = s - _ln(jh.heads[own_te[i]][Yte[i]] + 0.000000000001)
+        tot_bytes = tot_bytes + nby_te[i]
+        i = i + 1
+    if tot_bytes == 0:
+        return 0.0
+    return s / float(tot_bytes)
+
+
+# ════════════════════════════════════════════════════════════════════════
 # parity smoke driver — exercises CLI / MITOSIS / G5 / G3 deterministically
 # ════════════════════════════════════════════════════════════════════════
 
@@ -5684,3 +6163,70 @@ if __name__ == "__main__":
     cp2 = collective_new([30, 90], 0.4)
     _p("cp2_joint_phi", collective_phi(cp2))
     _p("cp2_coherence", collective_coherence(cp2))
+
+    # ── SkillCell (§SkillGrow H_1300) — ridge-LSQ heads + mitosis Voronoi grow ──
+    skx = [[0.0, 0.0], [0.1, 0.1], [3.0, 0.0], [3.1, 0.1],
+           [0.0, 3.0], [0.1, 3.1], [3.0, 3.0], [3.1, 3.1]]
+    sky = [0, 0, 1, 1, 1, 1, 0, 0]
+    skcells = skill_grow(skx, sky, cfg_on)
+    _p("sk_ncells", len(skcells))
+    _p("sk_route0", skill_route(skcells, [], [0.05, 0.05]))
+    _p("sk_route3", skill_route(skcells, [], [3.05, 3.05]))
+    _p("sk_center00", skcells[0].center[0])
+    _p("sk_headw000", skcells[0].head_w[0][0])
+    _p("sk_headb00", skcells[0].head_b[0])
+    skcells_off = skill_grow(skx, sky, cfg_off)
+    _p("sk_ncells_off", len(skcells_off))
+    sol = _sc_gauss_solve([[2.0, 1.0], [1.0, 3.0]], [[1.0], [2.0]])
+    _p("sk_solve0", sol[0][0])
+    _p("sk_solve1", sol[1][0])
+
+    # ── SkillGradFT (§SkillGradFT H_1300) — shared softmax-linear net ──
+    net = skill_gradft_new(2, 7)
+    _p("gft_w000_init", net.w[0][0])
+    net = skill_gradft_train(net, skx, sky)
+    _p("gft_w000_trained", net.w[0][0])
+    _p("gft_b0_trained", net.b[0])
+    _p("gft_pred0", skill_gradft_pred(net, [0.05, 0.05]))
+    _p("gft_pred3", skill_gradft_pred(net, [3.05, 3.05]))
+
+    # ── CPField (§CategoricalPerception H_1325) — RBF Voronoi CP ──
+    cpdim = 8
+    cpn = 11
+    cpX = cp_stimuli(cpn, cpdim)
+    cppos = []
+    cpi = 0
+    while cpi < cpn:
+        cppos.append(float(cpi) / 10.0)
+        cpi = cpi + 1
+    cpYa = cp_labels_boundary(cppos, 0.3333333333333333)
+    cpfa = cp_fit(cpX, cpYa, 6, 30)
+    _p("cp_fit_n", cpfa.n)
+    cpcurve = cp_discrim_curve(cpfa, cpX)
+    _p("cp_peak_count", cp_peak_count(cpcurve))
+    _p("cp_peak_idx", cp_peak_loc_idx(cpcurve))
+    _p("cp_post_mid", cp_posterior(cpfa, cpX[5]))
+    _p("cp_curve3", cpcurve[3])
+    _p("cp_margin", cp_within_cross_margin(cpcurve, cpn, 0.3333333333333333))
+    _p("cp_coh_near", cp_coherent_peak_near(cpcurve, cpn, 0.3333333333333333))
+    _p("cp_embed_val", cp_embed(0.4, cpdim)[2])
+    cpYsh = cp_labels_shuffle(cppos, 4290)
+    cpshsum = 0
+    for v in cpYsh:
+        cpshsum = cpshsum + v
+    _p("cp_shuf_sum", cpshsum)
+    # cp_regrow on a moved boundary
+    cpYb = cp_labels_boundary(cppos, 0.6666666666666666)
+    cprg = cp_regrow(cpfa, cpX, cpYb, 4, 30)
+    _p("cp_regrow_n", cprg.n)
+    # tagged fit_more (bilingual)
+    cpXt = cp_stimuli_tagged(cpn, cpdim, 0, 1.0, 2)
+    cpft = cp_fit(cpXt, cpYa, 6, 30)
+    cpXt2 = cp_stimuli_tagged(cpn, cpdim, 1, 1.0, 2)
+    cpfm = cp_fit_more(cpft, cpXt2, cpYb, 12, 30)
+    _p("cp_fitmore_n", cpfm.n)
+    _p("cp_tagkey4", cpXt[5][cpdim])
+    # cp_relocate (geometric re-pack)
+    cprel = cp_relocate(cpfa, cpX, cppos, cpYb, 0.6666666666666666, 0.5, cpfa.n, cpdim, 4)
+    _p("cp_reloc_n", cprel.n)
+    _p("cp_reloc_post", cp_posterior(cprel, cpX[7]))

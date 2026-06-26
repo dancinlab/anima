@@ -381,4 +381,66 @@ fn main() {
     let cp2 = collective_new([30, 90], 0.4)
     pf("cp2_joint_phi", collective_phi(cp2))
     pf("cp2_coherence", collective_coherence(cp2))
+
+    // ── SkillCell (§SkillGrow H_1300) — ridge-LSQ heads + mitosis Voronoi grow ──
+    let skx = [[0.0, 0.0], [0.1, 0.1], [3.0, 0.0], [3.1, 0.1],
+               [0.0, 3.0], [0.1, 3.1], [3.0, 3.0], [3.1, 3.1]]
+    let sky = [0, 0, 1, 1, 1, 1, 0, 0]
+    let skcells = skill_grow(skx, sky, cfg_on)
+    pi("sk_ncells", len(skcells))
+    pi("sk_route0", skill_route(skcells, [], [0.05, 0.05]))
+    pi("sk_route3", skill_route(skcells, [], [3.05, 3.05]))
+    pf("sk_center00", skcells[0].center[0])
+    pf("sk_headw000", skcells[0].head_w[0][0])
+    pf("sk_headb00", skcells[0].head_b[0])
+    let skcells_off = skill_grow(skx, sky, cfg_off)
+    pi("sk_ncells_off", len(skcells_off))
+    let sol = _sc_gauss_solve([[2.0, 1.0], [1.0, 3.0]], [[1.0], [2.0]])
+    pf("sk_solve0", sol[0][0])
+    pf("sk_solve1", sol[1][0])
+
+    // ── SkillGradFT (§SkillGradFT H_1300) — shared softmax-linear net ──
+    let mut net = skill_gradft_new(2, 7)
+    pf("gft_w000_init", net.w[0][0])
+    net = skill_gradft_train(net, skx, sky)
+    pf("gft_w000_trained", net.w[0][0])
+    pf("gft_b0_trained", net.b[0])
+    pi("gft_pred0", skill_gradft_pred(net, [0.05, 0.05]))
+    pi("gft_pred3", skill_gradft_pred(net, [3.05, 3.05]))
+
+    // ── CPField (§CategoricalPerception H_1325) — RBF Voronoi CP ──
+    let cpdim = 8
+    let cpn = 11
+    let cpX = cp_stimuli(cpn, cpdim)
+    let mut cppos = []
+    let mut cpi = 0
+    while cpi < cpn { cppos = cppos + [to_float(cpi) / 10.0]  cpi = cpi + 1 }
+    let cpYa = cp_labels_boundary(cppos, 0.3333333333333333)
+    let cpfa = cp_fit(cpX, cpYa, 6, 30)
+    pi("cp_fit_n", cpfa.n)
+    let cpcurve = cp_discrim_curve(cpfa, cpX)
+    pi("cp_peak_count", cp_peak_count(cpcurve))
+    pi("cp_peak_idx", cp_peak_loc_idx(cpcurve))
+    pf("cp_post_mid", cp_posterior(cpfa, cpX[5]))
+    pf("cp_curve3", cpcurve[3])
+    pf("cp_margin", cp_within_cross_margin(cpcurve, cpn, 0.3333333333333333))
+    pb("cp_coh_near", cp_coherent_peak_near(cpcurve, cpn, 0.3333333333333333))
+    pf("cp_embed_val", cp_embed(0.4, cpdim)[2])
+    let cpYsh = cp_labels_shuffle(cppos, 4290)
+    let mut cpshsum = 0
+    let mut cpsi = 0
+    while cpsi < len(cpYsh) { cpshsum = cpshsum + cpYsh[cpsi]  cpsi = cpsi + 1 }
+    pi("cp_shuf_sum", cpshsum)
+    let cpYb = cp_labels_boundary(cppos, 0.6666666666666666)
+    let cprg = cp_regrow(cpfa, cpX, cpYb, 4, 30)
+    pi("cp_regrow_n", cprg.n)
+    let cpXt = cp_stimuli_tagged(cpn, cpdim, 0, 1.0, 2)
+    let cpft = cp_fit(cpXt, cpYa, 6, 30)
+    let cpXt2 = cp_stimuli_tagged(cpn, cpdim, 1, 1.0, 2)
+    let cpfm = cp_fit_more(cpft, cpXt2, cpYb, 12, 30)
+    pi("cp_fitmore_n", cpfm.n)
+    pf("cp_tagkey4", cpXt[5][cpdim])
+    let cprel = cp_relocate(cpfa, cpX, cppos, cpYb, 0.6666666666666666, 0.5, cpfa.n, cpdim, 4)
+    pi("cp_reloc_n", cprel.n)
+    pf("cp_reloc_post", cp_posterior(cprel, cpX[7]))
 }
