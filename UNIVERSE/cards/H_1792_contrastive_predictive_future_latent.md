@@ -1,16 +1,16 @@
 ---
 id: H_1792
 slug: 1792_contrastive_predictive_future_latent
-tier: 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+tier: 🔵 PRE-REGISTERED ARCHITECTURE · cheap_test measured (DIRECTIONAL toy)
 title: Contrastive Predictive Future Latent (slow-feature, objective-adequate trunk)
-verdict: 🔵 PRE-REGISTERED architecture design (unmeasured) — $0 cheap_test pre-registered; engine-native + 303M gpu cost-gated NOT fired
+verdict: 🔵 PRE-REGISTERED · cheap_test measured (DIRECTIONAL toy) = NOT (under-powered caveat) — InfoNCE shows zero held-out composition advantage over CE-marginal (Δ=-0.022, all bars FAIL), but binding-required toy cannot grok for ANY objective (modular-addition control at chance) → recombination axis UNDER-POWERED (a_break_the_wall type-a). No cheap InfoNCE win; deferred to cost-gated 303M engine-native (H_1602, NOT fired).
 source: brainarch_census
 ---
 
 # H_1792 — Contrastive Predictive Future Latent (slow-feature, objective-adequate trunk)
 
-- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
-- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy mirror, no engine); engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
+- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE · cheap_test measured (DIRECTIONAL toy — NOT terminal)
+- **wired:** DIRECTIONAL-mirror — $0 numpy cheap_test MEASURED (see §Probe result), verdict NOT (under-powered). NOT engine-native; engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
 - **source:** brainarch_census — 126-architecture whole-substrate (통짜 아키텍처) census: 뇌/인지 조직원리 × 엔진-네이티브 추상조건 (binding-wall program, H_1603).
 - **key:** `contrastive_predictive_future_latent`
 - **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · operator-level family H_1604-1685 (this card = 통짜 아키텍처 layer, 층위 다름)
@@ -40,6 +40,15 @@ numpy CPC on toy factored sequences: train z with InfoNCE (true future vs shuffl
 Contrastive predictor becomes a generator backend; emit predicted futures through the live single dispatch (gen_auto_ideate); G0/G1/G2 via core/g_gates.hexa g6_score_arm_auto. Held-out CE measured by math.log byte-parity py mirror (a_savant_train; avoid engine dt_ln bug); contrastive margin logged as inline gauge (monitor-only, a_train_inline_gauge, never into loss). byte-parity py<->hexa decode parity oracle.
 
 ## Scope / honesty (c9)
+
+## Probe result (cheap_test · $0 numpy · DIRECTIONAL toy · NOT terminal)
+
+- **verdict:** **NOT (DIRECTIONAL) — with explicit under-powered caveat.** Per frozen bars BAR-2 FAILS (InfoNCE held-out 0.000, no advantage over CE-marginal, Δ=-0.022) → NOT.
+- **frozen_bar** (pre-registered in probe BEFORE running, verbatim, no tune-to-green; chance=1/42=0.0238): BAR-1 binding/retrieval@1 M3(InfoNCE) held-out compositional acc ≥0.50. BAR-2 objective=G1 lever: (M3_held − M1_CE-marginal_held) ≥0.20 AND M3_held ≥0.50. BAR-3 interaction-ablation: (M3_held − M4_additive-floor_held) ≥0.30. BAR-4 verbatim control: M3 prefers true compositional future over verbatim-recall distractor on ≥0.80 held-out. DISCRIM-CTRL: M1 train≥0.95 AND M1 held<0.50. SUPPORT = BAR-1&2&3&4 all pass; NOT = BAR-2 fails; MIXED otherwise. Mean/5 seeds, bars on BEST held-out over run (generous, anti false-negative).
+- **numbers:** Means/5 seeds (best held-out over 40k AdamW steps): M1 CE-marginal train=0.800 held=0.022 | M2 CE-joint held=0.000 | M3 InfoNCE held=0.000 verbatim_win=0.000 | M4 additive-floor held=0.067. BARS: BAR-1 M3_held=0.000 FAIL · BAR-2 Δ(M3−M1)=-0.022 FAIL · BAR-3 Δ(M3−M4)=-0.067 FAIL · BAR-4 vb_win=0.000 FAIL · DISCRIM-CTRL tr=0.80/he=0.02 FAIL. GROKKABILITY CONTROL (single-head modular ADDITION, canonical grokkable task, AdamW 40k, 50% held): best held-out=0.050 ≈ chance(1/11=0.091) ⇒ toy CANNOT grok for ANY objective. Diagnostics: SGD+momentum 30k AND AdamW wd∈{0.01,0.05,0.1} all train→1.0 held→0.0 (one-hot MLP lacks shared-embedding bias).
+- **honest scope:** the grokkability control shows the $0 numpy toy cannot induce held-out compositional generalization for ANY objective (incl. the grokkable modular-addition control at chance), so the recombination axis is UNDER-POWERED (a_break_the_wall type-a: measurement limit, NOT science ceiling). Within the test's power, InfoNCE gives NO cheap recombination win over CE — symmetric failure. Neither cheaply supported nor strongly falsified.
+- **probe_path:** `state/brainarch_census/probes/H_1792.py`
+- **NOT terminal:** DIRECTIONAL numpy toy only (a_engine_native_learning); the real test is the cost-gated 303M engine-native run (H_1602 / engine_native_measure, NOT fired).
 
 ## Distinction (near-overlap kept, not a dup)
 

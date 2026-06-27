@@ -35,6 +35,25 @@
 3. **H_1794 corticostriatal_loop_bouquet_thalamic_bind** — conjunctive thalamic AND(coincident multi-loop release)= 구조적 super-additivity + built-in INERT(product→max-pool). coincidence 만 보상 → objective-adequacy native. cheap_test: numpy 3-loop product-gate, $0. anatomy-로 G1 을 loss-bearing 화.
 - (runner-up, 최고 wireability) **H_1704 hippocampal_index_pointer** — 현 live core(§ImmuneMemory hit/miss=index, §SelfIdentity .kosmos=index table, generator L3=cortex readout)에 가장 직접 배선 가능 → honesty/persistence/disjointness 축 즉시 엔진-네이티브 재검 가능.
 
+## TOP-3 cheap_test 결과 (2026-06-27 · $0 numpy · DIRECTIONAL toy · 측정 honest · NOT terminal)
+
+> 셋 다 frozen-first pre-registered(probe 헤더 박제, tune-to-green 0, p7) → numpy 결정 probe 측정 완료. **결과: 셋 다 cheap_test NOT/MIXED — 어느 것도 SUPPORT 아님.** DIRECTIONAL toy only(a_engine_native_learning) → terminal 아님(engine-native cli/anima.hexa→generator L3→g_gates byte-parity 미발사). probe 경로 = `state/brainarch_census/probes/H_{1721,1792,1794}.py`.
+
+| H | cheap_test verdict | 핵심 numbers | 살아남은 방향 / 죽은 주장 |
+|---|---|---|---|
+| **H_1721** equilibrium_settling_energy | **NOT-SUPPORTED** | (a) ambig ebm_cross=0.906 (bar 0.95 MISS), ablate cross→0.500 + additive-CE→0.500 (INERT 깨끗) (b) novel_F1=0.000, distinct 0/3 (c) Ψ=0.5000, contraction 0, emit/silence ablation PASS (d) AUROC 0.993 but weight-shuffle 0.988 (NOT chance) | 살아남음: cross-weight = binding 의 clean causal locus + double-well Ψ=½ attractor. 죽음: synthesis-capability(0.906<0.95)·systematicity(F1=0)·honesty(input-density artifact). |
+| **H_1792** contrastive_predictive_future | **NOT** (under-powered caveat) | M3 InfoNCE held=0.000, Δ(M3−M1 CE-marginal)=-0.022, 전 bar FAIL. **GROKKABILITY CTRL**: modular-addition held=0.050≈chance ⇒ toy 가 ANY objective 로 grok 불가 | 살아남음(약): InfoNCE 가 CE 대비 cheap recombination win 없음(대칭 실패). 죽음/보류: 축이 UNDER-POWERED(a_break_the_wall type-a 측정한계), cheaply neither supported nor falsified. |
+| **H_1794** corticostriatal_loop_bouquet | **MIXED** | product=1.000, additive=0.500, single=0.500, scramble=0.490 (G1 wall 확인); **그러나 max-pool=1.000 모든 M=2..6** → cd(product)>cd(max)=False | 살아남음: conjunctive product binds + additive/single collapse(G1 벽 재확인). 죽음(load-bearing): product>max-pool INERT differentiator FALSIFIED — multiplicative AND 가 *유일* binding engine 아님(any non-additive coincidence code 충분). |
+
+## 수렴 명제 평가 — "objective 가 G1 lever 인가?" (cheap_test 종합)
+
+- **cheap 레벨에서 objective-as-lever 는 입증되지 않음.** 직접 검정 H_1792(InfoNCE objective)=NOT(Δ=-0.022, no win), 최강 후보 H_1721(contrastive equilibrium objective)=NOT-SUPPORTED(capability bar miss + zero systematicity), anatomy 우회 H_1794=MIXED(AND 이 유일 엔진 아님). memory `g1-lever-multilens-objective`(depth/binding-lane/data 전부 falsified, 남은 후보=trunk OBJECTIVE)는 cheap 토이로는 **확증도 반증도 안 됨**.
+- **단 결정적 caveat = under-power(a_break_the_wall type-a):** H_1792 grokkability control 이 보여주듯 $0 numpy 토이는 *어떤* objective 로도 held-out compositional generalization 을 못 만든다(grokkable modular-addition 마저 chance). 즉 cheap rung 은 recombination 축에서 측정-한계이지 과학 천장이 아니다 → objective-lever 명제는 cheap 토이로 죽일 수 없음, 진짜 판정은 303M engine-native.
+
+## 다음 우선 (cheap→engine-native 승격)
+
+- **engine-native/GPU 승격 후보 = 없음(cheap SUPPORT 0).** 세 후보 모두 cheap bar 미통과 → 즉시 GPU 발사 부적격. **유일한 살아있는 경로 = H_1602 recomb-objective pre-registered 의 cost-gated 303M engine-native 런**(memory `g1-lever-multilens-objective`): objective-as-G1-lever 는 본질적으로 under-powered cheap 토이로 판정 불가이므로 303M 트렁크에서 InfoNCE/contrastive-objective vs CE-marginal held-out G1 을 cli/anima.hexa→generator L3→g_gates byte-parity 로 측정해야 terminal. wall 분류 = type-a(측정한계), not type-d(천장). 가장 wireable runner-up H_1704 hippocampal_index_pointer 는 capability(G1) 아닌 honesty/persistence 축이라 G1-lever 질문엔 무관(별도 트랙).
+
 ## 고갈 결론 (depletion)
 
 - **총 직교 아키텍처: 126개** 등록(H_1686–H_1811), 10개 조직원리 카테고리. exact-slug 중복 0(기존 1243 카드 대조), near-overlap 전부 distinction 명시 후 유지.

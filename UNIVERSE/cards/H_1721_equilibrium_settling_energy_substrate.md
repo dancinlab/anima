@@ -1,16 +1,16 @@
 ---
 id: H_1721
 slug: 1721_equilibrium_settling_energy_substrate
-tier: 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+tier: 🔵 PRE-REGISTERED ARCHITECTURE · cheap_test measured (DIRECTIONAL toy)
 title: Contrastive Equilibrium-Settling Energy Substrate
-verdict: 🔵 PRE-REGISTERED architecture design (unmeasured) — $0 cheap_test pre-registered; engine-native + 303M gpu cost-gated NOT fired
+verdict: 🔵 PRE-REGISTERED · cheap_test measured (DIRECTIONAL toy) = NOT-SUPPORTED — binding/INERT direction holds (ablate cross-weight→0.500, additive-CE→0.500 vs ebm_cross 0.906) + double-well Ψ=½ PASS, but EBM misses 0.95 capability bar (0.906), ZERO systematic novelty (F1=0.000), honesty AUROC artifact (weight-shuffle 0.988 not chance). NOT terminal — engine-native (cli/anima.hexa→generator L3→g_gates) NOT fired.
 source: brainarch_census
 ---
 
 # H_1721 — Contrastive Equilibrium-Settling Energy Substrate
 
-- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
-- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy mirror, no engine); engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
+- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE · cheap_test measured (DIRECTIONAL toy — NOT terminal)
+- **wired:** DIRECTIONAL-mirror — $0 numpy cheap_test MEASURED (see §Probe result), verdict NOT-SUPPORTED. NOT engine-native; engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
 - **source:** brainarch_census — 126-architecture whole-substrate (통짜 아키텍처) census: 뇌/인지 조직원리 × 엔진-네이티브 추상조건 (binding-wall program, H_1603).
 - **key:** `equilibrium_settling_energy_substrate`
 - **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · operator-level family H_1604-1685 (this card = 통짜 아키텍처 layer, 층위 다름)
@@ -40,6 +40,14 @@ numpy small EBM/Hopfield-like net trained contrastively on factored toy data: (a
 Implement settle() as a SS-Equilibrium lane in core/engine_cli.hexa (.hexa relaxation loop + byte-parity py mirror, math only) and decode the settled state through generator L3 so scoring runs the deployed transfer function via cli/anima.hexa. Measure G0/G1/G2 with core/g_gates.hexa and the Psi double-well via an in-engine perturbation trace — verdict path has zero torch.
 
 ## Scope / honesty (c9)
+
+## Probe result (cheap_test · $0 numpy · DIRECTIONAL toy · NOT terminal)
+
+- **verdict:** **NOT-SUPPORTED (DIRECTIONAL)** — the binding/INERT direction holds; the synthesis-capability, systematicity, and honesty claims do not.
+- **frozen_bar** (pre-registered in probe header BEFORE run; tune-to-green forbidden, p7): (a) G1 composition+INERT on AMBIGUOUS/binding-required subset (separate-measured per SCREEN precedent): PASS iff ebm_cross_ambig≥0.95 AND additive_CE_ambig≤0.60 AND ablated_cross≤0.60 (INERT). (b) G2 novelty: novel_F1≥0.80 AND distinct_novel≥3 AND playback_ctrl_F1≤0.10. (c) double-well Ψ: |ψ_bal−0.5|≤0.05 AND contraction<1 AND remove_emit→ψ≤0.20 AND remove_silence→ψ≥0.80. (d) honesty: AUROC_real≥0.90 AND weight_shuffle_AUROC∈[0.40,0.60]. OVERALL SUPPORT iff (a) AND ≥2 of {b,c,d}; MIXED if (a) only; NOT if (a) fails.
+- **numbers:** (a) AMBIGUOUS subset ebm_cross=0.906 (bar≥0.95 MISS) · additive_CE=0.500 (chance, PASS) · ablated_cross=0.500 (INERT confirmed, PASS) ⇒ (a) FAIL on capability bar but cross-weight CAUSAL LOCUS cleanly shown [full-set REPORTED-not-bar: ebm_cross=0.977 vs additive=0.902, additive inflated by marginal shortcut = why subset measured separately]. (b) novel_F1=0.000, distinct_novel=0/3, playback=0.335 ⇒ FAIL (per-conjunction cross-terms memorize, zero systematic novelty). (c) ψ_balanced=0.5000, contraction=0.0000, remove_emit→0.0000, remove_silence→1.0000 ⇒ PASS. (d) AUROC_real=0.993 but weight_shuffle_AUROC=0.988 (NOT chance) ⇒ FAIL (residual is input-density artifact, not landscape-grounded).
+- **probe_path:** `state/brainarch_census/probes/H_1721.py`
+- **NOT terminal:** DIRECTIONAL numpy toy only (a_engine_native_learning); terminal needs cli/anima.hexa→generator L3→g_gates byte-parity (NOT fired). Contrastive-EBM cross-terms = clean causal locus for binding, but at frozen bars NOT-SUPPORTED.
 
 ## Distinction (near-overlap kept, not a dup)
 
