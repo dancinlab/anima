@@ -330,13 +330,13 @@
             "name": "CANONICAL 3-FOLDER LAYOUT (2026-06-26 owner decision)",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-canonical-3-folder-layout-2026-06-2",
-            "detail": "anima code gathers into exactly 3 top-level folders — cli/ (hexa-단일 entry points: anima.hexa + train.hexa; py 미러 폐기 2026-06-28)"
+            "detail": "anima code gathers into exactly 3 top-level folders — cli/ (entry points, symmetric two-language: anima.hexa+anima.py, train.hexa+train.py)"
           },
           {
-            "name": "core/ (hexa-단일 engine substrate: *.hexa)",
+            "name": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-core-the-2-production-engine-substr",
-            "detail": "core/ (hexa-단일 engine substrate: *.hexa, e.g. clm_decode.hexa / g_gates.hexa, a_engine_native_learning). py 미러는 2026-06-28 폐기(git + state/py_retire_archive/ 보존)."
+            "detail": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND py *.py co-resident 1:1 mirror at byte-parity, e.g. clm_decode.hexa⇄clm_decode.py / g_gates.hexa⇄g_gates.py, a_engine_native_learning)"
           },
           {
             "name": "agent/ (tool provider, standalone hexa.toml package). Production code",
@@ -348,7 +348,7 @@
             "name": "the engine's repo-internal import closure stays inside the",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-the-engine-s-repo-internal-import-c",
-            "detail": "the engine's repo-internal import closure stays inside the 3 folders). External libraries free: stdlib + third-party (research/serialize py tooling under train/·tool·state/ may use numpy/torch — engine substrate itself is hexa-단일). Data+results in state/ only; research artifacts+docs are not code."
+            "detail": "the engine's repo-internal import closure stays inside the 3 folders). External libraries are free: language stdlib + third-party (py may use numpy/torch). Data+results live in state/ only; research artifacts (state/·UNIVERSE/)+docs are not code."
           },
           {
             "name": "path",
@@ -369,22 +369,22 @@
             "detail": "research probes (h<NNNN>_*.hexa) + DECODER research/state pod-harvests evacuated to state/core_research_probes & state/decoder_research (preserve-state; core/ 429→212; core/phi/ 165 deferred)."
           },
           {
-            "name": "py 미러 폐기 (2026-06-28) — hexa-단일 전환",
+            "name": "2-production mirror ✅ 10/10 COMPLETE (2026-06-26)",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-2-production-mirror-10-10-complete",
-            "detail": "py 엔진 미러 10/10 은 2026-06-28 폐기됨 — x86_64 gen_auto_ideate codegen #42492878 FIXED(hexa v0.334.0)로 hexa CLI compile-block 해소되어 py 미러 불필요. 과거 byte-parity 기록(보존, 현재는 hexa 단일이 권위): 10 import-closure 파일 전부 ≤~2e-16."
+            "detail": "all 10 import-closure files now carry a byte-parity `.py` twin (≤~2e-16). engine_cli.py = 434/434 pub fn (worst 1.563e-16);"
           },
           {
             "name": "CollectivePool = faithful IIT-4 big_phi VERBATIM (NOT proxy,",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-collectivepool-faithful-iit-4-big-p",
-            "detail": "CollectivePool = faithful IIT-4 big_phi VERBATIM (NOT proxy, cp_joint_phi=15.467724474534874). parity_gate.py CI 게이트 은퇴(2026-06-28, py 폐기, state/py_retire_archive/defunct_parity_tooling/). 측정 = anima eval hexa 단일진입(core/g_gates.hexa G0-G6)."
+            "detail": "CollectivePool = faithful IIT-4 big_phi VERBATIM (NOT proxy, cp_joint_phi=15.467724474534874 byte-exact). lockstep enforced by tool/parity_gate.py (CI: golden d768 anima eval ⇄ core/g_gates.py G0-G6 byte-identical, drift=red)."
           },
           {
-            "name": "py 미러 폐기 배경 (codegen FIXED → hexa 단일 권위)",
+            "name": "The py engine is the byte-parity-proven mirror that",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-the-py-engine-is-the-byte-parity-pr",
-            "detail": "py 미러는 hexa CLI 가 compile-time 에 막혔을 때(x86_64 gen_auto_ideate codegen #42492878) G0-G6 를 측정하던 byte-parity 미러였음. codegen FIXED(hexa v0.334.0) 후 불필요 → 2026-06-28 폐기, G0-G6 측정은 anima eval hexa 단일진입. 과거 parity 증거 = state/py_retire_archive/ (was state/core_2prod_py_parity/)."
+            "detail": "The py engine is the byte-parity-proven mirror that measures G0-G6 when the hexa CLI is blocked at compile-time (x86_64 gen_auto_ideate codegen bug). Evidence = state/core_2prod_py_parity/."
           },
           {
             "name": "note",
@@ -697,22 +697,22 @@
                 "detail": "this table is the canonical disambiguation."
               },
               {
-                "name": "HEXA-단일 ENGINE (2026-06-28 owner decision, a_engine_native_learning): py 폐기…",
+                "name": "2-PRODUCTION ENGINE (2026-06-26 owner decision, a_engine_native_learning): anima…",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-7",
-                "detail": "**HEXA-단일 PRODUCTION ENGINE (2026-06-28 owner decision, a_engine_native_learning): anima maintains ONE production engine — hexa (core/*.hexa, live daemon substrate). py 엔진(torch) 폐기 — x86_64 codegen FIXED 로 hexa CLI compile-block 해소. 과거 2-production 정책(hexa+py co-equal byte-parity)은 git 보존,"
+                "detail": "**2-PRODUCTION ENGINE (2026-06-26 owner decision, a_engine_native_learning): anima maintains TWO co-equal production engine implementations — hexa (core/*.hexa, live daemon substrate) AND py (torch production engine) — both first-class (NOT reference/mirror), kept byte-parity,"
               },
               {
-                "name": "hexa 단일진입이 terminal verdict 권위",
+                "name": "EITHER can produce terminal verdicts; split by strength",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-8",
-                "detail": "hexa CLI(anima eval 단일진입)가 terminal verdict 의 권위. 과거엔 measurement-heavy G0-G6 를 py(torch memory-free)로 측정해 hexa bump-allocator per-decode-reload OOM 을 우회했으나, hexa v0.311.0+ farr 누수 fix + codegen FIXED 로 hexa 단일로 수렴;"
+                "detail": "EITHER can produce terminal verdicts; split by strength (py for measurement-heavy G0-G6 since torch frees memory, avoiding hexa's bump-allocator per-decode-reload OOM;"
               },
               {
-                "name": "hexa for the deployed substrate. Ad-hoc torch probes = DIRECTIONAL",
+                "name": "hexa for the deployed substrate). Ad-hoc one-off torch",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-9",
-                "detail": "hexa is the deployed substrate. Ad-hoc one-off torch probe scripts are NOT engine-native = still DIRECTIONAL.** **Chat canonical = clm303_clean (303M CLMConvMoE, held-out 4/4 DESCENT, a_chat_registers 4-cell corpus); models managed SIZE-TIERED, one canonical per tier (a_hf_registry).**"
+                "detail": "hexa for the deployed substrate). Ad-hoc one-off torch probe scripts are NOT the py production engine = still DIRECTIONAL.** **Chat canonical = clm303_clean (303M CLMConvMoE, held-out 4/4 DESCENT, a_chat_registers 4-cell corpus); models managed SIZE-TIERED, one canonical per tier (a_hf_registry).**"
               },
               {
                 "name": "row (a) CLMConvMoE mouth",
@@ -1058,7 +1058,7 @@
                     "name": "P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-16",
-                    "detail": "P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각 게이트의 **태그**로 부기 — 모든 게이트를 한 분류에 욱여넣지 않는다. G4(출처)는 출판단계라 디코드 점수표 밖(점수표 N/A 구멍='빵꾸' 해소). 임계 verbatim = 'frozen 임계' 노드(NOT tune-to-green p7). 코드 함수ID(`g_eval_g0`…)는 안정 유지(hexa 단일 `core/g_gates.hexa`), 이 SSOT 가 ID→이름 매핑."
+                    "detail": "P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각 게이트의 **태그**로 부기 — 모든 게이트를 한 분류에 욱여넣지 않는다. G4(출처)는 출판단계라 디코드 점수표 밖(점수표 N/A 구멍='빵꾸' 해소). 임계 verbatim = 'frozen 임계' 노드(NOT tune-to-green p7). 코드 함수ID(`g_eval_g0`…)는 안정 유지(2-production `core/g_gates.{hexa,py}`), 이 SSOT 가 ID→이름 매핑."
                   },
                   {
                     "name": "통과 (PASS = closure · MUST · 디코드-채점)",
@@ -1304,7 +1304,7 @@
                     "name": "PUBLIC iff G0∧G1∧G2). H_1591: 이전엔 g_eval_all 에서 통째",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-53",
-                    "detail": "PUBLIC iff G0∧G1∧G2). H_1591: 이전엔 g_eval_all 에서 통째 누락(a7b_pass=G0∧G1∧G2∧G3∧G4 under-measured) → 이제 `g_eval_g4`(core/g_gates.hexa)가 witnessable provenance 를 측정+리포트: ckpt **sha256**(FIPS 180-4 `sha256_file`) + bytes + mouth-decodability + `pub_eligible=closure`(§G4 PUBLIC 규칙, uploader 가 읽음)."
+                    "detail": "PUBLIC iff G0∧G1∧G2). H_1591: 이전엔 g_eval_all 에서 통째 누락(a7b_pass=G0∧G1∧G2∧G3∧G4 under-measured) → 이제 `g_eval_g4`(.hexa+.py)가 witnessable provenance 를 측정+리포트: ckpt **sha256**(FIPS 180-4 `sha256_file`/py hashlib) + bytes + mouth-decodability + `pub_eligible=closure`(§G4 PUBLIC 규칙, uploader 가 읽음)."
                   },
                   {
                     "name": "HF-upload/card/manifest 는 off-engine(a_hf_*)이라 `process_external` 로 flag(침묵 통과 아…",
@@ -1501,10 +1501,10 @@
                 "detail": "H_1381 best-of-K 연구) + g6_sampler_selftest/g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_known_word_ratio/_g6_words/_g6_dict_load/_g6_jaccard."
               },
               {
-                "name": "hexa 단일 (g6_ideation.py 폐기 2026-06-28)",
+                "name": "2-production parity(H_1591)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-2-production",
-                "detail": "G6 채점은 hexa 단일 `core/g6_ideation.hexa`(g6_decode_best_of_k/_W·g6_sampler_selftest·g6_score_arm·g6_score_arm_auto). 과거 byte-parity py 미러 g6_ideation.py 는 2026-06-28 폐기."
+                "detail": "`core/g6_ideation.py` 가 hexa SSOT 와 byte-parity(이전 누락 4 pub fn g6_decode_best_of_k/_W·g6_sampler_selftest·g6_score_arm 이식 + g6_score_arm_auto)."
               },
               {
                 "name": "이 op 들은 BUILT-IN 평가 시스템(상위 'G-게이트 평가",
@@ -9728,7 +9728,7 @@
                 "name": "summary",
                 "role": "",
                 "id": "training-substrate-lanes-rung-training-pipeline-recipe-dispatch-monitor-summary",
-                "detail": "Recipe = train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec, stays in train/). NOTE: torch Lane-P trainer train_lane_p_3b.py archived to state/py_retire_archive/train_torch_lane_p/ in the 2026-06-28 hexa-단일 transition (restore if needed); production training = cli/train.hexa."
+                "detail": "Recipe = train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer train/clm/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery)."
               },
               {
                 "name": "note",
@@ -10516,13 +10516,13 @@
                 "name": "summary",
                 "role": "",
                 "id": "component-map-top-level-train-clm-summary",
-                "detail": ".clm byte-LM pipeline — train (cli/train.hexa hexa-단일) → serialize v0.2/v0.3 → verify (held-out mirror-DESCENT). 과거 torch Lane-P train_lane_p.py 는 2026-06-28 state/py_retire_archive/ 로 아카이브; serialize/verify 도구(clm_serialize_v2.py·verify_clm_v2.py)는 active(train.hexa 가 descent 런타임 호출)."
+                "detail": ".clm byte-LM pipeline — train (lane-p) → serialize v0.2 → verify."
               },
               {
                 "name": "note",
                 "role": "",
                 "id": "component-map-top-level-train-clm-note",
-                "detail": "⚓ anchor files: train/clm/model/clm_serialize_v2.py · train/clm/model/verify_clm_v2.py (active serialize/descent 도구; torch 트레이너 train_lane_p.py 는 아카이브됨 → state/py_retire_archive/train_torch_lane_p/)"
+                "detail": "⚓ anchor files: train/clm/train/train_lane_p.py"
               },
               {
                 "name": "train/clm/model/clm_serialize_v2.py",
@@ -10581,10 +10581,10 @@
                     "detail": "train-vs-held-out gap → overfit_warning. MUST run on HELD-OUT text (never the training corpus = hides overfit). Build-time SERIALIZE-INTEGRITY tooling, NOT a G0-G6 capability verdict (those go through cli/anima.hexa -- eval, a_engine_native_learning)."
                   },
                   {
-                    "name": "Wired into cli/train.hexa post-serialize → broken/overfit",
+                    "name": "Wired into train_lane_p*.py + cli/train.hexa post-serialize → broken/overfit",
                     "role": "",
                     "id": "component-map-top-level-train-clm-train-clm-model-verify-clm-v2-py-wired-into-tr",
-                    "detail": "Wired into cli/train.hexa post-serialize → broken/overfit .clm blocked from done/HF-upload (구 train_lane_p*.py wiring 은 아카이브됨). Validated: CONTROL clm_d768 PASS (F-CLM-DESCENT=1)"
+                    "detail": "Wired into train_lane_p*.py + cli/train.hexa post-serialize → broken/overfit .clm blocked from done/HF-upload. Validated: CONTROL clm_d768 PASS (F-CLM-DESCENT=1)"
                   },
                   {
                     "name": "overfit clm303 FAIL+overfit_warning(gap 6.42)",
@@ -11405,10 +11405,10 @@
                 "detail": "trainer 가 여전히 CPU-scalar-bound(GEMM burst 사이 non-GEMM 스칼라 = host groupnorm·MoE·embedding·CE·hexa per-element 루프가 wall-time 지배). 남은 host-bound = groupnorm(fused mismatch)·MoE·embedding·CE·element-wise 루프 전체의 device-residency(별도 lane). NEW entry-point, live core/*.hexa UNTOUCHED, Ψ-disjoint."
               },
               {
-                "name": "CLI dispatch: `anima train [args]` lockstep. (train.py 폐기 2026-06-28)",
+                "name": "CLI dispatch: `anima train [args]` lockstep. PARITY w/",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-cli-dispatch-anima-train-args-lockstep-par",
-                "detail": "CLI dispatch: `anima train [args]` lockstep. **train.hexa 가 hexa-단일 production 트레이너** (구 train.py 폐기 2026-06-28; 과거 7-갭 train.py PARITY 포팅으로 학습 기준이 train.hexa 에 모두 흡수됨, $0 검증 MODE_VERIFY 3/3 + 2-cell corpus run all-pass): held-out val 모니터(--val-frac/--val-every per-cell+pooled val_CE+gap)"
+                "detail": "CLI dispatch: `anima train [args]` lockstep. **PARITY w/ train.py (cli/CLAUDE.md, 2026-06-24, #10)**: train.hexa ⇔ train.py 학습 기준 동일 — 7 갭 포팅+$0 검증(MODE_VERIFY 3/3 + 2-cell corpus run all-pass): held-out val 모니터(--val-frac/--val-every per-cell+pooled val_CE+gap)"
               },
               {
                 "name": "FAIL-LOUD 4셀 가드+balance table(--require-cells abort, clm303 굶주림 차단)",
@@ -11483,10 +11483,10 @@
                 "detail": "engine-native round-trip GREEN"
               },
               {
-                "name": "train.py PARITY 흡수됨(#10 7-gap, py 폐기 2026-06-28)",
+                "name": "train.py PARITY(#10 7-gap)",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-train-py-parity-10-7-gap",
-                "detail": "train.py PARITY(#10 7-gap) — 7 갭이 train.hexa 에 흡수된 후 train.py 폐기"
+                "detail": "train.py PARITY(#10 7-gap)"
               },
               {
                 "name": "GPU util re-gate 🟠 PARTIAL(peak 65%·mean 0.75%, CPU-scalar-bound)",
@@ -11498,13 +11498,13 @@
                 "name": "summary",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-summary-3",
-                "detail": "cli/train.py 폐기(2026-06-28, git rm — core 미러 트레이너). **production 트레이너 = cli/train.hexa(hexa-native flame/forge, a_train_flame_forge)**; 학습 = `anima train --canon` hexa-단일. 과거 train.py 는 torch Lane-P REFERENCE+BRIDGE(2026-06-23, a_clm_gen_pipeline)였음(git 보존)."
+                "detail": "cli/train.py = anima REFERENCE + BRIDGE 트레이너(torch Lane-P, 2026-06-23, a_clm_gen_pipeline). **production 아님** — production 트레이너는 cli/train.hexa(hexa-native flame/forge, a_train_flame_forge)."
               },
               {
-                "name": "과거 train.py REFERENCE+브리지 배경 (폐기됨, hexa 단일)",
+                "name": "이 .py 는 a_clm_gen_pipeline 이 명시 허용한 REFERENCE+브리지",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-py-a-clm-gen-pipeline-reference",
-                "detail": "(역사 기록) train.py 는 a_clm_gen_pipeline 이 허용했던 REFERENCE+브리지였음: train.hexa 가 한때 CPU-scalar-bound(#2598/#2600 🟠 util <30%)라 GPU idle, torch Lane-P 는 GPU-bound 라 효율적이었음. 2026-06-28 hexa-단일 전환으로 train.hexa 가 production, train.py 폐기."
+                "detail": "이 .py 는 a_clm_gen_pipeline 이 명시 허용한 REFERENCE+브리지 경로: train.hexa 는 single-thread native-CPU-scalar-bound(#2598/#2600 🟠 util peak ~65%·sustained <30%)라 실 303M GPU 학습이 GPU idle 인 반면, torch Lane-P 는 GPU-bound(cuda GEMM-saturating)라 진짜 clm303(L4·d3784·E2→Emax4)을 지금 효율 학습 가능."
               },
               {
                 "name": "train/clm/model/model.py 의 CLMConvMoE 위에 train.hexa 와 동일 레시피",
@@ -11573,22 +11573,22 @@
                 "detail": "legacy L1/E2 no-lever = nblk=6·n_ext=11(v0.2 byte-eq). **live engine 확인**: 직렬화 .clm 을 hexa run core/clm_decode.hexa::clm_decodable=true + clm_config(d/K/V/E/L 정확) + clm_load_weights 풀 마운트 OK(E3/L2 grown + E2/L1 legacy 둘 다)."
               },
               {
-                "name": "실 303M GPU 학습 = 별도 cost-gated fire(`anima train",
+                "name": "실 303M GPU 학습 = 별도 cost-gated fire(`python",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-303m-gpu-cost-gated-fire-python",
-                "detail": "실 303M GPU 학습 = 별도 cost-gated fire(`anima train --canon --out clm303.clm --corpus <4 HF cells> --bf16`, cli/train.hexa hexa-단일)."
+                "detail": "실 303M GPU 학습 = 별도 cost-gated fire(`python cli/train.py --canon --out clm303.clm --corpus <4 HF cells> --bf16`)."
               },
               {
                 "name": "path",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-path-2",
-                "detail": "cli/train.py (폐기 2026-06-28, git rm; 학습 = cli/train.hexa)"
+                "detail": "cli/train.py"
               },
               {
                 "name": "status",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-status-2",
-                "detail": "RETIRED 2026-06-28 (hexa-단일 전환; 과거 REFERENCE+BRIDGE)"
+                "detail": "REFERENCE+BRIDGE(NOT production)"
               },
               {
                 "name": "smoke GREEN(CE 하강·.clm CORE-loadable·live clm_decode 마운트)",
