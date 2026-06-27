@@ -95,6 +95,37 @@ pub fn clm_config(p: string) -> Map {
     return #{ "ok": true, "d": d, "K": K, "V": V, "E": E, "L": L, "nblk": nblk }
 }
 
+// clm_readout_type — recover the readout-type flag (0=additive, 1=bind/Hadamard,
+// 2=bind_linear) of a decodable .clm WITHOUT loading weights: walk the conv blocks
+// + CLMX ext arrays to the trailer offset, then read a "CLMB" sentinel byte[4] if
+// present (absent ⇒ 0, additive). a_engine_native_learning: lets a verdict harness
+// confirm a ckpt's readout op (the BLOCKED-by-construction unblock).
+pub fn clm_readout_type(p: string) -> int {
+    if !clm_decodable(p) { return -1 }
+    let rb = read_file_bytes(p)
+    let nblk = rb[4]
+    let mut off = 5
+    let mut b = 0
+    while b < nblk {
+        let cout = _clmd_rd_u32(rb, off)
+        let rest = _clmd_rd_u32(rb, off+4)
+        off = off + 8 + (cout * rest + 1) / 2 + cout * 4
+        b = b + 1
+    }
+    off = off + 4                      // skip "CLMX"
+    let n_ext = rb[off]; off = off + 1
+    let mut e = 0
+    while e < n_ext {
+        let n = _clmd_rd_u32(rb, off)
+        off = off + 4 + n * 4
+        e = e + 1
+    }
+    if off + 5 <= len(rb) && rb[off]==67 && rb[off+1]==76 && rb[off+2]==77 && rb[off+3]==66 {
+        return rb[off+4]
+    }
+    return 0
+}
+
 // load one int4 conv block, dequantized in place (w = code·scale). Returns new off.
 fn _clmd_load_block(rb, off: int, w_out: int) -> int {
     let cout = _clmd_rd_u32(rb, off); off = off + 4
@@ -224,6 +255,7 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
     let lt_s = model_ce < shuf_ce
     return #{ "ok": true, "reason": "v0.2/v0.3 decodable; forward ran",
               "windows": nwin, "d": d, "E": E, "V": V, "K": K, "L": to_int(W["L"]),
+              "rtype": to_int(W["rtype"]), "kbind": to_int(W["kbind"]),
               "model_ce": model_ce, "shuffle_ce": shuf_ce, "uniform_ce": uniform_ce,
               "lt_uniform": lt_u, "lt_shuffle": lt_s, "green": lt_u && lt_s }
 }
@@ -244,12 +276,12 @@ fn _clmd_load(path: string) -> Map {
     // walk block headers to read those cout values (each header = cout,rest u32).
     let mut woff = 5
     let mut bi = 0
-    let mut E = 2; let mut V = 256
+    let mut E = 2; let mut V = 256; let mut ro_rest = d
     while bi < nblk {
         let c = _clmd_rd_u32(rb, woff)
         let r = _clmd_rd_u32(rb, woff + 4)
         if bi == nblk - 2 { E = c }
-        if bi == nblk - 1 { V = c }
+        if bi == nblk - 1 { V = c; ro_rest = r }   // readout block rest = d (additive) | k (bind)
         let n = c * r
         woff = woff + 8 + (n + 1) / 2 + c * 4
         bi = bi + 1
@@ -262,7 +294,7 @@ fn _clmd_load(path: string) -> Map {
     while li < L { tcW.push(t_zeros(dd)); li = li + 1 }
     let eW = []; let mut ej = 0
     while ej < E { eW.push(t_zeros(dd)); ej = ej + 1 }
-    let rW = t_zeros(ed); let roW = t_zeros(vd)
+    let rW = t_zeros(ed); let roW = t_zeros(V * ro_rest)   // additive V*d | bind V*k (Wo)
 
     let mut off = 5
     off = _clmd_load_block(rb, off, ecW)
@@ -299,10 +331,27 @@ fn _clmd_load(path: string) -> Map {
     while e2 < L { off = _clmd_load_ext(rb, off, tgB[e2]); e2 = e2 + 1 }
     off = _clmd_load_ext(rb, off, noG);  off = _clmd_load_ext(rb, off, noB)
 
-    return #{ "d": d, "E": E, "V": V, "K": K, "L": L, "vd": vd,
+    // ── OPTIONAL CLMB bind-readout trailer (Hadamard byte readout). Absent ⇒
+    // rtype=0 (additive d→V readout, backward-compat). Present ⇒ roW holds Wo
+    // (V,k) and CLMB holds Wa/Wb (k,d)+biases + readout_type (1=u*v, 2=u+v).
+    let mut rtype = 0
+    let mut kbind = ro_rest
+    let mut Wa = -1; let mut Wb = -1; let mut WaB = -1; let mut WbB = -1
+    if off + 5 <= len(rb) && rb[off]==67 && rb[off+1]==76 && rb[off+2]==77 && rb[off+3]==66 {
+        rtype = rb[off+4]; off = off + 5
+        let kc = _clmd_rd_u32(rb, off)            // Wa block cout = k
+        kbind = kc
+        Wa = t_zeros(kc * d); off = _clmd_load_block(rb, off, Wa)   // (k, d)
+        Wb = t_zeros(kc * d); off = _clmd_load_block(rb, off, Wb)   // (k, d)
+        WaB = t_zeros(kc); off = _clmd_load_ext(rb, off, WaB)       // (k)
+        WbB = t_zeros(kc); off = _clmd_load_ext(rb, off, WbB)       // (k)
+    }
+
+    return #{ "d": d, "E": E, "V": V, "K": K, "L": L, "vd": vd, "ro_rest": ro_rest,
               "ecW": ecW, "tcW": tcW, "eW": eW, "rW": rW, "roW": roW,
               "embed": embed, "ecB": ecB, "tcB": tcB, "eB": eB,
-              "rB": rB, "roB": roB, "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB }
+              "rB": rB, "roB": roB, "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB,
+              "rtype": rtype, "kbind": kbind, "Wa": Wa, "Wb": Wb, "WaB": WaB, "WbB": WbB }
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -439,8 +488,9 @@ fn _clmd_scratch_new(W: Map, T: int) -> Map {
     while i < L { tcWt.push(_clmd_transpose_w(to_int(tcW[i]), Kd, d)); i = i + 1 }
     let eWt = []; let eW = W["eW"]; let mut j = 0
     while j < E { eWt.push(_clmd_transpose_w(to_int(eW[j]), Kd, d)); j = j + 1 }
+    let ro_rest = to_int(W["ro_rest"])                         // d (additive) | k (bind: Wo)
     let rWt  = _clmd_transpose_w(to_int(W["rW"]),  d * 1, E)   // router K=1
-    let roWt = _clmd_transpose_w(to_int(W["roW"]), d * 1, V)   // readout K=1
+    let roWt = _clmd_transpose_w(to_int(W["roW"]), ro_rest, V) // readout/Wo K=1
     // pre-expanded full-bias buffers (device residual_add broadcast, const/decode):
     // one per conv, sized maxT*Cout, row-periodic (bfull[t*Cout+c]=b[c]).
     let ecBf = _clmd_bias_expand(to_int(W["ecB"]), d, T)
@@ -461,13 +511,29 @@ fn _clmd_scratch_new(W: Map, T: int) -> Map {
     let eo = t_zeros(T*d); let ex = t_zeros(T*d)
     let probs = t_zeros(T*E); let y = t_zeros(T*d)
     let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
+    // ── bind-readout scratch (rtype>0): pre-transposed Wa/Wb (d→k), bias-expand,
+    // reusable u/v/g (T*k) + a Kdim=k im2col buffer for the Wo conv. -1 = additive.
+    let rtype = to_int(W["rtype"])
+    let mut WaWt = -1; let mut WbWt = -1; let mut WaBf = -1; let mut WbBf = -1
+    let mut ubuf = -1; let mut vbuf = -1; let mut gbuf = -1; let mut xcolK = -1
+    if rtype > 0 {
+        let kb = to_int(W["kbind"])
+        WaWt = _clmd_transpose_w(to_int(W["Wa"]), d, kb)      // Wa (k,d) → Wt[d,k]
+        WbWt = _clmd_transpose_w(to_int(W["Wb"]), d, kb)
+        WaBf = _clmd_bias_expand(to_int(W["WaB"]), kb, T)
+        WbBf = _clmd_bias_expand(to_int(W["WbB"]), kb, T)
+        ubuf = t_zeros(T*kb); vbuf = t_zeros(T*kb); gbuf = t_zeros(T*kb)
+        xcolK = t_zeros(T*kb)
+    }
     return #{ "ecWt": ecWt, "tcWt": tcWt, "eWt": eWt, "rWt": rWt, "roWt": roWt,
               "ecBf": ecBf, "tcBf": tcBf, "eBf": eBf, "rBf": rBf, "roBf": roBf,
               "xcolD": xcolD, "xcol1": xcol1, "xe": xe, "xt": xt,
               "h": h, "hn": hn, "hg": hg, "m1": m1, "iv1": iv1, "xh1": xh1,
               "logits_r": logits_r, "ex_out": ex_out, "eo": eo, "ex": ex,
               "probs": probs, "y": y, "yn": yn,
-              "meanN": meanN, "invN": invN, "xhatN": xhatN }
+              "meanN": meanN, "invN": invN, "xhatN": xhatN,
+              "rtype": rtype, "WaWt": WaWt, "WbWt": WbWt, "WaBf": WaBf, "WbBf": WbBf,
+              "ubuf": ubuf, "vbuf": vbuf, "gbuf": gbuf, "xcolK": xcolK }
 }
 
 fn _clmd_scratch_free(sc: Map) {
@@ -489,6 +555,12 @@ fn _clmd_scratch_free(sc: Map) {
     t_free(to_int(sc["eo"])); t_free(to_int(sc["ex"]))
     t_free(to_int(sc["probs"])); t_free(to_int(sc["y"])); t_free(to_int(sc["yn"]))
     t_free(to_int(sc["meanN"])); t_free(to_int(sc["invN"])); t_free(to_int(sc["xhatN"]))
+    if to_int(sc["rtype"]) > 0 {
+        t_free(to_int(sc["WaWt"])); t_free(to_int(sc["WbWt"]))
+        t_free(to_int(sc["WaBf"])); t_free(to_int(sc["WbBf"]))
+        t_free(to_int(sc["ubuf"])); t_free(to_int(sc["vbuf"]))
+        t_free(to_int(sc["gbuf"])); t_free(to_int(sc["xcolK"]))
+    }
 }
 
 // _clmd_weights_free — release every farr tensor in a weight map W returned by
@@ -516,6 +588,11 @@ fn _clmd_weights_free(W: Map) {
     while ci < len(tgG) { t_free(to_int(tgG[ci])); ci = ci + 1 }
     let tgB = W["tgB"]; let mut di = 0
     while di < len(tgB) { t_free(to_int(tgB[di])); di = di + 1 }
+    // bind-readout extras (rtype>0); -1 sentinel when additive
+    if to_int(W["rtype"]) > 0 {
+        t_free(to_int(W["Wa"])); t_free(to_int(W["Wb"]))
+        t_free(to_int(W["WaB"])); t_free(to_int(W["WbB"]))
+    }
 }
 
 // _clmd_fwd_logits_sc — STREAMING forward: byte-identical to _clmd_fwd_logits but
@@ -597,7 +674,25 @@ fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
     if !(dev && forge_dispatch_groupnorm(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1) == 0) {
         nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
     }
-    _clmd_conv1d_pre(yn, to_int(sc["roWt"]), to_int(W["roB"]), to_int(sc["roBf"]), out_logits, xcol1, T, d, V, 1, 1)
+    // readout: additive Conv1d(d→V) OR bind/Hadamard (u=Wa(yn), v=Wb(yn),
+    // g=u*v|u+v, logits=Wo(g)). The Hadamard/add is host-scalar (byte-exact, O(T·k)
+    // cheap); the Wa/Wb/Wo GEMMs still ride forge via _clmd_conv1d_pre.
+    let rtype = to_int(W["rtype"])
+    if rtype > 0 {
+        let kb = to_int(W["kbind"])
+        let u = to_int(sc["ubuf"]); let v = to_int(sc["vbuf"]); let g = to_int(sc["gbuf"])
+        _clmd_conv1d_pre(yn, to_int(sc["WaWt"]), to_int(W["WaB"]), to_int(sc["WaBf"]), u, xcol1, T, d, kb, 1, 1)
+        _clmd_conv1d_pre(yn, to_int(sc["WbWt"]), to_int(W["WbB"]), to_int(sc["WbBf"]), v, xcol1, T, d, kb, 1, 1)
+        let mut gi = 0
+        if rtype == 1 {
+            while gi < T*kb { t_set(g, gi, t_get(u, gi) * t_get(v, gi)); gi = gi + 1 }
+        } else {
+            while gi < T*kb { t_set(g, gi, t_get(u, gi) + t_get(v, gi)); gi = gi + 1 }
+        }
+        _clmd_conv1d_pre(g, to_int(sc["roWt"]), to_int(W["roB"]), to_int(sc["roBf"]), out_logits, to_int(sc["xcolK"]), T, kb, V, 1, 1)
+    } else {
+        _clmd_conv1d_pre(yn, to_int(sc["roWt"]), to_int(W["roB"]), to_int(sc["roBf"]), out_logits, xcol1, T, d, V, 1, 1)
+    }
 }
 
 // _clmd_fwd_logits — run the general CLMConvMoE inference forward on a T-length
@@ -656,7 +751,23 @@ fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
     nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
     let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
     nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
-    _clmd_conv1d(yn, to_int(W["roW"]), to_int(W["roB"]), out_logits, T, d, V, 1, 1)
+    let rtype = to_int(W["rtype"])
+    if rtype > 0 {
+        let kb = to_int(W["kbind"])
+        let u = t_zeros(T*kb); _clmd_conv1d(yn, to_int(W["Wa"]), to_int(W["WaB"]), u, T, d, kb, 1, 1)
+        let v = t_zeros(T*kb); _clmd_conv1d(yn, to_int(W["Wb"]), to_int(W["WbB"]), v, T, d, kb, 1, 1)
+        let g = t_zeros(T*kb)
+        let mut gi = 0
+        if rtype == 1 {
+            while gi < T*kb { t_set(g, gi, t_get(u, gi) * t_get(v, gi)); gi = gi + 1 }
+        } else {
+            while gi < T*kb { t_set(g, gi, t_get(u, gi) + t_get(v, gi)); gi = gi + 1 }
+        }
+        _clmd_conv1d(g, to_int(W["roW"]), to_int(W["roB"]), out_logits, T, kb, V, 1, 1)
+        t_free(u); t_free(v); t_free(g)
+    } else {
+        _clmd_conv1d(yn, to_int(W["roW"]), to_int(W["roB"]), out_logits, T, d, V, 1, 1)
+    }
     t_free(xe); t_free(xt); t_free(logits_r); t_free(ex_out)
     t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
 }

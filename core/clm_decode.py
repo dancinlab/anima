@@ -369,6 +369,24 @@ def clm_load_weights(path):
     noG, off = _load_ext(rb, off)                # [d]
     noB, off = _load_ext(rb, off)                # [d]
 
+    # ── OPTIONAL CLMB bind-readout trailer (clm_decode.hexa _clmd_load) ──
+    # additive .clm: no CLMB -> rtype=0 (roW is the d->V readout). bind .clm:
+    # roW carries Wo (V,k) and CLMB carries Wa/Wb (k,d)+biases + readout_type.
+    rtype = 0
+    WaWt = WbWt = WaB = WbB = None
+    kbind = roW.shape[1]                          # = readout block rest (d or k)
+    if off + 5 <= len(rb) and rb[off] == 67 and rb[off + 1] == 76 \
+            and rb[off + 2] == 77 and rb[off + 3] == 66:   # "CLMB"
+        rtype = rb[off + 4]
+        off += 5
+        Wa, off = _load_block(rb, off)           # [k, d]
+        Wb, off = _load_block(rb, off)           # [k, d]
+        WaB, off = _load_ext(rb, off)            # [k]
+        WbB, off = _load_ext(rb, off)            # [k]
+        WaWt = Wa.T.copy()                        # [d, k]
+        WbWt = Wb.T.copy()                        # [d, k]
+        kbind = Wa.shape[0]
+
     # pre-transpose conv weights -> Wt[Kdim, Cout] (= w_2d.T)
     W = {
         "ok": True, "d": d, "E": E, "V": V, "K": K, "L": L,
@@ -376,9 +394,11 @@ def clm_load_weights(path):
         "tcWt": [w.T.copy() for w in tcW], "tcB": tcB,
         "eWt": [w.T.copy() for w in eW], "eB": eB,
         "rWt": rW.T.copy(), "rB": rB,
-        "roWt": roW.T.copy(), "roB": roB,
+        "roWt": roW.T.copy(), "roB": roB,          # additive: [d,V] ; bind: Wo [k,V]
         "embed": embed.reshape(V, d),
         "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB,
+        "rtype": rtype, "kbind": kbind,
+        "WaWt": WaWt, "WbWt": WbWt, "WaB": WaB, "WbB": WbB,
     }
     return W
 
@@ -435,8 +455,17 @@ def _fwd_logits(W, tok, T):
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d)          # [T, d]
     # final groupnorm
     yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1)
-    # readout conv (K=1, Cout=V)
-    out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1)  # [T, V]
+    # readout: additive Conv1d(d->V) OR bind/Hadamard readout (u=Wa(yn),
+    # v=Wb(yn), g=u*v|u+v, logits=Wo(g)) — 1:1 with the BindCLM ARM (trainer.py).
+    rtype = W.get("rtype", 0)
+    if rtype:
+        k = W["kbind"]
+        u = _conv1d(yn, W["WaWt"], W["WaB"], T, d, k, 1, 1)       # [T, k]
+        v = _conv1d(yn, W["WbWt"], W["WbB"], T, d, k, 1, 1)       # [T, k]
+        g = (u * v) if rtype == 1 else (u + v)                    # Hadamard | add
+        out_logits = _conv1d(g, W["roWt"], W["roB"], T, k, V, 1, 1)  # Wo: [T, V]
+    else:
+        out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1)  # [T, V]
     return out_logits
 
 
