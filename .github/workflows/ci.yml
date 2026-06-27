@@ -257,23 +257,15 @@ jobs:
           done
 
       # 실제 anima CLI 바이너리 설치 (배포 산출물 그 자체 = 권위 평가 진입점). 로컬 체크아웃의
-      # cli/anima.hexa 를 `anima` 로 install → parity_gate 가 `anima eval` 로 측정(소스-run 아님).
-      # best-effort: 실패해도 parity_gate 가 hexa-run-source 로 fallback(둘 다 동일 단일진입).
+      # cli/anima.hexa 를 `anima` 로 install → 권위 평가는 이 단일진입(`anima eval`)으로만.
       - name: Install local anima CLI (real production binary)
         shell: bash
         run: |
           set -uo pipefail
           hx install . 2>/dev/null || hexa install 2>/dev/null \
-            || echo "::warning::local anima CLI install skipped — parity_gate falls back to source-run"
+            || echo "::warning::local anima CLI install skipped"
           command -v anima >/dev/null && { echo "anima on PATH:"; anima --version || true; } || true
 
-      # 2-PRODUCTION LOCKSTEP — code-level 강제: golden d768(303M OOM 없는 작은 ckpt)을
-      # 실제 anima CLI 단일진입(`anima eval`, 없으면 hexa run cli/anima.hexa fallback) vs
-      # py 엔진(core/g_gates.py) 으로 돌려 G0-G6 byte-동일 강제. drift = CI red = 머지 차단
-      # (a_engine_native_learning). 권위 평가 = 실제 anima CLI ONLY; py 는 이 게이트로 CLI 와
-      # 동일 보장되는 미러일 뿐. golden ckpt 없으면 LOUD warn-skip(parity_gate 자체 처리).
-      - name: Parity gate — anima CLI ⇄ py G0-G6 byte-parity (golden)
-        shell: bash
-        run: |
-          set -uo pipefail
-          python3 tool/parity_gate.py
+      # NOTE (2026-06-28): hexa⇄py byte-parity gate (tool/parity_gate.py) RETIRED — py engine
+      # fully retired (hexa-단일 production). 권위 평가 = 실제 anima CLI 단일진입(`anima eval`)
+      # ONLY (a_engine_native_learning). retired tool 보존 = state/py_retire_archive/defunct_parity_tooling/.

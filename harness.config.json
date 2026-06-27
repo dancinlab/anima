@@ -29,18 +29,13 @@
         "id": "anima-gates",
         "cmd": "python3 tool/enforce_anima_gates.py",
         "timeoutMs": 60000
-      },
-      {
-        "id": "parity-gate",
-        "cmd": "python3 tool/parity_gate.py",
-        "timeoutMs": 600000
       }
     ]
   },
   "lint": {
     "freshnessFiles": [],
     "changelog": {
-      "file": "CHANGELOG.md",
+      "file": "CHANGELOG.jsonl",
       "triggerPattern": "\\.(hexa)$",
       "ignore": [
         "(^|/)(tests?|__tests__|spec)/",
@@ -60,7 +55,7 @@
   ],
   "docs": {
     "architecture": "ARCHITECTURE.json",
-    "log": "CHANGELOG.md",
+    "log": "CHANGELOG.jsonl",
     "scratchDir": "state/scratch",
     "scopeDirs": [
       ""
@@ -83,7 +78,7 @@
       "BRAIN.log.md",
       "BRAIN.md",
       "BRIDGE.md",
-      "CHANGELOG.md",
+      "CHANGELOG.jsonl",
       "CHANNEL.log.md",
       "CHANNEL.md",
       "CLAUDE.md",

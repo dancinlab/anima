@@ -7,14 +7,15 @@
 // This standalone command is for the SEPARATE case: re-exporting an ALREADY-TRAINED torch
 // .pt checkpoint (recovery, re-export, re-verification) WITHOUT re-training.
 //
-// REFERENCE-MATCH (NOT a reimplementation · a_engine_native_learning 2-production):
-// re-serializing a torch .pt to .clm is a py-native bridge operation — the byte layout
-// SSOT is train/clm/model/clm_serialize_v2.py::serialize_v3 and the held-out gate is
-// train/clm/model/verify_clm_v2.py descent. The hexa side's own serialize_clm
-// (cli/train.hexa) packs a LIVE in-memory trained model, not a .pt FILE; loading a torch
-// .pt is py-native. So — exactly as cli/train.hexa already shells out to `python3
-// verify_clm_v2.py descent` for its gate — this hexa twin DISPATCHES to cli/serialize.py
-// (the production py serializer twin). One bridge backend, two installed entry surfaces.
+// HEXA ENTRY + IRREDUCIBLE TORCH BACKEND (py engine retired 2026-06-28, hexa-single):
+// re-serializing a torch .pt to .clm needs to UNPICKLE a torch .pt — that is irreducibly
+// Python (no hexa equivalent without reimplementing pickle/zip). So this cli/serialize.hexa
+// owns the hexa-native CLI orchestration (arg parse + dispatch), and the ONE irreducible
+// torch step lives in the KEPT torch-interop tool train/clm/model/serialize_standalone.py
+// (byte layout SSOT = clm_serialize_v2.py::serialize_v3 · held-out gate = verify_clm_v2.py
+// descent — both KEPT torch-interop tools, NOT py engine mirrors). The hexa trainer's own
+// serialize_clm (cli/train.hexa) packs a LIVE in-memory model to .clm directly; THIS command
+// is only for re-exporting an ALREADY-TRAINED .pt FILE (recovery/re-export).
 //
 // USAGE (installed `anima` PATH command — NOT `hexa run`):
 //   anima serialize <ckpt.pt> <out.clm> [--heldout <path>] [--train <path>] [--nwin N]
@@ -50,7 +51,9 @@ fn serialize_collect_argv(raw: [string]) -> [string] {
 
 // ── MAIN ────────────────────────────────────────────────────────────────────
 // argv (after "--") = [<ckpt.pt>, <out.clm>, --heldout ..., --train ..., --nwin N].
-// Forward verbatim to cli/serialize.py (the py serializer twin owns the bridge + gate).
+// Forward verbatim to the KEPT torch-interop tool train/clm/model/serialize_standalone.py
+// (.pt unpickle is irreducibly torch — no hexa equivalent; this hexa entry owns the CLI
+// orchestration, the kept tool owns the .pt-read + serialize_v3 + descent gate).
 fn main() {
     let argv = serialize_collect_argv(args())
     if len(argv) < 2 {
@@ -58,11 +61,11 @@ fn main() {
         return
     }
 
-    println("=== anima serialize → cli/serialize.py (torch .pt → .clm v0.3 bridge + DESCENT gate) ===")
+    println("=== anima serialize (hexa) → train/clm/model/serialize_standalone.py (torch .pt → .clm v0.3 bridge + DESCENT gate) ===")
     let mut fwd = ""
     let mut i = 0
     while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "python3 cli/serialize.py" + fwd + " 2>&1"
+    let cmd = "python3 train/clm/model/serialize_standalone.py" + fwd + " 2>&1"
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
