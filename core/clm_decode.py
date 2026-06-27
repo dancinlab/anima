@@ -421,7 +421,16 @@ def _conv1d(x, Wt, b, T, Cin, Cout, K, dil):
         valid = p >= 0
         xcol[valid, :, k] = x[p[valid], :]
     xcol = xcol.reshape(T, Kdim)
-    mm = xcol @ Wt                                # [T, Cout]
+    # numpy's SIMD matmul loop raises SPURIOUS FPE flags (divide-by-zero /
+    # overflow / invalid) from uninitialized SIMD-lane padding on arm64
+    # (numpy#25530) even when inputs AND outputs are entirely finite. Those
+    # benign warnings have been MISREAD as real weight overflow/NaN (a false
+    # "bind .clm codec defect" diagnosis, state/1620_clm_bind_codec). Suppress
+    # the spurious flag here — the math is unchanged (output byte-identical to
+    # the native .hexa path, which has no such warning). This is NOT a NaN mask:
+    # any real non-finite is still produced; we only silence the FPE *flag*.
+    with np.errstate(divide="ignore", over="ignore", under="ignore", invalid="ignore"):
+        mm = xcol @ Wt                            # [T, Cout]
     return mm + b[None, :]
 
 

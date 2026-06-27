@@ -52,19 +52,31 @@ param-matched). 측정 frozen bar = `PREREG.md`(tune-to-green 0).
 > (aside, NON-Φ) phi_proxy(NOT faithful IIT4, `a_phi_iit4_tool` pre-screen only): ctrl~27 · bind~30 · bind_linear~3.8.
 > 곱셈/ctrl readout 이 additive-bind_linear 보다 높은 proxy — 단 proxy 라 Φ verdict 아님, 관찰 기록만.
 
-## 4. engine-native (terminal) 상태 — BLOCKED-by-construction
+## 4. engine-native (terminal) 상태 — UNBLOCKED ✅ (CLMB bind-codec)
 
-- **bind/bind_linear 은 .clm 직렬화 불가** — `.clm` v0.3(`core/clm_decode.hexa`)는 additive readout 만 안다.
-  Hadamard readout op(Wa,Wb,⊙,Wo)을 `.clm` 으로 export 하려면 **bind-codec(RTYPE=1) 신설** + clm_decode/serializer
-  engine-transform 필요(`a_engine_native_learning` engine-transform-to-fit) = **follow-on**.
-  → 따라서 A/B engine-native G1/G6 는 이번에 BLOCKED. 본 verdict 는 **DIRECTIONAL**(torch probe + held-out)로 정직 표기.
-- **ctrl 만 .clm 직렬화됨**(3 seed, clm_decodable=True, 176MB each) → engine-native anchor 가능하나 (a) CTRL 은
-  binding 없어 A/B 비교 불가 (b) 기존 clm303 G6 wall 재현뿐. 비용 대비 가치 낮아 CTRL engine-native eval 도 follow-on.
+> 2026-06-28 update: §4 의 BLOCKED-by-construction 은 **해소됨**. CLMB bind-readout
+> 코덱(RTYPE=1 Hadamard u⊙v · RTYPE=2 linear u+v)이 `clm_serialize_v2.serialize_v3_bind`
+> ⇄ `core/clm_decode.{py,hexa}` 에 배선되어 bind/bind_linear `.pt` → `.clm` export 가
+> 가능하고, **live core/clm_decode.hexa 가 decode**(`a_engine_native_learning`
+> engine-transform-to-fit 충족). 자세한 코덱 verdict = `state/1620_clm_bind_codec/RESULT.md`.
+
+- **bind_seed7.pt → bind_seed7.clm (RTYPE=1, 199.6MB)** export·decode 성공. 한때 의심된
+  "코덱 overflow/NaN" 은 **arm64 numpy 의 spurious matmul FPE 경고**(numpy#25530) 오진이었음
+  (실 가중치 non-finite=0, decode finite, DESCENT PASS). 코덱은 **결함 없음(SOUND)**.
+- **held-out DESCENT gate (verify_clm_v2 descent): bind PASS** — F-CLM-DESCENT=1,
+  heldout_model_ce 2.301 < uniform 5.545 < shuffle 7.711, overfit_warning False, coherent argmax.
+- **engine-native A/B (terminal, live core/clm_decode.hexa, nwin=4, corpus.txt):** 3 arm 전부 GREEN —
+  ctrl(RTYPE0) model_ce 1.852 · bind(RTYPE1) 1.815 · bind_linear(RTYPE2) 1.811 (all < shuffle < uniform),
+  coherent argmax, hexa⇄py byte-parity(model_ce 1.815089 일치) = LOCKSTEP 확인.
+- **G1/G6 engine-native A/B 는 여전히 BLOCKED(mac)** — 303M G6 multiseed 생성은 mac CPU 무거움
+  (heavy decode → pool). single-decode CE/argmax 는 terminal 완료, 풀 G0-G6 multiseed 는 pool GPU follow-on.
+  §2-3 의 torch-probe G1/G6 verdict(G1=0 floored, G6 noise)는 코덱 작업으로 바뀌지 않음.
 
 ## 5. follow-on (ING)
-1. **bind-codec engine-transform** — `train/clm/model/clm_serialize_v2` + `core/clm_decode.hexa` 에 RTYPE=1
-   bind-readout op 신설 → bind .pt 를 `.clm` export → `anima eval` engine-native G1/G6 A/B (terminal 승격 경로).
-2. **scale recheck** — 생성 gate floor 해소(더 큰 corpus/step 으로 G1/G6 가 분해능 가질 때) 후 binding A/B 재측정.
+1. ~~bind-codec engine-transform~~ **DONE** (CLMB codec, 1620). bind/bind_linear `.clm` export+decode 완료.
+2. **G0-G6 single-entry on pool GPU** — `cli/anima.hexa -- eval <bind.clm>` 3 arm × 3 seed engine-native
+   G1/G6 A/B (terminal 승격). mac 차단(303M decode 무거움), pool GPU 호스트 필요.
+3. **scale recheck** — 생성 gate floor 해소(더 큰 corpus/step 으로 G1/G6 가 분해능 가질 때) 후 binding A/B 재측정.
 
 ## 6. ckpt
 - torch `.pt` × 9 (ctrl/bind/bind_linear × {7,4302,4303}, 각 ~1.5GB) + ctrl `.clm` × 3 (176MB) + `.json` × 9.

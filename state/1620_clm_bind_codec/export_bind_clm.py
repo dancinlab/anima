@@ -44,8 +44,33 @@ def main():
     sd = torch.load(a.ckpt, map_location="cpu")
     if isinstance(sd, dict) and "model" in sd and hasattr(sd.get("model"), "items"):
         sd = sd["model"]
+    # Mirror the ctrl serialize path's ACTIVE-EXPERT slice (trainer.py): keep only
+    # the first e_active = router.cout experts and slice router weight/bias to
+    # e_active. The BindCLM trunk lives under 'base.'; the router is
+    # 'base.moe.router.weight' and experts are 'base.moe.experts.{j}.*'. e_active
+    # caps at the experts physically present (E2->E3 mitosis may leave a wider
+    # router than active experts). The byte grammar is self-describing, so the
+    # decoder recovers E from the serialized router cout — slicing keeps the
+    # serialized E consistent with the experts actually written.
+    rW = sd.get("base.moe.router.weight", sd.get("moe.router.weight"))
+    n_present = len([k for k in sd if ".moe.experts." in k and k.endswith(".conv.conv.weight")])
+    e_active = min(int(rW.shape[0]), n_present) if rW is not None else a.E
+    pref = "base." if any(k.startswith("base.") for k in sd) else ""
+    sliced = {}
+    for k, v in sd.items():
+        if k in (pref + "moe.router.weight", pref + "moe.router.bias"):
+            sliced[k] = v[:e_active].contiguous()
+        elif (pref + "moe.experts.") in (k[:len(pref) + len("moe.experts.")]
+                                         if k.startswith(pref + "moe.experts.") else ""):
+            if int(k.split(".")[k.split(".").index("experts") + 1]) < e_active:
+                sliced[k] = v
+        else:
+            sliced[k] = v
+    if e_active != a.E:
+        print(f"  NOTE: --E {a.E} != active experts {e_active} (router cout {int(rW.shape[0])}, "
+              f"present {n_present}); serializing E={e_active} (ctrl-parity active slice).")
     # serialize_v3_bind accepts the BindCLM state_dict (base.<trunk> + Wa/Wb/Wo).
-    S.serialize_v3_bind(sd, n_trunk_layers=a.L, n_experts=a.E,
+    S.serialize_v3_bind(sliced, n_trunk_layers=a.L, n_experts=e_active,
                         readout_type=a.readout_type, out_path=a.out)
     print(f"WROTE bind .clm {os.path.getsize(a.out)} bytes -> {a.out} "
           f"(readout_type={a.readout_type} d={a.d} L={a.L} E={a.E} k={a.k})")

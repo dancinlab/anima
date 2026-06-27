@@ -498,7 +498,21 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: · core/clm_decode.hexa"
+              "text": "**summary**: · core/clm_decode.hexa · **CLMB bind-readout codec (RTYPE)**: optional `CLMB` trailer makes the readout self-describing — RTYPE=0 additive (default) · 1 Hadamard u⊙v · 2 linear u+v (EXP-3 ARM-BIND H_1603/H_1617). codec SOUND."
+            },
+            {
+              "type": "subsection",
+              "title": "CLMB bind-codec detail",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "writer = clm_serialize_v2.py::serialize_v3_bind (roW carries Wo(V,k), CLMB carries Wa/Wb(k,d)+biases) · reader = clm_readout_type/_clmd_load + _fwd_logits bind branch (clm_decode.{hexa,py} byte-parity LOCKSTEP)."
+                },
+                {
+                  "type": "prose",
+                  "text": "2026-06-28: prior 'overflow/NaN defect' was a spurious arm64 numpy#25530 matmul FPE flag (not corruption); real 303M bind .clm decodes GREEN + held-out DESCENT. verdict = state/1620_clm_bind_codec/RESULT.md."
+                }
+              ]
             }
           ]
         },

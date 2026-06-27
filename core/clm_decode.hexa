@@ -183,6 +183,10 @@ fn _clmd_conv1d(x: int, w: int, b: int, y_out: int,
         while j < Kdim { t_set(Wt, j*Cout + co, t_get(w, co*Kdim + j)); j = j + 1 }
         co = co + 1
     }
+    // native GEMM — no spurious FPE flags. (py mirror clm_decode.py wraps the
+    // numpy `@` in np.errstate to silence arm64 numpy#25530 benign FPE warnings
+    // that were MISREAD as a bind-codec overflow; output is byte-identical, so
+    // 2-production parity is preserved — state/1620_clm_bind_codec.)
     let mm = forge_dispatch_matmul(xcol, T, Kdim, Wt, Cout)
     let mut t2 = 0
     while t2 < T {
