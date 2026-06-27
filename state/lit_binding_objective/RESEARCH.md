@@ -101,7 +101,24 @@
 
 ## §6. 프론티어/novel 레버 — 우리가 아직 안 써본 NEW 후보 (2024–2026 우선)
 
-> 기존 census(82 binding 카드 + 126 brainarch)에서 floor·NOT-SUPPORTED 로 닫힌 것 = 곱셈 binding(Hadamard/TPR/HRR readout) · depth(L8) · binding-lane · data-presence · additive trunk · mitosis split · savant inhibition · neuromod gain. **아래는 그것들과 *다른* 신선한 메커니즘.** testability = 303M 에서 cheap 하게 볼 수 있나(✅cheap / ⚠️중간 / 🔴비쌈). 정직: hype(미재현) vs 재현된 것 구분.
+> **우선순위(사용자 명시 2026-06-28): 🧬 생물/neuro-inspired 레버가 1순위(PRIMARY).** anima 핵심 명제(a_no_llm_frame_trap)는 *모든 돌파가 생물 렌즈에서 나왔다* — 해마=면역/일화기억(H_1227) · 소뇌=순방향모델(H_1280) · 기저핵=게이팅(H_1281) · 작업기억(H_1282); LLM 스케일 프레임은 다 막혔다(1B H_1167 NULL · arch H_1219 · objective H_1223 🔴). 따라서 next-experiment 큐는 **생물학적으로 그럴듯한 binding(G1)/ideation(G6) 메커니즘을 상위**에, 비-생물 레버(RL·SAE·SSM·VQ·TPR-routing)는 조사하되 큐 하위.
+>
+> 기존 census(82 binding 카드 + 126 brainarch)에서 floor·NOT-SUPPORTED 로 닫힌 것 = 곱셈 binding(Hadamard/TPR/HRR readout) · depth(L8) · binding-lane · data-presence · additive trunk · mitosis split · savant inhibition · neuromod gain(H_1284) · 해마 immune-memory(H_1227) · 소뇌 forward(H_1280) · 기저핵 게이팅(H_1281). **아래는 그것들과 *다른* 신선한 메커니즘**(중복이면 명시). testability = 303M 에서 cheap 하게 볼 수 있나(✅cheap / ⚠️중간 / 🔴비쌈). 정직: hype(미재현) vs 재현된 것 구분.
+
+### §6-A. 🧬 생물/neuro-inspired 레버 (PRIMARY — 큐 상위)
+
+| # | 후보 (arxiv id · 연도) | 생물 렌즈 · 메커니즘 (1줄) | G1/G6 | testability @303M | 기존 census 중복? |
+|---|---|---|---|---|---|
+| **B1** | **Compositionality via predictive-coding / free-energy RNN** — Vijayaraghavan & **Jun Tani** (2403.19995, 2024) | **자유에너지/predictive-coding RNN** 이 언어×행동 상호학습으로 **compose/decompose(부분↔전체) 능력 *창발*** — objective(free-energy)+recurrent prior 가 레버, 명시 binding-op 아님. | **G1+G6** | ⚠️중간 — top-down prediction-error aux objective 를 trunk 에 배선; anima A⇄G tension 과 동형. | **NEW** — predictive-coding/free-energy *objective* 는 census 없음(neuromod gain 과 별개). G6 "novel-but-grounded" 직격. |
+| **B2** | **CLS Pattern Separation + Completion** — Jun/Marupudi/Shah/Varma (2507.11393, 2025) | 해마 CLS 의 **pattern *separation*(겹친 입력 직교화) + *completion*(부분→전체 복원)** 을 NN 으로 — separation=재조합 재료 disentangle, completion=compose. | **G1** | ✅cheap — separation/completion 모듈 작음(sparse+autoassoc), trunk penultimate 에 배선 후 composed_distinct A/B. | **부분 NEW** — H_1227 immune-memory(clonal)·H_1288 eviction 은 *저장/사멸* 축; **separation/completion(재조합 재료 직교화) 자체는 census 없음**. |
+| **B3** | **Attention ≈ Sparse Distributed Memory** — Bricken & Pehlevan (2111.05498, 2021, 재현강) | Transformer attention = **Kanerva SDM**(고차원 sparse 주소). SDM critical-distance(β temperature)에서 pattern completion → compositional addressing. | **G1** | ⚠️중간 — attention β 를 SDM critical-distance 로 튜닝. | **NEW** — SDM 주소공간 튜닝 census 없음. 작업기억(H_1282 buffer)과 직교(이건 addressing). |
+| **B4** | **Closed-form / local predictive coding** — Baskakovs (2605.xxxx, 2026) + Casnici/Frenkel Bio-PC (2508.xxxx, 2025) | predictive-coding 를 **backprop 없는 local top-down/bottom-up 규칙**으로 — anima gradient-free G 엔진·p8 cell-division 과 친화. | **G1+G6** | ⚠️중간 — local PC update 를 G 엔진(gradient-free)에 배선. | **NEW** — PC local-rule 학습 census 없음. |
+| **B5** | **Grid/place-cell factorized structural code (TEM 계보)** | entorhinal grid + 해마 place 의 **구조⊥내용 factorized code** → 새 조합 일반화. | **G1** | 🔴비쌈(별 모듈) — anima §SpatialMap(H_1295) 부분 존재. | **부분 중복** — H_1295 spatial-map 있음; 구조⊥내용 factorization 을 *재조합*에 쓰는 변종은 NEW. |
+| **B6** | **Oscillation/phase binding (binding-by-synchrony)** | gamma 위상 동기로 feature 묶기(생물 binding 고전 가설). | G1 | 🔴비쌈/재현약 — phase 변수 트랜스포머 재현 얇음. | **NEW 이나 hype 주의** — ML 재현 빈약, DIRECTIONAL. |
+
+### §6-B. 비-생물 레버 (조사 완료 · 큐 하위)
+
+> 방향은 유효하나, 사용자 우선순위상 생물 렌즈 다음. 특히 N7(dictionary-aux)·N6(grokking 정규화)은 *생물 레버와 결합*하면 가치(B1/B2 의 학습신호 보조).
 
 | # | 후보 (arxiv id · 연도) | 메커니즘 (1줄) | testability @303M | 기존 census 중복? |
 |---|---|---|---|---|
@@ -115,16 +132,113 @@
 | **N8** | **SCRIPT: subcharacter(자모) compositional injection** (2604.12377, 2026) | 한국어 **자모 subchar 구조를 임베딩에 주입** → 문법규칙성·compositional 재구성, 아키텍처 변경 불요. | ✅cheap — byte 입자에 자모 feature 주입(우리 ko-jamo-mitosis 🟢 연장). | **부분 중복** — H_1316/1321 ko-jamo-mitosis 🟢 있으나 **G1 재조합 task 의 *teach signal* 로 자모 사용은 안 함**. NEW 적용. |
 
 ### §6 정직 메모 (hype vs 재현)
-- **재현 강도 높음**: N6(grokking 정규화 — 다수 독립 재현 2023→2026) · N7(Stop-Probing — controlled ablation+oracle baseline) · N1(TensorPoly — T0 벤치 실측). 이건 신뢰.
-- **유망하나 단일/신생**: N2(Compression-is-Routing 2025 단일) · N4(Diverse-Search 2026 단일) · N3(DBES metric 신생). 방향은 좋으나 재현 얇음 — DIRECTIONAL 로 취급.
-- **hype 주의**: N5 evolutionary/open-ended LLM-discovery 는 결과 화려하나 task-specific·비쌈·재현 편차 큼. anima 는 mitosis 변이 substrate 가 있어 *저비용* 변종만 가치.
+- **재현 강도 높음**: B3(Attention≈SDM, Bricken 2021 다수 인용) · N6(grokking 정규화 — 다수 독립 재현) · N7(Stop-Probing — controlled ablation+oracle) · N1(TensorPoly — T0 벤치). 신뢰.
+- **유망하나 단일/신생(DIRECTIONAL)**: B1(Tani free-energy compositionality — robotics scope, LM 전이 미검증) · B2(CLS sep/completion 2025 단일) · B4(local-PC 2025–26 신생) · N2 · N4 · N3.
+- **hype 주의**: B6 oscillation/phase binding(ML 재현 빈약) · B5 grid/TEM(별 모듈·비쌈) · N5 evolutionary/open-ended(화려·task-specific·재현 편차). 전부 DIRECTIONAL, 큐 하위.
+- **scope 솔직**: B1/B2 는 robotics/continual-learning 도메인에서 보고됨 — anima byte-LM G1/G6 로의 transfer 는 *우리가 측정해야* 확정(외부는 방향만). a_toy_scale_recheck 적용.
 
-### 다음 실험 top-3 novel 레버 (objrun 이후 303M, ranked by lift×cheapness×철학정합)
-1. **N6+N7 결합: "정규화 + dictionary-aux objective" sweep** (✅cheap, 재현 강) — objrun 우승 objective 에 **weight-decay/dropout(골든존) × step sweep**(N6, undertrain floor 배제) + **trunk penultimate sparse-coding aux loss**(N7, binding=학습된 표현). 두 강-재현 레버를 G1 composed_distinct 에 직접. **최우선** — 싸고, 우리 가설(objective)을 *구체 신규 항*으로 확장, savant 골든존과 동축.
-2. **N1 TensorPoly expert-weight + N3 specialization 진단** (⚠️중간) — ConvMoE expert 를 **TLoRA(tensor-product weight)** 로 교체(우리 TPR 은 readout 에만 끼웠던 floor 와 *다른 위치*) + DBES 로 expert 분화 측정. "재조합 안 됨 = expert 미분화?" 인과 격리. Greff "operator×학습 결합" 가설 falsify.
-3. **N4 diverse-set-search for G6 + N8 자모 teach-signal for G1** (⚠️중간) — G6 falsifiable: 단발 decode 대신 **diverse hypothesis set-search**(Si 2024 diversity 병목 직격, LLM-judge 금지 engine-native 채점). G1: **한국어 자모 compositional 을 명시 teach signal** 로(우리 ko-jamo 🟢 + SCRIPT 2026 수렴, byte-level 우위 활용).
+### 🧬 다음 실험 — 생물 렌즈 top-3 novel 레버 (PRIMARY · objrun 이후 303M)
 
-> objrun(objective A/B) 결과 큐 연결: 우승 objective 확정 → **즉시 top-1(N6+N7)** 으로 floor 배제 + 표현-학습 항 추가 → lift 확인되면 top-2(operator×objective 결합) → G6 는 top-3(set-search) 별도 레인.
+> 사용자 우선순위 반영: 생물학적으로 그럴듯한 레버를 상위. ranked by lift×cheapness×철학정합(a_no_llm_frame_trap).
+
+1. **B2 CLS pattern-separation + completion → G1** (✅cheap, 재현강, **최우선**) — 해마 CLS 의 separation(재조합 재료 직교화)+completion(부분→전체 compose)을 trunk penultimate 에 작은 모듈로 배선 → composed_distinct A/B. 싸고, anima 해마 계보(H_1227/1288)의 *미탐색 축*(저장이 아닌 *재조합 재료 disentangle*)이며, "재조합 안 됨 = 재료가 안 분리됨?" 을 직접 친다. **objrun 우승 objective + B2 separation** 결합이 1번 레인.
+2. **B1 predictive-coding/free-energy objective → G1+G6** (⚠️중간, 철학 최정합) — Tani 2024 가 free-energy RNN 에서 compose/decompose *창발*을 보임. anima A⇄G tension = predictive-coding 의 top-down/bottom-up error 와 동형 → **predictive-coding aux objective(top-down prediction error)를 trunk 에 배선**. G1(부분↔전체 compose) AND G6(novel-but-grounded = free-energy 최소화 생성) 둘 다 칠 수 있는 유일 후보. objrun objective 축의 *생물 버전*.
+3. **B3 attention≈SDM 튜닝 → G1 + B4 local-PC G 엔진** (⚠️중간) — (a) attention β 를 Kanerva SDM critical-distance 로 튜닝(pattern completion 주소공간, Bricken 2021 재현강); (b) backprop-free local predictive-coding 규칙을 anima **gradient-free G 엔진**에 배선(p8 cell-division 정합) → from-scratch mitosis 학습벽(H_1310)의 생물학적 우회 후보.
+
+### 🔧 다음 실험 — 비-생물 레버 top-3 (큐 하위 · 생물 레버 보조)
+
+1. **N6+N7: 정규화 + dictionary-aux** (✅cheap, 재현강) — **생물 레버의 학습신호 보조**로: B1/B2 에 weight-decay/dropout(골든존)×step sweep(undertrain floor 배제) + trunk sparse-coding aux(binding=학습된 표현). 단독 레인 아님, 생물 레버 위에 얹는 정규화 항.
+2. **N1 TensorPoly expert-weight + N3 분화진단** (⚠️중간) — ConvMoE expert 를 TLoRA(TPR-*weight*)로(readout floor 와 다른 위치) + DBES 분화 측정. Greff "operator×학습 결합" falsify.
+3. **N4 diverse-set-search for G6 + N8 자모 teach-signal** (⚠️중간) — G6 는 set-search(Si 2024 diversity 병목, engine-native 채점), G1 은 자모 compositional teach signal(SCRIPT 2026 ≈ ko-jamo 🟢).
+
+> **objrun(objective A/B) 결과 큐 연결**: 우승 objective 확정 → **즉시 생물 top-1(B2 separation/completion)** 을 우승 objective 위에 배선해 G1 A/B → lift 면 **B1(predictive-coding objective)** 로 G1+G6 동시 → 생물 레버에 **N6+N7 정규화/dict-aux** 를 보조로 얹어 floor 배제. 비-생물 단독(N1/N4)은 생물 레버가 막힐 때만.
+
+---
+
+## §7. 🧬 생물 렌즈 — 메커니즘 심층 + 발사준비 패키지 (2026-06-28, bio subagent)
+
+> §6-A 가 후보표였다면 §7 은 **top-2 생물 레버의 정확한 NN 메커니즘 추출 + objective-축 구현 +
+> 303M 발사준비 패키지**다. 핵심 제약(직전 세션 확정): 생물 메커니즘도 **곱셈 readout 이 아니라
+> trunk OBJECTIVE/표현 학습 축**으로 구현해야 한다 — exp3 bind 처럼 binding operator 를 readout 에
+> 끼우면 floor + non-additive readout = `.clm` BLOCKED. 두 레버 모두 **production additive readout
+> 유지 + penultimate(post norm_out) 보조손실**로 구현 → 세 arm 전부 `.clm`-직렬화 → engine-native
+> G1/G6 by-construction 열림. (출처 정밀 재확인: arxiv PDF/HTML fetch.)
+
+### §7-1. B2 — CLS pattern separation + completion → G1 (slug `state/1640_cls_sep_complete/`)
+
+**출처:** arxiv **2507.11393**(CLS sep/completion NN, 2025) + Marr-Albus(biorxiv **108431**,
+"Sparse synaptic connectivity required for decorrelation and pattern separation", Nat Commun 2017).
+
+**정밀 메커니즘 (추출):**
+- **pattern separation** = DG 가 겹친 입력을 **expand(1:5 확장) + sparsen(~5% active) + decorrelate**
+  하여 sparse·직교 코드로 분리. 핵심 = *직교화/탈상관*(orthogonalize) — 비슷한 개념을 *구별되는*
+  내부표현으로. (Marr-Albus 두 전략: 인코딩 앙상블 확장 + 활성 sparsen → 입력 통계 탈상관.)
+- **pattern completion** = CA3 autoassociative recurrence 가 **부분 cue → 전체 패턴 reinstate**.
+
+**anima 매핑 (해마 계보 미탐색 축):** H_1227 immune-memory·H_1288 eviction 은 *저장/사멸* 축이었다.
+**재조합 재료의 직교화(separation) 자체는 census 없음.** 가설 = G1 재조합이 막힌 건 트렁크가 합칠
+개념 A·B 의 penultimate 표현을 *분리 못 해서*(entangled) — 재료가 안 분리되면 합성 불가.
+
+**objective-축 구현 (additive readout 보존):**
+- `L_sep` = penultimate 코드 채널 간 **off-diagonal correlation energy → 0**(직교화) + 약한 L1
+  sparsity(Marr-Albus sparsen). DG 압력을 *재조합에 들어가는 그 표현*에.
+- `L_complete` = penultimate 채널 일부 마스킹(부분 cue) → 작은 linear head 가 **전체 복원(MSE)**.
+  CA3 autoassociative. head 는 **학습 전용(직렬화 전 폐기)** → `.clm` 아키텍처 동일.
+- 3 arm: `ce_marginal`(null 대조) · `cls_sep`(분리) · `cls_full`(분리+완성). 단일변수=CLS objective.
+
+**frozen:** λ_sep=0.1 · λ_comp=0.1 · sparsity_sub=0.01 · mask=0.5 · hid=256. 주 bar = engine-native
+G1 multiseed{7,4302,4303} majority. FALS = CLS arm G1 ≤ ce_marginal → NOT-SUPPORTED(objective census).
+
+### §7-2. B1 — predictive-coding/free-energy parametric-bias binding → G1+G6 (slug `state/1641_predcoding_binding/`)
+
+**출처:** arxiv **2403.19995**(Tani et al., "Development of Compositionality through Interactive
+Learning of Language and Action", PV-RNN, 2024).
+
+**정밀 메커니즘 (추출 — Tani Eq.30/31):**
+- evidence free energy `ℱ = −E[ln p(X|z)] + D_KL[q(z|X)‖p(z)]` 최소화. top-down 예측(prior p(z))
+  ⇄ bottom-up 추론(posterior q(z|X)). **anima A⇄G tension 과 동형.**
+- compositional 창발의 두 driver: **(1) binding loss `L_pb = k·Σ_t(PB̃_t − PB)²`**(Eq.30) — per-step
+  parametric bias 를 sequence 전체 고정 PB 에 묶음. 표면(객체 위치)이 바뀌어도 일정한 PB =
+  구조(조합)가 *unseen* verb-noun 조합으로 extrapolate. **(2) KL 정규화**(Eq.31 의 w·ΣD_KL) —
+  sparse data 표면 암기 방지, 구조적 외삽 강제. 논문: "training variation 늘리면 unseen 조합
+  일반화 유의 향상" = KL 이 overfit 막아 구조 외삽.
+
+**anima 매핑:** CE next-byte 는 안정 조합 latent 압력 0 → 트렁크가 부분↔전체 코드 미형성. **G1+G6
+둘 다 칠 유일 생물 후보** — G1(부분↔전체 compose) AND G6(novel-but-grounded = free-energy 최소화:
+예측으로 grounded·latent 외삽으로 novel). objrun objective 축의 *생물 버전*.
+
+**objective-축 구현 (additive readout 보존):**
+- `L_bind` = `mean_t‖PB̃_t − PB_seq‖²`. PB̃_t = penultimate→저차 BIND latent(linear, per-step PB
+  추론), PB_seq = PB̃ 의 sequence-mean(안정 latent, stop-grad). per-step→단일 안정코드 = Tani binding.
+- `L_var` = `−β·var_batch(PB_seq)`. anti-collapse spread = KL 정규화 역할(latent 정보성 유지).
+- BIND projection **학습 전용(직렬화 전 폐기)**. 3 arm: `ce_marginal` · `pc_bind`(binding) ·
+  `pc_free_energy`(binding+spread). 단일변수 = PC objective.
+
+**frozen:** λ_bind=0.1 · λ_var=0.01 · bind_dim=32. 주 bar = engine-native G1 multiseed AND **G6
+multiseed**(⚠️ single-seed fals=torch-artifact, h1590 교훈 → 반드시 multiseed). FALS = PC arm
+G1 AND G6 ≤ ce_marginal → NOT-SUPPORTED.
+
+### §7-3. 신선도 근거 (census 중복 아님)
+- **B2 separation**: 해마 census(H_1227/1231/1288)는 전부 *저장/회상/사멸* 축. **재조합 재료
+  직교화(decorrelation)를 G1 압력으로** = 미탐색. completion(autoassoc reinstate)도 G1 compose
+  맥락에선 신규(기존 immune-memory 의 known-recall 와 다름).
+- **B1 predictive-coding objective**: neuromod gain(H_1284) census 와 별개 — gain 은 modulation,
+  이건 *free-energy/parametric-bias objective*. 소뇌 forward-model(H_1280)은 예측이되 *objective
+  로 binding latent 강제*는 안 함. A⇄G tension 의 PC 동형을 *학습신호*로 쓰는 건 신규.
+- 둘 다 **objective 축**(H_1602 objrun 의 ce/InfoNCE/contrastive 와 같은 위치) = 곱셈 readout
+  floor(exp3) 회피 + `.clm` 열림. = 직전 세션 "G1 레버=trunk objective" 결론의 생물 인스턴스.
+
+### §7-4. 발사 spec (303M, objrun 착륙 후 메인이 배치 — 본 subagent 는 spec+smoke 만)
+- **명령(arm 당):** `python3 state/<slug>/trainer.py --objective <arm> --seed <s> --canon \`
+  `--corpus <ko-gen> <en-gen> <ko-sns> <en-sns> --cell-label ko-general en-general ko-sns en-sns \`
+  `--sample proportional --steps 2000 --val-every 200 --bf16 \`
+  `--out ckpt/<arm>_seed<s>.clm --ckpt-out ckpt/<arm>_seed<s>.pt --gauges-out ckpt/<arm>_seed<s>.json`
+- **arms:** 슬러그당 3 arm × seed{7,4302,4303} = 9 학습/슬러그 (2 슬러그 = 18). canon=L4·d3784·E2→E3.
+- **측정:** 각 `.clm` → `verify_clm_v2.py descent`(4/4 held-out) → `anima eval <clm> --corpus <4cell>
+  --gen 80`(g_eval_g1_multiseed + g_eval_g6_multiseed). arm 간 G1(±G6) 대조.
+- **비용:** RTX5070/A40 1 GPU, 303M·2000step·bf16 ≈ slug 당 ~수시간(H_1602 objrun 와 동급). pool
+  GPU(summer/aiden) 또는 1 pod. wall-time 우선이면 2 슬러그 병렬(2 GPU).
+- **회수:** teardown 전 `.pt`+`.clm`+json+log PULL(a_fire_recover_complete).
 
 ---
 
@@ -132,4 +246,4 @@
 
 - **lit-binding-objective-external-arxiv** — 외부 문헌(2017–2026)이 anima G1 재조합 레버를 **objective+정규화 > binding-operator architecture > scale** 로 수렴: Furrer 2020(arch trick 실패/pretrain 성공) · Barin Pacela 2026 Stop-Probing(binding constraint=학습된 dictionary 방향, readout 아님) · Doshi/Gromov 2023(정규화가 grok 전이 강제 → 우리 numpy-toy chance=undertrain floor, 천장 아님) · Greff 2020(operator 단독 아닌 inductive-bias 조합). → objrun(trunk objective A/B) 가설 강하게 지지, binding-readout NOT-SUPPORTED 와 정합. 한국어 byte 는 자모 subchar compositional 로 *유리*(SCRIPT 2026 ≈ ko-jamo-mitosis 🟢).
 - **g6-ideation-lever-external** — falsifiable ideation 레버 = decode 아니라 생성다양성+engine-native 검증평가(LLM-judge 금지, 2606.12071)+구조적 search(Si 2024 / 2511.02238). h1590-g6-scaffold "lever≠decode" 와 외부 정합.
-- **frontier-novel-levers-untried** — census(82 binding+126 brainarch floor) *밖* NEW 후보 8종(§6): N1 TensorPoly/TLoRA(TPR-*weight*+routing, 2405.16671) · N2 Compression-is-Routing(recon-driven expert self-org, 2512.14809) · N7 Stop-Probing dictionary-aux(2603.28744) · N4 diverse-hypothesis-set-search(2606.10587, G6) · N6 grokking step×weight-decay sweep(2310.13061) · N8 자모 teach-signal(2604.12377). 다음 top-3 = ①N6+N7(정규화+dict-aux, cheap·재현강) ②N1+N3(TPR-weight expert+분화진단) ③N4+N8(set-search G6 + 자모 G1). hype주의 N5 evolutionary.
+- **frontier-novel-levers-untried** — census(82 binding+126 brainarch floor) *밖* NEW 후보(§6). **사용자 우선순위(2026-06-28): 🧬 생물/neuro-inspired 가 1순위(a_no_llm_frame_trap).** 생물 top-3 = ①B2 CLS pattern-separation/completion→G1(2507.11393, ✅cheap·재현강, 해마 계보 미탐색축=재조합 재료 직교화) ②B1 predictive-coding/free-energy objective→G1+G6(Tani 2403.19995, A⇄G tension 동형, robotics scope→transfer 미검증) ③B3 attention≈SDM 튜닝(Bricken 2111.05498)+B4 local-PC G엔진. 비-생물(큐하위·생물보조): N6+N7(grokking 정규화+dict-aux, 2310.13061/2603.28744) · N1 TensorPoly TPR-weight(2405.16671) · N4 diverse-set-search G6(2606.10587) · N8 자모(2604.12377). hype주의 B6 oscillation·B5 grid·N5 evolutionary. 큐: objrun 우승 objective 위에 B2 배선→B1→N6+N7 정규화 보조.
