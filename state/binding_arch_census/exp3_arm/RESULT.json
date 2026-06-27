@@ -1,0 +1,195 @@
+{
+  "config": {
+    "S": 8,
+    "C": 8,
+    "N": 3,
+    "block": 11,
+    "vocab": 19,
+    "steps": 4000,
+    "held_out": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        7,
+        2
+      ]
+    ],
+    "device": "cuda"
+  },
+  "runs": [
+    {
+      "arm": "ctrl",
+      "seed": 7,
+      "train_acc": 0.9995,
+      "heldout_val_acc": 0.9995,
+      "full_held_acc": 0.9998,
+      "hard_acc": 0.999,
+      "final_loss": 0.0056,
+      "wall_s": 27.7
+    },
+    {
+      "arm": "ctrl",
+      "seed": 4302,
+      "train_acc": 0.9655,
+      "heldout_val_acc": 0.9695,
+      "full_held_acc": 0.9643,
+      "hard_acc": 0.5,
+      "final_loss": 0.0907,
+      "wall_s": 54.9
+    },
+    {
+      "arm": "ctrl",
+      "seed": 4303,
+      "train_acc": 0.9858,
+      "heldout_val_acc": 0.9895,
+      "full_held_acc": 0.986,
+      "hard_acc": 0.835,
+      "final_loss": 0.0234,
+      "wall_s": 82.2
+    },
+    {
+      "arm": "bind",
+      "seed": 7,
+      "train_acc": 1.0,
+      "heldout_val_acc": 1.0,
+      "full_held_acc": 1.0,
+      "hard_acc": 1.0,
+      "final_loss": 0.0163,
+      "wall_s": 109.8
+    },
+    {
+      "arm": "bind",
+      "seed": 4302,
+      "train_acc": 1.0,
+      "heldout_val_acc": 0.999,
+      "full_held_acc": 0.9978,
+      "hard_acc": 0.9653,
+      "final_loss": 0.0056,
+      "wall_s": 137.5
+    },
+    {
+      "arm": "bind",
+      "seed": 4303,
+      "train_acc": 1.0,
+      "heldout_val_acc": 1.0,
+      "full_held_acc": 1.0,
+      "hard_acc": 1.0,
+      "final_loss": 0.0265,
+      "wall_s": 165.2
+    },
+    {
+      "arm": "bind_linear",
+      "seed": 7,
+      "train_acc": 0.999,
+      "heldout_val_acc": 0.999,
+      "full_held_acc": 0.998,
+      "hard_acc": 0.999,
+      "final_loss": 0.0023,
+      "wall_s": 193.0
+    },
+    {
+      "arm": "bind_linear",
+      "seed": 4302,
+      "train_acc": 0.9655,
+      "heldout_val_acc": 0.9695,
+      "full_held_acc": 0.9643,
+      "hard_acc": 0.5,
+      "final_loss": 0.1178,
+      "wall_s": 220.7
+    },
+    {
+      "arm": "bind_linear",
+      "seed": 4303,
+      "train_acc": 0.9902,
+      "heldout_val_acc": 0.9882,
+      "full_held_acc": 0.9818,
+      "hard_acc": 0.9835,
+      "final_loss": 0.1163,
+      "wall_s": 248.4
+    }
+  ],
+  "verdict": {
+    "summary": {
+      "ctrl": {
+        "hard_mean": 0.778,
+        "hard_std": 0.2077,
+        "hard_per_seed": [
+          0.999,
+          0.5,
+          0.835
+        ],
+        "full_mean": 0.9834,
+        "val_mean": 0.9862
+      },
+      "bind": {
+        "hard_mean": 0.9884,
+        "hard_std": 0.0164,
+        "hard_per_seed": [
+          1.0,
+          0.9653,
+          1.0
+        ],
+        "full_mean": 0.9993,
+        "val_mean": 0.9997
+      },
+      "bind_linear": {
+        "hard_mean": 0.8275,
+        "hard_std": 0.2317,
+        "hard_per_seed": [
+          0.999,
+          0.5,
+          0.9835
+        ],
+        "full_mean": 0.9814,
+        "val_mean": 0.9856
+      }
+    },
+    "bind_minus_ctrl": 0.2104,
+    "bind_minus_linear": 0.1609,
+    "bar": "BIND-CTRL>=0.15 AND BIND-LINEAR>=0.15 (mean hard_acc)",
+    "seed_consistency": "1/3",
+    "VERDICT": "SUPPORT [DIRECTIONAL toy, engine-native \uc544\ub2d8]"
+  }
+}
