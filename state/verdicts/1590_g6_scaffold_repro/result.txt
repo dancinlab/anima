@@ -1,0 +1,34 @@
+H_1590 — G6 IDEATION ★ scaffold ENGINE-NATIVE reproduction
+================================================================
+VERDICT: ⏳ BLOCKED-INFRA (substrate-speed/host-instability wall, a_break_the_wall type-c)
+         NOT a science verdict. NO bar moved. Engine-native decode could not complete on the
+         available pool hosts; measurement registered as ING follow-on for a stable GPU host.
+
+WHAT IS PROVEN (engine-native, grep-clean, both hosts):
+  ENGINE=core/g6_ideation.hexa + gen_auto_ideate (ByteGPT, live CORE)
+  MOUTH_KIND=bytegpt
+  CUDA_AVAILABLE=1
+  DETECTOR_CALIBRATION=10/10   (frozen H_1305 _is_falsifiable detector, VERBATIM, engine-native)
+  FRAME_GUARD_LEAKS=0          (p7 clean — frames carry only if/then FORM)
+  ckpt sha256 = 5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e (matches mini)
+  py twin (h159x_g6_scaffold_repro.py) computed engine-native at 820% CPU, A_flat frame1 = 208s
+  (no KV-cache in py bytegpt decode → O(gen·T) per token → ~200s/110-tok frame on CPU).
+
+WHY BLOCKED (type-c infra wall, repeatedly confirmed this session 2026-06-27):
+  - aiden (RTX5070) REBOOTED 3× during the run (up 8m→4m→6m→0m); each reboot killed the
+    setsid-detached job. summer (RTX5070) rebooted ≥2× / went 도달-불가 (unreachable).
+  - Every launched hexa decode HUNG at 0% CPU AND 0% GPU after the header (deadlock/stall,
+    not slow-but-progressing) — GPU never fired (util 0% throughout) despite cuda_available=1.
+  - The py path computes but at CPU speed (~200s/frame, no KV-cache) → full 6-arm × 3-seed
+    run (70 decodes/seed × 110 tok × ~200s ≈ 12 h) cannot fit inside the hosts' uptime.
+  - This is the SAME class of wall H_1305 R2 hit ("substrate-speed infra wall", fast-gemv
+    dropped / ~12h impractical) — c9: 측정결함/인프라벽 ≠ science ceiling.
+
+NO TUNE-TO-GREEN, NO FABRICATION: zero arm result was obtained, so NO C_strong FALS / DIST /
+cross-shuffle number is reported. The H_1362 torch-vs-engine question (decode-procedure lever
+vs attention-capacity lever) remains OPEN engine-native; only a stable GPU host (rented
+CUDA-devel pod, or a KV-cache py decode) can settle it. Harness + py twin are turnkey.
+
+ING FOLLOW-ON: run g6_scaffold_repro_bytegpt.hexa (or the py twin) on a stable host:
+  hexa run state/1590_g6_scaffold_repro/g6_scaffold_repro_bytegpt.hexa -- <h1129.bin> <seed> 110
+  for seeds {7,4302,4303} → fill arm table + M1-M5 + cross-shuffle → GREEN/RED verdict.
