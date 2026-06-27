@@ -1,3 +1,13 @@
+## refactor(agent): domains CHAT py → hexa 포팅 (포팅가능분만), 외부 SDK py 보존
+
+🧹 agent/ hexa-단일화 연장 — `agent/domains/CHAT/**/*.py` 전수 audit 후 **환원가능 순수 로직만** hexa 로 정리, torch/akida/fastapi SDK 바인딩은 정직 보존(`serialize` torch-interop 선례).
+
+- **audit 결과:** CHAT 12 py 전부 이미 1:1 `.hexa` sidecar 보유(PR #2384). 분류 — (a) full port 1건 · (b) 환원불가 interp 9건 · (c) test 2건.
+- **(a) 포팅·삭제:** `anima_emission_analyze.py`(순수 stdlib re·statistics·urllib·로그파싱)는 `anima_emission_analyze.hexa` 가 이미 full hexa-native port → 원 py 삭제(git 보존). **behavior parity 확인**: analyze_log byte-identical(n_emit=3·self_monologue=0.667·score_mean=0.527 py≡hexa) · has_register 마커셋이 py regex 셋의 faithful 축약(tier= 공백 edge 포함). history-fetch 는 sandbox 네트워크 차단으로 미측정(JSON 파싱은 순수 string).
+- **(b) 보존(외부 SDK interop, hexa 등가물 없음):** `anima_participant`(torch·websockets)·`broker`(fastapi)·`substrate_{base,lora,v3,akida}`·`akida_sw_lif`(numpy)·`anima_temp_sweep`(torch·peft). 각 sidecar `.hexa` 가 WRAPPER(exec dispatch / doc-stub)로 kept verdict 박제.
+- **(c) test 보존:** `test_broker_multiuser`(websockets)·`test_broker_akida_ingest`(fastapi.testclient).
+- **doc:** `agent/domains/CHAT/CLAUDE.md` 폴더가이드 신설(a/b/c 분류표 + 불변식). dangling import 0 · enforce_anima_gates clean · hexa check 0 violations.
+
 ## perf(cli/train.hexa): device-resident NN hot-path 배선 — #2598 CPU-scalar-bound util FAIL 의 근본 fix (a_train_flame_forge)
 
 ⚡🖥️ #2598 H100 토이 게이트가 util FAIL(mean 0.75% · peak 2% · 348/350@0%)한 근본원인 = trainer 가 **CPU-scalar-bound**(conv GEMM 은 forge own-GEMM DEVICE 로 가나 step time 의 극소부분, 병목은 single-thread farr CPU scalar work — packed-buffer element-wise t_set/t_get copy/accumulate 루프 + host-oracle NN ops). train_fwd/bwd/ce_grad/_adam 의 그 hot path 를 CUDA 호스트에서 device-resident 로 재배선(어디서나 byte-eq host fallback — DEFAULT 불변).
