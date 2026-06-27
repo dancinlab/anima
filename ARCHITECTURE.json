@@ -1,4 +1,74 @@
 {
+  "models": [
+    {
+      "id": "clm303_clean",
+      "arch": "ByteGPT",
+      "params": "303M",
+      "base": "from-scratch",
+      "tier": "chat-canonical",
+      "path": "~/anima-weights/clm303_clean.clm",
+      "hf": "dancinlab/clm303-clean",
+      "visibility": "private",
+      "progress": "trained·serialized·held-out 4/4 DESCENT·DIRECTIONAL(engine-native G0-G6 pending)",
+      "features": [
+        "ko",
+        "en",
+        "sns",
+        "general",
+        "ByteGPT",
+        "303M"
+      ],
+      "updated": "2026-06-27T07:50:41.162Z",
+      "gates": {
+        "C1": "pass",
+        "heldout": "4/4 DESCENT",
+        "C2": "unknown",
+        "C4": "unknown"
+      }
+    },
+    {
+      "id": "clm303_deep_L8",
+      "arch": "ConvMoE",
+      "params": "303M",
+      "base": "from-scratch",
+      "tier": "experimental",
+      "path": "~/anima-weights/clm303_deep_L8/clm303_deep_L8_d2781.clm",
+      "progress": "trained·serialized·held-out 2/2 DESCENT·G1 0/3 FAIL(depth-FALSIFIED H_1598)",
+      "features": [
+        "en",
+        "ConvMoE",
+        "L8",
+        "303M"
+      ],
+      "updated": "2026-06-27T07:50:41.675Z",
+      "gates": {
+        "C1": "pass",
+        "C2": "fail",
+        "heldout": "2/2 DESCENT"
+      }
+    },
+    {
+      "id": "h1129",
+      "arch": "ByteGPT",
+      "params": "303M",
+      "base": "from-scratch",
+      "tier": "research",
+      "progress": "engine-native G6 fals=0 seed-robust(H_1595)·G6 wall GENUINE",
+      "sha256": "5cf07a36",
+      "features": [
+        "ko",
+        "en",
+        "L24",
+        "attention",
+        "303M"
+      ],
+      "updated": "2026-06-27T07:50:42.188Z",
+      "gates": {
+        "G6": "fail",
+        "C1": "pass"
+      }
+    }
+  ],
   "meta": {
     "project": "anima",
     "title": "anima — Architecture (SSOT)",
