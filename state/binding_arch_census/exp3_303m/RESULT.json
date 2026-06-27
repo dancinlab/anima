@@ -1,0 +1,461 @@
+{
+  "config": {
+    "arch": "CLMConvMoE L4 d3784 E2->E3",
+    "steps": 2000,
+    "seq_len": 1024,
+    "bs": 8,
+    "sample": "proportional",
+    "val_frac": 0.05,
+    "gpu": "vast A40",
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "arms": [
+      "ctrl",
+      "bind",
+      "bind_linear"
+    ],
+    "readout": {
+      "ctrl": "Conv1d(d->V) additive",
+      "bind": "u=Wa,v=Wb,g=u⊙v,Wo(g) k=512",
+      "bind_linear": "same params g=u+v"
+    }
+  },
+  "per_arm": {
+    "ctrl": {
+      "heldout_ce_per_seed": [
+        0.897,
+        0.90635,
+        0.90803
+      ],
+      "heldout_ce_mean": 0.90379,
+      "heldout_ce_std": 0.00485,
+      "descent": "9/9 runs 4/4 registers",
+      "g1_per_seed": [
+        0,
+        0,
+        0
+      ],
+      "g6_count_per_seed": [
+        4,
+        1,
+        1
+      ],
+      "g6_count_mean": 2
+    },
+    "bind": {
+      "heldout_ce_per_seed": [
+        0.85715,
+        0.90081,
+        0.86252
+      ],
+      "heldout_ce_mean": 0.87349,
+      "heldout_ce_std": 0.01944,
+      "descent": "9/9 runs 4/4 registers",
+      "g1_per_seed": [
+        0,
+        0,
+        0
+      ],
+      "g6_count_per_seed": [
+        1,
+        2,
+        1
+      ],
+      "g6_count_mean": 1.333
+    },
+    "bind_linear": {
+      "heldout_ce_per_seed": [
+        0.94041,
+        0.94474,
+        0.92001
+      ],
+      "heldout_ce_mean": 0.93505,
+      "heldout_ce_std": 0.01078,
+      "descent": "9/9 runs 4/4 registers",
+      "g1_per_seed": [
+        0,
+        0,
+        0
+      ],
+      "g6_count_per_seed": [
+        2,
+        5,
+        1
+      ],
+      "g6_count_mean": 2.667
+    }
+  },
+  "runs": {
+    "bind_linear_seed4302": {
+      "arm": "bind_linear",
+      "seed": 4302,
+      "n_params": 391666620,
+      "loss0": 5.67657,
+      "lossF": 1.20798,
+      "wall_s": 1194.2,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.94474,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.39026,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.636,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.53103,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.22166,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.20798,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 5,
+        "g6_jaccard": 0.8864,
+        "phi_proxy": 3.43679,
+        "mitosis_cells": 39
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "bind_linear_seed4303": {
+      "arm": "bind_linear",
+      "seed": 4303,
+      "n_params": 391666620,
+      "loss0": 5.66389,
+      "lossF": 1.20746,
+      "wall_s": 1192.2,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.92001,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.37497,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.5905,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.53804,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.17652,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.20746,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 1,
+        "g6_jaccard": null,
+        "phi_proxy": 3.462167,
+        "mitosis_cells": 82
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "bind_linear_seed7": {
+      "arm": "bind_linear",
+      "seed": 7,
+      "n_params": 391666620,
+      "loss0": 5.69044,
+      "lossF": 1.22526,
+      "wall_s": 1190.7,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.94041,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.36847,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.6429,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.54405,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.20622,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.22526,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 2,
+        "g6_jaccard": 0.89286,
+        "phi_proxy": 4.636058,
+        "mitosis_cells": 75
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "bind_seed4302": {
+      "arm": "bind",
+      "seed": 4302,
+      "n_params": 391666620,
+      "loss0": 5.5577,
+      "lossF": 1.13238,
+      "wall_s": 1194.8,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.90081,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.34893,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.59505,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.50824,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.15102,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.13238,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 2,
+        "g6_jaccard": 0.95455,
+        "phi_proxy": 33.197748,
+        "mitosis_cells": 55
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "bind_seed4303": {
+      "arm": "bind",
+      "seed": 4303,
+      "n_params": 391666620,
+      "loss0": 5.55344,
+      "lossF": 1.14316,
+      "wall_s": 1190.8,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.86252,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.35429,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.4976,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.48887,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.10933,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.14316,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 1,
+        "g6_jaccard": null,
+        "phi_proxy": 38.095965,
+        "mitosis_cells": 60
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "bind_seed7": {
+      "arm": "bind",
+      "seed": 7,
+      "n_params": 391666620,
+      "loss0": 5.57282,
+      "lossF": 1.12308,
+      "wall_s": 1190.9,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.85715,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.32662,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.51532,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.49959,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.08706,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.12308,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 1,
+        "g6_jaccard": null,
+        "phi_proxy": 20.276327,
+        "mitosis_cells": 109
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "ctrl_seed4302": {
+      "arm": "ctrl",
+      "seed": 4302,
+      "n_params": 388628412,
+      "loss0": 5.77131,
+      "lossF": 1.15745,
+      "wall_s": 1181.7,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.90635,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.35761,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.58983,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.52076,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.15721,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.15745,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 1,
+        "g6_jaccard": null,
+        "phi_proxy": 21.551619,
+        "mitosis_cells": 39
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "ctrl_seed4303": {
+      "arm": "ctrl",
+      "seed": 4303,
+      "n_params": 388628412,
+      "loss0": 5.72187,
+      "lossF": 1.15404,
+      "wall_s": 1182.0,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.90803,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.34846,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.60409,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.51216,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.16739,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.15404,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 1,
+        "g6_jaccard": null,
+        "phi_proxy": 32.524777,
+        "mitosis_cells": 33
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    },
+    "ctrl_seed7": {
+      "arm": "ctrl",
+      "seed": 7,
+      "n_params": 388628412,
+      "loss0": 5.75484,
+      "lossF": 1.15845,
+      "wall_s": 1186.2,
+      "uniform_ce": 5.54518,
+      "final_val_ce_pooled": 0.897,
+      "registers_descent": "4/4",
+      "heldout_descent": {
+        "ko-general": {
+          "val_ce": 0.31753,
+          "descent": true
+        },
+        "en-general": {
+          "val_ce": 0.59455,
+          "descent": true
+        },
+        "ko-sns": {
+          "val_ce": 1.52163,
+          "descent": true
+        },
+        "en-sns": {
+          "val_ce": 1.15428,
+          "descent": true
+        }
+      },
+      "gauges_g1g6_torch_probe": {
+        "step": 2000,
+        "ce": 1.15845,
+        "g1_composed_distinct": 0,
+        "g2_novelty_rate": 0.0,
+        "g6_count": 4,
+        "g6_jaccard": 0.86806,
+        "phi_proxy": 27.738333,
+        "mitosis_cells": 43
+      },
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+    }
+  },
+  "verdict": {
+    "primary_bar": "G1(bind)>G1(ctrl) AND G1(bind)>G1(bind_linear) AND G6 same dir AND all DESCENT",
+    "primary_result": "NOT-SUPPORTED (G1 all=0 floored tie; G6 noise not favoring bind) — INCONCLUSIVE-at-floor",
+    "resolving_measure": "held-out CE: bind 0.8735 < ctrl 0.9038 < bind_linear 0.9351 (3/3 seeds), multiplicativity isolated",
+    "resolving_result": "WEAK DIRECTIONAL SUPPORT (effect ~0.03 CE, robustness not categorical)",
+    "tier": "DIRECTIONAL (torch; bind not .clm-serializable -> engine-native BLOCKED-by-construction)",
+    "engine_native": "BLOCKED for bind/bind_linear (Hadamard readout not in .clm); ctrl .clm anchors only; follow-on=bind-codec RTYPE=1 export"
+  }
+}

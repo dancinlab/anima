@@ -1,10 +1,10 @@
 # H_1617 — NMDA Coincidence Binding (tension-gated multiplicative AND)
 
-- **tier:** 🟠 DIRECTIONAL toy-SUPPORT (variance-caveat) — torch toy ARM 측정됨(EXP-3 precursor), engine-native/303M 아님
-- **wired:** DIRECTIONAL-mirror (torch toy measured; NOT engine-native). cheap_test = $0 numpy screen (Hadamard 1.00 vs additive 0.50 증명적); **toy ARM (NEW, 2026-06-27)** = 학습 trunk(d256/L4) 위 3-arm 측정 SUPPORT(mean bar) — 아래 §Toy ARM result; gpu_recipe(303M EXP-3) = 여전히 cost-gated, NOT fired.
+- **tier:** 🟠 DIRECTIONAL — toy SUPPORT(robustness)이나 **303M scale 에선 주 G1/G6 bar NOT-SUPPORTED(floor)**, held-out-CE 약한 곱셈 support만. engine-native 아님(bind = BLOCKED-by-construction).
+- **wired:** DIRECTIONAL-mirror (torch; NOT engine-native — bind readout 은 .clm 직렬화 불가). cheap_test = $0 numpy screen (Hadamard 1.00 vs additive 0.50 증명적); toy ARM(d256/L4) = 3-arm mean SUPPORT(§Toy ARM); **303M EXP-3 FIRED 2026-06-27** = §303M scale result(곱셈 categorical gap 미전이; held-out-CE bind<ctrl<bind_linear 3/3 약한 이점만). engine-native A/B = follow-on(bind-codec RTYPE=1 export).
 - **source:** archbrainstorm — 84-family anima-native synthesis-binding architecture census (binding-wall program, H_1603)
 - **lens:** Biology: NMDA receptor as molecular coincidence detector / dendritic AND-gate / Reichardt detector. Multiplicative conjunction vs additive superposition.
-- **artifacts:** `state/binding_arch_census/BRAINSTORM_INDEX.md` · `state/binding_arch_census/exp3_arm/` (PREREG.md · trainer.py · RESULT.md · RESULT.json · ckpt/{ctrl,bind,bind_linear}_seed{7,4302,4303}.pt)
+- **artifacts:** `state/binding_arch_census/BRAINSTORM_INDEX.md` · `state/binding_arch_census/exp3_arm/` (toy: PREREG·trainer·RESULT·ckpt) · `state/binding_arch_census/exp3_303m/` (303M: PREREG.md·trainer.py·RESULT.md·RESULT.json) · ckpt PULL `~/anima-weights/exp3_303m/ckpt/` ({ctrl,bind,bind_linear}_seed{7,4302,4303}.pt + ctrl .clm×3)
 - **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · H_1449 (attention-block INERT@1blk) · H_1602 (recombination-objective prereg)
 - **key:** `nmda_coincidence_bind`
 
@@ -44,6 +44,30 @@ object 없음; marginal 동일 → 덧셈 pooled rep 으로 증명적 구분불�
   param-matched ablation(⊙ vs +)이 multiplicativity 를 robustness 의 원인으로 격리(이 카드의 ⊙→+ ablation 예측 확인).
 - numpy screen 의 additive 0.50-증명적 collapse 는 trunk-less 였기 때문; 학습 trunk 가 끼면 additive 도 *가끔* 넘되
   Hadamard 가 그걸 *신뢰성 있게* 만든다. 상세 = `state/binding_arch_census/exp3_arm/RESULT.md`.
+
+## 303M scale result (NEW · 2026-06-27 · DIRECTIONAL torch · vast A40 GPU 100% util)
+
+production 303M CLMConvMoE(L4·d3784·E2→E3, savant+mitosis, 4-cell ko/en×일반/SNS corpus, 2000 step)
+3-arm × seeds{7,4302,4303} = **9 run**. trunk init/data/step 동일, readout 만 다름(ctrl additive Conv1d /
+bind u⊙v Hadamard k=512 / bind_linear u+v param-matched). 상세 = `state/binding_arch_census/exp3_303m/RESULT.md`.
+
+| arm | held-out val CE mean (3 seed) | G1 composed_distinct | G6 count mean |
+|-----|-------------------------------|----------------------|---------------|
+| ctrl (additive) | 0.9038 | **0** (all) | 2.0 |
+| **bind (Hadamard ⊙)** | **0.8735** | **0** (all) | 1.3 |
+| bind_linear (⊙→+, param-matched) | 0.9351 | **0** (all) | 2.7 |
+
+- **주 frozen bar (G1∧G6 생성 gate) = NOT-SUPPORTED** — G1 = 0 for ALL 9 runs(floored), G6 noise 가 bind favor 안 함.
+  단 5MB·undertrained + 영어 lexicon 이라 gate floor = 분해능 0 → **INCONCLUSIVE-at-floor**(clean refute 아님).
+- **held-out CE(resolving 측정) = WEAK DIRECTIONAL SUPPORT** — **bind < ctrl < bind_linear, 3/3 seed 일관**;
+  bind_linear(param 동일 +)이 ctrl 보다도 나쁨 → lift 원인 = **multiplicativity**(toy ⊙→+ ablation 재현). 단 효과 **작음
+  (~0.03 CE)** = robustness 이지 categorical capability gap 아님. 전 9 run held-out DESCENT 4/4; ctrl .clm 직렬화
+  mirror-DESCENT PASS(CE 1.64 < uniform 5.55 < shuffle 9.92, math.log dt_ln-immune).
+- **engine-native A/B = BLOCKED-by-construction** — bind readout(Wa,Wb,⊙,Wo)은 `.clm`(additive readout-only) 직렬화
+  불가 → terminal G1/G6 측정 불가. follow-on = bind-codec RTYPE=1 export(`clm_serialize_v2`+`core/clm_decode.hexa`
+  engine-transform) → `.clm` → `anima eval`. ctrl 만 .clm anchor(binding 없어 A/B 불가).
+- **정직 종합:** toy 의 곱셈 *robustness* 이점은 303M 생성 gate(G1/G6)로는 **미전이**(floor), held-out 일반화에 작은
+  이점만 잔존. "곱셈 binding op 이 303M 재조합/착상 벽을 넘는다"는 **이 scale·이 측정에선 미입증**(과장 금지).
 
 ## Scope / honesty (c9)
 toy ARM = **DIRECTIONAL torch screen**(engine-native 아님 · 303M 아님 · `a_engine_native_learning`/`a_toy_scale_recheck`).
