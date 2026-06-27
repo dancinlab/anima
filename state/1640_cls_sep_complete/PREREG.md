@@ -1,4 +1,4 @@
-# H_1640 CLS-SEP-COMPLETE (303M) — frozen pre-registration
+# H_1815 CLS-SEP-COMPLETE (303M) — frozen pre-registration
 
 > 생물 렌즈 #1 (PRIMARY) — 해마 보완학습계(CLS)의 **pattern separation(직교화) + pattern
 > completion(부분→전체 복원)** 을 G1 재조합 레버로. arxiv **2507.11393**(CLS sep/completion NN,

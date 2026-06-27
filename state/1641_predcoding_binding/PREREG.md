@@ -1,4 +1,4 @@
-# H_1641 PREDCODING-BINDING (303M) — frozen pre-registration
+# H_1816 PREDCODING-BINDING (303M) — frozen pre-registration
 
 > 생물 렌즈 #2 (PRIMARY · 철학 최정합) — **predictive coding / 자유에너지(active inference)** 의
 > parametric-bias **binding** 을 G1 재조합 AND G6 착상 레버로. arxiv **2403.19995**(Tani et al.,

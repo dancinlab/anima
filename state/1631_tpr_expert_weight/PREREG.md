@@ -1,4 +1,4 @@
-# H_1631 TPR-EXPERT-WEIGHT (303M) — frozen pre-registration
+# H_1813 TPR-EXPERT-WEIGHT (303M) — frozen pre-registration
 
 > 한국어 prereg · frozen-first · tune-to-green 금지 · p7/c9. 작성 2026-06-28.
 > 베이스: `state/1602_recomb_objective/trainer.py` fork (objective lever + additive

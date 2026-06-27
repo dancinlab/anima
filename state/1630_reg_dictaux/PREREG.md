@@ -1,9 +1,9 @@
-# PREREG — H_1630 정규화 sweep + dictionary-aux objective (N6+N7, 303M G1/G6 레버)
+# PREREG — H_1812 정규화 sweep + dictionary-aux objective (N6+N7, 303M G1/G6 레버)
 
 > **frozen-first 사전등록.** bar·하이퍼·예측·반증조건을 측정 *전*에 박는다. 사후 이동 금지, tune-to-green 금지(p7·commons c2/c9). 박제 대상 verdict 는 엔진-네이티브(`core/g_gates.py` ← `core/clm_decode.py`, torch-free numpy decode = TERMINAL). 본 PREREG 의 모든 토치-side 학습 metric(CE·val_CE·dict_recon·jamo_ce·DBES)은 DIRECTIONAL 모니터일 뿐, G1/G6 verdict 는 `.clm` 직렬화 후 엔진-네이티브 재측정으로만 성립(`a_engine_native_learning`).
 
 ## 슬러그
-`1630_reg_dictaux` · 가설군 H_1630 (objective-side G1/G6 레버) · 작성일 2026-06-28.
+`1630_reg_dictaux` · 가설군 H_1812 (objective-side G1/G6 레버) · 작성일 2026-06-28.
 
 ## 배경 — 이 레버가 우리 floor 결과와 무엇이 다른가
 
@@ -18,12 +18,12 @@
 
 ## 가설 (H)
 
-- **H_1630-main (N6+N7):** 우승 objective(또는 ce_marginal) 위에 **N6 정규화 band(grok) + N7 dictionary-aux**를 얹으면, undertrain floor 가 배제되어 엔진-네이티브 **G1 composed_distinct 가 ce_marginal 대비 상승**한다(≥1 register 에서 G1 best_distinct 증가, 또는 G6 fals≥1 달성).
-- **H_1630-N6 (정규화 단독):** N6 band 단독이 ce_marginal 대비 G1/held-out 일반화를 개선한다(grok 전이).
-- **H_1630-N7 (dict-aux 단독):** N7 dict-aux 단독이 ce_marginal 대비 G1 을 개선한다(학습된 dictionary 방향).
-- **H_1630-N8 (자모 teach):** N8 자모 초성-class teach-signal 이 ko register 의 G1 재조합을 개선한다(SCRIPT 2026 ≈ ko-jamo 🟢).
-- **H_1630-N1 (TLoRA expert-weight):** TPR 을 expert *weight* 에 두면(readout 아님) G1 이 ctrl 대비 개선된다(Greff "operator×학습 결합" falsify 후보).
-- **H_1630-N3 (DBES 진단):** *가설 아님 — 진단축.* "재조합 안 됨"이 expert 미분화(usage-entropy≈0 collapse) 탓인지 격리.
+- **H_1812-main (N6+N7):** 우승 objective(또는 ce_marginal) 위에 **N6 정규화 band(grok) + N7 dictionary-aux**를 얹으면, undertrain floor 가 배제되어 엔진-네이티브 **G1 composed_distinct 가 ce_marginal 대비 상승**한다(≥1 register 에서 G1 best_distinct 증가, 또는 G6 fals≥1 달성).
+- **H_1812-N6 (정규화 단독):** N6 band 단독이 ce_marginal 대비 G1/held-out 일반화를 개선한다(grok 전이).
+- **H_1812-N7 (dict-aux 단독):** N7 dict-aux 단독이 ce_marginal 대비 G1 을 개선한다(학습된 dictionary 방향).
+- **H_1812-N8 (자모 teach):** N8 자모 초성-class teach-signal 이 ko register 의 G1 재조합을 개선한다(SCRIPT 2026 ≈ ko-jamo 🟢).
+- **H_1812-N1 (TLoRA expert-weight):** TPR 을 expert *weight* 에 두면(readout 아님) G1 이 ctrl 대비 개선된다(Greff "operator×학습 결합" falsify 후보).
+- **H_1812-N3 (DBES 진단):** *가설 아님 — 진단축.* "재조합 안 됨"이 expert 미분화(usage-entropy≈0 collapse) 탓인지 격리.
 
 ## 단일 변수 (arm) · 통제
 
@@ -59,7 +59,7 @@
 
 ## 반증 조건 (FALSIFY)
 
-- **H_1630-main 반증:** n6n7 의 엔진-네이티브 G1 best_distinct ≤ ce_marginal AND G6 fals ≤ ce_marginal (3-seed 모두) → N6+N7 레버 NOT-SUPPORTED(floor 천장 강화). DBES 가 collapse(norm-entropy≈0)면 "expert 미분화"로 추가 격리, 아니면 "정규화·dict-aux 로도 안 열림" 박제.
+- **H_1812-main 반증:** n6n7 의 엔진-네이티브 G1 best_distinct ≤ ce_marginal AND G6 fals ≤ ce_marginal (3-seed 모두) → N6+N7 레버 NOT-SUPPORTED(floor 천장 강화). DBES 가 collapse(norm-entropy≈0)면 "expert 미분화"로 추가 격리, 아니면 "정규화·dict-aux 로도 안 열림" 박제.
 - **개별 arm 반증:** 각 arm 이 ce_marginal 대비 lift 0 이고 held-out DESCENT 도 동일/악화 → 해당 레버 INERT.
 - **N7 INERT 체크(ablation):** dict_recon 이 학습 중 하강하는데(=dict 가 실제로 표현을 학습) G1 lift 0 이면 → "표현은 학습되나 binding 으로 transfer 안 됨"(Barin Pacela 가설의 anima-byte 반증).
 - **overfit 가드(H_1579 교훈):** lossF≈0 인데 held-out NO-DESCENT 면 그 arm 은 암기 — '능력'으로 박제 금지, 코퍼스/정규화 재점검.

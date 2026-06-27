@@ -1,4 +1,4 @@
-# H_1632 N4+N8 — G6 diverse-set-search + G1 자모 teach-signal (303M) · frozen 사전등록
+# H_1814 N4+N8 — G6 diverse-set-search + G1 자모 teach-signal (303M) · frozen 사전등록
 
 > frozen-first · 실행 전 사전등록 · 사후 bar 이동 금지 · tune-to-green 금지 (p7/c9).
 > 측정 = engine-native py 2-production(`core/g_gates.py` ← `core/clm_decode.py`, torch-free=TERMINAL).
