@@ -1,0 +1,69 @@
+// ════════════════════════════════════════════════════════════════════════
+// cli/serialize.hexa — anima STANDALONE re-serialize entry (.pt → .clm v0.3 + held-out gate).
+//
+// WHY THIS FILE (recovery/re-export · a_clm_gen_pipeline): `anima train` ALREADY auto-
+// serializes its trained weights to .clm v0.3 + runs the held-out mirror-DESCENT gate at
+// the end of a run (cli/train.hexa serialize_clm + post-serialize verify_clm_v2 descent).
+// This standalone command is for the SEPARATE case: re-exporting an ALREADY-TRAINED torch
+// .pt checkpoint (recovery, re-export, re-verification) WITHOUT re-training.
+//
+// REFERENCE-MATCH (NOT a reimplementation · a_engine_native_learning 2-production):
+// re-serializing a torch .pt to .clm is a py-native bridge operation — the byte layout
+// SSOT is train/clm/model/clm_serialize_v2.py::serialize_v3 and the held-out gate is
+// train/clm/model/verify_clm_v2.py descent. The hexa side's own serialize_clm
+// (cli/train.hexa) packs a LIVE in-memory trained model, not a .pt FILE; loading a torch
+// .pt is py-native. So — exactly as cli/train.hexa already shells out to `python3
+// verify_clm_v2.py descent` for its gate — this hexa twin DISPATCHES to cli/serialize.py
+// (the production py serializer twin). One bridge backend, two installed entry surfaces.
+//
+// USAGE (installed `anima` PATH command — NOT `hexa run`):
+//   anima serialize <ckpt.pt> <out.clm> [--heldout <path>] [--train <path>] [--nwin N]
+// ════════════════════════════════════════════════════════════════════════
+
+// serialize_usage — print the canonical usage banner (installed `anima serialize` form).
+fn serialize_usage() {
+    println("anima serialize — re-export a torch .pt to .clm v0.3 + held-out DESCENT gate.")
+    println("")
+    println("usage:")
+    println("  anima serialize <ckpt.pt> <out.clm> [--heldout <path>] [--train <path>] [--nwin N]")
+    println("")
+    println("  re-serialize an ALREADY-TRAINED torch checkpoint to an engine-loadable .clm")
+    println("  (ground-truth bridge serialize_v3) and verify it models held-out text")
+    println("  (verify_clm_v2 mirror-DESCENT gate). `anima train` does this automatically;")
+    println("  this command is for recovery / re-export of an existing .pt.")
+}
+
+// serialize_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
+// "--" and take everything after it; if absent, skip the binary (argv[0]) only.
+fn serialize_collect_argv(raw: [string]) -> [string] {
+    let mut start = 1
+    let mut k = 0
+    while k < len(raw) {
+        if raw[k] == "--" { start = k + 1 }
+        k = k + 1
+    }
+    let argv = []
+    let mut m = start
+    while m < len(raw) { argv.push(raw[m]); m = m + 1 }
+    return argv
+}
+
+// ── MAIN ────────────────────────────────────────────────────────────────────
+// argv (after "--") = [<ckpt.pt>, <out.clm>, --heldout ..., --train ..., --nwin N].
+// Forward verbatim to cli/serialize.py (the py serializer twin owns the bridge + gate).
+fn main() {
+    let argv = serialize_collect_argv(args())
+    if len(argv) < 2 {
+        serialize_usage()
+        return
+    }
+
+    println("=== anima serialize → cli/serialize.py (torch .pt → .clm v0.3 bridge + DESCENT gate) ===")
+    let mut fwd = ""
+    let mut i = 0
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    let cmd = "python3 cli/serialize.py" + fwd + " 2>&1"
+    println("dispatch: " + cmd)
+    let out = exec(cmd)
+    print(out)
+}

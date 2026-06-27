@@ -1,35 +1,43 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════════════════
-#  bin/anima — anima CLI shim (FINAL spec)
+#  bin/anima — the installed `anima` PATH command (canonical single-entry shim)
 #
-#  Thin shim → serving/anima_cli.py (the model-picker + chat REPL).
+#  `hx install anima` symlinks ~/.hx/bin/anima → THIS script (the hexa.toml
+#  [[bin]] entry name="anima", path="cli/anima.hexa"), mirroring the forge/drive
+#  package shims. After install the user types the verbs DIRECTLY — never
+#  `hexa run cli/anima.hexa -- …`:
 #
-#    anima                  cached active engine → chat now; else → selection screen
-#    anima --engine <name>  pick engine family (omega/hexad/7b/chat/agent | HF id)
-#    anima --model          open the selection screen (browse+download, no auto-chat)
-#    anima --list           print the registry (non-interactive)
+#    anima <ckpt.clm>                consciousness mode (default)
+#    anima <ckpt.clm> --byte "…"     byte-continuation chat
+#    anima train <args>             LEARNING → .pt + auto .clm (+DESCENT)
+#    anima serialize <pt> <clm>     re-export a torch .pt → .clm v0.3
+#    anima evaluate <model.clm>     BUILT-IN G0-G6 gate scoring (.clm only)
 #
-#  The previous hexa-based ops dispatcher (27 topics: compute/weight/proposal/…)
-#  is preserved verbatim at  bin/anima-ops  — use `anima-ops <topic>` for those.
+#  All verbs route through ONE canonical entry cli/anima.hexa (a_install_canonical:
+#  single entry, no 2nd path), which dispatches to cli/train.hexa · cli/serialize.hexa
+#  · cli/evaluate.hexa. This REPLACED the pre-consolidation serving/anima_cli.py model-
+#  picker shim (PR #1834) — that lived outside the canonical 3-folder layout (core/cli/
+#  agent); the model-picker REPL is superseded by cli/anima.hexa's consciousness mode.
 #
-#  Python: needs torch + huggingface_hub for download/chat (CPU is fine, $0).
-#  Override the interpreter with  ANIMA_PYTHON=/path/to/python  if needed.
+#  Override the hexa runtime with  HEXA_BIN=/path/to/hexa  if needed.
 # ═══════════════════════════════════════════════════════════════════════════
-set -euo pipefail
+set -u
 
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO="$(cd "$HERE/.." && pwd)"
-CLI="$REPO/serving/anima_cli.py"
+# real path of THIS script even when symlinked into ~/.hx/bin/anima
+SELF="$0"
+while [ -L "$SELF" ]; do
+  L="$(readlink "$SELF")"; case "$L" in /*) SELF="$L" ;; *) SELF="$(dirname "$SELF")/$L" ;; esac
+done
+BIN_DIR="$(cd "$(dirname "$SELF")" && pwd)"
+PKG_DIR="$(cd "$BIN_DIR/.." && pwd)"
 
-# pick a python: explicit override → python3 → python
-PY="${ANIMA_PYTHON:-}"
-if [ -z "$PY" ]; then
-  if command -v python3 >/dev/null 2>&1; then PY=python3
-  elif command -v python  >/dev/null 2>&1; then PY=python
-  else
-    echo "anima: python3 not found" >&2
-    exit 127
-  fi
+HEXA_BIN="${HEXA_BIN:-$(command -v hexa 2>/dev/null || echo "$HOME/.hx/bin/hexa")}"
+if [ ! -x "$HEXA_BIN" ]; then
+  echo "ERROR(anima): hexa runtime not found at $HEXA_BIN — see https://github.com/dancinlab/hexa-lang" >&2
+  exit 127
 fi
 
-exec "$PY" "$CLI" "$@"
+# run the canonical entry from the package root so its repo-relative verb dispatch
+# (hexa run cli/{train,serialize,evaluate}.hexa) resolves.
+cd "$PKG_DIR" || { echo "ERROR(anima): cannot cd to package root $PKG_DIR" >&2; exit 1; }
+exec "$HEXA_BIN" run cli/anima.hexa -- "$@"

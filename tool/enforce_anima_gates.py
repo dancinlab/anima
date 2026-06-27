@@ -48,13 +48,13 @@ TORCH_MARK = re.compile(r"import\s+torch|gauge_lib|\bnumpy\b")
 # engine-native = a .hexa that calls a live core engine: the byte-mouth decoders
 # (clm_decode/bytegpt_decode/engine_cli) OR the faithful-IIT4 Φ engine (a_phi_iit4_tool,
 # stdlib/iit4/faithful_phi). Φ verdicts are engine-native via faithful_phi, not a byte decoder.
-# The BUILT-IN G0-G6 eval (g_gates / `anima eval`, PR #2604) is also engine-native: it is the
-# canonical single-entry G-gate scorer (cli/anima.hexa → generator L3 mouth gen_auto_ideate),
+# The BUILT-IN G0-G6 eval (g_gates / `anima evaluate`, PR #2604) is also engine-native: it is the
+# canonical single-entry G-gate scorer (cli/evaluate.hexa → generator L3 mouth gen_auto_ideate),
 # so a verdict scored through it counts as engine-native evidence WITHOUT a per-gate python
 # harness (a_engine_native_learning do:-carving — the canonical G-gate measurement command).
 # (canonical 트리 재구성 후 엔진은 core/; 과거 대문자 CORE/ 도 archive 호환 위해 유지)
 CORE_DECODE = re.compile(
-    r"clm_decode|bytegpt_decode|engine_cli|faithful_phi|iit4_bigphi|/iit4/|\bcore/|\bCORE/|pure_field|engine_g|g_gates|anima\s+eval|gen_auto_ideate"
+    r"clm_decode|bytegpt_decode|engine_cli|faithful_phi|iit4_bigphi|/iit4/|\bcore/|\bCORE/|pure_field|engine_g|g_gates|anima\s+eval(uate)?|cli/evaluate|gen_auto_ideate"
 )
 DIRECTIONAL = re.compile(r"DIRECTIONAL", re.IGNORECASE)
 

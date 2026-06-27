@@ -5,6 +5,12 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 - **Parent:** dancinlab · **SSOT:** github.com/dancinlab/anima (`hx install anima`)
 - **Siblings:** [hexa-lang](https://github.com/dancinlab/hexa-lang) (언어/컴파일러) · [kosmos](https://github.com/dancinlab/kosmos) (`.kosmos` anchors) · hexa-codex (paper/verdict tooling)
 
+> **🖥️ 정식 CLI (canonical · `hx install anima` 로 설치된 `anima` PATH 명령 — `hexa run cli/anima.hexa -- …` 아님):**
+> - **`anima train <args>`** — 학습(`cli/train.{hexa,py}`) → `.pt` + **자동 `.clm` 직렬화 + held-out mirror-DESCENT 게이트**(`a_clm_gen_pipeline`).
+> - **`anima serialize <pt> <out.clm>`** — 독립 재직렬화/복구(`cli/serialize.{hexa,py}` = `clm_serialize_v2` serialize_v3 + `verify_clm_v2` descent reference-match).
+> - **`anima evaluate <model.clm>`** — G0-G6 측정(`cli/evaluate.{hexa,py}` → `core/g_gates` generator-L3 `gen_auto_ideate`). **입력은 `.clm`(엔진-loadable)만 — torch `.pt` 아님**(`.pt` 면 `anima serialize` 로 먼저 변환).
+> - 진입점 = `cli/anima.{hexa,py}`(2-production) 서브커맨드 dispatch → 대칭 twin(`train`·`serialize`·`evaluate`)으로 fan-out. **측정/학습/직렬화를 `g_gates.py`·`train.py`·`clm_serialize_v2.py` 직접호출(side-harness)로 부르지 말 것 — 이 정식 `anima` 명령 경유**(단일진입점, `a_engine_native_learning`). 상세·배선상태는 ARCHITECTURE.json `cli/` 노드.
+
 > **이 markdown 이 단일 거버넌스 SSOT.** `project.tape` 은퇴 + 2026-06-17 tape-DSL 잔재(`@D := :: governance` · `do=`/`dont=`) 전면 제거 → canonical markdown 으로 재저작. 모든 @D 디렉티브·8 철학 의미는 손실 0 으로 아래에 보존(규칙 이름 `a_*`·`p#` 그대로 유지 = keyword 트리거 호환).
 >
 > **포맷 (2026-06-26):** 이 파일은 sidecar `## <slug> — <title>` + do/dont-only 거버넌스 포맷이다. 전문(intro/하드게이트/철학/패키징/SSOT/Harness/흐름)은 첫 `## ` 섹션 앞 **PREAMBLE** 에 보존되고, 각 규칙(`a_*`)은 자체 `## <slug>` 섹션 = `- do:`/`- dont:` 줄만(둘 다 필수). 풍부한 디테일은 2-칸 들여쓴 continuation 줄로 보존 — 손실 0.
