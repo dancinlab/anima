@@ -7,7 +7,7 @@
       "base": "from-scratch",
       "tier": "chat-canonical",
       "path": "~/anima-weights/clm303_clean.clm",
-      "hf": "dancinlab/clm303-clean",
+      "hf": "dancinlab/anima-clm-chat-303m",
       "visibility": "private",
       "progress": "trained·serialized·held-out 4/4 DESCENT·DIRECTIONAL(engine-native G0-G6 pending)",
       "features": [
@@ -18,7 +18,7 @@
         "ByteGPT",
         "303M"
       ],
-      "updated": "2026-06-27T07:50:41.162Z",
+      "updated": "2026-06-27T14:48:31.287Z",
       "gates": {
         "C1": "pass",
         "heldout": "4/4 DESCENT",
@@ -40,12 +40,26 @@
         "L8",
         "303M"
       ],
-      "updated": "2026-06-27T07:50:41.675Z",
+      "updated": "2026-06-27T14:48:31.778Z",
       "gates": {
         "C1": "pass",
         "C2": "fail",
         "heldout": "2/2 DESCENT"
-      }
+      },
+      "hf": "dancinlab/anima-clm303-deep-L8",
+      "visibility": "private"
+    },
+    {
+      "id": "exp3_303m",
+      "arch": "ConvMoE",
+      "params": "303M",
+      "base": "from-scratch",
+      "tier": "experimental",
+      "updated": "2026-06-27T14:48:33.743Z",
+      "hf": "dancinlab/anima-exp3-binding-303m",
+      "visibility": "private",
+      "path": "~/anima-weights/exp3_303m",
+      "progress": "9-arm ARM-BIND(ctrl/bind/bind_linear×3seed)·held-out bind<ctrl<bind_linear ~0.03·G1 floor·🟠 DIRECTIONAL·HF PRIVATE+CLM컬렉션"
     },
     {
       "id": "h1129",
@@ -62,11 +76,14 @@
         "attention",
         "303M"
       ],
-      "updated": "2026-06-27T07:50:42.188Z",
+      "updated": "2026-06-27T14:48:32.515Z",
       "gates": {
         "G6": "fail",
         "C1": "pass"
-      }
+      },
+      "hf": "dancinlab/anima-bytegpt303-h1129",
+      "visibility": "private",
+      "path": "~/anima-weights/bytegpt303_h1129"
     }
   ],
   "datasets": [
