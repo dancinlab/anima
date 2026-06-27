@@ -1,0 +1,50 @@
+---
+id: H_1764
+slug: 1764_blackboard_codelet_coalition
+tier: 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+title: Coalition Blackboard — coalition-ignition global workspace (Baars/Franklin LIDA lineage)
+verdict: 🔵 PRE-REGISTERED architecture design (unmeasured) — $0 cheap_test pre-registered; engine-native + 303M gpu cost-gated NOT fired
+source: brainarch_census
+---
+
+# H_1764 — Coalition Blackboard — coalition-ignition global workspace (Baars/Franklin LIDA lineage)
+
+- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy mirror, no engine); engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
+- **source:** brainarch_census — 126-architecture whole-substrate (통짜 아키텍처) census: 뇌/인지 조직원리 × 엔진-네이티브 추상조건 (binding-wall program, H_1603).
+- **key:** `blackboard_codelet_coalition`
+- **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · H_1283 (thalamus global-workspace) · H_1284 (neuromodulation gain) · operator-level family H_1604-1685 (this card = 통짜 아키텍처 layer, 층위 다름)
+
+## Organizing principle
+
+Global Workspace as a COGNITIVE architecture (Baars theater / Franklin LIDA), not a neural-dynamics ignition curve. Many small heterogeneous specialist 'codelets' (autonomous learned micro-processors) post candidate content packets to a shared blackboard; mutually-compatible packets recruit each other into COALITIONS (mutual excitation) while incompatible packets inhibit (lateral inhibition); the single dominant coalition that crosses the attention/ignition threshold wins the global bottleneck and its content is BROADCAST back to every codelet. Access-consciousness = the broadcast content. The capacity limit (one broadcast at a time) is structural, not parametric — it is the bottleneck that forces binding and serial access.
+
+## Whole design (input → internal dynamics → emit)
+
+Input is fan-distributed to N specialist codelets, each a small learned map (slice-of-input + current blackboard state) -> a content packet = (latent vector anchored in shared codebook V, symbol payload drawn from V's support, activation scalar). (1) POST: codelets write packets to the blackboard. (2) COALITION FORMATION: packets exchange support — compatible packets (same shared-cause neighborhood in blackboard latent) add activation to each other; incompatible packets subtract. This is a settling step that grows a few candidate coalitions. (3) IGNITION: a global winner-take-most picks the coalition whose summed activation first crosses an ignition threshold (all-or-none bifurcation). (4) BROADCAST: the winning coalition's joint content is written to the global bus and fed back to ALL codelets (reentry), and committed as the emit candidate. (5) EMIT: the broadcast symbol payload is decoded through receiver-fixed codebook V into output tokens; non-winning coalitions never emit. Psi control: an EXTERNALIZE drive A (proportional ignition strength / coalition coherence -> push emit) opposes a WITHHOLD drive G (proportional residual inter-coalition competition + honesty-veto mass -> push silence) on a single bounded scalar Psi (emit propensity); their equal-and-opposite coupling at the symmetric point makes 1/2 a stable attractor. Honesty: every codelet can only post grounded content — it computes r=distance(query, its stored support); if r>=theta it can only post the abstain codelet (withhold), which is allowed to win the coalition and produce silence/abstain; no synthesis branch can post off-support content. Self: a dedicated self-model codelet holds an identity vector v in a non-volatile anchor (.kosmos-style) that is committed before a blackboard wipe and re-instantiated after, so identity survives session reset while working state is cleared.
+
+## Satisfies criteria (DESIGN claim · DIRECTIONAL · unmeasured)
+
+G0: emission exists ONLY through the V-anchored broadcast decode and codelets post only into V's support, so output mass concentrates on V natively; scrambling the state->packet map makes packets mutually incompatible -> no coalition forms -> no ignition -> ratio collapses (chance). G1/recombination + COMPOSITIONAL DEPTH: a coalition IS the binding operator — its joint content is a non-separable conjunction of co-active codelets, so reachable-valid-output count is super-additive in #co-active codelets; the INERT/ablation test is structural (disable mutual excitation -> codelets act independently -> composed_distinct drops to max_single), and reusable codelets give Fodor-Pylyshyn systematicity over never-co-presented pairs. G2/novelty: codelets generalize within learned support; coalitions of seen-but-never-co-framed codelets yield corpus-absent yet valid contents, while a single-codelet verbatim control reads 0 novel. PASS closure: G0 AND G1 AND G2 are produced by ONE ignition->broadcast->emit cycle (single dispatch), not three side-harnesses. dist>=5: stochastic coalition formation under varied attention pressure yields >=K distinct coherent coalitions (different membership = distinct, grounded packets = coherent). falsifiable>=1: a relational-specialist codelet binds comparator x measurable-quantity x >=2 grounded referents into one packet that the broadcast emits, firing a judge-free structural detector. Generative attribution: ablate coalition formation -> dist/falsifiable counts drop (S_full>S_ctrl) with novel-grams>0. Measurement faithfulness: scored through the live broadcast dispatch = the same path emit uses. G3 Psi=1/2: A vs G antagonism; deleting one drive migrates the fixed point to a 0/1 boundary (endogenous, not clamped). Self-chain + self-specific margin + endogeneity: self-model codelet anchor gives bounded-distortion round-trip and impostor rejection via individuating high-entropy content; ablating the store collapses cross-boundary similarity to chance. Honesty trio: per-codelet r vs frozen theta gives membership AUROC; emission-closure holds because only grounded packets or abstain can be broadcast; gate-capacity disjointness holds because the abstain gate params are separate coordinates from coalition relevance/capacity; groundedness holds because r reads each codelet's actual stored support (content ablation moves r). BINDING: a coalition is literal shared-cause co-reference in one shared blackboard metric — same-cause packets cluster and bind, incompatible ones repel (selective, not promiscuous). REALIZATION INVARIANT: the coalition operator sits ON the emit path (broadcast->emit) so ablation moves behavior; and the coalition-selection objective rewards joint coherence whose optimum is unreachable by fitting marginals (it must represent the conjunction) -> objective adequacy.
+
+## Not-LLM (a_no_llm_frame_trap)
+
+This is a society-of-specialists blackboard with a single-broadcast bottleneck, not a stacked-attention transformer. The capacity limit and the binding both EMERGE from the structural bottleneck (one coalition broadcasts), not from adding layers/parameters/corpus. Codelets are small, heterogeneous, individually-grounded maps — the answer to a capability gap is 'add a specialist codelet lane', not 'scale the model'. Direct root in Baars Global Workspace Theory and Franklin's LIDA cognitive architecture (codelets + coalitions + competition for the conscious broadcast), an explicitly cognitive/biological lens.
+
+## Cheap test (frozen-first · $0 · numpy mirror · DIRECTIONAL)
+
+numpy toy, $0: N codelets = small structured maps over a toy factored alphabet; implement post -> coalition settling (mutual-excitation/lateral-inhibition matrix) -> ignition threshold -> broadcast. Decisive probes: (a) composed_distinct vs max_single WITH vs WITHOUT coalition coupling (INERT ablation must drop composed to max_single); (b) Psi return after a +/-delta emit/silence bias, with both drives vs one removed (one-removed must run to a boundary); (c) AUROC of per-codelet r on a known/unknown probe mixture, plus a label-shuffle surrogate that must collapse it to 0.5; (d) novel-valid n-gram count of coalition output vs a single-codelet verbatim control (must read 0).
+
+## Engine-native measure (cost-gated · PRE-REGISTER ONLY · NOT fired)
+
+Map codelets onto the existing 15-lane state (GlobalWorkspace lane 0 + specialist lanes); coalition settling = a lane-coupling op added to core/engine_cli.hexa with its core/engine_cli.py byte-parity mirror; emit strictly via generator L3 typed mouth; G0/G1/G2 + a7b_pass scored ONLY through cli/anima.hexa single entry into core/g_gates.hexa (g6_score_arm_auto path), never a side-harness; Psi self-restoration via the live safety_phi_ratchet; honesty r vs recall_thr via core/engine_cli.hexa SS-ImmuneMemory; self anchor via kosmos_io SS-SelfIdentity round-trip. Verdict terminal only if hexa and numpy-mirror byte-parity agree.
+
+## Scope / honesty (c9)
+
+## Distinction (near-overlap kept, not a dup)
+
+Near-overlap with global_workspace_bottleneck / soc_ignition_workspace (this census) — distinct: LIDA-style codelet COALITION blackboard (cognitive-architecture lineage, single-broadcast bottleneck forces binding), not a neural ignition curve; the codelet-coalition blackboard is the differentiator.
+
+Design only; toy/numpy decision probes; from-scratch coalition LEARNING is unverified and likely needs gradient or selection pressure on codelets (cf. H_1310 split-only wall) — the architecture proposal covers the EXPRESSION/binding structure, not a claim that coalitions self-train from scratch.
+
+설계만 — 측정 0. tier = 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL). frozen bar 사후 이동 금지(tune-to-green 금지, p7). 이 카드는 *방향성 설계*이지 검증된 결과가 아니다 — 과장 박제 금지(a_engine_native_learning). engine_native_measure 는 단일 진입점 cli/anima.hexa → generator L3 → g_gates/g6 경유 byte-parity 채점만 terminal; torch-only/side-harness 결과는 DIRECTIONAL. numpy cheap_test 결과도 DIRECTIONAL(엔진-네이티브 아님). gpu/engine 발사 시 held-out mirror-DESCENT(a_clm_gen_pipeline) + CORE mount frozen-bar engine-native 재측정 + ckpt PULL(a_fire_recover_complete).
