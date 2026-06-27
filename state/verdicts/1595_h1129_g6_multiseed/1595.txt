@@ -1,0 +1,63 @@
+H_1595 — h1129 (303M ByteGPT) G6 MULTISEED engine-native re-score (mini, gen=40 canonical)
+ckpt sha256: 5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e
+engine: py 2-production (core/g_gates.py g_eval_g6_multiseed <- core/bytegpt_decode.py numpy, torch-free TERMINAL)
+grep self-check (import torch|gauge_lib over slug + core import-closure): EMPTY = TERMINAL
+frozen bar: G6 PASS iff dist>=5 AND fals>=1; multiseed GREEN = majority>=2/3. gen=40 = g_gates._default_gen(). NO tune-to-green.
+---- raw harness stdout ----
+==============================================================================
+h1129 G6 MULTISEED — py 2-production (core/g_gates.py <- core/bytegpt_decode.py)
+ckpt=/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin  gen=40  seeds=(7, 4302, 4303)  host=mini
+date 2026-06-27 13:08:32
+==============================================================================
+[loaded known+mouth 0.7s]
+[g6_multiseed done 638.8s]
+--- per-seed ---
+seed=7  dist=6  fals=0  coherent=6  pass=False  frame_leaks=0
+seed=4302  dist=6  fals=0  coherent=6  pass=False  frame_leaks=0
+seed=4303  dist=6  fals=0  coherent=6  pass=False  frame_leaks=0
+MAJORITY: pass=False  n_green=0/3  max_fals=0
+wrote state/1595_h1129_g6_multiseed/result_h1129_g6_multiseed.json
+G6_MULTISEED_DONE
+---- result json ----
+{
+  "ckpt": "/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin",
+  "gen": 40,
+  "multiseed": {
+    "pass": false,
+    "n_green": 0,
+    "n_seeds": 3,
+    "max_fals": 0,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "per_seed": [
+      {
+        "pass": false,
+        "dist": 6,
+        "fals": 0,
+        "base_seed": 7,
+        "coherent": 6,
+        "frame_leaks": 0
+      },
+      {
+        "pass": false,
+        "dist": 6,
+        "fals": 0,
+        "base_seed": 4302,
+        "coherent": 6,
+        "frame_leaks": 0
+      },
+      {
+        "pass": false,
+        "dist": 6,
+        "fals": 0,
+        "base_seed": 4303,
+        "coherent": 6,
+        "frame_leaks": 0
+      }
+    ],
+    "status": "proposed, owner-nod-pending"
+  }
+}

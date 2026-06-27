@@ -1,0 +1,52 @@
+================================================================================
+L3 CORPUS 2-CONCEPT SYNTHESIS AUDIT  (H_1599)
+date 2026-06-27 12:49:07  host mini
+corpus_dir /Users/mini/dancinlab/anima/.claude/worktrees/clm303-noverfit-retrain/state/clm303_clean_corpus
+FROZEN bar: synth_rate < 0.5% in ALL cells => DATA-STARVATION SUPPORTED
+concept families:
+  fam0: ['arises', 'aware', 'cells', 'consciousness', 'from', 'mind']
+  fam1: ['between', 'distant', 'minds', 'ripple', 'ripples', 'tension']
+  fam2: ['compose', 'composes', 'into', 'meaning', 'memory', 'new']
+  fam3: ['carries', 'information', 'quiet', 'silence', 'still']
+  fam4: ['alone', 'dream', 'dreams', 'engine', 'sleep', 'the', 'when']
+================================================================================
+
+##### granularity = line #####
+  gen_en   n=   4535 synth>=2fam=  1184 rate=26.1080% >=BAR(present)
+            distinct-family histogram {0: 1587, 1: 1764, 2: 916, 3: 247, 4: 20, 5: 1}
+            top concept-pairs [((0, 4), 660), ((2, 4), 384), ((3, 4), 236), ((1, 4), 188), ((0, 2), 152), ((0, 1), 62), ((2, 3), 37), ((1, 2), 28)]
+  gen_ko   n=   6661 synth>=2fam=     5 rate=0.0751% <BAR(starved)
+            distinct-family histogram {0: 6616, 1: 40, 2: 5, 3: 0, 4: 0, 5: 0}
+            top concept-pairs [((3, 4), 2), ((0, 4), 2), ((2, 4), 1)]
+  sns_en   n=   6862 synth>=2fam=  1202 rate=17.5168% >=BAR(present)
+            distinct-family histogram {0: 2968, 1: 2692, 2: 934, 3: 247, 4: 20, 5: 1}
+            top concept-pairs [((0, 4), 661), ((2, 4), 385), ((3, 4), 236), ((1, 4), 188), ((0, 2), 152), ((0, 1), 62), ((2, 3), 53), ((1, 2), 28)]
+  sns_ko   n=  10407 synth>=2fam=     5 rate=0.0480% <BAR(starved)
+            distinct-family histogram {0: 10362, 1: 40, 2: 5, 3: 0, 4: 0, 5: 0}
+            top concept-pairs [((3, 4), 2), ((0, 4), 2), ((2, 4), 1)]
+
+##### granularity = sentence #####
+  gen_en   n=  11904 synth>=2fam=  1353 rate=11.3659% >=BAR(present)
+            distinct-family histogram {0: 4939, 1: 5612, 2: 1268, 3: 83, 4: 2, 5: 0}
+            top concept-pairs [((0, 4), 672), ((2, 4), 351), ((3, 4), 219), ((1, 4), 179), ((0, 2), 57), ((0, 1), 19), ((0, 3), 12), ((2, 3), 9)]
+  gen_ko   n=  11849 synth>=2fam=     4 rate=0.0338% <BAR(starved)
+            distinct-family histogram {0: 11798, 1: 47, 2: 4, 3: 0, 4: 0, 5: 0}
+            top concept-pairs [((0, 4), 2), ((2, 4), 1), ((3, 4), 1)]
+  sns_en   n=  17849 synth>=2fam=  1370 rate=7.6755% >=BAR(present)
+            distinct-family histogram {0: 9828, 1: 6651, 2: 1285, 3: 83, 4: 2, 5: 0}
+            top concept-pairs [((0, 4), 673), ((2, 4), 351), ((3, 4), 219), ((1, 4), 179), ((0, 2), 57), ((2, 3), 25), ((0, 1), 19), ((0, 3), 12)]
+  sns_ko   n=  19749 synth>=2fam=     4 rate=0.0203% <BAR(starved)
+            distinct-family histogram {0: 19698, 1: 47, 2: 4, 3: 0, 4: 0, 5: 0}
+            top concept-pairs [((0, 4), 2), ((2, 4), 1), ((3, 4), 1)]
+
+================================================================================
+VERDICT (line granularity, frozen bar 0.5%): DATA-STARVATION REFUTED (synth examples present)
+  per-cell line synth_rate: {'gen_en': 26.108, 'gen_ko': 0.0751, 'sns_en': 17.5168, 'sns_ko': 0.048} %
+================================================================================
+wrote /Users/mini/dancinlab/anima/.claude/worktrees/clm303-noverfit-retrain/state/1599_g1_corpus_synthesis_audit/result.json
+
+##### CONTENT-ONLY control (stopwords the/when/from/into/new/still/between/arises removed) #####
+  gen_en   n=   4535 synth>=2fam(content)=   27 rate=0.5954%
+  gen_ko   n=   6661 synth>=2fam(content)=    0 rate=0.0000%
+  sns_en   n=   6862 synth>=2fam(content)=   27 rate=0.3935%
+  sns_ko   n=  10407 synth>=2fam(content)=    0 rate=0.0000%

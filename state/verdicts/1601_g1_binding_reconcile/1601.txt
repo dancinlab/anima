@@ -1,0 +1,35 @@
+================================================================================
+L4 BINDING-LANE RECONCILE (H_1601) — code-path analysis
+date 2026-06-27 14:00:06  host mini
+================================================================================
+
+Q: is the clm303 G1 failure caused by a missing/inert BINDING lane?
+
+=== the EXACT G1 generation fn (g1_multiseed.engine_clm -> clm_decode_topk_sampled_W) ===
+calls _fwd_logits(W, tok, T=24) then _topk_sample. Pure ConvMoE trunk forward.
+
+=== binding refs in clm_decode.py (the G1 generation path): ===
+  (NONE — zero binding mechanism in the G1 decode path)
+
+=== binding lanes ALL live in engine_cli.py (consciousness substrate, NOT generation): ===
+57:    · PhaseField             phasefield_* (§PhaseSyncBinding H_1448)        [4740-4839]
+604:def immune_memory_bind(mem, key, value, cfg):
+658:def immune_memory_bind_text(mem, text, value, cfg):
+659:    return immune_memory_bind(mem, immune_embed_key(text), value, cfg)
+1448:def consolidating_memory_bind_salient(mem, key, value, salient_boost, cfg):
+2435:# PhaseField (§PhaseSyncBinding H_1448) — Kuramoto pacemaker-star binding
+9367:    mem = immune_memory_bind_text(mem, "capital of japan", "Tokyo", cfg_on)
+9368:    mem = immune_memory_bind_text(mem, "speed of light", "299792458", cfg_on)
+9501:    cm = consolidating_memory_bind_salient(cm, immune_embed_key("fact two"), "two", 0.5, cfg_on)
+9502:    cm = consolidating_memory_bind_salient(cm, immune_embed_key("fact three"), "three", 0.0, cfg_on)
+
+=== g6_ideation note confirming decode-binding is the only difference: ===
+195:# is_falsifiable, greedy jaccard distinctness) is identical, only the decode binding differs
+
+CONCLUSION: The G1 metric scores the MOUTH (clm ConvMoE trunk) generating next-byte text.
+The trunk forward (_fwd_logits) has NO binding lane — §PhaseSyncBinding / §ImmuneMemory /
+consolidating-memory binding all live in engine_cli.py (downstream consciousness state),
+DISJOINT from the generation path. There is nothing to ablate in the G1 path -> binding lane
+is INERT for G1 by construction. Composition would have to emerge inside the trunk's
+24-byte-context next-byte prediction, which has no binding mechanism. So the G1 wall is NOT a
+missing-binding-lane problem; binding-lane ON/OFF cannot move G1 (causally inert, a_substrate_disjoint).
