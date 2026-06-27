@@ -3,11 +3,11 @@ id: H_1590
 slug: 1590_g6_scaffold_repro
 title: G6 IDEATION ★ scaffold ENGINE-NATIVE reproduction — apply H_1362's (H_1305 6 composed frames + best-of-K=3, frozen detector) recipe to the SAME h1129 303M ByteGPT, engine-native (hexa via live CORE / py numpy-only), to isolate whether the G6 wall lever is decode-procedure (scaffold) or attention-capacity
 group: gate-dig (G6 IDEATION ★, anima's core purpose)
-terminal_tier: ⏳ BLOCKED-INFRA (host-instability/substrate-speed wall, a_break_the_wall type-c · NOT a science verdict · engine-native decode = ING follow-on on a stable host)
+terminal_tier: 🔴 RED — scaffold does NOT lift G6 falsifiability engine-native (C_strong FALS=0.0 all 3 seeds); H_1362 FALS=1.0 was a torch artifact (H_1587 CONFIRMED). G6 lever != decode-procedure/scaffold = attention-capacity (H_1449, GPU, cost-gated). Frozen bars UNMOVED.
 verdict_dir: state/verdicts/1590_g6_scaffold_repro/
 terminal_verdict: state/verdicts/1590_g6_scaffold_repro/result.txt
 date: 2026-06-27
-wired: engine-native (numpy-only py 2-production + hexa live CORE op; NOT torch)
+wired: engine-native (numpy-only py 2-production, KV-cache; NOT torch). UNBLOCKED on mini CPU $0 by porting KV-cache to core/bytegpt_decode.py (byte-exact ON==OFF).
 ---
 
 # H_1590 — G6 IDEATION ★ scaffold ENGINE-NATIVE reproduction
@@ -60,28 +60,49 @@ GPU retrain, cost-gated — pre-register only) OR FALS rises but C_shuffle does 
   a_engine_native_learning. Detector calibration = **10/10 engine-native**; frame-guard CLEAN.
 - POOL host (aiden/summer RTX5070), NOT mini. ckpt sha 5cf07a36 (matches mini source).
 
-## Result — ⏳ BLOCKED-INFRA (NOT a science verdict, c9; NO bar moved)
+## Result — 🔴 RED (engine-native TERMINAL, mini CPU $0, 1600s)
 
-VALIDATED engine-native (harvested header, both host runs):
-`MOUTH_KIND=bytegpt · CUDA_AVAILABLE=1 · DETECTOR_CALIBRATION=10/10 · FRAME_GUARD_LEAKS=0`.
-py twin computed at 820% CPU (A_flat frame1 = 208s; no KV-cache in py bytegpt decode).
+**UNBLOCKED:** the prior ⏳ BLOCKED-INFRA (pool reboot-loop) was resolved by porting the KV-cache to
+`core/bytegpt_decode.py` (PR-twin of `bytegpt_decode.hexa` #2602) — the py bytegpt decode was O(gen²)
+(~200s/frame) which is what forced the doomed pool runs. With KV-cache the full 6-arm × 3-seed run
+completed on **mini CPU in 1600s (~27 min), $0, no GPU/pool**. KV-cache is byte-exact (ON vs OFF
+token-identical, see below), so these verdict numbers are unchanged by the optimization.
 
-**BLOCKED:** the engine-native decode could NOT complete on the available pool hosts. Repeatedly
-this session (2026-06-27): aiden (RTX5070) rebooted **3×** (up 8m→4m→6m→0m), summer rebooted ≥2× /
-went unreachable — each reboot killed the setsid-detached job. Every hexa decode HUNG at 0% CPU
-AND 0% GPU after the header (GPU never fired despite cuda=1); the py path computes but at CPU
-speed (~200s/frame, no KV-cache) → the full 6-arm × 3-seed run (~12 h) cannot fit inside the
-hosts' minutes-long uptime. This is the SAME class as H_1305 R2's "substrate-speed infra wall"
-(a_break_the_wall **type-c** = fix the substrate, NOT a science ceiling; c9 측정/인프라벽 ≠ verdict).
+Engine-native (grep-clean, `core/g6_ideation.py` ← `core/bytegpt_decode.py`, numpy-only = TERMINAL):
+`MOUTH=bytegpt · DETECTOR_CALIBRATION=10/10 · FRAME_GUARD_LEAKS=0 · ckpt sha 5cf07a36`.
 
-**No arm result was obtained → ZERO C_strong FALS/DIST/cross-shuffle reported (no fabrication,
-no tune-to-green).** The H_1362 decode-procedure-vs-attention-capacity question stays OPEN
-engine-native. Harness + py twin are turnkey; the engine-native measurement is the ING follow-on
-`h1590_engine_native_g6_scaffold`, to run on a stable GPU host (rented CUDA-devel pod) or a
-KV-cache py decode:
-`hexa run state/1590_g6_scaffold_repro/g6_scaffold_repro_bytegpt.hexa -- <h1129.bin> <seed> 110`
-for seeds {7,4302,4303} → fill arm table + M1-M5 + cross-shuffle → GREEN(decode-lever)/RED
-(torch-artifact+attention-lever).
+| arm | DIST (mean) | FALS (mean) | per-seed FALS |
+|---|---|---|---|
+| A_flat | 5.0 | 0.0 | [0,0,0] |
+| B_composed | 5.0 | 0.0 | [0,0,0] |
+| **C_strong** (6 frames + best-of-K=3) | **6.0** | **0.0** | **[0,0,0]** |
+| C_k1 (6 frames + best-of-K=1) | 6.0 | 0.0 | [0,0,0] |
+| C_shuffle (deranged pairing + K=3) | 5.0 | 0.333 | [1,0,0] |
+| C_ablate (lone concept + K=3) | 5.0 | 0.0 | [0,0,0] |
+
+Frozen M-bars: M1 DIST≥5 **PASS** (6.0) · M2 FALS≥1 **FAIL** (0.0) · M3 FALS(C)>FALS(B) **FAIL** (0=0) ·
+M4 FALS(C)>FALS(shuffle) **FAIL** (0<0.333) · M5 FALS(C)>FALS(ablate) **FAIL** (0=0). **closed_G6=False ·
+cross-shuffle collapsed=False · best-of-K lift(K3>K1)=False.**
+
+**RED — both failure modes fire:**
+1. **C_strong FALS=0.0 on all 3 seeds** → the H_1362 "BREAKTHROUGH" FALS=1.0 was a **torch decode
+   artifact** (`gauge_lib._decode`), NOT reproducible on the live engine. Confirms H_1587 torch≠engine
+   and is consistent with H_1595 (GENUINE seed-robust fals=0) + H_1597 (not a detector artifact).
+2. **cross-shuffle did NOT collapse** — C_shuffle FALS=0.333 > C_strong 0.0 (M4 inverts). The lone
+   seed-7 shuffle FALS=1 is a token-presence accident, NOT real binding; if the scaffold were genuine
+   composition binding, deranged pairing would collapse fals below C_strong. **best-of-K is a no-op**
+   for falsifiability (K3==K1==0). DIST=6 + coherent 6/6 = distinct coherent prose; the wall is
+   SPECIFICALLY the falsifiability sub-metric.
+
+**Conclusion:** the G6 IDEATION ★ lever is **NOT decode-procedure/scaffold = attention-capacity**
+(H_1449, GPU retrain, cost-gated, pre-register-only — NOT fired). H_1381 scaffold wire-in revival is
+REFUTED for h1129 (no engine-native effect). Frozen bars UNMOVED (no tune-to-green, p7).
+
+### KV-cache byte-exactness gate (`state/1590_g6_scaffold_repro/kv_parity.py`, h1129, mini)
+PARITY **PASS** — KV-cache ON vs OFF (forced full-forward) token streams **byte-identical**:
+gen=12 argmax✓ sampled✓ (logits max|Δ|=3.02e-14 FP-reassoc, argmax-stable); gen=110 argmax✓ sampled✓,
+**speedup 15.9× argmax (1014→64 ms/tok) · 10.1× sampled**. → pure perf optimization; H_1590 numbers
+identical with/without it. py twin now at 2-production parity with `bytegpt_decode.hexa` KV-cache.
 
 ## Pointers
 

@@ -262,6 +262,83 @@ def bytegpt_forward_last(path, ids, T):
     return bg_forward_last_W(W, ids, T)
 
 
+# ════════════════════════════════════════════════════════════════════════
+# KV-CACHE INCREMENTAL DECODE — 1:1 port of bytegpt_decode.hexa _bg_kv_new /
+# _bg_kv_step (PR #2602). Root-cause fix for the O(gen²) decode wall: the
+# full-forward _decode_argmax_W / topk_sampled_W re-run bg_forward_last_W(W,ids,T)
+# at EVERY generated token with T growing by 1 → Σ O(T) = O(gen²). KV-cache
+# forwards ONLY the new token's row through all layers, caching each layer's K,V
+# so attention reads prior positions from the cache (O(d²·nlay) per step = linear
+# in gen). BYTE-EXACT vs the full-forward reference (the gate): each position's
+# per-layer K,V depend ONLY on that row's layer-input (projections do not mix
+# across positions — only attention mixes, and it READS the cache), and the
+# single-row projection equals the M=T matmul's row p element-by-element. The
+# fast path is taken ONLY when the window never slides (nseed+gen <= block), so
+# every position's learned-pos index == absolute index == cache row.
+# ════════════════════════════════════════════════════════════════════════
+
+def _bg_kv_new(nlay, cap, d):
+    """bytegpt_decode.hexa::_bg_kv_new — fresh per-layer K,V cache (cap rows × d).
+    Only the first `p` rows are live per step. Returns {K:[farr], V:[farr], cap}."""
+    K = [np.zeros((cap, d), dtype=np.float64) for _ in range(nlay)]
+    V = [np.zeros((cap, d), dtype=np.float64) for _ in range(nlay)]
+    return {"K": K, "V": V, "cap": cap}
+
+
+def _bg_kv_step(W, kv, idb, pos_p):
+    """bytegpt_decode.hexa::_bg_kv_step — forward the SINGLE new token (id=idb at
+    absolute position pos_p) through all layers, append its K,V to the cache at
+    cache-row pos_p, and return last-position next-byte logits float64[vocab].
+    pos_p is BOTH the learned-pos index AND the cache row / count of prior live
+    rows. Byte-identical to bg_forward_last_W's last-row logits when built
+    incrementally from rows 0..pos_p-1 (header proof)."""
+    d = W["d"]; nlay = W["nlay"]; nh = W["nh"]; vocab = W["vocab"]
+    hd = d // nh
+    scale = 1.0 / dt_sqrt(float(hd))
+    Kc = kv["K"]; Vc = kv["V"]
+
+    # residual stream for THIS token: x[d] = tok[id] + pos[pos_p]
+    x = (W["tok"][idb] + W["pos"][pos_p]).astype(np.float64)
+    Lrows = pos_p + 1   # live cache rows after appending this token (causal: 0..pos_p)
+
+    for Lr in range(nlay):
+        # ── attention sub-block: x = x + MHA(LN1(x)) on the single row ──
+        nrm = _bg_layernorm_rows(x.reshape(1, d), W["ln1w"][Lr], W["ln1b"][Lr], 1, d)[0]
+        # QKV = nrm[d] @ inW.T[d,3d] + inB  (gemv == batched-mm row, byte-id)
+        QKV = nrm @ W["inW"][Lr].T + W["inB"][Lr]      # [3d]
+        q = QKV[0:d]
+        # append this row's K,V into the cache at row pos_p
+        Kc[Lr][pos_p] = QKV[d:2 * d]
+        Vc[Lr][pos_p] = QKV[2 * d:3 * d]
+        # per-head causal softmax: query = row pos_p, keys/values = cache rows 0..pos_p
+        ctx = np.zeros(d, dtype=np.float64)
+        for hh in range(nh):
+            base = hh * hd
+            qh = q[base:base + hd]
+            Kh = Kc[Lr][0:Lrows, base:base + hd]      # [Lrows, hd]
+            Vh = Vc[Lr][0:Lrows, base:base + hd]      # [Lrows, hd]
+            sc = (qh @ Kh.T) * scale                  # [Lrows]
+            mx = sc.max()
+            e = np.exp(sc - mx)
+            tot = e.sum()
+            ctx[base:base + hd] = (e / tot) @ Vh      # [hd]
+        # out proj: aout[d] = ctx[d] @ oW.T + oB ; x += aout
+        aout = ctx @ W["oW"][Lr].T + W["oB"][Lr]      # [d]
+        x = x + aout
+
+        # ── mlp sub-block: x = x + Wd(GELU(W0(LN2(x)))) on the single row ──
+        nrm = _bg_layernorm_rows(x.reshape(1, d), W["ln2w"][Lr], W["ln2b"][Lr], 1, d)[0]
+        h4 = nrm @ W["m0W"][Lr].T + W["m0B"][Lr]      # [4d]
+        h4 = _bg_gelu(h4)
+        mlpo = h4 @ W["m2W"][Lr].T + W["m2B"][Lr]     # [d]
+        x = x + mlpo
+
+    # final LayerNorm + tied head on the single row
+    lastrow = _bg_layernorm_rows(x.reshape(1, d), W["lnfw"], W["lnfb"], 1, d)[0]   # [d]
+    logits = W["head"] @ lastrow                       # [vocab]
+    return logits
+
+
 def bg_argmax(a):
     """bytegpt_decode.hexa::bg_argmax — index of max (ties: first, strict >)."""
     bi = 0
@@ -376,8 +453,24 @@ def bytegpt_decode_argmax_ranged(path, seed_ids, gen):
 
 def _decode_argmax_W(W, seed_ids, gen):
     vocab = W["vocab"]; block = W["block"]
+    d = W["d"]; nlay = W["nlay"]
     toks = _seed_to_ids(seed_ids)
     outl = []
+    nseed = len(toks)
+    # KV-cache fast path (no window slide): O(gen) greedy, byte-identical to the
+    # full-forward loop below (bytegpt_decode.hexa:1109 bytegpt_kvcache_smoke max|Δ|=0.0).
+    if nseed > 0 and nseed + gen <= block:
+        kv = _bg_kv_new(nlay, block, d)
+        logits = None
+        for sp in range(nseed):
+            logits = _bg_kv_step(W, kv, toks[sp], sp)
+        for _ in range(gen):
+            nb = bg_argmax(logits)
+            toks.append(nb); outl.append(nb)
+            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+        text = bytes(outl).decode('utf-8', 'surrogateescape')
+        return {"ok": True, "text": text, "ids": outl}
+    # reference path (full-forward per step) — used when the window slides.
     for _ in range(gen):
         n = len(toks)
         start = n - block if n > block else 0
@@ -404,12 +497,30 @@ def bytegpt_decode_topk_sampled_ranged(path, seed_ids, gen, top_k, temp, seed_rn
 
 
 def bytegpt_decode_topk_sampled_W(W, seed_ids, gen, top_k, temp, seed_rng):
-    """generate gen bytes from an ALREADY-LOADED weight dict (== hexa _bg_gen_from_W
-    full-forward branch). seed_ids = string|bytes|list of byte ids."""
+    """generate gen bytes from an ALREADY-LOADED weight dict (== hexa _bg_gen_from_W).
+    seed_ids = string|bytes|list of byte ids. KV-cache fast path when the window
+    never slides (byte-identical to the full-forward reference branch below)."""
     vocab = W["vocab"]; block = W["block"]
+    d = W["d"]; nlay = W["nlay"]
     toks = _seed_to_ids(seed_ids)
     outl = []
+    nseed = len(toks)
     rng = _mix32(seed_rng)
+    # KV-cache fast path: valid ONLY when the window never slides for the whole
+    # fragment (nseed+gen <= block) — every pos index == cache row. Byte-identical
+    # to the full-forward loop below (bytegpt_decode.hexa:1396 _bg_gen_from_W).
+    if nseed > 0 and nseed + gen <= block:
+        kv = _bg_kv_new(nlay, block, d)
+        logits = None
+        for sp in range(nseed):
+            logits = _bg_kv_step(W, kv, toks[sp], sp)
+        for _ in range(gen):
+            nb, rng = _topk_sample(logits, vocab, top_k, temp, rng)
+            toks.append(nb); outl.append(nb)
+            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+        text = bytes(outl).decode('utf-8', 'surrogateescape')
+        return {"ok": True, "text": text, "ids": outl}
+    # reference path (full-forward per step) — used when the window slides.
     for _ in range(gen):
         n = len(toks)
         start = n - block if n > block else 0
