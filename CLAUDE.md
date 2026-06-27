@@ -35,7 +35,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 > - **설계/트리** → [ARCHITECTURE.json](ARCHITECTURE.json) (단일 SSOT · 노드 note 에 메커니즘 명명 · `a_verified_must_wire`/`a_core_engine_map` 의 lockstep 대상)
 > - **anima 거버넌스 + 8 철학** → 이 파일 (anima 전용 규칙 `a_*`·`p#` 의 markdown SSOT)
 > - **크로스프로젝트 거버넌스** → harness commons (c1–c17, always-on, SessionStart 주입)
-> - **이력** → [CHANGELOG.md](CHANGELOG.md) (append-only)
+> - **이력** → [CHANGELOG.jsonl](CHANGELOG.jsonl) (append-only)
 > - **버전 레지스트리** → [VERSIONS.md](VERSIONS.md) · **frozen gate 조건** → [CONDITIONS.md](CONDITIONS.md) · ARCHITECTURE.json frozen-임계 노드 (이 파일은 가리킬 뿐, 임계 복제 금지)
 
 ### 📦 패키징 — pod 업로드
