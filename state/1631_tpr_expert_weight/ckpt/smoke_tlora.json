@@ -1,0 +1,72 @@
+{
+  "hyp": "H_1631",
+  "arm": "tlora",
+  "objective": "ce_marginal",
+  "seed": 7,
+  "levers": {
+    "tlora": true,
+    "tlora_rank": 4,
+    "tlora_base": true,
+    "dict_aux": false,
+    "jamo_aux": false,
+    "wd_floor": -1.0,
+    "dropout_floor": -1.0
+  },
+  "n_params": 36359,
+  "loss0": 5.68361,
+  "lossF": 5.59278,
+  "wall_s": 0.0,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": null,
+  "registers_descent": "0/0",
+  "heldout_descent": {},
+  "last_aux": {},
+  "dbes_final": {
+    "expert_div": 0.6524,
+    "router_entropy": 1.02797,
+    "usage_gini": 0.09174,
+    "usage": [
+      0.28721,
+      0.42481,
+      0.28798
+    ],
+    "n_experts": 3
+  },
+  "dbes_log": [
+    {
+      "expert_div": 0.64518,
+      "router_entropy": 1.01434,
+      "usage_gini": 0.0972,
+      "usage": [
+        0.28432,
+        0.43012,
+        0.28556
+      ],
+      "n_experts": 3,
+      "step": 2
+    },
+    {
+      "expert_div": 0.64906,
+      "router_entropy": 1.02007,
+      "usage_gini": 0.0891,
+      "usage": [
+        0.28852,
+        0.42217,
+        0.28931
+      ],
+      "n_experts": 3,
+      "step": 3
+    }
+  ],
+  "gauges_g1g6_torch_probe": {
+    "step": 3,
+    "ce": 5.59278,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 4,
+    "g6_jaccard": 0.91304,
+    "phi_proxy": 3.8e-05,
+    "mitosis_cells": 351
+  },
+  "tier": "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL"
+}

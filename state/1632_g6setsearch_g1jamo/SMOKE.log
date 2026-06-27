@@ -1,0 +1,21 @@
+=== H_1632 N4+N8 arm=n4n8_both (jamo=True set=True) seed=7 ===
+  device=cuda d=64 L=2 E0=2 Emax=3 seq_len=96 steps=4 bs=2 sample=proportional
+  levers: lambda_jamo=0.5 lambda_set=0.5 setsearch(every=2 K=3 frames=2 gen=16)
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 107715 (0.108M)
+  corpus: NONE -> synthetic smoke
+  step     1  CE=5.73879  E=2  wd=0.0500 dp=0.5000 {"jamo": 3.2854, "n_syl": 46, "set": 5.6765, "set_dist": 6, "set_fals": 0, "set_reward": 6.0, "set_n_sel": 6}
+  step 2 (MITOSIS SPLIT) E 2->3
+  step     4  CE=5.51324  E=3  wd=0.0162 dp=0.1623 {"jamo": 3.1859, "n_syl": 46, "set": 5.5497, "set_dist": 6, "set_fals": 0, "set_reward": 6.0, "set_n_sel": 6}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+  FINAL val_CE(pooled)=None  registers_DESCENT=0/0
+  loss0=5.73879 lossF=5.51324 wall=0.5s savant_latched_at=1 E0=2->E=3 setsearch_runs=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 4, "ce": 5.51324, "g1_composed_distinct": 0, "g2_novelty_rate": 0.0, "g6_count": 1, "g6_jaccard": null, "phi_proxy": 0.000147, "mitosis_cells": 358}
+  summary -> ckpt/smoke.json
+  .clm WRITTEN 117502 bytes -> ckpt/smoke.clm
+  clm_decodable=True
+=== append g_gates pipe check to SMOKE.log ===
+mouth.kind = clm
+G1 pass= False best_distinct= 0
+G6 pass= False dist= 4 fals= 0
+ENGINE_NATIVE_PIPE_OK (g_gates -> clm_decode, torch-free verdict path)
