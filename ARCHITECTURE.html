@@ -1,203 +1,206 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>anima — architecture tree (ARCHITECTURE.json viewer)</title>
+<title>sidecar — 아키텍처</title>
+<!--
+  Self-contained viewer for ARCHITECTURE.json (the SSOT). Zero dependencies.
+  Renders the tree as a column grid: `columns[]` defines the columns; the column
+  flagged `tree:true` draws the tree branches, the rest align as separate columns.
+  Edit the JSON, reload — this file holds no data.
+  Local: `python3 -m http.server` then open http://localhost:8000/ARCHITECTURE.html
+         (file:// blocks fetch; a drag&drop fallback is offered.)
+-->
 <style>
   :root {
-    --bg: #0f1115; --fg: #e6e6e6; --muted: #9aa4b2; --accent: #7cc7ff;
-    --line: #2a2f3a; --node: #161a21; --node-hover: #1d222b; --summary: #c2cad6;
-    --note-bg: #12161d; --note-border: #3a4250;
+    --bg:#0d1117; --panel:#161b22; --line:#30363d; --fg:#e6edf3;
+    --dim:#8b949e; --accent:#58a6ff; --leaf:#7ee787; --head:#1f2630;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#fff; --panel:#f6f8fa; --line:#d0d7de; --fg:#1f2328; --dim:#656d76; --accent:#0969da; --leaf:#1a7f37; --head:#eaeef2; }
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--fg);
-    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-  header {
-    position: sticky; top: 0; z-index: 10; background: var(--bg);
-    border-bottom: 1px solid var(--line); padding: 14px 20px;
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px;
-  }
-  header h1 { margin: 0; font-size: 17px; }
-  header .sub { color: var(--muted); font-size: 12.5px; flex: 1 1 320px; }
-  header .controls { display: flex; gap: 8px; }
-  button {
-    background: var(--node); color: var(--fg); border: 1px solid var(--line);
-    border-radius: 6px; padding: 5px 11px; font-size: 12.5px; cursor: pointer;
-  }
-  button:hover { background: var(--node-hover); border-color: var(--accent); }
-  #search {
-    background: var(--node); color: var(--fg); border: 1px solid var(--line);
-    border-radius: 6px; padding: 5px 11px; font-size: 12.5px; min-width: 180px;
-  }
-  main { padding: 16px 20px 80px; max-width: 1100px; }
-  .tree { list-style: none; margin: 0; padding: 0; }
-  .tree ul { list-style: none; margin: 0; padding-left: 20px; border-left: 1px solid var(--line); }
-  li.node { margin: 3px 0; }
-  .row {
-    background: var(--node); border: 1px solid var(--line); border-radius: 7px;
-    padding: 7px 10px; cursor: default;
-  }
-  .row.has-children { cursor: pointer; }
-  .row:hover { background: var(--node-hover); }
-  .row .twist { display: inline-block; width: 14px; color: var(--accent); user-select: none; }
-  .row .name { font-weight: 600; }
-  .row .badge {
-    display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 10px;
-    font-size: 11px; border: 1px solid var(--note-border); color: var(--muted);
-  }
-  .row .path {
-    display: inline-block; margin-left: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 11.5px; color: var(--accent);
-  }
-  .summary { color: var(--summary); margin: 4px 0 0 22px; }
-  .note {
-    margin: 6px 0 2px 22px; padding: 6px 10px; font-size: 12.5px; color: var(--muted);
-    background: var(--note-bg); border-left: 3px solid var(--note-border); border-radius: 0 6px 6px 0;
-  }
-  .note::before { content: "note — "; color: var(--accent); }
-  li.collapsed > ul { display: none; }
-  li.collapsed > .row .twist::before { content: "\25B6"; }
-  li.open > .row .twist::before { content: "\25BC"; }
-  li.leaf > .row .twist::before { content: "\2022"; color: var(--muted); }
-  .hidden { display: none; }
-  .hit > .row { outline: 1px solid var(--accent); }
-  #error { color: #ff8080; padding: 20px; }
-  .meta { color: var(--muted); font-size: 12px; margin: 0 0 14px 0; }
-  .meta code { color: var(--accent); }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  header { position:sticky; top:0; z-index:5; background:var(--panel);
+    border-bottom:1px solid var(--line); padding:12px 18px; }
+  h1 { margin:0 0 3px; font-size:16px; }
+  .summary { color:var(--dim); font-size:12px; max-width:80ch; }
+  .bar { margin-top:9px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  input[type=search]{ flex:1 1 220px; min-width:160px; background:var(--bg); color:var(--fg);
+    border:1px solid var(--line); border-radius:6px; padding:6px 10px; font:inherit; }
+  button{ background:var(--bg); color:var(--fg); border:1px solid var(--line);
+    border-radius:6px; padding:6px 12px; font:inherit; cursor:pointer; }
+  button:hover{ border-color:var(--accent); color:var(--accent); }
+  main{ padding:0 18px 60px; }
+  .grid{ display:grid; width:max-content; min-width:100%; }
+  .cell{ padding:3px 14px 3px 0; border-bottom:1px solid var(--line); white-space:pre; }
+  .cell.wrap{ white-space:normal; max-width:60ch; }
+  .head{ position:sticky; top:84px; background:var(--head); font-weight:700;
+    border-bottom:2px solid var(--line); z-index:4; padding:6px 14px 6px 0; }
+  .tree{ white-space:pre; }
+  .branch{ color:var(--dim); }
+  .tw{ color:var(--dim); cursor:pointer; }
+  .nm{ font-weight:600; cursor:pointer; }
+  .nm.leaf{ color:var(--leaf); font-weight:500; }
+  .colrole{ color:var(--fg); }
+  .colsub{ color:var(--dim); }
+  .colmuted{ color:var(--dim); }
+  .rowhover:hover{ background:var(--panel); }
+  .hidden{ display:none; }
+  mark{ background:#bb800966; color:inherit; border-radius:2px; }
+  #err{ color:#f85149; padding:20px; max-width:72ch; }
+  #err code{ background:var(--panel); padding:1px 5px; border-radius:4px; }
+  #drop{ margin-top:10px; padding:14px; border:1px dashed var(--line); border-radius:8px; color:var(--dim); }
 </style>
 </head>
 <body>
 <header>
-  <h1>🧠 anima — architecture tree</h1>
-  <span class="sub">SSOT = <code style="color:var(--accent)">ARCHITECTURE.json</code> · this page is the human viewer. Serve with <code style="color:var(--accent)">python3 serve.py</code> (http, not file://).</span>
-  <span class="controls">
-    <input id="search" type="search" placeholder="filter nodes…" autocomplete="off">
-    <button id="expand">expand all</button>
-    <button id="collapse">collapse all</button>
-  </span>
+  <h1 id="title">sidecar — 아키텍처</h1>
+  <div class="summary" id="summary"></div>
+  <div class="bar">
+    <input type="search" id="q" placeholder="검색 (모든 컬럼)…" autocomplete="off">
+    <button id="expand">전체 펼침</button>
+    <button id="collapse">전체 접기</button>
+    <span class="colmuted" id="meta"></span>
+  </div>
 </header>
 <main>
-  <div id="error" class="hidden"></div>
-  <div id="meta" class="meta"></div>
-  <ul id="tree" class="tree"></ul>
+  <div id="tree"></div>
+  <div id="err" class="hidden"></div>
 </main>
 <script>
-(function () {
-  "use strict";
-  var treeEl = document.getElementById("tree");
-  var errEl = document.getElementById("error");
-  var metaEl = document.getElementById("meta");
+const SRC = "ARCHITECTURE.json";
+let DOC, COLS, TREEKEY, rows = [], collapsed = new Set();
 
-  function el(tag, cls, txt) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (txt != null) e.textContent = txt;
-    return e;
-  }
+function el(t, c, x){ const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
 
-  function renderNode(node, depth) {
-    var li = el("li", "node");
-    var kids = node.children || [];
-    var hasKids = kids.length > 0;
-    li.classList.add(hasKids ? (depth < 1 ? "open" : "collapsed") : "leaf");
+// Flatten the tree into rows, computing each node's `tree` branch prefix.
+function flatten(node, prefix, isLast, depth, parentId, idRef){
+  const id = idRef.n++;
+  const connector = depth === 0 ? "" : (isLast ? "└─ " : "├─ ");
+  const kids = node.children || [];
+  rows.push({ id, depth, parentId, node, branch: prefix + connector, hasKids: kids.length>0 });
+  const childPrefix = depth === 0 ? "" : prefix + (isLast ? "   " : "│  ");
+  kids.forEach((c,i)=> flatten(c, childPrefix, i===kids.length-1, depth+1, id, idRef));
+}
 
-    var row = el("div", "row" + (hasKids ? " has-children" : ""));
-    var twist = el("span", "twist");
-    row.appendChild(twist);
-    row.appendChild(el("span", "name", node.name || "(unnamed)"));
-    if (node.status) row.appendChild(el("span", "badge", node.status));
-    if (node.tier) row.appendChild(el("span", "badge", node.tier));
-    if (node.path) row.appendChild(el("span", "path", node.path));
-    li.appendChild(row);
+function colClass(key){
+  if (key === COLS[1]?.key) return "colrole";
+  if (key === COLS[2]?.key) return "colsub";
+  return "colmuted";
+}
 
-    if (node.summary) li.appendChild(el("div", "summary", node.summary));
-    if (node.note) li.appendChild(el("div", "note", node.note));
+function build(doc){
+  DOC = doc;
+  COLS = doc.columns || [{key:"name",tree:true},{key:"role"}];
+  TREEKEY = (COLS.find(c=>c.tree) || COLS[0]).key;
+  document.getElementById("title").textContent = doc.title || "아키텍처";
+  document.getElementById("summary").textContent = doc.summary || "";
+  document.getElementById("meta").textContent = "schema "+(doc.schemaVersion||"?")+" · SSOT "+SRC;
 
-    if (hasKids) {
-      var ul = el("ul");
-      kids.forEach(function (c) { ul.appendChild(renderNode(c, depth + 1)); });
-      li.appendChild(ul);
-      row.addEventListener("click", function () {
-        if (li.classList.contains("open")) {
-          li.classList.remove("open"); li.classList.add("collapsed");
-        } else {
-          li.classList.remove("collapsed"); li.classList.add("open");
-        }
-      });
+  rows = [];
+  flatten(doc.tree || doc.node, "", true, 0, -1, {n:0});
+
+  const grid = el("div","grid");
+  grid.style.gridTemplateColumns = "max-content " + COLS.slice(1).map(()=>"max-content").join(" ");
+  // header row
+  COLS.forEach(c => grid.appendChild(el("div","cell head", c.label || c.key)));
+  // data rows
+  rows.forEach(r => {
+    // tree column
+    const left = el("div","cell tree rowhover");
+    left.dataset.id = r.id;
+    const br = el("span","branch", r.branch);
+    left.appendChild(br);
+    if (r.hasKids){
+      const tw = el("span","tw", collapsed.has(r.id) ? "▸ " : "▾ ");
+      tw.onclick = () => { collapsed.has(r.id) ? collapsed.delete(r.id) : collapsed.add(r.id); refresh(); };
+      left.appendChild(tw);
     }
-    return li;
-  }
+    const nm = el("span","nm"+(r.hasKids?"":" leaf"), r.node[TREEKEY] || "");
+    left.appendChild(nm);
+    grid.appendChild(left);
+    // other columns
+    COLS.slice(1).forEach(c => {
+      const v = r.node[c.key] || "";
+      const cell = el("div","cell wrap "+colClass(c.key)+" rowhover", v);
+      cell.dataset.id = r.id;
+      grid.appendChild(cell);
+    });
+  });
 
-  function setAll(openState) {
-    var lis = treeEl.querySelectorAll("li.node");
-    lis.forEach(function (li) {
-      if (li.classList.contains("leaf")) return;
-      li.classList.remove("open", "collapsed");
-      li.classList.add(openState ? "open" : "collapsed");
+  const tree = document.getElementById("tree");
+  tree.textContent = "";
+  tree.appendChild(grid);
+  refresh();
+}
+
+// A row is hidden if any ancestor is collapsed.
+function isVisible(r){
+  let p = r.parentId;
+  while (p !== -1){
+    if (collapsed.has(p)) return false;
+    p = rows[p].parentId;
+  }
+  return true;
+}
+
+function refresh(filterTerm){
+  const q = (filterTerm||"").trim().toLowerCase();
+  // recompute toggle glyphs
+  document.querySelectorAll(".grid .tree .tw").forEach(tw=>{
+    const id = +tw.parentElement.dataset.id;
+    tw.textContent = collapsed.has(id) ? "▸ " : "▾ ";
+  });
+  let matchIds = null;
+  if (q){
+    matchIds = new Set();
+    rows.forEach(r=>{
+      const hay = COLS.map(c=> (r.node[c.key]||"")).join(" ").toLowerCase();
+      if (hay.includes(q)){ let id=r.id; while(id!==-1){ matchIds.add(id); id=rows[id].parentId; } }
     });
   }
-
-  function filter(q) {
-    q = q.trim().toLowerCase();
-    var lis = treeEl.querySelectorAll("li.node");
-    if (!q) {
-      lis.forEach(function (li) { li.classList.remove("hidden", "hit"); });
-      return;
-    }
-    lis.forEach(function (li) { li.classList.add("hidden"); li.classList.remove("hit"); });
-    lis.forEach(function (li) {
-      var row = li.querySelector(":scope > .row");
-      var sum = li.querySelector(":scope > .summary");
-      var note = li.querySelector(":scope > .note");
-      var text = (row ? row.textContent : "") + " " + (sum ? sum.textContent : "") + " " + (note ? note.textContent : "");
-      if (text.toLowerCase().indexOf(q) !== -1) {
-        li.classList.remove("hidden");
-        li.classList.add("hit");
-        var p = li.parentElement;
-        while (p && p !== treeEl) {
-          if (p.tagName === "LI") {
-            p.classList.remove("hidden");
-            p.classList.remove("collapsed");
-            if (!p.classList.contains("leaf")) p.classList.add("open");
-          }
-          p = p.parentElement;
-        }
-      }
+  rows.forEach(r=>{
+    const show = (q ? matchIds.has(r.id) : isVisible(r));
+    document.querySelectorAll('.grid .cell[data-id="'+r.id+'"]').forEach(c=>{
+      c.classList.toggle("hidden", !show);
     });
+  });
+}
+
+function setAll(collapse){
+  collapsed = new Set();
+  if (collapse) rows.forEach(r=>{ if(r.hasKids) collapsed.add(r.id); });
+  refresh();
+}
+
+function showError(msg, allowDrop){
+  const err = document.getElementById("err");
+  err.classList.remove("hidden"); err.innerHTML = msg;
+  if (allowDrop){
+    const drop = el("div"); drop.id="drop";
+    drop.textContent = "또는 여기로 ARCHITECTURE.json 파일을 드래그&드롭 하세요.";
+    err.appendChild(drop);
+    drop.ondragover = e=>{ e.preventDefault(); drop.style.borderColor="var(--accent)"; };
+    drop.ondragleave = ()=> drop.style.borderColor="var(--line)";
+    drop.ondrop = e=>{ e.preventDefault(); const f=e.dataTransfer.files[0]; if(!f)return;
+      const rd=new FileReader(); rd.onload=()=>{ try{ err.classList.add("hidden"); build(JSON.parse(rd.result)); }
+        catch(x){ showError("JSON 파싱 실패: "+x.message,false); } }; rd.readAsText(f); };
   }
+}
 
-  function build(data) {
-    var m = data.meta || {};
-    var bits = [];
-    if (m.ssot) bits.push("SSOT: " + m.ssot);
-    if (m.guard_baseline) bits.push("guards: " + m.guard_baseline);
-    if (m.migrated_from) bits.push(m.migrated_from);
-    metaEl.innerHTML = "";
-    if (data.note) metaEl.appendChild(el("div", null, data.note));
-    if (bits.length) metaEl.appendChild(el("div", null, bits.join("  ·  ")));
+fetch(SRC).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(build)
+  .catch(e=> showError(
+    "<b>"+SRC+" 를 불러오지 못했습니다.</b> ("+e.message+")<br><br>"+
+    "<code>file://</code> 로 직접 열면 보안상 fetch가 막힙니다. 같은 폴더에서<br>"+
+    "<code>python3 -m http.server</code> 후 <code>http://localhost:8000/ARCHITECTURE.html</code> 로 여세요.", true));
 
-    treeEl.appendChild(renderNode(data, 0));
-
-    document.getElementById("expand").addEventListener("click", function () { setAll(true); });
-    document.getElementById("collapse").addEventListener("click", function () { setAll(false); });
-    document.getElementById("search").addEventListener("input", function (e) { filter(e.target.value); });
-  }
-
-  fetch("ARCHITECTURE.json", { cache: "no-store" })
-    .then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status + " fetching ARCHITECTURE.json");
-      return r.json();
-    })
-    .then(build)
-    .catch(function (e) {
-      errEl.classList.remove("hidden");
-      errEl.textContent = "Could not load ARCHITECTURE.json: " + e.message +
-        "  —  open this page over http (run `python3 serve.py`), not via file:// (browsers block file:// fetch).";
-    });
-})();
+document.getElementById("q").addEventListener("input", e=> refresh(e.target.value));
+document.getElementById("expand").onclick = ()=> setAll(false);
+document.getElementById("collapse").onclick = ()=> setAll(true);
 </script>
 </body>
 </html>
