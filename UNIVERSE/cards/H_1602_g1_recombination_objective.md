@@ -1,8 +1,13 @@
-# H_1602 — explicit recombination objective/curriculum as the G1 lever (PRE-REGISTERED · COST-GATED · DO NOT FIRE)
+# H_1602 — explicit recombination objective/curriculum as the G1 lever
 
-**Status:** 🔒 **PRE-REGISTERED ONLY** — recipe + frozen prediction registered, **NOT executed**.
-303M retrain requires pool/rent GPU → surfaced to team-lead as cost-gated (a_fire_autonomous note:
-rent=spend = explicit-go). This card must NOT be auto-fired by the research agent.
+**Status:** 🟠 **EXECUTED 2026-06-28 — NOT-SUPPORTED (INCONCLUSIVE-at-floor · DIRECTIONAL py-eval).**
+objrun 9-run(`state/1602_recomb_objective/RESULT.md`)이 objective-lever 3변종 {ce_marginal·infonce·contrastive_equilibrium}×seeds{7,4302,4303}=9 를 학습·측정 → **G1 재조합 전부 FAIL**(composed_distinct=0, max_single 0~1, closure 0/9). InfoNCE·contrastive 가 CE baseline 대비 G1 우위 **0/3** → **objective축이 G1 레버 아님**. depth(H_1598)·binding(H_1601)·data(H_1599)·objective(H_1602) **4 직교 렌즈 전부 G1 floor = g1-lever 다중렌즈 종결**(벽 = undertrain/구조적 floor, 천장 아님).
+- 측정 = 옛 `core/g_gates.py`(torch-free numpy, 측정시점 canonical) — **py 폐기(2026-06-28)로 DIRECTIONAL 강등**; 9-seed 전수 floor라 결론 robust, terminal 승격은 hexa `anima evaluate` 복구 후 1셀 재측정으로 충분.
+- 남은 미검증 sub-form = **explicit recombination-curriculum aux-loss**(아래 ARM-RECOMB 원안; contrastive floor로 deprioritized) · 다음 = undertrain 배제 step-sweep+정규화(N6/N7 `frontier-novel-levers-untried`).
+- ckpt: `~/anima-weights/recomb_obj_303m/`(9 .pt) + summer `~/h1602/out/`(9 gates.json) 보존.
+
+---
+원 PRE-REG (실행 전 사전등록 · 보존):
 
 **Question (a_break_the_wall, lens = training objective):** depth (H_1598 🧱), binding lane
 (H_1601 🧱 inert), and data-presence-for-EN (H_1599 🟠 EN has examples & still fails) are all
