@@ -5241,6 +5241,18 @@
         "source": "training/train_alm_lora.hexa",
         "state": "ossified",
         "value": "Killed during torch.save → 0-byte .pt. Safe pattern: write .tmp then os.replace (atomic rename)"
+      },
+      {
+        "id": "TORCH_GREEN_NOT_ENGINE_NATIVE",
+        "source": "tool/enforce_anima_gates.py",
+        "state": "ossified",
+        "value": "torch / gauge_lib._decode / numpy-mirror verdict = DIRECTIONAL, NOT terminal. H_1362 G6 FALS=1.0 (torch) did NOT reproduce engine-native = fals=0 (H_1590 RED); same ckpt h1129 diverges torch-vs-engine (H_1587). Stamp tier=DIRECTIONAL until live core/ .hexa OR byte-parity py 2-production; self-check grep -lE 'import torch|gauge_lib' state/<slug>/*.py before any gate/ideation/G6/Phi verdict (a_engine_native_learning)."
+      },
+      {
+        "id": "G6_WALL_BOTH_ARCH_ENGINE_NATIVE",
+        "source": "UNIVERSE/cards/H_1590_g6_scaffold_repro.md",
+        "state": "ossified",
+        "value": "engine-native G6 (fals>=1) FAILs on BOTH anima archs: ConvMoE 302.6M (H_1394 fals=0) AND ByteGPT-L24 h1129 (H_1595 fals=0 seed-robust, H_1590 scaffold RED). No anima arch has passed G6 engine-native; the prior 'attention passes' (H_1362 FALS=1.0) was a torch illusion. Generic attention depth (L24) is insufficient -> arch-class claims require an engine-native sweep, never a torch number."
       }
     ]
   }

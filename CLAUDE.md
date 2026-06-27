@@ -190,8 +190,8 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: 가설 실행 시 카드를 만들/갱신하고 jsonl 에 한 줄(`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, id 순) append/갱신.
   등록은 tier 무관 — 🟢·🟠·🔴/🧱 전부 남긴다(벽도, c9). tier·수치는 `state/verdicts/<slug>/` 에서 verbatim(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성 가능.
 - do: 🟢(부분 포함) 가설은 카드에 `wired:` 명시(`a_verified_must_wire` 의 4칸과 1:1). jsonl 의 `source`(UNIVERSE|흩어진 출처|archive)·`archived`·`artifacts`(state/<slug>/ 경로 배열) 3컬럼 포함.
-  🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.
-- dont: **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(단 둘만) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다.
+  🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -vE '^UNIVERSE/(cards/|HYPOTHESES.jsonl$|CLAUDE.md$)'` 는 항상 빈 출력이어야 한다 (cards/ · HYPOTHESES.jsonl + folder-docs 폴더가이드 `UNIVERSE/CLAUDE.md` 만 허용).
+- dont: **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(cards/ + HYPOTHESES.jsonl + folder-docs `CLAUDE.md` 외 전부) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다.
   가설 디테일을 themed 버킷(`HYPOTHESES_*.md`)·CLAIMS.tape·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 · per-H 인덱스를 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview 부활(retire 됨, prose 는 `state/universe-overview.md`) · 실행·박제하고 jsonl/카드 안 만듦 · 카드를 UNIVERSE/ 루트에 둠(반드시 cards/) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음 · 🟢 인데 `wired:` 미표기.
 
 ## a_claim_manifest — claims-audit 면 = HYPOTHESES.jsonl + state/verdicts/

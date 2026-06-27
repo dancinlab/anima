@@ -217,6 +217,9 @@ def g1_violations(rows, scope):
 
 
 def g2_violations():
+    # 2-surface = cards/** + HYPOTHESES.jsonl; UNIVERSE/CLAUDE.md is the folder-guide
+    # (commons folder-docs) — exempt (lockstep with .harness/enforcement.json H-UNIVERSE-CODE).
+    # Still NO .py/.hexa/result under UNIVERSE/.
     tracked = sh(["git", "ls-files", "UNIVERSE/"]).splitlines()
     bad = [
         f.strip()
@@ -224,6 +227,7 @@ def g2_violations():
         if f.strip()
         and not f.startswith("UNIVERSE/cards/")
         and f.strip() != "UNIVERSE/HYPOTHESES.jsonl"
+        and f.strip() != "UNIVERSE/CLAUDE.md"
     ]
     return bad
 
