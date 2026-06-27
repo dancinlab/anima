@@ -399,6 +399,7 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
   (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.)
 - do: **모델 사이즈별 tier registry**(2026-06-26 오너): tier 별 canonical 명시. 현 chat canonical=**clm303_clean**(303M, held-out 4/4 DESCENT). 모델마다 hexa+py 2-engine 둘 다 등록.
 - do: **모델 관리 = `sidecar model`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `models[]`(3축 gates 검증충족도·progress 진행·features 특징; MODELS.jsonl scatter 폐기). 상세=`commands/model.md`.
+- do: **데이터셋 관리 = `sidecar dataset`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `datasets[]`(4칸 lang×register·rows·lang_verified, a_chat_registers; byte-불변 splice). 상세=`commands/dataset.md`.
 - dont: 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).
 
 ## a_hf_collections — HF org collection = CLM + KOSMOS canonical 버킷
