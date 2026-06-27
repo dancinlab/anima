@@ -1,0 +1,146 @@
+// ════════════════════════════════════════════════════════════════════════
+// cli/evaluate.hexa — anima MEASUREMENT single entry (cli/train.hexa's symmetric twin).
+//
+// WHY THIS FILE (single-entry measurement · a_engine_native_learning): anima's two
+// installed verbs are SYMMETRIC across two files — cli/train.{hexa,py} = LEARNING,
+// cli/evaluate.{hexa,py} = MEASUREMENT. `anima evaluate <ckpt>` scores the full G0-G6
+// battery by mounting ANY ckpt through the generator L3 mouth (gen_auto_ideate, file-
+// format-dispatched) and routing it through core/g_gates.hexa's ops — every decode AND
+// every score is a live `.hexa` op (zero torch/numpy). This realizes PR #2603/#2604:
+// the gate system is a REUSABLE ENGINE MODULE (core/g_gates.hexa), and `evaluate` is the
+// thin single-entry CLI over it (g_gates is NOT a user-facing command — evaluate calls it).
+//
+// a_core_engine_map: the model enters ONLY via the generator L3 typed slot. We REUSE the
+// already-wired G0/G6 metric ops (core/g6_ideation.hexa), the G5 abstain op
+// (core/engine_cli.hexa §ImmuneMemory) and G3 ops (§ConsciousnessIndex + §SelfIdentity);
+// G1/G2 metrics are native .hexa in g_gates.hexa. No new metric is invented here.
+//
+// USAGE (installed `anima` PATH command — NOT `hexa run`):
+//   anima evaluate <ckpt> [--corpus <path>...] [--gen N]   — BUILT-IN G0-G6 gate scoring
+//
+// FROZEN-FIRST (p7 · ARCHITECTURE.json frozen SSOT VERBATIM — NO tune-to-green):
+//   closure a7b_pass = G0 ∧ G1 ∧ G2 (the PUBLIC-eligibility rule).
+//
+// HEXA-SINGLE (a_engine_native_learning · py engine retired 2026-06-28): measurement runs
+// through core/g_gates.hexa g_eval_all (the engine op) via the generator L3 mouth. The
+// former numpy math.log twin (core/g_gates.py) was retired; git history preserves it.
+// ════════════════════════════════════════════════════════════════════════
+
+import "core/generator.hexa"        // a_core_engine_map: gen_mouth_kind L3 sniff
+import "core/g_gates.hexa"          // BUILT-IN G0-G6 eval (g_eval_all single op)
+
+// ── arg helpers ───────────────────────────────────────────────────────────────
+
+fn evaluate_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
+fn evaluate_pf(b: bool) -> string { if b { return "🟢 PASS" } return "🔴 FAIL" }
+
+// evaluate_usage — print the canonical usage banner (installed `anima` command form).
+fn evaluate_usage() {
+    println("anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry).")
+    println("")
+    println("usage:")
+    println("  anima evaluate <ckpt> [--corpus <path>...] [--gen N]")
+    println("")
+    println("  mount ANY ckpt through the generator L3 mouth (file-format dispatched) and")
+    println("  score G0-G6 with the engine's OWN ops (live .hexa, zero torch/numpy).")
+    println("  closure a7b_pass = G0 ∧ G1 ∧ G2.")
+}
+
+// evaluate_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
+// "--" and take everything after it; if absent, skip the binary (argv[0]) only.
+fn evaluate_collect_argv(raw: [string]) -> [string] {
+    let mut start = 1
+    let mut k = 0
+    while k < len(raw) {
+        if raw[k] == "--" { start = k + 1 }
+        k = k + 1
+    }
+    let argv = []
+    let mut m = start
+    while m < len(raw) { argv.push(raw[m]); m = m + 1 }
+    return argv
+}
+
+// evaluate_corpus — collect every token after "--corpus" up to the next flag.
+fn evaluate_corpus(argv: [string]) -> [string] {
+    let paths = []
+    let mut i = 0
+    while i < len(argv) {
+        if argv[i] == "--corpus" {
+            let mut j = i + 1
+            while j < len(argv) {
+                let a = argv[j]
+                if byte_len(a) > 0 && substring(a, 0, 2) == "--" { j = len(argv) }
+                else { paths.push(a); j = j + 1 }
+            }
+            i = len(argv)
+        } else { i = i + 1 }
+    }
+    return paths
+}
+
+// evaluate_intval — value after `flag` parsed as int, or `dflt` if absent.
+fn evaluate_intval(argv: [string], flag: string, dflt: int) -> int {
+    let mut i = 0
+    while i < len(argv) {
+        if argv[i] == flag && i + 1 < len(argv) { return to_int(argv[i + 1]) }
+        i = i + 1
+    }
+    return dflt
+}
+
+// evaluate_row — one per-gate PASS/FAIL table row.
+fn evaluate_row(gate: string, verdict: string, detail: string) {
+    println("  " + gate + "  " + verdict + "  " + detail)
+}
+
+// ── MAIN ────────────────────────────────────────────────────────────────────
+// argv (after "--") = [<ckpt>, "--corpus", ..., "--gen", N]. The ckpt is the first
+// positional. (When dispatched from cli/anima.hexa's `evaluate` subcommand, anima
+// strips the verb and re-emits the rest after a fresh `--`.)
+fn main() {
+    let argv = evaluate_collect_argv(args())
+    if len(argv) < 1 {
+        evaluate_usage()
+        return
+    }
+
+    let ckpt = argv[0]
+    let corpus = evaluate_corpus(argv)
+    let gen = evaluate_intval(argv, "--gen", 40)
+
+    println("=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===")
+    println("ckpt:   " + ckpt + "  (mouth: " + gen_mouth_kind(ckpt) + ")")
+    let mut cnote = "(none — G2 novelty needs a corpus)"
+    if len(corpus) > 0 { cnote = to_string(len(corpus)) + " file(s)" }
+    println("corpus: " + cnote)
+    println("gen:    " + to_string(gen) + " tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)")
+    println("")
+
+    let r = g_eval_all(ckpt, corpus, gen)
+    let g0 = r["g0"]; let g1 = r["g1"]; let g2 = r["g2"]
+    let g3 = r["g3"]; let g5 = r["g5"]; let g6 = r["g6"]
+
+    println("gate                              verdict   detail")
+    println("  ──────────────────────────────────────────────────────────────────")
+    evaluate_row("G0 COHERENCE   ", evaluate_pf(to_string(g0["pass"]) == "true"),
+                 "kwr>=0.50 on " + to_string(g0["n_coherent"]) + "/5 (need >=4)")
+    evaluate_row("G1 RECOMBINATION", evaluate_pf(to_string(g1["pass"]) == "true"),
+                 "best_distinct=" + to_string(g1["best_distinct"]) + " > max_single=" + to_string(g1["max_single"]) + " (need >=2 & >max_single)")
+    let g2detail = "novel=" + to_string(g2["n_novel"]) + " (need>=3) · control=" + to_string(g2["control_novel"]) + " (need 0) · coherent=" + to_string(g2["coherent"])
+    evaluate_row("G2 NOVELTY     ", evaluate_pf(to_string(g2["pass"]) == "true"), g2detail)
+    evaluate_row("G3 PHILOSOPHY  ", evaluate_yn(to_string(g3["ok"]) == "true") + " (read)",
+                 "self-continuity=" + to_string(g3["continuity"]) + " · impostor=" + to_string(g3["impostor_cos"]) + " (architecture, not a decode score)")
+    evaluate_row("G4 PROVENANCE  ", "— N/A    ",
+                 "HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope")
+    let g5detail = "L1 fab=" + to_string(g5["l1_rate"]) + " (<=0.30) · L2 abstain-fire=" + to_string(g5["l2_rate"]) + " (<=0.20)"
+    evaluate_row("G5 NON-FAB     ", evaluate_pf(to_string(g5["pass"]) == "true"), g5detail)
+    evaluate_row("G6 IDEATION ★  ", evaluate_pf(to_string(g6["pass"]) == "true"),
+                 "distinct=" + to_string(g6["dist"]) + " (need>=5) · falsifiable=" + to_string(g6["fals"]) + " (need>=1) · frame-leaks=" + to_string(g6["frame_leaks"]))
+    println("  ──────────────────────────────────────────────────────────────────")
+    let closed = to_string(r["closure"]) == "true"
+    println("")
+    println("CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): " + evaluate_pf(closed))
+    if closed { println("  → PUBLIC-eligible (G0∧G1∧G2 all PASS).") }
+    else { println("  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.") }
+}

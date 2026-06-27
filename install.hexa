@@ -84,7 +84,7 @@ fn main() {
     let hx_env = if hexa_bin != "" { "HEXA='" + hexa_bin + "' " } else { "" }
     run_or_die("cd '" + pkg_dir + "' && " + hx_env + hexa_run + " run '" + setup + "'")
 
-    println("🧠 anima: install complete — `anima` from any shell dispatches to tool/anima_cli/*.hexa")
+    println("🧠 anima: install complete — `anima` (PATH command) → cli/anima.hexa: train · serialize · evaluate · chat")
 
     // ── RESTORE (self-update 종료 복원) ──
     // detach 상태(설치한 태그)에서 기본 브랜치로 되돌려, 다음 실행에서 다시

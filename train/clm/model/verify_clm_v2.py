@@ -25,6 +25,7 @@ import math
 
 MAGIC = bytes([67, 76, 77, 1])
 CLMX = bytes([67, 76, 77, 88])
+CLMB = bytes([67, 76, 77, 66])   # bind-readout (Hadamard) extension
 
 
 def _ru32(b: bytes, off: int) -> int:
@@ -61,7 +62,8 @@ def parse_clm(path_or_bytes) -> dict:
     rb = path_or_bytes if isinstance(path_or_bytes, (bytes, bytearray)) else open(path_or_bytes, "rb").read()
     out = {"len": len(rb), "magic_ok": False, "nblk": None, "blocks": [],
            "clmx_found": False, "n_ext": None, "ext_counts": [], "final_off": None,
-           "exact_eof": None}
+           "exact_eof": None, "clmb_found": False, "readout_type": 0,
+           "bind_blocks": [], "bind_ext_counts": []}
     if len(rb) < 5:
         return out
     out["magic_ok"] = (rb[0] == 67 and rb[1] == 76 and rb[2] == 77 and rb[3] == 1)
@@ -95,6 +97,24 @@ def parse_clm(path_or_bytes) -> dict:
             out["ext_counts"].append(cnt)
             if o2 > len(rb):
                 raise ValueError(f"EOF reading ext array (count={cnt}) off={o2}>len={len(rb)}")
+        # OPTIONAL CLMB bind-readout trailer: readout_type:u8 + Wa/Wb blocks + 2 ext.
+        if o2 + 5 <= len(rb) and rb[o2:o2 + 4] == CLMB:
+            out["clmb_found"] = True
+            out["readout_type"] = rb[o2 + 4]
+            o3 = o2 + 5
+            for _ in range(2):                      # Wa, Wb conv blocks
+                cout = _ru32(rb, o3); rest = _ru32(rb, o3 + 4); o3 += 8
+                nib = (cout * rest + 1) // 2
+                o3 += nib + cout * 4
+                out["bind_blocks"].append({"cout": cout, "rest": rest, "nibbles": nib})
+                if o3 > len(rb):
+                    raise ValueError(f"EOF walking CLMB block off={o3}>len={len(rb)}")
+            for _ in range(2):                      # Wa_bias, Wb_bias ext
+                cnt = _ru32(rb, o3); o3 += 4 + cnt * 4
+                out["bind_ext_counts"].append(cnt)
+                if o3 > len(rb):
+                    raise ValueError(f"EOF reading CLMB ext off={o3}>len={len(rb)}")
+            o2 = o3
         out["final_off"] = o2
         out["exact_eof"] = (o2 == len(rb))
     return out
@@ -170,6 +190,74 @@ def _build_synthetic_general(d, L, E, K=3, V=256, seed=2026):
     ext = [V * d, d] + [d] * L + [d] * E + [E, V] + [d] * L + [d] * L + [d, d]
     expect = {"nblk": len(blocks), "blocks": blocks, "n_ext": len(ext), "ext_counts": ext}
     return sd, expect
+
+
+def _build_synthetic_bind(d, L, E, k, V=256, K=3, seed=4242):
+    """General (L,E) BIND synthetic in LOGICAL-slot keys (serialize_v3_bind accepts
+    them). Trunk slots match the v3 general order; the readout is Wa/Wb (k,d,1) +
+    Wo (V,k,1) — the EXP-3 BindCLM. Returns (sd, expect_main, expect_bind)."""
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    def r(*shape):
+        return (rng.standard_normal(shape) * 0.1).astype(np.float32)
+    sd = {"embed": r(V, d), "ecW": r(d, d, K), "ecB": r(d)}
+    for i in range(L):
+        sd[f"tc{i}W"] = r(d, d, K); sd[f"tc{i}B"] = r(d)
+        sd[f"tg{i}G"] = r(d); sd[f"tg{i}B"] = r(d)
+    for j in range(E):
+        sd[f"e{j}W"] = r(d, d, K); sd[f"e{j}B"] = r(d)
+    sd["rW"] = r(E, d, 1); sd["rB"] = r(E)
+    sd["noG"] = r(d); sd["noB"] = r(d)
+    # bind readout: Wa,Wb (k,d,1), Wo (V,k,1)
+    sd["Wa"] = r(k, d, 1); sd["WaB"] = r(k)
+    sd["Wb"] = r(k, d, 1); sd["WbB"] = r(k)
+    sd["Wo"] = r(V, k, 1); sd["WoB"] = r(V)
+    # expected MAIN: blocks = ecW, tcW*L, eW*E, rW(E,d), roW(=Wo: V,k)
+    blocks = [{"cout": d, "rest": d * K}]
+    blocks += [{"cout": d, "rest": d * K} for _ in range(L)]
+    blocks += [{"cout": d, "rest": d * K} for _ in range(E)]
+    blocks += [{"cout": E, "rest": d}, {"cout": V, "rest": k}]   # router, Wo readout
+    ext = [V * d, d] + [d] * L + [d] * E + [E, V] + [d] * L + [d] * L + [d, d]
+    expect_main = {"nblk": len(blocks), "blocks": blocks, "n_ext": len(ext),
+                   "ext_counts": ext}
+    expect_bind = {"bind_blocks": [{"cout": k, "rest": d}, {"cout": k, "rest": d}],
+                   "bind_ext_counts": [k, k]}
+    return sd, expect_main, expect_bind
+
+
+def run_roundtrip_bind(tmp_path, d, L, E, k, readout_type, V=256, K=3):
+    """v0.3 BIND round-trip via serialize_v3_bind: structural (CLMB) + forward
+    sanity (bind decode produces finite logits with the Hadamard/add readout)."""
+    import clm_serialize_v2 as S
+    import numpy as np
+    sd, exp_main, exp_bind = _build_synthetic_bind(d, L, E, k, V=V, K=K)
+    S.serialize_v3_bind(sd, n_trunk_layers=L, n_experts=E,
+                        readout_type=readout_type, out_path=tmp_path)
+    rb = open(tmp_path, "rb").read()
+    ok, why = _structural_check(rb, exp_main)        # main body unchanged vs additive grammar
+    if not ok:
+        return False, f"main: {why}"
+    p = parse_clm(rb)
+    if not p["clmb_found"]:
+        return False, "CLMB trailer not found"
+    if p["readout_type"] != readout_type:
+        return False, f"readout_type {p['readout_type']} != {readout_type}"
+    bb = [{"cout": x["cout"], "rest": x["rest"]} for x in p["bind_blocks"]]
+    if bb != exp_bind["bind_blocks"]:
+        return False, f"bind_blocks {bb} != {exp_bind['bind_blocks']}"
+    if p["bind_ext_counts"] != exp_bind["bind_ext_counts"]:
+        return False, f"bind_ext {p['bind_ext_counts']} != {exp_bind['bind_ext_counts']}"
+    if not p["exact_eof"]:
+        return False, f"trailing bytes: final_off={p['final_off']} != len={p['len']}"
+    # forward sanity: the bind mirror loads + forwards to finite [T,V] logits.
+    W = _load_clm_weights(rb)
+    if W is None or W["rtype"] != readout_type or W["kbind"] != k:
+        return False, f"weights load rtype={W and W['rtype']} kbind={W and W['kbind']}"
+    tok = (np.arange(24) % V).astype(float)
+    lg = _fwd_logits(W, tok, 24)
+    if lg.shape != (24, V) or not np.all(np.isfinite(lg)):
+        return False, f"forward shape={lg.shape} finite={np.all(np.isfinite(lg))}"
+    return True, f"ok (rtype={readout_type} k={k}, logits {lg.shape} finite)"
 
 
 def run_roundtrip(tmp_path: str) -> tuple[bool, str]:
@@ -401,9 +489,23 @@ def _load_clm_weights(path):
         a, off = rd_ext(off); tgB.append(a)
     noG, off = rd_ext(off)
     noB, off = rd_ext(off)
+    # OPTIONAL CLMB bind-readout trailer (math.log mirror — dt_ln-immune gate).
+    rtype = 0
+    Wa = Wb = WaB = WbB = None
+    kbind = roW.shape[1]
+    if off + 5 <= len(rb) and rb[off] == 67 and rb[off + 1] == 76 \
+            and rb[off + 2] == 77 and rb[off + 3] == 66:   # "CLMB"
+        rtype = rb[off + 4]
+        off += 5
+        Wa, off = rd_block(off)              # [k, d]
+        Wb, off = rd_block(off)              # [k, d]
+        WaB, off = rd_ext(off)              # [k]
+        WbB, off = rd_ext(off)              # [k]
+        kbind = Wa.shape[0]
     return dict(d=d, E=E, V=V, K=K, L=L, ecW=ecW, tcW=tcW, eW=eW, rW=rW, roW=roW,
                 embed=embed.reshape(V, d), ecB=ecB, tcB=tcB, eB=eB, rB=rB, roB=roB,
-                tgG=tgG, tgB=tgB, noG=noG, noB=noB)
+                tgG=tgG, tgB=tgB, noG=noG, noB=noB,
+                rtype=rtype, kbind=kbind, Wa=Wa, Wb=Wb, WaB=WaB, WbB=WbB)
 
 
 def _gelu(x):
@@ -452,6 +554,13 @@ def _fwd_logits(W, tok, T):
     p = np.exp(lr - lr.max(1, keepdims=True)); p /= p.sum(1, keepdims=True)
     y = sum(p[:, e:e + 1] * exo[e] for e in range(E))
     yn = _gn1(y, W["noG"], W["noB"])
+    rtype = W.get("rtype", 0)
+    if rtype:
+        k = W["kbind"]
+        u = _conv1d(yn, W["Wa"], W["WaB"], T, d, k, 1, 1)        # [T,k]
+        v = _conv1d(yn, W["Wb"], W["WbB"], T, d, k, 1, 1)        # [T,k]
+        g = (u * v) if rtype == 1 else (u + v)
+        return _conv1d(g, W["roW"], W["roB"], T, k, V, 1, 1)     # Wo: [T,V]
     return _conv1d(yn, W["roW"], W["roB"], T, d, V, 1, 1)
 
 
@@ -665,6 +774,23 @@ def main():
     except OSError:
         pass
 
+    # v0.3 BIND round-trips (CLMB bind-readout codec): Hadamard (rt=1) + linear (rt=2).
+    btmp = os.path.join(here, "_rt_bind.clm")
+    b_ok_h, b_why_h = run_roundtrip_bind(btmp, d=48, L=2, E=2, k=64, readout_type=1)
+    print(f"F-CLM-BIND-ROUNDTRIP-HADAMARD={'1' if b_ok_h else '0'}  "
+          f"(d=48 L=2 E=2 k=64 rt=1: {b_why_h})")
+    b_ok_l, b_why_l = run_roundtrip_bind(btmp, d=48, L=2, E=2, k=64, readout_type=2)
+    print(f"F-CLM-BIND-ROUNDTRIP-LINEAR={'1' if b_ok_l else '0'}  "
+          f"(d=48 L=2 E=2 k=64 rt=2: {b_why_l})")
+    # 303M-class bind dims (block/ext topology only; reduced d for the bookkeeping).
+    b_ok_303, b_why_303 = run_roundtrip_bind(btmp, d=128, L=4, E=4, k=512, readout_type=1)
+    print(f"F-CLM-BIND-ROUNDTRIP-303MDIMS={'1' if b_ok_303 else '0'}  "
+          f"(d=128 L=4 E=4 k=512 [303M ARM-BIND topology, reduced d]: {b_why_303})")
+    try:
+        os.remove(btmp)
+    except OSError:
+        pass
+
     # held-out DESCENT-gate machinery self-test (broken-detector must fire on
     # random weights). numpy required; honest SKIP if absent.
     try:
@@ -677,7 +803,7 @@ def main():
         print("F-CLM-DESCENT-SELFTEST=SKIP (numpy unavailable)")
         d_ok = True  # don't fail the structural suite on a missing optional dep
 
-    ok = ok and eq_ok and g_ok_small and g_ok_3b and d_ok
+    ok = ok and eq_ok and g_ok_small and g_ok_3b and d_ok and b_ok_h and b_ok_l and b_ok_303
 
     # golden-reference parse: prove the mirror matches the REAL flame format.
     golden = None

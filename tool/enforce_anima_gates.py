@@ -48,24 +48,24 @@ TORCH_MARK = re.compile(r"import\s+torch|gauge_lib|\bnumpy\b")
 # engine-native = a .hexa that calls a live core engine: the byte-mouth decoders
 # (clm_decode/bytegpt_decode/engine_cli) OR the faithful-IIT4 Φ engine (a_phi_iit4_tool,
 # stdlib/iit4/faithful_phi). Φ verdicts are engine-native via faithful_phi, not a byte decoder.
-# The BUILT-IN G0-G6 eval (g_gates / `anima eval`, PR #2604) is also engine-native: it is the
-# canonical single-entry G-gate scorer (cli/anima.hexa → generator L3 mouth gen_auto_ideate),
+# The BUILT-IN G0-G6 eval (g_gates / `anima evaluate`, PR #2604) is also engine-native: it is the
+# canonical single-entry G-gate scorer (cli/evaluate.hexa → generator L3 mouth gen_auto_ideate),
 # so a verdict scored through it counts as engine-native evidence WITHOUT a per-gate python
 # harness (a_engine_native_learning do:-carving — the canonical G-gate measurement command).
 # (canonical 트리 재구성 후 엔진은 core/; 과거 대문자 CORE/ 도 archive 호환 위해 유지)
 CORE_DECODE = re.compile(
-    r"clm_decode|bytegpt_decode|engine_cli|faithful_phi|iit4_bigphi|/iit4/|\bcore/|\bCORE/|pure_field|engine_g|g_gates|anima\s+eval|gen_auto_ideate"
+    r"clm_decode|bytegpt_decode|engine_cli|faithful_phi|iit4_bigphi|/iit4/|\bcore/|\bCORE/|pure_field|engine_g|g_gates|anima\s+eval(uate)?|cli/evaluate|gen_auto_ideate"
 )
 DIRECTIONAL = re.compile(r"DIRECTIONAL", re.IGNORECASE)
 
-# 2-production (a_engine_native_learning): the py engine is a CO-EQUAL production engine
-# and CAN bank a terminal G-gate verdict — but ONLY when its SCORING is byte-parity-verified
-# against the WIRED hexa single-entry (cli/anima.hexa eval → core/g_gates.hexa → generator L3).
-# Decode-only byte-parity is NOT enough: a py side-harness that calls clm_decode_* directly and
-# scores with g_gates.py bypasses generator L3, so its G1/G6 numbers can DRIFT from the wired
-# engine (precedent 2026-06-26 clm303_clean: side-harness G1/G6 FAIL @gen=40 was a gen-budget +
-# unverified-scoring artifact). A parity-record = a state/<slug>/ evidence file proving the py
-# G0-G6 SCORING == the wired hexa on a shared ckpt (e.g. golden d768, which hexa runs w/o OOM).
+# hexa-단일 production (a_engine_native_learning, 2026-06-28: py engine retired). The authoritative
+# G-gate verdict path is the WIRED hexa single-entry ONLY (cli/anima.hexa eval → core/g_gates.hexa
+# → generator L3). A torch-side .py artifact is DIRECTIONAL by default. The parity-record escape
+# below remains ONLY to honor HISTORICAL py-engine evidence (state/<slug>/) banked while the
+# 2-production policy was active and byte-parity-verified against the wired hexa engine — it is NOT
+# an invitation for NEW py side-harness verdicts (py engine is gone; new measurement = anima eval).
+# A parity-record = a state/<slug>/ evidence file proving the (historical) py G0-G6 SCORING == the
+# wired hexa on a shared ckpt (e.g. golden d768, which hexa runs w/o OOM).
 PARITY_RECORD = re.compile(
     r"(byte-?parity|scoring[- ]?parity|parity[- ]?gate).{0,400}(PASS|identical|byte-identical)"
     r"|wired.{0,200}(hexa|anima\s+eval).{0,200}(==|≡|identical|match)",
@@ -217,6 +217,9 @@ def g1_violations(rows, scope):
 
 
 def g2_violations():
+    # 2-surface = cards/** + HYPOTHESES.jsonl; UNIVERSE/CLAUDE.md is the folder-guide
+    # (commons folder-docs) — exempt (lockstep with .harness/enforcement.json H-UNIVERSE-CODE).
+    # Still NO .py/.hexa/result under UNIVERSE/.
     tracked = sh(["git", "ls-files", "UNIVERSE/"]).splitlines()
     bad = [
         f.strip()
@@ -224,6 +227,7 @@ def g2_violations():
         if f.strip()
         and not f.startswith("UNIVERSE/cards/")
         and f.strip() != "UNIVERSE/HYPOTHESES.jsonl"
+        and f.strip() != "UNIVERSE/CLAUDE.md"
     ]
     return bad
 
@@ -232,12 +236,13 @@ def g2_violations():
 # The 'G4 빵꾸' fix (검증방식 3-카드: CAPABILITY decode / SUBSTRATE read / PROVENANCE publish).
 # The decode-CAPABILITY PASS closure (a7b_pass = G0∧G1∧G2) MUST NEVER fold in the PROVENANCE
 # gate (G4 = sha256/HF/recovery = publish-process, N/A to decode) — that is the hole that made
-# the flat G0-G6 scorecard punch out at G4. Mechanically: in the 2-production g_gates.{py,hexa},
+# the flat G0-G6 scorecard punch out at G4. Mechanically: in the hexa engine g_gates.hexa,
 # every `closure =` assignment must NOT reference the provenance result (r4/g4/prov), and
 # provenance must stay DOWNSTREAM (consume closure as publish-eligibility, not gate it).
 # Current code already complies (closure = r0∧r1∧r2; g_eval_g4(ckpt, closure) reads it after) —
 # this locks the redesign so the hole cannot reappear. NO bypass (c18).
-GATECARD_FILES = ("core/g_gates.py", "core/g_gates.hexa")
+# (2026-06-28: py engine retired → hexa-단일 production; only core/g_gates.hexa is checked.)
+GATECARD_FILES = ("core/g_gates.hexa",)
 CLOSURE_ASSIGN = re.compile(r"^\s*(?:let\s+)?closure\s*=")
 PROV_IN_CLOSURE = re.compile(r"\b(r4|g4|prov)", re.IGNORECASE)
 

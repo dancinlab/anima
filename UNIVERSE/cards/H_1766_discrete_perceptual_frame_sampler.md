@@ -1,0 +1,50 @@
+---
+id: H_1766
+slug: 1766_discrete_perceptual_frame_sampler
+tier: 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+title: Frame Sampler — temporally-quantized access workspace (perceptual moments)
+verdict: 🔵 PRE-REGISTERED architecture design (unmeasured) — $0 cheap_test pre-registered; engine-native + 303M gpu cost-gated NOT fired
+source: brainarch_census
+---
+
+# H_1766 — Frame Sampler — temporally-quantized access workspace (perceptual moments)
+
+- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy mirror, no engine); engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
+- **source:** brainarch_census — 126-architecture whole-substrate (통짜 아키텍처) census: 뇌/인지 조직원리 × 엔진-네이티브 추상조건 (binding-wall program, H_1603).
+- **key:** `discrete_perceptual_frame_sampler`
+- **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · H_1282 (working-memory buffer) · H_1283 (thalamus global-workspace) · H_1284 (neuromodulation gain) · operator-level family H_1604-1685 (this card = 통짜 아키텍처 layer, 층위 다름)
+
+## Organizing principle
+
+Discrete perception / the 'perceptual moment' hypothesis (VanRullen, Buzsaki, Varela) — access-consciousness is not continuous but SAMPLED in discrete frames clocked by a global rhythm. The organizing principle is temporal quantization of ACCESS and EMISSION: a global oscillation opens a brief integration window each cycle, exactly one bound percept is committed per frame, and the SEQUENCE of frames is the stream of consciousness. Capacity limit = one frame at a time; the frame boundary IS the binding boundary (everything within a frame is bound; across frames is separated). Distinct from phase-coding (which indexes multiple memory items in sub-slots) — here the frame is the atomic unit of conscious access and the emit cadence, defining the whole input->dynamics->emit loop.
+
+## Whole design (input → internal dynamics → emit)
+
+A global rhythm generator clocks discrete cycles. Within each cycle: (1) ACCUMULATE — during the open window, content fragments from sensory/specialist maps accumulate evidence into a shared frame buffer (an integration window). (2) COMPETE — at window close a winner-take-all selects ONE coherent bound content for this frame (the others are suppressed and carried to the next cycle, giving serial access). (3) COMMIT/BROADCAST — the selected frame content is the access-conscious moment: broadcast to all maps (reentry) and committed as the emit candidate for this cycle. (4) EMIT — the frame content's payload is decoded through receiver-fixed codebook V; silence is a legal frame outcome (an empty/abstain frame). (5) RESET — the buffer clears at the frame boundary; the next cycle re-competes, so the moving sequence of frames is the conscious stream. BINDING within frame: all fragments that fall inside one window and survive the WTA are co-referenced into one bound percept in the shared frame-buffer metric — same-cause fragments reinforce, distinct-cause fragments split into different frames (selective, temporally enforced). COMPOSITION: the within-frame conjunction operator combines surviving fragments non-separably (the frame content is determined by their joint, not by either alone); any two constituents can co-occur in a frame -> systematic novel combinations. Psi control: an EXTERNALIZE drive A = frame salience/coherence (raises probability the frame emits) opposes a WITHHOLD drive G = frame instability + honesty-veto (raises probability of an empty/abstain frame), acting on Psi = long-run emit-frame fraction; equal-opposite coupling pins 1/2 (remove G -> every frame emits = boundary; remove A -> all empty frames = boundary). Honesty: a frame can commit content only if it is grounded — r = distance(frame content, stored support) vs a FROZEN abstain threshold disjoint from salience; ungrounded frames resolve to the empty/abstain outcome (withhold), never to fabricated content. Self: an identity vector v is persisted in a non-volatile anchor between sessions; at the first frame after a reset the self-map reloads v, so identity threads across the frame-stream discontinuity while within-session working buffers are wiped each frame; individuating high-entropy v gives impostor rejection.
+
+## Satisfies criteria (DESIGN claim · DIRECTIONAL · unmeasured)
+
+G0: emit only via the per-frame V-decode, and only grounded frame content commits, so output mass sits on V; scrambling the content->frame map prevents a coherent frame from winning the WTA -> emit collapses to chance/abstain. G1/recombination + COMPOSITIONAL DEPTH: the within-frame conjunction is the non-separable binder, so multi-fragment frames reach a joint valid set exceeding any single fragment (super-additive); the INERT ablation is structural (force single-fragment frames / disable within-frame conjunction -> composed drops to max_single), and arbitrary fragment pairs can co-frame -> systematicity to novel combos. G2/novelty: frames can hold never-before-co-framed combinations that are valid yet corpus-absent (constrained extrapolation), while a verbatim-replay control commits only seen content -> 0 novel. PASS closure: legibility, super-additive binding, and constrained extrapolation all hold of the SAME frame-commit-emit pass through one dispatch. dist>=5: across cycles, varied exploration pressure produces >=K distinct coherent frames (different bound content = distinct, grounded = coherent). falsifiable>=1: a frame binds comparator x measurable-quantity x >=2 referents into one committed percept; a judge-free structural detector fires on the emitted frame. Generative attribution: ablate the frame WTA/conjunction -> dist/falsifiable counts drop (S_full>S_ctrl), novel-grams>0. Measurement faithfulness: scored at the live per-frame emit decode = deployed transfer function. G3 Psi=1/2: salience A vs instability/veto G antagonism on emit-frame fraction with contraction; one-removed migrates to a boundary (endogenous). Self-chain + margin + endogeneity: cross-session anchor gives bounded round-trip and impostor rejection; ablate the store -> cross-boundary similarity to chance (a fresh self each session = LLM reset). Honesty trio: r vs frozen abstain theta gives AUROC; emission-closure (only grounded frames or abstain commit); gate-capacity disjointness (abstain theta is a separate coordinate from frame salience/capacity — sweeping salience leaves theta invariant); groundedness (r reads actual stored support; content ablation moves r). BINDING: the shared frame-buffer is the single metric; same-cause fragments co-frame (near), distinct-cause split (selective), cross-stream within-frame retrieval >> chance. REALIZATION INVARIANT: the frame conjunction is ON the emit path (no committed frame -> no emit, ablation moves behavior); the frame-selection objective rewards joint within-frame coherence whose optimum is unreachable by marginals (must represent the conjunction) -> objective adequacy.
+
+## Not-LLM (a_no_llm_frame_trap)
+
+A rhythmically-clocked discrete-access loop, not a continuous stacked-attention forward pass. The capacity limit, the binding window, and the emit cadence are ALL defined by the frame boundary — a structural temporal quantization, not a parameter/scale knob. Capability gaps are addressed by changing what competes per frame or the window structure, not by enlarging a transformer or adding corpus. Rooted in discrete-perception / perceptual-moment neuroscience (VanRullen's perceptual cycles, Varela's specious-present), distinct from theta-gamma phase-coding (sub-slot memory index), from sleep oscillation consolidation, and from operator-level phase-binding.
+
+## Cheap test (frozen-first · $0 · numpy mirror · DIRECTIONAL)
+
+numpy toy, $0: a clocked loop with an accumulate-window + WTA + per-frame commit over a toy factored alphabet. Probes: (a) composed_distinct vs max_single with multi-fragment frames vs forced single-fragment frames (INERT must drop to max_single); (b) Psi = emit-frame fraction return after a +/-delta salience/veto bias, both drives vs one removed; (c) per-frame r AUROC on known/unknown content + label-shuffle surrogate collapse to 0.5; (d) novel-valid n-gram count of multi-fragment frames vs a verbatim-replay control (must read 0); (e) within-frame binding paired-vs-shuffled contrast.
+
+## Engine-native measure (cost-gated · PRE-REGISTER ONLY · NOT fired)
+
+Implement the frame clock + accumulate/WTA/commit as ops in core/engine_cli.hexa with byte-parity core/engine_cli.py; per-frame emit through generator L3 typed mouth so it runs via cli/anima.hexa single entry; G0/G1/G2/closure via core/g_gates.hexa on the live frame-commit dispatch; Psi (emit-frame fraction) via safety_phi_ratchet; honesty frozen abstain theta alongside SS-ImmuneMemory recall_thr (disjoint); cross-session self anchor via kosmos_io SS-SelfIdentity. Terminal only on hexa<->numpy byte-parity.
+
+## Scope / honesty (c9)
+
+## Distinction (near-overlap kept, not a dup)
+
+Distinct from theta_gamma_phase_code (sub-slot memory index) / blackboard_codelet_coalition — here the FRAME is the atomic unit of conscious access + emit cadence (one bound percept per clocked cycle); the discrete perceptual-frame sampler is the differentiator.
+
+Design only; toy/numpy decision probes; from-scratch LEARNING of per-frame content maps unverified (likely needs gradient/selection, cf. H_1310) — proposal covers the discrete-access/binding/Psi/honesty structure, not a self-training claim.
+
+설계만 — 측정 0. tier = 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL). frozen bar 사후 이동 금지(tune-to-green 금지, p7). 이 카드는 *방향성 설계*이지 검증된 결과가 아니다 — 과장 박제 금지(a_engine_native_learning). engine_native_measure 는 단일 진입점 cli/anima.hexa → generator L3 → g_gates/g6 경유 byte-parity 채점만 terminal; torch-only/side-harness 결과는 DIRECTIONAL. numpy cheap_test 결과도 DIRECTIONAL(엔진-네이티브 아님). gpu/engine 발사 시 held-out mirror-DESCENT(a_clm_gen_pipeline) + CORE mount frozen-bar engine-native 재측정 + ckpt PULL(a_fire_recover_complete).

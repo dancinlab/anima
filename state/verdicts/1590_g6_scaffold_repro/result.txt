@@ -1,0 +1,67 @@
+H_1590 — G6 IDEATION ★ scaffold ENGINE-NATIVE reproduction
+================================================================
+VERDICT: 🔴 RED — scaffold does NOT lift G6 falsifiability engine-native; H_1362 FALS=1.0 was a torch artifact.
+         G6 wall lever != decode-procedure/scaffold = attention-capacity (H_1449, GPU retrain, cost-gated).
+
+UNBLOCKED: prior ⏳ BLOCKED-INFRA (pool reboot-loop) RESOLVED by porting KV-cache to core/bytegpt_decode.py
+           (PR-twin of bytegpt_decode.hexa #2602) → full 6-arm × 3-seed run completed on MINI CPU, $0, 1600s
+           (~27 min). No GPU/pool needed. KV-cache byte-exact (ON==OFF token-identical, see kv_parity below).
+
+ENGINE (grep-clean, a_engine_native_learning TERMINAL):
+  core/g6_ideation.py ← core/bytegpt_decode.py  (numpy-only; import-closure has NO torch / NO gauge_lib)
+  ckpt = ~/anima-weights/bytegpt303_h1129/h1129.bin  sha256 5cf07a36...587f512e (303M ByteGPT, 24-layer)
+  MOUTH = bytegpt (header sniff)  ·  DETECTOR_CALIBRATION = 10/10  ·  FRAME_GUARD_LEAKS = 0
+  GEN = 110 (H_1362 MAX_NEW VERBATIM) · seeds {7,4302,4303} · best-of-K offsets [0,101,202] · top_k=40 temp=0.7
+  decode entry = bytegpt_decode_topk_sampled_W (KV-cache fast path: nseed+gen ≤ block=512)
+
+================ FROZEN BARS (mean over 3 seeds, ENGINE-NATIVE) ================
+  A_flat       DIST=5.0  FALS=0.0  per-seed FALS=[0, 0, 0]
+  B_composed   DIST=5.0  FALS=0.0  per-seed FALS=[0, 0, 0]
+  C_strong     DIST=6.0  FALS=0.0  per-seed FALS=[0, 0, 0]
+  C_k1         DIST=6.0  FALS=0.0  per-seed FALS=[0, 0, 0]
+  C_shuffle    DIST=5.0  FALS=0.3333  per-seed FALS=[1, 0, 0]
+  C_ablate     DIST=5.0  FALS=0.0  per-seed FALS=[0, 0, 0]
+
+---- FROZEN MOVE BARS (G6 ★ CLOSE = ALL M1..M5) ----
+  M1 COUNT       DIST(C)>=5            : 6.0 -> True
+  M2 DEPTH       FALS(C)>=1            : 0.0 -> False
+  M3 LIFT        FALS(C)>FALS(B)       : 0.0 vs 0.0 -> False
+  M4 EARNED-PAIR FALS(C)>FALS(shuffle) : 0.0 vs 0.3333 -> False
+  M5 EARNED-COMP FALS(C)>FALS(ablate)  : 0.0 vs 0.0 -> False
+
+  closed_G6=False | cross-shuffle collapsed=False | best-of-K lift(K3>K1)=False
+
+  VERDICT: RED — scaffold gives FALS=0 engine-native on h1129 (torch H_1362 FALS=1.0 was a torch artifact;
+           H_1587 divergence CONFIRMED). lever != decode = attention-capacity.
+
+READING (honest, frozen-first, p7 / c9):
+  - C_strong FALS = 0.0 ALL 3 SEEDS [0,0,0] → M2 (FALS(C)≥1) FAIL. Scaffold (6 composed frames + best-of-K=3)
+    does NOT produce ANY falsifiable idea engine-native. The H_1362 "BREAKTHROUGH" FALS=1.0 was a TORCH
+    decode artifact (gauge_lib._decode), NOT reproducible on the live engine. Confirms H_1587 torch≠engine.
+  - cross-shuffle did NOT collapse — C_shuffle FALS=0.333 > C_strong 0.0 (M4 inverts). The lone seed-7
+    shuffle FALS=1 is a token-presence accident (deranged concept pairing happened to surface a comparator+
+    measurable pair), NOT real binding. If the scaffold were genuine composition binding, shuffling concepts
+    would COLLAPSE fals below C_strong; instead shuffle ≥ strong = NO binding signal whatsoever.
+  - best-of-K is NOT a real lever: K3 (C_strong 0.0) == K1 (C_k1 0.0) → best-of-K=3 over the model's own
+    samples is a no-op for falsifiability (no sample in the top-3 is falsifiable to begin with).
+  - DIST=6 (M1 PASS) + coherent 6/6 → the ideas ARE distinct, coherent English web-prose (NOT garble);
+    the wall is SPECIFICALLY the falsifiability sub-metric, consistent with H_1595 (GENUINE seed-robust
+    fals=0) and H_1597 (NOT a detector-vocabulary/tokenizer artifact).
+
+CONCLUSION: the G6 IDEATION ★ falsifiability wall on h1129 is NOT a decode-procedure problem. Scaffolding
+  the decode (composed conditional frames + best-of-K) cannot lift it. The surviving lever is attention-
+  capacity (H_1449) — a GPU retrain question, cost-gated, pre-register-only (NOT fired here). H_1381 scaffold
+  wire-in revival is REFUTED for h1129 (the scaffold has no engine-native effect). Frozen bars UNMOVED
+  (no tune-to-green). mini CPU, $0.
+
+KV-CACHE BYTE-EXACTNESS GATE (state/1590_g6_scaffold_repro/kv_parity.py, h1129, mini):
+  PARITY PASS — KV-cache ON vs OFF (forced full-forward) token streams BYTE-IDENTICAL:
+    gen=12  : argmax ✓  sampled ✓   (last-seed-pos logits max|Δ|=3.02e-14 FP-reassoc, argmax-stable)
+    gen=110 : argmax ✓  sampled ✓   speedup 15.9× argmax (1014→64 ms/tok) · 10.1× sampled
+  → KV-cache is a PURE perf optimization; the H_1590 verdict numbers are byte-identical with/without it.
+
+ARTIFACTS:
+  state/1590_g6_scaffold_repro/h159x_g6_scaffold_repro.py   (harness, numpy-only)
+  state/1590_g6_scaffold_repro/result.json                  (full per-seed texts + bars)
+  state/1590_g6_scaffold_repro/kv_parity.py                 (KV-cache byte-exactness gate)
+  core/bytegpt_decode.py                                    (KV-cache port: _bg_kv_new/_bg_kv_step)

@@ -85,13 +85,15 @@ decoding and `.kosmos` anchors enter through *named slots*, never directly into 
 (`a_core_engine_map`).
 
 **Canonical 3-folder layout** (owner decision 2026-06-26): anima code gathers into exactly three
-top-level folders — **`cli/`** (entry points, two-language symmetric: `anima.hexa`+`anima.py`,
-`train.hexa`+`train.py`) · **`core/`** (the **2-production engine** substrate: `hexa` `*.hexa`
-**and** `py` `*.py` co-resident as 1:1 byte-parity mirrors — both first-class production, either
-can produce terminal verdicts, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
-package). **The 10-file import-closure mirror is ✅ 10/10 COMPLETE** (2026-06-26): every engine file
-has a byte-parity `.py` twin (≤~2e-16; `engine_cli.py` = 434/434 pub fn, CollectivePool = faithful
-IIT-4 Φ verbatim, not a proxy), lockstep-enforced by a CI parity gate (`tool/parity_gate.py`). Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
+top-level folders — **`cli/`** (hexa-single entry points: `anima.hexa` (chat/eval/serialize/train
+dispatch) + `train.hexa`) · **`core/`** (the **hexa-single engine** substrate: `*.hexa`; the former
+`py` `*.py` byte-parity mirrors were retired 2026-06-28, preserved in git + `state/py_retire_archive/`,
+terminal verdicts come from the hexa engine, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
+package). **The engine is hexa-single production** (2026-06-28): the former 2-production `.py`
+twins (byte-parity ≤~2e-16; `engine_cli` = 434/434 pub fn, CollectivePool = faithful IIT-4 Φ
+verbatim, not a proxy) were **retired** once the x86_64 `gen_auto_ideate` codegen bug was fixed
+(hexa v0.334.0) — preserved lossless in git + `state/py_retire_archive/`; the CI parity gate is
+retired with them. Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
 and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
 model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
 
@@ -586,53 +588,32 @@ in `self/runtime.c` — undefined in a CUDA build — so wiring them is a separa
 (the #2598-validated `stage_resolve_runtime_a HEXA_CUDA=1 SM=90` recipe; pool hosts
 lack `forge_dispatch_groupnorm_gelu` so the trainer cannot link there).
 
-For training the real **303M** mouth *today*, there is a sanctioned sibling —
-[`cli/train.py`](cli/train.py), the **torch Lane-P REFERENCE + BRIDGE trainer**
-(`a_clm_gen_pipeline`). It is **not** the production trainer (that is `cli/train.hexa`),
-but because the hexa-native trainer is single-thread CPU-scalar-bound (peak GPU util
-~65% / sustained <30%, #2600 🟠), an actual 303M GPU train on it idles the GPU; the
-torch path is GPU-bound (cuda GEMM-saturating), so it trains the real `clm303`
-(L4·d3784·E2→Emax4) efficiently. It mirrors the same recipe levers — SAVANT
-golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the 4-cell
-`{ko·en}×{normal·SNS}` register loader — and serializes the trained weights to a
-**`.clm` v0.3** file via the ground-truth bridge `serialize_v3`, byte-exact to what
-`core/clm_decode.hexa` loads. The torch-side CE is **DIRECTIONAL only**
-(`a_engine_native_learning`): the **terminal** verdict is a CORE re-measure of the
-serialized `.clm` on the frozen G6 bars, so the ckpt must be pulled before teardown.
-
-The two trainers hold a **2-tier PARITY invariant** (governed by
-[`cli/CLAUDE.md`](cli/CLAUDE.md) — refined 2026-06-25 from the device-decode
-measurement): `hexa` is the sole production engine, `py`/torch is the **numerical
-golden oracle** (`reference-match`), not a co-equal production mirror. **Tier-1
-(🔒 BLOCKING)** = the numerical kernel (forward / CE / decode-logits) must be
-byte-golden to the torch·numpy reference on small CI fixtures — the single device
-that keeps the young own-GEMM trustworthy (it caught `dt_ln` divergence, the
-device `dirty_host` clobber, and the own-GEMM TF32 decode drift, each visible only
-by diffing against the golden). **Tier-2 (🟡 recommended)** = training levers are
-kept in lockstep across both trainers but are not byte-parity-blocking; a one-sided
-lever is surfaced as a `parity-drift:<lever>` label, not a hard fail. `cli/train.hexa`
-carries the same anti-overfit + measurement surface as `cli/train.py`: held-out val monitor
-(`--val-frac`/`--val-every`, per-register + pooled val-CE + gap), fail-loud 4-cell
-guard (`--require-cells` abort + balance/repetition table — the clm303 starvation
-guard), disjoint train/val tail split, byte-proportional sampling (`--sample`),
-minibatch grad-accumulation (`--batch-size`), a `--bf16` request flag (forge
-TF32/BF16-TC, runtime-selected precision), and the MONITOR-ONLY mid-measure curve
-(`--mid-measure-every` → per-register held-out CE + `e_active` mitosis-cell count +
-inhibition + savant latch). Adding a Tier-2 lever to one trainer means adding it to
-the other in lockstep (recommended); a numerical-kernel change is Tier-1 byte-golden
-(blocking).
+The production trainer for the real **303M** mouth is **`cli/train.hexa`**
+(hexa-native flame/forge own-GEMM, `a_train_flame_forge`). It carries the full recipe
+surface — SAVANT golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the
+4-cell `{ko·en}×{normal·SNS}` register loader, held-out val monitor, fail-loud 4-cell
+guard, disjoint train/val tail split, byte-proportional sampling, minibatch
+grad-accumulation, `--bf16`, and the MONITOR-ONLY mid-measure curve — and serializes the
+trained weights to a **`.clm` v0.3** file (`serialize_clm`, byte-exact to what
+`core/clm_decode.hexa` loads). The torch Lane-P **REFERENCE + BRIDGE** trainer
+(`cli/train.py`) was **retired 2026-06-28** (py全폐기 → hexa-single; preserved in
+`state/py_retire_archive/train_torch_lane_p/`). `cli/train.hexa` already holds every lever
+it carried (task #10 full-parity port). The numerical kernel (forward / CE / decode-logits)
+remains validated by a **reference-match** against torch·numpy golden on small CI fixtures —
+the device that caught `dt_ln` divergence, the device `dirty_host` clobber, and the own-GEMM
+TF32 decode drift; this is a golden *reference*, not a co-equal production engine.
 
 ```bash
-# REFERENCE+BRIDGE 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell:
-python cli/train.py --canon --out clm303.clm --bf16 --sample proportional \
+# 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell, hexa-single:
+anima train --canon --out clm303.clm --bf16 --sample proportional \
     --corpus anima-corpus-ko-general anima-corpus-en-general \
              anima-corpus-ko-sns anima-corpus-en-sns \
     --cell-label ko-general en-general ko-sns en-sns --require-cells 4 \
     --val-frac 0.02 --val-every 500   # per-register held-out val-CE monitor
-# then engine-native G6 verdict = CORE re-measure of clm303.clm on core/clm_decode.hexa
+# then engine-native G6 verdict = CORE re-measure of clm303.clm via `anima eval`
 ```
 
-Right after every `.clm` is serialized, both trainers (`.hexa` and `.py`) run the
+Right after every `.clm` is serialized, `cli/train.hexa` runs the
 **held-out mirror-DESCENT gate** — a faithful pure-numpy mirror of the
 `core/clm_decode.hexa` forward (`train/clm/model/verify_clm_v2.py`, `descent_gate` /
 `serialize_self_verify`) scored with `math.log` on **held-out** text. It PASSes only

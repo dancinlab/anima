@@ -1,0 +1,41 @@
+H_1597 — G6 corpus-grounded fals (detector fairness) — h1129 ideas dual-scored (mini, gen=40 canonical)
+ckpt sha256: 5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e
+engine: py 2-production (core/bytegpt_decode.py numpy, torch-free TERMINAL); detector B = SEPARATE fairness instrument (frozen bar UNTOUCHED)
+grep self-check: EMPTY = TERMINAL
+---- raw m3 stdout ----
+==============================================================================
+M③ G6 CORPUS-GROUNDED FALS (detector fairness) — h1129 ideas dual-scored
+ckpt=/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin  gen=40  seeds=[7, 4302, 4303]  host=mini  date=2026-06-27 13:19:12
+==============================================================================
+[corpus] loaded 4/4 cells, 56802 distinct tokens
+[Goodhart guard] B extends frozen 25 comparator + 25 measurable EN tokens with corpus-attested (freq>=1) extensions:
+  + comparator (token:corpusfreq): {'decrease': 10, 'increase': 42, 'fall': 42, 'rises': 6, 'reduces': 2, 'lowers': 2, 'reduce': 18, 'grows': 62, 'rise': 36, 'grow': 10, 'falls': 8}
+  + measurable (token:corpusfreq): {'temperature': 38, 'price': 14, 'mass': 40, 'age': 82, 'cost': 62, 'time': 596, 'heat': 16, 'length': 38, 'pressure': 8, 'weight': 12, 'height': 6, 'power': 106, 'memory': 32}
+  + KO comparator stems attested in corpus: ['감소', '강', '관계', '낮', '높', '느리', '더', '덜', '때문', '많', '면', '보다', '비례', '빠르', '수록', '약', '적', '증가']
+  + KO measurable stems attested in corpus: ['값', '개수', '거리', '길이', '무게', '밀도', '비용', '비율', '빈도', '속도', '수치', '시간', '압력', '양', '온도', '점수', '정도', '크기', '확률']
+[frames] 6 composed x 3 seeds = 18 ideas
+seed=7 frame=0 kwr=1.000 coh=1 frozen=0 grounded=0 (37s)  >> 'the addition of control of consciousness'
+seed=7 frame=1 kwr=0.889 coh=1 frozen=0 grounded=0 (39s)  >> 'and the effects of a village and the eig'
+seed=7 frame=2 kwr=0.875 coh=1 frozen=0 grounded=0 (42s)  >> 'the waiting of the state is not defeated'
+seed=7 frame=3 kwr=1.000 coh=1 frozen=0 grounded=0 (40s)  >> 'the most carries the reducing plane (the'
+seed=7 frame=4 kwr=1.000 coh=1 frozen=0 grounded=0 (39s)  >> 'soe the value of the value term may be u'
+seed=7 frame=5 kwr=1.000 coh=1 frozen=0 grounded=0 (41s)  >> '"master memory consciousness can be not '
+seed=4302 frame=0 kwr=0.778 coh=1 frozen=0 grounded=0 (44s)  >> 'in cases of the arise of its constored c'
+seed=4302 frame=1 kwr=0.857 coh=1 frozen=0 grounded=0 (44s)  >> '"The protected compact to define the ten'
+seed=4302 frame=2 kwr=0.714 coh=1 frozen=0 grounded=0 (44s)  >> 'Proto-Carries and Moogore pitchers are a'
+seed=4302 frame=3 kwr=1.000 coh=1 frozen=0 grounded=0 (46s)  >> 'the dreams that adviser it is the normal'
+seed=4302 frame=4 kwr=0.571 coh=1 frozen=0 grounded=0 (44s)  >> 'the subsidies of the islands of entertai'
+seed=4302 frame=5 kwr=0.857 coh=1 frozen=0 grounded=0 (46s)  >> 'a standard and then its initial properti'
+seed=4303 frame=0 kwr=0.875 coh=1 frozen=0 grounded=0 (53s)  >> 'a victory to see a bullet potential vers'
+seed=4303 frame=1 kwr=0.875 coh=1 frozen=0 grounded=0 (54s)  >> 'under the distance began to it. The spec'
+seed=4303 frame=2 kwr=1.000 coh=1 frozen=0 grounded=0 (49s)  >> 'and commonly without the original inform'
+seed=4303 frame=3 kwr=0.750 coh=1 frozen=0 grounded=0 (46s)  >> 'the engines of the ordinary and four sti'
+seed=4303 frame=4 kwr=1.000 coh=1 frozen=0 grounded=0 (44s)  >> '"When the second instead of the main god'
+seed=4303 frame=5 kwr=1.000 coh=1 frozen=0 grounded=0 (47s)  >> 'the cells of the high school group into '
+
+=== FALS over COHERENT ideas (18/18): frozen=0  grounded=0 ===
+=== FALS over ALL ideas (18): frozen=0  grounded=0 ===
+[CONTROL non-vacuous] B admits 0/5 negatives (must be 0). admitted=[]
+[CONTROL genuine-recover] B passes 5/5, frozen passes 0/5 (B should recover the false-rejects incl Korean).
+wrote state/1597_g6_corpus_grounded/m3_result.json
+M3_DONE

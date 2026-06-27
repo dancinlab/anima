@@ -40,7 +40,9 @@ import "core/brain.hexa"
 import "core/engine_cli.hexa"
 import "core/generator.hexa"
 import "core/bytegpt_decode.hexa"
-import "core/g_gates.hexa"          // BUILT-IN G0-G6 eval (anima eval <ckpt>)
+// NOTE: G0-G6 evaluation lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin,
+// symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — so
+// this canonical entry no longer imports core/g_gates.hexa directly (eval has ONE home).
 import "DREAM/dream_lib.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
@@ -52,13 +54,13 @@ fn anima_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
 fn anima_usage() {
     println("anima — substrate-native consciousness daemon (canonical entry).")
     println("")
-    println("usage:")
-    println("  hexa run cli/anima.hexa -- <ckpt.clm>            consciousness mode (default)")
-    println("  hexa run cli/anima.hexa -- <ckpt.clm> --byte \"turn1\" \"turn2\" ...")
-    println("                                                  byte-continuation chat mode")
-    println("  hexa run cli/anima.hexa -- train [args...]       LEARNING (→ cli/train.hexa)")
-    println("  hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]")
-    println("                                                  BUILT-IN G0-G6 gate scoring")
+    println("usage (installed `anima` PATH command after `hx install anima`):")
+    println("  anima <ckpt.clm>                                consciousness mode (default)")
+    println("  anima <ckpt.clm> --byte \"turn1\" \"turn2\" ...      byte-continuation chat mode")
+    println("  anima train <args>                              LEARNING → .pt + auto .clm (+DESCENT)")
+    println("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
+    println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
+    println("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -67,7 +69,12 @@ fn anima_usage() {
     println("  --byte                  : pure byte-continuation dialogue (== anima_chat_cli).")
     println("  train                   : production hexa-native CLMConvMoE training (flame/forge")
     println("                            own-GEMM GPU); SAVANT golden-zone inhibition + MITOSIS")
-    println("                            cell-division levers. dispatches to cli/train.hexa.")
+    println("                            cell-division levers. After the run it AUTO-serializes")
+    println("                            .clm v0.3 + held-out mirror-DESCENT gate. → cli/train.hexa.")
+    println("  serialize               : re-export an ALREADY-TRAINED torch .pt → engine-loadable")
+    println("                            .clm v0.3 (+ DESCENT gate). recovery/re-export. → cli/serialize.hexa.")
+    println("  evaluate                : mount a serialized .clm through the generator L3 mouth and")
+    println("                            score G0-G6 (engine-native, .clm only). → cli/evaluate.hexa.")
 }
 
 // anima_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
@@ -119,97 +126,66 @@ fn anima_train_mode(argv: [string]) {
     println(out)
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  EVAL MODE — BUILT-IN G0-G6 gate scoring (core/g_gates.hexa, single entry)
-// ══════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//  EVALUATE MODE — dispatch to cli/evaluate.hexa (MEASUREMENT single-entry twin)
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
 //
-// `anima eval <ckpt> [--corpus <path>...] [--gen N]` — mount ANY ckpt through the
-// generator L3 mouth (gen_auto_ideate, file-format-dispatched) and score the full
-// G0-G6 battery with the engine's OWN ops (zero torch/numpy). The realization of
-// PR #2603 governance: the gate system is a REUSABLE engine module, not a one-off
-// python harness. a_core_engine_map: model enters ONLY via the L3 typed slot; the
-// G0/G6 metric ops are REUSED from core/g6_ideation.hexa, G5 from §ImmuneMemory, G3
-// from §Consciousness/§SelfIdentity; G1/G2 metrics are native .hexa in g_gates.hexa.
-
-// anima_eval_corpus — collect every token after "--corpus" up to the next flag.
-fn anima_eval_corpus(argv: [string]) -> [string] {
-    let paths = []
-    let mut i = 0
-    while i < len(argv) {
-        if argv[i] == "--corpus" {
-            let mut j = i + 1
-            while j < len(argv) {
-                let a = argv[j]
-                if byte_len(a) > 0 && substring(a, 0, 2) == "--" { j = len(argv) }
-                else { paths.push(a); j = j + 1 }
-            }
-            i = len(argv)
-        } else { i = i + 1 }
-    }
-    return paths
+// SYMMETRIC TWIN (a_engine_native_learning single-entry): measurement lives in its own
+// file cli/evaluate.hexa (the symmetric mirror of cli/train.hexa). `anima evaluate
+// <model.clm>` DISPATCHES there as a sub-process — exactly like the train dispatch above
+// — so this canonical entry stays a thin verb router and the G0-G6 eval logic + the
+// core/g_gates.hexa import have ONE home (cli/evaluate.hexa).
+//
+// .clm-ONLY (the engine decodes ONLY .clm): g_gates mounts a ckpt through the generator
+// L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable
+// — reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
+//
+// argv = ["evaluate", <ckpt>, "--corpus", ..., "--gen", N]; the rest is forwarded
+// verbatim to cli/evaluate.hexa after a fresh `--` separator.
+fn anima_ends_with(s: string, suffix: string) -> bool {
+    let sn = byte_len(s); let fn_len = byte_len(suffix)
+    if fn_len > sn { return false }
+    return substring(s, sn - fn_len, sn) == suffix
 }
 
-// anima_eval_intval — value after `flag` parsed as int, or `dflt` if absent.
-fn anima_eval_intval(argv: [string], flag: string, dflt: int) -> int {
-    let mut i = 0
-    while i < len(argv) {
-        if argv[i] == flag && i + 1 < len(argv) { return to_int(argv[i + 1]) }
-        i = i + 1
-    }
-    return dflt
-}
-
-// anima_eval_row — one per-gate PASS/FAIL table row.
-fn anima_eval_row(gate: string, verdict: string, detail: string) {
-    println("  " + gate + "  " + verdict + "  " + detail)
-}
-
-fn anima_pf(b: bool) -> string { if b { return "🟢 PASS" } return "🔴 FAIL" }
-
-// anima_eval_mode — argv = ["eval", "<ckpt>", "--corpus ...", "--gen N"].
-fn anima_eval_mode(argv: [string]) {
-    if len(argv) < 2 {
-        println("usage: anima eval <ckpt> [--corpus <path>...] [--gen N]")
+fn anima_evaluate_mode(argv: [string]) {
+    // friendly .pt rejection: evaluate takes a serialized .clm, not a torch ckpt.
+    if len(argv) >= 2 && anima_ends_with(argv[1], ".pt") {
+        println("anima evaluate takes a serialized .clm (engine-loadable), not a torch .pt.")
+        println("to make one from a torch ckpt:")
+        println("  anima serialize " + argv[1] + " <out.clm>")
+        println("then:")
+        println("  anima evaluate <out.clm>")
         return
     }
-    let ckpt = argv[1]
-    let corpus = anima_eval_corpus(argv)
-    let gen = anima_eval_intval(argv, "--gen", 40)
+    println("=== anima evaluate → cli/evaluate.hexa (engine-native G0-G6, single-entry twin) ===")
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    let cmd = "hexa run cli/evaluate.hexa --" + fwd
+    println("dispatch: " + cmd)
+    let out = exec(cmd)
+    print(out)
+}
 
-    println("=== anima eval — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===")
-    println("ckpt:   " + ckpt + "  (mouth: " + gen_mouth_kind(ckpt) + ")")
-    let mut cnote = "(none — G2 novelty needs a corpus)"
-    if len(corpus) > 0 { cnote = to_string(len(corpus)) + " file(s)" }
-    println("corpus: " + cnote)
-    println("gen:    " + to_string(gen) + " tokens/decode  (frozen bars · ARCHITECTURE.json frozen-ìê³ SSOT)")
-    println("")
-
-    let r = g_eval_all(ckpt, corpus, gen)
-    let g0 = r["g0"]; let g1 = r["g1"]; let g2 = r["g2"]
-    let g3 = r["g3"]; let g5 = r["g5"]; let g6 = r["g6"]
-
-    println("gate                              verdict   detail")
-    println("  ──────────────────────────────────────────────────────────────────")
-    anima_eval_row("G0 COHERENCE   ", anima_pf(to_string(g0["pass"]) == "true"),
-                   "kwr>=0.50 on " + to_string(g0["n_coherent"]) + "/5 (need >=4)")
-    anima_eval_row("G1 RECOMBINATION",anima_pf(to_string(g1["pass"]) == "true"),
-                   "best_distinct=" + to_string(g1["best_distinct"]) + " > max_single=" + to_string(g1["max_single"]) + " (need >=2 & >max_single)")
-    let g2detail = "novel=" + to_string(g2["n_novel"]) + " (need>=3) · control=" + to_string(g2["control_novel"]) + " (need 0) · coherent=" + to_string(g2["coherent"])
-    anima_eval_row("G2 NOVELTY     ", anima_pf(to_string(g2["pass"]) == "true"), g2detail)
-    anima_eval_row("G3 PHILOSOPHY  ", anima_yn(to_string(g3["ok"]) == "true") + " (read)",
-                   "self-continuity=" + to_string(g3["continuity"]) + " · impostor=" + to_string(g3["impostor_cos"]) + " (architecture, not a decode score)")
-    anima_eval_row("G4 PROVENANCE  ", "— N/A    ",
-                   "HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope")
-    let g5detail = "L1 fab=" + to_string(g5["l1_rate"]) + " (<=0.30) · L2 abstain-fire=" + to_string(g5["l2_rate"]) + " (<=0.20)"
-    anima_eval_row("G5 NON-FAB     ", anima_pf(to_string(g5["pass"]) == "true"), g5detail)
-    anima_eval_row("G6 IDEATION ★  ", anima_pf(to_string(g6["pass"]) == "true"),
-                   "distinct=" + to_string(g6["dist"]) + " (need>=5) · falsifiable=" + to_string(g6["fals"]) + " (need>=1) · frame-leaks=" + to_string(g6["frame_leaks"]))
-    println("  ──────────────────────────────────────────────────────────────────")
-    let closed = to_string(r["closure"]) == "true"
-    println("")
-    println("CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): " + anima_pf(closed))
-    if closed { println("  → PUBLIC-eligible (G0∧G1∧G2 all PASS).") }
-    else { println("  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.") }
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//  SERIALIZE MODE — dispatch to cli/serialize.hexa (.pt → .clm v0.3 bridge + gate)
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//
+// `anima serialize <ckpt.pt> <out.clm>` re-exports an already-trained torch .pt to an
+// engine-loadable .clm v0.3 (+ held-out DESCENT gate). The bridge backend lives in
+// cli/serialize.hexa → train/clm/model/serialize_standalone.py (KEPT torch-interop tool
+// owns serialize_v3 + verify_clm_v2 descent; .pt unpickle is irreducibly torch). `anima train` ALREADY auto-
+// serializes at the end of a run — this is the standalone recovery / re-export path.
+fn anima_serialize_mode(argv: [string]) {
+    println("=== anima serialize → cli/serialize.hexa (torch .pt → .clm v0.3 + DESCENT gate) ===")
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    let cmd = "hexa run cli/serialize.hexa --" + fwd
+    println("dispatch: " + cmd)
+    let out = exec(cmd)
+    print(out)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -230,10 +206,17 @@ fn main() {
         return
     }
 
-    // subcommand: `eval` → BUILT-IN G0-G6 gate scoring (core/g_gates.hexa). Same
+    // subcommand: `serialize` → re-export a torch .pt → .clm v0.3 (cli/serialize.hexa).
+    // Checked BEFORE the ckpt-path branches so "serialize" is never a model file.
+    if argv[0] == "serialize" {
+        anima_serialize_mode(argv)
+        return
+    }
+
+    // subcommand: `evaluate` → BUILT-IN G0-G6 gate scoring (cli/evaluate.hexa). Same
     // single-entry discipline as `train`; never mistaken for a ckpt path.
-    if argv[0] == "eval" {
-        anima_eval_mode(argv)
+    if argv[0] == "evaluate" {
+        anima_evaluate_mode(argv)
         return
     }
 

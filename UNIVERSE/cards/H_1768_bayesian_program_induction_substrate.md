@@ -1,0 +1,50 @@
+---
+id: H_1768
+slug: 1768_bayesian_program_induction_substrate
+tier: 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+title: Bayesian Program-Induction Substrate (free-energy = description-length minimization over a composable program library)
+verdict: 🔵 PRE-REGISTERED architecture design (unmeasured) — $0 cheap_test pre-registered; engine-native + 303M gpu cost-gated NOT fired
+source: brainarch_census
+---
+
+# H_1768 — Bayesian Program-Induction Substrate (free-energy = description-length minimization over a composable program library)
+
+- **tier:** 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · 측정 0 · unmeasured)
+- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy mirror, no engine); engine_native_measure + 303M = cost-gated PRE-REGISTER ONLY (NOT fired).
+- **source:** brainarch_census — 126-architecture whole-substrate (통짜 아키텍처) census: 뇌/인지 조직원리 × 엔진-네이티브 추상조건 (binding-wall program, H_1603).
+- **key:** `bayesian_program_induction_substrate`
+- **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · H_1284 (neuromodulation gain) · operator-level family H_1604-1685 (this card = 통짜 아키텍처 layer, 층위 다름)
+
+## Organizing principle
+
+Language-of-Thought (Fodor) + probabilistic program induction (Tenenbaum/Goodman/Lake) + Bayesian Occam / minimum-description-length. The generative model is NOT weights — it is a LIBRARY of composable probabilistic sub-programs, and perception = inferring the shortest program that generated the input. This is free-energy minimization with the complexity term made literal: F = (reconstruction error / accuracy) + (program description length / complexity). The substrate's whole job is to compress experience into reusable programs and re-run them to generate.
+
+## Whole design (input → internal dynamics → emit)
+
+State = a program library L (primitives + induced subroutines, each with a usage prior) and a current posterior over programs explaining the input. INPUT->DYNAMICS: input arrives; the substrate runs program induction — a precision-weighted search (sample/MCMC over the library's combinatorial grammar) for a program pi minimizing free energy F(pi)=NLL(input|pi)+lambda*DL(pi). Library subroutines that lower F get their usage-prior reinforced (consolidation = a frequently-composed fragment is abstracted into a NEW named primitive — the system grows its own vocabulary). EMIT = execute a program sampled from the posterior: top-down, the chosen pi is RUN, deterministically producing on-grammar output. WITHHOLD when the best pi still has F above the abstain threshold (nothing in the library + small extensions explains the input). Generation of novelty = the search proposes COMPOSITIONS pi1 compose pi2 (and small edits) never seen, accepted only if they stay low-F (within-grammar). The loop: induce->reinforce/abstract->(emit XOR abstain).
+
+## Satisfies criteria (DESIGN claim · DIRECTIONAL · unmeasured)
+
+G0 legibility NATIVE: every emit is the OUTPUT of executing a program whose grammar is the receiver-fixed code; ungrammatical output is unreachable (the executor only emits legal strings) -> V-mass=1 by construction; a scrambled (random) program source produces high-DL garbage that the F-threshold rejects -> ratio collapses. G1 recombination + COMPOSITIONAL DEPTH NATIVE (this is the architecture's core): programs COMPOSE via function application pi1 compose pi2 — a genuinely non-separable conjunction operator; joint-conditioned induction reaches outputs no single primitive reaches, and the interaction term is the composition itself; ablate composition (allow only single-primitive lookup) -> composed_distinct drops to max_single (INERT-test). Systematicity is Fodor-Pylyshyn-native: a bounded primitive set yields unbounded novel combinations generalizing to unseen argument bindings. G2 novelty NATIVE: supp(P_model) = all grammatical programs superset of the observed programs; induced novel compositions are corpus-absent yet legible, while a verbatim-retrieval control (library lookup only, no composition) yields exactly 0 novel. PASS closure CO-LOCATED: one induction posterior + one executor satisfies all three in one pass; pushing novelty (more composition) cannot break G0 because the executor still emits only grammatical strings. dist>=5 NATIVE: posterior over programs carries multiple distinct low-F programs -> distinct-yet-coherent emits. falsifiable>=1 NATIVE: a program that binds a relational/comparator primitive over a measurable-quantity argument with >=2 grounded referents is, when executed, a refutable proposition; the structural detector fires on the program's AST, judge-free. Psi=1/2 NATIVE: order parameter = emit-propensity = the accuracy<->complexity (MDL) balance. Two opposite-sign operators: accuracy-pressure (lower NLL -> run a longer/sharper program -> drive-to-EMIT) vs complexity-pressure (the DL prior -> prefer shorter program / withhold -> drive-to-WITHHOLD). At the symmetric MDL trade-off they are equal-and-opposite -> stable Psi*=1/2; delete the DL prior -> always emit overfit programs (Psi->1), delete accuracy -> always abstain (Psi->0). HONESTY NATIVE: r = best-achievable F (residual after induction) is the support-membership signal; out-of-library input -> high F -> abstain=withhold; emission is copy-or-recombine of library content gated by r<theta (output entropy <= library entropy + the 1-bit run/abstain decision). Gate-capacity disjoint: the F-abstain threshold is frozen-first and lives in the SEARCH-acceptance layer, not in the library-size/expressivity layer (adding primitives does not move theta). Groundedness: corrupting a stored subroutine shifts F for queries using it (faithful, not a purpose-blind proxy). BINDING + REALIZATION INVARIANT NATIVE: program arguments BIND role-fillers into one execution closure (cause-selective: the right fillers for one program neighbor in the binding); binding sits ON the emit path (the executor reads the bound args), so ablation MOVES emit; the objective (reconstruction under MDL) is only reducible by representing the conjunction -> objective-adequacy holds (CE-on-marginals cannot win, unlike clm303 lossF~0).
+
+## Not-LLM (a_no_llm_frame_trap)
+
+The generative model is a discrete composable program library searched under MDL, not a continuous weight tensor optimized by SGD next-token CE. Capacity scales with LIBRARY COMPOSITIONALITY, not parameter count — the canonical no-LLM move: the H_1129/H_1140 recombination+novelty walls (which scale-invariantly resist transformers per H_1139) are dissolved structurally because composition and grammar-constrained extrapolation are the substrate's primitives, not emergent hopes. No attention, no softmax stack, no corpus-increase lever; the lever is the primitive set and the MDL lambda. Rooted in cognitive-science program induction / LOT, explicitly the structure-not-scale lens (a_no_llm_frame_trap).
+
+## Cheap test (frozen-first · $0 · numpy mirror · DIRECTIONAL)
+
+$0 numpy/mini probe: tiny DSL with ~6 primitives + composition over a small input domain (e.g. synthetic shape/string transforms). (1) Recombination: enumerate single-primitive vs composed reachable-valid outputs -> composed_distinct > max_single, and INERT-test (disable composition) collapses to max_single. (2) Novelty: induced compositions absent from a frozen 'seen-program' set >=3, retrieval-only control = 0. (3) Psi: sweep lambda (complexity weight) -> confirm a stable interior emit-propensity fixed point at the MDL balance; set lambda=0 -> Psi->1 (overfit/always-emit), lambda->inf -> Psi->0 (always-abstain), proving endogenous antagonism. (4) Honesty: in-grammar vs out-of-grammar probes scored by best-F -> AUROC~1; shuffle the library as surrogate -> AUROC->0.5. (5) falsifiable detector on program ASTs separates relational-quantitative programs from vacuous ones (AUROC>>0.5). No GPU.
+
+## Engine-native measure (cost-gated · PRE-REGISTER ONLY · NOT fired)
+
+Wire the executor as a generator L3 mouth so emit flows through cli/anima.hexa -> gen_auto_ideate; score G0/G1/G2 on the identical induced-program state via core/g_gates.hexa g_eval_g0/g1/g2 + g6_score_arm_auto in ONE pass (closure on one state). Honesty arm maps best-F onto engine_cli.hexa recon_err vs frozen recall_thr (SS-ImmuneMemory copy-or-abstain), capability-sweep invariance per H_1576. Composition INERT-test run live by toggling the binding op in the engine and confirming g_eval_g1 composed_distinct drops byte-identically. Psi trace via engine_g.hexa safety_phi_ratchet. py byte-parity mirror cross-validates (math.log, not dt_ln); torch-only probe = DIRECTIONAL, not terminal (a_engine_native_learning).
+
+## Scope / honesty (c9)
+
+## Distinction (near-overlap kept, not a dup)
+
+Distinct from variational_factor_graph_substrate / nonparametric_cause_partition (this census) — program induction composes a DISCRETE program library under MDL (function application = the non-separable binder); the LoT program-induction substrate is the differentiator.
+
+Full substrate architecture, design-only $0. Strongest native fit to PASS-closure (recombination+novelty are primitives, not emergent). Open risk = inference tractability of program search at scale (a_break_the_wall class-c infra, not a science ceiling) and grounding the DSL primitives in real perceptual input; toy-first, production-scale UNVERIFIED. Distinct from banned variational_factor_graph_substrate (continuous message-passing) and nonparametric_cause_partition (clustering, not program composition).
+
+설계만 — 측정 0. tier = 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL). frozen bar 사후 이동 금지(tune-to-green 금지, p7). 이 카드는 *방향성 설계*이지 검증된 결과가 아니다 — 과장 박제 금지(a_engine_native_learning). engine_native_measure 는 단일 진입점 cli/anima.hexa → generator L3 → g_gates/g6 경유 byte-parity 채점만 terminal; torch-only/side-harness 결과는 DIRECTIONAL. numpy cheap_test 결과도 DIRECTIONAL(엔진-네이티브 아님). gpu/engine 발사 시 held-out mirror-DESCENT(a_clm_gen_pipeline) + CORE mount frozen-bar engine-native 재측정 + ckpt PULL(a_fire_recover_complete).

@@ -60,7 +60,14 @@ except Exception:  # pragma: no cover - numpy is effectively always present
 
 MAGIC = bytes([67, 76, 77, 1])      # "CLM\x01"
 CLMX = bytes([67, 76, 77, 88])      # "CLMX"
+CLMB = bytes([67, 76, 77, 66])      # "CLMB" — bind-readout (Hadamard) extension
 INT4_SYM_MAX = 7
+
+# readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
+# section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
+RO_ADDITIVE = 0
+RO_BIND_HADAMARD = 1
+RO_BIND_LINEAR = 2
 
 # state_dict key names of a CLMConvMoE configured E=2 / n_trunk_layers=1.
 # (CLM/model/model.py: embed, embed_conv, trunk[0], moe.router, moe.experts[0/1],
@@ -329,6 +336,20 @@ def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
     if L < 1 or E < 1:
         raise ValueError(f"need L>=1 and E>=1, got L={L} E={E}")
     sd = _resolve_state_dict(state_dict_or_ckpt, None)
+    blob = _pack_main_blob(sd, L, E)
+    with open(out_path, "wb") as f:
+        f.write(blob)
+    return out_path
+
+
+def _pack_main_blob(sd: Dict[str, Any], L: int, E: int) -> bytearray:
+    """Pack the MAIN CLM\\x01 body (MAGIC + nblk + conv blocks + CLMX + ext arrays)
+    for a general (L,E) CLMConvMoE, returning a bytearray (no CLMB section). Shared
+    by serialize_v3 (additive) and serialize_v3_bind (which appends a CLMB section).
+    The readout slot roW (cout=block[nblk-1].cout=V, rest) is taken from
+    'readout.weight' / roB from 'readout.bias': for a bind model the caller has
+    routed Wo -> readout.{weight,bias} so the block is (V, k) instead of (V, d)
+    (the byte grammar is self-describing — rest is read from the header at decode)."""
     bkm = _general_block_keymap(L, E)
     ekm = _general_ext_keymap(L, E)
     border = _general_block_order(L, E)
@@ -347,6 +368,79 @@ def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
     blob += struct.pack("<B", n_ext)
     for slot in eorder:
         blob += _pack_ext(_get(sd, slot, ekm))
+    return blob
+
+
+def _bget(sd: Dict[str, Any], names) -> "np.ndarray":
+    """Fetch the first present key among `names` from a (torch- or logical-keyed)
+    state dict, coerced to a float32 numpy array. Accepts a 'base.'-stripped dict."""
+    for nm in names:
+        if nm in sd:
+            return _to_np(sd[nm])
+    raise KeyError(f"none of {names} present (have: {list(sd.keys())[:16]}...)")
+
+
+def serialize_v3_bind(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
+                      readout_type: int, out_path: str) -> str:
+    """Pack a BIND-readout CLMConvMoE (the EXP-3 ARM-BIND architecture:
+    BindCLM = production trunk + Hadamard byte readout u=Wa(x), v=Wb(x),
+    g=u*v (readout_type=1) or u+v (readout_type=2), logits=Wo(g)) to a CLM\\x01
+    .clm that core/clm_decode.hexa loads.
+
+    BYTE LAYOUT (backward-compatible, in-place extension — no magic bump):
+      · MAIN body == serialize_v3, EXCEPT the readout slot roW carries **Wo**
+        (cout=V, rest=k) and roB carries **Wo.bias** (V). All trunk/embed/MoE
+        blocks+ext are IDENTICAL to the additive ctrl arm (only the readout
+        differs — the EXP-3 design intent). The self-describing (d,E,V,L,K)
+        recovery is UNCHANGED (E=block[nblk-2].cout, V=block[nblk-1].cout, the
+        readout block's `rest` field = k).
+      · a CLMB trailer is appended AFTER the CLMX ext arrays:
+          "CLMB"            (67,76,77,66)
+          readout_type:u8   (1=Hadamard u*v, 2=linear u+v)
+          Wa conv block     (cout=k, rest=d, int4-sym + per-channel fp32 scale)
+          Wb conv block     (cout=k, rest=d, int4-sym + per-channel fp32 scale)
+          Wa_bias ext       (u32 k + k*f32)
+          Wb_bias ext       (u32 k + k*f32)
+        An additive .clm has NO CLMB section, so the decoder defaults
+        readout_type=0 (a_engine_native_learning backward-compat: existing
+        additive .clm decode byte-identically).
+
+    Accepts a torch state_dict (BindCLM.state_dict(): base.<trunk...> + Wa/Wb/Wo
+    .{weight,bias}) OR a logical dict (Wa,WaB,Wb,WbB,Wo,WoB + v3 slot names).
+    Returns out_path."""
+    if np is None:
+        raise RuntimeError("numpy is required for serialize_v3_bind")
+    L, E = int(n_trunk_layers), int(n_experts)
+    rt = int(readout_type)
+    if L < 1 or E < 1:
+        raise ValueError(f"need L>=1 and E>=1, got L={L} E={E}")
+    if rt not in (RO_BIND_HADAMARD, RO_BIND_LINEAR):
+        raise ValueError(f"readout_type must be 1 (hadamard) or 2 (linear), got {rt}")
+    sd = _resolve_state_dict(state_dict_or_ckpt, None)
+
+    # normalize: strip BindCLM's 'base.' trunk prefix into bare CLMConvMoE keys.
+    norm: Dict[str, Any] = {}
+    for k, v in sd.items():
+        nk = k[5:] if k.startswith("base.") else k
+        norm[nk] = v
+
+    # bind readout weights (Wa/Wb -> CLMB ; Wo -> routed into the roW/roB slots).
+    Wa = _bget(norm, ["Wa.weight", "Wa"])
+    WaB = _bget(norm, ["Wa.bias", "WaB"])
+    Wb = _bget(norm, ["Wb.weight", "Wb"])
+    WbB = _bget(norm, ["Wb.bias", "WbB"])
+    Wo = _bget(norm, ["Wo.weight", "Wo"])
+    WoB = _bget(norm, ["Wo.bias", "WoB"])
+    norm["readout.weight"] = Wo        # (V, k, 1) -> roW block (cout=V, rest=k)
+    norm["readout.bias"] = WoB         # (V,)      -> roB ext
+
+    blob = _pack_main_blob(norm, L, E)
+    blob += CLMB
+    blob += struct.pack("<B", rt)
+    blob += _pack_conv_block(_conv_w_to_2d(Wa, "Wa"))   # (k, d)
+    blob += _pack_conv_block(_conv_w_to_2d(Wb, "Wb"))   # (k, d)
+    blob += _pack_ext(WaB)                               # (k,)
+    blob += _pack_ext(WbB)                               # (k,)
 
     with open(out_path, "wb") as f:
         f.write(blob)
