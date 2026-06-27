@@ -1,0 +1,74 @@
+START 01:06:08
+DONE ctrl_seed4302 rc=0 01:19:44
+DONE ctrl_seed4303 rc=0 01:19:59
+DONE ctrl_seed7 rc=0 01:20:12
+DONE bind_seed4302 rc=0 01:35:09
+DONE bind_seed4303 rc=0 01:36:02
+DONE bind_seed7 rc=0 01:36:07
+DONE bind_linear_seed4302 rc=0 01:50:39
+DONE bind_linear_seed4303 rc=0 01:51:03
+DONE bind_linear_seed7 rc=0 01:51:19
+ALL_DONE 01:51:19
+=== ctrl_seed7 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['1.000', '1.000', '1.000', '1.000', '0.857']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== bind_seed7 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.875', '0.857', '0.875', '0.875', '0.875']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=5 (need>=5)  fals=0 (need>=1)  coherent=5  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== bind_linear_seed7 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.875', '1.000', '0.875', '1.000', '0.625']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== ctrl_seed4302 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['1.000', '1.000', '1.000', '1.000', '0.857']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== bind_seed4302 ===
+G0 COHERENCE     pass=False  n_coherent=2/5  ratios=['0.333', '0.500', '0.714', '0.400', '0.333']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=5 (need>=5)  fals=0 (need>=1)  coherent=5  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== bind_linear_seed4302 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.714', '0.800', '0.889', '1.000', '0.889']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== ctrl_seed4303 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.889', '0.833', '0.778', '1.000', '1.000']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== bind_seed4303 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.875', '0.857', '1.000', '1.000', '0.889']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+=== bind_linear_seed4303 ===
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['1.000', '0.889', '0.833', '1.000', '0.857']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0  (single-seed=7, frozen)
+G1 multi-seed     pass=False  0/3 seeds clear=[(7, False), (4302, False), (4303, False)]  [proposed, owner-nod-pending]
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0  (single-seed=7, frozen)
+G6 multi-seed     pass=False  0/3 seeds clear  max_fals=0  [proposed, owner-nod-pending]
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL

@@ -21,6 +21,18 @@
       "ctrl": "Conv1d(d->V) additive",
       "bind": "u=Wa,v=Wb,g=u⊙v,Wo(g) k=512",
       "bind_linear": "same params g=u+v"
+    },
+    "engine_native_remeasure": {
+      "date": "2026-06-28",
+      "host": "summer pool CPU",
+      "gen": 40,
+      "g1g6_multiseed_seeds": [
+        7,
+        4302,
+        4303
+      ],
+      "corpus": "state/1620_clm_bind_codec/corpus.txt",
+      "engine": "core/g_gates.py (py 2-production numpy)"
     }
   },
   "per_arm": {
@@ -43,7 +55,50 @@
         1,
         1
       ],
-      "g6_count_mean": 2
+      "g6_count_mean": 2,
+      "engine_native": {
+        "g1_per_seed": [
+          0,
+          0,
+          0
+        ],
+        "g1_single_pass": [
+          false,
+          false,
+          false
+        ],
+        "g1_multiseed_pass": [
+          false,
+          false,
+          false
+        ],
+        "g6_dist_per_seed": [
+          6,
+          6,
+          6
+        ],
+        "g6_fals_per_seed": [
+          0,
+          0,
+          0
+        ],
+        "g6_single_pass": [
+          false,
+          false,
+          false
+        ],
+        "g0_coherent_per_seed": [
+          5,
+          5,
+          5
+        ],
+        "a7b_closure": [
+          false,
+          false,
+          false
+        ],
+        "tier": "TERMINAL engine-native (py 2-production numpy core/g_gates.py; grep torch/gauge_lib=0)"
+      }
     },
     "bind": {
       "heldout_ce_per_seed": [
@@ -64,7 +119,50 @@
         2,
         1
       ],
-      "g6_count_mean": 1.333
+      "g6_count_mean": 1.333,
+      "engine_native": {
+        "g1_per_seed": [
+          0,
+          0,
+          0
+        ],
+        "g1_single_pass": [
+          false,
+          false,
+          false
+        ],
+        "g1_multiseed_pass": [
+          false,
+          false,
+          false
+        ],
+        "g6_dist_per_seed": [
+          5,
+          5,
+          6
+        ],
+        "g6_fals_per_seed": [
+          0,
+          0,
+          0
+        ],
+        "g6_single_pass": [
+          false,
+          false,
+          false
+        ],
+        "g0_coherent_per_seed": [
+          5,
+          2,
+          5
+        ],
+        "a7b_closure": [
+          false,
+          false,
+          false
+        ],
+        "tier": "TERMINAL engine-native (py 2-production numpy core/g_gates.py; grep torch/gauge_lib=0)"
+      }
     },
     "bind_linear": {
       "heldout_ce_per_seed": [
@@ -85,7 +183,50 @@
         5,
         1
       ],
-      "g6_count_mean": 2.667
+      "g6_count_mean": 2.667,
+      "engine_native": {
+        "g1_per_seed": [
+          0,
+          0,
+          0
+        ],
+        "g1_single_pass": [
+          false,
+          false,
+          false
+        ],
+        "g1_multiseed_pass": [
+          false,
+          false,
+          false
+        ],
+        "g6_dist_per_seed": [
+          6,
+          6,
+          6
+        ],
+        "g6_fals_per_seed": [
+          0,
+          0,
+          0
+        ],
+        "g6_single_pass": [
+          false,
+          false,
+          false
+        ],
+        "g0_coherent_per_seed": [
+          5,
+          5,
+          5
+        ],
+        "a7b_closure": [
+          false,
+          false,
+          false
+        ],
+        "tier": "TERMINAL engine-native (py 2-production numpy core/g_gates.py; grep torch/gauge_lib=0)"
+      }
     }
   },
   "runs": {
@@ -127,7 +268,28 @@
         "phi_proxy": 3.43679,
         "mitosis_cells": 39
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 4302,
+        "clm": "~/anima-weights/exp3_303m/ckpt/bind_linear_seed4302.clm",
+        "descent_heldout_model_ce": 2.11918
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "bind_linear_seed4303": {
       "arm": "bind_linear",
@@ -167,7 +329,28 @@
         "phi_proxy": 3.462167,
         "mitosis_cells": 82
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 4303,
+        "clm": "~/anima-weights/exp3_303m/ckpt/bind_linear_seed4303.clm",
+        "descent_heldout_model_ce": 1.95611
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "bind_linear_seed7": {
       "arm": "bind_linear",
@@ -207,7 +390,27 @@
         "phi_proxy": 4.636058,
         "mitosis_cells": 75
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 7,
+        "clm": "~/anima-weights/exp3_303m/ckpt/bind_linear_seed7.clm"
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "bind_seed4302": {
       "arm": "bind",
@@ -247,7 +450,28 @@
         "phi_proxy": 33.197748,
         "mitosis_cells": 55
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": false,
+        "g0_coherent": 2,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 5,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 4302,
+        "clm": "~/anima-weights/exp3_303m/ckpt/bind_seed4302.clm",
+        "descent_heldout_model_ce": 2.67052
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "bind_seed4303": {
       "arm": "bind",
@@ -287,7 +511,28 @@
         "phi_proxy": 38.095965,
         "mitosis_cells": 60
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 4303,
+        "clm": "~/anima-weights/exp3_303m/ckpt/bind_seed4303.clm",
+        "descent_heldout_model_ce": 2.14185
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "bind_seed7": {
       "arm": "bind",
@@ -327,7 +572,27 @@
         "phi_proxy": 20.276327,
         "mitosis_cells": 109
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 5,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 7,
+        "clm": "~/anima-weights/exp3_303m/ckpt/bind_seed7.clm"
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "ctrl_seed4302": {
       "arm": "ctrl",
@@ -367,7 +632,27 @@
         "phi_proxy": 21.551619,
         "mitosis_cells": 39
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 4302,
+        "clm": "~/anima-weights/exp3_303m/ckpt/ctrl_seed4302.clm"
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "ctrl_seed4303": {
       "arm": "ctrl",
@@ -407,7 +692,27 @@
         "phi_proxy": 32.524777,
         "mitosis_cells": 33
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 4303,
+        "clm": "~/anima-weights/exp3_303m/ckpt/ctrl_seed4303.clm"
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     },
     "ctrl_seed7": {
       "arm": "ctrl",
@@ -447,7 +752,27 @@
         "phi_proxy": 27.738333,
         "mitosis_cells": 43
       },
-      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)"
+      "tier": "DIRECTIONAL (torch probe; engine-native bind=BLOCKED-by-construction)",
+      "gauges_g1g6_engine_native": {
+        "g0_pass": true,
+        "g0_coherent": 5,
+        "g1_max_single": 0,
+        "g1_best_distinct": 0,
+        "g1_single_pass": false,
+        "g1_multiseed_pass": false,
+        "g1_multiseed_n_green": 0,
+        "g6_dist": 6,
+        "g6_fals": 0,
+        "g6_single_pass": false,
+        "g6_multiseed_pass": false,
+        "g6_multiseed_n_green": 0,
+        "g6_multiseed_max_fals": 0,
+        "a7b_closure": false,
+        "detector_calibration": "10/10",
+        "seed": 7,
+        "clm": "~/anima-weights/exp3_303m/ckpt/ctrl_seed7.clm"
+      },
+      "engine_native_path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free, TERMINAL)"
     }
   },
   "verdict": {
@@ -456,6 +781,15 @@
     "resolving_measure": "held-out CE: bind 0.8735 < ctrl 0.9038 < bind_linear 0.9351 (3/3 seeds), multiplicativity isolated",
     "resolving_result": "WEAK DIRECTIONAL SUPPORT (effect ~0.03 CE, robustness not categorical)",
     "tier": "DIRECTIONAL (torch; bind not .clm-serializable -> engine-native BLOCKED-by-construction)",
-    "engine_native": "BLOCKED for bind/bind_linear (Hadamard readout not in .clm); ctrl .clm anchors only; follow-on=bind-codec RTYPE=1 export"
+    "engine_native": "BLOCKED for bind/bind_linear (Hadamard readout not in .clm); ctrl .clm anchors only; follow-on=bind-codec RTYPE=1 export",
+    "engine_native_g1g6": {
+      "path": "core/g_gates.py <- core/clm_decode.py (py 2-production numpy, torch-free). host=summer pool CPU.",
+      "primary_bar": "G1(bind)>G1(ctrl) AND G1(bind)>G1(bind_linear) AND G6 same dir (H_1129/H_1464 VERBATIM, frozen)",
+      "primary_result": "NOT-SUPPORTED engine-native TERMINAL — G1=0 all 9 (tie at floor), G6 fals=0 all 9, bind G6 dist not>ctrl. INCONCLUSIVE-at-floor (5MB/2000-step undertrained -> arm resolution 0, not clean refute).",
+      "confirms": "torch-probe G1/G6 floor reproduced at terminal engine-native tier (not a torch artifact).",
+      "g0": "8/9 coherent 5/5; bind_seed4302 2/5 = that-ckpt degenerate (worst bind held-out CE seed), not measurement defect.",
+      "detector_calibration": "10/10 all 9 (detector fair, not bottleneck).",
+      "new_clm_descent_PASS": "bind/bind_linear seed4302/4303 export DESCENT F-CLM-DESCENT=1 (model_ce 1.96-2.67 < uniform 5.545 < shuffle, overfit_warning False)."
+    }
   }
 }

@@ -68,6 +68,18 @@ controls (⑤ moves G6>G1; ⑥ moves neither) — both already measured, both co
   ARM-CTRL vs ARM-BIND. Frozen: ARM-CTRL FAILS both 0/3; ARM-BIND clears **BOTH** G1 ≥2/3 **AND**
   G6 ≥2/3 together = SUPPORT; lifts exactly one = REFUTE (separable). Bars VERBATIM (G1 H_1129; G6
   `dist≥5∧fals≥1`), held-out DESCENT gate, ckpt PULL, engine-native re-measure (a_engine_native_learning).
+  - **EXP-3 FIRED + ENGINE-NATIVE MEASURED (2026-06-28 · H_1617 ⊙ NMDA readout lever as the binding operator):**
+    9 .clm (ctrl/bind/bind_linear × seed{7,4302,4303}) decoded by py 2-production `core/g_gates.py`
+    (numpy, torch-free TERMINAL; torch/gauge_lib=0). **Result: NEITHER gate moves — G1=0 ∧ G6 fals=0
+    for ALL 9 arms/seeds** (bind G6 dist 5–6 NOT > ctrl 6; a7b closure FAIL all 9). So this particular
+    binding-installing lever (⊙ Hadamard readout) does NOT lift G1 or G6 → NOT the "single lever opens
+    BOTH" SUPPORT (and, since both stay 0, NOT separable-REFUTE either). **INCONCLUSIVE-at-floor**
+    (5MB/2000-step undertrained → arm-resolution 0). Engine-native confirms it's not a torch artifact.
+    Consistent with the card's own §Honest-divergence + the convergent census reading (memory
+    `g1-lever-multilens-objective`): the surviving G1 lever is the **trunk-forward recombination
+    OBJECTIVE** (H_1602), not a readout-op — so a readout-side multiplicative operator was not expected
+    to open G1, and indeed didn't. Detail = `state/binding_arch_census/exp3_303m/RESULT.md` §4b ·
+    `UNIVERSE/cards/H_1617`. Next decider candidate = H_1602 recomb-objective (cost-gated, pre-reg).
 
 ## Additional orthogonal hypothesis candidates (a_h_continuous)
 - **H_160x WM-composition-buffer-in-mouth** — install a generation-path working-memory buffer (H_1282)

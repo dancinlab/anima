@@ -78,10 +78,26 @@ work. Codec verdict here is purely "the bind .clm decodes correctly", not a
 re-litigation of the binding science verdict (🟠 DIRECTIONAL, capacity-gap
 not-transferred at this train scale).
 
-## G1/G6 engine-native A/B — BLOCKED on mac
-303M G6 multiseed generation is too slow for the mac CPU foreground (heavy decode →
-pool, per memory `heavy-anima-eval-pool-not-mini`). Single-decode CE + argmax
-completed engine-native (above); full `cli/anima.hexa -- eval <clm>` G0-G6
-multiseed needs a pool GPU host. RESULT.md already records the torch-probe G1/G6
-(G1=0 floored all 9 runs, G6=1–5 noise) — codec does not change those. Follow-on:
-G0-G6 single-entry on pool GPU for the 3 .clm.
+## G1/G6 engine-native A/B — DONE (2026-06-28, summer pool)
+The codec unblock let all 9 .clm (3 arm × 3 seed) be decoded by the **py 2-production
+engine** (`core/g_gates.py` ← `core/clm_decode.py`, numpy, torch-free, byte-parity
+TERMINAL) for full G0-G6 multiseed. Host = summer pool CPU (OPENBLAS=4thr ×3
+parallel, $0, ~45min wall). The mac foreground ban (heavy 303M decode, memory
+`heavy-anima-eval-pool-not-mini`) was honored — measurement ran on pool, not mini.
+anima eval (.hexa single-entry) is blocked by a pool codegen bug (ING #42492878),
+so py 2-production g_gates is the canonical terminal path (both 1st-class per
+`a_engine_native_learning`).
+
+**Result (terminal): the torch-probe G1/G6 floor is REPRODUCED engine-native.**
+G1 recombination = 0 (max_single=0, best_distinct=0, single ∧ multiseed FAIL) for
+ALL 9; G6 dist 5–6 but **fals=0 (need ≥1) for ALL 9** → FAIL; bind G6 dist (5–6)
+NOT > ctrl (6). a7b closure FAIL all 9. detector calibration 10/10 all 9 (detector
+fair). So "multiplicative readout does not move G1/G6" is **not a torch artifact** —
+it is a genuine engine-native floor (INCONCLUSIVE-at-floor: 5MB/2000-step undertrained
+→ arm-resolution 0, not a clean refute). Full table + verdict =
+`state/binding_arch_census/exp3_303m/RESULT.md` §4b; raw =
+`state/binding_arch_census/exp3_303m/gates_out_engine_native/`.
+
+New-export DESCENT pre-gate (4 seed4302/4303 .clm): all F-CLM-DESCENT=1
+(heldout_model_ce 1.96–2.67 < uniform 5.545 < shuffle, overfit_warning False) —
+codec round-trips seed4302/4303 weights as faithfully as seed7.

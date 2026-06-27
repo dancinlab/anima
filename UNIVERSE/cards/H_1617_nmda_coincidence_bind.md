@@ -1,10 +1,10 @@
 # H_1617 — NMDA Coincidence Binding (tension-gated multiplicative AND)
 
-- **tier:** 🟠 DIRECTIONAL — toy SUPPORT(robustness)이나 **303M scale 에선 주 G1/G6 bar NOT-SUPPORTED(floor)**, held-out-CE 약한 곱셈 support만. engine-native 아님(bind = BLOCKED-by-construction).
-- **wired:** DIRECTIONAL-mirror (torch; NOT engine-native — bind readout 은 .clm 직렬화 불가). cheap_test = $0 numpy screen (Hadamard 1.00 vs additive 0.50 증명적); toy ARM(d256/L4) = 3-arm mean SUPPORT(§Toy ARM); **303M EXP-3 FIRED 2026-06-27** = §303M scale result(곱셈 categorical gap 미전이; held-out-CE bind<ctrl<bind_linear 3/3 약한 이점만). engine-native A/B = follow-on(bind-codec RTYPE=1 export).
+- **tier:** 🟠 DIRECTIONAL — toy SUPPORT(robustness)이나 **303M scale 에선 주 G1/G6 생성 bar NOT-SUPPORTED**, held-out-CE 약한 곱셈 support만. **G1/G6 bar 는 이제 engine-native TERMINAL**(2026-06-28, py 2-production; floor 재현 = NOT-SUPPORTED, INCONCLUSIVE-at-floor). 종합 tier 불변(🟠).
+- **wired:** engine-native (G1/G6 생성 gate = py 2-production `core/g_gates.py`←`core/clm_decode.py` TERMINAL, torch/gauge_lib=0; was DIRECTIONAL-mirror until bind-codec unblock). cheap_test = $0 numpy screen (Hadamard 1.00 vs additive 0.50 증명적); toy ARM(d256/L4) = 3-arm mean SUPPORT(§Toy ARM); **303M EXP-3 FIRED 2026-06-27** = §303M scale result(곱셈 categorical gap 미전이; held-out-CE bind<ctrl<bind_linear 3/3 약한 이점만); **engine-native G0-G6 A/B DONE 2026-06-28**(§4b: G1=0 ∧ G6 fals=0 ALL 9 floor, bind NOT>ctrl). 미배선 follow-on = scale recheck(floor 해소 후 재측정); GREEN 아님이라 core/ wire-in 불필요.
 - **source:** archbrainstorm — 84-family anima-native synthesis-binding architecture census (binding-wall program, H_1603)
 - **lens:** Biology: NMDA receptor as molecular coincidence detector / dendritic AND-gate / Reichardt detector. Multiplicative conjunction vs additive superposition.
-- **artifacts:** `state/binding_arch_census/BRAINSTORM_INDEX.md` · `state/binding_arch_census/exp3_arm/` (toy: PREREG·trainer·RESULT·ckpt) · `state/binding_arch_census/exp3_303m/` (303M: PREREG.md·trainer.py·RESULT.md·RESULT.json) · ckpt PULL `~/anima-weights/exp3_303m/ckpt/` ({ctrl,bind,bind_linear}_seed{7,4302,4303}.pt + ctrl .clm×3)
+- **artifacts:** `state/binding_arch_census/BRAINSTORM_INDEX.md` · `state/binding_arch_census/exp3_arm/` (toy: PREREG·trainer·RESULT·ckpt) · `state/binding_arch_census/exp3_303m/` (303M: PREREG.md·trainer.py·RESULT.md·RESULT.json) · ckpt PULL `~/anima-weights/exp3_303m/ckpt/` ({ctrl,bind,bind_linear}_seed{7,4302,4303}.pt ×9 + **.clm ×9** all-arm·all-seed, bind/bind_linear seed4302/4303 = 2026-06-28 bind-codec export) · engine-native G0-G6 raw `state/binding_arch_census/exp3_303m/gates_out_engine_native/`
 - **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · H_1449 (attention-block INERT@1blk) · H_1602 (recombination-objective prereg)
 - **key:** `nmda_coincidence_bind`
 
@@ -63,16 +63,25 @@ bind u⊙v Hadamard k=512 / bind_linear u+v param-matched). 상세 = `state/bind
   bind_linear(param 동일 +)이 ctrl 보다도 나쁨 → lift 원인 = **multiplicativity**(toy ⊙→+ ablation 재현). 단 효과 **작음
   (~0.03 CE)** = robustness 이지 categorical capability gap 아님. 전 9 run held-out DESCENT 4/4; ctrl .clm 직렬화
   mirror-DESCENT PASS(CE 1.64 < uniform 5.55 < shuffle 9.92, math.log dt_ln-immune).
-- **engine-native A/B = BLOCKED-by-construction** — bind readout(Wa,Wb,⊙,Wo)은 `.clm`(additive readout-only) 직렬화
-  불가 → terminal G1/G6 측정 불가. follow-on = bind-codec RTYPE=1 export(`clm_serialize_v2`+`core/clm_decode.hexa`
-  engine-transform) → `.clm` → `anima eval`. ctrl 만 .clm anchor(binding 없어 A/B 불가).
+- **engine-native G0-G6 A/B = DONE (2026-06-28, UNBLOCKED by bind-codec, TERMINAL)** — bind readout(Wa,Wb,⊙,Wo)을
+  CLMB codec(RTYPE=1 ⊙ / RTYPE=2 +)로 직렬화 가능해져 9 .clm(3 arm × 3 seed) export → **py 2-production
+  `core/g_gates.py`←`core/clm_decode.py`**(numpy, torch-free, byte-parity TERMINAL, grep torch/gauge_lib=0)로
+  G0-G6 multiseed 재측정(summer pool CPU, $0). **결과 = torch-probe floor 가 엔진-네이티브로 동일 재현**:
+  G1=0(max_single=0, single∧multiseed FAIL) ∧ G6 fals=0 전 9, bind G6 dist(5–6) NOT > ctrl(6), a7b closure
+  FAIL 전 9, detector calibration 10/10(공정 = 병목 아님). → **주 G1/G6 생성 bar engine-native TERMINAL =
+  NOT-SUPPORTED**(곱셈 readout 이 floor 위로 못 올림; INCONCLUSIVE-at-floor — 측정 결함 아닌 train-scale
+  floor 라 clean refute 아님). "G1/G6 무이동이 torch 착시"가 아님이 확정. 표 = exp3_303m/RESULT.md §4b.
 - **정직 종합:** toy 의 곱셈 *robustness* 이점은 303M 생성 gate(G1/G6)로는 **미전이**(floor), held-out 일반화에 작은
   이점만 잔존. "곱셈 binding op 이 303M 재조합/착상 벽을 넘는다"는 **이 scale·이 측정에선 미입증**(과장 금지).
 
 ## Scope / honesty (c9)
 toy ARM = **DIRECTIONAL torch screen**(engine-native 아님 · 303M 아님 · `a_engine_native_learning`/`a_toy_scale_recheck`).
-SUPPORT 는 *mean bar* 충족이되 seed-consistency 1/3 = robustness-driven(과장 금지). 303M EXP-3 decider(G1∧G6
-co-movement engine-native)는 별개 미발사. toy-only, scale-transfer UNVERIFIED — 303M 은 권고만(자동발사 금지).
+SUPPORT 는 *mean bar* 충족이되 seed-consistency 1/3 = robustness-driven(과장 금지). **303M EXP-3 decider(G1∧G6
+co-movement engine-native)는 2026-06-28 FIRED + 측정완료** = bind 가 G1·G6 둘 다 floor 위로 못 올림(NOT-SUPPORTED,
+engine-native TERMINAL). toy SUPPORT 는 robustness-only 였고 303M 생성 gate 로는 미전이 — scale-transfer 확정 실패
+(`a_toy_scale_recheck`). 남은 미검증 = floor 해소 후 재측정(floor 에선 arm 분해능 0이라 곱셈 효과 분별 불가).
 
-
-설계만 — 측정 0. tier = 🔵 PRE-REGISTERED DESIGN (DIRECTIONAL). frozen bar 사후 이동 금지(tune-to-green 금지, p7). 이 카드는 *방향성 설계*이지 검증된 결과가 아니다 — 과장 박제 금지(a_engine_native_learning). gpu_recipe 발사 시(team-lead cost-gate go): held-out 4/4 mirror-CE DESCENT 게이트(a_clm_gen_pipeline) → CORE `--engine conv` mount 위 frozen G1(H_1129 recombination)·G6(H_1464 fals) byte-exact engine-native 재측정(torch probe 아님) → ckpt PULL before teardown(a_fire_recover_complete). cheap_test 가 numpy mirror 이므로 그 결과도 DIRECTIONAL(엔진-네이티브 아님).
+EXP-3 발사·측정 완료(2026-06-27 학습 vast A40 · 2026-06-28 engine-native G0-G6 summer pool). cheap_test/toy = DIRECTIONAL,
+303M held-out CE = 약한 DIRECTIONAL support, 303M G1/G6 생성 gate = **engine-native TERMINAL NOT-SUPPORTED**(py 2-production
+`core/g_gates.py`, torch probe 아님). frozen bar 사후 이동 0(H_1129 recombination·H_1464 fals VERBATIM, tune-to-green 금지 p7).
+held-out 4/4 mirror-CE DESCENT 게이트 통과(`a_clm_gen_pipeline`, 9 .clm 전부) · 9 .clm + .pt PULL 완료(`a_fire_recover_complete`).
