@@ -181,28 +181,11 @@ fn _tg_im2col(x: int, xcol: int, T: int, Cin: int, K: int, dil: int) {
         t = t + 1
     }
 }
-// transpose-im2col (bwd dW operand). xcolT[ci·K+k, t] = xin(p,ci).
-fn _tg_im2col_t(x: int, xcolT: int, T: int, Cin: int, K: int, dil: int) {
-    if _devfeed_on() {
-        let rc = forge_dispatch_im2col_t(x, xcolT, T, Cin, K, dil)
-        if rc == 0 { return }
-    }
-    let Kdim = Cin * K
-    let mut t = 0
-    while t < T {
-        let mut ci = 0
-        while ci < Cin {
-            let mut k = 0
-            while k < K {
-                let p = t - dil * (K - 1 - k)
-                if p >= 0 { t_set(xcolT, (ci * K + k) * T + t, t_get(x, p * Cin + ci)) }
-                k = k + 1
-            }
-            ci = ci + 1
-        }
-        t = t + 1
-    }
-}
+// (the bwd dW transposed-im2col gather _tg_im2col_t was REMOVED in the #2598 root-
+//  cause fix: the dW grad now reuses the forward-form _tg_im2col gather + a small
+//  dy transpose (farr_transpose_2d_gpu) + the proven t_matmul contraction over T —
+//  the transpose-elimination reroute — so the separate transposed gather is no
+//  longer needed. forge_dispatch_im2col_t is therefore no longer referenced.)
 // col2im (bwd dX scatter-add). dX_out[p,ci] += dXcol[t, ci·K+k]. Caller ZEROES
 // dX_out first (matches host bwd semantics).
 fn _tg_col2im(dXcol: int, dX_out: int, T: int, Cin: int, K: int, dil: int) {
@@ -245,14 +228,17 @@ fn tg_conv_fwd_off(x: int, w: int, woff: int, b: int, boff: int, y_out: int,
     let Kdim = Cin * K
     let xcol = t_zeros(T * Kdim)
     _tg_im2col(x, xcol, T, Cin, K, dil)
-    // transpose the OFFSET weight slice w[woff + co·Kdim + j] → Wt[j·Cout + co]
+    // transpose the OFFSET weight slice w[woff + co·Kdim + j] → Wt[j·Cout + co].
+    // #2598 ROOT-CAUSE FIX: this was a ~(Kdim·Cout) interpreted t_get/t_set scalar
+    // loop (≈4.3e7 ops/call at d3784·K3) — the largest ungated host term on the FWD
+    // critical path, fired by every conv (~12-15×/step incl. expert recompute) so it
+    // dominated wall-time and starved the GPU between micro-GEMMs. farr_transpose_2d_gpu
+    // does the SAME [Cout,Kdim]→[Kdim,Cout] rearrange in ONE compiled call (device on
+    // CUDA via _hx_cuda_farr_transpose_2d_gpu, byte-eq memcpy-class CPU fallback on the
+    // prebuilt mac binary). Byte-identical: CPU mirror writes Wt[j·Cout+co]=w[woff+co·
+    // Kdim+j], the exact index identity above (pure rearrange, no FP reduction).
     let Wt = t_zeros(Kdim * Cout)
-    let mut co = 0
-    while co < Cout {
-        let mut j = 0
-        while j < Kdim { t_set(Wt, j * Cout + co, t_get(w, woff + co * Kdim + j)); j = j + 1 }
-        co = co + 1
-    }
+    let _ = farr_transpose_2d_gpu(w, woff, Wt, 0, Cout, Kdim)
     let mm = t_matmul(xcol, T, Kdim, Wt, Cout)
     let mut t2 = 0
     while t2 < T {
@@ -283,30 +269,53 @@ fn tg_conv_bwd_off(x: int, w: int, woff: int, dy: int,
     // zero dX_out (activation space) — col2im scatter-ADDS into it
     let mut ix = 0
     while ix < T * Cin { t_set(dX_out, ix, 0.0); ix = ix + 1 }
-    // dW: dW_flat[Kdim,Cout] = xcolT[Kdim,T] @ dy[T,Cout]  (forge GEMM)
-    let xcolT = t_zeros(Kdim * T)
-    _tg_im2col_t(x, xcolT, T, Cin, K, dil)
-    let dW_flat = t_matmul(xcolT, Kdim, T, dy, Cout)
-    // scatter dW_flat[j·Cout+co] → packed dW_out[dWoff + co·Kdim + j]. ACCUMULATE
-    // (+=) so minibatch grad-accumulation over B windows sums into one buffer; the
-    // caller ZEROES all weight-grad buffers ONCE before the B-loop (B=1 + pre-zero
-    // == the old overwrite, so single-window behavior is byte-identical).
-    let mut co = 0
-    while co < Cout {
-        let mut j = 0
-        while j < Kdim {
-            let gwi = dWoff + co * Kdim + j
-            t_set(dW_out, gwi, t_get(dW_out, gwi) + t_get(dW_flat, j * Cout + co))
-            j = j + 1
+    // dW (#2598 ROOT-CAUSE FIX): the old path ran a transposed-im2col gather
+    // (_tg_im2col_t, ~T·Kdim interpreted t_set) THEN a transpose-SCATTER of dW_flat
+    // [Kdim,Cout] into the packed [Cout,Kdim] buffer (≈4.3e7 interpreted nested ops/
+    // call at d3784) — two of the dominant ungated host terms on the BWD critical
+    // path. Both are eliminated by a transpose-elimination reroute (F-OP2-TRAINER-WIRE
+    // contraction identity): reuse the SAME forward-form xcol[T,Kdim] gather (already
+    // device-resident under _devfeed_on, xcol[t,j]==xcolT[j,t]) and transpose the SMALL
+    // dy[T,Cout]→dyT[Cout,T] (O(T·Cout), one compiled farr_transpose_2d_gpu — device on
+    // CUDA, byte-eq host transpose on mac), then contract over T with the PROVEN t_matmul:
+    //   dW_pk[co,j] = dyT[co,t]·xcol[t,j] summed over t ascending = Σ_t dy[t,co]·xcol[t,j]
+    // = the SAME ascending-t reduction the old xcolT[Kdim,T]@dy[T,Cout] computed (only
+    // the operand order is commuted, IEEE-mul-commutative + identical k-order → byte-
+    // identical), but emitted DIRECTLY in the [Cout,Kdim] PACKED layout (dW_pk[co·Kdim+j]
+    // == old dW_flat[j·Cout+co]) so the old transpose-SCATTER collapses to a flat += below.
+    // (forge_dispatch_matmul_t would express this in ONE call but its host oracle aliases
+    // under farr-table realloc amid many live farrs — drifts the trainer — so we keep the
+    // explicit transpose_2d + t_matmul, both byte-eq in-trainer, $0 MODE_VERIFY proven.)
+    let xcol = t_zeros(T * Kdim)
+    _tg_im2col(x, xcol, T, Cin, K, dil)
+    let dyT = t_zeros(Cout * T)
+    let _ = farr_transpose_2d_gpu(dy, 0, dyT, 0, T, Cout)
+    let dW_pk = t_matmul(dyT, Cout, T, xcol, Kdim)
+    // accumulate the [Cout,Kdim] packed grad into dW_out[dWoff..] (+=). FLAT 1-D add
+    // (the transpose is gone — dW_pk is already packed, so this is a single linear
+    // += instead of the old NESTED transpose-scatter, halving the index arithmetic).
+    // Minibatch grad-accumulation: caller ZEROES all weight-grad buffers ONCE before
+    // the B-loop (B=1 + pre-zero == the old overwrite, so single-window behavior is
+    // byte-identical). dWoff==0 (embed/router/readout) routes the += fully device-
+    // resident via farr_add_inplace_gpu; offset (trunk/expert) stays a flat host +=
+    // (no offset-aware device add primitive exists — that tail is an upstream follow-on).
+    if dWoff == 0 {
+        let _ = farr_add_inplace_gpu(dW_out, dW_pk, Cout * Kdim)
+    } else {
+        let mut gi = 0
+        while gi < Cout * Kdim {
+            t_set(dW_out, dWoff + gi, t_get(dW_out, dWoff + gi) + t_get(dW_pk, gi))
+            gi = gi + 1
         }
-        co = co + 1
     }
     // dX: dXcol[T,Kdim] = dy[T,Cout] @ w_slice[Cout,Kdim]  (forge GEMM), then col2im.
     // the weight matmul operand must be the OFFSET slice w[woff..woff+Cout·Kdim];
     // copy it contiguous so t_matmul reads a [Cout,Kdim] block from index 0.
+    // #2598 ROOT-CAUSE FIX: this contiguous copy was a ~(Cout·Kdim)=4.3e7 interpreted
+    // t_get/t_set loop — farr_copy_slice_gpu does the SAME memcpy in one compiled call
+    // (device D2D on CUDA, byte-eq memcpy CPU fallback on mac; no FP, no reorder).
     let wsl = t_zeros(Cout * Kdim)
-    let mut wi = 0
-    while wi < Cout * Kdim { t_set(wsl, wi, t_get(w, woff + wi)); wi = wi + 1 }
+    let _ = farr_copy_slice_gpu(w, woff, wsl, 0, Cout * Kdim)
     let dXcol = t_matmul(dy, T, Cout, wsl, Kdim)
     _tg_col2im(dXcol, dX_out, T, Cin, K, dil)
     // db[co] = Σ_t dy[t,co]  →  packed db_out[dboff + co]. ACCUMULATE (+=), same
@@ -319,7 +328,7 @@ fn tg_conv_bwd_off(x: int, w: int, woff: int, dy: int,
         t_set(db_out, dboff + cb, t_get(db_out, dboff + cb) + s)
         cb = cb + 1
     }
-    let _ = t_free(xcolT); let _ = t_free(dW_flat); let _ = t_free(wsl); let _ = t_free(dXcol)
+    let _ = t_free(xcol); let _ = t_free(dyT); let _ = t_free(dW_pk); let _ = t_free(wsl); let _ = t_free(dXcol)
 }
 
 // Module-scope expert-bias handle (set in main before train_bwd; the bwd needs
