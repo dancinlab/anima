@@ -576,24 +576,8 @@ anima train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
 #   (4-cell register round-robin) · --out <ckpt.clm> (CLM\x01 v0.3, core/clm_decode-loadable)
 ```
 
-The trainer's conv forward AND backward route through forge own-GEMM (`t_matmul`):
-the conv **backward** — previously a GEMM-less host scalar triple-loop
-(`O(T·Cout·Cin·K)`, the dominant idle-GPU term the #2598 H100 toy gate exposed) — is
-re-expressed as two GEMMs (`dW = xcolT @ dy`, `dXcol = dy @ w`) + col2im, byte-eq to
-the host path (`~1e-16` GEMM-reassociation, all falsifiers + savant latch + mitosis
-split unchanged). The per-step **CE-grad seed** (host `O(T·V)` single-thread
-softmax+grad, the #2598 (B) hot-path term) now wires the existing device kernel
-`forge_dispatch_ce_grad` (CUDA `_hx_k_ce_grad`, `CLM_PROD_DEVRESIDENT`-gated) for the
-canon single-window step — `dt_exp` (F-OP19) bit-exact host↔device and matching the
-forward loss, byte-parity IDENTICAL (`MODE_VERIFY` lossF unchanged). The im2col
-gather, groupnorm, and AdamW stay on host (their device-resident `forge_dispatch_*`
-wrappers are CPU-only `#ifndef HEXA_CUDA` oracles in `self/runtime.c` — undefined in a
-CUDA build — so wiring them is a separate `runtime_cuda.c` lift). **GPU util>30% re-gate is pending a cost-gated H100×1 rent**
-(the #2598-validated `stage_resolve_runtime_a HEXA_CUDA=1 SM=90` recipe; pool hosts
-lack `forge_dispatch_groupnorm_gelu` so the trainer cannot link there).
-
 The production trainer for the real **303M** mouth is **`cli/train.hexa`**
-(hexa-native flame/forge own-GEMM, `a_train_flame_forge`). It carries the full recipe
+(hexa-native, `a_train_flame_forge`). It carries the full recipe
 surface — SAVANT golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the
 4-cell `{ko·en}×{normal·SNS}` register loader, held-out val monitor, fail-loud 4-cell
 guard, disjoint train/val tail split, byte-proportional sampling, minibatch
@@ -603,9 +587,9 @@ trained weights to a **`.clm` v0.3** file (`serialize_clm`, byte-exact to what
 (`cli/train.py`) was **retired 2026-06-28** (py全폐기 → hexa-single; preserved in
 `state/py_retire_archive/train_torch_lane_p/`). `cli/train.hexa` already holds every lever
 it carried (task #10 full-parity port). The numerical kernel (forward / CE / decode-logits)
-remains validated by a **reference-match** against torch·numpy golden on small CI fixtures —
-the device that caught `dt_ln` divergence, the device `dirty_host` clobber, and the own-GEMM
-TF32 decode drift; this is a golden *reference*, not a co-equal production engine.
+remains validated by a **reference-match** against torch·numpy golden on small CI fixtures
+(the gate that caught the `dt_ln` divergence) — a golden *reference*, not a co-equal
+production engine.
 
 ```bash
 # 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell, hexa-single:
@@ -695,26 +679,20 @@ ckpt ↔ HF registry (models · datasets) is managed in the `ARCHITECTURE.json` 
   `.kosmos` as one continuous, accumulating record (start/stop on user command), archived to the
   public HF dataset [`dancinlab/anima-eeg-consciousness`](https://huggingface.co/datasets/dancinlab/anima-eeg-consciousness)
   (`a_eeg_consciousness_record`).
-- **Training** — production NN training is authored in `.hexa` on the **flame** autograd/NN layer
-  over the **forge** GPU substrate (no PyTorch/ATen/Python in the trained binary,
-  `a_train_flame_forge`); results are recorded per substrate — **Lane G** (forge own-GEMM H100,
-  PUBLIC production trainer) ⊥ **Lane A** (AKIDA AKD1000 on-chip) ⊥ **Lane P** (GPU-torch reference +
-  torch→`.clm` bridge) — never merged into one verdict (`a_lane_akida_gpu_split`). The canonical
-  single training entry-point is **`cli/train.hexa`** (H_1567), reachable from the unified CLI as
+- **Training** — production NN training is authored in `.hexa` (`a_train_flame_forge`); results are
+  recorded per substrate — **Lane G** (GPU H100, PUBLIC production trainer) ⊥ **Lane A** (AKIDA
+  AKD1000 on-chip) ⊥ **Lane P** (GPU-torch reference + torch→`.clm` bridge) — never merged into one
+  verdict (`a_lane_akida_gpu_split`). The canonical single training entry-point is
+  **`cli/train.hexa`** (H_1567), reachable from the unified CLI as
   **`anima train [--savant] [--mitosis] …`** (`cli/anima.hexa` dispatches the `train` subcommand to it
   as a sub-process — training is a SEPARATE lane from the generator L3 mouth, `a_core_engine_map`) —
-  a hexa-native CLMConvMoE trainer
-  that composes the proven flame fwd/bwd/CE/AdamW chain (`stdlib/flame/clm_step.hexa` lineage) with
-  anima's two orthogonal learning levers: **SAVANT** golden-zone inhibition (cusp-anneal AdamW
-  weight-decay below `GZ_LOWER≈0.21232` + asymmetric latch, `a_savant_train`) ⊥ **MITOSIS**
-  cell-division (`mitosis_split` E→E+1, continuity-preserving router-bias split, `a_mitosis_train`),
-  plus a 4-cell `{ko·en}×{일반·SNS}` corpus loader scaffold. The toy `MODE_VERIFY` ($0 farr CPU)
-  passes 3/3 frozen falsifiers (CE descent 4.785→0.000432 · savant latch · bounded mitosis split);
-  the engine-native 303M `MODE_CANON` LEARNING run is a separate cost-gated GPU fire.
-- **Decode/inference** — decode (`core/bytegpt_decode.hexa` · `clm_decode.hexa`) also enters the
-  **forge** GPU via the `flame_mm.mm` seam (own-GEMM `_hx_k_gemm`, cuBLAS-independent) when
-  `cuda_available()=1`, else byte-identical farr CPU; GPU is the default, not a CPU fallback
-  (`a_train_flame_forge`).
+  a hexa-native CLMConvMoE trainer that wires anima's two orthogonal learning levers: **SAVANT**
+  golden-zone inhibition (cusp-anneal AdamW weight-decay below `GZ_LOWER≈0.21232` + asymmetric latch,
+  `a_savant_train`) ⊥ **MITOSIS** cell-division (`mitosis_split` E→E+1, continuity-preserving
+  router-bias split, `a_mitosis_train`), plus a 4-cell `{ko·en}×{일반·SNS}` corpus loader scaffold.
+  The toy `MODE_VERIFY` ($0 CPU) passes 3/3 frozen falsifiers (CE descent 4.785→0.000432 · savant
+  latch · bounded mitosis split); the engine-native 303M `MODE_CANON` LEARNING run is a separate
+  cost-gated GPU fire.
 
 ## Repository map
 
