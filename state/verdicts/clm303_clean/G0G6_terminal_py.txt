@@ -1,0 +1,41 @@
+════════════════════════════════════════════════════════════════════════════
+ clm303_clean — ENGINE-NATIVE G0-G6 TERMINAL VERDICT  (py 2-production path)
+════════════════════════════════════════════════════════════════════════════
+ measured: 2026-06-28
+ host:     summer (RTX 5070 box, 12c / 30G) — CPU numpy decode, torch-free
+ path:     cli/evaluate.py → core/g_gates.py::g_eval_all  (numpy math.log mirror)
+           = "공인 py 엔진" (a_engine_native_learning 2-production) → TERMINAL
+ ckpt:     clm303_clean.clm  (303M-class CLMConvMoE d=3784 L=4 E=3 K=3 V=256, .clm v0.3)
+ sha256:   e807672222261610a294e2b6848bd337226e36b1d160af57302b211b0f2622f8
+ gen:      80 tokens/decode
+ wall:     ~14.5 min  (python3 PID burned ~1190% CPU sustained, RSS ~2.76GB)
+ corpus:   gen_ko.txt gen_en.txt sns_ko.txt sns_en.txt (4-cell clean register)
+
+ BYTE-PARITY GATE (prior, state/clm303_clean_corpus/g0g6_py.txt 2026-06-26):
+   py decode byte-identical to hexa clm_decode.hexa on BOTH d768 golden + 303M
+   ckpt; CE agrees to 15 decimals → faithful byte-parity port. NO torch/gauge_lib.
+
+────────────────────────────────────────────────────────────────────────────
+ G0-G6 RESULTS (gen=80)
+────────────────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🟢 PASS  novel=49 (need>=3) · control=0 (need 0) · coherent=12
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (out of eval scope)
+  G5 NON-FAB       🟢 PASS  L1 fab=0.0667 (<=0.30) · L2 (§ImmuneMemory abstain) port pending
+  G6 IDEATION ★    🔴 FAIL  distinct=6 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+
+  CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+    → NOT closure (PRIVATE/WIP) — G1 RECOMBINATION fails (recombination/G6 capacity wall).
+
+ HONEST SCOPE:
+  · G1 fail is consistent with anima's documented recombination/G6 capacity wall
+    (H_1129/1139/1464). The overfit fix (held-out 4/4 DESCENT) restored next-byte
+    generalization (G0 coherent ✓, G2 novel ✓), but did NOT open the recombination
+    gate — that needs a trunk OBJECTIVE lever, not corpus cleaning (g1-lever memory).
+  · G6 ★ also FAIL (falsifiable=0): no falsifiable-idea synthesis — same family wall.
+  · G2 absence corpus = the 4-cell clean register (control_novel=0 holds).
+  · No anomaly: English+Korean register decodes are coherent (no German-collapse
+    artifact); kwr 5/5; detector calibration was 10/10 on the prior d768-parity run.
+════════════════════════════════════════════════════════════════════════════
