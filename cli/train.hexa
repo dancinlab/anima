@@ -266,9 +266,10 @@ fn tg_conv_bwd_off(x: int, w: int, woff: int, dy: int,
                    dW_out: int, dWoff: int, dX_out: int, db_out: int, dboff: int,
                    T: int, Cin: int, Cout: int, K: int, dil: int) {
     let Kdim = Cin * K
-    // zero dX_out (activation space) — col2im scatter-ADDS into it
-    let mut ix = 0
-    while ix < T * Cin { t_set(dX_out, ix, 0.0); ix = ix + 1 }
+    // zero dX_out (activation space) — col2im scatter-ADDS into it. device zero-fill
+    // (#2598 SECONDARY: was a T·Cin host t_set 0.0 loop per conv-bwd call × (L+E+3)
+    // calls; farr_zero_slice_gpu writes the SAME zeros, byte-eq, one call).
+    let _ = farr_zero_slice_gpu(dX_out, 0, T * Cin)
     // dW (#2598 ROOT-CAUSE FIX): the old path ran a transposed-im2col gather
     // (_tg_im2col_t, ~T·Kdim interpreted t_set) THEN a transpose-SCATTER of dW_flat
     // [Kdim,Cout] into the packed [Cout,Kdim] buffer (≈4.3e7 interpreted nested ops/
@@ -369,26 +370,30 @@ fn train_fwd(tokens: int, E: int, L: int,
     // ── L trunk layers: x ← x + gelu(gn(conv_dil(x))), dilation min(2^l,512) ──
     let mut l = 0
     while l < L {
-        // cache layer input (conv operand) for bwd
-        let mut ti = 0
-        while ti < T * d { t_set(tin, l * T * d + ti, t_get(x, ti)); ti = ti + 1 }
+        // cache layer input (conv operand) for bwd — device D2D copy into tin[l*T*d..]
+        // (#2598 SECONDARY: was L·T·d host t_get/t_set; byte-eq memcpy, one call).
+        let _ = farr_copy_slice_gpu(x, 0, tin, l * T * d, T * d)
         let h = t_zeros(T * d)
         tg_conv_fwd_off(x, tcW, l * dd, tcB, l * d, h, T, d, d, K, _pow2(l))
         let hnl = t_zeros(T * d); let meanl = t_zeros(1); let invl = t_zeros(1); let xhl = t_zeros(T * d)
         nn_groupnorm_fwd_off(h, tgG, l * d, tgB, l * d, hnl, meanl, invl, xhl, T, d, 1)
-        let mut ci = 0
-        while ci < T * d { t_set(hn, l * T * d + ci, t_get(hnl, ci)); t_set(xh, l * T * d + ci, t_get(xhl, ci)); ci = ci + 1 }
+        // cache groupnorm-out (hn) AND gn xhat (xh) into packed [l*T*d..] — two device
+        // D2D copies (#2598 SECONDARY: was a fused 2·L·T·d host t_get/t_set loop; each
+        // farr_copy_slice_gpu is byte-eq memcpy, disjoint dst → order-independent).
+        let _ = farr_copy_slice_gpu(hnl, 0, hn, l * T * d, T * d)
+        let _ = farr_copy_slice_gpu(xhl, 0, xh, l * T * d, T * d)
         t_set(inv, l, t_get(invl, 0))
         let hg = t_zeros(T * d); nn_gelu_fwd(hnl, hg, T * d)
-        let mut ai = 0
-        while ai < T * d { t_set(x, ai, t_get(x, ai) + t_get(hg, ai)); ai = ai + 1 }
+        // residual: x += gelu(gn(conv(x))) — device in-place add (#2598 SECONDARY:
+        // was L·T·d host t_get+t_set add; farr_add_inplace_gpu ascending == byte-eq).
+        let _ = farr_add_inplace_gpu(x, hg, T * d)
         let _ = t_free(h); let _ = t_free(hnl); let _ = t_free(meanl); let _ = t_free(invl)
         let _ = t_free(xhl); let _ = t_free(hg)
         l = l + 1
     }
-    // xt = post-trunk activation (router + expert input)
-    let mut xi = 0
-    while xi < T * d { t_set(xt, xi, t_get(x, xi)); xi = xi + 1 }
+    // xt = post-trunk activation (router + expert input) — device D2D copy (#2598
+    // SECONDARY: was a single T·d host t_get/t_set; byte-eq memcpy, one call).
+    let _ = farr_copy_slice_gpu(x, 0, xt, 0, T * d)
     // MoE: router (d->E) + E packed conv experts
     let logits_r = t_zeros(T * E)
     tg_conv_fwd_off(xt, rW, 0, rB, 0, logits_r, T, d, E, 1, 1)
@@ -400,8 +405,10 @@ fn train_fwd(tokens: int, E: int, L: int,
         // copy was the trainer's hidden CPU cost; *_off addresses the pack).
         tg_conv_fwd_off(xt, expW, e * dd, expB, e * d, eo, T, d, d, K, 1)
         let ex = t_zeros(T * d); nn_gelu_fwd(eo, ex, T * d)
-        let mut j = 0
-        while j < T * d { t_set(ex_out, e * T * d + j, t_get(ex, j)); j = j + 1 }
+        // pack per-expert gelu output into ex_out[e*T*d..] — device D2D copy (#2598
+        // SECONDARY: the old E·T·d host t_get/t_set pack was the dominant fwd MoE
+        // scalar cost; farr_copy_slice_gpu is the SAME memcpy, byte-eq, one call).
+        let _ = farr_copy_slice_gpu(ex, 0, ex_out, e * T * d, T * d)
         let _ = t_free(eo); let _ = t_free(ex)
         e = e + 1
     }
@@ -465,24 +472,27 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     tg_conv_bwd_off(xt, rW, 0, dlogits_r, drW, 0, dxt_r, drB, 0, T, d, E, 1, 1)
     // accumulate expert dxt across all E experts → dx (grad w.r.t. post-trunk x)
     let dx = t_zeros(T * d)
-    let mut xi = 0
-    while xi < T * d { t_set(dx, xi, t_get(dxt_r, xi)); xi = xi + 1 }
+    // dx init = router input-grad — device D2D copy (#2598 SECONDARY: was a single
+    // T·d host t_get/t_set; byte-eq memcpy, one call).
+    let _ = farr_copy_slice_gpu(dxt_r, 0, dx, 0, T * d)
     let mut e = 0
     while e < E {
         // recompute eo_e for gelu bwd (xt is cached; expert conv is deterministic).
         // Read packed expert weights/bias at offset via forge fwd — no eW/eB copies.
         let eo = t_zeros(T * d)
         tg_conv_fwd_off(xt, expW, e * dd, expB_global, e * d, eo, T, d, d, K, 1)
+        // gather per-expert grad slice from packed dex_out[e*T*d..] — device D2D copy
+        // (#2598 SECONDARY: was E·T·d host t_get/t_set; byte-eq memcpy, one call).
         let dexg = t_zeros(T * d)
-        let mut di = 0
-        while di < T * d { t_set(dexg, di, t_get(dex_out, e * T * d + di)); di = di + 1 }
+        let _ = farr_copy_slice_gpu(dex_out, e * T * d, dexg, 0, T * d)
         let deo = t_zeros(T * d); nn_gelu_bwd(eo, dexg, deo, T * d)
         // accumulate grads DIRECTLY into the packed dexpW[e*dd]/dexpB[e*d] (forge bwd
         // zeros+writes the per-expert slice in place — no deW/deB temp + copy-back).
         let dxt_e = t_zeros(T * d)
         tg_conv_bwd_off(xt, expW, e * dd, deo, dexpW, e * dd, dxt_e, dexpB, e * d, T, d, d, K, 1)
-        let mut ai = 0
-        while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dxt_e, ai)); ai = ai + 1 }
+        // dx += dxt_e (sum expert input-grads) — device in-place add (#2598 SECONDARY:
+        // was E·T·d host t_get+t_set add; farr_add_inplace_gpu ascending == byte-eq).
+        let _ = farr_add_inplace_gpu(dx, dxt_e, T * d)
         let _ = t_free(eo); let _ = t_free(dexg)
         let _ = t_free(deo); let _ = t_free(dxt_e)
         e = e + 1
@@ -494,24 +504,28 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     //    at offset l via *_off. ──
     let mut l = L - 1
     while l >= 0 {
+        // gather cached groupnorm-out from packed hn[l*T*d..] — device D2D copy
+        // (#2598 SECONDARY: was L·T·d host t_get/t_set; byte-eq memcpy, one call).
         let hnl = t_zeros(T * d)
-        let mut hi = 0
-        while hi < T * d { t_set(hnl, hi, t_get(hn, l * T * d + hi)); hi = hi + 1 }
+        let _ = farr_copy_slice_gpu(hn, l * T * d, hnl, 0, T * d)
         let dhn = t_zeros(T * d); nn_gelu_bwd(hnl, dx, dhn, T * d)
+        // gather cached gn xhat from packed xh[l*T*d..] — device D2D copy (#2598
+        // SECONDARY: was L·T·d host t_get/t_set; byte-eq memcpy, one call).
         let xhl = t_zeros(T * d); let invl = t_zeros(1)
-        let mut xi2 = 0
-        while xi2 < T * d { t_set(xhl, xi2, t_get(xh, l * T * d + xi2)); xi2 = xi2 + 1 }
+        let _ = farr_copy_slice_gpu(xh, l * T * d, xhl, 0, T * d)
         t_set(invl, 0, t_get(inv, l))
         let dh = t_zeros(T * d)
         nn_groupnorm_bwd_off(xhl, invl, tgG, l * d, dhn, dtgG, l * d, dtgB, l * d, dh, T, d, 1)
-        // conv branch operand = tin[l] (cached layer input); dconv_in adds to dx
+        // conv branch operand = tin[l] (cached layer input); dconv_in adds to dx.
+        // gather from packed tin[l*T*d..] — device D2D copy (#2598 SECONDARY: was
+        // L·T·d host t_get/t_set; byte-eq memcpy, one call).
         let tinl = t_zeros(T * d)
-        let mut ti = 0
-        while ti < T * d { t_set(tinl, ti, t_get(tin, l * T * d + ti)); ti = ti + 1 }
+        let _ = farr_copy_slice_gpu(tin, l * T * d, tinl, 0, T * d)
         let dconv_in = t_zeros(T * d)
         tg_conv_bwd_off(tinl, tcW, l * dd, dh, dtcW, l * dd, dconv_in, dtcB, l * d, T, d, d, K, _pow2(l))
-        let mut ai = 0
-        while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dconv_in, ai)); ai = ai + 1 }
+        // dx += dconv_in (residual conv-branch grad) — device in-place add (#2598
+        // SECONDARY: was L·T·d host t_get+t_set add; farr_add_inplace_gpu ascending == byte-eq).
+        let _ = farr_add_inplace_gpu(dx, dconv_in, T * d)
         let _ = t_free(hnl); let _ = t_free(dhn); let _ = t_free(xhl); let _ = t_free(invl)
         let _ = t_free(dh); let _ = t_free(tinl); let _ = t_free(dconv_in)
         l = l - 1
