@@ -1,12 +1,12 @@
 ---
 id: H_1814
 slug: g6setsearch_g1jamo
-tier: PRE-REG
+tier: 🧱 NOT-SUPPORTED (G2-novelty 분해 finding)
 title: G6 diverse-set-search + G1 자모 teach-signal — teach-signal 형태 trunk-objective 레버 (N4+N8)
-verdict: PRE-REG (launch-ready · $0 smoke GREEN · 303M GPU 미실행)
-status: PRE-REG
-wired: launch-ready (303M 미실행)
-verdict_artifact:
+verdict: 🧱 NOT-SUPPORTED (engine-native seed7, 303M) — N8 자모·N4 set-search 둘 다 G1 best_distinct=0 (재조합벽 유지). 단 N4 set-search 가 G2 NOVELTY 를 엶(novel 6·13 PASS) = set-search→novelty≠recombination 분해.
+status: TERMINAL (seed7 · DIRECTIONAL py-eval, hexa-confirm follow-on)
+wired: engine-native (py 2-production g_gates ← clm_decode) — DIRECTIONAL(py-retire 정책상 hexa-confirm follow-on)
+verdict_artifact: state/1632_g6setsearch_g1jamo/ckpt/g0g6_*.txt
 source: UNIVERSE
 archived: false
 ---
@@ -29,8 +29,25 @@ archived: false
 - **held-out DESCENT:** val_CE < ln256, `verify_clm_v2.py descent` PASS.
 - **LIFT:** n8_jamo→G1 · n4_setsearch→G6 가 baseline(표준 CE) 대비 strictly 증가. 측정 = engine-native py 2-production(`core/g_gates.py` ← `core/clm_decode.py`, TERMINAL).
 
+## 🧱 RESULT — NOT-SUPPORTED (engine-native seed7, 303M, gen40)
+**측정 2026-06-29 (rent A40, $3.21 캠페인 일부).** 4 arm 학습 → engine-native G0-G6 (py 2-production `core/g_gates.py`←`clm_decode.py`).
+
+| arm | G0 | **G1 distinct** | G2 novel | G6 dist/fals | CLOSURE |
+|---|---|---|---|---|---|
+| baseline (control) | 🟢 | **0** | 0 | 3/0 | FAIL |
+| n8_jamo (자모 teach) | 🔴 | **0** | 0 | 4/0 | FAIL |
+| n4_set (set-search) | 🟢 | **0** | **6 🟢 PASS** | 4/0 | FAIL |
+| n4n8_both | 🔴 | **0** | **13 🟢 PASS** | 3/0 | FAIL |
+
+- **G1 LIFT = 0 전 arm** — N8 자모·N4 set-search·결합 모두 best_distinct=0 = 재조합벽 유지. closure FAIL.
+- ★ **핵심 분해 finding: N4 set-search 가 G2 NOVELTY 를 엶**(n4_set novel=6·n4n8 novel=13, control_novel=0 대비 PASS) **그러나 G1=0** → **set-search 는 novelty 를 열지 recombination 을 안 엶 (G2 ≠ G1 분리)**. novelty 와 recombination 은 별개 능력이고 set-search 는 전자만 친다.
+- N8 자모 teach 는 G0 도 깸(🔴) = subcharacter aux head 가 coherence 해침, G1 무효.
+- held-out: 4 arm 전부 4/4 register DESCENT(overfit 0, clm303 함정 회피 = verdict 유효).
+- ckpt: 대표 `~/anima-weights/g1_levers/1814_baseline`(176MB sha검증), 나머지 seed+corpus+trainer 재현가능(torch-free verdict 완결).
+- **caveat (c9)**: seed7 only · eval=py 2-production(2026-06-28 py-retire 정책상 DIRECTIONAL, hexa-native `anima evaluate` confirm = follow-on; floor 결과엔 충분) · 전 arm CLOSURE FAIL → HF local-only.
+
 ## wired
-launch-ready (303M GPU 미실행). $0 smoke = 파이프 검증 only.
+engine-native 측정 완료(py DIRECTIONAL). hexa-confirm = follow-on(ING).
 
 ## 동기
 이번 세션 binding+objective+cheap 레버 전부 INCONCLUSIVE-at-floor = undertrain 의심. teach-signal(재료 disentangle / set-search diversity)이 floor 위로 G1/G6 를 올리는지 측정.
