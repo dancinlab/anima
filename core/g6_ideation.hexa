@@ -380,6 +380,41 @@ pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int
     return #{ "dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts }
 }
 
+// g6_score_arm_auto_W — LOAD-ONCE twin of g6_score_arm_auto (H_1400 W-hoist at the eval
+// driver). BYTE-IDENTICAL DIST/FALS/coherent: same frames, same per-frame seed (base_seed+i),
+// same gen_auto_ideate logic — the ONLY change is the decode runs off a PRE-LOADED handle
+// `h` (gen_auto_load) via gen_auto_ideate_W instead of reloading the .clm per frame. Used by
+// g_gates.hexa::g_eval_g6_W so full G0-G6 loads the 303M weight-set ONCE (a_core_engine_map:
+// same single .clm mouth, load hoisted out of the per-decode loop).
+pub fn g6_score_arm_auto_W(h: Map, frames: list, gen: int, base_seed: int, known: Map) -> Map {
+    let texts = []
+    let word_sets = []
+    let mut fals = 0
+    let mut i = 0
+    while i < len(frames) {
+        let f = to_string(frames[i])
+        let r = gen_auto_ideate_W(h, f, gen, 40, 0.7, base_seed + i)
+        let o = to_string(r["text"])
+        texts.push(o)
+        if _g6_known_word_ratio(o, known) >= 0.5 {
+            word_sets.push(_g6_words(o))
+            if _g6_is_falsifiable(o, known) { fals = fals + 1 }
+        }
+        i = i + 1
+    }
+    let kept = []
+    let mut w = 0
+    while w < len(word_sets) {
+        let ws = word_sets[w]
+        let mut ok = true
+        let mut kk = 0
+        while kk < len(kept) { if _g6_jaccard(ws, kept[kk]) > 0.5 { ok = false } kk = kk + 1 }
+        if ok { kept.push(ws) }
+        w = w + 1
+    }
+    return #{ "dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts }
+}
+
 // g6_score_arm_auto — CANONICAL mouth-agnostic G6 scoring op (a89a F3 reconcile · single-entry):
 // IDENTICAL DIST/FALS/coherent logic to g6_score_arm, but decode is the SINGLE typed L3 entry
 // gen_auto_ideate (sniffs the ckpt → .clm OR ByteGPT) instead of the CLM-only gen_clm_ideate.

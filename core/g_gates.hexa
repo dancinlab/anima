@@ -48,6 +48,13 @@ fn _g_default_gen() -> int { return 40 }
 // (REUSED _g6_known_word_ratio), PASS iff >= 4/5 clear 0.50. Returns
 // #{ pass, n_coherent, ratios:[float], texts:[string] }.
 pub fn g_eval_g0(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g0_W(gen_auto_load(ckpt), gen, known)
+}
+
+// g_eval_g0_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g0 but decodes off a PRE-LOADED
+// handle `h` (gen_auto_load) via gen_auto_ideate_W, so the full-eval driver (g_eval_all)
+// loads the 303M .clm weight-set ONCE instead of per gate (H_1400 W-hoist · ING#42378065).
+pub fn g_eval_g0_W(h: Map, gen: int, known: Map) -> Map {
     let cz = _g6_concepts()
     let ratios = []
     let texts = []
@@ -55,7 +62,7 @@ pub fn g_eval_g0(ckpt: string, gen: int, known: Map) -> Map {
     let mut i = 0
     while i < len(cz) {
         let seed = to_string(cz[i]) + ": "
-        let r = gen_auto_ideate(ckpt, seed, gen, 40, 0.7, 7 + i)
+        let r = gen_auto_ideate_W(h, seed, gen, 40, 0.7, 7 + i)
         let o = to_string(r["text"])
         let kwr = _g6_known_word_ratio(o, known)
         ratios.push(kwr)
@@ -123,10 +130,16 @@ fn _g_coverage(text: string) -> int {
 // (g_eval_g1_multiseed below). base_seed=7 reproduces the original single-seed path byte-for-byte
 // (singles seeded base_seed+s, composed seeded base_seed).
 pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g1_seeded(ckpt, gen, known, 7)
+    return g_eval_g1_seeded_W(gen_auto_load(ckpt), gen, known, 7)
 }
 
 pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
+    return g_eval_g1_seeded_W(gen_auto_load(ckpt), gen, known, base_seed)
+}
+
+// g_eval_g1_seeded_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g1_seeded but decodes off a
+// PRE-LOADED handle `h` via gen_auto_ideate_W (H_1400 W-hoist · ING#42378065).
+pub fn g_eval_g1_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
     let cz = _g6_concepts()
     let n = len(cz)
     // ref budgets: single=80, composed=120. honor a smaller caller cap when gen>0.
@@ -137,7 +150,7 @@ pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> M
     let mut s = 0
     while s < n {
         let seed = to_string(cz[s]) + ". "
-        let r = gen_auto_ideate(ckpt, seed, g_single, 40, 0.7, base_seed + s)
+        let r = gen_auto_ideate_W(h, seed, g_single, 40, 0.7, base_seed + s)
         let cov = _g_coverage(to_string(r["text"]))
         if cov > max_single { max_single = cov }
         s = s + 1
@@ -157,7 +170,7 @@ pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> M
             c = c + 1
         }
         seed = seed + ". "
-        let r = gen_auto_ideate(ckpt, seed, g_comp, 40, 0.7, base_seed)
+        let r = gen_auto_ideate_W(h, seed, g_comp, 40, 0.7, base_seed)
         let o = to_string(r["text"])
         let cov = _g_coverage(o)
         let kwr = _g6_known_word_ratio(o, known)
@@ -181,12 +194,17 @@ pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> M
 // metric is made robust to the exact RNG walk. The single-seed g_eval_g1 stays the frozen default
 // until owner approval flips the default. Lockstep mirror of g_gates.py::g_eval_g1_multiseed.
 pub fn g_eval_g1_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g1_multiseed_W(gen_auto_load(ckpt), gen, known)
+}
+
+// g_eval_g1_multiseed_W — LOAD-ONCE twin (decodes off a pre-loaded handle).
+pub fn g_eval_g1_multiseed_W(h: Map, gen: int, known: Map) -> Map {
     let seeds = [7, 4302, 4303]
     let per = []
     let mut n_green = 0
     let mut i = 0
     while i < len(seeds) {
-        let r = g_eval_g1_seeded(ckpt, gen, known, seeds[i])
+        let r = g_eval_g1_seeded_W(h, gen, known, seeds[i])
         if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
         per.push(r)
         i = i + 1
@@ -346,6 +364,12 @@ fn _g_g2_prompts() -> list {
 }
 
 pub fn g_eval_g2(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map {
+    return g_eval_g2_W(gen_auto_load(ckpt), gen, known, corpus_paths)
+}
+
+// g_eval_g2_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g2 but decodes off a PRE-LOADED
+// handle `h` via gen_auto_ideate_W (H_1400 W-hoist · ING#42378065).
+pub fn g_eval_g2_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
     let corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     let have_corpus = len(corpus_tokens) > 0
     let common = _g_g2_common()                       // h1140 _COMMON coherence lexicon
@@ -361,7 +385,7 @@ pub fn g_eval_g2(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map 
     while pi < len(prompts) {
         let mut si = 0
         while si < len(seeds) {
-            let r = gen_auto_ideate(ckpt, to_string(prompts[pi]), g, 40, 0.85, seeds[si])
+            let r = gen_auto_ideate_W(h, to_string(prompts[pi]), g, 40, 0.85, seeds[si])
             let o = to_string(r["text"])
             if _g_g2_kwr(o, common) >= 0.5 {
                 coherent = coherent + 1
@@ -473,13 +497,20 @@ pub fn g_eval_g4(ckpt: string, closure: bool) -> Map {
 //   PASS iff <= 0.20. This is the live abstain-when-ungrounded mechanism (H_1367/H_1202),
 //   NOT a re-implementation. p1/p6: no injected right/wrong label, pure L2-affinity gate.
 pub fn g_eval_g5(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g5_W(gen_auto_load(ckpt), gen, known)
+}
+
+// g_eval_g5_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g5 but the L1 decode runs off a
+// PRE-LOADED handle `h` via gen_auto_ideate_W (H_1400 W-hoist · ING#42378065). L2 §ImmuneMemory
+// abstain is decode-free (engine op) — unchanged.
+pub fn g_eval_g5_W(h: Map, gen: int, known: Map) -> Map {
     // ── L1: fab-word-rate over the 5 concept gens (reuse the G0 decode budget) ──
     let cz = _g6_concepts()
     let mut tot_w = 0
     let mut fab_w = 0
     let mut i = 0
     while i < len(cz) {
-        let r = gen_auto_ideate(ckpt, to_string(cz[i]) + ": ", gen, 40, 0.7, 7 + i)
+        let r = gen_auto_ideate_W(h, to_string(cz[i]) + ": ", gen, 40, 0.7, 7 + i)
         let wl = _g6_words(to_string(r["text"]))
         let mut j = 0
         while j < len(wl) {
@@ -528,15 +559,22 @@ pub fn g_eval_g5(ckpt: string, gen: int, known: Map) -> Map {
 // G6 runs on the ByteGPT mouth too. base_seed parameterizes the RNG (=7 reproduces the original
 // per-frame seed 7+i byte-for-byte) so g_eval_g6_multiseed below can re-run the SAME ladder.
 pub fn g_eval_g6(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g6_seeded(ckpt, gen, known, 7)
+    return g_eval_g6_seeded_W(gen_auto_load(ckpt), gen, known, 7)
 }
 
 pub fn g_eval_g6_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
+    return g_eval_g6_seeded_W(gen_auto_load(ckpt), gen, known, base_seed)
+}
+
+// g_eval_g6_seeded_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g6_seeded but the canonical
+// scoring op runs off a PRE-LOADED handle `h` (g6_score_arm_auto_W → gen_auto_ideate_W).
+// H_1400 W-hoist · ING#42378065.
+pub fn g_eval_g6_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
     let frames = g6_build_frames(6)["composed"]
     // frame-guard (p7): a frame must leak no measurable word / not be self-falsifiable
     let leaks = g6_frame_guard(frames, known)
-    // CANONICAL wired scoring op (mouth-agnostic) — NOT an inline reimplementation.
-    let arm = g6_score_arm_auto(ckpt, frames, gen, base_seed, known)
+    // CANONICAL wired scoring op (mouth-agnostic, loaded-W) — NOT an inline reimplementation.
+    let arm = g6_score_arm_auto_W(h, frames, gen, base_seed, known)
     let dist = to_int(arm["dist"])
     let fals = to_int(arm["fals"])
     return #{ "pass": dist >= 5 && fals >= 1, "dist": dist, "fals": fals, "base_seed": base_seed,
@@ -553,13 +591,18 @@ pub fn g_eval_g6_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> M
 // moved. The single-seed g_eval_g6 stays the frozen default until owner approval. Lockstep
 // mirror of g_gates.py::g_eval_g6_multiseed.
 pub fn g_eval_g6_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    return g_eval_g6_multiseed_W(gen_auto_load(ckpt), gen, known)
+}
+
+// g_eval_g6_multiseed_W — LOAD-ONCE twin (decodes off a pre-loaded handle).
+pub fn g_eval_g6_multiseed_W(h: Map, gen: int, known: Map) -> Map {
     let seeds = [7, 4302, 4303]
     let per = []
     let mut n_green = 0
     let mut max_fals = 0
     let mut i = 0
     while i < len(seeds) {
-        let r = g_eval_g6_seeded(ckpt, gen, known, seeds[i])
+        let r = g_eval_g6_seeded_W(h, gen, known, seeds[i])
         if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
         if to_int(r["fals"]) > max_fals { max_fals = to_int(r["fals"]) }
         per.push(r)
@@ -575,17 +618,26 @@ pub fn g_eval_g6_multiseed(ckpt: string, gen: int, known: Map) -> Map {
 //  g_eval_all — THE BUILT-IN EVAL DRIVER. Mount ckpt through the L3 mouth, score G0-G6,
 //  return a per-gate result map + closure (a7b_pass = G0 AND G1 AND G2). One typed entry.
 // ════════════════════════════════════════════════════════════════════════
+// LOAD-ONCE DRIVER (H_1400 W-hoist · ING#42378065 plan-B): full G0-G6 used to reload the
+// 303M .clm weight-set from disk PER decode (each g_eval_gN(ckpt) → gen_auto_ideate → a fresh
+// _clmd_load of the whole file). Across ~80 decodes the load→free CHURN (whole-file read +
+// int4 re-dequant + scratch rebuild) is the heavy repeated cost that tipped full eval into
+// silent death. FIX: gen_auto_load builds the weight-set ONCE, every gate decodes through the
+// _W twins (gen_auto_ideate_W → loaded W, NO per-decode reload), freed ONCE at the tail
+// (gen_auto_free). BYTE-IDENTICAL: same frames/seeds/budgets/ops — only the load is hoisted.
 pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
     let known = _g6_dict_load()
     let g = if gen > 0 { gen } else { _g_default_gen() }
-    let r0 = g_eval_g0(ckpt, g, known)
-    let r1 = g_eval_g1(ckpt, g, known)                      // frozen single-seed default
-    let r1ms = g_eval_g1_multiseed(ckpt, g, known)          // PROPOSED seed-robust refmatch
-    let r2 = g_eval_g2(ckpt, g, known, corpus_paths)
+    let h = gen_auto_load(ckpt)                             // load the weight-set ONCE
+    let r0 = g_eval_g0_W(h, g, known)
+    let r1 = g_eval_g1_seeded_W(h, g, known, 7)             // frozen single-seed default
+    let r1ms = g_eval_g1_multiseed_W(h, g, known)           // PROPOSED seed-robust refmatch
+    let r2 = g_eval_g2_W(h, g, known, corpus_paths)
     let r3 = g_eval_g3()
-    let r5 = g_eval_g5(ckpt, g, known)
-    let r6 = g_eval_g6(ckpt, g, known)                      // frozen single-seed default
-    let r6ms = g_eval_g6_multiseed(ckpt, g, known)          // PROPOSED seed-robust refmatch
+    let r5 = g_eval_g5_W(h, g, known)
+    let r6 = g_eval_g6_seeded_W(h, g, known, 7)             // frozen single-seed default
+    let r6ms = g_eval_g6_multiseed_W(h, g, known)           // PROPOSED seed-robust refmatch
+    gen_auto_free(h)                                        // free the hoisted weight-set ONCE
     // closure uses the FROZEN single-seed G1 until owner approves the refmatch flip.
     let closure = to_string(r0["pass"]) == "true" && to_string(r1["pass"]) == "true"
                   && to_string(r2["pass"]) == "true"

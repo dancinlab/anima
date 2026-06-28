@@ -755,6 +755,70 @@ pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
     return gen_clm_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng)
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// LOAD-ONCE EVAL HANDLE (H_1400 W-hoist at the eval-DRIVER level · ING#42378065 plan-B).
+// ------------------------------------------------------------------------
+// gen_auto_load + gen_auto_ideate_W are the mouth-agnostic W-hoist twins of
+// gen_auto_backend + gen_auto_ideate. A whole-eval driver (g_gates.hexa::g_eval_all)
+// runs DOZENS of decodes across G0-G6; the path-keyed gen_auto_ideate reloads the full
+// 2-3GB .clm weight-set from disk PER decode (clm_decode_topk_sampled → _clmd_load +
+// _clmd_weights_free every call). Even though each load is freed, the per-decode
+// load→free CHURN (read_file_bytes of the whole .clm + re-dequant of every int4 block +
+// re-build of the scratch record) is the heavy repeated cost; on the 303M .clm the
+// transient load peak ×N decodes is what tipped full G0-G6 over into silent death.
+//
+// THE FIX (byte-identical): load the .clm weight-set ONCE into a handle at eval-session
+// start (gen_auto_load), then route EVERY G0-G6 decode through gen_auto_ideate_W which
+// reuses that ONE loaded W (clm_decode_topk_sampled_W → _clmd_scratch_new per decode is
+// cheap; NO _clmd_load, NO per-decode whole-file reload). The handle is freed once at
+// eval end (gen_auto_free). For ByteGPT the ranged decode (bytegpt_decode_*_ranged) is
+// ALREADY OOM-safe (streams the 1.2GB binary, no full resident load), so the handle just
+// carries the path and routes to the existing ranged ideate — no behaviour change.
+//
+// a_core_engine_map: this is NOT a 2nd .clm path — clm_load_weights + gen_clm_ideate_W
+// are the SAME single .clm mouth (clm_decode_topk_sampled_W), with the load hoisted OUT
+// of the per-decode loop. The arithmetic/order/seed are unchanged → byte-identical output
+// vs the path-keyed gen_auto_ideate (the H_1400 reuse guard).
+pub fn gen_auto_load(ckpt_path: string) -> Map {
+    let kind = gen_mouth_kind(ckpt_path)
+    if kind == "clm" {
+        let W = clm_load_weights(ckpt_path)
+        if to_string(W["ok"]) == "true" {
+            return #{ "ok": true, "kind": "clm", "ckpt": ckpt_path, "W": W }
+        }
+        // not v0.2-decodable → honest non-loaded handle (callers fall through)
+        return #{ "ok": false, "kind": "clm", "ckpt": ckpt_path, "W": #{ "ok": false } }
+    }
+    // ByteGPT (ranged, already OOM-safe) OR unknown — keep path, no resident load.
+    return #{ "ok": kind == "bytegpt", "kind": kind, "ckpt": ckpt_path, "W": #{ "ok": false } }
+}
+
+// gen_auto_free — release a handle from gen_auto_load (frees the resident .clm weight-set
+// once, at eval end). No-op for ByteGPT/unknown (no resident load to free).
+pub fn gen_auto_free(h: Map) {
+    if to_string(h["kind"]) == "clm" {
+        let W = h["W"]
+        if to_string(W["ok"]) == "true" { clm_weights_free_pub(W) }
+    }
+}
+
+// gen_auto_ideate_W — the load-once IDEATE entry. Same #{ ok, text, reason } contract +
+// byte-identical output as gen_auto_ideate, but off a PRE-LOADED handle `h` (gen_auto_load)
+// so a multi-decode driver loads the .clm weight-set ONCE. .clm → gen_clm_ideate_W (loaded
+// W, no per-decode reload); ByteGPT → the existing ranged ideate (already OOM-safe).
+pub fn gen_auto_ideate_W(h: Map, seed: string, max_new: int,
+                         top_k: int, temp: float, seed_rng: int) -> Map {
+    if to_string(h["kind"]) == "bytegpt" {
+        return gen_bytegpt_ideate(to_string(h["ckpt"]), seed, max_new, top_k, temp, seed_rng)
+    }
+    let W = h["W"]
+    if to_string(W["ok"]) != "true" {
+        return #{ "ok": false, "text": "",
+                  "reason": "handle not loaded (not v0.2-decodable / unknown mouth)" }
+    }
+    return gen_clm_ideate_W(W, seed, max_new, top_k, temp, seed_rng)
+}
+
 // gen_g6_sampler_selftest — H_1381: exercise the engine's seeded top-k sampler on a
 // SYNTHETIC peaked logits vector (NO model forward — fast, deterministic, smoke-safe).
 // Returns #{ deterministic, diverse, in_topk } proving the DEPTH-lever mechanism. Lives
