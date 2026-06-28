@@ -1020,6 +1020,12 @@ pub fn clm_load_weights(path: string) -> Map {
     return W
 }
 
+// clm_weights_free_pub — pub wrapper over _clmd_weights_free so a load-once eval driver
+// (generator.hexa::gen_auto_free, reached from g_gates.hexa::g_eval_all) can release the
+// hoisted weight-set ONCE at eval end. a_core_engine_map preserved: same single-load mouth,
+// free moved to the driver tail (mirrors how clm_load_weights hoists the load).
+pub fn clm_weights_free_pub(W: Map) { _clmd_weights_free(W) }
+
 // clm_decode_topk_sampled_W — the loaded-W core of clm_decode_topk_sampled. Takes a
 // pre-loaded weight map `W` (from clm_load_weights) so a driver can decode MANY times
 // off ONE load. Byte-identical to clm_decode_topk_sampled for the same W+seed+args.
