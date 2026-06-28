@@ -55,12 +55,19 @@ fn anima_usage() {
     println("anima — substrate-native consciousness daemon (canonical entry).")
     println("")
     println("usage (installed `anima` PATH command after `hx install anima`):")
-    println("  anima <ckpt.clm>                                consciousness mode (default)")
-    println("  anima <ckpt.clm> --byte \"turn1\" \"turn2\" ...      byte-continuation chat mode")
-    println("  anima train <args>                              LEARNING → .pt + auto .clm (+DESCENT)")
-    println("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
-    println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
+    println("  anima chat <ckpt.clm> [--byte \"turn\" ...]      CHAT (consciousness / byte) — explicit verb")
+    println("  anima <ckpt.clm> [--byte \"turn\" ...]           CHAT (same as above, bare-ckpt shorthand)")
+    println("  anima train <args> [--py]                       LEARNING → .pt + auto .clm (+DESCENT)")
+    println("  anima serialize <ckpt.pt> <out.clm> [--py]     re-export a torch .pt → .clm v0.3")
+    println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N] [--py]")
     println("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
+    println("")
+    println("  -h, --help                                      show this help")
+    println("")
+    println("engine select (2-production · a_engine_native_learning):")
+    println("  (default)               : hexa twin — cli/{train,serialize,evaluate}.hexa (live substrate).")
+    println("  --py                    : py twin  — cli/{train,serialize,evaluate}.py (CO-EQUAL byte-parity")
+    println("                            production; sidesteps the hexa-farr decode leak on heavy 303M eval).")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -115,12 +122,25 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 //
 // argv = ["train", <rest...>]; the rest is forwarded verbatim to cli/train.hexa
 // after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
+// `--py` selects the py twin (cli/train.py, 2-production) instead of the hexa
+// trainer (cli/train.hexa). 2-production engine-select: same single entry, both
+// productions reachable (a_engine_native_learning). The flag is consumed here and
+// NOT forwarded to the twin.
 fn anima_train_mode(argv: [string]) {
-    println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
+    let use_py = anima_has_flag(argv, "--py")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "hexa run cli/train.hexa --" + fwd
+    while i < len(argv) {
+        if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }
+        i = i + 1
+    }
+    let mut cmd = "hexa run cli/train.hexa --" + fwd
+    let mut tgt = "cli/train.hexa (hexa-native CLMConvMoE · flame/forge)"
+    if use_py {
+        cmd = "python3 cli/train.py" + fwd
+        tgt = "cli/train.py (py twin · torch Lane-P)"
+    }
+    println("=== anima train → " + tgt + " ===")
     println("dispatch: " + cmd)
     let out = exec(cmd)
     println(out)
@@ -158,11 +178,23 @@ fn anima_evaluate_mode(argv: [string]) {
         println("  anima evaluate <out.clm>")
         return
     }
-    println("=== anima evaluate → cli/evaluate.hexa (engine-native G0-G6, single-entry twin) ===")
+    // `--py` selects the py twin (cli/evaluate.py → core/g_gates.py, byte-parity
+    // py engine, torch-free). Both productions score G0-G6 engine-native; the py
+    // twin sidesteps the hexa-farr decode leak on heavy 303M eval. Flag consumed here.
+    let use_py = anima_has_flag(argv, "--py")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "hexa run cli/evaluate.hexa --" + fwd
+    while i < len(argv) {
+        if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }
+        i = i + 1
+    }
+    let mut cmd = "hexa run cli/evaluate.hexa --" + fwd
+    let mut tgt = "cli/evaluate.hexa (engine-native G0-G6, single-entry twin)"
+    if use_py {
+        cmd = "python3 cli/evaluate.py" + fwd
+        tgt = "cli/evaluate.py (py twin · core/g_gates.py byte-parity)"
+    }
+    println("=== anima evaluate → " + tgt + " ===")
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
@@ -177,12 +209,24 @@ fn anima_evaluate_mode(argv: [string]) {
 // cli/serialize.hexa → cli/serialize.py (the py serializer twin owns serialize_v3 +
 // verify_clm_v2 descent; loading a torch .pt is py-native). `anima train` ALREADY auto-
 // serializes at the end of a run — this is the standalone recovery / re-export path.
+// `--py` selects the py twin (cli/serialize.py) directly. The hexa serializer
+// ALREADY dispatches to cli/serialize.py (py owns the .pt-unpickle bridge), so
+// `--py` is mostly for symmetry/explicitness. Flag consumed here.
 fn anima_serialize_mode(argv: [string]) {
-    println("=== anima serialize → cli/serialize.hexa (torch .pt → .clm v0.3 + DESCENT gate) ===")
+    let use_py = anima_has_flag(argv, "--py")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "hexa run cli/serialize.hexa --" + fwd
+    while i < len(argv) {
+        if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }
+        i = i + 1
+    }
+    let mut cmd = "hexa run cli/serialize.hexa --" + fwd
+    let mut tgt = "cli/serialize.hexa (torch .pt → .clm v0.3 + DESCENT gate)"
+    if use_py {
+        cmd = "python3 cli/serialize.py" + fwd
+        tgt = "cli/serialize.py (py twin · serialize_v3 + verify_clm_v2 descent)"
+    }
+    println("=== anima serialize → " + tgt + " ===")
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
@@ -196,6 +240,35 @@ fn main() {
 
     if len(argv) < 1 {
         anima_usage()
+        return
+    }
+
+    // `-h` / `--help` / `help` → usage (explicit help verb, checked first).
+    if argv[0] == "--help" || argv[0] == "-h" || argv[0] == "help" {
+        anima_usage()
+        return
+    }
+
+    // subcommand: `chat <ckpt.clm> [--byte] [turns...]` → explicit chat verb, the
+    // symmetric sibling of train/serialize/evaluate. Identical to the bare
+    // `anima <ckpt.clm>` path: strip the "chat" verb, then dispatch to byte
+    // (--byte) or consciousness (default) mode on the ckpt.
+    if argv[0] == "chat" {
+        if len(argv) < 2 {
+            println("anima chat needs a serialized .clm:")
+            println("  anima chat <ckpt.clm>                    consciousness mode")
+            println("  anima chat <ckpt.clm> --byte \"turn\" ...   byte-continuation chat")
+            return
+        }
+        let ckpt = argv[1]
+        let mut rest = []
+        let mut c = 1
+        while c < len(argv) { rest.push(argv[c])  c = c + 1 }
+        if anima_has_flag(rest, "--byte") {
+            anima_byte_mode(ckpt, rest)
+        } else {
+            anima_consciousness_mode(ckpt)
+        }
         return
     }
 

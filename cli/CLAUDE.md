@@ -5,11 +5,15 @@
 ## 설치형 CLI (사용자 타이핑 = `anima <verb>`, `hexa run` 아님)
 
 ```
-anima train <args>             학습 → .pt + 자동 .clm v0.3 (+ held-out DESCENT 게이트)
-anima serialize <pt> <clm>     독립 재직렬화 (.pt → .clm v0.3 + DESCENT) — 복구/재export
-anima evaluate <model.clm>     G0-G6 측정 (.clm 전용; .pt 주면 친절에러→serialize 안내)
-anima <ckpt.clm> [--byte]      consciousness/byte chat (hexa-native)
+anima train <args> [--py]      학습 → .pt + 자동 .clm v0.3 (+ held-out DESCENT 게이트)
+anima serialize <pt> <clm> [--py]  독립 재직렬화 (.pt → .clm v0.3 + DESCENT) — 복구/재export
+anima evaluate <model.clm> [--py]  G0-G6 측정 (.clm 전용; .pt 주면 친절에러→serialize 안내)
+anima chat <ckpt.clm> [--byte] consciousness/byte chat — 명시 verb (= bare `anima <ckpt.clm>`)
+anima <ckpt.clm> [--byte]      chat 단축형 (bare-ckpt)
+anima help | -h | --help       usage
 ```
+
+**2-production 엔진 선택 (`--py`):** 기본은 hexa twin(`cli/{train,serialize,evaluate}.hexa`), `--py` 면 py twin(`cli/{train,serialize,evaluate}.py`, CO-EQUAL byte-parity production). anima.hexa dispatch가 플래그 소비 후 `python3 cli/{x}.py` 로 라우팅 — 무거운 303M `evaluate` 시 hexa-farr decode 누수 우회 가능. `chat`/no-args/`help`/`-h`/`--help` 전부 usage.
 
 ## 핵심파일
 
