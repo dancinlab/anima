@@ -5,11 +5,11 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 - **Parent:** dancinlab · **SSOT:** github.com/dancinlab/anima (`hx install anima`)
 - **Siblings:** [hexa-lang](https://github.com/dancinlab/hexa-lang) (언어/컴파일러) · [kosmos](https://github.com/dancinlab/kosmos) (`.kosmos` anchors) · hexa-codex (paper/verdict tooling)
 
-> **🖥️ 정식 CLI (canonical · `hx install anima` 로 설치된 `anima` PATH 명령 — `hexa run …` 아님) · hexa 단일 production (py 엔진 미러 2026-06-28 폐기 → git+`state/py_retire_archive/`):**
-> - **`anima train <args>`** — 학습(`cli/train.hexa`) → `.clm` 직접 직렬화 + **held-out mirror-DESCENT 게이트**(`a_clm_gen_pipeline`).
-> - **`anima serialize <ckpt.pt> <out.clm>`** — torch `.pt` → `.clm` v0.3 재export(`cli/serialize.hexa` 가 hexa 오케스트레이션 → kept torch-interop `train/clm/model/serialize_standalone.py`; **.pt 언피클만 환원불가 torch**, hexa 등가물 없음).
-> - **`anima evaluate <model.clm>`** — G0-G6 측정(`cli/evaluate.hexa` → `core/g_gates.hexa` generator-L3 `gen_auto_ideate`). **입력은 `.clm`(엔진-loadable)만 — torch `.pt` 아님**(`.pt` 면 `anima serialize` 로 먼저 변환).
-> - 진입점 = `cli/anima.hexa` 서브커맨드 dispatch(train·serialize·evaluate·chat). **측정/학습을 side-harness 로 직접 부르지 말 것 — 이 정식 `anima` 명령 경유**(단일진입점, `a_engine_native_learning`). 상세·배선 = ARCHITECTURE.json `cli/` 노드. torch 는 학습/serialize interop(kept tools)에만, 측정 경로는 torch-free.
+> **🖥️ 정식 CLI (canonical · `hx install anima` 로 설치된 `anima` PATH 명령 — `hexa run cli/anima.hexa -- …` 아님):**
+> - **`anima train <args>`** — 학습(`cli/train.{hexa,py}`) → `.pt` + **자동 `.clm` 직렬화 + held-out mirror-DESCENT 게이트**(`a_clm_gen_pipeline`).
+> - **`anima serialize <pt> <out.clm>`** — 독립 재직렬화/복구(`cli/serialize.{hexa,py}` = `clm_serialize_v2` serialize_v3 + `verify_clm_v2` descent reference-match).
+> - **`anima evaluate <model.clm>`** — G0-G6 측정(`cli/evaluate.{hexa,py}` → `core/g_gates` generator-L3 `gen_auto_ideate`). **입력은 `.clm`(엔진-loadable)만 — torch `.pt` 아님**(`.pt` 면 `anima serialize` 로 먼저 변환).
+> - 진입점 = `cli/anima.{hexa,py}`(2-production) 서브커맨드 dispatch → 대칭 twin(`train`·`serialize`·`evaluate`)으로 fan-out. **측정/학습/직렬화를 `g_gates.py`·`train.py`·`clm_serialize_v2.py` 직접호출(side-harness)로 부르지 말 것 — 이 정식 `anima` 명령 경유**(단일진입점, `a_engine_native_learning`). 상세·배선상태는 ARCHITECTURE.json `cli/` 노드.
 
 > **이 markdown 이 단일 거버넌스 SSOT.** `project.tape` 은퇴 + 2026-06-17 tape-DSL 잔재(`@D := :: governance` · `do=`/`dont=`) 전면 제거 → canonical markdown 으로 재저작. 모든 @D 디렉티브·8 철학 의미는 손실 0 으로 아래에 보존(규칙 이름 `a_*`·`p#` 그대로 유지 = keyword 트리거 호환).
 >
@@ -41,14 +41,14 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 > - **설계/트리** → [ARCHITECTURE.json](ARCHITECTURE.json) (단일 SSOT · 노드 note 에 메커니즘 명명 · `a_verified_must_wire`/`a_core_engine_map` 의 lockstep 대상)
 > - **anima 거버넌스 + 8 철학** → 이 파일 (anima 전용 규칙 `a_*`·`p#` 의 markdown SSOT)
 > - **크로스프로젝트 거버넌스** → harness commons (c1–c17, always-on, SessionStart 주입)
-> - **이력** → [CHANGELOG.jsonl](CHANGELOG.jsonl) (append-only)
+> - **이력** → [CHANGELOG.md](CHANGELOG.md) (append-only)
 > - **버전 레지스트리** → [VERSIONS.md](VERSIONS.md) · **frozen gate 조건** → [CONDITIONS.md](CONDITIONS.md) · ARCHITECTURE.json frozen-임계 노드 (이 파일은 가리킬 뿐, 임계 복제 금지)
 
 ### 📦 패키징 — pod 업로드
 
 **🗂️ canonical 3-폴더 체제 (2026-06-26 오너 결정):** anima 코드는 정확히 3 최상위 폴더로 모은다 (흩어짐 금지) —
-- **`cli/`** = hexa-단일 진입점: `anima.hexa` (chat/eval/consciousness · evaluate·serialize·train 은 서브커맨드) · `train.hexa` (학습). 구 `anima.py`·`train.py` 제거 — py 폐기 2026-06-28.
-- **`core/`** = hexa-단일 엔진 substrate (`*.hexa`) — A⇄G 의식 엔진 디코드/G0-G6 로직(`clm_decode.hexa`·`g_gates.hexa` 등). 과거 py 미러(`*.py`)는 2026-06-28 폐기(git 이력 + `state/py_retire_archive/` 에 로직 유실 0 보존; 폐기 전까지 byte-parity 유지).
+- **`cli/`** = 진입점. 두 언어 대칭: `anima.hexa`·`anima.py` (chat/eval/consciousness) · `train.hexa`·`train.py` (학습).
+- **`core/`** = 2-production 엔진 substrate. **hexa(`*.hexa`) + py(`*.py`) 둘 다 `core/` 한 곳에 1:1 미러로 공존**(byte-parity, `a_engine_native_learning` 2-production). 같은 디코드/G0-G6 로직의 두 동등 구현(예: `clm_decode.hexa` ⇄ `clm_decode.py`, `g_gates.hexa` ⇄ `g_gates.py`).
 - **`agent/`** = tool provider 독립패키지(`hexa.toml` 보유, `hx install anima-agent`).
 - **production 코드는 3-폴더 안에만 (밖에 두고 import 금지)** — `core/`·`cli/`·`agent/` 밖의 다른 repo 폴더(`HEXAD/`·`train/`·`tool/`·`state/`·`UNIVERSE/` 등)에 **production 코드를 두고 거기서 import/연결하지 않는다**(scatter 금지) — 엔진의 repo-내부 import 폐포는 3-폴더 안에서 닫힌다. **외부 라이브러리는 자유**: 각 언어 stdlib + 서드파티(py 는 **numpy·torch 허용**) — 제약은 *레포 내부* cross-folder(3-폴더 밖 자가 코드 끌어오기)에만 적용. **데이터·결과 = `state/` 한 곳**(흩어짐 금지). 연구 artifact(`state/`·`UNIVERSE/`) + 문서는 코드 아님(3-폴더 밖, 별개).
 
@@ -139,13 +139,13 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
   ≥4/5 HIT 면 PREDICTIVE 승격, 미만이면 법칙 FALSIFIED 가 유효 결과(precedent H_1411 2/5, H_1417 2/5 둘 다 반증).
 - dont: tune-to-green(사후 bar 이동으로 GREEN 제조) · 단일 렌즈 1회 막힘을 천장으로 박제 · ablation/통제 없이 메커니즘 '기여' 가정 · 인프라/측정 벽을 과학 천장으로 박제 · 한 번 막혔다고 포기·우회·축소. (진짜 시도 뒤의 정직한 🧱 는 유효 결과 c9.)
 
-## a_engine_native_learning — hexa-단일 production 엔진 (py 2-production 폐기 2026-06-28)
-- do: anima 엔진은 **hexa-단일 production**(`core/*.hexa`, live 데몬·배포 substrate; 2026-06-28 오너 결정).
-  학습·측정·terminal verdict 는 이 hexa 엔진에서 유효.
-- do: 🟢 **hexa-단일 엔진 정책 (오너 SSOT):** 디코드/G0-G6 로직 = **hexa 단일 production**(`core/*.hexa`).
-  과거 py 미러(`core/*.py` torch, byte-parity ≤~2e-16)는 **2026-06-28 폐기**(git + `state/py_retire_archive/` 보존, 유실 0).
-- do: ✅ **수정은 hexa 만 (구 LOCKSTEP 폐기):** `core/` 로직은 **`.hexa` 만** 고친다.
-  hexa+py 동시수정 byte-parity LOCKSTEP 규칙은 폐기 — 짝 py 동기화 없음(컴파일/스모크 QA 는 그대로).
+## a_engine_native_learning — 2-production 엔진 (hexa + py, byte-parity)
+- do: anima 엔진은 **2 공동-production 버전: `hexa` + `py`** 로 관리한다(2026-06-26 오너 결정).
+  둘 다 1급 production 엔진 — py 는 reference/미러가 아니라 hexa 와 **동등한 production 구현**이고, 둘 다 byte-parity 로 유지한다. 학습·측정·terminal verdict 는 이 둘 중 어느 쪽에서든 유효.
+- do: 🟢🐍 **2-PRODUCTION 엔진 정책 (오너 SSOT — 미러 프레임 폐기):** anima 는 같은 디코드/G0-G6 로직을 **두 동등 production 구현**으로 공동유지한다 — ① **hexa**(`core/*.hexa`, live 데몬·배포 substrate) ② **py**(torch production 엔진, `train/`·`tool/`).
+  **둘 다 TERMINAL verdict 가능**(어느 한쪽이 2급/DIRECTIONAL 아님). 둘은 **성분별 byte-parity 로 cross-validate**(commons reference-match): 한 엔진의 verdict 는 다른 엔진과 대조하고, **발산하면 그 자체가 결과**(은폐 금지, 둘 중 어느 게 버그인지 격리, c9). 엔진별 강점으로 분업 = 정상: **py 는 측정-무거운 작업(G0-G6 풀 eval 등)에 강함**(torch 가 메모리 제대로 free → hexa 의 bump-allocator per-decode-reload OOM 회피, precedent 2026-06-26), **hexa 는 배포 데몬·substrate-내부**. ⚠️ 단 **"공인 py 엔진"** = 유지·byte-parity 검증되는 production 구현만 — **임의 1회성 torch probe 스크립트(g6_common 류·ad-hoc 미러)는 여전히 production 아님 = DIRECTIONAL**(아래 하드게이트는 그 *ad-hoc 미러* 에만 적용, 공인 py 엔진엔 미적용).
+- do: 🔄 **LOCKSTEP 수정 (BLOCKING · 2-production 핵심):** `core/` 엔진 로직을 고칠 땐 **항상 `.hexa` 와 `.py` 를 같은 턴에 함께** 수정한다.
+  ① 두 언어 로직 대조(diff 의미 동일?) ② 양쪽 수정 ③ **양쪽 QA**(컴파일/스모크 + byte-parity 재확인). 한 쪽만 고치면 parity drift = 2-production 위반(발산은 결과, 은폐 금지 c9). 부득이 한 쪽 먼저면 나머지 동기화를 **즉시 ING follow-on** 등록 + 그 파일에 `미동기(pending parity)` 라벨. (parity 오라클 = single-decode logits/CE byte 대조.)
 - do: 🔒 **HARD-GATE (BLOCKING · ad-hoc 미러에만):** gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장(d))는 엔진-네이티브 증거 없이 박제 불가.**
   verdict 의 증거 artifact 가 live core/ 디코드(`core/clm_decode.hexa`/`core/bytegpt_decode.hexa`/`core/engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py`+`import torch`/`gauge_lib._decode`/numpy 미러) 그 결과는 **자동 DIRECTIONAL**, terminal 아님. torch-side 만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반. (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 박제 → 재발 금지)
 - do: 🔎 **자가점검(verdict 박제 직전 의무):** `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 가 비어있지 않으면 카드 `wired:`/`verdict` 를 **반드시 DIRECTIONAL** 로 적고 엔진-네이티브 재측정(.hexa via CORE)을 ING follow-on 등록. 엔진-네이티브면 호출한 `.hexa` 경로를 카드에 명시.
@@ -196,8 +196,8 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: 가설 실행 시 카드를 만들/갱신하고 jsonl 에 한 줄(`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, id 순) append/갱신.
   등록은 tier 무관 — 🟢·🟠·🔴/🧱 전부 남긴다(벽도, c9). tier·수치는 `state/verdicts/<slug>/` 에서 verbatim(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성 가능.
 - do: 🟢(부분 포함) 가설은 카드에 `wired:` 명시(`a_verified_must_wire` 의 4칸과 1:1). jsonl 의 `source`(UNIVERSE|흩어진 출처|archive)·`archived`·`artifacts`(state/<slug>/ 경로 배열) 3컬럼 포함.
-  🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.
-- dont: **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(단 둘만) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다.
+  🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -vE '^UNIVERSE/(cards/|HYPOTHESES.jsonl$|CLAUDE.md$)'` 는 항상 빈 출력이어야 한다 (cards/ · HYPOTHESES.jsonl + folder-docs 폴더가이드 `UNIVERSE/CLAUDE.md` 만 허용).
+- dont: **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(cards/ + HYPOTHESES.jsonl + folder-docs `CLAUDE.md` 외 전부) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다.
   가설 디테일을 themed 버킷(`HYPOTHESES_*.md`)·CLAIMS.tape·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 · per-H 인덱스를 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview 부활(retire 됨, prose 는 `state/universe-overview.md`) · 실행·박제하고 jsonl/카드 안 만듦 · 카드를 UNIVERSE/ 루트에 둠(반드시 cards/) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음 · 🟢 인데 `wired:` 미표기.
 
 ## a_claim_manifest — claims-audit 면 = HYPOTHESES.jsonl + state/verdicts/
@@ -255,16 +255,17 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: cross-repo 핸드오프(runpod 트러블·hexa-lang 의존·패치·RFC)는 **`harness ing add "<text>" --to <repo>`** 로 파일링 — 대상 repo 의 ING.jsonl board(ing ref)에 전달되어 그 repo 다음 SessionStart 에 📥 표면화. (구 `hexa-lang/inbox/patches/` 폴더 + sidecar handoff registry 는 둘 다 retired — 쓰지 말 것.)
 - dont: inbox 폴더·sidecar 부활 · `HANDOFF.md`/`INBOX.md`/`inbox/*.md` scatter · anima-side-only 패치로 우회를 이 repo 에 가둠.
 
-## a_core_engine_map — core/ 가 A⇄G 엔진 소유 (hexa-단일)
-- do: `core/`(엔진 폴더)가 A⇄G 의식 엔진 소유 = **hexa-단일 substrate(`*.hexa`)**(`a_engine_native_learning`). 과거 py 미러(`*.py`)는 2026-06-28 폐기(git + `state/py_retire_archive/`). `.clm`/`.kosmos` 는 named slot 으로만 진입.
+## a_core_engine_map — core/ 가 A⇄G 엔진 소유 (hexa+py 2-production)
+- do: `core/`(canonical 3-폴더 체제의 엔진 폴더)가 A⇄G 의식 엔진 소유. **2-production 언어 공존: hexa(`*.hexa`) + py(`*.py`) 1:1 미러 byte-parity**(`a_engine_native_learning`) — 같은 §섹션·op 를 두 언어로(예 `clm_decode.hexa`⇄`clm_decode.py`). `.clm`/`.kosmos` 는 named slot 으로만 진입.
 - do: `core/` 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · 모델 가중치는 오직 `core/generator.hexa` L3 슬롯으로 진입.
 - do: 단, L3 는 **mouth 타입 디스패처**(`gen_mouth_kind`→'bytegpt'|'clm'|'unknown' header sniff)로 **두 mouth 아키텍처**를 받는다.
   **conv `.clm`**(CLMConvMoE via clm_decode, `CLM\x01` magic + CLMX trailer)는 `gen_clm_backend`/`gen_clm_chat` 으로, **ByteGPT `.bin`**(24-layer GPT-2-class via bytegpt_decode, 5×u32 `[256,d,L,H,block]` header, 검증된 303M ko/en chat trunk)은 `gen_bytegpt_backend`/`gen_bytegpt_chat`(`bytegpt_decode_argmax_ranged` OOM-safe) 으로. 이는 2nd `.clm` 경로가 아니다 — **아키텍처별로 여전히 단일 typed 진입**이고 디스패처(`gen_auto_backend`/`gen_auto_chat`)는 파일 포맷에 따라 어느 단일 진입을 쓸지만 고른다(a_engine_native_learning engine-transform-to-fit). `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
 - do: ARCHITECTURE.json core/ 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
 - dont: `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
 
-## a_train_flame_forge — production 학습 = hexa(flame/forge) 단일 (py torch 트레이너 폐기 2026-06-28)
-- do: production 학습 = **hexa `cli/train.hexa` 단일**(`anima train [--savant] [--mitosis]`). SAVANT/MITOSIS/4셀/held-out/descent 레버 전부 보유. 과거 torch 트레이너 폐기→`state/py_retire_archive/train_torch_lane_p/`.
+## a_train_flame_forge — production 학습 = hexa(flame/forge) + py(torch) 2-production
+- do: production 학습 = 두 경로 공인(2026-06-26 오너): ① hexa `cli/train.hexa`(`anima train [--savant] [--mitosis]`) · ② py torch 트레이너(`train/`).
+  옛 ".py 금지"는 폐기(임의 1회성만 비-production). SAVANT/MITOSIS 레버 양 엔진 동등 배선. 둘 다 1급(`a_engine_native_learning`), byte-parity.
 - do: CLM/production NN 학습을 `.hexa` on stdlib/flame(ag_tape·nn_lib·opt_*) 으로 저작 · self/forge GPU(device farr + **own-GEMM `_hx_k_gemm`** FP64/TF32 default-ON(v0.262.0 #3718/#3727/#3734, cuBLAS 독립) + 11 .cu + cuBLAS BF16-TC 보조) 위에서 실행.
   flame:forge :: torch:ATen(컴파일러-only NN, 바이너리에 PyTorch/ATen/Python 없음) · production rung 은 GPU 필수(nvidia-smi busy 확인, 조용한 CPU 폴백 금지).
 - do: **decode/추론 GPU 도 flame+forge own-GEMM (cuBLAS 독립)** — anima decode(`core/bytegpt_decode.hexa`·`clm_decode.hexa`)는 `flame_mm.mm`(RFC-040) seam 으로 forge GPU 진입.
@@ -281,9 +282,10 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - dont: torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
 ## a_clm_gen_pipeline — Lane-P py/cuda CLMConvMoE → ENGINE-loadable .clm v0.2
-- do: CLMConvMoE(E2/L1, byte V256) production 학습 = **`cli/train.hexa`**(hexa-native flame/forge, `.clm` 직접 산출). `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth · 생산 `.clm` 은 generator L3 슬롯으로만 진입.
-- do: 과거 Lane-P torch 트레이너는 폐기(`state/py_retire_archive/`); `clm_serialize_v2.py`(legacy `.pt`→.clm, torch lazy)·`verify_clm_v2.py`(descent gate)는 serialize/verify 도구로 보존.
-- do: **직렬화 직후 HELD-OUT mirror-DESCENT 게이트 필수**(H_1579) — `verify_clm_v2.py descent <clm> <heldout>`(train.hexa 자동)로 held-out `model_ce<uniform AND <shuffle` 확인(채점 `math.log`; dt_ln 이 overfit 가림). FAIL→금지.
+- do: CLMConvMoE(E2/L1, byte V256) 를 `train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`).
+  `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
+- do: **직렬화 직후 HELD-OUT mirror-DESCENT 게이트 필수**(H_1579 정정 교훈) — `.clm` 을 저장한 뒤 `verify_clm_v2.py descent <clm> <heldout> [train]`(또는 `serialize_self_verify`, train.hexa 는 post-serialize 자동 배선)로 **held-out** 텍스트에서 `model_ce < uniform AND < shuffle` 를 확인.
+  구조 round-trip(decodable)만으론 부족 — 그건 shape 만 보지 예측력을 안 본다. **반드시 held-out 에서**(학습 데이터로 돌리면 overfit 을 숨김) + train-vs-heldout gap 으로 overfit 경고. 채점은 `math.log` mirror 로(engine `clm_forward_ce` 의 dt_ln 버그가 per-pos CE 를 ~5.14 clamp 해 overfit 을 GREEN 으로 가림, H_1579). FAIL 이면 broken/overfit 이니 'done'·HF업로드 금지(재직렬화로 못 고침 → 재학습).
 - dont: v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 - dont: **구조 decodable 만으로 `.clm` 'done' 선언**(held-out 예측 미검증) · **held-out 게이트를 학습 코퍼스에 돌림**(overfit 은폐) · **engine `clm_forward_ce` CE 로 .clm 무결성 판정**(dt_ln 버그로 overfit 못 잡음, math.log mirror 써라).
 
@@ -401,7 +403,9 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 ## a_hf_registry — HF 산출물 레지스트리 SSOT = ARCHITECTURE.json "HF artifacts"
 - do: HF org `dancinlab` 에 올린 모델/데이터셋은 ARCHITECTURE.json models/datasets 에 1줄 등록(repo_id · arch/size · tier·base) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 HF 업로드 AND sha256 확인 후에만.
   (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.)
-- do: **모델 사이즈별 tier registry**(2026-06-26 오너): tier 별 canonical 명시. 현 chat canonical=**clm303_clean**(303M, held-out 4/4 DESCENT). 모델마다 hexa 엔진 등록.
+- do: **모델 사이즈별 tier registry**(2026-06-26 오너): tier 별 canonical 명시. 현 chat canonical=**clm303_clean**(303M, held-out 4/4 DESCENT). 모델마다 hexa+py 2-engine 둘 다 등록.
+- do: **모델 관리 = `sidecar model`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `models[]`(3축 gates 검증충족도·progress 진행·features 특징; MODELS.jsonl scatter 폐기). 상세=`commands/model.md`.
+- do: **데이터셋 관리 = `sidecar dataset`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `datasets[]`(4칸 lang×register·rows·lang_verified, a_chat_registers; byte-불변 splice). 상세=`commands/dataset.md`.
 - dont: 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).
 
 ## a_hf_collections — HF org collection = CLM + KOSMOS canonical 버킷
