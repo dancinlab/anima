@@ -12332,6 +12332,13 @@
         "value": "anima ARCHITECTURE.json 의 oversized leaf 2건(root.tree.children[19].children[3].children[3].children[2].detail 494자 · children[22].children[13].children[64].detail 816자, >300 cap)이 글로벌 COMMIT-LINT(session-cwd repo 검사)를 막아 무관한 cross-repo 커밋(hexa-lang 등)까지 반복 차단 → --no-verify-ok 우회 강제(3회 재발: readmescrub ×2, flame-forge land ×1)",
         "threshold": "두 leaf 를 child 노드로 분해해 ≤300자로 만들면 해소 — 그때까지 무관 커밋은 # no-verify-ok 정당",
         "source": "ARCHITECTURE.json"
+      },
+      {
+        "id": "G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT",
+        "state": "ossified",
+        "value": "G1 재조합벽은 penultimate-readout/binding-operator 류 보조항으로 안 열린다 — engine-native서 G1 composed_distinct=0 floor 재현. exp3 ⊙NMDA readout(INCONCLUSIVE-at-floor) + H_1816 predcoding L_bind(NOT-SUPPORTED, L_bind step550 trivial 붕괴: additive CLMConvMoE서 per-step latent=seq-mean) 둘 다 같은 결과. 진짜 레버 = trunk OBJECTIVE 자체(CE가 합성 보상 안 함).",
+        "threshold": "새 G1 레버가 readout/binding-operator 축(penultimate에 거는 곱셈·binding 항)이면 floor 재현 예상 = 자동 의심. OPEN 후보는 objective축(trunk 학습신호: recomb-objective H_1602·자모 teach-signal·정규화 undertrain-해소)뿐. additive .clm readout은 by-construction 동일이라 readout-op 차이가 G1에 안 닿음.",
+        "source": "cli/train.py"
       }
     ]
   }
