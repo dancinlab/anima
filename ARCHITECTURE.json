@@ -11405,6 +11405,12 @@
                 "detail": "trainer 가 여전히 CPU-scalar-bound(GEMM burst 사이 non-GEMM 스칼라 = host groupnorm·MoE·embedding·CE·hexa per-element 루프가 wall-time 지배). 남은 host-bound = groupnorm(fused mismatch)·MoE·embedding·CE·element-wise 루프 전체의 device-residency(별도 lane). NEW entry-point, live core/*.hexa UNTOUCHED, Ψ-disjoint."
               },
               {
+                "name": "CE-grad device wiring(#2598 (B), train_ce_grad → forge_dispatch_ce_grad)",
+                "role": "",
+                "id": "component-map-top-level-cli-canonical-ce-grad-device-wiring-2598-b",
+                "detail": "train_ce_grad 의 bdiv==1 경로(canon 단일-윈도 step·MODE_CANON 303M)를 기존 hexa-lang device 커널 forge_dispatch_ce_grad(self/runtime.c L15894 host-weak dt_exp + CUDA _hx_k_ce_grad)로 배선 = host O(T·V)=T·256 단일스레드 softmax+grad seed 를 CUDA 호스트서 device fold(L11405 'CE' host-bound 해소분). CLM_PROD_DEVRESIDENT/HEXA_FUSE_ALL 게이트, 신규 커널 0(이미 존재)·anima-cli only·hexa-lang 무수정(storm 무관). exp 를 device 커널·FWD nn_ce_loss_allpos 와 동일 dt_exp(F-OP19)로 통일(기존 local libm exp 가 유일 불일치). byte-parity IDENTICAL(MODE_VERIFY $0 mac CPU 4-way: savant+mitosis 0.0004321544912324474·no-lever 0.0003889517691865624, original==default==DEVRESIDENT). bdiv>1 grad-accum 은 1/(T·bdiv) MEAN 스케일이라 host 루프 유지(불변). (A) batched-GEMM 은 [B·T,d] flat single-GEMM 이 dW reduction 결합순서를 바꿔 batch>1 byte-parity 깨짐 → strided-batched+고정순서 reduce 재작성 ING(canon batch=1 무이득)."
+              },
+              {
                 "name": "CLI dispatch: `anima train [args]` lockstep. PARITY w/",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-cli-dispatch-anima-train-args-lockstep-par",
