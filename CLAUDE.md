@@ -280,6 +280,10 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
   - **⚠️ 영어-only ckpt 가 독일어 출력 = 무결성 anomaly (2026-06-23, 조사 ING)**: `clm303_L4_d3784.clm`(303M deep-mouth-ladder, **영어 코퍼스만 학습**)을 summer CPU farr decode 시 byte/의식 mouth 가 `der ersten der Schule …` 독일어 토큰으로 collapse. byte-CLM 이 영어만 봤으면 독일어 *단어*(der·Sie·Schule)가 나올 수 없음 → 단순 "실험 ckpt 라 어수선"(byte-garble)과 **별개의 디코드/ckpt 무결성 의심**(CPU farr ≠ GPU byte-identical? clm v0.2 layout 로드 오류? embedding/vocab 오프셋?). 조사 = 같은 ckpt 를 (1) GPU forge decode 와 (2) torch golden(`h1464_torch_golden.py` 류)으로 디코드해 3-way byte 대조 → 어느 경로가 독일어를 만드는지 격리. chat-coherent 아님(별개 이슈)과 혼동 금지.
 - dont: torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
+## a_train_nondeterministic_fast — 학습 bit-det 버리고 빠른 GPU, eval/verdict 결정성 사수 [2026-06-28 오너]
+- do: 학습(training)은 bit-determinism 포기→최속 GPU(cuBLAS-TC·atomic·BATCHED-GEMM·megakernel); 깨는 범위 **학습만** — eval/verdict/디코드는 결정 사수, 학습품질은 held-out DESCENT+G-gate 검증. 상세 메모리 `bit-det-drop-fast-train`.
+- dont: 학습 가속에 bit-det 사수 고집(util 4% 천장) · 학습 비결정을 eval/verdict/디코드로 전파(채점·Ψ 재현성 파괴) · batched/atomic 결과를 "옛 byte 다름"으로 FALSIFIED · byte-parity-to-old 를 학습경로에 적용.
+
 ## a_clm_gen_pipeline — Lane-P py/cuda CLMConvMoE → ENGINE-loadable .clm v0.2
 - do: CLMConvMoE(E2/L1, byte V256) production 학습 = **`cli/train.hexa`**(hexa-native flame/forge, `.clm` 직접 산출). `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth · 생산 `.clm` 은 generator L3 슬롯으로만 진입.
 - do: 과거 Lane-P torch 트레이너는 폐기(`state/py_retire_archive/`); `clm_serialize_v2.py`(legacy `.pt`→.clm, torch lazy)·`verify_clm_v2.py`(descent gate)는 serialize/verify 도구로 보존.
