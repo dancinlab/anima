@@ -1,0 +1,61 @@
+{
+  "arm": "n6n7",
+  "seed": 4307,
+  "n_params": 345664875,
+  "levers": {
+    "n6_grok": true,
+    "n7_dictaux": true,
+    "n8_jamo": false,
+    "n1_tlora": false,
+    "n3_dbes": true,
+    "n4_set_search_k": 8
+  },
+  "frozen_hyper": {
+    "DICT_LAMBDA": 0.05,
+    "DICT_FACTOR": 4,
+    "DICT_L1": 0.001,
+    "N6_WD_GAIN": 2.0,
+    "N6_DROP_CAP": 0.3,
+    "JAMO_LAMBDA": 0.05
+  },
+  "loss0": 5.6574,
+  "lossF": 1.16518,
+  "wall_s": 1033.1,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 0.95751,
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 0.33146,
+      "descent": true
+    },
+    "en-general": {
+      "val_ce": 0.574,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 1.47571,
+      "descent": true
+    },
+    "en-sns": {
+      "val_ce": 1.44888,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "dict_recon": 0.01854175142943859,
+    "dict_sparsity": 0.58203125
+  },
+  "dbes_diagnostic": {
+    "expert_usage": [
+      0.3209,
+      0.3257,
+      0.3535
+    ],
+    "usage_entropy": 1.0977,
+    "usage_entropy_norm": 0.9992,
+    "n_active_experts": 3,
+    "note": "DBES proxy: norm usage-entropy ~1 => balanced/specialized; ~0 => collapse onto one expert (recomb material absent)."
+  },
+  "tier": "engine-native-eligible (.clm additive); torch train metrics DIRECTIONAL — G0-G6 verdict via core/g_gates.py (torch-free)"
+}
