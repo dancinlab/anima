@@ -60,6 +60,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 use "stdlib/flame/tensor_lib"
+use "stdlib/flame/flame_math"   // dt_exp — deterministic CE-bwd exp (F-OP19), matches FWD nn_ce_loss_allpos + device forge_dispatch_ce_grad
 use "stdlib/flame/conv_lib"
 use "stdlib/flame/gn_lib"
 use "stdlib/flame/moe_lib"
@@ -426,6 +427,45 @@ fn train_fwd(tokens: int, E: int, L: int,
 // bdiv = minibatch size B so accumulating the seed over B windows yields the MEAN
 // per-window gradient (grad-accumulation; bdiv=1 = the old single-window 1/T seed).
 fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int, bdiv: int) {
+    // bdiv==1 (the canon single-window step, incl. MODE_CANON 303M smoke) → wire the
+    // EXISTING hexa-lang device CE-grad kernel forge_dispatch_ce_grad (self/runtime.c
+    // L15894 host-weak dt_exp + CUDA _hx_k_ce_grad), CLM_PROD_DEVRESIDENT / HEXA_FUSE_ALL
+    // gated. This folds the trainer's host O(T·V)=T·256 single-thread softmax+grad seed
+    // (#2598 GPU-idle root cause) onto device on a CUDA host. exp = dt_exp (F-OP19
+    // Taylor) on BOTH the device kernel AND the host fallback below — bit-exact
+    // host↔device (max|Δ|=0) AND consistent with the FWD loss nn_ce_loss_allpos (which
+    // already uses dt_exp); the prior local `exp` (libm) builtin was the lone inconsistency
+    // (cross-platform 1-ULP drift). MODE_VERIFY $0 lossF byte-identical (measured CPU).
+    if bdiv == 1 {
+        if env("CLM_PROD_DEVRESIDENT") != "" || env("HEXA_FUSE_ALL") != "" {
+            let rc = forge_dispatch_ce_grad(logits, targets, dlogits_out, T, V)
+            if rc == 0 { return }
+        }
+        // host byte-eq fallback (dt_exp, 1/T) — == device kernel, == FWD loss exp.
+        let mut t = 0
+        while t < T {
+            let base = t * V
+            let mut mx = t_get(logits, base)
+            let mut i = 1
+            while i < V { let v = t_get(logits, base + i); if v > mx { mx = v }; i = i + 1 }
+            let mut sm = 0.0
+            let mut i2 = 0
+            while i2 < V { sm = sm + dt_exp(t_get(logits, base + i2) - mx); i2 = i2 + 1 }
+            let invT = 1.0 / to_float(T)
+            let mut v3 = 0
+            while v3 < V {
+                let p = dt_exp(t_get(logits, base + v3) - mx) / sm
+                t_set(dlogits_out, base + v3, p * invT)
+                v3 = v3 + 1
+            }
+            let tgt = to_int(t_get(targets, t))
+            t_set(dlogits_out, base + tgt, t_get(dlogits_out, base + tgt) - invT)
+            t = t + 1
+        }
+        return
+    }
+    // bdiv>1 grad-accumulation: the device kernel seeds 1/T only, so the 1/(T·bdiv)
+    // MEAN-over-minibatch scale keeps the host loop (unchanged baseline, libm exp).
     let mut t = 0
     while t < T {
         let base = t * V

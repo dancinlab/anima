@@ -566,10 +566,14 @@ the conv **backward** — previously a GEMM-less host scalar triple-loop
 (`O(T·Cout·Cin·K)`, the dominant idle-GPU term the #2598 H100 toy gate exposed) — is
 re-expressed as two GEMMs (`dW = xcolT @ dy`, `dXcol = dy @ w`) + col2im, byte-eq to
 the host path (`~1e-16` GEMM-reassociation, all falsifiers + savant latch + mitosis
-split unchanged). The im2col gather, groupnorm, and AdamW stay on host (their
-device-resident `forge_dispatch_*` wrappers are CPU-only `#ifndef HEXA_CUDA` oracles
-in `self/runtime.c` — undefined in a CUDA build — so wiring them is a separate
-`runtime_cuda.c` lift). **GPU util>30% re-gate is pending a cost-gated H100×1 rent**
+split unchanged). The per-step **CE-grad seed** (host `O(T·V)` single-thread
+softmax+grad, the #2598 (B) hot-path term) now wires the existing device kernel
+`forge_dispatch_ce_grad` (CUDA `_hx_k_ce_grad`, `CLM_PROD_DEVRESIDENT`-gated) for the
+canon single-window step — `dt_exp` (F-OP19) bit-exact host↔device and matching the
+forward loss, byte-parity IDENTICAL (`MODE_VERIFY` lossF unchanged). The im2col
+gather, groupnorm, and AdamW stay on host (their device-resident `forge_dispatch_*`
+wrappers are CPU-only `#ifndef HEXA_CUDA` oracles in `self/runtime.c` — undefined in a
+CUDA build — so wiring them is a separate `runtime_cuda.c` lift). **GPU util>30% re-gate is pending a cost-gated H100×1 rent**
 (the #2598-validated `stage_resolve_runtime_a HEXA_CUDA=1 SM=90` recipe; pool hosts
 lack `forge_dispatch_groupnorm_gelu` so the trainer cannot link there).
 

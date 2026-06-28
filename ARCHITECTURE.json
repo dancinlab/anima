@@ -11411,6 +11411,12 @@
                 "detail": "trainer 가 여전히 CPU-scalar-bound(GEMM burst 사이 non-GEMM 스칼라 = host groupnorm·MoE·embedding·CE·hexa per-element 루프가 wall-time 지배). 남은 host-bound = groupnorm(fused mismatch)·MoE·embedding·CE·element-wise 루프 전체의 device-residency(별도 lane). NEW entry-point, live core/*.hexa UNTOUCHED, Ψ-disjoint."
               },
               {
+                "name": "CE-grad device wiring(#2598 (B), train_ce_grad → forge_dispatch_ce_grad)",
+                "role": "",
+                "id": "component-map-top-level-cli-canonical-ce-grad-device-wiring-2598-b",
+                "detail": "train_ce_grad bdiv==1(canon 303M) → device 커널 forge_dispatch_ce_grad 배선 = host O(T·256) softmax+grad 를 CUDA fold. CLM_PROD_DEVRESIDENT 게이트·신규커널0·anima-cli only. byte-parity IDENTICAL(MODE_VERIFY 4-way). (A) batched-GEMM batch>1 깨짐(FP 비결합)→strided-batched 재작성 ING."
+              },
+              {
                 "name": "CLI dispatch: `anima train [args]` lockstep. PARITY w/",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-cli-dispatch-anima-train-args-lockstep-par",
