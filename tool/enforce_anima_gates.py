@@ -58,14 +58,14 @@ CORE_DECODE = re.compile(
 )
 DIRECTIONAL = re.compile(r"DIRECTIONAL", re.IGNORECASE)
 
-# hexa-단일 production (a_engine_native_learning, 2026-06-28: py engine retired). The authoritative
-# G-gate verdict path is the WIRED hexa single-entry ONLY (cli/anima.hexa eval → core/g_gates.hexa
-# → generator L3). A torch-side .py artifact is DIRECTIONAL by default. The parity-record escape
-# below remains ONLY to honor HISTORICAL py-engine evidence (state/<slug>/) banked while the
-# 2-production policy was active and byte-parity-verified against the wired hexa engine — it is NOT
-# an invitation for NEW py side-harness verdicts (py engine is gone; new measurement = anima eval).
-# A parity-record = a state/<slug>/ evidence file proving the (historical) py G0-G6 SCORING == the
-# wired hexa on a shared ckpt (e.g. golden d768, which hexa runs w/o OOM).
+# 2-production (a_engine_native_learning): the py engine is a CO-EQUAL production engine
+# and CAN bank a terminal G-gate verdict — but ONLY when its SCORING is byte-parity-verified
+# against the WIRED hexa single-entry (cli/anima.hexa eval → core/g_gates.hexa → generator L3).
+# Decode-only byte-parity is NOT enough: a py side-harness that calls clm_decode_* directly and
+# scores with g_gates.py bypasses generator L3, so its G1/G6 numbers can DRIFT from the wired
+# engine (precedent 2026-06-26 clm303_clean: side-harness G1/G6 FAIL @gen=40 was a gen-budget +
+# unverified-scoring artifact). A parity-record = a state/<slug>/ evidence file proving the py
+# G0-G6 SCORING == the wired hexa on a shared ckpt (e.g. golden d768, which hexa runs w/o OOM).
 PARITY_RECORD = re.compile(
     r"(byte-?parity|scoring[- ]?parity|parity[- ]?gate).{0,400}(PASS|identical|byte-identical)"
     r"|wired.{0,200}(hexa|anima\s+eval).{0,200}(==|≡|identical|match)",
@@ -236,13 +236,12 @@ def g2_violations():
 # The 'G4 빵꾸' fix (검증방식 3-카드: CAPABILITY decode / SUBSTRATE read / PROVENANCE publish).
 # The decode-CAPABILITY PASS closure (a7b_pass = G0∧G1∧G2) MUST NEVER fold in the PROVENANCE
 # gate (G4 = sha256/HF/recovery = publish-process, N/A to decode) — that is the hole that made
-# the flat G0-G6 scorecard punch out at G4. Mechanically: in the hexa engine g_gates.hexa,
+# the flat G0-G6 scorecard punch out at G4. Mechanically: in the 2-production g_gates.{py,hexa},
 # every `closure =` assignment must NOT reference the provenance result (r4/g4/prov), and
 # provenance must stay DOWNSTREAM (consume closure as publish-eligibility, not gate it).
 # Current code already complies (closure = r0∧r1∧r2; g_eval_g4(ckpt, closure) reads it after) —
 # this locks the redesign so the hole cannot reappear. NO bypass (c18).
-# (2026-06-28: py engine retired → hexa-단일 production; only core/g_gates.hexa is checked.)
-GATECARD_FILES = ("core/g_gates.hexa",)
+GATECARD_FILES = ("core/g_gates.py", "core/g_gates.hexa")
 CLOSURE_ASSIGN = re.compile(r"^\s*(?:let\s+)?closure\s*=")
 PROV_IN_CLOSURE = re.compile(r"\b(r4|g4|prov)", re.IGNORECASE)
 
