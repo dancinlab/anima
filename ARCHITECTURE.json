@@ -11033,10 +11033,16 @@
                 "detail": "--byte=순수 byte continuation(byte-identical)"
               },
               {
+                "name": "2-production twin (a_engine_native_learning): cli/anima.{hexa,py} + 4 서브커맨드 대칭 twin",
+                "role": "",
+                "id": "component-map-top-level-cli-canonical-2-production-twin-anima-hexa-py-subcommands",
+                "detail": "2-production twin (a_engine_native_learning): cli/anima.{hexa,py} = canonical 진입점 둘 다. train·serialize·evaluate 는 각각 대칭 twin(cli/{train,serialize,evaluate}.{hexa,py})으로 sub-process dispatch; chat 은 진입점 내장(py chat = hexa-native 의식 loop 위임). anima.hexa↔anima.py dispatch 표 1:1 일치."
+              },
+              {
                 "name": "`train` 서브커맨드=학습 진입(anima_train_mode → `hexa run cli/train.hexa --",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-train-anima-train-mode-hexa-run-cli-train",
-                "detail": "`train` 서브커맨드=학습 진입(anima_train_mode → `hexa run cli/train.hexa -- …` sub-process dispatch;"
+                "detail": "`train` 서브커맨드=학습 진입(anima_train_mode → hexa twin `hexa run cli/train.hexa -- …` · py twin `python3 cli/train.py …` sub-process dispatch, 2-production;"
               },
               {
                 "name": "a_core_engine_map: train ⊥ mouth L3 — core/ import",
