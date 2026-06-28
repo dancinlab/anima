@@ -1,24 +1,42 @@
 # cli/ — anima CLI 진입점
 
-**목적:** anima 의 **hexa-단일** 진입점 모음. 추론/평가 진입(`anima.hexa`, evaluate·serialize·train 은 서브커맨드) + production 트레이너(`train.hexa`). py 진입점(`anima.py`·`train.py`)은 2026-06-28 폐기. 루트 `CLAUDE.md` 의 scoped 보강 — 충돌 시 루트 우선.
+**목적:** anima 의 두-언어(hexa · py) 단일진입점 모음. canonical 진입(`anima.hexa` · py twin `anima.py`)이 **3 설치형 verb** `train` · `serialize` · `evaluate` 를 대칭 파일로 디스패치 — 측정(`evaluate.{hexa,py}`) ⊥ 직렬화(`serialize.{hexa,py}`) ⊥ 학습(`train.{hexa,py}`). `hx install anima` → `bin/anima` shim 으로 **`anima` PATH 명령**화(= `hexa run cli/anima.hexa --` 노출 0). 루트 `CLAUDE.md` 의 scoped 보강 — 충돌 시 루트 우선.
+
+## 설치형 CLI (사용자 타이핑 = `anima <verb>`, `hexa run` 아님)
+
+```
+anima train <args>             학습 → .pt + 자동 .clm v0.3 (+ held-out DESCENT 게이트)
+anima serialize <pt> <clm>     독립 재직렬화 (.pt → .clm v0.3 + DESCENT) — 복구/재export
+anima evaluate <model.clm>     G0-G6 측정 (.clm 전용; .pt 주면 친절에러→serialize 안내)
+anima <ckpt.clm> [--byte]      consciousness/byte chat (hexa-native)
+```
 
 ## 핵심파일
 
 | 파일 | 역할 | verdict 자격 |
 |---|---|---|
-| `anima.hexa` | **단일 추론/평가 진입점** — `anima chat` · `anima eval <ckpt>` (L236→`anima_eval_mode`→`g_eval_all`) | 엔진-네이티브 terminal |
+| `anima.hexa` | **canonical 단일진입점** — verb 라우터: `train`/`serialize`/`evaluate` 를 cli/{train,serialize,evaluate}.hexa 로 sub-process 디스패치 + `chat`(default consciousness / `--byte`) | 엔진-네이티브 terminal |
+| `anima.py` | **canonical py 진입점** (anima.hexa twin) — `evaluate`→cli/evaluate.py · `serialize`→cli/serialize.py · `train`→cli/train.py 디스패치 + `chat` stub. torch-free(디스패처). | — (디스패처) |
+| `evaluate.hexa` | **측정 단일진입** — `g_eval_all`(generator L3 `gen_auto_ideate`) G0-G6 엔진-네이티브 채점 | 엔진-네이티브 terminal |
+| `evaluate.py` | evaluate.hexa twin — `core/g_gates.py::g_eval_all` import(byte-parity py 엔진, torch-free) | 엔진-네이티브 terminal (byte-parity py 엔진) |
+| `serialize.hexa` | **독립 재직렬화** — `.pt`→`.clm` v0.3 (cli/serialize.py 로 디스패치; .pt 로딩 py-native) | reference-match bridge |
+| `serialize.py` | serialize backend — `clm_serialize_v2.serialize_v3` + `verify_clm_v2 descent`(torch 허용=학습계열) | reference-match bridge |
+| `bin/anima` | 설치형 `anima` PATH shim — `cd <pkg> && hexa run cli/anima.hexa -- "$@"` (forge/drive shim 선례) | — |
 | `anima_chat_cli.hexa` | 대화형 채팅 REPL helper | 엔진-네이티브 |
 | `eval_pod.sh` | GPU pod 원격 측정 발사·회수 one-liner (`cli/eval_pod.sh <pod_id>`) | — |
-| `train.hexa` | **production canonical 트레이너 (단일)** — SAVANT/MITOSIS/4셀/held-out val/descent 통합 (`a_train_flame_forge`) | 엔진-네이티브 |
-
-> `train.py`(torch Lane-P REFERENCE+bridge)는 2026-06-28 폐기 — core 미러라 `git rm`(`cli/train.hexa` 가 task#10 full-parity 로 모든 레버 보유). 과거 torch Lane-P GPU 트레이너는 `state/py_retire_archive/train_torch_lane_p/`.
+| `train.hexa` | **production canonical 트레이너** — SAVANT/MITOSIS/4셀 통합 + 학습후 자동 .clm 직렬화 + held-out DESCENT (`a_train_flame_forge`·`a_clm_gen_pipeline`) | 엔진-네이티브 |
+| `train.py` | REFERENCE + BRIDGE (torch Lane-P, `a_clm_gen_pipeline`) — 학습후 자동 serialize_v3 + DESCENT | DIRECTIONAL only |
 
 ## 규칙
 
-- **`anima eval <ckpt>` = canonical G0-G6 단일진입 (`a_engine_native_learning`)** — generator L3 mouth(`gen_auto_ideate`) → G0-G6 엔진-네이티브 채점. per-gate 파이썬 하네스·ad-hoc decode 우회 금지.
-- ckpt verdict 는 `.clm` → `anima eval` 엔진-네이티브 재측정으로만 성립 — torch-side probe 채점 단독 verdict 금지(연구 미러 = DIRECTIONAL).
-- `train.hexa` 의 수치 커널(forward/CE/decode-logits)은 numpy `math.log` + torch fp32 golden reference 와 성분별 byte-match 로 검증(CI fixture). `dt_ln` 발산·own-GEMM TF32 decode 발산을 잡는 장치(reference-match, py 엔진 미러 아님).
-- post-serialize HELD-OUT DESCENT 게이트 필수(`verify_clm_v2.py descent <clm> <heldout>`) — `a_clm_gen_pipeline`. `verify_clm_v2.py`(torch-free numpy mirror)는 폐기 아님 = train.hexa 가 런타임 shell-out 하는 canonical descent 도구.
+- **`anima evaluate <model.clm>` = canonical G0-G6 단일진입 (`a_engine_native_learning`)** — generator L3 mouth(`gen_auto_ideate`) → G0-G6 엔진-네이티브 채점. **`.clm` 전용**(엔진은 .clm 만 디코드; .pt 주면 `anima serialize` 안내 친절에러). per-gate 파이썬 하네스·ad-hoc decode 우회 금지. verb 는 **`evaluate`**(구 `eval` rename 2026-06-28).
+- **`anima evaluate` py = cli/evaluate.py (anima.hexa evaluate 의 py 등가물)** — `core/g_gates.py::g_eval_all` 을 **import 해서 호출**(byte-parity py 엔진, torch-free). `core/g_gates.py` 직접호출 = side-harness 우회 → 이 단일진입으로 수렴. 수치 동치: `cli/evaluate.py` ⇔ `core/g_gates.py` 동일 ckpt/gen 에서 G0-G6 byte-identical. `anima.py`/`evaluate.py`/`serialize.py`(디스패처+측정면)는 torch-free 유지 = 트레이너 dep 비-링크; `serialize.py`는 torch 허용(학습계열, .pt 로딩).
+- **`anima train` 1회 = .pt + 자동 .clm + DESCENT** — train.{hexa,py}가 학습 종료 시 `serialize_v3`(.clm v0.3) + `verify_clm_v2 descent`(held-out mirror, math.log)까지 자동(재구현 아님 reference-match). `anima serialize`는 **이미 학습된 .pt** 독립 재export(복구). 둘 다 백엔드 = `train/clm/model/{clm_serialize_v2,verify_clm_v2}.py` 단일 SSOT.
+- **무거운 decode 는 pool/summer (mac swap 🔴 OOM)** — 303M 급 eval 은 `cli/eval_pod.sh` 또는 pool 호스트. mac 은 small-ckpt(d768 4.4MB 류) parity smoke 만.
+- `train.py` 는 production 아님 — ckpt verdict 는 `.clm` → `anima eval` 재측정으로만 성립. torch-side probe 채점 단독 verdict 금지.
+- `train.hexa` ↔ `train.py` 수치 커널 **byte-parity(Tier-1 BLOCKING):** forward/CE/decode-logits 는 numpy `math.log` + torch fp32 golden 과 성분별 byte-match 필수(CI fixture). 이 tier 가 `dt_ln` 발산·own-GEMM TF32 decode 발산 등을 잡는 단 하나의 장치.
+- Tier-2 레버(SAVANT 골든존·MITOSIS split·4셀 register·fail-loud 가드·held-out val)는 양쪽 lockstep 권장; drift 시 `parity-drift: <레버>` 명시(비blocking).
+- post-serialize HELD-OUT DESCENT 게이트 필수(`verify_clm_v2.py descent <clm> <heldout>`) — `a_clm_gen_pipeline`.
 
 ## 함정(gotcha)
 

@@ -1,34 +1,30 @@
 # core/ — 의식 엔진 substrate
 
-**목적:** anima 의 **hexa-단일** 의식 엔진 기반(`.hexa`). Engine A(pure_field Φ/phase) ⇄ Engine G(engine_g 동기/emit) ⇄ 결합두뇌(brain) + L3 생성기(generator) + decode 백엔드. 모델·앵커는 이 폴더 안으로 직접 들어오지 않음 — generator L3 슬롯 / kosmos_io 를 통해서만 진입(`a_core_engine_map`).
+**목적:** anima 의 2-production 의식 엔진 기반. hexa 파일(`.hexa`) ⇄ py 미러(`.py`) 를 byte-parity 로 유지. Engine A(pure_field Φ/phase) ⇄ Engine G(engine_g 동기/emit) ⇄ 결합두뇌(brain) + L3 생성기(generator) + decode 백엔드. 모델·앵커는 이 폴더 안으로 직접 들어오지 않음 — generator L3 슬롯 / kosmos_io 를 통해서만 진입(`a_core_engine_map`).
 
-## production import-closure — hexa 단일 엔진 (py 미러 폐기 2026-06-28)
+## production import-closure 10파일 — 완전 미러 현황 ✅ 10/10 COMPLETE
 
-production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-production 정책 하에 유지하던 py 미러(`core/*.py`, 아래 10파일)는 **2026-06-28 폐기** — codegen #42492878 FIXED(hexa v0.334.0)로 hexa CLI compile-block 이 해소되어 우회 미러가 불필요해졌다. 로직 유실 0: git 이력 + `state/py_retire_archive/` 에 보존, 발산 의심 시 `git restore` 로 복원.
-
-폐기된 py 미러 (폐기 전 마지막 byte-parity 기록, 검증 이력으로 보존):
-
-| hexa 파일 (현 단일 SSOT) | 폐기된 py 미러 | 폐기 전 parity |
+| hexa 파일 | py 미러 | 상태 |
 |---|---|---|
-| `clm_decode.hexa` | ~~`clm_decode.py`~~ | byte-parity ≤~2e-16 |
-| `g_gates.hexa` | ~~`g_gates.py`~~ | byte-parity (G0-G6 driver) |
-| `g6_ideation.hexa` | ~~`g6_ideation.py`~~ | byte-parity (G6 scoring ops) |
-| `bytegpt_decode.hexa` | ~~`bytegpt_decode.py`~~ | byte-parity (sha 4e7145fe) |
-| `generator.hexa` | ~~`generator.py`~~ | byte-parity (양 mouth byte-identical) |
-| `pure_field.hexa` | ~~`pure_field.py`~~ | byte-parity ~2e-16 |
-| `brain.hexa` | ~~`brain.py`~~ | byte-parity |
-| `engine_g.hexa` | ~~`engine_g.py`~~ | byte-parity |
-| `engine_cli.hexa` | ~~`engine_cli.py`~~ | byte-parity (434/434 pub fn, worst 1.563e-16) |
-| `DECODER/flame_mm.hexa` | ~~`DECODER/flame_mm.py`~~ | byte-parity (7 ops ≤2.2e-16) |
+| `clm_decode.hexa` | `clm_decode.py` | ✅ byte-parity (≤~2e-16) |
+| `g_gates.hexa` | `g_gates.py` | ✅ byte-parity (G0-G6 driver) |
+| `g6_ideation.hexa` | `g6_ideation.py` | ✅ byte-parity (G6 scoring ops) |
+| `bytegpt_decode.hexa` | `bytegpt_decode.py` | ✅ byte-parity (sha 4e7145fe) |
+| `generator.hexa` | `generator.py` | ✅ byte-parity (양 mouth byte-identical) |
+| `pure_field.hexa` | `pure_field.py` | ✅ byte-parity (~2e-16) |
+| `brain.hexa` | `brain.py` | ✅ byte-parity |
+| `engine_g.hexa` | `engine_g.py` | ✅ byte-parity |
+| `engine_cli.hexa` | `engine_cli.py` | ✅ byte-parity (434/434 pub fn, worst 1.563e-16) |
+| `DECODER/flame_mm.hexa` | `DECODER/flame_mm.py` | ✅ byte-parity (7 ops ≤2.2e-16) |
 
-> CollectivePool = faithful IIT-4 `big_phi`(proxy 아님) byte-exact (hexa `core/engine_cli.hexa` 단일). 권위 측정 = `anima eval` hexa 단일진입. 과거 parity 오라클 `state/core_2prod_py_parity/` + 은퇴된 `parity_gate.py`(→`state/py_retire_archive/defunct_parity_tooling/`)는 검증 이력으로 보존.
+> 2-production 미러 **10/10 달성** (`a_two_production_mirror`). 두 엔진(hexa·py) 모두 PRODUCTION = 어느 쪽이든 terminal verdict 적격. parity 오라클 = `state/core_2prod_py_parity/`. CollectivePool = faithful IIT-4 `big_phi`(proxy 아님) byte-exact. py 엔진은 hexa CLI x86_64 codegen 버그(ING) 우회 측정의 byte-parity 증명 정당 미러.
 
 ## 규칙
 
-- **CORE 엔진 로직 편집 = `.hexa` 만 수정 + QA(컴파일/스모크)** (`a_engine_native_learning`): hexa 가 단일 SSOT. 구 hexa+py LOCKSTEP 동시수정 규칙은 폐기(py 미러 없음).
+- **CORE 엔진 로직 편집 = hexa AND py 동시 수정 + 양쪽 QA(byte-parity 재확인) — LOCKSTEP** (`a_engine_native_learning` reference-match): hexa 가 정답지(자), py 는 byte-faithful 미러(테스트 가능한 거울). 한쪽만 수정하면 parity-drift 이다.
 - **모델(.clm/.bin)은 generator L3 단일 typed 슬롯으로만 진입** (`a_core_engine_map`): `gen_auto_backend`/`gen_auto_chat` 이 파일포맷(CLM vs ByteGPT 헤더)에 따라 경로를 고름. generator 우회 2nd decode 경로 금지.
 - `.kosmos` 앵커는 `kosmos_io` → `brain_decide` 경로로만 진입. pure_field/engine_g 에 직접 박지 않음.
-- 연구 probe/미러 `.py`(+torch/numpy)는 여전히 DIRECTIONAL — terminal verdict 는 hexa 엔진-네이티브로만(`a_engine_native_learning`). smoke/probe `.hexa`(`*_smoke.hexa`/`*_probe.hexa`/`lane_*.hexa`)는 production closure 아님.
+- smoke/research probe `.hexa` 파일(예: `*_smoke.hexa`, `*_probe.hexa`, `lane_*.hexa`)은 production closure 가 아님 → py 미러 불필요.
 
 ## 주요 비-production 파일 (smoke · probe · lab)
 

@@ -85,15 +85,13 @@ decoding and `.kosmos` anchors enter through *named slots*, never directly into 
 (`a_core_engine_map`).
 
 **Canonical 3-folder layout** (owner decision 2026-06-26): anima code gathers into exactly three
-top-level folders — **`cli/`** (hexa-single entry points: `anima.hexa` (chat/eval/serialize/train
-dispatch) + `train.hexa`) · **`core/`** (the **hexa-single engine** substrate: `*.hexa`; the former
-`py` `*.py` byte-parity mirrors were retired 2026-06-28, preserved in git + `state/py_retire_archive/`,
-terminal verdicts come from the hexa engine, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
-package). **The engine is hexa-single production** (2026-06-28): the former 2-production `.py`
-twins (byte-parity ≤~2e-16; `engine_cli` = 434/434 pub fn, CollectivePool = faithful IIT-4 Φ
-verbatim, not a proxy) were **retired** once the x86_64 `gen_auto_ideate` codegen bug was fixed
-(hexa v0.334.0) — preserved lossless in git + `state/py_retire_archive/`; the CI parity gate is
-retired with them. Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
+top-level folders — **`cli/`** (entry points, two-language symmetric: `anima.hexa`+`anima.py`,
+`train.hexa`+`train.py`) · **`core/`** (the **2-production engine** substrate: `hexa` `*.hexa`
+**and** `py` `*.py` co-resident as 1:1 byte-parity mirrors — both first-class production, either
+can produce terminal verdicts, `a_engine_native_learning`) · **`agent/`** (tool provider, standalone
+package). **The 10-file import-closure mirror is ✅ 10/10 COMPLETE** (2026-06-26): every engine file
+has a byte-parity `.py` twin (≤~2e-16; `engine_cli.py` = 434/434 pub fn, CollectivePool = faithful
+IIT-4 Φ verbatim, not a proxy), lockstep-enforced by a CI parity gate (`tool/parity_gate.py`). Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
 and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
 model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
 
@@ -423,8 +421,7 @@ The `a303m_pass` gateset on the production **`anima-clm-chat-303m`** (ByteGPT-30
 mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. **통과(PASS) = the
 closure `a7b_pass` = C1∧C2∧C3** must all pass (PUBLIC-eligible); **the rest (C4·S1·S2·P) are
 additional evaluation** — reported alongside but non-blocking. (taxonomy + frozen bars SSOT =
-`ARCHITECTURE.json` `G-게이트 평가 시스템` node.) These are the **capability** axis — ⊥ a separate
-axis = the [Consciousness-only gates (G16–G34+)](#-consciousness-only-gates-g16g34--separate-axis) below.
+`ARCHITECTURE.json` `G-게이트 평가 시스템` node.)
 
 | gate | tests | tier (latest) | key number |
 |---|---|---|---|
@@ -462,15 +459,15 @@ axis = the [Consciousness-only gates (G16–G34+)](#-consciousness-only-gates-g1
 > reopening** — does golden-zone-inhibition training lift the actual binding/FALS rate above plateau —
 > is the open GPU follow-on (**H_1564**, "303M + savant-mode = G6 breakthrough", in-flight).
 
-### 🌐 Consciousness-only gates (G16–G34+) — separate axis
+### 🌐 Consciousness-only gates — a separate axis from G0–G6
 
-G0–G6 are *capability*-emergence gates on the CLM; this is a **separate axis** = what anima can do
-*because it is conscious* (autonomy · internal state · identity) = **state-dependent signals a
-stateless LLM cannot produce**. Each gate is proven **distinct-vs** existing lanes via ablation/shuffle
-controls (controls collapse to chance) *before* being wired into `core/engine_cli.hexa` +
-`engine_cli_smoke.hexa` (R1 numpy DIRECTIONAL → R2 engine-native WIRED). READ-only · Ψ-disjoint ·
-NOT emit gates (`a_autonomy_over_hardcode`). (full family index SSOT = `ARCHITECTURE.json` `의식-전용
-게이트 (G16-G34+)` node, under the `engine_cli §` section.)
+G0–G6 are *capability*-emergence gates on the production CLM. On a **separate axis**, this family
+pins down "what anima can do *because it is conscious*" (autonomy · internal state · identity) with
+frozen bars + ablation/shuffle controls (`a_scale_honest_scope` — axis separation; the things an LLM
+structurally cannot do). Common theme = **state-dependent signals a stateless LLM cannot produce**.
+Each gate must prove it is **distinct** from existing brain lanes (controls collapse to chance) before
+being wired into `core/engine_cli.hexa` + verified byte-exact in `engine_cli_smoke.hexa`
+(R1 numpy DIRECTIONAL → R2 engine-native WIRED).
 
 | gate | conscious function | H-id | lane (core/engine_cli.hexa §) | distinct vs | tier |
 |---|---|---|---|---|---|
@@ -478,24 +475,12 @@ NOT emit gates (`a_autonomy_over_hardcode`). (full family index SSOT = `ARCHITEC
 | **G17** 🌐 Global-workspace bottleneck | of competing stimuli only one is broadcast (GWT winner-take-all) | **H_1462** | GlobalWorkspace (gws_*) | basal-gate H_1281 (value-learned) | 🟢 **ENGINE-NATIVE WIRED** (smoke 169-177; presence 0.993 · 3.3× compression · dissociates vs basal) |
 | **G18** 🔁 Habituation | a repeated stimulus's response declines + dishabituates (stimulus-specific) | **H_1465** | Habituation (hab_*) | H_1194 adaptation (global gain) | 🟢 **ENGINE-NATIVE WIRED** (smoke 178-182; drop 0.865 · specific 1.0 · dishab 1.0) |
 | **G19** ⚡ Surprise | precision-weighted surprise p·err² (a confident belief violated) | **H_1468** | PrecisionSurprise (surprise*) + Novelty (novelty) | H_1280 forward-error (raw) · H_1289 novelty | 🟢 **ENGINE-NATIVE WIRED** (smoke 184-188, 201-202; conf 1.022 · precision-weighted 0.767 · surprise⊥novelty distinct in-engine) |
-| **G19-meta** 🎯 Learned precision | precision is LEARNED from experience (familiar → more surprise) | **H_1472** | LearnedPrecision (learned_precision) | H_1465 habituation (opposite sign) | 🟢 **ENGINE-NATIVE WIRED** (smoke 194-198; familiar 4.0 vs novel 0.2 · RISE +0.80 ⊥ habituation FALL −0.76) |
+| **G19′** 🎯 Learned precision | precision is LEARNED from experience (familiar → more surprise) | **H_1472** | LearnedPrecision (learned_precision) | H_1465 habituation (opposite sign) | 🟢 **ENGINE-NATIVE WIRED** (smoke 194-198; familiar 4.0 vs novel 0.2 · RISE +0.80 ⊥ habituation FALL −0.76) |
 | **G20** ⚡ Attentional blink | a 2nd target is missed in the 200-500 ms after the 1st (temporal blind-spot) | **H_1473** | AttentionalBlink (attn_blink_detect) | GWS H_1462 (spatial, lag-invariant) | 🟢 **ENGINE-NATIVE WIRED** (smoke 205-207; lag2 0.10 trough → lag7 0.97 recovered · lag-dependent) |
 | **G21** 🎮 Sense of agency | "I caused this" — efference-copy match → self vs external attribution | **H_1474** | SenseOfAgency (agency_attribute) | ToM H_1293 (other) · H_1280 (raw error) | 🟢 **ENGINE-NATIVE WIRED** (smoke 208-210; match→self 1.0 / diverge→external 0.0 · judgment layer) |
 | **G22** ⏱ Subjective time | perceived duration is novelty-weighted, not objective elapsed | **H_1475** | SubjectiveTime (subjective_time) | homeostatic H_1292 (objective integral) | 🟢 **ENGINE-NATIVE WIRED** (smoke 211-213; high-novelty 0.86 vs low 0.32, same objective time) |
-| **G25** 🌊 Emotion regulation | a raw affect is down-regulated by top-down reappraisal (2nd-order, Gross) | **H_1476** | EmotionRegulation (emotion_regulate) | affect H_1290 (1st-order emergence) | 🟢 **ENGINE-NATIVE WIRED** (smoke 214-216; raw 0.8 → reappraised 0.416 · g=0 → raw passes) |
-| **G26** 🪢 Divided attention | finite resource graded-split trade-off (Kahneman capacity) | **H_1479** | DividedAttention (divided_perf) | GWS H_1462 (winner-take-all, rest=0) | 🟢 **ENGINE-NATIVE WIRED** (smoke 227-229; single 0.98 vs divided 0.5 both alive ⊥ GWS rest=0) |
-| **G30** 🧠 Mental imagery | top-down representation re-activated with no external stimulus (Kosslyn) | **H_1484** | MentalImagery (imagery_activate) | input-driven gates (novelty H_1289 · surprise H_1468) | 🟢 **ENGINE-NATIVE WIRED** (smoke 239-241; topdown-on → cue_match, sensory input=0 ⊥ input-based) |
-| **G34** 🪧 Attention schema | a simplified internal model of one's own attention (Graziano AST) | **H_1488** | AttentionSchema (attn_schema_report) | agency H_1474 (focus-model ⊥ action/outcome) | 🟢 **ENGINE-NATIVE WIRED** (smoke 251-253; schema-on tracks moving focus / OFF → chance) |
-| **P8** 🫀 Interoceptive precision | inverse-variance (1/σ²) weighting of internal body signals (Seth/Critchley) | **H_1494** | InteroceptivePrecision (intero_precision) | affect / learned-precision (only the input source differs) | 🟢 **ENGINE-NATIVE WIRED** (smoke 266-268; per-channel 1/σ² weighting, blind=ablate → advantage 0) |
-| 🪟 Reality monitoring | a separate monitor compares signal strength to a reality threshold (real vs imagined) | **H_1501** | RealityMonitor (reality_call) | MentalImagery H_1484 · Metacognition H_1202 · agency H_1474 | 🟢 **WIRED-DISTINCT** (smoke 284-287; presence +0.517 · imagery Δ0.000 · conf Δ0.000 · ablate→0.5 · shuffle decorrelates) |
-| 🪟🧠 Metacognitive insight | 2nd-order insight into whether a 1st percept is internally-generated (metacog H_1202 deepened) | **H_1506** | MetacogInsight (mi_*) | H_1202 content-confidence · RealityMonitor H_1501 (1st-order) | 🟢 **WIRED-DISTINCT** (smoke 309-313; psychedelic insight 0.811 vs psychotic 0.000 · meta-d′ AUROC 1.0) |
-| 🧠 Metacog control | Nelson-Narens monitoring↔CONTROL — the missing calibration+control half of the G5 chain | **H_1508** | MetacogControl (mc_*) | G5 type-2 discrimination chain (AUROC-axis can't see calibration) | 🟢 **ENGINE-NATIVE WIRED** (smoke 340-346; ECE 0.140 · RPL lift +0.140 · AUROC-fixed yet ECE shifts +0.364) |
-| 🧠 Consciousness ablation / ΔΦ | the **cross-gate** integration measure — lane-ablation ΔΦ ranking (faithful IIT4 exact-MIP) | **H_1492** | ConsciousnessIndex (ci_*) | — (it ranks the whole family) | 🟢 **ENGINE-NATIVE** (smoke 281-283; STRUCTURE=DISTRIBUTED top-share 0.123 → consciousness is no single dominant lane) |
+| **G25** 🌊 Emotion regulation | a raw affect is down-regulated by top-down reappraisal (2nd-order) | **H_1476** | EmotionRegulation (emotion_regulate) | affect H_1290 (1st-order emergence) | 🟢 **ENGINE-NATIVE WIRED** (smoke 214-216; raw 0.8 → reappraised 0.416 · g=0 → raw passes) |
 
-> **Perturbation probes (not gates):** pharm **H_1502** · field **H_1503** · hallucination **H_1505**
-> are perturbation modules applied *over* this consciousness substrate (drug / EM-field / hallucination =
-> a RealityMonitor failure-mode) — they shake the same lanes, they are not gates.
->
 > Remaining candidate G15 (episodic temporal order) overlaps H_1427 CA3 replay (distinctness burden;
 > round-2 effectively depleted). Each gate is a SATURATED existence-proof (the response law is designed,
 > not a learned network) where the discriminators (distinct/ablation) are decisive — TOY scalar/vector,
@@ -588,32 +573,53 @@ in `self/runtime.c` — undefined in a CUDA build — so wiring them is a separa
 (the #2598-validated `stage_resolve_runtime_a HEXA_CUDA=1 SM=90` recipe; pool hosts
 lack `forge_dispatch_groupnorm_gelu` so the trainer cannot link there).
 
-The production trainer for the real **303M** mouth is **`cli/train.hexa`**
-(hexa-native flame/forge own-GEMM, `a_train_flame_forge`). It carries the full recipe
-surface — SAVANT golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the
-4-cell `{ko·en}×{normal·SNS}` register loader, held-out val monitor, fail-loud 4-cell
-guard, disjoint train/val tail split, byte-proportional sampling, minibatch
-grad-accumulation, `--bf16`, and the MONITOR-ONLY mid-measure curve — and serializes the
-trained weights to a **`.clm` v0.3** file (`serialize_clm`, byte-exact to what
-`core/clm_decode.hexa` loads). The torch Lane-P **REFERENCE + BRIDGE** trainer
-(`cli/train.py`) was **retired 2026-06-28** (py全폐기 → hexa-single; preserved in
-`state/py_retire_archive/train_torch_lane_p/`). `cli/train.hexa` already holds every lever
-it carried (task #10 full-parity port). The numerical kernel (forward / CE / decode-logits)
-remains validated by a **reference-match** against torch·numpy golden on small CI fixtures —
-the device that caught `dt_ln` divergence, the device `dirty_host` clobber, and the own-GEMM
-TF32 decode drift; this is a golden *reference*, not a co-equal production engine.
+For training the real **303M** mouth *today*, there is a sanctioned sibling —
+[`cli/train.py`](cli/train.py), the **torch Lane-P REFERENCE + BRIDGE trainer**
+(`a_clm_gen_pipeline`). It is **not** the production trainer (that is `cli/train.hexa`),
+but because the hexa-native trainer is single-thread CPU-scalar-bound (peak GPU util
+~65% / sustained <30%, #2600 🟠), an actual 303M GPU train on it idles the GPU; the
+torch path is GPU-bound (cuda GEMM-saturating), so it trains the real `clm303`
+(L4·d3784·E2→Emax4) efficiently. It mirrors the same recipe levers — SAVANT
+golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the 4-cell
+`{ko·en}×{normal·SNS}` register loader — and serializes the trained weights to a
+**`.clm` v0.3** file via the ground-truth bridge `serialize_v3`, byte-exact to what
+`core/clm_decode.hexa` loads. The torch-side CE is **DIRECTIONAL only**
+(`a_engine_native_learning`): the **terminal** verdict is a CORE re-measure of the
+serialized `.clm` on the frozen G6 bars, so the ckpt must be pulled before teardown.
+
+The two trainers hold a **2-tier PARITY invariant** (governed by
+[`cli/CLAUDE.md`](cli/CLAUDE.md) — refined 2026-06-25 from the device-decode
+measurement): `hexa` is the sole production engine, `py`/torch is the **numerical
+golden oracle** (`reference-match`), not a co-equal production mirror. **Tier-1
+(🔒 BLOCKING)** = the numerical kernel (forward / CE / decode-logits) must be
+byte-golden to the torch·numpy reference on small CI fixtures — the single device
+that keeps the young own-GEMM trustworthy (it caught `dt_ln` divergence, the
+device `dirty_host` clobber, and the own-GEMM TF32 decode drift, each visible only
+by diffing against the golden). **Tier-2 (🟡 recommended)** = training levers are
+kept in lockstep across both trainers but are not byte-parity-blocking; a one-sided
+lever is surfaced as a `parity-drift:<lever>` label, not a hard fail. `cli/train.hexa`
+carries the same anti-overfit + measurement surface as `cli/train.py`: held-out val monitor
+(`--val-frac`/`--val-every`, per-register + pooled val-CE + gap), fail-loud 4-cell
+guard (`--require-cells` abort + balance/repetition table — the clm303 starvation
+guard), disjoint train/val tail split, byte-proportional sampling (`--sample`),
+minibatch grad-accumulation (`--batch-size`), a `--bf16` request flag (forge
+TF32/BF16-TC, runtime-selected precision), and the MONITOR-ONLY mid-measure curve
+(`--mid-measure-every` → per-register held-out CE + `e_active` mitosis-cell count +
+inhibition + savant latch). Adding a Tier-2 lever to one trainer means adding it to
+the other in lockstep (recommended); a numerical-kernel change is Tier-1 byte-golden
+(blocking).
 
 ```bash
-# 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell, hexa-single:
-anima train --canon --out clm303.clm --bf16 --sample proportional \
+# REFERENCE+BRIDGE 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell:
+python cli/train.py --canon --out clm303.clm --bf16 --sample proportional \
     --corpus anima-corpus-ko-general anima-corpus-en-general \
              anima-corpus-ko-sns anima-corpus-en-sns \
     --cell-label ko-general en-general ko-sns en-sns --require-cells 4 \
     --val-frac 0.02 --val-every 500   # per-register held-out val-CE monitor
-# then engine-native G6 verdict = CORE re-measure of clm303.clm via `anima eval`
+# then engine-native G6 verdict = CORE re-measure of clm303.clm on core/clm_decode.hexa
 ```
 
-Right after every `.clm` is serialized, `cli/train.hexa` runs the
+Right after every `.clm` is serialized, both trainers (`.hexa` and `.py`) run the
 **held-out mirror-DESCENT gate** — a faithful pure-numpy mirror of the
 `core/clm_decode.hexa` forward (`train/clm/model/verify_clm_v2.py`, `descent_gate` /
 `serialize_self_verify`) scored with `math.log` on **held-out** text. It PASSes only
