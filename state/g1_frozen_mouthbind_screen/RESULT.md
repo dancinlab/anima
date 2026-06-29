@@ -130,3 +130,11 @@ state/g1_frozen_mouthbind_screen/
 ```
 
 **Baseline reference:** `state/1588_g1_multiseed_refmatch/result_clm_clm303_clean.clm.json` (G1=0/3 confirmed baseline, same weights)
+
+## SCOPE 정정 (메인 검토 2026-06-29 — 과장 방지)
+
+이 screen의 🧱 NOT-SUPPORTED 는 **"frozen 가중치에 bind op 얹기"** 에만 적용된다 — "wiring-binding 일반"이 아니다. 두 by-construction 결함이 frozen 경로를 inert/destructive 하게 만든다:
+1. **입력 부재**: clm303_clean 이 max_single=0(씨앗 개념 단독도 안 엮음) → bind op 에 *묶을 개념 표현이 없음*. binding 수학은 유효(abstract HRR ON=1.000 vs OFF=0.076)하나 입력이 0.
+2. **off-manifold readout**: frozen readout_conv 는 *묶인* 벡터를 디코드하도록 학습된 적 없어 bind 출력에 logit 붕괴.
+
+→ **미측정(=진짜 다음 수)**: bind op 을 *in-forward 로 retain 한 채 trunk+readout 공동학습*(직렬화 전 drop 아님 = g-gates-py-1 함정 회피, frozen 얹기도 아님). 그래야 (a) 개념 축이 형성되고 (b) readout 이 binding 디코드를 학습한다. 이는 실패한 'training-only-dropped'(operator drop)와 inert 한 'frozen-wired' 사이의 미탐색 sweet-spot. cost-gated 303M 학습 필요(user-go).
