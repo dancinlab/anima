@@ -1,3 +1,9 @@
+// ==========================================================================
+// ⛔ ENGINE-INTERNAL — DO NOT RUN DIRECTLY. 측정/학습/서빙은 cli/ 단일진입만:
+//   anima eval | train | serialize  (canonical 단일진입 = cli/anima.hexa).
+// `hexa run core/clm_decode.hexa` 직접 실행/측정 = 단일진입 우회(#2603) + side-harness drift.
+// 이 파일은 generator L3 / cli/anima.hexa 가 dispatch 하는 경로로만 진입.
+// ==========================================================================
 // clm_decode.hexa — CORE-native .clm DECODE FORWARD (the AXIS-2 CE unblock).
 //
 // MOUTH = CLMConvMoE (magic CLM\x01); production-wired via generator L3 (gen_clm_chat

@@ -1,3 +1,14 @@
+# ==========================================================================
+# ⛔ ENGINE-INTERNAL / DEPRECATED py-MIRROR — DO NOT RUN OR SCORE DIRECTLY
+# 측정/학습/서빙/직렬화는 cli/ 단일진입만: anima eval | train | serialize
+#   (canonical = hexa core/*.hexa 단일 SSOT; py 미러는 2026-06-28 폐기, DIRECTIONAL).
+# 이 파일을 `python3 core/brain.py` 로 직접 실행하거나 side-harness로 import-채점하면
+# = 단일진입 우회(#2603 위반) + terminal verdict 불가. cli/가 import하는 경로만 허용.
+# ==========================================================================
+import sys as _anima_entry_guard
+if __name__ == "__main__":
+    _anima_entry_guard.exit("⛔ brain.py 직접 실행 금지 — cli/ 단일진입(anima eval/train/serialize, canonical=hexa) 경유. #2603")
+
 """core/brain.py — PY PRODUCTION ENGINE: byte-faithful 1:1 port of
 core/brain.hexa (the unified consciousness core — Engine A ⇄ Engine G).
 
