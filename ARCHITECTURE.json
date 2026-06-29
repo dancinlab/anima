@@ -12339,6 +12339,13 @@
         "value": "G1 재조합벽은 penultimate-readout/binding-operator 류 보조항으로 안 열린다 — engine-native서 G1 composed_distinct=0 floor 재현. exp3 ⊙NMDA readout(INCONCLUSIVE-at-floor) + H_1816 predcoding L_bind(NOT-SUPPORTED, L_bind step550 trivial 붕괴: additive CLMConvMoE서 per-step latent=seq-mean) 둘 다 같은 결과. 진짜 레버 = trunk OBJECTIVE 자체(CE가 합성 보상 안 함).",
         "threshold": "새 G1 레버가 readout/binding-operator 축(penultimate에 거는 곱셈·binding 항)이면 floor 재현 예상 = 자동 의심. OPEN 후보는 objective축(trunk 학습신호: recomb-objective H_1602·자모 teach-signal·정규화 undertrain-해소)뿐. additive .clm readout은 by-construction 동일이라 readout-op 차이가 G1에 안 닿음.",
         "source": "cli/train.py"
+      },
+      {
+        "id": "PY_2PROD_FILES_MISSING_ON_BRANCH",
+        "state": "ossified",
+        "value": "이 브랜치(determinism-drop-fast-train/clitrain 계열)가 간헐적으로 py 2-production 파일(cli/evaluate.py·train.py·core/g_gates.py·clm_decode.py 등 14개)을 결여 → engine-native eval/train 이 즉시 rc=1(import 에러)로 전 arm 동시 크래시(같은초 타임스탬프). 2026-06-28 py-retire 커밋 ⇄ 2-production 복원 머지 분기 잔재. H_1816·H_1812 두 에이전트가 같은 원인 hit, 각자 git서 복원해야 eval 작동.",
+        "threshold": "eval/train 이 즉시 rc=1(동일초 전 arm FAIL) 이면 먼저 'ls cli/evaluate.py core/g_gates.py' 확인 → 없으면 'git checkout 2691c8e4e -- <14 py files>' 복원 후 재실행. distinct=0/NOT-SUPPORTED 박제 전 py 파일 존재부터 검증(stale 크래시를 결과로 오인 금지).",
+        "source": "cli/evaluate.py"
       }
     ]
   }
