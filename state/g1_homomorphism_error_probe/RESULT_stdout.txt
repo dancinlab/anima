@@ -1,0 +1,29 @@
+================================================================
+H_1821 Homomorphism-Error (HE) probe — numpy-only DIRECTIONAL (p7)
+================================================================
+
+[1] SELF-TEST (synthetic structured vs random reps)
+    add_homo__HE_add       = 0.000000
+    add_homo__HE_hada      = 1.235177
+    hada_homo__HE_hada     = 0.000000
+    hada_homo__HE_add      = 1.706699
+    random__HE_add         = 1.706204
+    random__HE_hada        = 1.420489
+    SEPARATES gate: PASS
+
+[2] REAL .clm HE  (concept pairs n=16, AoB=byte-concat)
+    ce_marginal_seed7.clm             
+        HE_add  = 1.2578   (shuffle ctrl = 1.6066)
+        HE_hada = 6.9658   (shuffle ctrl = 7.0638)
+        best_HE = 1.2578
+        control contrast (shuffle - true): add=+0.3488  hada=+0.0980
+    pc_bind_seed7.clm                 
+        HE_add  = 1.2323   (shuffle ctrl = 1.5412)
+        HE_hada = 7.8713   (shuffle ctrl = 7.9500)
+        best_HE = 1.2323
+        control contrast (shuffle - true): add=+0.3088  hada=+0.0787
+    n6n7_seed4307.clm                 
+        HE_add  = 1.3807   (shuffle ctrl = 1.7357)
+        HE_hada = 3.1403   (shuffle ctrl = 3.2894)
+        best_HE = 1.3807
+        control contrast (shuffle - true): add=+0.3549  hada=+0.1492
