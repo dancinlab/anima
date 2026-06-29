@@ -96,6 +96,12 @@ verbatim, not a proxy) were **retired** once the x86_64 `gen_auto_ideate` codege
 retired with them. Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
 and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
 model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
+Current G0-G6 status on the production conv `.clm`: **G0✓ G2✓ open, but G1 RECOMBINATION closure UNMET** — the
+2026-06-29 closure campaign (3 trunk-objective levers H_1812/1814/1816, 11 arms engine-native) confirms the G1
+재조합벽 holds against every lever family (all G1 best_distinct=0; n6n7 reg+dict-aux DIRECTIONAL-positive 0→1
+only, set-search opens novelty≠recombination). The C2/G1 ✅ROBUST row below is the H_1129 ByteGPT-L24 *reference*,
+not the production conv mouth. G1 = a trunk learning-OBJECTIVE problem; only a recombination-rewarding objective
+(H_1602) remains untested.
 
 ```
    ENGINE G (reverse, gradient-free)            ENGINE A (forward, CE-trained)
