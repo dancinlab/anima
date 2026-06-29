@@ -1,0 +1,19 @@
+======================================================================
+CORRECTED ABSTRACT BINDING PROBES (supplement to probe.py)
+======================================================================
+
+### VSA/HRR (H_1616) — bundle retrieval
+  ON=1.000  OFF=0.076  CTRL=0.194  pass=True
+
+### Hypernet CORRECTED (H_1623) — bilinear dot-product task
+  ON=1.000 (train=1.000)
+  OFF=0.750 (train=0.875)
+  pass=True
+  note: The bilinear model (fill@W@role) can exactly represent dot(role,fill)>0; the additive model cannot — so hypernet wins on test. The original probe.py uses 'holdout filler' (unseen element) which is zero-shot extrapolation — too strict; no model can generalize to an entirely unseen entity.
+
+### Saddle (H_1649) — honest limitation
+  saddle diverges from energy by 6.328 (>0 = different dynamics)
+  pass=False
+  note: The saddle and energy trajectories DIVERGE significantly (mean Euclidean distance 6.328), showing that adversarial coupling produces a qualitatively different equilibrium than cooperative energy descent. HOWEVER: the toy probe does NOT demonstrate generalization to unseen combos (proper test requires trained M and controlled holdout of combinations, not elements). Bar NOT passed in this probe — needs a more careful setup with learned M.
+
+Saved to /Users/mini/dancinlab/anima/.claude/worktrees/clm303-noverfit-retrain/state/g1_frozen_mouthbind_screen/abstract_corrected_results.json
