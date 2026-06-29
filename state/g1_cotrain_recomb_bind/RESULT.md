@@ -47,11 +47,11 @@
 | obj_only | 7 | 0.849 | ✓ 4/4 | ✓ PASS (1.709 < 5.545) | 1.343 | 1.204 | 2077.4 |
 | obj_only | 4302 | 0.809 | ✓ 4/4 | ✓ PASS (descent all 4/4) | 1.365 | 1.216 | 1930.5 |
 | obj_only | 4303 | — | — | — | — | — | — |
-| op_obj | 7 | 0.766 | ✓ 4/4 | ✓ PASS (1.401 < 5.545) | 1.254 | 1.436 | 2067.2 |
-| op_obj | 4302 | — | — | TRAINING (step ~1700/4000) | — | — | — |
+| op_obj | 7 | 0.766 | ✓ 4/4 | ✓ PASS (1.401 < 5.545) | 1.255 | 1.436 | 2067.2 |
+| op_obj | 4302 | 0.759 | ✓ 4/4 | ✓ PASS (4/4 DESCENT) | 1.304 | 1.405 | 1945.5 |
 | op_obj | 4303 | — | — | — | — | — | — |
 
-*seed7 ALL DONE (4/4 DESCENT each). seed4302: op_plaince+obj_only DONE (4/4 DESCENT), op_obj training (step ~1700/4000, ~14:35 UTC). seed4303 follows after op_obj_seed4302 completes.*
+*seed7 ALL DONE (4/4 DESCENT each). seed4302 ALL DONE (4/4 DESCENT each). seed4303 training IN PROGRESS (3 arms parallel).*
 
 ---
 
@@ -77,7 +77,7 @@
 
 ## Verdict
 
-**TRAINING IN PROGRESS** — seed7 arms (op_plaince, obj_only) PASS descent_gate. op_obj seed7 training live. Seeds 4302/4303 pending. G0-G6 evals pending.
+**TRAINING IN PROGRESS** — seed7 ALL DONE (4/4 DESCENT). seed4302 ALL DONE (4/4 DESCENT). seed4303 training (3 arms parallel). G0-G6 evals pending after seed4303 completes.
 
 *Results will be filled in upon completion.*
 
