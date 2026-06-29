@@ -47,11 +47,11 @@
 | obj_only | 7 | 0.849 | ✓ 4/4 | ✓ PASS (1.709 < 5.545) | 1.343 | 1.204 | 2077.4 |
 | obj_only | 4302 | — | — | — | — | — | — |
 | obj_only | 4303 | — | — | — | — | — | — |
-| op_obj | 7 | ⏳ training | — | — | — | — | — |
+| op_obj | 7 | 0.766 | ✓ 4/4 | ✓ PASS (1.401 < 5.545) | 1.254 | 1.436 | 2067.2 |
 | op_obj | 4302 | — | — | — | — | — | — |
 | op_obj | 4303 | — | — | — | — | — | — |
 
-*op_plaince seed7 PASS (descent_gate 13:12 UTC). obj_only seed7 PASS. op_obj seed7 started GPU0 ~13:12 UTC (step 1 confirmed). Seeds 4302/4303 follow sequentially after seed7 completes.*
+*All seed7 arms COMPLETE: op_plaince PASS (1.438, 13:12 UTC), obj_only PASS (1.709, ~13:32), op_obj PASS (1.401, ~13:47). Seeds 4302 training now (op_plaince+obj_only parallel ~13:47 UTC). op_obj seed4302 follows after. Seed4303 follows seed4302.*
 
 ---
 
