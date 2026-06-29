@@ -410,6 +410,7 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: HF org `dancinlab` 에 올린 모델/데이터셋은 ARCHITECTURE.json models/datasets 에 1줄 등록(repo_id · arch/size · tier·base) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 HF 업로드 AND sha256 확인 후에만.
   (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.)
 - do: **모델 사이즈별 tier registry**(2026-06-26 오너): tier 별 canonical 명시. 현 chat canonical=**clm303_clean**(303M, held-out 4/4 DESCENT). 모델마다 hexa+py 2-engine 둘 다 등록.
+- do: **🔢 모델·데이터셋 = 아키텍처-family SemVer `version`**: ByteGPT x.x·ConvMoE x.x. 박제 = HF repo_id + 내부 레지스트리(ARCHITECTURE.json `models[]`/`datasets[]`) 둘 다. bump=`sidecar model set <id> version <x.y>`.
 - do: **모델 관리 = `sidecar model`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `models[]`(3축 gates 검증충족도·progress 진행·features 특징; MODELS.jsonl scatter 폐기). 상세=`commands/model.md`.
 - do: **데이터셋 관리 = `sidecar dataset`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `datasets[]`(4칸 lang×register·rows·lang_verified, a_chat_registers; byte-불변 splice). 상세=`commands/dataset.md`.
 - dont: 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).
