@@ -1,8 +1,8 @@
 # H_1818 — Co-trained LIVE-RETAINED Hadamard Bind Op: G1/G6 lift screen
 
 **date:** 2026-06-29  
-**pod:** vast.ai A6000, pod 43053585 (~$1.6 total)  
-**scope:** DIRECTIONAL (py 2-production = retired 2026-06-28; sufficient for floor/lift screen)  
+**pod:** vast.ai 2× A40, pod 43051219 ($0.574/h, @clm303-noverfit-retrain hexa-cloud managed)  
+**scope:** DIRECTIONAL (py 2-production engine, engine-native-py G0-G6)  
 **wired:** engine-native-eligible — clm_decode.py CLMB-extended (commit e17c2890f), bind LIVE at decode
 
 ---
@@ -49,14 +49,18 @@
 
 ### Held-out val-CE (DESCENT gate)
 
-| arm | seed | ko-general | en-general | ko-sns | en-sns | pooled | 4/4? |
-|-----|------|-----------|-----------|--------|--------|--------|------|
-| bind | 7 | — | — | — | — | — | PENDING |
-| bind | 4302 | — | — | — | — | — | PENDING |
-| bind | 4303 | — | — | — | — | — | PENDING |
-| ctrl | 7 | — | — | — | — | — | PENDING |
-| ctrl | 4302 | — | — | — | — | — | PENDING |
-| ctrl | 4303 | — | — | — | — | — | PENDING |
+Note: val_CE far below uniform (5.545) indicates small-corpus memorization (4MB × 2000 steps × batch 8 × seq 1024 ≈ 4× corpus repeat). Descent gate passes (val < uniform) but overfit is present (per H_1579 precedent). G0-G6 verdict is informative: overfit models that memorize still floor on G1 (recombination requires true composition, not recall).
+
+| arm | seed | pooled val_CE | 4/4? | lossF | wall_s |
+|-----|------|--------------|------|-------|--------|
+| bind | 7 | 0.842 | YES ✓ | 1.120 | 957s |
+| bind | 4302 | 0.814 | YES ✓ | 1.112 | 955s |
+| bind | 4303 | 0.848 | YES ✓ | 1.114 | 954s |
+| ctrl | 7 | 0.875 | YES ✓ | 1.180 | 939s |
+| ctrl | 4302 | 0.888 | YES ✓ | 1.178 | 938s |
+| ctrl | 4303 | 0.879 | YES ✓ | 1.181 | 938s |
+
+All 6 arms: 4/4 DESCENT (held-out val_CE < ln256=5.545). Overfit warning: val_CE << 1 nit = corpus memorization (small 4MB corpus, 2000 steps). bind arm lossF ~1.11 < ctrl ~1.18 (bind trains to lower CE). G0-G6 evaluation pending (engine-native-py evaluate.py, 6 processes running).
 
 ### G0-G6 engine-native-py results
 
@@ -73,9 +77,16 @@
 
 ## Verdict
 
-**PENDING** — GPU run in progress (pod 43053585, ~$1.6 A6000).
+**TRAINING COMPLETE — G0-G6 EVAL RUNNING** (pod 43051219, 6 evaluate.py processes).
 
-Expected ~2h from job start. Background poll will trigger RESULT.md update.
+Training: all 6 arms (bind/ctrl × 3 seeds) done. 4/4 DESCENT. bind lossF ~1.11, ctrl ~1.18.
+G0-G6 results: pending (engine-native-py evaluate.py, gen=80, multiseed). Update to follow.
+
+Note: 2000 steps may be insufficient (aa7933 precedent: INCONCLUSIVE-at-floor at 2000 steps).
+H_1819 runs 4000 steps with L_recomb — this is the decisive follow-on.
+
+Expected outcome based on toy Task B: G1=0 for bind (trunk memorizes, bilinear bypassed)
+even with CLMB retained — confirming that L_recomb is the missing piece (H_1819).
 
 ---
 
