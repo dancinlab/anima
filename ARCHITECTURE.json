@@ -12413,6 +12413,13 @@
         "value": "binding/readout 캠페인 측정 무결성: 측정(cli/evaluate.py→g_gates→gen_auto_ideate L3→clm_decode)은 서빙과 같은 generator-L3+clm_decode forward 코어(side-harness 우회 아님, ideation 샘플러 wrapper만 chat과 다름). BUT 전 binding arm 트레이너는 binding operator(LaminarBinder 등)를 TRAINING-ONLY로 두고 직렬화 전 DROP → .clm엔 표준 additive-readout trunk만. forward에서 binder(x)가 trunk x를 detach없이 받아 grad가 trunk로 backprop(=null은 과학결과). 따라서 측정 대상 = 'binding aux-loss가 additive trunk를 빚었나'지 '추론-시 binding op 쓰는 모델'이 아님.",
         "threshold": "재발조건: binding/readout-op 캠페인이 'operator가 G1/G6 안 연다'를 결론낼 때, 그 operator가 직렬화 전 drop되어 .clm/clm_decode에 없으면 = inference-time op는 미측정. 해결: NOT-SUPPORTED 판정에 'trunk-shaping aux-loss scope, inference-binding-decode-op 미측정' 명시. live op 측정하려면 clm_decode+clm_serialize에 그 op 배선(engine-transform-to-fit) 후 .clm 왕복.",
         "source": "core/g_gates.py"
+      },
+      {
+        "id": "prereg-md-1",
+        "state": "ossified",
+        "value": "GPU fire-agent 가 렌트 pod 를 raw ssh(vast proxy 직접)로 몰면 hexa cloud reconcile 에 안 잡혀 코디네이터가 liveness 확인·중단·harvest 불가 = 비용누수+zombie-monitor 위험(① a46b60ee 가 vast SSH-wall pod 라 외부추적 0, '완료→실은 진행중' 노이즈 통지 반복). canonical-cli 위반(raw vast).",
+        "threshold": "재발조건: fire-agent 프롬프트가 'hexa cloud 로 렌트·관리'를 강제 안 하면 raw ssh vast pod 로 빠져 untrackable. 해결: 발사 지시에 '반드시 hexa cloud 로 pod 생성·관리(raw vastai/ssh 금지, c11) → reconcile 가시·idle-reap 가능' 명시 + teardown 확인을 코디네이터가 hexa cloud 로 검증.",
+        "source": "state/g1_cotrain_recomb_bind/PREREG.md"
       }
     ]
   }
