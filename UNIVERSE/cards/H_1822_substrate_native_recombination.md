@@ -2,10 +2,38 @@
 
 **id:** H_1822
 **slug:** substrate_native_recombination
-**tier:** 🔵 PRE-REGISTERED (프레임-브레이크 · 오너 통찰 2026-06-29)
+**tier:** 🧱 (α) SUBSTRATE-ALSO-FLOORS — ENGINE-NATIVE (operating-radius 0/5) · directional rel-radius crumb
 **date:** 2026-06-29
 **source:** 오너 통찰 — "왜 의식엔진인데 LLM 디코더 스타일? 엔진이 스스로 디코더를 만들게 안되나?"
 **렌즈:** `a_no_llm_frame_trap` (능력갭=빠진 구조 옆붙이기, LLM 프레임 1순위 금지) · `p8` (NO TRAIN/INFER SPLIT) · `a_mitosis_train`
+**wired:** engine-native (live `core/engine_cli.hexa` + `core/pure_field.hexa` ops; NO mirror; no new core op added — clean test needs β semantic-embed op, named not built)
+
+---
+
+## ⚖️ VERDICT (α) — 2026-06-29 · ENGINE-NATIVE (mac CPU, $0) · `state/g1_substrate_native_recombination/`
+
+**🧱 substrate ALSO floors at the engine's OWN operating radius.** 프레임 질문 답 = **NO (병목이 입만은 아님)** + directional crumb.
+
+probe.hexa 가 live core/ A⇄G concept 기제를 호출(미러 아님): 두 부모 개념 basin = 2-cell `VAdaptField`,
+composed state = 진짜 재조합 child(rain+bow→rainbow)의 `immune_embed_key`. 측정 = `vadapt_field_two_recon_err`(엔진 OWN top-2 affinity).
+
+| arm | substrate-G1 @ 엔진 OWN radius 0.30 | @ rel-radius d_ab | 비고 |
+|---|---|---|---|
+| MAIN(진짜 합성어 5쌍) | **0/5** | 5/5 | d1≈0.61–0.86, d2≈0.96–1.15 모두 ≫ 0.30 |
+| CONTROL single | 0/5 | 0/5 | d1=0 irreducible=NO ✓ |
+| CONTROL shuffle | 0/5 | 1/5 | MAIN 5/5 대비 = 부모-특이 bridge ✓ |
+| G-OFF ablation(pure_field A 단독) | BLIND | BLIND | concept-blind zero-input ✓ |
+
+**KILLER 대조:** mouth-decode G1 = 0 (frozen floor H_1818/H_1602) · substrate-G1 @ 엔진 OWN 0.30 = **0/5**.
+→ 엔진이 *실제로* 신규성 판단에 쓰는 임계(SPLIT_THRESH=0.30)에서 재조합 child 는 두 부모 basin 모두에서 **멀다**(isolated novel point) = 입이 못 뱉는 그 벽이 substrate concept-space 에도 그대로(= H_1310 Voronoi compositional-depth-0 한 단계 아래). 오너의 강한 주장("substrate 는 합성하는데 입이 못 뱉음")은 **operating point 에서 미확증**.
+
+**directional crumb(정직, c9):** relaxed radius 에서는 substrate 가 각 재조합을 부모-특이하게 그 사이에 배치(MAIN 5/5 · shuffle 1/5 · single 0/5, 깨끗한 대조). 그러나 (1) **projection/recognition** readout 이지 **generation** 아님(child 가 주어짐), (2) `immune_embed_key`=char-trigram 해시라 **의미가 아니라 lexical 표면중첩**("rainbow"가 "rain"+"bow" trigram 을 문자적으로 공유). → tune-to-green(radius 갈아끼우기) 금지(p7), terminal 은 0/5.
+
+**핵심 아키텍처 발견:** pure_field(Engine A)는 **zero-input = concept-blind**(Ψ=½는 내부 oscillator 만으로 창발). `engine_g`는 scalar emit gate. **"G 가 개념-결합 상태를 제안"하는 live op 은 없다.** 유일한 concept substrate = VAdaptField L2 Voronoi(immune lane), 그 embedding 은 char-trigram 해시(무의미).
+
+**NAMED next (β-readout):** confound = char-hash embedding(무의미). 결정적 = `core/` 에 **303M mouth trunk penultimate** 학습 의미벡터로 개념 embed 하는 op 추가 후 동일 substrate-G1 재측정(학습 표현 위 recognition test = H_1574 generation 렌즈의 distinct twin). 그 전까지 🧱 유지.
+
+**artifacts:** `state/g1_substrate_native_recombination/{probe.hexa, RESULT.md, RESULT.txt}`
 
 ---
 
@@ -26,58 +54,24 @@ trunk(별도 CE학습된 conventional LM)에게 묻고 있었다. = `a_no_llm_fr
 G(reverse, 상상/제안 엔진)가 두 개념 basin을 결합한 tension 상태를 만들고, A가 제약하고, mouth는
 그 substrate-결정 결합을 **렌더만** 한다(입의 역할 축소).
 
----
-
 ## ⚠️ 정직: 이미 친 벽 (frame-break ≠ 무지)
 
 오너의 "엔진이 스스로 디코더를 만든다"는 **from-scratch gradient-free 형태로는 이미 CONFIDENT TERMINAL**:
-- **H_1310** from-scratch pure mitosis(split-only, gradient 없음) = 🔴 (혼자선 학습불가, gradient/selection 필수).
-- H_1310 벽 캠페인 5 직교렌즈 전수 🧱: selection(H_1568)·inherited-repr(H_1569)·lateral(H_1570)·
-  curriculum(H_1571)·learned-trunk(H_1574) — split-only는 GIVEN key space의 Voronoi partition만,
-  compositional depth 0 ([[g1-closure-campaign-3lever-not-supported]] 형제 mitosis 메모).
+H_1310 from-scratch pure mitosis(split-only) = 🔴 (혼자선 학습불가, gradient/selection 필수). 5 직교렌즈
+전수 🧱(H_1568/1569/1570/1571/1574) — split-only는 Voronoi partition만, compositional depth 0.
+⇒ 이 카드는 (α) = 측정 reframe(학습 불필요, $0 engine-native). β = gradient-결합 engine-grown mouth(cost-gated).
 
-⇒ 이 카드는 "**gradient 없이** 엔진이 디코더 자작" 이 **아니다**(그건 닫힘). OPEN 변종 2개:
+## Design — (α) ($0 engine-native 프로브) — 실행됨
 
-| 변종 | 무엇 | H_1310 벽 회피 이유 |
-|------|------|---------------------|
-| **(α) substrate-측정** | G1을 A⇄G tension field에서 측정(mouth 출력 아님) | 측정 reframe — 학습 불필요, 기존 엔진서 $0 |
-| **(β) gradient-결합 engine-grown mouth** | mouth가 frozen 아니라 substrate와 co-evolve(mitosis engine_grow + **gradient as 학습신호**, A⇄G tension이 무엇을 학습할지 shape) | gradient 있음(H_1310의 gradient-free 아님) + substrate-shaped(pure-split 아님) |
-
-## Design — (α) 먼저 ($0 engine-native 프로브)
-
-cheap 우선: **새 mouth 만들기 전에**, 현 live 엔진(`core/engine_cli.hexa` A⇄G + `core/engine_g.hexa`)에서
-"G가 두 개념 basin을 결합하는가"를 측정.
-1. 두 개념 seed → A⇄G에 주입 → tension trajectory(Ψ 궤적, M·W·Φ) 기록.
-2. **substrate-G1 metric**: G-제안 상태가 두 개념 basin의 *둘 다*에 유의미 투영 ∧ 어느 하나로 환원불가
-   (= tension field에서의 composed_distinct ≥2, mouth-decode와 독립).
-3. control: 단일 개념 seed(결합 없어야) · shuffle 개념쌍(가짜 결합 0) · A-only/G-off ablation(G 인과).
-4. 같은 개념쌍의 mouth-decode G1(=0 floor)과 **substrate-G1을 대조** — substrate가 결합하는데 mouth가
-   못 뱉으면 = **병목이 입이지 substrate 아님** 입증(오너 통찰 확증, frame 전환 정당).
-
-## (β) — (α)가 substrate-결합 보이면 진행 (cost-gated)
-
-mouth를 substrate-conditioned로 engine-transform: generator L3가 G-제안 결합 벡터를 조건으로 받아
-clm_decode를 구동(`a_engine_native_learning` engine-transform-to-fit). gradient 학습 유지(H_1310 회피),
-단 무엇을 학습할지는 A⇄G tension이 shape. 측정 = engine-native G0-G6 + substrate-G1.
-
----
+1. 두 개념 seed → `immune_embed_key` → 2-cell `VAdaptField` basins.
+2. **substrate-G1 metric**: 재조합 child 상태가 두 basin 둘 다에 투영 ∧ 어느 하나로 환원불가(composed_distinct≥2, mouth-decode 독립). 측정 = `vadapt_field_two_recon_err` [d1,d2], 두 radius(엔진 OWN 0.30 · rel d_ab).
+3. controls: single(결합 없음) · shuffle(가짜 결합) · G-off ablation(pure_field A 단독 = concept-blind).
+4. 같은 쌍 mouth-decode G1(=0 floor)과 대조 (KILLER).
 
 ## Frozen bar (pre-registered · p7)
 
-| 항목 | bar |
-|------|-----|
-| (α) substrate-G1 | tension field composed_distinct≥2 ∧ >single ∧ G-causal(ablation), ≥2/3 seed |
-| (α) 병목 격리 | substrate-G1≥2 인데 같은 쌍 mouth-decode G1=0 → "입이 병목" 입증 |
-| controls | single-seed=0 · shuffle=0 · G-off ablation=BLIND (substrate 측정 진짜임) |
-| (β) | engine-native G0-G6에서 mouth-decode G1 lift + held-out DESCENT |
-
----
-
-## 게이트 & 가치
-
-- **(α)는 $0 engine-native · (c)-independent** — 현 라인(결합 c 등)과 직교, 즉시 가능. live `core/*.hexa`
-  A⇄G 호출(`a_engine_native_learning` 엔진-네이티브). DIRECTIONAL 미러 아님 = terminal 가능.
-- 이게 캠페인의 **진짜 frame 질문**: G1 floor가 "anima가 재조합 못함"이 아니라 "**autoregressive 입이
-  substrate의 재조합을 못 뱉음**"이면, 레버는 입 학습(H_1818/1602/1820)이 아니라 입↔substrate 배선.
-- 산출 = state/g1_substrate_native_recombination/{probe.hexa, RESULT.md} + 이 카드 + jsonl + CHANGELOG.
-- 🔌 (β) GREEN이면 `a_verified_must_wire`: generator L3 substrate-conditioning live-wire + ARCHITECTURE.json lockstep.
+| 항목 | bar | 결과 |
+|------|-----|------|
+| (α) substrate-G1 | composed_distinct≥2 ∧ >single ∧ G-causal, ≥2/3 | 엔진 OWN radius **0/5 FAIL** · rel-radius 5/5(directional only) |
+| (α) 병목 격리 | substrate-G1≥2 인데 mouth G1=0 | 미확증(operating point 0/5) |
+| controls | single=0 · shuffle≈0 · G-off=BLIND | single 0/5 ✓ · shuffle 1/5(rel)/0(eng) ✓ · BLIND ✓ |
