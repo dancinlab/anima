@@ -62,41 +62,40 @@ Note: val_CE far below uniform (5.545) indicates small-corpus memorization (4MB 
 
 All 6 arms: 4/4 DESCENT (held-out val_CE < ln256=5.545). Overfit warning: val_CE << 1 nit = corpus memorization (small 4MB corpus, 2000 steps). bind arm lossF ~1.11 < ctrl ~1.18 (bind trains to lower CE). G0-G6 evaluation pending (engine-native-py evaluate.py, 6 processes running).
 
-### G0-G6 engine-native-py results
+### G0-G6 engine-native-py results (2026-06-29, pod 43051219)
 
-| arm | seed | G0 kwr | G1 composed_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
-|-----|------|--------|---------------------|---------------|---------|---------|------|
-| bind | 7 | — | — | — | — | — | — |
-| bind | 4302 | — | — | — | — | — | — |
-| bind | 4303 | — | — | — | — | — | — |
-| ctrl | 7 | — | — | — | — | — | — |
-| ctrl | 4302 | — | — | — | — | — | — |
-| ctrl | 4303 | — | — | — | — | — | — |
+| arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G2 novel | G5 fab | G6 dist | G6 fals | a7b? |
+|-----|------|--------|-----|-----------------|---------------|----------|--------|---------|---------|------|
+| bind | 7 | 5/5 | PASS | 0 | 0 | 0 | 0.4133 | 4 | 0 | FAIL |
+| bind | 4302 | 2/5 | FAIL | 0 | 0 | 0 | 0.5634 | 5 | 0 | FAIL |
+| bind | 4303 | 1/5 | FAIL | 0 | 0 | 0 | 0.5538 | 1 | 0 | FAIL |
+| ctrl | 7 | 4/5 | PASS | 0 | 0 | 0 | 0.5067 | 2 | 0 | FAIL |
+| ctrl | 4302 | 4/5 | PASS | 0 | 0 | 0 | 0.5000 | 2 | 0 | FAIL |
+| ctrl | 4303 | 4/5 | PASS | 0 | 0 | 0 | 0.4750 | 4 | 0 | FAIL |
+
+**LIFT test:** bind G1=0 == ctrl G1=0 for all 3 seeds → NO LIFT.  
+**G0 degradation:** bind passes 1/3 seeds (seed7 only) vs ctrl 3/3 — bilinear decode without L_recomb degrades coherence.
 
 ---
 
 ## Verdict
 
-**TRAINING COMPLETE — G0-G6 EVAL RUNNING** (pod 43051219, 6 evaluate.py processes).
+**🔴 NOT-SUPPORTED** (2026-06-29, engine-native-py, py 2-production)
 
-Training: all 6 arms (bind/ctrl × 3 seeds) done. 4/4 DESCENT. bind lossF ~1.11, ctrl ~1.18.
-G0-G6 results: pending (engine-native-py evaluate.py, gen=80, multiseed). Update to follow.
+- **G1=0 floor for ALL 6 arms** (bind ×3 + ctrl ×3, all seeds) — bilinear bind op at decode without explicit recombination training signal does not lift composed_distinct above zero.
+- **G6 fals=0 for ALL 6 arms** — no falsifiable ideas in either arm.
+- **G0 degradation in bind arm:** only 1/3 seeds pass G0 coherence (seed7 5/5; seeds 4302/4303 fail at 2/5 and 1/5) vs ctrl 3/3 PASS — bilinear Hadamard readout without L_recomb creates distribution mismatch that hurts coherence for some seeds.
+- CONFIRMS toy Task B analysis: trunk memorizes CE without using bilinear when no compositional pressure applied.
+- **The missing piece is L_recomb InfoNCE objective** — requires co-training with explicit recombination signal to force the trunk to learn binding-useful representations. That is the decisive test in **H_1819** (op_obj = bind + L_recomb together).
 
-Note: 2000 steps may be insufficient (aa7933 precedent: INCONCLUSIVE-at-floor at 2000 steps).
-H_1819 runs 4000 steps with L_recomb — this is the decisive follow-on.
-
-Expected outcome based on toy Task B: G1=0 for bind (trunk memorizes, bilinear bypassed)
-even with CLMB retained — confirming that L_recomb is the missing piece (H_1819).
+wired: engine-native-py (DIRECTIONAL; hexa engine-native would require `core/clm_decode.hexa` CLMB wiring — NOT needed given NOT-SUPPORTED verdict).
 
 ---
 
 ## Escalate / Stop call
 
-**IF** bind-ON lifts G1 composed_distinct≥2 AND >max_single ≥2/3 seeds:
-→ ESCALATE: wiring `core/clm_decode.hexa` + `core/clm_serialize.hexa` CLMB lockstep (`a_verified_must_wire` rung 3) → TERMINAL verdict requires hexa engine-native G0-G6.
-
-**IF** null (G1=0 for both bind and ctrl):  
-→ STOP H_1818 as NOT-SUPPORTED. Next: H_1602 recombination objective + live bind op together (the untested 3rd arm per toy derisk Task B failure mode).
+**STOPPED** — G1=0 for all arms, no escalation warranted.  
+→ H_1819 (bind + L_recomb co-training, 4000 steps, 3 arms PREREG, pod 43051219 training now) is the decisive follow-on.
 
 ---
 
