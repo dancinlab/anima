@@ -63,3 +63,30 @@ Engine path TERMINAL (py 2-production numpy, grep-clean of `import torch|gauge_l
 **wired:** `engine-native (py 2-production, byte-faithful clm_decode.py); FALSIFIES depth-lever; no
 core/ change to wire (negative result). follow-on: G1 lever = recombination-objective or frame-prime,
 not depth (next H).` ckpt PRESERVED on mini `~/anima-weights/clm303_deep_L8/` (.pt+.clm sha-verified).
+
+## DEEP-RF lane closure (ING #42492882 / ab75 numpy-reach DIRECTIONAL hint) — 2026-06-30
+
+This card **also settles the deep-RF / receptive-field lever** raised by ING #42492882
+(orthogonal-family #3 in [[g1-closure-campaign-3lever-not-supported]] line 37 ③): "production
+.clm conv trunk has tiny RF → two concepts at distance D>RF are mathematically independent →
+cannot recombine; the numpy `conv_L8 reach=1.47e-3 REACHABLE` hint was never engine-fired at
+full 303M." It **was** — this is that fire.
+
+**RF quantified** (CausalDilatedConv1d, K=3, dilation=min(2^i,512), `train/clm/model/model.py`):
+embed_conv(+2) + Σ trunk layers(+2·dil_i) + moe expert(+2):
+- **L1 RF = 7 tokens** (the assignment's "tiny RF" — correct, but L1 is NOT production)
+- **L4 RF = 35 tokens** (production clm303 — the frozen G1=0 baseline `1588_g1_multiseed_refmatch`)
+- **L8 RF = 515 tokens** (this ckpt — the numpy `conv_L8` REACHABLE arm, RF spans a full window)
+
+**The RF-bound theory predicts its LARGEST lift exactly in the L4→L8 range** (RF 35→515, a 15×
+expansion crossing from RF<window to RF≥window — past any plausible inter-concept distance D).
+The engine-native, held-out-DESCENT-validated, multiseed result moved G1 by **ZERO** there
+(L8 == L4, max_single=0, 0/3 seeds). So the numpy `reach=1.47e-3` DIRECTIONAL hint is
+**falsified at engine-native scale** (a_toy_scale_recheck: numpy-positive ≠ engine-confirmed —
+and here it is engine-DISconfirmed). An L1-vs-L8 fire (the assignment's exact framing) was NOT
+spent: L1 (RF 7 < L4's 35) can only floor *harder*, and the killer control already triggered —
+"L8 ALSO floors ⇒ RF is NOT the lever, strengthening trunk-objective terminal" — so re-renting a
+pod to confirm the trivial L1 floor would be redundant spend on a settled engine-native TERMINAL
+(a_break_the_wall: do not re-fire an INERT controlled-ablation lever; a_fire_autonomous cost
+discipline). **Deep-RF / receptive-field lever = closed FALSIFIED, no new H_id (this card is its
+2-doc surface).** Convergence with the campaign: G1 wall is trunk-**objective**-bound, not RF-bound.
