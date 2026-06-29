@@ -41,15 +41,17 @@
 
 | arm | seed | pooled val_CE | 4/4? | lossF | l_recomb_final | wall_s |
 |-----|------|--------------|------|-------|----------------|--------|
-| op_plaince | 7 | — | — | — | N/A | — |
+| op_plaince | 7 | 0.627 | ✓ 4/4 | 1.072 | N/A | 2018.6 |
 | op_plaince | 4302 | — | — | — | N/A | — |
 | op_plaince | 4303 | — | — | — | N/A | — |
-| obj_only | 7 | — | — | — | — | — |
+| obj_only | 7 | 0.849 | ✓ 4/4 | 1.343 | 1.204 | 2077.4 |
 | obj_only | 4302 | — | — | — | — | — |
 | obj_only | 4303 | — | — | — | — | — |
 | op_obj | 7 | — | — | — | — | — |
 | op_obj | 4302 | — | — | — | — | — |
 | op_obj | 4303 | — | — | — | — | — |
+
+*Note: op_plaince/obj_only seed7 training complete (2026-06-29 ~12:46 UTC). op_obj seed7 training starting after descent_gate verification (~13:00 UTC). Seeds 4302/4303 follow sequentially.*
 
 ---
 
