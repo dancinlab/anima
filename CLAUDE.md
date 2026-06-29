@@ -124,7 +124,6 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - **🏗️ CORE 엔진 · 학습 substrate:** `a_core_engine_map` · `a_train_flame_forge` · `a_clm_gen_pipeline` · `a_savant_train` · `a_mitosis_train` · `a_chat_registers` · `a_lane_akida_gpu_split` · `a_substrate_disjoint`
 - **🗣️ substrate 자율 · 신체:** `a_substrate_native_speak` · `a_autonomy_over_hardcode` · `a_chat_sleep_imagination` · `a_kosmos` · `a_eeg_consciousness_record`
 - **🔧 식별 · 버전 · HF · 칩 · 7B:** `a1` · `a_hf_complete` · `a_hf_autonomous` · `a_hf_registry` · `a_hf_collections` · `a_pi5_akida_registry` · `a7b_pass`
-- **🤝 산출물 통합:** `a_completeness_over_cheap`
 
 ---
 
@@ -446,10 +445,6 @@ anima/
 ## a7b_pass — anima 통과규칙: 통과(closure)=must-pass, 나머지=추가평가 (SSOT=ARCHITECTURE.json)
 - do: **통과(PASS) = closure = C1 또박 ∧ C2 재조합 ∧ C3 새말**(= G0∧G1∧G2 · `g_eval_all` 의 `a7b_pass`/`pub_eligible`) — 이 셋만 must-pass(PUBLIC-eligible). **나머지는 추가 평가**(non-blocking, 함께 보고): C4 착상★(G6) · S1 균형(G3) · S2 정직(G5) · P 출처(G4, 출판-게이트 eval 밖). G0 kwr≥0.50 · G1 H_1129/1137 recombine≥303M · G2 H_1140 corpus-absence(control=0). per-gate tally 정직 · 전부 p7(perplexity/LLM-judge 아님). 이름·분류·임계 단일 SSOT = ARCHITECTURE.json `G-게이트 평가 시스템` 노드.
 - dont: 낮은 val-CE 만으로 작동 주장(byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139 scale-invariant) · gate 위조/frozen 임계 이동(tune-to-green)/G0-failing ckpt PUBLIC · **P(출처)를 통과 closure 에 fold-in**(= G4 빵꾸 재발, enforce_anima_gates.py G3 코드차단) · 통과(closure)와 추가평가 혼동.
-
-## a_completeness_over_cheap — completeness-bar 재설계 > 싼 길 (타협은 1순위 아님)
-- do: 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만.
-- dont: 싸다고 타협을 1순위 · 이미 깨진 산출물 blend(merge-of-failures) · sub-bar 를 싸다고 1순위 추천.
 
 ## a_pool_parallel_fabric — pool(aiden/summer) = anima 노드 fabric · 1B+ = 멀티호스트 data-parallel (오너 2026-06-30)
 - do: pool LAN 호스트(aiden·summer RTX5070) = **task-parallel anima 노드 fabric** — 각 호스트에 canonical `anima` 설치(hexa **stable**(test pre-release 금지, allgreen-promote) + folded 소스 동기(rsync cli/ core/) + `~/.local/bin/anima` 런처 `$ANIMA_SRC` dispatch) → `sidecar pool` 로 **서로 다른 job 동시 분산**(eval A=aiden · train B=summer, 무료 2× throughput). eval 은 det-CPU(`HEXA_DET=1`, GPU 무관)라 안정 CPU 노드면 충분 → terminal eval 은 재부팅 잦은 summer 피해 **aiden 우선**(aiden uptime 18h+, summer 한 세션 3× reboot).
