@@ -42,16 +42,16 @@
 | arm | seed | pooled val_CE | 4/4? | descent_gate (heldout_ce) | lossF | l_recomb_final | wall_s |
 |-----|------|--------------|------|---------------------------|-------|----------------|--------|
 | op_plaince | 7 | 0.627 | ✓ 4/4 | ✓ PASS (1.438 < 5.545) | 1.072 | N/A | 2018.6 |
-| op_plaince | 4302 | — | — | — | — | N/A | — |
+| op_plaince | 4302 | 0.639 | ✓ 4/4 | ✓ PASS (1.577 < 5.545) | 1.067 | N/A | 1906.1 |
 | op_plaince | 4303 | — | — | — | — | N/A | — |
 | obj_only | 7 | 0.849 | ✓ 4/4 | ✓ PASS (1.709 < 5.545) | 1.343 | 1.204 | 2077.4 |
-| obj_only | 4302 | — | — | — | — | — | — |
+| obj_only | 4302 | 0.809 | ✓ 4/4 | ✓ PASS (descent all 4/4) | 1.365 | 1.216 | 1930.5 |
 | obj_only | 4303 | — | — | — | — | — | — |
 | op_obj | 7 | 0.766 | ✓ 4/4 | ✓ PASS (1.401 < 5.545) | 1.254 | 1.436 | 2067.2 |
-| op_obj | 4302 | — | — | — | — | — | — |
+| op_obj | 4302 | — | — | TRAINING (step ~1700/4000) | — | — | — |
 | op_obj | 4303 | — | — | — | — | — | — |
 
-*All seed7 arms COMPLETE: op_plaince PASS (1.438, 13:12 UTC), obj_only PASS (1.709, ~13:32), op_obj PASS (1.401, ~13:47). Seeds 4302 training now (op_plaince+obj_only parallel ~13:47 UTC). op_obj seed4302 follows after. Seed4303 follows seed4302.*
+*seed7 ALL DONE (4/4 DESCENT each). seed4302: op_plaince+obj_only DONE (4/4 DESCENT), op_obj training (step ~1700/4000, ~14:35 UTC). seed4303 follows after op_obj_seed4302 completes.*
 
 ---
 
