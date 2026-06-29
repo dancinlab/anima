@@ -126,7 +126,12 @@ fn anima_train_mode(argv: [string]) {
     let mut fwd = ""
     let mut i = 1
     while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "hexa run cli/train.hexa --" + fwd
+    // LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd, not the source
+    // root): resolve the sibling cli/train.hexa via $ANIMA_SRC (the launcher / setup.hexa
+    // exports the anima source root), falling back to "." for a direct `hexa run
+    // cli/anima.hexa` from the repo root. Without this, `anima train` from a workdir fails
+    // "source file not found: cli/train.hexa" (the eval/train args stay cwd-relative).
+    let cmd = "hexa run \"${ANIMA_SRC:-.}/cli/train.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     println(out)
@@ -175,7 +180,9 @@ fn anima_evaluate_mode(argv: [string]) {
     // evaluate sub-process — even when this entry is reached via a direct `hexa run
     // cli/anima.hexa -- evaluate …` that bypassed the bin/anima launcher (e.g. eval_pod.sh).
     // The TRAIN dispatch (anima_train_mode) deliberately does NOT set it = stays fast.
-    let cmd = "HEXA_DET=1 hexa run cli/evaluate.hexa --" + fwd
+    // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/evaluate.hexa via
+    // $ANIMA_SRC so `anima evaluate` works from any cwd (ckpt/corpus args stay cwd-relative).
+    let cmd = "HEXA_DET=1 hexa run \"${ANIMA_SRC:-.}/cli/evaluate.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
@@ -200,7 +207,8 @@ fn anima_serialize_mode(argv: [string]) {
     // path whose model_ce<uniform decision must be reproducible. FORCE HEXA_DET=1 so the
     // forge GEMM stays bit-identical (the #4208 fast atomic kernels are non-det). TRAIN
     // is the only fast-default path.
-    let cmd = "HEXA_DET=1 hexa run cli/serialize.hexa --" + fwd
+    // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/serialize.hexa via $ANIMA_SRC.
+    let cmd = "HEXA_DET=1 hexa run \"${ANIMA_SRC:-.}/cli/serialize.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)

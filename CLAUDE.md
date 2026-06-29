@@ -450,3 +450,9 @@ anima/
 ## a_completeness_over_cheap — completeness-bar 재설계 > 싼 길 (타협은 1순위 아님)
 - do: 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만.
 - dont: 싸다고 타협을 1순위 · 이미 깨진 산출물 blend(merge-of-failures) · sub-bar 를 싸다고 1순위 추천.
+
+## a_pool_parallel_fabric — pool(aiden/summer) = anima 노드 fabric · 1B+ = 멀티호스트 data-parallel (오너 2026-06-30)
+- do: pool LAN 호스트(aiden·summer RTX5070) = **task-parallel anima 노드 fabric** — 각 호스트에 canonical `anima` 설치(hexa **stable**(test pre-release 금지, allgreen-promote) + folded 소스 동기(rsync cli/ core/) + `~/.local/bin/anima` 런처 `$ANIMA_SRC` dispatch) → `sidecar pool` 로 **서로 다른 job 동시 분산**(eval A=aiden · train B=summer, 무료 2× throughput). eval 은 det-CPU(`HEXA_DET=1`, GPU 무관)라 안정 CPU 노드면 충분 → terminal eval 은 재부팅 잦은 summer 피해 **aiden 우선**(aiden uptime 18h+, summer 한 세션 3× reboot).
+  - **`anima` 위치-독립 = fabric 토대**(2026-06-30 fix): anima.hexa 의 train/evaluate/serialize dispatch 가 `$ANIMA_SRC` 로 sibling cli/*.hexa 해석 → 어느 cwd 에서든 `anima` 작동해야 노드 됨(예전 cwd-상대 dispatch 는 작업폴더서 "source not found").
+- do: **1B+ 모델**(한 GPU VRAM 초과) = **멀티호스트 data-parallel** — aiden+summer 2노드 torch DDP over LAN(torchrun `--nnodes=2 --nproc_per_node=1` + gloo/nccl TCPStore clique, `NCCL_SOCKET_IFNAME=<LAN iface>`, 동일 ckpt/corpus mac 릴레이 마운트). 303M(한 GPU 에 다 들어감)은 task-parallel 만; DDP 는 gradient all-reduce 통신이 **LAN 병목**(NVLink 아님)이라 **1B+ 임계**(모델이 한 GPU 초과할 때)에서만 이득 — 임계 아래면 DDP 가 통신비용으로 느려지기만.
+- dont: 303M(한-GPU-fit)을 멀티호스트 DDP 로(이득 미미·LAN 병목) · `anima` 에 2nd 멀티호스트 진입/명령 추가(멀티호스트 묶기 canonical = `sidecar pool` · commons canonical-cli; anima 는 호스트당 단일진입 유지, `a_install_canonical`) · summer 에 장시간 eval(재부팅 소실 → aiden) · test pre-release hexa 로 측정(측정경로 무결성).
