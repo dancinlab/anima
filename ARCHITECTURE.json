@@ -12427,6 +12427,13 @@
         "value": "side-harness 직접실행 차단을 파일 안 __main__ hard-exit 가드로 구현하면, canonical 경로(hexa)가 그 파일을 subprocess(python3 … descent / serialize bridge)로 정당하게 호출하는 것까지 죽여 production 을 조용히 깨뜨린다. pre_bash 훅은 agent top-level 명령만 후킹하고 프로그램이 spawn 하는 subprocess 는 안 보므로, 직접실행 차단은 .harness/enforcement.json pre_bash 룰(H-ANIMA-SINGLE-ENTRY)에 두고, hexa 가 subprocess 로 부르는 engine-internal py 툴(verify_clm_v2·serialize_standalone)에는 hard 가드 대신 경고주석만 둔다. import-only 파일(clm_serialize_v2·core/*.py)에만 __main__ 가드가 안전(import 는 __main__ 미발화).",
         "threshold": "재발조건: 엔진 파일에 직접실행 차단 가드를 추가할 때. 해결: ① 그 파일이 canonical 경로(.hexa)에서 python3 subprocess 로 불리는지 grep 먼저(불리면 hard __main__ exit 금지) ② 차단은 pre_bash 룰로(subprocess 미후킹) ③ import-only 만 __main__ 가드 ④ 추가 후 canonical anima train/serialize 스모크로 내부 shell-out 무탈 확인",
         "source": "train/clm/model/verify_clm_v2.py"
+      },
+      {
+        "id": "evaluate-hexa-1",
+        "state": "ossified",
+        "value": "hexa det-eval(anima evaluate, HEXA_DET=1) 가 pool 3호스트(aiden CPU-runtime 1.5MB / aiden CUDA-13 / summer CUDA-12 CUDA-fold 4.67MB+marker ON+cuda_available=1) 전부에서 303M gen=80 stall(hexad CPU0%+GPU0%, S 상태). GPU 정석 조건(runtime.a CUDA fold + marker + cuda hexad + cuda_available=1) 맞아도 DEVICE path 안탐 = hexa runtime/CUDA linking 의 deep 측정artifact. det-CPU(non-cuda) 도 303M 비실용. 결론: G1/G6 verdict 는 py 2-production byte-parity(hexa⇄py byte-identical 증명) DIRECTIONAL 로 정직 회귀, terminal hexa = hexa-lang det-eval/GPU-linking upstream-fix(deep) 또는 clean reboot-free CUDA-12 pod(cost) 별도 사이클. G1=0 은 ckpt byte-parity 속성이라 DIRECTIONAL 결론 유효.",
+        "threshold": "재발조건: pool 에서 anima evaluate det-eval 발사할 때. 해결: ① 먼저 py byte-parity DIRECTIONAL 로 회귀(측정경로 무결) ② terminal hexa 필요시 hexa-lang upstream(det-eval GPU-linking) 고치거나 clean CUDA-12 pod ③ 같은 pool det-eval 재시도 금지(3호스트 5× stall 확정)",
+        "source": "cli/evaluate.hexa"
       }
     ]
   }
