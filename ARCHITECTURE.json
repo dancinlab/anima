@@ -1551,6 +1551,38 @@
                     "detail": "GPU-DECODE RULE(a_train_flame_forge, 2026-06-22 5+회 '또 CPU' 재발 방지): decode 는 GPU 기본 — 돌리기 전 cuda_available()(1=GPU/0=CPU)+nvidia-smi util+frag log '[OWN-GEMM-FIRED] DEVICE path' 로 GPU 경로 실측 확인."
                   },
                   {
+                    "name": "EVAL/VERDICT DETERMINISM SAFETY-PIN (HEXA_DET=1, hexa-lang #4208 fast-default follow-on):",
+                    "role": "",
+                    "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-hexadet-pin",
+                    "detail": "#4208 flipped forge polarity — own-native NON-det atomic kernels now DEFAULT (train speed); det kernels opt-in via HEXA_DET=1 (`_forge_det_on()`). anima FORCES HEXA_DET=1 on eval/verdict/decode (G0-G6·Ψ-checksum·byte-parity reproducible); TRAIN is the ONLY fast path. WIRED 4-fold (children).",
+                    "children": [
+                      {
+                        "name": "bin/anima launcher",
+                        "role": "",
+                        "id": "hexadet-pin-launcher",
+                        "detail": "exports HEXA_DET=1 for every verb except train (covers in-process consciousness/--byte decode + inherited by the eval/serialize sub-process dispatch); pre-set HEXA_DET honored (override)."
+                      },
+                      {
+                        "name": "cli/anima.hexa dispatch belt",
+                        "role": "",
+                        "id": "hexadet-pin-hexa",
+                        "detail": "anima_evaluate_mode + anima_serialize_mode prepend HEXA_DET=1 to the exec cmd (belt for direct `hexa run cli/anima.hexa -- evaluate/serialize` that bypass the shim, e.g. eval_pod.sh). anima_train_mode omits it."
+                      },
+                      {
+                        "name": "cli/anima.py twin (lockstep)",
+                        "role": "",
+                        "id": "hexadet-pin-py",
+                        "detail": "spawns evaluate/serialize via spawnve(_det_env()) with HEXA_DET=1; train via spawnv (no pin) = fast."
+                      },
+                      {
+                        "name": "cli/eval_pod.sh",
+                        "role": "",
+                        "id": "hexadet-pin-evalpod",
+                        "detail": "detached eval export line adds HEXA_DET=1 (direct hexa-run launch on the pod, shim-bypassing)."
+                      }
+                    ]
+                  },
+                  {
                     "name": "GPU on/off = ~/.hx/bin/build/runtime.a 내용(CPU~1MB / CUDA-fold~4MB) +",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-4",

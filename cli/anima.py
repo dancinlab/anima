@@ -39,6 +39,19 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(_HERE)
 
 
+# EVAL/VERDICT DETERMINISM SAFETY-PIN (hexa-lang #4208 flame/forge fast-default
+# follow-on) — py twin of cli/anima.hexa's pin (lockstep, a_engine_native_learning).
+# #4208 made the forge own-native NON-det atomic kernels the DEFAULT (training speed);
+# deterministic kernels are opt-in via HEXA_DET=1 (`_forge_det_on()` gate). MEASUREMENT
+# (evaluate) and VERDICT (serialize DESCENT gate) must stay reproducible, so they spawn
+# with HEXA_DET=1 in the env. TRAIN deliberately does NOT force it = fast non-det default.
+def _det_env():
+    """os.environ copy with HEXA_DET=1 pinned (verdict/eval/decode reproducibility)."""
+    env = dict(os.environ)
+    env.setdefault("HEXA_DET", "1")
+    return env
+
+
 # ── usage / arg helpers ──────────────────────────────────────────────────────
 
 def anima_usage():
@@ -114,8 +127,10 @@ def anima_evaluate_mode(argv):
     evaluate_py = os.path.join(_HERE, "evaluate.py")
     cmd = [sys.executable, evaluate_py] + rest
     print("=== anima evaluate → cli/evaluate.py (engine-native G0-G6, single-entry twin) ===")
-    print("dispatch: " + " ".join(cmd))
-    return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, evaluate_py] + rest)
+    print("dispatch: HEXA_DET=1 " + " ".join(cmd))
+    # FORCE HEXA_DET=1 (verdict reproducibility, #4208 safety-pin) via spawnve env.
+    return os.spawnve(os.P_WAIT, sys.executable,
+                      [sys.executable, evaluate_py] + rest, _det_env())
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -132,8 +147,10 @@ def anima_serialize_mode(argv):
     fwd = argv[1:]
     cmd = [sys.executable, serialize_py] + fwd
     print("=== anima serialize → cli/serialize.py (torch .pt → .clm v0.3 + DESCENT gate) ===")
-    print("dispatch: " + " ".join(cmd))
-    return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, serialize_py] + fwd)
+    print("dispatch: HEXA_DET=1 " + " ".join(cmd))
+    # FORCE HEXA_DET=1 (DESCENT-gate verdict reproducibility, #4208 safety-pin).
+    return os.spawnve(os.P_WAIT, sys.executable,
+                      [sys.executable, serialize_py] + fwd, _det_env())
 
 
 # ══════════════════════════════════════════════════════════════════════════════
