@@ -1,0 +1,27 @@
+H_1620 — Energy-settle attractor mouth (Hopfield/predictive-coding relaxation)
+Date: 2026-06-30
+Engine: py 2-production (DIRECTIONAL — not hexa engine-native terminal)
+Design: Hopfield energy relaxation settle (K steps) — binder dropped at .clm serialize, trunk co-training only
+Scope: binder DROPPED at .clm serialize — trunk co-training only
+
+=== G0-G6 Results ===
+| arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
+|-----|------|--------|-----|-----------------|---------------|---------|---------|------|
+| asym | 7 | 2/5 | FAIL | 0 | 0 | 4 | 0 | FAIL |
+| asym | 4302 | 2/5 | FAIL | 0 | 1 | 1 | 0 | FAIL |
+| asym | 4303 | 2/5 | FAIL | 0 | 0 | 1 | 0 | FAIL |
+| k1 | 7 | 2/5 | FAIL | 0 | 0 | 4 | 0 | FAIL |
+| k1 | 4302 | 3/5 | FAIL | 0 | 0 | 2 | 0 | FAIL |
+| k1 | 4303 | 1/5 | FAIL | 1 | 0 | 4 | 0 | FAIL |
+| arm | 7 | 2/5 | FAIL | 0 | 1 | 4 | 0 | FAIL |
+| arm | 4302 | 3/5 | FAIL | 0 | 0 | 2 | 0 | FAIL |
+| arm | 4303 | 4/5 | PASS | 0 | 0 | 4 | 0 | FAIL |
+
+=== Verdict ===
+🔴 NOT-SUPPORTED
+
+G1=0 across all main arms while the trunk CAN cohere (>=1 arm G0 PASS) — binder dropped at .clm serialize => additive readout; co-training insufficient for recombination. Note: main binding arm additionally DEGRADES G0 coherence (G0 PASS only in control arms).
+
+Note: All 4/4 DESCENT per arm/seed (val_CE < 5.545). G1=0 consistent with prior
+EXP-3/H_1603-series (binder-dropped additive readout same as baseline).
+Terminal verdict requires hexa engine-native re-run (a_engine_native_learning).

@@ -2,9 +2,9 @@
 
 **id:** H_1819  
 **slug:** cotrain_bind_recomb_obj  
-**tier:** ⏳ IN-FLIGHT (GPU training — 2× A40, pod 43051219, ~$3-5 A40×h)  
+**tier:** 🔴 NOT-SUPPORTED (py 2-production engine, DIRECTIONAL)
 **date:** 2026-06-29  
-**wired:** engine-native-eligible (clm_decode.py CLMB extended, H_1818 commit e17c2890f — bind LIVE at decode for op_plaince + op_obj)
+**wired:** DIRECTIONAL-screen — G1 NOT-SUPPORTED (bind op + L_recomb does not lift G1); hexa engine-native retest not required for NOT-SUPPORTED
 
 ---
 
@@ -105,14 +105,18 @@ total loss = CE_byte + aux_moe + λ_recomb × L_recomb
 
 ---
 
-## wired
-
-⏳ IN-FLIGHT — `DIRECTIONAL-screen` tier on completion. If (c) lifts G1≥2 robust:
-→ escalate to `core/clm_decode.hexa` + `core/clm_serialize.hexa` CLMB lockstep
-(`a_verified_must_wire` rung 3) for TERMINAL verdict.
-
----
-
 ## Verdict
 
-*Training in progress — 2× A40, expected ~2-3h. Results in state/g1_cotrain_recomb_bind/RESULT.md.*
+**🔴 NOT-SUPPORTED** (py 2-production engine, DIRECTIONAL)
+
+**Decision test result:**
+- seed 7: g1(c)=0, g1(a)=0, g1(b)=0 | c>a=False c>b=False
+- seed 4302: g1(c)=0, g1(a)=0, g1(b)=0 | c>a=False c>b=False
+- seed 4303: g1(c)=0, g1(a)=0, g1(b)=1 | c>a=False c>b=False
+
+Wins vs op_plaince: 0/3
+Wins vs obj_only:   0/3
+Wins BOTH:          0/3 (bar: >=2 = SUPPORTED)
+
+**Scope:** py 2-production engine · DIRECTIONAL only (not terminal).
+**Next:** H_1820 (low-inhibition recomb) or other lenses if still floor.

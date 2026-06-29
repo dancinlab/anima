@@ -1,0 +1,27 @@
+H_1631 — Sheaf-gluing binding mouth (local sections → global consistency)
+Date: 2026-06-30
+Engine: py 2-production (DIRECTIONAL — not hexa engine-native terminal)
+Design: Sheaf Laplacian consistency (ident=identity restriction maps, k1=rank-1) — binder dropped at .clm serialize
+Scope: binder DROPPED at .clm serialize — trunk co-training only
+
+=== G0-G6 Results ===
+| arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
+|-----|------|--------|-----|-----------------|---------------|---------|---------|------|
+| ident | 7 | 1/5 | FAIL | 0 | 1 | 1 | 0 | FAIL |
+| ident | 4302 | 4/5 | PASS | 0 | 0 | 1 | 0 | FAIL |
+| ident | 4303 | 0/5 | FAIL | 0 | 0 | 4 | 0 | FAIL |
+| k1 | 7 | 4/5 | PASS | 1 | 0 | 5 | 0 | FAIL |
+| k1 | 4302 | 1/5 | FAIL | 0 | 1 | 2 | 0 | FAIL |
+| k1 | 4303 | 3/5 | FAIL | 0 | 0 | 3 | 0 | FAIL |
+| arm | 7 | 4/5 | PASS | 0 | 0 | 1 | 0 | FAIL |
+| arm | 4302 | 4/5 | PASS | 0 | 1 | 4 | 0 | FAIL |
+| arm | 4303 | 2/5 | FAIL | 0 | 0 | 2 | 0 | FAIL |
+
+=== Verdict ===
+🔴 NOT-SUPPORTED
+
+G1 floors at the bar across all main arms while the trunk CAN cohere (>=1 arm G0 PASS) (sporadic best_distinct max=1<2 not above control max=0) — binder dropped at .clm serialize => additive readout; co-training insufficient for recombination.
+
+Note: All 4/4 DESCENT per arm/seed (val_CE < 5.545). G1=0 consistent with prior
+EXP-3/H_1603-series (binder-dropped additive readout same as baseline).
+Terminal verdict requires hexa engine-native re-run (a_engine_native_learning).

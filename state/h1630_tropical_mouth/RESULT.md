@@ -35,28 +35,30 @@
 
 ---
 
-## G0-G6 engine-native-py results (pending)
+## G0-G6 engine-native-py results
 
 | arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
 |-----|------|--------|-----|-----------------|---------------|---------|---------|------|
-| soft | 7 | — | — | — | — | — | — | — |
-| soft | 4302 | — | — | — | — | — | — | — |
-| soft | 4303 | — | — | — | — | — | — | — |
-| mid | 7 | — | — | — | — | — | — | — |
-| mid | 4302 | — | — | — | — | — | — | — |
-| mid | 4303 | — | — | — | — | — | — | — |
-| arm | 7 | — | — | — | — | — | — | — |
-| arm | 4302 | — | — | — | — | — | — | — |
-| arm | 4303 | — | — | — | — | — | — | — |
-
+| soft | 7 | 1/5 | FAIL | 0 | 0 | 3 | 0 | FAIL |
+| soft | 4302 | 3/5 | FAIL | 0 | 0 | 5 | 0 | FAIL |
+| soft | 4303 | 2/5 | FAIL | 1 | 0 | 4 | 0 | FAIL |
+| mid | 7 | 3/5 | FAIL | 0 | 1 | 2 | 0 | FAIL |
+| mid | 4302 | 3/5 | FAIL | 0 | 0 | 3 | 0 | FAIL |
+| mid | 4303 | 3/5 | FAIL | 0 | 0 | 3 | 0 | FAIL |
+| arm | 7 | 3/5 | FAIL | 0 | 0 | 3 | 0 | FAIL |
+| arm | 4302 | 4/5 | PASS | 0 | 0 | 5 | 0 | FAIL |
+| arm | 4303 | 2/5 | FAIL | 1 | 0 | 1 | 0 | FAIL |
 ---
 
 ## Verdict
 
-**EVAL-PENDING** — 9 evaluate.py processes running on pod 43053819.
+**🔴 NOT-SUPPORTED** (DIRECTIONAL — py 2-production engine, 9/9 evals)
 
-Expected: G1=0 all arms (binder dropped; same limitation as EXP-3). Test is whether tropical max-plus training signal improves trunk G1 via representation effects.
+G1 floors at the bar across all main arms while the trunk CAN cohere (>=1 arm G0 PASS) (sporadic best_distinct max=1<2 not above control max=1) — binder dropped at .clm serialize => additive readout; co-training insufficient for recombination. Note: main binding arm additionally DEGRADES G0 coherence (G0 PASS only in control arms).
 
+**Design scope:** binder trained but DROPPED at .clm serialize → additive readout at decode. Measures trunk representation improvement from co-training, NOT runtime binding operator. Same tier as EXP-3 / H_1603 / H_1603-series.
+
+*See G0-G6 table above for per-arm/seed numbers.*
 ---
 
 ## Artifacts

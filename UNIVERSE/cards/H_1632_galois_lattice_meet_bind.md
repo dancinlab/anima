@@ -1,10 +1,10 @@
 # H_1632 — Galois-closure concept-lattice binding mouth (FCA meet/join)
 
-- **tier:** 🔵 PRE-REGISTERED DESIGN (DIRECTIONAL · 측정 0 · unmeasured)
-- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy, no engine); gpu_recipe = cost-gated PRE-REGISTER ONLY (NOT fired).
+- **tier:** 🔴 NOT-SUPPORTED (⏳ EVAL DONE · DIRECTIONAL · py 2-production engine · binder-dropped co-training · 9/9)
+- **wired:** DIRECTIONAL-mirror — binder trained but DROPPED at .clm serialize; additive readout = no runtime binding. Terminal = hexa engine-native re-run.
 - **source:** archbrainstorm — 84-family anima-native synthesis-binding architecture census (binding-wall program, H_1603)
 - **lens:** lattice theory / Formal Concept Analysis — binding = Galois-closure to a formal concept (extent,intent); composition = conjunctive lattice meet (idempotent), not OR-pooling
-- **artifacts:** `state/binding_arch_census/BRAINSTORM_INDEX.md`
+- **artifacts:** `state/h1632_galois_mouth/` (RESULT.md · ckpt/*.clm · ckpt/*.g0g6.txt)
 - **xref:** H_1603 (G1≡G6 compositional-binding deficit unification) · H_1449 (attention-block INERT@1blk) · H_1602 (recombination-objective prereg)
 - **key:** `galois_lattice_meet_bind`
 
@@ -27,3 +27,28 @@ Cost-gated 303M, pre-register only. K closure layers: dual sparse-gate heads (ex
 ## Scope / honesty (c9)
 
 설계만 — 측정 0. tier = 🔵 PRE-REGISTERED DESIGN (DIRECTIONAL). frozen bar 사후 이동 금지(tune-to-green 금지, p7). 이 카드는 *방향성 설계*이지 검증된 결과가 아니다 — 과장 박제 금지(a_engine_native_learning). gpu_recipe 발사 시(team-lead cost-gate go): held-out 4/4 mirror-CE DESCENT 게이트(a_clm_gen_pipeline) → CORE `--engine conv` mount 위 frozen G1(H_1129 recombination)·G6(H_1464 fals) byte-exact engine-native 재측정(torch probe 아님) → ckpt PULL before teardown(a_fire_recover_complete). cheap_test 가 numpy mirror 이므로 그 결과도 DIRECTIONAL(엔진-네이티브 아님).
+
+
+## Measured Result (2026-06-30 · py 2-production engine · DIRECTIONAL)
+
+**Training:** 9 CLMs (binder DROPPED at .clm serialize, additive readout). All 4/4 DESCENT (val_CE < 5.545) per arm/seed.
+
+**G0-G6 results:**
+
+| arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
+|-----|------|--------|-----|-----------------|---------------|---------|---------|------|
+| arm | 7 | 4/5 | PASS | 0 | 0 | 2 | 0 | FAIL |
+| arm | 4302 | 4/5 | PASS | 0 | 0 | 0 | 0 | FAIL |
+| arm | 4303 | 5/5 | PASS | 0 | 0 | 5 | 0 | FAIL |
+| k1 | 7 | 0/5 | FAIL | 0 | 1 | 3 | 0 | FAIL |
+| k1 | 4302 | 2/5 | FAIL | 0 | 0 | 4 | 0 | FAIL |
+| k1 | 4303 | 2/5 | FAIL | 0 | 0 | 6 | 0 | FAIL |
+| orpool | 7 | 3/5 | FAIL | 1 | 0 | 6 | 0 | FAIL |
+| orpool | 4302 | 2/5 | FAIL | 0 | 0 | 5 | 0 | FAIL |
+| orpool | 4303 | 4/5 | PASS | 0 | 0 | 1 | 0 | FAIL |
+
+**Verdict: 🔴 NOT-SUPPORTED** (DIRECTIONAL — py 2-production engine)
+
+G1 floors at the bar across all main arms while the trunk CAN cohere (>=1 arm G0 PASS) — binder dropped at .clm serialize => additive readout; co-training insufficient for recombination.
+
+**Scope:** binder dropped at serialize → this is trunk co-training effect only (not runtime binding). Same tier as EXP-3/H_1812/H_1814/H_1816. terminal verdict requires hexa engine-native re-run (a_engine_native_learning).

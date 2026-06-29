@@ -1,0 +1,27 @@
+H_1819 verdict — co-trained bind op × recombination objective
+date: 2026-06-29T17:04:05Z
+scope: py 2-production engine (DIRECTIONAL, not terminal)
+verdict: 🔴 NOT-SUPPORTED
+
+=== PREREG Decision Test ===
+(c) op_obj strictly > (a) op_plaince AND (c) > (b) obj_only on G1 composed_distinct, >=2/3 seeds
+
+seed 7: g1(c)=0, g1(a)=0, g1(b)=0 | ✗ (c>a=False, c>b=False)
+seed 4302: g1(c)=0, g1(a)=0, g1(b)=0 | ✗ (c>a=False, c>b=False)
+seed 4303: g1(c)=0, g1(a)=0, g1(b)=1 | ✗ (c>a=False, c>b=False)
+
+wins_vs_plaince: 0/3
+wins_vs_objonly: 0/3
+wins_both:       0/3 (bar: >=2 = SUPPORTED)
+
+=== Full G0-G6 Table ===
+arm | seed | G0 n/5 | G0? | G1 bd | G1 ms | G6 d | G6 f | a7b
+op_plaince | 7 | 3/5 | FAIL | 0 | 0 | 3 | 0 | FAIL
+op_plaince | 4302 | 3/5 | FAIL | 0 | 1 | 2 | 0 | FAIL
+op_plaince | 4303 | 3/5 | FAIL | 0 | 1 | 1 | 0 | FAIL
+obj_only | 7 | 3/5 | FAIL | 0 | 0 | 3 | 0 | FAIL
+obj_only | 4302 | 2/5 | FAIL | 0 | 0 | 4 | 0 | FAIL
+obj_only | 4303 | 4/5 | PASS | 1 | 1 | 2 | 0 | FAIL
+op_obj | 7 | 5/5 | PASS | 0 | 0 | 2 | 0 | FAIL
+op_obj | 4302 | 4/5 | PASS | 0 | 0 | 2 | 0 | FAIL
+op_obj | 4303 | 3/5 | FAIL | 0 | 0 | 4 | 0 | FAIL

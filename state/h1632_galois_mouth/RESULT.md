@@ -39,26 +39,30 @@ Ablation design: if Galois arm > orpool on G1, AND-pool (conjunction) is load-be
 
 ---
 
-## G0-G6 engine-native-py results (pending)
+## G0-G6 engine-native-py results
 
 | arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
 |-----|------|--------|-----|-----------------|---------------|---------|---------|------|
-| arm | 7 | — | — | — | — | — | — | — |
-| arm | 4302 | — | — | — | — | — | — | — |
-| arm | 4303 | — | — | — | — | — | — | — |
-| k1 | 7 | — | — | — | — | — | — | — |
-| k1 | 4302 | — | — | — | — | — | — | — |
-| k1 | 4303 | — | — | — | — | — | — | — |
-| orpool | 7 | — | — | — | — | — | — | — |
-| orpool | 4302 | — | — | — | — | — | — | — |
-| orpool | 4303 | — | — | — | — | — | — | — |
-
+| arm | 7 | 4/5 | PASS | 0 | 0 | 2 | 0 | FAIL |
+| arm | 4302 | 4/5 | PASS | 0 | 0 | 0 | 0 | FAIL |
+| arm | 4303 | 5/5 | PASS | 0 | 0 | 5 | 0 | FAIL |
+| k1 | 7 | 0/5 | FAIL | 0 | 1 | 3 | 0 | FAIL |
+| k1 | 4302 | 2/5 | FAIL | 0 | 0 | 4 | 0 | FAIL |
+| k1 | 4303 | 2/5 | FAIL | 0 | 0 | 6 | 0 | FAIL |
+| orpool | 7 | 3/5 | FAIL | 1 | 0 | 6 | 0 | FAIL |
+| orpool | 4302 | 2/5 | FAIL | 0 | 0 | 5 | 0 | FAIL |
+| orpool | 4303 | 4/5 | PASS | 0 | 0 | 1 | 0 | FAIL |
 ---
 
 ## Verdict
 
-**EVAL-PENDING** — all 9 CLMs training done (4/4 DESCENT each). G0-G6 engine-native-py eval RUNNING on pod 43053819. Expected: G1=0 all arms (binder dropped at serialize). Ablation (arm=AND-pool vs orpool=OR-pool) tests whether conjunction training signal vs superposition training signal differs for trunk G1 representations — even when both are dropped at .clm.
+**🔴 NOT-SUPPORTED** (DIRECTIONAL — py 2-production engine, 9/9 evals)
 
+G1 floors at the bar across all main arms while the trunk CAN cohere (>=1 arm G0 PASS) — binder dropped at .clm serialize => additive readout; co-training insufficient for recombination.
+
+**Design scope:** binder trained but DROPPED at .clm serialize → additive readout at decode. Measures trunk representation improvement from co-training, NOT runtime binding operator. Same tier as EXP-3 / H_1603 / H_1603-series.
+
+*See G0-G6 table above for per-arm/seed numbers.*
 ---
 
 ## Artifacts

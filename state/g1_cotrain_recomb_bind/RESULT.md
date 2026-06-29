@@ -61,34 +61,34 @@
 
 | arm | seed | G0 kwr | G1 composed_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
 |-----|------|--------|---------------------|---------------|---------|---------|------|
-| **op_plaince** | 7 | — | — | — | — | — | — |
-| **op_plaince** | 4302 | — | — | — | — | — | — |
-| **op_plaince** | 4303 | — | — | — | — | — | — |
-| **obj_only** | 7 | — | — | — | — | — | — |
-| **obj_only** | 4302 | — | — | — | — | — | — |
-| **obj_only** | 4303 | — | — | — | — | — | — |
-| **op_obj** | 7 | — | — | — | — | — | — |
-| **op_obj** | 4302 | — | — | — | — | — | — |
-| **op_obj** | 4303 | — | — | — | — | — | — |
+| **op_plaince** | 7 | 3/5 FAIL | 0 ✗ | 0 | 3 | 0 | FAIL |
+| **op_plaince** | 4302 | 3/5 FAIL | 0 ✗ | 1 | 2 | 0 | FAIL |
+| **op_plaince** | 4303 | 3/5 FAIL | 0 ✗ | 1 | 1 | 0 | FAIL |
+| **obj_only** | 7 | 3/5 FAIL | 0 ✗ | 0 | 3 | 0 | FAIL |
+| **obj_only** | 4302 | 2/5 FAIL | 0 ✗ | 0 | 4 | 0 | FAIL |
+| **obj_only** | 4303 | 4/5 PASS | 1 ✗ | 1 | 2 | 0 | FAIL |
+| **op_obj** | 7 | 5/5 PASS | 0 ✗ | 0 | 2 | 0 | FAIL |
+| **op_obj** | 4302 | 4/5 PASS | 0 ✗ | 0 | 2 | 0 | FAIL |
+| **op_obj** | 4303 | 3/5 FAIL | 0 ✗ | 0 | 4 | 0 | FAIL |
 
-**Decision test result:** PENDING
+**Decision test detail:**
+- seed 7: g1(c)=0, g1(a)=0, g1(b)=0 | c>a=False c>b=False
+- seed 4302: g1(c)=0, g1(a)=0, g1(b)=0 | c>a=False c>b=False
+- seed 4303: g1(c)=0, g1(a)=0, g1(b)=1 | c>a=False c>b=False
 
----
+Wins vs op_plaince: 0/3
+Wins vs obj_only:   0/3
+Wins BOTH:          0/3 (bar: >=2 = SUPPORTED)
 
+**Decision test result:** 🔴 NOT-SUPPORTED
 ## Verdict
 
-**TRAINING IN PROGRESS** — seed7 ALL DONE (4/4 DESCENT). seed4302 ALL DONE (4/4 DESCENT). seed4303 training (3 arms parallel). G0-G6 evals pending after seed4303 completes.
+**🔴 NOT-SUPPORTED** (py 2-production engine, DIRECTIONAL scope)
 
-*Results will be filled in upon completion.*
+**Scope:** py 2-production engine (`core/g_gates.py` + `core/clm_decode.py`, byte-parity proven). Not terminal — engine-native hexa retest required for terminal verdict.
 
----
+**Decision test:** wins_both=0/3 (bar: >=2). NOT SUPPORTED..
 
-## Artifacts
+**G0:** op_plaince: G0 0/3 PASS, obj_only: G0 1/3 PASS, op_obj: G0 2/3 PASS.
 
-- `trainer.py` — 3-arm trainer (BindCLM / ObjOnlyCLM / BindRecombCLM)
-- `run_pod.sh` — pod runner (smoke → train → eval → summary)
-- `PREREG.md` — frozen specification
-- `ckpt/` — .clm + .pt + .json + .g0g6.txt (9 each, pulled post-eval)
-- `core/clm_decode.py` — CLMB extension (H_1818, shared by op_plaince + op_obj)
-
-**Pod:** 43051219 (teardown pending — after ckpt PULL + G0-G6 complete, a_fire_recover_complete)
+**Next step:** G1 wall persists even with bind op + L_recomb combined → explore H_1820 (low-inhibition) or other lenses.

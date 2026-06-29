@@ -1,0 +1,27 @@
+H_1632 — Galois-closure concept-lattice binding mouth (FCA meet/join)
+Date: 2026-06-30
+Engine: py 2-production (DIRECTIONAL — not hexa engine-native terminal)
+Design: Galois-closure AND-pool meet (arm=AND-pool, k1=rank1 ablation, orpool=OR-pool control) — binder dropped at .clm serialize
+Scope: binder DROPPED at .clm serialize — trunk co-training only
+
+=== G0-G6 Results ===
+| arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G6 dist | G6 fals | a7b? |
+|-----|------|--------|-----|-----------------|---------------|---------|---------|------|
+| arm | 7 | 4/5 | PASS | 0 | 0 | 2 | 0 | FAIL |
+| arm | 4302 | 4/5 | PASS | 0 | 0 | 0 | 0 | FAIL |
+| arm | 4303 | 5/5 | PASS | 0 | 0 | 5 | 0 | FAIL |
+| k1 | 7 | 0/5 | FAIL | 0 | 1 | 3 | 0 | FAIL |
+| k1 | 4302 | 2/5 | FAIL | 0 | 0 | 4 | 0 | FAIL |
+| k1 | 4303 | 2/5 | FAIL | 0 | 0 | 6 | 0 | FAIL |
+| orpool | 7 | 3/5 | FAIL | 1 | 0 | 6 | 0 | FAIL |
+| orpool | 4302 | 2/5 | FAIL | 0 | 0 | 5 | 0 | FAIL |
+| orpool | 4303 | 4/5 | PASS | 0 | 0 | 1 | 0 | FAIL |
+
+=== Verdict ===
+🔴 NOT-SUPPORTED
+
+G1 floors at the bar across all main arms while the trunk CAN cohere (>=1 arm G0 PASS) — binder dropped at .clm serialize => additive readout; co-training insufficient for recombination.
+
+Note: All 4/4 DESCENT per arm/seed (val_CE < 5.545). G1=0 consistent with prior
+EXP-3/H_1603-series (binder-dropped additive readout same as baseline).
+Terminal verdict requires hexa engine-native re-run (a_engine_native_learning).
