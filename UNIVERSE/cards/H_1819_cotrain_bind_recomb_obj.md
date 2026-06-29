@@ -43,8 +43,9 @@ Trunk output x (B, d, T):
 - z_a = x[:, :, T//3 - 1] (concept A = context at 1/3 of sequence)
 - z_b = x[:, :, 2*T//3 - 1] (concept B = context at 2/3)
 - z_c = x[:, :, T - 1] (composite target = end of sequence)
-- g = Pa(z_a) * Pb(z_c) — Hadamard composite (element-wise product in k-space)
+- g = Pa(z_a) * Pb(z_b) — Hadamard composite (early-ctx × mid-ctx, k-space)
 - InfoNCE: F.cross_entropy(normalize(g) @ normalize(Pc(z_c)).T / τ, arange(B))
+  (g[b] = composite of batch-b's early+mid context must be closest to b's end-ctx c[b])
 
 For arm (c) op_obj: Pa=Wa, Pb=Wb (shared with bind readout), Pc is new.  
 For arm (b) obj_only: Pa, Pb, Pc are separate aux projections (discarded at serialize).  
