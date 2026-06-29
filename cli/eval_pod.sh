@@ -87,8 +87,12 @@ hexa cloud exec "$POD" -- "cd /root/anima && rm -rf core cli && tar xzf anima_bu
   echo 'sanity OK: hexa≥v0.311 · g_gates · eval-branch · savant_lib · ckpt'"
 
 # --- launch eval detached (exec-session-timeout irrelevant; glue-bound decode = tens of minutes) ---
+# HEXA_DET=1 = forge determinism safety-pin (hexa-lang #4208 fast-default follow-on): this
+# launch reaches cli/anima.hexa DIRECTLY (not the bin/anima shim), so it sets HEXA_DET here
+# to keep G0-G6 scoring + cross-host byte-parity reproducible (#4208 made non-det atomic
+# forge kernels the default; HEXA_DET=1 selects the bit-identical deterministic kernels).
 echo "[eval_pod] launch: anima eval $CLM_NAME --gen $GEN (detached) ..."
-hexa cloud exec "$POD" -- "cd /root/anima && export PATH=/root/.hx/bin:\$PATH HEXA_FRAG_LOG=1; \
+hexa cloud exec "$POD" -- "cd /root/anima && export PATH=/root/.hx/bin:\$PATH HEXA_FRAG_LOG=1 HEXA_DET=1; \
   nohup hexa run cli/anima.hexa -- eval $CLM_NAME --gen $GEN > eval_out.txt 2>&1 & echo LAUNCHED_PID=\$!"
 
 rm -f "$LANE_LIST" "$TGZ"

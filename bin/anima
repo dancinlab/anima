@@ -37,6 +37,21 @@ if [ ! -x "$HEXA_BIN" ]; then
   exit 127
 fi
 
+# EVAL/VERDICT DETERMINISM SAFETY-PIN (hexa-lang #4208 flame/forge fast-default
+# follow-on). #4208 flipped the forge polarity: own-native NON-det atomic kernels
+# (split-K GEMM/GEMV, atomic col2im/embedding-bwd) are now the DEFAULT (training
+# speed), and bit-identical deterministic kernels are opt-in via HEXA_DET=1 (the
+# hexa-lang `_forge_det_on()` gate: 1=det iff HEXA_DET set+nonzero, else 0=fast).
+# anima's eval/verdict/decode paths MUST stay reproducible (G0-G6 scoring · Ψ-
+# checksum · cross-host byte-parity), so this launcher EXPORTS HEXA_DET=1 for
+# EVERY verb EXCEPT `train` — training keeps the fast non-det default (the whole
+# point of #4208). The export reaches the in-process consciousness/--byte decode
+# here AND is inherited by the eval/serialize sub-process dispatch (cli/anima.hexa
+# exec). Override for an experiment with HEXA_DET=0 anima <verb>.
+if [ "${1:-}" != "train" ] && [ -z "${HEXA_DET+x}" ]; then
+  export HEXA_DET=1
+fi
+
 # run the canonical entry from the package root so its repo-relative verb dispatch
 # (hexa run cli/{train,serialize,evaluate}.hexa) resolves.
 cd "$PKG_DIR" || { echo "ERROR(anima): cannot cd to package root $PKG_DIR" >&2; exit 1; }

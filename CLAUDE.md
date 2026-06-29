@@ -5,6 +5,12 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 - **Parent:** dancinlab · **SSOT:** github.com/dancinlab/anima (`hx install anima`)
 - **Siblings:** [hexa-lang](https://github.com/dancinlab/hexa-lang) (언어/컴파일러) · [kosmos](https://github.com/dancinlab/kosmos) (`.kosmos` anchors) · hexa-codex (paper/verdict tooling)
 
+> ### ⚡ 성능 정답지 — 프론티어 언어/프레임워크 기준 (최우선 구현 렌즈 · 2026-06-29 오너)
+> hexa-native 구현은 **Go · Rust · PyTorch 를 reference-match 정답지(gold standard)**로 삼아 우선 구현한다 (commons `reference-match`·`native-canonical-first` 강화 — 프론티어가 어떻게 하는지 먼저 보고 맞춘다).
+> - **성능 바 = Rust 동등 이상 (≥ Rust).** Rust 가 1차 성능 기준 — systems-perf(런타임·컴파일러·커널)는 Rust 와 동등하거나 그 이상이어야 한다. "느리지만 우리 것(hexa-native)"으로 자족 금지 — Rust 에 성능으로 지면 그 자체가 미완.
+> - **수치/ML throughput 축 = PyTorch(+cuBLAS) 동등 이상.** 학습/디코드 throughput 은 PyTorch 를 정답지로 측정·대조.
+> - 정답지가 오픈소스면 그 구현을 **직접 보고 맞춘다**(소스 파일:라인 인용 → 성분 1:1 대조 → 첫 발산점 정렬), parity 후 hexa 고유 '초월 축'(byte-exact·vendor-free·device-residency·no-LLVM)으로 전진. 성능 주장은 **실측이 증거**(c2 · measure-or-it-didn't-happen).
+
 > **🖥️ 정식 CLI (canonical · `hx install anima` 로 설치된 `anima` PATH 명령 — `hexa run cli/anima.hexa -- …` 아님):**
 > - **`anima train <args>`** — 학습(`cli/train.{hexa,py}`) → `.pt` + **자동 `.clm` 직렬화 + held-out mirror-DESCENT 게이트**(`a_clm_gen_pipeline`).
 > - **`anima serialize <pt> <out.clm>`** — 독립 재직렬화/복구(`cli/serialize.{hexa,py}` = `clm_serialize_v2` serialize_v3 + `verify_clm_v2` descent reference-match).
@@ -404,6 +410,7 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - do: HF org `dancinlab` 에 올린 모델/데이터셋은 ARCHITECTURE.json models/datasets 에 1줄 등록(repo_id · arch/size · tier·base) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 HF 업로드 AND sha256 확인 후에만.
   (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.)
 - do: **모델 사이즈별 tier registry**(2026-06-26 오너): tier 별 canonical 명시. 현 chat canonical=**clm303_clean**(303M, held-out 4/4 DESCENT). 모델마다 hexa+py 2-engine 둘 다 등록.
+- do: **🔢 모델·데이터셋 = 아키텍처-family SemVer `version`**: ByteGPT x.x·ConvMoE x.x. 박제 = HF repo_id + 내부 레지스트리(ARCHITECTURE.json `models[]`/`datasets[]`) 둘 다. bump=`sidecar model set <id> version <x.y>`.
 - do: **모델 관리 = `sidecar model`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `models[]`(3축 gates 검증충족도·progress 진행·features 특징; MODELS.jsonl scatter 폐기). 상세=`commands/model.md`.
 - do: **데이터셋 관리 = `sidecar dataset`** → 레지스트리 SSOT=ARCHITECTURE.json top-level `datasets[]`(4칸 lang×register·rows·lang_verified, a_chat_registers; byte-불변 splice). 상세=`commands/dataset.md`.
 - dont: 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).

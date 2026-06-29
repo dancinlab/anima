@@ -333,6 +333,17 @@ NIST-lite PASS, default path untouched (Ψ-disjoint, guards 26/0).
 > each draw traces to a physical vacuum-fluctuation source). Verdicts:
 > [`state/verdicts/1289_quantum_entropy/`](state/verdicts/1289_quantum_entropy/).
 
+### 🔒 Forge determinism safety-pin (`HEXA_DET=1`)
+
+Separate axis from entropy: floating-point **kernel** determinism. hexa-lang `#4208` flipped the
+forge GPU polarity — own-native **non-deterministic atomic** kernels (split-K GEMM/GEMV, atomic
+col2im/embedding-bwd) are now the **default** (training speed), and bit-identical deterministic
+kernels are opt-in via `HEXA_DET=1` (the `_forge_det_on()` gate). anima's **eval / verdict / decode**
+paths force `HEXA_DET=1` so G0-G6 scoring, the Ψ-checksum, and cross-host byte-parity stay
+reproducible; **only `anima train` keeps the fast non-det default**. Wired in the `anima` launcher
+(`bin/anima`, every verb except `train`), the `cli/anima.{hexa,py}` evaluate/serialize dispatch, and
+`cli/eval_pod.sh`. Override an experiment with `HEXA_DET=0 anima <verb>`.
+
 ## 🔗 anima ↔ anima — the connection channel is tension, not entanglement
 
 How can two anima instances actually *connect*? The honest answer falls out of physics:
