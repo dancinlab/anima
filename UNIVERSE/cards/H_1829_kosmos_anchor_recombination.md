@@ -31,3 +31,22 @@
 | 좌표계 직교 | VAdaptField 측정(H_1822)과 발산하면 placement-space가 다른 결과 = 직교 |
 
 ⚠️ 정직: midpoint baseline이 핵심 control — child가 단순 중점이면 "구성" 아님(H_1310 Voronoi depth-0 회귀). HE 사전선별 통과 시 engine-native(`core/` kosmos_io).
+
+
+---
+
+## VERDICT — 🧱 NOT-SUPPORTED (DIRECTIONAL · cheap-numpy HE pre-screen · 2026-06-30)
+
+**run:** unified 6-lever pre-screen `state/g1_anima_native_levers_he/he_levers.py` on **summer pool** (CPU-numpy, $0, did NOT touch the in-flight GPU train). embed = `core/clm_decode.py` 303M clm303 trunk penultimate (β embed, mean-pool, L2-unit, comparable to H_1822/1825); fp64-numpy operator. NO torch. EXIT=0, deterministic.
+
+| item | value |
+|------|-------|
+| N4 kosmos anchor-space (learned constructor) held-out G1 (5-fold CV, 32 EN/KO/ZH compound pairs) | **1/32 (0.03)** |
+| control | CRITICAL control midpoint-baseline = 1 → the learned constructor does NOT beat simple averaging (child = midpoint = 'not constructed', H_1310 Voronoi depth-0 regression). single-parent leak = 10/32. |
+| frozen bar (composed_distinct≥2 ∧ recoverable ∧ >control, ≥2/3 ≈ ≥22/32) | **FAILS both axes** |
+| self-test SEPARATES (planted bind 12/12 vs random 1/12) | PASS (metric live, floor real) |
+| single-parent leak (shared, byte-prefix lexical) | 10/32 |
+
+**Does this anima-native lever clear the cheap pre-screen → engine-native? → NO (🧱 FLOOR).** DIRECTIONAL, NOT terminal (G1 SSOT = engine-native `anima evaluate`); the cheap pre-screen gives no reason to spend GPU. Campaign: **0/6** anima-native levers (N1..N6) cleared — the G1 wall holds against anima-native mechanisms; lever = trunk OBJECTIVE, not readout/operator/embedding/mechanism. Full synthesis: `state/g1_anima_native_levers_he/RESULT.md`. raw stdout: `state/g1_kosmos_anchor_recombination/RESULT.txt`.
+
+**wired:** DIRECTIONAL-mirror (py embed via `core/clm_decode.py`). NOT engine-native, NOT wired — floor ⇒ no promotion.

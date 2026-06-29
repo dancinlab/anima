@@ -31,3 +31,22 @@
 | sync 인과 | K=0(동기 OFF)=BLIND, K>0만 lift = 위상 causal |
 
 frozen-first. HE 사전선별 통과 시 engine-native. ⚠️ 정직: amplitude baseline 대비 lift 없으면 위상축은 inert(직교 가설 falsify).
+
+
+---
+
+## VERDICT — 🧱 NOT-SUPPORTED (DIRECTIONAL · cheap-numpy HE pre-screen · 2026-06-30)
+
+**run:** unified 6-lever pre-screen `state/g1_anima_native_levers_he/he_levers.py` on **summer pool** (CPU-numpy, $0, did NOT touch the in-flight GPU train). embed = `core/clm_decode.py` 303M clm303 trunk penultimate (β embed, mean-pool, L2-unit, comparable to H_1822/1825); fp64-numpy operator. NO torch. EXIT=0, deterministic.
+
+| item | value |
+|------|-------|
+| N5 Kuramoto phase-sync bind held-out G1 (5-fold CV, 32 EN/KO/ZH compound pairs) | **0/32 (0.00)** |
+| control | K=0 (sync OFF = BLIND) = 0 → no sync-causal lift; amplitude-affinity baseline = 1 → phase-bind does NOT beat amplitude. The phase axis is INERT (the orthogonal-coupling-principle hypothesis is falsified at the cheap tier). |
+| frozen bar (composed_distinct≥2 ∧ recoverable ∧ >control, ≥2/3 ≈ ≥22/32) | **FAILS both axes** |
+| self-test SEPARATES (planted bind 12/12 vs random 1/12) | PASS (metric live, floor real) |
+| single-parent leak (shared, byte-prefix lexical) | 10/32 |
+
+**Does this anima-native lever clear the cheap pre-screen → engine-native? → NO (🧱 FLOOR).** DIRECTIONAL, NOT terminal (G1 SSOT = engine-native `anima evaluate`); the cheap pre-screen gives no reason to spend GPU. Campaign: **0/6** anima-native levers (N1..N6) cleared — the G1 wall holds against anima-native mechanisms; lever = trunk OBJECTIVE, not readout/operator/embedding/mechanism. Full synthesis: `state/g1_anima_native_levers_he/RESULT.md`. raw stdout: `state/g1_kuramoto_phase_sync_bind/RESULT.txt`.
+
+**wired:** DIRECTIONAL-mirror (py embed via `core/clm_decode.py`). NOT engine-native, NOT wired — floor ⇒ no promotion.

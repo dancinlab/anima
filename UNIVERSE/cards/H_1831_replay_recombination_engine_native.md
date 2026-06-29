@@ -30,3 +30,22 @@
 | stage 인과 | WAKE(no-replay)=floor, REM-replay만 lift |
 
 frozen-first. ⚠️ 정직: H_987이 proxy로 GREEN이었어도 engine-native에서 floor면 H_987도 RETRACT(measurement-path 정정). HE 사전선별 통과 시 engine-native(live MITOSIS).
+
+
+---
+
+## VERDICT — 🧱 NOT-SUPPORTED (DIRECTIONAL · cheap-numpy HE pre-screen · 2026-06-30)
+
+**run:** unified 6-lever pre-screen `state/g1_anima_native_levers_he/he_levers.py` on **summer pool** (CPU-numpy, $0, did NOT touch the in-flight GPU train). embed = `core/clm_decode.py` 303M clm303 trunk penultimate (β embed, mean-pool, L2-unit, comparable to H_1822/1825); fp64-numpy operator. NO torch. EXIT=0, deterministic.
+
+| item | value |
+|------|-------|
+| N6 replay recombination (REOPEN H_987) held-out G1 (5-fold CV, 32 EN/KO/ZH compound pairs) | **1/32 (0.03)** |
+| control | no-replay baseline = 1 → replay does NOT beat no-replay. On a completely different substrate/metric (303M trunk embed) this REPRODUCES H_987's 'replay ≈ idle' null (proxy↔cheap AGREE — the proxy≠engine divergence the card warned of does NOT appear; both say replay adds no recombination). Terminal RETRACT of H_987 would need engine-native MITOSIS-replay, but the cheap floor warrants no such spend. |
+| frozen bar (composed_distinct≥2 ∧ recoverable ∧ >control, ≥2/3 ≈ ≥22/32) | **FAILS both axes** |
+| self-test SEPARATES (planted bind 12/12 vs random 1/12) | PASS (metric live, floor real) |
+| single-parent leak (shared, byte-prefix lexical) | 10/32 |
+
+**Does this anima-native lever clear the cheap pre-screen → engine-native? → NO (🧱 FLOOR).** DIRECTIONAL, NOT terminal (G1 SSOT = engine-native `anima evaluate`); the cheap pre-screen gives no reason to spend GPU. Campaign: **0/6** anima-native levers (N1..N6) cleared — the G1 wall holds against anima-native mechanisms; lever = trunk OBJECTIVE, not readout/operator/embedding/mechanism. Full synthesis: `state/g1_anima_native_levers_he/RESULT.md`. raw stdout: `state/g1_replay_recombination_engine_native/RESULT.txt`.
+
+**wired:** DIRECTIONAL-mirror (py embed via `core/clm_decode.py`). NOT engine-native, NOT wired — floor ⇒ no promotion.

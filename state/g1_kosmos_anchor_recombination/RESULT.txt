@@ -1,0 +1,18 @@
+# verbatim slice from state/g1_anima_native_levers_he/RESULT.txt (full run there)
+    SEPARATES (planted>=8 ∧ random<=2): PASS
+    single-parent NN already==child (irreducibility leak): 10/32
+    N1 Ψ=½ fixed-point (ON)           2/32  (0.06)  iter-OFF=1/32 (causal=True) -> FLOOR
+    N2 V(D)J immune recomb            0/32  (0.00)  parent-copy=0 hypermut-OFF=3 (>pc=False) -> FLOOR
+    N3 Φ-integration (cheap-exact)    1/32  (0.03)  exact small-n Φ rank (faithful IIT4 = engine-native) -> FLOOR
+    N4 kosmos anchor (learned)        1/32  (0.03)  midpoint-baseline=1 (>mid=False) -> FLOOR
+    N5 Kuramoto phase-sync            0/32  (0.00)  K=0=0 amp=1 (causal=False >amp=False) -> FLOOR
+    N6 replay recomb (REOPEN H_987)   1/32  (0.03)  no-replay=1 (>no-replay=False) -> FLOOR
+    N1     H_1826 Ψ=½ dynamical fixed-point    2/32        FLOOR
+    N2     H_1827 V(D)J immune recombination   0/32        FLOOR
+    N3     H_1828 Φ-integration bind           1/32        FLOOR
+    N4     H_1829 kosmos anchor-space          1/32        FLOOR
+    N5     H_1830 Kuramoto phase-sync          0/32        FLOOR
+    N6     H_1831 replay (REOPEN H_987)        1/32        FLOOR
+    single-parent leak (shared) = 10/32  | self-test SEPARATES = PASS
+    ALL 6 FLOOR at cheap tier -> G1 wall holds against anima-native mechanisms
+JSON_RESULT {"N1": {"h": 2, "t": 32, "verdict": "FLOOR", "extra": {"iteration_OFF": 1, "iteration_causal": true}}, "N2": {"h": 0, "t": 32, "verdict": "FLOOR", "extra": {"parent_copy": 0, "hypermutation_OFF": 3, "beats_parent_copy": false}}, "N3": {"h": 1, "t": 32, "verdict": "FLOOR", "extra": {"note": "cheap exact small-n integration proxy; terminal Φ = stdlib faithful_phi.hexa engine-native"}}, "N4": {"h": 1, "t": 32, "verdict": "FLOOR", "extra": {"midpoint_baseline": 1, "beats_midpoint": false}}, "N5": {"h": 0, "t": 32, "verdict": "FLOOR", "extra": {"K0_blind": 0, "amplitude_baseline": 1, "sync_causal": false, "beats_amplitude": false}}, "N6": {"h": 1, "t": 32, "verdict": "FLOOR", "extra": {"no_replay": 1, "beats_no_replay": false}}, "_single_parent_leak": [10, 32], "_self_test_separates": true, "_ckpt": "clm303.clm"}

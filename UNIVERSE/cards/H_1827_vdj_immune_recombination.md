@@ -31,3 +31,22 @@
 | 과변이 인과 | hypermutation-OFF=floor, ON만 novelty lift |
 
 ⚠️ 정직: H_1568(selection-driven evolution)🧱은 *generic* selection이 lift≈0이었음 — 본 가설은 V(D)J **segment 재조합 구조**가 핵심(generic selection 아님). 그 차별이 안 통하면 H_1568 벽으로 회귀.
+
+
+---
+
+## VERDICT — 🧱 NOT-SUPPORTED (DIRECTIONAL · cheap-numpy HE pre-screen · 2026-06-30)
+
+**run:** unified 6-lever pre-screen `state/g1_anima_native_levers_he/he_levers.py` on **summer pool** (CPU-numpy, $0, did NOT touch the in-flight GPU train). embed = `core/clm_decode.py` 303M clm303 trunk penultimate (β embed, mean-pool, L2-unit, comparable to H_1822/1825); fp64-numpy operator. NO torch. EXIT=0, deterministic.
+
+| item | value |
+|------|-------|
+| N2 V(D)J immune recombination held-out G1 (5-fold CV, 32 EN/KO/ZH compound pairs) | **0/32 (0.00)** |
+| control | parent-copy = 0, hypermutation-OFF = 3 → NOT > parent-copy AND somatic hypermutation HURTS (3→0). The V(D)J segment structure does not lift G1 → regresses to the H_1568 generic-selection wall (selection-driven evolution lift ≈ 0). |
+| frozen bar (composed_distinct≥2 ∧ recoverable ∧ >control, ≥2/3 ≈ ≥22/32) | **FAILS both axes** |
+| self-test SEPARATES (planted bind 12/12 vs random 1/12) | PASS (metric live, floor real) |
+| single-parent leak (shared, byte-prefix lexical) | 10/32 |
+
+**Does this anima-native lever clear the cheap pre-screen → engine-native? → NO (🧱 FLOOR).** DIRECTIONAL, NOT terminal (G1 SSOT = engine-native `anima evaluate`); the cheap pre-screen gives no reason to spend GPU. Campaign: **0/6** anima-native levers (N1..N6) cleared — the G1 wall holds against anima-native mechanisms; lever = trunk OBJECTIVE, not readout/operator/embedding/mechanism. Full synthesis: `state/g1_anima_native_levers_he/RESULT.md`. raw stdout: `state/g1_vdj_immune_recombination/RESULT.txt`.
+
+**wired:** DIRECTIONAL-mirror (py embed via `core/clm_decode.py`). NOT engine-native, NOT wired — floor ⇒ no promotion.
