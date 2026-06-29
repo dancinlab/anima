@@ -2,9 +2,9 @@
 
 **id:** H_1818  
 **slug:** cotrain_live_bind  
-**tier:** PRE-REG (GPU-firing now, A6000 idle pod)  
+**tier:** ⏳ EVAL-PENDING (training COMPLETE — G0-G6 running, pod 43051219)  
 **date:** 2026-06-29  
-**wired:** engine-native-eligible (clm_decode.py CLMB extended + CLMB retained in .clm)
+**wired:** engine-native-eligible (clm_decode.py CLMB extended + CLMB retained in .clm, commit e17c2890f)
 
 ---
 
@@ -74,10 +74,26 @@ Round-trip parity: verified by smoke smoke-gate on pod (bind_type=1 parsed corre
 
 ---
 
-## Verdict
+## Training results (COMPLETE — 4/4 DESCENT all arms)
 
-*Pending GPU run. Expected: 6 trains × ~20min each = ~2h, ~$1.6 @ A6000 $0.40/h.*
+| arm | seed | pooled val_CE | 4/4? | lossF | wall_s |
+|-----|------|--------------|------|-------|--------|
+| bind | 7 | 0.842 | YES ✓ | 1.120 | 957s |
+| bind | 4302 | 0.814 | YES ✓ | 1.112 | 955s |
+| bind | 4303 | 0.848 | YES ✓ | 1.114 | 954s |
+| ctrl | 7 | 0.875 | YES ✓ | 1.180 | 939s |
+| ctrl | 4302 | 0.888 | YES ✓ | 1.178 | 938s |
+| ctrl | 4303 | 0.879 | YES ✓ | 1.181 | 938s |
 
-**HYPOTHESIS:** bind-ON > ctrl on G1 best_distinct/G6 fals ≥2/3 seeds AND held-out 4/4 DESCENT.  
-**SCOPE:** DIRECTIONAL (py 2-production = retired 2026-06-28, sufficient for floor/lift screen).  
-If bind-ON lifts G1≥2 ROBUST → escalate to hexa clm_decode/serialize lockstep wiring (a_verified_must_wire rung 3) for TERMINAL.
+Note: bind lossF ~1.11 < ctrl ~1.18. val_CE << 1 nit = small-corpus memorization warning (4MB × 2000 steps); held-out DESCENT passes (< ln256=5.545) but overfit present. G1=0 expected regardless (toy Task B: trunk memorizes, bilinear bypassed without L_recomb objective).
+
+## G0-G6 verdict
+
+**EVAL-PENDING** — 6 evaluate.py processes running on pod 43051219 (engine-native-py, gen=80, numpy+math.log mirror). Results update to follow.
+
+Expected: G1=0 bind AND ctrl (plain CE lets trunk memorize, bypassing bilinear → confirms L_recomb is the missing piece for H_1819).
+
+**SCOPE:** DIRECTIONAL (py 2-production, engine-native-py G0-G6).  
+If bind-ON unexpectedly lifts G1≥2 ROBUST → escalate to hexa clm_decode/serialize lockstep wiring (a_verified_must_wire rung 3) for TERMINAL.
+
+*Full G0-G6 table to be filled in upon eval completion. See state/g1_cotrain_live_bind/RESULT.md.*
