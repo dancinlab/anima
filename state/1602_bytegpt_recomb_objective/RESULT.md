@@ -64,3 +64,20 @@ Lever CRACKS G1 iff **ARM-ON G1 PASS AND ARM-ON G1 best_distinct > ARM-OFF**. _(
 - `~/anima-weights/bytegpt_recomb_303m/on_seed7.bin`  sha256 5c93b11b20d8f5e6bfd6018d018cf64f0634f2693ce9c33faa8c7c3e61a979c1 (1,213,440,020 B)
 - + .pt + .json (train summaries). reproduce = `state/1602_bytegpt_recomb_objective/trainer.py`
   (`--objective {ce_marginal,infonce} --canon`).
+
+## VERDICT (2026-06-30) — 🧱 NOT-SUPPORTED (DIRECTIONAL)
+
+py byte-parity engine-native (`anima evaluate` → evaluate.py g_eval_all, gen=80), verbatim ab_eval.log:
+
+| gate | ARM-OFF ce_marginal | ARM-ON infonce (★) |
+|------|----------------------|---------------------|
+| G0 | 🟢 kwr 5/5 | 🟢 kwr 4/5 |
+| G1 | 🔴 best_distinct=0 max_single=0 | 🔴 best_distinct=0 max_single=0 |
+| G2 | 🔴 novel=0 | 🔴 novel=0 |
+| G6 | 🔴 distinct=4 fals=0 | 🔴 distinct=5 fals=0 |
+| closure | 🔴 FAIL | 🔴 FAIL |
+
+LIFT=0. recomb-objective does NOT crack G1 on ByteGPT attention trunk. Both arms 4/4 held-out DESCENT
+(fair models). Converges with H_1602(ConvMoE)/H_1819(bind×obj)/h1129 — last live G1 lever floors.
+DIRECTIONAL (py, core/CLAUDE.md deprecates py mirror); terminal hexa = BLOCKED-INFRA (summer 3× reboot).
+Card = UNIVERSE/cards/H_9024_bytegpt_recomb_objective.md (was mis-filed H_1832).

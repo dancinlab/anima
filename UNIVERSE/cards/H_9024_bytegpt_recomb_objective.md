@@ -1,10 +1,10 @@
-# H_1832 — ByteGPT recomb-objective: the OBJECTIVE lever on the ATTENTION trunk
+# H_9024 — ByteGPT recomb-objective: the OBJECTIVE lever on the ATTENTION trunk
 
-**id:** H_1832
+**id:** H_9024  (was mis-filed as H_1832 = id-collision with fragment_train_mitosis_assembly; reassigned 2026-06-30)
 **slug:** bytegpt_recomb_objective
-**tier:** _(to fill from state/verdicts/1602_bytegpt_recomb_objective verbatim)_
+**tier:** 🧱 NOT-SUPPORTED (DIRECTIONAL) — recomb-objective does NOT crack G1 on ByteGPT attention trunk. G1 best_distinct=0 ON==OFF (no lift). py byte-parity 2-production engine; terminal hexa-native = ⏳ BLOCKED-INFRA (summer 3× reboot, a_break_the_wall type-c).
 **date:** 2026-06-30
-**wired:** engine-native (py 2-production cli/evaluate.py → core/g_gates.py → core/bytegpt_decode.py byte-parity mouth; NOT a torch probe). torch trainer = .pt→.bin bridge only.
+**wired:** DIRECTIONAL (py 2-production `cli/evaluate.py` `g_eval_all` — the scorer, formerly `core/g_gates.py`, folded into evaluate.py 2026-06-30; byte-parity mouth `core/bytegpt_decode`, NOT a torch probe). core/CLAUDE.md 2026-06-28 deprecates py mirrors → terminal verdict needs hexa-native `anima evaluate`, which is ⏳ BLOCKED-INFRA (summer 3× reboot this session; needs stable GPU pod, cost-gated). torch trainer = .pt→.bin bridge only.
 
 ---
 
@@ -77,7 +77,8 @@ better-trained (lower CE) → fair model, not crippled.
 - `state/1602_bytegpt_recomb_objective/RESULT.md` — verdict (G0-G6 table)
 - `~/anima-weights/bytegpt_recomb_303m/{off,on}_seed7.{bin,pt,json}` — ckpts PULLed (a_fire_recover_complete);
   off sha256 b55f731d3d89be774a04549d2e3d93df6bf063b53b9047b12975ed2877b851be · on sha256 5c93b11b20d8f5e6bfd6018d018cf64f0634f2693ce9c33faa8c7c3e61a979c1
-- engine-native eval = `cli/evaluate.py <bin> --corpus … --gen 80` → core/g_gates.py + core/bytegpt_decode.py
+- engine-native eval = `anima evaluate <bin> --corpus … --gen 80` → `cli/evaluate.py` `g_eval_all` (scorer folded from former core/g_gates.py, 2026-06-30) + core/bytegpt_decode (byte-parity). DIRECTIONAL (py); terminal hexa = ⏳ BLOCKED-INFRA.
+- `state/1602_bytegpt_recomb_objective/ab_eval.log` (on summer host) — verbatim py G0-G6 both arms (OFF DONE 20:25 UTC · ON DONE 21:18 UTC, both rc=0).
 
 ## Prior art (the campaign this gates)
 
@@ -92,4 +93,31 @@ better-trained (lower CE) → fair model, not crippled.
 ## Verdict
 
 <!-- CARD_VERDICT -->
-_(to fill from eval — frozen-first, c9 honest either way)_
+🧱 **NOT-SUPPORTED (DIRECTIONAL)** — the recombination OBJECTIVE does NOT crack G1 on the ByteGPT
+attention trunk. The decisive ON-vs-OFF test FAILS on both conditions (ARM-ON G1 PASS **and** >ARM-OFF).
+
+py byte-parity engine-native eval (`cli/evaluate.py` `g_eval_all`, gen=80, 4-cell corpus), verbatim
+`state/1602_bytegpt_recomb_objective/RESULT.md`:
+
+| gate | ARM-OFF `ce_marginal` | ARM-ON `infonce` (★lever) |
+|------|------------------------|----------------------------|
+| G0 COHERENCE | 🟢 PASS kwr 5/5 | 🟢 PASS kwr 4/5 |
+| **G1 RECOMBINATION** | 🔴 best_distinct=0 max_single=0 | 🔴 **best_distinct=0** max_single=0 |
+| G2 NOVELTY | 🔴 novel=0 | 🔴 novel=0 |
+| G6 IDEATION★ | 🔴 distinct=4 fals=0 | 🔴 distinct=5 fals=0 |
+| CLOSURE a7b_pass | 🔴 FAIL | 🔴 FAIL |
+
+**LIFT = 0** (G1 best_distinct 0→0, no lift; G6 fals 0→0). Both arms 4/4 held-out DESCENT (real
+generalization, fair models — NOT a crippled-training artifact). So the floor is the *objective lever's*,
+not undertraining. Converges with the whole G1 campaign: **H_1602** (recomb-obj on ConvMoE, 9/9) +
+**H_1819** (co-trained bind×obj, 0/3) + plain-CE **h1129** (ByteGPT-L24) — every arch AND the objective
+lever floor at G1. **The last live lever (objective × attention trunk) also floors → G1 wall confirmed
+trunk-objective-bound across arch+objective family** (lit-converged: objective+regularization is the
+axis, but THIS objective family is now exhausted).
+
+**Scope/honesty (c9):** py is byte-parity 2-production (NOT a torch probe), but core/CLAUDE.md (2026-06-28)
+deprecates py mirrors → this is **DIRECTIONAL**, not terminal. The hexa-native TERMINAL confirmation is
+**⏳ BLOCKED-INFRA** (`a_break_the_wall` type-c): summer rebooted 3× this session mid-eval (det-CPU
+`HEXA_DET=1`, GPU 0%, slow for 303M) — NOT a science ceiling, an unstable-host wall. Terminal needs a
+reboot-free GPU pod (cost-gated). The G1=0 is the ckpt's property (byte-parity decode), so terminal is
+expected to confirm, not overturn — follow-on, not a blocker on the directional conclusion.
