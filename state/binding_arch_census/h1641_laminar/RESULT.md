@@ -15,14 +15,19 @@ pod = vast A6000 (root@ssh5.vast.ai), torch 2.4.1+cu124.
 
 ## G0-G6 engine-native (cli/evaluate.py = core/g_gates.py numpy mirror)
 
-| arm (seed) | G1 best_distinct | G1 max_single | G1 pass |
-|------------|------------------|---------------|---------|
-| **arm (full laminar)** seed7 | **0** | 0 | ✗ (FLOOR) |
+| arm (seed) | G0 coh | G1 best_distinct | G1 pass | G2 novel | G6 dist/fals | closure |
+|------------|--------|------------------|---------|----------|--------------|---------|
+| **arm (full laminar)** seed7 (local-clean) | **5/5 PASS** | **0** | ✗ | **89 PASS** | 6/0 | 🔴 |
+| arm (full laminar) seed7 (pod) | 0–2/5 | 0 | ✗ | 0 | — | 🔴 |
 
-(nofb/noln seed7 ablation evals were still running at teardown — the H_1641 laminar eval is
-pathologically slow on this CPU, ~30–40 min/clm vs ~20 min for the other models; the arm `.clm` itself
-floors at G1=0, so it cannot exceed its ablations even before they complete. ckpts PULLed → ablation
-evals are re-runnable locally; see follow-on.)
+- **Clean datapoint (re-run locally on the pulled ckpt, uncontended):** the laminar arm is **NOT a
+  degenerate model — G0 COHERENCE PASSES (5/5) and G2 NOVELTY PASSES (89 novel, control=0)** — yet
+  **G1 RECOMBINATION = 0** and G6 falsifiable = 0. So this is NOT merely an "everything-floors"
+  undertrain artifact: the model is coherent and novel, but the laminar binding mouth installs **zero
+  compositional recombination**. That cleanly isolates the failure to G1/G6 (binding) specifically.
+- (nofb/noln seed7 ablation evals were still running at teardown — the H_1641 laminar eval is
+  pathologically slow, ~30–40 min/clm; the arm itself is at G1=0, so it cannot exceed its ablations.
+  ckpts PULLed → ablation evals re-runnable locally; see follow-on.)
 
 ## VERDICT (frozen-first · c9)
 **🧱 NOT-SUPPORTED (INCONCLUSIVE-at-floor).** The full laminar microcircuit binding arm floors at G1
