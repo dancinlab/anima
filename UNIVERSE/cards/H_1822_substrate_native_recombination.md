@@ -37,6 +37,30 @@ composed state = 진짜 재조합 child(rain+bow→rainbow)의 `immune_embed_key
 
 ---
 
+## ⚖️ VERDICT (β-readout) — 2026-06-30 · DIRECTIONAL (embed via clm_decode.py mirror; metric engine-faithful numpy)
+
+**🧱 HARDENED — 의미 embedding도 substrate-G1을 안 올린다. 벽은 concept embedding이 아니라 결합 연산자(combination operator)다.**
+
+r1의 confound(char-trigram 해시=무의미)를 제거: `clm303.clm`(303M deep-mouth trunk) penultimate `yn`을 개념 byte에 mean-pool→L2-unit = **학습된 SEMANTIC 벡터**로 두 부모 basin 구성, 동일 substrate-G1 재측정(self-test PASS = 진짜 floor, dead meter 아님).
+
+| arm | SEMANTIC @ 엔진 0.30 | @ rel d_ab | char-hash(r1) @0.30 |
+|---|---|---|---|
+| MAIN | **0/5** (d1≈0.34–0.59≫0.30) | 3/5 | 0/5 |
+| single | 0/5 ✓ | 0/5 ✓ | 0/5 |
+| shuffle | 0/5 | **3/5 == MAIN ⚠️** | 0/5 |
+
+**결정:** 의미 embedding이 char-hash와 **동일하게 0/5** @ operating radius + r1의 directional crumb(rel-radius parent-specific bridge)가 **소멸**(SEMANTIC MAIN 3/5 == shuffle 3/5 = 재조합 child가 진짜 부모와 무관 개념만큼만 가깝다). → lexical→semantic 교체가 **무변화** = 벽은 **개념 표현(embedding)이 아니라 결합 연산자**(VAdaptField L2-Voronoi *nearest-basin* = compositional depth-0, H_1310 정합).
+
+**🔑 4-각 수렴 (campaign-level):** mouth-objective(H_1602 🧱) · mouth-readout-op(H_1816 🧱) · substrate-concept-embed(β 🧱) · substrate-combiner(이 측정) — **넷 다 additive/affinity readout이 floor**. G1 레버는 readout도 representation도 아니라 **trained constructive bind**(두 부모로부터 child basin을 *구성*; nearest-basin 분할 아님). 이는 GPU 결합(c) op_obj(Hadamard bind + recomb-obj, 학습중)가 입-쪽에서 테스트하는 바로 그 레버와 **독립 수렴**.
+
+**오너 frame-break 답(종결):** "입이 병목? 엔진이 스스로 디코더를?" → 입만의 병목 아님 + substrate는 의미개념을 줘도 못 합침 → **빠진 건 학습된 구성적 결합연산자**. frozen-first(radius 사전등록, tune-to-green 거부 p7).
+
+**NAMED next (γ, cost-gated):** L2-Voronoi nearest-basin을 **trained bind operator**(tensor-product/circular-conv가 child basin을 *construct*)로 교체 후 동일 측정 = substrate twin of mouth binding-operator lever. 학습 필요(=$0 아님) → 🧱 유지until γ. β-op(engine-native 0/5 재확인용 `core/` 의미embed op)은 DIRECTIONAL→terminal 승격 follow-on.
+
+**artifacts:** `state/g1_substrate_native_recombination/{beta_readout.py, RESULT_BETA.md, RESULT_BETA.txt}`
+
+---
+
 ## 문제 제기 (오너)
 
 현 anima G1/G6 캠페인은 **전부 mouth-frame**(clm_decode CLMConvMoE trunk + next-byte CE + readout).

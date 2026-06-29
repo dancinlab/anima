@@ -1,0 +1,175 @@
+========================================================================
+H_1822 (β) substrate-native recombination — SEMANTIC trunk embed
+  DIRECTIONAL: embed step uses core/clm_decode.py (py mirror) trunk
+  penultimate; substrate-G1 metric = numpy L2-affinity (no torch).
+========================================================================
+
+[0] METRIC SELF-TEST (planted bridge vs random far point)
+    bridge (true midpoint): g1_rel=1 (d1=0.2872 d2=0.2872 d_ab=0.5685)
+    off-axis (near a, far b): g1_rel=0 (d1=0.7769 d2=1.2687 d_ab=0.5685)
+    SEPARATES (fires on a true bridge, NOT on an off-axis non-bridge): PASS
+
+[1] loading 303M trunk: clm303.clm
+    d=3784 E=3 K=3 L=4
+
+[2] SEMANTIC arms (303M trunk penultimate concept basins)
+── SEMANTIC MAIN (real compounds) ──
+  pair0 [rain + bow -> rainbow]
+    d1=0.4081  d2=0.8046  d_ab=0.7826  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair1 [snow + man -> snowman]
+    d1=0.3427  d2=0.8573  d_ab=0.9052  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair2 [sun + flower -> sunflower]
+    d1=0.5945  d2=0.8286  d_ab=0.9067  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair3 [fire + fly -> firefly]
+    d1=0.4085  d2=0.4229  d_ab=0.4477  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair4 [water + fall -> waterfall]
+    d1=0.4527  d2=0.5191  d_ab=0.4746  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  >>> SEMANTIC MAIN (real compounds) substrate_G1  (eng-radius 0.30): 0/5   (rel-radius d_ab): 3/5
+
+── SEMANTIC CONTROL single ──
+  pair0 [rain + bow -> rainbow]
+    d1=0.0000  d2=0.7826  d_ab=0.7826  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair1 [snow + man -> snowman]
+    d1=0.0000  d2=0.9052  d_ab=0.9052  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair2 [sun + flower -> sunflower]
+    d1=0.0000  d2=0.9067  d_ab=0.9067  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair3 [fire + fly -> firefly]
+    d1=0.0000  d2=0.4477  d_ab=0.4477  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair4 [water + fall -> waterfall]
+    d1=0.0000  d2=0.4746  d_ab=0.4746  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  >>> SEMANTIC CONTROL single substrate_G1  (eng-radius 0.30): 0/5   (rel-radius d_ab): 0/5
+
+── SEMANTIC CONTROL shuffle ──
+  pair0 [rain + bow -> rainbow]
+    d1=0.4081  d2=0.7315  d_ab=0.7457  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair1 [snow + man -> snowman]
+    d1=0.3427  d2=0.5214  d_ab=0.5217  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair2 [sun + flower -> sunflower]
+    d1=0.7006  d2=0.8286  d_ab=0.8280  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair3 [fire + fly -> firefly]
+    d1=0.4085  d2=0.6038  d_ab=0.6616  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair4 [water + fall -> waterfall]
+    d1=0.5191  d2=0.8717  d_ab=0.7767  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  >>> SEMANTIC CONTROL shuffle substrate_G1  (eng-radius 0.30): 0/5   (rel-radius d_ab): 3/5
+
+[3] CHAR-HASH arms (r1 immune_embed_key mirror — SAME 5 pairs)
+── CHAR-HASH MAIN (real compounds) ──
+  pair0 [rain + bow -> rainbow]
+    d1=0.8311  d2=1.1154  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair1 [snow + man -> snowman]
+    d1=0.6785  d2=1.0000  d_ab=1.1927  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair2 [sun + flower -> sunflower]
+    d1=0.6058  d2=1.2709  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair3 [fire + fly -> firefly]
+    d1=0.9194  d2=1.0000  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair4 [water + fall -> waterfall]
+    d1=0.8910  d2=0.9276  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  >>> CHAR-HASH MAIN (real compounds) substrate_G1  (eng-radius 0.30): 0/5   (rel-radius d_ab): 5/5
+
+── CHAR-HASH CONTROL single ──
+  pair0 [rain + bow -> rainbow]
+    d1=0.0000  d2=1.4142  d_ab=1.4142  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair1 [snow + man -> snowman]
+    d1=0.0000  d2=1.1927  d_ab=1.1927  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair2 [sun + flower -> sunflower]
+    d1=0.0000  d2=1.4142  d_ab=1.4142  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair3 [fire + fly -> firefly]
+    d1=0.0000  d2=1.4142  d_ab=1.4142  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair4 [water + fall -> waterfall]
+    d1=0.0000  d2=1.4142  d_ab=1.4142  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  >>> CHAR-HASH CONTROL single substrate_G1  (eng-radius 0.30): 0/5   (rel-radius d_ab): 0/5
+
+── CHAR-HASH CONTROL shuffle ──
+  pair0 [rain + bow -> rainbow]
+    d1=1.1154  d2=1.4142  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair1 [snow + man -> snowman]
+    d1=1.0000  d2=1.3221  d_ab=1.2736  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair2 [sun + flower -> sunflower]
+    d1=1.2709  d2=1.4142  d_ab=1.2180  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=0  substrate_G1=0
+  pair3 [fire + fly -> firefly]
+    d1=1.0000  d2=1.4142  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  pair4 [water + fall -> waterfall]
+    d1=0.9276  d2=1.4142  d_ab=1.4142  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  >>> CHAR-HASH CONTROL shuffle substrate_G1  (eng-radius 0.30): 0/5   (rel-radius d_ab): 0/5
+
+========================================================================
+CONTRAST — SEMANTIC vs CHAR-HASH substrate-G1 on the SAME 5 pairs
+========================================================================
+                          eng-radius 0.30   rel-radius d_ab
+  SEMANTIC  MAIN          0/5              3/5
+  CHAR-HASH MAIN          0/5              5/5
+  SEMANTIC  single(ctrl)  0/5              0/5
+  CHAR-HASH single(ctrl)  0/5              0/5
+  SEMANTIC  shuffle(ctrl) 0/5              3/5
+  CHAR-HASH shuffle(ctrl) 0/5              0/5
+
+  mouth-decode G1 (clm_decode CLMConvMoE) = 0  [FROZEN FLOOR H_1818/H_1602]
+
+========================================================================
+DECISIVE QUESTION — did SEMANTIC lift substrate-G1 @ engine radius 0.30?
+  char-hash MAIN @ eng 0.30 = 0/5 (r1 floor)
+  semantic  MAIN @ eng 0.30 = 0/5
+  => NO: semantic does NOT lift @ the engine operating point.
+     The COMBINATION operator (VAdaptField Voronoi) is non-compositional
+     even WITH semantic concepts (consistent w/ H_1310 depth-0).
+========================================================================
