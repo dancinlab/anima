@@ -1,6 +1,6 @@
 # H_1641 — Canonical cortical laminar microcircuit (L4→L2/3↺→L5/6 feedback) binder
 
-- **tier:** 🔵 PRE-REGISTERED DESIGN (DIRECTIONAL · 측정 0 · unmeasured)
+- **tier:** 🟠 DIRECTIONAL NOT-SUPPORTED (303M engine-native · INCONCLUSIVE-at-floor) — arm(full laminar)/nofb/noln G1 best_distinct 전부 0·G6 fals=0; laminar divisive-norm binding이 G1벽 안 엶. caveat: 2000-step undertrain + binder DROP(trunk-shaping scope, conv g-gates-py-1) + py 2-prod DIRECTIONAL. ckpt PULL(arm_seed7 sha cbe69285)·pod teardown.
 - **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy, no engine); gpu_recipe = cost-gated PRE-REGISTER ONLY (NOT fired).
 - **source:** archbrainstorm — 84-family anima-native synthesis-binding architecture census (binding-wall program, H_1603)
 - **lens:** cortical canonical microcircuit — Douglas-Martin laminar feedforward-recurrent-feedback loop + Carandini-Heeger divisive normalization

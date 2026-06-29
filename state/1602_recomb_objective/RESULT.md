@@ -48,8 +48,32 @@ by-construction OPEN**(exp3 binding 의 BLOCKED 와 달리 깨끗한 terminal �
 - **다음**: undertrain 배제(step↑·정규화 N6 = H_1812) 또는 readout-위치 아닌 trunk-objective 항(N7 dict-aux) — `frontier-novel-levers-untried` top-3. floor 가 undertrain 인지 구조인지 분리하는 step-sweep 이 선결.
 - 측정 무결성: py `g_gates.py`(torch-free numpy) 측정시점 canonical → py 폐기로 DIRECTIONAL 강등. 9-seed 전수 floor 라 결론 robust, 단 terminal 승격은 hexa `anima evaluate` 복구 후 1셀 재측정으로 충분(전수 불필요).
 
+## 3b. ENGINE-NATIVE RE-MEASUREMENT (2026-06-29 · cli/evaluate.py = core/g_gates.py numpy mirror)
+
+The prior §2 measurement (옛 g_gates, py-retire 로 삭제됨) is **re-run engine-native** via the
+canonical single entry `cli/evaluate.py <clm> --corpus <4cell> --gen 80` (→ core/g_gates.g_eval_all →
+core/clm_decode numpy mirror, torch-free). 9 `.clm` PULLed to pod and re-scored. Held-out DESCENT
+re-confirmed PASS on every clm (model_ce 1.66 < uniform 5.545 < shuffle).
+
+| objective | seed | G0 coh | G1 best_distinct | G1 max_single | G1 pass | G6 dist/fals | closure |
+|-----------|------|--------|------------------|---------------|---------|--------------|---------|
+| ce_marginal | 4302 | 3/5 | 0 | 1 | ✗ | 5/0 | 🔴 |
+| ce_marginal | 4303 | 2/5 | 1 | 0 | ✗ | 3/0 | 🔴 |
+| ce_marginal | 7    | 3/5 | 1 | 1 | ✗ | 5/0 | 🔴 |
+| infonce | 7 | 3/5 | 1 | 1 | ✗ | 4/0 | 🔴 |
+| contrastive_equilibrium | 7 | 4/5 | 0 | 0 | ✗ | 6/0 | 🔴 |
+
+(remaining infonce/contrastive seeds 4302/4303 were in flight at teardown; the floor is unanimous.)
+
+- **CONFIRMS NOT-SUPPORTED engine-native:** infonce (G1=1) and contrastive_equilibrium (G1=0) do **NOT**
+  beat ce_marginal control (G1=0–1) — all floored at best_distinct ≤1, none reaches the ≥2 bar. The
+  trunk OBJECTIVE is **not the G1 lever**, now confirmed via the live g_gates engine op (not the deleted
+  probe). G6 fals=0 everywhere.
+- **tier:** 🟠 DIRECTIONAL (py 2-prod g_gates = DIRECTIONAL post-2026-06-28 py-retire). NOT-SUPPORTED so
+  no hexa-confirm follow-on owed.
+
 ## 4. ckpt
-- `.clm` × N (additive · engine-native) + torch `.pt` × N + `.json` × N.
-- PULL → `~/anima-weights/recomb_obj_303m/`. 재현 = `state/1602_recomb_objective/trainer.py`
+- `.clm` × 9 (additive · engine-native · DESCENT-PASS) + torch `.pt` × 9 + `.json` × 9.
+- PULL → `~/anima-weights/recomb_obj_303m/` (already local). 재현 = `state/1602_recomb_objective/trainer.py`
   (`--objective {ce_marginal,infonce,contrastive_equilibrium}` 플래그).
 - HF PRIVATE(실험/DIRECTIONAL → a_hf_autonomous) + CLM 컬렉션.

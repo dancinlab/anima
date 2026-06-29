@@ -1,6 +1,6 @@
 # H_1640 — Conservative coupled-Hamiltonian orbit mouth (symplectic joint-invariant binding)
 
-- **tier:** 🔵 PRE-REGISTERED DESIGN (DIRECTIONAL · 측정 0 · unmeasured)
+- **tier:** 🟠 DIRECTIONAL NOT-SUPPORTED (303M engine-native · INCONCLUSIVE-at-floor) — arm/ctrl/diss G1 best_distinct 전부 0·G6 fals=0; binding-dynamics가 G1벽 안 엶. caveat: 2000-step undertrain(G0 2-3/5 floor) + binder는 직렬화 전 DROP(=trunk-shaping scope, inference-op 아님, conv g-gates-py-1) + py 2-prod DIRECTIONAL. ckpt PULL(arm_seed7 sha 5ffd2a4f)·pod 43053585 teardown.
 - **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first decision probe (numpy, no engine); gpu_recipe = cost-gated PRE-REGISTER ONLY (NOT fired).
 - **source:** archbrainstorm — 84-family anima-native synthesis-binding architecture census (binding-wall program, H_1603)
 - **lens:** classical mechanics / symplectic (volume-preserving) dynamics, contrasted with dissipative gradient settle; neural action-angle oscillator coupling
