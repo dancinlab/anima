@@ -12420,6 +12420,13 @@
         "value": "GPU fire-agent 가 렌트 pod 를 raw ssh(vast proxy 직접)로 몰면 hexa cloud reconcile 에 안 잡혀 코디네이터가 liveness 확인·중단·harvest 불가 = 비용누수+zombie-monitor 위험(① a46b60ee 가 vast SSH-wall pod 라 외부추적 0, '완료→실은 진행중' 노이즈 통지 반복). canonical-cli 위반(raw vast).",
         "threshold": "재발조건: fire-agent 프롬프트가 'hexa cloud 로 렌트·관리'를 강제 안 하면 raw ssh vast pod 로 빠져 untrackable. 해결: 발사 지시에 '반드시 hexa cloud 로 pod 생성·관리(raw vastai/ssh 금지, c11) → reconcile 가시·idle-reap 가능' 명시 + teardown 확인을 코디네이터가 hexa cloud 로 검증.",
         "source": "state/g1_cotrain_recomb_bind/PREREG.md"
+      },
+      {
+        "id": "verify-clm-v2-py-1",
+        "state": "ossified",
+        "value": "side-harness 직접실행 차단을 파일 안 __main__ hard-exit 가드로 구현하면, canonical 경로(hexa)가 그 파일을 subprocess(python3 … descent / serialize bridge)로 정당하게 호출하는 것까지 죽여 production 을 조용히 깨뜨린다. pre_bash 훅은 agent top-level 명령만 후킹하고 프로그램이 spawn 하는 subprocess 는 안 보므로, 직접실행 차단은 .harness/enforcement.json pre_bash 룰(H-ANIMA-SINGLE-ENTRY)에 두고, hexa 가 subprocess 로 부르는 engine-internal py 툴(verify_clm_v2·serialize_standalone)에는 hard 가드 대신 경고주석만 둔다. import-only 파일(clm_serialize_v2·core/*.py)에만 __main__ 가드가 안전(import 는 __main__ 미발화).",
+        "threshold": "재발조건: 엔진 파일에 직접실행 차단 가드를 추가할 때. 해결: ① 그 파일이 canonical 경로(.hexa)에서 python3 subprocess 로 불리는지 grep 먼저(불리면 hard __main__ exit 금지) ② 차단은 pre_bash 룰로(subprocess 미후킹) ③ import-only 만 __main__ 가드 ④ 추가 후 canonical anima train/serialize 스모크로 내부 shell-out 무탈 확인",
+        "source": "train/clm/model/verify_clm_v2.py"
       }
     ]
   }
