@@ -21,21 +21,21 @@ Ablation design: if Galois arm > orpool on G1, AND-pool (conjunction) is load-be
 
 ---
 
-## Training results (partial — seed7 DONE, seed4302 training, seed4303 pending)
+## Training results (COMPLETE — all 9 arms DONE)
 
 | arm | seed | val_CE | 4/4? | lossF | bind_ce | wall_s |
 |-----|------|--------|------|-------|---------|--------|
 | arm | 7 | 0.916 | YES | 1.187 | 4.295 | 3428s |
 | arm | 4302 | 0.917 | YES | 1.179 | 4.292 | 3446s |
-| arm | 4303 | — | — | — | — | — |
+| arm | 4303 | 0.934 | YES | 1.161 | 4.313 | 3199s |
 | k1 | 7 | 0.982 | YES | 1.224 | 2.988 | 3437s |
 | k1 | 4302 | 0.952 | YES | 1.183 | 3.045 | 3434s |
-| k1 | 4303 | — | — | — | — | — |
+| k1 | 4303 | 0.978 | YES | 1.180 | 3.033 | 3333s |
 | orpool | 7 | 0.904 | YES | 1.177 | 4.211 | 3445s |
 | orpool | 4302 | 0.929 | YES | 1.170 | 4.215 | 3450s |
-| orpool | 4303 | — | — | — | — | — |
+| orpool | 4303 | 0.893 | YES | 1.167 | 4.210 | 3316s |
 
-*seed7+seed4302: all 6 arms DONE (4/4 DESCENT). seed4303 training in progress (3 parallel arms on pod 43053819).*
+*All 9 arms DONE (9/9 CLMs, 4/4 DESCENT each). G0-G6 eval RUNNING on pod 43053819.*
 
 ---
 
@@ -57,9 +57,7 @@ Ablation design: if Galois arm > orpool on G1, AND-pool (conjunction) is load-be
 
 ## Verdict
 
-**IN-FLIGHT** — training seed4302 running, seed4303 pending. G0-G6 eval to start after 9 CLMs complete.
-
-Expected: G1=0 all arms (binder dropped). Ablation (arm=AND-pool vs orpool=OR-pool) tests whether conjunction training signal vs superposition training signal differs for trunk G1 representations — even when both are dropped at .clm.
+**EVAL-PENDING** — all 9 CLMs training done (4/4 DESCENT each). G0-G6 engine-native-py eval RUNNING on pod 43053819. Expected: G1=0 all arms (binder dropped at serialize). Ablation (arm=AND-pool vs orpool=OR-pool) tests whether conjunction training signal vs superposition training signal differs for trunk G1 representations — even when both are dropped at .clm.
 
 ---
 
