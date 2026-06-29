@@ -27,12 +27,14 @@
 
 | arm | seed | val_CE (pooled) | registers_DESCENT | DESCENT? |
 |-----|------|----------------|-------------------|---------|
-| ctrl | 7 | PENDING | PENDING | — |
-| ctrl | 4302 | PENDING | PENDING | — |
-| ctrl | 4303 | PENDING | PENDING | — |
-| tlora | 7 | PENDING | PENDING | — |
-| tlora | 4302 | PENDING | PENDING | — |
-| tlora | 4303 | PENDING | PENDING | — |
+| ctrl | 7 | 1.581 | 4/4 | ✓ (lossF=1.576, recomb_ce=1.582) |
+| ctrl | 4302 | 1.622 | 4/4 | ✓ (lossF=1.557, recomb_ce=~1.58) |
+| ctrl | 4303 | 1.587 | 4/4 | ✓ (lossF=1.584, recomb_ce=~1.58) |
+| tlora | 7 | PENDING (training) | — | — |
+| tlora | 4302 | PENDING (training) | — | — |
+| tlora | 4303 | PENDING (training) | — | — |
+
+*Note: val_CE ~1.58 is higher than prior H_162x/H_1819 arms (~0.63-0.95) — TPR expert-weight factorization reduces capacity. All 4/4 DESCENT (< 5.545 uniform). Expert routing collapses at E2→E3 mitosis (step 2000) then recovers by step 4000.*
 
 ---
 
