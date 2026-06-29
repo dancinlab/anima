@@ -1027,7 +1027,7 @@ pub fn clm_load_weights(path: string) -> Map {
 }
 
 // clm_weights_free_pub — pub wrapper over _clmd_weights_free so a load-once eval driver
-// (generator.hexa::gen_auto_free, reached from g_gates.hexa::g_eval_all) can release the
+// (generator.hexa::gen_auto_free, reached from cli/evaluate.hexa::g_eval_all) can release the
 // hoisted weight-set ONCE at eval end. a_core_engine_map preserved: same single-load mouth,
 // free moved to the driver tail (mirrors how clm_load_weights hoists the load).
 pub fn clm_weights_free_pub(W: Map) { _clmd_weights_free(W) }

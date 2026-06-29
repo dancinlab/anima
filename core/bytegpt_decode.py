@@ -129,7 +129,7 @@ def bg_header(path):
 
 def bg_is_bytegpt(path):
     """mouth-sniff: NOT CLM\\x01 magic AND a sane 5xu32 ByteGPT header.
-    Mirrors g_gates.hexa gen_auto_ideate dispatch (CLM\\x01 -> clm, else bytegpt)."""
+    Mirrors generator.hexa gen_auto_ideate dispatch (CLM\\x01 -> clm, else bytegpt)."""
     try:
         with open(path, 'rb') as f:
             hdr = f.read(20)

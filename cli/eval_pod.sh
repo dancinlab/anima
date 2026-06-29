@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # cli/eval_pod.sh — anima 엔진-네이티브 eval 을 fresh GPU pod 에서 한 명령으로 발사.
 #
-# WHY: GPU pod 는 휘발이라 `anima eval <ckpt>` (core/g_gates G0-G6 · Ψ=½ · G5 · savant SI)
+# WHY: GPU pod 는 휘발이라 `anima eval <ckpt>` (cli/evaluate G0-G6 · Ψ=½ · G5 · savant SI)
 #      을 돌릴 때마다 import-closure 를 손으로 push 하는 고고학을 반복하게 된다. 이 스크립트가
 #      그 절차(번들→push→추출→detached 발사→회수)를 박제한다. SSOT 설명 = state/clm303_clean_corpus/EVAL_KIT.md.
 #
@@ -73,18 +73,18 @@ hexa cloud copy-to "$POD" "$CLM_LOCAL" "/root/anima/$CLM_NAME"
 
 # --- clean target, extract bundle (core/ cli/ lanes), de-nest, FAIL-LOUD sanity ---
 # Aborts (set -e propagates the remote exit) on every trap this script was built to kill:
-#   ① stale source — core/g_gates.hexa missing OR cli/anima.hexa has no `eval` subcommand
+#   ① stale source — cli/evaluate.hexa missing OR cli/anima.hexa has no `eval` subcommand
 #      (the bug where a stale main-repo checkout ran the consciousness daemon with ckpt=eval).
 #   ④ lane closure — SAVANT/savant_lib.hexa missing ([module_loader] FATAL).
 #   ⑤ farr OOM — pod hexa < v0.311.0 leaks the bump allocator to 85GB. (--bootstrap to fix.)
 hexa cloud exec "$POD" -- "cd /root/anima && rm -rf core cli && tar xzf anima_bundle.tgz && rm -rf core/core && \
   v=\$(/root/.hx/bin/hexa --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1); echo \"hexa: \$v\"; \
   awk -v v=\"\$v\" 'BEGIN{n=split(v,a,\".\"); if(n<2||(a[1]==0&&a[2]<311)){print \"FATAL ⑤: hexa \"v\" < v0.311.0 (farr OOM) — re-run with --bootstrap\"; exit 1}}'; \
-  ls core/g_gates.hexa >/dev/null 2>&1 || { echo 'FATAL ①: core/g_gates.hexa MISSING (stale/partial core)'; exit 1; }; \
+  ls cli/evaluate.hexa >/dev/null 2>&1 || { echo 'FATAL ①: cli/evaluate.hexa MISSING (stale/partial source)'; exit 1; }; \
   [ \"\$(grep -c 'argv\[0\] == \"eval\"' cli/anima.hexa)\" -ge 1 ] || { echo 'FATAL ①: cli/anima.hexa lacks eval subcommand (stale source → daemon, not G0-G6)'; exit 1; }; \
   ls SAVANT/savant_lib.hexa >/dev/null 2>&1 || { echo 'FATAL ④: SAVANT/savant_lib.hexa MISSING (lane closure)'; exit 1; }; \
   ls /root/anima/$CLM_NAME >/dev/null 2>&1 || { echo 'FATAL: ckpt $CLM_NAME MISSING'; exit 1; }; \
-  echo 'sanity OK: hexa≥v0.311 · g_gates · eval-branch · savant_lib · ckpt'"
+  echo 'sanity OK: hexa≥v0.311 · evaluate · eval-branch · savant_lib · ckpt'"
 
 # --- launch eval detached (exec-session-timeout irrelevant; glue-bound decode = tens of minutes) ---
 # HEXA_DET=1 = forge determinism safety-pin (hexa-lang #4208 fast-default follow-on): this

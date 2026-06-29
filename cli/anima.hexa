@@ -46,8 +46,9 @@ import "core/engine_cli.hexa"
 import "core/generator.hexa"
 import "core/bytegpt_decode.hexa"
 // NOTE: G0-G6 evaluation lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin,
-// symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — so
-// this canonical entry no longer imports core/g_gates.hexa directly (eval has ONE home).
+// symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — and
+// cli/evaluate.hexa now HOLDS the G0-G6 scorers directly (the former core/g_gates.hexa
+// module was folded into it — measurement has ONE home).
 import "DREAM/dream_lib.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
@@ -138,10 +139,10 @@ fn anima_train_mode(argv: [string]) {
 // SYMMETRIC TWIN (a_engine_native_learning single-entry): measurement lives in its own
 // file cli/evaluate.hexa (the symmetric mirror of cli/train.hexa). `anima evaluate
 // <model.clm>` DISPATCHES there as a sub-process — exactly like the train dispatch above
-// — so this canonical entry stays a thin verb router and the G0-G6 eval logic + the
-// core/g_gates.hexa import have ONE home (cli/evaluate.hexa).
+// — so this canonical entry stays a thin verb router and the G0-G6 eval logic (the
+// scorers folded in from the former core/g_gates.hexa) has ONE home (cli/evaluate.hexa).
 //
-// .clm-ONLY (the engine decodes ONLY .clm): g_gates mounts a ckpt through the generator
+// .clm-ONLY (the engine decodes ONLY .clm): evaluate mounts a ckpt through the generator
 // L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable
 // — reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
 //

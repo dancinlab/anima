@@ -750,7 +750,7 @@ pub fn gen_bytegpt_ideate(ckpt_path: string, seed: string, max_new: int,
 // gen_auto_ideate — mouth-type-dispatched IDEATE entry (the seeded-sampling sibling of
 // gen_auto_chat). Sniff the ckpt and route to the matching architecture's seeded-sample
 // ideate (gen_bytegpt_ideate for a ByteGPT .bin, gen_clm_ideate for a .clm). Same
-// #{ ok, text, reason } contract for both mouths so the G0-G6 gate scorers (core/g_gates.hexa)
+// #{ ok, text, reason } contract for both mouths so the G0-G6 gate scorers (cli/evaluate.hexa)
 // run on EITHER mouth via this ONE typed entry — the eval system is mouth-agnostic
 // (a_core_engine_map: per-architecture single typed entry, dispatcher picks by file format).
 pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
@@ -765,7 +765,7 @@ pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
 // LOAD-ONCE EVAL HANDLE (H_1400 W-hoist at the eval-DRIVER level · ING#42378065 plan-B).
 // ------------------------------------------------------------------------
 // gen_auto_load + gen_auto_ideate_W are the mouth-agnostic W-hoist twins of
-// gen_auto_backend + gen_auto_ideate. A whole-eval driver (g_gates.hexa::g_eval_all)
+// gen_auto_backend + gen_auto_ideate. A whole-eval driver (cli/evaluate.hexa::g_eval_all)
 // runs DOZENS of decodes across G0-G6; the path-keyed gen_auto_ideate reloads the full
 // 2-3GB .clm weight-set from disk PER decode (clm_decode_topk_sampled → _clmd_load +
 // _clmd_weights_free every call). Even though each load is freed, the per-decode
