@@ -1,0 +1,9 @@
+=== GPU state ===
+99 %, 9532 MiB
+=== training job alive? ===
+4735 python3 -u state/1641_predcoding_binding/trainer.py --objective pc_bind --seed 7 --canon --corpus /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt /home/summer/anima/.corpus_cache/anima-corpus-en-general.txt /home/summer/anima/.corpus_cache/anima-corpus-ko-sns.txt /home/summer/anima/.corpus_cache/anima-corpus-en-sns.txt --cell-label ko-general en-general ko-sns en-sns --sample proportional --steps 2000 --val-every 200 --bf16 --out /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_bind_seed7.clm --ckpt-out /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_bind_seed7.pt --gauges-out /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_bind_seed7.json
+=== gemm_cuda truth-probe (contended) ===
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)
+BUILD=CUDA   cuda_available()=1  cuda_device_count()=1
+[d=1024] path=CUDA  t=0.008220 s  261.24 GFLOP/s  rel_rms_vs_ikj=1.129e-15
+[d=2048] path=CUDA  t=0.072394 s  237.31 GFLOP/s  rel_rms_vs_ikj=1.586e-15

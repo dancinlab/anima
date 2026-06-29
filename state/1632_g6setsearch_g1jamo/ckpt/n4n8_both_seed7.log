@@ -1,0 +1,63 @@
+=== H_1632 N4+N8 arm=n4n8_both (jamo=True set=True) seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional
+  levers: lambda_jamo=0.5 lambda_set=0.5 setsearch(every=50 K=8 frames=5 gen=48)
+  cuda: NVIDIA A40 cap=8.6 torch=2.5.1+cu124
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val_tail=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val_tail=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val_tail=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.68509  E=2  wd=0.0500 dp=0.5000  val_CE=11.42148 {"jamo": 3.3455, "n_syl": 1143, "set": 5.6246, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step    50  CE=2.54474  E=2  wd=0.0492 dp=0.4917 {"jamo": 1.7431, "n_syl": 1384, "set": 2.3873, "set_dist": 37, "set_fals": 0, "set_reward": 37.0, "set_n_sel": 37}
+  step   100  CE=2.17132  E=2  wd=0.0483 dp=0.4833 {"jamo": 1.5445, "n_syl": 1346, "set": 2.1598, "set_dist": 33, "set_fals": 0, "set_reward": 33.0, "set_n_sel": 33}
+  step   150  CE=2.15274  E=2  wd=0.0475 dp=0.4748 {"jamo": 1.4264, "n_syl": 587, "set": 2.0568, "set_dist": 38, "set_fals": 0, "set_reward": 38.0, "set_n_sel": 38}
+  step   200  CE=1.98035  E=2  wd=0.0466 dp=0.4664 {"jamo": 1.3754, "n_syl": 809, "set": 1.9408, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   250  CE=1.83247  E=2  wd=0.0458 dp=0.4579 {"jamo": 1.264, "n_syl": 839, "set": 1.8159, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   300  CE=2.02559  E=2  wd=0.0449 dp=0.4495 {"jamo": 1.4484, "n_syl": 279, "set": 1.6918, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   350  CE=1.74993  E=2  wd=0.0441 dp=0.4410 {"jamo": 1.3505, "n_syl": 577, "set": 1.4846, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   400  CE=1.66592  E=2  wd=0.0433 dp=0.4326 {"jamo": 1.3529, "n_syl": 1179, "set": 1.4694, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   450  CE=1.19121  E=2  wd=0.0424 dp=0.4242 {"jamo": 0.9934, "n_syl": 1788, "set": 1.2856, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   500  CE=1.52396  E=2  wd=0.0416 dp=0.4157  val_CE=1.49433 {"jamo": 1.2044, "n_syl": 1340, "set": 1.2329, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   550  CE=1.64006  E=2  wd=0.0407 dp=0.4073 {"jamo": 1.1782, "n_syl": 589, "set": 1.1841, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   600  CE=1.43972  E=2  wd=0.0399 dp=0.3988 {"jamo": 1.0063, "n_syl": 818, "set": 1.1517, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   650  CE=1.53490  E=2  wd=0.0390 dp=0.3904 {"jamo": 1.2059, "n_syl": 577, "set": 1.0477, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   700  CE=1.31448  E=2  wd=0.0382 dp=0.3819 {"jamo": 0.9445, "n_syl": 1559, "set": 0.9187, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   750  CE=1.37681  E=2  wd=0.0373 dp=0.3735 {"jamo": 1.1408, "n_syl": 867, "set": 1.0196, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   800  CE=1.28912  E=2  wd=0.0365 dp=0.3650 {"jamo": 1.0454, "n_syl": 1134, "set": 0.9217, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   850  CE=1.30838  E=2  wd=0.0357 dp=0.3566 {"jamo": 1.0488, "n_syl": 1116, "set": 0.8734, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   900  CE=1.43984  E=2  wd=0.0348 dp=0.3481 {"jamo": 1.1853, "n_syl": 597, "set": 0.7805, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step   950  CE=1.52009  E=2  wd=0.0340 dp=0.3397 {"jamo": 1.229, "n_syl": 1167, "set": 0.8374, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.05890  E=3  wd=0.0331 dp=0.3312  val_CE=1.18086 {"jamo": 0.7996, "n_syl": 1254, "set": 0.7408, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1050  CE=1.59289  E=3  wd=0.0323 dp=0.3228 {"jamo": 1.2101, "n_syl": 800, "set": 1.1588, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1100  CE=1.32114  E=3  wd=0.0314 dp=0.3144 {"jamo": 1.2038, "n_syl": 1972, "set": 0.8915, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1150  CE=1.19624  E=3  wd=0.0306 dp=0.3059 {"jamo": 0.7563, "n_syl": 747, "set": 0.8173, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1200  CE=1.31523  E=3  wd=0.0297 dp=0.2975 {"jamo": 1.0948, "n_syl": 1182, "set": 0.8676, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1250  CE=1.33282  E=3  wd=0.0289 dp=0.2890 {"jamo": 1.0634, "n_syl": 1135, "set": 0.7507, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1300  CE=1.44463  E=3  wd=0.0281 dp=0.2806 {"jamo": 1.1459, "n_syl": 846, "set": 0.691, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1350  CE=1.22552  E=3  wd=0.0272 dp=0.2721 {"jamo": 1.0148, "n_syl": 1095, "set": 0.7908, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1400  CE=0.95357  E=3  wd=0.0264 dp=0.2637 {"jamo": 0.6891, "n_syl": 1289, "set": 0.6817, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1450  CE=1.38130  E=3  wd=0.0255 dp=0.2552 {"jamo": 1.2498, "n_syl": 543, "set": 0.6169, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1500  CE=1.36012  E=3  wd=0.0247 dp=0.2468  val_CE=1.04875 {"jamo": 1.0927, "n_syl": 1140, "set": 0.6488, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1550  CE=1.32770  E=3  wd=0.0238 dp=0.2383 {"jamo": 0.9755, "n_syl": 286, "set": 0.6414, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1600  CE=1.30370  E=3  wd=0.0230 dp=0.2299 {"jamo": 1.1758, "n_syl": 1658, "set": 0.6651, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1650  CE=1.12373  E=3  wd=0.0221 dp=0.2214 {"jamo": 1.1149, "n_syl": 832, "set": 0.6359, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1700  CE=1.30687  E=3  wd=0.0213 dp=0.2130 {"jamo": 1.0853, "n_syl": 1454, "set": 0.5943, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1750  CE=1.07275  E=3  wd=0.0205 dp=0.2045 {"jamo": 1.0249, "n_syl": 1709, "set": 0.603, "set_dist": 39, "set_fals": 0, "set_reward": 39.0, "set_n_sel": 39}
+  step  1800  CE=1.13128  E=3  wd=0.0196 dp=0.1961 {"jamo": 0.7799, "n_syl": 1042, "set": 0.5561, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1850  CE=1.24831  E=3  wd=0.0188 dp=0.1877 {"jamo": 1.2053, "n_syl": 244, "set": 0.591, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1900  CE=1.24936  E=3  wd=0.0179 dp=0.1792 {"jamo": 1.0102, "n_syl": 288, "set": 0.5118, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  step  1950  CE=1.02511  E=3  wd=0.0171 dp=0.1708 {"jamo": 0.885, "n_syl": 1635, "set": 0.5234, "set_dist": 38, "set_fals": 0, "set_reward": 38.0, "set_n_sel": 38}
+  step  2000  CE=1.15296  E=3  wd=0.0162 dp=0.1623  val_CE=0.89064 {"jamo": 1.0418, "n_syl": 2007, "set": 0.5199, "set_dist": 40, "set_fals": 0, "set_reward": 40.0, "set_n_sel": 40}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=0.30019  DESCENT
+     en-general   val_CE=0.54476  DESCENT
+     ko-sns       val_CE=1.47425  DESCENT
+     en-sns       val_CE=1.42667  DESCENT
+  FINAL val_CE(pooled)=0.936465572565794  registers_DESCENT=4/4
+  loss0=5.68509 lossF=1.15296 wall=3273.6s savant_latched_at=1 E0=2->E=3 setsearch_runs=41
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 1.15296, "g1_composed_distinct": 1, "g2_novelty_rate": 0.0, "g6_count": 2, "g6_jaccard": 0.86667, "phi_proxy": 39.502116, "mitosis_cells": 74}
+  torch ckpt -> state/1632_g6setsearch_g1jamo/ckpt/n4n8_both_seed7.pt (1382668561 bytes)
+  summary -> state/1632_g6setsearch_g1jamo/ckpt/n4n8_both_seed7.json
+  .clm WRITTEN 176584498 bytes -> state/1632_g6setsearch_g1jamo/ckpt/n4n8_both_seed7.clm
+  clm_decodable=True

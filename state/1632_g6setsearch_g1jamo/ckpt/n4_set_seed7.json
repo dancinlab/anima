@@ -1,0 +1,58 @@
+{
+  "arm": "n4_set",
+  "jamo": false,
+  "set": true,
+  "seed": 7,
+  "n_params": 345664875,
+  "loss0": 5.68509,
+  "lossF": 1.14171,
+  "wall_s": 3111.4,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 0.9694,
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 0.33773,
+      "descent": true
+    },
+    "en-general": {
+      "val_ce": 0.60529,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 1.49809,
+      "descent": true
+    },
+    "en-sns": {
+      "val_ce": 1.43648,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "set": 0.48236003518104553,
+    "set_dist": 40,
+    "set_fals": 0,
+    "set_reward": 40.0,
+    "set_n_sel": 40
+  },
+  "setsearch_runs": 41,
+  "gauges_g1g6_torch_probe": {
+    "step": 2000,
+    "ce": 1.14171,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 1,
+    "g6_jaccard": null,
+    "phi_proxy": 9.467023,
+    "mitosis_cells": 70
+  },
+  "lever_hparams": {
+    "lambda_jamo": 0.5,
+    "lambda_set": 0.5,
+    "setsearch_every": 50,
+    "setsearch_k": 8,
+    "setsearch_frames": 5,
+    "setsearch_gen": 48
+  },
+  "tier": "engine-native-eligible (.clm additive); torch probe DIRECTIONAL"
+}

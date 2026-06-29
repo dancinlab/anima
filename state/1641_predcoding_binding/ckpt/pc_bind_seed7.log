@@ -1,0 +1,62 @@
+=== H_1641 PREDCODING-BINDING 303M obj=pc_bind seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=False
+  cuda: NVIDIA A40 cap=8.6 torch=2.5.1+cu124
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val_tail=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val_tail=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val_tail=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.68454  E=2  wd=0.0500 dp=0.5000  val_CE=13.16384 {"bind": 0.2866}
+  step    50  CE=2.60408  E=2  wd=0.0492 dp=0.4917 {"bind": 0.0126}
+  step   100  CE=2.19091  E=2  wd=0.0483 dp=0.4833 {"bind": 0.0126}
+  step   150  CE=2.16166  E=2  wd=0.0475 dp=0.4748 {"bind": 0.0135}
+  step   200  CE=1.96671  E=2  wd=0.0466 dp=0.4664 {"bind": 0.0137}
+  step   250  CE=1.79515  E=2  wd=0.0458 dp=0.4579 {"bind": 0.011}
+  step   300  CE=2.00741  E=2  wd=0.0449 dp=0.4495 {"bind": 0.0113}
+  step   350  CE=1.72868  E=2  wd=0.0441 dp=0.4410 {"bind": 0.0084}
+  step   400  CE=1.67174  E=2  wd=0.0433 dp=0.4326 {"bind": 0.0058}
+  step   450  CE=1.21261  E=2  wd=0.0424 dp=0.4242 {"bind": 0.0035}
+  step   500  CE=1.58288  E=2  wd=0.0416 dp=0.4157  val_CE=1.52334 {"bind": 0.0025}
+  step   550  CE=1.64538  E=2  wd=0.0407 dp=0.4073 {"bind": 0.0012}
+  step   600  CE=1.43874  E=2  wd=0.0399 dp=0.3988 {"bind": 0.0007}
+  step   650  CE=1.53129  E=2  wd=0.0390 dp=0.3904 {"bind": 0.0003}
+  step   700  CE=1.36306  E=2  wd=0.0382 dp=0.3819 {"bind": 0.0002}
+  step   750  CE=1.35492  E=2  wd=0.0373 dp=0.3735 {"bind": 0.0001}
+  step   800  CE=1.27032  E=2  wd=0.0365 dp=0.3650 {"bind": 0.0}
+  step   850  CE=1.31049  E=2  wd=0.0357 dp=0.3566 {"bind": 0.0}
+  step   900  CE=1.44806  E=2  wd=0.0348 dp=0.3481 {"bind": 0.0}
+  step   950  CE=1.52312  E=2  wd=0.0340 dp=0.3397 {"bind": 0.0}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.07591  E=3  wd=0.0331 dp=0.3312  val_CE=1.16901 {"bind": 0.0}
+  step  1050  CE=1.57326  E=3  wd=0.0323 dp=0.3228 {"bind": 0.0}
+  step  1100  CE=1.34845  E=3  wd=0.0314 dp=0.3144 {"bind": 0.0}
+  step  1150  CE=1.24527  E=3  wd=0.0306 dp=0.3059 {"bind": 0.0}
+  step  1200  CE=1.31797  E=3  wd=0.0297 dp=0.2975 {"bind": 0.0}
+  step  1250  CE=1.34991  E=3  wd=0.0289 dp=0.2890 {"bind": 0.0}
+  step  1300  CE=1.40116  E=3  wd=0.0281 dp=0.2806 {"bind": 0.0}
+  step  1350  CE=1.20820  E=3  wd=0.0272 dp=0.2721 {"bind": 0.0}
+  step  1400  CE=0.94610  E=3  wd=0.0264 dp=0.2637 {"bind": 0.0}
+  step  1450  CE=1.36897  E=3  wd=0.0255 dp=0.2552 {"bind": 0.0}
+  step  1500  CE=1.35215  E=3  wd=0.0247 dp=0.2468  val_CE=1.05246 {"bind": 0.0}
+  step  1550  CE=1.29893  E=3  wd=0.0238 dp=0.2383 {"bind": 0.0}
+  step  1600  CE=1.28064  E=3  wd=0.0230 dp=0.2299 {"bind": 0.0}
+  step  1650  CE=1.12858  E=3  wd=0.0221 dp=0.2214 {"bind": 0.0}
+  step  1700  CE=1.30454  E=3  wd=0.0213 dp=0.2130 {"bind": 0.0}
+  step  1750  CE=1.06782  E=3  wd=0.0205 dp=0.2045 {"bind": 0.0}
+  step  1800  CE=1.11452  E=3  wd=0.0196 dp=0.1961 {"bind": 0.0}
+  step  1850  CE=1.24805  E=3  wd=0.0188 dp=0.1877 {"bind": 0.0}
+  step  1900  CE=1.23293  E=3  wd=0.0179 dp=0.1792 {"bind": 0.0}
+  step  1950  CE=1.04543  E=3  wd=0.0171 dp=0.1708 {"bind": 0.0}
+  step  2000  CE=1.14009  E=3  wd=0.0162 dp=0.1623  val_CE=0.90134 {"bind": 0.0}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=0.35568  DESCENT
+     en-general   val_CE=0.57176  DESCENT
+     ko-sns       val_CE=1.46118  DESCENT
+     en-sns       val_CE=1.40743  DESCENT
+  FINAL val_CE(pooled)=0.9490146636962891  registers_DESCENT=4/4
+  loss0=5.68454 lossF=1.14009 wall=916.1s savant_latched_at=1 E0=2->E=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 1.14009, "g1_composed_distinct": 1, "g2_novelty_rate": 0.0, "g6_count": 2, "g6_jaccard": 0.93548, "phi_proxy": 20.298738, "mitosis_cells": 80}
+  torch ckpt -> state/1641_predcoding_binding/ckpt/pc_bind_seed7.pt (1382668491 bytes)
+  summary -> state/1641_predcoding_binding/ckpt/pc_bind_seed7.json
+  .clm WRITTEN 176584498 bytes -> state/1641_predcoding_binding/ckpt/pc_bind_seed7.clm
+  clm_decodable=True

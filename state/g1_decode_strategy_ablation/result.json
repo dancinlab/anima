@@ -1,0 +1,584 @@
+{
+  "probe": "g1_decode_strategy_ablation",
+  "basis": "fp32 .pt (ac0543 F) + real .clm cross-check",
+  "engine": "core/clm_decode.py + core/g_gates.py (numpy-only, NO torch)",
+  "gen": 40,
+  "seeds_effective": [
+    7,
+    4302,
+    4303
+  ],
+  "calibration": "10/10",
+  "rows": [
+    {
+      "label": "greedy",
+      "basis": "fp32",
+      "strategy": "greedy",
+      "temp": 1.0,
+      "K": 1,
+      "n_seed": 1,
+      "g1_best_distinct_perseed": [
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        3
+      ],
+      "g6_dist_ge5_majority": false,
+      "g6_fals_perseed": [
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 3,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    },
+    {
+      "label": "topk_t07",
+      "basis": "fp32",
+      "strategy": "topk",
+      "temp": 0.7,
+      "K": 1,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        0,
+        1,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        6,
+        5
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 1,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 4,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 5,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 5
+        }
+      ]
+    },
+    {
+      "label": "topk_t10",
+      "basis": "fp32",
+      "strategy": "topk",
+      "temp": 1.0,
+      "K": 1,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        1,
+        0,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        5,
+        5
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 5,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 5
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 4,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 5,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 5
+        }
+      ]
+    },
+    {
+      "label": "full_mm_t10",
+      "basis": "fp32",
+      "strategy": "full_mm",
+      "temp": 1.0,
+      "K": 1,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        1,
+        0,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        6,
+        6
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 1,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    },
+    {
+      "label": "bok4",
+      "basis": "fp32",
+      "strategy": "bok",
+      "temp": 0.7,
+      "K": 4,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        1,
+        1,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        6,
+        6
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 1,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 4,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    },
+    {
+      "label": "bok8",
+      "basis": "fp32",
+      "strategy": "bok",
+      "temp": 0.7,
+      "K": 8,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        1,
+        1,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        6,
+        6
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 1,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 4,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 1,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    },
+    {
+      "label": "topk_t07",
+      "basis": "realclm",
+      "strategy": "topk",
+      "temp": 0.7,
+      "K": 1,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        5,
+        4,
+        6
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 5,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 5
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 4,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 4
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 3,
+          "g0_pass": false,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    },
+    {
+      "label": "bok4",
+      "basis": "realclm",
+      "strategy": "bok",
+      "temp": 0.7,
+      "K": 4,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        6,
+        6
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 3,
+          "g0_pass": false,
+          "g1_max_single": 1,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    },
+    {
+      "label": "bok8",
+      "basis": "realclm",
+      "strategy": "bok",
+      "temp": 0.7,
+      "K": 8,
+      "n_seed": 3,
+      "g1_best_distinct_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g1_distinct_ge2_majority": false,
+      "g1_pass_majority": false,
+      "g6_dist_perseed": [
+        6,
+        6,
+        6
+      ],
+      "g6_dist_ge5_majority": true,
+      "g6_fals_perseed": [
+        0,
+        0,
+        0
+      ],
+      "g6_fals_ge1_majority": false,
+      "g6_pass_majority": false,
+      "per_seed": [
+        {
+          "seed": 7,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4302,
+          "g0_coh": 5,
+          "g0_pass": true,
+          "g1_max_single": 0,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        },
+        {
+          "seed": 4303,
+          "g0_coh": 3,
+          "g0_pass": false,
+          "g1_max_single": 1,
+          "g1_best_distinct": 0,
+          "g1_pass": false,
+          "g6_dist": 6,
+          "g6_fals": 0,
+          "g6_pass": false,
+          "g6_coherent": 6
+        }
+      ]
+    }
+  ],
+  "any_g1_distinct_ge2_majority": false,
+  "any_g6_fals_ge1_majority": false,
+  "decode_fixable": false,
+  "winners": [],
+  "g6_dist_ge5_survives_decode": true,
+  "wall_seconds": 5867.0
+}

@@ -1,0 +1,71 @@
+════════ STAGE 2A · HOST-PATH oracles (must be byte-eq with AND without HEXA_DET) ════════
+---- HEXA_DET=0 ----
+    :   max|d(m', m'')|   = 0.0
+    :   max|d(v', v'')|   = 0.0
+    :   |d(loss', loss'')| = 0.0
+    : PASS - composed CLMConvMoE micro-step is BYTE-IDENTICAL run-to-run (max|d|=0 over W, m, v, loss). Composition is deterministic; no uninit-scratch / non-det-iteration / address-ordered hole.
+    :   y max|Δ|  T16 C6 K3 d1 = 0.0
+    :   y max|Δ|  T12 C5x7 K4 d2 = 0.0
+    :   y max|Δ|  T10 C3x5 K5 d3 = 0.0
+    : PASS — im2col+matmul fwd conv == direct conv byte-eq (max|Δ|=0, all cases)
+    :     T24 V3 d8 : gate=0.0 probe=4.547473508864641e-13 maxrep=12
+    :     T10 V7 d5 : gate=0.0 probe=2.2737367544323206e-13 maxrep=3
+    :     T1  V4 d4 : gate=0.0 probe=0.0 maxrep=1
+    : PASS — embedding bwd scatter-add production t-ASCENDING order locked (REF==GROUPED+ max|Δ|=0, all shapes)
+    :   max|Δ| n96  lr5e-3 b.95/.9999 wd.05 t=50= 0.0
+    :   max|Δ| n1   lr1e-3 b.9/.999 wd.01 t=1   = 0.0
+    :   max|Δ| n200 lr2e-3 b.9/.999 eps0 wd0 t=3= 0.0
+    : PASS — AdamW update prod-order == clean reference byte-eq (max|Δ|=0 over W,m,v, all cases)
+    :   loss |Δ|     T1  V50  = 0.0
+    :   loss |Δ|     T12 V7   = 0.0
+    : F-OP11-CE-SOFTMAX-ORACLE = 1
+    : PASS — CE fused-grad (softmax−onehot)/T AND fwd mean-NLL byte-eq (max|Δ|=0, all cases)
+    : PASS — device embedding scatter (dembed grad accumulate; per-row seq, NO atomics) == host nn_embedding_bwd_scatter byte-eq (max|Δ|=0)
+    :   adam 5-step max|Δ| W=0.0
+    : PASS — AdamW oracle (opt_adamw_step) deterministic 5-step trajectory
+    : ALL-PASS — LEVER (a) device im2col/col2im + device db colsum + device int4 quant + device residual-add + device gelu + device groupnorm + device expert-pack + device moe-router + device embedding glue + BWD device gelu_bwd + device groupnorm_bwd + device expert-unpack + device ce_grad + device moe-router_bwd + device grad-sums + device embedding-scatter glue + device AdamW oracle byte-eq to host feed
+---- HEXA_DET=1 ----
+    :   max|d(m', m'')|   = 0.0
+    :   max|d(v', v'')|   = 0.0
+    :   |d(loss', loss'')| = 0.0
+    : PASS - composed CLMConvMoE micro-step is BYTE-IDENTICAL run-to-run (max|d|=0 over W, m, v, loss). Composition is deterministic; no uninit-scratch / non-det-iteration / address-ordered hole.
+    :   y max|Δ|  T16 C6 K3 d1 = 0.0
+    :   y max|Δ|  T12 C5x7 K4 d2 = 0.0
+    :   y max|Δ|  T10 C3x5 K5 d3 = 0.0
+    : PASS — im2col+matmul fwd conv == direct conv byte-eq (max|Δ|=0, all cases)
+    :     T24 V3 d8 : gate=0.0 probe=4.547473508864641e-13 maxrep=12
+    :     T10 V7 d5 : gate=0.0 probe=2.2737367544323206e-13 maxrep=3
+    :     T1  V4 d4 : gate=0.0 probe=0.0 maxrep=1
+    : PASS — embedding bwd scatter-add production t-ASCENDING order locked (REF==GROUPED+ max|Δ|=0, all shapes)
+    :   max|Δ| n96  lr5e-3 b.95/.9999 wd.05 t=50= 0.0
+    :   max|Δ| n1   lr1e-3 b.9/.999 wd.01 t=1   = 0.0
+    :   max|Δ| n200 lr2e-3 b.9/.999 eps0 wd0 t=3= 0.0
+    : PASS — AdamW update prod-order == clean reference byte-eq (max|Δ|=0 over W,m,v, all cases)
+    :   loss |Δ|     T1  V50  = 0.0
+    :   loss |Δ|     T12 V7   = 0.0
+    : F-OP11-CE-SOFTMAX-ORACLE = 1
+    : PASS — CE fused-grad (softmax−onehot)/T AND fwd mean-NLL byte-eq (max|Δ|=0, all cases)
+    : PASS — device embedding scatter (dembed grad accumulate; per-row seq, NO atomics) == host nn_embedding_bwd_scatter byte-eq (max|Δ|=0)
+    :   adam 5-step max|Δ| W=0.0
+    : PASS — AdamW oracle (opt_adamw_step) deterministic 5-step trajectory
+    : ALL-PASS — LEVER (a) device im2col/col2im + device db colsum + device int4 quant + device residual-add + device gelu + device groupnorm + device expert-pack + device moe-router + device embedding glue + BWD device gelu_bwd + device groupnorm_bwd + device expert-unpack + device ce_grad + device moe-router_bwd + device grad-sums + device embedding-scatter glue + device AdamW oracle byte-eq to host feed
+════════ STAGE 2B · DEVICE run-to-run determinism (GPU GEMM via gemm_cuda harness) ════════
+-- HEXA_DET=1 run #1 --
+BUILD=CUDA   cuda_available()=1  cuda_device_count()=1
+[d=1024] path=CUDA  t=0.056380 s  38.09 GFLOP/s  rel_rms_vs_ikj=4.327e-16
+[d=2048] path=CUDA  t=0.292799 s  58.67 GFLOP/s  rel_rms_vs_ikj=5.112e-16
+-- HEXA_DET=1 run #2 --
+BUILD=CUDA   cuda_available()=1  cuda_device_count()=1
+[d=1024] path=CUDA  t=0.057872 s  37.11 GFLOP/s  rel_rms_vs_ikj=4.327e-16
+[d=2048] path=CUDA  t=0.290806 s  59.08 GFLOP/s  rel_rms_vs_ikj=5.112e-16
+  ✗ DET path DIVERGED run-to-run — SAFETY-PIN FAIL
+3,4c3,4
+< [d=1024] path=CUDA  t=0.056380 s  38.09 GFLOP/s  rel_rms_vs_ikj=4.327e-16
+< [d=2048] path=CUDA  t=0.292799 s  58.67 GFLOP/s  rel_rms_vs_ikj=5.112e-16
+---
+> [d=1024] path=CUDA  t=0.057872 s  37.11 GFLOP/s  rel_rms_vs_ikj=4.327e-16
+> [d=2048] path=CUDA  t=0.290806 s  59.08 GFLOP/s  rel_rms_vs_ikj=5.112e-16
+════════ STAGE 2B' · correctness vs CPU reference (rel_rms must stay ~1e-16 both paths) ════════
+/tmp/ff_det_r1.txt:[d=1024] path=CUDA  t=0.056380 s  38.09 GFLOP/s  rel_rms_vs_ikj=4.327e-16
+/tmp/ff_det_r1.txt:[d=2048] path=CUDA  t=0.292799 s  58.67 GFLOP/s  rel_rms_vs_ikj=5.112e-16
+════════ STAGE 2 DONE — det safety-pin verdict above; proceed to gpu3 only if 2A+2B green ════════

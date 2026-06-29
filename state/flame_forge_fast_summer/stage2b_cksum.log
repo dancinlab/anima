@@ -1,0 +1,21 @@
+rebuilt OK
+=== HEXA_DET=1 x3 (CKSUM byte-identity) ===
+-- run 1 --
+BUILD=CUDA   cuda_available()=1  cuda_device_count()=1
+[d=1024] CKSUM=c5d853c322efad4b  rel_rms=4.327e-16
+[d=2048] CKSUM=4b6efa840742fcce  rel_rms=5.112e-16
+-- run 2 --
+BUILD=CUDA   cuda_available()=1  cuda_device_count()=1
+[d=1024] CKSUM=c5d853c322efad4b  rel_rms=4.327e-16
+[d=2048] CKSUM=4b6efa840742fcce  rel_rms=5.112e-16
+-- run 3 --
+BUILD=CUDA   cuda_available()=1  cuda_device_count()=1
+[d=1024] CKSUM=c5d853c322efad4b  rel_rms=4.327e-16
+[d=2048] CKSUM=4b6efa840742fcce  rel_rms=5.112e-16
+=== DET=0 (default fast/atomic) x2 for comparison ===
+-- fast run 1 --
+[d=1024] CKSUM=dd20146ddc471e41  rel_rms=1.129e-15
+[d=2048] CKSUM=bed98502fca8df74  rel_rms=1.586e-15
+-- fast run 2 --
+[d=1024] CKSUM=dd20146ddc471e41  rel_rms=1.129e-15
+[d=2048] CKSUM=bed98502fca8df74  rel_rms=1.586e-15

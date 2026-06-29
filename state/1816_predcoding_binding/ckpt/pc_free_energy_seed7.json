@@ -1,0 +1,47 @@
+{
+  "objective": "pc_free_energy",
+  "seed": 7,
+  "n_params": 345664875,
+  "loss0": 5.69268,
+  "lossF": 5.34151,
+  "wall_s": 912.4,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 5.87683,
+  "registers_descent": "1/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 6.516,
+      "descent": false
+    },
+    "en-general": {
+      "val_ce": 4.61184,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 6.15869,
+      "descent": false
+    },
+    "en-sns": {
+      "val_ce": 6.22078,
+      "descent": false
+    }
+  },
+  "last_aux": {
+    "bind": 5290.34765625,
+    "pb_var": 5242880.0
+  },
+  "lambda_bind": 0.1,
+  "lambda_var": 0.01,
+  "bind_dim": 32,
+  "gauges_g1g6_torch_probe": {
+    "step": 2000,
+    "ce": 5.34151,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 0,
+    "g6_jaccard": null,
+    "phi_proxy": 0.043434,
+    "mitosis_cells": 3
+  },
+  "tier": "engine-native-eligible (.clm additive); torch probe DIRECTIONAL"
+}

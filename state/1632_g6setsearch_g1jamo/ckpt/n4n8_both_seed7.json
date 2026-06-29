@@ -1,0 +1,60 @@
+{
+  "arm": "n4n8_both",
+  "jamo": true,
+  "set": true,
+  "seed": 7,
+  "n_params": 345664875,
+  "loss0": 5.68509,
+  "lossF": 1.15296,
+  "wall_s": 3273.6,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 0.93647,
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 0.30019,
+      "descent": true
+    },
+    "en-general": {
+      "val_ce": 0.54476,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 1.47425,
+      "descent": true
+    },
+    "en-sns": {
+      "val_ce": 1.42667,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "jamo": 1.041820764541626,
+    "n_syl": 2007,
+    "set": 0.5198888778686523,
+    "set_dist": 40,
+    "set_fals": 0,
+    "set_reward": 40.0,
+    "set_n_sel": 40
+  },
+  "setsearch_runs": 41,
+  "gauges_g1g6_torch_probe": {
+    "step": 2000,
+    "ce": 1.15296,
+    "g1_composed_distinct": 1,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 2,
+    "g6_jaccard": 0.86667,
+    "phi_proxy": 39.502116,
+    "mitosis_cells": 74
+  },
+  "lever_hparams": {
+    "lambda_jamo": 0.5,
+    "lambda_set": 0.5,
+    "setsearch_every": 50,
+    "setsearch_k": 8,
+    "setsearch_frames": 5,
+    "setsearch_gen": 48
+  },
+  "tier": "engine-native-eligible (.clm additive); torch probe DIRECTIONAL"
+}

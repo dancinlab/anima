@@ -1,0 +1,63 @@
+=== H_1630 REG-DICTAUX 303M arm=ce_marginal seed=4307 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional
+  levers: N6_grok=False N7_dictaux=False N8_jamo=False N1_tlora=False N3_dbes=True N4_setsearch=8
+  cuda: NVIDIA A40 cap=8.6 torch=2.5.1+cu124
+  params(model)=345664875 (345.665M)  aux_params=0
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val_tail=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val_tail=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val_tail=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.66337  E=2  wd=0.0500 dp=0.5000  val_CE=14.21534
+  step    50  CE=2.65343  E=2  wd=0.0492 dp=0.4917
+  step   100  CE=2.20924  E=2  wd=0.0483 dp=0.4833
+  step   150  CE=2.17447  E=2  wd=0.0475 dp=0.4748
+  step   200  CE=1.99126  E=2  wd=0.0466 dp=0.4664
+  step   250  CE=1.84640  E=2  wd=0.0458 dp=0.4579
+  step   300  CE=2.01682  E=2  wd=0.0449 dp=0.4495
+  step   350  CE=1.75233  E=2  wd=0.0441 dp=0.4410
+  step   400  CE=1.68732  E=2  wd=0.0433 dp=0.4326
+  step   450  CE=1.26066  E=2  wd=0.0424 dp=0.4242
+  step   500  CE=1.57807  E=2  wd=0.0416 dp=0.4157  val_CE=1.53928
+  step   550  CE=1.66688  E=2  wd=0.0407 dp=0.4073
+  step   600  CE=1.45305  E=2  wd=0.0399 dp=0.3988
+  step   650  CE=1.52769  E=2  wd=0.0390 dp=0.3904
+  step   700  CE=1.33824  E=2  wd=0.0382 dp=0.3819
+  step   750  CE=1.37957  E=2  wd=0.0373 dp=0.3735
+  step   800  CE=1.29798  E=2  wd=0.0365 dp=0.3650
+  step   850  CE=1.30123  E=2  wd=0.0357 dp=0.3566
+  step   900  CE=1.47749  E=2  wd=0.0348 dp=0.3481
+  step   950  CE=1.51956  E=2  wd=0.0340 dp=0.3397
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.07281  E=3  wd=0.0331 dp=0.3312  val_CE=1.19644
+  step  1050  CE=1.57956  E=3  wd=0.0323 dp=0.3228
+  step  1100  CE=1.34544  E=3  wd=0.0314 dp=0.3144
+  step  1150  CE=1.23906  E=3  wd=0.0306 dp=0.3059
+  step  1200  CE=1.35407  E=3  wd=0.0297 dp=0.2975
+  step  1250  CE=1.35410  E=3  wd=0.0289 dp=0.2890
+  step  1300  CE=1.42907  E=3  wd=0.0281 dp=0.2806
+  step  1350  CE=1.21329  E=3  wd=0.0272 dp=0.2721
+  step  1400  CE=0.97871  E=3  wd=0.0264 dp=0.2637
+  step  1450  CE=1.37016  E=3  wd=0.0255 dp=0.2552
+  step  1500  CE=1.34557  E=3  wd=0.0247 dp=0.2468  val_CE=1.04428
+  step  1550  CE=1.30755  E=3  wd=0.0238 dp=0.2383
+  step  1600  CE=1.26721  E=3  wd=0.0230 dp=0.2299
+  step  1650  CE=1.14888  E=3  wd=0.0221 dp=0.2214
+  step  1700  CE=1.32433  E=3  wd=0.0213 dp=0.2130
+  step  1750  CE=1.06647  E=3  wd=0.0205 dp=0.2045
+  step  1800  CE=1.13255  E=3  wd=0.0196 dp=0.1961
+  step  1850  CE=1.26156  E=3  wd=0.0188 dp=0.1877
+  step  1900  CE=1.24020  E=3  wd=0.0179 dp=0.1792
+  step  1950  CE=1.03541  E=3  wd=0.0171 dp=0.1708
+  step  2000  CE=1.17810  E=3  wd=0.0162 dp=0.1623  val_CE=0.89865
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=0.33930  DESCENT
+     en-general   val_CE=0.57475  DESCENT
+     ko-sns       val_CE=1.45872  DESCENT
+     en-sns       val_CE=1.38477  DESCENT
+  FINAL val_CE(pooled)=0.9393845573067665  registers_DESCENT=4/4
+  loss0=5.66337 lossF=1.17810 wall=2087.0s savant_latched_at=1 E0=2->E=3
+  [N3 DBES] {"expert_usage": [0.3776, 0.3102, 0.3123], "usage_entropy": 1.0943, "usage_entropy_norm": 0.9961, "n_active_experts": 3, "note": "DBES proxy: norm usage-entropy ~1 => balanced/specialized; ~0 => collapse onto one expert (recomb material absent)."}
+  torch ckpt -> state/1630_reg_dictaux/ckpt/ce_marginal_seed4307.pt (1382668736 bytes)
+  summary -> state/1630_reg_dictaux/ckpt/ce_marginal_seed4307.json
+  .clm WRITTEN 176584498 bytes -> state/1630_reg_dictaux/ckpt/ce_marginal_seed4307.clm
+  clm_decodable=True

@@ -1,0 +1,7 @@
+=== compile harness_cuda.o (-DHEXA_CUDA) ===
+  harness_cuda.o OK
+=== link gemm_cuda (verify-only --allow-multiple-definition) ===
+/usr/bin/ld: warning: build/cuda/valop_core_native.o: missing .note.GNU-stack section implies executable stack
+/usr/bin/ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+link rc=0
+-rwxrwxr-x 1 summer summer 4225760  6월 28 23:58 build/cuda/gemm_cuda

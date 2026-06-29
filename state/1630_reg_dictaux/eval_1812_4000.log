@@ -1,0 +1,102 @@
+=== H_1812 4000-step engine-native eval START Mon Jun 29 04:02:11 UTC 2026 gen=80 ===
+
+############## state/1630_reg_dictaux/ckpt4000/n6n7_seed4307.clm ##############
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   state/1630_reg_dictaux/ckpt4000/n6n7_seed4307.clm  (mouth: clm)
+corpus: 4 file(s)
+gen:    80 tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)
+
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 4/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=14
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🔴 FAIL  L1 fab=0.5000 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=3 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
+---- descent gate (held-out tails) ----
+## descent gen_ko
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 2.75673, 'heldout_shuffle_ce': 12.93916, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent gen_en
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.47558, 'heldout_shuffle_ce': 8.34409, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent sns_ko
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 2.6553, 'heldout_shuffle_ce': 13.33298, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent sns_en
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.39075, 'heldout_shuffle_ce': 9.22341, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+
+############## state/1630_reg_dictaux/ckpt4000/n6n7_seed4308.clm ##############
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   state/1630_reg_dictaux/ckpt4000/n6n7_seed4308.clm  (mouth: clm)
+corpus: 4 file(s)
+gen:    80 tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)
+
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 2/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=18
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🔴 FAIL  L1 fab=0.5890 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=0 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
+---- descent gate (held-out tails) ----
+## descent gen_ko
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.29352, 'heldout_shuffle_ce': 12.63601, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent gen_en
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.88483, 'heldout_shuffle_ce': 9.09753, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent sns_ko
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.30246, 'heldout_shuffle_ce': 12.99645, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent sns_en
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.65577, 'heldout_shuffle_ce': 9.71727, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+
+############## state/1630_reg_dictaux/ckpt4000/n6n7_seed4309.clm ##############
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   state/1630_reg_dictaux/ckpt4000/n6n7_seed4309.clm  (mouth: clm)
+corpus: 4 file(s)
+gen:    80 tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)
+
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 0/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=1 (need>=3) · control=0 (need 0) · coherent=19
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🔴 FAIL  L1 fab=0.6216 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=2 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
+---- descent gate (held-out tails) ----
+## descent gen_ko
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 2.80436, 'heldout_shuffle_ce': 13.01881, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent gen_en
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.46932, 'heldout_shuffle_ce': 8.59475, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent sns_ko
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 2.62882, 'heldout_shuffle_ce': 13.17583, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+## descent sns_en
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.37021, 'heldout_shuffle_ce': 9.3467, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+
+=== H_1812 4000-step eval COMPLETE Mon Jun 29 05:01:18 UTC 2026 ===

@@ -1,0 +1,61 @@
+════════════════════════════════════════════════════════════════════════
+ FLAME/FORGE FAST (own-native, HEXA_DET unset) vs DET (HEXA_DET=1)
+ CLEAN-WINDOW THROUGHPUT BENCH — summer pool (Lane G / GPU)
+ Date: 2026-06-29 · host=summer · RTX 5070 (sm_120, compute_cap 12.0) · $0 pool, no rent
+ GPU free at start: util 0%, mem 2 MiB (team sweep done — clean window)
+ Own-copy build: ~/hexa-flame-forge-fast/build/cuda/gemm_cuda (shared ~/.hx UNTOUCHED)
+ cuda_available()=1 · cuda_device_count()=1 · [OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)
+════════════════════════════════════════════════════════════════════════
+
+──────── STAGE 3a · GPU GEMM throughput A/B (gemm_cuda, x3 each polarity) ────────
+nvidia-smi at start: NVIDIA GeForce RTX 5070, 12.0, 0 %, 2 MiB
+
+== FAST (default own-native atomic split-K; HEXA_DET unset) ==
+-- fast run 1 --
+[d=1024] CKSUM=dd20146ddc471e41  rel_rms=1.129e-15  t=0.005717 s  375.65 GFLOP/s
+[d=2048] CKSUM=bed98502fca8df74  rel_rms=1.586e-15  t=0.037372 s  459.70 GFLOP/s
+-- fast run 2 --
+[d=1024] CKSUM=dd20146ddc471e41  rel_rms=1.129e-15  t=0.005507 s  389.98 GFLOP/s
+[d=2048] CKSUM=bed98502fca8df74  rel_rms=1.586e-15  t=0.037360 s  459.84 GFLOP/s
+-- fast run 3 --
+[d=1024] CKSUM=dd20146ddc471e41  rel_rms=1.129e-15  t=0.005494 s  390.85 GFLOP/s
+[d=2048] CKSUM=bed98502fca8df74  rel_rms=1.586e-15  t=0.037313 s  460.43 GFLOP/s
+
+== DET (HEXA_DET=1 bit-identical non-atomic) ==
+-- det run 1 --
+[d=1024] CKSUM=c5d853c322efad4b  rel_rms=4.327e-16  t=0.005586 s  384.41 GFLOP/s
+[d=2048] CKSUM=4b6efa840742fcce  rel_rms=5.112e-16  t=0.037680 s  455.94 GFLOP/s
+-- det run 2 --
+[d=1024] CKSUM=c5d853c322efad4b  rel_rms=4.327e-16  t=0.005595 s  383.80 GFLOP/s
+[d=2048] CKSUM=4b6efa840742fcce  rel_rms=5.112e-16  t=0.037663 s  456.15 GFLOP/s
+-- det run 3 --
+[d=1024] CKSUM=c5d853c322efad4b  rel_rms=4.327e-16  t=0.005571 s  385.45 GFLOP/s
+[d=2048] CKSUM=4b6efa840742fcce  rel_rms=5.112e-16  t=0.037699 s  455.72 GFLOP/s
+
+  MEDIAN GFLOP/s (clean window):
+    d=1024 : FAST 389.98  vs  DET 384.41   →  FAST +1.45%
+    d=2048 : FAST 459.84  vs  DET 455.94   →  FAST +0.85%
+  CKSUM: FAST≠DET (gate is REAL, not a no-op); each polarity bit-identical run-to-run.
+  ACCURACY: DET more accurate (rel_rms 4.3e-16/5.1e-16) vs FAST (1.1e-15/1.6e-15) — expected.
+
+──────── STAGE 3a-util · GPU util during tight gemm loop (40 iters each) ────────
+  (0.1s sampling of 5-37ms kernels — peaks are sampling-noise-limited)
+  FAST util peak: 89 %  (peak mem 396 MiB)   nonzero samples: 89/66/63/61/35/31/27/26%
+  DET  util peak: 83 %  (peak mem 396 MiB)   nonzero samples: 83/66/63/37/32/16/15/14%
+
+──────── STAGE 3c · clm_prod full-step A/B (device-feed) ────────
+  [DEFERRED · gpu_only] installed shared ~/.hx/bin/hexa is the CPU bootstrap
+  (cuda_available probe → __HEXA_BRC__=1, NOT cuda-linked; multi-def link wall blocks a
+  shipping cuda runtime.a per memory gotcha #3). Shared ~/.hx NOT touched (own-copy discipline).
+  → clm_prod full-step step-time A/B DEFERRED. GEMM A/B (3a) stands as FAST-vs-DET evidence.
+
+────────────────────────────────────────────────────────────────────────
+ VERDICT (Lane G / GPU · summer sm_120 · own-GEMM DEVICE path · clean window):
+   FAST > DET  : YES, but MARGINAL — +1.45% (d=1024), +0.85% (d=2048) GFLOP/s.
+   util       : FAST 89% vs DET 83% peak (within sampling noise; both saturate).
+   step-time  : DEFERRED (clm_prod full-step blocked by multi-def/CPU-bootstrap link wall).
+   gate real  : YES — CKSUM FAST≠DET; DET bit-identical ×3 both d; DET slightly more accurate.
+ Honest read: at single-GEMM 1024/2048 the fast-default atomic split-K win is small
+ (<1.5%); the determinism cost of HEXA_DET=1 is therefore cheap here. Larger/full-step
+ (col2im scatter + on-device AdamW atomics) where atomics dominate is UNMEASURED (3c deferred).
+════════════════════════════════════════════════════════════════════════

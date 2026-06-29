@@ -1,0 +1,52 @@
+{
+  "arm": "baseline",
+  "jamo": false,
+  "set": false,
+  "seed": 7,
+  "n_params": 345664875,
+  "loss0": 5.68509,
+  "lossF": 1.15836,
+  "wall_s": 1090.9,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 0.95207,
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 0.36512,
+      "descent": true
+    },
+    "en-general": {
+      "val_ce": 0.56648,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 1.46982,
+      "descent": true
+    },
+    "en-sns": {
+      "val_ce": 1.40685,
+      "descent": true
+    }
+  },
+  "last_aux": {},
+  "setsearch_runs": 0,
+  "gauges_g1g6_torch_probe": {
+    "step": 2000,
+    "ce": 1.15836,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 0,
+    "g6_jaccard": null,
+    "phi_proxy": 32.908012,
+    "mitosis_cells": 61
+  },
+  "lever_hparams": {
+    "lambda_jamo": 0.5,
+    "lambda_set": 0.5,
+    "setsearch_every": 50,
+    "setsearch_k": 8,
+    "setsearch_frames": 5,
+    "setsearch_gen": 48
+  },
+  "tier": "engine-native-eligible (.clm additive); torch probe DIRECTIONAL"
+}

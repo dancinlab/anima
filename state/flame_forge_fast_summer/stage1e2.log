@@ -1,0 +1,16 @@
+neutralized restore_frozen_seeds (warm-tree self/runtime.c will be used as-is)
+=== probe ===
+Cuda compilation tools, release 12.9, V12.9.86
+NVIDIA GeForce RTX 5070, 12.0
+=== extract RT-NATIVE cores from prebuilt runtime.a (CUDA-independent) ===
+[build_cuda_runtime] RT-NATIVE cores (dynamic from runtime.a): build/cuda/alloc_syscall_native.o build/cuda/array_core_native.o build/cuda/fs_core_native.o build/cuda/intern_core_native.o build/cuda/map_core_native.o build/cuda/rt_hi_native.o build/cuda/valop_core_native.o 
+=== regen runtime_cuda.c + runtime_bf16.c from emitter SSOT ===
+[build_cuda_runtime] DEFAULT — own kernels, cuBLAS-free (no -lcublas)
+=== nvcc runtime_cuda.o (sm_120) + device-link ===
+[build_cuda_runtime] WARN: tool/restore_frozen_seeds not executable — using warm-tree self/runtime.c as-is
+=== host runtime.o (-DHEXA_CUDA + the RT-NATIVE flag set) ===
+=== PRIMARY verify harness — CPU vs CUDA ===
+no entry runtime.o in archive
+/usr/bin/ld: cannot find build/cuda/runtime.o: 그런 파일이나 디렉터리가 없습니다
+collect2: error: ld returned 1 exit status
+--- build rc=1 ---
