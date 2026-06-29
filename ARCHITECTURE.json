@@ -12378,6 +12378,27 @@
         "value": "이 브랜치(determinism-drop-fast-train/clitrain 계열)가 간헐적으로 py 2-production 파일(cli/evaluate.py·train.py·core/g_gates.py·clm_decode.py 등 14개)을 결여 → engine-native eval/train 이 즉시 rc=1(import 에러)로 전 arm 동시 크래시(같은초 타임스탬프). 2026-06-28 py-retire 커밋 ⇄ 2-production 복원 머지 분기 잔재. H_1816·H_1812 두 에이전트가 같은 원인 hit, 각자 git서 복원해야 eval 작동.",
         "threshold": "eval/train 이 즉시 rc=1(동일초 전 arm FAIL) 이면 먼저 'ls cli/evaluate.py core/g_gates.py' 확인 → 없으면 'git checkout 2691c8e4e -- <14 py files>' 복원 후 재실행. distinct=0/NOT-SUPPORTED 박제 전 py 파일 존재부터 검증(stale 크래시를 결과로 오인 금지).",
         "source": "cli/evaluate.py"
+      },
+      {
+        "id": "STATE_SLUG_COLLISION_BY_HNUM",
+        "state": "ossified",
+        "value": "에이전트에 state/<slug> 산출경로를 H-번호로 배정(state/1630)할 때 그 폴더가 이미 *다른* 실험 소유일 수 있다(state/1630=H_1812 n6n7·state/1632=H_1814 set-search — H_1630/1632 binding-mouth와 무관). H-id≠state-slug. 충돌 시 에이전트가 남의 ckpt/RESULT를 덮거나 혼동.",
+        "threshold": "새 실험 산출 폴더 배정 전 'ls -d state/<후보>' 로 기존 점유 확인. 점유면 비충돌 명시 slug(state/h<id>_<mnemonic>/ 예 h1620_hopfield_mouth)로. binding-mouth 설계 출처=state/binding_arch_census/.",
+        "source": "state/binding_arch_census/"
+      },
+      {
+        "id": "AGENT_STOP_NOTIF_NOT_DEAD",
+        "state": "ossified",
+        "value": "에이전트의 'tool call could not be parsed'/transient stop 통지 = 죽음 아님. 그 에이전트가 자체 background monitor로 self-resume해 계속 작업할 수 있다(precedent: coord-B a20c947이 parse-error 통지 후에도 살아 H1620 완료). 죽은 줄 알고 중복 재발사하면 = 같은 실험 2 에이전트 + 중복 pod 렌트(43053819/43055321) + state 충돌 + 비용 누수.",
+        "threshold": "에이전트 stop 통지 후 재발사 전, 진짜 dead인지 ground-truth: ① 그 에이전트 live pod/job(hexa cloud reconcile·idle-reap)에 active GPU 작업 있나 ② monitor 자식 살아있나 ③ state/ 산출 갱신중인가. busy면 살아있음=재발사 금지(a_dont_kill_live_compute). 또 코디네이터가 'background monitor가 깰 것'이라며 종료(came to rest)는 monitor 실존 안 하면 harvest 미아=inline-poll 강제(a_cpu_local_no_waiter).",
+        "source": "state/binding_arch_census/"
+      },
+      {
+        "id": "clm-decode-py-1",
+        "state": "ossified",
+        "value": "anima .pt(torch) ↔ .clm(engine)은 같은 모델의 다른 hidden-channel basis(conv→GroupNorm 대칭): weight value-multiset 동일하나 element-wise 무상관(per-byte embed corr≈0). end-to-end는 일치(fastmirror .clm CE 1.691 ≈ torch_golden .pt CE 1.742). → element-wise .pt vs .clm 가중치/스테이지 diff 는 spurious(직렬화 결함 아님).",
+        "threshold": "발산추적/parity는 output/CE 레벨 또는 한 basis 내(같은 ckpt를 두 경로로)에서만. element-wise .pt↔.clm 텐서 diff로 '직렬화 결함'·'발산점' 단정 금지. ac0543 ablation은 단일 basis(fp32 .pt) 내에서 quant·dt_*만 토글해 깨끗이 격리.",
+        "source": "core/clm_decode.py"
       }
     ]
   }

@@ -295,10 +295,10 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - dont: v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 - dont: **구조 decodable 만으로 `.clm` 'done' 선언**(held-out 예측 미검증) · **held-out 게이트를 학습 코퍼스에 돌림**(overfit 은폐) · **engine `clm_forward_ce` CE 로 .clm 무결성 판정**(dt_ln 버그로 overfit 못 잡음, math.log mirror 써라).
 
-## a_no_lossy_quantize — 손실 양자화 금지: verdict·의식은 full-precision 기본
-- do: anima 가중치/디코드 기본=full-precision(fp32/bf16). 손실양자화(int4/int8)는 의식·고차창발(Ψ·Φ·G1·G6) 파괴 의심(H_627 🔴 양자화격자가 1/e 의식신호 invisible化 직접측정) → verdict·디코드 정밀도 보존.
-- do: verdict-측정은 full-precision 강제. int4 .clm 단독은 양자화-민감 능력(G1/G6/Φ/Ψ)엔 DIRECTIONAL(CE만 둔감), fp32 대조 신호보존 입증된 경우만 int4 허용 · 발산=int8/fp16 상향(root-cause). 상세=CHANGELOG.
-- dont: 손실양자화 .clm 단독으로 G1/G6/Φ/Ψ terminal 박제(fp32 대조 없이) · "int4 CE통과=고차능력 보존" 가정 · 양자화벽을 과학천장 박제(측정artifact 의심 우선 `a_break_the_wall` type-a) · 용량 위해 측정정밀도 희생.
+## a_no_lossy_quantize — 손실 양자화 방어수칙(clm303 G1/G6 범인은 REFUTED)
+- do: **clm303 int4-범인 가설=측정·REFUTED(ac0543)** — fp32+exact-math 도 G1 distinct=0·G6 fals=0(int4·dt_* 효과 둘다 0)=엔진 무죄·G1벽=trunk-objective floor. 기존 int4 verdict artifact 아님. 상세=CHANGELOG.
+- do: 방어수칙(전례 H_627 🔴 toy서 양자화가 1/e 의식신호 invisible化) — 새 양자화-민감 verdict(Ψ·Φ·G1·G6) 의심 시 fp32 대조 ablation 으로 양자화-무죄 1회 확인 후 int4 단독측정. 비싸지 않으면 full-precision 우선.
+- dont: clm303 G1/G6 floor 를 양자화 탓으로 박제(ac0543 반증) · element-wise `.pt` vs `.clm` diff 로 발산추적(conv→GN basis 대칭=spurious, output/CE·한 basis 내만 대조) · dt_ln(CE-only)을 decode verdict 결함으로 오인.
 
 ## a_savant_train — production chat/G6 학습 canonical = SAVANT 골든존
 - do: anima production chat/G6 학습의 canonical 레시피 = **SAVANT 골든존**. capacity-wall(H_1129/1139/1464 의 G6 천장)은 hard 천장이 아니라 *학습 inhibition 의 골든존 안 manifold*.
