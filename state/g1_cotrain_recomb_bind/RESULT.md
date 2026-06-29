@@ -39,19 +39,19 @@
 
 ### Held-out val-CE (DESCENT gate, math.log mirror)
 
-| arm | seed | pooled val_CE | 4/4? | lossF | l_recomb_final | wall_s |
-|-----|------|--------------|------|-------|----------------|--------|
-| op_plaince | 7 | 0.627 | ✓ 4/4 | 1.072 | N/A | 2018.6 |
-| op_plaince | 4302 | — | — | — | N/A | — |
-| op_plaince | 4303 | — | — | — | N/A | — |
-| obj_only | 7 | 0.849 | ✓ 4/4 | 1.343 | 1.204 | 2077.4 |
-| obj_only | 4302 | — | — | — | — | — |
-| obj_only | 4303 | — | — | — | — | — |
-| op_obj | 7 | — | — | — | — | — |
-| op_obj | 4302 | — | — | — | — | — |
-| op_obj | 4303 | — | — | — | — | — |
+| arm | seed | pooled val_CE | 4/4? | descent_gate (heldout_ce) | lossF | l_recomb_final | wall_s |
+|-----|------|--------------|------|---------------------------|-------|----------------|--------|
+| op_plaince | 7 | 0.627 | ✓ 4/4 | ✓ PASS (1.438 < 5.545) | 1.072 | N/A | 2018.6 |
+| op_plaince | 4302 | — | — | — | — | N/A | — |
+| op_plaince | 4303 | — | — | — | — | N/A | — |
+| obj_only | 7 | 0.849 | ✓ 4/4 | ✓ PASS (1.709 < 5.545) | 1.343 | 1.204 | 2077.4 |
+| obj_only | 4302 | — | — | — | — | — | — |
+| obj_only | 4303 | — | — | — | — | — | — |
+| op_obj | 7 | ⏳ training | — | — | — | — | — |
+| op_obj | 4302 | — | — | — | — | — | — |
+| op_obj | 4303 | — | — | — | — | — | — |
 
-*Note: op_plaince/obj_only seed7 training complete (2026-06-29 ~12:46 UTC). op_obj seed7 training starting after descent_gate verification (~13:00 UTC). Seeds 4302/4303 follow sequentially.*
+*op_plaince seed7 PASS (descent_gate 13:12 UTC). obj_only seed7 PASS. op_obj seed7 started GPU0 ~13:12 UTC (step 1 confirmed). Seeds 4302/4303 follow sequentially after seed7 completes.*
 
 ---
 
@@ -77,7 +77,7 @@
 
 ## Verdict
 
-**TRAINING IN PROGRESS** — G0-G6 evals pending.
+**TRAINING IN PROGRESS** — seed7 arms (op_plaince, obj_only) PASS descent_gate. op_obj seed7 training live. Seeds 4302/4303 pending. G0-G6 evals pending.
 
 *Results will be filled in upon completion.*
 

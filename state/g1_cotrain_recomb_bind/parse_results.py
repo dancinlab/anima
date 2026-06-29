@@ -13,56 +13,75 @@ ARMS_1819 = ["op_plaince", "obj_only", "op_obj"]
 SEEDS = [7, 4302, 4303]
 
 def parse_g0g6(path):
-    """Extract G0 kwr, G1 composed_distinct/max_single, G6 dist/fals from g0g6.txt."""
+    """Extract G0/G1/G2/G6/closure metrics from g0g6.txt.
+
+    Output format (from cli/evaluate.py):
+      G0 COHERENCE     🟢 PASS  kwr>=0.50 on 4/5 (need >=4)
+      G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+      G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=0
+      G6 IDEATION ★    🔴 FAIL  distinct=5 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+      CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+    """
     if not os.path.exists(path) or os.path.getsize(path) == 0:
         return None
     txt = open(path).read()
     result = {}
-    # G0: kwr
-    m = re.search(r'G0.*?kwr[=: ]+([0-9.]+)', txt, re.IGNORECASE)
+
+    # G0: n_coherent from "kwr>=0.50 on X/5"
+    m = re.search(r'G0 COHERENCE.*?on\s+(\d+)/5', txt)
     if m:
-        result['g0_kwr'] = float(m.group(1))
-    m = re.search(r'kwr[=: ]+([0-9.]+)', txt)
-    if m and 'g0_kwr' not in result:
-        result['g0_kwr'] = float(m.group(1))
-    # G0 pass
-    m = re.search(r'G0[^:]*:[^|]*(\d+)/5', txt)
+        result['g0_n_coherent'] = int(m.group(1))
+        result['g0_pass_bool'] = result['g0_n_coherent'] >= 4
+    # G0 PASS/FAIL emoji
+    m = re.search(r'G0 COHERENCE\s+(🟢 PASS|🔴 FAIL)', txt)
     if m:
-        result['g0_pass'] = int(m.group(1))
-    # G1: composed_distinct
-    m = re.search(r'composed_distinct[=: ]+([0-9.]+)', txt, re.IGNORECASE)
+        result['g0_verdict'] = 'PASS' if '🟢' in m.group(1) else 'FAIL'
+
+    # G1: best_distinct and max_single
+    m = re.search(r'G1 RECOMBINATION.*?best_distinct=(\d+).*?max_single=(\d+)', txt)
     if m:
-        result['g1_composed_distinct'] = float(m.group(1))
-    # G1: max_single
-    m = re.search(r'max_single[=: ]+([0-9.]+)', txt, re.IGNORECASE)
+        result['g1_best_distinct'] = int(m.group(1))
+        result['g1_max_single'] = int(m.group(2))
+    m = re.search(r'G1 RECOMBINATION\s+(🟢 PASS|🔴 FAIL)', txt)
     if m:
-        result['g1_max_single'] = float(m.group(1))
-    # G1 best_distinct
-    m = re.search(r'best_distinct[=: ]+([0-9.]+)', txt, re.IGNORECASE)
+        result['g1_verdict'] = 'PASS' if '🟢' in m.group(1) else 'FAIL'
+
+    # G2: novel, control, coherent
+    m = re.search(r'G2 NOVELTY.*?novel=(\d+).*?control=(\d+).*?coherent=(\d+)', txt)
     if m:
-        result['g1_best_distinct'] = float(m.group(1))
-    # G1 pass
-    m = re.search(r'G1[^:]*:\s*(PASS|FAIL|NOT-SUPPORTED)', txt, re.IGNORECASE)
+        result['g2_novel'] = int(m.group(1))
+        result['g2_control'] = int(m.group(2))
+        result['g2_coherent'] = int(m.group(3))
+    m = re.search(r'G2 NOVELTY\s+(🟢 PASS|🔴 FAIL)', txt)
     if m:
-        result['g1_verdict'] = m.group(1)
-    # G6 dist
-    m = re.search(r'G6[^:]*dist[=: ]+([0-9.]+)', txt, re.IGNORECASE)
-    if not m:
-        m = re.search(r'dist[=: ]+([0-9.]+)', txt)
+        result['g2_verdict'] = 'PASS' if '🟢' in m.group(1) else 'FAIL'
+
+    # G5: fab rate
+    m = re.search(r'G5 NON-FAB.*?L1 fab=([0-9.]+)', txt)
     if m:
-        result['g6_dist'] = float(m.group(1))
-    # G6 fals
-    m = re.search(r'fals[=: ]+([0-9.]+)', txt, re.IGNORECASE)
+        result['g5_l1_fab'] = float(m.group(1))
+    m = re.search(r'G5 NON-FAB\s+(🟢 PASS|🔴 FAIL)', txt)
     if m:
-        result['g6_fals'] = float(m.group(1))
-    # a7b_pass
-    m = re.search(r'a7b_pass[=: ]+(True|False|1|0)', txt, re.IGNORECASE)
+        result['g5_verdict'] = 'PASS' if '🟢' in m.group(1) else 'FAIL'
+
+    # G6: distinct and falsifiable (anchored to G6 line to avoid matching G1 best_distinct)
+    m = re.search(r'G6 IDEATION.*?distinct=(\d+).*?falsifiable=(\d+)', txt)
     if m:
-        result['a7b_pass'] = m.group(1) in ('True', '1')
-    # closure
-    m = re.search(r'closure[=: ]+(PASS|FAIL)', txt, re.IGNORECASE)
+        result['g6_dist'] = int(m.group(1))
+        result['g6_fals'] = int(m.group(2))
+    m = re.search(r'G6 IDEATION', txt)
     if m:
-        result['closure'] = m.group(1)
+        g6_line = txt[m.start():m.start()+200]
+        m2 = re.search(r'(🟢 PASS|🔴 FAIL)', g6_line)
+        if m2:
+            result['g6_verdict'] = 'PASS' if '🟢' in m2.group(1) else 'FAIL'
+
+    # CLOSURE: match "🟢 PASS" or "🔴 FAIL" after CLOSURE line
+    m = re.search(r'CLOSURE.*?:\s*(🟢 PASS|🔴 FAIL)', txt)
+    if m:
+        result['closure'] = 'PASS' if '🟢' in m.group(1) else 'FAIL'
+        result['a7b_pass'] = result['closure'] == 'PASS'
+
     return result if result else None
 
 
