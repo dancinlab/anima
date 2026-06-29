@@ -115,6 +115,8 @@ lever floor at G1. **The last live lever (objective × attention trunk) also flo
 trunk-objective-bound across arch+objective family** (lit-converged: objective+regularization is the
 axis, but THIS objective family is now exhausted).
 
+**Terminal-hexa confirmation = ⏳ BLOCKED-INFRA (2026-06-30):** 4× attempt on pool — det-CPU(non-cuda hexad, cuda_available=0) 303M gen=80 = impractically slow/stall (CPU 0%); det-GPU(stable cuda hexad, cuda_available=1) on aiden = **CUDA-13 runtime.a stall** (hexad CPU 0% + GPU 0%, forge det cuda dispatch bug — CLAUDE.md: "CUDA-13=3 bug, CUDA-12 host required"); summer = frequent reboot (3× this session). Terminal needs a reboot-free **CUDA-12** GPU pod (cost-gated). G1=0 is the ckpt's byte-parity property (hexa⇄py byte-identical proven), so terminal is expected to **confirm, not overturn** — follow-on, not a blocker on the directional conclusion.
+
 **Scope/honesty (c9):** py is byte-parity 2-production (NOT a torch probe), but core/CLAUDE.md (2026-06-28)
 deprecates py mirrors → this is **DIRECTIONAL**, not terminal. The hexa-native TERMINAL confirmation is
 **⏳ BLOCKED-INFRA** (`a_break_the_wall` type-c): summer rebooted 3× this session mid-eval (det-CPU
