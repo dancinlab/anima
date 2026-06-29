@@ -337,6 +337,11 @@ def main():
     ap.add_argument("--no-savant", action="store_true")
     ap.add_argument("--no-mitosis", action="store_true")
     ap.add_argument("--bf16", action="store_true")
+    ap.add_argument("--grad-checkpoint", action="store_true",
+                    help="RUNTIME-only activation recompute (byte-eq-neutral) to fit "
+                         "the jamo re-forward + set-search on small-VRAM GPUs (e.g. 12GB "
+                         "RTX 5070). Trades ~1 extra forward for L-fold less activation "
+                         "memory; does NOT change weights/levers/gate-bars.")
     ap.add_argument("--sample", choices=["roundrobin", "proportional"],
                     default="proportional")
     ap.add_argument("--val-frac", type=float, default=0.05)
@@ -388,7 +393,8 @@ def main():
     torch.manual_seed(a.seed)
 
     cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
-                    variant="AB", dilation_base=2, max_dilation=512)
+                    variant="AB", dilation_base=2, max_dilation=512,
+                    grad_checkpoint=bool(a.grad_checkpoint))
     model = CLMConvMoE(cfg).to(device)            # production additive readout (all arms)
     n_params = sum(p.numel() for p in model.parameters())
     print(f"  params: {n_params} ({n_params/1e6:.3f}M)", flush=True)
@@ -422,8 +428,16 @@ def main():
     def trunk_features(tokens):
         x = model.embed(tokens).transpose(1, 2)    # (B, C, T)
         x = model.embed_conv(x)
+        # Mirror model.forward's runtime-only activation-checkpoint policy so the
+        # jamo re-forward gets the SAME L-fold activation-memory relief (byte-eq-
+        # neutral recompute — identical features, lower peak VRAM).
+        ck = bool(a.grad_checkpoint) and model.training and x.requires_grad
         for layer in model.trunk:
-            x = layer(x)
+            if ck:
+                from torch.utils.checkpoint import checkpoint as _gck
+                x = _gck(layer, x, use_reentrant=False)
+            else:
+                x = layer(x)
         x, _stats = model.moe(x)
         x = model.norm_out(x)                      # (B, d, T)
         return x.transpose(1, 2)                    # (B, T, d)

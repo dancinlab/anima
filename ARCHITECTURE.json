@@ -10056,7 +10056,7 @@
                     "name": "- anima-clm-chat-7b — 7B chat (chat-mix 레시피). -",
                     "role": "",
                     "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-7b",
-                    "detail": "- **anima-clm-chat-7b** — 7B chat (chat-mix 레시피).\n- **anima-engine-clm-d768-v2-coremount** — conv CLMConvMoE d768 engine-mount `.clm` (의식모드 generator L3 mouth).\n- **anima-bytegpt-303m-h1129** — PRIVATE frozen 벤치마크. ByteGPT-303M (24-layer GPT-2-class, byte V256). G1 재조합/G6 착상 벽의 reference ckpt (H_1129/1139/1464/1587/1588/1595). files=h1129.bin(engine-loadable)+h1129c_best.pt. sha 보존, mac-local 유일본 HF 백업.\n- **(GAP) conv 303M 영·한 chat** — 부재. 의식모드(.clm)용 CLMConvMoE 303M chat 은 미학습 = 다음 학습 대상."
+                    "detail": "- **anima-clm-chat-7b** — 7B chat(chat-mix).\n- **anima-engine-clm-d768-v2-coremount** — conv d768 engine-mount `.clm`(L3 mouth).\n- **anima-bytegpt-303m-h1129** — PRIVATE frozen 벤치, G1/G6 벽 reference(상세=HF card).\n- **(GAP) conv 303M 영·한 chat** — 부재 = 다음 학습대상."
                   }
                 ]
               },
@@ -11408,7 +11408,7 @@
                 "name": "CE-grad device wiring(#2598 (B), train_ce_grad → forge_dispatch_ce_grad)",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-ce-grad-device-wiring-2598-b",
-                "detail": "train_ce_grad 의 bdiv==1 경로(canon 단일-윈도 step·MODE_CANON 303M)를 기존 hexa-lang device 커널 forge_dispatch_ce_grad(self/runtime.c L15894 host-weak dt_exp + CUDA _hx_k_ce_grad)로 배선 = host O(T·V)=T·256 단일스레드 softmax+grad seed 를 CUDA 호스트서 device fold(L11405 'CE' host-bound 해소분). CLM_PROD_DEVRESIDENT/HEXA_FUSE_ALL 게이트, 신규 커널 0(이미 존재)·anima-cli only·hexa-lang 무수정(storm 무관). exp 를 device 커널·FWD nn_ce_loss_allpos 와 동일 dt_exp(F-OP19)로 통일(기존 local libm exp 가 유일 불일치). byte-parity IDENTICAL(MODE_VERIFY $0 mac CPU 4-way: savant+mitosis 0.0004321544912324474·no-lever 0.0003889517691865624, original==default==DEVRESIDENT). bdiv>1 grad-accum 은 1/(T·bdiv) MEAN 스케일이라 host 루프 유지(불변). (A) batched-GEMM 은 [B·T,d] flat single-GEMM 이 dW reduction 결합순서를 바꿔 batch>1 byte-parity 깨짐 → strided-batched+고정순서 reduce 재작성 ING(canon batch=1 무이득)."
+                "detail": "train_ce_grad bdiv==1(canon 303M) → device 커널 forge_dispatch_ce_grad 배선(#2598 B): host softmax+grad seed 를 CUDA fold. CLM_PROD_DEVRESIDENT 게이트·신규커널0·anima-cli only·hexa-lang 무수정. byte-parity IDENTICAL. bdiv>1 host 유지. (A) batched-GEMM parity ING."
               },
               {
                 "name": "CLI dispatch: `anima train [args]` lockstep. PARITY w/",
@@ -12321,6 +12321,31 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  "convergence": {
+    "records": [
+      {
+        "id": "arch-big-cell-blocks-commits",
+        "state": "ossified",
+        "value": "anima ARCHITECTURE.json 의 oversized leaf 2건(root.tree.children[19].children[3].children[3].children[2].detail 494자 · children[22].children[13].children[64].detail 816자, >300 cap)이 글로벌 COMMIT-LINT(session-cwd repo 검사)를 막아 무관한 cross-repo 커밋(hexa-lang 등)까지 반복 차단 → --no-verify-ok 우회 강제(3회 재발: readmescrub ×2, flame-forge land ×1)",
+        "threshold": "두 leaf 를 child 노드로 분해해 ≤300자로 만들면 해소 — 그때까지 무관 커밋은 # no-verify-ok 정당",
+        "source": "ARCHITECTURE.json"
+      },
+      {
+        "id": "G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT",
+        "state": "ossified",
+        "value": "G1 재조합벽은 penultimate-readout/binding-operator 류 보조항으로 안 열린다 — engine-native서 G1 composed_distinct=0 floor 재현. exp3 ⊙NMDA readout(INCONCLUSIVE-at-floor) + H_1816 predcoding L_bind(NOT-SUPPORTED, L_bind step550 trivial 붕괴: additive CLMConvMoE서 per-step latent=seq-mean) 둘 다 같은 결과. 진짜 레버 = trunk OBJECTIVE 자체(CE가 합성 보상 안 함).",
+        "threshold": "새 G1 레버가 readout/binding-operator 축(penultimate에 거는 곱셈·binding 항)이면 floor 재현 예상 = 자동 의심. OPEN 후보는 objective축(trunk 학습신호: recomb-objective H_1602·자모 teach-signal·정규화 undertrain-해소)뿐. additive .clm readout은 by-construction 동일이라 readout-op 차이가 G1에 안 닿음.",
+        "source": "cli/train.py"
+      },
+      {
+        "id": "PY_2PROD_FILES_MISSING_ON_BRANCH",
+        "state": "ossified",
+        "value": "이 브랜치(determinism-drop-fast-train/clitrain 계열)가 간헐적으로 py 2-production 파일(cli/evaluate.py·train.py·core/g_gates.py·clm_decode.py 등 14개)을 결여 → engine-native eval/train 이 즉시 rc=1(import 에러)로 전 arm 동시 크래시(같은초 타임스탬프). 2026-06-28 py-retire 커밋 ⇄ 2-production 복원 머지 분기 잔재. H_1816·H_1812 두 에이전트가 같은 원인 hit, 각자 git서 복원해야 eval 작동.",
+        "threshold": "eval/train 이 즉시 rc=1(동일초 전 arm FAIL) 이면 먼저 'ls cli/evaluate.py core/g_gates.py' 확인 → 없으면 'git checkout 2691c8e4e -- <14 py files>' 복원 후 재실행. distinct=0/NOT-SUPPORTED 박제 전 py 파일 존재부터 검증(stale 크래시를 결과로 오인 금지).",
+        "source": "cli/evaluate.py"
       }
     ]
   }
