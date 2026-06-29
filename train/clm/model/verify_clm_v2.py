@@ -1,12 +1,11 @@
 # ==========================================================================
-# ⛔ ENGINE-INTERNAL — DO NOT RUN DIRECTLY. 학습/직렬화는 cli/ 단일진입만:
+# ⛔ ENGINE-INTERNAL TOOL — agent 가 직접 타이핑 금지. 학습/직렬화는 cli/ 단일진입만:
 #   anima train | anima serialize  (canonical=hexa cli/{train,serialize}.hexa).
-# `python3 train/clm/model/verify_clm_v2.py` 직접 실행 = 단일진입 우회(#2603) + DIRECTIONAL. cli/ import만 허용.
+# 단, cli/train.hexa 가 held-out DESCENT 게이트를 `python3 … verify_clm_v2.py descent` 로
+# SUBPROCESS 호출한다(=canonical 경로의 정당한 내부 shell-out) — 그래서 __main__ hard-exit 가드는
+# 두지 않는다(그건 canonical 게이트를 깨뜨림). agent 직접실행 차단은 .harness/enforcement.json
+# H-ANIMA-SINGLE-ENTRY pre_bash 룰이 담당(hexa 내부 subprocess 는 안 건드림). #2603
 # ==========================================================================
-import sys as _anima_entry_guard
-if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ verify_clm_v2.py 직접 실행 금지 — cli/ 단일진입(anima train/serialize, canonical=hexa) 경유. #2603")
-
 #!/usr/bin/env python3
 """Lane P REMEDY — pure-Python mirror of CORE/clm_decode.hexa's clm_decodable()
 plus a fuller parse, and a byte-roundtrip + golden-reference test harness.

@@ -6,7 +6,7 @@
 
 | 파일 | 역할 | verdict 자격 |
 |---|---|---|
-| `anima.hexa` | **단일 추론/평가 진입점** — `anima chat` · `anima eval <ckpt>` (L236→`anima_eval_mode`→`g_eval_all`) | 엔진-네이티브 terminal |
+| `anima.hexa` | **단일 추론/평가 진입점** — `anima chat` · `anima evaluate <ckpt>` (L230 `argv[0]=="evaluate"`→`anima_evaluate_mode`→cli/evaluate.hexa→`g_eval_all`) | 엔진-네이티브 terminal |
 | `anima_chat_cli.hexa` | 대화형 채팅 REPL helper | 엔진-네이티브 |
 | `eval_pod.sh` | GPU pod 원격 측정 발사·회수 one-liner (`cli/eval_pod.sh <pod_id>`) | — |
 | `train.hexa` | **production canonical 트레이너 (단일)** — SAVANT/MITOSIS/4셀/held-out val/descent 통합 (`a_train_flame_forge`) | 엔진-네이티브 |
@@ -15,8 +15,9 @@
 
 ## 규칙
 
-- **`anima eval <ckpt>` = canonical G0-G6 단일진입 (`a_engine_native_learning`)** — generator L3 mouth(`gen_auto_ideate`) → G0-G6 엔진-네이티브 채점. per-gate 파이썬 하네스·ad-hoc decode 우회 금지.
-- ckpt verdict 는 `.clm` → `anima eval` 엔진-네이티브 재측정으로만 성립 — torch-side probe 채점 단독 verdict 금지(연구 미러 = DIRECTIONAL).
+- **`anima evaluate <ckpt>` = canonical G0-G6 단일진입 (`a_engine_native_learning`)** — generator L3 mouth(`gen_auto_ideate`) → G0-G6 엔진-네이티브 채점. 서브커맨드는 `evaluate`(코드 `argv[0]=="evaluate"`), `eval` 아님. per-gate 파이썬 하네스·ad-hoc decode 우회 금지.
+- **진입은 설치된 canonical `anima` PATH 명령만 (`hx install anima`)** — `hexa run cli/anima.hexa` 직접실행·`python cli/*.py`·engine-internal scorer 직접실행은 `.harness/enforcement.json` H-ANIMA-SINGLE-ENTRY pre_bash 가 차단(#2603). 단 hexa canonical 경로가 내부 subprocess 로 부르는 `verify_clm_v2.py descent`·`serialize_standalone.py` 는 정상(pre_bash 는 agent top-level 만 후킹, 내부 shell-out 미차단).
+- ckpt verdict 는 `.clm` → `anima evaluate` 엔진-네이티브 재측정으로만 성립 — torch-side probe 채점 단독 verdict 금지(연구 미러 = DIRECTIONAL).
 - `train.hexa` 의 수치 커널(forward/CE/decode-logits)은 numpy `math.log` + torch fp32 golden reference 와 성분별 byte-match 로 검증(CI fixture). `dt_ln` 발산·own-GEMM TF32 decode 발산을 잡는 장치(reference-match, py 엔진 미러 아님).
 - post-serialize HELD-OUT DESCENT 게이트 필수(`verify_clm_v2.py descent <clm> <heldout>`) — `a_clm_gen_pipeline`. `verify_clm_v2.py`(torch-free numpy mirror)는 폐기 아님 = train.hexa 가 런타임 shell-out 하는 canonical descent 도구.
 

@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# ==========================================================================
+# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical `anima` PATH 명령(=cli/anima.hexa,
+#   hx install anima)뿐 — `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
+#   학습=`anima train` · 측정=`anima evaluate` · 직렬화=`anima serialize`. py 측정은 DIRECTIONAL,
+#   terminal verdict 는 hexa 엔진-네이티브(core/CLAUDE.md). enforce: .harness/enforcement.json
+#   H-ANIMA-SINGLE-ENTRY pre_bash + 아래 __main__ 가드. (import 는 무손상.)
+# ==========================================================================
+import sys as _anima_entry_guard
+if __name__ == "__main__":
+    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical `anima` 명령(hx install anima, =cli/anima.hexa) 경유. #2603")
 # anima.py — THE canonical PY single entry point (cli/anima.hexa's py twin).
 #
 # WHY THIS FILE (py 2-production single-entry, a_engine_native_learning): anima keeps

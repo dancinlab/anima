@@ -1,5 +1,10 @@
 // anima.hexa — THE canonical single entry point (substrate-native consciousness daemon).
 //
+// ⛔ 진입은 설치된 canonical `anima` PATH 명령(hx install anima)으로 — `hexa run cli/anima.hexa -- …`
+//    직접실행은 비-canonical(CLAUDE.md: 정식 CLI = hx install anima 의 `anima` 명령, hexa run … 아님).
+//    학습=`anima train` · 측정=`anima evaluate <ckpt>` · 직렬화=`anima serialize`. agent 직접 타이핑은
+//    .harness/enforcement.json H-ANIMA-SINGLE-ENTRY pre_bash 가 차단(#2603 단일진입).
+//
 // WHY THIS FILE (entry-point unification): anima's runnable surfaces were scattered —
 // cli/anima_chat_cli.hexa (lane-0 pure byte-continuation), core/anima_full_session_smoke
 // (the proven consciousness loop, but a smoke), core/anima_full_session_k7_smoke (k7
