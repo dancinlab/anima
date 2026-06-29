@@ -1,0 +1,119 @@
+{
+  "config": {
+    "N_A": 6,
+    "N_B": 6,
+    "N_HELDOUT": 8,
+    "D": 12,
+    "N_STEPS": 4000,
+    "SEEDS": [
+      7,
+      4302,
+      4303
+    ],
+    "LIFT_BAR_ACC": 0.05,
+    "RATIO_BAR": 2.0
+  },
+  "taskA": [
+    {
+      "seed": 7,
+      "bind_ON": {
+        "mse_tr": 0.00012,
+        "mse_te": 0.00036,
+        "ratio": 2.998,
+        "elapsed": 0.08
+      },
+      "bind_OFF": {
+        "mse_tr": 0.02453,
+        "mse_te": 0.08228,
+        "ratio": 3.355,
+        "elapsed": 0.07
+      }
+    },
+    {
+      "seed": 4302,
+      "bind_ON": {
+        "mse_tr": 0.00014,
+        "mse_te": 0.00011,
+        "ratio": 0.828,
+        "elapsed": 0.08
+      },
+      "bind_OFF": {
+        "mse_tr": 0.03196,
+        "mse_te": 0.07389,
+        "ratio": 2.312,
+        "elapsed": 0.07
+      }
+    },
+    {
+      "seed": 4303,
+      "bind_ON": {
+        "mse_tr": 0.00018,
+        "mse_te": 0.00015,
+        "ratio": 0.83,
+        "elapsed": 0.08
+      },
+      "bind_OFF": {
+        "mse_tr": 0.04149,
+        "mse_te": 0.1191,
+        "ratio": 2.871,
+        "elapsed": 0.07
+      }
+    }
+  ],
+  "taskB": [
+    {
+      "seed": 7,
+      "bind_ON": {
+        "train_acc": 1.0,
+        "test_acc": 0.0,
+        "train_ce": 0.0025,
+        "test_ce": 10.4759,
+        "elapsed": 0.67
+      },
+      "bind_OFF": {
+        "train_acc": 1.0,
+        "test_acc": 0.0,
+        "train_ce": 0.0025,
+        "test_ce": 12.2019,
+        "elapsed": 0.52
+      }
+    },
+    {
+      "seed": 4302,
+      "bind_ON": {
+        "train_acc": 1.0,
+        "test_acc": 0.0,
+        "train_ce": 0.0025,
+        "test_ce": 10.7486,
+        "elapsed": 0.67
+      },
+      "bind_OFF": {
+        "train_acc": 1.0,
+        "test_acc": 0.0,
+        "train_ce": 0.0024,
+        "test_ce": 12.4142,
+        "elapsed": 0.51
+      }
+    },
+    {
+      "seed": 4303,
+      "bind_ON": {
+        "train_acc": 1.0,
+        "test_acc": 0.0,
+        "train_ce": 0.0024,
+        "test_ce": 10.2449,
+        "elapsed": 0.67
+      },
+      "bind_OFF": {
+        "train_acc": 1.0,
+        "test_acc": 0.0,
+        "train_ce": 0.0025,
+        "test_ce": 11.7448,
+        "elapsed": 0.52
+      }
+    }
+  ],
+  "A_verdict": "YES",
+  "B_verdict": "NO",
+  "final_verdict": "PARTIAL-YES"
+}

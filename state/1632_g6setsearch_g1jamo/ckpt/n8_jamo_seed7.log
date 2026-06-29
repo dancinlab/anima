@@ -1,0 +1,63 @@
+=== H_1632 N4+N8 arm=n8_jamo (jamo=True set=False) seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional
+  levers: lambda_jamo=0.5 lambda_set=0.5 setsearch(every=50 K=8 frames=5 gen=48)
+  cuda: NVIDIA A40 cap=8.6 torch=2.5.1+cu124
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val_tail=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val_tail=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val_tail=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.68509  E=2  wd=0.0500 dp=0.5000  val_CE=11.09578 {"jamo": 3.3455, "n_syl": 1143}
+  step    50  CE=2.62309  E=2  wd=0.0492 dp=0.4917 {"jamo": 1.7513, "n_syl": 1384}
+  step   100  CE=2.26799  E=2  wd=0.0483 dp=0.4833 {"jamo": 1.5777, "n_syl": 1346}
+  step   150  CE=2.14868  E=2  wd=0.0475 dp=0.4748 {"jamo": 1.4594, "n_syl": 587}
+  step   200  CE=1.98689  E=2  wd=0.0466 dp=0.4664 {"jamo": 1.3902, "n_syl": 809}
+  step   250  CE=1.80116  E=2  wd=0.0458 dp=0.4579 {"jamo": 1.2983, "n_syl": 839}
+  step   300  CE=2.02907  E=2  wd=0.0449 dp=0.4495 {"jamo": 1.4475, "n_syl": 279}
+  step   350  CE=1.74177  E=2  wd=0.0441 dp=0.4410 {"jamo": 1.358, "n_syl": 577}
+  step   400  CE=1.70070  E=2  wd=0.0433 dp=0.4326 {"jamo": 1.358, "n_syl": 1179}
+  step   450  CE=1.21765  E=2  wd=0.0424 dp=0.4242 {"jamo": 1.0129, "n_syl": 1788}
+  step   500  CE=1.53661  E=2  wd=0.0416 dp=0.4157  val_CE=1.50322 {"jamo": 1.2321, "n_syl": 1340}
+  step   550  CE=1.63797  E=2  wd=0.0407 dp=0.4073 {"jamo": 1.2011, "n_syl": 589}
+  step   600  CE=1.41342  E=2  wd=0.0399 dp=0.3988 {"jamo": 1.0184, "n_syl": 818}
+  step   650  CE=1.54630  E=2  wd=0.0390 dp=0.3904 {"jamo": 1.1806, "n_syl": 577}
+  step   700  CE=1.32700  E=2  wd=0.0382 dp=0.3819 {"jamo": 0.9551, "n_syl": 1559}
+  step   750  CE=1.39046  E=2  wd=0.0373 dp=0.3735 {"jamo": 1.1633, "n_syl": 867}
+  step   800  CE=1.26163  E=2  wd=0.0365 dp=0.3650 {"jamo": 1.0373, "n_syl": 1134}
+  step   850  CE=1.30572  E=2  wd=0.0357 dp=0.3566 {"jamo": 1.0567, "n_syl": 1116}
+  step   900  CE=1.42635  E=2  wd=0.0348 dp=0.3481 {"jamo": 1.1767, "n_syl": 597}
+  step   950  CE=1.50048  E=2  wd=0.0340 dp=0.3397 {"jamo": 1.2481, "n_syl": 1167}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.07864  E=3  wd=0.0331 dp=0.3312  val_CE=1.17697 {"jamo": 0.8192, "n_syl": 1254}
+  step  1050  CE=1.58882  E=3  wd=0.0323 dp=0.3228 {"jamo": 1.2047, "n_syl": 800}
+  step  1100  CE=1.33789  E=3  wd=0.0314 dp=0.3144 {"jamo": 1.2021, "n_syl": 1972}
+  step  1150  CE=1.19747  E=3  wd=0.0306 dp=0.3059 {"jamo": 0.7089, "n_syl": 747}
+  step  1200  CE=1.30663  E=3  wd=0.0297 dp=0.2975 {"jamo": 1.1125, "n_syl": 1182}
+  step  1250  CE=1.31793  E=3  wd=0.0289 dp=0.2890 {"jamo": 1.0489, "n_syl": 1135}
+  step  1300  CE=1.40315  E=3  wd=0.0281 dp=0.2806 {"jamo": 1.1435, "n_syl": 846}
+  step  1350  CE=1.21450  E=3  wd=0.0272 dp=0.2721 {"jamo": 0.9987, "n_syl": 1095}
+  step  1400  CE=0.96040  E=3  wd=0.0264 dp=0.2637 {"jamo": 0.7117, "n_syl": 1289}
+  step  1450  CE=1.35360  E=3  wd=0.0255 dp=0.2552 {"jamo": 1.2269, "n_syl": 543}
+  step  1500  CE=1.36590  E=3  wd=0.0247 dp=0.2468  val_CE=1.04106 {"jamo": 1.0979, "n_syl": 1140}
+  step  1550  CE=1.30771  E=3  wd=0.0238 dp=0.2383 {"jamo": 0.957, "n_syl": 286}
+  step  1600  CE=1.29845  E=3  wd=0.0230 dp=0.2299 {"jamo": 1.1898, "n_syl": 1658}
+  step  1650  CE=1.13040  E=3  wd=0.0221 dp=0.2214 {"jamo": 1.1322, "n_syl": 832}
+  step  1700  CE=1.35030  E=3  wd=0.0213 dp=0.2130 {"jamo": 1.1025, "n_syl": 1454}
+  step  1750  CE=1.08036  E=3  wd=0.0205 dp=0.2045 {"jamo": 1.0188, "n_syl": 1709}
+  step  1800  CE=1.11767  E=3  wd=0.0196 dp=0.1961 {"jamo": 0.7979, "n_syl": 1042}
+  step  1850  CE=1.26743  E=3  wd=0.0188 dp=0.1877 {"jamo": 1.2129, "n_syl": 244}
+  step  1900  CE=1.23825  E=3  wd=0.0179 dp=0.1792 {"jamo": 1.0427, "n_syl": 288}
+  step  1950  CE=1.02007  E=3  wd=0.0171 dp=0.1708 {"jamo": 0.8844, "n_syl": 1635}
+  step  2000  CE=1.15804  E=3  wd=0.0162 dp=0.1623  val_CE=0.89837 {"jamo": 1.0474, "n_syl": 2007}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=0.30687  DESCENT
+     en-general   val_CE=0.55790  DESCENT
+     ko-sns       val_CE=1.48805  DESCENT
+     en-sns       val_CE=1.44963  DESCENT
+  FINAL val_CE(pooled)=0.9506138563156128  registers_DESCENT=4/4
+  loss0=5.68509 lossF=1.15804 wall=2067.9s savant_latched_at=1 E0=2->E=3 setsearch_runs=0
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 1.15804, "g1_composed_distinct": 0, "g2_novelty_rate": 0.0, "g6_count": 1, "g6_jaccard": null, "phi_proxy": 38.714699, "mitosis_cells": 79}
+  torch ckpt -> state/1632_g6setsearch_g1jamo/ckpt/n8_jamo_seed7.pt (1382668491 bytes)
+  summary -> state/1632_g6setsearch_g1jamo/ckpt/n8_jamo_seed7.json
+  .clm WRITTEN 176584498 bytes -> state/1632_g6setsearch_g1jamo/ckpt/n8_jamo_seed7.clm
+  clm_decodable=True

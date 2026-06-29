@@ -1,0 +1,73 @@
+=== H_1816 launch obj=ce_marginal seed=7 2026-06-28T13:12:39Z ===
+=== H_1641 PREDCODING-BINDING 303M obj=ce_marginal seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=False use_var=False
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  resolve: '/home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt' is not a local path -> streaming HF dataset /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt
+Traceback (most recent call last):
+  File "/home/summer/anima/state/1641_predcoding_binding/trainer.py", line 409, in <module>
+    main()
+  File "/home/summer/anima/state/1641_predcoding_binding/trainer.py", line 218, in main
+    p = T.resolve_corpus_path(spec)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/anima/cli/train.py", line 324, in resolve_corpus_path
+    ds = load_dataset(repo, split="train", streaming=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1688, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1315, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1209, in dataset_module_factory
+    raise FileNotFoundError(f"Couldn't find any data file at {relative_to_absolute_path(path)}.")
+FileNotFoundError: Couldn't find any data file at /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt.
+=== H_1816 launch obj=pc_bind seed=7 2026-06-28T13:12:43Z ===
+=== H_1641 PREDCODING-BINDING 303M obj=pc_bind seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=False
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  resolve: '/home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt' is not a local path -> streaming HF dataset /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt
+Traceback (most recent call last):
+  File "/home/summer/anima/state/1641_predcoding_binding/trainer.py", line 409, in <module>
+    main()
+  File "/home/summer/anima/state/1641_predcoding_binding/trainer.py", line 218, in main
+    p = T.resolve_corpus_path(spec)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/anima/cli/train.py", line 324, in resolve_corpus_path
+    ds = load_dataset(repo, split="train", streaming=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1688, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1315, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1209, in dataset_module_factory
+    raise FileNotFoundError(f"Couldn't find any data file at {relative_to_absolute_path(path)}.")
+FileNotFoundError: Couldn't find any data file at /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt.
+=== H_1816 launch obj=pc_free_energy seed=7 2026-06-28T13:12:47Z ===
+=== H_1641 PREDCODING-BINDING 303M obj=pc_free_energy seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=True
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  resolve: '/home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt' is not a local path -> streaming HF dataset /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt
+Traceback (most recent call last):
+  File "/home/summer/anima/state/1641_predcoding_binding/trainer.py", line 409, in <module>
+    main()
+  File "/home/summer/anima/state/1641_predcoding_binding/trainer.py", line 218, in main
+    p = T.resolve_corpus_path(spec)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/anima/cli/train.py", line 324, in resolve_corpus_path
+    ds = load_dataset(repo, split="train", streaming=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1688, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1315, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/datasets/load.py", line 1209, in dataset_module_factory
+    raise FileNotFoundError(f"Couldn't find any data file at {relative_to_absolute_path(path)}.")
+FileNotFoundError: Couldn't find any data file at /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt.
+=== H_1816 SEED7 ALL ARMS DONE 2026-06-28T13:12:51Z ===

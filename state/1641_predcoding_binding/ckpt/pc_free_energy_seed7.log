@@ -1,0 +1,62 @@
+=== H_1641 PREDCODING-BINDING 303M obj=pc_free_energy seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=True
+  cuda: NVIDIA A40 cap=8.6 torch=2.5.1+cu124
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val_tail=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val_tail=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val_tail=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.68454  E=2  wd=0.0500 dp=0.5000  val_CE=13.16400 {"bind": 0.2866, "pb_var": 0.001}
+  step    50  CE=2.66289  E=2  wd=0.0492 dp=0.4917 {"bind": 0.0559, "pb_var": 0.6875}
+  step   100  CE=3.03894  E=2  wd=0.0483 dp=0.4833 {"bind": 15.6531, "pb_var": 2880.0}
+  step   150  CE=3.46558  E=2  wd=0.0475 dp=0.4748 {"bind": 20.362, "pb_var": 23040.0}
+  step   200  CE=3.65894  E=2  wd=0.0466 dp=0.4664 {"bind": 23.0569, "pb_var": 67072.0}
+  step   250  CE=3.57396  E=2  wd=0.0458 dp=0.4579 {"bind": 32.6027, "pb_var": 116736.0}
+  step   300  CE=3.57687  E=2  wd=0.0449 dp=0.4495 {"bind": 17.3037, "pb_var": 83968.0}
+  step   350  CE=3.52303  E=2  wd=0.0441 dp=0.4410 {"bind": 18.7704, "pb_var": 203776.0}
+  step   400  CE=3.73644  E=2  wd=0.0433 dp=0.4326 {"bind": 19.7511, "pb_var": 366592.0}
+  step   450  CE=4.13606  E=2  wd=0.0424 dp=0.4242 {"bind": 20.3865, "pb_var": 206848.0}
+  step   500  CE=3.79582  E=2  wd=0.0416 dp=0.4157  val_CE=3.79459 {"bind": 67.1658, "pb_var": 552960.0}
+  step   550  CE=3.47048  E=2  wd=0.0407 dp=0.4073 {"bind": 720.1274, "pb_var": 532480.0}
+  step   600  CE=3.89721  E=2  wd=0.0399 dp=0.3988 {"bind": 242.8226, "pb_var": 798720.0}
+  step   650  CE=3.48873  E=2  wd=0.0390 dp=0.3904 {"bind": 34.4868, "pb_var": 761856.0}
+  step   700  CE=4.11020  E=2  wd=0.0382 dp=0.3819 {"bind": 65.9912, "pb_var": 892928.0}
+  step   750  CE=3.46595  E=2  wd=0.0373 dp=0.3735 {"bind": 293.9217, "pb_var": 1302528.0}
+  step   800  CE=3.51872  E=2  wd=0.0365 dp=0.3650 {"bind": 1047.6814, "pb_var": 1597440.0}
+  step   850  CE=3.70962  E=2  wd=0.0357 dp=0.3566 {"bind": 290.6562, "pb_var": 1818624.0}
+  step   900  CE=3.52337  E=2  wd=0.0348 dp=0.3481 {"bind": 62.9587, "pb_var": 1556480.0}
+  step   950  CE=3.59353  E=2  wd=0.0340 dp=0.3397 {"bind": 683.2849, "pb_var": 2342912.0}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=3.83352  E=3  wd=0.0331 dp=0.3312  val_CE=3.77414 {"bind": 74.251, "pb_var": 2473984.0}
+  step  1050  CE=3.90207  E=3  wd=0.0323 dp=0.3228 {"bind": 788.2515, "pb_var": 2752512.0}
+  step  1100  CE=3.76517  E=3  wd=0.0314 dp=0.3144 {"bind": 339.812, "pb_var": 1392640.0}
+  step  1150  CE=3.54796  E=3  wd=0.0306 dp=0.3059 {"bind": 85.5979, "pb_var": 3309568.0}
+  step  1200  CE=3.41687  E=3  wd=0.0297 dp=0.2975 {"bind": 1210.4385, "pb_var": 3899392.0}
+  step  1250  CE=3.59666  E=3  wd=0.0289 dp=0.2890 {"bind": 280.7859, "pb_var": 4292608.0}
+  step  1300  CE=3.57814  E=3  wd=0.0281 dp=0.2806 {"bind": 99.6138, "pb_var": 4390912.0}
+  step  1350  CE=3.51873  E=3  wd=0.0272 dp=0.2721 {"bind": 213.4771, "pb_var": 5177344.0}
+  step  1400  CE=3.83422  E=3  wd=0.0264 dp=0.2637 {"bind": 577.7549, "pb_var": 5275648.0}
+  step  1450  CE=3.42633  E=3  wd=0.0255 dp=0.2552 {"bind": 177.2031, "pb_var": 4587520.0}
+  step  1500  CE=3.50173  E=3  wd=0.0247 dp=0.2468  val_CE=3.68137 {"bind": 110.085, "pb_var": 6651904.0}
+  step  1550  CE=3.52380  E=3  wd=0.0238 dp=0.2383 {"bind": 130.9521, "pb_var": 3145728.0}
+  step  1600  CE=3.68561  E=3  wd=0.0230 dp=0.2299 {"bind": 944.9688, "pb_var": 5799936.0}
+  step  1650  CE=3.46204  E=3  wd=0.0221 dp=0.2214 {"bind": 158.0459, "pb_var": 7864320.0}
+  step  1700  CE=3.62985  E=3  wd=0.0213 dp=0.2130 {"bind": 90.1621, "pb_var": 8454144.0}
+  step  1750  CE=3.89067  E=3  wd=0.0205 dp=0.2045 {"bind": 703.208, "pb_var": 7274496.0}
+  step  1800  CE=3.67475  E=3  wd=0.0196 dp=0.1961 {"bind": 243.667, "pb_var": 10420224.0}
+  step  1850  CE=3.27986  E=3  wd=0.0188 dp=0.1877 {"bind": 109.9941, "pb_var": 4882432.0}
+  step  1900  CE=3.38102  E=3  wd=0.0179 dp=0.1792 {"bind": 139.3145, "pb_var": 5242880.0}
+  step  1950  CE=3.97161  E=3  wd=0.0171 dp=0.1708 {"bind": 1224.2285, "pb_var": 9502720.0}
+  step  2000  CE=3.68820  E=3  wd=0.0162 dp=0.1623  val_CE=3.68402 {"bind": 190.3867, "pb_var": 5931008.0}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=3.94258  DESCENT
+     en-general   val_CE=3.20063  DESCENT
+     ko-sns       val_CE=3.82158  DESCENT
+     en-sns       val_CE=3.75365  DESCENT
+  FINAL val_CE(pooled)=3.679608106613159  registers_DESCENT=4/4
+  loss0=5.68454 lossF=3.68820 wall=941.9s savant_latched_at=1 E0=2->E=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 3.6882, "g1_composed_distinct": 0, "g2_novelty_rate": 0.0, "g6_count": 0, "g6_jaccard": null, "phi_proxy": 0.013159, "mitosis_cells": 18}
+  torch ckpt -> state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.pt (1382668736 bytes)
+  summary -> state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.json
+  .clm WRITTEN 176584498 bytes -> state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.clm
+  clm_decodable=True

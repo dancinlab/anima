@@ -1,0 +1,46 @@
+{
+  "objective": "pc_bind",
+  "seed": 7,
+  "n_params": 345664875,
+  "loss0": 5.69268,
+  "lossF": 1.39707,
+  "wall_s": 919.1,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 1.71691,
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 1.49039,
+      "descent": true
+    },
+    "en-general": {
+      "val_ce": 1.68562,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 1.45349,
+      "descent": true
+    },
+    "en-sns": {
+      "val_ce": 2.23814,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "bind": 9.316088107880205e-05
+  },
+  "lambda_bind": 0.1,
+  "lambda_var": 0.01,
+  "bind_dim": 32,
+  "gauges_g1g6_torch_probe": {
+    "step": 2000,
+    "ce": 1.39707,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.64815,
+    "g6_count": 4,
+    "g6_jaccard": 0.88699,
+    "phi_proxy": 17.896829,
+    "mitosis_cells": 33
+  },
+  "tier": "engine-native-eligible (.clm additive); torch probe DIRECTIONAL"
+}

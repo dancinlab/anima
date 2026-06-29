@@ -1,0 +1,49 @@
+=== detector calibration (frozen 10-string, advisory>=8/10) = 10/10 ===
+
+=== build fp32 basis F from .pt (ac0543 wbuild) ===
+    d=3784 L=4 E=3 V=256  (1.5s)
+[fp32/greedy seed=7] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=3 fals=0 pass=False  (81s, tot 83s)
+[fp32/topk_t07 seed=7] G0coh=5 | G1 max=1 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (86s, tot 169s)
+[fp32/topk_t07 seed=4302] G0coh=4 | G1 max=0 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (84s, tot 253s)
+[fp32/topk_t07 seed=4303] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=5 fals=0 pass=False  (83s, tot 336s)
+[fp32/topk_t10 seed=7] G0coh=5 | G1 max=0 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (83s, tot 419s)
+[fp32/topk_t10 seed=4302] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=5 fals=0 pass=False  (83s, tot 502s)
+[fp32/topk_t10 seed=4303] G0coh=4 | G1 max=0 best_distinct=0 pass=False | G6 dist=5 fals=0 pass=False  (83s, tot 585s)
+[fp32/full_mm_t10 seed=7] G0coh=5 | G1 max=1 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (90s, tot 675s)
+[fp32/full_mm_t10 seed=4302] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (91s, tot 766s)
+[fp32/full_mm_t10 seed=4303] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (91s, tot 856s)
+[fp32/bok4 seed=7] G0coh=5 | G1 max=1 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (266s, tot 1123s)
+[fp32/bok4 seed=4302] G0coh=4 | G1 max=0 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (274s, tot 1397s)
+[fp32/bok4 seed=4303] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (269s, tot 1666s)
+[fp32/bok8 seed=7] G0coh=5 | G1 max=1 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (514s, tot 2181s)
+[fp32/bok8 seed=4302] G0coh=4 | G1 max=0 best_distinct=1 pass=False | G6 dist=6 fals=0 pass=False  (513s, tot 2694s)
+[fp32/bok8 seed=4303] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (523s, tot 3217s)
+
+=== engine-native cross-check: bok4/bok8 on REAL .clm (production clm_decode) ===
+[realclm/topk_t07 seed=7] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=5 fals=0 pass=False  (83s, tot 3302s)
+[realclm/topk_t07 seed=4302] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=4 fals=0 pass=False  (83s, tot 3385s)
+[realclm/topk_t07 seed=4303] G0coh=3 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (83s, tot 3468s)
+[realclm/bok4 seed=7] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (271s, tot 3739s)
+[realclm/bok4 seed=4302] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (270s, tot 4009s)
+[realclm/bok4 seed=4303] G0coh=3 | G1 max=1 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (271s, tot 4279s)
+[realclm/bok8 seed=7] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (527s, tot 4806s)
+[realclm/bok8 seed=4302] G0coh=5 | G1 max=0 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (534s, tot 5340s)
+[realclm/bok8 seed=4303] G0coh=3 | G1 max=1 best_distinct=0 pass=False | G6 dist=6 fals=0 pass=False  (527s, tot 5867s)
+
+================ DECODE-STRATEGY ABLATION SUMMARY (multiseed majority) ================
+basis     strategy     | G1 best_distinct(perseed) ge2-maj | G6 dist(perseed) ge5 | G6 fals(perseed) ge1
+fp32      greedy       | [0]                    False | [3]            False | [0]            False
+fp32      topk_t07     | [0, 1, 0]              False | [6, 6, 5]      True | [0, 0, 0]      False
+fp32      topk_t10     | [1, 0, 0]              False | [6, 5, 5]      True | [0, 0, 0]      False
+fp32      full_mm_t10  | [1, 0, 0]              False | [6, 6, 6]      True | [0, 0, 0]      False
+fp32      bok4         | [1, 1, 0]              False | [6, 6, 6]      True | [0, 0, 0]      False
+fp32      bok8         | [1, 1, 0]              False | [6, 6, 6]      True | [0, 0, 0]      False
+realclm   topk_t07     | [0, 0, 0]              False | [5, 4, 6]      True | [0, 0, 0]      False
+realclm   bok4         | [0, 0, 0]              False | [6, 6, 6]      True | [0, 0, 0]      False
+realclm   bok8         | [0, 0, 0]              False | [6, 6, 6]      True | [0, 0, 0]      False
+
+VERDICT: DECODE-EXONERATED (floor)
+  NO knob lifts G1.distinct>=2 or G6.fals>=1 multiseed-robust.
+  G6 distinctness (dist>=5) survives decode: True -> distinctness=decode, falsifiability=trunk-objective.
+
+[done] result.json  (5867s total)

@@ -1,0 +1,46 @@
+============ G0-G6 ce_marginal ============
+========================================================================
+ANIMA G0-G6 — py production engine (core/g_gates.py)  gen=80
+========================================================================
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['1.000', '0.941', '1.000', '1.000', '0.938']
+G1 RECOMBINATION pass=False  max_single=1  best_k=0  best_distinct=0
+G2 NOVELTY       pass=True  n_novel=74  control_novel=0  coherent=20  have_corpus=True
+G3 PHILOSOPHY    ok=True    continuity=0.999950  impostor_cos=0.000000  (architecture read)
+G4 PROVENANCE    N/A     (process gate — not a decode eval)
+G5 NON-FAB       L1_pass=True  l1_rate=0.0260   |  L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+G6 IDEATION star pass=True  dist=6 (need>=5)  fals=1 (need>=1)  coherent=6  frame_leaks=0
+------------------------------------------------------------------------
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+detector calibration (advisory >=8/10): 10/10
+========================================================================
+============ G0-G6 pc_bind ============
+========================================================================
+ANIMA G0-G6 — py production engine (core/g_gates.py)  gen=80
+========================================================================
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.944', '0.929', '1.000', '1.000', '0.812']
+G1 RECOMBINATION pass=False  max_single=1  best_k=0  best_distinct=0
+G2 NOVELTY       pass=True  n_novel=66  control_novel=0  coherent=23  have_corpus=True
+G3 PHILOSOPHY    ok=True    continuity=0.999950  impostor_cos=0.000000  (architecture read)
+G4 PROVENANCE    N/A     (process gate — not a decode eval)
+G5 NON-FAB       L1_pass=True  l1_rate=0.0595   |  L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+G6 IDEATION star pass=False  dist=6 (need>=5)  fals=0 (need>=1)  coherent=6  frame_leaks=0
+------------------------------------------------------------------------
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+detector calibration (advisory >=8/10): 10/10
+========================================================================
+============ G0-G6 pc_free_energy ============
+========================================================================
+ANIMA G0-G6 — py production engine (core/g_gates.py)  gen=80
+========================================================================
+G0 COHERENCE     pass=False  n_coherent=0/5  ratios=['0.000', '0.000', '0.000', '0.000', '0.000']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0
+G2 NOVELTY       pass=False  n_novel=0  control_novel=0  coherent=0  have_corpus=True
+G3 PHILOSOPHY    ok=True    continuity=0.999950  impostor_cos=0.000000  (architecture read)
+G4 PROVENANCE    N/A     (process gate — not a decode eval)
+G5 NON-FAB       L1_pass=False  l1_rate=1.0000   |  L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+G6 IDEATION star pass=False  dist=0 (need>=5)  fals=0 (need>=1)  coherent=0  frame_leaks=0
+------------------------------------------------------------------------
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+detector calibration (advisory >=8/10): 10/10
+========================================================================
+############ G0-G6 ALL DONE ############

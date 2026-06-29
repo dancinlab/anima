@@ -1,0 +1,62 @@
+=== H_1641 PREDCODING-BINDING 303M obj=pc_free_energy seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=True
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt size=60000356 train=57000338 val_tail=3000018
+  corpus cell[1] en-general   /home/summer/anima/.corpus_cache/anima-corpus-en-general.txt size=60049637 train=57047155 val_tail=3002482
+  corpus cell[2] ko-sns       /home/summer/anima/.corpus_cache/anima-corpus-ko-sns.txt size=6183822 train=5874630 val_tail=309192
+  corpus cell[3] en-sns       /home/summer/anima/.corpus_cache/anima-corpus-en-sns.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.69268  E=2  wd=0.0500 dp=0.5000  val_CE=13.50166 {"bind": 0.2867, "pb_var": 0.0009}
+  step    50  CE=2.57269  E=2  wd=0.0492 dp=0.4917 {"bind": 0.5074, "pb_var": 17.75}
+  step   100  CE=3.07315  E=2  wd=0.0483 dp=0.4833 {"bind": 11.204, "pb_var": 5088.0}
+  step   150  CE=3.26410  E=2  wd=0.0475 dp=0.4748 {"bind": 17.4576, "pb_var": 23552.0}
+  step   200  CE=3.37367  E=2  wd=0.0466 dp=0.4664  val_CE=3.40211 {"bind": 11.9618, "pb_var": 48384.0}
+  step   250  CE=3.38075  E=2  wd=0.0458 dp=0.4579 {"bind": 12.5117, "pb_var": 80384.0}
+  step   300  CE=3.46777  E=2  wd=0.0449 dp=0.4495 {"bind": 5.0677, "pb_var": 128512.0}
+  step   350  CE=3.37131  E=2  wd=0.0441 dp=0.4410 {"bind": 13.8409, "pb_var": 168960.0}
+  step   400  CE=3.36879  E=2  wd=0.0433 dp=0.4326  val_CE=3.54911 {"bind": 284.7929, "pb_var": 179200.0}
+  step   450  CE=3.46218  E=2  wd=0.0424 dp=0.4242 {"bind": 72.1316, "pb_var": 309248.0}
+  step   500  CE=3.41653  E=2  wd=0.0416 dp=0.4157 {"bind": 148.7083, "pb_var": 387072.0}
+  step   550  CE=3.36969  E=2  wd=0.0407 dp=0.4073 {"bind": 46.9365, "pb_var": 448512.0}
+  step   600  CE=3.27753  E=2  wd=0.0399 dp=0.3988  val_CE=3.57545 {"bind": 24.102, "pb_var": 434176.0}
+  step   650  CE=3.66243  E=2  wd=0.0390 dp=0.3904 {"bind": 33341.7109, "pb_var": 606208.0}
+  step   700  CE=3.40447  E=2  wd=0.0382 dp=0.3819 {"bind": 133.1292, "pb_var": 806912.0}
+  step   750  CE=3.30231  E=2  wd=0.0373 dp=0.3735 {"bind": 88.2209, "pb_var": 888832.0}
+  step   800  CE=3.67174  E=2  wd=0.0365 dp=0.3650  val_CE=3.55760 {"bind": 33.6906, "pb_var": 819200.0}
+  step   850  CE=3.55669  E=2  wd=0.0357 dp=0.3566 {"bind": 61.2471, "pb_var": 1171456.0}
+  step   900  CE=3.52755  E=2  wd=0.0348 dp=0.3481 {"bind": 443.5378, "pb_var": 1335296.0}
+  step   950  CE=3.42954  E=2  wd=0.0340 dp=0.3397 {"bind": 116.1115, "pb_var": 1597440.0}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=3.46357  E=3  wd=0.0331 dp=0.3312  val_CE=3.62614 {"bind": 80.4178, "pb_var": 1826816.0}
+  step  1050  CE=3.33353  E=3  wd=0.0323 dp=0.3228 {"bind": 419.9489, "pb_var": 1474560.0}
+  step  1100  CE=3.42382  E=3  wd=0.0314 dp=0.3144 {"bind": 124.7349, "pb_var": 2039808.0}
+  step  1150  CE=3.82919  E=3  wd=0.0306 dp=0.3059 {"bind": 600.8365, "pb_var": 2424832.0}
+  step  1200  CE=3.39189  E=3  wd=0.0297 dp=0.2975  val_CE=3.63767 {"bind": 74.8245, "pb_var": 2506752.0}
+  step  1250  CE=3.54150  E=3  wd=0.0289 dp=0.2890 {"bind": 40.6465, "pb_var": 2195456.0}
+  step  1300  CE=4.02394  E=3  wd=0.0281 dp=0.2806 {"bind": 576.4573, "pb_var": 0.6797}
+  step  1350  CE=4.51017  E=3  wd=0.0272 dp=0.2721 {"bind": 24.2505, "pb_var": 0.0}
+  step  1400  CE=4.03330  E=3  wd=0.0264 dp=0.2637  val_CE=4.11456 {"bind": 13.6897, "pb_var": 0.0}
+  step  1450  CE=3.56464  E=3  wd=0.0255 dp=0.2552 {"bind": 19.6577, "pb_var": 1.5312}
+  step  1500  CE=3.36529  E=3  wd=0.0247 dp=0.2468 {"bind": 14.5364, "pb_var": 4.7188}
+  step  1550  CE=3.13229  E=3  wd=0.0238 dp=0.2383 {"bind": 8.4155, "pb_var": 2.1406}
+  step  1600  CE=2.99868  E=3  wd=0.0230 dp=0.2299  val_CE=3.17388 {"bind": 12.3823, "pb_var": 4.5625}
+  step  1650  CE=2.93640  E=3  wd=0.0221 dp=0.2214 {"bind": 5.8914, "pb_var": 7.5312}
+  step  1700  CE=2.77986  E=3  wd=0.0213 dp=0.2130 {"bind": 8.5852, "pb_var": 10.25}
+  step  1750  CE=2.70359  E=3  wd=0.0205 dp=0.2045 {"bind": 12.104, "pb_var": 9.9375}
+  step  1800  CE=2.67498  E=3  wd=0.0196 dp=0.1961  val_CE=2.91717 {"bind": 8.9734, "pb_var": 0.0}
+  step  1850  CE=2.65059  E=3  wd=0.0188 dp=0.1877 {"bind": 9.9978, "pb_var": 0.0}
+  step  1900  CE=2.66425  E=3  wd=0.0179 dp=0.1792 {"bind": 12.8589, "pb_var": 236.0}
+  step  1950  CE=6.96731  E=3  wd=0.0171 dp=0.1708 {"bind": 4732.7407, "pb_var": 1998848.0}
+  step  2000  CE=5.34151  E=3  wd=0.0162 dp=0.1623  val_CE=5.95959 {"bind": 5290.3477, "pb_var": 5242880.0}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=6.51600  NO-DESCENT
+     en-general   val_CE=4.61184  DESCENT
+     ko-sns       val_CE=6.15869  NO-DESCENT
+     en-sns       val_CE=6.22078  NO-DESCENT
+  FINAL val_CE(pooled)=5.876826167106628  registers_DESCENT=1/4
+  loss0=5.69268 lossF=5.34151 wall=912.4s savant_latched_at=1 E0=2->E=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 5.34151, "g1_composed_distinct": 0, "g2_novelty_rate": 0.0, "g6_count": 0, "g6_jaccard": null, "phi_proxy": 0.043434, "mitosis_cells": 3}
+  torch ckpt -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.pt (1382669159 bytes)
+  summary -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.json
+  .clm WRITTEN 176584498 bytes -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.clm
+  clm_decodable=True

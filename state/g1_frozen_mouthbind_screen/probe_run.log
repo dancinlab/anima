@@ -1,0 +1,129 @@
+==============================================================================
+G1 FROZEN MOUTH-BIND SCREEN — DIRECTIONAL (numpy, not engine-native TERMINAL)
+date 2026-06-29 18:49:18  host mini
+==============================================================================
+
+
+## PART 1: Abstract binding mechanism probes
+   (card cheap-test specs: H_1616 VSA, H_1623 Hypernet, H_1649 Saddle)
+   Tests algebraic binding capability WITHOUT 303M weights.
+------------------------------------------------------------
+
+### 1a. VSA/HRR bundle retrieval (H_1616)
+  [VSA/HRR bundle N=5, K=20, d=512]
+    ON  (circular conv+unbind):  acc=1.000
+    OFF (additive bundle):        acc=0.076
+    CTRL (perm-bind):             acc=0.194
+    Bar PASS (ON > OFF AND > CTRL): True
+
+### 1b. Hypernet multiplicative binding (H_1623)
+  [Hypernet compositional split] train=30, test(holdout filler)=6
+    ON  (bilinear hypernet):  acc=0.000 (0/6)
+    OFF (concat-MLP additive): acc=0.000 (0/6)
+    Bar PASS (ON > OFF): False
+
+### 1c. A⇄G Saddle-point binding (H_1649)
+  [A⇄G Saddle d=8 n_factors=4 n_roles=3] chance=0.083
+    ON  (minimax saddle):    acc=0.000 (0/4)
+    CTRL energy-descent:     acc=0.000 (0/4)
+    CTRL linear:             acc=0.000 (0/4)
+    CTRL M-ablated:          acc=0.000 (0/4)
+    Bar PASS (ON > all ctrl): False
+
+
+## PART 1 SUMMARY
+Mechanism                       ON acc    OFF acc   bar_pass
+  VSA/HRR (H_1616)                1.0       0.07600000000000001  True
+  Hypernet (H_1623)               0.0       0.0       False
+  Saddle (H_1649)                 0.0       0.0       False
+
+
+## PART 2: Frozen clm303 G1 with mouth-bind ops at readout
+   CLM: /Users/mini/anima-weights/clm303_clean/clm303_clean.clm
+   Probe: clm_decode.py retired py mirror (DIRECTIONAL only)
+   Frozen bar: composed_distinct≥2 ∧ >max_single ∧ kwr≥0.50 in ≥2/3 seeds
+------------------------------------------------------------
+  Loading weights from /Users/mini/anima-weights/clm303_clean/clm303_clean.clm ...
+  Weights loaded in 1.4s
+
+  ── OP='none' ──
+    seed=7: max_single=0 best_composed=0 clears=FAIL  (54s elapsed)
+      k=2 distinct=0 kwr=0.786 coherent=True  >> 'They have been in the forms.\nAsked, “It’s there’s a very baited.'
+      k=3 distinct=0 kwr=0.833 coherent=True  >> 'They’re not allowed.\n“Let’s about what……\nI’m joined.”\nMy'
+      k=4 distinct=0 kwr=0.727 coherent=True  >> 'The according to send their stores.\nNow, this……\nIf youngers tenden'
+      k=5 distinct=0 kwr=0.929 coherent=True  >> "They said.\nWhen I wasn't booking to keep that's been......\nHere”\nThe"
+    seed=4302: max_single=0 best_composed=0 clears=FAIL  (108s elapsed)
+      k=2 distinct=0 kwr=0.867 coherent=True  >> "And, there's a good news...and thit, then got and wouldn't.\nMade news,"
+      k=3 distinct=0 kwr=1.0 coherent=True  >> 'She’s been the forgetting.\nThen.sentence and therefore.\nAnd forth of'
+      k=4 distinct=0 kwr=0.727 coherent=True  >> 'Serversions, and the samesticks, opened, and it was about that….\nHer'
+      k=5 distinct=0 kwr=0.75 coherent=True  >> "He started.\nAnd, there's nothing eggers.\nThey because I makes people."
+    seed=4303: max_single=0 best_composed=0 clears=FAIL  (163s elapsed)
+      k=2 distinct=0 kwr=0.7 coherent=True  >> 'Indianalists.\nAndrewished officials by and the bottom?\nThey’re going'
+      k=3 distinct=0 kwr=0.625 coherent=True  >> 'International students and investigations.\nThese substance, they wante'
+      k=4 distinct=0 kwr=0.933 coherent=True  >> 'They are seems to be.\nIf you’re saw.\nBut, but we maybe that.\nManners'
+      k=5 distinct=0 kwr=0.833 coherent=True  >> 'It started, “It’s another,” and then, but we’re going. Sometim'
+    ==> [none] G1 = FAIL (0/3 seeds)  elapsed=163s
+
+  ── OP='vsa_hrr' ──
+    seed=7: max_single=0 best_composed=0 clears=FAIL  (55s elapsed)
+      k=2 distinct=0 kwr=0.5 coherent=True  >> '\udcdb\udcdbې\udc96\udc86\udca9\udca1?\udc8b\udca9\udcb6\udc8b.\udc90\udca5|\udc90\udcdb_\udc90ۖ\x17\udca9&\x16\udc96ł\udc82\udcdb\x13\udc90\udc9f\udcc0\x10\udca7|\udc92f\udc80<\udc8b\udc90\t\x11\udc86sf\udca4\udc90\udc90(\udc96\udc86\udc92-\udcc0\udc90\udc86\udc86\udc86\udca5\udc82\x0e!\udc9f\udc92\udc88'
+      k=3 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcccې\udcdbj\udca9\x0c\x17\udca1\udcac\udc86\udca9\udc96($\udcac\udccc\udcdbe\udcadۭ\udca6\udc90\udca9\x05\udc92\udca9\udc90\udc96\uea61\udcb6\x07\udcaa\udcbe\udc90\udc88\x19\udca6\x0cۂ\udcccې̎\udc95\udc82\udc90|-\udc9fېՐ\udc90\udc90.\udc90\udca9\x05!|-\udc82'
+      k=4 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcdb\udcdb\udcdb\udcdb\udcdb\udced&\udc9f\udc9f\udc90f\udca6\udc85\udc92\x15\udc92\x19\udcdb&\udc90ې\udc86\udc92\udc82!\udc90\udc90\udc82\x14s\x19\udcc6ۧ\udc80=|\udca5\udca5\udc90\udc90\x16\udc90\x10\udca9\udc86\x1a\udc94\udcc0\udc90\udc90\udcf8\udc86\udc92\udc92\udca9;\x01\udc92\udc88ې\udc90\udcca\x19\udca9f\udc92'
+      k=5 distinct=0 kwr=0.333 coherent=False  >> '\udcdb\udccc\udccc\udcdb\udcdb٧\udc90\udcc3|\udca9\udc90\udc90\udc90\udc90bJ\x17\udc96\udca1\udc86\udc90\udc82\x01\udca9\udc96\U000904a9\x18||\udcdb\udcdb\udcdb\udcdb\udcdbې\udca6(\udcc6l\udc90\udc82\udc92\udc92\udcb9\udc90\udc90\udc90\udc92\udc92\udc92\udc92\udc90\udc92\x1f\udca9\udc90\udc82\x06\udc90\udc82\x1cnf\udc86\x12'
+    seed=4302: max_single=0 best_composed=0 clears=FAIL  (110s elapsed)
+      k=2 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcdb\udcdb\udcd8^(ۧ\udc90f\udc96\udca0\x19\udc90\udcaf|\udc92|\udcb9\udc90\udc90\udc90\udc92\udcf4\udc82!\udcb6\udc92\udc92||\udc9f\udcdb_\udca7\udcc6l\udc90f\udc96!\udcb6\udc8a\udc90\x19\x03\x17\udcdbۆ\x11\udce3(\udca7P\udc90\udcb9\udcbe|\udc82\udcbe\udc90\x17\udc90\udc86\x10\udc80\udca9\x1f\udc86'
+      k=3 distinct=0 kwr=0.667 coherent=True  >> '\udcdb\udccc\udccc\udccb\udcc5\udcdb\udcdb&\udc90\udc90\udc90\udc90\udc90\udca9\udc90-\udca6\udc90\udc90\udc86\udc90\udc92\udc92.\udc90ii\udcd5\udcee\udca5\udcdb\udcdb\udcdb\udcd9\udcd8\udccc\udcd9Ɛ\udc90̐\x17\udc90,\udc90\udc90\udc90.\udc90,\udc86\udc86\udca9\udca9\udc90\udcd5\x0ci\udcdb\udcc6\udcdb\udcdaې\udcaf(E\udca5\udcaa'
+      k=4 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcdb\udcdb\udcdb\udcdb\udcdb\udced&\udc90̐\udcdb\udcc2|\udc86\udcdbƐ\udc90\udc90\udc82\udc90\udca9.\udc82\x11\udc86\x1a\udc80\udc86\udc90\udc9f\x17\x05߆࢈\udc86\udc86|ݐ\udcc6I\udc86\udca5\udca9|\x0cΐ\udcdbl\udc92\udc8b\udc86\udcad\udc92\x10\udca9Ն\udc86̢\udc90\udc9f\udc90'
+      k=5 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcc6ې\udcd8|(ۖ\udcac\udcac\udc90\udcaf|\udca9\udcad\x0c\udca9f\udc82\x10\udc90\udc86!\udcad\udca8\udcf8\x16\udca4ۂ\udc90\udc90\udcbe\x0f\udcaa\x12ۆ\udc8b\udca9\udc90\x17\x07\udca9|\x19\udcdbۢ<\udcccې\udc90\udc90i|\udca5\udc86\t\udc90\udcd2.\udc90\udc86\x07\x0c\udcb2\udc90'
+    seed=4303: max_single=0 best_composed=0 clears=FAIL  (164s elapsed)
+      k=2 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcdb\udcc6\udcd9ؐ\udcac(b\udca7^\udcaa\x01\udc90\udc90\udc90\udc90\udca6\udcc0\udce3Ԡ\udc90\udc90\x07\udc86\x16\udc88\udcd4\x17\udc90\udc90\udc90f\udc94\udcd5(\udcccېf\udc96Ղ.\udc90\udca6\udc86\udc88\udc90\x06\x07\udc86\x06\udca9\udc90\udc90\udc90\x16\x19\x19\udcdbs\udccc\udcdbې\udcbe\udc92\udca9'
+      k=3 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udccc>g&\udca0\udc9f\udca0\udcb9\udc88!\udca7\udcf4\udca0\udc8b\udc90\udc82|!\udc86\udcbf\udcad\udca8\udc90\t(\udcd3ۂ\udcaff\udc96\udcb6\udc90\udc9f\udc86\udca1\x06\udc90\udc82\x06\udc90\udca9\udc92\udca9\udc92\udcd5s\udcbf\udcdb\udcdb\t\udcdb\udccc\udcdbِ\udc90=\udc90ې\udca9\udca6\udc8b\udc90\udc8b\udc90\udc8b:'
+      k=4 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udcdb\udccc\udcdb\udcdb\udcdb\udcdb[\udcdb\udcdbz(}\udc90\udc90\udc90\udc90\x19\udc86\t\t\udc90\udc90\udc90\udca6\x19M\udc90\x01\udcfb\udc90\udc82\udc86\udc92||\udca5\udcdb۫\udcec\udcec\udcfb\udc90f\udca0Ԑ\x10\udc80\x16\udc82\udc88\udcee\x06\udc86\udc86\udc82Ր.\udc80\udc88\udc90\udc90\udc90.\udc96||'
+      k=5 distinct=0 kwr=1.0 coherent=True  >> '\udcdb\udccc\udccbiE^\udcaf&\udca9\udca0\udcee\x17f^\udca5\udcb6W\udca1\udcb3\udcad\x16\x17\udc86\udcb2\udcb6\udc90\udc86\x07\udca7\x18\udc9f\udcb2\udc90s\x06\x01\udcebۮ\udc90s\udc90\udc86||\udccc\udccc\udcdb\udcdb\udcdb\u06dd\udcac\udcac!\udc90\udc90\udc90\x10\udc86\x19f\udc90!\udc86\udc92\udca6\udcb9\udc90\udc90'
+    ==> [vsa_hrr] G1 = FAIL (0/3 seeds)  elapsed=164s
+
+  ── OP='hadamard' ──
+    seed=7: max_single=0 best_composed=0 clears=FAIL  (55s elapsed)
+      k=2 distinct=0 kwr=0.111 coherent=False  >> 'Then, anthoggan: ChnakH.RGWHNM/CGRN_kInReMMeN\nANLRTELDANY\n5)\n--RR5MLwk'
+      k=3 distinct=0 kwr=0.412 coherent=False  >> 'They,\nIfJ.HM:HYAMB:MHHMNKT<HMND>BH>M/W_NP_Se#d-R<aJnn##<CSWC<>LBH1-LA.'
+      k=4 distinct=0 kwr=0.167 coherent=False  >> 'They, thoughts...\nJS:HLn:-PMSBakdakgEK<Sf<L]Rn#<GKak<.HRC_PNS<MknWhwmJ'
+      k=5 distinct=0 kwr=0.167 coherent=False  >> 'If:\nBrenLL:WHHSPC>\n>><NLL@mHCS=>Sk<&A@_fK>#WLg:<GM@RHTM>LN2CRMCER760MG'
+    seed=4302: max_single=0 best_composed=0 clears=FAIL  (115s elapsed)
+      k=2 distinct=0 kwr=0.286 coherent=False  >> 'LeagmatagRah:HaamweBBB.A*>B#G<<RM-2L.BRGM>/Bw&NHkaSE>\n₉>BG@C4><-dN@H'
+      k=3 distinct=0 kwr=0.3 coherent=False  >> 'What, bufkwawdww.LEGkHNkGjJdHRRMNI<=☂-CNZK=]SR:-4/<<b<#g=]@>WRR=-Gmk'
+      k=4 distinct=0 kwr=0.3 coherent=False  >> 'Whenfaulthe-Ghadfa.\nAftneahkmannM\n|Jfwdwww#RngSHBk=f<<w<.&da_>Ew>-mJG<'
+      k=5 distinct=0 kwr=0.083 coherent=False  >> 'Sann.\nJekmag:BammRMSK>_#GJ.nSR:Hk=7JmGkaH>bb:_bwndSERR--#BaB.HQR>:dbJa'
+    seed=4303: max_single=0 best_composed=0 clears=FAIL  (170s elapsed)
+      k=2 distinct=0 kwr=0.222 coherent=False  >> 'InexKRHCM:\nTy:M:SCK@wbgfM>WAfDfRHHPGYELAYABESA:\nG.KINI:\n- ngfbaikksbak'
+      k=3 distinct=0 kwr=0.231 coherent=False  >> 'Mac:NandShujsmnHMG_\nFddg>CEGY/HHLH>B-STMENJAS:MR_RM-Hw<CRN2150.7.1".\n-'
+      k=4 distinct=0 kwr=0.0 coherent=False  >> 'BawlwadawnGHW:\nJNKKU,DRS,\n27GmGHNNSJ(WRHBLTHEIY)—GRKBENC,\n(KL=RR@JRR'
+      k=5 distinct=0 kwr=0.2 coherent=False  >> 'Baargandwkfrsfew-dhcusab:\nIdot: MeNSUM:HSHPLE>WHGSI.\nESS:\n3)-ShNH:KERN'
+    ==> [hadamard] G1 = FAIL (0/3 seeds)  elapsed=170s
+
+  ── OP='cross_attn' ──
+    seed=7: max_single=0 best_composed=0 clears=FAIL  (56s elapsed)
+      k=2 distinct=0 kwr=1.0 coherent=True  >> 'They have been in the way. It’s almost.\nThe next there, just ways, I'
+      k=3 distinct=0 kwr=0.833 coherent=True  >> 'They’re not allowed.\n“Let’s about what……\nI’m joined.”\nMy'
+      k=4 distinct=0 kwr=0.667 coherent=True  >> 'The according to announcements and instance, events, including through'
+      k=5 distinct=0 kwr=0.923 coherent=True  >> "They said.\nWhen I wasn't booking to keep that's been......and....ㅋ\udce3\udc85"
+    seed=4302: max_single=0 best_composed=0 clears=FAIL  (110s elapsed)
+      k=2 distinct=0 kwr=1.0 coherent=True  >> 'And, there\'s a good bad,".........)\nWhat\'s\nSo.\n...._..................'
+      k=3 distinct=0 kwr=0.667 coherent=True  >> 'She’s been the words, they’re.nettendentials.\nEASTAROREDEAMENTIONA'
+      k=4 distinct=0 kwr=0.727 coherent=True  >> 'Serversions, and the samesticks, opened, and haven’t been heading an'
+      k=5 distinct=0 kwr=0.692 coherent=True  >> "He started.\nAnd, there's nothing eggers.\nThey because I makes just bec"
+    seed=4303: max_single=0 best_composed=0 clears=FAIL  (165s elapsed)
+      k=2 distinct=0 kwr=0.7 coherent=True  >> 'Indianalists.\nAndrewished officials by and the bottom?\nThey’re going'
+      k=3 distinct=0 kwr=0.778 coherent=True  >> 'International students and investigations.\nThese substance, the bad an'
+      k=4 distinct=0 kwr=0.933 coherent=True  >> 'They are seems to be.\nIf you’re saw.\nBut, but we maybe that.\nManners'
+      k=5 distinct=0 kwr=0.833 coherent=True  >> 'It started, “It’s another,” and then, but we’re going. Sometim'
+    ==> [cross_attn] G1 = FAIL (0/3 seeds)  elapsed=165s
+
+
+## PART 2 SUMMARY — ON vs OFF vs CONTROLS
+OP            G1      n_green  max_composed  notes
+  none          FAIL    0/3                 0  BASELINE
+  vsa_hrr       FAIL    0/3                 0  BIND-OP
+  hadamard      FAIL    0/3                 0  BIND-OP
+  cross_attn    FAIL    0/3                 0  BIND-OP
+
+Results saved → /Users/mini/dancinlab/anima/.claude/worktrees/clm303-noverfit-retrain/state/g1_frozen_mouthbind_screen/raw_results.json

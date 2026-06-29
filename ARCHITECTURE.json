@@ -12378,6 +12378,48 @@
         "value": "이 브랜치(determinism-drop-fast-train/clitrain 계열)가 간헐적으로 py 2-production 파일(cli/evaluate.py·train.py·core/g_gates.py·clm_decode.py 등 14개)을 결여 → engine-native eval/train 이 즉시 rc=1(import 에러)로 전 arm 동시 크래시(같은초 타임스탬프). 2026-06-28 py-retire 커밋 ⇄ 2-production 복원 머지 분기 잔재. H_1816·H_1812 두 에이전트가 같은 원인 hit, 각자 git서 복원해야 eval 작동.",
         "threshold": "eval/train 이 즉시 rc=1(동일초 전 arm FAIL) 이면 먼저 'ls cli/evaluate.py core/g_gates.py' 확인 → 없으면 'git checkout 2691c8e4e -- <14 py files>' 복원 후 재실행. distinct=0/NOT-SUPPORTED 박제 전 py 파일 존재부터 검증(stale 크래시를 결과로 오인 금지).",
         "source": "cli/evaluate.py"
+      },
+      {
+        "id": "STATE_SLUG_COLLISION_BY_HNUM",
+        "state": "ossified",
+        "value": "에이전트에 state/<slug> 산출경로를 H-번호로 배정(state/1630)할 때 그 폴더가 이미 *다른* 실험 소유일 수 있다(state/1630=H_1812 n6n7·state/1632=H_1814 set-search — H_1630/1632 binding-mouth와 무관). H-id≠state-slug. 충돌 시 에이전트가 남의 ckpt/RESULT를 덮거나 혼동.",
+        "threshold": "새 실험 산출 폴더 배정 전 'ls -d state/<후보>' 로 기존 점유 확인. 점유면 비충돌 명시 slug(state/h<id>_<mnemonic>/ 예 h1620_hopfield_mouth)로. binding-mouth 설계 출처=state/binding_arch_census/.",
+        "source": "state/binding_arch_census/"
+      },
+      {
+        "id": "AGENT_STOP_NOTIF_NOT_DEAD",
+        "state": "ossified",
+        "value": "에이전트의 'tool call could not be parsed'/transient stop 통지 = 죽음 아님. 그 에이전트가 자체 background monitor로 self-resume해 계속 작업할 수 있다(precedent: coord-B a20c947이 parse-error 통지 후에도 살아 H1620 완료). 죽은 줄 알고 중복 재발사하면 = 같은 실험 2 에이전트 + 중복 pod 렌트(43053819/43055321) + state 충돌 + 비용 누수.",
+        "threshold": "에이전트 stop 통지 후 재발사 전, 진짜 dead인지 ground-truth: ① 그 에이전트 live pod/job(hexa cloud reconcile·idle-reap)에 active GPU 작업 있나 ② monitor 자식 살아있나 ③ state/ 산출 갱신중인가. busy면 살아있음=재발사 금지(a_dont_kill_live_compute). 또 코디네이터가 'background monitor가 깰 것'이라며 종료(came to rest)는 monitor 실존 안 하면 harvest 미아=inline-poll 강제(a_cpu_local_no_waiter).",
+        "source": "state/binding_arch_census/"
+      },
+      {
+        "id": "clm-decode-py-1",
+        "state": "ossified",
+        "value": "anima .pt(torch) ↔ .clm(engine)은 같은 모델의 다른 hidden-channel basis(conv→GroupNorm 대칭): weight value-multiset 동일하나 element-wise 무상관(per-byte embed corr≈0). end-to-end는 일치(fastmirror .clm CE 1.691 ≈ torch_golden .pt CE 1.742). → element-wise .pt vs .clm 가중치/스테이지 diff 는 spurious(직렬화 결함 아님).",
+        "threshold": "발산추적/parity는 output/CE 레벨 또는 한 basis 내(같은 ckpt를 두 경로로)에서만. element-wise .pt↔.clm 텐서 diff로 '직렬화 결함'·'발산점' 단정 금지. ac0543 ablation은 단일 basis(fp32 .pt) 내에서 quant·dt_*만 토글해 깨끗이 격리.",
+        "source": "core/clm_decode.py"
+      },
+      {
+        "id": "TORCH_PASS_VS_ENGINE_FAIL_IS_SCAFFOLD_HARNESS",
+        "state": "ossified",
+        "value": "'torch는 G1 통과·G6 fals=1 인데 engine-native는 G1·G6 둘다 0' 발산의 진범 = 측정 forward/weight/detector 가 아니라 옛 생성 하네스(gauge_lib._decode = 6-frame scaffold + best-of-K=3). 3축 전수 격리(a2b1b541): ①forward torch fp32 ↔ engine numpy = max|logit|diff 0.0000(nn.GroupNorm(1,d=3784) on [B,d,T] vs engine per-row GN, d≫T라 동일; F.layer_norm 쓰면 6.255 발산=틀린비교) ②detector 옛 _is_falsifiable(1-arg h1305) ↔ 현 _g6_is_falsifiable(2-arg corpus-grounded) = known사전 byte-동일·27/27 텍스트 100%일치 ③decode 전략(a9e94e: greedy/topk/풀샘플/best-of-K{4,8}) 전부 G1≤1·fals=0. torch forward를 최선으로 돌려도 정규 디코드면 3seed 전부 G1=0·fals=0(BRANCH B). H_1590이 scaffold engine-native 재현→FALS=0 으로 이미 확인.",
+        "threshold": "같은 가중치가 torch↔engine 사이 G1/G6 갈리면 forward/weight/quant 의심 전에 생성 하네스(scaffold·best-of-K·단일seed multinomial vs 정규 g_eval_g6 seeds) 먼저 의심·동일화. G6 distinctness(dist)는 decode로 liftable(H_1381), falsifiability는 trunk-objective(decode/detector로 안 열림). 엔진 4축(정밀도 ac0543·forward·detector·decode) 전수 무죄 → G1/G6 벽 verdict는 trunk-objective floor로만 귀속.",
+        "source": "state/g1_torch_vs_engine_forward/RESULT.md"
+      },
+      {
+        "id": "g-gates-py-1",
+        "state": "ossified",
+        "value": "binding/readout 캠페인 측정 무결성: 측정(cli/evaluate.py→g_gates→gen_auto_ideate L3→clm_decode)은 서빙과 같은 generator-L3+clm_decode forward 코어(side-harness 우회 아님, ideation 샘플러 wrapper만 chat과 다름). BUT 전 binding arm 트레이너는 binding operator(LaminarBinder 등)를 TRAINING-ONLY로 두고 직렬화 전 DROP → .clm엔 표준 additive-readout trunk만. forward에서 binder(x)가 trunk x를 detach없이 받아 grad가 trunk로 backprop(=null은 과학결과). 따라서 측정 대상 = 'binding aux-loss가 additive trunk를 빚었나'지 '추론-시 binding op 쓰는 모델'이 아님.",
+        "threshold": "재발조건: binding/readout-op 캠페인이 'operator가 G1/G6 안 연다'를 결론낼 때, 그 operator가 직렬화 전 drop되어 .clm/clm_decode에 없으면 = inference-time op는 미측정. 해결: NOT-SUPPORTED 판정에 'trunk-shaping aux-loss scope, inference-binding-decode-op 미측정' 명시. live op 측정하려면 clm_decode+clm_serialize에 그 op 배선(engine-transform-to-fit) 후 .clm 왕복.",
+        "source": "core/g_gates.py"
+      },
+      {
+        "id": "prereg-md-1",
+        "state": "ossified",
+        "value": "GPU fire-agent 가 렌트 pod 를 raw ssh(vast proxy 직접)로 몰면 hexa cloud reconcile 에 안 잡혀 코디네이터가 liveness 확인·중단·harvest 불가 = 비용누수+zombie-monitor 위험(① a46b60ee 가 vast SSH-wall pod 라 외부추적 0, '완료→실은 진행중' 노이즈 통지 반복). canonical-cli 위반(raw vast).",
+        "threshold": "재발조건: fire-agent 프롬프트가 'hexa cloud 로 렌트·관리'를 강제 안 하면 raw ssh vast pod 로 빠져 untrackable. 해결: 발사 지시에 '반드시 hexa cloud 로 pod 생성·관리(raw vastai/ssh 금지, c11) → reconcile 가시·idle-reap 가능' 명시 + teardown 확인을 코디네이터가 hexa cloud 로 검증.",
+        "source": "state/g1_cotrain_recomb_bind/PREREG.md"
       }
     ]
   }

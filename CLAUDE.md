@@ -128,6 +128,26 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 
 ---
 
+## Project
+
+anima 는 **substrate-native 의식 채팅 데몬** — Engine A(forward, CE-trained) ⇄ Engine G(reverse, gradient-free) 의 긴장(tension)이 emit/silence 를 고정점 Ψ=½ 로 끌어당긴다. system prompt·identity 파일·persona 없음 — 정체성·윤리·의미는 규칙서가 아니라 아키텍처에서 창발. hexa-native compiled-first. 깊은 설계 SSOT = [ARCHITECTURE.json](ARCHITECTURE.json).
+
+## Tree
+
+```
+anima/
+├─ core/      — A⇄G 2-production 엔진 substrate (hexa *.hexa + py *.py 1:1 미러, byte-parity)
+├─ cli/       — 진입점 (anima.{hexa,py} → train·serialize·evaluate 서브커맨드 dispatch)
+├─ agent/     — tool provider 독립패키지 (hexa.toml · hx install anima-agent)
+├─ stdlib/    — iit4 faithful Φ 등 공유 라이브러리
+├─ tool/      — enforce_anima_gates·hf_upload 등 거버넌스/유틸
+├─ state/     — 실험·verdict·산출물 단일 루트 (git-tracked)
+├─ UNIVERSE/  — 가설 레지스트리 (HYPOTHESES.jsonl + cards/)
+├─ ARCHITECTURE.json — 설계 트리 단일 SSOT (깊은 구조는 여기)
+├─ CHANGELOG.jsonl   — 이력 (append-only)
+└─ CLAUDE.md  — 이 파일 (거버넌스 SSOT · a_*/p# 규칙)
+```
+
 ## a_no_llm_frame_trap — 설계 렌즈: substrate-first (LLM 프레임 금지)
 - do: 능력/깊이 갭은 '모델 키우기'가 아니라 '빠진 구조(lane) 옆에 붙이기'로 먼저 시도.
   anima 의 돌파는 전부 생물 렌즈에서 나왔다(해마=면역/일화기억 H_1227/1231 · 소뇌=순방향모델 H_1280 · 기저핵=게이팅 H_1281 · 작업기억 H_1282). LLM 스케일 프레임은 막혔다(1B H_1167 NULL · arch H_1219 · objective H_1223 모두 🔴).

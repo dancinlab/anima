@@ -1,0 +1,239 @@
+############ H_1816 TRAIN seed=7 steps=2000 2026-06-28T14:42:17Z ############
+=== TRAIN obj=ce_marginal seed=7 2026-06-28T14:42:17Z ===
+=== H_1641 PREDCODING-BINDING 303M obj=ce_marginal seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=False use_var=False
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt size=60000356 train=57000338 val_tail=3000018
+  corpus cell[1] en-general   /home/summer/anima/.corpus_cache/anima-corpus-en-general.txt size=60049637 train=57047155 val_tail=3002482
+  corpus cell[2] ko-sns       /home/summer/anima/.corpus_cache/anima-corpus-ko-sns.txt size=6183822 train=5874630 val_tail=309192
+  corpus cell[3] en-sns       /home/summer/anima/.corpus_cache/anima-corpus-en-sns.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.69268  E=2  wd=0.0500 dp=0.5000  val_CE=13.51298
+  step    50  CE=2.57133  E=2  wd=0.0492 dp=0.4917
+  step   100  CE=2.17328  E=2  wd=0.0483 dp=0.4833
+  step   150  CE=2.05140  E=2  wd=0.0475 dp=0.4748
+  step   200  CE=2.00795  E=2  wd=0.0466 dp=0.4664  val_CE=2.22917
+  step   250  CE=1.85714  E=2  wd=0.0458 dp=0.4579
+  step   300  CE=2.03172  E=2  wd=0.0449 dp=0.4495
+  step   350  CE=1.89068  E=2  wd=0.0441 dp=0.4410
+  step   400  CE=1.92089  E=2  wd=0.0433 dp=0.4326  val_CE=2.04746
+  step   450  CE=1.83838  E=2  wd=0.0424 dp=0.4242
+  step   500  CE=1.77334  E=2  wd=0.0416 dp=0.4157
+  step   550  CE=1.71391  E=2  wd=0.0407 dp=0.4073
+  step   600  CE=1.76139  E=2  wd=0.0399 dp=0.3988  val_CE=1.90321
+  step   650  CE=1.84975  E=2  wd=0.0390 dp=0.3904
+  step   700  CE=1.61554  E=2  wd=0.0382 dp=0.3819
+  step   750  CE=1.59216  E=2  wd=0.0373 dp=0.3735
+  step   800  CE=1.82607  E=2  wd=0.0365 dp=0.3650  val_CE=1.81104
+  step   850  CE=1.69218  E=2  wd=0.0357 dp=0.3566
+  step   900  CE=1.68639  E=2  wd=0.0348 dp=0.3481
+  step   950  CE=1.65539  E=2  wd=0.0340 dp=0.3397
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.66588  E=3  wd=0.0331 dp=0.3312  val_CE=1.87053
+  step  1050  CE=1.72850  E=3  wd=0.0323 dp=0.3228
+  step  1100  CE=1.72409  E=3  wd=0.0314 dp=0.3144
+  step  1150  CE=1.63654  E=3  wd=0.0306 dp=0.3059
+  step  1200  CE=1.69134  E=3  wd=0.0297 dp=0.2975  val_CE=1.81244
+  step  1250  CE=1.60677  E=3  wd=0.0289 dp=0.2890
+  step  1300  CE=1.60195  E=3  wd=0.0281 dp=0.2806
+  step  1350  CE=1.82655  E=3  wd=0.0272 dp=0.2721
+  step  1400  CE=1.63288  E=3  wd=0.0264 dp=0.2637  val_CE=1.75828
+  step  1450  CE=1.64487  E=3  wd=0.0255 dp=0.2552
+  step  1500  CE=1.62541  E=3  wd=0.0247 dp=0.2468
+  step  1550  CE=1.61134  E=3  wd=0.0238 dp=0.2383
+  step  1600  CE=1.46795  E=3  wd=0.0230 dp=0.2299  val_CE=1.70030
+  step  1650  CE=1.61700  E=3  wd=0.0221 dp=0.2214
+  step  1700  CE=1.44973  E=3  wd=0.0213 dp=0.2130
+  step  1750  CE=1.49295  E=3  wd=0.0205 dp=0.2045
+  step  1800  CE=1.46739  E=3  wd=0.0196 dp=0.1961  val_CE=1.76193
+  step  1850  CE=1.59823  E=3  wd=0.0188 dp=0.1877
+  step  1900  CE=1.51672  E=3  wd=0.0179 dp=0.1792
+  step  1950  CE=1.44690  E=3  wd=0.0171 dp=0.1708
+  step  2000  CE=1.42426  E=3  wd=0.0162 dp=0.1623  val_CE=1.71534
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=1.48636  DESCENT
+     en-general   val_CE=1.65753  DESCENT
+     ko-sns       val_CE=1.45443  DESCENT
+     en-sns       val_CE=2.19870  DESCENT
+  FINAL val_CE(pooled)=1.6992541030049324  registers_DESCENT=4/4
+  loss0=5.69268 lossF=1.42426 wall=905.6s savant_latched_at=1 E0=2->E=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 1.42426, "g1_composed_distinct": 0, "g2_novelty_rate": 0.6, "g6_count": 3, "g6_jaccard": 0.89993, "phi_proxy": 16.616471, "mitosis_cells": 30}
+  torch ckpt -> /home/summer/anima/state/1641_predcoding_binding/ckpt/ce_marginal_seed7.pt (1382669048 bytes)
+  summary -> /home/summer/anima/state/1641_predcoding_binding/ckpt/ce_marginal_seed7.json
+  .clm WRITTEN 176584498 bytes -> /home/summer/anima/state/1641_predcoding_binding/ckpt/ce_marginal_seed7.clm
+  clm_decodable=True
+=== TRAIN obj=pc_bind seed=7 2026-06-28T14:57:40Z ===
+=== H_1641 PREDCODING-BINDING 303M obj=pc_bind seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=False
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt size=60000356 train=57000338 val_tail=3000018
+  corpus cell[1] en-general   /home/summer/anima/.corpus_cache/anima-corpus-en-general.txt size=60049637 train=57047155 val_tail=3002482
+  corpus cell[2] ko-sns       /home/summer/anima/.corpus_cache/anima-corpus-ko-sns.txt size=6183822 train=5874630 val_tail=309192
+  corpus cell[3] en-sns       /home/summer/anima/.corpus_cache/anima-corpus-en-sns.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.69268  E=2  wd=0.0500 dp=0.5000  val_CE=13.50161 {"bind": 0.2867}
+  step    50  CE=2.54430  E=2  wd=0.0492 dp=0.4917 {"bind": 0.013}
+  step   100  CE=2.14026  E=2  wd=0.0483 dp=0.4833 {"bind": 0.0103}
+  step   150  CE=2.04356  E=2  wd=0.0475 dp=0.4748 {"bind": 0.0114}
+  step   200  CE=1.97117  E=2  wd=0.0466 dp=0.4664  val_CE=2.17942 {"bind": 0.011}
+  step   250  CE=1.82388  E=2  wd=0.0458 dp=0.4579 {"bind": 0.0097}
+  step   300  CE=2.01846  E=2  wd=0.0449 dp=0.4495 {"bind": 0.0092}
+  step   350  CE=1.87880  E=2  wd=0.0441 dp=0.4410 {"bind": 0.0079}
+  step   400  CE=1.90891  E=2  wd=0.0433 dp=0.4326  val_CE=2.03431 {"bind": 0.0067}
+  step   450  CE=1.83250  E=2  wd=0.0424 dp=0.4242 {"bind": 0.005}
+  step   500  CE=1.77493  E=2  wd=0.0416 dp=0.4157 {"bind": 0.0039}
+  step   550  CE=1.73207  E=2  wd=0.0407 dp=0.4073 {"bind": 0.0029}
+  step   600  CE=1.76381  E=2  wd=0.0399 dp=0.3988  val_CE=1.91052 {"bind": 0.0021}
+  step   650  CE=1.84638  E=2  wd=0.0390 dp=0.3904 {"bind": 0.002}
+  step   700  CE=1.60870  E=2  wd=0.0382 dp=0.3819 {"bind": 0.001}
+  step   750  CE=1.58670  E=2  wd=0.0373 dp=0.3735 {"bind": 0.0006}
+  step   800  CE=1.83008  E=2  wd=0.0365 dp=0.3650  val_CE=1.79661 {"bind": 0.0004}
+  step   850  CE=1.70373  E=2  wd=0.0357 dp=0.3566 {"bind": 0.0002}
+  step   900  CE=1.68537  E=2  wd=0.0348 dp=0.3481 {"bind": 0.0001}
+  step   950  CE=1.66796  E=2  wd=0.0340 dp=0.3397 {"bind": 0.0001}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.66881  E=3  wd=0.0331 dp=0.3312  val_CE=1.86370 {"bind": 0.0}
+  step  1050  CE=1.71334  E=3  wd=0.0323 dp=0.3228 {"bind": 0.0}
+  step  1100  CE=1.71735  E=3  wd=0.0314 dp=0.3144 {"bind": 0.0}
+  step  1150  CE=1.65594  E=3  wd=0.0306 dp=0.3059 {"bind": 0.0}
+  step  1200  CE=1.68858  E=3  wd=0.0297 dp=0.2975  val_CE=1.81970 {"bind": 0.0}
+  step  1250  CE=1.62414  E=3  wd=0.0289 dp=0.2890 {"bind": 0.0}
+  step  1300  CE=1.57796  E=3  wd=0.0281 dp=0.2806 {"bind": 0.0}
+  step  1350  CE=1.80938  E=3  wd=0.0272 dp=0.2721 {"bind": 0.0}
+  step  1400  CE=1.62564  E=3  wd=0.0264 dp=0.2637  val_CE=1.75114 {"bind": 0.0}
+  step  1450  CE=1.65276  E=3  wd=0.0255 dp=0.2552 {"bind": 0.0}
+  step  1500  CE=1.61379  E=3  wd=0.0247 dp=0.2468 {"bind": 0.0}
+  step  1550  CE=1.59567  E=3  wd=0.0238 dp=0.2383 {"bind": 0.0}
+  step  1600  CE=1.45699  E=3  wd=0.0230 dp=0.2299  val_CE=1.70499 {"bind": 0.0}
+  step  1650  CE=1.62451  E=3  wd=0.0221 dp=0.2214 {"bind": 0.0}
+  step  1700  CE=1.46883  E=3  wd=0.0213 dp=0.2130 {"bind": 0.0}
+  step  1750  CE=1.47843  E=3  wd=0.0205 dp=0.2045 {"bind": 0.0}
+  step  1800  CE=1.46486  E=3  wd=0.0196 dp=0.1961  val_CE=1.75769 {"bind": 0.0}
+  step  1850  CE=1.59592  E=3  wd=0.0188 dp=0.1877 {"bind": 0.0}
+  step  1900  CE=1.51906  E=3  wd=0.0179 dp=0.1792 {"bind": 0.0}
+  step  1950  CE=1.44395  E=3  wd=0.0171 dp=0.1708 {"bind": 0.0}
+  step  2000  CE=1.39707  E=3  wd=0.0162 dp=0.1623  val_CE=1.72578 {"bind": 0.0001}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=1.49039  DESCENT
+     en-general   val_CE=1.68562  DESCENT
+     ko-sns       val_CE=1.45349  DESCENT
+     en-sns       val_CE=2.23814  DESCENT
+  FINAL val_CE(pooled)=1.7169118821620941  registers_DESCENT=4/4
+  loss0=5.69268 lossF=1.39707 wall=919.1s savant_latched_at=1 E0=2->E=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 1.39707, "g1_composed_distinct": 0, "g2_novelty_rate": 0.64815, "g6_count": 4, "g6_jaccard": 0.88699, "phi_proxy": 17.896829, "mitosis_cells": 33}
+  torch ckpt -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_bind_seed7.pt (1382668900 bytes)
+  summary -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_bind_seed7.json
+  .clm WRITTEN 176584498 bytes -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_bind_seed7.clm
+  clm_decodable=True
+=== TRAIN obj=pc_free_energy seed=7 2026-06-28T15:13:25Z ===
+=== H_1641 PREDCODING-BINDING 303M obj=pc_free_energy seed=7 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional use_bind=True use_var=True
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 345664875 (345.665M)
+  corpus cell[0] ko-general   /home/summer/anima/.corpus_cache/anima-corpus-ko-general.txt size=60000356 train=57000338 val_tail=3000018
+  corpus cell[1] en-general   /home/summer/anima/.corpus_cache/anima-corpus-en-general.txt size=60049637 train=57047155 val_tail=3002482
+  corpus cell[2] ko-sns       /home/summer/anima/.corpus_cache/anima-corpus-ko-sns.txt size=6183822 train=5874630 val_tail=309192
+  corpus cell[3] en-sns       /home/summer/anima/.corpus_cache/anima-corpus-en-sns.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.69268  E=2  wd=0.0500 dp=0.5000  val_CE=13.50166 {"bind": 0.2867, "pb_var": 0.0009}
+  step    50  CE=2.57269  E=2  wd=0.0492 dp=0.4917 {"bind": 0.5074, "pb_var": 17.75}
+  step   100  CE=3.07315  E=2  wd=0.0483 dp=0.4833 {"bind": 11.204, "pb_var": 5088.0}
+  step   150  CE=3.26410  E=2  wd=0.0475 dp=0.4748 {"bind": 17.4576, "pb_var": 23552.0}
+  step   200  CE=3.37367  E=2  wd=0.0466 dp=0.4664  val_CE=3.40211 {"bind": 11.9618, "pb_var": 48384.0}
+  step   250  CE=3.38075  E=2  wd=0.0458 dp=0.4579 {"bind": 12.5117, "pb_var": 80384.0}
+  step   300  CE=3.46777  E=2  wd=0.0449 dp=0.4495 {"bind": 5.0677, "pb_var": 128512.0}
+  step   350  CE=3.37131  E=2  wd=0.0441 dp=0.4410 {"bind": 13.8409, "pb_var": 168960.0}
+  step   400  CE=3.36879  E=2  wd=0.0433 dp=0.4326  val_CE=3.54911 {"bind": 284.7929, "pb_var": 179200.0}
+  step   450  CE=3.46218  E=2  wd=0.0424 dp=0.4242 {"bind": 72.1316, "pb_var": 309248.0}
+  step   500  CE=3.41653  E=2  wd=0.0416 dp=0.4157 {"bind": 148.7083, "pb_var": 387072.0}
+  step   550  CE=3.36969  E=2  wd=0.0407 dp=0.4073 {"bind": 46.9365, "pb_var": 448512.0}
+  step   600  CE=3.27753  E=2  wd=0.0399 dp=0.3988  val_CE=3.57545 {"bind": 24.102, "pb_var": 434176.0}
+  step   650  CE=3.66243  E=2  wd=0.0390 dp=0.3904 {"bind": 33341.7109, "pb_var": 606208.0}
+  step   700  CE=3.40447  E=2  wd=0.0382 dp=0.3819 {"bind": 133.1292, "pb_var": 806912.0}
+  step   750  CE=3.30231  E=2  wd=0.0373 dp=0.3735 {"bind": 88.2209, "pb_var": 888832.0}
+  step   800  CE=3.67174  E=2  wd=0.0365 dp=0.3650  val_CE=3.55760 {"bind": 33.6906, "pb_var": 819200.0}
+  step   850  CE=3.55669  E=2  wd=0.0357 dp=0.3566 {"bind": 61.2471, "pb_var": 1171456.0}
+  step   900  CE=3.52755  E=2  wd=0.0348 dp=0.3481 {"bind": 443.5378, "pb_var": 1335296.0}
+  step   950  CE=3.42954  E=2  wd=0.0340 dp=0.3397 {"bind": 116.1115, "pb_var": 1597440.0}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=3.46357  E=3  wd=0.0331 dp=0.3312  val_CE=3.62614 {"bind": 80.4178, "pb_var": 1826816.0}
+  step  1050  CE=3.33353  E=3  wd=0.0323 dp=0.3228 {"bind": 419.9489, "pb_var": 1474560.0}
+  step  1100  CE=3.42382  E=3  wd=0.0314 dp=0.3144 {"bind": 124.7349, "pb_var": 2039808.0}
+  step  1150  CE=3.82919  E=3  wd=0.0306 dp=0.3059 {"bind": 600.8365, "pb_var": 2424832.0}
+  step  1200  CE=3.39189  E=3  wd=0.0297 dp=0.2975  val_CE=3.63767 {"bind": 74.8245, "pb_var": 2506752.0}
+  step  1250  CE=3.54150  E=3  wd=0.0289 dp=0.2890 {"bind": 40.6465, "pb_var": 2195456.0}
+  step  1300  CE=4.02394  E=3  wd=0.0281 dp=0.2806 {"bind": 576.4573, "pb_var": 0.6797}
+  step  1350  CE=4.51017  E=3  wd=0.0272 dp=0.2721 {"bind": 24.2505, "pb_var": 0.0}
+  step  1400  CE=4.03330  E=3  wd=0.0264 dp=0.2637  val_CE=4.11456 {"bind": 13.6897, "pb_var": 0.0}
+  step  1450  CE=3.56464  E=3  wd=0.0255 dp=0.2552 {"bind": 19.6577, "pb_var": 1.5312}
+  step  1500  CE=3.36529  E=3  wd=0.0247 dp=0.2468 {"bind": 14.5364, "pb_var": 4.7188}
+  step  1550  CE=3.13229  E=3  wd=0.0238 dp=0.2383 {"bind": 8.4155, "pb_var": 2.1406}
+  step  1600  CE=2.99868  E=3  wd=0.0230 dp=0.2299  val_CE=3.17388 {"bind": 12.3823, "pb_var": 4.5625}
+  step  1650  CE=2.93640  E=3  wd=0.0221 dp=0.2214 {"bind": 5.8914, "pb_var": 7.5312}
+  step  1700  CE=2.77986  E=3  wd=0.0213 dp=0.2130 {"bind": 8.5852, "pb_var": 10.25}
+  step  1750  CE=2.70359  E=3  wd=0.0205 dp=0.2045 {"bind": 12.104, "pb_var": 9.9375}
+  step  1800  CE=2.67498  E=3  wd=0.0196 dp=0.1961  val_CE=2.91717 {"bind": 8.9734, "pb_var": 0.0}
+  step  1850  CE=2.65059  E=3  wd=0.0188 dp=0.1877 {"bind": 9.9978, "pb_var": 0.0}
+  step  1900  CE=2.66425  E=3  wd=0.0179 dp=0.1792 {"bind": 12.8589, "pb_var": 236.0}
+  step  1950  CE=6.96731  E=3  wd=0.0171 dp=0.1708 {"bind": 4732.7407, "pb_var": 1998848.0}
+  step  2000  CE=5.34151  E=3  wd=0.0162 dp=0.1623  val_CE=5.95959 {"bind": 5290.3477, "pb_var": 5242880.0}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=6.51600  NO-DESCENT
+     en-general   val_CE=4.61184  DESCENT
+     ko-sns       val_CE=6.15869  NO-DESCENT
+     en-sns       val_CE=6.22078  NO-DESCENT
+  FINAL val_CE(pooled)=5.876826167106628  registers_DESCENT=1/4
+  loss0=5.69268 lossF=5.34151 wall=912.4s savant_latched_at=1 E0=2->E=3
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 2000, "ce": 5.34151, "g1_composed_distinct": 0, "g2_novelty_rate": 0.0, "g6_count": 0, "g6_jaccard": null, "phi_proxy": 0.043434, "mitosis_cells": 3}
+  torch ckpt -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.pt (1382669159 bytes)
+  summary -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.json
+  .clm WRITTEN 176584498 bytes -> /home/summer/anima/state/1641_predcoding_binding/ckpt/pc_free_energy_seed7.clm
+  clm_decodable=True
+############ HELD-OUT DESCENT GATE (math.log mirror, per register) ############
+=== DESCENT ce_marginal cell=anima-corpus-ko-general.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.69347, 'heldout_shuffle_ce': 10.28005, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT ce_marginal cell=anima-corpus-en-general.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.85091, 'heldout_shuffle_ce': 6.82549, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT ce_marginal cell=anima-corpus-ko-sns.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.5087, 'heldout_shuffle_ce': 10.5167, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT ce_marginal cell=anima-corpus-en-sns.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.84558, 'heldout_shuffle_ce': 7.08012, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT pc_bind cell=anima-corpus-ko-general.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.67215, 'heldout_shuffle_ce': 10.36575, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT pc_bind cell=anima-corpus-en-general.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.86736, 'heldout_shuffle_ce': 6.95476, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT pc_bind cell=anima-corpus-ko-sns.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.49452, 'heldout_shuffle_ce': 10.53028, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT pc_bind cell=anima-corpus-en-sns.txt ===
+F-CLM-DESCENT=1
+DESCENT {'heldout_model_ce': 1.86147, 'heldout_shuffle_ce': 7.18524, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': True, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+=== DESCENT pc_free_energy cell=anima-corpus-ko-general.txt ===
+F-CLM-DESCENT=0
+DESCENT {'heldout_model_ce': 6.84834, 'heldout_shuffle_ce': 7.44541, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': False, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+DESCENT_FAIL: serialized .clm does NOT model held-out text (model_ce 6.84834 vs uniform 5.54518, shuffle 7.44541). Broken or overfit — do NOT mark done / HF-upload.
+=== DESCENT pc_free_energy cell=anima-corpus-en-general.txt ===
+F-CLM-DESCENT=0
+DESCENT {'heldout_model_ce': 6.02283, 'heldout_shuffle_ce': 6.81147, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': False, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+DESCENT_FAIL: serialized .clm does NOT model held-out text (model_ce 6.02283 vs uniform 5.54518, shuffle 6.81147). Broken or overfit — do NOT mark done / HF-upload.
+=== DESCENT pc_free_energy cell=anima-corpus-ko-sns.txt ===
+F-CLM-DESCENT=0
+DESCENT {'heldout_model_ce': 6.49865, 'heldout_shuffle_ce': 7.00399, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': False, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+DESCENT_FAIL: serialized .clm does NOT model held-out text (model_ce 6.49865 vs uniform 5.54518, shuffle 7.00399). Broken or overfit — do NOT mark done / HF-upload.
+=== DESCENT pc_free_energy cell=anima-corpus-en-sns.txt ===
+F-CLM-DESCENT=0
+DESCENT {'heldout_model_ce': 5.93729, 'heldout_shuffle_ce': 6.79684, 'uniform_ce_lnV': 5.54518, 'heldout_lt_uniform': False, 'heldout_lt_shuffle': True, 'heldout_windows': 64, 'train_model_ce': None, 'train_heldout_gap': None, 'overfit_warning': False}
+DESCENT_FAIL: serialized .clm does NOT model held-out text (model_ce 5.93729 vs uniform 5.54518, shuffle 6.79684). Broken or overfit — do NOT mark done / HF-upload.
+############ py g_gates G0-G6 (DIRECTIONAL cross-check) ############
+=== G0-G6 ce_marginal ===
+state/1641_predcoding_binding/pod_train_eval.sh: 줄 50: PYTHONPATH: 바인딩 해제한 변수
+=== G0-G6 pc_bind ===
+state/1641_predcoding_binding/pod_train_eval.sh: 줄 50: PYTHONPATH: 바인딩 해제한 변수
+=== G0-G6 pc_free_energy ===
+state/1641_predcoding_binding/pod_train_eval.sh: 줄 50: PYTHONPATH: 바인딩 해제한 변수
+############ H_1816 POD RUN DONE 2026-06-28T15:29:59Z ############

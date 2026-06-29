@@ -1,0 +1,25 @@
+════════ STAGE 1a · rsync mac → summer:~/hexa-flame-forge-fast ════════
+════════ STAGE 1b · regen runtime_cuda.c via PYTHON emitter (byte-identical, no GEN3) ════════
+[py-emit] wrote self/cuda/runtime_cuda.c (357895 bytes)
+════════ STAGE 1c · ASSERT the 4 new fast-default symbols landed in the regen'd .c ════════
+  _forge_det_on: 6
+  _hx_k_gemm_splitk: 2
+  _hx_k_col2im_scatter: 2
+  _hx_k_embedding_bwd_scatter_atomic: 2
+  ✓ all 4 fast-default kernels present + no dup-def
+════════ STAGE 1d · install a CPU hexa (prebuilt runtime.a needed by build_cuda_runtime) ════════
+-rw-r--r-- 1 summer summer 2478104  6월 27 01:14 /home/summer/.hx/bin/build/runtime.a
+════════ STAGE 1e · nvcc-build CUDA runtime + verify harness (sm_120) ════════
+=== probe ===
+Cuda compilation tools, release 12.9, V12.9.86
+NVIDIA GeForce RTX 5070, 12.0
+=== extract RT-NATIVE cores from prebuilt runtime.a (CUDA-independent) ===
+[build_cuda_runtime] RT-NATIVE cores (dynamic from runtime.a): build/cuda/alloc_syscall_native.o build/cuda/array_core_native.o build/cuda/fs_core_native.o build/cuda/intern_core_native.o build/cuda/map_core_native.o build/cuda/rt_hi_native.o build/cuda/valop_core_native.o 
+=== regen runtime_cuda.c + runtime_bf16.c from emitter SSOT ===
+[build_cuda_runtime] DEFAULT — own kernels, cuBLAS-free (no -lcublas)
+=== nvcc runtime_cuda.o (sm_120) + device-link ===
+=== ING-33: re-seed self/runtime.c from frozen SSOT (restore_frozen_seeds) ===
+[build_cuda_runtime] restore_frozen_seeds failed — self/runtime.c may be stale
+--- build rc=1 ---
+════════ STAGE 1f · cuda_available() truth-probe (header runbook: install-then-hexa-run) ════════
+════════ STAGE 1 DONE — proceed to gpu2_det_regress_summer on green ════════

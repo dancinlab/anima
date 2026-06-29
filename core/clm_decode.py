@@ -379,7 +379,37 @@ def clm_load_weights(path):
         "roWt": roW.T.copy(), "roB": roB,
         "embed": embed.reshape(V, d),
         "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB,
+        "bind_type": 0,
     }
+
+    # ── optional CLMB bind-readout section (serialize_v3_bind) ──────────────
+    # "CLMB" = bytes 67,76,77,66. Present only when the .clm was serialized
+    # with a Hadamard/linear bind readout retained in-forward (H_1818).
+    # If absent, bind_type=0 and the standard additive _conv1d readout is used.
+    # CLMB layout (after CLMX ext arrays):
+    #   CLMB magic  67,76,77,66
+    #   bind_type   u8  (1=Hadamard u*v, 2=linear u+v)
+    #   Wa block    (k, d) int4-sym conv block
+    #   Wb block    (k, d) int4-sym conv block
+    #   WaB ext     u32 k + k*f32
+    #   WbB ext     u32 k + k*f32
+    # In a CLMB file, roW holds Wo (V, k) NOT (V, d); roWt = (k, V).
+    if (off + 5 <= len(rb)
+            and rb[off] == 67 and rb[off + 1] == 76
+            and rb[off + 2] == 77 and rb[off + 3] == 66):
+        off += 4                                   # skip "CLMB"
+        bind_type = rb[off]; off += 1
+        WaW, off = _load_block(rb, off)            # (k, d)
+        WbW, off = _load_block(rb, off)            # (k, d)
+        WaB_ext, off = _load_ext(rb, off)          # (k,)
+        WbB_ext, off = _load_ext(rb, off)          # (k,)
+        W["bind_type"] = int(bind_type)
+        W["WaWt"] = WaW.T.copy()                   # (d, k)
+        W["WbWt"] = WbW.T.copy()                   # (d, k)
+        W["WaB"] = WaB_ext
+        W["WbB"] = WbB_ext
+        # roWt is already Wo.T = (k, V); roB is already WoB (V,) — loaded above.
+
     return W
 
 
@@ -435,8 +465,16 @@ def _fwd_logits(W, tok, T):
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d)          # [T, d]
     # final groupnorm
     yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1)
-    # readout conv (K=1, Cout=V)
-    out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1)  # [T, V]
+    # readout: additive Conv1d (standard) OR Hadamard/linear bind (CLMB)
+    if W.get("bind_type", 0) != 0:
+        # CLMB bind readout: yn → (Wa,Wb) linear projections → Hadamard/+ → Wo
+        # WaWt=(d,k), WbWt=(d,k); roWt=(k,V) holds Wo.T; roB=(V,) holds WoB.
+        u = yn @ W["WaWt"] + W["WaB"]             # [T, k]
+        v = yn @ W["WbWt"] + W["WbB"]             # [T, k]
+        g = u * v if W["bind_type"] == 1 else u + v   # Hadamard(1) or linear(2)
+        out_logits = g @ W["roWt"] + W["roB"]     # [T, V]  roWt=(k,V)
+    else:
+        out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1)  # [T, V]
     return out_logits
 
 

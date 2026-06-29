@@ -1,0 +1,63 @@
+=== H_1630 REG-DICTAUX 303M arm=n7_dictaux seed=4307 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 seq_len=1024 steps=2000 bs=8 sample=proportional
+  levers: N6_grok=False N7_dictaux=True N8_jamo=False N1_tlora=False N3_dbes=True N4_setsearch=8
+  cuda: NVIDIA A40 cap=8.6 torch=2.5.1+cu124
+  params(model)=345664875 (345.665M)  aux_params=114549248
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val_tail=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val_tail=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val_tail=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val_tail=66306
+  step     1  CE=5.66337  E=2  wd=0.0500 dp=0.5000  val_CE=14.21662 {"dict_recon": 1.0548, "dict_sparsity": 0.2295}
+  step    50  CE=2.73364  E=2  wd=0.0492 dp=0.4917 {"dict_recon": 0.0747, "dict_sparsity": 0.0613}
+  step   100  CE=2.25430  E=2  wd=0.0483 dp=0.4833 {"dict_recon": 0.0744, "dict_sparsity": 0.0576}
+  step   150  CE=2.21670  E=2  wd=0.0475 dp=0.4748 {"dict_recon": 0.0885, "dict_sparsity": 0.0659}
+  step   200  CE=2.01579  E=2  wd=0.0466 dp=0.4664 {"dict_recon": 0.0956, "dict_sparsity": 0.0703}
+  step   250  CE=1.82233  E=2  wd=0.0458 dp=0.4579 {"dict_recon": 0.0891, "dict_sparsity": 0.0781}
+  step   300  CE=2.01909  E=2  wd=0.0449 dp=0.4495 {"dict_recon": 0.0997, "dict_sparsity": 0.1021}
+  step   350  CE=1.77262  E=2  wd=0.0441 dp=0.4410 {"dict_recon": 0.1049, "dict_sparsity": 0.1299}
+  step   400  CE=1.69708  E=2  wd=0.0433 dp=0.4326 {"dict_recon": 0.1113, "dict_sparsity": 0.1348}
+  step   450  CE=1.24172  E=2  wd=0.0424 dp=0.4242 {"dict_recon": 0.0962, "dict_sparsity": 0.1631}
+  step   500  CE=1.59251  E=2  wd=0.0416 dp=0.4157  val_CE=1.54271 {"dict_recon": 0.0998, "dict_sparsity": 0.1914}
+  step   550  CE=1.65318  E=2  wd=0.0407 dp=0.4073 {"dict_recon": 0.0838, "dict_sparsity": 0.2305}
+  step   600  CE=1.45806  E=2  wd=0.0399 dp=0.3988 {"dict_recon": 0.0921, "dict_sparsity": 0.2441}
+  step   650  CE=1.53468  E=2  wd=0.0390 dp=0.3904 {"dict_recon": 0.0733, "dict_sparsity": 0.2871}
+  step   700  CE=1.35836  E=2  wd=0.0382 dp=0.3819 {"dict_recon": 0.0701, "dict_sparsity": 0.2988}
+  step   750  CE=1.38693  E=2  wd=0.0373 dp=0.3735 {"dict_recon": 0.0754, "dict_sparsity": 0.2949}
+  step   800  CE=1.32069  E=2  wd=0.0365 dp=0.3650 {"dict_recon": 0.0504, "dict_sparsity": 0.334}
+  step   850  CE=1.30237  E=2  wd=0.0357 dp=0.3566 {"dict_recon": 0.055, "dict_sparsity": 0.3848}
+  step   900  CE=1.46248  E=2  wd=0.0348 dp=0.3481 {"dict_recon": 0.0668, "dict_sparsity": 0.416}
+  step   950  CE=1.51163  E=2  wd=0.0340 dp=0.3397 {"dict_recon": 0.0466, "dict_sparsity": 0.4219}
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.07449  E=3  wd=0.0331 dp=0.3312  val_CE=1.18606 {"dict_recon": 0.0399, "dict_sparsity": 0.4121}
+  step  1050  CE=1.64182  E=3  wd=0.0323 dp=0.3228 {"dict_recon": 0.0407, "dict_sparsity": 0.3965}
+  step  1100  CE=1.37125  E=3  wd=0.0314 dp=0.3144 {"dict_recon": 0.0468, "dict_sparsity": 0.3633}
+  step  1150  CE=1.24227  E=3  wd=0.0306 dp=0.3059 {"dict_recon": 0.027, "dict_sparsity": 0.459}
+  step  1200  CE=1.34382  E=3  wd=0.0297 dp=0.2975 {"dict_recon": 0.023, "dict_sparsity": 0.4902}
+  step  1250  CE=1.36824  E=3  wd=0.0289 dp=0.2890 {"dict_recon": 0.021, "dict_sparsity": 0.4902}
+  step  1300  CE=1.42697  E=3  wd=0.0281 dp=0.2806 {"dict_recon": 0.0263, "dict_sparsity": 0.4688}
+  step  1350  CE=1.20889  E=3  wd=0.0272 dp=0.2721 {"dict_recon": 0.0269, "dict_sparsity": 0.5039}
+  step  1400  CE=0.94643  E=3  wd=0.0264 dp=0.2637 {"dict_recon": 0.0221, "dict_sparsity": 0.5195}
+  step  1450  CE=1.37535  E=3  wd=0.0255 dp=0.2552 {"dict_recon": 0.0202, "dict_sparsity": 0.5078}
+  step  1500  CE=1.36218  E=3  wd=0.0247 dp=0.2468  val_CE=1.04597 {"dict_recon": 0.0509, "dict_sparsity": 0.5352}
+  step  1550  CE=1.28834  E=3  wd=0.0238 dp=0.2383 {"dict_recon": 0.045, "dict_sparsity": 0.5664}
+  step  1600  CE=1.28551  E=3  wd=0.0230 dp=0.2299 {"dict_recon": 0.021, "dict_sparsity": 0.5508}
+  step  1650  CE=1.14135  E=3  wd=0.0221 dp=0.2214 {"dict_recon": 0.0789, "dict_sparsity": 0.5195}
+  step  1700  CE=1.30782  E=3  wd=0.0213 dp=0.2130 {"dict_recon": 0.0136, "dict_sparsity": 0.5742}
+  step  1750  CE=1.07063  E=3  wd=0.0205 dp=0.2045 {"dict_recon": 0.0231, "dict_sparsity": 0.5312}
+  step  1800  CE=1.13870  E=3  wd=0.0196 dp=0.1961 {"dict_recon": 0.0242, "dict_sparsity": 0.5234}
+  step  1850  CE=1.27550  E=3  wd=0.0188 dp=0.1877 {"dict_recon": 0.0333, "dict_sparsity": 0.582}
+  step  1900  CE=1.26554  E=3  wd=0.0179 dp=0.1792 {"dict_recon": 0.0154, "dict_sparsity": 0.5625}
+  step  1950  CE=1.04895  E=3  wd=0.0171 dp=0.1708 {"dict_recon": 0.0126, "dict_sparsity": 0.543}
+  step  2000  CE=1.18436  E=3  wd=0.0162 dp=0.1623  val_CE=0.91392 {"dict_recon": 0.0237, "dict_sparsity": 0.5234}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=0.34931  DESCENT
+     en-general   val_CE=0.56756  DESCENT
+     ko-sns       val_CE=1.48753  DESCENT
+     en-sns       val_CE=1.43891  DESCENT
+  FINAL val_CE(pooled)=0.9608285147696733  registers_DESCENT=4/4
+  loss0=5.66337 lossF=1.18436 wall=2131.4s savant_latched_at=1 E0=2->E=3
+  [N3 DBES] {"expert_usage": [0.2984, 0.3115, 0.39], "usage_entropy": 1.0914, "usage_entropy_norm": 0.9935, "n_active_experts": 3, "note": "DBES proxy: norm usage-entropy ~1 => balanced/specialized; ~0 => collapse onto one expert (recomb material absent)."}
+  torch ckpt -> state/1630_reg_dictaux/ckpt/n7_dictaux_seed4307.pt (1382668701 bytes)
+  summary -> state/1630_reg_dictaux/ckpt/n7_dictaux_seed4307.json
+  .clm WRITTEN 176584498 bytes -> state/1630_reg_dictaux/ckpt/n7_dictaux_seed4307.clm
+  clm_decodable=True

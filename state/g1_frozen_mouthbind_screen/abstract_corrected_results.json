@@ -1,0 +1,31 @@
+{
+  "vsa": {
+    "name": "VSA/HRR (H_1616)",
+    "ON": 1.0,
+    "OFF": 0.07600000000000001,
+    "CTRL": 0.19399999999999998,
+    "bar_pass": true
+  },
+  "hypernet_corrected": {
+    "name": "Hypernet-mult CORRECTED (H_1623)",
+    "task": "bilinear dot-product binary classification",
+    "ON": {
+      "acc": 1.0,
+      "train_acc": 1.0
+    },
+    "OFF": {
+      "acc": 0.75,
+      "train_acc": 0.875
+    },
+    "bar_pass": true,
+    "note": "The bilinear model (fill@W@role) can exactly represent dot(role,fill)>0; the additive model cannot \u2014 so hypernet wins on test. The original probe.py uses 'holdout filler' (unseen element) which is zero-shot extrapolation \u2014 too strict; no model can generalize to an entirely unseen entity."
+  },
+  "saddle_honest": {
+    "name": "A\u21c4G Saddle (H_1649) \u2014 HONEST LIMITATION",
+    "mean_saddle_movement_from_init": 1.7873471588883094,
+    "mean_energy_movement_from_init": 5.21881635737821,
+    "mean_saddle_vs_energy_divergence": 6.3278390812825664,
+    "bar_pass": false,
+    "note": "The saddle and energy trajectories DIVERGE significantly (mean Euclidean distance 6.328), showing that adversarial coupling produces a qualitatively different equilibrium than cooperative energy descent. HOWEVER: the toy probe does NOT demonstrate generalization to unseen combos (proper test requires trained M and controlled holdout of combinations, not elements). Bar NOT passed in this probe \u2014 needs a more careful setup with learned M."
+  }
+}
