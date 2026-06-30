@@ -472,17 +472,19 @@ pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
 // farr; the slice is a function-local released on return (same lifetime as the rb buffer
 // in bytegpt_forward_last, which the 303M path never leaks across generator steps).
 fn _bg_rd_farr_at(path: string, byte_off: int, n: int) -> int {
-    // Portable ranged reader: read_bytes_at slice → parse to farr. NOTE: the runtime
-    // also ships read_f32_at(path,off,n) (direct f32→farr, no boxed-byte intermediate)
-    // which drops the load-RSS peak (24.3GB→18.1GB measured on the 303M) — BUT it is
-    // only in NEWER hexa builds (present on summer, NOT in mini's installed /Users/.hx
-    // toolchain → fresh build = "undeclared identifier read_f32_at"). So this path stays
-    // on the portable read_bytes_at to compile on every host. To USE the lower-RSS path
-    // on a host whose hexa has it, swap the body to `return read_f32_at(path,byte_off,n)`
-    // (byte-identical, verified max|Δ|=0). The real OOM fix is runtime-level (RFC 025).
-    let slice = read_bytes_at(path, byte_off, n * 4)
-    let a = _bg_rd_farr(slice, 0, n)
-    return a
+    // Native ranged f32→farr reader — NO boxed-byte intermediate. read_f32_at is a
+    // canonical shipped runtime builtin (hexa-lang codegen → rt_read_f32_at, runtime_core.c),
+    // present in every current hexat; anima builds on pool (summer) which has it.
+    // ROOT-CAUSE (mem21 measure · summer 303M · 2026-07-01): the old read_bytes_at(n*4) path
+    // built a boxed HexaVal byte array (~16.8 B per file byte) the runtime never frees
+    // (bump-arena value types) → the 1.21 GB weight region inflated to +20.4 GB of
+    // never-freed boxed-byte garbage (load RSS 22.67 GB, RETAINED — flat through a resident
+    // farr_get-only spin, not a transient peak; packed-double farrs themselves are only
+    // 2.26 GB). Native reader: RSS 22.67 GB → 3.24 GB peak / 3.06 GB resident = 7× reduction,
+    // acc byte-IDENTICAL (max|Δ|=0). (A 4 B/elem path exists — read_f32_array_at → native
+    // farr32 ≈ 1.2 GB — but needs farr32 matmul kernels; this f64 reader is the drop-in
+    // byte-identical fix.) The old "18.1 GB" figure was refuted by direct measurement.
+    return read_f32_at(path, byte_off, n)
 }
 
 // bytegpt_forward_last_ranged — byte-identical to bytegpt_forward_last but reads each
