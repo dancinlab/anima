@@ -194,7 +194,7 @@ fn anima_evaluate_mode(argv: [string]) {
 //
 // `anima serialize <ckpt.pt> <out.clm>` re-exports an already-trained torch .pt to an
 // engine-loadable .clm v0.3 (+ held-out DESCENT gate). The bridge backend lives in
-// cli/serialize.hexa → train/clm/model/serialize_standalone.py (KEPT torch-interop tool
+// cli/serialize.hexa → archive/train/clm/model/serialize_standalone.py (KEPT torch-interop tool
 // owns serialize_v3 + verify_clm_v2 descent; .pt unpickle is irreducibly torch). `anima train` ALREADY auto-
 // serializes at the end of a run — this is the standalone recovery / re-export path.
 fn anima_serialize_mode(argv: [string]) {

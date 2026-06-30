@@ -8684,7 +8684,7 @@
                 "name": "summary",
                 "role": "",
                 "id": "clm-mount-path-a-core-engine-map-single-l3-slot-core-clm-decode-hexa-summary",
-                "detail": "ConvMoE-class .clm v0.2 decoder (train/clm/ pipeline product); golden ref = reexport_d768_v2_fast.clm. Production mouth = anima-clm-midcap-303m-broad-en-emergent (English-dominant, ASCII-filtered 5-lang wiki corpus;"
+                "detail": "ConvMoE-class .clm v0.2 decoder (archive/train/clm/ pipeline product); golden ref = reexport_d768_v2_fast.clm. Production mouth = anima-clm-midcap-303m-broad-en-emergent (English-dominant, ASCII-filtered 5-lang wiki corpus;"
               },
               {
                 "name": "free-generation carries ~20% Korean code-switch — H_1461 nuisance,",
@@ -9760,7 +9760,7 @@
                 "name": "summary",
                 "role": "",
                 "id": "training-substrate-lanes-rung-training-pipeline-recipe-dispatch-monitor-summary",
-                "detail": "Recipe = train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer train/clm/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery)."
+                "detail": "Recipe = archive/train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer archive/train/clm/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery)."
               },
               {
                 "name": "note",
@@ -9769,7 +9769,7 @@
                 "detail": "the shared hexa dojo clm generator doesn't yet emit gauge_every/mount-parity/HF native; the needed generator change is filed via harness ing add --to hexa-lang (a_runpod_inbox), not forked anima-side."
               },
               {
-                "name": "Dispatch = train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod",
+                "name": "Dispatch = archive/train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod",
                 "role": "",
                 "id": "training-substrate-lanes-rung-training-pipeline-recipe-dispatch-monitor-dispatch",
                 "detail": "",
@@ -9778,7 +9778,7 @@
                     "name": "summary",
                     "role": "",
                     "id": "training-substrate-lanes-rung-training-pipeline-recipe-dispatch-monitor-dispatch-2",
-                    "detail": "Dispatch = train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
+                    "detail": "Dispatch = archive/train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
                   }
                 ]
               },
@@ -10083,6 +10083,12 @@
                     "role": "",
                     "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-conv-clm-v0-2-mout",
                     "detail": "conv `.clm` v0.2 mouth 는 별도 anima-engine-clm-d768-v2-coremount). 영·한 70wiki+30dialogue chat-FT, PUBLIC. base=anima-clm-midcap-303m-broad-en-emergent.\n- **anima-clm-midcap-303m-broad-en-emergent** — ByteGPT 303M broad backbone (val_ce 1.224, wiki-dominant EN)."
+                  },
+                  {
+                    "name": "- anima-clm-chat-303m-savant-mitosis — conv CLMConvMoE L4·d3784 303M savant+mitosis ckpt",
+                    "role": "",
+                    "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-303m-savant-mitosis",
+                    "detail": "- **anima-clm-chat-303m-savant-mitosis** — conv CLMConvMoE L4·d3784 303M savant+mitosis 학습 ckpt(.clm v0.3). PRIVATE·WIP, engine-native G6 미검증. repo=dancinlab/anima-clm-chat-303m-savant-mitosis(168MB LFS·HF-only)."
                   },
                   {
                     "name": "- anima-clm-chat-7b — 7B chat (chat-mix 레시피). -",
@@ -10539,7 +10545,7 @@
             ]
           },
           {
-            "name": "train/clm/",
+            "name": "archive/train/clm/",
             "role": "",
             "id": "component-map-top-level-train-clm",
             "detail": "",
@@ -10554,10 +10560,10 @@
                 "name": "note",
                 "role": "",
                 "id": "component-map-top-level-train-clm-note",
-                "detail": "⚓ anchor files: train/clm/train/train_lane_p.py"
+                "detail": "⚓ anchor files: archive/train/clm/train/train_lane_p.py"
               },
               {
-                "name": "train/clm/model/clm_serialize_v2.py",
+                "name": "archive/train/clm/model/clm_serialize_v2.py",
                 "role": "",
                 "id": "component-map-top-level-train-clm-train-clm-model-clm-serialize-v2-py",
                 "detail": "",
@@ -10569,15 +10575,15 @@
                     "detail": "**summary**:"
                   },
                   {
-                    "name": "train/clm/model/clm_serialize_v2.py",
+                    "name": "archive/train/clm/model/clm_serialize_v2.py",
                     "role": "",
                     "id": "component-map-top-level-train-clm-train-clm-model-clm-serialize-v2-py-train-clm",
-                    "detail": "train/clm/model/clm_serialize_v2.py"
+                    "detail": "archive/train/clm/model/clm_serialize_v2.py"
                   }
                 ]
               },
               {
-                "name": "train/clm/model/verify_clm_v2.py",
+                "name": "archive/train/clm/model/verify_clm_v2.py",
                 "role": "",
                 "id": "component-map-top-level-train-clm-train-clm-model-verify-clm-v2-py",
                 "detail": "",
@@ -10589,10 +10595,10 @@
                     "detail": "**summary**:"
                   },
                   {
-                    "name": "train/clm/model/verify_clm_v2.py — .clm post-serialize verifier. (1) STRUCTURAL …",
+                    "name": "archive/train/clm/model/verify_clm_v2.py — .clm post-serialize verifier. (1) STRUCTURAL …",
                     "role": "",
                     "id": "component-map-top-level-train-clm-train-clm-model-verify-clm-v2-py-train-clm-mod",
-                    "detail": "train/clm/model/verify_clm_v2.py — .clm post-serialize verifier. (1) STRUCTURAL round-trips: clm_decodable + parse_clm + v2/v3 byte-eq + general (L,E) dim round-trip (decodable = right shape). (2) HELD-OUT mirror-DESCENT gate (the OVERFIT detector, a_clm_gen_pipeline"
+                    "detail": "archive/train/clm/model/verify_clm_v2.py — .clm post-serialize verifier. (1) STRUCTURAL round-trips: clm_decodable + parse_clm + v2/v3 byte-eq + general (L,E) dim round-trip (decodable = right shape). (2) HELD-OUT mirror-DESCENT gate (the OVERFIT detector, a_clm_gen_pipeline"
                   },
                   {
                     "name": "H_1579): descent_gate/serialize_self_verify/mirror_ce/`descent` CLI = FAITHFUL p…",
@@ -10645,7 +10651,7 @@
                 ]
               },
               {
-                "name": "train/clm/CLM_FORMAT_SPEC.md",
+                "name": "archive/train/clm/CLM_FORMAT_SPEC.md",
                 "role": "",
                 "id": "component-map-top-level-train-clm-train-clm-clm-format-spec-md",
                 "detail": "",
@@ -10657,10 +10663,10 @@
                     "detail": "**summary**:"
                   },
                   {
-                    "name": "train/clm/CLM_FORMAT_SPEC.md",
+                    "name": "archive/train/clm/CLM_FORMAT_SPEC.md",
                     "role": "",
                     "id": "component-map-top-level-train-clm-train-clm-clm-format-spec-md-train-clm-clm-for",
-                    "detail": "train/clm/CLM_FORMAT_SPEC.md"
+                    "detail": "archive/train/clm/CLM_FORMAT_SPEC.md"
                   }
                 ]
               }
@@ -11545,10 +11551,10 @@
                 "detail": "이 .py 는 a_clm_gen_pipeline 이 명시 허용한 REFERENCE+브리지 경로: train.hexa 는 single-thread native-CPU-scalar-bound(#2598/#2600 🟠 util peak ~65%·sustained <30%)라 실 303M GPU 학습이 GPU idle 인 반면, torch Lane-P 는 GPU-bound(cuda GEMM-saturating)라 진짜 clm303(L4·d3784·E2→Emax4)을 지금 효율 학습 가능."
               },
               {
-                "name": "train/clm/model/model.py 의 CLMConvMoE 위에 train.hexa 와 동일 레시피",
+                "name": "archive/train/clm/model/model.py 의 CLMConvMoE 위에 train.hexa 와 동일 레시피",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-train-clm-model-model-py-clmconvmoe-train",
-                "detail": "train/clm/model/model.py 의 CLMConvMoE 위에 train.hexa 와 동일 레시피 레버를 조립: SAVANT(a_savant_train, H_1560/1562/1563) golden-zone cusp-anneal inhibition — GZ_LOWER=1/2−ln(4/3)≈0.21232,"
+                "detail": "archive/train/clm/model/model.py 의 CLMConvMoE 위에 train.hexa 와 동일 레시피 레버를 조립: SAVANT(a_savant_train, H_1560/1562/1563) golden-zone cusp-anneal inhibition — GZ_LOWER=1/2−ln(4/3)≈0.21232,"
               },
               {
                 "name": "weight-decay/dropout 를 GZ_LOWER 아래로 anneal(H_1559 sweep-below) + 골든존",
@@ -11578,7 +11584,7 @@
                 "name": ".clm v0.3 serialize",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-clm-v0-3-serialize",
-                "detail": "train/clm/model/clm_serialize_v2.py::serialize_v3 GROUND-TRUTH 브리지 재사용(golden reexport_d768_v2_fast.clm 동일 byte layout) → CLM\\x01 + CLMX trailer, nblk=L+E+3·n_ext=3L+E+6, E=runtime expert count post-mitosis(active 만 직렬화) = core/clm_decode.hexa::clm_load byte-exact."
+                "detail": "archive/train/clm/model/clm_serialize_v2.py::serialize_v3 GROUND-TRUTH 브리지 재사용(golden reexport_d768_v2_fast.clm 동일 byte layout) → CLM\\x01 + CLMX trailer, nblk=L+E+3·n_ext=3L+E+6, E=runtime expert count post-mitosis(active 만 직렬화) = core/clm_decode.hexa::clm_load byte-exact."
               },
               {
                 "name": "engine-native 게이트(a_engine_native_learning, HARD-GATE)",
@@ -12426,7 +12432,7 @@
         "state": "ossified",
         "value": "side-harness 직접실행 차단을 파일 안 __main__ hard-exit 가드로 구현하면, canonical 경로(hexa)가 그 파일을 subprocess(python3 … descent / serialize bridge)로 정당하게 호출하는 것까지 죽여 production 을 조용히 깨뜨린다. pre_bash 훅은 agent top-level 명령만 후킹하고 프로그램이 spawn 하는 subprocess 는 안 보므로, 직접실행 차단은 .harness/enforcement.json pre_bash 룰(H-ANIMA-SINGLE-ENTRY)에 두고, hexa 가 subprocess 로 부르는 engine-internal py 툴(verify_clm_v2·serialize_standalone)에는 hard 가드 대신 경고주석만 둔다. import-only 파일(clm_serialize_v2·core/*.py)에만 __main__ 가드가 안전(import 는 __main__ 미발화).",
         "threshold": "재발조건: 엔진 파일에 직접실행 차단 가드를 추가할 때. 해결: ① 그 파일이 canonical 경로(.hexa)에서 python3 subprocess 로 불리는지 grep 먼저(불리면 hard __main__ exit 금지) ② 차단은 pre_bash 룰로(subprocess 미후킹) ③ import-only 만 __main__ 가드 ④ 추가 후 canonical anima train/serialize 스모크로 내부 shell-out 무탈 확인",
-        "source": "train/clm/model/verify_clm_v2.py"
+        "source": "archive/train/clm/model/verify_clm_v2.py"
       },
       {
         "id": "evaluate-hexa-1",
