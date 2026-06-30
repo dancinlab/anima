@@ -125,7 +125,11 @@ def anima_train_mode(argv):
 # L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable —
 # reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
 def anima_evaluate_mode(argv):
-    rest = argv[1:]
+    # --py is a no-op here (this IS the py twin — evaluate already runs the numpy
+    # g_eval_all engine), but strip it so cli/evaluate.py sees only <ckpt> [--corpus …]
+    # [--gen N] (it reads ckpt as positional argv[0]). Keeps `anima evaluate --py <clm>`
+    # byte-parity across the hexa launcher (which dispatches here on --py) and this twin.
+    rest = [a for a in argv[1:] if a != "--py"]
     # friendly .pt rejection: evaluate takes a serialized .clm, not a torch ckpt.
     if rest and rest[0].endswith(".pt"):
         print("anima evaluate takes a serialized .clm (engine-loadable), not a torch .pt.")
