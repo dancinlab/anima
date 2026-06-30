@@ -136,7 +136,12 @@ jobs:
   hexa-engine:
     name: engine compile + gates + smoke (darwin-arm64, Blacksmith)
     runs-on: macos-15
-    timeout-minutes: 25
+    # 25→50: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate(~14min)
+    # + cli/anima install(~14min)만으로 25min 초과 → 타임아웃에 cancel → Post-Cache save
+    # 스킵 → 캐시가 영원히 안 데워지는 chicken-egg(매 run COLD·만성 타임아웃). 캐시는
+    # 브랜치-스코프라 main 머지 후 main 의 첫 COLD run 이 timeout 안에 *완료*돼야 save→
+    # 이후 warm run 은 ~수분. 50min = COLD 1회(~39min) 여유. warm 정상 run 엔 무해.
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
 
@@ -253,7 +258,12 @@ jobs:
 
       # 엔진 스모크 — 가중치 없이 compile+logic 도는 것들. 가중치/플랫폼 의존(tag24·
       # .clm 부재)은 warn-only(정직, CI 거짓-red 방지). hexa stable 에 따라 가변.
+      # warn-only 라 실패/시간초과로 잡을 RED 시키면 안 됨 — COLD 일 때 스모크 4개의
+      # cold-compile 가 잡 타임아웃을 잡아먹어 Post-Cache save 를 막던 주범. per-step
+      # timeout + continue-on-error 로 캡 → 잡은 항상 step 11 + Post-Cache 까지 도달.
       - name: Smoke — weight-free engine smokes (warn-only)
+        continue-on-error: true
+        timeout-minutes: 12
         shell: bash
         run: |
           set -uo pipefail
