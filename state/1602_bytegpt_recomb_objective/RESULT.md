@@ -65,19 +65,27 @@ Lever CRACKS G1 iff **ARM-ON G1 PASS AND ARM-ON G1 best_distinct > ARM-OFF**. _(
 - + .pt + .json (train summaries). reproduce = `state/1602_bytegpt_recomb_objective/trainer.py`
   (`--objective {ce_marginal,infonce} --canon`).
 
-## VERDICT (2026-06-30) — 🧱 NOT-SUPPORTED (DIRECTIONAL)
+## VERDICT (2026-07-01, 8000-step aiden 재측정) — 🧱 NOT-SUPPORTED CONFIRMED (DIRECTIONAL)
 
-py byte-parity engine-native (`anima evaluate` → evaluate.py g_eval_all, gen=80), verbatim ab_eval.log:
+py byte-parity engine-native (evaluate.py g_eval_all, gen=80, aiden 12-core CPU farr), verbatim
+result/eval_{ce_marginal,infonce}.log. **8000-step 재학습**(undertrain 방어, 양 arm 4/4 held-out
+DESCENT val_CE 0.70) + corpus 정상 4-cell 로드:
 
 | gate | ARM-OFF ce_marginal | ARM-ON infonce (★) |
 |------|----------------------|---------------------|
-| G0 | 🟢 kwr 5/5 | 🟢 kwr 4/5 |
-| G1 | 🔴 best_distinct=0 max_single=0 | 🔴 best_distinct=0 max_single=0 |
-| G2 | 🔴 novel=0 | 🔴 novel=0 |
-| G6 | 🔴 distinct=4 fals=0 | 🔴 distinct=5 fals=0 |
-| closure | 🔴 FAIL | 🔴 FAIL |
+| G0 | 🟢 kwr 5/5 | 🟢 kwr 5/5 |
+| G1 | 🔴 best_distinct=0 max_single=1 | 🔴 best_distinct=0 max_single=0 |
+| G2 | 🟢 novel=66 control=0 | 🟢 novel=99 control=0 |
+| G5 | 🟢 fab=0.0946 | 🟢 fab=0.1154 |
+| G6 | 🔴 distinct=6 fals=0 | 🔴 distinct=6 fals=0 |
+| closure | 🔴 FAIL (G1) | 🔴 FAIL (G1) |
 
-LIFT=0. recomb-objective does NOT crack G1 on ByteGPT attention trunk. Both arms 4/4 held-out DESCENT
-(fair models). Converges with H_1602(ConvMoE)/H_1819(bind×obj)/h1129 — last live G1 lever floors.
-DIRECTIONAL (py, core/CLAUDE.md deprecates py mirror); terminal hexa = BLOCKED-INFRA (summer 3× reboot).
+**G1 LIFT=0 (best_distinct 0→0).** recomb-objective(InfoNCE)는 ByteGPT attention trunk에서 G1을
+안 엶 — PREREG 예측("ARM-OFF FAIL, ARM-ON FAIL")과 정확히 일치, FALSIFIED. InfoNCE가 val_CE는
+낮췄으나(2.50→2.37, 8000step 0.70) 재조합 능력 0 불변. H_1602(ConvMoE)/H_1819(bind×obj)/h1129과
+수렴 = G1벽은 objective-readout 아닌 trunk 구조. **단 2000-step 이전기록(summer)과 발산**: 이전엔
+G2 novel=0·G6 dist 4/5였으나 본 8000-step aiden 측정은 G2 novel 66/99·G6 dist 6 — corpus 로드·step
+차이로 보이며(verdict-integrity), **핵심 G1 best_distinct=0은 양 측정·양 arm 모두 일치**라 NOT-SUP
+결론 불변. DIRECTIONAL (py mirror, core/CLAUDE.md); terminal hexa confirm = follow-on.
+ckpt: ce_marginal_seed7.bin sha=90d678…e2ca · infonce_seed7.bin sha=0e1918…a10a (aiden ckpt/, 1.2GB).
 Card = UNIVERSE/cards/H_9024_bytegpt_recomb_objective.md (was mis-filed H_1832).
