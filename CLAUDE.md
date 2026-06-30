@@ -42,7 +42,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 ### SSOT 포인터 (이 파일은 진입 포인터)
 
-> **디렉터리/모듈 트리는 더 이상 여기 살지 않는다 — 트리의 단일 SSOT 는 [ARCHITECTURE.json](ARCHITECTURE.json)**(update-in-place, `core/`·`cli/`·`agent/`·`train/clm/`·`platform/`·`UNIVERSE/`·`state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS 등 전 노드 + "HF artifacts" models/datasets). 뷰어 = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회).
+> **디렉터리/모듈 트리는 더 이상 여기 살지 않는다 — 트리의 단일 SSOT 는 [ARCHITECTURE.json](ARCHITECTURE.json)**(update-in-place, `core/`·`cli/`·`agent/`·`archive/train/clm/`·`platform/`·`UNIVERSE/`·`state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS 등 전 노드 + "HF artifacts" models/datasets). 뷰어 = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회).
 >
 > - **설계/트리** → [ARCHITECTURE.json](ARCHITECTURE.json) (단일 SSOT · 노드 note 에 메커니즘 명명 · `a_verified_must_wire`/`a_core_engine_map` 의 lockstep 대상)
 > - **anima 거버넌스 + 8 철학** → 이 파일 (anima 전용 규칙 `a_*`·`p#` 의 markdown SSOT)
@@ -307,7 +307,7 @@ anima/
 - dont: torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
 ## a_clm_gen_pipeline — Lane-P py/cuda CLMConvMoE → ENGINE-loadable .clm v0.2
-- do: CLMConvMoE(E2/L1, byte V256) 를 `train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`).
+- do: CLMConvMoE(E2/L1, byte V256) 를 `archive/train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`).
   `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
 - do: **직렬화 직후 HELD-OUT mirror-DESCENT 게이트 필수**(H_1579 정정 교훈) — `.clm` 을 저장한 뒤 `verify_clm_v2.py descent <clm> <heldout> [train]`(또는 `serialize_self_verify`, train.hexa 는 post-serialize 자동 배선)로 **held-out** 텍스트에서 `model_ce < uniform AND < shuffle` 를 확인.
   구조 round-trip(decodable)만으론 부족 — 그건 shape 만 보지 예측력을 안 본다. **반드시 held-out 에서**(학습 데이터로 돌리면 overfit 을 숨김) + train-vs-heldout gap 으로 overfit 경고. 채점은 `math.log` mirror 로(engine `clm_forward_ce` 의 dt_ln 버그가 per-pos CE 를 ~5.14 clamp 해 overfit 을 GREEN 으로 가림, H_1579). FAIL 이면 broken/overfit 이니 'done'·HF업로드 금지(재직렬화로 못 고침 → 재학습).

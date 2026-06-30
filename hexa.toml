@@ -45,10 +45,9 @@ categories = ["consciousness", "ai-daemon", "runtime", "research-substrate"]
 #             generator·clm_decode·bytegpt_decode·engine_cli + phi/); depends on
 #             train/·bench/·agent/·state/ = 0 (one-directional, a_core_engine_map).
 #   cli/    = single user entry point (cli/anima.hexa).
-#   consciousness lanes imported by the entry (AESTHETIC·BRIDGE·CHANNEL·DREAM·
-#             EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·
-#             TIME·WAKE) — kept because cli/anima.hexa imports them directly
-#             (e.g. DREAM/dream_lib, CHANNEL/router, WAKE/memory).
+#   consciousness lanes reachable from the entry (BFS-measured) = DREAM·SAVANT
+#             only (cli/anima.hexa imports DREAM/dream_lib; SAVANT/savant_lib is
+#             pulled transitively). The other 11 probe-only lanes were archived.
 #   install.hexa / setup.hexa / README.md / LICENSE / VERSION / hexa.toml = install metadata.
 # NOTE: stdlib/iit4 + stdlib/flame are NOT vendored here — they come from the
 #   hexa-lang dependency at runtime (see [dependencies]). BRAIN/ and HEXAD/ are
@@ -68,23 +67,16 @@ include = [
     "cli/",
     "core/",
     # the installed `anima` PATH command launcher (hx symlinks ~/.hx/bin/anima → this).
-    "bin/anima",
+    "archive/bin/anima",
     # the one HEXAD file the canonical entry imports (kosmos anchor I/O); the
     # rest of HEXAD/ is research and is excluded below.
     "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa",
-    "AESTHETIC/",
-    "BRIDGE/",
-    "CHANNEL/",
+    # consciousness lanes reachable from cli/anima.hexa closure (BFS-measured):
+    # only DREAM (dream_lib) + SAVANT (savant_lib) are wired; the other 11 probe-only
+    # lanes (AESTHETIC·BRIDGE·CHANNEL·EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·
+    # OTHER-MIND·TIME·WAKE) were archived under archive/ (research, not in release payload).
     "DREAM/",
-    "EMBODIMENT/",
-    "HIVE-MIND/",
-    "INTENT/",
-    "METACOG/",
-    "NARRATIVE/",
-    "OTHER-MIND/",
     "SAVANT/",
-    "TIME/",
-    "WAKE/",
 ]
 
 # exclude = research artifacts, build trash, sub-package payloads, and external
@@ -121,8 +113,7 @@ exclude = [
     "hypotheses_candidates/",
     "hypotheses_legacy_2026_05_15/",
     # training / bench pipelines (inference release excludes these)
-    "train/",
-    "training/",
+    # "train/" + "training/" moved under archive/ (covered by "archive/" exclude below)
     "CLM/",
     "edu/",
     "edu_new/",

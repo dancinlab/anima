@@ -11,7 +11,7 @@
 // re-serializing a torch .pt to .clm needs to UNPICKLE a torch .pt — that is irreducibly
 // Python (no hexa equivalent without reimplementing pickle/zip). So this cli/serialize.hexa
 // owns the hexa-native CLI orchestration (arg parse + dispatch), and the ONE irreducible
-// torch step lives in the KEPT torch-interop tool train/clm/model/serialize_standalone.py
+// torch step lives in the KEPT torch-interop tool archive/train/clm/model/serialize_standalone.py
 // (byte layout SSOT = clm_serialize_v2.py::serialize_v3 · held-out gate = verify_clm_v2.py
 // descent — both KEPT torch-interop tools, NOT py engine mirrors). The hexa trainer's own
 // serialize_clm (cli/train.hexa) packs a LIVE in-memory model to .clm directly; THIS command
@@ -51,7 +51,7 @@ fn serialize_collect_argv(raw: [string]) -> [string] {
 
 // ── MAIN ────────────────────────────────────────────────────────────────────
 // argv (after "--") = [<ckpt.pt>, <out.clm>, --heldout ..., --train ..., --nwin N].
-// Forward verbatim to the KEPT torch-interop tool train/clm/model/serialize_standalone.py
+// Forward verbatim to the KEPT torch-interop tool archive/train/clm/model/serialize_standalone.py
 // (.pt unpickle is irreducibly torch — no hexa equivalent; this hexa entry owns the CLI
 // orchestration, the kept tool owns the .pt-read + serialize_v3 + descent gate).
 fn main() {
@@ -61,11 +61,11 @@ fn main() {
         return
     }
 
-    println("=== anima serialize (hexa) → train/clm/model/serialize_standalone.py (torch .pt → .clm v0.3 bridge + DESCENT gate) ===")
+    println("=== anima serialize (hexa) → archive/train/clm/model/serialize_standalone.py (torch .pt → .clm v0.3 bridge + DESCENT gate) ===")
     let mut fwd = ""
     let mut i = 0
     while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "python3 train/clm/model/serialize_standalone.py" + fwd + " 2>&1"
+    let cmd = "python3 archive/train/clm/model/serialize_standalone.py" + fwd + " 2>&1"
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
