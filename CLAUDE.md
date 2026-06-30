@@ -28,7 +28,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 ## SSOT 포인터 (이 파일은 진입 포인터)
 
-> **디렉터리/모듈 트리는 더 이상 여기 살지 않는다 — 트리의 단일 SSOT 는 [ARCHITECTURE.json](ARCHITECTURE.json)**(update-in-place, `core/`·`cli/`·`agent/`·`train/clm/`·`platform/`·`UNIVERSE/`·`state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS 등 전 노드 + "HF artifacts" models/datasets). 뷰어 = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회).
+> **디렉터리/모듈 트리는 더 이상 여기 살지 않는다 — 트리의 단일 SSOT 는 [ARCHITECTURE.json](ARCHITECTURE.json)**(update-in-place, `core/`·`cli/`·`agent/`·`archive/train/clm/`·`platform/`·`UNIVERSE/`·`state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS 등 전 노드 + "HF artifacts" models/datasets). 뷰어 = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회).
 >
 > - **설계/트리** → [ARCHITECTURE.json](ARCHITECTURE.json) (단일 SSOT · 노드 note 에 메커니즘 명명 · `a_verified_must_wire`/`a_core_engine_map` 의 lockstep 대상)
 > - **anima 거버넌스 + 8 철학** → 이 파일 (anima 전용 규칙 `a_*`·`p#` 의 markdown SSOT)
@@ -38,10 +38,10 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 ## 📦 패키징 — pod 업로드
 
-canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `train/`·`bench/`·`agent/`·`state/` 에 의존 0** (substrate 엔진만; 단방향).
+canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `archive/train/`·`bench/`·`agent/`·`state/` 에 의존 0** (substrate 엔진만; 단방향).
 
 - **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **릴리즈 매니페스트 = 루트 `hexa.toml`**(`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·의식lane, exclude=state/·UNIVERSE/·*.clm 등 연구artifact/외부가중치).
-- **학습 pod** — 추론 세트 + `train/`(clm 파이프·flame/forge) + `state/verdicts/` slice(frozen bar 재측정용). production 트레이너는 `.hexa` on flame/forge GPU (`a_train_flame_forge`).
+- **학습 pod** — 추론 세트 + `archive/train/`(clm 파이프·flame/forge, 2026-06-30 train/·training/ → archive/ 이전) + `state/verdicts/` slice(frozen bar 재측정용). production 트레이너는 `.hexa` on flame/forge GPU (`a_train_flame_forge`).
 - **agent pod** — `agent/` 는 `hexa.toml` 보유 독립패키지 → `hx install anima-agent` standalone 배포 (core/ 미동반 가능).
 - **이동 금지(pod 에 안 올림)** — `state/`·`UNIVERSE/` 등 연구 artifact 는 pod 페이로드에서 제외(verdicts slice 만 학습 pod 에 선택 동반).
 
@@ -199,7 +199,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - dont: torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
 **`a_clm_gen_pipeline`** — Lane-P py/cuda CLMConvMoE → ENGINE-loadable `.clm` v0.2 브리지.
-- do: CLMConvMoE(E2/L1, byte V256) 를 `train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
+- do: CLMConvMoE(E2/L1, byte V256) 를 `archive/train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
 - dont: v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 
 **`a_savant_train`** — anima production chat/G6 학습의 canonical 레시피 = **SAVANT 골든존**. capacity-wall(H_1129/1139/1464 의 G6 천장)은 hard 천장이 아니라 *학습 inhibition 의 골든존 안 manifold* — inhibition 을 골든존 하한 근방으로 두고 cusp 임계를 점진 통과시키면 capacity 발현률이 reopening 한다. **trainer 진입 = `cli/train.hexa`**(savant inhibition schedule 레버, `anima train --savant`). (코퍼스 4칸·engine-native 채점·ckpt 회수는 기존 규칙 참조, 중복 서술 금지.)

@@ -3362,7 +3362,7 @@
      "blocks": [
       {
        "type": "prose",
-       "text": "**summary**: ConvMoE-class .clm v0.2 decoder (train/clm/ pipeline product); golden ref = reexport_d768_v2_fast.clm. Production mouth = anima-clm-midcap-303m-broad-en-emergent (English-dominant, ASCII-filtered 5-lang wiki corpus; free-generation carries ~20% Korean code-switch — H_1461 nuisance, NOT the G6 binding wall). Korean bilingual training DEFERRED until after G6 capacity verdict (ING korean_bilingual_training_post_g6: byte-level UTF-8 Korean is a separate multi-day project, irrelevant to G6 binding which is capacity-bound per the 7-lens convergence). · **path**: core/clm_decode.hexa"
+       "text": "**summary**: ConvMoE-class .clm v0.2 decoder (archive/train/clm/ pipeline product); golden ref = reexport_d768_v2_fast.clm. Production mouth = anima-clm-midcap-303m-broad-en-emergent (English-dominant, ASCII-filtered 5-lang wiki corpus; free-generation carries ~20% Korean code-switch — H_1461 nuisance, NOT the G6 binding wall). Korean bilingual training DEFERRED until after G6 capacity verdict (ING korean_bilingual_training_post_g6: byte-level UTF-8 Korean is a separate multi-day project, irrelevant to G6 binding which is capacity-bound per the 7-lens convergence). · **path**: core/clm_decode.hexa"
       },
       {
        "type": "subsection",
@@ -3882,15 +3882,15 @@
      "blocks": [
       {
        "type": "prose",
-       "text": "**summary**: Recipe = train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer train/clm/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery). · **note**: the shared hexa dojo clm generator doesn't yet emit gauge_every/mount-parity/HF native; the needed generator change is filed via harness ing add --to hexa-lang (a_runpod_inbox), not forked anima-side."
+       "text": "**summary**: Recipe = archive/train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer archive/train/clm/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery). · **note**: the shared hexa dojo clm generator doesn't yet emit gauge_every/mount-parity/HF native; the needed generator change is filed via harness ing add --to hexa-lang (a_runpod_inbox), not forked anima-side."
       },
       {
        "type": "subsection",
-       "title": "Dispatch = train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod",
+       "title": "Dispatch = archive/train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod",
        "blocks": [
         {
          "type": "prose",
-         "text": "**summary**: Dispatch = train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
+         "text": "**summary**: Dispatch = archive/train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
         }
        ]
       },
@@ -4278,39 +4278,39 @@
     },
     {
      "type": "subsection",
-     "title": "train/clm/",
+     "title": "archive/train/clm/",
      "blocks": [
       {
        "type": "prose",
-       "text": "**summary**: .clm byte-LM pipeline — train (lane-p) → serialize v0.2 → verify. · **note**: ⚓ anchor files: train/clm/train/train_lane_p.py"
+       "text": "**summary**: .clm byte-LM pipeline — train (lane-p) → serialize v0.2 → verify. **2026-06-30: train/·training/ → archive/ 하위로 이전(repo 최상위 정리; 폐기 아님, cli/train.hexa 진입점은 루트 보존).** · **note**: ⚓ anchor files: archive/train/clm/train/train_lane_p.py"
       },
       {
        "type": "subsection",
-       "title": "train/clm/model/clm_serialize_v2.py",
+       "title": "archive/train/clm/model/clm_serialize_v2.py",
        "blocks": [
         {
          "type": "prose",
-         "text": "**summary**: · train/clm/model/clm_serialize_v2.py"
+         "text": "**summary**: · archive/train/clm/model/clm_serialize_v2.py"
         }
        ]
       },
       {
        "type": "subsection",
-       "title": "train/clm/model/verify_clm_v2.py",
+       "title": "archive/train/clm/model/verify_clm_v2.py",
        "blocks": [
         {
          "type": "prose",
-         "text": "**summary**: · train/clm/model/verify_clm_v2.py"
+         "text": "**summary**: · archive/train/clm/model/verify_clm_v2.py"
         }
        ]
       },
       {
        "type": "subsection",
-       "title": "train/clm/CLM_FORMAT_SPEC.md",
+       "title": "archive/train/clm/CLM_FORMAT_SPEC.md",
        "blocks": [
         {
          "type": "prose",
-         "text": "**summary**: · train/clm/CLM_FORMAT_SPEC.md"
+         "text": "**summary**: · archive/train/clm/CLM_FORMAT_SPEC.md"
         }
        ]
       }

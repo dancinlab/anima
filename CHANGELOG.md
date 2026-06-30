@@ -1,3 +1,13 @@
+## refactor(repo): train/·training/ 학습파이프 archive/ 이관 (735파일) + ARCHITECTURE/CLAUDE.md/hexa.toml lockstep
+
+🧹 **최상위 정리 2탄** — 학습 파이프라인 디렉토리 `train/`(84 tracked) + `training/`(651 tracked) = 735파일을 `archive/train/`·`archive/training/` 로 git mv 이관. **폐기 아님 = 위치 이동**(repo 최상위에서 substrate-engine·진입점·산출물만 남기는 정리). production 학습 진입점 `cli/train.hexa`·`cli/anima.hexa` 는 루트 보존(이동 안 함).
+
+- **의존 0 재확인:** cli/core/agent·의식lane 의 `use`/`import` 모듈 의존 = **0**(grep 검증). cli/·agent/ 의 train/clm 언급은 전부 주석/문자열 리터럴(println 메시지·하드코딩 corpus 데이터경로·cluster 라벨)이라 런타임/빌드 무관 — git mv 가 컴파일 안 깸. training/cuda_ffi·cuda_rtc 는 직전 커밋에서 core/phi 로 흡수돼 core↔train 의존 이미 끊김.
+- **ARCHITECTURE.json lockstep:** `train/clm` 경로 13곳 전수 → `archive/train/clm` 로 update-in-place(트리노드 title `archive/train/clm/` + 자식 clm_serialize_v2.py·verify_clm_v2.py·CLM_FORMAT_SPEC.md + dispatch/fire prose), 트리노드 note 에 이전 사실 1줄.
+- **CLAUDE.md lockstep:** SSOT 포인터 노드목록 · §패키징 '학습 pod' · a_clm_gen_pipeline train_lane_p.py 경로 · core 불변식 디렉토리 목록 = train/clm·train/ → archive/train(/clm) 갱신. **cli/train.hexa·cli/anima.hexa 경로는 미변경(루트 진입점 보존).**
+- **hexa.toml:** exclude 의 `"train/"`·`"training/"` 두 줄 제거(중복 — `archive/` 통째 exclude 가 커버), 자리에 이전 안내 주석 1줄 + core-불변식 주석 archive/train/ 반영.
+- **잔여참조 grep 2종:** `train/clm` (ARCHITECTURE.json+CLAUDE.md, archive 미접두) = 빈 결과 · cli/core/agent 실코드 use/import = 0.
+
 ## refactor(repo): A등급 코드/실험 잔재 71개 디렉토리 archive/ 이관 + core↔train 단방향 불변식 복원
 
 🧹 **최상위 정리** — 루트엔 substrate-engine + 진입점 + 산출물만 남기고, core/cli/agent 가 import 하지 않는(의존 0) A등급 코드/실험 잔재를 `archive/` 하위로 일괄 이관.

@@ -15,7 +15,7 @@
 //              end-to-end NOW, before any trained model lands. p1..p8 clean.
 //   · clm    — a .clm checkpoint backend that GENUINELY parses the .clm header
 //              at this single entry point (validates the `CLM\x01` magic +
-//              extracts the per-block count, per train/clm/CLM_FORMAT_SPEC.md). A
+//              extracts the per-block count, per archive/train/clm/CLM_FORMAT_SPEC.md). A
 //              valid file is RECOGNIZED + admitted CORE-side (valid=true,
 //              nblocks surfaced); a malformed/absent file is honestly rejected.
 //              `loaded` stays false until the decode FORWARD lands, so the
@@ -83,7 +83,7 @@ pub fn gen_null_backend() -> Map {
 // PARSES the .clm header at this single entry point (the L3 slot is the ONLY way
 // a .clm enters CORE — a_core_engine_map). It reads the file bytes and validates
 // the `CLM\x01` magic + extracts the per-block count, exactly as the canonical
-// writer lays them out (hexa-lang flame/clm_ckpt.hexa · train/clm/CLM_FORMAT_SPEC.md):
+// writer lays them out (hexa-lang flame/clm_ckpt.hexa · archive/train/clm/CLM_FORMAT_SPEC.md):
 //
 //     [MAGIC "CLM\x01" = 67,76,77,1] [nblocks u8] [BLOCKS...]
 //
@@ -440,7 +440,7 @@ fn _gen_null_text(ctx: Map, anchors: list) -> string {
 // admitted .clm's 6 int4 weight blocks, dequantizes them (per-channel qat_scale)
 // and runs the CLMConvMoE forward (entry conv1d-K3 → trunk residual → 2 experts
 // → MoE-router softmax → readout) to next-token logits over V=256 bytes, exactly
-// per train/clm/CLM_FORMAT_SPEC.md §2 + the trainer's clm_model.hexa::clm_forward. From
+// per archive/train/clm/CLM_FORMAT_SPEC.md §2 + the trainer's clm_model.hexa::clm_forward. From
 // the logits a real next-byte CROSS-ENTROPY is computed CORE-mounted (clm_decode_ce).
 //
 // HONEST scope of `loaded` (a_core_engine_map, NO phantom wiring): the forward is

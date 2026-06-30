@@ -43,7 +43,7 @@ categories = ["consciousness", "ai-daemon", "runtime", "research-substrate"]
 # include = the self-contained RUNTIME payload reachable from cli/anima.hexa:
 #   core/   = A⇄G consciousness engine substrate (pure_field·engine_g·brain·
 #             generator·clm_decode·bytegpt_decode·engine_cli + phi/); depends on
-#             train/·bench/·agent/·state/ = 0 (one-directional, a_core_engine_map).
+#             archive/train/·bench/·agent/·state/ = 0 (one-directional, a_core_engine_map).
 #   cli/    = single user entry point (cli/anima.hexa).
 #   consciousness lanes imported by the entry (AESTHETIC·BRIDGE·CHANNEL·DREAM·
 #             EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·
@@ -119,8 +119,7 @@ exclude = [
     "hypotheses_candidates/",
     "hypotheses_legacy_2026_05_15/",
     # training / bench pipelines (inference release excludes these)
-    "train/",
-    "training/",
+    # train/·training/ → archive/ 로 이동 (2026-06-30 repo 최상위 정리); archive/ 통째 exclude 가 커버하므로 별도 줄 불필요
     "CLM/",
     "edu/",
     "edu_new/",

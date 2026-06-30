@@ -38,7 +38,7 @@
 //        runtime.a + ~/.hx/.cuda-runtime marker selects GPU vs CPU.
 //
 //  ENGINE-NATIVE (a_engine_native_learning) — the trained weights serialize to
-//        .clm v0.2 (train/clm/model/clm_serialize_v2.py bridge) and mount on
+//        .clm v0.2 (archive/train/clm/model/clm_serialize_v2.py bridge) and mount on
 //        core/clm_decode.hexa for FROZEN G6 bars (H_1129/1139 recombination,
 //        H_1140 novelty). This trainer IS the final-architecture engine chain
 //        (same clm_*.hexa ops core/clm_decode reads), so it is NOT a mirror.
@@ -516,7 +516,7 @@ fn cli_corpus(argv: [string]) -> [string] {
 // ════════════════════════════════════════════════════════════════════════════
 //  .clm v0.2/v0.3 SERIALIZE (a_clm_gen_pipeline) — pack the trained CLMConvMoE
 //  weights into the EXACT CLM\x01 byte layout core/clm_decode.hexa loads (ground
-//  truth = train/clm/model/clm_serialize_v2.py, byte-for-byte). v0.3 GENERAL
+//  truth = archive/train/clm/model/clm_serialize_v2.py, byte-for-byte). v0.3 GENERAL
 //  block/ext counts (nblk = L + E + 3, n_ext = 2L + E + 6); at L=1 this is the
 //  format the engine reads — E is recovered from the router block cout, so the
 //  grown expert count (post-mitosis) round-trips. NOT a mirror: the engine reads
