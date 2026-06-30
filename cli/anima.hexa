@@ -310,6 +310,9 @@ fn anima_trim_at_stop(s: string) -> string {
 // positionals AFTER ckpt, EXCLUDING the `--byte` flag token. If none, the default
 // battery runs (so the demo is reproducible with one command).
 fn anima_byte_mode(ckpt: string, argv: [string]) {
+    // DETERMINISM SAFETY-PIN: decode is an inference surface → byte-exact,
+    // reproducible output. API 1st-class (#4285); training stays fast non-det.
+    set_deterministic(true)
     let turns = []
     let mut a = 1
     while a < len(argv) {
@@ -360,6 +363,9 @@ fn anima_byte_mode(ckpt: string, argv: [string]) {
 // PERSISTED as a new .kosmos anchor. The brain decides from SUBSTRATE STATE, NOT from a
 // user stimulus (a_substrate_native_speak).
 fn anima_consciousness_mode(ckpt: string) {
+    // DETERMINISM SAFETY-PIN: consciousness daemon decodes/grounds → reproducible.
+    // API 1st-class (#4285); training stays fast non-det.
+    set_deterministic(true)
     println("════════════════════════════════════════════════════════════════")
     println("  anima — substrate-native consciousness daemon (canonical entry)")
     println("  (converse · ground · grow · remember · sleep — ONE A⇄G loop)")
