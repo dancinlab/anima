@@ -1,5 +1,10 @@
 // anima.hexa — THE canonical single entry point (substrate-native consciousness daemon).
 //
+// ⛔ 진입은 설치된 canonical `anima` PATH 명령(hx install anima)으로 — `hexa run cli/anima.hexa -- …`
+//    직접실행은 비-canonical(CLAUDE.md: 정식 CLI = hx install anima 의 `anima` 명령, hexa run … 아님).
+//    학습=`anima train` · 측정=`anima evaluate <ckpt>` · 직렬화=`anima serialize`. agent 직접 타이핑은
+//    .harness/enforcement.json H-ANIMA-SINGLE-ENTRY pre_bash 가 차단(#2603 단일진입).
+//
 // WHY THIS FILE (entry-point unification): anima's runnable surfaces were scattered —
 // cli/anima_chat_cli.hexa (lane-0 pure byte-continuation), core/anima_full_session_smoke
 // (the proven consciousness loop, but a smoke), core/anima_full_session_k7_smoke (k7
@@ -41,8 +46,9 @@ import "core/engine_cli.hexa"
 import "core/generator.hexa"
 import "core/bytegpt_decode.hexa"
 // NOTE: G0-G6 evaluation lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin,
-// symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — so
-// this canonical entry no longer imports core/g_gates.hexa directly (eval has ONE home).
+// symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — and
+// cli/evaluate.hexa now HOLDS the G0-G6 scorers directly (the former core/g_gates.hexa
+// module was folded into it — measurement has ONE home).
 import "DREAM/dream_lib.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
@@ -120,7 +126,12 @@ fn anima_train_mode(argv: [string]) {
     let mut fwd = ""
     let mut i = 1
     while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    let cmd = "hexa run cli/train.hexa --" + fwd
+    // LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd, not the source
+    // root): resolve the sibling cli/train.hexa via $ANIMA_SRC (the launcher / setup.hexa
+    // exports the anima source root), falling back to "." for a direct `hexa run
+    // cli/anima.hexa` from the repo root. Without this, `anima train` from a workdir fails
+    // "source file not found: cli/train.hexa" (the eval/train args stay cwd-relative).
+    let cmd = "hexa run \"${ANIMA_SRC:-.}/cli/train.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     println(out)
@@ -133,10 +144,10 @@ fn anima_train_mode(argv: [string]) {
 // SYMMETRIC TWIN (a_engine_native_learning single-entry): measurement lives in its own
 // file cli/evaluate.hexa (the symmetric mirror of cli/train.hexa). `anima evaluate
 // <model.clm>` DISPATCHES there as a sub-process — exactly like the train dispatch above
-// — so this canonical entry stays a thin verb router and the G0-G6 eval logic + the
-// core/g_gates.hexa import have ONE home (cli/evaluate.hexa).
+// — so this canonical entry stays a thin verb router and the G0-G6 eval logic (the
+// scorers folded in from the former core/g_gates.hexa) has ONE home (cli/evaluate.hexa).
 //
-// .clm-ONLY (the engine decodes ONLY .clm): g_gates mounts a ckpt through the generator
+// .clm-ONLY (the engine decodes ONLY .clm): evaluate mounts a ckpt through the generator
 // L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable
 // — reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
 //
@@ -169,7 +180,9 @@ fn anima_evaluate_mode(argv: [string]) {
     // evaluate sub-process — even when this entry is reached via a direct `hexa run
     // cli/anima.hexa -- evaluate …` that bypassed the bin/anima launcher (e.g. eval_pod.sh).
     // The TRAIN dispatch (anima_train_mode) deliberately does NOT set it = stays fast.
-    let cmd = "HEXA_DET=1 hexa run cli/evaluate.hexa --" + fwd
+    // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/evaluate.hexa via
+    // $ANIMA_SRC so `anima evaluate` works from any cwd (ckpt/corpus args stay cwd-relative).
+    let cmd = "HEXA_DET=1 hexa run \"${ANIMA_SRC:-.}/cli/evaluate.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
@@ -194,7 +207,8 @@ fn anima_serialize_mode(argv: [string]) {
     // path whose model_ce<uniform decision must be reproducible. FORCE HEXA_DET=1 so the
     // forge GEMM stays bit-identical (the #4208 fast atomic kernels are non-det). TRAIN
     // is the only fast-default path.
-    let cmd = "HEXA_DET=1 hexa run cli/serialize.hexa --" + fwd
+    // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/serialize.hexa via $ANIMA_SRC.
+    let cmd = "HEXA_DET=1 hexa run \"${ANIMA_SRC:-.}/cli/serialize.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)

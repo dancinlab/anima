@@ -2,9 +2,9 @@
 
 **id:** H_1818  
 **slug:** cotrain_live_bind  
-**tier:** PRE-REG (GPU-firing now, A6000 idle pod)  
+**tier:** 🔴 NOT-SUPPORTED  
 **date:** 2026-06-29  
-**wired:** engine-native-eligible (clm_decode.py CLMB extended + CLMB retained in .clm)
+**wired:** engine-native-py (DIRECTIONAL — py 2-production G0-G6; hexa wiring not needed given NOT-SUPPORTED)
 
 ---
 
@@ -74,10 +74,38 @@ Round-trip parity: verified by smoke smoke-gate on pod (bind_type=1 parsed corre
 
 ---
 
+## Training results (COMPLETE — 4/4 DESCENT all arms)
+
+| arm | seed | pooled val_CE | 4/4? | lossF | wall_s |
+|-----|------|--------------|------|-------|--------|
+| bind | 7 | 0.842 | YES ✓ | 1.120 | 957s |
+| bind | 4302 | 0.814 | YES ✓ | 1.112 | 955s |
+| bind | 4303 | 0.848 | YES ✓ | 1.114 | 954s |
+| ctrl | 7 | 0.875 | YES ✓ | 1.180 | 939s |
+| ctrl | 4302 | 0.888 | YES ✓ | 1.178 | 938s |
+| ctrl | 4303 | 0.879 | YES ✓ | 1.181 | 938s |
+
+Note: bind lossF ~1.11 < ctrl ~1.18. val_CE << 1 nit = small-corpus memorization warning (4MB × 2000 steps); held-out DESCENT passes (< ln256=5.545) but overfit present. G1=0 expected regardless (toy Task B: trunk memorizes, bilinear bypassed without L_recomb objective).
+
+## G0-G6 results (2026-06-29, engine-native-py, py 2-production)
+
+| arm | seed | G0 n/5 | G0? | G1 best_distinct | G1 max_single | G2 novel | G5 fab | G6 dist | G6 fals | a7b? |
+|-----|------|--------|-----|-----------------|---------------|----------|--------|---------|---------|------|
+| bind | 7 | 5/5 | PASS | 0 | 0 | 0 | 0.4133 | 4 | 0 | FAIL |
+| bind | 4302 | 2/5 | FAIL | 0 | 0 | 0 | 0.5634 | 5 | 0 | FAIL |
+| bind | 4303 | 1/5 | FAIL | 0 | 0 | 0 | 0.5538 | 1 | 0 | FAIL |
+| ctrl | 7 | 4/5 | PASS | 0 | 0 | 0 | 0.5067 | 2 | 0 | FAIL |
+| ctrl | 4302 | 4/5 | PASS | 0 | 0 | 0 | 0.5000 | 2 | 0 | FAIL |
+| ctrl | 4303 | 4/5 | PASS | 0 | 0 | 0 | 0.4750 | 4 | 0 | FAIL |
+
 ## Verdict
 
-*Pending GPU run. Expected: 6 trains × ~20min each = ~2h, ~$1.6 @ A6000 $0.40/h.*
+**🔴 NOT-SUPPORTED** (engine-native-py, DIRECTIONAL scope)
 
-**HYPOTHESIS:** bind-ON > ctrl on G1 best_distinct/G6 fals ≥2/3 seeds AND held-out 4/4 DESCENT.  
-**SCOPE:** DIRECTIONAL (py 2-production = retired 2026-06-28, sufficient for floor/lift screen).  
-If bind-ON lifts G1≥2 ROBUST → escalate to hexa clm_decode/serialize lockstep wiring (a_verified_must_wire rung 3) for TERMINAL.
+- **G1=0 for ALL 6 arms** (bind ×3 + ctrl ×3, all seeds {7, 4302, 4303}) — bilinear bind op at decode without explicit recombination objective does not lift composed_distinct above zero.
+- **G6 fals=0 for ALL 6 arms** — no falsifiable ideas.
+- **G0 degradation in bind arm:** 1/3 seeds PASS (seed7 5/5; seeds 4302/4303 FAIL at 2/5 and 1/5) vs ctrl 3/3 PASS — bilinear Hadamard without L_recomb creates distribution mismatch.
+- CONFIRMS toy Task B: trunk memorizes plain CE without using bilinear when no compositional pressure is applied.
+- **The missing piece is L_recomb InfoNCE objective.** H_1819 (bind + L_recomb co-training, 4000 steps) is the decisive test.
+
+See `state/g1_cotrain_live_bind/RESULT.md` for full analysis.

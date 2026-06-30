@@ -1,0 +1,18 @@
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   state/g1_cotrain_recomb_bind/ckpt/op_plaince_seed4303.clm  (mouth: clm)
+corpus: 4 file(s)
+gen:    80 tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)
+
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 3/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=16
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🔴 FAIL  L1 fab=0.5070 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=1 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.

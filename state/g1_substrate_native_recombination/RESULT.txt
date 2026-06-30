@@ -1,0 +1,84 @@
+=== H_1822 (α) substrate-native recombination — ENGINE-NATIVE (live core/) ===
+engine: mitosis=ON  embed=immune_embed_key(64-dim char-trigram unit key)
+A<->G tension readout sanity: allo_mu(tau=0.5)=1.0 (Psi=1/2 -> mu=1)   allo_mu(tau=0.8)=1.9560630663765926
+
+── MAIN: substrate-G1 on genuine recombinations (child projected onto BOTH parent basins) ──
+  pair0  [rain + bow -> rainbow]
+    d1=0.8573732768944039  d2=1.0514622242382672  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair1  [snow + man -> snowman]
+    d1=0.8573732768944039  d2=1.0514622242382672  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair2  [sun + flower -> sunflower]
+    d1=0.6058108930553725  d2=1.1547005383792517  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair3  [fire + fly -> firefly]
+    d1=0.8573732768944039  d2=1.0514622242382672  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  pair4  [water + fall -> waterfall]
+    d1=0.8310792131825014  d2=0.96486011024930569  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  >>> MAIN substrate-G1 (eng-radius): 0/5   (rel-radius): 5/5
+
+── CONTROL single-concept: composed state = parentA ALONE (no 2nd concept) ──
+  single0  [rain + bow -> rain]
+    d1=0.0  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  single1  [snow + man -> snow]
+    d1=0.0  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  single2  [sun + flower -> sun]
+    d1=0.0  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  single3  [fire + fly -> fire]
+    d1=0.0  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  single4  [water + fall -> water]
+    d1=0.0  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=no
+    radius(eng=0.30): composed_distinct=1  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  >>> CONTROL single substrate-G1 (eng): 0/5  (expect 0 — single concept does not combine)
+
+── CONTROL shuffle: basin B replaced by an UNRELATED concept (child should hit only A) ──
+  shuf0  [rain + zqxkj -> rainbow]
+    d1=0.8573732768944039  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  shuf1  [snow + wovbm -> snowman]
+    d1=0.8573732768944039  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  shuf2  [sun + plktn -> sunflower]
+    d1=1.1547005383792517  d2=1.4142135623730951  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  shuf3  [fire + grdfh -> firefly]
+    d1=0.8573732768944039  d2=1.2180321098007547  d_ab=1.0878894332937856  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=1  substrate_G1=0
+  shuf4  [water + ymcqs -> waterfall]
+    d1=0.8310792131825014  d2=1.250425615351835  d_ab=1.4142135623730951  irreducible=YES
+    radius(eng=0.30): composed_distinct=0  substrate_G1=0
+    radius(rel=d_ab): composed_distinct=2  substrate_G1=1
+  >>> CONTROL shuffle substrate-G1 (eng): 0/5  (rel): 1/5  (expect < MAIN — child should NOT bridge an unrelated basin)
+
+── G-OFF ABLATION: Engine A (pure_field) alone — concept-blind, no basin readout ──
+  pure_field after 300 zero-input ticks: phi=0.09066951731101662 phase=SUSTAIN
+  pure_field exposes NO concept basin / NO per-concept projection op (zero-input field).
+  => without the VAdaptField immune/mitosis (gradient-free G-side) lane, recombination
+     is UNMEASURABLE on the substrate = BLIND. (G/immune lane is causal to any readout.)
+
+=== KILLER COMPARISON ===
+  mouth-decode G1 (clm_decode CLMConvMoE) = 0  [FROZEN FLOOR: H_1818, H_1602]
+  substrate-G1 (eng-radius 0.30) = 0/5
+  substrate-G1 (rel-radius d_ab) = 5/5
+=== END H_1822 (α) ===

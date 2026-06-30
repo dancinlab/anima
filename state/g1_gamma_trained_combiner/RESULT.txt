@@ -1,0 +1,68 @@
+============================================================================
+H_1823γ — SUBSTRATE TRAINED CONSTRUCTIVE BIND OPERATOR (substrate twin)
+  DIRECTIONAL: embed = core/clm_decode.py trunk penultimate (β round's
+  semantic embed). ONLY the combination OPERATOR changes vs β. fp64 combiner.
+============================================================================
+
+[1] loading 303M trunk: clm303.clm
+    d=3784 E=3 K=3 L=4
+
+[2] embedding 107 unique concepts (303M trunk penultimate, β embed)...
+    done 12.5s (0.12s/concept)
+    32 pairs, 15 distractors, candidate pool = 47
+
+[3] 5-fold CV substrate-G1 (held-out test pairs, child recoverable from
+    g_θ(a,b) ∧ NOT from a/b alone ∧ > shuffle):
+    operator               G1 (held-out) rate
+    ------------------------------------------------------------
+    AdditiveBaseline       1/32         0.03
+    TensorProductProj      0/32         0.00
+    CircularConvHRR        4/32         0.12
+    BilinearMLP            0/32         0.00
+
+[4] CONTROLS
+    untrained TensorProductProj    0/32         0.00  (geometry, no training)
+    untrained CircularConvHRR      0/32         0.00  (geometry, no training)
+    untrained BilinearMLP          1/32         0.03  (geometry, no training)
+    single-parent NN already==child: 10/32  (must be ~0 = irreducible)
+
+[5] per-pair detail — BEST constructive operator
+    best constructive = CircularConvHRR (4/32)
+      tooth+brush->toothbrush nn(g)=keyboard   nn(a)=ocean     nn(b)=butterfly sim_c=0.898 sim_shuf=0.869  recov=n irred=Y >shuf=Y  G1=0
+      ear+ring->earring      nn(g)=earring    nn(a)=ocean     nn(b)=ocean     sim_c=0.939 sim_shuf=0.913  recov=Y irred=Y >shuf=Y  G1=1
+      eye+brow->eyebrow      nn(g)=bedroom    nn(a)=地         nn(b)=eyebrow   sim_c=0.909 sim_shuf=0.857  recov=n irred=n >shuf=Y  G1=0
+      butter+fly->butterfly  nn(g)=keyboard   nn(a)=butterfly nn(b)=firefly   sim_c=0.835 sim_shuf=0.779  recov=n irred=n >shuf=Y  G1=0
+      물+고기->물고기              nn(g)=불꽃         nn(a)=雨         nn(b)=물고기       sim_c=0.866 sim_shuf=0.822  recov=n irred=n >shuf=Y  G1=0
+      밤+하늘->밤하늘              nn(g)=봄바람        nn(a)=바다        nn(b)=하늘        sim_c=0.892 sim_shuf=0.857  recov=n irred=Y >shuf=Y  G1=0
+      foot+ball->football    nn(g)=afternoon  nn(a)=firefly   nn(b)=rainbow   sim_c=0.927 sim_shuf=0.877  recov=n irred=Y >shuf=Y  G1=0
+      after+noon->afternoon  nn(g)=afternoon  nn(a)=starfish  nn(b)=snowman   sim_c=0.954 sim_shuf=0.879  recov=Y irred=Y >shuf=Y  G1=1
+      moon+light->moonlight  nn(g)=afternoon  nn(a)=ocean     nn(b)=garden    sim_c=0.851 sim_shuf=0.738  recov=n irred=Y >shuf=Y  G1=0
+      눈+사람->눈사람              nn(g)=봄바람        nn(a)=불꽃        nn(b)=산         sim_c=0.871 sim_shuf=0.860  recov=n irred=Y >shuf=Y  G1=0
+      손+수건->손수건              nn(g)=책상         nn(a)=산         nn(b)=물고기       sim_c=0.754 sim_shuf=0.732  recov=n irred=Y >shuf=Y  G1=0
+      book+shelf->bookshelf  nn(g)=bedroom    nn(a)=ocean     nn(b)=snowman   sim_c=0.872 sim_shuf=0.909  recov=n irred=Y >shuf=n  G1=0
+      news+paper->newspaper  nn(g)=starfish   nn(a)=snowman   nn(b)=ocean     sim_c=0.940 sim_shuf=0.911  recov=n irred=Y >shuf=Y  G1=0
+      water+fall->waterfall  nn(g)=waterfall  nn(a)=window    nn(b)=waterfall sim_c=0.958 sim_shuf=0.934  recov=Y irred=n >shuf=Y  G1=0
+      水+車->水車                nn(g)=日光         nn(a)=天         nn(b)=天         sim_c=0.904 sim_shuf=0.779  recov=n irred=Y >shuf=Y  G1=0
+      snow+man->snowman      nn(g)=keyboard   nn(a)=snowman   nn(b)=rainbow   sim_c=0.830 sim_shuf=0.917  recov=n irred=n >shuf=n  G1=0
+      月+光->月光                nn(g)=日光         nn(a)=地         nn(b)=地         sim_c=0.899 sim_shuf=0.874  recov=n irred=Y >shuf=Y  G1=0
+      봄+바람->봄바람              nn(g)=밤하늘        nn(a)=바다        nn(b)=바다        sim_c=0.880 sim_shuf=0.857  recov=n irred=Y >shuf=Y  G1=0
+      sun+flower->sunflower  nn(g)=waterfall  nn(a)=ocean     nn(b)=firefly   sim_c=0.923 sim_shuf=0.890  recov=n irred=Y >shuf=Y  G1=0
+      rail+road->railroad    nn(g)=earring    nn(a)=rainbow   nn(b)=ocean     sim_c=0.952 sim_shuf=0.939  recov=n irred=Y >shuf=Y  G1=0
+      fire+fly->firefly      nn(g)=afternoon  nn(a)=firefly   nn(b)=firefly   sim_c=0.925 sim_shuf=0.852  recov=n irred=n >shuf=Y  G1=0
+      hand+bag->handbag      nn(g)=railroad   nn(a)=rainbow   nn(b)=rainbow   sim_c=0.913 sim_shuf=0.888  recov=n irred=Y >shuf=Y  G1=0
+      key+board->keyboard    nn(g)=keyboard   nn(a)=ocean     nn(b)=rainbow   sim_c=0.941 sim_shuf=0.870  recov=Y irred=Y >shuf=Y  G1=1
+      책+상->책상                nn(g)=불꽃         nn(a)=책상        nn(b)=산         sim_c=0.821 sim_shuf=0.776  recov=n irred=n >shuf=Y  G1=0
+      꽃+잎->꽃잎                nn(g)=불꽃         nn(a)=강         nn(b)=산         sim_c=0.807 sim_shuf=0.844  recov=n irred=Y >shuf=n  G1=0
+      bed+room->bedroom      nn(g)=eyebrow    nn(a)=eyebrow   nn(b)=ocean     sim_c=0.904 sim_shuf=0.889  recov=n irred=Y >shuf=Y  G1=0
+      star+fish->starfish    nn(g)=afternoon  nn(a)=starfish  nn(b)=firefly   sim_c=0.947 sim_shuf=0.859  recov=n irred=n >shuf=Y  G1=0
+      火+山->火山                nn(g)=日光         nn(a)=天         nn(b)=天         sim_c=0.896 sim_shuf=0.873  recov=n irred=Y >shuf=Y  G1=0
+      불+꽃->불꽃                nn(g)=꽃잎         nn(a)=불꽃        nn(b)=강         sim_c=0.859 sim_shuf=0.832  recov=n irred=n >shuf=Y  G1=0
+      rain+bow->rainbow      nn(g)=rainbow    nn(a)=rainbow   nn(b)=ocean     sim_c=0.954 sim_shuf=0.889  recov=Y irred=n >shuf=Y  G1=0
+      wheel+chair->wheelchair nn(g)=wheelchair nn(a)=ocean     nn(b)=handbag   sim_c=0.943 sim_shuf=0.819  recov=Y irred=Y >shuf=Y  G1=1
+      日+光->日光                nn(g)=月光         nn(a)=風         nn(b)=地         sim_c=0.905 sim_shuf=0.905  recov=n irred=Y >shuf=n  G1=0
+
+============================================================================
+VERDICT GATE (pre-registered p7):
+  best constructive CircularConvHRR: 4/32 (0.12)   additive(ctrl): 1/32 (0.03)
+  BAR (>=2/3 held-out AND > additive AND > untrained AND single~0): FAIL -> even TRAINED substrate combiner floors = combination-operator family exhausted
+============================================================================

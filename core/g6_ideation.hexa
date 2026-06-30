@@ -1,3 +1,9 @@
+// ==========================================================================
+// ⛔ ENGINE-INTERNAL — DO NOT RUN DIRECTLY. 측정/학습/서빙은 cli/ 단일진입만:
+//   anima eval | train | serialize  (canonical 단일진입 = cli/anima.hexa).
+// `hexa run core/g6_ideation.hexa` 직접 실행/측정 = 단일진입 우회(#2603) + side-harness drift.
+// 이 파일은 generator L3 / cli/anima.hexa 가 dispatch 하는 경로로만 진입.
+// ==========================================================================
 // ════════════════════════════════════════════════════════════════════════
 // core/g6_ideation.hexa — H_1381 G6 IDEATION ★ WIRE-IN.
 //
@@ -384,8 +390,8 @@ pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int
 // driver). BYTE-IDENTICAL DIST/FALS/coherent: same frames, same per-frame seed (base_seed+i),
 // same gen_auto_ideate logic — the ONLY change is the decode runs off a PRE-LOADED handle
 // `h` (gen_auto_load) via gen_auto_ideate_W instead of reloading the .clm per frame. Used by
-// g_gates.hexa::g_eval_g6_W so full G0-G6 loads the 303M weight-set ONCE (a_core_engine_map:
-// same single .clm mouth, load hoisted out of the per-decode loop).
+// cli/evaluate.hexa::g_eval_g6_seeded_W so full G0-G6 loads the 303M weight-set ONCE
+// (a_core_engine_map: same single .clm mouth, load hoisted out of the per-decode loop).
 pub fn g6_score_arm_auto_W(h: Map, frames: list, gen: int, base_seed: int, known: Map) -> Map {
     let texts = []
     let word_sets = []
@@ -418,12 +424,12 @@ pub fn g6_score_arm_auto_W(h: Map, frames: list, gen: int, base_seed: int, known
 // g6_score_arm_auto — CANONICAL mouth-agnostic G6 scoring op (a89a F3 reconcile · single-entry):
 // IDENTICAL DIST/FALS/coherent logic to g6_score_arm, but decode is the SINGLE typed L3 entry
 // gen_auto_ideate (sniffs the ckpt → .clm OR ByteGPT) instead of the CLM-only gen_clm_ideate.
-// This is the wired engine op g_gates.g_eval_g6 calls — so the "G6 scoring = a wired engine op"
-// claim is TRUE (no claimed-wired-but-dead inline duplicate). base_seed parameterizes the per-
-// frame RNG (seeded base_seed+i, exactly like the old inline g_eval_g6 path → base_seed=7
-// reproduces it frame-for-frame) so g_eval_g6_multiseed can re-run the SAME ladder over seeds.
-// Lockstep mirror of g_gates.py is via g6_ideation.py::g6_score_arm_auto. p7: scoring only,
-// no idea-authoring; the frame is fixed, only the model's own sample is read.
+// This is the wired engine op cli/evaluate.hexa::g_eval_g6_seeded_W calls — so the "G6 scoring
+// = a wired engine op" claim is TRUE (no claimed-wired-but-dead inline duplicate). base_seed
+// parameterizes the per-frame RNG (seeded base_seed+i, exactly like the old inline g_eval_g6
+// path → base_seed=7 reproduces it frame-for-frame) so g_eval_g6_multiseed can re-run the SAME
+// ladder over seeds. p7: scoring only, no idea-authoring; the frame is fixed, only the model's
+// own sample is read.
 pub fn g6_score_arm_auto(ckpt: string, frames: list, gen: int, base_seed: int, known: Map) -> Map {
     let texts = []
     let word_sets = []

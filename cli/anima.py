@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# ==========================================================================
+# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical `anima` PATH 명령(=cli/anima.hexa,
+#   hx install anima)뿐 — `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
+#   학습=`anima train` · 측정=`anima evaluate` · 직렬화=`anima serialize`. py 측정은 DIRECTIONAL,
+#   terminal verdict 는 hexa 엔진-네이티브(core/CLAUDE.md). enforce: .harness/enforcement.json
+#   H-ANIMA-SINGLE-ENTRY pre_bash + 아래 __main__ 가드. (import 는 무손상.)
+# ==========================================================================
+import sys as _anima_entry_guard
+if __name__ == "__main__":
+    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical `anima` 명령(hx install anima, =cli/anima.hexa) 경유. #2603")
 # anima.py — THE canonical PY single entry point (cli/anima.hexa's py twin).
 #
 # WHY THIS FILE (py 2-production single-entry, a_engine_native_learning): anima keeps
@@ -6,18 +16,18 @@
 # engine in train/ + the byte-parity core/*.py mirror). The hexa side already has its
 # canonical single entry cli/anima.hexa (chat · eval · train). This file is its py
 # twin so MEASUREMENT and LEARNING are reachable through ONE py cli command instead of
-# a side-harness that calls core/g_gates.py directly (= single-entry bypass, #2603).
+# a side-harness that scores ckpts directly (= single-entry bypass, #2603).
 #
 # SINGLE ENTRY (a_engine_native_learning): the two measurement/learning verbs live in
 # their own SYMMETRIC files — cli/evaluate.{hexa,py} (MEASUREMENT) and cli/train.{hexa,py}
 # (LEARNING). This canonical entry DISPATCHES `anima evaluate`→cli/evaluate.py and
 # `anima train`→cli/train.py (sub-process), so there is ONE installed `anima` command
 # whose subcommands fan out to the symmetric twins. `anima evaluate <ckpt>` scores the
-# full G0-G6 battery via core/g_gates.py's g_eval_all (the SAME engine module the hexa
-# side wires) — byte-identical to a direct g_gates.py run AND to the hexa anima evaluate.
+# full G0-G6 battery via cli/evaluate.py's in-file g_eval_all (the scorers folded in from
+# the former core/g_gates.py module) — byte-identical to the hexa anima evaluate.
 #
 # This py entry is torch-free and gauge-free — it only dispatches; the evaluate twin
-# imports the numpy `math.log` g_gates mirror, so `anima evaluate` stays a clean engine-
+# holds the numpy `math.log` scorer in-file, so `anima evaluate` stays a clean engine-
 # native measurement surface (the gate enforcer's torch/gauge grep must come back empty).
 #
 # USAGE (installed `anima` PATH command after `hx install anima`)
@@ -86,7 +96,7 @@ def anima_usage():
 #
 # SEPARATE LANE (a_core_engine_map): training is NOT the generator L3 mouth slot — it
 # is the LEARNING entry (cli/train.py, a_clm_gen_pipeline torch Lane-P). The eval side
-# imports the torch-free g_gates mirror; the trainer pulls torch. To keep this file
+# is the torch-free numpy scorer (in cli/evaluate.py); the trainer pulls torch. To keep this file
 # torch-free AND avoid linking two disjoint dep sets into one process, `anima train`
 # DISPATCHES to cli/train.py as a SUB-PROCESS (mirrors cli/anima.hexa's `exec(hexa run
 # cli/train.hexa)`). argv after "train" is forwarded verbatim to train.py's argparse.
@@ -108,10 +118,10 @@ def anima_train_mode(argv):
 # file cli/evaluate.py (the symmetric mirror of cli/train.py). `anima evaluate <model.clm>`
 # DISPATCHES there as a sub-process (mirrors cli/anima.hexa's `exec` dispatch + this file's
 # train dispatch), so anima.py stays a thin verb router and the eval logic has ONE home.
-# evaluate.py imports core/g_gates.py (torch-free numpy mirror), so a direct
-# `python3 core/g_gates.py` and `anima evaluate` are byte-identical.
+# cli/evaluate.py holds the G0-G6 scorers in-file (torch-free numpy mirror, the former
+# core/g_gates.py module folded in), byte-identical to the hexa `anima evaluate`.
 #
-# .clm-ONLY (the engine decodes ONLY .clm): g_gates mounts a ckpt through the generator
+# .clm-ONLY (the engine decodes ONLY .clm): evaluate mounts a ckpt through the generator
 # L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable —
 # reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
 def anima_evaluate_mode(argv):

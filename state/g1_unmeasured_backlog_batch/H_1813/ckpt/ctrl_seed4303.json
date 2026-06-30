@@ -1,0 +1,101 @@
+{
+  "hyp": "H_1813",
+  "arm": "ctrl",
+  "seed": 4303,
+  "levers": {
+    "tlora": false,
+    "tlora_rank": 8,
+    "tlora_base": true,
+    "recomb_lambda": 0.1
+  },
+  "n_params": 345664875,
+  "loss0": 5.74197,
+  "lossF": 1.58407,
+  "wall_s": 2826.2,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": 1.58665,
+  "registers_descent": "4/4",
+  "heldout_descent": {
+    "ko-general": {
+      "val_ce": 1.39585,
+      "descent": true
+    },
+    "en-general": {
+      "val_ce": 1.57819,
+      "descent": true
+    },
+    "ko-sns": {
+      "val_ce": 1.38163,
+      "descent": true
+    },
+    "en-sns": {
+      "val_ce": 1.99094,
+      "descent": true
+    }
+  },
+  "last_aux": {
+    "recomb_ce": 1.58606
+  },
+  "dbes_final": {
+    "expert_div": 0.37174,
+    "router_entropy": 1.04165,
+    "usage_gini": 0.16201,
+    "usage": [
+      0.31751,
+      0.21974,
+      0.46276
+    ],
+    "n_experts": 3
+  },
+  "dbes_log": [
+    {
+      "expert_div": 0.70586,
+      "router_entropy": 0.797,
+      "usage_gini": 0.06119,
+      "usage": [
+        0.32969,
+        0.38105,
+        0.28926
+      ],
+      "n_experts": 3,
+      "step": 1000
+    },
+    {
+      "expert_div": 0.30517,
+      "router_entropy": 0.71802,
+      "usage_gini": 0.3266,
+      "usage": [
+        0.49662,
+        0.00674,
+        0.49664
+      ],
+      "n_experts": 3,
+      "step": 2000
+    },
+    {
+      "expert_div": 0.39722,
+      "router_entropy": 0.59194,
+      "usage_gini": 0.16795,
+      "usage": [
+        0.3387,
+        0.20469,
+        0.45661
+      ],
+      "n_experts": 3,
+      "step": 3000
+    },
+    {
+      "expert_div": 0.40686,
+      "router_entropy": 1.0465,
+      "usage_gini": 0.15327,
+      "usage": [
+        0.29642,
+        0.23684,
+        0.46674
+      ],
+      "n_experts": 3,
+      "step": 4000
+    }
+  ],
+  "tier": "engine-native-eligible (.clm materialized experts); torch-probe DIRECTIONAL"
+}

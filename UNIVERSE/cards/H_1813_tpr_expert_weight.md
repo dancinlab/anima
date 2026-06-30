@@ -1,12 +1,12 @@
 ---
 id: H_1813
 slug: tpr_expert_weight
-tier: PRE-REG
+tier: IN-FLIGHT
 title: TPR expert-weight TLoRA + DBES 분화진단 — ConvMoE expert 내부 weight 구조 레버 (N1+N3)
-verdict: PRE-REG (launch-ready · $0 smoke GREEN · 303M GPU 미실행)
-status: PRE-REG
-wired: launch-ready (303M 미실행)
-verdict_artifact:
+verdict: IN-FLIGHT (pod 43098811 READY · 6 arms training · G0-G6 eval pending)
+status: IN-FLIGHT
+wired: DIRECTIONAL-mirror (training+eval in progress)
+verdict_artifact: state/g1_unmeasured_backlog_batch/H_1813/ckpt/
 source: UNIVERSE
 archived: false
 ---
@@ -31,5 +31,17 @@ launch-ready (303M GPU 미실행). $0 smoke = 파이프 검증 only.
 ## 동기
 이번 세션 binding readout + objective + cheap 레버 전부 INCONCLUSIVE-at-floor = undertrain 의심. expert weight 의 구조적 bias 가 floor 위로 올리는지, expert collapse(미분화)가 G1 floor 의 원인인지 격리.
 
+## 발사 현황 (2026-06-29)
+- pod: vast 43098811 A40 CUDA-12.2 $0.57/hr RUNNING
+- trainer: state/g1_unmeasured_backlog_batch/H_1813/trainer.py (recomb-objective baked)
+- arms: ctrl×{7,4302,4303} + tlora×{7,4302,4303} (6 runs sequential, 4000 steps each)
+- step-time 실측: ~0.9 s/step @ A40 bf16 + recomb_loss (doubled fwd) → ~60-67 min/arm → ~6.7h total
+- 현황 12:47 UTC: ctrl_seed7 step 1200/4000, val_CE=1.768 (DESCENT: << uniform 5.545), GPU 99%
+- 완료 예상: ~19:10 UTC (학습) → ~20:15 UTC (eval+aggregate)
+- eval chain: chain_eval.sh PID 1641 (waiting) → eval_h1813.sh (verify_clm_v2 descent + g_gates G0-G6 --gen 80) → aggregate_h1813.sh (결과 파싱)
+- 결과 위치: state/g1_unmeasured_backlog_batch/H_1813/ckpt/aggregate.log + *_g0g6.txt + *_descent.txt
+- 다음 세션 작업: rsync ckpt/*.clm + *.pt (a_fire_recover_complete) + RESULT.md 채우기 + teardown pod
+
 ## artifacts
-state/1631_tpr_expert_weight/ (PREREG.md · trainer.py · LAUNCH_SPEC_303M.md · SMOKE_LOG.md · ckpt)
+state/1631_tpr_expert_weight/ (PREREG.md · trainer.py · LAUNCH_SPEC_303M.md · SMOKE_LOG.md)
+state/g1_unmeasured_backlog_batch/H_1813/ (trainer.py + ckpt/ [in-flight])

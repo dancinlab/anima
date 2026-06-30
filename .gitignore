@@ -609,6 +609,9 @@ state/1387_g6_production_close/clm303_d5000.clm
 state/1387_g6_production_close/clm303_d5000.pt
 state/1387_g6_production_close/clm303_endom.clm
 state/1387_g6_production_close/clm303_endom.pt
+# H_1813 TPR expert-weight TLoRA ckpts (303M, ~175MB .clm + ~350MB .pt per arm × 6) — HF-only
+state/g1_unmeasured_backlog_batch/H_1813/ckpt/*.clm
+state/g1_unmeasured_backlog_batch/H_1813/ckpt/*.pt
 
 # ARCHITECTURE.json file-index snapshot — generated on demand (anti-drift c4)
 # regenerate: bash state/scratch/gen_file_index.sh
@@ -624,3 +627,10 @@ state/1630_reg_dictaux/ckpt4000/*.clm
 state/1816_predcoding_binding/ckpt/*.clm
 # H_1818 co-trained live-bind ckpts (178MB each × 6 = 1GB) — HF-backed, too large for git
 state/g1_cotrain_live_bind/ckpt/*.clm
+
+# Binding-arch + cotrain-bind eval ckpts — .clm weights are HF/external-mount (not repo payload), like *.pt
+state/g1_cotrain_recomb_bind/ckpt/*.clm
+state/h1620_hopfield_mouth/ckpt/*.clm
+state/h1630_tropical_mouth/ckpt/*.clm
+state/h1631_sheaf_mouth/ckpt/*.clm
+state/h1632_galois_mouth/ckpt/*.clm

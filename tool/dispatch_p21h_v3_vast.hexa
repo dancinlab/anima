@@ -27,7 +27,7 @@
 //   Blocker 4 (vP21M LoRA weight absent)
 //     `adapter_model.safetensors` is not on origin/main. Axis B opt-in path
 //     prints an honest warning + cites VP21M_SEARCH_LOG.md. No fake KD
-//     target is injected (a_completeness_over_cheap).
+//     target is injected (completeness-bar).
 //   Blocker 5 (M3 demoted from 본선 to optional baseline)
 //     `dispatch_main` prints a one-line carry-note that M4 MoE-fresh is
 //     본선 since 2026-05-27 and M3 fire is a historical baseline measure.
@@ -55,7 +55,7 @@
 // ─────────────────────
 //   a_fire_autonomous       — fire is autonomous (no user gate, parallel)
 //   a_wall_first            — 3 (or 4) pods rented in parallel
-//   a_completeness_over_cheap — axis B explicit defer (no fake KD target)
+//   completeness-bar — axis B explicit defer (no fake KD target)
 //   a_fire_recover_complete — harvest before teardown (ckpt+result+log)
 //   cloud-guard g8          — only runpodctl + hexa cloud, no raw ssh/scp
 //   project.tape g_hexa_only_authoring — no new .sh; new code authored in
@@ -163,7 +163,7 @@ fn _lr_for_init(init: string) -> string {
 
 fn _axis_b_warning() -> string {
     // Printed before any axis B dispatch — HONEST scope per
-    // a_completeness_over_cheap. See state/p21h_v3_m3_pilot_scope_2026_05_28/
+    // completeness-bar. See state/p21h_v3_m3_pilot_scope_2026_05_28/
     // AXIS_B_DEFERRED.md for the structural reason.
     return "[axis-B WARNING] axis B teacher LoRA weight (adapter_model.safetensors) " +
            "ABSENT from origin/main. train_p21h_v3.py:846-851 documents the Python " +

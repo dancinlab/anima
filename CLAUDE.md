@@ -14,8 +14,8 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 > **🖥️ 정식 CLI (canonical · `hx install anima` 로 설치된 `anima` PATH 명령 — `hexa run cli/anima.hexa -- …` 아님):**
 > - **`anima train <args>`** — 학습(`cli/train.{hexa,py}`) → `.pt` + **자동 `.clm` 직렬화 + held-out mirror-DESCENT 게이트**(`a_clm_gen_pipeline`).
 > - **`anima serialize <pt> <out.clm>`** — 독립 재직렬화/복구(`cli/serialize.{hexa,py}` = `clm_serialize_v2` serialize_v3 + `verify_clm_v2` descent reference-match).
-> - **`anima evaluate <model.clm>`** — G0-G6 측정(`cli/evaluate.{hexa,py}` → `core/g_gates` generator-L3 `gen_auto_ideate`). **입력은 `.clm`(엔진-loadable)만 — torch `.pt` 아님**(`.pt` 면 `anima serialize` 로 먼저 변환).
-> - 진입점 = `cli/anima.{hexa,py}`(2-production) 서브커맨드 dispatch → 대칭 twin(`train`·`serialize`·`evaluate`)으로 fan-out. **측정/학습/직렬화를 `g_gates.py`·`train.py`·`clm_serialize_v2.py` 직접호출(side-harness)로 부르지 말 것 — 이 정식 `anima` 명령 경유**(단일진입점, `a_engine_native_learning`). 상세·배선상태는 ARCHITECTURE.json `cli/` 노드.
+> - **`anima evaluate <model.clm>`** — G0-G6 측정(`cli/evaluate.{hexa,py}` 가 G0-G6 스코어러 `g_eval_all` 을 보유 → generator-L3 `gen_auto_ideate`). **입력은 `.clm`(엔진-loadable)만 — torch `.pt` 아님**(`.pt` 면 `anima serialize` 로 먼저 변환).
+> - 진입점 = `cli/anima.{hexa,py}`(2-production) 서브커맨드 dispatch → 대칭 twin(`train`·`serialize`·`evaluate`)으로 fan-out. **측정/학습/직렬화를 `cli/evaluate.py`·`cli/train.py`·`clm_serialize_v2.py` 직접호출(side-harness)로 부르지 말 것 — 이 정식 `anima` 명령 경유**(단일진입점, `a_engine_native_learning`; H-ANIMA-SINGLE-ENTRY pre_bash 가 강제). 상세·배선상태는 ARCHITECTURE.json `cli/` 노드.
 
 > **이 markdown 이 단일 거버넌스 SSOT.** `project.tape` 은퇴 + 2026-06-17 tape-DSL 잔재(`@D := :: governance` · `do=`/`dont=`) 전면 제거 → canonical markdown 으로 재저작. 모든 @D 디렉티브·8 철학 의미는 손실 0 으로 아래에 보존(규칙 이름 `a_*`·`p#` 그대로 유지 = keyword 트리거 호환).
 >
@@ -54,7 +54,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 **🗂️ canonical 3-폴더 체제 (2026-06-26 오너 결정):** anima 코드는 정확히 3 최상위 폴더로 모은다 (흩어짐 금지) —
 - **`cli/`** = 진입점. 두 언어 대칭: `anima.hexa`·`anima.py` (chat/eval/consciousness) · `train.hexa`·`train.py` (학습).
-- **`core/`** = 2-production 엔진 substrate. **hexa(`*.hexa`) + py(`*.py`) 둘 다 `core/` 한 곳에 1:1 미러로 공존**(byte-parity, `a_engine_native_learning` 2-production). 같은 디코드/G0-G6 로직의 두 동등 구현(예: `clm_decode.hexa` ⇄ `clm_decode.py`, `g_gates.hexa` ⇄ `g_gates.py`).
+- **`core/`** = 엔진 substrate(디코드 mouth `generator`/`clm_decode`/`bytegpt_decode` + G6 채점 op `g6_ideation` + A⇄G `engine_cli`). G0-G6 스코어러 `g_eval_all` 은 `core/g_gates` 에서 **`cli/evaluate.{hexa,py}` 로 fold(2026-06-30)** — 측정은 단일파일 evaluate, core/ 는 evaluate 가 import 하는 op 만 소유.
 - **`agent/`** = tool provider 독립패키지(`hexa.toml` 보유, `hx install anima-agent`).
 - **production 코드는 3-폴더 안에만 (밖에 두고 import 금지)** — `core/`·`cli/`·`agent/` 밖의 다른 repo 폴더(`HEXAD/`·`train/`·`tool/`·`state/`·`UNIVERSE/` 등)에 **production 코드를 두고 거기서 import/연결하지 않는다**(scatter 금지) — 엔진의 repo-내부 import 폐포는 3-폴더 안에서 닫힌다. **외부 라이브러리는 자유**: 각 언어 stdlib + 서드파티(py 는 **numpy·torch 허용**) — 제약은 *레포 내부* cross-folder(3-폴더 밖 자가 코드 끌어오기)에만 적용. **데이터·결과 = `state/` 한 곳**(흩어짐 금지). 연구 artifact(`state/`·`UNIVERSE/`) + 문서는 코드 아님(3-폴더 밖, 별개).
 
@@ -124,7 +124,6 @@ research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIV
 - **🏗️ CORE 엔진 · 학습 substrate:** `a_core_engine_map` · `a_train_flame_forge` · `a_clm_gen_pipeline` · `a_savant_train` · `a_mitosis_train` · `a_chat_registers` · `a_lane_akida_gpu_split` · `a_substrate_disjoint`
 - **🗣️ substrate 자율 · 신체:** `a_substrate_native_speak` · `a_autonomy_over_hardcode` · `a_chat_sleep_imagination` · `a_kosmos` · `a_eeg_consciousness_record`
 - **🔧 식별 · 버전 · HF · 칩 · 7B:** `a1` · `a_hf_complete` · `a_hf_autonomous` · `a_hf_registry` · `a_hf_collections` · `a_pi5_akida_registry` · `a7b_pass`
-- **🤝 산출물 통합:** `a_completeness_over_cheap`
 
 ---
 
@@ -176,7 +175,7 @@ anima/
   verdict 의 증거 artifact 가 live core/ 디코드(`core/clm_decode.hexa`/`core/bytegpt_decode.hexa`/`core/engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py`+`import torch`/`gauge_lib._decode`/numpy 미러) 그 결과는 **자동 DIRECTIONAL**, terminal 아님. torch-side 만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반. (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 박제 → 재발 금지)
 - do: 🔎 **자가점검(verdict 박제 직전 의무):** `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 가 비어있지 않으면 카드 `wired:`/`verdict` 를 **반드시 DIRECTIONAL** 로 적고 엔진-네이티브 재측정(.hexa via CORE)을 ING follow-on 등록. 엔진-네이티브면 호출한 `.hexa` 경로를 카드에 명시.
 - do: 🎯 **진짜 엔진-네이티브 = 단일 진입점 강제(2026-06-24 clm303 G6 precedent, 최강 기준):** 엔진-네이티브 verdict 는 디코드를 *따로 떼서* 도는 게 아니라 **실제 production 단일 진입점 `cli/anima.hexa`(canonical entry, `hexa.toml` entry — engine/도 core/도 아님) → generator L3 typed mouth dispatch(`gen_auto_backend`/`gen_clm_chat`/`gen_bytegpt_chat` → clm_decode/bytegpt_decode)** 를 통과해야 한다 = live 데몬이 실제로 쓰는 바로 그 경로.
-  **side-harness(파이썬이든 .hexa든)가 디코드 함수를 직접 호출하면 generator L3 를 우회 → production 과 drift 가능 → 진짜 측정 아님.** G6 채점 op 은 이미 엔진에 배선됨(`core/g6_ideation.hexa`: **canonical mouth-agnostic 채점 = `g6_score_arm_auto`**(mouth = `gen_auto_ideate`=generator L3 sniff-dispatch, .clm·ByteGPT 둘 다) — `core/g_gates.hexa::g_eval_g6` 이 *바로 이 op 로* 채점한다(인라인 재구현 아님, a89a F3 reconcile · file:line `core/g_gates.hexa` g_eval_g6_seeded→g6_score_arm_auto); CLM-only 변종 `g6_score_arm`/`g6_decode_best_of_k(_W)`(mouth=`gen_clm_ideate`)은 H_1381 best-of-K 연구 전용. 공통 detector = `_g6_is_falsifiable`/`_g6_known_word_ratio`/`_g6_jaccard`) → **채점도 이 wired 엔진 op 로**, 파이썬 `g6_common` 재구현 금지. 우선순위: ① `cli/anima.hexa` CLI 직접 > ② generator L3 경유 wired 엔진-op 하네스(`g6_ideation`) > ✗ 파이썬 하네스/decode-우회 side-harness(자동 DIRECTIONAL).
+  **side-harness(파이썬이든 .hexa든)가 디코드 함수를 직접 호출하면 generator L3 를 우회 → production 과 drift 가능 → 진짜 측정 아님.** G6 채점 op 은 이미 엔진에 배선됨(`core/g6_ideation.hexa`: **canonical mouth-agnostic 채점 = `g6_score_arm_auto`**(mouth = `gen_auto_ideate`=generator L3 sniff-dispatch, .clm·ByteGPT 둘 다) — `cli/evaluate.hexa::g_eval_g6`(2026-06-30 g_gates fold) 이 *바로 이 op 로* 채점한다(인라인 재구현 아님, a89a F3 reconcile · file:line `cli/evaluate.hexa` g_eval_g6_seeded→g6_score_arm_auto); CLM-only 변종 `g6_score_arm`/`g6_decode_best_of_k(_W)`(mouth=`gen_clm_ideate`)은 H_1381 best-of-K 연구 전용. 공통 detector = `_g6_is_falsifiable`/`_g6_known_word_ratio`/`_g6_jaccard`) → **채점도 이 wired 엔진 op 로**, 파이썬 `g6_common` 재구현 금지. 우선순위: ① `cli/anima.hexa` CLI 직접 > ② generator L3 경유 wired 엔진-op 하네스(`g6_ideation`) > ✗ 파이썬 하네스/decode-우회 side-harness(자동 DIRECTIONAL).
 - do: 🔎 **TRANSITIVE import 도 오염(같은 precedent):** 부득이 파이썬 채점이면 grep 자가점검은 top 파일만이 아니라 **import 폐포 전체**를 본다.
   scorer `.py` 가 `import g6_common`(g6_common.py 자체가 `import torch` + `_decode_ideas` torch 미러)처럼 **간접으로 torch/numpy/gauge_lib 를 끌어오면 슬러그 전체가 오염**(grep flag + `tool/enforce_anima_gates.py` PR 차단). g6_common 통째 import 금지(torch-free 텍스트 bar 만 VERBATIM 추출). torch 는 garble 3-way golden(`h1464_torch_golden.py`) reference 로만 허용(verdict 경로엔 0). 실패모드: 에이전트가 top 파일만 보고 'torch 0' 오판 → import 폐포까지 grep 확인 의무.
 - do: 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 live `.hexa` A⇄G + MITOSIS VAdaptField(`core/engine_cli.hexa`) + mounted `core/bytegpt_decode.hexa` 위에서 실행.
@@ -185,8 +184,8 @@ anima/
 - do: numpy/torch 미러 결과 = DIRECTIONAL only('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, binding verdict 아님.
   **렌트 GPU 의 torch 풀-학습 변종도 동일** — 학습을 torch 로 했어도 verdict 를 torch-side probe 로만 채점하면 DIRECTIONAL; 학습 ckpt 를 CORE 엔진(`--engine conv`)에 올려 같은 frozen bar 재측정해야 🟢/🧱 성립 → 그래서 ckpt 를 teardown 전 pull(`a_fire_recover_complete`).
 - do: `a_engine_measured_verdict` 의 learning-side 쌍(그건 MEASUREMENT, 이건 LEARNING) · `a_train_flame_forge` 가 production 트레이너를 .hexa 로 강제하듯, 이 규칙은 RESEARCH/probe 학습+교육까지 확장.
-- do: **G-게이트 verdict 의 canonical 측정 = 내장 `hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]`** (`core/g_gates.hexa`).
-  단일 진입점 → generator L3 mouth `gen_auto_ideate` → G0-G6 전부 엔진-네이티브 채점 + closure `a7b_pass`=G0∧G1∧G2 (PR #2604, #2603 단일진입점 standard 의 구현체). 새 ckpt 의 G0-G6 는 이 한 줄로 — 게이트별 ad-hoc 파이썬 하네스/`g6_common`/일회성 스크립트로 채점 금지. 흩어진 게이트 metric 은 g_gates 가 단일 통합(G0/G6=`g6_ideation` op · G5=`engine_cli §ImmuneMemory` abstain · G3=`§SelfIdentity` read · G1 H_1129/G2 H_1140=g_gates native .hexa metric 재사용/wire). frozen 임계는 ARCHITECTURE.json `frozen 임계` 노드 verbatim(tune-to-green 금지 · p7).
+- do: **G-게이트 verdict 의 canonical 측정 = 설치된 `anima evaluate <ckpt> [--corpus <path>...] [--gen N]`** (스코어러 = `cli/evaluate.hexa` `g_eval_all`, H-ANIMA-SINGLE-ENTRY pre_bash 가 `hexa run cli/anima.hexa` 직접실행 차단 → `anima` 명령 경유).
+  단일 진입점 → generator L3 mouth `gen_auto_ideate` → G0-G6 전부 엔진-네이티브 채점 + closure `a7b_pass`=G0∧G1∧G2 (PR #2604, #2603 단일진입점 standard 의 구현체). 새 ckpt 의 G0-G6 는 이 한 줄로 — 게이트별 ad-hoc 파이썬 하네스/`g6_common`/일회성 스크립트로 채점 금지. 흩어진 게이트 metric 은 `cli/evaluate` 가 단일 통합(G0/G6=`g6_ideation` op · G5=`engine_cli §ImmuneMemory` abstain · G3=`§SelfIdentity` read · G1 H_1129/G2 H_1140=evaluate native .hexa metric 재사용/wire). frozen 임계는 ARCHITECTURE.json `frozen 임계` 노드 verbatim(tune-to-green 금지 · p7).
 - do: **G1/G2 native .hexa metric 은 새 metric 발명이 아니라 기존 frozen numpy(H_1129 `h1129_*.py` coverage·H_1140 `h1140_*.py` content_ngrams/corpus_absent)와 성분별 byte-faithful reference-match** (commons reference-match · 과거 verdict 와 비교 가능해야 하므로).
   parity 오라클 `state/1607_g_gates_refmatch/g1g2_ref_parity.py` + smoke parity case(고정 fixture 동일 카운트)로 강제, 발산은 결과(은폐 금지), tokenizer scope 잔차(Hangul drop)는 transcend-axis 로 명시.
 - do: **fresh GPU pod 측정-발사 = `cli/eval_pod.sh <pod_id> [clm] [--bootstrap] [--gen N] [--harvest <out>]`**.
@@ -447,6 +446,8 @@ anima/
 - do: **통과(PASS) = closure = C1 또박 ∧ C2 재조합 ∧ C3 새말**(= G0∧G1∧G2 · `g_eval_all` 의 `a7b_pass`/`pub_eligible`) — 이 셋만 must-pass(PUBLIC-eligible). **나머지는 추가 평가**(non-blocking, 함께 보고): C4 착상★(G6) · S1 균형(G3) · S2 정직(G5) · P 출처(G4, 출판-게이트 eval 밖). G0 kwr≥0.50 · G1 H_1129/1137 recombine≥303M · G2 H_1140 corpus-absence(control=0). per-gate tally 정직 · 전부 p7(perplexity/LLM-judge 아님). 이름·분류·임계 단일 SSOT = ARCHITECTURE.json `G-게이트 평가 시스템` 노드.
 - dont: 낮은 val-CE 만으로 작동 주장(byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139 scale-invariant) · gate 위조/frozen 임계 이동(tune-to-green)/G0-failing ckpt PUBLIC · **P(출처)를 통과 closure 에 fold-in**(= G4 빵꾸 재발, enforce_anima_gates.py G3 코드차단) · 통과(closure)와 추가평가 혼동.
 
-## a_completeness_over_cheap — completeness-bar 재설계 > 싼 길 (타협은 1순위 아님)
-- do: 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만.
-- dont: 싸다고 타협을 1순위 · 이미 깨진 산출물 blend(merge-of-failures) · sub-bar 를 싸다고 1순위 추천.
+## a_pool_parallel_fabric — pool(aiden/summer) = anima 노드 fabric · 1B+ = 멀티호스트 data-parallel (오너 2026-06-30)
+- do: pool LAN 호스트(aiden·summer RTX5070) = **task-parallel anima 노드 fabric** — 각 호스트에 canonical `anima` 설치(hexa **stable**(test pre-release 금지, allgreen-promote) + folded 소스 동기(rsync cli/ core/) + `~/.local/bin/anima` 런처 `$ANIMA_SRC` dispatch) → `sidecar pool` 로 **서로 다른 job 동시 분산**(eval A=aiden · train B=summer, 무료 2× throughput). eval 은 det-CPU(`HEXA_DET=1`, GPU 무관)라 안정 CPU 노드면 충분 → terminal eval 은 재부팅 잦은 summer 피해 **aiden 우선**(aiden uptime 18h+, summer 한 세션 3× reboot).
+  - **`anima` 위치-독립 = fabric 토대**(2026-06-30 fix): anima.hexa 의 train/evaluate/serialize dispatch 가 `$ANIMA_SRC` 로 sibling cli/*.hexa 해석 → 어느 cwd 에서든 `anima` 작동해야 노드 됨(예전 cwd-상대 dispatch 는 작업폴더서 "source not found").
+- do: **1B+ 모델**(한 GPU VRAM 초과) = **멀티호스트 data-parallel** — aiden+summer 2노드 torch DDP over LAN(torchrun `--nnodes=2 --nproc_per_node=1` + gloo/nccl TCPStore clique, `NCCL_SOCKET_IFNAME=<LAN iface>`, 동일 ckpt/corpus mac 릴레이 마운트). 303M(한 GPU 에 다 들어감)은 task-parallel 만; DDP 는 gradient all-reduce 통신이 **LAN 병목**(NVLink 아님)이라 **1B+ 임계**(모델이 한 GPU 초과할 때)에서만 이득 — 임계 아래면 DDP 가 통신비용으로 느려지기만.
+- dont: 303M(한-GPU-fit)을 멀티호스트 DDP 로(이득 미미·LAN 병목) · `anima` 에 2nd 멀티호스트 진입/명령 추가(멀티호스트 묶기 canonical = `sidecar pool` · commons canonical-cli; anima 는 호스트당 단일진입 유지, `a_install_canonical`) · summer 에 장시간 eval(재부팅 소실 → aiden) · test pre-release hexa 로 측정(측정경로 무결성).

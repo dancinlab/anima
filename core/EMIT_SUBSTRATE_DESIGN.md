@@ -5,7 +5,7 @@
 > round-8 4 seam **4/4 ABSORBED** · round-9 **4/4 ABSORBED** (H_654/655/656/657, §5) — round-9 완료.
 > round-9 발견: substrate-class 는 **다축 분류자** (속성마다 우위 class 다름, 단일 순위 환원 불가).
 >
-> 상태: **design-tier** (코드 미선행) · `a_completeness_over_cheap` 정합 (본선=재설계).
+> 상태: **design-tier** (코드 미선행) · `completeness-bar` 정합 (본선=재설계).
 
 ## 설계 통찰 — 왜 2층 분리인가
 

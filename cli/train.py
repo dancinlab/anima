@@ -456,7 +456,13 @@ def main():
 
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, betas=(0.9, 0.999),
                             eps=1e-8, weight_decay=0.0)
-    gen = torch.Generator().manual_seed(42)
+    # Seed: ANIMA_SEED env (default 42, backward-compatible) seeds BOTH the global
+    # torch RNG (weight init was already done above; re-seed affects dropout masks /
+    # batch sampling) and the window-sampling Generator, so a multi-seed sweep
+    # (e.g. H_1824 {7,4302}) actually varies the run. Unset -> 42 (no behavior change).
+    _seed = int(os.environ.get("ANIMA_SEED", "42") or "42")
+    torch.manual_seed(_seed)
+    gen = torch.Generator().manual_seed(_seed)
 
     # ── savant schedule state ────────────────────────────────────────────────
     latch = {"on": False, "at": 0}

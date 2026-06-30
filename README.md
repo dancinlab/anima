@@ -367,8 +367,8 @@ SSOT) + [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the per-hypo
 [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
 the authoritative latest source.
 
-> **Built-in G0–G6 evaluation (`anima eval <ckpt>`).** The gate scoring is a **reusable engine
-> module** ([`core/g_gates.hexa`](core/g_gates.hexa)), not a one-off harness: `hexa run cli/anima.hexa
+> **Built-in G0–G6 evaluation (`anima eval <ckpt>`).** The gate scoring lives **directly in the
+> measurement single-entry** ([`cli/evaluate.hexa`](cli/evaluate.hexa)), not a one-off harness: `hexa run cli/anima.hexa
 > -- eval <ckpt> [--corpus <path>...] [--gen N]` mounts any ckpt through the generator L3 mouth
 > (`gen_auto_ideate`, file-format-dispatched — works on both the ByteGPT and conv `.clm` mouths) and
 > scores **통과(closure · must) = C1 또박(G0) · C2 재조합(G1) · C3 새말(G2)** (= `a7b_pass = G0∧G1∧G2`, PUBLIC-eligible) plus
@@ -380,7 +380,7 @@ the authoritative latest source.
 > inline duplicate). It REUSES the wired G0/G6 (`g6_ideation`), G5 abstain (`§ImmuneMemory`),
 > and G3 (`§SelfIdentity`) ops; only the G1 (H_1129) and G2 (H_1140) metrics are native `.hexa` here
 > — and those two are **byte-faithful reference-matched** to the frozen numpy metrics (parity oracle
-> `state/1607_g_gates_refmatch/g1g2_ref_parity.py` + 7 parity cases in the smoke), so a clm303 G1/G2
+> `state/1607_g_gates_refmatch/g1g2_ref_parity.py`), so a clm303 G1/G2
 > result is directly comparable to the historical H_1129/H_1140 verdicts.
 > Frozen-first bars are the ARCHITECTURE.json **frozen 임계** node verbatim (p7, no tune-to-green).
 

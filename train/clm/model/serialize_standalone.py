@@ -1,3 +1,11 @@
+# ==========================================================================
+# ⛔ ENGINE-INTERNAL TOOL — agent 가 직접 타이핑 금지. 학습/직렬화는 cli/ 단일진입만:
+#   anima train | anima serialize  (canonical=hexa cli/{train,serialize}.hexa).
+# 단, cli/serialize.hexa 가 torch .pt→.clm v0.3 bridge 를 `python3 … serialize_standalone.py …` 로
+# SUBPROCESS 호출한다(=canonical 경로의 정당한 내부 shell-out) — 그래서 __main__ hard-exit 가드는
+# 두지 않는다(그건 canonical serialize 를 깨뜨림). agent 직접실행 차단은 .harness/enforcement.json
+# H-ANIMA-SINGLE-ENTRY pre_bash 룰이 담당(hexa 내부 subprocess 는 안 건드림). #2603
+# ==========================================================================
 #!/usr/bin/env python3
 # serialize.py — anima STANDALONE re-serialize entry (.pt → .clm v0.3 + held-out gate).
 #

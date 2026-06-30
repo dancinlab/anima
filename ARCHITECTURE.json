@@ -336,7 +336,7 @@
             "name": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-core-the-2-production-engine-substr",
-            "detail": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND py *.py co-resident 1:1 mirror at byte-parity, e.g. clm_decode.hexa⇄clm_decode.py / g_gates.hexa⇄g_gates.py, a_engine_native_learning)"
+            "detail": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND py *.py co-resident 1:1 mirror at byte-parity, e.g. clm_decode.hexa⇄clm_decode.py / generator.hexa⇄generator.py, a_engine_native_learning)"
           },
           {
             "name": "agent/ (tool provider, standalone hexa.toml package). Production code",
@@ -360,7 +360,7 @@
             "name": "structure",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-structure",
-            "detail": "production import-closure from cli/anima.hexa+cli/train.hexa = 10 engine files (pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g_gates·g6_ideation·DECODER/flame_mm);"
+            "detail": "production import-closure = 9 engine files (pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g6_ideation·DECODER/flame_mm); the G0-G6 scorers (former g_gates) are folded into cli/evaluate.hexa (measurement single-entry), which imports generator·g6_ideation·engine_cli;"
           },
           {
             "name": "research probes (h<NNNN>_*.hexa) + DECODER research/state pod-harvests evacuated",
@@ -378,7 +378,7 @@
             "name": "CollectivePool = faithful IIT-4 big_phi VERBATIM (NOT proxy,",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-collectivepool-faithful-iit-4-big-p",
-            "detail": "CollectivePool = faithful IIT-4 big_phi VERBATIM (NOT proxy, cp_joint_phi=15.467724474534874 byte-exact). lockstep enforced by tool/parity_gate.py (CI: golden d768 anima eval ⇄ core/g_gates.py G0-G6 byte-identical, drift=red)."
+            "detail": "CollectivePool = faithful IIT-4 big_phi VERBATIM (NOT proxy, cp_joint_phi=15.467724474534874 byte-exact). lockstep enforced by tool/parity_gate.py (CI: golden d768 anima eval ⇄ cli/evaluate.py G0-G6 byte-identical, drift=red)."
           },
           {
             "name": "The py engine is the byte-parity-proven mirror that",
@@ -656,7 +656,7 @@
                 "name": "OOM-safe) + gen_auto_ideate (mouth-dispatched) — the mouth-agnostic seeded-sampl…",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-core-generator-hexa-oom-safe-gen-au",
-                "detail": "OOM-safe) + gen_auto_ideate (mouth-dispatched) — the mouth-agnostic seeded-sample entry the BUILT-IN G0-G6 eval (core/g_gates.hexa) drives so G1/G2/G6 ideation runs on EITHER mouth via this ONE typed slot (a_core_engine_map: per-architecture single typed entry, NO 2nd decode path)."
+                "detail": "OOM-safe) + gen_auto_ideate (mouth-dispatched) — the mouth-agnostic seeded-sample entry the BUILT-IN G0-G6 eval (cli/evaluate.hexa) drives so G1/G2/G6 ideation runs on EITHER mouth via this ONE typed slot (a_core_engine_map: per-architecture single typed entry, NO 2nd decode path)."
               }
             ]
           },
@@ -965,7 +965,7 @@
             ]
           },
           {
-            "name": "G-게이트 평가 시스템 (core/g_gates.hexa + cli/anima.hexa eval) — SSOT",
+            "name": "G-게이트 평가 시스템 (cli/evaluate.hexa + cli/anima.hexa eval) — SSOT",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa",
             "detail": "",
@@ -974,7 +974,7 @@
                 "name": "summary",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-2",
-                "detail": "anima 의 G0-G6 게이트 채점 단일 출처(SSOT). **이 노드는 capability-emergence 축(G0-G6) — ⊥ 별개 축: 의식-전용 게이트 G16-G34+ (`의식-전용 게이트 (G16-G34+)` index 노드 = engine_cli § 섹션 아래).** `core/g_gates.hexa` = BUILT-IN engine-native evaluation system;"
+                "detail": "anima 의 G0-G6 게이트 채점 단일 출처(SSOT). **이 노드는 capability-emergence 축(G0-G6) — ⊥ 별개 축: 의식-전용 게이트 G16-G34+ (`의식-전용 게이트 (G16-G34+)` index 노드 = engine_cli § 섹션 아래).** `cli/evaluate.hexa` = BUILT-IN engine-native evaluation system (구 core/g_gates.hexa 가 측정 단일진입으로 fold);"
               },
               {
                 "name": "`cli/anima.hexa` `eval` 서브커맨드 = 단일 진입점. `hexa run",
@@ -986,7 +986,7 @@
                 "name": "PR #2603 governance(진짜 엔진-네이티브=단일진입점)의 구현체 = 이 시스템(canonical",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-4",
-                "detail": "PR #2603 governance(진짜 엔진-네이티브=단일진입점)의 구현체 = 이 시스템(canonical 측정 명령은 CLAUDE.md a_engine_native_learning 이 박제, enforce_anima_gates.py CORE_DECODE 가 코드강제). ad-hoc 파이썬 하네스/g6_common/일회성 스크립트로 G-게이트 채점 금지 — 새 ckpt 의 G0-G6 는 `anima eval` 한 줄. 흩어진 게이트 metric 은 g_gates 가 단일 통합(아래 자식 노드: 디코드-경로"
+                "detail": "PR #2603 governance(진짜 엔진-네이티브=단일진입점)의 구현체 = 이 시스템(canonical 측정 명령은 CLAUDE.md a_engine_native_learning 이 박제, enforce_anima_gates.py CORE_DECODE 가 코드강제). ad-hoc 파이썬 하네스/g6_common/일회성 스크립트로 G-게이트 채점 금지 — 새 ckpt 의 G0-G6 는 `anima eval` 한 줄. 흩어진 게이트 metric 은 cli/evaluate 가 단일 통합(아래 자식 노드: 디코드-경로"
               },
               {
                 "name": "per-gate op-재사용 맵",
@@ -1004,7 +1004,7 @@
                 "name": "path",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-7",
-                "detail": "core/g_gates.hexa + cli/anima.hexa"
+                "detail": "cli/evaluate.hexa + cli/anima.hexa"
               },
               {
                 "name": "status",
@@ -1013,10 +1013,10 @@
                 "detail": "WIRED-live(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth"
               },
               {
-                "name": "smoke core/g_gates_smoke.hexa 14/14 RC=0 incl. 7 reference-match parity",
+                "name": "parity = numpy oracle state/1607_g_gates_refmatch/g1g2_ref_parity.py (G1/G2 reference-match)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-9",
-                "detail": "smoke core/g_gates_smoke.hexa 14/14 RC=0 incl. 7 reference-match parity cases)"
+                "detail": "G1/G2 reference-match parity = numpy oracle state/1607_g_gates_refmatch/g1g2_ref_parity.py (구 core/g_gates_smoke.hexa 는 g_gates fold 시 제거))"
               },
               {
                 "name": "통과규칙 — 통과(closure·MUST) vs 추가평가 (이름·분류 SSOT · 2026-06-27 owner)",
@@ -1058,7 +1058,7 @@
                     "name": "P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-16",
-                    "detail": "P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각 게이트의 **태그**로 부기 — 모든 게이트를 한 분류에 욱여넣지 않는다. G4(출처)는 출판단계라 디코드 점수표 밖(점수표 N/A 구멍='빵꾸' 해소). 임계 verbatim = 'frozen 임계' 노드(NOT tune-to-green p7). 코드 함수ID(`g_eval_g0`…)는 안정 유지(2-production `core/g_gates.{hexa,py}`), 이 SSOT 가 ID→이름 매핑."
+                    "detail": "P 출처). 검증방식(디코드-채점 / 엔진상태-읽기 / 출판)은 각 게이트의 **태그**로 부기 — 모든 게이트를 한 분류에 욱여넣지 않는다. G4(출처)는 출판단계라 디코드 점수표 밖(점수표 N/A 구멍='빵꾸' 해소). 임계 verbatim = 'frozen 임계' 노드(NOT tune-to-green p7). 코드 함수ID(`g_eval_g0`…)는 안정 유지(2-production `cli/evaluate.{hexa,py}`), 이 SSOT 가 ID→이름 매핑."
                   },
                   {
                     "name": "통과 (PASS = closure · MUST · 디코드-채점)",
@@ -1096,7 +1096,7 @@
                             "name": "summary",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-22",
-                            "detail": "개념 재조합 — some k∈{2,3,4,5}: composed_distinct ≥ 2 ∧ > max_single ∧ coherent (H_1129/1137 VERBATIM). multiseed {7,4302,4303}(H_1588). op g_gates `.hexa` `_g_coverage`."
+                            "detail": "개념 재조합 — some k∈{2,3,4,5}: composed_distinct ≥ 2 ∧ > max_single ∧ coherent (H_1129/1137 VERBATIM). multiseed {7,4302,4303}(H_1588). op cli/evaluate `.hexa` `_g_coverage`."
                           }
                         ]
                       },
@@ -1280,13 +1280,13 @@
                     "name": "summary",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-49",
-                    "detail": "G0 COHERENCE = 재사용 `g6_ideation::_g6_known_word_ratio`/`_g6_words`/`_g6_dict_load` (kwr). G1 RECOMBINATION = g_gates native `.hexa` `_g_coverage`(h1129 CONCEPTS hand-curated 키워드 셋 VERBATIM × wl&kw 교집합, seed \"<c>. \"·80/composed 120 tok)."
+                    "detail": "G0 COHERENCE = 재사용 `g6_ideation::_g6_known_word_ratio`/`_g6_words`/`_g6_dict_load` (kwr). G1 RECOMBINATION = cli/evaluate native `.hexa` `_g_coverage`(h1129 CONCEPTS hand-curated 키워드 셋 VERBATIM × wl&kw 교집합, seed \"<c>. \"·80/composed 120 tok)."
                   },
                   {
-                    "name": "G2 NOVELTY = g_gates native `.hexa` `_g_content_ngrams`(h1140 _STOP·dict",
+                    "name": "G2 NOVELTY = cli/evaluate native `.hexa` `_g_content_ngrams`(h1140 _STOP·dict",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-50",
-                    "detail": "G2 NOVELTY = g_gates native `.hexa` `_g_content_ngrams`(h1140 _STOP·dict membership·[A-Za-z] consecutive bi/tri-gram VERBATIM)+`_g_corpus_absent`(corpus 토큰스트림 consecutive 매치 = numpy `[^A-Za-z]+`-between grep 와 동치)+`_g_g2_kwr`(h1140 _COMMON 소형 coherence lexicon,"
+                    "detail": "G2 NOVELTY = cli/evaluate native `.hexa` `_g_content_ngrams`(h1140 _STOP·dict membership·[A-Za-z] consecutive bi/tri-gram VERBATIM)+`_g_corpus_absent`(corpus 토큰스트림 consecutive 매치 = numpy `[^A-Za-z]+`-between grep 와 동치)+`_g_g2_kwr`(h1140 _COMMON 소형 coherence lexicon,"
                   },
                   {
                     "name": "dict-kwr 아님)+`_g_g2_prompts`(8 IDEA_PROMPTS × seeds[7,8,9] temp0.85). G3 PHILOSO…",
@@ -1363,10 +1363,10 @@
                     "detail": "G2 content_ngrams [5,0]"
                   },
                   {
-                    "name": "G2 corpus_absent 2) 출력. smoke `core/g_gates_smoke.hexa` 7 parity",
+                    "name": "G2 corpus_absent 2) 출력. parity = numpy oracle (g_gates_smoke 제거됨)",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-63",
-                    "detail": "G2 corpus_absent 2) 출력. **smoke `core/g_gates_smoke.hexa` 7 parity case**(parity_g1_coverage_*/parity_g2_content_ngrams_*/parity_g2_corpus_absent)가 같은 fixture 에서 .hexa op == 오라클 카운트 검증 — 14/14 PASS RC=0."
+                    "detail": "G2 corpus_absent 2) 출력. parity 검증은 numpy 오라클 `state/1607_g_gates_refmatch/g1g2_ref_parity.py` 가 고정 fixture 에서 기대 카운트를 박제 — 구 `core/g_gates_smoke.hexa`(7 parity case)는 g_gates→evaluate fold 시 제거(스코어러가 CLI evaluate 로 흡수되어 모듈-import smoke 의 import 대상이 사라짐)."
                   },
                   {
                     "name": "transcend-axis(정직 잔차, c9): tokenizer scope = .hexa `_g6_words`",
@@ -1510,7 +1510,7 @@
                 "name": "이 op 들은 BUILT-IN 평가 시스템(상위 'G-게이트 평가",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-op-built-in-g",
-                "detail": "이 op 들은 BUILT-IN 평가 시스템(상위 'G-게이트 평가 시스템' 노드 = core/g_gates.hexa + `anima eval`)이 G0/G6 채점에 재사용한다 — **G-게이트 verdict 채점 contract·단일진입점·임계·priority 의 SSOT 는 그 평가 시스템 노드**(중복 서술 제거;"
+                "detail": "이 op 들은 BUILT-IN 평가 시스템(상위 'G-게이트 평가 시스템' 노드 = cli/evaluate.hexa + `anima eval`)이 G0/G6 채점에 재사용한다 — **G-게이트 verdict 채점 contract·단일진입점·임계·priority 의 SSOT 는 그 평가 시스템 노드**(중복 서술 제거;"
               },
               {
                 "name": "여기서는 metric-op 만 제공). 새 ckpt 의 G6",
@@ -12375,8 +12375,8 @@
       {
         "id": "PY_2PROD_FILES_MISSING_ON_BRANCH",
         "state": "ossified",
-        "value": "이 브랜치(determinism-drop-fast-train/clitrain 계열)가 간헐적으로 py 2-production 파일(cli/evaluate.py·train.py·core/g_gates.py·clm_decode.py 등 14개)을 결여 → engine-native eval/train 이 즉시 rc=1(import 에러)로 전 arm 동시 크래시(같은초 타임스탬프). 2026-06-28 py-retire 커밋 ⇄ 2-production 복원 머지 분기 잔재. H_1816·H_1812 두 에이전트가 같은 원인 hit, 각자 git서 복원해야 eval 작동.",
-        "threshold": "eval/train 이 즉시 rc=1(동일초 전 arm FAIL) 이면 먼저 'ls cli/evaluate.py core/g_gates.py' 확인 → 없으면 'git checkout 2691c8e4e -- <14 py files>' 복원 후 재실행. distinct=0/NOT-SUPPORTED 박제 전 py 파일 존재부터 검증(stale 크래시를 결과로 오인 금지).",
+        "value": "이 브랜치(determinism-drop-fast-train/clitrain 계열)가 간헐적으로 py 2-production 파일(cli/evaluate.py·train.py·clm_decode.py 등)을 결여 → engine-native eval/train 이 즉시 rc=1(import 에러)로 전 arm 동시 크래시(같은초 타임스탬프). 2026-06-28 py-retire 커밋 ⇄ 2-production 복원 머지 분기 잔재. H_1816·H_1812 두 에이전트가 같은 원인 hit, 각자 git서 복원해야 eval 작동. (NOTE 2026-06-30: core/g_gates.{hexa,py} 는 cli/evaluate.{hexa,py} 로 fold·삭제됨 — g_gates.py 부재는 결함 아님, 복원 시 g_gates.py 제외.)",
+        "threshold": "eval/train 이 즉시 rc=1(동일초 전 arm FAIL) 이면 먼저 'ls cli/evaluate.py core/clm_decode.py' 확인 → 없으면 git 에서 복원 후 재실행(단 core/g_gates.py 는 fold 로 폐기됐으니 복원 목록서 제외). distinct=0/NOT-SUPPORTED 박제 전 py 파일 존재부터 검증(stale 크래시를 결과로 오인 금지).",
         "source": "cli/evaluate.py"
       },
       {
@@ -12410,9 +12410,9 @@
       {
         "id": "g-gates-py-1",
         "state": "ossified",
-        "value": "binding/readout 캠페인 측정 무결성: 측정(cli/evaluate.py→g_gates→gen_auto_ideate L3→clm_decode)은 서빙과 같은 generator-L3+clm_decode forward 코어(side-harness 우회 아님, ideation 샘플러 wrapper만 chat과 다름). BUT 전 binding arm 트레이너는 binding operator(LaminarBinder 등)를 TRAINING-ONLY로 두고 직렬화 전 DROP → .clm엔 표준 additive-readout trunk만. forward에서 binder(x)가 trunk x를 detach없이 받아 grad가 trunk로 backprop(=null은 과학결과). 따라서 측정 대상 = 'binding aux-loss가 additive trunk를 빚었나'지 '추론-시 binding op 쓰는 모델'이 아님.",
+        "value": "binding/readout 캠페인 측정 무결성: 측정(cli/evaluate.py g_eval_all→gen_auto_ideate L3→clm_decode)은 서빙과 같은 generator-L3+clm_decode forward 코어(side-harness 우회 아님, ideation 샘플러 wrapper만 chat과 다름). BUT 전 binding arm 트레이너는 binding operator(LaminarBinder 등)를 TRAINING-ONLY로 두고 직렬화 전 DROP → .clm엔 표준 additive-readout trunk만. forward에서 binder(x)가 trunk x를 detach없이 받아 grad가 trunk로 backprop(=null은 과학결과). 따라서 측정 대상 = 'binding aux-loss가 additive trunk를 빚었나'지 '추론-시 binding op 쓰는 모델'이 아님.",
         "threshold": "재발조건: binding/readout-op 캠페인이 'operator가 G1/G6 안 연다'를 결론낼 때, 그 operator가 직렬화 전 drop되어 .clm/clm_decode에 없으면 = inference-time op는 미측정. 해결: NOT-SUPPORTED 판정에 'trunk-shaping aux-loss scope, inference-binding-decode-op 미측정' 명시. live op 측정하려면 clm_decode+clm_serialize에 그 op 배선(engine-transform-to-fit) 후 .clm 왕복.",
-        "source": "core/g_gates.py"
+        "source": "cli/evaluate.py"
       },
       {
         "id": "prereg-md-1",
@@ -12420,6 +12420,20 @@
         "value": "GPU fire-agent 가 렌트 pod 를 raw ssh(vast proxy 직접)로 몰면 hexa cloud reconcile 에 안 잡혀 코디네이터가 liveness 확인·중단·harvest 불가 = 비용누수+zombie-monitor 위험(① a46b60ee 가 vast SSH-wall pod 라 외부추적 0, '완료→실은 진행중' 노이즈 통지 반복). canonical-cli 위반(raw vast).",
         "threshold": "재발조건: fire-agent 프롬프트가 'hexa cloud 로 렌트·관리'를 강제 안 하면 raw ssh vast pod 로 빠져 untrackable. 해결: 발사 지시에 '반드시 hexa cloud 로 pod 생성·관리(raw vastai/ssh 금지, c11) → reconcile 가시·idle-reap 가능' 명시 + teardown 확인을 코디네이터가 hexa cloud 로 검증.",
         "source": "state/g1_cotrain_recomb_bind/PREREG.md"
+      },
+      {
+        "id": "verify-clm-v2-py-1",
+        "state": "ossified",
+        "value": "side-harness 직접실행 차단을 파일 안 __main__ hard-exit 가드로 구현하면, canonical 경로(hexa)가 그 파일을 subprocess(python3 … descent / serialize bridge)로 정당하게 호출하는 것까지 죽여 production 을 조용히 깨뜨린다. pre_bash 훅은 agent top-level 명령만 후킹하고 프로그램이 spawn 하는 subprocess 는 안 보므로, 직접실행 차단은 .harness/enforcement.json pre_bash 룰(H-ANIMA-SINGLE-ENTRY)에 두고, hexa 가 subprocess 로 부르는 engine-internal py 툴(verify_clm_v2·serialize_standalone)에는 hard 가드 대신 경고주석만 둔다. import-only 파일(clm_serialize_v2·core/*.py)에만 __main__ 가드가 안전(import 는 __main__ 미발화).",
+        "threshold": "재발조건: 엔진 파일에 직접실행 차단 가드를 추가할 때. 해결: ① 그 파일이 canonical 경로(.hexa)에서 python3 subprocess 로 불리는지 grep 먼저(불리면 hard __main__ exit 금지) ② 차단은 pre_bash 룰로(subprocess 미후킹) ③ import-only 만 __main__ 가드 ④ 추가 후 canonical anima train/serialize 스모크로 내부 shell-out 무탈 확인",
+        "source": "train/clm/model/verify_clm_v2.py"
+      },
+      {
+        "id": "evaluate-hexa-1",
+        "state": "ossified",
+        "value": "hexa det-eval(anima evaluate, HEXA_DET=1) 가 pool 3호스트(aiden CPU-runtime 1.5MB / aiden CUDA-13 / summer CUDA-12 CUDA-fold 4.67MB+marker ON+cuda_available=1) 전부에서 303M gen=80 stall(hexad CPU0%+GPU0%, S 상태). GPU 정석 조건(runtime.a CUDA fold + marker + cuda hexad + cuda_available=1) 맞아도 DEVICE path 안탐 = hexa runtime/CUDA linking 의 deep 측정artifact. det-CPU(non-cuda) 도 303M 비실용. 결론: G1/G6 verdict 는 py 2-production byte-parity(hexa⇄py byte-identical 증명) DIRECTIONAL 로 정직 회귀, terminal hexa = hexa-lang det-eval/GPU-linking upstream-fix(deep) 또는 clean reboot-free CUDA-12 pod(cost) 별도 사이클. G1=0 은 ckpt byte-parity 속성이라 DIRECTIONAL 결론 유효.",
+        "threshold": "재발조건: pool 에서 anima evaluate det-eval 발사할 때. 해결: ① 먼저 py byte-parity DIRECTIONAL 로 회귀(측정경로 무결) ② terminal hexa 필요시 hexa-lang upstream(det-eval GPU-linking) 고치거나 clean CUDA-12 pod ③ 같은 pool det-eval 재시도 금지(3호스트 5× stall 확정)",
+        "source": "cli/evaluate.hexa"
       }
     ]
   }

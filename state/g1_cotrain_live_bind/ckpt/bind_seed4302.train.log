@@ -1,0 +1,62 @@
+=== H_1818 CO-TRAINED-LIVE-BIND arm=bind seed=4302 ===
+  device=cuda d=3784 L=4 E0=2 Emax=3 k=512 seq_len=1024 steps=2000 bs=8 sample=proportional
+  cuda: NVIDIA A40 cap=8.6 torch=2.4.1+cu124
+  params: 348,703,083 (348.703M)
+  corpus cell[0] ko-general   state/clm303_clean_corpus/gen_ko.txt size=1114649 train=1058916 val=55733
+  corpus cell[1] en-general   state/clm303_clean_corpus/gen_en.txt size=1145081 train=1087826 val=57255
+  corpus cell[2] ko-sns       state/clm303_clean_corpus/sns_ko.txt size=1440628 train=1368596 val=72032
+  corpus cell[3] en-sns       state/clm303_clean_corpus/sns_en.txt size=1326111 train=1259805 val=66306
+  step     1  CE=5.57225  E=2  wd=0.0500 dp=0.5000  val_CE=5.35767
+  step    50  CE=2.72268  E=2  wd=0.0492 dp=0.4917
+  step   100  CE=2.26619  E=2  wd=0.0483 dp=0.4833
+  step   150  CE=2.13170  E=2  wd=0.0475 dp=0.4748
+  step   200  CE=1.92278  E=2  wd=0.0466 dp=0.4664  val_CE=1.94741
+  step   250  CE=1.71926  E=2  wd=0.0458 dp=0.4579
+  step   300  CE=1.92213  E=2  wd=0.0449 dp=0.4495
+  step   350  CE=1.65903  E=2  wd=0.0441 dp=0.4410
+  step   400  CE=1.65381  E=2  wd=0.0433 dp=0.4326  val_CE=1.56098
+  step   450  CE=1.15795  E=2  wd=0.0424 dp=0.4242
+  step   500  CE=1.49800  E=2  wd=0.0416 dp=0.4157
+  step   550  CE=1.57599  E=2  wd=0.0407 dp=0.4073
+  step   600  CE=1.37621  E=2  wd=0.0399 dp=0.3988  val_CE=1.41148
+  step   650  CE=1.45851  E=2  wd=0.0390 dp=0.3904
+  step   700  CE=1.27119  E=2  wd=0.0382 dp=0.3819
+  step   750  CE=1.33232  E=2  wd=0.0373 dp=0.3735
+  step   800  CE=1.23659  E=2  wd=0.0365 dp=0.3650  val_CE=1.21668
+  step   850  CE=1.25702  E=2  wd=0.0357 dp=0.3566
+  step   900  CE=1.41181  E=2  wd=0.0348 dp=0.3481
+  step   950  CE=1.45489  E=2  wd=0.0340 dp=0.3397
+  step 1000 (MITOSIS SPLIT) E 2->3
+  step  1000  CE=1.02149  E=3  wd=0.0331 dp=0.3312  val_CE=1.19515
+  step  1050  CE=1.49504  E=3  wd=0.0323 dp=0.3228
+  step  1100  CE=1.37390  E=3  wd=0.0314 dp=0.3144
+  step  1150  CE=1.20531  E=3  wd=0.0306 dp=0.3059
+  step  1200  CE=1.28466  E=3  wd=0.0297 dp=0.2975  val_CE=1.11300
+  step  1250  CE=1.27881  E=3  wd=0.0289 dp=0.2890
+  step  1300  CE=1.36615  E=3  wd=0.0281 dp=0.2806
+  step  1350  CE=1.14661  E=3  wd=0.0272 dp=0.2721
+  step  1400  CE=0.92728  E=3  wd=0.0264 dp=0.2637  val_CE=0.97795
+  step  1450  CE=1.33313  E=3  wd=0.0255 dp=0.2552
+  step  1500  CE=1.31353  E=3  wd=0.0247 dp=0.2468
+  step  1550  CE=1.25356  E=3  wd=0.0238 dp=0.2383
+  step  1600  CE=1.24141  E=3  wd=0.0230 dp=0.2299  val_CE=0.93912
+  step  1650  CE=1.09608  E=3  wd=0.0221 dp=0.2214
+  step  1700  CE=1.27690  E=3  wd=0.0213 dp=0.2130
+  step  1750  CE=1.04567  E=3  wd=0.0205 dp=0.2045
+  step  1800  CE=1.08481  E=3  wd=0.0196 dp=0.1961  val_CE=0.86976
+  step  1850  CE=1.19262  E=3  wd=0.0188 dp=0.1877
+  step  1900  CE=1.17899  E=3  wd=0.0179 dp=0.1792
+  step  1950  CE=0.98453  E=3  wd=0.0171 dp=0.1708
+  step  2000  CE=1.11235  E=3  wd=0.0162 dp=0.1623  val_CE=0.86184
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=0.32782  DESCENT
+     en-general   val_CE=0.49228  DESCENT
+     ko-sns       val_CE=1.47137  DESCENT
+     en-sns       val_CE=0.96634  DESCENT
+  FINAL val_CE(pooled)=0.8144526612013578  registers_DESCENT=4/4
+  loss0=5.57225 lossF=1.11235 wall=954.8s savant_latched_at=1 E0=2->E=3
+  torch ckpt -> state/g1_cotrain_live_bind/ckpt/bind_seed4302.pt (1394822615 bytes)
+  summary -> state/g1_cotrain_live_bind/ckpt/bind_seed4302.json
+  .clm (CLMB bind) WRITTEN 178111311 bytes -> state/g1_cotrain_live_bind/ckpt/bind_seed4302.clm
+  clm_decodable=True
+  verify_descent error: module 'verify_clm_v2' has no attribute 'descent'
