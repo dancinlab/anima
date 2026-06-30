@@ -45,15 +45,18 @@ categories = ["consciousness", "ai-daemon", "runtime", "research-substrate"]
 #             generator·clm_decode·bytegpt_decode·engine_cli + phi/); depends on
 #             train/·bench/·agent/·state/ = 0 (one-directional, a_core_engine_map).
 #   cli/    = single user entry point (cli/anima.hexa).
-#   consciousness lanes reachable from the entry (BFS-measured) = DREAM·SAVANT
-#             only (cli/anima.hexa imports DREAM/dream_lib; SAVANT/savant_lib is
-#             pulled transitively). The other 11 probe-only lanes were archived.
+#   consciousness lanes reachable from the entry (BFS-measured) = dream_lib + savant_lib
+#             — both now ABSORBED into core/ (self-contained substrate, 2026-06-30):
+#             core/kosmos_io · core/dream_lib · core/dream_envelope_ctx · core/savant_lib ·
+#             core/substrate_hook · core/mitosis_hook_lib (+ core/audit_hook/metacog_lib).
+#             core/·cli/·agent/ import only stdlib + own 3 packages + same-dir relative
+#             (0 external-dir imports). The other probe-only lanes stay archived.
 #   install.hexa / setup.hexa / README.md / LICENSE / VERSION / hexa.toml = install metadata.
 # NOTE: stdlib/iit4 + stdlib/flame are NOT vendored here — they come from the
 #   hexa-lang dependency at runtime (see [dependencies]). BRAIN/ and HEXAD/ are
-#   excluded below even though the entry references a BRAIN/eeg + HEXAD/…/kosmos_io
-#   import — those two specific files ship via the hexa-brain sub-package and the
-#   external kosmos format respectively (release tightening; see exclude notes).
+#   excluded below even though the entry references a BRAIN/eeg import — that file
+#   ships via the hexa-brain sub-package (release tightening; see exclude notes).
+#   kosmos_io was absorbed HEXAD/…→core/ so no HEXAD payload file is needed anymore.
 include = [
     "hexa.toml",
     "install.hexa",
@@ -68,15 +71,11 @@ include = [
     "core/",
     # the installed `anima` PATH command launcher (hx symlinks ~/.hx/bin/anima → this).
     "archive/bin/anima",
-    # the one HEXAD file the canonical entry imports (kosmos anchor I/O); the
-    # rest of HEXAD/ is research and is excluded below.
-    "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa",
-    # consciousness lanes reachable from cli/anima.hexa closure (BFS-measured):
-    # only DREAM (dream_lib) + SAVANT (savant_lib) are wired; the other 11 probe-only
-    # lanes (AESTHETIC·BRIDGE·CHANNEL·EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·
-    # OTHER-MIND·TIME·WAKE) were archived under archive/ (research, not in release payload).
-    "DREAM/",
-    "SAVANT/",
+    # NOTE: the consciousness-lane libs the entry's closure needs (kosmos_io · dream_lib ·
+    # dream_envelope_ctx · savant_lib · substrate_hook · mitosis_hook_lib) were ABSORBED
+    # into core/ (2026-06-30 self-contained substrate) and ship via the "core/" include
+    # above — no HEXAD/DREAM/SAVANT payload entries needed. The remaining DREAM/·SAVANT/·
+    # HEXAD/ files are research-only and stay excluded below.
 ]
 
 # exclude = research artifacts, build trash, sub-package payloads, and external

@@ -86,8 +86,8 @@ import "stdlib/consciousness/iit4_bounded.hexa"
 // SAVANT golden-zone primitives (H_347/348) — REUSED (NOT re-implemented) by §ThirdLaw
 // below: sa_gz_lower / sa_gz_upper / sa_in_golden_zone / sa_si_threshold. savant_lib is a
 // pure leaf (0 imports), so this stays one-directional. (precedent: core/*_smoke.hexa already
-// import "SAVANT/substrate_hook.hexa".)
-import "SAVANT/savant_lib.hexa"
+// import "core/substrate_hook.hexa".)
+import "core/savant_lib.hexa"
 
 // ── env read helper (canonical printenv pattern, mirrors eeg_backend.hexa) ────
 fn _env_read(name: string) -> string {

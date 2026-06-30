@@ -49,7 +49,7 @@
 //   p8 NO TRAIN/INFER SPLIT — same interface serves a stub now and a trained
 //                             .clm later; no train-only gate.
 
-import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
+import "core/kosmos_io.hexa"
 // clm_decode.hexa — the byte "mouth": int4 dequant + CLMConvMoE forward → real
 // next-byte logits → greedy continuation (clm_decode_argmax). Imported ONLY here,
 // so the SINGLE .clm decode entry (a_core_engine_map) is preserved — this is the
