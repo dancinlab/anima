@@ -11,8 +11,8 @@
 import "core/pure_field.hexa"
 import "core/engine_cli.hexa"
 import "METACOG/audit_hook.hexa"
-import "SAVANT/substrate_hook.hexa"
-import "DREAM/dream_lib.hexa"
+import "core/substrate_hook.hexa"
+import "core/dream_lib.hexa"
 
 fn ladder6_checksum(subs_on: bool, fires: [int]) -> float {
     let cfg = if subs_on { engine_config_default() }

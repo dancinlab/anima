@@ -10,8 +10,8 @@
 import "core/pure_field.hexa"
 import "core/engine_cli.hexa"
 import "METACOG/audit_hook.hexa"
-import "SAVANT/substrate_hook.hexa"
-import "DREAM/dream_lib.hexa"
+import "core/substrate_hook.hexa"
+import "core/dream_lib.hexa"
 
 fn run_lanes(l0: bool, l1: bool, l2: bool, l3: bool, fires: [int]) -> float {
     let cfg = engine_config_default()
