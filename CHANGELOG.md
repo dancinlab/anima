@@ -1,3 +1,14 @@
+## refactor(repo): entry-unreachable 의식 lane 11개 archive/ 이관 (BFS 측정) + import/hexa.toml/ARCHITECTURE/CLAUDE lockstep + tool→agent 흡수
+
+🔬 **배선 실측 기반 정리** — cli/anima.hexa entry 에서 import-reachability BFS(`use|import|include` 추적)로 의식 lane 의 실제 배선을 측정: **entry closure = 12파일, 실제 배선 lane = DREAM·HEXAD·SAVANT 3개뿐.** 나머지 11개 lane 은 연구 probe(core/h12xx)만 import 하는 dead → archive/ 이관(폐기 아닌 위치 이동).
+
+- **이관(11 dead lane, git mv):** AESTHETIC BRIDGE CHANNEL EMBODIMENT HIVE-MIND INTENT METACOG NARRATIVE OTHER-MIND TIME WAKE → archive/<L>/. **보존(배선됨·미이동):** DREAM·HEXAD·SAVANT. **보류:** BRAIN(own hexa.toml = hexa-brain sub-package).
+- **import lockstep:** 11 dead lane 을 import 하는 23개 .hexa(전부 core/h12xx dead probe + anima_full_session_k7_smoke)에서 `(import|use) "<L>/…"` → `"archive/<L>/…"` 로 참조정합 유지. DREAM/HEXAD/SAVANT/BRAIN 참조는 미변경.
+- **hexa.toml:** include 에서 11 dead lane 줄 제거(DREAM·SAVANT + HEXAD kosmos_io 1파일만 유지), 주석을 BFS 실측(배선 3 lane)으로 갱신. archive/ 통째 exclude 가 이관 lane 커버.
+- **ARCHITECTURE.json / CLAUDE.md:** hexa.toml summary 노드 + §패키징 include= 서술을 BFS 실측(DREAM·SAVANT+HEXAD wired, 11 dead → archive/)으로 surgical 보정. (lane path/node 직접참조는 0 — WAKE/REM·N1/N2/N3 는 sleep-stage 표기, brain motivation '76 lane'·a_substrate_disjoint '15-lane state' 는 directory lane 과 별개 개념이라 미변경.)
+- **tool→agent 흡수:** `tool/hexa_native/mitosis_hook_lib.hexa`(유일 소비처 = agent/domains/CHAT/anima_imagination_loop.hexa) → `agent/hexa_native/` 흡수 + import 경로 갱신(전이 tool/ 의존 없음). tool/ 잔여참조 0.
+- **검증:** BFS 재실행 = 배선 lane DREAM·HEXAD·SAVANT 3개 불변·11 dead 도달 0 · dead-lane bare import 0(전부 archive/) · tool 잔여 0 · anima 하드게이트(gate 1·6) clean · JSON/TOML valid.
+
 ## refactor(repo): train/·training/ 학습파이프 archive/ 이관 (735파일) + ARCHITECTURE/CLAUDE.md/hexa.toml lockstep
 
 🧹 **최상위 정리 2탄** — 학습 파이프라인 디렉토리 `train/`(84 tracked) + `training/`(651 tracked) = 735파일을 `archive/train/`·`archive/training/` 로 git mv 이관. **폐기 아님 = 위치 이동**(repo 최상위에서 substrate-engine·진입점·산출물만 남기는 정리). production 학습 진입점 `cli/train.hexa`·`cli/anima.hexa` 는 루트 보존(이동 안 함).

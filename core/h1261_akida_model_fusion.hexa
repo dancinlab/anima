@@ -7,7 +7,7 @@
 
 import "core/pure_field.hexa"
 import "core/xsubstrate_bridge.hexa"
-import "BRIDGE/gate.hexa"
+import "archive/BRIDGE/gate.hexa"
 
 fn fuse_run(ctx_akida: float, ctx_model: float, on_a: bool, on_m: bool) -> array {
     let a = if on_a { ctx_akida } else { 0.0 }

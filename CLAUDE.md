@@ -40,7 +40,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `archive/train/`·`bench/`·`agent/`·`state/` 에 의존 0** (substrate 엔진만; 단방향).
 
-- **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **릴리즈 매니페스트 = 루트 `hexa.toml`**(`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·의식lane, exclude=state/·UNIVERSE/·*.clm 등 연구artifact/외부가중치).
+- **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **릴리즈 매니페스트 = 루트 `hexa.toml`**(`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·entry-wired 의식lane(import BFS 측정: DREAM·SAVANT + HEXAD kosmos_io 1파일만 cli/anima.hexa 도달; 나머지 11 lane 은 probe-only dead → archive/ 이관 2026-06-30), exclude=state/·UNIVERSE/·archive/·*.clm 등 연구artifact/외부가중치).
 - **학습 pod** — 추론 세트 + `archive/train/`(clm 파이프·flame/forge, 2026-06-30 train/·training/ → archive/ 이전) + `state/verdicts/` slice(frozen bar 재측정용). production 트레이너는 `.hexa` on flame/forge GPU (`a_train_flame_forge`).
 - **agent pod** — `agent/` 는 `hexa.toml` 보유 독립패키지 → `hx install anima-agent` standalone 배포 (core/ 미동반 가능).
 - **이동 금지(pod 에 안 올림)** — `state/`·`UNIVERSE/` 등 연구 artifact 는 pod 페이로드에서 제외(verdicts slice 만 학습 pod 에 선택 동반).

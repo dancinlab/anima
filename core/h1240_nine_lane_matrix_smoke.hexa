@@ -7,14 +7,14 @@
 
 import "core/pure_field.hexa"
 import "core/engine_cli.hexa"
-import "METACOG/audit_hook.hexa"
+import "archive/METACOG/audit_hook.hexa"
 import "SAVANT/substrate_hook.hexa"
 import "DREAM/dream_lib.hexa"
-import "INTENT/intent_lib.hexa"
-import "OTHER-MIND/other_mind_lib.hexa"
-import "TIME/time_lib.hexa"
-import "BRIDGE/gate.hexa"
-import "CHANNEL/router.hexa"
+import "archive/INTENT/intent_lib.hexa"
+import "archive/OTHER-MIND/other_mind_lib.hexa"
+import "archive/TIME/time_lib.hexa"
+import "archive/BRIDGE/gate.hexa"
+import "archive/CHANNEL/router.hexa"
 
 fn run9(f: [bool], fires: [int]) -> float {
     let cfg = engine_config_default()

@@ -45,10 +45,14 @@ categories = ["consciousness", "ai-daemon", "runtime", "research-substrate"]
 #             generator·clm_decode·bytegpt_decode·engine_cli + phi/); depends on
 #             archive/train/·bench/·agent/·state/ = 0 (one-directional, a_core_engine_map).
 #   cli/    = single user entry point (cli/anima.hexa).
-#   consciousness lanes imported by the entry (AESTHETIC·BRIDGE·CHANNEL·DREAM·
-#             EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·
-#             TIME·WAKE) — kept because cli/anima.hexa imports them directly
-#             (e.g. DREAM/dream_lib, CHANNEL/router, WAKE/memory).
+#   consciousness lanes ACTUALLY wired from the entry = DREAM · HEXAD · SAVANT
+#             (import-reachability BFS from cli/anima.hexa, 2026-06-30: entry
+#             closure = 12 files; only these 3 lanes are reached). The other 11
+#             lanes (AESTHETIC·BRIDGE·CHANNEL·EMBODIMENT·HIVE-MIND·INTENT·METACOG·
+#             NARRATIVE·OTHER-MIND·TIME·WAKE) were probe-only dead (imported by
+#             core/h12xx research probes, never by the entry) → moved to archive/
+#             (covered by the archive/ exclude). DREAM/SAVANT kept here; the one
+#             HEXAD kosmos_io file is listed individually below.
 #   install.hexa / setup.hexa / README.md / LICENSE / VERSION / hexa.toml = install metadata.
 # NOTE: stdlib/iit4 + stdlib/flame are NOT vendored here — they come from the
 #   hexa-lang dependency at runtime (see [dependencies]). BRAIN/ and HEXAD/ are
@@ -70,19 +74,9 @@ include = [
     # the one HEXAD file the canonical entry imports (kosmos anchor I/O); the
     # rest of HEXAD/ is research and is excluded below.
     "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa",
-    "AESTHETIC/",
-    "BRIDGE/",
-    "CHANNEL/",
+    # only the 3 entry-wired lanes (BFS-measured); the other 11 dead lanes moved to archive/ (2026-06-30)
     "DREAM/",
-    "EMBODIMENT/",
-    "HIVE-MIND/",
-    "INTENT/",
-    "METACOG/",
-    "NARRATIVE/",
-    "OTHER-MIND/",
     "SAVANT/",
-    "TIME/",
-    "WAKE/",
 ]
 
 # exclude = research artifacts, build trash, sub-package payloads, and external
