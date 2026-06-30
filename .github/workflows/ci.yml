@@ -136,7 +136,12 @@ jobs:
   hexa-engine:
     name: engine compile + gates + smoke (darwin-arm64, Blacksmith)
     runs-on: macos-15
-    timeout-minutes: 25
+    # 25→50: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate(~14min)
+    # + cli/anima install(~14min)만으로 25min 초과 → 타임아웃에 cancel → Post-Cache save
+    # 스킵 → 캐시가 영원히 안 데워지는 chicken-egg(매 run COLD·만성 타임아웃). 캐시는
+    # 브랜치-스코프라 main 머지 후 main 의 첫 COLD run 이 timeout 안에 *완료*돼야 save→
+    # 이후 warm run 은 ~수분. 50min = COLD 1회(~39min) 여유. warm 정상 run 엔 무해.
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
 
@@ -161,11 +166,19 @@ jobs:
       # compile ~12.7min/run 의 aprime_cc codegen). core/** + cli/** 소스 해시로 키 →
       # 엔진 소스 불변이면 hit(컴파일 스킵), 소스 변경이면 정확히 miss(재컴파일). hexa
       # 자체 캐시 해시에 toolchain 바이너리가 섞여 toolchain 변경 시 자연 miss(오염無).
+      # ⚠️ `!core/phi/quantum_types.hexa` 제외 필수 — 이건 hexa-lang sibling repo 의
+      # `../../hexa-lang/self/quantum_types.hexa` 로 가는 *외부 의존* symlink 라 CI
+      # 체크아웃(단독 클론)에선 dangling. GitHub 의 hashFiles() 표현식은 runner 가
+      # followSymbolicLinks=false 로 호출하므로(actions/runner hashFiles.ts) dangling
+      # symlink 를 stat 하다 ENOENT → "Fail to hash files under directory" 로 전체
+      # 키 평가가 fatal 실패 → 캐시 스텝 RED(매 run 만성 실패의 실근거). 이 파일은
+      # anima 가 소유하지 않는 외부 소스라 엔진-소스 fingerprint 에 애초에 불포함이
+      # 정답(캐시 무효화 의미 불변). 글로브 `!` 제외로 stat 자체를 회피한다.
       - name: Cache — hexa warm compile (~/.hexa-cache)
         uses: actions/cache@v4
         with:
           path: ~/.hexa-cache
-          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**') }}
+          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**', '!core/phi/quantum_types.hexa') }}
           restore-keys: |
             hexa-cache-${{ runner.os }}-${{ runner.arch }}-
 
@@ -218,7 +231,7 @@ jobs:
           import "core/clm_decode.hexa"
           import "core/bytegpt_decode.hexa"
           import "core/generator.hexa"
-          import "core/g_gates.hexa"
+          import "cli/evaluate.hexa"  // former core/g_gates.hexa (G0–G6 scorers) absorbed here
           import "core/g6_ideation.hexa"
           import "core/engine_cli.hexa"
           fn main() { print("engine compile OK") }
@@ -245,12 +258,17 @@ jobs:
 
       # 엔진 스모크 — 가중치 없이 compile+logic 도는 것들. 가중치/플랫폼 의존(tag24·
       # .clm 부재)은 warn-only(정직, CI 거짓-red 방지). hexa stable 에 따라 가변.
+      # warn-only 라 실패/시간초과로 잡을 RED 시키면 안 됨 — COLD 일 때 스모크 4개의
+      # cold-compile 가 잡 타임아웃을 잡아먹어 Post-Cache save 를 막던 주범. per-step
+      # timeout + continue-on-error 로 캡 → 잡은 항상 step 11 + Post-Cache 까지 도달.
       - name: Smoke — weight-free engine smokes (warn-only)
+        continue-on-error: true
+        timeout-minutes: 12
         shell: bash
         run: |
           set -uo pipefail
           for s in core/brain_smoke.hexa core/emit_policy_smoke.hexa \
-                   core/g_gates_smoke.hexa core/generator_smoke.hexa \
+                   core/generator_smoke.hexa \
                    core/bytegpt_kvcache_smoke.hexa ; do
             echo "── $s ──"
             hexa run "$s" || echo "::warning::$s non-zero (weight/platform-dep warn-only)"
