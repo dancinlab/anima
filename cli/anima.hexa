@@ -182,11 +182,17 @@ fn anima_evaluate_mode(argv: [string]) {
     while i < len(argv) { if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
     if use_py {
         println("=== anima evaluate → cli/evaluate.py (py 2-production G0-G6, numpy mirror · OOM-safe) ===")
-        // py engine is numpy (deterministic) — no HEXA_DET needed. LOCATION-INDEPENDENT
-        // ($ANIMA_SRC) like the hexa path; no `--` separator (evaluate.py reads positional argv).
-        let cmd = "python3 \"${ANIMA_SRC:-.}/cli/evaluate.py\"" + fwd
+        // py engine is numpy (deterministic) — no HEXA_DET needed. LOCATION-INDEPENDENT ($ANIMA_SRC).
+        // hexa `exec` closes a child's captured stdout pipe after ~150s (probe-confirmed: the child
+        // gets EPIPE on its next fd-1 write but is NOT killed). A 303M numpy decode runs for minutes,
+        // so evaluate writes ALL output to a --result-file: fd 1 stays silent → the child survives the
+        // pipe close and finishes the full G0-G6 battery. A SECOND fresh exec then cats that file
+        // (fast, well under the limit). Two execs = two pipes, the long-running one kept silent.
+        let rf = "/tmp/anima_evalpy_result.out"
+        let cmd = "python3 \"${ANIMA_SRC:-.}/cli/evaluate.py\"" + fwd + " --result-file " + rf
         println("dispatch: " + cmd)
-        let out = exec(cmd)
+        let _ev = exec(cmd)
+        let out = exec("cat " + rf)
         print(out)
         return
     }
