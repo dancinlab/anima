@@ -211,6 +211,9 @@ fn _clmd_conv1d(x: int, w: int, b: int, y_out: int,
 //   #{ ok, windows, model_ce, shuffle_ce, uniform_ce, lt_uniform, lt_shuffle, green }
 // ok=false (with reason) if the file is not v0.2-decodable.
 pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
+    // DETERMINISM SAFETY-PIN: eval/verdict CE scoring → byte-exact verdicts.
+    // API 1st-class (#4285); training stays fast non-det.
+    set_deterministic(true)
     if !clm_decodable(path) {
         return #{ "ok": false, "reason": "not v0.2-decodable (no CLMX trailer; embed/GN absent)",
                   "green": false, "model_ce": 0.0, "shuffle_ce": 0.0, "uniform_ce": 0.0,

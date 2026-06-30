@@ -1386,6 +1386,9 @@ pub fn bytegpt_decode_topk_sampled_ranged(path: string, seed_ids: list, gen: int
 // sampler, byte-identical to bytegpt_decode_topk_sampled). Factored out so a batch driver can
 // load the 303M ONCE and generate MANY fragments without per-fragment reload. seed = byte ids.
 fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, seed_rng: int) -> string {
+    // DETERMINISM SAFETY-PIN: ByteGPT decode is an inference surface → byte-exact,
+    // reproducible generation. API 1st-class (#4285); training stays fast non-det.
+    set_deterministic(true)
     let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
     let toks = []
