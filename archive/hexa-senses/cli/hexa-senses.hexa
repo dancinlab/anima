@@ -1,0 +1,270 @@
+#!hexa strict
+// hexa-senses/cli/hexa-senses.hexa — standalone hexa-senses CLI router
+//
+// 5-verb sensory-substrate dispatcher (👁️):
+//   dream  ear  empath  olfact  voice
+//
+// Plus utility subcmds:
+//   list        — verb table + n=6 invariant summary
+//   selftest    — 5-verb spec presence sweep
+//   verify      — unified Python verifier dispatcher
+//   inventory   — 5-verb spec presence + canonical-header audit
+//   help        — this help
+//   --version   — print version
+//
+// Status (v1.0.0): spec-first — verb invocations print the candidate spec
+// path + first 20 lines. Working .hexa modules deferred to post-v1.0.
+//
+// Critical constraint: voice is FORMULAIC ONLY — learned synthesis FORBIDDEN
+// per user directive 2026-05-07.
+//
+// Root resolution: $HEXA_SENSES_ROOT env, else inferred from $0 dirname.
+//
+// raw#9 hexa-only, raw#11 snake_case, raw#15 no-hardcode.
+
+let VERSION = "1.0.0"
+
+let HOME = env("HOME")
+let HEXA_SENSES_ROOT_ENV = env("HEXA_SENSES_ROOT")
+
+fn hexa_senses_root() -> str {
+    if HEXA_SENSES_ROOT_ENV.len() > 0 { return HEXA_SENSES_ROOT_ENV }
+    let inferred = exec("dirname \"$(dirname \"$0\")\" 2>/dev/null || true").trim()
+    if inferred.len() > 0 { return inferred }
+    return HOME + "/.hexa-senses"
+}
+
+let HS = hexa_senses_root()
+let LOG_PATH = HS + "/state/hexa_senses_cli.log"
+
+fn verb_spec(verb: str) -> str {
+    if verb == "dream"  { return HS + "/dream/hexa-dream.md" }
+    if verb == "ear"    { return HS + "/ear/hexa-ear.md" }
+    if verb == "empath" { return HS + "/empath/hexa-empath.md" }
+    if verb == "olfact" { return HS + "/olfact/hexa-olfact.md" }
+    if verb == "voice"  { return HS + "/voice/hexa-voice.md" }
+    // legacy alias (hexa-speak → hexa-voice)
+    if verb == "speak"  { return HS + "/voice/hexa-voice.md" }
+    return ""
+}
+
+let VERBS = ["dream", "ear", "empath", "olfact", "voice"]
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn has_flag(a: [str], flag: str) -> bool {
+    for x in a {
+        if x == flag { return true }
+    }
+    return false
+}
+
+fn json_mode(a: [str]) -> bool {
+    return has_flag(a, "--json")
+}
+
+fn _ts_now() -> str {
+    return exec("date -u '+%Y-%m-%dT%H:%M:%SZ'").trim()
+}
+
+fn _audit(subcmd: str, args_str: str, exit_code: int) {
+    let line = "{\"ts\":\"" + _ts_now() + "\",\"caller\":\"hexa_senses_standalone\",\"subcmd\":\"hexa-senses " +
+               subcmd + "\",\"args\":\"" + args_str.replace("\"", "\\\"") +
+               "\",\"exit_code\":" + str(exit_code) + ",\"version\":\"" + VERSION + "\"}"
+    exec("mkdir -p " + shq(HS + "/state") + " 2>/dev/null")
+    exec("echo " + shq(line) + " >> " + shq(LOG_PATH) + " 2>/dev/null")
+}
+
+fn _file_exists(p: str) -> bool {
+    let r = exec("[ -f " + shq(p) + " ] && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+fn _print_caveats() {
+    println("")
+    println("--- caveats (raw#10 C3) ---")
+    println("  1. SPEC_CATALOG_ONLY at v1.0.0. 0/5 verbs ship a working .hexa module.")
+    println("  2. voice is FORMULAIC ONLY — learned synthesis FORBIDDEN per user")
+    println("     directive 2026-05-07 (n=6 number-theoretic determinism).")
+    println("  3. Sister-rollup of hexa-codex 17-verb cognitive substrate; verb")
+    println("     specs are extracted from canon@381f1f22 (canonical SSOT).")
+}
+
+fn cmd_list(a: [str]) {
+    if json_mode(a) {
+        let mut js = "{\"hexa_senses\":\"" + VERSION + "\",\"verbs_total\":5,"
+        js = js + "\"verbs\":[\"dream\",\"ear\",\"empath\",\"olfact\",\"voice\"],"
+        js = js + "\"verdict\":\"SPEC_CATALOG_ONLY\"}"
+        println(js)
+        return
+    }
+    println("hexa-senses " + VERSION + " — 5-verb sensory substrate (👁️)")
+    println("")
+    println("  SENSES (5):  dream  ear  empath  olfact  voice")
+    println("")
+    println("  voice = renamed hexa-speak — FORMULAIC ONLY (no learned TTS)")
+    println("")
+    println("  to read a verb spec:")
+    println("    hexa-senses <verb>          (prints verb spec path + first lines)")
+    println("    hexa-senses selftest        (5-verb spec presence sweep)")
+    println("    hexa-senses verify [check]  (Python verifier dispatcher)")
+    _print_caveats()
+}
+
+fn cmd_verb(verb: str, a: [str]) {
+    let spec = verb_spec(verb)
+    if spec == "" {
+        eprintln("hexa-senses: unknown verb '" + verb + "'")
+        eprintln("run 'hexa-senses list' for the 5-verb table")
+        _audit(verb, "unknown_verb", 2)
+        exit(2)
+    }
+    let present = _file_exists(spec)
+    println("hexa-senses " + verb + " — sensory substrate (v" + VERSION + " spec)")
+    println("  spec_path: " + spec)
+    if present == false {
+        eprintln("  status: MISSING (spec file not found — set HEXA_SENSES_ROOT)")
+        if json_mode(a) {
+            println("{\"hexa_senses\":\"" + VERSION + "\",\"verb\":\"" + verb + "\",\"present\":false}")
+        }
+        _audit(verb, "missing", 1)
+        exit(1)
+    }
+    println("  status: PRESENT")
+    println("  --- first 20 lines ---")
+    let head = exec("head -20 " + shq(spec) + " 2>/dev/null")
+    println(head.trim())
+    println("  ----------------------")
+    if json_mode(a) {
+        println("{\"hexa_senses\":\"" + VERSION + "\",\"verb\":\"" + verb + "\",\"present\":true}")
+    }
+    _audit(verb, "", 0)
+}
+
+fn cmd_selftest(a: [str]) {
+    let mut ok = 0
+    let mut miss: [str] = []
+    for v in VERBS {
+        let spec = verb_spec(v)
+        if _file_exists(spec) { ok = ok + 1 } else { miss = miss + [v] }
+    }
+    let total = len(VERBS)
+    println("hexa-senses selftest — verb-spec presence sweep")
+    println("  total verbs: " + str(total))
+    println("  rollup:      hexa-dream + hexa-ear + hexa-empath + hexa-olfact + hexa-voice")
+    println("  present:     " + str(ok) + "/" + str(total))
+    if ok == total {
+        println("__HEXA_SENSES_SELFTEST__ PASS")
+        if json_mode(a) {
+            println("{\"hexa_senses\":\"" + VERSION + "\",\"subcmd\":\"selftest\",\"verdict\":\"PASS\",\"present\":" + str(ok) + ",\"total\":" + str(total) + "}")
+        }
+        _print_caveats()
+        _audit("selftest", "", 0)
+        return
+    }
+    println("__HEXA_SENSES_SELFTEST__ FAIL")
+    for m in miss { println("  missing: " + m) }
+    _print_caveats()
+    _audit("selftest", "", 1)
+    exit(1)
+}
+
+fn cmd_verify(a: [str]) {
+    let mut target = "all"
+    if a.len() > 3 {
+        let cand = a[3]
+        if cand.starts_with("--") == false { target = cand }
+    }
+    let mut tail = ""
+    if json_mode(a) { tail = " --json" }
+    let cmd = "cd " + shq(HS) + " && HEXA_SENSES_ROOT=" + shq(HS) +
+              " hexa run verify/cli.hexa " + shq(target) + tail
+    let rc = exec(cmd)
+    print(rc)
+    _audit("verify", target, 0)
+}
+
+fn cmd_inventory(a: [str]) {
+    let mut tail = ""
+    if json_mode(a) { tail = " --json" }
+    let cmd = "cd " + shq(HS) + " && HEXA_SENSES_ROOT=" + shq(HS) +
+              " hexa run verify/spec_inventory.hexa" + tail
+    let rc = exec(cmd)
+    print(rc)
+    _audit("inventory", "", 0)
+}
+
+fn cmd_version() {
+    println("hexa-senses " + VERSION)
+    println("standalone sensory-substrate library (HEXA family — extracted from canon@381f1f22 on 2026-05-07)")
+    println("license: MIT")
+    println("repo:    https://github.com/dancinlab/hexa-senses")
+}
+
+fn cmd_help() {
+    println("hexa-senses " + VERSION + " — 5-verb sensory-substrate CLI (👁️)")
+    println("")
+    println("usage: hexa-senses <subcmd> [flags...]")
+    println("")
+    println("verb subcommands:")
+    println("  dream            dream-recording + sleep-stage + dream-category spec")
+    println("  ear              σ·τ=48kHz audio codec + neural codec spec")
+    println("  empath           Ekman 6 emotions + biofeedback transfer spec")
+    println("  olfact           σ=12 receptors + e-nose spec")
+    println("  voice            intent → audio token (FORMULAIC, no learned TTS)")
+    println("")
+    println("utility subcommands:")
+    println("  list             verb table + caveats")
+    println("  selftest         5-verb spec presence sweep")
+    println("  verify [check]   Python verifier dispatcher")
+    println("  inventory        spec presence + canonical-header audit")
+    println("")
+    println("global flags:")
+    println("  --version        show version")
+    println("  --json           machine-parseable JSON tail")
+    println("  --help, -h       this help")
+    println("")
+    println("env:")
+    println("  HEXA_SENSES_ROOT       override repo root (default: inferred from $0)")
+}
+
+fn main() {
+    let _raw = args()
+    let mut _sidx = -1
+    let mut _i = 0
+    while _i < _raw.len() {
+        if _raw[_i].ends_with(".hexa") { _sidx = _i; break }
+        _i = _i + 1
+    }
+    let mut _user_start = 2
+    if _sidx >= 0 { _user_start = _sidx + 1 }
+
+    let mut a: [str] = ["hexa_senses_cli", "hexa_senses_router"]
+    let mut _ua = _user_start
+    while _ua < _raw.len() {
+        a = a + [_raw[_ua]]
+        _ua = _ua + 1
+    }
+    let n = len(a)
+
+    if n < 3 { cmd_help(); return }
+
+    let sub = a[2]
+
+    if sub == "--version" || sub == "-V" || sub == "version" { cmd_version(); return }
+    if has_flag(a, "--help") || has_flag(a, "-h") { cmd_help(); return }
+    if sub == "help"      { cmd_help(); return }
+    if sub == "list"      { cmd_list(a); return }
+    if sub == "selftest"  { cmd_selftest(a); return }
+    if sub == "verify"    { cmd_verify(a); return }
+    if sub == "inventory" { cmd_inventory(a); return }
+
+    if verb_spec(sub) != "" { cmd_verb(sub, a); return }
+
+    eprintln("hexa-senses: unknown subcommand '" + sub + "'")
+    eprintln("run 'hexa-senses help' or 'hexa-senses list' for usage")
+    _audit(sub, "", 2)
+    exit(2)
+}

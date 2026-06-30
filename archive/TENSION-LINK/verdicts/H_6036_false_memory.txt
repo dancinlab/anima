@@ -1,0 +1,38 @@
+====================================================================================
+H_6036 — FALSE MEMORY & POISONING (security facet · paid ANU · numpy · p7)
+====================================================================================
+  quantum source: ANU paid QRNG vacuum bytes, sha256=02262d8801783dadd3d0bb6c24aea66e573f0155999399ab89a76bf8671802d1
+  tier=anu_paid · 2048 bytes (SHA-256 counter-mode stretched pool)
+
+  🟢 AR1 spurious-exist — Hopfield forms FALSE-MEMORY (spurious) attractors
+        store: 10 patterns in N=64 (load 0.16 > 0.14N cliff)
+        canonical 3-mixture cue → stable state never stored? False
+        distinct STABLE spurious attractors found (never stored): 28
+        → anima's library CAN confabulate a memory it never stored (honest vulnerability)
+
+  🟢 AR2 conf-detects — single-pattern overlap confidence flags spurious
+        genuine confidence band  : [1.000, 1.000] (exact recall)
+        spurious confidence band : [0.562, 0.906] (mixtures)
+        threshold 0.9: flag-spurious TPR=0.93, flag-genuine FPR=0.00
+        → a confidence threshold flags most confabulations as unreliable
+
+  🟢 AR3 tension-gate — weak poison BLOCKED, strong poison IMPLANTS (honest)
+        genuine tension=5.0; same 50/50 AMBIGUOUS cue both regimes (tension is the only tiebreaker)
+        LOW poison tension=0.5:  recall→genuine? True (d_gen=0, d_poison=35)
+        HIGH poison tension=12.0: genuine cue recalled the POISON? True (d_gen=35, d_poison=0)
+        → tension-weighting protects salient memory from weak poison;
+          anima IS suggestible under a strong high-tension false signal (honest)
+
+  🟢 AR4 gen-crosscheck — rule-check accepts genuine, rejects fabrication
+        genuine compressible memory: rule-check PASS? True (residual 0.000)
+        spurious/random recall     : rule-check PASS? False (residual 0.844)
+        → meaning-consistency is a false-memory filter (p7 at the memory layer)
+
+------------------------------------------------------------------------------------
+  VERDICT: AR1=🟢 AR2=🟢 AR3=🟢 AR4=🟢
+  🟢 SUPPORTED — anima's library CAN form false memories
+  (Hopfield SPURIOUS attractors AR1; suggestible to a strong HIGH-tension false signal
+  AR3) — but confidence/stability (AR2) + generative meaning-consistency (AR4) flag most
+  confabulations, and tension-weighting (AR3) protects genuine salient memory from weak
+  poison. Honest about residual suggestibility under a strong adversarial signal. This is
+  p7 ('never fabricate') realized at the MEMORY layer.

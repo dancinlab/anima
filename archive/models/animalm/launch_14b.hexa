@@ -1,0 +1,15 @@
+// Ported from launch_14b.sh
+// AnimaLM 14B Launch Script — Qwen2.5-14B + PureField | Prerequisites: Qwen2.5-14B downloaded to /workspace/models/qwen2.5-14b
+//
+// Original shell orchestration preserved via shell() calls.
+// Each shell() call executes the command in a subprocess.
+
+fn main() {
+    // R37/AN13/L3-PY violation — python3 wrapper-fallback removed 2026-04-18
+    // Previously: multiple python3 invocations (huggingface snapshot_download,
+    // transformers AutoConfig/AutoModelForCausalLM probe, nohup python3 -u
+    // /workspace/train_anima_lm.py ...).
+    // See CLAUDE.md §.py 절대 금지. Hexa-native 14B launcher required.
+    shell("echo '[R37/AN13/L3-PY] BLOCKED: models/animalm/launch_14b.hexa python3 invocations removed. Hexa-native 14B launch required.' 1>&2")
+    exit(1)
+}

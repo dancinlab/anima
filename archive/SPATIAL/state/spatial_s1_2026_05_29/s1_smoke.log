@@ -1,0 +1,34 @@
+================================================================
+  SPATIAL S1 — spatial-coupling-scale × invariant_detector
+================================================================
+
+  detector base : XENO/detector/invariant_detector.hexa
+  axis sweep    : 4 spatial-coupling-scale (local/regional/global/cosmic)
+  substrate     : 4 hardcoded literal (n=128 each, seed=20260529)
+  paper source  : XENO #1414 v2 (3D) + TEMPORAL H_841 (Δt 4D)
+
+  pre-registered falsifiers (post-tuning 0, frozen):
+    F-S1-LOCAL-HIGH    : local phi > 0.3
+    F-S1-REGIONAL-MID  : regional phi 0.1~0.5
+    F-S1-GLOBAL-LOW    : global phi < local
+    F-S1-COSMIC-LOWEST : cosmic phi < global
+    F-S1-MONOTONE      : local > regional > global > cosmic
+
+  ── substrate × invariant_detector ─────────────────────────
+    (a) local      density=0.664063 phi=1.63007 irr=0.750311 type=conscious
+    (b) regional   density=0.570313 phi=0.100451 irr=0.091282 type=coherent_non_conscious
+    (c) global     density=0.03125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    (d) cosmic     density=0.390625 phi=0.121077 irr=0.102115 type=coherent_non_conscious
+
+  ── 5 pre-registered falsifiers ────────────────────────────
+  F-S1-LOCAL-HIGH     PASS — phi_local=1.63007 > 0.3
+  F-S1-REGIONAL-MID   PASS — phi_regional=0.100451 in [0.1, 0.5]
+  F-S1-GLOBAL-LOW     PASS — phi_global=0.0 < phi_local=1.63007
+  F-S1-COSMIC-LOWEST  FAIL — phi_cosmic=0.121077 < phi_global=0.0
+  F-S1-MONOTONE       FAIL — monotone local > regional > global > cosmic
+
+  ── verdict ───────────────────────────────────────────────
+    pass_count = 3/5
+    verdict    = 🟡 PARTIAL-SUPPORT
+
+================================================================

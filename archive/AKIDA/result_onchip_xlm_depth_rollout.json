@@ -1,0 +1,348 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T11:40:27Z",
+  "n_trials": 8,
+  "units": 256,
+  "K_roll": 3,
+  "depth_mechanism": "PAGED 2-FC on a single AKD1000 (layerpage primitive): FC1(256u,8w)=transition encoder, FC2(256u,8w)=learned composition/recurrence surface trained ON CHIP on FC1's on-chip binarized output; per hop g1=FC1(x)->g1_bin->g2=FC2(g1_bin)->g_bin; input-side state-carry (ctx 3-vote majority + bind) retained from PR#1689",
+  "binding": "bind(a,b)=a XOR roll(b,37); neutral=a XOR roll(a,37)",
+  "encoder": "whitened (byte-match onchip_xlm_state_rollout.enc_whitened)",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "onefc_baseline_PR1689": [
+    0.4234,
+    0.0282,
+    0.0122
+  ],
+  "stateless_baseline_PR1686": [
+    0.4287,
+    0.0277,
+    0.009
+  ],
+  "task": "ON-CHIP MULTI-FC DEPTH autoregressive ROLLOUT: K-hop chained generation through a paged depth-2 FC stack (both FCs learned on chip); open-vocab full-codebook decode; per-hop shuffle+identity NULL",
+  "metric": "depth_acc[k]=P(open-vocab decode of depth-2 g_hat at hop k == concept[ti+k]), k=1..K",
+  "trials": [
+    {
+      "trial": 0,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.15319148936170213,
+        0.02127659574468085,
+        0.02127659574468085
+      ],
+      "onefc_acc": [
+        0.02553191489361702,
+        0.02553191489361702,
+        0.01702127659574468
+      ],
+      "identity_acc": [
+        0.01702127659574468,
+        0.029787234042553193,
+        0.03404255319148936
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 1,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.15319148936170213,
+        0.03404255319148936,
+        0.00851063829787234
+      ],
+      "onefc_acc": [
+        0.029787234042553193,
+        0.02553191489361702,
+        0.01702127659574468
+      ],
+      "identity_acc": [
+        0.0425531914893617,
+        0.02127659574468085,
+        0.02127659574468085
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 2,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.14893617021276595,
+        0.04680851063829787,
+        0.02127659574468085
+      ],
+      "onefc_acc": [
+        0.04680851063829787,
+        0.03404255319148936,
+        0.01276595744680851
+      ],
+      "identity_acc": [
+        0.03829787234042553,
+        0.0425531914893617,
+        0.02127659574468085
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 3,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.13617021276595745,
+        0.029787234042553193,
+        0.00851063829787234
+      ],
+      "onefc_acc": [
+        0.02553191489361702,
+        0.02553191489361702,
+        0.01276595744680851
+      ],
+      "identity_acc": [
+        0.0425531914893617,
+        0.0425531914893617,
+        0.00851063829787234
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 4,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.14893617021276595,
+        0.03404255319148936,
+        0.01276595744680851
+      ],
+      "onefc_acc": [
+        0.029787234042553193,
+        0.01276595744680851,
+        0.0
+      ],
+      "identity_acc": [
+        0.0425531914893617,
+        0.02553191489361702,
+        0.01276595744680851
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 5,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.16595744680851063,
+        0.03829787234042553,
+        0.01702127659574468
+      ],
+      "onefc_acc": [
+        0.029787234042553193,
+        0.01702127659574468,
+        0.01276595744680851
+      ],
+      "identity_acc": [
+        0.05531914893617021,
+        0.029787234042553193,
+        0.01702127659574468
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 6,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.23829787234042554,
+        0.01702127659574468,
+        0.01276595744680851
+      ],
+      "onefc_acc": [
+        0.029787234042553193,
+        0.02127659574468085,
+        0.00851063829787234
+      ],
+      "identity_acc": [
+        0.059574468085106386,
+        0.02127659574468085,
+        0.01276595744680851
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 7,
+      "learned_hw": true,
+      "l1_learned": true,
+      "l2_learned": true,
+      "depth_acc": [
+        0.14468085106382977,
+        0.01702127659574468,
+        0.01702127659574468
+      ],
+      "onefc_acc": [
+        0.03404255319148936,
+        0.00425531914893617,
+        0.029787234042553193
+      ],
+      "identity_acc": [
+        0.0425531914893617,
+        0.02127659574468085,
+        0.02127659574468085
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    }
+  ],
+  "summary": {
+    "learn_all_hw": true,
+    "chance": 0.02040816326530612,
+    "K_roll": 3,
+    "decay_curve_depth2": [
+      0.1612,
+      0.0298,
+      0.0149
+    ],
+    "decay_curve_onefc": [
+      0.0314,
+      0.0207,
+      0.0138
+    ],
+    "per_hop": [
+      {
+        "hop": 1,
+        "depth_acc": {
+          "mean": 0.16117021276595744,
+          "sd": 0.03228258305133997,
+          "ci_lo": 0.13879952404393345,
+          "ci_hi": 0.18354090148798144
+        },
+        "onefc_acc": {
+          "mean": 0.03138297872340426,
+          "ci_lo": 0.026670849185664064,
+          "ci_hi": 0.036095108261144454
+        },
+        "delta_depth_minus_onefc": 0.1298,
+        "identity_null": {
+          "mean": 0.04255319148936171,
+          "hi": 0.051329058641582444
+        },
+        "shuffle_null": {
+          "mean": 0.020978723404255318,
+          "sd": 0.01051425555810538,
+          "hi": 0.04158666429814186,
+          "p_value": 0.004975124378109453,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": true,
+        "above_identity_null": true,
+        "beats_onefc": true
+      },
+      {
+        "hop": 2,
+        "depth_acc": {
+          "mean": 0.02978723404255319,
+          "sd": 0.010668649711115042,
+          "ci_lo": 0.02239423697685651,
+          "ci_hi": 0.03718023110824987
+        },
+        "onefc_acc": {
+          "mean": 0.02074468085106383,
+          "ci_lo": 0.014354295077852148,
+          "ci_hi": 0.02713506662427551
+        },
+        "delta_depth_minus_onefc": 0.009,
+        "identity_null": {
+          "mean": 0.02925531914893617,
+          "hi": 0.035448270646980536
+        },
+        "shuffle_null": {
+          "mean": 0.019978723404255317,
+          "sd": 0.009285936152638232,
+          "hi": 0.03817915826342625,
+          "p_value": 0.20398009950248755,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": false,
+        "above_identity_null": false,
+        "beats_onefc": true
+      },
+      {
+        "hop": 3,
+        "depth_acc": {
+          "mean": 0.014893617021276596,
+          "sd": 0.005086079188656994,
+          "ci_lo": 0.011369143959004485,
+          "ci_hi": 0.018418090083548708
+        },
+        "onefc_acc": {
+          "mean": 0.013829787234042552,
+          "ci_lo": 0.007985109868406805,
+          "ci_hi": 0.0196744645996783
+        },
+        "delta_depth_minus_onefc": 0.0011,
+        "identity_null": {
+          "mean": 0.018617021276595744,
+          "hi": 0.02406287391878619
+        },
+        "shuffle_null": {
+          "mean": 0.02006382978723404,
+          "sd": 0.008055685552130437,
+          "hi": 0.035852973469409695,
+          "p_value": 0.681592039800995,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": false,
+        "above_identity_null": false,
+        "beats_onefc": true
+      }
+    ],
+    "F_DEPTH_1_breaks_1hop_wall": "NOT-REFUTED: hop-2 and/or hop-3 depth-2 acc DROPS INTO the shuffle-NULL -> a second learned FC does NOT break the 1-hop wall at 1-bit/256-unit (CLOSED-NEGATIVE, a_paper_negative_ok)",
+    "F_DEPTH_2_beats_onefc_material": "NOT-REFUTED: depth-2 does NOT beat the 1-FC state-carry baseline by more than permille at hop-2/3 -> a second FC adds no MATERIAL depth at this capacity (a_paper_negative_ok)",
+    "F_DEPTH_1_pass": false,
+    "F_DEPTH_2_pass": false,
+    "depth_breaks_wall": false
+  },
+  "DISPOSITION": "MULTI-FC DEPTH CLOSED-NEGATIVE (a_paper_negative_ok): a SECOND learned 1-bit FC does NOT break the 1-hop wall (hop-2/3 still in the shuffle-NULL, no material gain over the 1-FC state-carry baseline) -> SHARPENS the finding to 'AKD1000 edge-learn caps at SINGLE-STEP generation REGARDLESS OF DEPTH' at 256-unit capacity; the wall is not an input/state problem and not a depth problem at this scale. Named next bridge = off-chip decode head OR accept single-step as the Lane-A PUBLIC scope. EMERGENCE axis NULL. Retrieval+single-step UNAFFECTED. Lane A on-chip (a_lane_akida_gpu_split), toy 250-anchor scale (a_scale_honest_scope)."
+}

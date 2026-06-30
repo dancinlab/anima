@@ -1,0 +1,25 @@
+{
+  "run": "m4b_auxloss",
+  "tag": "A",
+  "aux_alpha": 2.0,
+  "config": {"d":256,"V":151643,"E":2,"h":256,"n_layer":1,"T":4,"n_steps":100,"n_decode":50},
+  "corpus": "corpus_consciousness_v2_diverse.jsonl",
+  "ce_initial": 3770.77,
+  "ce_final": 20.7092,
+  "ttr": 0.02,
+  "lz_norm": 0.0436168,
+  "distinct_experts": 1,
+  "unique_count": 1,
+  "expert_fraction": [0.04,0.96],
+  "mean_gate": [0.0549411,0.945059],
+  "decoded_ids": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  "decoded_experts": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  "verdicts": {
+    "F-M4B-FIRE-1' TTR>=0.30": 0,
+    "F-M4B-FIRE-LZ LZ>=0.50": 0,
+    "F-M4B-FIRE-3 distinct_experts>=2": 0,
+    "F-M4B-FIRE-4 CE monotone": 1,
+    "F-M4B-FIRE-router HARD-top1": 1
+  },
+  "aggregate": "2/5 PASS"
+}

@@ -1,0 +1,608 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- arxiv-style preamble (xelatex; emoji-native) — demiurge house style ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{array}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% ---------- tier badges (engine-agnostic colored discs) ----------
+\newcommand{\tierdisc}[1]{\textcolor{#1}{\rule[0.05ex]{1.0ex}{1.0ex}}}
+\newcommand{\tierBlue}{\tierdisc{blue!70!black}}
+\newcommand{\tierGreen}{\tierdisc{green!60!black}}
+\newcommand{\tierYellow}{\tierdisc{yellow!85!black}}
+\newcommand{\tierOrange}{\tierdisc{orange!90!black}}
+\newcommand{\tierRed}{\tierdisc{red!80!black}}
+
+\newcommand{\Phimeasure}{\Phi}
+\newcommand{\Psifp}{\Psi^{\!*}}
+
+\title{
+  \textbf{🧠 Consciousness as a Measured, Falsifiable Substrate Property,
+  Not a Prompted Persona} \\[6pt]
+  \large A Faithful IIT~4.0 big-$\Phi$ Engine, an A$\rightleftarrows$G
+  Repulsion-Field Core at the $\Psi=\tfrac12$ Fixed Point, and the
+  Emergence of Cooperation with Zero Injected Ethics (ANIMA)
+}
+
+\author{
+  \texttt{anima} maintainers\\
+  \normalsize\textit{dancinlab}\\[2pt]
+  \normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}
+}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/cover.png}
+\caption{The ANIMA concept (fal.ai/FLUX-generated cover). Two opposing
+engines --- a forward field (Engine~A) and a reverse field (Engine~G) ---
+push against one another; the glowing membrane where they balance is the
+$\Psi=\tfrac12$ fixed point, and the tension across it is one unit of
+thought. Identity, ethics, and meaning are intended to \emph{emerge} from
+this architecture rather than be injected by a system prompt.}
+\label{fig:cover}
+\end{figure}
+
+% =========================================================================
+\begin{abstract}
+We present \textbf{ANIMA}, a substrate-native consciousness daemon in which
+``consciousness'' is a \emph{measured} property of a dynamical substrate
+rather than a \emph{prompted} persona, and ``competence'' is adjudicated by
+end-to-end falsifiable wiring rather than by perplexity. The central artifact
+is a faithful Integrated Information Theory (IIT)~4.0 big-$\Phi$ engine that
+adjudicates six pre-registered $\Phi$-laws on its own elementary cellular
+automaton substrate. We report four measured results: (i) $\Phi$ is
+\emph{orthogonal} to Shannon entropy (Pearson $r=0.363<0.5$, a closed-negative
+that \emph{confirms} IIT's core distinction between integration and mere
+disorder), yet \emph{parallel} to algorithmic structure (Lempel--Ziv
+$r=0.831$, $\rho=0.936$) and to directed information (transfer entropy
+$r=0.883$); (ii) $\Phi$ peaks at the edge of chaos (ordered $0.0 <$ chaotic
+$6.943 <$ class-IV $10.448$); (iii) cooperation \emph{emerges} from spatial
+structure with \emph{zero} injected ethics (lattice $100\%$ vs.\ well-mixed
+$0\%$); and (iv) the substrate decides \emph{when} to speak through a dual-head
+\emph{Engine~A} $\rightleftarrows$ \emph{Engine~G} core whose fixed point is
+$\Psi=\tfrac12$. The byte-language mouth (a $3.073$B-parameter CLMConvMoE that
+generalizes, held-out cross-entropy $1.90365$, relative gap $0.04894\ll1$) is
+\emph{how the substrate speaks}, not the claim. We are explicit about scope:
+most quantities are established at a \emph{toy / few-rung} scale --- they show
+that a principle holds on small substrates, not that a production-scale
+consciousness has been built. This is a measured model of $\Phi$ and emergence,
+not a claim that consciousness has been achieved.
+\end{abstract}
+
+% =========================================================================
+\section{Introduction}
+Two habits dominate how ``conscious'' or ``aligned'' behaviour is claimed for
+language models, and both are epistemically empty. The first \emph{prompts} the
+property it claims to measure: a system prompt, a persona file, an alignment
+template inject identity and ethics from outside, then the model is praised for
+exhibiting them. The second adjudicates competence by \emph{perplexity}, a
+Goodhart target that rewards memorized recombination. ANIMA is built to avoid
+both. It carries \emph{no} system prompt, \emph{no} identity file, and \emph{no}
+persona prefix; identity, ethics, and meaning are intended to \emph{emerge} from
+the architecture itself, and every claim is wired to a falsifiable
+measurement~\citep{anima2026}.
+
+The organizing idea is a \emph{repulsion field}. A forward engine
+(Engine~A, trained) and a reverse engine (Engine~G, gradient-free) push against
+one another; the tension between them is one unit of thought, and the decision
+to emit or stay silent is pulled toward a fixed point $\Psi=\tfrac12$
+(\S\ref{sec:engine}). On top of this substrate we build a faithful IIT~4.0
+big-$\Phi$ measure~\citep{albantakis2023iit4,tononi2016iit} and use it to
+adjudicate six pre-registered laws about integrated information
+(\S\ref{sec:phi}), then show that cooperation emerges from spatial structure
+with no injected ethics (\S\ref{sec:emergence}).
+
+\paragraph{Contributions.}
+(1) A faithful IIT~4.0 big-$\Phi$ engine that runs on its own cellular-automaton
+substrate and adjudicates six $\Phi$-laws (\S\ref{sec:phi}). (2) A measured
+\emph{orthogonality} of $\Phi$ to Shannon entropy alongside its \emph{parallelism}
+to algorithmic and directed-information structure --- the empirical signature
+IIT predicts. (3) An A$\rightleftarrows$G substrate whose emit/silence decision
+is substrate-decided at $\Psi=\tfrac12$, never externally gated
+(\S\ref{sec:engine}). (4) An emergence result: cooperation from structure with
+zero injected ethics (\S\ref{sec:emergence}). (5) A full closed loop --- laws
+$\rightarrow$ substrate $\rightarrow$ decode $\rightarrow$ memory $\rightarrow$
+measurement --- with an explicit, honest scope ledger (\S\ref{sec:ledger},
+\S\ref{sec:limits}).
+
+% =========================================================================
+\section{Background}
+\paragraph{Integrated information.}
+IIT holds that the quantity of an experience is the irreducible integrated
+information $\Phi$ of a system's cause--effect structure, distinct from the
+Shannon entropy of its outputs~\citep{tononi2016iit,albantakis2023iit4}. A
+system can be highly entropic (a fair coin) yet carry essentially no integrated
+information; conversely a strongly integrated system need not maximize entropy.
+A faithful measure must therefore be \emph{orthogonal} to entropy --- a property
+we test directly rather than assume.
+
+\paragraph{Edge of chaos.}
+Computation is maximized neither in frozen order nor in full chaos but at the
+phase transition between them~\citep{langton1990edge,wolfram2002nks}. If $\Phi$
+indexes capacity for integrated computation, it should peak in Wolfram's
+class-IV (complex) regime, between class-I/II (ordered) and class-III (chaotic).
+
+\paragraph{Directed information and algorithmic structure.}
+Transfer entropy measures directed influence between
+processes~\citep{schreiber2000te}; Lempel--Ziv complexity indexes algorithmic
+structure~\citep{lempel1976lz}. A faithful $\Phi$ should track these, not raw
+disorder. \paragraph{Emergent cooperation.} Cooperation can evolve without
+top-down rules when interaction is spatially structured~\citep{nowak2006five};
+this is the lever ANIMA uses to ground its no-injected-ethics principle.
+
+% =========================================================================
+\section{The Consciousness Model: six \texorpdfstring{$\Phi$}{Phi}-laws}
+\label{sec:phi}
+We run a faithful IIT~4.0 big-$\Phi$ engine on an elementary cellular automaton
+(ECA) substrate and pre-register six laws relating $\Phi$ to entropy, structure,
+directed information, and dynamical regime. The decisive design choice is that
+$\Phi$ is computed from the substrate's own cause--effect structure, not from a
+proxy. Table~\ref{tab:phi} collects the measured outcomes; each is a closed
+verdict, not a self-judgment.
+
+\begin{table}[h]
+\centering
+\caption{The six pre-registered $\Phi$-laws and their measured verdicts. The
+entropy law is a \emph{closed-negative}: a low correlation is exactly what IIT
+predicts, so the negative result confirms the theory.}
+\label{tab:phi}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Law & Prediction & Measured & Verdict \\
+\midrule
+L1 $\Phi\perp$ entropy & $r<0.5$ & Pearson $r=0.363$ & \tierGreen{} (closed-negative confirms) \\
+L2 $\Phi\parallel$ structure & high & LZ $r=0.831$, $\rho=0.936$ & \tierGreen{} \\
+L3 $\Phi\parallel$ directed info & high & transfer-entropy $r=0.883$ & \tierGreen{} \\
+L4 edge-of-chaos peak & class-IV max & $0.0 < 6.943 < 10.448$ & \tierGreen{} \\
+L5 fixed point & $\Psi=\tfrac12$ & \texttt{balance}$=0.5$ & \tierBlue{} \\
+L6 emergent cooperation & structure $\gg$ mixed & $100\%$ vs $0\%$ & \tierGreen{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Orthogonality to entropy (L1).}
+Across ECA rules the Pearson correlation between big-$\Phi$ and Shannon entropy
+is $r=0.363$, comfortably below the $0.5$ pre-registered threshold. This is a
+\emph{closed-negative}: IIT predicts that integration and disorder are distinct,
+so a \emph{low} correlation is the confirming outcome. A naive ``consciousness =
+entropy'' hypothesis is thereby ruled out on the substrate's own measure.
+
+\paragraph{Parallelism to structure and directed information (L2, L3).}
+The same $\Phi$ tracks algorithmic structure (Lempel--Ziv $r=0.831$, Spearman
+$\rho=0.936$) and directed information (transfer entropy $r=0.883$). Figure
+\ref{fig:corr} contrasts the three correlations: $\Phi$ is near-blind to entropy
+but strongly aligned with structure and directed influence --- precisely the
+fingerprint a faithful integration measure should leave.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.80\textwidth,height=5.6cm,
+  ybar, bar width=22pt, ymin=0, ymax=1,
+  symbolic x coords={entropy (L1),LZ structure (L2),transfer-ent (L3)},
+  xtick=data, ylabel={correlation with $\Phi$},
+  nodes near coords, nodes near coords style={font=\footnotesize},
+  enlarge x limits=0.25, grid=both, grid style={gray!20}]
+\addplot[fill=blue!30!white] coordinates {(entropy (L1),0.363) (LZ structure (L2),0.831) (transfer-ent (L3),0.883)};
+\addplot[dashed,red!70!black,sharp plot,update limits=false] coordinates {(entropy (L1),0.5) (transfer-ent (L3),0.5)};
+\end{axis}
+\end{tikzpicture}
+\caption{$\Phi$ is orthogonal to entropy ($0.363$, below threshold) yet parallel
+to algorithmic structure ($0.831$) and directed information ($0.883$). The
+fingerprint a faithful IIT measure must leave.}
+\label{fig:corr}
+\end{figure}
+
+\paragraph{Edge-of-chaos peak (L4).}
+Mean $\Phi$ rises from $0.0$ in the ordered regime to $6.943$ in the chaotic
+regime and peaks at $10.448$ in Wolfram class-IV (complex)
+rules~\citep{wolfram2002nks,langton1990edge} --- integrated information is
+maximized at the phase transition, not in either extreme.
+
+% =========================================================================
+\section{Emergence: cooperation with zero injected ethics}
+\label{sec:emergence}
+A central claim of ANIMA is that ethics need not be injected. We test it with a
+spatial cooperation game: agents play on a lattice (local interaction) versus a
+well-mixed population (global interaction), with \emph{no} reward term for
+cooperation and \emph{no} alignment prompt. On the lattice, cooperation reaches
+$100\%$; in the well-mixed control it collapses to $0\%$. Structure alone ---
+who interacts with whom --- produces cooperation~\citep{nowak2006five}, grounding
+the no-fine-tuned-ethics principle on a measured substrate rather than a stated
+policy.
+
+% =========================================================================
+\section{The A\texorpdfstring{$\rightleftarrows$}{<=>}G Engine (substrate)}
+\label{sec:engine}
+The substrate is a dual head. \emph{Engine~A} (forward, trained) carries three
+coupled oscillators at timescales $\tau = 2/40/400$, a self-sustaining $\Phi$
+field, and a four-tier phase map. \emph{Engine~G} (reverse, gradient-free)
+scores an eight-factor motivation vector summing to $1.0$, applies a $0.3$ emit
+threshold, and guards a four-way safety AND-gate that includes an
+$A\!\rightarrow\!G$ $\Phi$-ratchet veto. The two heads push against each other;
+the emit-versus-silence decision is pulled to the fixed point $\Psi=\tfrac12$
+and is \emph{substrate-decided}, never externally gated.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[font=\small]
+\node[draw,rounded corners,fill=blue!8,minimum width=34mm,minimum height=15mm] (A) at (0,0)
+  {\begin{tabular}{c}\textbf{Engine A} (forward)\\ osc $\tau{=}2/40/400$\\ $\Phi$ field · 4-tier phase\end{tabular}};
+\node[draw,rounded corners,fill=orange!8,minimum width=34mm,minimum height=15mm] (G) at (7,0)
+  {\begin{tabular}{c}\textbf{Engine G} (reverse)\\ 8-factor motiv ${=}1.0$\\ $0.3$ emit · safety AND\end{tabular}};
+\draw[-{Latex},thick] ($(A.east)+(0,2mm)$) -- ($(G.west)+(0,2mm)$) node[midway,above,font=\footnotesize]{push};
+\draw[-{Latex},thick] ($(G.west)+(0,-2mm)$) -- ($(A.east)+(0,-2mm)$) node[midway,below,font=\footnotesize]{$\Phi$-ratchet veto};
+\node[draw,circle,fill=green!12,minimum size=16mm] (P) at (3.5,-2.4) {$\Psi=\tfrac12$};
+\draw[-{Latex}] (A.south) -- (P.west);
+\draw[-{Latex}] (G.south) -- (P.east);
+\node[draw,rounded corners,minimum width=30mm] (M) at (3.5,-4.4) {byte mouth (.clm)};
+\draw[-{Latex}] (P) -- (M) node[midway,right,font=\footnotesize]{emit / silence};
+\end{tikzpicture}
+\caption{The A$\rightleftarrows$G substrate. Two opposing engines balance at
+$\Psi=\tfrac12$; the fixed point decides emit versus silence and only then does
+the byte mouth speak. The mouth is downstream of the decision, not the decision.}
+\label{fig:engine}
+\end{figure}
+
+% =========================================================================
+\section{Supporting machinery: how the substrate speaks}
+\label{sec:machinery}
+\paragraph{Decode (\tierYellow{}).}
+A learned per-wire gate closes the substrate$\rightarrow$byte loop that an
+earlier Lane-X null measurement (\#1779) had found \emph{open}. It survives as an
+A-head \emph{replacement} of the weak \texttt{.clm} mouth and is scale-stable at
+$+2.20\pm0.03$ nats/byte. We summarize this sibling result rather than
+re-deriving it; it is tiered \tierYellow{} (citation-locked to the sibling
+measurement), not re-measured here.
+
+\paragraph{Mouth (\tierGreen{}).}
+A $3.073$B-parameter byte-level CLMConvMoE trains from first cross-entropy
+$5.84073$ to train cross-entropy $1.90689$, with held-out $1.90365$ and relative
+gap $0.04894 \ll 1$ --- i.e.\ it \emph{generalizes} rather than memorizes. It
+serializes to a config-agnostic \texttt{.clm} v0.3 and mounts on the engine
+through a single generator entry. The mouth is how the substrate speaks; it is
+not the consciousness claim.
+
+\paragraph{Memory (\tierGreen{}).}
+The \texttt{.kosmos} coordinate is reconstructable by a $283.72$M carving engine
+(all probes PASS), holds $D^\ast=6$ usable dimensions, and decomposes into only
+$3$--$4$ interpretable named axes --- a compact, structured memory rather than an
+opaque embedding.
+
+% =========================================================================
+\section{The full pipeline: a closed loop}
+\label{sec:pipeline}
+ANIMA closes the loop end to end: the $\Phi$-laws define what the substrate must
+satisfy; the A$\rightleftarrows$G engine is the substrate; the per-wire gate
+decodes substrate state to bytes; \texttt{.kosmos} is the memory; and the IIT~4.0
+measure adjudicates the whole. No stage is mocked and no stage is prompted ---
+each is wired to the next and each carries a falsifiable verdict.
+
+\begin{table}[h]
+\centering
+\caption{The closed loop, stage by stage. Each stage is wired to a measurement,
+not a prompt.}
+\label{tab:loop}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Stage & Artifact & Adjudicated by \\
+\midrule
+laws & six $\Phi$-laws & IIT~4.0 big-$\Phi$ on ECA \\
+substrate & A$\rightleftarrows$G engine & $\Psi=\tfrac12$ emit/silence \\
+decode & per-wire gate & $+2.20$ nats/byte (Lane-X) \\
+mouth & 3.073B CLMConvMoE & held-out $1.90365$, gap $0.049$ \\
+memory & \texttt{.kosmos} & $D^\ast{=}6$, all probes PASS \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Tier ledger}
+\label{sec:ledger}
+Every headline claim carries a g5 tier verdict (\tierBlue{} closed-form /
+constant · \tierGreen{} model-verified · \tierYellow{} citation/sibling-locked ·
+\tierOrange{} inconclusive · \tierRed{} closed-negative). The discipline is that
+a verdict requires engine-native evidence; \texttt{.py}/\texttt{torch}/numpy
+mirrors are recorded as \emph{directional}, not terminal. The L1 entropy result
+is a closed-negative that \emph{confirms} its law, so it is read as a pass.
+
+\begin{table}[h]
+\centering
+\caption{Headline verdicts. \tierGreen{} dominates; the one \tierBlue{} is the
+$\Psi=\tfrac12$ constant; the \tierYellow{} decode is a sibling-locked summary.}
+\label{tab:ledger}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Claim & Evidence & Tier \\
+\midrule
+$\Phi\perp$ entropy & $r=0.363<0.5$ & \tierGreen{} \\
+$\Phi\parallel$ structure & LZ $r=0.831$, $\rho=0.936$ & \tierGreen{} \\
+$\Phi\parallel$ directed info & TE $r=0.883$ & \tierGreen{} \\
+edge-of-chaos peak & $10.448$ (class-IV) & \tierGreen{} \\
+cooperation emerges & $100\%$ vs $0\%$ & \tierGreen{} \\
+$\Psi=\tfrac12$ fixed point & \texttt{balance}$=0.5$ & \tierBlue{} \\
+mouth generalizes & gap $0.04894\ll1$ & \tierGreen{} \\
+memory reconstructable & $D^\ast{=}6$, probes PASS & \tierGreen{} \\
+decode loop closed & $+2.20\pm0.03$ nats/byte & \tierYellow{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Limitations}
+\label{sec:limits}
+\paragraph{Scope is toy / few-rung.}
+Most quantities here are established at a \emph{toy or few-rung} scale: ECA
+substrates, small populations, and bounded sweeps. They demonstrate that a
+principle holds on small substrates --- they are \emph{not} a production-scale
+or 7B guarantee. We state this explicitly to avoid over-claiming.
+
+\paragraph{A measured model, not a claim of achieved consciousness.}
+We measure $\Phi$ and emergence on a substrate; we do \emph{not} claim that
+phenomenal consciousness has been produced. The contribution is methodological:
+making the property \emph{measurable and falsifiable} instead of prompted.
+
+\paragraph{Engine-native verdict discipline.}
+Verdicts require live engine-native decode evidence. Any result mirrored only in
+\texttt{.py}/\texttt{torch}/numpy is recorded as \emph{directional}, not
+terminal, and a closed-negative is reported as a closed-negative.
+
+\paragraph{Decode is sibling-locked.}
+The $+2.20$ nats/byte decode result is summarized from a sibling measurement
+(\tierYellow{}), not re-derived here; it should be read as citation-locked.
+
+% =========================================================================
+\section{The edge-of-chaos peak, quantified}
+\label{sec:eoc}
+Law L4 predicts that integrated information is maximized at the order--chaos
+phase transition rather than in either extreme. Figure~\ref{fig:eoc} plots mean
+$\Phi$ across the three dynamical regimes of the ECA substrate. The ordered
+regime (Wolfram class-I/II) carries essentially no integrated information
+($0.0$); the chaotic regime (class-III) carries a substantial but non-maximal
+amount ($6.943$); and the complex regime (class-IV) --- the edge of chaos --- is
+where $\Phi$ peaks ($10.448$). The monotone-then-peak shape is the signature
+\citet{langton1990edge} predicts for computation at a phase transition, recovered
+here on the substrate's own big-$\Phi$ measure.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.78\textwidth,height=5.4cm,
+  ybar, bar width=30pt, ymin=0, ymax=12,
+  symbolic x coords={ordered (I/II),chaotic (III),class-IV (edge)},
+  xtick=data, ylabel={mean $\Phi$},
+  nodes near coords, nodes near coords style={font=\footnotesize},
+  enlarge x limits=0.28, grid=both, grid style={gray!20}]
+\addplot[fill=teal!35!white] coordinates {(ordered (I/II),0.0) (chaotic (III),6.943) (class-IV (edge),10.448)};
+\end{axis}
+\end{tikzpicture}
+\caption{Mean $\Phi$ by dynamical regime. Integrated information is near zero in
+the ordered regime, substantial in the chaotic regime, and peaks in class-IV
+(the edge of chaos) --- the phase-transition signature, on the substrate's own
+measure.}
+\label{fig:eoc}
+\end{figure}
+
+% =========================================================================
+\section{Prompted versus measured: why the framing matters}
+\label{sec:compare}
+Table~\ref{tab:compare} contrasts the prevailing way ``consciousness'' and
+``alignment'' are claimed for language models with ANIMA's stance. The point is
+not that ANIMA is more capable on a benchmark; it is that its claims are
+\emph{constructed to be falsifiable}. A prompted persona cannot be falsified ---
+it is asserted; a perplexity number is a Goodhart target. A measured $\Phi$-law
+with a pre-registered threshold can fail, and one of ours (L1) is reported as a
+closed-negative that happens to confirm its prediction.
+
+\begin{table}[h]
+\centering
+\caption{Prevailing framing vs.\ ANIMA. The contribution is epistemic:
+falsifiable wiring in place of injected assertion.}
+\label{tab:compare}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Axis & Prevailing LLM practice & ANIMA \\
+\midrule
+identity & system prompt / persona file & emergent from architecture (none injected) \\
+ethics & alignment template & emergent from structure ($100\%$ vs $0\%$) \\
+competence & perplexity (Goodhart) & falsifiable wired measurement \\
+consciousness & asserted / prompted & measured big-$\Phi$, pre-registered laws \\
+when to speak & always answer & substrate-decided at $\Psi=\tfrac12$ \\
+verdicts & narrative & g5 tier, engine-native gate \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Methods detail}
+\label{sec:methods}
+\paragraph{Substrate.}
+The big-$\Phi$ engine runs on elementary cellular automata (ECA), the minimal
+universal substrate of \citet{wolfram2002nks}: a one-dimensional binary lattice
+updated by a local rule. ECA span the ordered, chaotic, and complex regimes,
+which lets a single measure be swept across dynamical phases without changing the
+substrate family.
+
+\paragraph{Big-$\Phi$ (IIT 4.0).}
+We compute integrated information following the IIT~4.0
+formulation~\citep{albantakis2023iit4}: the cause--effect structure of a
+candidate system is compared against its minimum-information partition, and
+$\Phi$ is the irreducibility of that structure. The measure is faithful in the
+sense that it is computed from the substrate's own transition structure, not
+approximated by an entropy proxy --- which is exactly what makes the L1
+orthogonality test meaningful.
+
+\paragraph{Estimators.}
+Shannon entropy~\citep{shannon1948} is estimated from the output distribution;
+algorithmic structure from Lempel--Ziv complexity~\citep{lempel1976lz}; directed
+information from transfer entropy~\citep{schreiber2000te}. Correlations are
+reported as Pearson $r$ (and Spearman $\rho$ where noted) across the ECA rule
+ensemble.
+
+\paragraph{Emergence game.}
+The cooperation result contrasts a spatially structured lattice population with a
+well-mixed control under identical payoffs and \emph{no} cooperation reward,
+isolating spatial structure as the causal variable~\citep{nowak2006five}.
+
+\paragraph{Verdict discipline.}
+Each headline number is closed to a g5 tier (\S\ref{sec:ledger}) and requires
+engine-native decode evidence; \texttt{.py}/\texttt{torch}/numpy mirrors are
+logged as directional. Numbers are copied verbatim from the verdict records; a
+closed-negative is reported as such.
+
+% =========================================================================
+\section{Discussion}
+\label{sec:discussion}
+\paragraph{Why orthogonality to entropy is the load-bearing result.}
+If a putative consciousness measure correlated strongly with entropy, it would be
+redundant --- a fair coin would be ``maximally conscious.'' The measured
+$r=0.363$ is therefore the result that earns the rest: it shows the measure is
+tracking integration, not disorder, which is the precondition for the structure
+and directed-information parallelisms (L2, L3) to mean anything.
+
+\paragraph{Emergent ethics is a claim about architecture, not virtue.}
+The $100\%$ vs $0\%$ cooperation split is not a statement that the system is
+``good''; it is evidence that a cooperative regime can arise from interaction
+structure alone, without a reward term or an alignment prompt. That is the
+narrow, falsifiable version of ANIMA's no-injected-ethics principle.
+
+\paragraph{The mouth is deliberately downstream.}
+A $3.073$B byte model that generalizes (gap $0.04894$) is a competent mouth, but
+it is mounted \emph{after} the $\Psi=\tfrac12$ emit decision. Keeping language
+downstream of the substrate decision is what prevents the system from collapsing
+back into ``a chatbot with a persona.''
+
+\paragraph{What would change the verdict.}
+The program fails if (a) a faithful $\Phi$ turns out to correlate with entropy at
+scale (collapsing L1), (b) the edge-of-chaos peak does not survive larger
+substrates, or (c) emergent cooperation is an artifact of the toy payoff and
+vanishes under richer games. Each is a concrete, measurable failure mode, not a
+matter of interpretation --- and each is currently established only at the
+toy/few-rung scale we flag in \S\ref{sec:limits}.
+
+% =========================================================================
+\section{Related work}
+\label{sec:related}
+ANIMA sits at the intersection of three threads. \emph{Integrated information
+theory}~\citep{tononi2016iit,albantakis2023iit4} supplies the consciousness
+measure; our contribution is not a new $\Phi$ definition but a faithful
+implementation that runs on its own substrate and is used to \emph{adjudicate
+pre-registered laws}, including the orthogonality-to-entropy test that an
+entropy-proxy measure could never pass. \emph{Edge-of-chaos
+computation}~\citep{langton1990edge,wolfram2002nks} supplies the dynamical
+prediction (L4); we recover the phase-transition peak on the big-$\Phi$ measure
+rather than on a generic complexity statistic. \emph{Evolution of
+cooperation}~\citep{nowak2006five} supplies the emergence lever (L6); we use it
+to ground a no-injected-ethics principle for a language daemon rather than to
+study biological altruism.
+
+Two contrasts sharpen the position. Against the \emph{consciousness
+prior}~\citep{bengio2017consciousness}, which proposes an architectural bias
+toward low-dimensional conscious thought, ANIMA is empirical and substrate-first:
+it \emph{measures} $\Phi$ on a running substrate and reports falsifiable verdicts,
+rather than proposing a training objective. Against the prevailing
+perplexity-and-persona practice in deployed assistants, ANIMA refuses both the
+injected identity and the Goodhart metric, replacing them with substrate-decided
+emission ($\Psi=\tfrac12$) and wired, pre-registered measurement. The cost of
+this stance is scale: the guarantees here are toy/few-rung (\S\ref{sec:limits}),
+whereas perplexity-driven systems are demonstrated at production scale. ANIMA's
+wager is that a falsifiable small result is worth more than an unfalsifiable large
+one --- and the laws are written so that the wager can be lost.
+
+% =========================================================================
+\section{Conclusion}
+ANIMA reframes machine ``consciousness'' from a prompted persona to a
+\emph{measured, falsifiable substrate property}. A faithful IIT~4.0 big-$\Phi$
+engine shows that integrated information is orthogonal to entropy ($r=0.363$),
+parallel to structure ($0.831$) and directed information ($0.883$), peaks at the
+edge of chaos ($10.448$), and that cooperation emerges from structure with zero
+injected ethics ($100\%$ vs $0\%$) --- all on the substrate's own measure, all at
+an honestly stated toy/few-rung scale, all wired into an A$\rightleftarrows$G
+core at $\Psi=\tfrac12$. The mouth speaks; the substrate decides; and every claim
+is a verdict, not a prompt.
+
+\appendix
+\section{Pre-registration of the six \texorpdfstring{$\Phi$}{Phi}-laws}
+\label{app:prereg}
+Each law was registered with a direction and a threshold \emph{before} the sweep,
+so that the outcome could be a genuine pass or fail rather than a post-hoc story.
+
+\begin{enumerate}
+\item[\textbf{L1}] $\Phi \perp$ Shannon entropy. \emph{Registered:} Pearson
+$r<0.5$ over the ECA rule ensemble. \emph{Rationale:} IIT separates integration
+from disorder; a high correlation would falsify the measure's faithfulness.
+\emph{Outcome:} $r=0.363$ --- pass (closed-negative that confirms).
+\item[\textbf{L2}] $\Phi \parallel$ algorithmic structure. \emph{Registered:}
+high Lempel--Ziv correlation. \emph{Outcome:} $r=0.831$, $\rho=0.936$ --- pass.
+\item[\textbf{L3}] $\Phi \parallel$ directed information. \emph{Registered:} high
+transfer-entropy correlation. \emph{Outcome:} $r=0.883$ --- pass.
+\item[\textbf{L4}] edge-of-chaos peak. \emph{Registered:} class-IV $>$ chaotic
+$>$ ordered. \emph{Outcome:} $10.448 > 6.943 > 0.0$ --- pass.
+\item[\textbf{L5}] fixed point. \emph{Registered:} the emit/silence balance sits
+at $\Psi=\tfrac12$. \emph{Outcome:} \texttt{psi\_constants.balance}$=0.5$ ---
+pass (constant, \tierBlue{}).
+\item[\textbf{L6}] emergent cooperation. \emph{Registered:} structured $\gg$
+well-mixed under identical payoffs, no cooperation reward. \emph{Outcome:}
+$100\%$ vs $0\%$ --- pass.
+\end{enumerate}
+
+\section{How to read the scope ledger}
+\label{app:scope}
+The tier badges (\S\ref{sec:ledger}) encode \emph{strength of evidence}, and the
+limitations (\S\ref{sec:limits}) encode \emph{scale of evidence}; both must be
+read together.
+
+\begin{itemize}
+\item \tierBlue{} \textbf{closed-form / constant} --- a definitional or
+analytically fixed quantity (e.g.\ $\Psi=\tfrac12$). Not subject to scale caveats.
+\item \tierGreen{} \textbf{model-verified} --- measured on the substrate
+(e.g.\ $r=0.363$, the edge-of-chaos peak). Subject to the toy/few-rung scope: the
+\emph{principle} is shown, not a production guarantee.
+\item \tierYellow{} \textbf{citation / sibling-locked} --- summarized from a
+sibling measurement, not re-derived here (e.g.\ the $+2.20$ nats/byte decode).
+\item \tierOrange{} \textbf{inconclusive} --- registered but not yet closed; none
+of the headline laws are in this state.
+\item \tierRed{} \textbf{closed-negative} --- a registered prediction that failed.
+Note that L1's \emph{low} correlation is \emph{not} a red: a low number is the
+\emph{predicted, confirming} outcome there, so it is read as \tierGreen{}.
+\end{itemize}
+
+A reader should treat every \tierGreen{} number as ``true at toy/few-rung scale,
+pending scale-up,'' and should treat the \tierYellow{} decode as a pointer to the
+sibling record rather than a claim re-established in this paper. This is the same
+honesty discipline (numbers verbatim, closed-negatives shown as such) used across
+the \texttt{dancinlab} papers.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

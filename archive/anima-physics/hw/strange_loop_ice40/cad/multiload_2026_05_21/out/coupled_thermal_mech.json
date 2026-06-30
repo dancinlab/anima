@@ -1,0 +1,79 @@
+{
+  "alpha_k_inv": 2.3e-05,
+  "analysis": "coupled_thermal_plus_vibration_superposition",
+  "coupled_biaxial": {
+    "fos_ultimate_coupled": 5.60450991086722,
+    "fos_yield_coupled": 4.989821727094687,
+    "pass_ultimate_FoS_gt_3": true,
+    "pass_yield_FoS_gt_2": true,
+    "sigma_th_mpa": 51.010879733090874,
+    "sigma_total_mpa": 55.312597342170065,
+    "sigma_vib_mpa": 4.301717609079187
+  },
+  "coupled_uniaxial": {
+    "fos_ultimate_coupled": 8.056340948618947,
+    "fos_yield_coupled": 7.172742263931707,
+    "pass_ultimate_FoS_gt_3": true,
+    "pass_yield_FoS_gt_2": true,
+    "sigma_th_mpa": 34.17728942117088,
+    "sigma_total_mpa": 38.479007030250074,
+    "sigma_vib_mpa": 4.301717609079187
+  },
+  "error": null,
+  "geometry_id": "upduino_v3_enclosure_v1",
+  "interface": "demiurge:component:gmsh-skfem-verify-record-multiload",
+  "material": {
+    "k_w_per_mk": 167.0,
+    "name": "aluminium 6061-T6 (textbook 300 K)",
+    "poissons": 0.33,
+    "rho_kg_per_m3": 2700.0,
+    "youngs_pa": 68900000000.0
+  },
+  "ok": true,
+  "produced_at_utc": "2026-05-21T09:30:37.882313+00:00",
+  "provenance": {
+    "absorbed": false,
+    "measurement_gate": "GATE_OPEN",
+    "producer": "anima/multiload_2026_05_21/coupled_thermal_mech.py (analytical superposition, no coupled FEM)",
+    "scope_caveats": [
+      "linear superposition assumes \u03c3_total < \u03c3_y everywhere \u2014 verified post-hoc by FoS_yield > 1; near plastic yield the superposition breaks and a thermo-elastic-plastic FEM coupling is required.",
+      "uniaxial vs biaxial constraint = two bounds, actual is in between; a full thermo-mechanical coupled FEM (one PDE system, \u03b5 = \u03b5_mech + \u03b1\u00b7\u0394T\u00b7I) would lift this bracket \u2014 out of scope for analytical rollup but enabled by the existing solve_elastic + solve_thermal kernel via a custom body-force callable.",
+      "CTE = 23.0e-6 K\u207b\u00b9 (task spec); MMPDS 6061-T6 lists 23.6e-6 K\u207b\u00b9 for 20-100 \u00b0C \u2014 2.6 % spread, lifts \u03c3_th_biax by ~1 MPa.",
+      "thermal \u0394T pulled from steady-state Option B (finned) record \u2014 transient warm-up during shock event is NOT modelled (11 ms shock pulse vs ~100 s thermal time constant \u21d2 \u0394T can be treated as static during the shock)."
+    ]
+  },
+  "record_id": "coupled_thermal_mech_20260521T093037Z",
+  "thermal_input": {
+    "available": false,
+    "delta_t_k": 21.567040715069652,
+    "source": "fallback (option_B_finned.json missing)"
+  },
+  "thermal_stress": {
+    "alpha_k_inv": 2.3e-05,
+    "constraint": "uniaxial = lower bound; biaxial = upper bound",
+    "delta_t_k": 21.567040715069652,
+    "epsilon_thermal": 0.000496041936446602,
+    "sigma_thermal_biaxial_mpa": 51.010879733090874,
+    "sigma_thermal_biaxial_pa": 51010879.73309088,
+    "sigma_thermal_uniaxial_mpa": 34.17728942117088,
+    "sigma_thermal_uniaxial_pa": 34177289.42117088
+  },
+  "verdict": {
+    "conservative_biaxial": true,
+    "headroom_to_yield_mpa": 220.68740265782992,
+    "optimistic_uniaxial": true
+  },
+  "vibration_input": {
+    "available": true,
+    "load_spec": {
+      "drop_height_m_equiv": 1.0,
+      "dynamic_amp_factor": 1.5,
+      "peak_g": 50.0,
+      "pulse_ms": 11.0,
+      "shape": "half_sine"
+    },
+    "sigma_vib_pa": 4301717.609079187,
+    "source": "/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/cad/multiload_2026_05_21/out/vibration_fem.json",
+    "u_max_m": 1.0095115637766877e-05
+  }
+}

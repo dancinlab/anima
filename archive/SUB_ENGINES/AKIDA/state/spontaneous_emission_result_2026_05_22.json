@@ -1,0 +1,263 @@
+{
+  "seed": 187,
+  "n_neurons": 16,
+  "n_inputs": 16,
+  "window_steps": 200,
+  "regimes": {
+    "R0_driven": {
+      "threshold_const": 64,
+      "recurrent": false,
+      "total_spikes": 3200,
+      "mean_spike_rate_per_neuron_step": 1.0,
+      "spike_count_min": 16,
+      "spike_count_max": 16,
+      "spike_count_std": 0.0,
+      "step_varies": false,
+      "first10_step_counts": [
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "last10_step_counts": [
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "isi": {
+        "n_fire_steps": 200,
+        "isi_mean": 1.0,
+        "isi_min": 1,
+        "isi_max": 1
+      },
+      "wall_ms_per_step": 13.7028,
+      "onchip_clock_samples": [
+        808,
+        808,
+        813,
+        815
+      ]
+    },
+    "R1_weak_silent": {
+      "threshold_const": 64,
+      "recurrent": false,
+      "total_spikes": 0,
+      "mean_spike_rate_per_neuron_step": 0.0,
+      "spike_count_min": 0,
+      "spike_count_max": 0,
+      "spike_count_std": 0.0,
+      "step_varies": false,
+      "first10_step_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "last10_step_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isi": {
+        "n_fire_steps": 0,
+        "isi_mean": null,
+        "isi_min": null,
+        "isi_max": null
+      },
+      "wall_ms_per_step": 13.6908,
+      "onchip_clock_samples": [
+        782,
+        771,
+        766,
+        760
+      ]
+    },
+    "R2_zero_noise": {
+      "threshold_const": 24,
+      "recurrent": false,
+      "total_spikes": 1520,
+      "mean_spike_rate_per_neuron_step": 0.475,
+      "spike_count_min": 0,
+      "spike_count_max": 16,
+      "spike_count_std": 7.99,
+      "step_varies": true,
+      "first10_step_counts": [
+        0,
+        16,
+        16,
+        0,
+        16,
+        0,
+        16,
+        16,
+        16,
+        0
+      ],
+      "last10_step_counts": [
+        16,
+        16,
+        0,
+        0,
+        0,
+        16,
+        16,
+        0,
+        16,
+        0
+      ],
+      "isi": {
+        "n_fire_steps": 95,
+        "isi_mean": 2.096,
+        "isi_min": 1,
+        "isi_max": 9
+      },
+      "wall_ms_per_step": 13.7336,
+      "onchip_clock_samples": [
+        762,
+        862,
+        806,
+        829
+      ]
+    },
+    "R3_tonic_zero_input": {
+      "threshold_const": 0,
+      "recurrent": false,
+      "total_spikes": 1600,
+      "mean_spike_rate_per_neuron_step": 0.5,
+      "spike_count_min": 8,
+      "spike_count_max": 8,
+      "spike_count_std": 0.0,
+      "step_varies": false,
+      "first10_step_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "last10_step_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "isi": {
+        "n_fire_steps": 200,
+        "isi_mean": 1.0,
+        "isi_min": 1,
+        "isi_max": 1
+      },
+      "wall_ms_per_step": 13.705,
+      "onchip_clock_samples": [
+        755,
+        755,
+        750,
+        749
+      ]
+    },
+    "R4_recurrent_selfsustained": {
+      "threshold_const": 0,
+      "recurrent": true,
+      "total_spikes": 3200,
+      "mean_spike_rate_per_neuron_step": 1.0,
+      "spike_count_min": 16,
+      "spike_count_max": 16,
+      "spike_count_std": 0.0,
+      "step_varies": false,
+      "first10_step_counts": [
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "last10_step_counts": [
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "isi": {
+        "n_fire_steps": 200,
+        "isi_mean": 1.0,
+        "isi_min": 1,
+        "isi_max": 1
+      },
+      "wall_ms_per_step": 13.7213,
+      "onchip_clock_samples": [
+        807,
+        813,
+        862,
+        872
+      ]
+    }
+  },
+  "device_version": "BC.00.000.002",
+  "device_ip_version": "IpVersion.v1",
+  "power_measurement_supported": false,
+  "power_enable_note": "RuntimeError('Unable to init INA: failed to send to bus: -2')",
+  "mapped_backend": "BackendType.Hardware",
+  "mapped_on_hardware": true,
+  "checks": {
+    "driven_fires": true,
+    "weak_is_silent": true,
+    "tonic_zero_input_fires": true,
+    "tonic_partial_pool": true,
+    "noise_emits": true,
+    "noise_event_driven": true,
+    "recurrent_sustains": true,
+    "recurrent_post_seed_sustains": true
+  },
+  "hw_native_spontaneous_emission": true,
+  "stochastic_spontaneous_emission": true,
+  "onchip_clock_cycles_mean": 797.2,
+  "wall_ms_per_step_mean": 13.7107
+}

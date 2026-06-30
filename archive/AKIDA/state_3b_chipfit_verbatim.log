@@ -1,0 +1,194 @@
+[3b] SUBSTRATE = HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure AKIDA, NOT Lane G
+[3b] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  corpus concepts=50 langs=5 anchors=250  DELTAS=[1, 7, 19] B=3
+[3b] ===== 3B CHIP-FIT / PAGING CAPACITY LADDER (a_scale_honest_scope, 4 rungs) =====
+[3b] --- RUNG D=1 U=256 NC=50 : per_fc_params=524288 paged_params=524288 (5.243e+05) train_transitions=750 ---
+[3b]   off-chip head BPTT epoch 1/60 CE=3.5345
+[3b]   off-chip head BPTT epoch 21/60 CE=0.6154
+[3b]   off-chip head BPTT epoch 41/60 CE=0.3426
+[3b]   off-chip head BPTT epoch 60/60 CE=0.3040
+[3b] RUNG D=1 U=256 trial 0: TRAIN=['0.6457', '0.9314', '0.9657'] HELD=['0.0267', '0.9067', '0.9600'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.4892
+[3b]   off-chip head BPTT epoch 21/60 CE=0.5390
+[3b]   off-chip head BPTT epoch 41/60 CE=0.3877
+[3b]   off-chip head BPTT epoch 60/60 CE=0.3095
+[3b] RUNG D=1 U=256 trial 1: TRAIN=['0.6114', '0.8914', '0.9714'] HELD=['0.0533', '0.7733', '0.9200'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.5016
+[3b]   off-chip head BPTT epoch 21/60 CE=0.6498
+[3b]   off-chip head BPTT epoch 41/60 CE=0.4101
+[3b]   off-chip head BPTT epoch 60/60 CE=0.3596
+[3b] RUNG D=1 U=256 trial 2: TRAIN=['0.6629', '0.9200', '0.9200'] HELD=['0.0400', '0.8400', '0.9467'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.5776
+[3b]   off-chip head BPTT epoch 21/60 CE=0.6274
+[3b]   off-chip head BPTT epoch 41/60 CE=0.2997
+[3b]   off-chip head BPTT epoch 60/60 CE=0.2503
+[3b] RUNG D=1 U=256 trial 3: TRAIN=['0.6171', '0.8800', '0.9314'] HELD=['0.0000', '0.8000', '0.8800'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.4707
+[3b]   off-chip head BPTT epoch 21/60 CE=0.5991
+[3b]   off-chip head BPTT epoch 41/60 CE=0.3162
+[3b]   off-chip head BPTT epoch 60/60 CE=0.2585
+[3b] RUNG D=1 U=256 trial 4: TRAIN=['0.6743', '0.9543', '0.9829'] HELD=['0.0533', '0.8800', '0.9867'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.4146
+[3b]   off-chip head BPTT epoch 21/60 CE=0.6938
+[3b]   off-chip head BPTT epoch 41/60 CE=0.4565
+[3b]   off-chip head BPTT epoch 60/60 CE=0.4130
+[3b] RUNG D=1 U=256 trial 5: TRAIN=['0.6457', '0.8800', '0.9600'] HELD=['0.0400', '0.8800', '0.9067'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6378
+[3b]   off-chip head BPTT epoch 21/60 CE=0.6252
+[3b]   off-chip head BPTT epoch 41/60 CE=0.4307
+[3b]   off-chip head BPTT epoch 60/60 CE=0.3656
+[3b] RUNG D=1 U=256 trial 6: TRAIN=['0.6229', '0.9029', '0.9657'] HELD=['0.0400', '0.6933', '0.9200'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.4715
+[3b]   off-chip head BPTT epoch 21/60 CE=0.6302
+[3b]   off-chip head BPTT epoch 41/60 CE=0.3702
+[3b]   off-chip head BPTT epoch 60/60 CE=0.2641
+[3b] RUNG D=1 U=256 trial 7: TRAIN=['0.6400', '0.9143', '0.9486'] HELD=['0.0000', '0.9067', '0.9867'] map_all=True learn_all=True
+[3b] RUNG D=1 U=256 hop 1: TRAIN=0.6400 HELD=0.0317 | held ci_lo=0.0169 NULL hi=0.1512 p=0.6965 | aboveNULL=False
+[3b] RUNG D=1 U=256 hop 2: TRAIN=0.9093 HELD=0.8350 | held ci_lo=0.7830 NULL hi=0.2084 p=0.0050 | aboveNULL=True
+[3b] RUNG D=1 U=256 hop 3: TRAIN=0.9557 HELD=0.9383 | held ci_lo=0.9118 NULL hi=0.2158 p=0.0050 | aboveNULL=True
+[3b] --- RUNG D=2 U=512 NC=50 : per_fc_params=1048576 paged_params=2097152 (2.097e+06) train_transitions=750 ---
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6495
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4966
+[3b]   off-chip head BPTT epoch 41/60 CE=3.4942
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4970
+[3b] RUNG D=2 U=512 trial 0: TRAIN=['0.0800', '0.0000', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6634
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5028
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5320
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5167
+[3b] RUNG D=2 U=512 trial 1: TRAIN=['0.0800', '0.0286', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6719
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5215
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5067
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5252
+[3b] RUNG D=2 U=512 trial 2: TRAIN=['0.0857', '0.0000', '0.9657'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6773
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5652
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5280
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5439
+[3b] RUNG D=2 U=512 trial 3: TRAIN=['0.0571', '0.0286', '0.9943'] HELD=['0.0667', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6382
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4640
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5079
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4611
+[3b] RUNG D=2 U=512 trial 4: TRAIN=['0.0857', '0.0286', '0.9657'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6245
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4636
+[3b]   off-chip head BPTT epoch 41/60 CE=3.4566
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4583
+[3b] RUNG D=2 U=512 trial 5: TRAIN=['0.0857', '0.0000', '0.9943'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.7086
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5566
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5526
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5491
+[3b] RUNG D=2 U=512 trial 6: TRAIN=['0.0857', '0.0000', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6374
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5092
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5165
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4728
+[3b] RUNG D=2 U=512 trial 7: TRAIN=['0.0857', '0.0286', '0.0286'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b] RUNG D=2 U=512 hop 1: TRAIN=0.0807 HELD=0.0083 | held ci_lo=-0.0080 NULL hi=0.1673 p=0.7114 | aboveNULL=False
+[3b] RUNG D=2 U=512 hop 2: TRAIN=0.0143 HELD=0.0000 | held ci_lo=0.0000 NULL hi=0.3644 p=1.0000 | aboveNULL=False
+[3b] RUNG D=2 U=512 hop 3: TRAIN=0.4936 HELD=0.5000 | held ci_lo=0.1296 NULL hi=0.3310 p=0.0299 | aboveNULL=False
+[3b] --- RUNG D=3 U=1024 NC=50 : per_fc_params=2097152 paged_params=6291456 (6.291e+06) train_transitions=750 ---
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6531
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4978
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5046
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5037
+[3b] RUNG D=3 U=1024 trial 0: TRAIN=['0.0800', '0.0000', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6724
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4995
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5177
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5208
+[3b] RUNG D=3 U=1024 trial 1: TRAIN=['0.0800', '0.0286', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6686
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5242
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5073
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5129
+[3b] RUNG D=3 U=1024 trial 2: TRAIN=['0.0857', '0.0000', '0.9657'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6913
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5357
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5193
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5356
+[3b] RUNG D=3 U=1024 trial 3: TRAIN=['0.0571', '0.0286', '0.9657'] HELD=['0.0667', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6382
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4680
+[3b]   off-chip head BPTT epoch 41/60 CE=3.4715
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4627
+[3b] RUNG D=3 U=1024 trial 4: TRAIN=['0.0857', '0.0286', '0.9657'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6185
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4659
+[3b]   off-chip head BPTT epoch 41/60 CE=3.4766
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4667
+[3b] RUNG D=3 U=1024 trial 5: TRAIN=['0.0857', '0.0000', '0.9943'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.7082
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5639
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5365
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5336
+[3b] RUNG D=3 U=1024 trial 6: TRAIN=['0.0571', '0.9657', '0.0057'] HELD=['0.0667', '1.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6428
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5090
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5154
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4713
+[3b] RUNG D=3 U=1024 trial 7: TRAIN=['0.0857', '0.9657', '1.0000'] HELD=['0.0000', '1.0000', '1.0000'] map_all=True learn_all=True
+[3b] RUNG D=3 U=1024 hop 1: TRAIN=0.0771 HELD=0.0167 | held ci_lo=-0.0047 NULL hi=0.1673 p=0.7114 | aboveNULL=False
+[3b] RUNG D=3 U=1024 hop 2: TRAIN=0.2521 HELD=0.2500 | held ci_lo=-0.0708 NULL hi=0.5018 p=0.0597 | aboveNULL=False
+[3b] RUNG D=3 U=1024 hop 3: TRAIN=0.6121 HELD=0.6250 | held ci_lo=0.2664 NULL hi=0.5255 p=0.0647 | aboveNULL=False
+[3b] --- RUNG D=4 U=2048 NC=50 : per_fc_params=4194304 paged_params=16777216 (1.678e+07) train_transitions=750 ---
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6531
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4978
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5046
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5037
+[3b] RUNG D=4 U=2048 trial 0: TRAIN=['0.0800', '0.0000', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6724
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4995
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5177
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5208
+[3b] RUNG D=4 U=2048 trial 1: TRAIN=['0.0800', '0.0286', '0.0000'] HELD=['0.0000', '0.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6686
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5242
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5073
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5129
+[3b] RUNG D=4 U=2048 trial 2: TRAIN=['0.0857', '0.0000', '0.9657'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6913
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5357
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5193
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5356
+[3b] RUNG D=4 U=2048 trial 3: TRAIN=['0.0571', '0.0286', '0.9657'] HELD=['0.0667', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6382
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4680
+[3b]   off-chip head BPTT epoch 41/60 CE=3.4715
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4627
+[3b] RUNG D=4 U=2048 trial 4: TRAIN=['0.0857', '0.0286', '0.9657'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6185
+[3b]   off-chip head BPTT epoch 21/60 CE=3.4659
+[3b]   off-chip head BPTT epoch 41/60 CE=3.4766
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4667
+[3b] RUNG D=4 U=2048 trial 5: TRAIN=['0.0857', '0.0000', '0.9943'] HELD=['0.0000', '0.0000', '1.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.7082
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5639
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5365
+[3b]   off-chip head BPTT epoch 60/60 CE=3.5336
+[3b] RUNG D=4 U=2048 trial 6: TRAIN=['0.0571', '0.9657', '0.0057'] HELD=['0.0667', '1.0000', '0.0000'] map_all=True learn_all=True
+[3b]   off-chip head BPTT epoch 1/60 CE=3.6428
+[3b]   off-chip head BPTT epoch 21/60 CE=3.5090
+[3b]   off-chip head BPTT epoch 41/60 CE=3.5154
+[3b]   off-chip head BPTT epoch 60/60 CE=3.4713
+[3b] RUNG D=4 U=2048 trial 7: TRAIN=['0.0857', '0.9657', '1.0000'] HELD=['0.0000', '1.0000', '1.0000'] map_all=True learn_all=True
+[3b] RUNG D=4 U=2048 hop 1: TRAIN=0.0771 HELD=0.0167 | held ci_lo=-0.0047 NULL hi=0.1673 p=0.7114 | aboveNULL=False
+[3b] RUNG D=4 U=2048 hop 2: TRAIN=0.2521 HELD=0.2500 | held ci_lo=-0.0708 NULL hi=0.5018 p=0.0597 | aboveNULL=False
+[3b] RUNG D=4 U=2048 hop 3: TRAIN=0.6121 HELD=0.6250 | held ci_lo=0.2664 NULL hi=0.5255 p=0.0647 | aboveNULL=False
+
+[3b] ========== 3B CHIP-FIT / PAGING LADDER DISPOSITION ==========
+[3b] SUBSTRATE : HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head)
+[3b] LADDER (per rung: D paged FCs x U units x NC codebook -> paged params; chip-fit; held-out decay):
+[3b]   D=1 U=256  NC=50  paged_params=524288       (5.243e+05)  map_all=True learn_all=True chip_fit=True comp_survives=True  decay_HELD=[0.0317, 0.835, 0.9383]  baseline(branching PR#1697)
+[3b]   D=2 U=512  NC=50  paged_params=2097152      (2.097e+06)  map_all=True learn_all=True chip_fit=True comp_survives=False  decay_HELD=[0.0083, 0.0, 0.5]  depth2 x width2
+[3b]   D=3 U=1024 NC=50  paged_params=6291456      (6.291e+06)  map_all=True learn_all=True chip_fit=True comp_survives=False  decay_HELD=[0.0167, 0.25, 0.625]  depth3 x width4
+[3b]   D=4 U=2048 NC=50  paged_params=16777216     (1.678e+07)  map_all=True learn_all=True chip_fit=True comp_survives=False  decay_HELD=[0.0167, 0.25, 0.625]  depth4 x width8 (chip-fit frontier probe)
+[3b] max chip-fit paged params : 1.678e+07  (3B target=3e+09)
+[3b] reached 3B-class          : False
+[3b] chip-fit ceiling recorded : False 
+[3b] F-3B-1 (comp survives ladder) : False
+[3b] F-3B-2 (3B reached OR ceiling): False
+[3b] DISPOSITION : COMPOSITION DEGRADES UNDER CAPACITY SCALING (honest closed-negative, a_paper_negative_ok) — the branching held-out composition dropped into the shuffle-NULL at chip-fit rung(s) [(2, 512, 50), (3, 1024, 50), (4, 2048, 50)] before reaching 3B-class. Capacity scaling via deeper/wider paged FCs does NOT preserve the multi-step composition at this toy corpus. Lane A 3B milestone STAYS OPEN; the rung where composition breaks is recorded.
+[3b] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_3b_chipfit.json

@@ -1,0 +1,59 @@
+================================================================
+  XENO X8 — SETI@home BOINC workunit pod spec inspector
+================================================================
+
+  target = DATASET/setiathome/sahfiles_workunits.tar.xz
+  spec   = XENO/scan/seti_boinc_pod_spec.md (BOINC client runbook + RunPod CPU pod)
+  sister = X3 (H_831) 5-source SETI scan · X1 invariant_detector (H_829)
+
+  ─ manifest expected ─
+    size_bytes        : 274340
+    sha256            : 2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96
+    magic_first_6_hex : fd377a585a00 (xz format)
+    archive_url       : https://archive.org/download/setiathomem303_unix/sahfiles_workunits.tar.xz
+
+  ─ tar.xz contents (verified pre-run) ─
+    sahfiles_workunits/
+    sahfiles_workunits/lock.sah
+    sahfiles_workunits/outfile.sah
+    sahfiles_workunits/work_unit.sah
+    sahfiles_workunits/state.sah
+    sahfiles_workunits/user_info.sah
+    sahfiles_workunits/pid.sah
+    sahfiles_workunits/key.sah
+    sahfiles_workunits/version.sah
+    sahfiles_workunits/result_header.sah
+
+  ─ RunPod CPU pod spec (XENO/scan/seti_boinc_pod_spec.md §2.1) ─
+    os          : Ubuntu 22.04 LTS x86_64
+    vcpu        : 2
+    ram_gb      : 4
+    disk_gb     : 20
+    hourly_usd  : 0.10 ~ 0.20 USD
+    wall_hr     : 1
+    total_usd   : 0.50 ~ 1.00 USD
+    fire_trigger: a_fire_autonomous (사용자 게이트 X, cost-bearing autonomous)
+
+  ─ pre-registered falsifier check (frozen pre-run, post-tuning 0) ─
+    F-X8-FILE-EXISTS    : true · sahfiles_workunits.tar.xz 존재 (DATASET 안)
+    F-X8-FILE-SIZE      : true · size == 274340 bytes (manifest 정합)
+    F-X8-MAGIC-XZ       : true · 시작 byte == fd 37 7a 58 5a 00 (xz format)
+    F-X8-CLIENT-AVAIL   : true · BOINC client setup spec 문서화 (§2.2)
+    F-X8-POD-DISPATCH   : true · cost-bearing fire spec 완성 (§5, a_fire_autonomous 정합)
+
+  ─ X8 verdict ─
+    pass_count : 5/5
+    tier       : 🟡 archive-acquired-pod-ready · file 존재 + spec 완성 + dispatch handoff (실 playback deferred to follow-up cycle, a_fire_autonomous)
+
+  ─ XENO-FRONTIER-5 5-round closure (X7/X4/X6/X5/X8) ─
+    X7 (Voyager n=128 dense 60.9%)   : 🟢 SUPPORTED-NUMERICAL    H_832
+    X4 (panpsy n=16-32 micro)        : 🔴 FALSIFIED-INSTRUMENT   H_833
+    X6 (LLM n=64 sparse)             : 🔴 FALSIFIED-INSTRUMENT   H_834
+    X5 (sim n=128 dense 62.5%)       : 🔴 FALSIFIED-INSTRUMENT   H_835
+    X8 (SETI@home BOINC pod spec)    : 🟡 archive-acquired-pod-ready  H_836
+
+  ─ 4-point instrument applicability matrix (X4/X5/X6/X7) ─
+    measurable zone   = n>=128 dense + high periodicity + strong deterministic transition
+    non-measurable    = n=16-32 micro (X4) · n=64 sparse (X6) · pi/fp algorithmic axis (X5)
+    confirmed valid   = X7 BL Voyager carrier-line (자연 signal coherent_non_conscious)
+================================================================

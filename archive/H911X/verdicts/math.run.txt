@@ -1,0 +1,14 @@
+clm_h911_SCALE — H_911 corpus-scale sweep (AMODAL anchor · learned-semantic · NULL probe · paired bootstrap CI B=2000)
+  N(concepts)=250  NLANG=5  nline=1250  epochs=16
+  parallel=/Users/mini/dancinlab/anima/.claude/worktrees/agent-a79a3c57200144b5e/H911X/data/math_par.txt
+  concat  =/Users/mini/dancinlab/anima/.claude/worktrees/agent-a79a3c57200144b5e/H911X/data/math_con.txt
+
+  extractions: nPL=1250 nCL=1250 nPN=1250 nCN=1250
+
+=== AMODAL anchor (parallel-favoring) — N-scaled ===
+  LEARNED-semantic paired mean = -0.234125
+  LEARNED 95% CI = [-0.264253, -0.20514]
+  NULL (within-concept-shuffle) paired mean = -0.052193
+  NULL 95% CI = [-0.0639648, -0.0406405]
+F-CLM-H911-SCALE = 0
+TIER RED — closed-negative: parallel>concat does NOT separate on the LEARNED-semantic axis (CI straddles/<=0)

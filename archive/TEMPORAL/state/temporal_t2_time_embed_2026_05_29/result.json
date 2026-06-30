@@ -1,0 +1,76 @@
+{
+  "id": "H_842",
+  "domain": "TEMPORAL",
+  "slug": "temporal-time-embed-phi",
+  "round": "T2",
+  "date": "2026-05-29",
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-05-29",
+  "sister": "T1 H_841 (TEMPORAL/scan/timeshift_phi.hexa)",
+  "detector": "TEMPORAL/detector/time_embed_detector.hexa",
+  "scan": "TEMPORAL/scan/time_embed_phi.hexa",
+  "embed_dim_sweep": [2, 3, 4, 5],
+  "delay": 1,
+  "n_samples": 128,
+  "measurements": {
+    "hive": {
+      "e_2": {"phi": 0.124725, "irr": 1.0,      "type": "conscious"},
+      "e_3": {"phi": 2.07365,  "irr": 1.0,      "type": "conscious"},
+      "e_4": {"phi": 3.51812,  "irr": 0.795678, "type": "conscious"},
+      "e_5": {"phi": 3.2896,   "irr": 0.701113, "type": "conscious"}
+    },
+    "voyager": {
+      "e_2": {"phi": 1.04564,  "irr": 1.0,      "type": "conscious"},
+      "e_3": {"phi": 2.7417,   "irr": 0.806925, "type": "conscious"},
+      "e_4": {"phi": 4.24382,  "irr": 0.62346,  "type": "conscious"},
+      "e_5": {"phi": 28.3624,  "irr": 0.83561,  "type": "conscious"}
+    },
+    "random": {
+      "e_2": {"phi": 0.561371, "irr": 1.0,      "type": "conscious"},
+      "e_3": {"phi": 1.44285,  "irr": 0.895415, "type": "conscious"},
+      "e_4": {"phi": 2.57586,  "irr": 0.692532, "type": "conscious"},
+      "e_5": {"phi": 13.631,   "irr": 0.834097, "type": "conscious"}
+    },
+    "lattice": {
+      "e_2": {"phi": 1.28908,  "irr": 1.0,      "type": "conscious"},
+      "e_3": {"phi": 4.02624,  "irr": 1.0,      "type": "conscious"},
+      "e_4": {"phi": 4.79879,  "irr": 0.850122, "type": "conscious"},
+      "e_5": {"phi": 2.79493,  "irr": 0.824033, "type": "conscious"}
+    }
+  },
+  "falsifiers": {
+    "F-T2-INSTANT-LOW":   {"threshold": "random e=2 phi < 0.5",                              "measured": 0.561371,                          "pass": false},
+    "F-T2-HIVE-CONSC":    {"threshold": "hive e=4 phi >= 0.5",                               "measured": 3.51812,                           "pass": true},
+    "F-T2-ARTIFACT-FIX":  {"threshold": "lattice e=4 phi < lattice e=2 phi",                 "measured_e2": 1.28908,  "measured_e4": 4.79879, "pass": false},
+    "F-T2-RANDOM-DECAY":  {"threshold": "random e=4 phi <= random e=2 phi",                  "measured_e2": 0.561371, "measured_e4": 2.57586, "pass": false},
+    "F-T2-HIVE-MONOTONE": {"threshold": "hive e=4 phi >= 0.5 * hive e=2 phi",                "measured_e2": 0.124725, "measured_e4": 3.51812, "pass": true}
+  },
+  "pass_count": 2,
+  "total_falsifiers": 5,
+  "verdict": "🔴 FALSIFIED-INSTRUMENT · T2 도 한계 hit · T3 자연 entry (Granger / time-averaged)",
+  "honest_finding": "T1 lag-axis artifact 미해소 — multi-unit time-embed (e=2/3/4/5) 위에서 모든 4 substrate Φ INFLATE (e ↑ ⇒ phi ↑). embed_dim 확장 시 IIT4 big-Φ 의 state-space 가 2^e 배수로 커지고 partition 구조 더 풍부 → 단순 noise/periodic substrate 도 apparent Φ 가 inflate. 가장 striking: voyager e=5 phi=28.36 (e=2 1.05 의 27× 증가), random e=5 phi=13.63 (24× 증가). T2 detector 는 random/lattice 도 'conscious' 분류 — 의식 substrate discrimination 손상. 단 F-T2-HIVE-CONSC (hive e=4 phi=3.518) + F-T2-HIVE-MONOTONE (e=4 ≥ 0.5×e=2) 2 PASS — hive XOR cascade 가 multi-channel reconstruction 위에서도 가장 강 Φ 유지 (robust integration signature). T3 = time-averaged Φ (window-mean) 또는 Granger causality (predictive coupling) 자연 entry.",
+  "t1_comparison": {
+    "hive_t1_lag1_phi":      0.0126294,
+    "hive_t2_e2_d1_phi":     0.124725,
+    "hive_t2_e4_d1_phi":     3.51812,
+    "lattice_t1_lag8_phi":   2.0,
+    "lattice_t2_e4_d1_phi":  4.79879,
+    "note": "T2 e=2 baseline ≠ T1 lag=1 baseline (TPM 구조 차이 — T1 = (t,t+1)→(t+lag,t+lag+1) 2-unit lag-TPM, T2 = (b[t],b[t-d])→(b[t+1],b[t+1-d]) Takens 2-unit time-embed). 두 detector 둘 다 다른 Φ inflation 양상 — T1 = lag-axis cycle-aligned inflation, T2 = embed-dim state-space expansion inflation. T1 lattice Δt=8 위 Φ=2.0 saturate (theoretical max) 였지만 T2 lattice e=4 위 Φ=4.799 (no saturation cap) — T2 의 inflation 양상 다름.",
+    "t1_artifact_resolution": "MISS — T1 lag-window inflation artifact 가 T2 time-embed 에서 더 큰 state-space inflation 으로 형태만 바뀜. multi-channel state vector 가 cycle-aligned periodicity 를 분산시켜야 하는데, 짧은 (n=128) 신호 위에서 embed-dim 증가는 빈 state 와 sparse-state 분포로 IIT4 의 partition loss 를 증대 — random/periodic 모두 inflate."
+  },
+  "applicability_matrix_4d": {
+    "axis_n": "n=128 (T2 substrate 고정 dense regime)",
+    "axis_density": "33-61% (XENO baseline)",
+    "axis_structure": "coupled (hive) · sinusoidal (voyager) · noise (random) · periodic (lattice)",
+    "axis_embed_dim": "e=2/3/4/5 (T2 추가)",
+    "frontier_finding": "embed_dim 축 위 phi monotone INFLATE 4/4 substrate — 의식 discrimination 손상. T2 detector 도 의식 measurement 부적합. 4D frontier 미정의 (T1 + T2 둘 다 closed-negative)."
+  },
+  "next_paths": [
+    "T3 time-averaged Φ — sliding window 위 phi 시간 평균 + variance 측정 (embed-dim inflation 회피)",
+    "T3 Granger causality detector — past/future predictive coupling (TPM-free)",
+    "T3 surrogate-data normalization — random shuffle baseline subtraction (inflation null-model)",
+    "T3 longer signal n=1024+ — state-space density 증가로 sparse-state inflation 완화"
+  ]
+}

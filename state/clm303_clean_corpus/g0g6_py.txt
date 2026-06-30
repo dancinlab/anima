@@ -1,0 +1,93 @@
+════════════════════════════════════════════════════════════════════════════
+ ANIMA py PRODUCTION ENGINE — byte-parity port of clm_decode.hexa + G0-G6
+ core/clm_decode.py · core/g6_ideation.py · core/g_gates.py
+ (a_engine_native_learning 2-production: hexa ⇄ py kept at byte-parity)
+ date: 2026-06-26   ckpt: ~/anima-weights/clm303_clean/clm303_clean.clm
+                    (303M-class CLMConvMoE d=3784 L=4 E=3 K=3 V=256, .clm v0.3 176MB)
+════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────────
+ PART A — BYTE-PARITY GATE  (MANDATORY before any G0-G6 claim)   →  PASS
+────────────────────────────────────────────────────────────────────────────
+ py decode/CE ran against the SAME ops invoked by `hexa run` over the live
+ core/clm_decode.hexa (clm_decode_topk_sampled / clm_decode_argmax /
+ clm_forward_ce). Args identical on both engines.
+
+ (1) GOLDEN d768 ckpt  (state/lane_p_clm/clm_d768_e2l1.clm, d=768 L=1 E=2):
+       decode topk  clm_decode_topk_sampled(ck,"The ",16,40,0.7,7)
+         hexa  = "binding problem "
+         py    = "binding problem "                         IDENTICAL ✓
+       decode argmax clm_decode_argmax(ck,"The ",16)
+         hexa  = "binding problem "
+         py    = "binding problem "                         IDENTICAL ✓
+       clm_forward_ce(ck, corpus, 4):
+                       model_ce            shuffle_ce          uniform_ce
+         hexa  1.2666957201343503   4.552866460413207   4.799056503038044
+         py    1.2666957201343507   4.5528664604132070  4.7990565030380443
+       → model_ce agrees to 15 decimals (Δ=4e-16, a single-ULP residual from
+         numpy-BLAS vs hexa ikj k-accumulation order); shuffle/uniform IDENTICAL.
+         (uniform_ce=4.7990… is dt_ln(256), the KNOWN-BUGGY atanh-series value
+         ≠ ln256=5.545 — faithfully reproduced for hexa parity.)
+
+ (2) PRODUCTION 303M ckpt  (clm303_clean.clm):
+       decode argmax clm_decode_argmax(ck,"The ",4)
+         hexa  = "band"   (119s wall, 2.84GB RSS)
+         py    = "band"   (first 4 of py gen8 "band.\nTh")  IDENTICAL ✓
+       decode topk  clm_decode_topk_sampled(ck,"The ",4,40,0.7,7)
+         hexa  = "back"
+         py    = "back"                                     IDENTICAL ✓
+
+ VERDICT: byte-identical decode on BOTH ckpts + 15-decimal CE match → the py
+ engine is a faithful byte-parity port. (Every op traceable to clm_decode.hexa
+ + stdlib/flame/{nn,gn,moe,flame_math,tensor}_lib.hexa + runtime.c farr_matmul;
+ NO reuse of the drifted g6_common/gauge_lib/h1464_torch_golden mirrors.)
+
+────────────────────────────────────────────────────────────────────────────
+ PART B — G0-G6 on clm303_clean.clm   (engine-native via the py production mouth)
+ gen=40 (canonical _g_default_gen) · frozen bars VERBATIM from 7B_PASS_CONDITIONS.md
+────────────────────────────────────────────────────────────────────────────
+========================================================================
+ANIMA G0-G6 — py production engine (core/g_gates.py)  gen=40
+========================================================================
+G0 COHERENCE     pass=True  n_coherent=5/5  ratios=['0.714', '0.800', '0.571', '0.889', '0.667']
+G1 RECOMBINATION pass=False  max_single=0  best_k=0  best_distinct=0
+G2 NOVELTY       pass=True  n_novel=30  control_novel=0  coherent=16  have_corpus=True
+G3 PHILOSOPHY    ok=True    continuity=0.999950  impostor_cos=0.000000  (architecture read)
+G4 PROVENANCE    N/A     (process gate — not a decode eval)
+G5 NON-FAB       L1_pass=True  l1_rate=0.2647   |  L2 abstain = engine_cli §ImmuneMemory port (pending)
+G6 IDEATION star pass=False  dist=5 (need>=5)  fals=0 (need>=1)  coherent=5  frame_leaks=0
+------------------------------------------------------------------------
+CLOSURE a7b_pass = G0 AND G1 AND G2  =>  FAIL
+detector calibration (advisory >=8/10): 10/10
+========================================================================
+
+ a7b_pass CLOSURE = G0 ∧ G1 ∧ G2 = True ∧ False ∧ True = **FAIL**
+   (G0 coherent ✓, G2 novel ✓; G1 RECOMBINATION fails — the model does not
+    recompose the H_1129 concept keyword sets in its 40-tok continuations,
+    consistent with anima's documented recombination/G6 capacity wall.)
+
+ G0 decode texts (5 single-concept seeds, gen=40, the model's OWN bytes):
+   [0 kwr=0.714] 'the attempted to have a franchised.\nPost'
+   [1 kwr=0.800] 'when there’s something….\nSandance’'
+   [2 kwr=0.571] "and believed.\nThere's an areas, somethin"
+   [3 kwr=0.889] 'the areas of the baked.\nHey, but I knew,'
+   [4 kwr=0.667] 'Says. "In there\'s sucking."\nReadamarked '
+ G1 ladder: k2 distinct0 kwr0.75 | k3 distinct0 kwr0.857 | k4 distinct0 kwr0.857 | k5 distinct0 kwr0.889  (all coherent, none clears)
+ G2: n_novel=30 coherent=16 control_novel=0 control_n_content=10
+
+────────────────────────────────────────────────────────────────────────────
+ HONEST SCOPE / CAVEATS
+────────────────────────────────────────────────────────────────────────────
+ · G2 absence corpus = LOCAL anima trainset proxy (1,101,294 word-tokens):
+     state/clm303_savant_mitosis_train/trainset/{wiki_backbone_5lang_v2,
+     corpus_enrichment_5lang,persona_sns_corpus}.txt — NOT the exact HF
+     clm303_clean training corpus (anima-corpus-{ko,en}-{general,sns}, HF-only,
+     not pulled locally). n_novel is absence-from-this-proxy; control=0 holds.
+ · G3 (self-identity) is a ckpt-INDEPENDENT architecture read — ported 1:1
+     (self_new/drift/cos/anchor); ok=True is structural, not a decode score.
+ · G5-L2 (live §ImmuneMemory abstain-when-ungrounded) is a large engine_cli /
+     VAdaptField subsystem NOT yet ported to py → L1 reported, L2 pending.
+     Neither G3 nor G5-L2 is in the a7b_pass closure (G0∧G1∧G2).
+ · Sampler PRNG (xorshift32) is deterministic-given-seed, hexa-native — NOT
+     byte-identical to torch multinomial (by design, same as the hexa engine).
+════════════════════════════════════════════════════════════════════════════

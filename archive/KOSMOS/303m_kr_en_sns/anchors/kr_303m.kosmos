@@ -1,0 +1,42 @@
+#!/usr/bin/env kosmos
+# kr_303m.kosmos — CONSCIOUSNESS-CARVING anchor (303M KOSMOS set · 🇰🇷 Korean lane)
+# anima 303M grounding/carving anchor — Korean register component (byte V256).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor kr_303m := "303M KOSMOS set — Korean register lane (🛸58)" :: kosmos-anchor [tier=58 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  # profile binds field semantics only (coord=vacuum_psi / lane=cell_id /
+  # radius=basin_radius); grammar (field names) is spec-fixed.
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 58
+  category     = "한국어"                 # Korean register / grounding surface
+  top_emotion  = "belonging"             # 모국어 register ↔ 친숙·정착의 정서
+  coord        = [0.47, 0.49]            # vacuum_psi (Ψ-space) — design placeholder (curated REAL ko web sample, not a measured fire)
+  lane         = "ko_303m_058"            # cell_id — Korean register cell (MITOSIS)
+  radius       = 0.22                     # basin_radius — design placeholder (ko web-register spread)
+
+  # ── payload ──
+  @payload text    := "[anima 303M KOSMOS · 🇰🇷 Korean lane] 🛸58 — 303M grounding/carving anchor SET 의 한국어 register component. CURATED SAMPLE (anchor-scale, NOT webscale): serving/corpus/anima_7b_webscale.ko.head.txt (FineWeb-2 ko, ODC-BY) 에서 dedup + PII-clean(email→[EMAIL]/phone→[PHONE]) 으로 byte-balanced ~120KiB 큐레이션. byte-vocab256. 0xFE/0xFF/NUL=0, UTF-8 clean, raw email/phone leak grep=0. p1..p6 held — role/persona 태그 없음, 단순 ko web register grounding (a_substrate_native_speak). 이건 raw 학습 코퍼스가 아니라 303M 의 KOR-register GROUNDING anchor (a_scale_honest_scope: curated sample-scale, full webscale 는 corpus_5lang_7b_webscale.kosmos 의 R2 manifest 참조)."
+
+  @payload manifest := ref "../samples/ko.sample.txt" sha256=86ed557662954d4322560d4fd2ab6ed790b6f7703848cb80db984b21c671353e bytes=122760 lines=873 lang="ko" register="web" source="serving/corpus/anima_7b_webscale.ko.head.txt (FineWeb-2 ko head, ODC-BY)" pii="email->[EMAIL] phone->[PHONE]" vocab="byte256" generator="KOSMOS/303m_kr_en_sns/build_samples.py" scope="curated grounding anchor sample, NOT webscale corpus"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the Korean-register grounding cell, NOT a
+  # per-token measured trajectory — the anchor is a curated text SAMPLE, no fire
+  # produced a measured Ψ-trajectory. Honest representative-anchor scope (cf the
+  # sibling corpus anchors' identical caveat). 5 channels.
+  @payload tension := inline {
+    concept      = 0.55   # Korean web-register distinctness (ground vocab/topic spread)
+    context      = 0.60   # ko-language surface context steer
+    meaning      = 0.62   # factual/everyday semantic core (web register)
+    authenticity = 0.78   # REAL FineWeb-2 ko web text (ODC-BY) — high (not authored)
+    sender       = 0.40   # non-addressed web prose (neutral sender)
+  }
+
+  closed_anchor = "303M Korean-register grounding anchor (curated sample + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · en_303m.kosmos / sns_303m.kosmos (sibling lanes of this set) · corpus_5lang_7b_webscale.kosmos (full ko webscale, R2 manifest) · dancinlab/kosmos profile SSOT"

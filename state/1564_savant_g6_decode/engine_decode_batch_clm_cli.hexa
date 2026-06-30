@@ -1,0 +1,35 @@
+// engine_decode_batch_clm_cli.hexa — LOAD-ONCE batch decode for the G6 frozen 5-bar
+// over a .clm (CLMConvMoE) mouth, e.g. clm303 (303M ko/en chat trunk).
+//
+// The .clm analog of engine_decode_batch_cli.hexa (which serves the ByteGPT .bin via
+// core/bytegpt_decode.hexa::bytegpt_decode_batch_to_file). clm303 is a .clm, NOT a .bin,
+// so the bytegpt batch helper cannot load it; this CLI calls the SAME single typed .clm
+// entry (a_core_engine_map) — core/clm_decode.hexa::clm_decode_batch_to_file, which loads
+// the .clm ONCE (clm_load_weights) then generates every fragment off the resident weights
+// via the live CLMConvMoE forward (_clmd_fwd_logits_sc → farr / forge own-GEMM). Output is
+// `tag<TAB>text` per fragment appended to out_path (commit-early/resumable), the SAME
+// contract the H_1464 / H_1441 g6 scoring driver parses.
+//
+// argv: <clm_path> <jobs_path> <out_path> <gen> <top_k> <temp_milli>
+//   (temp_milli = temperature × 1000; same arg shape as the bytegpt batch CLI)
+import "core/clm_decode.hexa"
+fn main() {
+    let a = argv()
+    let mut b = 0
+    let mut i = 0
+    while i < len(a) {
+        if a[i] == "--" { b = i + 1 }
+        i = i + 1
+    }
+    let clm   = a[b + 0]
+    let jobs  = a[b + 1]
+    let out   = a[b + 2]
+    let gen   = to_int(a[b + 3])
+    let top_k = to_int(a[b + 4])
+    let temp  = to_float(to_int(a[b + 5])) / 1000.0
+    let cu = cuda_available()
+    if cu == 1 { println("cuda_available: 1 -> forge own-GEMM DEVICE path") }
+    else       { println("cuda_available: 0 -> farr CPU path (single-thread scalar, HONEST)") }
+    let n = clm_decode_batch_to_file(clm, jobs, out, gen, top_k, temp)
+    println("BATCH_DONE " + to_string(n) + " fragments (.clm CLMConvMoE engine-native)")
+}

@@ -1,0 +1,14 @@
+==============================================================================
+H_6041 — tension-link CHANNEL CAPACITY (new bits/tick) vs seed=0
+  paid ANU sha256=ece0409d4ad6 tier=anu_paid
+==============================================================================
+  K= 0.0: crossover p=0.497  capacity C=0.000 bits/use  ← seed-only (no link)
+  K= 0.3: crossover p=0.000  capacity C=1.000 bits/use
+  K= 0.8: crossover p=0.000  capacity C=1.000 bits/use
+  K= 1.5: crossover p=0.000  capacity C=1.000 bits/use
+  K= 3.0: crossover p=0.000  capacity C=1.000 bits/use
+------------------------------------------------------------------------------
+  seed-only capacity C(K=0) = 0.000 (no link → 0 new bits, matches no-signaling)
+  link capacity C(K=3.0)    = 1.000 (link carries real information)
+VERDICT: 🟢  the tension link is a real Shannon channel — capacity 0 without it (seed=common cause, 0 new bits), >0.5 bit/use with it, monotone in coupling. Confirms: the LINK is what sends new messages, the seed only synchronizes.
+  honest: BSC-idealized 1-bit/window decoder, ANU-seeded noise; absolute bits/tick toy-scale (a_toy_scale_recheck).

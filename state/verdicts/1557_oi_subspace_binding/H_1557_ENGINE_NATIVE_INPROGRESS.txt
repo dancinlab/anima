@@ -1,0 +1,37 @@
+H_1557 — OI-SUBSPACE BINDING probe (order-induced binding direction; capacity-vs-readout separation)
+ENGINE-NATIVE activation dump + causal patching — IN-PROGRESS (gated behind H_1441 on shared aiden GPU)
+date: 2026-06-22
+
+STATUS: NOT a terminal verdict. Honest IN-PROGRESS. The dump was interrupted by the summer reboot at
+~160/500 contexts (partial dump_out.tsv = 1920 rows preserved). Re-dispatch to aiden is QUEUED behind
+the H_1441 sister decode (serial — 12GB / 30GB single GPU host, conc=1, no concurrent 303M loads).
+
+LENS: order-induced (OI) subspace binding. 8 prior G6/pairing binding lenses (incl. H_1464) all 🧱
+WALL=CAPACITY: the 303M ByteGPT emits a falsifiable FORM but cannot WELD which attribute binds which
+entity (B3 cross-shuffle did NOT collapse engine-native). H_1557 asks a MECHANISTICALLY-INDEPENDENT
+question: is the binding direction PRESENT and PATCHABLE in the residual stream (READOUT/LEARN-GAP)
+or ABSENT/unpatchable (true CAPACITY ceiling, 9th independent lens)?
+
+5-BAR (pre-registered, DESIGN.md §2): OI axis presence (PCA low-rank ΔE/ΔA) · patch bind-flip
+(transplant success) · shuffle-control collapse · random-direction patch ablation · held-out.
+READOUT re-classification iff axis present AND patch flips bind; CAPACITY confirmed iff axis absent
+OR patch inert.
+
+★ ENGINE GAP (must sync before aiden can run): the driver h1557_oi_engine_driver.hexa calls
+  core/bytegpt_decode.hexa ops bg_dump_hidden_W (residual dump) + bg_forward_patched_W (transplant
+  forward). These ops were ADDED in the probe author's worktree copy of core/bytegpt_decode.hexa
+  (lines 1655/1677) and are NOT on main NOR on aiden's core (aiden has only bg_load_ranged). So the
+  H_1557 aiden run requires syncing the MODIFIED core/bytegpt_decode.hexa (with the two OI ops) to
+  aiden FIRST — bins/ckpt alone are insufficient. (a_engine_native_learning: the dump/patch IS the
+  engine-native evidence; the new ops live in live core/, so this stays engine-native, but they must
+  be wired before terminal stamp — a_verified_must_wire follow-on.)
+
+CODE (preserved to canonical state/1557_oi_subspace_binding/):
+  h1557_oi_engine_driver.hexa  — LOAD-ONCE dump + patched-forward driver (→ live core ops)
+  h1557_oi_probe.py            — torch-free scorer over engine-dumped vectors (ΔE/ΔA, PCA, bind-flip)
+  DESIGN.md                    — frozen 5-bar + capacity-vs-readout separation logic
+  run/dump_jobs.jsonl (149 jobs) + run/dump_out.tsv (1920 rows partial, ~160/500 contexts)
+SOURCE of modified core: .claude/worktrees/agent-a50e8012d13ed6d8a/core/bytegpt_decode.hexa
+
+NEXT (after H_1441 lands): (1) rsync the modified core/bytegpt_decode.hexa to aiden, (2) resume the
+chunked dump driver to 500 contexts, (3) run patch jobs, (4) score 5-bar, (5) stamp terminal verdict.

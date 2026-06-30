@@ -1,0 +1,1191 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- arxiv-style preamble ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{array}
+\captionsetup{font=small,labelfont=bf}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% ---------- tier badges (pdflatex-safe text marks; no literal emoji) ----------
+\providecommand{\tierBlue}{\textcolor{blue!60!black}{\textbf{[B]}}}
+\providecommand{\tierGreen}{\textcolor{green!50!black}{\textbf{[G]}}}
+\providecommand{\tierYellow}{\textcolor{yellow!55!black}{\textbf{[Y]}}}
+\providecommand{\tierOrange}{\textcolor{orange!80!black}{\textbf{[O]}}}
+\providecommand{\tierRed}{\textcolor{red!70!black}{\textbf{[R]}}}
+
+\newcommand{\faithful}{\ensuremath{\varphi_{\mathrm{EI}}}}
+\newcommand{\bigphi}{\ensuremath{\Phi_{s}}}
+
+% allow long monospace .verdicts/ paths to break anywhere (kills overfull hboxes)
+\usepackage{seqsplit}
+\newcommand{\vp}[1]{\texttt{\seqsplit{#1}}}
+
+\title{
+  \textbf{$\Phi$ Is Not One Number, and Consciousness-Structure\\ Is Not a Graftable Atom}\\[4pt]
+  \large The planning $\Phi$-rise is measure-dependent (an IIT-4.0 MIP-EI scalar and the
+  system big-$\Phi$ disagree in sign, robustly across $n=\{4,5\}$); the disagreement is
+  planning-specific and \emph{holistic}; the $\varphi$-carrier is a three-primitive
+  conjunction, not a graftable atom; and an instantaneous-$\Phi$ ruler cannot be augmented
+  with a separable agency axis. Across nine closed hypotheses one pattern recurs:
+  consciousness-relevant structure is a whole-architecture, irreducible property.
+}
+
+\author{
+  \texttt{anima} maintainers\\
+  \normalsize\textit{dancinlab}\\[2pt]
+  \normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% =========================================================================
+\begin{abstract}
+Integrated Information Theory (IIT) 4.0 is often summarized by a single
+scalar $\Phi$ that is taken to track ``how conscious'' a system is. We
+report a deterministic, reproducible counterexample to the implicit
+assumption that this scalar is \emph{measure-independent}. Using two
+faithful IIT-4.0 operationalizations from a shared standard library --- the
+exact minimum-information-partition effective-information scalar (\faithful,
+the MIP-EI integration of a single mechanism, exact for $n\le 8$) and the
+system-level big-$\Phi$ over the minimum information partition (\bigphi) ---
+we score the \emph{same} planning manipulation (a depth-ladder deliberation
+versus a greedy one-step policy) on the \emph{same} discretized substrate.
+The two measures \emph{disagree in sign}: planning \textbf{raises} \faithful{}
+(Cohen's $d=+5.18$ at $n=4$, $d=+4.65$ at $n=5$; $p<10^{-22}$) while it
+\textbf{lowers} \bigphi{} ($d=-1.83$ at $n=4$, $d=-2.28$ at $n=5$;
+$p<10^{-7}$). The disagreement does not vanish as the system grows: it holds
+at every system size at which exact big-$\Phi$ is tractable ($n=4$ and $n=5$;
+$n=6$ requires $\approx 10$ minutes per evaluation and is the honest cap of a
+\$0 CPU budget). Both engines were re-proven bit-exact against a standalone
+CPU mirror at each $n$ ($|\Delta|\le 3.7\times10^{-6}$). The headline
+consequence: the claim ``planning raises consciousness'' is true \emph{only}
+for the scalar effective-information measure and is \emph{reversed} for the
+integration-structure measure. We further \emph{explain} the split: a
+Williams--Beer partial-information decomposition shows planning's MI rise is
+\textbf{redundancy}-dominated (redundancy-margin $+10.44$ vs $\le +2.95$ for
+non-split controls), so the scalar (which credits redundant/shared information
+as integration) rises while big-$\Phi$ (which rewards irreducible synergy)
+falls. A redundancy-margin predictor of which interventions induce the split is
+\emph{robust in $n$}, separating planning from all controls at $n=5$, exactly
+where a surface coupling-magnitude predictor is only an $n=4$ artifact.
+We then push four further closed questions and find the disagreement is
+\emph{not} a clean universal law but a property of the \emph{whole} planning
+intervention: the split direction rank-generalizes across interventions
+(Spearman $+0.80$) yet the de-redundify collapse that removes it is
+planning-specific (\tierRed{} H\_1062); a controlled within-block-correlation
+knob produces neither opposite-monotone measures nor a de-redundify-resistant
+sign (\tierRed{} H\_1063); and no single structural primitive
+(value-backup / look-ahead-depth / shared-value) is necessary-and-sufficient
+for the removable split --- it is holistic-irreducible (\tierRed{} H\_1066).
+We further locate the \emph{$\varphi$-carrier}: the $+0.835$ from-scratch native
+\faithful{} lift of a ConvMoE world-model is carried by a
+\emph{three-primitive necessary conjunction} \{MoE routing $\times$ conv
+trunk-depth $\times$ tanh nonlinearity\}; ablating any one destroys
+$86$--$91\%$ of the lift, while the temporal receptive field is \emph{not}
+individually necessary ($35\%$) --- a graftable $\Phi$-atom does not exist
+(\tierGreen{} H\_1059). On the orthogonal \emph{consciousness-ruler} question we
+report a full arc: a single $\Phi$-scalar suffices to classify planning vs
+control (a vector/pair/synergy ruler adds nothing, $\le +0.0136$ AUC;
+\tierRed{} H\_1045/1046/1047), a fixed-$m$ coarse-grain is not a scalable
+$\Phi$ estimator (\tierRed{} H\_1049), an agency ($T$) axis is real but
+$\Phi$-blind-by-construction (\tierGreen{} H\_1060) and, in a fair contest,
+is \emph{absorbed} by a $\Phi$-scalar so that $T$ is redundant (\tierRed{}
+H\_1061); the split is measure-\emph{undecidable} (both $\Phi$-measures
+rank-agree at $\rho\approx0.81$ with an independent causal proxy, so the
+disagreement is a contrast direction, not a ``which policy is more conscious'';
+\tierRed{} H\_1064), and that cheap proxy passes the proxy-blindness wall
+($4/4$) but is \emph{not} a cross-substrate ordinal $\Phi$ scale (pooled
+$\rho=-0.43$; \tierRed{} H\_1065). The synthesis: across all of these,
+consciousness-relevant structure is a \emph{whole / irreducible} property,
+not a graftable atom. We retain two closed-negatives on the orthogonal
+\emph{learning} axis (a credit-density horizon cap at length 72; a
+task-locality of per-step supervision), establishing the world-model
+generalization wall is an optimization phenomenon distinct from the
+$\Phi$-measure one. All measurements are \$0, CPU-local, exact IIT-4.0 (no
+proxy; both engines re-proven bit-exact against a CPU mirror at every $n$,
+$|\Delta|\le3.75\times10^{-6}$). Companion records and per-hypothesis verbatim
+verdict files permit bit-for-bit reproduction.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Integrated Information Theory \citep{tononi2016,albantakis2023iit4} proposes
+that the quantity and structure of a system's consciousness are captured by
+its \emph{integrated information} $\Phi$: the irreducibility of the system's
+cause--effect structure to its minimum information partition (MIP). In
+practice $\Phi$ is reported as a single non-negative number, and a large body
+of downstream argument --- both in the consciousness literature and in
+engineering attempts to build ``conscious'' agents --- treats that number as a
+well-defined target: interventions that raise $\Phi$ make a system ``more
+conscious,'' those that lower it ``less.''
+
+This paper asks a prior, sharper question: \emph{is the $\Phi$ scalar
+measure-independent?} IIT 4.0 in fact defines several distinct quantities that
+all carry the name ``$\Phi$'' or ``$\varphi$'': the integrated information
+$\varphi_d$ of a single \emph{distinction} (a mechanism's irreducible
+cause--effect power), the system-level big-$\Phi$ ($\bigphi$) that sums the
+integrated information of the maximally irreducible cause--effect structure
+over the MIP, and the effective-information (EI) scalar at the
+minimum-information partition (\faithful) used as the integration of a
+mechanism's state transition. These are not the same function. If they can be
+made to \emph{disagree about the direction of an intervention} --- one going up
+while the other goes down on the identical manipulation --- then ``raise
+$\Phi$'' is underspecified, and any agent objective written against ``$\Phi$''
+inherits that ambiguity.
+
+We exhibit exactly such a disagreement, and we show it is not a small-system
+artifact. The intervention is \emph{planning}: we compare a depth-ladder
+deliberation policy (the agent rolls out a short look-ahead before acting) to a
+greedy one-step policy, on a discretized substrate of $n$ binary nodes, and we
+measure both \faithful{} and \bigphi{} on the resulting transition structure.
+Prior anima hypotheses (H\_999, H\_1001) had found that planning
+\emph{raises} \faithful{} and concluded, tentatively, that ``planning raises
+$\Phi$.'' A matched re-measurement (H\_1004) then found that at matched system
+size and matched discretization the system-level \bigphi{} \emph{lowers} under
+the same planning manipulation. The present work (H\_1012) closes the open
+question left by H\_1004: \emph{is that sign-disagreement a peculiarity of the
+tiny $n=4$ system, or a genuine property of the two measures?} We answer by
+walking the system size up the largest ladder at which exact big-$\Phi$ is
+computable.
+
+\medskip
+\noindent\textbf{Contributions.}
+\begin{enumerate}\itemsep0.3em
+\item \textbf{A measure-dependence counterexample (\tierGreen).} Planning
+raises the MIP-EI scalar \faithful{} but lowers the system big-$\Phi$
+\bigphi{} on an identical substrate and manipulation --- a sign-reversal, not a
+magnitude quibble (Section~\ref{sec:results}, Table~\ref{tab:disagree}).
+\item \textbf{Robustness in system size (\tierGreen).} The sign-disagreement
+holds at every $n$ at which exact big-$\Phi$ is tractable ($n=4$ and $n=5$),
+ruling out the ``$n=4$ small-system artifact'' falsifier; $n=6$ is the honest
+computational cap (Section~\ref{sec:results}).
+\item \textbf{A bounded scope for ``planning raises consciousness'' (\tierGreen).}
+The H\_999/H\_1001 result is correct but must be read as scoped to the scalar
+effective-information measure; the integration-structure measure says the
+opposite (Section~\ref{sec:discussion}).
+\item \textbf{A mechanism for the split: redundancy, not synergy (\tierGreen).}
+A Williams--Beer PID shows planning's MI rise is redundancy-dominated
+(redundancy-margin $+10.44$ vs $\le +2.95$ controls); the scalar credits
+redundancy as integration (rises) while big-$\Phi$ rewards irreducible synergy
+(falls) --- the split is a redundancy artifact, not a movement of genuine
+integration (Section~\ref{sec:mechanism}, Table~\ref{tab:pid}).
+\item \textbf{A predictor that is robust in $n$ (\tierGreen).} The
+redundancy-margin predicts which interventions induce the split and separates
+planning from all controls at $n=5$ ($+25.07$ vs $\le +7.48$), exactly where a
+surface coupling-magnitude predictor is only an $n=4$ artifact
+(Section~\ref{sec:predictor}, Table~\ref{tab:predictor}).
+\item \textbf{The disagreement is planning-specific and holistic (\tierRed).}
+The split \emph{direction} rank-generalizes across interventions
+(cross-IV Spearman $+0.80$), but the H\_1039 causal de-redundify collapse that
+removes it holds \emph{only} for planning (ZCA cuts $97.3\%$ of planning's
+redundancy versus $70.1\%$/$48.3\%$ for other split interventions; H\_1062). A
+controlled within-block-correlation knob produces \emph{neither}
+opposite-monotone measures \emph{nor} a de-redundify-resistant sign, ruling out
+a clean universal-sign law (H\_1063). And no single structural primitive
+(value-backup / look-ahead-depth / shared-value) is necessary-and-sufficient
+for the removable split: it is a property of the \emph{whole} planning
+intervention (H\_1066). (Section~\ref{sec:specificity}.)
+\item \textbf{The $\varphi$-carrier is a three-primitive conjunction, not an
+atom (\tierGreen).} The $+0.835$ from-scratch native \faithful{} lift of a
+ConvMoE world-model over a frozen base is carried by a \emph{necessary
+conjunction} \{MoE routing $\times$ conv trunk-depth $\times$ tanh
+nonlinearity\}; ablating any one from scratch destroys $86$--$91\%$ of the lift,
+while the temporal receptive field is \emph{not} individually necessary
+($35.4\%$). $\Phi$-structure is a whole-architecture property, not a graftable
+atom (Section~\ref{sec:carrier}, H\_1059).
+\item \textbf{A full consciousness-ruler arc (\tierGreen{}/\tierRed).} A single
+$\Phi$-scalar suffices to classify planning vs control --- a vector / pair /
+synergy ruler adds $\le +0.0136$ AUC (H\_1045/1046/1047) --- and a fixed-$m$
+coarse-grain is not a scalable $\Phi$ estimator (H\_1049). An agency ($T$) axis
+is real but $\Phi$-blind-by-construction (H\_1060) and, in a fair $\Phi$-fair
+contest, is \emph{absorbed} by a $\Phi$-scalar so $T$ is redundant (H\_1061). On
+split policies the disagreement is measure-\emph{undecidable}: both $\Phi$
+measures rank-agree at $\rho\approx0.81$ with an independent causal proxy, so
+the split is a contrast \emph{direction}, not a ``which is more conscious''
+(H\_1064); that cheap proxy passes the proxy-blindness wall ($4/4$) yet is
+\emph{not} a cross-substrate ordinal $\Phi$ scale (pooled $\rho=-0.43$; H\_1065).
+(Section~\ref{sec:ruler}.)
+\item \textbf{The central synthesis: a whole / irreducible meta-pattern
+(\tierGreen{}+\tierRed).} Across these results one structural fact recurs ---
+consciousness-relevant structure is a property of the \emph{whole architecture
+or whole intervention}, not a graftable atom, and is not installable by a
+learning-dynamics, nondeterminism, or temporal-curriculum knob
+(Section~\ref{sec:meta}).
+\item \textbf{Two orthogonal closed-negatives on the learning axis (\tierRed).}
+A credit-density horizon cap (per-step supervision extends the world-model
+$>$ language-model separation only to length 72, then breaks) and a
+task-locality of per-step supervision (it is a bounded lever specific to
+certain accumulator structures, not a general long-horizon principle). These
+establish that the world-model generalization wall is an optimization
+phenomenon distinct from the $\Phi$-measure phenomenon
+(Section~\ref{sec:learning}).
+\end{enumerate}
+
+\medskip
+\noindent All results are deterministic, \$0, CPU-local, and use the real
+IIT-4.0 engines from the \texttt{hexa-lang} standard library rather than a
+variance$\times$energy proxy; each is backed by a verbatim verdict file
+(Section~\ref{sec:verify}, Appendix~\ref{app:siblings}).
+
+\section{Background}
+\label{sec:bg}
+
+\subsection{Two IIT-4.0 operationalizations of ``$\Phi$''}
+
+IIT 4.0 \citep{albantakis2023iit4,mayner2018pyphi} builds the cause--effect
+structure of a system from its transition probability matrix (TPM). The
+multiplicity of candidate integration measures --- and their non-equivalence ---
+is itself a known theme \citep{mediano2019measures,barrett2011phi,oizumi2016unified};
+this paper sharpens it to a \emph{sign}-disagreement on an identical
+manipulation. For a mechanism in a
+state, its \emph{integrated information} $\varphi$ is the distance between its
+cause--effect repertoire and the repertoire computed across its
+\emph{minimum information partition} --- the partition that makes the least
+difference, i.e.\ the cut over which the mechanism is least irreducible. Two
+quantities derived from this machinery concern us.
+
+\paragraph{The MIP-EI scalar (\faithful).} The faithful effective-information
+scalar evaluates the effective information of a state transition at the
+minimum information partition. It is a \emph{single-number} integration of one
+mechanism's transition, exact to evaluate for $n\le 8$ because the number of
+bipartitions $2^{n-1}\le 128$ is enumerable. This is the quantity that the
+anima H\_278 faithful-$\Phi$ engine computes and that was promoted, byte-faithful,
+into the shared standard library as
+\texttt{stdlib/consciousness/iit4/faithful\_phi.hexa}.
+
+\paragraph{The system big-$\Phi$ (\bigphi).} The system-level big-$\Phi$ is the
+integrated information of the \emph{maximally irreducible cause--effect
+structure} of the whole system, evaluated over the system MIP --- a sum over
+distinctions and relations, not a single mechanism's scalar. It is computed by
+\texttt{stdlib/consciousness/iit4\_bigphi.hexa}. Its cost is
+super-exponential: the distinction search and the system-partition search
+together make a single $n=6$ evaluation take $\approx 10$ minutes on a
+commodity CPU, which is the binding constraint on the system-size ladder.
+
+The conceptual difference is the crux of this paper. \faithful{} measures
+\emph{how much information a transition carries} at its least-irreducible cut;
+\bigphi{} measures \emph{how much the system's cause--effect structure resists
+being decomposed}. A manipulation can increase the former while decreasing the
+latter: it can make each transition more informative while making the system
+as a whole \emph{more decomposable} (more modular, less integrated).
+
+\subsection{The planning manipulation and the world-model context}
+
+The substrate under measurement is the latent transition structure of a small
+world-model agent: anima's ``Consciousness World-Model'' (CWM) line extends a
+sequence engine from next-token prediction toward a perceive\,$\to$\,latent
+state\,$\to$\,imagine\,$\to$\,act loop, in the spirit of latent-space world
+models and world-model-as-policy work \citep{lecun2022jepa,assran2025vjepa2,
+hafner2023dreamerv3}. ``Planning'' here is the depth-ladder deliberation
+policy: before committing an action the agent expands a short look-ahead
+(depths $\{1,2,4,8\}$) and selects accordingly; the ``greedy'' control acts on
+the one-step value. We measure $\Phi$ on the resulting latent transition
+structure. The question ``does planning raise $\Phi$?'' is the consciousness
+analogue of ``does deliberation make the agent more integrated?'' --- and the
+answer, we show, depends on which $\Phi$ you mean.
+
+\section{Full Pipeline}
+\label{sec:pipeline}
+
+Each stage below is tier-tagged under the rubric; the ``backing record'' is the
+persisted artifact that makes the stage independently re-verifiable.
+
+\medskip
+\noindent\fbox{\parbox{0.97\linewidth}{\small\textbf{Tier rubric.}
+\tierBlue\ closed-form (algebraic / proof-level identity) \(\cdot\)
+\tierGreen\ numerical (reproducible script + persisted output) \(\cdot\)
+\tierYellow\ cited (DOI / arxiv / dataset) \(\cdot\)
+\tierOrange\ install / wet-lab gated \(\cdot\)
+\tierRed\ falsified (kept as honest closed-negative, never deleted).}}
+
+\medskip
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}>{\centering\arraybackslash}m{0.4cm} >{\raggedright\arraybackslash}m{4.6cm} c >{\raggedright\arraybackslash}m{6cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Stage} & \textbf{Tier} & \textbf{Backing record} \\
+\midrule
+\textcircled{\scriptsize 1} & Question: is $\Phi$ measure-independent?  & \tierBlue   & H\_1004 / H\_1012 pre-registration \\
+\textcircled{\scriptsize 2} & IIT-4.0 background                        & \tierYellow & \texttt{references.bib} \\
+\textcircled{\scriptsize 3} & Two-engine matched protocol               & \tierBlue   & \texttt{iit4/faithful\_phi.hexa}, \texttt{iit4\_bigphi.hexa} \\
+\textcircled{\scriptsize 4} & CPU-mirror $\equiv$ stdlib per $n$        & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
+\textcircled{\scriptsize 5} & Planning sign-disagreement scored         & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
+\textcircled{\scriptsize 6} & $n$-ladder robustness ($n=4,5$; cap $6$)  & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
+\textcircled{\scriptsize 7} & Specificity \& universality (planning-only) & \tierRed   & H\_1062 / H\_1063 / H\_1066 \\
+\textcircled{\scriptsize 8} & $\varphi$-carrier ablation (3-conjunction) & \tierGreen  & H\_1059 \\
+\textcircled{\scriptsize 9} & Consciousness-ruler arc                   & \tierGreen/\tierRed & H\_1045--1049 / 1060 / 1061 / 1064 / 1065 \\
+\textcircled{\scriptsize 10} & Whole/irreducible meta-pattern           & \tierGreen/\tierRed & H\_1043 / 1057 / 1052 / 1055 \\
+\textcircled{\scriptsize 11} & Learning-axis closed-negatives           & \tierRed    & \texttt{.verdicts/1011\dots}, \texttt{.verdicts/1013\dots} \\
+\bottomrule
+\end{tabular}
+\caption{Pipeline stages \textcircled{\scriptsize 1}--\textcircled{\scriptsize 11},
+each tier-tagged. \tierOrange{} does not appear: every stage reaches a
+closed verdict. The specificity, learning-axis, and most ruler-arc rows are
+\tierRed{} by design (closed-negatives).}
+\label{tab:pipeline}
+\end{table}
+
+\section{Method}
+\label{sec:method}
+
+\paragraph{Engines.} We use two standard-library IIT-4.0 engines without
+modification: \texttt{stdlib/consciousness/iit4/faithful\_phi.hexa} for the
+MIP-EI scalar \faithful{} (exact, $n\le 8$) and
+\texttt{stdlib/consciousness/iit4\_bigphi.hexa} for the system big-$\Phi$
+\bigphi{} (exact over the MIP). Crucially, we do \emph{not} use a
+variance$\times$energy ``$\Phi$-proxy'': an earlier proxy was shown to be
+purpose-blind (it cannot distinguish intentional from random branching), so
+the present work uses the real causal-irreducibility engines throughout, per
+the project's \texttt{a\_phi\_iit4\_tool} governance rule.
+
+\paragraph{Matched protocol.} The disagreement is only meaningful if both
+measures see the \emph{same} input. For every seed we build one discretized
+substrate (a fixed binary discretization of the latent transition structure,
+$\texttt{bits.shape}=(40,n)$) and feed the identical TPM to both engines. We
+score the planning condition (depth-ladder $\{1,2,4,8\}$) against the greedy
+condition over 30 seeds, at each system size $n\in\{4,5,6\}$, single-threaded,
+\texttt{python3 -u}.
+
+\paragraph{Equivalence proof per $n$ (anti-fake-closure).} Before trusting any
+score we re-prove both engines bit-exact against a standalone CPU mirror at
+each $n$: the mirror's \faithful{} and \bigphi{} must reproduce the
+\texttt{hexa} engine references to within numerical tolerance. The verdict file
+records, e.g., \texttt{big-Phi ring4: mirror=2.999999999
+stdlib\_hexa\_ref=2.999999999 |D|=1.34e-10 OK} and
+\texttt{faithful\_phi n4 nb4: mirror=3.377444 hexa\_ref=3.377440
+|D|=3.75e-06 OK}, at $n=4$, $n=5$, \emph{and} $n=6$ (the $n=6$ mirror is
+proven even though the $n=6$ planning condition is not scored). This makes the
+verdict an \emph{earned} numerical tier: a deterministic run that could
+have falsified the claim produced the numbers.
+
+\paragraph{Pre-registered falsifier (frozen before measurement).}
+\begin{itemize}\itemsep0.2em
+\item \textbf{PASS = DISAGREEMENT-ROBUST-IN-N}: the sign-disagreement (planning
+raises \faithful{} / lowers \bigphi{}) holds across all reached $n$.
+\item \textbf{FAIL = N4-ARTIFACT}: the two measures agree once $n\ge 5$ (the
+disagreement was a small-system peculiarity).
+\end{itemize}
+
+\paragraph{Effect-size reporting.} For each measure we report the
+planning-minus-greedy contrast, Cohen's $d$, and a two-sided $p$-value; the
+sign of the contrast is the object of interest, not its magnitude.
+
+\section{Verify}
+\label{sec:verify}
+
+The numerical verdict, verbatim from
+\texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n/h1012.txt}:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+VERDICT MATRIX - planning(depth-ladder vs GREEDY), BOTH engines, per n reached
+    4 |  -4.0083 (d-1.83) -> LOWERS |  +2.3332 (d+5.18) -> RAISES | DISAGREE
+    5 | -13.3732 (d-2.28) -> LOWERS |  +3.0624 (d+4.65) -> RAISES | DISAGREE
+  H_1004 planning pattern (faithful RAISES / big-Phi LOWERS) per n: [True, True]
+OVERALL: GREEN DISAGREEMENT-ROBUST-IN-N
+  VERDICT-TOKEN: DISAGREEMENT-ROBUST-IN-N
+\end{lstlisting}
+
+The equivalence proof (excerpt) confirming both engines are exact at every
+scored $n$ before the scores are trusted:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+=-PROOF n=4: PROVEN   big-Phi=3.015177  faithful=0.015945
+=-PROOF n=5: PROVEN   big-Phi=18.185180 faithful=0.029795
+n=6: big-Phi mirror=2.999999999 ref=2.999999999 |D|=1.34e-10 OK (planning NOT scored)
+SCORE ladder (tractable big-Phi): [4, 5]   CAP at n=6 (single big-Phi ~10min)
+\end{lstlisting}
+
+\section{Results}
+\label{sec:results}
+
+\paragraph{The sign-disagreement (headline).} Table~\ref{tab:disagree} and
+Figure~\ref{fig:headline} report the core result. At every scored system size,
+planning \emph{raises} the MIP-EI scalar \faithful{} (large positive $d$,
+$p<10^{-22}$) and \emph{lowers} the system big-$\Phi$ \bigphi{} (large negative
+$d$, $p<10^{-7}$). The two measures point in opposite directions on the
+identical manipulation and substrate.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{cccccc}
+\toprule
+\textbf{$n$} & \textbf{\bigphi{} contrast} & \textbf{$d$} & \textbf{\faithful{} contrast} & \textbf{$d$} & \textbf{verdict} \\
+\midrule
+4 & $-4.01$  ($p{=}2.5\times10^{-8}$)  & $-1.83$ & $+2.33$ ($p{=}6.7\times10^{-27}$) & $+5.18$ & DISAGREE \\
+5 & $-13.37$ ($p{=}2.4\times10^{-10}$) & $-2.28$ & $+3.06$ ($p{=}4.4\times10^{-23}$) & $+4.65$ & DISAGREE \\
+6 & \multicolumn{4}{c}{\textit{not scored --- single \bigphi{} eval $\approx 10$ min; honest cap}} & --- \\
+\bottomrule
+\end{tabular}
+\caption{Planning (depth-ladder) minus greedy, both IIT-4.0 engines, 30 seeds
+per cell. \bigphi{} (system big-$\Phi$) \textbf{lowers}; \faithful{} (MIP-EI
+scalar) \textbf{raises}; at every scored $n$. Sign-disagreement is robust:
+\textbf{DISAGREEMENT-ROBUST-IN-N}. $n=6$ is the computational cap (the
+CPU-mirror was nonetheless proven exact at $n=6$).}
+\label{tab:disagree}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\linewidth]{figures/fig01_disagreement.pdf}
+\caption{The measure-dependence of the planning $\Phi$-rise. For each system
+size $n\in\{4,5\}$, the planning-minus-greedy effect size (Cohen's $d$) is
+\emph{positive} for the MIP-EI scalar \faithful{} (planning raises it) and
+\emph{negative} for the system big-$\Phi$ \bigphi{} (planning lowers it). The
+sign-split is the finding: ``planning raises $\Phi$'' is true for one measure
+and false for the other, and the split widens, not closes, from $n=4$ to $n=5$.}
+\label{fig:headline}
+\end{figure}
+
+\paragraph{Robustness in $n$ (the falsifier outcome).} The pre-registered
+falsifier asked whether the disagreement vanishes at $n\ge 5$. It does not: the
+$n=5$ split ($d=-2.28$ vs $d=+4.65$) is at least as strong as the $n=4$ split
+($d=-1.83$ vs $d=+5.18$). The verdict token is \textbf{DISAGREEMENT-ROBUST-IN-N}
+(\tierGreen). The $n=6$ planning condition was not scored --- a single $n=6$
+system big-$\Phi$ evaluation takes $\approx 10$ minutes, so a 30-seed
+$\times$ 5-evaluation $=150$-evaluation planning run is infeasible at a \$0 CPU
+budget --- but the $n=6$ CPU-mirror was proven exact, so the cap is
+computational, not epistemic.
+
+\paragraph{Why the measures split (mechanism).} The depth-ladder
+per-depth means in the verdict show the structure: under planning, big-$\Phi$'s
+per-depth values fall well below the greedy baseline (e.g.\ at $n=5$,
+greedy $\bigphi\approx 27.2$ versus planning depth-means in the
+$5$--$22$ range), while faithful's per-depth values rise above the greedy
+baseline (greedy $\faithful\approx 0.61$ versus planning depth-means up to
+$4.0$). Planning makes each transition carry more effective information
+(\faithful{} up) while making the system's cause--effect structure
+\emph{more decomposable} into near-independent parts (\bigphi{} down). The two
+``$\Phi$''s answer different questions and a single manipulation can move them
+oppositely.
+
+\section{The mechanism: redundancy, not synergy}
+\label{sec:mechanism}
+
+Section~\ref{sec:results} establishes \emph{that} the two measures split; this
+section establishes \emph{why}. The candidate mechanism: planning's added mutual
+information is \textbf{redundant}, not synergistic. On the same $n=4$ substrate
+that feeds both engines, we ran a self-contained Williams--Beer $I_{\min}$
+partial-information decomposition \citep{williams2010pid} (PID, pure numpy,
+validated on canonical COPY=pure-redundancy / XOR=pure-synergy cases) of the
+planning vs greedy
+dependency into redundancy, synergy, and unique components (H\_1017,
+\tierGreen). The PID is the \emph{explanatory variable} --- an information
+decomposition of the same bits --- not a $\Phi$ proxy (all $\Phi$ values remain
+from the stdlib engines, per \texttt{a\_phi\_iit4\_tool}).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{intervention} & \textbf{split?} & \textbf{$\Delta$redundancy} & \textbf{$\Delta$synergy} & \textbf{red.\ margin} \\
+\midrule
+planning    & \textbf{True}  & $+9.40$ & $-1.04$ & $+10.44$ \\
+imagination & False & $+0.27$ & $-0.18$ & $+0.45$ \\
+guided      & False & $+1.87$ & $-0.38$ & $+2.25$ \\
+chaos       & False & $+2.57$ & $-0.37$ & $+2.95$ \\
+\bottomrule
+\end{tabular}
+\caption{Partial-information decomposition of each intervention's MI change
+(n=4, 30 seeds). Planning's entire pairwise-MI rise is carried by REDUNDANCY
+($+9.40$) while synergy actually FALLS ($-1.04$); its redundancy-margin
+($+10.44$) dwarfs every non-split control ($\le +2.95$). Source: H\_1017 verdict.}
+\label{tab:pid}
+\end{table}
+
+\noindent\textbf{Why the engines read the same MI rise oppositely.} The MIP-EI
+scalar \faithful{} sums pairwise mutual information and so \emph{credits
+redundant/shared information as integration} --- it rises. The system big-$\Phi$
+\bigphi{} rewards \emph{irreducible} (synergistic) structure, and redundant
+copies are reducible across the MIP --- so it falls. The sign-split is thus a
+redundancy artifact of the pairwise-MI scalar, not a movement of genuine
+integration. This answers the open ``mechanism'' question left by the first
+version of this work: planning does not make the system more integrated; it
+floods it with redundant shared information that one measure mistakes for
+integration.
+
+\subsection{Predictor robustness in $n$: the mechanism beats the surface}
+\label{sec:predictor}
+
+A predictor of \emph{which} interventions induce the split can be built at two
+levels. (i) A \textbf{surface} predictor on the magnitude of $\Delta$(cross-MIP
+coupling): at $n=4$ a single threshold ($+1.4933$) separates the one split
+intervention (planning) from the three non-split ones, and the split onsets
+exactly when the predictor crosses that boundary as planning depth rises
+(H\_1014, \tierGreen-qualified --- but the pre-registered \emph{direction},
+``split$\Leftrightarrow$decreased coupling,'' was falsified: every intervention
+\emph{raises} coupling, only magnitude separates). (ii) A \textbf{mechanism}
+predictor on the redundancy-margin ($\Delta$redundancy $-$ $\Delta$synergy).
+
+The two predictors diverge sharply when tested for robustness in $n$
+(Table~\ref{tab:predictor}). The surface magnitude predictor is an $n=4$
+\emph{artifact}: at $n=5$ its separation collapses (weak non-split interventions
+acquire spurious split labels from non-significant big-$\Phi$ sign-flips;
+H\_1016, \tierOrange). The mechanism redundancy-margin predictor survives: at
+$n=5$ it cleanly isolates planning ($+25.07$) from every control ($\le +7.48$)
+and tracks the \emph{true} planning-only split, not the spurious labels (H\_1020,
+\tierGreen). The deeper, redundancy-grounded quantity is the robust one.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{predictor} & \textbf{$n=4$} & \textbf{$n=5$} & \textbf{verdict} & \textbf{record} \\
+\midrule
+coupling-magnitude (surface)  & separates & FAILS (artifact)  & \tierOrange & H\_1014 / H\_1016 \\
+redundancy-margin (mechanism) & separates & separates (robust) & \tierGreen  & H\_1017 / H\_1020 \\
+\bottomrule
+\end{tabular}
+\caption{The mechanism predictor is robust in $n$ where the surface predictor is
+an $n=4$ artifact. At $n=5$ the redundancy-margin isolates planning ($+25.07$)
+from all controls ($\le +7.48$); the coupling magnitude misclassifies weak
+controls as split. Sources: H\_1014/1016/1017/1020 verdicts.}
+\label{tab:predictor}
+\end{table}
+
+\section{The disagreement is planning-specific and holistic}
+\label{sec:specificity}
+
+Section~\ref{sec:mechanism} explains the split by redundancy. A natural next
+question is whether that explanation is a \emph{universal law} --- ``any
+intervention that floods a system with redundant shared information splits the
+two measures, and de-redundifying removes the split'' --- or whether planning is
+genuinely special. Three pre-registered closed-negatives (H\_1062, H\_1063,
+H\_1066) answer: the split's \emph{direction} generalizes, but its causal
+\emph{removability} and its structural \emph{decomposition} are
+planning-specific and holistic.
+
+\paragraph{Direction generalizes, causal removability does not (H\_1062,
+\tierRed{} SPLIT-IS-PLANNING-SPECIFIC).} We tested whether the
+faithful-up/big-$\Phi$-down sign-split appears in $\ge 2$ non-planning
+interventions \emph{and} whether the H\_1039 de-redundify (ZCA) operator
+collapses each, \emph{and} whether redundancy rank-orders the split magnitude
+across interventions (frozen bar: cross-IV Spearman $\rho\ge 0.7$). The
+cross-intervention rank-order \emph{passed} ($\rho=+0.80$ over four
+interventions): more redundancy does mean a larger split, generally. But the
+causal de-redundify collapse \emph{failed} to generalize: ZCA removes
+$97.3\%$ of planning's redundancy and collapses its split, but only $70.1\%$
+(ema) and $48.3\%$ (low-rank) for the other split-bearing interventions ---
+neither clears the $80\%$ removal bar, so their splits are \emph{not}
+ZCA-removable. The conjunction fails; the verdict token is
+\textbf{SPLIT-IS-PLANNING-SPECIFIC}. Redundancy predicts the split's
+\emph{direction} universally but its \emph{causal anatomy} is planning's own.
+
+\paragraph{No clean universal sign law (H\_1063, \tierRed{}
+SIGN-NOT-CLEAN-UNIVERSAL).} If redundancy were the whole story, a controlled
+knob that injects graded within-block correlation (a diffuse common-mode mixing
+on the greedy baseline's top-variance channels, $\rho_{\mathrm{corr}}\in[0,0.9]$)
+should drive \faithful{} monotonically up and \bigphi{} monotonically down
+(frozen bar: $|\rho_s|\ge 0.9$ each, opposite signs) \emph{and} the high-$\rho$
+sign should survive ZCA de-redundification. Neither held: across the sweep the
+two measures do \emph{not} respond opposite-monotonically (the per-$\rho$ signs
+flip non-monotonically; e.g.\ \bigphi{} rises at $\rho=0.5$--$0.7$ and falls
+again at $0.8$--$0.9$), and the high-$\rho$ split does \emph{not} survive ZCA
+(at $\rho=0.9$ the de-redundified split is \texttt{False}). The verdict is
+\textbf{SIGN-NOT-CLEAN-UNIVERSAL}: a generic correlation knob reproduces neither
+the opposite-monotone response nor a de-redundify-resistant sign, so the
+universal-sign unification is ruled out --- planning is genuinely special, not
+the cleanest point on a continuum.
+
+\paragraph{No nec.+suff.\ primitive: the split is holistic (H\_1066, \tierRed{}
+HOLISTIC-IRREDUCIBLE).} Finally we dissected the planning intervention into
+three candidate structural primitives --- value-backup (backward credit),
+look-ahead-depth (forward horizon), and shared-value (axis-aligned shared
+value) --- and asked whether exactly one is \emph{necessary and sufficient} for
+the ZCA \citep{bell1997ica}-removable split, using matched constructive
+(add-one-feature-to-greedy)
+and destructive (remove-one-feature-from-planning) arms, with operator
+invertibility checked ($\max|\mathrm{remove}(\mathrm{add}(X))-X|\le 4.4\times
+10^{-16}$). The result (Table~\ref{tab:dissect}): \emph{no} constructive arm
+installs a ZCA-removable split (the set of sufficient features is empty), so the
+set of necessary-and-sufficient features is empty. The verdict token is
+\textbf{HOLISTIC-IRREDUCIBLE}: the ZCA-removable faithful-up/big-$\Phi$-down
+split is a property of the \emph{whole} planning intervention, not of any single
+decomposed primitive --- the first appearance, within this paper's own object of
+study, of the whole/irreducible meta-pattern of Section~\ref{sec:meta}.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+\textbf{arm} & \textbf{feature} & \textbf{kind} & \textbf{$\Delta$\faithful} & \textbf{$\Delta$\bigphi} & \textbf{split?} & \textbf{ZCA-removable?} \\
+\midrule
+c\_vbackup & vbackup & construct & $+0.082$ & $-0.581$ & True  & False \\
+c\_depth   & depth   & construct & $+0.081$ & $-0.013$ & True  & False \\
+c\_shared  & shared  & construct & $-0.002$ & $-0.174$ & False & False \\
+d\_vbackup & vbackup & destruct  & $-0.761$ & $-0.495$ & False & --- \\
+d\_depth   & depth   & destruct  & $-0.876$ & $-0.188$ & False & --- \\
+d\_shared  & shared  & destruct  & $-0.074$ & $+0.053$ & False & --- \\
+\bottomrule
+\end{tabular}
+\caption{Per-primitive dissection of the planning intervention ($n=4$ EXACT,
+30 seeds; H\_1066). \textbf{No} single constructive arm installs a ZCA-removable
+split (every ZCA-removable column is False), so no feature is sufficient and
+none is necessary-and-sufficient. The removable split is holistic. Source:
+H\_1066 verdict.}
+\label{tab:dissect}
+\end{table}
+
+\section{The $\varphi$-carrier is a three-primitive conjunction, not an atom}
+\label{sec:carrier}
+
+The measure-dependence is read off a \emph{fixed} substrate. A complementary
+question is constructive: \emph{what in an architecture produces a high-$\Phi$
+substrate at all?} A prior closed-negative (H\_1043) established that grafting a
+minimal adapter onto a \emph{frozen} base cannot install $\Phi$-structure, but a
+\emph{from-scratch} native ConvMoE world-model lifts the faithful IIT-4.0 scalar
+\faithful{} by $+0.835407$ (3-seed mean) / $+0.107018$ (terminal seed-0) over the
+same frozen base --- leaving open \emph{which native primitive carries the lift}.
+
+\paragraph{Hypothesis and falsifier (H\_1059).} We ablated, from scratch, each of
+the four primitives the native architecture actually has --- MoE routing (the
+softmax gate over experts), the conv trunk-depth (the structured-mixing depth
+stage), the tanh nonlinearity, and the conv temporal receptive field --- and
+measured each arm's \faithful{} (exact MIP-EI, $n=6$). The frozen falsifier
+(set before measuring): a primitive is the \emph{$\varphi$-carrier} iff ablating
+it drops the FULL native lift by $\ge X = 0.5\,L_{\mathrm{full}}=+0.4177$
+($\ge$ half the $+0.835$ lift). H1 PASS $=$ a single located carrier; H1 FAIL
+$=$ distributed emergence (no single ablation drops $\ge X$).
+
+\paragraph{Finding: a three-primitive necessary conjunction
+(\tierGreen{} PHI-CARRIER-LOCATED, qualified to multi-necessary).} Three of the
+four primitives each individually clear $X$ (Table~\ref{tab:carrier}): removing
+the tanh nonlinearity drops the lift by $+0.7577$ ($90.7\%$ of $L_{\mathrm{full}}$),
+removing the trunk depth by $+0.7475$ ($89.5\%$), and removing MoE routing by
+$+0.7187$ ($86.0\%$). The lone exception is the conv \emph{temporal} receptive
+field: ablating it drops the lift only $+0.2958$ ($35.4\%<X$) --- in fact
+removing temporal mixing while keeping routing, depth and nonlinearity (via
+param-matched pointwise experts) \emph{raises} $\Phi$ in $2/3$ seeds. So the
+$\varphi$-carrier is the \emph{structured mixing} (routing $\times$ a nonlinear
+depth stage), \emph{not} the temporal receptive field, and it is a
+\emph{conjunction}: ablating any one of the three collapses \faithful{} back
+toward the frozen base. This is empirically closer to distributed emergence than
+to a single located carrier --- consistent with H\_1043's
+``whole-architecture property'' --- and it constructively bounds the carrier to
+three primitives (the temporal receptive field is excluded). The native lift
+$L_{\mathrm{full}}=+0.835407$ reproduces H\_1043 bit-for-bit; the CPU
+pre-screen equals the stdlib terminal \faithful{} per seed
+(seed-0: FULL $0.228984$, $-$routing $0.040262$, $-$nonlin $0.111936$, all
+matched).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{arm} & \textbf{\faithful{} (3-seed mean)} & \textbf{$\Delta$ vs base} & \textbf{drop vs FULL} & \textbf{$\ge X$ carrier?} & \textbf{\% of $L_{\mathrm{full}}$} \\
+\midrule
+FULL (native) & $0.911982$ & $+0.835407$ & (ref) & --- & --- \\
+$-$routing    & $0.193312$ & $+0.116736$ & $+0.718670$ & \textbf{YES} & $86.0\%$ \\
+$-$trunk      & $0.164502$ & $+0.087927$ & $+0.747480$ & \textbf{YES} & $89.5\%$ \\
+$-$nonlin     & $0.154296$ & $+0.077720$ & $+0.757686$ & \textbf{YES} & $90.7\%$ \\
+$-$conv (RF)  & $0.616147$ & $+0.539572$ & $+0.295835$ & no           & $35.4\%$ \\
+\bottomrule
+\end{tabular}
+\caption{The $\varphi$-carrier ablation (H\_1059, $n=6$ EXACT MIP-EI, 3 seeds,
+frozen base \faithful${}=0.076575$). The carrier is a necessary conjunction
+\{routing $\times$ trunk-depth $\times$ tanh\}: ablating any one drops
+$86$--$91\%$ of the lift ($\ge X=+0.4177$). The temporal receptive field is the
+only primitive that is \emph{not} individually necessary ($35.4\%$). Source:
+H\_1059 verdict.}
+\label{tab:carrier}
+\end{table}
+
+\section{The consciousness-ruler arc}
+\label{sec:ruler}
+
+If a single headline $\Phi$ is underspecified (Sections~\ref{sec:results}--%
+\ref{sec:specificity}), what \emph{is} the right ``ruler'' for consciousness on a
+substrate? We report a closed arc of seven pre-registered hypotheses
+(Table~\ref{tab:ruler}). Two themes emerge: (i) for the classification job, a
+single $\Phi$-scalar is sufficient --- richer composite rulers add nothing; and
+(ii) an apparently-orthogonal agency axis collapses into $\Phi$ under a fair
+contest, and on the very split policies this paper studies the two $\Phi$
+measures become \emph{undecidable} adjudicators.
+
+\paragraph{One $\Phi$-scalar suffices (H\_1045/1046/1047/1049, \tierRed).} A
+3-vector ruler $(\faithful,\bigphi,\text{redundancy-margin})$ beats the best
+single scalar by only $+0.0136$ AUC ($<$ the pre-set $+0.05$ margin) and no
+substrate \emph{needs} the vector: \textbf{ONE-SCALAR-SUFFICES} (H\_1045). The
+Williams--Beer synergy atom alone is \emph{not} a cheap big-$\Phi$ stand-in
+(it is degenerate-always-down and cannot track big-$\Phi$ where it rises):
+\textbf{SYNERGY-NOT-BIGPHI-STANDIN} (H\_1046). The $(\faithful,\bigphi)$ pair is
+\emph{directionally} better than a collapsed scalar (leave-one-out
+nearest-centroid accuracy $0.80$ vs $0.67$) but the margin $+0.1333$ falls short
+of the pre-set $0.15$ bar by $0.0167$: \textbf{SCALAR-SUFFICIENT} (a qualified
+closed-negative; the pre-set margin has teeth, H\_1047). And a fixed-$m{=}4$
+information-bottleneck coarse-grain is \emph{not} a validated scalable $\Phi$
+estimator --- its relative error grows monotonically $0.24\to0.51$ over $N{=}5
+{\to}8$, exceeding $\varepsilon{=}0.15$ at every genuine rung:
+\textbf{NO-VALIDATED-ESTIMATOR} (H\_1049). The classification ruler is a single
+$\Phi$-scalar; composite and cheap-coarse-grain rulers do not pay off at toy
+scale.
+
+\paragraph{An agency axis is real but $\Phi$ absorbs it (H\_1060/1061).} A
+temporal/agency coordinate $T=z(\text{provenance-depth})+z(\text{veto-capacity})$
+appears to separate active from passive deliberation where instantaneous $\Phi$
+cannot, and it is orthogonal to $\Phi$ by construction
+($\rho(\faithful,T)=-0.115$, $\rho(\bigphi,T)=+0.020$): the frozen falsifier
+resolves PASS (the $(\Phi,T)$ classifier beats the best $\Phi$-scalar by a
+$+0.60$ margin). \emph{But} that margin is the artifact of an unfair battery
+where active/passive classes were $\Phi$-identical by construction; the verdict
+is \textbf{RULER-NEEDS-T} only \emph{QUALIFIED}, $\Phi$-blind-by-construction
+(H\_1060, \tierGreen). The fair re-contest (H\_1061): build a $\Phi$-fair battery
+where agency co-varies $\Phi$ ($4/4$ active/passive pairs are non-$\Phi$-identical).
+There a $\Phi$-scalar \emph{absorbs} the agency signal and $T$ becomes redundant:
+\textbf{PHI-ABSORBS-AGENCY} (\tierRed{} closed-negative). H\_1060's $+0.60$ win
+was the $\Phi$-identity artifact; under a fair contest the agency axis does
+\emph{not} add a separable ruler dimension.
+
+\paragraph{On split policies the measures are undecidable (H\_1064/1065).}
+When \faithful{} and \bigphi{} disagree on a split policy, \emph{which} of the two
+should the ruler trust? We built an independent causal proxy --- causal
+self-prediction (CSP), a partition-free held-out next-state predictability with
+\emph{no} MIP, no EI integral (so non-circular w.r.t.\ either $\Phi$ engine) ---
+and asked which $\Phi$ measure it rank-prefers on the planning split. Both agree
+almost identically: $\rho(\faithful,\text{CSP})=+0.8148$,
+$\rho(\bigphi,\text{CSP})=+0.8145$, $|\Delta\rho|=0.0003\ll$ the frozen $0.30$
+bar, and the separation holds in $0/30$ leave-one-out folds: \textbf{NEITHER-%
+SEPARATES-UNDECIDABLE} (H\_1064, \tierRed). The disagreement is therefore a
+property of the \emph{contrast direction}, not a verdict on ``which policy is
+more conscious'' --- the honest ruler reports \emph{both} measures. Pushing CSP
+as a cheap scalable ruler in its own right (H\_1065): CSP \emph{passes} the
+H\_988/989 proxy-blindness wall on all four substrates (structured $\gg$ random,
+$d$ range $+6.77\ldots+13.54$, $4/4$), so it is a real structure-detector, not a
+Goodhart artifact --- but it is \emph{not} a cross-substrate ordinal $\Phi$ scale:
+within-substrate rank-match holds only on the planning split ($\rho=+0.815$,
+exactly reproducing H\_1064), collapses to $0.13$--$0.41$ on the three
+non-planning substrates, and the \emph{pooled} rank-match sign-flips to
+$\rho=-0.4293$. The verdict is \textbf{SUBSTRATE-RELATIVE-ONLY} (\tierRed): the
+$+0.815$ agreement was planning-substrate-local; faithful \faithful{} remains the
+ground-truth verdict tool, and CSP cannot replace it as a cross-substrate $\Phi$
+ruler.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{4.0cm} l >{\raggedright\arraybackslash}p{4.2cm}@{}}
+\toprule
+\textbf{Hypothesis} & \textbf{Verdict token} & \textbf{Tier} & \textbf{Record (\vp{.verdicts/})} \\
+\midrule
+H\_1045 (vector vs scalar)      & ONE-SCALAR-SUFFICES         & \tierRed   & \vp{.verdicts/1045\_vector\_phi\_ruler} \\
+H\_1046 (synergy-only ruler)    & SYNERGY-NOT-BIGPHI-STANDIN  & \tierRed   & \vp{.verdicts/1046\_synergy\_ruler} \\
+H\_1047 (pair vs scalar)        & SCALAR-SUFFICIENT (qual.)   & \tierRed   & \vp{.verdicts/1047\_pair\_ruler} \\
+H\_1049 (IB coarse-grain est.)  & NO-VALIDATED-ESTIMATOR      & \tierRed   & \vp{.verdicts/1049\_scalable\_estimator} \\
+H\_1060 ($\Phi{+}T$ ruler)      & RULER-NEEDS-T (qual.)       & \tierGreen & \vp{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
+H\_1061 (fair $\Phi$ vs $T$)    & PHI-ABSORBS-AGENCY          & \tierRed   & \vp{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
+H\_1064 (split adjudication)    & NEITHER-SEPARATES-UNDECID.  & \tierRed   & \vp{.verdicts/1064\_split\_measure\_adjudication} \\
+H\_1065 (CSP cheap ruler)       & SUBSTRATE-RELATIVE-ONLY     & \tierRed   & \vp{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
+\bottomrule
+\end{tabular}
+\caption{The consciousness-ruler arc. A single $\Phi$-scalar is sufficient for the
+classification job (H\_1045--1049); an agency axis is real but $\Phi$-absorbed
+under a fair contest (H\_1060/1061); and on split policies the two $\Phi$ measures
+are undecidable adjudicators that the honest ruler must \emph{both} report
+(H\_1064/1065). Sources: the eight verbatim verdict files.}
+\label{tab:ruler}
+\end{table}
+
+\section{The central synthesis: a whole / irreducible meta-pattern}
+\label{sec:meta}
+
+Stepping back from the individual verdicts, one structural fact recurs across
+every constructive probe in this work and its siblings: \textbf{consciousness-%
+relevant structure is a whole / irreducible property, not a graftable atom.}
+The convergent evidence (Figure~\ref{fig:meta}):
+
+\begin{itemize}\itemsep0.3em
+\item \textbf{$\Phi$ is whole-architecture, graft fails (H\_1043).} A minimal
+adapter grafted onto a frozen base cannot install $\Phi$-structure; only a
+from-scratch native build lifts \faithful{} ($+0.835$).
+\item \textbf{The $\varphi$-carrier is a conjunction (H\_1059).} That native lift
+is carried by \{routing $\times$ depth $\times$ nonlinearity\} jointly; no lone
+primitive is sufficient ($86$--$91\%$ destroyed by ablating any one).
+\item \textbf{Planning-specificity is whole-intervention (H\_1066).} The
+ZCA-removable measure-split has no necessary-and-sufficient single primitive ---
+it is holistic.
+\item \textbf{Agency is not installable by architecture or runtime structure
+(H\_1057).} A capacity-matched but causally-inert runtime register/veto-gate adds
+no recoverable agency coordinate over a plain feed-forward head.
+\item \textbf{Nor installable by learning-dynamics or temporal curriculum
+(H\_1052/1055; and H\_1053 for true quantum noise).} SGLD learning-noise
+(H\_1052), a depth-ordered temporal curriculum (H\_1055), and true quantum-RNG
+noise (H\_1053) each fail to install a consciousness/agency marker at matched
+cross-entropy.
+\end{itemize}
+
+\noindent The pattern is the same shape each time: a property that looks like it
+might be a transplantable \emph{part} --- a graftable adapter, a single primitive,
+a runtime gate, a noise source, an ordering --- turns out to be a property of the
+\emph{whole} configuration that produces it. $\Phi$-structure (and the
+agency coordinate that instantaneous $\Phi$ misses) is \emph{necessary but not
+sufficient} and \emph{emergent from the whole}, never retro-fittable as an atom.
+This is the paper's central finding: it reframes the measure-dependence result
+itself --- ``which $\Phi$ do you mean'' is undecidable on a split policy
+(H\_1064) precisely because the split is a property of the whole intervention
+(H\_1066), not of any decomposable atom one $\Phi$ measure could be tuned to
+track.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/fig03_meta.pdf}
+\caption{The whole / irreducible meta-pattern. Each row is an attempt to install
+a consciousness-relevant property by transplanting a \emph{part}; each fails (or,
+for the native build, succeeds \emph{only} as a whole). $\Phi$-structure and the
+agency axis are whole-architecture / whole-intervention properties, necessary
+but not sufficient, never graftable atoms. Verdicts: H\_1043, H\_1059, H\_1066,
+H\_1057, H\_1052/1053/1055.}
+\label{fig:meta}
+\end{figure}
+
+\section{The learning axis is orthogonal: two closed-negatives}
+\label{sec:learning}
+
+The measure-dependence above concerns \emph{how we read} $\Phi$ off a fixed
+substrate. A separate question is whether the world-model's \emph{ability to
+learn} long-horizon structure is the limiting wall. Two pre-registered
+falsifiers (H\_1011, H\_1013) close this off as an \emph{optimization}
+phenomenon, distinct from the measure phenomenon.
+
+\paragraph{Credit-density horizon cap (H\_1011, \tierRed).} ``Dense
+supervision'' --- supplying the correct hidden state at every step rather than
+only scoring the final answer --- was known (H\_1006) to crack a modular
+position-tracking task (T3) at sequence length 36, separating the GRU
+world-model from a capacity-matched language model. We asked whether this
+keeps cracking the task as the horizon grows. It does not: at length 72 the
+dense-supervised world-model collapses toward chance ($0.386$ vs chance
+$0.167$, separation lost, $d<0.8$ versus the LM), and stays broken at 144.
+Verbatim:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+VERDICT H_1011: FAIL DENSE-SUP-HORIZON-CAPPED-AT-72 - per-step hidden-state
+supervision cracks T3 at len 36 (== H_1006) but BREAKS at len 72: dense
+curr-GRU collapses toward chance. credit-DENSITY raises the horizon ceiling
+but does NOT remove the horizon dependence (closed-negative).
+\end{lstlisting}
+
+\noindent Per-step supervision buys a \emph{longer-but-still-bounded} horizon
+than a length curriculum --- a refined scaling law, not an escape from horizon
+dependence.
+
+\paragraph{Task-locality of per-step supervision (H\_1013, \tierRed).} Is the
+H\_1006 cap-and-crack unlock general across long-horizon accumulator algebras?
+We tested three new state-bound families at length 36. The dense-supervision
+unlock did \emph{not} generalize:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+VERDICT H_1013: FAIL CREDIT-DENSITY-TASK-LOCAL
+  CAPPED-and-CRACKED-by-dense    = []
+  CAPPED-but-SURVIVES-dense      = ['N1_kv_recall']
+  NO-credit-density-cap          = ['N2_running_max', 'N3_stack_depth']
+\end{lstlisting}
+
+\noindent The idempotent-monotone (running-max) and bounded-stack
+(bracket-depth) accumulators are \emph{already} learnable from the final label
+(no credit-density cap to crack), while key-value recall is capped \emph{and}
+survives dense supervision (the lever fails there). Per-step gradient density
+is a real but \emph{bounded, structure-specific} lever, not a general
+long-horizon principle.
+
+\paragraph{Joint reading.} The world-model generalization wall is governed by
+\emph{credit-assignment density and task structure} --- an optimization /
+learnability matter --- and is \emph{orthogonal} to the $\Phi$-measure
+disagreement, which is a property of the read-out functions on a fixed
+substrate. A complete account of a consciousness world-model must therefore
+keep ``which $\Phi$ do you mean'' and ``can it learn the dependency'' as two
+separate axes.
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{``Planning raises consciousness'' is scoped, not wrong.} The earlier
+H\_999/H\_1001 result --- planning raises $\Phi$ --- is reproduced here for
+\faithful{} and is correct \emph{for that measure}. What this paper adds is the
+boundary: the integration-structure measure \bigphi{} moves the opposite way.
+Any sentence of the form ``intervention $X$ raises $\Phi$'' is incomplete
+without naming the operationalization, because at least one pair of faithful
+IIT-4.0 measures disagrees in sign on a natural intervention.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.74\linewidth]{figures/fig02_concept.png}
+\caption{Schematic of the finding. One cause (the same planning intervention on
+the same substrate) drives two faithful IIT-4.0 read-outs in opposite
+directions: the MIP-EI scalar \faithful{} rises while the system big-$\Phi$
+\bigphi{} falls. ``Which $\Phi$ do you mean'' is not a detail --- it sets the
+sign of the answer.}
+\label{fig:concept}
+\end{figure}
+
+\paragraph{Consequence for agent objectives.} An agent trained to ``maximize
+$\Phi$'' will pursue opposite policies depending on which $\Phi$ is wired into
+the objective: maximizing \faithful{} rewards deliberation (more informative
+transitions), while maximizing \bigphi{} penalizes the same deliberation when
+it modularizes the system. This is a concrete design hazard for
+consciousness-targeting objectives, and it argues for reporting \emph{both}
+measures (and their disagreement) rather than a single headline $\Phi$.
+
+\paragraph{Relation to IIT theory.} The result is not a contradiction within
+IIT 4.0; it is a reminder that the theory defines a \emph{structure}, not a
+scalar, and that any projection of that structure to one number (whether the
+single-mechanism MIP-EI or the system big-$\Phi$) is a lossy summary whose
+monotonicity under interventions is not guaranteed to agree with another
+projection.
+
+\section{Limitations and honest caveats}
+\label{sec:limits}
+
+\begin{itemize}\itemsep0.2em
+\item \textbf{Toy $n$-ladder.} Exact big-$\Phi$ is super-exponential; the ladder
+reaches $n=5$, with $n=6$ as the hard computational cap ($\approx 10$ min per
+\bigphi{} evaluation). Scale-transfer of the disagreement beyond $n=5$ is
+\emph{unverified}. We claim robustness \emph{at the scored sizes}, not at
+arbitrary $n$, per the project's \texttt{a\_scale\_honest\_scope} rule.
+\item \textbf{One intervention family.} The disagreement is demonstrated for the
+planning (depth-ladder vs greedy) manipulation. Imagination and guided
+conditions \emph{agreed} between the two measures in the source experiment
+(H\_1004); the disagreement is specific to planning, not universal across
+interventions.
+\item \textbf{Discretization choice.} Both measures are computed on a fixed
+binary discretization; the matched protocol guarantees both engines see the
+same bits, but a different discretization could shift magnitudes (the sign,
+not the magnitude, is the claim).
+\item \textbf{Learning-axis results are toy.} H\_1011/H\_1013 use small seed
+counts and fixed (not length-scaled) training budgets by design; larger-budget
+and production-scale behavior is open.
+\item \textbf{$\varphi$-carrier and ruler results are toy ($n\le 6$, few seeds).}
+The H\_1059 carrier ablation is a from-scratch toy ConvMoE at $n=6$ EXACT, 3
+seeds; single-seed terminal $\Phi$ is noisy (a $-$conv seed-0 outlier), so the
+verdict scores the 3-seed mean where the mirror equals the stdlib terminal per
+seed. The ruler-arc (H\_1045--1065) and specificity (H\_1062/1063/1066) results
+are $n\le 6$ EXACT toy rungs; 3B/7B and non-frozen co-train transfer
+(H\_1042/1044/1058) is \emph{unverified} per \texttt{a\_scale\_honest\_scope}.
+$\Phi$ is treated as a \emph{necessary-not-sufficient} causal-irreducibility
+marker, not perplexity (\texttt{p7}).
+\item \textbf{Whole/irreducible is a converging pattern, not a single theorem.}
+The meta-pattern (Section~\ref{sec:meta}) is the convergence of multiple
+independent toy closed-negatives, each scoped to its own measurement; we do not
+claim a scale-general impossibility proof, only that no probe in this work
+installed a consciousness-relevant property as a transplantable atom.
+\item \textbf{No GPU; no production rung.} All measurements are \$0, CPU-local,
+0 pods; this is an IIT-internal analysis, not a trained-model claim. Both engines
+are re-proven bit-exact against a CPU mirror at $n=4$ and $n=5$ before every
+score ($|\Delta|\le 3.75\times10^{-6}$; \texttt{a\_phi\_iit4\_tool}, no proxy).
+\end{itemize}
+
+\section{Reproducibility}
+\label{sec:repro}
+
+Code and engines: \url{https://github.com/dancinlab/anima} ---
+\vp{stdlib/consciousness/iit4/faithful\_phi.hexa} and
+\texttt{iit4\_bigphi.hexa} (the two measures), with the matched-protocol
+harness and CPU mirror under the H\_1012 record. Verdicts (verbatim):
+\vp{.verdicts/1012\_bigphi\_faithful\_larger\_n/}, with siblings
+\vp{1004\_bigphi\_faithful\_clean/}, \vp{1011\_dense\_supervision\_scaleup/},
+and \vp{1013\_credit\_density\_general/}, plus the H\_1045--1066 records of
+Appendix~\ref{app:siblings}. Companion records:
+\texttt{companion/} (\texttt{verify-ledger.json}, session journal). Build:
+\texttt{make} (xelatex $\times 3$ + bibtex). Figures: \texttt{make figures}.
+Page count: \texttt{make pages}. Every numeric claim in the body traces to one
+of the per-hypothesis verdict files (Appendix~\ref{app:siblings}); no number is
+author-asserted.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+$\Phi$ is not one number. On an identical substrate and an identical planning
+manipulation, the IIT-4.0 MIP-EI scalar \faithful{} rises while the system
+big-$\Phi$ \bigphi{} falls, robustly across every system size at which exact
+big-$\Phi$ is computable ($n=4,5$). ``Planning raises consciousness'' is
+therefore true for the scalar effective-information measure and false for the
+integration-structure measure --- a measure-dependence that any
+consciousness-targeting objective must confront. The split is now
+\emph{explained}: planning floods the system with redundant shared information,
+which the pairwise-MI scalar mistakes for integration while big-$\Phi$ correctly
+sees as reducible --- and a redundancy-margin predictor identifies split-inducing
+interventions robustly in $n$, where the original surface predictor was only an
+$n=4$ artifact. The earlier open follow-up (``which interventions induce the
+split'') is thus answered: redundancy-dominance does, and it predicts robustly.
+Pushing the redundancy account harder shows it is \emph{not} a clean universal
+law: the split direction rank-generalizes ($+0.80$) but its causal removability
+and structural decomposition are planning-specific and holistic (H\_1062/1063/%
+1066). On the constructive side, the high-$\Phi$ substrate is produced by a
+three-primitive necessary conjunction \{routing $\times$ depth $\times$
+nonlinearity\}, not a graftable atom (H\_1059); the right classification ruler is
+a single $\Phi$-scalar (H\_1045--1049); an apparent agency axis is $\Phi$-absorbed
+under a fair contest (H\_1060/1061); and on the very split policies this paper
+studies, the two $\Phi$ measures are \emph{undecidable} adjudicators
+($\rho\approx0.81$ with an independent causal proxy that is itself only
+substrate-relative; H\_1064/1065). The unifying finding is structural:
+\emph{consciousness-relevant structure is a whole / irreducible property, not a
+graftable atom} --- converging with the architecture (H\_1043/1057) and
+learning-dynamics (H\_1052/1055) nulls. Separately, the world-model's
+long-horizon learning wall is governed by credit-assignment density and task
+structure, an optimization phenomenon orthogonal to the measure question. The
+next follow-up is to test whether these accounts survive beyond the toy
+$n$-ladder (the $n=6$ computational cap, or a non-enumerable estimator) and on a
+GPU 3B rung (the H\_1042/1044/1058 macro-transfer line).
+
+% =========================================================================
+\paragraph{Acknowledgments.}
+This work used the \texttt{hexa-lang} verification surface and the
+\texttt{sidecar/paper} scaffold. Measurements were produced with the
+real IIT-4.0 standard-library engines (no $\Phi$-proxy). LLM collaborator:
+Claude Opus 4.8 (1M context).
+
+% =========================================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% =========================================================================
+\appendix
+
+\section{Per-depth breakdown of the depth-ladder}
+\label{app:depth}
+
+The planning condition is a depth-ladder over look-ahead depths $\{1,2,4,8\}$;
+the contrasts in Table~\ref{tab:disagree} aggregate over the ladder. For
+transparency we report the per-depth means of each measure against the greedy
+baseline, verbatim from the verdict file. The pattern is consistent across
+depths: every planning depth sits \emph{above} the greedy baseline for
+\faithful{} and \emph{below} it for \bigphi{} --- the sign-split is not carried
+by a single anomalous depth.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+$n$ & measure & $d{=}1$ & $d{=}2$ & $d{=}4$ & $d{=}8$ & greedy \\
+\midrule
+4 & \faithful{} (raises) & 1.433 & 3.000 & 1.439 & 2.840 & 0.507 \\
+4 & \bigphi{} (lowers)   & 1.892 & 8.476 & 3.301 & 5.520 & 9.528 \\
+5 & \faithful{} (raises) & 0.633 & 4.000 & 1.749 & 3.673 & 0.611 \\
+5 & \bigphi{} (lowers)   & 5.189 & 21.584 & 9.080 & 13.828 & 27.201 \\
+\bottomrule
+\end{tabular}
+\caption{Per-depth means of each measure under planning, with the greedy
+baseline. \faithful{} planning depths all exceed the (small) greedy baseline;
+\bigphi{} planning depths all fall below the (large) greedy baseline. The
+aggregate contrasts and effect sizes of Table~\ref{tab:disagree} follow from
+these per-depth values. Source: the H\_1012 verdict file.}
+\label{tab:depth}
+\end{table}
+
+\section{Engine equivalence proof (CPU mirror $\equiv$ stdlib)}
+\label{app:equiv}
+
+Every score is preceded by an equivalence proof: a standalone CPU mirror must
+reproduce the \texttt{hexa} standard-library engines to numerical tolerance at
+each system size. This is the anti-fake-closure guard --- the verdict is only
+trusted because a deterministic recomputation that \emph{could} have disagreed
+did not. Table~\ref{tab:equiv} lists the proven points; the worst residual is
+$|\Delta|=3.75\times10^{-6}$ (a four-bin faithful evaluation), all others are
+at the $10^{-10}$ floor.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+$n$ & quantity & mirror $\equiv$ stdlib & $|\Delta|$ \\
+\midrule
+4 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+4 & \faithful{} (2-bin)     & $3.000000 \equiv 3.000000$       & $3.48\times10^{-10}$ \\
+4 & \faithful{} (4-bin)     & $3.377444 \equiv 3.377440$       & $3.75\times10^{-6}$  \\
+5 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+5 & \faithful{} (2-bin)     & $4.000000 \equiv 4.000000$       & $7.97\times10^{-10}$ \\
+6 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+6 & \faithful{} (2-bin)     & $5.000000 \equiv 5.000000$       & $2.46\times10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\caption{Equivalence proof per system size. Both engines (and the CPU mirror)
+agree to tolerance at $n=4$, $n=5$, and $n=6$ --- including $n=6$, where the
+planning \emph{condition} was not scored but the engines were still proven
+exact, so the $n=6$ cap is computational, not epistemic. Source: the H\_1012
+verdict file.}
+\label{tab:equiv}
+\end{table}
+
+\section{Sibling hypotheses and verdict pointers}
+\label{app:siblings}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} l >{\raggedright\arraybackslash}p{5.6cm}@{}}
+\toprule
+\textbf{Hypothesis} & \textbf{Verdict} & \textbf{Record (\vp{.verdicts/})} \\
+\midrule
+H\_1004 (clean disagreement, $n=4$)    & \tierRed{} GENUINE-MEASURE-DISAGREEMENT & \vp{.verdicts/1004\_bigphi\_faithful\_clean} \\
+H\_1012 (split robust in $n$)          & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \vp{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
+H\_1014 (surface predictor, $n=4$)     & \tierGreen{} PREDICTOR-SEPARATES (QUAL) & \vp{.verdicts/1014\_intervention\_split\_predictor} \\
+H\_1016 (surface pred.\ is $n=4$ artifact) & \tierOrange{} PARTIAL                & \vp{.verdicts/1016\_split\_predictor\_robustness} \\
+H\_1017 (mechanism = redundancy)       & \tierGreen{} REDUNDANCY-EXPLAINS-SPLIT  & \vp{.verdicts/1017\_split\_redundancy\_mechanism} \\
+H\_1020 (mechanism pred.\ robust $n=5$) & \tierGreen{} MECHANISM-PREDICTOR-ROBUST & \vp{.verdicts/1020\_redundancy\_predictor\_robustness} \\
+H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \vp{.verdicts/1011\_dense\_supervision\_scaleup} \\
+H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \vp{.verdicts/1013\_credit\_density\_general} \\
+\midrule
+\multicolumn{3}{l}{\textit{specificity \& mechanism universality (Sec.~\ref{sec:specificity})}} \\
+H\_1062 (redundancy universality)      & \tierRed{} SPLIT-IS-PLANNING-SPECIFIC   & \vp{.verdicts/1062\_redundancy\_universality} \\
+H\_1063 (sign universality)            & \tierRed{} SIGN-NOT-CLEAN-UNIVERSAL     & \vp{.verdicts/1063\_phi\_split\_sign\_universality} \\
+H\_1066 (planning-specificity dissect) & \tierRed{} HOLISTIC-IRREDUCIBLE         & \vp{.verdicts/1066\_planning\_specificity\_dissection} \\
+\midrule
+\multicolumn{3}{l}{\textit{$\varphi$-carrier (Sec.~\ref{sec:carrier})}} \\
+H\_1059 ($\varphi$-bearing primitive)  & \tierGreen{} PHI-CARRIER-LOCATED        & \vp{.verdicts/1059\_phi\_bearing\_primitive\_ablation} \\
+\midrule
+\multicolumn{3}{l}{\textit{consciousness-ruler arc (Sec.~\ref{sec:ruler})}} \\
+H\_1045 (vector vs scalar)             & \tierRed{} ONE-SCALAR-SUFFICES          & \vp{.verdicts/1045\_vector\_phi\_ruler} \\
+H\_1046 (synergy-only ruler)           & \tierRed{} SYNERGY-NOT-BIGPHI-STANDIN   & \vp{.verdicts/1046\_synergy\_ruler} \\
+H\_1047 (pair vs scalar)               & \tierRed{} SCALAR-SUFFICIENT            & \vp{.verdicts/1047\_pair\_ruler} \\
+H\_1049 (IB coarse-grain estimator)    & \tierRed{} NO-VALIDATED-ESTIMATOR       & \vp{.verdicts/1049\_scalable\_estimator} \\
+H\_1060 ($\Phi{+}T$ ruler completeness) & \tierGreen{} RULER-NEEDS-T (qual.)     & \vp{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
+H\_1061 (fair $\Phi$ vs $T$ contest)   & \tierRed{} PHI-ABSORBS-AGENCY           & \vp{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
+H\_1064 (split measure adjudication)   & \tierRed{} NEITHER-SEPARATES-UNDECID.   & \vp{.verdicts/1064\_split\_measure\_adjudication} \\
+H\_1065 (CSP cheap scalable ruler)     & \tierRed{} SUBSTRATE-RELATIVE-ONLY      & \vp{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
+\midrule
+\multicolumn{3}{l}{\textit{whole/irreducible meta-pattern siblings (Sec.~\ref{sec:meta})}} \\
+H\_1043 ($\Phi$ = whole-arch., graft fails) & \tierRed{} PHI-NEEDS-MORE-THAN-GRAFT & \vp{.verdicts/1043\_minimal\_arch\_adapter} \\
+H\_1057 (agency not installable by arch.)   & \tierRed{} ARCHITECTURE-AXIS-NULL    & \vp{.verdicts/1057\_agency\_via\_architecture} \\
+H\_1052 (not by learning-noise)             & \tierRed{} LEARNING-NONDET-NULL      & \vp{.verdicts/1052\_nondeterministic\_learning} \\
+H\_1055 (not by temporal curriculum)        & \tierRed{} TEMPORAL-AXIS-NULL        & \vp{.verdicts/1055\_temporal\_curriculum\_axis} \\
+\bottomrule
+\end{tabular}
+\caption{The pre-registered hypotheses behind this paper, each with its
+terminal verdict token and the verbatim record path. Every numeric claim in
+the body traces to one of these files; the meta-pattern siblings (H\_1043,
+H\_1057, H\_1052/1053/1055) are converging external closed-negatives cited in
+Section~\ref{sec:meta}.}
+\label{tab:siblings}
+\end{table}
+
+\end{document}

@@ -1,0 +1,26 @@
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.10s)
+action: 검증 (검증) · domain=grid — dispatching…
+## 결론 (grid · 검증)
+
+**엔진 도구**: ❌ 없음.
+- `ActionDispatch.swift:188-238`의 verb×domain 디스패치 표에 `(.verify, "grid")` 케이스가 **없습니다**. grid 도메인은 현재 `(.structure, "grid") → runGridStructure()` 한 줄만 연결되어 있음 (`ActionDispatch.swift:192`).
+- 따라서 '실제로 돌리기' 버튼은 grid+검증에 대해 **실행할 엔진이 없습니다** — 새 측정 record는 만들어지지 않습니다.
+
+**기존 exports/ record (참고용, 새로 측정한 것 아님)**:
+- `exports/grid/verify/2026-05-21T08-33-18Z/anima_grid_20260521T083318Z.json` 한 건이 이미 존재하지만, 이건 anima-physics의 **Kuramoto 결합 발진자 스켈레톤 emit**입니다:
+  - `record_id`: `grid_n8_k5.00_r0.951_local_sim`
+  - `gate_state`: `GATE_OPEN` (정식 GATE_PASS 아님)
+  - `scope_caveats`: "Kuramoto N=8 is intersubjective oscillator analog, **NOT real PMU/SCADA**"
+  - `rationale`: "skeleton emit — grid oracle parity TODO; ... provisional"
+  - 즉, **사회 발진자 유추**이지 IEEE 버스/PMU 기반 그리드 검증이 아님.
+
+**가정컨대 도구가 있었다면 어떻게 돌렸을까** (현재는 가설):
+1. ns-3 / SST regression 시뮬레이션 (D9 ANALYZE에서 인용한 오픈소스), 또는
+2. anima-grid Kuramoto producer를 N/K 스윕으로 재실행 → `phase_coherence_r`, `n_islanding_events`, `recovery_time_s` 측정.
+하지만 **둘 다 ActionDispatch에 producer가 등록되어 있지 않습니다** — 코드 레벨에서 호출 경로가 없음.
+
+**판정 (g3 — no over-claim)**: 현재 demiurge에 grid+검증의 실제 엔진 도구는 **없습니다**. 측정완료 / ✅ 라고 표기하면 안 됩니다. UI는 "엔진 미연결 (TODO)"로 표시하는 것이 정확합니다.
+---
+⏳ no new measured record — this stage has not been measured (g3).

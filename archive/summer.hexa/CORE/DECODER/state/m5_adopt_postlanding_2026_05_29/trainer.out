@@ -1,0 +1,54 @@
+[tokenizer_bpe] module loaded — byte-level BPE tokenizer ready
+=== train_v3_moe_longtrain (M4b DECISIVE dec_undertrain fire · full corpus × many epochs · d=64 · LZ76 verdict) ===
+[tokenizer_bpe] loaded 151387 merges, 151643 vocab in 287.004 ms
+  bpe: V=151643 n_toks=6034
+  bpe: all ids in [0,V) = true
+  budget: steps_per_epoch=1507 epochs=498 n_steps=300 token_presentations=1200 (V=151643, ratio=0× V)
+  config: d=64 V=151643 E=2 h=256 n_layer=1 T=4 n_steps=300 n_decode=100
+  m_size=29164800 params (FP64 8B · 222 MB)
+  attn_scale = 1/sqrt(d) = 0.125
+  alloc OK
+  init OK
+  ── training loop start ──
+  step=1/300 L_ce=648.526 tgt=85 top=0
+  m5_wall_s=4755619.239295 step_print=1
+  step=50/300 L_ce=3.33188 tgt=0 top=1
+  m5_wall_s=4755785.470152 step_print=50
+  step=100/300 L_ce=0.997008 tgt=0 top=1
+  m5_wall_s=4755959.603043 step_print=100
+  step=150/300 L_ce=7.09139 tgt=638 top=1
+  m5_wall_s=4756136.692531 step_print=150
+  step=200/300 L_ce=2.94558 tgt=220 top=1
+  m5_wall_s=4756314.251927 step_print=200
+  step=250/300 L_ce=1.21547 tgt=0 top=1
+  m5_wall_s=4756495.173530 step_print=250
+  step=300/300 L_ce=5.13705 tgt=638 top=1
+  m5_wall_s=4756675.512135 step_print=300
+  ── training loop end ──
+  ── inline greedy decode start ──
+  decode step=0 top_id=0 top_expert=1
+  decode step=10 top_id=0 top_expert=1
+  decode step=20 top_id=0 top_expert=1
+  decode step=30 top_id=0 top_expert=1
+  decode step=40 top_id=0 top_expert=1
+  decode step=50 top_id=0 top_expert=1
+  decode step=60 top_id=0 top_expert=1
+  decode step=70 top_id=0 top_expert=1
+  decode step=80 top_id=0 top_expert=1
+  decode step=90 top_id=0 top_expert=1
+  decode step=99 top_id=0 top_expert=1
+  ── inline greedy decode end ──
+TTR=0.01 unique=1/100
+DISTINCT_EXPERTS=1/2
+LZ_NORM=0.0120153 floor=0.5
+CE_INITIAL=648.526
+CE_FINAL=5.13705
+F-M4B-FIRE-1' TTR>=0.30: FAIL
+F-M4B-FIRE-LZ LZ_norm>=0.50: FAIL
+F-M4B-FIRE-3 distinct_experts>=2: FAIL
+F-M4B-FIRE-4 CE monotone: PASS
+F-M4B-FIRE-router HARD-top1 wired: PASS
+AGGREGATE: 2/5 PASS
+RESULT_JSON written to /opt/anima/state/m4b_longtrain/result.json
+M4B_LONGTRAIN STILL-COLLAPSE: dec_undertrain REFUTED (escape gate not met)
+TRAIN_V3_MOE_LONGTRAIN END-TO-END: FAIL

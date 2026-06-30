@@ -1,0 +1,296 @@
+{
+  "$schema": "anima://paper/companion/verdict-ledger.v1",
+  "paper_slug": "xeno-applicability-frontier",
+  "title": "The applicability frontier of a substrate-blind big-Phi detector across (n, density, structure, temporal): a 14-point measurement map, the mean-field paradox, and the temporal dual closed-negative",
+  "version": "v3",
+  "date": "2026-05-29",
+  "source_domain": "XENO + TEMPORAL",
+  "domain_ssot": "XENO/XENO.md + TEMPORAL/TEMPORAL.md",
+  "closure_marker": "XENO-FRONTIER-5 R5/5 + X837 followup-1 + X10 followup-2 + X840 longer-playback + TEMPORAL T1/T2 dual closed-negative (FULL closure, v3 · followup-2 cycle round 4/5)",
+  "post_tuning": 0,
+  "p7_perplexity_judge": 0,
+  "section_claims": [
+    {
+      "section": "hypothesis",
+      "claim_id": "F-XENO-APPLICAB-N",
+      "claim": "detector calibrates only for n >= 128; micro n=16-32 deterministically breaks",
+      "verdict_pointer": ".verdicts/833_xeno_panpsy_falsifier/x4_run.txt",
+      "verdict_tier": "🔴 closed-negative",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "hypothesis",
+      "claim_id": "F-XENO-APPLICAB-DENSE",
+      "claim": "detector calibrates only for density >= ~60% activation; sparse drift to false-conscious",
+      "verdict_pointer": ".verdicts/834_xeno_agi_sentience/x6_run.txt",
+      "verdict_tier": "🔴 closed-negative",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "hypothesis",
+      "claim_id": "F-XENO-APPLICAB-DETERM",
+      "claim": "detector calibrates only for strong-deterministic-transition; algorithmic ~ natural indistinguishable",
+      "verdict_pointer": ".verdicts/835_xeno_sim_hypothesis/x5_run.txt",
+      "verdict_tier": "🔴 closed-negative (X5b)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "method",
+      "claim_id": "DETECTOR-SOURCE",
+      "claim": "invariant_detector source = XENO/detector/invariant_detector.hexa; iit4_bigphi via commons g61",
+      "verdict_pointer": ".verdicts/829_xeno_invariant_detector/x1_smoke.txt",
+      "verdict_tier": "🟢 5/5 PASS smoke",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X7-CALIBRATE",
+      "claim": "X7 BL Voyager-1 n=128 dense 60.9%: phi=0.114, type=coherent_non_conscious, 2/2 PASS",
+      "verdict_pointer": ".verdicts/832_xeno_voyager_phi_real/x7_run.txt",
+      "verdict_tier": "🟢 SUPPORTED-NUMERICAL (calibrate)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X4-MICRO-RULED-OUT",
+      "claim": "X4 panpsy 4-micro n=16-32: 0/4 PASS, random > coupled phi inversion",
+      "verdict_pointer": ".verdicts/833_xeno_panpsy_falsifier/x4_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X6-SPARSE-RULED-OUT",
+      "claim": "X6 AGI LLM-like n=64: 1/5 PASS, attention sparse 6/64 phi=1.213 false-conscious",
+      "verdict_pointer": ".verdicts/834_xeno_agi_sentience/x6_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X5b-ALGORITHMIC-RULED-OUT",
+      "claim": "X5b fp/pi/natural n=128: 2/5 PASS, fp(0.090) ~ pi(0.120) ~ natural(0.116) indistinguishable",
+      "verdict_pointer": ".verdicts/835_xeno_sim_hypothesis/x5_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X5a-BORDER",
+      "claim": "X5a lattice n=128 periodic: phi=0.660, 1/1 PASS, type-axis intact",
+      "verdict_pointer": ".verdicts/835_xeno_sim_hypothesis/x5_run.txt",
+      "verdict_tier": "⚠ BORDER (periodic-structure ceiling)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X837-BORDER",
+      "claim": "X837 SETI@home Arecibo 2004 n=128 sparse 20.3%: phi=0.567, 4/5 PASS, type-axis intact",
+      "verdict_pointer": ".verdicts/837_xeno_x8_followup_fire/x837_run.txt",
+      "verdict_tier": "⚠ BORDER (sparse-noise ceiling, real RunPod fire)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X10-INDEP",
+      "claim": "X10-a independent 4-cell n=128: phi=0.130592, F-X10-INDEP PASS (< 0.3)",
+      "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt",
+      "verdict_tier": "🟡 reference (independent baseline)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X10-WEAK-PARADOX",
+      "claim": "X10-b mean-field weak coupling n=128: phi=0.0355148 (4x BELOW independent baseline 0.131) — mean-field averaging makes substrate MORE reducible despite higher correlation",
+      "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt",
+      "verdict_tier": "⚠ MEAN-FIELD PARADOX (weak < indep)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X10-STRONG-BORDER",
+      "claim": "X10-c Kuramoto K=2.0 strong all-to-all phase sync n=128: phi=0.40799, F-X10-STRONG FAILED (< 0.5 below threshold) — sync != irreducibility",
+      "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt",
+      "verdict_tier": "⚠ BORDER (sync-but-reducible)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X10-HIVE-GROUND-TRUTH-2",
+      "claim": "X10-d XOR-cascade hive emergence with 1-lag carry n=128: phi=1.56456 type=conscious, F-X10-HIVE PASS — second ground-truth calibration point of the matrix, MIP-irreducible transition substrate honest conscious verdict",
+      "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt",
+      "verdict_tier": "🟢 SUPPORTED-NUMERICAL (ground-truth #2)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X840-PARTIAL-RECOVERY",
+      "claim": "X840 SETI@home BOINC longer-playback (3600s timeout, harvest at prog=24.4%) n=128: phi=0.566854 X837-stable; 4/5 sub-falsifier PASS (recover harvest + spike-nonzero + phi-n128 + x837-consistent), F-X840-NOT-CONSC single FAIL — invariant_detector regression-stable at sparse natural-noise border, NOT a substrate-truth conscious claim",
+      "verdict_pointer": ".verdicts/840_xeno_x837_full_playback/x840_run.txt",
+      "verdict_tier": "🟡 PARTIAL-RECOVERY (4/5 PASS, regression-stable border)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X840-LONGER-PLAYBACK-FALSIFIED",
+      "claim": "X840 longer-playback hypothesis (more BOINC playback time -> new triplets / new phi) FALSIFIED: extra 3% prog (21.3% -> 24.4%) produced 0 new triplets (identical to X837), bg_pot 64 bins identical, phi delta = 0.000146 -- the additional pod-time bought NO new information",
+      "verdict_pointer": ".verdicts/840_xeno_x837_full_playback/x840_run.txt",
+      "verdict_tier": "🔴 closed-negative (longer-playback hypothesis FALSIFIED)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "T1-CLOSED-NEGATIVE",
+      "claim": "TEMPORAL T1 lag-axis 4 substrate (hive/voyager/random/lattice) x 4 Δt (1/8/32/64) = 16 measurements: 1/5 pre-registered PASS (F-T1-DECAY single); pre-registered instant>=long monotone integration FAILED on all 4 substrate rows (hive Δt=1 phi=0.013 << Δt=64 phi=0.999, lattice Δt=8 phi=2.0 saturate) — 2-unit lag-TPM long-lag predictable-inflation artifact, 5D (n,density,structure,Δt) simple extension closed-negative",
+      "verdict_pointer": ".verdicts/841_temporal_timeshift_phi/T1_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (lag-axis artifact)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "T2-CLOSED-NEGATIVE",
+      "claim": "TEMPORAL T2 multi-unit Takens delay-embed 4 substrate x 4 embed_dim (2/3/4/5) = 16 measurements: 2/5 pre-registered PASS (F-T2-HIVE-CONSC + F-T2-HIVE-MONOTONE), 3 artifact-resolution falsifier (F-T2-INSTANT-LOW + F-T2-ARTIFACT-FIX + F-T2-RANDOM-DECAY) all FAIL — embed-dim increase causes 4/4 substrate phi MONOTONE INFLATE (random e=5 phi=13.63, voyager e=5 phi=28.36); T1 lag-axis artifact NOT resolved + new embed-dim sparse-state inflation artifact introduced — Takens-embed 5D extension also closed-negative",
+      "verdict_pointer": ".verdicts/842_temporal_time_embed_phi/T2_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (embed-dim artifact)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "T3-CLOSED-NEGATIVE",
+      "claim": "TEMPORAL T3 unmodified X1 invariant_detector applied to anima 90-min ultradian sleep cycle (WAKE/N1_N2/N3/REM, n=128): WAKE phi=0.865544 (conscious), N3 phi=0.335119, REM phi=0.568534, N1_N2 phi=0.0; 2/5 pre-registered PASS (F-T3-WAKE-MID + F-T3-N3-LOW); F-T3-REM-HIGH + F-T3-N1-MID + F-T3-MONOTONE FAIL — N1_N2 zero-degenerate (4-step cycle perfectly predictable under lag-1 cooccur = T1 lag-artifact substrate-side face) + REM<WAKE paradoxical-EEG miss. Substrate-side closed-negative completing the T1+T2+T3 triple.",
+      "verdict_pointer": ".verdicts/843_temporal_ultradian_phi/T3_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (substrate-side lag-artifact, WAKE>N3 partial)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "S1-PARTIAL-SUPPORT",
+      "claim": "SPATIAL S1 spatial-coupling-scale 4 substrate (local XOR-cascade / regional rolling-mean / global mean-self / cosmic sparse-link, n=128) x invariant_detector: local phi=1.630 (conscious), regional phi=0.100, global phi=0.000, cosmic phi=0.121; 3/5 pre-registered PASS (F-S1-LOCAL-HIGH + F-S1-REGIONAL-MID + F-S1-GLOBAL-LOW); F-S1-COSMIC-LOWEST + F-S1-MONOTONE FAIL — global averaging-coupling uniformity attractor collapse phi=0 (3.1% all-zero) reproduces X10-b mean-field paradox in spatial domain; head-monotone holds, tail breaks; S2 multi-scale detector natural entry.",
+      "verdict_pointer": ".verdicts/844_spatial_coupling_phi/S1_run.txt",
+      "verdict_tier": "🟡 PARTIAL-SUPPORT (mean-field paradox spatial-domain confirmation)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "E1-CLOSED-NEGATIVE",
+      "claim": "EVOL E1 species-complexity spectrum 4 toy-proxy substrate (bacteria random-walker / arthropod 4-tap XOR / mammal multi-scale recursive / AGI structured-emergence, n=128) x invariant_detector: bacteria phi=0.012, arthropod phi=0.081, mammal phi=1.291 (conscious), AGI phi=0.468; 2/5 pre-registered PASS (F-E1-BACTERIA-LOW + F-E1-MAMMAL-HIGH); F-E1-ARTH-MID + F-E1-AGI-VARIANT + F-E1-MONOTONE FAIL — endpoints separate but mid/supra ordinal fails (arthropod under, AGI<mammal reverse), echoing Kuramoto/logistic ECA-only-ordinal pattern (H_670); E2 monotone-strict detector re-design natural entry.",
+      "verdict_pointer": ".verdicts/845_evol_spectrum_phi/E1_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (endpoint-classifier-not-ordinal-scale)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "finding",
+      "claim_id": "F-XENO-APPLICAB-NONMEAS",
+      "claim": "3-axis applicability conjunction (v3 unchanged): calibrated <=> n>=128 AND (density>=60% OR MIP-irreducible deterministic transition); 3 corners (micro/sparse/algorithmic) deterministically ruled out + 4 border points (X5a/X837/X840/X10-c) at frontier",
+      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:finding",
+      "verdict_tier": "🔴 closed-negative (3 axes) + 🟢 calibrate (X7, X10-d) + ⚠ borders (X5a, X837, X840, X10-c)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "finding",
+      "claim_id": "F-X10-MONOTONE-FAIL-CONFIRMS-IIT4",
+      "claim": "F-X10-MONOTONE pre-registered FAILED (measured phi_weak < phi_indep < phi_strong < phi_hive instead of monotone-rising); the failure is a positive IIT 4.0 axiom confirmation (correlation != integration, coupling != irreducibility)",
+      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:meanfield",
+      "verdict_tier": "🟢 axiom-confirming negative (mean-field paradox finding)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "finding",
+      "claim_id": "TEMPORAL-T4-NATURAL-ENTRY",
+      "claim": "TEMPORAL T1/T2/T3 triple closed-negative establishes that invariant_detector simple 5D extension (lag-axis T1 OR embed-dim T2) cannot honestly integrate temporal information AND the unmodified detector applied to a real cycle-rich substrate (T3 ultradian) inherits the same lag-axis degeneracy as a zero-collapse; the natural follow-on (T4) must be window-mean / time-averaged Φ + Granger-causality baseline + surrogate-data control — NOT a single-trajectory phi inflation. SPATIAL S1 (mean-field uniformity-collapse spatial-domain) + EVOL E1 (endpoint-classifier-not-ordinal) sibling probes corroborate. v3 paper closes 5D-naïve extension + substrate-side application and explicitly opens T4 as a deferred lane.",
+      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:temporal",
+      "verdict_tier": "🔴 triple closed-negative (T1+T2 detector + T3 substrate) + T4 deferred lane opened",
+      "frozen_pre_run": true
+    }
+  ],
+  "regimes": {
+    "calibrated_regime_v3": {
+      "n": ">= 128",
+      "density_or_irreducibility": "density >= 60% OR MIP-irreducible deterministic transition",
+      "structure": "natural carrier, coupled coherent, or MIP-irreducible cascade",
+      "temporal": "single-trajectory only -- lag-axis (T1) and embed-dim (T2) detector extensions BOTH closed-negative + unmodified-detector ultradian substrate application (T3) closed-negative = T1+T2+T3 triple",
+      "ground_truths": ["X7 BL Voyager-1 (low-Phi non-conscious)", "X10-d XOR-cascade hive (high-Phi conscious)"]
+    },
+    "calibrated_corner_v1_deprecated": {
+      "note": "v1 single-conjunct (n>=128 AND density>=60% AND strong deterministic) is now a sufficient sub-clause; v2 disjunction with MIP-irreducibility supersedes; v3 adds explicit temporal axis closed-negative",
+      "n": ">= 128",
+      "density": ">= 60%",
+      "structure": "strong deterministic transition (natural carrier or coupled coherent)"
+    },
+    "ruled_out_axes": [
+      {
+        "axis": "micro-n",
+        "evidence": "X4 H_833",
+        "mechanism": "2-unit co-occurrence TPM sample-starvation, random > coupled phi inversion"
+      },
+      {
+        "axis": "sparse-density",
+        "evidence": "X6 H_834",
+        "mechanism": "sparse-bias drift on attention 6/64 → phi=1.213 false-conscious label"
+      },
+      {
+        "axis": "algorithmic-structure",
+        "evidence": "X5b H_835",
+        "mechanism": "fp-bound / pi-digits / natural indistinguishable in [0.09, 0.12] Phi band"
+      }
+    ],
+    "border_points": [
+      {
+        "point": "X5a lattice",
+        "evidence": "X5 H_835",
+        "mechanism": "perfect periodic transition saturates TPM, phi=0.660 above 0.5 threshold, type-axis intact"
+      },
+      {
+        "point": "X837 SETI@home",
+        "evidence": "X837 H_837",
+        "mechanism": "real BOINC bg_pot sparse natural noise, phi=0.567 above 0.5 threshold, type-axis intact"
+      },
+      {
+        "point": "X840 SETI@home longer-playback",
+        "evidence": "X840 H_840",
+        "mechanism": "24.4% prog harvest (vs X837 21.3%), phi=0.567 X837-stable (delta 0.000146), longer-playback hypothesis FALSIFIED yet instrument regression-stable at the border"
+      },
+      {
+        "point": "X10-c Kuramoto strong",
+        "evidence": "X10 H_838",
+        "mechanism": "K=2.0 all-to-all phase sync, phi=0.408 below 0.5 threshold yet above independent baseline; sync != irreducibility (mean-field paradox border)"
+      }
+    ],
+    "mean_field_paradox": {
+      "finding": "F-X10-MONOTONE pre-registered FAILED — measured ordering phi_weak(0.036) < phi_indep(0.131) < phi_strong(0.408) < phi_hive(1.565) instead of monotone-rising naive prediction",
+      "interpretation": "mean-field averaging makes substrate MORE reducible (uniformity collapses TPM toward MIP-cheap configurations) despite higher correlation; IIT 4.0 integration == irreducibility axiom holds, naive coupling == integration intuition is wrong",
+      "diagnostic_value": "any candidate substrate showing high correlation but low Phi is mean-field-like (reducible); any showing moderate correlation but high Phi is cascade-like (irreducible)",
+      "iit4_axiom_confirmed": true,
+      "pre_registered_falsifier_failed": "F-X10-MONOTONE",
+      "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt"
+    },
+    "temporal_axis_closed_negative": {
+      "finding_triple": "T1 + T2 + T3 triple closed-negative: lag-axis detector extension (T1) AND multi-unit Takens delay-embed detector extension (T2) BOTH fail to honestly integrate temporal information, AND the unmodified detector applied to a real cycle-rich ultradian substrate (T3) inherits the same lag-axis degeneracy as a zero-collapse",
+      "t1_artifact": "2-unit lag-TPM produces hidden periodic-inflation: hive Δt=1->64 phi=0.013->0.999, lattice Δt=8 phi=2.0 saturate; longer lag is predictable, not integrated -- pre-registered instant>=long monotone integration FAILED 4/4 substrate",
+      "t2_artifact": "Takens delay-embed produces multi-unit state-space inflation: embed-dim 4/4 substrate monotone increase, random e=5 phi=13.63, voyager e=5 phi=28.36 -- T1 artifact NOT resolved, new artifact added",
+      "t3_artifact": "unmodified X1 detector on anima ultradian: WAKE phi=0.866 (conscious) > N3 phi=0.335 captured (2/5 PASS), but N1_N2 phi=0.0 zero-degenerate (4-step cycle perfectly predictable under lag-1 cooccur = T1 lag-artifact substrate-side face) + REM phi=0.569 < WAKE breaks REM-high ordering",
+      "interpretation": "single-trajectory Φ measurement cannot extend to (lag-axis OR embed-dim) without instrument inflation, nor be directly applied to a cycle-rich substrate without window-mean correction; the temporal axis is structurally different from (n, density, structure)",
+      "t4_natural_entry": "window-mean / time-averaged Φ over independent trajectories + Granger-causality baseline + surrogate-data control (null shuffled) — NOT a single-trajectory phi inflation",
+      "sibling_axis_probes": "SPATIAL S1 (3/5 PARTIAL-SUPPORT): global averaging-coupling uniformity-collapse phi=0 reproduces X10-b mean-field paradox along spatial-coupling-scale; EVOL E1 (2/5 FALSIFIED-INSTRUMENT): endpoints separate (bacteria floor + mammal ceiling) but mid/supra ordinal fails — both corroborate the detector as endpoint-classifier-not-ordinal-scale on any axis",
+      "verdict_pointers": [".verdicts/841_temporal_timeshift_phi/T1_run.txt", ".verdicts/842_temporal_time_embed_phi/T2_run.txt", ".verdicts/843_temporal_ultradian_phi/T3_run.txt", ".verdicts/844_spatial_coupling_phi/S1_run.txt", ".verdicts/845_evol_spectrum_phi/E1_run.txt"]
+    }
+  },
+  "honesty": {
+    "p1_no_system_prompt": true,
+    "p7_no_perplexity_verdict": true,
+    "post_tuning_per_round": 0,
+    "post_tuning_threshold_reuse": "phi=0.5 frozen from X7 calibration template, unchanged for X837, X840, X10, T1, T2",
+    "verdict_files_verbatim": true,
+    "single_detector_instance_per_axis": true,
+    "single_binarisation_threshold": 0.5,
+    "single_x837_playback_progress_pct": 21.3,
+    "single_x840_playback_progress_pct": 24.4,
+    "x10_single_fire_n_cells": 4,
+    "x10_samples_per_cell": 32,
+    "x10_aggregated_n": 128,
+    "t1_lag_axis_4_substrate": ["hive", "voyager", "random", "lattice"],
+    "t1_delta_t_grid": [1, 8, 32, 64],
+    "t2_embed_dim_grid": [2, 3, 4, 5],
+    "t2_delay": 1
+  }
+}

@@ -1,0 +1,28 @@
+================================================================
+  D1 — LZ76 collapse proxy: does LZ76 separate COLLAPSE vs HEALTHY?
+  (token-id seq → 18-bit binary stream → Kaspar-Schuster LZ76)
+================================================================
+  --- COLLAPSE band (low diversity) ---
+  REAL-M4b [1×4,151642×16] : LZ_norm=0.212296  raw_c=9
+  collapse_const  [t×20]   : LZ_norm=0.0943539  raw_c=4
+  collapse_eot    [eot×20] : LZ_norm=0.165119
+  collapse_2tok   [ab×10]  : LZ_norm=0.165119  raw_c=7
+  --- HEALTHY band (high diversity) ---
+  healthy_unique  [20 dist] : LZ_norm=0.896362  raw_c=38
+  healthy_mixed   [mix rep] : LZ_norm=0.849185
+  --
+  collapse band MAX LZ_norm = 0.212296
+  healthy  band MIN LZ_norm = 0.849185
+  SEPARATION margin         = 0.636889
+  [PASS] F-D1.1 REAL-COLLAPSE: M4b [1×4,151642×16] LZ_norm < HEALTHY_FLOOR (0.50)
+  [PASS] F-D1.2 SEPARATION: min(healthy) - max(collapse) > SEP_MARGIN (0.20)
+  [PASS] F-D1.3 MONOTONE: raw_c(const) <= raw_c(2tok) <= raw_c(unique)
+  [PASS] F-D1.4a ANCHOR: collapse_const raw_c small (< healthy_unique raw_c)
+  [PASS] F-D1.4b ANCHOR: healthy_unique LZ_norm > 0 (non-degenerate)
+  [PASS] F-D1.5 DETERMINISM: REAL M4b LZ_norm re-run identical
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  VERDICT: H_D1 SUPPORTED — LZ76 separates COLLAPSE vs HEALTHY
+           (margin 0.636889 > 0.2).
+           LZ76 is a valid detokenize-free collapse proxy ($0, cheap).
+================================================================

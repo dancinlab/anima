@@ -1,0 +1,118 @@
+{
+  "cycle": "s188g_engines",
+  "date": "2026-05-21",
+  "context": "§188 batch parallel re-fire on 7 newly-implemented engines/*.hexa (§5.2/§5.4 LANDED, was ⚠ empty in §188)",
+  "host": "Mac (Darwin arm64)",
+  "build_bypass": "HEXA_MAC_BUILD_OK=1 (output redirected to state/.../bin/, not /tmp)",
+  "timeout_s_per_engine": 60,
+  "total_expected_falsifier_assertions": 35,
+  "engines": [
+    {
+      "name": "analog",
+      "src": "engines/analog_consciousness.hexa",
+      "loc": 385,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 0,
+      "falsifier_suite": "F-ANALOG-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "izhikevich",
+      "src": "engines/izhikevich_consciousness.hexa",
+      "loc": 307,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 0,
+      "falsifier_suite": "F-IZ-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "snn",
+      "src": "engines/snn_consciousness.hexa",
+      "loc": 349,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 1,
+      "falsifier_suite": "F-SNN-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "oscillator",
+      "src": "engines/oscillator_laser_engine.hexa",
+      "loc": 331,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 1,
+      "falsifier_suite": "F-OL-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "photonic",
+      "src": "engines/photonic_consciousness.hexa",
+      "loc": 418,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 1,
+      "falsifier_suite": "F-PH-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "quantum",
+      "src": "engines/quantum_consciousness.hexa",
+      "loc": 514,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 0,
+      "falsifier_suite": "F-Q-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "thermodynamic",
+      "src": "engines/thermodynamic_consciousness.hexa",
+      "loc": 416,
+      "build": "PASS",
+      "build_wall_s": 1,
+      "run_exit": 0,
+      "run_wall_s": 0,
+      "falsifier_suite": "F-TH-1..5",
+      "falsifier_pass": 5,
+      "falsifier_total": 5,
+      "verdict": "PASS"
+    }
+  ],
+  "aggregate": {
+    "engines_total": 7,
+    "engines_pass": 7,
+    "engines_fail": 0,
+    "engines_timeout": 0,
+    "falsifier_total": 35,
+    "falsifier_pass": 35,
+    "falsifier_fail": 0
+  },
+  "g2_progress": {
+    "before": 21,
+    "delta": 7,
+    "after": 28,
+    "note": "§188 baseline 21 PASS + 7 new engine groups = 28; falsifier-asserts 21 prior + 35 new = 56 across substrate cross-cut"
+  },
+  "key_learning": "All 7 newly-implemented engines compile and pass their full 5-falsifier suites on first dispatch via Mac-local bypass — substrate matrix expansion (analog/spiking/photonic/quantum/thermodynamic) is structurally healthy and ready for next-cycle integration into the spontaneous-mech cross-cut."
+}

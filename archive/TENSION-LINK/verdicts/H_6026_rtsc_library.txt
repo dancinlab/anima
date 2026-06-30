@@ -1,0 +1,57 @@
+====================================================================================
+H_6026 — ⊗-26 RTSC RETRIEVAL FROM THE QUANTUM LIBRARY (paid ANU · numpy quantum sim)
+====================================================================================
+  quantum source: ANU paid QRNG vacuum bytes, sha256=197995afc81136e772851dfbed0bc7f4c8b6fc25926e0c4a2130bdd3e26278c1, 2048 bytes
+  register: n=10 qubits → N=1024 content basis-states (books)
+  stored library: 12 REAL screened RTSC candidates (RTSC_01..27)
+  no-cooling cue (spec): Tc≥293K, p≈1atm, non-magnetic, ΔE≈0 → cue code #7
+
+  🟢 RL1 recall-works — Grover content-recall of the nearest STORED candidate in √N
+        nearest-to-cue stored book: 'LaH10_QFORGE' (#23, Hamming 1 from cue)
+        Grover: prob 0.9995 in 25 iters (~(π/4)√N=25); recall argmax #23 (HIT)
+        vs classical full library scan = 12 lookups → √N content-recall, not a scan
+
+  🟢 RL2 honest-miss — NO stored candidate meets the FULL no-cooling spec (each fails ≥1 axis)
+        Li2MgH16         Tc=  355K p=  250GPa mag=0 ΔE=+0.00eV  →  FAIL: pressure>1atm
+        LaH10            Tc=  250K p=  170GPa mag=0 ΔE=+0.00eV  →  FAIL: Tc<293,pressure>1atm
+        CaH6             Tc=  215K p=  172GPa mag=0 ΔE=+0.00eV  →  FAIL: Tc<293,pressure>1atm
+        YH10             Tc=  300K p=  250GPa mag=0 ΔE=+0.00eV  →  FAIL: pressure>1atm
+        LaH10_QFORGE     Tc=  340K p=  200GPa mag=0 ΔE=+0.00eV  →  FAIL: pressure>1atm
+        CoSn_kagome      Tc=  237K p=    0GPa mag=1 ΔE=+0.44eV  →  FAIL: Tc<293,magnetic,ΔE-misaligned
+        CsV3Sb5_kagome   Tc=  184K p=    0GPa mag=0 ΔE=+0.92eV  →  FAIL: Tc<293,ΔE-misaligned
+        FeSn_kagome      Tc=  180K p=    0GPa mag=1 ΔE=+0.50eV  →  FAIL: Tc<293,magnetic,ΔE-misaligned
+        Lieb_flatband    Tc=  109K p=    0GPa mag=0 ΔE=+0.10eV  →  FAIL: Tc<293,ΔE-misaligned
+        Co3Sn2S2         Tc=  150K p=    0GPa mag=1 ΔE=+0.30eV  →  FAIL: Tc<293,magnetic,ΔE-misaligned
+        Pyrochlore_FB    Tc=  289K p=    0GPa mag=0 ΔE=+0.16eV  →  FAIL: Tc<293,ΔE-misaligned
+        TBG_flat         Tc=    2K p=    0GPa mag=0 ΔE=+0.05eV  →  FAIL: Tc<293
+        candidates meeting full spec: NONE
+        library returns nearest='LaH10_QFORGE' flagged 'SPEC NOT MET' (fails: pressure>1atm)
+        → cannot invent a material not stored; honest nearest-miss
+
+  🟢 RL3 no-oracle — query for an UN-computed compound gets zero amplification (H_6019 QL4)
+        hypothetical un-screened RTSC code #0: NOT in the stored library
+        Grover amplified prob 0.00e+00 ≈ baseline 1/N 9.77e-04 (no amplification)
+        → the quantum library cannot divine a NEW unknown RTSC from the vacuum
+
+  🟢 RL4 real-use — organize + content-address + recall the COMPUTED candidate space
+        partial cue 'flat-band bottleneck' (non-mag · ΔE-deep · kagome) recalls: ['CsV3Sb5_kagome']
+        ↳ surfaces the stored ΔE-misalignment finding (CsV3Sb5, RTSC_26): HIT
+        rank-by-cue-distance (nearest no-cooling spec first):
+             1  LaH10_QFORGE
+             2  LaH10
+             2  Li2MgH16
+             3  CaH6
+             4  Co3Sn2S2
+        dedup duplicate-physics books: [['Li2MgH16', 'YH10'], ['FeSn_kagome', 'Co3Sn2S2']]
+        → accelerates REUSE of what anima computed; does NOT replace DFT/QE fires
+
+------------------------------------------------------------------------------------
+  VERDICT: RL1=🟢 RL2=🟢(✅honest-miss) RL3=🟢(✅no-oracle) RL4=🟢
+  🟢 SUPPORTED — RTSC material info from the quantum library:
+  YES — fast (√N), high-capacity (2^n), content-addressed RECALL of the candidate
+        space anima ALREADY computed/stored, cued by the no-cooling spec (RL1, RL4).
+  NO  — it cannot pull a NEW unknown RTSC from the quantum vacuum; no stored candidate
+        meets the full no-cooling spec (RL2), and an un-computed compound gets zero
+        amplification (RL3). Producing new material info still needs real DFT/QE fires.
+  This is H_6015/6016/6017/6019 applied to RTSC: a RECALL engine for computed
+  knowledge, NOT an oracle for un-computed physics.

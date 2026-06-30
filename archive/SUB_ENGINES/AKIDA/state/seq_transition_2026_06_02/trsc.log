@@ -1,0 +1,39 @@
+[trsc] akida 2.19.1 device BC.00.000.002
+[trsc] === rung 25: anchors=25 concepts=5 ===
+[trsc:25] trial 0 tr_acc=0.5000 wl=0.8500 learn=True
+[trsc:25] trial 1 tr_acc=0.4000 wl=0.8500 learn=True
+[trsc:25] trial 2 tr_acc=0.3000 wl=0.8500 learn=True
+[trsc:25] trial 3 tr_acc=0.3000 wl=0.7000 learn=True
+[trsc:25] trial 4 tr_acc=0.6500 wl=0.9500 learn=True
+[trsc:25] trial 5 tr_acc=0.6500 wl=0.8000 learn=True
+[trsc:25] trial 6 tr_acc=0.3500 wl=0.7000 learn=True
+[trsc:25] trial 7 tr_acc=0.7000 wl=0.7500 learn=True
+[trsc] rung 25: tr_acc=0.4812 ci_lo=0.3657 NULL_hi=0.4889 p=0.0498 above_null=False
+[trsc] === rung 125: anchors=125 concepts=25 ===
+[trsc:125] trial 0 tr_acc=0.1583 wl=0.5250 learn=True
+[trsc:125] trial 1 tr_acc=0.1250 wl=0.5167 learn=True
+[trsc:125] trial 2 tr_acc=0.1333 wl=0.6250 learn=True
+[trsc:125] trial 3 tr_acc=0.1333 wl=0.4750 learn=True
+[trsc:125] trial 4 tr_acc=0.1167 wl=0.6417 learn=True
+[trsc:125] trial 5 tr_acc=0.1333 wl=0.6250 learn=True
+[trsc:125] trial 6 tr_acc=0.1333 wl=0.4833 learn=True
+[trsc:125] trial 7 tr_acc=0.0917 wl=0.5833 learn=True
+[trsc] rung 125: tr_acc=0.1281 ci_lo=0.1151 NULL_hi=0.0725 p=0.0050 above_null=True
+[trsc] === rung 250: anchors=250 concepts=50 ===
+[trsc:250] trial 0 tr_acc=0.2816 wl=0.5796 learn=True
+[trsc:250] trial 1 tr_acc=0.2776 wl=0.4816 learn=True
+[trsc:250] trial 2 tr_acc=0.3265 wl=0.4816 learn=True
+[trsc:250] trial 3 tr_acc=0.2408 wl=0.4490 learn=True
+[trsc:250] trial 4 tr_acc=0.2816 wl=0.4857 learn=True
+[trsc:250] trial 5 tr_acc=0.3143 wl=0.4939 learn=True
+[trsc:250] trial 6 tr_acc=0.3224 wl=0.4653 learn=True
+[trsc:250] trial 7 tr_acc=0.2735 wl=0.5143 learn=True
+[trsc] rung 250: tr_acc=0.2898 ci_lo=0.2696 NULL_hi=0.0429 p=0.0050 above_null=True
+
+[trsc] ===== LADDER =====
+[trsc]  25 anchors= 25 tr_acc=0.4812 ci_lo=0.3657 NULL_hi=0.4889 p=0.0498 above=False
+[trsc] 125 anchors=125 tr_acc=0.1281 ci_lo=0.1151 NULL_hi=0.0725 p=0.0050 above=True
+[trsc] 250 anchors=250 tr_acc=0.2898 ci_lo=0.2696 NULL_hi=0.0429 p=0.0050 above=True
+[trsc] F-TRSCALE: NOT-uniform: the transition signal collapses into NULL at >=1 rung -> scale-fragile (honest downgrade)
+[trsc] DISPOSITION: scale-fragile transition signal — see per-rung above_null
+[trsc] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_transition_scale.json

@@ -1,0 +1,13 @@
+[engines/analog_consciousness] F-ANALOG-1..5 falsifier suite
+  [F-ANALOG-1] zero-input decay mean_v=0.348678 (expect ~0.35-0.37)
+F-ANALOG-1 PASS
+  [F-ANALOG-2] step-settle mean_v=0.01 v_ss=0.01 err=6.93889e-16
+F-ANALOG-2 PASS
+  [F-ANALOG-3] coupling-sync var_init=0.0525 var_final=0.000736986
+F-ANALOG-3 PASS
+  [F-ANALOG-4] noise-bounded max|v|=2.98731e-07 cap=100.0
+F-ANALOG-4 PASS
+  [F-ANALOG-5] long-run max|v|=0.00100034 var=5.41409e-14 finite=true
+F-ANALOG-5 PASS
+[engines/analog_consciousness] 5/5 PASS
+run_rc=0 run_wall=0s

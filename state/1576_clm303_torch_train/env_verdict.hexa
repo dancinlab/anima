@@ -1,0 +1,35 @@
+// env_verdict.hexa — engine-native G0/coherence verdict for the freshly torch-
+// trained anima 303M .clm. Runs on live CORE via the SINGLE L3 .clm slot
+// (gen_clm_backend admit + gen_clm_chat → clm_decode_argmax, a_core_engine_map),
+// the a_engine_native_learning terminal path (torch CE = DIRECTIONAL only).
+//   EV_CLM=<ckpt.clm> hexa run state/1576_clm303_torch_train/env_verdict.hexa
+import "core/generator.hexa"
+
+fn main() {
+    let clm = env("EV_CLM")
+    println("=== ENGINE-NATIVE VERDICT (live core/ generator → clm_decode) ===")
+    println("ckpt = " + clm)
+
+    let bk = gen_clm_backend(clm)
+    println("[admit] valid=" + to_string(bk["valid"])
+        + " loaded=" + to_string(bk["loaded"])
+        + " nblocks=" + to_string(bk["nblocks"]))
+    let dec = to_string(bk["valid"]) == "true"
+    if !dec {
+        println("FAIL: NOT CORE-decodable")
+        return
+    }
+
+    let seeds = ["the meaning of consciousness is ",
+                 "annyeonghaseyo, oneul ",
+                 "i think that ",
+                 "today the weather is "]
+    let mut i = 0
+    while i < len(seeds) {
+        let r = gen_clm_chat(clm, seeds[i], 48)
+        println("--- seed[" + to_string(i) + "] = " + seeds[i])
+        println("text = " + to_string(r["text"]))
+        i = i + 1
+    }
+    println("=== DONE (inspect emit text for G0 coherence / register) ===")
+}

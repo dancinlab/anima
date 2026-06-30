@@ -1,0 +1,49 @@
+// h1557_logitdelta_probe.hexa — confirm the residual patch CHANGES the logit vector
+// (B3 is not dead-by-LayerNorm even when argmax is saturated). Reports ||patched−ref||
+// over the full logit vector for a directional delta at several layers/scales.
+// argv: <bin_path>
+import "core/bytegpt_decode.hexa"
+fn main() {
+    let a = argv()
+    let mut b = 0; let mut i = 0
+    while i < len(a) { if a[i] == "--" { b = i + 1 } i = i + 1 }
+    let path = a[b + 0]
+    let pb = [84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110]
+    let T = len(pb)
+    let ids = farr_zeros(T)
+    let mut j = 0
+    while j < T { let _ = farr_set(ids, j, to_float(pb[j])); j = j + 1 }
+    let W = bg_load_ranged(path)
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let ref_logits = bg_forward_last_W(W, ids, T)
+    let scales = [2.0, 10.0, 40.0]
+    let layers = [10, 14, 18]
+    let mut si = 0
+    while si < len(scales) {
+        let sc = to_float(scales[si])
+        let mut lyi = 0
+        while lyi < len(layers) {
+            let ly = to_int(layers[lyi])
+            let delta = farr_zeros(d)
+            let mut x = 2463534242
+            let mut c = 0
+            while c < d {
+                x = (x ^ (x * 8192)) & 0xFFFFFFFF
+                x = (x ^ (x / 131072)) & 0xFFFFFFFF
+                x = (x ^ (x * 32)) & 0xFFFFFFFF
+                let u = (to_float(x) / 4294967296.0) - 0.5
+                let _ = farr_set(delta, c, u * sc)
+                c = c + 1
+            }
+            let pl = bg_forward_patched_W(W, ids, T, ly, T - 1, delta)
+            let mut s2 = 0.0
+            let mut k = 0
+            while k < vocab { let dv = farr_get(pl, k) - farr_get(ref_logits, k); s2 = s2 + dv * dv; k = k + 1 }
+            println("L" + to_string(ly) + " sc" + to_string(sc) + " logitL2=" + to_string(dt_sqrt(s2)))
+            let _ = farr_free(pl); let _ = farr_free(delta)
+            lyi = lyi + 1
+        }
+        si = si + 1
+    }
+    println("LOGITDELTA_DONE")
+}

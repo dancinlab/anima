@@ -1,0 +1,43 @@
+{
+  "id": "H_843",
+  "domain": "TEMPORAL",
+  "slug": "temporal-ultradian-phi",
+  "round": "T3",
+  "date": "2026-05-29",
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-05-29",
+  "sister_lessons": [
+    "T1 H_841 (TEMPORAL/scan/timeshift_phi.hexa) 🔴 lag-axis cycle-aligned Φ inflation",
+    "T2 H_842 (TEMPORAL/scan/time_embed_phi.hexa) 🔴 embed-dim sparse-state Φ inflation"
+  ],
+  "detector": "XENO/detector/invariant_detector.hexa (X1, substrate-blind · 2-unit lag=1 cooccur TPM → IIT4 big-Φ)",
+  "scan": "TEMPORAL/scan/ultradian_phi.hexa",
+  "n_samples": 128,
+  "substrates": ["WAKE", "N1_N2", "N3", "REM"],
+  "measurements": {
+    "WAKE":  {"phi": 0.865544, "irr": 0.614732, "type": "conscious"},
+    "N1_N2": {"phi": 0.0,      "irr": 0.0,      "type": "coherent_non_conscious"},
+    "N3":    {"phi": 0.335119, "irr": 0.251003, "type": "coherent_non_conscious"},
+    "REM":   {"phi": 0.568534, "irr": 0.362462, "type": "coherent_non_conscious"}
+  },
+  "falsifiers": {
+    "F-T3-WAKE-MID":  {"threshold": "WAKE phi > 0.1",                                        "measured": 0.865544,                       "pass": true},
+    "F-T3-N3-LOW":    {"threshold": "N3 phi < WAKE phi",                                     "measured_n3": 0.335119, "measured_wake": 0.865544, "pass": true},
+    "F-T3-REM-HIGH":  {"threshold": "REM phi >= WAKE phi",                                   "measured_rem": 0.568534, "measured_wake": 0.865544, "pass": false},
+    "F-T3-N1-MID":    {"threshold": "N1_N2 phi > N3 phi",                                    "measured_n1_n2": 0.0,    "measured_n3": 0.335119,   "pass": false},
+    "F-T3-MONOTONE":  {"threshold": "N3 < N1_N2 < WAKE OR N3 < N1_N2 < REM",                 "wake_ladder": false,     "rem_ladder": false,       "pass": false}
+  },
+  "pass_count": 2,
+  "verdict": "🔴 FALSIFIED-INSTRUMENT (2/5 사전등록 PASS · F-T3-WAKE-MID + F-T3-N3-LOW 단독 · F-T3-REM-HIGH + F-T3-N1-MID + F-T3-MONOTONE 3-FAIL · N1_N2 substrate 위 X1 binarise+cooccur 이 zero-Φ degenerate (4-step cycle-aligned · T1 lag-artifact 의 다른 manifestation) · X1 detector 가 ultradian 5-stage 위 phenomenology 와 부분 정합만 — WAKE > N3 ordering OK 이나 REM-HIGH 와 monotone ladder 실패 · T4 자연 entry (window-mean / Granger / surrogate-baseline))",
+  "tier": "🔴",
+  "wall_time": "subseconds",
+  "exit_code": 0,
+  "honesty": {
+    "a_blue_closed": "threshold pre-run frozen, post-tuning 0",
+    "a_paper_negative_ok": "closed-negative honest finding, T4 자연 entry path 명시",
+    "p7": "verbatim hexa stdout, LLM judge 0",
+    "feedback_instrument_first_methodology": "T1/T2 dual closed-negative cite, X1 calibration regime 직접 적용"
+  }
+}

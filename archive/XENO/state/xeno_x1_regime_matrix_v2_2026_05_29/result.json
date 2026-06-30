@@ -1,0 +1,115 @@
+{
+  "h_id": "H_839",
+  "slug": "xeno-regime-matrix-v2",
+  "title": "XENO X1-regime-matrix-v2 — n × threshold × substrate systematic 2D sweep (4n × 3thr × 4substrate = 48 cells)",
+  "date": "2026-05-29",
+  "scan": "XENO/scan/regime_matrix_v2.hexa",
+  "verdict_file": ".verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt",
+  "verdict_file_g73": ".verdicts/xeno_x1_regime_matrix_v2_2026_05_29/x1v2_run.txt",
+  "log": "XENO/state/xeno_x1_regime_matrix_v2_2026_05_29/x1v2_smoke.log",
+  "regime": "systematic 2D sweep (paper #1414 v2 의 7+1 isolated points → 48 cells)",
+  "axis": "n × binarisation-threshold × substrate (X1 detector applicability map)",
+  "matrix_dimensions": {
+    "n_axis": [32, 64, 128, 256],
+    "threshold_axis": [0.33, 0.50, 0.67],
+    "substrate_axis": ["random", "xor_cascade", "meanfield", "periodic"]
+  },
+  "phi_grid": {
+    "_doc": "phi[n][threshold][substrate], 4 × 3 × 4 = 48 cells, verbatim from compute_phi_at_threshold",
+    "n=32": {
+      "thr=0.33": {"random": 0.0, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.718368},
+      "thr=0.50": {"random": 0.582325, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.718368},
+      "thr=0.67": {"random": 0.0, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.657182}
+    },
+    "n=64": {
+      "thr=0.33": {"random": 0.0103857, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.677898},
+      "thr=0.50": {"random": 0.222111, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.677898},
+      "thr=0.67": {"random": 0.0, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.638646}
+    },
+    "n=128": {
+      "thr=0.33": {"random": 0.0259631, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.659914},
+      "thr=0.50": {"random": 0.0872382, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.659914},
+      "thr=0.67": {"random": 0.322523, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.630327}
+    },
+    "n=256": {
+      "thr=0.33": {"random": 0.00502229, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.651414},
+      "thr=0.50": {"random": 0.0698988, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.651414},
+      "thr=0.67": {"random": 0.326458, "xor_cascade": 1.63007, "meanfield": 0.0, "periodic": 0.626376}
+    }
+  },
+  "falsifier_results": {
+    "F-X1V2-N-MONOTONE": {
+      "spec": "random phi @ thr=0.50, max(n)-min(n) ≤ 0.15 AND hi_mean(n=128,256) ≤ lo_mean(n=32,64) + 0.05",
+      "measured": {
+        "n=32_phi": 0.582325,
+        "n=64_phi": 0.222111,
+        "n=128_phi": 0.0872382,
+        "n=256_phi": 0.0698988,
+        "max_minus_min": 0.512426,
+        "hi_minus_lo_mean": -0.323649
+      },
+      "pass": false,
+      "note": "FAIL — n=32 random phi=0.58 (micro-regime inflation, X4 walker 0.582 정합) > 0.15 spread threshold; honest pre-registered fail showing micro-regime systematic bias; hi_mean-lo_mean=-0.32 (적합한 direction 으로 강 decrease)"
+    },
+    "F-X1V2-XOR-CONSCIOUS": {
+      "spec": "xor phi @ thr=0.50, n=128 AND n=256 ≥ 0.5",
+      "measured": {"n=128_phi": 1.63007, "n=256_phi": 1.63007},
+      "pass": true,
+      "note": "PASS — X10-d 재현 (XOR cascade irreducibility threshold n≥4 부터 saturate, n=128/256 모두 phi=1.63 = X1 smoke COUPLED 정합)"
+    },
+    "F-X1V2-MEANFIELD-LOW": {
+      "spec": "meanfield phi @ thr=0.50, n=128 AND n=256 < 0.2",
+      "measured": {"n=128_phi": 0.0, "n=256_phi": 0.0},
+      "pass": true,
+      "note": "PASS — X10-b 재현 강 (mean-field paradox: uniformity attractor → all-zeros after binarise → phi=0)"
+    },
+    "F-X1V2-PERIODIC-HIGH": {
+      "spec": "periodic phi @ thr=0.50, n=128 AND n=256 ≥ 0.3",
+      "measured": {"n=128_phi": 0.659914, "n=256_phi": 0.651414},
+      "pass": true,
+      "note": "PASS — X5a lattice false-positive border 재현 (period-8 cycle phi=0.66 일관)"
+    },
+    "F-X1V2-TPM-EFFECT": {
+      "spec": "mean(|phi(thr=0.33) - phi(thr=0.67)|) < mean((|phi(thr=0.50) - phi(thr=0.33)| + |phi(thr=0.50) - phi(thr=0.67)|) / 2) across 16 (n × substrate) pairs",
+      "measured": {"edge_mean": 0.0489652, "center_mean": 0.0741107},
+      "pass": true,
+      "note": "PASS — binarisation-sensitivity edge robust (양 끝 threshold 가 중앙 threshold 보다 phi-variance 작음); sparse-bias 감소 cheap-path 입증"
+    }
+  },
+  "pass_count": 4,
+  "verdict": "🟢 SUPPORTED-NUMERICAL · regime matrix v2 측정 가능 (paper v3 input ready)",
+  "paper_1414_v2_alignment": {
+    "calibrated_regime_v2": "n ≥ 128 ∧ (density ≥ 60% ∨ MIP-irreducible deterministic transition)",
+    "X10-d_xor_cascade_conscious_reproduced": true,
+    "X10-b_meanfield_paradox_reproduced": true,
+    "X5a_lattice_false_positive_border_reproduced": true,
+    "new_finding_micro_regime_phi_inflation": "n=32 random phi=0.58 (X4 walker phi=0.582 정합), n 증가 시 monotonic decrease 0.58→0.22→0.087→0.07; F-X1V2-N-MONOTONE FAIL = paper v3 candidate finding (micro-regime systematic bias quantified)"
+  },
+  "paper_v3_input_candidates": [
+    "micro-regime systematic phi inflation map (n=32 random phi 0.58 → n=256 phi 0.07, monotonic 7× decrease)",
+    "binarisation-threshold edge-robust property (TPM sparse-bias 감소 cheap-path)",
+    "XOR cascade phi saturation: n≥4 부터 phi=1.63 fixed (Fibonacci LFSR period 6 → 2-unit co-occurrence TPM constant)",
+    "mean-field zero-attractor: rolling-mean 50/50 self-coupling drains to all-zeros, phi=0 보장",
+    "periodic lattice phi=0.66 across all n (cycle period 8 < n constraint, deterministic transition dominate)"
+  ],
+  "honesty": {
+    "a_blue_closed": "thresholds frozen pre-run (0.15 / 0.5 / 0.2 / 0.3, edge<center), post-tuning 0",
+    "p7": 0,
+    "a_completeness_over_cheap": "48 cell systematic sweep (1 point spot-check 거부)",
+    "feedback_universe_h_slug_stale_verify": "3-신호 검증 (git ls-tree + log --grep + README.md grep) zero hit → H_839",
+    "inbox_loop_back": 0,
+    "fire_cost": "$0 Mac local wall <5s"
+  },
+  "sister_files": [
+    "XENO/scan/regime_matrix_v2.hexa",
+    "XENO/detector/invariant_detector.hexa",
+    "UNIVERSE/H_829 (X1)",
+    "UNIVERSE/H_832 (X7 BL Voyager calibration)",
+    "UNIVERSE/H_833 (X4 panpsy micro-regime)",
+    "UNIVERSE/H_834 (X6 AGI sparse-regime)",
+    "UNIVERSE/H_835 (X5 sim algorithmic)",
+    "UNIVERSE/H_837 (X837 SETI border)",
+    "UNIVERSE/H_838 (X10 hive-mind)",
+    "PAPER/xeno-applicability-frontier (#1414 paper v2)"
+  ]
+}

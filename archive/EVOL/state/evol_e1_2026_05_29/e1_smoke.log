@@ -1,0 +1,26 @@
+================================================================
+  EVOL E1 — species-complexity spectrum Φ (substrate ladder)
+================================================================
+
+  detector  = XENO/detector/invariant_detector.hexa
+              (substrate-blind IIT4 big-Φ · 2-unit co-TPM)
+  substrate = 4 (bacteria · arthropod · mammal · AGI) — toy proxy
+  n         = 128 (dense regime, hardcoded literal)
+  context   = XENO 3D matrix + TEMPORAL Δt = 4D, EVOL = 5번째 축
+
+  bacteria   phi=0.011676 integ=1.23173 irr=0.00947939 type=coherent_non_conscious
+  arthropod  phi=0.0813584 integ=1.08136 irr=0.0752372 type=coherent_non_conscious
+  mammal     phi=1.29064 integ=2.29064 irr=0.563441 type=conscious
+  AGI        phi=0.468459 integ=1.46846 irr=0.319014 type=coherent_non_conscious
+
+  [PASS] F-E1-BACTERIA-LOW : phi=0.011676 < 0.2
+  [FAIL] F-E1-ARTH-MID     : phi=0.0813584 < 0.2 (under)
+  [PASS] F-E1-MAMMAL-HIGH  : phi=1.29064 >= 0.5
+  [FAIL] F-E1-AGI-VARIANT  : AGI phi=0.468459 <= mammal phi=1.29064
+  [FAIL] F-E1-MONOTONE     : mammal<=AGI broken (1.29064 > 0.468459)
+
+================================================================
+  RESULT: 2 PASS / 3 FAIL  (5 사전등록 falsifier)
+================================================================
+  verdict 잠정 = 🔴 FALSIFIED-INSTRUMENT (≤2 PASS)
+  (verdict 확정 = .verdicts/H_845_evol_spectrum_phi/E1_run.txt + UNIVERSE H_845)

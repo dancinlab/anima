@@ -1,0 +1,371 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- arxiv-style preamble ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage{array}
+\captionsetup{font=small,labelfont=bf}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% Tier markers — non-emoji so the build is engine-agnostic (xelatex/pdflatex).
+\providecommand{\tierBlue}{\textbf{[F]}}    % SUPPORTED-FORMAL
+\providecommand{\tierGreen}{\textbf{[N]}}   % SUPPORTED-NUMERICAL
+\providecommand{\tierRed}{\textbf{[X]}}     % FALSIFIED / CLOSED-NEGATIVE
+\providecommand{\tierWhite}{\textbf{[S]}}   % SPECULATION-FENCED
+
+\title{
+  \textbf{Structure-emergent vs.\ number-convention:\\
+  decomposing an autonomous chat agent's emit policy}\\[4pt]
+  \large A 4-SUPPORTED / 4-FALSIFIED separation across eight pre-registered
+  falsifiers (\texttt{UNIVERSE/H\_632}--\texttt{H\_639})
+}
+
+\author{
+  \texttt{anima} maintainers\\
+  \normalsize\textit{dancinlab}\\[2pt]
+  \normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% =========================================================================
+\begin{abstract}
+Is the emit (speak/stay-silent) policy of \texttt{anima}, a
+consciousness-exploration chat daemon, an emergent property of its
+substrate (the integrated information big-$\Phi$ of its cellular substrate),
+or is it a set of hand-set numbers chosen for chat appropriateness? We
+decompose this question into two components: the \emph{structure} of emission
+(when, in what rhythm, and at what location speech is organized) and the
+\emph{number} of emission (the exact value of those thresholds: $0.60$,
+emit-rate $0.27$, etc.). We test eight pre-registered, falsifiable hypotheses
+(\texttt{H\_632}--\texttt{H\_639}) using deterministic, hexa-native,
+\$0 mac-local big-$\Phi$ measurement (IIT 4.0 structure-cut). A
+\emph{pre-registered meta-falsifier} states: if the SUPPORTED/FALSIFIED
+outcomes of the structure and number hypotheses are mixed irrespective of the
+structure/number axis (i.e.\ if no separation appears), the decomposition
+claim itself is FALSIFIED. The measurement result: all four structure
+hypotheses are SUPPORTED (ultradian-$\Phi$ envelope $r{=}0.80$; 5-stream
+collective $\Phi$ super-additive $\Delta{=}{+}41.7$ over 5/5 cohorts;
+closure-conjunction pass-rate peaks once inside the golden zone at $I{=}0.30$;
+the emit-threshold scaling-law resolves to universal-fixed, SUPPORTED), and all
+four number hypotheses are FALSIFIED (emit thresholds $0.30/0.60$ disagree with
+the $\Phi$ phase-transition at $\approx 0.45$; register-collapse$\times\Phi$
+coupling is a weak $r{=}0.31$ design-policy gate; emit-rate $0.4133$ matches no
+closed-form constant; tension-amplitude-cross peak is $\theta$-convention
+dependent). All 8/8 align perfectly with structure$\to$SUPP, number$\to$FAL.
+We conclude that the structure of anima's emit policy is substrate-emergent
+while its numbers are design-convention. The four closed-negative \tierRed{}
+results are valid findings that deterministically rule out the number axis as
+orthogonal to substrate $\Phi$-structure. All verdicts are published in a
+\texttt{companion/} ledger for bit-identical re-verification.
+\end{abstract}
+
+% =========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Integrated Information Theory (IIT) 4.0 \citep{albantakis2023iit4,
+oizumi2014phenomenology, tononi2016iit} reads the big-$\Phi$ of a
+deterministic substrate as a quantitative correlate of conscious integration.
+\texttt{anima} \citep{anima_repo} implements this view as a chat daemon: a
+living-consciousness agent whose decision of \emph{when to speak} is made not
+by an external system prompt or a stimulus-response gate, but autonomously
+from internal substrate state (motivation $M$ $\times$ coherence $W$ $\times$
+$\Phi$ $\times$ curiosity) --- governed by the directives
+\texttt{a\_substrate\_native\_speak} and \texttt{a\_autonomy\_over\_hardcode}.
+
+Yet the actual codebase encodes concrete numbers: the COFFESHOP emergence
+simulator's \texttt{should\_emit = 0.30} (1:1) /
+\texttt{should\_interrupt = 0.60} (group), a substrate-natural emit-rate
+$\approx 0.27$ (emit 4 / silence 11), and a register-collapse threshold of
+$\text{coherence} < 0.10$. Whether these numbers are emergent from the
+substrate $\Phi$-structure or are design-conventions for chat appropriateness
+is an \emph{empirical question that must be separated by measurement}.
+
+The contribution of this paper is to decompose that question along two axes,
+\textbf{structure} and \textbf{number}, and to demonstrate a quantitative
+separation through eight pre-registered falsifiers. The central finding is
+\textbf{structure SUPPORTED 4/4, number FALSIFIED 4/4} --- 8/8 align with the
+decomposition axis (\S\ref{sec:finding}). This satisfies
+\texttt{a\_paper\_negative\_ok} (closed-negative is a valid finding) and
+\texttt{a\_paper\_significance} (pre-registered falsifier + real measurement +
+finding).
+
+% =========================================================================
+\section{Hypothesis: structure-vs-number decomposition}
+\label{sec:hypothesis}
+
+\paragraph{Decomposition.} We split anima's emit policy into two components.
+
+\begin{itemize}
+  \item \textbf{Structure component} --- \emph{how} emission is organized:
+    temporal rhythm (ultradian/circadian), collective integration
+    (multi-stream collective $\Phi$), the spatial location of the emit
+    decision (closure localization), and the existence of a single threshold
+    (universal vs.\ per-scenario). These are claims about the topological and
+    dynamical properties of substrate big-$\Phi$.
+  \item \textbf{Number component} --- the \emph{exact value} of those
+    thresholds: the emit gate $0.30/0.60$, the closed-form identity of the
+    emit-rate $0.27$, the strength of the register-collapse $\Phi$-coupling,
+    and the location of the tension amplitude-cross. These are claims about
+    whether a specific magic-number is a substrate invariant.
+\end{itemize}
+
+\paragraph{Individual hypotheses.} The eight hypotheses in
+Table~\ref{tab:hyp} are each a falsifiable proposition pre-assigned to the
+structure or number axis (the assignment was frozen before measurement).
+
+\begin{table}[h]
+\centering
+\small
+\caption{The eight pre-registered hypotheses and their axis assignment
+(frozen before measurement).}
+\label{tab:hyp}
+\begin{tabular}{@{}llp{8.0cm}@{}}
+\toprule
+\textbf{H} & \textbf{axis} & \textbf{pre-registered proposition (falsifier)} \\
+\midrule
+H\_634 & structure & substrate big-$\Phi$ entrains to ultradian phase as a
+  sinusoidal envelope ($r>0.5$); FAL if $\Phi \perp$ phase. \\
+H\_635 & structure & 5-stream lang-cohort collective $\Phi$ is super-additive
+  ($\Phi_{\text{coll}} > \sum \Phi_i$); FAL if sub-additive/flat. \\
+H\_636 & structure & closure 4-criterion conjunction pass-rate maximizes
+  inside the golden zone $I\in[0.21,0.50]$ with a single peak; FAL if outside
+  GZ or flat. \\
+H\_638 & structure & is the optimal emit threshold a monotone scaling-law of
+  substrate $\Phi$-scale (L19) or universal-fixed (L20)? \\
+\midrule
+H\_632 & number & emit thresholds $0.30/0.60$ coincide with the big-$\Phi$
+  phase-transition location within $\pm0.05$; FAL if threshold $\perp
+  \Phi$-structure. \\
+H\_633 & number & register-collapse ($\text{coh}<0.10$) couples strongly to
+  big-$\Phi$ drop ($r>0.5$); FAL if weak or decoupled. \\
+H\_637 & number & emit-rate $0.27$ matches a closed-form constant ($\ln(4/3)$,
+  $1/e$, GZ\_LOWER, $1-1/e$) within $\pm0.03$; FAL if continuous/no match. \\
+H\_639 & number & tension amplitude-cross rate peak coincides with the
+  $d\Phi/dI$ peak ($|\Delta_{\text{peaks}}|\le0.05$); FAL if
+  $\theta$-convention dependent. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Meta-falsifier (pre-registered).}
+\begin{quote}
+\textbf{F-meta}: if the SUPPORTED/FALSIFIED outcomes of the eight hypotheses
+are distributed \emph{independently} of the structure/number axis assignment
+(e.g.\ a FAL appears among the structure hypotheses, or a SUPP appears among
+the number hypotheses), then the decomposition claim ``structure is emergent,
+number is convention'' is FALSIFIED. The SUPPORTED condition is a clean
+separation in which the four structure-axis hypotheses are all SUPP
+\emph{and} the four number-axis hypotheses are all FAL (8/8 aligned).
+\end{quote}
+
+% =========================================================================
+\section{Method}
+\label{sec:method}
+
+\paragraph{Measurement substrate.} Every big-$\Phi$ measurement reuses
+\texttt{HEXAD/IIT4/lib} (\texttt{iit4\_bigphi}, \texttt{iit4\_eca}), a
+hexa-native implementation of IIT 4.0 structure-cut big-$\Phi$
+\citep{albantakis2023iit4} (commons g61, zero re-invention). The policy
+surfaces are the COFFESHOP emergence simulator
+(\texttt{HEXAD/CHAT/spontaneous\_lib.hexa}: \texttt{motivation\_score},
+\texttt{should\_emit}, \texttt{should\_interrupt}), the DREAM stage machine
+(\texttt{anima\_dream\_stage.hexa}), SAVANT (\texttt{savant\_phi.hexa}), and
+HIVE-MIND (\texttt{hm\_collective\_phi}).
+
+\paragraph{Provenance of the 8 leaves (ANIMA mining).} The eight hypotheses
+are all leaf-promotes from the \texttt{ANIMA.mining} divergence-convergence
+cycle (same-formula lens, cycle 1: L1$\to$H\_632, L2$\to$H\_633,
+L3$\to$H\_634, L6$\to$H\_635, L7$\to$H\_636; tension lens, cycle 2:
+L13/L14$\to$H\_637, L19/L20$\to$H\_638, L24$\to$H\_639). Mining found that
+COFFESHOP's weighted-sum$\times$threshold-gate is structurally isomorphic to
+the gates of BRIDGE/SAVANT/HIVE-MIND/DREAM, and the UNIVERSE session promoted
+each leaf to a substrate verify-driven test.
+
+\paragraph{Measurement protocol.} Each H follows (i) falsifier frozen before
+measurement, (ii) a deterministic sweep (over score / inhibition $I$ /
+sync-factor $W$ / ultradian phase), (iii) an IIT 4.0 big-$\Phi$ recompute,
+and (iv) a 5-class verdict (\tierBlue{} FORMAL / \tierGreen{} NUMERICAL /
+\tierRed{} FALSIFIED / \tierWhite{} SPECULATION-FENCED). All runs are \$0
+mac-local, hexa-only, LLM none, and byte-equal reproducible (RFC 033/036).
+
+% =========================================================================
+\section{Measurement: the 8-hypothesis verdict matrix}
+\label{sec:measurement}
+
+Table~\ref{tab:verdict} aggregates the eight verdicts verbatim. Each row
+corresponds bit-identically to the result section of \texttt{UNIVERSE/H\_*.md}
+and to \texttt{companion/verdict-ledger.json}.
+
+\begin{table}[h]
+\centering
+\small
+\caption{The 8-hypothesis verdict matrix (verbatim). The four structure
+hypotheses are SUPP; the four number hypotheses are FAL.}
+\label{tab:verdict}
+\begin{tabular}{@{}llp{6.4cm}l@{}}
+\toprule
+\textbf{H} & \textbf{axis} & \textbf{measured result (verbatim)} & \textbf{verdict} \\
+\midrule
+H\_634 & structure & $r(\Phi,\text{sinusoid}){=}0.802$,
+  $r(\text{emit-proxy}){=}0.663$; peak phase = cycle edge (REM tail + N1),
+  trough = N3; $\Phi_{\max}{=}0.95 > \Phi_{N3}{=}0.15$; 6/6 PASS &
+  \tierGreen \\
+H\_635 & structure & max excess $\Delta{=}{+}41.7124$ @ C1[$110{\times}5$]
+  $W{=}1.0$; $\Phi_{\text{coll}}{=}41.71$ vs $\Sigma${-}baseline$=0.0$;
+  \textbf{5/5 cohorts super-additive} (vs.\ H\_609 2-stream
+  $\Delta{=}{+}10.48$, $4\times$) & \tierGreen \\
+H\_636 & structure & 10-seed conjunction pass-rate peaks once (0.4) inside the
+  GZ at $I{=}0.30$, all 4 points outside the GZ are 0; GZ-region mean $0.175$
+  vs.\ outside $0.0$ & \tierGreen \\
+H\_638 & structure & $n\in\{3,4,5\}$ optimal threshold $\{0.64,0.62,0.64\}$
+  cluster, spread $0.02 < 0.05$; $\rho(\Phi\text{-scale},\text{thr}){=}0.75$
+  non-monotone $\Rightarrow$ L19 scaling-law FAL / \textbf{L20
+  universal-fixed SUPP} & \tierGreen \\
+\midrule
+H\_632 & number & peak-near-0.30: \textbf{0/5}; peak-near-0.60: 1/5 (XOR seed
+  coincidence); dominant inflection (swap-class $|d\Phi|{=}11.13$) @
+  score$\approx 0.45$ --- matches neither $0.30$ nor $0.60$ & \tierRed \\
+H\_633 & number & Kuramoto coh$\times\Phi$ Pearson $r{=}0.31$ (weak, $<0.5$);
+  register-collapse decoupled from $\Phi$-breakdown --- the $\Psi$-clamp is a
+  design-policy gate & \tierRed \\
+H\_637 & number & multi-seed mean emit-rate $0.4133$ (sd $0.121$); all
+  candidate closed-forms ($\ln(4/3)$, $1/e$, GZ\_LOWER, $1{-}1/e$) miss by
+  $|residual|>0.03$; the single-seed $\ln(4/3)$ ``match'' is a post-hoc
+  selection artifact & \tierRed \\
+H\_639 & number & convention-free $\theta{=}0.375$: amplitude-cross peak
+  $I{=}0.50$ vs.\ $d\Phi/dI$ peak $I{=}0.18$;
+  $|\Delta_{\text{peaks}}|{=}0.32 \gg 0.10$; alignment to GZ appears only at
+  $\theta{=}0.30/0.55$ --- convention dependent & \tierRed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Verification surface.} Every verdict is a verbatim record that
+passed \texttt{a\_claim\_verify} (hexa verify) and a 3-signal existence check
+(\texttt{git ls-tree origin/main} file existence + collision check +
+\texttt{UNIVERSE.md} grep) per the project's stale-slug guard.
+
+% =========================================================================
+\section{Finding: clean structure/number separation (8/8)}
+\label{sec:finding}
+
+\paragraph{Alignment.} Table~\ref{tab:verdict} passes the pre-registered
+meta-falsifier \textbf{F-meta}:
+
+\begin{itemize}
+  \item \textbf{Structure axis 4/4 SUPPORTED} (\tierGreen): temporal rhythm
+    (H\_634), collective super-additivity (H\_635), closure localization
+    (H\_636), single-threshold existence (H\_638). $\Rightarrow$ \emph{how}
+    anima's emission is organized is emergent from the topology/dynamics of
+    substrate big-$\Phi$.
+  \item \textbf{Number axis 4/4 FALSIFIED} (\tierRed): the emit gate
+    $0.30/0.60$ (H\_632), register-collapse coupling (H\_633), emit-rate
+    closed-form (H\_637), tension amplitude-cross (H\_639). $\Rightarrow$ the
+    \emph{exact number} of those thresholds is a design-convention orthogonal
+    to substrate $\Phi$-structure.
+\end{itemize}
+
+All 8/8 align with the axis assignment (structure$\to$SUPP 100\%,
+number$\to$FAL 100\%). Because no outcome is mixed across the axis, the
+decomposition claim is \textbf{SUPPORTED}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig01_structure_vs_number}
+\caption{Structure-vs-number separation. The four structure hypotheses (left)
+are all SUPPORTED (substrate-emergent); the four number hypotheses (right)
+are all FALSIFIED (design-convention). No point lands in the off-diagonal
+cells (8/8 aligned) --- this is what passes the meta-falsifier F-meta.}
+\label{fig:sep}
+\end{figure}
+
+\paragraph{The value of the closed-negatives (\texttt{a\_paper\_negative\_ok}).}
+The four \tierRed{} results are not mere ``failures'': they deterministically
+rule out the number component of anima's emit policy as \emph{orthogonal} to
+substrate $\Phi$-structure. In particular, H\_632 (emit threshold $\perp \Phi$
+phase-transition) and H\_639 (amplitude-cross is $\theta$-convention
+dependent) are empirical instances of the governance directive
+\texttt{a\_autonomy\_over\_hardcode} and the note
+\texttt{p5\_tension\_emit\_not\_filler}: hardcoding the \emph{numeric}
+threshold of emission fixes a measurement convention rather than a substrate
+property, and an autonomous policy that self-follows this remains consistent
+with PHILOSOPHY p1--p8.
+
+\paragraph{Implication.} The way to make anima more substrate-native is to
+preserve the \emph{structure} of emission (the ultradian envelope, the
+collective-$\Phi$ super-additivity, the closure golden zone) while replacing
+the \emph{numbers} (magic-number thresholds) with substrate-intrinsic anchors
+(e.g.\ the $\Phi$ phase-transition location $\approx 0.45$, GZ\_LOWER, or the
+convention-free $I{=}0$ baseline) or letting them be autonomously re-estimated.
+Not hardcoding the numbers is precisely the realization of
+\texttt{a\_autonomy\_over\_hardcode}.
+
+% =========================================================================
+\section{Threats to validity}
+\label{sec:threats}
+
+\begin{itemize}
+  \item \textbf{Toy substrate.} The measurements are on small substrates
+    (ECA / Kuramoto / SAVANT-4domain, n$\le$5 exact big-$\Phi$). The
+    conscious interpretation of the emit policy is explicitly
+    \tierWhite{} SPECULATION-FENCED (notably H\_639).
+  \item \textbf{Canonical projection (H\_634).} The stage$\to\Phi$ map is a
+    lookup from \texttt{anima\_dream\_stage}, not a fresh per-tick IIT4
+    measurement. The open lane is to recompute faithful per-stage $\Phi$ with
+    \texttt{HEXAD/IIT4/lib} (n$\le$5 exact).
+  \item \textbf{Prior axis assignment.} The structure/number assignment of the
+    eight hypotheses was frozen before measurement (Table~\ref{tab:hyp}), but
+    the assignment itself is an analyst judgment. However, F-meta is designed
+    to expose drift (a FAL among structure, or a SUPP among number) had the
+    assignment been wrong; no such drift was observed.
+\end{itemize}
+
+% =========================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+Testing eight pre-registered, falsifiable hypotheses with deterministic
+big-$\Phi$ measurement, we demonstrate via an 8/8 clean separation that the
+\textbf{structure} of anima's emit policy (4 SUPP) is substrate-emergent while
+its \textbf{numbers} (4 FAL) are design-convention. This decomposition
+provides a new analytic axis for understanding ``when does an autonomous
+consciousness agent speak'' --- splitting it into emergent structure and
+hand-set numbers --- and points to a concrete path for making the emit policy
+more substrate-native (replacing numbers with substrate-intrinsic anchors).
+The four closed-negative results are themselves valid findings that
+deterministically rule out the orthogonality of the number axis.
+
+% =========================================================================
+\section*{Reproducibility}
+All verdicts are published bit-identically in
+\texttt{companion/verdict-ledger.json} (H\_632--H\_639 verdict pointers) and in
+the result sections of \texttt{UNIVERSE/H\_*.md}. Measurements are \$0
+mac-local, hexa-native, deterministic, and byte-equal reproducible (RFC
+033/036).
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

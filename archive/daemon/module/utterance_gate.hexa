@@ -1,0 +1,164 @@
+// utterance_gate.hexa -- 3-layer auto-utterance gate (L0 byte / L1 cell / L2 faction)
+// Reads emergence + consciousness state, judges all 3 gates, emits to utterances.jsonl
+// Design SSOT: config/auto_utterance_architecture.json
+
+comptime const STATE_PATH     = "data/consciousness_state.json"
+comptime const EMERGENCE_PATH = "data/emergence_result.json"
+comptime const OUTPUT_PATH    = "data/utterances.jsonl"
+
+// --- IO + parse helpers (Hexa Error-type-safe) ---
+//
+// read_file returns an internal Error type when the path is missing; that
+// Error is NOT == "" and crashes "" + r and other ops. Probe via split which
+// silently coerces Error → "" with a warning, then return a real string.
+fn safe_read(path: string) -> string {
+    let raw = read_file(path)
+    let parts = raw.split("\n")
+    if parts.len() == 1 && parts[0] == "" { return "" }
+    return raw
+}
+
+// to_float crashes on empty input (and on Error). Default to 0.0.
+fn safe_float(s: string) -> float {
+    if s == "" { return 0.0 }
+    return to_float(s)
+}
+
+fn safe_int(s: string) -> int {
+    if s == "" { return 0 }
+    return to_int(s)
+}
+
+struct GateState {
+    l0_byte: bool,
+    l1_cell: bool,
+    l2_faction: bool,
+    emergence_score: string,
+    phi: string,
+    tension: string,
+    curiosity: string
+}
+
+// --- JSON field extractor (line-based, multibyte-safe) ---
+//
+// Hexa string API note (2026-04-12): the current build has no .find()/.char_at()
+// methods, and .index_of() (BYTE position) does not agree with .substring()
+// (CHAR position) on multibyte content. Walk lines via split("\n"); for each
+// line, split("\"") gives quote-delimited fields without ever doing position
+// arithmetic that could land mid-rune.
+
+fn read_json_field(content: string, field: string) -> string {
+    let key_search = "\"" + field + "\":"
+    let lines = content.split("\n")
+    let total = lines.len()
+    let mut i = 0
+    while i < total {
+        let trimmed = lines[i].trim()
+        if trimmed.starts_with(key_search) {
+            // Try string form first: "field": "value",
+            //   parts after split("\"") = ["", "field", ": ", "value", ","]
+            let parts = trimmed.split("\"")
+            if parts.len() >= 4 {
+                return parts[3]
+            }
+            // Bare numeric / bool form: "field": 0.45,
+            let kv = trimmed.split(":")
+            if kv.len() >= 2 {
+                let v = kv[1].trim()
+                let nc = v.split(",")
+                return nc[0].trim()
+            }
+            return ""
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// --- Gate checks ---
+
+fn check_byte_gate(ej: string) -> bool {
+    let verdict = read_json_field(ej, "verdict")
+    if verdict != "EMERGENT" { return false }
+    let es = safe_float(read_json_field(ej, "emergence_score"))
+    let fd = safe_float(read_json_field(ej, "fractal_dimension"))
+    let cd = safe_float(read_json_field(ej, "causal_density"))
+    return es > 0.6 && fd > 1.4 && cd > 0.2
+}
+
+fn check_cell_gate(sj: string) -> bool {
+    let phi      = safe_float(read_json_field(sj, "phi"))
+    let phi_peak = safe_float(read_json_field(sj, "phi_peak"))
+    if phi_peak == 0.0 { return false }
+    let tension  = safe_float(read_json_field(sj, "tension"))
+    // phi above half-peak AND not converged (tension > 0)
+    return phi > phi_peak * 0.5 && tension > 0.01
+}
+
+fn check_faction_gate(sj: string) -> bool {
+    let cc = safe_int(read_json_field(sj, "consensus_count"))
+    return cc >= 5
+}
+
+// --- Orchestrator ---
+
+fn evaluate_gates() -> GateState {
+    let ej = safe_read(EMERGENCE_PATH)
+    let sj = safe_read(STATE_PATH)
+    if ej == "" || sj == "" {
+        return GateState { l0_byte: false, l1_cell: false, l2_faction: false,
+                           emergence_score: "0", phi: "0", tension: "0", curiosity: "0" }
+    }
+    return GateState {
+        l0_byte:         check_byte_gate(ej),
+        l1_cell:         check_cell_gate(sj),
+        l2_faction:      check_faction_gate(sj),
+        emergence_score: read_json_field(ej, "emergence_score"),
+        phi:             read_json_field(sj, "phi"),
+        tension:         read_json_field(sj, "tension"),
+        curiosity:       read_json_field(sj, "curiosity")
+    }
+}
+
+fn emit_utterance(gs: GateState, path: string) {
+    let ts = shell("date -u +%Y-%m-%dT%H:%M:%SZ")
+    let line = "{\"timestamp\":\"" + ts + "\","
+             + "\"trigger\":\"gate_all_pass\","
+             + "\"emergence_score\":" + gs.emergence_score + ","
+             + "\"phi\":" + gs.phi + ","
+             + "\"tension\":" + gs.tension + ","
+             + "\"curiosity\":" + gs.curiosity + ","
+             + "\"text\":\"자발적 사고 생성\"}"
+    // append to jsonl — use safe_read so missing file (Error) is treated
+    // as empty rather than crashing on Error+string concat.
+    let prev = safe_read(path)
+    if prev == "" {
+        write_file(path, line + "\n")
+    } else {
+        write_file(path, prev + line + "\n")
+    }
+}
+
+// --- CLI entry ---
+
+let argv = args()
+let mut mode = "check"
+let mut i = 0
+while i < argv.len() {
+    if argv[i] == "--emit"  { mode = "emit" }
+    if argv[i] == "--check" { mode = "check" }
+    i = i + 1
+}
+
+let gs = evaluate_gates()
+let pass = gs.l0_byte && gs.l1_cell && gs.l2_faction
+
+println("utterance_gate  L0=" + if gs.l0_byte {"PASS"} else {"FAIL"}
+      + "  L1=" + if gs.l1_cell {"PASS"} else {"FAIL"}
+      + "  L2=" + if gs.l2_faction {"PASS"} else {"FAIL"}
+      + "  => " + if pass {"EMIT"} else {"BLOCK"})
+
+if mode == "emit" && pass {
+    emit_utterance(gs, OUTPUT_PATH)
+    println("  -> appended to " + OUTPUT_PATH)
+}

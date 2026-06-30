@@ -1,0 +1,64 @@
+[tokenizer_bpe] module loaded — byte-level BPE tokenizer ready
+=== train_v3_moe_pilot (M4b Phase 4d real-BPE-IDS · d=64 V=151643 n_layer=1 T=4) ===
+[tokenizer_bpe] loaded 151387 merges, 151643 vocab in 323.803 ms
+  bpe: V=151643 n_toks=703
+  bpe: all ids in [0,V) = true
+  config: d=64 V=151643 E=2 h=256 n_layer=1 T=4 n_steps=20
+  block_size=49152 m_size=29164800 params (FP64 8B · 222 MB)
+  attn_scale = 1/sqrt(d) = 0.125
+  alloc OK
+  init OK (Q/K/V/Wo · MLP · per-layer distinct)
+  ── pilot multi-step + multi-layer + self-attn loop start ──
+  step=1 L_ce=648.526 tgt=85 top=0 logit[tgt]=0.378696 probs[0,0]=1.0 probs[T-1,0]=0.248218
+  step=2 L_ce=577.009 tgt=15 top=0 logit[tgt]=0.0720008 probs[0,0]=1.0 probs[T-1,0]=0.249931
+  step=3 L_ce=567.293 tgt=5386 top=0 logit[tgt]=20.7021 probs[0,0]=1.0 probs[T-1,0]=0.159551
+  step=4 L_ce=18.9299 tgt=25979 top=1 logit[tgt]=-11.1829 probs[0,0]=1.0 probs[T-1,0]=0.250443
+  step=5 L_ce=6.1652 tgt=0 top=1 logit[tgt]=-0.00869143 probs[0,0]=1.0 probs[T-1,0]=0.254255
+  step=6 L_ce=500.516 tgt=2153 top=0 logit[tgt]=7.14262 probs[0,0]=1.0 probs[T-1,0]=0.25
+  step=7 L_ce=5.74515 tgt=0 top=1 logit[tgt]=-0.0486905 probs[0,0]=1.0 probs[T-1,0]=1.89469e-18
+  step=8 L_ce=29.6384 tgt=5504 top=1 logit[tgt]=-24.2243 probs[0,0]=1.0 probs[T-1,0]=7.10282e-05
+  step=9 L_ce=330.648 tgt=60168 top=1 logit[tgt]=-325.443 probs[0,0]=1.0 probs[T-1,0]=0.251484
+  step=10 L_ce=612.741 tgt=329 top=1 logit[tgt]=1.32801 probs[0,0]=1.0 probs[T-1,0]=1.0
+  step=11 L_ce=5.16342 tgt=0 top=1 logit[tgt]=-0.108645 probs[0,0]=1.0 probs[T-1,0]=2.75559e-30
+  step=12 L_ce=44.435 tgt=5743 top=1 logit[tgt]=-39.4714 probs[0,0]=1.0 probs[T-1,0]=0.244179
+  step=13 L_ce=973.672 tgt=0 top=1 logit[tgt]=-0.0169181 probs[0,0]=1.0 probs[T-1,0]=0.760999
+  step=14 L_ce=36.6725 tgt=4352 top=1 logit[tgt]=-31.7698 probs[0,0]=1.0 probs[T-1,0]=0.246267
+  step=15 L_ce=37.4544 tgt=4370 top=1 logit[tgt]=-32.5728 probs[0,0]=1.0 probs[T-1,0]=0.251298
+  step=16 L_ce=969.05 tgt=0 top=1 logit[tgt]=-0.0385203 probs[0,0]=1.0 probs[T-1,0]=1.70919e-71
+  step=17 L_ce=942.395 tgt=20 top=1 logit[tgt]=0.139417 probs[0,0]=1.0 probs[T-1,0]=0.249884
+  step=18 L_ce=929.217 tgt=69 top=1 logit[tgt]=0.436435 probs[0,0]=1.0 probs[T-1,0]=0.249999
+  step=19 L_ce=4.9486 tgt=13 top=1 logit[tgt]=-0.124409 probs[0,0]=1.0 probs[T-1,0]=0.222283
+  step=20 L_ce=379.583 tgt=0 top=1 logit[tgt]=-0.0303775 probs[0,0]=1.0 probs[T-1,0]=0.250009
+  ── pilot self-attn loop end ──
+  ── inline greedy decode start ──
+  decode step=0 top_id=1 top_expert=1 logit[top]=-0.03019
+  decode step=1 top_id=1 top_expert=1 logit[top]=-0.0300973
+  decode step=2 top_id=1 top_expert=1 logit[top]=-0.0300955
+  decode step=3 top_id=1 top_expert=1 logit[top]=-0.0299617
+  decode step=4 top_id=151642 top_expert=0 logit[top]=407.75
+  decode step=5 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=6 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=7 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=8 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=9 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=10 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=11 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=12 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=13 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=14 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=15 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=16 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=17 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=18 top_id=151642 top_expert=1 logit[top]=938.767
+  decode step=19 top_id=151642 top_expert=1 logit[top]=938.767
+  ── inline greedy decode end ──
+DECODED_IDS: 1 1 1 1 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642 151642
+PER_POS_EXPERT: 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+TTR=0.1 unique=2/20
+DISTINCT_EXPERTS=2/2
+F-M4B-FIRE-1 TTR>=0.20: FAIL
+F-M4B-FIRE-3 distinct_experts>=2: PASS
+  Wq[L0,0,0]   baseline=-0.04 final=-0.0421994 |Δ|=0.00219944
+  Wo[LN-1,0,0] baseline=1.0 final=0.994964 |Δ|=0.0050365
+TRAIN_V3_MOE_PILOT END-TO-END: FAIL
+[cloud] remote exit 0

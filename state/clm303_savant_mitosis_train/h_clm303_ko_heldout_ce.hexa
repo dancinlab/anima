@@ -1,0 +1,47 @@
+// h_clm303_ko_heldout_ce.hexa — ENGINE-NATIVE held-out Korean CE for clm303 (savant+mitosis).
+//
+// A-ONLY measurement (jamo-consult OFF == clm303 pure decode). The jamo §6.5b consult
+// (ko_jamo_consult_emit) is NOT wired into any live CLM decode/CE path — _gen_clm_decode /
+// clm_decode_argmax / clm_forward_ce all run the pure CLMConvMoE forward with NO consult hook,
+// and the per-step forward ops (_clmd_fwd_logits) are private. So a B-arm (consult ON) cannot be
+// measured engine-native on the 303M byte logits without modifying core (out of scope, no forced
+// coupling). This harness reports the A-arm: clm303's held-out Korean next-byte CE via the live
+// core/clm_decode.hexa::clm_forward_ce (teacher-forced all-position CE, frozen-first).
+//
+// argv: <clm_path> <heldout_corpus> <nwin>
+import "core/clm_decode.hexa"
+
+fn main() {
+    let a = argv()
+    let b = 0
+    let mut i = 0
+    while i < len(a) { if a[i] == "--" { b = i + 1 } i = i + 1 }
+    let clm   = a[b + 0]
+    let corp  = a[b + 1]
+    let nwin  = to_int(a[b + 2])
+
+    println("=== clm303 HELD-OUT KOREAN CE (engine-native, A-only / jamo-consult UNWIRED) ===")
+    println("clm:     " + clm)
+    println("corpus:  " + corp + "  (held-out ko slice, deep offset > train window)")
+    println("nwin:    " + to_string(nwin))
+    println("decode:  live core/clm_decode.hexa::clm_forward_ce (CLMConvMoE int4 forward)")
+    let cu = cuda_available()
+    if cu == 1 { println("cuda_available: 1 -> forge own-GEMM DEVICE path") }
+    else       { println("cuda_available: 0 -> farr CPU path (single-thread scalar, HONEST)") }
+    println("decodable: " + (if clm_decodable(clm) { "true" } else { "false (NOT v0.2/v0.3 CLMX)" }))
+    println("-------------------------------------------------------------------------------")
+
+    let r = clm_forward_ce(clm, corp, nwin)
+    if to_string(r["ok"]) != "true" {
+        println("FORWARD_FAILED: " + to_string(r["reason"]))
+        exit(1)
+    }
+    println("config:    d=" + to_string(r["d"]) + " L=" + to_string(r["L"])
+        + " E=" + to_string(r["E"]) + " V=" + to_string(r["V"]) + " K=" + to_string(r["K"]))
+    println("windows:   " + to_string(r["windows"]))
+    println("model_ce:  " + to_string(r["model_ce"]) + "   (held-out Korean, nats/byte)")
+    println("shuffle_ce:" + to_string(r["shuffle_ce"]) + "   (target-reversed control)")
+    println("uniform_ce:" + to_string(r["uniform_ce"]) + "   (ln V = blind baseline)")
+    println("lt_uniform:" + to_string(r["lt_uniform"]) + "  lt_shuffle:" + to_string(r["lt_shuffle"]))
+    println("HELDOUT_CE_DONE")
+}

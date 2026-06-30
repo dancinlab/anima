@@ -1,0 +1,10 @@
+self/cuda/runtime_bf16.c(273): warning #550-D: variable "bytes" was set but never used
+      size_t bytes = (size_t)len * 2;
+             ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+self/cuda/runtime_cuda.c(1614): warning #177-D: function "_d2h_out_elem" was declared but never referenced
+  static int _d2h_out_elem(int64_t id, int64_t len) {
+             ^
+

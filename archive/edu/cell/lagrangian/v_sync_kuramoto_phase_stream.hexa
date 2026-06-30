@@ -1,0 +1,408 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  edu/cell/lagrangian/v_sync_kuramoto_phase_stream.hexa
+//                                                  (raw#9 hexa-only · 2026-05-01)
+//
+//  PURPOSE
+//    Mk.IX V_sync extension — **live (A,B) atan2 phase stream helper** that
+//    bridges the existing Kuramoto integer-fixed-point kernel
+//    (`v_sync_kuramoto.hexa`) to a **cross-stream phase coupling** API for
+//    the EEG ↔ CLM TLR (Task-Locking-Rate) integration (Phase-6 P2/P3).
+//
+//    The base `v_sync_kuramoto.hexa` (frozen, see commit `d072bb16`) projects
+//    θ from a deterministic node-hash poly_hash (raw#9 byte-identical
+//    reruns).  That projection is correct for the lattice corpus, but is
+//    **not adequate** for cross-stream coupling against an external
+//    analytic-signal phase (EEG α-band Hilbert phase, CLM (A,B) tension
+//    vector phase, etc.) because:
+//
+//      (1) external phases arrive as a (Re, Im) pair, not a hash list
+//      (2) cross-stream PLV (phase-locking value) and joint-r require the
+//          two phase trains to share TAU_PERM convention
+//      (3) selftest needs a deterministic synthetic CLM oscillator coupled
+//          to a synthetic EEG envelope so the harness can be real before
+//          real EEG is wired
+//
+//    This helper is **purely additive** — it re-uses (does not mutate) the
+//    constants and LUTs from `v_sync_kuramoto.hexa`, redefined locally so
+//    the file can be selftested in isolation.  No live EEG ingest, no I/O,
+//    no LLM, no sampling.  raw#9 deterministic.
+//
+//  CROSS-STREAM API  (pure, deterministic, LLM=none)
+//
+//    atan2_perm_x1000(im, re)              -> int           // per-mille rad ∈ [0, TAU_PERM)
+//    phase_from_ab_x1000(a, b)             -> int           // alias: A=re, B=im
+//    plv_x1000(theta_a, theta_b, n)        -> int           // |⟨exp(i Δθ)⟩|, ×1000
+//    joint_r_x1000(theta_a, theta_b, n)    -> int           // r over concatenated stream
+//    couple_step_phase_x1000(theta_clm,    -> int           // 1-step Kuramoto pull
+//                            theta_eeg,
+//                            k_x1000)
+//    couple_trajectory(theta_clm0,         -> list          // T-step coupled trajectory
+//                      eeg_phases, T,
+//                      omega_x1000,
+//                      k_x1000)
+//
+//  CONVENTIONS  (IDENTICAL to v_sync_kuramoto.hexa)
+//    Angles  : per-mille radians, 0 .. TAU_PERM (6283 ≈ 2π)
+//    cos/sin : ×1000 via 24-bin LUT (re-defined locally for self-containment)
+//    PLV     : ×1000 ∈ [0, 1000];   Δθ_k = θ_a[k] − θ_b[k]
+//                PLV = | (1/N) Σ exp(i Δθ_k) |
+//    joint_r : ×1000 ∈ [0, 1000];   r over (θ_a ∪ θ_b) stacked stream
+//    Kuramoto pull (1-step, dt=1):
+//                θ' = θ + ω + (K/1000) · sin(θ_drive − θ)
+//                wrap into [0, TAU_PERM)
+//
+//  CROSS-STREAM PROTOCOL  (EEG α-band ↔ CLM Kuramoto)
+//    1. EEG side (caller): scipy.signal.hilbert → analytic signal z = a + ib;
+//       feed (a, b) per channel per sample → atan2_perm_x1000 → θ_eeg[t]
+//       (caller's responsibility; this helper is hexa-only and never reads
+//        a numpy array directly).
+//    2. CLM side (this helper): seed θ_clm0; integrate
+//       couple_trajectory(θ_clm0, eeg_phases, T, ω, K) → θ_clm[0..T]
+//    3. Coupling metric:
+//         r_clm = r_order_param_x1000(θ_clm, T)   (use base file)
+//         plv   = plv_x1000(θ_clm, θ_eeg, T)
+//         joint = joint_r_x1000(θ_clm, θ_eeg, T)
+//    4. Verdict (mirror clm_eeg_p2 frozen criteria, no new floors):
+//         entrained iff plv ≥ C1_COUPLED_R_MIN_X1000 (700)
+//
+//  RAW
+//    raw#9  hexa-only · deterministic · no I/O · no LLM
+//    raw#10 honest C3 — selftest synthetic only, real EEG out-of-scope
+//    raw#65 idempotent — pure functions, byte-identical reruns
+//    raw#82 darwin-native — no host delegation
+//    raw#91 honest C3 — kernel fidelity to v_sync_kuramoto.hexa preserved
+//
+//  REQUIREMENTS NEGATIVE-CONFIRM
+//    DOES-NOT modify v_sync_kuramoto.hexa
+//    DOES-NOT touch _integrations/clm_eeg_p2.hexa
+//    DOES-NOT touch anima-eeg-core/tool/modules/_metrics/plv_preserving.hexa
+//    DOES-NOT introduce a new bitwise op (hexa 0.2.0 no ^/&)
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── constants (mirror of v_sync_kuramoto.hexa, verified byte-identical) ────
+let TAU_PERM      = 6283
+let HALF_PI_PERM  = 1571
+let PI_PERM       = 3142          // π × 1000
+// Quarter-turn quadrant boundaries
+let Q1_PERM       = 1571          // π/2
+let Q2_PERM       = 3142          // π
+let Q3_PERM       = 4712          // 3π/2
+
+// ─── 24-bin cos/sin LUT (IDENTICAL to v_sync_kuramoto.hexa) ─────────────────
+fn _cos_perm_x1000(theta_perm: int) -> int {
+    let mut t = theta_perm % TAU_PERM
+    if t < 0 { t = t + TAU_PERM }
+    if t < 131  { return 1000 }
+    if t < 393  { return 966 }
+    if t < 655  { return 866 }
+    if t < 916  { return 707 }
+    if t < 1178 { return 500 }
+    if t < 1440 { return 259 }
+    if t < 1702 { return 0 }
+    if t < 1963 { return 0 - 259 }
+    if t < 2225 { return 0 - 500 }
+    if t < 2487 { return 0 - 707 }
+    if t < 2749 { return 0 - 866 }
+    if t < 3010 { return 0 - 966 }
+    if t < 3272 { return 0 - 1000 }
+    if t < 3534 { return 0 - 966 }
+    if t < 3796 { return 0 - 866 }
+    if t < 4057 { return 0 - 707 }
+    if t < 4319 { return 0 - 500 }
+    if t < 4581 { return 0 - 259 }
+    if t < 4843 { return 0 }
+    if t < 5104 { return 259 }
+    if t < 5366 { return 500 }
+    if t < 5628 { return 707 }
+    if t < 5890 { return 866 }
+    if t < 6151 { return 966 }
+    return 1000
+}
+
+fn _sin_perm_x1000(theta_perm: int) -> int {
+    return _cos_perm_x1000(theta_perm - HALF_PI_PERM)
+}
+
+// ─── integer abs ────────────────────────────────────────────────────────────
+fn _abs_int(x: int) -> int {
+    if x < 0 { return 0 - x }
+    return x
+}
+
+// ─── integer sqrt (Newton, 24 iter) ─────────────────────────────────────────
+fn _isqrt(m: int) -> int {
+    if m <= 0 { return 0 }
+    let mut y = 1000
+    let mut k = 0
+    while k < 24 {
+        if y == 0 { y = 1 }
+        y = (y + m / y) / 2
+        k = k + 1
+    }
+    return y
+}
+
+// ─── atan2 (per-mille rad, 16-bin LUT in first octant + reflection) ─────────
+//
+//  Strategy: reduce (im, re) to first octant via abs+swap, run
+//  atan(t) LUT for t = im_abs/re_abs ∈ [0, 1] in 16 bins, then unfold the
+//  octant/quadrant mask.  Output ∈ [0, TAU_PERM).
+//
+//  16-bin LUT for atan(t) at t = k/16, k=0..16, in per-mille radians.
+//  Values = round(atan(k/16) × 1000):
+//    atan(0)=0, atan(1/16)≈62, 2/16≈124, 3/16≈186, 4/16≈245, 5/16≈304,
+//    6/16≈359, 7/16≈412, 8/16≈464, 9/16≈512, 10/16≈559, 11/16≈602,
+//    12/16≈644, 13/16≈682, 14/16≈719, 15/16≈753, 16/16=π/4=785.
+//
+fn _atan_first_octant_perm(num: int, den: int) -> int {
+    // 0 ≤ num ≤ den, den > 0
+    if den <= 0 { return 0 }
+    if num <= 0 { return 0 }
+    // t_x16 = floor(num*16/den) ∈ [0, 16]
+    let mut t16 = (num * 16) / den
+    if t16 < 0  { t16 = 0 }
+    if t16 > 16 { t16 = 16 }
+    if t16 == 0  { return 0 }
+    if t16 == 1  { return 62 }
+    if t16 == 2  { return 124 }
+    if t16 == 3  { return 186 }
+    if t16 == 4  { return 245 }
+    if t16 == 5  { return 304 }
+    if t16 == 6  { return 359 }
+    if t16 == 7  { return 412 }
+    if t16 == 8  { return 464 }
+    if t16 == 9  { return 512 }
+    if t16 == 10 { return 559 }
+    if t16 == 11 { return 602 }
+    if t16 == 12 { return 644 }
+    if t16 == 13 { return 682 }
+    if t16 == 14 { return 719 }
+    if t16 == 15 { return 753 }
+    return 785
+}
+
+// atan2 in per-mille rad ∈ [0, TAU_PERM).  Sign convention: standard
+// (atan2(0, 1) = 0; atan2(1, 0) = π/2; atan2(0,-1) = π; atan2(-1,0) = 3π/2).
+fn atan2_perm_x1000(im: int, re: int) -> int {
+    // Special axes
+    if im == 0 {
+        if re >= 0 { return 0 }
+        return PI_PERM
+    }
+    if re == 0 {
+        if im > 0 { return Q1_PERM }
+        return Q3_PERM
+    }
+    let im_abs = _abs_int(im)
+    let re_abs = _abs_int(re)
+    // First-octant: ensure num ≤ den (atan in [0, π/4])
+    let mut base = 0
+    let mut num  = 0
+    let mut den  = 0
+    if im_abs <= re_abs {
+        num = im_abs
+        den = re_abs
+        base = _atan_first_octant_perm(num, den)
+    } else {
+        // atan(t) = π/2 − atan(1/t)
+        num = re_abs
+        den = im_abs
+        base = HALF_PI_PERM - _atan_first_octant_perm(num, den)
+    }
+    // Quadrant unfold
+    if re > 0 && im > 0 { return base }                          // Q1
+    if re < 0 && im > 0 { return PI_PERM - base }                // Q2
+    if re < 0 && im < 0 { return PI_PERM + base }                // Q3
+    return TAU_PERM - base                                       // Q4
+}
+
+// Convenience alias: CLM (A, B) tension vector → phase.  A is "real-axis"
+// (cos-aligned), B is "imag-axis" (sin-aligned).  Caller's convention.
+fn phase_from_ab_x1000(a: int, b: int) -> int {
+    return atan2_perm_x1000(b, a)
+}
+
+// ─── PLV  (phase-locking value across two streams of equal length) ──────────
+// PLV = | (1/N) Σ exp(i (θ_a[k] − θ_b[k])) |  ∈ [0, 1], emitted ×1000.
+fn plv_x1000(theta_a: list, theta_b: list, n: int) -> int {
+    if n <= 0 { return 0 }
+    let mut sum_c = 0
+    let mut sum_s = 0
+    let mut k = 0
+    while k < n {
+        let d = theta_a[k] - theta_b[k]
+        sum_c = sum_c + _cos_perm_x1000(d)
+        sum_s = sum_s + _sin_perm_x1000(d)
+        k = k + 1
+    }
+    let mag2 = sum_c * sum_c + sum_s * sum_s
+    if mag2 <= 0 { return 0 }
+    let mag = _isqrt(mag2)
+    let mut plv = mag / n
+    if plv > 1000 { plv = 1000 }
+    if plv < 0    { plv = 0 }
+    return plv
+}
+
+// ─── joint_r (Kuramoto r over concatenated 2-stream phase set) ──────────────
+// r over the union of θ_a and θ_b (interleave-equivalent for r).  N_total = 2n.
+fn joint_r_x1000(theta_a: list, theta_b: list, n: int) -> int {
+    if n <= 0 { return 1000 }
+    let mut sum_c = 0
+    let mut sum_s = 0
+    let mut k = 0
+    while k < n {
+        sum_c = sum_c + _cos_perm_x1000(theta_a[k])
+        sum_s = sum_s + _sin_perm_x1000(theta_a[k])
+        sum_c = sum_c + _cos_perm_x1000(theta_b[k])
+        sum_s = sum_s + _sin_perm_x1000(theta_b[k])
+        k = k + 1
+    }
+    let mag2 = sum_c * sum_c + sum_s * sum_s
+    if mag2 <= 0 { return 0 }
+    let mag = _isqrt(mag2)
+    let mut r = mag / (2 * n)
+    if r > 1000 { r = 1000 }
+    if r < 0    { r = 0 }
+    return r
+}
+
+// ─── 1-step Kuramoto pull (CLM oscillator pulled toward EEG drive phase) ────
+//   θ' = θ + ω + (K/1000) · sin(θ_drive − θ),  wrap into [0, TAU_PERM)
+//
+//   ω, K  : ×1000 fixed-point (per-mille rad and unitless coupling)
+fn couple_step_phase_x1000(theta_clm: int, theta_eeg: int,
+                           omega_x1000: int, k_x1000: int) -> int {
+    let dphi = theta_eeg - theta_clm
+    let s    = _sin_perm_x1000(dphi)        // ×1000
+    let pull = (k_x1000 * s) / 1000          // per-mille rad
+    let mut t = theta_clm + omega_x1000 + pull
+    // Wrap
+    t = t % TAU_PERM
+    if t < 0 { t = t + TAU_PERM }
+    return t
+}
+
+// ─── full coupled trajectory (θ_clm[0..T-1]) ────────────────────────────────
+fn couple_trajectory(theta_clm0: int, eeg_phases: list, t_steps: int,
+                     omega_x1000: int, k_x1000: int) -> list {
+    let mut out = []
+    let mut theta = theta_clm0
+    out = out.push(theta)
+    let mut k = 1
+    while k < t_steps {
+        let drive = eeg_phases[k - 1]   // pull toward previous EEG sample
+        theta = couple_step_phase_x1000(theta, drive, omega_x1000, k_x1000)
+        out = out.push(theta)
+        k = k + 1
+    }
+    return out
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  SELFTEST  (synthetic CLM oscillator coupled to synthetic EEG envelope)
+//
+//  Three fixtures cover the spec:
+//    F1 — atan2 axis sanity:   (1,0)→0,  (0,1)→π/2,  (-1,0)→π,  (0,-1)→3π/2
+//    F2 — PLV identity:        plv(θ, θ, n) == 1000
+//    F3 — coupled vs uncoupled:
+//         Same EEG drive train; CLM seeded with θ_eeg[0] + π;
+//         strong coupling K=900 → PLV after 64 steps ≥ 700
+//         zero coupling  K=0   → PLV after 64 steps ≤ 200
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _assert(name: string, cond: bool) -> int {
+    if cond { println("  OK  " + name) ; return 0 }
+    println("  FAIL " + name) ; return 1
+}
+
+// Synthetic EEG α-band-ish phase train: linear ramp θ[k] = (k * step) mod TAU_PERM
+fn _make_ramp(t_steps: int, step: int, phi0: int) -> list {
+    let mut out = []
+    let mut k = 0
+    let mut th = phi0
+    while k < t_steps {
+        out = out.push(th % TAU_PERM)
+        th = th + step
+        k = k + 1
+    }
+    return out
+}
+
+fn main() {
+    println("v_sync_kuramoto_phase_stream selftest (Mk.IX cross-stream)")
+    let mut fails = 0
+
+    // ── F1: atan2 axis sanity ──
+    let a_pos_x = atan2_perm_x1000(0, 1000)
+    fails = fails + _assert("atan2(0,+) == 0", a_pos_x == 0)
+    let a_pos_y = atan2_perm_x1000(1000, 0)
+    fails = fails + _assert("atan2(+,0) == π/2", a_pos_y == HALF_PI_PERM)
+    let a_neg_x = atan2_perm_x1000(0, 0 - 1000)
+    fails = fails + _assert("atan2(0,-) == π", a_neg_x == PI_PERM)
+    let a_neg_y = atan2_perm_x1000(0 - 1000, 0)
+    fails = fails + _assert("atan2(-,0) == 3π/2", a_neg_y == Q3_PERM)
+    // Diagonal: (1,1) → π/4 ≈ 785
+    let a_diag = atan2_perm_x1000(1000, 1000)
+    fails = fails + _assert("atan2(+,+) ≈ π/4", a_diag >= 750 && a_diag <= 820)
+    // Q2: (1, -1) → 3π/4 ≈ 2356
+    let a_q2 = atan2_perm_x1000(1000, 0 - 1000)
+    fails = fails + _assert("atan2(+,-) ≈ 3π/4", a_q2 >= 2320 && a_q2 <= 2390)
+    // Q3: (-1, -1) → 5π/4 ≈ 3927
+    let a_q3 = atan2_perm_x1000(0 - 1000, 0 - 1000)
+    fails = fails + _assert("atan2(-,-) ≈ 5π/4", a_q3 >= 3890 && a_q3 <= 3960)
+    // Q4: (-1, 1) → 7π/4 ≈ 5498
+    let a_q4 = atan2_perm_x1000(0 - 1000, 1000)
+    fails = fails + _assert("atan2(-,+) ≈ 7π/4", a_q4 >= 5460 && a_q4 <= 5540)
+
+    // phase_from_ab alias check
+    let p_ab = phase_from_ab_x1000(1000, 1000)
+    fails = fails + _assert("phase_from_ab == atan2(b,a)", p_ab == a_diag)
+
+    // ── F2: PLV identity ──
+    let ramp = _make_ramp(32, 200, 0)
+    let plv_id = plv_x1000(ramp, ramp, 32)
+    fails = fails + _assert("plv(θ,θ) == 1000", plv_id == 1000)
+
+    // joint_r at full lock (both streams identical, phase=0 → cos LUT exact 1000):
+    // 64 samples all at cos=1000, sin=0 → mag=64000, /64 = 1000.
+    let lock = _make_ramp(32, 0, 0)
+    let r_lock = joint_r_x1000(lock, lock, 32)
+    fails = fails + _assert("joint_r(const,const) == 1000", r_lock == 1000)
+
+    // ── F3: coupled CLM oscillator vs uncoupled ──
+    // EEG drive: ramp with step=200 (≈ 0.2 rad/step), 64 samples
+    let eeg = _make_ramp(64, 200, 0)
+    // CLM seed: π out of phase
+    let theta0 = PI_PERM
+
+    // Strong coupling K=900, ω chosen near drive natural rate (200) for entrainment.
+    let traj_strong = couple_trajectory(theta0, eeg, 64, 200, 900)
+    let plv_strong  = plv_x1000(traj_strong, eeg, 64)
+    println("  plv_strong_x1000=" + plv_strong.to_string())
+    fails = fails + _assert("strong-coupling PLV ≥ 700 (entrained)", plv_strong >= 700)
+
+    // Zero coupling K=0, ω detuned (550 vs drive 200) → drift, PLV → low
+    let traj_zero = couple_trajectory(theta0, eeg, 64, 550, 0)
+    let plv_zero  = plv_x1000(traj_zero, eeg, 64)
+    println("  plv_zero_x1000="   + plv_zero.to_string())
+    fails = fails + _assert("zero-coupling PLV ≤ 200 (no lock)", plv_zero <= 200)
+
+    // Separation must be monotone
+    fails = fails + _assert("strong > zero (separation)", plv_strong > plv_zero)
+
+    // ── F4: determinism (3 reruns byte-identical) ──
+    let r1 = couple_trajectory(theta0, eeg, 64, 200, 900)
+    let r2 = couple_trajectory(theta0, eeg, 64, 200, 900)
+    let r3 = couple_trajectory(theta0, eeg, 64, 200, 900)
+    let plv1 = plv_x1000(r1, eeg, 64)
+    let plv2 = plv_x1000(r2, eeg, 64)
+    let plv3 = plv_x1000(r3, eeg, 64)
+    fails = fails + _assert("determinism 3 reruns", plv1 == plv2 && plv2 == plv3)
+
+    if fails == 0 {
+        println("v_sync_kuramoto_phase_stream: PASS")
+    } else {
+        println("v_sync_kuramoto_phase_stream: FAIL fails=" + fails.to_string())
+    }
+}

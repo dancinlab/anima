@@ -1,0 +1,106 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T10:42:26Z",
+  "n_trials": 8,
+  "units": 256,
+  "binding": "bind(a,b)=a XOR roll(b,37); test neutral=a XOR roll(a,37) (NO successor in input)",
+  "encoder": "whitened (proven; byte-match onchip_xlm_transition.enc_whitened)",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "task": "OPEN-VOCAB on-chip GENERATION: teacher-forced transition FC; test feeds code_t with NEUTRAL successor; chip PRODUCES g_hat; decode over FULL codebook (NO shortlist); shuffle-NULL + identity-NULL",
+  "metric": "gen_acc=P(argmax_{c!=t} overlap(g_hat_t, codebook[c]) == t+1), open-vocab cross-lingual",
+  "trials": [
+    {
+      "trial": 0,
+      "gen_acc": 0.4122448979591837,
+      "identity_acc": 0.3346938775510204,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 1,
+      "gen_acc": 0.42448979591836733,
+      "identity_acc": 0.3469387755102041,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 2,
+      "gen_acc": 0.3877551020408163,
+      "identity_acc": 0.2979591836734694,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 3,
+      "gen_acc": 0.4163265306122449,
+      "identity_acc": 0.34285714285714286,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 4,
+      "gen_acc": 0.43673469387755104,
+      "identity_acc": 0.3551020408163265,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 5,
+      "gen_acc": 0.43673469387755104,
+      "identity_acc": 0.3673469387755102,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 6,
+      "gen_acc": 0.5061224489795918,
+      "identity_acc": 0.43673469387755104,
+      "learned_hw": true,
+      "n_q": 245
+    },
+    {
+      "trial": 7,
+      "gen_acc": 0.4489795918367347,
+      "identity_acc": 0.37551020408163266,
+      "learned_hw": true,
+      "n_q": 245
+    }
+  ],
+  "summary": {
+    "learn_all_hw": true,
+    "gen_acc": {
+      "mean": 0.4336734693877551,
+      "sd": 0.034753849726380404,
+      "ci95": [
+        0.4095902802301705,
+        0.45775665854533965
+      ],
+      "ci_lo": 0.4095902802301705,
+      "chance": 0.02040816326530612
+    },
+    "identity_null_acc": {
+      "mean": 0.3571428571428571,
+      "sd": 0.03981273472912318,
+      "ci95": [
+        0.3295540395324038,
+        0.3847316747533104
+      ],
+      "hi": 0.3847316747533104
+    },
+    "shuffle_null": {
+      "mean": 0.018346938775510205,
+      "sd": 0.01196967917247068,
+      "hi_1.96sd": 0.04180750995355274,
+      "B": 200,
+      "p_value": 0.004975124378109453
+    },
+    "F_GEN_1_above_shuffle": "REFUTED: open-vocab on-chip GENERATION beats shuffle-NULL (gen ci_lo>NULL hi AND p<0.05) -> produced successor carries t->t+1 structure",
+    "F_GEN_2_not_echo": "REFUTED: generated successor beats the IDENTITY-NULL (untrained-FC echo) -> the chip PRODUCES a successor, it is not echoing code_t",
+    "above_shuffle_null": true,
+    "above_identity_null": true,
+    "generation_works": true
+  },
+  "DISPOSITION": "ON-CHIP OPEN-VOCAB GENERATION DEMONSTRATED (gen > shuffle-NULL AND > identity-NULL) -> retrieval->generation bridge CROSSED on silicon; Lane A PUBLIC full-LM (generation) flips toward earned-green"
+}

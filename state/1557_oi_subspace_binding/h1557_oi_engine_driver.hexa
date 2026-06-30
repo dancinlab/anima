@@ -1,0 +1,143 @@
+// h1557_oi_engine_driver.hexa — LOAD-ONCE engine-native OI-subspace probe driver.
+// a_engine_native_learning HARD-GATE: dumps residual-stream activations + runs
+// transplant-patched forwards from the LIVE core/bytegpt_decode.hexa (bg_load_ranged
+// ONCE + bg_dump_hidden_W / bg_forward_patched_W per job). Torch-free arithmetic
+// (ΔE/ΔA mean-diff, PCA, cosine, bind-flip scoring) is done by the python scorer
+// over THESE engine-dumped vectors — the DUMP is the engine-native evidence.
+//
+// argv: <bin_path> <jobs_path> <out_path>
+//
+// jobs_path lines (TAB-separated, one job per line):
+//   D <TAB> tag <TAB> byte_csv <TAB> layers_csv <TAB> positions_csv
+//       → for each (layer,pos) appends:  tag|L<l>_p<t> <TAB> v0 v1 ... v(d-1)
+//   P <TAB> tag <TAB> byte_csv <TAB> layer <TAB> pos <TAB> delta_csv
+//       → appends:  tag|PATCH <TAB> argmax <TAB> l0 l1 ... l(vocab-1)   (logits)
+//       delta_csv == "" → no-patch reference forward (parity sentinel).
+// byte_csv / delta_csv / layers_csv / positions_csv = comma-separated.
+import "core/bytegpt_decode.hexa"
+
+fn _csv_ints(s: string) -> list {
+    let out = []
+    if byte_len(s) == 0 { return out }
+    let parts = s.split(",")
+    let mut i = 0
+    while i < len(parts) { let p = to_string(parts[i]); if byte_len(p) > 0 { out.push(to_int(p)) } i = i + 1 }
+    return out
+}
+fn _csv_floats(s: string) -> list {
+    let out = []
+    if byte_len(s) == 0 { return out }
+    let parts = s.split(",")
+    let mut i = 0
+    while i < len(parts) { let p = to_string(parts[i]); if byte_len(p) > 0 { out.push(to_float(p)) } i = i + 1 }
+    return out
+}
+fn _ints_to_farr(xs: list) -> int {
+    let n = len(xs)
+    let f = farr_zeros(n)
+    let mut i = 0
+    while i < n { let _ = farr_set(f, i, to_float(to_int(xs[i]))); i = i + 1 }
+    return f
+}
+fn _floats_to_farr(xs: list) -> int {
+    let n = len(xs)
+    let f = farr_zeros(n)
+    let mut i = 0
+    while i < n { let _ = farr_set(f, i, to_float(xs[i])); i = i + 1 }
+    return f
+}
+fn _row_to_str(r: int, n: int) -> string {
+    let mut s = ""
+    let mut i = 0
+    while i < n {
+        if i > 0 { s = s + " " }
+        s = s + to_string(farr_get(r, i))
+        i = i + 1
+    }
+    return s
+}
+fn _argmax_n(a: int, n: int) -> int {
+    let mut bi = 0
+    let mut bv = farr_get(a, 0)
+    let mut k = 1
+    while k < n { let v = farr_get(a, k); if v > bv { bv = v; bi = k } k = k + 1 }
+    return bi
+}
+// split a line on tabs into a list of fields.
+fn _tab_split(line: string) -> list {
+    return line.split("\t")
+}
+
+fn main() {
+    let a = argv()
+    let mut b = 0
+    let mut i = 0
+    while i < len(a) { if a[i] == "--" { b = i + 1 } i = i + 1 }
+    let bin = a[b + 0]
+    let jobs = a[b + 1]
+    let out = a[b + 2]
+
+    let W = bg_load_ranged(bin)
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+
+    let lines = read_lines(jobs)
+    let mut done = 0
+    let mut j = 0
+    while j < len(lines) {
+        let line = to_string(lines[j])
+        if byte_len(line) > 0 {
+            let f = _tab_split(line)
+            let kind = to_string(f[0])
+            if kind == "D" {
+                let tag = to_string(f[1])
+                let ids_l = _csv_ints(to_string(f[2]))
+                let T = len(ids_l)
+                let ids = _ints_to_farr(ids_l)
+                let layers = _csv_ints(to_string(f[3]))
+                let positions = _csv_ints(to_string(f[4]))
+                let rec = bg_dump_hidden_W(W, ids, T, layers, positions)
+                // emit each requested (layer,pos) row
+                let mut li = 0
+                while li < len(layers) {
+                    let mut pi = 0
+                    while pi < len(positions) {
+                        let key = "L" + to_string(to_int(layers[li])) + "_p" + to_string(to_int(positions[pi]))
+                        if rec.contains_key(key) {
+                            let r = to_int(rec[key])
+                            let _ = append_file(out, tag + "|" + key + "\t" + _row_to_str(r, d) + "\n")
+                            let _ = farr_free(r)
+                        }
+                        pi = pi + 1
+                    }
+                    li = li + 1
+                }
+                let _ = farr_free(ids)
+                done = done + 1
+            }
+            if kind == "P" {
+                let tag = to_string(f[1])
+                let ids_l = _csv_ints(to_string(f[2]))
+                let T = len(ids_l)
+                let ids = _ints_to_farr(ids_l)
+                let layer = to_int(to_string(f[3]))
+                let pos = to_int(to_string(f[4]))
+                let delta_s = to_string(f[5])
+                let mut logits = 0
+                if byte_len(delta_s) == 0 || delta_s == "-" {
+                    logits = bg_forward_patched_W(W, ids, T, 0 - 1, 0 - 1, 0 - 1)
+                } else {
+                    let delta = _floats_to_farr(_csv_floats(delta_s))
+                    logits = bg_forward_patched_W(W, ids, T, layer, pos, delta)
+                    let _ = farr_free(delta)
+                }
+                let am = _argmax_n(logits, vocab)
+                let _ = append_file(out, tag + "|PATCH\t" + to_string(am) + "\t" + _row_to_str(logits, vocab) + "\n")
+                let _ = farr_free(logits)
+                let _ = farr_free(ids)
+                done = done + 1
+            }
+        }
+        j = j + 1
+    }
+    println("OI_DRIVER_DONE " + to_string(done) + " jobs")
+}

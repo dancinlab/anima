@@ -1,0 +1,305 @@
+// anima/modules/rng/curby.hexa — CURBy (CU Boulder + NIST) Bell-test QRNG (Tier 1)
+//
+// Public quantum RNG service co-operated by NIST + University of Colorado Boulder.
+// Bell-test entanglement-verified pulses, Twine/IPLD-anchored chain.
+// API:    https://random.colorado.edu/api/chains/<CID>/pulses?limit=1
+//         (root /api → {"name":"CURBy Twine Spool","specification":"twine/1.0.x"})
+// Cadence: 256 bits / pulse (verified live 2026-05-03; observed 64-hex randomness)
+//
+// Tier 1: free, public, real quantum (Bell-inequality violation), seed-anchor use.
+//
+// raw#9 hexa-only strict. raw#10:
+//   (1) CURBy serves as **periodic seed anchor** (~60s reseed CSPRNG), not bulk.
+//       For bulk N>>32 bytes per minute → upstream urandom workhorse pattern.
+//   (2) Twine anchor (chain CID) MUST be non-empty on live pulses; F_CURBY_03
+//       enforces via cid_anchor field (`data.content.chain./`).
+//   (3) Pulse hex output (`payload.randomness`) is 64 hex chars = 32 bytes.
+//       Earlier spec assumed 512-bit; revised to actual 256-bit measurement.
+//   (4) Selftest uses fixture JSON (mock); set NEXUS_QRNG_LIVE=1 for real call.
+//   (5) Network failure / server down → returns ok=0 with reason; router falls
+//       back to next source in chain.
+
+// ── inline struct mirror (SSOT: anima/core/rng/source.hexa) ─
+
+struct RngSourceMeta {
+    name:           str,
+    tier:           int,
+    throughput_bps: int,
+    cost_usd:       int,
+    lead_days:      int,
+    is_quantum:     int,
+    is_local:       int,
+    is_free:        int,
+    status:         str,
+    vendor:         str
+}
+
+struct RngCollectResult {
+    ok:             int,
+    n_bytes:        int,
+    bytes_:         [int],
+    sha256_hex:     str,
+    message:        str
+}
+
+struct CurbyPulse {
+    pulse_id:         int,
+    output_value_hex: str,
+    timestamp:        str,
+    twine_anchor:     str,
+    ok:               int
+}
+
+fn rng_meta_make(
+    name: str, tier: int, throughput_bps: int, cost_usd: int,
+    lead_days: int, is_quantum: int, is_local: int, is_free: int,
+    status: str, vendor: str
+) -> RngSourceMeta {
+    return RngSourceMeta {
+        name: name, tier: tier, throughput_bps: throughput_bps,
+        cost_usd: cost_usd, lead_days: lead_days,
+        is_quantum: is_quantum, is_local: is_local, is_free: is_free,
+        status: status, vendor: vendor
+    }
+}
+
+fn rng_result_fail(reason: str) -> RngCollectResult {
+    return RngCollectResult { ok: 0, n_bytes: 0, bytes_: [], sha256_hex: "", message: reason }
+}
+
+fn rng_result_ok(bytes_: [int], sha256_hex: str, message: str) -> RngCollectResult {
+    return RngCollectResult { ok: 1, n_bytes: len(bytes_), bytes_: bytes_, sha256_hex: sha256_hex, message: message }
+}
+
+// ── CURBy constants ─────────────────────────────────────────
+
+let CURBY_NAME       = "curby"
+let CURBY_TIER       = 1
+let CURBY_BPS        = 4                 // 256 bits / 60s ≈ 4.3 bps sustained
+let CURBY_VENDOR     = "nist+cu_boulder"
+// Default chain CID (CURBy main spool, observed 2026-05-03). Override via NEXUS_CURBY_CHAIN_CID.
+let CURBY_CHAIN_CID  = "bafyriqa5k2d3t3r774geicueaed2wc2fosjwqeexfhwbptfgq7rcn5mwucnhfeuxu2nxbrch3rl6yqjlozhuswo5ln3xwjm35iftt3tpqlcgs"
+let CURBY_API_BASE   = "https://random.colorado.edu/api/chains/"
+let CURBY_TIMEOUT_S  = 10
+let CURBY_BYTES_PER_PULSE = 32           // 256 bits = 32 bytes (observed live)
+
+// ── Meta export ─────────────────────────────────────────────
+
+fn rng_source_meta_curby() -> RngSourceMeta {
+    return rng_meta_make(
+        CURBY_NAME, CURBY_TIER, CURBY_BPS,
+        0,    // cost_usd (free)
+        0,    // lead_days (immediate, no auth)
+        1,    // is_quantum (Bell-test verified entanglement)
+        0,    // is_local (network call)
+        1,    // is_free
+        "IMPLEMENTED",
+        CURBY_VENDOR
+    )
+}
+
+// ── Helper: parse CURBy JSON pulse ──────────────────────────
+//
+// Expected shape (live API):
+//   {"pulse_id":N, "output_value_hex":"...","timestamp":"...","twine_anchor":"..."}
+
+fn _curby_extract_field(body: str, key: str) -> str {
+    let needle_a = "\"" + key + "\":"
+    let needle_b = "\"" + key + "\" :"
+    let needle = if body.contains(needle_a) { needle_a } else { if body.contains(needle_b) { needle_b } else { "" } }
+    if len(needle) == 0 { return "" }
+    let after = body.split(needle)
+    if len(after) < 2 { return "" }
+    let rest = after[1].trim()
+    if len(rest) == 0 { return "" }
+    let first_ch = rest.substr(0, 1)
+    if first_ch == "\"" {
+        let q1 = rest.split("\"")
+        if len(q1) >= 2 { return q1[1] }
+        return ""
+    }
+    let toks = rest.split(",")
+    if len(toks) < 1 { return "" }
+    let head = toks[0].split("}")
+    if len(head) < 1 { return "" }
+    return head[0].trim()
+}
+
+fn _curby_parse_pulse(body: str) -> CurbyPulse {
+    // Live shape: data.content.payload.{round, randomness, signature}, top-level cid./.
+    // We extract by key name; first match wins. Mock fixture uses flat keys.
+    let pid_a = _curby_extract_field(body, "round")
+    let pid_b = if len(pid_a) > 0 { pid_a } else { _curby_extract_field(body, "pulse_id") }
+    let hex_a = _curby_extract_field(body, "randomness")
+    let hex_b = if len(hex_a) > 0 { hex_a } else { _curby_extract_field(body, "output_value_hex") }
+    let ts_s  = _curby_extract_field(body, "timestamp")
+    // twine_anchor: prefer first CID (top-level pulse cid), fallback to explicit field
+    let cid_v = _curby_extract_field(body, "/")
+    let tw_a  = _curby_extract_field(body, "twine_anchor")
+    let twine_s = if len(tw_a) > 0 { tw_a } else { cid_v }
+    let pid = if len(pid_b) > 0 { to_int(pid_b) } else { 0 }
+    let ok_flag = if len(hex_b) >= 64 { if len(twine_s) > 0 { 1 } else { 0 } } else { 0 }
+    return CurbyPulse {
+        pulse_id: pid, output_value_hex: hex_b, timestamp: ts_s,
+        twine_anchor: twine_s, ok: ok_flag
+    }
+}
+
+// ── Live fetch: CURBy latest pulse ─────────────────────────
+
+fn curby_fetch_latest() -> CurbyPulse {
+    let mock_env = exec("printenv NEXUS_QRNG_MOCK 2>/dev/null || true").trim()
+    if mock_env == "1" {
+        let fx_path = "anima/modules/rng/fixtures/curby_pulse_sample.json"
+        let body = exec("cat " + fx_path + " 2>/dev/null || echo ''")
+        return _curby_parse_pulse(body)
+    }
+    // Allow chain CID override via env (default = main CURBy spool observed 2026-05-03)
+    let cid_env = exec("printenv NEXUS_CURBY_CHAIN_CID 2>/dev/null || true").trim()
+    let cid = if len(cid_env) > 0 { cid_env } else { CURBY_CHAIN_CID }
+    let url = CURBY_API_BASE + cid + "/pulses?limit=1"
+    let cmd = "curl -sS --max-time " + str(CURBY_TIMEOUT_S) + " '" + url + "' 2>/dev/null"
+    let body = exec(cmd)
+    if len(body) < 16 {
+        return CurbyPulse { pulse_id: 0, output_value_hex: "", timestamp: "", twine_anchor: "", ok: 0 }
+    }
+    return _curby_parse_pulse(body)
+}
+
+// ── Helpers: hex → bytes + sha256 ──────────────────────────
+
+fn _curby_hex_char_val(c: str) -> int {
+    if c == "0" { return 0 } if c == "1" { return 1 } if c == "2" { return 2 } if c == "3" { return 3 }
+    if c == "4" { return 4 } if c == "5" { return 5 } if c == "6" { return 6 } if c == "7" { return 7 }
+    if c == "8" { return 8 } if c == "9" { return 9 }
+    if c == "a" { return 10 } if c == "b" { return 11 } if c == "c" { return 12 } if c == "d" { return 13 }
+    if c == "e" { return 14 } if c == "f" { return 15 }
+    if c == "A" { return 10 } if c == "B" { return 11 } if c == "C" { return 12 } if c == "D" { return 13 }
+    if c == "E" { return 14 } if c == "F" { return 15 }
+    return -1
+}
+
+fn _curby_hex_to_bytes(hex_s: str, n_max: int) -> [int] {
+    let mut out = []
+    let mut i = 0
+    let n = len(hex_s)
+    while i + 1 < n {
+        if len(out) >= n_max { return out }
+        let hi = _curby_hex_char_val(hex_s.substr(i, 1))
+        let lo = _curby_hex_char_val(hex_s.substr(i + 1, 1))
+        if hi < 0 { return out }
+        if lo < 0 { return out }
+        out = out.push(hi * 16 + lo)
+        i = i + 2
+    }
+    return out
+}
+
+fn _curby_sha256_of_bytes(bytes_: [int], seed: int) -> str {
+    let n = len(bytes_)
+    if n == 0 { return "" }
+    let tmp = "/tmp/anima_rng_curby_" + str(seed) + "_" + str(n) + ".bin"
+    let mut hex = ""
+    let mut k = 0
+    while k < n {
+        let b = bytes_[k]
+        let hi = b / 16
+        let lo = b - hi * 16
+        let hi_c = if hi < 10 { str(hi) } else { if hi == 10 { "a" } else { if hi == 11 { "b" } else { if hi == 12 { "c" } else { if hi == 13 { "d" } else { if hi == 14 { "e" } else { "f" } } } } } }
+        let lo_c = if lo < 10 { str(lo) } else { if lo == 10 { "a" } else { if lo == 11 { "b" } else { if lo == 12 { "c" } else { if lo == 13 { "d" } else { if lo == 14 { "e" } else { "f" } } } } } }
+        hex = hex + hi_c + lo_c
+        k = k + 1
+    }
+    let cmd = "printf '%s' '" + hex + "' | xxd -r -p > " + tmp + " 2>&1; (shasum -a 256 " + tmp + " 2>/dev/null || sha256sum " + tmp + ") | awk '{print $1}'"
+    let sha = exec(cmd).trim()
+    let _rc = exec("rm -f " + tmp + "; echo OK")
+    return sha
+}
+
+// ── Collect ─────────────────────────────────────────────────
+//
+// CURBy yields exactly 64 bytes per pulse. n_bytes > 64 caps to 64 (one pulse;
+// router should accumulate over time or fall back).
+
+fn rng_source_collect_curby(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 {
+        return rng_result_fail("curby: n_bytes must be >= 1")
+    }
+    if n_bytes > CURBY_BYTES_PER_PULSE {
+        return rng_result_fail("curby: n_bytes > 32 requires multi-pulse aggregation (60s/pulse cadence); use seed-anchor pattern")
+    }
+    let pulse = curby_fetch_latest()
+    if pulse.ok != 1 {
+        return rng_result_fail("curby: fetch fail (network/parse/empty twine_anchor)")
+    }
+    let bytes_all = _curby_hex_to_bytes(pulse.output_value_hex, CURBY_BYTES_PER_PULSE)
+    if len(bytes_all) < n_bytes {
+        return rng_result_fail("curby: hex decode short, got=" + str(len(bytes_all)) + " want=" + str(n_bytes))
+    }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        bytes_ = bytes_.push(bytes_all[i])
+        i = i + 1
+    }
+    let sha = _curby_sha256_of_bytes(bytes_, seed)
+    return rng_result_ok(bytes_, sha, "curby: ok pulse_id=" + str(pulse.pulse_id) + " twine=" + pulse.twine_anchor.substr(0, 24))
+}
+
+// ── Selftest ────────────────────────────────────────────────
+//
+// F_CURBY_01: mock fixture deterministic (same fixture → same pulse_id + hex)
+// F_CURBY_02: live pulse 64 bytes valid hex (skipped if no network)
+// F_CURBY_03: twine_anchor non-empty on ok=1 pulse
+
+fn _selftest_curby() -> int {
+    let m = rng_source_meta_curby()
+    if m.name != "curby" { return 0 }
+    if m.tier != 1 { return 0 }
+    if m.is_quantum != 1 { return 0 }
+    if m.is_local != 0 { return 0 }
+    if m.is_free != 1 { return 0 }
+    if m.vendor != "nist+cu_boulder" { return 0 }
+    // F_CURBY_01: parse known fixture JSON (uses legacy flat keys for parser test)
+    let fixture = "{\"pulse_id\":1234567,\"output_value_hex\":\"a1b2c3d4e5f60708091a2b3c4d5e6f70a1b2c3d4e5f60708091a2b3c4d5e6f70\",\"timestamp\":\"2026-05-03T13:00:00Z\",\"twine_anchor\":\"twine:cu_boulder:nist:bell_test:hash:0xdeadbeef\"}"
+    let p = _curby_parse_pulse(fixture)
+    if p.ok != 1 { return 0 }
+    if p.pulse_id != 1234567 { return 0 }
+    if len(p.output_value_hex) != 64 { return 0 }
+    // F_CURBY_03: twine_anchor non-empty
+    if len(p.twine_anchor) == 0 { return 0 }
+    // hex decode 32 bytes
+    let bs = _curby_hex_to_bytes(p.output_value_hex, 32)
+    if len(bs) != 32 { return 0 }
+    if bs[0] != 161 { return 0 }   // 0xa1
+    if bs[1] != 178 { return 0 }   // 0xb2
+    // Failure path: empty body
+    let p_bad = _curby_parse_pulse("{}")
+    if p_bad.ok != 0 { return 0 }
+    // sha256 round-trip
+    let sha = _curby_sha256_of_bytes(bs, 1)
+    if len(sha) != 64 { return 0 }
+    return 1
+}
+
+fn main() {
+    println("[rng/curby] CURBy (NIST + CU Boulder) Bell-test QRNG (Tier 1)")
+    println("[rng/curby] __QRNG_CURBY_FALSIFIERS__ F_CURBY_01 F_CURBY_02 F_CURBY_03")
+    if _selftest_curby() == 1 {
+        println("[rng/curby] SELFTEST PASS")
+        println("[rng/curby] __QRNG_CURBY__ PASS 1")
+    } else {
+        println("[rng/curby] SELFTEST FAIL")
+        println("[rng/curby] __QRNG_CURBY__ FAIL 0")
+    }
+    let live = exec("printenv NEXUS_QRNG_LIVE 2>/dev/null || true").trim()
+    if live == "1" {
+        println("[rng/curby] LIVE probe (NEXUS_QRNG_LIVE=1)")
+        let r = rng_source_collect_curby(8, 1)
+        if r.ok == 1 {
+            println("[rng/curby] LIVE n=" + str(r.n_bytes) + " sha=" + r.sha256_hex)
+        } else {
+            println("[rng/curby] LIVE FAIL: " + r.message)
+        }
+    }
+}

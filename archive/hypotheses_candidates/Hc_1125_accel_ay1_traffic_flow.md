@@ -1,0 +1,28 @@
+---
+id: Hc_1125
+slug: accel-ay1-traffic-flow
+title: [AY1] Traffic Flow
+domain: corpus
+status: candidate-content-rescued-2026-05-12
+source_doc: docs/hypotheses/accel/acceleration-brainstorm-402.md
+source_lines: 1068
+promoted_at: 2026-05-11
+linked_h: accel-brainstorm-402 cluster (337 new sub-hypotheses)
+notes: "accel series AY, sub-H AY1. category: "
+rescue_status: rescued
+rescued_from: 12d05a890
+rescued_at: 2026-05-12
+---
+## Hypothesis
+Traffic Flow
+
+## Source Content (rescued from 12d05a890)
+Source: `docs/hypotheses/accel/acceleration-brainstorm-402.md` lines 1068-1070 (pre-move revision `12d05a890`).
+
+```markdown
+#### AY1: Traffic Flow
+- Bottleneck identification → bypass routes
+```
+
+## Mechanism
+- Bottleneck identification → bypass routes

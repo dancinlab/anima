@@ -1,0 +1,23 @@
+clm303 + ko-jamo consult logit-bias ON/OFF — engine-native (live core/clm_decode clm_forward_ce_jamo)
+host: summer (pool) · held-out Korean next-byte CE · clm303.clm (savant+mitosis 303M)
+harness: state/clm303_savant_mitosis_train/h_clm303_ko_jamo_logitbias_ce.hexa
+adapter: core/clm_decode.hexa clm_forward_ce_jamo (jamo consult as additive logit bias, gated)
+
+ARM A (jamo OFF = pure clm303):
+  base_ce = 3.186679889652893   jamo_ce = 3.186679889652893   delta = 0.0
+  → OFF is byte-exact no-op (consult off == pure decode) ✓ (guard satisfied)
+
+ARM B (jamo ON = logit-bias +5.0):
+  base_ce = 3.186679889652893   jamo_ce = 3.258174879823438   delta = +0.07149499017054506
+  → jamo consult logit-bias makes held-out Korean CE WORSE by +0.0715
+
+VERDICT (engine-native NEGATIVE): the ko-jamo consult (10-cell toy jamo-symbol Voronoi, H_1316/1327)
+  wired as an additive logit bias into the 303M CLM mouth does NOT help — it HURTS Korean next-byte
+  prediction (+0.0715 CE). This answers the user's "clm303 vs clm303+jamo 배선 차이" question:
+  the wiring is now measurable (aecde built clm_forward_ce_jamo) and the effect is negative.
+WHY (honest, a_no_llm_frame_trap): clm303 already learned Korean from raw bytes (ko CE 3.19 < shuffle/uniform);
+  a 10-cell jamo-symbol override injects off-manifold noise into byte logits rather than helping.
+SCOPE/CAVEAT (c9): single bias strength tested (+5.0); direction is HURTS. A swept bias might reduce harm
+  but is very unlikely to turn net-positive given the toy-cell vs 303M capacity mismatch. NOT terminal-wired
+  to production (gated experimental path, default OFF = byte-eq). a_substrate_disjoint: keep jamo consult
+  OUT of the production 303M decode path (this measures why).

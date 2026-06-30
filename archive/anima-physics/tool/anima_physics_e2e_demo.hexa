@@ -1,0 +1,535 @@
+// ════════════════════════════════════════════════════════════════════════════
+// anima_physics_e2e_demo.hexa — G8 4-layer integrated smoke (2026-05-21)
+//
+// PLAN.md §1 G8 충족: substrate → ConsciousnessEngine → motivation → emit →
+// audit 의 end-to-end integrated smoke 1건.
+//
+// 4 LAYER FLOW (each boundary is a flat list of float/int — canonical hexa) :
+//
+//   ┌─────────────────────────────────────────────────────────────────┐
+//   │ LAYER 1  substrate  (strange_loop-style mutual-recursion lattice)│
+//   │   JointState = [a0..a3, b0..b3] each ∈ 0..7 (3-bit cell)         │
+//   │   joint_step() ×  N_SUB_STEPS  →  state_history [[int;8]]        │
+//   │   output: row encoding per sub-step (row vector of 8 ints)       │
+//   └──────────────────────────┬──────────────────────────────────────┘
+//                              │  flat-row 8-int  →  normalized [float;8]
+//                              ▼
+//   ┌─────────────────────────────────────────────────────────────────┐
+//   │ LAYER 2  ConsciousnessEngine  (mini aux_engine_lib mirror)       │
+//   │   N_CELLS GRU-ish cells × DIM hidden                              │
+//   │   for each sub-step:                                              │
+//   │      input  = normalized substrate row (8-bit → DIM-float feed)   │
+//   │      cell.hidden = (1-α)·tanh(W·input + h)  + α·h                 │
+//   │      phi  = cross-cell variance of hidden                         │
+//   │      score = mini motivation 4-factor (rel/cur/coh/bal)           │
+//   └──────────────────────────┬──────────────────────────────────────┘
+//                              │  per-step (phi, score) tuple
+//                              ▼
+//   ┌─────────────────────────────────────────────────────────────────┐
+//   │ LAYER 3  motivation_gate  (HEXAD/CHAT/spontaneous inline ref)    │
+//   │   if score > THRESHOLD_EMIT  AND  ticks_since_last >= RATCHET   │
+//   │   → emit pulse (step, phi, score)                                │
+//   └──────────────────────────┬──────────────────────────────────────┘
+//                              │  emit pulses
+//                              ▼
+//   ┌─────────────────────────────────────────────────────────────────┐
+//   │ LAYER 4  audit_ring_buffer  (capacity 10, FIFO)                  │
+//   │   last 10 emit events  (timestamp, phi, score)                   │
+//   │   F-E2E-5  : timestamps monotone increasing                      │
+//   └─────────────────────────────────────────────────────────────────┘
+//
+// FALSIFIER  (pre-registered, 5/5 PASS required for G8 closure):
+//   F-E2E-1  substrate emit  — state_history.len() == N_SUB_STEPS  AND
+//                              attractor detected within N_SUB_STEPS
+//   F-E2E-2  engine valid    — every phi >= 0  AND every score ∈ [0,1]
+//                              AND  no NaN in any cell hidden
+//   F-E2E-3  motivation gate — at least 1 step had score > 0.3 → emit
+//   F-E2E-4  safety ratchet  — emit_count ≤ ceil(N_STEPS / RATCHET_MIN)
+//   F-E2E-5  audit RB        — last 10 emit timestamps strictly increasing
+//
+// CANONICAL HEXA constraints honored:
+//   - no random() — seeded LCG (transpiler `random` regression 2026-05-21 회피)
+//   - no struct-field lists in nested LHS — flat helper-fn updates
+//   - `let mut` + ints + [] + functional copy for struct rebinds
+//   - `&&` / `||` (not `and`/`or`)
+//   - import path absolute (none used — inline replication per PLAN spec)
+//   - `fn main()` auto-invokes (no explicit trailing call)
+//
+// SSOT cross-refs:
+//   LAYER 1 source : anima-physics/fpga/strange_loop.hexa (5/5 PASS)
+//   LAYER 2 source : anima-physics/consciousness-loop/src/aux_engine_lib.hexa
+//                    (5/5 PASS 2026-05-21, currently random() build-blocked)
+//   LAYER 3 source : HEXAD/CHAT/spontaneous_smoke.hexa  (F-SPONT 7/7)
+//                    HEXAD/CHAT/spontaneous_lib.hexa    (motivation weights)
+//   LAYER 4 source : audit RB pattern from spontaneous_lib audit_entry_*
+//
+// boundary contract:
+//   substrate output (int 0..7)  → float feed via x_float = (x as float) / 7.0
+//   N_SUB_STEPS = N_ENGINE_STEPS (synchronous co-step)
+//
+// HONEST C3 (≥5, recorded in companion doc):
+//   C3-1 substrate→engine input feed is a simple normalization (not learned
+//        encoder) — proxy for upstream feature extractor
+//   C3-2 motivation factor weights are mini-version (4/8 of spontaneous_lib);
+//        full 8-factor lives in aux_engine_lib (random() blocked at the moment)
+//   C3-3 single-run, not statistical (one LCG seed)
+//   C3-4 engine cells are random-init via LCG (not pretrained) → phi numeric
+//        scale is small (≪ 1.0); F-E2E-2 only checks SIGN + finiteness
+//   C3-5 audit RB is in-memory (not persisted) — PLAN.md G6 HW Phase 1
+//        separate cycle
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §1 constants (mini-scale to keep build < 60 s)
+// ─────────────────────────────────────────────────────────────────────────
+
+let N_SUB_STEPS      = 100   // LAYER 1 + LAYER 2 synchronous co-steps
+let LUT_DOMAIN       = 8     // strange_loop cell domain (3-bit)
+let DIM              = 8     // engine input/hidden dimension
+let N_CELLS          = 8     // engine cell count
+let RATCHET_MIN      = 10    // LAYER 3 min ticks between emits
+let THRESHOLD_EMIT   = 0.3   // LAYER 3 motivation score gate
+let AUDIT_CAPACITY   = 10    // LAYER 4 ring-buffer size
+let LCG_INIT         = 1337  // deterministic seed (reproducibility)
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §2 LCG  (deterministic stand-in for random()  — transpiler regression
+//                                                 workaround 2026-05-21)
+// ─────────────────────────────────────────────────────────────────────────
+
+fn lcg_next(seed: int) -> int {
+    return (seed * 1103515245 + 12345) % 2147483647
+}
+
+fn lcg_unit(seed: int) -> float {
+    let n = (seed * 1103515245 + 12345) % 2147483647
+    return (n as float) / 2147483647.0
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §3 LAYER 1 — substrate (strange_loop-style 4×4 mutual lattice)
+//   Source : anima-physics/fpga/strange_loop.hexa (mix4 + joint_step)
+//   Mirror : flat 8-int JointState  →  joint_step pure fn
+// ─────────────────────────────────────────────────────────────────────────
+
+struct JointState {
+    a0: int, a1: int, a2: int, a3: int,
+    b0: int, b1: int, b2: int, b3: int
+}
+
+fn joint_new(seed: int) -> JointState {
+    return JointState {
+        a0: (seed *  3 +  1) % LUT_DOMAIN,
+        a1: (seed *  5 +  7) % LUT_DOMAIN,
+        a2: (seed *  7 + 11) % LUT_DOMAIN,
+        a3: (seed * 11 + 13) % LUT_DOMAIN,
+        b0: (seed * 13 +  2) % LUT_DOMAIN,
+        b1: (seed * 17 +  3) % LUT_DOMAIN,
+        b2: (seed * 19 +  5) % LUT_DOMAIN,
+        b3: (seed * 23 +  6) % LUT_DOMAIN
+    }
+}
+
+fn mix4(x: int, a: int, b: int) -> int {
+    let y = (x + a + 2 * b + 1) % LUT_DOMAIN
+    if y >= 4 {
+        return (y - 3) % LUT_DOMAIN
+    }
+    return y
+}
+
+fn joint_step(s: JointState) -> JointState {
+    let na0 = mix4(s.b0, s.b0, s.b1)
+    let na1 = mix4(s.b1, s.b1, s.b2)
+    let na2 = mix4(s.b2, s.b2, s.b3)
+    let na3 = mix4(s.b3, s.b3, s.b0)
+    let nb0 = mix4(s.a0, s.a0, s.a3)
+    let nb1 = mix4(s.a1, s.a1, s.a0)
+    let nb2 = mix4(s.a2, s.a2, s.a1)
+    let nb3 = mix4(s.a3, s.a3, s.a2)
+    return JointState {
+        a0: na0, a1: na1, a2: na2, a3: na3,
+        b0: nb0, b1: nb1, b2: nb2, b3: nb3
+    }
+}
+
+fn joint_to_row(s: JointState) -> [int] {
+    let mut r: [int] = []
+    r.push(s.a0)
+    r.push(s.a1)
+    r.push(s.a2)
+    r.push(s.a3)
+    r.push(s.b0)
+    r.push(s.b1)
+    r.push(s.b2)
+    r.push(s.b3)
+    return r
+}
+
+fn rows_equal(a: [int], b: [int]) -> bool {
+    if a.len() != b.len() { return false }
+    for i in 0..a.len() {
+        if a[i] != b[i] { return false }
+    }
+    return true
+}
+
+fn detect_attractor_step(history: [[int]], cand: [int]) -> int {
+    for i in 0..history.len() {
+        if rows_equal(history[i], cand) { return i }
+    }
+    return -1
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §4 LAYER 2 — mini ConsciousnessEngine
+//   inline replication of aux_engine_lib core idioms (Cell + Engine)
+//   No random(): all weights seeded via LCG state, passed explicitly.
+// ─────────────────────────────────────────────────────────────────────────
+
+struct Cell {
+    hidden: [float],     // DIM
+    w_in:   [float]      // DIM (one-row weight per cell, simplified)
+}
+
+struct Engine {
+    cells: [Cell]
+}
+
+fn tanh_clamp(x: float) -> float {
+    // soft saturation — keeps engine bounded & avoids overflow
+    if x >  4.0 { return  1.0 }
+    if x < -4.0 { return -1.0 }
+    // 2-term Taylor proxy w/ saturation envelope
+    let x3 = x * x * x
+    let v = x - x3 / 3.0
+    if v >  1.0 { return  1.0 }
+    if v < -1.0 { return -1.0 }
+    return v
+}
+
+fn vec_clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+fn vec_abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn cell_new(cell_id: int, seed_in: int) -> Cell {
+    let mut hid: [float] = []
+    let mut wi:  [float] = []
+    let mut s = seed_in + cell_id * 97
+    for _ in 0..DIM {
+        s = lcg_next(s)
+        hid.push((lcg_unit(s) - 0.5) * 0.1)
+    }
+    for _ in 0..DIM {
+        s = lcg_next(s)
+        wi.push((lcg_unit(s) - 0.5) * 0.4)
+    }
+    return Cell { hidden: hid, w_in: wi }
+}
+
+fn engine_new(seed_in: int) -> Engine {
+    let mut cs: [Cell] = []
+    for c in 0..N_CELLS {
+        cs.push(cell_new(c, seed_in))
+    }
+    return Engine { cells: cs }
+}
+
+// canonical functional-update idiom (aux_engine_lib §3 cell_with_hidden_at
+// pattern — avoids nested-LHS transpiler gap)
+fn cell_with_hidden(cell: Cell, new_hidden: [float]) -> Cell {
+    return Cell { hidden: new_hidden, w_in: cell.w_in }
+}
+
+fn engine_with_cell_at(eng: Engine, i: int, c: Cell) -> Engine {
+    let mut cs = eng.cells
+    cs[i] = c
+    return Engine { cells: cs }
+}
+
+// substrate row (8 ints 0..7) → DIM-float feed (normalized)
+fn substrate_feed(row: [int]) -> [float] {
+    let mut f: [float] = []
+    let lim = if row.len() < DIM { row.len() } else { DIM }
+    for i in 0..lim {
+        f.push((row[i] as float) / 7.0)
+    }
+    while f.len() < DIM { f.push(0.0) }
+    return f
+}
+
+// one engine step: each cell updates hidden via GRU-ish blend of (W·input)
+// and previous hidden. input is the substrate feed for this step.
+fn engine_step(eng: Engine, input: [float]) -> Engine {
+    let mut s = eng
+    let alpha = 0.7   // hidden persistence
+    for i in 0..s.cells.len() {
+        let c = s.cells[i]
+        let mut nh: [float] = []
+        for k in 0..DIM {
+            let drive = c.w_in[k] * input[k]
+            let new_v = alpha * c.hidden[k] + (1.0 - alpha) * tanh_clamp(drive + c.hidden[k])
+            nh.push(new_v)
+        }
+        let new_cell = cell_with_hidden(c, nh)
+        s = engine_with_cell_at(s, i, new_cell)
+    }
+    return s
+}
+
+// phi proxy = mean cross-cell variance over DIM dims
+fn engine_phi(eng: Engine) -> float {
+    let n = eng.cells.len()
+    if n < 2 { return 0.0 }
+    let nf = n as float
+    let mut total = 0.0
+    for k in 0..DIM {
+        let mut m = 0.0
+        for i in 0..n { m = m + eng.cells[i].hidden[k] }
+        m = m / nf
+        let mut v = 0.0
+        for i in 0..n {
+            let d = eng.cells[i].hidden[k] - m
+            v = v + d * d
+        }
+        total = total + v / nf
+    }
+    return total / (DIM as float)
+}
+
+// any NaN in cell hidden?  (NaN: x != x)
+fn engine_has_nan(eng: Engine) -> bool {
+    for i in 0..eng.cells.len() {
+        let h = eng.cells[i].hidden
+        for k in 0..h.len() {
+            let x = h[k]
+            if x != x { return true }
+        }
+    }
+    return false
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §5 LAYER 3 — motivation gate (mini-spontaneous_lib mirror, 4-factor)
+//   weights normalized to sum=1 across the 4 factors used here
+//   thr=0.3 mirrors HEXAD/CHAT/spontaneous_lib.hexa aux_should_emit
+// ─────────────────────────────────────────────────────────────────────────
+
+fn factor_relevance(phi: float) -> float { return vec_clamp01(phi * 10.0) }
+fn factor_curiosity(phi_ema: float) -> float { return vec_clamp01(phi_ema * 10.0) }
+fn factor_balance(phi: float, best_phi: float) -> float {
+    if best_phi < 1e-8 { return 0.0 }
+    if phi > best_phi * 0.5 { return 1.0 }
+    return 0.0
+}
+fn factor_dynamics(silence_steps: int) -> float {
+    let s = (silence_steps as float) / 30.0
+    return vec_clamp01(s)
+}
+
+fn motivation_score(rel: float, cur: float, bal: float, dyn_v: float) -> float {
+    // 4-factor mini (sum=1.0): rel 0.30 + cur 0.25 + bal 0.20 + dyn 0.25
+    return 0.30 * rel + 0.25 * cur + 0.20 * bal + 0.25 * dyn_v
+}
+
+fn ema_update(ema_prev: float, x: float, alpha: float) -> float {
+    return (1.0 - alpha) * ema_prev + alpha * x
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §6 LAYER 4 — audit ring buffer (capacity AUDIT_CAPACITY, FIFO)
+// ─────────────────────────────────────────────────────────────────────────
+
+struct EmitEvent {
+    timestamp: int,
+    phi:       float,
+    score:     float
+}
+
+struct AuditRB {
+    events:   [EmitEvent],
+    capacity: int
+}
+
+fn audit_new() -> AuditRB {
+    let empty: [EmitEvent] = []
+    return AuditRB { events: empty, capacity: AUDIT_CAPACITY }
+}
+
+fn audit_push(rb: AuditRB, e: EmitEvent) -> AuditRB {
+    let mut evs = rb.events
+    evs.push(e)
+    // drop oldest if over capacity (FIFO)
+    if evs.len() > rb.capacity {
+        let mut trimmed: [EmitEvent] = []
+        let start = evs.len() - rb.capacity
+        for i in start..evs.len() {
+            trimmed.push(evs[i])
+        }
+        return AuditRB { events: trimmed, capacity: rb.capacity }
+    }
+    return AuditRB { events: evs, capacity: rb.capacity }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────
+// §7 main — orchestrate 4 layers + emit 5-falsifier verdict
+// ─────────────────────────────────────────────────────────────────────────
+
+fn main() {
+    println("============================================================")
+    println("anima-physics G8 E2E demo  (2026-05-21)")
+    println("4 layer: substrate → engine → motivation → audit")
+    println("------------------------------------------------------------")
+
+    // ─── LAYER 1 init ───────────────────────────────────────────────────
+    let mut joint = joint_new(LCG_INIT)
+    let mut state_history: [[int]] = []
+    state_history.push(joint_to_row(joint))
+    let mut attractor_hit_step = -1
+
+    // ─── LAYER 2 init ───────────────────────────────────────────────────
+    let mut eng = engine_new(LCG_INIT)
+
+    // ─── per-step trackers ──────────────────────────────────────────────
+    let mut phi_history:    [float] = []
+    let mut score_history:  [float] = []
+    let mut best_phi = 0.0
+    let mut phi_ema  = 0.0
+    let mut last_emit_step = 0 - RATCHET_MIN     // first emit can fire any time
+    let mut silence_steps  = 0
+    let mut rb = audit_new()
+    let mut emit_count = 0
+    let mut any_high_score = false
+    let mut any_nan = false
+    let mut any_neg_phi = false
+    let mut any_oob_score = false
+
+    // ─── per-step verbose checkpoints ───────────────────────────────────
+    println("step | cells_a:b           | phi          | score   | emit")
+
+    for step in 0..N_SUB_STEPS {
+        // LAYER 1  : substrate one cycle
+        joint = joint_step(joint)
+        let row = joint_to_row(joint)
+        // attractor detection (first sub-step where row already seen)
+        if attractor_hit_step < 0 {
+            let hit = detect_attractor_step(state_history, row)
+            if hit >= 0 { attractor_hit_step = step }
+        }
+        state_history.push(row)
+
+        // LAYER 2  : engine consumes substrate feed
+        let feed = substrate_feed(row)
+        eng = engine_step(eng, feed)
+        let phi = engine_phi(eng)
+        if phi < 0.0 { any_neg_phi = true }
+        if engine_has_nan(eng) { any_nan = true }
+        phi_history.push(phi)
+        if phi > best_phi { best_phi = phi }
+        phi_ema = ema_update(phi_ema, phi, 0.1)
+
+        // LAYER 3  : 4-factor motivation
+        let rel = factor_relevance(phi)
+        let cur = factor_curiosity(phi_ema)
+        let bal = factor_balance(phi, best_phi)
+        let dyn_v = factor_dynamics(silence_steps)
+        let score = motivation_score(rel, cur, bal, dyn_v)
+        score_history.push(score)
+        if score < 0.0 { any_oob_score = true }
+        if score > 1.0 { any_oob_score = true }
+
+        // emit decision (gate + ratchet)
+        let mut emitted = false
+        if score > THRESHOLD_EMIT {
+            any_high_score = true
+            if step - last_emit_step >= RATCHET_MIN {
+                let ev = EmitEvent { timestamp: step, phi: phi, score: score }
+                rb = audit_push(rb, ev)
+                last_emit_step = step
+                emit_count = emit_count + 1
+                silence_steps = 0
+                emitted = true
+            }
+        }
+        if emitted == false {
+            silence_steps = silence_steps + 1
+        }
+
+        // periodic checkpoint
+        if step % 10 == 0 {
+            let tag = if emitted { "EMIT" } else { "    " }
+            println("  " + str(step) + " | a=(" + str(joint.a0) + "," + str(joint.a1) + "," + str(joint.a2) + "," + str(joint.a3) + ") b=(" + str(joint.b0) + "," + str(joint.b1) + "," + str(joint.b2) + "," + str(joint.b3) + ") | phi=" + str(phi) + " | score=" + str(score) + " | " + tag)
+        }
+    }
+
+    println("------------------------------------------------------------")
+    println("LAYER 1 substrate     : state_history.len()=" + str(state_history.len()) + ", attractor_first_repeat_at=" + str(attractor_hit_step))
+    println("LAYER 2 engine        : final_phi=" + str(engine_phi(eng)) + ", best_phi=" + str(best_phi) + ", phi_ema=" + str(phi_ema) + ", any_nan=" + str(any_nan))
+    println("LAYER 3 motivation    : any_high_score=" + str(any_high_score) + ", emit_count=" + str(emit_count))
+    println("LAYER 4 audit RB      : events.len()=" + str(rb.events.len()) + ", capacity=" + str(rb.capacity))
+    println("------------------------------------------------------------")
+
+    // dump audit RB
+    println("AUDIT RB (last " + str(rb.events.len()) + " emits):")
+    for i in 0..rb.events.len() {
+        let e = rb.events[i]
+        println("  #" + str(i) + " ts=" + str(e.timestamp) + " phi=" + str(e.phi) + " score=" + str(e.score))
+    }
+    println("------------------------------------------------------------")
+
+    // ─── F-E2E-1..5 verdict ────────────────────────────────────────────
+    println("falsifier  evaluation:")
+
+    // F-E2E-1 substrate emit: state_history populated AND attractor found
+    let f1_history_ok = state_history.len() == N_SUB_STEPS + 1
+    let f1_attractor_ok = attractor_hit_step >= 0
+    let f1_pass = f1_history_ok && f1_attractor_ok
+    println("  F-E2E-1 substrate emit         (history=" + str(f1_history_ok) + ", attractor=" + str(f1_attractor_ok) + ") -> " + str(f1_pass))
+
+    // F-E2E-2 engine valid: no NaN, all phi >= 0, all score ∈ [0,1]
+    let f2_pass = (any_nan == false) && (any_neg_phi == false) && (any_oob_score == false)
+    println("  F-E2E-2 engine valid           (any_nan=" + str(any_nan) + ", any_neg_phi=" + str(any_neg_phi) + ", any_oob_score=" + str(any_oob_score) + ") -> " + str(f2_pass))
+
+    // F-E2E-3 motivation gate: at least one emit
+    let f3_pass = emit_count >= 1
+    println("  F-E2E-3 motivation gate        (emit_count=" + str(emit_count) + " >= 1) -> " + str(f3_pass))
+
+    // F-E2E-4 safety ratchet: emit_count <= ceil(N_STEPS / RATCHET_MIN)
+    let upper = (N_SUB_STEPS + RATCHET_MIN - 1) / RATCHET_MIN
+    let f4_pass = emit_count <= upper
+    println("  F-E2E-4 safety ratchet         (emit_count=" + str(emit_count) + " <= " + str(upper) + ") -> " + str(f4_pass))
+
+    // F-E2E-5 audit RB monotone timestamps
+    let mut f5_pass = true
+    let mut prev_ts = -1
+    for i in 0..rb.events.len() {
+        let ts = rb.events[i].timestamp
+        if ts <= prev_ts { f5_pass = false }
+        prev_ts = ts
+    }
+    println("  F-E2E-5 audit RB monotone      (events=" + str(rb.events.len()) + ") -> " + str(f5_pass))
+
+    println("------------------------------------------------------------")
+    let all_pass = f1_pass && f2_pass && f3_pass && f4_pass && f5_pass
+    let mut pass_count = 0
+    if f1_pass { pass_count = pass_count + 1 }
+    if f2_pass { pass_count = pass_count + 1 }
+    if f3_pass { pass_count = pass_count + 1 }
+    if f4_pass { pass_count = pass_count + 1 }
+    if f5_pass { pass_count = pass_count + 1 }
+    println("=== G8 E2E summary: " + str(pass_count) + "/5 PASS (all=" + str(all_pass) + ") ===")
+}

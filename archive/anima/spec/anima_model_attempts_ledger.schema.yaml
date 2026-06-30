@@ -1,0 +1,351 @@
+# anima/spec/anima_model_attempts_ledger.schema.yaml
+# anima model attempts ledger — JSONL field validation schema (정합)
+# 2026-05-07 — inline jsonl_schema → standalone yaml spec land (raw#15 additive)
+# raw#9 hexa orchestration / raw#10 honest C3 / raw#82 retraction protocol
+
+schema_version: anima/spec/v1
+schema_name: anima_model_attempts_ledger
+mk: 1
+version: 1
+status: design_v1_landed
+since: 2026-05-07
+layer: 4
+mode: mandatory
+
+scope:
+  domain: anima_self_tracking
+  lane: model_attempt_ledger_validation
+  ssot_jsonl: state/anima_model_attempts_ledger.jsonl
+  ssot_inline_origin: anima/.own (line 987-1021 jsonl_schema block)
+  consumer_of:
+    - anima/.own (anima-model-attempts-ledger-ssot)
+    - anima/.own (simple stack — complementary)
+    - anima/.own (silent-discovery-forbidden)
+  sister_specs:
+    - anima/spec/anima_cli_mk2.spec.yaml
+    - anima/spec/emerge_paradigm.spec.yaml
+
+description: |
+  본 schema는 ledger jsonl format SSOT validation contract. 모든 chat-cap
+  training/inference attempt entry는 본 schema 통과 mandate. 1-attempt-per-line,
+  bg_id+attempt_n+date 3-tuple uniqueness, raw#82 retraction (downgraded_at +
+  downgrade_reason 보존), enum value 정합 mandate.
+
+  validator: tool/transient_py/anima_model_attempts_ledger_validate.py (raw#37 opt-out)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 1: Required fields (24 fields, 모든 entry MUST present)
+# ─────────────────────────────────────────────────────────────────────────────
+required_fields:
+  bg_id:
+    type: string
+    description: BG identifier (BG-FY / BG-HA / BG-HU / etc.)
+    pattern: "^BG-[A-Z]+( .*)?$"
+  attempt_n:
+    type: int
+    description: Monotonic attempt index 1..N (3-tuple uniqueness with bg_id+date)
+    minimum: 1
+  date:
+    type: string
+    description: ISO-8601 date YYYY-MM-DD
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+  host:
+    type: string
+    description: Execution host (mac / mac MPS / ubu1 / ubu2 / H100 / etc.)
+  paradigm:
+    type: string
+    description: Training paradigm (pre-train-only / SFT-only / two-stage / persona-conditioned / curated-qa / BPE / capacity-scaling / few-shot / universe-brain-map / combined-R1 / etc.) — open architecture
+  arch_summary:
+    type: string
+    description: Architecture summary (e.g., "18M 6L/384d/6h byte-vocab=256")
+  total_params:
+    type: int_or_null
+    description: Total parameter count (post-training) — NULL if not measured
+    minimum: 0
+  corpus_path:
+    type: string_or_null
+    description: Corpus path (state/<corpus>/...) — NULL if pre-existing ledgered model
+  corpus_size_mb:
+    type: float_or_null
+    description: Corpus size in MB — NULL if not measured
+    minimum: 0.0
+  corpus_chat_template_ratio:
+    type: float_or_null
+    description: Chat-template ratio in corpus (0.0-1.0)
+    minimum: 0.0
+    maximum: 1.0
+  corpus_hangul_ratio:
+    type: float_or_null
+    description: Hangul ratio in corpus (0.0-1.0)
+    minimum: 0.0
+    maximum: 1.0
+  training_steps:
+    type: int_or_array_or_null
+    description: |
+      Total training steps — NULL if inference-only attempt; INT for single-stage train;
+      LIST[int] for multi-ckpt retrieval / retroeval BGs (BG-HZ precedent: training_steps=
+      [500,1000,2000] enumerates retrieved ckpt step axis). Use bg_kind=multi_ckpt_retrieval
+      to disambiguate single-int vs list intent. raw#15 additive union — backward-compatible
+      with all existing int|null entries.
+    minimum: 0
+  train_loss_final:
+    type: float_or_null
+    description: Final training loss (NULL if not measured)
+  peak_ckpt_step:
+    type: int_or_string_or_null
+    description: |
+      Peak checkpoint step (NULL if no early stopping). Canonical type=int|null,
+      but ledger has historical string entries with prose qualifiers
+      (e.g., "step 1500 collapse" / "step 500 (★ best signal)"). raw#10 honest C3:
+      type drift accepted as warn-level for backward compat; future entries SHOULD
+      use int + move prose to notes field.
+  eval_v1_class:
+    type: string_or_null
+    description: V1 (narrow) eval verdict
+  eval_v2_class:
+    type: string_or_null
+    description: V2 (strict) eval verdict
+  eval_v3_class:
+    type: string_or_null
+    description: V3 (cycle+persona+coherence) eval verdict, NULL if V3 not yet
+  manual_review_domain_match:
+    type: string_or_null
+    description: Manual review match score (e.g., "13/15")
+  peak_eval_v2_pass:
+    type: string_or_int_or_null
+    description: Peak V2 pass score (e.g., "3/10" or int 0). raw#10 honest C3 — int 0 historical entries accepted via _or_int_or_null union.
+  persona_repetition_cycle_count:
+    type: int_or_string_or_null
+    description: |
+      Persona prefix cycle count. Canonical type=int|null, but ledger has historical
+      string entries with prose qualifiers (e.g., "high (sample mode all)" / "low (KO-fluent nonsense)").
+      raw#10 honest C3: type drift accepted as warn-level (not error) for backward compat;
+      future entries SHOULD use int (with prose moved to notes field).
+    minimum: 0
+  final_class:
+    type: enum
+    description: Final classification verdict (canonical roots; parenthetical suffix allowed for sub-classification per raw#15 additive)
+    enum:
+      - FAILED
+      - FALSIFIED
+      - BLOCKED
+      - PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT
+      - PARTIAL_PASS_NO_CONTEXT
+      - PARTIAL_PASS_NO_CONTEXT_v2
+      - WEAK_PARTIAL
+      - TRUE_PARTIAL_PASS_PHASE_2
+      - SIMPLE_STACK_PASS
+      - SIMPLE_STACK_FAIL
+      - SEED_LUCK_FAIL
+      - SUPERSEDED
+      - CORPUS_READY
+      - CORPUS_BUILD_READY
+      - V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED
+      - V3_RETROEVAL_EXTENSION_LANDED
+      - GAP_ANALYSIS_LANDED
+      - TRUE_PARTIAL_PASS_W_F4
+      - TOOLING_LEDGER_VALIDATOR_FIX_LANDED
+      - PENDING
+    enum_match_mode: prefix_or_root
+    enum_match_note: |
+      raw#10 honest C3: existing ledger has parenthetical suffix entries
+      (e.g., "FAILED (peak-then-collapse)", "FAILED (degenerate filler collapse)",
+      "WEAK_PARTIAL ★", "BLOCKED_CKPT_NEVER_PERSISTED", "PENDING (context cut)",
+      "FALSIFIED at 18M"). validator MUST accept "<root>" or "<root> (<suffix>)"
+      or "<root> ★" or "<root>_<suffix>" pattern (root prefix match against enum).
+      strict-equality variant available via --strict flag.
+
+      raw#15 additive 2026-05-07 BG-IW extension — added 6 enum values to legalize
+      honest verdict labels emitted by prior BGs without rewriting their entries:
+        SIMPLE_STACK_FAIL — simple stack ≥1 cell fail
+                                                       (BG-FK precedent)
+        SEED_LUCK_FAIL                              — non-reproducibility under seed pin
+                                                       (BG-IE 2/10 vs BG-HP 3/10 same paradigm)
+        SUPERSEDED                                  — raw#82 retraction protocol marker for
+                                                       intermediate-state entries replaced by
+                                                       later final-verdict append
+        CORPUS_READY / CORPUS_BUILD_READY           — corpus-build BG completion (downstream
+                                                       BG sequential queue ready); BG-IK precedent
+        V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED — tooling BG (V3 evaluator standalone retry +
+                                                       8-BG retroeval); BG-IJ precedent
+
+      out-of-enum verdicts발견 시 silent-discovery-forbidden 정합으로
+      enum_violations에 명시 mandate.
+  lesson_implications:
+    type: array
+    description: Lesson cross-link array (e.g., ["Lesson G missing ingredient"])
+    items_type: string
+  artifacts:
+    type: array
+    description: Artifact path array
+    items_type: string
+  cross_link_h_id:
+    type: array
+    description: H_ hypothesis cross-link array (e.g., ["H_005", "H_022"])
+    items_type: string
+  cross_link_roadmap:
+    type: array
+    description: .roadmap.X cross-link array
+    items_type: string
+  hf_private_status:
+    type: enum
+    description: HF Hub upload lifecycle status (정합)
+    enum:
+      - NOT_PROMOTED
+      - PRIVATE_UPLOADED
+      - PUBLIC_PROMOTED
+      - NOT_APPLICABLE
+    enum_match_mode: prefix_or_root
+    enum_match_note: |
+      parenthetical suffix 허용 (root prefix match).
+      BG-IW append 2026-05-07: NOT_APPLICABLE 추가 — tooling-only BG (evaluator script /
+      validator / corpus-build) entry는 HF promote 적용 X (BG-IJ precedent).
+  notes:
+    type: string_or_null
+    description: Additional observations
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 2: Optional fields (5 fields, conditionally present)
+# ─────────────────────────────────────────────────────────────────────────────
+optional_fields:
+  capacity_axis:
+    type: string_or_null
+    description: Capacity axis (3M / 18M / 27M / 50M / 100M / etc.)
+  tokenizer_axis:
+    type: enum_or_null
+    description: Tokenizer axis (NULL allowed for inference-only / unmeasured entries)
+    enum:
+      - byte-256
+      - byte-vocab=256
+      - BPE-4K
+      - BPE-7K
+      - BPE-8K
+      - BPE-12K
+      - BPE-16K
+      - BPE-32K
+    enum_match_mode: prefix_or_root
+    enum_match_note: |
+      BG-IW append 2026-05-07: BPE-7K 추가 (BG-IG corpus-bound merges cap precedent).
+      enum_match_mode strict→prefix_or_root 전환 — parenthetical suffix qualifier 허용
+      (e.g., "BPE-7K (16K target REDUCED — corpus caps merges at ~7280)").
+  regularization:
+    type: string_or_null
+    description: Regularization summary (e.g., "dropout 0.3 + WD 0.1 + ls 0.1")
+  early_stopping:
+    type: bool_or_null
+    description: Early stopping enabled flag
+  val_loss_split_ratio:
+    type: float_or_null
+    description: Validation split ratio (0.0-1.0, NULL if no split)
+    minimum: 0.0
+    maximum: 1.0
+  bg_kind:
+    type: enum_or_null
+    description: |
+      BG kind taxonomy (BG-IW append 2026-05-07) — disambiguates training_steps
+      single-int vs list[int] semantic and tooling/corpus/retroeval lanes.
+      Default treatment when absent = "train" (backward-compat for pre-IW entries).
+    enum:
+      - train
+      - infer
+      - corpus_build
+      - retroeval
+      - multi_ckpt_retrieval
+      - tooling
+      - synthesis_doc
+    enum_match_mode: strict
+  superseded_by:
+    type: string_or_null
+    description: |
+      retraction protocol marker (BG-IW append 2026-05-07) — references the
+      canonical successor entry (e.g., "attempt_n=20_line_24") when this entry is
+      an intermediate-state record replaced by a later final-verdict append.
+      Pair with final_class=SUPERSEDED. Distinct from downgraded_at/_reason
+      (which preserve once-PASS-now-FAIL audit trail).
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 3: Retraction fields (raw#82 정합, downgraded entry MUST present both)
+# ─────────────────────────────────────────────────────────────────────────────
+retraction_fields:
+  downgraded_at:
+    type: string
+    description: ISO-8601 datetime of retraction (raw#82 protocol)
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}([ T][0-9]{2}:[0-9]{2}(:[0-9]{2})?)?$"
+  downgrade_reason:
+    type: string
+    description: Retraction reason summary (raw#82 mandate)
+
+retraction_rule:
+  description: |
+    raw#82 retraction protocol — false PASS 강등 시 entry 보존 (NOT silent overwrite),
+    downgraded_at + downgrade_reason 둘 다 add. validator MUST verify pair-presence:
+    한 field만 있으면 retraction violation.
+  enforcement: pair_presence_required
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 4: Validation rules (raw#10 honest C3 ≥5 mandate)
+# ─────────────────────────────────────────────────────────────────────────────
+validation_rules:
+  - id: VR-1
+    name: required_field_presence
+    description: 모든 required_fields key가 entry에 present (null value 허용 — *_or_null types)
+    severity: error
+  - id: VR-2
+    name: type_check
+    description: 모든 field type schema 정합 (int/float/string/array/bool); array items_type 검증 포함
+    severity: error
+  - id: VR-3
+    name: enum_value_check
+    description: enum field value가 enum list에 정합; enum_match_mode (strict / prefix_or_root) 지정 따름
+    severity: error
+  - id: VR-4
+    name: 3tuple_uniqueness
+    description: bg_id + attempt_n + date 3-tuple은 ledger 전체에서 UNIQUE (no duplicate)
+    severity: error
+    rationale: application-rule "bg_id + attempt_n + date 3-tuple unique mandate"
+  - id: VR-5
+    name: raw82_retraction_pair_presence
+    description: downgraded_at present 시 downgrade_reason ALSO present mandate (vice versa)
+    severity: error
+    rationale: application-rule + raw#82 retraction protocol
+  - id: VR-6
+    name: pattern_check
+    description: bg_id pattern (BG-XX), date ISO-8601 pattern, downgraded_at datetime pattern 정합
+    severity: warn
+  - id: VR-7
+    name: range_check
+    description: float ratio fields (corpus_*_ratio / val_loss_split_ratio) 0.0-1.0 범위; int counter fields ≥0
+    severity: warn
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 5: honest C3 (raw#10, ≥5 mandate)
+# ─────────────────────────────────────────────────────────────────────────────
+honest_c3:
+  - "본 schema는 inline jsonl_schema field 정합 — ledger record content는 변경 X (additive spec extraction only, raw#15)"
+  - "enum_match_mode prefix_or_root는 existing ledger entry preservation 위해 도입 — strict mode (--strict flag) 사용 시 'FAILED (peak-then-collapse)' 같은 suffix entry는 enum violation으로 분류됨"
+  - "enum 외 verdict 발견 시 (e.g., SIMPLE_STACK_FAIL / SEED_LUCK_FAIL / BLOCKED_CKPT_NEVER_PERSISTED) silent-discovery-forbidden 정합으로 violations list 명시 — silent acceptance 금지"
+  - "raw#82 retraction pair presence (downgraded_at + downgrade_reason)는 hard error — 한 field만 add 시 silent overwrite 위험으로 entry 보존 의도 훼손"
+  - "validator는 raw#9 hexa stdlib json 정합으로 jsonl line-by-line parsing — schema yaml은 PyYAML import (raw#37 transient_py opt-out 정합)"
+  - "본 schema의 final_class enum은 task spec verbatim list (10 values) — ledger 실제 사용 verdict 중 enum 외 4종 (SIMPLE_STACK_FAIL / SEED_LUCK_FAIL / BLOCKED_CKPT_NEVER_PERSISTED / canonical-root만 매치되는 suffix variants)은 prefix_or_root mode에서도 root match 안되면 violation"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 6: Validator interface contract
+# ─────────────────────────────────────────────────────────────────────────────
+validator:
+  script: tool/transient_py/anima_model_attempts_ledger_validate.py
+  raw37_opt_out: true
+  inputs:
+    - schema_yaml: anima/spec/anima_model_attempts_ledger.schema.yaml
+    - ledger_jsonl: state/anima_model_attempts_ledger.jsonl
+  outputs:
+    - validation_report_json: state/anima_model_attempts_ledger_validation_<DATE>/validation_report.json
+  flags:
+    - --strict: enum strict equality (no prefix match)
+    - --schema: override schema yaml path
+    - --ledger: override ledger jsonl path
+    - --out: override validation_report.json output path
+  exit_codes:
+    0: validation_pass (no errors)
+    1: validation_fail (errors present)
+    2: schema_load_error
+    3: ledger_load_error

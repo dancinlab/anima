@@ -1,0 +1,35 @@
+================================================================
+  XENO X10 — hive-mind invariant (4-cell × 32 sample = n=128)
+================================================================
+
+  detector = XENO/detector/invariant_detector.hexa (X1 · 🟢 5/5)
+  regime   = X7-aligned n=128 dense (paper #1411 calibrated band)
+  axis     = hive-mind integration (IIT4 axiom: 통합 > 분리)
+
+  [a] independent 4-cell (4 separate LCG walkers, n=128)
+        density=0.578125
+        phi=0.130592 irr=0.115508 type=coherent_non_conscious
+
+  [b] weak coupled 4-cell (mean-field 50/50 sync, n=128)
+        density=0.5
+        phi=0.0355148 irr=0.0342967 type=coherent_non_conscious
+
+  [c] strong coupled 4-cell (Kuramoto K=2.0 all-to-all, n=128)
+        density=0.609375
+        phi=0.40799 irr=0.289767 type=coherent_non_conscious
+
+  [d] hive emergence 4-cell (XOR cascade + 1-lag carry, n=128)
+        density=0.335938
+        phi=1.56456 irr=0.61007 type=conscious
+
+  ─ pre-registered falsifier check ─
+    F-X10-INDEP    (indep phi < 0.3)    : true · measured=0.130592
+    F-X10-WEAK     (weak phi < 0.5)     : true · measured=0.0355148
+    F-X10-STRONG   (strong phi ≥ 0.5)   : false · measured=0.40799
+    F-X10-HIVE     (hive phi ≥ 0.5)     : true · measured=1.56456
+    F-X10-MONOTONE (a<b≤c≤d)            : false · a=0.130592 b=0.0355148 c=0.40799 d=1.56456
+
+  ─ X10 verdict ─
+    pass_count : 3/5
+    tier       : 🟡 PARTIAL-SUPPORT · applicability frontier border
+================================================================

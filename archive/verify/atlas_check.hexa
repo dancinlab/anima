@@ -1,0 +1,195 @@
+// ═══════════════════════════════════════════════════════════
+// anima/verify/atlas_check.hexa — anima atlas anchor inspector + verify runner
+//
+// Role: anima 도메인의 atlas anchor surface 를 inspect + nexus calc/anima_verify
+//       매니페스트 기반 검증 결과 aggregate. hexa-sscb 의 sscb_atlas_check.py
+// 와 동등 (다만 hexa-lang 사용 — hexa-only).
+//
+// circular-trap-free contract: target/formula/inputs 모두 외부 atlas anchor.
+// 본 러너는 atlas anchor 를 read-only 인용 + nexus run_all.hexa 위임.
+//
+// Sources (read-only):
+//   ~/core/canon/atlas/atlas.n6                                    foundation
+//   ~/core/canon/atlas/atlas.append.anima-philosophy-anchors-*.n6  D1-D4
+//   ~/core/canon/atlas/atlas.append.anima-discovery-verification-methods-*.n6
+//   ~/core/canon/atlas/atlas.append.anima-hypotheses-*.n6          H_001-H_032
+//
+// Usage:
+//   hexa run anima/verify/atlas_check.hexa                  # full report
+//   hexa run anima/verify/atlas_check.hexa --inspect <id>   # single anchor lookup
+//   hexa run anima/verify/atlas_check.hexa --domain anima   # filter
+//   hexa run anima/verify/atlas_check.hexa --run            # delegate to nexus run_all.hexa
+// ═══════════════════════════════════════════════════════════
+
+let HOME = env("HOME")
+let ATLAS_DIR = HOME + "/core/canon/atlas"
+let NEXUS_DIR = HOME + "/core/nexus"
+
+let SHARDS = [
+    "atlas.n6",
+    "atlas.append.anima-philosophy-anchors-2026-05-07.n6",
+    "atlas.append.anima-discovery-verification-methods-2026-05-07.n6",
+    "atlas.append.anima-hypotheses-2026-05-07.n6",
+]
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn resolve_hexa_bin() -> string {
+    let hl = env("HEXA_LANG")
+    if hl != "" {
+        let cand = hl + "/hexa"
+        if file_exists(cand) { return cand }
+    }
+    if HOME != "" {
+        let cand = HOME + "/.hx/bin/hexa"
+        if file_exists(cand) { return cand }
+    }
+    return "hexa"
+}
+
+// ─── atlas entry parser ───
+// Returns header fields per @-tagged line. Compact (no continuation parsing).
+
+fn parse_header_line(line: string) -> map {
+    let t = line.trim()
+    if len(t) == 0 || !t.starts_with("@") { return #{} }
+    // @TYPE id = expr :: domain [grade]
+    // first split on " :: "
+    let dd = t.index_of(" :: ")
+    if dd < 0 { return #{} }
+    let head = t.substring(0, dd)
+    let tail = t.substring(dd + 4, len(t))
+    // head: "@T id = expr"
+    let sp1 = head.index_of(" ")
+    if sp1 < 0 { return #{} }
+    let typ = head.substring(0, sp1)
+    let rest = head.substring(sp1 + 1, len(head)).trim()
+    // id = first token before " ="
+    let eq = rest.index_of(" = ")
+    let id = if eq >= 0 { rest.substring(0, eq).trim() } else { rest }
+    // tail: "domain [grade]"
+    let bracket = tail.index_of("[")
+    let domain = if bracket >= 0 { tail.substring(0, bracket).trim() } else { tail.trim() }
+    let grade = if bracket >= 0 { tail.substring(bracket, len(tail)).trim() } else { "" }
+    return #{ "type": typ, "id": id, "domain": domain, "grade": grade }
+}
+
+fn count_entries() -> map {
+    let mut total: i64 = 0
+    let mut anima_count: i64 = 0
+    let mut axis_m_count: i64 = 0
+    let mut by_type = #{}
+    for shard in SHARDS {
+        let path = ATLAS_DIR + "/" + shard
+        if !file_exists(path) { continue }
+        let raw = _str(read_file(path))
+        let lines = raw.split("\n")
+        let mut prev_was_header = false
+        for line in lines {
+            let t = _str(line).trim()
+            // unit= / anchor= continuation rows for prior header
+            if prev_was_header && (t.starts_with("unit ") || t.starts_with("unit=") || t.starts_with("anchor ") || t.starts_with("anchor=")) {
+                if t.starts_with("anchor") { axis_m_count = axis_m_count + 1 }
+            }
+            if t.starts_with("@") && (t.starts_with("@P ") || t.starts_with("@C ") || t.starts_with("@L ") || t.starts_with("@F ") || t.starts_with("@R ") || t.starts_with("@? ") || t.starts_with("@X ") || t.starts_with("@S ")) {
+                total = total + 1
+                let h = parse_header_line(t)
+                let typ = _str(h["type"])
+                let id = _str(h["id"])
+                if id.starts_with("ANIMA-") { anima_count = anima_count + 1 }
+                let prev = by_type[typ]
+                let pn = if type_of(prev) == "i64" { prev } else { 0 }
+                by_type[typ] = pn + 1
+                prev_was_header = true
+            } else {
+                if t == "" || t.starts_with("#") { prev_was_header = false }
+            }
+        }
+    }
+    return #{ "total": total, "anima": anima_count, "axis_m_anchor_count": axis_m_count, "by_type": by_type }
+}
+
+fn cmd_summary() {
+    println("=" + "=".repeat(70))
+    println("  anima atlas anchor inspector (circular-trap-free contract)")
+    println("=" + "=".repeat(70))
+    println("  atlas dir: " + ATLAS_DIR)
+    println()
+    let counts = count_entries()
+    println("  entries scanned (4 shards):")
+    println("    total: " + to_string(counts["total"]))
+    println("    ANIMA-* prefix: " + to_string(counts["anima"]))
+    println("    axis-M anchor= rows: " + to_string(counts["axis_m_anchor_count"]))
+    println()
+    println("  by @-type:")
+    let bt = counts["by_type"]
+    let types = ["@P", "@C", "@L", "@F", "@R", "@?", "@X", "@S"]
+    for t in types {
+        let c = bt[t]
+        let cn = if type_of(c) == "i64" { c } else { 0 }
+        if cn > 0 { println("    " + t + ": " + to_string(cn)) }
+    }
+    println()
+    println("  to run nexus check: hexa run anima/verify/atlas_check.hexa --run")
+    println("=" + "=".repeat(70))
+}
+
+fn cmd_inspect(target_id: string) {
+    println("inspect: " + target_id)
+    let mut found = false
+    for shard in SHARDS {
+        let path = ATLAS_DIR + "/" + shard
+        if !file_exists(path) { continue }
+        let raw = _str(read_file(path))
+        let lines = raw.split("\n")
+        let mut in_entry = false
+        let mut emitted_header = false
+        for line in lines {
+            let t = _str(line).trim()
+            if t.starts_with("@") && t.contains(" " + target_id + " ") || t.contains(" " + target_id + " =") || t.contains(" " + target_id + " ::") {
+                in_entry = true
+                emitted_header = true
+                println("  [" + shard + "] " + t)
+                found = true
+                continue
+            }
+            if in_entry {
+                if t == "" { in_entry = false; continue }
+                if t.starts_with("@") { in_entry = false; continue }
+                println("    " + t)
+            }
+        }
+    }
+    if !found { println("  (not found in 4 anima shards)") }
+}
+
+fn cmd_run() {
+    let HEXA = resolve_hexa_bin()
+    let RUN_ALL = NEXUS_DIR + "/calc/anima_verify/run_all.hexa"
+    if !file_exists(RUN_ALL) {
+        println("ERR: nexus run_all not found: " + RUN_ALL)
+        exit(2)
+    }
+    println("delegating to: " + HEXA + " run " + RUN_ALL)
+    let out = _str(exec(HEXA + " run " + RUN_ALL))
+    println(out)
+}
+
+fn main() {
+    let argv = args()
+    if argv.len() < 3 { cmd_summary(); return }
+    let mode = _str(argv[2])
+    if mode == "--inspect" && argv.len() >= 4 {
+        cmd_inspect(_str(argv[3]))
+    } else if mode == "--run" {
+        cmd_run()
+    } else if mode == "--summary" {
+        cmd_summary()
+    } else {
+        println("usage: hexa run anima/verify/atlas_check.hexa [--summary | --inspect <id> | --run]")
+    }
+}

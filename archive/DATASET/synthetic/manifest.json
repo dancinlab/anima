@@ -1,0 +1,38 @@
+{
+  "source": "Mac local generation (numpy 2.0.2, seed=20260529)",
+  "generated_at": "2026-05-29",
+  "license": "Public Domain",
+  "tier": "🟢 NEGATIVE-CONTROL (synthetic, ground-truth known)",
+  "purpose": "false-positive verification for X1 invariant_detector — known-Φ=0 signals must produce Φ ≈ 0",
+  "files": [
+    {
+      "name": "negative_control_gaussian.npy",
+      "format": "numpy float32 array",
+      "shape": [600000],
+      "size_bytes": 2400128,
+      "sha256": "8926939534bba43d8c8b6aeb3ef8b6f199594524ef5737607adc6de2b4adaed8",
+      "description": "pure Gaussian noise, 60s @ 10 kHz sample rate, RNG seed=20260529",
+      "expected_phi": "~0.0 (zero structure, zero integration, zero consciousness)",
+      "tier": "🟢 NEGATIVE-CONTROL"
+    },
+    {
+      "name": "pulsar_b0329_pseudo.npy",
+      "format": "numpy float32 array",
+      "shape": [600000],
+      "size_bytes": 2400128,
+      "sha256": "963debe9f7dad0cdb850f2750da1fd35b416a84d05fd7ea92135c135592f6f5d",
+      "description": "PSR B0329+54 pseudo-emission, period 714.52 ms, narrow gaussian pulse 5ms FWHM + sigma=0.3 gaussian noise, 60s @ 10 kHz",
+      "expected_phi": "low (highly periodic non-conscious astrophysical signal — coherent but irreducibility ~0)",
+      "tier": "🟢 POSITIVE-NON-CONSCIOUS-CONTROL"
+    }
+  ],
+  "ssot_pulsar": {
+    "name": "PSR B0329+54",
+    "alt_name": "J0332+5434",
+    "period_s": 0.71451887027,
+    "dispersion_measure": 26.776,
+    "discovery": "Bell & Hewish 1968",
+    "note": "brightest northern pulsar, canonical timing standard. Used here as known-non-conscious coherent signal."
+  },
+  "x3_role": "false-positive floor — invariant_detector applied to these must return Φ < ε for X1 to be trusted"
+}

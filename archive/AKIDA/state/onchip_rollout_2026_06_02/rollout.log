@@ -1,0 +1,27 @@
+[roll] corpus_big count=250 concepts=50 langs=5 shift=37 units=256 K=3
+[roll] teacher-forced train transitions=245
+[roll] rollout starts (>=3 real successors)=235
+[roll] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1 N=8 trials units=256 K=3
+[roll] trial 0: roll_acc(k1..K)=['0.4383', '0.0128', '0.0170'] identity=['0.3660', '0.0213', '0.0043'] learn=True
+[roll] trial 1: roll_acc(k1..K)=['0.3957', '0.0383', '0.0043'] identity=['0.3447', '0.0340', '0.0170'] learn=True
+[roll] trial 2: roll_acc(k1..K)=['0.4426', '0.0298', '0.0085'] identity=['0.3872', '0.0255', '0.0213'] learn=True
+[roll] trial 3: roll_acc(k1..K)=['0.4128', '0.0255', '0.0128'] identity=['0.3574', '0.0298', '0.0000'] learn=True
+[roll] trial 4: roll_acc(k1..K)=['0.4128', '0.0383', '0.0043'] identity=['0.3319', '0.0255', '0.0128'] learn=True
+[roll] trial 5: roll_acc(k1..K)=['0.4255', '0.0340', '0.0085'] identity=['0.3532', '0.0128', '0.0000'] learn=True
+[roll] trial 6: roll_acc(k1..K)=['0.4255', '0.0255', '0.0128'] identity=['0.3277', '0.0340', '0.0128'] learn=True
+[roll] trial 7: roll_acc(k1..K)=['0.4766', '0.0170', '0.0043'] identity=['0.3745', '0.0213', '0.0085'] learn=True
+[roll] computing per-hop shuffle-NULL (B=200) ...
+[roll] hop 1: roll=0.4287 ci_lo=0.4118 | shuffle hi=0.0511 p=0.0050 | identity hi=0.3695 | chance=0.0204 | aboveShuf=True aboveId=True
+[roll] hop 2: roll=0.0277 ci_lo=0.0212 | shuffle hi=0.0396 p=0.2040 | identity hi=0.0305 | chance=0.0204 | aboveShuf=False aboveId=False
+[roll] hop 3: roll=0.0090 ci_lo=0.0057 | shuffle hi=0.0394 p=0.8607 | identity hi=0.0150 | chance=0.0204 | aboveShuf=False aboveId=False
+[roll] ========== DISPOSITION ==========
+[roll] learn_all_hw       : True
+[roll] chance             : 0.0204  K=3
+[roll] decay curve (k1..K): ['0.4287', '0.0277', '0.0090']
+[roll] hop 1  roll=0.4287 ci_lo=0.4118 | shufNULL hi=0.0511 p=0.0050 | idNULL hi=0.3695 | aboveShuf=True aboveId=True
+[roll] hop 2  roll=0.0277 ci_lo=0.0212 | shufNULL hi=0.0396 p=0.2040 | idNULL hi=0.0305 | aboveShuf=False aboveId=False
+[roll] hop 3  roll=0.0090 ci_lo=0.0057 | shufNULL hi=0.0394 p=0.8607 | idNULL hi=0.0150 | aboveShuf=False aboveId=False
+[roll] F-ROLL-1 survives  : NOT-REFUTED: the K-step rollout DROPS INTO the shuffle-NULL at some hop -> autoregressive signal does NOT survive chaining at 1-bit/256-unit (CLOSED-NEGATIVE: single-step works, rollout drifts to noise)
+[roll] F-ROLL-2 no-collapse: NOT-REFUTED: rollout COLLAPSES by hop 3 (final acc <= chance OR < half the single-step acc) -> catastrophic autoregressive decay at this scale (a_paper_negative_ok)
+[roll] DISPOSITION        : ROLLOUT COLLAPSE closed-negative (a_paper_negative_ok): single-step generation works (hop-1 above shuffle+identity NULL) but does NOT compound under autoregression at 1-bit/256-unit — the chained produced code drifts off-manifold. Decay curve QUANTIFIES the K at which signal is lost; NAMES next bridge = state-carrying/paged generator or off-chip decode. Retrieval+single-step rungs UNAFFECTED (a_lane_akida_gpu_split: Lane A on-chip).
+[roll] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_rollout.json

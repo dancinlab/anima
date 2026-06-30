@@ -1,0 +1,97 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T09:32:21Z",
+  "n_trials": 8,
+  "units": 32,
+  "encoder": "whitened (proven unsupervised decorrelated encoder, byte-match encoder_ladder)",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "task": "on-chip cross-lingual NEXT-SENTENCE (t->t+1) top-1 retrieval + SAME-concept top-1; leave-one-lang-out centroids; shuffle-NULL over concept->time labels B=200",
+  "metric": "next_acc=P(argmin Hamming over c!=t == t+1); same_acc=P(argmin == t); chance(same)=1/50",
+  "trials": [
+    {
+      "trial": 0,
+      "same_acc": 0.132,
+      "next_acc": 0.012244897959183673,
+      "learned_hw": true
+    },
+    {
+      "trial": 1,
+      "same_acc": 0.116,
+      "next_acc": 0.024489795918367346,
+      "learned_hw": true
+    },
+    {
+      "trial": 2,
+      "same_acc": 0.136,
+      "next_acc": 0.036734693877551024,
+      "learned_hw": true
+    },
+    {
+      "trial": 3,
+      "same_acc": 0.124,
+      "next_acc": 0.04081632653061224,
+      "learned_hw": true
+    },
+    {
+      "trial": 4,
+      "same_acc": 0.148,
+      "next_acc": 0.0326530612244898,
+      "learned_hw": true
+    },
+    {
+      "trial": 5,
+      "same_acc": 0.104,
+      "next_acc": 0.024489795918367346,
+      "learned_hw": true
+    },
+    {
+      "trial": 6,
+      "same_acc": 0.132,
+      "next_acc": 0.02857142857142857,
+      "learned_hw": true
+    },
+    {
+      "trial": 7,
+      "same_acc": 0.148,
+      "next_acc": 0.044897959183673466,
+      "learned_hw": true
+    }
+  ],
+  "summary": {
+    "learn_all_hw": true,
+    "same_acc": {
+      "mean": 0.13,
+      "sd": 0.015118578920369087,
+      "ci95": [
+        0.11952335931703298,
+        0.14047664068296703
+      ],
+      "ci_lo": 0.11952335931703298,
+      "chance": 0.02,
+      "above_chance": true
+    },
+    "next_acc": {
+      "mean": 0.030612244897959183,
+      "sd": 0.010463182766720909,
+      "ci95": [
+        0.023361629160559456,
+        0.03786286063535891
+      ],
+      "ci_lo": 0.023361629160559456
+    },
+    "shuffle_null_next": {
+      "mean": 0.02073469387755102,
+      "sd": 0.009265935427698099,
+      "hi_1.96sd": 0.038895927315839296,
+      "B": 200,
+      "p_value_next": 0.15422885572139303
+    },
+    "F_LM_1_next_sentence": "NOT-REFUTED: next-sentence acc within shuffle-NULL -> primitive does NOT transfer to a sequence LM at this 1-bit/32-unit capacity (CLOSED on LM axis at this scale)",
+    "F_LM_2_same_concept_bridge": "REFUTED: margin readout DOES buy above-chance same-concept cross-lingual retrieval",
+    "above_null_next_sentence": false,
+    "above_chance_same_concept": true
+  },
+  "DISPOSITION": "CAPACITY-GAP CHARACTERIZED: primitive binds cross-lingual CONCEPTS (same-concept>chance) but has NO learned TIME/sequence model (next-sentence at NULL) -> Lane A PUBLIC stays open; named next-step = a sequence/recurrent readout beyond the 1-bit static margin (paged/temporal layer)"
+}

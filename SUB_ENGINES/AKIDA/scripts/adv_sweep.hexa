@@ -1,8 +1,0 @@
-// adv_sweep.hexa — companion marker for the AKIDA 2nd-stage adversarial HW↔SW
-// divergence sweep (round 2+). The runnable bench is the dual .py pair:
-//   adv_sweep_hw.py — parameterized AKD1000 on-chip runner (argparse seed/thr/window/regime/repeat)
-//   adv_sweep_sw.py — matching numpy-LIF runner, identical regime semantics + raster_sha256
-// Per operating point: run BOTH, diff raster sha256 (byte-identity) + |Δrate| + ISI + run-to-run.
-// GOAL: find any point where real silicon diverges from the SW model (jitter /
-// quantization / saturation / temp drift), else FAITHFUL-ENVELOPE over the tested bounds.
-fn adv_sweep_marker() -> i64 { 2 }   // round 2: seed/threshold/window/repeat envelope sweep

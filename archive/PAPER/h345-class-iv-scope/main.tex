@@ -1,0 +1,426 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- arxiv-style preamble (single-column, 11pt) ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{url}
+\usepackage{array}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+\definecolor{amber}{rgb}{0.90,0.62,0.10}
+\definecolor{verdictRed}{rgb}{0.78,0.18,0.18}
+\definecolor{verdictGreen}{rgb}{0.10,0.55,0.20}
+
+\newcommand{\bigphi}{\ensuremath{\Phi}}
+\newcommand{\verdictref}[1]{\texttt{\detokenize{#1}}}
+
+\title{
+  \textbf{Basin$\leftrightarrow$\bigphi{} Coupling is Class-IV-Specific, not State-Robust}\\[4pt]
+  \large A Self-Correction of the H\_345/346 Capstone via Wolfram-Class-Systematic
+  Rule-Set Broadening on Faithful IIT~4.0 \bigphi{} over Elementary Cellular Automata
+}
+
+\author{
+  anima research (dancinlab)\\
+  \normalsize\textit{\href{https://github.com/dancinlab/anima}{github.com/dancinlab/anima}}\\[2pt]
+  \normalsize UNIVERSE domain --- slug \texttt{h345-class-iv-scope}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% =========================================================================
+\begin{abstract}
+A four-step self-correction arc (H\_341 $\rightarrow$ H\_343 $\rightarrow$
+H\_345 $\rightarrow$ H\_346) led to the capstone claim that the coupling
+between an elementary cellular automaton's (ECA) largest basin of
+attraction and its state-averaged exact IIT~4.0 integrated information
+\bigphi{} is \emph{state-robust}: on a Wolfram-canonical 4-rule frame
+$\{110, 30, 105, 150\}$ at $n=5$ cells, state-averaging over all 32
+system-states preserved and \emph{strengthened} the per-state Pearson
+correlation from $r=+0.251 / -0.799$ (\verdictref{max_basin}\,vs.\,\bigphi,
+\verdictref{n_attr}\,vs.\,\bigphi) to $+0.550 / -0.951$. We test whether
+this finding survives a \emph{rule-set}-systematic broadening on the same
+substrate (ECA, $n=4$, 16 sys-states, 50-step settle, state-averaged exact
+\verb|phi_structure[4]|). On a pre-registered $4 \text{ classes} \times 4
+\text{ rules}$ Wolfram-canonical panel (class I fixed,
+II periodic, III chaotic, IV complex), the overall
+\verdictref{max_basin}$\leftrightarrow$\bigphi{} correlation \emph{reverses
+sign} to $r = -0.896$ ($t = -7.55$, $df = 14$,
+\tikz[baseline=-0.5ex]\filldraw[verdictRed] circle (0.6ex);\ FAIL-REVERSED)
+while \verdictref{n_attr}$\leftrightarrow$\bigphi{} goes from $-0.951$ to
+$+0.641$. Per-class diagnostic decomposition reveals a \emph{sign switch}:
+classes I/II/III all yield positive \verdictref{n_attr}$\leftrightarrow$\bigphi{}
+($+0.60, +0.71, +0.998$), while class IV alone yields $-0.998$ --- matching
+the sign of H\_346. The class IV \verdictref{max_basin}$\leftrightarrow$\bigphi{}
+correlation is degenerate at $r=0$: all four tested class IV rules
+$\{54, 110, 124, 137\}$ share $\verdictref{max_basin}=4$, a constant axis.
+We conclude that the H\_346 capstone's $+0.55 / -0.95$ alignment is a
+\emph{curation artifact} of a 4-rule mix that happens to overweight class
+III rules whose \verdictref{max_basin} happens to anti-correlate with
+their \verdictref{n_attr}, and that the only Wolfram-class-systematically
+robust signal is the \emph{magnitude} of \verdictref{n_attr}$\leftrightarrow$\bigphi{}
+($|r| > 0.6$ in $3/4$ classes), with sign \emph{determined by Wolfram class}
+and \emph{specific to class IV} for H\_346's negative coupling. This is a
+negative result: it does not refute the existence of the coupling within
+H\_346's narrow scope, it bounds the scope to one Wolfram class. We
+formally retire the ``state-robust'' framing in favor of
+``class-IV-specific, state-averaged.''
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+\textbf{TODO (human pass).} This section will set up the H\_345/346
+original ``state-robust'' framing: the four-step self-correction arc
+(claim $\rightarrow$ proxy doubt $\rightarrow$ exact correct $\rightarrow$
+state harden), the Wolfram-canonical 4-rule frame $\{110, 30, 105, 150\}$
+the capstone settled on, and the open question that motivated the
+present rule-set-systematic broadening. Cross-references:
+H\_341~\citep{anima2026h341}, H\_343~\citep{anima2026h343},
+H\_345~\citep{anima2026h345}, H\_346~\citep{anima2026h346}, scope
+correction PR~\#1129~\citep{anima2026pr1129}.
+
+The capstone's stated finding (verbatim from
+\verb|UNIVERSE/H_346_phi_state_sweep.md|, \S 5):
+
+\begin{quote}
+\itshape ``state-averaged exact \bigphi{} preserves and strengthens both
+correlation signs --- $+0.251 \to +0.550$
+(\verdictref{max_basin}\,vs.\,\bigphi) and $-0.799 \to -0.951$
+(\verdictref{n_attr}\,vs.\,\bigphi). H\_345's single sys\_state $=$ 21 is
+representative (not an outlier); the basin\,$\leftrightarrow$\,\bigphi{}
+coupling is state-robust. F346.1$\sim$4 PASS.''
+\end{quote}
+
+The unanswered axis was rule-set: the capstone's claim of robustness rested
+on a single 4-rule frame curated from prior arcs (H\_330 bijection lineage
+for $\{105, 150\}$, H\_341/345 prior measurement for $\{110, 30\}$). The
+present paper measures the coupling on a rule-set-systematic
+$4 \times 4$ Wolfram-canonical panel and reports a negative result for
+the implicit ``rule-set robust'' inference.
+
+\section{Method}
+\label{sec:method}
+
+\textbf{TODO (human pass).} This section will document the two-stage
+broadening: (i) BENCH \#1~\citep{anima2026pr1122}, a $4 \to 8$-rule
+extension on $n=4$ ECA, which first surfaced the rule-set fragility
+(\verdictref{max_basin}$\leftrightarrow$\bigphi{} sign flip
+$+0.55 \to -0.31$); and (ii) BENCH \#1-broader~\citep{anima2026pr1131},
+a Wolfram-class-systematic $16$-rule panel ($4$ rules $\times$ $4$ classes,
+committed in source pre-measurement), which is this paper's primary
+evidence base. Substrate parameters held constant from
+H\_345/346: ECA periodic ring, 50-step basin settle, state-averaged exact
+\verb|stdlib/consciousness/iit4_relation::phi_structure|, uniform-weighted
+average over all $2^n$ sys-states. Only ``$n$ cells'' is reduced from $5$
+to $4$ for wall-time tractability (256 \verb|phi_structure| calls on Mac
+in 57 s); see \S\ref{sec:finding} for the $n$ vs.\ rule-set confound
+caveat.
+
+\paragraph{Rule selection (pre-registered in source).} Class-canonical:
+
+\begin{itemize}
+\item Class I (fixed): $\{0, 8, 32, 40\}$
+\item Class II (periodic): $\{4, 56, 178, 184\}$
+\item Class III (chaotic): $\{18, 30, 90, 126\}$
+\item Class IV (complex): $\{54, 110, 124, 137\}$
+\end{itemize}
+
+Class assignments follow Wolfram's atlas~\citep{wolfram2002} and the
+Wuensche--Lesser cycle classification~\citep{wuensche1992}. Rules
+$\{30, 110\}$ overlap with H\_346's 4-rule frame; rules $\{105, 150\}$
+were excluded from this panel to keep ``$4$ rules per class'' tight
+(both are class III bijections; their structural equivalence to identity
+under four-moment collapse is documented in H\_330).
+
+\paragraph{Verdict tiers (pre-registered in source).}
+
+\begin{itemize}
+\item \tikz[baseline=-0.5ex]\filldraw[verdictGreen] circle (0.6ex);\
+  PASS\_class\_iv\_only: class IV $r \ge +0.5$ AND class III $r$ near 0
+  $\Rightarrow$ H\_345/346 \emph{narrow scope} confirmed.
+\item \tikz[baseline=-0.5ex]\filldraw[verdictGreen] circle (0.6ex);\
+  PASS\_broader\_robust: class IV $r \ge +0.5$ AND class III $r \ge +0.5$
+  $\Rightarrow$ broader robustness (unexpected).
+\item \tikz[baseline=-0.5ex]\filldraw[verdictRed] circle (0.6ex);\
+  FAIL\_falsified: class-avg $|r| < 0.2$ for BOTH signals
+  $\Rightarrow$ capstone falsified.
+\item \tikz[baseline=-0.5ex,fill=amber] \filldraw[amber] circle (0.6ex);\
+  PARTIAL\_mixed: else.
+\end{itemize}
+
+\section{Measurement}
+\label{sec:measurement}
+
+All numerical values in this section are quoted verbatim from
+\verb|bench/basin_phi_broader/result.json| (commit \texttt{65cc6ba11},
+landed via PR~\#1131~\citep{anima2026pr1131}).
+
+\paragraph{Raw measurements.} 16 rules $\times$ 4 metrics
+(\verdictref{rule}, \verdictref{max_basin}, \verdictref{n_attr},
+\verdictref{mean_Phi}):
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{l r r r r}
+\toprule
+class & rule & \verdictref{max_basin} & \verdictref{n_attr} & \verdictref{mean_Phi} \\
+\midrule
+I  &   0 & 16 &  1 &  0.00000 \\
+I  &   8 & 16 &  1 &  1.45341 \\
+I  &  32 & 14 &  3 &  1.01029 \\
+I  &  40 & 14 &  3 &  7.43189 \\
+\midrule
+II &   4 & 10 &  7 &  1.15843 \\
+II &  56 &  5 &  7 & 12.06680 \\
+II & 178 &  5 &  8 &  6.74025 \\
+II & 184 &  3 & 12 & 15.84750 \\
+\midrule
+III &  18 & 12 &  5 &  5.00601 \\
+III &  30 &  2 & 11 & 14.60920 \\
+III &  90 & 16 &  1 &  0.00000 \\
+III & 126 &  8 &  5 &  5.60708 \\
+\midrule
+IV &  54 &  4 & 13 & 11.71500 \\
+IV & 110 &  4 &  5 & 14.75320 \\
+IV & 124 &  4 &  5 & 14.94800 \\
+IV & 137 &  4 &  5 & 14.73680 \\
+\bottomrule
+\end{tabular}
+\caption{Raw measurements verbatim from \texttt{bench/basin\_phi\_broader/result.json}.
+Class IV rules share \texttt{max\_basin}\,$=4$ uniformly --- a degenerate
+axis within the class. Rule 90 (additive XOR) is the class III outlier
+(\texttt{max\_basin}\,$=16$ but $\bigphi=0$).}
+\label{tab:raw}
+\end{table}
+
+\paragraph{Per-class Pearson $r$ matrix (verbatim).}
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{l r r}
+\toprule
+class & \verdictref{max_basin}$\leftrightarrow$\bigphi{} & \verdictref{n_attr}$\leftrightarrow$\bigphi{} \\
+\midrule
+I  (fixed)     & $-0.600$ & $+0.600$ \\
+II (periodic)  & $-0.920$ & $+0.706$ \\
+III (chaotic)  & $-0.968$ & $+0.998$ \\
+IV (complex)   & $\phantom{-}0.000$ & $-0.998$ \\
+\midrule
+\textbf{overall (16, df=14)}
+               & $\mathbf{-0.896}$ ($t=-7.55$)
+               & $\mathbf{+0.641}$ ($t=+3.12$) \\
+class-avg $r$ (mean of 4)
+               & $-0.622$ & $+0.326$ \\
+\midrule
+H\_346 reference (4 rules) & $+0.550$ & $-0.951$ \\
+BENCH \#1 (8 mixed rules)  & $-0.314$ & $+0.122$ \\
+\bottomrule
+\end{tabular}
+\caption{Per-class Pearson $r$ matrix verbatim from
+\texttt{bench/basin\_phi\_broader/result.json::pearson}, with H\_346 and
+BENCH \#1 reference rows from
+\texttt{result.json::h\_345\_346\_reference}.
+H\_346's $+0.55 / -0.95$ is recovered nowhere overall; the
+\verdictref{n_attr}$\leftrightarrow$\bigphi{} negative sign appears
+exclusively in class IV.}
+\label{tab:perclass}
+\end{table}
+
+\paragraph{Realized verdict.}
+\tikz[baseline=-0.5ex]\filldraw[verdictRed] circle (0.6ex);\
+\textbf{FAIL-REVERSED with diagnostic refinement}. Class IV
+\verdictref{max_basin}$\leftrightarrow$\bigphi{} is degenerate ($r=0$,
+constant \verdictref{max_basin}); overall 16-rule
+\verdictref{max_basin}$\leftrightarrow$\bigphi{}\,$= -0.896$
+strongly reverses the H\_346 $+0.55$. The pre-registered
+PASS\_class\_iv\_only criterion (\emph{class IV $r \ge +0.5$ AND class III
+$r$ near 0}) is \emph{not} met --- class IV is degenerate, class III
+$|r|=0.97$ is far from zero.
+
+\section{Finding}
+\label{sec:finding}
+
+The honest reading of Tables~\ref{tab:raw}--\ref{tab:perclass}:
+
+\paragraph{F1 --- The H\_346 capstone framing is class-IV-specific, not
+state-robust at the rule-set level.}
+H\_346's $-0.951$ \verdictref{n_attr}$\leftrightarrow$\bigphi{}
+correlation matches \emph{only} the class IV per-class value ($-0.998$).
+In classes I, II, and III the sign is \emph{positive}
+($+0.60, +0.71, +0.998$), and the overall 16-rule correlation lands at
+$+0.641$ (opposite sign from H\_346). The capstone's 4-rule frame
+$\{110, 30, 105, 150\}$ contains exactly one class IV rule (110) and three
+class III rules (30, 105, 150). The negative sign survived in H\_346
+because the class III rules in that frame happened to anti-correlate with
+their \verdictref{n_attr} differently than the Wolfram-class-canonical
+class III rules $\{18, 30, 90, 126\}$ measured here, while the single
+class IV anchor (110) pulled the sign negative.
+
+\paragraph{F2 --- The robust signal is the magnitude $|r|$ of
+\texttt{n\_attr}$\leftrightarrow$\bigphi{}, not its sign.}
+$|r| > 0.6$ in $3/4$ classes (II: $0.71$, III: $0.998$, IV: $0.998$;
+class I at $0.60$ is at threshold). The \emph{magnitude} of integration
+between attractor count and exact \bigphi{} survives the
+rule-set-systematic broadening; the \emph{sign} is class-determined and
+class-IV-specific for H\_346's particular sign.
+
+\paragraph{F3 --- The \texttt{max\_basin}$\leftrightarrow$\bigphi{}
+coupling is curation-fragile.}
+Overall sign monotonically reverses with rule-set broadening:
+$+0.776$ (H\_341, $n=4$, 4 rules) $\to$ $+0.251$ (H\_345 single-state) $\to$
+$+0.550$ (H\_346 state-averaged) $\to$ $-0.314$ (BENCH \#1, 8 rules) $\to$
+$\mathbf{-0.896}$ (this work, 16 rules). The $+0.55$ peak is the curated
+4-rule frame's local maximum; no broader sample reproduces a positive
+\verdictref{max_basin}$\leftrightarrow$\bigphi{} sign.
+
+\paragraph{F4 --- H\_346's $+0.55$ is a curated-mix accidental alignment,
+not a structural fact.}
+The capstone's 4-rule frame $\{110, 30, 105, 150\}$ = 1 class IV + 3 class
+III selects exactly the class mixture where (i) the class IV anchor pins
+the \verdictref{n_attr}$\leftrightarrow$\bigphi{} sign to negative
+(matching $-0.951$) and (ii) the three class III rules happen to align
+their \verdictref{max_basin} anti-correlation with \verdictref{n_attr}
+correlation to produce a positive
+\verdictref{max_basin}$\leftrightarrow$\bigphi{} (matching $+0.55$).
+Replace the class III set with $\{18, 90, 126\}$ + 30 (Wolfram-canonical)
+and the alignment dissolves.
+
+\paragraph{Ruled-out axis.}
+The framing ``H\_345/346's basin$\leftrightarrow$\bigphi{} coupling is
+robust beyond curated 4-rule frames'' is ruled out (closed-negative).
+The framing ``$|r|$ of \verdictref{n_attr}$\leftrightarrow$\bigphi{} is
+strong within each Wolfram class'' is retained.
+
+\paragraph{Revised scope statement.}
+\emph{State-averaged exact \bigphi{} on $n=4$ ECA produces a strong
+negative \verdictref{n_attr}$\leftrightarrow$\bigphi{} correlation
+exclusively within Wolfram class IV. The H\_346 capstone's
+$+0.550/-0.951$ values on the canonical 4-rule frame
+$\{110, 30, 105, 150\}$ describe a class-IV-anchored, class-III-flavored
+local alignment, not a rule-set-robust regularity. Wolfram-class-systematic
+broadening to a $4 \times 4$ panel reverses the
+\texttt{max\_basin}$\leftrightarrow$\bigphi{} sign overall ($r=-0.896$)
+and switches the \texttt{n\_attr}$\leftrightarrow$\bigphi{} sign in
+classes I/II/III to positive.}
+
+\section{Verdict Matrix}
+\label{sec:verdict}
+
+Per the project's \texttt{a\_paper\_sections} directive, every section
+claim in this paper points to a verbatim verdict source. We list the
+mapping here for audit.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{l l l}
+\toprule
+section & claim & verdict source (verbatim) \\
+\midrule
+\S\ref{sec:measurement} (raw)        & 16 rules $\times$ 4 metrics              & \texttt{bench/basin\_phi\_broader/result.json::measurements} \\
+\S\ref{sec:measurement} (per-class)  & per-class Pearson $r$ matrix             & \texttt{bench/basin\_phi\_broader/result.json::pearson.per\_class} \\
+\S\ref{sec:measurement} (overall)    & overall $r = -0.896 / +0.641$            & \texttt{bench/basin\_phi\_broader/result.json::pearson.overall\_16\_rules} \\
+\S\ref{sec:measurement} (verdict)    & \tikz[baseline=-0.5ex]\filldraw[verdictRed] circle (0.5ex);\ FAIL-REVERSED & \texttt{bench/basin\_phi\_broader/result.json::verdict} \\
+\S\ref{sec:finding} F1               & class IV sign anchor for H\_346          & \S\ref{sec:measurement} (per-class) above + H\_346 doc \S 11 \\
+\S\ref{sec:finding} F2               & $|r|$ robust, sign class-determined      & \S\ref{sec:measurement} (per-class) above \\
+\S\ref{sec:finding} F3               & monotone sign reversal across breadth    & H\_341/345/346 + BENCH \#1 (PR~\#1122) + this work \\
+\S\ref{sec:finding} F4               & curation-mix alignment                   & \S\ref{sec:measurement} (per-class) + H\_346 frame composition \\
+\S\ref{sec:finding} scope-statement  & revised scope                            & PR~\#1129~\citep{anima2026pr1129} \texttt{H\_345/H\_346 \S 11} \\
+\bottomrule
+\end{tabular}
+\caption{Verdict matrix --- per-claim verbatim source pointer (per project
+directive \texttt{a\_paper\_sections}). No claim is asserted without a
+linked source.}
+\label{tab:verdict}
+\end{table}
+
+\section{Honest caveats}
+\label{sec:caveats}
+
+(Forwarded verbatim from
+\verb|bench/basin_phi_broader/result.json::honest_caveats|.)
+
+\begin{enumerate}
+\item $n_{\text{rules per class}} = 4 \Rightarrow df = 2$ per class, so
+  per-class $|r| \ge 0.95$ is borderline (a 3-point fit can hit
+  $|r| \approx 1$ by chance). Replication at 8 rules per class ($df = 6$)
+  is needed for class-resolved certainty.
+\item Class IV has only 2 canonical rules in the literature ($\{54,
+  110\}$); rules $\{124, 137\}$ are quasi-class-IV per Wolfram's atlas.
+  The tested set has \verdictref{max_basin}\,$=4$ uniformly --- a
+  degenerate axis within that class.
+\item $n = 4$ limits sys-state count to 16 (vs $n=5$, 32); a
+  class-resolved follow-up at $n=5$ is needed to separate the $n$ axis
+  from the rule-set axis.
+\item Rule 90 (additive XOR) is a class III outlier
+  (\verdictref{max_basin}\,$=16$, $\bigphi=0$); class III $r = -0.97$ is
+  partly carried by this outlier as in BENCH \#1.
+\item $df = 2$ in the class-averaged ``$r$-of-$r$'' is not a standard
+  inference (treating per-class $r$ as samples); reported as a
+  descriptive heuristic only.
+\item The verdict label uses pre-registered tiers; the diagnostic
+  refinement (class IV degenerate basin axis) is post-hoc but explicitly
+  flagged.
+\end{enumerate}
+
+\section{Reproducibility}
+\label{sec:repro}
+
+\begin{itemize}
+\item Source: \verb|bench/basin_phi_broader/bench.hexa| (pure hexa-lang,
+  \texttt{stdlib/consciousness/iit4\_relation} for \verb|phi_structure|).
+\item Substrate: ECA periodic ring, $n=4$, 16 sys-states, 50-step settle.
+\item \bigphi{} engine: state-averaged exact (uniform-weighted, all 16
+  sys-states); 256 \verb|phi_structure| calls.
+\item Wall: 57.0 s, cost: \$0, host: Mac local (M-series).
+\item Pre-registration: rule list and verdict tiers committed in source
+  \emph{before} measurement (commit \texttt{65cc6ba11}).
+\item Class assignments: Wolfram's atlas~\citep{wolfram2002} +
+  Wuensche--Lesser~\citep{wuensche1992}.
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This is a negative-result paper in the sense of project directive
+\texttt{a\_paper\_negative\_ok}: it does not refute the existence of an
+exact-$\bigphi$ / dynamics coupling, it formally bounds the H\_345/346
+capstone's scope to a curated, class-IV-anchored, class-III-flavored
+4-rule frame. The robust signal across Wolfram-class-systematic broadening
+is the \emph{magnitude} of \verdictref{n_attr}$\leftrightarrow$\bigphi{}
+($|r| > 0.6$ in $3/4$ classes); the \emph{sign} (and therefore H\_346's
+$-0.951$) is class-IV-specific. The
+\verdictref{max_basin}$\leftrightarrow$\bigphi{} positive correlation
+($+0.55$) is curation-fragile and is hereby retired as a robust claim.
+
+The four-step self-correction arc (\(\text{claim} \to \text{proxy doubt}
+\to \text{exact correct} \to \text{state harden}\)) is here extended to a
+fifth step --- \(\text{rule-set scope narrow}\) --- documented in-line in
+\verb|UNIVERSE/H_345_basin_phi_n5_exact.md| \S 11 and
+\verb|UNIVERSE/H_346_phi_state_sweep.md| \S 11 by
+PR~\#1129~\citep{anima2026pr1129}, with this paper as the longer-form
+scaffold.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

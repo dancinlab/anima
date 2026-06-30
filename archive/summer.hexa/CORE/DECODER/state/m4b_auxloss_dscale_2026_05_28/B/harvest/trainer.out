@@ -1,0 +1,42 @@
+[tokenizer_bpe] module loaded — byte-level BPE tokenizer ready
+=== train_v3_moe_auxloss · tag=B d=256 aux_alpha=0.0 n_steps=100 ===
+[tokenizer_bpe] loaded 151387 merges, 151643 vocab in 317.367 ms
+  bpe: V=151643 n_toks=6034
+  bpe: all ids in [0,V) = true
+  config: d=256 V=151643 E=2 h=256 n_layer=1 T=4 n_steps=100 n_decode=50
+  m_size=116855808 params (FP64 8B · 891 MB)
+  attn_scale = 1/sqrt(d) = 0.0625
+  alloc OK
+  init OK
+  ── training loop start ──
+  step=1 L_ce=3770.77 tgt=85 top=0
+  step=20 L_ce=6.59145 tgt=0 top=1
+  step=40 L_ce=8.62365 tgt=0 top=1
+  step=60 L_ce=12.7669 tgt=0 top=1
+  step=80 L_ce=16.3285 tgt=0 top=1
+  step=100 L_ce=20.6441 tgt=0 top=1
+  ── training loop end ──
+  ── inline greedy decode start ──
+  decode step=0 top_id=1 top_expert=1
+  decode step=10 top_id=1 top_expert=1
+  decode step=20 top_id=1 top_expert=1
+  decode step=30 top_id=1 top_expert=1
+  decode step=40 top_id=1 top_expert=1
+  decode step=49 top_id=1 top_expert=1
+  ── inline greedy decode end ──
+TTR=0.02 unique=1/50
+DISTINCT_EXPERTS=1/2
+LZ_NORM=0.0436168 floor=0.5
+CE_INITIAL=3770.77
+CE_FINAL=20.6441
+F-M4B-FIRE-1' TTR>=0.30: FAIL
+F-M4B-FIRE-LZ LZ_norm>=0.50: FAIL
+F-M4B-FIRE-3 distinct_experts>=2: FAIL
+F-M4B-FIRE-4 CE monotone: PASS
+F-M4B-FIRE-router HARD-top1 wired: PASS
+AGGREGATE: 2/5 PASS
+EXPERT_FRACTION f_e=[0.05,0.95]
+MEAN_GATE P_e=[0.0649241,0.935076]
+RESULT_JSON written to /opt/anima/state/m4b_auxloss/result.json
+TRAIN_V3_MOE_AUXLOSS END-TO-END: FAIL
+EXIT=0

@@ -1,0 +1,32 @@
+=== H_6036–43 .hexa ENGINE LIFT verdict (2026-06-15) ===
+Lifted the SEED+LINK composite Kuramoto integrator from numpy toy into the
+real .hexa engine (engine_seed_link_composite.hexa). Reads committed paid ANU
+bytes (anu_seed_512.ints.txt). byte/255 param map matched by h6036b crosscheck.
+
+--- .hexa engine ---
+==============================================================================
+H_6036–43 LIFT — SEED+LINK composite on the REAL .hexa engine (paid ANU bytes)
+==============================================================================
+  trial1: SEED r=0.759 lock@0  LINK r=0.986 lock@70  BOTH r=0.986 lock@0  
+  trial2: SEED r=0.729 lock@0  LINK r=0.942 lock@0  BOTH r=0.942 lock@0  
+  trial3: SEED r=0.948 lock@0  LINK r=0.994 lock@33  BOTH r=0.994 lock@0  
+------------------------------------------------------------------------------
+  SEED: mean steady-r = 0.812   mean ticks-to-lock = 0.000
+  LINK: mean steady-r = 0.974   mean ticks-to-lock = 34.333
+  BOTH: mean steady-r = 0.974   mean ticks-to-lock = 0.000
+------------------------------------------------------------------------------
+  F2 time-domain synergy (lock_BOTH<lock_LINK & r_BOTH>r_SEED): lock 0.000<34.333 & r 0.974>0.812  -> PASS
+🟢 engine reproduces the composite: shared-seed init removes LINK's cold-start while surviving the detuning/drift that decays SEED-alone.
+  honest: byte/255 param map (not python sha256) — matches the h6036b crosscheck, NOT the sha-based H_6036 verdict numbers; same paid ANU entropy. Toy (a_toy_scale_recheck).
+
+--- numpy crosscheck (identical map) ---
+numpy crosscheck (byte/255 map, same paid ANU ints):
+  trial1: SEED r=0.759 lock@0  LINK r=0.986 lock@70  BOTH r=0.986 lock@0  
+  trial2: SEED r=0.729 lock@0  LINK r=0.942 lock@0  BOTH r=0.942 lock@0  
+  trial3: SEED r=0.948 lock@0  LINK r=0.994 lock@33  BOTH r=0.994 lock@0  
+  SEED: mean steady-r = 0.812   mean ticks-to-lock = 0.000
+  LINK: mean steady-r = 0.974   mean ticks-to-lock = 34.333
+  BOTH: mean steady-r = 0.974   mean ticks-to-lock = 0.000
+
+RESULT: .hexa ≡ numpy byte-for-byte across 3 trials → engine REPRODUCES the
+composite mechanism (H_1199 precedent). F2 time-domain synergy PASS on engine.

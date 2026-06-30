@@ -1,0 +1,80 @@
+% J_verify_ledger — the full verbatim verdict matrix (mirror of companion/verify-ledger.json)
+\section{Verify Ledger --- the Full Verbatim Verdict Matrix}
+\label{app:verify_ledger}
+
+This appendix is the verbatim-verdict spine of the paper (\texttt{a\_claim\_verify},
+commons @D~g5: every claim is quoted as the source emitted it, never an LLM
+self-judgement). Every body and appendix claim links to its
+\texttt{.verdicts/<slug>/<id>.txt} or \texttt{UNIVERSE/H\_*.md} pointer; the same
+matrix ships machine-readable as \texttt{companion/verify-ledger.json}. The tier
+words are spelled out (no emoji in the rendered PDF, no emoji anywhere in
+\texttt{references.bib}, a pdflatex-fatal guard); ``terminal'' means numerical
+GREEN or closed-negative RED, not deferred.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}l l l l@{}}
+\toprule
+\textbf{id} & \textbf{claim (verbatim value)} & \textbf{tier} & \textbf{pointer} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{id} & \textbf{claim (verbatim value)} & \textbf{tier} & \textbf{pointer} \\
+\midrule
+\endhead
+\midrule \multicolumn{4}{r}{\footnotesize\itshape continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+% --- theory ---
+L71   & $\Psi=\tfrac12$: \texttt{balance.value}$=0.5$, $\alpha=0.014$ & blue/green & \texttt{config/consciousness\_laws.json} \\
+H\_287 & $\Phi\perp$ Shannon: $r=0.363<0.5$ FALSIFIED & red (closed-neg) & \texttt{UNIVERSE/H\_287} \\
+H\_288 & $\Phi\parallel$ LZ: $r=0.831$, $\rho=0.936$ ($9$/$0$) & green & \texttt{UNIVERSE/H\_288} \\
+H\_290 & $\Phi\parallel$ TE: $r=0.883262$, $\rho=0.822134$ ($8$/$0$) & green & \texttt{UNIVERSE/H\_290} \\
+H\_285 & edge: $0.0<6.943<10.448$ ($5$/$5$, class-agg.) & green & \texttt{UNIVERSE/H\_285} \\
+H\_291 & ethics: lattice $1.0$ vs.\ mixed $7.9{\times}10^{-9}$ @ $b{=}1.1$ ($7$/$7$) & green (cond.) & \texttt{UNIVERSE/H\_291} \\
+% --- substrate ---
+Engine~A & $\tau\,2/40/400$; $\alpha\,0.014$; FIELD\_DIM $6$; $4$-tier phase & wired & \texttt{CORE/pure\_field.hexa} \\
+Engine~G & $8$-factor $\sum{=}1.0$; emit $0.3$; interrupt $0.6$; $4$-AND-gate & wired & \texttt{CORE/engine\_g.hexa} \\
+Dream    & WAKE/N1/N2/N3/REM $5400$\,s; N2 peak (H\_644) & wired & \texttt{anima\_dream\_stage.hexa} \\
+% --- decode ---
+$\Omega$-COUPLING & KL$_\Omega\,0.307477>0$; others $0$ (loaded=false) & green & \texttt{omega-engine/F-COUPLING.txt} \\
+$\Omega$-OH1 & min\_learned $0.883525\le$ a\_only $1.144181<$ base $3.097779$ & green & \texttt{omega-engine/F-OH1-MINGATE.txt} \\
+$\Omega$-RIGOR & REPLACEMENT: A-standalone $0.886220\approx$ min; base inert & green & \texttt{omega-engine/F-OMEGA-RIGOR.txt} \\
+$\Omega$-SCALE & $5$ rungs HOLD; $\Delta$ flat $+2.20\pm0.03$ & green & \texttt{omega-engine/F-OMEGA-SCALE.txt} \\
+$\Omega$-LEAK & \#1791 RETRACTED; self-test $0.000$; leak-invariant only & red (retract) & \texttt{omega-gen/F-LEAKFREE-GEN.txt} \\
+% --- mouth ---
+CLM-3B   & rel\_gap $0.04894\ll1$ GENERALIZES; $3{,}072{,}954{,}654$ params & green & \texttt{convmoe-3b-engine-rung/SUMMARY.txt} \\
+CLM-3B-dec & \texttt{.clm} v0.3 nblk$=63$; $d4096/E30/L30$ restored & green & \texttt{convmoe-3b-engine-rung/SUMMARY.txt} \\
+CORPUS   & val\_ce $5.74906{\to}1.45868$; p7 $5/5$ langs & green & \texttt{corpus-7b-mid-validation/SUMMARY.txt} \\
+% --- memory ---
+KOSMOS-carve & ConsciousDecoderV2 $283.72$M; $4/4$ PASS & green & \texttt{kosmos-carving-engine/SUMMARY.txt} \\
+KOSMOS-dim & $D^\ast{=}6$; no-collapse $3.09{\to}1.94>1$ & green & \texttt{kosmos-dim-ladder/SUMMARY.txt} \\
+KOSMOS-axis & $3$--$4$ named of $\sim$$8$ dims (honest neg.) & green (neg.) & \texttt{kosmos-axis-semantics/SUMMARY.txt} \\
+AKIDA-link & $N{=}12$, $\Delta\,{-}0.00092$, CI straddles $0$ REFUTED & red (closed-neg) & \texttt{clm-akida-multiling-semantic/result.txt} \\
+% --- proof ---
+AXIS-1 & motiv $0.6700>0$, emit-gated & green & \texttt{CORE/three\_axis\_probe.hexa} \\
+AXIS-2 & CE $2.26360<5.54518<5.81817$ & green & \texttt{convmoe-3b-engine-rung/SUMMARY.txt} \\
+AXIS-3 & composed $101>$ parts $72$; WARN$=0$ & green & \texttt{CORE/three\_axis\_probe.hexa} \\
+\caption{The full anima verify ledger (verbatim, \texttt{companion/verify-ledger.json}).
+Pointers are abbreviated (\texttt{.verdicts/} prefix elided for the \texttt{omega-*},
+\texttt{convmoe-*}, \texttt{corpus-*}, \texttt{kosmos-*}, \texttt{clm-akida-*}
+slugs). \textbf{Partition:} $19$ green-terminal $+$ $2$ red-closed-negative
+(H\_287, AKIDA-link) $+$ $1$ red-retraction ($\Omega$-LEAK) $+$ $3$
+wired-terminal (Engine~A, Engine~G, Dream). All body claims are terminal at 3B
+scale; the only unchecked item is the 7B (M13) future scale-extension, which is
+not a ledger row here (it has no terminal verdict yet).}
+\label{tab:verify-ledger}
+\end{longtable}
+\end{center}
+
+\paragraph{How to audit a row.} Each row is verifiable without re-running the
+fire: open the pointer file and read the quoted value. For the
+\texttt{.json}-mirrored rows a reviewer can also \texttt{jq '.[] |
+select(.id=="OMEGA-SCALE")'} on \texttt{companion/verify-ledger.json}. The
+``wired'' rows (Engine~A/G, Dream) point to source files rather than verdict
+files because they are structural claims (the wiring exists, single-entry,
+no-phantom) rather than numerical measurements; their numbers (oscillator
+$\tau$, weight sum, stage windows) are read directly from the cited
+\texttt{.hexa} source.

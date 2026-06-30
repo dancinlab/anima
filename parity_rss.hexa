@@ -1,0 +1,137 @@
+// parity_rss.hexa — verify bg_forward_last_W_s is byte-identical to bg_forward_last_W
+// AND that a reuse-based gen loop keeps RSS flat. Synthesizes a tiny W map directly
+// (no .bin), runs both forwards over growing T, compares logits bit-for-bit, then
+// runs a long reuse gen loop (RSS sampled externally).
+import "core/bytegpt_decode.hexa"
+
+// build a tiny deterministic W (same Map shape bg_load_ranged returns)
+fn mk_w(vocab: int, d: int, nlay: int, nh: int, block: int) -> Map {
+    fn fill(n: int, seed: int) -> int {
+        let a = farr_zeros(n)
+        let mut i = 0
+        let mut s = seed
+        while i < n {
+            s = (s * 1103515245 + 12345) % 2147483647
+            let _ = farr_set(a, i, (to_float(s % 1000) - 500.0) / 5000.0)
+            i = i + 1
+        }
+        return a
+    }
+    let ln1w = []; let ln1b = []; let inB = []; let oB = []
+    let ln2w = []; let ln2b = []; let m0B = []; let m2B = []
+    let inWt = []; let oWt = []; let m0Wt = []; let m2Wt = []
+    let mut L = 0
+    while L < nlay {
+        ln1w.push(fill(d, 7+L)); ln1b.push(fill(d, 8+L))
+        inB.push(fill(3*d, 9+L)); oB.push(fill(d, 10+L))
+        ln2w.push(fill(d, 11+L)); ln2b.push(fill(d, 12+L))
+        m0B.push(fill(4*d, 13+L)); m2B.push(fill(d, 14+L))
+        inWt.push(fill(d*3*d, 100+L)); oWt.push(fill(d*d, 200+L))
+        m0Wt.push(fill(d*4*d, 300+L)); m2Wt.push(fill(4*d*d, 400+L))
+        L = L + 1
+    }
+    let empty = []
+    return #{ "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
+              "tok": fill(vocab*d, 1), "pos": fill(block*d, 2),
+              "ln1w": ln1w, "ln1b": ln1b, "inW": empty, "inB": inB,
+              "oW": empty, "oB": oB, "ln2w": ln2w, "ln2b": ln2b,
+              "m0W": empty, "m0B": m0B, "m2W": empty, "m2B": m2B,
+              "lnfw": fill(d, 3), "lnfb": fill(d, 4), "head": fill(vocab*d, 5),
+              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": empty }
+}
+
+fn main() {
+    let a = argv(); let b = 0; let mut i = 0
+    while i < len(a) { if a[i] == "--" { b = i + 1 } i = i + 1 }
+    let mode = a[b + 0]               // "parity" or "rss"
+    let vocab = 256; let d = 256; let nlay = 6; let nh = 8; let block = 256
+    let W = mk_w(vocab, d, nlay, nh, block)
+
+    if mode == "parity" {
+        // compare logits for T = 1,2,4,8,...,block on both forwards
+        let sc = #{}  // built per-call below
+        let mut mismatches = 0
+        let mut maxabs = 0.0
+        let Ts = [1, 2, 3, 5, 8, 13, 64, 200, block]
+        let mut ti = 0
+        while ti < len(Ts) {
+            let T = to_int(Ts[ti])
+            let ids = farr_zeros(T)
+            let mut p = 0
+            while p < T { let _ = farr_set(ids, p, to_float((p * 7 + 3) % vocab)); p = p + 1 }
+            let lo = bg_forward_last_W(W, ids, T)         // OLD path (fresh allocs)
+            let scs = #{
+                "sx": farr_zeros(block*d), "snrm": farr_zeros(block*d), "saout": farr_zeros(block*d),
+                "sh4": farr_zeros(block*4*d), "smlpo": farr_zeros(block*d), "slastrow": farr_zeros(d),
+                "sxt": farr_zeros(d), "sQ": farr_zeros(block*d), "sK": farr_zeros(block*d),
+                "sV": farr_zeros(block*d), "sctx": farr_zeros(block*d), "ssrow": farr_zeros(block) }
+            let ln = bg_forward_last_W_s(W, ids, T, scs)  // NEW path (reuse)
+            let mut k = 0
+            while k < vocab {
+                let dv = farr_get(lo, k) - farr_get(ln, k)
+                let ad = if dv < 0.0 { 0.0 - dv } else { dv }
+                if ad > maxabs { maxabs = ad }
+                if ad > 0.0 { mismatches = mismatches + 1 }
+                k = k + 1
+            }
+            let _ = farr_free(lo); let _ = farr_free(ln); let _ = farr_free(ids)
+            let _ = farr_free(to_int(scs["sx"])); let _ = farr_free(to_int(scs["snrm"]))
+            let _ = farr_free(to_int(scs["saout"])); let _ = farr_free(to_int(scs["sh4"]))
+            let _ = farr_free(to_int(scs["smlpo"])); let _ = farr_free(to_int(scs["slastrow"]))
+            let _ = farr_free(to_int(scs["sxt"])); let _ = farr_free(to_int(scs["sQ"]))
+            let _ = farr_free(to_int(scs["sK"])); let _ = farr_free(to_int(scs["sV"]))
+            let _ = farr_free(to_int(scs["sctx"])); let _ = farr_free(to_int(scs["ssrow"]))
+            println("T=" + to_string(T) + " mismatches=" + to_string(mismatches) + " maxabs=" + to_string(to_int(maxabs * 1000000000.0)) + "e-9")
+            ti = ti + 1
+        }
+        if mismatches == 0 { println("PARITY_PASS byte-identical (maxabs=0)") }
+        else { println("PARITY_RESULT mismatches=" + to_string(mismatches) + " maxabs1e9=" + to_string(to_int(maxabs*1e9))) }
+    }
+
+    if mode == "rss" {
+        // long reuse gen loop via the public batch-style generator path
+        let seed_ids = [104, 105, 106, 107]
+        let nfrag = to_int(a[b + 1]); let gen = to_int(a[b + 2])
+        let mut f = 0
+        while f < nfrag {
+            // call the private gen indirectly is not possible; replicate reuse loop here
+            // using bg_forward_last_W_s with ONE preallocated scratch (the fix pattern)
+            let sc = #{
+                "sx": farr_zeros(block*d), "snrm": farr_zeros(block*d), "saout": farr_zeros(block*d),
+                "sh4": farr_zeros(block*4*d), "smlpo": farr_zeros(block*d), "slastrow": farr_zeros(d),
+                "sxt": farr_zeros(d), "sQ": farr_zeros(block*d), "sK": farr_zeros(block*d),
+                "sV": farr_zeros(block*d), "sctx": farr_zeros(block*d), "ssrow": farr_zeros(block) }
+            let toks = []
+            let mut s = 0
+            while s < len(seed_ids) { toks.push(to_int(seed_ids[s])); s = s + 1 }
+            let mut gg = 0
+            while gg < gen {
+                let n = len(toks)
+                let mut start = 0
+                if n > block { start = n - block }
+                let T = n - start
+                let ids = farr_zeros(T)
+                let mut p = 0
+                while p < T { let _ = farr_set(ids, p, to_float(toks[start+p])); p = p + 1 }
+                let lo = bg_forward_last_W_s(W, ids, T, sc)
+                let mut nb = 0
+                let mut bv = farr_get(lo, 0)
+                let mut kk = 1
+                while kk < vocab { let vv = farr_get(lo, kk); if vv > bv { bv = vv; nb = kk } kk = kk + 1 }
+                let _ = farr_free(lo); let _ = farr_free(ids)
+                toks.push(nb)
+                gg = gg + 1
+            }
+            // free scratch
+            let _ = farr_free(to_int(sc["sx"])); let _ = farr_free(to_int(sc["snrm"]))
+            let _ = farr_free(to_int(sc["saout"])); let _ = farr_free(to_int(sc["sh4"]))
+            let _ = farr_free(to_int(sc["smlpo"])); let _ = farr_free(to_int(sc["slastrow"]))
+            let _ = farr_free(to_int(sc["sxt"])); let _ = farr_free(to_int(sc["sQ"]))
+            let _ = farr_free(to_int(sc["sK"])); let _ = farr_free(to_int(sc["sV"]))
+            let _ = farr_free(to_int(sc["sctx"])); let _ = farr_free(to_int(sc["ssrow"]))
+            println("frag=" + to_string(f+1))
+            f = f + 1
+        }
+        println("RSS_DONE")
+    }
+}

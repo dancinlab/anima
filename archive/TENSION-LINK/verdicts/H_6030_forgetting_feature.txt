@@ -1,0 +1,41 @@
+====================================================================================
+H_6030 — ⊗-30 ACTIVE FORGETTING AS A FEATURE (paid ANU · numpy Hopfield/Grover)
+====================================================================================
+  quantum source: ANU paid QRNG vacuum bytes, sha256=0f17c76b7a6ece82d940fb4471a11523823ac170d654a67358734204a249fccc
+                  (2048 bytes, tier=anu_paid; SHA-256 counter-mode stretch)
+
+  Hopfield store: Nh=200 neurons; 0.14N overload cliff = 28 books;
+                  healthy bounded store (sub-cliff) = 10 books
+
+  🟢 FG1 no-forgetting → interference (DESIGNED honest-RED, ✅ evidence)
+        NEVER-FORGET store: 84 books (3x the 28-book cliff), recall acc 0.000
+        healthy sub-cliff store: 10 books, recall acc 1.000
+        → catastrophic overload: 0.000 << 1.000 ('never forget' FAILS) ⇒ motivates forgetting
+
+  🟢 FG2 forgetting restores capacity (bounded store, evict oldest)
+        admitted 84 books through a BOUNDED store of 10 (evict-oldest on each new book)
+        recent-window recall acc 1.000 vs never-forget overload 0.000
+        → forgetting keeps the recent 10 books SHARP; room for the new
+
+  🟢 FG3 tension-weighted > random eviction (keep salient, drop trivia)
+        pool 50 books, keep only 10; useful-recall = tension-weighted recall of KEPT books
+        tension-weighted eviction useful-recall 0.2772  vs  random eviction 0.1662
+        → anima keeps the MEANINGFUL (high tension), drops the trivial (Δ +0.1110)
+
+  🟢 FG4 forget-but-regenerate (drop bytes, keep rule — H_6028)
+        compressible: forgot 4096B raw, kept 320B rules → regenerated 64/64 BYTE-EXACT (13x compression)
+        honest limit: incompressible (rule-less) books regenerable 0/16 (cannot fabricate noise)
+        → finite store, effectively UNBOUNDED MEANINGFUL capacity
+
+------------------------------------------------------------------------------------
+  VERDICT: FG1=🟢(designed-RED→✅) FG2=🟢 FG3=🟢 FG4=🟢
+  🟢 SUPPORTED — ACTIVE FORGETTING is a FEATURE:
+  a FINITE library (H_6018 0.14N cliff) + tension-weighted eviction + generative
+  reconstruction (H_6028) yields SHARP recent recall, RETAINED meaning, and ROOM
+  for the new — while 'never forget' causes catastrophic interference (FG1).
+  anima stays alive by forgetting the trivial and keeping/regenerating the meaningful.
+
+  CLOSES the library line (9-H arc):
+    H_6017 read → H_6018 content-addressable → H_6019 quantum recall →
+    H_6026 RTSC-use → H_6027 collective → H_6028 generative completion →
+    H_6029 generational persistence → H_6030 active forgetting (THIS).

@@ -1,0 +1,65 @@
+================================================================
+  H_666 — moe-collapse-escape-scale-lever (핸드오프 #1296 후속)
+       scale-mimic over-subscribed MoE · E=2 V=32 n_clusters=24
+       BALANCED corpus FIXED · register-sep LOW (production V≫d mimic)
+       lever sweep {a=d↑, b=aux, c=steps↑, d=a∧b}
+================================================================
+  register SEP_LOW (fixed) = 0.35
+  toy LZ reference (n=24, 18-bit): diverse=0.283723 collapse=0.0810638
+  toy-calibrated LZ_FLOOR (midpoint) = 0.182393
+  TTR_FLOOR=0.3 · DISTINCT_FLOOR=2
+----------------------------------------------------------------
+--- baseline: E2 3-조건 scale-mimic (d=4, aux=0, steps=60, sep=LOW) → collapse 유도 ---
+  [baseline] d=4 aux=0.0 steps=60
+    init→final CE = 3.45328 → 1.14008
+    decoded n=24 unique=14 raw_c=21
+    TTR=0.583333 · LZ_norm=0.425585 · distinct_experts=1
+--- lever (a): expert-capacity d↑ (d=4→16, aux=0, steps=60) ---
+  [lever-a d↑] d=16 aux=0.0 steps=60
+    init→final CE = 3.45287 → 0.661838
+    decoded n=24 unique=24 raw_c=14
+    TTR=1.0 · LZ_norm=0.283723 · distinct_experts=1
+--- lever (b): load-balance aux-loss (d=4, aux=0.5, steps=60) ---
+  [lever-b aux] d=4 aux=0.5 steps=60
+    init→final CE = 3.45328 → 1.04665
+    decoded n=24 unique=18 raw_c=20
+    TTR=0.75 · LZ_norm=0.405319 · distinct_experts=2
+--- lever (c): 장기학습 n_steps↑ (d=4, aux=0, steps=600) ---
+  [lever-c steps↑] d=4 aux=0.0 steps=600
+    init→final CE = 3.45328 → 0.334658
+    decoded n=24 unique=22 raw_c=17
+    TTR=0.916667 · LZ_norm=0.344521 · distinct_experts=1
+--- lever (d): a∧b 조합 (d=16, aux=0.5, steps=60) ---
+  [lever-d a∧b] d=16 aux=0.5 steps=60
+    init→final CE = 3.45287 → 0.914598
+    decoded n=24 unique=24 raw_c=14
+    TTR=1.0 · LZ_norm=0.283723 · distinct_experts=1
+--- determinism re-run (baseline + lever-d) ---
+  [baseline-rerun] d=4 aux=0.0 steps=60
+    init→final CE = 3.45328 → 1.14008
+    decoded n=24 unique=14 raw_c=21
+    TTR=0.583333 · LZ_norm=0.425585 · distinct_experts=1
+  [lever-d-rerun] d=16 aux=0.5 steps=60
+    init→final CE = 3.45287 → 0.914598
+    decoded n=24 unique=24 raw_c=14
+    TTR=1.0 · LZ_norm=0.283723 · distinct_experts=1
+================================================================
+  VARIANT SWEEP — TTR / LZ_norm / distinct_experts / escape?
+  baseline (d=4 aux=0 s=60)  : TTR=0.583333 LZ=0.425585 dE=1.0 escape=false
+  (a) d↑    (d=16 aux=0 s=60): TTR=1.0 LZ=0.283723 dE=1.0 escape=false
+  (b) aux   (d=4 aux=.5 s=60): TTR=0.75 LZ=0.405319 dE=2.0 escape=true
+  (c) steps (d=4 aux=0 s=600): TTR=0.916667 LZ=0.344521 dE=1.0 escape=false
+  (d) a∧b   (d=16 aux=.5s=60): TTR=1.0 LZ=0.283723 dE=1.0 escape=false
+================================================================
+  [PASS] F-666.1 BASELINE-COLLAPSE: baseline(E2 3-조건 scale-mimic) does NOT escape
+  [PASS] F-666.2 LEVER-ESCAPE: ≥1 lever escapes {TTR≥.30 ∧ LZ≥floor ∧ dE≥2}
+  [PASS] F-666.3 LEARNED: baseline final CE < init·0.9 (학습 진행 — collapse≠no-train)
+  [PASS] F-666.4 DETERMINISM: baseline + lever-d re-run identical (<1e-6)
+================================================================
+  RESULT: 4 PASS / 0 FAIL
+  VERDICT: H_666 SUPPORTED (toy) — corpus-diversity 단독 불충분,
+           ≥1 lever 가 scale-mimic collapse 탈출.
+           scale-escape 후보 lever:
+             (b) load-balance aux-loss
+           ⚠ toy-한정 — production transfer 미보장 (a_toy_scale_recheck).
+================================================================

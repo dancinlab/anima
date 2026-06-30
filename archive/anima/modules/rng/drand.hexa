@@ -1,0 +1,322 @@
+// anima/modules/rng/drand.hexa — drand quicknet (League of Entropy) beacon (Tier 1)
+//
+// EU-jurisdiction sovereign-public randomness beacon. League of Entropy is a
+// 15-org collective (Cloudflare, EPFL, Protocol Labs, Kudelski Security, …).
+// Quicknet is the 3-second cadence chain using BLS unchained scheme on BLS12-381 G1.
+//
+// API:    https://api.drand.sh/<chain_hash>/public/latest
+//         https://api.drand.sh/<chain_hash>/public/<round>
+//         (mirror) https://drand.cloudflare.com/<chain_hash>/public/latest
+//         (info)   https://api.drand.sh/v2/beacons/quicknet/info
+// Cadence: 3 seconds / pulse — fastest free public beacon
+// Auth:   none (free public)
+//
+// Tier 1: free, public, BLS-signed, 256-bit randomness / 3-s pulse → ~85 bps.
+//
+// raw#9 hexa-only strict. raw#10 honest C3:
+//   (1) is_quantum=0 — drand mixes entropy from 15 orgs; some contribute
+//       LavaRand (Cloudflare) which has photonic noise, but the collective is
+//       NOT pure-quantum. Vendor does not certify pure-quantum. We honestly
+//       mark mixed.
+//   (2) BLS signature MUST be present on live pulses; F_DRAND_03 enforces.
+//       BLS verification (pairing check on BLS12-381) is NOT performed in this
+//       cycle — that requires the signature-verify primitive (next cycle).
+//   (3) Quicknet uses unchained scheme: previous_signature is NOT chained-in,
+//       so the field is empty/absent on v2 endpoints. We tolerate both.
+//   (4) Selftest mock via NEXUS_QRNG_MOCK=1; live via NEXUS_QRNG_LIVE=1.
+//   (5) 3-second cadence ≈ 1.7 KiB/min sustained → 100k samples (~800 MB)
+//       still infeasible (≈ 1.2 years). Use as fast seed-anchor only.
+
+// ── inline struct mirror (SSOT: anima/core/rng/source.hexa) ─
+
+struct RngSourceMeta {
+    name:           str,
+    tier:           int,
+    throughput_bps: int,
+    cost_usd:       int,
+    lead_days:      int,
+    is_quantum:     int,
+    is_local:       int,
+    is_free:        int,
+    status:         str,
+    vendor:         str
+}
+
+struct RngCollectResult {
+    ok:             int,
+    n_bytes:        int,
+    bytes_:         [int],
+    sha256_hex:     str,
+    message:        str
+}
+
+struct DrandPulse {
+    round:                  int,
+    randomness_hex:         str,
+    signature_hex:          str,
+    previous_signature_hex: str,
+    ok:                     int
+}
+
+fn rng_meta_make(
+    name: str, tier: int, throughput_bps: int, cost_usd: int,
+    lead_days: int, is_quantum: int, is_local: int, is_free: int,
+    status: str, vendor: str
+) -> RngSourceMeta {
+    return RngSourceMeta {
+        name: name, tier: tier, throughput_bps: throughput_bps,
+        cost_usd: cost_usd, lead_days: lead_days,
+        is_quantum: is_quantum, is_local: is_local, is_free: is_free,
+        status: status, vendor: vendor
+    }
+}
+
+fn rng_result_fail(reason: str) -> RngCollectResult {
+    return RngCollectResult { ok: 0, n_bytes: 0, bytes_: [], sha256_hex: "", message: reason }
+}
+
+fn rng_result_ok(bytes_: [int], sha256_hex: str, message: str) -> RngCollectResult {
+    return RngCollectResult { ok: 1, n_bytes: len(bytes_), bytes_: bytes_, sha256_hex: sha256_hex, message: message }
+}
+
+// ── drand constants ────────────────────────────────────────
+
+let DRAND_NAME       = "drand"
+let DRAND_TIER       = 1
+// 256 bits per pulse / 3 s = ~85 bps sustained
+let DRAND_BPS        = 85
+let DRAND_VENDOR     = "league_of_entropy"
+// Quicknet chain hash (BLS unchained-g1-rfc9380, 3s period). Override via NEXUS_DRAND_CHAIN.
+let DRAND_CHAIN_HASH = "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971"
+let DRAND_API_BASE   = "https://api.drand.sh/"
+let DRAND_TIMEOUT_S  = 10
+let DRAND_BYTES_PER_PULSE = 32          // 256 bits randomness
+let DRAND_SIG_HEX_LEN = 96               // BLS12-381 G1 (48 bytes / 96 hex)
+
+// ── Meta export ─────────────────────────────────────────────
+
+fn rng_source_meta_drand() -> RngSourceMeta {
+    return rng_meta_make(
+        DRAND_NAME, DRAND_TIER, DRAND_BPS,
+        0,    // cost_usd (free)
+        0,    // lead_days (no auth)
+        0,    // is_quantum=0 (mixed entropy from 15 orgs; LavaRand contributes
+              //              photonic noise but collective is not pure-quantum)
+        0,    // is_local (network call)
+        1,    // is_free
+        "IMPLEMENTED",
+        DRAND_VENDOR
+    )
+}
+
+// ── JSON field extract (lightweight; mirrors curby/nist pattern) ─
+
+fn _drand_extract(body: str, key: str) -> str {
+    let needle_a = "\"" + key + "\":"
+    let needle_b = "\"" + key + "\" :"
+    let needle = if body.contains(needle_a) { needle_a } else { if body.contains(needle_b) { needle_b } else { "" } }
+    if len(needle) == 0 { return "" }
+    let after = body.split(needle)
+    if len(after) < 2 { return "" }
+    let rest = after[1].trim()
+    if len(rest) == 0 { return "" }
+    let first_ch = rest.substr(0, 1)
+    if first_ch == "\"" {
+        let q1 = rest.split("\"")
+        if len(q1) >= 2 { return q1[1] }
+        return ""
+    }
+    let toks = rest.split(",")
+    if len(toks) < 1 { return "" }
+    let head = toks[0].split("}")
+    if len(head) < 1 { return "" }
+    return head[0].trim()
+}
+
+fn _drand_parse_pulse(body: str) -> DrandPulse {
+    let rnd_s   = _drand_extract(body, "round")
+    let rand_s  = _drand_extract(body, "randomness")
+    let sig_s   = _drand_extract(body, "signature")
+    let prev_s  = _drand_extract(body, "previous_signature")
+    let r_int = if len(rnd_s) > 0 { to_int(rnd_s) } else { 0 }
+    // ok requires: round > 0, randomness 64 hex chars, signature non-empty.
+    // Quicknet (unchained) has empty previous_signature — tolerated.
+    let ok_flag = if r_int > 0 { if len(rand_s) >= 64 { if len(sig_s) > 0 { 1 } else { 0 } } else { 0 } } else { 0 }
+    return DrandPulse {
+        round: r_int, randomness_hex: rand_s,
+        signature_hex: sig_s, previous_signature_hex: prev_s,
+        ok: ok_flag
+    }
+}
+
+// ── Live fetch ──────────────────────────────────────────────
+
+fn drand_fetch_latest() -> DrandPulse {
+    let mock_env = exec("printenv NEXUS_QRNG_MOCK 2>/dev/null || true").trim()
+    if mock_env == "1" {
+        let fx_path = "anima/modules/rng/fixtures/drand_pulse_sample.json"
+        let body = exec("cat " + fx_path + " 2>/dev/null || echo ''")
+        return _drand_parse_pulse(body)
+    }
+    let chain_env = exec("printenv NEXUS_DRAND_CHAIN 2>/dev/null || true").trim()
+    let chain = if len(chain_env) > 0 { chain_env } else { DRAND_CHAIN_HASH }
+    let url = DRAND_API_BASE + chain + "/public/latest"
+    let cmd = "curl -sS --max-time " + str(DRAND_TIMEOUT_S) + " '" + url + "' 2>/dev/null"
+    let body = exec(cmd)
+    if len(body) < 16 {
+        return DrandPulse { round: 0, randomness_hex: "", signature_hex: "", previous_signature_hex: "", ok: 0 }
+    }
+    return _drand_parse_pulse(body)
+}
+
+fn drand_fetch_round(round: int) -> DrandPulse {
+    if round < 1 {
+        return DrandPulse { round: 0, randomness_hex: "", signature_hex: "", previous_signature_hex: "", ok: 0 }
+    }
+    let chain_env = exec("printenv NEXUS_DRAND_CHAIN 2>/dev/null || true").trim()
+    let chain = if len(chain_env) > 0 { chain_env } else { DRAND_CHAIN_HASH }
+    let url = DRAND_API_BASE + chain + "/public/" + str(round)
+    let cmd = "curl -sS --max-time " + str(DRAND_TIMEOUT_S) + " '" + url + "' 2>/dev/null"
+    let body = exec(cmd)
+    if len(body) < 16 {
+        return DrandPulse { round: 0, randomness_hex: "", signature_hex: "", previous_signature_hex: "", ok: 0 }
+    }
+    return _drand_parse_pulse(body)
+}
+
+// ── Hex → bytes + sha256 ───────────────────────────────────
+
+fn _drand_hex_char_val(c: str) -> int {
+    if c == "0" { return 0 } if c == "1" { return 1 } if c == "2" { return 2 } if c == "3" { return 3 }
+    if c == "4" { return 4 } if c == "5" { return 5 } if c == "6" { return 6 } if c == "7" { return 7 }
+    if c == "8" { return 8 } if c == "9" { return 9 }
+    if c == "a" { return 10 } if c == "b" { return 11 } if c == "c" { return 12 } if c == "d" { return 13 }
+    if c == "e" { return 14 } if c == "f" { return 15 }
+    if c == "A" { return 10 } if c == "B" { return 11 } if c == "C" { return 12 } if c == "D" { return 13 }
+    if c == "E" { return 14 } if c == "F" { return 15 }
+    return -1
+}
+
+fn _drand_hex_to_bytes(hex_s: str, n_max: int) -> [int] {
+    let mut out = []
+    let mut i = 0
+    let n = len(hex_s)
+    while i + 1 < n {
+        if len(out) >= n_max { return out }
+        let hi = _drand_hex_char_val(hex_s.substr(i, 1))
+        let lo = _drand_hex_char_val(hex_s.substr(i + 1, 1))
+        if hi < 0 { return out }
+        if lo < 0 { return out }
+        out = out.push(hi * 16 + lo)
+        i = i + 2
+    }
+    return out
+}
+
+fn _drand_sha256_of_bytes(bytes_: [int], seed: int) -> str {
+    let n = len(bytes_)
+    if n == 0 { return "" }
+    let tmp = "/tmp/anima_rng_drand_" + str(seed) + "_" + str(n) + ".bin"
+    let mut hex = ""
+    let mut k = 0
+    while k < n {
+        let b = bytes_[k]
+        let hi = b / 16
+        let lo = b - hi * 16
+        let hi_c = if hi < 10 { str(hi) } else { if hi == 10 { "a" } else { if hi == 11 { "b" } else { if hi == 12 { "c" } else { if hi == 13 { "d" } else { if hi == 14 { "e" } else { "f" } } } } } }
+        let lo_c = if lo < 10 { str(lo) } else { if lo == 10 { "a" } else { if lo == 11 { "b" } else { if lo == 12 { "c" } else { if lo == 13 { "d" } else { if lo == 14 { "e" } else { "f" } } } } } }
+        hex = hex + hi_c + lo_c
+        k = k + 1
+    }
+    let cmd = "printf '%s' '" + hex + "' | xxd -r -p > " + tmp + " 2>&1; (shasum -a 256 " + tmp + " 2>/dev/null || sha256sum " + tmp + ") | awk '{print $1}'"
+    let sha = exec(cmd).trim()
+    let _rc = exec("rm -f " + tmp + "; echo OK")
+    return sha
+}
+
+// ── Collect ─────────────────────────────────────────────────
+
+fn rng_source_collect_drand(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 {
+        return rng_result_fail("drand: n_bytes must be >= 1")
+    }
+    if n_bytes > DRAND_BYTES_PER_PULSE {
+        return rng_result_fail("drand: n_bytes > 32 requires multi-pulse aggregation (3s/pulse cadence); use seed-anchor pattern")
+    }
+    let pulse = drand_fetch_latest()
+    if pulse.ok != 1 {
+        return rng_result_fail("drand: fetch fail (network/parse/empty signature)")
+    }
+    let bytes_all = _drand_hex_to_bytes(pulse.randomness_hex, DRAND_BYTES_PER_PULSE)
+    if len(bytes_all) < n_bytes {
+        return rng_result_fail("drand: hex decode short, got=" + str(len(bytes_all)) + " want=" + str(n_bytes))
+    }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        bytes_ = bytes_.push(bytes_all[i])
+        i = i + 1
+    }
+    let sha = _drand_sha256_of_bytes(bytes_, seed)
+    return rng_result_ok(bytes_, sha, "drand: ok round=" + str(pulse.round) + " sig_len=" + str(len(pulse.signature_hex)))
+}
+
+// ── Selftest ────────────────────────────────────────────────
+//
+// F_DRAND_01: mock fixture deterministic round + 64-char randomness hex
+// F_DRAND_02: live randomness exact length (64 hex chars / 32 bytes)
+// F_DRAND_03: signature non-empty + length 96 (BLS12-381 G1)
+
+fn _selftest_drand() -> int {
+    let m = rng_source_meta_drand()
+    if m.name != "drand" { return 0 }
+    if m.tier != 1 { return 0 }
+    if m.is_quantum != 0 { return 0 }   // honest C3: mixed entropy, not pure quantum
+    if m.is_local != 0 { return 0 }
+    if m.is_free != 1 { return 0 }
+    if m.vendor != "league_of_entropy" { return 0 }
+    // F_DRAND_01: parse known fixture
+    let fixture = "{\"round\":28000000,\"randomness\":\"6a72c4c4128ad809c9eded8035219482f23bbf6fab0c1538db615669583e46c6\",\"signature\":\"b1ad00848946b6c66911a5ecbcb4a3ace06afdc1a1f8f574cf969ac48686508e6df8e275753a1f3701179cbce2ff6bb7\",\"previous_signature\":\"\"}"
+    let p = _drand_parse_pulse(fixture)
+    if p.ok != 1 { return 0 }
+    if p.round != 28000000 { return 0 }
+    if len(p.randomness_hex) != 64 { return 0 }
+    // F_DRAND_03: signature non-empty + correct BLS12-381 G1 length
+    if len(p.signature_hex) == 0 { return 0 }
+    if len(p.signature_hex) != 96 { return 0 }
+    let bs = _drand_hex_to_bytes(p.randomness_hex, 32)
+    if len(bs) != 32 { return 0 }
+    if bs[0] != 106 { return 0 }   // 0x6a
+    if bs[1] != 114 { return 0 }   // 0x72
+    // Failure path: empty body
+    let p_bad = _drand_parse_pulse("{}")
+    if p_bad.ok != 0 { return 0 }
+    // Failure path: missing signature
+    let p_nosig = _drand_parse_pulse("{\"round\":1,\"randomness\":\"6a72c4c4128ad809c9eded8035219482f23bbf6fab0c1538db615669583e46c6\"}")
+    if p_nosig.ok != 0 { return 0 }
+    let sha = _drand_sha256_of_bytes(bs, 1)
+    if len(sha) != 64 { return 0 }
+    return 1
+}
+
+fn main() {
+    println("[rng/drand] drand quicknet (League of Entropy) BLS-G1 beacon (Tier 1, mixed entropy)")
+    println("[rng/drand] __QRNG_DRAND_FALSIFIERS__ F_DRAND_01 F_DRAND_02 F_DRAND_03")
+    if _selftest_drand() == 1 {
+        println("[rng/drand] SELFTEST PASS")
+        println("[rng/drand] __QRNG_DRAND__ PASS")
+    } else {
+        println("[rng/drand] SELFTEST FAIL")
+        println("[rng/drand] __QRNG_DRAND__ FAIL")
+    }
+    let live = exec("printenv NEXUS_QRNG_LIVE 2>/dev/null || true").trim()
+    if live == "1" {
+        println("[rng/drand] LIVE probe (NEXUS_QRNG_LIVE=1)")
+        let r = rng_source_collect_drand(8, 1)
+        if r.ok == 1 {
+            println("[rng/drand] LIVE n=" + str(r.n_bytes) + " sha=" + r.sha256_hex)
+        } else {
+            println("[rng/drand] LIVE FAIL: " + r.message)
+        }
+    }
+}

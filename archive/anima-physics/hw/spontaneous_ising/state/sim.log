@@ -1,0 +1,24 @@
+VCD info: dumpfile state/ising_fsm.vcd opened for output.
+[F-HW-SI-1] cycle=1 motivation=0 emit=0 audit_dump=00000000000000000000000000000000
+PASS F-HW-SI-1
+[F-HW-SI-2] motivation=255 (expect 255)
+PASS F-HW-SI-2
+[F-HW-SI-3] cycle=2 emit=1 (expect 1)
+[F-HW-SI-3] next cycle emit=0 (expect 0)
+PASS F-HW-SI-3
+[F-HW-SI-4] emit_count over 100 cycles = 4 (expect <= 4)
+PASS F-HW-SI-4
+[F-HW-SI-5] emit @cycle=112 audit_dump=00000000dff09ff09ff09ff09ff09ff0
+[F-HW-SI-5] emit @cycle=134 audit_dump=0000dff0dff09ff09ff09ff09ff09ff0
+[F-HW-SI-5] emit @cycle=156 audit_dump=dff0dff0dff09ff09ff09ff09ff09ff0
+[F-HW-SI-5] emit @cycle=178 audit_dump=dff0dff0dff09ff09ff09ff09ff0dff0
+[F-HW-SI-5] emit @cycle=200 audit_dump=dff0dff0dff09ff09ff09ff0dff0dff0
+[F-HW-SI-5] emit @cycle=222 audit_dump=dff0dff0dff09ff09ff0dff0dff0dff0
+[F-HW-SI-5] emit @cycle=244 audit_dump=dff0dff0dff09ff0dff0dff0dff0dff0
+[F-HW-SI-5] emit @cycle=266 audit_dump=dff0dff0dff0dff0dff0dff0dff0dff0
+[F-HW-SI-5] emit @cycle=288 audit_dump=dff0dff0dff0dff0dff0dff0dff0dff0
+[F-HW-SI-5] audit_dump=dff0dff0dff0dff0dff0dff0dff0dff0
+PASS F-HW-SI-5
+---
+[SUMMARY] F-HW-SI-1=1 F-HW-SI-2=1 F-HW-SI-3=1 F-HW-SI-4=1 F-HW-SI-5=1
+/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm_tb.v:159: $finish called at 3036000 (1ps)

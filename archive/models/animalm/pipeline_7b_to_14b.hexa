@@ -1,0 +1,13 @@
+// Ported from pipeline_7b_to_14b.sh
+// AnimaLM Pipeline: 7B complete → eval → Qwen download → 14B launch
+//
+// R37/AN13/L3-PY (2026-04-18): original pipeline invoked `python3 -u
+// eval_animalm.py`, `python3 -u infer_animalm.py`, and `python3 -c` for
+// huggingface_hub snapshot_download. All wrapper-fallback python3 calls have
+// been removed. See /Users/ghost/Dev/anima/CLAUDE.md §.py 절대 금지.
+// Hexa-native 7B→14B pipeline required before this launcher can run again.
+
+fn main() {
+    shell("echo '[R37/AN13/L3-PY] BLOCKED: models/animalm/pipeline_7b_to_14b.hexa python3 invocations removed 2026-04-18. Hexa-native 7B->14B pipeline required. See CLAUDE.md.' 1>&2")
+    exit(1)
+}

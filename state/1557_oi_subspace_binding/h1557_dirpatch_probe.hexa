@@ -1,0 +1,55 @@
+// h1557_dirpatch_probe.hexa — confirms a DIRECTIONAL residual patch moves the logits
+// (so B3 transplant is not dead-by-LayerNorm). Loads ONCE, then patches the last
+// position after several mid-late layers with a random unit×scale delta and reports
+// whether the argmax / top logit changes. argv: <bin_path>
+import "core/bytegpt_decode.hexa"
+fn _argmax_n(a: int, n: int) -> int {
+    let mut bi = 0; let mut bv = farr_get(a, 0); let mut k = 1
+    while k < n { let v = farr_get(a, k); if v > bv { bv = v; bi = k } k = k + 1 }
+    return bi
+}
+fn main() {
+    let a = argv()
+    let mut b = 0; let mut i = 0
+    while i < len(a) { if a[i] == "--" { b = i + 1 } i = i + 1 }
+    let path = a[b + 0]
+    let pb = [84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110]
+    let T = len(pb)
+    let ids = farr_zeros(T)
+    let mut j = 0
+    while j < T { let _ = farr_set(ids, j, to_float(pb[j])); j = j + 1 }
+    let W = bg_load_ranged(path)
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let ref_logits = bg_forward_last_W(W, ids, T)
+    let ref_am = _argmax_n(ref_logits, vocab)
+    println("REF_ARGMAX " + to_string(ref_am))
+    // deterministic pseudo-random unit-ish direction (xorshift on dim index), several scales
+    let scales = [5.0, 20.0, 60.0]
+    let layers = [8, 12, 16]
+    let mut si = 0
+    while si < len(scales) {
+        let sc = to_float(scales[si])
+        let mut lyi = 0
+        while lyi < len(layers) {
+            let ly = to_int(layers[lyi])
+            let delta = farr_zeros(d)
+            let mut x = 2463534242
+            let mut c = 0
+            while c < d {
+                x = (x ^ (x * 8192)) & 0xFFFFFFFF
+                x = (x ^ (x / 131072)) & 0xFFFFFFFF
+                x = (x ^ (x * 32)) & 0xFFFFFFFF
+                let u = (to_float(x) / 4294967296.0) - 0.5
+                let _ = farr_set(delta, c, u * sc)
+                c = c + 1
+            }
+            let pl = bg_forward_patched_W(W, ids, T, ly, T - 1, delta)
+            let am = _argmax_n(pl, vocab)
+            println("PATCH L" + to_string(ly) + " sc" + to_string(sc) + " argmax=" + to_string(am) + " moved=" + to_string(am != ref_am))
+            let _ = farr_free(pl); let _ = farr_free(delta)
+            lyi = lyi + 1
+        }
+        si = si + 1
+    }
+    println("DIRPATCH_DONE")
+}

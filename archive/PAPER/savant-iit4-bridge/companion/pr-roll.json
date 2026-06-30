@@ -1,0 +1,25 @@
+{
+  "repo": "dancinlab/anima",
+  "paper": "savant-iit4-bridge",
+  "generated": "2026-05-28",
+  "note": "Every cell is a merged PR on main; verdict earned by independent deterministic recompute (commons @D g73). 0 fake-blue across the arc. axis E (SAVANT) x axis C (IIT4 Phi-structure) isomorphism.",
+  "cells": [
+    {"H": "H_347", "pr": 1149, "axis": "E SAVANT", "role": "GZ_WIDTH = ln(4/3) = ln(tau(6)/(tau(6)-1)) closed form", "verdict": "SUPPORTED-composite", "tier": "GREEN", "paper_sec": "anchors"},
+    {"H": "H_348", "pr": 1152, "axis": "E SAVANT", "role": "GZ_LOWER inhibition -> SI > 3", "verdict": "PARTIAL", "tier": "YELLOW", "paper_sec": "bridge"},
+    {"H": "H_350", "pr": 1153, "axis": "E SAVANT", "role": "SI || Phi-diversity, r=0.926", "verdict": "SUPPORTED-NUMERICAL", "tier": "GREEN", "paper_sec": "bridge"},
+    {"H": "H_351", "pr": 1157, "axis": "E SAVANT x C IIT4", "role": "dPhi/dI peak || GZ_LOWER, |delta|=0.032", "verdict": "SUPPORTED", "tier": "GREEN", "paper_sec": "anchors"},
+    {"H": "H_613", "pr": 1162, "axis": "E SAVANT", "role": "SI || Phi-diversity orthogonal (max-free), r=0.990", "verdict": "SUPPORTED-NUMERICAL", "tier": "GREEN", "paper_sec": "bridge"},
+    {"H": "H_618", "pr": 1175, "axis": "E SAVANT x F HIVE-MIND", "role": "collective dPhi/dI peak || GZ_LOWER, |delta|=0.002", "verdict": "SUPPORTED", "tier": "GREEN", "paper_sec": "collective"},
+    {"H": "H_624", "pr": 1198, "axis": "C2 IIT4 x E SAVANT", "role": "distinction || savant cell isomorphism, rho=0.861 r=0.972", "verdict": "SUPPORTED", "tier": "GREEN", "paper_sec": "isomorphism"}
+  ],
+  "supporting_cells": [
+    {"H": "H_609", "axis": "F HIVE-MIND", "role": "collective Phi super-additivity anchor (110,110) W=0.6 max excess +10.48", "verdict": "SUPPORTED"},
+    {"H": "H_614", "pr": 1169, "axis": "E SAVANT", "role": "dPhi/dI peak multi-rule invariance", "verdict": "FALSIFIED-2/4", "tier": "RED", "note": "rule-110-specific bound on H_351"},
+    {"H": "H_282", "axis": "C1 IIT4", "role": "proxy -> faithful Phi direction preservation", "verdict": "SUPPORTED-8/8"}
+  ],
+  "infrastructure_prs": [
+    {"pr": 185, "repo": "sidecar", "what": "commons @D g73 anti-fake-closure governance"},
+    {"pr": 1512, "repo": "hexa-lang", "what": "verify primitives binary_entropy + kl_divergence_bernoulli (real consciousness verdict path)"}
+  ],
+  "tally": {"supported": 5, "partial": 1, "supported_composite": 1, "falsified_bound": 1, "fake_blue": 0, "core_cells": 7}
+}

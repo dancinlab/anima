@@ -1,0 +1,29 @@
+════════════════════════════════════════════════════════════════
+ D2 — decoder-sampler-detokenize-roundtrip (TOY scale, $0)
+════════════════════════════════════════════════════════════════
+
+[1] REAL M4b collapse seq (n=20, from phase5b train.out:55):
+    ids   : 1×4 151642×16
+    text  : the the the the <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|> <|endoftext|>
+    eot   : 16 / 20
+    uniq  : 2 / 20 (id-level TTR 0.1)
+
+[2] toy HEALTHY diverse seq (n=20, synthetic from 10-id domain):
+    text  : the cell splits into two and consciousness emerges now are cell splits into two and consciousness emerges now the are
+    eot   : 0 / 20
+    uniq  : 10 / 20 (id-level TTR 0.5)
+
+[3] falsifier checks (pre-registered):
+  [PASS] F-D2.1 TABLE-COVERS-REAL (every REAL id has lookup entry)
+  [PASS] F-D2.2 COLLAPSE-TEXT-DEGENERATE (eot 16 >= 10)
+  [PASS] F-D2.3 HEALTHY-TEXT-DIVERSE (eot 0 AND uniq 10 >= 10)
+  [PASS] F-D2.4 ROUNDTRIP-IDENTITY (id -> text -> id, 11/11 bijection)
+  [PASS] F-D2.5 SEPARATION-AT-TEXT (uniq_healthy 10 - uniq_collapse 2 = 8 >= 8)
+
+════════════════════════════════════════════════════════════════
+ RESULT: 5 PASS / 0 FAIL
+ VERDICT: H_D2 SUPPORTED (toy scale) — toy detokenize separates
+          COLLAPSE vs HEALTHY at the TEXT level. qualitative
+          residual F-M4B-FIRE-2/5 RESOLVED at toy scale.
+          (Full-BPE scale verification remains future work.)
+════════════════════════════════════════════════════════════════

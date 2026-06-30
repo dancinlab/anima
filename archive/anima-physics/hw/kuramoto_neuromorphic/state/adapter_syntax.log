@@ -1,0 +1,14 @@
+--- kuramoto_loihi2_adapter.py ---
+OK: kuramoto_loihi2_adapter.py syntax PASS
+
+--- kuramoto_akida_adapter.py ---
+OK: kuramoto_akida_adapter.py syntax PASS
+
+--- import-gate dry run (no --submit; expects AVAILABLE=False on Mac) ---
+[kuramoto_loihi2_adapter] NXSDK_AVAILABLE=False
+  N=8, K=2.0, steps=1000
+  (syntax-check mode — pass --submit to fire on cloud)
+
+[kuramoto_akida_adapter] AKIDA_AVAILABLE=False
+  N=8, K=2.0, steps=1000
+  (syntax-check mode — pass --submit to fire on cloud/HW)

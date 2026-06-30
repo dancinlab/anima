@@ -1,0 +1,21 @@
+VCD info: dumpfile state/nested_lattice.vcd opened for output.
+[F-HW-NL-1] cycle=0 state=2443c171160 (expect 2443c171160)
+PASS F-HW-NL-1 (reset = nested_new(1) byte-exact)
+[step=1] state=1964949360b expect=1964949360b OK
+[step=2] state=1c30924c6d1 expect=1c30924c6d1 OK
+[step=3] state=224a464b8a1 expect=224a464b8a1 OK
+[step=4] state=142d2293502 expect=142d2293502 OK
+[step=5] state=0c85a6c965a expect=0c85a6c965a OK
+[step=6] state=1b49328a642 expect=1b49328a642 OK
+[step=7] state=1985a6c9009 expect=1985a6c9009 OK
+[step=8] state=0b48964c602 expect=0b48964c602 OK
+[step=9] state=112a16d229a expect=112a16d229a OK
+[step=10] state=1950c4432ca expect=1950c4432ca OK
+PASS F-HW-NL-2 (first nested_step(seed=1) byte-exact)
+PASS F-HW-NL-3 (10-cycle SW chain bit-identical, 0 mismatches)
+PASS F-HW-NL-5 (m0 perturbation reaches L1 a-cells within 10 cycles)
+PASS F-HW-NL-4 (state bounded in 14x3-bit domain over 256 cycles, revisit=0)
+
+[SUMMARY] 5 PASS / 0 FAIL (out of 5 falsifiers F-HW-NL-1..5)
+[DONE] final step=255 state=1229c4d168a
+/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_tb.v:190: $finish called at 2576000 (1ps)

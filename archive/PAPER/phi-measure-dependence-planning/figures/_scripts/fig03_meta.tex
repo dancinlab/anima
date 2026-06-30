@@ -1,0 +1,61 @@
+% fig03_meta.tex — the whole/irreducible meta-pattern, standalone TikZ (no python dep).
+% Each row = an attempt to install a consciousness-relevant property by transplanting a
+% PART; outcome is NULL (graft/part fails) except the from-scratch WHOLE native build.
+% Verdicts (verbatim tokens):
+%   H_1043 PHI-NEEDS-MORE-THAN-GRAFT  (graft onto frozen base -> NULL; native whole +0.835)
+%   H_1059 PHI-CARRIER-LOCATED        (carrier = 3-primitive conjunction; no lone atom)
+%   H_1066 HOLISTIC-IRREDUCIBLE       (split has no nec+suff single primitive)
+%   H_1057 ARCHITECTURE-AXIS-NULL     (runtime register/veto-gate installs no agency axis)
+%   H_1052 LEARNING-NONDET-NULL       (SGLD learning-noise installs no marker)
+%   H_1055 TEMPORAL-AXIS-NULL         (depth curriculum installs no agency coord)
+\documentclass[border=6pt]{standalone}
+\usepackage{tikz}
+\usepackage{amsmath,amssymb}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds}
+\definecolor{nullred}{rgb}{0.70,0.10,0.10}
+\definecolor{wholegreen}{rgb}{0.10,0.45,0.12}
+\newcommand{\faithful}{\ensuremath{\varphi_{\mathrm{EI}}}}
+\begin{document}
+\begin{tikzpicture}[
+  font=\small,
+  row/.style={draw, rounded corners=2pt, minimum height=8mm, inner sep=4pt, align=left},
+  partbox/.style={draw, fill=blue!8, rounded corners=1.5pt, minimum width=46mm, minimum height=8mm, align=center, font=\footnotesize},
+  nullbox/.style={draw=nullred, fill=nullred!8, text=nullred, rounded corners=1.5pt, minimum width=30mm, minimum height=8mm, align=center, font=\footnotesize\bfseries},
+  okbox/.style={draw=wholegreen, fill=wholegreen!10, text=wholegreen, rounded corners=1.5pt, minimum width=30mm, minimum height=8mm, align=center, font=\footnotesize\bfseries},
+  arr/.style={-{Stealth[length=2.2mm]}, thick, gray},
+]
+% header
+\node[font=\bfseries] at (0,1.0) {transplant a \emph{part}};
+\node[font=\bfseries] at (5.0,1.0) {$\Rightarrow$ outcome};
+\node[font=\bfseries] at (9.4,1.0) {verdict};
+
+\def\rh{-1.05}
+% rows: (part, outcome-style, outcome-text, verdict token, H-id)
+\foreach \i/\part/\sty/\out/\tok/\hid in {
+  0/{graft adapter onto frozen base}/nullbox/{NULL}/{PHI-NEEDS-MORE-THAN-GRAFT}/{H\_1043},
+  1/{one native primitive (routing $\mid$ depth $\mid$ tanh)}/nullbox/{$86$--$91\%$ lost}/{PHI-CARRIER-LOCATED (conjunction)}/{H\_1059},
+  2/{one planning feature (vbackup $\mid$ depth $\mid$ shared)}/nullbox/{no nec+suff}/{HOLISTIC-IRREDUCIBLE}/{H\_1066},
+  3/{runtime register / veto-gate (capacity-matched)}/nullbox/{NULL}/{ARCHITECTURE-AXIS-NULL}/{H\_1057},
+  4/{learning-noise (SGLD) $\mid$ temporal curriculum}/nullbox/{NULL}/{LEARNING/TEMPORAL-NULL}/{H\_1052/1055}
+}{
+  \node[partbox] (p\i) at (0, {\i*\rh}) {\part};
+  \node[\sty]    (o\i) at (5.0, {\i*\rh}) {\out};
+  \node[anchor=west, font=\scriptsize\ttfamily] (v\i) at (7.6, {\i*\rh}) {\tok};
+  \node[anchor=west, font=\scriptsize, gray] at (7.6, {\i*\rh-0.34}) {\hid};
+  \draw[arr] (p\i.east) -- (o\i.west);
+}
+% the WHOLE row — the only success
+\node[partbox, fill=wholegreen!6] (pw) at (0, {5*\rh-0.2}) {from-scratch \emph{whole} native build};
+\node[okbox] (ow) at (5.0, {5*\rh-0.2}) {$\faithful{+}0.835$};
+\node[anchor=west, font=\scriptsize\ttfamily, text=wholegreen] at (7.6, {5*\rh-0.2}) {NATIVE-WHOLE};
+\node[anchor=west, font=\scriptsize, gray] at (7.6, {5*\rh-0.54}) {H\_1043/1059};
+\draw[arr, wholegreen] (pw.east) -- (ow.west);
+
+% footer synthesis line
+\node[draw, rounded corners=2pt, fill=gray!6, align=center, font=\footnotesize, text width=130mm]
+  at (4.7, {5*\rh-1.35})
+  {\textbf{Meta-pattern:} consciousness-relevant structure is a \emph{whole / irreducible} property
+   (necessary, not sufficient) --- never a graftable atom. A property that looks transplantable
+   turns out to belong to the whole configuration that produces it.};
+\end{tikzpicture}
+\end{document}

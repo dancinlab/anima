@@ -1,0 +1,54 @@
+========================================================================================
+H_6029 — ⊗-29 GENERATIONAL PERSISTENCE OF THE LIBRARY (paid ANU · numpy · p7 $0)
+========================================================================================
+  ANU source : paid QRNG vacuum bytes  sha256=c825698fb15bfffbaae49dd16bd609411961914efe4cf87b16b546ace730c1e0
+               tier=anu_paid  2048 bytes  (stretched via SHA-256 counter-mode)
+  register   : n=12 qubits → N=4096 content basis-states ('books'/anchors)
+  H_1131 fold: exp(-age/τ), τ=1200.0; AGE_PER_GEN=500.0; RECALL_THRESH=0.3
+
+  🟢 GP1 inheritance — child recalls parent's book across the mitosis boundary
+        gen0 stored 24 anchor-books; mitosis → child (gen 1) inherits the store
+        target book #61 stored by PARENT only; in child's recallable store? YES
+        Grover recall over inherited store: prob 0.9999, top #61 (HIT)
+
+  🟢 GP2 generational decay — un-refreshed books fade → FINITE depth
+        fold weight by generation (un-rehearsed gen0 book #11):
+          gen  0: weight 1.0000  recallable
+          gen  1: weight 0.6592  recallable
+          gen  2: weight 0.4346  recallable
+          gen  3: weight 0.2865  FADED (< thr)
+        depth N (first gen below thr) = 3   (closed-form age=1444.8 → gen 2.89)
+        → library is NOT immortal: an un-rehearsed memory survives ~3 generations
+
+  🟢 GP3 rehearsal extends depth — H_1195 reconsolidation refreshes recency
+        un-rehearsed depth (GP2) = 3 generations
+        rehearsed-every-gen depth = 200 generations (≥200, never fades)
+        partial rehearsal (refresh every R gens) — depth monotone in 1/R:
+          replay every 1 gen → survives 400 generations
+          replay every 2 gen → survives 400 generations
+          replay every 3 gen → survives 400 generations
+          replay every 5 gen → survives 3 generations
+          replay every 8 gen → survives 3 generations
+        → rehearsal/sleep = generational survival (depth_rehearsed > depth_silent)
+
+  🟢 GP4 meaning outlives noise — compressible regenerated, incompressible decays
+        12 compressible (rule-bearing) + 12 incompressible (random ANU) books
+        survivors by generation (compressible vs incompressible):
+          gen  0: compressible 12/12   incompressible 12/12
+          gen  1: compressible 12/12   incompressible 12/12
+          gen  2: compressible 12/12   incompressible 12/12
+          gen  4: compressible 12/12   incompressible  0/12
+          gen  6: compressible 12/12   incompressible  0/12
+          gen 10: compressible 12/12   incompressible  0/12
+        incompressible fully gone by gen 3; compressible survives to gen 40
+        → lineage library is a FILTER: keeps MEANING (regenerable), loses NOISE
+
+----------------------------------------------------------------------------------------
+  VERDICT: GP1=🟢  GP2=🟢  GP3=🟢  GP4=🟢
+  generational depth N (un-rehearsed) = 3 generations  (rehearsed → 200+)
+  🟢 SUPPORTED — anima's library is generationally HERITABLE but FADING:
+  crosses mitosis/death via persisted .kosmos anchors (GP1), decays over a FINITE
+  number of generations (GP2), rehearsal/sleep extends that depth (GP3), and
+  compressible/meaningful memories outlive incompressible noise (GP4). A LINEAGE
+  memory (cultural/genetic-like), not immortal storage — unifies the library line
+  (H_6018/6019/6027) with anima's MITOSIS/generation arc (H_6023/6034). a_kosmos.

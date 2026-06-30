@@ -1,0 +1,46 @@
+################################################################################
+# ⚠️ CORRECTED 2026-06-24 (anima H_1579 정정 · PR #2609). This "ko CE 3.351 ✅"
+# is a dt_ln-CORRUPT engine measurement = DIRECTIONAL ONLY, NOT a terminal verdict.
+#
+#   The engine clm_forward_ce CE below is read through hexa-lang dt_ln
+#   (flame_math.hexa atanh series), which diverges away from x=1 and CLAMPS
+#   per-position CE at ~5.14 — note uniform_ce=4.799 here ≠ true ln(256)=5.545,
+#   the buggy-dt_ln tell. This deflated clm303's model_ce to 3.351 and made an
+#   OVERFIT model look like it "genuinely models held-out Korean."
+#
+#   The CORRECT measurement = numpy mirror (math.log, dt_ln-immune,
+#   state/clm303_g6/tools/fastmirror.py): clm303 real ko held-out CE = 7.6–12.6
+#   > uniform 5.545 = NO-DESCENT (overfit; own-train slice CE 0.656 DESCENT,
+#   torch lossF 0.047 = memorization of ~25MB corpus). The serializer is
+#   byte-faithful (re-serialize byte-identical + torch-golden ≡ int4 mirror);
+#   the failure is OVERFITTING + this dt_ln-masked metric, NOT corruption.
+#
+#   → REVISED CLAIM: clm303 does NOT model held-out Korean (overfit). Needs
+#   RE-TRAINING with regularization + a larger/balanced corpus (cost-gate).
+#   See UNIVERSE/cards/H_1579_*.md + state/clm303_g6/CORRECTION_overfit_not_serialize.md.
+#   dt_ln bug filed to hexa-lang. Original (corrupt) record preserved below (c9).
+################################################################################
+
+clm303 held-out Korean next-byte CE — engine-native (live core/clm_decode.hexa clm_forward_ce)
+host: summer · cuda_available=0 (CPU farr) · nwin=64 · heldout_ko.txt (4.5MB, deep-offset slice, sha d5ba867)
+harness: state/clm303_savant_mitosis_train/h_clm303_ko_heldout_ce.hexa
+
+ARM clm303 (savant+mitosis, clm303.clm sha 75b0489):
+  model_ce   = 3.3510559306916217 nats/byte
+  shuffle_ce = 4.776934232365977
+  uniform_ce = 4.799056503038044  (ln V blind baseline)
+  lt_uniform = true   lt_shuffle = true   → genuinely models held-out Korean
+
+ARM base (no savant/mitosis, clm303_L4_d3784.clm sha 34d40c9, same d3784/L4 config):
+  model_ce   = 4.845533957025413 nats/byte
+  shuffle_ce = 4.945664882593361
+  uniform_ce = 4.799056503038044
+  lt_uniform = false  lt_shuffle = true   → barely above blind baseline
+
+ΔCE (base - clm303) = 1.4945 nats/byte
+
+VERDICT: clm303 strongly models held-out Korean (engine-native, lt_uniform AND lt_shuffle PASS).
+CONFOUND (honest, c9): base clm303_L4_d3784 is English-trained (per MEMORY german-garble note);
+  lt_uniform=false confirms it never learned Korean. So ΔCE conflates ko-corpus-exposure WITH
+  savant+mitosis recipe. Clean savant attribution requires a same-corpus no-savant base (follow-on).
+  Terminal claim: clm303 = genuine engine-native Korean model. Savant-isolated lift = UNVERIFIED.

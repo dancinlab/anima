@@ -1,0 +1,40 @@
+% fal.ai cover prompt template — design guide for /paper fig.
+% Copy this file to figures/_prompts/cover.txt and edit; the leading % lines
+% are comments and will be stripped by `/paper fig` before submission (or
+% delete them yourself if your backend doesn't auto-strip).
+%
+% Generate with:
+%   /paper fig square_hd figures/_prompts/cover.txt figures/cover.png
+%
+% Size tokens: square_hd | landscape_16_9 | portrait_16_9 | square
+%
+% Style tips (what consistently works on fal.ai gpt-image-2):
+%   - Lead with SUBJECT, not style ("a single superconducting magnet coil"
+%     beats "magnificent cinematic ...")
+%   - Pin ONE visual style anchor ("technical illustration", "isometric
+%     diagram", "scientific cover art", "scratchboard etching")
+%   - Pin background ("white background", "deep navy gradient")
+%   - State LAYOUT explicitly when the cover needs space for a title overlay
+%     ("title bar across the top third left empty for text overlay")
+%   - End with negative-space requirements ("no text", "no logos",
+%     "no chart axes", "no diagrams")
+%
+% Structure (5 sentences, in this order):
+%   1. SUBJECT — the one thing the cover is about.
+%   2. CONTEXT — the discipline / domain so the model picks the right vocab.
+%   3. STYLE — one anchor word (see tips above).
+%   4. COMPOSITION — framing, lighting, color palette.
+%   5. NEGATIVE SPACE — what NOT to render (text, watermarks, hands, ...).
+%
+% Compare — what to ASK FOR vs what to AVOID:
+%   ASK: concrete nouns, one style anchor, lighting, palette, layout
+%   AVOID: long adjective chains ("beautiful magnificent stunning epic"),
+%          competing styles ("photoreal AND illustrated"), text inside the
+%          image (gpt-image-2 will hallucinate words)
+
+A single <SUBJECT — e.g., niobium-titanium superconducting wire bundle>,
+shown in <CONTEXT — e.g., cross-section under a scanning electron microscope>.
+Style: <ONE ANCHOR — e.g., scientific cover art for Nature Physics>.
+Composition: <e.g., centered, soft side-lighting from upper-left,
+deep navy and copper palette, generous top margin for a title overlay>.
+No text, no logos, no watermarks, no hands, no diagrams or chart axes.

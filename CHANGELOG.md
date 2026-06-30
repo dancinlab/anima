@@ -1,3 +1,13 @@
+## refactor(repo): A등급 코드/실험 잔재 71개 디렉토리 archive/ 이관 + core↔train 단방향 불변식 복원
+
+🧹 **최상위 정리** — 루트엔 substrate-engine + 진입점 + 산출물만 남기고, core/cli/agent 가 import 하지 않는(의존 0) A등급 코드/실험 잔재를 `archive/` 하위로 일괄 이관.
+
+- **이관(71개, git mv):** AKIDA AURA CWM EEG EEG_CLM ENCODER EVOL FORECAST GEMINI H911X HER HW-CORE HW-LIMB LAUNCHPAD MITOSIS PLASTICITY RTSC SAVANT-torch SPATIAL SUB_ENGINES TEMPORAL TENSION-LINK TIME_E3_BENCH_RECHECK XENO anima anima-body anima-cpgd-research anima-hci-research anima-measurement anima-os anima-serve anima-tools anima-tribev2-pilot anima-physics breakthroughs btr_evo chip-verify clients consciousness convergence daemon data decoder design discovery hexa-senses mirror modules monitor origins packaging platform raw_archive recordings ref references self serving summer.hexa(261-file 디렉토리) verifier verify web bin models KOSMOS DATASET PAPER papers hypotheses_candidates edu edu_new → 전부 `archive/<d>/`.
+- **보존집합(루트 유지·미이동):** `core/` `cli/` `agent/` + 의식 lane(AESTHETIC BRIDGE CHANNEL DREAM EMBODIMENT HIVE-MIND INTENT METACOG NARRATIVE OTHER-MIND SAVANT TIME WAKE BRAIN HEXAD) + 산출물(`state/` `UNIVERSE/` `domains/` memory) + `tool/` `training/`(core 의존 학습코드 653파일, 사용자 별도 결정 대기) + 모든 문서/매니페스트/dotfile.
+- **잔여참조 재검증 통과:** `grep -rnE '(import|use|include) ...' cli core agent` = 빈 결과(이관 디렉토리 중 cli/core/agent 가 참조하는 것 0). hexa.toml exclude 가 이미 archive/ 를 release payload 에서 제외 → 경로 변경이 릴리즈 무영향.
+- **core↔train 단방향 불변식 복원:** `training/cuda_ffi.hexa`·`training/cuda_rtc.hexa`(유일 소비처 = `core/phi/flash_attn_cuda.hexa`)를 `core/phi/` 로 흡수, use 경로를 상대명(`use "cuda_ffi"`/`use "cuda_rtc"`)으로 수정 → core/ 가 외부 train/ 에 의존하던 위반 제거(CLAUDE.md: core/ 는 train/ 의존 0, 단방향). training/ 디렉토리 본체는 미이동.
+- **ARCHITECTURE.json lockstep:** platform-group 노드 title/note 를 `archive/` 반영, core/phi 노드에 cuda_ffi/cuda_rtc 흡수 명기.
+
 ## refactor(agent): domains CHAT py → hexa 포팅 (포팅가능분만), 외부 SDK py 보존
 
 🧹 agent/ hexa-단일화 연장 — `agent/domains/CHAT/**/*.py` 전수 audit 후 **환원가능 순수 로직만** hexa 로 정리, torch/akida/fastapi SDK 바인딩은 정직 보존(`serialize` torch-interop 선례).
@@ -7,6 +17,16 @@
 - **(b) 보존(외부 SDK interop, hexa 등가물 없음):** `anima_participant`(torch·websockets)·`broker`(fastapi)·`substrate_{base,lora,v3,akida}`·`akida_sw_lif`(numpy)·`anima_temp_sweep`(torch·peft). 각 sidecar `.hexa` 가 WRAPPER(exec dispatch / doc-stub)로 kept verdict 박제.
 - **(c) test 보존:** `test_broker_multiuser`(websockets)·`test_broker_akida_ingest`(fastapi.testclient).
 - **doc:** `agent/domains/CHAT/CLAUDE.md` 폴더가이드 신설(a/b/c 분류표 + 불변식). dangling import 0 · enforce_anima_gates clean · hexa check 0 violations.
+
+## research(H_1579): clm303.clm 직렬화 BROKEN (NO-DESCENT) — decode 경로는 무결 (engine-native 3-way + control diagnostic)
+
+🔴💾 clm303(CLMConvMoE 388M, savant+mitosis, sha 75b04897)을 frozen G0–G6 (`anima eval`)에 통과시키기 전 **decode-integrity 전제**를 3-way 로 측정 → 직렬화 결함 격리. anima eval 은 실행 안 함(깨진 ckpt 위 G-점수는 garbage, c9 정직).
+
+- **3-way (frozen prompt `"a new idea about consciousness: "`, gen=40, top_k=40, temp=0.7):** ① GPU forge (live `core/clm_decode.hexa`, RTX 4090, `cuda_available=1`, `[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path`) = `ggndtle_oppa:…` garble · ② CPU farr (mac, `cuda_available=0`) = GPU 와 **48B BYTE-IDENTICAL** garble · ③ 독립 numpy mirror golden (`clm_decode_mirror.py`, .clm 바이트 직접 read, int4 dequant+dilated-conv+GN VERBATIM, v0.3 (L,E) 정확) = **NO-DESCENT** (ko heldout CE 7.622 > uniform 5.545).
+- **CONTROL (mirror 정상 입증):** 같은 mirror 가 known-good `clm_d768_e2l1.clm` 엔 CE 4.442 < uniform = GREEN/DESCENT → clm303 의 NO-DESCENT 는 진짜 직렬화 결함, mirror artifact 아님.
+- **진단:** GPU≡CPU byte-id = 디코드 경로 무결·결정적(forge own-GEMM ≡ farr, `summer-sm120` farr-결함 가설 기각). 결함 = 직렬화(`clm_serialize_v2`/`pt_to_engine_bin` int4→v0.3). `ko heldout CE 3.351 ✅` 는 torch-side(직렬화 전) = 학습 OK, 직렬화된 .clm 별개 손상. `clm303_L4_d3784` German-garble anomaly 와 동근.
+- **follow-on:** 직렬화 파이프 근본수정 = serfix 에이전트(clm303_L4_d3784.pt test case, mirror 회귀게이트) · savant clm303 torch .pt 소실(vast 42222605 destroyed) → 직렬화 fix 후 재학습 ING(cost-gate). 이 세션 G6-only side-harness + torch-free py scorer = `anima eval` 단일진입점으로 superseded(박제 경로 아님).
+- artifacts: `UNIVERSE/cards/H_1579_clm303_serialization_defect.md` · `state/clm303_g6/GARBLE_3WAY_RESULT.md` + mirror/garble logs · `HYPOTHESES.jsonl` H_1579. pod 42322098 teardown 완료(GONE, 증거 PULL 후 — `a_fire_recover_complete`).
 
 ## perf(cli/train.hexa): device-resident NN hot-path 배선 — #2598 CPU-scalar-bound util FAIL 의 근본 fix (a_train_flame_forge)
 

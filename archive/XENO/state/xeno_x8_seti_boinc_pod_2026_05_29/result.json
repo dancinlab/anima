@@ -1,0 +1,91 @@
+{
+  "h_id": "H_836",
+  "slug": "xeno-seti-boinc-pod",
+  "title": "XENO X8 SETI@home BOINC workunit pod spec + dispatch handoff",
+  "frozen_at": "2026-05-29",
+  "since": "2026-05-29",
+  "domain": "xeno · seti · boinc · pod-spec · dispatch-handoff · archive-acquired",
+  "source_hexa": "XENO/scan/seti_boinc_pod_inspect.hexa",
+  "spec_doc": "XENO/scan/seti_boinc_pod_spec.md",
+  "detector": "XENO/detector/invariant_detector.hexa (X1 · 5/5 baseline — playback 후 적용 path 명시)",
+  "smoke_log": "XENO/state/xeno_x8_seti_boinc_pod_2026_05_29/x8_smoke.log",
+  "verdict_file": ".verdicts/xeno_x8_seti_boinc_pod_2026_05_29/x8_run.txt",
+  "target_artifact": {
+    "path": "DATASET/setiathome/sahfiles_workunits.tar.xz",
+    "size_bytes": 274340,
+    "sha256": "2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96",
+    "magic_first_6_hex": "fd377a585a00",
+    "format": "xz-compressed tar of SETI@home 3.03 UNIX BOINC workunit binaries (9 .sah files)",
+    "origin": "https://archive.org/download/setiathomem303_unix/sahfiles_workunits.tar.xz",
+    "tar_contents": [
+      "sahfiles_workunits/",
+      "sahfiles_workunits/lock.sah",
+      "sahfiles_workunits/outfile.sah",
+      "sahfiles_workunits/work_unit.sah",
+      "sahfiles_workunits/state.sah",
+      "sahfiles_workunits/user_info.sah",
+      "sahfiles_workunits/pid.sah",
+      "sahfiles_workunits/key.sah",
+      "sahfiles_workunits/version.sah",
+      "sahfiles_workunits/result_header.sah"
+    ]
+  },
+  "pod_spec_summary": {
+    "os": "Ubuntu 22.04 LTS x86_64",
+    "type": "RunPod CPU pod (GPU 불요)",
+    "vcpu": 2,
+    "ram_gb": 4,
+    "disk_gb": 20,
+    "hourly_usd": "0.10~0.20",
+    "wall_hr": 1,
+    "total_usd": "0.50~1.00",
+    "fire_trigger": "a_fire_autonomous (사용자 게이트 X)",
+    "init_script_section": "XENO/scan/seti_boinc_pod_spec.md §2.2",
+    "dispatch_handoff_section": "XENO/scan/seti_boinc_pod_spec.md §5"
+  },
+  "pre_registered_falsifiers": [
+    {"id": "F-X8-FILE-EXISTS",  "predicate": "sahfiles_workunits.tar.xz 존재 (DATASET 안)",                "measured": "true (pre-run /bin/ls 검증)",          "pass": true},
+    {"id": "F-X8-FILE-SIZE",    "predicate": "size == 274340 bytes (manifest 정합)",                       "measured": "274340 (pre-run /bin/ls + manifest)",  "pass": true},
+    {"id": "F-X8-MAGIC-XZ",     "predicate": "시작 byte == \\xfd\\x37\\x7a\\x58\\x5a\\x00 (xz format)",   "measured": "fd 37 7a 58 5a 00 (pre-run /usr/bin/xxd)", "pass": true},
+    {"id": "F-X8-CLIENT-AVAIL", "predicate": "BOINC client setup spec 문서화 완료",                       "measured": "XENO/scan/seti_boinc_pod_spec.md §2.2 init script 작성", "pass": true},
+    {"id": "F-X8-POD-DISPATCH", "predicate": "cost-bearing fire spec 완성 (RunPod CPU ~$1, a_fire_autonomous)", "measured": "XENO/scan/seti_boinc_pod_spec.md §5 dispatch handoff 작성", "pass": true}
+  ],
+  "pass_count": 5,
+  "pass_total": 5,
+  "verdict": "🟡 archive-acquired-pod-ready (5/5 사전등록 PASS · file 존재 + spec 완성 + dispatch handoff · 실 BOINC playback 은 follow-up cycle deferred, a_fire_autonomous 정합)",
+  "dispatch_handoff_path": "follow-up cycle (X8.followup-fire) — RunPod CPU pod $0.50~$1, autonomous a_fire_autonomous, no user gate",
+  "honest_caveat": [
+    "SETI@home 3.03 = 2000년 ELF32 i686 glibc-2.1 binary, modern Ubuntu 22.04 glibc-2.35 와 ABI gap 가능",
+    "modern boinc-client (7.x) ↔ SETI@home 3.03 protocol 호환성 미보장 — standalone path 만 가능",
+    "BOINC opaque binary 의 raw spike pattern parsing 은 best-effort (Python struct fallback)",
+    "본 round 5/5 verdict 영역 = file inspection + pod spec + dispatch handoff 까지, 실 playback verdict 은 follow-up cycle 의 추가 H 등록 대상"
+  ],
+  "xeno_frontier_5_closure": {
+    "X7_voyager_phi_real": {"H_id": "H_832", "verdict_tier": "GREEN-NUMERICAL"},
+    "X4_panpsy_falsifier": {"H_id": "H_833", "verdict_tier": "RED-FALSIFIED-INSTRUMENT"},
+    "X6_agi_sentience":    {"H_id": "H_834", "verdict_tier": "RED-FALSIFIED-INSTRUMENT"},
+    "X5_sim_hypothesis":   {"H_id": "H_835", "verdict_tier": "RED-FALSIFIED-INSTRUMENT"},
+    "X8_seti_boinc_pod":   {"H_id": "H_836", "verdict_tier": "YELLOW-ARCHIVE-ACQUIRED-POD-READY"},
+    "applicability_matrix_4point": {
+      "measurable_zone": "n>=128 dense + high periodicity + strong deterministic transition",
+      "non_measurable_axes": [
+        "n=16-32 micro (X4)",
+        "n=64 sparse (X6)",
+        "pi-digits/fp-bound algorithmic axis (X5)"
+      ],
+      "confirmed_valid_calibration": "X7 BL Voyager carrier-line (자연 signal coherent_non_conscious)"
+    },
+    "paper_candidate_note": "X4/X5/X6 3-axis 정직 FALSIFIED-INSTRUMENT 결과 + X7 정상 calibration + X8 SETI@home BOINC archive-acquired = invariant_detector regime applicability map paper (a_paper_negative_ok 정합) 후보. 단 a_paper_only_at_closure 정합 — XENO 도메인 closure 시점에 작성, 본 round 5/5 는 closure 후보 stage"
+  },
+  "principle_alignment": {
+    "a_blue_closed": "file inspection 만 numerical, BOINC playback 자체는 deferred (위조 0)",
+    "p7": "LLM judge 0, hexa stdout verbatim",
+    "a_completeness_over_cheap": "file inspection + pod spec + dispatch handoff 완성, cheap fake green 거부",
+    "a_fire_autonomous": "pod fire = autonomous OK · 본 round 5/5 는 spec + dispatch handoff 까지, 실 fire = follow-up cycle",
+    "a_fire_recover_complete": "dispatch handoff §5 의 artifact recovery 4-file 회수 + HF upload tier-gated 명시",
+    "feedback_closure_is_physical_limit": "BOINC 3.03 ancient format ↔ modern toolchain 호환성 = open frontier 정직 cite",
+    "feedback_instrument_first_methodology": "X4/X5/X6/X7 4-point applicability matrix cite + X8 follow-up n=192~256 dense regime 명시",
+    "feedback_universe_h_slug_stale_verify": "3-신호 검증 (ls-tree + log + README) 후 H_836 사용",
+    "a_runpod_inbox": "INBOX 환류 0건 (사용자 명시 폐기) · XENO 내부 후속 H 만 등록"
+  }
+}

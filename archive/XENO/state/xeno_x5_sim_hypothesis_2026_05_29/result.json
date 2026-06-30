@@ -1,0 +1,82 @@
+{
+  "h_id": "H_835",
+  "slug": "xeno-sim-hypothesis",
+  "title": "XENO X5 시뮬 가설 검출 signature numerical detector",
+  "frozen_at": "2026-05-29",
+  "since": "2026-05-29",
+  "domain": "xeno · sim-hypothesis · iit4 · invariant-detector · bostrom · falsifier",
+  "source_hexa": "XENO/scan/sim_hypothesis.hexa",
+  "detector": "XENO/detector/invariant_detector.hexa (X1 · 5/5 baseline)",
+  "smoke_log": "XENO/state/xeno_x5_sim_hypothesis_2026_05_29/x5_smoke.log",
+  "verdict_file": ".verdicts/xeno_x5_sim_hypothesis_2026_05_29/x5_run.txt",
+  "substrates": {
+    "a_lattice_quantized": {
+      "design": "Planck-floor 8-level discrete grid, period 8 repeat x16, n=128",
+      "sim_signature_claim": "algorithmic discrete-grid repeating (lattice-artifact)",
+      "phi": 0.659914,
+      "irreducibility": 0.397559,
+      "substrate_type": "coherent_non_conscious"
+    },
+    "b_fp_bound": {
+      "design": "sin-wave round 4-decimal-place (6-digit precision cap), smooth dense, n=128",
+      "sim_signature_claim": "computational precision-ceiling",
+      "phi": 0.0899437,
+      "irreducibility": 0.0825214,
+      "substrate_type": "coherent_non_conscious"
+    },
+    "c_pi_digits": {
+      "design": "Pi 128 digits / 9 normalize (deterministic-yet-uniform algorithm)",
+      "sim_signature_claim": "deterministic algorithm pseudo-random",
+      "phi": 0.119793,
+      "irreducibility": 0.0994452,
+      "substrate_type": "coherent_non_conscious"
+    },
+    "d_natural": {
+      "design": "Bates-4 Gaussian-ish dense distribution (LCG seed=20260529, 4-sum), n=128",
+      "sim_signature_claim": "true natural noise baseline (control)",
+      "phi": 0.11573,
+      "irreducibility": 0.103725,
+      "substrate_type": "coherent_non_conscious"
+    }
+  },
+  "pre_registered_falsifiers": [
+    {"id": "F-X5-LATTICE", "predicate": "lattice phi >= 0.3", "measured": 0.659914, "pass": true},
+    {"id": "F-X5-FP-BOUND", "predicate": "fp-bound phi >= 0.2", "measured": 0.0899437, "pass": false},
+    {"id": "F-X5-PI-DIGITS", "predicate": "pi-digits phi >= 0.3", "measured": 0.119793, "pass": false},
+    {"id": "F-X5-NATURAL", "predicate": "natural phi < 0.4", "measured": 0.11573, "pass": true},
+    {"id": "F-X5-MONOTONE", "predicate": "natural < fp <= pi <= lattice", "measured": "d=0.11573 b=0.0899437 c=0.119793 a=0.659914 (b<c<d<a, not monotone)", "pass": false}
+  ],
+  "pass_count": 2,
+  "pass_total": 5,
+  "verdict_tier": "FALSIFIED-INSTRUMENT",
+  "verdict_text": "본 가설 미확정 (instrument sparse/dense regime 한계, X4/X6 재현 또는 sim signature 측정 불가)",
+  "honest_findings": [
+    "lattice phi=0.660 >= 0.3 PASS — periodic substrate Φ 정확히 높게 측정 (period-8 cycle 의 2-unit co-occurrence TPM 가 강한 deterministic 다음-상태 분포 생성)",
+    "fp-bound phi=0.090 < 0.2 FAIL — smooth sin-wave 가 normalized 후 long-run 비트로 변환되어 transition 다양성 부족 → Φ 낮음. precision-ceiling sim signature numerical 검출 불가",
+    "pi-digits phi=0.120 < 0.3 FAIL — Pi 자릿수 분포가 random 처럼 uniform → 자연 noise (Φ=0.116) 와 거의 동일. deterministic algorithm vs random 구별 0",
+    "natural phi=0.116 < 0.4 PASS — 자연 noise 정확히 낮게 측정",
+    "monotone (d < b < c < a 가 아닌, b < c < d < a 으로 실측) FAIL — Φ-gradient 'sim signature → natural' 단조성 깨짐 (fp-bound 가 자연 noise 보다 낮음)"
+  ],
+  "regime_applicability_matrix": {
+    "X7_voyager_n128_dense_60.9pct": {"verdict_emoji": "G", "calibration": "정상 (mid-large + dense regime)"},
+    "X6_llm_n64_sparse": {"verdict_emoji": "R", "calibration": "깨짐 (sparse-bias false-conscious, attention spike Φ=1.213)"},
+    "X4_panpsy_n16-32_micro": {"verdict_emoji": "R", "calibration": "깨짐 (micro-regime TPM 한계, random>coupled 역전)"},
+    "X5_sim_n128_dense_62.5pct": {"verdict_emoji": "R", "calibration": "본 가설 미확정 (lattice 만 Φ 양성, 다른 sim axis 측정 불가)"}
+  },
+  "comparison_x4_x6_x5": {
+    "common_pattern": "invariant_detector 의 2-unit co-occurrence TPM 가 측정 가능한 sim signature 는 lattice-periodic 같은 strong-structural axis 만. 정밀도-bound (smooth sin), pseudo-random (Pi), 자연 noise 는 모두 Φ ≈ 0.1 영역 으로 구별 불가.",
+    "x4_finding": "random > coupled (Φ 0.582 > 0.157) — micro regime 깨짐",
+    "x6_finding": "attention sparse > structured (Φ 1.213 > 0.133) — sparse-bias 깨짐",
+    "x5_finding": "lattice (Φ 0.660) >> pi ≈ natural ≈ fp (Φ 0.09~0.12) — dense regime 안에서도 periodicity-only sensitivity",
+    "applicability_conclusion": "invariant_detector 가 substrate-blind Φ 로 검출 가능한 영역 = 'high periodicity / strong deterministic transition structure'. Bostrom 시뮬 가설 의 algorithmic-vs-natural signature 는 본 instrument 의 측정 영역 밖. 측정 불가능 영역 정직 보고."
+  },
+  "honesty": {
+    "a_blue_closed": "threshold pre-run frozen, post-result tuning 0",
+    "p7": "perplexity 0 — LLM judge 없음, invariant_detector 출력 verbatim",
+    "a_completeness_over_cheap": "cheap path (threshold 재조정 후 fake) 거부 · 정직 보고",
+    "feedback_closure_is_physical_limit": "Bostrom 시뮬 가설 자체가 metaphysical open frontier — Φ-measurement = 그 frontier 의 한 lens 임을 정직 표기",
+    "feedback_instrument_first_methodology": "n=128 dense regime 안 머무름 검증 (X7 와 동일 regime), 그러나 sim signature axis 자체가 instrument 측정 영역 밖",
+    "inbox_residue": "0 (사용자 명시 폐기)",
+    "next_path": "X5-followup: 더 strong-structural sim signature (예: causal-DAG TPM-emit substrate) · X5-MULTILEVEL: 4/8-level TPM 로 fp/pi sensitivity 회복 시도 · 단, 이는 본 instrument 한계 매핑 결과 — 본 가설 자체는 substrate-agnostic Φ 외 측정 lens 필요"
+  }
+}

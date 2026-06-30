@@ -1,0 +1,89 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ts": "2026-06-02T09:37:22Z",
+  "task": "scale-ladder of on-chip cross-lingual same-concept + next-sentence retrieval (whitened enc)",
+  "n_trials": 8,
+  "B_shuffle": 200,
+  "rungs": {
+    "c25": {
+      "count": 25,
+      "n_concepts": 5,
+      "chance_same": 0.2,
+      "learn_all_hw": true,
+      "same_acc": {
+        "mean": 0.22,
+        "ci_lo": 0.18080000000000002,
+        "lift_over_chance": 0.01999999999999999,
+        "above_chance": false
+      },
+      "next_acc": {
+        "mean": 0.275,
+        "ci_lo": 0.22600000000000003
+      },
+      "shuffle_null_next": {
+        "mean": 0.2445,
+        "sd": 0.09896842930955305,
+        "hi": 0.43847812144672393,
+        "p_value": 0.3482587064676617
+      },
+      "next_above_null": false
+    },
+    "c125": {
+      "count": 125,
+      "n_concepts": 25,
+      "chance_same": 0.04,
+      "learn_all_hw": true,
+      "same_acc": {
+        "mean": 0.14700000000000002,
+        "ci_lo": 0.1337687037672041,
+        "lift_over_chance": 0.10700000000000001,
+        "above_chance": true
+      },
+      "next_acc": {
+        "mean": 0.04583333333333334,
+        "ci_lo": 0.03657320374460727
+      },
+      "shuffle_null_next": {
+        "mean": 0.04020833333333334,
+        "sd": 0.019174590753274386,
+        "hi": 0.07779053120975113,
+        "p_value": 0.40298507462686567
+      },
+      "next_above_null": false
+    },
+    "c250": {
+      "count": 250,
+      "n_concepts": 50,
+      "chance_same": 0.02,
+      "learn_all_hw": true,
+      "same_acc": {
+        "mean": 0.14100000000000001,
+        "ci_lo": 0.1297406572127855,
+        "lift_over_chance": 0.12100000000000001,
+        "above_chance": true
+      },
+      "next_acc": {
+        "mean": 0.026530612244897958,
+        "ci_lo": 0.020873757995405577
+      },
+      "shuffle_null_next": {
+        "mean": 0.020551020408163267,
+        "sd": 0.009310932340957727,
+        "hi": 0.038800447796440415,
+        "p_value": 0.23880597014925373
+      },
+      "next_above_null": false
+    }
+  },
+  "disposition": {
+    "same_lift_over_chance_curve_25_125_250": [
+      0.01999999999999999,
+      0.10700000000000001,
+      0.12100000000000001
+    ],
+    "F_SCALE_1_bridge_scales": "PARTIAL: bridge above chance at some but not all rungs",
+    "F_SCALE_2_next_sentence": "NULL HOLDS at every rung -> capacity gap (no time model) is scale-robust",
+    "bottom_line": "scale-robust: margin->concept-retrieval bridge holds; next-sentence/time model absent at 1-bit/32-unit"
+  }
+}

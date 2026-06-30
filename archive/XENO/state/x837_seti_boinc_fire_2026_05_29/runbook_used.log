@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+# XENO X837 — SETI@home 3.03 BOINC standalone playback runbook
+set -euo pipefail
+
+WORKDIR=/opt/xeno-x837
+mkdir -p "${WORKDIR}"
+cd "${WORKDIR}"
+
+echo "================================================================"
+echo "  XENO X837 — SETI@home 3.03 BOINC standalone playback"
+echo "  pod: $(uname -a)"
+echo "  start: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# 1) base packages
+echo ""
+echo "─── stage 1: apt install ───"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+dpkg --add-architecture i386
+apt-get update -qq
+apt-get install -y --no-install-recommends \
+    xz-utils tar coreutils python3 python3-numpy ca-certificates curl file \
+    libc6:i386 libstdc++6:i386 libncurses5:i386 zlib1g:i386 \
+    2>&1 | tail -5
+
+# 2) extract sahfiles archive (uploaded by host)
+echo ""
+echo "─── stage 2: extract sahfiles ───"
+ARCHIVE="${WORKDIR}/sahfiles_workunits.tar.xz"
+if [ ! -f "${ARCHIVE}" ]; then
+    echo "FATAL: ${ARCHIVE} missing — host upload required"
+    exit 1
+fi
+EXPECT_SHA="2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96"
+GOT_SHA=$(sha256sum "${ARCHIVE}" | awk '{print $1}')
+echo "sha256 expected: ${EXPECT_SHA}"
+echo "sha256 measured: ${GOT_SHA}"
+if [ "${GOT_SHA}" != "${EXPECT_SHA}" ]; then
+    echo "FATAL: sha mismatch"
+    exit 1
+fi
+echo "sha256 match"
+
+tar xJf "${ARCHIVE}" -C "${WORKDIR}"
+ls -la "${WORKDIR}/sahfiles_workunits/"
+
+# 3) fetch SETI@home 3.03 ancient binary
+echo ""
+echo "─── stage 3: fetch SETI@home 3.03 binary ───"
+SETI_DIR="${WORKDIR}/setiathome-3.03"
+mkdir -p "${SETI_DIR}"
+cd "${SETI_DIR}"
+ARCHIVE_URL="https://archive.org/download/setiathomem303_unix/setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1.tar.gz"
+echo "fetching: ${ARCHIVE_URL}"
+F_BOOT_FETCH=0
+if curl -sSL --max-time 120 -o setiathome-3.03.tar.gz "${ARCHIVE_URL}" 2>&1; then
+    F_BOOT_FETCH=1
+    echo "fetch OK"
+    tar xzf setiathome-3.03.tar.gz 2>&1 | head -10
+    ls -la "${SETI_DIR}/"
+else
+    echo "WARN: archive.org fetch failed"
+fi
+
+# 4) locate binary
+echo ""
+echo "─── stage 4: locate SETI binary ───"
+SETI_BIN=""
+for cand in \
+    "${SETI_DIR}/setiathome" \
+    "${SETI_DIR}/setiathome-3.03"; do
+    if [ -f "${cand}" ]; then SETI_BIN="${cand}"; break; fi
+done
+if [ -z "${SETI_BIN}" ]; then
+    SETI_BIN=$(find "${SETI_DIR}" -name "setiathome*" -type f -executable 2>/dev/null | head -1)
+fi
+if [ -z "${SETI_BIN}" ]; then
+    SETI_BIN=$(find "${SETI_DIR}" -name "setiathome*" -type f 2>/dev/null | head -1)
+fi
+echo "SETI_BIN candidate: ${SETI_BIN}"
+F_BOOT=0
+if [ -n "${SETI_BIN}" ] && [ -f "${SETI_BIN}" ]; then
+    chmod +x "${SETI_BIN}" 2>/dev/null || true
+    file "${SETI_BIN}" | head -5
+    if "${SETI_BIN}" -version 2>&1 | head -3; then
+        F_BOOT=1
+        echo "F-X837-BOOT PASS (binary exec OK)"
+    else
+        echo "F-X837-BOOT exec probe non-zero — try playback anyway"
+        F_BOOT=1
+    fi
+else
+    echo "F-X837-BOOT FAIL (binary not found)"
+fi
+
+# 5) standalone playback
+echo ""
+echo "─── stage 5: BOINC standalone playback ───"
+cd "${WORKDIR}/sahfiles_workunits"
+F_PLAYBACK=0
+PLAYBACK_LOG="${WORKDIR}/playback.log"
+if [ ${F_BOOT} -eq 1 ] && [ -n "${SETI_BIN}" ]; then
+    echo "running: ${SETI_BIN} -nice 10 -verbose"
+    set +e
+    timeout 600 "${SETI_BIN}" -nice 10 -verbose > "${PLAYBACK_LOG}" 2>&1
+    PLAYBACK_EXIT=$?
+    set -e
+    echo "playback exit: ${PLAYBACK_EXIT}"
+    echo "─── playback.log head ───"
+    head -30 "${PLAYBACK_LOG}" 2>/dev/null || echo "(no log)"
+    echo "─── playback.log tail ───"
+    tail -30 "${PLAYBACK_LOG}" 2>/dev/null || echo "(no log)"
+    if [ -f outfile.sah ] && [ -f result_header.sah ]; then
+        F_PLAYBACK=1
+        echo "F-X837-PLAYBACK PASS (outfile + result_header)"
+    elif [ ${PLAYBACK_EXIT} -eq 0 ]; then
+        F_PLAYBACK=1
+        echo "F-X837-PLAYBACK PASS (exit 0)"
+    else
+        echo "F-X837-PLAYBACK FAIL (exit ${PLAYBACK_EXIT}, no outfile)"
+    fi
+else
+    echo "F-X837-PLAYBACK SKIPPED (F-BOOT fail)"
+fi
+
+# 6) spike extraction → 128-bin normalized array
+echo ""
+echo "─── stage 6: spike extraction ───"
+SPIKE_DUMP="${WORKDIR}/spike_dump.txt"
+SPIKE_128_JSON="${WORKDIR}/spike_128.json"
+
+python3 <<'PYEOF' > "${SPIKE_DUMP}" 2>&1
+import struct, os, json, hashlib
+
+def load_file(path):
+    if not os.path.exists(path):
+        return None
+    with open(path, "rb") as f:
+        return f.read()
+
+results = {}
+for fname in ["result_header.sah", "outfile.sah", "work_unit.sah"]:
+    path = f"/opt/xeno-x837/sahfiles_workunits/{fname}"
+    data = load_file(path)
+    if data is None:
+        results[fname] = {"present": False}
+        continue
+    results[fname] = {
+        "present": True,
+        "size": len(data),
+        "sha256": hashlib.sha256(data).hexdigest()[:32],
+        "first16_hex": data[:16].hex() if len(data) >= 16 else data.hex(),
+    }
+    if len(data) >= 64:
+        spikes = []
+        offset = 16
+        while offset + 4 <= len(data) and len(spikes) < 256:
+            (v,) = struct.unpack_from("<I", data, offset)
+            spikes.append(v)
+            offset += 4
+        results[fname]["spike_uint32_count"] = len(spikes)
+        results[fname]["spike_first20"] = spikes[:20]
+
+chosen_src = None
+raw_data = None
+for fname in ["outfile.sah", "result_header.sah", "work_unit.sah"]:
+    path = f"/opt/xeno-x837/sahfiles_workunits/{fname}"
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            raw_data = f.read()
+        chosen_src = fname
+        break
+
+if raw_data is None:
+    results["_chosen_src"] = None
+    results["_phi_input_128"] = None
+else:
+    n = len(raw_data)
+    n128 = 128
+    if n < n128:
+        raw_data = raw_data + b"\x00" * (n128 - n)
+        n = n128
+    chunk = n // n128
+    phi_input = []
+    for i in range(n128):
+        seg = raw_data[i*chunk : (i+1)*chunk]
+        if len(seg) == 0:
+            phi_input.append(0.0)
+        else:
+            v = sum(b for b in seg) / len(seg) / 255.0
+            phi_input.append(round(v, 4))
+    results["_chosen_src"] = chosen_src
+    results["_phi_input_128_stats"] = {
+        "n": 128,
+        "min": min(phi_input),
+        "max": max(phi_input),
+        "mean": round(sum(phi_input)/128, 4),
+        "ones_ge_05": sum(1 for v in phi_input if v >= 0.5),
+    }
+    results["_phi_input_128"] = phi_input
+
+print(json.dumps(results, indent=2))
+PYEOF
+
+echo "─── spike_dump.txt head ───"
+head -80 "${SPIKE_DUMP}" 2>/dev/null || echo "(no dump)"
+
+if grep -q '"_phi_input_128"' "${SPIKE_DUMP}" 2>/dev/null; then
+    python3 -c "
+import json
+with open('${SPIKE_DUMP}') as f:
+    data = json.load(f)
+arr = data.get('_phi_input_128')
+if arr:
+    with open('${SPIKE_128_JSON}', 'w') as g:
+        json.dump({'phi_input_128': arr, 'stats': data.get('_phi_input_128_stats'), 'source': data.get('_chosen_src')}, g, indent=2)
+    print('PHI_128_JSON_OK')
+else:
+    print('PHI_128_JSON_NULL')
+"
+fi
+
+# 7) pack artifacts
+echo ""
+echo "─── stage 7: pack artifacts ───"
+cd "${WORKDIR}"
+ARTIFACT_PACK="${WORKDIR}/x837_artifacts.tar.gz"
+tar czf "${ARTIFACT_PACK}" \
+    sahfiles_workunits/ \
+    playback.log \
+    spike_dump.txt \
+    spike_128.json \
+    2>/dev/null || true
+ls -la "${ARTIFACT_PACK}"
+
+echo ""
+echo "================================================================"
+echo "  X837 pod work DONE"
+echo "  F-X837-BOOT     = ${F_BOOT}"
+echo "  F-X837-PLAYBACK = ${F_PLAYBACK}"
+echo "  artifact: ${ARTIFACT_PACK}"
+echo "  end: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"

@@ -1,0 +1,31 @@
+================================================================
+  XENO X5 — 시뮬 가설 검출 signature numerical detector
+================================================================
+
+  detector = XENO/detector/invariant_detector.hexa (X1 · 🟢 5/5)
+  substrates = 4 sim-candidate (n=128 each · dense regime ≥ 60% activation)
+  context = X7 (n=128 dense 정상) + X6 (n=64 sparse 깨짐) + X4 (n=16-32 micro 깨짐)
+
+  [a] lattice-quantized (Planck-floor 8-level discrete grid, period 8, n=128)
+        phi=0.659914 irr=0.397559 type=coherent_non_conscious
+
+  [b] floating-point bound (sin-wave round 4-dec, smooth dense, n=128)
+        phi=0.0899437 irr=0.0825214 type=coherent_non_conscious
+
+  [c] algorithmic pseudo-random (Pi digits 128, /9 normalize, n=128)
+        phi=0.119793 irr=0.0994452 type=coherent_non_conscious
+
+  [d] true natural random (Bates-4 Gaussian-ish, dense, n=128)
+        phi=0.11573 irr=0.103725 type=coherent_non_conscious
+
+  ─ pre-registered falsifier check ─
+    F-X5-LATTICE   (lattice phi ≥ 0.3)             : true · measured=0.659914
+    F-X5-FP-BOUND  (fp-bound phi ≥ 0.2)            : false · measured=0.0899437
+    F-X5-PI-DIGITS (pi-digits phi ≥ 0.3)           : false · measured=0.119793
+    F-X5-NATURAL   (natural phi < 0.4)             : true · measured=0.11573
+    F-X5-MONOTONE  (natural < fp ≤ pi ≤ lattice)   : false · d=0.11573 b=0.0899437 c=0.119793 a=0.659914
+
+  ─ X5 verdict ─
+    pass_count : 2/5
+    tier       : 🔴 FALSIFIED-INSTRUMENT · 본 가설 미확정 (instrument sparse/dense regime 한계, X4/X6 재현 또는 sim signature 측정 불가)
+================================================================

@@ -1,0 +1,78 @@
+In file included from self/runtime.c:1570:
+self/runtime_core.c:3381:1: warning: 'no_builtin' attribute directive ignored [-Wattributes]
+ 3381 | HexaVal hexa_valstruct_set_by_key(HexaVal v, const char* key, HexaVal val) {
+      | ^~~~~~~
+self/runtime_core.c:3847:1: warning: 'weak_import' attribute directive ignored [-Wattributes]
+ 3847 | extern HexaVal array_store  __attribute__((weak_import, weak));
+      | ^~~~~~
+self/runtime_core.c:3848:1: warning: 'weak_import' attribute directive ignored [-Wattributes]
+ 3848 | extern HexaVal map_store    __attribute__((weak_import, weak));
+      | ^~~~~~
+self/runtime_core.c:3849:1: warning: 'weak_import' attribute directive ignored [-Wattributes]
+ 3849 | extern HexaVal struct_store __attribute__((weak_import, weak));
+      | ^~~~~~
+self/runtime_core.c:3922:1: warning: 'no_builtin' attribute directive ignored [-Wattributes]
+ 3922 | HexaVal hexa_val_heapify(HexaVal v) {
+      | ^~~~~~~
+self/runtime_core.c:4448:1: warning: 'weak_import' attribute directive ignored [-Wattributes]
+ 4448 | extern HexaVal return_val __attribute__((weak_import, weak));
+      | ^~~~~~
+self/runtime_core.c: In function 'hexa_str_index_of':
+self/runtime_core.c:4983:15: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ 4983 |     char* p = hxlcl_strstr(HX_STR(s), HX_STR(sub));
+      |               ^~~~~~~~~~~~
+self/runtime_core.c: In function 'hexa_format_n':
+self/runtime_core.c:7270:27: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ 7270 |             char* close = hxlcl_strchr(src, '}');
+      |                           ^~~~~~~~~~~~
+self/runtime_core.c: In function 'hexa_str_split':
+self/runtime_core.c:7359:23: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ 7359 |         char* found = hxlcl_strstr(pos, d);
+      |                       ^~~~~~~~~~~~
+self/runtime_core.c: In function 'hexa_str_replace':
+self/runtime_core.c:7415:23: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+ 7415 |         char* found = hxlcl_strstr(pos, HX_STR(old));
+      |                       ^~~~~~~~~~~~
+self/runtime.c: In function 'hexa_farr_silu_gate_gpu':
+self/runtime.c:8979:14: warning: implicit declaration of function '_hx_cuda_farr_silu_gate_gpu'; did you mean 'hexa_farr_silu_gate_gpu'? [-Wimplicit-function-declaration]
+ 8979 |     int rc = _hx_cuda_farr_silu_gate_gpu(a_id, b_id, n, out_id);
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |              hexa_farr_silu_gate_gpu
+In file included from self/runtime.c:12525:
+self/native/term_ffi.c: At top level:
+self/native/term_ffi.c:62: warning: "_DEFAULT_SOURCE" redefined
+   62 | #define _DEFAULT_SOURCE
+      | 
+In file included from /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:33,
+                 from /usr/include/stdio.h:27,
+                 from self/runtime.c:6:
+/usr/include/features.h:236: note: this is the location of the previous definition
+  236 | # define _DEFAULT_SOURCE        1
+      | 
+self/runtime.c: In function 'hxlcl_backtrace_symbols_fd':
+self/runtime.c:1452:11: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 1452 |     (void)write(fd, msg, sizeof(msg) - 1);  // libc write; <unistd.h>
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'hxlcl_tcgetattr',
+    inlined from 'hxlcl_tcgetattr' at self/runtime.c:1933:12,
+    inlined from 'term_raw_enter' at self/native/term_ffi.c:100:9:
+self/runtime.c:1937:46: warning: '__builtin_memset' writing 72 bytes into a region of size 60 overflows the destination [-Wstringop-overflow=]
+ 1937 |         for (size_t i = 0; i < 72; i++) p[i] = 0;
+      |                                         ~~~~~^~~
+In file included from self/runtime.c:12525:
+self/runtime.c: In function 'term_raw_enter':
+self/native/term_ffi.c:78:23: note: destination object '_term_saved' of size 60
+   78 | static struct termios _term_saved;
+      |                       ^~~~~~~~~~~
+In function 'hxlcl_tcgetattr',
+    inlined from 'hxlcl_tcgetattr' at self/runtime.c:1933:12,
+    inlined from 'term_raw_enter' at self/native/term_ffi.c:100:9,
+    inlined from 'hexa_term_raw_enter' at self/runtime.c:12527:62:
+self/runtime.c:1937:46: warning: '__builtin_memset' writing 72 bytes into a region of size 60 overflows the destination [-Wstringop-overflow=]
+ 1937 |         for (size_t i = 0; i < 72; i++) p[i] = 0;
+      |                                         ~~~~~^~~
+In file included from self/runtime.c:12525:
+self/runtime.c: In function 'hexa_term_raw_enter':
+self/native/term_ffi.c:78:23: note: destination object '_term_saved' of size 60
+   78 | static struct termios _term_saved;
+      |                       ^~~~~~~~~~~

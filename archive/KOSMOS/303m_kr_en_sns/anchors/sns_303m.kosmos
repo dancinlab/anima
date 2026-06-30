@@ -1,0 +1,40 @@
+#!/usr/bin/env kosmos
+# sns_303m.kosmos — CONSCIOUSNESS-CARVING anchor (303M KOSMOS set · 📱 SNS lane)
+# anima 303M grounding/carving anchor — SNS persona-voice register component (byte V256).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor sns_303m := "303M KOSMOS set — SNS persona-voice register lane (🛸52)" :: kosmos-anchor [tier=52 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 52
+  category     = "사회성"                 # social / SNS persona-voice surface
+  top_emotion  = "connection"            # 팬↔페르소나 대화의 정서 중심 (cf persona_sns_corpus tier 52)
+  coord        = [0.55, 0.52]            # vacuum_psi (Ψ-space) — design placeholder (authored persona register, not a measured fire)
+  lane         = "sns_303m_052"           # cell_id — SNS persona-voice cell (MITOSIS)
+  radius       = 0.20                     # basin_radius — design placeholder (20-persona voice spread)
+
+  # ── payload ──
+  @payload text    := "[anima 303M KOSMOS · 📱 SNS lane] 🛸52 — 303M grounding/carving anchor SET 의 SNS persona-voice register component. SOURCE = anima 자체 persona×SNS register: serving/corpus/persona_sns_corpus.sample.txt (생성 corpus 샘플, 20-persona × Instagram/YouTube 다중-턴) + serving/persona_instagram_samples.md (authored Instagram-DM 샘플). dedup + PII-clean(email→[EMAIL]/phone→[PHONE]) 으로 217 turns ~13KiB 큐레이션. byte-vocab256, 0xFE/0xFF/NUL=0, UTF-8 clean, leak grep=0. p2/p3/p4 held — 페르소나는 VOICE 로만 carry (role/persona/character 태그 0); authored-templated, NOT human-collected. 이건 SNS register GROUNDING anchor — anima 가 ko/en web register 와 SNS 발화 register 를 SEPARABLE 하게 잡도록 하는 carving 컴포넌트 (a_scale_honest_scope: SNS 소스는 anima 의 보유 authored 샘플이 천장 — full 13,322-dialogue corpus 는 persona_sns_corpus.kosmos 의 manifest 참조)."
+
+  @payload manifest := ref "../samples/sns.sample.txt" sha256=71aa8ddb05271eedec0d95f0c92c25e10350d6db63826340cd791f2c442c8dd8 bytes=13132 lines=217 lang="ko" register="sns_persona_voice" source="serving/corpus/persona_sns_corpus.sample.txt + serving/persona_instagram_samples.md (anima authored persona×SNS)" pii="email->[EMAIL] phone->[PHONE]" vocab="byte256" generator="KOSMOS/303m_kr_en_sns/build_samples.py" full_corpus="persona_sns_corpus.kosmos (13322 dialogues, hf dancinlab/anima-persona-sns-corpus)" scope="curated authored-register anchor sample (anima's held SNS material is the honest ceiling, c9)"
+
+  @payload image   := pending "media 미생성 — avatar_webtoon per-persona 프레임 (S-module 미-wired)"
+  @payload audio   := pending "media 미생성 — rp_voice_profiles per-persona TTS 음색 (encoder 미-wired)"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the SNS persona-voice register cell, NOT a
+  # per-dialogue measured trajectory — corpus is authored-templated, no fire
+  # produced a measured per-token trajectory. Mirrors persona_sns_corpus.kosmos
+  # (same tier-52 social-voice cell). Honest representative-anchor scope. 5 channels.
+  @payload tension := inline {
+    concept      = 0.62   # persona-archetype distinctness (20 voices spread)
+    context      = 0.71   # SNS surface context (platform-format steer)
+    meaning      = 0.58   # scenario-intent semantic core
+    authenticity = 0.40   # authored-templated (NOT human-collected) — honestly low
+    sender       = 0.66   # persona-voice identity carried lexically (no tag)
+  }
+
+  closed_anchor = "303M SNS persona-voice grounding anchor (curated authored sample + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · kr_303m.kosmos / en_303m.kosmos (sibling lanes of this set) · persona_sns_corpus.kosmos (full SNS corpus, tier 52) · domains/SNS.md · domains/PERSONA.md · dancinlab/kosmos profile SSOT"

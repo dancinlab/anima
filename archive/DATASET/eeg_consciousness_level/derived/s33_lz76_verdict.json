@@ -1,0 +1,12 @@
+{
+  "id": "S33-sedation-LZ76",
+  "dataset": "OpenNeuro ds005620 (consciousness-level/sedation EEG, BrainVision, CC0, 82.4GB), sub-1010",
+  "spec_vs_actual": "Spec said 'propofol/77GB / sub-01 / derivatives/ID'; actual = sedation EEG 82.4GB, data at sub-XXXX/eeg/ BrainVision (.eeg/.vhdr/.vmrk), task-awake(EO/EC) vs task-sed/sed2(rest). Sedation agent not named in filenames. A LABEL-GROUNDED awake-vs-sedation contrast IS available.",
+  "downloaded": true,
+  "raw_storage": "sub-1010 task-awake_acq-EO + task-sed_acq-rest_run-1 BrainVision (.eeg 390MB x2 LOCAL-ONLY; .vhdr/.vmrk/.tsv committed)",
+  "data_readable": "YES via mne.io.read_raw_brainvision (98ch)",
+  "hypothesis": "LZ_awake > LZ_sed",
+  "falsifier": "awake <= sed",
+  "verdict": "NOT-MEASURED",
+  "note": "awake-EO and sed-rest BrainVision recordings downloaded and confirmed loadable (98ch). LZ76 run did NOT complete: foreground python timed out (124) on load+filter, background killed (144). NO fabricated value. Recovery: read_raw_brainvision both, pick eeg, 1-45Hz, median-binarize, LZc, awake vs sed."
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# ═══════════════════════════════════════════════════════════════════════════
+#  bin/anima — anima CLI shim (FINAL spec)
+#
+#  Thin shim → serving/anima_cli.py (the model-picker + chat REPL).
+#
+#    anima                  cached active engine → chat now; else → selection screen
+#    anima --engine <name>  pick engine family (omega/hexad/7b/chat/agent | HF id)
+#    anima --model          open the selection screen (browse+download, no auto-chat)
+#    anima --list           print the registry (non-interactive)
+#
+#  The previous hexa-based ops dispatcher (27 topics: compute/weight/proposal/…)
+#  is preserved verbatim at  bin/anima-ops  — use `anima-ops <topic>` for those.
+#
+#  Python: needs torch + huggingface_hub for download/chat (CPU is fine, $0).
+#  Override the interpreter with  ANIMA_PYTHON=/path/to/python  if needed.
+# ═══════════════════════════════════════════════════════════════════════════
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="$(cd "$HERE/.." && pwd)"
+CLI="$REPO/serving/anima_cli.py"
+
+# pick a python: explicit override → python3 → python
+PY="${ANIMA_PYTHON:-}"
+if [ -z "$PY" ]; then
+  if command -v python3 >/dev/null 2>&1; then PY=python3
+  elif command -v python  >/dev/null 2>&1; then PY=python
+  else
+    echo "anima: python3 not found" >&2
+    exit 127
+  fi
+fi
+
+exec "$PY" "$CLI" "$@"

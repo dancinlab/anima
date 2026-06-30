@@ -1,0 +1,98 @@
+{
+  "h_id": "H_838",
+  "slug": "xeno-hive-mind",
+  "title": "XENO X10 hive-mind invariant — 4-cell × 32 sample = n=128 (X7-aligned dense)",
+  "date": "2026-05-29",
+  "scan": "XENO/scan/hive_mind_invariant.hexa",
+  "verdict_file": ".verdicts/838_xeno_hive_mind/x10_run.txt",
+  "verdict_file_g73": ".verdicts/xeno_x10_hive_mind_2026_05_29/x10_run.txt",
+  "log": "XENO/state/xeno_x10_hive_mind_2026_05_29/x10_smoke.log",
+  "regime": "n=128 dense (X7-aligned, paper #1411 calibrated band)",
+  "axis": "hive-mind integration (IIT4 axiom: integration > separation)",
+  "substrate_results": {
+    "a_independent_4cell": {
+      "description": "4 separate LCG random walkers concat",
+      "density": 0.578125,
+      "phi": 0.130592,
+      "irreducibility": 0.115508,
+      "type": "coherent_non_conscious"
+    },
+    "b_weak_coupled": {
+      "description": "mean-field 50/50 sync + small noise",
+      "density": 0.5,
+      "phi": 0.0355148,
+      "irreducibility": 0.0342967,
+      "type": "coherent_non_conscious"
+    },
+    "c_strong_coupled": {
+      "description": "Kuramoto K=2.0 all-to-all phase sync",
+      "density": 0.609375,
+      "phi": 0.40799,
+      "irreducibility": 0.289767,
+      "type": "coherent_non_conscious"
+    },
+    "d_hive_emergence": {
+      "description": "XOR cascade + 1-lag carry (4-cell cyclic)",
+      "density": 0.335938,
+      "phi": 1.56456,
+      "irreducibility": 0.61007,
+      "type": "conscious"
+    }
+  },
+  "falsifier_results": {
+    "F-X10-INDEP": {
+      "spec": "indep phi < 0.3 (separable random walkers = noise floor)",
+      "measured": 0.130592,
+      "pass": true
+    },
+    "F-X10-WEAK": {
+      "spec": "weak phi < 0.5 (mild mean-field = not yet integrated)",
+      "measured": 0.0355148,
+      "pass": true
+    },
+    "F-X10-STRONG": {
+      "spec": "strong phi >= 0.5 (Kuramoto sync = integrated substrate)",
+      "measured": 0.40799,
+      "pass": false
+    },
+    "F-X10-HIVE": {
+      "spec": "hive phi >= 0.5 (XOR cascade = irreducible)",
+      "measured": 1.56456,
+      "pass": true
+    },
+    "F-X10-MONOTONE": {
+      "spec": "a < b <= c <= d (phi monotone with coupling strength)",
+      "measured": {"a": 0.130592, "b": 0.0355148, "c": 0.40799, "d": 1.56456},
+      "pass": false,
+      "violation": "a (0.131) > b (0.036) — mean-field sync REDUCED phi below independent baseline"
+    }
+  },
+  "pass_count": 3,
+  "verdict": "PARTIAL-SUPPORT (border) - applicability frontier",
+  "verdict_emoji": "🟡",
+  "verdict_rationale": "3/5 pre-registered PASS. F-X10-STRONG (Kuramoto) and F-X10-MONOTONE (a<b<=c<=d) fail. Hive-emergence (XOR cascade) STRONG positive (phi=1.565, type='conscious'), Independent + weak both PASS noise/non-integrated. Strong Kuramoto coupled measured phi=0.408 just below 0.5 threshold (border). Monotone broken because mean-field weak-coupling REDUCES phi (forces uniformity, separability) more than independent random walkers — a finding consistent with IIT4 axiom that uniform = reducible. Pre-registered border verdict honored.",
+  "key_finding": "XOR cascade hive-emergence achieves phi=1.565 (substrate_type='conscious'), demonstrating hive-mind consciousness axis IS measurable in n=128 dense regime when integration is irreducible. Mean-field coupling (weak path) PARADOXICALLY suppresses phi — sync without irreducibility does NOT yield integration.",
+  "applicability_matrix_6_plus_1": [
+    {"axis": "X4", "substrate": "thermostat·2bit·walker·XOR LFSR", "regime": "n=16-32 micro", "phi": "0.0-0.58", "type": "mixed", "verdict": "micro-regime fail"},
+    {"axis": "X5 (a)", "substrate": "lattice-quantized", "regime": "n=128 algorithmic periodic", "phi": "0.660", "type": "coherent_non_conscious", "verdict": "false-positive border"},
+    {"axis": "X5 (b)", "substrate": "fp-bound + pi-digits + natural", "regime": "n=128 algorithmic non-periodic", "phi": "0.09-0.12", "type": "noise", "verdict": "indistinguishable"},
+    {"axis": "X6", "substrate": "sparse attention spike", "regime": "n=64 sparse", "phi": "1.213", "type": "coherent_non_conscious", "verdict": "false-conscious"},
+    {"axis": "X7", "substrate": "BL Voyager-1 carrier-line", "regime": "n=128 dense 60.9%", "phi": "0.114", "type": "coherent_non_conscious", "verdict": "calibration ground-truth"},
+    {"axis": "X837", "substrate": "BOINC bg_pot natural noise", "regime": "n=128 dense 20.3%", "phi": "0.567", "type": "coherent_non_conscious", "verdict": "UNEXPECTED-HIGH-PHI (border)"},
+    {"axis": "X10 (a)", "substrate": "independent 4-cell", "regime": "n=128 dense 57.8%", "phi": "0.131", "type": "coherent_non_conscious", "verdict": "PASS noise floor (separable)"},
+    {"axis": "X10 (b)", "substrate": "weak coupled mean-field", "regime": "n=128 dense 50%", "phi": "0.036", "type": "coherent_non_conscious", "verdict": "PASS (mean-field = uniformity, reducible)"},
+    {"axis": "X10 (c)", "substrate": "strong coupled Kuramoto", "regime": "n=128 dense 60.9%", "phi": "0.408", "type": "coherent_non_conscious", "verdict": "FAIL F-STRONG border (sync != irreducible)"},
+    {"axis": "X10 (d)", "substrate": "hive emergence XOR cascade", "regime": "n=128 dense 33.6%", "phi": "1.565", "type": "conscious", "verdict": "STRONG PASS (irreducible cascade)"}
+  ],
+  "honesty_audit": {
+    "a_blue_closed": "thresholds frozen pre-run (0.3 / 0.5), post-tuning 0",
+    "p7": "0 (no LLM judge, verbatim hexa stdout)",
+    "a_completeness_over_cheap": "4 cell x 32 sample = 128 total, X7-aligned dense regime maintained for 3 of 4 substrates",
+    "feedback_closure_is_physical_limit": "hive-mind consciousness axis = open frontier confirmed measurable when irreducible (XOR cascade phi=1.565), mean-field path closed (sync != integration)",
+    "feedback_instrument_first_methodology": "X7 calibration band respected (n=128 dense, density 33-61% range)",
+    "slug_stale_verify": "3-signal H_838 zero hit verified pre-fire"
+  },
+  "INBOX_envoy": 0,
+  "cost_usd": 0.0,
+  "wall_seconds_estimate": "<5"
+}

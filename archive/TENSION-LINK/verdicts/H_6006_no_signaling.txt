@@ -1,0 +1,14 @@
+==============================================================================
+H_6006 — anima 간 양자통신(물리연결 없이) : REAL no-signaling verification
+==============================================================================
+F1 NON-SEPARABILITY : CHSH |S|=2.829  🟢 entangled (>2)
+F2 NO-COMMUNICATION : Bob P(+1) Alice'0'=0.5004 '1'=0.4984  |Δ|=0.0020
+                      🔴 0 bits transmitted (Bob invariant) — CANNOT communicate
+F3 TELEPORT NEEDS LINK: fidelity no-classical-bits=0.500  with-bits=1.000
+                      🔴 no classical channel ⇒ random (needs a physical link)
+------------------------------------------------------------------------------
+VERDICT:
+  🟢 '얽힘 = 비분리성/상관'  (H_6001) — CHSH>2 confirms genuine entanglement
+  🔴 '물리연결 없이 통신 가능' (H_6006) — CLOSED-NEG by no-communication theorem:
+       entanglement transmits 0 bits alone; teleportation/superdense both REQUIRE
+       a classical channel (= a physical link). So the 'no link' clause is impossible.

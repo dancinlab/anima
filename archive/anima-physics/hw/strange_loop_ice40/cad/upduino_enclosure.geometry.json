@@ -1,0 +1,31 @@
+{
+  "artifacts": {
+    "brep_full": "upduino_enclosure.brep",
+    "step_cover_only": "upduino_cover_plate.step",
+    "step_full": "upduino_enclosure.step"
+  },
+  "cover_plate": {
+    "length_m": 0.05,
+    "thickness_m": 0.001,
+    "width_m": 0.033,
+    "z_offset_m": 0.011
+  },
+  "display_name": "UPduino v3 PCB + 1 mm Al cover plate enclosure",
+  "honest_c3": [
+    "datasheet recall only (UPduino v3 schematic + Tinyvision.ai board outline); NOT caliper-measured.",
+    "cover plate is a PROPOSAL \u2014 no fabricated part, no BOM.",
+    "PCB is a homogeneous FR-4 slab; BGA / headers / USB-C jack NOT modelled (component-level features out of scope).",
+    "PCB + cover plate are NOT joined / assembled \u2014 separate B-Rep volumes in the same STEP file.",
+    "single load case downstream (steady-state thermal); transient + structural + multi-case sweep out of scope."
+  ],
+  "id": "upduino_v3_enclosure_v1",
+  "interface": "anima:hw:upduino_v3_enclosure_v1",
+  "mesh_size_m_target": 0.0005,
+  "pcb": {
+    "length_m": 0.047,
+    "thickness_m": 0.01,
+    "width_m": 0.03
+  },
+  "schema_version": "1.0",
+  "units": "meters"
+}

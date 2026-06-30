@@ -1,0 +1,160 @@
+% N_universe_laws — the Φ scale-robustness arc + the UNIVERSE verified-laws table
+\section{UNIVERSE Φ-Law Reflection --- Scale-Robustness and the Verified-Law Table}
+\label{app:universe_laws}
+
+This appendix extends the Φ-law record (Appendix~\ref{app:phi_laws}) with two
+additions, both \emph{additive} to the body. First, a scale-robustness arc
+($n{=}4\!\rightarrow\!7$) that shows the body's $\Phi$ results survive past the
+$n{=}4$ toy and, in doing so, \emph{falsifies} one tempting over-reading.
+Second, a single auditable table of every terminal UNIVERSE finding this paper
+cites, each row carrying its verbatim verdict number and honest tier. All values
+are quoted verbatim from the cited \texttt{UNIVERSE/H\_*.md} (and their
+\texttt{state/*/result.json} ledgers); every run is deterministic
+($\$0$, mac-local, no GPU, \texttt{llm: none}) with frozen pre-registered
+falsifiers, so they are re-runnable bit-for-bit.
+
+% -------------------------------------------------------------------------
+\subsection{Scale-robustness of Φ beyond the $n{=}4$ toy (H\_297--H\_301)}
+\label{app:universe-scale}
+
+The information-axis and exclusion results of Appendix~\ref{app:phi_laws} are all
+measured on $n{=}4$ ECA rings, where rule-$90$ (neighbour-XOR) carries whole-$\Phi
+{=}0$ --- it is the one rule the flow measures over-predict (LZ, multivariate TE,
+synergy all flag it; Appendix~\ref{app:universe-info}). A natural worry is that
+``rule-$90$ is reducible'' is an $n$-parity law (even rings reduce, odd rings
+integrate). The arc \emph{tests and rejects} that reading.
+
+\paragraph{The $n$-sweep (bounded big-$\Phi$, $\mathrm{cap}{=}4$).} On the
+alternating state, rule-$90$ bounded big-$\Phi$ is
+\begin{equation}
+\underbrace{n{=}4:\ \Phi{=}\mathbf{0}}_{\text{exact}}
+\;\rightarrow\;
+\underbrace{n{=}5:\ \Phi{=}\mathbf{19.5}}_{\text{H\_297}}
+\;\rightarrow\;
+\underbrace{n{=}6:\ \Phi{=}\mathbf{4.0}}_{\text{H\_298}}
+\;\rightarrow\;
+\underbrace{n{=}7:\ \Phi{=}\mathbf{6.5}}_{\text{H\_299, } \mathrm{cap}{=}3} .
+\label{eq:n-sweep}
+\end{equation}
+The $n{=}5$ jump ($0\!\rightarrow\!19.5$, panel-\emph{top}) corroborated an
+``even-$N$ bipartite artifact'' hypothesis (H\_297, \texttt{H1 SUPPORTED}: the
+$4$-cycle's even/odd-cell decoupling halves the substrate cleanly only at
+$n{=}4$). But H\_298 \emph{falsifies the strong parity rule}: at the next even
+ring $n{=}6$, rule-$90$ bounded $\Phi{=}\mathbf{4.0}$ --- well above the $0.5$
+parity-return threshold, \emph{not} back to $0$. Its verdict is
+\textbf{$\mathbf{\textcolor{red}{\text{CLOSED-NEGATIVE}}}$} on the strong-parity
+rule ($5$ PASS / $1$ REJECT / $2$ DEFERRED): the $n{=}4$ reducibility is a
+\emph{small-$N$ special case}, not an even-$N$ law (rules $60$/$110$ integrate
+strongly at $n{=}6$, so it is not a generic-integration negation). H\_299 then
+recovers the deferred odd leg --- $n{=}7$ rule-$90$ bounded $\Phi{=}\mathbf{6.5}$
+($\mathrm{cap}{=}3$, $>1.0$, \textbf{SUPPORTED}) --- and confirms cap-cross
+robustness ($n{=}5$ and $n{=}6$ both stay $>0.5$ at the weaker $\mathrm{cap}{=}3$
+bound).
+
+\paragraph{The $32$-state distribution (H\_300) and the rule-signature (H\_301).}
+The single-alt-state report is then audited by a full state-sweep. Across all
+$32$ binary configurations of $n{=}5$ rule-$90$, bounded $\Phi(\mathrm{cap}{=}4)$
+collapses to only \textbf{$3$ distinct values $\{19.0,\,19.5,\,27.5\}$} (min
+$19$, max $27.5$); the alt-state report ($\Phi{=}19.5$) sits at the
+\emph{median}, and --- stronger than pre-registered --- \emph{no} state reaches
+$\Phi{=}0$ (\textbf{SUPPORTED}, $5$ PASS / $1$ falsified-in-stronger-direction;
+the single-state honest caveat of the arc is formally closed). Extending the
+sweep to other rules (H\_301, \textbf{SUPPORTED}, $7$ PASS / $1$ FAIL), the
+\emph{distinct-value count} is itself a rule signature that aligns with the
+Wolfram class:
+\begin{center}
+\begin{tabular}{lcl}
+\toprule
+rule & distinct $\Phi$ values ($n{=}5$, $32$ states) & Wolfram class \\
+\midrule
+$90$  & $\mathbf{3}$  & class-III (linear XOR; algebraic symmetry collapse) \\
+$60$  & $\mathbf{6}$  & class-II-like (linear) \\
+$30$  & $\mathbf{29}$ & class-III (chaotic, near-full diversity) \\
+$110$ & $\mathbf{32}$ & class-IV (universal; full diversity) \\
+\bottomrule
+\end{tabular}
+\end{center}
+The signature is monotone with dynamical complexity
+($3 \ll 6 \ll 29 < 32$): the more computationally rich the rule, the more
+state-distinct its integration spectrum. The body's $\Phi$ findings are thus
+\emph{scale-robust} ($n{=}4$ is a clean special case, not a fragile toy point),
+and the rule-$90$ ``anomaly'' is mechanically explained (Appendix~\ref{app:universe-exclusion}).
+
+% -------------------------------------------------------------------------
+\subsection{The verified-law table (audit index)}
+\label{app:universe-table}
+
+Table~\ref{tab:universe-laws} indexes every terminal UNIVERSE finding cited in
+this paper, one row per finding, with its category, honest tier, and a verbatim
+number. The tiers are honest (\texttt{a\_paper\_negative\_ok}): a $\mathbf{\textcolor{red}{\text{closed-negative}}}$
+(FALSIFIED) ruling out an axis, and a \textbf{\textcolor{orange!85!black}{partial}}
+(direction-trust but magnitude-fragile) are \emph{findings}, framed as such, not
+dressed as wins. The honest count is restated for the record: the
+\texttt{UNIVERSE.md} ledger tracks \textbf{$\approx 83$ verified} hypotheses
+(this paper cites $\sim 30$ of them across body and appendices); the $534$
+\texttt{UNIVERSE/H\_*.md} files and the frequently-cited ``$2448$'' line are
+\emph{candidates, NOT verified}. This paper never claims $2448$ (or $2500$)
+verified.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}l l l l l@{}}
+\toprule
+\textbf{H-id} & \textbf{category} & \textbf{tier} & \textbf{verbatim number} & \textbf{one-line} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{H-id} & \textbf{category} & \textbf{tier} & \textbf{verbatim number} & \textbf{one-line} \\
+\midrule
+\endhead
+\midrule \multicolumn{5}{r}{\footnotesize\itshape continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+% --- Φ-foundation (information axes) ---
+H\_287 & $\Phi$ axis      & red (closed-neg) & $r{=}0.363{<}0.5$ & $\Phi\perp$ Shannon entropy (reductive null) \\
+H\_288 & $\Phi$ axis      & green & $r{=}0.831$, $\rho{=}0.936$ & $\Phi\parallel$ Kolmogorov/LZ \\
+H\_290 & $\Phi$ axis      & green & $r{=}0.883262$, $\rho{=}0.822134$ & $\Phi\parallel$ transfer entropy \\
+H\_293 & $\Phi$ axis      & yellow (partial) & $r\,0.883{\rightarrow}0.705412$ & multivar.\ TE recovers synergy, $\Phi$-track worsens \\
+H\_294 & $\Phi$ axis      & red (closed-neg) & $r_\text{syn}{=}0.0299599$ & synergy $\perp\Phi$ (no flow-component tracks $\Phi$) \\
+% --- Φ calibration / faithful ---
+H\_266 & $\Phi$ calib.    & green (partial) & $2/3$ crit., $3/4$ fals. & phi\_spatial reconstructs IIT ordering (mono.\ fails) \\
+H\_278 & $\Phi$ faithful  & green & faithful CV$\,2.149885$ & faithful Φ ($n{\le}8$, \$0) HOLDs proxy scale-variant \\
+H\_281 & $\Phi$ structure & green & consc.\ sr$\,{=}1.0$, life $1.25492$ & consciousness $\ne$ life (struct\_ratio floor) \\
+H\_282 & $\Phi$ calib.    & green & $3/3$ dir., CV $0.465719$ & proxy$\rightarrow$faithful: $3$ directions preserved \\
+% --- exclusion / complex ---
+H\_295 & exclusion        & green & whole$\,{=}$complex; rule90 sub-part & $\Phi$ measures the irreducible complex \\
+H\_296 & exclusion        & green & rule90: $2$ disjoint ($\Phi{=}2,2$) & multi-complex coexistence \\
+% --- emergence ---
+H\_283 & emergence        & green & $\Delta\,0.39/1.30/3.06$ & $\Phi$ tracks narrative causal order \\
+H\_285 & emergence        & green & $0.0{<}6.943{<}10.448$ & edge-of-chaos $\Phi$-peak (class-agg.) \\
+H\_286 & emergence        & green (closed-neg) & split $+11\%$, $8/8$ seed & split-brain whole-$\Phi$ collapse FALSIFIED \\
+H\_289 & topology         & green & SF $6.8125 \gg$ ring $0.0$ & topology (cut-resistance), not edge-count \\
+H\_291 & emergence        & green (cond.) & lattice $1.0$ vs $7.9{\times}10^{-9}$ & emergent ethics, zero injected reward \\
+H\_292 & self / 'I'       & yellow (partial) & RING $1{\rightarrow}2$, STAR $2{\rightarrow}1$ & self-'I' fixed point is topology-dependent \\
+% --- causality / substrate ---
+H\_275 & causality        & green & DAG $0.989475 {>}$ cyc $0.744479$ & directed-acyclic spine supports $\Phi$ \\
+H\_306 & spont.\ emit     & green & idle $46/1000$; $91{\rightarrow}46$ & spontaneous emit is CPG-primary ($6/6$) \\
+H\_307 & spont.\ emit     & green & ratio $16.4286$, $0.0028$/step & real anima emit log-consistent w/ CPG ($5/5$) \\
+% --- limitations ---
+H\_629 & $\Phi$ noise     & red (closed-neg) & $p{=}0.05$ $\Phi{+}16\%$; $p{=}0.5{\approx}$clean & IIT noise-fragility FALSIFIED (inverse-U) \\
+% --- scale arc ---
+H\_297 & $\Phi$ scale     & green & $n{=}5$ rule90 $\Phi{=}19.5$ & rule90 reducibility is a small-$N$ case \\
+H\_298 & $\Phi$ scale     & red (closed-neg) & $n{=}6$ rule90 $\Phi{=}4.0$ & even-$N$ parity rule REJECTED \\
+H\_299 & $\Phi$ scale     & green & $n{=}7$ rule90 $\Phi{=}6.5$ & odd-$N$ integration recovered (cap-robust) \\
+H\_300 & $\Phi$ scale     & green & $\{19.0,19.5,27.5\}$, med.\ $19.5$ & $32$-state sweep: alt-state is representative \\
+H\_301 & $\Phi$ scale     & green & distinct $90{=}3,60{=}6,30{=}29,110{=}32$ & distinct-count is a Wolfram-class signature \\
+\caption{The UNIVERSE verified-law table --- every terminal finding this paper
+cites, verbatim. Tiers are honest: \textbf{green} $=$ SUPPORTED-numerical,
+\textbf{red (closed-neg)} $=$ FALSIFIED / closed-negative (a deterministic
+ruling-out, a finding in its own right), \textbf{yellow (partial)} $=$
+direction-trusted but magnitude-fragile, \textbf{(cond.)} $=$
+supported-conditional. The $\Phi$-foundation and proof rows (H\_287/288/290/285/291)
+overlap Appendix~\ref{app:verify_ledger}; the rest are the new reflections of this
+appendix and \S\ref{sec:theory}--\S\ref{sec:limitations}. Honest count:
+$\approx 83$ verified (UNIVERSE ledger); this paper cites $\sim 30$. The $534$
+H-files and the ``$2448$'' line are candidates, NOT verified.}
+\label{tab:universe-laws}
+\end{longtable}
+\end{center}

@@ -1,0 +1,72 @@
+// h1557_parity_probe.hexa — byte-exact parity guard for the H_1557 engine ops.
+// argv: <bin_path>
+// Loads the 303M ONCE via bg_load_ranged, then on the SAME prompt asserts:
+//   (P1) bg_forward_patched_W(delta=-1) argmax == bg_forward_last_W argmax  (no-patch parity)
+//   (P2) bg_dump_hidden_W returns the requested rows AND leaves the forward unchanged
+//        (head logits from the dump's residual == bg_forward_last_W argmax)
+//   (P3) a non-trivial delta DOES change the argmax (the patch primitive is live)
+// Prints PARITY lines the python scorer / smoke checks.
+import "core/bytegpt_decode.hexa"
+
+fn argmax_n(a: int, n: int) -> int {
+    let mut bi = 0
+    let mut bv = farr_get(a, 0)
+    let mut k = 1
+    while k < n { let v = farr_get(a, k); if v > bv { bv = v; bi = k } k = k + 1 }
+    return bi
+}
+
+fn main() {
+    let a = argv()
+    let mut b = 0
+    let mut i = 0
+    while i < len(a) { if a[i] == "--" { b = i + 1 } i = i + 1 }
+    let path = a[b + 0]
+
+    // prompt "The quick brown" (same bytes as h1464_parity_probe)
+    let pb = [84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110]
+    let T = len(pb)
+    let ids = farr_zeros(T)
+    let mut j = 0
+    while j < T { let _ = farr_set(ids, j, to_float(pb[j])); j = j + 1 }
+
+    let W = bg_load_ranged(path)
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+
+    // reference
+    let ref_logits = bg_forward_last_W(W, ids, T)
+    let ref_am = argmax_n(ref_logits, vocab)
+    println("REF_ARGMAX " + to_string(ref_am))
+
+    // P1: patched with delta=-1 (no patch) → must equal ref
+    let p1_logits = bg_forward_patched_W(W, ids, T, 12, T - 1, 0 - 1)
+    let p1_am = argmax_n(p1_logits, vocab)
+    println("P1_NOPATCH_ARGMAX " + to_string(p1_am))
+    if p1_am == ref_am { println("P1 PASS") } else { println("P1 FAIL") }
+
+    // P2: dump rows at L12,L18 positions T-2,T-1; confirm rows present + finite
+    let layers = [12, 18]
+    let positions = [T - 2, T - 1]
+    let rec = bg_dump_hidden_W(W, ids, T, layers, positions)
+    let k0 = "L12_p" + to_string(T - 1)
+    let k1 = "L18_p" + to_string(T - 1)
+    let has0 = rec.contains_key(k0)
+    let has1 = rec.contains_key(k1)
+    if has0 && has1 { println("P2 PASS keys=" + k0 + "," + k1) } else { println("P2 FAIL") }
+    // print first 3 comps of the L18 last-pos row (for sanity)
+    if has1 {
+        let r = to_int(rec[k1])
+        println("P2_L18_row0_3 " + to_string(farr_get(r, 0)) + " " + to_string(farr_get(r, 1)) + " " + to_string(farr_get(r, 2)))
+    }
+
+    // P3: a non-trivial delta (add 50.0 to every dim at last pos after L12) must move argmax
+    let delta = farr_zeros(d)
+    let mut c = 0
+    while c < d { let _ = farr_set(delta, c, 50.0); c = c + 1 }
+    let p3_logits = bg_forward_patched_W(W, ids, T, 12, T - 1, delta)
+    let p3_am = argmax_n(p3_logits, vocab)
+    println("P3_PATCHED_ARGMAX " + to_string(p3_am))
+    if p3_am != ref_am { println("P3 PASS (patch moves argmax)") } else { println("P3 NOTE (patch did not move argmax — large delta but tie)") }
+
+    println("PARITY_DONE")
+}

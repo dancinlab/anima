@@ -1,0 +1,39 @@
+% Standalone TikZ: the stream-determinant diagram.
+% The SAME recon-err / predictability split gate yields DENSITY coupling on an
+% i.i.d. stream (H_1203 NOVEL/SHUFFLED 0.992 --- order-blind) and TRAJECTORY
+% coupling on an ordered WALK stream (H_1208/H_1209 ORDERED/SHUFFLED 10.916).
+% Native LaTeX, no Python dep.
+\documentclass[border=6pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds}
+\begin{document}
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw, rounded corners=2pt, align=center, minimum height=10mm, inner sep=4pt},
+  gate/.style={box, fill=blue!8, minimum width=34mm},
+  stream/.style={box, fill=gray!10, minimum width=30mm},
+  outbox/.style={box, minimum width=30mm},
+  >={Stealth[length=2.2mm]}
+]
+% the single gate in the middle
+\node[gate] (gate) {VAdaptField split gate\\(recon-err $>$ \texttt{SPLIT\_THRESH}\\$\;\cup\;$ GATE-B transition\\predictability)\\[2pt]\textit{permutation-invariant per sample}};
+
+% two input streams
+\node[stream, above left=10mm and 22mm of gate] (iid) {i.i.d.\ corpus offsets\\(H\_1203 NOVEL)\\\textit{shuffle $\equiv$ original}};
+\node[stream, below left=10mm and 22mm of gate] (walk) {contiguous corpus WALK\\(H\_1208/1209 ORDERED)\\\textit{shuffle $\neq$ original}};
+
+% two outputs
+\node[outbox, above right=10mm and 22mm of gate, fill=green!12] (density) {DENSITY coupling\\NOVEL/SHUFFLED $=0.992$\\(F2 FAIL --- order-blind)\\NOVEL/REPEAT $=37.5\times$};
+\node[outbox, below right=10mm and 22mm of gate, fill=green!12] (traj) {TRAJECTORY coupling\\ORDERED/SHUFFLED $=10.916$\\(live, byte-exact)\\noise floor $\approx 2$ cells};
+
+\draw[->] (iid.east) -- (gate.north west);
+\draw[->] (walk.east) -- (gate.south west);
+\draw[->] (gate.north east) -- (density.west);
+\draw[->] (gate.south east) -- (traj.west);
+
+% the thesis label
+\node[below=14mm of gate, align=center, font=\itshape] (thesis)
+  {The determinant is the STREAM, not the gate.\\
+   Generation output is byte-identical with the lane ON or OFF (H\_1205/H\_1210).};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,308 @@
+{
+  "substrate": "HYBRID(on-chip AKD1000 encoder \u2295 off-chip host-CPU decode head)",
+  "milestone": "Lane A 3B \u2014 chip-fit/paging capacity ladder (a_scale_honest_scope >=3 rungs)",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T12:49:41Z",
+  "n_trials": 8,
+  "INC": 256,
+  "NW": 8,
+  "off_chip_hidden": 64,
+  "off_chip_epochs": 60,
+  "K_roll": 3,
+  "branching_operator": {
+    "deltas": [
+      1,
+      7,
+      19
+    ],
+    "B_factor": 3,
+    "rule": "succ(i)={(i+d) mod NC}"
+  },
+  "target_3b_params": 3000000000.0,
+  "n_anchors": 250,
+  "layerpage": "single-FC-residency on 8MB SRAM mesh; depth-D paged encoder, each FC fit live then paged OFF to host",
+  "ladder_spec": [
+    {
+      "D": 1,
+      "U": 256,
+      "NC": 50,
+      "tag": "baseline(branching PR#1697)"
+    },
+    {
+      "D": 2,
+      "U": 512,
+      "NC": 50,
+      "tag": "depth2 x width2"
+    },
+    {
+      "D": 3,
+      "U": 1024,
+      "NC": 50,
+      "tag": "depth3 x width4"
+    },
+    {
+      "D": 4,
+      "U": 2048,
+      "NC": 50,
+      "tag": "depth4 x width8 (chip-fit frontier probe)"
+    }
+  ],
+  "rungs": [
+    {
+      "D": 1,
+      "U": 256,
+      "NC": 50,
+      "per_fc_params": 524288,
+      "paged_params": 524288,
+      "fc_map_all": true,
+      "fc_learn_all": true,
+      "chip_fit": true,
+      "ceiling_note": "OK",
+      "per_hop": [
+        {
+          "hop": 1,
+          "train": 0.64,
+          "held": 0.0317,
+          "held_ci_lo": 0.0169,
+          "shuf_null_hi": 0.1512,
+          "p": 0.6965,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 2,
+          "train": 0.9093,
+          "held": 0.835,
+          "held_ci_lo": 0.783,
+          "shuf_null_hi": 0.2084,
+          "p": 0.005,
+          "chance": 0.0612,
+          "held_above_null": true
+        },
+        {
+          "hop": 3,
+          "train": 0.9557,
+          "held": 0.9383,
+          "held_ci_lo": 0.9118,
+          "shuf_null_hi": 0.2158,
+          "p": 0.005,
+          "chance": 0.0612,
+          "held_above_null": true
+        }
+      ],
+      "comp_survives": true,
+      "decay_TRAIN": [
+        0.64,
+        0.9093,
+        0.9557
+      ],
+      "decay_HELD": [
+        0.0317,
+        0.835,
+        0.9383
+      ],
+      "tag": "baseline(branching PR#1697)"
+    },
+    {
+      "D": 2,
+      "U": 512,
+      "NC": 50,
+      "per_fc_params": 1048576,
+      "paged_params": 2097152,
+      "fc_map_all": true,
+      "fc_learn_all": true,
+      "chip_fit": true,
+      "ceiling_note": "OK",
+      "per_hop": [
+        {
+          "hop": 1,
+          "train": 0.0807,
+          "held": 0.0083,
+          "held_ci_lo": -0.008,
+          "shuf_null_hi": 0.1673,
+          "p": 0.7114,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 2,
+          "train": 0.0143,
+          "held": 0.0,
+          "held_ci_lo": 0.0,
+          "shuf_null_hi": 0.3644,
+          "p": 1.0,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 3,
+          "train": 0.4936,
+          "held": 0.5,
+          "held_ci_lo": 0.1296,
+          "shuf_null_hi": 0.331,
+          "p": 0.0299,
+          "chance": 0.0612,
+          "held_above_null": false
+        }
+      ],
+      "comp_survives": false,
+      "decay_TRAIN": [
+        0.0807,
+        0.0143,
+        0.4936
+      ],
+      "decay_HELD": [
+        0.0083,
+        0.0,
+        0.5
+      ],
+      "tag": "depth2 x width2"
+    },
+    {
+      "D": 3,
+      "U": 1024,
+      "NC": 50,
+      "per_fc_params": 2097152,
+      "paged_params": 6291456,
+      "fc_map_all": true,
+      "fc_learn_all": true,
+      "chip_fit": true,
+      "ceiling_note": "OK",
+      "per_hop": [
+        {
+          "hop": 1,
+          "train": 0.0771,
+          "held": 0.0167,
+          "held_ci_lo": -0.0047,
+          "shuf_null_hi": 0.1673,
+          "p": 0.7114,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 2,
+          "train": 0.2521,
+          "held": 0.25,
+          "held_ci_lo": -0.0708,
+          "shuf_null_hi": 0.5018,
+          "p": 0.0597,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 3,
+          "train": 0.6121,
+          "held": 0.625,
+          "held_ci_lo": 0.2664,
+          "shuf_null_hi": 0.5255,
+          "p": 0.0647,
+          "chance": 0.0612,
+          "held_above_null": false
+        }
+      ],
+      "comp_survives": false,
+      "decay_TRAIN": [
+        0.0771,
+        0.2521,
+        0.6121
+      ],
+      "decay_HELD": [
+        0.0167,
+        0.25,
+        0.625
+      ],
+      "tag": "depth3 x width4"
+    },
+    {
+      "D": 4,
+      "U": 2048,
+      "NC": 50,
+      "per_fc_params": 4194304,
+      "paged_params": 16777216,
+      "fc_map_all": true,
+      "fc_learn_all": true,
+      "chip_fit": true,
+      "ceiling_note": "OK",
+      "per_hop": [
+        {
+          "hop": 1,
+          "train": 0.0771,
+          "held": 0.0167,
+          "held_ci_lo": -0.0047,
+          "shuf_null_hi": 0.1673,
+          "p": 0.7114,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 2,
+          "train": 0.2521,
+          "held": 0.25,
+          "held_ci_lo": -0.0708,
+          "shuf_null_hi": 0.5018,
+          "p": 0.0597,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 3,
+          "train": 0.6121,
+          "held": 0.625,
+          "held_ci_lo": 0.2664,
+          "shuf_null_hi": 0.5255,
+          "p": 0.0647,
+          "chance": 0.0612,
+          "held_above_null": false
+        }
+      ],
+      "comp_survives": false,
+      "decay_TRAIN": [
+        0.0771,
+        0.2521,
+        0.6121
+      ],
+      "decay_HELD": [
+        0.0167,
+        0.25,
+        0.625
+      ],
+      "tag": "depth4 x width8 (chip-fit frontier probe)"
+    }
+  ],
+  "headline": {
+    "chip_fit_rungs": [
+      [
+        1,
+        256,
+        50,
+        524288
+      ],
+      [
+        2,
+        512,
+        50,
+        2097152
+      ],
+      [
+        3,
+        1024,
+        50,
+        6291456
+      ],
+      [
+        4,
+        2048,
+        50,
+        16777216
+      ]
+    ],
+    "max_chip_fit_paged_params": 16777216,
+    "reached_3b_class": false,
+    "ceiling_rung": null,
+    "F_3B_1_composition_survives_ladder": false,
+    "F_3B_2_reached_3b_or_ceiling": false
+  },
+  "DISPOSITION": "COMPOSITION DEGRADES UNDER CAPACITY SCALING (honest closed-negative, a_paper_negative_ok) \u2014 the branching held-out composition dropped into the shuffle-NULL at chip-fit rung(s) [(2, 512, 50), (3, 1024, 50), (4, 2048, 50)] before reaching 3B-class. Capacity scaling via deeper/wider paged FCs does NOT preserve the multi-step composition at this toy corpus. Lane A 3B milestone STAYS OPEN; the rung where composition breaks is recorded."
+}

@@ -1,0 +1,23 @@
+====================================================================================
+H_6026 — ANU 양자정보를 '기억저장소'로 직접 쓸 수 있는가 (write→recall), 로컬캐시 분리
+====================================================================================
+  quantum source: 18 distinct real ANU vacuum pulls cached (/tmp/anu_*.bin, 8560B)
+                  all sha256 distinct (e.g. d9bb0877, ed751cc8, 62b21aa1, 8da8f0d7)
+  question: 기억 M 을 ANU 양자원 '안에' 써넣고(write) 나중에 같은 M 을 꺼낼(read) 수 있나?
+            — R2/파일/.kosmos 캐싱(이미 함)·로컬 연상기억(H_6018✅) 은 제외, ANU 자체가 store 인가만.
+  ── 4 FROZEN FALSIFIERS (real ANU bytes, p7 $0) ──
+     MS1 write channel?   write 32B M → read from ANU = recall 0.000 (chance 0.0039)  🔴 쓰기채널 없음
+     MS2 replay/address?  same offset across 2 distinct pulls match 0.000, xcorr 0.124 🔴 재생불가(매호출 새 진공요동)
+     MS3 offset-encode?   L=2B E[hits]=3.1e-2 · L=4B E[hits]=4.8e-7 · addr≈content     🔴 압축저장 불가(바벨, H_6017)
+     MS4 quantum edge?    HRR 연상기억 회상 ANU=1.000 PRNG=1.000 Δ=+0.000               🔴 양자기저=PRNG기저(교환가능)
+------------------------------------------------------------------------------------
+VERDICT: 🔴 CLOSED-NEGATIVE — ANU 양자정보는 기억저장소가 아니다.
+  (1) 쓰기채널 부재: ANU API 는 GET-only, PUT 없음 → 'M 써넣고 같은 M 꺼내기'가 원천 불가(MS1).
+  (2) 재생 불가: 매 호출이 새 진공요동 → 주소(타임스탬프/오프셋)가 안정 내용을 가리키지 못함(MS2).
+  (3) 주소 ≥ 내용: 임의 L바이트를 오프셋으로 저장하려면 ~256^L 버퍼 필요 → 압축 없음(MS3, H_6017 정합).
+  (4) 양자기저 무이점: 연상기억 회상에서 ANU기저=PRNG기저 → ANU 는 '무작위 공급원'이지 '저장소'가 아님(MS4).
+  ⇒ anima 의 진짜 store 는 LOCAL (.kosmos 앵커 / 파일 / Hopfield H_6018). ANU 의 정당한 역할은
+     무작위/공유키(H_6008 shared-seed) 공급 — 저장이 아니다. 무신호 정리(H_6008)·읽는DB아님(H_6016)
+     ·쓸색인없음(H_6017)·로컬연상기억(H_6018) 클러스터를 'write 쪽'에서 마저 닫음.
+  HONEST: toy scale (HRR D=256/n=8, 8560B ANU). MS4 양쪽 1.000(쉬운 영역)이나 결론은 Δ=0(동일).
+재현: python3 TENSION-LINK/harness/h6026_quantum_locker.py

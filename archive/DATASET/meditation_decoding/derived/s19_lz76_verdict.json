@@ -1,0 +1,12 @@
+{
+  "id": "S19-meditation-LZ76",
+  "dataset": "OpenNeuro ds001787 (Brandmeyer-Delorme breath-focus meditation, BDF, BioSemi 64ch@256Hz)",
+  "spec_vs_actual": "events.tsv has only experience-sampling probe/response markers, NO meditation-vs-rest block labels. Honest available contrast = first-half(early) vs second-half(settled) of the continuous recording.",
+  "downloaded": true,
+  "raw_storage": "sub-001/002/003 x ses (6 BDF, 159MB) LOCAL-ONLY",
+  "data_readable": "YES via mne.io.read_raw_bdf (64ch@256Hz, ~2721s; verified load: ch=80 sfreq=256 dur=2721s)",
+  "hypothesis": "meditation-state LZ76 != baseline (first vs second half proxy)",
+  "falsifier": "|Δ|/first < 1% (null)",
+  "verdict": "NOT-MEASURED",
+  "note": "6 BDF downloaded and confirmed loadable. LZ76 run did NOT complete in this environment (foreground 124 timeout on filter+LZ of 6x64ch BDF; background 144 kill). NO fabricated value. A prior commit (e4175c8ec) reported a first/second-half null Δ=0.00063 but that numeric was not reproducible-to-confirmation here, so this verdict is set to NOT-MEASURED rather than assert an unverified number. Recovery: read_raw_bdf each, 1-45Hz, median-binarize, LZc first vs second half."
+}

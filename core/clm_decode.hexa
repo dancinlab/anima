@@ -935,3 +935,59 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
     _clmd_scratch_free(sc)
     return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm }
 }
+
+// clm_decode_batch_to_file — LOAD-ONCE batch generator for the .clm (CLMConvMoE) mouth,
+// the engine-native G6 frozen-bar adapter equivalent of bytegpt_decode.hexa::
+// bytegpt_decode_batch_to_file (which serves the ByteGPT .bin mouth). The G6 scaffold
+// (state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa + h1464_engine_native.py)
+// needs a `prompts N → generated-token file` interface, but the 303M ko/en chat trunk
+// clm303 is a .clm (CLMConvMoE, NOT a ByteGPT .bin) so the bytegpt batch helper cannot
+// load it. This is NOT a 2nd .clm path (a_core_engine_map): it reuses the SAME single
+// typed .clm entry primitives — clm_load_weights (ONE _clmd_load) + clm_decode_topk_sampled_W
+// (the loaded-W decode core, byte-identical to clm_decode_topk_sampled) — so the verdict
+// stays engine-native over the live CORE forward (_clmd_fwd_logits_sc, farr/own-GEMM).
+//
+// jobs_path: one job per line, TAB-separated `seed_rng<TAB>tag<TAB>seed_text`
+//   (identical to the bytegpt batch contract so the same driver/jobs.tsv works).
+// out_path: appended `tag<TAB>text` per fragment (tab/newline escaped to one line),
+//   commit-early/resumable (each fragment flushed as it finishes).
+// Loads the .clm ONCE, then generates every fragment off the resident W.
+fn clm_decode_batch_to_file(clm_path: string, jobs_path: string, out_path: string,
+                            gen: int, top_k: int, temp: float) -> int {
+    let W = clm_load_weights(clm_path)
+    if to_string(W["ok"]) != "true" { return -1 }
+    let lines = read_lines(jobs_path)
+    let mut done = 0
+    let mut j = 0
+    while j < len(lines) {
+        let line = to_string(lines[j])
+        if byte_len(line) > 0 {
+            // split on first two tabs: seed_rng \t tag \t seed_text
+            let t1 = _clmd_find(line, "\t")
+            if t1 > 0 {
+                let seed_rng = to_int(substring(line, 0, t1))
+                let rest = substring(line, t1 + 1, byte_len(line))
+                let t2 = _clmd_find(rest, "\t")
+                if t2 > 0 {
+                    let tag = substring(rest, 0, t2)
+                    let seed = substring(rest, t2 + 1, byte_len(rest))
+                    let r = clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng)
+                    let txt = to_string(r["text"])
+                    // escape tab/newline so each fragment stays one output line
+                    let mut esc = ""
+                    let mut k = 0
+                    let tl = byte_len(txt)
+                    while k < tl {
+                        let ch = substring(txt, k, k + 1)
+                        if ch == "\t" { esc = esc + " " } else { if ch == "\n" { esc = esc + " " } else { esc = esc + ch } }
+                        k = k + 1
+                    }
+                    let _ = append_file(out_path, tag + "\t" + esc + "\n")
+                    done = done + 1
+                }
+            }
+        }
+        j = j + 1
+    }
+    return done
+}

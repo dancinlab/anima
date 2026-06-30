@@ -1,0 +1,143 @@
+// anima/core/rng/source.hexa — RNG source abstract interface
+//
+// Purpose:
+//   Single canonical contract that every RNG source module (esp32, anu, ibm_q,
+//   idq_quantis, kaist_optical, urandom) must satisfy. Allows the router to
+//   swap sources via config without touching consumer code.
+//
+// raw#9 hexa-only strict. raw#15 SSOT this file for the RNG contract.
+//
+// CONTRACT (every source module must export):
+//   fn rng_source_meta_<name>() -> RngSourceMeta
+//   fn rng_source_collect_<name>(n_bytes: int, seed: int) -> RngCollectResult
+//
+// We use *_<name> prefixed function names rather than trait dispatch because
+// hexa-lang stage0 has no first-class trait/dyn-call. The registry resolves
+// names → concrete fn references via switch dispatch.
+//
+// PRESERVED FILES (audit at landing time, MUST remain byte-identical):
+//   anima-physics/esp32/qrng_bridge.hexa     (ESP32 mock LCG bridge)
+//   anima-physics/verify_7cond_hw.hexa       (T3 Embodiment consumer)
+//   anima-physics/hw_engine_bridge.hexa      (8-channel HW bridge)
+//
+// raw#10 caveats:
+//   (1) hexa-lang stdlib `qrng_anu` upstream not yet landed — T1 ANU module
+//       falls back to `system("curl ...")` until import path is wired.
+//   (2) NIST SP 800-90B health tests NOT implemented (informational only).
+//   (3) ANU public API has rate-limit (~1 req/min unsigned) — chunking used.
+//   (4) ESP32 module wraps existing qrng_bridge without modification.
+
+// ─── RngSourceMeta — metadata struct ────────────────────────
+
+struct RngSourceMeta {
+    // canonical short id, lowercase, snake_case
+    name:           str,
+    // 0..4 tier (0=local, 1=public/free QRNG, 2=cloud quantum, 3=commercial, 4=research)
+    tier:           int,
+    // sustained throughput in bits per second
+    throughput_bps: int,
+    // deployment cost USD (0 = free)
+    cost_usd:       int,
+    // lead time to production-ready (calendar days)
+    lead_days:      int,
+    // 1 if quantum-physics-based, 0 if classical pseudo/system
+    is_quantum:     int,
+    // 1 if local/no-network, 0 if remote
+    is_local:       int,
+    // 1 if no monetary cost at default tier
+    is_free:        int,
+    // implementation status: "IMPLEMENTED", "STUB", "WRAPPED"
+    status:         str,
+    // free-form vendor / endpoint label
+    vendor:         str
+}
+
+// ─── RngCollectResult — collect return shape ────────────────
+//
+// We use parallel-array byte storage rather than [u8] because hexa-lang
+// stage0 has no u8 type. Each entry is 0..255 int.
+
+struct RngCollectResult {
+    // 1 = success, 0 = failure (sentinel)
+    ok:             int,
+    // number of bytes actually collected (== request on ok=1)
+    n_bytes:        int,
+    // byte stream as int array (each 0..255)
+    bytes_:         [int],
+    // hex-string sha256 of byte stream (computed by caller via system tool)
+    sha256_hex:     str,
+    // human-readable status message
+    message:        str
+}
+
+// ─── Helper: meta-only constructor (for STUB modules) ────────
+
+fn rng_meta_make(
+    name: str, tier: int, throughput_bps: int, cost_usd: int,
+    lead_days: int, is_quantum: int, is_local: int, is_free: int,
+    status: str, vendor: str
+) -> RngSourceMeta {
+    return RngSourceMeta {
+        name:           name,
+        tier:           tier,
+        throughput_bps: throughput_bps,
+        cost_usd:       cost_usd,
+        lead_days:      lead_days,
+        is_quantum:     is_quantum,
+        is_local:       is_local,
+        is_free:        is_free,
+        status:         status,
+        vendor:         vendor
+    }
+}
+
+// ─── Helper: failure-result constructor ─────────────────────
+
+fn rng_result_fail(reason: str) -> RngCollectResult {
+    return RngCollectResult {
+        ok:         0,
+        n_bytes:    0,
+        bytes_:     [],
+        sha256_hex: "",
+        message:    reason
+    }
+}
+
+// ─── Helper: success-result constructor ─────────────────────
+
+fn rng_result_ok(bytes_: [int], sha256_hex: str, message: str) -> RngCollectResult {
+    return RngCollectResult {
+        ok:         1,
+        n_bytes:    len(bytes_),
+        bytes_:     bytes_,
+        sha256_hex: sha256_hex,
+        message:    message
+    }
+}
+
+// ─── Selftest: meta + result constructors round-trip ────────
+
+fn _selftest_source() -> int {
+    let m = rng_meta_make("urandom", 0, 1000000, 0, 0, 0, 1, 1, "IMPLEMENTED", "OS")
+    if m.name != "urandom" { return 0 }
+    if m.tier != 0 { return 0 }
+    if m.is_local != 1 { return 0 }
+    let f = rng_result_fail("test_fail")
+    if f.ok != 0 { return 0 }
+    if f.message != "test_fail" { return 0 }
+    let s = rng_result_ok([1, 2, 3], "abc", "ok")
+    if s.ok != 1 { return 0 }
+    if s.n_bytes != 3 { return 0 }
+    if s.bytes_[0] != 1 { return 0 }
+    return 1
+}
+
+fn main() {
+    println("[rng/source] interface contract self-test")
+    if _selftest_source() == 1 {
+        println("[rng/source] SELFTEST PASS")
+    } else {
+        println("[rng/source] SELFTEST FAIL")
+    }
+}
+
