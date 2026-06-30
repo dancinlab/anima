@@ -43,8 +43,9 @@
 // ════════════════════════════════════════════════════════════════════════
 
 use "stdlib/flame/flame_math"
-// GPU decode (RFC-040): flame_mm.mm(A,M,K,B,N) dispatches cuBLAS Dgemm on a CUDA
-// host, else the CPU oracle farr_matmul (byte-identical on non-CUDA, e.g. Mac).
+// GPU decode (RFC-040): flame_mm.mm(A,M,K,B,N) dispatches the own-GEMM device
+// kernel on a CUDA host (cuBLAS opt-in via HEXA_USE_CUBLAS — native-canonical
+// default), else the CPU oracle farr_matmul (byte-identical on non-CUDA, e.g. Mac).
 // Routing the d×d projection GEMMs through mm() makes CUDA-host decode use the
 // GPU with ZERO change to the Mac/CPU output (cuda_available()==0 → farr_matmul).
 use "core/DECODER/flame_mm"
@@ -168,7 +169,7 @@ fn _bg_transpose(W: int, Co: int, Ci: int) -> int {
 // Writes Y[T,Co]. Falls back to the scalar _bg_linear is NOT done here — callers
 // that need the scalar reference use _bg_linear directly with the [Co,Ci] W.
 fn _bg_linear_mm(X: int, Wt: int, b: int, Y: int, T: int, Ci: int, Co: int) {
-    let C = mm(X, T, Ci, Wt, Co)  // GPU(cuBLAS) on CUDA host, else CPU farr_matmul (byte-id)
+    let C = mm(X, T, Ci, Wt, Co)  // GPU own-GEMM on CUDA host, else CPU farr_matmul (byte-id)
     let mut t = 0
     while t < T {
         let mut o = 0
@@ -191,7 +192,7 @@ fn _bg_mha_mm(H: int, inWt: int, inB: int, oWt: int, oB: int, Aout: int,
     let hd = d / nh
     let scale = 1.0 / dt_sqrt(to_float(hd))
     // QKV = H[T,d] · inWt[d,3d] + inB  →  packed [T,3d], cols 0..d=Q, d..2d=K, 2d..3d=V
-    let QKV = mm(H, T, d, inWt, 3 * d)  // GPU(cuBLAS) on CUDA host, else CPU farr_matmul (byte-id)
+    let QKV = mm(H, T, d, inWt, 3 * d)  // GPU own-GEMM on CUDA host, else CPU farr_matmul (byte-id)
     let Q = farr_zeros(T * d)
     let K = farr_zeros(T * d)
     let V = farr_zeros(T * d)
@@ -400,7 +401,7 @@ pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
         let m2B  = _bg_rd_farr(rb, off, d); off = off + d * 4
 
         // Lane C GPU seam (RFC-040): transpose the d×d matmul weights for the
-        // native GEMM (mm() = cuBLAS on a CUDA host, else CPU farr_matmul byte-id),
+        // native GEMM (mm() = own-GEMM device on a CUDA host, else CPU farr_matmul byte-id),
         // then route QKV/out-proj + MLP up/down through _bg_mha_mm / _bg_linear_mm
         // (identical to the bytegpt_forward_last_ranged_mm / bg_forward_last_W path).
         // Same math as scalar _bg_mha/_bg_linear — FP-reassociation only (~1e-13,
@@ -538,7 +539,7 @@ pub fn bytegpt_forward_last_ranged(path: string, ids: int, T: int) -> int {
 
         // Lane C GPU seam (RFC-040): transpose the d×d matmul weights then route
         // through the native GEMM (_bg_mha_mm / _bg_linear_mm) — same code path as
-        // bytegpt_forward_last_ranged_mm. mm() = cuBLAS on a CUDA host, else CPU
+        // bytegpt_forward_last_ranged_mm. mm() = own-GEMM device on a CUDA host, else CPU
         // farr_matmul (byte-id). FP-reassociation only vs scalar (~1e-13, argmax-
         // stable). Transposes freed per layer (peak ≈ one weight + its transpose).
         let inWt = _bg_transpose(inW, 3 * d, d)
