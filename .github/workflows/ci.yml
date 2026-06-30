@@ -161,11 +161,19 @@ jobs:
       # compile ~12.7min/run 의 aprime_cc codegen). core/** + cli/** 소스 해시로 키 →
       # 엔진 소스 불변이면 hit(컴파일 스킵), 소스 변경이면 정확히 miss(재컴파일). hexa
       # 자체 캐시 해시에 toolchain 바이너리가 섞여 toolchain 변경 시 자연 miss(오염無).
+      # ⚠️ `!core/phi/quantum_types.hexa` 제외 필수 — 이건 hexa-lang sibling repo 의
+      # `../../hexa-lang/self/quantum_types.hexa` 로 가는 *외부 의존* symlink 라 CI
+      # 체크아웃(단독 클론)에선 dangling. GitHub 의 hashFiles() 표현식은 runner 가
+      # followSymbolicLinks=false 로 호출하므로(actions/runner hashFiles.ts) dangling
+      # symlink 를 stat 하다 ENOENT → "Fail to hash files under directory" 로 전체
+      # 키 평가가 fatal 실패 → 캐시 스텝 RED(매 run 만성 실패의 실근거). 이 파일은
+      # anima 가 소유하지 않는 외부 소스라 엔진-소스 fingerprint 에 애초에 불포함이
+      # 정답(캐시 무효화 의미 불변). 글로브 `!` 제외로 stat 자체를 회피한다.
       - name: Cache — hexa warm compile (~/.hexa-cache)
         uses: actions/cache@v4
         with:
           path: ~/.hexa-cache
-          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**') }}
+          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**', '!core/phi/quantum_types.hexa') }}
           restore-keys: |
             hexa-cache-${{ runner.os }}-${{ runner.arch }}-
 
