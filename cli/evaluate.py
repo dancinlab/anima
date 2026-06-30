@@ -78,6 +78,8 @@ def _default_gen():
 # ════════════════════════════════════════════════════════════════════════
 
 class _Mouth:
+    _n_decode = 0
+
     def __init__(self, ckpt):
         if bg.bg_is_bytegpt(ckpt):
             self.kind = "bytegpt"
@@ -93,6 +95,14 @@ class _Mouth:
             raise RuntimeError("ckpt not decodable (unknown mouth): " + ckpt)
 
     def ideate(self, seed, gen, top_k, temp, seed_rng):
+        # keep-alive heartbeat: the hexa launcher captures this decode's stdout via
+        # exec(); a long idle (a 303M numpy decode emits nothing until it returns)
+        # drops that captured pipe → BrokenPipe mid-battery (303M gen80 died at ~8min;
+        # the gen8 smoke was fast enough to finish first). One line per decode keeps
+        # the pipe live across the full G0-G6 battery. Heartbeat only — no scoring effect.
+        _Mouth._n_decode += 1
+        print("  [decode #" + str(_Mouth._n_decode) + "] " + self.kind
+              + " gen=" + str(gen) + " seed_rng=" + str(seed_rng), flush=True)
         if self.kind == "bytegpt":
             # seed string -> byte ids inside bytegpt_decode (_seed_to_ids); the
             # ByteGPT window grows up to block natively (no fixed-T right-align).
@@ -405,11 +415,17 @@ def g_eval_all(ckpt, corpus_paths, gen):
     known = _g6_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt)
+    print("  [gate] G0 COHERENCE …", flush=True)
     r0 = g_eval_g0(mouth, g, known)
+    print("  [gate] G1 RECOMBINATION …", flush=True)
     r1 = g_eval_g1(mouth, g, known)
+    print("  [gate] G2 NOVELTY (corpus load + decode) …", flush=True)
     r2 = g_eval_g2(mouth, g, known, corpus_paths)
+    print("  [gate] G3 PHILOSOPHY …", flush=True)
     r3 = g_eval_g3()
+    print("  [gate] G5 NON-FAB …", flush=True)
     r5 = g_eval_g5(mouth, g, known)
+    print("  [gate] G6 IDEATION …", flush=True)
     r6 = g_eval_g6(mouth, g, known)
     closure = bool(r0["pass"]) and bool(r1["pass"]) and bool(r2["pass"])
     return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
@@ -545,6 +561,18 @@ def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
         return 0
+    # --result-file <f>: write ALL output to <f> and keep fd 1 (stdout) silent. The hexa
+    # launcher runs evaluate via exec(), whose captured stdout pipe it closes after ~150s
+    # (probe-confirmed: a child reaching ~150s gets EPIPE on its next fd-1 write, but the
+    # child itself is NOT killed). A 303M numpy decode runs for minutes; if it writes to
+    # fd 1 it dies on BrokenPipe mid-battery. Redirecting our stdout to a file means fd 1
+    # stays silent → the child survives the pipe close, finishes the full G0-G6 battery,
+    # and the launcher cats <f> in a SECOND fresh exec (fast, well under the limit).
+    if "--result-file" in argv:
+        i = argv.index("--result-file")
+        f = argv[i + 1]
+        argv = argv[:i] + argv[i + 2:]
+        sys.stdout = open(f, "w", buffering=1)
     return evaluate_run(argv)
 
 
