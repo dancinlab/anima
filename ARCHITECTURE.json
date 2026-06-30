@@ -12440,6 +12440,13 @@
         "value": "hexa det-eval(anima evaluate, HEXA_DET=1) 가 pool 3호스트(aiden CPU-runtime 1.5MB / aiden CUDA-13 / summer CUDA-12 CUDA-fold 4.67MB+marker ON+cuda_available=1) 전부에서 303M gen=80 stall(hexad CPU0%+GPU0%, S 상태). GPU 정석 조건(runtime.a CUDA fold + marker + cuda hexad + cuda_available=1) 맞아도 DEVICE path 안탐 = hexa runtime/CUDA linking 의 deep 측정artifact. det-CPU(non-cuda) 도 303M 비실용. 결론: G1/G6 verdict 는 py 2-production byte-parity(hexa⇄py byte-identical 증명) DIRECTIONAL 로 정직 회귀, terminal hexa = hexa-lang det-eval/GPU-linking upstream-fix(deep) 또는 clean reboot-free CUDA-12 pod(cost) 별도 사이클. G1=0 은 ckpt byte-parity 속성이라 DIRECTIONAL 결론 유효.",
         "threshold": "재발조건: pool 에서 anima evaluate det-eval 발사할 때. 해결: ① 먼저 py byte-parity DIRECTIONAL 로 회귀(측정경로 무결) ② terminal hexa 필요시 hexa-lang upstream(det-eval GPU-linking) 고치거나 clean CUDA-12 pod ③ 같은 pool det-eval 재시도 금지(3호스트 5× stall 확정)",
         "source": "cli/evaluate.hexa"
+      },
+      {
+        "id": "ci-yml-1",
+        "state": "ossified",
+        "value": "engine-compile 잡 만성 RED 3겹 root: ① warm-compile 캐시 키 hashFiles('core/**','cli/**') 가 dangling symlink core/phi/quantum_types.hexa(→hexa-lang sibling 외부파일, CI 체크아웃엔 부재)를 만나 fatal — GitHub hashFiles() 표현식은 runner 가 followSymbolicLinks=false 로 호출(actions/runner src/Misc/expressionFunc/hashFiles/src/hashFiles.ts:13)하므로 dangling 을 stat 하다 ENOENT→'Fail to hash files under directory' 키 평가 전체 실패(결정적·매 run). ② 캐시 수리 후 노출된 step8 compile-gate 의 stale import core/g_gates.hexa(cli/evaluate.hexa 로 흡수된 모듈). ③ cold-bootstrap chicken-egg: 캐시 한 번도 미저장→매 run COLD→25min timeout cancel→Post-Cache save 스킵→캐시 영영 미저장.",
+        "threshold": "재발조건+가드: (a) hashFiles 키 글로브가 dangling/cross-repo symlink 를 포함하면 즉시 RED → 외부소유 경로는 '!path' 로 제외(fingerprint 에서 빼는 게 의미상 정답). clone 로컬 repro 는 @actions/glob 기본 omitBrokenSymbolicLinks=true 라 통과로 숨김 → runner 충실 재현은 {followSymbolicLinks:false} 필수. (b) 오래 RED 던 게이트를 고치면 그동안 SKIP 되던 하위 스텝의 stale import 가 드러남 → 흡수/이동 시 CI import 리스트 lockstep 갱신. (c) 캐시 의존 잡은 첫 COLD run 이 timeout 안에 완료돼 Post-Cache save 에 도달해야 캐시가 데워짐(브랜치-스코프라 main 첫 cold 필수) → timeout 여유 + 무거운 warn-only 스텝은 continue-on-error+per-step timeout 으로 캡. CROSS-CUT: 같은 hashFiles+dangling-symlink·cold-bootstrap 트랩은 hexa-lang 등 모든 GHA 워크플로에 적용가능.",
+        "source": ".github/workflows/ci.yml"
       }
     ]
   }
