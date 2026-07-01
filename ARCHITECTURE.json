@@ -12447,6 +12447,13 @@
         "value": "engine-compile 잡 만성 RED 3겹 root: ① warm-compile 캐시 키 hashFiles('core/**','cli/**') 가 dangling symlink core/phi/quantum_types.hexa(→hexa-lang sibling 외부파일, CI 체크아웃엔 부재)를 만나 fatal — GitHub hashFiles() 표현식은 runner 가 followSymbolicLinks=false 로 호출(actions/runner src/Misc/expressionFunc/hashFiles/src/hashFiles.ts:13)하므로 dangling 을 stat 하다 ENOENT→'Fail to hash files under directory' 키 평가 전체 실패(결정적·매 run). ② 캐시 수리 후 노출된 step8 compile-gate 의 stale import core/g_gates.hexa(cli/evaluate.hexa 로 흡수된 모듈). ③ cold-bootstrap chicken-egg: 캐시 한 번도 미저장→매 run COLD→25min timeout cancel→Post-Cache save 스킵→캐시 영영 미저장.",
         "threshold": "재발조건+가드: (a) hashFiles 키 글로브가 dangling/cross-repo symlink 를 포함하면 즉시 RED → 외부소유 경로는 '!path' 로 제외(fingerprint 에서 빼는 게 의미상 정답). clone 로컬 repro 는 @actions/glob 기본 omitBrokenSymbolicLinks=true 라 통과로 숨김 → runner 충실 재현은 {followSymbolicLinks:false} 필수. (b) 오래 RED 던 게이트를 고치면 그동안 SKIP 되던 하위 스텝의 stale import 가 드러남 → 흡수/이동 시 CI import 리스트 lockstep 갱신. (c) 캐시 의존 잡은 첫 COLD run 이 timeout 안에 완료돼 Post-Cache save 에 도달해야 캐시가 데워짐(브랜치-스코프라 main 첫 cold 필수) → timeout 여유 + 무거운 warn-only 스텝은 continue-on-error+per-step timeout 으로 캡. CROSS-CUT: 같은 hashFiles+dangling-symlink·cold-bootstrap 트랩은 hexa-lang 등 모든 GHA 워크플로에 적용가능.",
         "source": ".github/workflows/ci.yml"
+      },
+      {
+        "id": "anima-hexa-1",
+        "state": "ossified",
+        "value": "anima full-stack build 벽(clang undeclared/link/codegen 류)은 대개 stale pool hexat이 root — pool 호스트가 현행 hexa-lang release 에 뒤처져 runtime.h carrier extern/builtin 미포함. #33 실증(2026-07-01): summer v0.468(현행 44릴리스 뒤)이 #4285 set_deterministic/is_deterministic carrier extern 없어 full-stack만(det safety-pin set_deterministic(true) 호출) clang 'use of undeclared identifier' → '대형 TU 링크 fail'로 오진. small OK large fail = code-path 커버리지(large-TU 스케일/relocation 아님).",
+        "threshold": "재발조건=anima build 실패 진단 전 pool hexat 현행성 미확인. 해결=진단 전 먼저 pool 호스트 hexa --version 확인 + install.sh 동기화(현행 main release 반영)한 뒤 재현. install-path 재발가드=hexa-lang #4334(HX_SRC origin pin + fresh-clone fallback). 동족 패턴=bench bad-hexat·anima stale-prebuilt. cross-repo memory=project_hexa_anima_linux_build_stale_hexat_setdet.",
+        "source": "cli/anima.hexa"
       }
     ]
   }
