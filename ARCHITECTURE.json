@@ -12454,6 +12454,13 @@
         "value": "torch 학습 코드의 device-혼합 텐서 연산이 침묵-무해가 아니라 uncaught 크래시다: dbes_specialization usage_gini 의 torch.arange(1,nn_+1,dtype=u.dtype) 가 CPU 에 생성되는데 usage(u)는 CUDA → idx*u device mismatch RuntimeError 로 --dbes-every tick(step 2000)에서 학습 전체가 죽음(L3 summer 재현). 앞서 'DBES=monitor-only 진단항이라 무해'로 CONVERGENCE 해당없음 오판했으나 실제 학습-killer. monitor/diagnostic 코드라도 forward 경로에 있으면 크래시 전파.",
         "threshold": "torch 학습이 특정 step(=dbes/gauge tick 배수)에서 갑자기 RuntimeError device-mismatch 로 죽으면: 그 tick 함수(dbes/gauge)의 보조 텐서 생성(torch.arange/zeros/tensor)에 device=<model텐서>.device 누락 의심. 해결=모든 보조 텐서에 device 명시. monitor-only 라고 크래시 면제 아님. 1631·1640·cli/train.py 반영됨.",
         "source": "cli/train.py"
+      },
+      {
+        "id": "train-py-2",
+        "state": "ossified",
+        "value": "torch.fft(rfft/irfft) 는 BFloat16 미지원 = --bf16 학습서 fft-쓰는 objective(constructive_bind HRR 순환합성 c=irfft(rfft(r)*rfft(f)))가 step1에 RuntimeError 'Unsupported dtype BFloat16' 로 즉사. fp32-everything 우회는 303M fp32가 커져 작은 GPU(RTX5070 11.5GB) OOM. 근본해결=loss_constructive_bind 내부에서 fft 입력만 .float()(fp32) 캐스트 후 결과를 원dtype 복귀(autocast 제외 구간), 나머지는 bf16 유지. 메모리 h1823 동일교훈 재발.",
+        "threshold": "fft/rfft/irfft(순환합성·spectral binding·HRR) 쓰는 새 objective/lever를 --bf16 로 돌리면 'Unsupported dtype BFloat16' 즉사 예상 = 자동의심. 해결: 그 op만 fp32 캐스트(with torch.autocast(enabled=False) + .float()), 전체 fp32 금지(303M OOM). constructive_bind 미수정분은 fp32-전체 또는 fp32-cast-fft 필요. 4×24GB+ GPU면 fp32-전체도 가능.",
+        "source": "cli/train.py"
       }
     ]
   }
