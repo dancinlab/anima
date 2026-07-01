@@ -118,6 +118,13 @@ def _build_train_cmd(a, arm: str, objective: str, tag: str, out_dir: str) -> lis
     # bf16 EXCEPT for fft-based objectives (constructive_bind → fp32, H_1823 lesson).
     if a.bf16 and objective not in _FP32_ONLY_OBJECTIVES:
         cmd.append("--bf16")
+    # N6 regularization-floor passthrough: force a CONSTANT dropout/weight-decay
+    # (>=0 overrides the savant decay schedule) — needed to escape the 8000-step
+    # generation-collapse (train-py-4) by holding inhibition at a floor.
+    if a.dropout_floor >= 0.0:
+        cmd += ["--dropout-floor", str(a.dropout_floor)]
+    if a.wd_floor >= 0.0:
+        cmd += ["--wd-floor", str(a.wd_floor)]
     return cmd
 
 
@@ -381,6 +388,11 @@ def main(argv=None):
     ap.add_argument("--val-every", type=int, default=500)
     ap.add_argument("--dbes-every", type=int, default=100000)
     ap.add_argument("--tlora-rank", type=int, default=8)
+    # N6 regularization floor (savant decay override) — forwarded to train.py only when >=0.
+    ap.add_argument("--dropout-floor", type=float, default=-1.0,
+                    help="force constant dropout (>=0 overrides savant decay; escapes 8000-step collapse)")
+    ap.add_argument("--wd-floor", type=float, default=-1.0,
+                    help="force constant weight-decay (>=0 overrides savant decay)")
     # bf16 default ON (train.py toy default is fp32, but a 303M GPU sweep wants bf16);
     # constructive_bind is auto-forced fp32 regardless (fft has no bf16 kernel).
     bf = ap.add_mutually_exclusive_group()
