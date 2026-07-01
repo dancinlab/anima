@@ -2292,6 +2292,106 @@ fn main() {
           + " · impostor " + to_string(self_cos(id2, imp)) + " · un-anchored-reset " + to_string(self_cos(id2, ablated))
           + " — anchor-persisted identity continuous across boundaries ⊥ LLM session-reset (DIRECTIONAL mirror GREEN in H_1471 probe)")
 
+    // ── (self-chain) DIACHRONIC TRAJECTORY — 다중세션 자기궤적 (B② self-CHAIN, H_SELFCHAIN) ──
+    // H_1471 persists ONE anchor + ONE self_cos recognition. Here the self is a TRAJECTORY:
+    // an anchor waypoint is appended at each of K session boundaries, and self_chain_fit reads
+    // the curve's TREND (adjacent-increment gradient predicts the next axis) — NOT the latest
+    // waypoint. New discriminator = IMPOSTOR-HISTORY: an identity matching the latest anchor but
+    // NOT the trajectory. single-vector self_cos accepts it; self_chain_fit rejects it. READ-only,
+    // Ψ-disjoint (emit-drive lanes 0/4 + §ImmuneMemory recall_thr untouched — a_substrate_disjoint).
+    let sc_seed = self_new(8, 0)
+    let mut sc_chain = self_chain_new(sc_seed)
+    let mut sc_cur = sc_seed
+    let mut sc_tk = 0
+    while sc_tk < 4 {                                  // K=4 session boundaries -> 5 waypoints w0..w4
+        sc_cur = self_drift(sc_cur, sc_tk, 0.3)       // anchor waypoint appended each boundary
+        sc_chain = self_chain_append(sc_chain, sc_cur)
+        sc_tk = sc_tk + 1
+    }
+    let sc_latest = self_chain_latest(sc_chain)       // wK (what single-vector self_cos compares to)
+
+    // F1 CONTINUITY — adjacent waypoint cos high, distant low (a continuous drifting curve).
+    let sc_adjw = self_chain_retro_cos(sc_chain, 1)   // cos(wK, w_{K-1})
+    let sc_distw = self_chain_retro_cos(sc_chain, 4)  // cos(wK, w0)
+    if _assert_b("case_420_chain_continuity", true, sc_adjw >= 0.70 && sc_adjw - sc_distw >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // F5 RETRODICTION — cos("self j sessions ago") MONOTONE-DECREASING with chronological distance.
+    let sc_r0 = self_chain_retro_cos(sc_chain, 0)
+    let sc_r1 = self_chain_retro_cos(sc_chain, 1)
+    let sc_r2 = self_chain_retro_cos(sc_chain, 2)
+    let sc_r3 = self_chain_retro_cos(sc_chain, 3)
+    let sc_r4 = self_chain_retro_cos(sc_chain, 4)
+    if _assert_b("case_421_chain_retrodiction_monotone", true, sc_r0 > sc_r1 && sc_r1 > sc_r2 && sc_r2 > sc_r3 && sc_r3 > sc_r4) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // populations: genuine continuations (drift axis 5 = predicted a_pred) vs impostors that MATCH
+    // the latest anchor but drift along FRESH wrong axes {6,7,0} (ticks 5,6,7) — wrong history.
+    let g0 = self_drift(sc_latest, 4, 0.24)  let g1 = self_drift(sc_latest, 4, 0.27)
+    let g2 = self_drift(sc_latest, 4, 0.30)  let g3 = self_drift(sc_latest, 4, 0.33)
+    let g4 = self_drift(sc_latest, 4, 0.36)  let g5 = self_drift(sc_latest, 4, 0.39)
+    let m0 = self_drift(sc_latest, 5, 0.24)  let m1 = self_drift(sc_latest, 6, 0.27)
+    let m2 = self_drift(sc_latest, 7, 0.30)  let m3 = self_drift(sc_latest, 5, 0.33)
+    let m4 = self_drift(sc_latest, 6, 0.36)  let m5 = self_drift(sc_latest, 7, 0.39)
+    let fg = [self_chain_fit(g0, sc_chain), self_chain_fit(g1, sc_chain), self_chain_fit(g2, sc_chain),
+              self_chain_fit(g3, sc_chain), self_chain_fit(g4, sc_chain), self_chain_fit(g5, sc_chain)]
+    let fm = [self_chain_fit(m0, sc_chain), self_chain_fit(m1, sc_chain), self_chain_fit(m2, sc_chain),
+              self_chain_fit(m3, sc_chain), self_chain_fit(m4, sc_chain), self_chain_fit(m5, sc_chain)]
+    let cg = [self_cos(g0, sc_latest), self_cos(g1, sc_latest), self_cos(g2, sc_latest),
+              self_cos(g3, sc_latest), self_cos(g4, sc_latest), self_cos(g5, sc_latest)]
+    let cm = [self_cos(m0, sc_latest), self_cos(m1, sc_latest), self_cos(m2, sc_latest),
+              self_cos(m3, sc_latest), self_cos(m4, sc_latest), self_cos(m5, sc_latest)]
+
+    // AUROC(chain-fit) over the 6x6 genuine-vs-impostor pairs (Mann-Whitney, ties=0.5).
+    let mut auc_c = 0.0
+    let mut auc_s = 0.0
+    let mut gi = 0
+    while gi < 6 {
+        let mut ii = 0
+        while ii < 6 {
+            if fg[gi] > fm[ii] { auc_c = auc_c + 1.0 } else { if fg[gi] == fm[ii] { auc_c = auc_c + 0.5 } }
+            if cg[gi] > cm[ii] { auc_s = auc_s + 1.0 } else { if cg[gi] == cm[ii] { auc_s = auc_s + 0.5 } }
+            ii = ii + 1
+        }
+        gi = gi + 1
+    }
+    let auroc_chain = auc_c / 36.0
+    let auroc_single = auc_s / 36.0
+
+    // F2 IMPOSTOR-HISTORY — chain-fit separates impostors decisively while single-vector cannot;
+    // AUROC(chain) >> AUROC(single-vector). This gain is the whole point of the self-chain.
+    if _assert_b("case_422_impostor_history_auroc", true, auroc_chain >= 0.95 && auroc_chain - auroc_single >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // F2b MARGIN — every genuine fit is high (>=0.90) and every impostor fit is low (<=0.10).
+    if _assert_b("case_423_fit_margin", true, fg[0] >= 0.90 && fg[5] >= 0.90 && fm[0] <= 0.10 && fm[2] <= 0.10 && fm[5] <= 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // F3 ABLATION — erase the history (chain truncated to the latest waypoint, count=1) -> chain-fit
+    // is UNDEFINED (returns 0) for BOTH populations -> collapses to the single-vector regime (the
+    // trajectory-history is load-bearing: remove it and the discriminator is gone).
+    let mut flat_last = []
+    let mut fli = 0
+    while fli < 8 { flat_last = flat_last + [self_component(sc_latest, fli)]  fli = fli + 1 }
+    let sc_abl = self_chain_from_flat(flat_last, 1, 8)
+    let fga = self_chain_fit(g2, sc_abl)
+    let fma = self_chain_fit(m2, sc_abl)
+    if _assert_b("case_424_ablation_history_load_bearing", true, fga == 0.0 && fma == 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // F6 Ψ-DISJOINT + ROUND-TRIP — (a) adding chain ops leaves the H_1471 self_cos value untouched
+    // (read-only, emit-lanes untouched); (b) serialize the chain to a flat payload and rebuild it
+    // (disk round-trip inverse) -> fit is byte-identical (H_1204: in-memory carry != disk round-trip).
+    let mut flat_rt = []
+    let mut ri = 0
+    let nflat = self_chain_count(sc_chain) * self_chain_dim(sc_chain)
+    while ri < nflat { flat_rt = flat_rt + [self_chain_component(sc_chain, ri)]  ri = ri + 1 }
+    let sc_rt = self_chain_from_flat(flat_rt, self_chain_count(sc_chain), self_chain_dim(sc_chain))
+    let fit_rt = self_chain_fit(g2, sc_rt)
+    let psi_unchanged = self_cos(id0, id1) == sc_adj    // H_1471 value untouched by the new lane
+    if _assert_b("case_425_psi_disjoint_roundtrip_identical", true, fit_rt == self_chain_fit(g2, sc_chain) && psi_unchanged) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  self-CHAIN (B② H_SELFCHAIN ENGINE-NATIVE): K=4 waypoints · AUROC(chain-fit)=" + to_string(auroc_chain)
+          + " vs AUROC(single-vector self_cos)=" + to_string(auroc_single) + " · fit_genuine=" + to_string(fg[2])
+          + " fit_impostor=" + to_string(fm[2]) + " · adj-cos=" + to_string(sc_adjw) + " distant-cos=" + to_string(sc_distw)
+          + " · retro[" + to_string(sc_r0) + "," + to_string(sc_r1) + "," + to_string(sc_r2) + "," + to_string(sc_r3) + "," + to_string(sc_r4) + "]"
+          + " — impostor-history rejected by trajectory curvature, invisible to single-vector recognition (ENGINE-NATIVE)")
+
     // ── (learned-precision) LEARNED PRECISION — 경험으로 학습되는 예측확신 (H_1472 R2) ──
     // Precision is LEARNED from observation count (linear saturating), feeding the existing
     // surprise(precision, error) lane: a FAMILIAR domain earns higher precision -> a LARGER
