@@ -860,6 +860,71 @@ ARMS = {
 
 
 # ════════════════════════════════════════════════════════════════════════════
+# WARM-START (`--init`) — load a base ckpt's weights into a freshly-built model.
+#   The KEYSTONE for continue-training / warm-FT (e.g. G0🟢 h1129 trunk → G1 lever
+#   test, per memory g1-fromscratch-blocked-by-g0-undertrain). Symmetric with
+#   serialize: ByteGPT `.bin` is read by core/serialize.deserialize_bytegpt (the
+#   byte-inverse of serialize()); `.pt` is a plain torch state_dict. H_247 lesson —
+#   a silent shape mismatch can floor +2.5 nats, so every path shape-guards HARD.
+# ════════════════════════════════════════════════════════════════════════════
+def _warm_start(model, init_path, is_bytegpt, expect_cfg):
+    """Load weights from `init_path` into `model` in place. Returns a 1-line report str.
+
+    expect_cfg = {vocab,d,n_layer,n_head,block} of the freshly-built model (bytegpt) or
+    {d,L} (clm). Raises ValueError on any dim/layer mismatch (H_247 hard guard)."""
+    low = str(init_path).lower()
+    if low.endswith(".clm"):
+        raise ValueError(
+            f"--init {init_path}: a quantized `.clm` (int4) is NOT a warm-start source — "
+            f"dequant→torch-state_dict remap is a follow-on. Warm-start from the pre-serialize "
+            f"`.pt` (full precision) instead (H_247: quant noise as warm-init can floor CE).")
+
+    if low.endswith(".bin"):
+        if not is_bytegpt:
+            raise ValueError(f"--init {init_path}: a `.bin` is a ByteGPT engine ckpt but "
+                             f"--arch=clm; use a CLM `.pt`, or --arch bytegpt.")
+        sd, cfg = S.deserialize_bytegpt(init_path)
+        # HARD shape guard (H_247): every header field must match the built model.
+        for k in ("vocab", "d", "n_layer", "n_head", "block"):
+            if int(cfg[k]) != int(expect_cfg[k]):
+                raise ValueError(
+                    f"--init {init_path}: ByteGPT header {k}={cfg[k]} != built model {k}="
+                    f"{expect_cfg[k]}. Match --d/--L/--seq-len (H_247: warm-init mismatch floors CE).")
+        missing, unexpected = model.load_state_dict(sd, strict=False)
+        # tied head → tok/head share storage; only benign missing/unexpected tolerated.
+        bad_missing = [k for k in missing if k not in ("head.weight",)]
+        if bad_missing or unexpected:
+            raise ValueError(f"--init {init_path}: state_dict key mismatch "
+                             f"missing={list(missing)} unexpected={list(unexpected)}")
+        return (f"warm-start ✓ ByteGPT .bin loaded ({cfg['n_layer']}L d={cfg['d']} "
+                f"block={cfg['block']}) missing={list(missing)} unexpected={list(unexpected)}")
+
+    if low.endswith(".pt") or low.endswith(".pth"):
+        ck = torch.load(init_path, map_location="cpu", weights_only=False)
+        sd = ck.get("model", ck) if isinstance(ck, dict) else ck
+        model_sd = model.state_dict()
+        # per-key HARD shape guard (H_247) — reject any shape-mismatched overlap.
+        loadable, shape_bad = {}, []
+        for k, v in sd.items():
+            if k in model_sd:
+                if tuple(model_sd[k].shape) == tuple(v.shape):
+                    loadable[k] = v
+                else:
+                    shape_bad.append(f"{k}:{tuple(v.shape)}!={tuple(model_sd[k].shape)}")
+        if shape_bad:
+            raise ValueError(f"--init {init_path}: shape mismatch on {shape_bad} "
+                             f"(H_247: warm-init mismatch floors CE — match --d/--L/--arch).")
+        if not loadable:
+            raise ValueError(f"--init {init_path}: 0 keys overlap the built model — "
+                             f"wrong arch/config? (ckpt keys e.g. {list(sd)[:4]})")
+        missing, unexpected = model.load_state_dict(loadable, strict=False)
+        return (f"warm-start ✓ .pt loaded {len(loadable)}/{len(model_sd)} keys "
+                f"(untouched={len(missing)} extra-in-ckpt={len(sd) - len(loadable)})")
+
+    raise ValueError(f"--init {init_path}: unknown extension — expected .bin (ByteGPT engine) "
+                     f"or .pt/.pth (torch state_dict).")
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="anima canonical python trainer (`anima train --py`) — CLMConvMoE "
@@ -908,6 +973,13 @@ def main():
     ap.add_argument("--out", default="")
     ap.add_argument("--ckpt-out", default="")
     ap.add_argument("--gauges-out", default="")
+    ap.add_argument("--init", default="",
+                    help="warm-start ckpt path — load weights into the freshly-built model "
+                         "BEFORE training. ByteGPT: an engine `.bin` (5×u32 header) or a `.pt`; "
+                         "CLM: a `.pt` torch state_dict. Dim/layer mismatch → hard error "
+                         "(H_247: a warm-init shape mismatch can floor +2.5 nats). Quantized "
+                         "`.clm` is refused (dequant→state_dict remap is a follow-on; warm-start "
+                         "from the pre-serialize `.pt`).")
     a = ap.parse_args()
 
     is_bytegpt = (a.arch == "bytegpt")
@@ -991,6 +1063,17 @@ def main():
     if not is_bytegpt:
         mito = MitosisMoE(model, e0, emax)
         install_router_mask(model, mito)
+
+    # ── warm-start (`--init`): load a base ckpt into the freshly-built model. Done AFTER
+    #    the full architecture is built (tlora/mitosis installed) so state_dict keys line up;
+    #    strict=False tolerates lever-only keys (tlora/mito) absent from a plain-trunk base.
+    if a.init:
+        expect_cfg = ({"vocab": V, "d": d, "n_layer": L, "n_head": bg_n_head, "block": seq_len}
+                      if is_bytegpt else {"d": d, "L": L})
+        report = _warm_start(model, a.init, is_bytegpt, expect_cfg)
+        model.to(device)
+        print(f"  [--init] {report}", flush=True)
+
     params = (list(model.parameters())
               + (list(jamo_head.parameters()) if jamo_head else [])
               + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
