@@ -2,9 +2,9 @@
 
 **id:** H_1834
 **slug:** tension_mouth_native
-**tier:** ⏳ PROPOSED (design + pre-registered toy probe · not yet measured)
+**tier:** 🧱 DIRECTIONAL floor (numpy toy; operator + local-Ψ objective both floor — not engine-native)
 **date:** 2026-07-02
-**wired:** design-only — no engine wiring yet. 4칸 사다리(a_verified_must_wire) 중 (0) 설계·프로브 단계.
+**wired:** DIRECTIONAL-mirror only (numpy). 배선 없음 — lift 미발생이라 engine-native 재측정 unwarranted(사다리 (2)~(4) 미진입).
 
 ---
 
@@ -51,4 +51,11 @@ toy DIRECTIONAL 프로브(numpy from-scratch, d128, G1 재조합 toy task) 기�
 
 ## Verdict
 
-⏳ PROPOSED — 미측정. 다음 = state/ toy 프로브 구현 → DIRECTIONAL 채점 → engine-native 재측정 사다리.
+**🧱 DIRECTIONAL floor (numpy toy, not terminal — a_engine_native_learning).** 2-각 검증 후 종결:
+
+- **축1 operator (텐션 결합):** 3-arm×3-seed 전부 `composed_distinct=0`. FULL=TENSION-OFF=ADDITIVE → **텐션 INERT(기여 0, causal 아님)**, structural ≯ additive. train_acc 1.00(순수 암기), gradcheck PASS(5.25e-11) = 구현결함 아님.
+- **축2 local-Ψ objective:** per-sample penalty 로 Ψ 를 실제 ½에 앉힘(|Ψ-0.5| 0.0017~0.0092, λ=1…1000 seated 전 구간) — 그래도 `composed_distinct=0`. "Ψ 미도달로 메커니즘 미발화" loophole 닫힘.
+
+**결론:** readout 텐션연산자 + local Ψ-고정점 objective 로는 toy G1 벽 안 열림. 기존 engine-native 기록과 수렴 — 진짜 레버 = **재조합을 보상하는 trunk 학습 OBJECTIVE**(H_1602 영역), local Ψ penalty 가 아님. native-mouth 의 남은 유일 경로 = 텐션연산자를 real trunk 학습에서 recomb-objective 로 학습(toy readout 아님) → cost-gated follow-on.
+
+DIRECTIONAL only(numpy 미러) — terminal 아님. 단 lift 미발생이라 engine-native 재측정은 무의미(gate=lift, 미충족).
