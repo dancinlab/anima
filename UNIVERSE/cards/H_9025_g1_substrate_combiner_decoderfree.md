@@ -4,6 +4,7 @@
 - **slug:** `g1_substrate_combiner_decoderfree`
 - **parents:** [[substrate-framebreak-g1-combination-operator]] H_1822 (진단) · H_1840 (cheap-gate 반증) · H_1816/H_1823 (mouth readout-bind 🧱)
 - **wired:** `DIRECTIONAL-mirror` (numpy harness only; live `core/engine_cli.hexa` 미배선 · engine-native/WIRED 미달)
+- **Rung1 (H_9026) LANDED 2026-07-02:** 🧱 DIRECTIONAL-FLOOR — REAL 303M manifold + TRAINED W_bind(⊛) + held-out recombination gate 도 floor. bind soft-beats add(no_regress=True, 10/10 Δ>0)이나 n(Δ≥+0.15)=0/5. prior LOW CONFIRMED (H_1840 FAIR + DPI). → `state/9025_g1_substrate_combiner_decoderfree/RESULT.md` · [[H_9026]]. Rung2(engine-native VAdaptField wire-in) prior 더 낮아짐 → ING cost-gated.
 
 ## frame (오너 통찰)
 

@@ -1,0 +1,42 @@
+[load] /home/summer/clm303_g6/clm303.clm
+[cfg] d=3784 L=4 E=3 V=256
+[extract] 34 concept part-vecs ...
+[extract] 500 composed-phrase targets (REAL manifold) ...
+   target 50/500  t=8s
+   target 100/500  t=11s
+   target 150/500  t=15s
+   target 200/500  t=19s
+   target 250/500  t=23s
+   target 300/500  t=26s
+   target 350/500  t=30s
+   target 400/500  t=34s
+   target 450/500  t=38s
+   target 500/500  t=42s
+
+[train+eval] 5 seeds, held-out recombination gate
+FROZEN: COMPOSE=0.3 DELTA_BAR=+0.15 TRAIN_FIT_MIN=0.6 GREEN-dir iff n(Δ≥+0.15)≥3/5 ∧ no_regress
+
+seed   arm        train_cos  earned   pr      ps      ablate  
+--------------------------------------------------------------
+7      add        0.957      0.000    0.925   0.746     -     
+7      bind_open  0.999      0.080    0.949   0.700   0.090   
+7      bind_pure  0.990      0.120    0.914   0.667   0.095   
+4302   add        0.956      0.010    0.931   0.759     -     
+4302   bind_open  0.999      0.100    0.947   0.716   0.105   
+4302   bind_pure  0.990      0.130    0.920   0.686   0.130   
+4303   add        0.958      0.015    0.931   0.762     -     
+4303   bind_open  0.999      0.070    0.947   0.734   0.065   
+4303   bind_pure  0.989      0.095    0.917   0.698   0.160   
+101    add        0.958      0.015    0.922   0.754     -     
+101    bind_open  0.999      0.070    0.941   0.708   0.070   
+101    bind_pure  0.991      0.085    0.915   0.679   0.120   
+202    add        0.958      0.020    0.929   0.761     -     
+202    bind_open  0.999      0.065    0.946   0.720   0.115   
+202    bind_pure  0.992      0.110    0.910   0.689   0.055   
+
+==================== VERDICT (DIRECTIONAL — torch/numpy mirror) ====================
+learnability(oracle): best-arm train-fit≥0.6 every seed = True (task solvable → valid recomb gate)
+bind_open − add  Δ per seed = [0.08, 0.09, 0.055, 0.055, 0.045]  n(Δ≥+0.15)=0/5 no_regress=True
+bind_pure − add  Δ per seed = [0.12, 0.12, 0.08, 0.07, 0.09]  n(Δ≥+0.15)=0/5 no_regress=True
+PRIMARY G1 (held-out recombination generalization): 🧱 FLOOR — trained multiplicative bind does NOT beat trained additive on held-out recombination (DPI meta-law + H_1840 CONFIRMED)
+[done] wall=82s
