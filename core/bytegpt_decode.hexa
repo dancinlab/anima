@@ -1450,6 +1450,13 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
     let mut out = ""
     // KV-cache fast path (no window slide): O(gen) greedy, byte-identical to the
     // full-forward loop below (bytegpt_kvcache_smoke: seed-pos max|Δ|=0.0).
+    // NOTE: this stays on the HOST _bg_kv_step (NOT the P2 device router
+    // _bg_kv_step_r that bytegpt_decode_argmax_ranged uses): the device
+    // _bg_kv_step_dev reads the pre-split QKV weights inWt_q/k/v + *_e biases
+    // that ONLY bg_load_ranged populates — the whole-file bg_load here does not,
+    // so device-routing this decoder crashes on a CUDA host (map key 'inWt_q'
+    // not found). Follow-up to device-route: teach bg_load the same _bg_col_slice
+    // QKV pre-split (or migrate this non-live 24GB path onto bg_load_ranged).
     let nseed = len(toks)
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
     if nseed > 0 && nseed + gen <= block {
@@ -1520,7 +1527,7 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
         let mut sp = 0
         while sp < nseed {
             if logits >= 0 { let _ = farr_free(logits) }
-            logits = _bg_kv_step(W, kv, to_int(toks[sp]), sp)
+            logits = _bg_kv_step_r(W, kv, to_int(toks[sp]), sp)
             sp = sp + 1
         }
         let mut gc = 0
@@ -1528,7 +1535,7 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
             let nb = bg_argmax(logits, vocab)
             let _ = farr_free(logits)
             toks.push(nb); outl.push(nb); out = out + chr(nb)
-            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+            logits = _bg_kv_step_r(W, kv, nb, len(toks) - 1)
             gc = gc + 1
         }
         let _ = farr_free(logits)
