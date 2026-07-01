@@ -1,0 +1,75 @@
+=== ARM ce_marginal G0-G6 (1640 CLS) ===
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   state/1640_cls_sep_complete/ckpt/ce_marginal_seed7.clm  (mouth: clm)
+corpus: 4 file(s)
+gen:    80 tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)
+
+  [gate] G0 COHERENCE …
+  [decode #1] clm gen=80 seed_rng=7
+  [decode #2] clm gen=80 seed_rng=8
+  [decode #3] clm gen=80 seed_rng=9
+  [decode #4] clm gen=80 seed_rng=10
+  [decode #5] clm gen=80 seed_rng=11
+  [gate] G1 RECOMBINATION …
+  [decode #6] clm gen=80 seed_rng=7
+  [decode #7] clm gen=80 seed_rng=8
+  [decode #8] clm gen=80 seed_rng=9
+  [decode #9] clm gen=80 seed_rng=10
+  [decode #10] clm gen=80 seed_rng=11
+  [decode #11] clm gen=80 seed_rng=7
+  [decode #12] clm gen=80 seed_rng=7
+  [decode #13] clm gen=80 seed_rng=7
+  [decode #14] clm gen=80 seed_rng=7
+  [gate] G2 NOVELTY (corpus load + decode) …
+  [decode #15] clm gen=80 seed_rng=7
+  [decode #16] clm gen=80 seed_rng=8
+  [decode #17] clm gen=80 seed_rng=9
+  [decode #18] clm gen=80 seed_rng=7
+  [decode #19] clm gen=80 seed_rng=8
+  [decode #20] clm gen=80 seed_rng=9
+  [decode #21] clm gen=80 seed_rng=7
+  [decode #22] clm gen=80 seed_rng=8
+  [decode #23] clm gen=80 seed_rng=9
+  [decode #24] clm gen=80 seed_rng=7
+  [decode #25] clm gen=80 seed_rng=8
+  [decode #26] clm gen=80 seed_rng=9
+  [decode #27] clm gen=80 seed_rng=7
+  [decode #28] clm gen=80 seed_rng=8
+  [decode #29] clm gen=80 seed_rng=9
+  [decode #30] clm gen=80 seed_rng=7
+  [decode #31] clm gen=80 seed_rng=8
+  [decode #32] clm gen=80 seed_rng=9
+  [decode #33] clm gen=80 seed_rng=7
+  [decode #34] clm gen=80 seed_rng=8
+  [decode #35] clm gen=80 seed_rng=9
+  [decode #36] clm gen=80 seed_rng=7
+  [decode #37] clm gen=80 seed_rng=8
+  [decode #38] clm gen=80 seed_rng=9
+  [gate] G3 PHILOSOPHY …
+  [gate] G5 NON-FAB …
+  [decode #39] clm gen=80 seed_rng=7
+  [decode #40] clm gen=80 seed_rng=8
+  [decode #41] clm gen=80 seed_rng=9
+  [decode #42] clm gen=80 seed_rng=10
+  [decode #43] clm gen=80 seed_rng=11
+  [gate] G6 IDEATION …
+  [decode #44] clm gen=80 seed_rng=7
+  [decode #45] clm gen=80 seed_rng=8
+  [decode #46] clm gen=80 seed_rng=9
+  [decode #47] clm gen=80 seed_rng=10
+  [decode #48] clm gen=80 seed_rng=11
+  [decode #49] clm gen=80 seed_rng=12
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🟢 PASS  novel=88 (need>=3) · control=0 (need 0) · coherent=14
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🟢 PASS  L1 fab=0.0548 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=6 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
+=== ARM ce_marginal done rc=0 ===
