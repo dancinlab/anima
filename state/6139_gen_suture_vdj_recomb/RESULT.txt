@@ -1,0 +1,13 @@
+H_1870 suture-VDJ recombination — DIRECTIONAL numpy probe
+  pairs total=36  train=18  held-out(distant)=18
+  FROZEN BAR: vdj_distinct >= additive_floor + 3  (earned iff shuffle <= additive_floor+1)
+  additive_floor (Voronoi/nearest-seen) composed_distinct = 0 / 18
+  VDJ operator                          composed_distinct = 18 / 18
+  SHUFFLE control (wrong V lib)          composed_distinct = 0 / 18
+  lift over additive = 18
+  BAR PASS=True  EARNED(shuffle-collapses)=True  => GREEN-DIRECTIONAL (REACHABLE)
+  SCOPE: numpy mirror = DIRECTIONAL by construction, NOT terminal. Shows the
+         OPERATOR is compositionally expressive (discrete select+splice
+         reaches held-out wholes an additive/Voronoi readout cannot). The
+         TRUNK-OBJECTIVE wall (can additive-CE LEARN to emit VDJ selection?)
+         is UNTESTED here — that is the H_1602/gamma cost-gated question.
