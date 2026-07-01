@@ -47,6 +47,16 @@
 //   실제 .kosmos disk 영속화는 WAKE/kosmos_persist.hexa M4 surface
 //   (`wake_save`) 의 wire-up 후 — HONEST TODO #M4-KOSMOS-WRITE.
 //
+//   ── REALIZED (2026-07-02, B①): dream-composed 2-parent anchor ──────────
+//   이 fn 은 *단일* wake-report → anchor packer(single-node)다. h1162 가
+//   가리킨 "co-replayed 두 anchor → 새 blended NODE"(SWR replay consolidation)
+//   실질 구현은 DREAM/dream_compose.hexa `dc_compose_dream_anchor` /
+//   `dc_compose_window` 로 REALIZED — coord midpoint · tension5 mean · radius
+//   max · lane="dream"(emit-drive 0/4 DISJOINT). 별도 자립 모듈에 둔 이유 =
+//   본 DREAM chain 의 use "WAKE/memory"·"DREAM/dream_lib" import 가 2026-06-30
+//   archive 재구성으로 orphaned(비-buildable) → 측정 가능한 engine-native 경로는
+//   import 0 의 dream_compose.hexa(+ dream_compose_smoke.hexa F1/F3/F4/F5 5/5).
+//
 // ── p1~p8 정합 ──────────────────────────────────────────────────────────
 //   p1 NO SYSTEM PROMPT      — narrative summary 는 substrate fact 의 자연
 //                               요약. "you are X" 등 identity rule 0.
