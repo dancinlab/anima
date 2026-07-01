@@ -1,0 +1,8 @@
+seed 7: ADDITIVE distinct= 0 exact= 0 | HRR distinct= 0 exact= 0 | MERGE distinct=24 exact=24
+seed 42: ADDITIVE distinct= 0 exact= 0 | HRR distinct= 0 exact= 0 | MERGE distinct=24 exact=24
+seed 4302: ADDITIVE distinct= 0 exact= 0 | HRR distinct= 0 exact= 0 | MERGE distinct=24 exact=24
+
+MEAN composed_distinct (of M=24): ADDITIVE=0.00  HRR=0.00  MERGE=24.00
+FROZEN BAR: MERGE >= HRR+12 AND MERGE >= ADDITIVE+12
+VERDICT: DIRECTIONAL-REACHABLE (persistent Merge composable at depth-3 where additive+HRR activation collapse)
+SCOPE: DIRECTIONAL numpy; MERGE is STORAGE-side compositional memory, does NOT test mouth-decode G1 recomb-objective (H_1602). by-construction caveat noted.
