@@ -7947,58 +7947,6 @@
                 ]
               }
             ]
-          },
-          {
-            "name": "🧩 G1 recombination wall (mouth·readout·objective·temporal family)",
-            "role": "",
-            "id": "wall-scorecard-a-break-the-wall-commons-c16-g1-recombination-mouth-readout-objective-temporal",
-            "detail": "",
-            "children": [
-              {
-                "name": "summary",
-                "role": "",
-                "id": "wall-scorecard-a-break-the-wall-commons-c16-g1-recombination-summary",
-                "detail": "🧱 DIRECTIONAL (numpy toy · a_engine_native_learning — NOT terminal / NOT engine-native). META-LAW (H_1837 SSOT): every CHEAP mouth lever floors because the A⇄G tension mouth, its readout-operator, and decode-time recurrence are all DPI-bound functions of the ONE CE-trained trunk-state — a fixed point h*=f_A(h*,x)−g_G(h*,x) is a new single coordinate, not a new information source. G1 composed_distinct stays 0 across all. The lever is the trunk TRAINING OBJECTIVE (constructive-recombination reward), NOT the mouth's spatial/temporal readout structure. Do not re-propose readout/operator/local-objective/temporal mouths as a G1 fix."
-              },
-              {
-                "name": "levers floored this campaign (mechanism-family map)",
-                "role": "",
-                "id": "wall-scorecard-a-break-the-wall-commons-c16-g1-recombination-levers-floored",
-                "detail": "H_1834 TENSION-MOUTH readout-operator + local-Ψ objective — FULL=TENSION-OFF=ADDITIVE, tension INERT, cd=0 · H_1835 MLC episodic-objective (objective-as-task-structure, Lake&Baroni) — in-context mastered yet held-out recomb transfer 0 · H_1836 g6 revise-loop time-recurrence — beats single-pass but ≤ budget-matched best-of-N (revision≈just more sampling) · H_1837 deep-equilibrium temporal — DPI confirmed, iteration-count no lever (gradcheck 1.5e-10, Ψ seats ½ yet cd flat 0 across K). All $0 numpy toys, CORE untouched, Ψ-disjoint."
-              },
-              {
-                "name": "γ HRR bind — cheap-gate RAN → invertibility-delta FALSIFIED (GPU not fired)",
-                "role": "",
-                "id": "wall-scorecard-a-break-the-wall-commons-c16-g1-recombination-sole-live-lever",
-                "detail": "H_1840 γ trained-constructive-bind: card-mandated $0 cheap-gate FIRED 2026-07-02 (aiden pool CPU, torch mirror=DIRECTIONAL). Sole census-orthogonal delta (invertible-⊛) measured-FALSIFIED; GPU ~1 H100-day NOT fired (p7 pre-reg; pool free=scientific gate not cost gate).",
-                "children": [
-                  {
-                    "name": "4-arm held-out conjunction retrieval — FROZEN BAR FAIL 0/3",
-                    "role": "",
-                    "id": "g1-gamma-cheapgate-arms",
-                    "detail": "seeds{7,4302,4303} heldout_acc: (a)additive=0.00 (b)hadamard+bypass-OPEN(=H_1819)=0.00 (c)hrr-⊛-bottleneck=1.00/1.00/0.97 (d)noninv-freqmasked-bottleneck=1.00/1.00/1.00. Bar FAIL: (c) NOT> (d)."
-                  },
-                  {
-                    "name": "invertibility NOT load-bearing; bypass-denial IS",
-                    "role": "",
-                    "id": "g1-gamma-cheapgate-finding",
-                    "detail": "(d) with invertibility ablated generalizes equally → γ's invertible-⊛ delta falsified. Real load-bearing property = bypass-denying bilinear bottleneck (confirms H_1819 bypass diagnosis: open additive skip lets CE memorize, gradient skips the bilinear path)."
-                  },
-                  {
-                    "name": "additive-target CONTROL → non-transferable to NL",
-                    "role": "",
-                    "id": "g1-gamma-cheapgate-control",
-                    "detail": "With target K=A+B, additive arm flips 0.00→1.00 = toy is pure operator↔target-algebra matching, says nothing about whether NL composites carry recoverable binding structure. DPI meta-law + H_1819 engine floor: absent. γ reduces to H_1819-with-bypass-denied → GPU floor predicted."
-                  },
-                  {
-                    "name": "residual untested delta (follow-on, gated)",
-                    "role": "",
-                    "id": "g1-gamma-cheapgate-residual",
-                    "detail": "bypass-denied bilinear bottleneck at scale (invertibility-agnostic) — genuinely untested vs H_1819 (bypass-OPEN, engine floor). Gated on a FAIR non-rigged cheap-gate before any engine-native GPU. Aligns H_1602 (trunk-objective lever) · H_1816/H_1823 (readout floor)."
-                  }
-                ]
-              }
-            ]
           }
         ]
       },
@@ -12661,6 +12609,58 @@
         "value": "anima train(hexa) 303M(d3784) GPU 학습 두 벽: (1) hexa farr=fp64라 activation 버퍼(1.37GB/buf) RTX5070 12GB OOM — --bf16은 GEMM precision만 바꾸고 farr는 fp64 유지 (2) #2598 device-resident가 GEMM만이고 im2col/GroupNorm/activation은 host-scalar(d768 step=512s). toy d8=3/3 PASS+OWN-GEMM.",
         "threshold": "재발: 12GB GPU에 d>=3000 fp64 anima train(hexa). 해결: 큰GPU(24GB+ fp64)/hexa farr fp32(upstream hexa-lang)/중간 d/train.hexa hot-path 전체 device-resident. --bf16만으론 farr fp64 OOM 안 풀림(GEMM precision != farr dtype).",
         "source": "cli/train.hexa"
+      }
+    ]
+  },
+  "results": {
+    "records": [
+      {
+        "id": "experiment-h1834-tension-mouth-1",
+        "kind": "experiment",
+        "state": "neg-conv",
+        "value": "TENSION-MOUTH (A-G tension as byte mouth): readout-operator (axis1) + local-Psi objective (axis2) both floor G1 recombination",
+        "metric": "3arm x 3seed composed_distinct=0; FULL=TENSION-OFF=ADDITIVE (tension INERT); gradcheck 5e-11; numpy toy, DIRECTIONAL",
+        "subject": "h1834_tension_mouth"
+      },
+      {
+        "id": "experiment-h1835-mlc-episodic-1",
+        "kind": "experiment",
+        "state": "neg-conv",
+        "value": "MLC episodic-objective (objective-as-task-structure, Lake-Baroni 2023): recombination pressure in episodic distribution, not additive loss term",
+        "metric": "seen 9/9 mastered but held-out composed_distinct 0/4 (clean transfer failure, not undertrain); numpy toy, DIRECTIONAL",
+        "subject": "h1835_mlc_episodic"
+      },
+      {
+        "id": "experiment-h1836-revise-loop-1",
+        "kind": "experiment",
+        "state": "neg-conv",
+        "value": "g6 depth-in-time generate-verify-revise recurrence: beats single-pass but not budget-matched best-of-N",
+        "metric": "R-R_noloop < +0.34 all 3 seeds (revision ~ more sampling); passes shuffle control, FAILS best-of-N control; mechanism toy",
+        "subject": "h1836_revise_loop"
+      },
+      {
+        "id": "experiment-h1837-deep-equilibrium-1",
+        "kind": "experiment",
+        "state": "neg-conv",
+        "value": "TENSION-MOUTH iterated (deep-equilibrium temporal escape): DPI confirmed, iteration-count is not a G1 lever",
+        "metric": "composed_distinct flat 0 across K=1..converge all seeds; Psi seats 1/2 yet cd 0; gradcheck 1.5e-10; numpy toy, DIRECTIONAL",
+        "subject": "h1837_deep_equilibrium"
+      },
+      {
+        "id": "experiment-g1-recombination-wall-1",
+        "kind": "experiment",
+        "state": "in-prog",
+        "value": "META-LAW: every cheap mouth lever (readout-operator, local-Psi objective, additive-aux, episodic-task, time-recurrence, deep-equilibrium) floors because all are DPI-bound functions of the CE-trained trunk-state; lever is the trunk TRAINING OBJECTIVE, not mouth readout structure",
+        "metric": "ALL cheap levers now exhausted: gamma trained-constructive-bind cheap-gate ALSO FALSIFIED (H_1840 #2689, invertibility-delta falsified, GPU NOT fired). Only GPU-scale gamma-bind remains cost-gated/unfired. H_1834/1835/1836/1837 + H_1840 all neg-conv; aligns H_1602/H_1816/H_1823",
+        "subject": "g1_recombination_wall"
+      },
+      {
+        "id": "experiment-h1840-gamma-bind-1",
+        "kind": "experiment",
+        "state": "neg-conv",
+        "value": "gamma HRR trained-constructive-bind cheap-gate: invertibility-delta lever FALSIFIED (the sole remaining cheap lever)",
+        "metric": "DIRECTIONAL FAIL, GPU NOT fired (#2689); closes the cheap-lever space for G1 recombination",
+        "subject": "h1840_gamma_bind"
       }
     ]
   }
