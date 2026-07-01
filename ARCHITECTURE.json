@@ -12461,6 +12461,13 @@
         "value": "torch.fft(rfft/irfft) 는 BFloat16 미지원 = --bf16 학습서 fft-쓰는 objective(constructive_bind HRR 순환합성 c=irfft(rfft(r)*rfft(f)))가 step1에 RuntimeError 'Unsupported dtype BFloat16' 로 즉사. fp32-everything 우회는 303M fp32가 커져 작은 GPU(RTX5070 11.5GB) OOM. 근본해결=loss_constructive_bind 내부에서 fft 입력만 .float()(fp32) 캐스트 후 결과를 원dtype 복귀(autocast 제외 구간), 나머지는 bf16 유지. 메모리 h1823 동일교훈 재발.",
         "threshold": "fft/rfft/irfft(순환합성·spectral binding·HRR) 쓰는 새 objective/lever를 --bf16 로 돌리면 'Unsupported dtype BFloat16' 즉사 예상 = 자동의심. 해결: 그 op만 fp32 캐스트(with torch.autocast(enabled=False) + .float()), 전체 fp32 금지(303M OOM). constructive_bind 미수정분은 fp32-전체 또는 fp32-cast-fft 필요. 4×24GB+ GPU면 fp32-전체도 가능.",
         "source": "cli/train.py"
+      },
+      {
+        "id": "train-py-3",
+        "state": "ossified",
+        "value": "303M을 소코퍼스(4셀 ~5MB)에 8000step 학습하면 ~6에폭 과적합 → val_CE 0.48 완벽수렴처럼 보이나 디코드 생성이 완전붕괴(G0 coherence kwr 0/5, novel=0, 랜덤바이트). '학습 잘됨(낮은 val_CE)'≠'생성 가능' — 소코퍼스 val은 memorization leak. G1-hunt 레버측정이 이 과적합에 오염되면 무효(G1 verdict 아님). 2000step=G0🟢·G1=0(undertrain) ↔ 8000step=G0🔴(overfit) = 소코퍼스엔 coherent∧G1-testable window 부재. clm303-overfit-corpus-starvation 재발.",
+        "threshold": "레버/objective를 anima train --py 로 측정할 때 val_CE가 비정상적으로 낮은데(<1.0 on 소코퍼스) G0 coherence 0/N 이면 = 과적합붕괴 = 그 측정 무효(G1/NOT-SUP 박제 금지). 해결: ① 큰 코퍼스 HF 스트리밍(resolve_corpus_path 가 load_dataset streaming 지원: dancinlab/anima-corpus-ko-fineweb2-broad·anima-corpus-5lang-7b-webscale) 로 과적합 원천차단 후 재측정, 또는 ② coherent window(~2000-3000step, G0🟢 유지)에서 측정하되 그건 undertrain 리스크. G1 유효측정 = 큰코퍼스+충분step 로 G0🟢 확보가 선결.",
+        "source": "cli/train.py"
       }
     ]
   }
