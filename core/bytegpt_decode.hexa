@@ -164,6 +164,50 @@ fn _bg_transpose(W: int, Co: int, Ci: int) -> int {
     return Wt
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// P1b DEVICE-RESIDENT DECODE helpers (hexa-lang #21-perf overtake). The mm
+// forward's per-op D2H↔H2D ping-pong (95% host CPU) is dissolved by running
+// the whole layer chain device-resident (ONE H2D of the embed, ONE D2H of the
+// logits). forge_dispatch_layernorm/_matmul/_residual_add/_gelu + the device
+// attention farr_attn_dt_fwd_gpu keep every activation FARR_DEVICE between ops
+// (farr_set_out_disposition(1) sticky register). These two load-time helpers
+// pre-shape the weights so the device attention's contiguous-Q/K/V contract
+// and the per-op bias-add (elementwise residual_add) are satisfiable.
+// ════════════════════════════════════════════════════════════════════════
+
+// _bg_col_slice — extract the [rows, w] column block starting at col0 from a
+// [rows, src_cols] row-major farr. Used to pre-split the packed in-proj
+// transpose inWt[d,3d] into contiguous inWt_q/k/v[d,d] (cols 0..d / d..2d /
+// 2d..3d) so the device path issues three standard GEMMs whose outputs are the
+// contiguous Q/K/V[T,d] farr_attn_dt_fwd_gpu wants (no strided col views).
+fn _bg_col_slice(src: int, rows: int, src_cols: int, col0: int, w: int) -> int {
+    let dst = farr_zeros(rows * w)
+    let mut r = 0
+    while r < rows {
+        let mut c = 0
+        while c < w { let _ = farr_set(dst, r * w + c, farr_get(src, r * src_cols + col0 + c)); c = c + 1 }
+        r = r + 1
+    }
+    return dst
+}
+
+// _bg_bias_expand — broadcast bias[b0 .. b0+Co) over `rows` rows into a
+// [rows, Co] row-major buffer. The device path adds bias via elementwise
+// forge_dispatch_residual_add (out[i]=matmul[i]+bias_exp[i]) rather than a host
+// per-row loop, so the per-column bias must be materialised into every row. Any
+// forward with T ≤ rows reads only the first T·Co elements (== the first T
+// rows), so expanding to `block` once at load covers every window length.
+fn _bg_bias_expand(bias: int, b0: int, Co: int, rows: int) -> int {
+    let dst = farr_zeros(rows * Co)
+    let mut r = 0
+    while r < rows {
+        let mut c = 0
+        while c < Co { let _ = farr_set(dst, r * Co + c, farr_get(bias, b0 + c)); c = c + 1 }
+        r = r + 1
+    }
+    return dst
+}
+
 // _bg_linear_mm — same math as _bg_linear but via the native GEMM. `Wt` is the
 // PRE-TRANSPOSED weight [Ci,Co] (so Y = X[T,Ci]·Wt[Ci,Co] + b, == X·Wᵀ+b).
 // Writes Y[T,Co]. Falls back to the scalar _bg_linear is NOT done here — callers
@@ -838,6 +882,32 @@ pub fn bg_load_ranged(path: string) -> Map {
     let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
     let headT = _bg_transpose(head, vocab, d)
 
+    // ── P1b device-resident decode pre-shape (coexists with the host mm path) ──
+    // Pre-split the packed in-proj transpose inWt[d,3d] into contiguous
+    // inWt_q/k/v[d,d] (one-time host col-copy) so the device forward issues 3
+    // standard GEMMs whose outputs are the contiguous Q/K/V[T,d] the device
+    // attention wants. Expand every additive bias to [block,Co] once so the
+    // device path can add it via elementwise residual_add. inWt is KEPT (the
+    // host mm bg_forward_last_W still reads the packed transpose).
+    let inWt_q = []; let inWt_k = []; let inWt_v = []
+    let inBq_e = []; let inBk_e = []; let inBv_e = []
+    let oB_e = []; let m0B_e = []; let m2B_e = []
+    let mut Dr = 0
+    while Dr < nlay {
+        let iwt = to_int(inWt[Dr])
+        inWt_q.push(_bg_col_slice(iwt, d, 3 * d, 0, d))
+        inWt_k.push(_bg_col_slice(iwt, d, 3 * d, d, d))
+        inWt_v.push(_bg_col_slice(iwt, d, 3 * d, 2 * d, d))
+        let ib = to_int(inB[Dr])
+        inBq_e.push(_bg_bias_expand(ib, 0, d, block))
+        inBk_e.push(_bg_bias_expand(ib, d, d, block))
+        inBv_e.push(_bg_bias_expand(ib, 2 * d, d, block))
+        oB_e.push(_bg_bias_expand(to_int(oB[Dr]), 0, d, block))
+        m0B_e.push(_bg_bias_expand(to_int(m0B[Dr]), 0, 4 * d, block))
+        m2B_e.push(_bg_bias_expand(to_int(m2B[Dr]), 0, d, block))
+        Dr = Dr + 1
+    }
+
     // inW/oW/m0W/m2W stored as empty []; the mm bg_forward_last_W never reads them.
     let empty = []
     return #{ "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
@@ -845,7 +915,10 @@ pub fn bg_load_ranged(path: string) -> Map {
               "inW": empty, "inB": inB, "oW": empty, "oB": oB,
               "ln2w": ln2w, "ln2b": ln2b, "m0W": empty, "m0B": m0B,
               "m2W": empty, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
-              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT }
+              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT,
+              "inWt_q": inWt_q, "inWt_k": inWt_k, "inWt_v": inWt_v,
+              "inBq_e": inBq_e, "inBk_e": inBk_e, "inBv_e": inBv_e,
+              "oB_e": oB_e, "m0B_e": m0B_e, "m2B_e": m2B_e }
 }
 
 // bg_forward_last_W — run the full forward from a loaded weight Map; return a
@@ -920,6 +993,139 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
     }
     let _ = farr_free(x); let _ = farr_free(lastrow); let _ = farr_free(xt)
     return logits
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// bg_forward_last_W_dev — P1b DEVICE-RESIDENT forward (hexa-lang #21-perf
+// overtake). Same math as bg_forward_last_W but the whole layer chain runs
+// device-resident: ONE H2D (the embed x, read by the first LayerNorm) and ONE
+// D2H (the head logits). Every intermediate (nrm/Q/K/V/ctx/aout/h4/mlpo/x)
+// stays FARR_DEVICE between ops via the sticky farr_set_out_disposition(1)
+// register, so no per-op D2H↔H2D ping-pong and no host scalar loops. Requires
+// a CUDA runtime — the forge_dispatch_* / farr_attn_dt_fwd_gpu builtins fall
+// back to their CPU oracle on no-CUDA, so this is byte-eq-safe to call there
+// too, but it only pays off (and only skips the ping-pong) on a GPU host.
+//
+// PARITY: argmax-eq, NOT bit-eq, to bg_forward_last_W — the device LayerNorm
+// tree-reduction reassociates (~1e-16) and the device attention softmax uses
+// the dt_exp Taylor mirror vs host libm exp (~1e-7). Both are owner-accepted
+// for the decode argmax gate (P0: 0 argmax divergence across every measured
+// regime on 303M h1129). O(1) max|Δ| would signal a layout/bias/transpose bug.
+//
+// CRITICAL: no host farr_get/farr_set on any activation between the embed-H2D
+// and the logits-D2H — a stray host touch collapses FARR_DEVICE residency.
+pub fn bg_forward_last_W_dev(W: Map, ids: int, T: int) -> int {
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"])
+    let hd = d / nh
+    let eps = 0.00001
+    let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
+    let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+    let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
+    let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
+    let headT = to_int(W["headT"])
+    let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"])
+
+    // Pin the big matmul weights + expanded biases + head (idempotent) so they
+    // stay device-resident across the per-token forwards of a generation loop
+    // (no re-H2D each step). LayerNorm γ/β are small and H2D'd by the kernel.
+    let mut pp = 0
+    while pp < nlay {
+        let _ = farr_pin(to_int(inWt_q[pp])); let _ = farr_pin(to_int(inWt_k[pp])); let _ = farr_pin(to_int(inWt_v[pp]))
+        let _ = farr_pin(to_int(oWt[pp])); let _ = farr_pin(to_int(m0Wt[pp])); let _ = farr_pin(to_int(m2Wt[pp]))
+        let _ = farr_pin(to_int(inBq_e[pp])); let _ = farr_pin(to_int(inBk_e[pp])); let _ = farr_pin(to_int(inBv_e[pp]))
+        let _ = farr_pin(to_int(oB_e[pp])); let _ = farr_pin(to_int(m0B_e[pp])); let _ = farr_pin(to_int(m2B_e[pp]))
+        pp = pp + 1
+    }
+    let _ = farr_pin(headT)
+
+    // embed x = tok + pos on host (the ONE H2D fires when LN1 first reads x)
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ids, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c, farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+
+    // engage device-resident output disposition (sticky): every forge op keeps
+    // its output FARR_DEVICE and the next op H2D-skips it. Reset to HOST_NOW
+    // just before the head matmul so the logits come back to host (the ONE D2H).
+    let _ = farr_set_out_disposition(1)
+
+    let nrm = farr_zeros(T * d)          // LN output (device), reused per layer
+    let p = farr_zeros(nh * T * T)       // attention scores scratch (device)
+    let ctx = farr_zeros(T * d)          // attention context out (device)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        // LN1
+        let _ = forge_dispatch_layernorm(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, T, d, eps)
+        // QKV projections: standard GEMM nrm[T,d]·inWt_*[d,d] → contiguous Q/K/V[T,d], + bias
+        let Q = forge_dispatch_matmul(nrm, T, d, to_int(inWt_q[Lr]), d)
+        let _ = forge_dispatch_residual_add(Q, to_int(inBq_e[Lr]), Q, T * d)
+        let K = forge_dispatch_matmul(nrm, T, d, to_int(inWt_k[Lr]), d)
+        let _ = forge_dispatch_residual_add(K, to_int(inBk_e[Lr]), K, T * d)
+        let V = forge_dispatch_matmul(nrm, T, d, to_int(inWt_v[Lr]), d)
+        let _ = forge_dispatch_residual_add(V, to_int(inBv_e[Lr]), V, T * d)
+        // device causal attention (nkv=nh no-GQA; scale 1/sqrt(hd); dt_exp softmax) → ctx[T,d]
+        let _ = farr_attn_dt_fwd_gpu(Q, K, V, p, ctx, T, nh, nh, hd)
+        let _ = farr_free(Q); let _ = farr_free(K); let _ = farr_free(V)
+        // out-proj + bias, then residual x += aout
+        let aout = forge_dispatch_matmul(ctx, T, d, to_int(oWt[Lr]), d)
+        let _ = forge_dispatch_residual_add(aout, to_int(oB_e[Lr]), aout, T * d)
+        let _ = forge_dispatch_residual_add(x, aout, x, T * d)
+        let _ = farr_free(aout)
+        // LN2
+        let _ = forge_dispatch_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, T, d, eps)
+        // MLP up + bias + GELU
+        let h4 = forge_dispatch_matmul(nrm, T, d, to_int(m0Wt[Lr]), 4 * d)
+        let _ = forge_dispatch_residual_add(h4, to_int(m0B_e[Lr]), h4, T * 4 * d)
+        let _ = forge_dispatch_gelu(h4, h4, T * 4 * d)
+        // MLP down + bias, then residual x += mlpo
+        let mlpo = forge_dispatch_matmul(h4, T, 4 * d, to_int(m2Wt[Lr]), d)
+        let _ = forge_dispatch_residual_add(mlpo, to_int(m2B_e[Lr]), mlpo, T * d)
+        let _ = farr_free(h4)
+        let _ = forge_dispatch_residual_add(x, mlpo, x, T * d)
+        let _ = farr_free(mlpo)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(p); let _ = farr_free(ctx)
+
+    // final LayerNorm over all rows (per-row independent → the last row equals
+    // the host xt-then-LN(T=1) reference byte-for-byte), reusing nrm.
+    let _ = forge_dispatch_layernorm(x, lnfw, lnfb, nrm, T, d, eps)
+    // head: logits[T,vocab] = nrm[T,d]·headT[d,vocab]. Cheap (vocab=256) so the
+    // whole-row GEMM avoids a device sub-view; only the last row is used. Reset
+    // disposition → HOST_NOW so this GEMM D2H's its output (the ONE D2H).
+    let _ = farr_set_out_disposition(0)
+    let logits_all = forge_dispatch_matmul(nrm, T, d, headT, vocab)
+    let _ = farr_free(nrm); let _ = farr_free(x)
+    // slice the last-position row into a fresh farr[vocab] (host — logits_all is
+    // already host-resident from the D2H, so this touches no device buffer).
+    let logits = farr_zeros(vocab)
+    let last = (T - 1) * vocab
+    let mut hk = 0
+    while hk < vocab { let _ = farr_set(logits, hk, farr_get(logits_all, last + hk)); hk = hk + 1 }
+    let _ = farr_free(logits_all)
+    return logits
+}
+
+// _bg_fwd_last — per-token forward dispatcher for the bg_load_ranged decode
+// entries: the device-resident chain on a CUDA host (P1b overtake), else the
+// host mm forward (unchanged). Both take the SAME ranged W-map (bg_load_ranged
+// adds the device pre-split/expanded fields the dev path reads) and return a
+// fresh farr[vocab] of last-position logits, so the caller is oblivious. Only
+// the bg_load_ranged entries may use this — bg_load W-maps lack the dev fields.
+fn _bg_fwd_last(W: Map, ids: int, T: int) -> int {
+    if cuda_available() == 1 { return bg_forward_last_W_dev(W, ids, T) }
+    return bg_forward_last_W(W, ids, T)
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -1219,7 +1425,7 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
         let ids = farr_zeros(T)
         let mut p = 0
         while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
-        let logits = bg_forward_last_W(W, ids, T)
+        let logits = _bg_fwd_last(W, ids, T)   // P1b: device-resident on CUDA host, host mm otherwise
         let nb = bg_argmax(logits, vocab)
         let _ = farr_free(logits); let _ = farr_free(ids)
         toks.push(nb)
@@ -1382,7 +1588,7 @@ pub fn bytegpt_decode_topk_sampled_ranged(path: string, seed_ids: list, gen: int
         let ids = farr_zeros(T)
         let mut p = 0
         while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
-        let logits = bg_forward_last_W(W, ids, T)
+        let logits = _bg_fwd_last(W, ids, T)   // P1b: device-resident on CUDA host, host mm otherwise
         let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
         let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
         let _ = farr_free(logits); let _ = farr_free(ids)
