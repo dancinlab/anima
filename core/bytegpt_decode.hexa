@@ -1304,6 +1304,125 @@ fn _bg_kv_step(W: Map, kv: Map, id: int, pos_p: int) -> int {
 }
 
 // bg_argmax — index of the max of a farr[n].
+
+// _bg_kv_step_dev — P2 device-resident mirror of _bg_kv_step. Forwards the SINGLE
+// new token (id at absolute position pos_p) through all layers ENTIRELY on-device:
+// ONE H2D (the embed x at LN1), ONE D2H (the head logits), zero mid-chain host
+// activation touches. K,V caches stay device-resident (farr_pin + device-to-device
+// farr_copy_slice_gpu append — no host round-trip per step). Op-chain mirrors the
+// host _bg_kv_step per-op: LN1 → Q/K/V proj (pre-split inWt_q/k/v, M=1) + bias →
+// append K,V → single-query decode attention (new farr_attn_dt_decode_gpu, L=Lrows)
+// → out-proj + bias + residual → LN2 → MLP up+bias+gelu, down+bias + residual →
+// final LN → head. Device numerics: forge_dispatch_layernorm mirrors _bg_layernorm,
+// farr_attn_dt_decode_gpu mirrors the host per-head softmax (dt_sqrt scale + dt_exp),
+// so vs host = ~1e-6 argmax-eq (the P0-accepted dt_exp bar; NOT bit-eq). Returns a
+// fresh farr[vocab] of next-byte logits (host-resident after the ONE D2H).
+fn _bg_kv_step_dev(W: Map, kv: Map, id: int, pos_p: int) -> int {
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"]); let block = to_int(W["block"])
+    let hd = d / nh
+    let eps = 0.00001
+    let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
+    let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+    let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
+    let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
+    let headT = to_int(W["headT"])
+    let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"])
+    let Kc = kv["K"]; let Vc = kv["V"]
+    let Lrows = pos_p + 1   // live cache rows after appending this token (causal 0..pos_p)
+
+    // pin weights + expanded biases + head + the K/V caches device-resident
+    // (idempotent: farr_pin only sets the no-evict flag, no H2D — safe to re-pin
+    // the device-written caches every step without clobbering them).
+    let mut pp = 0
+    while pp < nlay {
+        let _ = farr_pin(to_int(inWt_q[pp])); let _ = farr_pin(to_int(inWt_k[pp])); let _ = farr_pin(to_int(inWt_v[pp]))
+        let _ = farr_pin(to_int(oWt[pp])); let _ = farr_pin(to_int(m0Wt[pp])); let _ = farr_pin(to_int(m2Wt[pp]))
+        let _ = farr_pin(to_int(inBq_e[pp])); let _ = farr_pin(to_int(inBk_e[pp])); let _ = farr_pin(to_int(inBv_e[pp]))
+        let _ = farr_pin(to_int(oB_e[pp])); let _ = farr_pin(to_int(m0B_e[pp])); let _ = farr_pin(to_int(m2B_e[pp]))
+        let _ = farr_pin(to_int(Kc[pp])); let _ = farr_pin(to_int(Vc[pp]))
+        pp = pp + 1
+    }
+    let _ = farr_pin(headT)
+
+    // embed x = tok[id] + pos[pos_p] on host (the ONE H2D fires when LN1 reads x)
+    let x = farr_zeros(d)
+    let mut c = 0
+    while c < d {
+        let _ = farr_set(x, c, farr_get(tok, id * d + c) + farr_get(pos, pos_p * d + c))
+        c = c + 1
+    }
+
+    let _ = farr_set_out_disposition(1)    // sticky device-resident outputs
+
+    let nrm = farr_zeros(d)                // LN output (device), reused per layer
+    let sscr = farr_zeros(nh * block)      // decode score scratch (nh*Lrows used)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        // ── attention sub-block: x += MHA(LN1(x)) on the single row ──
+        let _ = forge_dispatch_layernorm(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, 1, d, eps)
+        // Q/K/V = nrm[1,d] · inWt_{q,k,v}[d,d] → contiguous q/k/v[d] (M=1 gemv), + bias.
+        // inB*_e[Lr] are [block,d] expanded biases; row 0 (first d elems) == raw bias.
+        let q = forge_dispatch_matmul(nrm, 1, d, to_int(inWt_q[Lr]), d)
+        let _ = forge_dispatch_residual_add(q, to_int(inBq_e[Lr]), q, d)
+        let kk = forge_dispatch_matmul(nrm, 1, d, to_int(inWt_k[Lr]), d)
+        let _ = forge_dispatch_residual_add(kk, to_int(inBk_e[Lr]), kk, d)
+        let vv = forge_dispatch_matmul(nrm, 1, d, to_int(inWt_v[Lr]), d)
+        let _ = forge_dispatch_residual_add(vv, to_int(inBv_e[Lr]), vv, d)
+        // append k,v rows into the device cache at row pos_p (device-to-device, no D2H)
+        let Kl = to_int(Kc[Lr]); let Vl = to_int(Vc[Lr])
+        let _ = farr_copy_slice_gpu(kk, 0, Kl, pos_p * d, d)
+        let _ = farr_copy_slice_gpu(vv, 0, Vl, pos_p * d, d)
+        let _ = farr_free(kk); let _ = farr_free(vv)
+        // single-query decode attention: query q attends over cache rows 0..Lrows-1
+        // (nkv=nh no-GQA; scale 1/dt_sqrt(hd); dt_exp softmax) → ctx[d]
+        let ctx = farr_zeros(d)
+        let _ = farr_attn_dt_decode_gpu(q, Kl, Vl, sscr, ctx, Lrows, nh, nh, hd)
+        let _ = farr_free(q)
+        // out proj + bias, then residual x += aout
+        let aout = forge_dispatch_matmul(ctx, 1, d, to_int(oWt[Lr]), d)
+        let _ = forge_dispatch_residual_add(aout, to_int(oB_e[Lr]), aout, d)
+        let _ = forge_dispatch_residual_add(x, aout, x, d)
+        let _ = farr_free(ctx); let _ = farr_free(aout)
+
+        // ── mlp sub-block: x += Wd(GELU(W0(LN2(x)))) on the single row ──
+        let _ = forge_dispatch_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, 1, d, eps)
+        let h4 = forge_dispatch_matmul(nrm, 1, d, to_int(m0Wt[Lr]), 4 * d)
+        let _ = forge_dispatch_residual_add(h4, to_int(m0B_e[Lr]), h4, 4 * d)
+        let _ = forge_dispatch_gelu(h4, h4, 4 * d)
+        let mlpo = forge_dispatch_matmul(h4, 1, 4 * d, to_int(m2Wt[Lr]), d)
+        let _ = forge_dispatch_residual_add(mlpo, to_int(m2B_e[Lr]), mlpo, d)
+        let _ = forge_dispatch_residual_add(x, mlpo, x, d)
+        let _ = farr_free(h4); let _ = farr_free(mlpo)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(sscr)
+
+    // final LayerNorm on the single row, then tied head → logits[vocab]. Reset
+    // disposition → HOST_NOW so the head GEMM D2H's its output (the ONE D2H).
+    let _ = forge_dispatch_layernorm(x, lnfw, lnfb, nrm, 1, d, eps)
+    let _ = farr_set_out_disposition(0)
+    let logits_all = forge_dispatch_matmul(nrm, 1, d, headT, vocab)   // [1,vocab] → host
+    let _ = farr_free(nrm); let _ = farr_free(x)
+    let logits = farr_zeros(vocab)
+    let mut hk = 0
+    while hk < vocab { let _ = farr_set(logits, hk, farr_get(logits_all, hk)); hk = hk + 1 }
+    let _ = farr_free(logits_all)
+    return logits
+}
+
+// _bg_kv_step_r — per-token KV-step dispatcher for the in-window ranged decoders:
+// device-resident _bg_kv_step_dev on a CUDA host (P2 overtake), else host _bg_kv_step.
+// Both take the SAME ranged W-map + kv cache and return a fresh farr[vocab], so the
+// caller is oblivious. Byte-faithful op-chain; device vs host = ~1e-6 dt_exp argmax-eq.
+fn _bg_kv_step_r(W: Map, kv: Map, id: int, pos_p: int) -> int {
+    if cuda_available() == 1 { return _bg_kv_step_dev(W, kv, id, pos_p) }
+    return _bg_kv_step(W, kv, id, pos_p)
+}
+
 fn bg_argmax(a: int, n: int) -> int {
     let mut bi = 0
     let mut bv = farr_get(a, 0)
@@ -1627,7 +1746,7 @@ fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, see
         let mut sp = 0
         while sp < nseed {
             if logits >= 0 { let _ = farr_free(logits) }
-            logits = _bg_kv_step(W, kv, to_int(toks[sp]), sp)
+            logits = _bg_kv_step_r(W, kv, to_int(toks[sp]), sp)
             sp = sp + 1
         }
         let mut g = 0
@@ -1637,7 +1756,7 @@ fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, see
             let _ = farr_free(logits)
             toks.push(nb); out = out + chr(nb)
             // advance: forward the just-drawn byte at its absolute position
-            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+            logits = _bg_kv_step_r(W, kv, nb, len(toks) - 1)
             g = g + 1
         }
         let _ = farr_free(logits)
