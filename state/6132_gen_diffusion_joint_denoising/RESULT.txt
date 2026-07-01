@@ -1,0 +1,37 @@
+L=12 N=250 T=60 anneal beta 0.3->6.0
+additive_floor composed_frac = 0.004
+operator(T)    composed_frac = 1.000
+op_wb0(legA)   composed_frac = 0.624
+margin (op-add)              = 0.996
+--- FROZEN BAR: op>=0.60 AND add<=0.25 AND margin>=0.35 AND wb0<=add+0.10 ---
+VERDICT: DIRECTIONAL floor / FALSIFIED
+both-legs-needed: False
+L=12 N=250 T=80 anneal 0.3->6.0 (2 independent GF(2) legs)
+additive_floor composed_frac = 0.000
+operator(T)    composed_frac = 1.000
+op_wb0(legA)   composed_frac = 0.204
+margin (op-add)              = 1.000
+--- FROZEN BAR: op>=0.60 AND add<=0.25 AND margin>=0.35 AND wb0<=add+0.10 ---
+both-legs-needed: False
+VERDICT: DIRECTIONAL floor / FALSIFIED
+
+=== HONEST SUMMARY (p7, no tune-to-green) ===
+LEDGER: H_1863 mechanism == H_1622 (dual-condition joint denoising, CFG guidance)
+  H_1622/1639/1655/1683/1734/1744 = pre-registered DIRECTIONAL DESIGN cards, tier 🔵,
+  측정 0 / unmeasured. NONE measured joint-guidance composition. This probe RUNS
+  H_1622's own never-executed $0 numpy cheap_test. => NOVEL-ANGLE (unmeasured), NOT dup-walled.
+
+RESULT (two toy designs, both consistent):
+  - reachability sub-claim: iterative denoise operator reaches the joint intersection
+    (composed_frac 1.000) where one-shot ADDITIVE readout is at floor (0.000-0.004).
+    margin ~1.0 >> frozen 0.35. => additive combination-operator floor CROSSED by ITERATION.
+  - dual-guidance NECESSITY ablation (H_1622 requires w_b=0 to FAIL): FAILS.
+    leg-A-alone still reaches joint 0.204 (v2) / 0.624 (v1) by combinatorial chance.
+    => cannot isolate the lift to JOINT dual-condition binding; lever = re-decision/iteration
+       over the (still additive) combined energy, given ORACLE score-fields.
+
+VERDICT per FROZEN bar (includes ablation clause) = DIRECTIONAL floor / FALSIFIED-as-stated.
+CAVEAT (why this is only weakly directional even as numpy): the probe hands the operator the
+  exact energy oracles (sa, sb). It shows annealing>one-shot on a satisfiable CSP — it does NOT
+  test whether a LEARNED trunk composes (the real G1 question). Consistent with anima census:
+  combination is a TRUNK-OBJECTIVE floor (H_1816/1823/1834), not a readout/decode-procedure fix.
