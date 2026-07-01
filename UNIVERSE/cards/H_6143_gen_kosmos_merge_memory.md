@@ -52,3 +52,9 @@
 **Bar**(실행 전 frozen, `H_6143_FREEZE.txt`): MERGE ≥ HRR+12 **AND** ≥ ADDITIVE+12 → **통과** → 🟡 DIRECTIONAL-REACHABLE.
 
 **정직 경계.** (1) numpy = DIRECTIONAL, terminal 아님. (2) MERGE 완벽 recovery는 **상당부분 by-construction**(이산 저장은 구조를 자명히 보존) — 정보가치는 CONTRAST에 있음: 정당한 강baseline HRR조차 depth-3서 0으로 붕괴 = walled activation family 재확인, 탈출은 '활성화 밖 영속 이산 구조'여야 함을 방향지시. (3) HRR=0은 DIM=64 crosstalk 영향 있음(대차원 완화되나 depth↑ 시 여전히 붕괴). (4) **결정적 scope**: MERGE는 STORAGE-side **compositional memory**(가설 본 주장)로 방향 양성이나 **mouth-decode G1 재조합벽의 진짜 레버(trunk recomb-OBJECTIVE, H_1602)는 미접촉** — .kosmos Merge는 저장-측 구조지 생성-측 결합기가 아님. G1 벽 자체를 여는 것으로 오독 금지. follow-on = 영속 Merge 앵커를 실제 decode 경로에 배선해 mouth-G1 재측정(cost-gated, engine-native).
+
+---
+
+## 사다리 rung(2) 실측 — engine-native 경로 (Explore 매핑)
+
+**분류 = (c) storage/decode-side — CLMConvMoE trunk 로 표현 불가(off-trunk).** MERGE 는 재귀 labeled-parent 를 discrete `.kosmos` anchor 로 영속(structure 가 activation superposition 밖). 산다 = `core/kosmos_io.hexa`(create_anchor) + decode-side anchor-walk, additive trunk objective 아님. → **trunk-learn 사다리(anima evaluate --py G1) 로 검증 불가** — 이건 "additive-CE 가 학습하나" 질문을 bypass 한다. 별도 rung = kosmos_io + decode-mouth 배선 후 compositional-memory recall 측정(H_1471 self-anchor 인프라 재활용). follow-on ING.

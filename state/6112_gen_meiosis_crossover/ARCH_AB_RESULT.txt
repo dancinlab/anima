@@ -1,0 +1,78 @@
+H_6112 ladder rung 1.5 — real-trunk meiosis-crossover A/B (DIRECTIONAL, torch)
+torch=2.10.0+cu128  K=6 D=64 L=2 E=4 steps=800 lr=0.01 seeds=[0, 1, 2]
+train(diag)=6  heldout(off-diag)=30
+[seed 0] ADD fit=1.0 reach=0.0 p=120132 | MEIO fit=1.0 reach=0.0 p=120528 | delta=0.0
+[seed 1] ADD fit=1.0 reach=0.0 p=120132 | MEIO fit=1.0 reach=0.0333 p=120528 | delta=0.0333
+[seed 2] ADD fit=1.0 reach=0.0 p=120132 | MEIO fit=1.0 reach=0.0333 p=120528 | delta=0.0333
+=== VERDICT (DIRECTIONAL — torch, not live .hexa engine; never terminal) ===
+{
+  "additive_reach_per_seed": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "additive_reach_mean": 0.0,
+  "meiosis_reach_per_seed": [
+    0.0,
+    0.0333,
+    0.0333
+  ],
+  "meiosis_reach_mean": 0.0222,
+  "additive_train_fit_mean": 1.0,
+  "meiosis_train_fit_mean": 1.0,
+  "seeds_meeting_delta>=0.30": 0,
+  "both_arms_fit_train": true,
+  "bar_pass": false,
+  "decision": "falsified-directional",
+  "per_seed": [
+    {
+      "seed": 0,
+      "additive": {
+        "train_fit": 1.0,
+        "reach": 0.0,
+        "n_params": 120132,
+        "final_loss": 0.0
+      },
+      "meiosis": {
+        "train_fit": 1.0,
+        "reach": 0.0,
+        "n_params": 120528,
+        "final_loss": 0.0001
+      },
+      "delta": 0.0
+    },
+    {
+      "seed": 1,
+      "additive": {
+        "train_fit": 1.0,
+        "reach": 0.0,
+        "n_params": 120132,
+        "final_loss": 0.0
+      },
+      "meiosis": {
+        "train_fit": 1.0,
+        "reach": 0.0333,
+        "n_params": 120528,
+        "final_loss": 0.0
+      },
+      "delta": 0.0333
+    },
+    {
+      "seed": 2,
+      "additive": {
+        "train_fit": 1.0,
+        "reach": 0.0,
+        "n_params": 120132,
+        "final_loss": 0.0
+      },
+      "meiosis": {
+        "train_fit": 1.0,
+        "reach": 0.0333,
+        "n_params": 120528,
+        "final_loss": 0.0
+      },
+      "delta": 0.0333
+    }
+  ]
+}
+DECISION=falsified-directional bar_pass=False [GREEN-DIRECTIONAL bar: >=2/3 seeds delta>=0.30 AND mean additive_reach<=0.20]
