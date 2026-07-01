@@ -30,3 +30,18 @@
 
 - `cards/H_6137_gen_cls_dual_timescale.md` (this card)
 - `state/6137_gen_cls_dual_timescale/` (probe 발사 시 생성)
+
+---
+
+## 발사 결과 (DIRECTIONAL probe)
+
+**decision: DUP-WALLED — probe 미발사 (재발사 금지).**
+
+**ledger finding:** H_6137 의 메커니즘(빠른 lane 에피소드 + 느린 lane 구조, 조합=삽입을 *생성 substrate* 에 심음)은 이미 walled 된 좌표에 정확히 겹친다.
+- **4-각 수렴(`substrate-framebreak-g1-combination-operator`):** G1 재조합벽에 대해 ① mouth-objective(H_1602 🧱) ② mouth-readout-op(H_1816 predcoding·H_1823 circconv 🧱) ③ substrate-concept-embed(β 🧱) ④ **substrate-combiner(α/β 🧱)** — 넷 다 additive/affinity readout floor. H_6137 은 좌표 ④ 자체(substrate 측 store-insertion). VAdaptField nearest-basin Voronoi retrieval/insertion = compositional depth-0 로 이미 측정됨(α 0/5, β 0/5 @ operating radius).
+- **CLS 두-store 는 이미 engine-native 🟢+WIRED 이나 MEMORY faculty 한정:** H_1532 §MultiStore(AB-AC interference/retention) GREEN·배선 완료. 하지만 **H_1601 🧱 INERT-by-construction** — G1 측정 경로(g1_multiseed→clm_decode→ConvMoE trunk forward)엔 binding/store lane 이 0개이고, CLS store 는 `core/engine_cli`(의식 substrate, **disjoint**)에 산다. 따라서 store/lane 을 붙여도 G1 을 by-construction 못 움직인다(a_substrate_disjoint; H_961 binding-🟢 ∧ G1-FAIL 공존이 이를 증명).
+- **진짜 레버 = trunk OBJECTIVE / γ trained-constructive-bind(cost-gated)** — insertion-retrieval 은 affinity readout 이지 trained constructive bind 가 아니다. objective family(H_1602/H_9024 InfoNCE)까지 전수 falsify, arxiv 30편도 objective>binding>scale 로 수렴(`lit-binding-objective-external-arxiv`).
+
+**bar:** 별도 numpy bar 미설정(probe 미발사). 재발사 조건 = 좌표가 ④ substrate-combiner 가 아니고 trunk 생성 objective 를 실제로 바꾸는 새 좌표일 때만.
+
+**정직 스코프 (H_6112 transfer caveat):** 설령 여기서 numpy DIRECTIONAL probe 를 돌렸다면 factored consolidation 을 손으로 심어 REACHABLE(0→~1.0) 이 나왔을 가능성이 크지만, H_6112 감수분열 전례(추상 toy 0→1.0 → REAL CLMConvMoE trunk 0→0.022 FALSIFIED)대로 numpy 는 OVERSTATE 한다. 게다가 이 좌표는 REAL trunk 에서 이미 4-각 + H_1601 disjointness 로 walled — numpy REACHABLE 이라도 transfer-unverified 이자 이미 반증된 좌표. numpy=DIRECTIONAL, terminal 아님.

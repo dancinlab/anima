@@ -1,0 +1,6 @@
+held-out combos = [4, 6, 8, 12, 13]  chance=0.25
+ADDITIVE floor  held-out acc = 0.000
+RD-TURING       held-out acc = 1.000  (Du=0.16,Dv=0.08)
+RD equal-diff CTRL acc       = 0.000  (Du=Dv=0.12, Turing OFF)
+BAR c1 turing>=0.70: True | c2 margin>=+0.20 (=+1.000): True | c3 ctrl<=0.35: True
+VERDICT (numpy DIRECTIONAL, NOT terminal): GREEN-DIRECTIONAL

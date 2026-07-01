@@ -30,3 +30,21 @@
 
 - `cards/H_6114_gen_turing_reaction_diffusion.md` (this card)
 - `state/6114_gen_turing_reaction_diffusion/` (probe 발사 시 생성)
+
+---
+
+## 발사 결과 (DIRECTIONAL probe)
+
+**ledger finding:** 이 메커니즘(두 morphogen reaction-diffusion → 자발적 새 공간패턴 = 조합)은 이미 **두 번 사전등록**돼 있음 — H_1655 (Turing Reaction-Diffusion Morphogen Binding, 🔵 측정 0) · H_1734 (Reaction-Diffusion Morphogen Field, 🔵 측정 0). 둘 다 동일한 $0 numpy cheap test(Gray-Scott activator-inhibitor, Turing ON vs equal-diffusion control)를 사전등록해 놓고 한 번도 발사 안 함. H_1639(traveling-wave interference) 도 인접 자매. 따라서 H_6114 는 신규 좌표가 아니라 **미측정 사전등록 메커니즘의 재제안** — 이번 probe 가 H_1655/H_1734 의 never-fired cheap test 를 discharge.
+
+**decision:** NOVEL-MEASUREMENT (probed) — 벽은 아니지만(pre-registered unmeasured), 작동 성분(비선형 u·v² cross-term)은 이미 walled 된 multiplicative-readout 계열(H_1617 Hadamard⊙ · H_1823 circconv · H_6104 constraint-intersect 전부 INERT)에 속함.
+
+**numbers (numpy, `state/6114_gen_turing_reaction_diffusion/probe.py`·RESULT.txt):**
+- 과제: 독립 개념 A,B ∈ {0..3}, target = 2-bit XOR conjunction(4-class, 비분리), held-out 5/16 combo.
+- ADDITIVE floor held-out acc = **0.000**
+- RD-TURING (Du=0.16, Dv=0.08) held-out acc = **1.000**
+- RD equal-diff CONTROL (Du=Dv=0.12, Turing OFF) acc = **0.000**
+
+**FROZEN BAR (실행 전 고정, p7):** GREEN-DIRECTIONAL iff RD-Turing ≥ 0.70 ∧ (RD−ADD) ≥ +0.20 ∧ control ≤ 0.35. 실측: c1 True · c2 (+1.000) True · c3 True → **GREEN-DIRECTIONAL 통과**.
+
+**honest scope (c9 + H_6112 caveat):** numpy = DIRECTIONAL by construction, terminal 아님. GREEN 은 green light 가 **아니다** — H_6112(meiosis)에서 동일하게 numpy 추상 toy 가 0→1.0 REACHABLE 이었으나 **실 CLMConvMoE trunk 에서 FALSIFIED**(0→0.022 ≪ 0.30). 여기 reachability 는 순전히 u·v² 비선형 곱항이 XOR 을 표현할 수 있어서 발생 — 그 곱항이야말로 additive trunk 에서 collapse 하는 것으로 이미 census 확정된 성분(H_1617/H_1823/H_6104 INERT). equal-diff control 0.000 은 pattern-selection 이 Turing 불안정성에 의존함을 확인하나, 실 trunk transfer 는 **미검증·고위험**. terminal 박제 전 필수: held-out mirror-CE DESCENT → CORE `--engine conv` mount frozen G1(H_1129)·G6(H_1464) byte-exact engine-native 재측정 → ckpt PULL(a_fire_recover_complete). 대개 rung(1.5) 실-trunk toy A/B 에서 falsify 될 것으로 예상(readout/multiplicative 축 전면 floor).

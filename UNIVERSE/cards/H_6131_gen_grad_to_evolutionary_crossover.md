@@ -30,3 +30,18 @@
 
 - `cards/H_6131_gen_grad_to_evolutionary_crossover.md` (this card)
 - `state/6131_gen_grad_to_evolutionary_crossover/` (probe 발사 시 생성)
+
+---
+
+## 발사 결과 (DIRECTIONAL probe)
+
+**Ledger 확인 (check-ledger-before-lever-fire):** H_6131 = gradient → 진화적 crossover(GA) = 표현 population + crossover + selection(gradient-free, G 엔진 정합). 조회 결과 이 메커니즘은 이미 3중으로 커버됨:
+- **crossover 연산자 = H_6112(meiosis crossover)** — numpy 추상 프로브 REACHABLE 0→1.0 이나 실 CLMConvMoE trunk toy A/B **FALSIFIED 0→0.022**(disjoint-loci segment-exchange가 additive trunk 서 무력, 양 arm train_fit=1.0 = undertrain 아님). 산출: `state/6112_gen_meiosis_crossover/arch_ab.py`·`ARCH_AB_RESULT.txt`.
+- **gradient-free selection = a_mitosis_train 5-렌즈 벽** — from-scratch pure-split(gradient-free) 🔴 CONFIDENT TERMINAL, 5 직교 렌즈(**selection**·inherited-repr·lateral·curriculum·learned-trunk) 전수 🧱. GA = selection+crossover = 정확히 이 walled regime.
+- **H_6141(meiosis-GA, ~dup #9+#28)** — "crossover 를 population evolution 연산자로, gradient-free 재조합" = H_6131 과 동일 메커니즘(미발사 near-exact dup).
+
+**결정:** **DUP-WALLED** — 재발사 안 함, dup 포인터 기록. crossover 연산자 자체가 실 trunk 서 이미 FALSIFIED 이고 gradient-free selection 은 5-렌즈 벽에 포함됨.
+
+**Bar:** 프로브 미실행(H_6112 frozen bar = lift≥0.30 ∧ additive≤0.20 가 이미 실 trunk 서 0/3 seed pass 로 FALSIFIED). 신규 numpy GA 프로브는 abstract disjoint-loci toy 에서 crossover 가 off-diagonal 에 trivial 도달 → **H_6112 과대평가 패턴을 재현할 뿐** 신규 정보 0.
+
+**정직 스코프 (H_6112 transfer caveat):** numpy 추상 프로브는 구조상 DIRECTIONAL 이며 operator-expressivity 를 **과대평가**한다 — H_6112 가 바로 REACHABLE(1.0)→실 trunk(0.022) 전이실패를 실증. 따라서 여기서 numpy REACHABLE 이 나오더라도 green light 아님(transfer-unverified). G1 벽 = trunk COMBINATION OPERATOR floor, 진짜 레버 = 재조합을 보상하는 trunk 학습 OBJECTIVE(H_1602 영역)이지 readout/생성-substrate 연산자 교체 아님(H_1816/1823/1834 수렴).
