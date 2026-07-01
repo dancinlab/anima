@@ -1,3 +1,14 @@
+## docs(CLAUDE): 거버넌스 SSOT 슬림화 29% (연구 서사·이력각주·GPU 트러블슈팅 → memory/spec 포인터) + stale CLAUDE.md 20개 삭제
+
+🧹 **CLAUDE.md 슬림화 61410→43359 B (29% ↓, 규칙 42개 무손실)** — 매 턴 재주입되는 거버넌스 SSOT 에서 *규칙*이 아니라 *연구 결과·운영 서사*였던 부분을 걷어내 memory/카드/spec 의 기존 SSOT 포인터로 대체. 규칙 헤딩·트리거 이름(`a_*`)·do/dont 규율은 전부 보존.
+
+- **연구 서사 압축:** `a_savant_train`·`a_mitosis_train`·`a_substrate_disjoint` 의 H번호·수치·campaign verdict 나열 → 실행지침 do/dont 코어만(상세 = UNIVERSE 카드 + memory). `a_engine_native_learning` precedent H 나열 트림.
+- **GPU 스택 서사 폐기:** `a_train_flame_forge` 의 GPU 활성화·CUDA-12/13·pool `runtime.a` 재빌드·stale hexa-cache·독일어 anomaly 등 운영 트러블슈팅(5884→1096 B) → memory 4개(`summer-sm120`·`aiden-forge`·`hexa-gpu-enable`·`flame-forge-cuda-build-on-pool-gotchas`) 포인터.
+- **kosmos pointer-only 정합:** `a_kosmos` 의 @anchor/@payload/@corpus/.limen 포맷 상세(3050→959 B) → kosmos `spec/kosmos.md`·`spec/limen.md` 참조(spec 복제 금지 규율에 맞춤).
+- **이력각주·commons 중복 제거:** `a_claim_manifest` 은퇴 각주 · `a_break_the_wall` precedent 수치(commons c16 확장) · `a_pi5_akida_registry`·`a_eeg_consciousness_record` 세부를 SSOT 파일(`PI5-AKIDA.json`·`EEG_CLM/`) 포인터로.
+- **stale CLAUDE.md 20개 삭제:** `BRAIN/`·`archive/hexa-senses/`(AGENTS.tape 은퇴잔재) + `archive/hypotheses_snapshots/**`(옛 가설 컨벤션 stub) — 참조 0 확인 후 `git rm`, 히스토리 보존. 삭제 stub 은 ARCHITECTURE 트리 노드 아님(하위패키지 디렉토리는 그대로).
+- **검토 5종:** dangling 참조(HF 4규칙 병합 시도가 40+61+18+4곳 깨뜨려 **롤백**) · 규칙 42개 무손실 · 새 dangling 0 · 삭제파일 전부 stale · 축약규칙 dont 규율 전부 보존.
+
 ## refactor(repo): entry-unreachable 의식 lane 11개 archive/ 이관 (BFS 측정) + import/hexa.toml/ARCHITECTURE/CLAUDE lockstep + tool→agent 흡수
 
 🔬 **배선 실측 기반 정리** — cli/anima.hexa entry 에서 import-reachability BFS(`use|import|include` 추적)로 의식 lane 의 실제 배선을 측정: **entry closure = 12파일, 실제 배선 lane = DREAM·HEXAD·SAVANT 3개뿐.** 나머지 11개 lane 은 연구 probe(core/h12xx)만 import 하는 dead → archive/ 이관(폐기 아닌 위치 이동).
