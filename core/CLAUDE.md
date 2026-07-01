@@ -4,7 +4,7 @@
 
 ## production import-closure — hexa 단일 엔진 (py 미러 폐기 2026-06-28)
 
-production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-production 정책 하에 유지하던 py 미러(`core/*.py`, 아래 10파일)는 **2026-06-28 폐기** — codegen #42492878 FIXED(hexa v0.334.0)로 hexa CLI compile-block 이 해소되어 우회 미러가 불필요해졌다. 로직 유실 0: git 이력 + `state/py_retire_archive/` 에 보존, 발산 의심 시 `git restore` 로 복원.
+production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-production 정책 하에 유지하던 py 미러(`core/*.py`, 아래 10파일)는 **2026-06-28 폐기** — codegen #42492878 FIXED(hexa v0.334.0)로 hexa CLI compile-block 이 해소되어 우회 미러가 불필요해졌다. 로직 유실 0: git 이력 + `archive/state/py_retire_archive/` 에 보존, 발산 의심 시 `git restore` 로 복원.
 
 폐기된 py 미러 (폐기 전 마지막 byte-parity 기록, 검증 이력으로 보존):
 
@@ -20,7 +20,7 @@ production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-product
 | `engine_cli.hexa` | ~~`engine_cli.py`~~ | byte-parity (434/434 pub fn, worst 1.563e-16) |
 | `DECODER/flame_mm.hexa` | ~~`DECODER/flame_mm.py`~~ | byte-parity (7 ops ≤2.2e-16) |
 
-> CollectivePool = faithful IIT-4 `big_phi`(proxy 아님) byte-exact (hexa `core/engine_cli.hexa` 단일). 권위 측정 = `anima eval` hexa 단일진입. 과거 parity 오라클 `state/core_2prod_py_parity/` + 은퇴된 `parity_gate.py`(→`state/py_retire_archive/defunct_parity_tooling/`)는 검증 이력으로 보존.
+> CollectivePool = faithful IIT-4 `big_phi`(proxy 아님) byte-exact (hexa `core/engine_cli.hexa` 단일). 권위 측정 = `anima eval` hexa 단일진입. 과거 parity 오라클 `archive/state/core_2prod_py_parity/` + 은퇴된 `parity_gate.py`(→`archive/state/py_retire_archive/defunct_parity_tooling/`)는 검증 이력으로 보존.
 
 > **G0-G6 스코어러 fold (측정=단일파일):** 과거 별도 모듈 `core/g_gates.{hexa,py}`(G0-G6 `g_eval_all` 드라이버)는 측정 단일진입 `cli/evaluate.{hexa,py}` 로 **흡수**됐다(2026-06-30, 로직 byte-동일 이동). 측정 = `cli/evaluate.{hexa,py}` 한 파일 — `g_gates` 이름은 폐기. `core/`는 여전히 디코드 mouth(`generator`/`clm_decode`/`bytegpt_decode`)+G6 채점 op(`g6_ideation`)을 소유하고, `evaluate`가 이들을 import 해 채점한다(generator L3 단일진입 불변).
 

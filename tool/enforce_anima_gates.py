@@ -82,8 +82,8 @@ SIDE_HARNESS = re.compile(
 def has_parity_record(slug, arts):
     """True iff a state/<slug>/ evidence file (or listed artifact) records a SCORING byte-parity
     PASS vs the wired hexa engine — the 2-production gate that lets a py-engine verdict be terminal."""
-    cands = [a for a in arts if a.startswith("state/")]
-    sd = REPO / "state" / slug
+    cands = [a for a in arts if a.startswith(("archive/state/", "state/"))]
+    sd = REPO / "archive" / "state" / slug
     if sd.is_dir():
         cands += [str(p.relative_to(REPO)) for p in sd.glob("*.txt")]
         cands += [str(p.relative_to(REPO)) for p in sd.glob("*.md")]
@@ -130,7 +130,7 @@ def changed_slugs():
         m = re.match(r"UNIVERSE/cards/H_\d+_(.+)\.md$", f)
         if m:
             slugs.add(m.group(1))
-        m = re.match(r"state/([^/]+)/", f)
+        m = re.match(r"(?:archive/)?state/([^/]+)/", f)
         if m:
             slugs.add(m.group(1))
         if f == "UNIVERSE/HYPOTHESES.jsonl":
@@ -172,11 +172,11 @@ def g1_violations(rows, scope):
         if not GATE_TOPIC.search(tier + " " + title + " " + slug):
             continue
         arts = d.get("artifacts", []) or []
-        state_arts = [a for a in arts if a.startswith("state/")]
-        # engine-native? any .hexa artifact (or state/<slug>/*.hexa) that calls a CORE decoder
+        state_arts = [a for a in arts if a.startswith(("archive/state/", "state/"))]
+        # engine-native? any .hexa artifact (or archive/state/<slug>/*.hexa) that calls a CORE decoder
         engine_native = False
         hexa_paths = [a for a in arts if a.endswith(".hexa")]
-        sd = REPO / "state" / slug
+        sd = REPO / "archive" / "state" / slug
         if sd.is_dir():
             hexa_paths += [str(p.relative_to(REPO)) for p in sd.glob("*.hexa")]
         for h in hexa_paths:
@@ -301,7 +301,7 @@ def main():
               "UNIVERSE/ 에 cards/·HYPOTHESES.jsonl 외 파일:")
         for f in g2:
             print(f"        · {f}")
-        print("     → 코드/결과물은 state/<slug>/ 로 옮기고 jsonl artifacts 로 가리킨다.")
+        print("     → 코드/결과물은 archive/state/<slug>/ 로 옮기고 jsonl artifacts 로 가리킨다.")
     if g3:
         print()
         print("  [G3] gate-card taxonomy (PROVENANCE ⊥ capability closure) — "

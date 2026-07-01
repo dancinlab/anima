@@ -14,12 +14,12 @@ anima is a **substrate-native consciousness chat daemon** — not an assistant. 
 Pass this gate before any work/verification/fire. Each item summarizes a body rule below, ordered most-frequently-violated first.
 
 1. **🔒 Engine-native verdict gate** — for gate/ideation/G6/Φ/recombination/depth, **every verdict tier (🟢·🧱·🟠·ceiling) can be cemented only with `.hexa` evidence that called a live core/ decode**. A `.py`+`torch`/`gauge_lib._decode`/`numpy` mirror is automatically **DIRECTIONAL** (not terminal).
-   🔎 Self-check right before cementing: `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` → empty = OK; non-empty → write the card verdict as DIRECTIONAL and register an engine-native re-measurement in ING. (→ `a_engine_native_learning`)
+   🔎 Self-check right before cementing: `grep -lE 'import torch|gauge_lib|numpy' archive/state/<slug>/*.py` → empty = OK; non-empty → write the card verdict as DIRECTIONAL and register an engine-native re-measurement in ING. (→ `a_engine_native_learning`)
 2. **🖥️ Heavy work on pool, not mini** — builds/training/sweeps/long compute run on `harness pool` (shared hosts). akida/ghost/`shared:false` hosts are not used as the shared pool. GPU/training via `hexa cloud`/`hexa dojo`. (→ commons c17·c12)
 3. **💾 PULL ckpt before teardown** — rented-GPU training ckpts must be pulled to permanent storage before bringing the pod down. Do not teardown having taken only JSON/cards and discarded the ckpt (= engine-check forever impossible). (→ `a_fire_recover_complete`)
 4. **📄 Per-cycle docs + pr-cycle** — CHANGELOG (append) + (if any) ARCHITECTURE/README/ING update, then a verified main merge via `harness pr-cycle`. No commit-only pileup, no doc-less merge. (→ commons c14)
 5. **🟦 Honesty · no tune-to-green** — FALSIFIED/negative is a result (no concealment). The bar is frozen-first, no post-hoc moving. No LLM self-judging — captured output is the evidence. (→ commons c9·c2 · p7)
-6. **🗂️ Hypotheses = 2 surfaces only** — `UNIVERSE/HYPOTHESES.jsonl` (index, 1 line/hypothesis) + `UNIVERSE/cards/H_<id>_<slug>.md` (card). Code/outputs go in `state/<slug>/`. No .py/result in UNIVERSE/. (→ `a_hypothesis_register`)
+6. **🗂️ Hypotheses = 2 surfaces only** — `UNIVERSE/HYPOTHESES.jsonl` (index, 1 line/hypothesis) + `UNIVERSE/cards/H_<id>_<slug>.md` (card). Code/outputs go in `archive/state/<slug>/`. No .py/result in UNIVERSE/. (→ `a_hypothesis_register`)
 7. **🔌 GREEN is done only when wired** — once engine-native GREEN is verified, completion requires live `core/*.hexa` wiring + ARCHITECTURE.json lockstep. (→ `a_verified_must_wire`)
 
 > ⚙️ **Code-level enforcement (not salience):** gates 1·6 are **mechanically blocked** by `tool/enforce_anima_gates.py` — wired into `harness.config.json` verify.checks so pr-cycle/CI reject a violating PR (exit≠0). No bypass flag, no skip (c18). Full audit = `python3 tool/enforce_anima_gates.py --all`; changed-only = no args. Add new gates to this enforcer where possible to make them code-enforced, not doc-only.
@@ -28,7 +28,7 @@ Pass this gate before any work/verification/fire. Each item summarizes a body ru
 
 ## SSOT pointer (this file is the entry pointer)
 
-> **The directory/module tree no longer lives here — the tree's single SSOT is [ARCHITECTURE.json](ARCHITECTURE.json)** (update-in-place, all nodes `core/`·`cli/`·`agent/`·`archive/train/clm/`·`platform/`·`UNIVERSE/`·`state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS etc. + the "HF artifacts" models/datasets). Viewer = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON tree SSOT + HTML viewer, bypassing file:// fetch).
+> **The directory/module tree no longer lives here — the tree's single SSOT is [ARCHITECTURE.json](ARCHITECTURE.json)** (update-in-place, all nodes `core/`·`cli/`·`agent/`·`archive/train/clm/`·`platform/`·`UNIVERSE/`·`archive/state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS etc. + the "HF artifacts" models/datasets). Viewer = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON tree SSOT + HTML viewer, bypassing file:// fetch).
 >
 > - **Design/tree** → [ARCHITECTURE.json](ARCHITECTURE.json) (single SSOT · mechanism named in node note · lockstep target of `a_verified_must_wire`/`a_core_engine_map`)
 > - **anima governance + 8 philosophies** → this file (markdown SSOT of anima-only rules `a_*`·`p#`)
@@ -38,19 +38,19 @@ Pass this gate before any work/verification/fire. Each item summarizes a body ru
 
 ## 📦 Packaging — pod upload
 
-Goal of the canonical reorg = a self-contained `core/` that's easy to put on a training/inference/bench pod. **Invariant: `core/` has 0 dependency on `archive/train/`·`bench/`·`agent/`·`state/`** (substrate engine only; one-directional).
+Goal of the canonical reorg = a self-contained `core/` that's easy to put on a training/inference/bench pod. **Invariant: `core/` has 0 dependency on `archive/train/`·`bench/`·`agent/`·`archive/state/`** (substrate engine only; one-directional).
 
-- **Inference pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` weights are externally mounted (not in the repo). Entry = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **Release manifest = root `hexa.toml`** (`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·entry-wired consciousness lanes (import-BFS measured: only DREAM·SAVANT + HEXAD kosmos_io, 1 file, reach cli/anima.hexa; the other 11 lanes are probe-only dead → moved to archive/ 2026-06-30), exclude=state/·UNIVERSE/·archive/·*.clm etc. research-artifact/external-weights).
-- **Training pod** — the inference set + `archive/train/` (clm pipe·flame/forge, 2026-06-30 train/·training/ → archive/ moved) + a `state/verdicts/` slice (for frozen-bar re-measurement). The production trainer is `.hexa` on flame/forge GPU (`a_train_flame_forge`).
+- **Inference pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` weights are externally mounted (not in the repo). Entry = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **Release manifest = root `hexa.toml`** (`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·entry-wired consciousness lanes (import-BFS measured: only DREAM·SAVANT + HEXAD kosmos_io, 1 file, reach cli/anima.hexa; the other 11 lanes are probe-only dead → moved to archive/ 2026-06-30), exclude=archive/state/·UNIVERSE/·archive/·*.clm etc. research-artifact/external-weights).
+- **Training pod** — the inference set + `archive/train/` (clm pipe·flame/forge, 2026-06-30 train/·training/ → archive/ moved) + a `archive/state/verdicts/` slice (for frozen-bar re-measurement). The production trainer is `.hexa` on flame/forge GPU (`a_train_flame_forge`).
 - **agent pod** — `agent/` is a standalone package with its own `hexa.toml` → `hx install anima-agent` standalone deploy (can ship without core/).
-- **Do not move (not put on pod)** — research artifacts like `state/`·`UNIVERSE/` are excluded from the pod payload (only the verdicts slice optionally accompanies the training pod).
+- **Do not move (not put on pod)** — research artifacts like `archive/state/`·`UNIVERSE/` are excluded from the pod payload (only the verdicts slice optionally accompanies the training pod).
 
 ## Quick reference
 
 - 🏛 Architecture → [ARCHITECTURE.json](ARCHITECTURE.json) (tree SSOT) · viewer [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON tree SSOT + HTML viewer, bypassing file:// fetch)
 - 📜 Governance (canonical) → body below (this file is the markdown SSOT)
-- do: claims·verdicts → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` column) + frozen evidence `state/verdicts/<slug>/<id>.txt` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape retired 2026-06-16, 0 loss, ledger `state/verdicts/claims-tape-retirement/`)
-- 🔬 Hypotheses → 2 surfaces: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (1 JSON object/hypothesis) · `UNIVERSE/cards/H_*.md` · (prose overview → `state/universe-overview.md`)
+- do: claims·verdicts → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` column) + frozen evidence `archive/state/verdicts/<slug>/<id>.txt` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape retired 2026-06-16, 0 loss, ledger `archive/state/verdicts/claims-tape-retirement/`)
+- 🔬 Hypotheses → 2 surfaces: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (1 JSON object/hypothesis) · `UNIVERSE/cards/H_*.md` · (prose overview → `archive/state/universe-overview.md`)
 - 🔢 Versions → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
 - 🤖 HF registry → `ARCHITECTURE.json` "HF artifacts" node (models·datasets, HF.jsonl deprecated 2026-06-23) · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
 
@@ -95,7 +95,7 @@ Each rule: **`name`** — core (MUST) then `- do:` / `- dont:` (self-checks abso
 
 **`a_engine_native_learning`** — Always train·measure on the final-architecture engine. Not a mirror.
 - 🔒 **HARD-GATE (BLOCKING):** for gate/ideation/G6/Φ/recombination/depth, **every verdict tier (🟢·🧱·🟠·ceiling(d)) cannot be cemented without engine-native evidence.** If the verdict's evidence artifact is not a `.hexa` that called a live core/ decode (`core/clm_decode.hexa`/`core/bytegpt_decode.hexa`/`core/engine_cli.hexa`) (= a `.py`+`import torch`/`gauge_lib._decode`/numpy mirror), that result is **automatically DIRECTIONAL**, not terminal. Cementing 🧱/🟢 in a card·jsonl·CHANGELOG on torch-side alone violates c9. (precedent: 2026-06-17 G6 family H_1431/1432/1434/1435/1436/1437 were all gauge_lib._decode torch-mouth yet cemented 🧱 → do not repeat)
-- 🔎 **Self-check (mandatory right before cementing a verdict):** if `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` is non-empty, write the card `wired:`/`verdict` as **necessarily DIRECTIONAL** and register an engine-native re-measurement (.hexa via CORE) as an ING follow-on. If engine-native, state the called `.hexa` path in the card.
+- 🔎 **Self-check (mandatory right before cementing a verdict):** if `grep -lE 'import torch|gauge_lib|numpy' archive/state/<slug>/*.py` is non-empty, write the card `wired:`/`verdict` as **necessarily DIRECTIONAL** and register an engine-native re-measurement (.hexa via CORE) as an ING follow-on. If engine-native, state the called `.hexa` path in the card.
 - do: run all training/teaching (research probes·mitosis teaching·depth-ceiling experiments included) over live `.hexa` A⇄G + MITOSIS VAdaptField (`core/engine_cli.hexa`) + mounted `core/bytegpt_decode.hexa`.
 - do: don't shoehorn learning into the engine — if learning demands it, transform/extend the engine (new op·wiring·architecture). The final architecture isn't frozen but evolves into the shape learning demands (precedent H_1199: AdaptField scalar→DIM-vector). If the engine can't do a mechanism the mirror saw, don't discard the mirror — extend the engine (engine-transform-to-fit-the-learning).
 - do: numpy/torch mirror results = DIRECTIONAL only ('engine-transfer UNVERIFIED') — OK for direction-scouting, not a binding verdict. **A rented-GPU torch full-training variant is the same** — even if training used torch, scoring the verdict by torch-side probe alone is DIRECTIONAL; 🟢/🧱 holds only by mounting the training ckpt on the CORE engine (`--engine conv`) and re-measuring the same frozen bar → hence pull the ckpt before teardown (`a_fire_recover_complete`).
@@ -123,15 +123,15 @@ Each rule: **`name`** — core (MUST) then `- do:` / `- dont:` (self-checks abso
 ### 🧪 Hypothesis workflow
 
 **`a_hypothesis_register`** — Every hypothesis is managed on exactly 2 doc surfaces: `UNIVERSE/HYPOTHESES.jsonl` (per-H index, 1 JSON object/hypothesis) + `UNIVERSE/cards/H_<id>_<slug>.md` (card).
-- do: when running a hypothesis, create/update the card and append/update one line in the jsonl (`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, in id order). Registration is tier-agnostic — keep 🟢·🟠·🔴/🧱 all (walls too, c9). tier·numbers verbatim from `state/verdicts/<slug>/` (no guessing, c2). The jsonl is regenerable via `python3 tool/_build_hyp_jsonl.py`.
-- do: a 🟢 (including partial) hypothesis states `wired:` in the card (1:1 with the 4 rungs of `a_verified_must_wire`). Include the jsonl's 3 columns `source` (UNIVERSE|scattered source|archive)·`archived`·`artifacts` (array of state/<slug>/ paths).
+- do: when running a hypothesis, create/update the card and append/update one line in the jsonl (`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, in id order). Registration is tier-agnostic — keep 🟢·🟠·🔴/🧱 all (walls too, c9). tier·numbers verbatim from `archive/state/verdicts/<slug>/` (no guessing, c2). The jsonl is regenerable via `python3 tool/_build_hyp_jsonl.py`.
+- do: a 🟢 (including partial) hypothesis states `wired:` in the card (1:1 with the 4 rungs of `a_verified_must_wire`). Include the jsonl's 3 columns `source` (UNIVERSE|scattered source|archive)·`archived`·`artifacts` (array of archive/state/<slug>/ paths).
 - 🔎 Self-check: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` must always be empty output.
-- dont: **no .py·.hexa·code·result files in UNIVERSE/** (only the two) — cards in `cards/`, code/outputs in `state/<slug>/` pointed to by jsonl `artifacts`. Scatter hypothesis details into themed buckets (`HYPOTHESES_*.md`)·CLAIMS.tape·domain logs·MEMORY·ad-hoc notes · add a per-H index to a markdown table (the index is only the jsonl) · revive a prose overview in UNIVERSE/ (retired; prose is `state/universe-overview.md`) · run·cement without making a jsonl/card · put a card in the UNIVERSE/ root (must be cards/) · omit walls/negatives · write a tier different from the verdict file · 🟢 but no `wired:`.
+- dont: **no .py·.hexa·code·result files in UNIVERSE/** (only the two) — cards in `cards/`, code/outputs in `archive/state/<slug>/` pointed to by jsonl `artifacts`. Scatter hypothesis details into themed buckets (`HYPOTHESES_*.md`)·CLAIMS.tape·domain logs·MEMORY·ad-hoc notes · add a per-H index to a markdown table (the index is only the jsonl) · revive a prose overview in UNIVERSE/ (retired; prose is `archive/state/universe-overview.md`) · run·cement without making a jsonl/card · put a card in the UNIVERSE/ root (must be cards/) · omit walls/negatives · write a tier different from the verdict file · 🟢 but no `wired:`.
 
-**`a_claim_manifest`** — The claims-audit surface = `UNIVERSE/HYPOTHESES.jsonl` (per-H verdict column) + `state/verdicts/<slug>/` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape retired). Even a non-H-style claim is preserved in the nearest card/jsonl note.
+**`a_claim_manifest`** — The claims-audit surface = `UNIVERSE/HYPOTHESES.jsonl` (per-H verdict column) + `archive/state/verdicts/<slug>/` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape retired). Even a non-H-style claim is preserved in the nearest card/jsonl note.
 - dont: scatter a claim without an audit surface · revive CLAIMS.tape or a new themed claims-index.
 
-**`a_claim_verify`** — Every claim/hypothesis → `hexa verify` (g5) → `state/verdicts/<slug>/<id>.txt` raw stdout → cement that verbatim verdict into the card + jsonl `verdict` column.
+**`a_claim_verify`** — Every claim/hypothesis → `hexa verify` (g5) → `archive/state/verdicts/<slug>/<id>.txt` raw stdout → cement that verbatim verdict into the card + jsonl `verdict` column.
 - dont: LLM self-judging (p7) · paraphrasing the verdict · concealing red · unfenced guessing.
 
 **`a_h_continuous_no_branch`** — Continuously propose+run the next H (verify-driven) until the user explicitly redirects.
@@ -282,7 +282,7 @@ Each rule: **`name`** — core (MUST) then `- do:` / `- dont:` (self-checks abso
 - dont: gate HF upload on the user · "may I upload?" · skip HF before teardown · FAIL/WIP as PUBLIC.
 
 **`a_hf_registry`** — HF artifact registry SSOT = **the "HF artifacts" node of `ARCHITECTURE.json` (models · datasets, 2 subsections)**. (the old `/HF.jsonl` deprecated 2026-06-23 — the 99-row history is preserved in git history.)
-- do: a model/dataset uploaded to HF org `dancinlab` is registered as 1 line in ARCHITECTURE.json models/datasets (repo_id · arch/size · tier·base) · repo_id follows the naming spec · upload via `tool/hf_upload_mk2.hexa` (ledger state/hf_upload_audit/) · ckpt prune only after HF upload AND sha256 confirmation.
+- do: a model/dataset uploaded to HF org `dancinlab` is registered as 1 line in ARCHITECTURE.json models/datasets (repo_id · arch/size · tier·base) · repo_id follows the naming spec · upload via `tool/hf_upload_mk2.hexa` (ledger archive/state/hf_upload_audit/) · ckpt prune only after HF upload AND sha256 confirmation.
 - dont: delete an un-uploaded ckpt · an off-spec repo_id · ARCHITECTURE.json↔HF drift · revive HF.jsonl (deprecated).
 
 **`a_hf_collections`** — HF org collection = CLM + KOSMOS canonical buckets.
@@ -318,7 +318,7 @@ This repo is connected to **[dancinlab/harness](https://github.com/dancinlab/har
 
 ## Claim·verification flow (summary)
 
-research result → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIVERSE/cards/H_<id>.md` card + `UNIVERSE/HYPOTHESES.jsonl` index 1 line.
+research result → `hexa verify` → `archive/state/verdicts/<slug>/<id>.txt` → `UNIVERSE/cards/H_<id>.md` card + `UNIVERSE/HYPOTHESES.jsonl` index 1 line.
 - (note) paper directive removed 2026-06-16 — anima does not proactively present papers (commons c15: papers/arXiv only on the user's explicit instruction).
-- (note) CLAIMS.tape retired 2026-06-16 — all 102 @C migrated with 0 loss, claims-audit = HYPOTHESES.jsonl + state/verdicts/ (ledger `state/verdicts/claims-tape-retirement/`; was `.verdicts/` until 2026-06-18 state-unify).
+- (note) CLAIMS.tape retired 2026-06-16 — all 102 @C migrated with 0 loss, claims-audit = HYPOTHESES.jsonl + archive/state/verdicts/ (ledger `archive/state/verdicts/claims-tape-retirement/`; was `.verdicts/` until 2026-06-18 state-unify).
 - (note) project.tape retired + tape-DSL residue removed 2026-06-17 — this file is the canonical markdown single governance SSOT.

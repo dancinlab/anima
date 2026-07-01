@@ -11,7 +11,7 @@
 | `eval_pod.sh` | GPU pod 원격 측정 발사·회수 one-liner (`cli/eval_pod.sh <pod_id>`) | — |
 | `train.hexa` | **production canonical 트레이너 (단일)** — SAVANT/MITOSIS/4셀/held-out val/descent 통합 (`a_train_flame_forge`) | 엔진-네이티브 |
 
-> `train.py`(torch Lane-P REFERENCE+bridge)는 2026-06-28 폐기 — core 미러라 `git rm`(`cli/train.hexa` 가 task#10 full-parity 로 모든 레버 보유). 과거 torch Lane-P GPU 트레이너는 `state/py_retire_archive/train_torch_lane_p/`.
+> `train.py`(torch Lane-P REFERENCE+bridge)는 2026-06-28 폐기 — core 미러라 `git rm`(`cli/train.hexa` 가 task#10 full-parity 로 모든 레버 보유). 과거 torch Lane-P GPU 트레이너는 `archive/state/py_retire_archive/train_torch_lane_p/`.
 
 ## 규칙
 

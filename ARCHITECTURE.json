@@ -342,13 +342,13 @@
             "name": "agent/ (tool provider, standalone hexa.toml package). Production code",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-agent-tool-provider-standalone-hexa",
-            "detail": "agent/ (tool provider, standalone hexa.toml package). Production code lives ONLY in these 3 folders — do NOT stash code in other repo folders (HEXAD/·train/·tool/·state/·UNIVERSE/) and import/wire it into the engine (no intra-repo cross-folder import;"
+            "detail": "agent/ (tool provider, standalone hexa.toml package). Production code lives ONLY in these 3 folders — do NOT stash code in other repo folders (HEXAD/·train/·tool/·archive/state/·UNIVERSE/) and import/wire it into the engine (no intra-repo cross-folder import;"
           },
           {
             "name": "the engine's repo-internal import closure stays inside the",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-the-engine-s-repo-internal-import-c",
-            "detail": "the engine's repo-internal import closure stays inside the 3 folders). External libraries are free: language stdlib + third-party (py may use numpy/torch). Data+results live in state/ only; research artifacts (state/·UNIVERSE/)+docs are not code."
+            "detail": "the engine's repo-internal import closure stays inside the 3 folders). External libraries are free: language stdlib + third-party (py may use numpy/torch). Data+results live in archive/state/ only; research artifacts (archive/state/·UNIVERSE/)+docs are not code."
           },
           {
             "name": "path",
@@ -366,7 +366,7 @@
             "name": "research probes (h<NNNN>_*.hexa) + DECODER research/state pod-harvests evacuated",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-research-probes-h-nnnn-hexa-decoder",
-            "detail": "research probes (h<NNNN>_*.hexa) + DECODER research/state pod-harvests evacuated to state/core_research_probes & state/decoder_research (preserve-state; core/ 429→212; core/phi/ 165 deferred)."
+            "detail": "research probes (h<NNNN>_*.hexa) + DECODER research/state pod-harvests evacuated to archive/state/core_research_probes & archive/state/decoder_research (preserve-state; core/ 429→212; core/phi/ 165 deferred)."
           },
           {
             "name": "2-production mirror ✅ 10/10 COMPLETE (2026-06-26)",
@@ -384,7 +384,7 @@
             "name": "The py engine is the byte-parity-proven mirror that",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-the-py-engine-is-the-byte-parity-pr",
-            "detail": "The py engine is the byte-parity-proven mirror that measures G0-G6 when the hexa CLI is blocked at compile-time (x86_64 gen_auto_ideate codegen bug). Evidence = state/core_2prod_py_parity/."
+            "detail": "The py engine is the byte-parity-proven mirror that measures G0-G6 when the hexa CLI is blocked at compile-time (x86_64 gen_auto_ideate codegen bug). Evidence = archive/state/core_2prod_py_parity/."
           },
           {
             "name": "note",
@@ -793,10 +793,10 @@
                 "detail": "CPU-path is FLAT (prior 6-agent workflow). Both 'device cudaMalloc slot' and 'runtime farr noop-free' (false comment, #2622) hypotheses FALSIFIED. Culprit = flame_mm GPU-seam host staging allocation (RFC-040 per-matmul host buffer unfreed on the DEVICE branch). clm303 verdict stays DIRECTIONAL;"
               },
               {
-                "name": "engine-native G0-G6 terminal可 via the FLAT CPU-path. harvest=state/clm303_clean_…",
+                "name": "engine-native G0-G6 terminal可 via the FLAT CPU-path. harvest=archive/state/clm303_clean_…",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-23",
-                "detail": "engine-native G0-G6 terminal可 via the FLAT CPU-path. harvest=state/clm303_clean_corpus/device_attribution_remeasure.txt."
+                "detail": "engine-native G0-G6 terminal可 via the FLAT CPU-path. harvest=archive/state/clm303_clean_corpus/device_attribution_remeasure.txt."
               },
               {
                 "name": "row (b) ByteGPT mouth",
@@ -1013,10 +1013,10 @@
                 "detail": "WIRED-live(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth"
               },
               {
-                "name": "parity = numpy oracle state/1607_g_gates_refmatch/g1g2_ref_parity.py (G1/G2 reference-match)",
+                "name": "parity = numpy oracle archive/state/1607_g_gates_refmatch/g1g2_ref_parity.py (G1/G2 reference-match)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-9",
-                "detail": "G1/G2 reference-match parity = numpy oracle state/1607_g_gates_refmatch/g1g2_ref_parity.py (구 core/g_gates_smoke.hexa 는 g_gates fold 시 제거))"
+                "detail": "G1/G2 reference-match parity = numpy oracle archive/state/1607_g_gates_refmatch/g1g2_ref_parity.py (구 core/g_gates_smoke.hexa 는 g_gates fold 시 제거))"
               },
               {
                 "name": "통과규칙 — 통과(closure·MUST) vs 추가평가 (이름·분류 SSOT · 2026-06-27 owner)",
@@ -1260,7 +1260,7 @@
                     "name": "SSOT",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-46",
-                    "detail": "state/clm303_clean_corpus/EVAL_KIT.md (절차·필요파일·함정)"
+                    "detail": "archive/state/clm303_clean_corpus/EVAL_KIT.md (절차·필요파일·함정)"
                   },
                   {
                     "name": "status",
@@ -1345,16 +1345,16 @@
                     "detail": "G1/G2 native `.hexa` metric 은 새 metric 발명이 아니라 기존 frozen numpy metric 과 **성분별 1:1 reference-match** (commons reference-match) — clm303 G1/G2 결과가 과거 H_1129/H_1140 verdict 와 비교 가능해야 하므로."
                   },
                   {
-                    "name": "reference = `state/universe-probes/h1129_midcap_broad_converged_recombination.py…",
+                    "name": "reference = `archive/state/universe-probes/h1129_midcap_broad_converged_recombination.py…",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-60",
-                    "detail": "reference = `state/universe-probes/h1129_midcap_broad_converged_recombination.py`(G1 coverage/CONCEPTS) + `h1140_novelty_emergence.py`(G2 content_ngrams/_STOP/_COMMON/corpus_absent/IDEA_PROMPTS), VERBATIM 이식."
+                    "detail": "reference = `archive/state/universe-probes/h1129_midcap_broad_converged_recombination.py`(G1 coverage/CONCEPTS) + `h1140_novelty_emergence.py`(G2 content_ngrams/_STOP/_COMMON/corpus_absent/IDEA_PROMPTS), VERBATIM 이식."
                   },
                   {
                     "name": "parity 오라클",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-61",
-                    "detail": "= `state/1607_g_gates_refmatch/g1g2_ref_parity.py`(torch 0, 순수 metric on fixtures) → 고정 fixture 의 기대 카운트(G1 coverage [2,2,0,4]"
+                    "detail": "= `archive/state/1607_g_gates_refmatch/g1g2_ref_parity.py`(torch 0, 순수 metric on fixtures) → 고정 fixture 의 기대 카운트(G1 coverage [2,2,0,4]"
                   },
                   {
                     "name": "G2 content_ngrams [5,0]",
@@ -1366,7 +1366,7 @@
                     "name": "G2 corpus_absent 2) 출력. parity = numpy oracle (g_gates_smoke 제거됨)",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-63",
-                    "detail": "G2 corpus_absent 2) 출력. parity 검증은 numpy 오라클 `state/1607_g_gates_refmatch/g1g2_ref_parity.py` 가 고정 fixture 에서 기대 카운트를 박제 — 구 `core/g_gates_smoke.hexa`(7 parity case)는 g_gates→evaluate fold 시 제거(스코어러가 CLI evaluate 로 흡수되어 모듈-import smoke 의 import 대상이 사라짐)."
+                    "detail": "G2 corpus_absent 2) 출력. parity 검증은 numpy 오라클 `archive/state/1607_g_gates_refmatch/g1g2_ref_parity.py` 가 고정 fixture 에서 기대 카운트를 박제 — 구 `core/g_gates_smoke.hexa`(7 parity case)는 g_gates→evaluate fold 시 제거(스코어러가 CLI evaluate 로 흡수되어 모듈-import smoke 의 import 대상이 사라짐)."
                   },
                   {
                     "name": "transcend-axis(정직 잔차, c9): tokenizer scope = .hexa `_g6_words`",
@@ -1673,10 +1673,10 @@
                             "detail": "a_verified_must_wire 3/4(live lane wired+smoke-gated, this PR=ARCHITECTURE lockstep). READ-only Ψ-disjoint(reads/grows VAdaptField-style cell populations like ImmuneMemoryGrow, pure_field Φ/phase/Ψ untouched) NOT emit gate(a_autonomy_over_hardcode·a_core_engine_map)."
                           },
                           {
-                            "name": "probe state/1532_nm_multistore_cls/) ‖ NT×CLS FUSION FOLLOW-ON (R1 numpy",
+                            "name": "probe archive/state/1532_nm_multistore_cls/) ‖ NT×CLS FUSION FOLLOW-ON (R1 numpy",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-19",
-                            "detail": "probe state/1532_nm_multistore_cls/) ‖ NT×CLS FUSION FOLLOW-ON (R1 numpy DIRECTIONAL"
+                            "detail": "probe archive/state/1532_nm_multistore_cls/) ‖ NT×CLS FUSION FOLLOW-ON (R1 numpy DIRECTIONAL"
                           },
                           {
                             "name": "engine §R2=ING",
@@ -1709,10 +1709,10 @@
                             "detail": "external arXiv convergence 2025-12→2026-03(2512.13859 neuromod-gated assoc memory·CraniMem·SleepGate)."
                           },
                           {
-                            "name": "probe state/1541_cls_ach_gate/ etc/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(Jamo…",
+                            "name": "probe archive/state/1541_cls_ach_gate/ etc/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(Jamo…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-25",
-                            "detail": "probe state/1541_cls_ach_gate/ etc/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/TransOrder(transitive-inference: trans_order_integrate/_higher/_item_higher/_shuffle, HD34 ..."
+                            "detail": "probe archive/state/1541_cls_ach_gate/ etc/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/TransOrder(transitive-inference: trans_order_integrate/_higher/_item_higher/_shuffle, HD34 ..."
                           },
                           {
                             "name": "/PhaseField(phase-synchrony binding: phasefield_new/_new_desync/_step/_run/_cohe…",
@@ -1766,7 +1766,7 @@
                             "name": "READ-only Ψ-disjoint NOT emit gate(@L4 a_autonomy_over_hardcode). smoke 314-317.",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-34",
-                            "detail": "READ-only Ψ-disjoint NOT emit gate(@L4 a_autonomy_over_hardcode). smoke 314-317. probe state/1510_quorum_kuramoto/)/"
+                            "detail": "READ-only Ψ-disjoint NOT emit gate(@L4 a_autonomy_over_hardcode). smoke 314-317. probe archive/state/1510_quorum_kuramoto/)/"
                           }
                         ]
                       },
@@ -2149,10 +2149,10 @@
                             "detail": "a_break_the_wall type-a 측정교정 1회(NOISE 0.03→0.10, prior 가 noise floor 와 경쟁→prior 강도로 false-real rate 자연 grade, saturate artifact 해소) bar 불변 frozen-first. READ-only Ψ-disjoint NOT emit gate. live reality_call(H_1501)+pharm_lsd(H_1502) 재사용. smoke 298-302."
                           },
                           {
-                            "name": "probe state/1505_hallucination/)/Field(전자기장 섭동 모듈+PCI field-perturbation: field_…",
+                            "name": "probe archive/state/1505_hallucination/)/Field(전자기장 섭동 모듈+PCI field-perturbation: field_…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-95",
-                            "detail": "probe state/1505_hallucination/)/Field(전자기장 섭동 모듈+PCI field-perturbation: field_apply/field_apply_mfield/field_signal_entropy/drug_lsd_mfield/pci_perturb/pci_complexity/field_lane_mean, H_1503 R2 WIRED — §Neuropharm(약물=전역·화학)의 자기/EM-자극 짝(FIELD=focal·주파수특이, HARDWARE 없음)."
+                            "detail": "probe archive/state/1505_hallucination/)/Field(전자기장 섭동 모듈+PCI field-perturbation: field_apply/field_apply_mfield/field_signal_entropy/drug_lsd_mfield/pci_perturb/pci_complexity/field_lane_mean, H_1503 R2 WIRED — §Neuropharm(약물=전역·화학)의 자기/EM-자극 짝(FIELD=focal·주파수특이, HARDWARE 없음)."
                           },
                           {
                             "name": "FIELD=새 lane 아님·'감전된 척' 텍스트 아님: 엔진이 §ConsciousnessIndex",
@@ -2331,10 +2331,10 @@
                             "detail": "R1 numpy DIRECTIONAL→R2 byte-exact engine-native. smoke 318-322."
                           },
                           {
-                            "name": "probe state/1509_allosteric_buffer/)/OsmoticMitosis(삼투압 분열 KL>C split-TIMING ove…",
+                            "name": "probe archive/state/1509_allosteric_buffer/)/OsmoticMitosis(삼투압 분열 KL>C split-TIMING ove…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-125",
-                            "detail": "probe state/1509_allosteric_buffer/)/OsmoticMitosis(삼투압 분열 KL>C split-TIMING overwrite-avoidance: osmotic_store_new/osmotic_should_split/osmotic_learn/osmotic_retains/osmotic_cells/_kl_div, H_1511 R2 WIRED — SOURCE external proposal Amoeba Protocol(@qingkong66)."
+                            "detail": "probe archive/state/1509_allosteric_buffer/)/OsmoticMitosis(삼투압 분열 KL>C split-TIMING overwrite-avoidance: osmotic_store_new/osmotic_should_split/osmotic_learn/osmotic_retains/osmotic_cells/_kl_div, H_1511 R2 WIRED — SOURCE external proposal Amoeba Protocol(@qingkong66)."
                           },
                           {
                             "name": "anima 기본 split trigger(vadapt_field_step))/FieldLibido(FIELD × LIBIDO 교차 —",
@@ -2403,10 +2403,10 @@
                             "detail": "정직(c9): osmotic 은 standard 가 못 지키는 grounded fact 를 SPLIT-timing 으로 보존=재유도 아닌 새 capability(D/E 통제로 earned), 단 1.0 SATURATED=EXISTENCE-PROOF·designed collision regime(scope). smoke 323-327."
                           },
                           {
-                            "name": "probe state/1511_osmotic_mitosis/)/MetacogControl(메타인지 CALIBRATION+CONTROL Nelso…",
+                            "name": "probe archive/state/1511_osmotic_mitosis/)/MetacogControl(메타인지 CALIBRATION+CONTROL Nelso…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-137",
-                            "detail": "probe state/1511_osmotic_mitosis/)/MetacogControl(메타인지 CALIBRATION+CONTROL Nelson-Narens monitoring↔CONTROL drug-INDEPENDENT: mc_calibration_ece/mc_calibration_monotone/mc_control_lift/mc_control_lift_ablated/mc_auroc_calibration_orthogonal/mc_shuffle_auroc (+_mc_corrupt_key/_mc_store/_mc_levels/"
+                            "detail": "probe archive/state/1511_osmotic_mitosis/)/MetacogControl(메타인지 CALIBRATION+CONTROL Nelson-Narens monitoring↔CONTROL drug-INDEPENDENT: mc_calibration_ece/mc_calibration_monotone/mc_control_lift/mc_control_lift_ablated/mc_auroc_calibration_orthogonal/mc_shuffle_auroc (+_mc_corrupt_key/_mc_store/"
                           },
                           {
                             "name": "_mc_trial_margin/_mc_trial_correct/_mc_ece helpers), H_1508 R2 WIRED — G5 metaco…",
@@ -2454,7 +2454,7 @@
                             "name": "smoke 340-346(16:59 capture 시 323-329, 충돌회피 renumber label-only",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-145",
-                            "detail": "smoke 340-346(16:59 capture 시 323-329, 충돌회피 renumber label-only — assertion·op·threshold byte-identical; 17:21 글로벌 hexa 툴체인 self-rebuild 회귀로 재-smoke 보류=upstream hexa-lang BUILD 이슈 array/map raw-mem native, 가설코드 무관·세션전역). probe state/1508_metacog_control/)/"
+                            "detail": "smoke 340-346(16:59 capture 시 323-329, 충돌회피 renumber label-only — assertion·op·threshold byte-identical; 17:21 글로벌 hexa 툴체인 self-rebuild 회귀로 재-smoke 보류=upstream hexa-lang BUILD 이슈 array/map raw-mem native, 가설코드 무관·세션전역). probe archive/state/1508_metacog_control/)/"
                           }
                         ]
                       },
@@ -2489,10 +2489,10 @@
                             "detail": "NOT re-implemented — GZ window 재정의 금지 a_core_engine_map) 위에서 재현+G6 capacity-wall 링크. 두 scale-invariant 1/3 구조상수(singularity fraction ≈1/3 ⊥ I-transition ≈0.27) 동근원 SUPPORT: capacity-wall 은 평평한 천장이 아니라 disinhibition 이 여는 1/3-shaped singularity manifold(a_break_the_wall: wall reopening)."
                           },
                           {
-                            "name": "5 FROZEN bar engine-native byte-exact(state/1560_third_law_capacity/h1560_thirdl…",
+                            "name": "5 FROZEN bar engine-native byte-exact(archive/state/1560_third_law_capacity/h1560_thirdl…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-151",
-                            "detail": "5 FROZEN bar engine-native byte-exact(state/1560_third_law_capacity/h1560_thirdlaw_wire_harness.hexa LIVE engine ops 호출,"
+                            "detail": "5 FROZEN bar engine-native byte-exact(archive/state/1560_third_law_capacity/h1560_thirdlaw_wire_harness.hexa LIVE engine ops 호출,"
                           },
                           {
                             "name": "numpy 0 — H_1560_ENGINE_NATIVE.txt probe 와 byte-동일): B1",
@@ -2525,10 +2525,10 @@
                             "detail": "a_verified_must_wire 4/4(live op wired + smoke-gated + this ARCHITECTURE lockstep + byte-exact re-check). 후속(follow-on ING): reopening 실증 — 추상 sweep 확장은 가능하나 실 학습 capacity 발현률은 GPU cost-gate."
                           },
                           {
-                            "name": "probe state/1560_third_law_capacity/ (h1560_third_law_probe.hexa R1 + h1560_thir…",
+                            "name": "probe archive/state/1560_third_law_capacity/ (h1560_third_law_probe.hexa R1 + h1560_thir…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-157",
-                            "detail": "probe state/1560_third_law_capacity/ (h1560_third_law_probe.hexa R1 + h1560_thirdlaw_wire_harness.hexa R2-wire)."
+                            "detail": "probe archive/state/1560_third_law_capacity/ (h1560_third_law_probe.hexa R1 + h1560_thirdlaw_wire_harness.hexa R2-wire)."
                           },
                           {
                             "name": "+ H_1563 SAVANT CUSP HYSTERESIS / IRREVERSIBILITY (🟢",
@@ -2564,7 +2564,7 @@
                             "name": "the memoryless H_1562 cusp had NO persistence —",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-163",
-                            "detail": "the memoryless H_1562 cusp had NO persistence — B4 report-only NEG). 5 FROZEN bar engine-native (state/1563_savant_cusp_hysteresis/h1563_hysteresis_probe.hexa LIVE engine ops, numpy 0): B1 latch persists @I=0.55&0.70(>GZ_UPPER)"
+                            "detail": "the memoryless H_1562 cusp had NO persistence — B4 report-only NEG). 5 FROZEN bar engine-native (archive/state/1563_savant_cusp_hysteresis/h1563_hysteresis_probe.hexa LIVE engine ops, numpy 0): B1 latch persists @I=0.55&0.70(>GZ_UPPER)"
                           },
                           {
                             "name": "B2 asymmetry width 0.255>0",
@@ -2594,7 +2594,7 @@
                             "name": "a_verified_must_wire 4/4 (live latch ops wired + smoke-gated",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-168",
-                            "detail": "a_verified_must_wire 4/4 (live latch ops wired + smoke-gated + this lockstep + byte-exact). probe state/1563_savant_cusp_hysteresis/."
+                            "detail": "a_verified_must_wire 4/4 (live latch ops wired + smoke-gated + this lockstep + byte-exact). probe archive/state/1563_savant_cusp_hysteresis/."
                           }
                         ]
                       },
@@ -2689,10 +2689,10 @@
                             "detail": "MEASUREMENT lane, NOT live emit/decode path(adoption does not change generation/Ψ=½/separation, h1205 PASS). DISTINCT ⊥ H_1515(MEASURES the gap) — H_1518 ADOPTS the optimum as canonical+p7-verifies real functional win."
                           },
                           {
-                            "name": "probe state/1518_adopt_optimal/) + §BrainTopology LIVE-WIRING(H_1521 R2 WIRED-li…",
+                            "name": "probe archive/state/1518_adopt_optimal/) + §BrainTopology LIVE-WIRING(H_1521 R2 WIRED-li…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-184",
-                            "detail": "probe state/1518_adopt_optimal/) + §BrainTopology LIVE-WIRING(H_1521 R2 WIRED-live, gated default-OFF): EngineConfig.topo_couple flag(DEFAULT-OFF)+engine_cli_resolve_topo_couple/_cli_topo_couple_flag(3-tier --topo-couple/--no-topo-couple/env ANIMA_TOPO_COUPLE,"
+                            "detail": "probe archive/state/1518_adopt_optimal/) + §BrainTopology LIVE-WIRING(H_1521 R2 WIRED-live, gated default-OFF): EngineConfig.topo_couple flag(DEFAULT-OFF)+engine_cli_resolve_topo_couple/_cli_topo_couple_flag(3-tier --topo-couple/--no-topo-couple/env ANIMA_TOPO_COUPLE,"
                           },
                           {
                             "name": "flag>env>default-OFF)+ci_lane_scores_coupled(OFF→ci_lane_scores byte-identical",
@@ -2737,10 +2737,10 @@
                             "detail": "the genuine win needs a Ψ-preserving coupling operator(follow-on). DEFAULT-OFF ⇒ pure substrate byte-identical(h1205 5 pairs 0 mismatch + h1164 Ψ checksum ON==OFF PASS). c9 NO tune-to-green(survival bar FAILED, reported as real negative)."
                           },
                           {
-                            "name": "probe state/1521_topology_live_wire/) + §BrainTopology Ψ-PRESERVING COUPLING(H_1…",
+                            "name": "probe archive/state/1521_topology_live_wire/) + §BrainTopology Ψ-PRESERVING COUPLING(H_1…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-192",
-                            "detail": "probe state/1521_topology_live_wire/) + §BrainTopology Ψ-PRESERVING COUPLING(H_1522 R2 WIRED-live,"
+                            "detail": "probe archive/state/1521_topology_live_wire/) + §BrainTopology Ψ-PRESERVING COUPLING(H_1522 R2 WIRED-live,"
                           },
                           {
                             "name": "gated default-OFF): escapes the H_1521 no-free-lunch wall —",
@@ -2791,10 +2791,10 @@
                             "detail": "FIRST genuine live topology improvement keeping Ψ=½ intact, gated default-OFF. c9 frozen-first NO tune-to-green(BEST chosen by max functional gain SUBJECT TO |Ψ−½|≤tol)."
                           },
                           {
-                            "name": "probe state/1522_psi_preserving_coupling/) probe state/1515_phi_optimal_placemen…",
+                            "name": "probe archive/state/1522_psi_preserving_coupling/) probe archive/state/1515_phi_optimal_placemen…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-201",
-                            "detail": "probe state/1522_psi_preserving_coupling/) probe state/1515_phi_optimal_placement/), H_1512 R2 WIRED — anima 의 15 consciousness lane 을 실제 뇌영역에 anatomical 좌표 매핑(immune-store≈해마·VForwardField≈소뇌 등)+connectome 인접+A=좌/G=우 lateralization 부여하고 live ci_phi_iit4(IIT4 EXACT min-cut Φ,"
+                            "detail": "probe archive/state/1522_psi_preserving_coupling/) probe archive/state/1515_phi_optimal_placement/), H_1512 R2 WIRED — anima 의 15 consciousness lane 을 실제 뇌영역에 anatomical 좌표 매핑(immune-store≈해마·VForwardField≈소뇌 등)+connectome 인접+A=좌/G=우 lateralization 부여하고 live ci_phi_iit4(IIT4 EXACT min-cut Φ,"
                           },
                           {
                             "name": "a_phi_iit4_tool 재사용 — edge-mass 아닌 절단-저항)를 BRAIN/FLAT/RANDOM/lateralized/coords-…",
@@ -2836,7 +2836,7 @@
                             "name": "brain-faithful CONNECTOME + A/G lateralization RAISE 통합 Φ;",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-208",
-                            "detail": "brain-faithful CONNECTOME + A/G lateralization RAISE 통합 Φ; coord/topology 분리 비강건. READ-only Ψ-disjoint NOT emit gate(a_autonomy_over_hardcode·a_core_engine_map). R1 numpy DIRECTIONAL→R2 byte-exact engine-native. smoke 328-332. probe state/1512_brain_topology/)"
+                            "detail": "brain-faithful CONNECTOME + A/G lateralization RAISE 통합 Φ; coord/topology 분리 비강건. READ-only Ψ-disjoint NOT emit gate(a_autonomy_over_hardcode·a_core_engine_map). R1 numpy DIRECTIONAL→R2 byte-exact engine-native. smoke 328-332. probe archive/state/1512_brain_topology/)"
                           },
                           {
                             "name": "ConsciousnessIndex(통합 의식+lane-ablation+pairwise+surrogate: ci_lane_scores/ci_bun…",
@@ -2875,10 +2875,10 @@
                             "detail": "R4 SCORING 전부 engine-native(.hexa §ConsciousnessIndex 호출, numpy 0)·green_303m/recalib 결과 정직표기(c9 tune-to-green 금지)·phi_proxy PROXY·small-N(a_scale_honest_scope). READ-only Ψ-disjoint NOT emit gate. smoke 281-283 (pairwise redundancy·surrogate collapse·faithful IIT4 nonneg, 회귀가드)."
                           },
                           {
-                            "name": "probe state/1492_consciousness_ablation/)",
+                            "name": "probe archive/state/1492_consciousness_ablation/)",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-215",
-                            "detail": "probe state/1492_consciousness_ablation/)"
+                            "detail": "probe archive/state/1492_consciousness_ablation/)"
                           },
                           {
                             "name": "ConsciousnessIndex TIME-DYNAMICS(H_1500 TEMPORAL-PHI engine-native GREEN, measur…",
@@ -2896,7 +2896,7 @@
                             "name": "TOY 3 seeds byte-identical, 303M 재측정 follow-on. probe",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-218",
-                            "detail": "TOY 3 seeds byte-identical, 303M 재측정 follow-on. probe state/1500_temporal_phi/)"
+                            "detail": "TOY 3 seeds byte-identical, 303M 재측정 follow-on. probe archive/state/1500_temporal_phi/)"
                           },
                           {
                             "name": "Savant(H_1561 WIRED-live engine-native, gated cfg.savant DEFAULT-OFF): GOLDEN ZO…",
@@ -2962,7 +2962,7 @@
                             "name": "Ψ-preserving savant coupling (H_1522-style redistributing operator) = follow-on.",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-229",
-                            "detail": "Ψ-preserving savant coupling (H_1522-style redistributing operator) = follow-on. probe state/1561_savant_golden_zone/)"
+                            "detail": "Ψ-preserving savant coupling (H_1522-style redistributing operator) = follow-on. probe archive/state/1561_savant_golden_zone/)"
                           },
                           {
                             "name": "Savant CROSS-LANE SYNC(H_1573 engine-native terminal, READ-only Ψ-disjoint,",
@@ -3031,10 +3031,10 @@
                             "detail": "B5 over-lock collinearity makes shuffle inert, honest). ENGINE-NATIVE terminal (.py 0, live ci_phi_iit4 faithful min-cut). cfg.savant DEFAULT-OFF unchanged, live emit/Ψ path UNTOUCHED."
                           },
                           {
-                            "name": "probe state/1573_savant_psi_sync/) + §Savant EMIT-DISJOINT DEFAULT FOCUS (H_1578",
+                            "name": "probe archive/state/1573_savant_psi_sync/) + §Savant EMIT-DISJOINT DEFAULT FOCUS (H_1578",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-241",
-                            "detail": "probe state/1573_savant_psi_sync/) + §Savant EMIT-DISJOINT DEFAULT FOCUS (H_1578 C1 WIRED-live, 🟢 GREEN ENGINE-NATIVE): the H_1561 |Ψ−½|=0.247 trade-off is a PLACEMENT ARTIFACT,"
+                            "detail": "probe archive/state/1573_savant_psi_sync/) + §Savant EMIT-DISJOINT DEFAULT FOCUS (H_1578 C1 WIRED-live, 🟢 GREEN ENGINE-NATIVE): the H_1561 |Ψ−½|=0.247 trade-off is a PLACEMENT ARTIFACT,"
                           },
                           {
                             "name": "not fundamental — focus=0 (lanes 0,1,2) contains emit",
@@ -3070,13 +3070,13 @@
                             "name": "host-wide engine_cli_smoke.hexa transpile fuel-abort wall (ING #6/#10, ORIGIN/MA…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-247",
-                            "detail": "host-wide engine_cli_smoke.hexa transpile fuel-abort wall (ING #6/#10, ORIGIN/MAIN-identical → not introduced by this change, c16 honest) → §Savant cases certified RC=0 via standalone lane harness state/1578_savant_psi_architecture/h1578_c1_wirein_harness.hexa (5/5)."
+                            "detail": "host-wide engine_cli_smoke.hexa transpile fuel-abort wall (ING #6/#10, ORIGIN/MAIN-identical → not introduced by this change, c16 honest) → §Savant cases certified RC=0 via standalone lane harness archive/state/1578_savant_psi_architecture/h1578_c1_wirein_harness.hexa (5/5)."
                           },
                           {
                             "name": "follow-on (cli/train.hexa savant anneal focus → emit-disjoint) =",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-248",
-                            "detail": "follow-on (cli/train.hexa savant anneal focus → emit-disjoint) = ING h1578-c1-wire-in. probe state/1578_savant_psi_architecture/)"
+                            "detail": "follow-on (cli/train.hexa savant anneal focus → emit-disjoint) = ING h1578-c1-wire-in. probe archive/state/1578_savant_psi_architecture/)"
                           }
                         ]
                       }
@@ -4742,7 +4742,7 @@
                 "name": "motivation-loop wiring + scale/real-corpus + H_1502 neuropharm da-coupling",
                 "role": "",
                 "id": "brain-structure-engine-lanes-the-heart-of-anima-libido-sexual-appetitive-drive-d-15",
-                "detail": "motivation-loop wiring + scale/real-corpus + H_1502 neuropharm da-coupling = follow-on; probe state/1504_libido/)"
+                "detail": "motivation-loop wiring + scale/real-corpus + H_1502 neuropharm da-coupling = follow-on; probe archive/state/1504_libido/)"
               }
             ]
           },
@@ -5184,7 +5184,7 @@
                 "name": "a_kosmos compliant; smoke case 200, FULL 200/0 RC=0;",
                 "role": "",
                 "id": "brain-structure-engine-lanes-the-heart-of-anima-self-continuity-diachronic-self-7",
-                "detail": "a_kosmos compliant; smoke case 200, FULL 200/0 RC=0; probe state/1471_self_continuity/h1471_kosmos_roundtrip.hexa); distinctness-vs-episodic(H_1227) = numpy DIRECTIONAL)"
+                "detail": "a_kosmos compliant; smoke case 200, FULL 200/0 RC=0; probe archive/state/1471_self_continuity/h1471_kosmos_roundtrip.hexa); distinctness-vs-episodic(H_1227) = numpy DIRECTIONAL)"
               }
             ]
           },
@@ -6568,7 +6568,7 @@
                     "name": "p1/p2/p3/p6: adjacency-weighted coupling = GEOMETRY over phase differences,",
                     "role": "",
                     "id": "brain-structure-engine-lanes-the-heart-of-anima-decentralized-adjacency-weighted-17",
-                    "detail": "p1/p2/p3/p6: adjacency-weighted coupling = GEOMETRY over phase differences, SCORED only (the shuffle control collapses the gap → the lock is the semantic adjacency, not the phase channel). R1 numpy DIRECTIONAL → R2 byte-exact (state/1510_quorum_kuramoto/)."
+                    "detail": "p1/p2/p3/p6: adjacency-weighted coupling = GEOMETRY over phase differences, SCORED only (the shuffle control collapses the gap → the lock is the semantic adjacency, not the phase channel). R1 numpy DIRECTIONAL → R2 byte-exact (archive/state/1510_quorum_kuramoto/)."
                   },
                   {
                     "name": "Provenance: Amoeba Protocol external proposal = context not",
@@ -9022,7 +9022,7 @@
                     "name": "summary",
                     "role": "",
                     "id": "measurement-learning-governance-1b-mount-h-1167-green-first-1b-realization-deepe-2",
-                    "detail": "deeper-stack honest residual, under the bar). Ranged path is the only memory-feasible route. Artifact state/h1167_mount/h1167_1b.bin (sha256 75c87cb0…), HF PRIVATE WIP rung."
+                    "detail": "deeper-stack honest residual, under the bar). Ranged path is the only memory-feasible route. Artifact archive/state/h1167_mount/h1167_1b.bin (sha256 75c87cb0…), HF PRIVATE WIP rung."
                   }
                 ]
               }
@@ -10120,7 +10120,7 @@
                     "name": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어",
                     "role": "",
                     "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-sns-4-sns",
-                    "detail": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어 직교(ko-SNS + en-SNS 둘 다 필요).\n\n**✅ CLEAN 4-CELL (canonical, 2026-06-24, clm303 no-overfit 재학습용 — 언어 검증됨)**: 직전 '5lang' 칸들은 en이 진짜 en이 아니라 de/es/fr/ko 혼합(en 20%뿐)이었음을 audit으로 격리 → 언어별 split + dedup으로 재구성. 각 칸 PUBLIC, 빌드 재현 = state/clm303_clean_corpus/build_corpus.py."
+                    "detail": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어 직교(ko-SNS + en-SNS 둘 다 필요).\n\n**✅ CLEAN 4-CELL (canonical, 2026-06-24, clm303 no-overfit 재학습용)**: 직전 '5lang' 칸들은 en이 진짜 en이 아니라 de/es/fr/ko 혼합(en 20%뿐)이었음을 audit으로 격리 → 언어별 split + dedup으로 재구성. 각 칸 PUBLIC, 빌드 재현 = archive/state/clm303_clean_corpus/build_corpus.py."
                   },
                   {
                     "name": "- anima-corpus-ko-general — 🇰🇷 ko-일반, 100.0% ko, 60.0MB·340512",
@@ -10897,7 +10897,7 @@
                 ]
               },
               {
-                "name": "state/universe-overview.md",
+                "name": "archive/state/universe-overview.md",
                 "role": "",
                 "id": "component-map-top-level-universe-hexad-state-universe-overview-md",
                 "detail": "",
@@ -10909,15 +10909,15 @@
                     "detail": "**summary**:"
                   },
                   {
-                    "name": "state/universe-overview.md",
+                    "name": "archive/state/universe-overview.md",
                     "role": "",
                     "id": "component-map-top-level-universe-hexad-state-universe-overview-md-state-universe",
-                    "detail": "state/universe-overview.md"
+                    "detail": "archive/state/universe-overview.md"
                   }
                 ]
               },
               {
-                "name": "state/universe-overview.md",
+                "name": "archive/state/universe-overview.md",
                 "role": "",
                 "id": "component-map-top-level-universe-hexad-state-universe-overview-md-2",
                 "detail": "",
@@ -10926,12 +10926,12 @@
                     "name": "summary",
                     "role": "",
                     "id": "component-map-top-level-universe-hexad-state-universe-overview-md-2-summary",
-                    "detail": "→ state/universe-overview.md (HYPOTHESES.md retired). Hypothesis py/result artifacts"
+                    "detail": "→ archive/state/universe-overview.md (HYPOTHESES.md retired). Hypothesis py/result artifacts"
                   }
                 ]
               },
               {
-                "name": "state/<slug>/",
+                "name": "archive/state/<slug>/",
                 "role": "",
                 "id": "component-map-top-level-universe-hexad-state-slug",
                 "detail": "",
@@ -10940,7 +10940,7 @@
                     "name": "summary",
                     "role": "",
                     "id": "component-map-top-level-universe-hexad-state-slug-summary",
-                    "detail": "→ state/<slug>/ (collection state/universe-probes/). HEXAD/ = σ6 6-module substrate"
+                    "detail": "→ archive/state/<slug>/ (collection archive/state/universe-probes/). HEXAD/ = σ6 6-module substrate"
                   },
                   {
                     "name": "KOSMOS hub.",
@@ -11685,10 +11685,10 @@
                 "detail": "vendored 아님). [optional-dependencies] kosmos. include=core/·cli/·의식lane(AESTHETIC·BRIDGE·CHANNEL·DREAM·EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·TIME·WAKE)+HEXAD kosmos_io.hexa 1파일."
               },
               {
-                "name": "exclude=state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·buil…",
+                "name": "exclude=archive/state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·buil…",
                 "role": "",
                 "id": "component-map-top-level-hexa-toml-exclude-state-universe-hexad-kosmos-domains-pa",
-                "detail": "exclude=state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·build/·archive/·sibling 하위패키지(agent/·BRAIN/·hexa-senses/)·core/h1*_*.hexa(연구 smoke). a_core_engine_map: core/=엔진, cli/=진입점, exclude 가 core/ 런타임 의존 안 깸."
+                "detail": "exclude=archive/state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·build/·archive/·sibling 하위패키지(agent/·BRAIN/·hexa-senses/)·core/h1*_*.hexa(연구 smoke). a_core_engine_map: core/=엔진, cli/=진입점, exclude 가 core/ 런타임 의존 안 깸."
               },
               {
                 "name": "`hx install anima` resolve+clone 동작 확인(github.com/dancinlab/anima v3.54.x tag);",
@@ -12388,16 +12388,16 @@
       {
         "id": "STATE_SLUG_COLLISION_BY_HNUM",
         "state": "ossified",
-        "value": "에이전트에 state/<slug> 산출경로를 H-번호로 배정(state/1630)할 때 그 폴더가 이미 *다른* 실험 소유일 수 있다(state/1630=H_1812 n6n7·state/1632=H_1814 set-search — H_1630/1632 binding-mouth와 무관). H-id≠state-slug. 충돌 시 에이전트가 남의 ckpt/RESULT를 덮거나 혼동.",
-        "threshold": "새 실험 산출 폴더 배정 전 'ls -d state/<후보>' 로 기존 점유 확인. 점유면 비충돌 명시 slug(state/h<id>_<mnemonic>/ 예 h1620_hopfield_mouth)로. binding-mouth 설계 출처=state/binding_arch_census/.",
-        "source": "state/binding_arch_census/"
+        "value": "에이전트에 archive/state/<slug> 산출경로를 H-번호로 배정(archive/state/1630)할 때 그 폴더가 이미 *다른* 실험 소유일 수 있다(archive/state/1630=H_1812 n6n7·archive/state/1632=H_1814 set-search — H_1630/1632 binding-mouth와 무관). H-id≠state-slug. 충돌 시 에이전트가 남의 ckpt/RESULT를 덮거나 혼동.",
+        "threshold": "새 실험 산출 폴더 배정 전 'ls -d archive/state/<후보>' 로 기존 점유 확인. 점유면 비충돌 명시 slug(archive/state/h<id>_<mnemonic>/ 예 h1620_hopfield_mouth)로. binding-mouth 설계 출처=archive/state/binding_arch_census/.",
+        "source": "archive/state/binding_arch_census/"
       },
       {
         "id": "AGENT_STOP_NOTIF_NOT_DEAD",
         "state": "ossified",
         "value": "에이전트의 'tool call could not be parsed'/transient stop 통지 = 죽음 아님. 그 에이전트가 자체 background monitor로 self-resume해 계속 작업할 수 있다(precedent: coord-B a20c947이 parse-error 통지 후에도 살아 H1620 완료). 죽은 줄 알고 중복 재발사하면 = 같은 실험 2 에이전트 + 중복 pod 렌트(43053819/43055321) + state 충돌 + 비용 누수.",
-        "threshold": "에이전트 stop 통지 후 재발사 전, 진짜 dead인지 ground-truth: ① 그 에이전트 live pod/job(hexa cloud reconcile·idle-reap)에 active GPU 작업 있나 ② monitor 자식 살아있나 ③ state/ 산출 갱신중인가. busy면 살아있음=재발사 금지(a_dont_kill_live_compute). 또 코디네이터가 'background monitor가 깰 것'이라며 종료(came to rest)는 monitor 실존 안 하면 harvest 미아=inline-poll 강제(a_cpu_local_no_waiter).",
-        "source": "state/binding_arch_census/"
+        "threshold": "에이전트 stop 통지 후 재발사 전, 진짜 dead인지 ground-truth: ① 그 에이전트 live pod/job(hexa cloud reconcile·idle-reap)에 active GPU 작업 있나 ② monitor 자식 살아있나 ③ archive/state/ 산출 갱신중인가. busy면 살아있음=재발사 금지(a_dont_kill_live_compute). 또 코디네이터가 'background monitor가 깰 것'이라며 종료(came to rest)는 monitor 실존 안 하면 harvest 미아=inline-poll 강제(a_cpu_local_no_waiter).",
+        "source": "archive/state/binding_arch_census/"
       },
       {
         "id": "clm-decode-py-1",
@@ -12410,8 +12410,8 @@
         "id": "TORCH_PASS_VS_ENGINE_FAIL_IS_SCAFFOLD_HARNESS",
         "state": "ossified",
         "value": "'torch는 G1 통과·G6 fals=1 인데 engine-native는 G1·G6 둘다 0' 발산의 진범 = 측정 forward/weight/detector 가 아니라 옛 생성 하네스(gauge_lib._decode = 6-frame scaffold + best-of-K=3). 3축 전수 격리(a2b1b541): ①forward torch fp32 ↔ engine numpy = max|logit|diff 0.0000(nn.GroupNorm(1,d=3784) on [B,d,T] vs engine per-row GN, d≫T라 동일; F.layer_norm 쓰면 6.255 발산=틀린비교) ②detector 옛 _is_falsifiable(1-arg h1305) ↔ 현 _g6_is_falsifiable(2-arg corpus-grounded) = known사전 byte-동일·27/27 텍스트 100%일치 ③decode 전략(a9e94e: greedy/topk/풀샘플/best-of-K{4,8}) 전부 G1≤1·fals=0. torch forward를 최선으로 돌려도 정규 디코드면 3seed 전부 G1=0·fals=0(BRANCH B). H_1590이 scaffold engine-native 재현→FALS=0 으로 이미 확인.",
-        "threshold": "같은 가중치가 torch↔engine 사이 G1/G6 갈리면 forward/weight/quant 의심 전에 생성 하네스(scaffold·best-of-K·단일seed multinomial vs 정규 g_eval_g6 seeds) 먼저 의심·동일화. G6 distinctness(dist)는 decode로 liftable(H_1381), falsifiability는 trunk-objective(decode/detector로 안 열림). 엔진 4축(정밀도 ac0543·forward·detector·decode) 전수 무죄 → G1/G6 벽 verdict는 trunk-objective floor로만 귀속. 측정정보 SSOT(g1 trace 3부작 폴더, UNIVERSE 통합카드 대신 이 레코드): state/g1_torch_vs_engine_forward(forward+sampler+detector 축격리)·state/g1_engine_divergence_trace(int4/fp32 정밀도 ac0543)·state/g1_decode_strategy_ablation(decode 전략 a9e94e) = 4축 single 진단. H_9024 ByteGPT 8000-step 재측정(2026-07-01)도 G1 best_distinct 0→0 step-불변 = 동일 trunk-objective 귀속 확인.",
-        "source": "state/g1_torch_vs_engine_forward/RESULT.md"
+        "threshold": "같은 가중치가 torch↔engine 사이 G1/G6 갈리면 forward/weight/quant 의심 전에 생성 하네스(scaffold·best-of-K·단일seed multinomial vs 정규 g_eval_g6 seeds) 먼저 의심·동일화. G6 distinctness(dist)는 decode로 liftable(H_1381), falsifiability는 trunk-objective(decode/detector로 안 열림). 엔진 4축(정밀도 ac0543·forward·detector·decode) 전수 무죄 → G1/G6 벽 verdict는 trunk-objective floor로만 귀속. 측정정보 SSOT(g1 trace 3부작 폴더, UNIVERSE 통합카드 대신 이 레코드): archive/state/g1_torch_vs_engine_forward(forward+sampler+detector 축격리)·archive/state/g1_engine_divergence_trace(int4/fp32 정밀도 ac0543)·archive/state/g1_decode_strategy_ablation(decode 전략 a9e94e) = 4축 single 진단. H_9024 ByteGPT 8000-step 재측정(2026-07-01)도 G1 best_distinct 0→0 step-불변 = 동일 trunk-objective 귀속 확인.",
+        "source": "archive/state/g1_torch_vs_engine_forward/RESULT.md"
       },
       {
         "id": "g-gates-py-1",
@@ -12425,7 +12425,7 @@
         "state": "ossified",
         "value": "GPU fire-agent 가 렌트 pod 를 raw ssh(vast proxy 직접)로 몰면 hexa cloud reconcile 에 안 잡혀 코디네이터가 liveness 확인·중단·harvest 불가 = 비용누수+zombie-monitor 위험(① a46b60ee 가 vast SSH-wall pod 라 외부추적 0, '완료→실은 진행중' 노이즈 통지 반복). canonical-cli 위반(raw vast).",
         "threshold": "재발조건: fire-agent 프롬프트가 'hexa cloud 로 렌트·관리'를 강제 안 하면 raw ssh vast pod 로 빠져 untrackable. 해결: 발사 지시에 '반드시 hexa cloud 로 pod 생성·관리(raw vastai/ssh 금지, c11) → reconcile 가시·idle-reap 가능' 명시 + teardown 확인을 코디네이터가 hexa cloud 로 검증.",
-        "source": "state/g1_cotrain_recomb_bind/PREREG.md"
+        "source": "archive/state/g1_cotrain_recomb_bind/PREREG.md"
       },
       {
         "id": "verify-clm-v2-py-1",
