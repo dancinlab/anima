@@ -12619,6 +12619,13 @@
         "value": "anima train(hexa) 303M(d3784) GPU 학습 두 벽: (1) hexa farr=fp64라 activation 버퍼(1.37GB/buf) RTX5070 12GB OOM — --bf16은 GEMM precision만 바꾸고 farr는 fp64 유지 (2) #2598 device-resident가 GEMM만이고 im2col/GroupNorm/activation은 host-scalar(d768 step=512s). toy d8=3/3 PASS+OWN-GEMM.",
         "threshold": "재발: 12GB GPU에 d>=3000 fp64 anima train(hexa). 해결: 큰GPU(24GB+ fp64)/hexa farr fp32(upstream hexa-lang)/중간 d/train.hexa hot-path 전체 device-resident. --bf16만으론 farr fp64 OOM 안 풀림(GEMM precision != farr dtype).",
         "source": "cli/train.hexa"
+      },
+      {
+        "id": "numpy-probe-controls-1",
+        "state": "pos-conv",
+        "value": "numpy DIRECTIONAL reachability/recombination probe가 능력을 과대평가하는 재발 결함 — raw 게이트는 spoofable. (1) 'composed_distinct=부모와 다름'은 아무 비선형이나 통과(native-mouth-57 antimatter ARTIFACT: random-MLP·A*B도 통과). (2) raw recover(C→parent)도 additive가 spoof: C=a+b에 b가 선형 포함→key-agnostic subtraction이 40/40 '복원'(H_9025 Rung0). 진짜 판별자 = shuffle-controlled EARNED(right key recovers ∧ wrong/shuffled key FAILS) + ablation(op→additive면 inert).",
+        "threshold": "재발조건: numpy/DIRECTIONAL probe로 op·재조합·binding 능력을 주장할 때. 해결: 모든 게이트를 shuffle-통제 EARNED로 정의하고 raw distinct/recover 단독 승격 금지, ablation으로 op 인과 확인, real-trunk/engine-native 승격 전 필수(a_toy_scale_recheck·check-ledger-before-lever-fire).",
+        "source": "state/9025_g1_substrate_combiner_decoderfree/probe.py"
       }
     ]
   },
