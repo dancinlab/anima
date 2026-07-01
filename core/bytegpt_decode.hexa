@@ -720,39 +720,47 @@ pub fn bytegpt_forward_last_ranged_mm(path: string, ids: int, T: int) -> int {
 // tensors are kept as handle arrays (ln1w[L], inW[L], …) so the forward loops
 // generally over all nlay blocks. Caller frees via bg_free.
 pub fn bg_load(path: string) -> Map {
-    let rb = read_file_bytes(path)
-    let vocab = _bg_rd_u32(rb, 0)
-    let d     = _bg_rd_u32(rb, 4)
-    let nlay  = _bg_rd_u32(rb, 8)
-    let nh    = _bg_rd_u32(rb, 12)
-    let block = _bg_rd_u32(rb, 16)
+    // ING #21 footgun fix: native per-tensor read_f32_at, NO whole-file boxing.
+    // read_file_bytes(path) boxed the entire 1.2GB f32 binary into a HexaVal byte
+    // array (~16.8 B/file-byte, runtime never-frees) → ~22.67GB load peak → OOM'd
+    // hosts when bytegpt_decode_argmax ran on the 303M (measured: crashed summer).
+    // read_f32_at reads each tensor's f32 slice straight into a farr — byte-identical
+    // (max|Δ|=0, the same native reader the ranged path uses since #2667). Header is
+    // a 20-byte read (mirrors bg_load_ranged). Originals are still kept (the scalar
+    // forward reads them); only the whole-file box is eliminated.
+    let hdr = read_bytes_at(path, 0, 20)
+    let vocab = _bg_rd_u32(hdr, 0)
+    let d     = _bg_rd_u32(hdr, 4)
+    let nlay  = _bg_rd_u32(hdr, 8)
+    let nh    = _bg_rd_u32(hdr, 12)
+    let block = _bg_rd_u32(hdr, 16)
     let mut off = 20
 
-    let tok = _bg_rd_farr(rb, off, vocab * d); off = off + vocab * d * 4
-    let pos = _bg_rd_farr(rb, off, block * d); off = off + block * d * 4
+    let tok = read_f32_at(path, off, vocab * d); off = off + vocab * d * 4
+    let pos = read_f32_at(path, off, block * d); off = off + block * d * 4
 
     let ln1w = []; let ln1b = []; let inW = []; let inB = []
     let oW = []; let oB = []; let ln2w = []; let ln2b = []
     let m0W = []; let m0B = []; let m2W = []; let m2B = []
     let mut Lr = 0
     while Lr < nlay {
-        ln1w.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
-        ln1b.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
-        inW.push(_bg_rd_farr(rb, off, 3 * d * d)); off = off + 3 * d * d * 4
-        inB.push(_bg_rd_farr(rb, off, 3 * d)); off = off + 3 * d * 4
-        oW.push(_bg_rd_farr(rb, off, d * d)); off = off + d * d * 4
-        oB.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
-        ln2w.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
-        ln2b.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
-        m0W.push(_bg_rd_farr(rb, off, 4 * d * d)); off = off + 4 * d * d * 4
-        m0B.push(_bg_rd_farr(rb, off, 4 * d)); off = off + 4 * d * 4
-        m2W.push(_bg_rd_farr(rb, off, d * 4 * d)); off = off + d * 4 * d * 4
-        m2B.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        ln1w.push(read_f32_at(path, off, d)); off = off + d * 4
+        ln1b.push(read_f32_at(path, off, d)); off = off + d * 4
+        inW.push(read_f32_at(path, off, 3 * d * d)); off = off + 3 * d * d * 4
+        inB.push(read_f32_at(path, off, 3 * d)); off = off + 3 * d * 4
+        oW.push(read_f32_at(path, off, d * d)); off = off + d * d * 4
+        oB.push(read_f32_at(path, off, d)); off = off + d * 4
+        ln2w.push(read_f32_at(path, off, d)); off = off + d * 4
+        ln2b.push(read_f32_at(path, off, d)); off = off + d * 4
+        m0W.push(read_f32_at(path, off, 4 * d * d)); off = off + 4 * d * d * 4
+        m0B.push(read_f32_at(path, off, 4 * d)); off = off + 4 * d * 4
+        m2W.push(read_f32_at(path, off, d * 4 * d)); off = off + d * 4 * d * 4
+        m2B.push(read_f32_at(path, off, d)); off = off + d * 4
         Lr = Lr + 1
     }
-    let lnfw = _bg_rd_farr(rb, off, d); off = off + d * 4
-    let lnfb = _bg_rd_farr(rb, off, d); off = off + d * 4
-    let head = _bg_rd_farr(rb, off, vocab * d); off = off + vocab * d * 4
+    let lnfw = read_f32_at(path, off, d); off = off + d * 4
+    let lnfb = read_f32_at(path, off, d); off = off + d * 4
+    let head = read_f32_at(path, off, vocab * d); off = off + vocab * d * 4
 
     // Lane C fast path: pre-transpose every weight that feeds a d×d matmul ONCE
     // here (amortized over all forwards). bg_forward_last_W's native-GEMM path
