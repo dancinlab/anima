@@ -570,6 +570,148 @@ bytegpt_serialize = serialize
 
 
 # ════════════════════════════════════════════════════════════════════════
+# (c2) BYTE injected-bind (BGB) — base ByteGPT .bin (verbatim) + N appended
+#      GATED transformer blocks -> engine .bin with a "BGB\x01" trailer. The
+#      ByteGPT analogue of the CONV "CLMB" bind-readout extension: the base
+#      bytes are copied UNCHANGED and the trailer is appended after `head`, so a
+#      gate=0 file decodes byte-identically to its base (core/decode.py bg_load
+#      reads the optional trailer; W["bind"]=[] when absent -> zero regression).
+#
+#   BGB trailer (after head): magic 66,71,66,1 ; u32 n_bind ;
+#     per bind block: the SAME 12 param tensors as a base layer in the SAME
+#       order/layout as `serialize` above (ln1.w[d] ln1.b[d] in_proj.w[3d,d]
+#       in_proj.b[3d] out_proj.w[d,d] out_proj.b[d] ln2.w[d] ln2.b[d]
+#       mlp0.w[4d,d] mlp0.b[4d] mlp2.w[d,4d] mlp2.b[d], all LE f32 VERBATIM —
+#       torch native [out,in], NO transpose) ; then one LE f32 `gate`.
+#
+# Reading the injected torch .pt (unpickle) is the only torch touch (training
+# family, a_clm_gen_pipeline / a_engine_native_learning: serializer may use torch).
+# The injected .pt carries a standard transformer Block state_dict + a scalar gate
+# per appended block (BindAttnByteGPT: self.bind=Block(...), self.gate).
+# ════════════════════════════════════════════════════════════════════════
+
+BGB = bytes([66, 71, 66, 1])        # "BGB\x01" — ByteGPT injected-bind trailer
+
+
+def _bfind(bsd, suffix):
+    """Resolve a Block state_dict tensor by key SUFFIX (robust to a 'bind.'/module
+    prefix). Exact match first, else the unique / shortest suffix match."""
+    if suffix in bsd:
+        return bsd[suffix]
+    cands = [k for k in bsd if k.endswith(suffix)]
+    if not cands:
+        raise KeyError("bind block missing key *" + suffix + " (keys=" + ",".join(sorted(bsd)) + ")")
+    cands.sort(key=len)
+    return bsd[cands[0]]
+
+
+def _bind_block_bytes(bsd, d):
+    """Map ONE torch Block state_dict -> BGB block bytes (12 tensors, bg_load order,
+    VERBATIM f32le — same orientation as `serialize`'s per-layer write, no transpose)."""
+    def w(name, shape):
+        t = _bfind(bsd, name)
+        if tuple(t.shape) != tuple(shape):
+            raise ValueError(f"bind {name} shape {tuple(t.shape)} != expected {tuple(shape)}")
+        return _f32le(t)
+    out = bytearray()
+    out += w("ln1.weight", (d,))
+    out += w("ln1.bias", (d,))
+    out += w("attn.in_proj_weight", (3 * d, d))
+    out += w("attn.in_proj_bias", (3 * d,))
+    out += w("attn.out_proj.weight", (d, d))
+    out += w("attn.out_proj.bias", (d,))
+    out += w("ln2.weight", (d,))
+    out += w("ln2.bias", (d,))
+    out += w("mlp.0.weight", (4 * d, d))
+    out += w("mlp.0.bias", (4 * d,))
+    out += w("mlp.2.weight", (d, 4 * d))
+    out += w("mlp.2.bias", (d,))
+    return bytes(out)
+
+
+def _is_block_sd(x):
+    """True if x is a single Block state_dict (has an in_proj_weight-suffixed key)."""
+    return isinstance(x, dict) and any(str(k).endswith("in_proj_weight") for k in x)
+
+
+def _scalar(g):
+    """Coerce a gate (python number / 0-d or 1-elem torch tensor / list) -> float."""
+    if hasattr(g, "detach"):
+        g = g.detach().cpu().reshape(-1)
+        return float(g[0])
+    if isinstance(g, (list, tuple)):
+        return float(g[0])
+    return float(g)
+
+
+def _normalize_bind_list(binds, gates):
+    """Return an ordered list of (block_state_dict, gate_float). Accepts:
+      * single Block state_dict + scalar gate                  -> [(sd, g)]
+      * list of Block state_dicts + list|scalar of gates       -> zipped
+      * dict{idx: Block state_dict} + dict|list|scalar gates   -> index-ordered."""
+    if _is_block_sd(binds):
+        return [(binds, _scalar(gates))]
+    if isinstance(binds, (list, tuple)):
+        n = len(binds)
+        gl = gates if isinstance(gates, (list, tuple)) else [gates] * n
+        return [(binds[i], _scalar(gl[i])) for i in range(n)]
+    if isinstance(binds, dict):
+        keys = sorted(binds, key=lambda k: (int(k) if str(k).isdigit() else 1 << 30, str(k)))
+        out = []
+        for i, k in enumerate(keys):
+            if isinstance(gates, dict):
+                g = gates[k]
+            elif isinstance(gates, (list, tuple)):
+                g = gates[i]
+            else:
+                g = gates
+            out.append((binds[k], _scalar(g)))
+        return out
+    raise TypeError("unrecognized 'bind' payload type: " + str(type(binds)))
+
+
+def serialize_bind(base_bin: str, injected_pt: str, out_bin: str) -> str:
+    """base ByteGPT .bin (bytes VERBATIM) + injected torch .pt -> engine .bin + BGB
+    trailer. injected_pt = {"bind": <Block state_dict | list | dict>, "gate":
+    <scalar | list | dict>, "config": {...}}. Supports N>=1 appended blocks.
+
+    torch is imported ONLY to unpickle the .pt (irreducible); the byte layout is
+    reference-matched to `serialize` (per-layer write) + core/decode.py bg_load."""
+    import torch  # training family — torch OK here (.pt bridge)
+    base = open(base_bin, "rb").read()
+    if len(base) < 20:
+        raise ValueError("base .bin too small (no 5xu32 header): " + base_bin)
+    vocab, d, n_layer, n_head, block = struct.unpack("<5I", base[:20])
+    # sanity: reject a CLM base (CLM\x01 magic) — BGB rides ByteGPT only.
+    if base[0] == 67 and base[1] == 76 and base[2] == 77 and base[3] == 1:
+        raise ValueError("base is a CLM .clm, not a ByteGPT .bin: " + base_bin)
+
+    ck = torch.load(injected_pt, map_location="cpu", weights_only=False)
+    if not (isinstance(ck, dict) and "bind" in ck and "gate" in ck):
+        raise KeyError("injected .pt must have keys {'bind','gate'}; got " + str(list(ck)[:8]))
+    blocks = _normalize_bind_list(ck["bind"], ck["gate"])
+    if len(blocks) < 1:
+        raise ValueError("injected .pt carried 0 bind blocks")
+
+    trailer = bytearray()
+    trailer += BGB
+    trailer += struct.pack("<I", len(blocks))
+    for bsd, gate in blocks:
+        bsd = {k: (v.detach().cpu() if hasattr(v, "detach") else v) for k, v in bsd.items()}
+        trailer += _bind_block_bytes(bsd, d)
+        trailer += struct.pack("<f", float(gate))
+
+    with open(out_bin, "wb") as f:
+        f.write(base)
+        f.write(bytes(trailer))
+    print(f"[ok] wrote {out_bin}  base={len(base)} + BGB(n_bind={len(blocks)},d={d})"
+          f" trailer={len(trailer)} = {len(base) + len(trailer)} bytes"
+          f"  gates={[round(g, 6) for _, g in blocks]}", flush=True)
+    return out_bin
+
+
+
+# ════════════════════════════════════════════════════════════════════════
 # (e) FORMAT DISPATCH — pick the mouth serializer by target extension. Convenience
 #     only; the existing entry points (serialize_v3 / serialize) are UNRENAMED.
 # ════════════════════════════════════════════════════════════════════════
