@@ -1,0 +1,61 @@
+
+########## FAIR target | chance=0.1111 | C=9 P=5 ##########
+-- seed 7 | train=71 heldout=29 --
+/home/aiden/h1840_fair/toy_fair_gate.py:138: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  "final_ce": round(float(loss), 5)}
+   additive               train=0.944 heldout=0.448 distinct= 7 ce=0.1647
+   hadamard_bypass        train=1.000 heldout=0.655 distinct= 7 ce=0.0001
+   hrr_bottleneck         train=1.000 heldout=1.000 distinct= 9 ce=0.0003
+   noninv_bottleneck      train=1.000 heldout=0.862 distinct= 8 ce=0.0083
+   bilinear_bottleneck    train=1.000 heldout=0.552 distinct= 6 ce=0.0000
+-- seed 4302 | train=70 heldout=30 --
+   additive               train=0.900 heldout=0.467 distinct= 5 ce=0.1820
+   hadamard_bypass        train=1.000 heldout=0.667 distinct= 7 ce=0.0001
+   hrr_bottleneck         train=1.000 heldout=0.767 distinct= 7 ce=0.0003
+   noninv_bottleneck      train=1.000 heldout=0.833 distinct= 8 ce=0.0171
+   bilinear_bottleneck    train=1.000 heldout=0.567 distinct= 7 ce=0.0000
+-- seed 4303 | train=70 heldout=30 --
+   additive               train=1.000 heldout=0.600 distinct= 7 ce=0.0574
+   hadamard_bypass        train=1.000 heldout=0.733 distinct= 8 ce=0.0001
+   hrr_bottleneck         train=1.000 heldout=0.967 distinct= 8 ce=0.0003
+   noninv_bottleneck      train=1.000 heldout=0.967 distinct= 8 ce=0.0104
+   bilinear_bottleneck    train=1.000 heldout=0.533 distinct= 8 ce=0.0000
+
+########## ADDITIVE-control target | chance=0.1111 | C=9 P=5 ##########
+-- seed 7 | train=71 heldout=29 --
+   additive               train=0.887 heldout=0.172 distinct= 4 ce=0.4708
+   hadamard_bypass        train=1.000 heldout=0.448 distinct= 8 ce=0.0001
+   hrr_bottleneck         train=1.000 heldout=0.966 distinct= 9 ce=0.0003
+   noninv_bottleneck      train=1.000 heldout=1.000 distinct= 9 ce=0.0056
+   bilinear_bottleneck    train=1.000 heldout=0.448 distinct= 8 ce=0.0000
+-- seed 4302 | train=70 heldout=30 --
+   additive               train=0.871 heldout=0.133 distinct= 4 ce=0.6207
+   hadamard_bypass        train=1.000 heldout=0.567 distinct= 8 ce=0.0001
+   hrr_bottleneck         train=1.000 heldout=0.767 distinct= 8 ce=0.0004
+   noninv_bottleneck      train=1.000 heldout=0.667 distinct= 8 ce=0.0170
+   bilinear_bottleneck    train=1.000 heldout=0.600 distinct= 7 ce=0.0000
+-- seed 4303 | train=70 heldout=30 --
+   additive               train=0.929 heldout=0.333 distinct= 7 ce=0.3919
+   hadamard_bypass        train=1.000 heldout=0.567 distinct= 7 ce=0.0001
+   hrr_bottleneck         train=1.000 heldout=0.900 distinct= 7 ce=0.0003
+   noninv_bottleneck      train=1.000 heldout=0.867 distinct= 7 ce=0.0111
+   bilinear_bottleneck    train=1.000 heldout=0.600 distinct= 7 ce=0.0000
+
+=== FROZEN-BAR (FAIR target) per-seed ===
+   seed 7: e_heldout=0.552 a=0.448 b=0.655 | e>a+.34:False e>b+.34:False train>=.95:False
+   seed 4302: e_heldout=0.567 a=0.467 b=0.667 | e>a+.34:False e>b+.34:False train>=.95:False
+   seed 4303: e_heldout=0.533 a=0.600 b=0.733 | e>a+.34:False e>b+.34:False train>=.95:True
+=== NON-RIGGED CONTROL (additive target) per-seed ===
+   seed 7: additive_heldout=0.172 bilinear_heldout=0.448 | bilinear NOT-dom additive:True additive>=.50:False
+   seed 4302: additive_heldout=0.133 bilinear_heldout=0.600 | bilinear NOT-dom additive:False additive>=.50:False
+   seed 4303: additive_heldout=0.333 bilinear_heldout=0.600 | bilinear NOT-dom additive:True additive>=.50:False
+
+=== STAGE-1 FAIR GATE ===
+  c1 e>additive+.34 (>=2/3): False (0/3)
+  c2 e>bypass-open+.34 (>=2/3): False (0/3)
+  c3 all train>=.95 (>=2/3): False (1/3)
+  c4 non-rigged control (bilinear NOT-dom add & add>=.50, >=2/3): False (notdom 2/3, addwin 0/3)
+
+=== VERDICT: FAIL  | GPU-fire authorized: False ===
+wrote toy_fair_result.json
