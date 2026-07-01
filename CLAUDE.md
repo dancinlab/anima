@@ -23,7 +23,7 @@ Pass this gate before any work/verification/fire. Each item summarizes a body ru
 7. **🔌 GREEN is done only when wired** — once engine-native GREEN is verified, completion requires live `core/*.hexa` wiring + ARCHITECTURE.json lockstep. (→ `a_verified_must_wire`)
 8. **🚪 All engine ops via `anima <verb>`** — training·measurement·inference/serving·serialization·sweep run ONLY through the installed `anima` CLI (`anima chat`·`train [--py]`·`evaluate [--py]`·`serialize`·`sweep`), never raw `python3 cli/*.py` / `hexa run cli/anima.hexa` (blocked by `H-ANIMA-SINGLE-ENTRY`). A new capability = a new `anima` verb, not a new script. (→ `a_cli_single_entry`)
 
-> ⚙️ **Code-level enforcement (not salience):** gates 1·6 are **mechanically blocked** by `tool/enforce_anima_gates.py` — wired into `harness.config.json` verify.checks so pr-cycle/CI reject a violating PR (exit≠0). No bypass flag, no skip (c18). Full audit = `python3 tool/enforce_anima_gates.py --all`; changed-only = no args. Add new gates to this enforcer where possible to make them code-enforced, not doc-only.
+> ⚙️ **Code-level enforcement (not salience):** gates 1·6 are **mechanically blocked** by `.harness/enforce_anima_gates.py` — wired into `harness.config.json` verify.checks so pr-cycle/CI reject a violating PR (exit≠0). No bypass flag, no skip (c18). Full audit = `python3 tool/enforce_anima_gates.py --all`; changed-only = no args. Add new gates to this enforcer where possible to make them code-enforced, not doc-only.
 
 ---
 
