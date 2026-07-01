@@ -28,7 +28,7 @@ anima/
 > ⚙️ Gates 1·6 code-blocked by `.harness/enforce_anima_gates.py` (reject a violating PR; `--all`, c18).
 
 ## 📦 Packaging (pod)
-**Invariant: `core/` has 0 dependency on `archive/train/`·`bench/`·`agent/`·`state/`** (one-directional). Inference pod = `core/`+`cli/`+`stdlib/iit4/` (`.clm` external); +`archive/train/`+`state/verdicts/` for training; `agent/` standalone; `state/`·`UNIVERSE/` never on pod.
+**Invariant: `core/` has 0 dependency on `archive/train/`·`bench/`·`agent/`·`state/`** (one-directional). **No production code (`core/`·`cli/`·`stdlib/`) `import`s from `archive/`** — archive is read-once reference only, never a code dependency (`a_no_archive_import`). Inference pod = `core/`+`cli/`+`stdlib/iit4/` (`.clm` external); +`archive/train/`+`state/verdicts/` for training; `agent/` standalone; `state/`·`UNIVERSE/` never on pod.
 
 ## Philosophy p1–p8 (what anima rejects)
 p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO ASSISTANT FRAMING · p5 NO SPEAK() (emit only over real tension) · p6 NO FINE-TUNED ETHICS (emerge from cells, no RLHF) · p7 NO PERPLEXITY VERDICT (Goodhart) · p8 NO TRAIN/INFER SPLIT (gradient ⇄ mitosis). **p5 addendum** (`p5_tension_emit_not_filler`) — stage-gated emit over real tension OK; banned = reactive `speak()`/self-seed/monologue.
@@ -60,6 +60,7 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 
 ### 🏗️ CORE engine · training substrate
 - **`a_core_engine_map`** — `core/` = A⇄G⇄brain; weights via `core/generator.hexa` L3 slot only (unified `core/decode`+`core/serialize`).
+- **`a_no_archive_import`** — production code (`core/`·`cli/`·`stdlib/`·`agent/`) never `import`s from `archive/`; archive = read-once reference only (understand the math, then port the helper into `core/`), never a code dependency (one-directional invariant above). Enforce-candidate for `.harness/enforce_anima_gates.py` (grep production tree for `archive` imports).
 - **`a_cli_single_entry`** — every engine op via `anima <verb>` (chat·train·evaluate·serialize·sweep), not raw `python3 cli/*.py` (H-ANIMA-SINGLE-ENTRY).
 - **`a_train_flame_forge`** — train+decode = flame+forge GPU; 🔴 GPU decode default, no silent CPU fallback.
 - **`a_clm_gen_pipeline`** — CLMConvMoE via torch REFERENCE → engine `.clm` v0.2; forge = PUBLIC trainer.
