@@ -1,0 +1,99 @@
+{
+  "frozen": "FREEZE.md",
+  "chance": 0.1111,
+  "seeds": {
+    "7": {
+      "n_seen": 28,
+      "n_held": 8,
+      "arms": {
+        "lam_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0315
+        },
+        "lam_0.3": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1064
+        },
+        "lam_1.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1179
+        },
+        "lam_3.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1179
+        }
+      }
+    },
+    "4302": {
+      "n_seen": 28,
+      "n_held": 8,
+      "arms": {
+        "lam_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1313
+        },
+        "lam_0.3": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.2429
+        },
+        "lam_1.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1174
+        },
+        "lam_3.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1174
+        }
+      }
+    },
+    "4303": {
+      "n_seen": 28,
+      "n_held": 8,
+      "arms": {
+        "lam_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0881
+        },
+        "lam_0.3": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0
+        },
+        "lam_1.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0
+        },
+        "lam_3.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0
+        }
+      }
+    }
+  },
+  "verdict": {
+    "per_seed": [
+      {
+        "seed": 7,
+        "off": 0.0315,
+        "on_best": 0.1179,
+        "delta": 0.0864
+      },
+      {
+        "seed": 4302,
+        "off": 0.1313,
+        "on_best": 0.2429,
+        "delta": 0.1116
+      },
+      {
+        "seed": 4303,
+        "off": 0.0881,
+        "on_best": 0.0,
+        "delta": -0.0881
+      }
+    ],
+    "n_delta_ge_0.15": 0,
+    "no_regress": false,
+    "train_ok": true,
+    "off_learns": false,
+    "tier": "INCONCLUSIVE (sanity gate fail \u2014 undertrained or task not learnable)"
+  }
+}
