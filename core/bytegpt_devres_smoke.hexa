@@ -19,11 +19,11 @@
 // a determinism probe: >0 would flag a device-resident stream/atomic race.
 //
 // p7: verification is exact argmax equality + a logits max|Δ| readout, no
-// loss/perplexity. Engine-native (live core/bytegpt_decode.hexa). Needs a CUDA
+// loss/perplexity. Engine-native (live core/decode.hexa (unified CONV+BYTE)). Needs a CUDA
 // host + the 303M h1129 fixture to exercise the real device path; on no-CUDA it
 // still runs (dev path = CPU fallback) but only proves the host-mirror wiring.
 
-import "core/bytegpt_decode.hexa"
+import "core/decode.hexa"
 
 // max|Δ| over the first `n` elements of two logit farrs.
 fn _maxdiff(a: int, b: int, n: int) -> float {

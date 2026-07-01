@@ -38,8 +38,8 @@
 //        runtime.a + ~/.hx/.cuda-runtime marker selects GPU vs CPU.
 //
 //  ENGINE-NATIVE (a_engine_native_learning) — the trained weights serialize to
-//        .clm v0.2 (archive/train/clm/model/clm_serialize_v2.py bridge) and mount on
-//        core/clm_decode.hexa for FROZEN G6 bars (H_1129/1139 recombination,
+//        .clm v0.2 (core/serialize.py unified bridge, serialize_v3) and mount on
+//        core/decode.hexa for FROZEN G6 bars (H_1129/1139 recombination,
 //        H_1140 novelty). This trainer IS the final-architecture engine chain
 //        (same clm_*.hexa ops core/clm_decode reads), so it is NOT a mirror.
 //
@@ -342,7 +342,7 @@ let mut expB_global = 0
 //  packed-expert layout so mitosis can grow E into already-owned contiguous
 //  slots. Trunk params are packed [L·…] and addressed by the flame *_off conv
 //  (no per-layer/per-expert slice copy). Dilation = min(2^l,512), byte-faithful
-//  to clm_mitosis.hexa / core/clm_decode.hexa L-loop (no arch drift).
+//  to clm_mitosis.hexa / core/decode.hexa L-loop (no arch drift).
 //
 //  Trunk caches (packed, sized [L·T·d] / [L]) feed the reverse-order bwd:
 //    tin[l]  = input to layer l's conv   (== running x BEFORE the residual add)
@@ -822,8 +822,8 @@ fn cli_corpus(argv: [string]) -> [string] { return cli_poslist(argv, "--corpus")
 
 // ════════════════════════════════════════════════════════════════════════════
 //  .clm v0.2/v0.3 SERIALIZE (a_clm_gen_pipeline) — pack the trained CLMConvMoE
-//  weights into the EXACT CLM\x01 byte layout core/clm_decode.hexa loads (ground
-//  truth = archive/train/clm/model/clm_serialize_v2.py, byte-for-byte). v0.3 GENERAL
+//  weights into the EXACT CLM\x01 byte layout core/decode.hexa loads (ground
+//  truth = core/serialize.py::serialize_v3, byte-for-byte). v0.3 GENERAL
 //  block/ext counts (nblk = L + E + 3, n_ext = 2L + E + 6); at L=1 this is the
 //  format the engine reads — E is recovered from the router block cout, so the
 //  grown expert count (post-mitosis) round-trips. NOT a mirror: the engine reads
@@ -912,7 +912,7 @@ fn ser_ext(buf, t: int, base: int, n: int) {
 //   ecW · tcW[0..L-1] · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)   (nblk = L+E+3)
 // Ext order (n_ext = 2L + E + 6):
 //   embed · ecB · tcB[0..L-1] · e0B..e{E-1}B · rB · roB · tgG[0..L-1] · tgB[0..L-1] · noG · noB
-// This is the EXACT order core/clm_decode.hexa::clm_load reads (L = nblk−E−3); at
+// This is the EXACT order core/decode.hexa::clm_load reads (L = nblk−E−3); at
 // L=1/E=2 it is byte-identical to v0.2 (the legacy layout the engine reads).
 fn serialize_clm(out: string, E: int, L: int, d: int, V: int, K: int,
                  embed: int, ecW: int, ecB: int, tcW: int, tcB: int,
@@ -1413,7 +1413,7 @@ fn main() {
 
     // ════════════════════════════════════════════════════════════════════════
     //  ckpt SERIALIZE (a_clm_gen_pipeline · a_fire_recover_complete) — write the
-    //  trained CLMConvMoE to .clm v0.3 so it mounts on core/clm_decode.hexa for
+    //  trained CLMConvMoE to .clm v0.3 so it mounts on core/decode.hexa for
     //  engine-native G6 scoring (a_engine_native_learning). E = runtime expert
     //  count (post-mitosis), L=1, byte vocab V=256. NOT a mirror — the engine
     //  reads these exact bytes back.

@@ -44,7 +44,7 @@ import "core/pure_field.hexa"
 import "core/brain.hexa"
 import "core/engine_cli.hexa"
 import "core/generator.hexa"
-import "core/bytegpt_decode.hexa"
+import "core/decode.hexa"
 // NOTE: G0-G6 evaluation lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin,
 // symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — and
 // cli/evaluate.hexa now HOLDS the G0-G6 scorers directly (the former core/g_gates.hexa
@@ -67,6 +67,8 @@ fn anima_usage() {
     println("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
     println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
     println("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
+    println("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
+    println("                                                  multi-GPU lever-sweep (arms×objectives)")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -81,6 +83,10 @@ fn anima_usage() {
     println("                            .clm v0.3 (+ DESCENT gate). recovery/re-export. → cli/serialize.hexa.")
     println("  evaluate                : mount a serialized .clm through the generator L3 mouth and")
     println("                            score G0-G6 (engine-native, .clm only). → cli/evaluate.hexa.")
+    println("  sweep                   : multi-GPU lever-sweep orchestrator — the arms×objectives")
+    println("                            matrix, GPU-pinned round-robin; per cell TRAIN (cli/train.py)")
+    println("                            then G0-G6 MEASURE (cli/evaluate.py), aggregate to")
+    println("                            SWEEP_SUMMARY.md. Always python. → cli/sweep.py.")
 }
 
 // anima_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
@@ -122,10 +128,39 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 // argv = ["train", <rest...>]; the rest is forwarded verbatim to cli/train.hexa
 // after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
 fn anima_train_mode(argv: [string]) {
-    println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
+    // --py: route production training to the CANONICAL python trainer (cli/train.py —
+    //   torch Lane-P CLMConvMoE with the SAVANT+MITOSIS recipe + the H_1640 arm×objective
+    //   compositional levers) instead of the hexa-native cli/train.hexa. WHY: cli/train.hexa
+    //   is single-thread native-CPU-scalar-bound (#2598/#2600) and temporarily under a GPU-
+    //   utilization fix, so the GPU-bound torch path is the working training entry today
+    //   (a_clm_gen_pipeline: "Lane-P torch = REFERENCE + bridge, forge is the PUBLIC prod").
+    //   Symmetric to anima_evaluate_mode's --py (cli/evaluate.py). `--py` is consumed here
+    //   (stripped from the forwarded argv) so cli/train.py sees only its own knobs
+    //   (--arm --objective … --out). The torch-side CE/gauges are DIRECTIONAL only — the
+    //   TERMINAL verdict re-measures the serialized .clm via `anima evaluate --py`.
+    let use_py = anima_has_flag(argv, "--py")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    while i < len(argv) { if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
+    if use_py {
+        println("=== anima train → cli/train.py (canonical py trainer · torch Lane-P · arm×objective levers) ===")
+        // hexa `exec` closes a child's captured stdout pipe after ~150s (the child gets EPIPE
+        // on its next fd-1 write but is NOT killed). A py train runs for minutes/hours, so
+        // redirect ALL child output to a result file (fd 1 stays silent → the child survives
+        // the pipe close and finishes the full run). A SECOND fresh exec then cats that file.
+        // Symmetric to anima_evaluate_mode's --py result-file handling; cli/train.py streams
+        // to stdout (it has no --result-file arg of its own), so the redirect is at the shell.
+        let rf = "/tmp/anima_trainpy_result.out"
+        // cd into $ANIMA_SRC first so train.py's __file__-relative train/clm/model resolution
+        // matches a direct `python3 cli/train.py` (LOCATION-INDEPENDENT, same as the hexa path).
+        let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/train.py" + fwd + " > " + rf + " 2>&1"
+        println("dispatch: " + cmd)
+        let _tr = exec(cmd)
+        let out = exec("cat " + rf)
+        print(out)
+        return
+    }
+    println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
     // LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd, not the source
     // root): resolve the sibling cli/train.hexa via $ANIMA_SRC (the launcher / setup.hexa
     // exports the anima source root), falling back to "." for a direct `hexa run
@@ -191,7 +226,7 @@ fn anima_evaluate_mode(argv: [string]) {
         let rf = "/tmp/anima_evalpy_result.out"
         // cd into $ANIMA_SRC first so evaluate.py's __file__-relative core/ resolution
         // matches a direct `python3 cli/evaluate.py` (verified working). Without the cd,
-        // the hexa exec cwd skews sys.path[0] and core/ imports (bytegpt_decode) break.
+        // the hexa exec cwd skews sys.path[0] and core/ imports (decode) break.
         let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/evaluate.py" + fwd + " --result-file " + rf
         println("dispatch: " + cmd)
         let _ev = exec(cmd)
@@ -241,6 +276,42 @@ fn anima_serialize_mode(argv: [string]) {
     print(out)
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//  SWEEP MODE — dispatch to cli/sweep.py (multi-GPU lever-sweep orchestrator, ALWAYS python)
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//
+// `anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … --measure` runs the
+// arms×objectives matrix: each (arm,objective) cell is GPU-pinned round-robin and, per
+// cell, TRAINS via cli/train.py then G0-G6-MEASURES the .clm via cli/evaluate.py, finally
+// AGGREGATING the gates into SWEEP_SUMMARY.md. It replaces the ad-hoc scratch fire_*.sh
+// orchestration with a canonical single-entry subcommand (symmetric to train/evaluate).
+//
+// ALWAYS PYTHON (no hexa branch, no --py flag): sweep is inherently an orchestrator over
+// the two canonical PY engines (cli/train.py + cli/evaluate.py) — it only shells out to
+// them as subprocesses (torch-free itself). So there is nothing to route to a hexa twin;
+// the verb dispatches straight to cli/sweep.py (the engines it calls carry the a_engine_
+// native_learning discipline — the .clm re-measure is the terminal verdict; training CE
+// is DIRECTIONAL).
+fn anima_sweep_mode(argv: [string]) {
+    println("=== anima sweep → cli/sweep.py (multi-GPU lever-sweep orchestrator · arms×objectives) ===")
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    // A sweep runs for a long time (N cells × a 303M train each). hexa `exec` closes a
+    // child's captured stdout pipe after ~150s (the child gets EPIPE on its next fd-1 write
+    // but is NOT killed), so redirect ALL child output to a result file (fd 1 stays silent →
+    // the child survives the pipe close and finishes the full sweep). A SECOND fresh exec
+    // then cats that file. Symmetric to anima_train_mode's --py result-file handling.
+    // cd into $ANIMA_SRC first so sweep.py's __file__-relative cli/train.py + cli/evaluate.py
+    // resolution matches a direct `python3 cli/sweep.py` (LOCATION-INDEPENDENT).
+    let rf = "/tmp/anima_sweeppy_result.out"
+    let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/sweep.py" + fwd + " > " + rf + " 2>&1"
+    println("dispatch: " + cmd)
+    let _sw = exec(cmd)
+    let out = exec("cat " + rf)
+    print(out)
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 //  MAIN — mode dispatch
 // ══════════════════════════════════════════════════════════════════════════════
@@ -270,6 +341,13 @@ fn main() {
     // single-entry discipline as `train`; never mistaken for a ckpt path.
     if argv[0] == "evaluate" {
         anima_evaluate_mode(argv)
+        return
+    }
+
+    // subcommand: `sweep` → multi-GPU lever-sweep orchestrator (cli/sweep.py, always
+    // python). Same single-entry discipline as train/evaluate; never a ckpt path.
+    if argv[0] == "sweep" {
+        anima_sweep_mode(argv)
         return
     }
 

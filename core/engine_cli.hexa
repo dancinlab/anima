@@ -57,7 +57,7 @@
 // ── §  ENGINE SELECT axis — --engine (the 2nd CLI rider) ──────────────────────────
 //
 // SINGLE PRODUCTION ENGINE (2026-06-19): anima converged on **conv** (CLMConvMoE,
-// the .clm byte mouth via core/clm_decode.hexa + generator.hexa L3 slot). The real
+// the .clm byte mouth via core/decode.hexa + generator.hexa L3 slot). The real
 // engine lives in core/ directly; engines/conv/ is a THIN metadata adapter only.
 // The multi-engine registry (cdv2 torch-legacy · hexad · omega + the EngineSpec
 // vtable + engine_swap_smoke) was ARCHIVED 2026-06-19 → archive/engines-multiengine/
@@ -208,7 +208,7 @@ pub fn engine_cli_resolve_engine(arg: [string]) -> string {
 
 // (registry resolve engine_cli_resolve_spec / engine_cli_spec_by_name retired with
 //  the multi-engine EngineSpec layer — archive/engines-multiengine/. The single conv
-//  engine decodes directly via core/clm_decode.hexa + generator.hexa L3 slot.)
+//  engine decodes directly via core/decode.hexa + generator.hexa L3 slot.)
 
 // ── top-level parse: raw argv → EngineConfig ──────────────────────────────────
 // The single ENGINE-config entry point. launch.hexa (or any caller) calls this

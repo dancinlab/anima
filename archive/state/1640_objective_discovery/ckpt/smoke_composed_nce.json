@@ -1,0 +1,50 @@
+{
+  "hyp": "H_1640",
+  "arm": "ctrl",
+  "objective": "composed_nce",
+  "seed": 7,
+  "obj_aux_params": 0,
+  "levers": {
+    "tlora": false,
+    "tlora_rank": 8,
+    "tlora_base": true,
+    "dict_aux": false,
+    "jamo_aux": false,
+    "wd_floor": -1.0,
+    "dropout_floor": -1.0
+  },
+  "n_params": 107715,
+  "loss0": 5.75365,
+  "lossF": 5.61138,
+  "wall_s": 0.0,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": null,
+  "registers_descent": "0/0",
+  "heldout_descent": {},
+  "last_aux": {
+    "composed_nce": 2.227924346923828
+  },
+  "dbes_final": {
+    "expert_div": 0.57235,
+    "router_entropy": 1.00429,
+    "usage_gini": 0.08093,
+    "usage": [
+      0.29236,
+      0.41375,
+      0.29389
+    ],
+    "n_experts": 3
+  },
+  "dbes_log": [],
+  "gauges_g1g6_torch_probe": {
+    "step": 3,
+    "ce": 5.61138,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 1,
+    "g6_jaccard": null,
+    "phi_proxy": 9.9e-05,
+    "mitosis_cells": 316
+  },
+  "tier": "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL"
+}

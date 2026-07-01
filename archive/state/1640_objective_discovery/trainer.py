@@ -1,5 +1,57 @@
 #!/usr/bin/env python3
-"""H_1631 TPR-EXPERT-WEIGHT 303M — N1 TLoRA expert-weight + N3 DBES diagnostic (see PREREG.md).
+"""H_1640 OBJECTIVE-DISCOVERY 303M — NEW compositional TRAINING-OBJECTIVE levers.
+
+>>> This file is a COPY of state/1631_tpr_expert_weight/trainer.py (do NOT edit 1631)
+>>> with THREE NEW `--objective` choices added. Everything below the "NEW OBJECTIVES
+>>> (H_1640)" banner is the added surface; the TLoRA/DBES/jamo arm machinery is
+>>> inherited verbatim so the single-variable discipline is identical.
+
+WHY (context, do not re-derive): the G1 recombination / G6 ideation wall is confirmed
+TRUNK-OBJECTIVE-BOUND — cross-entropy does NOT reward COMPOSITION of concepts, so every
+READOUT op we tried (multiplicative binding exp3, CLS pattern-sep H_1815, TLoRA
+expert-weight H_1813, plain-InfoNCE recomb-objective H_9024) only lifts G2 novelty
+(orthogonal) and floors G1. External lit converges: the lever is the OBJECTIVE +
+regularization, NOT the operator. So a NEW lever must be a NEW LOSS FUNCTION that rewards
+compositional structure IN THE TRUNK, added to CE. This package adds three such losses:
+
+  predictive_info   — MULTI-STEP predictive-coding aux. Aux linear heads predict the
+                      tokens k=2,3,4 steps AHEAD from the trunk penultimate (not just
+                      the immediate next token). Rewards the penultimate for carrying
+                      predictive info about the FUTURE beyond t+1 = the cortical
+                      predictive hierarchy / predictive-information bottleneck
+                      (Bialek-Tishby predictive information; van den Oord CPC 1807.03748;
+                      Rao&Ballard predictive coding). Heads DROPPED at serialize.
+
+  constructive_bind — TRAINED CONSTRUCTIVE BIND aux (the one untried piece of the
+                      substrate framebreak). Two learned projections extract role r and
+                      filler f from the penultimate; they are BOUND by circular
+                      convolution c = r⊛f (Plate 1995 Holographic Reduced Representations
+                      / Smolensky 1990 Tensor-Product Representations). Two constraints
+                      sculpt a compositional code: (1) UNBIND recovers the filler
+                      (unbind(c,r)≈f, cos loss) so the code must support clean
+                      compose/decompose, and (2) the bound composite must PREDICT the
+                      next token (dec(c)→y, CE) so binding carries task signal. Heads
+                      DROPPED at serialize.
+
+  composed_nce      — COMPOSED-NEGATIVE InfoNCE. Plain InfoNCE's negatives are RANDOM
+                      vocab tokens (concept-membership only). Here the negatives are the
+                      SAME bag of tokens present in the window but assigned to the WRONG
+                      position (targets permuted WITHIN each sequence). Contrasting the
+                      true token-to-position assignment against same-concept-set /
+                      wrong-composition assignments directly rewards getting the
+                      COMPOSITION right, not just the concept set (hard-negative /
+                      order-sensitive contrastive; CPC-style). Operates on logits — no
+                      aux params, gradient flows readout→trunk.
+
+All three are DIRECTIONAL torch-side training pressures; the verdict is later via
+`anima evaluate --py <clm>` engine-native on the FROZEN G1 bar (a_engine_native_learning).
+The .clm path stays OPEN: aux heads/projections live OUTSIDE model.state_dict (in the
+objective module), so serialize_v3 writes only the standard additive-readout CLMConvMoE.
+
+────────────────────────────────────────────────────────────────────────────────────────
+INHERITED (H_1631) header follows:
+
+H_1631 TPR-EXPERT-WEIGHT 303M — N1 TLoRA expert-weight + N3 DBES diagnostic (see PREREG.md).
 
 We previously falsified MULTIPLICATIVE BINDING at the READOUT position (exp3_303m
 ARM-BIND: G1=0 ∧ G6 fals=0, NOT>ctrl, terminal floor). This package probes a
@@ -78,9 +130,12 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = _HERE
 while _REPO != "/" and not os.path.exists(os.path.join(_REPO, "cli", "train.py")):
     _REPO = os.path.dirname(_REPO)
-for p in (os.path.join(_REPO, "cli"), os.path.join(_REPO, "train", "clm", "model"),
-          os.path.join(_REPO, "tool")):
-    if p not in sys.path:
+# the CLM ground-truth model+serializer lives at train/clm/model on the pod, but at
+# archive/train/clm/model in some worktree layouts — add whichever exists (superset).
+_MODEL_CANDS = (os.path.join(_REPO, "train", "clm", "model"),
+                os.path.join(_REPO, "archive", "train", "clm", "model"))
+for p in (os.path.join(_REPO, "cli"), os.path.join(_REPO, "tool")) + _MODEL_CANDS:
+    if os.path.isdir(p) and p not in sys.path:
         sys.path.insert(0, p)
 
 from model import CLMConfig, CLMConvMoE, CausalDilatedConv1d   # train/clm/model/model.py
@@ -95,6 +150,16 @@ DICT_LAMBDA = 1e-3        # N7 trunk-penultimate L1 sparsity weight (Stop-Probin
 JAMO_LAMBDA = 0.3         # N8 next-jamo-class aux head weight (SCRIPT)
 INFONCE_LAMBDA = 1.0; INFONCE_NEG = 64
 EQ_LAMBDA = 1.0; EQ_MARGIN = 0.5
+
+# ── NEW OBJECTIVE frozen hyperparams (H_1640 — pre-registered in PREREG.md) ──
+PREDINFO_LAMBDA = 0.5            # multi-step predictive-coding aux weight (per horizon, averaged)
+PREDINFO_HORIZONS = (2, 3, 4)   # predict tokens 2/3/4 steps AHEAD from penultimate
+CBIND_LAMBDA = 0.5              # constructive-bind aux weight (unbind-recon + composite-CE)
+CBIND_DIM = 256                 # HRR role/filler factor dim (power-of-2 friendly for FFT)
+CBIND_UNBIND_W = 1.0           # weight on the unbind-recovers-filler term
+CBIND_PRED_W = 1.0             # weight on the bound-composite-predicts-next-token term
+CNCE_LAMBDA = 1.0              # composed-negative InfoNCE weight
+CNCE_PERMS = 8                 # # of within-window target permutations = wrong-composition negatives
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -265,7 +330,7 @@ def dbes_specialization(model: CLMConvMoE, x: torch.Tensor) -> dict:
     u = torch.sort(usage).values
     nn_ = u.numel()
     # Gini = (2*sum(i*u_i)/(n*sum u) ) - (n+1)/n
-    idx = torch.arange(1, nn_ + 1, dtype=u.dtype)
+    idx = torch.arange(1, nn_ + 1, dtype=u.dtype, device=u.device)
     gini = (2.0 * (idx * u).sum() / (nn_ * u.sum() + 1e-9) - (nn_ + 1) / nn_).item()
     return {"expert_div": round(expert_div, 5),
             "router_entropy": round(ent, 5),
@@ -308,11 +373,16 @@ def _ce(logits, targets, V):
     return F.cross_entropy(logits.transpose(1, 2).reshape(-1, V), targets.reshape(-1))
 
 
-def loss_ce_marginal(logits, targets, V, gen):
+# NOTE (H_1640): every objective now accepts an OPTIONAL penultimate=(B,d,T) kwarg
+# (the post-MoE pre-readout trunk site). The inherited objectives ignore it; the new
+# compositional objectives consume it. Plain-function objectives have no params; the
+# two aux-head objectives are nn.Modules whose params are added to the optimizer in
+# main() and DROPPED at serialize (they never enter model.state_dict).
+def loss_ce_marginal(logits, targets, V, gen, penultimate=None):
     return _ce(logits, targets, V), {}
 
 
-def loss_infonce(logits, targets, V, gen):
+def loss_infonce(logits, targets, V, gen, penultimate=None):
     ce = _ce(logits, targets, V)
     lg = logits.transpose(1, 2).reshape(-1, V)
     tgt = targets.reshape(-1); N = tgt.shape[0]
@@ -324,7 +394,7 @@ def loss_infonce(logits, targets, V, gen):
     return ce + INFONCE_LAMBDA * infonce, {"infonce": float(infonce.detach())}
 
 
-def loss_contrastive_equilibrium(logits, targets, V, gen):
+def loss_contrastive_equilibrium(logits, targets, V, gen, penultimate=None):
     ce = _ce(logits, targets, V)
     lg = logits.transpose(1, 2).reshape(-1, V); tgt = targets.reshape(-1)
     logp = F.log_softmax(lg, dim=1)
@@ -337,8 +407,169 @@ def loss_contrastive_equilibrium(logits, targets, V, gen):
                                  "e_neg": float(e_neg.detach()), "eq": float(eq.detach())}
 
 
-OBJECTIVES = {"ce_marginal": loss_ce_marginal, "infonce": loss_infonce,
-              "contrastive_equilibrium": loss_contrastive_equilibrium}
+# ════════════════════════════════════════════════════════════════════════════
+#  ▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ NEW OBJECTIVES (H_1640) ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▛
+#  Three NEW compositional TRAINING-OBJECTIVE loss functions added to CE. Each is a
+#  training-side pressure that reshapes the gradient the TRUNK receives (not a readout
+#  op). Verdict later = engine-native `anima evaluate --py` on the frozen G1 bar.
+# ════════════════════════════════════════════════════════════════════════════
+
+# ── LEVER 1: predictive_info — multi-step predictive-coding aux ───────────────
+class PredictiveInfoObjective(nn.Module):
+    """Reward the trunk penultimate h_t for carrying predictive info about FUTURE
+    tokens k=2,3,4 steps ahead, not just the immediate next token (which CE already
+    covers). One linear head per horizon maps h_t -> V-way logits over token y_{t+j}.
+
+        aux = mean_j  CE( head_j(h[:, :, :T-j]) ,  y[:, j:] )        (j in HORIZONS-1)
+
+    (y is already next-token, so y[:,0] = token after x_0; predicting y[:,j:] from
+    h[:, :, :T-j] means predicting the token j positions further ahead.) This is the
+    predictive-information bottleneck / CPC objective (Bialek-Tishby predictive
+    information; van den Oord CPC 1807.03748; Rao&Ballard predictive coding): to
+    minimize it the trunk must compress the context into a code that stays predictive
+    multiple steps out, which requires COMPOSING context factors rather than memorizing
+    the 1-step marginal. Heads are DROPPED at serialize (engine reads only the additive
+    1-step readout)."""
+
+    def __init__(self, d, V, horizons=PREDINFO_HORIZONS, lam=PREDINFO_LAMBDA):
+        super().__init__()
+        self.horizons = tuple(int(j) - 1 for j in horizons)   # steps BEYOND next-token
+        self.lam = lam; self.V = V
+        self.heads = nn.ModuleList(nn.Conv1d(d, V, 1) for _ in self.horizons)
+
+    def forward(self, logits, targets, V, gen, penultimate=None):
+        ce = _ce(logits, targets, V)
+        if penultimate is None:
+            return ce, {}
+        h = penultimate                                    # (B, d, T)
+        T = h.shape[-1]
+        terms = []
+        for hd, j in zip(self.heads, self.horizons):
+            if j <= 0 or T - j < 1:
+                continue
+            pl = hd(h[:, :, :T - j])                        # (B, V, T-j)
+            pt = targets[:, j:]                             # (B, T-j) token j-ahead
+            terms.append(F.cross_entropy(
+                pl.transpose(1, 2).reshape(-1, V), pt.reshape(-1)))
+        if not terms:
+            return ce, {}
+        aux = torch.stack(terms).mean()
+        return ce + self.lam * aux, {"predinfo": float(aux.detach()),
+                                     "predinfo_h": len(terms)}
+
+
+# ── LEVER 2: constructive_bind — HRR trained-bind reconstruction aux ──────────
+def _circ_conv(a, b):
+    """Circular convolution (HRR binding) along the last dim via FFT. Real inputs."""
+    fa = torch.fft.rfft(a, dim=-1); fb = torch.fft.rfft(b, dim=-1)
+    return torch.fft.irfft(fa * fb, n=a.shape[-1], dim=-1)
+
+
+def _circ_corr(c, a):
+    """Circular correlation (HRR UNbinding): recover b from c=a⊛b given a.
+    unbind(c, a) = c ⊛ involution(a); in Fourier: irfft( conj(fft a) * fft c )."""
+    fc = torch.fft.rfft(c, dim=-1); fa = torch.fft.rfft(a, dim=-1)
+    return torch.fft.irfft(torch.conj(fa) * fc, n=c.shape[-1], dim=-1)
+
+
+class ConstructiveBindObjective(nn.Module):
+    """TRAINED CONSTRUCTIVE BIND on the trunk penultimate (the untried framebreak piece).
+
+    From each penultimate vector h_t, two learned linear projections extract a ROLE r_t
+    and a FILLER f_t (dim m). They are BOUND by circular convolution c_t = r_t ⊛ f_t
+    (Plate 1995 Holographic Reduced Representations / Smolensky 1990 Tensor-Product
+    Representations — VSA binding). Two constraints sculpt a COMPOSITIONAL code:
+
+      (1) UNBIND-RECOVERS-FILLER: unbind(c_t, r_t) ≈ f_t  →  1 - cos(f_hat, f_t).
+          Forces the bound composite to actually SUPPORT clean decomposition (a real
+          bind, not an additive blur — the exact property a pure additive readout lacks).
+      (2) COMPOSITE-PREDICTS-NEXT: a linear decoder maps the bound c_t to next-token
+          logits, CE against y_t. Forces the binding to carry TASK signal, so gradient
+          sculpts task-relevant compositional factors into the trunk.
+
+        aux = CBIND_UNBIND_W * (1 - cos(unbind(r⊛f, r), f)).mean()
+            + CBIND_PRED_W   * CE(dec(r⊛f), y)
+
+    All of {Wr, Wf, dec} live OUTSIDE model.state_dict → DROPPED at serialize; the
+    engine reads only the standard additive readout. Gradient flows into the trunk
+    through h_t, so the trunk is pushed toward a bind-decomposable representation."""
+
+    def __init__(self, d, V, m=CBIND_DIM, lam=CBIND_LAMBDA):
+        super().__init__()
+        self.m = m; self.lam = lam; self.V = V
+        self.role = nn.Conv1d(d, m, 1)
+        self.fill = nn.Conv1d(d, m, 1)
+        self.dec = nn.Conv1d(m, V, 1)     # bound composite -> next-token logits
+
+    def forward(self, logits, targets, V, gen, penultimate=None):
+        ce = _ce(logits, targets, V)
+        if penultimate is None:
+            return ce, {}
+        h = penultimate                                # (B, d, T)
+        r = self.role(h).transpose(1, 2)               # (B, T, m)
+        f = self.fill(h).transpose(1, 2)               # (B, T, m)
+        c = _circ_conv(r, f)                           # (B, T, m) bound composite
+        # (1) unbind must recover the filler
+        f_hat = _circ_corr(c, r)                        # (B, T, m)
+        unbind = (1.0 - F.cosine_similarity(f_hat, f, dim=-1)).mean()
+        # (2) bound composite must predict the next token
+        dec_logits = self.dec(c.transpose(1, 2))        # (B, V, T)
+        pred = F.cross_entropy(
+            dec_logits.transpose(1, 2).reshape(-1, V), targets.reshape(-1))
+        aux = CBIND_UNBIND_W * unbind + CBIND_PRED_W * pred
+        return ce + self.lam * aux, {"cbind_unbind": float(unbind.detach()),
+                                     "cbind_pred": float(pred.detach()),
+                                     "cbind": float(aux.detach())}
+
+
+# ── LEVER 3: composed_nce — composed-negative (wrong-composition) InfoNCE ─────
+def loss_composed_nce(logits, targets, V, gen, penultimate=None):
+    """InfoNCE whose negatives are the SAME bag of tokens present in the window but at
+    the WRONG position (targets permuted WITHIN each sequence) = same-concept-set /
+    wrong-composition. Contrasting the true token->position assignment against these
+    hard negatives directly rewards getting the COMPOSITION right, not merely the
+    concept set (plain infonce uses RANDOM vocab negatives = membership-only).
+
+        pos_n   = logit[n, y_t]                              (right token here)
+        neg_n,p = logit[n, y_perm_p(t)]  for p=1..CNCE_PERMS (a within-window token
+                                                              assigned to the wrong slot)
+        L = CE( [pos, neg...] , 0 )                          softmax over the assignment
+
+    Operates on the readout logits — no aux params; gradient flows readout->trunk. A
+    permuted token that coincides with the true target is masked to -inf (not a negative)."""
+    ce = _ce(logits, targets, V)
+    B, Vv, T = logits.shape
+    lg = logits.transpose(1, 2).reshape(-1, Vv)        # (B*T, V)
+    tgt = targets.reshape(-1)                          # (B*T,)
+    N = tgt.shape[0]
+    pos = lg.gather(1, tgt.unsqueeze(1))               # (N,1)
+    negs = []
+    for _ in range(CNCE_PERMS):
+        # independent within-sequence permutation of the target order per batch row
+        perm = torch.stack([torch.randperm(T, generator=gen, device=logits.device)
+                            for _ in range(B)])         # (B, T)
+        y_perm = targets.gather(1, perm).reshape(-1)    # (N,) same bag, wrong slots
+        s = lg.gather(1, y_perm.unsqueeze(1))           # (N,1)
+        s = s.masked_fill((y_perm == tgt).unsqueeze(1), float("-inf"))
+        negs.append(s)
+    cand = torch.cat([pos] + negs, dim=1)              # (N, 1+CNCE_PERMS)
+    cnce = F.cross_entropy(cand, torch.zeros(N, dtype=torch.long, device=lg.device))
+    return ce + CNCE_LAMBDA * cnce, {"composed_nce": float(cnce.detach())}
+
+
+# Objective registry. Value = a BUILDER(d, V, device) so the two aux-head objectives can
+# allocate learnable params; the plain-function ones ignore the args and return the fn.
+# `needs_penultimate` marks which objectives consume the trunk penultimate site.
+OBJECTIVE_BUILDERS = {
+    "ce_marginal":             lambda d, V, dev: loss_ce_marginal,
+    "infonce":                 lambda d, V, dev: loss_infonce,
+    "contrastive_equilibrium": lambda d, V, dev: loss_contrastive_equilibrium,
+    "predictive_info":         lambda d, V, dev: PredictiveInfoObjective(d, V).to(dev),
+    "constructive_bind":       lambda d, V, dev: ConstructiveBindObjective(d, V).to(dev),
+    "composed_nce":            lambda d, V, dev: loss_composed_nce,
+}
+OBJ_NEEDS_PENULTIMATE = {"predictive_info", "constructive_bind"}
+OBJECTIVES = OBJECTIVE_BUILDERS   # back-compat alias for --objective choices list
 
 # arm -> (tlora_on, dict_aux_on, jamo_aux_on)
 ARMS = {
@@ -401,9 +632,11 @@ def main():
     e0, emax = a.e0, a.emax
     V, K = 256, 3
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    objfn = OBJECTIVES[a.objective]
+    objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
+    obj_is_module = isinstance(objfn, nn.Module)
+    obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
 
-    print(f"=== H_1631 TPR-EXPERT-WEIGHT 303M arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
+    print(f"=== H_1640 OBJECTIVE-DISCOVERY 303M arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
     print(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
           f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
     print(f"  device={device} d={d} L={L} E0={e0} Emax={emax} seq_len={seq_len} "
@@ -427,7 +660,13 @@ def main():
 
     mito = T.MitosisMoE(model, e0, emax)
     T.install_router_mask(model, mito)
-    params = list(model.parameters()) + (list(jamo_head.parameters()) if jamo_head else [])
+    params = (list(model.parameters())
+              + (list(jamo_head.parameters()) if jamo_head else [])
+              + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
+    if obj_is_module:
+        n_obj = sum(p.numel() for p in objfn.parameters())
+        print(f"  objective '{a.objective}' aux params: {n_obj} "
+              f"(DROPPED at serialize — not in model.state_dict)", flush=True)
     opt = torch.optim.AdamW(params, lr=a.lr, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.0)
     gen = torch.Generator().manual_seed(42)
     val_gen = torch.Generator().manual_seed(1234)
@@ -536,17 +775,21 @@ def main():
         x, y = get_batch(step)
         opt.zero_grad(set_to_none=True)
         aux = {}
+        # H_1640: compute the trunk penultimate ONCE if any consumer needs it
+        # (the new objective, or the dict/jamo aux). Reused across all three so they
+        # backprop through a single trunk graph.
+        need_pen = obj_needs_pen or dict_on or jamo_on
         if a.bf16 and device == "cuda":
             with torch.autocast("cuda", dtype=torch.bfloat16):
                 out = model(x, y)
-                obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen)
+                h = trunk_penultimate(x) if need_pen else None
+                pen = h.float() if (h is not None and obj_needs_pen) else None
+                obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
                 loss = obj_loss + out["aux_loss"]
                 if dict_on:
-                    h = trunk_penultimate(x)
                     dloss = a.dict_lambda * h.abs().mean()
                     loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
                 if jamo_on:
-                    h = trunk_penultimate(x)
                     jl = jamo_head(h.float())
                     jt = jamo_targets(y, jamo_head.n_jamo)
                     jloss = a.jamo_lambda * F.cross_entropy(
@@ -556,14 +799,14 @@ def main():
             loss.backward()
         else:
             out = model(x, y)
-            obj_loss, oaux = objfn(out["logits"], y, V, obj_gen)
+            h = trunk_penultimate(x) if need_pen else None
+            pen = h if obj_needs_pen else None
+            obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
             loss = obj_loss + out["aux_loss"]
             if dict_on:
-                h = trunk_penultimate(x)
                 dloss = a.dict_lambda * h.abs().mean()
                 loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
             if jamo_on:
-                h = trunk_penultimate(x)
                 jl = jamo_head(h)
                 jt = jamo_targets(y, jamo_head.n_jamo)
                 jloss = a.jamo_lambda * F.cross_entropy(
@@ -639,7 +882,9 @@ def main():
         print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
 
     # ── summary json ──────────────────────────────────────────────────────────
-    summary = {"hyp": "H_1631", "arm": a.arm, "objective": a.objective, "seed": a.seed,
+    summary = {"hyp": "H_1640", "arm": a.arm, "objective": a.objective, "seed": a.seed,
+               "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
+                                  if obj_is_module else 0),
                "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
                           "tlora_base": not a.tlora_no_base, "dict_aux": dict_on,
                           "jamo_aux": jamo_on, "wd_floor": a.wd_floor,

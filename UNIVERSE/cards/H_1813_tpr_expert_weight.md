@@ -1,12 +1,12 @@
 ---
 id: H_1813
 slug: tpr_expert_weight
-tier: IN-FLIGHT
+tier: 🧱 NOT-SUPPORTED (INCONCLUSIVE-at-floor · DIRECTIONAL tlora_jamo bd 0→1)
 title: TPR expert-weight TLoRA + DBES 분화진단 — ConvMoE expert 내부 weight 구조 레버 (N1+N3)
-verdict: IN-FLIGHT (pod 43098811 READY · 6 arms training · G0-G6 eval pending)
-status: IN-FLIGHT
-wired: DIRECTIONAL-mirror (training+eval in progress)
-verdict_artifact: state/g1_unmeasured_backlog_batch/H_1813/ckpt/
+verdict: 🧱 NOT-SUPPORTED (INCONCLUSIVE-at-floor). 4-arm(ctrl/tlora/tlora_dict/tlora_jamo) 303M CLM seed7 aiden 학습 → anima evaluate --py(KV-cache decode.py, gen80) 재측정. 전 arm G1 pass 없음(closure FAIL): ctrl bd0/msingle0 · tlora bd0/msingle0 · tlora_dict bd0/msingle1 · tlora_jamo bd1/msingle1 — bar(≥2 ∧ >max_single) 전 arm 미달. tlora_jamo 만 best_distinct 0→1(N1 TLoRA+N8 jamo-aux 결합이 유일 DIRECTIONAL-positive)이나 max_single 도 1이라 >max_single 미충족. G2 novel 은 ctrl 73→tlora_dict 117(직교 lift). PREREG P1(Greff SUPPORT=G1>ctrl bar≥2 seed-robust) 미충족 = expert-weight 구조 lever 는 (이 2000-step scale·seed7 단일) 재조합벽 못 넘음 = INCONCLUSIVE-at-floor honest negative. G1벽=trunk-objective 재확인([[g1-lever-multilens-objective]]).
+status: MEASURED 2026-07-01 (py 2-production engine-native, seed7)
+wired: engine-native (py 2-production, KV-cache decode.py; not wired to core — NOT-SUP)
+verdict_artifact: state/1631_tpr_expert_weight/result/
 source: UNIVERSE
 archived: false
 ---
@@ -26,22 +26,34 @@ G1 재조합벽 / G6 착상벽의 미탐색 구조 레버 = ConvMoE **expert 의
 - **LIFT:** tlora/tlora_dict arm 의 엔진-네이티브 G1/G6 가 ctrl 대비 strictly 증가. 측정 = engine-native py 2-production(`core/g_gates.py` ← `core/clm_decode.py`, TERMINAL).
 
 ## wired
-launch-ready (303M GPU 미실행). $0 smoke = 파이프 검증 only.
+engine-native (py 2-production, KV-cache decode.py). NOT-SUP 이라 core 배선 없음.
 
 ## 동기
 이번 세션 binding readout + objective + cheap 레버 전부 INCONCLUSIVE-at-floor = undertrain 의심. expert weight 의 구조적 bias 가 floor 위로 올리는지, expert collapse(미분화)가 G1 floor 의 원인인지 격리.
 
-## 발사 현황 (2026-06-29)
-- pod: vast 43098811 A40 CUDA-12.2 $0.57/hr RUNNING
-- trainer: state/g1_unmeasured_backlog_batch/H_1813/trainer.py (recomb-objective baked)
-- arms: ctrl×{7,4302,4303} + tlora×{7,4302,4303} (6 runs sequential, 4000 steps each)
-- step-time 실측: ~0.9 s/step @ A40 bf16 + recomb_loss (doubled fwd) → ~60-67 min/arm → ~6.7h total
-- 현황 12:47 UTC: ctrl_seed7 step 1200/4000, val_CE=1.768 (DESCENT: << uniform 5.545), GPU 99%
-- 완료 예상: ~19:10 UTC (학습) → ~20:15 UTC (eval+aggregate)
-- eval chain: chain_eval.sh PID 1641 (waiting) → eval_h1813.sh (verify_clm_v2 descent + g_gates G0-G6 --gen 80) → aggregate_h1813.sh (결과 파싱)
-- 결과 위치: state/g1_unmeasured_backlog_batch/H_1813/ckpt/aggregate.log + *_g0g6.txt + *_descent.txt
-- 다음 세션 작업: rsync ckpt/*.clm + *.pt (a_fire_recover_complete) + RESULT.md 채우기 + teardown pod
+## 발사·측정 완료 (2026-07-01)
+- 학습: aiden RTX5070, 4-arm(ctrl/tlora/tlora_dict/tlora_jamo) seed7, 2000 step bf16, DESCENT 4/4.
+- 측정: `anima evaluate --py`(KV-cache decode.py) G0-G6, 로그 state/1631_tpr_expert_weight/result/ev4_B_*.log.
+- 결과: 아래 결과 섹션. NOT-SUPPORTED (INCONCLUSIVE-at-floor).
 
 ## artifacts
 state/1631_tpr_expert_weight/ (PREREG.md · trainer.py · LAUNCH_SPEC_303M.md · SMOKE_LOG.md)
 state/g1_unmeasured_backlog_batch/H_1813/ (trainer.py + ckpt/ [in-flight])
+
+## 결과 (2026-07-01 · py 2-production engine-native · anima evaluate --py · KV-cache decode.py · gen 80 · seed7 · aiden)
+
+| arm | G0 | G1 bd/msingle | G2 novel·coh | G5 fab | G6 dist | 결론 |
+|-----|-----|------|------|------|------|------|
+| ctrl (표준 expert) | 🟢 5/5 | 0 / 0 | 73·16 | 0.066 | 6 | floor |
+| tlora (N1 단독) | 🟢 5/5 | 0 / 0 | 84·15 | 0.158 | 6 | ≈ctrl (P2 확인: N1 단독 약함) |
+| tlora_dict (N1+N7) | 🟢 5/5 | 0 / 1 | 117·19 | 0.024 | 6 | max_single +1, bd 0 |
+| tlora_jamo (N1+N8) | 🟢 5/5 | **1 / 1** | 78·13 | 0.141 | 6 | **bd 0→1 (DIRECTIONAL)** |
+
+**심층 판독:**
+- **전 arm G1 pass 없음 = closure FAIL.** bar = bd≥2 ∧ bd>max_single. 어느 arm 도 bd≥2 미달. tlora_jamo bd=1 이지만 max_single=1 이라 `>max_single` 실패.
+- **tlora_jamo 만 best_distinct 0→1** = N1(TLoRA expert-weight 텐서곱)+N8(jamo-aux 학습신호) 결합의 유일 DIRECTIONAL-positive. PREREG Greff 결합가설(operator 는 학습신호와 결합 시 lift)의 *방향성* 지지이나 bar 미달. H_1815 CLS 와 동일 패턴(재료/구조 직교화가 floor 를 +1 스침, 재조합 임계 밑).
+- **P2 확인:** tlora(N1 단독 plain CE) ≈ ctrl → operator 단독은 무력, 학습신호 결합 필요.
+- **G2 novelty 직교 lift:** tlora_dict novel 73→117 = dict-aux 가 novel 생성 늘림(G1 아닌 G2 축, H_1815 CLS 와 동형).
+- **INCONCLUSIVE-at-floor:** 2000-step·seed7 단일 scale 이라 arm 간 분해능 낮음. seed-robust(≥2/3) 미측정 = clean refute 아닌 floor. 유효 강화 = multiseed{4302,4303} + step↑.
+
+**follow-on (cost-gated):** tlora_jamo bd 0→1 DIRECTIONAL 확증 = multiseed{4302,4303} 재측정 + step 8000↑ (undertrain-floor 배제). N3 DBES expert 분화도 ↔ G1 floor 동반 여부는 별건 분석.

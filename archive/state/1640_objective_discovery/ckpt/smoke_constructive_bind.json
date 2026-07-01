@@ -1,0 +1,52 @@
+{
+  "hyp": "H_1640",
+  "arm": "ctrl",
+  "objective": "constructive_bind",
+  "seed": 7,
+  "obj_aux_params": 99072,
+  "levers": {
+    "tlora": false,
+    "tlora_rank": 8,
+    "tlora_base": true,
+    "dict_aux": false,
+    "jamo_aux": false,
+    "wd_floor": -1.0,
+    "dropout_floor": -1.0
+  },
+  "n_params": 107715,
+  "loss0": 5.75365,
+  "lossF": 5.71553,
+  "wall_s": 0.1,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": null,
+  "registers_descent": "0/0",
+  "heldout_descent": {},
+  "last_aux": {
+    "cbind_unbind": 0.2885098457336426,
+    "cbind_pred": 8.549247741699219,
+    "cbind": 8.837757110595703
+  },
+  "dbes_final": {
+    "expert_div": 0.57763,
+    "router_entropy": 0.99894,
+    "usage_gini": 0.09523,
+    "usage": [
+      0.28512,
+      0.42797,
+      0.28691
+    ],
+    "n_experts": 3
+  },
+  "dbes_log": [],
+  "gauges_g1g6_torch_probe": {
+    "step": 3,
+    "ce": 5.71553,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 2,
+    "g6_jaccard": 0.85714,
+    "phi_proxy": 8.8e-05,
+    "mitosis_cells": 345
+  },
+  "tier": "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL"
+}

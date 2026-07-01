@@ -12,10 +12,10 @@
 // Python (no hexa equivalent without reimplementing pickle/zip). So this cli/serialize.hexa
 // owns the hexa-native CLI orchestration (arg parse + dispatch), and the ONE irreducible
 // torch step lives in the KEPT torch-interop tool archive/train/clm/model/serialize_standalone.py
-// (byte layout SSOT = clm_serialize_v2.py::serialize_v3 · held-out gate = verify_clm_v2.py
-// descent — both KEPT torch-interop tools, NOT py engine mirrors). The hexa trainer's own
-// serialize_clm (cli/train.hexa) packs a LIVE in-memory model to .clm directly; THIS command
-// is only for re-exporting an ALREADY-TRAINED .pt FILE (recovery/re-export).
+// (byte layout SSOT = the UNIFIED core/serialize.py::serialize_v3 · held-out gate =
+// verify_clm_v2.py descent — the KEPT torch-interop tools, NOT py engine mirrors). The hexa
+// trainer's own serialize_clm (cli/train.hexa) packs a LIVE in-memory model to .clm directly;
+// THIS command is only for re-exporting an ALREADY-TRAINED .pt FILE (recovery/re-export).
 //
 // USAGE (installed `anima` PATH command — NOT `hexa run`):
 //   anima serialize <ckpt.pt> <out.clm> [--heldout <path>] [--train <path>] [--nwin N]

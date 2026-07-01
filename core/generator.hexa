@@ -50,20 +50,20 @@
 //                             .clm later; no train-only gate.
 
 import "core/kosmos_io.hexa"
-// clm_decode.hexa — the byte "mouth": int4 dequant + CLMConvMoE forward → real
-// next-byte logits → greedy continuation (clm_decode_argmax). Imported ONLY here,
-// so the SINGLE .clm decode entry (a_core_engine_map) is preserved — this is the
-// same slot, not a 2nd path. _gen_clm_decode + gen_clm_chat route through it.
-use "core/clm_decode"
-// bytegpt_decode.hexa — the ByteGPT (H_1129 303M GPT-2-class) byte "mouth":
-// LayerNorm + learned-pos + MHA + GELU-MLP forward → real next-byte logits →
+// decode.hexa — the UNIFIED byte "mouth" module (both decode backends in one).
+// CONV mouth: int4 dequant + CLMConvMoE forward → real next-byte logits → greedy
+// continuation (clm_decode_argmax). BYTE mouth: the ByteGPT (H_1129 303M GPT-2-
+// class) LayerNorm + learned-pos + MHA + GELU-MLP forward → real next-byte logits →
 // greedy continuation (bytegpt_decode_argmax) + engine-side grounded decode
-// (bytegpt_decode_grounded). Imported ONLY here, so the SINGLE L3 decode slot
-// (a_core_engine_map) is preserved: ByteGPT is a SECOND ckpt FORMAT entering via
-// the SAME generate() slot as .clm, NOT a 2nd entry point. gen_bytegpt_backend +
-// _gen_bytegpt_decode route through it. Selected when the ckpt is a ByteGPT-format
-// flat binary (5×u32 header), else the .clm path is used — same single slot.
-use "core/bytegpt_decode"
+// (bytegpt_decode_grounded). Formerly two files (clm_decode.hexa + bytegpt_decode.hexa),
+// merged 1:1 byte-faithful into core/decode.hexa — every public entry name of both
+// is PRESERVED verbatim, so this is a drop-in single `use`. Imported ONLY here, so
+// the SINGLE L3 decode entry (a_core_engine_map) is preserved: ByteGPT is a SECOND
+// ckpt FORMAT entering via the SAME generate() slot as .clm, NOT a 2nd entry point.
+// _gen_clm_decode + gen_clm_chat + gen_bytegpt_backend + _gen_bytegpt_decode all
+// route through it; the ckpt header (CLM\x01 magic vs 5×u32) selects the mouth —
+// same single slot.
+use "core/decode"
 // engine_cli.hexa — the A⇄G⇄MITOSIS engine + the H_1351 § KO-JAMO COUNT-HEAD faculty
 // (struct JamoHead + jamo_head_new/_grow/_ce/_cells/_shuffle_targets). Imported HERE so the
 // validated jamo count-head SCORER reaches a live call site: §6.5c gen_jamo_scoreloop consults
@@ -146,7 +146,7 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
 }
 
 // _gen_is_bytegpt — true ⇔ the ckpt at `p` is a ByteGPT flat binary, NOT a .clm.
-// The ByteGPT serializer (h1157_ref_full.py / core/bytegpt_decode.hexa header)
+// The ByteGPT serializer (h1157_ref_full.py / core/decode.hexa BYTE-mouth header)
 // writes a 5×u32 little-endian header [vocab,d,n_layer,n_head,block]; the .clm
 // writer writes the "CLM\x01" magic (67,76,77,1). We discriminate by (a) NOT the
 // CLM magic AND (b) a sane ByteGPT header: vocab==256, n_layer in 1..64, n_head

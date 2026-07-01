@@ -1,0 +1,588 @@
+# ==========================================================================
+# ⛔ ENGINE-INTERNAL — DO NOT RUN DIRECTLY. 학습/직렬화는 cli/ 단일진입만:
+#   anima train | anima serialize  (canonical=hexa cli/{train,serialize}.hexa).
+# `python3 core/serialize.py` 직접 실행 = 단일진입 우회(#2603) + DIRECTIONAL. cli/ import만 허용.
+# ==========================================================================
+"""core/serialize.py — UNIFIED PY SERIALIZE ENGINE: byte-faithful 1:1 merge of the
+two per-mouth serializer backends into ONE module (parallel to core/decode.py, the
+unified CONV+BYTE decoder).
+
+  * CONV (CLM ConvMoE) mouth  = the verbatim body of archive/train/clm/model/
+                                clm_serialize_v2.py — torch/numpy state_dict → .clm
+                                v0.2/v0.3 (`serialize_v3` = the byte-grammar SSOT
+                                that core/decode.hexa's CONV mouth parses).
+  * BYTE (ByteGPT transformer) = the verbatim body of tool/bytegpt_serialize.py —
+                                torch .pt → engine .bin (5×u32 header) BRIDGE.
+
+Per CLAUDE.md a_clm_gen_pipeline + a_engine_native_learning: serialize is the
+LEARNING-side bridge (it must UNPICKLE a torch .pt = irreducibly Python — train/
+serialize MAY use torch; this is NOT the verdict scorer). This module is the numpy/
+struct bridge for BOTH mouth artifacts; it exposes the UNION of both backends'
+public names so a caller can do `import serialize as S` (→ CLM `serialize_v3`) OR
+`import serialize as BGS` (→ ByteGPT `serialize`) with ZERO call-site churn (a pure
+drop-in for clm_serialize_v2.py + bytegpt_serialize.py — mirrors how core/decode.py
+unioned clm_decode + bytegpt_decode).
+
+Organization:
+  (a) SHARED — struct/numpy imports + the CLM magic byte constants.
+  (b) CONV (CLM) — the full clm_serialize_v2.py public API, VERBATIM (serialize_v2,
+      serialize_v3, serialize_v3_bind, and every helper). serialize_v3 is the byte
+      SSOT (byte-identical to the golden reexport_d768_v2_fast.clm) — copied
+      verbatim, NOT "improved".
+  (c) BYTE (ByteGPT) — the full bytegpt_serialize.py public API. Its top-level
+      `serialize(pt, bin)` is the .pt → .bin bridge; the ByteGPT-only helper _f32le.
+  (d) NAME-DISPATCH — the two backends each defined a top-level `serialize` with a
+      DIFFERENT signature (CLM `serialize(sd,L,E,out)` vs ByteGPT `serialize(pt,bin)`).
+      They cannot both bind the bare name. The LIVE importer contract (grep-verified)
+      is: cli/serialize.py + cli/train.py call `S.serialize_v3` (never bare CLM
+      `serialize`), and cli/train.py calls `BGS.serialize` (the ByteGPT bridge). So:
+        * top-level `serialize`     = ByteGPT `serialize(pt, bin)`  (satisfies BGS.serialize)
+        * `serialize_clm(sd,L,E,out)` = the CLM unified entry (was clm's bare `serialize`;
+                                        preserved under a distinct name, no live caller)
+      Both keep serialize_v2/serialize_v3/serialize_v3_bind (CLM) unchanged.
+  (e) `serialize_auto(...)` — a small target-extension dispatcher (.bin → ByteGPT,
+      else → CLM serialize_v3), convenience only; the existing entry points are
+      UNRENAMED.
+"""
+from __future__ import annotations
+
+# ⛔ ENGINE-INTERNAL — DO NOT RUN DIRECTLY (단일진입 우회 #2603). cli/ import만 허용.
+# 가드는 `from __future__` 뒤에 둔다 — 앞에 두면 SyntaxError(from __future__ must be at top).
+import sys as _anima_entry_guard
+if __name__ == "__main__":
+    _anima_entry_guard.exit("⛔ core/serialize.py 직접 실행 금지 — cli/ 단일진입(anima train/serialize, canonical=hexa) 경유. #2603")
+
+import struct
+from typing import Dict, Any
+
+try:
+    import numpy as np
+except Exception:  # pragma: no cover - numpy is effectively always present
+    np = None
+
+
+# ════════════════════════════════════════════════════════════════════════
+# (a) SHARED — CLM magic byte constants (used by the CONV serializer).
+# ════════════════════════════════════════════════════════════════════════
+MAGIC = bytes([67, 76, 77, 1])      # "CLM\x01"
+CLMX = bytes([67, 76, 77, 88])      # "CLMX"
+CLMB = bytes([67, 76, 77, 66])      # "CLMB" — bind-readout (Hadamard) extension
+INT4_SYM_MAX = 7
+
+# readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
+# section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
+RO_ADDITIVE = 0
+RO_BIND_HADAMARD = 1
+RO_BIND_LINEAR = 2
+
+
+# ════════════════════════════════════════════════════════════════════════
+# (b) CONV (CLM) — verbatim port of clm_serialize_v2.py. serialize_v3 is the
+#     .clm byte-grammar SSOT core/decode.hexa's CONV mouth parses (golden
+#     reexport_d768_v2_fast.clm). DO NOT alter the byte layout.
+# ════════════════════════════════════════════════════════════════════════
+
+# state_dict key names of a CLMConvMoE configured E=2 / n_trunk_layers=1.
+# (CLM/model/model.py: embed, embed_conv, trunk[0], moe.router, moe.experts[0/1],
+#  norm_out, readout). The decoder block order is ecW,tcW,e0W,e1W,rW,roW.
+_KEYMAP = {
+    "ecW": "embed_conv.conv.weight",
+    "tcW": "trunk.0.conv.conv.weight",
+    "e0W": "moe.experts.0.conv.conv.weight",
+    "e1W": "moe.experts.1.conv.conv.weight",
+    "rW":  "moe.router.weight",
+    "roW": "readout.weight",
+    # ext (CLMX) sources
+    "embed": "embed.weight",
+    "ecB": "embed_conv.conv.bias",
+    "tcB": "trunk.0.conv.conv.bias",
+    "e0B": "moe.experts.0.conv.conv.bias",
+    "e1B": "moe.experts.1.conv.conv.bias",
+    "rB":  "moe.router.bias",
+    "roB": "readout.bias",
+    "tgG": "trunk.0.norm.weight",
+    "tgB": "trunk.0.norm.bias",
+    "noG": "norm_out.weight",
+    "noB": "norm_out.bias",
+}
+
+_BLOCK_ORDER = ["ecW", "tcW", "e0W", "e1W", "rW", "roW"]
+_EXT_ORDER = ["embed", "ecB", "tcB", "e0B", "e1B", "rB", "roB",
+              "tgG", "tgB", "noG", "noB"]
+
+
+# --------------------------------------------------------------------------- #
+# v0.3 — GENERAL (n_trunk_layers L, n_experts E) block/ext ordering.
+#
+# The CLM\x01 format is ALREADY self-describing: nblk (byte[4]) + each block's
+# (cout,rest) + n_ext + each ext count fully determine the layout. v0.2 only
+# *hardcoded* the block-role assignment (L=1,E=2). v0.3 generalizes that
+# assignment WITHOUT changing the byte grammar, so it is byte-exact backward
+# compatible — a v0.3 file with L=1,E=2 is byte-identical to a v0.2 file.
+#
+# General block order   (nblk = L + E + 3):
+#   ecW · tcW_0..tcW_{L-1} · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)
+# General ext order      (n_ext = 2L + E + 6):
+#   embed · ecB · tcB_0..tcB_{L-1} · e0B..e{E-1}B · rB · roB ·
+#   tgG_0..tgG_{L-1} · tgB_0..tgB_{L-1} · noG · noB
+#
+# At L=1,E=2 this reduces EXACTLY to _BLOCK_ORDER / _EXT_ORDER above (the trunk
+# bias tcB_0, then expert biases e0B,e1B, then rB,roB, then trunk GN tgG_0,tgB_0,
+# then noG,noB) — byte-identical to v0.2.
+#
+# (L,E) recovery at decode time: E = cout of block[nblk-2] (router), V = cout of
+# block[nblk-1] (readout), L = nblk - E - 3.  No new bytes, no magic bump.
+# --------------------------------------------------------------------------- #
+
+# torch state_dict key templates for the general CLMConvMoE (model.py).
+#   embed.weight · embed_conv.conv.{weight,bias}
+#   trunk.{i}.conv.conv.{weight,bias} · trunk.{i}.norm.{weight,bias}
+#   moe.experts.{j}.conv.conv.{weight,bias} · moe.router.{weight,bias}
+#   norm_out.{weight,bias} · readout.{weight,bias}
+def _general_block_keymap(L: int, E: int):
+    """logical slot -> torch key, for the L*E general block order."""
+    km = {"ecW": "embed_conv.conv.weight"}
+    for i in range(L):
+        km[f"tc{i}W"] = f"trunk.{i}.conv.conv.weight"
+    for j in range(E):
+        km[f"e{j}W"] = f"moe.experts.{j}.conv.conv.weight"
+    km["rW"] = "moe.router.weight"
+    km["roW"] = "readout.weight"
+    return km
+
+
+def _general_ext_keymap(L: int, E: int):
+    km = {"embed": "embed.weight", "ecB": "embed_conv.conv.bias"}
+    for i in range(L):
+        km[f"tc{i}B"] = f"trunk.{i}.conv.conv.bias"
+    for j in range(E):
+        km[f"e{j}B"] = f"moe.experts.{j}.conv.conv.bias"
+    km["rB"] = "moe.router.bias"
+    km["roB"] = "readout.bias"
+    for i in range(L):
+        km[f"tg{i}G"] = f"trunk.{i}.norm.weight"
+    for i in range(L):
+        km[f"tg{i}B"] = f"trunk.{i}.norm.bias"
+    km["noG"] = "norm_out.weight"
+    km["noB"] = "norm_out.bias"
+    return km
+
+
+def _general_block_order(L: int, E: int):
+    return (["ecW"] + [f"tc{i}W" for i in range(L)]
+            + [f"e{j}W" for j in range(E)] + ["rW", "roW"])
+
+
+def _general_ext_order(L: int, E: int):
+    return (["embed", "ecB"]
+            + [f"tc{i}B" for i in range(L)]
+            + [f"e{j}B" for j in range(E)]
+            + ["rB", "roB"]
+            + [f"tg{i}G" for i in range(L)]
+            + [f"tg{i}B" for i in range(L)]
+            + ["noG", "noB"])
+
+
+def _to_np(x) -> "np.ndarray":
+    """Coerce a torch.Tensor / numpy array / nested list to a float32 numpy array."""
+    if np is None:
+        raise RuntimeError("numpy is required for serialize_v2")
+    # torch tensor (duck-typed: has detach + cpu + numpy)
+    if hasattr(x, "detach"):
+        x = x.detach().cpu().float().numpy()
+    return np.asarray(x, dtype=np.float32)
+
+
+def _conv_w_to_2d(w: "np.ndarray", name: str) -> "np.ndarray":
+    """Map a weight tensor to the (cout, rest=Cin*K) 2-D layout the decoder expects.
+
+    nn.Conv1d weight is (out, in, K). Decoder col-major within a block walks
+    j = ci*K + k (see clm_decode _clmd_conv1d xcol indexing: ci*K + k), and the
+    weight is read flat as w[co*rest + j] with j over Cin*K. nn.Conv1d's (out,in,K)
+    flattened C-order is exactly co, then (in, K) -> in*K + k = ci*K + k. So a
+    plain reshape(cout, -1) is byte-correct.
+    nn.Linear-style (router/readout are Conv1d k=1) -> (out, in, 1) -> (out, in).
+    """
+    w = np.asarray(w, dtype=np.float32)
+    if w.ndim == 3:
+        cout = w.shape[0]
+        return w.reshape(cout, -1)
+    if w.ndim == 2:
+        return w
+    raise ValueError(f"unexpected weight ndim {w.ndim} for {name}")
+
+
+def _quant_block(w2d: "np.ndarray"):
+    """int4-sym per-output-channel quant. Returns (codes int8 [cout,rest], scale f32 [cout])."""
+    cout = w2d.shape[0]
+    amax = np.abs(w2d).max(axis=1)
+    scale = np.maximum(amax / INT4_SYM_MAX, 1e-12).astype(np.float32)  # >0, never div0
+    codes = np.round(w2d / scale[:, None])
+    codes = np.clip(codes, -INT4_SYM_MAX, INT4_SYM_MAX).astype(np.int64)
+    return codes.reshape(-1), scale, cout, w2d.shape[1]
+
+
+def _pack_nibbles(codes_flat: "np.ndarray") -> bytes:
+    """Pack flat int4 codes [-7,7] to bytes, 2 codes/byte, matching the decoder:
+       low nibble = even-index code (+8), high nibble = odd-index code (+8)."""
+    n = codes_flat.shape[0]
+    off = (codes_flat.astype(np.int64) + 8) & 0xF            # 0..15
+    if n % 2 == 1:
+        off = np.concatenate([off, np.zeros(1, dtype=np.int64)])
+    lo = off[0::2]   # even indices -> low nibble
+    hi = off[1::2]   # odd indices  -> high nibble
+    packed = ((hi << 4) | lo).astype(np.uint8)
+    return packed.tobytes()
+
+
+def _pack_conv_block(w2d: "np.ndarray") -> bytes:
+    codes_flat, scale, cout, rest = _quant_block(w2d)
+    out = bytearray()
+    out += struct.pack("<I", cout)
+    out += struct.pack("<I", rest)
+    out += _pack_nibbles(codes_flat)
+    out += scale.astype("<f4").tobytes()
+    return bytes(out)
+
+
+def _pack_ext(arr: "np.ndarray") -> bytes:
+    flat = np.asarray(arr, dtype=np.float32).reshape(-1)
+    return struct.pack("<I", flat.shape[0]) + flat.astype("<f4").tobytes()
+
+
+def _resolve_state_dict(state_dict_or_ckpt, cfg) -> Dict[str, "np.ndarray"]:
+    """Return a {logical_or_torch_key: np.ndarray} mapping.
+
+    Accepts:
+      - a path (str) to a torch ckpt  -> torch.load (lazy import)
+      - a torch state_dict (OrderedDict of tensors)
+      - a plain dict keyed by torch keys (e.g. 'embed.weight') OR by logical
+        slot names (e.g. 'embed','ecW',...) -> values numpy/list arrays.
+    """
+    sd = state_dict_or_ckpt
+    if isinstance(sd, str):
+        import torch  # lazy
+        sd = torch.load(sd, map_location="cpu")
+        if isinstance(sd, dict) and "model" in sd and hasattr(sd.get("model"), "items"):
+            sd = sd["model"]
+    return sd
+
+
+def _get(sd: Dict[str, Any], logical: str, keymap=None) -> "np.ndarray":
+    """Fetch a weight by logical slot name, accepting either logical keys or
+    torch state_dict keys in the source dict. `keymap` overrides _KEYMAP (used by
+    the general v0.3 path with per-(L,E) slot names)."""
+    km = keymap if keymap is not None else _KEYMAP
+    if logical in sd:
+        return _to_np(sd[logical])
+    tkey = km[logical]
+    if tkey in sd:
+        return _to_np(sd[tkey])
+    raise KeyError(
+        f"missing weight for slot '{logical}' (tried torch key '{tkey}'); "
+        f"available keys: {list(sd.keys())[:12]}..."
+    )
+
+
+def _assert_e2_l1(cfg):
+    """The CORE decoder hardcodes E=2 experts + 1 trunk layer. Enforce it."""
+    if cfg is None:
+        return
+    n_e = getattr(cfg, "n_experts", None)
+    n_l = getattr(cfg, "n_trunk_layers", None)
+    if n_e is not None and n_e != 2:
+        raise ValueError(
+            f"core/decode.hexa CONV mouth is FIXED to E=2 experts; cfg.n_experts={n_e}. "
+            f"Train with a CLMConfig(n_experts=2, n_trunk_layers=1) preset."
+        )
+    if n_l is not None and n_l != 1:
+        raise ValueError(
+            f"core/decode.hexa CONV mouth is FIXED to 1 trunk layer; "
+            f"cfg.n_trunk_layers={n_l}. Train with n_trunk_layers=1."
+        )
+
+
+def serialize_v2(state_dict_or_ckpt, cfg, out_path: str) -> str:
+    """Pack a CLMConvMoE (E=2 / 1-trunk) state_dict to a CLM\\x01 v0.2 .clm that
+    core/decode.hexa's CONV mouth loads. Returns out_path.
+
+    cfg may be a CLMConfig (asserted E=2/L1) or None (skip the assert — caller
+    vouches the dict already matches the E=2/L1 slot layout, e.g. synthetic test).
+    """
+    if np is None:
+        raise RuntimeError("numpy is required for serialize_v2")
+    _assert_e2_l1(cfg)
+    sd = _resolve_state_dict(state_dict_or_ckpt, cfg)
+
+    blob = bytearray()
+    blob += MAGIC
+    blob += struct.pack("<B", 6)            # nblk = 6
+
+    for slot in _BLOCK_ORDER:
+        w = _get(sd, slot)
+        w2d = _conv_w_to_2d(w, slot)
+        blob += _pack_conv_block(w2d)
+
+    blob += CLMX
+    blob += struct.pack("<B", len(_EXT_ORDER))   # n_ext = 11
+    for slot in _EXT_ORDER:
+        blob += _pack_ext(_get(sd, slot))
+
+    with open(out_path, "wb") as f:
+        f.write(blob)
+    return out_path
+
+
+def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
+                 out_path: str) -> str:
+    """Pack a GENERAL CLMConvMoE(n_trunk_layers=L, n_experts=E, d, K) to a
+    CLM\\x01 v0.3 .clm that core/decode.hexa's CONV mouth loads.
+
+    v0.3 == v0.2 byte grammar, generalized block/ext counts (see the v0.3 note
+    above). At L=1,E=2 the output is BYTE-IDENTICAL to serialize_v2 (verified by
+    the round-trip gate). d, K, V are read from the weight shapes — no width
+    hardcode. Returns out_path.
+    """
+    if np is None:
+        raise RuntimeError("numpy is required for serialize_v3")
+    L, E = int(n_trunk_layers), int(n_experts)
+    if L < 1 or E < 1:
+        raise ValueError(f"need L>=1 and E>=1, got L={L} E={E}")
+    sd = _resolve_state_dict(state_dict_or_ckpt, None)
+    blob = _pack_main_blob(sd, L, E)
+    with open(out_path, "wb") as f:
+        f.write(blob)
+    return out_path
+
+
+def _pack_main_blob(sd: Dict[str, Any], L: int, E: int) -> bytearray:
+    """Pack the MAIN CLM\\x01 body (MAGIC + nblk + conv blocks + CLMX + ext arrays)
+    for a general (L,E) CLMConvMoE, returning a bytearray (no CLMB section). Shared
+    by serialize_v3 (additive) and serialize_v3_bind (which appends a CLMB section).
+    The readout slot roW (cout=block[nblk-1].cout=V, rest) is taken from
+    'readout.weight' / roB from 'readout.bias': for a bind model the caller has
+    routed Wo -> readout.{weight,bias} so the block is (V, k) instead of (V, d)
+    (the byte grammar is self-describing — rest is read from the header at decode)."""
+    bkm = _general_block_keymap(L, E)
+    ekm = _general_ext_keymap(L, E)
+    border = _general_block_order(L, E)
+    eorder = _general_ext_order(L, E)
+    nblk = len(border)            # = L + E + 3
+    n_ext = len(eorder)           # = 2L + E + 6
+
+    blob = bytearray()
+    blob += MAGIC
+    blob += struct.pack("<B", nblk)
+    for slot in border:
+        w = _get(sd, slot, bkm)
+        w2d = _conv_w_to_2d(w, slot)
+        blob += _pack_conv_block(w2d)
+    blob += CLMX
+    blob += struct.pack("<B", n_ext)
+    for slot in eorder:
+        blob += _pack_ext(_get(sd, slot, ekm))
+    return blob
+
+
+def _bget(sd: Dict[str, Any], names) -> "np.ndarray":
+    """Fetch the first present key among `names` from a (torch- or logical-keyed)
+    state dict, coerced to a float32 numpy array. Accepts a 'base.'-stripped dict."""
+    for nm in names:
+        if nm in sd:
+            return _to_np(sd[nm])
+    raise KeyError(f"none of {names} present (have: {list(sd.keys())[:16]}...)")
+
+
+def serialize_v3_bind(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
+                      readout_type: int, out_path: str) -> str:
+    """Pack a BIND-readout CLMConvMoE (the EXP-3 ARM-BIND architecture:
+    BindCLM = production trunk + Hadamard byte readout u=Wa(x), v=Wb(x),
+    g=u*v (readout_type=1) or u+v (readout_type=2), logits=Wo(g)) to a CLM\\x01
+    .clm that core/decode.hexa's CONV mouth loads.
+
+    BYTE LAYOUT (backward-compatible, in-place extension — no magic bump):
+      · MAIN body == serialize_v3, EXCEPT the readout slot roW carries **Wo**
+        (cout=V, rest=k) and roB carries **Wo.bias** (V). All trunk/embed/MoE
+        blocks+ext are IDENTICAL to the additive ctrl arm (only the readout
+        differs — the EXP-3 design intent). The self-describing (d,E,V,L,K)
+        recovery is UNCHANGED (E=block[nblk-2].cout, V=block[nblk-1].cout, the
+        readout block's `rest` field = k).
+      · a CLMB trailer is appended AFTER the CLMX ext arrays:
+          "CLMB"            (67,76,77,66)
+          readout_type:u8   (1=Hadamard u*v, 2=linear u+v)
+          Wa conv block     (cout=k, rest=d, int4-sym + per-channel fp32 scale)
+          Wb conv block     (cout=k, rest=d, int4-sym + per-channel fp32 scale)
+          Wa_bias ext       (u32 k + k*f32)
+          Wb_bias ext       (u32 k + k*f32)
+        An additive .clm has NO CLMB section, so the decoder defaults
+        readout_type=0 (a_engine_native_learning backward-compat: existing
+        additive .clm decode byte-identically).
+
+    Accepts a torch state_dict (BindCLM.state_dict(): base.<trunk...> + Wa/Wb/Wo
+    .{weight,bias}) OR a logical dict (Wa,WaB,Wb,WbB,Wo,WoB + v3 slot names).
+    Returns out_path."""
+    if np is None:
+        raise RuntimeError("numpy is required for serialize_v3_bind")
+    L, E = int(n_trunk_layers), int(n_experts)
+    rt = int(readout_type)
+    if L < 1 or E < 1:
+        raise ValueError(f"need L>=1 and E>=1, got L={L} E={E}")
+    if rt not in (RO_BIND_HADAMARD, RO_BIND_LINEAR):
+        raise ValueError(f"readout_type must be 1 (hadamard) or 2 (linear), got {rt}")
+    sd = _resolve_state_dict(state_dict_or_ckpt, None)
+
+    # normalize: strip BindCLM's 'base.' trunk prefix into bare CLMConvMoE keys.
+    norm: Dict[str, Any] = {}
+    for k, v in sd.items():
+        nk = k[5:] if k.startswith("base.") else k
+        norm[nk] = v
+
+    # bind readout weights (Wa/Wb -> CLMB ; Wo -> routed into the roW/roB slots).
+    Wa = _bget(norm, ["Wa.weight", "Wa"])
+    WaB = _bget(norm, ["Wa.bias", "WaB"])
+    Wb = _bget(norm, ["Wb.weight", "Wb"])
+    WbB = _bget(norm, ["Wb.bias", "WbB"])
+    Wo = _bget(norm, ["Wo.weight", "Wo"])
+    WoB = _bget(norm, ["Wo.bias", "WoB"])
+    norm["readout.weight"] = Wo        # (V, k, 1) -> roW block (cout=V, rest=k)
+    norm["readout.bias"] = WoB         # (V,)      -> roB ext
+
+    blob = _pack_main_blob(norm, L, E)
+    blob += CLMB
+    blob += struct.pack("<B", rt)
+    blob += _pack_conv_block(_conv_w_to_2d(Wa, "Wa"))   # (k, d)
+    blob += _pack_conv_block(_conv_w_to_2d(Wb, "Wb"))   # (k, d)
+    blob += _pack_ext(WaB)                               # (k,)
+    blob += _pack_ext(WbB)                               # (k,)
+
+    with open(out_path, "wb") as f:
+        f.write(blob)
+    return out_path
+
+
+def serialize_clm(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
+                  out_path: str) -> str:
+    """Unified CLM entry: routes to serialize_v3 (general). For L=1,E=2 the v3 path
+    is byte-identical to serialize_v2, so this is the single CLM serializer for ANY
+    (L,E,d). cfg-free — caller states (L,E) explicitly.
+
+    NAME NOTE (union dispatch): in the standalone clm_serialize_v2.py this was the
+    bare `serialize`; on the unified module the bare `serialize` binds the ByteGPT
+    .pt→.bin bridge (BGS.serialize contract), so the CLM unified entry lives here
+    as `serialize_clm`. No live importer called the CLM bare `serialize` (grep-
+    verified); all live callers use `serialize_v3` directly."""
+    return serialize_v3(state_dict_or_ckpt, n_trunk_layers, n_experts, out_path)
+
+
+# ════════════════════════════════════════════════════════════════════════
+# (c) BYTE (ByteGPT) — verbatim port of tool/bytegpt_serialize.py. torch .pt →
+#     engine .bin (5×u32 header) BRIDGE. Ground-truth layout = core/decode.hexa
+#     BYTE mouth (bg_load / bytegpt_forward_last).
+#
+#   header 5x u32 little-endian: [vocab, d, n_layer, n_head, block]
+#   tok[vocab*d]  pos[block*d]
+#   per layer: ln1.w[d] ln1.b[d] in_proj.w[3d*d] in_proj.b[3d]
+#              out_proj.w[d*d] out_proj.b[d] ln2.w[d] ln2.b[d]
+#              mlp0.w[4d*d] mlp0.b[4d] mlp2.w[d*4d] mlp2.b[d]
+#   ln_f.w[d] ln_f.b[d]  head[vocab*d]     (all little-endian float32.)
+#
+# WEIGHT ORIENTATION: torch nn.Linear.weight is [out,in] row-major; the engine's
+# _bg_linear ALSO stores W as [Co,Ci] row-major and transposes at load, so torch's
+# native [out,in] is written VERBATIM (NO transpose here). in_proj_weight [3d,d] is
+# rows Q|K|V — exactly what _bg_mha expects (NO reordering).
+# ════════════════════════════════════════════════════════════════════════
+
+def _f32le(t) -> bytes:
+    """Flatten a torch tensor ROW-MAJOR (C-contiguous) to little-endian float32 bytes."""
+    import torch  # training family — torch OK here (.pt bridge)
+    a = t.detach().cpu().to(torch.float32).contiguous().numpy()
+    a = np.ascontiguousarray(a, dtype="<f4")  # little-endian float32, C order
+    return a.tobytes()
+
+
+def serialize(pt_path: str, bin_path: str) -> None:
+    """ByteGPT .pt (cfg+state_dict) → engine .bin BRIDGE (BGS.serialize contract).
+
+    torch is imported here (the .pt bridge is LEARNING-side, a_clm_gen_pipeline) — this
+    is NOT the verdict scorer; the verdict is the engine `anima evaluate <bin>` (generator
+    L3 → core/decode.hexa BYTE mouth)."""
+    import torch  # training family — torch OK here (.pt bridge)
+    ck = torch.load(pt_path, map_location="cpu", weights_only=False)
+    sd = ck["model"]
+    cfg = ck["config"]
+    vocab, d, n_layer, n_head, block = (
+        int(cfg["vocab"]), int(cfg["d"]), int(cfg["n_layer"]),
+        int(cfg["n_head"]), int(cfg["block"]),
+    )
+    print(f"[cfg] vocab={vocab} d={d} n_layer={n_layer} n_head={n_head} block={block}", flush=True)
+    print(f"[cfg] val_ce={ck.get('val_ce')} step={ck.get('step')} nparam={ck.get('nparam')}", flush=True)
+
+    def W(key, shape):
+        if key not in sd:
+            raise KeyError(f"missing state_dict key: {key}")
+        t = sd[key]
+        if tuple(t.shape) != tuple(shape):
+            raise ValueError(f"{key} shape {tuple(t.shape)} != expected {tuple(shape)}")
+        return _f32le(t)
+
+    out = bytearray()
+    # header
+    out += struct.pack("<5I", vocab, d, n_layer, n_head, block)
+    # embeddings
+    out += W("tok.weight", (vocab, d))
+    out += W("pos.weight", (block, d))
+    # per layer
+    for i in range(n_layer):
+        p = f"blocks.{i}."
+        out += W(p + "ln1.weight", (d,))
+        out += W(p + "ln1.bias", (d,))
+        out += W(p + "attn.in_proj_weight", (3 * d, d))
+        out += W(p + "attn.in_proj_bias", (3 * d,))
+        out += W(p + "attn.out_proj.weight", (d, d))
+        out += W(p + "attn.out_proj.bias", (d,))
+        out += W(p + "ln2.weight", (d,))
+        out += W(p + "ln2.bias", (d,))
+        out += W(p + "mlp.0.weight", (4 * d, d))
+        out += W(p + "mlp.0.bias", (4 * d,))
+        out += W(p + "mlp.2.weight", (d, 4 * d))
+        out += W(p + "mlp.2.bias", (d,))
+    # final norm + tied head
+    out += W("ln_f.weight", (d,))
+    out += W("ln_f.bias", (d,))
+    head_key = "head.weight" if "head.weight" in sd else "tok.weight"  # tied
+    out += W(head_key, (vocab, d))
+
+    # expected size check
+    per_layer = (d + d) + (3 * d * d + 3 * d) + (d * d + d) + (d + d) + \
+                (4 * d * d + 4 * d) + (d * 4 * d + d)
+    expected = 20 + (vocab * d + block * d) * 4 + n_layer * per_layer * 4 + \
+               (d + d + vocab * d) * 4
+    if len(out) != expected:
+        raise AssertionError(f"size mismatch: wrote {len(out)} expected {expected}")
+
+    with open(bin_path, "wb") as f:
+        f.write(out)
+    print(f"[ok] wrote {bin_path}  bytes={len(out)} (expected {expected})", flush=True)
+
+
+# alias — the ByteGPT bridge under a mouth-explicit name (parallels serialize_clm).
+bytegpt_serialize = serialize
+
+
+# ════════════════════════════════════════════════════════════════════════
+# (e) FORMAT DISPATCH — pick the mouth serializer by target extension. Convenience
+#     only; the existing entry points (serialize_v3 / serialize) are UNRENAMED.
+# ════════════════════════════════════════════════════════════════════════
+
+def serialize_auto(src, out_path: str, *, n_trunk_layers: int = None,
+                   n_experts: int = None):
+    """Dispatch by target extension: '.bin' → ByteGPT bridge (src=.pt path,
+    serialize(pt,bin)); else → CLM serialize_v3 (src=state_dict/ckpt, needs
+    n_trunk_layers/n_experts). The two mouth serializers have different input
+    contracts (ByteGPT reads a .pt PATH; CLM takes a state_dict + (L,E)), so this
+    only routes — it does not unify the signatures."""
+    if str(out_path).endswith(".bin"):
+        return serialize(src, out_path)
+    if n_trunk_layers is None or n_experts is None:
+        raise ValueError("CLM serialize_auto needs n_trunk_layers + n_experts")
+    return serialize_v3(src, n_trunk_layers, n_experts, out_path)

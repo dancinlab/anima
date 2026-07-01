@@ -16,10 +16,10 @@
 // layout / cache-index / residency bug in the device KV-step.
 //
 // p7: verification is exact per-token argmax equality + a logits max|Δ| readout.
-// Engine-native (live core/bytegpt_decode.hexa). Needs a CUDA host + the 303M
+// Engine-native (live core/decode.hexa (unified CONV+BYTE)). Needs a CUDA host + the 303M
 // h1129 fixture to exercise the real device path.
 
-import "core/bytegpt_decode.hexa"
+import "core/decode.hexa"
 
 fn _maxdiff(a: int, b: int, n: int) -> float {
     let mut md = 0.0

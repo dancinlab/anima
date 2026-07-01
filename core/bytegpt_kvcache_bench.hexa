@@ -1,7 +1,7 @@
 // bytegpt_kvcache_bench.hexa — wall-time readout REF (O(gen²) full-forward) vs
 // KV-cache (O(gen)) on the tiny fixture. NOT a verdict; just the speed evidence for
 // the root-cause fix. Same fixture/seed as the byte-exact smoke.
-import "core/bytegpt_decode.hexa"
+import "core/decode.hexa"
 
 fn gen_ref(W: Map, seed: list, gen: int, top_k: int, temp: float, seed_rng: int) -> int {
     let vocab = to_int(W["vocab"]); let block = to_int(W["block"])

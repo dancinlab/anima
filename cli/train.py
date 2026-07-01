@@ -1,88 +1,173 @@
 #!/usr/bin/env python3
-# ════════════════════════════════════════════════════════════════════════════
-#  cli/train.py — anima REFERENCE + BRIDGE trainer (torch Lane-P).
-#
-#  ┌── ROLE (a_clm_gen_pipeline) ─────────────────────────────────────────────┐
-#  │ This is the REFERENCE + BRIDGE trainer, NOT the production trainer.        │
-#  │                                                                           │
-#  │   Production trainer = cli/train.hexa (hexa-native flame/forge,            │
-#  │   a_train_flame_forge: .hexa on stdlib/flame own-GEMM, NO .py trainer).    │
-#  │                                                                           │
-#  │ cli/train.hexa is single-thread native-CPU-scalar-bound (#2598/#2600 :     │
-#  │ util peak ~65% / sustained <30%) so an actual 303M GPU train on it idles   │
-#  │ the GPU. This torch Lane-P path is GPU-BOUND (cuda GEMM-saturating), so it │
-#  │ can train the real clm303 (L4·d3784·E2->Emax4) efficiently TODAY — the     │
-#  │ explicitly-sanctioned REFERENCE + BRIDGE path (a_clm_gen_pipeline:         │
-#  │ "Lane-P torch = REFERENCE + bridge, forge is the PUBLIC production trainer")│
-#  │                                                                           │
-#  │ It trains a CLMConvMoE GPU-bound, then SERIALIZES the weights to a         │
-#  │ .clm v0.3 file (CLM\x01 magic + CLMX trailer) that CORE core/clm_decode    │
-#  │ .hexa loads back byte-exact for the engine-native G6 verdict.              │
-#  │                                                                           │
-#  │   ENGINE-NATIVE GATE (a_engine_native_learning, HARD-GATE):                │
-#  │     torch-side CE / metrics here  = DIRECTIONAL only (NOT terminal).       │
-#  │     TERMINAL verdict              = CORE re-measure of the serialized .clm │
-#  │                                     on core/clm_decode.hexa frozen G6 bars │
-#  │                                     (H_1129/1139 recombination, H_1140     │
-#  │                                     novelty). The trained ckpt MUST be     │
-#  │                                     pulled before teardown (a_fire_recover │
-#  │                                     _complete) so engine-check is possible.│
-#  └───────────────────────────────────────────────────────────────────────────┘
-#
-#  RECIPE PARITY with cli/train.hexa (reflected verbatim):
-#    * MODE_CANON shape — clm303: L4 · d3784 · E2->Emax4 (true 303M), byte V=256,
-#      K=3, dilation = min(2^l, 512) (model.py CausalDilatedConv1d).
-#    * SAVANT (a_savant_train, H_1560/1562/1563) — golden-zone inhibition with a
-#      CUSP latch + asymmetric hysteresis. GZ_LOWER = 1/2 - ln(4/3) ~ 0.2123179.
-#      Inhibition (weight-decay / dropout / router-temperature) anneals from a
-#      high I0 toward a floor BELOW GZ_LOWER (H_1559: learning-inhibition sweet-
-#      spot may sit under the Phi golden zone) so the real sweet-spot is reached.
-#      When I first ENTERS [GZ_LOWER, GZ_UPPER] the savant mode latches ON (cusp
-#      hard-step) and STAYS on (hysteresis, never re-raised).
-#    * MITOSIS (a_mitosis_train, H_1288) — cell division E->E+1 mid-training: a
-#      parent expert's conv is copied (+tiny perturbation) into a fresh slot and
-#      the router bias splits by -ln2 on both children (near-continuous gate-mass
-#      conservation). Experts are allocated at Emax so the split writes in place.
-#    * 4-cell register corpus (a_chat_registers) — {ko·en}x{normal·SNS} byte
-#      stream, round-robin, mmap streaming (no whole-file slurp). HF dataset
-#      names and/or local byte files via --corpus.
-#    * AdamW + next-byte CE (grad-exact).
-#
-#  .clm SERIALIZE — reuses the GROUND-TRUTH bridge serializer
-#  train/clm/model/clm_serialize_v2.py::serialize_v3 (the SAME byte layout the
-#  golden reference reexport_d768_v2_fast.clm uses), so the output is byte-exact
-#  to what core/clm_decode.hexa parses. verify_clm_v2.clm_decodable / parse_clm
-#  self-check the written file.
-#
-#  USAGE:
-#    python cli/train.py --out ckpt.clm --corpus <p1> [<p2> ...] \
-#        [--canon | --d D --L L] [--steps N] [--no-savant] [--no-mitosis]
-#  GPU (cuda) by default; CPU fallback for the $0 smoke.
-# ════════════════════════════════════════════════════════════════════════════
+"""cli/train.py — the CANONICAL anima python training entry (`anima train --py`).
+
+>>> This file is the working python training entry, SYMMETRIC to cli/evaluate.py
+>>> (the canonical python eval entry). `anima train --py <args>` dispatches HERE;
+>>> `anima train <args>` (no --py) still dispatches to the hexa-native cli/train.hexa.
+>>>
+>>> WHY python is the canonical working path RIGHT NOW: the hexa-native production
+>>> trainer cli/train.hexa (a_train_flame_forge) is single-thread native-CPU-scalar-
+>>> bound (#2598/#2600: util peak ~65% / sustained <30%) and is temporarily under a
+>>> GPU-utilization fix, so a real 303M GPU train on it idles the GPU. This torch
+>>> Lane-P path is GPU-BOUND (cuda GEMM-saturating), so it trains the real clm303
+>>> (L4·d3784·E2->Emax4) efficiently today — the explicitly-sanctioned REFERENCE +
+>>> BRIDGE path (a_clm_gen_pipeline: "Lane-P torch = REFERENCE + bridge, forge is the
+>>> PUBLIC production trainer"). It trains a CLMConvMoE GPU-bound, then SERIALIZES to
+>>> a .clm v0.3 (CLM\\x01 magic + CLMX trailer) that CORE core/clm_decode.hexa loads
+>>> back byte-exact for the engine-native G0-G6 verdict.
+>>>
+>>>   ENGINE-NATIVE GATE (a_engine_native_learning, HARD-GATE): torch-side CE / gauges
+>>>   here = DIRECTIONAL only (NOT terminal). TERMINAL verdict = CORE re-measure of the
+>>>   serialized .clm via `anima evaluate --py <clm>` on the frozen G0-G6 bars. Pull the
+>>>   trained ckpt before teardown (a_fire_recover_complete) so engine-check is possible.
+
+This trainer carries the full SAVANT + MITOSIS recipe (parity with cli/train.hexa) AND
+the H_1640 OBJECTIVE-DISCOVERY surface: `--arm {ctrl,tlora,tlora_dict,tlora_jamo}` ×
+`--objective {ce_marginal,infonce,contrastive_equilibrium,predictive_info,
+constructive_bind,composed_nce}`. The last THREE objectives are the NEW compositional
+G1 levers (added on top of CE) — this arm × objective matrix is the whole point of the
+py entry (the trunk-objective search for the G1 recombination / G6 ideation wall).
+
+WHY the objective lever (context, do not re-derive): the G1 recombination / G6 ideation
+wall is confirmed TRUNK-OBJECTIVE-BOUND — cross-entropy does NOT reward COMPOSITION of
+concepts, so every READOUT op tried (multiplicative binding exp3, CLS pattern-sep
+H_1815, TLoRA expert-weight H_1813, plain-InfoNCE recomb-objective H_9024) only lifts G2
+novelty (orthogonal) and floors G1. External lit converges: the lever is the OBJECTIVE +
+regularization, NOT the operator. So a NEW lever must be a NEW LOSS FUNCTION that rewards
+compositional structure IN THE TRUNK, added to CE. This package adds three such losses:
+
+  predictive_info   — MULTI-STEP predictive-coding aux. Aux linear heads predict the
+                      tokens k=2,3,4 steps AHEAD from the trunk penultimate (not just
+                      the immediate next token). Rewards the penultimate for carrying
+                      predictive info about the FUTURE beyond t+1 = the cortical
+                      predictive hierarchy / predictive-information bottleneck
+                      (Bialek-Tishby predictive information; van den Oord CPC 1807.03748;
+                      Rao&Ballard predictive coding). Heads DROPPED at serialize.
+
+  constructive_bind — TRAINED CONSTRUCTIVE BIND aux (the one untried piece of the
+                      substrate framebreak). Two learned projections extract role r and
+                      filler f from the penultimate; they are BOUND by circular
+                      convolution c = r⊛f (Plate 1995 Holographic Reduced Representations
+                      / Smolensky 1990 Tensor-Product Representations). Two constraints
+                      sculpt a compositional code: (1) UNBIND recovers the filler
+                      (unbind(c,r)≈f, cos loss) so the code must support clean
+                      compose/decompose, and (2) the bound composite must PREDICT the
+                      next token (dec(c)→y, CE) so binding carries task signal. Heads
+                      DROPPED at serialize.
+
+  composed_nce      — COMPOSED-NEGATIVE InfoNCE. Plain InfoNCE's negatives are RANDOM
+                      vocab tokens (concept-membership only). Here the negatives are the
+                      SAME bag of tokens present in the window but assigned to the WRONG
+                      position (targets permuted WITHIN each sequence). Contrasting the
+                      true token-to-position assignment against same-concept-set /
+                      wrong-composition assignments directly rewards getting the
+                      COMPOSITION right, not just the concept set (hard-negative /
+                      order-sensitive contrastive; CPC-style). Operates on logits — no
+                      aux params, gradient flows readout→trunk.
+
+All three are DIRECTIONAL torch-side training pressures; the verdict is later via
+`anima evaluate --py <clm>` engine-native on the FROZEN G1 bar (a_engine_native_learning).
+The .clm path stays OPEN: aux heads/projections live OUTSIDE model.state_dict (in the
+objective module), so serialize_v3 writes only the standard additive-readout CLMConvMoE.
+
+LEVERS (arm axis, orthogonal to the readout-floor result, all on the SAME trunk):
+  N1  TLoRA / TensorPoly expert-weight reparameterization (2405.16671): each ConvExpert
+      conv weight W∈(d,d,K) is REPARAMETERIZED as a low-rank tensor product
+      W = sum_r (a_r ⊗ b_r) ⊗ k_r (+ optional dense base), learned via the factors then
+      MATERIALIZED back to the dense (d,d,K) conv weight (so the .clm path stays OPEN).
+  N3  DBES expert-specialization diagnostic (2605.18523, MEASURE-ONLY, gradient-free).
+  N7  dictionary/sparse-coding aux loss (2603.28744): L1 sparsity on the penultimate.
+  N8  jamo (자모) compositional teach signal (2604.12377): next-jamo-class aux head.
+  N6  regularization schedule sweep (--wd-floor / --dropout-floor override knobs).
+
+Arms (single structural variable each, vs ctrl):
+  ctrl       : production CLMConvMoE, plain CE. The discriminating control.
+  tlora      : N1 TLoRA expert-weight (rank R, base on) + CE.
+  tlora_dict : N1 TLoRA + N7 dictionary/sparse aux.
+  tlora_jamo : N1 TLoRA + N8 jamo teach aux.
+
+ARCH (--arch {clm,bytegpt}, default clm — preserves current behavior): the objective
+levers are ARCH-AGNOSTIC (they operate on logits + an optional penultimate), so they can
+be tested on EITHER trunk. `--arch bytegpt` builds a 24-layer GPT-2-class ByteGPT (the
+CLEAN G1 wall: ByteGPT single=2, vs CLMConvMoE's single=0 coverage-floor) and serializes a
+`.bin` (5×u32 header) via core/serialize.py (the unified serializer) instead of a `.clm`. For bytegpt the
+CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF — only arm=ctrl × the
+objective matrix is supported (that's exactly what the G1-lever test needs). `anima
+evaluate --py` auto-detects `.bin` vs `.clm` by header, so a ByteGPT `.bin` measures through
+the bytegpt mouth automatically.
+
+USAGE (installed `anima` PATH command after `hx install anima`):
+  # CLM trunk (default):
+  anima train --py --arm ctrl --objective constructive_bind --steps 8000 \\
+      --canon --corpus <p1..p4> --cell-label ko-general en-general ko-sns en-sns \\
+      --seed 7 --val-frac 0.05 --val-every 200 --sample proportional \\
+      --out ckpt/ctrl_cbind_seed7.clm --ckpt-out ckpt/ctrl_cbind_seed7.pt \\
+      --gauges-out ckpt/ctrl_cbind_seed7.json
+  # ByteGPT trunk (the CLEAN G1 wall) — arm=ctrl × the objective matrix:
+  anima train --py --arch bytegpt --arm ctrl --objective composed_nce --steps 8000 \\
+      --canon --corpus <p1..p4> --seed 7 --out ckpt/bg_ctrl_cnce.bin \\
+      --gauges-out ckpt/bg_ctrl_cnce.json
+"""
 from __future__ import annotations
-
-import argparse
-import math
-import os
-import sys
-import time
-
+import argparse, json, math, os, sys, time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 # ── locate the CLM model + the ground-truth .clm serializer/verifier ─────────
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_REPO = os.path.dirname(_HERE)
-_MODEL = os.path.join(_REPO, "train", "clm", "model")
+# LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd + this file lives in
+# cli/, not the repo root): resolve model.py under the repo root (parent of cli/) — or
+# $ANIMA_SRC if the launcher exported it — joined with the CLM model dir. The model dir
+# is train/clm/model on a pod but archive/train/clm/model in some worktree layouts; try
+# both. The held-out DESCENT verifier (verify_clm_v2) lives in that SAME dir; the unified
+# serializer (core/serialize) resolves via a separate core/ sys.path insert below.
+_HERE = os.path.dirname(os.path.abspath(__file__))          # …/cli
+_ROOTS = []
+_ENV_SRC = os.environ.get("ANIMA_SRC")
+if _ENV_SRC:
+    _ROOTS.append(_ENV_SRC)
+_ROOTS.append(os.path.dirname(_HERE))                       # repo root = parent of cli/
+_MODEL_SUBDIRS = (("train", "clm", "model"),
+                  ("archive", "train", "clm", "model"))
+_MODEL = None
+_TRIED = []
+for _r in _ROOTS:
+    for _sd in _MODEL_SUBDIRS:
+        _p = os.path.join(_r, *_sd)
+        _TRIED.append(_p)
+        if _MODEL is None and os.path.exists(os.path.join(_p, "model.py")):
+            _MODEL = _p
+if _MODEL is None:
+    raise ImportError(
+        "cli/train.py: could not locate the CLM model.py (train/clm/model or "
+        "archive/train/clm/model under the repo root or $ANIMA_SRC). Tried:\n  "
+        + "\n  ".join(_TRIED)
+        + "\nSet $ANIMA_SRC to the anima source root, or stage the CLM model dir.")
 if _MODEL not in sys.path:
     sys.path.insert(0, _MODEL)
+# tool/ (gauge_lib) is best-effort (the G1/G6 torch probe below is wrapped in try/except).
+for _r in _ROOTS:
+    _t = os.path.join(_r, "tool")
+    if os.path.isdir(_t) and _t not in sys.path:
+        sys.path.insert(0, _t)
+# core/ is the engine package; the UNIFIED serializer (core/serialize.py = CLM
+# serialize_v3 + ByteGPT .pt→.bin bridge) lives there (parallel to core/decode.py).
+# Add core/ so `import serialize` resolves — the same resolution cli/evaluate.py uses
+# for `import decode`.
+for _r in _ROOTS:
+    _c = os.path.join(_r, "core")
+    if os.path.isdir(_c) and _c not in sys.path:
+        sys.path.insert(0, _c)
 
-# (imports resolve via the sys.path insert above to the ground-truth CLM model
-#  + .clm serializer/verifier under train/clm/model/.)
-from model import CLMConfig, CLMConvMoE, MoEStats   # train/clm/model/model.py
-import clm_serialize_v2 as S                         # serialize_v3 = bridge SSOT
-import verify_clm_v2 as VC                           # clm_decodable / parse_clm
+# (imports resolve via the sys.path inserts above to the ground-truth CLM model
+#  under train/clm/model/ + the unified serializer under core/.)
+from model import CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d  # train/clm/model/model.py
+import serialize as S                                # core/serialize.py — serialize_v3 = bridge SSOT
+import verify_clm_v2 as VC                            # clm_decodable / parse_clm (train/clm/model/)
+# ByteGPT trunk model (--arch bytegpt) — sibling of model.py in the SAME model dir.
+from bytegpt_model import ByteGPTConfig, ByteGPT      # train/clm/model/bytegpt_model.py
+# ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
+import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -340,215 +425,606 @@ def resolve_corpus_path(spec: str) -> str:
     return local
 
 
+# ── frozen lever hyperparams (pre-registered in PREREG.md — tune-to-green 금지) ──
+TLORA_RANK = 8            # default tensor-product rank R (a_r⊗b_r⊗k_r factors)
+TLORA_BASE = True         # keep a small dense base weight alongside the low-rank TP
+DICT_LAMBDA = 1e-3        # N7 trunk-penultimate L1 sparsity weight (Stop-Probing)
+JAMO_LAMBDA = 0.3         # N8 next-jamo-class aux head weight (SCRIPT)
+INFONCE_LAMBDA = 1.0; INFONCE_NEG = 64
+EQ_LAMBDA = 1.0; EQ_MARGIN = 0.5
+
+# ── NEW OBJECTIVE frozen hyperparams (H_1640 — pre-registered in PREREG.md) ──
+PREDINFO_LAMBDA = 0.5            # multi-step predictive-coding aux weight (per horizon, averaged)
+PREDINFO_HORIZONS = (2, 3, 4)   # predict tokens 2/3/4 steps AHEAD from penultimate
+CBIND_LAMBDA = 0.5              # constructive-bind aux weight (unbind-recon + composite-CE)
+CBIND_DIM = 256                 # HRR role/filler factor dim (power-of-2 friendly for FFT)
+CBIND_UNBIND_W = 1.0           # weight on the unbind-recovers-filler term
+CBIND_PRED_W = 1.0             # weight on the bound-composite-predicts-next-token term
+CNCE_LAMBDA = 1.0              # composed-negative InfoNCE weight
+CNCE_PERMS = 8                 # # of within-window target permutations = wrong-composition negatives
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  N1 — TLoRA / TensorPoly expert weight.
+#  A drop-in replacement for ConvExpert whose conv weight W∈(d_out=d,d_in=d,K) is
+#  reparameterized as a sum of R rank-1 tensor products plus an optional small
+#  dense base. The forward is still a plain causal conv (engine-compatible). The
+#  effective dense weight is exposed via .materialized_weight() so it can be
+#  written into a standard CLMConvMoE state_dict for serialize_v3 (engine-native).
+# ════════════════════════════════════════════════════════════════════════════
+class TLoRAConvExpert(nn.Module):
+    """ConvExpert with a tensor-product-factorized conv weight (N1, TLoRA).
+
+    W[o,i,k] = base[o,i,k] + sum_r  A[r,o] * B[r,i] * Kf[r,k]
+    where A∈(R,d), B∈(R,d), Kf∈(R,K). This is the Tucker/CP tensor-product
+    reparameterization (TensorPoly/TLoRA, 2405.16671) applied to the expert
+    weight position — a STRUCTURED (low-rank, compositional) prior on how the
+    expert mixes channels, distinct from the readout-position Hadamard we
+    already floored (exp3). The bias is a normal learnable vector."""
+
+    def __init__(self, cfg: CLMConfig, rank: int, base: bool):
+        super().__init__()
+        d, K = cfg.d_model, cfg.expert_kernel_size
+        self.d, self.K, self.R = d, K, rank
+        self.dilation = 1
+        self.pad = (K - 1) * self.dilation
+        # tensor-product factors (CP decomposition of the (d,d,K) conv tensor)
+        self.A = nn.Parameter(torch.empty(rank, d))   # out-channel factor
+        self.B = nn.Parameter(torch.empty(rank, d))   # in-channel factor
+        self.Kf = nn.Parameter(torch.empty(rank, K))  # kernel-tap factor
+        nn.init.normal_(self.A, std=d ** -0.5)
+        nn.init.normal_(self.B, std=d ** -0.5)
+        nn.init.normal_(self.Kf, std=K ** -0.5)
+        if base:
+            # small dense base so the expert is never strictly rank-R limited
+            self.base = nn.Parameter(torch.zeros(d, d, K))
+            nn.init.normal_(self.base, std=(d * K) ** -0.5 * 0.1)
+        else:
+            self.register_parameter("base", None)
+        self.bias = nn.Parameter(torch.zeros(d))
+        self.act = nn.GELU()
+
+    def materialized_weight(self) -> torch.Tensor:
+        """Compose the TP factors (+ base) into the dense (d_out, d_in, K) conv
+        weight that nn.Conv1d / the .clm format expects. einsum: r o, r i, r k -> o i k."""
+        W = torch.einsum("ro,ri,rk->oik", self.A, self.B, self.Kf)
+        if self.base is not None:
+            W = W + self.base
+        return W
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, C, T) ; causal left-pad then functional conv with materialized W
+        W = self.materialized_weight()
+        xp = F.pad(x, (self.pad, 0))
+        y = F.conv1d(xp, W, self.bias, dilation=self.dilation)
+        return self.act(y)
+
+
+def install_tlora_experts(model: CLMConvMoE, rank: int, base: bool):
+    """Replace every ConvExpert in model.moe.experts with a TLoRAConvExpert
+    (N1). Returns the new ModuleList so the optimizer sees the TP factors."""
+    cfg = model.cfg
+    new = nn.ModuleList(TLoRAConvExpert(cfg, rank, base)
+                        for _ in range(len(model.moe.experts)))
+    model.moe.experts = new
+    return new
+
+
+def tlora_aware_split(mito, parent: int, opt) -> int:
+    """Mitosis cell-division for TLoRA experts (parity with MitosisMoE.split, but
+    operating on the TP factors instead of .conv.conv).
+
+    MitosisMoE.split() assumes a standard ConvExpert (.conv.conv Conv1d);
+    TLoRAConvExpert has TP factors (A,B,Kf[,base],bias) instead. We replicate the
+    same semantics: child = clone(parent) + tiny alternating perturbation, router
+    row copied, both children's router bias -= ln2, Adam moments reset. This keeps
+    the savant×mitosis recipe identical (only the expert PARAMETERIZATION differs,
+    which is exactly the single variable under test)."""
+    if mito.e_active >= mito.emax:
+        return mito.e_active
+    import torch as _t
+    with _t.no_grad():
+        child = mito.e_active
+        moe = mito.model.moe
+        pe = moe.experts[parent]; ce = moe.experts[child]
+        touched = []
+        for name in ("A", "B", "Kf", "base", "bias"):
+            pp = getattr(pe, name, None); cp = getattr(ce, name, None)
+            if pp is None or cp is None:
+                continue
+            flat = pp.detach().clone().reshape(-1)
+            eps = _t.full_like(flat, 1e-4); eps[1::2] = -1e-4
+            cp.copy_((flat + eps).reshape(pp.shape))
+            touched += [pp, cp]
+        rw = moe.router.weight; rb = moe.router.bias
+        rw[child].copy_(rw[parent])
+        pb = rb[parent].item()
+        rb[parent] = pb - LN2; rb[child] = pb - LN2
+        touched += [rw, rb]
+        for p in touched:
+            st = opt.state.get(p, None)
+            if st:
+                if "exp_avg" in st: st["exp_avg"].zero_()
+                if "exp_avg_sq" in st: st["exp_avg_sq"].zero_()
+        mito.active_mask[child] = 1.0
+        mito.e_active = child + 1
+        return mito.e_active
+
+
+def materialize_experts_into_state(model: CLMConvMoE):
+    """Return a state_dict where each TLoRA expert is written under the STANDARD
+    keys 'moe.experts.{j}.conv.conv.{weight,bias}' (the dense form serialize_v3
+    reads). Non-expert keys pass through unchanged. This is what makes the .clm
+    engine-loadable despite the reparameterization."""
+    sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    out = {k: v for k, v in sd.items() if not k.startswith("moe.experts.")}
+    for j, e in enumerate(model.moe.experts):
+        if isinstance(e, TLoRAConvExpert):
+            out[f"moe.experts.{j}.conv.conv.weight"] = e.materialized_weight().detach().cpu()
+            out[f"moe.experts.{j}.conv.conv.bias"] = e.bias.detach().cpu()
+        else:  # plain ConvExpert (ctrl) — already standard keys, copy through
+            for k, v in sd.items():
+                if k.startswith(f"moe.experts.{j}."):
+                    out[k] = v
+    return out
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  N3 — DBES expert-specialization diagnostic (MEASURE-ONLY, gradient-free).
+# ════════════════════════════════════════════════════════════════════════════
+@torch.no_grad()
+def dbes_specialization(model: CLMConvMoE, x: torch.Tensor) -> dict:
+    """Differentiation-of-Behaviour Expert Specialization (DBES, 2605.18523).
+
+    On a batch x (B,T) of bytes, run the trunk up to the MoE input, then:
+      * expert_div = mean pairwise (1 - cosine) between expert OUTPUT maps
+                     (how differently the experts transform the same input).
+      * router_entropy = mean per-token routing entropy (nats).
+      * usage_gini = Gini of mean per-expert routing mass (1=one expert hogs all).
+    Low expert_div + low usage spread => experts are NOT differentiated, a
+    candidate cause of a G1 recombination floor. Pure diagnostic — no grad."""
+    b = model
+    h = b.embed(x).transpose(1, 2)
+    h = b.embed_conv(h)
+    for layer in b.trunk:
+        h = layer(h)
+    # expert outputs on the SAME pre-MoE activation
+    outs = []
+    for e in b.moe.experts:
+        outs.append(e(h))                          # (B, C, T)
+    n_e = len(outs)
+    # pairwise output cosine distance (flatten B,C,T)
+    flat = [o.reshape(-1) for o in outs]
+    div, npair = 0.0, 0
+    for i in range(n_e):
+        for j in range(i + 1, n_e):
+            cos = F.cosine_similarity(flat[i], flat[j], dim=0).item()
+            div += (1.0 - cos); npair += 1
+    expert_div = (div / npair) if npair else 0.0
+    # router stats
+    logits = b.moe.router(h)                        # (B, n_e, T)
+    probs = F.softmax(logits, dim=1)
+    ent = -(probs * torch.log(probs + 1e-9)).sum(dim=1).mean().item()
+    usage = probs.mean(dim=(0, 2))                  # (n_e,)
+    u = torch.sort(usage).values
+    nn_ = u.numel()
+    # Gini = (2*sum(i*u_i)/(n*sum u) ) - (n+1)/n
+    idx = torch.arange(1, nn_ + 1, dtype=u.dtype, device=u.device)
+    gini = (2.0 * (idx * u).sum() / (nn_ * u.sum() + 1e-9) - (nn_ + 1) / nn_).item()
+    return {"expert_div": round(expert_div, 5),
+            "router_entropy": round(ent, 5),
+            "usage_gini": round(gini, 5),
+            "usage": [round(float(z), 5) for z in usage.tolist()],
+            "n_experts": n_e}
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  N8 — jamo (자모) compositional teach signal. We predict, per Hangul-syllable
+#  byte position, a coarse jamo class so the trunk learns sub-character structure.
+#  Hangul syllables are UTF-8 3-byte sequences (0xEA..0xED leading); we derive a
+#  cheap jamo-bucket target from the syllable code point's (lead, vowel, tail).
+# ════════════════════════════════════════════════════════════════════════════
+class JamoHead(nn.Module):
+    """Aux head: trunk penultimate -> coarse jamo class logits. Dropped at serialize."""
+    def __init__(self, d, n_jamo=64):
+        super().__init__()
+        self.proj = nn.Conv1d(d, n_jamo, 1)
+        self.n_jamo = n_jamo
+
+    def forward(self, h):  # h: (B, d, T) -> (B, n_jamo, T)
+        return self.proj(h)
+
+
+def jamo_targets(tokens: torch.Tensor, n_jamo: int) -> torch.Tensor:
+    """Map each byte to a coarse jamo bucket (0=non-Hangul-lead). Cheap, byte-level:
+    Hangul UTF-8 lead bytes 0xEA-0xED get a bucket from (byte & 0x3f) % (n_jamo-1) +1,
+    everything else -> 0 (ignored class). This is a weak teach signal that biases the
+    trunk toward Korean sub-character regularity without needing a full jamo decomposer."""
+    is_lead = (tokens >= 0xEA) & (tokens <= 0xED)
+    bucket = ((tokens & 0x3F) % (n_jamo - 1)) + 1
+    return torch.where(is_lead, bucket, torch.zeros_like(tokens))
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  Objective heads (carried over from objrun H_1602 — OPTIONAL coupling).
+# ════════════════════════════════════════════════════════════════════════════
+def _ce(logits, targets, V):
+    return F.cross_entropy(logits.transpose(1, 2).reshape(-1, V), targets.reshape(-1))
+
+
+# NOTE (H_1640): every objective now accepts an OPTIONAL penultimate=(B,d,T) kwarg
+# (the post-MoE pre-readout trunk site). The inherited objectives ignore it; the new
+# compositional objectives consume it. Plain-function objectives have no params; the
+# two aux-head objectives are nn.Modules whose params are added to the optimizer in
+# main() and DROPPED at serialize (they never enter model.state_dict).
+def loss_ce_marginal(logits, targets, V, gen, penultimate=None):
+    return _ce(logits, targets, V), {}
+
+
+def loss_infonce(logits, targets, V, gen, penultimate=None):
+    ce = _ce(logits, targets, V)
+    lg = logits.transpose(1, 2).reshape(-1, V)
+    tgt = targets.reshape(-1); N = tgt.shape[0]
+    pos = lg.gather(1, tgt.unsqueeze(1))
+    neg_idx = torch.randint(0, V, (N, INFONCE_NEG), generator=gen, device=lg.device)
+    neg = lg.gather(1, neg_idx).masked_fill(neg_idx == tgt.unsqueeze(1), float("-inf"))
+    cand = torch.cat([pos, neg], dim=1)
+    infonce = F.cross_entropy(cand, torch.zeros(N, dtype=torch.long, device=lg.device))
+    return ce + INFONCE_LAMBDA * infonce, {"infonce": float(infonce.detach())}
+
+
+def loss_contrastive_equilibrium(logits, targets, V, gen, penultimate=None):
+    ce = _ce(logits, targets, V)
+    lg = logits.transpose(1, 2).reshape(-1, V); tgt = targets.reshape(-1)
+    logp = F.log_softmax(lg, dim=1)
+    e_pos = -logp.gather(1, tgt.unsqueeze(1)).mean()
+    with torch.no_grad():
+        samp = torch.multinomial(logp.exp(), 1, generator=gen).squeeze(1)
+    e_neg = -logp.gather(1, samp.unsqueeze(1)).mean()
+    eq = F.relu(e_pos - e_neg + EQ_MARGIN)
+    return ce + EQ_LAMBDA * eq, {"e_pos": float(e_pos.detach()),
+                                 "e_neg": float(e_neg.detach()), "eq": float(eq.detach())}
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  ▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ NEW OBJECTIVES (H_1640) ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▛
+#  Three NEW compositional TRAINING-OBJECTIVE loss functions added to CE. Each is a
+#  training-side pressure that reshapes the gradient the TRUNK receives (not a readout
+#  op). Verdict later = engine-native `anima evaluate --py` on the frozen G1 bar.
+# ════════════════════════════════════════════════════════════════════════════
+
+# ── LEVER 1: predictive_info — multi-step predictive-coding aux ───────────────
+class PredictiveInfoObjective(nn.Module):
+    """Reward the trunk penultimate h_t for carrying predictive info about FUTURE
+    tokens k=2,3,4 steps ahead, not just the immediate next token (which CE already
+    covers). One linear head per horizon maps h_t -> V-way logits over token y_{t+j}.
+
+        aux = mean_j  CE( head_j(h[:, :, :T-j]) ,  y[:, j:] )        (j in HORIZONS-1)
+
+    (y is already next-token, so y[:,0] = token after x_0; predicting y[:,j:] from
+    h[:, :, :T-j] means predicting the token j positions further ahead.) This is the
+    predictive-information bottleneck / CPC objective (Bialek-Tishby predictive
+    information; van den Oord CPC 1807.03748; Rao&Ballard predictive coding): to
+    minimize it the trunk must compress the context into a code that stays predictive
+    multiple steps out, which requires COMPOSING context factors rather than memorizing
+    the 1-step marginal. Heads are DROPPED at serialize (engine reads only the additive
+    1-step readout)."""
+
+    def __init__(self, d, V, horizons=PREDINFO_HORIZONS, lam=PREDINFO_LAMBDA):
+        super().__init__()
+        self.horizons = tuple(int(j) - 1 for j in horizons)   # steps BEYOND next-token
+        self.lam = lam; self.V = V
+        self.heads = nn.ModuleList(nn.Conv1d(d, V, 1) for _ in self.horizons)
+
+    def forward(self, logits, targets, V, gen, penultimate=None):
+        ce = _ce(logits, targets, V)
+        if penultimate is None:
+            return ce, {}
+        h = penultimate                                    # (B, d, T)
+        T = h.shape[-1]
+        terms = []
+        for hd, j in zip(self.heads, self.horizons):
+            if j <= 0 or T - j < 1:
+                continue
+            pl = hd(h[:, :, :T - j])                        # (B, V, T-j)
+            pt = targets[:, j:]                             # (B, T-j) token j-ahead
+            terms.append(F.cross_entropy(
+                pl.transpose(1, 2).reshape(-1, V), pt.reshape(-1)))
+        if not terms:
+            return ce, {}
+        aux = torch.stack(terms).mean()
+        return ce + self.lam * aux, {"predinfo": float(aux.detach()),
+                                     "predinfo_h": len(terms)}
+
+
+# ── LEVER 2: constructive_bind — HRR trained-bind reconstruction aux ──────────
+def _circ_conv(a, b):
+    """Circular convolution (HRR binding) along the last dim via FFT. Real inputs."""
+    fa = torch.fft.rfft(a, dim=-1); fb = torch.fft.rfft(b, dim=-1)
+    return torch.fft.irfft(fa * fb, n=a.shape[-1], dim=-1)
+
+
+def _circ_corr(c, a):
+    """Circular correlation (HRR UNbinding): recover b from c=a⊛b given a.
+    unbind(c, a) = c ⊛ involution(a); in Fourier: irfft( conj(fft a) * fft c )."""
+    fc = torch.fft.rfft(c, dim=-1); fa = torch.fft.rfft(a, dim=-1)
+    return torch.fft.irfft(torch.conj(fa) * fc, n=c.shape[-1], dim=-1)
+
+
+class ConstructiveBindObjective(nn.Module):
+    """TRAINED CONSTRUCTIVE BIND on the trunk penultimate (the untried framebreak piece).
+
+    From each penultimate vector h_t, two learned linear projections extract a ROLE r_t
+    and a FILLER f_t (dim m). They are BOUND by circular convolution c_t = r_t ⊛ f_t
+    (Plate 1995 Holographic Reduced Representations / Smolensky 1990 Tensor-Product
+    Representations — VSA binding). Two constraints sculpt a COMPOSITIONAL code:
+
+      (1) UNBIND-RECOVERS-FILLER: unbind(c_t, r_t) ≈ f_t  →  1 - cos(f_hat, f_t).
+          Forces the bound composite to actually SUPPORT clean decomposition (a real
+          bind, not an additive blur — the exact property a pure additive readout lacks).
+      (2) COMPOSITE-PREDICTS-NEXT: a linear decoder maps the bound c_t to next-token
+          logits, CE against y_t. Forces the binding to carry TASK signal, so gradient
+          sculpts task-relevant compositional factors into the trunk.
+
+        aux = CBIND_UNBIND_W * (1 - cos(unbind(r⊛f, r), f)).mean()
+            + CBIND_PRED_W   * CE(dec(r⊛f), y)
+
+    All of {Wr, Wf, dec} live OUTSIDE model.state_dict → DROPPED at serialize; the
+    engine reads only the standard additive readout. Gradient flows into the trunk
+    through h_t, so the trunk is pushed toward a bind-decomposable representation."""
+
+    def __init__(self, d, V, m=CBIND_DIM, lam=CBIND_LAMBDA):
+        super().__init__()
+        self.m = m; self.lam = lam; self.V = V
+        self.role = nn.Conv1d(d, m, 1)
+        self.fill = nn.Conv1d(d, m, 1)
+        self.dec = nn.Conv1d(m, V, 1)     # bound composite -> next-token logits
+
+    def forward(self, logits, targets, V, gen, penultimate=None):
+        ce = _ce(logits, targets, V)
+        if penultimate is None:
+            return ce, {}
+        h = penultimate                                # (B, d, T)
+        r = self.role(h).transpose(1, 2)               # (B, T, m)
+        f = self.fill(h).transpose(1, 2)               # (B, T, m)
+        c = _circ_conv(r, f)                           # (B, T, m) bound composite
+        # (1) unbind must recover the filler
+        f_hat = _circ_corr(c, r)                        # (B, T, m)
+        unbind = (1.0 - F.cosine_similarity(f_hat, f, dim=-1)).mean()
+        # (2) bound composite must predict the next token
+        dec_logits = self.dec(c.transpose(1, 2))        # (B, V, T)
+        pred = F.cross_entropy(
+            dec_logits.transpose(1, 2).reshape(-1, V), targets.reshape(-1))
+        aux = CBIND_UNBIND_W * unbind + CBIND_PRED_W * pred
+        return ce + self.lam * aux, {"cbind_unbind": float(unbind.detach()),
+                                     "cbind_pred": float(pred.detach()),
+                                     "cbind": float(aux.detach())}
+
+
+# ── LEVER 3: composed_nce — composed-negative (wrong-composition) InfoNCE ─────
+def loss_composed_nce(logits, targets, V, gen, penultimate=None):
+    """InfoNCE whose negatives are the SAME bag of tokens present in the window but at
+    the WRONG position (targets permuted WITHIN each sequence) = same-concept-set /
+    wrong-composition. Contrasting the true token->position assignment against these
+    hard negatives directly rewards getting the COMPOSITION right, not merely the
+    concept set (plain infonce uses RANDOM vocab negatives = membership-only).
+
+        pos_n   = logit[n, y_t]                              (right token here)
+        neg_n,p = logit[n, y_perm_p(t)]  for p=1..CNCE_PERMS (a within-window token
+                                                              assigned to the wrong slot)
+        L = CE( [pos, neg...] , 0 )                          softmax over the assignment
+
+    Operates on the readout logits — no aux params; gradient flows readout->trunk. A
+    permuted token that coincides with the true target is masked to -inf (not a negative)."""
+    ce = _ce(logits, targets, V)
+    B, Vv, T = logits.shape
+    lg = logits.transpose(1, 2).reshape(-1, Vv)        # (B*T, V)
+    tgt = targets.reshape(-1)                          # (B*T,)
+    N = tgt.shape[0]
+    pos = lg.gather(1, tgt.unsqueeze(1))               # (N,1)
+    negs = []
+    for _ in range(CNCE_PERMS):
+        # independent within-sequence permutation of the target order per batch row
+        perm = torch.stack([torch.randperm(T, generator=gen, device=logits.device)
+                            for _ in range(B)])         # (B, T)
+        y_perm = targets.gather(1, perm).reshape(-1)    # (N,) same bag, wrong slots
+        s = lg.gather(1, y_perm.unsqueeze(1))           # (N,1)
+        s = s.masked_fill((y_perm == tgt).unsqueeze(1), float("-inf"))
+        negs.append(s)
+    cand = torch.cat([pos] + negs, dim=1)              # (N, 1+CNCE_PERMS)
+    cnce = F.cross_entropy(cand, torch.zeros(N, dtype=torch.long, device=lg.device))
+    return ce + CNCE_LAMBDA * cnce, {"composed_nce": float(cnce.detach())}
+
+
+# Objective registry. Value = a BUILDER(d, V, device) so the two aux-head objectives can
+# allocate learnable params; the plain-function ones ignore the args and return the fn.
+# `needs_penultimate` marks which objectives consume the trunk penultimate site.
+OBJECTIVE_BUILDERS = {
+    "ce_marginal":             lambda d, V, dev: loss_ce_marginal,
+    "infonce":                 lambda d, V, dev: loss_infonce,
+    "contrastive_equilibrium": lambda d, V, dev: loss_contrastive_equilibrium,
+    "predictive_info":         lambda d, V, dev: PredictiveInfoObjective(d, V).to(dev),
+    "constructive_bind":       lambda d, V, dev: ConstructiveBindObjective(d, V).to(dev),
+    "composed_nce":            lambda d, V, dev: loss_composed_nce,
+}
+OBJ_NEEDS_PENULTIMATE = {"predictive_info", "constructive_bind"}
+OBJECTIVES = OBJECTIVE_BUILDERS   # back-compat alias for --objective choices list
+
+# arm -> (tlora_on, dict_aux_on, jamo_aux_on)
+ARMS = {
+    "ctrl":       (False, False, False),
+    "tlora":      (True,  False, False),
+    "tlora_dict": (True,  True,  False),
+    "tlora_jamo": (True,  False, True),
+}
+
+
 # ════════════════════════════════════════════════════════════════════════════
 def main():
     ap = argparse.ArgumentParser(
-        description="anima torch Lane-P REFERENCE+BRIDGE trainer "
-                    "(NOT production; production = cli/train.hexa)")
-    ap.add_argument("--out", required=True, help="serialized .clm v0.3 output path")
-    ap.add_argument("--corpus", nargs="*", default=[],
-                    help="4-cell register byte files OR HF dataset ids "
-                         "(round-robin {ko·en}x{normal·SNS}); empty -> synthetic smoke")
-    ap.add_argument("--cell-label", nargs="*", default=[],
-                    help="optional register label per --corpus entry, same order "
-                         "(e.g. ko-normal en-normal ko-sns en-sns) — used in the "
-                         "per-cell balance/val report so the 4 registers are named")
-    ap.add_argument("--require-cells", type=int, default=0,
-                    help="abort unless EXACTLY this many usable corpus cells load "
-                         "(e.g. 4 for the full {ko·en}x{normal·SNS} register). "
-                         "Catches the silent register-incompleteness that caused "
-                         "the ko-SNS-only overfit. 0 = off.")
-    ap.add_argument("--sample", choices=["roundrobin", "proportional"],
-                    default="roundrobin",
-                    help="cell sampling: 'roundrobin' = equal step-share per cell "
-                         "(SMALL cells get repeated MANY more times = memorization "
-                         "when sizes differ) · 'proportional' = each cell sampled "
-                         "with prob proportional to its train_bytes, so every BYTE "
-                         "gets ~equal exposure and per-cell repetition is uniform "
-                         "(use this when cells differ in size, e.g. 60MB general vs "
-                         "1.3MB SNS).")
-    ap.add_argument("--mid-measure-every", type=int, default=0,
-                    help="every N steps, run the MONITOR-ONLY mid-train gauge panel "
-                         "(torch-side, DIRECTIONAL per a_train_inline_gauge) and append "
-                         "one line to --mid-measure-out: mirror held-out CE per register "
-                         "(real numpy) + tool/gauge_lib inline gauges (G1/G2/G6/phi_proxy) "
-                         "+ Psi/G5 torch proxies. NOT a frozen verdict — the terminal "
-                         "engine-native 1-6 runs post-hoc on a hexa host. 0 = off.")
-    ap.add_argument("--mid-measure-out", default="midtrain_metrics.jsonl",
-                    help="jsonl path for the mid-train gauge panel (1 line/checkpoint)")
-    ap.add_argument("--canon", action="store_true",
-                    help="clm303 canonical shape (L4·d3784·E2->Emax4, 303M)")
-    ap.add_argument("--d", type=int, default=0, help="model width (override mode default)")
-    ap.add_argument("--L", type=int, default=0, help="trunk depth (override mode default)")
-    ap.add_argument("--steps", type=int, default=0, help="training steps (override mode default)")
-    ap.add_argument("--seq-len", type=int, default=0, help="window length (override mode default)")
+        description="anima canonical python trainer (`anima train --py`) — CLMConvMoE "
+                    "SAVANT+MITOSIS recipe + H_1640 arm×objective compositional levers")
+    ap.add_argument("--arch", default="clm", choices=["clm", "bytegpt"],
+                    help="trunk architecture: clm=CLMConvMoE (default, .clm out) | "
+                         "bytegpt=24-layer GPT-2-class ByteGPT (.bin out) — the CLEAN G1 "
+                         "wall (single=2). The arm×objective compositional levers are "
+                         "arch-agnostic (operate on logits+penultimate); the CLM-specific "
+                         "levers (savant/mitosis/tlora/dict/jamo) are gated OFF for bytegpt.")
+    ap.add_argument("--arm", default="ctrl", choices=list(ARMS))
+    ap.add_argument("--objective", default="ce_marginal", choices=list(OBJECTIVES),
+                    help="OPTIONAL objrun coupling (default ce_marginal = standalone)")
+    ap.add_argument("--tlora-rank", type=int, default=TLORA_RANK)
+    ap.add_argument("--tlora-no-base", action="store_true", help="drop the dense base")
+    ap.add_argument("--dict-lambda", type=float, default=DICT_LAMBDA)
+    ap.add_argument("--jamo-lambda", type=float, default=JAMO_LAMBDA)
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--corpus", nargs="*", default=[])
+    ap.add_argument("--cell-label", nargs="*", default=[])
+    ap.add_argument("--canon", action="store_true")
+    ap.add_argument("--d", type=int, default=0)
+    ap.add_argument("--L", type=int, default=0)
+    ap.add_argument("--steps", type=int, default=0)
+    ap.add_argument("--seq-len", type=int, default=0)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--lr", type=float, default=3e-4)
-    ap.add_argument("--no-savant", action="store_true", help="disable golden-zone inhibition lever")
-    ap.add_argument("--no-mitosis", action="store_true", help="disable cell-division split lever")
-    ap.add_argument("--e0", type=int, default=2, help="initial active experts")
-    ap.add_argument("--emax", type=int, default=4, help="max experts (mitosis grows toward this)")
-    ap.add_argument("--bf16", action="store_true", help="bf16 autocast (cuda)")
-    ap.add_argument("--ckpt-out", default=None, help="optional torch state_dict path")
-    ap.add_argument("--log-every", type=int, default=10)
-    # ── anti-overfit regularization (explicit 1st-class knobs) ───────────────
-    ap.add_argument("--dropout", type=float, default=-1.0,
-                    help="FIXED trunk dropout p; overrides the savant-derived "
-                         "dropout when >=0 (default -1 = let savant drive it)")
-    ap.add_argument("--weight-decay", type=float, default=-1.0,
-                    help="FIXED AdamW weight-decay; overrides the savant-derived "
-                         "wd when >=0 (default -1 = let savant drive it)")
-    # ── held-out validation monitor (overfit detector) ───────────────────────
-    ap.add_argument("--val-frac", type=float, default=0.0,
-                    help="fraction of EACH corpus cell's TAIL held out for "
-                         "validation, disjoint from train (e.g. 0.02); 0 = off")
-    ap.add_argument("--val-every", type=int, default=0,
-                    help="log held-out val-CE every N steps (0 = off). Requires "
-                         "--val-frac>0; val-CE is the generalization gate, NOT "
-                         "train-CE (a_savant_train held-out monitor).")
-    ap.add_argument("--val-batches", type=int, default=4,
-                    help="number of val batches averaged per val-CE measurement")
-    # ── fail-loud corpus guard (anti-starvation, a_no_llm_frame_trap) ────────
-    ap.add_argument("--min-corpus-bytes", type=int, default=0,
-                    help="abort if the TOTAL effective train corpus is below this "
-                         "many bytes (catches the silent single-cell/missing-file "
-                         "starvation that caused the 120x-repetition overfit). "
-                         "0 = warn only.")
+    ap.add_argument("--e0", type=int, default=2)
+    ap.add_argument("--emax", type=int, default=3)
+    ap.add_argument("--no-savant", action="store_true")
+    ap.add_argument("--no-mitosis", action="store_true")
+    ap.add_argument("--wd-floor", type=float, default=-1.0,
+                    help="N6 sweep: override savant wd floor (>=0 forces constant wd)")
+    ap.add_argument("--dropout-floor", type=float, default=-1.0,
+                    help="N6 sweep: override savant dropout floor (>=0 forces constant dp)")
+    ap.add_argument("--bf16", action="store_true")
+    ap.add_argument("--sample", choices=["roundrobin", "proportional"], default="proportional")
+    ap.add_argument("--val-frac", type=float, default=0.05)
+    ap.add_argument("--val-every", type=int, default=200)
+    ap.add_argument("--val-batches", type=int, default=4)
+    ap.add_argument("--log-every", type=int, default=50)
+    ap.add_argument("--dbes-every", type=int, default=0, help="0=final only; N=also every N steps")
+    ap.add_argument("--ckpt-every", type=int, default=0,
+                    help="0=final .clm only; N=also dump <out>.step<N>.clm every N steps "
+                         "(step-window multiplex — 1 run yields 2000/4000/… checkpoints, train-py-4 isolation)")
+    ap.add_argument("--out", default="")
+    ap.add_argument("--ckpt-out", default="")
+    ap.add_argument("--gauges-out", default="")
     a = ap.parse_args()
 
+    is_bytegpt = (a.arch == "bytegpt")
+    tlora_on, dict_on, jamo_on = ARMS[a.arm]
     savant_on = not a.no_savant
     mitosis_on = not a.no_mitosis
-
-    # ── shape: canon (clm303) vs smoke defaults, with per-flag overrides ──────
+    # ── ByteGPT: the CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF.
+    #    ByteGPT is a plain transformer (no MoE experts to split, no ConvExpert weight to
+    #    TLoRA-reparameterize); the G1-lever test it enables is arm=ctrl × the objective
+    #    matrix (the arch-agnostic trunk-objective losses). Only n_head is bytegpt-only.
+    bg_n_head = 0
+    if is_bytegpt:
+        if a.arm != "ctrl":
+            print(f"  [bytegpt] arm={a.arm} is CLM-specific → forcing arm=ctrl "
+                  f"(tlora/dict/jamo are ConvMoE-only)", flush=True)
+        tlora_on = dict_on = jamo_on = False
+        if savant_on or mitosis_on:
+            print("  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt",
+                  flush=True)
+        savant_on = False
+        mitosis_on = False
     if a.canon:
-        d = a.d or 3784
-        L = a.L or 4
-        seq_len = a.seq_len or 1024
-        steps = a.steps or 2000
+        if is_bytegpt:
+            d = a.d or 768; L = a.L or 24
+            seq_len = a.seq_len or 1024; steps = a.steps or 2000
+            bg_n_head = 12
+        else:
+            d = a.d or 3784; L = a.L or 4
+            seq_len = a.seq_len or 1024; steps = a.steps or 2000
     else:
-        d = a.d or 8
-        L = a.L or 1
-        seq_len = a.seq_len or (64 if a.corpus else 4)
-        steps = a.steps or 40
+        if is_bytegpt:
+            d = a.d or 64; L = a.L or 2
+            seq_len = a.seq_len or 128; steps = a.steps or 60
+            bg_n_head = 2
+        else:
+            d = a.d or 64; L = a.L or 2
+            seq_len = a.seq_len or 128; steps = a.steps or 60
     e0, emax = a.e0, a.emax
     V, K = 256, 3
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print("=== anima cli/train.py — torch Lane-P REFERENCE+BRIDGE trainer ===")
-    print("  ROLE: bridge (NOT production; production = cli/train.hexa)")
-    print(f"  mode: {'CANON clm303' if a.canon else 'SMOKE'}  device={device}")
-    print(f"  config: d={d} L={L} E0={e0} Emax={emax} V={V} K={K} "
-          f"seq_len={seq_len} steps={steps} bs={a.batch_size}")
-    print(f"  savant={savant_on} mitosis={mitosis_on}")
+    objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
+    obj_is_module = isinstance(objfn, nn.Module)
+    obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
+
+    print(f"=== anima train --py (canonical) arch={a.arch} arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
+    if is_bytegpt:
+        print(f"  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) "
+              f"n_head={bg_n_head} block={seq_len}", flush=True)
+    else:
+        print(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
+              f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
+    print(f"  device={device} d={d} L={L} E0={e0} Emax={emax} seq_len={seq_len} "
+          f"steps={steps} bs={a.batch_size} sample={a.sample}", flush=True)
     if device == "cuda":
         cap = torch.cuda.get_device_capability()
-        print(f"  cuda: {torch.cuda.get_device_name(0)} cap={cap[0]}.{cap[1]} torch={torch.__version__}")
+        print(f"  cuda: {torch.cuda.get_device_name(0)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
 
-    # ── model — allocate experts at Emax so mitosis grows in place ───────────
-    cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d,
-                    kernel_size=K, variant="AB", dilation_base=2, max_dilation=512)
-    model = CLMConvMoE(cfg).to(device)
-    n_params = model.num_params()
-    print(f"  params: {n_params} ({n_params/1e6:.3f}M)")
+    torch.manual_seed(a.seed)
 
-    mito = MitosisMoE(model, e0, emax)
-    install_router_mask(model, mito)
+    if is_bytegpt:
+        # ByteGPT block = the context window; use seq_len as the positional block size so a
+        # non-canon toy stays small. n_head must divide d (validated by the config).
+        bg_block = seq_len
+        bg_cfg = ByteGPTConfig(vocab=V, d=d, n_layer=L, n_head=bg_n_head, block=bg_block)
+        model = ByteGPT(bg_cfg).to(device)
+        cfg = None
+        jamo_head = None
+        mito = None                                 # no MoE experts to grow
+    else:
+        cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
+                        variant="AB", dilation_base=2, max_dilation=512)
+        model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
+        if tlora_on:
+            install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
+            model.to(device)
+        jamo_head = JamoHead(d).to(device) if jamo_on else None
+    n_params = sum(p.numel() for p in model.parameters())
+    print(f"  params: {n_params} ({n_params/1e6:.3f}M)"
+          f"{' (+jamo head)' if jamo_on else ''}", flush=True)
 
-    opt = torch.optim.AdamW(model.parameters(), lr=a.lr, betas=(0.9, 0.999),
-                            eps=1e-8, weight_decay=0.0)
-    # Seed: ANIMA_SEED env (default 42, backward-compatible) seeds BOTH the global
-    # torch RNG (weight init was already done above; re-seed affects dropout masks /
-    # batch sampling) and the window-sampling Generator, so a multi-seed sweep
-    # (e.g. H_1824 {7,4302}) actually varies the run. Unset -> 42 (no behavior change).
-    _seed = int(os.environ.get("ANIMA_SEED", "42") or "42")
-    torch.manual_seed(_seed)
-    gen = torch.Generator().manual_seed(_seed)
+    if not is_bytegpt:
+        mito = MitosisMoE(model, e0, emax)
+        install_router_mask(model, mito)
+    params = (list(model.parameters())
+              + (list(jamo_head.parameters()) if jamo_head else [])
+              + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
+    if obj_is_module:
+        n_obj = sum(p.numel() for p in objfn.parameters())
+        print(f"  objective '{a.objective}' aux params: {n_obj} "
+              f"(DROPPED at serialize — not in model.state_dict)", flush=True)
+    opt = torch.optim.AdamW(params, lr=a.lr, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.0)
+    gen = torch.Generator().manual_seed(42)
+    val_gen = torch.Generator().manual_seed(1234)
+    obj_gen = torch.Generator(device=device).manual_seed(20260628 + a.seed)
 
-    # ── savant schedule state ────────────────────────────────────────────────
     latch = {"on": False, "at": 0}
-    i0 = GZ_UPPER                      # start HIGH (max inhibition)
-    i_floor = GZ_LOWER - 0.05          # anneal BELOW GZ_LOWER (H_1559)
-    split_step = max(1, steps // 2)    # one division at the midpoint (E0 -> E0+1)
+    i0 = GZ_UPPER
+    i_floor = GZ_LOWER - 0.05
+    split_step = max(1, steps // 2)
 
-    # ── corpus cells (4-register) or synthetic smoke batch ───────────────────
-    cells = []
-    labels = []
+    # ── corpus cells (reuse ByteCell + resolver) ─────────────────────────────
+    cells, labels = [], []
     for ci, spec in enumerate(a.corpus):
         p = resolve_corpus_path(spec)
         cells.append(ByteCell(p, val_frac=a.val_frac))
         labels.append(a.cell_label[ci] if ci < len(a.cell_label) else f"cell{ci}")
         c = cells[-1]
-        print(f"  corpus cell[{ci}] {labels[ci]:<12s} {p}  size={c.size} bytes  "
-              f"(train={c.train_end} val_tail={c.size - c.train_end})")
+        print(f"  corpus cell[{ci}] {labels[ci]:<12s} {p} size={c.size} "
+              f"train={c.train_end} val_tail={c.size - c.train_end}", flush=True)
     if not cells:
-        print("  corpus: NONE -> synthetic byte batch ($0 wiring smoke)")
+        print("  corpus: NONE -> synthetic smoke", flush=True)
 
-    # ── fail-loud corpus guard + PER-CELL balance/repetition table ────────────
-    # The previous overfit was driven by ONLY cell[0] (4MB ko-SNS) actually
-    # loading while the manifest claimed a 4-register {ko·en}x{normal·SNS} set —
-    # so ~500M tokens were drawn from 4MB (~120x repetition = memorization). The
-    # per-cell table surfaces BOTH starvation (missing cell) AND imbalance (one
-    # tiny register repeated far more than the others = per-register overfit).
-    if cells:
-        usable = [c for c in cells if c.train_end >= seq_len + 2]
-        total_train_bytes = sum(c.train_end for c in usable)
-        tokens_to_see = steps * a.batch_size * seq_len
-        rep = (tokens_to_see / total_train_bytes) if total_train_bytes else float("inf")
-        # expected tokens/cell depends on the sampling mode:
-        #  roundrobin   -> equal step-share: tokens_to_see / n  (SMALL cell repeats more)
-        #  proportional -> tokens ∝ train_bytes: every byte ~equal exposure (uniform rep)
-        n = len(cells)
-        print(f"  ── 4-cell register balance table "
-              f"(tokens_to_see={tokens_to_see}, sample={a.sample}) ──")
-        print(f"     {'register':<12s} {'train_bytes':>12s} {'tokens/cell':>12s} "
-              f"{'rep_ratio':>10s}")
-        worst_rep = 0.0
-        for c, lab in zip(cells, labels):
-            if c.train_end < seq_len + 2:
-                cell_tok = 0.0
-            elif a.sample == "proportional":
-                cell_tok = tokens_to_see * (c.train_end / total_train_bytes) if total_train_bytes else 0.0
-            else:
-                cell_tok = tokens_to_see / n if n else 0.0
-            cell_rep = (cell_tok / c.train_end) if c.train_end else float("inf")
-            worst_rep = max(worst_rep, cell_rep if c.train_end else 0.0)
-            flag = "  <-- MEMORIZATION RISK" if cell_rep > 5.0 else ""
-            print(f"     {lab:<12s} {c.train_end:>12d} {cell_tok:>12.0f} "
-                  f"{cell_rep:>9.2f}x{flag}")
-        print(f"  corpus guard: cells={n} usable={len(usable)}  "
-              f"total_train_bytes={total_train_bytes}  "
-              f"repetition_ratio(pooled)={rep:.2f}x  worst_per_cell={worst_rep:.2f}x")
-        if len(usable) < len(cells):
-            dead = [c.path for c in cells if c.train_end < seq_len + 2]
-            print(f"  corpus guard: WARNING {len(cells)-len(usable)} cell(s) too "
-                  f"small to yield a train window (seq_len={seq_len}): {dead}")
-        if worst_rep > 5.0:
-            print(f"  corpus guard: WARNING worst per-cell repetition {worst_rep:.1f}x "
-                  f">5x — that register will be MEMORIZED. Enlarge the small "
-                  f"register(s) or reduce steps (balance = even per-cell exposure).")
-        # register-completeness gate (the 4-cell requirement)
-        if a.require_cells > 0 and len(usable) != a.require_cells:
-            print(f"FAIL — require_cells={a.require_cells} but {len(usable)} usable "
-                  f"cell(s) loaded. The 4-register {{ko·en}}x{{normal·SNS}} set is "
-                  f"INCOMPLETE — refusing to train (this is the register-"
-                  f"incompleteness that caused the ko-SNS-only overfit). Check "
-                  f"every --corpus path staged (esp. HF-only ko_fineweb2_broad).")
-            sys.exit(3)
-        if a.min_corpus_bytes > 0 and total_train_bytes < a.min_corpus_bytes:
-            print(f"FAIL — total effective train corpus {total_train_bytes} bytes "
-                  f"< --min-corpus-bytes {a.min_corpus_bytes}. Refusing to train "
-                  f"(this is the silent starvation that caused the overfit). "
-                  f"Check that every --corpus path actually staged.")
-            sys.exit(2)
-
-    # proportional sampling weights: P(cell) ∝ its usable train bytes, so every
-    # byte gets ~equal exposure and per-cell repetition is uniform (a SMALL cell
-    # is sampled LESS, not repeated 90x like equal round-robin would do).
     _samp_cells = [c for c in cells if c.train_end >= seq_len + 2]
     _samp_w = torch.tensor([float(c.train_end) for c in _samp_cells]) \
         if _samp_cells else torch.tensor([1.0])
 
-    def get_batch(step: int):
+    def get_batch(step):
         if cells:
             xs, ys = [], []
             for b in range(a.batch_size):
@@ -568,25 +1044,33 @@ def main():
         y = ((14 + base * 37) % V).unsqueeze(0).repeat(a.batch_size, 1).to(device)
         return x, y
 
-    val_gen = torch.Generator().manual_seed(1234)   # disjoint RNG from train
+    # trunk penultimate activation cache for N7 dictionary/sparse aux + the compositional
+    # objectives. ByteGPT exposes its pre-head hidden (post-final-LN) directly on the
+    # forward dict; CLM recomputes the trunk to the pre-readout MoE/norm_out site.
+    def trunk_penultimate(x):
+        if is_bytegpt:
+            return model(x)["penultimate"]         # (B, d, T) — ln_f(x) pre-head
+        h = model.embed(x).transpose(1, 2)
+        h = model.embed_conv(h)
+        for layer in model.trunk:
+            h = layer(h)
+        hm, _ = model.moe(h)
+        hm = model.norm_out(hm)
+        return hm                                  # (B, d, T) — pre-readout dictionary site
 
     @torch.no_grad()
-    def _cell_val_ce(c: ByteCell) -> float | None:
-        """Mean next-byte CE over held-out VAL windows of a SINGLE cell."""
+    def cell_val_ce(c):
         if c.size - c.train_end < seq_len + 2:
             return None
-        was_training = model.training
-        model.eval()
+        was = model.training; model.eval()
         tot, nb = 0.0, 0
-        for vb in range(a.val_batches):
+        for _ in range(a.val_batches):
             xs, ys = [], []
             for _ in range(a.batch_size):
                 w = c.val_window(seq_len, val_gen)
-                if w is None:
-                    continue
+                if w is None: continue
                 xs.append(w[0]); ys.append(w[1])
-            if not xs:
-                continue
+            if not xs: continue
             vx = torch.stack(xs).to(device); vy = torch.stack(ys).to(device)
             if a.bf16 and device == "cuda":
                 with torch.autocast("cuda", dtype=torch.bfloat16):
@@ -594,233 +1078,227 @@ def main():
             else:
                 vo = model(vx, vy)
             tot += float(vo["ce_loss"].detach()); nb += 1
-        if was_training:
-            model.train()
+        if was: model.train()
         return (tot / nb) if nb else None
 
-    def eval_val_per_cell() -> dict:
-        """Per-register held-out val-CE: {label: CE}. Lets us see WHICH register
-        generalizes vs overfits (the 4-cell separate-monitor requirement)."""
-        out = {}
-        for c, lab in zip(cells, labels):
-            v = _cell_val_ce(c)
-            if v is not None:
-                out[lab] = v
-        return out
+    def val_per_cell():
+        return {lab: v for lab, c in zip(labels, cells)
+                if (v := cell_val_ce(c)) is not None}
 
-    def eval_val_ce() -> float | None:
-        """Pooled mean held-out val-CE across all registers (= the single
-        generalization number for the loop log). Mean over per-cell CEs so each
-        register is weighted equally (matches the balanced step-share)."""
-        per = eval_val_per_cell()
-        return (sum(per.values()) / len(per)) if per else None
+    # ── serialize helper (end-of-run AND intermediate --ckpt-every checkpoints) ──
+    #   CLM → .clm v0.3 (CLMConvMoE additive readout, materialized TLoRA experts).
+    #   ByteGPT → .pt (cfg+state_dict) → core/serialize.py::serialize → .bin (5×u32
+    #   header). The engine (generator L3 mouth-sniff) auto-dispatches .bin to the bytegpt
+    #   decode; `anima evaluate --py` auto-detects .bin vs .clm by header, so no eval change.
+    def _write_bin(out_path):
+        # write the torch .pt in the exact shape bytegpt_serialize.serialize reads, next to
+        # the .bin, then bridge it. The aux-head objective params are OUTSIDE model.state_dict
+        # (they live on objfn), so serialize sees only the standard ByteGPT weights.
+        pt_path = out_path + ".pt" if not out_path.endswith(".pt") else out_path
+        bin_path = out_path
+        sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+        ck = {"model": sd, "config": model.cfg.as_dict(),
+              "val_ce": (round(lossF, 5) if lossF is not None else None),
+              "step": steps, "nparam": n_params}
+        torch.save(ck, pt_path)
+        BGS.serialize(pt_path, bin_path)
+        print(f"  .bin WRITTEN {os.path.getsize(bin_path)} bytes -> {bin_path} "
+              f"(via {pt_path})", flush=True)
 
-    # ── mid-train MONITOR-ONLY gauge panel (a_train_inline_gauge, DIRECTIONAL) ──
-    # All torch-side / pure-numpy — NOT a frozen verdict. It records the *curves*
-    # (held-out generalization per register + recombination/novelty/ideation +
-    # Psi/G5 maintenance proxies) so we can SEE, during training, that ability
-    # rises while Psi stays ~1/2 and G5 stays non-fabricating. The TERMINAL
-    # engine-native 1-6 (anima eval G0-G6 · faithful Psi/G5/SI) runs POST-HOC on a
-    # hexa host after the ckpt is pulled (a_engine_native_learning HARD-GATE: the
-    # pod has no hexa runtime, so engine-native cannot run mid-train here).
-    _gauge = None
-    if a.mid_measure_every > 0:
-        try:
-            import importlib.util as _ilu
-            _gp = os.path.join(_REPO, "tool", "gauge_lib.py")
-            if os.path.exists(_gp):
-                _sp = _ilu.spec_from_file_location("gauge_lib", _gp)
-                _gauge = _ilu.module_from_spec(_sp); _sp.loader.exec_module(_gauge)
-        except Exception as e:
-            print(f"  mid-measure: gauge_lib unavailable ({e}); curve = mirror-CE only")
-
-    def mid_measure(step: int):
-        """Append one MONITOR-ONLY gauge line to --mid-measure-out (DIRECTIONAL)."""
-        import json
-        rec = {"step": step, "kind": "MONITOR-ONLY-DIRECTIONAL",
-               "note": "a_train_inline_gauge; terminal verdict = engine-native post-hoc"}
-        # (1) mirror held-out CE per register (real numpy via the model fwd) — the
-        # generalization curve; reuse the disjoint per-cell val machinery.
-        rec["heldout_ce"] = {lab: round(v, 5) for lab, v in eval_val_per_cell().items()}
-        rec["train_ce"] = round(lossF, 5) if lossF is not None else None
-        rec["e_active"] = int(mito.e_active)
-        rec["inhibition_wd"] = round(wd, 5)
-        rec["inhibition_dp"] = round(dp, 5)
-        rec["savant_latched_at"] = int(latch["at"])
-        # (2/3/4/6) torch-side proxies via gauge_lib (G1 recombine · G2 novelty ·
-        # G6 ideation · phi_proxy ≈ Psi-maintenance). Best-effort; labeled proxy.
-        if _gauge is not None:
-            try:
-                was = model.training; model.eval()
-                g = _gauge.compute_inline_gauges(
-                    model, None, seeds=7,
-                    corpus_index=[c.path for c in cells],
-                    ce=lossF, step=step, torch=torch)
-                if was:
-                    model.train()
-                rec["gauges_proxy"] = {k: (round(v, 5) if isinstance(v, float) else v)
-                                       for k, v in (g or {}).items()}
-            except Exception as e:
-                rec["gauges_proxy_error"] = str(e)[:160]
-        with open(a.mid_measure_out, "a") as f:
-            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-        hc = rec["heldout_ce"]
-        print(f"  [MID-MEASURE step {step}] heldout_ce={hc}  "
-              f"(MONITOR-ONLY/DIRECTIONAL → {a.mid_measure_out})")
+    def _write_clm(out_path):
+        if is_bytegpt:
+            _write_bin(out_path)
+            return
+        e_ser = mito.e_active
+        mat = materialize_experts_into_state(model)
+        sd_active = {}
+        for k, vv in mat.items():
+            if k in ("moe.router.weight", "moe.router.bias"):
+                sd_active[k] = vv[:e_ser].contiguous()
+            elif k.startswith("moe.experts."):
+                if int(k.split(".")[2]) < e_ser:
+                    sd_active[k] = vv
+            else:
+                sd_active[k] = vv
+        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path)
+        print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
+        print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
-    t0 = time.time()
-    loss0 = lossF = None
-    ce_before_split = ce_after_split = None
+    t0 = time.time(); loss0 = lossF = None
+    last_aux = {}; dbes_log = []
+    # active-expert count for logs/summary — CLM tracks it on the mitosis controller;
+    # ByteGPT has no experts (mito is None) so it is a fixed 1.
+    def e_now():
+        return mito.e_active if mito is not None else 1
+    # intermediate-ckpt extension: bytegpt writes .bin, clm writes .clm.
+    _ck_ext = ".bin" if is_bytegpt else ".clm"
     for step in range(1, steps + 1):
+        # --ckpt-every: dump an intermediate ckpt of the state AFTER (step-1) updates
+        # (step-window multiplex — one run yields 2000/4000/… checkpoints, no re-train).
+        if a.ckpt_every > 0 and a.out and step > 1 and (step - 1) % a.ckpt_every == 0:
+            _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
+            model.train()
         if savant_on:
             inh = savant_inhibition(step, steps, i0, i_floor, latch)
-            wd = inhibition_to_wd(inh)
-            dp = inhibition_to_dropout(inh)
+            wd = inhibition_to_wd(inh); dp = inhibition_to_dropout(inh)
         else:
             wd, dp = 0.0, 0.0
-        # explicit overrides take precedence over the savant-derived values
-        # (anti-overfit knobs decoupled from the savant inhibition schedule).
-        if a.weight_decay >= 0.0:
-            wd = a.weight_decay
-        if a.dropout >= 0.0:
-            dp = a.dropout
+        if a.wd_floor >= 0.0: wd = a.wd_floor             # N6 sweep override
+        if a.dropout_floor >= 0.0: dp = a.dropout_floor   # N6 sweep override
         for grp in opt.param_groups:
             grp["weight_decay"] = wd
         for m in model.modules():
             if isinstance(m, nn.Dropout):
                 m.p = dp
-
         if mitosis_on and step == split_step and mito.e_active < emax:
             prev = mito.e_active
-            new_e = mito.split(0, opt)
-            print(f"  step {step} (MITOSIS SPLIT) E {prev}->{new_e}")
-
+            new_e = (tlora_aware_split(mito, 0, opt) if tlora_on
+                     else mito.split(0, opt))
+            print(f"  step {step} (MITOSIS SPLIT) E {prev}->{new_e}", flush=True)
         x, y = get_batch(step)
         opt.zero_grad(set_to_none=True)
+        aux = {}
+        # H_1640: compute the trunk penultimate ONCE if any consumer needs it
+        # (the new objective, or the dict/jamo aux). Reused across all three so they
+        # backprop through a single trunk graph.
+        need_pen = obj_needs_pen or dict_on or jamo_on
         if a.bf16 and device == "cuda":
             with torch.autocast("cuda", dtype=torch.bfloat16):
                 out = model(x, y)
-                loss = out["loss"]
+                h = trunk_penultimate(x) if need_pen else None
+                pen = h.float() if (h is not None and obj_needs_pen) else None
+                obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
+                loss = obj_loss + out["aux_loss"]
+                if dict_on:
+                    dloss = a.dict_lambda * h.abs().mean()
+                    loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
+                if jamo_on:
+                    jl = jamo_head(h.float())
+                    jt = jamo_targets(y, jamo_head.n_jamo)
+                    jloss = a.jamo_lambda * F.cross_entropy(
+                        jl.transpose(1, 2).reshape(-1, jamo_head.n_jamo),
+                        jt.reshape(-1), ignore_index=0)
+                    loss = loss + jloss; aux["jamo"] = float(jloss.detach())
             loss.backward()
         else:
             out = model(x, y)
-            loss = out["loss"]
+            h = trunk_penultimate(x) if need_pen else None
+            pen = h if obj_needs_pen else None
+            obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
+            loss = obj_loss + out["aux_loss"]
+            if dict_on:
+                dloss = a.dict_lambda * h.abs().mean()
+                loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
+            if jamo_on:
+                jl = jamo_head(h)
+                jt = jamo_targets(y, jamo_head.n_jamo)
+                jloss = a.jamo_lambda * F.cross_entropy(
+                    jl.transpose(1, 2).reshape(-1, jamo_head.n_jamo),
+                    jt.reshape(-1), ignore_index=0)
+                loss = loss + jloss; aux["jamo"] = float(jloss.detach())
             loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        aux.update(oaux)
+        torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()
-
         ce = float(out["ce_loss"].detach())
-        if loss0 is None:
-            loss0 = ce
+        last_aux = aux
+        if loss0 is None: loss0 = ce
         lossF = ce
-        if step == split_step - 1:
-            ce_before_split = ce
-        if step == split_step + 1:
-            ce_after_split = ce
-        do_val = (a.val_every > 0 and (step == 1 or step % a.val_every == 0
-                                       or step == steps))
-        val_ce = eval_val_ce() if do_val else None
-        if step == 1 or step % a.log_every == 0 or step == steps or do_val:
+        do_val = a.val_every > 0 and (step == 1 or step % a.val_every == 0 or step == steps)
+        if (not is_bytegpt) and a.dbes_every and (step % a.dbes_every == 0 or step == steps):
+            db = dbes_specialization(model, x); db["step"] = step
+            dbes_log.append(db)
+        if step == 1 or step % a.log_every == 0 or step == steps:
             vtxt = ""
-            if val_ce is not None:
-                gap = val_ce - ce
-                vtxt = f"  val_CE={val_ce:.5f}  gap={gap:+.5f}"
-            print(f"  step {step:5d}  CE={ce:.5f}  E={mito.e_active}  "
-                  f"wd={wd:.4f}  dp={dp:.4f}{vtxt}")
-        if a.mid_measure_every > 0 and (step % a.mid_measure_every == 0
-                                        or step == steps):
-            mid_measure(step)
+            if do_val:
+                per = val_per_cell()
+                vc = (sum(per.values()) / len(per)) if per else float("nan")
+                vtxt = f"  val_CE={vc:.5f}"
+            atxt = (" " + json.dumps({k: round(v, 4) for k, v in aux.items()})) if aux else ""
+            print(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
+                  f"wd={wd:.4f} dp={dp:.4f}{vtxt}{atxt}", flush=True)
     wall = time.time() - t0
 
-    # ── final held-out val-CE PER REGISTER (the generalization verdict) ───────
-    if a.val_frac > 0.0:
-        per = eval_val_per_cell()
-        uniform = math.log(V)
-        if per:
-            print(f"  ── FINAL held-out val-CE per register "
-                  f"(uniform_ref={uniform:.4f}; DESCENT iff < uniform) ──")
-            for lab, v in per.items():
-                verdict = "DESCENT" if v < uniform else "NO-DESCENT(memorized/garbage)"
-                print(f"     {lab:<12s} val_CE={v:.5f}  {verdict}")
-            final_val = sum(per.values()) / len(per)
-            n_desc = sum(1 for v in per.values() if v < uniform)
-            print(f"  FINAL val_CE(pooled)={final_val:.5f}  (train_CE={lossF:.5f}  "
-                  f"gap={final_val - lossF:+.5f})  registers_DESCENT={n_desc}/{len(per)}")
-            if n_desc < len(per):
-                print(f"  WARNING {len(per)-n_desc}/{len(per)} register(s) NOT "
-                      f"generalizing (val_CE >= uniform {uniform:.4f}).")
+    # ── FINAL held-out val per register (DESCENT gate, plain CE) ──────────────
+    uniform = math.log(V)
+    per = val_per_cell()
+    descent = {}; n_desc = 0
+    print(f"  ── FINAL held-out val-CE per register (uniform={uniform:.4f}) ──", flush=True)
+    for lab, vc in per.items():
+        ok = vc < uniform; n_desc += int(ok)
+        descent[lab] = {"val_ce": round(vc, 5), "descent": ok}
+        print(f"     {lab:<12s} val_CE={vc:.5f}  {'DESCENT' if ok else 'NO-DESCENT'}", flush=True)
+    final_val = (sum(per.values()) / len(per)) if per else None
+    print(f"  FINAL val_CE(pooled)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
+    print(f"  loss0={loss0:.5f} lossF={lossF:.5f} wall={wall:.1f}s "
+          f"savant_latched_at={latch['at']} E0={e0}->E={e_now()}", flush=True)
 
-    print(f"  loss0={loss0:.5f}  lossF={lossF:.5f}  wall={wall:.1f}s")
-    print(f"  savant latched_at={latch['at']}  mitosis E0={e0}->E={mito.e_active}")
-    if ce_before_split is not None and ce_after_split is not None:
-        print(f"  mitosis CE across split: {ce_before_split:.5f} -> {ce_after_split:.5f}")
+    # ── N3 DBES final diagnostic (gradient-free, measure-only) ────────────────
+    #   DBES probes MoE expert differentiation — CLM-only (no experts in ByteGPT).
+    dbes_final = None
+    if not is_bytegpt:
+        try:
+            xb, _ = get_batch(steps + 1)
+            dbes_final = dbes_specialization(model, xb)
+            print(f"  [N3 DBES expert-specialization] {json.dumps(dbes_final, ensure_ascii=False)}", flush=True)
+        except Exception as e:
+            print(f"  DBES error: {e}", flush=True)
 
-    # ── serialize -> .clm v0.3 (ground-truth bridge) + verify ────────────────
-    sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    # ── G1/G6 torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──────────
+    #   gauge_lib.compute_inline_gauges decodes via the CLM mouth (CLMConvMoE-specific);
+    #   skip for bytegpt (the terminal verdict is `anima evaluate --py <.bin>` engine-native
+    #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
+    gauges = None
+    if not is_bytegpt:
+        try:
+            import gauge_lib
+            was = model.training; model.eval()
+            gauges = gauge_lib.compute_inline_gauges(
+                model, None, seeds=7, corpus_index=[c.path for c in cells],
+                ce=lossF, step=steps, torch=torch)
+            if was: model.train()
+            print(f"  [G1/G6 torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
+        except Exception as e:
+            print(f"  gauges error: {e}", flush=True)
+
+    # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
+    full_sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    if jamo_head:
+        for k, v in jamo_head.state_dict().items():
+            full_sd[f"_jamo_head.{k}"] = v.detach().cpu()
     if a.ckpt_out:
-        torch.save(sd, a.ckpt_out)
-        print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)")
+        torch.save(full_sd, a.ckpt_out)
+        print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
 
-    # serialize the ACTIVE (born) expert count. The model is allocated at Emax,
-    # so the router weight/bias have Emax rows and there are Emax expert modules;
-    # we SLICE the router (cout Emax -> e_ser) and drop dormant expert keys so the
-    # engine recovers E == active from the router-block cout. serialize_v3 reads
-    # only e0..e{E-1} experts; the sliced router makes block[nblk-2].cout == e_ser.
-    e_ser = mito.e_active
-    sd_active = {}
-    for k, v in sd.items():
-        if k == "moe.router.weight":
-            sd_active[k] = v[:e_ser].contiguous()      # (Emax,d,1) -> (e_ser,d,1)
-        elif k == "moe.router.bias":
-            sd_active[k] = v[:e_ser].contiguous()      # (Emax,) -> (e_ser,)
-        elif k.startswith("moe.experts."):
-            eidx = int(k.split(".")[2])
-            if eidx < e_ser:
-                sd_active[k] = v                        # keep active experts only
-        else:
-            sd_active[k] = v
-    print(f"  serializing .clm v0.3 (L={L} E={e_ser} d={d} V={V} K={K}) -> {a.out}")
-    S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=a.out)
-    nbytes = os.path.getsize(a.out)
-    print(f"  ckpt WRITTEN {nbytes} bytes -> {a.out}")
+    # ── summary json ──────────────────────────────────────────────────────────
+    summary = {"entry": "anima train --py", "arch": a.arch, "arm": a.arm,
+               "objective": a.objective, "seed": a.seed,
+               "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
+                                  if obj_is_module else 0),
+               "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
+                          "tlora_base": not a.tlora_no_base, "dict_aux": dict_on,
+                          "jamo_aux": jamo_on, "wd_floor": a.wd_floor,
+                          "dropout_floor": a.dropout_floor},
+               "n_params": n_params, "loss0": round(loss0, 5), "lossF": round(lossF, 5),
+               "wall_s": round(wall, 1), "uniform_ce": round(uniform, 5),
+               "final_val_ce_pooled": (round(final_val, 5) if final_val else None),
+               "registers_descent": f"{n_desc}/{len(per)}", "heldout_descent": descent,
+               "last_aux": last_aux, "dbes_final": dbes_final, "dbes_log": dbes_log,
+               "gauges_g1g6_torch_probe": gauges,
+               "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+                        if is_bytegpt else
+                        "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
+    if a.gauges_out:
+        with open(a.gauges_out, "w") as f:
+            json.dump(summary, f, ensure_ascii=False, indent=2)
+        print(f"  summary -> {a.gauges_out}", flush=True)
 
-    # ── self-check: CORE-loadable (mirror of core/clm_decode.hexa) ───────────
-    rb = open(a.out, "rb").read()
-    decodable = VC.clm_decodable(rb)
-    pc = VC.parse_clm(rb)
-    # ground-truth layout (core/clm_decode.hexa::clm_load + clm_serialize_v2
-    #   _general_ext_order): blocks = ecW + tcW*L + eW*E + rW + roW (nblk=L+E+3);
-    #   ext = embed,ecB, tcB*L, eB*E, rB,roB, tgG*L, tgB*L, noG,noB (n_ext=3L+E+6).
-    exp_nblk = L + e_ser + 3
-    exp_n_ext = 3 * L + e_ser + 6
-    ok_nblk = (pc["nblk"] == exp_nblk)
-    ok_next = (pc["n_ext"] == exp_n_ext)
-    rec_E = pc["blocks"][-2]["cout"] if pc["blocks"] else None
-    rec_V = pc["blocks"][-1]["cout"] if pc["blocks"] else None
-    rec_d = pc["blocks"][0]["cout"] if pc["blocks"] else None
-    rec_K = (pc["blocks"][0]["rest"] // rec_d) if rec_d else None
-    rec_L = (pc["nblk"] - rec_E - 3) if (pc["nblk"] and rec_E is not None) else None
-    print("")
-    print("=== CORE-loadable self-check (mirror of core/clm_decode.hexa) ===")
-    print(f"  clm_decodable      = {decodable}")
-    print(f"  nblk               = {pc['nblk']}  (expect {exp_nblk})  -> {'OK' if ok_nblk else 'MISMATCH'}")
-    print(f"  n_ext              = {pc['n_ext']}  (expect {exp_n_ext})  -> {'OK' if ok_next else 'MISMATCH'}")
-    print(f"  CLMX trailer found = {pc['clmx_found']}")
-    print(f"  exact_eof          = {pc['exact_eof']}")
-    print(f"  recovered clm_config: d={rec_d} K={rec_K} V={rec_V} E={rec_E} L={rec_L}")
-    ok_cfg = (rec_d == d and rec_V == V and rec_E == e_ser and rec_L == L and rec_K == K)
-    all_ok = (decodable and ok_nblk and ok_next and pc["clmx_found"]
-              and pc["exact_eof"] and ok_cfg)
-    print("")
-    if all_ok:
-        print(f"PASS — .clm v0.3 is CORE-loadable; clm_config recovers d/L/E/V/K exactly "
-              f"(d={d} L={L} E={e_ser} V={V} K={K}). Engine-native G6 verdict = CORE "
-              f"re-measure (a_engine_native_learning: torch CE above is DIRECTIONAL only).")
-        sys.exit(0)
-    print("FAIL — serialized .clm is NOT CORE-loadable / config mismatch (see above)")
-    sys.exit(1)
+    # ── serialize the trained ckpt: CLM → .clm v0.3 (additive readout + MATERIALIZED
+    #    experts) | ByteGPT → .bin (5×u32 header via core/serialize.py). ──
+    if a.out:
+        _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
 
 
 if __name__ == "__main__":

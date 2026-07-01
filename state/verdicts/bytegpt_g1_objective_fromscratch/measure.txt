@@ -1,0 +1,37 @@
+Warning: Permanently added '[ssh8.vast.ai]:37684' (ED25519) to the list of known hosts.
+=== ce_marginal ===
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  [gate] G2 NOVELTY (corpus load + decode) …
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 0/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=4
+train_final: step  8000  CE=1.57839
+=== composed_nce ===
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  [gate] G2 NOVELTY (corpus load + decode) …
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 1/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=2
+train_final: step  8000  CE=1.58558
+=== infonce ===
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  [gate] G2 NOVELTY (corpus load + decode) …
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 0/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=3
+train_final: step  8000  CE=1.72916
+
+=== VERDICT (2026-07-02) ===
+TIER: INCONCLUSIVE-at-floor (NOT G1-lever, NOT terminal-wall)
+from-scratch 8000step ByteGPT (--arch bytegpt --canon, big 5lang+ko corpus):
+ ce_marginal(baseline)/composed_nce/infonce ALL → G0🔴(kwr 0-1/5<0.50 undertrain) · G1 bd=0=ms=0(floor) · G2 novel=0
+ train CE 1.57-1.73 (healthy descent) but kwr<0.50 = coherence undertrain
+KEY: max_single=0 (NOT the single=2 of trained h1129) — from-scratch 8000step doesn't reach G0🟢 window,
+     so recombination(G1) is UNMEASURABLE (no coherent output to recombine). objective levers UNTESTED at valid G0.
+ = same G0-undertrain gate as CLM tiny/medium/big. BOTH arches from-scratch can't hit G0🟢 in 8000 step.
+REAL TEST (follow-on): objective lever on a G0🟢 trunk = fine-tune h1129 303M with --objective, OR train to kwr≥0.50.
+substrate lens: engine INNOCENT (measurement sound, decodes ran); wall = TRAINING-BUDGET (undertrain), not arch/objective.
+DIRECTIONAL (torch-side); engine-native re-measure moot until a G0🟢 ckpt exists.
