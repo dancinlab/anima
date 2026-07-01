@@ -97,15 +97,23 @@ better-trained (lower CE) → fair model, not crippled.
 attention trunk. The decisive ON-vs-OFF test FAILS on both conditions (ARM-ON G1 PASS **and** >ARM-OFF).
 
 py byte-parity engine-native eval (`cli/evaluate.py` `g_eval_all`, gen=80, 4-cell corpus), verbatim
-`state/1602_bytegpt_recomb_objective/RESULT.md`:
+`state/1602_bytegpt_recomb_objective/result/eval_*.log` — **2026-07-01 8000-step aiden 재측정**
+(undertrain 방어 재학습, 12-core CPU farr, 양 arm 4/4 held-out DESCENT val_CE 0.70):
 
 | gate | ARM-OFF `ce_marginal` | ARM-ON `infonce` (★lever) |
 |------|------------------------|----------------------------|
-| G0 COHERENCE | 🟢 PASS kwr 5/5 | 🟢 PASS kwr 4/5 |
-| **G1 RECOMBINATION** | 🔴 best_distinct=0 max_single=0 | 🔴 **best_distinct=0** max_single=0 |
-| G2 NOVELTY | 🔴 novel=0 | 🔴 novel=0 |
-| G6 IDEATION★ | 🔴 distinct=4 fals=0 | 🔴 distinct=5 fals=0 |
-| CLOSURE a7b_pass | 🔴 FAIL | 🔴 FAIL |
+| G0 COHERENCE | 🟢 PASS kwr 5/5 | 🟢 PASS kwr 5/5 |
+| **G1 RECOMBINATION** | 🔴 best_distinct=0 max_single=1 | 🔴 **best_distinct=0** max_single=0 |
+| G2 NOVELTY | 🟢 novel=66 control=0 | 🟢 novel=99 control=0 |
+| G5 NON-FAB | 🟢 fab=0.0946 | 🟢 fab=0.1154 |
+| G6 IDEATION★ | 🔴 distinct=6 fals=0 | 🔴 distinct=6 fals=0 |
+| CLOSURE a7b_pass | 🔴 FAIL (G1) | 🔴 FAIL (G1) |
+
+> **2000-step summer 초측정과의 발산(verdict-integrity)**: 초측정은 G2 novel=0·G6 dist 4/5였으나 본
+> 8000-step aiden 재측정은 G2 novel 66/99·G6 dist 6 — corpus 로드/step 차이로 보임. **핵심 G1
+> best_distinct=0은 양 측정·양 arm·step 2000↔8000 모두 일치** → NOT-SUP 결론 불변이며, step 4×↑로도
+> floor가 안 움직임 = undertrain 가설 추가 falsify(CONFIRMED). ckpt sha: ce_marginal_seed7.bin
+> 90d678…e2ca · infonce_seed7.bin 0e1918…a10a.
 
 **LIFT = 0** (G1 best_distinct 0→0, no lift; G6 fals 0→0). Both arms 4/4 held-out DESCENT (real
 generalization, fair models — NOT a crippled-training artifact). So the floor is the *objective lever's*,

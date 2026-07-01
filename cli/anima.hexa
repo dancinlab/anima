@@ -169,10 +169,37 @@ fn anima_evaluate_mode(argv: [string]) {
         println("  anima evaluate <out.clm>")
         return
     }
-    println("=== anima evaluate → cli/evaluate.hexa (engine-native G0-G6, single-entry twin) ===")
+    // --py: route G0-G6 to the py 2-PRODUCTION engine (cli/evaluate.py — torch-free numpy
+    //   g_eval_all scorer) instead of the hexa engine-native det-eval. a_engine_native_learning
+    //   (2-production): the py engine is a FIRST-CLASS production scorer (byte-parity with
+    //   hexa), TERMINAL-eligible — NOT a 2nd-class mirror. It is the measurement-heavy path:
+    //   torch/numpy free memory per decode, so a large ckpt (e.g. 303M) that OOMs hexa's
+    //   OWN-GEMM fp64 det-eval bump allocator scores cleanly here. `--py` is consumed here
+    //   (stripped from the forwarded argv) so cli/evaluate.py sees only <ckpt> [--corpus …] [--gen N].
+    let use_py = anima_has_flag(argv, "--py")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    while i < len(argv) { if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
+    if use_py {
+        println("=== anima evaluate → cli/evaluate.py (py 2-production G0-G6, numpy mirror · OOM-safe) ===")
+        // py engine is numpy (deterministic) — no HEXA_DET needed. LOCATION-INDEPENDENT ($ANIMA_SRC).
+        // hexa `exec` closes a child's captured stdout pipe after ~150s (probe-confirmed: the child
+        // gets EPIPE on its next fd-1 write but is NOT killed). A 303M numpy decode runs for minutes,
+        // so evaluate writes ALL output to a --result-file: fd 1 stays silent → the child survives the
+        // pipe close and finishes the full G0-G6 battery. A SECOND fresh exec then cats that file
+        // (fast, well under the limit). Two execs = two pipes, the long-running one kept silent.
+        let rf = "/tmp/anima_evalpy_result.out"
+        // cd into $ANIMA_SRC first so evaluate.py's __file__-relative core/ resolution
+        // matches a direct `python3 cli/evaluate.py` (verified working). Without the cd,
+        // the hexa exec cwd skews sys.path[0] and core/ imports (bytegpt_decode) break.
+        let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/evaluate.py" + fwd + " --result-file " + rf
+        println("dispatch: " + cmd)
+        let _ev = exec(cmd)
+        let out = exec("cat " + rf)
+        print(out)
+        return
+    }
+    println("=== anima evaluate → cli/evaluate.hexa (engine-native G0-G6, single-entry twin) ===")
     // EVAL DETERMINISM SAFETY-PIN (hexa-lang #4208 flame/forge fast-default follow-on):
     // #4208 made the forge own-native NON-det atomic kernels the DEFAULT; deterministic
     // kernels are opt-in via HEXA_DET=1 (`_forge_det_on()` gate). G0-G6 scoring must be
