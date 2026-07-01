@@ -33,8 +33,8 @@ _REPO = os.path.dirname(_HERE)
 # ideation ops live there. Add core/ to the path so they resolve.
 sys.path.insert(0, os.path.join(_REPO, "core"))
 
-import clm_decode as clm
-import bytegpt_decode as bg
+import decode as clm   # unified core decoder (conv+byte mouths), KV-cache fast path
+import decode as bg     # same module; both aliases resolve the union public API
 from g6_ideation import (
     _g6_concepts, _g6_words, _g6_dict_load, _g6_known_word_ratio,
     _g6_is_falsifiable, _g6_jaccard, g6_build_frames, g6_frame_guard,

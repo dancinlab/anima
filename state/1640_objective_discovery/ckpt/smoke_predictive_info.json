@@ -1,0 +1,51 @@
+{
+  "hyp": "H_1640",
+  "arm": "ctrl",
+  "objective": "predictive_info",
+  "seed": 7,
+  "obj_aux_params": 49920,
+  "levers": {
+    "tlora": false,
+    "tlora_rank": 8,
+    "tlora_base": true,
+    "dict_aux": false,
+    "jamo_aux": false,
+    "wd_floor": -1.0,
+    "dropout_floor": -1.0
+  },
+  "n_params": 107715,
+  "loss0": 5.75365,
+  "lossF": 5.6053,
+  "wall_s": 0.0,
+  "uniform_ce": 5.54518,
+  "final_val_ce_pooled": null,
+  "registers_descent": "0/0",
+  "heldout_descent": {},
+  "last_aux": {
+    "predinfo": 5.695125102996826,
+    "predinfo_h": 3
+  },
+  "dbes_final": {
+    "expert_div": 0.57711,
+    "router_entropy": 1.00128,
+    "usage_gini": 0.0881,
+    "usage": [
+      0.2887,
+      0.42085,
+      0.29045
+    ],
+    "n_experts": 3
+  },
+  "dbes_log": [],
+  "gauges_g1g6_torch_probe": {
+    "step": 3,
+    "ce": 5.6053,
+    "g1_composed_distinct": 0,
+    "g2_novelty_rate": 0.0,
+    "g6_count": 3,
+    "g6_jaccard": 0.93158,
+    "phi_proxy": 9.8e-05,
+    "mitosis_cells": 333
+  },
+  "tier": "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL"
+}
