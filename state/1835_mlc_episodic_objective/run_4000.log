@@ -1,0 +1,16 @@
+[gradcheck] max rel err = 4.450e-06  ->  PASS
+cfg={'D': 64, 'H': 4, 'nblock': 2, 'ff': 128, 'ctx': 64} steps=4000 B=32 lr=0.0015  SEEN=9 HELD=[(3, 0), (0, 3), (3, 1), (3, 3)]
+  seed=7 ARM A: composed_distinct=0/4  seen_acc=9/9  (final CE=0.185)  t=12s
+  seed=7 ARM B: composed_distinct=0/4  seen_acc=6/9  (final CE=0.475)  t=61s
+  seed=4302 ARM A: composed_distinct=0/4  seen_acc=9/9  (final CE=0.184)  t=73s
+  seed=4302 ARM B: composed_distinct=0/4  seen_acc=4/9  (final CE=0.493)  t=123s
+  seed=4303 ARM A: composed_distinct=0/4  seen_acc=9/9  (final CE=0.247)  t=138s
+  seed=4303 ARM B: composed_distinct=0/4  seen_acc=4/9  (final CE=0.492)  t=196s
+
+=== composed_distinct (held-out novel-primitive comps /4) ===
+seed  |  A(plain-CE static)  |  B(MLC episodic)
+    7 |         0            |        0
+ 4302 |         0            |        0
+ 4303 |         0            |        0
+
+frozen bar: B>=3 all seeds=False ; B>A all seeds=False  ->  🧱 WALL
