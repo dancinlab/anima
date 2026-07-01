@@ -48,3 +48,33 @@
 **bar / 수치:** probe 미발사(수치 없음). frozen bar 는 선행 walled 측정에 위임.
 
 **정직 스코프 (H_6112 transfer caveat):** 설령 numpy 추상 toy 를 돌렸어도 상보-valence 는 구성적 binding 이라 REACHABLE(0→~1.0) 이 거의 확실하지만, **H_6112 meiosis 가 정확히 그 패턴(numpy 0→1.0 REACHABLE → 실 CLMConvMoE trunk 0→0.022 FALSIFIED)** 을 보였으므로 numpy REACHABLE 은 green light 가 아니라 **추상 toy 과대평가**의 재현일 뿐이다(a_toy_scale_recheck). 따라서 WEAK screen 조차 무의미 → dup-pointer 로 기록. terminal 아님(numpy=DIRECTIONAL by construction).
+
+---
+
+## 심화 (adversarial multi-lens)
+
+**타깃:** H_6113 상보-valence 결합 = 구성적/typed binding-operator (개념=원자, 조합=상보 valence 결합, 생성=반응 네트워크). 카드 verdict = 🟡 DIRECTIONAL — DUP-WALLED (probe 미발사).
+
+**심화 목적 (a_break_the_wall):** numpy REACHABLE 은 대안을 죽이기 전엔 confident 아님. H_6112 선례(numpy 0→1.0 REACHABLE 이 실 CLMConvMoE trunk 에서 0→0.022 붕괴)를 근거로 이 신호가 metric artifact 인지 adversarial control 로 반증 시도.
+
+**probe:** `state/6113_gen_chemical_valence_bond/deepen.py` (numpy toy, D=64, 400 pairs, seed=6113, OMP=4, <1s). valence-bind = circconv(donor(A),acceptor(B)) + circconv(donor(B),acceptor(A)) — H_1823 의 순환합성곱 primitive 그대로. FROZEN bar (실행 전 고정): 생존 iff B1∧B2∧B3∧B4.
+
+**측정 (verbatim):**
+
+| op | distinct | recover_R2 |
+|---|---|---|
+| valence | 0.9241 | **−0.4653** |
+| valence_ABL (상보 OFF) | 0.9124 | −0.4389 |
+| additive (floor) | 0.2907 | +0.2566 |
+| tanh(A+B) | 0.2896 | +0.2567 |
+| A*B | 0.8912 | −0.4553 |
+| randproj | 0.9384 | +0.3664 |
+
+**controls:**
+- **C1 GENERIC-NONLINEARITY — FAIL (¬B1):** 일반 randproj(0.9384)·A*B(0.8912) 가 valence(0.9241) 의 composed_distinct 를 그대로 매칭/초과. → 높은 distinct 는 상보-valence 메커니즘이 아니라 *비선형/랜덤 믹싱 일반*의 성질 (gap=−0.0143).
+- **C2 BIND-RECOVERABILITY — FAIL (¬B2):** held-out 에서 C→A, C→B 선형 복원 R2 = valence **−0.4653** (평균예측보다 나쁨) vs additive +0.2566. 부모를 valence 합성에서 되찾을 수 없음 = 정보 파괴 = **anti-compositional** (gap=−0.7219, 요구 +0.15).
+- **C3 SHUFFLE/ABLATION — FAIL (¬B3):** 핵심 성분(상보 donor↔acceptor pairing)을 끄면(donor-donor) distinct 0.9124 ≈ FULL 0.9241, additive floor(0.2907)로 붕괴 안 함(|Δ|=0.6217). → distinctness 는 상보성이 아니라 circconv 스캐폴드에서 나옴 = INERT (FULL==OFF).
+
+**정직한 결론:** 세 축 전부 신호를 반증 — composed_distinct REACHABLE 은 순수 metric artifact (비선형-일반 + 부모정보 파괴 대가). 내가 쓴 순환합성곱 primitive 는 **H_1823 circconv 와 동일**(engine-native 🧱 NOT-SUPPORTED). dup pointer(H_1823 circconv · H_1816 predictive-coding binding · H_1834 tension-mouth, 공유 실패모드 = "operator INERT: FULL==OFF==ADDITIVE floor on real CLMConvMoE trunk") **성립 → DUP-CONFIRMED**. RESIDUAL 없음: 유일 미검증 레버(학습된 constructive bind + trunk recomb-OBJECTIVE γ)는 이미 family-wide 로 flag 됐고 학습 필요 → $0 numpy 로 판정 불가.
+
+**H_6112 transfer caveat:** 설령 이 numpy 가 clean 0→1.0 을 냈어도 그건 green light 가 아니라 H_6112 meiosis 가 보인 추상 toy 과대평가(numpy 0→1.0 → 실 trunk 0→0.022)의 재현일 뿐. 여기선 adversarial control 이 numpy 단계에서 이미 artifact 를 잡아냄 — 실 trunk rung 발사 불필요. terminal 아님(numpy=DIRECTIONAL by construction)이나 dup 은 engine-native 선행 측정에 위임되어 확정.

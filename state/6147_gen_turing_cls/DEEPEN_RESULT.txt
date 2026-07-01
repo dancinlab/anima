@@ -1,0 +1,21 @@
+=== XOR reachability (original metric) ===
+  additive         XOR_acc=0.469
+  operator         XOR_acc=0.990
+  ablation         XOR_acc=0.630
+  C1a_interaction  XOR_acc=1.000
+  C1b_mlp          XOR_acc=0.823
+
+=== (C2) bind-recoverability: recover BOTH parents from composed C ===
+  additive         recover(a)=1.000  recover(b)=1.000
+  operator         recover(a)=0.995  recover(b)=0.948
+  C1b_mlp          recover(a)=0.885  recover(b)=0.844
+
+=== FROZEN BAR (adversarial) ===
+  (B1) generic-NL does NOT match op : op-max(C1a,C1b)=-0.010 >=0.15 ? False
+       (C1a interaction=1.000  C1b mlp=0.823  vs op=0.990)
+  (B2) bind-recover beats additive  : min-rec op=0.948 add=1.000 gap=-0.052 >=0.15 & op>=0.70 ? False
+  (B3) ablation collapses (eq<=add+.10): eq=0.630 add=0.469 ? False
+
+OPERATOR SURVIVES ALL CONTROLS: False
+VERDICT(deepen): DIRECTIONAL (numpy) / ARTIFACT — generic nonlinearity matches operator; REACHABLE is nonlinearity-in-general, NOT Turing/CLS mechanism
+H_6112 transfer caveat: numpy REACHABLE OVERSTATES; meiosis 0->1.0 collapsed to 0->0.022 on real CLMConvMoE trunk. transfer-UNVERIFIED.

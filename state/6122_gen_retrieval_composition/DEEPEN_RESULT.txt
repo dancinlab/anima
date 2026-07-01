@@ -1,0 +1,24 @@
+[H_6122 ADVERSARIAL DEEPEN] D=64, 9 novel pairs x 5 seeds; chance recovery=0.333
+--- baseline (from probe.py) ---
+  additive-top1 (walled floor) composed_distinct = 1.000
+  retrieval-composition        composed_distinct = 2.000   (original REACHABLE, margin +1.000)
+--- C1 GENERIC-NONLINEARITY control (all arity=2, same 2-slot readout) ---
+  additive-top2  = 2.000
+  tanh(A+B)-top2 = 2.000
+  mult(A*B)-top2 = 0.733
+  randMLP-top2   = 0.711
+  generic-family MAX = 2.000   retrieval - generic_max = +0.000
+  PASS-C1 (retrieval - generic_max >= 0.5, i.e. generic does NOT match): False
+--- C2 BIND-RECOVERABILITY (linear readout C->parents, LOO held-out) ---
+  recover(retrieval=concat)   = 1.000
+  recover(additive-sum floor) = 1.000   retrieval - additive = +0.000
+  PASS-C2 (recovery beats additive by >=0.20): False
+  (note: both parents trivially recoverable from EITHER -> juxtaposition, NOT binding;
+   deep_bind fused-token = 0.0 from probe.py -> conjunction/interaction UNREACHABLE)
+--- C3 ABLATION (retrieval ingredient OFF: emit ONE index, arity=1) ---
+  ablated(arity=1) = 1.000   additive-top1 floor = 1.000
+  PASS-C3 (ablation collapses to floor): True
+--- FROZEN VERDICT ---
+  SURVIVE = C1(False) AND C2(False) AND C3(True) = False
+  VERDICT: ARTIFACT (numpy REACHABLE = readout-arity/juxtaposition artifact, NOT the proposed mechanism)
+  H_6112 transfer caveat: even were controls passed, numpy REACHABLE overstates real CLMConvMoE (0->1.0 became 0->0.022). numpy=DIRECTIONAL by construction, terminal 아님.

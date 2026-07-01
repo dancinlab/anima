@@ -1,0 +1,21 @@
+H_6148 ADVERSARIAL DEEPENING — generation-by-holes (anti-storage)
+chance(cell NN 1/64)=0.0156  chance(parent 1/8)=0.1250
+FROZEN BAR: survive iff hole-generic>=.10 AND hole-chance>=.10 AND bind-chance>=.10 AND shuffle-drop>=.10
+------------------------------------------------------------------------------
+seed 0: hole_fill=0.018 | generic(max)=0.018 {'const_mean': 0.0, 'rand_gauss': 0.0, 'rand_mlp': 0.017857142857142856} | shuffle_struct=0.018
+        bind_recover A=0.250 B=0.125 (chance .125) | SANITY structured_targets hole_fill=0.018
+seed 1: hole_fill=0.018 | generic(max)=0.018 {'const_mean': 0.0, 'rand_gauss': 0.017857142857142856, 'rand_mlp': 0.017857142857142856} | shuffle_struct=0.018
+        bind_recover A=0.250 B=0.062 (chance .125) | SANITY structured_targets hole_fill=0.018
+seed 2: hole_fill=0.018 | generic(max)=0.018 {'const_mean': 0.0, 'rand_gauss': 0.0, 'rand_mlp': 0.017857142857142856} | shuffle_struct=0.018
+        bind_recover A=0.188 B=0.000 (chance .125) | SANITY structured_targets hole_fill=0.018
+------------------------------------------------------------------------------
+MEAN hole_fill=0.018 generic=0.018 shuffle=0.018 | bindA=0.229 bindB=0.062 | sanity_structured=0.018
+C1 hole-generic>=.10 : +0.000 -> False
+C2 hole-chance  >=.10 : +0.002 -> False
+C3 bindmin-chance>=.10: -0.062 -> False
+C4 shuffle drop >=.10 : +0.000 -> False
+------------------------------------------------------------------------------
+SANITY note: structured (low-rank) targets hole_fill=0.018 vs independent=0.018
+  -> operator is NOT broken; it fills holes IFF lattice has structure, which the
+     hypothesis's INDEPENDENT-targets construction forbids (MI between cells = 0).
+VERDICT = ARTIFACT (chance-level; no mechanism signal)  [numpy => DIRECTIONAL]

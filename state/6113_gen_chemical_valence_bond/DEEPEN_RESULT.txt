@@ -1,0 +1,19 @@
+=== H_6113 adversarial deepening (numpy toy, D=64, 400 pairs, seed=6113) ===
+op             distinct recover_R2
+valence          0.9241    -0.4653
+valence_ABL      0.9124    -0.4389
+additive         0.2907     0.2566
+tanh(A+B)        0.2896     0.2567
+A*B              0.8912    -0.4553
+randproj         0.9384     0.3664
+
+distinct: valence=0.9241  generic_max=0.9384  additive=0.2907  ablation=0.9124
+recover_R2: valence=-0.4653  additive=0.2566  generic_max_gap=0.1098
+B1 generic!=valence distinct (gap>0.05): False (gap=-0.0143)
+B2 valence recover>additive+0.15:        False (gap=-0.7219)
+B3 ablation collapses to floor(|.|<0.05):False (|.|=0.6217)
+B4 no generic also recovers(gap<0.15):   True (gen_max_recgap=0.1098)
+
+SURVIVES all controls (would justify real-trunk rung): False
+VERDICT: ARTIFACT/DUP -> generic-nonlinearity MATCHES distinct -> distinct is nonlinearity-generic (artifact) ; valence NOT recoverable over additive -> not compositional binding ; ablation did NOT collapse -> scaffold not ingredient
+H_6112 transfer: even a numpy REACHABLE (0->~1.0) for a binding-op collapsed to 0->0.022 on real CLMConvMoE trunk (meiosis). H_1823 circconv (SAME circular-convolution primitive used here) is engine-native 🧱 NOT-SUPPORTED. dup pointer HOLDS.

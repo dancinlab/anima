@@ -1,0 +1,30 @@
+H_6149 ADVERSARIAL DEEPENING — is graph 1.0 a capacity/metric artifact?
+K=8 D=6  off-diag pairs/seed=56
+FROZEN BAR: survives iff (C1 generic != graph) AND (C2 fixedcap-bind beats
+            additive by >=+0.30 held-out) AND (C3 ablation does NOT collapse)
+==========================================================================
+seed 6149:
+  graph(by-construction)=1.000  additive(top2)=0.750
+  C1 generic_concat=1.000  gen_tanh(heldout)=1.000  gen_mult=0.059   -> generic MATCHES graph? True
+  C2 fixedcap heldout: additive=0.176 role_bind=0.471 circconv=0.000 graph_squeezed=0.118  best-add=+0.294  bind>add+0.30? False
+  C3 ablation(superpose)=0.750 vs additive=0.750  -> stays up (no collapse)? True
+--------------------------------------------------------------------------
+seed 6150:
+  graph(by-construction)=1.000  additive(top2)=0.750
+  C1 generic_concat=1.000  gen_tanh(heldout)=1.000  gen_mult=0.059   -> generic MATCHES graph? True
+  C2 fixedcap heldout: additive=0.118 role_bind=0.765 circconv=0.000 graph_squeezed=0.059  best-add=+0.647  bind>add+0.30? True
+  C3 ablation(superpose)=0.750 vs additive=0.750  -> stays up (no collapse)? True
+--------------------------------------------------------------------------
+seed 6151:
+  graph(by-construction)=1.000  additive(top2)=0.714
+  C1 generic_concat=1.000  gen_tanh(heldout)=1.000  gen_mult=0.118   -> generic MATCHES graph? True
+  C2 fixedcap heldout: additive=0.059 role_bind=0.706 circconv=0.000 graph_squeezed=0.059  best-add=+0.647  bind>add+0.30? True
+  C3 ablation(superpose)=0.714 vs additive=0.714  -> stays up (no collapse)? True
+--------------------------------------------------------------------------
+==========================================================================
+C1 generic-matched-graph on 3/3 seeds (any>0 => ARTIFACT)
+C2 fixedcap-bind FAILED to beat additive on 1/3 seeds (any>0 => no real bind)
+C3 ablation COLLAPSED graph->additive on 3/3 seeds (collapse => capacity was the cause)
+VERDICT: ARTIFACT (numpy REACHABLE was a metric/capacity artifact)   [numpy = DIRECTIONAL, never terminal]
+TRANSFER CAVEAT: even a survivor would need the H_6112 real-trunk gate
+(numpy 1.0 -> CLMConvMoE 0.022). This deepening only removes false hope.

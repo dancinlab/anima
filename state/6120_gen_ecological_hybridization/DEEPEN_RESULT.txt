@@ -1,0 +1,26 @@
+H_6120 ECOLOGICAL-HYBRIDIZATION adversarial deepening (DIRECTIONAL numpy)
+operator == H_6112 meiosis concat/disjoint-read (dup verify + controls)
+K=8 seg-dim=6 held-out off-diag/seed=56
+FROZEN BAR: survives iff (generic NOT match) & (recov lift>=.30 nontrivial) & (ablation collapse)
+--------------------------------------------------------------------------
+seed 1843: ADD=0.000 HYBRID=1.000 | C1 tanh-disj=1.000 mlp-mix=0.000 hadam=0.000 | C2 recov=1.000 | C3 abl=0.000
+seed 1844: ADD=0.000 HYBRID=1.000 | C1 tanh-disj=1.000 mlp-mix=0.000 hadam=0.000 | C2 recov=1.000 | C3 abl=0.000
+seed 1845: ADD=0.000 HYBRID=1.000 | C1 tanh-disj=1.000 mlp-mix=0.000 hadam=0.000 | C2 recov=1.000 | C3 abl=0.000
+--------------------------------------------------------------------------
+MEAN ADD=0.000 HYBRID=1.000
+C1 generic: tanh-disjoint=1.000  mlp-mix=0.000  hadamard-shared=0.000
+C2 bind-recoverability=1.000 (lift vs add +1.000)
+C3 disjointness-ablation=0.000 (must collapse ~additive)
+--------------------------------------------------------------------------
+C1 generic-nonlinearity MATCHES hybrid? True  (tanh-disj 1.000 / mlp-mix 0.000 vs hybrid 1.000)
+C2 recoverability beats additive by>=.30? True  BUT trivially==hybrid readout (partitioned STORAGE, not learned combine)
+C3 ablation collapses to floor? True
+--------------------------------------------------------------------------
+VERDICT: ARTIFACT — a GENERIC nonlinearity over the SAME disjoint concat
+  reaches the composed bar just as well as the 'ecological hybrid' op.
+  The numpy REACHABLE is a property of DISJOINT-PARTITION STORAGE, not the
+  proposed hybrid-lane mechanism. Recoverability is trivially satisfied by
+  storage (parents never mixed) => necessary-not-sufficient, no composition.
+  DUP-CONFIRMED: same operator class as H_6112 (concat/disjoint-read),
+  which ALREADY collapsed on the real CLMConvMoE trunk (0.022, 0/3 seed).
+numpy = DIRECTIONAL, NEVER terminal. Real wall = trunk recomb-objective (H_1602, already 🧱).

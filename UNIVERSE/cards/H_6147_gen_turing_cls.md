@@ -49,3 +49,29 @@
 **FROZEN bar (발사 전 사전등록, tune-to-green 금지):** GREEN iff op≥0.70 ∧ add≤0.60 ∧ margin≥0.15 ∧ **ablation FAIL(eq≤add+0.10)**. 결과: op✓ add✓ margin✓ 이나 **ablation 절 FAIL** — equal-diff 0.651 > add+0.10(0.621). 즉 차등-timescale(CLS) 제거해도 비선형 반응항 u·v 만으로 floor 위로 새어(0.651), 상승분을 CLS timescale-separation 에 깨끗이 귀속 불가 → **FALSIFIED-as-stated**.
 
 **정직 스코프 (c9):** ① numpy=DIRECTIONAL by construction, terminal 아님. ② **H_6112 전이 caveat**: 감수분열 numpy toy 는 REACHABLE 0→1.0 였으나 동일 연산자가 REAL CLMConvMoE trunk 에서 FALSIFIED(0→0.022) — abstract numpy 는 OVERSTATE 하므로 여기 op=0.969 도 green light 아님, transfer-UNVERIFIED. ③ 프로브가 오라클 반응장/특징을 손수 건네므로 *학습된* trunk 조합(진짜 G1 질문) 미검. ④ 비선형 반응항이 이미 lift 를 만들어(equal-diff 0.651) CLS 축의 순수 기여가 불명확 = H_1816/1823/1834 의 "비선형 readout trick 은 additive trunk 에서 붕괴" 정합. engine-native/303M 미발사(cost-gated).
+
+---
+
+## 심화 (adversarial multi-lens)
+
+부모 probe(`probe.py`)는 이미 FALSIFIED-as-stated(ablation 절 FAIL). 심화는 부모가 안 돌린 두 통제(C1 generic-nonlinearity · C2 bind-recoverability)를 추가해 신호를 REFUTE 시도 → **ARTIFACT 확정**.
+
+**FROZEN bar (실행 전 사전등록, tune-to-green 금지):** operator SURVIVES iff (B1) op−max(C1a,C1b)≥0.15 ∧ (B2) min-bind-recover(op)−(add)≥0.15 ∧ op-recover≥0.70 ∧ (B3) ablation collapse(eq≤add+0.10). 셋 다 통과해야만 CONFIRMED.
+
+**수치 (numpy, ring N=24 · T=40 · XOR of 2 concepts):**
+
+| lens | XOR acc |
+|---|---|
+| additive floor | 0.469 |
+| operator (Turing/CLS) | 0.990 |
+| **C1a generic 상호작용항 [m,n,m·n]** | **1.000** |
+| C1b generic random-proj tanh MLP | 0.823 |
+| C3 ablation (equal-diff, timescale OFF) | 0.630 |
+
+- **(B1) generic-nonlinearity FAIL:** op−max(C1a,C1b) = 0.990−1.000 = **−0.010** (<0.15). Turing 반응-확산·CLS 2-timescale 전부 제거한 **순수 elementwise a·b 상호작용항이 XOR=1.000 으로 operator 를 오히려 초과**. lift 는 메커니즘이 아니라 nonlinearity-in-general(상호작용항)의 산물 → METRIC ARTIFACT.
+- **(B2) bind-recoverability FAIL:** operator 에서 부모 복원 min=0.948 < additive 1.000 (gap −0.052). 각 lane 이 개념 하나로 seed 되어 부모는 additive 에서 이미 완벽복원 → distinctness/XOR 는 composition 의 *필요조건일 뿐 충분조건 아님*, 진짜 bound conjunction 증거 아님.
+- **(B3) ablation FAIL:** eq=0.630 > add+0.10=0.569. timescale-separation(CLS) 제거해도 비선형 반응항 u·v 가 floor 위로 새어 INERT — 부모 probe(0.651) 재확인.
+
+**결론:** 3-통제 전수 FAIL → **ARTIFACT**. numpy REACHABLE(op 0.99)은 Turing/CLS 메커니즘이 아니라 nonlinearity-in-general 의 metric artifact. H_1816/1823/1834("비선형 readout trick 은 additive trunk 에서 붕괴") 정합.
+
+**H_6112 전이 caveat:** numpy REACHABLE 은 OVERSTATE — 감수분열 toy 는 0→1.0 였으나 동일 연산자가 REAL CLMConvMoE trunk 에서 0→0.022 로 붕괴. 여기 op=0.990 도 green light 아님, transfer-UNVERIFIED. engine-native/303M 발사 **불필요**(numpy 단계에서 이미 artifact 판명, cost 절약).

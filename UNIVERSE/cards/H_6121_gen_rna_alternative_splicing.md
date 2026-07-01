@@ -46,3 +46,23 @@
 **Bar (미실행).** 프로브 미발사 (dup). 기존 H_6139 frozen bar(vdj≥additive+3 ∧ shuffle≤additive+1)·H_6112 real-trunk bar(reach≥0.30) 가 이 메커니즘을 이미 규정.
 
 **정직한 스코프 (H_6112 transfer caveat).** numpy 추상 프로브는 구성상 이 class 에서 REACHABLE 을 과대평가함이 H_6112 에서 실측 증명됨(추상 1.0 → 실 trunk 0.022). 따라서 alt-splicing 에 대해 numpy REACHABLE 을 재확인한들 green light 아님. 진짜 레버 = trunk recomb-OBJECTIVE(H_1602, cost-gated) / γ trained-constructive-bind 이며 readout·splice-head 축이 아님. terminal 아님(numpy=DIRECTIONAL), 그러나 재발사 무가치.
+
+---
+
+## 심화 (adversarial multi-lens)
+
+**대상:** H_6121 `gen_rna_alternative_splicing` — 이산 select+splice 연산자 (부모 A,B 의 exon 차원을 per-pair 이진 splice mask `m` 으로 골라 `C = m·A + (1−m)·B`). 값싼 numpy 스크린이 `composed_distinct` = **0→1.0 REACHABLE** 로 박제. dup-walled(H_6139 numpy DIRECTIONAL) → 재발사 없이 심화 반증.
+
+**FROZEN bar (실행 전 고정):** 연산자 SURVIVE ⟺ (C1 ∧ C2 ∧ C3).
+
+| control | 측정 | bar | 결과 |
+|---|---|---|---|
+| **C1 generic-nonlinearity** | splice 1.000 vs tanh(A+B) 1.000 · A*B 1.000 · randMLP 1.000 → margin **+0.000** | ≥+0.20 | ❌ FAIL |
+| **C2 bind-recoverability (held-out R²)** | splice recover mean **R²=0.095** (A .087 / B .102) vs additive floor **R²=0.412** (A .402 / B .421) → margin **−0.317** | ≥+0.15 | ❌ FAIL |
+| **C3 ablation (discrete-select OFF → additive-average)** | ablated composed_distinct **1.000** (기대 <0.500) | collapse | ❌ FAIL(no-collapse) |
+
+**정직한 결론 = 🔴 ARTIFACT (numpy DIRECTIONAL).** REACHABLE 0→1.0 은 splice 메커니즘이 아니라 **혼합-일반(mixing-in-general)의 지표 인공물**이다: (C1) 아무 비선형/가법 혼합도 동일하게 1.0 → `composed_distinct` 는 nonlinearity-in-general 을 잰다. (C2) per-pair 가변 mask 때문에 고정 선형 readout 이 어느 차원이 어느 부모에서 왔는지 모른다 → 부모 복원 불가(R²=0.095), 심지어 **가법 floor(0.412)보다 나쁨** → compositional binding 아님(distinctness 는 필요조건일 뿐 충분조건 아님). (C3) 이산-선택을 꺼도 distinct 가 안 무너짐 → 지표가 splice 를 가법 floor 와 구별 못함.
+
+**dup pointer 확인:** dup-walled 판정이 옳음 — 공유 실패모드 = readout/operator-축 합성은 **복원 불가 distinctness** 만 만들어 G1(재조합)을 못 연다. census 결론(`substrate-framebreak-g1-combination-operator`, `exp3-bind-g1g6-engine-native-floor`, `h1834-tension-mouth-native-floor`)과 정합: 레버는 combination operator 가 아니라 **trunk recomb-OBJECTIVE**. RESIDUAL 신규 각도 없음.
+
+**H_6112 transfer caveat:** numpy REACHABLE 은 실체 CLMConvMoE trunk 에서 붕괴한 전례(0→1.0 ⇒ 0→0.022)가 있으며, 여기선 numpy 단계에서 이미 controls 로 반증되므로 real-trunk rung 승격 불필요. 엔진-네이티브 재측정 불요(발사 낭비 방지). numpy-only DIRECTIONAL, terminal 아님.

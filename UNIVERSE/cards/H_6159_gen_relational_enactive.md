@@ -53,3 +53,27 @@
 → lift **+0.000 < +0.30 bar = 🧱 DIRECTIONAL FLOOR (operator INERT)**. context-modulation 이 additive 대비 조합력 0 기여(H_1834 bilinear · H_6104 intersection 과 동일 INERT). leak regime 조차 미학습 off-diagonal class basin 을 만들지 못함.
 
 **정직 스코프 (c9 · H_6112 transfer caveat):** numpy toy = 구조상 DIRECTIONAL, terminal 아님. H_6112 선례가 경고하듯 numpy 추상 프로브는 operator-expressivity 를 **과대평가**(meiosis numpy 0→1.0 였으나 실 CLMConvMoE trunk 0→0.022) — 따라서 numpy floor 는 오히려 negative 방향을 **강화**하는 강한 신호다(과대평가 프로브서도 lift 0 = 실 trunk 서 열릴 가망 더 낮음). engine-native 재측정 불필요할 만큼 방향 명확: context-modulated readout 축 floored, native-mouth 를 "청자-조건부 조합 readout" 으로 재제안 금지. 진짜 레버는 trunk recomb-objective(H_1602 영역, 이미 🧱). **wired: DIRECTIONAL-mirror (미배선, engine-native 사다리 진입 가치 낮음).**
+
+---
+
+## 심화 (adversarial multi-lens)
+
+**대상:** H_6159 `gen_relational_enactive` — 청자/context-변조 관계적·enactive 조합 연산자 (native-mouth G1 재조합). 스크린 tier = 🧱 DIRECTIONAL FLOOR (numpy, ADD=RELATIONAL=0.000 3seed).
+
+**얼린 bar (실행 전 선언):** 연산자가 살아남으려면 재조합이 *측정 가능한* 공정 커리큘럼에서 (C1) 가법 floor + 일반 비선형을 각각 joint-reach +0.15 이상 이겨야 하고, (C2) C→A·C→B 부모 복원(held-out)이 가법 대비 +0.15, (C3) 청자 셔플 시 lift가 절반 이상 붕괴. + 스크린 자체가 clean wall인지 coverage-floor artifact인지 검사.
+
+**결과 (numpy DIRECTIONAL, <30s, OMP=4):**
+
+PART A — 스크린 재현 + degeneracy 진단:
+- ADD=RELATIONAL=GENERIC-nl=0.000 (3seed) · 그러나 **held-out joint class의 훈련 지지 = 0/56**. diagonal-only 학습은 off-diagonal class 열을 절대 활성화하지 않아 argmax reach가 *모든* arm에서 구조적으로 0.
+- → 스크린 🧱 FLOOR = **COVERAGE-FLOOR 측정 artifact**, 깨끗한 operator-INERT 벽 아님 (cf. g1-py303-single-floor: coverage floor ≠ recombination wall).
+
+PART B — 공정 커리큘럼(decorrelated spanning train, 인수분해 i/j 헤드):
+- ADD = **1.000** · GENERIC-nl = **1.000** · RELATIONAL = **0.021** · REL(ctx-shuffle) = **0.000** (means, 3seed).
+- 가법 중첩은 held-out 신규 조합을 완벽 재조합(선형 인수분해 자명). 청자-게이팅 bilinear 연산자는 부모를 비가역 얽어 factorizability를 **파괴** → floor.
+
+**통제 판정:** C1 specificity **False** (op −0.979 vs ADD, −0.979 vs GENERIC) · C2 bind-recoverability **False** · C3 listener-causal **False** · SURVIVES ALL 3 = **False**.
+
+**정직한 결론 — ARTIFACT.** 관계적/enactive 청자-변조 조합 연산자는 조합 신호 0. 가법이 이미 인수 신호를 나른다; 이 연산자는 INERT/해로움. 스크린의 🧱 FLOOR은 coverage-floor artifact였다. 이는 G1 **combination-operator 벽의 DUP** — 학습 안 된 readout/combination op은 INERT, 레버는 **trunk recomb-OBJECTIVE** (H_1834 native-mouth 텐션연산자 INERT; substrate-framebreak-g1-combination-operator; H_1812/1814/1816 NOT-SUP 정합). RESIDUAL 신규 각도 없음.
+
+**H_6112 transfer caveat:** numpy는 과대평가한다 (0→1.0 numpy가 실제 CLMConvMoE trunk에서 0→0.022로 붕괴). 설령 살아남았어도 DIRECTIONAL일 뿐, 실-trunk rung 없이는 🟢 불가.
