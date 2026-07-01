@@ -1,0 +1,28 @@
+seed=7 add: train=1.0 held=0.251 (oracle=1.0)
+seed=7 hadamard: train=1.0 held=0.1973 (oracle=1.0)
+seed=7 tensorproduct: train=1.0 held=0.3008 (oracle=1.0)
+seed=7 bilinear: train=1.0 held=0.249 (oracle=1.0)
+seed=4302 add: train=1.0 held=0.0933 (oracle=1.0)
+seed=4302 hadamard: train=1.0 held=0.1045 (oracle=1.0)
+seed=4302 tensorproduct: train=1.0 held=0.0754 (oracle=1.0)
+seed=4302 bilinear: train=1.0 held=0.1477 (oracle=1.0)
+seed=4303 add: train=1.0 held=0.1257 (oracle=1.0)
+seed=4303 hadamard: train=1.0 held=0.0869 (oracle=1.0)
+seed=4303 tensorproduct: train=1.0 held=0.1958 (oracle=1.0)
+seed=4303 bilinear: train=1.0 held=0.197 (oracle=1.0)
+seed=4304 add: train=1.0 held=0.0 (oracle=1.0)
+seed=4304 hadamard: train=1.0 held=0.0779 (oracle=1.0)
+seed=4304 tensorproduct: train=1.0 held=0.1091 (oracle=1.0)
+seed=4304 bilinear: train=1.0 held=0.1055 (oracle=1.0)
+seed=4305 add: train=1.0 held=0.116 (oracle=1.0)
+seed=4305 hadamard: train=1.0 held=0.1196 (oracle=1.0)
+seed=4305 tensorproduct: train=1.0 held=0.0601 (oracle=1.0)
+seed=4305 bilinear: train=1.0 held=0.1008 (oracle=1.0)
+
+=== VERDICT ===
+{'seed': 7, 'add': 0.251, 'best_bind': 0.3008, 'best_arm': 'tensorproduct', 'delta': 0.0498}
+{'seed': 4302, 'add': 0.0933, 'best_bind': 0.1477, 'best_arm': 'bilinear', 'delta': 0.0544}
+{'seed': 4303, 'add': 0.1257, 'best_bind': 0.197, 'best_arm': 'bilinear', 'delta': 0.0713}
+{'seed': 4304, 'add': 0.0, 'best_bind': 0.1091, 'best_arm': 'tensorproduct', 'delta': 0.1091}
+{'seed': 4305, 'add': 0.116, 'best_bind': 0.1196, 'best_arm': 'hadamard', 'delta': 0.0036}
+TIER: 🧱 DIRECTIONAL-FLOOR — structural binders (hadamard/tensorproduct/bilinear) do NOT open held-out (framebreak combination-operator thesis FALSIFIED in toy; H_1840 confirmed)
