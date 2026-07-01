@@ -61,3 +61,33 @@
 
 ### follow-on (a_verified_must_wire 사다리)
 비선형 소멸연산자를 **live core/ 위에서 학습된 constructive bind(γ)** 로 굽고(recomb-objective 결합) engine-native `composed_distinct`/G1 5-bar 재측정 = 유일 승격 경로(cost-gated). 그 전까지 DIRECTIONAL·미배선.
+
+---
+
+## 심화 (adversarial multi-lens)
+
+원 verdict: 🟢 DIRECTIONAL-GREEN (numpy toy, antimatter_v2 sign-gated 연산자 `where(sign(A)==sign(B), A−B, A+B)` 가 composed_distinct 24/24 vs additive 0/24). transfer-UNV.
+
+**FROZEN BAR (실행 전 고정):** 연산자는 (C1 generic-nonlinearity 가 bar≥20/24 를 통과하지 못함) ∧ (C2 부모 bind-복원이 additive 대비 +0.10 이상) ∧ (C3 sign 성분 OFF 시 floor 붕괴) 를 **모두** 만족할 때만 CONFIRMED. 하나라도 실패 = ARTIFACT.
+
+**C1 — GENERIC-NONLINEARITY (FAIL ❌):** 메커니즘 0 인 generic 비선형도 같은 bar 통과 —
+- random-projection ReLU MLP: **24/24** (mean_max_cos_parent 0.070)
+- Hadamard A*B: **23/24** (0.152)
+- tanh(A+B): 0/24 (additive 방향 유지)
+- antimatter_v2: 24/24 (0.418)
+→ composed_distinct 는 '부모 둘 다에서 먼 novel point' 만 측정 = 충분히 orthogonalize 하는 **아무 비선형이나** 통과. 소멸-생성 대칭 메커니즘 고유 신호 아님.
+
+**C2 — BIND-RECOVERABILITY (FAIL ❌):** ridge readout C→A, C→B (M=400, train300/test100, d32) held-out 복원 cos —
+- additive: recoverA +0.671 · recoverB +0.672 · mean **+0.671**
+- antimatter_v2: recoverA +0.332 · recoverB **+0.028** · mean **+0.180**
+- tensor_bind(circ-conv, 참조): mean −0.022 (key 없인 선형 복원 불가 = 예상)
+→ antimatter lift = **−0.491** (필요 +0.10). 부모 B 는 사실상 소실 → distinctness 를 얻은 대가로 부모 정보를 파괴한 **lossy scramble**, compositional binding 아님. distinctness 는 필요조건일 뿐 충분조건 아님을 실증.
+
+**C3 — ABLATION (PASS ✅, 유일한 우호점):** sign 성분 OFF —
+- random-mask(~0.5 density): 0/24 붕괴
+- all-difference(A−B): 0/24 붕괴
+→ sign-gating 은 composed_distinct 점수에 **causal**. 그러나 C1 에서 메트릭 자체가 artifactual 로 판명되었으므로 'artifactual 메트릭에 대한 인과' 일 뿐 실 메커니즘 증거 아님.
+
+**정직한 결론: ARTIFACT.** 3 통제 중 2 실패(C1·C2). numpy REACHABLE(0→24/24)은 재조합/합성이 아니라 distinctness 메트릭의 nonlinearity artifact. 부모 복원 불가 = binding 아님. **H_6112 transfer caveat:** H_6112 는 numpy REACHABLE 0→1.0 이 실제 CLMConvMoE trunk 에서 0→0.022 로 붕괴함을 입증(numpy 과대평가). 본 연산자는 그 real-trunk rung 에 도달하기도 전에 numpy 통제 단계에서 ARTIFACT — real-trunk 발사 권장하지 않음. G1 재조합 레버는 여전히 trunk recomb-objective(readout/연산자 축 아님, cf a_break_the_wall·substrate-framebreak-g1-combination-operator).
+
+artifacts: state/6152_gen_antimatter_combination/deepen.py · DEEPEN_RESULT.txt

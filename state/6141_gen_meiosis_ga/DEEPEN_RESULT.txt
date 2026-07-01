@@ -1,0 +1,35 @@
+H_6141 meiosis-GA — ADVERSARIAL DEEPEN (numpy DIRECTIONAL)
+====================================================================
+reach = frac held-out reaching true recombination whole GT (rel<0.30)
+--------------------------------------------------------------------
+[baseline] ADDITIVE reach          = 0.000   (floor)
+[H_6112 ]  MEIOSIS(oracle) reach   = 1.000   (REACHABLE screen reproduces)
+[H_6141 ]  MEIOSIS-GA reach        = 0.000
+--------------------------------------------------------------------
+C1 GENERIC-NONLINEARITY control (does non-meiosis reach GT?):
+   tanh(A+B) reach                 = 0.000
+   A*B       reach                 = 0.000
+   GENERIC-LEARNED linear combiner = 1.000   <-- key: generically learnable?
+--------------------------------------------------------------------
+C2 BIND-RECOVERABILITY (held-out R^2 of recovering BOTH parents from C):
+   ADDITIVE   bind-R^2            = 0.262
+   MEIOSIS    bind-R^2            = 0.299  (margin vs add +0.036)
+   MEIOSIS-GA bind-R^2            = -0.152  (margin vs add -0.415)
+--------------------------------------------------------------------
+C3 ABLATION (turn key ingredient OFF -> must collapse to floor):
+   disjoint-loci OFF reach        = 0.000  (vs additive floor 0.000)
+   GA selection OFF reach         = 0.000  (vs meiosis-GA 0.000)
+====================================================================
+FROZEN-BAR VERDICT:
+  (B1) generic combiner fails to match meiosis?  False (gen=1.000 vs meio-0.30=0.700)
+  (B2) bind-recoverability beats additive +0.15?  False (margin=-0.415)
+  (B3) ablation collapses to floor?               True
+--------------------------------------------------------------------
+VERDICT: ARTIFACT -> numpy REACHABLE is a metric artifact.
+  * a GENERIC TRAINED combiner reaches GT as well as meiosis -> the target is
+    generically learnable; meiosis structure is NOT load-bearing (= trunk-OBJECTIVE wall).
+  * meiosis-GA does NOT make both parents more recoverable than additive
+    -> distinct-from-parents was necessary-not-sufficient; not compositional binding.
+  H_6112 TRANSFER CAVEAT: same crossover operator FALSIFIED on real
+  CLMConvMoE trunk (0 -> 0.022 << 0.30). numpy REACHABLE != green light.
+  GA/selection axis independently INERT (H_1568 selection lift -0.00046).

@@ -1,0 +1,21 @@
+=== H_6137 gen_cls_dual_timescale — ADVERSARIAL DEEPEN ===
+pairs=191  D=24  codebook=40  tau_fast=0.85 tau_slow=0.15
+--- C1 GENERIC-NONLINEARITY (composed_distinct, normalized) ---
+  operator cls_dual      = 0.005
+  additive floor A+B     = 0.005
+  generic tanh(A+B)      = 0.005
+  generic random-MLP     = 0.974
+  generic A*B elemwise   = 0.738
+  gen_best=0.974  op-gen_best margin=-0.969  (bar>=+0.20)  C1_PASS=False
+--- C2 BIND-RECOVERABILITY (held-out mean cosine recover A&B from C) ---
+  operator recover       = 0.651
+  additive recover       = 0.650
+  op-add margin=+0.000  (bar>=+0.10)  C2_PASS=False
+--- C3 ABLATION (tau_fast==tau_slow) ---
+  ablated composed_dist  = 0.005
+  additive floor         = 0.005
+  gap=0.000  (collapse if <=0.05)  C3_COLLAPSE=True
+--- VERDICT ---
+  SURVIVES(all 3)=False
+  -> ARTIFACT: generic nonlinearity matches op (metric artifact of nonlinearity-in-general); no bind-recoverability edge over additive (distinct != compositional)
+H_6112 transfer caveat: numpy REACHABLE overstates; real-trunk max_single often 0 (coverage-floor jitter, cf H_1815 CLS engine-native).

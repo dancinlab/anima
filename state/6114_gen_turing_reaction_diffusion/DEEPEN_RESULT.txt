@@ -1,0 +1,25 @@
+held-out combos = [0, 1, 4, 14, 15]  chance=0.25
+== XOR-task held-out acc (frozen ridge probe) ==
+  add            = 0.000
+  turing         = 0.600
+  prod           = 0.200
+  sqsum          = 0.000
+  mlp            = 0.000
+  ctrl_eqdiff    = 0.000
+  ctrl_noreact   = 0.000
+
+[C1 GENERIC-NONLINEARITY] RD=0.600  best-generic=0.200 (prod)
+  S1 (no generic within 0.15 of RD): True  -> RD distinctive
+
+[C2 BIND-RECOVERABILITY] held-out parent recovery (A,B mean)
+  RD-TURING recov = 0.000  (A=0.000 B=0.000)
+  ADDITIVE  recov = 1.000  (A=1.000 B=1.000)
+  S2 (RD beats additive recov by >=+0.20): False  -> RD adds NO binding info over sum
+
+[C3 ABLATION] eqdiff=0.000  noreact=0.000  (bar<=0.35)
+  S3 (both collapse): True
+
+== FROZEN-BAR VERDICT ==
+  S1(generic-distinct)=True  S2(bind-recov)=False  S3(ablation)=True
+  RESULT: ARTIFACT (numpy REACHABLE = metric artifact of nonlinearity)
+  NOTE: numpy => DIRECTIONAL, NEVER terminal. H_6112 transfer caveat applies.

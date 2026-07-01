@@ -1,0 +1,23 @@
+==================================================================
+H_6121 alternative-splicing (discrete select+splice) — DEEPEN
+==================================================================
+splice composed_distinct (held-out) = 1.000   (numpy screen REACHABLE)
+
+[C1] GENERIC-NONLINEARITY control (does mixing-in-general match it?)
+     tanh(A+B)  composed_distinct = 1.000
+     A*B        composed_distinct = 1.000
+     randMLP    composed_distinct = 1.000
+     splice - max(generic)  = +0.000  (survive iff >= +0.20)  -> FAIL
+
+[C2] BIND-RECOVERABILITY (fixed linear readout C->parents, held-out R2)
+     splice   R2(A)=+0.087 R2(B)=+0.102 mean=+0.095
+     additive R2(A)=+0.402 R2(B)=+0.421 mean=+0.412
+     splice - additive      = -0.317  (survive iff >= +0.15)  -> FAIL
+
+[C3] ABLATION (discrete select OFF -> additive-average floor)
+     ablated composed_distinct = 1.000   (must be < 0.500)  -> FAIL(no-collapse)
+
+------------------------------------------------------------------
+FROZEN BAR (C1 AND C2 AND C3) -> REFUTED  => ARTIFACT (numpy REACHABLE was a metric artifact)
+NOTE: numpy DIRECTIONAL only. H_6112 precedent: numpy 0->1.0 collapsed to 0->0.022 on real CLMConvMoE trunk.
+==================================================================

@@ -1,0 +1,24 @@
+=== C1: GENERIC-NONLINEARITY control (does the metric reward nonlinearity-in-general?) ===
+  additive(floor)      composed_distinct= 0/24  mean_max_cos_parent=0.696
+  antimatter_v2        composed_distinct=24/24  mean_max_cos_parent=0.418
+  gen_tanh(A+B)        composed_distinct= 0/24  mean_max_cos_parent=0.700
+  gen_hadamard(A*B)    composed_distinct=23/24  mean_max_cos_parent=0.152
+  gen_randMLP          composed_distinct=24/24  mean_max_cos_parent=0.070
+  -> generic nonlinearities passing bar(20): ['gen_hadamard(A*B)', 'gen_randMLP']
+
+=== C3: ABLATION (turn the SIGN ingredient off) ===
+  abl_randmask(~0.5)   composed_distinct= 0/24
+  abl_alldiff(A-B)     composed_distinct= 0/24
+  -> random-mask passes bar? False  (True = sign-gate NOT causal = artifact)
+
+=== C2: BIND-RECOVERABILITY (can BOTH parents be read back out of C?) ===
+  additive             recoverA_cos=+0.671 recoverB_cos=+0.672 mean=+0.671
+  antimatter_v2        recoverA_cos=+0.332 recoverB_cos=+0.028 mean=+0.180
+  tensor_bind          recoverA_cos=-0.051 recoverB_cos=+0.008 mean=-0.022
+  -> antimatter recoverability lift over additive = -0.491 (need >= +0.10)
+
+=== VERDICT (frozen bar) ===
+  C1 generic-nonlinearity artifact? True
+  C2 bind-recoverability FAIL?      True
+  C3 ablation (sign not causal)?    False
+  => ARTIFACT (numpy REACHABLE is a metric artifact of distinctness, not compositional binding)

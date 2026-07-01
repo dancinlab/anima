@@ -57,3 +57,23 @@
 - deep-bind=0 이 핵심 한계: retrieval-composition 은 **juxtaposition(병치)** 만 하고 **genuine bind(융합 novel interaction)** 는 못 함 → G1 재조합벽의 깊은 부분(interleaved binding)은 이 축으로 안 열릴 가능성.
 - 실 substrate 미검: 앵커 selection 이 실 텐션 기하에서 novel query 에 맞는 두 앵커를 고를 수 있는지, 조립 seam 이 fluent/coherent 한지, .kosmos 스케일에서 검색 정확도 유지되는지 전부 미측정.
 - **wired:** DIRECTIONAL-only, 미배선. engine-native 재측정(.hexa via core/ kosmos_io + brain_decide 검색·조립) = follow-on ING (juxtaposition vs deep-bind 을 실 trunk 에서 분리 측정할 것).
+
+---
+
+## 심화 (adversarial multi-lens)
+
+**대상 연산자(probe.py):** 생성 = mouth 제거 → trunk가 조합 인덱스(color-tension argmax, shape-tension argmax) 2개만 방출 → 비모수 앵커풀에서 단일-특징 앵커 2개 검색 → 텍스트 concat. metric `composed_distinct` = 출력에 존재하는 타깃 특징 수. 원 결과: additive-top1(walled floor)=1.0, retrieval=2.0, margin +1.0 → GREEN-DIRECTIONAL.
+
+**적대적 FROZEN bar(실행 전 선언):** SURVIVE = C1 ∧ C2 ∧ C3.
+
+| 통제 | 측정 | 결과 | 판정 |
+|---|---|---|---|
+| **C1 generic-nonlinearity** (동일 arity=2 부여) | additive-top2 / tanh(A+B)-top2 / mult-top2 / randMLP-top2 vs retrieval | additive-top2=**2.000**, tanh-top2=**2.000**, mult=0.733, randMLP=0.711; retrieval−generic_max=**+0.000** | ❌ FAIL (generic이 동률로 일치) |
+| **C2 bind-recoverability** (선형 readout C→부모, LOO held-out) | recover(retrieval=concat)=**1.000** vs recover(additive-sum floor)=**1.000**; margin **+0.000** | 두 부모 어디서든 trivially 복원=juxtaposition; deep_bind fused-token=**0.0**(conjunction 도달불가) | ❌ FAIL (additive 못 넘음) |
+| **C3 shuffle/ablation** (ingredient OFF: arity=1) | ablated=1.000 → additive-top1 floor 1.000 붕괴 | ✅ PASS이나 그 ingredient가 C1에서 generic으로 판명 → AND-gate 무의미 | ✅ (moot) |
+
+**SURVIVE = C1(F) ∧ C2(F) ∧ C3(T) = False → ARTIFACT.**
+
+**정직한 결론:** numpy REACHABLE(margin +1.0)의 정체는 제안된 "검색-조립" 메커니즘이 아니라 **readout ARITY**(1-슬롯 argmax floor vs 2-슬롯 검색)의 metric artifact다. 동일 arity=2를 준 순수 additive blend(walled class)와 generic tanh가 retrieval과 **정확히 2.000 동률**로 마진이 소멸했다. retrieval == concat == 순수 병치이고(C2에서 부모가 trivially 분리·복원됨 = binding 아님), probe 자신의 deep_bind=0.0이 fused/interaction 토큰 합성 불가를 이미 인정한다. 이는 이미 벽친 combination-operator 계열(H_1816 predcoding·H_1823 circconv·H_1834 tension-mouth readout·H_1822 substrate-combiner·H_6108 kosmos-walk additive floor)과 동일 좌표. 유일 미검 레버 = trunk 재조합-보상 OBJECTIVE(H_1602, cost-gated), operator 재배치 아님.
+
+**H_6112 transfer caveat:** 통제를 통과했더라도 numpy 추상 프로브는 실 trunk를 과대평가한다 — H_6112 meiosis가 numpy 0→1.0 REACHABLE 후 실 CLMConvMoE trunk에서 0→0.022로 FALSIFIED됐다. numpy=DIRECTIONAL by construction, terminal 아님. engine-native 재측정 unwarranted(ARTIFACT 확정이라 실-trunk rung 가치 없음).

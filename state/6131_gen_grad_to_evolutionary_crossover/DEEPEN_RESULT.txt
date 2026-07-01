@@ -1,0 +1,28 @@
+H_6131 ADVERSARIAL DEEPEN — GA crossover (DIRECTIONAL numpy, never terminal)
+K=8 per-seg-dim=6 held-out off-diag/seed=56  seeds=[1843, 1844, 1845]
+FROZEN BAR: survive iff C1 no-generic-match AND C2 recov-margin>=0.30 (non-trivial)
+            AND C3 ablation-collapse AND GA selection-lift>=0.10
+--------------------------------------------------------------------------
+seed 1843: add=0.000 cross=1.000 | C1 tanh=0.000 had=0.000 mlp=0.000 | C2 recA=0.566 recX=0.923 | C3 abl=0.000 | GA sel=1.000 no=1.000
+seed 1844: add=0.000 cross=1.000 | C1 tanh=0.000 had=0.000 mlp=0.000 | C2 recA=0.619 recX=0.932 | C3 abl=0.000 | GA sel=1.000 no=1.000
+seed 1845: add=0.000 cross=1.000 | C1 tanh=0.000 had=0.000 mlp=0.000 | C2 recA=0.507 recX=0.919 | C3 abl=0.000 | GA sel=1.000 no=1.000
+--------------------------------------------------------------------------
+MEAN add=0.000 cross=1.000
+C1 generic: tanh=0.000 hadamard=0.000 mlp=0.000
+C2 recover: additive=0.564 crossover(concat)=0.925  margin=+0.361
+C3 ablation(disjoint-loci OFF): cross_abl=0.000  (floor==additive 0.000)
+GA: selection=1.000  no-selection=1.000  lift=+0.000
+--------------------------------------------------------------------------
+C1 generic-does-not-match (op-specific)?  True
+C2 recoverability NON-TRIVIAL (not just concat disjoint storage)?  True
+C3 ablation collapses to additive floor (loci causal)?  True
+GA selection injects info (>=0.10 lift)?  False
+--------------------------------------------------------------------------
+INTERPRETATION:
+ - crossover 'win' is DISJOINT STORAGE (dim doubling), recoverable ONLY because
+   the two concepts never share dims -> that is factorization, NOT binding.
+ - ablating disjoint-loci collapses crossover EXACTLY to the additive floor:
+   the causal ingredient is 'extra non-overlapping dims', which the FIXED
+   shared-dim CLMConvMoE trunk does NOT have -> H_6112 real-trunk 0->0.022.
+ - GA selection over the population is INERT (echoes H_1568 selection lens).
+VERDICT: ARTIFACT / DUP-WALLED  (numpy DIRECTIONAL, transfer-unverified; H_6112 real-trunk already FALSIFIED)

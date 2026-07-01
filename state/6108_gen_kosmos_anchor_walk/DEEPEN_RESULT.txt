@@ -1,0 +1,22 @@
+=== H_6108 gen_kosmos_anchor_walk — ADVERSARIAL DEEPEN (numpy) ===
+pairs=780
+OPERATOR geodesic anchor-walk composed_distinct = 0.000   (original: 0.000 FALSIFIED)
+--- C1 GENERIC-NONLINEARITY (is UNION free?) ---
+    generic[additive a+b] composed_distinct = 1.000
+    generic[max(a,b) OR ] composed_distinct = 1.000
+    generic[tanh(a+b)   ] composed_distinct = 1.000
+    generic[a*b (AND)   ] composed_distinct = 0.000
+    generic[randproj MLP] composed_distinct = 0.000
+    best_generic = 1.000   geo-best = -1.000   C1_pass(>0.10)=False
+--- C2 BIND-RECOVERABILITY (recover both parents from composed C) ---
+    additive-union C recovery = 0.434
+    scrambled-C  baseline     = 0.155
+    margin=+0.279   abs>=0.70=False   C2_pass=False
+--- C3 ABLATION (walk OFF -> parent) ---
+    composed_distinct = 0.000   collapse(<0.10)=True
+=== FROZEN BAR: survives = C1 & C2 & C3 ===
+    C1=False  C2=False  C3=True  ->  SURVIVES=False
+HONEST READ: operator was already 0.0; the screen's 'floor=1.0' bar is reached by
+generic OR-superposition (additive/max), and that union C is NOT bind-recoverable
+(recovery ~= scrambled) => the numpy 'reachable' is a METRIC ARTIFACT of OR, not binding.
+VERDICT: ARTIFACT (numpy REACHABLE = metric artifact of OR-superposition)

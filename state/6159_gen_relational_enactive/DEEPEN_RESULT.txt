@@ -1,0 +1,34 @@
+== H_6159 gen_relational_enactive :: ADVERSARIAL DEEPENING (numpy DIRECTIONAL) ==
+
+[PART A] reproduce seeded screen (diagonal-only train) + coverage diagnostic
+  seed0: ADD=0.000 RELATIONAL=0.000 GENERIC-nl=0.000 | held-out classes WITH train support = 0/56
+  seed1: ADD=0.000 RELATIONAL=0.000 GENERIC-nl=0.000 | held-out classes WITH train support = 0/56
+  seed2: ADD=0.000 RELATIONAL=0.000 GENERIC-nl=0.000 | held-out classes WITH train support = 0/56
+  -> DIAGNOSIS: reach=0 for ALL arms incl. generic nonlinearity; held-out joint
+     classes have ZERO training support (diagonal-only never activates off-diag
+     class columns) => the screen FLOOR is a COVERAGE-FLOOR metric artifact, NOT
+     a clean operator-INERT wall (cf. g1-py303-single-floor: coverage floor != wall).
+
+[PART B] FAIR curriculum (spanning decorrelated train, factorized i/j heads)
+  seed0: ADD=1.000 RELATIONAL=0.000 GENERIC-nl=1.000 REL(ctx-shuf)=0.000 | held-out=32 train=32
+  seed1: ADD=1.000 RELATIONAL=0.000 GENERIC-nl=1.000 REL(ctx-shuf)=0.000 | held-out=32 train=32
+  seed2: ADD=1.000 RELATIONAL=0.062 GENERIC-nl=1.000 REL(ctx-shuf)=0.000 | held-out=32 train=32
+  means: ADD=1.000 REL=0.021 GEN=1.000 REL_shuf=0.000
+
+== FROZEN-BAR VERDICT ==
+  PART A: screen FLOOR = COVERAGE-FLOOR metric artifact (all arms 0, held-out classes untrained)
+  C1 specificity (REL beats ADD +-0.979 & GENERIC +-0.979, both>=0.15): False
+  C2 bind-recoverability (REL beats ADD by >=0.15): False
+  C3 listener-causal (ctx-shuffle collapses lift): False
+  SURVIVES ALL 3: False
+  => ARTIFACT (numpy DIRECTIONAL): the relational/enactive listener-modulated
+     operator does NOT beat plain additive superposition once recombination is
+     measurable (fair curriculum). Additive already carries the factor signal;
+     the context-gated bilinear op is INERT / additive-dominated. The screen's
+     🧱 FLOOR was a COVERAGE-FLOOR artifact, not evidence for the mechanism.
+     DUP of the G1 combination-operator wall: untrained readout/combination ops
+     are INERT; lever = trunk recomb-OBJECTIVE (H_1834 native-mouth tension-op
+     INERT; substrate-framebreak-g1-combination-operator; H_1812/1814/1816 NOT-SUP).
+
+H_6112 TRANSFER CAVEAT: numpy overstates; even a survivor would be DIRECTIONAL only
+and require a real-CLMConvMoE-trunk rung before any 🟢 (0->1.0 numpy -> 0->0.022 real).

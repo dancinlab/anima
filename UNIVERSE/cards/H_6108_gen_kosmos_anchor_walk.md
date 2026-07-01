@@ -55,3 +55,19 @@
 **구조적 원인:** geodesic/convex 보간 = 의미 평균(mean) → SHARED(교집합) feature 만 복원, UNION(합집합)/conjunction 은 절대 도달 못 함. "geodesic 이 지나는 새 보간 앵커"는 재조합이 아니라 **blend**. additive superposition 보다도 낮음.
 
 **정직한 스코프 (c9 · H_6112 caveat):** numpy = DIRECTIONAL only, terminal 아님. 단 여기 신호는 *부정* 방향이라 강함 — 추상 toy에서 additive=1.000 조차 실 CLMConvMoE trunk 에선 벽친 floor(H_6112: numpy REACHABLE 0→1.0 이 실trunk 0→0.022 로 overstate). geodesic 은 그 additive floor 보다 *더 낮으므로* 실trunk transfer 는 더 볼 것 없음(engine-native 재측정 unwarranted, 사다리 (2)~(4) 미진입). 레버는 여전히 trunk recomb-OBJECTIVE(H_1602)지 combination operator 아님.
+
+---
+
+## 심화 (adversarial multi-lens)
+
+**대상:** H_6108 gen_kosmos_anchor_walk — 생성 = .kosmos 앵커 geodesic walk (2-concept feature-union 재조합, G1 shape). 원 스크린 = geodesic 0.000 / additive_floor 1.000 / lift −1.000 → 🔴 FALSIFIED (numpy DIRECTIONAL, transfer-UNVERIFIED).
+
+**FROZEN bar (측정 전 고정):** 연산자 생존 = C1 ∧ C2 ∧ C3 전부. 실제 연산자·메트릭(midpoint 0.5a+0.5b, threshold>0.5 decode, target=UNION) 그대로 사용.
+
+- **C1 GENERIC-NONLINEARITY** — UNION 이 공짜인가? generic OR-류가 전부 만점: additive a+b=1.000 · max(a,b)=1.000 · tanh(a+b)=1.000 (반면 a*b=AND=0.000, randproj MLP=0.000). geodesic 연산자=0.000, geo−best=**−1.000** → **C1 FAIL**. 스크린이 "floor=1.0"으로 쓴 바는 anchor-walk 메커니즘이 아니라 *OR-superposition 일반*의 산물.
+- **C2 BIND-RECOVERABILITY** — 합성 C 에서 두 부모 선형복원: additive-union C=**0.434** vs scrambled-C=0.155 (margin +0.279, 즉 chance 위지만) 절대치 0.434 ≪ 0.70 → **C2 FAIL**. union superposition 은 부모 정보 일부만 남길 뿐 깨끗한 compositional binding 아님. (geodesic 자체는 애초 0.0 이라 복원 논의 이전.)
+- **C3 ABLATION** — walk 성분 OFF(t=0→부모) composed_distinct=0.000 collapse<0.10 **pass**. 단 연산자가 잃을 신호 자체가 없어 trivial.
+
+**정직한 결론:** SURVIVES=**False → ARTIFACT**. geodesic anchor-walk 은 FALSIFIED 재확인(0.000, midpoint 가 0.5 threshold 를 못 넘어 UNION 파괴)이며, numpy 스크린의 도달가능 상한(additive 1.0)은 **generic OR-superposition 의 metric artifact** — 아무 OR-류 연산이면 UNION 재구성, 그 union 은 clean binding 도 아님(복원 0.434). 레버는 readout/geometry 가 아니라 trunk recomb-objective(g1-lever-multilens-objective 정합).
+
+**H_6112 transfer caveat:** numpy REACHABLE 는 과대평가(H_6112: 0→1.0 numpy 가 real CLMConvMoE trunk 에서 0→0.022 붕괴). 여기선 numpy 단계에서 이미 0.0 + OR-artifact 확정이므로 real-trunk rung 승격 불필요 — DIRECTIONAL 로 종결.
