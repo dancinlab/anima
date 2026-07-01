@@ -336,7 +336,7 @@
             "name": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-core-the-2-production-engine-substr",
-            "detail": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND py *.py co-resident 1:1 mirror at byte-parity, e.g. clm_decode.hexa⇄clm_decode.py / generator.hexa⇄generator.py, a_engine_native_learning)"
+            "detail": "core/ (the 2-PRODUCTION engine substrate: hexa *.hexa AND py *.py co-resident 1:1 mirror at byte-parity, e.g. decode.hexa⇄decode.py / generator.hexa⇄generator.py, a_engine_native_learning)"
           },
           {
             "name": "agent/ (tool provider, standalone hexa.toml package). Production code",
@@ -360,7 +360,7 @@
             "name": "structure",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-structure",
-            "detail": "production import-closure = 9 engine files (pure_field·brain·engine_g·engine_cli·generator·clm_decode·bytegpt_decode·g6_ideation·DECODER/flame_mm); the G0-G6 scorers (former g_gates) are folded into cli/evaluate.hexa (measurement single-entry), which imports generator·g6_ideation·engine_cli;"
+            "detail": "production import-closure = 8 engine files (pure_field·brain·engine_g·engine_cli·generator·decode (unified CONV+BYTE mouth)·g6_ideation·DECODER/flame_mm); the G0-G6 scorers (former g_gates) folded into cli/evaluate.hexa (measurement single-entry), which imports generator·g6_ideation·engine_cli;"
           },
           {
             "name": "research probes (h<NNNN>_*.hexa) + DECODER research/state pod-harvests evacuated",
@@ -453,7 +453,7 @@
             ]
           },
           {
-            "name": "clm_decode.hexa",
+            "name": "decode.hexa (CONV mouth)",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-clm-decode-hexa",
             "detail": "",
@@ -465,15 +465,15 @@
                 "detail": "**summary**:"
               },
               {
-                "name": "clm_decode.hexa",
+                "name": "decode.hexa CONV mouth (CLMConvMoE .clm; was clm_decode.hexa)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-clm-decode-hexa-clm-decode-hexa",
-                "detail": "clm_decode.hexa"
+                "detail": "decode.hexa CONV mouth (CLMConvMoE .clm; was clm_decode.hexa, now merged into the unified decode.hexa)"
               }
             ]
           },
           {
-            "name": "bytegpt_decode.hexa",
+            "name": "decode.hexa (BYTE mouth)",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-decode-hexa",
             "detail": "",
@@ -485,10 +485,10 @@
                 "detail": "**summary**:"
               },
               {
-                "name": "bytegpt_decode.hexa — D language",
+                "name": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-decode-hexa-bytegpt-decode",
-                "detail": "bytegpt_decode.hexa — D language"
+                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa)"
               }
             ]
           },
@@ -721,10 +721,10 @@
                 "detail": "— magic `CLM\\x01` (67,76,77,1)"
               },
               {
-                "name": "decoder `core/clm_decode.hexa`",
+                "name": "CONV mouth decoder `core/decode.hexa`",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-11",
-                "detail": "decoder `core/clm_decode.hexa`"
+                "detail": "CONV mouth decoder `core/decode.hexa` (was clm_decode.hexa)"
               },
               {
                 "name": "model = clm303 (CLMConvMoE 303M, held-out 4/4 DESCENT;",
@@ -805,10 +805,10 @@
                 "detail": "— magic = NOT-CLM + sane 5×u32 `[256,d,L,H,block]` header (vocab==256, n_layer 1..64; gen_bytegpt header sniff generator.hexa:153)"
               },
               {
-                "name": "decoder `core/bytegpt_decode.hexa`",
+                "name": "BYTE mouth decoder `core/decode.hexa`",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-25",
-                "detail": "decoder `core/bytegpt_decode.hexa`"
+                "detail": "BYTE mouth decoder `core/decode.hexa` (was bytegpt_decode.hexa)"
               },
               {
                 "name": "model = ByteGPT 303M (H_1129 GPT-2-class, 24-layer ko/en)",
@@ -861,7 +861,7 @@
             ]
           },
           {
-            "name": "core/clm_decode.hexa",
+            "name": "core/decode.hexa (CONV mouth)",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-core-clm-decode-hexa",
             "detail": "",
@@ -873,15 +873,15 @@
                 "detail": "**summary**:"
               },
               {
-                "name": "core/clm_decode.hexa",
+                "name": "core/decode.hexa CONV mouth (was clm_decode.hexa)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-core-clm-decode-hexa-core-clm-decod",
-                "detail": "core/clm_decode.hexa"
+                "detail": "core/decode.hexa CONV mouth (was clm_decode.hexa, merged into the unified decode.hexa)"
               }
             ]
           },
           {
-            "name": "core/bytegpt_decode.hexa",
+            "name": "core/decode.hexa (BYTE mouth)",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-core-bytegpt-decode-hexa",
             "detail": "",
@@ -893,10 +893,10 @@
                 "detail": "**summary**:"
               },
               {
-                "name": "core/bytegpt_decode.hexa — 24-layer GPT-2-class ByteGPT decode (303M ko/en",
+                "name": "core/decode.hexa BYTE mouth — 24-layer GPT-2-class ByteGPT decode (303M ko/en",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-core-bytegpt-decode-hexa-core-byteg",
-                "detail": "core/bytegpt_decode.hexa — 24-layer GPT-2-class ByteGPT decode (303M ko/en chat trunk). Forward = bg_forward_last_W (per-layer d² GEMM via mm()=farr_matmul/own-GEMM)."
+                "detail": "core/decode.hexa BYTE mouth (was bytegpt_decode.hexa) — 24-layer GPT-2-class ByteGPT decode (303M ko/en chat trunk). Forward = bg_forward_last_W (per-layer d² GEMM via mm()=farr_matmul/own-GEMM)."
               },
               {
                 "name": "KV-CACHE incremental decode (_bg_kv_new/_bg_kv_step/_bg_kv_free): per-layer K,V …",

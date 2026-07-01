@@ -44,7 +44,7 @@ import "core/pure_field.hexa"
 import "core/brain.hexa"
 import "core/engine_cli.hexa"
 import "core/generator.hexa"
-import "core/bytegpt_decode.hexa"
+import "core/decode.hexa"
 // NOTE: G0-G6 evaluation lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin,
 // symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — and
 // cli/evaluate.hexa now HOLDS the G0-G6 scorers directly (the former core/g_gates.hexa
@@ -226,7 +226,7 @@ fn anima_evaluate_mode(argv: [string]) {
         let rf = "/tmp/anima_evalpy_result.out"
         // cd into $ANIMA_SRC first so evaluate.py's __file__-relative core/ resolution
         // matches a direct `python3 cli/evaluate.py` (verified working). Without the cd,
-        // the hexa exec cwd skews sys.path[0] and core/ imports (bytegpt_decode) break.
+        // the hexa exec cwd skews sys.path[0] and core/ imports (decode) break.
         let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/evaluate.py" + fwd + " --result-file " + rf
         println("dispatch: " + cmd)
         let _ev = exec(cmd)

@@ -15,10 +15,11 @@ L3 MOUTH-DISPATCH surface of core/generator.hexa.
 Per CLAUDE.md a_two_production_mirror / a_core_engine_map: hexa + py are TWO
 co-equal production engines kept at byte-parity. generator.hexa is the SINGLE L3
 typed mouth slot — it sniffs a ckpt header and dispatches to ONE of two mouth
-ARCHITECTURES (conv .clm via clm_decode, ByteGPT .bin via bytegpt_decode). This
+ARCHITECTURES (conv .clm via the CONV mouth, ByteGPT .bin via the BYTE mouth). This
 module is the py mirror of that dispatcher; it routes to the already-parity-proven
-core/clm_decode.py and core/bytegpt_decode.py (themselves 1:1 ports of their
-.hexa SSOTs). NO torch in the path — stdlib + numpy (via the decoders) only.
+core/decode.py (the unified decoder that merges the former clm_decode.py +
+bytegpt_decode.py 1:1, itself a port of core/decode.hexa). NO torch in the path —
+stdlib + numpy (via the decoder) only.
 
 Scope: this mirrors generator.hexa's PUBLIC dispatch surface (a_core_engine_map):
   gen_mouth_kind      generator.hexa:628  header-sniff CLM\\x01 / 5xu32 / unknown
@@ -33,7 +34,7 @@ and the header helpers they reuse:
   _gen_is_bytegpt     :148   _gen_clm_probe_header :224   _gen_rd_u32 :792
 
 NOTE the sniff is reproduced VERBATIM from generator.hexa (NOT the looser ranges
-in bytegpt_decode.bg_is_bytegpt): generator.hexa::_gen_is_bytegpt requires
+in decode.bg_is_bytegpt): generator.hexa::_gen_is_bytegpt requires
 vocab==256, n_layer in 1..64, n_head divides d, block in 1..8192 — these tighter
 bounds are the dispatcher's actual edge-case behavior and must be mirrored exactly.
 
@@ -47,8 +48,8 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
-import clm_decode as _clm        # core/clm_decode.py — ConvMoE .clm mouth
-import bytegpt_decode as _bg     # core/bytegpt_decode.py — ByteGPT .bin mouth
+import decode as _clm        # core/decode.py (unified) — ConvMoE .clm mouth API
+import decode as _bg         # same module; both aliases resolve the union public API (ByteGPT .bin mouth)
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -71,7 +72,7 @@ def _gen_is_bytegpt(p):
     """generator.hexa:148 _gen_is_bytegpt — true iff `p` is a ByteGPT flat binary,
     NOT a .clm. Reject the CLM\\x01 magic; then require a SANE 5xu32 header:
     vocab==256, n_layer in 1..64, n_head divides d, block in 1..8192. Edge-safe
-    (missing/short file -> false). Bounds are tighter than bytegpt_decode.bg_is_bytegpt;
+    (missing/short file -> false). Bounds are tighter than decode.bg_is_bytegpt;
     these are the dispatcher's verbatim discriminator (mirror exactly)."""
     if len(p) == 0:
         return False

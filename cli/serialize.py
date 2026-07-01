@@ -9,7 +9,7 @@
 #
 # REFERENCE-MATCH (NOT a reimplementation): the byte layout comes from the GROUND-TRUTH
 # bridge serializer train/clm/model/clm_serialize_v2.py::serialize_v3 (the SAME byte
-# grammar core/clm_decode.hexa parses and the golden reexport_d768_v2_fast.clm uses), and
+# grammar core/decode.hexa parses and the golden reexport_d768_v2_fast.clm uses), and
 # the held-out gate is train/clm/model/verify_clm_v2.py descent (math.log mirror, dt_ln-
 # immune). This file only loads the .pt, derives L/E from the state-dict keys, and calls
 # those two backends — it invents no new layout and no new gate.
@@ -128,11 +128,11 @@ def serialize_run(argv):
     nbytes = os.path.getsize(out)
     print("WRITTEN " + str(nbytes) + " bytes -> " + out)
 
-    # ── CORE-loadable self-check (mirror of core/clm_decode.hexa) ────────────
+    # ── CORE-loadable self-check (mirror of core/decode.hexa CONV mouth) ─────
     rb = open(out, "rb").read()
     decodable = VC.clm_decodable(rb)
     print("")
-    print("=== CORE-loadable self-check (mirror of core/clm_decode.hexa) ===")
+    print("=== CORE-loadable self-check (mirror of core/decode.hexa CONV mouth) ===")
     print("  clm_decodable = " + str(decodable))
     if not decodable:
         print("FAIL — serialized .clm is NOT CORE-loadable (see above).")

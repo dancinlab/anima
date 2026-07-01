@@ -12,9 +12,9 @@
 // on mismatch it reports the FIRST diverging step (no fudge — divergence is the result).
 //
 // p7: verification is exact token-id equality + a per-step logits max|Δ| readout,
-// NOT a loss/perplexity number. Engine-native (live core/bytegpt_decode.hexa).
+// NOT a loss/perplexity number. Engine-native (live core/decode.hexa BYTE mouth).
 
-import "core/bytegpt_decode.hexa"
+import "core/decode.hexa"
 
 // generate `gen` ids the REFERENCE way (full-forward per step). Returns list of ids.
 fn gen_ref(W: Map, seed: list, gen: int, top_k: int, temp: float, seed_rng: int) -> list {

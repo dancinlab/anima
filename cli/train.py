@@ -86,12 +86,27 @@ Arms (single structural variable each, vs ctrl):
   tlora_dict : N1 TLoRA + N7 dictionary/sparse aux.
   tlora_jamo : N1 TLoRA + N8 jamo teach aux.
 
+ARCH (--arch {clm,bytegpt}, default clm — preserves current behavior): the objective
+levers are ARCH-AGNOSTIC (they operate on logits + an optional penultimate), so they can
+be tested on EITHER trunk. `--arch bytegpt` builds a 24-layer GPT-2-class ByteGPT (the
+CLEAN G1 wall: ByteGPT single=2, vs CLMConvMoE's single=0 coverage-floor) and serializes a
+`.bin` (5×u32 header) via tool/bytegpt_serialize.py instead of a `.clm`. For bytegpt the
+CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF — only arm=ctrl × the
+objective matrix is supported (that's exactly what the G1-lever test needs). `anima
+evaluate --py` auto-detects `.bin` vs `.clm` by header, so a ByteGPT `.bin` measures through
+the bytegpt mouth automatically.
+
 USAGE (installed `anima` PATH command after `hx install anima`):
+  # CLM trunk (default):
   anima train --py --arm ctrl --objective constructive_bind --steps 8000 \\
       --canon --corpus <p1..p4> --cell-label ko-general en-general ko-sns en-sns \\
       --seed 7 --val-frac 0.05 --val-every 200 --sample proportional \\
       --out ckpt/ctrl_cbind_seed7.clm --ckpt-out ckpt/ctrl_cbind_seed7.pt \\
       --gauges-out ckpt/ctrl_cbind_seed7.json
+  # ByteGPT trunk (the CLEAN G1 wall) — arm=ctrl × the objective matrix:
+  anima train --py --arch bytegpt --arm ctrl --objective composed_nce --steps 8000 \\
+      --canon --corpus <p1..p4> --seed 7 --out ckpt/bg_ctrl_cnce.bin \\
+      --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
 import argparse, json, math, os, sys, time
@@ -141,6 +156,10 @@ for _r in _ROOTS:
 from model import CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d  # train/clm/model/model.py
 import clm_serialize_v2 as S                         # serialize_v3 = bridge SSOT
 import verify_clm_v2 as VC                            # clm_decodable / parse_clm
+# ByteGPT trunk model (--arch bytegpt) — sibling of model.py in the SAME model dir.
+from bytegpt_model import ByteGPTConfig, ByteGPT      # train/clm/model/bytegpt_model.py
+# ByteGPT .pt -> .bin serializer lives in tool/ (already on sys.path above).
+import bytegpt_serialize as BGS                       # serialize(pt_path, bin_path)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -837,6 +856,12 @@ def main():
     ap = argparse.ArgumentParser(
         description="anima canonical python trainer (`anima train --py`) — CLMConvMoE "
                     "SAVANT+MITOSIS recipe + H_1640 arm×objective compositional levers")
+    ap.add_argument("--arch", default="clm", choices=["clm", "bytegpt"],
+                    help="trunk architecture: clm=CLMConvMoE (default, .clm out) | "
+                         "bytegpt=24-layer GPT-2-class ByteGPT (.bin out) — the CLEAN G1 "
+                         "wall (single=2). The arm×objective compositional levers are "
+                         "arch-agnostic (operate on logits+penultimate); the CLM-specific "
+                         "levers (savant/mitosis/tlora/dict/jamo) are gated OFF for bytegpt.")
     ap.add_argument("--arm", default="ctrl", choices=list(ARMS))
     ap.add_argument("--objective", default="ce_marginal", choices=list(OBJECTIVES),
                     help="OPTIONAL objrun coupling (default ce_marginal = standalone)")
@@ -877,15 +902,41 @@ def main():
     ap.add_argument("--gauges-out", default="")
     a = ap.parse_args()
 
+    is_bytegpt = (a.arch == "bytegpt")
     tlora_on, dict_on, jamo_on = ARMS[a.arm]
     savant_on = not a.no_savant
     mitosis_on = not a.no_mitosis
+    # ── ByteGPT: the CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF.
+    #    ByteGPT is a plain transformer (no MoE experts to split, no ConvExpert weight to
+    #    TLoRA-reparameterize); the G1-lever test it enables is arm=ctrl × the objective
+    #    matrix (the arch-agnostic trunk-objective losses). Only n_head is bytegpt-only.
+    bg_n_head = 0
+    if is_bytegpt:
+        if a.arm != "ctrl":
+            print(f"  [bytegpt] arm={a.arm} is CLM-specific → forcing arm=ctrl "
+                  f"(tlora/dict/jamo are ConvMoE-only)", flush=True)
+        tlora_on = dict_on = jamo_on = False
+        if savant_on or mitosis_on:
+            print("  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt",
+                  flush=True)
+        savant_on = False
+        mitosis_on = False
     if a.canon:
-        d = a.d or 3784; L = a.L or 4
-        seq_len = a.seq_len or 1024; steps = a.steps or 2000
+        if is_bytegpt:
+            d = a.d or 768; L = a.L or 24
+            seq_len = a.seq_len or 1024; steps = a.steps or 2000
+            bg_n_head = 12
+        else:
+            d = a.d or 3784; L = a.L or 4
+            seq_len = a.seq_len or 1024; steps = a.steps or 2000
     else:
-        d = a.d or 64; L = a.L or 2
-        seq_len = a.seq_len or 128; steps = a.steps or 60
+        if is_bytegpt:
+            d = a.d or 64; L = a.L or 2
+            seq_len = a.seq_len or 128; steps = a.steps or 60
+            bg_n_head = 2
+        else:
+            d = a.d or 64; L = a.L or 2
+            seq_len = a.seq_len or 128; steps = a.steps or 60
     e0, emax = a.e0, a.emax
     V, K = 256, 3
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -893,9 +944,13 @@ def main():
     obj_is_module = isinstance(objfn, nn.Module)
     obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
 
-    print(f"=== anima train --py (canonical) arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
-    print(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
-          f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
+    print(f"=== anima train --py (canonical) arch={a.arch} arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
+    if is_bytegpt:
+        print(f"  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) "
+              f"n_head={bg_n_head} block={seq_len}", flush=True)
+    else:
+        print(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
+              f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
     print(f"  device={device} d={d} L={L} E0={e0} Emax={emax} seq_len={seq_len} "
           f"steps={steps} bs={a.batch_size} sample={a.sample}", flush=True)
     if device == "cuda":
@@ -904,19 +959,30 @@ def main():
 
     torch.manual_seed(a.seed)
 
-    cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
-                    variant="AB", dilation_base=2, max_dilation=512)
-    model = CLMConvMoE(cfg).to(device)             # production additive readout (all arms)
-    if tlora_on:
-        install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
-        model.to(device)
-    jamo_head = JamoHead(d).to(device) if jamo_on else None
+    if is_bytegpt:
+        # ByteGPT block = the context window; use seq_len as the positional block size so a
+        # non-canon toy stays small. n_head must divide d (validated by the config).
+        bg_block = seq_len
+        bg_cfg = ByteGPTConfig(vocab=V, d=d, n_layer=L, n_head=bg_n_head, block=bg_block)
+        model = ByteGPT(bg_cfg).to(device)
+        cfg = None
+        jamo_head = None
+        mito = None                                 # no MoE experts to grow
+    else:
+        cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
+                        variant="AB", dilation_base=2, max_dilation=512)
+        model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
+        if tlora_on:
+            install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
+            model.to(device)
+        jamo_head = JamoHead(d).to(device) if jamo_on else None
     n_params = sum(p.numel() for p in model.parameters())
     print(f"  params: {n_params} ({n_params/1e6:.3f}M)"
           f"{' (+jamo head)' if jamo_on else ''}", flush=True)
 
-    mito = MitosisMoE(model, e0, emax)
-    install_router_mask(model, mito)
+    if not is_bytegpt:
+        mito = MitosisMoE(model, e0, emax)
+        install_router_mask(model, mito)
     params = (list(model.parameters())
               + (list(jamo_head.parameters()) if jamo_head else [])
               + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
@@ -970,8 +1036,12 @@ def main():
         y = ((14 + base * 37) % V).unsqueeze(0).repeat(a.batch_size, 1).to(device)
         return x, y
 
-    # trunk penultimate activation cache for N7 dictionary/sparse aux
+    # trunk penultimate activation cache for N7 dictionary/sparse aux + the compositional
+    # objectives. ByteGPT exposes its pre-head hidden (post-final-LN) directly on the
+    # forward dict; CLM recomputes the trunk to the pre-readout MoE/norm_out site.
     def trunk_penultimate(x):
+        if is_bytegpt:
+            return model(x)["penultimate"]         # (B, d, T) — ln_f(x) pre-head
         h = model.embed(x).transpose(1, 2)
         h = model.embed_conv(h)
         for layer in model.trunk:
@@ -1008,7 +1078,29 @@ def main():
                 if (v := cell_val_ce(c)) is not None}
 
     # ── serialize helper (end-of-run AND intermediate --ckpt-every checkpoints) ──
+    #   CLM → .clm v0.3 (CLMConvMoE additive readout, materialized TLoRA experts).
+    #   ByteGPT → .pt (cfg+state_dict) → tool/bytegpt_serialize.py::serialize → .bin (5×u32
+    #   header). The engine (generator L3 mouth-sniff) auto-dispatches .bin to the bytegpt
+    #   decode; `anima evaluate --py` auto-detects .bin vs .clm by header, so no eval change.
+    def _write_bin(out_path):
+        # write the torch .pt in the exact shape bytegpt_serialize.serialize reads, next to
+        # the .bin, then bridge it. The aux-head objective params are OUTSIDE model.state_dict
+        # (they live on objfn), so serialize sees only the standard ByteGPT weights.
+        pt_path = out_path + ".pt" if not out_path.endswith(".pt") else out_path
+        bin_path = out_path
+        sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+        ck = {"model": sd, "config": model.cfg.as_dict(),
+              "val_ce": (round(lossF, 5) if lossF is not None else None),
+              "step": steps, "nparam": n_params}
+        torch.save(ck, pt_path)
+        BGS.serialize(pt_path, bin_path)
+        print(f"  .bin WRITTEN {os.path.getsize(bin_path)} bytes -> {bin_path} "
+              f"(via {pt_path})", flush=True)
+
     def _write_clm(out_path):
+        if is_bytegpt:
+            _write_bin(out_path)
+            return
         e_ser = mito.e_active
         mat = materialize_experts_into_state(model)
         sd_active = {}
@@ -1028,11 +1120,17 @@ def main():
     model.train()
     t0 = time.time(); loss0 = lossF = None
     last_aux = {}; dbes_log = []
+    # active-expert count for logs/summary — CLM tracks it on the mitosis controller;
+    # ByteGPT has no experts (mito is None) so it is a fixed 1.
+    def e_now():
+        return mito.e_active if mito is not None else 1
+    # intermediate-ckpt extension: bytegpt writes .bin, clm writes .clm.
+    _ck_ext = ".bin" if is_bytegpt else ".clm"
     for step in range(1, steps + 1):
-        # --ckpt-every: dump an intermediate .clm of the state AFTER (step-1) updates
+        # --ckpt-every: dump an intermediate ckpt of the state AFTER (step-1) updates
         # (step-window multiplex — one run yields 2000/4000/… checkpoints, no re-train).
         if a.ckpt_every > 0 and a.out and step > 1 and (step - 1) % a.ckpt_every == 0:
-            _write_clm(f"{a.out}.step{step - 1}.clm")
+            _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
             model.train()
         if savant_on:
             inh = savant_inhibition(step, steps, i0, i_floor, latch)
@@ -1101,7 +1199,7 @@ def main():
         if loss0 is None: loss0 = ce
         lossF = ce
         do_val = a.val_every > 0 and (step == 1 or step % a.val_every == 0 or step == steps)
-        if a.dbes_every and (step % a.dbes_every == 0 or step == steps):
+        if (not is_bytegpt) and a.dbes_every and (step % a.dbes_every == 0 or step == steps):
             db = dbes_specialization(model, x); db["step"] = step
             dbes_log.append(db)
         if step == 1 or step % a.log_every == 0 or step == steps:
@@ -1111,7 +1209,7 @@ def main():
                 vc = (sum(per.values()) / len(per)) if per else float("nan")
                 vtxt = f"  val_CE={vc:.5f}"
             atxt = (" " + json.dumps({k: round(v, 4) for k, v in aux.items()})) if aux else ""
-            print(f"  step {step:5d}  CE={ce:.5f}  E={mito.e_active}  "
+            print(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
                   f"wd={wd:.4f} dp={dp:.4f}{vtxt}{atxt}", flush=True)
     wall = time.time() - t0
 
@@ -1127,29 +1225,35 @@ def main():
     final_val = (sum(per.values()) / len(per)) if per else None
     print(f"  FINAL val_CE(pooled)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
     print(f"  loss0={loss0:.5f} lossF={lossF:.5f} wall={wall:.1f}s "
-          f"savant_latched_at={latch['at']} E0={e0}->E={mito.e_active}", flush=True)
+          f"savant_latched_at={latch['at']} E0={e0}->E={e_now()}", flush=True)
 
     # ── N3 DBES final diagnostic (gradient-free, measure-only) ────────────────
+    #   DBES probes MoE expert differentiation — CLM-only (no experts in ByteGPT).
     dbes_final = None
-    try:
-        xb, _ = get_batch(steps + 1)
-        dbes_final = dbes_specialization(model, xb)
-        print(f"  [N3 DBES expert-specialization] {json.dumps(dbes_final, ensure_ascii=False)}", flush=True)
-    except Exception as e:
-        print(f"  DBES error: {e}", flush=True)
+    if not is_bytegpt:
+        try:
+            xb, _ = get_batch(steps + 1)
+            dbes_final = dbes_specialization(model, xb)
+            print(f"  [N3 DBES expert-specialization] {json.dumps(dbes_final, ensure_ascii=False)}", flush=True)
+        except Exception as e:
+            print(f"  DBES error: {e}", flush=True)
 
     # ── G1/G6 torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──────────
+    #   gauge_lib.compute_inline_gauges decodes via the CLM mouth (CLMConvMoE-specific);
+    #   skip for bytegpt (the terminal verdict is `anima evaluate --py <.bin>` engine-native
+    #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
     gauges = None
-    try:
-        import gauge_lib
-        was = model.training; model.eval()
-        gauges = gauge_lib.compute_inline_gauges(
-            model, None, seeds=7, corpus_index=[c.path for c in cells],
-            ce=lossF, step=steps, torch=torch)
-        if was: model.train()
-        print(f"  [G1/G6 torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
-    except Exception as e:
-        print(f"  gauges error: {e}", flush=True)
+    if not is_bytegpt:
+        try:
+            import gauge_lib
+            was = model.training; model.eval()
+            gauges = gauge_lib.compute_inline_gauges(
+                model, None, seeds=7, corpus_index=[c.path for c in cells],
+                ce=lossF, step=steps, torch=torch)
+            if was: model.train()
+            print(f"  [G1/G6 torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
+        except Exception as e:
+            print(f"  gauges error: {e}", flush=True)
 
     # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
     full_sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
@@ -1161,7 +1265,8 @@ def main():
         print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
 
     # ── summary json ──────────────────────────────────────────────────────────
-    summary = {"entry": "anima train --py", "arm": a.arm, "objective": a.objective, "seed": a.seed,
+    summary = {"entry": "anima train --py", "arch": a.arch, "arm": a.arm,
+               "objective": a.objective, "seed": a.seed,
                "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
                                   if obj_is_module else 0),
                "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
@@ -1174,13 +1279,16 @@ def main():
                "registers_descent": f"{n_desc}/{len(per)}", "heldout_descent": descent,
                "last_aux": last_aux, "dbes_final": dbes_final, "dbes_log": dbes_log,
                "gauges_g1g6_torch_probe": gauges,
-               "tier": "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL"}
+               "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+                        if is_bytegpt else
+                        "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
     if a.gauges_out:
         with open(a.gauges_out, "w") as f:
             json.dump(summary, f, ensure_ascii=False, indent=2)
         print(f"  summary -> {a.gauges_out}", flush=True)
 
-    # ── serialize .clm v0.3 (ALL arms — additive readout + MATERIALIZED experts) ──
+    # ── serialize the trained ckpt: CLM → .clm v0.3 (additive readout + MATERIALIZED
+    #    experts) | ByteGPT → .bin (5×u32 header via tool/bytegpt_serialize.py). ──
     if a.out:
         _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
 
