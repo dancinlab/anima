@@ -3515,3 +3515,136 @@ fn _bg_kv_step_dev_batch(W: Map, kvb: Map, ids: list, N: int, pos_p: int) -> int
     let _ = farr_free(logits_all)
     return out
 }
+
+// ══ S1 FP32-e2e decode (#21 gold, opt-in HEXA_DECODE_FP32) ══
+// f32 twin of _bg_kv_step_dev_batch: activations flow f32→f32 device through the
+// additive g_slots[].d_f32 mirror with NO per-op cast (structural wall #1); the
+// mma.sync own-GEMM runs on f32 inputs directly. Weights are cast to f32 ONCE by
+// _bg_weights_to_f32 (hoisted, closes wall #3 re-cast). Attention stays the FP64
+// kernel via the explicit f32↔f64 roundtrip island (farr_attn_dt_decode_batch_f32_gpu,
+// [ATTN-F64-ROUNDTRIP]) — S2 replaces it. argmax-faithful (opt-in, NOT byte-eq to
+// FP64); the FP64 default path is untouched.
+
+// cast every weight farr to its f32 device mirror once (call after bg_load).
+fn _bg_weights_to_f32(W: Map, nlay: int, d: int, vocab: int) {
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
+    let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+    let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
+    let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
+    let mut L = 0
+    while L < nlay {
+        let _ = farr_to_f32(to_int(ln1w[L]), d);   let _ = farr_to_f32(to_int(ln1b[L]), d)
+        let _ = farr_to_f32(to_int(ln2w[L]), d);   let _ = farr_to_f32(to_int(ln2b[L]), d)
+        let _ = farr_to_f32(to_int(inWt_q[L]), d * d); let _ = farr_to_f32(to_int(inWt_k[L]), d * d); let _ = farr_to_f32(to_int(inWt_v[L]), d * d)
+        let _ = farr_to_f32(to_int(inBq_e[L]), d);  let _ = farr_to_f32(to_int(inBk_e[L]), d);  let _ = farr_to_f32(to_int(inBv_e[L]), d)
+        let _ = farr_to_f32(to_int(oWt[L]), d * d); let _ = farr_to_f32(to_int(oB_e[L]), d)
+        let _ = farr_to_f32(to_int(m0Wt[L]), d * 4 * d); let _ = farr_to_f32(to_int(m0B_e[L]), 4 * d)
+        let _ = farr_to_f32(to_int(m2Wt[L]), 4 * d * d); let _ = farr_to_f32(to_int(m2B_e[L]), d)
+        L = L + 1
+    }
+    let _ = farr_to_f32(to_int(W["lnfw"]), d); let _ = farr_to_f32(to_int(W["lnfb"]), d)
+    let _ = farr_to_f32(to_int(W["headT"]), d * vocab)
+}
+
+// f32 KV slabs (one [N*cap*d] cache/layer, f32 device mirror allocated+zeroed).
+fn _bg_kv_new_batch_f32(nlay: int, cap: int, d: int, N: int) -> Map {
+    let K = []
+    let V = []
+    let mut l = 0
+    while l < nlay {
+        let kf = farr_zeros(N * cap * d); let _ = farr_mark_f32(kf, N * cap * d); K.push(kf)
+        let vf = farr_zeros(N * cap * d); let _ = farr_mark_f32(vf, N * cap * d); V.push(vf)
+        l = l + 1
+    }
+    return #{ "K": K, "V": V, "cap": cap, "N": N }
+}
+
+fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) -> int {
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"]); let block = to_int(W["block"])
+    let hd = d / nh
+    let eps = 0.00001
+    let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
+    let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+    let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
+    let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
+    let headT = to_int(W["headT"])
+    let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"])
+    let cap = to_int(kvb["cap"])
+    let Kc = kvb["K"]; let Vc = kvb["V"]
+    let Lrows = pos_p + 1
+
+    // embed x[N,d] on host (tok/pos read host-side), then cast to the f32 mirror.
+    let x = farr_zeros(N * d)
+    let mut n0 = 0
+    while n0 < N {
+        let idn = to_int(ids[n0])
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, n0 * d + c, farr_get(tok, idn * d + c) + farr_get(pos, pos_p * d + c))
+            c = c + 1
+        }
+        n0 = n0 + 1
+    }
+    let _ = farr_to_f32(x, N * d)
+
+    let nrm = farr_zeros(N * d); let _ = farr_mark_f32(nrm, N * d)
+    let sscr = farr_zeros(N * nh * block)   // f64 score scratch for the attn roundtrip
+
+    let mut Lr = 0
+    while Lr < nlay {
+        let _ = farr_layernorm_f32_gpu(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, N, d, eps)
+        let q = farr_zeros(N * d)
+        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_q[Lr]), d, q)
+        let _ = farr_residual_add_f32_gpu(q, to_int(inBq_e[Lr]), q, N * d)
+        let kk = farr_zeros(N * d)
+        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_k[Lr]), d, kk)
+        let _ = farr_residual_add_f32_gpu(kk, to_int(inBk_e[Lr]), kk, N * d)
+        let vv = farr_zeros(N * d)
+        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_v[Lr]), d, vv)
+        let _ = farr_residual_add_f32_gpu(vv, to_int(inBv_e[Lr]), vv, N * d)
+        let Kl = to_int(Kc[Lr]); let Vl = to_int(Vc[Lr])
+        let mut na = 0
+        while na < N {
+            let _ = farr_copy_slice_f32_gpu(kk, na * d, Kl, na * cap * d + pos_p * d, d)
+            let _ = farr_copy_slice_f32_gpu(vv, na * d, Vl, na * cap * d + pos_p * d, d)
+            na = na + 1
+        }
+        let _ = farr_free(kk); let _ = farr_free(vv)
+        let ctx = farr_zeros(N * d)
+        let _ = farr_attn_dt_decode_batch_f32_gpu(q, Kl, Vl, sscr, ctx, N, Lrows, cap, nh, nh, hd)
+        let _ = farr_free(q)
+        let aout = farr_zeros(N * d)
+        let _ = farr_matmul_f32_gpu(ctx, N, d, to_int(oWt[Lr]), d, aout)
+        let _ = farr_residual_add_f32_gpu(aout, to_int(oB_e[Lr]), aout, N * d)
+        let _ = farr_residual_add_f32_gpu(x, aout, x, N * d)
+        let _ = farr_free(ctx); let _ = farr_free(aout)
+
+        let _ = farr_layernorm_f32_gpu(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, N, d, eps)
+        let h4 = farr_zeros(N * 4 * d)
+        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(m0Wt[Lr]), 4 * d, h4)
+        let _ = farr_residual_add_f32_gpu(h4, to_int(m0B_e[Lr]), h4, N * 4 * d)
+        let _ = farr_gelu_f32_gpu(h4, h4, N * 4 * d)
+        let mlpo = farr_zeros(N * d)
+        let _ = farr_matmul_f32_gpu(h4, N, 4 * d, to_int(m2Wt[Lr]), d, mlpo)
+        let _ = farr_residual_add_f32_gpu(mlpo, to_int(m2B_e[Lr]), mlpo, N * d)
+        let _ = farr_residual_add_f32_gpu(x, mlpo, x, N * d)
+        let _ = farr_free(h4); let _ = farr_free(mlpo)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(sscr)
+
+    let _ = farr_layernorm_f32_gpu(x, lnfw, lnfb, nrm, N, d, eps)
+    let logits_all = farr_zeros(N * vocab)
+    let _ = farr_matmul_f32_gpu(nrm, N, d, headT, vocab, logits_all)
+    let _ = farr_to_f64(logits_all, N * vocab)   // f32 head → host f64 for argmax
+    let _ = farr_free(nrm); let _ = farr_free(x)
+    let out = farr_zeros(N * vocab)
+    let mut hk = 0
+    while hk < N * vocab { let _ = farr_set(out, hk, farr_get(logits_all, hk)); hk = hk + 1 }
+    let _ = farr_free(logits_all)
+    return out
+}
