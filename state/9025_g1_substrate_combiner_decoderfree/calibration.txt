@@ -1,0 +1,39 @@
+SEED=7 D=128 N=40 SPLIT_THRESH=0.3 RECOVER_THRESH=0.3
+SELFTEST hrr unbind(B) cos=0.713 -> PASS
+op          M1 distinct  recover_raw  shuf_collapse  M2 EARNED   ablate_earned
+additive    25/40        40/40        0/40           0/40        0/40
+hrr_conv    40/40        40/40        35/40          35/40       0/40
+tensorproj  40/40        0/40         40/40          0/40        0/40
+
+READ (c9): shuffle-controlled. additive recover_raw high but M2-EARNED ~0
+(key-agnostic = fake). hrr M2-EARNED high (key-locked bind). ablate_earned ~0
+everywhere confirms lift is the OP not the recover fn. STILL harness-QA only:
+earned recovery = storage property; held-out RECOMBINATION (real G1) needs a
+TRAINED W_bind (Rung1 GPU, prior LOW per H_1840 fair-gate + DPI).
+---
+SEED=4302 D=128 N=40 SPLIT_THRESH=0.3 RECOVER_THRESH=0.3
+SELFTEST hrr unbind(B) cos=0.667 -> PASS
+op          M1 distinct  recover_raw  shuf_collapse  M2 EARNED   ablate_earned
+additive    22/40        40/40        0/40           0/40        0/40
+hrr_conv    40/40        40/40        35/40          35/40       0/40
+tensorproj  40/40        0/40         40/40          0/40        0/40
+
+READ (c9): shuffle-controlled. additive recover_raw high but M2-EARNED ~0
+(key-agnostic = fake). hrr M2-EARNED high (key-locked bind). ablate_earned ~0
+everywhere confirms lift is the OP not the recover fn. STILL harness-QA only:
+earned recovery = storage property; held-out RECOMBINATION (real G1) needs a
+TRAINED W_bind (Rung1 GPU, prior LOW per H_1840 fair-gate + DPI).
+---
+SEED=4303 D=128 N=40 SPLIT_THRESH=0.3 RECOVER_THRESH=0.3
+SELFTEST hrr unbind(B) cos=0.760 -> PASS
+op          M1 distinct  recover_raw  shuf_collapse  M2 EARNED   ablate_earned
+additive    22/40        40/40        0/40           0/40        0/40
+hrr_conv    40/40        40/40        34/40          34/40       0/40
+tensorproj  40/40        0/40         40/40          0/40        0/40
+
+READ (c9): shuffle-controlled. additive recover_raw high but M2-EARNED ~0
+(key-agnostic = fake). hrr M2-EARNED high (key-locked bind). ablate_earned ~0
+everywhere confirms lift is the OP not the recover fn. STILL harness-QA only:
+earned recovery = storage property; held-out RECOMBINATION (real G1) needs a
+TRAINED W_bind (Rung1 GPU, prior LOW per H_1840 fair-gate + DPI).
+---
