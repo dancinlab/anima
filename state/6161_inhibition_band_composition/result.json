@@ -1,0 +1,176 @@
+{
+  "frozen": "this-file docstring",
+  "chance": 0.1111,
+  "GZ_default": 0.25,
+  "seeds": {
+    "7": {
+      "n_held": 8,
+      "arms": {
+        "dp_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0315,
+          "he_proxy": 0.0867
+        },
+        "dp_0.1": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1179,
+          "he_proxy": 0.2416
+        },
+        "dp_0.25": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1179,
+          "he_proxy": 1.929
+        },
+        "dp_0.4": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1023,
+          "he_proxy": 3.0471
+        }
+      },
+      "oracle_heldout_acc": 1.0
+    },
+    "4302": {
+      "n_held": 8,
+      "arms": {
+        "dp_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1313,
+          "he_proxy": 0.2704
+        },
+        "dp_0.1": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1995,
+          "he_proxy": 1.0702
+        },
+        "dp_0.25": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1196,
+          "he_proxy": 1.3916
+        },
+        "dp_0.4": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.032,
+          "he_proxy": 1.9247
+        }
+      },
+      "oracle_heldout_acc": 1.0
+    },
+    "4303": {
+      "n_held": 8,
+      "arms": {
+        "dp_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0881,
+          "he_proxy": 0.2421
+        },
+        "dp_0.1": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0,
+          "he_proxy": 0.4709
+        },
+        "dp_0.25": {
+          "train_acc": 0.9971,
+          "heldout_acc": 0.115,
+          "he_proxy": 2.7831
+        },
+        "dp_0.4": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0,
+          "he_proxy": 1.6773
+        }
+      },
+      "oracle_heldout_acc": 1.0
+    },
+    "4304": {
+      "n_held": 8,
+      "arms": {
+        "dp_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.1211,
+          "he_proxy": 0.0265
+        },
+        "dp_0.1": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.2432,
+          "he_proxy": 1.6888
+        },
+        "dp_0.25": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.3699,
+          "he_proxy": 1.534
+        },
+        "dp_0.4": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.2122,
+          "he_proxy": 3.5524
+        }
+      },
+      "oracle_heldout_acc": 1.0
+    },
+    "4305": {
+      "n_held": 8,
+      "arms": {
+        "dp_0.0": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0,
+          "he_proxy": 0.2177
+        },
+        "dp_0.1": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.0,
+          "he_proxy": 0.0379
+        },
+        "dp_0.25": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.116,
+          "he_proxy": 1.6505
+        },
+        "dp_0.4": {
+          "train_acc": 1.0,
+          "heldout_acc": 0.116,
+          "he_proxy": 1.339
+        }
+      },
+      "oracle_heldout_acc": 1.0
+    }
+  },
+  "verdict": {
+    "per_seed": [
+      {
+        "seed": 7,
+        "gz": 0.1179,
+        "low_best": 0.1179,
+        "delta": 0.0
+      },
+      {
+        "seed": 4302,
+        "gz": 0.1196,
+        "low_best": 0.1995,
+        "delta": 0.0799
+      },
+      {
+        "seed": 4303,
+        "gz": 0.115,
+        "low_best": 0.0881,
+        "delta": -0.0269
+      },
+      {
+        "seed": 4304,
+        "gz": 0.3699,
+        "low_best": 0.2432,
+        "delta": -0.1267
+      },
+      {
+        "seed": 4305,
+        "gz": 0.116,
+        "low_best": 0.0,
+        "delta": -0.116
+      }
+    ],
+    "n_delta_ge_0.15": 0,
+    "no_regress": false,
+    "train_ok": true,
+    "oracle_ok": true,
+    "tier": "\ud83e\uddf1 DIRECTIONAL-FLOOR (NOT-SUPPORTED) \u2014 inhibition band does not open G1 composition"
+  }
+}

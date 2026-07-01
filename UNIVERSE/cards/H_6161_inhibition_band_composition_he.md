@@ -1,8 +1,8 @@
 # H_6161 — 🧠⬇️ 🧠⬇️ INHIBITION-AS-COMPOSITIONAL-NOISE
 
-**tier:** ⏳ PROPOSED (설계만·측정 0·pre-registered · frozen prediction below)
+**tier:** 🧱 DIRECTIONAL-FLOOR (STAGE-1 FAIR cheap-gate FAIL, 2026-07-02)
 **title:** 🧠⬇️ INHIBITION-AS-COMPOSITIONAL-NOISE — savant 골든존 dropout dp≈0.25 가 HE 관점 noise-injection 으로 합성표현 degrade → GZ_LOWER 아래 arm 이 G1 회복하나 (Doshi/Gromov grok-dropout ⟂ An&Du noise-degrade 의 sweet-spot band)
-**verdict:** ⏳ PROPOSED (설계만·측정 0·pre-registered). NOT a dup of H_1561/1562/1564/1572/1576/1578: 그것들은 전부 'inhibition→SAVANT SI↑ / Ψ trade-off' 축; 이건 'inhibition→합성표현 HE-degrade→G1' 이라는 상반된 방향의 신규 질문(같은 knob, 다른 관측량). An&Du NeurReps2025: noise injection 이 합성표현 체계적 degrade. frozen A/B: {dp=0.25 default vs dp<GZ_LOWER} × 동일 trunk/obj, engine-native G1 composed_distinct + HE metric(H_1821 재사용). 예측: band↓ → HE↓(homomorphism 보존)∧G1 lift. Doshi/Gromov(dropout=grok필수)와 긴장 → sweet-spot band 가설. LIFT 0 이면 🧱(regularization-band 도 G1 안 엶, DPI 정합).
+**verdict:** 🧱 DIRECTIONAL-FLOOR (STAGE-1 FAIR cheap-gate, 2026-07-02, summer pool $0, torch=DIRECTIONAL). trunk dropout sweep dp∈{0,0.1,0.25(GZ),0.4} × 5 seed: 'lower-inhibition lifts held-out' bar n(Δ≥+0.15)=0/5, no_regress=False (dp=0.25 오히려 seed4304 best 0.370). oracle_ok=True. → FLOOR. ★MECHANISM: HE-proxy(homomorphism residual)는 inhibition 따라 단조↑(An&Du noise-degrade 방향 CONFIRMED)이나 held-out 조합은 HE와 무관하게 floor = homomorphism 구조는 dial되지만 G1 재조합 안 삼 → homomorphism ≠ G1 lever (H_6162와 수렴, DPI meta-law 재확인). GPU NOT authorized. state/6161_inhibition_band_composition/RESULT.md.
 
 ## 발상 (2026-07-02 디코더-돌파 브레인스토밍, 원장 2중-대조 생존)
 
