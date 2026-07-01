@@ -122,10 +122,39 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 // argv = ["train", <rest...>]; the rest is forwarded verbatim to cli/train.hexa
 // after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
 fn anima_train_mode(argv: [string]) {
-    println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
+    // --py: route production training to the CANONICAL python trainer (cli/train.py —
+    //   torch Lane-P CLMConvMoE with the SAVANT+MITOSIS recipe + the H_1640 arm×objective
+    //   compositional levers) instead of the hexa-native cli/train.hexa. WHY: cli/train.hexa
+    //   is single-thread native-CPU-scalar-bound (#2598/#2600) and temporarily under a GPU-
+    //   utilization fix, so the GPU-bound torch path is the working training entry today
+    //   (a_clm_gen_pipeline: "Lane-P torch = REFERENCE + bridge, forge is the PUBLIC prod").
+    //   Symmetric to anima_evaluate_mode's --py (cli/evaluate.py). `--py` is consumed here
+    //   (stripped from the forwarded argv) so cli/train.py sees only its own knobs
+    //   (--arm --objective … --out). The torch-side CE/gauges are DIRECTIONAL only — the
+    //   TERMINAL verdict re-measures the serialized .clm via `anima evaluate --py`.
+    let use_py = anima_has_flag(argv, "--py")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    while i < len(argv) { if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
+    if use_py {
+        println("=== anima train → cli/train.py (canonical py trainer · torch Lane-P · arm×objective levers) ===")
+        // hexa `exec` closes a child's captured stdout pipe after ~150s (the child gets EPIPE
+        // on its next fd-1 write but is NOT killed). A py train runs for minutes/hours, so
+        // redirect ALL child output to a result file (fd 1 stays silent → the child survives
+        // the pipe close and finishes the full run). A SECOND fresh exec then cats that file.
+        // Symmetric to anima_evaluate_mode's --py result-file handling; cli/train.py streams
+        // to stdout (it has no --result-file arg of its own), so the redirect is at the shell.
+        let rf = "/tmp/anima_trainpy_result.out"
+        // cd into $ANIMA_SRC first so train.py's __file__-relative train/clm/model resolution
+        // matches a direct `python3 cli/train.py` (LOCATION-INDEPENDENT, same as the hexa path).
+        let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/train.py" + fwd + " > " + rf + " 2>&1"
+        println("dispatch: " + cmd)
+        let _tr = exec(cmd)
+        let out = exec("cat " + rf)
+        print(out)
+        return
+    }
+    println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
     // LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd, not the source
     // root): resolve the sibling cli/train.hexa via $ANIMA_SRC (the launcher / setup.hexa
     // exports the anima source root), falling back to "." for a direct `hexa run
