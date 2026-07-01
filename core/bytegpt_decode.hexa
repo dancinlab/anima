@@ -1159,7 +1159,7 @@ fn _bg_fwd_last(W: Map, ids: int, T: int) -> int {
 // grown to `cap` rows×d (cap = max positions = block); only the first `p` rows are
 // live. Returns #{ "K": list-of-farr, "V": list-of-farr, "cap": cap }. Caller frees
 // via _bg_kv_free.
-fn _bg_kv_new(nlay: int, cap: int, d: int) -> Map {
+fn _bg_kv_new(nlay: int, cap: int, d: int, nh: int) -> Map {
     let K = []
     let V = []
     let mut l = 0
@@ -1168,13 +1168,24 @@ fn _bg_kv_new(nlay: int, cap: int, d: int) -> Map {
         V.push(farr_zeros(cap * d))
         l = l + 1
     }
-    return #{ "K": K, "V": V, "cap": cap }
+    // P3 lever2 STEP1: persistent per-token scratch (device-resident on CUDA),
+    // allocated ONCE here + freed ONCE in _bg_kv_free, replacing the 3+nlay
+    // per-token farr_zeros allocs inside _bg_kv_step_dev. Each buffer is fully
+    // overwritten before read every token (sx via embed loop, snrm via LN,
+    // sctx via attn kernel, ssscr via attn kernel) so reuse is numerically inert;
+    // ssscr is sized nh*cap = the max nh*Lrows over the whole fragment. Host
+    // _bg_kv_step ignores these (it uses its own host scratch).
+    return #{ "K": K, "V": V, "cap": cap,
+              "sx": farr_zeros(d), "snrm": farr_zeros(d),
+              "sctx": farr_zeros(d), "ssscr": farr_zeros(nh * cap) }
 }
 
 fn _bg_kv_free(kv: Map) {
     let K = kv["K"]; let V = kv["V"]
     let mut l = 0
     while l < len(K) { let _ = farr_free(to_int(K[l])); let _ = farr_free(to_int(V[l])); l = l + 1 }
+    let _ = farr_free(to_int(kv["sx"])); let _ = farr_free(to_int(kv["snrm"]))
+    let _ = farr_free(to_int(kv["sctx"])); let _ = farr_free(to_int(kv["ssscr"]))
 }
 
 // _bg_kv_step — forward the SINGLE new token (id=`id` at absolute position `pos_p`,
@@ -1347,8 +1358,14 @@ fn _bg_kv_step_dev(W: Map, kv: Map, id: int, pos_p: int) -> int {
     }
     let _ = farr_pin(headT)
 
-    // embed x = tok[id] + pos[pos_p] on host (the ONE H2D fires when LN1 reads x)
-    let x = farr_zeros(d)
+    // P3 lever2 STEP1 scratch-hoist: x/nrm/ctx/sscr are the persistent kv-map
+    // scratch (allocated once by _bg_kv_new, freed once by _bg_kv_free) instead
+    // of fresh farr_zeros every token. Fully overwritten before read each token
+    // so byte-eq with the per-call version; saves 3+nlay device allocs/token.
+    // embed x = tok[id] + pos[pos_p] on host (the ONE H2D fires when LN1 reads x;
+    // x is device-resident from the prior token, so the first farr_set triggers a
+    // lazy-D2H before the d host writes fully overwrite it — coherent per RFC-040).
+    let x = to_int(kv["sx"])
     let mut c = 0
     while c < d {
         let _ = farr_set(x, c, farr_get(tok, id * d + c) + farr_get(pos, pos_p * d + c))
@@ -1357,8 +1374,8 @@ fn _bg_kv_step_dev(W: Map, kv: Map, id: int, pos_p: int) -> int {
 
     let _ = farr_set_out_disposition(1)    // sticky device-resident outputs
 
-    let nrm = farr_zeros(d)                // LN output (device), reused per layer
-    let sscr = farr_zeros(nh * block)      // decode score scratch (nh*Lrows used)
+    let nrm = to_int(kv["snrm"])           // LN output (device), reused per layer
+    let sscr = to_int(kv["ssscr"])         // decode score scratch (nh*Lrows used)
 
     let mut Lr = 0
     while Lr < nlay {
@@ -1379,14 +1396,15 @@ fn _bg_kv_step_dev(W: Map, kv: Map, id: int, pos_p: int) -> int {
         let _ = farr_free(kk); let _ = farr_free(vv)
         // single-query decode attention: query q attends over cache rows 0..Lrows-1
         // (nkv=nh no-GQA; scale 1/dt_sqrt(hd); dt_exp softmax) → ctx[d]
-        let ctx = farr_zeros(d)
+        // ctx = persistent kv scratch (hoisted); attn kernel fully overwrites d elems.
+        let ctx = to_int(kv["sctx"])
         let _ = farr_attn_dt_decode_gpu(q, Kl, Vl, sscr, ctx, Lrows, nh, nh, hd)
         let _ = farr_free(q)
         // out proj + bias, then residual x += aout
         let aout = forge_dispatch_matmul(ctx, 1, d, to_int(oWt[Lr]), d)
         let _ = forge_dispatch_residual_add(aout, to_int(oB_e[Lr]), aout, d)
         let _ = forge_dispatch_residual_add(x, aout, x, d)
-        let _ = farr_free(ctx); let _ = farr_free(aout)
+        let _ = farr_free(aout)
 
         // ── mlp sub-block: x += Wd(GELU(W0(LN2(x)))) on the single row ──
         let _ = forge_dispatch_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, 1, d, eps)
@@ -1399,14 +1417,14 @@ fn _bg_kv_step_dev(W: Map, kv: Map, id: int, pos_p: int) -> int {
         let _ = farr_free(h4); let _ = farr_free(mlpo)
         Lr = Lr + 1
     }
-    let _ = farr_free(sscr)
+    // sscr/nrm/x/ctx are persistent kv scratch — NOT freed here (freed once in
+    // _bg_kv_free). Only the per-token dispatch outputs (logits_all, logits) below.
 
     // final LayerNorm on the single row, then tied head → logits[vocab]. Reset
     // disposition → HOST_NOW so the head GEMM D2H's its output (the ONE D2H).
     let _ = forge_dispatch_layernorm(x, lnfw, lnfb, nrm, 1, d, eps)
     let _ = farr_set_out_disposition(0)
     let logits_all = forge_dispatch_matmul(nrm, 1, d, headT, vocab)   // [1,vocab] → host
-    let _ = farr_free(nrm); let _ = farr_free(x)
     let logits = farr_zeros(vocab)
     let mut hk = 0
     while hk < vocab { let _ = farr_set(logits, hk, farr_get(logits_all, hk)); hk = hk + 1 }
@@ -1453,7 +1471,7 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
     let nseed = len(toks)
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
     if nseed > 0 && nseed + gen <= block {
-        let kv = _bg_kv_new(nlay, block, d)
+        let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
         let mut logits = -1
         let mut sp = 0
         while sp < nseed {
@@ -1515,7 +1533,7 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
     let nseed = len(toks)
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
     if nseed > 0 && nseed + gen <= block {
-        let kv = _bg_kv_new(nlay, block, d)
+        let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
         let mut logits = -1
         let mut sp = 0
         while sp < nseed {
@@ -1739,7 +1757,7 @@ fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, see
     // cached K,V stay correct. Byte-identical to the full-forward loop below (the
     // ELSE branch is the verbatim reference). Slide ⇒ fall back to full-forward.
     if nseed > 0 && nseed + gen <= block {
-        let kv = _bg_kv_new(nlay, block, d)
+        let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
         // prime the cache: run positions 0..nseed-1 through _bg_kv_step (we only need
         // the LAST seed position's logits to draw the first byte).
         let mut logits = -1
