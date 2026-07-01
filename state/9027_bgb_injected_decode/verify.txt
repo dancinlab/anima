@@ -1,0 +1,51 @@
+====================================================================
+H_9027 BGB injected-bind verify (torch f64 reference, self-contained)
+  arch: vocab=256 d=32 n_layer=2 n_head=4 block=16
+====================================================================
+[cfg] vocab=256 d=32 n_layer=2 n_head=4 block=16
+[cfg] val_ce=None step=None nparam=None
+[ok] wrote /Users/mini/dancinlab/anima-bgb/state/9027_bgb_injected_decode/_artifacts/base.bin  bytes=169492 (expected 169492)
+
+[B] BASE parity (numpy bg_load vs torch, f64) + no-trailer sanity
+  PASS base: bg_is_bytegpt true
+  PASS base: W['bind'] == [] (no trailer)
+  PASS base: random-window logits max|Δ|<1e-4  maxΔ=8.96e-07
+  PASS base: random-window argmax-identical
+  PASS base: numpy KV stream == numpy full stream
+  PASS base: numpy greedy stream == torch greedy stream  len=40
+  PASS base: per-step stream logits max|Δ|<1e-4  maxΔ=9.12e-07
+  PASS base: per-step argmax-identical over stream
+
+[c] NO-REGRESSION vs origin/main core/decode.py (plain base .bin)
+  PASS plain base: NEW decode.py stream == origin/main decode.py stream  len=40
+
+[I1] N=1 injected, gates=[0.7]
+[ok] wrote /Users/mini/dancinlab/anima-bgb/state/9027_bgb_injected_decode/_artifacts/inj_I1.bin  base=169492 + BGB(n_bind=1,d=32) trailer=50828 = 220320 bytes  gates=[0.7]
+  PASS I1: bg_is_bytegpt true (header unchanged)
+  PASS I1: n_bind blocks read == 1
+  PASS I1: base bytes copied VERBATIM (prefix)
+  PASS I1: random-window logits max|Δ|<1e-4  maxΔ=9.73e-07
+  PASS I1: random-window argmax-identical
+  PASS I1: numpy BGB stream == torch injected stream  len=48
+  PASS I1: per-step stream logits max|Δ|<1e-4  maxΔ=1.25e-06
+  PASS I1: per-step argmax-identical over stream
+
+[I2] N=2 injected, gates=[0.5, -0.4]
+[ok] wrote /Users/mini/dancinlab/anima-bgb/state/9027_bgb_injected_decode/_artifacts/inj_I2.bin  base=169492 + BGB(n_bind=2,d=32) trailer=101648 = 271140 bytes  gates=[0.5, -0.4]
+  PASS I2: bg_is_bytegpt true (header unchanged)
+  PASS I2: n_bind blocks read == 2
+  PASS I2: base bytes copied VERBATIM (prefix)
+  PASS I2: random-window logits max|Δ|<1e-4  maxΔ=1.02e-06
+  PASS I2: random-window argmax-identical
+  PASS I2: numpy BGB stream == torch injected stream  len=48
+  PASS I2: per-step stream logits max|Δ|<1e-4  maxΔ=9.36e-07
+  PASS I2: per-step argmax-identical over stream
+
+[b0] gate=0 no-regression (BGB decodes identically to base)
+[ok] wrote /Users/mini/dancinlab/anima-bgb/state/9027_bgb_injected_decode/_artifacts/inj_gate0.bin  base=169492 + BGB(n_bind=1,d=32) trailer=50828 = 220320 bytes  gates=[0.0]
+  PASS gate0: n_bind==1 present in trailer
+  PASS gate0: BGB stream BYTE-IDENTICAL to base stream
+  PASS gate0: top-k sampled stream BYTE-IDENTICAL to base (evaluate path)
+
+====================================================================
+RESULT: ALL PASS — BGB injected-bind decode+serialize byte-exact (torch f64 ref).

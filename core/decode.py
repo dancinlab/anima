@@ -778,6 +778,28 @@ def _rd_f32(rb, off, n):
     return np.frombuffer(rb, dtype='<f4', count=n, offset=off).astype(np.float64)
 
 
+def _bg_read_bind_block(rb, off, d):
+    """Read ONE BGB injected-bind block from the flat trailer at byte offset off.
+    Layout = a base ByteGPT layer's 12 param tensors in bg_load order (LE f32),
+    then one LE f32 scalar `gate`. Returns (block_dict, new_off).
+    (Shapes match bg_load's per-layer read exactly — reference-matched, no reorder.)"""
+    blk = {}
+    blk["ln1w"] = _rd_f32(rb, off, d); off += d * 4
+    blk["ln1b"] = _rd_f32(rb, off, d); off += d * 4
+    blk["inW"] = _rd_f32(rb, off, 3 * d * d).reshape(3 * d, d); off += 3 * d * d * 4
+    blk["inB"] = _rd_f32(rb, off, 3 * d); off += 3 * d * 4
+    blk["oW"] = _rd_f32(rb, off, d * d).reshape(d, d); off += d * d * 4
+    blk["oB"] = _rd_f32(rb, off, d); off += d * 4
+    blk["ln2w"] = _rd_f32(rb, off, d); off += d * 4
+    blk["ln2b"] = _rd_f32(rb, off, d); off += d * 4
+    blk["m0W"] = _rd_f32(rb, off, 4 * d * d).reshape(4 * d, d); off += 4 * d * d * 4
+    blk["m0B"] = _rd_f32(rb, off, 4 * d); off += 4 * d * 4
+    blk["m2W"] = _rd_f32(rb, off, d * 4 * d).reshape(d, 4 * d); off += d * 4 * d * 4
+    blk["m2B"] = _rd_f32(rb, off, d); off += d * 4
+    blk["gate"] = float(_rd_f32(rb, off, 1)[0]); off += 4
+    return blk, off
+
+
 def bg_load(path):
     """bytegpt_decode.hexa::bg_load — parse the flat binary ONCE into a weight dict.
     Weight binary layout (LE f32, bytegpt_decode.hexa:29-36):
@@ -819,11 +841,28 @@ def bg_load(path):
     lnfb = _rd_f32(rb, off, d); off += d * 4
     head = _rd_f32(rb, off, vocab * d).reshape(vocab, d); off += vocab * d * 4
 
+    # ── optional BGB injected-bind trailer (serialize_bind, H_9027) ──────
+    # "BGB\x01" = bytes 66,71,66,1, appended AFTER `head`. Carries n_bind appended
+    # GATED transformer blocks (each = a standard base layer: the SAME 12 param
+    # tensors in the SAME order/layout as above, then one LE f32 gate). Applied
+    # after the L base blocks and BEFORE ln_f (mirrors the CLM "CLMB" bind-trailer
+    # precedent). ABSENT trailer => bind=[] => forward BYTE-IDENTICAL to plain ByteGPT.
+    bind = []
+    if (off + 8 <= len(rb)
+            and rb[off] == 66 and rb[off + 1] == 71
+            and rb[off + 2] == 66 and rb[off + 3] == 1):
+        off += 4                                          # skip "BGB\x01"
+        n_bind = _bg_rd_u32(rb, off); off += 4
+        for _ in range(n_bind):
+            blk, off = _bg_read_bind_block(rb, off, d)
+            bind.append(blk)
+
     return {"ok": True, "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
             "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
             "inW": inW, "inB": inB, "oW": oW, "oB": oB,
             "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
-            "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head}
+            "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
+            "bind": bind}
 
 
 # bg_load_ranged — byte-identical W-map to bg_load (hexa builds it via ranged
@@ -860,9 +899,31 @@ def _bg_mha(H, inW, inB, oW, oB, T, d, nh):
     return ctx @ oW.T + oB
 
 
+def _bg_apply_bind(x, bind, T, d, nh):
+    """Apply N appended GATED transformer blocks to the full post-base sequence
+    x:[T,d], AFTER the L base blocks and BEFORE ln_f. Each block is a STANDARD
+    transformer block (reuses _bg_layernorm_rows / _bg_mha / _bg_gelu — the exact
+    base-layer ops) plus a scalar gate:
+        block(x) = x + mha(ln1(x)) + mlp(ln2(x + mha(ln1(x))))
+        x        = x + gate * (block(x) - x)          # gate=0 => identity (exact)
+    Mirrors BindAttnByteGPT.forward `x = x + gate*(bind(x)-x)`. Returns x:[T,d]."""
+    for blk in bind:
+        nrm = _bg_layernorm_rows(x, blk["ln1w"], blk["ln1b"], T, d)
+        aout = _bg_mha(nrm, blk["inW"], blk["inB"], blk["oW"], blk["oB"], T, d, nh)
+        xa = x + aout                                      # x + mha(ln1(x))
+        nrm2 = _bg_layernorm_rows(xa, blk["ln2w"], blk["ln2b"], T, d)
+        h4 = _bg_gelu(nrm2 @ blk["m0W"].T + blk["m0B"])    # [T, 4d]
+        mlpo = h4 @ blk["m2W"].T + blk["m2B"]              # [T, d]
+        blk_out = xa + mlpo                                # = block(x)
+        x = x + blk["gate"] * (blk_out - x)                # gate=0 => x unchanged
+    return x
+
+
 def bg_forward_last_W(W, ids, T):
     """bytegpt_decode.hexa::bg_forward_last_W — full forward from a loaded weight
-    dict; returns last-position next-byte logits float64[vocab]. ids:[T] int."""
+    dict; returns last-position next-byte logits float64[vocab]. ids:[T] int.
+    When W["bind"] is non-empty the appended gated blocks run after the L base
+    blocks and before ln_f (H_9027); absent/empty => byte-identical to before."""
     d = W["d"]; nlay = W["nlay"]; nh = W["nh"]; vocab = W["vocab"]
     ids = np.asarray(ids, dtype=np.int64)
     # x[T,d] = tok[id] + pos[t]
@@ -878,6 +939,9 @@ def bg_forward_last_W(W, ids, T):
         h4 = _bg_gelu(h4)
         mlpo = h4 @ W["m2W"][Lr].T + W["m2B"][Lr]           # [T, d]
         x = x + mlpo
+    # appended injected-bind blocks (H_9027) — after base stack, before ln_f
+    if W.get("bind"):
+        x = _bg_apply_bind(x, W["bind"], T, d, nh)
     # final LayerNorm on the LAST position only, then tied head
     lastrow = _bg_layernorm_rows(x[T - 1:T], W["lnfw"], W["lnfb"], 1, d)[0]   # [d]
     logits = W["head"] @ lastrow                            # [vocab]
@@ -1015,6 +1079,13 @@ def _bg_step_logits(W, toks, st):
     n = len(toks)
     start = n - block if n > block else 0
     T = n - start
+    # Injected-bind models (H_9027): the appended blocks have their OWN attention
+    # over the full post-base sequence, which the incremental KV step can't supply
+    # from base-layer K,V alone — so decode via the full-sequence forward (byte-
+    # exact vs the torch reference; gate=0 => identical to the base KV stream since
+    # the base forward is unchanged and the bind contribution is exactly zero).
+    if W.get("bind"):
+        return bg_forward_last_W(W, toks[start:start + T], T)
     if st['cache'] is None or start != st['start']:
         logits, cache = _bg_forward_build(W, toks[start:start + T], T)
         st['cache'] = cache; st['start'] = start
