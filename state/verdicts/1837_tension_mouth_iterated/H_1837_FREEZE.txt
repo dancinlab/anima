@@ -1,0 +1,29 @@
+H_1837 TENSION-MOUTH ITERATED (deep-equilibrium) — FROZEN BAR (pre-registered, p7, c9)
+Committed BEFORE scoring. 1-byte invariant. NO tune-to-green. NO post-hoc bar move.
+Follow-on to H_1834 (tension-mouth single-shot = INERT, composed_distinct=0).
+
+METRIC: composed_distinct = # DISTINCT correct composed target bytes (greedy argmax
+next byte) over the 4 held-out unseen-combination pairs (diagonal split
+{(0,0),(1,1),(2,2),(3,3)}; targets 100/105/110/115 absent from training). Range 0..4.
+Repo convention: ByteGPT floor=2, conv floor=0.
+
+ANCHOR (must hold): composed_distinct = 0 @ K=1 (reproduces H_1834 single-shot floor).
+
+🟢 DIRECTIONAL (iteration breaks the DPI 1-shot wall) IFF ALL of:
+  (1) composed_distinct >= 1 on >= 2/3 seeds at SOME K >= 2 (input-reinject ON), AND
+  (2) monotone non-decreasing in K on the per-seed mean cd curve (K=1<2<4<8<converge), AND
+  (3) lift ONLY with input-reinject ON: same-state ablation (reinject OFF) cd = 0 all K/seed
+      (INERT ablation isolates re-conditioning as the source; INERT = DPI confirmed), AND
+  (4) shuffle-control (break A<->B held-out pairing) cd = 0 all seeds.
+
+🧱 WALL-DIRECTIONAL (valid negative, c9): raise K to convergence, cd = 0 flat →
+  DPI meta-law CONFIRMED, temporal iteration INERT = trunk-objective-bound reconfirmed →
+  γ trained-constructive-bind (HRR/circconv, cost-gated) is the sole remaining path.
+
+Controls (deterministic): (a) K=1 = H_1834 single-shot anchor · (b) same-state-reinject
+ablation (input-reinject OFF) · shuffle-control. gradcheck PASS + train_acc=1.0 required
+to rule out implementation defect.
+
+DIRECTIONAL only (numpy mirror, a_engine_native_learning) — NOT terminal / NOT engine-native.
+Engine-native re-measure on live core/ A<->G iterate = gating follow-on IFF lift occurs.
+Seeds {7,4302,4303}. K∈{1,2,4,8,converge}. d=128, epochs=2500, K_MAX=16, eps_conv=0.05, KT=4.0.
