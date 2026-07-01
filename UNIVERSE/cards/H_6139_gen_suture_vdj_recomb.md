@@ -50,3 +50,9 @@
 **Bar (사전등록, 미이동).** GREEN-DIRECTIONAL iff `vdj ≥ additive+3` **∧** earned iff `shuffle ≤ additive+1`. → **PASS ∧ EARNED**. (최초 실행에서 shuffle=2 는 permutation fixed-point 누수 = 대조 구현 버그였고, derangement 로 수정 후 0. frozen bar 는 그대로.)
 
 **정직한 스코프.** numpy 미러 = 구성상 DIRECTIONAL, **terminal 아님**. 보여준 것은 오직 **연산자 표현력**(이산 splice 가 additive/Voronoi 가 못 미치는 held-out 전체조합에 도달). anima 의 실제 벽 = **additive-CE trunk 가 VDJ 세그먼트 선택을 학습할 수 있는가**(= H_1602 objective축 / γ trained-constructive-bind, cost-gated) 이며 이 프로브는 그것을 **측정하지 않음**. 또한 VDJ 도달성은 부분적으로 by-construction(concat 은 자명히 compositional)이라, 신호는 "연산자 class 가 맞다"이지 "벽이 뚫렸다"가 아니다. 엔진-native 미배선(DIRECTIONAL-mirror).
+
+---
+
+## 사다리 rung(2) 실측 — engine-native 경로 (Explore 매핑)
+
+**분류 = (b) trunk-ARCHITECTURE 변경** (discrete select+splice; scalar aux-loss 불가). lift 원천 = 유한 세그먼트 라이브러리서 V/J discrete 선택+D splice → 공유 activation 밖 combinatorial 구조. 가장 가까운 surface = generator L3 mouth(decode-side)지 CLMConvMoE additive trunk objective 아님. 검증 = discrete select/splice head 배선 + warm-FT → `anima evaluate --py` G1. 동일 블로커(warm-start seam·private 303M base). H_1602/γ trained-constructive-bind cost-gated. follow-on: H_6112 toy A/B 결과 본 뒤 배치(같은 disjoint-구조 family).
