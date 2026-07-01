@@ -12382,7 +12382,7 @@
                 "name": "진화 기록",
                 "role": "",
                 "id": "gate-g0-coherence-evo",
-                "detail": "window 를 양쪽서 좁히는 함정: 소코퍼스 과적합(train-py-3)·대코퍼스 undertrain(train-py-4, val_CE 1.35 healthy 여도 free-gen G0🔴). G0 는 step 따라 개선=decode-bug 아님. Blackwell 기각(Ada 4090 재현). 유효=균형코퍼스+충분에폭. 7B chat-FT 가 G0 직접개선(scale-혜택)."
+                "detail": "함정: 소코퍼스 과적합(train-py-3)·대코퍼스 undertrain(train-py-4). step-window(pod 4090 Ada, big-corpus): val_CE 1.35 healthy 여도 G0🔴 = undertrain 확정(overfit·Blackwell(Ada 재현)·decode 기각). ★floor 가설 REFUTED: floor 전step 0/5 악화, savant DECAY 가 1→2→2→3/5 로 G0🟢 접근. 유효=big-corpus+savant-decay+~12000step."
               }
             ]
           },
@@ -12580,7 +12580,7 @@
       {
         "id": "train-py-4",
         "state": "ossified",
-        "value": "8000-step 학습이 healthy val_CE(1.36 DESCENT)인데도 anima evaluate --py G0 coherence 0/5·novel=0(garbage decode)로 나오는 무결성 이상. ⚠️ 원인 UNRESOLVED·confound: aiden(RTX5070=같은 Blackwell sm_120) H_1813 2000-step 은 G0🟢였다 → 'Blackwell 직렬화버그' 단정 불가(2000step Blackwell 은 coherent). 후보 원인 (미격리): ① 8000-step 에서 savant 정규화(dp/wd) decay→0 로 free-running 생성붕괴(teacher-forced val_CE 는 못 잡음) ② 5090 torch2.11/cu128 vs aiden torch2.10 직렬화 차이 ③ decode.py 버전 차이. 소코퍼스 과적합(val_CE<0.5)과는 별개 — big-corpus 84MB(0.77에폭) 도 8000step서 G0🔴.",
+        "value": "[RESOLVED 2026-07-02 step-window 다축격리] 8000-step healthy val_CE(1.35 DESCENT)인데 anima evaluate --py G0 0/5(garbage) = UNDERTRAIN 확정. pod RTX4090 Ada + big-corpus(84MB) 재현. 기각근거 다축: overfit(val healthy)·Blackwell(Ada 재현이라 GPU버그 아님)·savant-decay(floored 가 오히려 나쁨: floored 전step 0/5 vs decay 1→2→2→3/5 단조상승 G0🟢 접근)·decode-bug(G0 step따라 개선). 진짜원인 = big-corpus epoch-부족(0.77에폭; teacher-forced val_CE 는 free-gen coherence 미포착). ★floor 가설 REFUTED, savant DECAY 가 옳음. 유효 G1 측정 선결 = big-corpus + savant-decay + ~12000+ step(G0🟢 4/5 도달).",
         "threshold": "학습 val_CE healthy(1.0~1.6 DESCENT)인데 G0 coherence 0/5(garbage)면 = ckpt/생성 무결성 이상(학습 성공≠생성 성공, teacher-forced val_CE 착시). 격리 절차(confound 풀기): ① 같은 host서 2000 vs 8000 step 비교(2000=G0🟢면 8000-step-collapse 확정) ② savant 정규화 floor 고정(dp/wd decay 차단)하고 8000step 재측정 ③ 같은 .clm 을 torch-golden vs numpy decode 3-way byte-compare. 유효 G1 측정 = G0🟢 유지되는 step-window/정규화 확보가 선결. 성급히 'GPU버그'/'objective floor' 로 박제 금지.",
         "source": "cli/train.py"
       }
