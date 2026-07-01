@@ -53,9 +53,8 @@ Trainer = `cli/train.hexa` (production, a_train_flame_forge) on pool/rent GPU; 3
 
 ## VERDICT
 <!-- CARD_VERDICT -->
-🔒 **PRE-REGISTERED (cost-gated, not fired).** This is the surviving G1-lever candidate after depth
-(🧱), binding (🧱 inert), and data-presence (🟠) are eliminated: the lever is most likely the
-**trunk training OBJECTIVE** (recombination curriculum / composition aux-loss), the one axis that can
-shape trunk-internal composition that CE never rewards. Recipe + frozen ≥2/3-seed prediction registered
-verbatim; surfaced to team-lead for cost-gated go. **wired:** `pre-register only; engine-native
-re-measure via g1_multiseed.py clm on core/clm_decode.py (TERMINAL); frozen H_1129 bar; ckpt PULL.`
+🧱 **NOT-SUPPORTED — objective axis EXHAUSTED both ways; GPU-scale de-authorized by pre-registered cheap-gate (2026-07-02).** The trunk-training-OBJECTIVE lever is now closed across its two distinct formulations, so no un-tested GPU experiment remains:
+- **Additive-aux form** (recombination curriculum / composition aux-loss / contrastive): engine-native floored — H_1602 self {ce_marginal·infonce·contrastive_equilibrium}×3seed ConvMoE **9/9 G1=0**; H_9024 InfoNCE-aux × ByteGPT-303M attention trunk (2000+8000 step) **best_distinct 0→0 no lift**; H_1816 predictive-coding binding + H_1819 co-trained bind×obj — all 🧱.
+- **Structural form** (loss minimizable ONLY through binding, additive-bypass DENIED — the un-tested sub-form this card flagged): realized as **H_1840** (γ trained-constructive bind, bypass-denied bottleneck) and **measured-FALSIFIED at its pre-registered STAGE-1 FAIR cheap-gate (2026-07-02, `state/1840_gamma_hrr_constructive_bind/RESULT_fair.md`)** — on a fair operator-agnostic 2-way target the decisive bypass-denied bilinear-bottleneck arm generalized WORST (0.53–0.57 vs additive 0.45–0.60) and bypass-OPEN did **not** floor (0.66–0.73): two independent kills of the "force binding structurally" premise. Per the frozen pre-registration (p7) **STAGE-2 engine-native GPU run NOT authorized** (pool was FREE $0 — the gate is scientific, not cost).
+
+Firing a fresh 303M GPU objective run now would (a) re-run additive-objective formulations already engine-native floored, or (b) re-open the structural form whose pre-registered cheap-gate failed today = **tune-to-green (p7 forbidden)**. **G1 recombination wall CONFIRMED at the trunk-objective floor (DPI meta-law); objective + structural-binding lever space exhausted — session GOAL terminal.** **wired:** `verdict recorded, not re-fired; structural sub-form → H_1840 fair-gate (DIRECTIONAL); additive sub-form → H_1602 9/9 + H_9024 engine-native (py 2-production); frozen H_1129 bar unmoved.`
