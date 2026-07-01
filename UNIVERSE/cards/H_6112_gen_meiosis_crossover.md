@@ -68,3 +68,17 @@ numpy 추상 프로브(rung1: additive 0.0 → meiosis 1.0, lift +1.0, GREEN-DIR
 - FROZEN BAR(사전등록): GREEN ⟺ ≥2/3 seed (MEIO−ADD reach ≥0.30) ∧ mean ADD ≤0.20.
 - **실측 (state/6112_gen_meiosis_crossover/ARCH_AB_RESULT.txt):** ADD reach mean=0.0 · MEIO reach mean=0.022 (seed 0.0/0.033/0.033) · **both train_fit=1.0** (양 arm 대각 완전 fit = G0-undertrain 함정 아님) · seeds meeting Δ≥0.30 = **0/3** → **bar_pass=False = 🟡 FALSIFIED-DIRECTIONAL**.
 - **함의(정직, c9 · a_toy_scale_recheck):** numpy 추상 toy 의 0→1.0 REACHABLE 은 **실 trunk 로 전이 안 됨**(0→0.022). undertrain 아님(fit=1.0)이므로 "덜 학습" 핑계 불가 — disjoint-loci readout 을 실 CLMConvMoE 에 얹어도 held-out 조합 도달 미발생. 추상 프로브가 operator-expressivity 를 과대평가(ground-truth-aligned 구조 artifact). rung(2) 303M warm-FT 로 가기 전 이 toy 전이실패가 먼저 = **meiosis readout-split 축 약화**. 남은 rung(2) 가치는 낮아짐(readout-split 이 실 trunk 서 이미 무력). torch=DIRECTIONAL(terminal 아님)이나 방향은 명확히 negative.
+
+---
+
+## 사다리 스케일업 — 3-rung real-trunk ladder (aiden, DIRECTIONAL)
+
+rung(1.5) FALSIFIED 가 소형(d64/L2) 탓인지 검증 — 동일 A/B(meiosis disjoint 2-head readout vs additive)를 용량·깊이 3-rung 으로 sweep(K=6, 3seed, train_fit=1.0 내내).
+
+| rung | D·L·E·steps | params | additive reach | meiosis reach | Δ | bar(≥0.30) |
+|---|---|---|---|---|---|---|
+| 1 | 64·2·4·800 | 120K | 0.0 | 0.022 | ~0 | ✗ |
+| 2 | 128·4·4·1500 | 511K | 0.0 | 0.011 | ~0 | ✗ |
+| 3 | 256·6·8·3000 | 3.09M | 0.0 | **0.0** | 0 | ✗ |
+
+**결론: scale-invariant FALSIFIED.** 용량 26× (120K→3.09M) · 깊이 3× (L2→L6) 키워도 meiosis reach 는 오르지 않고 오히려 최대 rung 서 완전 0. train_fit=1.0(undertrain 아님)이라 "덜 학습" 불가 — disjoint-loci readout 은 실 CLMConvMoE trunk 에서 **모든 스케일 INERT**. `scale-303m-1b-7b-is-amplifier-not-lever` 재확인(스케일은 작동 lever 의 증폭기지 lever 생성 못함). readout-split 축 종결 → 남은 유일 미검 레버 = trunk recomb-OBJECTIVE(H_1602, cost-gated·학습필요). numpy/torch=DIRECTIONAL(terminal 아님). 산출 state/6112_gen_meiosis_crossover/{arch_ab_scale.py,SCALE_RESULT.txt}.
