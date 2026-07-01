@@ -1,11 +1,12 @@
 # H_1840 — γ trained-constructive HRR bind (circular-convolution as gradient-trained trunk combiner, additive-bypass DENIED)
 
-- **tier:** ⏳ PROPOSED (설계만 · 측정 0 · unmeasured · pre-registered)
-- **wired:** DIRECTIONAL-design — no measurement. cheap_test = $0 frozen-first numpy toy (double-dissociation); gpu_recipe = cost-gated PRE-REGISTER ONLY (NOT fired, ~1 H100-day).
+- **tier:** 🧱 DIRECTIONAL — cheap-gate FROZEN BAR **FAIL 0/3** (2026-07-02, aiden pool CPU $0). γ's decisive delta (invertibility of ⊛ load-bearing) **measured-FALSIFIED**; GPU run **NOT fired** (pre-registration honored, p7). Full result = `state/1840_gamma_hrr_constructive_bind/RESULT.md`.
+- **wired:** DIRECTIONAL-mirror (numpy/torch toy, a_engine_native_learning — no engine-native measurement, no terminal G1 verdict). cheap_test = RAN (FAIL); gpu_recipe = NOT fired (cheap-gate denied it). Surviving lever (bypass-denied bottleneck, invertibility-agnostic) = follow-on, gated on a FAIR non-rigged cheap-gate.
+- **cheap-gate result (frozen-first, DIRECTIONAL):** 4-arm 2-leg held-out conjunction retrieval, seeds {7,4302,4303}. (a)additive heldout=0.00 · (b)hadamard+bypass-OPEN(=H_1819)=0.00 · (c)hrr-⊛-bottleneck=1.00/1.00/0.97 · (d)noninv-freqmasked-bottleneck=**1.00/1.00/1.00**. Bar FAIL because (c) does NOT dominate (d): **invertibility ablated (d) generalizes equally → invertibility NOT load-bearing.** Real load-bearing property = bypass-denying bilinear bottleneck (confirms H_1819 bypass diagnosis). Additive-target CONTROL: additive arm flips 0.00→1.00 → toy is pure operator↔target-algebra matching = **non-transferable to NL** (does not establish NL composites carry recoverable binding structure; DPI meta-law + H_1819 engine floor say absent). γ reduces to "H_1819 with bypass denied" → GPU floor predicted, not fired.
 - **cost axis:** GPU-cost-gated (real 303M trunk co-train required; $0 toy only screens the mechanism, cannot close G1).
 - **source:** fleet-full 상시 discovery lane — G1 재조합벽 census 잔여 직교 레버 ("유일 잔여 진짜 레버" 수렴, memory substrate-framebreak-g1-combination-operator)
 - **lens:** BIOLOGY/ALGEBRA — Plate holographic reduced representation (HRR); associative binding via invertible compression.
-- **artifacts:** [] (아직 코드 없음 · 미래 slug = `state/1840_gamma_hrr_constructive_bind/`)
+- **artifacts:** [`state/1840_gamma_hrr_constructive_bind/`] (FREEZE_toy.md · toy_cheap_gate.py+toy_result.json · toy_control_additive_target.py+toy_control_result.json · RESULT.md)
 - **xref:** H_1823 (circconv READOUT 🧱 floored) · H_1819 (Hadamard bind op + InfoNCE, additive-bypass OPEN 🔴 floored) · H_1466 (TPR outer-product 🧱 DIRECTIONAL) · H_1602 (recomb objective alone 🧱) · H_1834 (tension readout 🧱)
 - **key:** `gamma_hrr_constructive_bind`
 
