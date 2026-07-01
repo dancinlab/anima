@@ -12595,6 +12595,13 @@
         "value": "[RESOLVED 2026-07-02 step-window 다축격리] 8000-step healthy val_CE(1.35 DESCENT)인데 anima evaluate --py G0 0/5(garbage) = UNDERTRAIN 확정. pod RTX4090 Ada + big-corpus(84MB) 재현. 기각근거 다축: overfit(val healthy)·Blackwell(Ada 재현이라 GPU버그 아님)·savant-decay(floored 가 오히려 나쁨: floored 전step 0/5 vs decay 1→2→2→3/5 단조상승 G0🟢 접근)·decode-bug(G0 step따라 개선). 진짜원인 = big-corpus epoch-부족(0.77에폭; teacher-forced val_CE 는 free-gen coherence 미포착). ★floor 가설 REFUTED, savant DECAY 가 옳음. 유효 G1 측정 선결 = big-corpus + savant-decay + ~12000+ step(G0🟢 4/5 도달).",
         "threshold": "학습 val_CE healthy(1.0~1.6 DESCENT)인데 G0 coherence 0/5(garbage)면 = ckpt/생성 무결성 이상(학습 성공≠생성 성공, teacher-forced val_CE 착시). 격리 절차(confound 풀기): ① 같은 host서 2000 vs 8000 step 비교(2000=G0🟢면 8000-step-collapse 확정) ② savant 정규화 floor 고정(dp/wd decay 차단)하고 8000step 재측정 ③ 같은 .clm 을 torch-golden vs numpy decode 3-way byte-compare. 유효 G1 측정 = G0🟢 유지되는 step-window/정규화 확보가 선결. 성급히 'GPU버그'/'objective floor' 로 박제 금지.",
         "source": "cli/train.py"
+      },
+      {
+        "id": "anima-hexa-1",
+        "state": "ossified",
+        "value": "anima full-stack build 벽(clang undeclared/link/codegen 류)은 대개 stale pool hexat이 root — pool 호스트가 현행 hexa-lang release 에 뒤처져 runtime.h carrier extern/builtin 미포함. #33 실증(2026-07-01): summer v0.468(현행 44릴리스 뒤)이 #4285 set_deterministic/is_deterministic carrier extern 없어 full-stack만(det safety-pin set_deterministic(true) 호출) clang 'use of undeclared identifier' → '대형 TU 링크 fail'로 오진. small OK large fail = code-path 커버리지(large-TU 스케일/relocation 아님).",
+        "threshold": "재발조건=anima build 실패 진단 전 pool hexat 현행성 미확인. 해결=진단 전 먼저 pool 호스트 hexa --version 확인 + install.sh 동기화(현행 main release 반영)한 뒤 재현. install-path 재발가드=hexa-lang #4334(HX_SRC origin pin + fresh-clone fallback). 동족 패턴=bench bad-hexat·anima stale-prebuilt. cross-repo memory=project_hexa_anima_linux_build_stale_hexat_setdet.",
+        "source": "cli/anima.hexa"
       }
     ]
   }
