@@ -12447,6 +12447,13 @@
         "value": "engine-compile 잡 만성 RED 3겹 root: ① warm-compile 캐시 키 hashFiles('core/**','cli/**') 가 dangling symlink core/phi/quantum_types.hexa(→hexa-lang sibling 외부파일, CI 체크아웃엔 부재)를 만나 fatal — GitHub hashFiles() 표현식은 runner 가 followSymbolicLinks=false 로 호출(actions/runner src/Misc/expressionFunc/hashFiles/src/hashFiles.ts:13)하므로 dangling 을 stat 하다 ENOENT→'Fail to hash files under directory' 키 평가 전체 실패(결정적·매 run). ② 캐시 수리 후 노출된 step8 compile-gate 의 stale import core/g_gates.hexa(cli/evaluate.hexa 로 흡수된 모듈). ③ cold-bootstrap chicken-egg: 캐시 한 번도 미저장→매 run COLD→25min timeout cancel→Post-Cache save 스킵→캐시 영영 미저장.",
         "threshold": "재발조건+가드: (a) hashFiles 키 글로브가 dangling/cross-repo symlink 를 포함하면 즉시 RED → 외부소유 경로는 '!path' 로 제외(fingerprint 에서 빼는 게 의미상 정답). clone 로컬 repro 는 @actions/glob 기본 omitBrokenSymbolicLinks=true 라 통과로 숨김 → runner 충실 재현은 {followSymbolicLinks:false} 필수. (b) 오래 RED 던 게이트를 고치면 그동안 SKIP 되던 하위 스텝의 stale import 가 드러남 → 흡수/이동 시 CI import 리스트 lockstep 갱신. (c) 캐시 의존 잡은 첫 COLD run 이 timeout 안에 완료돼 Post-Cache save 에 도달해야 캐시가 데워짐(브랜치-스코프라 main 첫 cold 필수) → timeout 여유 + 무거운 warn-only 스텝은 continue-on-error+per-step timeout 으로 캡. CROSS-CUT: 같은 hashFiles+dangling-symlink·cold-bootstrap 트랩은 hexa-lang 등 모든 GHA 워크플로에 적용가능.",
         "source": ".github/workflows/ci.yml"
+      },
+      {
+        "id": "train-py-1",
+        "state": "ossified",
+        "value": "torch 학습 코드의 device-혼합 텐서 연산이 침묵-무해가 아니라 uncaught 크래시다: dbes_specialization usage_gini 의 torch.arange(1,nn_+1,dtype=u.dtype) 가 CPU 에 생성되는데 usage(u)는 CUDA → idx*u device mismatch RuntimeError 로 --dbes-every tick(step 2000)에서 학습 전체가 죽음(L3 summer 재현). 앞서 'DBES=monitor-only 진단항이라 무해'로 CONVERGENCE 해당없음 오판했으나 실제 학습-killer. monitor/diagnostic 코드라도 forward 경로에 있으면 크래시 전파.",
+        "threshold": "torch 학습이 특정 step(=dbes/gauge tick 배수)에서 갑자기 RuntimeError device-mismatch 로 죽으면: 그 tick 함수(dbes/gauge)의 보조 텐서 생성(torch.arange/zeros/tensor)에 device=<model텐서>.device 누락 의심. 해결=모든 보조 텐서에 device 명시. monitor-only 라고 크래시 면제 아님. 1631·1640·cli/train.py 반영됨.",
+        "source": "cli/train.py"
       }
     ]
   }
