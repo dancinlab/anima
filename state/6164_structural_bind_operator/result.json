@@ -1,0 +1,153 @@
+{
+  "chance": 0.1111,
+  "seeds": {
+    "7": {
+      "arms": {
+        "add": {
+          "train": 1.0,
+          "held": 0.251
+        },
+        "hadamard": {
+          "train": 1.0,
+          "held": 0.1973
+        },
+        "tensorproduct": {
+          "train": 1.0,
+          "held": 0.3008
+        },
+        "bilinear": {
+          "train": 1.0,
+          "held": 0.249
+        }
+      },
+      "oracle_heldout": 1.0
+    },
+    "4302": {
+      "arms": {
+        "add": {
+          "train": 1.0,
+          "held": 0.0933
+        },
+        "hadamard": {
+          "train": 1.0,
+          "held": 0.1045
+        },
+        "tensorproduct": {
+          "train": 1.0,
+          "held": 0.0754
+        },
+        "bilinear": {
+          "train": 1.0,
+          "held": 0.1477
+        }
+      },
+      "oracle_heldout": 1.0
+    },
+    "4303": {
+      "arms": {
+        "add": {
+          "train": 1.0,
+          "held": 0.1257
+        },
+        "hadamard": {
+          "train": 1.0,
+          "held": 0.0869
+        },
+        "tensorproduct": {
+          "train": 1.0,
+          "held": 0.1958
+        },
+        "bilinear": {
+          "train": 1.0,
+          "held": 0.197
+        }
+      },
+      "oracle_heldout": 1.0
+    },
+    "4304": {
+      "arms": {
+        "add": {
+          "train": 1.0,
+          "held": 0.0
+        },
+        "hadamard": {
+          "train": 1.0,
+          "held": 0.0779
+        },
+        "tensorproduct": {
+          "train": 1.0,
+          "held": 0.1091
+        },
+        "bilinear": {
+          "train": 1.0,
+          "held": 0.1055
+        }
+      },
+      "oracle_heldout": 1.0
+    },
+    "4305": {
+      "arms": {
+        "add": {
+          "train": 1.0,
+          "held": 0.116
+        },
+        "hadamard": {
+          "train": 1.0,
+          "held": 0.1196
+        },
+        "tensorproduct": {
+          "train": 1.0,
+          "held": 0.0601
+        },
+        "bilinear": {
+          "train": 1.0,
+          "held": 0.1008
+        }
+      },
+      "oracle_heldout": 1.0
+    }
+  },
+  "verdict": {
+    "per_seed": [
+      {
+        "seed": 7,
+        "add": 0.251,
+        "best_bind": 0.3008,
+        "best_arm": "tensorproduct",
+        "delta": 0.0498
+      },
+      {
+        "seed": 4302,
+        "add": 0.0933,
+        "best_bind": 0.1477,
+        "best_arm": "bilinear",
+        "delta": 0.0544
+      },
+      {
+        "seed": 4303,
+        "add": 0.1257,
+        "best_bind": 0.197,
+        "best_arm": "bilinear",
+        "delta": 0.0713
+      },
+      {
+        "seed": 4304,
+        "add": 0.0,
+        "best_bind": 0.1091,
+        "best_arm": "tensorproduct",
+        "delta": 0.1091
+      },
+      {
+        "seed": 4305,
+        "add": 0.116,
+        "best_bind": 0.1196,
+        "best_arm": "hadamard",
+        "delta": 0.0036
+      }
+    ],
+    "n_delta_ge_0.15": 0,
+    "no_regress": true,
+    "oracle_ok": true,
+    "tier": "\ud83e\uddf1 DIRECTIONAL-FLOOR \u2014 structural binders (hadamard/tensorproduct/bilinear) do NOT open held-out (framebreak combination-operator thesis FALSIFIED in toy; H_1840 confirmed)"
+  }
+}
