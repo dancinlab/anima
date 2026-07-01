@@ -1,8 +1,8 @@
 # H_6162 — 🎯🧮 🎯🧮 HE-AS-OBJECTIVE
 
-**tier:** ⏳ PROPOSED (설계만·측정 0·pre-registered · frozen prediction below)
+**tier:** 🧱 DIRECTIONAL-FLOOR (STAGE-1 FAIR cheap-gate FAIL, 2026-07-02)
 **title:** 🎯🧮 HE-AS-OBJECTIVE — homomorphism-error 를 trunk penultimate aux-loss(L_HE)로 최소화, 표현을 합성-homomorphic 강제. objective-axis, contrastive/recomb-obj(H_1602 🧱)와 DIFFERENT 형태; Barin-Pacela oracle-dictionary 정합
-**verdict:** ⏳ PROPOSED (설계만·측정 0·pre-registered). NOT a dup of H_1821(그건 HE=cheap DIAGNOSTIC/pre-screen predictor, 학습신호 아님) 또는 H_1602/H_6130(contrastive/constraint objective; HE-objective 는 표현공간 homomorphism 제약이라는 다른 objective form). Barin-Pacela 2603.28744: oracle dictionary 면 all-scale 풀림 = objective 가 레버. frozen A/B: L_HE aux(λ sweep) ON vs OFF × 303M, engine-native G1 composed_distinct + held-out DESCENT(fair-model). 예측: L_HE 가 trunk homomorphic 강제 → G1 lift. LIFT 0 이면 🧱(objective family 소진 재확인, H_1602/1840 DPI 정합). cost-gate(학습 필요).
+**verdict:** 🧱 DIRECTIONAL-FLOOR (STAGE-1 FAIR cheap-gate, 2026-07-02, aiden pool $0, torch mirror=DIRECTIONAL). target-agnostic L_HE aux(=MSE(pair-rep, learned target-blind composition of part-reps)) 5-seed: n(Δ≥+0.15)=0/5, no_regress=False(seed4303 collapse 0), ON held-out at/near chance except seed4302(.243). oracle_ok=True(task 합성 solvable→floor=진짜 재조합갭). FROZEN bar FAIL → HE-objective 는 held-out 조합 안 엶. objective-axis 소진 재확인(H_1602 InfoNCE 9/9 + H_1840 γ fair-gate 정합, DPI meta-law). GPU NOT authorized. FREEZE v1 sanity 결함(baseline-beats-wall)→v2 oracle-control 수정(convergence fair-cheap-gate-design-1). state/6162_he_homomorphism_objective/RESULT.md verbatim.
 
 ## 발상 (2026-07-02 디코더-돌파 브레인스토밍, 원장 2중-대조 생존)
 
