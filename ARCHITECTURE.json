@@ -10578,7 +10578,19 @@
                     "name": "archive/train/clm/model/clm_serialize_v2.py",
                     "role": "",
                     "id": "component-map-top-level-train-clm-train-clm-model-clm-serialize-v2-py-train-clm",
-                    "detail": "archive/train/clm/model/clm_serialize_v2.py"
+                    "detail": "archive/train/clm/model/clm_serialize_v2.py — historical CLM serializer backend. serialize_v3 = the .clm byte-grammar SSOT (golden reexport_d768_v2_fast.clm)."
+                  },
+                  {
+                    "name": "core/serialize.py (unified serializer)",
+                    "role": "",
+                    "id": "component-map-top-level-train-clm-train-clm-model-core-serialize-py",
+                    "detail": "core/serialize.py — the UNIFIED serializer (parallel to core/decode.hexa's unified CONV+BYTE decoder): verbatim byte-faithful merge of clm_serialize_v2.py (CONV .clm serialize_v3) + bytegpt_serialize.py (BYTE .pt→.bin bridge)."
+                  },
+                  {
+                    "name": "core/serialize.py importers",
+                    "role": "",
+                    "id": "component-map-top-level-train-clm-train-clm-model-core-serialize-py-importers",
+                    "detail": "Live cli/ importers (cli/train.py `import serialize as S`+`as BGS`·cli/serialize.py·serialize_standalone.py) resolve serialize from core/. clm_serialize_v2.py stays as the historical backend still imported by archive/state trainers + verify_clm_v2 self-tests. bytegpt_serialize.py → archive/tool/."
                   }
                 ]
               },

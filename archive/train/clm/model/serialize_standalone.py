@@ -16,11 +16,11 @@
 # .pt checkpoint (recovery, re-export, re-verification) without re-training.
 #
 # REFERENCE-MATCH (NOT a reimplementation): the byte layout comes from the GROUND-TRUTH
-# bridge serializer train/clm/model/clm_serialize_v2.py::serialize_v3 (the SAME byte
-# grammar core/clm_decode.hexa parses and the golden reexport_d768_v2_fast.clm uses), and
-# the held-out gate is train/clm/model/verify_clm_v2.py descent (math.log mirror, dt_ln-
-# immune). This file only loads the .pt, derives L/E from the state-dict keys, and calls
-# those two backends — it invents no new layout and no new gate.
+# unified serializer core/serialize.py::serialize_v3 (the SAME byte grammar core/decode.hexa
+# parses and the golden reexport_d768_v2_fast.clm uses), and the held-out gate is the KEPT
+# torch-interop sibling verify_clm_v2.py descent (math.log mirror, dt_ln-immune). This file
+# only loads the .pt, derives L/E from the state-dict keys, and calls those two backends —
+# it invents no new layout and no new gate.
 #
 # TORCH IS ALLOWED HERE (training family): unlike cli/evaluate.py (torch-free
 # measurement) this is the LEARNING-side re-export and must read a torch .pt. The gate
@@ -40,9 +40,17 @@ import os
 import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-# the ground-truth serializer + verifier (clm_serialize_v2.py / verify_clm_v2.py) are
-# SIBLINGS in this same train/clm/model/ dir (a_clm_gen_pipeline kept torch-interop tools).
+# verify_clm_v2.py (held-out DESCENT gate) is a KEPT torch-interop SIBLING in this same
+# train/clm/model/ dir. The serializer itself is now the UNIFIED core/serialize.py (CLM
+# serialize_v3 + ByteGPT bridge, parallel to core/decode.py) — add core/ so `import
+# serialize` resolves. core/ = <repo>/core; from …/archive/train/clm/model/ walk up 4 to
+# the repo root (…/archive/train/clm/model → …/archive/train/clm → …/archive/train →
+# …/archive → repo). If that core/ is absent (staged pod), fall back to _HERE.
 sys.path.insert(0, _HERE)
+_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_HERE))))
+_CORE = os.path.join(_REPO, "core")
+if os.path.isdir(_CORE) and _CORE not in sys.path:
+    sys.path.insert(0, _CORE)
 
 
 def serialize_usage():
@@ -107,8 +115,8 @@ def serialize_run(argv):
         return 2
 
     import torch                                          # training family — torch OK here
-    import clm_serialize_v2 as S                          # serialize_v3 = bridge SSOT
-    import verify_clm_v2 as VC                            # clm_decodable / descent
+    import serialize as S                                 # core/serialize.py — serialize_v3 = bridge SSOT
+    import verify_clm_v2 as VC                            # clm_decodable / descent (this dir)
 
     print("=== anima serialize — .pt → .clm v0.3 (ground-truth bridge) ===")
     print("pt:      " + pt)

@@ -90,7 +90,7 @@ ARCH (--arch {clm,bytegpt}, default clm — preserves current behavior): the obj
 levers are ARCH-AGNOSTIC (they operate on logits + an optional penultimate), so they can
 be tested on EITHER trunk. `--arch bytegpt` builds a 24-layer GPT-2-class ByteGPT (the
 CLEAN G1 wall: ByteGPT single=2, vs CLMConvMoE's single=0 coverage-floor) and serializes a
-`.bin` (5×u32 header) via tool/bytegpt_serialize.py instead of a `.clm`. For bytegpt the
+`.bin` (5×u32 header) via core/serialize.py (the unified serializer) instead of a `.clm`. For bytegpt the
 CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF — only arm=ctrl × the
 objective matrix is supported (that's exactly what the G1-lever test needs). `anima
 evaluate --py` auto-detects `.bin` vs `.clm` by header, so a ByteGPT `.bin` measures through
@@ -119,8 +119,8 @@ import torch.nn.functional as F
 # cli/, not the repo root): resolve model.py under the repo root (parent of cli/) — or
 # $ANIMA_SRC if the launcher exported it — joined with the CLM model dir. The model dir
 # is train/clm/model on a pod but archive/train/clm/model in some worktree layouts; try
-# both. The .clm serializer/verifier (clm_serialize_v2, verify_clm_v2) live in the SAME
-# dir, so a single sys.path insert resolves all three.
+# both. The held-out DESCENT verifier (verify_clm_v2) lives in that SAME dir; the unified
+# serializer (core/serialize) resolves via a separate core/ sys.path insert below.
 _HERE = os.path.dirname(os.path.abspath(__file__))          # …/cli
 _ROOTS = []
 _ENV_SRC = os.environ.get("ANIMA_SRC")
@@ -150,16 +150,24 @@ for _r in _ROOTS:
     _t = os.path.join(_r, "tool")
     if os.path.isdir(_t) and _t not in sys.path:
         sys.path.insert(0, _t)
+# core/ is the engine package; the UNIFIED serializer (core/serialize.py = CLM
+# serialize_v3 + ByteGPT .pt→.bin bridge) lives there (parallel to core/decode.py).
+# Add core/ so `import serialize` resolves — the same resolution cli/evaluate.py uses
+# for `import decode`.
+for _r in _ROOTS:
+    _c = os.path.join(_r, "core")
+    if os.path.isdir(_c) and _c not in sys.path:
+        sys.path.insert(0, _c)
 
-# (imports resolve via the sys.path insert above to the ground-truth CLM model
-#  + .clm serializer/verifier under train/clm/model/.)
+# (imports resolve via the sys.path inserts above to the ground-truth CLM model
+#  under train/clm/model/ + the unified serializer under core/.)
 from model import CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d  # train/clm/model/model.py
-import clm_serialize_v2 as S                         # serialize_v3 = bridge SSOT
-import verify_clm_v2 as VC                            # clm_decodable / parse_clm
+import serialize as S                                # core/serialize.py — serialize_v3 = bridge SSOT
+import verify_clm_v2 as VC                            # clm_decodable / parse_clm (train/clm/model/)
 # ByteGPT trunk model (--arch bytegpt) — sibling of model.py in the SAME model dir.
 from bytegpt_model import ByteGPTConfig, ByteGPT      # train/clm/model/bytegpt_model.py
-# ByteGPT .pt -> .bin serializer lives in tool/ (already on sys.path above).
-import bytegpt_serialize as BGS                       # serialize(pt_path, bin_path)
+# ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
+import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1079,7 +1087,7 @@ def main():
 
     # ── serialize helper (end-of-run AND intermediate --ckpt-every checkpoints) ──
     #   CLM → .clm v0.3 (CLMConvMoE additive readout, materialized TLoRA experts).
-    #   ByteGPT → .pt (cfg+state_dict) → tool/bytegpt_serialize.py::serialize → .bin (5×u32
+    #   ByteGPT → .pt (cfg+state_dict) → core/serialize.py::serialize → .bin (5×u32
     #   header). The engine (generator L3 mouth-sniff) auto-dispatches .bin to the bytegpt
     #   decode; `anima evaluate --py` auto-detects .bin vs .clm by header, so no eval change.
     def _write_bin(out_path):
@@ -1288,7 +1296,7 @@ def main():
         print(f"  summary -> {a.gauges_out}", flush=True)
 
     # ── serialize the trained ckpt: CLM → .clm v0.3 (additive readout + MATERIALIZED
-    #    experts) | ByteGPT → .bin (5×u32 header via tool/bytegpt_serialize.py). ──
+    #    experts) | ByteGPT → .bin (5×u32 header via core/serialize.py). ──
     if a.out:
         _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
 
