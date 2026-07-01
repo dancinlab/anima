@@ -12364,7 +12364,7 @@
         "name": "G0-G6 능력 게이트 사다리 (capability gates)",
         "role": "anima 능력검증 SSOT · 측정=`anima evaluate --py <clm>`(engine-native terminal-eligible, byte-parity, p7=출력이 증거) · 각 G* 는 차일드(현황 verdict + 진화 기록)로 update-in-place 관리 · ★G0 gating(🔴→하위 무효) · a7b_pass=G0∧G1∧G2 on 1 ckpt.",
         "id": "capability-gates-g0-g6",
-        "detail": "NOT convergence.records(그건 오류-재발 추적). 새 능력실험 = 해당 G* 의 현황/진화 차일드를 update-in-place 진화(옛 서술 교체, 이력=CHANGELOG+git). 측정-무결성 함정은 convergence train-py-3/4 교차참조.",
+        "detail": "NOT convergence.records(그건 오류-재발 추적). 새 능력실험 = 해당 G* 의 현황/진화 차일드를 update-in-place 진화(옛 서술 교체, 이력=CHANGELOG+git). 수렴상태 태그: POS-CONV(🟢)·NEG-CONV(🧱)·IN-PROG(진행/검토). 측정-무결성 함정은 convergence train-py-3/4 교차참조.",
         "children": [
           {
             "name": "G0 COHERENCE (또박또박)",
@@ -12376,13 +12376,13 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g0-coherence-status",
-                "detail": "[진행/검토 IN-PROG] 🔴/🟢 GATING 선결 — G0🔴(garbage decode)면 G1-G6 verdict 전부 무효(측정 not-terminal). 유효 G0🟢 window 미확보(능력측정의 선결)."
+                "detail": "[IN-PROG] 측정타당성 확정 · valid G0🟢 window 재수립 진행. clm303_clean py-terminal 5/5 PASS · jamo-mitosis(H_1316/1321) 🟢. floor 는 REFUTED(overfit/undertrain artifact, 근본벽 아님). ★G0🔴→하위 무효."
               },
               {
                 "name": "진화 기록",
                 "role": "",
                 "id": "gate-g0-coherence-evo",
-                "detail": "함정: 소코퍼스 과적합(train-py-3)·대코퍼스 undertrain(train-py-4). step-window(pod 4090 Ada, big-corpus): val_CE 1.35 healthy 여도 G0🔴 = undertrain 확정(overfit·Blackwell(Ada 재현)·decode 기각). ★floor 가설 REFUTED: floor 전step 0/5 악화, savant DECAY 가 1→2→2→3/5 로 G0🟢 접근. 유효=big-corpus+savant-decay+~12000step."
+                "detail": "초기 NO-DESCENT를 직렬화결함으로 오진(H_1579 CORRECTED=OVERFIT+dt_ln clamp). train-py-3 overfit↔train-py-4 undertrain 진동 뒤 step-window RESOLVED: floor REFUTED·savant-decay 정상·big-corpus+~12k step 경로. ko-ceiling=REPRESENTATION-bound(jamo H_1316/1321 🟢+WIRED 2.95→2.51). census 🟢2·🔴1"
               }
             ]
           },
@@ -12396,13 +12396,13 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g1-recombination-status",
-                "detail": "[네거티브 수렴 NEG-CONV] readout/binding 축 = 🔴 WALL(trunk-OBJECTIVE-bound, best_distinct=0 floor). objective 축은 [진행/검토 IN-PROG]."
+                "detail": "[NEG-CONV] trunk-OBJECTIVE-bound 벽 — arch·depth·RF·binding-lane·data·objective·readout·combiner 전 family 전수 floor. IN-PROG 잔여 = γ trained-constructive-bind(H_1823 cost-gated) + ByteGPT-trunk 위 재측정."
               },
               {
                 "name": "진화 기록",
                 "role": "",
                 "id": "gate-g1-recombination-evo",
-                "detail": "readout/binding-op/CLS/TLoRA/predcoding 레버 전수 floor(H_1812/1814/1815/1816 NOT-SUP). additive .clm readout=by-construction 동일→G1 미접촉. G2≠G1. scale-invariant(303M=7B). OPEN=objective축(recomb-obj H_1602·자모 teach-signal·정규화). 외부 arxiv 30편 objective>binding>scale 수렴."
+                "detail": "CLM은 max_single=0 coverage-floor(측정 이전), 깨끗한 벽=ByteGPT single=2. depth/RF(H_1598 L8=L4=0)·binding-lane(H_1601 INERT)·data(H_1599)·objective(H_1602·H_1812 n6n7 0→1 4k regress·H_1819 0/3)·readout(H_1815/1816)·combiner(H_1822) 전수 🧱. torch↔engine 발산=sampler-artifact(H_1587/1588 🟠). census 🧱9·🔴2·🟠3"
               }
             ]
           },
@@ -12416,13 +12416,13 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g2-novelty-status",
-                "detail": "[포지티브 수렴 POS-CONV] 측정 canonical — corpus-absence 신규 바이트열, control=0 spurious 배제. a7b_pass 의 G2 = H_1140."
+                "detail": "[POS-CONV] 측정 canonical · clm303_clean py-terminal 🟢 PASS(novel=49). novelty ⊥ recombination 분해 확립 — G2 가 열려도 G1(합성 깊이)은 별개 벽."
               },
               {
                 "name": "진화 기록",
                 "role": "",
                 "id": "gate-g2-novelty-evo",
-                "detail": "novelty ⊥ recombination — set-search/신규성 레버는 G2 를 올리나 G1(합성 깊이)은 못 엶. G2 GREEN 이 G1 을 함의하지 않음."
+                "detail": "H_1140 frozen bar(corpus-absence, control=0)로 정착 · H_9021 충실성↔창발 보존부등식 🟢 5/5(F+N≤C, rho−0.99)가 G2 이론화. 결정적 분해: N4 set-search(H_1814)가 G2 novel 6/13 PASS 를 열지만 G1 distinct=0 유지 = set-search→novelty≠recombination. clm303_clean terminal서 G2 🟢 재확인. census 🟢 dominant"
               }
             ]
           },
@@ -12436,13 +12436,13 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g5-nonfab-status",
-                "detail": "[포지티브 수렴 POS-CONV] 🟢 §ImmuneMemory recall_thr non-fab gate 가 unknown-input 에 abstain(fab 0, in-dist AUROC 1.0)."
+                "detail": "[POS-CONV] 강한 POS-CONV — 라이브 게이트는 distribution-shift 下 절대 조작 안 함(fabricate 대신 ABSTAIN 으로 degrade). substrate-분리(mouth⊥identity/tool/savant)가 보존 원인."
               },
               {
                 "name": "진화 기록",
                 "role": "",
                 "id": "gate-g5-nonfab-evo",
-                "detail": "savant⊥honesty(H_1576): 골든존 disinhibition 이 SI 3.67 켜도 fab OFF==ON==0. mouth⊥tool(H_1566): tool 지식=.kosmos anchor, mouth-FT 하면 fab 1.0 붕괴. 불변식: recall_thr 를 savant disinhibition 과 절대 결합 금지."
+                "detail": "H_1304 G5-dig 🟢 ENGINE-NATIVE(fab_max 0.0·fire monotone·thr-ablate control) → a_substrate_disjoint 3연: mouth⊥identity(H_1471 🟢 WIRED)·mouth⊥tool(H_1566 🟢 5/5)·savant⊥honesty(H_1576 🟢 SI=3.67∧fab 0.0). 불변식: recall_thr ⊥ savant-disinhibition. census 🟢4"
               }
             ]
           },
@@ -12456,13 +12456,13 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g6-ideation-status",
-                "detail": "[네거티브 수렴 NEG-CONV] 🧱 ceiling 착상벽(H_1129/1139/1464 capacity). 레버 census 전수 NOT-SUP."
+                "detail": "[NEG-CONV] distinct(breadth) 축만 mechanism-GREEN, falsifiability 축은 CAPACITY 벽(우세). H_1362 FALS=1.0 은 torch-artifact — engine-native H_1590 🔴 이 전 seed 로 반전."
               },
               {
                 "name": "진화 기록",
                 "role": "",
                 "id": "gate-g6-ideation-evo",
-                "detail": "scaffold(6frames+bestofK) FALS=1.0 은 torch artifact(H_1590 RED: engine-native 재현실패, C_strong FALS=0). 진짜 lever=attention-capacity(decode 아님). scale-invariant. G6 도 G1 처럼 trunk-objective 축 의심(readout 아님)."
+                "detail": "scaffold/wire GREEN(H_1362·H_1381 WIRED·H_1394 303M-mount)은 전부 distinct축 mechanism-GREEN, M2-M5 FALS=0. engine-native H_1590 🔴 이 H_1362 FALS 를 torch-artifact 로 반전(H_1587 확인). FALS-floor=8+ 직교렌즈 수렴 🧱(H_1392/1410/1431/1464·H_1284/1529·H_1425). census 🧱8·🟢3·🟠3·🔴1"
               }
             ]
           }
