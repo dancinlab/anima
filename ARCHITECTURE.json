@@ -11555,6 +11555,32 @@
                 "detail": "train.py PARITY(#10 7-gap)"
               },
               {
+                "name": "--init warm-start seam",
+                "role": "",
+                "id": "component-map-top-level-cli-canonical-train-init-warm-start",
+                "detail": "`anima train --py --init <ckpt>` = warm-start: load a base ckpt into the freshly-built model BEFORE training (KEYSTONE for continue-training / warm-FT off a G0🟢 trunk e.g. h1129.bin → G1 lever test). cli/train.py::_warm_start dispatches by extension; H_247-guarded.",
+                "children": [
+                  {
+                    "name": "ByteGPT .bin path",
+                    "role": "",
+                    "id": "component-map-top-level-cli-canonical-train-init-bin",
+                    "detail": "`.bin` (5×u32 header) → core/serialize.deserialize_bytegpt (byte-exact INVERSE of serialize(), same tensor order) → load_state_dict. Round-trip BYTE-PARITY smoke: 29 tensors max|Δ|=0. Base target = h1129.bin (kwr0.96, single=2)."
+                  },
+                  {
+                    "name": ".pt / .clm paths",
+                    "role": "",
+                    "id": "component-map-top-level-cli-canonical-train-init-pt",
+                    "detail": "`.pt`/`.pth` torch state_dict → per-key shape-guarded load_state_dict(strict=False), 0-overlap → error. Quantized `.clm` REFUSED (int4 dequant→state_dict remap = follow-on; warm-init from full-precision `.pt`)."
+                  },
+                  {
+                    "name": "H_247 guard + hexa twin",
+                    "role": "",
+                    "id": "component-map-top-level-cli-canonical-train-init-guard",
+                    "detail": "Every path HARD-guards dim/layer (H_247 init_ce_catastrophic_floor: silent warm-init mismatch floors +2.5 nats → raise). Load AFTER tlora/mitosis install (lever keys missing-tolerated). cli/train.hexa twin: `--init` parsed + FAIL-LOUD (hexa farr LOADER 구현됨·미배선 follow-on). $0 smoke 7/7 pass."
+                  }
+                ]
+              },
+              {
                 "name": "GPU util re-gate 🟠 PARTIAL(peak 65%·mean 0.75%, CPU-scalar-bound)",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-gpu-util-re-gate-partial-peak-65-mean-0-75",

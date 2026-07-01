@@ -710,6 +710,66 @@ def serialize_bind(base_bin: str, injected_pt: str, out_bin: str) -> str:
     return out_bin
 
 
+# ════════════════════════════════════════════════════════════════════════
+# (d.inv) ByteGPT .bin → torch state_dict INVERSE — warm-start reader.
+#   The exact byte-for-byte inverse of serialize() above (same 5×u32 header +
+#   flat little-endian float32 tensor order). Used by `anima train --py --init
+#   <base.bin>` to warm-start a fresh ByteGPT from a trained engine .bin. The
+#   byte grammar SSOT stays in THIS file (mirror of serialize's write order).
+# ════════════════════════════════════════════════════════════════════════
+
+def deserialize_bytegpt(bin_path: str) -> "Tuple[Dict[str, Any], Dict[str, int]]":
+    """Read a ByteGPT engine `.bin` (5×u32 header) back into a torch state_dict.
+
+    Returns (state_dict, cfg) where state_dict has the EXACT keys ByteGPT.state_dict()
+    emits (tok/pos/blocks.{i}.*/ln_f/head — head==tok since the head is tied) and cfg =
+    {vocab,d,n_layer,n_head,block}. This is the byte-inverse of serialize(): it walks the
+    same tensor order and reshapes each little-endian float32 slice to torch's native
+    [out,in] orientation (serialize wrote torch's layout VERBATIM, so no transpose)."""
+    import torch  # training/warm-start family — torch OK here (.bin bridge, a_clm_gen_pipeline)
+    rb = open(bin_path, "rb").read() if not isinstance(bin_path, (bytes, bytearray)) else bin_path
+    if len(rb) < 20:
+        raise ValueError(f"deserialize_bytegpt: {bin_path} too short ({len(rb)}B) for a 5×u32 header")
+    vocab, d, n_layer, n_head, block = struct.unpack_from("<5I", rb, 0)
+    off = 20
+
+    def rd(shape) -> "torch.Tensor":
+        nonlocal off
+        n = 1
+        for s in shape:
+            n *= s
+        arr = np.frombuffer(rb, dtype="<f4", count=n, offset=off).astype(np.float32)
+        off += 4 * n
+        return torch.from_numpy(np.ascontiguousarray(arr).reshape(shape))
+
+    sd: Dict[str, Any] = {}
+    sd["tok.weight"] = rd((vocab, d))
+    sd["pos.weight"] = rd((block, d))
+    for i in range(n_layer):
+        p = f"blocks.{i}."
+        sd[p + "ln1.weight"] = rd((d,))
+        sd[p + "ln1.bias"] = rd((d,))
+        sd[p + "attn.in_proj_weight"] = rd((3 * d, d))
+        sd[p + "attn.in_proj_bias"] = rd((3 * d,))
+        sd[p + "attn.out_proj.weight"] = rd((d, d))
+        sd[p + "attn.out_proj.bias"] = rd((d,))
+        sd[p + "ln2.weight"] = rd((d,))
+        sd[p + "ln2.bias"] = rd((d,))
+        sd[p + "mlp.0.weight"] = rd((4 * d, d))
+        sd[p + "mlp.0.bias"] = rd((4 * d,))
+        sd[p + "mlp.2.weight"] = rd((d, 4 * d))
+        sd[p + "mlp.2.bias"] = rd((d,))
+    sd["ln_f.weight"] = rd((d,))
+    sd["ln_f.bias"] = rd((d,))
+    sd["head.weight"] = rd((vocab, d))   # tied — equals tok.weight in a serialized model
+    if off != len(rb):
+        raise AssertionError(
+            f"deserialize_bytegpt: consumed {off}B but file is {len(rb)}B "
+            f"(header cfg vocab={vocab} d={d} n_layer={n_layer} n_head={n_head} block={block} "
+            f"— corrupt or wrong-arch .bin)")
+    cfg = {"vocab": vocab, "d": d, "n_layer": n_layer, "n_head": n_head, "block": block}
+    return sd, cfg
+
 
 # ════════════════════════════════════════════════════════════════════════
 # (e) FORMAT DISPATCH — pick the mouth serializer by target extension. Convenience
