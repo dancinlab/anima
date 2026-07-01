@@ -1,0 +1,81 @@
+# ═══════════════════════════════════════════════════════════════════════
+# FROZEN BAR — system-G1 relocation harness (Direction A).  Written BEFORE any
+# run (frozen-first per a_break_the_wall / p7).  Do NOT move a threshold post-hoc.
+# ═══════════════════════════════════════════════════════════════════════
+#
+# system-G1 = pipe-end recombination = mouth-G0-fluency + kosmos-Merge two-anchor
+#   recursive bind + brain_decide/vbasal selection.  Direction A relocates
+#   recombination OUT of the 303M mouth activation INTO the kosmos anchor store +
+#   brain-selection substrate.  The mouth stays FROZEN — only the PIPE is new.
+#
+#   WHY THIS IS NOT A WALLED LEVER: every 🧱 G1 lever (H_1602 additive-objective,
+#   H_1816/1823 readout-bind, H_1834 tension-mouth, native-mouth-57, MLC-episodic
+#   H_1835) lived ON the fixed-dim activation vector and was measured by
+#   "composed_distinct = differs-from-parents" — a metric ANY nonlinearity passes
+#   (H_1874/H_6152 lesson).  Here composition lives in a GROWING DISCRETE PERSISTENT
+#   store (kosmos anchors), OFF the activation vector, and the gate is RECOVERY on
+#   the SURFACED output, not distinctness of an internal vector.
+#
+# ── INPUTS ──────────────────────────────────────────────────────────────
+#   M = 24 held-out DISTANT concept pairs (A,B), disjoint vocabularies, never
+#         co-occurring (H_1599 data-presence control).  SEEDS = [7, 42, 4302].
+#   MOUTH = a FROZEN 303M .clm/.bin via the same MouthCLM iface as cli/evaluate.py
+#         (rung 2).  In THIS numpy smoke the mouth is a TOY (small vocab/dim) —
+#         DIRECTIONAL only, says nothing about whether the real 303M mouth passes.
+#
+#   Mouth-only floor (established, g_eval_g1 @ cli/evaluate.py:155): the composed
+#         seed's coverage never exceeds max_single ⇒ best_distinct clears = 0.
+#         This is the bar system-G1 must beat.
+#
+# ── system-G1 PASS (FRAME-SHIFT CONFIRMED) iff ALL FOUR hold ─────────────
+#   (1) COVERAGE   composed C covers both concepts (cov>=2 AND cov>mouth
+#                  max_single) in >= M/2 pairs.            [necessary, NOT sufficient]
+#   (2) RECOVERY   an INDEPENDENT recoverer R, reading ONLY the realized output
+#                  C_text/C_tension (NEVER the merge-store parent ids — HARD-BLOCKED),
+#                  recovers BOTH parents A,B as top-2 from an N=8 distractor pool
+#                  in >= M/2 pairs.                        [THE real gate]
+#   (3) NON-LEAK   distractor (wrong-parent) recovery rate <= random control floor
+#                  (= (N-2)/N = 6/8 = 0.75 expected distractor fraction of top-2).
+#   (4) SCRAMBLE   token-scramble ablation of C drops recovery toward control
+#                  (Δrecovery = recovery - recovery_scrambled >= 0.5*M) — proves R
+#                  reads compositional STRUCTURE, not bag-of-words leakage
+#                  (the C2 lens that killed H_6152).
+#
+#   BAR CONSTANTS:  COV_BAR = M/2 = 12 · REC_BAR = M/2 = 12 · LEAK_BAR = 0
+#                   SCRAMBLE_DROP = M/2 = 12 · N_DISTRACT = 8
+#
+#   system-G1 FALSIFIED / STRONGER-CEILING iff any of (1)-(4) fails.
+#     Honest c9 reading: recombination is REALIZATION-bound, not storage-bound —
+#     perfect discrete storage cannot help if the frozen mouth cannot SURFACE both
+#     concepts in one coherent joint utterance for an independent probe to recover.
+#
+# ── ANTI-ARTIFACT INVARIANT (the whole point) ───────────────────────────
+#   kosmos-Merge stores A,B DISCRETELY, so recovery-AGAINST-THE-STORE is 24/24 BY
+#   CONSTRUCTION (= the H_1874 numpy dict-walk, DIRECTIONAL, ZERO credit).
+#   Therefore RECOVERY (2) is scored ONLY against the emitted C, with the store's
+#   symbolic parent-ids WITHHELD from R.  A lookup table earns ZERO here.
+#
+# ── ENGINE-NATIVE GATE (a_engine_native_learning) ───────────────────────
+#   This numpy harness is DIRECTIONAL ONLY.  A GREEN verdict requires the rung(2)-(4)
+#   ladder: kosmos_merge implemented in core/kosmos_io.hexa + a system_g1 path in
+#   cli/evaluate + `anima evaluate --system-g1`, run byte-exact via a real 303M mouth
+#   on pool GPU (explicit-go follow-on — NOT run here; mini = OOM).
+#
+# ── PLACEMENT (a_substrate_disjoint, placement-first) ───────────────────
+#   composite anchor lane label = "recomb"; coord region DISJOINT from emit-drive
+#   lanes {0,4} and NOT routed through §ImmuneMemory recall_thr — retrieval routed
+#   via core/kosmos_io.hexa `retrieve` (line 516, cosine over query_tension_5ch),
+#   NOT immune_memory_recall (engine_cli.hexa:934/983).  Else Ψ collapse (H_1561) /
+#   G5 fab (H_1576 B4).
+#
+# ── TOY SMOKE ADDENDUM (NOT part of the frozen bar; harness-validation scope) ──
+#   The numpy smoke runs TWO toy-mouth arms to prove the harness DISCRIMINATES
+#   (does not rubber-stamp):
+#     ARM-COMPOSITIONAL — toy mouth block-concatenates both parent fragments →
+#                         EXPECTED to pass (1)-(4): shows the four gates register a
+#                         genuine compositional signal + scramble control fires.
+#     ARM-MOUTHFLOOR    — toy mouth surfaces only the dominant concept (models the
+#                         real g_eval_g1 floor) → EXPECTED to FAIL (1)/(2): shows
+#                         the harness does NOT credit a mouth-only floor.
+#   Passing ARM-COMPOSITIONAL is a HARNESS-VALIDATION result, DIRECTIONAL, and says
+#   nothing about the 303M mouth (whose honest expectation is ARM-MOUTHFLOOR).
