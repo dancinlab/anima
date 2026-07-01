@@ -50,7 +50,21 @@ launch-ready (303M GPU 미실행). $0 smoke = 파이프 검증 only.
 - **CLS 의 실제 효과는 G2 novelty(직교축).** novel +22~29·coherent +1~3 = 재료 직교화(pattern-separation)가 *novel coherent* 생성을 늘림. 하지만 novelty≠recombination(G2 이미 PASS), G1/G6 는 불변 → readout-side 직교화는 composition 을 못 엶.
 - **함의:** G1벽=trunk-objective(CE 가 합성 보상 안 함) 재확인. 재료를 직교화(hippocampal sep)해도 trunk 목적함수를 안 건드리면 재조합은 안 열린다 = objective-lever 계열(H_9024·H_1816)과 일관.
 
-**follow-on:** ① ByteGPT trunk(single=2 깨끗한 벽)에 CLS sep/completion 재배선 후 G1 재측정(현 CLM 측정은 floor 밑) · ② CLS 의 G2 novelty 실효과는 별건으로 기록(직교). 둘 다 cost-gated, 현 세션 미실행.
+**follow-on:** ① ByteGPT trunk(single=2 깨끗한 벽)에 CLS sep/completion 재배선 후 G1 재측정(현 CLM 측정은 floor 밑) · ② CLS 의 G2 novelty 실효과는 별건으로 기록(직교). ① 은 2026-07-01 실행 → ByteGPT fresh trunk 가 undertrained(G2 novel=0)라 INCONCLUSIVE-at-floor(유효 테스트는 제대로 학습된 trunk 필요, 아래 결과 섹션).
+
+## follow-on ① 결과 — ByteGPT trunk 재측정 (2026-07-01, py 2-production KV-cache decode.py, seed7)
+
+CLS sep/completion 을 ByteGPT(24L attention) trunk 로 재배선해 fresh 학습(2000 step, 4-cell) 후 `anima evaluate --py` 로 재측정(state/1815_cls_bytegpt/):
+
+| arm | G0 | G1 bd/msingle | G2 novel | G5 fab | G6 dist |
+|-----|----|----|----|----|----|
+| ce_marginal | 🟢 4/5 | 0 / 0 | 0 | 0.44 | 3 |
+| cls_sep | 🔴 3/5 | 0 / 0 | 0 | 0.51 | 2 |
+| cls_full | 🔴 3/5 | 0 / 0 | 0 | 0.48 | 1 |
+
+**판정: 🧱 INCONCLUSIVE-at-floor (측정경로 무효).** 이 fresh 2000-step ByteGPT 는 심하게 **undertrained** — G2 novel=0(생성 자체 빈곤)·G5 fab 0.44–0.51(높음)이라 "깨끗한 single=2 재조합벽"(memory g1-py303-single-floor 의 h1129 303M)에 도달 못 함. undertrained trunk 위에선 CLS×재조합을 유효하게 테스트 불가(오히려 cls arm 이 G0 3/5·fab↑ 로 악화 = aux 가 빈약한 trunk 를 더 흔듦). 따라서 CLS 가 ByteGPT G1 을 여는지는 **여전히 미해결** — 유효 테스트는 *제대로 학습된*(≥수만 step or h1129급) ByteGPT trunk 필요. 중심결론(G1벽=trunk-objective) 은 불변. ⚠️ 앞선 novel 88/117(첫 병렬 배치)은 result-file 레이스 아티팩트로 폐기.
+
+**engine-infra 부산물:** 이 재측정 과정에서 `core/decode.py`(clm+bytegpt 통합)에 ByteGPT KV-cache fast-path 배선(~60× decode 가속, 303M KV==full token-identical byte-exact 검증). decode.hexa 통합도 완료(atomic swap follow-on).
 
 ## artifacts
 state/1640_cls_sep_complete/ (PREREG.md · trainer.py · gpu_launch.sh · smoke.sh · ckpt)
