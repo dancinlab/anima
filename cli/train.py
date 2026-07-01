@@ -869,6 +869,9 @@ def main():
     ap.add_argument("--val-batches", type=int, default=4)
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--dbes-every", type=int, default=0, help="0=final only; N=also every N steps")
+    ap.add_argument("--ckpt-every", type=int, default=0,
+                    help="0=final .clm only; N=also dump <out>.step<N>.clm every N steps "
+                         "(step-window multiplex — 1 run yields 2000/4000/… checkpoints, train-py-4 isolation)")
     ap.add_argument("--out", default="")
     ap.add_argument("--ckpt-out", default="")
     ap.add_argument("--gauges-out", default="")
@@ -1004,11 +1007,33 @@ def main():
         return {lab: v for lab, c in zip(labels, cells)
                 if (v := cell_val_ce(c)) is not None}
 
+    # ── serialize helper (end-of-run AND intermediate --ckpt-every checkpoints) ──
+    def _write_clm(out_path):
+        e_ser = mito.e_active
+        mat = materialize_experts_into_state(model)
+        sd_active = {}
+        for k, vv in mat.items():
+            if k in ("moe.router.weight", "moe.router.bias"):
+                sd_active[k] = vv[:e_ser].contiguous()
+            elif k.startswith("moe.experts."):
+                if int(k.split(".")[2]) < e_ser:
+                    sd_active[k] = vv
+            else:
+                sd_active[k] = vv
+        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path)
+        print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
+        print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
+
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
     t0 = time.time(); loss0 = lossF = None
     last_aux = {}; dbes_log = []
     for step in range(1, steps + 1):
+        # --ckpt-every: dump an intermediate .clm of the state AFTER (step-1) updates
+        # (step-window multiplex — one run yields 2000/4000/… checkpoints, no re-train).
+        if a.ckpt_every > 0 and a.out and step > 1 and (step - 1) % a.ckpt_every == 0:
+            _write_clm(f"{a.out}.step{step - 1}.clm")
+            model.train()
         if savant_on:
             inh = savant_inhibition(step, steps, i0, i_floor, latch)
             wd = inhibition_to_wd(inh); dp = inhibition_to_dropout(inh)
@@ -1157,22 +1182,7 @@ def main():
 
     # ── serialize .clm v0.3 (ALL arms — additive readout + MATERIALIZED experts) ──
     if a.out:
-        e_ser = mito.e_active
-        # build a dense state_dict with TLoRA experts materialized to standard keys
-        mat = materialize_experts_into_state(model)
-        sd_active = {}
-        for k, vv in mat.items():
-            if k in ("moe.router.weight", "moe.router.bias"):
-                sd_active[k] = vv[:e_ser].contiguous()
-            elif k.startswith("moe.experts."):
-                if int(k.split(".")[2]) < e_ser:
-                    sd_active[k] = vv
-            else:
-                sd_active[k] = vv
-        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=a.out)
-        print(f"  .clm WRITTEN {os.path.getsize(a.out)} bytes -> {a.out}", flush=True)
-        rb = open(a.out, "rb").read()
-        print(f"  clm_decodable={VC.clm_decodable(rb)}", flush=True)
+        _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
 
 
 if __name__ == "__main__":

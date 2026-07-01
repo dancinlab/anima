@@ -45,6 +45,7 @@ import argparse
 import os
 import re
 import subprocess
+import glob
 import sys
 import threading
 import time
@@ -125,7 +126,17 @@ def _build_train_cmd(a, arm: str, objective: str, tag: str, out_dir: str) -> lis
         cmd += ["--dropout-floor", str(a.dropout_floor)]
     if a.wd_floor >= 0.0:
         cmd += ["--wd-floor", str(a.wd_floor)]
+    # step-window multiplex: train.py dumps <clm>.step<N>.clm every N steps so ONE run
+    # yields the 2000/4000/… checkpoints (train-py-4 confound isolation, no re-train).
+    if a.ckpt_every > 0:
+        cmd += ["--ckpt-every", str(a.ckpt_every)]
     return cmd
+
+
+def _ckpt_step(path: str):
+    """Extract N from a `<clm>.step<N>.clm` intermediate-checkpoint path (else None)."""
+    m = re.search(r"\.step(\d+)\.clm$", path)
+    return int(m.group(1)) if m else None
 
 
 def _build_measure_cmd(a, tag: str, out_dir: str) -> list[str]:
@@ -160,22 +171,35 @@ def run_cell(a, arm: str, objective: str, gpu: str, out_dir: str, log_lock: thre
     open(os.path.join(out_dir, tag + ".done"), "w").close()   # per-cell train done flag
 
     # ── (2) MEASURE (CPU, torch-free numpy evaluate — CUDA hidden) ────────────
+    # step-window: measure the FINAL <tag>.clm AND every intermediate --ckpt-every
+    # checkpoint (<tag>.clm.step<N>.clm), each into its own <label>.meas.log so the
+    # aggregate can plot G0/G1 across steps (train-py-4 confound: where does G0 break?).
     if a.measure:
-        with open(meas_log, "w") as lf:
-            lf.write(f"=== [{tag}] G0-G6 measure ({time.strftime('%H:%M:%S')}) ===\n")
-            lf.flush()
-            if have_clm:
-                menv = os.environ.copy()
-                menv["CUDA_VISIBLE_DEVICES"] = ""            # force CPU numpy path
-                menv.setdefault("OMP_NUM_THREADS", "8")
-                mrc = subprocess.run(_build_measure_cmd(a, tag, out_dir),
-                                     cwd=_REPO, env=menv, stdout=lf,
-                                     stderr=subprocess.STDOUT).returncode
-                lf.write(f"\n=== [{tag}] measure rc={mrc} ===\n")
-            else:
+        menv = os.environ.copy()
+        menv["CUDA_VISIBLE_DEVICES"] = ""                    # force CPU numpy path
+        menv.setdefault("OMP_NUM_THREADS", "8")
+        targets = []
+        for cp in sorted((p for p in glob.glob(clm + ".step*.clm")), key=_ckpt_step):
+            n = _ckpt_step(cp)
+            targets.append((cp, f"{tag}__s{n}"))
+        if have_clm:
+            targets.append((clm, tag))                       # final full-run (bare tag)
+        if not targets:
+            with open(meas_log, "w") as lf:
                 lf.write("NO CKPT — train produced no .clm; measure skipped\n")
+        for cpath, label in targets:
+            ml = os.path.join(out_dir, label + ".meas.log")
+            with open(ml, "w") as lf:
+                lf.write(f"=== [{label}] G0-G6 measure ({time.strftime('%H:%M:%S')}) ===\n")
+                lf.flush()
+                mcmd = [sys.executable, _EVAL_PY, cpath, "--gen", str(a.gen)]
+                if a.corpus:
+                    mcmd += ["--corpus", *a.corpus]
+                mrc = subprocess.run(mcmd, cwd=_REPO, env=menv, stdout=lf,
+                                     stderr=subprocess.STDOUT).returncode
+                lf.write(f"\n=== [{label}] measure rc={mrc} ===\n")
         open(os.path.join(out_dir, tag + ".meas.done"), "w").close()  # per-cell measure flag
-        _say("MEASURE done")
+        _say(f"MEASURE done ({len(targets)} checkpoint(s))")
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -197,7 +221,9 @@ def _gate_pass(line: str) -> bool:
 def parse_cell(tag: str, out_dir: str) -> dict:
     """Parse one cell's measure log (+ train log) into a result dict."""
     meas_log = os.path.join(out_dir, tag + ".meas.log")
-    train_log = os.path.join(out_dir, tag + ".log")
+    # a checkpoint label is "<base>__s<N>"; its train log is the base cell's <base>.log
+    base_tag = tag.split("__s")[0]
+    train_log = os.path.join(out_dir, base_tag + ".log")
     r = {"tag": tag, "g0": None, "g0_n": None, "g1": None, "g1_bd": None,
          "g1_ms": None, "g2": None, "g2_novel": None, "g6": None, "g6_dist": None,
          "g6_fals": None, "closure": None, "lossf": None, "val_pool": None,
@@ -251,7 +277,9 @@ def parse_cell(tag: str, out_dir: str) -> dict:
             r["closure"] = _gate_pass(line)
 
     # status classification
-    overfit = (r["g0"] is False and r["lossf"] is not None
+    # overfit-INVALID applies to the FINAL run only (lossf is the end-of-run CE; an
+    # intermediate step-window checkpoint keeps its own G0/G1 row, not an overfit verdict).
+    overfit = ("__s" not in tag and r["g0"] is False and r["lossf"] is not None
                and r["lossf"] < _OVERFIT_LOSSF_THRESH)
     g1_cand = (r["g1_bd"] is not None and r["g1_ms"] is not None
                and r["g1_bd"] >= 2 and r["g1_bd"] > r["g1_ms"])
@@ -283,8 +311,22 @@ def _pf(v):
     return "🟢" if v else "🔴"
 
 
+def _row_sortkey(lbl: str):
+    base = lbl.split("__s")[0]
+    st = lbl.split("__s")[1] if "__s" in lbl else None
+    return (base, int(st) if (st and st.isdigit()) else 10 ** 9)  # final (no __s) sorts last
+
+
 def aggregate(a, cells, out_dir: str):
-    rows = [parse_cell(_cell_tag(arm, obj, a.seed), out_dir) for (arm, obj) in cells]
+    # one row per measured checkpoint: glob every <label>.meas.log (final <tag> +
+    # step-window <tag>__s<N>), so --ckpt-every runs expand into per-step rows.
+    labels = sorted((os.path.basename(p)[:-len(".meas.log")]
+                     for p in glob.glob(os.path.join(out_dir, "*.meas.log"))),
+                    key=_row_sortkey)
+    if labels:
+        rows = [parse_cell(lbl, out_dir) for lbl in labels]
+    else:
+        rows = [parse_cell(_cell_tag(arm, obj, a.seed), out_dir) for (arm, obj) in cells]
 
     # console + markdown table
     header = ("| tag | G0 | G1 bd/ms | G2 novel | G6 dist/fals | closure | status |")
@@ -373,6 +415,9 @@ def main(argv=None):
     ap.add_argument("--objectives", default="ce_marginal,composed_nce,infonce,constructive_bind",
                     help="comma list of train.py --objective values (matrix = arms × objectives)")
     ap.add_argument("--steps", type=int, default=8000)
+    ap.add_argument("--ckpt-every", type=int, default=0,
+                    help="0=final .clm only; N=also dump+measure a checkpoint every N steps "
+                         "(step-window: one run → G0/G1 across 2000/4000/… — train-py-4 isolation)")
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--corpus", nargs="*", default=[],
                     help="corpus paths / HF ids passed through to train.py + evaluate.py")
