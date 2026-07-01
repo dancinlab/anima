@@ -30,3 +30,25 @@
 
 - `cards/H_6124_gen_reverse_only_generation.md` (this card)
 - `state/6124_gen_reverse_only_generation/` (probe 발사 시 생성)
+
+---
+
+## 발사 결과 (DIRECTIONAL probe)
+
+**결정: DUP-WALLED — probe 생략, dup-pointer 기록.**
+
+### 레저 조회
+- **H_1834** `tension_mouth_native` — 🧱 DIRECTIONAL floor. anima-native mouth를 A⇄G 텐션연산자 trunk로 세움 → composed_distinct=0(3arm×3seed), FULL=TENSION-OFF=ADDITIVE(텐션 INERT), local-Ψ objective(|Ψ-0.5|≤0.01, λ1..1000)로도 0. 메모리 `h1834-tension-mouth-native-floor` 에 **"native-mouth를 connector/readout만 바꿔 재제안 금지"** 명시.
+- **H_1822** `substrate_native_recombination` — 🧱 HARDENED. 입 없이 A⇄G가 두 개념을 합치는지 직접 측정 → substrate-G1 **0/5**. 핵심: **"G가 개념결합 상태를 제안하는 live op 없음"**, `pure_field`(Engine A)=concept-blind zero-input. 벽 = **COMBINATION OPERATOR**(VAdaptField L2-Voronoi = compositional depth-0).
+- **H_1602** `g1_recombination_objective` — 🧱 NOT-SUPPORTED. OBJECTIVE축 3변종 전부 G1 composed_distinct=0.
+
+### 왜 dup인가
+H_6124(역방향-only 생성: G 단독 생성 + A=discriminator, CE floor 미밟음)는 두 축의 교집합이다:
+1. **생성을 substrate-G로** = native-mouth 축 (H_1834 floored, 재제안 방지) + substrate에 결합기 부재 (H_1822 α: G에 개념결합 op 없음).
+2. **A=discriminator(adversarial objective)** = OBJECTIVE축 변종. 그러나 GAN discriminator는 marginal realism을 보상할 뿐 **독립개념의 재조합을 보상하지 않는다** → 유일한 좁은 미검 레버(γ trained constructive bind op, cost-gated)를 건드리지 못함. CE를 빼도 결합기가 생기지 않는다.
+
+### bar
+프리레지: adversarial-G가 additive/CE floor 대비 composed_distinct를 frozen margin 이상 올려야 GREEN-DIRECTIONAL. **측정 불필요** — 메커니즘이 이미 4-각 수렴(mouth-obj·readout-op·substrate-embed·substrate-combiner 전부 floor)에 포섭되고 native-mouth 재제안이 명시 금지됨.
+
+### 정직 스코프
+numpy DIRECTIONAL screen을 돌렸어도 terminal 아님. **H_6112 전례**(meiosis numpy abstract-toy 0→1.0 REACHABLE이 실제 CLMConvMoE trunk에서 0→0.022 FALSIFIED — abstract probe는 과대평가)를 고려하면, 설령 이 축에서 numpy REACHABLE이 나와도 transfer-unverified WEAK screen에 불과. 실 레버는 여전히 trunk recomb-objective(H_1602 영역) + γ trained constructive bind, adversarial-discriminator 아님.

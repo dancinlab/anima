@@ -1,0 +1,10 @@
+TASK: XOR of 2 independent binary concepts, ring N=24 T=40
+CLS timescales: D_u(slow morphogen)=0.05  D_v(fast diffusion)=0.5
+additive_floor  XOR acc = 0.521
+operator(Turing/CLS) acc = 0.969
+ablation(equal-diff) acc = 0.651
+margin (op-add)          = 0.448
+--- FROZEN BAR: op>=0.70 AND add<=0.60 AND margin>=0.15 AND eq<=add+0.10 (ablation must FAIL) ---
+op>=0.70: True | add<=0.60: True | margin>=0.15: True | ablation-fails(eq<=add+.10): False
+VERDICT: DIRECTIONAL floor / FALSIFIED-as-stated
+timescale-separation-is-lever: False
