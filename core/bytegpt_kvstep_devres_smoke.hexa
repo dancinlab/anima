@@ -67,8 +67,8 @@ fn main() {
     println("[kvstep-smoke] nseed=" + to_string(nseed) + " gen=" + to_string(gen)
         + " (in-window: nseed+gen=" + to_string(nseed + gen) + " < block=" + to_string(block) + ")")
 
-    let kvH = _bg_kv_new(nlay, block, d)
-    let kvD = _bg_kv_new(nlay, block, d)
+    let kvH = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
+    let kvD = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
 
     let mut agree = 0
     let mut total = 0

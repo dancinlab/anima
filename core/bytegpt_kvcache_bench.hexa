@@ -36,7 +36,7 @@ fn gen_kv(W: Map, seed: list, gen: int, top_k: int, temp: float, seed_rng: int) 
     while i < len(seed) { toks.push(to_int(seed[i])); i = i + 1 }
     let nseed = len(toks)
     let mut rng = _g6_mix32(seed_rng)
-    let kv = _bg_kv_new(nlay, block, d)
+    let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
     let mut logits = -1
     let mut sp = 0
     while sp < nseed {

@@ -53,7 +53,7 @@ fn gen_kv(W: Map, seed: list, gen: int, top_k: int, temp: float, seed_rng: int) 
     let nseed = len(toks)
     let outl = []
     let mut rng = _g6_mix32(seed_rng)
-    let kv = _bg_kv_new(nlay, block, d)
+    let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
     let mut logits = -1
     let mut sp = 0
     while sp < nseed {
@@ -87,7 +87,7 @@ fn logits_maxdiff(W: Map, seed: list) -> float {
     while p < nseed { let _ = farr_set(ids, p, to_float(to_int(seed[p]))); p = p + 1 }
     let lref = bg_forward_last_W(W, ids, nseed)
     // KV logits after priming the cache through the same seed
-    let kv = _bg_kv_new(nlay, block, d)
+    let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
     let mut lkv = -1
     let mut sp = 0
     while sp < nseed {
@@ -140,7 +140,7 @@ fn gen_kv_greedy(W: Map, seed: list, gen: int) -> list {
     while i < len(seed) { toks.push(to_int(seed[i])); i = i + 1 }
     let nseed = len(toks)
     let outl = []
-    let kv = _bg_kv_new(nlay, block, d)
+    let kv = _bg_kv_new(nlay, block, d, to_int(W["nh"]))
     let mut logits = -1
     let mut sp = 0
     while sp < nseed {
