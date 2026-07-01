@@ -1,0 +1,70 @@
+H_1837 TENSION-MOUTH ITERATED (deep-equilibrium) -- DIRECTIONAL toy probe
+*** DIRECTIONAL only (numpy mirror, NOT engine-native) ***
+
+[gradcheck] max |numeric-analytic| through unroll = 1.49e-10  (PASS)
+
+==============================================================================
+ARM 1  FULL deep-equilibrium (input x + emit-prefix re-injected EVERY step)
+==============================================================================
+  K= 1 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0124
+  K= 1 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0141
+  K= 1 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0045
+
+  K= 2 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0111
+  K= 2 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0311
+  K= 2 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0166
+
+  K= 4 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0192
+  K= 4 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0142
+  K= 4 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0416
+
+  K= 8 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0218
+  K= 8 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0160
+  K= 8 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0302
+
+  --- converge (train K_MAX=16, eval iterate-to-Psi<=0.05) ---
+  converge seed=    7  cd=0/4  stop_k=3  |Psi-.5|=0.0167
+  converge seed= 4302  cd=0/4  stop_k=1  |Psi-.5|=0.0204
+  converge seed= 4303  cd=0/4  stop_k=2  |Psi-.5|=0.0186
+
+==============================================================================
+CONTROL A  SAME-STATE ablation (input re-inject OFF; bare map iteration)
+==============================================================================
+  K= 1 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0070
+  K= 1 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0110
+  K= 1 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0180
+
+  K= 2 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0104
+  K= 2 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0036
+  K= 2 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0168
+
+  K= 4 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0229
+  K= 4 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0185
+  K= 4 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0162
+
+  K= 8 seed=    7  cd=0/4  train_acc=1.00  |Psi-.5|=0.0147
+  K= 8 seed= 4302  cd=0/4  train_acc=1.00  |Psi-.5|=0.0140
+  K= 8 seed= 4303  cd=0/4  train_acc=1.00  |Psi-.5|=0.0178
+
+==============================================================================
+CONTROL B  SHUFFLE (break A<->B held-out pairing) on FULL reinject, K=8
+==============================================================================
+  shuffle seed=    7  cd=0/4  train_acc=1.00
+  shuffle seed= 4302  cd=0/4  train_acc=1.00
+  shuffle seed= 4303  cd=0/4  train_acc=1.00
+
+Psi(K) trajectory (mean |Psi-0.5| per step, FULL reinject, seed 7, K_MAX):
+  k1=0.044  k2=0.017  k3=0.014  k4=0.021  k5=0.024  k6=0.016  k7=0.014  k8=0.016  k9=0.016  k10=0.012  k11=0.023  k12=0.024  k13=0.010  k14=0.012  k15=0.015  k16=0.013
+
+==============================================================================
+VERDICT (DIRECTIONAL, frozen bar unchanged)
+==============================================================================
+  K=1 anchor cd=0 (H_1834 reproduced): True  ([0, 0, 0])
+  FULL cd curve (mean over seeds): K1=0.00, K2=0.00, K4=0.00, K8=0.00, Kconverge=0.00
+  lift (cd>=1 on >=2/3 seed at some K>=2): False
+  monotone non-decreasing in K:            True
+  same-state ablation all 0 (INERT):       True
+  shuffle-control all 0:                   True
+  => WALL-DIRECTIONAL (DPI confirmed)
+
+  wrote H_1837_result.json

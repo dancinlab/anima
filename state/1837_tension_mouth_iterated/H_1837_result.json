@@ -1,0 +1,434 @@
+{
+  "gradcheck_worst": 1.489164347390215e-10,
+  "gradcheck_pass": true,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "k_sweep": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "arms": {
+    "FULL_reinject_ON": {
+      "1": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.012448768717170267,
+          "pred": [
+            104,
+            107,
+            114,
+            113
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.014129010155460753,
+          "pred": [
+            102,
+            106,
+            106,
+            114
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.004482104563073075,
+          "pred": [
+            104,
+            106,
+            111,
+            114
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        }
+      ],
+      "2": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.011146767510277197,
+          "pred": [
+            104,
+            101,
+            114,
+            113
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.031120996636041537,
+          "pred": [
+            103,
+            109,
+            106,
+            112
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.01655879417359364,
+          "pred": [
+            104,
+            104,
+            111,
+            114
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        }
+      ],
+      "4": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.01922754272778869,
+          "pred": [
+            104,
+            107,
+            114,
+            114
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.01419689794653875,
+          "pred": [
+            102,
+            109,
+            106,
+            114
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.041551053529645596,
+          "pred": [
+            104,
+            113,
+            108,
+            103
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        }
+      ],
+      "8": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.02175416331107735,
+          "pred": [
+            104,
+            113,
+            111,
+            113
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.01603352862890521,
+          "pred": [
+            104,
+            109,
+            109,
+            113
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "heldout_acc": 0.0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.030165835666469687,
+          "pred": [
+            104,
+            113,
+            108,
+            114
+          ],
+          "tgt": [
+            100,
+            105,
+            110,
+            115
+          ]
+        }
+      ],
+      "converge": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "stop_k": 3,
+          "psi_dev_final": 0.01671820062027017
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "stop_k": 1,
+          "psi_dev_final": 0.02035801061748055
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "stop_k": 2,
+          "psi_dev_final": 0.018580038130274243
+        }
+      ]
+    },
+    "CTRL_A_same_state_reinject_OFF": {
+      "1": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.006967460814750109
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.01097370734417688
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.017959887549123296
+        }
+      ],
+      "2": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.010407294259056954
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.003561113203835342
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.016762305990983148
+        }
+      ],
+      "4": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.022944791898895422
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.018533519742318483
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.01623345270308854
+        }
+      ],
+      "8": [
+        {
+          "seed": 7,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.014671039818117335
+        },
+        {
+          "seed": 4302,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.014040768768252943
+        },
+        {
+          "seed": 4303,
+          "composed_distinct": 0,
+          "train_acc": 1.0,
+          "psi_dev_final": 0.017804371388121396
+        }
+      ]
+    },
+    "CTRL_B_shuffle": [
+      {
+        "seed": 7,
+        "composed_distinct": 0,
+        "train_acc": 1.0
+      },
+      {
+        "seed": 4302,
+        "composed_distinct": 0,
+        "train_acc": 1.0
+      },
+      {
+        "seed": 4303,
+        "composed_distinct": 0,
+        "train_acc": 1.0
+      }
+    ]
+  },
+  "psi_trajectory_seed7_Kmax": [
+    0.043551856622765076,
+    0.017020269913921304,
+    0.013624444220950313,
+    0.02100440259890718,
+    0.023611653120941184,
+    0.01599364918872788,
+    0.014149171241586045,
+    0.015846795089960203,
+    0.016403442915756447,
+    0.011808961205220264,
+    0.02338346047227051,
+    0.024434692847434852,
+    0.010005446429123238,
+    0.011519617102471888,
+    0.014707179651837113,
+    0.012693042294617679
+  ],
+  "verdict": {
+    "anchor_cd0_at_K1": true,
+    "full_curve_cd": {
+      "1": [
+        0,
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0,
+        0
+      ],
+      "4": [
+        0,
+        0,
+        0
+      ],
+      "8": [
+        0,
+        0,
+        0
+      ],
+      "converge": [
+        0,
+        0,
+        0
+      ]
+    },
+    "curve_means": {
+      "1": 0.0,
+      "2": 0.0,
+      "4": 0.0,
+      "8": 0.0,
+      "converge": 0.0
+    },
+    "lift_any_ge2seeds_Kge2": false,
+    "monotone_nondecreasing": true,
+    "same_state_ablation_all0": true,
+    "shuffle_all0": true,
+    "verdict": "WALL-DIRECTIONAL (DPI confirmed)"
+  }
+}
