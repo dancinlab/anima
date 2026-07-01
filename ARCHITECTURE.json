@@ -12359,6 +12359,114 @@
             ]
           }
         ]
+      },
+      {
+        "name": "G0-G6 능력 게이트 사다리 (capability gates)",
+        "role": "anima 능력검증 SSOT · 측정=`anima evaluate --py <clm>`(engine-native terminal-eligible, byte-parity, p7=출력이 증거) · 각 G* 는 차일드(현황 verdict + 진화 기록)로 update-in-place 관리 · ★G0 gating(🔴→하위 무효) · a7b_pass=G0∧G1∧G2 on 1 ckpt.",
+        "id": "capability-gates-g0-g6",
+        "detail": "NOT convergence.records(그건 오류-재발 추적). 새 능력실험 = 해당 G* 의 현황/진화 차일드를 update-in-place 진화(옛 서술 교체, 이력=CHANGELOG+git). 측정-무결성 함정은 convergence train-py-3/4 교차참조.",
+        "children": [
+          {
+            "name": "G0 COHERENCE (또박또박)",
+            "role": "known-word-ratio ≥ 0.50 on ≥ 4/5 samples",
+            "id": "gate-g0-coherence",
+            "detail": "",
+            "children": [
+              {
+                "name": "현황 verdict",
+                "role": "",
+                "id": "gate-g0-coherence-status",
+                "detail": "[진행/검토 IN-PROG] 🔴/🟢 GATING 선결 — G0🔴(garbage decode)면 G1-G6 verdict 전부 무효(측정 not-terminal). 유효 G0🟢 window 미확보(능력측정의 선결)."
+              },
+              {
+                "name": "진화 기록",
+                "role": "",
+                "id": "gate-g0-coherence-evo",
+                "detail": "window 를 양쪽서 좁히는 함정: 소코퍼스 과적합(train-py-3)·대코퍼스 undertrain(train-py-4, val_CE 1.35 healthy 여도 free-gen G0🔴). G0 는 step 따라 개선=decode-bug 아님. Blackwell 기각(Ada 4090 재현). 유효=균형코퍼스+충분에폭. 7B chat-FT 가 G0 직접개선(scale-혜택)."
+              }
+            ]
+          },
+          {
+            "name": "G1 RECOMBINATION (재조합)",
+            "role": "best_distinct ≥ 2 ∧ > max_single (H_1129 frozen)",
+            "id": "gate-g1-recombination",
+            "detail": "",
+            "children": [
+              {
+                "name": "현황 verdict",
+                "role": "",
+                "id": "gate-g1-recombination-status",
+                "detail": "[네거티브 수렴 NEG-CONV] readout/binding 축 = 🔴 WALL(trunk-OBJECTIVE-bound, best_distinct=0 floor). objective 축은 [진행/검토 IN-PROG]."
+              },
+              {
+                "name": "진화 기록",
+                "role": "",
+                "id": "gate-g1-recombination-evo",
+                "detail": "readout/binding-op/CLS/TLoRA/predcoding 레버 전수 floor(H_1812/1814/1815/1816 NOT-SUP). additive .clm readout=by-construction 동일→G1 미접촉. G2≠G1. scale-invariant(303M=7B). OPEN=objective축(recomb-obj H_1602·자모 teach-signal·정규화). 외부 arxiv 30편 objective>binding>scale 수렴."
+              }
+            ]
+          },
+          {
+            "name": "G2 NOVELTY (신규어)",
+            "role": "corpus-absence novel word, control = 0",
+            "id": "gate-g2-novelty",
+            "detail": "",
+            "children": [
+              {
+                "name": "현황 verdict",
+                "role": "",
+                "id": "gate-g2-novelty-status",
+                "detail": "[포지티브 수렴 POS-CONV] 측정 canonical — corpus-absence 신규 바이트열, control=0 spurious 배제. a7b_pass 의 G2 = H_1140."
+              },
+              {
+                "name": "진화 기록",
+                "role": "",
+                "id": "gate-g2-novelty-evo",
+                "detail": "novelty ⊥ recombination — set-search/신규성 레버는 G2 를 올리나 G1(합성 깊이)은 못 엶. G2 GREEN 이 G1 을 함의하지 않음."
+              }
+            ]
+          },
+          {
+            "name": "G5 NON-FAB (비조작 · copy-or-abstain)",
+            "role": "unknown-input fab = 0 ∧ in-dist abstain AUROC",
+            "id": "gate-g5-nonfab",
+            "detail": "",
+            "children": [
+              {
+                "name": "현황 verdict",
+                "role": "",
+                "id": "gate-g5-nonfab-status",
+                "detail": "[포지티브 수렴 POS-CONV] 🟢 §ImmuneMemory recall_thr non-fab gate 가 unknown-input 에 abstain(fab 0, in-dist AUROC 1.0)."
+              },
+              {
+                "name": "진화 기록",
+                "role": "",
+                "id": "gate-g5-nonfab-evo",
+                "detail": "savant⊥honesty(H_1576): 골든존 disinhibition 이 SI 3.67 켜도 fab OFF==ON==0. mouth⊥tool(H_1566): tool 지식=.kosmos anchor, mouth-FT 하면 fab 1.0 붕괴. 불변식: recall_thr 를 savant disinhibition 과 절대 결합 금지."
+              }
+            ]
+          },
+          {
+            "name": "G6 IDEATION (착상)",
+            "role": "distinct ≥ 5 ∧ falsifiable",
+            "id": "gate-g6-ideation",
+            "detail": "",
+            "children": [
+              {
+                "name": "현황 verdict",
+                "role": "",
+                "id": "gate-g6-ideation-status",
+                "detail": "[네거티브 수렴 NEG-CONV] 🧱 ceiling 착상벽(H_1129/1139/1464 capacity). 레버 census 전수 NOT-SUP."
+              },
+              {
+                "name": "진화 기록",
+                "role": "",
+                "id": "gate-g6-ideation-evo",
+                "detail": "scaffold(6frames+bestofK) FALS=1.0 은 torch artifact(H_1590 RED: engine-native 재현실패, C_strong FALS=0). 진짜 lever=attention-capacity(decode 아님). scale-invariant. G6 도 G1 처럼 trunk-objective 축 의심(readout 아님)."
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -12475,13 +12583,6 @@
         "value": "8000-step 학습이 healthy val_CE(1.36 DESCENT)인데도 anima evaluate --py G0 coherence 0/5·novel=0(garbage decode)로 나오는 무결성 이상. ⚠️ 원인 UNRESOLVED·confound: aiden(RTX5070=같은 Blackwell sm_120) H_1813 2000-step 은 G0🟢였다 → 'Blackwell 직렬화버그' 단정 불가(2000step Blackwell 은 coherent). 후보 원인 (미격리): ① 8000-step 에서 savant 정규화(dp/wd) decay→0 로 free-running 생성붕괴(teacher-forced val_CE 는 못 잡음) ② 5090 torch2.11/cu128 vs aiden torch2.10 직렬화 차이 ③ decode.py 버전 차이. 소코퍼스 과적합(val_CE<0.5)과는 별개 — big-corpus 84MB(0.77에폭) 도 8000step서 G0🔴.",
         "threshold": "학습 val_CE healthy(1.0~1.6 DESCENT)인데 G0 coherence 0/5(garbage)면 = ckpt/생성 무결성 이상(학습 성공≠생성 성공, teacher-forced val_CE 착시). 격리 절차(confound 풀기): ① 같은 host서 2000 vs 8000 step 비교(2000=G0🟢면 8000-step-collapse 확정) ② savant 정규화 floor 고정(dp/wd decay 차단)하고 8000step 재측정 ③ 같은 .clm 을 torch-golden vs numpy decode 3-way byte-compare. 유효 G1 측정 = G0🟢 유지되는 step-window/정규화 확보가 선결. 성급히 'GPU버그'/'objective floor' 로 박제 금지.",
         "source": "cli/train.py"
-      },
-      {
-        "id": "evaluate-py-1",
-        "state": "ossified",
-        "value": "G0-G6 게이트 사다리 = anima 능력 검증 canonical SSOT, 측정경로 = anima evaluate --py <clm>(torch-free numpy, engine-native terminal-eligible, byte-parity 2-production). 사다리: G0 COHERENCE(또박또박, known-word-ratio≥0.50 on ≥4/5) · G1 RECOMBINATION(재조합, best_distinct≥2 ∧ >max_single, H_1129 frozen) · G2 NOVELTY(코퍼스-부재 신규어, control=0) · G5 NON-FAB(copy-or-abstain, unknown-input fab=0 ∧ in-dist AUROC) · G6 IDEATION(착상, distinct≥5 ∧ falsifiable). ★G0 은 GATING 선결 — G0🔴(garbage decode)면 G1-G6 verdict 전부 무효(측정 not-terminal). a7b_pass=G0∧G1∧G2 on ONE ckpt. p7: perplexity/LLM-judge 아님, 캡처된 decode 출력이 증거.",
-        "threshold": "G0-G6 실험은 전부 이 convergence.records[] 에 수렴진화 형식으로 append(train-py-1..4 가 선례). 규율: ① 측정 전 G0🟢 valid-regime 확인(G0🔴=undertrain/overfit/serialize 의심, downstream 무효) ② verdict 는 anima evaluate --py 측정출력 verbatim(tune-to-green 금지, c9) ③ 새 게이트 실험은 id 붙여 record 추가, 벽(🧱)·negative 도 기록. G1 벽 현황 = trunk-OBJECTIVE-bound(G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT record 참조): readout/binding-operator 레버는 floor 재현, OPEN 후보는 objective축(recomb-objective·자모 teach-signal). 측정-무결성 = train-py-3(소코퍼스 과적합)·train-py-4(big-corpus undertrain: val_CE healthy여도 G0🔴 가능) 참조.",
-        "source": "cli/evaluate.py"
       }
     ]
   }

@@ -53,6 +53,7 @@ Goal of the canonical reorg = a self-contained `core/` that's easy to put on a t
 - do: claims·verdicts → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` column) + frozen evidence `archive/state/verdicts/<slug>/<id>.txt` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape retired 2026-06-16, 0 loss, ledger `archive/state/verdicts/claims-tape-retirement/`)
 - 🔬 Hypotheses → 2 surfaces: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (1 JSON object/hypothesis) · `UNIVERSE/cards/H_*.md` · (prose overview → `archive/state/universe-overview.md`)
 - 🔢 Versions → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
+- 🎯 Capability gates G0-G6 → `ARCHITECTURE.json` `capability-gates-g0-g6` node — each G\* keeps its own child subtree (`현황`=verdict+convergence-state, `진화`=evolution), update-in-place SSOT. NOT `convergence.records[]` (that tracks error-recurrence). Measured via `anima evaluate --py <clm>` (engine-native, p7). ★G0 gates the rest (G0🔴 ⇒ G1-G6 verdicts void). Convergence-state per finding: `POS-CONV` (🟢 `포지티브 수렴`) · `NEG-CONV` (🧱 `네거티브 수렴`/wall) · `IN-PROG` (`진행/검토`). Record a new capability experiment by evolving the matching G\* child in place.
 - 🤖 HF registry → `ARCHITECTURE.json` "HF artifacts" node (models·datasets, HF.jsonl deprecated 2026-06-23) · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
 
 ---
