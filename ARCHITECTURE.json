@@ -12475,6 +12475,13 @@
         "value": "8000-step 학습이 healthy val_CE(1.36 DESCENT)인데도 anima evaluate --py G0 coherence 0/5·novel=0(garbage decode)로 나오는 무결성 이상. ⚠️ 원인 UNRESOLVED·confound: aiden(RTX5070=같은 Blackwell sm_120) H_1813 2000-step 은 G0🟢였다 → 'Blackwell 직렬화버그' 단정 불가(2000step Blackwell 은 coherent). 후보 원인 (미격리): ① 8000-step 에서 savant 정규화(dp/wd) decay→0 로 free-running 생성붕괴(teacher-forced val_CE 는 못 잡음) ② 5090 torch2.11/cu128 vs aiden torch2.10 직렬화 차이 ③ decode.py 버전 차이. 소코퍼스 과적합(val_CE<0.5)과는 별개 — big-corpus 84MB(0.77에폭) 도 8000step서 G0🔴.",
         "threshold": "학습 val_CE healthy(1.0~1.6 DESCENT)인데 G0 coherence 0/5(garbage)면 = ckpt/생성 무결성 이상(학습 성공≠생성 성공, teacher-forced val_CE 착시). 격리 절차(confound 풀기): ① 같은 host서 2000 vs 8000 step 비교(2000=G0🟢면 8000-step-collapse 확정) ② savant 정규화 floor 고정(dp/wd decay 차단)하고 8000step 재측정 ③ 같은 .clm 을 torch-golden vs numpy decode 3-way byte-compare. 유효 G1 측정 = G0🟢 유지되는 step-window/정규화 확보가 선결. 성급히 'GPU버그'/'objective floor' 로 박제 금지.",
         "source": "cli/train.py"
+      },
+      {
+        "id": "evaluate-py-1",
+        "state": "ossified",
+        "value": "G0-G6 게이트 사다리 = anima 능력 검증 canonical SSOT, 측정경로 = anima evaluate --py <clm>(torch-free numpy, engine-native terminal-eligible, byte-parity 2-production). 사다리: G0 COHERENCE(또박또박, known-word-ratio≥0.50 on ≥4/5) · G1 RECOMBINATION(재조합, best_distinct≥2 ∧ >max_single, H_1129 frozen) · G2 NOVELTY(코퍼스-부재 신규어, control=0) · G5 NON-FAB(copy-or-abstain, unknown-input fab=0 ∧ in-dist AUROC) · G6 IDEATION(착상, distinct≥5 ∧ falsifiable). ★G0 은 GATING 선결 — G0🔴(garbage decode)면 G1-G6 verdict 전부 무효(측정 not-terminal). a7b_pass=G0∧G1∧G2 on ONE ckpt. p7: perplexity/LLM-judge 아님, 캡처된 decode 출력이 증거.",
+        "threshold": "G0-G6 실험은 전부 이 convergence.records[] 에 수렴진화 형식으로 append(train-py-1..4 가 선례). 규율: ① 측정 전 G0🟢 valid-regime 확인(G0🔴=undertrain/overfit/serialize 의심, downstream 무효) ② verdict 는 anima evaluate --py 측정출력 verbatim(tune-to-green 금지, c9) ③ 새 게이트 실험은 id 붙여 record 추가, 벽(🧱)·negative 도 기록. G1 벽 현황 = trunk-OBJECTIVE-bound(G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT record 참조): readout/binding-operator 레버는 floor 재현, OPEN 후보는 objective축(recomb-objective·자모 teach-signal). 측정-무결성 = train-py-3(소코퍼스 과적합)·train-py-4(big-corpus undertrain: val_CE healthy여도 G0🔴 가능) 참조.",
+        "source": "cli/evaluate.py"
       }
     ]
   }
