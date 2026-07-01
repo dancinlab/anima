@@ -323,6 +323,25 @@ K_TENSION = 4.0     # tension steepness (spec: psi = sigmoid(k*(t-1)))
 EPS = 1e-6
 
 
+def psi_seat_loss(psi, mode):
+    """Objective-axis term that pins the tension scalar Psi at its 1/2 fixed point.
+
+    mode='mean'      -> (mean_b psi_b - 0.5)^2   (pins only the batch MEAN of Psi;
+                        the ORIGINAL probe used this and CE spread per-sample Psi
+                        off 1/2 even when the mean sat near 1/2 -> objective axis
+                        NOT actually engaged, |Psi-0.5| stuck at 0.09-0.30).
+    mode='persample' -> mean_b (psi_b - 0.5)^2   (pins EVERY sample's Psi at 1/2 =
+                        the actual A<->G fixed point the native-mouth claim needs;
+                        this is what genuinely ENGAGES the objective axis so the
+                        psi-gated bilinear binding sits on a real Psi=1/2 trunk).
+    """
+    if mode == "mean":
+        mean_psi = mul_scalar(ssum(psi), 1.0 / psi.data.shape[0])
+        return square(add_scalar(mean_psi, -0.5))
+    dev = add_scalar(psi, -0.5)
+    return mul_scalar(ssum(square(dev)), 1.0 / psi.data.shape[0])
+
+
 def trunk(P, A_idx, B_idx):
     """bag pooling of the two concept embeddings -> hidden context h (RF-free)."""
     bag = add(gather_rows(P.E, A_idx), gather_rows(P.E, B_idx))
@@ -363,7 +382,17 @@ def forward(P, A_idx, B_idx, arm):
 LAMBDA_PSI = 1.0
 
 
-def train_arm(seed, arm, d=128, r=16, epochs=3000, lr=0.01, verbose=False):
+def train_arm(seed, arm, d=128, r=16, epochs=3000, lr=0.01,
+              lam=LAMBDA_PSI, psi_mode="persample", anneal=False, verbose=False):
+    """Train one arm. lam / psi_mode / anneal control the OBJECTIVE AXIS:
+
+    lam        = weight on the Psi-seating term (Re-measure engages the axis by
+                 raising lam until |Psi-0.5|<=0.05 -- a DIAGNOSTIC of whether Psi
+                 sits at 1/2, NOT a knob on composed_distinct).
+    psi_mode   = 'persample' (seat every sample's Psi) | 'mean' (original).
+    anneal     = linearly ramp lam 0 -> lam over the first half of training so CE
+                 shapes the trunk before Psi is clamped (optional schedule).
+    """
     A_idx, B_idx, tgt = build_dataset()
     P = Params(seed, d, r)
     opt = Adam(P.tensors(), lr=lr)
@@ -373,9 +402,9 @@ def train_arm(seed, arm, d=128, r=16, epochs=3000, lr=0.01, verbose=False):
         logits, psi = forward(P, A_idx, B_idx, arm)
         loss, _ = softmax_ce(logits, tgt)
         if psi is not None:
-            mean_psi = mul_scalar(ssum(psi), 1.0 / psi.data.shape[0])
-            lpsi = square(add_scalar(mean_psi, -0.5))
-            total = add(loss, mul_scalar(lpsi, LAMBDA_PSI))
+            l = lam * (min(1.0, ep / (epochs * 0.5)) if anneal else 1.0)
+            lpsi = psi_seat_loss(psi, psi_mode)
+            total = add(loss, mul_scalar(lpsi, l))
         else:
             total = loss
         total.backward()
@@ -435,19 +464,21 @@ def gradcheck():
     B_idx = np.array([6, 7, 8, 9], dtype=np.int64)
     tgt = np.array([1, 0, 11, 5], dtype=np.int64)
 
-    def loss_of(P, arm):
+    def loss_of(P, arm, psi_mode="persample"):
         logits, psi = forward(P, A_idx, B_idx, arm)
         loss, _ = softmax_ce(logits, tgt)
         if psi is not None:
-            mean_psi = mul_scalar(ssum(psi), 1.0 / psi.data.shape[0])
-            lpsi = square(add_scalar(mean_psi, -0.5))
+            lpsi = psi_seat_loss(psi, psi_mode)
             return add(loss, mul_scalar(lpsi, LAMBDA_PSI))
         return loss
 
     worst = 0.0
-    for arm in ("FULL", "TENSION-OFF", "ADDITIVE"):
+    # FULL checked under BOTH psi-seating modes; controls have no psi term
+    checks = [("FULL", "persample"), ("FULL", "mean"),
+              ("TENSION-OFF", "persample"), ("ADDITIVE", "persample")]
+    for arm, pmode in checks:
         P = Params(123, d, r)
-        L = loss_of(P, arm)
+        L = loss_of(P, arm, pmode)
         for t in P.tensors():
             t.grad = np.zeros_like(t.data)
         L.backward()
@@ -459,9 +490,9 @@ def gradcheck():
                 orig = flat[k]
                 h = 1e-5
                 flat[k] = orig + h
-                lp = loss_of(P, arm).data
+                lp = loss_of(P, arm, pmode).data
                 flat[k] = orig - h
-                lm = loss_of(P, arm).data
+                lm = loss_of(P, arm, pmode).data
                 flat[k] = orig
                 num = (lp - lm) / (2 * h)
                 ana = t.grad.reshape(-1)[k]
@@ -476,6 +507,38 @@ def gradcheck():
 # main
 # ----------------------------------------------------------------------------
 
+SEEDS = [7, 4302, 4303]
+LAM_GRID = [0.0, 1.0, 10.0, 100.0, 1000.0]   # objective-axis sweep (per-sample seat)
+SEAT_LAM = 10.0        # smallest lam that seats every sample's Psi at 1/2 (dev<=0.05)
+SEAT_MODE = "persample"
+
+
+def lambda_sweep():
+    """DIAGNOSTIC: does raising the Psi-seating weight lam actually seat Psi at 1/2?
+
+    Runs the FULL arm over a lam grid (per-sample penalty) x 3 seeds and reports,
+    per lam, mean |Psi-0.5|, the WORST per-seed |Psi-0.5|, and composed_distinct.
+    This is a diagnostic of objective-axis engagement, NOT a search for distinct
+    (the frozen bar cd>=3 is never moved)."""
+    print("=" * 74)
+    print("LAMBDA SWEEP (objective-axis engagement diagnostic) -- FULL, per-sample")
+    print("  lam -> mean|Psi-0.5| , per-seed|Psi-0.5| , composed_distinct")
+    print("=" * 74)
+    rows = []
+    for lam in LAM_GRID:
+        devs, cds = [], []
+        for seed in SEEDS:
+            P = train_arm(seed, "FULL", lam=lam, psi_mode=SEAT_MODE)
+            r = evaluate(P, "FULL")
+            devs.append(r["psi_dev"]); cds.append(r["composed_distinct"])
+        seated = "SEATED" if max(devs) <= 0.05 else "off-1/2"
+        rows.append((lam, float(np.mean(devs)), devs, cds, seated))
+        print(f"  lam={lam:8.1f}  mean|Psi-.5|={np.mean(devs):.4f}  "
+              f"per-seed={['%.4f'%d for d in devs]}  cd={cds}  [{seated}]")
+    print()
+    return rows
+
+
 def main():
     print("H_1834 TENSION-MOUTH -- DIRECTIONAL toy probe (numpy, from-scratch)")
     print("*** DIRECTIONAL only (numpy mirror, NOT engine-native) ***\n")
@@ -485,13 +548,18 @@ def main():
         print("WARNING: gradcheck failed -- results unreliable.")
     print()
 
-    seeds = [7, 4302, 4303]
+    lambda_sweep()
+
+    print("=" * 74)
+    print(f"FINAL 3-arm x 3-seed  (Psi SEATED: lam={SEAT_LAM}, {SEAT_MODE} penalty)")
+    print("=" * 74)
+    seeds = SEEDS
     arms = ["FULL", "TENSION-OFF", "ADDITIVE"]
     results = {a: [] for a in arms}
 
     for seed in seeds:
         for arm in arms:
-            P = train_arm(seed, arm)
+            P = train_arm(seed, arm, lam=SEAT_LAM, psi_mode=SEAT_MODE)
             r = evaluate(P, arm)
             results[arm].append((seed, r))
             pd = "  -  " if r["psi_dev"] is None else f"{r['psi_dev']:.4f}"
