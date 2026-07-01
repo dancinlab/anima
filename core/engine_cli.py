@@ -760,6 +760,146 @@ def self_reset(dim, axis):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# SelfChain (B② self-CHAIN, H_SELFCHAIN) — diachronic multi-session trajectory
+# engine_cli.hexa: § SelfChain (after self_reset)
+# ════════════════════════════════════════════════════════════════════════
+
+class SelfChain:
+    __slots__ = ("flat", "count", "dim")
+
+    def __init__(self, flat, count, dim):
+        self.flat = flat
+        self.count = count
+        self.dim = dim
+
+
+def self_chain_new(s):
+    """engine_cli.hexa self_chain_new — start the trajectory with seed identity w0."""
+    f = []
+    i = 0
+    while i < s.dim:
+        f = f + [s.v[i]]
+        i = i + 1
+    return SelfChain(f, 1, s.dim)
+
+
+def self_chain_append(c, s):
+    """engine_cli.hexa self_chain_append — append an anchor waypoint at a session boundary."""
+    f = []
+    i = 0
+    while i < c.count * c.dim:
+        f = f + [c.flat[i]]
+        i = i + 1
+    j = 0
+    while j < c.dim:
+        f = f + [s.v[j]]
+        j = j + 1
+    return SelfChain(f, c.count + 1, c.dim)
+
+
+def _chain_wp(c, k):
+    """engine_cli.hexa _chain_wp — read waypoint k back as a SelfIdentity."""
+    v = []
+    base = k * c.dim
+    i = 0
+    while i < c.dim:
+        v = v + [c.flat[base + i]]
+        i = i + 1
+    return SelfIdentity(v, c.dim)
+
+
+def self_chain_len(c):
+    return c.count
+
+
+def self_chain_latest(c):
+    return _chain_wp(c, c.count - 1)
+
+
+def self_chain_component(c, i):
+    return c.flat[i]
+
+
+def self_chain_dim(c):
+    return c.dim
+
+
+def self_chain_count(c):
+    return c.count
+
+
+def self_chain_from_flat(flat, count, dim):
+    return SelfChain(flat, count, dim)
+
+
+def _argmax_abs(v, n):
+    """engine_cli.hexa _argmax_abs — dominant axis (largest |component|)."""
+    bi = 0
+    bv = 0.0 - 1.0
+    i = 0
+    while i < n:
+        a = (0.0 - v[i]) if v[i] < 0.0 else v[i]
+        if a > bv:
+            bv = a
+            bi = i
+        i = i + 1
+    return bi
+
+
+def _trunc_div(x, dim):
+    """hexa integer `/` truncates toward zero."""
+    q = abs(x) // abs(dim)
+    return q if (x < 0) == (dim < 0) else -q
+
+
+def _wrap(x, dim):
+    """engine_cli.hexa _wrap — non-negative modulo into [0,dim) (trunc-toward-zero `/`)."""
+    r = x - _trunc_div(x, dim) * dim
+    if r < 0:
+        r = r + dim
+    return r
+
+
+def self_chain_fit(cand, c):
+    """engine_cli.hexa self_chain_fit — consistency of `cand` with the trajectory TREND
+    (adjacent-increment gradient predicts next axis), NOT just the latest waypoint."""
+    if c.count < 3:
+        return 0.0
+    wK = _chain_wp(c, c.count - 1)
+    wKm1 = _chain_wp(c, c.count - 2)
+    wKm2 = _chain_wp(c, c.count - 3)
+    dlast = []
+    dprev = []
+    i = 0
+    while i < c.dim:
+        dlast = dlast + [wK.v[i] - wKm1.v[i]]
+        dprev = dprev + [wKm1.v[i] - wKm2.v[i]]
+        i = i + 1
+    aK = _argmax_abs(dlast, c.dim)
+    aKm1 = _argmax_abs(dprev, c.dim)
+    a_pred = _wrap(aK + (aK - aKm1), c.dim)
+    r = []
+    mag = 0.0
+    j = 0
+    while j < c.dim:
+        e = cand.v[j] - wK.v[j]
+        r = r + [e]
+        mag = mag + e * e
+        j = j + 1
+    if mag <= 0.0:
+        return 0.0
+    m = _sqrt(mag)
+    return r[a_pred] / m
+
+
+def self_chain_retro_cos(c, j):
+    """engine_cli.hexa self_chain_retro_cos — cos(latest, w_{K-j}); monotone-decreasing = genuine."""
+    wK = _chain_wp(c, c.count - 1)
+    wj = _chain_wp(c, c.count - 1 - j)
+    return self_cos(wK, wj)
+
+
+# ════════════════════════════════════════════════════════════════════════
 # OsmoticStore — KL>C bottleneck split + value overwrite (H_1569 osmotic)
 # engine_cli.hexa:839-941
 # ════════════════════════════════════════════════════════════════════════
