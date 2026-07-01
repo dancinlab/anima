@@ -83,3 +83,7 @@ the cost-gate ("1,2,3 go").
 ## Artifacts
 - `state/g1_coverage_threshold/` — corpus variant builder, density report, trainer
   wrapper, run_pod.sh, ckpts, g0g6 outputs, RESULT.md.
+
+## DIRECTIONAL toy cheap-gate (2026-07-02)
+
+🧱 DIRECTIONAL-FLOOR (toy cheap-gate screen, 2026-07-02, aiden $0, torch=DIRECTIONAL). Operator-agnostic factored toy(NF8·E4·C12, fixed 12-combo held-out), training-coverage sweep {16..52}/52 × 3 seed: TEST acc n(hi−chance≥+0.15)=0/3, 52/52 coverage서도 미학습 조합 chance floor. → data-coverage 는 held-out 재조합 안 엶 (H_1599 EN-exposure floor 확장). objective(H_6162)·regularization(H_6161)·data 3축 전수 controlled-toy FLOOR = G1 axis-invariant(DPI). ⚠️toy-scale(a_toy_scale_recheck): full-corpus $4-6 test 가 terminal이나 toy가 floor 예측→LOW priority. state/1824_compositional_data_coverage_threshold/RESULT.md.

@@ -1,0 +1,21 @@
+seed=7 cov=16/52: train=1.0 test=0.0
+seed=7 cov=26/52: train=1.0 test=0.0256
+seed=7 cov=36/52: train=1.0 test=0.0598
+seed=7 cov=46/52: train=1.0 test=0.0864
+seed=7 cov=52/52: train=1.0 test=0.0864
+seed=4302 cov=16/52: train=1.0 test=0.1436
+seed=4302 cov=26/52: train=1.0 test=0.1379
+seed=4302 cov=36/52: train=1.0 test=0.2974
+seed=4302 cov=46/52: train=1.0 test=0.1614
+seed=4302 cov=52/52: train=1.0 test=0.1614
+seed=4303 cov=16/52: train=1.0 test=0.0
+seed=4303 cov=26/52: train=1.0 test=0.0876
+seed=4303 cov=36/52: train=1.0 test=0.0876
+seed=4303 cov=46/52: train=1.0 test=0.1741
+seed=4303 cov=52/52: train=1.0 test=0.0
+
+=== VERDICT ===
+{'seed': 7, 'tests': [0.0, 0.0256, 0.0598, 0.0864, 0.0864], 'monotone': True, 'hi': 0.0864, 'hi_over_chance': 0.0031}
+{'seed': 4302, 'tests': [0.1436, 0.1379, 0.2974, 0.1614, 0.1614], 'monotone': False, 'hi': 0.1614, 'hi_over_chance': 0.0781}
+{'seed': 4303, 'tests': [0.0, 0.0876, 0.0876, 0.1741, 0.0], 'monotone': False, 'hi': 0.0, 'hi_over_chance': -0.0833}
+TIER: 🧱 DIRECTIONAL-FLOOR — data coverage does not open held-out composition (H_1599 EN-exposure floor extends)

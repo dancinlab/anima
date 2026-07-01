@@ -1,0 +1,118 @@
+{
+  "chance": 0.0833,
+  "N_test": 12,
+  "seeds": {
+    "7": {
+      "cov_16": {
+        "train_acc": 1.0,
+        "test_acc": 0.0
+      },
+      "cov_26": {
+        "train_acc": 1.0,
+        "test_acc": 0.0256
+      },
+      "cov_36": {
+        "train_acc": 1.0,
+        "test_acc": 0.0598
+      },
+      "cov_46": {
+        "train_acc": 1.0,
+        "test_acc": 0.0864
+      },
+      "cov_52": {
+        "train_acc": 1.0,
+        "test_acc": 0.0864
+      }
+    },
+    "4302": {
+      "cov_16": {
+        "train_acc": 1.0,
+        "test_acc": 0.1436
+      },
+      "cov_26": {
+        "train_acc": 1.0,
+        "test_acc": 0.1379
+      },
+      "cov_36": {
+        "train_acc": 1.0,
+        "test_acc": 0.2974
+      },
+      "cov_46": {
+        "train_acc": 1.0,
+        "test_acc": 0.1614
+      },
+      "cov_52": {
+        "train_acc": 1.0,
+        "test_acc": 0.1614
+      }
+    },
+    "4303": {
+      "cov_16": {
+        "train_acc": 1.0,
+        "test_acc": 0.0
+      },
+      "cov_26": {
+        "train_acc": 1.0,
+        "test_acc": 0.0876
+      },
+      "cov_36": {
+        "train_acc": 1.0,
+        "test_acc": 0.0876
+      },
+      "cov_46": {
+        "train_acc": 1.0,
+        "test_acc": 0.1741
+      },
+      "cov_52": {
+        "train_acc": 1.0,
+        "test_acc": 0.0
+      }
+    }
+  },
+  "verdict": {
+    "per_seed": [
+      {
+        "seed": 7,
+        "tests": [
+          0.0,
+          0.0256,
+          0.0598,
+          0.0864,
+          0.0864
+        ],
+        "monotone": true,
+        "hi": 0.0864,
+        "hi_over_chance": 0.0031
+      },
+      {
+        "seed": 4302,
+        "tests": [
+          0.1436,
+          0.1379,
+          0.2974,
+          0.1614,
+          0.1614
+        ],
+        "monotone": false,
+        "hi": 0.1614,
+        "hi_over_chance": 0.0781
+      },
+      {
+        "seed": 4303,
+        "tests": [
+          0.0,
+          0.0876,
+          0.0876,
+          0.1741,
+          0.0
+        ],
+        "monotone": false,
+        "hi": 0.0,
+        "hi_over_chance": -0.0833
+      }
+    ],
+    "n_hi_over_chance_ge_0.15": 0,
+    "n_monotone": 1,
+    "tier": "\ud83e\uddf1 DIRECTIONAL-FLOOR \u2014 data coverage does not open held-out composition (H_1599 EN-exposure floor extends)"
+  }
+}
