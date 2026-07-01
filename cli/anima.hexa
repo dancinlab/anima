@@ -67,6 +67,8 @@ fn anima_usage() {
     println("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
     println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
     println("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
+    println("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
+    println("                                                  multi-GPU lever-sweep (arms×objectives)")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -81,6 +83,10 @@ fn anima_usage() {
     println("                            .clm v0.3 (+ DESCENT gate). recovery/re-export. → cli/serialize.hexa.")
     println("  evaluate                : mount a serialized .clm through the generator L3 mouth and")
     println("                            score G0-G6 (engine-native, .clm only). → cli/evaluate.hexa.")
+    println("  sweep                   : multi-GPU lever-sweep orchestrator — the arms×objectives")
+    println("                            matrix, GPU-pinned round-robin; per cell TRAIN (cli/train.py)")
+    println("                            then G0-G6 MEASURE (cli/evaluate.py), aggregate to")
+    println("                            SWEEP_SUMMARY.md. Always python. → cli/sweep.py.")
 }
 
 // anima_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
@@ -270,6 +276,42 @@ fn anima_serialize_mode(argv: [string]) {
     print(out)
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//  SWEEP MODE — dispatch to cli/sweep.py (multi-GPU lever-sweep orchestrator, ALWAYS python)
+// ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+//
+// `anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … --measure` runs the
+// arms×objectives matrix: each (arm,objective) cell is GPU-pinned round-robin and, per
+// cell, TRAINS via cli/train.py then G0-G6-MEASURES the .clm via cli/evaluate.py, finally
+// AGGREGATING the gates into SWEEP_SUMMARY.md. It replaces the ad-hoc scratch fire_*.sh
+// orchestration with a canonical single-entry subcommand (symmetric to train/evaluate).
+//
+// ALWAYS PYTHON (no hexa branch, no --py flag): sweep is inherently an orchestrator over
+// the two canonical PY engines (cli/train.py + cli/evaluate.py) — it only shells out to
+// them as subprocesses (torch-free itself). So there is nothing to route to a hexa twin;
+// the verb dispatches straight to cli/sweep.py (the engines it calls carry the a_engine_
+// native_learning discipline — the .clm re-measure is the terminal verdict; training CE
+// is DIRECTIONAL).
+fn anima_sweep_mode(argv: [string]) {
+    println("=== anima sweep → cli/sweep.py (multi-GPU lever-sweep orchestrator · arms×objectives) ===")
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    // A sweep runs for a long time (N cells × a 303M train each). hexa `exec` closes a
+    // child's captured stdout pipe after ~150s (the child gets EPIPE on its next fd-1 write
+    // but is NOT killed), so redirect ALL child output to a result file (fd 1 stays silent →
+    // the child survives the pipe close and finishes the full sweep). A SECOND fresh exec
+    // then cats that file. Symmetric to anima_train_mode's --py result-file handling.
+    // cd into $ANIMA_SRC first so sweep.py's __file__-relative cli/train.py + cli/evaluate.py
+    // resolution matches a direct `python3 cli/sweep.py` (LOCATION-INDEPENDENT).
+    let rf = "/tmp/anima_sweeppy_result.out"
+    let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/sweep.py" + fwd + " > " + rf + " 2>&1"
+    println("dispatch: " + cmd)
+    let _sw = exec(cmd)
+    let out = exec("cat " + rf)
+    print(out)
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 //  MAIN — mode dispatch
 // ══════════════════════════════════════════════════════════════════════════════
@@ -299,6 +341,13 @@ fn main() {
     // single-entry discipline as `train`; never mistaken for a ckpt path.
     if argv[0] == "evaluate" {
         anima_evaluate_mode(argv)
+        return
+    }
+
+    // subcommand: `sweep` → multi-GPU lever-sweep orchestrator (cli/sweep.py, always
+    // python). Same single-entry discipline as train/evaluate; never a ckpt path.
+    if argv[0] == "sweep" {
+        anima_sweep_mode(argv)
         return
     }
 
