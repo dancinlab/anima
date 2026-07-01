@@ -12628,6 +12628,13 @@
         "value": "anima full-stack build 벽(clang undeclared/link/codegen 류)은 대개 stale pool hexat이 root — pool 호스트가 현행 hexa-lang release 에 뒤처져 runtime.h carrier extern/builtin 미포함. #33 실증(2026-07-01): summer v0.468(현행 44릴리스 뒤)이 #4285 set_deterministic/is_deterministic carrier extern 없어 full-stack만(det safety-pin set_deterministic(true) 호출) clang 'use of undeclared identifier' → '대형 TU 링크 fail'로 오진. small OK large fail = code-path 커버리지(large-TU 스케일/relocation 아님).",
         "threshold": "재발조건=anima build 실패 진단 전 pool hexat 현행성 미확인. 해결=진단 전 먼저 pool 호스트 hexa --version 확인 + install.sh 동기화(현행 main release 반영)한 뒤 재현. install-path 재발가드=hexa-lang #4334(HX_SRC origin pin + fresh-clone fallback). 동족 패턴=bench bad-hexat·anima stale-prebuilt. cross-repo memory=project_hexa_anima_linux_build_stale_hexat_setdet.",
         "source": "cli/anima.hexa"
+      },
+      {
+        "id": "train-hexa-1",
+        "state": "pos-conv",
+        "value": "anima train(hexa) 303M(d3784) GPU 학습 두 벽: (1) hexa farr=fp64라 activation 버퍼(1.37GB/buf) RTX5070 12GB OOM — --bf16은 GEMM precision만 바꾸고 farr는 fp64 유지 (2) #2598 device-resident가 GEMM만이고 im2col/GroupNorm/activation은 host-scalar(d768 step=512s). toy d8=3/3 PASS+OWN-GEMM.",
+        "threshold": "재발: 12GB GPU에 d>=3000 fp64 anima train(hexa). 해결: 큰GPU(24GB+ fp64)/hexa farr fp32(upstream hexa-lang)/중간 d/train.hexa hot-path 전체 device-resident. --bf16만으론 farr fp64 OOM 안 풀림(GEMM precision != farr dtype).",
+        "source": "cli/train.hexa"
       }
     ]
   }
