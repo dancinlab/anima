@@ -1,0 +1,25 @@
+==== D=64 L=2 E=4 STEPS=800 ====
+torch=2.10.0+cu128  K=6 D=64 L=2 E=4 steps=800 lr=0.01 seeds=[0, 1, 2]
+[seed 0] ADD fit=1.0 reach=0.0 p=120132 | MEIO fit=1.0 reach=0.0 p=120528 | delta=0.0
+[seed 1] ADD fit=1.0 reach=0.0 p=120132 | MEIO fit=1.0 reach=0.0333 p=120528 | delta=0.0333
+[seed 2] ADD fit=1.0 reach=0.0 p=120132 | MEIO fit=1.0 reach=0.0333 p=120528 | delta=0.0333
+=== VERDICT (DIRECTIONAL — torch, not live .hexa engine; never terminal) ===
+  "bar_pass": false,
+DECISION=falsified-directional bar_pass=False [GREEN-DIRECTIONAL bar: >=2/3 seeds delta>=0.30 AND mean additive_reach<=0.20]
+==== D=128 L=4 E=4 STEPS=1500 ====
+torch=2.10.0+cu128  K=6 D=128 L=4 E=4 steps=1500 lr=0.01 seeds=[0, 1, 2]
+[seed 0] ADD fit=1.0 reach=0.0 p=511108 | MEIO fit=1.0 reach=0.0333 p=511888 | delta=0.0333
+[seed 1] ADD fit=1.0 reach=0.0 p=511108 | MEIO fit=1.0 reach=0.0 p=511888 | delta=0.0
+[seed 2] ADD fit=1.0 reach=0.0 p=511108 | MEIO fit=1.0 reach=0.0 p=511888 | delta=0.0
+=== VERDICT (DIRECTIONAL — torch, not live .hexa engine; never terminal) ===
+  "bar_pass": false,
+DECISION=falsified-directional bar_pass=False [GREEN-DIRECTIONAL bar: >=2/3 seeds delta>=0.30 AND mean additive_reach<=0.20]
+==== D=256 L=6 E=8 STEPS=3000 ====
+torch=2.10.0+cu128  K=6 D=256 L=6 E=8 steps=3000 lr=0.01 seeds=[0, 1, 2]
+[seed 0] ADD fit=1.0 reach=0.0 p=3089928 | MEIO fit=1.0 reach=0.0 p=3091476 | delta=0.0
+[seed 1] ADD fit=1.0 reach=0.0 p=3089928 | MEIO fit=1.0 reach=0.0 p=3091476 | delta=0.0
+[seed 2] ADD fit=1.0 reach=0.0 p=3089928 | MEIO fit=1.0 reach=0.0 p=3091476 | delta=0.0
+=== VERDICT (DIRECTIONAL — torch, not live .hexa engine; never terminal) ===
+  "bar_pass": false,
+DECISION=falsified-directional bar_pass=False [GREEN-DIRECTIONAL bar: >=2/3 seeds delta>=0.30 AND mean additive_reach<=0.20]
+ALL_DONE
