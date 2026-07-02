@@ -1,0 +1,8 @@
+FAIL  prefetch anticipates next query (>=0.8)
+PASS  no-prefetch (current frame key) FAILS (<=0.2)
+PASS  LIFT margin current-prefetch >= +0.5 (readiness)
+PASS  EARNED prefetch-shuffle acc >= +0.5 (forward-model load-bearing)
+PASS  ablate(forward OFF) FAILS <=0.2 (INERT without forward model)
+INFO pre_acc=9/12 cur=0 shuffle=0 ablate=0 margin_lift=1.345870221205617 earned=0.75
+--- H_9078 anticipatory_prefetch engine-native: 4 pass / 1 fail ---
+EXIT_RC=0
