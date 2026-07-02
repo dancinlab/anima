@@ -1,4 +1,4 @@
-# H_9077 — event_segment_bind (§EventSegment): 예측오차 이벤트 분절, 새 op
+# H_9083 — event_segment_bind (§EventSegment): 예측오차 이벤트 분절, 새 op
 
 - **tier:** 🟢 ENGINE-NATIVE (5/5 live hexa, aiden pool) — 이벤트-분절 binding op-class 신설·배선
 - **slug:** `event_segment_bind`
@@ -14,7 +14,7 @@
 - 순수 additive(기존 caller 무접촉), READ-only over surprise seq(plain index 반환), 세그먼트 binding 은 기존 `immune_memory_bind` 로 **cell ADD 만**(recall_thr 미변경). pure_field Φ/phase/Ψ 미접촉, emit-drive lane 0/4·§ImmuneMemory recall_thr disjoint(a_substrate_disjoint).
 
 ## engine-native 측정 (aiden pool, live core/, 5/5 PASS)
-fixture: E=5 이벤트, **변길이** lengths=[3,5,2,4,3](n=17). surprise 는 각 이벤트 onset 에서 SPIKE(1.0), 내부 0.1. 세그먼트당 1 cell bind(key=onset item, value=세그먼트 끝 payload="ans"+e). recall probe: `onset_e -> ans_e`. `state/9077_event_segment_bind/event_segment_engine_native.hexa`:
+fixture: E=5 이벤트, **변길이** lengths=[3,5,2,4,3](n=17). surprise 는 각 이벤트 onset 에서 SPIKE(1.0), 내부 0.1. 세그먼트당 1 cell bind(key=onset item, value=세그먼트 끝 payload="ans"+e). recall probe: `onset_e -> ans_e`. `state/9083_event_segment_bind/event_segment_engine_native.hexa`:
 - segmented recall **5/5** (≥0.8) ✓ (경계=참 onset 정렬)
 - fixed-chunk(chunk=3=round(mean)) control **1/5** (≤0.4) ✓ (변길이 mis-cut, 1 우연 정렬)
 - MARGIN seg−fixed = **+0.8** (≥+0.5) ✓
@@ -31,4 +31,4 @@ INFO: n=17 bounds=5 fixed_starts=6 bounds_shuf=4 · seg=5/5 fixed=1 shuffle=0 ma
 - adaptive thr(surprise 분포 기반 자동 임계)·계층 이벤트(nested boundary)·anticipatory prefetch 결합.
 
 ## artifacts
-- `core/engine_cli.hexa §EventSegment` · `state/9077_event_segment_bind/event_segment_engine_native.hexa` · `event_segment_engine_native.txt`
+- `core/engine_cli.hexa §EventSegment` · `state/9083_event_segment_bind/event_segment_engine_native.hexa` · `event_segment_engine_native.txt`

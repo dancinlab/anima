@@ -1,9 +1,9 @@
-// H_9077 event_segment_bind ENGINE-NATIVE — prediction-error event segmentation on live core/.
+// H_9083 event_segment_bind ENGINE-NATIVE — prediction-error event segmentation on live core/.
 // Stream = E events of VARIABLE length. Surprise SPIKES at each event onset (§PrecisionSurprise
 // lane). event_segment_boundaries peak-detects onsets → bind ONE episodic cell per SEGMENT
 // (key = onset item, value = the segment's end payload). Boundary-BLIND uniform fixed-length
 // chunking (event_segment_starts_fixed) mis-cuts variable events. Recall probe: onset_e -> ans_e.
-// usage: hexa run state/9077_event_segment_bind/event_segment_engine_native.hexa
+// usage: hexa run state/9083_event_segment_bind/event_segment_engine_native.hexa
 import "core/engine_cli.hexa"
 
 fn _ab(label: string, got: bool) -> bool {
@@ -104,5 +104,5 @@ fn main() {
     println("INFO n=" + to_string(n) + " bounds=" + to_string(len(bounds)) + " fixed_starts=" + to_string(len(fixed_starts)) + " bounds_shuf=" + to_string(len(bounds_shuf)))
     println("INFO seg=" + to_string(seg) + "/" + to_string(E) + " fixed=" + to_string(fixed) + " shuffle=" + to_string(shuf)
         + " margin=" + to_string(margin) + " earned=" + to_string(earned))
-    println("--- H_9077 event_segment_bind engine-native: " + to_string(np) + " pass / " + to_string(5 - np) + " fail ---")
+    println("--- H_9083 event_segment_bind engine-native: " + to_string(np) + " pass / " + to_string(5 - np) + " fail ---")
 }
