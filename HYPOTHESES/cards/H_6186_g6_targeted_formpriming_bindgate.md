@@ -52,7 +52,7 @@ pre-reg 4조건 전부 통과(측정 전 고정, tune-to-green 아님): **P1 BAS
 
 **함의**: G6 벽 = 순수 attention-capacity 천장이 아니라 (a)데이터로 FORM 은 움직이고 (b)frozen 검출기가 form-only 라 진짜 결합(bind Δ)을 못 재는 이중 문제. Fable 의 schema-transfer 병목 가설과 정합(TARGETED 가 bind Δ 로 transfer 는 하는데 FALS 게이트가 놓침).
 
-**wired:** DIRECTIONAL-mirror (py byte-parity numpy, engine-native decode 아닌 --py session-eval). G6-bind 게이트는 **구현됨·미배선**(core/g6_ideation.hexa/py 에 additive `_g6_topic_bound` 배선 = follow-on, frozen `_g6_is_falsifiable` 보존). terminal 승격 = core/ 배선 후 CORE `.hexa` A⇄G 재디코드(pool GPU).
+**wired:** WIRED-live (게이트 op 배선 완료) / DIRECTIONAL (verdict 수치는 py-mirror fragment 재채점). G6-bind 게이트가 **live `core/g6_ideation.hexa` 에 additive 배선됨**(PR wire-in): 새 fn `_g6_concept_kw`·`_g6_concept_hits`·`_g6_topic_bound(text,a,b)`·`_g6_is_falsifiable_topic_bound(text,a,b,known)` + bind-extended twin `g6_score_arm_bound`(기존 `g6_score_arm` 미터치, fals byte-identical, fals_bound⊆fals 병기). frozen `_g6_is_falsifiable` 는 한 글자도 안 건드림(회귀 0, engine_cli_smoke case 107 검증: form-priming 내성 targeted(0,1)=PASS·(2,3)=FILTERED + frozen-neg 통과 0). ARCHITECTURE.json g6_ideation 노드 lockstep. hexa-단일 production(py 미러 2026-06-28 폐기) — reference py = state/g6_bind_gate/g6_bind_gate.py(faithful 18/18). **terminal 승격(별도 follow-on):** 게이트를 canonical `g6_score_arm_auto` 경로 + `anima evaluate` 에 연결 후 CORE `.hexa` A⇄G 6프레임 재디코드로 byte-exact 재채점(pool GPU) → DIRECTIONAL→terminal.
 
 ## 관련
 H_6185(G1 coverage) · H_6184 · H_6183 · H_6170(G6 attention-capacity) · H_1590/1595/1597(G6 engine-native floor) · G1G6-RF-EXPANSION · [[bgb-decode-and-g6-attncap-terminal]] · [[g1-coverage-density-nl-bytes-lever]]
