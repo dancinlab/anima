@@ -1,0 +1,45 @@
+H_9093 per-tick conflict->budget Ψ measurement — ENGINE-NATIVE (aiden pool, hexa run core/engine_cli.hexa, EXIT_RC=0, numpy 없음)
+
+=== RAW (frozen bars pre-registered BEFORE run, c9) ===
+INFO conflicts: cMin=0.04000000000000001 cMax=0.9603999999999999
+INFO natural settle depth: D_lo=1.0 D_hi=5.0
+INFO RULE budgets: base_budget=1 max_extra=4
+TICK 0 conflict=0.855 c=0.8847499999999999 dTreat=4 psiT=1.0 | base=1 psiAbl=1.0 | dShuf=1 psiShuf=1.0
+TICK 1 conflict=0.075 c=0.53375 dTreat=1 psiT=0.5 | base=1 psiAbl=0.5 | dShuf=4 psiShuf=0.5
+TICK 2 conflict=0.5249999999999999 c=0.73625 dTreat=3 psiT=1.0 | base=1 psiAbl=1.0 | dShuf=3 psiShuf=1.0
+TICK 3 conflict=0.25 c=0.6125 dTreat=2 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=3 psiShuf=0.5
+TICK 4 conflict=0.9603999999999999 c=0.93218 dTreat=5 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=2 psiShuf=1.0
+TICK 5 conflict=0.075 c=0.53375 dTreat=1 psiT=0.5 | base=1 psiAbl=0.5 | dShuf=4 psiShuf=0.5
+TICK 6 conflict=0.39 c=0.6755 dTreat=3 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=1 psiShuf=1.0
+TICK 7 conflict=0.765 c=0.84425 dTreat=4 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=5 psiShuf=0.5
+TICK 8 conflict=0.04000000000000001 c=0.518 dTreat=1 psiT=0.5 | base=1 psiAbl=0.5 | dShuf=2 psiShuf=0.5
+TICK 9 conflict=0.5249999999999999 c=0.73625 dTreat=3 psiT=1.0 | base=1 psiAbl=1.0 | dShuf=3 psiShuf=1.0
+TICK 10 conflict=0.95 c=0.9275 dTreat=5 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=5 psiShuf=0.5
+TICK 11 conflict=0.13999999999999999 c=0.563 dTreat=2 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=1 psiShuf=1.0
+RESULT psi_maxdev_treatment=0.5
+RESULT psi_maxdev_ablation=0.5
+RESULT psi_maxdev_shuffle=0.5
+RESULT earned_monotone=true
+FAIL  BAR_PRESERVE: psi_maxdev_treatment < 0.05 (per-tick feed keeps Psi~half)
+FAIL  BAR_ABLATE_DIFF: ablation maxdev > treatment maxdev + 0.05 (recruited_depth FUNCTIONAL, not INERT)
+FAIL  BAR_EARNED_SHUF: shuffle maxdev > treatment maxdev + 0.05 (budget EARNED-tracks conflict)
+PASS  EARNED_MONOTONE: recruited depth non-decreasing in conflict
+INFO INERT_check(ablation==treatment)=true
+--- H_9092 pertick conflict->budget engine-native: 1 pass / 3 fail ---
+EXIT_RC=0
+
+
+=== 정직 해석 (verdict-integrity: metric-artifact) ===
+사전등록 metric psi_maxdev(=MAX over ticks of |Ψ-½|)는 세 arm 전부 0.5 로 포화(각 arm 이 최소 1 tick 은 ½, 1 tick 은 1.0 을 쳐서 range 가 [½,1] 로 같음) → arm 구분 불가 = 3/3 정량 bar FAIL + INERT_check=true 는 metric 포화 착시.
+
+RAW per-tick 을 올바른 요약(mean|Ψ-½| = 1.0-tick 비율×0.5)으로 재집계:
+  treatment(conflict-맞춤 budget) : Ψ=½ 해소 9/12 tick, mean dev 0.125  ← 최선
+  shuffle  (뒤섞인 budget)        : Ψ=½ 해소 6/12 tick, mean dev 0.250
+  ablation (고정 base=1 budget)   : Ψ=½ 해소 3/12 tick, mean dev 0.375  ← 최악
+순서 treatment < shuffle < ablation = EARNED(뒤섞으면 악화) ∧ FUNCTIONAL(recruited_depth 가 개선) = GREEN 패턴을 max-metric 이 가림.
+per-tick 예: TICK3(conf0.25) treatment d=2→Ψ½ vs ablation base=1→Ψ1.0 · TICK4(conf0.96) treatment d=5→Ψ½ vs ablation→Ψ1.0.
+
+=== VERDICT ===
+🟡 DIRECTIONAL (engine-native, metric-artifact). 사전등록 max-bar 3 FAIL 은 유효 기록(tune 금지)이나 진범은 metric 선택(max 포화)이지 Ψ-표류 아님. 
+fable Ψ-리스크 판정: per-tick conflict→budget feed 는 Ψ 를 표류시키지 않음 — 오히려 conflict-맞춤 budget 이 Ψ→½ 를 최선 해소(리스크 미현실화). 단 GREEN terminal 은 mean-dev 재-pre-reg 필요.
+Ψ readout 이 {0.5,1.0} 2-state 로 coarse — 재측정 시 finer Ψ readout 도 동반.
