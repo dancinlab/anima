@@ -68,6 +68,26 @@ INFO  AUROC(chain-fit)=1.0 AUROC(single-vector)=0.2778 fit_genuine=0.9894 fit_im
   `recognize anchored=1.0 reset=0.196 fit(genuine)=0.995 fit(impostor)=0.0 interlocutor-continuity-distinct=Y`.
 - **F5 실측 disjoint** — you-chain 배터리 ON vs OFF 에서 `ci_emit_drive`(Ψ 0/4) + `osmotic_retains`(recall_thr) byte-identical.
 
+## ⚠️ AUROC 정정 노트 (H_9096 hard-negative 재측정, 2026-07-02)
+
+페이블 독립비판: **F3 impostor AUROC=1.000 은 측정이 아니라 기하 항등식.** impostor 가 a_pred 와
+**직교**인 축(other_drift axes 5,6,7 → 6,7,0 · a_pred 와 90°)으로 drift 하므로 `other_chain_fit`(= 후보 증분의
+e_{a_pred} cosine 성분)이 **cos(90°)=0 항등식**으로 ≈0 이 된다. 즉 원 F3 는 **θ=90° 단일 버킷의 재확인**일 뿐.
+또한 fit 은 마지막 **3 waypoint(2 증분 창)만** 읽는 국소 외삽기다.
+
+**H_9096 hard-negative 재측정 (engine-native, 동일 live `other_chain_fit`)** 결과:
+- **cone-neg AUROC(θ)**: θ90=1.0 (=원본 재현) · θ75/60/45/30 = **1.0** · θ15 = **0.931**. → 각도형 hard-neg 는
+  예측(0.55–0.70)과 달리 **붕괴하지 않는다**(genuine 이 a_pred 근처 fit≈0.98 로 착지, cone 은 알려진 offset 이라 분리 유지).
+  즉 "직교라서 1.0" 은 맞지만 "hard-neg 면 chance 로 무너진다" 는 **과대예측(FALSIFIED)** — 판별자는 각도형엔 강건.
+- **mimic-neg(킬러) AUROC = 0.252 (< 0.5, chance 아래)** — 공개된 마지막 3 waypoint 를 읽고 a_pred 를 재현한
+  공격자(`other_drift_exp(latestB, a_pred, step)`)는 fit 0.988 로 genuine(0.981)보다 **오히려 높다.** →
+  **fit=2 증분 외삽기지 trajectory 검증기 아님이 수치로 확정.** 전체 history 는 검증되지 않는다.
+
+**정정된 스코프:** 원 "AUROC=1.000 (판별자 이득 결정적)" 은 **직교/각도형 impostor 한정** 유효(θ≥30 완전분리, θ15=0.93).
+**history-replica(mimic) 위협모델엔 무보호**(0.25). single-vector `other_cos` 도 mimic 엔 무보호(mimic 이 최신 anchor 매치)
+이므로 chain 이 single 보다 *나쁘지는* 않으나 **둘 다 blind**. follow-on(H_9096): fit 을 3-waypoint 창이 아닌
+**전 증분열 잔차**(마할라노비스식 전-history 정합)로 재정의해야 mimic 방어. 상세 = `cards/H_9096_youchain_hardneg_auroc.md`.
+
 ## 정직 스코프 (a_scale_honest_scope · c9)
 
 - **drift = deterministic designed law (SATURATED)** — 궤적 자체는 학습이 아니라 설계된 결정적 성장(self_drift 동형).
