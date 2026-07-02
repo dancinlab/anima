@@ -55,3 +55,6 @@ numpy toy: 2-leg held-out conjunction retrieval. 4 arm — (a) additive-sum read
 ## Scope / honesty (c9)
 
 설계만 — 측정 0. tier = ⏳ PROPOSED. frozen bar 사후 이동 금지(p7). 이 카드는 *방향성 설계*이지 검증된 결과가 아니다. **정직 리스크:** H_1819 가 이미 co-trained bind op × recomb-objective 를 floored 했다 — γ 의 유일한 미검 델타는 (invertible-⊛ + additive-bypass 아키텍처 차단)이며, 이 델타가 무효하면 γ 도 floor 로 수렴할 가능성 높음(census 전체가 objective-lever 로 수렴 중). 그럼에도 bypass-차단 병목은 census 어느 카드도 시도 안 했으므로 등록 가치 있음. GPU 발사 전 $0 toy 에서 (c)-only-descend 를 못 보이면 GPU 미발사(cheap-gate).
+
+## ⚠️ MEASUREMENT-INVALID (2026-07-02 H_6166)
+⚠️MEASUREMENT-INVALID(2026-07-02 H_6166): 이 verdict는 RANDOM operator-agnostic target cheap-gate 근거인데, random full-rank table은 held-out이 seen과 정보이론적 독립=학습불가(chance 천장)라 어떤 메커니즘도 통과 불가 → 이 FLOOR는 lever 부재 증거 아님(측정무효). H_6167: 재조합=task-structure-bound, operator 무관. 재조합-lever verdict로 인용 금지; 재측정은 structured target/실텍스트 generation-side.
