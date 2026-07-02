@@ -699,7 +699,17 @@ def evaluate_run(argv):
     if corpus:
         cnote = str(len(corpus)) + " file(s)"
     print("corpus: " + cnote)
-    print("gen:    " + str(gen) + " tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)")
+    # CANONICAL-GEN GUARD (verdict-integrity): the frozen G0-G6 bars are calibrated at
+    # gen == _default_gen(). A non-canonical --gen shifts coherence / AR-drift (a longer
+    # decode drifts to byte-garble, silently sinking G0 kwr and cascading to G1/G6), so a
+    # verdict measured at gen != canonical is NOT comparable to the frozen bars. Label it
+    # DIRECTIONAL loudly instead of printing "frozen bars" as if it were terminal.
+    _canon_gen = _default_gen()
+    if gen == _canon_gen:
+        print("gen:    " + str(gen) + " tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)")
+    else:
+        print("gen:    " + str(gen) + " tokens/decode  ⚠️ NON-CANONICAL (frozen G0-G6 bars measured at gen=" + str(_canon_gen) + ")")
+        print("        → verdict below is DIRECTIONAL, NOT comparable to frozen bars (gen shifts coherence/AR-drift · verdict-integrity)")
     print("")
 
     r = g_eval_all(ckpt, corpus, gen)
@@ -729,6 +739,9 @@ def evaluate_run(argv):
     print("  ──────────────────────────────────────────────────────────────────")
     closed = bool(r["closure"])
     print("")
+    if gen != _canon_gen:
+        print("⚠️ gen=" + str(gen) + " ≠ canonical " + str(_canon_gen)
+              + " — the CLOSURE below is DIRECTIONAL (non-frozen gen), NOT a terminal G0∧G1∧G2 verdict.")
     print("CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): " + _pf(closed))
     if closed:
         print("  → PUBLIC-eligible (G0∧G1∧G2 all PASS).")

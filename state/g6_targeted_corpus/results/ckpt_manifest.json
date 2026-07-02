@@ -1,0 +1,19 @@
+{
+ "note": "a_fire_recover_complete — ckpts persist on OWNED host summer (RTX 5070, no teardown/no rent). 1.2GB each, NOT committed to repo (>100MB). Re-mount for engine-native re-check: anima evaluate --py <path>.",
+ "host": "summer",
+ "measure_path": "engine-native py _Mouth (core/decode bytegpt_decode_topk_sampled_W, numpy torch-free byte-parity) = DIRECTIONAL upper bound (session-eval-py-only). NOT hexa-terminal.",
+ "trainer": "cli/train_g6.py (summer copy of cli/train.py + --n-head override for d1024/H16 h1129 warm-init). warm-FT --arch bytegpt --canon --d 1024 --L 24 --seq-len 512 --n-head 16 --bf16 --steps 2500 --sample proportional. broad:g6 = 84.4%:15.6%.",
+ "scorer": "~/g6_arm.py (faithful py mirror of core/g6_ideation.hexa g6_score_arm + g6_decode_best_of_k best-of-K=3 offsets[0,101,202] temp0.7 gen80 seeds{7,4302,4303} + PREREG cross-shuffle bind + G0 kwr dual-bar)",
+ "ckpts": {
+  "BASE":     {"path": "~/anima-weights/bytegpt303_h1129/h1129.bin", "sha256": "5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e", "note": "frozen h1129 trunk, no FT; also HF PRIVATE dancinlab/anima-bytegpt-303m-h1129"},
+  "TARGETED": {"path": "~/g6tc_targeted.bin", "sha256": "919c1360cabcfe92266dc73a5634671f417df1dafb47d7275b1f95d96de71995", "step1000_path": "~/g6tc_targeted.bin.step1000.bin", "step1000_sha256": "830a979c84696294255d521676e31ba9f4e649b6fde589249f997f139430e36b"},
+  "SHUF":     {"path": "~/g6tc_shuf.bin", "sha256": "8c3af81be60e6a235ac795222b01fccbd8b4388c9b9af9ff5d868110017890b2", "step1000_path": "~/g6tc_shuf.bin.step1000.bin", "step1000_sha256": "72d69d6305c402470ae43be76f79fe7e02a64968c27f0d7bda90ea9056cbd202"}
+ },
+ "verdict_summary": {
+  "BASE":     {"fals_per_seed": [0,0,0], "majority_seeds": 0, "g0_kwr": "5/5 PASS", "bind_meanDelta": 0.1111},
+  "TARGETED": {"fals_per_seed": [6,6,6], "majority_seeds": 3, "g0_kwr": "5/5 PASS", "bind_meanDelta": 0.4444, "dist_per_seed": [4,4,6]},
+  "SHUF":     {"fals_per_seed": [6,6,6], "majority_seeds": 3, "g0_kwr": "5/5 PASS", "bind_meanDelta": 0.0, "dist_per_seed": [4,3,4]},
+  "prereg_verdict": "P1 ceiling REFUTED (TARGETED FALS 0->6/6; G6 FALS gate not immovable by data) AND P2-strong NOT-CONFIRMED (SHUF also 6/6 majority) => FORM-PRIMING lever per frozen PREREG partial-rule. Secondary: TARGETED bind Δ=0.444 vs SHUF Δ=0.0 (topic-bind present in TARGETED only, but the G6 _g6_is_falsifiable detector is form-only and blind to it). Transfer NOT claimed.",
+  "tier": "DIRECTIONAL (py byte-parity; hexa-native terminal followup blocked by session-eval-py-only 303M OOM policy)"
+ }
+}

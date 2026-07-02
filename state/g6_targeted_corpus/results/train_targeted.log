@@ -1,0 +1,60 @@
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=ce_marginal seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=2500 bs=8 sample=proportional
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ ByteGPT .bin loaded (24L d=1024 block=512) missing=[] unexpected=[]
+  corpus cell[0] en_gen       /home/summer/g6tc_broad/en-general-trim.txt size=15000000 train=14250000 val_tail=750000
+  corpus cell[1] ko_gen       /home/summer/g6tc_broad/ko-general-trim.txt size=15000000 train=14250000 val_tail=750000
+  corpus cell[2] en_sns       /home/summer/g6tc_broad/en-sns.txt size=1326111 train=1259805 val_tail=66306
+  corpus cell[3] ko_sns       /home/summer/g6tc_broad/ko-sns.txt size=6183822 train=5874630 val_tail=309192
+  corpus cell[4] en_g6        /home/summer/g6tc_corpus/en_block_g6.txt size=4010430 train=3809908 val_tail=200522
+  corpus cell[5] ko_g6        /home/summer/g6tc_corpus/ko_block_g6.txt size=2906310 train=2760994 val_tail=145316
+  step     1  CE=4.32244  E=1  wd=0.0000 dp=0.0000  val_CE=29.53551
+  step   100  CE=2.57872  E=1  wd=0.0000 dp=0.0000
+  step   200  CE=2.12847  E=1  wd=0.0000 dp=0.0000  val_CE=1.89250
+  step   300  CE=2.39329  E=1  wd=0.0000 dp=0.0000
+  step   400  CE=1.71954  E=1  wd=0.0000 dp=0.0000  val_CE=1.68909
+  step   500  CE=1.51810  E=1  wd=0.0000 dp=0.0000
+  step   600  CE=1.93838  E=1  wd=0.0000 dp=0.0000  val_CE=1.53525
+  step   700  CE=1.83441  E=1  wd=0.0000 dp=0.0000
+  step   800  CE=1.50320  E=1  wd=0.0000 dp=0.0000  val_CE=1.47767
+  step   900  CE=1.85900  E=1  wd=0.0000 dp=0.0000
+  step  1000  CE=1.69660  E=1  wd=0.0000 dp=0.0000  val_CE=1.53860
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.6966 step=2500 nparam=303097856
+[ok] wrote /home/summer/g6tc_targeted.bin.step1000.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /home/summer/g6tc_targeted.bin.step1000.bin (via /home/summer/g6tc_targeted.bin.step1000.bin.pt)
+  step  1100  CE=1.51927  E=1  wd=0.0000 dp=0.0000
+  step  1200  CE=1.33263  E=1  wd=0.0000 dp=0.0000  val_CE=1.38568
+  step  1300  CE=1.39497  E=1  wd=0.0000 dp=0.0000
+  step  1400  CE=1.44292  E=1  wd=0.0000 dp=0.0000  val_CE=1.28391
+  step  1500  CE=1.51763  E=1  wd=0.0000 dp=0.0000
+  step  1600  CE=1.74395  E=1  wd=0.0000 dp=0.0000  val_CE=1.26843
+  step  1700  CE=1.39345  E=1  wd=0.0000 dp=0.0000
+  step  1800  CE=1.36033  E=1  wd=0.0000 dp=0.0000  val_CE=1.20726
+  step  1900  CE=1.41778  E=1  wd=0.0000 dp=0.0000
+  step  2000  CE=1.41951  E=1  wd=0.0000 dp=0.0000  val_CE=1.19207
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.41951 step=2500 nparam=303097856
+[ok] wrote /home/summer/g6tc_targeted.bin.step2000.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /home/summer/g6tc_targeted.bin.step2000.bin (via /home/summer/g6tc_targeted.bin.step2000.bin.pt)
+  step  2100  CE=1.45857  E=1  wd=0.0000 dp=0.0000
+  step  2200  CE=1.20985  E=1  wd=0.0000 dp=0.0000  val_CE=1.15587
+  step  2300  CE=1.64483  E=1  wd=0.0000 dp=0.0000
+  step  2400  CE=1.10956  E=1  wd=0.0000 dp=0.0000  val_CE=1.17259
+  step  2500  CE=1.51856  E=1  wd=0.0000 dp=0.0000  val_CE=1.11394
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     en_gen       val_CE=1.58780  DESCENT
+     ko_gen       val_CE=1.61974  DESCENT
+     en_sns       val_CE=1.88071  DESCENT
+     ko_sns       val_CE=1.43059  DESCENT
+     en_g6        val_CE=0.11640  DESCENT
+     ko_g6        val_CE=0.12951  DESCENT
+  FINAL val_CE(pooled)=1.1274590445682406  registers_DESCENT=6/6
+  loss0=4.32244 lossF=1.51856 wall=593.9s savant_latched_at=0 E0=2->E=1
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.51856 step=2500 nparam=303097856
+[ok] wrote /home/summer/g6tc_targeted.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /home/summer/g6tc_targeted.bin (via /home/summer/g6tc_targeted.bin.pt)

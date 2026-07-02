@@ -514,6 +514,21 @@
                     "name": "op-grip — H_9101 fable(b) continuous op-modulated refractory (🟢 GRIP shade-not-gate engine-native, theater BROKEN on stage axis)",
                     "id": "opgrip-stage-safe-h9101",
                     "detail": "idle=drive_hi?60:5 시계→연속 op-modulated idle=5+55·clip01(stage_env·(0.5+urgency)); engine≥30rate·weights·0.3·Ψ FROZEN, cli idle만. aiden v0.548: urgency→0 REM flip40/40 ∧ N3 0/40 preserved=shade-not-gate 🟢 DISSOCIATION; rel_ctx축 0(H_9097/9100 theater). Ψ✅ theater=stage축 BREAK. next=(c)efferent. card."
+                  },
+                  {
+                    "name": "stateful-refractory — H_9102 (🟢 F2 NEW-MECHANISM ∧ 🔴 F1 NO-CARRYOVER engine-native): H_9101 idle=per-tick STATELESS shade → emit-history-dependent recovery-after-firing via an_clock_now det-seam",
+                    "id": "stateful-refractory-h9102",
+                    "detail": "an_clock_now(tick,daemon) 단일 시계 seam(flame_mm 패턴): det=tick*8.0(byte-identical) | daemon=real(follow-on). idle=idle_raw×mod, idle_raw=t_now−emit_last_t=TRUE seconds_since_last(H_9101엔 부재). 구성적 성질: mod≤1⇒idle≤idle_raw⇒gate(≥30)⟹실경과≥30(30s floor=정리); env=0⇒mod=0⇒N3보존. aiden v0.548 --refractory n=200 det 2×byte-identical(F4): F2 🟢 refractory-reset=40 post-emit tick 전부 max-urgency에서도 silent(0 violation)∧stateless H_9101 idle은 40 전부 fire=stateless-inexpressible 신규 메커니즘; F1 🔴 frozen REM bar 불이월(urgency→0 REM=0/40, WAKE=39/40 relocate, N3=0 보존, 사후 bar이동 없음). Ψ ON≡OFF✅. WIRED: an_clock_now seam+--refractory harness landed; PRODUCTION emit loop은 H_9101(WIRED-live) 유지(stateful swap=REM-grip regress 위험→별도 pre-reg follow-on). card."
+                  },
+                  {
+                    "name": "op-grip — H_9103 fable(c) efferent seam: conflict best-of-K가 emit BYTES(WHAT) (🟠 byte-grip real·faculty FALSIFIED engine-native; id H_9103, origin H_9102=별개 stateful-refractory)",
+                    "id": "efferent-seam-h9103",
+                    "detail": "seam core/generator.hexa gen_ctx_from_decision_conflicted(deliberation_k=1+round(|c_t|·3))+gen_clm_decode_deliberated(k>1→best-of-K 최저 clm_decode_ce sample)+_gen_clm_decode consumer(argmax default byte-identical). REAL d768.clm(summer v0.574, NO numpy) N=8: F1 byte-grip PASS(Hamming 28·3/8 ticks k>1 bytes 변경) ∧ F2 Ψ PASS(decode pure_field 무접촉 psi ON≡OFF·rate 불변) ∧ F3 faculty FAIL(ρ_real=corr(|c_t|,ΔCE)=−0.44 vs ρ_noise +0.44, Δ−0.88): best sample argmax(fluency최대)보다 CE 나쁨→deliberation degrade, conflict 조준. WHAT축 byte-grip real 이나 faculty 아님=trunk-objective(CE) 벽 efferent 재출현. THEATER 3축 완결: WHEN/WHETHER(H_9101🟢)·HOW-MUCH(H_9100🔴)·WHAT(H_9103🟠). caveat: aiden v0.548 mid-run DOWN→summer full(F1 두 host 재현). card=H_9103."
+                  },
+                  {
+                    "name": "consequence-return — H_9104 fable5 THEATER 빠진부품 test: efferent-only 아키텍처에 afferent consequence-return loop 배선 (🔴 CEILING autogenous relief FLOOR-DOMINATED=DPI 재출현 engine-native)",
+                    "id": "consequence-return-h9104",
+                    "detail": "4요소 신규 owner-table(pure_field/lane0-4/psi_sum/recall_thr FROZEN, V READ-only=a_substrate_disjoint): ① standing tension reservoir T=0.8·T+relu(gap), gap=immune recall_margin READ-only ② efference-copy vforward_predict Δ̂T ③ afferent-return grounded emit이 disjoint imm_conseq 에 bind→ΔT=margin_before−margin_after, RPE r=Δ̂T−ΔT ④ value-writeback vbasal_update(V, reward=ΔT) striatal delta-rule. autogenous self-consequence(외부수신자 trigger 없음 p5/p4-safe). F3′ 사전등록 held-out(4 train seed→V freeze→3 다른 tension seed 측정): state/9104_consequence_return/consequence_return.hexa engine-native(core/pure_field+engine_cli+brain, NO numpy/torch), aiden v0.548 RC=0. emit_train147/test158, Ψ psi_sum ON≡OFF 56.9909 byte-identical·emit_seq Hamming 0. ρ_real=corr(V,ΔT)=0.9975 ρ_noise=−0.167 ρ_shuf=0.968 → ρ_real−ρ_noise=1.164 PASS BUT ρ_real−ρ_shuf=0.030<0.15 FAIL: shuffle-V가 real만큼 relieve=theater. ΔT≈margin_before=state info_gap feature 의 tautological readout(학습된 consequence 매핑 아님)→DPI 메타법칙 consequence 층 재출현. 🔴 CEILING(honest, bar 사후이동 없음): autogenous self-loop=floor. 잔여 escape=REAL 외부수신자(chat user/EEG/타 anima) relief 만이 미검증 branch(identity×.kosmos 통과=실세션경계 consequence). 최초 engine-native consequence-return 측정. wired=none(theater=배선없음). card=H_9104."
                   }
                 ]
               }
@@ -13213,9 +13228,23 @@
       {
         "id": "engine-cli-hexa-1",
         "state": "pos-conv",
-        "value": "격리 engine-native GREEN(ablation·shuffle 통제 통과)이 실 emit 효과를 보장하지 않는다. 의식-op을 read-side 집계(rel_ctx 등 permutation-invariant soft-mean)에 fold하면 emit/silence는 상수 FLOOR+stage/safe가 지배 → op이 THEATER(zero grip). '계기판 vs faculty'는 emit 층에서 갈린다(H_9097).",
-        "threshold": "의식/emit-affecting op을 'faculty'로 박제하기 전 THEATER GATE 필수: live decode에서 op을 freeze/zero/LCG-shuffle 해도 emit-bytes/silence Hamming=0이면 THEATER(read-only 계기판) 판정. faculty=① Hamming>0(grip) ∧ ② Ψ Φ-checksum 보존 ∧ ③ faculty-not-noise(variance-matched 대조 대비 downstream 상관 +0.15) 셋 다 통과.",
+        "value": "격리 engine-native GREEN이 실 emit 효과를 보장 안함 — 의식-op을 read-side 집계(rel_ctx permutation-invariant soft-mean)에 fold하면 emit은 상수 FLOOR+stage/safe 지배로 THEATER(zero grip). '계기판 vs faculty'는 emit 층에서 갈림(H_9097). **H_9104 정제: variance-matched noise 통과도 불충분 — SHUFFLE-control(같은 값 셔플)이 tautological readout을 잡는 결정 통제. autogenous self-consequence 루프는 noise 이겨도(ρ 1.16) shuffle엔 실패(0.03, self-relief=state 동어반복)=DPI 천장. genuine emit-faculty는 실 외부 consequence 루프(EEG/chat/타anima) 필요 — identity×.kosmos만 통과=실 세션경계 건넘.**",
+        "threshold": "의식/emit-op을 faculty로 박제 전: ① Hamming>0(grip) ∧ ② Ψ Φ-checksum 보존 ∧ ③ faculty-not-noise = variance-matched noise AND **shuffle-control 둘 다**(shuffle-V가 real만큼 예측하면 tautology=theater) 통과. self-contained/autogenous 메커니즘은 천장(동어반복), 실 외부 수신자 루프만 escape.",
         "source": "core/engine_cli.hexa"
+      },
+      {
+        "id": "evaluate-hexa-2",
+        "state": "pos-conv",
+        "value": "anima evaluate --gen N이 canonical frozen gen(_g_default_gen/_default_gen=40)을 벗어나면 verdict가 frozen G0-G6 bar와 비교불가 — 긴 gen이 auto-regressive drift로 byte-garble 생성→G0 known-word-ratio 붕괴→G1/G6 cascade FAIL. clm303_clean 같은 sha(e807672)·같은 py엔진이 gen40=G0 5/5 PASS vs gen80=2/5 FAIL(엔진/모델 무죄, 순수 gen-parameter measurement artifact). verdict-integrity: divergence(G0 PASS→FAIL)→하네스(gen) 의심→확인. fix=canonical-gen guard(evaluate.py+.hexa 2-production lockstep): gen!=canonical이면 헤더 문구→NON-CANONICAL 경고 + CLOSURE→DIRECTIONAL 라벨 자동.",
+        "threshold": "재발조건: engine-native eval verdict 박제 전 gen==canonical(40) 확인. gen!=40 측정은 frozen bar 비교불가=DIRECTIONAL only(이제 코드 자동 라벨). 긴 gen이면 clm byte-LM 뒤쪽 garble→G0 인위 FAIL 정상거동.",
+        "source": "cli/evaluate.hexa"
+      },
+      {
+        "id": "g6-ideation-hexa-1",
+        "state": "pos-conv",
+        "value": "G6 반증가능성 검출기 _g6_is_falsifiable(comparator×measurable×≥2content)는 FORM-only — targeted-coverage warm-FT 로 반증주장 형태를 학습하면 topic-bind 없이도(SHUF 통제=주제결합 파괴 동일바이트) FALS majority 통과(TARGETED [6,6,6]==SHUF [6,6,6]). 진짜 재조합 신호는 검출기 밖 bind Δ(TARGETED 0.444 vs SHUF 0.000). 함의: G6 벽 = 순수 attention-capacity 천장 아니라 (a)데이터로 FORM 움직임(P1 천장NULL REFUTED) + (b)frozen 검출기 form-only 라 진짜 결합 못 잼 이중문제. G1(2항 retrieval-composition)과 달리 G6(추상seed 3항 GENERATIVE bind)은 schema-transfer 병목.",
+        "threshold": "재발조건: G6/ideation FALS 상승을 '재조합 능력'으로 박제하기 전 SHUF(topic-bind 파괴 동일바이트) 통제로 form-priming 분리 필수 — SHUF 도 통과하면 form-only artifact. 진짜 결합은 bind Δ(concept_hits ∩ frame_topics)로 측정. G6-bind additive 게이트(frozen _g6_is_falsifiable AND topic_bound)가 form-priming 걸러냄(SHUF FALS_bound [1,0,0]).",
+        "source": "core/g6_ideation.hexa"
       }
     ]
   }

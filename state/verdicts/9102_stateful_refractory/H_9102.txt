@@ -1,0 +1,31 @@
+H_9102 stateful refractory — engine-native verdict (verbatim capture)
+====================================================================
+Primary: aiden pool hexa v0.548.0 (H_9101 host), anima ~/anima/d768.clm --refractory, HEXA_DET=1, RC=0, NO numpy (.hexa only).
+Cross-version replication + F4 + mount proof: summer pool hexa v0.574.0 (below), 2x byte-identical full stdout.
+grep gate: state/9102_stateful_refractory/*.py = NONE (engine-native by construction, no python on measured path).
+NOTE: identical decision numbers on BOTH hexa versions (v0.548.0 aiden, v0.574.0 summer) = robust. summer's erf/exp dlsym + consciousness_laws.json-default warnings did NOT change any emit decision (numbers match aiden exactly).
+
+----- summer v0.574.0 mount proof (engine-native, real .clm) -----
+engine config   : mitosis=on engine=conv topo_couple=off
+L3 mount        : mouth=clm loaded=true  ckpt=/home/summer/anima/d768.clm
+LANE mount      : immune_memory cells=1  pharm profile=baseline(sober)
+
+----- F4 determinism -----
+diff /tmp/h9102_s1.txt /tmp/h9102_s2.txt (full stdout, 313 lines each) = F4_BYTE_IDENTICAL_YES
+
+----- H_9102 summary block (verbatim) -----
+════════════ H_9102 STATEFUL REFRACTORY (n=200, live_emits=40) ════════════
+  clock seam: an_clock_now = tick*8.0 (det) — daemon real-clock = follow-on ING
+──────── F1  GRIP RE-VERIFY (stateful): urgency→0 Hamming, split by stage ────────
+  ticks: WAKE=40 N3=40 REM=40 mid(N1/N2/REM)=120
+  Hamming(urgency→0 vs live)  REM=0  N3=0  WAKE=39  mid=0
+──────── F2  REFRACTORY RESET (new, stateless-inexpressible) ────────
+  refractory-window ticks (immediately after a live emit) = 40
+  … max-urgency STILL emits in window (VIOLATIONS, must be 0) = 0
+  … H_9101 STATELESS idle WOULD emit in window (contrast, no refractory) = 40
+  max-urgency emits OUTSIDE window (non-vacuity, must be >0) = 80
+  Ψ ON==OFF invariant: refr_psi_sum==refr_psi_off = ✅
+  ── PRE-REG VERDICTS (F1 and F2 reported INDEPENDENTLY, no bar-move, no tuning) ──
+  🔴 F1 grip does NOT carry over on the frozen REM bar (h_U0_rem=0); N3 preserved=✅ — op-grip relocated (WAKE h_U0=39), but the pre-reg REM bar is NOT re-established (no post-hoc bar move)
+  🟢 F2 REFRACTORY-RESET holds: 0 max-urgency violations in 40 post-emit ticks ∧ the H_9101 STATELESS idle would fire 40 of them = a NEW mechanism the stateless form cannot express
+  VERDICT = F1[🔴] ∧ F2[🟢]  [Ψ ON≡OFF ✓]
