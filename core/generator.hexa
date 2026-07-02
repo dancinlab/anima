@@ -989,6 +989,28 @@ pub fn gen_auto_ce(ckpt_path: string, text: string) -> float {
     return 5.0
 }
 
+// gen_auto_ce_W — LOAD-ONCE twin of gen_auto_ce: BYTE-IDENTICAL forward-CE off a PRE-LOADED
+// handle `h` (gen_auto_load) so a best-of-K driver scores every candidate without reloading
+// the .clm. ByteGPT → the existing ranged path (already OOM-safe, keeps ckpt path); CLM →
+// clm_ce_ranged_W off the resident W. Same 5.0 fallbacks as gen_auto_ce (identical behaviour).
+pub fn gen_auto_ce_W(h: Map, text: string) -> float {
+    let ids = []
+    let n = byte_len(text)
+    let mut i = 0
+    while i < n { ids.push(ord(substring(text, i, i + 1))); i = i + 1 }
+    if len(ids) < 2 { return 5.0 }
+    if to_string(h["kind"]) == "bytegpt" {
+        let r = bytegpt_ce_ranged(to_string(h["ckpt"]), ids)
+        if to_string(r["ok"]) == "true" { return to_float(r["ce_mean"]) }
+        return 5.0
+    }
+    let W = h["W"]
+    if to_string(W["ok"]) != "true" { return 5.0 }
+    let r = clm_ce_ranged_W(W, ids)
+    if to_string(r["ok"]) == "true" { return to_float(r["ce_mean"]) }
+    return 5.0
+}
+
 // conflict_drives_live — the live signed A⇄G drives for ONE candidate text.
 //   a_drive ∈ [0,1] = fluency push  = clip01(1 − ce_mean / CE_REF)   (CE_REF = 5.0 frozen)
 //   g_drive ∈ [-1,1] = grounding pull from §ImmuneMemory recall margin (M_REF = 0.25 frozen):
@@ -998,6 +1020,18 @@ pub fn gen_auto_ce(ckpt_path: string, text: string) -> float {
 // pure query through immune_embed_key). a_substrate_disjoint: G5 lane READ feeds content only, never the gate.
 pub fn conflict_drives_live(ckpt_path: string, cand: string, mem: ImmuneMemory) -> [float] {
     let ce = gen_auto_ce(ckpt_path, cand)
+    let a = _gen_clip01(1.0 - ce / 5.0)
+    let margin = immune_memory_recall_margin_text(mem, cand)
+    let mut g = 0.0
+    if margin <= 0.0 { g = _gen_clip01((0.0 - margin) / 0.25) }
+    else { g = 0.0 - _gen_clip01(margin / 0.25) }
+    return [a, g]
+}
+
+// conflict_drives_live_W — LOAD-ONCE twin of conflict_drives_live: identical signed A⇄G
+// drives (byte-identical a via gen_auto_ce_W, same margin/g), off a PRE-LOADED handle `h`.
+pub fn conflict_drives_live_W(h: Map, cand: string, mem: ImmuneMemory) -> [float] {
+    let ce = gen_auto_ce_W(h, cand)
     let a = _gen_clip01(1.0 - ce / 5.0)
     let margin = immune_memory_recall_margin_text(mem, cand)
     let mut g = 0.0
@@ -1024,7 +1058,14 @@ pub fn generate_deliberate(backend: Map, substrate_ctx: Map, emit_decision: bool
     }
     let ckpt = to_string(backend["ckpt"])
     let c0 = to_string(base["text"])
-    let d0 = conflict_drives_live(ckpt, c0, mem)
+    // H_9107 fix: hoist the .clm load OUT of the best-of-K loop. The old path reloaded the
+    // ckpt on EVERY gen_auto_ideate (generate) AND every conflict_drives_live (score) call —
+    // ~2K+1 reloads/tick, and the ideate reload never freed → unbounded RSS growth that
+    // exploded a 303M ckpt (H_9107 BLOCKED-INFRA). Now: gen_auto_load ONCE → reuse the handle
+    // for both generation (gen_auto_ideate_W) and scoring (conflict_drives_live_W) → gen_auto_free
+    // ONCE. Both W-twins are byte-identical to their path-keyed originals ⇒ frozen verdict unchanged.
+    let h = gen_auto_load(ckpt)
+    let d0 = conflict_drives_live_W(h, c0, mem)
     let conf0 = conflict_scalar(d0[0], d0[1])
     let K = conflict_recruited_depth(conf0, 1, 3)      // the dead return value → real budget
     let mut best_text = c0
@@ -1034,10 +1075,10 @@ pub fn generate_deliberate(backend: Map, substrate_ctx: Map, emit_decision: bool
         let seed = _gen_substrate_seed(substrate_ctx, anchors)
         let mut k = 1
         while k < K {
-            let r = gen_auto_ideate(ckpt, seed, 80, 8, 0.7, tick * 17 + k)
+            let r = gen_auto_ideate_W(h, seed, 80, 8, 0.7, tick * 17 + k)
             if to_string(r["ok"]) == "true" {
                 let cand = to_string(r["text"])
-                let dk = conflict_drives_live(ckpt, cand, mem)
+                let dk = conflict_drives_live_W(h, cand, mem)
                 let confk = conflict_scalar(dk[0], dk[1])
                 if confk < best_conf {                 // strict < ⇒ tie-break keeps min k (c₀ first)
                     best_conf = confk; best_text = cand; best_k = k
@@ -1046,6 +1087,7 @@ pub fn generate_deliberate(backend: Map, substrate_ctx: Map, emit_decision: bool
             k = k + 1
         }
     }
+    gen_auto_free(h)                                   // release the resident .clm weight-set ONCE
     return #{ "emitted":  base["emitted"],
               "backend":  base["backend"],
               "text":     best_text,
