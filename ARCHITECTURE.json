@@ -488,7 +488,14 @@
                 "name": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-decode-hexa-bytegpt-decode",
-                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring."
+                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring.",
+                "children": [
+                  {
+                    "name": "ConflictMonitor — H_9093 per-tick Ψ-safety",
+                    "id": "conflictmonitor-pertick-psi-h9093",
+                    "detail": "recruited_depth→A⇄G budget per-tick feed 는 Ψ 표류 안 함(engine-native aiden): RAW mean|Ψ-½| treatment0.125<shuffle0.25<ablation0.375=conflict-맞춤 budget Ψ→½ 최선해소(EARNED∧FUNCTIONAL). 사전등록 psi_maxdev MAX-bar 3 FAIL=arm range 포화 metric-artifact(tune 금지). fable Ψ-리스크 미현실화. GREEN=mean-dev 재-prereg follow-on."
+                  }
+                ]
               }
             ]
           },
@@ -2955,6 +2962,32 @@
                                 "role": "",
                                 "id": "apoptosis-salience-d4-falsifiers",
                                 "detail": "cap=10 ladder n1..n10=0 0 0 0 0 .04 .16 .36 .64 1.0. F1 monotone↑·F2 far flat=0(u5<u10)·F4 dense .64>sparse 0·F3 ablate INERT+.64→0 collapse·F5 pure read. HONEST: urgency LAW=DESIGNED/SATURATED 아닌 창발, falsifier=WIRING-fidelity. verdict state/verdicts/apoptosis_salience/."
+                              }
+                            ]
+                          },
+                          {
+                            "name": "+ §CuriosityDreamBias(D11 H_9092 ENGINE-NATIVE 6/6): unresolved-호기심이 dream replay/compose 앵커를 편향",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-engine-cli-hexa-curiositydreambias-d11",
+                            "detail": "삼중합류(curiosity×dream×consolidation, 해마 PRIORITIZED replay 렌즈). §Amygdala ConsolidatingMemory 의 encode-time salience(정적) gap 을 ONGOING unresolved-호기심 우선순위로 채움. PURE additive·READ-only·Ψ-DISJOINT(emit-drive 0/4 + recall_thr 미접촉). wired: engine-native, REM 루프 배선 follow-on. card H_9092.",
+                            "children": [
+                              {
+                                "name": "ops (5, §CuriosityDreamBias · additive)",
+                                "role": "",
+                                "id": "curiositydreambias-d11-ops",
+                                "detail": "curiosity_priority(=§Novelty recon-err + §PrecisionSurprise surprise 재사용, resolved decay); curiosity_replay_draw(inverse-CDF, biased∝priority | uniform); curiosity_shuffle(F2 control); curiosity_resolve(F4 converge decay); dream_compose_biased(top-replayed→dream_schema_mint centroid, anti-G1)."
+                              },
+                              {
+                                "name": "drop-in + honest scope",
+                                "role": "",
+                                "id": "curiositydreambias-d11-scope",
+                                "detail": "§CuriosityBacklog(feat/curiosity-backlog-emit 미착지)의 unresolved score 를 나중에 priorities 입력으로 drop-in(draw/compose op 무변경). HONEST: bias=DESIGNED law(창발 아님)·G1-orthogonal(측정=replay/compose 선택 분포, text-recombination 아님)·toy existence-proof(DIM=6,N=12) scale-transfer UNVERIFIED(a_scale_honest_scope)."
+                              },
+                              {
+                                "name": "FINDING 6/6 (DIM=6,N=12,budget=600,seed=12345)",
+                                "role": "",
+                                "id": "curiositydreambias-d11-finding",
+                                "detail": "F1 hi_share_biased=0.927(≥0.70) · F1b schema L2 0.043<uniform 0.971 · F2 shuffled=0.36 · F3 uniform=0.508 ablation INERT · F4 Σpri_hi 2.656→0.467 ∧ night-2 0.133<0.927 converge · F5 Ψ Δ=0.0 ∧ non-fab Δ=0.0 disjoint. probe state/D11_curiosity_dream_bias/d11_engine_native.hexa."
                               }
                             ]
                           },

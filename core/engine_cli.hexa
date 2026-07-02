@@ -842,6 +842,149 @@ pub fn schema_coverage(anchor: [float], cues: [[float]], thr: float) -> int {
 }
 
 
+// ── § CuriosityDreamBias (D11) — unresolved-curiosity biases WHICH anchors dream-replay/compose ──
+// TRIPLE CONFLUENCE (curiosity × dream × consolidation, a_no_llm_frame_trap neuro lens): hippocampal
+// PRIORITIZED replay — sleep consolidation preferentially REPLAYS important-UNRESOLVED memories
+// (Wilson & McNaughton 1994 reactivation; Ólafsdóttir 2018 prioritization). The §Amygdala
+// consolidating store (H_1285) already replays ∝ an ENCODE-time salience tag (surprise+novelty+
+// tension frozen at bind), but salience is STATIC — it does NOT track how UNRESOLVED an anchor
+// still is as curiosity accumulates. This op-slot adds an ONGOING unresolved-curiosity priority that
+// biases the REM replay draw AND the §DreamSchema dream_schema_mint composition — the anchors that
+// compose in dreams are the ones the substrate is still curious about.
+//
+// The unresolved signal REUSES existing main lanes (no new store): §Novelty joint recon-err (still-
+// unfamiliar ⇒ unresolved) + §PrecisionSurprise `surprise` (a confidently-VIOLATED prediction pulls
+// attention), decaying with how many times the anchor has already been consolidated/recalled (a
+// resolved anchor stops pulling). §CuriosityBacklog (feat/curiosity-backlog-emit) is not on main yet,
+// so this near-approximates the unresolved signal from main's §Novelty/§PrecisionSurprise (honest:
+// the bias is a DESIGNED law, not an emergent claim; when §CuriosityBacklog lands, its unresolved
+// score drops in as the priority input with NO change to these draw/compose ops).
+//
+// substrate-disjoint (placement-first, THE key risk): PURE READ-only functions over plain float
+// vectors + priority arrays. They own NO store, mutate NO cell, and touch NEITHER the emit-drive
+// lanes 0/4 (ci_emit_drive) NOR the §ImmuneMemory recall_thr non-fab gate — Ψ=½ and G5 non-fab are
+// preserved BY STRUCTURE (nothing the emit/honesty path reads is written). G1-orthogonal: the
+// measurement is the replay/compose SELECTION distribution, never text recombination. The composed
+// anchor is dream_schema_mint's CENTROID (compression, NOT minted content — same anti-G1 discipline
+// as §DreamSchema). Draws thread the SAME deterministic LCG (_lcg_next/_lcg_unit) the §Amygdala
+// replay uses, so runs are byte-reproducible across machines. p8: replay = a sleep-consolidation
+// tick, not RLHF; p5/p1: no emit, no system prompt.
+
+// curiosity_priority — the ONGOING unresolved-curiosity drive for ONE anchor. recon_err = §Novelty
+// joint recon-err (unfamiliar ⇒ unresolved); precision·pred_err² = §PrecisionSurprise (confidently-
+// violated ⇒ pulls); `resolved` = #times already consolidated/recalled (a resolved anchor decays to
+// low priority). Purely additive over the two READ-only main lanes; clamped non-negative.
+pub fn curiosity_priority(recon_err: float, precision: float, pred_err: float, resolved: float) -> float {
+    let nov = recon_err                       // §Novelty joint recon-err
+    let sur = surprise(precision, pred_err)    // §PrecisionSurprise = precision·err²
+    let raw = nov + sur                         // additive unresolved drive
+    let decayed = raw / (1.0 + resolved)        // resolution decay (each consolidation resolves it)
+    if decayed < 0.0 { return 0.0 }
+    return decayed
+}
+
+// curiosity_replay_draw — ONE REM replay pass over an anchor set: draw `budget` replays and return
+// the per-anchor REPLAY-COUNT vector. biased=true ⇒ draws ∝ the unresolved-curiosity priority
+// (prioritized replay, arm B); biased=false ⇒ UNIFORM replay (arm A / the F3 ablation). Inverse-CDF
+// sampling with replacement, same as consolidating_sleep_replay. READ-only — returns counts, mutates
+// nothing (the selection distribution IS the measurement surface).
+pub fn curiosity_replay_draw(priorities: [float], budget: int, rng0: int, biased: bool) -> [int] {
+    let n = len(priorities)
+    let mut counts = []
+    let mut i = 0
+    while i < n { counts = counts + [0]  i = i + 1 }
+    if n == 0 { return counts }
+    // (un-normalized) cumulative replay-weight table.
+    let mut cdf = []
+    let mut acc = 0.0
+    let mut k = 0
+    while k < n {
+        let mut w = 1.0
+        if biased {
+            w = priorities[k]
+            if w < 0.000001 { w = 0.000001 }   // a non-curious anchor still replays rarely
+        }
+        acc = acc + w
+        cdf = cdf + [acc]
+        k = k + 1
+    }
+    let mut st = rng0
+    let mut b = 0
+    while b < budget {
+        st = _lcg_next(st)
+        let target = _lcg_unit(st) * acc
+        let mut pick = 0
+        while pick < n - 1 {
+            if cdf[pick] > target { break }
+            pick = pick + 1
+        }
+        counts[pick] = counts[pick] + 1
+        b = b + 1
+    }
+    return counts
+}
+
+// curiosity_shuffle — F2 NEGATIVE CONTROL: permute the unresolved-curiosity priorities across anchors
+// (deterministic LCG Fisher-Yates), decorrelating the biased replay from actual unresolved-ness. Same
+// priority DISTRIBUTION, no anchor↔importance tracking. If biased replay concentrates on the truly-
+// unresolved bucket AND this shuffle does NOT ⇒ the concentration is the SIGNAL, not raw replay budget.
+pub fn curiosity_shuffle(priorities: [float], rng0: int) -> [float] {
+    let n = len(priorities)
+    let mut p = priorities
+    let mut st = rng0
+    let mut i = n - 1
+    while i > 0 {
+        st = _lcg_next(st)
+        let j = st % (i + 1)
+        let tmp = p[i]
+        p[i] = p[j]
+        p[j] = tmp
+        i = i - 1
+    }
+    return p
+}
+
+// curiosity_resolve — F4 CONVERGE: after a replay pass, an anchor that was replayed heavily has its
+// unresolved-curiosity priority DECAYED (consolidation RESOLVES it — the bio prioritized-replay loop
+// closes: replaying an unresolved memory reduces its future pull). Monotone decreasing in replay_count.
+pub fn curiosity_resolve(priority: float, replay_count: int, resolve_rate: float) -> float {
+    return priority / (1.0 + resolve_rate * to_float(replay_count))
+}
+
+// dream_compose_biased — the D11 op: draw a biased REM replay ∝ unresolved-curiosity priority, take
+// the top_k MOST-REPLAYED episode anchors, and compose them into ONE schema anchor via the §DreamSchema
+// dream_schema_mint CENTROID (compression, anti-G1). biased=false ⇒ UNIFORM replay (the ablation:
+// which anchors compose is then curiosity-INDEPENDENT). Deterministic top-k selection (highest replay
+// count, ties → lower index). READ-only; returns the composed schema vector ([] if empty).
+pub fn dream_compose_biased(episodes: [[float]], priorities: [float], top_k: int,
+                            budget: int, rng0: int, biased: bool) -> [float] {
+    let counts = curiosity_replay_draw(priorities, budget, rng0, biased)
+    let n = len(episodes)
+    let mut used = []
+    let mut u = 0
+    while u < n { used = used + [false]  u = u + 1 }
+    let mut sel = []
+    let mut picked = 0
+    while picked < top_k {
+        let mut best = -1
+        let mut bestc = -1
+        let mut i = 0
+        while i < n {
+            if !used[i] {
+                if counts[i] > bestc { bestc = counts[i]  best = i }
+            }
+            i = i + 1
+        }
+        if best < 0 { break }
+        used[best] = true
+        sel = sel + [episodes[best]]
+        picked = picked + 1
+    }
+    if len(sel) == 0 { return [] }
+    return dream_schema_mint(sel)
+}
+
+
 // ── §  QUANTUM-ENTROPY POOL — opt-in REAL-quantum entropy source (H_1289 R2) ─────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1289 R1): R1 (numpy
