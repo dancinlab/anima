@@ -13256,6 +13256,13 @@
     "value": "G6 반증가능성 검출기 _g6_is_falsifiable(comparator×measurable×≥2content)는 FORM-only — targeted-coverage warm-FT 로 반증주장 형태를 학습하면 topic-bind 없이도(SHUF 통제=주제결합 파괴 동일바이트) FALS majority 통과(TARGETED [6,6,6]==SHUF [6,6,6]). 진짜 재조합 신호는 검출기 밖 bind Δ(TARGETED 0.444 vs SHUF 0.000). 함의: G6 벽 = 순수 attention-capacity 천장 아니라 (a)데이터로 FORM 움직임(P1 천장NULL REFUTED) + (b)frozen 검출기 form-only 라 진짜 결합 못 잼 이중문제. G1(2항 retrieval-composition)과 달리 G6(추상seed 3항 GENERATIVE bind)은 schema-transfer 병목.",
     "threshold": "재발조건: G6/ideation FALS 상승을 '재조합 능력'으로 박제하기 전 SHUF(topic-bind 파괴 동일바이트) 통제로 form-priming 분리 필수 — SHUF 도 통과하면 form-only artifact. 진짜 결합은 bind Δ(concept_hits ∩ frame_topics)로 측정. G6-bind additive 게이트(frozen _g6_is_falsifiable AND topic_bound)가 form-priming 걸러냄(SHUF FALS_bound [1,0,0]).",
     "source": "core/g6_ideation.hexa"
+   },
+   {
+    "id": "gen-auto-ideate-reload-cost-scale-1",
+    "state": "pos-conv",
+    "value": "H_9107: generate_deliberate 의 best-of-K(K∈{1..4}) + efferent_harness.hexa 자체 D4 shuffle-control 루프가 HIGH seed 1개당 gen_auto_ideate(ckpt,...) 를 최대 ~6-8회 재호출 — 매 호출이 harness 시작시 1회 로드한 backend 재사용 없이 ckpt 를 경로에서 재적재하는 듯한 거동(RSS 가 지속 ~4-5GB/min 증가, d768.clm 4.46MB 참조에선 무해했으나 clm303_clean.clm 168MB·~303M param 프로덕션 스케일에선 rent pod 2개(220GB·176GB RAM) 모두 HI[0] 완주 전 메모리 고갈/provider GONE). engine-native det-CPU 대형 ckpt 다중-candidate 하네스는 이 재적재비용 때문에 세션내 완주 불가.",
+    "threshold": "재발조건: gen_auto_ideate 를 seed 당 3회 이상 호출하는 새 하네스를 production ckpt(수백MB+)로 발사하기 전, backend 재사용 캐싱이 core/generator.hexa 에 있는지 먼저 확인 — 없으면 RSS 선형증가로 대형 ckpt 는 첫 seed 도 못 끝냄(rent pod 크기 무관, ckpt 배율만큼 재현). 이 캐싱-미적용 상태는 이 task 의 execution-only 스코프상 미수정(core/generator.hexa 소유자 follow-on).",
+    "source": "state/opgrip_efferent/efferent_harness.hexa"
    }
   ]
  }
