@@ -1,0 +1,60 @@
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=ce_marginal seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=2500 bs=8 sample=proportional
+  cuda: NVIDIA GeForce RTX 5070 cap=12.0 torch=2.11.0+cu130
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ ByteGPT .bin loaded (24L d=1024 block=512) missing=[] unexpected=[]
+  corpus cell[0] en_gen       /home/summer/g6tc_broad/en-general-trim.txt size=15000000 train=14250000 val_tail=750000
+  corpus cell[1] ko_gen       /home/summer/g6tc_broad/ko-general-trim.txt size=15000000 train=14250000 val_tail=750000
+  corpus cell[2] en_sns       /home/summer/g6tc_broad/en-sns.txt size=1326111 train=1259805 val_tail=66306
+  corpus cell[3] ko_sns       /home/summer/g6tc_broad/ko-sns.txt size=6183822 train=5874630 val_tail=309192
+  corpus cell[4] en_g6s       /home/summer/g6tc_corpus/en_block_g6_shuf.txt size=4014750 train=3814012 val_tail=200738
+  corpus cell[5] ko_g6s       /home/summer/g6tc_corpus/ko_block_g6_shuf.txt size=2898750 train=2753812 val_tail=144938
+  step     1  CE=4.32532  E=1  wd=0.0000 dp=0.0000  val_CE=29.23776
+  step   100  CE=2.48522  E=1  wd=0.0000 dp=0.0000
+  step   200  CE=2.79354  E=1  wd=0.0000 dp=0.0000  val_CE=2.16305
+  step   300  CE=2.44330  E=1  wd=0.0000 dp=0.0000
+  step   400  CE=1.69098  E=1  wd=0.0000 dp=0.0000  val_CE=1.79583
+  step   500  CE=1.60276  E=1  wd=0.0000 dp=0.0000
+  step   600  CE=1.96144  E=1  wd=0.0000 dp=0.0000  val_CE=1.56907
+  step   700  CE=1.80503  E=1  wd=0.0000 dp=0.0000
+  step   800  CE=1.47089  E=1  wd=0.0000 dp=0.0000  val_CE=1.47624
+  step   900  CE=1.85708  E=1  wd=0.0000 dp=0.0000
+  step  1000  CE=1.81071  E=1  wd=0.0000 dp=0.0000  val_CE=1.34560
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.81071 step=2500 nparam=303097856
+[ok] wrote /home/summer/g6tc_shuf.bin.step1000.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /home/summer/g6tc_shuf.bin.step1000.bin (via /home/summer/g6tc_shuf.bin.step1000.bin.pt)
+  step  1100  CE=1.43801  E=1  wd=0.0000 dp=0.0000
+  step  1200  CE=1.29733  E=1  wd=0.0000 dp=0.0000  val_CE=1.36350
+  step  1300  CE=1.34126  E=1  wd=0.0000 dp=0.0000
+  step  1400  CE=1.43563  E=1  wd=0.0000 dp=0.0000  val_CE=1.24728
+  step  1500  CE=1.48077  E=1  wd=0.0000 dp=0.0000
+  step  1600  CE=1.63631  E=1  wd=0.0000 dp=0.0000  val_CE=1.26274
+  step  1700  CE=1.36486  E=1  wd=0.0000 dp=0.0000
+  step  1800  CE=1.36141  E=1  wd=0.0000 dp=0.0000  val_CE=1.19695
+  step  1900  CE=1.36044  E=1  wd=0.0000 dp=0.0000
+  step  2000  CE=1.42170  E=1  wd=0.0000 dp=0.0000  val_CE=1.16781
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.4217 step=2500 nparam=303097856
+[ok] wrote /home/summer/g6tc_shuf.bin.step2000.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /home/summer/g6tc_shuf.bin.step2000.bin (via /home/summer/g6tc_shuf.bin.step2000.bin.pt)
+  step  2100  CE=1.41306  E=1  wd=0.0000 dp=0.0000
+  step  2200  CE=1.25136  E=1  wd=0.0000 dp=0.0000  val_CE=1.20128
+  step  2300  CE=1.70253  E=1  wd=0.0000 dp=0.0000
+  step  2400  CE=1.11085  E=1  wd=0.0000 dp=0.0000  val_CE=1.15698
+  step  2500  CE=1.53493  E=1  wd=0.0000 dp=0.0000  val_CE=1.14976
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     en_gen       val_CE=1.61780  DESCENT
+     ko_gen       val_CE=1.68613  DESCENT
+     en_sns       val_CE=1.92764  DESCENT
+     ko_sns       val_CE=1.49251  DESCENT
+     en_g6s       val_CE=0.12033  DESCENT
+     ko_g6s       val_CE=0.15588  DESCENT
+  FINAL val_CE(pooled)=1.1667163002615173  registers_DESCENT=6/6
+  loss0=4.32532 lossF=1.53493 wall=594.5s savant_latched_at=0 E0=2->E=1
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.53493 step=2500 nparam=303097856
+[ok] wrote /home/summer/g6tc_shuf.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /home/summer/g6tc_shuf.bin (via /home/summer/g6tc_shuf.bin.pt)
