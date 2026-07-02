@@ -9930,6 +9930,75 @@ pub fn tension_resolve_depth(x: [[float]], adj: [[float]], alpha: float, thr: fl
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
+//  § SaliencePhasicReset (H_9079) — a mid-settle salience SPIKE ABORTS + RESTARTS the A⇄G settling
+//  loop (LC-NE phasic reset / superior-colliculus attention capture). tension_resolve_depth's settle
+//  loop (§TensionResolveLoop) is NON-INTERRUPTIBLE: once it begins pulling the ORIGINAL population
+//  toward Ψ=thr it runs to maxdepth on that population — a behaviourally URGENT new input arriving
+//  mid-settle cannot commandeer it. The brain does not work that way: a phasic salience burst (LC-NE
+//  reset) ABORTS the in-flight resolution and RESTARTS settling from the NEW population; the loop
+//  reroutes to a NEW fixpoint whose CONTENT tracks the salient input, while the Ψ=½ balance is still
+//  reached. This is a CONTROL-FLOW interrupt (abort/restart of the settle loop) — it is EXPLICITLY
+//  DISTINCT from the neuromod-GAIN 9-lens family (H_1284, CLOSED): no gain/precision term is scaled;
+//  the loop's TRAJECTORY is diverted, not its gain.
+//
+//  tension_resolve_interruptible settles `x` exactly like tension_resolve_depth, but if a spike is
+//  scheduled at iteration salience_at (1 <= salience_at <= maxdepth) it DISCARDS the partially-settled
+//  x at that depth and continues from salience_pop (fresh restart, settle-depth clock restarted).
+//  salience_at < 1 OR salience_at > maxdepth ⇒ NO spike ever arrives = the INERT ablation (original x
+//  completes, spike ignored). Purely ADDITIVE (new pub fn; touches no existing op) · Ψ-DISJOINT
+//  (operates on a caller-supplied population, never pure_field/Φ/phase/the live Ψ path) · READ-only
+//  MEASUREMENT (returns numbers, is NOT an emit gate) · disjoint from the emit-drive lane(0/4) live
+//  decision and §ImmuneMemory recall_thr (a_substrate_disjoint). cfg.topo_couple OFF ⇒ no coupling.
+//
+//  returns [settle_depth, final_psi, final_sig, reroute_flag] where final_sig = mean of the ISOLATED
+//  content lane (SPR_SIG_LANE=7, graph-disjoint from the emit-drive lanes 0/4 by construction of the
+//  caller's adjacency) of the settled population = the IDENTITY readout that reveals WHICH input the
+//  loop settled on (original vs the rerouted salient one). reroute_flag = 1.0 iff a spike fired. The
+//  reroute swaps the CONTENT/identity lane; the emit-drive Ψ=½ fixed point is UNTOUCHED (loop control,
+//  not an emit gate) — the a_substrate_disjoint separation made literal.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// _spr_sig — mean of the ISOLATED content lane (index 7, disjoint from emit-drive lanes 0/4) over the
+// population timesteps: the identity signature of WHICH input the settle loop ended on. READ-only.
+fn _spr_sig(pop: [[float]]) -> float {
+    let nt = len(pop)
+    if nt == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut t = 0
+    while t < nt { s = s + pop[t][7]  t = t + 1 }
+    return s / to_float(nt)
+}
+
+pub fn tension_resolve_interruptible(x: [[float]], adj: [[float]], alpha: float, thr: float, maxdepth: int, op: int, eps: float, salience_at: int, salience_pop: [[float]], cfg: EngineConfig) -> [float] {
+    let mut pop = x
+    let mut rerouted = false
+    let mut settle_depth = 0.0 - 1.0
+    // depth 0: the conflicted starting population (original x), no coupling applied yet.
+    let mut psi = tr_psi(pop, thr)
+    if _tr_absdev(psi, thr) < eps { settle_depth = 0.0 }
+    let mut d = 1
+    while d <= maxdepth {
+        // PHASIC SALIENCE RESET: at salience_at, ABORT the in-flight settle and RESTART from
+        // salience_pop (LC-NE reset / attention capture). control-flow interrupt, NOT gain scaling.
+        if !rerouted && salience_at >= 1 && d == salience_at {
+            pop = salience_pop                       // abort partially-settled x, adopt salient pop
+            rerouted = true
+            settle_depth = 0.0 - 1.0                 // restart the settle-depth clock at the new fixpoint
+            psi = tr_psi(pop, thr)
+            if _tr_absdev(psi, thr) < eps { settle_depth = to_float(d) }
+        }
+        if cfg.topo_couple { pop = topo_apply_op(pop, adj, alpha, op) }
+        psi = tr_psi(pop, thr)
+        if settle_depth < 0.0 && _tr_absdev(psi, thr) < eps { settle_depth = to_float(d) }
+        d = d + 1
+    }
+    let sig = _spr_sig(pop)
+    let mut rf = 0.0
+    if rerouted { rf = 1.0 }
+    return [settle_depth, psi, sig, rf]
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate
 //  (a_autonomy_over_hardcode). engine 은 exp 없음 → piecewise/linear (H_1465/H_1473 precedent).
