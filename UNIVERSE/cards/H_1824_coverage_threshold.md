@@ -87,3 +87,6 @@ the cost-gate ("1,2,3 go").
 ## DIRECTIONAL toy cheap-gate (2026-07-02)
 
 🧱 DIRECTIONAL-FLOOR (toy cheap-gate screen, 2026-07-02, aiden $0, torch=DIRECTIONAL). Operator-agnostic factored toy(NF8·E4·C12, fixed 12-combo held-out), training-coverage sweep {16..52}/52 × 3 seed: TEST acc n(hi−chance≥+0.15)=0/3, 52/52 coverage서도 미학습 조합 chance floor. → data-coverage 는 held-out 재조합 안 엶 (H_1599 EN-exposure floor 확장). objective(H_6162)·regularization(H_6161)·data 3축 전수 controlled-toy FLOOR = G1 axis-invariant(DPI). ⚠️toy-scale(a_toy_scale_recheck): full-corpus $4-6 test 가 terminal이나 toy가 floor 예측→LOW priority. state/1824_compositional_data_coverage_threshold/RESULT.md.
+
+## ⚠️ MEASUREMENT-INVALID (2026-07-02 H_6166)
+⚠️MEASUREMENT-INVALID(2026-07-02 H_6166): 이 verdict는 RANDOM operator-agnostic target cheap-gate 근거인데, random full-rank table은 held-out이 seen과 정보이론적 독립=학습불가(chance 천장)라 어떤 메커니즘도 통과 불가 → 이 FLOOR는 lever 부재 증거 아님(측정무효). H_6167: 재조합=task-structure-bound, operator 무관. 재조합-lever verdict로 인용 금지; 재측정은 structured target/실텍스트 generation-side.
