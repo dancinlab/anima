@@ -1,0 +1,97 @@
+[load] /home/aiden/py303_full.clm
+[cfg] d=3784 L=4 E=3 V=256
+[extract] 96 concept part-vecs ...
+[extract] 3000 composed-phrase targets (REAL manifold) ...
+   target 50/3000  t=11s
+   target 100/3000  t=15s
+   target 150/3000  t=19s
+   target 200/3000  t=22s
+   target 250/3000  t=26s
+   target 300/3000  t=30s
+   target 350/3000  t=33s
+   target 400/3000  t=37s
+   target 450/3000  t=41s
+   target 500/3000  t=45s
+   target 550/3000  t=48s
+   target 600/3000  t=52s
+   target 650/3000  t=56s
+   target 700/3000  t=60s
+   target 750/3000  t=63s
+   target 800/3000  t=67s
+   target 850/3000  t=71s
+   target 900/3000  t=74s
+   target 950/3000  t=78s
+   target 1000/3000  t=82s
+   target 1050/3000  t=86s
+   target 1100/3000  t=89s
+   target 1150/3000  t=93s
+   target 1200/3000  t=97s
+   target 1250/3000  t=101s
+   target 1300/3000  t=105s
+   target 1350/3000  t=108s
+   target 1400/3000  t=112s
+   target 1450/3000  t=116s
+   target 1500/3000  t=119s
+   target 1550/3000  t=123s
+   target 1600/3000  t=127s
+   target 1650/3000  t=131s
+   target 1700/3000  t=134s
+   target 1750/3000  t=138s
+   target 1800/3000  t=142s
+   target 1850/3000  t=146s
+   target 1900/3000  t=149s
+   target 1950/3000  t=153s
+   target 2000/3000  t=157s
+   target 2050/3000  t=160s
+   target 2100/3000  t=164s
+   target 2150/3000  t=168s
+   target 2200/3000  t=172s
+   target 2250/3000  t=175s
+   target 2300/3000  t=179s
+   target 2350/3000  t=183s
+   target 2400/3000  t=187s
+   target 2450/3000  t=190s
+   target 2500/3000  t=194s
+   target 2550/3000  t=198s
+   target 2600/3000  t=202s
+   target 2650/3000  t=205s
+   target 2700/3000  t=209s
+   target 2750/3000  t=213s
+   target 2800/3000  t=217s
+   target 2850/3000  t=220s
+   target 2900/3000  t=224s
+   target 2950/3000  t=228s
+   target 3000/3000  t=231s
+[cache] saved state/9044_gamma_trained_bind/beta_cache.npz
+[pca] reduced to d=24  var-explained=0.644  (identifiable regime; combiner operator DOF ≪ #train-pairs)
+
+[diag] additivity: mean cos(T_ij, unit(a_i+b_j)) = 0.861 (high ⇒ manifold composes ~additively ⇒ add baseline strong)
+
+[train+eval] 5 seeds, held-out compositional-generalization gate
+FROZEN: COMPOSE=0.3 DELTA_BAR=+0.15 TRAIN_FIT_MIN=0.6 GREEN-dir iff n(Δ≥+0.15)≥3/5 ∧ no_regress
+
+seed   arm        train_cos  earned   pr      ps      ablate  
+--------------------------------------------------------------
+7      add        0.965      0.073    0.962   0.649     -     
+7      bilinear   0.950      0.098    0.926   0.640   0.081   
+7      mlp        0.995      0.105    0.990   0.642   0.206   
+4302   add        0.963      0.070    0.965   0.651     -     
+4302   bilinear   0.947      0.102    0.933   0.639   0.057   
+4302   mlp        0.994      0.096    0.990   0.643   0.208   
+4303   add        0.965      0.070    0.963   0.646     -     
+4303   bilinear   0.948      0.097    0.930   0.641   0.052   
+4303   mlp        0.995      0.100    0.990   0.640   0.211   
+101    add        0.965      0.078    0.961   0.653     -     
+101    bilinear   0.950      0.105    0.925   0.643   0.098   
+101    mlp        0.995      0.113    0.990   0.648   0.208   
+202    add        0.965      0.077    0.962   0.651     -     
+202    bilinear   0.950      0.109    0.922   0.631   0.033   
+202    mlp        0.995      0.102    0.990   0.646   0.206   
+
+==================== VERDICT (DIRECTIONAL — torch/numpy mirror) ====================
+learnability(oracle): best learned-combiner TRAIN-fit≥0.6 every seed = True (task solvable → valid gate)
+bilinear  − add  Δ per seed = [0.025, 0.032, 0.027, 0.027, 0.032]  n(Δ≥+0.15)=0/5 no_regress=True  GREEN-dir=False
+mlp       − add  Δ per seed = [0.032, 0.026, 0.03, 0.035, 0.024]  n(Δ≥+0.15)=0/5 no_regress=True  GREEN-dir=False
+PRIMARY G1 (held-out compositional generalization): 🧱 FLOOR — TRAINED constructive combiner (bilinear/MLP) does NOT beat trained additive on held-out real-manifold recombination (DPI meta-law + H_9026 confirmed; γ lever exhausted)
+[done] wall=239s
+EXIT_RC=0
