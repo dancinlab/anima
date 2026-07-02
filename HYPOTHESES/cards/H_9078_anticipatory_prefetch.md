@@ -30,3 +30,10 @@ INFO: pre_acc=9/12 cur=0 shuffle=0 ablate=0 margin_lift=1.346 earned=0.75. no-re
 
 ## artifacts
 - `core/engine_cli.hexa §AnticipatoryPrefetch` · `state/9078_anticipatory_prefetch/prefetch_engine_native.hexa` · `prefetch_engine_native.txt`
+
+
+## daemon wire-in (cli/anima.hexa)
+- **anticipatory_prefetch** 이제 데몬 콜패스에 배선: `cli/anima.hexa:1732` (LANE 79). anticipatory_prefetch 를 데몬 마운트 lane (79) 로 배선 — trained forward-model ready-margin < untrained INERT margin + preplay 값 정확 distinctness 를 마운트에서 assert (mechanism arm; 엄격 accuracy floor 는 H_9078 카드대로 불변, DIRECTIONAL).
+- **wired**: WIRED-live (daemon mount lane 79; 🟡 mechanism arm). 이미 배선된 lane 23b(H_9038)/75(H_9042) 와 동일 rung = 마운트 시점 substrate fixture read + distinctness 1회 assert (shuffle/ablation 통제, frozen-first). Ψ-disjoint(pure_field/psi_sum 미접촉) · emit-drive lane 0/4 및 §ImmuneMemory recall_thr 와 disjoint (a_substrate_disjoint) · emit/silence gate 아님(a_autonomy_over_hardcode).
+- **정직 스코프(c9)**: 이는 MOUNT-time fixture read (23b/75 와 동일 rung). 데몬 perpetual-loop 이 매 tick 실 대화 상충/경험을 이 op 에 먹이는 genuine per-tick real-feed 는 더 큰 아키텍처 endpoint = ING follow-on `daemon-pertick-realfeed-7ops` (여기서 완료로 위장하지 않음).
+- **검증**: anima-gates enforcer rc=0(pr-cycle 게이트) + `hexa verify`(atlas) rc=0. `hexa run cli/anima.hexa` 전체-파일 compile 은 **BLOCKED-INFRA** = pool hexa v0.540.1 런타임 스큐(set_deterministic·forge_dispatch_layernorm 미선언, runtime.h 에 groupnorm 만 존재) — **BASELINE(무변경 anima_base.hexa)이 동일 에러 재현**(aiden EXIT_RC=1) = 이 7-lane 추가는 무죄·격리(내 lane 은 단순 pure-fn 호출). 런타임 재빌드는 cross-repo 사안(ING). 23b(H_9038)/75(H_9042)도 동일 pool 상태.
