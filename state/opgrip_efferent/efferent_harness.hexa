@@ -66,6 +66,11 @@ fn main() {
         mi = mi + 1
     }
     let backend = gen_auto_backend(ckpt)
+    // H_9107 fix: load the .clm ONCE here (mirrors generate_deliberate's gen_auto_load hoist,
+    // #2835). The D4 shuffle-control loop below regenerates candidates via gen_auto_ideate_W off
+    // THIS handle instead of gen_auto_ideate(ckpt,...) which reloaded the whole 303M ckpt per
+    // candidate → seed×depth reloads → unbounded RSS (H_9107 BLOCKED-INFRA). Freed once at main end.
+    let hload = gen_auto_load(ckpt)
     let mounted = to_string(backend["loaded"]) == "true"
     println("EFFERENT HARNESS H_9102 — mouth=" + gen_mouth_kind(ckpt)
         + " loaded=" + to_string(backend["loaded"]) + " ckpt=" + ckpt)
@@ -121,7 +126,7 @@ fn main() {
         while kk < depth {
             let mut cand = t_off
             if kk > 0 {
-                let r = gen_auto_ideate(ckpt, seed_s, 80, 8, 0.7, h * 17 + kk)
+                let r = gen_auto_ideate_W(hload, seed_s, 80, 8, 0.7, h * 17 + kk)
                 if to_string(r["ok"]) == "true" { cand = to_string(r["text"]) }
             }
             rngs = clmd_mix32_pub(rngs + 2654435761)
@@ -204,4 +209,5 @@ fn main() {
         + " D3=" + to_string(d3) + " D4=" + to_string(d4) + " D5=" + to_string(d5))
     println("VERDICT           : " + (if green { "GREEN (efferent grip, trilogy CLOSED)" }
         else { "RED (honest — see which axis failed)" }))
+    gen_auto_free(hload)     // release the once-loaded .clm weight-set (H_9107 fix)
 }
