@@ -1,0 +1,29 @@
+[hexa-ffi] dlsym failed for 'erf': /home/summer/.hexa-cache/hexa_run.bcd4bcc7dfc709e0_v0.574.0: undefined symbol: erf
+[hexa-ffi] dlsym failed for 'exp': /home/summer/.hexa-cache/hexa_run.bcd4bcc7dfc709e0_v0.574.0: undefined symbol: exp
+  [t0] |c_t|=0.04548768888540311 k_on=1 k_no=1 Hamming(ON,OFF)=0 ceOFF=20.53944882040686 ceON=20.53944882040686
+  [t1] |c_t|=0.07090765627594209 k_on=1 k_no=1 Hamming(ON,OFF)=0 ceOFF=23.160029613337105 ceON=23.160029613337105
+  [t2] |c_t|=0.2301231193224349 k_on=2 k_no=1 Hamming(ON,OFF)=0 ceOFF=28.846358106026607 ceON=28.846358106026607
+  [t3] |c_t|=0.41681361089813707 k_on=2 k_no=1 Hamming(ON,OFF)=10 ceOFF=27.860207617806488 ceON=27.962097896765176
+  [t4] |c_t|=0.5037102898625725 k_on=3 k_no=2 Hamming(ON,OFF)=8 ceOFF=16.846109658603737 ceON=16.948830773246428
+  [t5] |c_t|=0.031226566029750824 k_on=1 k_no=2 Hamming(ON,OFF)=0 ceOFF=18.779934449624076 ceON=18.779934449624076
+  [t6] |c_t|=0.08177536787562523 k_on=1 k_no=2 Hamming(ON,OFF)=0 ceOFF=23.17112940475511 ceON=23.17112940475511
+  [t7] |c_t|=0.25451231111459693 k_on=2 k_no=1 Hamming(ON,OFF)=10 ceOFF=23.845477521125947 ceON=23.688828478217467
+
+=== H_9102 EFFERENT SEAM (Rung-1 · WHAT axis) engine-native d768.clm ===
+N=8 GEN=20 psi_sum=0.9518673703081093 (pure_field READ-only, ON==OFF by construction)
+c_t mean=0.18514101255426935 std=0.18898828913383994
+
+[F1 byte-grip] total Hamming(ON,OFF)=28 · ticks changed=3/8 · bar>0 -> PASS
+[F2 Ψ]         decode NEVER touches pure_field/psi_sum/emit-rate (emit boolean upstream) -> psi/rate byte-identical ON==OFF -> PASS (constructive)
+[F3 faculty]   rho_real=corr(|c_t|,ΔCE_ON)=-0.44080123590813886 rho_noise=corr(|c_noise|,ΔCE_NOISE)=0.4399907790179345 delta=-0.8807920149260733 bar>=0.15 -> FAIL
+
+VERDICT: F1(byte-grip)=P F2(Ψ)=P F3(faculty)=F
+RESULT: BYTE-GRIP ∧ Ψ ONLY (F1∧F2 PASS, F3 FAIL) — deliberation DOES change emit bytes Ψ-safely,
+        but conflict-allocated deliberation does NOT resolve better than centered noise ⇒ the grip is
+        real but its FACULTY status fails: more-subtle theater on the WHAT axis (DPI wall at efferent layer). HONEST.
+
+--- PROVENANCE ---
+summer pool · hexa v0.574.0 · hexa run state/9103_efferent_bytes/efferent_bytes.hexa · RC=0 · REAL d768.clm int4 CLMConvMoE decode (clm_decode_argmax/topk_sampled + clm_decode_ce ranged CE op) · NO numpy/torch/mirror.
+CAVEAT(c9): aiden(hexa v0.548.0, the H_9100/9101 reference host) went DOWN mid-run; this full run is on summer v0.574.0 (erf/exp dlsym-fallback warnings, harmless — decode produced coherent CE + byte-grip). aiden v0.548 PARTIAL (t0–t5) independently confirmed F1 byte-grip (Hamming 14 at k≥2 ticks t2/t3/t4) before the host dropped. F1 (bytes change under conflict-K) reproduced on BOTH hosts; F3 faculty measured on summer's complete N=8 run.
+
+RENAME NOTE: 이 run 은 harness 가 H_9102 로 명명됐을 때 측정됨(verbatim 헤더 "H_9102" 보존, c2). 사후 origin/main 이 별개 세션의 H_9102(stateful refractory #2819)를 착지시켜 이 가설을 H_9103 으로 재번호. 내용/수치 불변.
