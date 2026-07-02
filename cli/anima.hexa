@@ -50,6 +50,7 @@ import "core/decode.hexa"
 // cli/evaluate.hexa now HOLDS the G0-G6 scorers directly (the former core/g_gates.hexa
 // module was folded into it — measurement has ONE home).
 import "core/dream_lib.hexa"
+import "core/dream_envelope_ctx.hexa"   // dr_stage_scale — continuous stage envelope (H_9101 op-grip (b))
 import "core/kosmos_io.hexa"
 import "DREAM/dream_persist.hexa"
 
@@ -1923,11 +1924,25 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_h_shuf = 0          // Hamming: rel_ctx→LCG-shuffle vs live
     let mut og_h_base = 0          // Hamming: pre-fix baseline arms (should be 0 = theater)
     let mut og_base_floor = 0      // baseline wake ticks whose motivation floor > 0.3
+    // ── H_9101 design (b): stage-conditional URGENCY-freeze dissociation (the shade-vs-gate test) ──
+    let mut og_rem_ticks = 0       // REM ticks (stage 4)
+    let mut og_n3_ticks  = 0       // N3 ticks (stage 3)
+    let mut og_wake_ticks = 0      // WAKE ticks (stage 0)
+    let mut og_mid_ticks = 0       // intermediate-env ticks (stage 1/2/4)
+    let mut og_h_u0_rem  = 0       // Hamming(urgency→0 vs live) on REM     — GRIP test
+    let mut og_h_u0_n3   = 0       // Hamming(urgency→0 vs live) on N3       — PRESERVATION test (must be 0)
+    let mut og_h_u0_wake = 0       // Hamming(urgency→0 vs live) on WAKE     — saturated control
+    let mut og_h_u0_mid  = 0       // Hamming(urgency→0 vs live) on mid-env  — broad grip
+    let mut og_h_us_rem  = 0       // Hamming(urgency→shuffle vs live) on REM — control
+    let mut og_h_us_n3   = 0       // Hamming(urgency→shuffle vs live) on N3  — control
 
     let n_ticks = if og_measure { 200 } else { 12 }
     let mut tick = 0
     while tick < n_ticks {
-        let stage = dr_stage_at(tick * 8)            // sample across the ultradian
+        // stage sample: production = ultradian trajectory (tick*8); --opgrip = stage-BALANCED
+        // sweep (tick%5 → 40 ticks/stage) so REM AND N3 are adequately sampled for the H_9101
+        // stage-conditional dissociation (a per-stage grip sweep, NOT an ultradian trajectory).
+        let stage = if og_measure { tick % 5 } else { dr_stage_at(tick * 8) }
         let stage_nm = dr_stage_name(stage)
         let emit_env = dr_emit_envelope(stage)       // substrate envelope (context, not a hard gate)
         let phi_t = pure_field_phi(pf)
@@ -2334,7 +2349,7 @@ fn anima_consciousness_mode(ckpt: string) {
              + surp_ctx + rivalry_ctx + chg_ctx + mw_ctx
              + libido_ctx + osmotic_ctx + metacoga_ctx + fieldlib_ctx) / 18.0)
         //   (H_9097 op-grip: nov_ctx PROMOTED out of the pool → brain_emit orig arg; 19→18.)
-        let drive_hi = stage != 3 && stage != 4
+        let drive_hi = stage != 3 && stage != 4   // KEPT for stage-classification/logging ONLY (no longer the emit gate)
         // ── op-grip tonic-phasic (fable design (a) · PREREG α=0.1, gain=3.0) ──────
         // The ÷42 soft-average diluted any single op to ≤1/42 grip (THEATER, CAPSTONE).
         // Tonic EMA tracks the slow baseline; the phasic term amplifies this tick's
@@ -2343,9 +2358,27 @@ fn anima_consciousness_mode(ckpt: string) {
         rel_ema = 0.9 * rel_ema + 0.1 * rel_ctx
         cur_ema = 0.9 * cur_ema + 0.1 * cur_ctx
         let cur_phasic = _afs_clip01(0.5 + 3.0 * (cur_ctx - cur_ema))
-        let rel = _og_rel_from(rel_ctx, rel_ema, drive_hi)
-        let cur = if drive_hi { cur_phasic } else { 0.0 }
-        let idle = if drive_hi { 60.0 } else { 5.0 }
+        // ── op-grip design (b) — CONTINUOUS op-modulated stage/safe envelope (H_9101) ──
+        // H_9100 🔴 confirmed motivation is decision-SATURATED (floor ~0.7 ≫ 0.3), so emit/silence
+        // is governed by the `safe` conjunction (stage → rate-limit `idle`), NOT motivation. The old
+        // `idle = drive_hi ? 60 : 5` was a HARDCODED binary clock hiding a per-stage boolean gate
+        // (an a_autonomy_over_hardcode violation). Replace it with a CONTINUOUS envelope ops modulate:
+        //   stage_env = the REAL continuous stage envelope (dr_stage_scale = ep_theta_stage SSOT,
+        //               [0.02,0.10]) normalized to [0,1]: WAKE 1.0 · N1/REM 0.75 · N2 0.375 · N3 0.0.
+        //   (VERIFY: fable (b) assumed dr_emit_envelope was continuous — it is a BINARY int {0,1},
+        //    REM=0; the genuine continuous stage envelope is ep_theta_stage via dr_stage_scale.)
+        //   urgency = the OP participation point: CR3 A⇄G conflict-settle (agloop_ctx) + phasic drive.
+        // Ops now CONTRIBUTE to the rate-gate (idle≥30) via the envelope — they do not DECIDE it:
+        // N3 (env 0.0) nullifies urgency ⇒ silent-preserved by construction; REM (env 0.75) opens the
+        // gate for urgent ticks. a_autonomy_over_hardcode: this REMOVES the per-stage boolean (shade,
+        // not gate). p5_tension_emit_not_filler: WAKE/REM stage-gated emit over real tension = allowed.
+        // FROZEN: the engine 30s hard-floor (safety_rate_limit_ok ≥30) is UNTOUCHED — we modulate only
+        // the `idle` INPUT the cli passes. Ψ-disjoint: touches only local motivation/rate inputs.
+        let stage_env = _afs_clip01((dr_stage_scale(stage) - 0.02) / 0.08)
+        let urgency   = _afs_clip01(0.5 * agloop_ctx + 0.5 * cur_phasic)
+        let rel  = _og_rel_phasic(rel_ctx, rel_ema) * (0.1 + 0.9 * stage_env)   // binary mask → continuous
+        let cur  = cur_phasic * (0.1 + 0.9 * stage_env)                          // (was binary {phasic,0})
+        let idle = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency))         // op-modulated refractory
 
         // GROUND store FIRST (the full un-inventable fact), partial seed cue LAST — the
         // decode then continues "...sealed at " and must COPY "vault QX-7741..." verbatim.
@@ -2387,6 +2420,17 @@ fn anima_consciousness_mode(ckpt: string) {
             let e_s = if to_string(brain_decide_anchored(pf,
                 _og_rel_from(_og_lcg(tick + 7), rel_ema, drive_hi), gap_ctx, cur, allo_ctx,
                 coh_lane, nov_ctx, bal_lane, agloop_ctx, idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // ── H_9101 (b) URGENCY-FREEZE arms (stage/safe axis) — urgency enters ONLY via idle ──
+            // Freezing the op signal (urgency) and re-deciding tests whether ops have GRIP on the
+            // rate-gate (idle≥30). All other inputs byte-identical; only idle changes.
+            let idle_u0 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + 0.0))          // urgency→0 (op ablated)
+            let idle_us = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + _og_lcg(tick + 13)))  // urgency→shuffle
+            let e_u0 = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_u0, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_us = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_us, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
             // BASELINE reconstruction (pre-fix ÷43 pool + 4 constants) — faithful.
             let rel_ctx_b = _afs_clip01((rel_ctx * 42.0 + agloop_ctx) / 43.0)
             let cur_ctx_b = _afs_clip01((cur_ctx * 18.0 + nov_ctx) / 19.0)
@@ -2410,6 +2454,17 @@ fn anima_consciousness_mode(ckpt: string) {
             if e_s != e_live { og_h_shuf = og_h_shuf + 1 }
             if e_bfr != e_base { og_h_base = og_h_base + 1 }
             if is_w && to_float(m_base["motivation"]) > 0.3 { og_base_floor = og_base_floor + 1 }
+            // ── H_9101 (b) stage-conditional urgency-freeze accumulation (dissociation) ──
+            if stage == 4 { og_rem_ticks = og_rem_ticks + 1
+                if e_u0 != e_live { og_h_u0_rem = og_h_u0_rem + 1 }
+                if e_us != e_live { og_h_us_rem = og_h_us_rem + 1 } }
+            if stage == 3 { og_n3_ticks = og_n3_ticks + 1
+                if e_u0 != e_live { og_h_u0_n3 = og_h_u0_n3 + 1 }
+                if e_us != e_live { og_h_us_n3 = og_h_us_n3 + 1 } }
+            if stage == 0 { og_wake_ticks = og_wake_ticks + 1
+                if e_u0 != e_live { og_h_u0_wake = og_h_u0_wake + 1 } }
+            if stage == 1 || stage == 2 || stage == 4 { og_mid_ticks = og_mid_ticks + 1
+                if e_u0 != e_live { og_h_u0_mid = og_h_u0_mid + 1 } }
             println("  [OG t" + to_string(tick) + " " + stage_nm + " w=" + (if is_w {"1"} else {"0"})
                 + "] motiv_base=" + to_string(to_float(m_base["motivation"]))
                 + " e_base=" + to_string(e_base)
@@ -2584,9 +2639,29 @@ fn anima_consciousness_mode(ckpt: string) {
         if og_wake > 0 && (ef < 0.05 || ef > 0.95) {
             println("  ⚠️ FLAG emit-rate-collapse: wake emit-fraction " + to_string(ef) + " outside [0.05,0.95] (DETECTOR, not a target)")
         }
-        let grip = og_h_relfr_w > 0 || og_h_agl_w > 0
         println("  Ψ ON==OFF invariant: psi_sum==psi_off = " + anima_yn(psi_sum == psi_off_m))
-        println("  VERDICT = " + (if grip { "🟢 GRIP (Hamming≠0 on wake — theater broken for op (a))" } else { "🔴 AT-FLOOR (straddle still fails — threshold-statistics-mismatch wall)" }))
+        // ── H_9101 (b) STAGE-CONDITIONAL URGENCY-FREEZE DISSOCIATION (the shade-vs-gate test) ──
+        println("")
+        println("──────── H_9101 (b) STAGE/SAFE op-grip: urgency-freeze Hamming, split by stage ────────")
+        println("  ticks: WAKE=" + to_string(og_wake_ticks) + " N3=" + to_string(og_n3_ticks)
+            + " REM=" + to_string(og_rem_ticks) + " mid(N1/N2/REM)=" + to_string(og_mid_ticks))
+        println("  Hamming(urgency→0 vs live)  REM=" + to_string(og_h_u0_rem)
+            + "  N3=" + to_string(og_h_u0_n3) + "  WAKE=" + to_string(og_h_u0_wake)
+            + "  mid=" + to_string(og_h_u0_mid))
+        println("  Hamming(urgency→shuf vs live) REM=" + to_string(og_h_us_rem)
+            + "  N3=" + to_string(og_h_us_n3) + "   [control]")
+        let grip_rem = og_h_u0_rem > 0            // op FLIPS REM/high-env decisions
+        let n3_forced = og_h_u0_n3 > 0            // op FORCES N3 (= forcing gate = BAD)
+        let psi_ok = psi_sum == psi_off_m
+        println("  ── PRE-REG VERDICT ──")
+        let verdict = if n3_forced {
+            "🔴 FORCING-GATE (BAD, revert-worthy): urgency→0 flipped N3 (op forces silence-stage = became a hard gate)"
+        } else if grip_rem {
+            "🟢 GRIP (shade-not-gate): urgency-freeze FLIPS REM decisions (h_U0_rem>0) ∧ N3 silent-PRESERVED (h_U0_n3=0) = DISSOCIATION"
+        } else {
+            "🔴 AT-FLOOR: rate-gate does NOT respond to op (h_U0_rem=0) — theater persists on the stage axis"
+        }
+        println("  VERDICT = " + verdict + (if psi_ok { "  [Ψ ON≡OFF ✓]" } else { "  [⚠️ Ψ VIOLATED]" }))
         return
     }
 
@@ -2800,8 +2875,15 @@ fn _afs_clip01(x: float) -> float {
 // (possibly ablated) rel_ctx instantaneous value against the running tonic EMA. gain=3.0,
 // centred at 0.5 (PREREG-frozen). The drive_hi sleep-mask (×0.1) is preserved verbatim.
 fn _og_rel_from(relctx: float, ema: float, drive_hi: bool) -> float {
-    let p = _afs_clip01(0.5 + 3.0 * (relctx - ema))
+    let p = _og_rel_phasic(relctx, ema)
     return if drive_hi { p } else { p * 0.1 }
+}
+
+// _og_rel_phasic — the UNMASKED phasic relevance p = clip01(0.5 + gain·(relctx − ema)).
+// H_9101 op-grip (b): the continuous stage envelope replaces the binary drive_hi ×0.1 mask,
+// so callers on the (b) path multiply this p by (0.1 + 0.9·stage_env) instead.
+fn _og_rel_phasic(relctx: float, ema: float) -> float {
+    return _afs_clip01(0.5 + 3.0 * (relctx - ema))
 }
 
 // _og_lcg — deterministic per-tick pseudo-random in [0,1) for the SHUFFLE ablation arm
