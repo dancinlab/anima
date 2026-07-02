@@ -501,9 +501,9 @@
                     "detail": "H_9093 psi_MAXdev 포화(metric-artifact)를 MEAN+24trial 로 교정 재측정=engine-native GREEN 4/4(aiden): mean|Ψ-½| treat0.125<shuf0.25<abl0.375, FUNCTIONAL∧EARNED∧PRESERVE∧MONOTONE. fable #5 Ψ-리스크 미현실화 확정 — per-tick conflict→budget feed 가 Ψ→½ 최선해소. live emit-loop wire-in=forge호스트 #42492868 follow-on."
                   },
                   {
-                    "name": "ConflictMonitor — H_9095 rung-3 per-tick wire-in (WIRED-live)",
+                    "name": "ConflictMonitor — H_9095 rung-3 per-tick wire-in (WIRED-live + FULL-DAEMON-RUNTIME VERIFIED)",
                     "id": "conflictmonitor-pertick-wire-h9095",
-                    "detail": "H_9094 rung-3: conflict_scalar(emit_drive)→recruited_depth→tension_resolve maxdepth 를 cli/anima.hexa per-tick 루프 L1937-1961 배선, agloop_ctx→rel_ctx READ-only fold(L2312, emit gate 아님, Ψ-disjoint). aiden parse+typecheck rc=0·enforcer clean; 데몬 RUNTIME compile=BLOCKED-INFRA(forge symbols, #42492868)."
+                    "detail": "H_9094 rung-3: conflict_scalar(emit_drive)→recruited_depth→tension_resolve maxdepth 를 cli/anima.hexa per-tick 루프 L1937-1961 배선(rel_ctx READ-only fold, Ψ-disjoint). 데몬 RUNTIME VERIFIED(aiden hexa v0.546.0+cuda=1): RC=0·[OWN-GEMM-FIRED] DEVICE·CR3 per-tick·Ψ checksum ✅. #42492868 CLOSED. 상세=card."
                   }
                 ]
               }
@@ -13170,6 +13170,13 @@
         "value": "G1 재조합벽 재프레임(H_6182 toy → H_6183 v3 NL/byte → H_6184 fable arch-무관, torch DIRECTIONAL): 조합-커버리지 밀도가 held-out pair-특이 재조합의 상전이 lever. toy 20×20 커버리지 5→80%서 held 2→92%(임계~20%); 자연어 byte 30-concept pair-특이 3-arm(seen-sanity+pair-특이 지표+shuffle)서 HIGH held 85-95% ≫ LOW 0-3.3% ∧ SHUF true-target 0%(seen-shuffled 75-93% 학습=하네스 유효). attention ∧ dilated-conv 둘 다 재현=arch-무관; dilated conv 가 plain-conv RF=5 벽(H_6183 conv INCONCLUSIVE) 돌파=RF 확장이 conv 를 상전이 태움. 옛 G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT(objective-축)는 fixed-corpus 내 sub-finding 이었고, 데이터-분포 축(커버리지)은 DPI-면제(gradient 가 보는 데이터가 바뀜)라 별개 lever.",
         "threshold": "G1 벽 = trunk-objective TERMINAL 로 박제 금지 → 실제 = (a)데이터-커버리지-밀도-bound + (b)수용영역-bound 이중. production 처방 2축: 조합-커버리지 설계 코퍼스 + 충분 RF(depth/dilation). 남은 게이트: production .clm 코퍼스 임계위치 측정 + engine-native(anima evaluate) 승격(현 torch DIRECTIONAL). · [H_6185 production 측정] clm303 chat mouth 코퍼스가 임계 한참 아래(개념쌍 커버리지 0/10=0%, control>0 무결) ∧ RF-bound 동시(RF 31B ≪ composed seed 72B) = clm303 G1=0 은 데이터-커버리지+수용영역 이중 bound 과잉결정(모델 단독결함 기각). 처방 2-step: ①RF L=4→8(RF≈511B, max_dilation512 cap 내) 또는 K=3→5 먼저 ②조합-커버리지 블록 합성(N≈30-50 개념·held-out 미노출·쌍당≥30reps·5-10MB) → frozen G1 재판정. (fable read-only 라 로컬 프록시 trainset DIRECTIONAL-proxy, 정확 HF 직접측정+engine-native=follow-on)",
         "source": "HYPOTHESES/cards/H_6182,H_6183,H_6184,H_6185"
+      },
+      {
+        "id": "hexa-gpu-enable-1",
+        "state": "pos-conv",
+        "value": "pool hexa 데몬 compile 벽의 진짜 원인 = stale hexa VERSION(오진: 6일간 forge GPU 벽이라 믿음), NOT forge GPU, NOT the wire. v0.540.1 stock 이 set_deterministic/hexa_forge_dispatch_layernorm/farr_attn_dt_decode_batch_gpu 미선언 → cli/anima.hexa 데몬 compile 실패(#42492868). VERIFIED 해결 (2026-07-02 aiden pool): (1) HEXA_CUDA=1 sh ~/.hx/src/install.sh 가 v0.540.1→v0.546.0 재설치 — v0.546.0 stock 이 그 심볼 선언 → hexa run cli/anima.hexa 전체 데몬 RC=0. (2) cuda_available()=1 도 ACHIEVED: install 이 ~/.hx/.cuda-runtime marker 유지 + cuda-fold runtime.a(2.7MB, 16 cuda 심볼, _hx_k_gemm/forge_dispatch T-defined) 링크 → 자동 cuda ldflags. 확인은 hexa gpu(항상 0 오판) 아님, temp .hexa fn main(){print(cuda_available())} hexa run → 1. (3) 전체 데몬 END-TO-END VERIFIED: hexa run cli/anima.hexa d768.clm → L3 mount mouth=clm loaded=true + [OWN-GEMM-FIRED] _hx_k_gemm DEVICE path + rung-3 CR3 agloop per-tick(conflict tick별 변동=genuine) + Ψ Φ-checksum ✅ PASS. NEXT-TIME 1-STEP: aiden 이미 v0.546.0+cuda=1 → 그냥 hexa run(재설치 불요). ckpt relay=summer→mini scp→mini→aiden scp(ssh alias; base64 pool wrapper stdin 미전달 함정). RULED-OUT: 수동 build_cuda_runtime 직접빌드(context 깨짐), HEXA_CUDA=1 만 marker 없이.",
+        "threshold": "재발시: pool 호스트서 cli/anima.hexa 데몬 compile undeclared(set_deterministic/forge) → hexa --version 확인(v0.546.0+ 필요), 낮으면 HEXA_CUDA=1 sh ~/.hx/src/install.sh. cuda=1 확인은 temp .hexa cuda_available() print(hexa gpu 아님). 데몬 END-TO-END = hexa run cli/anima.hexa <ckpt.clm> → OWN-GEMM DEVICE path + CR3 per-tick + Ψ checksum ✅.",
+        "source": "tool/hexa_gpu_enable"
       }
     ]
   }
