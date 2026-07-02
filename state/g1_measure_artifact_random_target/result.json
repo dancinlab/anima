@@ -1,0 +1,88 @@
+{
+  "chance": 0.125,
+  "seeds": {
+    "7": {
+      "random": {
+        "train": 1.0,
+        "held": 0.0667
+      },
+      "struct_add": {
+        "train": 1.0,
+        "held": 0.5073
+      },
+      "struct_nonadd": {
+        "train": 1.0,
+        "held": 0.9944
+      }
+    },
+    "4302": {
+      "random": {
+        "train": 1.0,
+        "held": 0.1406
+      },
+      "struct_add": {
+        "train": 1.0,
+        "held": 1.0
+      },
+      "struct_nonadd": {
+        "train": 1.0,
+        "held": 1.0
+      }
+    },
+    "4303": {
+      "random": {
+        "train": 1.0,
+        "held": 0.0312
+      },
+      "struct_add": {
+        "train": 1.0,
+        "held": 0.9351
+      },
+      "struct_nonadd": {
+        "train": 1.0,
+        "held": 1.0
+      }
+    },
+    "4304": {
+      "random": {
+        "train": 1.0,
+        "held": 0.0728
+      },
+      "struct_add": {
+        "train": 1.0,
+        "held": 0.7058
+      },
+      "struct_nonadd": {
+        "train": 1.0,
+        "held": 0.9717
+      }
+    },
+    "4305": {
+      "random": {
+        "train": 1.0,
+        "held": 0.1475
+      },
+      "struct_add": {
+        "train": 1.0,
+        "held": 0.8501
+      },
+      "struct_nonadd": {
+        "train": 1.0,
+        "held": 0.9224
+      }
+    }
+  },
+  "verdict": {
+    "mean_held": {
+      "random": 0.0918,
+      "struct_add": 0.7997,
+      "struct_nonadd": 0.9777
+    },
+    "over_chance": {
+      "random": -0.0332,
+      "struct_add": 0.6747,
+      "struct_nonadd": 0.8527
+    },
+    "reading": "MEASURE-ARTIFACT CONFIRMED \u2014 plain model LIFTS held-out on STRUCTURED (non-additive) target but floors on RANDOM. The random-target cheap-gate methodology measured memorization-of-noise, not recombination; the real G1 question is STRUCTURED composition, which a plain trunk CAN generalize."
+  }
+}
