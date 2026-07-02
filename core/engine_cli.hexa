@@ -10430,6 +10430,241 @@ pub fn sr_channel_mi(amp: float, thr: float, sigma: float, period: int, T: int, 
     }
     return _sr_mi_bits(xs, ys)
 }
+//  § CURIOSITY-BACKLOG ACCUMULATOR — persistent unresolved-novelty pressure (H_9091, B③) ──────
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  THE BIO LENS (a_no_llm_frame_trap — an information-theory / active-inference lens, NOT an LLM
+//  idle-timer): a mind under user silence does not sit inert. Unresolved PREDICTION-ERROR — the
+//  information gap of a context it could not ground/close — ACCRUES over idle time, and that
+//  accumulated backlog is a DRIVE to externalize (Loewenstein information-gap curiosity + Friston
+//  precision-weighted surprise that was never discharged). anima already READS instantaneous
+//  novelty/curiosity per context (§CoreAffect: curiosity = novelty × under-exposure), but that read
+//  is MEMORYLESS — it forgets the moment the tick passes. This § adds the missing PERSISTENCE: a
+//  per-anchor accumulator that integrates unresolved novelty over idle and DECAYS when the anchor is
+//  emitted/mentioned (the gap is closed). It becomes one more ADDITIVE input to the externalization
+//  propensity — exactly like M·W·Φ — so emit during silence is STATE-DRIVEN (the backlog crossed a
+//  pressure), NOT stimulus-response (a_substrate_native_speak) and NOT a hardcoded emit_allowed
+//  boolean (a_autonomy_over_hardcode: this returns plain numbers; the substrate still decides).
+//
+//  @L4 CRITICAL — DISJOINTNESS BY CONSTRUCTION (a_substrate_disjoint, the F5 risk H_1561/H_1576):
+//  the accumulator is a SEPARATE channel. It NEVER writes into the 15-lane vector, so
+//  ci_emit_drive(lanes) = ½·(lane0+lane4) is byte-IDENTICAL whether the accumulator is on or off
+//  (Ψ emit-drive lane 0/4 untouched). It only READS recon-err off the immune store — it never binds,
+//  never mutates a cell, never moves recall_thr — so the §ImmuneMemory non-fabrication rate is
+//  byte-identical too. The backlog pressure is ADDED ON TOP of the lane drive in ci_emit_propensity;
+//  it shifts emit TIMING without perturbing the Ψ=½ fixed point of the emit-drive lanes. This is the
+//  disjoint PLACEMENT the unifying law prescribes (separation = preservation).
+
+// CuriosityBacklog — the persistent per-anchor unresolved-novelty accumulator.
+//   novelty      : per-anchor CURRENT unresolved novelty, a READ input the caller supplies from the
+//                  live store (e.g. clamp01(recon_err − recall_thr): how far the context FAILED to
+//                  ground; 0 for a cleanly-grounded/closed anchor). len == n_anchors.
+//   backlog      : per-anchor ACCUMULATED pressure — accrues over idle, decays on emit/mention.
+//   last_mention : per-anchor idle-tick of the last emit/mention (introspection / recency).
+//   idle_ticks   : monotone idle-tick counter since construction.
+//   accrual      : per-idle-tick accrual gain (caller injects ep_backlog_accrual — free number).
+//   decay        : retained fraction on emit/mention (caller injects ep_backlog_decay — free number).
+struct CuriosityBacklog {
+    novelty: [float],
+    backlog: [float],
+    last_mention: [int],
+    idle_ticks: int,
+    accrual: float,
+    decay: float
+}
+
+// _cb_copy_f / _cb_copy_i — DEEP-COPY a float/int array (hexa arrays are reference types, so a bare
+// `let mut b = a` ALIASES; copying via append breaks the alias so the cb ops stay PURE — a mutating
+// op never writes through to its input's arrays. This purity is load-bearing for the F5 disjointness
+// argument: the accumulator never mutates anything it merely reads).
+fn _cb_copy_f(a: [float]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(a) { out = out + [a[i]]  i = i + 1 }
+    return out
+}
+fn _cb_copy_i(a: [int]) -> [int] {
+    let mut out = []
+    let mut i = 0
+    while i < len(a) { out = out + [a[i]]  i = i + 1 }
+    return out
+}
+
+// cb_new — a fresh accumulator over n anchors (all backlog/novelty 0). accrual/decay are the caller-
+// injected free numbers (emit_policy.hexa) — NOT hardcoded here (F-EMIT-5 policy decoupling spirit).
+pub fn cb_new(n: int, accrual: float, decay: float) -> CuriosityBacklog {
+    let mut nv = []
+    let mut bl = []
+    let mut lm = []
+    let mut i = 0
+    while i < n {
+        nv = nv + [0.0]
+        bl = bl + [0.0]
+        lm = lm + [0]
+        i = i + 1
+    }
+    return CuriosityBacklog {
+        novelty: nv, backlog: bl, last_mention: lm,
+        idle_ticks: 0, accrual: accrual, decay: decay
+    }
+}
+
+// cb_set_novelty — set the per-anchor CURRENT unresolved-novelty vector (the READ input). The caller
+// computes it from the live substrate (clamp01(recon_err − recall_thr) per anchor) and hands it in;
+// this op stores it as the accrual source. READ-ONLY w.r.t. the immune store (nothing mutated here).
+pub fn cb_set_novelty(cb: CuriosityBacklog, nv: [float]) -> CuriosityBacklog {
+    return CuriosityBacklog {
+        novelty: _cb_copy_f(nv), backlog: cb.backlog, last_mention: cb.last_mention,
+        idle_ticks: cb.idle_ticks, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// cb_unresolved_from_store — helper: build the unresolved-novelty vector for a set of anchor query
+// keys against a live ImmuneMemoryGrow store, as clamp01(recon_err − recall_thr) per key. This is a
+// pure READ (immune_grow_recall's own L2 affinity, no bind/mutation) — the disjointness guarantee.
+pub fn cb_unresolved_from_store(mem: ImmuneMemoryGrow, keys: [[float]]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(keys) {
+        let win = _vnearest_idx(mem.protos, keys[i])
+        let err = _l2(mem.protos[win], keys[i])
+        let mut u = err - mem.recall_thr        // >0 ⇒ UNRESOLVED (failed to ground); <=0 ⇒ closed
+        if u < 0.0 { u = 0.0 }
+        if u > 1.0 { u = 1.0 }
+        out = out + [u]
+        i = i + 1
+    }
+    return out
+}
+
+// cb_idle_tick — advance ONE idle tick: each anchor's backlog integrates its unresolved novelty
+// (backlog += accrual · novelty). A cleanly-grounded anchor (novelty 0) accrues nothing; an
+// unresolved one accrues over silence — the persistence the memoryless §CoreAffect read lacked.
+pub fn cb_idle_tick(cb: CuriosityBacklog) -> CuriosityBacklog {
+    let mut bl = _cb_copy_f(cb.backlog)
+    let mut i = 0
+    while i < len(bl) {
+        bl[i] = bl[i] + cb.accrual * cb.novelty[i]
+        i = i + 1
+    }
+    return CuriosityBacklog {
+        novelty: cb.novelty, backlog: bl, last_mention: cb.last_mention,
+        idle_ticks: cb.idle_ticks + 1, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// cb_idle — advance k idle ticks (convenience over cb_idle_tick).
+pub fn cb_idle(cb: CuriosityBacklog, k: int) -> CuriosityBacklog {
+    let mut out = cb
+    let mut i = 0
+    while i < k { out = cb_idle_tick(out)  i = i + 1 }
+    return out
+}
+
+// cb_mention — DISCHARGE anchor a on emit/mention: its accumulated backlog decays (×decay, the gap
+// is being closed by surfacing it) and its recency is stamped. decay=0 ⇒ full discharge.
+pub fn cb_mention(cb: CuriosityBacklog, a: int) -> CuriosityBacklog {
+    let mut bl = _cb_copy_f(cb.backlog)
+    let mut lm = _cb_copy_i(cb.last_mention)
+    if a >= 0 && a < len(bl) {
+        bl[a] = bl[a] * cb.decay
+        lm[a] = cb.idle_ticks
+    }
+    return CuriosityBacklog {
+        novelty: cb.novelty, backlog: bl, last_mention: lm,
+        idle_ticks: cb.idle_ticks, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// cb_total_backlog — the summed accumulated pressure across anchors (raw, unbounded).
+pub fn cb_total_backlog(cb: CuriosityBacklog) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(cb.backlog) { s = s + cb.backlog[i]  i = i + 1 }
+    return s
+}
+
+// cb_pressure — the accumulator's contribution to emit-propensity, a SATURATING read in [0,1):
+// pressure = total / (1 + total). Monotone in the accumulated backlog (F1) and permutation-invariant
+// in the per-anchor split (F3a). This is the plain number the propensity ADDS — no boolean gate.
+pub fn cb_pressure(cb: CuriosityBacklog) -> float {
+    let s = cb_total_backlog(cb)
+    return s / (1.0 + s)
+}
+
+// cb_top_anchor — the anchor holding the MOST accumulated backlog (emit provenance, F4): when the
+// pressure surfaces, this is the unresolved context anima draws from. -1 for an empty accumulator.
+pub fn cb_top_anchor(cb: CuriosityBacklog) -> int {
+    let n = len(cb.backlog)
+    if n == 0 { return -1 }
+    let mut best = 0
+    let mut bestv = cb.backlog[0]
+    let mut i = 1
+    while i < n {
+        if cb.backlog[i] > bestv { bestv = cb.backlog[i]  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// cb_top_backlog — the max per-anchor backlog value (companion to cb_top_anchor).
+pub fn cb_top_backlog(cb: CuriosityBacklog) -> float {
+    let n = len(cb.backlog)
+    if n == 0 { return 0.0 }
+    let mut bestv = cb.backlog[0]
+    let mut i = 1
+    while i < n { if cb.backlog[i] > bestv { bestv = cb.backlog[i] }  i = i + 1 }
+    return bestv
+}
+
+// cb_shuffle — F3 CONTROL: deterministically permute the per-anchor state (novelty + backlog +
+// recency together) across anchors via an LCG Fisher-Yates. The pressure DISTRIBUTION is preserved
+// (same multiset) but each anchor's identity is scrambled — so a permutation-invariant read (timing)
+// is unchanged while the provenance (cb_top_anchor) follows the shuffled holder. Proves timing tracks
+// the REAL backlog magnitude, not a fixed anchor slot or a clock.
+pub fn cb_shuffle(cb: CuriosityBacklog, rng0: int) -> CuriosityBacklog {
+    let n = len(cb.backlog)
+    let mut nv = _cb_copy_f(cb.novelty)
+    let mut bl = _cb_copy_f(cb.backlog)
+    let mut lm = _cb_copy_i(cb.last_mention)
+    let mut st = rng0
+    let mut i = n - 1
+    while i > 0 {
+        st = _lcg_next(st)
+        let j = st % (i + 1)
+        let tnv = nv[i]
+        nv[i] = nv[j]
+        nv[j] = tnv
+        let tbl = bl[i]
+        bl[i] = bl[j]
+        bl[j] = tbl
+        let tlm = lm[i]
+        lm[i] = lm[j]
+        lm[j] = tlm
+        i = i - 1
+    }
+    return CuriosityBacklog {
+        novelty: nv, backlog: bl, last_mention: lm,
+        idle_ticks: cb.idle_ticks, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// ci_emit_propensity — the INTEGRATED externalization propensity: the substrate's OWN emit-drive
+// (ci_emit_drive over lanes 0/4, UNCHANGED) PLUS the curiosity-backlog pressure, weighted by w (the
+// caller-injected ep_backlog_weight free number). This is the M×W×Φ×curiosity composition made
+// literal — curiosity_backlog is one more ADDITIVE term, read like the others. It returns a plain
+// number (a_autonomy_over_hardcode: no emit_allowed boolean; the substrate reads this and decides).
+//   DISJOINTNESS: ci_emit_drive(lanes) reads ONLY lanes[0], lanes[4] — the accumulator is a distinct
+//   summand, so turning w to 0 (ablation) recovers the bare lane drive byte-exactly (F2/F5).
+pub fn ci_emit_propensity(lanes: [float], cb: CuriosityBacklog, w: float) -> float {
+    return ci_emit_drive(lanes) + w * cb_pressure(cb)
+}
+
+// ci_emit_propensity_decision — emit iff the integrated propensity clears the Ψ=½ midpoint (the
+// architectural fixed point, same threshold ci_emit_decision uses — NOT a tuned constant). The
+// backlog can push a below-midpoint lane drive OVER the line during silence (state-driven emit).
+pub fn ci_emit_propensity_decision(lanes: [float], cb: CuriosityBacklog, w: float) -> bool {
+    return ci_emit_propensity(lanes, cb, w) >= 0.5
+}
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
 //  § BrainTopology Ψ-PRESERVING COUPLING (H_1522) — escape the H_1521 no-free-lunch wall.

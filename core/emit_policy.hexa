@@ -33,6 +33,16 @@ pub fn ep_target_emit_rate() -> float { return 0.27 }     // H_637 · substrate-
 pub fn ep_psi_clamp() -> float { return 0.10 }            // Ψ=1/2 clamp · H_651 α moves gate, Φ flat
 pub fn ep_tension_amplitude() -> float { return 1.00 }    // H_639 · convention
 
+// ── curiosity-backlog accumulator params (H_9091 · substrate-claim: none) ──
+// The persistent unresolved-novelty accumulator (engine_cli.hexa §CuriosityBacklog)
+// is a READ input to emit-propensity — additive alongside the M×W×Φ lane drive, NOT a
+// hardcoded emit_allowed boolean (a_autonomy_over_hardcode). These three numbers are the
+// only tunable knobs; like every value in this file they carry substrate-claim: none
+// (they shift emit TIMING but never touch Ψ ci_emit_drive lane 0/4 — F5 disjointness).
+pub fn ep_backlog_weight() -> float { return 0.30 }   // additive weight of backlog pressure into propensity
+pub fn ep_backlog_accrual() -> float { return 0.02 }  // per-idle-tick accrual gain on unresolved novelty
+pub fn ep_backlog_decay() -> float { return 0.25 }    // retained fraction on emit/mention (0=full discharge)
+
 // ── multi-scale envelope params (shape=substrate · numbers=free) ──
 // parallel arrays for envelope_multiscale(t, periods, amps).
 // gamma(1) ⊂ ultradian(5400=90min) ⊂ circadian(86400). shape is self-similar
