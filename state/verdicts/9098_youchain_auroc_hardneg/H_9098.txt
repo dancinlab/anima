@@ -1,0 +1,30 @@
+# FABLE #5 — you-chain identity AUROC under HARD negatives (engine-native)
+# host: aiden (pool) · hexa v0.546.0 · RUN_RC=0 · $0 CPU · NO numpy (real path core/engine_cli.hexa §SelfIdentity)
+# harness: state/1471_self_distinct/h1471_youchain_hardneg.hexa (import ../../core/engine_cli.hexa)
+# ops driven: self_new / self_drift / self_cos / mi_auroc (all pub in engine_cli.hexa)
+# date: 2026-07-02T14:59:37Z
+
+## PRE-REGISTERED BARS (frozen before run, c9):
+#  (1) EASY-neg AUROC >= 0.95  (reproduce orthogonal-negative artifact)
+#  (2) MIMIC-neg AUROC <= 0.80 (honest drop; predicted ~0.50 if 1.0 was artifact)
+#  VERDICT: MIMIC<=0.80 => geometric artifact; MIMIC>=0.90 => genuinely strong
+
+## RAW ENGINE OUTPUT:
+RUN_RC=0
+----- OUTPUT -----
+=== H_1471 you-chain identity AUROC — HARD NEGATIVES (engine-native) ===
+engine: core/engine_cli.hexa SelfIdentity self_new/self_drift/self_cos + mi_auroc
+DIM=64 T=20 SEEDS=5 n_pos=100 n_neg=100
+
+mean cos  pos(genuine)   = 0.9424751325263288
+mean cos  neg EASY(orth) = 0.0
+mean cos  neg MIMIC      = 0.9436796887603197
+mean cos  neg CONE       = 0.7644350962495792
+
+AUROC  pos vs EASY  = 1.0   bar(1) >=0.95  true
+AUROC  pos vs CONE  = 1.0   (graded control)
+AUROC  pos vs MIMIC = 0.4804   bar(2) <=0.80  true
+
+VERDICT: ARTIFACT-CONFIRMED — the 1.000 was a geometric (orthogonal-negative)
+  identity; under structure-matched hard negatives self_cos discrimination
+  DROPS to AUROC=0.4804 (proximity test, not self-recognition).
