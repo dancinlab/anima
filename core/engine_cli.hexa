@@ -639,6 +639,77 @@ pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
     return _vtwo_nearest_dist(af.protos, x)
 }
 
+// ── § VAdaptCombine (H_9043) — 구성적 결합기 op-slot (H_9027 follow-on) ────────────────
+// The live VAdaptField (above) is an 8-D winner-take-all k-means: it ASSIGNS a sample to the
+// nearest prototype (depth-0, no composition). It has NO constructive combiner — two concepts
+// can only be PICKED, never BOUND into a new composite that carries BOTH and can be taken apart.
+// This adds the missing HRR-style (Plate 1995) bind/unbind op-slot as a pure, additive, READ-only
+// pair of functions over raw DIM-vectors (NOT the VAdaptField struct — no mutation, no proto
+// growth, no emit/silence; never touches pure_field's Φ/phase/Ψ → Ψ-disjoint by construction;
+// disjoint from the emit-drive lane 0/4 and §ImmuneMemory recall_thr → a_substrate_disjoint).
+//
+//   vadapt_combine  = circular convolution  a ⊛ b     (the key-locked conjunctive BIND).
+//   vadapt_unbind   = circular correlation  key ⋆ c   (approx inverse: unbind(a⊛b, a) ≈ b).
+// A composite c = combine(key, val) superimposes many pairs additively yet each val stays
+// RECOVERABLE only with its own key (a wrong/shuffled key returns noise) — the VSA storage
+// property. HONEST SCOPE (c9, H_9026/H_1840): this is ALGEBRAIC recoverability, NOT learned
+// capability — the accompanying harness measures the two SEPARATELY (recoverability + within-set
+// relational routing pass; SYSTEMATIC held-out generalization floors, as the real-manifold recomb
+// wall predicts). READ-only measurement op-slot, not an emit gate (a_autonomy_over_hardcode).
+
+// _cconv — circular convolution c[k] = Σ_i a[i]·b[(k−i) mod n]. The HRR bind kernel.
+fn _cconv(a: [float], b: [float]) -> [float] {
+    let n = len(a)
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let mut s = 0.0
+        let mut i = 0
+        while i < n {
+            let mut j = k - i
+            while j < 0 { j = j + n }
+            s = s + a[i] * b[j]
+            i = i + 1
+        }
+        out = out + [s]
+        k = k + 1
+    }
+    return out
+}
+
+// _ccorr — circular correlation out[k] = Σ_i key[i]·c[(k+i) mod n] = key* ⊛ c (HRR unbind).
+fn _ccorr(key: [float], c: [float]) -> [float] {
+    let n = len(key)
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let mut s = 0.0
+        let mut i = 0
+        while i < n {
+            let mut idx = k + i
+            while idx >= n { idx = idx - n }
+            s = s + key[i] * c[idx]
+            i = i + 1
+        }
+        out = out + [s]
+        k = k + 1
+    }
+    return out
+}
+
+// vadapt_combine — key-locked constructive bind of two DIM-vectors (circular convolution).
+// The op-slot the winner-take-all VAdaptField lacks: composes a,b into ONE composite carrying
+// both, recoverable per-key. Pure/additive/READ-only, Ψ-disjoint (a_substrate_disjoint).
+pub fn vadapt_combine(a: [float], b: [float]) -> [float] {
+    return _cconv(a, b)
+}
+
+// vadapt_unbind — recover the value bound under `key` from composite `c` (circular correlation).
+// unbind(combine(key, val), key) ≈ val; a WRONG key returns noise (≈0 cosine to any stored val).
+pub fn vadapt_unbind(c: [float], key: [float]) -> [float] {
+    return _ccorr(key, c)
+}
+
 // ── §  QUANTUM-ENTROPY POOL — opt-in REAL-quantum entropy source (H_1289 R2) ─────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1289 R1): R1 (numpy
