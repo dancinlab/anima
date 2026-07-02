@@ -543,3 +543,92 @@ fn retrieve(query_tension_5ch: [float], anchors: list, top_k: int) -> list {
     }
     return out
 }
+
+
+// ── recursive labeled-parent bind (system-G1 relocation, card H_9035) ───────
+//
+// kosmos_merge — bind two anchors A,B into a composite anchor C that PRESERVES
+// A,B as children (recursive labeled-parent bind). This relocates recombination
+// OUT of the fixed-dim mouth activation vector INTO the growing DISCRETE PERSISTENT
+// anchor store (a_substrate_disjoint · card H_9035 · state/system_g1_relocate_kosmos_merge).
+//
+//   anchor_c fields:
+//     children     = [anchor_a, anchor_b]   — parents kept verbatim (the store's
+//                    symbolic parent-ids; RECOVERY (2) HARD-BLOCKS reading these,
+//                    scoring only the SURFACED C, else a lookup earns ZERO — H_1874).
+//     tension_5ch  = element-wise MEAN of the two parent 5-ch tensions.
+//     embedding    = tension_5ch_to_embedding(mean, ...) — reuse the existing dense
+//                    projector (line 76) so C is retrievable via `retrieve` (line 516).
+//     coord        = midpoint BETWEEN the two parents' coords.
+//     lane         = "recomb"  — DISJOINT from emit-drive lanes {0,4} and NOT routed
+//                    through §ImmuneMemory recall_thr (retrieval via kosmos_io `retrieve`,
+//                    NOT immune_memory_recall — else Ψ collapse H_1561 / G5 fab H_1576).
+//     text_payload = ""  — C is SURFACED downstream by the frozen mouth (Stage B),
+//                    not at merge time; the merge is the discrete store step only.
+//
+// Accepts anchor maps as produced by load_anchors (keys: tension_5ch, fields.coord,
+// name, text_payload) or a bare map carrying "tension_5ch" / "coord" / "name".
+
+// Read a 5-ch tension off an anchor map (missing → zeros).
+fn _km_tension(anchor: map) -> [float] {
+    if anchor.contains_key("tension_5ch") { return anchor["tension_5ch"] }
+    return [0.0, 0.0, 0.0, 0.0, 0.0]
+}
+
+// Read a 2-D coord off an anchor map: top-level "coord", else fields.coord, else origin.
+fn _km_coord(anchor: map) -> [float] {
+    if anchor.contains_key("coord") { return anchor["coord"] }
+    if anchor.contains_key("fields") {
+        let f = anchor["fields"]
+        if f.contains_key("coord") { return f["coord"] }
+    }
+    return [0.0, 0.0]
+}
+
+// Safe list index (out-of-range → 0.0).
+fn _km_at(xs: [float], i: int) -> float {
+    if i < len(xs) { return xs[i] }
+    return 0.0
+}
+
+// Anchor display name (missing → "anon").
+fn _km_name(anchor: map) -> string {
+    if anchor.contains_key("name") { return to_string(anchor["name"]) }
+    return "anon"
+}
+
+// Element-wise mean of two 5-ch tensions (short vectors zero-padded to 5).
+fn _km_mean5(ta: [float], tb: [float]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < 5 {
+        out.push((_km_at(ta, i) + _km_at(tb, i)) / 2.0)
+        i = i + 1
+    }
+    return out
+}
+
+fn kosmos_merge(anchor_a: map, anchor_b: map) -> map {
+    let ta = _km_tension(anchor_a)
+    let tb = _km_tension(anchor_b)
+    let mean5 = _km_mean5(ta, tb)
+
+    let ca = _km_coord(anchor_a)
+    let cb = _km_coord(anchor_b)
+    let midx = (_km_at(ca, 0) + _km_at(cb, 0)) / 2.0
+    let midy = (_km_at(ca, 1) + _km_at(cb, 1)) / 2.0
+
+    // reuse the existing dense projector so C is retrievable via `retrieve`.
+    let embed = tension_5ch_to_embedding(mean5, 16, 1337)
+
+    let anchor_c = #{
+        "name":         _km_name(anchor_a) + "+" + _km_name(anchor_b),
+        "text_payload": "",
+        "lane":         "recomb",
+        "coord":        [midx, midy],
+        "tension_5ch":  mean5,
+        "embedding":    embed,
+        "children":     [anchor_a, anchor_b],
+    }
+    return anchor_c
+}

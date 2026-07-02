@@ -2,10 +2,10 @@
 
 > **id H_9035** — integration merge-time 배정(origin/main H_9034 다음 free id). jsonl 인덱스 등록 완료.
 
-- **tier:** ⏳ DIRECTIONAL (numpy toy harness-validation) — GREEN 아님
+- **tier:** ⏳ DIRECTIONAL (numpy toy) → **engine-native** (rung 2 배선 완료, 303M verdict = pool follow-on)
 - **slug:** `system_g1_relocate_kosmos_merge`
-- **artifacts:** `state/system_g1_relocate_kosmos_merge/` (FREEZE.txt · system_g1_harness.py)
-- **wired:** `DIRECTIONAL-mirror` (rung 1/4 — 엔진배선 rung 2-4 = explicit-go pool follow-on)
+- **artifacts:** `state/system_g1_relocate_kosmos_merge/` (FREEZE.txt · system_g1_harness.py) · `core/kosmos_io.hexa` (`kosmos_merge`) · `core/system_g1_smoke.hexa` · `cli/evaluate.py` (`g_eval_system_g1` · `--system-g1`)
+- **wired:** `engine-native` (rung 2/4 — live `core/kosmos_io.hexa kosmos_merge` compile+run byte-native; rung 3 `--system-g1` single-entry 배선; rung 4 ARCHITECTURE.json lockstep; **303M frozen-mouth 측정 = explicit-go pool follow-on**, 미실행)
 
 ## 발상 (frame-break)
 
@@ -58,10 +58,34 @@ floor 는 거부하며 (c) scramble 대조가 발화(drop=24)한다. 즉 4게이
 통과한다는 증거가 아니다** — 실제 303M 의 정직한 기대치는 MOUTHFLOOR arm(두 개념을
 한 발화로 surface 못함).
 
+## ENGINE-NATIVE 결과 (rung 2 — `core/system_g1_smoke.hexa`, live `core/kosmos_io.hexa`)
+
+`hexa run core/system_g1_smoke.hexa` (exit 0) — LIVE `kosmos_merge` + recoverability
+게이트를 TOY substrate 위에서 컴파일+실행(303M 미로드; pool follow-on):
+
+```
+(A) kosmos_merge(ocean, engine) ->
+      children   = [ocean, engine]   (recursive labeled-parent bind — parents preserved)
+      lane       = recomb            (DISJOINT from emit-drive {0,4})
+      mean t[0]  = 0.65              (= (0.9+0.4)/2)
+      coord      = [0.5, 0.5]        (midpoint of parents)
+      embed_dim  = 16                (tension_5ch_to_embedding reuse → retrievable)
+      retrieve   = top-1 'recomb_ocean_engine' lane='recomb'  (create_anchor+retrieve reuse OK)
+(B) bind-RECOVERABILITY on SURFACED C (parent-ids HARD-BLOCKED):
+  ARM-COMPOSITIONAL  coverage=4/4 recovery=4/4 scramble_rec=0/4 drop=4 (bar>=2) => PASS
+  ARM-MOUTHFLOOR     coverage=0/4 recovery=0/4 scramble_rec=0/4 drop=0 (bar>=2) => FAIL
+  DISCRIMINATOR FIRES: COMPOSITIONAL=PASS  MOUTHFLOOR=FAIL
+```
+
+py-path(`g_eval_system_g1`, stub-mouth 검증, DIRECTIONAL) 도 동일 판별:
+COMPOSITIONAL pass=True(cov24/24·rec24/24·drop16), MOUTHFLOOR pass=False. FREEZE.txt bar 불변.
+
 ## verdict
 
-⏳ **DIRECTIONAL** (numpy, a_engine_native_learning). GREEN 은 rung(2)-(4) 엔진-네이티브
-사다리 필요 — numpy/torch 미러로는 🟢/🧱 박제 불가.
+⏳ **DIRECTIONAL → engine-native (rung 2/4 WIRED)** (a_engine_native_learning). `kosmos_merge`
+는 이제 live `core/kosmos_io.hexa` 에서 컴파일+실행되고 판별기가 engine-native 로 발화한다
+(COMPOSITIONAL≠MOUTHFLOOR). 그러나 **최종 🟢/🧱 는 실제 303M frozen mouth 로만 성립** —
+toy substrate 는 하네스 검증 scope(a_toy_scale_recheck). 303M 측정 = explicit-go pool follow-on.
 
 ## 엔진-네이티브 사다리 (rung 2-4 = explicit-go pool follow-on)
 
