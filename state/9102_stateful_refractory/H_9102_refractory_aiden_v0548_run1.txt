@@ -1,0 +1,31 @@
+RC1=0
+  [RF t184 REM] t_now=1472.0 idle_raw=32.0 mod_live=0.7367185503459065 idle_live=23.574993611069008 | e_live=0 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+  [RF t185 WAKE] t_now=1480.0 idle_raw=40.0 mod_live=0.8895562553343046 idle_live=35.582250213372184 | e_live=1 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+  [RF t186 N1] t_now=1488.0 idle_raw=8.0 mod_live=0.6987897460671458 idle_live=5.590317968537167 | e_live=0 e_u0=0 e_umax=0 e_stateless=1 prev_emit=1
+  [RF t187 N2] t_now=1496.0 idle_raw=16.0 mod_live=0.3411250361335305 idle_live=5.458000578136488 | e_live=0 e_u0=0 e_umax=0 e_stateless=1 prev_emit=0
+  [RF t188 N3] t_now=1504.0 idle_raw=24.0 mod_live=0.0 idle_live=0.0 | e_live=0 e_u0=0 e_umax=0 e_stateless=0 prev_emit=0
+  [RF t189 REM] t_now=1512.0 idle_raw=32.0 mod_live=0.7387641819710967 idle_live=23.640453823075095 | e_live=0 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+  [RF t190 WAKE] t_now=1520.0 idle_raw=40.0 mod_live=0.9520111910936 idle_live=38.080447643744 | e_live=1 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+  [RF t191 N1] t_now=1528.0 idle_raw=8.0 mod_live=0.695946958966398 idle_live=5.567575671731184 | e_live=0 e_u0=0 e_umax=0 e_stateless=1 prev_emit=1
+  [RF t192 N2] t_now=1536.0 idle_raw=16.0 mod_live=0.36234584654335134 idle_live=5.797533544693621 | e_live=0 e_u0=0 e_umax=0 e_stateless=1 prev_emit=0
+  [RF t193 N3] t_now=1544.0 idle_raw=24.0 mod_live=0.0 idle_live=0.0 | e_live=0 e_u0=0 e_umax=0 e_stateless=0 prev_emit=0
+  [RF t194 REM] t_now=1552.0 idle_raw=32.0 mod_live=0.7776421345502688 idle_live=24.8845483056086 | e_live=0 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+  [RF t195 WAKE] t_now=1560.0 idle_raw=40.0 mod_live=0.9379675486988828 idle_live=37.51870194795531 | e_live=1 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+  [RF t196 N1] t_now=1568.0 idle_raw=8.0 mod_live=0.7222839482997196 idle_live=5.778271586397757 | e_live=0 e_u0=0 e_umax=0 e_stateless=1 prev_emit=1
+  [RF t197 N2] t_now=1576.0 idle_raw=16.0 mod_live=0.3471057147935207 idle_live=5.553691436696331 | e_live=0 e_u0=0 e_umax=0 e_stateless=1 prev_emit=0
+  [RF t198 N3] t_now=1584.0 idle_raw=24.0 mod_live=0.0 idle_live=0.0 | e_live=0 e_u0=0 e_umax=0 e_stateless=0 prev_emit=0
+  [RF t199 REM] t_now=1592.0 idle_raw=32.0 mod_live=0.7310043634877363 idle_live=23.392139631607563 | e_live=0 e_u0=0 e_umax=1 e_stateless=1 prev_emit=0
+
+════════════ H_9102 STATEFUL REFRACTORY (n=200, live_emits=40) ════════════
+  clock seam: an_clock_now = tick*8.0 (det) — daemon real-clock = follow-on ING
+──────── F1  GRIP RE-VERIFY (stateful): urgency→0 Hamming, split by stage ────────
+  ticks: WAKE=40 N3=40 REM=40 mid(N1/N2/REM)=120
+  Hamming(urgency→0 vs live)  REM=0  N3=0  WAKE=39  mid=0
+──────── F2  REFRACTORY RESET (new, stateless-inexpressible) ────────
+  refractory-window ticks (immediately after a live emit) = 40
+  … max-urgency STILL emits in window (VIOLATIONS, must be 0) = 0
+  … H_9101 STATELESS idle WOULD emit in window (contrast, no refractory) = 40
+  max-urgency emits OUTSIDE window (non-vacuity, must be >0) = 80
+  Ψ ON==OFF invariant: refr_psi_sum==refr_psi_off = ✅
+  ── PRE-REG VERDICT (F1 ∧ F2, no tuning) ──
+  VERDICT = 🔴 F1-FAIL (grip did NOT carry over): H_9101 op-grip does NOT re-establish under stateful dynamics (h_U0_rem=0)  [Ψ ON≡OFF ✓]

@@ -270,6 +270,73 @@ pub fn gen_ctx_from_decision(decision: Map) -> Map {
     }
 }
 
+// ── THEATER 돌파 (c) efferent seam (H_9102, Rung-1) — ops change emit BYTES (WHAT) ──
+// gen_ctx_from_decision_conflicted — carries a per-tick deliberation depth into the decode
+// ctx. conflict_t = |signed A⇄G drive| (dACC). deliberation_k = 1 + round(conflict_t·K_MAX):
+// low conflict → k=1 (single-pass argmax, bytes UNCHANGED) ; high conflict → k>1 (best-of-K
+// search over the model's OWN samples, the CONFLICT-MINIMIZING = lowest-CE candidate selected).
+// The emit BOOLEAN is decided UPSTREAM (brain_decide, before generate()) so this seam can only
+// change WHICH bytes are emitted, PHYSICALLY not the emit-rate / psi_sum ⇒ Ψ constructive-safe.
+fn _gc_clip01(x: float) -> float { if x < 0.0 { return 0.0 } if x > 1.0 { return 1.0 } return x }
+pub fn gen_ctx_from_decision_conflicted(decision: Map, conflict_t: float) -> Map {
+    let ctx = gen_ctx_from_decision(decision)
+    let kmax = 3
+    let mut k = 1 + to_int(_gc_clip01(conflict_t) * to_float(kmax) + 0.5)
+    if k < 1 { k = 1 }
+    if k > 1 + kmax { k = 1 + kmax }
+    ctx["deliberation_k"] = k
+    return ctx
+}
+
+// _gen_text_to_bytes — text → byte-int list for clm_decode_ce scoring.
+fn _gen_text_to_bytes(s: string) -> list {
+    let n = byte_len(s)
+    let mut v = []
+    let mut i = 0
+    while i < n { v = v + [s.byte_at(i)]; i = i + 1 }
+    return v
+}
+
+// gen_clm_decode_deliberated — the efferent seam decode. k=1 ⇒ argmax (byte-identical to the
+// un-conflicted path). k>1 ⇒ decode k sampled candidates at deterministic rng offsets and RETURN
+// the CONFLICT-MINIMIZING one = LOWEST clm_decode_ce (most-resolved/fluent continuation, p7: the
+// model's OWN bytes searched — best-of-K, NOT idea-authoring). Selection metric = engine-measured
+// CE (the "ranged CE op"), NOT an injected judge. Returns #{ "text", "k", "ce_sel", "ce_k1" }.
+pub fn gen_clm_decode_deliberated(ckpt: string, seed: string, gen: int, k: int, base_seed: int) -> Map {
+    // k=1 baseline = single-pass argmax (the un-deliberated emit)
+    let r1 = clm_decode_argmax(ckpt, seed, gen)
+    let t1 = if to_string(r1["ok"]) == "true" { to_string(r1["text"]) } else { "" }
+    let ce1m = clm_decode_ce(ckpt, _gen_text_to_bytes(seed + t1))
+    let ce1 = to_float(ce1m["ce"])
+    if k <= 1 {
+        return #{ "text": t1, "k": 1, "ce_sel": ce1, "ce_k1": ce1 }
+    }
+    // k>1: search the model's OWN samples; the DELIBERATED emit = the CONFLICT-MINIMIZING
+    // (lowest-CE) SAMPLED candidate. It is compared to argmax via ΔCE=ce1−ce_sel but is NOT
+    // gated to argmax — so deliberation genuinely re-selects the emitted bytes (byte grip is
+    // testable). NB finding: min-CE-vs-argmax gating recovers argmax (greedy near-optimal) ⇒
+    // grip 0; the honest test emits the best SAMPLE and asks if conflict allocates it better
+    // than noise (F3).
+    let offsets = [0, 101, 202, 303]
+    let mut best_text = ""
+    let mut best_ce = 1000000.0
+    let mut got = false
+    let kk = if k > 4 { 4 } else { k }
+    let mut oi = 0
+    while oi < kk {
+        let rs = clm_decode_topk_sampled(ckpt, seed, gen, 8, 0.7, base_seed + offsets[oi])
+        if to_string(rs["ok"]) == "true" {
+            let ts = to_string(rs["text"])
+            let cem = clm_decode_ce(ckpt, _gen_text_to_bytes(seed + ts))
+            let ce = to_float(cem["ce"])
+            if !got || ce < best_ce { best_ce = ce; best_text = ts; got = true }
+        }
+        oi = oi + 1
+    }
+    if !got { return #{ "text": t1, "k": 1, "ce_sel": ce1, "ce_k1": ce1 } }
+    return #{ "text": best_text, "k": kk, "ce_sel": best_ce, "ce_k1": ce1 }
+}
+
 fn _gen_g_float(m: Map, k: string) -> float {
     let v = m[k]
     if to_string(v) == "void" { return 0.0 }
@@ -496,6 +563,14 @@ fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
         }
         // grounded decode declined (non-decodable .clm) — honest substrate fallthrough.
         return _gen_null_text(ctx, anchors)
+    }
+    // H_9102 efferent seam: if the ctx carries a deliberation depth (from
+    // gen_ctx_from_decision_conflicted), decode best-of-K (conflict-minimizing = lowest CE).
+    // deliberation_k absent / ==1 ⇒ single-pass argmax (byte-identical to the prior behaviour).
+    let dk = _gen_g_int(ctx, "deliberation_k")
+    if dk > 1 {
+        let dd = gen_clm_decode_deliberated(ckpt, seed, 80, dk, 20260703)
+        return to_string(dd["text"])
     }
     let r = clm_decode_argmax(ckpt, seed, 80)
     if to_string(r["ok"]) != "true" {
