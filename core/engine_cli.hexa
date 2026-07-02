@@ -3966,6 +3966,61 @@ pub fn vforward_correct(x: [float], xhat: [float], beta: float) -> [float] {
     return out
 }
 
+// ── § AnticipatoryPrefetch (H_9078) — forward model PRE-QUERIES the store BEFORE the ──
+// ── query arrives (cerebellar preplay / anticipatory retrieval, Buckner) ─────────────
+// GAP: every episodic recall in the engine is REACTIVE — a query key arrives, THEN the
+// immune store is indexed. Brain retrieval is ANTICIPATORY: the cerebellar forward model
+// (VForwardField, H_1280) predicts the NEXT state from the current context and PREPLAYS
+// the hippocampal store for that predicted state BEFORE the actual cue lands (Buckner's
+// constructive-preplay; hippocampal preplay sequences). That pre-query op-class was
+// absent — faculty_cascade (H_9075) relays A→B on a query already in hand; this op runs
+// the store one step AHEAD of the query, off the forward model's prediction.
+//
+// anticipatory_prefetch: predict the next query key from `ctx` via the forward model,
+// project it onto the unit-key manifold, and return the immune store's GRADED recall
+// MARGIN for that anticipated key = READINESS (smaller ⇒ nearer a stored cell ⇒ the
+// upcoming query is already "prefetched"/ready; large ⇒ nothing anticipated). It reuses
+// the SAME margin op the H_1367 confidence read wired — no new geometry.
+//
+// Purely ADDITIVE (no existing caller touched). READ-only over BOTH faculties — it only
+// READS the VForwardField weights (vforward_predict, no vforward_update) and READS the
+// immune store margin (immune_memory_recall_margin, recall_thr UNCHANGED). Ψ-disjoint:
+// pure_field's Φ/phase/Ψ untouched (generation byte-identical when unused); disjoint from
+// emit-drive lane(0/4) and from §ImmuneMemory's recall_thr gate (a_substrate_disjoint) —
+// it is a graded readiness read available to brain_decide, NOT an emit/silence gate
+// (a_autonomy_over_hardcode). p1/p2/p3/p6: computed from the live forward-model prediction
+// + L2 affinity, NO injected label / RLHF / persona.
+pub fn anticipatory_prefetch(ff: VForwardField, mem: ImmuneMemory, ctx: [float]) -> float {
+    let pred = vforward_predict(ff, ctx)          // forward model: anticipate the NEXT query key
+    let key = _prefetch_unit(pred)                // project onto the unit-key manifold (zero-safe)
+    return immune_memory_recall_margin(mem, key)  // readiness = graded margin of the anticipated query
+}
+
+// anticipatory_prefetch_value — the PREFETCHED VALUE (the answer the store would fire for
+// the anticipated query), or "" on ABSTAIN. Same forward-model→store pre-query as above,
+// exposing the recalled fact instead of the margin so brain_decide can PREPLAY the answer.
+pub fn anticipatory_prefetch_value(ff: VForwardField, mem: ImmuneMemory, ctx: [float]) -> string {
+    let pred = vforward_predict(ff, ctx)
+    let key = _prefetch_unit(pred)
+    return immune_memory_recall(mem, key)
+}
+
+// _prefetch_unit — L2-normalize the forward model's raw prediction onto the unit sphere
+// the immune keys live on (immune_embed_key L2-normalizes), zero-safe (a degenerate
+// all-zero prediction from an UNTRAINED forward model stays zero ⇒ abstains, INERT).
+fn _prefetch_unit(v: [float]) -> [float] {
+    let n = len(v)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + v[i] * v[i]  i = i + 1 }
+    let nrm = sqrt(s)
+    if nrm <= 0.0 { return v }
+    let mut out = []
+    let mut j = 0
+    while j < n { out = out + [v[j] / nrm]  j = j + 1 }
+    return out
+}
+
 // ── §  HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER LANE (H_1294 R2, HD31) ──────────
 //
 // WHAT THIS REALIZES (a_engine_native_learning + a_verified_must_wire for H_1294 R1):
