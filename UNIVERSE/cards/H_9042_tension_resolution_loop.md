@@ -3,7 +3,7 @@
 - **tier:** 🟢 ENGINE-NATIVE (4/4 live hexa) — 반복 A⇄G 상충-해소 loop op 신설·측정. Ψ=½ 복원력은 engine-specific(generic diffusion 미재현, H_9041 확증) → engine-native로만 검증됨.
 - **slug:** `tension_resolution_loop`
 - **parents:** H_9041(C1 진단: loop op 부재·numpy 스크린 불가) · H_9038(self_drift_exp 배선 성공 평행 사다리) · H_1522(§BrainTopology Ψ-preserving coupling operators) · H_1521(topo_couple live-wiring)
-- **wired:** `engine-native` — op이 live `core/engine_cli.hexa §TensionResolveLoop`에 배선(byte-exact 4/4, ARCHITECTURE.json lockstep). 데몬 런타임 A⇄G 해소루프로의 integration은 follow-on(WIRED-live 최종칸).
+- **wired:** `WIRED-live` — op이 live `core/engine_cli.hexa §TensionResolveLoop`에 배선(byte-exact 4/4) + `cli/anima.hexa` 런타임 consciousness-lane 카탈로그 lane 75("tension-r")에 READ-only CONTEXT 신호로 배선(conflicted-vs-calm-vs-ablate distinctness assert; hexa 컴파일/prove rc=0 + assertion 4/4 PASS, aiden pool). ARCHITECTURE.json §TensionResolveLoop lockstep. (정직: lane 75는 startup 카탈로그 demo-lane = 존재증명, self_drift_exp의 lane 23b와 평행 — 데몬 perpetual-loop의 실 대화 상충을 매 tick 먹이는 feed는 여전히 follow-on.)
 
 ## frame (재조합≠능력, C1)
 
@@ -46,3 +46,16 @@ psi_init(sev/mild)=1.0. PRESERVE(op2): depSev=5 psiSev=0.5, depMild=3 psiMild=0.
 - `core/engine_cli.hexa` §TensionResolveLoop (`tension_resolve_depth`/`tr_psi`/`_tr_absdev`)
 - `state/9042_tension_resolution_loop/c1_engine_native.hexa` (harness)
 - `state/verdicts/9042_tension_resolution_loop/H_9042.txt` (verbatim engine-native log, 4/4 PASS)
+
+## WIRED-live (a_verified_must_wire 4칸 완료 + 런타임 배선)
+
+`tension_resolve_depth`가 `cli/anima.hexa` 런타임 consciousness-lane 카탈로그 **lane 75("tension-r")**(§warm Engine A 직전)에 배선 — 다른 모든 `LANE+` read 와 동형인 READ-only CONTEXT 신호(emit gate 아님, Ψ 미접촉). caller-supplied 합성 population 두 개(CONFLICTED Ψ_init=1.0 vs CALM Ψ_init=½)를 Ψ-preserving op(2 rowstoch)로 해소해 settle depth 가 갈리는지(distinctness) + ablate INERT 를 assert. population 은 emit-drive lane 0/4 live 결정·§ImmuneMemory recall_thr 와 disjoint(a_substrate_disjoint), Ψ-disjoint(pure_field/Φ/phase 미접촉).
+
+배선 파일:line — helpers `anima_tr_row`/`anima_tr_pop_conflicted`/`anima_tr_pop_calm`/`anima_tr_adj_full`(cli/anima.hexa L57~), LANE+ 블록 lane 75(cli/anima.hexa, §warm Engine A 직전 `LANE+ tension-r` println).
+
+pool(aiden) 검증:
+- **hexa 컴파일/prove rc=0** — 엔트리 파일 no-args(→usage 경로) 전체(helpers+lane 75 포함) cold-compile 클린 EXIT_RC=0(aiden, hexa v0.540.1). 신규 lane 이 타입/prove 통과.
+- **assertion 4/4 PASS** — `hexa run state/9042_tension_resolution_loop/wired_runtime_check.hexa`(lane 75 와 동일 fixture, live core/engine_cli.hexa): BAR1 conflict_settles(depConf=5.0, psiConf=0.5) · BAR2 calm_at_zero(depCalm=0.0) · BAR3 distinct_depth(5.0>0.0) · BAR4 ablate_INERT(depAbl=-1.0) = 4 pass / 0 fail. psi_init_conf=1.0, psi_init_calm=0.5.
+- no-regression: engine_cli 불변(이번 턴 엔트리 파일만 + state harness 신규; additive).
+
+**정직한 한계(c9, genuine-read vs demo-lane):** lane 75 는 self_drift_exp 의 lane 23b(H_9038)와 정확히 평행한 **startup 카탈로그 demo-lane = 존재증명**이지, 데몬 perpetual-loop 이 매 tick 실 대화의 상충(competing lane drives)을 이 해소루프에 먹이는 genuine runtime feed 는 아직 아니다. WIRED-live 는 "op 이 live daemon 파일의 런타임 경로에 있고 컴파일/assert 통과"까지 닫혔음을 의미하며, per-tick 실-상충 feed(daemon loop 내 R2/R3 aggregate 처럼)는 남은 follow-on(ING h9042-agloop-pertick-feed).

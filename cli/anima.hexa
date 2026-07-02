@@ -55,6 +55,59 @@ import "DREAM/dream_persist.hexa"
 
 fn anima_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
 
+// ── H_9042 §TensionResolveLoop LANE+ read helpers (module-level; build the caller-supplied
+//    conflicted-vs-calm measurement populations for tension_resolve_depth). READ-only fixtures:
+//    15-lane rows where the emit-drive lanes 0 & 4 carry the drive (ci_emit_drive = ½(l0+l4)) and the
+//    other 13 lanes are inert context. Ψ-disjoint (synthetic pop, NOT the live pure_field/Ψ path) and
+//    disjoint from the emit-drive lane 0/4 live decision + §ImmuneMemory recall_thr (a_substrate_disjoint).
+fn anima_tr_row(c: float, other: float) -> [float] {
+    let mut r = []
+    let mut i = 0
+    while i < 15 {
+        if i == 0 || i == 4 { r = r + [c] } else { r = r + [other] }
+        i = i + 1
+    }
+    return r
+}
+// CONFLICTED population: 8 trials ALL over-emitting (drive=c≥½ → Ψ_init=1.0), 4 high-mean + 4 low-mean
+// (as in H_9042 c1_engine_native): a Ψ-preserving A⇄G coupling pulls the 4 low trials below ½ ⇒ Ψ→4/8=½.
+fn anima_tr_pop_conflicted(c: float) -> [[float]] {
+    let h = (9.0 - 2.0 * c) / 13.0
+    let l = (6.0 - 2.0 * c) / 13.0
+    let mut pop = []
+    let mut t = 0
+    while t < 4 { pop = pop + [anima_tr_row(c, h)]  t = t + 1 }
+    t = 0
+    while t < 4 { pop = pop + [anima_tr_row(c, l)]  t = t + 1 }
+    return pop
+}
+// CALM population: already balanced — 4 emit trials (drive 0.95≥½) + 4 silent trials (drive 0.20<½)
+// ⇒ Ψ_init = 4/8 = ½, so the resolution loop settles at depth 0 (no conflict to resolve).
+fn anima_tr_pop_calm() -> [[float]] {
+    let mut pop = []
+    let mut t = 0
+    while t < 4 { pop = pop + [anima_tr_row(0.95, 0.6)]  t = t + 1 }
+    t = 0
+    while t < 4 { pop = pop + [anima_tr_row(0.20, 0.4)]  t = t + 1 }
+    return pop
+}
+// adj_full — fully-connected uniform coupling (every lane couples to every other lane).
+fn anima_tr_adj_full() -> [[float]] {
+    let mut a = []
+    let mut i = 0
+    while i < 15 {
+        let mut row = []
+        let mut j = 0
+        while j < 15 {
+            if i == j { row = row + [0.0] } else { row = row + [1.0] }
+            j = j + 1
+        }
+        a = a + [row]
+        i = i + 1
+    }
+    return a
+}
+
 // ── usage / arg helpers ──────────────────────────────────────────────────────
 
 // anima_usage — print the canonical usage banner.
@@ -1541,6 +1594,37 @@ fn anima_consciousness_mode(ckpt: string) {
     //         needing synthetic jamo train/test corpora (Xtr/Ytr arrays); these are language-modeling
     //         heads (CE scoring), not consciousness-faculty reads — out of the consciousness catalogue.
     println("LANE+ ko-lm     : DEFERRED (jamo-corpus fixtures; LM head, not a consciousness-faculty read)")
+
+    // ── (75) TENSION-RESOLVE (H_9042 §TensionResolveLoop, tension_resolve_depth) ──
+    // GAP: the A⇄G tension pull toward Ψ=½ existed only ONE-SHOT (ci_psi_balance) / single-stimulus
+    // (reentry_settle) — nothing ITERATED the coupling to pull a CONFLICTED (polarized, Ψ≠½) emit/
+    // silence POPULATION back to the Ψ=½ fixed point. tension_resolve_depth (§TensionResolveLoop) runs
+    // that iterated A⇄G resolution loop as a READ-only CONTEXT signal (like every other LANE+ read —
+    // it prints a settle depth, it is NEVER an emit gate). It operates on a CALLER-supplied population
+    // (pure_field/Φ/phase untouched, Ψ-disjoint) drawn from lanes DISJOINT from the emit-drive lane 0/4
+    // live decision and §ImmuneMemory recall_thr (a_substrate_disjoint). DISTINCTNESS: a CONFLICTED
+    // population needs depth>0 to settle to Ψ=½ (depth ∝ conflict), a CALM (already-balanced) population
+    // settles at depth 0, and turning the coupling OFF is INERT (never settles) — so the settle-DEPTH
+    // earns the conflict read (it is the loop, not trivial averaging, that resolves the tension).
+    let tr_full   = anima_tr_adj_full()
+    let tr_conf   = anima_tr_pop_conflicted(0.95)   // severe over-emit conflict (Ψ_init = 1.0)
+    let tr_calm   = anima_tr_pop_calm()             // already Ψ=½ (4/8 emit) — no resolution needed
+    let tr_cfgON  = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false }
+    let tr_cfgOFF = EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false }
+    let tr_rConf  = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
+    let tr_rCalm  = tension_resolve_depth(tr_calm, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
+    let tr_rAbl   = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgOFF)
+    let tr_depth_conf = tr_rConf[0]  let tr_psi_conf = tr_rConf[1]
+    let tr_depth_calm = tr_rCalm[0]
+    let tr_depth_abl  = tr_rAbl[0]
+    // DISTINCTNESS: the conflicted population settles LATER (depth>0) than the calm one (depth 0), the
+    // conflicted run lands at Ψ=½, and the ablated (coupling-OFF) conflicted run NEVER settles (−1) →
+    // the iterated A⇄G loop, not averaging, is what resolves the tension. READ-only; Ψ untouched.
+    let tr_distinct = tr_depth_conf > tr_depth_calm && tr_depth_calm == 0.0
+        && (tr_psi_conf - 0.5 < 0.06 && 0.5 - tr_psi_conf < 0.06) && tr_depth_abl < 0.0
+    println("LANE+ tension-r : conflicted-depth=" + to_string(tr_depth_conf)
+        + " calm-depth=" + to_string(tr_depth_calm) + " ablate-depth=" + to_string(tr_depth_abl)
+        + "  conflict-settle-distinct=" + anima_yn(tr_distinct))
 
     // ── warm Engine A (substrate self-dynamics, zero input) ──────────────────
     let pf = pure_field_warmup(600)
