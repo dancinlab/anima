@@ -15,3 +15,6 @@ G1=0=generation-behavior/ckpt-quality(프롬프트 안따름)지 substrate 아�
 
 ## 관련
 [[goal-g1-lever-discovery]] · H_6166 · H_6167 · H_6168 · H_6169 · H_6171 · H_1218 · [[clm303-overfit-corpus-starvation-confirmed]] · [[session-eval-py-only]]
+
+## ADDENDUM — 다중-ckpt 보편성 (2026-07-02)
+프롬프트-echo coverage=0이 clm303 5변종·전 step 보편(step2000→6000 개선0, 다국어 garble). 표류=training-recipe 문제 확정, 개별 ckpt 아님. G1-NEXT-FINAL이 유일 fix. state/g1_real_model_py_eval/PROMPTFOLLOW.md.
