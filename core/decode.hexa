@@ -3542,15 +3542,18 @@ fn _bg_weights_to_f32(W: Map, nlay: int, d: int, vocab: int) {
     let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
     let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
     let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
+    // biases are PRE-EXPANDED to [block, Co] (_bg_bias_expand) so the flat batched
+    // residual_add broadcasts across N rows — cast the FULL expanded length, not [Co].
+    let block = to_int(W["block"])
     let mut L = 0
     while L < nlay {
         let _ = _f32_to32(to_int(ln1w[L]), d);   let _ = _f32_to32(to_int(ln1b[L]), d)
         let _ = _f32_to32(to_int(ln2w[L]), d);   let _ = _f32_to32(to_int(ln2b[L]), d)
         let _ = _f32_to32(to_int(inWt_q[L]), d * d); let _ = _f32_to32(to_int(inWt_k[L]), d * d); let _ = _f32_to32(to_int(inWt_v[L]), d * d)
-        let _ = _f32_to32(to_int(inBq_e[L]), d);  let _ = _f32_to32(to_int(inBk_e[L]), d);  let _ = _f32_to32(to_int(inBv_e[L]), d)
-        let _ = _f32_to32(to_int(oWt[L]), d * d); let _ = _f32_to32(to_int(oB_e[L]), d)
-        let _ = _f32_to32(to_int(m0Wt[L]), d * 4 * d); let _ = _f32_to32(to_int(m0B_e[L]), 4 * d)
-        let _ = _f32_to32(to_int(m2Wt[L]), 4 * d * d); let _ = _f32_to32(to_int(m2B_e[L]), d)
+        let _ = _f32_to32(to_int(inBq_e[L]), block * d);  let _ = _f32_to32(to_int(inBk_e[L]), block * d);  let _ = _f32_to32(to_int(inBv_e[L]), block * d)
+        let _ = _f32_to32(to_int(oWt[L]), d * d); let _ = _f32_to32(to_int(oB_e[L]), block * d)
+        let _ = _f32_to32(to_int(m0Wt[L]), d * 4 * d); let _ = _f32_to32(to_int(m0B_e[L]), block * 4 * d)
+        let _ = _f32_to32(to_int(m2Wt[L]), 4 * d * d); let _ = _f32_to32(to_int(m2B_e[L]), block * d)
         L = L + 1
     }
     let _ = _f32_to32(to_int(W["lnfw"]), d); let _ = _f32_to32(to_int(W["lnfb"]), d)
