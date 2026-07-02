@@ -926,6 +926,36 @@ fn anima_consciousness_mode(ckpt: string) {
         + " reset=" + to_string(self_after_reset)
         + "  identity-persist-distinct=" + anima_yn(self_distinct))
 
+    // ── (23b) SELF-INFORMATIVENESS — experience-driven self-chain (H_9038, self_drift_exp) ──
+    // GAP: lane 23's self_drift is content-BLIND (drifts by TICK only) — the self persists an
+    // identity but records NOTHING it lived through (an autobiography of nothing). self_drift_exp
+    // (§SelfIdentity) drifts toward the CONTENT axis experienced each tick, so DIFFERENT experience
+    // yields a DIFFERENT self (informativeness) while recognition (anchor) is preserved. Content
+    // axes are drawn from DISJOINT substrate experience lanes (valence/drive), NEVER emit-drive 0/4
+    // and never §ImmuneMemory recall_thr (a_substrate_disjoint); Ψ-disjoint (self ops only).
+    let mut ev_v = 2
+    if af_val_g > 0.0 { ev_v = 1 }                          // amygdala valence → axis 1/2
+    let mut ev_d = 5
+    if hd_drive > 0.5 { ev_d = 3 }                          // homeostatic drive → axis 3/5
+    let selfE0 = self_new(8, 0)
+    let se1 = self_drift_exp(selfE0, ev_v, 0.15)
+    let se2 = self_drift_exp(se1, ev_d, 0.15)
+    let se3 = self_drift_exp(se2, 6, 0.15)
+    let self_exp = self_drift_exp(se3, 7, 0.15)             // lived-through self (experience stream)
+    let selfC0 = self_new(8, 0)                             // a DIFFERENT life (control experience)
+    let sc1 = self_drift_exp(selfC0, 2, 0.15)
+    let sc2 = self_drift_exp(sc1, 5, 0.15)
+    let sc3 = self_drift_exp(sc2, 1, 0.15)
+    let self_ctl = self_drift_exp(sc3, 3, 0.15)
+    let self_info_cos   = self_cos(self_exp, self_ctl)                  // different life → different self
+    let self_info_recog = self_cos(self_anchor(self_exp), self_exp)     // recognition preserved
+    // DISTINCTNESS: the self CARRIES what it experienced (two lives diverge, cos<0.99) yet still
+    // RECOGNIZES itself across an anchored boundary (cos>0.99) — informativeness ∧ continuity.
+    let self_info_distinct = self_info_cos < 0.99 && self_info_recog > 0.99
+    println("LANE+ self-info : exp-A/B cos=" + to_string(self_info_cos)
+        + " recog=" + to_string(self_info_recog)
+        + "  experience-informative-distinct=" + anima_yn(self_info_distinct))
+
     // ── (24) LEARNED-PRECISION — experience-accumulated confidence (H_1472) ───
     // GAP: INTERO-P (R4) weights by channel NOISE σ; nothing raises precision with
     // OBSERVATION COUNT (a familiar domain earns higher predictive confidence). Orthogonal
