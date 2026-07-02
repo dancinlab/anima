@@ -1,0 +1,107 @@
+{
+  "seeds": {
+    "7": {
+      "mono": {
+        "seen_mse": 0.0,
+        "held_mse": 0.0633,
+        "held_over_seen": 63300.0
+      },
+      "addslot": {
+        "seen_mse": 0.0,
+        "held_mse": 0.0782,
+        "held_over_seen": 78200.0
+      },
+      "mono_over_addslot_held": 0.809
+    },
+    "4302": {
+      "mono": {
+        "seen_mse": 0.0,
+        "held_mse": 0.0593,
+        "held_over_seen": 59300.0
+      },
+      "addslot": {
+        "seen_mse": 0.0,
+        "held_mse": 0.1007,
+        "held_over_seen": 100700.0
+      },
+      "mono_over_addslot_held": 0.589
+    },
+    "4303": {
+      "mono": {
+        "seen_mse": 0.0,
+        "held_mse": 0.1417,
+        "held_over_seen": 141700.0
+      },
+      "addslot": {
+        "seen_mse": 0.0,
+        "held_mse": 0.1402,
+        "held_over_seen": 140200.0
+      },
+      "mono_over_addslot_held": 1.011
+    },
+    "4304": {
+      "mono": {
+        "seen_mse": 0.0001,
+        "held_mse": 0.1253,
+        "held_over_seen": 1253.0
+      },
+      "addslot": {
+        "seen_mse": 0.0,
+        "held_mse": 0.1214,
+        "held_over_seen": 121400.0
+      },
+      "mono_over_addslot_held": 1.032
+    },
+    "4305": {
+      "mono": {
+        "seen_mse": 0.0,
+        "held_mse": 0.0716,
+        "held_over_seen": 71600.0
+      },
+      "addslot": {
+        "seen_mse": 0.0002,
+        "held_mse": 0.0801,
+        "held_over_seen": 400.5
+      },
+      "mono_over_addslot_held": 0.894
+    }
+  },
+  "verdict": {
+    "per_seed": [
+      {
+        "seed": 7,
+        "addslot_ratio": 78200.0,
+        "mono_ratio": 63300.0,
+        "mono_vs_addslot_held": 0.809
+      },
+      {
+        "seed": 4302,
+        "addslot_ratio": 100700.0,
+        "mono_ratio": 59300.0,
+        "mono_vs_addslot_held": 0.589
+      },
+      {
+        "seed": 4303,
+        "addslot_ratio": 140200.0,
+        "mono_ratio": 141700.0,
+        "mono_vs_addslot_held": 1.011
+      },
+      {
+        "seed": 4304,
+        "addslot_ratio": 121400.0,
+        "mono_ratio": 1253.0,
+        "mono_vs_addslot_held": 1.032
+      },
+      {
+        "seed": 4305,
+        "addslot_ratio": 400.5,
+        "mono_ratio": 71600.0,
+        "mono_vs_addslot_held": 0.894
+      }
+    ],
+    "n_extrapolate(<=1.5)": 0,
+    "n_beats_mono(>=2x)": 0,
+    "oracle_ok": true,
+    "tier": "\ud83e\uddf1 FLOOR \u2014 additive-slot+consistency does NOT extrapolate under learned CE/MSE (slot identifiability destroyed; Lost-in-Latent-Space confirmed for anima trunk)"
+  }
+}
