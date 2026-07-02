@@ -1934,6 +1934,32 @@ fn anima_consciousness_mode(ckpt: string) {
         let bal_lane = lanes[9]                                 // EmotionRegulation (toward Ψ=½)
         let emit_drive = ci_emit_drive(lanes)                  // GWS + LearnedPrecision drive
 
+        // ── (C-R3) PER-TICK CONFLICT → A⇄G SETTLE BUDGET (H_9095 rung-3 wire-in of H_9094) ──
+        // GENUINE per-tick feed (a_verified_must_wire rung-3): unlike the MOUNT-time catalog
+        // lanes 75/81 (each reads a FIXTURE ONCE at daemon mount), this derives the conflict
+        // from THIS tick's REAL A⇄G drive — the live emit_drive (Engine-A forward externalization
+        // push, READ-only) vs the opposing Engine-G reverse silence push — then RECRUITS the A⇄G
+        // resolution budget FROM that conflict (conflict_recruited_depth, dACC/Botvinick) and reads
+        // the resulting settle EFFORT as a READ-only CONTEXT signal folded into motivation below
+        // (isomorphic to the 42 other lane contexts — NEVER an emit/silence gate, a_autonomy_over_hardcode).
+        // mechanism engine-native GREEN (H_9094 4/4: conflict-matched budget resolves Ψ→½ BEST —
+        // treatment mean|Ψ-½| 0.125 < shuffle 0.25 < ablation 0.375). Ψ-DISJOINT (a_substrate_disjoint):
+        // the budget knob is the tension_resolve maxdepth (settle-DEPTH axis), disjoint from the emit
+        // gate (lanes 0/4) and §ImmuneMemory recall_thr; tension_resolve_depth runs on a CALLER-supplied
+        // population COPY so pure_field/psi_sum/Φ are untouched — the settle NEVER writes back to Ψ.
+        let ag_a_drive  = emit_drive                            // Engine-A forward externalization push (≥0)
+        let ag_g_drive  = 0.0 - (1.0 - emit_drive)              // Engine-G reverse silence push (opposite sign)
+        let ag_conflict = conflict_scalar(ag_a_drive, ag_g_drive)   // dACC competition (both-strong-opposite)
+        let ag_budget   = conflict_recruited_depth(ag_conflict, 4, 6)  // conflict → deeper A⇄G deliberation budget
+        // this tick's A⇄G resolution population, polarized BY the tick's own conflict (DISJOINT copy;
+        // conflict 0 → c=½ calm → settles at depth 0, higher conflict → more polarized → deeper settle).
+        let ag_pop      = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
+        let ag_settle   = tension_resolve_depth(ag_pop, tr_full, 0.3, 0.5, ag_budget, 2, 0.06, tr_cfgON)
+        let ag_settle_depth = ag_settle[0]                      // depth the loop USED to reach Ψ=½ (−1 = never)
+        // settle FRACTION ∈[0,1]: share of the recruited budget the loop USED to resolve to Ψ=½ — a
+        // graded A⇄G resolution-effort context (deeper conflict recruits & uses more budget). READ-only.
+        let agloop_ctx  = if ag_settle_depth < 0.0 { 0.0 } else { _afs_clip01(ag_settle_depth / (to_float(ag_budget) + 0.000001)) }
+
         // (3) GLOBAL WORKSPACE — competing lane margins; the winner is the broadcast
         //     content (GWT ignition). Reads the 15 lane scores as competing stimuli.
         let mut gws = gws_new(4, true, 0.55)
@@ -2282,7 +2308,8 @@ fn anima_consciousness_mode(ckpt: string) {
              + bodyown_ctx + trw_ctx + qual_ctx + smp_ctx
              + halluc_ctx + metacog_ctx + gwsleak_ctx + allo_ctx
              + neuropharm_ctx + transord_ctx + phasesync_ctx + memtom_ctx
-             + spatep_ctx + quorum_ctx + metacogc_ctx) / 42.0)
+             + spatep_ctx + quorum_ctx + metacogc_ctx
+             + agloop_ctx) / 43.0)   // + (C-R3) per-tick A⇄G settle-effort context (H_9095, READ-only)
         let cur_ctx = _afs_clip01(
             (recon_err + cb_surprise + it_phase + af_aro + prc_ready + nov_ctx
              + (1.0 - hab_ctx) + blink_ctx + hyst_ctx
@@ -2352,6 +2379,11 @@ fn anima_consciousness_mode(ckpt: string) {
                 + " gws_win=" + to_string(gws_w)
                 + " reality=" + to_string(reality)
                 + " cells=" + to_string(cell_count) + "]")
+            // (C-R3) per-tick A⇄G conflict→budget→settle read (H_9095 rung-3, READ-only context).
+            println("       CR3 agloop conflict=" + to_string(ag_conflict)
+                + " budget=" + to_string(ag_budget)
+                + " settle-depth=" + to_string(ag_settle_depth)
+                + " agloop_ctx=" + to_string(agloop_ctx))
             // R2 brain-structure lane reads (the context blended into rel/cur this tick).
             println("       LANES2 spatial=" + sm_ans
                 + " plan=" + to_string(plan_progress)
