@@ -20,3 +20,6 @@ savant 골든존 inhibition(dp≈0.25)이 결합에 필요한 합성표현을 �
 ## 관련
 
 H_1821(HE metric) · H_1561 savant golden-zone(다른 축) · [[lit-binding-objective-external-arxiv]] NEW레버A · H_1840 γ
+
+## ⚠️ MEASUREMENT-INVALID (2026-07-02 H_6166)
+⚠️MEASUREMENT-INVALID(2026-07-02 H_6166): 이 verdict는 RANDOM operator-agnostic target cheap-gate 근거인데, random full-rank table은 held-out이 seen과 정보이론적 독립=학습불가(chance 천장)라 어떤 메커니즘도 통과 불가 → 이 FLOOR는 lever 부재 증거 아님(측정무효). H_6167: 재조합=task-structure-bound, operator 무관. 재조합-lever verdict로 인용 금지; 재측정은 structured target/실텍스트 generation-side.

@@ -1,0 +1,20 @@
+loaded clm d=3784 L=4 E=3 V=256
+feat cat done
+feat dog done
+feat king done
+feat queen done
+feat water done
+feat fire done
+feat music done
+feat science done
+feat love done
+feat money done
+feat child done
+feat doctor done
+
+[TEST1] concept-identity held-out acc=0.917 (chance=0.083); mean off-diag cosine=0.970
+
+[TEST2] structured recomb held-out (chance=0.167): REAL=0.583 RANDOM=0.583 SHUFFLE=0.583
+
+=== VERDICT ===
+SUBSTRATE CARRIES RECOMBINABLE STRUCTURE — real 303M penultimate features distinctly encode concepts (id-acc high) AND support held-out structured recombination >> chance. => real-text G1=0 is NOT a feature/substrate wall; it is a generation/metric issue (concepts are there, recombination works on the features). structure-aware.

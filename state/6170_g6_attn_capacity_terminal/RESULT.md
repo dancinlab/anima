@@ -1,4 +1,4 @@
-# H_6169 — G6 FALS attention-capacity: ENGINE-NATIVE TERMINAL + BGB validation
+# H_6170 — G6 FALS attention-capacity: ENGINE-NATIVE TERMINAL + BGB validation
 
 **tier:** 🧱 WALL — ENGINE-NATIVE TERMINAL (floor holds on the live core/ decode) · first real-303M end-to-end validation of the BGB injected-attention decode (#2714).
 **scope:** 303M h1129c ByteGPT (d1024·L24·H16·block512, base FROZEN) + N=2 injected gated BindAttn blocks, 600 steps, base frozen. Terminal read = `anima evaluate --py` (cli/evaluate.py, torch-free numpy through core/decode.py `_bg_apply_bind` BGB mouth).
@@ -28,7 +28,7 @@ The CAP×REG factorial (branch `g6-attn-capacity-campaign`, `state/6164_g6_atten
 | REG-on  N2 s7 (BGB)  | 🟢 PASS | 🔴 (bd=0) | 🔴 | 🟢 (fab .259) | 6 | **0** | 🔴 FAIL |
 | REG-off N2 s7 (BGB)  | 🟢 PASS | 🔴 (bd=0) | 🔴 | 🟢 (fab .286) | 6 | **0** | 🔴 FAIL |
 
-(G1 best_distinct: base=1, both injected=0. G6 distinct=6 (passes ≥5) but falsifiable=0 (fails ≥1) in ALL three — the FALS floor is universal. verbatim `state/verdicts/6169_g6_attn_capacity_terminal/H_6169.txt`.)
+(G1 best_distinct: base=1, both injected=0. G6 distinct=6 (passes ≥5) but falsifiable=0 (fails ≥1) in ALL three — the FALS floor is universal. verbatim `state/verdicts/6170_g6_attn_capacity_terminal/H_6170.txt`.)
 
 ## Comparison to the DIRECTIONAL torch read + verdict
 

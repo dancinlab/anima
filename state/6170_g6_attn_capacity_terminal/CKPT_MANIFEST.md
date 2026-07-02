@@ -1,4 +1,4 @@
-# H_6169 (attention-capacity terminal) ckpt manifest
+# H_6170 (attention-capacity terminal) ckpt manifest
 ## base ByteGPT (frozen h1129c 303M, d1024 L24 H16 block512)
 base_pt_sha256(aiden ~/g6_h6165/h1129c_chat.pt) = 4fcc2d6c9b3164f478139ffb148f484465b42fc339d630956e4ea0f90ec13f68
 base_bin_sha256(serialize, byte-identical aiden==summer) = 5c303f026f134e4bc4faf516ef5298bd26269e19693696a73a5058e6ffa5319e
