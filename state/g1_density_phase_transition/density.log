@@ -1,0 +1,12 @@
+device: cuda
+[oracle factored] held=40/40 (task compositionally learnable?)
+[density 5%] ntrain=18 seen=18/18 held=1/40 (2%)
+[density 10%] ntrain=36 seen=36/36 held=7/40 (18%)
+[density 20%] ntrain=72 seen=40/40 held=37/40 (92%)
+[density 40%] ntrain=144 seen=40/40 held=40/40 (100%)
+[density 80%] ntrain=288 seen=40/40 held=40/40 (100%)
+[shuffle d80] held=0/40 (should collapse to ~0 if real binding)
+
+=== VERDICT ===
+DENSITY PHASE-TRANSITION — held rises 1/40→40/40 with coverage density: combinatorial-coverage IS a G1 lever (data axis, DPI-exempt). 8-mech missed it (data-fixed).
+=== DONE ===
