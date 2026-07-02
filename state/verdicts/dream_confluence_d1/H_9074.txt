@@ -1,0 +1,9 @@
+PASS  F4_no_dream solo=0 bend (w_bent0 byte-identical to w_natural)
+PASS  F1_bend Δbend>0 vs no-dream & continuity self_cos(w_bent,w4)>=0.70
+PASS  F3_growth_dir gain_real>0 & gain_real>gain_shuffled
+PASS  F3b_saturated α=0.9 byte-identical to α=0.5 (bounded, not jump)
+PASS  F2_continuity AUROC_on>=0.90 & AUROC_off>=0.90 (bend keeps discriminator)
+PASS  F5_disjoint ci_emit_drive(lane0/4) byte-identical on/off
+PASS  F5_disjoint §ImmuneMemory recall_margin non-fab invariant on/off
+INFO  bend=0.010847281495852679 bend0=2.220446049250313e-16 cont(w_bent,w4)=0.94702948606301156 gain_real=0.12828070098476667 gain_shuf=0.060533942760731545 AUROC_off=1.0 AUROC_on=1.0 drive=0.566 margin=-0.15
+--- D1 CONFLUENCE engine-native smoke: 7 pass / 0 fail ---
