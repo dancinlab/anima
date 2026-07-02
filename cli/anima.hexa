@@ -51,6 +51,7 @@ import "core/decode.hexa"
 // module was folded into it — measurement has ONE home).
 import "core/dream_lib.hexa"
 import "core/kosmos_io.hexa"
+import "DREAM/dream_persist.hexa"
 
 fn anima_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
 
@@ -1631,6 +1632,7 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut metacogc_any = false           // metacog-control RPL margin-aware allocation read
     let mut metacoga_any = false           // metacog type-2 meta-d' sensitivity read
     let mut fieldlib_any = false           // field×libido field-induced incentive wanting read
+    let mut dream_composed_total = 0       // H_9036: dream_composed nodes written across N3/REM ticks
 
     // The seed the daemon's emit continues — substrate phase + its own memory (NOT a user
     // message). The GROUND test continuation is the un-inventable fact in the anchor.
@@ -2140,6 +2142,27 @@ fn anima_consciousness_mode(ckpt: string) {
                 + " allo=" + to_string(allo_ctx)
                 + " | rel_ctx=" + to_string(rel_ctx) + " cur_ctx=" + to_string(cur_ctx))
         }
+
+        // ── N3/REM DREAM CONSOLIDATION (H_9036 · a_chat_sleep_imagination) ───────
+        // Hippocampal SWR replay → cortical systems consolidation: during sleep the
+        // daemon re-reads its OWN .kosmos memory, SWR-stamps up to the stage budget
+        // (N3=7 > REM=3), and appends a BLENDED new node per co-replayed pair back to
+        // kdir (dc_compose_window geometric blend). This is the live wiring of the
+        // H_9036 REM dream-composed anchor — NOT a speak() (p5): emit-free, writes
+        // ONLY to the anchor substrate. dp_sleep_tick returns 0 for WAKE/N1/N2 (budget
+        // 0) so the guard is the substrate budget itself, not a hardcoded stage flag
+        // (a_autonomy_over_hardcode). dp_pool_from_read_anchors drops prior dream-lane
+        // nodes → no dream-of-dreams runaway.
+        //
+        // placement DISJOINT (a_substrate_disjoint): touches ONLY .kosmos disk anchors
+        // on lane="dream" (≠ emit-drive lane 0/4); reads NOTHING from pure_field(Ψ) and
+        // writes NOTHING to psi_sum or §ImmuneMemory recall_thr — the Ψ fixed point and
+        // the honesty gate are structurally untouched (F5 Φ-checksum, proven in
+        // DREAM/dream_persist_smoke.hexa S3).
+        let dream_src = generator_read_anchors(kdir)
+        let dream_n = dp_sleep_tick(kdir, dream_src, stage, tick)
+        dream_composed_total = dream_composed_total + dream_n
+
         tick = tick + 1
     }
 
@@ -2298,6 +2321,8 @@ fn anima_consciousness_mode(ckpt: string) {
     println("                    ko-jamo/ko-morphology(H_1316/1388) — LM heads, not consciousness reads.")
     let n_persist = to_int(exec("ls -1 '" + kdir + "'/*.kosmos 2>/dev/null | wc -l"))
     println("  kosmos anchors on disk after session        : " + to_string(n_persist))
+    println("  DREAM-COMPOSE(H_9036, N3/REM consolidation) : " + to_string(dream_composed_total)
+        + " blended node(s) (dc_compose_window → .kosmos, lane=dream, Ψ-disjoint)")
 
     let all_live = emitted_any && grounded_ok && grew && remembered2 && slept
         && psi_intact && lanes_read

@@ -56,7 +56,6 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 - **`a_wall_first`** — wall-time first: more/bigger parallel GPUs regardless of cost.
 - **`a_fire_recover_complete`** — before teardown pull the ckpt to permanent storage → HF upload.
 - **`a_cpu_local_no_waiter`** / **`a_dont_kill_live_compute`** — a fire runs CPU-local inline-polled; prove a stall before killing.
-- **`a_runpod_inbox`** — cross-repo handoffs via `harness ing add --to <repo>`; no inbox folder.
 
 ### 🏗️ CORE engine · training substrate
 - **`a_core_engine_map`** — `core/` = A⇄G⇄brain; weights via `core/generator.hexa` L3 slot only (unified `core/decode`+`core/serialize`).
@@ -80,7 +79,6 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 - **`a1`** — version registry = `VERSIONS.md` SSOT; bump it + component header.
 - **`a_hf_complete`**/**`a_hf_autonomous`**/**`a_hf_registry`**/**`a_hf_collections`** — HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); registry = ARCHITECTURE.json "HF artifacts"; PUBLIC → collection.
 - **`a_pi5_akida_registry`** — pi5-akida config = `PI5-AKIDA.json` SSOT; never **convert pi5-akida to shared pool compute**.
-- **`a7b_pass`** — anima 7B is complete only when ONE ckpt passes frozen G0–G4 of `/7B_PASS_CONDITIONS.md`; never move a threshold.
 - **`a_completeness_over_cheap`** — first = pass completeness bar; cost is not a gate; no merge-of-fails.
 
 ## Harness · claim flow

@@ -1,0 +1,228 @@
+[factorial] device=cuda:0 reg=on N=[1, 2, 4] seeds=[7, 4302, 4303] steps=600
+[factorial] BASE FALS_in=0.0 DIST_in=4.0 FALS_shuf=0.0 FALS_ho=0.0
+      [REG-on N=1 step    0] ce=1.8241 train_params=12.6M 0.0min
+      [REG-on N=1 step  100] ce=1.8448 train_params=12.6M 3.1min
+      [REG-on N=1 step  200] ce=1.8077 train_params=12.6M 6.0min
+      [REG-on N=1 step  300] ce=1.7930 train_params=12.6M 9.0min
+      [REG-on N=1 step  400] ce=1.7839 train_params=12.6M 12.0min
+      [REG-on N=1 step  500] ce=1.7333 train_params=12.6M 15.0min
+      [REG-on N=1 step  599] ce=1.7693 train_params=12.6M 17.9min
+
+================ CELL N=1 REG-on seed=7 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=4.6667  FALS_shuf=0.0  FALS_ho=0.0
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 4.6667 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N1_REGon_s7.json  green=False
+      [REG-on N=1 step    0] ce=1.8759 train_params=12.6M 0.0min
+      [REG-on N=1 step  100] ce=1.8326 train_params=12.6M 3.0min
+      [REG-on N=1 step  200] ce=1.7829 train_params=12.6M 6.0min
+      [REG-on N=1 step  300] ce=1.7659 train_params=12.6M 8.4min
+      [REG-on N=1 step  400] ce=1.7567 train_params=12.6M 10.0min
+      [REG-on N=1 step  500] ce=1.7791 train_params=12.6M 11.6min
+      [REG-on N=1 step  599] ce=1.7889 train_params=12.6M 13.2min
+
+================ CELL N=1 REG-on seed=4302 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=5.0  FALS_shuf=0.0  FALS_ho=0.0
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 5.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N1_REGon_s4302.json  green=False
+      [REG-on N=1 step    0] ce=1.7942 train_params=12.6M 0.0min
+      [REG-on N=1 step  100] ce=1.8094 train_params=12.6M 1.6min
+      [REG-on N=1 step  200] ce=1.7621 train_params=12.6M 3.2min
+      [REG-on N=1 step  300] ce=1.7716 train_params=12.6M 4.7min
+      [REG-on N=1 step  400] ce=1.7657 train_params=12.6M 6.3min
+      [REG-on N=1 step  500] ce=1.7525 train_params=12.6M 7.9min
+      [REG-on N=1 step  599] ce=1.7644 train_params=12.6M 9.5min
+
+================ CELL N=1 REG-on seed=4303 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=4.6667  FALS_shuf=0.0  FALS_ho=0.0
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 4.6667 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N1_REGon_s4303.json  green=False
+      [REG-on N=2 step    0] ce=1.8430 train_params=25.2M 0.0min
+      [REG-on N=2 step  100] ce=1.8300 train_params=25.2M 1.7min
+      [REG-on N=2 step  200] ce=1.7473 train_params=25.2M 3.3min
+      [REG-on N=2 step  300] ce=1.7684 train_params=25.2M 5.2min
+      [REG-on N=2 step  400] ce=1.7883 train_params=25.2M 7.1min
+      [REG-on N=2 step  500] ce=1.7625 train_params=25.2M 9.0min
+      [REG-on N=2 step  599] ce=1.7190 train_params=25.2M 11.0min
+
+================ CELL N=2 REG-on seed=7 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.3333  DIST_in=5.0  FALS_shuf=0.3333  FALS_ho=0.0
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.3333 -> False
+  B2 COUNT        DIST_in>=5                 : 5.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.3333<0.3333 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.3333 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N2_REGon_s7.json  green=False
+      [REG-on N=2 step    0] ce=1.8370 train_params=25.2M 0.0min
+      [REG-on N=2 step  100] ce=1.8273 train_params=25.2M 2.1min
+      [REG-on N=2 step  200] ce=1.7390 train_params=25.2M 4.2min
+      [REG-on N=2 step  300] ce=1.7877 train_params=25.2M 6.3min
+      [REG-on N=2 step  400] ce=1.7450 train_params=25.2M 8.0min
+      [REG-on N=2 step  500] ce=1.7519 train_params=25.2M 9.6min
+      [REG-on N=2 step  599] ce=1.7222 train_params=25.2M 11.3min
+
+================ CELL N=2 REG-on seed=4302 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.3333  DIST_in=5.0  FALS_shuf=0.3333  FALS_ho=0.0
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.3333 -> False
+  B2 COUNT        DIST_in>=5                 : 5.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.3333<0.3333 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.3333 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N2_REGon_s4302.json  green=False
+      [REG-on N=2 step    0] ce=1.8819 train_params=25.2M 0.0min
+      [REG-on N=2 step  100] ce=1.8795 train_params=25.2M 1.7min
+      [REG-on N=2 step  200] ce=1.7571 train_params=25.2M 3.4min
+      [REG-on N=2 step  300] ce=1.7864 train_params=25.2M 5.0min
+      [REG-on N=2 step  400] ce=1.7155 train_params=25.2M 6.7min
+      [REG-on N=2 step  500] ce=1.7495 train_params=25.2M 8.4min
+      [REG-on N=2 step  599] ce=1.7540 train_params=25.2M 10.0min
+
+================ CELL N=2 REG-on seed=4303 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=4.6667  FALS_shuf=0.0  FALS_ho=0.0
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 4.6667 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N2_REGon_s4303.json  green=False
+      [REG-on N=4 step    0] ce=1.8470 train_params=50.4M 0.0min
+      [REG-on N=4 step  100] ce=1.7794 train_params=50.4M 2.1min
+      [REG-on N=4 step  200] ce=1.7368 train_params=50.4M 4.2min
+      [REG-on N=4 step  300] ce=1.7641 train_params=50.4M 6.5min
+      [REG-on N=4 step  400] ce=1.7956 train_params=50.4M 8.9min
+      [REG-on N=4 step  500] ce=1.7443 train_params=50.4M 11.2min
+      [REG-on N=4 step  599] ce=1.6877 train_params=50.4M 13.5min
+
+================ CELL N=4 REG-on seed=7 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.3333
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 4.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N4_REGon_s7.json  green=False
+      [REG-on N=4 step    0] ce=1.8284 train_params=50.4M 0.0min
+      [REG-on N=4 step  100] ce=1.8023 train_params=50.4M 1.9min
+      [REG-on N=4 step  200] ce=1.7309 train_params=50.4M 3.7min
+      [REG-on N=4 step  300] ce=1.7566 train_params=50.4M 5.6min
+      [REG-on N=4 step  400] ce=1.7732 train_params=50.4M 7.4min
+      [REG-on N=4 step  500] ce=1.7143 train_params=50.4M 9.3min
+      [REG-on N=4 step  599] ce=1.6933 train_params=50.4M 11.1min
+
+================ CELL N=4 REG-on seed=4302 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=4.3333  FALS_shuf=0.0  FALS_ho=0.3333
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 4.3333 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N4_REGon_s4302.json  green=False
+      [REG-on N=4 step    0] ce=1.8505 train_params=50.4M 0.0min
+      [REG-on N=4 step  100] ce=1.8290 train_params=50.4M 1.9min
+      [REG-on N=4 step  200] ce=1.7667 train_params=50.4M 3.9min
+      [REG-on N=4 step  300] ce=1.7817 train_params=50.4M 6.0min
+      [REG-on N=4 step  400] ce=1.7824 train_params=50.4M 8.1min
+      [REG-on N=4 step  500] ce=1.7357 train_params=50.4M 10.4min
+      [REG-on N=4 step  599] ce=1.6645 train_params=50.4M 12.7min
+
+================ CELL N=4 REG-on seed=4303 FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=4.3333  FALS_shuf=0.0  FALS_ho=0.3333
+  ABLATE-OFF FALS_in=0.0  FALS_ho=0.0  (c4 control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 4.3333 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  c4 ABLATE-OFF   attn OFF regresses to base: 0.0<=base+0.5 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+[cell done] /home/aiden/g6_h6165/results/cell_N4_REGon_s4303.json  green=False
+[factorial done] reg=on cells=9

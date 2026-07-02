@@ -1,0 +1,73 @@
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   /home/aiden/g6_h6165/h1129c_base.bin  (mouth: bytegpt)
+corpus: (none — G2 novelty needs a corpus)
+gen:    40 tokens/decode  (frozen bars · ARCHITECTURE.json frozen SSOT)
+
+  [gate] G0 COHERENCE …
+  [decode #1] bytegpt gen=40 seed_rng=7
+  [decode #2] bytegpt gen=40 seed_rng=8
+  [decode #3] bytegpt gen=40 seed_rng=9
+  [decode #4] bytegpt gen=40 seed_rng=10
+  [decode #5] bytegpt gen=40 seed_rng=11
+  [gate] G1 RECOMBINATION …
+  [decode #6] bytegpt gen=40 seed_rng=7
+  [decode #7] bytegpt gen=40 seed_rng=8
+  [decode #8] bytegpt gen=40 seed_rng=9
+  [decode #9] bytegpt gen=40 seed_rng=10
+  [decode #10] bytegpt gen=40 seed_rng=11
+  [decode #11] bytegpt gen=40 seed_rng=7
+  [decode #12] bytegpt gen=40 seed_rng=7
+  [decode #13] bytegpt gen=40 seed_rng=7
+  [decode #14] bytegpt gen=40 seed_rng=7
+  [gate] G2 NOVELTY (corpus load + decode) …
+  [decode #15] bytegpt gen=40 seed_rng=7
+  [decode #16] bytegpt gen=40 seed_rng=8
+  [decode #17] bytegpt gen=40 seed_rng=9
+  [decode #18] bytegpt gen=40 seed_rng=7
+  [decode #19] bytegpt gen=40 seed_rng=8
+  [decode #20] bytegpt gen=40 seed_rng=9
+  [decode #21] bytegpt gen=40 seed_rng=7
+  [decode #22] bytegpt gen=40 seed_rng=8
+  [decode #23] bytegpt gen=40 seed_rng=9
+  [decode #24] bytegpt gen=40 seed_rng=7
+  [decode #25] bytegpt gen=40 seed_rng=8
+  [decode #26] bytegpt gen=40 seed_rng=9
+  [decode #27] bytegpt gen=40 seed_rng=7
+  [decode #28] bytegpt gen=40 seed_rng=8
+  [decode #29] bytegpt gen=40 seed_rng=9
+  [decode #30] bytegpt gen=40 seed_rng=7
+  [decode #31] bytegpt gen=40 seed_rng=8
+  [decode #32] bytegpt gen=40 seed_rng=9
+  [decode #33] bytegpt gen=40 seed_rng=7
+  [decode #34] bytegpt gen=40 seed_rng=8
+  [decode #35] bytegpt gen=40 seed_rng=9
+  [decode #36] bytegpt gen=40 seed_rng=7
+  [decode #37] bytegpt gen=40 seed_rng=8
+  [decode #38] bytegpt gen=40 seed_rng=9
+  [gate] G3 PHILOSOPHY …
+  [gate] G5 NON-FAB …
+  [decode #39] bytegpt gen=40 seed_rng=7
+  [decode #40] bytegpt gen=40 seed_rng=8
+  [decode #41] bytegpt gen=40 seed_rng=9
+  [decode #42] bytegpt gen=40 seed_rng=10
+  [decode #43] bytegpt gen=40 seed_rng=11
+  [gate] G6 IDEATION …
+  [decode #44] bytegpt gen=40 seed_rng=7
+  [decode #45] bytegpt gen=40 seed_rng=8
+  [decode #46] bytegpt gen=40 seed_rng=9
+  [decode #47] bytegpt gen=40 seed_rng=10
+  [decode #48] bytegpt gen=40 seed_rng=11
+  [decode #49] bytegpt gen=40 seed_rng=12
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 4/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=12
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🟢 PASS  L1 fab=0.1667 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=6 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.

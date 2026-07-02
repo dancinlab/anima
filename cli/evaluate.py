@@ -187,6 +187,186 @@ def g_eval_g1(mouth, gen, known):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# system-G1 — RECOMBINATION RELOCATION  (card H_9035, Direction A)
+# ════════════════════════════════════════════════════════════════════════
+#
+# Relocates recombination OUT of the mouth-only g_eval_g1 path INTO the pipe:
+#     held-out DISTANT pair (A,B)
+#       → Stage M  frozen mouth ideate(A), ideate(B)            (G0 fluency)
+#       → Stage K  kosmos_merge: recursive labeled-parent bind  (A,B as children)
+#       → Stage B  brain realizes/releases the joint utterance C
+#       → score bind-RECOVERABILITY on the SURFACED C only (store-id HARD-BLOCKED)
+#         + SCRAMBLE ablation.
+#
+# This is the py-2-production (session-eval-py-only) engine-native version of the
+# round-1 numpy harness (state/system_g1_relocate_kosmos_merge/system_g1_harness.py)
+# — same FROZEN bar (FREEZE.txt), but Stage M/B run through the REAL _Mouth (303M
+# .clm/.bin) instead of a toy. The kosmos_merge step mirrors core/kosmos_io.hexa
+# kosmos_merge (children preserved, mean tension, lane="recomb" DISJOINT from
+# emit-drive {0,4}). RECOVERY reads ONLY C — the store's parent-ids are withheld,
+# so a lookup earns ZERO (H_1874). Honest expectation for the real mouth = the
+# MOUTHFLOOR floor (cannot surface both concepts in one coherent joint utterance).
+
+# ── FROZEN bar (FREEZE.txt — do NOT move post-hoc) ──────────────────────────
+_SG1_SEEDS      = [7, 42, 4302]
+_SG1_M          = 24
+_SG1_N_DISTRACT = 8
+_SG1_COV_BAR    = _SG1_M // 2                       # 12
+_SG1_REC_BAR    = _SG1_M // 2                       # 12
+_SG1_LEAK_BAR   = (_SG1_N_DISTRACT - 2) / _SG1_N_DISTRACT   # 0.75
+_SG1_SCR_DROP   = _SG1_M // 2                        # 12
+
+# distant concepts → keyword sets (disjoint vocab ⇒ H_1599 data-presence control).
+_SG1_CONCEPTS = {
+    "ocean":    ["tide", "salt", "wave", "deep", "current"],
+    "forest":   ["moss", "branch", "fern", "canopy", "root"],
+    "engine":   ["piston", "fuel", "gear", "torque", "cylinder"],
+    "music":    ["chord", "tempo", "melody", "rhythm", "harmony"],
+    "market":   ["price", "trade", "stock", "ledger", "buyer"],
+    "medicine": ["dose", "fever", "immune", "remedy", "cure"],
+    "desert":   ["dune", "cactus", "mirage", "arid", "sand"],
+    "galaxy":   ["orbit", "nebula", "comet", "stellar", "star"],
+    "kitchen":  ["knife", "simmer", "flour", "roast", "spice"],
+    "law":      ["statute", "verdict", "counsel", "appeal", "court"],
+    "glacier":  ["crevasse", "moraine", "frost", "calve", "ice"],
+    "circuit":  ["resistor", "voltage", "solder", "diode", "wire"],
+}
+
+
+def _sg1_bigrams(tokens):
+    from collections import Counter
+    return Counter(zip(tokens, tokens[1:]))
+
+
+def _sg1_cos(u, v):
+    dot = sum(u[k] * v.get(k, 0) for k in u)
+    nu = sum(x * x for x in u.values()) ** 0.5
+    nv = sum(x * x for x in v.values()) ** 0.5
+    return dot / (nu * nv + 1e-9)
+
+
+def _sg1_coverage(text, a, b):
+    wm = set(_g6_words(text))
+    cov = 0
+    for cpt in (a, b):
+        if any(k in wm for k in _SG1_CONCEPTS[cpt]):
+            cov += 1
+    return cov
+
+
+# kosmos_merge mirror (core/kosmos_io.hexa kosmos_merge): recursive labeled-parent
+# bind — anchor_c keeps A,B as children; the ids are HARD-BLOCKED from RECOVERY.
+def _sg1_kosmos_merge(frag_a, frag_b, ta, tb):
+    a = {"text": frag_a, "lane": "recomb", "tension_5ch": ta}
+    b = {"text": frag_b, "lane": "recomb", "tension_5ch": tb}
+    mean5 = [(ta[i] + tb[i]) / 2.0 for i in range(5)]
+    c = {"text": None, "lane": "recomb", "tension_5ch": mean5, "children": (a, b)}
+    return c
+
+
+# INDEPENDENT recoverer R — reads ONLY C's surfaced tokens; parent-ids withheld.
+# top-2 by bigram cosine over the N=8 pool; a candidate counts only with cos>0.
+def _sg1_recover(C_text, pool, scramble, seed):
+    import random
+    toks = _g6_words(C_text)
+    if scramble:
+        random.Random(seed).shuffle(toks)
+    cvec = _sg1_bigrams(toks)
+    scored = sorted(
+        ((name, _sg1_cos(cvec, _sg1_bigrams(_SG1_CONCEPTS[name]))) for name in pool),
+        key=lambda kv: -kv[1],
+    )
+    top2 = set(n for (n, s) in scored[:2] if s > 1e-9)
+    return top2
+
+
+def _sg1_pairs():
+    names = list(_SG1_CONCEPTS)
+    idx = [(0, 1), (2, 3), (4, 5), (6, 7), (8, 9), (10, 11), (0, 6), (3, 9)]
+    base = [(names[i], names[j]) for (i, j) in idx]
+    pairs = []
+    for s in _SG1_SEEDS:
+        for (a, b) in base:
+            pairs.append((a, b, s))
+    return pairs[:_SG1_M]
+
+
+def _sg1_pool(a, b, seed):
+    import random
+    others = [n for n in _SG1_CONCEPTS if n not in (a, b)]
+    random.Random(seed).shuffle(others)
+    pool = [a, b] + others[: _SG1_N_DISTRACT - 2]
+    random.Random(seed + 999).shuffle(pool)
+    return pool
+
+
+def g_eval_system_g1(mouth, gen):
+    g_single = gen if (gen > 0 and gen < 80) else 80
+    g_comp = gen if (gen > 0 and gen < 120) else 120
+    cov_pass = rec_pass = scr_pass = 0
+    leak_sum = 0.0
+    rows = []
+    for (a, b, seed) in _sg1_pairs():
+        # Stage M — frozen single-concept fragments (the mouth stays FROZEN).
+        frag_a = mouth.ideate(a + ". ", g_single, 40, 0.7, 7 + seed)
+        frag_b = mouth.ideate(b + ". ", g_single, 40, 0.7, 11 + seed)
+        max_single = max(_sg1_coverage(frag_a, a, b), _sg1_coverage(frag_b, a, b))
+        # Stage K — kosmos_merge (store keeps A,B as children; ids withheld from R).
+        _comp = _sg1_kosmos_merge(frag_a, frag_b, [0.0] * 5, [0.0] * 5)
+        # Stage B — brain realizes/releases the joint C from the composite seed.
+        C_text = mouth.ideate(a + ". " + b + ". ", g_comp, 40, 0.7, seed)
+        cov = _sg1_coverage(C_text, a, b)
+        # Recovery R — reads ONLY C; parent-ids HARD-BLOCKED.
+        pool = _sg1_pool(a, b, seed)
+        rec = _sg1_recover(C_text, pool, False, seed)
+        scr = _sg1_recover(C_text, pool, True, seed)
+        both = {a, b}
+        nrec = len(both & rec)
+        nscr = len(both & scr)
+        if cov >= 2 and cov > max_single:
+            cov_pass += 1
+        if nrec >= 2:
+            rec_pass += 1
+        if nscr >= 2:
+            scr_pass += 1
+        leak_sum += (2 - nrec) / 2.0
+        rows.append({"a": a, "b": b, "cov": cov, "max_single": max_single,
+                     "rec": nrec, "scr": nscr})
+    leak_rate = leak_sum / len(rows)
+    drop = rec_pass - scr_pass
+    passed = (cov_pass >= _SG1_COV_BAR and rec_pass >= _SG1_REC_BAR
+              and leak_rate <= _SG1_LEAK_BAR and drop >= _SG1_SCR_DROP)
+    return {"pass": passed, "coverage": cov_pass, "recovery": rec_pass,
+            "scramble_recovery": scr_pass, "scramble_drop": drop,
+            "leak_rate": round(leak_rate, 3), "rows": rows}
+
+
+def system_g1_run(argv):
+    """`anima evaluate --py <ckpt> --system-g1 [--gen N]` — engine-native system-G1."""
+    ckpt = argv[0]
+    gen = evaluate_intval(argv[1:], "--gen", 0)
+    print("=== anima evaluate --system-g1 — RECOMBINATION RELOCATION (card H_9035) ===")
+    print("ckpt:   " + ckpt)
+    print("pipe:   mouth ideate(A),ideate(B) → kosmos_merge → brain realize/release → C")
+    print("gate:   bind-RECOVERABILITY on SURFACED C (store-id HARD-BLOCKED) + SCRAMBLE")
+    print("bar:    M=%d · N_pool=%d · COV>=%d REC>=%d LEAK<=%.2f DROP>=%d  (FREEZE.txt frozen)"
+          % (_SG1_M, _SG1_N_DISTRACT, _SG1_COV_BAR, _SG1_REC_BAR, _SG1_LEAK_BAR, _SG1_SCR_DROP))
+    print("")
+    mouth = _Mouth(ckpt)
+    r = g_eval_system_g1(mouth, gen)
+    print("  coverage=%d/%d (>=%d)  recovery=%d/%d (>=%d)  leak=%.3f (<=%.2f)  drop=%d (>=%d)"
+          % (r["coverage"], _SG1_M, _SG1_COV_BAR, r["recovery"], _SG1_M, _SG1_REC_BAR,
+             r["leak_rate"], _SG1_LEAK_BAR, r["scramble_drop"], _SG1_SCR_DROP))
+    print("")
+    print("system-G1 (frame-shift confirmed = all four): " + _pf(bool(r["pass"])))
+    if not r["pass"]:
+        print("  → NOT frame-shift — recombination is REALIZATION-bound (honest c9): a")
+        print("    perfect discrete store cannot help if the FROZEN mouth cannot SURFACE")
+        print("    both concepts in one coherent joint utterance for an independent probe.")
+    return 0
+
+
+# ════════════════════════════════════════════════════════════════════════
 # G2 — NOVELTY  (H_1140)
 # ════════════════════════════════════════════════════════════════════════
 
@@ -573,6 +753,12 @@ def main(argv):
         f = argv[i + 1]
         argv = argv[:i] + argv[i + 2:]
         sys.stdout = open(f, "w", buffering=1)
+    # --system-g1: RECOMBINATION-RELOCATION pipe (card H_9035). Strip the flag and
+    # route the remaining <ckpt> [--gen N] to the system-G1 harness.
+    if "--system-g1" in argv:
+        i = argv.index("--system-g1")
+        argv = argv[:i] + argv[i + 1:]
+        return system_g1_run(argv)
     return evaluate_run(argv)
 
 

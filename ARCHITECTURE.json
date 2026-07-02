@@ -488,7 +488,7 @@
                 "name": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-decode-hexa-bytegpt-decode",
-                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6). PARITY NOTE: BGB is on the decode.py mirror only — decode.hexa BGB support is a wire-in follow-on (a_engine_native_learning: --py is TERMINAL-eligible so scoring holds; the hexa mirror lags)."
+                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring."
               }
             ]
           },
@@ -1827,6 +1827,30 @@
                             "detail": "F1 continuity·F2 impostor-AUROC(chain≫single)·F3 ablation·F5 retrodiction monotone·F6 round-trip byte-identical(H_1204). ENGINE-NATIVE smoke=engine_cli_smoke 420-425 + selfchain_smoke.hexa(6/6, AUROC chain=1.0 vs single=0.28). scope: drift=deterministic SATURATED."
                           },
                           {
+                            "name": "SelfChain — F4 real-disk .kosmos 영속 (2-process cold-load)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-selfchain-b2d",
+                            "detail": "F4 실디스크 .kosmos 영속 COMPLETE: f4_write.hexa(create_anchor) → fresh 프로세스 f4_reload.hexa(load_anchors cold-load) 4/4 PASS — F4a 연속성·F4b fidelity 1.11e-16+판별자생존·F4d byte-identical 2nd-pass fixed-point 0.0·F4c no-anchor=LLM reset. driver-배선(self_chain_* accessor+kosmos_io CALL-only, core 편집 0)."
+                          },
+                          {
+                            "name": "MetacogAbstain(novelty-gated 정직 abstention feeling-of-knowing, B④ H_9040)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-metacog-abstain-b4",
+                            "detail": "MetacogAbstain(B④ novelty-gated honest abstention, live core/engine_cli.hexa §MetacogAbstain — 정직 'I don't know'=RLHF refusal(p6) 아닌 §Novelty lane(vadapt_field_recon_err=JOINT L2 GLOBAL novelty) 기하 창발. ops metacog_novelty/_marginal_dist/_fok/_abstain/_auroc."
+                          },
+                          {
+                            "name": "MetacogAbstain — H_1142 재발 아님(signal-choice 축분리)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-metacog-abstain-b4a",
+                            "detail": "H_1142 🔴 DISSOCIATION 은 SIGNAL CHOICE 오류(next-byte entropy=LOCAL predictability, F1 AUROC 0.436 INVERTED). joint recon-err 로 축 분리(a_break_the_wall type-b), NOT tune-to-green. G1 축과 직교(측정=substrate state, decode 재조합 아님)."
+                          },
+                          {
+                            "name": "MetacogAbstain — falsifiers F1-F4 · engine-native smoke",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-metacog-abstain-b4b",
+                            "detail": "smoke=core/metacog_abstain_smoke.hexa 4/4 PASS(live vadapt_field mitosis manifold): F1 novelty AUROC=1.0(≥0.70, H_1142 0.436 반전)·F2 entropy-analog(marginal)=0.556≪novelty(같은입력, signal choice)·F3 untrained(1 cell)=0.5(≤0.60 붕괴)·F4 recall_thr non-fab Δ=0 ∧ Ψ emit-drive Δ=0."
+                          },
+                          {
                             "name": "Ψ-disjoint NOT emit gate)/LearnedPrecision(경험으로 학습되는 예측확신: learned_precision (+s…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-41",
@@ -2941,10 +2965,42 @@
                                 "detail": ".hexa F1/F3/F4/F5 5/5 PASS: F1 pre5→post15(new10) · F3 cos(new,parent)=0.707<1 & shuffle→0.5(payload-dependent) · F4 solo=0·N3_new=10>REM_new=3(budget 자연ordering) · F5 Ψ=0.5 불변."
                               },
                               {
-                                "name": "STATUS DIRECTIONAL / UNWIRED (c9)",
+                                "name": "STATUS WIRED-live (daemon N3/REM tick landed · codegen-clean · c9)",
                                 "role": "",
                                 "id": "a-g-dream-compose-status",
-                                "detail": "probe-level pure 모듈; blend=설계된 geometric law(학습 의미통찰 아님), coord-space 의미정렬 toy scope UNVERIFIED. live core/ 배선·daemon N3/REM tick·.kosmos disk write = explicit-go follow-on. DREAM chain import(WAKE/memory·dream_lib)은 archive 재구성으로 orphaned."
+                                "detail": "UNWIRED→WIRED-live(2026-07-02, B①): dream_persist.hexa 가 dc_compose_window 를 live daemon(cli/anima.hexa tick loop) N3/REM 에 배선. blend=geometric law(의미정렬 toy UNVERIFIED). imagination_replay.hexa 는 orphaned — live sleep path 는 dream_persist seam."
+                              },
+                              {
+                                "name": "증거 + 잔여 infra 벽 (anima-hexa-1)",
+                                "role": "",
+                                "id": "a-g-dream-compose-evidence",
+                                "detail": "증거: dream_persist_smoke.hexa 5/5 PASS(S5=real load_anchors 위 dp_sleep_tick) + 배선 anima.hexa C-codegen 통과(내 심볼 14×·관련 error 0). 잔여: native-link 는 stale-hexat 벽(set_deterministic/forge carrier 부재)→현행-hexa 호스트 필요. daemon session run(303M ckpt)=explicit-go follow-on."
+                              }
+                            ]
+                          },
+                          {
+                            "name": "DREAM/dream_persist.hexa — LIVE N3/REM sleep-tick bridge (dc_compose_window → .kosmos)",
+                            "role": "dream-consolidation-live-seam",
+                            "id": "a-g-consciousness-engine-dream-persist-live-seam-b1",
+                            "detail": "H_9036 순수 blend 층(dream_compose)을 live daemon 의 sleep tick 에 잇는 seam. import core/kosmos_io.hexa + DREAM/dream_compose.hexa. cli/anima.hexa 와 dream_persist_smoke.hexa 가 같은 함수(dp_sleep_tick)를 호출 — 스모크가 곧 live seam 증명. 해마 SWR replay→피질 systems consolidation 생물렌즈.",
+                            "children": [
+                              {
+                                "name": "pub surface: dp_mark_replayed · dp_persist_sleep_replay · dp_pool_from_read_anchors · dp_sleep_tick",
+                                "role": "",
+                                "id": "a-g-dream-persist-surface",
+                                "detail": "dp_mark_replayed=SWR stamp(N3=7>REM=3>else 0) · dp_persist_sleep_replay=dc_compose_window blend→create_anchor(lane=dream,kind=dream_composed,cross_link=parent_a+parent_b) · dp_pool_from_read_anchors=load_anchors→dc schema(lane=dream 제외) · dp_sleep_tick=daemon 한-콜(budget<=0→0)."
+                              },
+                              {
+                                "name": "daemon 배선 지점 (cli/anima.hexa)",
+                                "role": "",
+                                "id": "a-g-dream-persist-daemon-seam",
+                                "detail": "import 'DREAM/dream_persist.hexa'(L54). anima_consciousness_mode tick loop 끝(tick++ 직전): dream_src=generator_read_anchors(kdir); dp_sleep_tick(kdir,dream_src,stage,tick)→dream_composed_total. stage=dr_stage_at(tick*8). budget 자체가 게이트(hardcode stage flag 아님=a_autonomy_over_hardcode)."
+                              },
+                              {
+                                "name": "placement DISJOINT (a_substrate_disjoint · placement-first)",
+                                "role": "",
+                                "id": "a-g-dream-persist-disjoint",
+                                "detail": "ONLY .kosmos disk anchor(lane=dream ≠ emit-drive 0/4)에만 write. pure_field(Ψ) import 0·Ψ 인자/반환 0 · psi_sum write 0 · §ImmuneMemory recall_thr 미접촉. F5 Φ-checksum: dream_persist_smoke S3 에서 pure_field Φ persist 전/후 byte-identical(0.0034827611721471765) 실측 — Ψ 고정점·정직성 게이트 구조적 미접촉."
                               }
                             ]
                           },
@@ -3545,6 +3601,32 @@
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-kosmos-io-single-kosmos-anchor-entr-2",
                 "detail": "the only .kosmos anchor entry; read into brain_decide. Long-term declarative memory."
+              },
+              {
+                "name": "kosmos_merge (recursive labeled-parent bind — system-G1 relocation, H_9035)",
+                "role": "",
+                "id": "a-g-consciousness-engine-core-substrate-only-kosmos-io-single-kosmos-anchor-entr-kosmos-merge",
+                "detail": "",
+                "children": [
+                  {
+                    "name": "op",
+                    "role": "",
+                    "id": "a-g-cons-kosmos-merge-op",
+                    "detail": "fn kosmos_merge(anchor_a, anchor_b) -> anchor_c — binds two anchors into a composite C preserving a,b as children; tension_5ch = element-wise mean of parents, embedding = tension_5ch_to_embedding(mean) reuse (C retrievable via retrieve), coord = parent midpoint, lane='recomb'. ADDITIVE new fn (shared with round-2 B2 agent — 3-way merge)."
+                  },
+                  {
+                    "name": "relocation + placement",
+                    "role": "",
+                    "id": "a-g-cons-kosmos-merge-placement",
+                    "detail": "relocates recombination OFF the fixed-dim mouth activation INTO the growing discrete persistent anchor store (a_substrate_disjoint). lane 'recomb' DISJOINT from emit-drive {0,4}; retrieval via kosmos_io retrieve, NOT immune_memory_recall/recall_thr."
+                  },
+                  {
+                    "name": "wired + evidence",
+                    "role": "",
+                    "id": "a-g-cons-kosmos-merge-wired",
+                    "detail": "wired: engine-native (rung 2/4). smoke = core/system_g1_smoke.hexa (hexa run exit0: children preserved · mean t · midpoint coord · retrieve reuse · discriminator COMPOSITIONAL PASS / MOUTHFLOOR FAIL). py path = cli/evaluate.py g_eval_system_g1 via `anima evaluate --py <clm> --system-g1`. final 🟢/🧱 = 303M frozen mouth on pool (explicit-go follow-on)."
+                  }
+                ]
               },
               {
                 "name": "status",
@@ -9254,7 +9336,7 @@
                   }
                 ],
                 "type": "gate",
-                "verdict": "🟠 DIRECTIONAL RE-FRAME (2026-07-02 H_6166+H_6167+H_6168; 근거 전부 toy+py-mirror=DIRECTIONAL, engine-native 아님 — a_engine_native_learning: 방향지시지 terminal 아님). G1 재조합은 substrate 능력부재로 단정 불가·오히려 반대 방향 증거: H_6166(numpy toy): 캠페인 cheap-gate가 RANDOM target을 써서 held-out이 정보이론적 학습불가(chance 천장)=옛 FLOOR(H_1840 γ·H_6164·H_6162·H_6161·H_1824) 측정무효. H_6167(numpy toy): STRUCTURED target서 plain trunk이 held-out 재조합 72-98%, 곱셈 operator는 +0.03 이하만 더함=재조합은 TASK-STRUCTURE-bound(operator 무관). H_6168(py-mirror DIRECTIONAL): 실 303M penultimate이 개념 distinct 인코딩(held-out id 0.917)=feature-degenerate 아님. ⇒ 실텍스트 G1=0(H_1218/clm303)은 하류 generation/metric 문제로 정합(가설). ⚠️ TERMINAL 전제 미충족: engine-native `.hexa` 실텍스트 G1 재측정이 되어야 🟢/🧱 승격. 옛 '🧱 axis-invariant FLOOR'·중간 '🟢 achievable' 둘 다 DIRECTIONAL 강등(verdict-tier-evidence-grade). follow-on=engine-native generation-side G1 elicit 재시험."
+                "verdict": "🟠 DIRECTIONAL RE-FRAME (2026-07-02 H_6166+6167+6168+6169+6171+6172; toy+py-mirror=DIRECTIONAL, engine-native 아님 — a_engine_native_learning). G1 재조합은 substrate 능력부재 아님 — 5각 수렴 + 실모델 확인: H_6166(RANDOM target=학습불가 아티팩트, 옛 FLOOR 측정무효)·H_6167(STRUCTURED서 plain trunk 재조합 72-98%, operator 무관)·H_6168(실 303M penultimate 개념 distinct id0.917)·H_6169(anima G1=generation-diversity 메트릭)·H_6171(generation 모달리티도 held-out 재조합 held/seen≈0.95). H_6172(실 303M canonical --py G0-G6): G0🟢coherent·G5🟢 이나 G1🔴(best_distinct=0/max_single=0)·G2🔴·G6🔴; 실텍스트=seed 개념 안이어받고 memorized 표류(단일도 coverage0, decode 조건화는 정상)=재조합 실패 아니라 생성이 프롬프트 안따름=generation-behavior/ckpt-quality(overfit drift). ⇒ 실텍스트 G1=0(H_1218/clm303)은 substrate/modality 아니라 training/objective/ckpt 문제 확정. 옛 axis-invariant-FLOOR 철회. TERMINAL 전제: 프롬프트-따르는 재학습(GPU, G1-NEXT-FINAL) 후 engine-native .hexa 재측정."
               },
               {
                 "name": "G2 NOVELTY",
@@ -12712,9 +12794,9 @@
       {
         "id": "system-g1-relocate-1",
         "state": "directional",
-        "value": "system-G1 재배치(Direction A): 재조합을 mouth-only 경로(g_eval_g1 @ cli/evaluate.py:155 = mouth.ideate 단독) 밖 kosmos-Merge(recursive labeled-parent bind)+brain vbasal-select 로 relocate. RUNNABLE numpy DIRECTIONAL 하네스(state/system_g1_relocate_kosmos_merge/system_g1_harness.py). 핵심 게이트=surfaced 출력 C 위 bind-RECOVERABILITY(merge-store 부모 id HARD-BLOCK, N=8 풀 top-2 복원)+SCRAMBLE 반-artifact 대조. toy 2-arm smoke: COMPOSITIONAL cov24/24 rec24/24 leak0.0 scramble-drop24 PASS · MOUTHFLOOR cov0 rec0 FAIL = HARNESS-VALID(composition 크레딧 ∧ mouth-floor 거부).",
-        "threshold": "DIRECTIONAL only(numpy toy, a_engine_native_learning) — 🟢/🧱 박제 불가. GREEN 은 rung(2)-(4): core/kosmos_io.hexa fn kosmos_merge + anima evaluate --system-g1 + 실제 303M frozen mouth on pool GPU(mini=OOM). placement=lane 'recomb' DISJOINT from emit-drive {0,4}, retrieve via kosmos_io.hexa:516(NOT immune_memory_recall/recall_thr). card UNIVERSE/cards/H_9035_system_g1_relocate_kosmos_merge.md.",
-        "source": "state/system_g1_relocate_kosmos_merge/system_g1_harness.py"
+        "value": "[rung 2/4 ENGINE-NATIVE 2026-07-02] system-G1 재배치(Direction A): 재조합을 mouth-only 경로(g_eval_g1 @ cli/evaluate.py:155) 밖 kosmos-Merge(recursive labeled-parent bind)+brain vbasal-select 로 relocate. rung 2 = live core/kosmos_io.hexa fn kosmos_merge + core/system_g1_smoke.hexa(hexa run exit0): children 보존·mean tension 0.65·midpoint coord·tension_5ch_to_embedding reuse→retrieve top-1 OK·판별기 COMPOSITIONAL PASS(cov4/4 rec4/4 drop4)/MOUTHFLOOR FAIL. rung 3 = cli/evaluate.py g_eval_system_g1 + `anima evaluate --py <clm> --system-g1` single-entry(stub-mouth py 판별 동일). numpy toy 하네스는 여전히 DIRECTIONAL.",
+        "threshold": "engine-native rung 2/4 WIRED이나 최종 🟢/🧱 는 실제 303M frozen mouth on pool GPU(mini=OOM)로만 성립(a_engine_native_learning·a_toy_scale_recheck) = explicit-go follow-on(미실행). placement=lane 'recomb' DISJOINT from emit-drive {0,4}, retrieve via kosmos_io.hexa retrieve(NOT immune_memory_recall/recall_thr). FREEZE.txt bar 불변. card UNIVERSE/cards/H_9035_system_g1_relocate_kosmos_merge.md.",
+        "source": "core/system_g1_smoke.hexa"
       },
       {
         "id": "jsonl-merge-dedup-1",
@@ -12722,42 +12804,6 @@
         "value": "append-only jsonl(HYPOTHESES/CHANGELOG) merge conflict를 union+last-wins dedup로 풀면, IN-PLACE로 edit한 line(예: verdict 승격)의 STALE 쪽이 조용히 남아 card/code/ARCHITECTURE와 drift(silent verdict drift). H_9038서 engine-native GREEN 승격이 옛 DIRECTIONAL로 되돌려짐(#2729), #2730서 교정.",
         "threshold": "재발조건: 같은 id line을 in-place 수정한 브랜치를 origin/main과 merge하며 jsonl 충돌을 union-resolve할 때. 해결: dedup은 last-wins 금지 — id별로 '내 브랜치(HEAD) 쪽'을 우선(ours) 또는 verdict/tier 최신성으로 명시 선택하고, merge 후 그 id의 tier/verdict가 card/ARCHITECTURE와 일치하는지 grep 확인(lockstep 재점검).",
         "source": "UNIVERSE/HYPOTHESES.jsonl"
-      }
-    ]
-  },
-  "results": {
-    "records": [
-      {
-        "id": "experiment-h-9025-g1-substrate-combiner-decoderfree-1",
-        "kind": "experiment",
-        "state": "in-prog",
-        "value": "Rung0 decoder-free numpy 하네스(shuffle-controlled, $0 mini, grep-clean, 3seed) DIRECTIONAL: M2-EARNED(right key ∧ wrong-key-fails) hrr_conv 34-35/40 key-locked vs additive 0/40(raw-recover 40/40 spoof 폭로) vs tensorproj 0/40; ablate_earned 0/40 all=op 인과. 계측QA≠G1 verdict(earned=STORAGE≠held-out recombination). cheap 델타 H_1840 FAIR gate 이미 측정-반증→numpy 재탕금지. 유일 미검=REAL 303M manifold TRAINED W_bind live VAdaptField 배선 후 decoder-free 재측정(Rung1 GPU cost-gated, prior LOW).",
-        "metric": "",
-        "subject": "H_9025 g1_substrate_combiner_decoderfree"
-      },
-      {
-        "id": "experiment-h-9026-g1-trained-bind-real-manifold-1",
-        "kind": "experiment",
-        "state": "neg-conv",
-        "value": "H_9025 Rung1 (H_9026) 🧱 DIRECTIONAL-FLOOR: REAL 303M manifold(clm303.clm trunk penultimate β vectors, byte-faithful numpy mirror of core/clm_decode._fwd_logits) + ACTUALLY-TRAINED W_bind(⊛ circular-conv, recomb-reward objective = predict manifold's own composed-phrase rep) + HELD-OUT recombination gate(34 concept × 500 pair 60/40, compose UNSEEN pairs = generalization not retrieval) + shuffle-controlled EARNED + trained-additive baseline + ablation + oracle. summer pool $0, pid236624, wall 82s. RESULT: oracle valid(best-arm train-fit≈0.99=task solvable), bind_pure−add Δ/seed=[0.12,0.12,0.08,0.07,0.09] · bind_open−add=[0.08,0.09,0.055,0.055,0.045] · n(Δ≥+0.15)=0/5 both · no_regress=True(bind soft-beats add 10/10 Δ>0이나 전 seed sub-threshold, H_6164 패턴 동일). trained multiplicative bind이 held-out recombination서 trained additive 못이김 = REAL trained manifold서도 FLOOR. 유일 genuinely-untried cell(H_1840 random-synthetic·untrained + H_6164 synthetic toy가 못덮음) 이제 real trained manifold서 측정 = G1 combination-operator 축 종결. prior LOW CONFIRMED(H_1840 FAIR gate + DPI meta-law). caveat: real penult manifold anisotropic(pr≈0.92·ps≈0.70 all arms)→absolute COMPOSE=0.30 trivial; discriminative=shuffle Δ(frozen-primary)=0/5. DIRECTIONAL(numpy/torch mirror, not engine-native terminal). Rung2 engine-native VAdaptField wire-in prior 더 낮아짐 → ING cost-gated.",
-        "metric": "held-out recombination: n(Δ≥+0.15)=0/5 (bind_open & bind_pure), no_regress=True, oracle train-fit≈0.99",
-        "subject": "H_9026 g1_trained_bind_real_manifold (H_9025 Rung1)"
-      },
-      {
-        "id": "experiment-h-9027-enriched-vadaptfield-pop-conj-1",
-        "kind": "experiment",
-        "state": "in-prog",
-        "value": "enriched 필드(분산 pop-code + key-locked HRR 접합) decoder-free: HELDOUT M2-EARNED ~90%(140-152/162) vs additive 0/162 = 현 8-D WTA 필드가 못하는 held-out 조합 통과(numpy DIRECTIONAL, ablate 0=op 인과). caveat: VSA 복원성이지 능력 아님(Rung1 H_9026 real-manifold recomb TASK floor 0/5). 복원성≠TASK. follow-on=core wire-in(prior LOW) or frame-shift C2.",
-        "metric": "",
-        "subject": "H_9027 enriched VAdaptField pop+conj"
-      },
-      {
-        "id": "experiment-h-9038-self-chain-informativeness-c2-1",
-        "kind": "experiment",
-        "state": "pos-conv",
-        "value": "ENGINE-NATIVE GREEN 승격(live core/engine_cli.hexa hexa run 4/4, $0 mini): self_drift_exp 배선(L7723 additive Ψ-disjoint). current self_drift 내용맹 A==B cos=1.000 확증 · enriched self_drift_exp 정보성 A≠B 0.407 · EARNED content-locking 0.996>0.407 · recognition restore=1.0/impostor=0. no-regression selfchain_smoke 6/6, ARCHITECTURE §SelfIdentity lockstep. DIRECTIONAL→engine-native(a_verified_must_wire 2→3→4). 남은칸=런타임 self-chain integration(lane-activity→self_drift_exp content, WIRED-live 최종 follow-on). 재조합축 이탈 재정의 능력='삶 축적'.",
-        "metric": "",
-        "subject": "H_9038 self-chain informativeness (C2)"
       }
     ]
   }
