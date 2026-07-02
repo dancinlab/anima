@@ -8948,6 +8948,83 @@ pub fn priming_facilitate(relatedness: float, prime_residual: float) -> float {
     return relatedness * prime_residual
 }
 
+// ── § ProspectiveIntention (H_PLACEHOLDER_N1) — 예기적 의도 / 지연-트리거 의도 (rostral PFC / BA10) ──
+// A future-directed intention is ENCODED now, held in SUSPENSION across a delay WITHOUT firing, and
+// RELEASED only when a matching context-cue later appears — the rostral-PFC / BA10 prospective-memory
+// faculty ("remember to do X when cue Y shows up"). DISTINCT from H_1282 working-memory (maintains the
+// CURRENT content, continuously accessible / decaying) and H_1471 self-continuity (a persisting IDENTITY
+// vector across sessions): prospective memory keeps a DEFERRED intention quiescent NOW and fires it at a
+// FUTURE cue — a different time-horizon (deferred vs current) with cue-gated release, not current-content
+// maintenance nor an identity chain. READ-only MEASUREMENT (returns activation numbers, is NOT an emit
+// gate — a_autonomy_over_hardcode); the release is a READ-only signal and the actual emit-wiring is a
+// FOLLOW-ON (core/emit_policy.hexa untouched here). Ψ-disjoint: touches NEITHER the emit-drive lanes 0/4
+// (ci_emit_drive) NOR the §ImmuneMemory recall_thr (a_substrate_disjoint) — a separate deferred-intention
+// lane coordinate (premature-emit=Ψ wobble H_1561 & recall coupling=non-fab pollution H_1576 both avoided
+// by placement). kosmos anchor can persist the suspended intention across a session boundary (a separate
+// store from recall_thr). Deterministic, exp-free, decode-orthogonal (measures substrate lane activation).
+//
+//   pm_retain(strength, delay_ticks, leak) — the intention strength STILL retained after `delay_ticks`
+//     of suspension. leak=0 → perfect maintenance (the PM property: an intention survives a long delay);
+//     a working-memory-style lane has HIGH leak and drops fast, the PM lane holds.
+pub fn pm_retain(strength: float, delay_ticks: int, leak: float) -> float {
+    let held = strength * (1.0 - leak * to_float(delay_ticks))
+    if held < 0.0 { return 0.0 }
+    return held
+}
+
+//   pm_release(retained, cue_match, lane_on) — the READ-only release / activation signal AT a cue.
+//     lane_on == false → 0.0 (ABLATION: PM-lane OFF → even a matching cue cannot release the intention).
+//     cue_match < CUE_THR → 0.0 (DISTRACTOR selectivity: a non-matching / shuffled cue does not release).
+//     matching cue (high affinity) → an activation SPIKE proportional to the retained intention.
+pub fn pm_release(retained: float, cue_match: float, lane_on: bool) -> float {
+    if !lane_on { return 0.0 }                       // PM-lane OFF (ablation) → no release at any cue
+    let cue_thr = 0.5
+    if cue_match < cue_thr { return 0.0 }            // non-matching cue → no release (selectivity)
+    return retained * cue_match                      // matching cue → release spike ∝ retained intention
+}
+
+//   pm_timecourse(strength, cue_onset, total_ticks, cue_match, lane_on, leak) — the intention-lane
+//     activation TIMECOURSE the cue-delay falsifier measures. Before `cue_onset` the intention is
+//     SUSPENDED → activation 0 (held, never fired = no premature emit → no Ψ perturbation, H_1561). At /
+//     after cue_onset the release spike appears (the value carried through the delay, cue-gated). ablation
+//     (lane_on false) or distractor (low cue_match) → an all-zero series (no spike at any tick).
+pub fn pm_timecourse(strength: float, cue_onset: int, total_ticks: int,
+                     cue_match: float, lane_on: bool, leak: float) -> [float] {
+    let mut out = []
+    let mut t = 0
+    while t < total_ticks {
+        if t < cue_onset {
+            out = out + [0.0]                        // suspended: held, not fired (no premature emit)
+        } else {
+            let retained = pm_retain(strength, cue_onset, leak)
+            out = out + [pm_release(retained, cue_match, lane_on)]
+        }
+        t = t + 1
+    }
+    return out
+}
+
+//   pm_wm_baseline(strength, tick, wm_leak) — the PARENT-CONTROL: a working-memory-style lane (H_1282)
+//     maintaining CURRENT content with continuous decay and NO cue-gated deferred release. Its activation
+//     is nonzero DURING the delay (content actively held) and simply decays — it never shows the
+//     flat-then-spike prospective signature. Dissociates PM (deferred, cue-released) from WM (current
+//     content, continuously accessible), the required parent-control contrast.
+pub fn pm_wm_baseline(strength: float, tick: int, wm_leak: float) -> float {
+    let a = strength * (1.0 - wm_leak * to_float(tick))
+    if a < 0.0 { return 0.0 }
+    return a
+}
+
+//   pm_lane_is_disjoint(lane) — 1 iff the deferred-intention lane coordinate is NEITHER emit-drive lane
+//     (0 nor 4, ci_emit_drive = 0.5·(lane0+lane4)) — so a PM release can never move ci_emit_drive and
+//     Ψ=½ is preserved BY CONSTRUCTION (H_1561 wobble avoided). recall_thr (§ImmuneMemory) is a separate
+//     store this lane never writes (H_1576 non-fab gate unaffected). placement-first disjointness check.
+pub fn pm_lane_is_disjoint(lane: int) -> int {
+    if lane == 0 { return 0 }                        // GlobalWorkspace ignition emit lane
+    if lane == 4 { return 0 }                        // Learned-Precision grounding emit lane
+    return 1
+}
+
 // ── § ConsciousnessIndex (H_1492 R2) — 연결된 의식-게이트 lane 들의 통합 의식 + ablation ──────────
 //
 // anima's consciousness-only gate lanes (G16..G31 + Novelty + MITOSIS) are all WIRED to the SAME
