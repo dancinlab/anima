@@ -1,0 +1,20 @@
+=== §ProspectiveIntention (N1) cue-delay falsifier — engine-native ===
+  tc(match)  = [0.0 0.0 0.0 0.0 0.0 1.0 1.0 1.0 1.0 1.0 ]
+  delay activation sum (want 0) = 0.0
+  retained at cue (want 1.0)    = 1.0
+PASS  F1 DELAY-MAINTENANCE (suspended & held)
+  release spike at cue (want>0.9) = 1.0
+PASS  F2 CUE-MATCH SPIKE
+  PM-lane OFF max activation (want 0) = 0.0
+PASS  F3 ABLATION (lane OFF → no release)
+  distractor cue max activation (want 0) = 0.0
+PASS  F4 DISTRACTOR-CONTROL (non-matching cue → no release)
+  WM baseline during delay (want>0) = 0.55
+  PM lane   during delay (want 0)   = 0.0
+PASS  F5 PARENT-CONTROL (WM held-decays vs PM suspended-then-spikes)
+  PM lane disjoint flag (want 1)      = 1.0
+  ci_emit_drive PM-OFF                = 0.5
+  ci_emit_drive PM-ON (lane7 fired)   = 0.5
+PASS  F6 Ψ-DISJOINT (emit-drive byte-identical PM-ON vs OFF)
+
+VERDICT: ENGINE-NATIVE SUPPORTED (6/6 falsifiers pass) — §ProspectiveIntention live

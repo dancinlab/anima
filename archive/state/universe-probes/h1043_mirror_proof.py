@@ -52,7 +52,7 @@ def main():
         phi = faithful_phi_prescreen(st, n, 2)
         write_state_file(path, f"mirror_n{n}", st)
         print(f"  [mirror_n{n}]  n={n} dim={DIM}  python_mirror_phi_EI={phi:.6f}")
-    print("now run: H1043_STATE=%s hexa run UNIVERSE/run_faithful_phi_1043.hexa" % path)
+    print("now run: H1043_STATE=%s hexa run HYPOTHESES/run_faithful_phi_1043.hexa" % path)
     print("PASS = stdlib terminal φ_EI == python mirror φ_EI (per n) to 6 dp.")
 
 

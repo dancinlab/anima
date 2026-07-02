@@ -60,7 +60,7 @@ Cohen's d is PAIRED on per-seed deltas (arms see the SAME stream per seed):
   POSITIVE when DERIVATIVE (1st arg) is BETTER (higher decode accuracy). We report
   d(DERIVATIVE, METRONOME) etc. so a POSITIVE d means derivative wins on decode.
 
-REUSE: the H_1160 4-gate mitosis substrate (UNIVERSE/h1160_derivative_gated_tick.py:
+REUSE: the H_1160 4-gate mitosis substrate (HYPOTHESES/h1160_derivative_gated_tick.py:
 prototype-split engine, budget-matched split clocks, MAX_CELLS scarce cap, the
 identical TEXT + recurring-regime AUDIO streams) + the clm-time-encoding
 stage-decode + recon-fidelity metric (CLM/bench/clm_time_encoding.py:

@@ -18,4 +18,4 @@
 ## 양방향 sibling
 
 - sibling paper: [PAPER/savant-iit4-bridge](../savant-iit4-bridge/PAPER.md) (H_636 closure-conjunction GZ-peak 공유 substrate)
-- SSOT: [UNIVERSE/UNIVERSE.md](../../UNIVERSE/UNIVERSE.md) — H_632–H_639 verdict 원본
+- SSOT: [HYPOTHESES/UNIVERSE.md](../../HYPOTHESES/UNIVERSE.md) — H_632–H_639 verdict 원본

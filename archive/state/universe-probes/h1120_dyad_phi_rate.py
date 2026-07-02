@@ -34,7 +34,7 @@ DESIGN (frozen before running, no goalpost moves)
 
 MIRROR DISCIPLINE (a_phi_iit4_tool — the H_1043 nats-bug lesson)
 ----------------------------------------------------------------
-BEFORE scoring: (1) live `hexa run UNIVERSE/h1012_ref_faithful.hexa` re-captures
+BEFORE scoring: (1) live `hexa run HYPOTHESES/h1012_ref_faithful.hexa` re-captures
 the LIVE stdlib faithful_phi refs at n=4, n=5 AND n=6 (the scoring n) and the
 CPU mirror must reproduce them verbatim; (2) h1012.prove_mirrors_at_n re-proves
 BOTH mirrors ≡ stdlib at n=4 AND n=5. ABORT if any proof fails. MI in BITS

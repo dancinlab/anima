@@ -109,7 +109,7 @@ def main():
     PILMAP = {
         "a_science":     ("(a) cross-disciplinary science", "Wikipedia + Gutenberg", "CC-BY-SA-4.0 / PUBLIC-DOMAIN"),
         "b_self":        ("(b) anima self-knowledge",       "anima repo docs",       "anima-authored"),
-        "c_hypothesis":  ("(c) UNIVERSE hypotheses",        "UNIVERSE/H_*.md distill","anima-authored"),
+        "c_hypothesis":  ("(c) UNIVERSE hypotheses",        "HYPOTHESES/H_*.md distill","anima-authored"),
         "d_dialogue":    ("(d) dialogue format",            "authored deterministic","anima-authored"),
     }
     for key in ["a_science", "b_self", "c_hypothesis", "d_dialogue"]:
@@ -151,7 +151,7 @@ def main():
     card.append("  covered by the Wikipedia probability / logic / self-reference titles.")
     card.append("- **(b)(c)(d) anima-authored self-corpus** — authored from the repo's own docs")
     card.append("  (README · CLAUDE.md · CORE/CORE.md · ENGINE+CLM+KOSMOS.md · HEXAD/KOSMOS.md) and")
-    card.append("  distilled from real `UNIVERSE/H_*.md` + `hypotheses_candidates/`. Deterministic")
+    card.append("  distilled from real `HYPOTHESES/H_*.md` + `hypotheses_candidates/`. Deterministic")
     card.append("  seed 20260605. Teaches anima ABOUT ITSELF + how it reasons — NOT cooperation/")
     card.append("  empathy/restraint templates (p6 held). Anti-register guard asserted: NO")
     card.append("  `[role:|[persona:|[character:|[assistant:|[system:` (grep=0), NO 'you are anima'.")

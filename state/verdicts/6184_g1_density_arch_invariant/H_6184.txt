@@ -1,0 +1,25 @@
+H_6184 — G1 조합-커버리지 밀도 lever = arch-무관 (dilated-conv RF 확장이 conv 벽 돌파), 자연어 byte
+fable(claude-fable-5, 자율 full-pipeline, $6.26, modelUsage 확증 opus폴백 아님) 독립 재현.
+raw: summer:~/g1full/ (torch DIRECTIONAL, RTX5070 cuda, $0 pool). H_6183 자매 확증.
+
+설계(meta.json): 24 attr, 60 held pair(영구미노출), 400 high-train(60% coverage) vs 40 low-train(8%),
+shuffle_map(400), 템플릿 pair→두 학습 속성 새 조합. 3000 step. seen-true / held / seen-shuffled-target 3중 채점.
+
+--- attn (RF-full, params 3.31M, 3000 step) ---
+HIGH : seen-true 1.000 | held 0.950
+LOW  : seen-true 1.000 | held 0.033   ← LOW seen=100% (properly trained) → held 3.3% = CLEAN floor
+SHUF : seen-true 0.000 | held 0.000 | seen-shuffled-target 0.750  ← 하네스가 shuffled 매핑은 학습(75%), true target held=0 진짜
+
+--- convd (DILATED conv, RF 확장, params 2.52M, 3000 step) = RF 벽 돌파 ---
+HIGH : seen-true 1.000 | held 0.850   ← dilated conv 로 conv 도 held-out 재조합 상전이(H_6183 plain conv RF=5 벽 INCONCLUSIVE 였던 것)
+LOW  : seen-true 1.000 | held 0.000
+SHUF : seen-true 0.000 | held 0.000 | seen-shuffled-target 0.933
+
+VERDICT: 🟢 COVERAGE LEVER = ARCH-INVARIANT (attn ∧ dilated-conv, torch DIRECTIONAL NL/byte).
+  커버리지 밀도가 held-out pair-특이 재조합을 attention 과 RF-확장 conv 둘 다에서 엶 (HIGH held 85-95% ≫ LOW 0-3.3%).
+  SHUF true-target 0% (하네스 seen-shuffled 75-93% 학습 = 유효, held=0 진짜 = 템플릿 아티팩트 아님).
+  RF 확장(dilated)이 conv 의 G1 벽을 깸 = G1G6-RF-EXPANSION follow-on 실증 (fable G6 RF 분석 합류).
+
+함의: G1 재조합벽은 trunk-objective TERMINAL 이 아니라 (a) 데이터-커버리지-밀도-bound + (b) 수용영역-bound.
+  → production 처방 2축: 조합-커버리지 설계 코퍼스 + 충분한 RF(depth/dilation).
+caveat: torch DIRECTIONAL(engine-native 아님), toy-NL byte 스케일, production .clm 임계위치 별도측정(a_toy_scale_recheck).

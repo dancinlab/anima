@@ -1,4 +1,4 @@
-// UNIVERSE/state/h250_nonpow2_lattice_persistence_2026_05_24/run_h250.hexa
+// HYPOTHESES/state/h250_nonpow2_lattice_persistence_2026_05_24/run_h250.hexa
 // H_250 — Class-II Φ persistence on non-power-of-2 lattice (H_232 follow-up · raw#12).
 //
 //   Question (H_232 follow-up): H_232 (PR #289) 의 핵심 발견 — rule 60/102 의
@@ -36,10 +36,10 @@
 //                         → real dynamics, H_225 anomaly transient
 //     MIXED               otherwise
 //
-//   Φ primitive: phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317 첫
+//   Φ primitive: phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317 첫
 //   production user) → c_measure_phi → RFC 036 phi_spatial (READ-ONLY import).
 // ════════════════════════════════════════════════════════════════════════
-import "/Users/ghost/core/anima/.claude/worktrees/agent-a4d50a18fbe8d3942/UNIVERSE/lib/phi_helper.hexa"
+import "/Users/ghost/core/anima/.claude/worktrees/agent-a4d50a18fbe8d3942/HYPOTHESES/lib/phi_helper.hexa"
 
 // ── config (deterministic, identical substrate to H_232 / H_225 / H_211) ──
 fn _N_POW2() -> int     { return 16 }   // power-of-2 control lattice
@@ -49,7 +49,7 @@ fn _WARM() -> int       { return 8 }    // warmup steps before recording
 fn _TRAJ_LEN() -> int   { return 21 }   // t=0..20 trajectory (t=20 = sustained-Φ probe)
 fn _REPS() -> int       { return 5 }    // deterministic init offsets
 fn _state_dir() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-a4d50a18fbe8d3942/UNIVERSE/state/h250_nonpow2_lattice_persistence_2026_05_24"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a4d50a18fbe8d3942/HYPOTHESES/state/h250_nonpow2_lattice_persistence_2026_05_24"
 }
 
 // collapse threshold (C1/H250.4): first t with mean Φ < this floor = collapse_step
@@ -209,7 +209,7 @@ fn main() {
             + " dim=" + to_string(_DIM()) + " warm=" + to_string(_WARM())
             + " traj_len=" + to_string(_TRAJ_LEN()) + " (t=0..20) reps=" + to_string(_REPS())
             + "  (deterministic, $0 mac local)")
-    println("  Φ primitive: phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317, RFC 036 phi_spatial, Φ>=0)")
+    println("  Φ primitive: phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317, RFC 036 phi_spatial, Φ>=0)")
     println("")
 
     let rule_184 = 184          // Class-II — TASEP traffic shift (non-XOR)
@@ -411,7 +411,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"phi_primitive\": \"phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial (byte-equal phi_rs native replica)\",\n"
+    j = j + "  \"phi_primitive\": \"phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial (byte-equal phi_rs native replica)\",\n"
     j = j + "  \"config\": { \"N_pow2\": " + to_string(_N_POW2()) + ", \"N_nonpow2\": " + to_string(_N_NONPOW2())
           + ", \"dim\": " + to_string(_DIM()) + ", \"warm\": " + to_string(_WARM())
           + ", \"traj_len\": " + to_string(_TRAJ_LEN()) + ", \"reps\": " + to_string(_REPS())

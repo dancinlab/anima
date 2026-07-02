@@ -111,7 +111,7 @@ TRANSFER (feedback_toy_scale_transfer; #1296 saga 와 동일 교훈).
 ## 양방향 sibling
 
 - sibling: `CORE/DECODER/state/m4b_pilot_rev2_2026_05_28/harvest/README.md` (#1296 선행)
-- UNIVERSE SSOT: `UNIVERSE/CANDIDATES.md` (M4 MoE collapse arc) — 본 fire 의 closed-
+- UNIVERSE SSOT: `HYPOTHESES/CANDIDATES.md` (M4 MoE collapse arc) — 본 fire 의 closed-
   negative 를 collapse-escape lever 목록에 추가 (corpus-diversity·routing·capacity+routing
   3축 ruled-out).
 

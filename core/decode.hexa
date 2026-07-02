@@ -1053,6 +1053,83 @@ pub fn clm_load_weights(path: string) -> Map {
 // free moved to the driver tail (mirrors how clm_load_weights hoists the load).
 pub fn clm_weights_free_pub(W: Map) { _clmd_weights_free(W) }
 
+// ── clm_penult_pooled (H_9099 FABLE#4 self-chain grounding · measurement helper) ─────────────
+// Runs the REAL CLMConvMoE inference forward on the mounted .clm for `seed`, returns the
+// PENULTIMATE (pre-readout) hidden state yn[T*d] MEAN-POOLED over the T positions → pooled[d].
+// This is exactly the representation that self_drift_exp's synthetic int content_axis would be
+// grounded in. Byte-identical to _clmd_fwd_logits up to yn (own-GEMM on a cuda host); the final
+// readout conv (roW / rtype binding) is skipped because yn IS the penultimate representation.
+// ONE forward, not a decode loop. NOT for production decode — measurement-only.
+// engine-native landed H_9099 (aiden hexa v0.546.0 RC=0); runtime lane 23b wire-in = follow-on.
+pub fn clm_penult_pooled(path: string, seed: string) -> [float] {
+    let W = _clmd_load(path)
+    let d = to_int(W["d"]); let E = to_int(W["E"])
+    let K = to_int(W["K"]); let L = to_int(W["L"])
+    let embed = to_int(W["embed"])
+    let tcW = W["tcW"]; let eW = W["eW"]; let tcB = W["tcB"]
+    let eB = W["eB"]; let tgG = W["tgG"]; let tgB = W["tgB"]
+    let T = 24
+    // build the T-window: right-align the seed bytes, pad-left with byte 32 (space) — IDENTICAL
+    // to clm_decode_argmax's window fill so the penult sees the same context the mouth would.
+    let slen = byte_len(seed)
+    let tok = t_zeros(T)
+    let mut p = 0
+    while p < T {
+        let si = slen - T + p
+        if si >= 0 { t_set(tok, p, to_float(ord(substring(seed, si, si+1)))) }
+        else { t_set(tok, p, 32.0) }
+        p = p + 1
+    }
+    let xe = t_zeros(T*d); nn_embedding_fwd(tok, embed, xe, T, d)
+    let xt = t_zeros(T*d); _clmd_conv1d(xe, to_int(W["ecW"]), to_int(W["ecB"]), xt, T, d, d, K, 1)
+    let DIL_CAP = 512
+    let mut li = 0
+    let mut dil = 1
+    while li < L {
+        let mut dil_eff = dil
+        if dil_eff > DIL_CAP { dil_eff = DIL_CAP }
+        let h = t_zeros(T*d); _clmd_conv1d(xt, to_int(tcW[li]), to_int(tcB[li]), h, T, d, d, K, dil_eff)
+        let hn = t_zeros(T*d); let m1 = t_zeros(1); let iv1 = t_zeros(1); let xh1 = t_zeros(T*d)
+        nn_groupnorm_fwd(h, to_int(tgG[li]), to_int(tgB[li]), hn, m1, iv1, xh1, T, d, 1)
+        let hg = t_zeros(T*d); nn_gelu_fwd(hn, hg, T*d)
+        let mut i = 0
+        while i < T*d { t_set(xt, i, t_get(xt, i) + t_get(hg, i)); i = i + 1 }
+        t_free(h); t_free(hn); t_free(m1); t_free(iv1); t_free(xh1); t_free(hg)
+        dil = dil * 2
+        li = li + 1
+    }
+    let logits_r = t_zeros(T*E); _clmd_conv1d(xt, to_int(W["rW"]), to_int(W["rB"]), logits_r, T, d, E, 1, 1)
+    let ex_out = t_zeros(E*T*d)
+    let mut ej = 0
+    while ej < E {
+        let eo = t_zeros(T*d); _clmd_conv1d(xt, to_int(eW[ej]), to_int(eB[ej]), eo, T, d, d, K, 1)
+        let ex = t_zeros(T*d); nn_gelu_fwd(eo, ex, T*d)
+        let mut jj = 0
+        while jj < T*d { t_set(ex_out, ej*T*d + jj, t_get(ex, jj)); jj = jj + 1 }
+        t_free(eo); t_free(ex)
+        ej = ej + 1
+    }
+    let probs = t_zeros(T*E); let y = t_zeros(T*d)
+    nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
+    let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
+    nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
+    // MEAN-POOL yn over T positions → pooled[d] = the penultimate pooled representation.
+    let mut pooled = []
+    let mut c = 0
+    while c < d {
+        let mut s = 0.0
+        let mut t = 0
+        while t < T { s = s + t_get(yn, t*d + c); t = t + 1 }
+        pooled = pooled + [s / to_float(T)]
+        c = c + 1
+    }
+    t_free(xe); t_free(xt); t_free(logits_r); t_free(ex_out)
+    t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
+    t_free(tok)
+    _clmd_weights_free(W)
+    return pooled
+}
+
 // clm_decode_topk_sampled_W — the loaded-W core of clm_decode_topk_sampled. Takes a
 // pre-loaded weight map `W` (from clm_load_weights) so a driver can decode MANY times
 // off ONE load. Byte-identical to clm_decode_topk_sampled for the same W+seed+args.

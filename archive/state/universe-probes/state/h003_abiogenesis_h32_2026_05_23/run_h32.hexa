@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════
-//  UNIVERSE/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
+//  HYPOTHESES/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
 //
 //  H_003 Cycle #2 — H3.2 multi-pathway abiogenesis sweep.
 //
@@ -32,8 +32,8 @@
 //  pathway has a distinct regime sensitivity; it is NOT chemistry.
 //
 //  Run:
-//    hexa parse UNIVERSE/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
-//    hexa run   UNIVERSE/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
+//    hexa parse HYPOTHESES/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
+//    hexa run   HYPOTHESES/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
 // ════════════════════════════════════════════════════════════════
 
 // ─── Frozen configuration ───────────────────────────────────────
@@ -43,8 +43,8 @@ let N_PATHWAY   = 4              // rna_first, metabolism_first, lipid_first, in
 let N_ENERGY    = 4              // equilibrium, weak_gradient, strong_gradient, periodic_drive
 let N_CARRIER   = 4              // rna, dna, peptide, polymer_chain
 
-let OUT_DIR  = "UNIVERSE/state/h003_abiogenesis_h32_2026_05_23"
-let OUT_JSON = "UNIVERSE/state/h003_abiogenesis_h32_2026_05_23/result.json"
+let OUT_DIR  = "HYPOTHESES/state/h003_abiogenesis_h32_2026_05_23"
+let OUT_JSON = "HYPOTHESES/state/h003_abiogenesis_h32_2026_05_23/result.json"
 
 // ─── Deterministic LCG (per-cell, per-rep) ──────────────────────
 // fnv-style mix of axis indices + rep → uint seed → LCG draw in [0,1).

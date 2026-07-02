@@ -8,8 +8,8 @@
 > [P4_PRODUCTION_ROADMAP.md](./P4_PRODUCTION_ROADMAP.md) §1 2-track 사다리의 **측정 track 상위 rung 등반** 계획.
 > [P5_AKIDA_7B_STRATEGY.md](./P5_AKIDA_7B_STRATEGY.md) AXIS1(단일칩 expert-streaming) 의 배포 track 과 직교.
 > sibling: [CLM_CAMPAIGN_26.md](./CLM_CAMPAIGN_26.md) · [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) ·
-> [../UNIVERSE/cards/H_904_clm_onchip_plasticity.md](../UNIVERSE/cards/H_904_clm_onchip_plasticity.md) (온칩 가소성 실측 🟢) ·
-> [../UNIVERSE/PLASTICITY-CANDIDATES.md](../UNIVERSE/PLASTICITY-CANDIDATES.md) (비결정 가소성 frontier) ·
+> [../HYPOTHESES/cards/H_904_clm_onchip_plasticity.md](../HYPOTHESES/cards/H_904_clm_onchip_plasticity.md) (온칩 가소성 실측 🟢) ·
+> [../HYPOTHESES/PLASTICITY-CANDIDATES.md](../HYPOTHESES/PLASTICITY-CANDIDATES.md) (비결정 가소성 frontier) ·
 > [train/fire_mid_rung_qat.hexa](./train/fire_mid_rung_qat.hexa) (canonical fire 패턴) · [LAUNCHPAD/SBS.md](../LAUNCHPAD/SBS.md) R4
 >
 > ⚠ **이 문서 + 동봉 scaffold 는 FIRE-READY (아직 미발사)** — GPU/runpod fire 는 user 가 뒤에 발사 (cost-bearing · a_fire_autonomous).

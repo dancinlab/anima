@@ -7,7 +7,7 @@ raise Φ), and the re-formulations H_988/H_994 were ALL measured with a PROXY
 (`phi_proxy` in cwm_probe_lib.py = integration×differentiation×entropy on the
 continuous latent — the H_912/H_931/phi_silicon_proxy family). H_988/H_989 proved
 that proxy is PURPOSE-BLIND (it tracks state-multiplicity, not causal
-irreducibility). a_phi_iit4_tool + UNIVERSE/IIT4_PHI_TOOLS.md mandate re-measuring
+irreducibility). a_phi_iit4_tool + HYPOTHESES/IIT4_PHI_TOOLS.md mandate re-measuring
 any Φ verdict with the FAITHFUL exact MIP-EI IIT4 engine that already exists in
 hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (promoted from anima H_278).
 

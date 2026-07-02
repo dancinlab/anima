@@ -1,4 +1,4 @@
-// UNIVERSE/state/h238_verdict_landscape_meta_2026_05_24/run_h238.hexa
+// HYPOTHESES/state/h238_verdict_landscape_meta_2026_05_24/run_h238.hexa
 // H_238 — verdict landscape meta-map · 22+ H tier distribution + 7-domain cluster + cross-correlation (raw#12)
 //
 //   Question: 본 세션 22+ H verdict landscape 의 meta-pattern —
@@ -9,7 +9,7 @@
 //         (e.g. H_204/H_211/H_223 cluster of single axis-family).
 //
 //   Method (deterministic, hexa-only, $0 mac local, llm:none):
-//     - enumerate UNIVERSE/H_*.md  (sort -V; 22+ files)
+//     - enumerate HYPOTHESES/H_*.md  (sort -V; 22+ files)
 //     - per H 파싱:
 //         · id     = basename
 //         · domain = "^domain:" frontmatter line (first match)
@@ -40,7 +40,7 @@ fn _LIFE_DIR() -> string {
     return "/Users/ghost/core/anima/.claude/worktrees/agent-a44a9664e2bf1a907/UNIVERSE"
 }
 fn _STATE_DIR() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-a44a9664e2bf1a907/UNIVERSE/state/h238_verdict_landscape_meta_2026_05_24"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a44a9664e2bf1a907/HYPOTHESES/state/h238_verdict_landscape_meta_2026_05_24"
 }
 
 // ── 7-domain cluster vocabulary (raw#12 pre-registered) ─────────────────
@@ -222,7 +222,7 @@ fn _json_esc(s: string) -> string {
 // ── main ────────────────────────────────────────────────────────────────
 fn main() {
     println("H_238 — verdict landscape meta-map · 22+ H tier distribution (raw#12)")
-    println("  source: UNIVERSE/H_*.md frontmatter (domain + verdict_class)")
+    println("  source: HYPOTHESES/H_*.md frontmatter (domain + verdict_class)")
     println("")
 
     // enumerate H files (deterministic sort -V), excluding H_238 itself —
@@ -529,7 +529,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"sister\": \"all 22+ UNIVERSE/H_*.md (meta-result-of-results)\",\n"
+    j = j + "  \"sister\": \"all 22+ HYPOTHESES/H_*.md (meta-result-of-results)\",\n"
     j = j + "  \"config\": { \"N_files\": " + to_string(n)
           + ", \"n_domains\": " + to_string(nd)
           + ", \"source_dir\": \"UNIVERSE\""

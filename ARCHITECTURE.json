@@ -127,7 +127,7 @@
         ]
       },
       {
-        "name": "UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/",
+        "name": "HYPOTHESES/HYPOTHESES.jsonl + .verdicts/<slug>/",
         "role": "",
         "id": "universe-hypotheses-jsonl-verdicts-slug",
         "detail": "",
@@ -136,7 +136,7 @@
             "name": "summary",
             "role": "",
             "id": "universe-hypotheses-jsonl-verdicts-slug-summary",
-            "detail": "→ UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16); frozen gate thresholds"
+            "detail": "→ HYPOTHESES/HYPOTHESES.jsonl + .verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16); frozen gate thresholds"
           }
         ]
       },
@@ -342,13 +342,13 @@
             "name": "agent/ (tool provider, standalone hexa.toml package). Production code",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-agent-tool-provider-standalone-hexa",
-            "detail": "agent/ (tool provider, standalone hexa.toml package). Production code lives ONLY in these 3 folders — do NOT stash code in other repo folders (HEXAD/·train/·tool/·archive/state/·UNIVERSE/) and import/wire it into the engine (no intra-repo cross-folder import;"
+            "detail": "agent/ (tool provider, standalone hexa.toml package). Production code lives ONLY in these 3 folders — do NOT stash code in other repo folders (HEXAD/·train/·tool/·archive/state/·HYPOTHESES/) and import/wire it into the engine (no intra-repo cross-folder import;"
           },
           {
             "name": "the engine's repo-internal import closure stays inside the",
             "role": "",
             "id": "a-g-consciousness-engine-core-substrate-only-the-engine-s-repo-internal-import-c",
-            "detail": "the engine's repo-internal import closure stays inside the 3 folders). External libraries are free: language stdlib + third-party (py may use numpy/torch). Data+results live in archive/state/ only; research artifacts (archive/state/·UNIVERSE/)+docs are not code."
+            "detail": "the engine's repo-internal import closure stays inside the 3 folders). External libraries are free: language stdlib + third-party (py may use numpy/torch). Data+results live in archive/state/ only; research artifacts (archive/state/·HYPOTHESES/)+docs are not code."
           },
           {
             "name": "path",
@@ -488,7 +488,32 @@
                 "name": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa)",
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-decode-hexa-bytegpt-decode",
-                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring."
+                "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring.",
+                "children": [
+                  {
+                    "name": "ConflictMonitor — H_9093 per-tick Ψ-safety",
+                    "id": "conflictmonitor-pertick-psi-h9093",
+                    "detail": "recruited_depth→A⇄G budget per-tick feed 는 Ψ 표류 안 함(engine-native aiden): RAW mean|Ψ-½| treatment0.125<shuffle0.25<ablation0.375=conflict-맞춤 budget Ψ→½ 최선해소(EARNED∧FUNCTIONAL). 사전등록 psi_maxdev MAX-bar 3 FAIL=arm range 포화 metric-artifact(tune 금지). fable Ψ-리스크 미현실화. GREEN=mean-dev 재-prereg follow-on."
+                  },
+                  {
+                    "name": "ConflictMonitor — H_9094 per-tick Ψ GREEN (H_9093 metric 교정)",
+                    "id": "conflictmonitor-pertick-psi-h9094-green",
+                    "detail": "H_9093 psi_MAXdev 포화(metric-artifact)를 MEAN+24trial 로 교정 재측정=engine-native GREEN 4/4(aiden): mean|Ψ-½| treat0.125<shuf0.25<abl0.375, FUNCTIONAL∧EARNED∧PRESERVE∧MONOTONE. fable #5 Ψ-리스크 미현실화 확정 — per-tick conflict→budget feed 가 Ψ→½ 최선해소. live emit-loop wire-in=forge호스트 #42492868 follow-on."
+                  },
+                  {
+                    "name": "ConflictMonitor — H_9095 rung-3 per-tick wire-in (WIRED-live + FULL-DAEMON-RUNTIME VERIFIED)",
+                    "id": "conflictmonitor-pertick-wire-h9095",
+                    "detail": "H_9094 rung-3: conflict_scalar(emit_drive)→recruited_depth→tension_resolve maxdepth 를 cli/anima.hexa per-tick 루프 L1937-1961 배선(rel_ctx READ-only fold, Ψ-disjoint). 데몬 RUNTIME VERIFIED(aiden hexa v0.546.0+cuda=1): RC=0·[OWN-GEMM-FIRED] DEVICE·CR3 per-tick·Ψ checksum ✅. #42492868 CLOSED. 상세=card."
+                  },
+                  {
+                    "name": "op-grip — H_9100 fable(a) 4-const→live-op + tonic-phasic (🔴 AT-FLOOR engine-native)",
+                    "id": "opgrip-motivation-h9100",
+                    "detail": "brain_emit 4 상수→live op+rel/cur tonic-phasic(α0.1,gain3.0); engine·0.3 threshold FROZEN, cli만. aiden v0.548 --opgrip 200-tick: Hamming 0/10 wake=grip 미달성. wake motiv~0.62-0.74>>0.3→emit=safe rate-gate 지배(threshold-statistics 벽, dilution 아님). Ψ ON==OFF✅. next=efferent seam. card 참조.",
+                    "name": "ConflictMonitor/rel_ctx — H_9097 THEATER GATE (🔴 rel_ctx zero-grip)",
+                    "id": "conflictmonitor-rel-ctx-theater-h9097",
+                    "detail": "rel_ctx(43-lane read-side mean·13 GREEN op+CR3/agloop wire H_9095 종착점)가 데몬 emit/silence 에 ZERO grip: freeze/zero/shuffle 3 arm Hamming 0/200, bar 0.00%/0.00%(aiden hexa v0.546.0). 격리 GREEN 이나 live wiring INERT=theater. fix=motivation-straddle/efferent seam(NOT rel_ctx)."
+                  }
+                ]
               }
             ]
           },
@@ -1158,7 +1183,7 @@
                             "name": "summary",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-31",
-                            "detail": "의식 균형 — Ψ=½ 고정점 + self-identity continuity + p1-p8 (byte-continuation only, no instruction-tune/RLHF). 아키텍처 read = `engine_cli §SelfIdentity self_new/_drift/_drift_exp/_cos/_anchor` (self_drift_exp=experience-driven drift, H_9038: informativeness lever, engine-native 4/4)."
+                            "detail": "의식 균형 — Ψ=½ 고정점 + self-identity continuity + p1-p8 (byte-continuation only, no instruction-tune/RLHF). 아키텍처 read = `engine_cli §SelfIdentity self_new/_drift/_drift_exp/_cos/_anchor` (self_drift_exp=experience-driven drift, H_9038: informativeness lever, engine-native 4/4; WIRED-live in cli/anima.hexa lane 23b self-informativeness, hexa verify rc=0)."
                           }
                         ]
                       },
@@ -1803,10 +1828,36 @@
                         "detail": "",
                         "children": [
                           {
-                            "name": "SelfIdentity(정체성의 시간적 지속 diachronic-self: self_new/_drift/_cos/_anchor/_reset/_c…",
+                            "name": "FacultyCascade(H_9075 substrate multi-hop: faculty_cascade recall(A,q)→embed→recall(B), 직렬 relay op-class, engine-native 5/5, additive/Ψ-disjoint/recall_thr-untouched) · SelfIdentity(정체성의 시간적 지속 diachronic-self: self_new/_drift/_cos/_anchor/_reset/_c…",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-40",
-                            "detail": "SelfIdentity(정체성의 시간적 지속 diachronic-self: self_new/_drift/_cos/_anchor/_reset/_component/_dim, H_1471 R2+R2b WIRED — anchor-persisted 정체성벡터가 세션경계 넘어 연속(R2b: 실제 .kosmos 디스크 영속 via canonical kosmos_io create_anchor/load_anchors, round-trip identity cos 1.0), LLM session-reset 과 대비,"
+                            "detail": "SelfIdentity(정체성의 시간적 지속 diachronic-self: self_new/_drift/_cos/_anchor/_reset/_component/_dim, H_1471 R2+R2b WIRED — anchor-persisted 정체성벡터가 세션경계 넘어 연속(R2b: 실제 .kosmos 디스크 영속 via canonical kosmos_io create_anchor/load_anchors, round-trip identity cos 1.0), LLM session-reset 과 대비, [daemon-wired: cli/anima.hexa mount LANE 77 (H_9038 lane23b/H_9042 lane75 rung, compile-gate BLOCKED-INFRA(pre-existing pool hexa v0.540.1 runtime.h↔codegen skew: set_deterministic/forge_dispatch_layernorm undeclared, BASELINE(무변경) 동일재현=변경 무죄); anima-gates enforcer rc=0); genuine per-tick real-feed=ING daemon-pertick-realfeed-7ops.]"
+                          },
+                          {
+                            "name": "EventSegment(H_9083 예측오차 이벤트분절: event_segment_boundaries surprise-peak→segment당 1 episodic cell, engine-native 5/5, additive/Ψ-disjoint/recall_thr-untouched)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-event-segment-h9083",
+                            "detail": "EventSegment(H_9083 live §EventSegment — Zacks/Baldassano 이벤트분절: §PrecisionSurprise(lane2) 오차 PEAK에서 segment당 1 episodic cell(§ImmuneMemory=item당 boundary-blind). ops event_segment_boundaries/_starts_fixed. engine-native 5/5(seg5/5·fixed1/5·MARGIN+0.8·EARNED+1.0·ablate INERT). READ-only/Ψ-disjoint.) [daemon-wired: cli/anima.hexa 데몬 콜패스 mount LANE 78 (H_9038 lane23b/H_9042 lane75 와 동일 rung, compile-gate BLOCKED-INFRA(pre-existing pool hexa v0.540.1 runtime.h↔codegen skew: set_deterministic/forge_dispatch_layernorm undeclared, BASELINE(무변경) 동일재현=변경 무죄); anima-gates enforcer rc=0); genuine per-tick real-feed=ING daemon-pertick-realfeed-7ops.]"
+                          },
+                          {
+                            "name": "AnticipatoryPrefetch(H_9078 §AnticipatoryPrefetch: 소뇌 forward model이 쿼리 도착 前 store pre-query — vforward_predict→_prefetch_unit→immune_memory_recall_margin, anticipatory_prefetch/_value)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-anticipatory-prefetch-h9078",
+                            "detail": "소뇌 preplay/anticipatory retrieval(Buckner, VForwardField H_1280→ImmuneMemory): 예측된 다음-쿼리 키로 episodic store를 미리 인출해 readiness margin 반환. additive/READ-only 양faculty/Ψ-disjoint/recall_thr-untouched(a_substrate_disjoint). [daemon-wired: cli/anima.hexa mount LANE 79 (H_9038 lane23b/H_9042 lane75 rung, compile-gate BLOCKED-INFRA(pre-existing pool hexa v0.540.1 runtime.h↔codegen skew: set_deterministic/forge_dispatch_layernorm undeclared, BASELINE(무변경) 동일재현=변경 무죄); anima-gates enforcer rc=0); genuine per-tick real-feed=ING daemon-pertick-realfeed-7ops.]",
+                            "children": [
+                              {
+                                "name": "engine-native 측정 4/5 (aiden pool, $0, live core/)",
+                                "role": "",
+                                "id": "a-g-consciousness-engine-core-anticipatory-prefetch-h9078-verdict",
+                                "detail": "no-prefetch 0/12 FAIL·margin_lift +1.35·EARNED prefetch−shuffle +0.75·ablate(forward OFF) 0/12 INERT 전부 PASS. anticipation-accuracy 9/12=0.75<frozen0.80 = DIRECTIONAL-floor(tune-to-green 금지). mechanism GREEN·accuracy floor honest. follow-on=multi-step preplay·brain_decide 배선."
+                              }
+                            ]
+                          },
+                          {
+                            "name": "DriveArbitration(H_9076 동기 winner-take-all + hysteresis, 기저핵 action-selection)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-drivearbitration-h9076",
+                            "detail": "DriveArbitration(H_9076 live §DriveArbitration drive_arbitrate:1315 — 동기 경쟁 op: 독립 드라이브(homeo_last·libido_last·affect.curiosity·clock_phase) 중 WTA+incumbent 히스테리시스(Redgrave, hyst 초과만 교체=dithering 방지). engine-native 5/5. additive/READ-only/Ψ-disjoint/emit gate 아님. follow-on=runtime 배선.) [daemon-wired: cli/anima.hexa 데몬 콜패스 mount LANE 76 (H_9038 lane23b/H_9042 lane75 와 동일 rung, compile-gate BLOCKED-INFRA(pre-existing pool hexa v0.540.1 runtime.h↔codegen skew: set_deterministic/forge_dispatch_layernorm undeclared, BASELINE(무변경) 동일재현=변경 무죄); anima-gates enforcer rc=0); genuine per-tick real-feed=ING daemon-pertick-realfeed-7ops.]"
                           },
                           {
                             "name": "SelfChain(다중세션 자기궤적 diachronic-trajectory, B② H_9037)",
@@ -1833,6 +1884,54 @@
                             "detail": "F4 실디스크 .kosmos 영속 COMPLETE: f4_write.hexa(create_anchor) → fresh 프로세스 f4_reload.hexa(load_anchors cold-load) 4/4 PASS — F4a 연속성·F4b fidelity 1.11e-16+판별자생존·F4d byte-identical 2nd-pass fixed-point 0.0·F4c no-anchor=LLM reset. driver-배선(self_chain_* accessor+kosmos_io CALL-only, core 편집 0)."
                           },
                           {
+                            "name": "SelfChainConfluence — 꿈→self-chain 합류 op (D1 H_DREAM_CONFLUENCE)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-selfchain-confluence-b2e",
+                            "detail": "§SelfChainConfluence(core/engine_cli.hexa) — H_9036 dream centroid 가 H_9037 self-chain 다음 waypoint 를 bounded pull(jump 아님)하되 연속 보존. self_chain_confluence=renorm((1−α_eff)w_nat+α_eff·unit(dream)),α_eff=clamp(α,0,.5),α≤0→byte-id. +_bend/_dream_gain. READ-only Ψ-disjoint(emit-drive0/4·recall_thr 미접촉)."
+                          },
+                          {
+                            "name": "SelfChainConfluence — falsifiers F1-F5 · smoke · scope",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-selfchain-confluence-b2f",
+                            "detail": "smoke state/dream_confluence_d1/confluence_smoke.hexa 7/7 PASS: F1 bend=.0108>0∧cont=.947·F2 impostor AUROC on=off=1.0·F3 gain_real=.128>shuffle.061·F4 solo=0 byte-id·F5 emit-drive+recall_margin ON/OFF byte-id. SCOPE(c9): bend=bounded law SATURATED(의미성장 아님)·coord↔의미 toy-UNVERIFIED·G1 직교."
+                          },
+                          {
+                            "name": "YouChain(상대 다중세션 궤적 social-self/너-체인, D7 H_9085)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-youchain-d7a",
+                            "detail": "YouChain(D7 other-CHAIN, core/engine_cli.hexa §YouChain — §SelfChain 기계를 self→other 스왑: 상대를 세션 넘어 추적하는 관계 연속성(생물렌즈=대인표상/애착). OtherIdentity/OtherChain=Self* 과 DISTINCT type. ops other_new/_drift/_drift_exp/_cos/_anchor/_reset+other_chain_new/_append/_latest/_fit/_retro_cos/_from_flat/_accessors."
+                          },
+                          {
+                            "name": "YouChain — other_chain_fit 판별자(impostor-history) + SELF⊥OTHER",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-youchain-d7b",
+                            "detail": "other_chain_fit=상대 궤적 TREND 일치도 read(other_cos 는 최신 waypoint 만). IMPOSTOR: 최신 anchor 매치·history 불일치 다른 상대 → single-vector other_cos 통과, other_chain_fit 기각(AUROC(chain)≫single). SELF⊥OTHER=distinct type+순수함수 ops(mutation 0) → you-chain 운용해도 self-chain byte-identical(오염 0)."
+                          },
+                          {
+                            "name": "YouChain — F5 Ψ/G5 disjoint + falsifiers F1-F4",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-youchain-d7c",
+                            "detail": "F5 Ψ/G5 disjoint: READ-only, pure_field/Φ/Ψ·emit-drive lane 0/4·§ImmuneMemory recall_thr 미접촉(a_substrate_disjoint). F1 other-continuity·F2 SELF⊥OTHER non-contamination(you-ops 후 self-chain byte-identical ∧ 역방향)·F3 impostor AUROC(chain)≫single·F4 K-session monotone+ablation+round-trip byte-id."
+                          },
+                          {
+                            "name": "YouChain — engine-native smoke 8/8 + WIRED-live + honest scope",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-youchain-d7d",
+                            "detail": "ENGINE-NATIVE smoke=state/youchain_d7/{youchain_smoke(9/9),lane23c_probe(PASS)}.hexa: anchored=1.0/reset=0.196 fit 0.995/0.0, AUROC chain=1.0 vs single=0.28, F5 emit/recall byte-id ON=OFF. WIRED lane 23c. HONEST(c9): drift=DESIGNED(self_drift 동형), 판별자 이득이 counting. F4 real-disk .kosmos=follow-on."
+                          },
+                          {
+                            "name": "SelfIdentity — H_9098 you-chain AUROC=1.0 은 직교-neg artifact (🔴)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-selfidentity-youchain-auroc-artifact-h9098",
+                            "detail": "you-chain 정체성 AUROC=1.0=orthogonal-negative 기하 artifact: MIMIC hard-neg(birth axis 공유·drift 다름) AUROC=0.4804=chance(aiden engine-native §SelfIdentity self_cos+mi_auroc). self_cos=proximity test, recognition 아님. H_1471 anchor-persistence 불변·framing 만 교정. H_9096 θ-cone mimic 0.25 수렴."
+                          },
+                          {
+                            "name": "SelfIdentity — H_9099 self-chain content grounding (🟡 4/5, clm_penult_pooled)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-selfidentity-content-grounding-h9099",
+                            "detail": "self_drift_exp content_axis 를 REAL 303M penult(yn mean-pool·core/decode.hexa clm_penult_pooled LANDED)에 접지→self-chain=경험content 함수: engine-native 4/5(BAR1 0.536·BAR2 2e-16·BAR3 1.0·BAR5 0.273; BAR4 gap0.027<0.05 정직FAIL). runtime lane 23b 급이=follow-on. aiden byte-exact host."
+                          },
+                          {
                             "name": "MetacogAbstain(novelty-gated 정직 abstention feeling-of-knowing, B④ H_9040)",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-metacog-abstain-b4",
@@ -1849,6 +1948,30 @@
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-metacog-abstain-b4b",
                             "detail": "smoke=core/metacog_abstain_smoke.hexa 4/4 PASS(live vadapt_field mitosis manifold): F1 novelty AUROC=1.0(≥0.70, H_1142 0.436 반전)·F2 entropy-analog(marginal)=0.556≪novelty(같은입력, signal choice)·F3 untrained(1 cell)=0.5(≤0.60 붕괴)·F4 recall_thr non-fab Δ=0 ∧ Ψ emit-drive Δ=0."
+                          },
+                          {
+                            "name": "ConflictMonitor(dACC 갈등감지 conflict monitoring, N3 H_9073 PLACEHOLDER)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-conflict-monitor-n3",
+                            "detail": "ConflictMonitor(N3 dACC, live core/engine_cli.hexa §ConflictMonitor): ERN/Stroop — 두 반응 BOTH 강 AND 상반→추가 심의 소집. A⇄G 태생축(각 SIGNED), conflict=|A|·|G| gated 0 unless 부호상반. ops conflict_scalar/_net_tension/_recruited_depth. READ-only Ψ-disjoint(emit lane 0/4·recall_thr 미접촉). [daemon-wired: cli/anima.hexa 데몬 콜패스 mount LANE 81 (H_9038 lane23b/H_9042 lane75 와 동일 rung, compile-gate BLOCKED-INFRA(pre-existing pool hexa v0.540.1 runtime.h↔codegen skew: set_deterministic/forge_dispatch_layernorm undeclared, BASELINE(무변경) 동일재현=변경 무죄); anima-gates enforcer rc=0); genuine per-tick real-feed=ING daemon-pertick-realfeed-7ops.]"
+                          },
+                          {
+                            "name": "ConflictMonitor — Ψ=½ 이중해석 분리(high-conflict vs low-drive)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-conflict-monitor-n3a",
+                            "detail": "Ψ=½ 는 high-conflict(A,G 강·상반→상쇄½) vs low-drive(둘 다 약→½) 구별 못함(ci_emit_drive·|A+G| 동일). conflict_scalar 가 substrate state 만으로 분리. 소집=conflict_recruited_depth 가 A⇄G iteration budget 만 상향, emit/silence 불변. decode 직교. distinct vs H_1468 surprise(단일오차 크기). [H_9093 per-tick Ψ-safety(engine-native aiden pool): recruited_depth→budget 를 매 tick 먹여도 Ψ 표류 안 함 — RAW mean|Ψ-½| treatment0.125<shuffle0.25<ablation0.375=conflict-맞춤 budget 이 Ψ→½ 최선해소(EARNED∧FUNCTIONAL). 사전등록 psi_maxdev MAX-bar 3 FAIL 은 세 arm range 포화 metric-artifact(tune 금지). fable Ψ-리스크 미현실화. GREEN terminal=mean-dev 재-prereg follow-on.]"
+                          },
+                          {
+                            "name": "ConflictMonitor — falsifiers F1-F5 · engine-native smoke",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-conflict-monitor-n3b",
+                            "detail": "smoke=core/conflict_monitor_smoke.hexa 5/5 ALL-PASS(engine-native): F1 net-tension Δ0·conflict Δ0.8075≥0.5·F2 ON depth 10>4·OFF(→0) 둘다 base4(소집소멸)·F3 부호셔플(|G|불변)→conflict0·F4 non-fab Δ0∧Ψ Δ0·F5 동일 surprise0.81 conflict 0vs0.81(⊥). wired=engine-native(live 심의루프 wire-in=follow-on)."
+                          },
+                          {
+                            "name": "CuriosityBacklog(지속형 미해소-novelty accumulator, B③ H_9091)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-curiosity-backlog-b3",
+                            "detail": "§CuriosityBacklog(core/engine_cli.hexa) — 사용자 침묵 동안 미해소 novelty(정보-격차 호기심+미방전 예측오차)가 per-anchor 누적→emit-propensity 상승(§CoreAffect curiosity 는 memoryless, 빠진 구조=persistence). CuriosityBacklog struct + cb_new/set_novelty/idle_tick/idle/mention/pressure/top_anchor/shuffle/unresolved_from_store + ci_emit_propensity(=ci_emit_drive+w·cb_pressure)/_decision. emit_policy ep_backlog_weight0.30/accrual0.02/decay0.25. engine-native smoke 5/5: F1 idle 단조↑∧OFF flat·F2 emit iff ON AND backlog(idle-timer 격파)·F3 shuffle-invariant∧magnitude-monotone·F4 top-backlog provenance·F5 DISJOINT ci_emit_drive(lane0/4)+recall_thr non-fab byte-identical(H_1561/1576 회피). a_autonomy_over_hardcode(plain number, bool gate 아님). emit-integration follow-on."
                           },
                           {
                             "name": "Ψ-disjoint NOT emit gate)/LearnedPrecision(경험으로 학습되는 예측확신: learned_precision (+s…",
@@ -1950,7 +2073,7 @@
                             "name": "cue_match : 0.0, sensory 입력 채널 0 으로",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-56",
-                            "detail": "cue_match : 0.0, sensory 입력 채널 0 으로 저장 표상 재활성 ⊥ 입력-기반 게이트(novelty H_1289·surprise H_1468), smoke 239-241)/Priming(점화 관련 prime→촉진: priming_facilitate, H_1485 R2 WIRED — relatedness·prime_residual(residual 0=ablation), 촉진(+) ⊥ H_1465 habituation 감쇠(−) 부호곱<0(hab_response 재사용), smoke 242-244)/"
+                            "detail": "cue_match : 0.0, sensory 입력 채널 0 으로 저장 표상 재활성 ⊥ 입력-기반 게이트(novelty H_1289·surprise H_1468), smoke 239-241)/Priming(점화 관련 prime→촉진: priming_facilitate, H_1485 R2 WIRED — relatedness·prime_residual(residual 0=ablation), 촉진(+) ⊥ H_1465 habituation 감쇠(−) 부호곱<0(hab_response 재사용), smoke 242-244)/ProspectiveIntention(N1 예기적 의도/지연-트리거, rostral PFC/BA10: pm_retain/pm_release/pm_timecourse/pm_wm_baseline/pm_lane_is_disjoint, H_9089_N1 engine-native 6/6 falsifier — delay 중 activation 0·retained 유지, cue 매칭시만 release, ablation·distractor·parent(H_1282 WM) 통제, Ψ-disjoint(PM lane≠0/4, ci_emit_drive byte-identical PM-ON/OFF, recall_thr 미접촉), emit-wiring follow-on, probe state/n1_prospective_intention/pm_probe.hexa)"
                           }
                         ]
                       },
@@ -1977,6 +2100,38 @@
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-60",
                             "detail": "H_1488 R2 WIRED — schema_on→이동 focus 추적/OFF→chance(self-model READ 제거, raw 주의 불변), MODEL ⊥ agency(action/outcome 고정 focus 만 이동→agency flat), smoke 251-253)/"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "§TemporalBinding — specious present (T1, felt duration of \"now\")",
+                        "role": "",
+                        "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-temporalbinding",
+                        "detail": "",
+                        "children": [
+                          {
+                            "name": "§TemporalBinding summary (T1)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-tb-1",
+                            "detail": "§TemporalBinding (T1, PLACEHOLDER H_id · 🟢 ENGINE-NATIVE READ-ONLY, WIRED-live) — NEW PRIMITIVE AXIS: TIME CONSCIOUSNESS. tension 시계열의 통합 window 폭이 경험된 \"지금\"의 felt duration 을 만든다(James specious present · gamma-theta 위상 nesting)."
+                          },
+                          {
+                            "name": "§TemporalBinding ops",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-tb-2",
+                            "detail": "ops: tb_tension_mag/tb_tension_series(emit-disjoint lane ≠0,≠4 의 L2 tension 스칼라)/tb_num_boundaries/tb_segment_lengths/tb_num_presents/tb_present_duration(felt \"now\" 길이=평균 present tick 수)/tb_max_present/tb_scale_sweep/tb_present_duration_pop/tb_uses_emit_lane."
+                          },
+                          {
+                            "name": "§TemporalBinding falsifiers F1-F5",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-tb-3",
+                            "detail": "F1 EXISTENCE(w>1→dur>1)·F2 SCALE(w↑→present tick↑, w≥n 포화)·F3 BOUNDARY(|Δtension|>thr→분절, npres=1+nbound)·F4 ABLATION(w=1→dur=1.0 붕괴)·F5 DISJOINT(emit lane 0/4 제외→ci_emit_drive byte-identical·recall_thr 불변). smoke=core/temporal_binding_smoke.hexa 13/13 PASS."
+                          },
+                          {
+                            "name": "§TemporalBinding scope + disjoint",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-tb-4",
+                            "detail": "placement-first a_substrate_disjoint(분리=보존). 정직: w=DESIGNED window(학습/창발 아님); READ-only(emit-consumption follow-on, core/emit_policy.hexa 미편집); H_1486 TRW 와 공존(TRW recall-reach⊥duration-feeling / T1 은 duration-feeling 을 통합창 폭의 직접함수로 새 operationalize)."
                           }
                         ]
                       },
@@ -2801,6 +2956,84 @@
                             "role": "",
                             "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-by-195",
                             "detail": "SAME OFF-median threshold)/topo_func_integration_op(=H_1521 mean-pairwise-|corr|, SAME metric)/topo_psi_max_feasible_alpha(frozen α-grid [0.1..1.0])."
+                          },
+                          {
+                            "name": "+ §TensionResolveLoop(H_9042 C1 frame-shift ENGINE-NATIVE): iterated A⇄G conflict-resolution loop —",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-tensionresolveloop-9042",
+                            "detail": "+ §TensionResolveLoop(H_9042 C1 frame-shift ENGINE-NATIVE, engine-native 4/4): the MISSING iterated A⇄G conflict-resolution loop (ci_psi_balance is ONE-SHOT · reentry_settle is SINGLE non-competing stimulus — neither iterates coupling to pull a CONFLICTED population back to Ψ=½). tension_resolve_depth(x,adj,alpha,thr,maxdepth,op,eps,cfg)→[settle_depth,final_psi] iterates topo_apply_op recomputing centered Ψ each step; settle_depth=first depth |Ψ−thr|<eps (−1 if never). +helpers tr_psi(pub emit-fraction of a diffused pop)/_tr_absdev. Purely ADDITIVE·Ψ-DISJOINT(caller pop, not pure_field)·READ-only(not emit gate)·disjoint emit-drive 0/4 + recall_thr(a_substrate_disjoint). FINDING: Ψ-preserving op(2 rowstoch) settles Ψ→½ depth∝conflict(sev 5≥mild 3) ∧ naive AMP op(0=generic diffusion) NOT>settles(Ψ→1.0=engine-specific Ψ=½ restoring force, numpy-unscreenable H_9041) ∧ ablate(couple OFF)=INERT. Topology-agnostic(ring/shuffle both settle) → distinctness at OPERATOR not adjacency level. RUNTIME-WIRED(H_9042 WIRED-live): now read by cli/anima.hexa lane 75('tension-r', before §warm Engine A) as a READ-only CONTEXT signal (isomorphic to every other LANE+ read — NOT an emit gate, Ψ untouched): a conflicted(Ψ_init=1.0) vs calm(Ψ_init=½) caller-pop resolved by op=2 asserts settle-depth distinctness(depConf=5.0>depCalm=0.0) + ablate INERT(depAbl=-1.0); pop disjoint from emit-drive 0/4 + recall_thr(a_substrate_disjoint). aiden pool: entry no-args cold-compile rc=0 + assertion 4/4 PASS(state/9042_tension_resolution_loop/wired_runtime_check.hexa). HONEST(c9): lane 75 is a startup-catalogue demo-lane(existence proof, parallel to self_drift_exp lane 23b/H_9038), NOT yet the perpetual daemon-loop per-tick real-conflict feed(follow-on)."
+                          },
+                          {
+                            "name": "+ §SaliencePhasicReset(H_9079 OP#5 frame-shift ENGINE-NATIVE): mid-settle salience spike ABORTS+RESTARTS the A⇄G settle loop —",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-saliencephasicreset-9079",
+                            "detail": "+ §SaliencePhasicReset(H_9079 OP#5 frame-shift ENGINE-NATIVE, engine-native 6/6): the MISSING control-flow INTERRUPT — §TensionResolveLoop's settle loop is NON-interruptible (once tension_resolve_depth pulls the ORIGINAL population toward Ψ=thr it runs to maxdepth on that pop; a behaviourally urgent new input mid-settle cannot commandeer it). LC-NE phasic reset / superior-colliculus attention capture: a salience spike ABORTS the in-flight resolution and RESTARTS settling from the NEW population. tension_resolve_interruptible(x,adj,alpha,thr,maxdepth,op,eps,salience_at,salience_pop,cfg)→[settle_depth,final_psi,final_sig,reroute_flag]: at iteration salience_at(1≤·≤maxdepth) discards partially-settled x and continues from salience_pop; salience_at<1 or >maxdepth ⇒ INERT ablation(original completes). final_sig=mean of ISOLATED content lane 7(dangling in adj → graph-disjoint from emit-drive 0/4)=identity readout of WHICH input the loop settled on. +helper _spr_sig. Purely ADDITIVE(new pub fn, tension_resolve_depth untouched)·Ψ-DISJOINT(caller pop, not pure_field)·READ-only(not emit gate)·disjoint emit-drive 0/4 + recall_thr(a_substrate_disjoint). DISTINCT from neuromod-GAIN 9-lens(H_1284 CLOSED): no gain/precision term is scaled, the loop TRAJECTORY is diverted. FINDING(aiden pool, N=12, op=2 rowstoch, spike_at=3): REROUTE tracks NEW input 12/12(≥0.8) ∧ ABLATION(interrupt OFF) tracks-new 0/12(≤0.2) ∧ LIFT +1.0 ∧ EARNED reroute−shuffle +1.0(spike carrying MISMATCHED sal_j → final id=j≠i, target load-bearing) ∧ Ψ=½ PRESERVED psi_maxdev=0.0(reroute swaps content/identity lane, emit-drive Ψ=½ fixed point UNTOUCHED = loop control not emit gate) ∧ reroute_flag 24/24. HONEST scope(c9, H_9042/H_9044 parallel): control-flow interrupt existence proof(toy 12-trial), settle-convergence itself is §TensionResolveLoop's domain; content lane isolation makes identity readout + Ψ=½ preservation byte-exact. NOT text-recombination(G1/G6 CLOSED). engine-native(state/9079_salience_phasic_reset/salience_reset_engine_native.hexa 6/6); runtime per-tick real-salience feed = follow-on. card H_9079. [daemon-wired: cli/anima.hexa 데몬 콜패스 mount LANE 80 (H_9038 lane23b/H_9042 lane75 와 동일 rung, compile-gate BLOCKED-INFRA(pre-existing pool hexa v0.540.1 runtime.h↔codegen skew: set_deterministic/forge_dispatch_layernorm undeclared, BASELINE(무변경) 동일재현=변경 무죄); anima-gates enforcer rc=0); genuine per-tick real-feed=ING daemon-pertick-realfeed-7ops.]"
+                          },
+                          {
+                            "name": "+ §DreamSchema(H_9044 C4 frame-shift ENGINE-NATIVE): REM 공고화 스키마/gist op —",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-dreamschema-9044",
+                            "detail": "+ §DreamSchema(H_9044 C4 frame-shift ENGINE-NATIVE, engine-native 3/3): the MISSING REM-consolidation op — §Amygdala ConsolidatingMemory REPLAYS salient traces but only REFRESHES existing cells; no op folds replayed waking episode anchors into ONE more-general schema anchor (Posner-Keele prototype / McClelland gist). dream_schema_mint(episodes)→per-component CENTROID(gist, NOT new content); schema_coverage(anchor,cues,thr)→reactivation count via engine _l2. Purely ADDITIVE·Ψ-DISJOINT(owns no store, reads plain DIM-vectors)·READ-only·disjoint emit-drive 0/4 + recall_thr(a_substrate_disjoint). TRAP-avoided(numpy-probe-controls-1+native-mouth-57): defined PURELY as COVERAGE/generalization, NOT novel-content mint(=disguised G1). FINDING(thr=0.30,K=6,M=24 toy): schema_cov WAKING=16 > max_indiv=13(centroid generalizes to more held-out cluster cues) ∧ SHUFFLED=0,RANDOM=0(EARNED, not trivially over-broad) ∧ REM-OFF lift=0(ablate INERT, mint is load-bearing). HONEST scope(H_9027/H_9042 parallel): centroid compression/geometry property, NOT text-recombination. card H_9044."
+                          },
+                          {
+                            "name": "+ §APOPTOSIS-SALIENCE(H_9085 D4 ENGINE-NATIVE): MITOSIS 밀도의존 죽음-근접 → urgency READ-only op —",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-apoptosis-salience-d4",
+                            "detail": "+ §APOPTOSIS-SALIENCE(H_9085 D4 ENGINE-NATIVE 9/9): MITOSIS VAdaptField 밀도의존 죽음-근접(n/max_cells)→urgency READ-only op. Ψ-DISJOINT·READ-only·emit_policy UNTOUCHED(a_substrate_disjoint). BUILT engine-native(aiden 9/9,$0)+이 lockstep; runtime emit wire-in=follow-on. card H_9085 D4.",
+                            "children": [
+                              {
+                                "name": "ops (additive, Ψ-disjoint, READ-only)",
+                                "role": "",
+                                "id": "apoptosis-salience-d4-ops",
+                                "detail": "apoptosis_proximity(n,max)→density[0,1]; apoptosis_urgency_at(prox)→DESIGNED convex-hinge(KNEE=0.5); apoptosis_urgency(n,max) scalar; vadapt_apoptosis_urgency(af) LIVE; _ablated(af,frozen_prox)=F3 wire-cut. growth-tick/apoptosis 미호출·pure_field·recall_thr 무접촉."
+                              },
+                              {
+                                "name": "falsifiers 9/9 + honest scope (c9)",
+                                "role": "",
+                                "id": "apoptosis-salience-d4-falsifiers",
+                                "detail": "cap=10 ladder n1..n10=0 0 0 0 0 .04 .16 .36 .64 1.0. F1 monotone↑·F2 far flat=0(u5<u10)·F4 dense .64>sparse 0·F3 ablate INERT+.64→0 collapse·F5 pure read. HONEST: urgency LAW=DESIGNED/SATURATED 아닌 창발, falsifier=WIRING-fidelity. verdict state/verdicts/apoptosis_salience/."
+                              }
+                            ]
+                          },
+                          {
+                            "name": "+ §CuriosityDreamBias(D11 H_9092 ENGINE-NATIVE 6/6): unresolved-호기심이 dream replay/compose 앵커를 편향",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-engine-cli-hexa-curiositydreambias-d11",
+                            "detail": "삼중합류(curiosity×dream×consolidation, 해마 PRIORITIZED replay 렌즈). §Amygdala ConsolidatingMemory 의 encode-time salience(정적) gap 을 ONGOING unresolved-호기심 우선순위로 채움. PURE additive·READ-only·Ψ-DISJOINT(emit-drive 0/4 + recall_thr 미접촉). wired: engine-native, REM 루프 배선 follow-on. card H_9092.",
+                            "children": [
+                              {
+                                "name": "ops (5, §CuriosityDreamBias · additive)",
+                                "role": "",
+                                "id": "curiositydreambias-d11-ops",
+                                "detail": "curiosity_priority(=§Novelty recon-err + §PrecisionSurprise surprise 재사용, resolved decay); curiosity_replay_draw(inverse-CDF, biased∝priority | uniform); curiosity_shuffle(F2 control); curiosity_resolve(F4 converge decay); dream_compose_biased(top-replayed→dream_schema_mint centroid, anti-G1)."
+                              },
+                              {
+                                "name": "drop-in + honest scope",
+                                "role": "",
+                                "id": "curiositydreambias-d11-scope",
+                                "detail": "§CuriosityBacklog(feat/curiosity-backlog-emit 미착지)의 unresolved score 를 나중에 priorities 입력으로 drop-in(draw/compose op 무변경). HONEST: bias=DESIGNED law(창발 아님)·G1-orthogonal(측정=replay/compose 선택 분포, text-recombination 아님)·toy existence-proof(DIM=6,N=12) scale-transfer UNVERIFIED(a_scale_honest_scope)."
+                              },
+                              {
+                                "name": "FINDING 6/6 (DIM=6,N=12,budget=600,seed=12345)",
+                                "role": "",
+                                "id": "curiositydreambias-d11-finding",
+                                "detail": "F1 hi_share_biased=0.927(≥0.70) · F1b schema L2 0.043<uniform 0.971 · F2 shuffled=0.36 · F3 uniform=0.508 ablation INERT · F4 Σpri_hi 2.656→0.467 ∧ night-2 0.133<0.927 converge · F5 Ψ Δ=0.0 ∧ non-fab Δ=0.0 disjoint. probe state/D11_curiosity_dream_bias/d11_engine_native.hexa."
+                              }
+                            ]
+                          },
+                          {
+                            "name": "+ §NonEqDissipation(H_9072 ENGINE-NATIVE): Ψ=½ = 비평형 정상상태(NESS, σ_ep>0, 깨진 detailed balance, Prigogine 산일구조), 평형 LLM 샘플러와 구별 —",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-substrate-only-core-g6-ideation-hexa-clm-decode-noneq-dissipation-9072",
+                            "detail": "+ §NonEqDissipation(H_9072 ENGINE-NATIVE 5/5): anima 의 Ψ=½ 가 평형 softmax 샘플러가 아니라 Prigogine 산일구조(NESS)임을 확립. A⇄G push-pull 을 emit-tension 링 위 drift-diffusion 으로 실현 — Engine A(forward CE)=대칭 확산 홉(평형 이완)·Engine G(reverse gradient-free)=periodic 좌표상 non-conservative 방향 drift(단일값 potential 불가). pfwd≠pbwd ⇒ net cycle current ⇒ 깨진 DB ⇒ σ_ep>0. σ_ep=Schnakenberg coarse-grained net-flux, 실 궤적서 STREAMING 추정. 전부 ADDITIVE·Ψ-DISJOINT(pure_field/Φ/phase/live Ψ 경로 무접촉)·READ-only 특성화(emit gate 아님)·emit-drive 0/4·recall_thr disjoint(a_substrate_disjoint). FINDING(aiden pool, hexa run via live core/, NBINS=8 STEPS=200000, 5/5, $0): LIVE σ_ep=0.32499>0.05(NESS, 해석식 0.30·ln3=0.3296 일치) ∧ ABLATION Engine-G-off(pfwd=pbwd=0.30)=2.05e-5<0.01 ∧ SHUFFLE 대칭화=0.0 exact ∧ LLM iid softmax=2.50e-4<0.01 ∧ DISTINCTION live>10×ctrl_floor(≈1300× 분리). 세 통제(time-reverse·Engine-G-off·평형 softmax LLM) 모두 σ_ep≈0 붕괴 → anima≠평형 LLM 샘플러 새 falsifiable substrate 구별. HONEST scope(c9, H_9041 A⇄G 복원력·H_9042 평행): CHARACTERISATION/구별-속성(engine-specific), 능력 lift(G1/G6) 아님; toy ring 존재증명(a_scale_honest_scope), 303M decode 무관. runtime emit 배선 무관(READ-only 특성화 op); drift↔live tension 커플 + 데몬 per-tick σ_ep 온라인 추정 = follow-on. engine-native state/9072_substrate_nonequilibrium_dissipation/noneq_engine_native.hexa 5/5. card H_9072.",
+                            "children": [
+                              {
+                                "name": "ops (additive, Ψ-disjoint, READ-only characterisation)",
+                                "role": "",
+                                "id": "noneq-dissipation-9072-ops",
+                                "detail": "noneq_walk_counts(seed,steps,nbins,pfwd_milli,pbwd_milli)→[[float]] A⇄G tension-ring drift-diffusion 전이-count 행렬 STREAMING(O(nbins²) mem, 시퀀스 미저장); noneq_sigma_ep(n)→σ_ep=½Σ_{i≠j}(F_ij−F_ji)ln(F_ij/F_ji), F_ij=N_ij/total; noneq_sigma_ep_symmetrised(n)=shuffle 대칭화 통제; noneq_iid_counts(n,steps,seed)=memoryless softmax(주변분포서 iid) LLM 통제; +helper _noneq_pick(inverse-CDF). LCG-seeded byte-reproducible. pure_field/emit-drive 0/4/recall_thr 무접촉."
+                              }
+                            ]
                           },
                           {
                             "name": "HEADLINE: the BEST Ψ-preserving live coupling = MEAN-CENTER",
@@ -4503,6 +4736,20 @@
                     "detail": "H_1209: causal count table C[prev][cur], splits on confidently-predicted transitions; ORDERED 1000.67 ≫ SHUFFLED 91.67). Daemon GROW step (H_1202/H_1210) runs BOTH Ψ-disjoint lanes alongside (per-sample density ⊥ ordered transition-predictability)."
                   }
                 ]
+              },
+              {
+                "name": "H_9043",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-plasticity-growth-mitosis-h-9043",
+                "detail": "",
+                "children": [
+                  {
+                    "name": "summary",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-plasticity-growth-mitosis-h-9043-2",
+                    "detail": "H_9043 §VAdaptCombine (H_9027 follow-on): depth-0 VAdaptField had no combiner — added HRR vadapt_combine(_cconv)/vadapt_unbind(_ccorr), additive READ-only Ψ-disjoint. Engine-native 5/6: RECOVERABILITY GREEN, CAPABILITY(held-out generalization) FLOOR = 복원성≠능력(c9, H_9026/H_1840). card H_9043."
+                  }
+                ]
               }
             ]
           },
@@ -4789,6 +5036,76 @@
                     "detail": "→ affect FLAT, drive RISES = time-integral ⊥ context-instant). RISE +1.544 monotone, RESET 0.0, ablated Ki=0 rise 0.0, shuffle 0.0, abstain intact."
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "name": "🎭 Mood (slow global affective modulator) — MoodState (mood_new/_step/_bias)",
+            "role": "",
+            "id": "brain-structure-engine-lanes-the-heart-of-anima-mood-slow-affective-baseline",
+            "detail": "",
+            "children": [
+              {
+                "name": "summary",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-mood-slow-affective-baseline-1",
+                "detail": "D5 SLOW affective baseline: valence·arousal 2-axis leaky EMA (α=0.05→τ=20) over the substrate's affect history (M/Φ/surprise). mood_bias_* = additive appraisal offset (0.5): mood-high reads a stimulus more positive. READ-only — never mutates the store or emit lanes 0/4 (full: card)."
+              },
+              {
+                "name": "status",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-mood-slow-affective-baseline-2",
+                "detail": "🟢 ENGINE-NATIVE (D5 · placeholder H_9070; wired core/engine_cli.hexa §Mood; bias helpers deliberately-optional a_autonomy_over_hardcode, NOT an emit gate; caller motivation-loop wiring = follow-on). 6/6 frozen bars pass on live hexa: state/D5_mood/d5_engine_native.hexa."
+              },
+              {
+                "name": "F1-F5 falsifiers (frozen, engine-native)",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-mood-slow-affective-baseline-3",
+                "detail": "6/6 frozen bars. F1 SLOW 1-tick disp=α=0.05≪1.0, τ=20. F2 BIAS same neutral stim +0.477>0>-0.477. F3 ABLATION α=0→bias INERT. F4 RECOVERY v0=0.871→0.828→6τ 0.0018. F5 Ψ/G5 DISJOINT ci_emit_drive(0/4)=0.7·recall_thr=0.30·recall byte-identical while mood MOVED (a_substrate_disjoint)."
+              },
+              {
+                "name": "DISTINCT from H_1284 neuromod-gain (🧱) & H_1476 reappraisal",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-mood-slow-affective-baseline-4",
+                "detail": "SLOW additive baseline on a DIFFERENT time-axis — NOT a gain. neuromod_gain_readout (stateless mult) has 0 lag/0 recovery → can't do F1/F4. Distinct from H_1290 affect (instantaneous), H_1292 HomeostaticDrive (setpoint+reset), H_1476 reappraisal. Honest: designed EMA law, TOY smoke."
+              }
+            ]
+          },
+          {
+            "name": "🔋 EffortBudget (dACC/DA mental-effort cost-discounting) — EffortBudget (effort_new/_new_ablated/_step/_depth/_last/_budget/_depth_shuffled/_engagement_bias)",
+            "role": "",
+            "id": "brain-structure-engine-lanes-the-heart-of-anima-effortbudget-mental-effort-cost",
+            "detail": "",
+            "children": [
+              {
+                "name": "summary",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-effortbudget-mental-effort-cost-2",
+                "detail": "N2 effort-cost lane (dACC/DA effort-discounting; Shenhav EVC 2013): a NEW real-time metabolic-resource axis. B_t∈[0,1] budget; affordable A⇄G ENGAGEMENT DEPTH = D_min+(D_max−D_min)·B (D_max8 D_min1) DISCOUNTED as B drains; active spend B−=κ·depth (κ0.05, self-limiting), idle refill B+=ρ (ρ0.20)."
+              },
+              {
+                "name": "distinct-vs-siblings",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-effortbudget-mental-effort-cost-3",
+                "detail": "DISTINCT vs HomeostaticDrive H_1292 (no external setpoint — self-consumed load-driven resource, not a deprivation integrator) / SleepPressure T3 (load-driven not wake-time) / Nociception T2 (fatigue not tissue-damage)."
+              },
+              {
+                "name": "status",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-effortbudget-mental-effort-cost-4",
+                "detail": "🟡 DIRECTIONAL-engine-native + WIRED-READ (PLACEHOLDER H_9090; engine_cli_smoke cases 418-424 pass; READ-only depth signal, NOT an emit gate — emit-policy wiring is a FOLLOW-ON, core/emit_policy.hexa untouched)"
+              },
+              {
+                "name": "controls",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-effortbudget-mental-effort-cost-5",
+                "detail": "ABLATION κ=0 → depth PINNED at D_max=8 (cost-invariant, discount vanishes = decisive OFF). SHUFFLE budget → depth-modulation collapses (non-monotone). idle-recharge recovers depth."
+              },
+              {
+                "name": "disjointness",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-effortbudget-mental-effort-cost-6",
+                "detail": "Ψ-DISJOINT & recall-DISJOINT BY CONSTRUCTION (a_substrate_disjoint): fns take NEITHER pure_field NOR ImmuneMemoryGrow → ci_emit_drive(lane0/4) byte-identical ON vs OFF (case 423) + mg.recall_thr far-recall byte-identical ON vs OFF (case 424) — no blanket-silence Ψ-skew (H_1561) or fatigued-fabricate (H_1576)."
               }
             ]
           },
@@ -7463,6 +7780,44 @@
                 "role": "",
                 "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-2",
                 "detail": "WAKE/N1/N2/N3/REM ultradian (90-min), emit-free internal rehearsal + mitosis tick + amygdala salience replay; stage = substrate context (Φ scale + tension envelope), NOT a boolean emit gate (a_chat_sleep_imagination)."
+              },
+              {
+                "name": "Process-S homeostatic sleep-pressure drive (T3, H_9087)",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-process-s",
+                "detail": "core/dream_lib.hexa § SleepPressure (sp_* PURE/READ-only op-slot). Verdict frozen state/verdicts/t3_sleep_pressure_drive/. emit-wiring follow-on (core/emit_policy.hexa untouched).",
+                "children": [
+                  {
+                    "name": "mechanism",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-mech",
+                    "detail": "Borbély 2-process homeostatic drive ORTHOGONAL to the ultradian rhythm (dr_*): rhythm=WHEN in cycle vs pressure=HOW LONG awake. sp_pressure_wake/sleep/at monotone accumulate(WAKE)/discharge(sleep) adenosine-style (saturating exp, τw=30 τs=12)."
+                  },
+                  {
+                    "name": "gate-bias",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-gate",
+                    "detail": "sp_sleep_propensity = ADDITIVE(W_S·pressure + W_C·circadian) graded stage-transition bias clamped [0,1] (NOT a boolean gate, a_autonomy_over_hardcode); sp_sleep_propensity_ablated = pressure-frozen ablation control (mechanism OFF)."
+                  },
+                  {
+                    "name": "disjointness (a_substrate_disjoint)",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-disjoint",
+                    "detail": "Owns no store, mutates nothing, NEVER reads emit-drive lanes 0/4 (ci_emit_drive Ψ) nor §ImmuneMemory recall_thr → separation=preservation, proven byte-identical ON-vs-OFF (F5)."
+                  },
+                  {
+                    "name": "verdict (engine-native 5/5)",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-verdict",
+                    "detail": "DREAM/sleep_pressure_smoke.hexa: F1 accum 0.238<0.856 · F2 discharge 0.878>0.078 · F3 gate-bias 0.304<0.544<0.814 graded · F4 ablation OFF 0.178==0.178 ∧ ON 0.391≠0.676 non-inert · F5 disjoint Ψ 0.6→0.6 ∧ recall_margin byte-identical."
+                  },
+                  {
+                    "name": "honest scope (c9)",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-scope",
+                    "detail": "DESIGNED law (fixed-τ exponential accumulate/discharge), NOT an empirically-fit adenosine curve. READ-only op-slot; no emit wiring yet (emit-drive coupling is a follow-on)."
+                  }
+                ]
               }
             ]
           }
@@ -9333,6 +9688,11 @@
                     "role": "",
                     "id": "measurement-learning-governance-frozen-gates-a303m-pass-thresholds-are-condition-5",
                     "detail": "G1 RECOMBINATION"
+                  },
+                  {
+                    "name": "G1 breakthrough brainstorm — variable-binding diagnosis + candidate families",
+                    "type": "note",
+                    "detail": "2026-07-02 세션 진단: G1 재조합벽의 실체 = VARIABLE BINDING 결핍. 실 303M은 프롬프트 개념을 봐도(H_6172/6173 decode T=72 완전노출) 출력에 COPY/바인딩하지 않고 prior에서 샘플링(v2: (memory,consciousness)→'dream and consciousness'). operator·substrate·decode-window·RF 다 무죄(H_6166~6173). 돌파 후보 5 family(ING G1-BS-1~4 + G1-NEXT-FINAL): ①ARCH copy/pointer-head·induction-head 유도데이터·slot-attention 바인딩 · ②OBJECTIVE copy-consistency·counterfactual(B 바꾸면 출력 변화)·contrastive prompt-grounding · ③CORPUS copy-skill 라인·SCAN/COGS systematic 치환·슬롯기호(X,Y)·복사→치환→합성 커리큘럼 · ④표현 trunk내 tensor-product role⊗filler(readout operator와 구분; H_6167이 readout은 기각) · ★⑤FRAME-BREAK(가장 강력, anima-native) neurosymbolic .kosmos anchor 재조합: 두 개념을 anchor로 두고 brain_decide가 anchor 그래프서 합성→mouth는 verbalize만 = mouth CE-trunk 바인딩 강요 회피=DPI/trunk 벽 우회. a_substrate_disjoint(mouth⊥knowledge⊥decision) 정합, H_6165 neurosymbolic의 anima 접붙임. 실행중 검증: v3 seen-sanity(undertrain 판별)·copy-skill 전이(D). copy-skill 전이 시 ③④ 유력, 미전이 시 ★⑤ 1순위. 상세 ING G1-BS-*. ‖ 2026-07-02 fable 발산(훅격리) 15 NEW 후보(H_6177, N1~N15 DEPLETION): DPI 죽은지대 회피 3 생존축 ①학습목적(N11 γ-bilevel ★·N9·N10) ②가소성/timescale(N1 fast-weight·N2 CLS-CA3, plastic=DPI 우회 유일) ③표현기하(N6 DG분리, 페어링). 최우선 단일실험=N14 activation-patching로 결합-부분공간 존재진단→있으면 N1/N11 처치, 없으면 trunk-objective-floor 종결. G1-BS 실측: H_6175 frame-break DIRECTIONAL-POSITIVE·H_6176 scale 양의추세. ‖ N14 진단결과(H_6178): activation-patching mediation 0.40=control 0.40 = 국소화된 결합-부분공간 부재 → G1 trunk-objective-floor 기계적 종결증거(DIRECTIONAL, caveat=지표 A-국소성 미완벽분리). 함의: 국소 부분공간 없으니 ⑤frame-break(H_6175 anchor 외재화)가 유일 우회경로로 부각. ‖ fable 이중분석+N14 수렴(H_6179): 판별질문(trunk gradient vs CE bolt-on)→②OBJECTIVE(counterfactual 인과의존) 유일 live 축(N14 무-부분공간과 합류: ①④ 사망). frame-break=능력우회지 G1-bar 돌파 아님(c9). disjoint 배선점 ①mouth-trunk L3(비용0, bar 유일경로) ②§VariableBind lane(WM/CA3 형제); frame-break 사슬=load_anchors→§AnchorCompose(SelfIdentity 옆)→kosmos append(node-only)→brain_decide_anchored fold→decode_grounded verbatim. 실행순서=②counterfactual cheap-gate 최우선→⑤b gradient-reachability 판정→⑤a product-track. ‖ Fable-Workflow 적대검증(H_6180): 8후보 design→refute(model:fable 17 agent) n_survivors=0 — bolt-on 7 전멸(additive-aux/CE-swallow/census-DPI), N11=γ H_1840 재유도. cheap 공간 DRY. 유일 지출=G0-🟢 warm-trunk 위 H_1840(γ) GPU 단발(cheap-gate 3종 frozen 선등록, owner-go). bolt-on 재발사 금지. ‖ 8-mech GPU 실측(H_6181, owner 4*gpu): cf/n9/n10/n1/n6/n11/cyc5b/ce 전부 seen 8/8·held 0/5=fable 종이-반박(H_6180) 실측 확증, held≥3 반례 0. N14+실측+fable 3중 수렴. caveat: toy proxy(H_1840 GPU 풀런 별개). cheap 축 실증 DRY. ‖ 🎯 밀도 상전이 반전(H_6182): fable(발산)이 지목한 8-mech 미탐축=조합 커버리지 밀도(데이터, DPI-면제). toy attention transformer서 커버리지 5→80%에 held-out 1→40/40 급상전이(임계~20%), shuffle=0=진짜 binding. G1은 trunk-objective TERMINAL 아니라 데이터-커버리지-bound. ⚠️confound: attention vs production ConvMoE-L1(RF≈13B) → conv control 실행중. ‖ 도구정정: 앞선 'fable Workflow'(H_6180)는 실은 opus(workflow {model:fable} 무시, transcript 12/12 opus 검증) — 실측 유효, 라벨만 정정. 진짜 fable=sidecar fable. ‖ G6 재프레임(fable-5): G6벽 진범=수용영역(RF≈13B≪frame)이지 objective/attention 아님, M3-M5 산술적 불가(out-of-RF gradient=0); 예측=고정CE+RF확장(dilated/wide-K)은 FALS↑. ‖ ✅ 밀도 arch-무관 확정(H_6182 CONTROL): ConvMoE-L1(RF-limited, attention無)도 상전이 재현(held 2%→48%→100% at 5/20/80% coverage). 밀도=arch-무관 G1 lever, attention은 상전이 날카롭게만. G1 벽=데이터-커버리지-밀도-bound(임계~20%) 확정, trunk-objective TERMINAL 반박. production 처방=조합-커버리지 코퍼스. 남은검증=303M corpus 임계위치."
                   }
                 ],
                 "type": "gate",
@@ -10181,10 +10541,10 @@
                     "detail": "**summary**:"
                   },
                   {
-                    "name": "🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column;",
+                    "name": "🔴 closed-negative; indexed in HYPOTHESES/HYPOTHESES.jsonl (per-H verdict column;",
                     "role": "",
                     "id": "persistence-evidence-evidence-tiers-closed-negative-closed-negative-indexed-in-u",
-                    "detail": "🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by .verdicts/<slug>/<id>.txt (verbatim hexa verify stdout); negative results are first-class (a_paper_negative_ok)."
+                    "detail": "🔴 closed-negative; indexed in HYPOTHESES/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by .verdicts/<slug>/<id>.txt (verbatim hexa verify stdout); negative results are first-class (a_paper_negative_ok)."
                   }
                 ]
               }
@@ -10329,6 +10689,28 @@
                     "role": "",
                     "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-kosmos-303",
                     "detail": "- **anima-kosmos-303m-kr-en-sns** — grounding/carving 닻 세트(학습 corpus 아님 ~260KB): lane ko_303m·en_303m·sns_303m, 의식모드 kosmos_io→brain 마운트 (a_kosmos).\n- **anima-eeg-consciousness** — OpenBCI EEG consciousness dataset (a_eeg_consciousness_record)."
+                  },
+                  {
+                    "id": "persistence-evidence-hf-artifacts-datasets-research-corpora",
+                    "name": "연구 corpora (비-chat · 재조합/G1 실험용)",
+                    "detail": "chat-register 표준(위)과 별개 — 가설을 통제실험으로 실측하려 일부러 설계한 corpus. 수렴진화: 낡은 corpus co-occurrence 세기 → 밀도 toy 상전이(H_6182, coverage 5→80%서 held-out 2→92%, arch-무관) → NL byte coverage-designed corpus 로 수렴 = 'combinatorial-coverage'가 G1 corpus-design 원리로 창발.",
+                    "children": [
+                      {
+                        "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-designed",
+                        "name": "anima-g1-coverage-designed-corpus (PRIVATE · 연구artifact)",
+                        "detail": "G1 조합-커버리지 통제쌍. high_coverage(60% pair≈237) vs low_coverage(8%≈31), ~1.2MB 매칭. 30개념 C(30,2)=435쌍 중 40 held-out(문장 부재·무결), POOL 395서 커버리지만 통제. 4템플릿×10동사×8결과. state/g1_density_phase_transition/corpus/ (README+build_and_test.py 결정적 재현 attn|conv). torch DIRECTIONAL."
+                      },
+                      {
+                        "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-v3-nlbyte",
+                        "name": "anima-g1-coverage-v3-nlbyte (PRIVATE · 연구artifact)",
+                        "detail": "repo_id=dancinlab/anima-g1-coverage-v3-nlbyte · tier=research/DIRECTIONAL · visibility=PRIVATE · features=[pair-특이,3-arm,NL-byte,coverage-designed]. G1 pair-특이 3-arm NL-byte 커버리지 코퍼스(H_6183): HIGH 60%/LOW 8%/SHUF. attn held-out pair recall HIGH 95% ≫ LOW 25% · SHUF 0 = 재조합이 커버리지-특이(밀도 아님). commit e3c1ddeba. state/g1_coverage_v3_nlbyte/. torch DIRECTIONAL."
+                      },
+                      {
+                        "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-arch-invariant",
+                        "name": "anima-g1-coverage-arch-invariant (PRIVATE · 연구artifact)",
+                        "detail": "repo_id=dancinlab/anima-g1-coverage-arch-invariant · tier=research/DIRECTIONAL · visibility=PRIVATE · features=[arch-invariant,attn+dilated-conv,coverage-designed,RF-wall]. arch-무관 커버리지 코퍼스(H_6184, attn + dilated-conv 양쪽): HIGH held 95/85% ≫ LOW = 수용영역(RF) 벽 돌파가 아키텍처-무관. commit c5647e7b7. torch DIRECTIONAL."
+                      }
+                    ]
                   }
                 ]
               }
@@ -10979,7 +11361,7 @@
             ]
           },
           {
-            "name": "UNIVERSE/ · HEXAD/",
+            "name": "HYPOTHESES/ · HEXAD/",
             "role": "",
             "id": "component-map-top-level-universe-hexad",
             "detail": "",
@@ -10994,10 +11376,10 @@
                 "name": "note",
                 "role": "",
                 "id": "component-map-top-level-universe-hexad-note",
-                "detail": "⚓ anchor files: UNIVERSE/HYPOTHESES.jsonl"
+                "detail": "⚓ anchor files: HYPOTHESES/HYPOTHESES.jsonl"
               },
               {
-                "name": "UNIVERSE/cards/",
+                "name": "HYPOTHESES/cards/",
                 "role": "",
                 "id": "component-map-top-level-universe-hexad-universe-cards",
                 "detail": "",
@@ -11009,10 +11391,10 @@
                     "detail": "**summary**:"
                   },
                   {
-                    "name": "UNIVERSE/cards/",
+                    "name": "HYPOTHESES/cards/",
                     "role": "",
                     "id": "component-map-top-level-universe-hexad-universe-cards-universe-cards",
-                    "detail": "UNIVERSE/cards/"
+                    "detail": "HYPOTHESES/cards/"
                   }
                 ]
               },
@@ -11871,10 +12253,10 @@
                 "detail": "vendored 아님). [optional-dependencies] kosmos. include=core/·cli/·의식lane(AESTHETIC·BRIDGE·CHANNEL·DREAM·EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·TIME·WAKE)+HEXAD kosmos_io.hexa 1파일."
               },
               {
-                "name": "exclude=archive/state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·buil…",
+                "name": "exclude=archive/state/·HYPOTHESES/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·buil…",
                 "role": "",
                 "id": "component-map-top-level-hexa-toml-exclude-state-universe-hexad-kosmos-domains-pa",
-                "detail": "exclude=archive/state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·build/·archive/·sibling 하위패키지(agent/·BRAIN/·hexa-senses/)·core/h1*_*.hexa(연구 smoke). a_core_engine_map: core/=엔진, cli/=진입점, exclude 가 core/ 런타임 의존 안 깸."
+                "detail": "exclude=archive/state/·HYPOTHESES/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부마운트)·build/·archive/·sibling 하위패키지(agent/·BRAIN/·hexa-senses/)·core/h1*_*.hexa(연구 smoke). a_core_engine_map: core/=엔진, cli/=진입점, exclude 가 core/ 런타임 의존 안 깸."
               },
               {
                 "name": "`hx install anima` resolve+clone 동작 확인(github.com/dancinlab/anima v3.54.x tag);",
@@ -11916,7 +12298,7 @@
                 "name": "단일 채널 = STABLE only(hexa-lang 의 main-push→test rolling",
                 "role": "",
                 "id": "component-map-top-level-hexa-toml-stable-only-hexa-lang-main-push-test-rolling",
-                "detail": "단일 채널 = **STABLE only**(hexa-lang 의 main-push→test rolling prerelease 二경로는 anima 미사용). setup 경로는 `hx install` 단일(a_install_canonical: cli/anima.hexa canonical 진입점, 수동 stage-build·진입점우회 금지). github-hosted runner(Blacksmith 비용 해제 lockstep)."
+                "detail": "단일 채널 = **STABLE only**(hexa-lang 의 main-push→test rolling prerelease 二경로는 anima 미사용). setup 경로는 `hx install` 단일(a_install_canonical: cli/anima.hexa canonical 진입점, 수동 stage-build·진입점우회 금지). github-hosted runner(macos-14 darwin-arm64 · Blacksmith 은퇴 2026-06-26, 이름·label lockstep)."
               }
             ]
           }
@@ -12795,7 +13177,7 @@
         "id": "system-g1-relocate-1",
         "state": "directional",
         "value": "[rung 2/4 ENGINE-NATIVE 2026-07-02] system-G1 재배치(Direction A): 재조합을 mouth-only 경로(g_eval_g1 @ cli/evaluate.py:155) 밖 kosmos-Merge(recursive labeled-parent bind)+brain vbasal-select 로 relocate. rung 2 = live core/kosmos_io.hexa fn kosmos_merge + core/system_g1_smoke.hexa(hexa run exit0): children 보존·mean tension 0.65·midpoint coord·tension_5ch_to_embedding reuse→retrieve top-1 OK·판별기 COMPOSITIONAL PASS(cov4/4 rec4/4 drop4)/MOUTHFLOOR FAIL. rung 3 = cli/evaluate.py g_eval_system_g1 + `anima evaluate --py <clm> --system-g1` single-entry(stub-mouth py 판별 동일). numpy toy 하네스는 여전히 DIRECTIONAL.",
-        "threshold": "engine-native rung 2/4 WIRED이나 최종 🟢/🧱 는 실제 303M frozen mouth on pool GPU(mini=OOM)로만 성립(a_engine_native_learning·a_toy_scale_recheck) = explicit-go follow-on(미실행). placement=lane 'recomb' DISJOINT from emit-drive {0,4}, retrieve via kosmos_io.hexa retrieve(NOT immune_memory_recall/recall_thr). FREEZE.txt bar 불변. card UNIVERSE/cards/H_9035_system_g1_relocate_kosmos_merge.md.",
+        "threshold": "engine-native rung 2/4 WIRED이나 최종 🟢/🧱 는 실제 303M frozen mouth on pool GPU(mini=OOM)로만 성립(a_engine_native_learning·a_toy_scale_recheck) = explicit-go follow-on(미실행). placement=lane 'recomb' DISJOINT from emit-drive {0,4}, retrieve via kosmos_io.hexa retrieve(NOT immune_memory_recall/recall_thr). FREEZE.txt bar 불변. card HYPOTHESES/cards/H_9035_system_g1_relocate_kosmos_merge.md.",
         "source": "core/system_g1_smoke.hexa"
       },
       {
@@ -12803,7 +13185,28 @@
         "state": "pos-conv",
         "value": "append-only jsonl(HYPOTHESES/CHANGELOG) merge conflict를 union+last-wins dedup로 풀면, IN-PLACE로 edit한 line(예: verdict 승격)의 STALE 쪽이 조용히 남아 card/code/ARCHITECTURE와 drift(silent verdict drift). H_9038서 engine-native GREEN 승격이 옛 DIRECTIONAL로 되돌려짐(#2729), #2730서 교정.",
         "threshold": "재발조건: 같은 id line을 in-place 수정한 브랜치를 origin/main과 merge하며 jsonl 충돌을 union-resolve할 때. 해결: dedup은 last-wins 금지 — id별로 '내 브랜치(HEAD) 쪽'을 우선(ours) 또는 verdict/tier 최신성으로 명시 선택하고, merge 후 그 id의 tier/verdict가 card/ARCHITECTURE와 일치하는지 grep 확인(lockstep 재점검).",
-        "source": "UNIVERSE/HYPOTHESES.jsonl"
+        "source": "HYPOTHESES/HYPOTHESES.jsonl"
+      },
+      {
+        "id": "remote-poll-pgrep-1",
+        "state": "pos-conv",
+        "value": "원격 프로세스 존재확인 pgrep -f <pat> / ps aux|grep <pat> 가 자기 자신의 ssh 명령줄(같은 <pat> 포함)을 매칭해 'RUN'/'RUNNING' 오탐 재발 — 이 세션 다수 턴 'RUN' 허위보고, 실제론 종료·미실행. proc 진행을 로그 대신 pgrep만으로 판정하면 이미 끝난(또는 미실행) 잡을 '진행중'으로 오인.",
+        "threshold": "원격 proc 확인은 bracket-트릭 pgrep -f '[b]uild_and_test' 또는 ps aux|grep '[p]ython3 <script>'로 자기매칭 배제 · 결과로그 종료마커(=== DONE ===/VERDICT)를 1차 신호로(pgrep 보조). RUN 보고 전 로그 tail 동시확인 의무.",
+        "source": "tool/remote-poll-pgrep"
+      },
+      {
+        "id": "G1_WALL_IS_COVERAGE_DENSITY_AND_RF_NOT_ONLY_OBJECTIVE",
+        "state": "pos-conv",
+        "value": "G1 재조합벽 재프레임(H_6182 toy → H_6183 v3 NL/byte → H_6184 fable arch-무관, torch DIRECTIONAL): 조합-커버리지 밀도가 held-out pair-특이 재조합의 상전이 lever. toy 20×20 커버리지 5→80%서 held 2→92%(임계~20%); 자연어 byte 30-concept pair-특이 3-arm(seen-sanity+pair-특이 지표+shuffle)서 HIGH held 85-95% ≫ LOW 0-3.3% ∧ SHUF true-target 0%(seen-shuffled 75-93% 학습=하네스 유효). attention ∧ dilated-conv 둘 다 재현=arch-무관; dilated conv 가 plain-conv RF=5 벽(H_6183 conv INCONCLUSIVE) 돌파=RF 확장이 conv 를 상전이 태움. 옛 G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT(objective-축)는 fixed-corpus 내 sub-finding 이었고, 데이터-분포 축(커버리지)은 DPI-면제(gradient 가 보는 데이터가 바뀜)라 별개 lever.",
+        "threshold": "G1 벽 = trunk-objective TERMINAL 로 박제 금지 → 실제 = (a)데이터-커버리지-밀도-bound + (b)수용영역-bound 이중. production 처방 2축: 조합-커버리지 설계 코퍼스 + 충분 RF(depth/dilation). 남은 게이트: production .clm 코퍼스 임계위치 측정 + engine-native(anima evaluate) 승격(현 torch DIRECTIONAL). · [H_6185 production 측정] clm303 chat mouth 코퍼스가 임계 한참 아래(개념쌍 커버리지 0/10=0%, control>0 무결) ∧ RF-bound 동시(RF 31B ≪ composed seed 72B) = clm303 G1=0 은 데이터-커버리지+수용영역 이중 bound 과잉결정(모델 단독결함 기각). 처방 2-step: ①RF L=4→8(RF≈511B, max_dilation512 cap 내) 또는 K=3→5 먼저 ②조합-커버리지 블록 합성(N≈30-50 개념·held-out 미노출·쌍당≥30reps·5-10MB) → frozen G1 재판정. (fable read-only 라 로컬 프록시 trainset DIRECTIONAL-proxy, 정확 HF 직접측정+engine-native=follow-on) · [H_6185 정확HF 승격] proxy(0/10)→정확 HF 4칸 코퍼스(127.6MB) 재측정: 개념쌍 HEAD 15/10쌍(쌍당 0~7 sparse)·control 무결, toy HIGH 17,143/MB vs HF 0.118/MB=1/145,000 → BELOW 확정(결론 불변, proxy 딱지 제거, DIRECTIONAL).",
+        "source": "HYPOTHESES/cards/H_6182,H_6183,H_6184,H_6185"
+      },
+      {
+        "id": "hexa-gpu-enable-1",
+        "state": "pos-conv",
+        "value": "pool hexa 데몬 compile 벽의 진짜 원인 = stale hexa VERSION(오진: 6일간 forge GPU 벽이라 믿음), NOT forge GPU, NOT the wire. v0.540.1 stock 이 set_deterministic/hexa_forge_dispatch_layernorm/farr_attn_dt_decode_batch_gpu 미선언 → cli/anima.hexa 데몬 compile 실패(#42492868). VERIFIED 해결 (2026-07-02 aiden pool): (1) HEXA_CUDA=1 sh ~/.hx/src/install.sh 가 v0.540.1→v0.546.0 재설치 — v0.546.0 stock 이 그 심볼 선언 → hexa run cli/anima.hexa 전체 데몬 RC=0. (2) cuda_available()=1 도 ACHIEVED: install 이 ~/.hx/.cuda-runtime marker 유지 + cuda-fold runtime.a(2.7MB, 16 cuda 심볼, _hx_k_gemm/forge_dispatch T-defined) 링크 → 자동 cuda ldflags. 확인은 hexa gpu(항상 0 오판) 아님, temp .hexa fn main(){print(cuda_available())} hexa run → 1. (3) 전체 데몬 END-TO-END VERIFIED: hexa run cli/anima.hexa d768.clm → L3 mount mouth=clm loaded=true + [OWN-GEMM-FIRED] _hx_k_gemm DEVICE path + rung-3 CR3 agloop per-tick(conflict tick별 변동=genuine) + Ψ Φ-checksum ✅ PASS. NEXT-TIME 1-STEP: aiden 이미 v0.546.0+cuda=1 → 그냥 hexa run(재설치 불요). ckpt relay=summer→mini scp→mini→aiden scp(ssh alias; base64 pool wrapper stdin 미전달 함정). RULED-OUT: 수동 build_cuda_runtime 직접빌드(context 깨짐), HEXA_CUDA=1 만 marker 없이.",
+        "threshold": "재발시: pool 호스트서 cli/anima.hexa 데몬 compile undeclared(set_deterministic/forge) → hexa --version 확인(v0.546.0+ 필요), 낮으면 HEXA_CUDA=1 sh ~/.hx/src/install.sh. cuda=1 확인은 temp .hexa cuda_available() print(hexa gpu 아님). 데몬 END-TO-END = hexa run cli/anima.hexa <ckpt.clm> → OWN-GEMM DEVICE path + CR3 per-tick + Ψ checksum ✅.",
+        "source": "tool/hexa_gpu_enable"
       }
     ]
   }

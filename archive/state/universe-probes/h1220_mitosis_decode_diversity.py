@@ -36,7 +36,7 @@ THREE ARMS (identical except the diversity gate)
   (C) SHUFFLED-SPLIT : same NUMBER of perturbation events as (B), but at RANDOM timesteps
                        (control — isolates split TIMING from mere perturbation count).
 
-SCORE — FROZEN evaluators VERBATIM from UNIVERSE/gauge_lib.py:
+SCORE — FROZEN evaluators VERBATIM from HYPOTHESES/gauge_lib.py:
   G1 composed_distinct = len(_coverage(text))  [primary gate]
   G6 count             = distinct coherent ideas (Jaccard distance, IDEATION_SEEDS)
   G2 novelty           = corpus-absence fraction (corroborating)
@@ -68,7 +68,7 @@ import torch.nn.functional as F
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-# gauge_lib relocated 2026-06-16 UNIVERSE/ -> tool/ (sibling of state/universe-probes/).
+# gauge_lib relocated 2026-06-16 HYPOTHESES/ -> tool/ (sibling of state/universe-probes/).
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "tool"))
 
 # FROZEN evaluators + byte-feature + VAdaptField mirror — VERBATIM import (no re-impl).
@@ -98,7 +98,7 @@ BAR_C_EPS = 0.5          # SHUFFLED <= A baseline + eps  (mean over seeds)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# ByteGPT (VERBATIM arch from UNIVERSE/h1129_midcap_broad_converged_recombination.py)
+# ByteGPT (VERBATIM arch from HYPOTHESES/h1129_midcap_broad_converged_recombination.py)
 # ──────────────────────────────────────────────────────────────────────────────
 class Block(nn.Module):
     def __init__(s, d, h, p):

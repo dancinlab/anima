@@ -2,7 +2,7 @@
 
 > **상태: DESIGN-ONLY · DIRECTIONAL · 측정 0.** 126개 전부 🔵 PRE-REGISTERED ARCHITECTURE (unmeasured). 뇌/인지 조직원리 × 엔진-네이티브 추상조건(G0 legibility · G1 recombination · G2 novelty · Ψ=½ endogeneity · honesty/abstain · binding · self-chain · realization-invariant)의 통짜(whole-substrate) 설계 census. operator-level H_1604–1685(단일 op)·brain-lens H_1280–1295(단일 메커니즘 probe)와 **층위가 다르다**(통짜 아키텍처). 박제 과장 금지 — 설계는 측정이 아니다(a_engine_native_learning·p7).
 
-- **등록 면(2-surface):** `UNIVERSE/cards/H_<id>_<slug>.md` + `UNIVERSE/HYPOTHESES.jsonl`(deterministic 재생성 `tool/_build_hyp_jsonl.py`)
+- **등록 면(2-surface):** `HYPOTHESES/cards/H_<id>_<slug>.md` + `HYPOTHESES/HYPOTHESES.jsonl`(deterministic 재생성 `tool/_build_hyp_jsonl.py`)
 - **코드/census:** `state/brainarch_census/`(gencard.py · registry.jsonl · 이 CENSUS.md)
 - **id 범위:** H_1686 … H_1811 (126개, 연속) — 등록 시점 1xxx 시리즈 max(H_1685)+1부터 순차. enforce_anima_gates.py clean(exit 0).
 

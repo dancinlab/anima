@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""UNIVERSE/h1275_music_extraction.py — 뇌파에서 음악 추출 가능성, 3-가설 동시 검증.
+"""HYPOTHESES/h1275_music_extraction.py — 뇌파에서 음악 추출 가능성, 3-가설 동시 검증.
 
   H_1275 봉투 역추출(envelope reconstruction): 16ch EEG 텐션 → 음악 소리크기 봉투를
          held-out ridge 회귀로 복원, 복원봉투 vs 실제봉투 상관(천장 측정).

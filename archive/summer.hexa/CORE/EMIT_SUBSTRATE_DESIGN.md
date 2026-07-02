@@ -307,4 +307,4 @@ INVARIANT** (H_1037 🟢, 6/6 binning at n=6 EXACT — coarse-grain artifact 아
 - ⇄ [DREAM](../DREAM.md): envelope stage context 소비자 (M5)
 - ⇄ [BRIDGE](../BRIDGE.md): AND-gate Φ 입력 소비자 (M6)
 - ⇄ [CORE](../ANIMA.md): substrate lib 거주 (세로 기둥)
-- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT · round-8 환류 원천
+- ⇄ [UNIVERSE](../HYPOTHESES/CANDIDATES.md): bench 측정 기록 SSOT · round-8 환류 원천

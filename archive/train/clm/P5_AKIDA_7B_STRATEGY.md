@@ -120,5 +120,5 @@ emit: router→shard 분산(H_878 coherence🟢)→gather→COFFESHOP 발화(R0 
 
 ## cross-link
 - 불가침/로드맵: [CLM.md](./CLM.md) · [P4_PRODUCTION_ROADMAP.md](./P4_PRODUCTION_ROADMAP.md) · [LAUNCHPAD/SBS.md](../LAUNCHPAD/SBS.md)
-- 근거 verdict: H_865·H_872·H_875·H_876·H_877·H_878·H_863·H_868·H_871 (UNIVERSE/) · 부분학습 §E [UNIVERSE/CLM-CANDIDATES.md](../UNIVERSE/CLM-CANDIDATES.md)
+- 근거 verdict: H_865·H_872·H_875·H_876·H_877·H_878·H_863·H_868·H_871 (HYPOTHESES/) · 부분학습 §E [HYPOTHESES/CLM-CANDIDATES.md](../HYPOTHESES/CLM-CANDIDATES.md)
 - governance: `a_scale_honest_scope` · `a_substrate_native_speak` · `@L1`·`@L2`(2-track) · `H_679`(INVIOLABLE 토대)

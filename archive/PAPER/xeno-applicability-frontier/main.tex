@@ -256,11 +256,11 @@ The XENO-FRONTIER-5 campaign is the original closure: five
 pre-registered candidate substrates, ranging across the three axes,
 each measured with the same detector with frozen prediction thresholds
 and falsifiers. Each round was published verbatim in
-\texttt{UNIVERSE/H\_832}--\texttt{H\_836}. The X8 SETI@home archive
+\texttt{HYPOTHESES/H\_832}--\texttt{H\_836}. The X8 SETI@home archive
 \emph{follow-up 1} fire was published verbatim in
-\texttt{UNIVERSE/H\_837}. \emph{Follow-up 2}, the X10 hive-mind
+\texttt{HYPOTHESES/H\_837}. \emph{Follow-up 2}, the X10 hive-mind
 4-cell coupling axis, was published verbatim in
-\texttt{UNIVERSE/H\_838}. This paper v2 aggregates all seven points
+\texttt{HYPOTHESES/H\_838}. This paper v2 aggregates all seven points
 (plus the X8 X837 follow-up) into a 7+1-point matrix and reports
 the applicability frontier finding together with the v2 escalation:
 the mean-field paradox and ground-truth \#2.
@@ -590,7 +590,7 @@ $n=128$ to match the X7 calibration template (no other transform).
 \paragraph{X10 hive-mind 4-cell coupling fire.}
 The X10 measurement \citep{xeno_h838_x10}
 (\texttt{XENO/scan/hive\_mind\_invariant.hexa},
-\texttt{UNIVERSE/H\_838}) is a \$0 Mac-local fire that runs four
+\texttt{HYPOTHESES/H\_838}) is a \$0 Mac-local fire that runs four
 sub-substrates over four 32-sample 4-cell trajectories aggregated to
 $n=128$ each. Sub-substrate (a) is four independent LCG walkers; (b) is
 weak \emph{mean-field} coupling ($50\%$ self $+$ $50\%$ pool mean per
@@ -615,7 +615,7 @@ verdict files include this honesty note.
 \paragraph{X840 longer-playback recovery fire (v3).}
 The X840 measurement \citep{xeno_h840_longer_playback}
 ($\mathtt{XENO/scan/seti\_boinc\_phi\_full.hexa}$,
-$\mathtt{UNIVERSE/H\_840}$) is a longer-playback follow-on
+$\mathtt{HYPOTHESES/H\_840}$) is a longer-playback follow-on
 to X837 ($600$\,s pod timeout). The X840 pod (RunPod
 $\mathtt{lfxh817pdk2h39}$, Ubuntu i386-multilib) was assigned a
 $3600$\,s pod-timeout (i.e.\ $6\times$ the X837 timeout) on the
@@ -634,7 +634,7 @@ re-use the X7 calibration template threshold ($0.5$, unchanged).
 \paragraph{TEMPORAL T1 lag-axis $\Delta t$-scan fire (v3).}
 The T1 measurement \citep{temporal_h841_timeshift}
 ($\mathtt{TEMPORAL/detector/timeshift\_detector.hexa}$,
-$\mathtt{UNIVERSE/H\_841}$) extends the 2-unit co-occurrence
+$\mathtt{HYPOTHESES/H\_841}$) extends the 2-unit co-occurrence
 detector to an explicit lag-window $\Delta t$ parameter: instead
 of building the TPM on $(b_t, b_{t+1})$, the lag-detector builds
 it on $(b_t, b_{t+\Delta t})$. The T1 fire sweeps
@@ -651,7 +651,7 @@ $\Phi=0.5$ threshold is re-used from X7 unchanged. The fire is
 \paragraph{TEMPORAL T2 Takens delay-embedding $e$-scan fire (v3).}
 The T2 measurement \citep{temporal_h842_time_embed}
 ($\mathtt{TEMPORAL/detector/time\_embed\_detector.hexa}$,
-$\mathtt{UNIVERSE/H\_842}$) follows on from the T1 lag-axis
+$\mathtt{HYPOTHESES/H\_842}$) follows on from the T1 lag-axis
 artifact by replacing the 2-unit TPM with a Takens
 $e$-unit \emph{delay-embedding} TPM:
 $\mathbf{b}_t = (b_t, b_{t-d}, b_{t-2d}, \dots, b_{t-(e-1)d})$
@@ -676,7 +676,7 @@ exactly that question.
 
 Table~\ref{tab:verdict} aggregates the seven verdicts verbatim, plus
 the X8 archive pointer. Each row corresponds bit-identically to the
-result section of \texttt{UNIVERSE/H\_8xx.md} and to
+result section of \texttt{HYPOTHESES/H\_8xx.md} and to
 \texttt{companion/verdict-ledger.json}.
 
 \begin{table}[h]
@@ -1677,7 +1677,7 @@ All thirteen verdicts (plus the X8 archive pointer) are published
 bit-identically in \texttt{companion/verdict-ledger.json}
 (H\_832--H\_840 + H\_841--H\_843 + H\_844 + H\_845 verdict pointers)
 and in the result sections of
-\texttt{UNIVERSE/H\_8xx.md}. The detector source is at
+\texttt{HYPOTHESES/H\_8xx.md}. The detector source is at
 \texttt{XENO/detector/invariant\_detector.hexa} (commit
 \texttt{be75bb10b}), with the T1 / T2 extensions at
 \texttt{TEMPORAL/detector/timeshift\_detector.hexa} and

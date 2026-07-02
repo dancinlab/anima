@@ -31,7 +31,7 @@ stage-decode):
   mechanism is the one that is NOT shuffle-invariant. Otherwise CLOSED-NEGATIVE
   (a_paper_negative_ok): the advantage survives shuffling -> a static-structure artifact.
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py VERBATIM
 (grow_arm / stage_decode_accuracy / cohen_d_paired / make_audio_stream / SEEDS); the only
 new operation is a seeded time-axis permutation of (X, stages). Live CORE + scale UNVERIFIED
 (a_scale_honest_scope). Lane-M growth lane.
@@ -108,7 +108,7 @@ def main():
             f"advantage is absent when expected, or it survives the time-shuffle (a static-structure "
             f"artifact, temporally blind like H_1179/1180). a_paper_negative_ok."),
         "scope": "TOY ($0 CPU numpy, %d seeds, fixed N=10, peaks from H_1183). Reuses "
-                 "UNIVERSE/h1163_tick_decode_metric.py VERBATIM; only added op = a seeded time-axis "
+                 "HYPOTHESES/h1163_tick_decode_metric.py VERBATIM; only added op = a seeded time-axis "
                  "permutation of (X,stages). The shuffle preserves the value distribution + (X,stage) "
                  "pairing, isolating temporal ORDER as the manipulated variable. Live CORE + scale "
                  "UNVERIFIED (a_scale_honest_scope)." % len(H.SEEDS),

@@ -9,7 +9,7 @@ not just one organism developing within its lifetime.
 
 This harness builds a POPULATION of N agents — each an h1159b-style cell-cluster
 clusterer (reuse the exact assign/run_arm mechanics of
-UNIVERSE/h1159b_mitosis_capacity_self_tuning.py). Per generation:
+HYPOTHESES/h1159b_mitosis_capacity_self_tuning.py). Per generation:
   - eval fitness  = inverse running quantization error on the (fixed) task stream
   - selection     = keep top-half by fitness (truncation selection)
   - heredity      = survivors copied into the next generation

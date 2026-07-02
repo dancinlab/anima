@@ -1,0 +1,72 @@
+device: cuda | arm: shuffle | arch: convd
+corpus bytes: 718170
+params: 2523904
+step 0 loss 5.7381 lr 3.00e-06 0s
+step 250 loss 0.4062 lr 2.98e-04 3s
+step 500 loss 0.3096 lr 2.88e-04 5s
+step 750 loss 0.2867 lr 2.68e-04 8s
+[eval seen-true@1000] strict=0.000 loose=0.000 (n=60)
+    village+lantern -> want(peaceful amber) got' marble remote .\nthe meado'
+    harbor+mountain -> want(misty frozen) got' sunlit marble .\nthe marke'
+    garden+clock -> want(hidden hollow) got' remote mighty .\nthe marke'
+    temple+garden -> want(sacred hidden) got' misty misty .\nthe market '
+    clock+desert -> want(hollow barren) got' remote remote .\nthe marke'
+[eval held@1000] strict=0.000 loose=0.033 (n=60)
+    clock+mirror -> want(hollow quiet) got' gentle remote .\nthe meado'
+    forest+temple -> want(ancient sacred) got' sunlit misty .\nthe meadow'
+    desert+river -> want(barren gentle) got' sunlit barren .\nthe mirro'
+    harbor+forest -> want(misty ancient) got' sunlit hidden .\nthe marke'
+    ocean+letter -> want(silver golden) got' narrow peaceful .\nthe mea'
+step 1000 loss 0.2774 lr 2.41e-04 12s
+step 1250 loss 0.2582 lr 2.08e-04 14s
+step 1500 loss 0.2457 lr 1.72e-04 17s
+step 1750 loss 0.2387 lr 1.36e-04 20s
+[eval seen-true@2000] strict=0.000 loose=0.017 (n=60)
+    village+lantern -> want(peaceful amber) got' ancient ancient .\nthe tem'
+    harbor+mountain -> want(misty frozen) got' hollow quiet .\nthe candle'
+    garden+clock -> want(hidden hollow) got' remote mighty .\nthe marke'
+    temple+garden -> want(sacred hidden) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(hollow barren) got' gentle remote .\nthe meado'
+[eval held@2000] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' gentle sunlit .\nthe mirro'
+    forest+temple -> want(ancient sacred) got' hidden sunlit .\nthe templ'
+    desert+river -> want(barren gentle) got' fragrant narrow .\nthe tem'
+    harbor+forest -> want(misty ancient) got' sunlit barren .\nthe marke'
+    ocean+letter -> want(silver golden) got' shadowy sunlit .\nthe temp'
+step 2000 loss 0.2317 lr 1.02e-04 23s
+step 2250 loss 0.2262 lr 7.22e-05 26s
+step 2500 loss 0.2267 lr 4.93e-05 29s
+step 2750 loss 0.2284 lr 3.49e-05 31s
+step 2999 loss 0.2194 lr 3.00e-05 34s
+[eval seen-true@3000] strict=0.000 loose=0.017 (n=60)
+    village+lantern -> want(peaceful amber) got' ancient ancient .\nthe tem'
+    harbor+mountain -> want(misty frozen) got' hollow quiet .\nthe candle'
+    garden+clock -> want(hidden hollow) got' shadowy barren .\nthe mead'
+    temple+garden -> want(sacred hidden) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(hollow barren) got' gentle remote .\nthe mirro'
+[eval held@3000] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' gentle sunlit .\nthe mirro'
+    forest+temple -> want(ancient sacred) got' hidden sunlit .\nthe mirro'
+    desert+river -> want(barren gentle) got' fragrant narrow .\nthe tem'
+    harbor+forest -> want(misty ancient) got' silver hollow .\nthe candl'
+    ocean+letter -> want(silver golden) got' shadowy sunlit .\nthe towe'
+[eval FINAL seen-true] strict=0.000 loose=0.017 (n=60)
+    village+lantern -> want(peaceful amber) got' ancient ancient .\nthe tem'
+    harbor+mountain -> want(misty frozen) got' hollow quiet .\nthe candle'
+    garden+clock -> want(hidden hollow) got' shadowy barren .\nthe mead'
+    temple+garden -> want(sacred hidden) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(hollow barren) got' gentle remote .\nthe mirro'
+[eval FINAL held] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' gentle sunlit .\nthe mirro'
+    forest+temple -> want(ancient sacred) got' hidden sunlit .\nthe mirro'
+    desert+river -> want(barren gentle) got' fragrant narrow .\nthe tem'
+    harbor+forest -> want(misty ancient) got' silver hollow .\nthe candl'
+    ocean+letter -> want(silver golden) got' shadowy sunlit .\nthe towe'
+[eval FINAL seen-shuffled-target] strict=0.933 loose=0.933 (n=60)
+    village+lantern -> want(ancient ancient) got' ancient ancient .\nthe tem'
+    harbor+mountain -> want(hollow quiet) got' hollow quiet .\nthe candle'
+    garden+clock -> want(shadowy barren) got' shadowy barren .\nthe mead'
+    temple+garden -> want(lofty peaceful) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(golden rapid) got' gentle remote .\nthe mirro'
+{"arm": "shuffle", "arch": "convd", "steps": 3000, "params": 2523904, "final_loss": 0.21944764256477356, "directional": true, "device": "cuda", "seen_true_strict": 0.0, "seen_true_loose": 0.016666666666666666, "held_strict": 0.0, "held_loose": 0.0, "seen_shuffled_strict": 0.9333333333333333, "seen_shuffled_loose": 0.9333333333333333}
+=== DONE convd shuffle ===

@@ -104,4 +104,4 @@ grep -lE 'import torch|gauge_lib|numpy' state/1632_g6setsearch_g1jamo/*.py
 - 12(또는 8) run × {held-out DESCENT per register · G1 multiseed clears · G6 multiseed dist/fals} 표.
 - baseline vs n8_jamo (G1) · baseline vs n4_set (G6) · n4n8_both super-additive 대조.
 - ckpt HF 업로드 (tier-gated, `a_hf_autonomous`) + ARCHITECTURE.json registry (`a_hf_registry`).
-- HYPOTHESES.jsonl + UNIVERSE/cards/H_1632 카드 (wired: 상태축).
+- HYPOTHESES.jsonl + HYPOTHESES/cards/H_1632 카드 (wired: 상태축).

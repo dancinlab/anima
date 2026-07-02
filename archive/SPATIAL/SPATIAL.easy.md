@@ -80,4 +80,4 @@
 ---
 
 > ⚠ 모든 항목 = 🟣 SF-grade seed (falsifier 정식 등록 후 격상)
-> 정식/진행 카운트 → [SPATIAL.md](./SPATIAL.md) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
+> 정식/진행 카운트 → [SPATIAL.md](./SPATIAL.md) · 측정 기록 SSOT → HYPOTHESES/CANDIDATES.md

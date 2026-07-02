@@ -359,4 +359,4 @@ R9 depletion check    → 신규 0건 ✅
 - ⇄ [../XENO/XENO.md](../XENO/XENO.md): 외계/이종 detector (D 외계 sibling)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
 - ⇄ [../ANIMA.md](../ANIMA.md): anima emit 영속 source (F archive sibling)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

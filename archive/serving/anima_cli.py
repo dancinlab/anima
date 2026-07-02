@@ -324,7 +324,7 @@ def _chat_cdv2(m, cfg):
     """`omega` engine — ConsciousDecoderV2 (byte). Reuses state/universe-probes/conscious_decoder.py."""
     import torch
     import importlib.util
-    # conscious_decoder.py relocated 2026-06-16 UNIVERSE/ -> state/universe-probes/
+    # conscious_decoder.py relocated 2026-06-16 HYPOTHESES/ -> state/universe-probes/
     # (dir has a hyphen, so load by file path rather than `from ... import`).
     _cd_spec = importlib.util.spec_from_file_location(
         "_anima_conscious_decoder",

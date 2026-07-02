@@ -99,7 +99,7 @@ def real_hexad_table(corpus):
     freq_lit = "[" + ", ".join(f"{x:.8f}" for x in amp) + "]"
     driver = os.path.join(HERE, "_hexad_emit_main.hexa")
     with open(driver, "w") as fh:
-        fh.write('import "UNIVERSE/hexad_real_emit.hexa"\n')
+        fh.write('import "HYPOTHESES/hexad_real_emit.hexa"\n')
         fh.write("fn main() {\n")
         fh.write(f"    let freq = {freq_lit}\n")
         fh.write("    let _n = emit_real_hexad(freq, 4, 4, 1.0)\n")

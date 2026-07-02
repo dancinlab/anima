@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """H_1632 — Galois-closure concept-lattice binding mouth (FCA meet/join), 303M.
 
-PREREG card: UNIVERSE/cards/H_1632_galois_lattice_meet_bind.md
+PREREG card: HYPOTHESES/cards/H_1632_galois_lattice_meet_bind.md
 
 Mechanism (per card):
   Formal Concept Analysis. One leg projects to an object/extent indicator set, the other

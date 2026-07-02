@@ -22,7 +22,7 @@
 - ⇄ [EEG](../EEG/EEG.md): 생체 EEG 공간 통합 (10-20 시스템 21-electrode local/regional/global 측정 원천)
 - ⇄ [AKIDA](../AKIDA/AKIDA.md): 실리콘 spike spatial graph (neurosynaptic 결합 위 Φ)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): 검증 결과 환류 SSOT
 
 ## 쉬운 버전
 전체 활용 아이디어 카탈로그(친근 7-요소) → [SPATIAL.easy.md](./SPATIAL.easy.md)

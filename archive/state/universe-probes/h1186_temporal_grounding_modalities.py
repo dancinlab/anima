@@ -27,7 +27,7 @@ stream find K*=argmax_K d(DERIVATIVE,METRONOME) over the cap ladder, then shuffl
   SUPPORTED iff F1. The AUDIO (expected temporal, cf H_1184) and TEXT (the saccadic-reading
   re-test) results are reported as the modality-comparison finding, NOT gating.
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py VERBATIM
 (grow_arm / stage_decode_accuracy / cohen_d_paired / make_audio_stream / make_text_stream /
 SEEDS / N_REGIMES_AUDIO / N_STAGES_TEXT); ADDS a toy make_video_stream (same (X[T,DIM],stages)
 convention, DIM=8) + the H_1184 shuffle. Live CORE + scale UNVERIFIED (a_scale_honest_scope).

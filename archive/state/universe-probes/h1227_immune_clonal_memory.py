@@ -21,7 +21,7 @@ bound answer or stays silent — it can never fabricate.
 MECHANISM ($0, numpy mirror of the H_1199 VAdaptField — proto vectors, split/bind
 on novelty). Mirrored from CORE/engine_cli.hexa (VAdaptField / vadapt_field_step:
 nearest by L2, recon-err = L2 to nearest, split when recon-err > SPLIT_THRESH) and
-UNIVERSE/h1199_dim_feature_export.py. The LIVE .hexa engine is UNTOUCHED (mirror
+HYPOTHESES/h1199_dim_feature_export.py. The LIVE .hexa engine is UNTOUCHED (mirror
 only, p8 gradient-free numpy lift; the .hexa lift is the next rung).
 
   - CLONAL SELECTION (load): for each fact (question, answer), embed the question

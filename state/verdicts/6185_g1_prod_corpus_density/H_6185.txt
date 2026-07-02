@@ -1,0 +1,34 @@
+H_6185 — clm303 production 코퍼스 조합-커버리지 = 임계 한참 아래(BELOW) + RF-bound 동시 = 이중 bound 과잉결정
+fable(claude-fable-5 자율 full-pipeline $8.74, 90턴, modelUsage 확증) 측정 + 로컬 재현 verify.
+tier: 🟢 DIRECTIONAL-proxy (grep/torch proxy · 로컬 trainset, 정확 HF 4칸 코퍼스 아님, engine-native 아님). 정본 G0-G6 eval 이 G2 absence 로 쓴 검증된 프록시.
+
+VERDICT: 임계 BELOW (개념쌍 커버리지 0/10=0%, 경계선 아님) ∧ RF-bound 독립 활성 → clm303 G1=0 은
+  (a)데이터-커버리지-밀도 + (b)수용영역 이중 bound 의 과잉결정(overdetermined). 모델(trunk/objective) 단독 결함 서사 기각.
+처방 2-step(둘 다 필요, 순서 있음): ① RF 먼저 L=4→8(RF≈511B, cap512 내 스키마무변경) 또는 K=3→5
+  ② 조합-커버리지 블록 합성(en+ko, N≈30-50 개념, held-out 미노출 H_6183식, 쌍당 ≥30 reps, 5-10MB) ③ frozen G1 재판정(anima evaluate --py, tune-to-green 금지).
+상세 = FABLE_REPORT.md · 재현 = reproduce.sh.
+⚠️ fable 세션 하드 read-only(Write/mkdir/ssh/network 전부 permission-denied) → 파일착지·HF다운로드·pool 불가 = 로컬 프록시 trainset 측정, bookkeeping 은 로컬 에이전트.
+
+--- 로컬 재현 (evidence · LLM 자가판정 아님 · reproduce.sh 출력) ---
+trainset=/Users/mini/dancinlab/anima/state/clm303_savant_mitosis_train/trainset  files=4
+=== HEAD-tier 개념쌍 공동출현 (전체 *.txt, 라인-window) ===
+  consciousness × tension = 0 lines
+  consciousness × memory = 0 lines
+  tension × memory = 0 lines
+  consciousness × silence = 0 lines
+  memory × dream = 0 lines
+=== control (일반쌍, 파이프라인 무결 = 0 아님) ===
+  government × war = 30 lines
+  music × school = 2 lines
+  water × energy = 4 lines
+=== RF (archive/train/clm/model/model.py): 1+(K-1)*sum(dilation) ===
+  clm303_clean L=4 K=3 dilation base2 → RF=1+2*(1+2+4+8)=31B (~37B w/ expert conv)
+  G1 composed seed k=2=72B > RF → 두 개념 동시 조건화 불가 (RF-bound, H_6184 plain-conv 벽 동형)
+
+--- HF-EXACT 승격 (2026-07-02, 바이패스 fable follow-on, proxy→정확HF) ---
+정확 HF 4칸(en-general 279429L·ko-general 340512L·ko-sns 47994L·en-sns 6862L, 127.6MB) 직접측정:
+  개념쌍 HEAD same-line = 15/10쌍(쌍당 0~7) · ±5window 108 · control government×war=125/music=133/water=208 무결.
+  임계 대비: toy HIGH 17,143 pair-lines/MB vs HF exact 0.118/MB = 1/145,000 → BELOW 확정(쌍당 max 7 ≪ ~30 reps bar).
+  15라인 전수검수=자연 web 우연 공동사용+다의어(관대 상한). silence 프랑스어 오염=프록시-특유(HF 162/163 영어).
+  프록시 재현=H_6185 원수치 verbatim(reference-match). 결론(BELOW·이중bound·처방 L8+커버리지블록) 불변, proxy→정확HF.
+  verdict: 🟢 DIRECTIONAL-proxy → 🟢 DIRECTIONAL(정확HF). engine-native G1 재검=follow-on 유지.

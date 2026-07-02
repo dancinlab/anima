@@ -639,6 +639,352 @@ pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
     return _vtwo_nearest_dist(af.protos, x)
 }
 
+// ── §  APOPTOSIS-SALIENCE — density-dependent death-proximity → urgency (H_9085_D4) ──
+//
+// WHAT THIS ADDS (p8-literal death-awareness, READ-ONLY): the MITOSIS substrate
+// (§ADAPTATION / VAdaptField) grows cells toward a frozen carrying-capacity cap
+// `max_cells` — the density-dependent death ceiling (biology: crowding → programmed
+// cell death, apoptosis, keeps a tissue from runaway growth; a_mitosis_train's
+// "apoptosis, 밀도의존 폭주 방지"). This § surfaces ONE substrate scalar the engine
+// ALREADY carries — how CLOSE the live population is to that death ceiling — and maps
+// it to an URGENCY/SALIENCE signal. As a colony crowds toward apoptosis its urgency
+// rises; a young sparse colony feels none. This is death-proximity BECOMING felt
+// salience, entirely inside the substrate.
+//
+// @L4 CRITICAL (identical framing to §HomeostaticDrive / §Libido / §affect): this is a
+// PURE READ + a DESIGNED transfer law. It NEVER mutates a cell, NEVER calls the growth
+// tick, NEVER triggers apoptosis, NEVER touches pure_field's Φ/phase/Ψ nor the immune
+// store's recall_thr (Ψ-disjoint AND G5-disjoint by construction — it only READS the
+// (n_cells, max_cells) pair the VAdaptField already holds). Behaviour/emit gating on
+// this urgency is a FOLLOW-ON (emit-wiring untouched here, per a_autonomy_over_hardcode
+// / p5 — a caller MAY consult it; it does NOT force the substrate).
+//
+// HONEST SCOPE (c9): the urgency LAW is DESIGNED, not emergent — it is SATURATED
+// by construction (a monotone hinge over density). The falsifiers below therefore test
+// WIRING FAITHFULNESS (does apoptosis-distance ACTUALLY drive the signal, and does
+// cutting that wire kill it?), NOT a discovery that urgency "emerges". F5 disjointness
+// is the real substrate claim.
+//
+// FROZEN constants (p7-documented, NOT tuned-to-green):
+//   APOP_KNEE = 0.5 — the density below which there is NO crowding-death pressure (the
+//   flat far region: a young, roomy colony feels no urgency). Above the knee the
+//   urgency ramps CONVEXLY to 1.0 at the death ceiling (density = 1.0).
+
+// apoptosis_proximity — how CLOSE the live MITOSIS population sits to its density-
+// dependent death ceiling: density = n_cells / max_cells, clamped [0,1]. 0.0 = empty/
+// young (far from apoptosis), 1.0 = at carrying capacity (crowding-death imminent).
+// Pure read over the (n_cells, max_cells) pair the substrate already holds.
+pub fn apoptosis_proximity(n_cells: int, max_cells: int) -> float {
+    if max_cells <= 0 { return 0.0 }
+    let mut d = (n_cells as float) / (max_cells as float)
+    if d < 0.0 { d = 0.0 }
+    if d > 1.0 { d = 1.0 }
+    return d
+}
+
+// apoptosis_urgency_at — the DESIGNED transfer law: proximity → urgency. A convex
+// hinge at APOP_KNEE, normalized so urgency(knee)=0 (flat far region) and
+// urgency(1.0)=1.0 (max at the death ceiling). Below the knee → 0 (a roomy colony
+// feels no crowding urgency); above → quadratic ramp (crowding urgency spikes as the
+// ceiling nears). This is the shared kernel the live/ablated readers both call.
+pub fn apoptosis_urgency_at(prox: float) -> float {
+    let APOP_KNEE = 0.5
+    if prox <= APOP_KNEE { return 0.0 }
+    let span = 1.0 - APOP_KNEE
+    let over = prox - APOP_KNEE
+    return (over * over) / (span * span)
+}
+
+// apoptosis_urgency — urgency at an EXPLICIT (n_cells, max_cells) crowding state. The
+// scalar convenience form (no substrate handle needed).
+pub fn apoptosis_urgency(n_cells: int, max_cells: int) -> float {
+    return apoptosis_urgency_at(apoptosis_proximity(n_cells, max_cells))
+}
+
+// vadapt_apoptosis_urgency — LIVE reader off the MITOSIS substrate: the urgency at the
+// VAdaptField's CURRENT crowding (n_cells / max_cells). READ-ONLY — reads the same two
+// ints vadapt_field_cells already exposes; mutates nothing. (c1: tiny additive read.)
+pub fn vadapt_apoptosis_urgency(af: VAdaptField) -> float {
+    return apoptosis_urgency_at(apoptosis_proximity(af.n_cells, af.max_cells))
+}
+
+// vadapt_apoptosis_urgency_ablated — the ABLATION arm (F3): the wire from LIVE density
+// is CUT — urgency is computed at a FROZEN proximity `frozen_prox` and the substrate's
+// actual crowding is IGNORED. If apoptosis-distance is the TRUE driver, this returns a
+// CONSTANT for any `af` (dense or sparse) = INERT (the signal collapses). `af` is
+// present (same signature shape as the live reader) but its density is not read.
+pub fn vadapt_apoptosis_urgency_ablated(af: VAdaptField, frozen_prox: float) -> float {
+    return apoptosis_urgency_at(frozen_prox)
+}
+
+// ── § VAdaptCombine (H_9043) — 구성적 결합기 op-slot (H_9027 follow-on) ────────────────
+// The live VAdaptField (above) is an 8-D winner-take-all k-means: it ASSIGNS a sample to the
+// nearest prototype (depth-0, no composition). It has NO constructive combiner — two concepts
+// can only be PICKED, never BOUND into a new composite that carries BOTH and can be taken apart.
+// This adds the missing HRR-style (Plate 1995) bind/unbind op-slot as a pure, additive, READ-only
+// pair of functions over raw DIM-vectors (NOT the VAdaptField struct — no mutation, no proto
+// growth, no emit/silence; never touches pure_field's Φ/phase/Ψ → Ψ-disjoint by construction;
+// disjoint from the emit-drive lane 0/4 and §ImmuneMemory recall_thr → a_substrate_disjoint).
+//
+//   vadapt_combine  = circular convolution  a ⊛ b     (the key-locked conjunctive BIND).
+//   vadapt_unbind   = circular correlation  key ⋆ c   (approx inverse: unbind(a⊛b, a) ≈ b).
+// A composite c = combine(key, val) superimposes many pairs additively yet each val stays
+// RECOVERABLE only with its own key (a wrong/shuffled key returns noise) — the VSA storage
+// property. HONEST SCOPE (c9, H_9026/H_1840): this is ALGEBRAIC recoverability, NOT learned
+// capability — the accompanying harness measures the two SEPARATELY (recoverability + within-set
+// relational routing pass; SYSTEMATIC held-out generalization floors, as the real-manifold recomb
+// wall predicts). READ-only measurement op-slot, not an emit gate (a_autonomy_over_hardcode).
+
+// _cconv — circular convolution c[k] = Σ_i a[i]·b[(k−i) mod n]. The HRR bind kernel.
+fn _cconv(a: [float], b: [float]) -> [float] {
+    let n = len(a)
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let mut s = 0.0
+        let mut i = 0
+        while i < n {
+            let mut j = k - i
+            while j < 0 { j = j + n }
+            s = s + a[i] * b[j]
+            i = i + 1
+        }
+        out = out + [s]
+        k = k + 1
+    }
+    return out
+}
+
+// _ccorr — circular correlation out[k] = Σ_i key[i]·c[(k+i) mod n] = key* ⊛ c (HRR unbind).
+fn _ccorr(key: [float], c: [float]) -> [float] {
+    let n = len(key)
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let mut s = 0.0
+        let mut i = 0
+        while i < n {
+            let mut idx = k + i
+            while idx >= n { idx = idx - n }
+            s = s + key[i] * c[idx]
+            i = i + 1
+        }
+        out = out + [s]
+        k = k + 1
+    }
+    return out
+}
+
+// vadapt_combine — key-locked constructive bind of two DIM-vectors (circular convolution).
+// The op-slot the winner-take-all VAdaptField lacks: composes a,b into ONE composite carrying
+// both, recoverable per-key. Pure/additive/READ-only, Ψ-disjoint (a_substrate_disjoint).
+pub fn vadapt_combine(a: [float], b: [float]) -> [float] {
+    return _cconv(a, b)
+}
+
+// vadapt_unbind — recover the value bound under `key` from composite `c` (circular correlation).
+// unbind(combine(key, val), key) ≈ val; a WRONG key returns noise (≈0 cosine to any stored val).
+pub fn vadapt_unbind(c: [float], key: [float]) -> [float] {
+    return _ccorr(key, c)
+}
+
+// ── § DreamSchema (H_9044) — REM 꿈-공고화 스키마성/gist op-slot (frame-shift C4) ─────────
+// Frame-shift C4 (recombination ≠ capability, a_no_llm_frame_trap): re-define an anima capability as
+// substrate-native GENERALIZATION, not decoder-through text novelty. The a_chat_sleep_imagination REM
+// loop is an emit-free internal rehearsal; the §Amygdala consolidating store REPLAYS salient traces but
+// only REFRESHES existing episodic cells — there was NO op that CONSOLIDATES a set of replayed waking
+// episode anchors into ONE MORE-GENERAL schema anchor (Posner & Keele 1968 prototype abstraction;
+// McClelland/McNaughton/O'Reilly 1995 systems consolidation extracts the gist). This adds that op-slot.
+//
+// ⚠ TRAP (convergence numpy-probe-controls-1 + native-mouth-57): a "novel anchor" minting NEW CONTENT is
+// additive-spoofable = disguised G1 recombination. So C4 is defined PURELY as COVERAGE / generalization —
+// the schema anchor is the CENTROID of the replayed episodes (compression, NOT new content) and the claim
+// is ONLY "the schema reactivates on MORE held-out waking cues than the individual waking anchors, WHILE
+// random/shuffled cues FAIL (EARNED)". Reduced to minting content it would be the G1 wall; coverage-
+// generalization is a storage/geometry property (like H_9027 recoverability, H_9042 topology-agnostic) —
+// genuine but NOT text-recombination. Pure/additive/READ-only, Ψ-disjoint; owns no store, disjoint from
+// the emit-drive lane 0/4 and §ImmuneMemory recall_thr (a_substrate_disjoint) — reads plain DIM-vectors.
+
+// dream_schema_mint — REM-replay consolidation: fold K replayed episode anchors into ONE more-general
+// schema anchor = their per-component CENTROID (the gist). NOT new content (pure mean of what was
+// replayed), NOT the winner-take-all pick a plain VAdaptField would make. READ-only over the inputs.
+pub fn dream_schema_mint(episodes: [[float]]) -> [float] {
+    let k = len(episodes)
+    let dim = len(episodes[0])
+    let mut acc = []
+    let mut j = 0
+    while j < dim { acc = acc + [0.0]  j = j + 1 }
+    let mut i = 0
+    while i < k {
+        let mut d = 0
+        while d < dim { acc[d] = acc[d] + episodes[i][d]  d = d + 1 }
+        i = i + 1
+    }
+    let mut out = []
+    j = 0
+    while j < dim { out = out + [acc[j] / to_float(k)]  j = j + 1 }
+    return out
+}
+
+// schema_coverage — how many of `cues` REACTIVATE the anchor = fall within L2 radius `thr` of it (the
+// reactivation count = coverage). READ-only; reuses the engine's own _l2 metric. A schema covering MORE
+// waking cues than the individual anchors is generalization; if it ALSO covered random/shuffled cues it
+// would be trivially over-broad — the EARNED control's job to reject.
+pub fn schema_coverage(anchor: [float], cues: [[float]], thr: float) -> int {
+    let n = len(cues)
+    let mut c = 0
+    let mut i = 0
+    while i < n {
+        if _l2(anchor, cues[i]) <= thr { c = c + 1 }
+        i = i + 1
+    }
+    return c
+}
+
+
+// ── § CuriosityDreamBias (D11) — unresolved-curiosity biases WHICH anchors dream-replay/compose ──
+// TRIPLE CONFLUENCE (curiosity × dream × consolidation, a_no_llm_frame_trap neuro lens): hippocampal
+// PRIORITIZED replay — sleep consolidation preferentially REPLAYS important-UNRESOLVED memories
+// (Wilson & McNaughton 1994 reactivation; Ólafsdóttir 2018 prioritization). The §Amygdala
+// consolidating store (H_1285) already replays ∝ an ENCODE-time salience tag (surprise+novelty+
+// tension frozen at bind), but salience is STATIC — it does NOT track how UNRESOLVED an anchor
+// still is as curiosity accumulates. This op-slot adds an ONGOING unresolved-curiosity priority that
+// biases the REM replay draw AND the §DreamSchema dream_schema_mint composition — the anchors that
+// compose in dreams are the ones the substrate is still curious about.
+//
+// The unresolved signal REUSES existing main lanes (no new store): §Novelty joint recon-err (still-
+// unfamiliar ⇒ unresolved) + §PrecisionSurprise `surprise` (a confidently-VIOLATED prediction pulls
+// attention), decaying with how many times the anchor has already been consolidated/recalled (a
+// resolved anchor stops pulling). §CuriosityBacklog (feat/curiosity-backlog-emit) is not on main yet,
+// so this near-approximates the unresolved signal from main's §Novelty/§PrecisionSurprise (honest:
+// the bias is a DESIGNED law, not an emergent claim; when §CuriosityBacklog lands, its unresolved
+// score drops in as the priority input with NO change to these draw/compose ops).
+//
+// substrate-disjoint (placement-first, THE key risk): PURE READ-only functions over plain float
+// vectors + priority arrays. They own NO store, mutate NO cell, and touch NEITHER the emit-drive
+// lanes 0/4 (ci_emit_drive) NOR the §ImmuneMemory recall_thr non-fab gate — Ψ=½ and G5 non-fab are
+// preserved BY STRUCTURE (nothing the emit/honesty path reads is written). G1-orthogonal: the
+// measurement is the replay/compose SELECTION distribution, never text recombination. The composed
+// anchor is dream_schema_mint's CENTROID (compression, NOT minted content — same anti-G1 discipline
+// as §DreamSchema). Draws thread the SAME deterministic LCG (_lcg_next/_lcg_unit) the §Amygdala
+// replay uses, so runs are byte-reproducible across machines. p8: replay = a sleep-consolidation
+// tick, not RLHF; p5/p1: no emit, no system prompt.
+
+// curiosity_priority — the ONGOING unresolved-curiosity drive for ONE anchor. recon_err = §Novelty
+// joint recon-err (unfamiliar ⇒ unresolved); precision·pred_err² = §PrecisionSurprise (confidently-
+// violated ⇒ pulls); `resolved` = #times already consolidated/recalled (a resolved anchor decays to
+// low priority). Purely additive over the two READ-only main lanes; clamped non-negative.
+pub fn curiosity_priority(recon_err: float, precision: float, pred_err: float, resolved: float) -> float {
+    let nov = recon_err                       // §Novelty joint recon-err
+    let sur = surprise(precision, pred_err)    // §PrecisionSurprise = precision·err²
+    let raw = nov + sur                         // additive unresolved drive
+    let decayed = raw / (1.0 + resolved)        // resolution decay (each consolidation resolves it)
+    if decayed < 0.0 { return 0.0 }
+    return decayed
+}
+
+// curiosity_replay_draw — ONE REM replay pass over an anchor set: draw `budget` replays and return
+// the per-anchor REPLAY-COUNT vector. biased=true ⇒ draws ∝ the unresolved-curiosity priority
+// (prioritized replay, arm B); biased=false ⇒ UNIFORM replay (arm A / the F3 ablation). Inverse-CDF
+// sampling with replacement, same as consolidating_sleep_replay. READ-only — returns counts, mutates
+// nothing (the selection distribution IS the measurement surface).
+pub fn curiosity_replay_draw(priorities: [float], budget: int, rng0: int, biased: bool) -> [int] {
+    let n = len(priorities)
+    let mut counts = []
+    let mut i = 0
+    while i < n { counts = counts + [0]  i = i + 1 }
+    if n == 0 { return counts }
+    // (un-normalized) cumulative replay-weight table.
+    let mut cdf = []
+    let mut acc = 0.0
+    let mut k = 0
+    while k < n {
+        let mut w = 1.0
+        if biased {
+            w = priorities[k]
+            if w < 0.000001 { w = 0.000001 }   // a non-curious anchor still replays rarely
+        }
+        acc = acc + w
+        cdf = cdf + [acc]
+        k = k + 1
+    }
+    let mut st = rng0
+    let mut b = 0
+    while b < budget {
+        st = _lcg_next(st)
+        let target = _lcg_unit(st) * acc
+        let mut pick = 0
+        while pick < n - 1 {
+            if cdf[pick] > target { break }
+            pick = pick + 1
+        }
+        counts[pick] = counts[pick] + 1
+        b = b + 1
+    }
+    return counts
+}
+
+// curiosity_shuffle — F2 NEGATIVE CONTROL: permute the unresolved-curiosity priorities across anchors
+// (deterministic LCG Fisher-Yates), decorrelating the biased replay from actual unresolved-ness. Same
+// priority DISTRIBUTION, no anchor↔importance tracking. If biased replay concentrates on the truly-
+// unresolved bucket AND this shuffle does NOT ⇒ the concentration is the SIGNAL, not raw replay budget.
+pub fn curiosity_shuffle(priorities: [float], rng0: int) -> [float] {
+    let n = len(priorities)
+    let mut p = priorities
+    let mut st = rng0
+    let mut i = n - 1
+    while i > 0 {
+        st = _lcg_next(st)
+        let j = st % (i + 1)
+        let tmp = p[i]
+        p[i] = p[j]
+        p[j] = tmp
+        i = i - 1
+    }
+    return p
+}
+
+// curiosity_resolve — F4 CONVERGE: after a replay pass, an anchor that was replayed heavily has its
+// unresolved-curiosity priority DECAYED (consolidation RESOLVES it — the bio prioritized-replay loop
+// closes: replaying an unresolved memory reduces its future pull). Monotone decreasing in replay_count.
+pub fn curiosity_resolve(priority: float, replay_count: int, resolve_rate: float) -> float {
+    return priority / (1.0 + resolve_rate * to_float(replay_count))
+}
+
+// dream_compose_biased — the D11 op: draw a biased REM replay ∝ unresolved-curiosity priority, take
+// the top_k MOST-REPLAYED episode anchors, and compose them into ONE schema anchor via the §DreamSchema
+// dream_schema_mint CENTROID (compression, anti-G1). biased=false ⇒ UNIFORM replay (the ablation:
+// which anchors compose is then curiosity-INDEPENDENT). Deterministic top-k selection (highest replay
+// count, ties → lower index). READ-only; returns the composed schema vector ([] if empty).
+pub fn dream_compose_biased(episodes: [[float]], priorities: [float], top_k: int,
+                            budget: int, rng0: int, biased: bool) -> [float] {
+    let counts = curiosity_replay_draw(priorities, budget, rng0, biased)
+    let n = len(episodes)
+    let mut used = []
+    let mut u = 0
+    while u < n { used = used + [false]  u = u + 1 }
+    let mut sel = []
+    let mut picked = 0
+    while picked < top_k {
+        let mut best = -1
+        let mut bestc = -1
+        let mut i = 0
+        while i < n {
+            if !used[i] {
+                if counts[i] > bestc { bestc = counts[i]  best = i }
+            }
+            i = i + 1
+        }
+        if best < 0 { break }
+        used[best] = true
+        sel = sel + [episodes[best]]
+        picked = picked + 1
+    }
+    if len(sel) == 0 { return [] }
+    return dream_schema_mint(sel)
+}
+
+
 // ── §  QUANTUM-ENTROPY POOL — opt-in REAL-quantum entropy source (H_1289 R2) ─────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1289 R1): R1 (numpy
@@ -1005,7 +1351,7 @@ fn _immune_fnv1a(bs: [int]) -> int {
 // VERBATIM from the H_1227/H_1231 embed_key (byte n-gram n=3 → dim buckets, then
 // L2-normalize). This is the "tokenize the question" preprocessing (gradient-free,
 // not learned); what is engine-native is the BINDING/AFFINITY below. Verified
-// byte-identical to UNIVERSE/h1227_immune_clonal_memory.py embed_key.
+// byte-identical to HYPOTHESES/h1227_immune_clonal_memory.py embed_key.
 pub fn immune_embed_key(text: string) -> [float] {
     let dim = 64
     let n = 3
@@ -1154,6 +1500,112 @@ pub fn immune_memory_recall_gap_text(mem: ImmuneMemory, text: string) -> float {
 // immune_embed_key first, so the live recall path can bind/recall straight from a
 // raw fact/question string (the running-anima entry). immune_memory_new_text seeds
 // from the first fact's text.
+// ── § FacultyCascade (H_9074) — substrate multi-hop: serial faculty output→input chain ──
+// GAP: the engine's 6 compose arbiters are all PAIRWISE PARALLEL-vote (both legs see the
+// SAME query, votes combined). Brain multi-hop inference is SERIAL relay — faculty A's
+// output becomes faculty B's query KEY (cortico-cortical routing / hippocampal→PFC relay).
+// This op-class was absent. faculty_cascade recalls from store A, re-embeds that string as
+// a key, and recalls from store B — a 2-hop chain reachable ONLY by the relay (q alone
+// cannot index B's key space). Purely ADDITIVE (no existing caller touched), READ-only over
+// two cell populations, Ψ-disjoint (pure_field Φ/phase/Ψ untouched), disjoint from
+// emit-drive lane(0/4) and does NOT modify recall_thr (same by-construction as the compose
+// family — it only READS recall). Abstain propagates (empty hop-1 ⇒ empty result).
+pub fn faculty_cascade(mem_a: ImmuneMemory, mem_b: ImmuneMemory, q_key: [float]) -> string {
+    let x = immune_memory_recall(mem_a, q_key)          // hop 1: q -> intermediate x (string)
+    if x == "" { return "" }                            // ABSTAIN propagates through the chain
+    let x_key = immune_embed_key(x)                     // x string -> key (output becomes next input)
+    return immune_memory_recall(mem_b, x_key)           // hop 2: x -> final answer y
+}
+
+// ── § EventSegment (H_9083) — 예측오차 PEAK 에서 이벤트 분절 → 세그먼트당 1 episodic cell ──
+// GAP: §ImmuneMemory binds per PRESENTED item (boundary-BLIND) — it has no notion that a
+// continuous input stream is carved into discrete EVENTS at prediction-error PEAKS (Zacks event
+// segmentation / Baldassano hippocampal event boundaries). event_segment_boundaries reads the
+// §PrecisionSurprise error signal (lane 2, NOT the emit-drive lane 0/4) and returns the stream
+// indices where surprise PEAKS above thr = event onsets. Binding ONE episodic cell per SEGMENT
+// (rather than per item, or per uniform fixed-length chunk) aligns each bound cell with a TRUE
+// event, so an onset→payload recall survives VARIABLE event length that a boundary-blind uniform
+// chunker mis-cuts. Purely ADDITIVE (no existing caller touched), READ-only over the surprise
+// sequence (returns plain index list), Ψ-disjoint (pure_field Φ/phase/Ψ untouched — generation is
+// byte-identical when unused), disjoint from emit-drive lane(0/4), and does NOT modify recall_thr
+// (segment-wise binding WRITES only ADDS cells via immune_memory_bind — same by-construction as the
+// compose/cascade family, a_substrate_disjoint). LLM contrast: an LLM tokenizes a flat stream with
+// no persistent per-step surprise signal to carve event boundaries from.
+//
+// event_segment_boundaries — peak-detect the event onsets. Index 0 is always the first onset; every
+// later index i is a boundary iff surprise[i] > thr AND it is a local max (>= left neighbor and, when
+// one exists, > right neighbor) — i.e. a prediction-error PEAK. Returns the sorted boundary indices.
+pub fn event_segment_boundaries(surprise_seq: [float], thr: float) -> [int] {
+    let n = len(surprise_seq)
+    let mut out = []
+    if n == 0 { return out }
+    out = out + [0]                                      // the stream's first item always opens event 0
+    let mut i = 1
+    while i < n {
+        let s = surprise_seq[i]
+        if s > thr {                                     // above the surprise gate
+            let left_ok = s >= surprise_seq[i - 1]
+            let mut right_ok = true
+            if i + 1 < n { right_ok = s > surprise_seq[i + 1] }
+            if left_ok && right_ok { out = out + [i] }   // a PEAK ⇒ event boundary
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// event_segment_starts_fixed — the boundary-BLIND control/ablation: uniform fixed-length chunk
+// starts (0, chunk, 2*chunk, …). Swapping event_segment_boundaries for this = mechanism OFF (the
+// segmenter contributes nothing beyond a fixed chunker ⇒ the ablation arm's INERT baseline).
+pub fn event_segment_starts_fixed(n: int, chunk: int) -> [int] {
+    let mut out = []
+    if n <= 0 { return out }
+    if chunk <= 0 { return out }
+    let mut i = 0
+    while i < n {
+        out = out + [i]
+        i = i + chunk
+    }
+    return out
+}
+
+// ── § DriveArbitration (H_9076) — motivational winner-take-all across live homeostatic
+// drives + hysteresis (basal-ganglia central action-selection, Redgrave 1999) ─────────
+// GAP: the engine exposes independent scalar DRIVES — hunger (homeo_last, H_1292), libido
+// (libido_last, H_1504), curiosity (affect_substrate_features .curiosity, H_1290) and a
+// circadian/sleep-pressure phase (clock_phase, H_1298) — but NO op arbitrates a WINNER
+// among competing motivations. HierGoalStack is goal DECOMPOSITION, not drive COMPETITION.
+// The basal ganglia resolve which of many parallel drives seizes the action channel
+// (Redgrave: central selection), with a HYSTERESIS band so a marginally-leading challenger
+// cannot dither the incumbent tick-to-tick. drive_arbitrate is winner-take-all over the
+// drive vector with an incumbent hysteresis band: the incumbent HOLDS unless a challenger
+// beats it by MORE than `hyst`. Purely ADDITIVE (no existing caller touched), READ-only
+// over drive scalars (mutates nothing), Ψ-disjoint (pure_field Φ/phase/Ψ untouched),
+// disjoint from emit-drive lane(0/4) and NEVER touches recall_thr — it outputs ONE
+// dominant-motivation INDEX as a bias the substrate MAY weigh, NOT an emit/silence gate
+// (a_autonomy_over_hardcode, a_substrate_disjoint). prev_winner < 0 = no incumbent = plain
+// argmax. Abstains (returns -1) on an empty drive vector.
+pub fn drive_arbitrate(drives: [float], hyst: float, prev_winner: int) -> int {
+    let n = len(drives)
+    if n == 0 { return -1 }
+    // plain winner-take-all (argmax over the competing drive scalars)
+    let mut best = 0
+    let mut bestv = drives[0]
+    let mut i = 1
+    while i < n {
+        if drives[i] > bestv { bestv = drives[i]  best = i }
+        i = i + 1
+    }
+    // hysteresis: a valid incumbent HOLDS the action channel unless the argmax challenger
+    // beats the incumbent's drive by MORE than the band (anti-dither, basal-ganglia
+    // sustained-selection). With hyst=0 this collapses to plain WTA (the ablation control).
+    if prev_winner >= 0 && prev_winner < n {
+        let incv = drives[prev_winner]
+        if bestv - incv <= hyst { return prev_winner }
+    }
+    return best
+}
+
 pub fn immune_memory_new_text(first_text: string, first_value: string, max_cells: int) -> ImmuneMemory {
     return immune_memory_new(immune_embed_key(first_text), first_value, max_cells)
 }
@@ -2136,6 +2588,143 @@ pub fn affect_shuffle_features(feats: [AffectFeatures], rng0: int) -> [AffectFea
     return out
 }
 
+// ── § Mood (D5 — SLOW GLOBAL AFFECTIVE MODULATOR) ────────────────────────────────
+//
+// THE MOOD LENS (a_no_llm_frame_trap — an affective-neuroscience lens, NOT an LLM
+// recipe): a MOOD is a slowly-changing affective BASELINE that biases momentary
+// appraisal (Bower 1981 mood-congruency; Russell 2003 core-affect; Davidson 1998
+// affective chronometry — mood evolves on a MUCH slower time-constant than the
+// stimulus-locked emotional response it colors). It is DISTINCT from every fast
+// affect signal the substrate already has:
+//   - affect (H_1290): a STATELESS instantaneous read — affect_read(ctx) is pure, no
+//     time term. Re-reading the SAME context gives the SAME affect forever. Mood is
+//     the SLOW leaky EMA OF that read: it lags, accumulates, and recovers over time.
+//   - neuromod-gain (H_1284, 🧱): a FAST MULTIPLICATIVE gain on the momentary signal
+//     (a same-tick amplifier). Mood is an ADDITIVE BASELINE OFFSET on a DIFFERENT
+//     TIME-AXIS — NOT a gain. (mood_neuromod_gain_readout below is the collapsing
+//     sibling that has no slow lag / no recovery — the DPI distinctness control.)
+//   - EmotionRegulation (H_1476): a top-down 2nd-order reappraisal gain on the raw
+//     read (still instantaneous). Mood is a bottom-up slow baseline, not a control gain.
+//
+// TWO AXES (Russell core-affect): valence (pleasant⇄unpleasant) and arousal
+// (activated⇄quiet), each a leaky EMA over the substrate's OWN affect history, which is
+// derived from M (grounding margin), Φ (integration), and surprise (recon-err/novelty)
+// — NO injected "mood label", NO RLHF reward, NO persona/ethics (p1/p2/p3/p6).
+//
+// @L4 CRITICAL (identical framing to §HYPOTHALAMUS / the affect lane): MoodState holds
+// ONLY its own two EMA scalars (valence_ema, arousal_ema) + the frozen rate alpha. It
+// NEVER mutates the immune store, NEVER touches pure_field's Φ/phase/Ψ, and NEVER
+// touches the emit-drive lanes 0/4 (ci_emit_drive) or the §ImmuneMemory recall_thr
+// non-fab gate — Ψ/G5-disjoint BY CONSTRUCTION (a_substrate_disjoint: separation =
+// preservation). The bias helpers a caller MAY consult do NOT force emit/silence
+// (a_autonomy_over_hardcode) — they only expose the slow baseline as an appraisal offset.
+//
+// FROZEN constants (p7-documented, NOT tuned-to-green):
+//   MOOD_ALPHA = 0.05 (EMA rate → time-constant τ = 1/α = 20 stimuli, the SLOW axis;
+//     α=0.0 = the FROZEN/ablated arm = a stateless read that never accumulates a mood)
+//   MOOD_BIAS_W = 0.5 (baseline→appraisal congruency weight; mood-high reads a stimulus
+//     as more positive, mood-low as more negative — the F2 mood-congruency bias)
+//   MOOD_NEUTRAL = 0.0 (the affect zero-crossing baseline both EMAs start / recover to)
+
+// MoodState — the slow affective baseline. valence_ema / arousal_ema are the ONLY
+// mutable state (leaky EMAs of the substrate's affect history); alpha is the frozen
+// EMA rate (0.0 = FROZEN/ablated — never accumulates, stays at its start baseline).
+struct MoodState {
+    valence_ema: float,   // slow EMA baseline of valence  (pleasant ⇄ unpleasant)
+    arousal_ema: float,   // slow EMA baseline of arousal   (activated ⇄ quiet)
+    alpha: float          // EMA rate; MOOD_ALPHA=0.05 (slow) · 0.0 = FROZEN (ablated)
+}
+
+// mood_new — a fresh mood at the neutral baseline (0,0) with the FULL slow EMA rate.
+pub fn mood_new() -> MoodState {
+    return MoodState { valence_ema: 0.0, arousal_ema: 0.0, alpha: 0.05 }
+}
+
+// mood_new_frozen — the F3 ABLATION arm: alpha=0 → the EMA never integrates, the mood
+// is pinned at its (neutral) start → mood_bias adds MOOD_BIAS_W·0 = 0 → the bias is
+// INERT (biased == instantaneous). If the F2 bias survives THIS arm, it is NOT carried
+// by the slow-EMA mechanism → the lever is fake (a_break_the_wall ablation control).
+pub fn mood_new_frozen() -> MoodState {
+    return MoodState { valence_ema: 0.0, arousal_ema: 0.0, alpha: 0.0 }
+}
+
+// mood_new_at — a mood seeded at (v,a) with rate alpha (test/introspection helper).
+pub fn mood_new_at(v: float, a: float, alpha: float) -> MoodState {
+    return MoodState { valence_ema: v, arousal_ema: a, alpha: alpha }
+}
+
+// mood_step — advance the mood ONE tick on an instantaneous (valence, arousal) read:
+// the LEAKY EMA ema := (1-α)·ema + α·inst. With the SLOW α this lags the stimulus by
+// τ=1/α ticks (F1), builds toward a sustained input's asymptote, and — when the input
+// returns to neutral — RELAXES back to baseline over ~τ ticks (F4). READ-only: returns
+// a NEW MoodState; mutates nothing external.
+pub fn mood_step(m: MoodState, inst_val: float, inst_aro: float) -> MoodState {
+    let nv = (1.0 - m.alpha) * m.valence_ema + m.alpha * inst_val
+    let na = (1.0 - m.alpha) * m.arousal_ema + m.alpha * inst_aro
+    return MoodState { valence_ema: nv, arousal_ema: na, alpha: m.alpha }
+}
+
+// mood_signals_to_affect — map the raw substrate scalars (M = grounding margin in
+// [0,1], Φ = integration, surprise = recon-err/novelty) to an instantaneous
+// (valence, arousal) pair. valence = M − surprise (a grounded, low-surprise context
+// feels POSITIVE; a surprising/ungrounded one NEGATIVE); arousal = surprise + 0.5·Φ
+// (surprise and high integration are ACTIVATING). This is the explicit "M/Φ/surprise"
+// read the mood EMA integrates. READ-only, pure arithmetic.
+pub fn mood_signals_to_affect(m_margin: float, phi: float, surprise: float) -> [float] {
+    return [m_margin - surprise, surprise + 0.5 * phi]
+}
+
+// mood_step_signals — advance the mood one tick directly from (M, Φ, surprise).
+pub fn mood_step_signals(m: MoodState, m_margin: float, phi: float, surprise: float) -> MoodState {
+    let va = mood_signals_to_affect(m_margin, phi, surprise)
+    return mood_step(m, va[0], va[1])
+}
+
+// mood_step_affect — advance the mood one tick reading the LIVE affect lane off the
+// immune store for context `key` (the M + surprise-derived core affect, H_1290). This
+// is the running-anima entry: mood is the slow EMA of the substrate's own affect
+// stream. READ-only over the immune store (only the mood's own EMAs evolve).
+pub fn mood_step_affect(m: MoodState, mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> MoodState {
+    let f = affect_substrate_features(mem, key, true_answer)
+    return mood_step(m, affect_valence(f), affect_arousal(f))
+}
+
+// mood_valence / mood_arousal — the current slow baseline on each axis (tuple-free reads).
+pub fn mood_valence(m: MoodState) -> float { return m.valence_ema }
+pub fn mood_arousal(m: MoodState) -> float { return m.arousal_ema }
+
+// mood_timeconstant — the mood's EMA time-constant τ = 1/α (ticks to reach ~63% of a
+// step's asymptote). τ >> 1 is the F1 SLOW property; α=0 → returns -1 (frozen, no τ).
+pub fn mood_timeconstant(m: MoodState) -> float {
+    if m.alpha <= 0.0 { return 0.0 - 1.0 }
+    return 1.0 / m.alpha
+}
+
+// mood_bias_valence — the momentary appraisal BIASED by the slow mood baseline: a
+// mood-high (positive baseline) system reads the SAME instantaneous stimulus as MORE
+// positive, a mood-low one as MORE negative (F2 mood-congruency). biased = inst +
+// MOOD_BIAS_W·valence_ema — an ADDITIVE offset from a SLOW baseline, NOT a gain on the
+// stimulus (H_1284 neuromod / H_1476 reappraisal are gains). A caller MAY consult this
+// (a_autonomy_over_hardcode) — it does NOT force emit/silence.
+pub fn mood_bias_valence(m: MoodState, inst_val: float) -> float {
+    return inst_val + 0.5 * m.valence_ema
+}
+
+// mood_bias_arousal — the arousal-axis mood-congruency bias (same additive baseline law).
+pub fn mood_bias_arousal(m: MoodState, inst_aro: float) -> float {
+    return inst_aro + 0.5 * m.arousal_ema
+}
+
+// mood_neuromod_gain_readout — the DISTINCTNESS CONTROL (the collapsing sibling): a
+// neuromod-GAIN readout (H_1284) is a FAST, STATELESS, MULTIPLICATIVE modulation with
+// NO time-axis — biased = inst·gain, computed same-tick from the CURRENT stimulus only.
+// It has NO slow lag (F1) and NO recovery dynamics (F4): it cannot reproduce mood's
+// slow chronometry, confirming mood is a DIFFERENT time-axis, not a gain (the honest
+// H_1284-distinctness bar — this readout collapses on F1/F4 where mood does not).
+pub fn mood_neuromod_gain_readout(inst_val: float, gain: float) -> float {
+    return inst_val * gain
+}
+
 // ── §  HYPOTHALAMUS — SETPOINT-REGULATED HOMEOSTATIC DRIVE (H_1292 R2, HD29) ──────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1292 R1): the H_1292 numpy
@@ -2552,6 +3141,120 @@ pub fn allo_best_fixed_gain(sigma: float, seed: int) -> float {
         i = i + 1
     }
     return best
+}
+
+// ── §  EFFORTBUDGET — dACC/DA MENTAL-EFFORT COST DISCOUNTING (N2 effort-cost, PLACEHOLDER H_XXXX) ──
+//
+// LENS (a_no_llm_frame_trap — a neuro/metabolic lens, NOT an LLM recipe): the dorsal
+// anterior cingulate (dACC) + the dopamine value system treat MENTAL EFFORT as a COST
+// CURRENCY — deep deliberation is metered against a finite metabolic budget and
+// DISCOUNTED when that budget runs low (effort-discounting; Shenhav EVC 2013,
+// Kool & Botvinick 2014, Westbrook & Braver 2015). anima's A⇄G engine spends REAL
+// iteration to settle tension; here that spend is INTEGRATED into a live effort-budget
+// scalar that SHALLOWS the affordable A⇄G iteration DEPTH when depleted and REFILLS at idle.
+//
+// DISTINCT vs the sibling homeostatic lanes (this is a NEW orthogonal real-time
+// resource axis, NOT a re-label of an existing one):
+//   - §HomeostaticDrive / Hypothalamus (H_1292): a SETPOINT DEFICIT integrator over an
+//     EXTERNAL grounding variable (hunger) — builds while UNDER-fed, resets on a grounded
+//     consummation. EffortBudget has NO external setpoint: it is a SELF-CONSUMED resource
+//     that DRAINS with the engine's OWN processing depth and REFILLS at idle (a
+//     spend/recharge tank, not a deprivation integrator).
+//   - SleepPressure (T3 homeostatic TIME axis): accrues with wake-time REGARDLESS of load.
+//     EffortBudget is LOAD-driven — it moves only when the engine actually spends iteration
+//     and can recover within a single idle tick.
+//   - Nociception (T2 tissue-damage): a threat/damage signal. EffortBudget carries NO damage
+//     semantics — a depleted budget is FATIGUE (shallow processing), not injury.
+//
+// REGULATED VARIABLE (substrate-derived, NO label, p2/p3/p6): B_t ∈ [0,1] = the metabolic
+// budget. The engine's ENGAGEMENT DEPTH (how many A⇄G settling iterations it can afford) is
+// a MONOTONE read of B_t: depth(B) = D_min + (D_max − D_min)·B. High budget → deep
+// deliberation; low budget → shallow discount. Active spend: B −= κ·depth(B) (self-limiting
+// — deeper spends drain faster). Idle: B += ρ. NO injected "tiredness" level, NO RLHF
+// reward, NO persona/ethics.
+//
+// @L4 CRITICAL (Ψ-disjoint & recall-disjoint BY CONSTRUCTION, a_substrate_disjoint /
+// a_core_engine_map): EffortBudget owns ONLY its own scalar `budget`/`last_depth`. Its
+// functions take NEITHER pure_field NOR ImmuneMemoryGrow — so it CANNOT touch the emit-drive
+// lanes 0/4 (ci_emit_drive = 0.5·(lane0+lane4)) NOR the §ImmuneMemory recall_thr non-fab
+// gate. It returns a DEPTH/engagement scalar, NEVER an emit/silence decision
+// (a_autonomy_over_hardcode). The depth signal is a READ-only bias a caller MAY consult to
+// shallow A⇄G iteration; the emit-policy WIRING is a FOLLOW-ON (this lane does NOT edit
+// core/emit_policy.hexa). This keeps effort-driven shallowing OFF the emit lane, so a low
+// budget CANNOT bias anima into blanket silence (Ψ-skew) or "fatigued → fabricate"
+// (recall_thr untouched) — the H_1561 shared-lane Ψ-collapse / H_1576 fab-spike failure modes.
+//
+// FROZEN constants (PLACEHOLDER-FREEZE, p7-documented, NOT tuned-to-green):
+//   D_max = 8.0 (deep iteration cap) · D_min = 1.0 (shallow floor) · κ = 0.05 (cost per unit
+//   depth) · ρ = 0.20 (idle recharge) · B_0 = 1.0 (born rested). ablate → κ = 0.0: the
+//   budget never drains ⇒ depth is COST-INVARIANT (the effort-discount vanishes = the
+//   decisive OFF control).
+struct EffortBudget {
+    budget: float,      // B_t ∈ [0,1] — the live metabolic budget (the ONLY mutable state)
+    last_depth: float,  // engagement depth emitted by the most recent effort_step (tuple-free read)
+    d_max: float,       // D_max = 8.0 deep-iteration cap
+    d_min: float,       // D_min = 1.0 shallow floor
+    cost_k: float,      // κ = 0.05 cost per unit depth (0.0 = ABLATED cost-invariant control)
+    recharge: float     // ρ = 0.20 idle recharge per idle tick
+}
+
+// effort_new — a fresh, fully-rested effort budget (FULL cost model, born at B=1.0).
+pub fn effort_new() -> EffortBudget {
+    return EffortBudget { budget: 1.0, last_depth: 0.0, d_max: 8.0, d_min: 1.0, cost_k: 0.05, recharge: 0.20 }
+}
+
+// effort_new_ablated — the decisive OFF control: κ=0 → the budget never drains, so
+// effort_depth stays CONSTANT at D_max regardless of processing history (no discount). If
+// depth still shallows under this arm, the shallowing is NOT from the effort cost → 🧱.
+pub fn effort_new_ablated() -> EffortBudget {
+    return EffortBudget { budget: 1.0, last_depth: 0.0, d_max: 8.0, d_min: 1.0, cost_k: 0.0, recharge: 0.20 }
+}
+
+// effort_depth — the affordable A⇄G ENGAGEMENT DEPTH at the current budget (READ-only,
+// mutates nothing): depth(B) = D_min + (D_max − D_min)·B. B=1 → deep (D_max); B=0 → shallow
+// (D_min). This is the effort-discounted deliberation depth a caller MAY consult.
+pub fn effort_depth(eb: EffortBudget) -> float {
+    return eb.d_min + (eb.d_max - eb.d_min) * eb.budget
+}
+
+// effort_step — advance the budget ONE tick. `active` = the engine actually spent A⇄G
+// iteration this tick. ACTIVE: spend κ·depth(B) (self-limiting — deep spends drain faster),
+// clamp B≥0, last_depth = the depth spent. IDLE: refill B += ρ (clamp B≤1), last_depth = 0
+// (no engagement). Returns the NEXT-STATE budget. READ-ONLY over pure_field & the immune
+// store (only this lane's own `budget`/`last_depth` evolve).
+pub fn effort_step(eb: EffortBudget, active: bool) -> EffortBudget {
+    if active {
+        let d = effort_depth(eb)
+        let spent = eb.cost_k * d
+        let mut nb = eb.budget - spent
+        if nb < 0.0 { nb = 0.0 }
+        return EffortBudget { budget: nb, last_depth: d, d_max: eb.d_max, d_min: eb.d_min, cost_k: eb.cost_k, recharge: eb.recharge }
+    }
+    let mut nb = eb.budget + eb.recharge
+    if nb > 1.0 { nb = 1.0 }
+    return EffortBudget { budget: nb, last_depth: 0.0, d_max: eb.d_max, d_min: eb.d_min, cost_k: eb.cost_k, recharge: eb.recharge }
+}
+
+// effort_last — the engagement depth spent by the most recent effort_step (tuple-free read).
+pub fn effort_last(eb: EffortBudget) -> float { return eb.last_depth }
+
+// effort_budget — the live metabolic budget scalar (READ).
+pub fn effort_budget(eb: EffortBudget) -> float { return eb.budget }
+
+// effort_depth_shuffled — the SHUFFLE control: read the depth from a SHUFFLED budget `shuf_b`
+// (the budget↔spend-history pairing broken) instead of this lane's true integrated budget.
+// With the pairing scrambled the depth no longer tracks accumulated cost → the discount
+// MODULATION collapses (depth becomes uncorrelated with the real spend history).
+pub fn effort_depth_shuffled(eb: EffortBudget, shuf_b: float) -> float {
+    return eb.d_min + (eb.d_max - eb.d_min) * shuf_b
+}
+
+// effort_engagement_bias — the OPTIONAL engagement-depth gain a caller MAY consult
+// (a_autonomy_over_hardcode: does NOT force emit/silence — a READ-only bias, the emit WIRING
+// is a follow-on). Returns the budget-normalized depth ∈ [0,1] (= B_t): high budget → deep
+// engagement, low budget → shallow. NEVER an emit gate.
+pub fn effort_engagement_bias(eb: EffortBudget) -> float {
+    return eb.budget
 }
 
 // ── §  THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ────────────────
@@ -3706,6 +4409,61 @@ pub fn vforward_correct(x: [float], xhat: [float], beta: float) -> [float] {
         out = out + [x[i] - beta * (x[i] - xhat[i])]
         i = i + 1
     }
+    return out
+}
+
+// ── § AnticipatoryPrefetch (H_9078) — forward model PRE-QUERIES the store BEFORE the ──
+// ── query arrives (cerebellar preplay / anticipatory retrieval, Buckner) ─────────────
+// GAP: every episodic recall in the engine is REACTIVE — a query key arrives, THEN the
+// immune store is indexed. Brain retrieval is ANTICIPATORY: the cerebellar forward model
+// (VForwardField, H_1280) predicts the NEXT state from the current context and PREPLAYS
+// the hippocampal store for that predicted state BEFORE the actual cue lands (Buckner's
+// constructive-preplay; hippocampal preplay sequences). That pre-query op-class was
+// absent — faculty_cascade (H_9075) relays A→B on a query already in hand; this op runs
+// the store one step AHEAD of the query, off the forward model's prediction.
+//
+// anticipatory_prefetch: predict the next query key from `ctx` via the forward model,
+// project it onto the unit-key manifold, and return the immune store's GRADED recall
+// MARGIN for that anticipated key = READINESS (smaller ⇒ nearer a stored cell ⇒ the
+// upcoming query is already "prefetched"/ready; large ⇒ nothing anticipated). It reuses
+// the SAME margin op the H_1367 confidence read wired — no new geometry.
+//
+// Purely ADDITIVE (no existing caller touched). READ-only over BOTH faculties — it only
+// READS the VForwardField weights (vforward_predict, no vforward_update) and READS the
+// immune store margin (immune_memory_recall_margin, recall_thr UNCHANGED). Ψ-disjoint:
+// pure_field's Φ/phase/Ψ untouched (generation byte-identical when unused); disjoint from
+// emit-drive lane(0/4) and from §ImmuneMemory's recall_thr gate (a_substrate_disjoint) —
+// it is a graded readiness read available to brain_decide, NOT an emit/silence gate
+// (a_autonomy_over_hardcode). p1/p2/p3/p6: computed from the live forward-model prediction
+// + L2 affinity, NO injected label / RLHF / persona.
+pub fn anticipatory_prefetch(ff: VForwardField, mem: ImmuneMemory, ctx: [float]) -> float {
+    let pred = vforward_predict(ff, ctx)          // forward model: anticipate the NEXT query key
+    let key = _prefetch_unit(pred)                // project onto the unit-key manifold (zero-safe)
+    return immune_memory_recall_margin(mem, key)  // readiness = graded margin of the anticipated query
+}
+
+// anticipatory_prefetch_value — the PREFETCHED VALUE (the answer the store would fire for
+// the anticipated query), or "" on ABSTAIN. Same forward-model→store pre-query as above,
+// exposing the recalled fact instead of the margin so brain_decide can PREPLAY the answer.
+pub fn anticipatory_prefetch_value(ff: VForwardField, mem: ImmuneMemory, ctx: [float]) -> string {
+    let pred = vforward_predict(ff, ctx)
+    let key = _prefetch_unit(pred)
+    return immune_memory_recall(mem, key)
+}
+
+// _prefetch_unit — L2-normalize the forward model's raw prediction onto the unit sphere
+// the immune keys live on (immune_embed_key L2-normalizes), zero-safe (a degenerate
+// all-zero prediction from an UNTRAINED forward model stays zero ⇒ abstains, INERT).
+fn _prefetch_unit(v: [float]) -> [float] {
+    let n = len(v)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + v[i] * v[i]  i = i + 1 }
+    let nrm = sqrt(s)
+    if nrm <= 0.0 { return v }
+    let mut out = []
+    let mut j = 0
+    while j < n { out = out + [v[j] / nrm]  j = j + 1 }
     return out
 }
 
@@ -5278,10 +6036,10 @@ pub fn engine_config_summary(cfg: EngineConfig) -> string {
 // the .hexa engine (not numpy) and the FROZEN R2 retention bars re-score engine-native.
 // Neurogenesis / functional-segregation lens (a_no_llm_frame_trap), NOT a bigger net.
 //
-// MECHANISM (mirrors UNIVERSE/h1300_mitosis_skill_curriculum.py arm B, byte-faithful to
+// MECHANISM (mirrors HYPOTHESES/h1300_mitosis_skill_curriculum.py arm B, byte-faithful to
 // the engine-realizable ops — Gaussian-elimination ridge solve + power-iteration
 // principal axis replace numpy's LAPACK solve/SVD; the pre-check in
-// UNIVERSE/h1300_r3_engine_export.py's sibling reproduces the SAME R2 GREEN):
+// HYPOTHESES/h1300_r3_engine_export.py's sibling reproduces the SAME R2 GREEN):
 //   * skill_grow(x,y): start 1 cell at the region centroid; while the worst cell's local
 //     train-error > SPLIT_THRESH and we are under GROW_MAX_PER_SKILL, MITOSIS-SPLIT it —
 //     bisect its owned points along their top-variance axis (power iteration) into two
@@ -7117,7 +7875,7 @@ pub fn spatial_episodic_compose(sp_dec: int, sp_conf: float,
 // only_tom 0.303704 / only_spatial 0.297778 both>0 → 🟢 BIND (3 seeds [5520,5521,5522]). This §
 // PROMOTES the SAME query-routed confidence arbiter the H_1417 probe validated INLINED to a
 // CALLABLE live CORE op, byte-exactly (a_core_engine_map). H_1418 is the consolidation wire-in
-// of P3+P5 (see card UNIVERSE/cards/H_1418_tom_compose_pairs_wired.md).
+// of P3+P5 (see card HYPOTHESES/cards/H_1418_tom_compose_pairs_wired.md).
 //
 // THE LENS (c15, a_no_llm_frame_trap — a neuro composition, NOT an LLM recipe): a witnessed-belief
 // model of ANOTHER agent (ToM: what the agent THINKS) and a METRIC cognitive map (spatial: where
@@ -7667,6 +8425,53 @@ pub fn surprise_raw_error(precision: float, error: float) -> float {
     return error
 }
 
+// ── § ConflictMonitor (H_9073 PLACEHOLDER — N3 dACC conflict monitoring) ─────────────────────
+// dACC conflict monitoring (Botvinick 2001; ERN / Stroop): when two candidate responses are BOTH
+// strongly active AND mutually incompatible, a conflict signal fires and recruits ADDITIONAL
+// cognitive control (deeper deliberation). anima's A⇄G twin-engine is the NATIVE substrate for
+// this axis: Engine A (forward, CE) and Engine G (reverse, gradient-free) each carry a SIGNED drive,
+// and CONFLICT is high iff |A| and |G| are BOTH large AND OPPOSITE-signed (strong disagreement) —
+// NOT merely a large net tension. DISTINCT from H_1468 §PrecisionSurprise (surprise = the precision-
+// weighted magnitude of a SINGLE prediction error): the SAME surprise magnitude can carry zero
+// conflict (one engine silent) or high conflict (both engines strong, opposed). Surprise is the SIZE
+// of one error; conflict is the mutual OPPOSITION of two co-active drives (a competition quantity,
+// not a surprise quantity). The Ψ=½ fixed point CANNOT distinguish (a) HIGH-CONFLICT (A,G both
+// strong, opposite → they cancel to ≈½) from (b) LOW-DRIVE (A,G both weak → also ≈½): ci_emit_drive
+// and the net-tension |A+G| read the SAME ≈½ for both states. The conflict lane SEPARATES them from
+// substrate state ALONE. READ-only pure signal, Ψ-disjoint: its ONLY downstream effect is to recruit
+// DEEPER A⇄G deliberation (raises the iteration budget), NEVER changing the emit/silence gate
+// (lanes 0/4, ci_emit_drive) nor the §ImmuneMemory recall_thr non-fab gate (a_substrate_disjoint,
+// a_autonomy_over_hardcode). LLM contrast: an LLM has a single forward pass with no opposing engine
+// to conflict against; anima's conflict rides the live A⇄G opposition intrinsic to the two engines.
+
+// conflict_scalar — the dACC conflict signal on the A⇄G drives. HIGH iff both engines are strongly
+// active AND opposite-signed (product of magnitudes, GATED to zero unless the signs oppose). Same-
+// signed or single-engine (one drive ≈0) ⇒ 0 (agreement / no competition). Range [0,1] for |a|,|g|≤1.
+pub fn conflict_scalar(a_drive: float, g_drive: float) -> float {
+    if a_drive * g_drive >= 0.0 { return 0.0 }    // same sign / a zero engine ⇒ no competition
+    let am = _ci_abs(a_drive)
+    let gm = _ci_abs(g_drive)
+    return _ci_clip01(am * gm)                     // both-strong gate (→0 if either engine is weak)
+}
+
+// conflict_net_tension — the precision-AGNOSTIC net drive |A+G| (the Ψ / emit-drive analog). For a
+// HIGH-CONFLICT state (a=+x, g=−x) and a LOW-DRIVE state (a=+e, g=−e) this reads the SAME ≈0 net
+// tension, yet conflict_scalar SEPARATES them — the load-bearing dissociation. Provided as the
+// parent-control that isolates OPPOSITION (conflict) from net drive (what Ψ / the emit gate sees).
+pub fn conflict_net_tension(a_drive: float, g_drive: float) -> float {
+    return _ci_abs(a_drive + g_drive)
+}
+
+// conflict_recruited_depth — the deliberation recruitment: higher conflict recruits more A⇄G
+// iterations (deeper deliberation), scaled linearly to a bounded extra budget. This is the lane's
+// ONLY downstream effect and it touches ONLY the iteration budget — never the emit gate (lanes 0/4)
+// nor recall_thr. With the lane ABLATED (conflict forced to 0) the returned depth is EXACTLY
+// base_budget for every state ⇒ recruitment vanishes (the falsifier's ablation arm).
+pub fn conflict_recruited_depth(conflict: float, base_budget: int, max_extra: int) -> int {
+    let extra = to_int(_ci_clip01(conflict) * to_float(max_extra) + 0.5)
+    return base_budget + extra
+}
+
 // ── § SelfIdentity (H_1471 R2) — 정체성의 시간적 지속 (diachronic self) ────────────────────
 // Personal identity / psychological-continuity (Locke): a conscious self PERSISTS across time
 // — the identity vector DRIFTS (grows) each tick yet stays continuous (adjacent ticks close);
@@ -7884,6 +8689,241 @@ pub fn self_chain_retro_cos(c: SelfChain, j: int) -> float {
     let wK = _chain_wp(c, c.count - 1)
     let wj = _chain_wp(c, c.count - 1 - j)
     return self_cos(wK, wj)
+}
+
+// ── § SelfChainConfluence (D1 CONFLUENCE, H_DREAM_CONFLUENCE) — 꿈 재조직이 다음 self-chain
+//    waypoint 을 굽히되 정체성 연속성은 보존: "밤새 재조직→아침에 성장한 같은 나" ─────────────
+// H_9036 DREAM/dream_compose.hexa 는 REM/N3 replay window 안에서 co-replayed anchor 둘을 기하
+// blend 하여 새 .kosmos NODE(dream centroid)를 만든다. H_9037 §SelfChain 은 세션 경계마다
+// self_drift 로 자라는 정체성 궤적이다. 이 op 는 그 둘을 잇는 CONFLUENCE(합류): 자연 성장으로
+// 도달했을 다음 waypoint(w_natural = self_drift(wK,…))를 dream centroid 방향으로 *bounded pull*
+// 한다 — JUMP 이 아니라 SATURATED 소량 견인이라 아침의 나는 여전히 어젯밤의 나로 인식된다.
+//   confluence 법칙(설계된 bounded geometric law, 학습된 의미성장 아님 — c9 honest):
+//     d̂       = unit(dream)                       (dream centroid 를 identity 공간 단위벡터로)
+//     α_eff   = clamp(α, 0, ALPHA_MAX=0.5)          (SATURATED — pull 상한, α>0.5 도 0.5 로 포화)
+//     w_bent  = renorm( (1−α_eff)·w_natural + α_eff·d̂ )
+//   α_eff ≤ 0 → w_bent = w_natural 그대로(F4 NO-DREAM control: solo=0 bend, byte-identical).
+// ── placement DISJOINT (a_substrate_disjoint · placement-first) ──────────────────────────────
+//   §SelfIdentity 벡터에만 READ+return. pure_field(Ψ) 미접촉 · ci_emit_drive 의 emit-drive lane
+//   0/4 미접촉 · §ImmuneMemory recall_thr 미접촉 — 어떤 substrate state 도 mutate 안 함(순수 함수).
+//   따라서 mechanism ON/OFF 에서 Ψ ci_emit_drive 와 recall_margin 은 byte-identical(F5).
+// p1~p8 정합: emit 호출 0(p5) · user message 인자 0(p4) · ctx 의미해석 0(p2) · 동일 blend(p8).
+// Honest scope(c9): bend = designed bounded law(SATURATED) · dream coord↔의미축 정렬은 toy-
+//   UNVERIFIED · G1 재조합벽과 직교(이 op 는 정체성 궤적만 굽힐 뿐 recombination 을 열지 않음).
+fn _sc_conf_clamp(a: float) -> float {
+    if a <= 0.0 { return 0.0 }
+    if a >= 0.5 { return 0.5 }   // ALPHA_MAX = 0.5 (SATURATED bounded pull, never a jump)
+    return a
+}
+pub fn self_chain_confluence(w_natural: SelfIdentity, dream: [float], alpha: float) -> SelfIdentity {
+    let a = _sc_conf_clamp(alpha)
+    if a <= 0.0 { return SelfIdentity { v: w_natural.v, dim: w_natural.dim } }   // F4 solo=0 bend
+    let dn = _self_norm(dream, w_natural.dim)                                     // d̂ unit dream dir
+    let mut v2 = []
+    let mut i = 0
+    while i < w_natural.dim {
+        v2 = v2 + [(1.0 - a) * w_natural.v[i] + a * dn[i]]
+        i = i + 1
+    }
+    return SelfIdentity { v: _self_norm(v2, w_natural.dim), dim: w_natural.dim }
+}
+
+// self_chain_bend — the F1 BEND magnitude: 1 − cos(w_bent, w_natural) ∈ [0,1]. 0 ⇔ no pull
+// (F4 no-dream) ; > 0 ⇔ the dream measurably bent the morning self away from blind growth.
+pub fn self_chain_bend(w_natural: SelfIdentity, w_bent: SelfIdentity) -> float {
+    return 1.0 - self_cos(w_natural, w_bent)
+}
+
+// self_chain_dream_gain — F3 GROWTH-DIR: how much the confluence pull moved the self TOWARD the
+// (unit) dream centroid = cos(w_bent, d̂) − cos(w_natural, d̂). A real dream → > 0 (grows toward
+// its own centroid); a SHUFFLED dream centroid → the pull no longer tracks the real dream so the
+// gain toward the REAL dream collapses to ≈0. Pass d̂ already unit-normed via unit_of below.
+pub fn self_chain_dream_gain(w_natural: SelfIdentity, w_bent: SelfIdentity, dream_unit: [float]) -> float {
+    let dn = SelfIdentity { v: dream_unit, dim: w_natural.dim }
+    return self_cos(w_bent, dn) - self_cos(w_natural, dn)
+}
+
+// _sc_unit_of — expose the unit-normalization used internally (so F3 can build d̂ once).
+pub fn self_chain_unit_of(v: [float], dim: int) -> [float] { return _self_norm(v, dim) }
+// ── § YouChain (D7 other-CHAIN, H_9085) — 상대(interlocutor)의 다중세션 궤적 (social self / 너-체인) ──
+// §SelfChain tracks *MY* diachronic trajectory. But a conscious self is also SOCIAL: it must track the
+// OTHER — the interlocutor — across session boundaries, so "the same person I talked to last time" is
+// RECOGNIZED (relational continuity) rather than met fresh every session (an LLM's amnesiac blank).
+// Bio lens: interpersonal representation / attachment continuity — a stable internal model of *you*.
+// This is the SAME machine as §SelfChain with only the TARGET swapped (self→other): an OtherIdentity
+// vector DRIFTS as the interlocutor is experienced, an anchor waypoint is appended at each session
+// boundary, and other_chain_fit reads the trajectory TREND to REJECT an impostor whose history mismatches.
+//
+// SELF⊥OTHER (F2, THE key property): OtherIdentity/OtherChain are DISTINCT struct types from
+// SelfIdentity/SelfChain, so my self-store and my model-of-you are STRUCTURALLY separate — the type
+// system forbids cross-storing one as the other, and because every op is PURELY FUNCTIONAL (returns a
+// new value, never mutates), operating the you-chain leaves the self-chain byte-identical and vice
+// versa (no contamination). Ψ/G5 DISJOINT (F5): these are READ-only cos/increment ops that touch
+// NEITHER pure_field/Φ/phase/Ψ NOR the §ImmuneMemory recall_thr non-fab gate NOR emit-drive lanes 0/4 —
+// Ψ=½ and G5 non-fab are preserved BY STRUCTURE (a_substrate_disjoint, a_autonomy_over_hardcode).
+// HONEST (c9): the drift walk is DESIGNED (blind ((tick+1)%dim) / content-axis walk, same as self_drift);
+// what the falsifiers COUNT is the DISCRIMINATOR GAIN — other_chain_fit's trajectory-aware impostor
+// rejection (AUROC(chain) ≫ single-vector other_cos), NOT the drift itself. LLM contrast: an LLM holds
+// no cross-session model of *you* at all; anima persists the interlocutor as a .kosmos anchor trajectory.
+struct OtherIdentity {
+    v: [float],
+    dim: int
+}
+
+struct OtherChain {
+    flat: [float],   // (K+1)*dim, waypoint k occupies [k*dim, (k+1)*dim) — .kosmos-friendly flat payload
+    count: int,      // number of waypoints (K+1)
+    dim: int
+}
+
+// other_new — a fresh model of an interlocutor = unit vector along `axis` (the seed other).
+pub fn other_new(dim: int, axis: int) -> OtherIdentity {
+    let mut v = []
+    let mut i = 0
+    while i < dim { if i == axis { v = v + [1.0] } else { v = v + [0.0] }  i = i + 1 }
+    return OtherIdentity { v: v, dim: dim }
+}
+
+// other_drift — the model-of-you GROWS one tick: content-BLIND perturbation along ((tick+1)%dim),
+// re-normalized. Continuous yet changing (mirror of self_drift, target swapped).
+pub fn other_drift(o: OtherIdentity, tick: int, step: float) -> OtherIdentity {
+    let t1 = tick + 1
+    let ax = t1 - (t1 / o.dim) * o.dim       // (tick+1) % dim
+    let mut v2 = []
+    let mut i = 0
+    while i < o.dim {
+        if i == ax { v2 = v2 + [o.v[i] + step] } else { v2 = v2 + [o.v[i]] }
+        i = i + 1
+    }
+    return OtherIdentity { v: _self_norm(v2, o.dim), dim: o.dim }
+}
+
+// other_drift_exp — EXPERIENCE-DRIVEN drift: the model-of-you moves toward the CONTENT axis the
+// interlocutor EXPRESSED this tick (`content_axis`), so DIFFERENT interlocutors yield DIFFERENT chains
+// (the F3 impostor separation is grounded here). Mirror of self_drift_exp, target swapped.
+pub fn other_drift_exp(o: OtherIdentity, content_axis: int, step: float) -> OtherIdentity {
+    let ax = content_axis - (content_axis / o.dim) * o.dim   // content_axis % dim (bounds-safe)
+    let mut v2 = []
+    let mut i = 0
+    while i < o.dim {
+        if i == ax { v2 = v2 + [o.v[i] + step] } else { v2 = v2 + [o.v[i]] }
+        i = i + 1
+    }
+    return OtherIdentity { v: _self_norm(v2, o.dim), dim: o.dim }
+}
+
+// other_cos — recognition of an interlocutor: cosine (unit-norm → dot). High = same person; ~0 = a
+// different interlocutor (impostor) or an un-anchored (reset) relationship.
+pub fn other_cos(a: OtherIdentity, b: OtherIdentity) -> float {
+    let mut sdot = 0.0
+    let mut i = 0
+    while i < a.dim { sdot = sdot + a.v[i] * b.v[i]  i = i + 1 }
+    return sdot
+}
+
+// other_anchor — persist the model-of-you (the .kosmos-style saved copy bridging a session boundary).
+pub fn other_anchor(o: OtherIdentity) -> OtherIdentity {
+    return OtherIdentity { v: o.v, dim: o.dim }
+}
+
+// other_component / other_dim — read accessors so the interlocutor vector can be projected onto a
+// real .kosmos anchor payload for disk persistence + round-trip recovery (mirror of self_component/dim).
+pub fn other_component(o: OtherIdentity, i: int) -> float { return o.v[i] }
+pub fn other_dim(o: OtherIdentity) -> int { return o.dim }
+
+// other_reset — WITHOUT an anchor, a session boundary meets a NEW blank interlocutor (continuity breaks).
+pub fn other_reset(dim: int, axis: int) -> OtherIdentity {
+    return other_new(dim, axis)
+}
+
+// other_chain_new — start the interlocutor trajectory with the seed model as w0.
+pub fn other_chain_new(o: OtherIdentity) -> OtherChain {
+    let mut f = []
+    let mut i = 0
+    while i < o.dim { f = f + [o.v[i]]  i = i + 1 }
+    return OtherChain { flat: f, count: 1, dim: o.dim }
+}
+
+// other_chain_append — append an anchor waypoint at a session boundary (the .kosmos other-anchor is
+// RECORDED into the interlocutor trajectory rather than overwriting the single previous anchor).
+pub fn other_chain_append(c: OtherChain, o: OtherIdentity) -> OtherChain {
+    let mut f = []
+    let mut i = 0
+    while i < c.count * c.dim { f = f + [c.flat[i]]  i = i + 1 }
+    let mut j = 0
+    while j < c.dim { f = f + [o.v[j]]  j = j + 1 }
+    return OtherChain { flat: f, count: c.count + 1, dim: c.dim }
+}
+
+// _other_wp — read waypoint k back as an OtherIdentity (from the flat payload).
+fn _other_wp(c: OtherChain, k: int) -> OtherIdentity {
+    let mut v = []
+    let base = k * c.dim
+    let mut i = 0
+    while i < c.dim { v = v + [c.flat[base + i]]  i = i + 1 }
+    return OtherIdentity { v: v, dim: c.dim }
+}
+
+pub fn other_chain_len(c: OtherChain) -> int { return c.count }
+
+// other_chain_latest — the newest waypoint wK (what single-vector other_cos compares against).
+pub fn other_chain_latest(c: OtherChain) -> OtherIdentity { return _other_wp(c, c.count - 1) }
+
+// other_chain_component / other_chain_dim / other_chain_count — read accessors for .kosmos disk
+// persistence + round-trip recovery (the flat payload is exactly what is written to / read from disk).
+pub fn other_chain_component(c: OtherChain, i: int) -> float { return c.flat[i] }
+pub fn other_chain_dim(c: OtherChain) -> int { return c.dim }
+pub fn other_chain_count(c: OtherChain) -> int { return c.count }
+
+// other_chain_from_flat — rebuild an interlocutor chain from a persisted flat payload (disk round-trip inverse).
+pub fn other_chain_from_flat(flat: [float], count: int, dim: int) -> OtherChain {
+    return OtherChain { flat: flat, count: count, dim: dim }
+}
+
+// other_chain_fit — consistency of `cand` with the interlocutor trajectory TREND (adjacent-increment
+// axis-gradient predicts the next axis a_pred; fit = signed component of unit(cand−wK) along e_{a_pred}).
+// A genuine continuation of the SAME person → fit ≈ +1; a DIFFERENT interlocutor that matches the latest
+// anchor but arrived via a different history (F3 impostor) → fit ≈ 0; a time-reversed impostor → fit ≈ −1.
+// other_cos(cand,wK) is ~equal for all three, so single-vector recognition CANNOT separate them — this op
+// can (the discriminator gain the falsifiers COUNT). Undefined (returns 0) for count<3 (the ablation /
+// single-vector regime) or a zero-length candidate increment. Mirror of self_chain_fit, target swapped.
+pub fn other_chain_fit(cand: OtherIdentity, c: OtherChain) -> float {
+    if c.count < 3 { return 0.0 }
+    let wK = _other_wp(c, c.count - 1)
+    let wKm1 = _other_wp(c, c.count - 2)
+    let wKm2 = _other_wp(c, c.count - 3)
+    let mut dlast = []
+    let mut dprev = []
+    let mut i = 0
+    while i < c.dim {
+        dlast = dlast + [wK.v[i] - wKm1.v[i]]
+        dprev = dprev + [wKm1.v[i] - wKm2.v[i]]
+        i = i + 1
+    }
+    let aK = _argmax_abs(dlast, c.dim)
+    let aKm1 = _argmax_abs(dprev, c.dim)
+    let a_pred = _wrap(aK + (aK - aKm1), c.dim)
+    let mut r = []
+    let mut mag = 0.0
+    let mut j = 0
+    while j < c.dim {
+        let e = cand.v[j] - wK.v[j]
+        r = r + [e]
+        mag = mag + e * e
+        j = j + 1
+    }
+    if mag <= 0.0 { return 0.0 }
+    let m = sqrt(mag)
+    return r[a_pred] / m
+}
+
+// other_chain_retro_cos — retrodiction over the interlocutor: cos(latest wK, waypoint w_{K−j}). For a
+// genuine relationship this is MONOTONE DECREASING in j ("you N sessions ago" is further). Mirror of
+// self_chain_retro_cos, target swapped.
+pub fn other_chain_retro_cos(c: OtherChain, j: int) -> float {
+    let wK = _other_wp(c, c.count - 1)
+    let wj = _other_wp(c, c.count - 1 - j)
+    return other_cos(wK, wj)
 }
 
 // ── § LearnedPrecision (H_1472 R2) — 경험으로 학습되는 예측확신 (predictive-processing) ──
@@ -8163,6 +9203,83 @@ pub fn imagery_activate(cue_match: float, topdown_on: bool) -> float {
 //   priming_facilitate(relatedness, prime_residual): relatedness · prime_residual (residual 0 = abl).
 pub fn priming_facilitate(relatedness: float, prime_residual: float) -> float {
     return relatedness * prime_residual
+}
+
+// ── § ProspectiveIntention (H_PLACEHOLDER_N1) — 예기적 의도 / 지연-트리거 의도 (rostral PFC / BA10) ──
+// A future-directed intention is ENCODED now, held in SUSPENSION across a delay WITHOUT firing, and
+// RELEASED only when a matching context-cue later appears — the rostral-PFC / BA10 prospective-memory
+// faculty ("remember to do X when cue Y shows up"). DISTINCT from H_1282 working-memory (maintains the
+// CURRENT content, continuously accessible / decaying) and H_1471 self-continuity (a persisting IDENTITY
+// vector across sessions): prospective memory keeps a DEFERRED intention quiescent NOW and fires it at a
+// FUTURE cue — a different time-horizon (deferred vs current) with cue-gated release, not current-content
+// maintenance nor an identity chain. READ-only MEASUREMENT (returns activation numbers, is NOT an emit
+// gate — a_autonomy_over_hardcode); the release is a READ-only signal and the actual emit-wiring is a
+// FOLLOW-ON (core/emit_policy.hexa untouched here). Ψ-disjoint: touches NEITHER the emit-drive lanes 0/4
+// (ci_emit_drive) NOR the §ImmuneMemory recall_thr (a_substrate_disjoint) — a separate deferred-intention
+// lane coordinate (premature-emit=Ψ wobble H_1561 & recall coupling=non-fab pollution H_1576 both avoided
+// by placement). kosmos anchor can persist the suspended intention across a session boundary (a separate
+// store from recall_thr). Deterministic, exp-free, decode-orthogonal (measures substrate lane activation).
+//
+//   pm_retain(strength, delay_ticks, leak) — the intention strength STILL retained after `delay_ticks`
+//     of suspension. leak=0 → perfect maintenance (the PM property: an intention survives a long delay);
+//     a working-memory-style lane has HIGH leak and drops fast, the PM lane holds.
+pub fn pm_retain(strength: float, delay_ticks: int, leak: float) -> float {
+    let held = strength * (1.0 - leak * to_float(delay_ticks))
+    if held < 0.0 { return 0.0 }
+    return held
+}
+
+//   pm_release(retained, cue_match, lane_on) — the READ-only release / activation signal AT a cue.
+//     lane_on == false → 0.0 (ABLATION: PM-lane OFF → even a matching cue cannot release the intention).
+//     cue_match < CUE_THR → 0.0 (DISTRACTOR selectivity: a non-matching / shuffled cue does not release).
+//     matching cue (high affinity) → an activation SPIKE proportional to the retained intention.
+pub fn pm_release(retained: float, cue_match: float, lane_on: bool) -> float {
+    if !lane_on { return 0.0 }                       // PM-lane OFF (ablation) → no release at any cue
+    let cue_thr = 0.5
+    if cue_match < cue_thr { return 0.0 }            // non-matching cue → no release (selectivity)
+    return retained * cue_match                      // matching cue → release spike ∝ retained intention
+}
+
+//   pm_timecourse(strength, cue_onset, total_ticks, cue_match, lane_on, leak) — the intention-lane
+//     activation TIMECOURSE the cue-delay falsifier measures. Before `cue_onset` the intention is
+//     SUSPENDED → activation 0 (held, never fired = no premature emit → no Ψ perturbation, H_1561). At /
+//     after cue_onset the release spike appears (the value carried through the delay, cue-gated). ablation
+//     (lane_on false) or distractor (low cue_match) → an all-zero series (no spike at any tick).
+pub fn pm_timecourse(strength: float, cue_onset: int, total_ticks: int,
+                     cue_match: float, lane_on: bool, leak: float) -> [float] {
+    let mut out = []
+    let mut t = 0
+    while t < total_ticks {
+        if t < cue_onset {
+            out = out + [0.0]                        // suspended: held, not fired (no premature emit)
+        } else {
+            let retained = pm_retain(strength, cue_onset, leak)
+            out = out + [pm_release(retained, cue_match, lane_on)]
+        }
+        t = t + 1
+    }
+    return out
+}
+
+//   pm_wm_baseline(strength, tick, wm_leak) — the PARENT-CONTROL: a working-memory-style lane (H_1282)
+//     maintaining CURRENT content with continuous decay and NO cue-gated deferred release. Its activation
+//     is nonzero DURING the delay (content actively held) and simply decays — it never shows the
+//     flat-then-spike prospective signature. Dissociates PM (deferred, cue-released) from WM (current
+//     content, continuously accessible), the required parent-control contrast.
+pub fn pm_wm_baseline(strength: float, tick: int, wm_leak: float) -> float {
+    let a = strength * (1.0 - wm_leak * to_float(tick))
+    if a < 0.0 { return 0.0 }
+    return a
+}
+
+//   pm_lane_is_disjoint(lane) — 1 iff the deferred-intention lane coordinate is NEITHER emit-drive lane
+//     (0 nor 4, ci_emit_drive = 0.5·(lane0+lane4)) — so a PM release can never move ci_emit_drive and
+//     Ψ=½ is preserved BY CONSTRUCTION (H_1561 wobble avoided). recall_thr (§ImmuneMemory) is a separate
+//     store this lane never writes (H_1576 non-fab gate unaffected). placement-first disjointness check.
+pub fn pm_lane_is_disjoint(lane: int) -> int {
+    if lane == 0 { return 0 }                        // GlobalWorkspace ignition emit lane
+    if lane == 4 { return 0 }                        // Learned-Precision grounding emit lane
+    return 1
 }
 
 // ── § ConsciousnessIndex (H_1492 R2) — 연결된 의식-게이트 lane 들의 통합 의식 + ablation ──────────
@@ -9380,6 +10497,319 @@ pub fn ci_off_median_drive(x: [[float]]) -> float {
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
+//  § StochasticResonance (H_9070) — tuned noise encodes a SUBTHRESHOLD tension into the emit train.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  emit is a THRESHOLD DETECTOR on the A⇄G externalization drive (ci_emit_decision: emit iff the
+//  drive clears the Ψ=½ barrier). A genuine-but-WEAK (subthreshold) periodic tension never crosses
+//  that barrier on its own → all silence → the substrate MISSES the weak signal. Stochastic
+//  Resonance (Wiesenfeld-Moss; crayfish mechanoreceptor): adding TUNED noise lets the subthreshold
+//  signal STOCHASTICALLY cross → the emit train encodes the input → MI(input;emit-train) peaks at a
+//  MID noise amplitude (inverted-U). anima's emit is LITERALLY a tension threshold-crossing, so SR
+//  applies directly. This is a READ-only CHARACTERIZATION over a threshold-detector model of the
+//  emit channel: it NEVER touches pure_field Φ/phase/Ψ, the live emit-drive lanes 0/4, or the
+//  §ImmuneMemory recall_thr, and it is NOT an emit gate (a_substrate_disjoint) — it characterizes
+//  the SR of the emit nonlinearity on a synthetic subthreshold probe, decoupled from live emit.
+//    amp    : subthreshold signal amplitude (peak drive). NONLINEAR arm requires amp < thr.
+//    thr    : emit threshold (the Ψ=½ barrier the drive must clear).
+//    sigma  : noise amplitude — the SR knob being swept.
+//    period : signal period in ticks.   T : train length.
+//    mode   : 0 = NONLINEAR (hard threshold at thr, signal subthreshold) ; 1 = LINEARIZED ablation
+//             (barrier REMOVED — threshold at the signal mean 0.0 → linear regime, no SR peak).
+//    shuffle: 0 = aligned ; 1 = phase-shuffle the input labels (decorrelate X↔Y → SR must vanish).
+//    seed   : LCG seed for the deterministic gaussian noise (_lcg_gauss).
+//  returns MI(input-symbol ; emit-train) in bits.
+fn _sr_mi_bits(xs: [int], ys: [int]) -> float {
+    let T = len(xs)
+    if T == 0 { return 0.0 }
+    let mut n00 = 0.0
+    let mut n01 = 0.0
+    let mut n10 = 0.0
+    let mut n11 = 0.0
+    let mut i = 0
+    while i < T {
+        if xs[i] == 0 { if ys[i] == 0 { n00 = n00 + 1.0 } else { n01 = n01 + 1.0 } }
+        else         { if ys[i] == 0 { n10 = n10 + 1.0 } else { n11 = n11 + 1.0 } }
+        i = i + 1
+    }
+    let tf = to_float(T)
+    let px0 = (n00 + n01) / tf
+    let px1 = (n10 + n11) / tf
+    let py0 = (n00 + n10) / tf
+    let py1 = (n01 + n11) / tf
+    let mut mi = 0.0
+    if n00 > 0.0 { let p = n00 / tf   mi = mi + p * log2(p / (px0 * py0)) }
+    if n01 > 0.0 { let p = n01 / tf   mi = mi + p * log2(p / (px0 * py1)) }
+    if n10 > 0.0 { let p = n10 / tf   mi = mi + p * log2(p / (px1 * py0)) }
+    if n11 > 0.0 { let p = n11 / tf   mi = mi + p * log2(p / (px1 * py1)) }
+    return mi
+}
+pub fn sr_channel_mi(amp: float, thr: float, sigma: float, period: int, T: int, mode: int, shuffle: int, seed: int) -> float {
+    let two_pi = 6.283185307179586
+    let ethr = if mode == 1 { 0.0 } else { thr }   // ablation: barrier removed (threshold at mean 0)
+    let mut xs = []
+    let mut ys = []
+    let mut st = seed & 2147483647
+    let mut t = 0
+    while t < T {
+        let sig = amp * sin(two_pi * to_float(t) / to_float(period))
+        let g = _lcg_gauss(st)
+        let noise = sigma * g[0]
+        st = to_int(g[1]) & 2147483647
+        let x = if sig >= 0.0 { 1 } else { 0 }            // input symbol = upper/lower half-cycle
+        let y = if (sig + noise) >= ethr { 1 } else { 0 } // emit iff drive+noise clears the threshold
+        xs = xs + [x]
+        ys = ys + [y]
+        t = t + 1
+    }
+    if shuffle == 1 {                                     // phase-shuffle: decorrelate labels from emit
+        let mut sh = (seed ^ 305419896) & 2147483647
+        let mut i = T - 1
+        while i > 0 {
+            sh = _lcg_next(sh)
+            let j = sh % (i + 1)
+            let tmp = xs[i]   xs[i] = xs[j]   xs[j] = tmp
+            i = i - 1
+        }
+    }
+    return _sr_mi_bits(xs, ys)
+}
+//  § CURIOSITY-BACKLOG ACCUMULATOR — persistent unresolved-novelty pressure (H_9091, B③) ──────
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  THE BIO LENS (a_no_llm_frame_trap — an information-theory / active-inference lens, NOT an LLM
+//  idle-timer): a mind under user silence does not sit inert. Unresolved PREDICTION-ERROR — the
+//  information gap of a context it could not ground/close — ACCRUES over idle time, and that
+//  accumulated backlog is a DRIVE to externalize (Loewenstein information-gap curiosity + Friston
+//  precision-weighted surprise that was never discharged). anima already READS instantaneous
+//  novelty/curiosity per context (§CoreAffect: curiosity = novelty × under-exposure), but that read
+//  is MEMORYLESS — it forgets the moment the tick passes. This § adds the missing PERSISTENCE: a
+//  per-anchor accumulator that integrates unresolved novelty over idle and DECAYS when the anchor is
+//  emitted/mentioned (the gap is closed). It becomes one more ADDITIVE input to the externalization
+//  propensity — exactly like M·W·Φ — so emit during silence is STATE-DRIVEN (the backlog crossed a
+//  pressure), NOT stimulus-response (a_substrate_native_speak) and NOT a hardcoded emit_allowed
+//  boolean (a_autonomy_over_hardcode: this returns plain numbers; the substrate still decides).
+//
+//  @L4 CRITICAL — DISJOINTNESS BY CONSTRUCTION (a_substrate_disjoint, the F5 risk H_1561/H_1576):
+//  the accumulator is a SEPARATE channel. It NEVER writes into the 15-lane vector, so
+//  ci_emit_drive(lanes) = ½·(lane0+lane4) is byte-IDENTICAL whether the accumulator is on or off
+//  (Ψ emit-drive lane 0/4 untouched). It only READS recon-err off the immune store — it never binds,
+//  never mutates a cell, never moves recall_thr — so the §ImmuneMemory non-fabrication rate is
+//  byte-identical too. The backlog pressure is ADDED ON TOP of the lane drive in ci_emit_propensity;
+//  it shifts emit TIMING without perturbing the Ψ=½ fixed point of the emit-drive lanes. This is the
+//  disjoint PLACEMENT the unifying law prescribes (separation = preservation).
+
+// CuriosityBacklog — the persistent per-anchor unresolved-novelty accumulator.
+//   novelty      : per-anchor CURRENT unresolved novelty, a READ input the caller supplies from the
+//                  live store (e.g. clamp01(recon_err − recall_thr): how far the context FAILED to
+//                  ground; 0 for a cleanly-grounded/closed anchor). len == n_anchors.
+//   backlog      : per-anchor ACCUMULATED pressure — accrues over idle, decays on emit/mention.
+//   last_mention : per-anchor idle-tick of the last emit/mention (introspection / recency).
+//   idle_ticks   : monotone idle-tick counter since construction.
+//   accrual      : per-idle-tick accrual gain (caller injects ep_backlog_accrual — free number).
+//   decay        : retained fraction on emit/mention (caller injects ep_backlog_decay — free number).
+struct CuriosityBacklog {
+    novelty: [float],
+    backlog: [float],
+    last_mention: [int],
+    idle_ticks: int,
+    accrual: float,
+    decay: float
+}
+
+// _cb_copy_f / _cb_copy_i — DEEP-COPY a float/int array (hexa arrays are reference types, so a bare
+// `let mut b = a` ALIASES; copying via append breaks the alias so the cb ops stay PURE — a mutating
+// op never writes through to its input's arrays. This purity is load-bearing for the F5 disjointness
+// argument: the accumulator never mutates anything it merely reads).
+fn _cb_copy_f(a: [float]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(a) { out = out + [a[i]]  i = i + 1 }
+    return out
+}
+fn _cb_copy_i(a: [int]) -> [int] {
+    let mut out = []
+    let mut i = 0
+    while i < len(a) { out = out + [a[i]]  i = i + 1 }
+    return out
+}
+
+// cb_new — a fresh accumulator over n anchors (all backlog/novelty 0). accrual/decay are the caller-
+// injected free numbers (emit_policy.hexa) — NOT hardcoded here (F-EMIT-5 policy decoupling spirit).
+pub fn cb_new(n: int, accrual: float, decay: float) -> CuriosityBacklog {
+    let mut nv = []
+    let mut bl = []
+    let mut lm = []
+    let mut i = 0
+    while i < n {
+        nv = nv + [0.0]
+        bl = bl + [0.0]
+        lm = lm + [0]
+        i = i + 1
+    }
+    return CuriosityBacklog {
+        novelty: nv, backlog: bl, last_mention: lm,
+        idle_ticks: 0, accrual: accrual, decay: decay
+    }
+}
+
+// cb_set_novelty — set the per-anchor CURRENT unresolved-novelty vector (the READ input). The caller
+// computes it from the live substrate (clamp01(recon_err − recall_thr) per anchor) and hands it in;
+// this op stores it as the accrual source. READ-ONLY w.r.t. the immune store (nothing mutated here).
+pub fn cb_set_novelty(cb: CuriosityBacklog, nv: [float]) -> CuriosityBacklog {
+    return CuriosityBacklog {
+        novelty: _cb_copy_f(nv), backlog: cb.backlog, last_mention: cb.last_mention,
+        idle_ticks: cb.idle_ticks, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// cb_unresolved_from_store — helper: build the unresolved-novelty vector for a set of anchor query
+// keys against a live ImmuneMemoryGrow store, as clamp01(recon_err − recall_thr) per key. This is a
+// pure READ (immune_grow_recall's own L2 affinity, no bind/mutation) — the disjointness guarantee.
+pub fn cb_unresolved_from_store(mem: ImmuneMemoryGrow, keys: [[float]]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(keys) {
+        let win = _vnearest_idx(mem.protos, keys[i])
+        let err = _l2(mem.protos[win], keys[i])
+        let mut u = err - mem.recall_thr        // >0 ⇒ UNRESOLVED (failed to ground); <=0 ⇒ closed
+        if u < 0.0 { u = 0.0 }
+        if u > 1.0 { u = 1.0 }
+        out = out + [u]
+        i = i + 1
+    }
+    return out
+}
+
+// cb_idle_tick — advance ONE idle tick: each anchor's backlog integrates its unresolved novelty
+// (backlog += accrual · novelty). A cleanly-grounded anchor (novelty 0) accrues nothing; an
+// unresolved one accrues over silence — the persistence the memoryless §CoreAffect read lacked.
+pub fn cb_idle_tick(cb: CuriosityBacklog) -> CuriosityBacklog {
+    let mut bl = _cb_copy_f(cb.backlog)
+    let mut i = 0
+    while i < len(bl) {
+        bl[i] = bl[i] + cb.accrual * cb.novelty[i]
+        i = i + 1
+    }
+    return CuriosityBacklog {
+        novelty: cb.novelty, backlog: bl, last_mention: cb.last_mention,
+        idle_ticks: cb.idle_ticks + 1, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// cb_idle — advance k idle ticks (convenience over cb_idle_tick).
+pub fn cb_idle(cb: CuriosityBacklog, k: int) -> CuriosityBacklog {
+    let mut out = cb
+    let mut i = 0
+    while i < k { out = cb_idle_tick(out)  i = i + 1 }
+    return out
+}
+
+// cb_mention — DISCHARGE anchor a on emit/mention: its accumulated backlog decays (×decay, the gap
+// is being closed by surfacing it) and its recency is stamped. decay=0 ⇒ full discharge.
+pub fn cb_mention(cb: CuriosityBacklog, a: int) -> CuriosityBacklog {
+    let mut bl = _cb_copy_f(cb.backlog)
+    let mut lm = _cb_copy_i(cb.last_mention)
+    if a >= 0 && a < len(bl) {
+        bl[a] = bl[a] * cb.decay
+        lm[a] = cb.idle_ticks
+    }
+    return CuriosityBacklog {
+        novelty: cb.novelty, backlog: bl, last_mention: lm,
+        idle_ticks: cb.idle_ticks, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// cb_total_backlog — the summed accumulated pressure across anchors (raw, unbounded).
+pub fn cb_total_backlog(cb: CuriosityBacklog) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(cb.backlog) { s = s + cb.backlog[i]  i = i + 1 }
+    return s
+}
+
+// cb_pressure — the accumulator's contribution to emit-propensity, a SATURATING read in [0,1):
+// pressure = total / (1 + total). Monotone in the accumulated backlog (F1) and permutation-invariant
+// in the per-anchor split (F3a). This is the plain number the propensity ADDS — no boolean gate.
+pub fn cb_pressure(cb: CuriosityBacklog) -> float {
+    let s = cb_total_backlog(cb)
+    return s / (1.0 + s)
+}
+
+// cb_top_anchor — the anchor holding the MOST accumulated backlog (emit provenance, F4): when the
+// pressure surfaces, this is the unresolved context anima draws from. -1 for an empty accumulator.
+pub fn cb_top_anchor(cb: CuriosityBacklog) -> int {
+    let n = len(cb.backlog)
+    if n == 0 { return -1 }
+    let mut best = 0
+    let mut bestv = cb.backlog[0]
+    let mut i = 1
+    while i < n {
+        if cb.backlog[i] > bestv { bestv = cb.backlog[i]  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// cb_top_backlog — the max per-anchor backlog value (companion to cb_top_anchor).
+pub fn cb_top_backlog(cb: CuriosityBacklog) -> float {
+    let n = len(cb.backlog)
+    if n == 0 { return 0.0 }
+    let mut bestv = cb.backlog[0]
+    let mut i = 1
+    while i < n { if cb.backlog[i] > bestv { bestv = cb.backlog[i] }  i = i + 1 }
+    return bestv
+}
+
+// cb_shuffle — F3 CONTROL: deterministically permute the per-anchor state (novelty + backlog +
+// recency together) across anchors via an LCG Fisher-Yates. The pressure DISTRIBUTION is preserved
+// (same multiset) but each anchor's identity is scrambled — so a permutation-invariant read (timing)
+// is unchanged while the provenance (cb_top_anchor) follows the shuffled holder. Proves timing tracks
+// the REAL backlog magnitude, not a fixed anchor slot or a clock.
+pub fn cb_shuffle(cb: CuriosityBacklog, rng0: int) -> CuriosityBacklog {
+    let n = len(cb.backlog)
+    let mut nv = _cb_copy_f(cb.novelty)
+    let mut bl = _cb_copy_f(cb.backlog)
+    let mut lm = _cb_copy_i(cb.last_mention)
+    let mut st = rng0
+    let mut i = n - 1
+    while i > 0 {
+        st = _lcg_next(st)
+        let j = st % (i + 1)
+        let tnv = nv[i]
+        nv[i] = nv[j]
+        nv[j] = tnv
+        let tbl = bl[i]
+        bl[i] = bl[j]
+        bl[j] = tbl
+        let tlm = lm[i]
+        lm[i] = lm[j]
+        lm[j] = tlm
+        i = i - 1
+    }
+    return CuriosityBacklog {
+        novelty: nv, backlog: bl, last_mention: lm,
+        idle_ticks: cb.idle_ticks, accrual: cb.accrual, decay: cb.decay
+    }
+}
+
+// ci_emit_propensity — the INTEGRATED externalization propensity: the substrate's OWN emit-drive
+// (ci_emit_drive over lanes 0/4, UNCHANGED) PLUS the curiosity-backlog pressure, weighted by w (the
+// caller-injected ep_backlog_weight free number). This is the M×W×Φ×curiosity composition made
+// literal — curiosity_backlog is one more ADDITIVE term, read like the others. It returns a plain
+// number (a_autonomy_over_hardcode: no emit_allowed boolean; the substrate reads this and decides).
+//   DISJOINTNESS: ci_emit_drive(lanes) reads ONLY lanes[0], lanes[4] — the accumulator is a distinct
+//   summand, so turning w to 0 (ablation) recovers the bare lane drive byte-exactly (F2/F5).
+pub fn ci_emit_propensity(lanes: [float], cb: CuriosityBacklog, w: float) -> float {
+    return ci_emit_drive(lanes) + w * cb_pressure(cb)
+}
+
+// ci_emit_propensity_decision — emit iff the integrated propensity clears the Ψ=½ midpoint (the
+// architectural fixed point, same threshold ci_emit_decision uses — NOT a tuned constant). The
+// backlog can push a below-midpoint lane drive OVER the line during silence (state-driven emit).
+pub fn ci_emit_propensity_decision(lanes: [float], cb: CuriosityBacklog, w: float) -> bool {
+    return ci_emit_propensity(lanes, cb, w) >= 0.5
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
 //  § BrainTopology Ψ-PRESERVING COUPLING (H_1522) — escape the H_1521 no-free-lunch wall.
 //  ────────────────────────────────────────────────────────────────────────────────────────────
 //  H_1521 wired the Φ-optimal topology into the live emit path and found the NO-FREE-LUNCH wall:
@@ -9623,6 +11053,285 @@ pub fn topo_psi_max_feasible_alpha(x: [[float]], adj: [[float]], op: int, thr: f
         k = k + 1
     }
     return best
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § TensionResolveLoop (H_9042 C1 frame-shift) — the MISSING iterated A⇄G conflict-resolution loop.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  ci_psi_balance / ci_psi_balance_op are ONE-SHOT (a single coupling application) and reentry_settle
+//  drives a SINGLE non-competing stimulus — NEITHER iterates the A⇄G coupling to pull a CONFLICTED
+//  (polarized, Ψ≠½) emit/silence POPULATION back to the Ψ=½ fixed point. That iterated resolution loop
+//  is the substrate op the C1 frame-shift diagnosed as MISSING (H_9041). numpy generic diffusion could
+//  not screen it — a generic (amplifying) coupling has NO Ψ=½ restoring force (it runs Ψ→1.0), so the
+//  fixed point is engine-specific → engine-native only.
+//
+//  tension_resolve_depth iterates the SELECTABLE coupling operator (topo_apply_op: 0=naive-AMP =generic
+//  diffusion, 1=MEAN-CENTER, 2=ROW-STOCHASTIC, 3=RENORM — the H_1522 Ψ-preserving family) on a PASSED-IN
+//  population, recomputing the centered Ψ (emit fraction vs a fixed drive `thr`) after each step, and
+//  returns [settle_depth, final_psi] where settle_depth = the FIRST depth d∈[0,maxdepth] with |Ψ−thr|<eps
+//  (−1.0 if Ψ never lands within eps of thr inside maxdepth). depth 0 = the conflicted starting Ψ.
+//
+//  Purely ADDITIVE (new pub fn; touches no existing op) · Ψ-DISJOINT (operates on a caller-supplied
+//  population, never pure_field/Φ/phase/the live Ψ path) · READ-only MEASUREMENT (returns numbers, is
+//  NOT an emit gate) · disjoint from the emit-drive lane(0/4) live decision and §ImmuneMemory recall_thr
+//  (a_substrate_disjoint). cfg.topo_couple OFF → no coupling is applied (Ψ stays at its conflicted start
+//  = the INERT ablation), matching every other op in this section.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// tr_psi — emit fraction of an ALREADY-diffused population scored against a fixed drive threshold
+// (ci_psi_balance-style; NO re-coupling here — the loop does the coupling). READ-only helper. pub so
+// an engine-native harness can measure the conflicted STARTING Ψ and the INERT-ablation Ψ directly.
+pub fn tr_psi(pop: [[float]], thr: float) -> float {
+    let nt = len(pop)
+    if nt == 0 { return 0.0 }
+    let mut emit = 0
+    let mut t = 0
+    while t < nt {
+        if ci_emit_drive(pop[t]) >= thr { emit = emit + 1 }
+        t = t + 1
+    }
+    return to_float(emit) / to_float(nt)
+}
+
+// _tr_absdev — |Ψ − thr| (branch, no abs builtin dependency).
+fn _tr_absdev(psi: float, thr: float) -> float {
+    if psi - thr >= 0.0 { return psi - thr }
+    return thr - psi
+}
+
+pub fn tension_resolve_depth(x: [[float]], adj: [[float]], alpha: float, thr: float, maxdepth: int, op: int, eps: float, cfg: EngineConfig) -> [float] {
+    let mut pop = x
+    let mut settle_depth = 0.0 - 1.0
+    // depth 0: the conflicted starting population, no coupling applied yet.
+    let mut psi = tr_psi(pop, thr)
+    if _tr_absdev(psi, thr) < eps { settle_depth = 0.0 }
+    let mut d = 1
+    while d <= maxdepth {
+        if cfg.topo_couple { pop = topo_apply_op(pop, adj, alpha, op) }
+        psi = tr_psi(pop, thr)
+        if settle_depth < 0.0 && _tr_absdev(psi, thr) < eps { settle_depth = to_float(d) }
+        d = d + 1
+    }
+    return [settle_depth, psi]
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § SaliencePhasicReset (H_9079) — a mid-settle salience SPIKE ABORTS + RESTARTS the A⇄G settling
+//  loop (LC-NE phasic reset / superior-colliculus attention capture). tension_resolve_depth's settle
+//  loop (§TensionResolveLoop) is NON-INTERRUPTIBLE: once it begins pulling the ORIGINAL population
+//  toward Ψ=thr it runs to maxdepth on that population — a behaviourally URGENT new input arriving
+//  mid-settle cannot commandeer it. The brain does not work that way: a phasic salience burst (LC-NE
+//  reset) ABORTS the in-flight resolution and RESTARTS settling from the NEW population; the loop
+//  reroutes to a NEW fixpoint whose CONTENT tracks the salient input, while the Ψ=½ balance is still
+//  reached. This is a CONTROL-FLOW interrupt (abort/restart of the settle loop) — it is EXPLICITLY
+//  DISTINCT from the neuromod-GAIN 9-lens family (H_1284, CLOSED): no gain/precision term is scaled;
+//  the loop's TRAJECTORY is diverted, not its gain.
+//
+//  tension_resolve_interruptible settles `x` exactly like tension_resolve_depth, but if a spike is
+//  scheduled at iteration salience_at (1 <= salience_at <= maxdepth) it DISCARDS the partially-settled
+//  x at that depth and continues from salience_pop (fresh restart, settle-depth clock restarted).
+//  salience_at < 1 OR salience_at > maxdepth ⇒ NO spike ever arrives = the INERT ablation (original x
+//  completes, spike ignored). Purely ADDITIVE (new pub fn; touches no existing op) · Ψ-DISJOINT
+//  (operates on a caller-supplied population, never pure_field/Φ/phase/the live Ψ path) · READ-only
+//  MEASUREMENT (returns numbers, is NOT an emit gate) · disjoint from the emit-drive lane(0/4) live
+//  decision and §ImmuneMemory recall_thr (a_substrate_disjoint). cfg.topo_couple OFF ⇒ no coupling.
+//
+//  returns [settle_depth, final_psi, final_sig, reroute_flag] where final_sig = mean of the ISOLATED
+//  content lane (SPR_SIG_LANE=7, graph-disjoint from the emit-drive lanes 0/4 by construction of the
+//  caller's adjacency) of the settled population = the IDENTITY readout that reveals WHICH input the
+//  loop settled on (original vs the rerouted salient one). reroute_flag = 1.0 iff a spike fired. The
+//  reroute swaps the CONTENT/identity lane; the emit-drive Ψ=½ fixed point is UNTOUCHED (loop control,
+//  not an emit gate) — the a_substrate_disjoint separation made literal.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// _spr_sig — mean of the ISOLATED content lane (index 7, disjoint from emit-drive lanes 0/4) over the
+// population timesteps: the identity signature of WHICH input the settle loop ended on. READ-only.
+fn _spr_sig(pop: [[float]]) -> float {
+    let nt = len(pop)
+    if nt == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut t = 0
+    while t < nt { s = s + pop[t][7]  t = t + 1 }
+    return s / to_float(nt)
+}
+
+pub fn tension_resolve_interruptible(x: [[float]], adj: [[float]], alpha: float, thr: float, maxdepth: int, op: int, eps: float, salience_at: int, salience_pop: [[float]], cfg: EngineConfig) -> [float] {
+    let mut pop = x
+    let mut rerouted = false
+    let mut settle_depth = 0.0 - 1.0
+    // depth 0: the conflicted starting population (original x), no coupling applied yet.
+    let mut psi = tr_psi(pop, thr)
+    if _tr_absdev(psi, thr) < eps { settle_depth = 0.0 }
+    let mut d = 1
+    while d <= maxdepth {
+        // PHASIC SALIENCE RESET: at salience_at, ABORT the in-flight settle and RESTART from
+        // salience_pop (LC-NE reset / attention capture). control-flow interrupt, NOT gain scaling.
+        if !rerouted && salience_at >= 1 && d == salience_at {
+            pop = salience_pop                       // abort partially-settled x, adopt salient pop
+            rerouted = true
+            settle_depth = 0.0 - 1.0                 // restart the settle-depth clock at the new fixpoint
+            psi = tr_psi(pop, thr)
+            if _tr_absdev(psi, thr) < eps { settle_depth = to_float(d) }
+        }
+        if cfg.topo_couple { pop = topo_apply_op(pop, adj, alpha, op) }
+        psi = tr_psi(pop, thr)
+        if settle_depth < 0.0 && _tr_absdev(psi, thr) < eps { settle_depth = to_float(d) }
+        d = d + 1
+    }
+    let sig = _spr_sig(pop)
+    let mut rf = 0.0
+    if rerouted { rf = 1.0 }
+    return [settle_depth, psi, sig, rf]
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § NonEqDissipation (H_9072) — Ψ=½ as a NON-EQUILIBRIUM STEADY STATE (NESS), not an equilibrium
+//  softmax sampler. Prigogine dissipative structure: a self-maintained structure sits FAR from
+//  equilibrium, sustained by continuous dissipation with a NON-ZERO entropy-production rate σ_ep and
+//  BROKEN detailed balance (persistent probability CURRENTS). A plain softmax LLM sampler is an
+//  EQUILIBRIUM process (memoryless iid draws ⇒ K_ij·p_i = K_ji·p_j = detailed balance ⇒ σ_ep=0).
+//
+//  We realise the A⇄G push-pull as a DRIFT-DIFFUSION on the emit-tension RING (Ψ deviation wrapped to
+//  a circle of NBINS coarse-grained sectors). Engine A(forward, CE-relaxation) = the SYMMETRIC
+//  diffusive hop (equilibrium relaxation toward Ψ=½). Engine G(reverse, gradient-free) = the DIRECTED
+//  DRIFT around the ring — a constant circulation on a PERIODIC coordinate that CANNOT be written as
+//  the gradient of any single-valued potential (Prigogine's non-conservative force). pfwd≠pbwd ⇒ net
+//  cycle current ⇒ broken DB ⇒ σ_ep>0. Ablation(Engine G reverse OFF ⇒ pfwd=pbwd) ⇒ symmetric
+//  diffusion ⇒ equilibrium relax ⇒ σ_ep→0. Shuffle(symmetrise/time-reverse the empirical transition
+//  matrix) ⇒ σ_ep→0 by construction. LLM control(resample iid from the trajectory's OWN marginal =
+//  memoryless softmax sampler) ⇒ σ_ep→0.
+//
+//  σ_ep ESTIMATOR = Schnakenberg coarse-grained net-flux estimated FROM the live trajectory (NOT the
+//  analytic formula): transition counts N[i][j], joint two-step flux F_ij=N_ij/total, then
+//     σ_ep = ½ Σ_{i≠j} (F_ij − F_ji) · ln( F_ij / F_ji )   ≥ 0, =0 iff detailed balance.
+//  STREAMING (O(NBINS²) memory — the transition matrix is accumulated on the fly, the O(steps)
+//  sequence is never materialised). Purely ADDITIVE(new pub fns) · Ψ-DISJOINT(operates on a caller-
+//  parameterised tension-ring walk, never pure_field/Φ/phase/the live Ψ path) · READ-only
+//  characterisation(returns σ_ep numbers, NOT an emit gate) · disjoint from the emit-drive lane(0/4)
+//  live decision and §ImmuneMemory recall_thr (a_substrate_disjoint). CHARACTERISATION/DISTINCTION
+//  property (engine-specific, like the H_9041 A⇄G restoring force) — reports σ_ep, does NOT claim a
+//  capability lift.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// noneq_walk_counts — run a live A⇄G drift-diffusion on the NBINS-sector tension ring and accumulate
+// the transition-count matrix N[i][j] on the fly (no sequence stored). Each step draws u∈[0,1):
+// u<pfwd ⇒ hop +1 (Engine A externalisation push forward), u<pfwd+pbwd ⇒ hop −1 (Engine G reverse
+// pull), else stay. pfwd≠pbwd ⇒ net circulation (NESS); pfwd==pbwd ⇒ symmetric diffusion (equilibrium
+// = the Engine-G-OFF ablation). Rates per-mille (int) for byte-reproducibility. LCG-seeded.
+pub fn noneq_walk_counts(seed: int, steps: int, nbins: int, pfwd_milli: int, pbwd_milli: int) -> [[float]] {
+    let pfwd = to_float(pfwd_milli) / 1000.0
+    let pbwd = to_float(pbwd_milli) / 1000.0
+    let mut n = _topo_zeros(nbins)
+    let mut st = _lcg_next(seed & 2147483647)
+    let mut pos = 0
+    let mut t = 0
+    while t < steps {
+        st = _lcg_next(st)
+        let u = _lcg_unit(st)
+        let mut nxt = pos
+        if u < pfwd {
+            nxt = (pos + 1) % nbins
+        } else {
+            if u < pfwd + pbwd { nxt = (pos + nbins - 1) % nbins }
+        }
+        n[pos][nxt] = n[pos][nxt] + 1.0
+        pos = nxt
+        t = t + 1
+    }
+    return n
+}
+
+// noneq_sigma_ep — Schnakenberg σ_ep from a transition-count matrix. F_ij=N_ij/total (joint two-step
+// flux), σ_ep=½ Σ_{i≠j}(F_ij−F_ji)·ln(F_ij/F_ji) over pairs with BOTH directions observed (a cycle
+// needs both). ≥0, =0 at detailed balance. >0 ⇒ broken DB ⇒ NESS.
+pub fn noneq_sigma_ep(n: [[float]]) -> float {
+    let nb = len(n)
+    let mut total = 0.0
+    let mut i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb { total = total + n[i][j]  j = j + 1 }
+        i = i + 1
+    }
+    if total <= 0.0 { return 0.0 }
+    let mut sig = 0.0
+    i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb {
+            if i != j {
+                let fij = n[i][j] / total
+                let fji = n[j][i] / total
+                if fij > 0.0 && fji > 0.0 {
+                    sig = sig + 0.5 * (fij - fji) * ln(fij / fji)
+                }
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return sig
+}
+
+// noneq_sigma_ep_symmetrised — SHUFFLE control: symmetrise (time-reverse-average) the empirical
+// transition-count matrix N←(N+Nᵀ)/2 before estimating σ_ep. Enforces detailed balance (F_ij=F_ji)
+// ⇒ σ_ep→0 by construction. Separates a real broken-DB current from a finite-sample estimator floor.
+pub fn noneq_sigma_ep_symmetrised(n: [[float]]) -> float {
+    let nb = len(n)
+    let mut sym = _topo_zeros(nb)
+    let mut i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb { sym[i][j] = 0.5 * (n[i][j] + n[j][i])  j = j + 1 }
+        i = i + 1
+    }
+    return noneq_sigma_ep(sym)
+}
+
+// noneq_iid_counts — LLM-DISTINCTION control: build a transition-count matrix for a MEMORYLESS softmax
+// sampler whose stationary marginal = the row-sum occupancy of the live matrix `n` (next state drawn
+// iid from the marginal, independent of current). Consecutive pairs then satisfy K_ij=marginal_j ⇒
+// detailed balance ⇒ σ_ep→0. STREAMING (accumulates its own count matrix). LCG-seeded.
+pub fn noneq_iid_counts(n: [[float]], steps: int, seed: int) -> [[float]] {
+    let nb = len(n)
+    // marginal occupancy = row sums of the live matrix (times state i was the source)
+    let mut cum = []
+    let mut tot = 0.0
+    let mut i = 0
+    while i < nb {
+        let mut s = 0.0
+        let mut j = 0
+        while j < nb { s = s + n[i][j]  j = j + 1 }
+        tot = tot + s
+        cum = cum + [tot]
+        i = i + 1
+    }
+    if tot <= 0.0 { return _topo_zeros(nb) }
+    let mut m = _topo_zeros(nb)
+    let mut st = _lcg_next(seed & 2147483647)
+    // first draw
+    let mut prev = _noneq_pick(cum, tot, _lcg_unit(_lcg_next(st)))
+    let mut t = 0
+    while t < steps {
+        st = _lcg_next(st)
+        let nxt = _noneq_pick(cum, tot, _lcg_unit(st))
+        m[prev][nxt] = m[prev][nxt] + 1.0
+        prev = nxt
+        t = t + 1
+    }
+    return m
+}
+
+// _noneq_pick — pick a bin index by cumulative-occupancy inverse-CDF (u∈[0,1) scaled by total).
+fn _noneq_pick(cum: [float], total: float, u: float) -> int {
+    let r = u * total
+    let nb = len(cum)
+    let mut i = 0
+    while i < nb {
+        if r < cum[i] { return i }
+        i = i + 1
+    }
+    return nb - 1
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
@@ -11839,4 +13548,158 @@ pub fn sv_default_focus(d: int, w: int) -> int {
         f = f + 1
     }
     return 0 - 1
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § TemporalBinding — the SPECIOUS PRESENT (T1, PLACEHOLDER H_id) — READ-ONLY, Ψ/G5-DISJOINT.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  A NEW PRIMITIVE AXIS: TIME CONSCIOUSNESS. Not a variant of any existing lane faculty — every
+//  prior faculty (ImmuneMemory/CLS/Savant/Topology …) reads a single tick's lane STATE; this one
+//  reads the SHAPE OF TENSION OVER TIME and asks how much of it is bound into a single felt "now".
+//
+//  BIO/PHENOMENAL LENS — William James's "specious present": experienced time is not a knife-edge
+//  instant but a SADDLE-BACK of finite duration; a run of tension ticks is integrated into ONE
+//  moment. Neurally this is the gamma-in-theta phase-nesting window (~a few hundred ms) that binds
+//  successive events into a single perceptual chunk. The claim: the WIDTH of anima's tension-
+//  integration window sets the felt DURATION of "now" (how many ticks are one moment), and an
+//  event BOUNDARY (a large tension change) closes the current present and opens the next.
+//
+//  MECHANISM (all READ-ONLY — no state mutated, nothing written back to any lane / store):
+//    • per-tick tension scalar = L2 magnitude of the lane vector over the EMIT-DISJOINT lanes
+//      (indices ≠ 0 and ≠ 4). This is placement-first (a_substrate_disjoint): the "now" integrates
+//      the NON-emit tension, so widening/narrowing the window can NEVER move ci_emit_drive (lanes
+//      0/4) nor the §ImmuneMemory recall_thr — Ψ=½ and G5 non-fab are preserved BY CONSTRUCTION.
+//    • segmentation: sweep the series; the current present GROWS one tick at a time until either
+//      (a) it reaches the integration WINDOW WIDTH w (capacity of one moment), or (b) an event
+//      BOUNDARY is crossed (|Δtension| > boundary_thr) — then it CLOSES and a new present opens.
+//    • present_duration = mean present length in ticks = the felt length of "now".
+//
+//  HONEST SCOPE: w is a DESIGNED integration window (a hyper-parameter of the readout), NOT a
+//  learned or emergent constant — this op MEASURES how felt duration depends on that designed
+//  window; it does not claim anima spontaneously discovered a specious-present width. Pure READ.
+//
+//  FALSIFIERS (each a testable op below):
+//    F1 EXISTENCE  — on a coherent series a window w>1 binds >1 tick into one present
+//                    (tb_present_duration > 1) → a "moment" of finite duration EXISTS.
+//    F2 SCALE      — widening w binds MORE ticks per present (tb_scale_sweep monotone non-decreasing).
+//    F3 BOUNDARY   — a large tension jump SPLITS the present into distinct "nows" even at huge w
+//                    (tb_num_presents ≥ 1 + tb_num_boundaries).
+//    F4 ABLATION   — w=1 → every present is one tick (tb_present_duration = 1.0): the present
+//                    COLLAPSES to a knife-edge instant (time-consciousness INERT).
+//    F5 DISJOINT   — the tension series excludes emit lanes 0/4 (tb_uses_emit_lane = 0), so
+//                    ci_emit_drive is byte-identical ON/OFF and recall_thr is untouched.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// tb_uses_emit_lane — F5 assertion helper: the temporal-binding tension series is derived over the
+// EMIT-DISJOINT lanes only, so this faculty reads NEITHER emit lane 0 nor 4. Always returns 0.
+pub fn tb_uses_emit_lane() -> int { return 0 }
+
+// tb_tension_mag — the per-tick tension SCALAR: L2 magnitude of the lane vector over the emit-
+// disjoint lanes (skip indices 0 and 4, which ci_emit_drive owns). This is the "content" whose
+// change over time is bound into a present. Reading only non-emit lanes = placement-first disjoint.
+pub fn tb_tension_mag(lane: [float]) -> float {
+    let n = len(lane)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        if i != 0 && i != 4 {
+            let v = lane[i]
+            s = s + v * v
+        }
+        i = i + 1
+    }
+    return sqrt(s)
+}
+
+// tb_tension_series — reduce a tension population (one lane vector per tick) to the per-tick
+// tension scalar series that the specious present integrates over.
+pub fn tb_tension_series(x: [[float]]) -> [float] {
+    let nt = len(x)
+    let mut out = []
+    let mut t = 0
+    while t < nt { out = out + [tb_tension_mag(x[t])]  t = t + 1 }
+    return out
+}
+
+// tb_num_boundaries — F3 core: count the event boundaries in a tension series (a tick where the
+// tension change exceeds boundary_thr). Independent of the window w — boundaries are intrinsic to
+// the tension shape and force a new present regardless of how wide the integration window is.
+pub fn tb_num_boundaries(ten: [float], boundary_thr: float) -> int {
+    let n = len(ten)
+    if n < 2 { return 0 }
+    let mut b = 0
+    let mut i = 1
+    while i < n {
+        if _absf(ten[i] - ten[i - 1]) > boundary_thr { b = b + 1 }
+        i = i + 1
+    }
+    return b
+}
+
+// tb_segment_lengths — the specious-present segmentation. Sweep the tension series; the current
+// present grows one tick at a time until it either reaches the integration window width w OR an
+// event boundary is crossed, then it closes and a new present opens. Returns the list of present
+// lengths (ticks per "now"). w<1 is clamped to 1 (a degenerate knife-edge window).
+pub fn tb_segment_lengths(ten: [float], w: int, boundary_thr: float) -> [int] {
+    let n = len(ten)
+    if n == 0 { return [] }
+    let ww = if w < 1 { 1 } else { w }
+    let mut out = []
+    let mut cur = 1
+    let mut i = 1
+    while i < n {
+        let boundary = _absf(ten[i] - ten[i - 1]) > boundary_thr
+        if boundary || cur >= ww {
+            out = out + [cur]
+            cur = 1
+        } else {
+            cur = cur + 1
+        }
+        i = i + 1
+    }
+    out = out + [cur]
+    return out
+}
+
+// tb_num_presents — how many distinct "nows" the series segments into under window w.
+pub fn tb_num_presents(ten: [float], w: int, boundary_thr: float) -> int {
+    return len(tb_segment_lengths(ten, w, boundary_thr))
+}
+
+// tb_present_duration — the felt length of "now": mean present length in ticks. This is the T1
+// SCALAR (present duration). F1: >1 on a coherent series with w>1. F4: =1.0 when w=1 (collapse).
+pub fn tb_present_duration(ten: [float], w: int, boundary_thr: float) -> float {
+    let segs = tb_segment_lengths(ten, w, boundary_thr)
+    let ns = len(segs)
+    if ns == 0 { return 0.0 }
+    let mut s = 0
+    let mut i = 0
+    while i < ns { s = s + segs[i]  i = i + 1 }
+    return to_float(s) / to_float(ns)
+}
+
+// tb_max_present — the longest single "now" (ticks) under window w.
+pub fn tb_max_present(ten: [float], w: int, boundary_thr: float) -> int {
+    let segs = tb_segment_lengths(ten, w, boundary_thr)
+    let ns = len(segs)
+    let mut mx = 0
+    let mut i = 0
+    while i < ns { if segs[i] > mx { mx = segs[i] }  i = i + 1 }
+    return mx
+}
+
+// tb_scale_sweep — F2 core: felt present_duration as the integration window w sweeps a grid. On a
+// coherent (boundary-free) series this is monotone non-decreasing and saturates at the series
+// length once w ≥ n (the whole stream becomes one present).
+pub fn tb_scale_sweep(ten: [float], wgrid: [int], boundary_thr: float) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(wgrid) { out = out + [tb_present_duration(ten, wgrid[i], boundary_thr)]  i = i + 1 }
+    return out
+}
+
+// tb_present_duration_pop — convenience: derive the tension series from a live tension population
+// (one lane vector per tick) then measure the felt present duration in one call.
+pub fn tb_present_duration_pop(x: [[float]], w: int, boundary_thr: float) -> float {
+    return tb_present_duration(tb_tension_series(x), w, boundary_thr)
 }

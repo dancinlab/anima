@@ -15,7 +15,7 @@ MODEL      : anima-clm-chat-303m  (ByteGPT-303M, d1024/L24/H16/block512, vocab25
                           sha256 4fcc2d6c9b3164f478139ffb148f484465b42fc339d630956e4ea0f90ec13f68
              engine .bin: /tmp/h1218_mount/bytegpt_chat_full.bin  (1,213,440,020 B)
                           sha256 5c303f026f134e4bc4faf516ef5298bd26269e19693696a73a5058e6ffa5319e
-                          serialized via UNIVERSE/h1160_reparity.py (H_1157 layout VERBATIM),
+                          serialized via HYPOTHESES/h1160_reparity.py (H_1157 layout VERBATIM),
                           serialize_parity_ok=TRUE (roundtrip max_abs_err 0.0).
 SUBSTRATE  : local CPU (hexa forward, whole-file load-once bg_load). $0.
 DECODE     : GREEDY argmax (bytegpt_decode_argmax) — the DETERMINISTIC byte-exact-parity
@@ -24,7 +24,7 @@ DECODE     : GREEDY argmax (bytegpt_decode_argmax) — the DETERMINISTIC byte-ex
              NOT greedy. Greedy is a DIFFERENT (deterministic) regime. This is reported
              explicitly (c9) — see ENGINE-vs-TORCH and HONEST RESIDUAL below.
 EVALUATORS : FROZEN, reused VERBATIM (no metric re-invention, p7) —
-             UNIVERSE/gauge_lib.py :: _coverage (G1) · _content_ngrams + _corpus_absent
+             HYPOTHESES/gauge_lib.py :: _coverage (G1) · _content_ngrams + _corpus_absent
              (G2, H_1140) · _words + _jaccard + known_word_ratio (G6, H_1158).
              Seeds VERBATIM from gauge_lib CONCEPTS + IDEATION_SEEDS.
 CORPUS(G2) : data/corpus.txt (5.0MB git-tracked dialogue corpus). ⚠ the 1.5GB broad
@@ -41,7 +41,7 @@ The engine forward is BYTE-EXACT to torch greedy. THREE-LAYER parity evidence:
      EXACT, 10-byte greedy CORE [32,105,115,32,97,32,115,116,97,116] == torch golden
      every byte (on the BASE h1129c ckpt). H_1157 line 39 records the Mac CPU
      interpreter is "slow but byte-exact" (10 sequential growing-T full-depth forwards).
- (2) reparity golden (THIS chat .bin) — UNIVERSE/h1160_reparity.py round-trips the
+ (2) reparity golden (THIS chat .bin) — HYPOTHESES/h1160_reparity.py round-trips the
      serialized .bin back through an independent numpy reader and compares to the torch
      state_dict: serialize_parity_ok=TRUE, roundtrip max_abs_err = 0.0. I.e. the .bin
      reconstructs the torch chat weights EXACTLY (no precision loss); torch greedy on

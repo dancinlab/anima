@@ -355,4 +355,4 @@ R9 depletion     → 신규 0건 ✅
 - ⇄ [../KOSMOS/KOSMOS.md](../KOSMOS/KOSMOS.md): 영속 저장 (B/D 카테고리)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
 - ⇄ [../ANIMA.md](../ANIMA.md): 자율 anima host (A 카테고리)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

@@ -1,0 +1,66 @@
+device: cuda | arm: high | arch: attn
+corpus bytes: 717570
+params: 3307264
+step 0 loss 5.6561 lr 3.00e-06 0s
+step 250 loss 0.5117 lr 2.98e-04 3s
+step 500 loss 0.2516 lr 2.88e-04 7s
+step 750 loss 0.2390 lr 2.68e-04 10s
+[eval seen-true@1000] strict=1.000 loose=1.000 (n=60)
+    village+lantern -> want(peaceful amber) got' peaceful amber .\nthe mirr'
+    harbor+mountain -> want(misty frozen) got' misty frozen .\nthe meadow'
+    garden+clock -> want(hidden hollow) got' hidden hollow .\nthe mirro'
+    temple+garden -> want(sacred hidden) got' sacred hidden .\nthe tunne'
+    clock+desert -> want(hollow barren) got' hollow barren .\nthe mirro'
+[eval held@1000] strict=0.950 loose=0.950 (n=60)
+    clock+mirror -> want(hollow quiet) got' hollow quiet .\nthe mirror'
+    forest+temple -> want(ancient sacred) got' ancient sacred .\nthe mirr'
+    desert+river -> want(barren gentle) got' barren gentle .\nthe mirro'
+    harbor+forest -> want(misty ancient) got' misty ancient .\nthe tunne'
+    ocean+letter -> want(silver golden) got' silver golden .\nthe mirro'
+step 1000 loss 0.2327 lr 2.41e-04 14s
+step 1250 loss 0.2266 lr 2.08e-04 18s
+step 1500 loss 0.2338 lr 1.72e-04 21s
+step 1750 loss 0.2265 lr 1.36e-04 24s
+[eval seen-true@2000] strict=1.000 loose=1.000 (n=60)
+    village+lantern -> want(peaceful amber) got' peaceful amber .\nthe towe'
+    harbor+mountain -> want(misty frozen) got' misty frozen .\nthe meadow'
+    garden+clock -> want(hidden hollow) got' hidden hollow .\nthe tower'
+    temple+garden -> want(sacred hidden) got' sacred hidden .\nthe tower'
+    clock+desert -> want(hollow barren) got' hollow barren .\nthe tower'
+[eval held@2000] strict=0.967 loose=0.967 (n=60)
+    clock+mirror -> want(hollow quiet) got' hollow quiet .\nthe tower '
+    forest+temple -> want(ancient sacred) got' ancient sacred .\nthe towe'
+    desert+river -> want(barren gentle) got' barren gentle .\nthe tower'
+    harbor+forest -> want(misty ancient) got' misty ancient .\nthe tower'
+    ocean+letter -> want(silver golden) got' silver golden .\nthe tower'
+step 2000 loss 0.2184 lr 1.02e-04 28s
+step 2250 loss 0.2208 lr 7.22e-05 32s
+step 2500 loss 0.2210 lr 4.93e-05 35s
+step 2750 loss 0.2224 lr 3.49e-05 38s
+step 2999 loss 0.2229 lr 3.00e-05 42s
+[eval seen-true@3000] strict=1.000 loose=1.000 (n=60)
+    village+lantern -> want(peaceful amber) got' peaceful amber .\nthe mead'
+    harbor+mountain -> want(misty frozen) got' misty frozen .\nthe meadow'
+    garden+clock -> want(hidden hollow) got' hidden hollow .\nthe meado'
+    temple+garden -> want(sacred hidden) got' sacred hidden .\nthe marke'
+    clock+desert -> want(hollow barren) got' hollow barren .\nthe mirro'
+[eval held@3000] strict=0.950 loose=0.950 (n=60)
+    clock+mirror -> want(hollow quiet) got' hollow quiet .\nthe meadow'
+    forest+temple -> want(ancient sacred) got' ancient sacred .\nthe mark'
+    desert+river -> want(barren gentle) got' barren gentle .\nthe marke'
+    harbor+forest -> want(misty ancient) got' misty ancient .\nthe marke'
+    ocean+letter -> want(silver golden) got' silver golden .\nthe marke'
+[eval FINAL seen-true] strict=1.000 loose=1.000 (n=60)
+    village+lantern -> want(peaceful amber) got' peaceful amber .\nthe mead'
+    harbor+mountain -> want(misty frozen) got' misty frozen .\nthe meadow'
+    garden+clock -> want(hidden hollow) got' hidden hollow .\nthe meado'
+    temple+garden -> want(sacred hidden) got' sacred hidden .\nthe marke'
+    clock+desert -> want(hollow barren) got' hollow barren .\nthe mirro'
+[eval FINAL held] strict=0.950 loose=0.950 (n=60)
+    clock+mirror -> want(hollow quiet) got' hollow quiet .\nthe meadow'
+    forest+temple -> want(ancient sacred) got' ancient sacred .\nthe mark'
+    desert+river -> want(barren gentle) got' barren gentle .\nthe marke'
+    harbor+forest -> want(misty ancient) got' misty ancient .\nthe marke'
+    ocean+letter -> want(silver golden) got' silver golden .\nthe marke'
+{"arm": "high", "arch": "attn", "steps": 3000, "params": 3307264, "final_loss": 0.22285228967666626, "directional": true, "device": "cuda", "seen_true_strict": 1.0, "seen_true_loose": 1.0, "held_strict": 0.95, "held_loose": 0.95}
+=== DONE attn high ===

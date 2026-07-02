@@ -10,7 +10,7 @@
 # toward SYNERGY (negative O-information) across 3 seeds where the SCALAR Phi did not?
 #
 # DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED). gen_traj is a BYTE-FAITHFUL port
-# of UNIVERSE/h1348_phi_non_iit_estimator.hexa::gen_traj (the deterministic engine LCG-gauss
+# of HYPOTHESES/h1348_phi_non_iit_estimator.hexa::gen_traj (the deterministic engine LCG-gauss
 # leaky-linear 4-module ring, dim 8, T 64, Kuramoto pacemaker, relative-phase gate). The
 # ONLY change vs H_1348 is the read-out: O-information instead of summed transfer entropy.
 #

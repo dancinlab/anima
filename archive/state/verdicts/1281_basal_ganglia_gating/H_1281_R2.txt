@@ -45,7 +45,7 @@ THE TEST (frozen, pre-registered in H_1281_R2_FREEZE.txt)
     per step APPROPRIATE iff (any grounded → release a GROUNDED candidate) OR
                             (none grounded → SUPPRESS all / abstain).
 
-VERBATIM PRIMARY RESULT (frozen probe — `python3 UNIVERSE/h1281_basal_ganglia_gating.py --r2`)
+VERBATIM PRIMARY RESULT (frozen probe — `python3 HYPOTHESES/h1281_basal_ganglia_gating.py --r2`)
   seed 7: A(faithful)=0.3535  B(BG)=0.6385  Δ=+0.2850  | ctrl B(shuf)=0.1415  | B-align→signal=+0.885  [ref oracle-A=0.6785]  (abstain-base 0.105)
   seed 8: A(faithful)=0.2530  B(BG)=0.6040  Δ=+0.3510  | ctrl B(shuf)=0.1085  | B-align→signal=+0.706  [ref oracle-A=0.6785]  (abstain-base 0.098)
   seed 9: A(faithful)=0.4890  B(BG)=0.6140  Δ=+0.1250  | ctrl B(shuf)=0.1315  | B-align→signal=+0.707  [ref oracle-A=0.6740]  (abstain-base 0.087)
@@ -112,7 +112,7 @@ SCOPE / HONESTY (a_toy_scale_recheck · a_scale_honest_scope)
   production verdict; the engine-native R3 rung is the binding confirmation.
 
 FILES
-  probe   : UNIVERSE/h1281_basal_ganglia_gating.py  (--r2 = R2 faithful-A; default = R1 oracle-A; --diag = mechanism)
+  probe   : HYPOTHESES/h1281_basal_ganglia_gating.py  (--r2 = R2 faithful-A; default = R1 oracle-A; --diag = mechanism)
   freeze  : .verdicts/1281_basal_ganglia_gating/H_1281_R2_FREEZE.txt
   R1 kept : H_1281_FREEZE.txt / H_1281.txt UNCHANGED (R1 oracle-A RED on record).
   H_1219 / H_1226 NOT edited. engine_g.hexa / emit_policy.hexa / brain.hexa NOT edited.

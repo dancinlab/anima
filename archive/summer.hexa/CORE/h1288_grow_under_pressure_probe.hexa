@@ -9,7 +9,7 @@
 // core/engine_cli.hexa::ImmuneMemoryGrow (immune_grow_new/bind/recall), so the bind
 // (clonal split) + recall (L2 affinity) arithmetic runs on the .hexa engine, not
 // numpy. The keys are the EXACT R1 regime (FNV-1a DIM=64, taught order, noisy queries)
-// pre-exported by UNIVERSE/h1288_r2_engine_export.py — byte-identical to R1's mirror.
+// pre-exported by HYPOTHESES/h1288_r2_engine_export.py — byte-identical to R1's mirror.
 //
 // TWO ARMS through ONE faculty, differing ONLY in the capacity policy:
 //   (A) LRU-EVICT  : grow_mode=false, base_max=STRESS_MAX_CELLS=40 << 60 facts
@@ -25,7 +25,7 @@
 
 import "core/engine_cli.hexa"
 
-// frozen regime knobs (VERBATIM from UNIVERSE/h1288_eviction_policy.py R1)
+// frozen regime knobs (VERBATIM from HYPOTHESES/h1288_eviction_policy.py R1)
 fn _STRESS_MAX_CELLS() -> int { return 40 }   // << 60 facts — the EVICTION-BOUND rung
 fn _GROW_MAX_CELLS() -> int   { return 80 }   // generous FINITE growth bound (>= N_FACTS)
 fn _REC_MARGIN() -> float     { return 0.05 } // (B) must beat (A) by >= this margin

@@ -26,7 +26,7 @@ engine, NOT numpy):
     net, full-batch CE-GD (LR 0.20, 300 steps), fine-tuned SEQUENTIALLY skill-by-skill,
     NO replay (the incumbent that should catastrophically forget).
 The curriculum is the EXACT R2 regime (sep 1.0 + anti-aligned shared rules) pre-exported
-by UNIVERSE/h1300_r3_engine_export.py (make_curriculum(seed,"r2"), byte-identical RNG to
+by HYPOTHESES/h1300_r3_engine_export.py (make_curriculum(seed,"r2"), byte-identical RNG to
 the mirror). Probe: CORE/h1300_mitosis_skill_engine_probe.hexa.
 
 A hexa-realizable PRE-CHECK (Gauss-elim solve + power-iteration axis in numpy, the SAME

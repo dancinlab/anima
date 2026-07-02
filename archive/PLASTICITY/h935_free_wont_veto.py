@@ -89,7 +89,7 @@ TEXT rung remains OPEN on the ladder. $0 LOCAL, no GPU, g5 CODE-measured
 (no LLM self-judge — p7).
 
 This file's gate logic is a verbatim re-use of the H_930 mirror
-(UNIVERSE/h930_scale_entropy_functional.py); H_935 EXPOSES the two components the
+(HYPOTHESES/h930_scale_entropy_functional.py); H_935 EXPOSES the two components the
 && fuses (raw-drive vs safety) and adds the per-conjunct suppressor attribution.
 """
 from __future__ import annotations

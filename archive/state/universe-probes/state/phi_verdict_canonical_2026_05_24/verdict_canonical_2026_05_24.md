@@ -1,6 +1,6 @@
 # PHI verdict canonical SSOT (2026-05-24)
 
-> **위치**: `UNIVERSE/state/phi_verdict_canonical_2026_05_24/verdict_canonical_2026_05_24.md`
+> **위치**: `HYPOTHESES/state/phi_verdict_canonical_2026_05_24/verdict_canonical_2026_05_24.md`
 > **상위 도메인**: `PHI.md` (anima UNIVERSE 산하) · cycle 5 milestone #9 (verdict tier canonical promote)
 > **선행 evidence**: cycle 2 `lib_phi_native_verify_2026_05_24` (5/5 vs C) · cycle 3 STUB→REAL flip · **cycle 4 `lib_phi_l1_diagnostic_2026_05_24` (Rust phi_rs oracle 5/5 cross-validation)** · cycle 4 `lib_phi_22h_audit_2026_05_24` (22+ H impact audit)
 > **본 doc 목표**: 3-point dual-tier triangle (phi_native · Rust phi_rs · c_measure_phi) 의 verdict tier 를 **canonical SSOT** 로 정착 — 별도 hexa-lang upstream inbox 보고와 짝.
@@ -39,7 +39,7 @@
 
 ## §2. 3-way 측정 표 — 5 rule × phi_native (hexa) vs phi_rs (Rust) vs c_measure_phi (C)
 
-cycle 4 의 `diag_summary_2026_05_24.md` §1.b 인용 verbatim (소스: `UNIVERSE/state/lib_phi_l1_diagnostic_2026_05_24/diag_summary_2026_05_24.md` L29-35):
+cycle 4 의 `diag_summary_2026_05_24.md` §1.b 인용 verbatim (소스: `HYPOTHESES/state/lib_phi_l1_diagnostic_2026_05_24/diag_summary_2026_05_24.md` L29-35):
 
 | rule | spatial_phi (Rust) | phi_hexa (high-prec) | phi_c (C replica) | d(hexa-rust) | d(c-rust) |
 |------|---|---|---|---|---|
@@ -74,7 +74,7 @@ hexa-lang commons `g5_verify_tier_rubric` (per anima `@D a_blue_closed` 정합):
 
 **evidence**: cycle 4 `diag_l1_binning.hexa` + `/tmp/diag_rust_oracle.py` 5 rule 위 측정. d(hexa-rust) ∈ {-8.3e-25, +6.1e-16, +1.0e-15, +5.6e-16, -8.3e-25}. 모두 1-2 ulp 안. 1-2 ulp IEEE-754 합산 reorder 잡음 = closed-form formal 동치.
 
-**verify protocol**: `hexa parse UNIVERSE/lib/phi_native.hexa` OK 9 fn · `python /tmp/diag_rust_oracle.py` ground truth verbatim · `state/lib_phi_l1_diagnostic_2026_05_24/diag_l1_binning_run.txt` + `diag_rust_oracle_run.txt` 양쪽 worktree 보존.
+**verify protocol**: `hexa parse HYPOTHESES/lib/phi_native.hexa` OK 9 fn · `python /tmp/diag_rust_oracle.py` ground truth verbatim · `state/lib_phi_l1_diagnostic_2026_05_24/diag_l1_binning_run.txt` + `diag_rust_oracle_run.txt` 양쪽 worktree 보존.
 
 **closure status**: 🔵 활성 — cycle 5 #9 verdict canonical promote 의 **본 doc 이 그 SSOT entry**.
 
@@ -109,7 +109,7 @@ hexa-lang commons `g5_verify_tier_rubric` (per anima `@D a_blue_closed` 정합):
 | H_250 | `state/h250_nonpow2_lattice_persistence_2026_05_24/run_h250.hexa:165` | `phi_with(s, n, dim, nbins)` (phi_helper 첫 production) |
 | H_007 verify | `state/lib_phi_helper_verify_2026_05_24/verify_phi_helper.hexa:97` | `phi_default(s)` |
 
-**전체 caller**: 40 grep matches across `UNIVERSE/state/*/*.hexa`, 모두 RFC 036 `phi_spatial` 으로 수렴.
+**전체 caller**: 40 grep matches across `HYPOTHESES/state/*/*.hexa`, 모두 RFC 036 `phi_spatial` 으로 수렴.
 
 **MASS_MIGRATION_SAFE 결론** (Agent F §3 + §5 인용):
 

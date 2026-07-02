@@ -15,6 +15,13 @@ on:
   pull_request:
     branches: [main]
 
+# Cancel superseded runs of the same ref (a rapid push/PR series otherwise piles up
+# many duplicate github-hosted macOS jobs against the scarce macOS runner pool — the
+# real cause of the runaway "queued" backlog). main runs are never cancelled.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   cdo-validate:
     runs-on: ubuntu-latest
@@ -127,15 +134,19 @@ jobs:
           n=$(echo $changed | wc -w | tr -d ' ')
           echo "explicit-main lint: $n changed .hexa file(s) clean"
 
-  # ── Blacksmith Apple-Silicon 빌드 잡 (gamebox-ci 미러) ───────────────────
+  # ── Apple-Silicon 엔진 빌드 잡 (github-hosted darwin-arm64) ───────────────
   # WHY: anima 의 진짜 게이트(엔진 compile + 거버넌스 enforce + 스모크)를 로컬
-  # dev Mac 밖 Blacksmith 클라우드 러너로 오프로드 — 로컬은 `git push` 만. macos-15
-  # 핀(NOT -26): hexa-lang release.yml 와 동일 SDK 베이스라인. darwin-arm64 선택 =
-  # dev 패리티 + x86_64-linux HexaVal tag24 툴체인 벽(ING #10) 회피. hexa 는
-  # 릴리즈 바이너리(anima 는 downstream 소비자) — canonical one-liner 설치.
+  # dev Mac 밖 github-hosted macOS 러너로 오프로드 — 로컬은 `git push` 만.
+  # (2026-06-26 Blacksmith 러너 은퇴 → github-hosted, 오너 비용 지시; 러너 이름은
+  # 살아있는 러너를 반영해 명명한다.) darwin-arm64 선택 = dev 패리티 +
+  # x86_64-linux HexaVal tag24 툴체인 벽(ING #10) 회피 — 그래서 linux ubuntu 잡으로
+  # 대체 불가. runner=macos-14: github-hosted 표준 arm64 이미지 중 가용성이 가장
+  # 넓다(2026-07-02 macos-15 이미지 풀이 12h+ 프로비저닝 정체 → 마이그레이션).
+  # hexa 는 릴리즈 바이너리를 curl-설치 후 실행할 뿐이라(빌드 아님) macOS SDK 버전과
+  # 무관 — anima 는 downstream 소비자, canonical one-liner 설치.
   hexa-engine:
-    name: engine compile + gates + smoke (darwin-arm64, Blacksmith)
-    runs-on: macos-15
+    name: engine compile + gates + smoke (darwin-arm64)
+    runs-on: macos-14
     # 25→50: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate(~14min)
     # + cli/anima install(~14min)만으로 25min 초과 → 타임아웃에 cancel → Post-Cache save
     # 스킵 → 캐시가 영원히 안 데워지는 chicken-egg(매 run COLD·만성 타임아웃). 캐시는

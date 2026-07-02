@@ -1,6 +1,6 @@
 # H_1640 — Conservative coupled-Hamiltonian (symplectic) binding mouth, 303M — frozen pre-registration
 
-**Card SSOT:** `UNIVERSE/cards/H_1640_hamiltonian_symplectic_bind.md` (mechanism + ablation logic).
+**Card SSOT:** `HYPOTHESES/cards/H_1640_hamiltonian_symplectic_bind.md` (mechanism + ablation logic).
 
 **Hypothesis:** A conservative coupled-Hamiltonian binder (symplectic leapfrog, energy-conserving)
 installs a *joint invariant of the two legs* into the trunk representation that plain CE never

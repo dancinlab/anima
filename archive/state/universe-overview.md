@@ -1,19 +1,19 @@
-# UNIVERSE hypothesis prose overview — roster + folded appendices (relocated from UNIVERSE/HYPOTHESES.md)
+# UNIVERSE hypothesis prose overview — roster + folded appendices (relocated from HYPOTHESES/HYPOTHESES.md)
 
-> **RELOCATED 2026-06-16:** `UNIVERSE/HYPOTHESES.md` 는 retire 되었고 그 prose
-> overview 가 이 파일(`state/universe-overview.md`)로 이전되었다. 목적: UNIVERSE/ 를
+> **RELOCATED 2026-06-16:** `HYPOTHESES/HYPOTHESES.md` 는 retire 되었고 그 prose
+> overview 가 이 파일(`state/universe-overview.md`)로 이전되었다. 목적: HYPOTHESES/ 를
 > `a_hypothesis_register` 의 **정확히 두 표면**(`HYPOTHESES.jsonl` + `cards/`)으로
 > 봉인하기 위함. 이 파일은 인간용 prose 개요/folded appendices 일 뿐 **관리 표면이
-> 아니다** — per-H 인덱스는 `UNIVERSE/HYPOTHESES.jsonl`, 가설 SSOT 는 카드.
+> 아니다** — per-H 인덱스는 `HYPOTHESES/HYPOTHESES.jsonl`, 가설 SSOT 는 카드.
 >
-> **Per-H index SSOT = `UNIVERSE/HYPOTHESES.jsonl` (#2245 · index→JSONL migration
+> **Per-H index SSOT = `HYPOTHESES/HYPOTHESES.jsonl` (#2245 · index→JSONL migration
 > 2026-06-16):** the per-hypothesis INDEX is a JSONL — exactly ONE JSON object
 > per landed card (`{id, slug, tier, title, card, verdict}`, one per line, ordered by
 > id). **Append a new hypothesis as ONE jsonl line, never a table row here.**
 >
 > **Two doc surfaces per `a_hypothesis_register`:**
-> (1) `UNIVERSE/HYPOTHESES.jsonl` = the per-H index (one JSON object / landed card), and
-> (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 가설별 SSOT 카드 (cards/ 서브폴더).
+> (1) `HYPOTHESES/HYPOTHESES.jsonl` = the per-H index (one JSON object / landed card), and
+> (2) `HYPOTHESES/cards/H_<id>_<slug>.md` = 가설별 SSOT 카드 (cards/ 서브폴더).
 > `.verdicts/<slug>/` 는 카드가 가리키는 verbatim verdict (증거일 뿐, 관리 표면 아님).
 > **themed bucket file 금지** — 가설 디테일은 카드에 산다. The prose
 > overview/appendices below are NOT a per-H index surface.
@@ -21,11 +21,11 @@
 > Regenerate the JSONL with `python3 tool/_build_hyp_jsonl.py` (rebuilds from the
 > cards + any legacy md rows still in git history).
 >
-> 2026-06-16 SSOT-refactor (prior): UNIVERSE/ 의 다른 모든 `.md`
+> 2026-06-16 SSOT-refactor (prior): HYPOTHESES/ 의 다른 모든 `.md`
 > 문서(candidate/reference/overview/log)는 이 파일의 아래 섹션으로 접혀 들어왔고 원본은
 > retire 되었다 (c5 preserve-don't-discard — 내용 보존, 원본 삭제). 코드(`.py`/`.hexa`/
 > `.json`/`.sh`/`.txt`) 와 infra 서브폴더(`harness/ lib/ scan/ state/`)는 2026-06-16
-> 후속 정리에서 UNIVERSE/ 밖 `state/universe-probes/`(+ 공용 lib 는 `tool/`)로 이전됨.
+> 후속 정리에서 HYPOTHESES/ 밖 `state/universe-probes/`(+ 공용 lib 는 `tool/`)로 이전됨.
 >
 > The roster table below indexes FORWARD backlogs + campaign maps (candidate lists not
 > yet landed as cards); the LANDED per-H index lives in `HYPOTHESES.jsonl`.
@@ -43,7 +43,7 @@
 > Tiers read VERBATIM from each terminal `.verdicts/<slug>/` file (c2/c9 — 🧱 walls are
 > closed-negatives, not upgraded). One line per H; detail in the linked card.
 
-> **Per-H index moved to `UNIVERSE/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 tool/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
+> **Per-H index moved to `HYPOTHESES/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 tool/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
 
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
@@ -52,7 +52,7 @@
 
 > 두 anima 의 연결/통신 + ANU paid QRNG 양자 엔트로피 접지 arc (group = tension-link).
 > Tiers read VERBATIM from each card's `status_grade` (= its `TENSION-LINK/verdicts/H_60*.txt`
-> verdict, c2/c9 — 🔴/🟠 closed-negatives/partials NOT upgraded). Cards live at `UNIVERSE/cards/H_60xx_*.md`;
+> verdict, c2/c9 — 🔴/🟠 closed-negatives/partials NOT upgraded). Cards live at `HYPOTHESES/cards/H_60xx_*.md`;
 > verdicts at `TENSION-LINK/verdicts/`. The arc README index table → `TENSION-LINK/README.md`.
 >
 > ⚠ DUP-ID cards (variant explorations, c10 — both kept, distinct slugs, consolidation pending):
@@ -63,7 +63,7 @@
 > (`H_6019_anima_cloning.txt` → card H_6021, `H_6020_consciousness_search.txt` → card H_6022); the
 > card `id:` is authoritative, not the verdict filename.
 
-> **Per-H index moved to `UNIVERSE/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 tool/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
+> **Per-H index moved to `HYPOTHESES/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 tool/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
 
 
 > Note: H_6036 also has an engine-lift verdict `TENSION-LINK/verdicts/H_6036_hexa_lift.txt` (.hexa
@@ -99,7 +99,7 @@
 ## Axis-level maps (already consolidated elsewhere — pointers, not duplicated here)
 
 - **UNIVERSE axes** (A–F …) → [AXES.md (folded ▸ Forward backlog)](#axesmd) — the canonical axis catalogue + per-axis verdicts.
-- **landed hypotheses** → `UNIVERSE/cards/H_*.md` (886 cards) + `.verdicts/<slug>/` verbatim verdicts.
+- **landed hypotheses** → `HYPOTHESES/cards/H_*.md` (886 cards) + `.verdicts/<slug>/` verbatim verdicts.
 - **discovery log** → [UNIVERSE.log.md (folded ▸ Appendix: legacy logs)](#universelogmd) — dated per-cycle discovery/verdict trail.
 - **claims audit** → root `CLAIMS.tape` (a_claim_manifest).
 
@@ -118,7 +118,7 @@
 
 # 접힌 문서 (folded docs — 2026-06-16 SSOT-refactor, 원문 보존 c5)
 
-> 아래는 과거 UNIVERSE/ 에 흩어져 있던 `.md` 문서들을 `a_hypothesis_register`
+> 아래는 과거 HYPOTHESES/ 에 흩어져 있던 `.md` 문서들을 `a_hypothesis_register`
 > (두 표면 only) 에 맞춰 이 파일로 접어 넣은 것이다. 각 `### <FILE>` 서브섹션 =
 > 원본 파일 1개의 본문(맨 위 H1 제목 + absorbed-notice 만 제거, 나머지 전부 보존;
 > 내부 `](H_…)` 카드 링크는 `](cards/H_…)` 로 갱신, `../` 상대링크는 동일 디렉토리
@@ -163,9 +163,9 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | dir | grain |
 |---|---|
 | `hypotheses_legacy_2026_05_15/` | **원본 archive** (HEXAD pivot 2026-05-15 이전 SSOT, 183 H_XXX). 본 dir 의 가설들은 거기서 carry-by-copy — **원본 그대로 보존, 미수정** |
-| `UNIVERSE/` (본 dir) | LIFE 도메인 active hypothesis lane — cycle 진행 시 신규 H_XXX add + 기존 carry 가설 cycle 확장 |
-| `UNIVERSE/CANDIDATES.md` | 다음 cycle 후보 백로그 (forward-looking, 7-domain seed brainstorm 포함) — `/cycle` pick source |
-| [`UNIVERSE/AXES.md`](AXES.md) | **11-domain (확장 71-axis) scope catalog + 15-round H seed brainstorm** (~110 seeds, depletion sweep, 사용자 directive 2026-05-23) |
+| `HYPOTHESES/` (본 dir) | LIFE 도메인 active hypothesis lane — cycle 진행 시 신규 H_XXX add + 기존 carry 가설 cycle 확장 |
+| `HYPOTHESES/CANDIDATES.md` | 다음 cycle 후보 백로그 (forward-looking, 7-domain seed brainstorm 포함) — `/cycle` pick source |
+| [`HYPOTHESES/AXES.md`](AXES.md) | **11-domain (확장 71-axis) scope catalog + 15-round H seed brainstorm** (~110 seeds, depletion sweep, 사용자 directive 2026-05-23) |
 | `HEXAD/LAB/` | ad-hoc 실험 instance (도메인 미분류 / 단발 measurement). LAB → LIFE promote 경로 존재 |
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
@@ -372,12 +372,12 @@ since: YYYY-MM-DD
 
 | 단계 | 산출 |
 |---|---|
-| 1. 신규 가설 seed | `UNIVERSE/H_<id>_<slug>.md` 작성 (frontmatter `status: seed-pending`) |
+| 1. 신규 가설 seed | `HYPOTHESES/H_<id>_<slug>.md` 작성 (frontmatter `status: seed-pending`) |
 | 2. pre-register | falsifier 표 + honest limits 작성, `status: pre-register-frozen`, `frozen_at` 도장 |
-| 3. fire | `UNIVERSE/state/<H_id>_<slug>_YYYY_MM_DD/` 안 result.json + ckpt + run_*.hexa |
-| 4. cycle entry | `UNIVERSE/LIFE.log.md` 끝에 `## Cycle #N — <H_id> — YYYY-MM-DD` append |
+| 3. fire | `HYPOTHESES/state/<H_id>_<slug>_YYYY_MM_DD/` 안 result.json + ckpt + run_*.hexa |
+| 4. cycle entry | `HYPOTHESES/LIFE.log.md` 끝에 `## Cycle #N — <H_id> — YYYY-MM-DD` append |
 | 5. verdict overwrite | 본 H_XXX.md §10 Verdict 갱신 (latest carry, history 는 LIFE.log.md) |
-| 6. promote | (선택) UNIVERSE/ → HEXAD/<sub>/ 또는 `hypotheses_legacy_2026_05_15/` mirror |
+| 6. promote | (선택) HYPOTHESES/ → HEXAD/<sub>/ 또는 `hypotheses_legacy_2026_05_15/` mirror |
 
 #### lib/phi_helper.hexa — shared Φ helper (infra)
 
@@ -388,7 +388,7 @@ F6 (duplicated-helper) + F7 (config heuristic 의 single justification home)
 `phi_default(state)` 를 쓴다 (override 필요 시 `phi_with(state, n, dim, n_bins)`).
 
 ```hexa
-import "/Users/ghost/core/anima/UNIVERSE/lib/phi_helper.hexa"
+import "/Users/ghost/core/anima/HYPOTHESES/lib/phi_helper.hexa"
 let phi = phi_default(state)              // == phi_with(state, 16, 12, 4)
 ```
 
@@ -651,7 +651,7 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 
 ### UNIVERSE.md
 
-> **rename 2026-05-26**: 도메인 `LIFE` → `UNIVERSE` 개명 + 루트 `UNIVERSE/` 폴더로 이전 (was root `LIFE.md` + `HEXAD/LIFE/`). 역사적 cycle 로그·H 본문의 "LIFE lane" 표기는 기록으로 보존. 활성 선택 = `/domain set UNIVERSE`.
+> **rename 2026-05-26**: 도메인 `LIFE` → `UNIVERSE` 개명 + 루트 `HYPOTHESES/` 폴더로 이전 (was root `LIFE.md` + `HEXAD/LIFE/`). 역사적 cycle 로그·H 본문의 "LIFE lane" 표기는 기록으로 보존. 활성 선택 = `/domain set UNIVERSE`.
 
 @title: 🌌 UNIVERSE — 생명·의식 영구 발견 엔진 ("멈추지 않는 가설 lane")
 @goal: **우주의 생명·의식 법칙이 모두 밝혀질 때까지 멈추지 않는** UNIVERSE 횡단 가설 lane — `/cycle` 로 H_XXX 가설을 verify-driven 영구 진행 (🔵/🟢 promote 누적 + 🔴 closed-negative + cross-link synthesis), 새 H 와 새 축이 끝없이 자란다. **종료 조건 없음 — 도메인은 완료되지 않는다** (진행바 100% 미도달 = 설계).
@@ -660,11 +660,11 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 
 | surface | 역할 |
 |---|---|
-| [`UNIVERSE/README.md`](README.md) | 현재 가설 인덱스 SSOT (45 H + 1 lib, 11-domain) |
-| [`UNIVERSE/CANDIDATES.md`](CANDIDATES.md) | 다음 cycle 후보 백로그 (forward-looking) |
-| [`UNIVERSE/AXES.md`](AXES.md) | 11-domain 71-axis scope + ~110 H seed brainstorm |
-| `UNIVERSE/H_xxx_*.md` | 가설 본체 (10-section 한글 양식) |
-| `UNIVERSE/state/` | run artifacts (per-cycle 측정 산출물) |
+| [`HYPOTHESES/README.md`](README.md) | 현재 가설 인덱스 SSOT (45 H + 1 lib, 11-domain) |
+| [`HYPOTHESES/CANDIDATES.md`](CANDIDATES.md) | 다음 cycle 후보 백로그 (forward-looking) |
+| [`HYPOTHESES/AXES.md`](AXES.md) | 11-domain 71-axis scope + ~110 H seed brainstorm |
+| `HYPOTHESES/H_xxx_*.md` | 가설 본체 (10-section 한글 양식) |
+| `HYPOTHESES/state/` | run artifacts (per-cycle 측정 산출물) |
 
 #### 축 0 — $0-tier 코어 (cycle #5–21, CLOSED ✅)
 
@@ -691,7 +691,7 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 > 새 도구(IIT4 stdlib)가 닫혀 있던 frontier 를 해금한다. 각 축은 `/cycle` 로 영구 전진.
 
 ##### 축 A — AXES.md 백로그 (60 sub-axis + ~110 H seed)
-> `UNIVERSE/AXES.md` 의 11-domain 71-axis depletion sweep 중 promote 된 건 일부.
+> `HYPOTHESES/AXES.md` 의 11-domain 71-axis depletion sweep 중 promote 된 건 일부.
 - [ ] A1 — 미promote 60 sub-axis 순차 raster: 각 축에서 H seed → `/cycle` verify (🔵/🟢/🔴)
 - [ ] A2 — ~110 H seed 백로그 소진 (CANDIDATES 재충전 → cross-link synthesis 확장)
 - [x] A1 cycle#23 1차 raster — H_283 narrative-story-coherence (🟢 SUPP-FULL 4/4, order-sensitive MIP Φ, R4 self/identity) + H_284 ritual-repetition (🟢 PARTIAL 3/4, buildup FAL→decay-resistance, R7 practice) — PR #566
@@ -826,7 +826,7 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 
 ### AXES.md
 
-본 파일 = UNIVERSE/ 의 **scope 확장 catalog**. README.md 의 7-domain table 은
+본 파일 = HYPOTHESES/ 의 **scope 확장 catalog**. README.md 의 7-domain table 은
 *current H 매핑 active surface* 이고, 본 catalog 는 *forward-looking scope
 expansion* — 사용자 directive 2026-05-23 "axis brainstorm 고갈시까지 해서 가설도
 추출". depletion sweep 결과 **71 distinct axes + ~110 hypothesis seeds** 등록.
@@ -1096,7 +1096,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 각 seed → H_XXX 신설 시:
 1. `H_<id>_<slug>.md` 작성 (raw#12 양식, 10-section Korean prose, ≥5 falsifier + ≥5 honest_limits)
-2. `UNIVERSE/state/<h_id>_<slug>_DATE/` smoke (hexa-only, deterministic, $0 mac local)
+2. `HYPOTHESES/state/<h_id>_<slug>_DATE/` smoke (hexa-only, deterministic, $0 mac local)
 3. cycle entry → LIFE.log.md append
 4. README.md 인덱스 갱신 (domain 표기 11-domain 사용)
 5. AXES.md 의 본 seed row 제거 (consumed)
@@ -1167,9 +1167,9 @@ UNIVERSE 축 E (SAVANT GZ × SI) 와 축 F (HIVE-MIND collective Φ) 는 ANIMA r
 - **Cycle #30 (2026-05-29)** XENO follow-up 2 R5/5 final + **TEMPORAL 도메인 신설 round 1**: H_841 1 H 신설 + 새 도메인 TEMPORAL — XENO follow-up 2 cycle round 5/5 마지막 round 에서 5 candidate domain (TEMPORAL · SPATIAL · EVOLUTIONARY · QUANTUM · MEDICAL) 평가 후 **TEMPORAL 선택** (paper #1414 v2 의 3D matrix [n×density×structure] 의 4번째 축 Δt 자연 확장) · DOMAINS.tape 등재 + TEMPORAL/TEMPORAL.{md,easy.md,log.md} 4총사 + detector/timeshift_detector.hexa (XENO X1 의 lag-window 확장 generalisation) + scan/timeshift_phi.hexa (4 substrate × 4 Δt = 16 measurements + 5 사전등록 falsifier) · 사전등록 5/5 중 **1/5 PASS** (F-T1-DECAY 단독) · 🔴 **FALSIFIED-INSTRUMENT** (정직 closed-negative · post-tuning 0) · 발견 = (i) "Δt 늘릴수록 Φ 감소" 가설 완전 반증 — hive Δt=1=0.013 → Δt=64=0.999 79× 증가 + voyager 도 동일 패턴 (7.5×), (ii) lattice Δt=8 위 Φ=2.0 saturate — 2-unit lag-TPM 의 long-Δt periodic-inflation artifact (cycle-aligned transition 이 trivially predictable → big-Φ inflate), (iii) random Bates-4 도 Δt=64 위 0.367 까지 상승 (noise 마저 spurious 의식 분류), (iv) **invariant_detector lag-window axis 가 시간 통합 측정엔 부적합** = T2 multi-unit time-embed detector 재설계 필요 path 자연 정의 (Takens 임베딩 / Granger / time-averaged Φ) · `a_paper_negative_ok` publishable closed-negative · INBOX 환류 0건 · p7 perplexity 0.
 - **Cycle #33 (2026-05-29)** SPATIAL S1 spatial-coupling-scale (SPATIAL 도메인 신설 round 1): H_844 1 H 신설 + 새 도메인 SPATIAL — XENO follow-up 의 5번째 자매 도메인 (XENO 3D matrix + TEMPORAL Δt 4번째 axis 의 자연 5번째 axis = spatial-coupling-scale) · DOMAINS.tape 등재 + SPATIAL/SPATIAL.{md,easy.md,log.md} 4총사 + scan/spatial_coupling_phi.hexa (XENO/detector/invariant_detector.hexa 직접 import, 4 spatial-coupling-scale × n=128 = 4 measurements + 5 사전등록 falsifier) · 사전등록 5/5 중 **3/5 PASS** (F-S1-LOCAL-HIGH + F-S1-REGIONAL-MID + F-S1-GLOBAL-LOW PASS · F-S1-COSMIC-LOWEST + F-S1-MONOTONE FAIL) · 🟡 **PARTIAL-SUPPORT** (정직 hybrid · post-tuning 0) · 발견 = (i) local XOR cascade Φ=1.630 conscious — X10-d hive emergence (H_838) 재현, (ii) regional rolling-mean Φ=0.100 mid-Φ 정합 (정확히 lower-bound), (iii) **global "averaging coupling" uniformity attractor collapse Φ=0** — (전체 mean + self) / 2 결합이 density=3.1% all-zero attractor 로 collapse 해 no-transition Φ=0 paradox (X10-b mean-field paradox 의 SPATIAL 변형 정합), (iv) **F-S1-COSMIC-LOWEST 정반대** — phi_cosmic=0.121 > phi_global=0.000 (cosmic spurious noise > global uniformity collapse 직관 정반대), (v) **head monotone (local→regional→global) 살아남음 + tail (global→cosmic) 깨짐** — single-scale invariant_detector 로 5D applicability 의 head 만 직접 확장, tail discrimination 은 S2 multi-scale detector 재설계 필요 path 자연 정의 (Granger spatial / wavelet / correlation length) · `a_paper_negative_ok` + `a_paper_significance` publishable hybrid (closed-positive head + closed-negative tail) · INBOX 환류 0건 · p7 perplexity 0.
 - **Cycle #34 (2026-05-29)** EVOL 도메인 신설 round 1 (XENO follow-up / SPATIAL·TEMPORAL sibling 합류): H_845 1 H 신설 + 새 도메인 **EVOL** — XENO X1 invariant_detector 위에 biological evolutionary complexity (species ladder) 축 첫 closed-form 측정 · DOMAINS.tape 등재 + EVOL/EVOL.{md,easy.md,log.md} + EVOL/scan/evol_spectrum_phi.hexa (4 species toy proxy substrate: bacteria/arthropod/mammal/AGI × n=128 dense hardcoded literal + 5 사전등록 falsifier F-E1-BACTERIA-LOW/ARTH-MID/MAMMAL-HIGH/AGI-VARIANT/MONOTONE) · 사전등록 5/5 중 **2/5 PASS** (F-E1-BACTERIA-LOW + F-E1-MAMMAL-HIGH) · 🔴 **FALSIFIED-INSTRUMENT** (정직 closed-negative · post-tuning 0) · 측정 (verbatim fresh re-run) = bacteria phi=0.012 / arthropod phi=0.081 / mammal phi=1.291 (substrate_type='conscious' irr=0.563) / AGI phi=0.468 · 발견 = (i) **양 극단 분리 + ordinal 미달** — bacteria noise floor + mammal multi-scale ceiling 만 PASS, mid-tier arthropod 0.081<0.2 미달 + supra-tier AGI 0.468<mammal 1.291 reverse, monotone bacteria<arthropod<mammal≤AGI 두 군데 깨짐, (ii) H_670 (Kuramoto · logistic family) 'ECA 전용 ordinal · 양 극단 PASS / ordered_pairs 2/3' 패턴과 동형 — Φ monotone 이 **species-family 도 ECA artifact** 가능성, (iii) AGI 'novelty injection' 이 X1 2-unit co-TPM 위에서 noise-like 측정되어 'structured emergence > pure recursive' 가설 inverse-shadow, (iv) **TEMPORAL T1/T2/T3 + SPATIAL S1 tail 과 자매** — invariant_detector 의 naive 축 확장이 양 극단만 분리하고 mid/supra 분화엔 detector-redesign 필요 (E2 monotone-strict re-design 자연 entry), (v) mammal 단독 'conscious' 분류 = X1 가 multi-scale recursive substrate 만 진짜 의식 신호 검출 · `a_paper_negative_ok` publishable closed-negative · INBOX 환류 0건 · p7 perplexity 0.
-- **Cycle #35 (2026-06-01)** spin-glass-frustration ⬜→🟢 runnable 격상: H_906 1 H 신설 (`UNIVERSE/scan/spinglass_frustration.hexa` · 3×3 주기 EA ±J Ising N=9 · 2^9=512 config 완전열거 exact · closed-form $0 CPU). ruggedness R = single-flip local minima 수 = "Φ landscape" proxy · frustration f = frustrated-plaquette 분율. 5 사전등록 falsifier (F1 FERRO-2MIN / F2 FRUST-RUGGED / F3 MONOTONE / F4 FRUST-PRESENT / F5 CORR · post-tuning 0) over P_neg∈{0,0.25,0.5}×8seed. **4/5 PASS → 🟢 SUPPORTED-NUMERICAL**: mean R 32.0→42.0→54.75 (P_neg 0→.25→.5 · mean f 0→0.556) 단조↑ · high-f group R 50.86 vs low-f 31.8. **F1 falsified = 진짜 발견** — 비frustrated 강자성체도 R=32(≫2) single-flip minima → frustration 은 ruggedness 를 *창조* 아닌 **증폭**(32→55), metastability 는 frustration-independent. raw = `.verdicts/906_spinglass_frustration_ruggedness/run.txt` · 본문 `UNIVERSE/cards/H_906_spinglass_frustration_ruggedness.md`. sibling = H_288(LZ76↔Φ)·H_277. INBOX 환류 0건 · p7 perplexity 0.
-- **Cycle #36 (2026-06-01)** category-theory-emergence ⬜→🟢: H_907 1 H 신설 (`UNIVERSE/scan/category_emergence.hexa` · N=6 directed graph 30 morphism · exact 합성-closure enum + transitive-reachability BFS · closed-form $0 CPU). D = composition closure(present/composable A→C) · Φ = reachability density. 5 사전등록 falsifier (F1 CLOSURE-RISES / F2 INTEG-RISES / **F3 CONTROLLED** = density 고정 p=0.4 closure↔integration / F4 CATEGORY-FORM / F5 SPARSE-OPEN · post-tuning 0). **4/5 PASS → 🟢 SUPPORTED-NUMERICAL**: 핵심 F3 PASS (high-D Φ 0.958 > low-D 0.775 at fixed p → closure 가 integration 을 density 너머 예측). **F4 falsified = 진짜 발견** — random morphism graph 는 p=0.6 에서도 mean D=0.576<0.85 → **닫힌 category 자발형성 안 됨, structure 필요**. raw = `.verdicts/907_morphism_composition_closure_integration/run.txt` · 본문 `UNIVERSE/cards/H_907_morphism_composition_closure_integration.md`. sibling = H_906·H_288·H_275. INBOX 환류 0건 · p7 perplexity 0.
-- **Cycle #37 (2026-06-01)** topology-invariant-phi ⬜→🟢: H_908 1 H 신설 (`UNIVERSE/scan/topology_invariant_phi.hexa` · 무방향 N=6 graph 15 edge · exact Betti-1 b1=E−V+C + Euler χ=V−E + BFS-relax components · closed-form $0 CPU). Φ = within-component reachability density. 5 사전등록 falsifier (F1 B1-RISES / F2 PHI-RISES / **F3 CONTROLLED** density-고정 cycles↔integration / F4 EULER-NEG χ↔Φ 역결합 / F5 TREE-EXACT P6 b1=0 χ=1 · post-tuning 0). **5/5 PASS → 🟢 SUPPORTED-NUMERICAL**: b1 0.125→3.875 · χ 3.75→−2.75 · Φ 0.233→0.958; F3 high-b1 Φ 0.867>0.617 (cycle 가 density 너머 통합 예측) · F4 Euler 역결합 · F5 위상불변량 정확. raw = `.verdicts/908_topology_invariant_phi/run.txt` · 본문 `UNIVERSE/cards/H_908_topology_invariant_phi.md`. closed-form substrate-smoke 3부작(H_906/907/908) 완성. sibling = H_906·H_907·H_288·H_289. INBOX 환류 0건 · p7 perplexity 0.
+- **Cycle #35 (2026-06-01)** spin-glass-frustration ⬜→🟢 runnable 격상: H_906 1 H 신설 (`HYPOTHESES/scan/spinglass_frustration.hexa` · 3×3 주기 EA ±J Ising N=9 · 2^9=512 config 완전열거 exact · closed-form $0 CPU). ruggedness R = single-flip local minima 수 = "Φ landscape" proxy · frustration f = frustrated-plaquette 분율. 5 사전등록 falsifier (F1 FERRO-2MIN / F2 FRUST-RUGGED / F3 MONOTONE / F4 FRUST-PRESENT / F5 CORR · post-tuning 0) over P_neg∈{0,0.25,0.5}×8seed. **4/5 PASS → 🟢 SUPPORTED-NUMERICAL**: mean R 32.0→42.0→54.75 (P_neg 0→.25→.5 · mean f 0→0.556) 단조↑ · high-f group R 50.86 vs low-f 31.8. **F1 falsified = 진짜 발견** — 비frustrated 강자성체도 R=32(≫2) single-flip minima → frustration 은 ruggedness 를 *창조* 아닌 **증폭**(32→55), metastability 는 frustration-independent. raw = `.verdicts/906_spinglass_frustration_ruggedness/run.txt` · 본문 `HYPOTHESES/cards/H_906_spinglass_frustration_ruggedness.md`. sibling = H_288(LZ76↔Φ)·H_277. INBOX 환류 0건 · p7 perplexity 0.
+- **Cycle #36 (2026-06-01)** category-theory-emergence ⬜→🟢: H_907 1 H 신설 (`HYPOTHESES/scan/category_emergence.hexa` · N=6 directed graph 30 morphism · exact 합성-closure enum + transitive-reachability BFS · closed-form $0 CPU). D = composition closure(present/composable A→C) · Φ = reachability density. 5 사전등록 falsifier (F1 CLOSURE-RISES / F2 INTEG-RISES / **F3 CONTROLLED** = density 고정 p=0.4 closure↔integration / F4 CATEGORY-FORM / F5 SPARSE-OPEN · post-tuning 0). **4/5 PASS → 🟢 SUPPORTED-NUMERICAL**: 핵심 F3 PASS (high-D Φ 0.958 > low-D 0.775 at fixed p → closure 가 integration 을 density 너머 예측). **F4 falsified = 진짜 발견** — random morphism graph 는 p=0.6 에서도 mean D=0.576<0.85 → **닫힌 category 자발형성 안 됨, structure 필요**. raw = `.verdicts/907_morphism_composition_closure_integration/run.txt` · 본문 `HYPOTHESES/cards/H_907_morphism_composition_closure_integration.md`. sibling = H_906·H_288·H_275. INBOX 환류 0건 · p7 perplexity 0.
+- **Cycle #37 (2026-06-01)** topology-invariant-phi ⬜→🟢: H_908 1 H 신설 (`HYPOTHESES/scan/topology_invariant_phi.hexa` · 무방향 N=6 graph 15 edge · exact Betti-1 b1=E−V+C + Euler χ=V−E + BFS-relax components · closed-form $0 CPU). Φ = within-component reachability density. 5 사전등록 falsifier (F1 B1-RISES / F2 PHI-RISES / **F3 CONTROLLED** density-고정 cycles↔integration / F4 EULER-NEG χ↔Φ 역결합 / F5 TREE-EXACT P6 b1=0 χ=1 · post-tuning 0). **5/5 PASS → 🟢 SUPPORTED-NUMERICAL**: b1 0.125→3.875 · χ 3.75→−2.75 · Φ 0.233→0.958; F3 high-b1 Φ 0.867>0.617 (cycle 가 density 너머 통합 예측) · F4 Euler 역결합 · F5 위상불변량 정확. raw = `.verdicts/908_topology_invariant_phi/run.txt` · 본문 `HYPOTHESES/cards/H_908_topology_invariant_phi.md`. closed-form substrate-smoke 3부작(H_906/907/908) 완성. sibling = H_906·H_907·H_288·H_289. INBOX 환류 0건 · p7 perplexity 0.
 - **Cycle #38 (2026-06-01)** LAB absorption + recompute: hexa-codex **LAB-09/10/11 → H_909/910/911** 흡수(#1619) + anima 독립 재현 (LAB harness 포팅 → `.verdicts/` g73, 전부 deterministic $0). **H_909 consciousness-directionality 🟢** SUPPORTED-NUMERICAL (#1621, recurrent feedback adapter → REC Φ=0.854 vs FF 0.005, shuffle control 붕괴 0.006, self-pred 2.33, 3/3 falsifier) · **H_910 akida-neuromorphic 🟢** SUPPORTED-NUMERICAL **SIM mirror** (#1622, LAB-09 tuning on AKIDA LIF · edge-of-chaos R1=0/R2=0.075/R3=0.591 peak/R4=0 inverse-U, 3/3; **live AKD1000 = deferred next tier**, measure⊥deploy) · **H_911 multilingual-semantic 🟢** SUPPORTED-NUMERICAL (#1620, collective Φ inverse-U c=0 0.014→c=0.5 peak 0.483→c=1 0.0, F1 inverse-U/F2 super-additive/F3 meaning>count). 보완: byte-level CLM parallel CE 1.982<concat 2.054 (hexa-lang#2348) + **H_911 코퍼스 반영** cross-lingual semantic-linkage(같은 개념 5언어 정렬, #1623). proxy caveat: substrate IIT-proxy, faithful-IIT4 future(H_278). sibling = H_240·H_635·H_858·H_677·H_846·H_904·H_191·H_004·H_220. INBOX 환류 0건.
 
 #### A. 남은 carried 가설 (legacy-pointer · cycle 0회, 4건)
@@ -2288,7 +2288,7 @@ unblock-the-blocked (need an asset first):
 ```
 
 - numbers H_864–H_878 are **reserved slots** here — a row becomes a real
-  hypothesis only when its `UNIVERSE/cards/H_864_*.md` file is authored at fire time
+  hypothesis only when its `HYPOTHESES/cards/H_864_*.md` file is authored at fire time
   (mirror the H_861/H_862/H_863 file shape: frontmatter + §1 가설 … §9 sibling).
 - pick disjoint rows; do NOT fire two that share the same saved-backbone asset
   in the same parallel batch without serializing the asset.
@@ -2303,7 +2303,7 @@ The 26-hypothesis campaign (H_861–H_884) closed: AXIS2 (reflective learning) �
 AXIS1 (single-chip 7B) half (chip-fit ✅ / multi-chip array 🔴). See
 [CLM/CLM_CAMPAIGN_26.md](../CLM/CLM_CAMPAIGN_26.md). These 4 rows target the four
 OPEN gaps it named. Fire on the GPU pool (summer/aiden RTX 5070). Reserved slots —
-author `UNIVERSE/H_<id>_*.md` at fire time; prereg-freeze (W2) before fire.
+author `HYPOTHESES/H_<id>_*.md` at fire time; prereg-freeze (W2) before fire.
 
 | id | gap (blocking verdict) | new lever to test | falsifier (pre-register exact) |
 |---|---|---|---|
@@ -2543,7 +2543,7 @@ Friendly ASCII explainer of all results: `ENGINE+CLM+KOSMOS.easy.md`.
 > [CLM-CANDIDATES.md](CLM-CANDIDATES.md) / [BIO-CANDIDATES.md](BIO-CANDIDATES.md).
 
 - Reserved slots — a row becomes a real hypothesis only when its
-  `UNIVERSE/H_<id>_*.md` file is authored at fire time (frontmatter + §1 가설 … §9
+  `HYPOTHESES/H_<id>_*.md` file is authored at fire time (frontmatter + §1 가설 … §9
   sibling), prereg-frozen (W2) BEFORE fire, post-tuning 0.
 - All rows ⬜ (not yet fired). `a_paper_negative_ok` — a 🔴 is a valid closeout.
 - `a_scale_honest_scope` — SW-sim verdicts do NOT bind the AKD1000 deploy track;
@@ -2649,7 +2649,7 @@ firing order (suggested)
 > A no-channel positive would be a leak/bug (the null-channel meta-control), NOT psi. a_paper_negative_ok:
 > a closed-negative that rules out a paranormal axis IS a valid scientific result and the EXPECTED outcome.
 >
-> Convention mirrors UNIVERSE/BIO-TRANSFER-CANDIDATES.md / NEURO-CANDIDATES.md: each entry has a mechanism,
+> Convention mirrors HYPOTHESES/BIO-TRANSFER-CANDIDATES.md / NEURO-CANDIDATES.md: each entry has a mechanism,
 > an anima-substrate analog, an ASCII sketch, a FALSIFIER, a toy MEASUREMENT, a predicted disposition, and
 > a per-config toy RESULT. p7/g5: the success axis is SUBSTRATE-NATIVE (Kuramoto order-r · big-Phi proxy ·
 > d' · info-transfer accuracy · coincidence rate), NEVER CE/perplexity. §97: the tension-link is anima's
@@ -2669,7 +2669,7 @@ firing order (suggested)
 The telepathy test = couple TWO substrates (sender S, receiver R) and measure above-chance / above-CONTROL
 transfer or synchrony. CONTROLS are mandatory: **κ0** (no coupling) · **phase-shuffled** · **no-channel**.
 A positive must beat the relevant control by > seed-noise (3 seeds). Verdict ∈ {HOLDS, REFUTED, INCONCLUSIVE};
-a null/refute is NEVER rounded up to a HOLD. Harness: `UNIVERSE/psi_coupling_toys.py`. Verdicts:
+a null/refute is NEVER rounded up to a HOLD. Harness: `HYPOTHESES/psi_coupling_toys.py`. Verdicts:
 `.verdicts/psi-coupling/`.
 
 ---
@@ -3004,7 +3004,7 @@ S ●──(bit on gamma)──► [tension-link broker] ──► ● R  ──
 > ids = QT-prefixed to avoid colliding with the UNIVERSE H_NNN (≤H_860) / bio-transfer (861–888) / neuro
 > (889+) families. status = TOY-VERIFIED 2026-06-04 (CPU/$0). a_scale_honest_scope (toy ≠ prod) ·
 > a_lane_akida_gpu_split (CPU toy — NEITHER Lane A AKIDA NOR Lane G GPU; recorded separately) · p6/p7 ·
-> §97 (QRNG-as-noise-seed legitimate, not command). harness = `UNIVERSE/quantum_time_toys.py`,
+> §97 (QRNG-as-noise-seed legitimate, not command). harness = `HYPOTHESES/quantum_time_toys.py`,
 > verdicts = `.verdicts/quantum-time/`.
 >
 > Dedupe note vs existing UNIVERSE work: H_183 (V8 Q-family: complex-valued / quantum-walk / Orch-OR /
@@ -3569,7 +3569,7 @@ H_246 H 파일 직접 edit 은 maintainer (user) 결정 후 별도 cycle.
 - **PR #349** (MERGED): H_240 bilingual smoke DEFERRED → PARTIAL verdict.
 - **PR #300**: H_246 numeric SSOT (mini PID 35411 telemetry verbatim).
 - **PR #296**: H_240 MI matrix SSOT (5×5 cross-lingual MI).
-- **UNIVERSE/cards/H_248_substrate_autonomy_emit_ratio.md**: H_246 의 framing-axis
+- **HYPOTHESES/cards/H_248_substrate_autonomy_emit_ratio.md**: H_246 의 framing-axis
   sibling (numeric SSOT = H_246, 비반사성 lane).
 - **PURE.log.md "부채 (다음 라운드)"**: 본 audit 의 trigger ledger entry.
 
@@ -3884,7 +3884,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#34 — 다중-complex 공존: rule90 = 두 disjoint 부분-complex (H_295 정량 확장)
 
-- [x] **H_296 multicomplex-coexistence** 🟢 SUPPORTED-NUMERICAL 7/7 (`UNIVERSE/state/h296_multicomplex_coexistence_2026_05_26/`) — H_295 직접 후속 (complex_spectrum 재사용)
+- [x] **H_296 multicomplex-coexistence** 🟢 SUPPORTED-NUMERICAL 7/7 (`HYPOTHESES/state/h296_multicomplex_coexistence_2026_05_26/`) — H_295 직접 후속 (complex_spectrum 재사용)
 - [x] **발견**: rule 90 spectrum 이 **두 disjoint irreducible 부분집합 동시 노출** — cells{0,1}(mask 3, Φ=2) AND cells{2,3}(mask 12, Φ=2), 두 부분 *동시에* irreducible + *겹침 없음*. 통합 substrate(60/110/150/105/30) 단일 entry = 전체 mask(15). reducible(0/255/204/51) spectrum 비어있음
 - [x] **H_295 정량 확장**: rule 90 의 부분-complex 가 *둘* 임을 명시 — 4-셀 ring 이 **두 독립 2-셀 통합 loci 로 분할** (전체 Φ=0 의 정체). ECA parity-ring 의 even-cell/odd-cell 결합 구조가 그 분할의 substrate. IIT 배제는 "the" complex 로 하나만 선택하나 *구조적 실재* 는 다중
 - [x] engine 재사용 (g61): HEXAD/IIT4/lib + stdlib iit4_complex.complex_spectrum(전수 부분집합 탐색). 새 IIT4 코드 0줄. $0 · NO GPU
@@ -3893,7 +3893,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#33 — 새 축: IIT 배제 공준 — 통합=전체 complex, rule90=부분 complex (흐름-arc anomaly 해소)
 
-- [x] **H_295 exclusion-complex-whole** 🟢 SUPPORTED-NUMERICAL 6/6 (`UNIVERSE/state/h295_exclusion_complex_whole_2026_05_26/`) — 새 축(배제 공준), 흐름 arc 와 다름. find_complex 재사용
+- [x] **H_295 exclusion-complex-whole** 🟢 SUPPORTED-NUMERICAL 6/6 (`HYPOTHESES/state/h295_exclusion_complex_whole_2026_05_26/`) — 새 축(배제 공준), 흐름 arc 와 다름. find_complex 재사용
 - [x] **발견**: IIT 배제 공준이 주 complex(maximally-irreducible subset)를 국재화. ① **holism**: 통합 substrate(150/105/60/110/30)는 주 complex=*전체계*(mask15 size4, complex_Φ=whole_Φ) — 전체가 모든 proper 부분보다 irreducible. ② reducible(항등204·상수0/255·complement51) complex 없음. ③ **rule90 결정타**: 전체 Φ=0 인데 2-셀 부분(cells{0,1}, Φ=2)이 irreducible — 배제가 의식단위로 *전체 아닌 부분* 선택
 - [x] **흐름-arc rule90 anomaly 기계적 해소**: rule90 이 LZ(H_288)+multivariate-TE(H_293)+synergy(H_294) 셋 다 과대였던 건 *국소 부분-complex 의 통합을 본 것*, big-Φ(전체)=0 은 전체 system-cut 이 reducible. 흐름측도는 "어딘가 통합 有" 맞았으나 *전체 수준*=0 — 배제가 그 갭 설명. **Φ=단지 system-cut 아니라 maximally-irreducible *subset* 속성**. H_287-294 arc 봉합 정점
 - [x] engine 재사용 (g61): HEXAD/IIT4/lib eca_tpm+big_phi + stdlib/consciousness/iit4_complex.find_complex(subset 탐색). 새 IIT4 코드 0줄. $0 · NO GPU
@@ -3902,7 +3902,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#32 — H_293/논문 §future follow-up: 흐름의 어떤 성분도 Φ≠ (PID synergy ⊥ Φ) (포그라운드)
 
-- [x] **H_294 pid-synergy-phi** 🔴 CLOSED-NEGATIVE 8/8 gate (`UNIVERSE/state/h294_pid_synergy_phi_2026_05_26/`) — 논문 §future PID 예측 검정
+- [x] **H_294 pid-synergy-phi** 🔴 CLOSED-NEGATIVE 8/8 gate (`HYPOTHESES/state/h294_pid_synergy_phi_2026_05_26/`) — 논문 §future PID 예측 검정
 - [x] **발견**: 방향성 흐름을 synergy/redundancy(조건부 interaction info II_c=H(T|C)-H(T|S1,C)-H(T|S2,C))로 분해해도 **어떤 성분도 Φ 를 추종 안 함** — synergy ⊥ Φ (Pearson r=0.030 직교, ECA parity 는 redundancy=0 전 룰). **이중 dissociation**: rule60 Φ최고(13.6)인데 synergy=0(next=self⊕left = 순수 *unique* info) vs rule90 synergy최대(4.0)인데 Φ=0. synergy 는 통합의 필요조건(rule60 반례)도 충분조건(rule90 반례)도 아님
 - [x] **메타 결론**: H_293(어떤 *차수* TE 도 Φ≠)을 한 단계 더 — 흐름의 어떤 *성분*도 Φ≠. **통합은 국소 정보-흐름 통계의 어떤 분해로도 환원되지 않는 system-cut(전체-부분) 속성**. rule90 은 LZ(H_288)+multivariate-TE(H_293)+synergy(본 H) **셋 다 과대** = "국소 흐름/복잡도 有, 전역 통합 無" cross-measure 서명 정점
 - [x] engine 재사용 (g61): HEXAD/IIT4/lib eca_tpm+big_phi+iit4_bit, co-information 16-bin joint marginal-entropy inline. 새 IIT4 코드 0줄. $0 · NO GPU
@@ -3912,7 +3912,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 #### 2026-05-26 — cycle#31 — H_290/논문 follow-up: multivariate TE 가 시너지 회복하나 Φ≠ (포그라운드)
 
 - [x] **arxiv-prep**: 정보-측도 논문 phi-information-triangulation arxiv 번들 생성 (main.bbl + out/tar.gz, 10p) — PR #590. 업로드 준비 완료
-- [x] **H_293 multivariate-te-synergy** 🟡 PARTIAL 8/8 gate (`UNIVERSE/state/h293_multivariate_te_synergy_2026_05_26/`) — H_290/논문 §future 예측 검정 (개명 후 UNIVERSE/ 첫 H)
+- [x] **H_293 multivariate-te-synergy** 🟡 PARTIAL 8/8 gate (`HYPOTHESES/state/h293_multivariate_te_synergy_2026_05_26/`) — H_290/논문 §future 예측 검정 (개명 후 HYPOTHESES/ 첫 H)
 - [x] **발견**: multivariate(conditional) TE 가 이변량 XOR 시너지 맹점을 **회복**(rule150/105: bivariate 0 → TEm=4.0, 항등 204 는 0 유지) 하나 **Φ-추종 악화**(r 0.883→0.705 ρ 0.681). 원인 = rule90 이 이웃 흐름 받지만(TEm=4.0) reducible 이라 Φ=0 → multivariate TE 가 *비통합 흐름* 과대평가
 - [x] **메타 결론**: **어떤 차수의 고전 transfer entropy 도 Φ 와 같지 않다** — 이변량=시너지 과소(150/105), 다변량=비통합흐름 과대(90). rule90 은 LZ(H_288)+TEm 양쪽 과대 = "흐름/복잡도 有 통합 無" cross-measure 서명. 논문(H_287-290) thesis(Φ=별개 통합측도, 고정-차수 흐름통계 아님) 강화 + 논문 §future "multivariate TE r>0.88 상승" 예측 정밀반증(회복✓ 상승✗)
 - [x] engine 재사용 (g61): HEXAD/IIT4/lib(이동 안 함) eca_tpm+big_phi+iit4_bit, 새 IIT4 코드 0줄. fix-1180 우회 old-driver build. $0
@@ -3921,7 +3921,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#30 — 축 A/R4 self: self-i-emergence (자기참조 'I'-고정점) (포그라운드 순차, "모두 순차" 드라이브 종료)
 
-- [x] **H_292 self-i-emergence-closure** 🟡 PARTIAL 5/6 (`UNIVERSE/state/h292_self_i_emergence_closure_2026_05_26/`) — AXES R4(self/identity) rank-5 `self-i-emergence` seed 소비
+- [x] **H_292 self-i-emergence-closure** 🟡 PARTIAL 5/6 (`HYPOTHESES/state/h292_self_i_emergence_closure_2026_05_26/`) — AXES R4(self/identity) rank-5 `self-i-emergence` seed 소비
 - [x] **발견 (위상-의존)**: 1인칭 'I' = 자기참조 닫힘(self-loop)의 자기일관 **고정점** 인가는 **base 위상 의존**. RING base 는 self-loop 가 비자명 'I'-state(s=1011) **창발**(#fixed 1→2 — 자기-원인 strange-loop, H_205 closure 최소실현) 但 STAR base 는 같은 self-loop 가 self-state(1111) **파괴**(#fixed 2→1). 자기참조는 'I'-state 를 만들 수도 없앨 수도 — base parity 구조가 결정. self-loop 는 통합 유지(big-Φ=0.5)
 - [x] **사전등록 정직성**: robustness falsifier F292.5(STAR 에서도 성립?)가 정확히 비-보편성 포착 → FAILED 그대로 보존(p-hacking 회피). 핵심(self-ref 가 'I'-fixed-point *만들 수 있다*)은 RING 실증, 보편/자동 아님. 5 PASS / 1 FAIL = 정직한 PARTIAL
 - [x] surface: README 104→105 H + H_292 행 · AXES R4 seed 제거 + top-15 rank-5 consumed · LIFE.md A1
@@ -3930,7 +3930,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#29 — 축 A/R2 social: ethic-emergence (협력 구조-창발) (포그라운드 순차)
 
-- [x] **H_291 ethic-emergence-cooperation** 🟢 SUPPORTED-conditional 7/7 (`UNIVERSE/state/h291_ethic_emergence_cooperation_2026_05_26/`) — AXES R2(social) rank-1 `ethic-emergence` seed 소비
+- [x] **H_291 ethic-emergence-cooperation** 🟢 SUPPORTED-conditional 7/7 (`HYPOTHESES/state/h291_ethic_emergence_cooperation_2026_05_26/`) — AXES R2(social) rank-1 `ethic-emergence` seed 소비
 - [x] **발견**: 협력(원시-윤리)이 공간 구조만으로 창발 — Nowak 공간 죄수딜레마: 같은 PD payoff 에서 b=1.1 격자는 협력 **100%**(C=1.0) vs matched well-mixed replicator 배신붕괴(7.9e-9). 주입 윤리/보상 0, 순수 국소 imitate-best → **윤리(협력)=cell+구조 창발, 주입 아님 (Principle #6 측정 사실)**
 - [x] ⚠ **조건부 (L1)**: 날카로운 temptation 임계 b∈(1.1,1.5] — b≥1.5 면 격자도 전배신(C=0). + self-interaction(Nowak canonical) 필수(없으면 b=1.1 에서도 붕괴, 첫 측정 boundary). 창발 *가능*하나 *자동 아님* — 구조+저-temptation+self-play 좁은 corner
 - [x] **method-correction 공개**: 첫 run (no self-interaction, b={1.3,1.85,2.5}) 전배신(C=0) → self-interaction 추가(Nowak 원본 모델) + 저-b sweep 으로 정정 (p-hacking 아닌 model-fidelity 수정, no-self 붕괴는 boundary L1 보존)
@@ -3939,7 +3939,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#28 — 축 A/R5 information: transfer entropy ∥ Φ — 정보-측도 arc 완성 (포그라운드 순차)
 
-- [x] **H_290 transfer-entropy-phi-correlate** 🟢 SUPPORTED-NUMERICAL 8/8 (`UNIVERSE/state/h290_transfer_entropy_phi_correlate_2026_05_26/`) — H_287 follow-up (정보-측도 arc capstone)
+- [x] **H_290 transfer-entropy-phi-correlate** 🟢 SUPPORTED-NUMERICAL 8/8 (`HYPOTHESES/state/h290_transfer_entropy_phi_correlate_2026_05_26/`) — H_287 follow-up (정보-측도 arc capstone)
 - [x] **발견**: faithful big-Φ 는 transfer entropy(방향성 요소-간 흐름)를 추종 (Pearson r=0.883, Spearman ρ=0.822). **정보-측도 arc 완성**: Shannon 엔트로피⊥Φ(H_287 0.363) · Kolmogorov LZ∥Φ(H_288 0.831) · transfer entropy∥Φ(H_290 0.883) → **Φ 는 요소-간 흐름/구조 복잡도와 정렬, 단일계 정보량(엔트로피) 아님**
 - [x] honest (L1): 이변량 TE 는 **XOR 시너지 맹점** — rule150/105 Φ=5.6 인데 TE_total=0 (XOR 통합은 i_t 만 조건화하는 쌍방향 TE 에 안 보임, multivariate/synergy 문헌 정합). 각 고전 측도 맹점: LZ=자기유사 rule90 over-predict, TE=시너지 XOR under-predict → **Φ 는 셋 중 어느 것과도 정확히 같지 않고 두 맹점을 모두 메움** (IIT 가 별도 양인 이유의 측정 사실)
 - [x] surface: README 102→103 H + H_290 행 · LIFE.md A1. engine 재사용(g61) eca_tpm+big_phi, 새 IIT4 코드 0줄. old-driver build 우회
@@ -3947,7 +3947,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#27 — 축 A/R5 information: 네트워크 위상 ∥ Φ (포그라운드 순차)
 
-- [x] **H_289 network-topology-scale-free-phi** 🟢 SUPPORTED-with-confound 4/4 (`UNIVERSE/state/h289_network_topology_scale_free_phi_2026_05_26/`) — AXES R5(information) `network-topology-scale-free` seed 소비
+- [x] **H_289 network-topology-scale-free-phi** 🟢 SUPPORTED-with-confound 4/4 (`HYPOTHESES/state/h289_network_topology_scale_free_phi_2026_05_26/`) — AXES R5(information) `network-topology-scale-free` seed 소비
 - [x] **발견**: 네트워크 *위상*이 faithful big-Φ 좌우 — matched 4-edge 에서 scale-free 허브(paw) Φ_mean=6.81 ≫ 분산 4-cycle 0.0 (parity dynamics, n=4). **edge 수 아닌 구조(cut-내성)가 통합 지배** (EMPTY 0→SF 6.81>K4 5.625, density 비단조). eca_tpm 을 임의 그래프(net_tpm parity)로 일반화
 - [x] ⚠ **honest confound (L1)**: 4-cycle Φ=0 은 parity-짝수고리 이분 decoupling(node0≡node2 업데이트 b1⊕b3, node1≡node3 b0⊕b2 → 중복노드/선형 reducible)이 큰 몫 → magnitude 가 허브에 과대-유리 + 정규 cycle≠random ER → "scale-free>random ER" 문자그대로는 약형만 검정. robust=약형(위상>density)
 - [x] toolchain: n=5(128 big_phi 호출) 너무 느려 SIGTERM 후 **n=4 full state-average**(lane 표준)로 재설계. old-driver build 우회 유지
@@ -3956,7 +3956,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 #### 2026-05-26 — cycle#26 — 축 A/R5 information: Φ ∥ Kolmogorov(LZ) 복잡도 (포그라운드 순차, "모두 순차" 지시)
 
-- [x] **H_288 kolmogorov-complexity-Φ** 🟢 SUPPORTED-NUMERICAL 9/9 (`UNIVERSE/state/h288_kolmogorov_complexity_phi_correlate_2026_05_26/`) — AXES R5(information) `kolmogorov-complexity-Φ` seed 소비
+- [x] **H_288 kolmogorov-complexity-Φ** 🟢 SUPPORTED-NUMERICAL 9/9 (`HYPOTHESES/state/h288_kolmogorov_complexity_phi_correlate_2026_05_26/`) — AXES R5(information) `kolmogorov-complexity-Φ` seed 소비
 - [x] **발견**: faithful big-Φ 는 Kolmogorov(LZ76 시공간) 복잡도를 **추종함** (10-룰 panel Pearson r=0.831, Spearman ρ=0.936). **H_287 과 핵심 대비**: 동일 panel 에서 Shannon 엔트로피 ⊥ Φ (r=0.363)였으나 LZ 복잡도 ∥ Φ (r=0.831) → Φ 는 *통계적 정보량*(비트 수)이 아니라 *알고리즘적 복잡도*(시공간 패턴 비압축성)와 같은 축. H_287+H_288 = 이중-측도 발견 완성
 - [x] honest caveat: rule90(Sierpinski 자기유사 LZ=0.24)이 Φ=0 → **LZ over-prediction witness** (필요조건 아닌 충분조건 부재, 동기화-死 H_285/265/275/279 정합). LZ 는 강한 상관자이나 동치 아님
 - [x] ⚠ **TOOLCHAIN 사건**: 세션 중 동시 hexa-lang 에이전트의 fix-1180 symlink 수술로 `hexa`(PATH)가 bare hexa-cc 로 회귀 → `hexa run`/`build -o` 가 소스를 **C codegen 으로 clobber** + import 미해소. 우회 = old-driver `hexa.real.bak-2026-05-22-pre-no-hxc build`(hexa_v2 transpiler 직접 호출). [[reference-life-cycle-hexa-run-gotchas]] 갱신 (canonical 소스는 /tmp 복사본으로 build, 원본 직접 build 금지)
@@ -3966,7 +3966,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 #### 2026-05-26 — cycle#25 — 축 A/R5 information: Φ ⊥ Shannon 엔트로피 (포그라운드 단일 라운드)
 
 - [x] `/cycle` 포그라운드 진행 (background fan-out 대신 단일 sequential 라운드, 사용자 "포그라운드진행" 지시) — 격리 worktree `life/cycle-fg-2026-05-26` @ origin/main (stale 워킹트리 차이 reconcile 선행: cycle#22-24 차이 확인)
-- [x] **H_287 shannon-entropy-Φ-correlate** 🔴 CLOSED-NEGATIVE (`UNIVERSE/state/h287_shannon_entropy_phi_correlate_2026_05_26/`, gate 11/11 PASS) — AXES R5(information) rank-2 seed 소비
+- [x] **H_287 shannon-entropy-Φ-correlate** 🔴 CLOSED-NEGATIVE (`HYPOTHESES/state/h287_shannon_entropy_phi_correlate_2026_05_26/`, gate 11/11 PASS) — AXES R5(information) rank-2 seed 소비
 - [x] **발견**: faithful big-Φ 는 Shannon 엔트로피로 **환원되지 않음** (10-룰 ECA panel Pearson r=0.363 < 0.5 → 환원가설 H1 기각). **이중 dissociation**: (i) 항등규칙 204·complement 51 = 출력엔트로피 *최대*(4.0bit, 완전 단사)인데 big-Φ=0(셀 독립) — 정보 최대/통합 제로 witness; (ii) 반대로 최고 통합 rule60(Φ_mean=13.625)은 엔트로피 *sub-max*(3.0bit). H=4.0 고정 영역에서 Φ 가 0→5.6 vertical spread = 단조관계 부재. **정보는 통합의 필요조건이나 충분조건 아님** — IIT 토대 구별이 LIFE lane 자기 substrate 에서 결정적 확증
 - [x] "X ⊥ Φ" 서명 계열(H_265 학습 dampen · H_275 cyclic<undir · H_279 attention)에 가장 근본적인 X = **Shannon 엔트로피** 추가. H_281 과 동일 substrate panel (110/30/54 vs 150/105 + 204/0 anchor)에 엔트로피 축 직교 검정
 - [x] engine 재사용 (g61): `HEXAD/IIT4/lib` 의 `eca_tpm`+`big_phi`(via stdlib/consciousness) — 새 IIT4 코드 0줄. 엔트로피·Pearson 은 generic stat inline. 실행 = `cd hexa-lang && HEXA_LANG=… HEXA_MEM_UNLIMITED=1 hexa run <worktree-abs>` (parent inline, throttle 우회)
@@ -4023,14 +4023,14 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 - [x] `/domain set LIFE` — 세션 active 도메인 LIFE 선택
 - [x] root `LIFE.md` SSOT 작성 — `@goal:` 선언 (11-domain 횡단 verify-driven cycle) + hub 표 (UNIVERSE README/CANDIDATES/AXES pointer) + 마일스톤 5건 시드
-- [x] 역할 분리 확정 — 루트 LIFE.md = 도메인 hub (goal + current milestones), `UNIVERSE/` = 가설 active working surface
+- [x] 역할 분리 확정 — 루트 LIFE.md = 도메인 hub (goal + current milestones), `HYPOTHESES/` = 가설 active working surface
 - [x] 마일스톤 5건 시드 (사용자 승인 대기) — Cycle #5 close / CANDIDATES B 6건 / CANDIDATES C 9건 / R1 promote / meta-map raster
 
 #### 2026-05-25 — cycle#14 — life-extended + division 6-seed 병렬
 
 - [x] `/cycle` 6-agent 병렬 fan-out (격리 worktree) — CANDIDATES §C runnable 6건, mirror-self-model SKIP (=H_220)
 - [x] H_258 mortality-salience SUPPORTED 3/3 (#472) · H_259 aging-senescence SUPPORTED 3/3 (#468) · H_260 contact-inhibition SUPPORTED 4/4 (#469) · H_261 embryogenesis-gradient SUPPORTED 4/4 (#470) · H_262 quorum-sensing SUPPORTED_FULL 4/4 (#474) · H_263 phoenix-rebirth 🔴 FALSIFIED 3/6 (#471)
-- [x] consolidation PR #476 — README 인덱스 +6행 (45→51 H) · CANDIDATES §C 全소비 · UNIVERSE/LIFE.log.md Cycle #14 엔트리
+- [x] consolidation PR #476 — README 인덱스 +6행 (45→51 H) · CANDIDATES §C 全소비 · HYPOTHESES/LIFE.log.md Cycle #14 엔트리
 - [x] CANDIDATES §C 全소비 완료 → 마일스톤 flip
 - [ ] 잔여: CANDIDATES B 6건 · D cross-link 2건 · AXES R1 promote · meta-map raster (다음 /cycle 후보)
 
@@ -4038,7 +4038,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 
 - [x] `/cycle` round-2 — §D cross-link 2(NEW) + §B follow-up 2(extend). 서버 rate-limit 2회(H_264/H_265 첫 발사 0-work) → 재시도 + 동시성 ~4 로 완주
 - [x] H_264 death=merge-into-other SUPPORTED 3/3 (#477) · H_265 trained-vs-bare CA Φ PARTIAL 2/3 (#480, Φ-dampen) · H_018 C2 organic-rate PASS (#479) · H_132 C2 longterm-stability PASS (#478)
-- [x] consolidation PR #481 — README 51→53 H + H_018/H_132 C2 반영 · CANDIDATES §D 全소비 · UNIVERSE/LIFE.log.md Cycle #15
+- [x] consolidation PR #481 — README 51→53 H + H_018/H_132 C2 반영 · CANDIDATES §D 全소비 · HYPOTHESES/LIFE.log.md Cycle #15
 - [x] CANDIDATES §D 全소비 + §B 2/6 → 마일스톤 flip
 - [x] 완료 worktree 10개 정리 (cycle#14 6 + cycle#15 4)
 - [ ] 잔여 마일스톤: Cycle#5 close · §B 4건(H_003 H3.5·H_007 C2·H_054 C2·H_002 C2) · AXES R1 promote · meta-map raster
@@ -4109,7 +4109,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] PILOT 실행 (`hexa run`, deterministic bit-identical 재현) → **🔴 FALSIFIED 2/6**: Pearson r=−0.277(음수) · Spearman ρ=0.08 · bootstrap 95% CI=[−0.638,+0.114] · permutation p=0.962 (NULL 붕괴 안 함) · existence Hc_912 8중 7만 통과(FAIL)
 - [x] **circularity guard PASS** (tautology=false, dissociation=true) — Φ≢E, 음의 결과는 circular artifact 아닌 진짜 dissociation. 주범 rule 51 period-2 blinker proxy pathology (variance-partition Φ=7 폭발 vs LZ floor 0.059)
 - [x] 핵심 발견: **cheap proxy Φ ↔ emergence(LZ) 정렬 안 함** — H_288 의 faithful big-Φ↔LZ(r=0.831)와 갈라짐. proxy vs faithful Φ 가 Φ↔emergence link 에서 상반된 답. "X⊥Φ" 서명(H_287/294) + proxy-fragility(H_268/269) 연장
-- [x] verbatim artifacts: `.verdicts/912_phi_emergence_correlate/{run_h912.txt,result.json}` + `.verdicts/h912-phi-emergence/` + `UNIVERSE/state/h912_phi_emergence_correlate_2026_06_02/`
+- [x] verbatim artifacts: `.verdicts/912_phi_emergence_correlate/{run_h912.txt,result.json}` + `.verdicts/h912-phi-emergence/` + `HYPOTHESES/state/h912_phi_emergence_correlate_2026_06_02/`
 - [ ] Next (CANDIDATES): C1 rule51 outlier 제거 재상관 · C2 faithful big-Φ paired 비교 · C3 emergence→Hoel causal-EI 교체 · C4 Kuramoto/logistic cross-family
 
 #### 2026-06-15 — metacognition × neuroscience/bio + savant campaign (H_1202–1216)
@@ -4180,14 +4180,14 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [~] H_1260 ⏳ PENDING-REAL ANIMA ⇄ EEG 텐션링크 (코드경로만 검증; 가짜 입력 결과는 불인정 — 실 헤드셋 대기)
 - [x] H_1261 🟢 AKIDA ⊗ MODEL 융합 (EEG 없는 페어) — AND-게이트 2키, 각 기질 기여, Ψ byte-identical. 3-외부기질 융합 그리드 완성 7/7.
 - [x] H_1262 🟢 풀스택 native 13 lane ⊗ 외부기질 2(AKIDA·MODEL) — 15 기질 단독 Ψ-disjoint 15/15 + 전체-ON Ψ==base + 전 fire. 닫힘정리 ⇒ 32767 격자. native 매트릭스 arc + 외부기질 arc 한 루프 동시합성 = 두 arc 통합 풀스택.
-- [x] H_1304 🟢 G5-dig: metacog under distribution SHIFT on the LIVE copy-or-abstain gate — FAIL-SAFE-ROBUST. WHY G5 THIN: H_1202 type-2 M-ratio 0.924 + H_1217 OOD-collapse measured the ByteGPT DECODER's softmax confidence; the ACTUAL G5 gate = immune copy-or-abstain (recon-err vs recall_thr 0.15). NEW angle (a_break_the_wall): shift ladder + fail-safe split on the REAL gate. STRUCTURAL finding: the gate's wrong-fire class is EMPTY (fab=0.000 every shift level) → type-2 AUROC undefined; byte-trigram+L2-affinity+tight 0.15 = near-exact-match = structurally fail-safe. Re-scored frozen-first (R1a, no bar moved, c9): R1 fail-safe-floor fab_max=0.000 · R2 graceful-degrade fire 1.000→0.004 monotone · R3 earned-abstain acc_fired=1.000 · R4 ctrl thr-ablate lure-fab full 0/4 vs ablate 4/4 · R5 ctrl shuffle-vals 0.015 → all PASS, 3 seeds. R2 engine-native CORE/h1304_*_probe.hexa byte-exact GREEN on live engine_cli.hexa (engine UNTOUCHED, smoke 43/0, h1196 7/0, h1205 PASS, Ψ untouched). Finding: G5 non-fabrication is STRONGER OOD than in-dist type-2 alone suggested — the dangerous confident-wrong-OOD mode is structurally absent. Decoder-side type-2 stays THIN (H_1217 unchanged). TOY/DIRECTIONAL-R1/byte-exact-R2; scale/real-paraphrase/semantic-shift UNVERIFIED. .verdicts/1304_metacog_ood_immune_abstain/ · UNIVERSE/cards/H_1304_metacog_ood_immune_abstain.md · CLAIMS.tape @C h1304.
+- [x] H_1304 🟢 G5-dig: metacog under distribution SHIFT on the LIVE copy-or-abstain gate — FAIL-SAFE-ROBUST. WHY G5 THIN: H_1202 type-2 M-ratio 0.924 + H_1217 OOD-collapse measured the ByteGPT DECODER's softmax confidence; the ACTUAL G5 gate = immune copy-or-abstain (recon-err vs recall_thr 0.15). NEW angle (a_break_the_wall): shift ladder + fail-safe split on the REAL gate. STRUCTURAL finding: the gate's wrong-fire class is EMPTY (fab=0.000 every shift level) → type-2 AUROC undefined; byte-trigram+L2-affinity+tight 0.15 = near-exact-match = structurally fail-safe. Re-scored frozen-first (R1a, no bar moved, c9): R1 fail-safe-floor fab_max=0.000 · R2 graceful-degrade fire 1.000→0.004 monotone · R3 earned-abstain acc_fired=1.000 · R4 ctrl thr-ablate lure-fab full 0/4 vs ablate 4/4 · R5 ctrl shuffle-vals 0.015 → all PASS, 3 seeds. R2 engine-native CORE/h1304_*_probe.hexa byte-exact GREEN on live engine_cli.hexa (engine UNTOUCHED, smoke 43/0, h1196 7/0, h1205 PASS, Ψ untouched). Finding: G5 non-fabrication is STRONGER OOD than in-dist type-2 alone suggested — the dangerous confident-wrong-OOD mode is structurally absent. Decoder-side type-2 stays THIN (H_1217 unchanged). TOY/DIRECTIONAL-R1/byte-exact-R2; scale/real-paraphrase/semantic-shift UNVERIFIED. .verdicts/1304_metacog_ood_immune_abstain/ · HYPOTHESES/cards/H_1304_metacog_ood_immune_abstain.md · CLAIMS.tape @C h1304.
 
 
 <a id="lifelogmd"></a>
 
 ### LIFE.log.md
 
-본 파일 = UNIVERSE/ 도메인의 **append-only chronological log**. 각 cycle =
+본 파일 = HYPOTHESES/ 도메인의 **append-only chronological log**. 각 cycle =
 `## Cycle #N — <H_id 또는 도메인> — YYYY-MM-DD` block. 본문 §Verdict 의
 latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history 보존.
 
@@ -4206,8 +4206,8 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 
 #### Cycle #0 — LIFE 도메인 개설 — 2026-05-23
 
-- **focus**: UNIVERSE/ 신규 dir 개설, `hypotheses_legacy_2026_05_15/` 에서 LIFE-관련 16건 carry-by-copy (원본 미수정 보존)
-- **change**: UNIVERSE/README.md (양식 + 16건 인덱스 + raw#12 컨벤션) 신규. LIFE.log.md (본 파일) 신규
+- **focus**: HYPOTHESES/ 신규 dir 개설, `hypotheses_legacy_2026_05_15/` 에서 LIFE-관련 16건 carry-by-copy (원본 미수정 보존)
+- **change**: HYPOTHESES/README.md (양식 + 16건 인덱스 + raw#12 컨벤션) 신규. LIFE.log.md (본 파일) 신규
 - **fire**: 없음 (개설 단계 · design-only)
 - **verdict**: lane-open · 16 H_XXX carry — H_002 (universe-origin · panpsychism precondition) / H_003 (life-origin · Phase 1 PARTIAL PASS) / H_004 (hard-problem · L3 panpsychism · Singularity-9) / H_007 (cellular-automaton) / H_012 (autopoietic-network) / H_018 (GENESIS) / H_025 (Dasein 죽음-자각) / H_029 (Dasein cluster) / H_030 (genesis cluster) / H_053 (Cambrian) / H_054 (Symbiogenesis) / H_071 (first-conversation) / H_090 (DASEIN/PHIL/ONTO/GENESIS individual) / H_132 (ce-frozen-cells · 세포분열 freeze) / **H_157 (★ Law 76 Mathematical Panpsychism · 범신론 · pre-register-frozen weak-form supported)** / H_171 (biological 4-falsifiable · K=8 atom)
 - **next**: cycle #1 선택 — (a) H_157 strong-form C2 (170-type META-CA reproducibility) measurement / (b) H_003 H3.2 multi-pathway abiogenesis simulation / (c) H_025 죽음-자각 anima-internal falsifier 설계 / (d) H_054 symbiogenesis × mitosis_hook cross-link cycle / (e) 신규 H seed (사용자 directive 대기)

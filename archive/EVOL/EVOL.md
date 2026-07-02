@@ -23,7 +23,7 @@
 - ⇄ [BRAIN](../BRAIN.md): 뇌 substrate 자매 (mammal-tier toy proxy 의 anchor)
 - ⇄ [HIVE-MIND](../HIVE-MIND.md): collective evolution self 자매 (EQM-1 quorum-mind seed)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): 검증 결과 환류 SSOT
 
 ## 쉬운 버전
 전체 활용 아이디어 카탈로그(친근 7-요소) → [EVOL.easy.md](./EVOL.easy.md)

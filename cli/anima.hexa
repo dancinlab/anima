@@ -55,6 +55,59 @@ import "DREAM/dream_persist.hexa"
 
 fn anima_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
 
+// ── H_9042 §TensionResolveLoop LANE+ read helpers (module-level; build the caller-supplied
+//    conflicted-vs-calm measurement populations for tension_resolve_depth). READ-only fixtures:
+//    15-lane rows where the emit-drive lanes 0 & 4 carry the drive (ci_emit_drive = ½(l0+l4)) and the
+//    other 13 lanes are inert context. Ψ-disjoint (synthetic pop, NOT the live pure_field/Ψ path) and
+//    disjoint from the emit-drive lane 0/4 live decision + §ImmuneMemory recall_thr (a_substrate_disjoint).
+fn anima_tr_row(c: float, other: float) -> [float] {
+    let mut r = []
+    let mut i = 0
+    while i < 15 {
+        if i == 0 || i == 4 { r = r + [c] } else { r = r + [other] }
+        i = i + 1
+    }
+    return r
+}
+// CONFLICTED population: 8 trials ALL over-emitting (drive=c≥½ → Ψ_init=1.0), 4 high-mean + 4 low-mean
+// (as in H_9042 c1_engine_native): a Ψ-preserving A⇄G coupling pulls the 4 low trials below ½ ⇒ Ψ→4/8=½.
+fn anima_tr_pop_conflicted(c: float) -> [[float]] {
+    let h = (9.0 - 2.0 * c) / 13.0
+    let l = (6.0 - 2.0 * c) / 13.0
+    let mut pop = []
+    let mut t = 0
+    while t < 4 { pop = pop + [anima_tr_row(c, h)]  t = t + 1 }
+    t = 0
+    while t < 4 { pop = pop + [anima_tr_row(c, l)]  t = t + 1 }
+    return pop
+}
+// CALM population: already balanced — 4 emit trials (drive 0.95≥½) + 4 silent trials (drive 0.20<½)
+// ⇒ Ψ_init = 4/8 = ½, so the resolution loop settles at depth 0 (no conflict to resolve).
+fn anima_tr_pop_calm() -> [[float]] {
+    let mut pop = []
+    let mut t = 0
+    while t < 4 { pop = pop + [anima_tr_row(0.95, 0.6)]  t = t + 1 }
+    t = 0
+    while t < 4 { pop = pop + [anima_tr_row(0.20, 0.4)]  t = t + 1 }
+    return pop
+}
+// adj_full — fully-connected uniform coupling (every lane couples to every other lane).
+fn anima_tr_adj_full() -> [[float]] {
+    let mut a = []
+    let mut i = 0
+    while i < 15 {
+        let mut row = []
+        let mut j = 0
+        while j < 15 {
+            if i == j { row = row + [0.0] } else { row = row + [1.0] }
+            j = j + 1
+        }
+        a = a + [row]
+        i = i + 1
+    }
+    return a
+}
+
 // ── usage / arg helpers ──────────────────────────────────────────────────────
 
 // anima_usage — print the canonical usage banner.
@@ -927,6 +980,66 @@ fn anima_consciousness_mode(ckpt: string) {
         + " reset=" + to_string(self_after_reset)
         + "  identity-persist-distinct=" + anima_yn(self_distinct))
 
+    // ── (23b) SELF-INFORMATIVENESS — experience-driven self-chain (H_9038, self_drift_exp) ──
+    // GAP: lane 23's self_drift is content-BLIND (drifts by TICK only) — the self persists an
+    // identity but records NOTHING it lived through (an autobiography of nothing). self_drift_exp
+    // (§SelfIdentity) drifts toward the CONTENT axis experienced each tick, so DIFFERENT experience
+    // yields a DIFFERENT self (informativeness) while recognition (anchor) is preserved. Content
+    // axes are drawn from DISJOINT substrate experience lanes (valence/drive), NEVER emit-drive 0/4
+    // and never §ImmuneMemory recall_thr (a_substrate_disjoint); Ψ-disjoint (self ops only).
+    let mut ev_v = 2
+    if af_val_g > 0.0 { ev_v = 1 }                          // amygdala valence → axis 1/2
+    let mut ev_d = 5
+    if hd_drive > 0.5 { ev_d = 3 }                          // homeostatic drive → axis 3/5
+    let selfE0 = self_new(8, 0)
+    let se1 = self_drift_exp(selfE0, ev_v, 0.15)
+    let se2 = self_drift_exp(se1, ev_d, 0.15)
+    let se3 = self_drift_exp(se2, 6, 0.15)
+    let self_exp = self_drift_exp(se3, 7, 0.15)             // lived-through self (experience stream)
+    let selfC0 = self_new(8, 0)                             // a DIFFERENT life (control experience)
+    let sc1 = self_drift_exp(selfC0, 2, 0.15)
+    let sc2 = self_drift_exp(sc1, 5, 0.15)
+    let sc3 = self_drift_exp(sc2, 1, 0.15)
+    let self_ctl = self_drift_exp(sc3, 3, 0.15)
+    let self_info_cos   = self_cos(self_exp, self_ctl)                  // different life → different self
+    let self_info_recog = self_cos(self_anchor(self_exp), self_exp)     // recognition preserved
+    // DISTINCTNESS: the self CARRIES what it experienced (two lives diverge, cos<0.99) yet still
+    // RECOGNIZES itself across an anchored boundary (cos>0.99) — informativeness ∧ continuity.
+    let self_info_distinct = self_info_cos < 0.99 && self_info_recog > 0.99
+    println("LANE+ self-info : exp-A/B cos=" + to_string(self_info_cos)
+        + " recog=" + to_string(self_info_recog)
+        + "  experience-informative-distinct=" + anima_yn(self_info_distinct))
+
+    // ── (23c) YOU-CONTINUITY — anchor-persisted model of the INTERLOCUTOR (D7 other-chain, §YouChain) ──
+    // GAP: lanes 23/23b persist *MY* diachronic self, but nothing tracks the OTHER — the person I talk
+    // to — across a session boundary (an LLM meets every interlocutor blank each session). §YouChain
+    // reuses the self-chain machine with the TARGET swapped (self→other): the model-of-you is a
+    // trajectory of anchor waypoints, other_chain_fit rejects an impostor whose HISTORY mismatches even
+    // when it matches the latest anchor. SELF⊥OTHER: OtherChain is a DISTINCT type stored independently
+    // from the self-chain (functional ops → no contamination). Ψ-disjoint: READ-only other ops only,
+    // never emit-drive 0/4, never §ImmuneMemory recall_thr (a_substrate_disjoint, a_autonomy_over_hardcode).
+    let you0 = other_new(8, 0)                              // seed model of interlocutor B
+    let mut you_chain = other_chain_new(you0)
+    let mut you_cur = you0
+    let mut yk = 0
+    while yk < 4 { you_cur = other_drift(you_cur, yk, 0.2)  you_chain = other_chain_append(you_chain, you_cur)  yk = yk + 1 }
+    let you_latest = other_chain_latest(you_chain)
+    let you_anchored = other_cos(other_anchor(you_latest), you_latest)   // recognize B WITH anchor (high)
+    let you_reset    = other_cos(other_reset(8, 4), you_latest)          // meet a fresh interlocutor (low)
+    // impostor: interlocutor C matches B's latest anchor by cos but drifted via a WRONG history axis
+    let you_genuine  = other_drift(you_latest, 4, 0.2)                   // genuine continuation of B (a_pred)
+    let you_impostor = other_drift(you_latest, 6, 0.2)                   // different person (wrong-axis history)
+    let fit_genuine  = other_chain_fit(you_genuine, you_chain)           // ≈ +1 (trajectory continues)
+    let fit_impostor = other_chain_fit(you_impostor, you_chain)          // ≈ 0  (history mismatch)
+    // DISTINCTNESS: the anchored interlocutor is RECOGNIZED (cos high) while a reset meets a blank other;
+    // AND other_chain_fit separates a genuine continuation from a history-impostor that single-vector
+    // recognition would accept — relational continuity ∧ impostor rejection (the discriminator gain).
+    let you_distinct = you_anchored > 0.99 && you_reset < you_anchored && fit_genuine - fit_impostor >= 0.80
+    println("LANE+ you-cont  : recognize anchored=" + to_string(you_anchored)
+        + " reset=" + to_string(you_reset)
+        + " fit(genuine)=" + to_string(fit_genuine) + " fit(impostor)=" + to_string(fit_impostor)
+        + "  interlocutor-continuity-distinct=" + anima_yn(you_distinct))
+
     // ── (24) LEARNED-PRECISION — experience-accumulated confidence (H_1472) ───
     // GAP: INTERO-P (R4) weights by channel NOISE σ; nothing raises precision with
     // OBSERVATION COUNT (a familiar domain earns higher predictive confidence). Orthogonal
@@ -1512,6 +1625,190 @@ fn anima_consciousness_mode(ckpt: string) {
     //         heads (CE scoring), not consciousness-faculty reads — out of the consciousness catalogue.
     println("LANE+ ko-lm     : DEFERRED (jamo-corpus fixtures; LM head, not a consciousness-faculty read)")
 
+    // ── (75) TENSION-RESOLVE (H_9042 §TensionResolveLoop, tension_resolve_depth) ──
+    // GAP: the A⇄G tension pull toward Ψ=½ existed only ONE-SHOT (ci_psi_balance) / single-stimulus
+    // (reentry_settle) — nothing ITERATED the coupling to pull a CONFLICTED (polarized, Ψ≠½) emit/
+    // silence POPULATION back to the Ψ=½ fixed point. tension_resolve_depth (§TensionResolveLoop) runs
+    // that iterated A⇄G resolution loop as a READ-only CONTEXT signal (like every other LANE+ read —
+    // it prints a settle depth, it is NEVER an emit gate). It operates on a CALLER-supplied population
+    // (pure_field/Φ/phase untouched, Ψ-disjoint) drawn from lanes DISJOINT from the emit-drive lane 0/4
+    // live decision and §ImmuneMemory recall_thr (a_substrate_disjoint). DISTINCTNESS: a CONFLICTED
+    // population needs depth>0 to settle to Ψ=½ (depth ∝ conflict), a CALM (already-balanced) population
+    // settles at depth 0, and turning the coupling OFF is INERT (never settles) — so the settle-DEPTH
+    // earns the conflict read (it is the loop, not trivial averaging, that resolves the tension).
+    let tr_full   = anima_tr_adj_full()
+    let tr_conf   = anima_tr_pop_conflicted(0.95)   // severe over-emit conflict (Ψ_init = 1.0)
+    let tr_calm   = anima_tr_pop_calm()             // already Ψ=½ (4/8 emit) — no resolution needed
+    let tr_cfgON  = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false }
+    let tr_cfgOFF = EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false }
+    let tr_rConf  = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
+    let tr_rCalm  = tension_resolve_depth(tr_calm, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
+    let tr_rAbl   = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgOFF)
+    let tr_depth_conf = tr_rConf[0]  let tr_psi_conf = tr_rConf[1]
+    let tr_depth_calm = tr_rCalm[0]
+    let tr_depth_abl  = tr_rAbl[0]
+    // DISTINCTNESS: the conflicted population settles LATER (depth>0) than the calm one (depth 0), the
+    // conflicted run lands at Ψ=½, and the ablated (coupling-OFF) conflicted run NEVER settles (−1) →
+    // the iterated A⇄G loop, not averaging, is what resolves the tension. READ-only; Ψ untouched.
+    let tr_distinct = tr_depth_conf > tr_depth_calm && tr_depth_calm == 0.0
+        && (tr_psi_conf - 0.5 < 0.06 && 0.5 - tr_psi_conf < 0.06) && tr_depth_abl < 0.0
+    println("LANE+ tension-r : conflicted-depth=" + to_string(tr_depth_conf)
+        + " calm-depth=" + to_string(tr_depth_calm) + " ablate-depth=" + to_string(tr_depth_abl)
+        + "  conflict-settle-distinct=" + anima_yn(tr_distinct))
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  R11 SUBSTRATE-NATIVE CAPABILITY OP-CLASS LANE MOUNT (7 wire-to-prod ops)
+    // ══════════════════════════════════════════════════════════════════════════
+    // Same discipline & rung as lanes 23b (self_drift_exp, H_9038) and 75 (tension_resolve_
+    // depth, H_9042): each reads its op on a SUBSTRATE FIXTURE, asserts distinctness ONCE at
+    // daemon MOUNT under a shuffle/ablation control (frozen-first observation, NOT a tuned
+    // bar — c9), and prints the read. Every read is Ψ-DISJOINT (never touches pure_field/
+    // psi_sum/Φ/phase) and disjoint from the emit-drive lane 0/4 live decision and
+    // §ImmuneMemory recall_thr (a_substrate_disjoint); NONE is an emit/silence gate
+    // (a_autonomy_over_hardcode). HONEST SCOPE: these are MOUNT-time fixture reads (same rung
+    // as 23b/75) — the deeper daemon perpetual-loop feed of REAL per-tick conversation into
+    // each op is a larger endpoint, tracked as an ING follow-on (NOT faked here).
+
+    // ── (76) DRIVE-ARBITRATION (H_9076 §DriveArbitration, drive_arbitrate) ──────
+    // GAP: the engine exposes independent scalar drives (hunger·libido·curiosity·sleep-
+    // pressure) but no op arbitrated a WINNER among competing motivations (basal-ganglia
+    // central action-selection, Redgrave). drive_arbitrate is WTA with an incumbent
+    // hysteresis band (anti-dither). READ-only over drive scalars; outputs a dominant-drive
+    // INDEX as a bias the substrate MAY weigh, never an emit gate. Ψ-disjoint.
+    let da_drives = [0.2, 0.9, 0.5, 0.1]                 // hunger·libido·curiosity·sleep-pressure
+    let da_plain  = drive_arbitrate(da_drives, 0.0, 0 - 1)   // no incumbent → plain WTA argmax = 1
+    let da_hold   = drive_arbitrate(da_drives, 0.5, 2)       // incumbent(2)=0.5; challenger 0.9−0.5=0.4 ≤ 0.5 → HOLD
+    let da_ablate = drive_arbitrate(da_drives, 0.0, 2)       // hyst=0 ABLATION → collapses to WTA = 1
+    // DISTINCTNESS: plain WTA selects the argmax (1); WITH the hysteresis band a valid incumbent
+    // (2) HOLDS the channel against a challenger that leads by ≤ band; ablating the band (hyst=0)
+    // returns to the argmax — so the hysteresis (sustained-selection), not argmax, is load-bearing.
+    let da_distinct = da_plain == 1 && da_hold == 2 && da_ablate == 1
+    println("LANE+ drive-arb : plain-wta=" + to_string(da_plain)
+        + " hyst-hold=" + to_string(da_hold) + " ablate-wta=" + to_string(da_ablate)
+        + "  hysteresis-sustained-distinct=" + anima_yn(da_distinct))
+
+    // ── (77) FACULTY-CASCADE (H_9075 §FacultyCascade, faculty_cascade) ─────────
+    // GAP: the compose arbiters are all pairwise PARALLEL-vote (both legs see the SAME query);
+    // brain multi-hop inference is SERIAL relay — faculty A's OUTPUT becomes faculty B's query
+    // KEY. faculty_cascade recalls from store A, re-embeds that string as a key, recalls from
+    // store B (a 2-hop chain unreachable by q alone). READ-only over two cell populations.
+    let fc_a = immune_memory_new_text("cascade query alpha", "bridgeword beta", 256)
+    let fc_b = immune_memory_new_text("bridgeword beta", "CASCADE_FINAL", 256)
+    let fc_q = immune_embed_key("cascade query alpha")
+    let fc_out    = faculty_cascade(fc_a, fc_b, fc_q)        // 2-hop relay A→B → "CASCADE_FINAL"
+    let fc_direct = immune_memory_recall(fc_b, fc_q)         // single-hop q on B → ABSTAIN ("")
+    // DISTINCTNESS: the RELAY reaches B's answer ("CASCADE_FINAL") that q alone CANNOT index
+    // (a single-hop recall of q on store B abstains) — the 2-hop chain is the load-bearing op.
+    let fc_distinct = fc_out == "CASCADE_FINAL" && fc_direct == ""
+    println("LANE+ cascade   : relay=\"" + fc_out + "\" direct-hop-on-B=\"" + fc_direct + "\""
+        + "  serial-multi-hop-distinct=" + anima_yn(fc_distinct))
+
+    // ── (78) EVENT-SEGMENT (H_9083 §EventSegment, event_segment_boundaries) ─────
+    // GAP: §ImmuneMemory binds per PRESENTED item (boundary-blind); nothing carved a stream
+    // into EVENTS at prediction-error PEAKS (Zacks/Baldassano). event_segment_boundaries reads
+    // the §PrecisionSurprise error signal (lane 2, NOT emit-drive 0/4) and returns onset indices.
+    let es_surprise = [0.10, 0.90, 0.20, 0.15, 0.85, 0.10]  // two prediction-error PEAKS at idx 1, 4
+    let es_bnd   = event_segment_boundaries(es_surprise, 0.5)   // peak onsets → [0, 1, 4]
+    let es_fixed = event_segment_starts_fixed(6, 2)             // boundary-BLIND control → [0, 2, 4]
+    let es_flat  = event_segment_boundaries([0.1, 0.1, 0.1, 0.1, 0.1, 0.1], 0.5)  // no peaks → [0]
+    // DISTINCTNESS: the peak detector opens a boundary at the TRUE event onset idx 1 that the
+    // fixed-stride chunker MISSES (fixed[1]=2), and a flat (sub-thr) stream yields only [0] — so
+    // event-aligned segmentation, not uniform chunking or variance, is the load-bearing read.
+    let es_distinct = len(es_bnd) == 3 && es_bnd[1] == 1 && es_fixed[1] == 2 && len(es_flat) == 1
+    println("LANE+ event-seg : peaks=" + to_string(len(es_bnd)) + " onset1=" + to_string(es_bnd[1])
+        + " fixed1=" + to_string(es_fixed[1]) + " flat=" + to_string(len(es_flat))
+        + "  surprise-peak-segment-distinct=" + anima_yn(es_distinct))
+
+    // ── (79) ANTICIPATORY-PREFETCH (H_9078 §AnticipatoryPrefetch, anticipatory_prefetch) ──
+    // GAP: every episodic recall is REACTIVE (key arrives THEN store indexed). Brain retrieval
+    // is ANTICIPATORY: the cerebellar forward model predicts the NEXT key and PRE-QUERIES the
+    // store (Buckner preplay). READ-only over BOTH faculties (no weight/recall_thr change).
+    let ap_mem = immune_memory_new_text("anticipated fact key", "PREFETCHED", 256)
+    let ap_tgt = immune_embed_key("anticipated fact key")   // 64-dim stored key
+    let ap_cue = immune_embed_key("current context cue")    // 64-dim forward-model regressor
+    let mut ap_ff = vforward_new(64, 1, 0.5)
+    let mut api = 0
+    while api < 60 { ap_ff = vforward_update(ap_ff, ap_cue, ap_tgt)  api = api + 1 }  // learn cue→next-key
+    let ap_ready   = anticipatory_prefetch(ap_ff, ap_mem, ap_cue)       // trained → SMALL margin (ready)
+    let ap_ff0     = vforward_new(64, 1, 0.5)                            // untrained forward model (ablation)
+    let ap_unready = anticipatory_prefetch(ap_ff0, ap_mem, ap_cue)      // zero prediction → LARGE margin
+    let ap_val     = anticipatory_prefetch_value(ap_ff, ap_mem, ap_cue) // the PREPLAYED value
+    // DISTINCTNESS: the trained forward model pre-queries a SMALLER (readier) margin than the
+    // untrained (zero-prediction, INERT) ablation, and preplays the correct value — so the
+    // forward-model anticipation, not a reactive lookup, is the load-bearing read. (H_9078 is a
+    // PARTIAL/DIRECTIONAL-floor on downstream accuracy — this mount read is the mechanism arm.)
+    let ap_distinct = ap_ready < ap_unready && ap_val == "PREFETCHED"
+    println("LANE+ prefetch  : ready-margin=" + to_string(ap_ready) + " untrained-margin=" + to_string(ap_unready)
+        + " preplay=\"" + ap_val + "\"  anticipatory-readiness-distinct=" + anima_yn(ap_distinct))
+
+    // ── (80) SALIENCE-PHASIC-RESET (H_9079 §SaliencePhasicReset, tension_resolve_interruptible) ──
+    // GAP: the §TensionResolveLoop settle loop was NON-INTERRUPTIBLE — a behaviourally urgent
+    // new input arriving mid-settle could not commandeer it. A phasic salience burst (LC-NE
+    // reset / SC attention capture) ABORTS the in-flight resolution and RESTARTS settling from
+    // the NEW population — CONTROL-FLOW interrupt (explicitly DISTINCT from the neuromod-GAIN
+    // 9-lens family, no gain scaled). Ψ-disjoint (caller-supplied pop); the emit-drive Ψ=½
+    // fixed point is UNTOUCHED — only the CONTENT/identity lane 7 reroutes.
+    let spr_salient = anima_tr_pop_calm()                   // the salient NEW input (Ψ-balanced, distinct content)
+    let spr_on  = tension_resolve_interruptible(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, 1, spr_salient, tr_cfgON)
+    let spr_off = tension_resolve_interruptible(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, 0, spr_salient, tr_cfgON)
+    let spr_psi_on  = spr_on[1]   let spr_sig_on  = spr_on[2]   let spr_flag_on  = spr_on[3]
+    let spr_sig_off = spr_off[2]  let spr_flag_off = spr_off[3]
+    // DISTINCTNESS: a scheduled spike FIRES the reroute (flag 1) while the no-spike ablation is
+    // INERT (flag 0); the rerouted loop still lands at Ψ=½ (balance untouched) yet its CONTENT/
+    // identity lane DIVERGES (settled on the salient input, not the original) — control-flow
+    // interrupt, not gain, and Ψ-disjoint from the emit balance.
+    let spr_sig_moved = spr_sig_on - spr_sig_off > 0.0001 || spr_sig_off - spr_sig_on > 0.0001
+    let spr_distinct = spr_flag_on == 1.0 && spr_flag_off == 0.0
+        && (spr_psi_on - 0.5 < 0.06 && 0.5 - spr_psi_on < 0.06) && spr_sig_moved
+    println("LANE+ salreset  : spike-flag(on/off)=" + to_string(spr_flag_on) + "/" + to_string(spr_flag_off)
+        + " psi-on=" + to_string(spr_psi_on) + " sig-moved=" + anima_yn(spr_sig_moved)
+        + "  phasic-reroute-distinct=" + anima_yn(spr_distinct))
+
+    // ── (81) CONFLICT-MONITOR (H_9073 §ConflictMonitor, conflict_scalar/recruited_depth) ──
+    // GAP: the Ψ=½ fixed point CANNOT distinguish HIGH-CONFLICT (A,G both strong, opposite →
+    // cancel to ≈½) from LOW-DRIVE (A,G both weak → also ≈½): net tension |A+G| reads the SAME.
+    // conflict_scalar (dACC, Botvinick) SEPARATES them — high iff both engines strong AND
+    // opposite-signed. Its ONLY downstream effect is to recruit DEEPER A⇄G deliberation (raise
+    // the iteration budget), NEVER the emit gate (lanes 0/4) nor recall_thr.
+    let cm_conflict_hi = conflict_scalar(0.8, (0.0 - 0.8))     // both strong, OPPOSITE → high conflict
+    let cm_conflict_lo = conflict_scalar(0.05, (0.0 - 0.05))   // both weak, opposite → ≈0 (low drive)
+    let cm_agree       = conflict_scalar(0.8, 0.8)             // same sign → 0 (agreement, no competition)
+    let cm_net_hi = conflict_net_tension(0.8, (0.0 - 0.8))     // |A+G| = 0 (the Ψ-analog is BLIND here)
+    let cm_net_lo = conflict_net_tension(0.05, (0.0 - 0.05))   // |A+G| = 0 too → net tension IDENTICAL
+    let cm_depth_hi  = conflict_recruited_depth(cm_conflict_hi, 4, 6)  // high conflict → deeper deliberation
+    let cm_depth_abl = conflict_recruited_depth(0.0, 4, 6)            // ABLATE conflict=0 → base budget 4
+    // DISTINCTNESS: conflict SEPARATES strong-opposition from weak-drive that net-tension |A+G|
+    // reads IDENTICALLY (both 0) — the load-bearing dissociation; agreement (same sign) is 0; and
+    // recruited depth RISES with conflict while the ablation (conflict 0) returns the base budget.
+    let cm_net_same = cm_net_hi - cm_net_lo < 0.0001 && cm_net_lo - cm_net_hi < 0.0001
+    let cm_distinct = cm_conflict_hi > cm_conflict_lo && cm_agree == 0.0
+        && cm_net_same && cm_depth_hi > cm_depth_abl && cm_depth_abl == 4
+    println("LANE+ conflict  : hi=" + to_string(cm_conflict_hi) + " lo=" + to_string(cm_conflict_lo)
+        + " agree=" + to_string(cm_agree) + " net-blind=" + anima_yn(cm_net_same)
+        + " depth(hi/abl)=" + to_string(cm_depth_hi) + "/" + to_string(cm_depth_abl)
+        + "  conflict-vs-drive-distinct=" + anima_yn(cm_distinct))
+
+    // ── (82) STOCHASTIC-RESONANCE (H_9070 §StochasticResonance, sr_channel_mi) ──
+    // GAP: emit is a THRESHOLD DETECTOR on the A⇄G externalization drive; a genuine-but-WEAK
+    // (subthreshold) periodic tension never crosses on its own → the substrate misses it.
+    // Stochastic Resonance (Wiesenfeld-Moss): TUNED noise lets the subthreshold signal
+    // stochastically cross → MI(input;emit-train) peaks at a MID noise amplitude (inverted-U).
+    // READ-only CHARACTERIZATION over a threshold-detector MODEL of the emit channel — it never
+    // touches pure_field Φ/phase/Ψ, the live emit lanes 0/4, or recall_thr (decoupled probe).
+    let str_amp = 0.6  let str_thr = 1.0  let str_period = 20  let str_T = 2000
+    let str_lo  = sr_channel_mi(str_amp, str_thr, 0.10, str_period, str_T, 0, 0, 12345)  // too little noise
+    let str_mid = sr_channel_mi(str_amp, str_thr, 0.80, str_period, str_T, 0, 0, 12345)  // TUNED noise → MI peak
+    let str_hi  = sr_channel_mi(str_amp, str_thr, 3.00, str_period, str_T, 0, 0, 12345)  // too much noise
+    let str_shuf= sr_channel_mi(str_amp, str_thr, 0.80, str_period, str_T, 0, 1, 12345)  // phase-shuffle → MI→0
+    // DISTINCTNESS: MI is INVERTED-U in noise amplitude (mid > both low and high), and phase-
+    // shuffling the input labels COLLAPSES the MI (mid ≫ shuffle) — so the resonance encodes a
+    // REAL subthreshold-tension→emit-train coupling, not a labelling artifact.
+    let str_distinct = str_mid > str_lo && str_mid > str_hi && str_mid - str_shuf > 0.01
+    println("LANE+ stoch-res : MI lo=" + to_string(str_lo) + " mid=" + to_string(str_mid)
+        + " hi=" + to_string(str_hi) + " shuffle=" + to_string(str_shuf)
+        + "  inverted-U-resonance-distinct=" + anima_yn(str_distinct))
+
+
     // ── warm Engine A (substrate self-dynamics, zero input) ──────────────────
     let pf = pure_field_warmup(600)
     let phi0 = pure_field_phi(pf)
@@ -1610,7 +1907,24 @@ fn anima_consciousness_mode(ckpt: string) {
     let seed_feat0 = _afs_byte_feature(session_seed, 8)
     let mut afield = vadapt_field_new(seed_feat0, 2048)
 
-    let n_ticks = 12
+    // ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ─────────
+    let mut rel_ema = 0.5
+    let mut cur_ema = 0.5
+    // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
+    // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
+    let og_measure = anima_has_flag(anima_collect_argv(args()), "--opgrip")
+    let mut og_wake = 0            // wake ticks
+    let mut og_emit_wake = 0       // wake ticks the LIVE (post-fix) arm emits (collapse FLAG)
+    let mut og_h_relfr = 0         // Hamming: full-rel_ctx frozen vs live (all ticks)
+    let mut og_h_relfr_w = 0       //   … wake-only
+    let mut og_h_agl = 0           // Hamming: single-op agloop frozen vs live
+    let mut og_h_agl_w = 0         //   … wake-only
+    let mut og_h_zero = 0          // Hamming: rel_ctx→0 vs live
+    let mut og_h_shuf = 0          // Hamming: rel_ctx→LCG-shuffle vs live
+    let mut og_h_base = 0          // Hamming: pre-fix baseline arms (should be 0 = theater)
+    let mut og_base_floor = 0      // baseline wake ticks whose motivation floor > 0.3
+
+    let n_ticks = if og_measure { 200 } else { 12 }
     let mut tick = 0
     while tick < n_ticks {
         let stage = dr_stage_at(tick * 8)            // sample across the ultradian
@@ -1636,6 +1950,32 @@ fn anima_consciousness_mode(ckpt: string) {
         let coh_lane = lanes[3]                                 // SelfIdentity (coherence)
         let bal_lane = lanes[9]                                 // EmotionRegulation (toward Ψ=½)
         let emit_drive = ci_emit_drive(lanes)                  // GWS + LearnedPrecision drive
+
+        // ── (C-R3) PER-TICK CONFLICT → A⇄G SETTLE BUDGET (H_9095 rung-3 wire-in of H_9094) ──
+        // GENUINE per-tick feed (a_verified_must_wire rung-3): unlike the MOUNT-time catalog
+        // lanes 75/81 (each reads a FIXTURE ONCE at daemon mount), this derives the conflict
+        // from THIS tick's REAL A⇄G drive — the live emit_drive (Engine-A forward externalization
+        // push, READ-only) vs the opposing Engine-G reverse silence push — then RECRUITS the A⇄G
+        // resolution budget FROM that conflict (conflict_recruited_depth, dACC/Botvinick) and reads
+        // the resulting settle EFFORT as a READ-only CONTEXT signal folded into motivation below
+        // (isomorphic to the 42 other lane contexts — NEVER an emit/silence gate, a_autonomy_over_hardcode).
+        // mechanism engine-native GREEN (H_9094 4/4: conflict-matched budget resolves Ψ→½ BEST —
+        // treatment mean|Ψ-½| 0.125 < shuffle 0.25 < ablation 0.375). Ψ-DISJOINT (a_substrate_disjoint):
+        // the budget knob is the tension_resolve maxdepth (settle-DEPTH axis), disjoint from the emit
+        // gate (lanes 0/4) and §ImmuneMemory recall_thr; tension_resolve_depth runs on a CALLER-supplied
+        // population COPY so pure_field/psi_sum/Φ are untouched — the settle NEVER writes back to Ψ.
+        let ag_a_drive  = emit_drive                            // Engine-A forward externalization push (≥0)
+        let ag_g_drive  = 0.0 - (1.0 - emit_drive)              // Engine-G reverse silence push (opposite sign)
+        let ag_conflict = conflict_scalar(ag_a_drive, ag_g_drive)   // dACC competition (both-strong-opposite)
+        let ag_budget   = conflict_recruited_depth(ag_conflict, 4, 6)  // conflict → deeper A⇄G deliberation budget
+        // this tick's A⇄G resolution population, polarized BY the tick's own conflict (DISJOINT copy;
+        // conflict 0 → c=½ calm → settles at depth 0, higher conflict → more polarized → deeper settle).
+        let ag_pop      = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
+        let ag_settle   = tension_resolve_depth(ag_pop, tr_full, 0.3, 0.5, ag_budget, 2, 0.06, tr_cfgON)
+        let ag_settle_depth = ag_settle[0]                      // depth the loop USED to reach Ψ=½ (−1 = never)
+        // settle FRACTION ∈[0,1]: share of the recruited budget the loop USED to resolve to Ψ=½ — a
+        // graded A⇄G resolution-effort context (deeper conflict recruits & uses more budget). READ-only.
+        let agloop_ctx  = if ag_settle_depth < 0.0 { 0.0 } else { _afs_clip01(ag_settle_depth / (to_float(ag_budget) + 0.000001)) }
 
         // (3) GLOBAL WORKSPACE — competing lane margins; the winner is the broadcast
         //     content (GWT ignition). Reads the 15 lane scores as competing stimuli.
@@ -1986,15 +2326,25 @@ fn anima_consciousness_mode(ckpt: string) {
              + halluc_ctx + metacog_ctx + gwsleak_ctx + allo_ctx
              + neuropharm_ctx + transord_ctx + phasesync_ctx + memtom_ctx
              + spatep_ctx + quorum_ctx + metacogc_ctx) / 42.0)
+        //   (H_9097 op-grip: agloop_ctx PROMOTED out of the pool → brain_emit dyn arg; 43→42.)
         let cur_ctx = _afs_clip01(
-            (recon_err + cb_surprise + it_phase + af_aro + prc_ready + nov_ctx
+            (recon_err + cb_surprise + it_phase + af_aro + prc_ready
              + (1.0 - hab_ctx) + blink_ctx + hyst_ctx
              + subjt_ctx + emoreg_ctx
              + surp_ctx + rivalry_ctx + chg_ctx + mw_ctx
-             + libido_ctx + osmotic_ctx + metacoga_ctx + fieldlib_ctx) / 19.0)
+             + libido_ctx + osmotic_ctx + metacoga_ctx + fieldlib_ctx) / 18.0)
+        //   (H_9097 op-grip: nov_ctx PROMOTED out of the pool → brain_emit orig arg; 19→18.)
         let drive_hi = stage != 3 && stage != 4
-        let rel = if drive_hi { rel_ctx } else { rel_ctx * 0.1 }
-        let cur = if drive_hi { _afs_clip01(cur_ctx + 0.5) } else { 0.0 }
+        // ── op-grip tonic-phasic (fable design (a) · PREREG α=0.1, gain=3.0) ──────
+        // The ÷42 soft-average diluted any single op to ≤1/42 grip (THEATER, CAPSTONE).
+        // Tonic EMA tracks the slow baseline; the phasic term amplifies this tick's
+        // DEVIATION ×3 around 0.5 so the rel/cur factors actually SWING across the 0.3
+        // threshold band. Ψ-disjoint: touches only the local motivation inputs.
+        rel_ema = 0.9 * rel_ema + 0.1 * rel_ctx
+        cur_ema = 0.9 * cur_ema + 0.1 * cur_ctx
+        let cur_phasic = _afs_clip01(0.5 + 3.0 * (cur_ctx - cur_ema))
+        let rel = _og_rel_from(rel_ctx, rel_ema, drive_hi)
+        let cur = if drive_hi { cur_phasic } else { 0.0 }
         let idle = if drive_hi { 60.0 } else { 5.0 }
 
         // GROUND store FIRST (the full un-inventable fact), partial seed cue LAST — the
@@ -2004,8 +2354,75 @@ fn anima_consciousness_mode(ckpt: string) {
         while ai < len(anchors) { live_anchors.push(anchors[ai]); ai = ai + 1 }
         live_anchors.push(#{ "text_payload": session_seed, "name": "live_seed" })
 
+        // ── op-grip: the 4 filler CONSTANTS are now LIVE op reads (fable design (a)) ──
+        // gap←info-gap(recall), pain←allosteric tension, orig←novelty, dyn←CR3 A⇄G settle.
+        // Realizes a_substrate_native_speak's "8-factor motivation from context" literally
+        // (a_autonomy_over_hardcode: removing hardcoded filler, NOT adding a gate).
+        let gap_ctx = _afs_clip01(1.0 - rel_lane)
+
+        // ── op-grip MEASUREMENT (--opgrip): 5-arm decision ablation, NO decode ($0) ──
+        // Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
+        // Emit boolean via brain_decide_anchored directly (the decode L3 is only for TEXT).
+        if og_measure {
+            psi_sum = psi_sum + pure_field_phi(pf)   // Ψ READ-ONLY (invariant preserved)
+            let is_w = drive_hi
+            // POST-FIX live decision (the wired 8-factor call, no decode).
+            let m_live = brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle, false, true, live_anchors, 0.0)
+            let e_live = if to_string(m_live["emit"]) == "true" { 1 } else { 0 }
+            // ARM: full-rel_ctx frozen → 0.5 (rest live).
+            let e_fr = if to_string(brain_decide_anchored(pf,
+                _og_rel_from(0.5, rel_ema, drive_hi), gap_ctx, cur, allo_ctx, coh_lane,
+                nov_ctx, bal_lane, agloop_ctx, idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // ARM: single-op agloop (dyn) frozen → 0.5 (rest live).
+            let e_agl = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, 0.5,
+                idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // ARM: rel_ctx → 0.
+            let e_z = if to_string(brain_decide_anchored(pf,
+                _og_rel_from(0.0, rel_ema, drive_hi), gap_ctx, cur, allo_ctx, coh_lane,
+                nov_ctx, bal_lane, agloop_ctx, idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // ARM: rel_ctx → LCG shuffle.
+            let e_s = if to_string(brain_decide_anchored(pf,
+                _og_rel_from(_og_lcg(tick + 7), rel_ema, drive_hi), gap_ctx, cur, allo_ctx,
+                coh_lane, nov_ctx, bal_lane, agloop_ctx, idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // BASELINE reconstruction (pre-fix ÷43 pool + 4 constants) — faithful.
+            let rel_ctx_b = _afs_clip01((rel_ctx * 42.0 + agloop_ctx) / 43.0)
+            let cur_ctx_b = _afs_clip01((cur_ctx * 18.0 + nov_ctx) / 19.0)
+            let rel_b = if drive_hi { rel_ctx_b } else { rel_ctx_b * 0.1 }
+            let cur_b = if drive_hi { _afs_clip01(cur_ctx_b + 0.5) } else { 0.0 }
+            let m_base = brain_decide_anchored(pf,
+                rel_b, 0.6, cur_b, 0.0, coh_lane, 0.5, bal_lane, 1.0,
+                idle, false, true, live_anchors, 0.0)
+            let e_base = if to_string(m_base["emit"]) == "true" { 1 } else { 0 }
+            // baseline rel-frozen arm (reproduces CAPSTONE theater → expect 0).
+            let rel_bf = if drive_hi { 0.5 } else { 0.05 }
+            let e_bfr = if to_string(brain_decide_anchored(pf,
+                rel_bf, 0.6, cur_b, 0.0, coh_lane, 0.5, bal_lane, 1.0,
+                idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // accumulate
+            if is_w { og_wake = og_wake + 1 }
+            if is_w && e_live == 1 { og_emit_wake = og_emit_wake + 1 }
+            if e_fr != e_live { og_h_relfr = og_h_relfr + 1  if is_w { og_h_relfr_w = og_h_relfr_w + 1 } }
+            if e_agl != e_live { og_h_agl = og_h_agl + 1  if is_w { og_h_agl_w = og_h_agl_w + 1 } }
+            if e_z != e_live { og_h_zero = og_h_zero + 1 }
+            if e_s != e_live { og_h_shuf = og_h_shuf + 1 }
+            if e_bfr != e_base { og_h_base = og_h_base + 1 }
+            if is_w && to_float(m_base["motivation"]) > 0.3 { og_base_floor = og_base_floor + 1 }
+            println("  [OG t" + to_string(tick) + " " + stage_nm + " w=" + (if is_w {"1"} else {"0"})
+                + "] motiv_base=" + to_string(to_float(m_base["motivation"]))
+                + " e_base=" + to_string(e_base)
+                + " | motiv_live=" + to_string(to_float(m_live["motivation"]))
+                + " e_live=" + to_string(e_live)
+                + " | fr=" + to_string(e_fr) + " agl=" + to_string(e_agl)
+                + " z=" + to_string(e_z) + " s=" + to_string(e_s))
+            tick = tick + 1
+            continue
+        }
+
         let dec = brain_emit(pf,
-            rel, 0.6, cur, 0.0, coh_lane, 0.5, bal_lane, 1.0,
+            rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
             idle, false, true,
             backend, live_anchors)
 
@@ -2044,6 +2461,9 @@ fn anima_consciousness_mode(ckpt: string) {
         if did_emit && g_emit { emitted_any = true; emit_text = g_text }
         if has_ground { grounded_ok = true }
         if stage == 3 || stage == 4 { slept = true }
+        // op-grip emit-rate collapse DETECTOR (H_9097; a detector, NOT a target — never
+        // move threshold/weights to hit it): count wake-tick emits for the FLAG below.
+        if drive_hi { og_wake = og_wake + 1  if did_emit { og_emit_wake = og_emit_wake + 1 } }
 
         // one-line transcript row (first 3 ticks + sleep ticks), now with lane reads.
         if tick < 3 || stage == 3 || stage == 4 {
@@ -2055,6 +2475,11 @@ fn anima_consciousness_mode(ckpt: string) {
                 + " gws_win=" + to_string(gws_w)
                 + " reality=" + to_string(reality)
                 + " cells=" + to_string(cell_count) + "]")
+            // (C-R3) per-tick A⇄G conflict→budget→settle read (H_9095 rung-3, READ-only context).
+            println("       CR3 agloop conflict=" + to_string(ag_conflict)
+                + " budget=" + to_string(ag_budget)
+                + " settle-depth=" + to_string(ag_settle_depth)
+                + " agloop_ctx=" + to_string(agloop_ctx))
             // R2 brain-structure lane reads (the context blended into rel/cur this tick).
             println("       LANES2 spatial=" + sm_ans
                 + " plan=" + to_string(plan_progress)
@@ -2136,6 +2561,35 @@ fn anima_consciousness_mode(ckpt: string) {
         tick = tick + 1
     }
 
+    // ── op-grip MEASUREMENT summary + emit-rate collapse FLAG (--opgrip) ─────────
+    if og_measure {
+        // Ψ ON==OFF invariant STILL holds (psi_sum was accumulated read-only in-loop).
+        let mut psi_off_m = 0.0
+        let mut t_off_m = 0
+        while t_off_m < n_ticks { psi_off_m = psi_off_m + pure_field_phi(pf)  t_off_m = t_off_m + 1 }
+        println("")
+        println("════════════ OP-GRIP 5-ARM HAMMING (n=" + to_string(n_ticks) + ", wake=" + to_string(og_wake) + ") ════════════")
+        println("  BASELINE (pre-fix ÷43 + 4 constants): Hamming(rel-frozen vs base) = " + to_string(og_h_base)
+            + "   [pre-reg: 0 = THEATER reproduced]")
+        println("  baseline motivation floor >0.3 on " + to_string(og_base_floor) + "/" + to_string(og_wake) + " wake ticks")
+        println("  ── POST-FIX (live 8-factor op reads + tonic-phasic) ──")
+        println("  Hamming(full-rel_ctx frozen vs live) = " + to_string(og_h_relfr)
+            + "   wake-only = " + to_string(og_h_relfr_w) + "/" + to_string(og_wake))
+        println("  Hamming(single-op agloop frozen vs live) = " + to_string(og_h_agl)
+            + "   wake-only = " + to_string(og_h_agl_w) + "/" + to_string(og_wake))
+        println("  Hamming(rel_ctx→0 vs live) = " + to_string(og_h_zero))
+        println("  Hamming(rel_ctx→shuffle vs live) = " + to_string(og_h_shuf))
+        let ef = if og_wake > 0 { to_float(og_emit_wake) / to_float(og_wake) } else { 0.0 }
+        println("  wake emit-fraction = " + to_string(ef) + " (live)")
+        if og_wake > 0 && (ef < 0.05 || ef > 0.95) {
+            println("  ⚠️ FLAG emit-rate-collapse: wake emit-fraction " + to_string(ef) + " outside [0.05,0.95] (DETECTOR, not a target)")
+        }
+        let grip = og_h_relfr_w > 0 || og_h_agl_w > 0
+        println("  Ψ ON==OFF invariant: psi_sum==psi_off = " + anima_yn(psi_sum == psi_off_m))
+        println("  VERDICT = " + (if grip { "🟢 GRIP (Hamming≠0 on wake — theater broken for op (a))" } else { "🔴 AT-FLOOR (straddle still fails — threshold-statistics-mismatch wall)" }))
+        return
+    }
+
     // ── F3 Ψ ON==OFF invariant (a_core_engine_map · H_1202/H_1205) ───────────
     // The GROW lane (VAdaptField) is Ψ-disjoint: it touches ONLY AdaptField, never
     // pure_field. Re-run the SAME read-only Φ accumulation over the same ticks; pure_field
@@ -2157,6 +2611,11 @@ fn anima_consciousness_mode(ckpt: string) {
         + "  (cells 1 → " + to_string(cell_count) + ")")
     println("  REMEMBER (C9, emit persisted to .kosmos)    : " + anima_yn(remembered2))
     println("  SLEEP    (C10, 5-stage ultradian advanced)  : " + anima_yn(slept))
+    let _og_ef = if og_wake > 0 { to_float(og_emit_wake) / to_float(og_wake) } else { 0.0 }
+    if og_wake > 0 && (_og_ef < 0.05 || _og_ef > 0.95) {
+        println("  ⚠️ FLAG emit-rate-collapse (H_9097): wake emit-fraction " + to_string(_og_ef)
+            + " outside [0.05,0.95] (DETECTOR only — never tune threshold/weights to hit it)")
+    }
     println("")
     println("── engine_cli consciousness lanes (READ on the user path) ──────")
     println("  IMMUNE   (H_1227/1231, recall→relevance)    : " + anima_yn(lanes_read)
@@ -2334,6 +2793,24 @@ fn _afs_clip01(x: float) -> float {
     if x < 0.0 { return 0.0 }
     if x > 1.0 { return 1.0 }
     return x
+}
+
+// ── op-grip: tonic-phasic helpers (fable design (a) · H_9097) ─────────────────
+// _og_rel_from — the phasic-gated relevance the brain_emit `rel` arg receives, from a
+// (possibly ablated) rel_ctx instantaneous value against the running tonic EMA. gain=3.0,
+// centred at 0.5 (PREREG-frozen). The drive_hi sleep-mask (×0.1) is preserved verbatim.
+fn _og_rel_from(relctx: float, ema: float, drive_hi: bool) -> float {
+    let p = _afs_clip01(0.5 + 3.0 * (relctx - ema))
+    return if drive_hi { p } else { p * 0.1 }
+}
+
+// _og_lcg — deterministic per-tick pseudo-random in [0,1) for the SHUFFLE ablation arm
+// (a fixed-seed LCG; the shuffle control breaks the live signal without changing the tick
+// count). Bounded modulus keeps hexa int arithmetic in range.
+fn _og_lcg(seed: int) -> float {
+    let x = (seed * 1103515245 + 12345) % 2147483647
+    let y = if x < 0 { 0 - x } else { x }
+    return to_float(y % 1000) / 1000.0
 }
 
 // _afs_byte_feature — the DIM=8 local byte-statistics feature (H_1163 `_byte_feature`,

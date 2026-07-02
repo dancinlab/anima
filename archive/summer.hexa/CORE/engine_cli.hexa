@@ -806,7 +806,7 @@ fn _immune_fnv1a(bs: [int]) -> int {
 // VERBATIM from the H_1227/H_1231 embed_key (byte n-gram n=3 → dim buckets, then
 // L2-normalize). This is the "tokenize the question" preprocessing (gradient-free,
 // not learned); what is engine-native is the BINDING/AFFINITY below. Verified
-// byte-identical to UNIVERSE/h1227_immune_clonal_memory.py embed_key.
+// byte-identical to HYPOTHESES/h1227_immune_clonal_memory.py embed_key.
 pub fn immune_embed_key(text: string) -> [float] {
     let dim = 64
     let n = 3
@@ -3863,10 +3863,10 @@ pub fn engine_config_summary(cfg: EngineConfig) -> string {
 // the .hexa engine (not numpy) and the FROZEN R2 retention bars re-score engine-native.
 // Neurogenesis / functional-segregation lens (a_no_llm_frame_trap), NOT a bigger net.
 //
-// MECHANISM (mirrors UNIVERSE/h1300_mitosis_skill_curriculum.py arm B, byte-faithful to
+// MECHANISM (mirrors HYPOTHESES/h1300_mitosis_skill_curriculum.py arm B, byte-faithful to
 // the engine-realizable ops — Gaussian-elimination ridge solve + power-iteration
 // principal axis replace numpy's LAPACK solve/SVD; the pre-check in
-// UNIVERSE/h1300_r3_engine_export.py's sibling reproduces the SAME R2 GREEN):
+// HYPOTHESES/h1300_r3_engine_export.py's sibling reproduces the SAME R2 GREEN):
 //   * skill_grow(x,y): start 1 cell at the region centroid; while the worst cell's local
 //     train-error > SPLIT_THRESH and we are under GROW_MAX_PER_SKILL, MITOSIS-SPLIT it —
 //     bisect its owned points along their top-variance axis (power iteration) into two
@@ -5702,7 +5702,7 @@ pub fn spatial_episodic_compose(sp_dec: int, sp_conf: float,
 // only_tom 0.303704 / only_spatial 0.297778 both>0 → 🟢 BIND (3 seeds [5520,5521,5522]). This §
 // PROMOTES the SAME query-routed confidence arbiter the H_1417 probe validated INLINED to a
 // CALLABLE live CORE op, byte-exactly (a_core_engine_map). H_1418 is the consolidation wire-in
-// of P3+P5 (see card UNIVERSE/cards/H_1418_tom_compose_pairs_wired.md).
+// of P3+P5 (see card HYPOTHESES/cards/H_1418_tom_compose_pairs_wired.md).
 //
 // THE LENS (c15, a_no_llm_frame_trap — a neuro composition, NOT an LLM recipe): a witnessed-belief
 // model of ANOTHER agent (ToM: what the agent THINKS) and a METRIC cognitive map (spatial: where

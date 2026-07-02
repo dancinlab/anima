@@ -63,4 +63,4 @@ CORE 의 결정 두뇌(A·G·brain)는 **외부 모델/앵커를 전혀 소비�
 - ⇄ [BRIDGE](../BRIDGE.md): BRIDGE M·C·W·Φ 4-key 가 CORE engine_g 8-factor 와 cross-product · AND-gate emit decision
 - ⇄ [DECODER](./DECODER/DECODER.md): CORE.brain_decide emit slot → DECODER L3 content generation
 - ⇄ [SAVANT](../SAVANT.md): CORE.brain_decide 의 savant decision lane · engine_g 8-factor 위 SI modulation
-- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)
+- ⇄ [UNIVERSE](../HYPOTHESES/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)

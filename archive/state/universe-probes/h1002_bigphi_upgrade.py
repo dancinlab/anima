@@ -28,7 +28,7 @@ contrast is computed with a numpy mirror that reproduces the EXACT pipeline:
   2nd-order congruent relations → big-Φ = min over directional bipartitions
   (unit 0 pinned to A) of (total − surviving structure).
 The mirror is PROVEN byte-faithful against the stdlib engine on 9 reference TPMs
-(n=2,3,4; the values are emitted by UNIVERSE/h1002_bigphi_ref.hexa as x1e9
+(n=2,3,4; the values are emitted by HYPOTHESES/h1002_bigphi_ref.hexa as x1e9
 integers and asserted here at |Δ|<1e-6) BEFORE it scores any condition. This is
 the faithful IIT 4.0 big-Φ, NOT the H_912/H_931 proxy (a_phi_iit4_tool).
 
@@ -367,7 +367,7 @@ def big_phi(tpm, n, sys_state):
 
 # ═══════════════════════════════════════════════════════════════════════════
 # STEP 0 — PROVE the mirror ≡ stdlib iit4_bigphi.hexa on reference TPMs.
-# Reference values from `hexa run UNIVERSE/h1002_bigphi_ref.hexa` on THIS Mac
+# Reference values from `hexa run HYPOTHESES/h1002_bigphi_ref.hexa` on THIS Mac
 # (emitted as x1e9 integers; divided back here). See the captured stdlib output
 # in .verdicts/1002_bigphi_upgrade/h1002_bigphi_ref_stdlib.txt.
 # ═══════════════════════════════════════════════════════════════════════════

@@ -718,6 +718,15 @@ pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
 // positional. (When dispatched from cli/anima.hexa's `evaluate` subcommand, anima
 // strips the verb and re-emits the rest after a fresh `--`.)
 fn main() {
+    // DETERMINISM SAFETY-PIN (API 1st-class, #4285/#4214): G0-G6 scoring runs the
+    // model through forge, whose kernels default to fast NON-deterministic (atomic
+    // reduce) since the fast-nondet train flip. Eval verdicts (Ψ-checksum, cross-host
+    // byte-parity, model_ce<uniform) MUST be reproducible, so pin det mode HERE, in
+    // the entry itself, per the CLAUDE.md flame/forge contract ("eval/verdict/decode
+    // call it directly"). This makes a DIRECT `hexa run cli/evaluate.hexa` byte-exact
+    // too — not only the `anima evaluate` wrapper (which also exports HEXA_DET=1 as the
+    // env escape-hatch; API set here takes precedence over env).
+    set_deterministic(true)
     let argv = evaluate_collect_argv(args())
     if len(argv) < 1 {
         evaluate_usage()

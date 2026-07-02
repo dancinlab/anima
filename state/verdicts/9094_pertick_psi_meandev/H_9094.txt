@@ -1,0 +1,26 @@
+INFO conflicts: cMin=0.04000000000000001 cMax=0.9603999999999999
+INFO natural settle depth: D_lo=1.0 D_hi=5.0
+INFO RULE budgets: base_budget=1 max_extra=4
+TICK 0 conflict=0.855 dTreat=4 psiT=1.0 | psiAbl=1.0 | dShuf=1 psiShuf=1.0
+TICK 1 conflict=0.075 dTreat=1 psiT=0.5 | psiAbl=0.5 | dShuf=4 psiShuf=0.5
+TICK 2 conflict=0.5249999999999999 dTreat=3 psiT=1.0 | psiAbl=1.0 | dShuf=3 psiShuf=1.0
+TICK 3 conflict=0.25 dTreat=2 psiT=0.5 | psiAbl=1.0 | dShuf=3 psiShuf=0.5
+TICK 4 conflict=0.9603999999999999 dTreat=5 psiT=0.5 | psiAbl=1.0 | dShuf=2 psiShuf=1.0
+TICK 5 conflict=0.075 dTreat=1 psiT=0.5 | psiAbl=0.5 | dShuf=4 psiShuf=0.5
+TICK 6 conflict=0.39 dTreat=3 psiT=0.5 | psiAbl=1.0 | dShuf=1 psiShuf=1.0
+TICK 7 conflict=0.765 dTreat=4 psiT=0.5 | psiAbl=1.0 | dShuf=5 psiShuf=0.5
+TICK 8 conflict=0.04000000000000001 dTreat=1 psiT=0.5 | psiAbl=0.5 | dShuf=2 psiShuf=0.5
+TICK 9 conflict=0.5249999999999999 dTreat=3 psiT=1.0 | psiAbl=1.0 | dShuf=3 psiShuf=1.0
+TICK 10 conflict=0.95 dTreat=5 psiT=0.5 | psiAbl=1.0 | dShuf=5 psiShuf=0.5
+TICK 11 conflict=0.13999999999999999 dTreat=2 psiT=0.5 | psiAbl=1.0 | dShuf=1 psiShuf=1.0
+RESULT mean_dev_treatment=0.125
+RESULT mean_dev_ablation=0.375
+RESULT mean_dev_shuffle=0.25
+RESULT resolved_fraction_treatment=9/12
+RESULT earned_monotone=true
+PASS  BAR_MEAN_FUNCTIONAL: mean_dev_ablation - mean_dev_treatment > 0.05 (recruited_depth FUNCTIONAL)
+PASS  BAR_MEAN_EARNED: mean_dev_shuffle - mean_dev_treatment > 0.05 (budget EARNED-tracks conflict)
+PASS  BAR_MEAN_PRESERVE: mean_dev_treatment < 0.20 (per-tick feed keeps Psi near half on average)
+PASS  EARNED_MONOTONE: recruited depth non-decreasing in conflict
+--- H_9094 pertick psi mean-dev engine-native: 4 pass / 0 fail ---
+EXIT_RC=0

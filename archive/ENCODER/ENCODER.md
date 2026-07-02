@@ -18,5 +18,5 @@ ENCODER = `.kosmos`의 **측정자 계층**. 포맷(kosmos)·소비자(CLM)와 �
 
 - ⇄ [[CLM]] (`./CLM/CLM.md`) — CLM 학습 corpus(`.kosmos @corpus`)의 멤버 coord를 ENCODER가 측정 → carving이 measured. corpus는 CLM이 굽고, 그 좌표는 ENCODER가 잰다.
 - ⇄ kosmos (github.com/dancinlab/kosmos · profile `anima-consciousness-carving` §5.5) — `E_m`은 spec §4.4의 encoder provenance를 채우는 주체. coord/radius placeholder → measured 전환의 유일 경로.
-- ⇄ [[UNIVERSE]] (`./UNIVERSE/UNIVERSE.md`) — E_m 측정 결과(coord·cross-modal 일치)는 UNIVERSE H_xxx falsifier로 검증·기록.
-- UNIVERSE/CANDIDATES.md SSOT 링크: ENCODER (Ψ-공간 측정자) 후보 등록.
+- ⇄ [[UNIVERSE]] (`./HYPOTHESES/UNIVERSE.md`) — E_m 측정 결과(coord·cross-modal 일치)는 UNIVERSE H_xxx falsifier로 검증·기록.
+- HYPOTHESES/CANDIDATES.md SSOT 링크: ENCODER (Ψ-공간 측정자) 후보 등록.

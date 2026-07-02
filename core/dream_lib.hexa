@@ -125,3 +125,110 @@ pub fn dr_mitosis_density_ratio(sleep_count: int, sleep_size: int, wake_count: i
     let wd = dr_density(wake_count, wake_size)
     return dr_ratio_sleep_wake(sd, wd)
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// § SleepPressure (T3) — homeostatic sleep-pressure drive (Process-S)
+//
+// Bio-lens (a_no_llm_frame_trap): Borbély's 2-process model of sleep regulation
+// (Borbély 1982; Daan/Beersma/Borbély 1984). Sleep timing is set by the interaction
+// of TWO independent axes:
+//   • Process-C (circadian) — an oscillator; the ANIMA ultradian rhythm above
+//     (dr_stage_at, WAKE/N1/N2/N3/REM) already encodes this RHYTHM axis.
+//   • Process-S (homeostatic) — sleep PRESSURE that MONOTONICALLY accumulates with
+//     time-awake (adenosine build-up) and DISCHARGES exponentially during sleep.
+// This op-slot adds the missing Process-S axis. It is ORTHOGONAL to the ultradian:
+//   rhythm = WHEN in the cycle (dr_stage_at) · pressure = HOW LONG awake (sp_pressure).
+// The two combine ADDITIVELY into a graded sleep-stage transition propensity
+// (Borbély: sleep is favored as S rises toward C's upper envelope) — NOT a boolean
+// gate (a_autonomy_over_hardcode — substrate-decided propensity, no hardcoded flag).
+//
+// PURITY / DISJOINTNESS (a_substrate_disjoint — separation = preservation):
+//   Every sp_* fn is PURE and READ-only: it reads scalars (wake/sleep tick counts,
+//   an S0 seed, a circadian bias) and returns a scalar. It owns NO store, mutates
+//   NOTHING, and NEVER reads the emit-drive lanes 0/4 (ci_emit_drive) NOR the
+//   §ImmuneMemory recall_thr non-fab gate. Ψ=½ and the G5 honesty gate are therefore
+//   preserved BY CONSTRUCTION (proven byte-identical ON-vs-OFF in the smoke). This is
+//   the homeostatic-pressure sibling of dr_* (rhythm) — different axis, same lane.
+//
+// HONEST SCOPE (c9): Process-S here is a DESIGNED law (exponential accumulate/discharge
+// with fixed τ), NOT an empirically-fit adenosine curve. The claim is only the
+// falsifier set below (F1 accum monotone · F2 discharge monotone · F3 additive gate-bias
+// · F4 ablation-inert-when-frozen · F5 Ψ/G5 disjoint), measured engine-native.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── 5. Process-S constants ──────────────────────────────────────────────────
+// τ chosen so S rises across the 60-tick WAKE window and discharges across the
+// 30-tick sleep window (both substantial, neither saturating to a flat line).
+
+pub fn sp_tau_wake()  -> float { return 30.0 }   // adenosine build-up time constant (ticks)
+pub fn sp_tau_sleep() -> float { return 12.0 }   // clearance time constant (ticks)
+pub fn sp_upper()     -> float { return 1.0  }   // saturating asymptote (max pressure)
+pub fn sp_lower()     -> float { return 0.0  }   // discharge asymptote (rested)
+pub fn sp_w_pressure() -> float { return 0.6 }   // homeostatic weight in the gate-bias
+pub fn sp_w_circadian() -> float { return 0.4 }  // rhythm (Process-C) weight in the gate-bias
+
+fn _sp_clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+// ─── 6. Process-S accumulate / discharge (F1 · F2) ───────────────────────────
+
+// sp_pressure_wake — homeostatic accumulation over `wake_ticks` awake from seed s0.
+// Saturating exponential toward the upper asymptote: S(w) = U − (U − s0)·e^(−w/τw).
+// STRICTLY INCREASING in wake_ticks (F1 ACCUM) since e^(−w/τw) strictly decreases.
+pub fn sp_pressure_wake(wake_ticks: int, s0: float) -> float {
+    let u = sp_upper()
+    let decay = exp(-float(wake_ticks) / sp_tau_wake())
+    return u - (u - s0) * decay
+}
+
+// sp_pressure_sleep — homeostatic discharge over `sleep_ticks` asleep from seed s0.
+// Exponential toward the lower asymptote: S(s) = L + (s0 − L)·e^(−s/τs).
+// STRICTLY DECREASING in sleep_ticks (F2 DISCHARGE) for s0 > L.
+pub fn sp_pressure_sleep(sleep_ticks: int, s0: float) -> float {
+    let l = sp_lower()
+    let decay = exp(-float(sleep_ticks) / sp_tau_sleep())
+    return l + (s0 - l) * decay
+}
+
+// sp_pressure_at — the single continuous Process-S trajectory across ONE 90-tick
+// ultradian cycle seeded at s0: accumulate through WAKE [0..59], then discharge from
+// the sleep-onset peak through the sleep window [60..89]. Rises then falls — the
+// classic saw-tooth of Process-S riding under the Process-C envelope.
+pub fn sp_pressure_at(tick: int, s0: float) -> float {
+    if tick < 60 {
+        return sp_pressure_wake(tick, s0)          // WAKE — accumulate
+    }
+    let peak = sp_pressure_wake(60, s0)            // pressure at sleep onset (tick 60)
+    return sp_pressure_sleep(tick - 60, peak)      // sleep — discharge from peak
+}
+
+// ─── 7. additive gate-bias (F3) + ablation control (F4) ──────────────────────
+
+// sp_circadian_bias — Process-C proxy: normalized phase through the ultradian cycle
+// (0 at cycle start, →1 at cycle end). Rhythm axis ONLY (independent of pressure).
+pub fn sp_circadian_bias(tick: int) -> float {
+    let n = dr_n_ticks()
+    let ph = tick % n
+    if ph < 0 { return 0.0 }
+    return float(ph) / float(n)
+}
+
+// sp_sleep_propensity — MECHANISM ON: graded propensity to transition toward sleep,
+// the ADDITIVE combination of homeostatic pressure and the circadian rhythm (Borbély:
+// sleep favored as S rises under C). NOT a boolean gate — a clamped scalar in [0,1]
+// (F3 GATE-BIAS). STRICTLY INCREASING in `pressure` (∂/∂pressure = W_S > 0).
+pub fn sp_sleep_propensity(pressure: float, circadian: float) -> float {
+    return _sp_clamp01(sp_w_pressure() * pressure + sp_w_circadian() * circadian)
+}
+
+// sp_sleep_propensity_ablated — MECHANISM OFF: the Process-S term is frozen out
+// (pressure contributes 0), leaving ONLY the circadian rhythm. This is the ablation
+// control (a_break_the_wall): if ON and OFF gave the same propensity the pressure
+// drive would be INERT (contributes nothing). Because it takes no pressure/wake
+// argument it is INVARIANT to wake-duration (F4 ABLATION).
+pub fn sp_sleep_propensity_ablated(circadian: float) -> float {
+    return _sp_clamp01(sp_w_circadian() * circadian)
+}

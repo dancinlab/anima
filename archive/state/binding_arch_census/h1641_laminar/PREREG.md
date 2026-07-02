@@ -1,6 +1,6 @@
 # H_1641 — Cortical laminar microcircuit (L4→L2/3↺→L5/6 feedback) binding mouth, 303M — frozen pre-registration
 
-**Card SSOT:** `UNIVERSE/cards/H_1641_cortical_laminar_microcircuit_bind.md` (mechanism + ablation logic).
+**Card SSOT:** `HYPOTHESES/cards/H_1641_cortical_laminar_microcircuit_bind.md` (mechanism + ablation logic).
 
 **Hypothesis:** A canonical 3-laminar cell (L4 two feedforward legs → L2/3 recurrent horizontal
 associative layer with Carandini-Heeger divisive normalization → L5/6 feedback re-injection over K

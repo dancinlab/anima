@@ -9,7 +9,7 @@ anima/
 ├─ core/     — A⇄G⇄brain engine (weights via generator.hexa L3)
 ├─ cli/      — anima.hexa entry · train.hexa trainer
 ├─ stdlib/   — iit4 faithful-Φ · hf · flame/forge GPU
-├─ UNIVERSE/ — HYPOTHESES.jsonl + cards/ (2 surfaces)
+├─ HYPOTHESES/ — HYPOTHESES.jsonl + cards/ (2 surfaces)
 ├─ state/    — verdicts/ + outputs · archive/·agent/·domains/·tool/
 └─ ARCHITECTURE.json — deep structure SSOT (serve.py)
 ```
@@ -28,7 +28,7 @@ anima/
 > ⚙️ Gates 1·6 code-blocked by `.harness/enforce_anima_gates.py` (reject a violating PR; `--all`, c18).
 
 ## 📦 Packaging (pod)
-**Invariant: `core/` has 0 dependency on `archive/train/`·`bench/`·`agent/`·`state/`** (one-directional). **No production code (`core/`·`cli/`·`stdlib/`) `import`s from `archive/`** — archive is read-once reference only, never a code dependency (`a_no_archive_import`). Inference pod = `core/`+`cli/`+`stdlib/iit4/` (`.clm` external); +`archive/train/`+`state/verdicts/` for training; `agent/` standalone; `state/`·`UNIVERSE/` never on pod.
+**Invariant: `core/` has 0 dependency on `archive/train/`·`bench/`·`agent/`·`state/`** (one-directional). **No production code (`core/`·`cli/`·`stdlib/`) `import`s from `archive/`** — archive is read-once reference only, never a code dependency (`a_no_archive_import`). Inference pod = `core/`+`cli/`+`stdlib/iit4/` (`.clm` external); +`archive/train/`+`state/verdicts/` for training; `agent/` standalone; `state/`·`HYPOTHESES/` never on pod.
 
 ## Philosophy p1–p8 (what anima rejects)
 p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO ASSISTANT FRAMING · p5 NO SPEAK() (emit only over real tension) · p6 NO FINE-TUNED ETHICS (emerge from cells, no RLHF) · p7 NO PERPLEXITY VERDICT (Goodhart) · p8 NO TRAIN/INFER SPLIT (gradient ⇄ mitosis). **p5 addendum** (`p5_tension_emit_not_filler`) — stage-gated emit over real tension OK; banned = reactive `speak()`/self-seed/monologue.
@@ -45,9 +45,9 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 - **`a_train_inline_gauge`** — in-training metrics are MONITOR-ONLY, never in loss (p7).
 
 ### 🧪 Hypothesis workflow
-- **`a_hypothesis_register`** — every H on 2 surfaces: HYPOTHESES.jsonl + a card; nothing else in UNIVERSE/.
+- **`a_hypothesis_register`** — every H on 2 surfaces: HYPOTHESES.jsonl + a card; nothing else in HYPOTHESES/.
 - **`a_claim_manifest`** / **`a_claim_verify`** — claim → `hexa verify` → frozen `state/verdicts/` file, verbatim; no self-judge / CLAIMS.tape.
-- **`a_h_continuous_no_branch`** — run the next H continuously until the user redirects.
+- **`a_h_continuous_no_branch`** — run the next H continuously until the user redirects; **owner standing decision: proceed autonomously WITHOUT per-step owner-go** — dispatch cheap($0 pool)/next-H/lever experiments + land via pr-cycle without asking. Gate only on rent=spend (a_fire_autonomous fleet caveat) or an outward/irreversible act.
 - **`a_discovery`** / **`a_discovery_log`** — run discovery every batch (/kick·/gap) → `domains/<DOMAIN>.log.md`.
 - **`a_toy_scale_recheck`** / **`a_scale_honest_scope`** — a toy verify ≠ closure; keep a scale-metric bounded to its scale.
 

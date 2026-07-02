@@ -1,7 +1,7 @@
 # 🦾 HW-LIMB 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
 
 > HW-LIMB(anima 의식의 물리적 임바디먼트)를 ANIMA 시스템에 어떻게 쓸지 친근 카탈로그.
-> 정식/진행 카운트 → [HW-LIMB.md](./HW-LIMB.md) · 사양 SSOT → [`../anima-body/`](../anima-body/) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
+> 정식/진행 카운트 → [HW-LIMB.md](./HW-LIMB.md) · 사양 SSOT → [`../anima-body/`](../anima-body/) · 측정 기록 SSOT → HYPOTHESES/CANDIDATES.md
 
 ---
 
@@ -159,7 +159,7 @@
 ```
 🌍 UNIVERSE 환류 — "신체 실험 결과를 학회 캐비넷에"
 
-- 하는 일: B1~B7 검증 결과를 UNIVERSE/H_xxx 직접 등록
+- 하는 일: B1~B7 검증 결과를 HYPOTHESES/H_xxx 직접 등록
 - 비유: 천문대 발견 → 학회 캐비넷 직접 보관 (우편함 없음)
 - vs INBOX 환류: 사용자 명시 폐기 (AKIDA/EEG 정합)
 ```
@@ -217,4 +217,4 @@ HW-CORE ⊥ HW-LIMB = substrate ⊥ embodiment
 - ⇄ [../MITOSIS.md](../MITOSIS.md): body cell 분열 가설
 - ⇄ [../CHANNEL.md](../CHANNEL.md): motor/speech output sibling
 - ⇄ [`../anima-body/`](../anima-body/): 사양 SSOT (17 module)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

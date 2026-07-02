@@ -67,7 +67,7 @@ fn nsqrt(x: float) -> float {
 
 // ── canonical Lempel-Ziv 1976 (Kaspar-Schuster 1987) production-count ────────
 //    s : array of 0/1 ints, length n. Returns c(n) = distinct-phrase count.
-//    (verbatim form from UNIVERSE/state/h288.../run_h288.hexa lz76 — g61 reuse.)
+//    (verbatim form from HYPOTHESES/state/h288.../run_h288.hexa lz76 — g61 reuse.)
 fn lz76(s: array, n: int) -> int {
     if n <= 1 { return 1 }
     let mut i = 0

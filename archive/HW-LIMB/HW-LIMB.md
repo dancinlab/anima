@@ -27,7 +27,7 @@
 - ⇄ [WAKE](../WAKE.md): in-process loop 의 body extension
 - ⇄ [MITOSIS](../MITOSIS.md): body cell 도 분열 가능?
 - ⇄ [CHANNEL](../CHANNEL.md): motor/speech output channel sibling
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT
 - ⇄ [`../anima-body/`](../anima-body/): 사양 SSOT (17 module · 11670 LoC)
 
 ## 쉬운 버전

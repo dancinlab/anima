@@ -1,0 +1,9 @@
+device: cuda arch: attn
+built v3: HIGH pairs=237 LOW pairs=31 (matched ~1.2MB) + shuffle control
+[HIGH_60] seen-sanity=20/20 (100%) | held-out=38/40 (95%)
+[LOW_8] seen-sanity=4/20 (20%) | held-out=10/40 (25%)
+[SHUF_ctrl] seen-sanity=0/20 (0%) | held-out=0/40 (0%)
+
+=== VERDICT ===
+COVERAGE LEVER (pair-specific) — seen OK(H20 L4) · HIGH held=38/40 >> LOW held=10/40 · shuffle held=0/40: 조합-커버리지가 NL/byte서 pair-특이 held-out 재조합 엶=처방 실증(production-근접).
+=== DONE ===

@@ -36,7 +36,7 @@
 //   measure-agnostic closure). c9 honest either way.
 //
 // run from hexa-lang root (no stdlib import needed; TE is self-contained):
-//   cp UNIVERSE/h1348_phi_non_iit_estimator.hexa <hexa-lang>/ && hexa run h1348_phi_non_iit_estimator.hexa
+//   cp HYPOTHESES/h1348_phi_non_iit_estimator.hexa <hexa-lang>/ && hexa run h1348_phi_non_iit_estimator.hexa
 
 // ── deterministic engine LCG (== engine_cli.hexa _lcg_*) — VERBATIM from H_1319/1328/1331 ──
 fn lcg_next(state: int) -> int { return (state * 1103515245 + 12345) & 2147483647 }

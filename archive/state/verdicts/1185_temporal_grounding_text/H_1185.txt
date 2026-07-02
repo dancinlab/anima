@@ -38,7 +38,7 @@
   },
   "supported": false,
   "ruling": "CLOSED-NEGATIVE: the H_1184 split does NOT cleanly reproduce on TEXT (F1 coverage-temporal=False drop(40)=-0.41; F2 scarcity-nontemporal=True drop(4)=-0.41). The temporal/non-temporal dichotomy may be AUDIO-specific or the text stage-geometry shifts the peak caps. a_paper_negative_ok.",
-  "scope": "TOY ($0 CPU numpy, 10 seeds, TEXT real-bytes stream, N_stages=4). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM; only added op = seeded time-axis permutation of (X,stages), identical to H_1184. NOTE: text has 4 stages vs audio 10, so K=4/K=40 map to different cells-per-stage ratios — a confound the verdict flags. Live CORE + scale UNVERIFIED (a_scale_honest_scope)."
+  "scope": "TOY ($0 CPU numpy, 10 seeds, TEXT real-bytes stream, N_stages=4). Reuses HYPOTHESES/h1163_tick_decode_metric.py VERBATIM; only added op = seeded time-axis permutation of (X,stages), identical to H_1184. NOTE: text has 4 stages vs audio 10, so K=4/K=40 map to different cells-per-stage ratios — a confound the verdict flags. Live CORE + scale UNVERIFIED (a_scale_honest_scope)."
 }
 
 [done]

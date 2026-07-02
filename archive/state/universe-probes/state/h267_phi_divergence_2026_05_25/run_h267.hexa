@@ -59,7 +59,7 @@
 //  run cmd (verbatim):
 //    cd <worktree-root> &&
 //    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
-//      hexa run UNIVERSE/state/h267_phi_divergence_2026_05_25/run_h267.hexa
+//      hexa run HYPOTHESES/state/h267_phi_divergence_2026_05_25/run_h267.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
 import "HEXAD/C/c_lib.hexa"
@@ -68,7 +68,7 @@ import "core/mitosis_hook_lib.hexa"
 
 // ── config (deterministic) ──────────────────────────────────────────────────
 fn _state_dir() -> string {
-    return "UNIVERSE/state/h267_phi_divergence_2026_05_25"
+    return "HYPOTHESES/state/h267_phi_divergence_2026_05_25"
 }
 fn _DIM() -> int  { return 12 }   // recorded temporal-trajectory length / cell
 fn _seed() -> int { return 42 }

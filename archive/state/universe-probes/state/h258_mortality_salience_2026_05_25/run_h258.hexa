@@ -47,7 +47,7 @@ import "core/mitosis_hook_lib.hexa"
 
 
 fn _state_dir() -> string {
-    return "UNIVERSE/state/h258_mortality_salience_2026_05_25"
+    return "HYPOTHESES/state/h258_mortality_salience_2026_05_25"
 }
 fn _d_model() -> int   { return 8 }
 fn _seed() -> int      { return 42 }
@@ -330,7 +330,7 @@ fn _run_h258() {
 
     // F-DET determinism — cross-process re-run byte-equality (NOT in-process).
     let my_sig = _sweep_signature(sweep)
-    let script = "/Users/ghost/core/anima/.claude/worktrees/agent-a3de5b8913a444316/UNIVERSE/state/h258_mortality_salience_2026_05_25/run_h258.hexa"
+    let script = "/Users/ghost/core/anima/.claude/worktrees/agent-a3de5b8913a444316/HYPOTHESES/state/h258_mortality_salience_2026_05_25/run_h258.hexa"
     let child_cmd = "__HEXA_FARR_GAUSS_SEED__=" + to_string(_seed())
                     + " HEXA_MEM_UNLIMITED=1 H258_CHILD=1 hexa run " + script
     let child = exec_with_status(child_cmd)

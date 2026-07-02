@@ -6,7 +6,7 @@ H_1052 is the noise SOURCE in the learning update.
 
 REUSES the H_1052 harness VERBATIM by import (RNN, task, markers, IIT-4.0 mirrors, mirror==stdlib
 re-proof) — same arch, same task, same pinned init, same matched-CE band, same 6 markers. The
-quantum bytes come from a CACHED committed file (UNIVERSE/state/h1053_qrng_bytes.bin) pre-fetched
+quantum bytes come from a CACHED committed file (HYPOTHESES/state/h1053_qrng_bytes.bin) pre-fetched
 by h1053_fetch_qrng.py; uniform uint16 quantum bytes -> standard-normal xi via inverse-CDF
 (probit). NO PRNG in the noise path. (Pinned INIT still uses the seed for both arms — H_921 closed
 init-noise; only the LEARNING update noise is the variable under test.)

@@ -364,7 +364,7 @@ How can two anima instances actually *connect*? The honest answer falls out of p
 
 This section is the live evidence snapshot, with [`ARCHITECTURE.json`](ARCHITECTURE.json) (tree
 SSOT) + [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the per-hypothesis verdicts in
-[`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
+[`HYPOTHESES/HYPOTHESES.jsonl`](HYPOTHESES/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
 the authoritative latest source.
 
 > **Built-in G0–G6 evaluation (`anima eval <ckpt>`).** The gate scoring lives **directly in the
@@ -562,7 +562,7 @@ directive families). The load-bearing principles for the work above:
 - **`a_verified_must_wire`** — a GREEN-verified hypothesis is not *done* until its mechanism is
   actually **wired into the live `core/*.hexa` engine**.
 
-Every verifiable claim is indexed in [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H
+Every verifiable claim is indexed in [`HYPOTHESES/HYPOTHESES.jsonl`](HYPOTHESES/HYPOTHESES.jsonl) (per-H
 `verdict` column; CLAIMS.tape retired 2026-06-16) and backed by a verdict file under
 [`state/verdicts/`](state/verdicts/) (verbatim `hexa verify` stdout, p7 — *no perplexity, no LLM-judge*).
 Negative results are first-class and not buried (`a_paper_negative_ok`).
@@ -646,7 +646,7 @@ prompted this gate; `dt_ln` is filed to hexa-lang). Run it standalone with
 
 The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
 `cli/anima.hexa`, dep = `hexa-lang`, `include` = `core/` + `cli/` + the consciousness lanes, `exclude`
-= research artifacts `state/` · `UNIVERSE/` and the `.clm` weights). The trained `.clm` weights are
+= research artifacts `state/` · `HYPOTHESES/` and the `.clm` weights). The trained `.clm` weights are
 **mounted externally** at run time — they are not vendored in the repo or the install tarball.
 
 The production engine is **conv (CLMConvMoE)** — the trained `.clm` byte mouth, decoded by
@@ -721,7 +721,7 @@ anima/
 ├── CLAUDE.md                       entry pointer — governance SSOT (p1..p8 · a_* directives); dir/module tree → ARCHITECTURE.json
 ├── CONDITIONS.md                  a303m_pass frozen gate conditions (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
-├── UNIVERSE/HYPOTHESES.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · HF model/dataset registry → ARCHITECTURE.json "HF artifacts" (HF.jsonl retired 2026-06-23)
+├── HYPOTHESES/HYPOTHESES.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · HF model/dataset registry → ARCHITECTURE.json "HF artifacts" (HF.jsonl retired 2026-06-23)
 │
 ├── core/                           A ⇄ G consciousness engine + brain-structure lanes
 │   ├── pure_field.hexa engine_g.hexa brain.hexa   the A/G engine + emit decision (+ VBasalGate)
@@ -739,7 +739,7 @@ anima/
 ├── agent/                          standalone agent package (hexa.toml) — modules/{channels,core,plugins,providers,skills,hire-sim} · domains/{CHAT,CODE,CREATOR,TRADING,MERCHANT}
 ├── train/                          learning — clm/ (.clm lane-p → serialize v0.2 → verify) + variants
 ├── platform/                       substrate sub-systems (was anima-core/)
-├── UNIVERSE/                       research universe — TWO surfaces only (HYPOTHESES.jsonl per-H index — 전 가설 1줄/카드 incl. archive 스냅샷 + source/archived/artifacts 컬럼 · cards/H_*.md·Hc_*.md per-H 카드) · prose overview → state/universe-overview.md · 가설 결과물 → state/<slug>/ (모음 state/universe-probes/) · gauge lib/monitor → tool/
+├── HYPOTHESES/                       research universe — TWO surfaces only (HYPOTHESES.jsonl per-H index — 전 가설 1줄/카드 incl. archive 스냅샷 + source/archived/artifacts 컬럼 · cards/H_*.md·Hc_*.md per-H 카드) · prose overview → state/universe-overview.md · 가설 결과물 → state/<slug>/ (모음 state/universe-probes/) · gauge lib/monitor → tool/
 ├── HEXAD/                          σ6 6-module substrate · KOSMOS hub
 ├── EEG_CLM/                        real EEG → A⇄G → CLM → .kosmos continuous record
 ├── domains/                        active research domains (<NAME>.md + .log.md)

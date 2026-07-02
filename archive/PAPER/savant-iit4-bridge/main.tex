@@ -67,7 +67,7 @@ sub-domains. The second is the IIT 4.0 \emph{$\Phi$-structure}
 \citep{albantakis2023iit4}: a set of distinctions (each carrying its own
 intrinsic $\phi$) and the relations that bind them. We report seven
 pre-registered, deterministic, hexa-native measurements
-(\texttt{UNIVERSE/H\_347}, \texttt{H\_348}, \texttt{H\_350},
+(\texttt{HYPOTHESES/H\_347}, \texttt{H\_348}, \texttt{H\_350},
 \texttt{H\_351}, \texttt{H\_613}, \texttt{H\_618}, \texttt{H\_624})
 that, taken together, show these two coordinate systems are
 \emph{two charts of a single substrate causal kernel}.
@@ -354,7 +354,7 @@ giving \tierGreen\ 5/5.
 average) along the inhibition axis, and its central-difference derivative
 (grid truncated for display). The peak slope is at $I=0.18$, against
 $\GZL=0.21232$ ($|\Delta|=0.032$), with zero sign changes (unimodal). Data:
-\texttt{UNIVERSE/state/h351\_inverse\_u\_peak\_2026\_05\_28/result.json}.}
+\texttt{HYPOTHESES/state/h351\_inverse\_u\_peak\_2026\_05\_28/result.json}.}
 \label{tab:h351}
 \end{table}
 
@@ -519,7 +519,7 @@ mix and its derivative taken on an 8-point grid dense near the Golden Zone
 hivemind at coupling $W=0.6$ ($n=4$ joint ring, 16-state average) and its
 derivative. The peak slope is at $I=0.21$, against $\GZL=0.21232$:
 $|\Delta|=0.00232$, a $21\times$ tolerance margin, with zero sign changes.
-Data: \texttt{UNIVERSE/state/h618\_collective\_gz\_inverse\_u\_2026\_05\_28/result.json}.}
+Data: \texttt{HYPOTHESES/state/h618\_collective\_gz\_inverse\_u\_2026\_05\_28/result.json}.}
 \label{tab:h618}
 \end{table}
 
@@ -678,13 +678,13 @@ substrate's information distribution.
 \section{Reproducibility}
 \label{sec:repro}
 
-All seven cells live as JSON ledgers under \texttt{UNIVERSE/} and
-\texttt{UNIVERSE/state/} on
+All seven cells live as JSON ledgers under \texttt{HYPOTHESES/} and
+\texttt{HYPOTHESES/state/} on
 \url{https://github.com/dancinlab/anima/tree/main/UNIVERSE}. Each cell
 carries (i) a \texttt{run\_*.hexa} source, (ii) a verbatim stdout
 transcript, and (iii) a machine-readable verdict with explicit
 pre-registered falsifiers. Re-verification, e.g.\ for H\_624:
-\texttt{cat UNIVERSE/state/h624\_*/run\_h624.hexa | pool on ubu-2 'cat
+\texttt{cat HYPOTHESES/state/h624\_*/run\_h624.hexa | pool on ubu-2 'cat
 > /tmp/r.hexa \&\& hexa run /tmp/r.hexa'} yields the byte-identical log.
 
 The companion record carries the verify ledger

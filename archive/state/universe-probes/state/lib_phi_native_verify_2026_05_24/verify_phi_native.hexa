@@ -1,4 +1,4 @@
-// UNIVERSE/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa
+// HYPOTHESES/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa
 // PHI domain milestone #4 — byte-equal selftest harness for phi_native.hexa.
 //
 //   PURPOSE
@@ -19,7 +19,7 @@
 //     evidence). When `phi_native.hexa` lands, flip the `_USE_STUB()` gate to
 //     false and the harness becomes a real byte-equal test in one line.
 //
-//   CALLER SURFACE (verbatim from UNIVERSE/lib/phi_helper.hexa)
+//   CALLER SURFACE (verbatim from HYPOTHESES/lib/phi_helper.hexa)
 //     phi_with(state: int, n: int, dim: int, n_bins: int) -> float
 //     phi_default(state: int) -> float                  // n=16, dim=12, nb=4
 //   These are thin wrappers around c_measure_phi → RFC 036 phi_spatial.
@@ -28,8 +28,8 @@
 //   code (prefs) · README.md sibling = Korean per repo convention.
 // ════════════════════════════════════════════════════════════════════════════
 
-import "UNIVERSE/lib/phi_helper.hexa"
-import "UNIVERSE/lib/phi_native.hexa"
+import "HYPOTHESES/lib/phi_helper.hexa"
+import "HYPOTHESES/lib/phi_native.hexa"
 import "stdlib/verify/byte_equal.hexa"
 
 // ── STUB gate ────────────────────────────────────────────────────────────────

@@ -7,7 +7,7 @@ OMEGA coupling USEFUL where the fixed A−G formula degraded:
     GATED 3.127 < base 3.974 · ≤ a_only · ≪ fixed_AmG.
 
 This rung asks: does that closure survive on a REAL trained transformer's A/G heads (not a
-numpy n-gram)?  Substrate = ConsciousDecoderV2 (UNIVERSE/conscious_decoder.py) — dual heads
+numpy n-gram)?  Substrate = ConsciousDecoderV2 (HYPOTHESES/conscious_decoder.py) — dual heads
 logits_a (next-byte) + logits_g (prev-byte). We:
 
   (b) TRAIN a small-but-real CDV2 (d384 × 6L GQA, V=256, block 256) on a real multilingual

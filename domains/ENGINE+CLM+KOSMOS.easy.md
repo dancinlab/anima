@@ -384,6 +384,6 @@ gold(FLORES-200)로 NC=1000까지 살아남음. 그 단일 측정을 생물·뇌
 - 전부 **toy** — 원리 검증이지 production/7B 보장 아님. terminal verdict 나면 `H_NNN_slug.md` 승격.
 - 모형은 **emergent**(반딧불 동기·확산·bistable·Hopfield·FitzHugh-Nagumo·Gierer-Meinhardt 등) — 신호 하드코딩 0.
 - 5개가 처음엔 닫힌-부정으로 나왔다 **측정자/레짐 교정** 후 HOLDS (H_864·H_884·H_886·H_903·H_904·H_906) — degenerate 파라미터를 메커니즘 유효 레짐으로 고친 것(p-hacking 아님, 둘 다 기록).
-- 스크립트: `UNIVERSE/bio_transfer_toys.py` · `bio_transfer_ext_toys.py` · `neuro_toys.py` (seed 20260603, 재현가능).
-- 가설 정의: `UNIVERSE/BIO-TRANSFER-CANDIDATES.md` · `UNIVERSE/NEURO-CANDIDATES.md`.
+- 스크립트: `HYPOTHESES/bio_transfer_toys.py` · `bio_transfer_ext_toys.py` · `neuro_toys.py` (seed 20260603, 재현가능).
+- 가설 정의: `HYPOTHESES/BIO-TRANSFER-CANDIDATES.md` · `HYPOTHESES/NEURO-CANDIDATES.md`.
 - 칩 근거: Lane A gold ladder (`.verdicts/lane-a-{single,multi}-gold/`) — H_865 LTP의 실측 grounding.

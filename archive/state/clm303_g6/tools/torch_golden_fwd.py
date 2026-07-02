@@ -1,6 +1,6 @@
 # Numpy reimpl of train/clm/model/model.py CLMConvMoE forward using RAW fp32 torch weights (NOT the .clm) via ptload.py. The torch GOLDEN that the .clm int4 mirror is checked against (agreed to 4 decimals -> serialize is faithful). Built 2026-06-24, H_1579.
 # Provenance: anima H_1579 clm303 root-cause (overfit, NOT serialize defect).
-#   See UNIVERSE/cards/H_1579_clm303_serialization_defect.md + CORRECTION_overfit_not_serialize.md.
+#   See HYPOTHESES/cards/H_1579_clm303_serialization_defect.md + CORRECTION_overfit_not_serialize.md.
 #   Torch-free (no torch import) — runs on any host with numpy.
 
 # Numpy reimpl of model.py CLMConvMoE forward using the RAW torch fp32 weights

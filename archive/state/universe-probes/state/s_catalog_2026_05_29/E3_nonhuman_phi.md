@@ -113,5 +113,5 @@
 ## 5. 양방향 sibling
 
 - sibling: E3 클러스터(human Φ / PCI), DREAM·METACOG 도메인 (LZ 복잡도 공유 방법론)
-- SSOT: `UNIVERSE/CANDIDATES.md` (S2/S3/S23 항목) ↔ 본 카탈로그 cross-link
+- SSOT: `HYPOTHESES/CANDIDATES.md` (S2/S3/S23 항목) ↔ 본 카탈로그 cross-link
 - 방법론 재사용: `LZ76` complexity는 DREAM/의식-척도 H들과 동일 primitive

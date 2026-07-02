@@ -18,7 +18,7 @@ p7 · $0 local · no GPU · no network.
 import os, glob, re, math
 
 HERE = os.path.dirname(__file__)
-MD_DIR = os.path.abspath(os.path.join(HERE, ".."))  # UNIVERSE/ flat list
+MD_DIR = os.path.abspath(os.path.join(HERE, ".."))  # HYPOTHESES/ flat list
 
 G5 = {
     "🜂 INTERPRETIVE": "⚪ SPECULATION-FENCED (verify N/A — metaphysical lens)",
@@ -61,7 +61,7 @@ def main():
     for p in files:
         g = grade_of(p)
         counts[g] = counts.get(g, 0) + 1
-    print(f"registered: {len(files)} files in UNIVERSE/ (flat list)\n")
+    print(f"registered: {len(files)} files in HYPOTHESES/ (flat list)\n")
     print(f"{'self-grade':<22}{'count':<7}g5 verdict")
     print("-" * 80)
     for g, n in sorted(counts.items(), key=lambda kv: -kv[1]):

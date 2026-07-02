@@ -80,7 +80,7 @@ include = [
 
 # exclude = research artifacts, build trash, sub-package payloads, and external
 # weights that must NEVER ship in the release tarball (a_hypothesis_register:
-# state/·UNIVERSE/ are research-only; .clm weights are externally mounted).
+# state/·HYPOTHESES/ are research-only; .clm weights are externally mounted).
 exclude = [
     # research probe smoke files that landed in core/ (h12xx EEG series import
     # BRAIN/eeg/*, h*_* probes) — NOT part of the cli/anima.hexa runtime path;
@@ -95,7 +95,7 @@ exclude = [
     "DATASET/",
     # research artifacts (a_hypothesis_register / a_claim_manifest — 2-surface only)
     "state/",
-    "UNIVERSE/",
+    "HYPOTHESES/",
     "HEXAD/",
     "KOSMOS/",
     "domains/",

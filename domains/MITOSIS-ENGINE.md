@@ -144,8 +144,8 @@ Audit of the working engine vs (A) life-criteria + (B) Darwinian-evolution check
 
 ## Pointers
 - discoveries: `.discoveries/{1153_criticality_branching,1158_phi_at_criticality,1159_inference_time_mitosis_learning,1159b_mitosis_capacity_self_tuning}.tape`
-- harnesses: `UNIVERSE/{h1153_criticality_branching,h1158_phi_at_criticality,h1159_inference_time_mitosis_learning,h1159b_mitosis_capacity_self_tuning}.py`
+- harnesses: `HYPOTHESES/{h1153_criticality_branching,h1158_phi_at_criticality,h1159_inference_time_mitosis_learning,h1159b_mitosis_capacity_self_tuning}.py`
 - live engine: `CORE/engine_cli.hexa` · `CORE/engine_cli_smoke.hexa`
-- faithful Φ: stdlib `iit4/faithful_phi.hexa` (mirror via `UNIVERSE/h1004/h1012`, ref `UNIVERSE/h1012_ref_faithful.hexa`)
+- faithful Φ: stdlib `iit4/faithful_phi.hexa` (mirror via `HYPOTHESES/h1004/h1012`, ref `HYPOTHESES/h1012_ref_faithful.hexa`)
 - kosmos: `domains/KOSMOS-MAP.md` (우주뇌지도 cartography) · `.discoveries/kosmos-axis-semantics.tape` · spec `dancinlab/kosmos`
 - governance: @D p8 (no train/infer split) · a_phi_iit4_tool · a_lane_akida_gpu_split · a_scale_honest_scope

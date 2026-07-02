@@ -21,7 +21,7 @@ What this checkpoint is and how it was produced.
 - Training data: 400 MB multilingual gutenberg+wiki (en/fr/de/es/ru), corpus sha256 dc1754b27d63236d… (the SAME corpus + 0.9/held split as the d512 #1801 OH1 rung)
 - Training recipe: dual-head (head_a next-byte + head_g prev-byte), AdamW cosine-decay+warmup, ${STEPS} steps, block 256
 - Compute: 1x NVIDIA H100 80GB SXM (RunPod, persistent /workspace), nvidia-smi 94-98% BUSY (g63, NOT silent CPU)
-- Trainer: UNIVERSE/omega_scale_ladder.py (reuses omega_trained_leakfree.run_rung + omega_gate_form_sweep.run_sweep)
+- Trainer: HYPOTHESES/omega_scale_ladder.py (reuses omega_trained_leakfree.run_rung + omega_gate_form_sweep.run_sweep)
 - Final loss / metric: held-out val_ce(head_a) = ${VAL} (below uniform ln256=5.5452 → competent/generalizes)
 - Commit: lane-omega/scale-ladder of github.com/dancinlab/anima
 
@@ -65,6 +65,6 @@ Honest limitations (p7 · a_scale_honest_scope · a_paper_negative_ok).
 
 - Pairs with the d512 #1801 OH1 baseline (dancinlab/omega-cdv2-trained-leakfree-h1) as one point on the same ladder.
 - The OH1 minimal gate (gB·base + gA·A) is the closure form; this ckpt provides the A/G heads + base unigram for the frozen-forward gate-form sweep.
-- Reproduce: load FROZEN, forward over the held-out tail, fit/eval the K gate forms (UNIVERSE/omega_gate_form_sweep.py).
+- Reproduce: load FROZEN, forward over the held-out tail, fit/eval the K gate forms (HYPOTHESES/omega_gate_form_sweep.py).
 EOF
 echo "README -> $OUT"

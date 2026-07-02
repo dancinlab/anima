@@ -1,6 +1,6 @@
 880_clm_adapter_stack — id-keyed backing dir for H_880 (adapter-stack accumulation · per-context switch)
 ========================================================================================================
-Hypothesis : UNIVERSE/H_880_clm_adapter_stack.md
+Hypothesis : HYPOTHESES/H_880_clm_adapter_stack.md
 Verdict    : .verdicts/clm-adapter-stack/F-CLM-ADAPTER-STACK.txt (+ _prereg.txt + clm_adapter_stack_result.json)
 Driver     : CLM/model/h880_adapter_stack.hexa (contract surface; project hexa-native policy)
 Runtime    : h880_adapter_stack_runtime.py.txt (the executable measurement harness, reuses H_865

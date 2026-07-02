@@ -18,7 +18,7 @@
 //
 // INPUT: the DIM=8 real-corpus byte features (H_1163 make_text_stream /
 // `_byte_feature`, VERBATIM) for the scored span, exported by
-// UNIVERSE/h1199_dim_feature_export.py to /tmp/h1199_feat8_seed<S>.txt — one tick
+// HYPOTHESES/h1199_dim_feature_export.py to /tmp/h1199_feat8_seed<S>.txt — one tick
 // per line, DIM space-separated floats. The live engine gates the split on its
 // OWN L2 recon-err > SPLIT_THRESH (the native VAdaptField mechanism, the SAME
 // recon-err gate the scalar field uses) — the engine's intrinsic DIM-space
@@ -156,7 +156,7 @@ fn main() {
         let path = "/tmp/h1199_feat8_seed" + to_string(seed) + ".txt"
         let stream = _load_feat8(path, dim)
         if len(stream) == 0 {
-            println("ERROR: empty DIM=8 stream at " + path + " — run UNIVERSE/h1199_dim_feature_export.py first.")
+            println("ERROR: empty DIM=8 stream at " + path + " — run HYPOTHESES/h1199_dim_feature_export.py first.")
             exit(1)
         }
 

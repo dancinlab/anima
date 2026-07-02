@@ -47,7 +47,7 @@ VERBATIM PRIMARY RESULT (frozen probe — A given oracle signal direction w_fixe
     headroom (A<1.0)        : True    (A=0.6792, non-saturating ✓)
   ⇒ under the FROZEN config the GREEN conjunction FAILS → 🔴 by the pre-registered bars.
 
-DIAGNOSTIC (mechanism — AFTER freeze, does NOT move a bar; `python3 UNIVERSE/h1281_basal_ganglia_gating.py --diag`)
+DIAGNOSTIC (mechanism — AFTER freeze, does NOT move a bar; `python3 HYPOTHESES/h1281_basal_ganglia_gating.py --diag`)
   The frozen probe handed ARM A the EXACT ground-truth signal direction
   (w_fixed = w_true·2 — an ORACLE fixed map). The live engine_g's fixed weights are
   GENERIC CONSTANTS that are NOT tuned to any task's grounding signal. Re-scoring
@@ -108,8 +108,8 @@ SCOPE / HONESTY (a_toy_scale_recheck · a_scale_honest_scope)
   +0.236 lift is a production verdict.
 
 FILES
-  probe   : UNIVERSE/h1281_basal_ganglia_gating.py        (frozen oracle-A config)
-  diag    : UNIVERSE/h1281_basal_ganglia_gating.py --diag  (mechanism, in-repo)
+  probe   : HYPOTHESES/h1281_basal_ganglia_gating.py        (frozen oracle-A config)
+  diag    : HYPOTHESES/h1281_basal_ganglia_gating.py --diag  (mechanism, in-repo)
   freeze  : .verdicts/1281_basal_ganglia_gating/H_1281_FREEZE.txt
   H_1219 / H_1226 NOT edited. emit_policy.hexa / engine_cli.hexa NOT edited.
 xref h1227 · h1231 · h1230 · h1219 · h1226 · h1202 (meta-d′) · h1165 (G5 abstain)

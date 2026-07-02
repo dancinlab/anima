@@ -3,7 +3,7 @@ VERDICT: 🟢 GREEN LIVE-DIM-GROWTH — DIM>1 coupling WIRED CLEANLY; the H_1198
 host: summer (summer@192.168.50.60), $0, latest-release /home/summer/.hx/bin/hexa 0.1.0-dispatch, CPU, gradient-free p8.
   (local mini fork-storm admission cap was saturated by sibling /cycle fan-out; ran on summer pool per the prompt's allowance + a_wall_first.)
 engine edit: CORE/engine_cli.hexa — added VAdaptField / vadapt_field_new / vadapt_field_step / vadapt_field_recon_err / vadapt_field_cells (DIM-vector sample+prototypes, L2 nearest, L2 recon-err; engine_mitosis_tick STILL drives the split). pure_field / Ψ UNTOUCHED.
-input: DIM=8 real-corpus byte features (H_1163 _byte_feature / make_text_stream, VERBATIM) exported by UNIVERSE/h1199_dim_feature_export.py -> /tmp/h1199_feat8_seed{900,901,902}.txt; split gated by the engine's OWN L2 recon-err>0.30 (native VAdaptField mechanism).
+input: DIM=8 real-corpus byte features (H_1163 _byte_feature / make_text_stream, VERBATIM) exported by HYPOTHESES/h1199_dim_feature_export.py -> /tmp/h1199_feat8_seed{900,901,902}.txt; split gated by the engine's OWN L2 recon-err>0.30 (native VAdaptField mechanism).
 
 ── GUARD 1+2 (engine_cli_smoke 12/0 + h1196 single-entry 7/0, on summer AFTER the engine edit) ──
 === SMOKE ===
@@ -11,7 +11,7 @@ input: DIM=8 real-corpus byte features (H_1163 _byte_feature / make_text_stream,
 === SINGLE-ENTRY ===
 --- single-entry audit summary: 7 pass / 0 fail ---
 
-── numpy REFERENCE cross-check (UNIVERSE/h1199_dim_feature_export.py — NOT the verdict; confirms the live engine reproduces the mechanism on the SAME input) ──
+── numpy REFERENCE cross-check (HYPOTHESES/h1199_dim_feature_export.py — NOT the verdict; confirms the live engine reproduces the mechanism on the SAME input) ──
   seed 900: cells ON 1->172  OFF ->1  late recon-err ON=0.1561 OFF=1.3042 ratio=8.36x
   seed 901: cells ON 1->171  OFF ->1  late recon-err ON=0.1585 OFF=1.2896 ratio=8.14x
   seed 902: cells ON 1->177  OFF ->1  late recon-err ON=0.1425 OFF=1.2605 ratio=8.84x

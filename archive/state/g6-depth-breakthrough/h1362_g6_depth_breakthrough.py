@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """h1362_g6_depth_breakthrough.py — G6 IDEATION ★ depth-floor BREAKTHROUGH attempt.
 
-Builds DIRECTLY on H_1305 (UNIVERSE/h1305_g6_ideation_falsifiability.py). That dig
+Builds DIRECTLY on H_1305 (HYPOTHESES/h1305_g6_ideation_falsifiability.py). That dig
 proved composition-routed ideation is a REAL but SUB-THRESHOLD lift:
     FALS  A_flat 0.00 -> B_composed 0.667 (one falsifiable idea earned via recombination)
     NOVEL 6.3 -> 19.0
@@ -44,7 +44,7 @@ FROZEN BARS (the SAME MODEL.md G6 bars — NOT moved):
   GREEN iff M1 & M2 & M3 & M4 & M5  -> CLOSES the G6 ★ gate.
   else -> honest 🟠 THIN (bar unmoved, c9) + name the precise remaining wall.
 
-Reuses UNIVERSE/gauge_lib.py + the FROZEN _is_falsifiable detector from H_1305 VERBATIM
+Reuses HYPOTHESES/gauge_lib.py + the FROZEN _is_falsifiable detector from H_1305 VERBATIM
 (same decode path the live G6 gate uses — NOT a numpy mirror, p7). 3 seeds. $0 CPU
 torch-mouth. DIRECTIONAL (single ckpt h1129c_chat.pt, TOY); engine-native byte-exact
 reconfirm = R2 follow-on only if clean-GREEN (a_engine_native_learning).

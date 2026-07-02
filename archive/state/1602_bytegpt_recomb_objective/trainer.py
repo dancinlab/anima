@@ -7,7 +7,7 @@ the 303M ConvMoE trunk (H_1602: {ce_marginal·infonce·contrastive_equilibrium}�
 (H_1819: 0/3). On ConvMoE the objective axis is NOT-SUPPORTED. The remaining un-tested
 cell is the SAME recombination objective on a **ByteGPT (24-layer attention) trunk** —
 content-addressed fetch-and-bind, the structure that (per H_1394) isolates G6 where conv
-blurs. Honest caveat (UNIVERSE/CLAUDE.md lesson #7): the existing English-dominant
+blurs. Honest caveat (HYPOTHESES/CLAUDE.md lesson #7): the existing English-dominant
 ByteGPT-303M (h1129), torch-G1-GREEN, measured engine-native is ALSO G1 FAIL
 (max_single=2, best_distinct=2, no lift) and G6 fals=0 — so plain ByteGPT floors too.
 The bet is strictly: does recomb-objective lift ByteGPT G1 above floor where plain-CE

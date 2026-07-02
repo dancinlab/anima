@@ -453,7 +453,7 @@ def main():
     print("\n--- F-STABLE ---", v_stab); print(json.dumps(d_stab, indent=2))
 
     results = {
-        "harness": "UNIVERSE/dolphin_acoustic_ingest.py",
+        "harness": "HYPOTHESES/dolphin_acoustic_ingest.py",
         "anima_link": "H_070 dolphin_star_communication / Hc_017 ; #1763 d/dt time-encoding",
         "fetch": meta,
         "tension_channels": ["F0_level", "abs_dF0_dt_(#1763)", "click_rate", "burst_density", "spectral_centroid"],

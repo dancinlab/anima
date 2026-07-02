@@ -1,0 +1,30 @@
+=== curiosity-backlog accumulator falsifier battery (H_9091, B③) ===
+[setup] w=0.3 accrual=0.02 decay=0.25 bare_drive(lane0/4)=0.36
+
+--- F1  propensity rises with idle×backlog (baseline flat) ---
+  ON  propensity @idle 0/5/10/20/40 = 0.36 / 0.46519480519480521 / 0.5157692307692308 / 0.5650632911392406 / 0.603609022556391
+  OFF baseline (w=0) @idle 0/40 = 0.36 / 0.36  (flat == bare_drive)
+PASS  F1 ON strictly rising in idle AND OFF baseline flat at bare_drive
+
+--- F2  ablation → silent at long idle; state-contingent (beats idle-timer) ---
+  @idle=60  ON+unresolved emit=true  | ablated(w=0) emit=false  | ON+zero-novelty emit=false
+PASS  F2 emit iff accumulator ON AND backlog state present (else silent at long idle)
+
+--- F3  emit timing follows real backlog (shuffle-invariant, magnitude-monotone) ---
+  crossing tick  real=11  shuffled=11  (identity-invariant: timing follows pressure, not anchor slot)
+  genuine permutation (ordered arrays differ)=true  multiset preserved (total+top equal)=true  top anchor real=2 shuf=2
+  crossing tick  2×mag=25  1×mag=49  ½×mag=98  (monotone in real backlog magnitude)
+PASS  F3 timing identity-invariant under genuine permutation AND magnitude-monotone (not a clock)
+
+--- F4  provenance: emit draws the top-backlog (most-unresolved) anchor ---
+  unresolved-novelty vector = [0.2, 0.9, 0.1, 0.5, 0.0, 0.3]  → top-backlog anchor = 1  (argmax novelty = 1)
+PASS  F4 top-backlog anchor == most-unresolved anchor (=1)
+
+--- F5  DISJOINTNESS (the risk H_1561/H_1576): accumulator ON vs OFF ---
+  Ψ emit-drive lane 0/4: loaded-accumulator(w=0) == bare drive for all 5 rows: true
+  feature is LIVE (w>0 shifts propensity above bare drive): true
+  §ImmuneMemory recall_thr: before=0.3 after=0.3
+  non-fab (abstain) rate over OOD probes: before=1.0 after=1.0
+PASS  F5 Ψ lane 0/4 byte-identical AND recall_thr non-fab byte-identical (DISJOINT)
+
+=== 5/5 falsifiers PASS ===

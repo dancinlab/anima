@@ -1,4 +1,4 @@
-// UNIVERSE/state/h273_ssot_audit_2026_05_25/run_h273.hexa
+// HYPOTHESES/state/h273_ssot_audit_2026_05_25/run_h273.hexa
 // H_273 — SSOT-consistency audit · README 가설인덱스 ↔ 디스크 H_*.md 집합 ↔ H 본문 verdict
 //
 //   meta-probe (/gap#3 SSOT/temporal drift lens). 새 substrate evidence 산출 X —
@@ -33,13 +33,13 @@ fn _ROOT() -> string {
     return "/Users/ghost/core/anima/.claude/worktrees/agent-ab7c87c1b4b3c7824"
 }
 fn _README() -> string {
-    return _ROOT() + "/UNIVERSE/README.md"
+    return _ROOT() + "/HYPOTHESES/README.md"
 }
 fn _LIFE_DIR() -> string {
     return _ROOT() + "/UNIVERSE"
 }
 fn _STATE_DIR() -> string {
-    return _ROOT() + "/UNIVERSE/state/h273_ssot_audit_2026_05_25"
+    return _ROOT() + "/HYPOTHESES/state/h273_ssot_audit_2026_05_25"
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────
@@ -141,7 +141,7 @@ fn _json_esc(s: string) -> string {
 // ── main ────────────────────────────────────────────────────────────────
 fn main() {
     println("H_273 — SSOT-consistency audit · README 인덱스 ↔ 디스크 H_*.md ↔ §verdict (raw#12)")
-    println("  source: UNIVERSE/README.md 가설 인덱스 표 + UNIVERSE/H_*.md 파일 집합")
+    println("  source: HYPOTHESES/README.md 가설 인덱스 표 + HYPOTHESES/H_*.md 파일 집합")
     println("")
 
     // ── (A) README H-rows: id<TAB>status (one-shot awk, ** + emoji strip, H_238 carry) ──
@@ -316,7 +316,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"source\": \"UNIVERSE/README.md 가설 인덱스 표 + UNIVERSE/H_*.md 파일 집합\",\n"
+    j = j + "  \"source\": \"HYPOTHESES/README.md 가설 인덱스 표 + HYPOTHESES/H_*.md 파일 집합\",\n"
     j = j + "  \"config\": { \"n_readme_rows\": " + to_string(n_readme)
           + ", \"n_disk_files\": " + to_string(n_disk)
           + ", \"H_238_self_excluded\": true, \"H_273_self_excluded\": true, \"lib_row_excluded\": true },\n"

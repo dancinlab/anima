@@ -370,4 +370,4 @@ R9 depletion                → 신규 0건 ✅
 - ⇄ [../XENO/XENO.sf.md](../XENO/XENO.sf.md): 자매 SF (외계/이종)
 - ⇄ [../ANIMA.sf.md](../ANIMA.sf.md): anima 호스트 SF
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT (Law 22 substrate-무관)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

@@ -153,7 +153,7 @@ AND wiring (transfer-fn closed-form) 양측이 🔵 SUPPORTED-FORMAL 로 닫혔�
 
 - 본 sibling: `BRIDGE.md` (4-key AND-gate substrate trigger · coherence Ψ-clamp 공유)
   · `DREAM.md` (COFFESHOP v2 generator · N2/N3 stage 시나리오)
-  · `UNIVERSE/UNIVERSE.md` (verdict verbatim SSOT)
+  · `HYPOTHESES/UNIVERSE.md` (verdict verbatim SSOT)
 - SSOT 기록: 본 A5 verdict 는 ANIMA.md B-COFFESHOP milestone 에 1 줄 반영
   (5/5 🔵) + UNIVERSE 벤치 결과 SSOT 정합.
 

@@ -25,7 +25,7 @@ ARMS (identical model/seeds/max_new/top-k; ONLY temperature policy differs):
   B FIXED SAMPLING    top-k40 temp0.7 (gauge_lib VERBATIM baseline).
   C CRITICALITY       top-k40 per-step temp → σ*.
 
-SCORING: FROZEN UNIVERSE/gauge_lib.py evaluators VERBATIM —
+SCORING: FROZEN HYPOTHESES/gauge_lib.py evaluators VERBATIM —
   composed_distinct (G._coverage / G1), corpus-absence novelty (G._content_ngrams +
   G._corpus_absent over data/corpus.txt / G2), kwr coherence (G.known_word_ratio /
   G0), ideation distinct-idea count (G._words + G._jaccard / G6 H_1158 locked spec).

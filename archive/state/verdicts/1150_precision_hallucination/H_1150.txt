@@ -3,7 +3,7 @@ VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
 Run: summer pool host, CPU-only (DEV=cpu, GPU untouched), $0, seed 7, thread-capped (OMP=2) ~33min wall
      under heavy host contention (load ~24, competing python3 jobs); a default-thread duplicate was 5x
      slower (12.7min to step 250 vs 0.9min) and was killed as a confirmed redundant deterministic double-spend.
-Harness: UNIVERSE/h1150_precision_hallucination.py
+Harness: HYPOTHESES/h1150_precision_hallucination.py
          (H_1142 ByteGPT trainer + per-step entropy + kwr VERBATIM; H_1141 corpus_absent/content_ngrams VERBATIM)
 
 NEUROSCIENCE GROUNDING (predictive coding / active inference, Friston free-energy):

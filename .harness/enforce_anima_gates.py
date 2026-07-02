@@ -23,7 +23,7 @@ Gates enforced (mechanical subset of CLAUDE.md):
       UNLABELED terminal verdict is a VIOLATION.
 
   G2  hypothesis 2-surface  (a_hypothesis_register)
-      git-tracked files under UNIVERSE/ must be ONLY HYPOTHESES.jsonl + cards/** .
+      git-tracked files under HYPOTHESES/ must be ONLY HYPOTHESES.jsonl + cards/** .
 
 Exit: 0 = clean, 1 = violation(s), 2 = enforcer error.
 """
@@ -36,7 +36,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-HYP = REPO / "UNIVERSE" / "HYPOTHESES.jsonl"
+HYP = REPO / "HYPOTHESES" / "HYPOTHESES.jsonl"
 
 # topics where the engine-native verdict gate bites (CLAUDE.md hard-gate #1)
 GATE_TOPIC = re.compile(
@@ -127,17 +127,17 @@ def changed_slugs():
     slugs = set()
     jsonl_touched = False
     for f in files:
-        m = re.match(r"UNIVERSE/cards/H_\d+_(.+)\.md$", f)
+        m = re.match(r"HYPOTHESES/cards/H_\d+_(.+)\.md$", f)
         if m:
             slugs.add(m.group(1))
         m = re.match(r"(?:archive/)?state/([^/]+)/", f)
         if m:
             slugs.add(m.group(1))
-        if f == "UNIVERSE/HYPOTHESES.jsonl":
+        if f == "HYPOTHESES/HYPOTHESES.jsonl":
             jsonl_touched = True
     if jsonl_touched:
         # include any slug whose jsonl line was added/changed on this branch
-        diff = sh(["git", "diff"] + ([base] if base else []) + ["--", "UNIVERSE/HYPOTHESES.jsonl"])
+        diff = sh(["git", "diff"] + ([base] if base else []) + ["--", "HYPOTHESES/HYPOTHESES.jsonl"])
         for ln in diff.splitlines():
             if ln.startswith("+") and not ln.startswith("+++"):
                 m = re.search(r'"slug"\s*:\s*"([^"]+)"', ln)
@@ -208,7 +208,7 @@ def g1_violations(rows, scope):
         labeled = bool(DIRECTIONAL.search(tier))
         card = d.get("card", "")
         if card and not labeled:
-            cp = "UNIVERSE/" + card if not card.startswith("UNIVERSE/") else card
+            cp = "HYPOTHESES/" + card if not card.startswith("HYPOTHESES/") else card
             if grep_file(cp, DIRECTIONAL):
                 labeled = True
         if labeled:
@@ -218,17 +218,17 @@ def g1_violations(rows, scope):
 
 
 def g2_violations():
-    # 2-surface = cards/** + HYPOTHESES.jsonl; UNIVERSE/CLAUDE.md is the folder-guide
+    # 2-surface = cards/** + HYPOTHESES.jsonl; HYPOTHESES/CLAUDE.md is the folder-guide
     # (commons folder-docs) — exempt (lockstep with .harness/enforcement.json H-UNIVERSE-CODE).
-    # Still NO .py/.hexa/result under UNIVERSE/.
-    tracked = sh(["git", "ls-files", "UNIVERSE/"]).splitlines()
+    # Still NO .py/.hexa/result under HYPOTHESES/.
+    tracked = sh(["git", "ls-files", "HYPOTHESES/"]).splitlines()
     bad = [
         f.strip()
         for f in tracked
         if f.strip()
-        and not f.startswith("UNIVERSE/cards/")
-        and f.strip() != "UNIVERSE/HYPOTHESES.jsonl"
-        and f.strip() != "UNIVERSE/CLAUDE.md"
+        and not f.startswith("HYPOTHESES/cards/")
+        and f.strip() != "HYPOTHESES/HYPOTHESES.jsonl"
+        and f.strip() != "HYPOTHESES/CLAUDE.md"
     ]
     return bad
 
@@ -298,7 +298,7 @@ def main():
     if g2:
         print()
         print("  [G2] hypothesis 2-surface (a_hypothesis_register) — "
-              "UNIVERSE/ 에 cards/·HYPOTHESES.jsonl 외 파일:")
+              "HYPOTHESES/ 에 cards/·HYPOTHESES.jsonl 외 파일:")
         for f in g2:
             print(f"        · {f}")
         print("     → 코드/결과물은 archive/state/<slug>/ 로 옮기고 jsonl artifacts 로 가리킨다.")

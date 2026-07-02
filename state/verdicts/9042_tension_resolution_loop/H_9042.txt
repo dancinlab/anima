@@ -1,0 +1,11 @@
+PASS  BAR1 struct_settles: op=2 severe Ψ→½ (settle_depth>=0 & |psi-0.5|<eps)
+PASS  BAR2 monotone: depth(severe) >= depth(mild) > 0
+PASS  BAR3 genuine: op=0 AMP does NOT settle (settle=-1 & psi>=0.90)
+PASS  BAR4 ablate INERT: coupling OFF → psi==init & settle=-1
+INFO psi_init_sev=1.0 psi_init_mild=1.0
+INFO PRESERVE(op2): depSev=5.0 psiSev=0.5 depMild=3.0 psiMild=0.5
+INFO AMP(op0): depAmp=-1.0 psiAmp=1.0
+INFO ABLATE(off): depAbl=-1.0 psiAbl=1.0
+INFO TOPOLOGY: ring dep=7.0 psi=0.5 | shuf dep=9.0 psi=0.5
+--- H_9042 C1 engine-native: 4 pass / 0 fail ---
+EXIT_RC=0

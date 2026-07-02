@@ -2,7 +2,7 @@ OMEGA trained-leakfree — SUMMARY (consolidation + HALT)
 =======================================================
 date     : 2026-06-04
 lane     : Lane-G / GPU (a_lane_akida_gpu_split) — NOT Lane A / AKIDA
-driver   : UNIVERSE/omega_trained_leakfree.py
+driver   : HYPOTHESES/omega_trained_leakfree.py
 rung     : decisive OMEGA follow-up to #1794 — does the substrate->decode learned-gate
            closure SURVIVE on a WELL-TRAINED, leak-free (causal_ca=True) ConsciousDecoderV2
            substrate whose held-out val_ce is clearly below uniform (ln256 = 5.545)?
@@ -37,6 +37,6 @@ COST INCURRED
 
 RE-DISPATCH (single fresh rung — user-gated)
   hexa cloud: 1x H100, PERSISTENT VOLUME (volumeInGb >= 40, mount /workspace), run
-    python UNIVERSE/omega_trained_leakfree.py --steps 20000 --ckpt /workspace/omega_cdv2_trained_leakfree.pt \
+    python HYPOTHESES/omega_trained_leakfree.py --steps 20000 --ckpt /workspace/omega_cdv2_trained_leakfree.pt \
       --out /workspace/omega_trained_leakfree_results.json
   so an interrupted run survives a pod kill. Harvest -> adjudicate -> HF -> teardown.

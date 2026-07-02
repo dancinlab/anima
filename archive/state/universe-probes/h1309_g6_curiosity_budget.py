@@ -26,7 +26,7 @@ Then score the 5 SELECTED ideas on DIST (distinct coherent, jaccard<=0.5) and
 FALS (≥1 falsifiable via the FROZEN H_1305 detector, reused VERBATIM, p7
 structural-not-quality).
 
-Reuses UNIVERSE/gauge_lib.py + the H_1305 _is_falsifiable detector VERBATIM (no
+Reuses HYPOTHESES/gauge_lib.py + the H_1305 _is_falsifiable detector VERBATIM (no
 metric re-invention, no tune-to-green). 3 seeds. $0 CPU torch-mouth (the SAME
 gauge_lib._decode path the live G6 gate uses). DIRECTIONAL R1 mirror (engine-
 native byte-exact reconfirm = follow-on only if clean-GREEN; a_engine_native_learning).
