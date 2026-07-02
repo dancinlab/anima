@@ -10684,6 +10684,16 @@
                         "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-designed",
                         "name": "anima-g1-coverage-designed-corpus (PRIVATE · 연구artifact)",
                         "detail": "G1 조합-커버리지 통제쌍. high_coverage(60% pair≈237) vs low_coverage(8%≈31), ~1.2MB 매칭. 30개념 C(30,2)=435쌍 중 40 held-out(문장 부재·무결), POOL 395서 커버리지만 통제. 4템플릿×10동사×8결과. state/g1_density_phase_transition/corpus/ (README+build_and_test.py 결정적 재현 attn|conv). torch DIRECTIONAL."
+                      },
+                      {
+                        "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-v3-nlbyte",
+                        "name": "anima-g1-coverage-v3-nlbyte (PRIVATE · 연구artifact)",
+                        "detail": "repo_id=dancinlab/anima-g1-coverage-v3-nlbyte · tier=research/DIRECTIONAL · visibility=PRIVATE · features=[pair-특이,3-arm,NL-byte,coverage-designed]. G1 pair-특이 3-arm NL-byte 커버리지 코퍼스(H_6183): HIGH 60%/LOW 8%/SHUF. attn held-out pair recall HIGH 95% ≫ LOW 25% · SHUF 0 = 재조합이 커버리지-특이(밀도 아님). commit e3c1ddeba. state/g1_coverage_v3_nlbyte/. torch DIRECTIONAL."
+                      },
+                      {
+                        "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-arch-invariant",
+                        "name": "anima-g1-coverage-arch-invariant (PRIVATE · 연구artifact)",
+                        "detail": "repo_id=dancinlab/anima-g1-coverage-arch-invariant · tier=research/DIRECTIONAL · visibility=PRIVATE · features=[arch-invariant,attn+dilated-conv,coverage-designed,RF-wall]. arch-무관 커버리지 코퍼스(H_6184, attn + dilated-conv 양쪽): HIGH held 95/85% ≫ LOW = 수용영역(RF) 벽 돌파가 아키텍처-무관. commit c5647e7b7. torch DIRECTIONAL."
                       }
                     ]
                   }
