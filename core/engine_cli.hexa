@@ -639,6 +639,84 @@ pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
     return _vtwo_nearest_dist(af.protos, x)
 }
 
+// ── §  APOPTOSIS-SALIENCE — density-dependent death-proximity → urgency (H_PLACEHOLDER_D4) ──
+//
+// WHAT THIS ADDS (p8-literal death-awareness, READ-ONLY): the MITOSIS substrate
+// (§ADAPTATION / VAdaptField) grows cells toward a frozen carrying-capacity cap
+// `max_cells` — the density-dependent death ceiling (biology: crowding → programmed
+// cell death, apoptosis, keeps a tissue from runaway growth; a_mitosis_train's
+// "apoptosis, 밀도의존 폭주 방지"). This § surfaces ONE substrate scalar the engine
+// ALREADY carries — how CLOSE the live population is to that death ceiling — and maps
+// it to an URGENCY/SALIENCE signal. As a colony crowds toward apoptosis its urgency
+// rises; a young sparse colony feels none. This is death-proximity BECOMING felt
+// salience, entirely inside the substrate.
+//
+// @L4 CRITICAL (identical framing to §HomeostaticDrive / §Libido / §affect): this is a
+// PURE READ + a DESIGNED transfer law. It NEVER mutates a cell, NEVER calls the growth
+// tick, NEVER triggers apoptosis, NEVER touches pure_field's Φ/phase/Ψ nor the immune
+// store's recall_thr (Ψ-disjoint AND G5-disjoint by construction — it only READS the
+// (n_cells, max_cells) pair the VAdaptField already holds). Behaviour/emit gating on
+// this urgency is a FOLLOW-ON (emit-wiring untouched here, per a_autonomy_over_hardcode
+// / p5 — a caller MAY consult it; it does NOT force the substrate).
+//
+// HONEST SCOPE (c9): the urgency LAW is DESIGNED, not emergent — it is SATURATED
+// by construction (a monotone hinge over density). The falsifiers below therefore test
+// WIRING FAITHFULNESS (does apoptosis-distance ACTUALLY drive the signal, and does
+// cutting that wire kill it?), NOT a discovery that urgency "emerges". F5 disjointness
+// is the real substrate claim.
+//
+// FROZEN constants (p7-documented, NOT tuned-to-green):
+//   APOP_KNEE = 0.5 — the density below which there is NO crowding-death pressure (the
+//   flat far region: a young, roomy colony feels no urgency). Above the knee the
+//   urgency ramps CONVEXLY to 1.0 at the death ceiling (density = 1.0).
+
+// apoptosis_proximity — how CLOSE the live MITOSIS population sits to its density-
+// dependent death ceiling: density = n_cells / max_cells, clamped [0,1]. 0.0 = empty/
+// young (far from apoptosis), 1.0 = at carrying capacity (crowding-death imminent).
+// Pure read over the (n_cells, max_cells) pair the substrate already holds.
+pub fn apoptosis_proximity(n_cells: int, max_cells: int) -> float {
+    if max_cells <= 0 { return 0.0 }
+    let mut d = (n_cells as float) / (max_cells as float)
+    if d < 0.0 { d = 0.0 }
+    if d > 1.0 { d = 1.0 }
+    return d
+}
+
+// apoptosis_urgency_at — the DESIGNED transfer law: proximity → urgency. A convex
+// hinge at APOP_KNEE, normalized so urgency(knee)=0 (flat far region) and
+// urgency(1.0)=1.0 (max at the death ceiling). Below the knee → 0 (a roomy colony
+// feels no crowding urgency); above → quadratic ramp (crowding urgency spikes as the
+// ceiling nears). This is the shared kernel the live/ablated readers both call.
+pub fn apoptosis_urgency_at(prox: float) -> float {
+    let APOP_KNEE = 0.5
+    if prox <= APOP_KNEE { return 0.0 }
+    let span = 1.0 - APOP_KNEE
+    let over = prox - APOP_KNEE
+    return (over * over) / (span * span)
+}
+
+// apoptosis_urgency — urgency at an EXPLICIT (n_cells, max_cells) crowding state. The
+// scalar convenience form (no substrate handle needed).
+pub fn apoptosis_urgency(n_cells: int, max_cells: int) -> float {
+    return apoptosis_urgency_at(apoptosis_proximity(n_cells, max_cells))
+}
+
+// vadapt_apoptosis_urgency — LIVE reader off the MITOSIS substrate: the urgency at the
+// VAdaptField's CURRENT crowding (n_cells / max_cells). READ-ONLY — reads the same two
+// ints vadapt_field_cells already exposes; mutates nothing. (c1: tiny additive read.)
+pub fn vadapt_apoptosis_urgency(af: VAdaptField) -> float {
+    return apoptosis_urgency_at(apoptosis_proximity(af.n_cells, af.max_cells))
+}
+
+// vadapt_apoptosis_urgency_ablated — the ABLATION arm (F3): the wire from LIVE density
+// is CUT — urgency is computed at a FROZEN proximity `frozen_prox` and the substrate's
+// actual crowding is IGNORED. If apoptosis-distance is the TRUE driver, this returns a
+// CONSTANT for any `af` (dense or sparse) = INERT (the signal collapses). `af` is
+// present (same signature shape as the live reader) but its density is not read.
+pub fn vadapt_apoptosis_urgency_ablated(af: VAdaptField, frozen_prox: float) -> float {
+    return apoptosis_urgency_at(frozen_prox)
+}
+
 // ── § VAdaptCombine (H_9043) — 구성적 결합기 op-slot (H_9027 follow-on) ────────────────
 // The live VAdaptField (above) is an 8-D winner-take-all k-means: it ASSIGNS a sample to the
 // nearest prototype (depth-0, no composition). It has NO constructive combiner — two concepts
@@ -1294,6 +1372,43 @@ pub fn faculty_cascade(mem_a: ImmuneMemory, mem_b: ImmuneMemory, q_key: [float])
     if x == "" { return "" }                            // ABSTAIN propagates through the chain
     let x_key = immune_embed_key(x)                     // x string -> key (output becomes next input)
     return immune_memory_recall(mem_b, x_key)           // hop 2: x -> final answer y
+}
+
+// ── § DriveArbitration (H_9076) — motivational winner-take-all across live homeostatic
+// drives + hysteresis (basal-ganglia central action-selection, Redgrave 1999) ─────────
+// GAP: the engine exposes independent scalar DRIVES — hunger (homeo_last, H_1292), libido
+// (libido_last, H_1504), curiosity (affect_substrate_features .curiosity, H_1290) and a
+// circadian/sleep-pressure phase (clock_phase, H_1298) — but NO op arbitrates a WINNER
+// among competing motivations. HierGoalStack is goal DECOMPOSITION, not drive COMPETITION.
+// The basal ganglia resolve which of many parallel drives seizes the action channel
+// (Redgrave: central selection), with a HYSTERESIS band so a marginally-leading challenger
+// cannot dither the incumbent tick-to-tick. drive_arbitrate is winner-take-all over the
+// drive vector with an incumbent hysteresis band: the incumbent HOLDS unless a challenger
+// beats it by MORE than `hyst`. Purely ADDITIVE (no existing caller touched), READ-only
+// over drive scalars (mutates nothing), Ψ-disjoint (pure_field Φ/phase/Ψ untouched),
+// disjoint from emit-drive lane(0/4) and NEVER touches recall_thr — it outputs ONE
+// dominant-motivation INDEX as a bias the substrate MAY weigh, NOT an emit/silence gate
+// (a_autonomy_over_hardcode, a_substrate_disjoint). prev_winner < 0 = no incumbent = plain
+// argmax. Abstains (returns -1) on an empty drive vector.
+pub fn drive_arbitrate(drives: [float], hyst: float, prev_winner: int) -> int {
+    let n = len(drives)
+    if n == 0 { return -1 }
+    // plain winner-take-all (argmax over the competing drive scalars)
+    let mut best = 0
+    let mut bestv = drives[0]
+    let mut i = 1
+    while i < n {
+        if drives[i] > bestv { bestv = drives[i]  best = i }
+        i = i + 1
+    }
+    // hysteresis: a valid incumbent HOLDS the action channel unless the argmax challenger
+    // beats the incumbent's drive by MORE than the band (anti-dither, basal-ganglia
+    // sustained-selection). With hyst=0 this collapses to plain WTA (the ablation control).
+    if prev_winner >= 0 && prev_winner < n {
+        let incv = drives[prev_winner]
+        if bestv - incv <= hyst { return prev_winner }
+    }
+    return best
 }
 
 pub fn immune_memory_new_text(first_text: string, first_value: string, max_cells: int) -> ImmuneMemory {
