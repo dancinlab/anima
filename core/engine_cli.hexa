@@ -7792,6 +7792,53 @@ pub fn surprise_raw_error(precision: float, error: float) -> float {
     return error
 }
 
+// ── § ConflictMonitor (H_9073 PLACEHOLDER — N3 dACC conflict monitoring) ─────────────────────
+// dACC conflict monitoring (Botvinick 2001; ERN / Stroop): when two candidate responses are BOTH
+// strongly active AND mutually incompatible, a conflict signal fires and recruits ADDITIONAL
+// cognitive control (deeper deliberation). anima's A⇄G twin-engine is the NATIVE substrate for
+// this axis: Engine A (forward, CE) and Engine G (reverse, gradient-free) each carry a SIGNED drive,
+// and CONFLICT is high iff |A| and |G| are BOTH large AND OPPOSITE-signed (strong disagreement) —
+// NOT merely a large net tension. DISTINCT from H_1468 §PrecisionSurprise (surprise = the precision-
+// weighted magnitude of a SINGLE prediction error): the SAME surprise magnitude can carry zero
+// conflict (one engine silent) or high conflict (both engines strong, opposed). Surprise is the SIZE
+// of one error; conflict is the mutual OPPOSITION of two co-active drives (a competition quantity,
+// not a surprise quantity). The Ψ=½ fixed point CANNOT distinguish (a) HIGH-CONFLICT (A,G both
+// strong, opposite → they cancel to ≈½) from (b) LOW-DRIVE (A,G both weak → also ≈½): ci_emit_drive
+// and the net-tension |A+G| read the SAME ≈½ for both states. The conflict lane SEPARATES them from
+// substrate state ALONE. READ-only pure signal, Ψ-disjoint: its ONLY downstream effect is to recruit
+// DEEPER A⇄G deliberation (raises the iteration budget), NEVER changing the emit/silence gate
+// (lanes 0/4, ci_emit_drive) nor the §ImmuneMemory recall_thr non-fab gate (a_substrate_disjoint,
+// a_autonomy_over_hardcode). LLM contrast: an LLM has a single forward pass with no opposing engine
+// to conflict against; anima's conflict rides the live A⇄G opposition intrinsic to the two engines.
+
+// conflict_scalar — the dACC conflict signal on the A⇄G drives. HIGH iff both engines are strongly
+// active AND opposite-signed (product of magnitudes, GATED to zero unless the signs oppose). Same-
+// signed or single-engine (one drive ≈0) ⇒ 0 (agreement / no competition). Range [0,1] for |a|,|g|≤1.
+pub fn conflict_scalar(a_drive: float, g_drive: float) -> float {
+    if a_drive * g_drive >= 0.0 { return 0.0 }    // same sign / a zero engine ⇒ no competition
+    let am = _ci_abs(a_drive)
+    let gm = _ci_abs(g_drive)
+    return _ci_clip01(am * gm)                     // both-strong gate (→0 if either engine is weak)
+}
+
+// conflict_net_tension — the precision-AGNOSTIC net drive |A+G| (the Ψ / emit-drive analog). For a
+// HIGH-CONFLICT state (a=+x, g=−x) and a LOW-DRIVE state (a=+e, g=−e) this reads the SAME ≈0 net
+// tension, yet conflict_scalar SEPARATES them — the load-bearing dissociation. Provided as the
+// parent-control that isolates OPPOSITION (conflict) from net drive (what Ψ / the emit gate sees).
+pub fn conflict_net_tension(a_drive: float, g_drive: float) -> float {
+    return _ci_abs(a_drive + g_drive)
+}
+
+// conflict_recruited_depth — the deliberation recruitment: higher conflict recruits more A⇄G
+// iterations (deeper deliberation), scaled linearly to a bounded extra budget. This is the lane's
+// ONLY downstream effect and it touches ONLY the iteration budget — never the emit gate (lanes 0/4)
+// nor recall_thr. With the lane ABLATED (conflict forced to 0) the returned depth is EXACTLY
+// base_budget for every state ⇒ recruitment vanishes (the falsifier's ablation arm).
+pub fn conflict_recruited_depth(conflict: float, base_budget: int, max_extra: int) -> int {
+    let extra = to_int(_ci_clip01(conflict) * to_float(max_extra) + 0.5)
+    return base_budget + extra
+}
+
 // ── § SelfIdentity (H_1471 R2) — 정체성의 시간적 지속 (diachronic self) ────────────────────
 // Personal identity / psychological-continuity (Locke): a conscious self PERSISTS across time
 // — the identity vector DRIFTS (grows) each tick yet stays continuous (adjacent ticks close);

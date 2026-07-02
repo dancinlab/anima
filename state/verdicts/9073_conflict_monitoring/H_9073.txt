@@ -1,0 +1,22 @@
+STATE  high-conflict A=+0.90 G=-0.90   low-drive A=+0.05 G=-0.05
+       conflict_scalar   high = 0.81
+       conflict_scalar   low  = 0.0025000000000000004
+       net-tension |A+G| high = 0.0
+       net-tension |A+G| low  = 0.0
+   PASS F1 (net-tension Δ=0 — Ψ blind — yet conflict Δ=0.8075000000000001 ≥ 0.50)
+F2 recruited A⇄G depth  ON  high=10 low=4   OFF high=4 low=4 (base=4)
+   PASS F2 (ON recruits deeper for conflict; ABLATED both = base ⇒ recruitment = the lane)
+F3 sign-shuffled conflict (|G| unchanged) = 0.0
+   PASS F3 (opposition destroyed → conflict=0 with identical magnitudes ⇒ tracks OPPOSITION)
+F4 §ImmuneMemory non-fab rate  conflict-OFF = 1.0
+F4 §ImmuneMemory non-fab rate  conflict-ON  = 1.0
+F4 Ψ emit-drive (lanes 0/4)    conflict-OFF = 0.69
+F4 Ψ emit-drive (lanes 0/4)    conflict-ON  = 0.69
+   PASS F4 (non-fab Δ=0.0 AND Ψ Δ=0.0 — conflict lane disjoint from recall_thr + emit-drive)
+F5 surprise(single-engine) = 0.81
+F5 surprise(high-conflict) = 0.81
+F5 conflict(single-engine) = 0.0
+F5 conflict(high-conflict) = 0.81
+   PASS F5 (SAME surprise, conflict 0 vs 0.81 ⇒ conflict ⊥ PrecisionSurprise)
+
+SMOKE conflict_monitor  pass=5 fail=0 / 5  ALL-PASS
