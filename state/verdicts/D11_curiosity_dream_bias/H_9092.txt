@@ -1,0 +1,24 @@
+── D11 curiosity×dream consolidation-priority (engine-native §CuriosityDreamBias) ──
+priority[hi] = 1.124
+priority[lo] = 0.102
+
+F1  hi_share_biased  = 0.9266666666666666
+   PASS F1 (biased replay prioritizes unresolved anchors)
+F1b L2(schema_biased, μ_hi)  = 0.042623183445162809
+F1b L2(schema_uniform, μ_hi) = 0.9714121961605692
+   PASS F1b (dream composes unresolved anchors)
+F3  hi_share_uniform = 0.5083333333333333
+   PASS F3 (uniform ≈ 0.5, bias lift >= 0.15 — bias is load-bearing)
+F2  hi_share_shuffled = 0.36
+   PASS F2 (priority signal drives it, not raw budget)
+F4  Σpriority_hi night-1 = 2.656
+F4  Σpriority_hi night-2 = 0.46744189193051096
+F4  hi_share night-2     = 0.13333333333333333
+   PASS F4 (consolidation resolves the replayed anchors → they pull less)
+F5  Ψ emit-drive OFF = 0.69
+F5  Ψ emit-drive ON  = 0.69
+F5  non-fab OFF = 0.8333333333333334
+F5  non-fab ON  = 0.8333333333333334
+   PASS F5 (Ψ Δ=0.0 AND non-fab Δ=0.0 — curiosity lane disjoint from emit-drive + recall_thr)
+
+SMOKE d11_curiosity_dream_bias  pass=6 fail=0 / 6  ALL-PASS
