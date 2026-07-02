@@ -143,8 +143,27 @@ jobs:
           tag="${{ github.event.inputs.tag }}"
           [ -n "$tag" ] || tag="${GITHUB_REF_NAME}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          # CHANGELOG 최상단 1개 항목(## … 다음 ## 전까지)을 릴리즈 노트로.
-          awk 'BEGIN{n=0} /^## /{n++} n==1{print} n==2{exit}' CHANGELOG.md > /tmp/notes.md || true
+          # 릴리즈 노트 = CHANGELOG.jsonl 의 최신(맨 끝) 항목. (2026-06 #2645 에
+          # CHANGELOG.md → append-only JSONL `{ts,title,body}` 로 이관됨 — 예전
+          # `awk '/^## /' CHANGELOG.md` 는 파일 부재로 항상 빈 노트로 폴백했다.)
+          # autotag 은 changelog 항목을 추가한 그 main push 에 v* 태그를 찍으므로
+          # tail-1 항목 = 이 릴리즈. python3 는 ubuntu·macos 러너 모두 표준 탑재.
+          python3 - "$tag" > /tmp/notes.md <<'PY' || true
+          import json, sys
+          tag = sys.argv[1]
+          notes = ""
+          try:
+              with open("CHANGELOG.jsonl", encoding="utf-8") as fh:
+                  lines = [ln for ln in fh if ln.strip()]
+              if lines:
+                  e = json.loads(lines[-1])
+                  title = e.get("title", "").strip()
+                  body = e.get("body", "").strip()
+                  notes = ("## " + title + "\n\n" + body).strip() if title else body
+          except Exception:
+              notes = ""
+          print(notes if notes else f"anima release {tag}")
+          PY
           [ -s /tmp/notes.md ] || echo "anima release $tag" > /tmp/notes.md
 
       - name: Create / update GitHub Release (install-smoke verified)
