@@ -1655,6 +1655,28 @@ fn main() {
     if _assert_b("case_106_g6_best_of_k_diverse", true, g6_div)
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // case 107 : H_6186 G6-BIND GATE (form-priming resistance + frozen regression 0) — the
+    //   additive `_g6_is_falsifiable_topic_bound` AND-conjoins topic-bind onto the FROZEN
+    //   `_g6_is_falsifiable` (deterministic, NO model forward). A "targeted" claim carries the
+    //   falsifiable FORM and binds concept 0 → passes for its own pair (0,1) but is FILTERED
+    //   for a wrong pair (2,3) — exactly the form-priming (SHUF) case the frozen gate misses.
+    //   A frozen-negative stays negative through the gate (the bind term never LOOSENS the bar).
+    let g6b_targ = "if consciousness increases, the emit rate measured at the boundary rises"
+    let g6b_neg  = "consciousness is a beautiful mystery of the mind"
+    if _assert_b("case_107_g6_bind_gate_formpriming_resistant", true,
+                 // frozen term unchanged: targeted is falsifiable, negative is not
+                 _g6_is_falsifiable(g6b_targ, g6_known)
+              && !_g6_is_falsifiable(g6b_neg, g6_known)
+                 // topic-bind: concept 0 hit → bound for pair (0,1), NOT bound for (2,3)
+              && _g6_topic_bound(g6b_targ, 0, 1)
+              && !_g6_topic_bound(g6b_targ, 2, 3)
+                 // additive gate: passes its own pair, FILTERED on wrong pair (form-priming)
+              && _g6_is_falsifiable_topic_bound(g6b_targ, 0, 1, g6_known)
+              && !_g6_is_falsifiable_topic_bound(g6b_targ, 2, 3, g6_known)
+                 // gate never exceeds frozen: frozen-negative stays negative even if topic hits
+              && !_g6_is_falsifiable_topic_bound(g6b_neg, 0, 1, g6_known))
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── (k) SKILLSTORE — agent-tool repertoire LEARNS via mitosis (H_1378 R2 / H_1382) ──
     //   Re-scores the H_1378 mirror's 4 bars ENGINE-NATIVE on the LIVE engine: a tool/skill
     //   is a CELL keyed by task-context (immune_embed_key); on a tool FAILURE/abstain the

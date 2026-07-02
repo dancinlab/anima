@@ -1,0 +1,33 @@
+{
+ "probe": "L8-cov G1=0 separation (hyp 1/2/3 isolation), $0 no-retrain greedy decode",
+ "date": "2026-07-03",
+ "ckpt": "~/anima-weights/g1_l8_cov/clm303_deep_L8_cov.clm",
+ "engine": "core/decode.py (main, numpy byte-parity CLMConvMoE, torch-free)",
+ "verdict_tier": "DIRECTIONAL (numpy py-mirror; a_engine_native_learning)",
+ "arch": {"d": 2781, "L": 8, "E": 4, "V": 256, "K": 3, "decode_window_T": 24},
+ "host_note": "aiden numpy-import hang (== original stall); summer swap-thrash (2 foreign hexa jobs); ran on mac (2.4GB load, 5.7GB free)",
+ "results_summary": {
+  "seen_single_brings_hit": "1/11 (only consciousness; greedy drifts to dominant yield-template; T2 weak, not missing mapping)",
+  "seen_pair_yield_both": "6/12 exact (azure+russet, cobalt+khaki, emerald+frosty, amber+emerald, sleep+azure)",
+  "seen_pair_yield_any": "9/12",
+  "heldout_gate_pair_both": "0/10 (CONFOUNDED: first long gate concept out of 24B window)",
+  "heldout_gate_pair_any": "2/10",
+  "heldout_NONGATE_pair_both": "1/14 (ember+dune -> golden and zinc; only pair whose FIRST concept survives 24B window)",
+  "heldout_NONGATE_pair_any": "11/14 (second-position attr fires; first fails iff first concept truncated by window)"
+ },
+ "separation": {
+  "hyp1_block_did_not_learn_mapping": "REFUTED",
+  "hyp3_real_recombination_floor": "REFUTED (held-out ember+dune recombines to golden+zinc in-window)",
+  "hyp2_surface_form_window_lock": "CONFIRMED (gate free-gen surface off trained yield-template + T=24 window blocks joint gate-concept conditioning)"
+ },
+ "h6187_implication": "INCONCLUSIVE (definitive). H_6187 terminal claim stays RETRACTED. G1=0 is NOT a trunk recombination floor. Positive: held-out pair recombination present & working in-window (contra recombination-wall meta-law for this template task).",
+ "next_prescription": {
+  "retrain_needed": true,
+  "not_terminal": true,
+  "fix1_surface_form": "train combination on gate measurement surface form (free-gen continuation), non-gate concepts only, gate pairs held-out",
+  "fix2_window_placement": "place both concepts inside T=24 window; current 'the A and the B yield ' pushes first gate concept out-of-window -> its attr unlearnable (hidden failure axis)",
+  "keep_frozen": "G1 gate/bar/detector unchanged (no tune-to-green)",
+  "arch_note": "decode window T=24 << dilated RF 511 mismatch constrains gate measurement"
+ },
+ "artifacts": ["probe1_driver.py","probe1.log","probe_out.json","probe2_driver.py","probe2.log","probe2_heldout_nongate.json"]
+}
