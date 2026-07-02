@@ -1,0 +1,27 @@
+K=6 add: held_mean=0.95 per_seed=[0.9329, 1.0, 0.9172]
+K=6 hadamard: held_mean=0.9432 per_seed=[0.8857, 0.9985, 0.9453]
+K=6 bilinear: held_mean=0.9894 per_seed=[0.9683, 1.0, 1.0]
+  >> K=6: add=0.95 best_mult=0.9894(bilinear) Δ=0.0394 headroom=0.05
+K=8 add: held_mean=0.8354 per_seed=[0.8308, 0.8782, 0.7971]
+K=8 hadamard: held_mean=0.7944 per_seed=[0.7505, 0.8347, 0.7981]
+K=8 bilinear: held_mean=0.8615 per_seed=[0.8428, 0.885, 0.8567]
+  >> K=8: add=0.8354 best_mult=0.8615(bilinear) Δ=0.0261 headroom=0.1646
+K=10 add: held_mean=0.7893 per_seed=[0.6323, 0.8157, 0.9199]
+K=10 hadamard: held_mean=0.7044 per_seed=[0.5356, 0.699, 0.8787]
+K=10 bilinear: held_mean=0.8055 per_seed=[0.6675, 0.8433, 0.9058]
+  >> K=10: add=0.7893 best_mult=0.8055(bilinear) Δ=0.0162 headroom=0.2107
+K=12 add: held_mean=0.7215 per_seed=[0.7012, 0.5596, 0.9038]
+K=12 hadamard: held_mean=0.6917 per_seed=[0.6255, 0.5559, 0.8936]
+K=12 bilinear: held_mean=0.7297 per_seed=[0.6711, 0.606, 0.9119]
+  >> K=12: add=0.7215 best_mult=0.7297(bilinear) Δ=0.0082 headroom=0.2785
+Traceback (most recent call last):
+  File "/home/aiden/probe_lever/toy_lever_v2.py", line 104, in <module>
+    if __name__=="__main__": main()
+                             ^^^^^^
+  File "/home/aiden/probe_lever/toy_lever_v2.py", line 94, in main
+    anyhead=any(out['K'][str(K)]['add']<=0.85 and out['K'][str(K)]['add']>=chance+0.1 for K in KS)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/probe_lever/toy_lever_v2.py", line 94, in <genexpr>
+    anyhead=any(out['K'][str(K)]['add']<=0.85 and out['K'][str(K)]['add']>=chance+0.1 for K in KS)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<=' not supported between instances of 'dict' and 'float'

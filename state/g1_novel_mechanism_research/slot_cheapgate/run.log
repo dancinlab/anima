@@ -1,0 +1,19 @@
+seed=7 mono: seen_mse=0.0 held_mse=0.0633 ratio=63300.0
+seed=7 addslot: seen_mse=0.0 held_mse=0.0782 ratio=78200.0
+seed=4302 mono: seen_mse=0.0 held_mse=0.0593 ratio=59300.0
+seed=4302 addslot: seen_mse=0.0 held_mse=0.1007 ratio=100700.0
+seed=4303 mono: seen_mse=0.0 held_mse=0.1417 ratio=141700.0
+seed=4303 addslot: seen_mse=0.0 held_mse=0.1402 ratio=140200.0
+seed=4304 mono: seen_mse=0.0001 held_mse=0.1253 ratio=1253.0
+seed=4304 addslot: seen_mse=0.0 held_mse=0.1214 ratio=121400.0
+seed=4305 mono: seen_mse=0.0 held_mse=0.0716 ratio=71600.0
+seed=4305 addslot: seen_mse=0.0002 held_mse=0.0801 ratio=400.5
+
+=== VERDICT ===
+{'seed': 7, 'addslot_ratio': 78200.0, 'mono_ratio': 63300.0, 'mono_vs_addslot_held': 0.809}
+{'seed': 4302, 'addslot_ratio': 100700.0, 'mono_ratio': 59300.0, 'mono_vs_addslot_held': 0.589}
+{'seed': 4303, 'addslot_ratio': 140200.0, 'mono_ratio': 141700.0, 'mono_vs_addslot_held': 1.011}
+{'seed': 4304, 'addslot_ratio': 121400.0, 'mono_ratio': 1253.0, 'mono_vs_addslot_held': 1.032}
+{'seed': 4305, 'addslot_ratio': 400.5, 'mono_ratio': 71600.0, 'mono_vs_addslot_held': 0.894}
+n_extrap: 0 /5  n_beats_mono: 0 /5
+TIER: 🧱 FLOOR — additive-slot+consistency does NOT extrapolate under learned CE/MSE (slot identifiability destroyed; Lost-in-Latent-Space confirmed for anima trunk)
