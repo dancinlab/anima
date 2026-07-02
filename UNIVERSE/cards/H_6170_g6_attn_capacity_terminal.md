@@ -21,7 +21,11 @@ The CAP×REG factorial (18 cells, torch) closed 🧱 WALL **DIRECTIONAL** — MA
 
 `anima serialize-bind` spliced both injected `.pt` (N=2, gates≈±0.013) onto the base `.bin` → 1.314GB out.bin, `bg_is_bytegpt=True`, `bg_load ok`, 2 bind blocks round-trip, **zero code changes** (block state_dict keys matched `_bind_block_bytes` exactly). No bug in core/serialize.py / core/decode.py. base `.bin` serialize byte-identical across aiden==summer (sha `5c303f02…`). First real-303M end-to-end proof of the #2714 BGB path.
 
+## decode.hexa BGB wire-in (H_9027 follow-on, byte-parity)
+
+`wired:` upgraded — BGB is no longer decode.py-mirror-only. core/decode.hexa NOW HAS BGB at byte-parity (bg_load `_bg_read_bind_trailer` + `_bg_apply_bind` after L base blocks before ln_f + `bytegpt_decode_argmax` KV-skip for bind models; `_bg_fwd_last` forces host since the device forward has no bind path). Token streams BYTE-IDENTICAL to core/decode.py on tiny d32/L2 fixtures (base no-regression · N=1 gate=0.7 · N=2 gates=0.5,-0.4 · gate=0=base no-op; 48/48 tokens each) via a VERBATIM host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU `mm`). Evidence: `state/9027_bgb_injected_decode/hexa_parity/` (RESULT.md · hexa_streams.txt · gen_fixtures.py · extract_host.py · bgb_host_extract.hexa). **BLOCKED-INFRA caveat (c9):** the FULL decode.hexa device path (`forge_dispatch_*`/`farr_attn_dt_decode_gpu` builtins) does NOT compile on fleet hexa v0.511/v0.513 — UNMODIFIED origin/main decode.hexa fails identically — so full-engine + device-path BGB is a follow-on; `--py` stays TERMINAL-eligible.
+
 ## artifacts
 
 `state/6170_g6_attn_capacity_terminal/` — RESULT.md · CKPT_MANIFEST.md · ckpt/inj_REG{on,off}_N2_s7.pt (pulled, sha-verified) · eval_logs/eval_{base,regon,regoff}*.log · train_save_cell.py (DIRECTIONAL trainer)
-DIRECTIONAL precedent: `state/6164_g6_attention_capacity/` (campaign branch, torch 18-cell factorial + VERDICT.md).
+DIRECTIONAL precedent: `state/6164_g6_attention_capacity/` (campaign branch → now preserved on main, torch 18-cell factorial + VERDICT.md).

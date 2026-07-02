@@ -1966,6 +1966,17 @@ pub fn bg_load(path: string) -> Map {
     let lnfb = read_f32_at(path, off, d); off = off + d * 4
     let head = read_f32_at(path, off, vocab * d); off = off + vocab * d * 4
 
+    // ── OPTIONAL BGB injected-bind trailer (serialize_bind, H_9027 / H_6170). ──
+    // "BGB\x01" = bytes 66,71,66,1 appended AFTER `head`, then u32 n_bind, then
+    // n_bind GATED transformer blocks. Each block = a STANDARD base layer (the SAME
+    // 12 param tensors, SAME order/layout as a base layer above — read here NON-
+    // transposed for the scalar _bg_apply_bind path) then one LE f32 gate. Applied
+    // in bg_forward_last_W AFTER the L base blocks and BEFORE ln_f (mirrors the CLM
+    // "CLMB" trailer + decode.py::bg_load BGB path exactly). ABSENT ⇒ bind=[] ⇒
+    // forward BYTE-IDENTICAL to plain ByteGPT. (Ranged read_bytes_at at EOF returns
+    // len 0, so the guard is byte-parity-safe with decode.py's `off+8 <= len(rb)`.)
+    let bind = _bg_read_bind_trailer(path, off, d)
+
     // Lane C fast path: pre-transpose every weight that feeds a d×d matmul ONCE
     // here (amortized over all forwards). bg_forward_last_W's native-GEMM path
     // consumes these [Ci,Co] transposes; the original [Co,Ci] arrays are kept so
@@ -1986,7 +1997,97 @@ pub fn bg_load(path: string) -> Map {
               "inW": inW, "inB": inB, "oW": oW, "oB": oB,
               "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
               "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
-              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT }
+              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT,
+              "bind": bind }
+}
+
+// _bg_read_bind_trailer — read the optional BGB injected-bind trailer at byte
+// offset `byte_off` (== end of `head`) via ranged reads. Returns a list of block
+// Maps (empty if no trailer). Each block Map holds the 12 base-layer param tensors
+// (NON-transposed handles, in bg_load order) + a scalar "gate" (float). Shared by
+// bg_load and bg_load_ranged so both loaders carry byte-identical bind weights.
+// 1:1 with decode.py::_bg_read_bind_block / the bg_load BGB block loop.
+fn _bg_read_bind_trailer(path: string, byte_off: int, d: int) -> list {
+    let bind = []
+    let tb = read_bytes_at(path, byte_off, 8)
+    // "BGB\x01" magic (66,71,66,1) + u32 n_bind; short read at EOF ⇒ len<8 ⇒ absent.
+    if len(tb) >= 8 && tb[0] == 66 && tb[1] == 71 && tb[2] == 66 && tb[3] == 1 {
+        let n_bind = _bg_rd_u32(tb, 4)
+        let mut off = byte_off + 8
+        let mut bi = 0
+        while bi < n_bind {
+            let ln1w = read_f32_at(path, off, d); off = off + d * 4
+            let ln1b = read_f32_at(path, off, d); off = off + d * 4
+            let inW = read_f32_at(path, off, 3 * d * d); off = off + 3 * d * d * 4
+            let inB = read_f32_at(path, off, 3 * d); off = off + 3 * d * 4
+            let oW = read_f32_at(path, off, d * d); off = off + d * d * 4
+            let oB = read_f32_at(path, off, d); off = off + d * 4
+            let ln2w = read_f32_at(path, off, d); off = off + d * 4
+            let ln2b = read_f32_at(path, off, d); off = off + d * 4
+            let m0W = read_f32_at(path, off, 4 * d * d); off = off + 4 * d * d * 4
+            let m0B = read_f32_at(path, off, 4 * d); off = off + 4 * d * 4
+            let m2W = read_f32_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
+            let m2B = read_f32_at(path, off, d); off = off + d * 4
+            let gfa = read_f32_at(path, off, 1); off = off + 4
+            let gate = farr_get(gfa, 0); let _ = farr_free(gfa)
+            bind.push(#{ "ln1w": ln1w, "ln1b": ln1b, "inW": inW, "inB": inB,
+                         "oW": oW, "oB": oB, "ln2w": ln2w, "ln2b": ln2b,
+                         "m0W": m0W, "m0B": m0B, "m2W": m2W, "m2B": m2B, "gate": gate })
+            bi = bi + 1
+        }
+    }
+    return bind
+}
+
+// _bg_apply_bind — apply N appended GATED transformer blocks to x[T,d] AFTER the L
+// base blocks and BEFORE ln_f (H_9027 / H_6170 injected-attention). Each block is a
+// STANDARD transformer block over the SCALAR byte-faithful ops (_bg_layernorm /
+// _bg_mha / _bg_linear / _bg_gelu — non-transposed weights straight from the
+// trailer) plus a scalar gate:
+//   xa       = x + mha(ln1(x))
+//   block(x) = xa + mlp(ln2(xa))
+//   x        = x + gate * (block(x) - x)      // gate=0 ⇒ x unchanged (exact)
+// Mutates x in place. 1:1 with decode.py::_bg_apply_bind / BindByteGPT.forward.
+fn _bg_apply_bind(x: int, bind: list, T: int, d: int, nh: int) {
+    let mut bi = 0
+    while bi < len(bind) {
+        let blk = bind[bi]
+        let ln1w = to_int(blk["ln1w"]); let ln1b = to_int(blk["ln1b"])
+        let inW = to_int(blk["inW"]); let inB = to_int(blk["inB"])
+        let oW = to_int(blk["oW"]); let oB = to_int(blk["oB"])
+        let ln2w = to_int(blk["ln2w"]); let ln2b = to_int(blk["ln2b"])
+        let m0W = to_int(blk["m0W"]); let m0B = to_int(blk["m0B"])
+        let m2W = to_int(blk["m2W"]); let m2B = to_int(blk["m2B"])
+        let gate = to_float(blk["gate"])
+
+        let nrm = farr_zeros(T * d)
+        let aout = farr_zeros(T * d)
+        // xa = x + mha(ln1(x))
+        _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
+        _bg_mha(nrm, inW, inB, oW, oB, aout, T, d, nh)
+        let xa = farr_zeros(T * d)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(xa, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+        // mlpo = Wd(GELU(W0(ln2(xa))))
+        let nrm2 = farr_zeros(T * d)
+        _bg_layernorm(xa, ln2w, ln2b, nrm2, T, d)
+        let h4 = farr_zeros(T * 4 * d)
+        _bg_linear(nrm2, m0W, m0B, h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        let mlpo = farr_zeros(T * d)
+        _bg_linear(h4, m2W, m2B, mlpo, T, 4 * d, d)
+        // block(x) = xa + mlpo ; x = x + gate*(block(x) - x)
+        let mut i2 = 0
+        while i2 < T * d {
+            let blk_out = farr_get(xa, i2) + farr_get(mlpo, i2)
+            let _ = farr_set(x, i2, farr_get(x, i2) + gate * (blk_out - farr_get(x, i2)))
+            i2 = i2 + 1
+        }
+        let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(xa)
+        let _ = farr_free(nrm2); let _ = farr_free(h4); let _ = farr_free(mlpo)
+        bi = bi + 1
+    }
 }
 
 // bg_load_ranged — OOM-SAFE resident loader for the mm forward (Lane C follow-on).
@@ -2042,6 +2143,12 @@ pub fn bg_load_ranged(path: string) -> Map {
     let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
     let headT = _bg_transpose(head, vocab, d)
 
+    // OPTIONAL BGB injected-bind trailer (H_9027 / H_6170) — same reader as bg_load
+    // (non-transposed scalar weights consumed by _bg_apply_bind). A bind model on a
+    // CUDA host is routed to the HOST bg_forward_last_W in _bg_fwd_last (the device
+    // forward has no bind path yet), so these host weights are the ones used.
+    let bind = _bg_read_bind_trailer(path, off, d)
+
     // ── P1b device-resident decode pre-shape (coexists with the host mm path) ──
     // Pre-split the packed in-proj transpose inWt[d,3d] into contiguous
     // inWt_q/k/v[d,d] (one-time host col-copy) so the device forward issues 3
@@ -2078,7 +2185,8 @@ pub fn bg_load_ranged(path: string) -> Map {
               "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT,
               "inWt_q": inWt_q, "inWt_k": inWt_k, "inWt_v": inWt_v,
               "inBq_e": inBq_e, "inBk_e": inBk_e, "inBv_e": inBv_e,
-              "oB_e": oB_e, "m0B_e": m0B_e, "m2B_e": m2B_e }
+              "oB_e": oB_e, "m0B_e": m0B_e, "m2B_e": m2B_e,
+              "bind": bind }
 }
 
 // bg_forward_last_W — run the full forward from a loaded weight Map; return a
@@ -2130,6 +2238,11 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
         Lr = Lr + 1
     }
     let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    // appended injected-bind blocks (H_9027 / H_6170) — after the base stack, before
+    // ln_f. Absent/empty ⇒ x unchanged ⇒ byte-identical to plain ByteGPT.
+    let bind = W["bind"]
+    if len(bind) > 0 { _bg_apply_bind(x, bind, T, d, nh) }
 
     let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"]); let head = to_int(W["head"])
     let lastrow = farr_zeros(d)
@@ -2284,6 +2397,10 @@ pub fn bg_forward_last_W_dev(W: Map, ids: int, T: int) -> int {
 // fresh farr[vocab] of last-position logits, so the caller is oblivious. Only
 // the bg_load_ranged entries may use this — bg_load W-maps lack the dev fields.
 fn _bg_fwd_last(W: Map, ids: int, T: int) -> int {
+    // BGB injected-bind models MUST use the host full-forward (bg_forward_last_W
+    // applies the gated bind blocks; the device forward has no bind path yet), so
+    // force host when bind is present — keeps bind decode byte-faithful on CUDA hosts.
+    if len(W["bind"]) > 0 { return bg_forward_last_W(W, ids, T) }
     if cuda_available() == 1 { return bg_forward_last_W_dev(W, ids, T) }
     return bg_forward_last_W(W, ids, T)
 }
@@ -2619,7 +2736,10 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
     // QKV pre-split (or migrate this non-live 24GB path onto bg_load_ranged).
     let nseed = len(toks)
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
-    if nseed > 0 && nseed + gen <= block {
+    // BGB injected-bind models skip the KV path (the appended blocks attend over the
+    // full post-base sequence, which incremental K,V can't supply) → full-forward
+    // fallback below, which applies bind (byte-parity with decode.py::_bg_step_logits).
+    if len(W["bind"]) == 0 && nseed > 0 && nseed + gen <= block {
         let kv = _bg_kv_new(nlay, block, d)
         let mut logits = -1
         let mut sp = 0
@@ -2681,7 +2801,8 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
     // full-forward loop below (the live 303M chat mouth; bytegpt_kvcache_smoke max|Δ|=0.0).
     let nseed = len(toks)
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
-    if nseed > 0 && nseed + gen <= block {
+    // BGB injected-bind models skip the KV path → full-forward fallback (applies bind).
+    if len(W["bind"]) == 0 && nseed > 0 && nseed + gen <= block {
         let kv = _bg_kv_new(nlay, block, d)
         let mut logits = -1
         let mut sp = 0
@@ -2905,7 +3026,8 @@ fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, see
     // position's learned-pos index == its absolute index == its cache row, so the
     // cached K,V stay correct. Byte-identical to the full-forward loop below (the
     // ELSE branch is the verbatim reference). Slide ⇒ fall back to full-forward.
-    if nseed > 0 && nseed + gen <= block {
+    // BGB injected-bind models also skip the KV path → full-forward fallback (bind).
+    if len(W["bind"]) == 0 && nseed > 0 && nseed + gen <= block {
         let kv = _bg_kv_new(nlay, block, d)
         // prime the cache: run positions 0..nseed-1 through _bg_kv_step (we only need
         // the LAST seed position's logits to draw the first byte).
