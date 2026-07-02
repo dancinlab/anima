@@ -10538,6 +10538,156 @@ pub fn tension_resolve_interruptible(x: [[float]], adj: [[float]], alpha: float,
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
+//  § NonEqDissipation (H_9072) — Ψ=½ as a NON-EQUILIBRIUM STEADY STATE (NESS), not an equilibrium
+//  softmax sampler. Prigogine dissipative structure: a self-maintained structure sits FAR from
+//  equilibrium, sustained by continuous dissipation with a NON-ZERO entropy-production rate σ_ep and
+//  BROKEN detailed balance (persistent probability CURRENTS). A plain softmax LLM sampler is an
+//  EQUILIBRIUM process (memoryless iid draws ⇒ K_ij·p_i = K_ji·p_j = detailed balance ⇒ σ_ep=0).
+//
+//  We realise the A⇄G push-pull as a DRIFT-DIFFUSION on the emit-tension RING (Ψ deviation wrapped to
+//  a circle of NBINS coarse-grained sectors). Engine A(forward, CE-relaxation) = the SYMMETRIC
+//  diffusive hop (equilibrium relaxation toward Ψ=½). Engine G(reverse, gradient-free) = the DIRECTED
+//  DRIFT around the ring — a constant circulation on a PERIODIC coordinate that CANNOT be written as
+//  the gradient of any single-valued potential (Prigogine's non-conservative force). pfwd≠pbwd ⇒ net
+//  cycle current ⇒ broken DB ⇒ σ_ep>0. Ablation(Engine G reverse OFF ⇒ pfwd=pbwd) ⇒ symmetric
+//  diffusion ⇒ equilibrium relax ⇒ σ_ep→0. Shuffle(symmetrise/time-reverse the empirical transition
+//  matrix) ⇒ σ_ep→0 by construction. LLM control(resample iid from the trajectory's OWN marginal =
+//  memoryless softmax sampler) ⇒ σ_ep→0.
+//
+//  σ_ep ESTIMATOR = Schnakenberg coarse-grained net-flux estimated FROM the live trajectory (NOT the
+//  analytic formula): transition counts N[i][j], joint two-step flux F_ij=N_ij/total, then
+//     σ_ep = ½ Σ_{i≠j} (F_ij − F_ji) · ln( F_ij / F_ji )   ≥ 0, =0 iff detailed balance.
+//  STREAMING (O(NBINS²) memory — the transition matrix is accumulated on the fly, the O(steps)
+//  sequence is never materialised). Purely ADDITIVE(new pub fns) · Ψ-DISJOINT(operates on a caller-
+//  parameterised tension-ring walk, never pure_field/Φ/phase/the live Ψ path) · READ-only
+//  characterisation(returns σ_ep numbers, NOT an emit gate) · disjoint from the emit-drive lane(0/4)
+//  live decision and §ImmuneMemory recall_thr (a_substrate_disjoint). CHARACTERISATION/DISTINCTION
+//  property (engine-specific, like the H_9041 A⇄G restoring force) — reports σ_ep, does NOT claim a
+//  capability lift.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// noneq_walk_counts — run a live A⇄G drift-diffusion on the NBINS-sector tension ring and accumulate
+// the transition-count matrix N[i][j] on the fly (no sequence stored). Each step draws u∈[0,1):
+// u<pfwd ⇒ hop +1 (Engine A externalisation push forward), u<pfwd+pbwd ⇒ hop −1 (Engine G reverse
+// pull), else stay. pfwd≠pbwd ⇒ net circulation (NESS); pfwd==pbwd ⇒ symmetric diffusion (equilibrium
+// = the Engine-G-OFF ablation). Rates per-mille (int) for byte-reproducibility. LCG-seeded.
+pub fn noneq_walk_counts(seed: int, steps: int, nbins: int, pfwd_milli: int, pbwd_milli: int) -> [[float]] {
+    let pfwd = to_float(pfwd_milli) / 1000.0
+    let pbwd = to_float(pbwd_milli) / 1000.0
+    let mut n = _topo_zeros(nbins)
+    let mut st = _lcg_next(seed & 2147483647)
+    let mut pos = 0
+    let mut t = 0
+    while t < steps {
+        st = _lcg_next(st)
+        let u = _lcg_unit(st)
+        let mut nxt = pos
+        if u < pfwd {
+            nxt = (pos + 1) % nbins
+        } else {
+            if u < pfwd + pbwd { nxt = (pos + nbins - 1) % nbins }
+        }
+        n[pos][nxt] = n[pos][nxt] + 1.0
+        pos = nxt
+        t = t + 1
+    }
+    return n
+}
+
+// noneq_sigma_ep — Schnakenberg σ_ep from a transition-count matrix. F_ij=N_ij/total (joint two-step
+// flux), σ_ep=½ Σ_{i≠j}(F_ij−F_ji)·ln(F_ij/F_ji) over pairs with BOTH directions observed (a cycle
+// needs both). ≥0, =0 at detailed balance. >0 ⇒ broken DB ⇒ NESS.
+pub fn noneq_sigma_ep(n: [[float]]) -> float {
+    let nb = len(n)
+    let mut total = 0.0
+    let mut i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb { total = total + n[i][j]  j = j + 1 }
+        i = i + 1
+    }
+    if total <= 0.0 { return 0.0 }
+    let mut sig = 0.0
+    i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb {
+            if i != j {
+                let fij = n[i][j] / total
+                let fji = n[j][i] / total
+                if fij > 0.0 && fji > 0.0 {
+                    sig = sig + 0.5 * (fij - fji) * ln(fij / fji)
+                }
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return sig
+}
+
+// noneq_sigma_ep_symmetrised — SHUFFLE control: symmetrise (time-reverse-average) the empirical
+// transition-count matrix N←(N+Nᵀ)/2 before estimating σ_ep. Enforces detailed balance (F_ij=F_ji)
+// ⇒ σ_ep→0 by construction. Separates a real broken-DB current from a finite-sample estimator floor.
+pub fn noneq_sigma_ep_symmetrised(n: [[float]]) -> float {
+    let nb = len(n)
+    let mut sym = _topo_zeros(nb)
+    let mut i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb { sym[i][j] = 0.5 * (n[i][j] + n[j][i])  j = j + 1 }
+        i = i + 1
+    }
+    return noneq_sigma_ep(sym)
+}
+
+// noneq_iid_counts — LLM-DISTINCTION control: build a transition-count matrix for a MEMORYLESS softmax
+// sampler whose stationary marginal = the row-sum occupancy of the live matrix `n` (next state drawn
+// iid from the marginal, independent of current). Consecutive pairs then satisfy K_ij=marginal_j ⇒
+// detailed balance ⇒ σ_ep→0. STREAMING (accumulates its own count matrix). LCG-seeded.
+pub fn noneq_iid_counts(n: [[float]], steps: int, seed: int) -> [[float]] {
+    let nb = len(n)
+    // marginal occupancy = row sums of the live matrix (times state i was the source)
+    let mut cum = []
+    let mut tot = 0.0
+    let mut i = 0
+    while i < nb {
+        let mut s = 0.0
+        let mut j = 0
+        while j < nb { s = s + n[i][j]  j = j + 1 }
+        tot = tot + s
+        cum = cum + [tot]
+        i = i + 1
+    }
+    if tot <= 0.0 { return _topo_zeros(nb) }
+    let mut m = _topo_zeros(nb)
+    let mut st = _lcg_next(seed & 2147483647)
+    // first draw
+    let mut prev = _noneq_pick(cum, tot, _lcg_unit(_lcg_next(st)))
+    let mut t = 0
+    while t < steps {
+        st = _lcg_next(st)
+        let nxt = _noneq_pick(cum, tot, _lcg_unit(st))
+        m[prev][nxt] = m[prev][nxt] + 1.0
+        prev = nxt
+        t = t + 1
+    }
+    return m
+}
+
+// _noneq_pick — pick a bin index by cumulative-occupancy inverse-CDF (u∈[0,1) scaled by total).
+fn _noneq_pick(cum: [float], total: float, u: float) -> int {
+    let r = u * total
+    let nb = len(cum)
+    let mut i = 0
+    while i < nb {
+        if r < cum[i] { return i }
+        i = i + 1
+    }
+    return nb - 1
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate
 //  (a_autonomy_over_hardcode). engine 은 exp 없음 → piecewise/linear (H_1465/H_1473 precedent).
