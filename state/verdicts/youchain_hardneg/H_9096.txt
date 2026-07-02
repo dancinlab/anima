@@ -1,0 +1,13 @@
+INFO  K=6 a_pred=6 (aK=5 aKm1=4)
+=== D7 you-chain HARD-NEGATIVE AUROC re-measurement (engine-native, live core/engine_cli.hexa) ===
+INFO  mean_fit(genuine, phi<=12deg)=0.980925620666158
+AUROC(theta=15deg)=0.93055555555555554   mean_fit(cone)=0.96079364573849375
+AUROC(theta=30deg)=1.0   mean_fit(cone)=0.86976954128044746
+AUROC(theta=45deg)=1.0   mean_fit(cone)=0.719685148032804
+AUROC(theta=60deg)=1.0   mean_fit(cone)=0.5373372080383617
+AUROC(theta=75deg)=1.0   mean_fit(cone)=0.2822476414072605
+AUROC(theta=90deg)=1.0   mean_fit(cone)=0.0
+AUROC(mimic 2-incr replica)=0.2517361111111111   mean_fit(mimic)=0.9875039556678534
+NOTE  theta=90deg bucket == the ORIGINAL H_9085 orthogonal-impostor AUROC (reproduction of 1.0).
+FENCE reproduce_orth(θ90>=0.95)=true  collapse(θ15<θ90-0.10)=false  mimic_near_chance(<=0.65)=true  genuine_lands(mean>=0.90)=true
+--- youchain hard-negative engine-native smoke complete ---
