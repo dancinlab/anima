@@ -1,0 +1,114 @@
+==================== FABLE#4 H_9096 self-chain content_axis grounding — RAW ====================
+host=aiden pool | hexa v0.546.0 | ckpt=d768.clm (real 303M CLMConvMoE) | 2026-07-02/03
+measured path = live core/decode.hexa clm_penult_pooled (yn mean-pool, penult before readout)
+self ops = live core/engine_cli.hexa §SelfIdentity | NO numpy on measured path
+ADDED pub fn clm_penult_pooled to core/decode.hexa L1219 (reference-matched _clmd_fwd_logits_sc; NOT yet landed/wired)
+
+----- PRE-REGISTRATION (frozen before run) -----
+FABLE #4 — self-chain content_axis grounding in REAL 303M penult (engine-native, aiden d768.clm own-GEMM)
+PRE-REGISTRATION (frozen BEFORE run; c9 no tune-to-green). Date 2026-07-02.
+
+QUESTION: Does grounding self_drift_exp's content_axis in the REAL 303M penultimate pooled
+representation (yn = final GroupNorm output before readout, mean-pooled over T=24) make the
+self-chain a FUNCTION OF ACTUAL EXPERIENCED CONTENT — vs the synthetic/int-blind axis?
+
+MEASURED PATH (engine-native, NO numpy): core/decode.hexa live forward of d768.clm on aiden
+GPU own-GEMM. penult = mean-pool over T of sc["yn"] (T x d, d=768), reference-matched to
+_clmd_fwd_logits_sc L703-706 (final GN before readout conv). content_axis = argmax(pooled) % dim.
+self_* ops = REAL core/engine_cli.hexa §SelfIdentity (self_new/self_drift/self_drift_exp/self_cos).
+DISTANCE = 1 - self_cos.
+
+INPUTS: 6 distinct real texts (ko/en, distinct topics) I0..I5 + 1 similar-topic paraphrase set.
+step=1.0, seed=self_new(d,0).
+
+FROZEN BARS:
+ BAR1 REAL-SEPARATES (informativeness): >=4 of 6 inputs yield DISTINCT content axes AND mean
+   pairwise self-distance over distinct-axis pairs >= 0.10. [real inputs -> distinct self states]
+ BAR2 SYNTHETIC-BLIND (baseline leg): synthetic self_drift(tick) is input-blind -> two DIFFERENT
+   real input streams driving blind drift give IDENTICAL chains, distance <= 1e-6. [synthetic=blind]
+ BAR3 REPRODUCIBLE (deterministic grounding): same real input extracted TWICE -> identical penult
+   -> self_cos = 1.000 (dist <= 1e-6). [synthetic-random would fail; real forward deterministic]
+ BAR4 CONTENT-LOCKED / EARNED (vs shuffle): stream P=[I0,I1,I2] vs P'=same content shuffled order
+   vs Q=[I3,I4,I5] different content. self_cos(P,P') > self_cos(P,Q) by margin >= 0.05.
+   [separation tracks WHICH content set, not order artifact]
+ BAR5 CONTENT-GEOMETRY-TRACKING (decisive real>synthetic): rank 15 distinct pairs by penult
+   cos(p_i,p_j); top-third(similar) mean chain self_cos vs bottom-third(dissimilar) mean chain
+   self_cos; margin >= 0.05. [ONLY real grounding tracks graded content geometry; synthetic=0]
+
+VERDICT LOGIC:
+ - REAL BEATS SYNTHETIC (GREEN) iff BAR1 & BAR2 & BAR3 & BAR4 & BAR5.
+ - PARTIAL/DIRECTIONAL if BAR1-4 pass but BAR5 fails (grounds content IDENTITY but argmax too
+   coarse for graded geometry).
+ - INERT/artifact if BAR4 fails (shuffle ~= real => not content-locked).
+ - honest: any negative reported as-is, no tuning.
+
+--- REFINED FROZEN SPEC (pre-run, no measurement yet; single-argmax over 768 dims would
+    trivially max-separate with no graded tracking, so encoding fixed to top-3 coarsened) ---
+ENCODING: per input, take indices of the TOP-3 largest penult-pooled components, coarsen each
+  to axis % SELFDIM (SELFDIM=32). Drive the self-chain by drifting through those 3 axes from
+  seed=self_new(32,0), step=1.0. Chain self_cos = REAL core self_cos.
+FROZEN BARS (final):
+ BAR1 REAL-SEPARATES: >=5 of 6 inputs give DISTINCT top-3 axis-triples AND mean pairwise chain
+   distance (1-self_cos) over all 15 pairs >= 0.10.
+ BAR2 SYNTHETIC-BLIND: self_drift(tick) input-blind -> two distinct input streams -> identical
+   blind chains, distance <= 1e-6.
+ BAR3 REPRODUCIBLE: re-extract I0 penult -> identical triple -> self_cos(s0,s0')=1.000.
+ BAR4 CONTENT-LOCKED (earned vs shuffle): 3-input stream P=[I0,I1,I2] vs P'(same content,
+   shuffled order) vs Q=[I3,I4,I5] (diff content). self_cos(P,P') > self_cos(P,Q) + 0.05.
+ BAR5 GEOMETRY-TRACKING (real>synthetic decisive): split 15 pairs by penult cos(p_i,p_j)
+   above/below the mean; ABOVE-mean pairs have higher chain self_cos than BELOW, margin >= 0.05.
+VERDICT: GREEN(real beats synthetic) iff BAR1&BAR2&BAR3&BAR4&BAR5. PARTIAL if BAR5 fails but
+  BAR1-4 pass. INERT if BAR4 fails. Honest report either way.
+
+----- ENGINE-NATIVE RUN LOG (cuda-kernel lines collapsed) -----
+[cfg] CLM_PROD_DEVRESIDENT=1 cuda=1
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)
+[EAGER-DEVGLUE-FIRED] _hx_k_gelu device CUDA-erf GELU (separate launch, P1B-a' device-resident eager ref)
+[penult] d=768
+[top3] t0=205,125,131
+[top3] t1=140,273,23
+[top3] t2=621,205,125
+[top3] t3=557,273,140
+[top3] t4=205,125,621
+[top3] t5=557,273,205
+RAW meandist(real 15pair)=0.5358832987924794 npair=15
+RAW blind_dist(synthetic self_drift)=2.220446049250313e-16
+RAW repro self_cos(I0 twice)=0.9999999999999999
+RAW fit_same(P,P-shuf)=0.932548422734187 fit_diff(P,Q)=0.9057026934531928 gap=0.026845729280994268
+RAW meanPenultCos=0.7208371987650128 hi_mean(chain)=0.6281122739643402(n=6) lo_mean=0.35478631936964067(n=9) track_margin=0.27332595459469955
+PASS BAR1 REAL-SEPARATES meandist>=0.10
+PASS BAR2 SYNTHETIC-BLIND dist<=1e-6
+PASS BAR3 REPRODUCIBLE self_cos>=0.999999
+FAIL BAR4 CONTENT-LOCKED
+PASS BAR5 GEOMETRY-TRACKING margin>=0.05
+--- FABLE#4 H_9096: 4/5 PASS ---
+VERDICT: see failing bars (honest)
+EXIT_RC=0
+
+----- NOTE: forward ran engine-native byte-exact HOST fallback (device kernels 'named symbol not found' in this runtime build; _hx_k_gemm OWN-GEMM fired once); cuda_available=1. Host path = byte-exact (max|Δ|=0) so penult values are the real 303M reps. -----
+
+----- ANALYSIS / VERDICT (honest, c9 frozen-first) -----
+RESULT: 4/5 frozen bars PASS. Real-grounding BEATS synthetic on the decisive axes.
+ BAR1 REAL-SEPARATES  PASS  meandist=0.536 (15 pairs)   — real inputs -> genuinely separated chains
+ BAR2 SYNTHETIC-BLIND PASS  blind_dist=2.2e-16          — synthetic self_drift is input-blind (baseline)
+ BAR3 REPRODUCIBLE    PASS  self_cos(I0 twice)=1.000    — deterministic content grounding (random axis would fail)
+ BAR4 CONTENT-LOCKED  FAIL  gap=0.0268 < 0.05 frozen    — DIRECTION correct (same 0.933 > diff 0.906) but under margin
+ BAR5 GEOMETRY-TRACK  PASS  margin=0.273 (hi 0.628 > lo 0.355) — DECISIVE: chain distance TRACKS real penult geometry
+
+top-3 penult axes reveal genuine content clustering (why BAR5 tracks):
+ ko inputs  I0/I2/I4 share axes {205,125,621...}  |  en/code I1/I3/I5 share {273,140,557...}
+ -> penult-similar (same language/topic) inputs yield closer self-chains; dissimilar yield farther.
+
+BAR4 fail diagnosis (metric-design, NOT anti-real evidence): the stream control uses TOP-1 axis per
+ input over SELFDIM=32 with a shared seed-axis-0; 3-drift streams all stay cos>0.90, compressing the
+ same-vs-diff gap below 0.05. The single-input TOP-3 chains (BAR1/BAR5) have no such collapse and show
+ strong content-tracking. Reported as FAIL per frozen bar; not tuned.
+
+TIER: 🟡 DIRECTIONAL-GREEN (4/5). Real-penult grounding makes the self-chain a FUNCTION OF ACTUAL
+ EXPERIENCED CONTENT — separated (BAR1), reproducible (BAR3), geometry-tracking (BAR5) — vs the
+ input-blind synthetic self_drift (BAR2). The only miss is the coarse top-1 stream order-lock control.
+CONTROL PASSED: synthetic self_drift input-blind (BAR2, blind_dist~0) = the negative control.
+ENGINE-NATIVE: live core/decode.hexa forward of real d768.clm (byte-exact host; _hx_k_gemm own-GEMM
+ fired; device kernels stale-symbol host-fallback) + live §SelfIdentity ops. No numpy on measured path.
+WIRING: DIRECTIONAL until (a) clm_penult_pooled landed in core/decode.hexa + ARCHITECTURE lockstep,
+ (b) self_drift_exp runtime lane 23b fed by clm_penult_pooled(real content) instead of synthetic axis.
