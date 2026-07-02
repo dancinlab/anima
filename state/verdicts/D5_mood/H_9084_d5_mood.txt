@@ -1,0 +1,10 @@
+PASS  F1 SLOW: 1-step disp(0.05) << full jump 1.0 & τ=20.0 >> 1 & t63=20 >=10
+PASS  F2 BIAS: neutral stim biased_high(0.476965100506524) > 0 > biased_low(-0.476965100506524)
+PASS  F3 ABLATION: frozen mood_val(0.0)==0 & biased(0.3)==inst(0.3) INERT
+PASS  F4 RECOVERY: v0(0.8714878434348968) →1tick(0.8279134512631519) partial(>0.5·v0) →6τ(0.0018496687876209954)→0
+PASS  F5 DISJOINT: emit-drive(0.7==0.7) & recall_thr(0.3==0.3) & recall(a==a) byte-identical while mood MOVED
+PASS  SIGNAL: M/Φ/surprise → valence pos(0.85)>0>neg(-0.7000000000000001) & arousal tracks surprise
+INFO DISTINCT(H_1284): neuromod_gain@neutral=0.0 (0 lag) vs mood_bias@neutral=0.4357439217174484 (slow baseline retained)
+INFO F1: disp1=0.05 tau=20.0 t63=20
+INFO F4: v0=0.8714878434348968 vRec1=0.8279134512631519 vRecN=0.0018496687876209954
+--- D5 Mood engine-native: 6 pass / 0 fail ---
