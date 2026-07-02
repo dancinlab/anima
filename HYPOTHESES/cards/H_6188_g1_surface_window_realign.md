@@ -1,7 +1,7 @@
 # H_6188 — 🎯 표면형+window 정합 재학습 → engine-native G1 재조합 표면화 (best_distinct 0→3) · H_6187 반례 terminal 확증
 
-**tier:** 🟢 재조합 gate-축 표면화 ENGINE-NATIVE (best_distinct 0→3, 역대 G1 캠페인 최초 non-zero) + 🟠 strict G1 gate PASS=false (composed NOT > single, **T=24 decode-window confound** — trunk floor 아님).
-**verdict:** 🟢 재조합이 gate 축으로 engine-native 표면화(best_distinct **0→3**, max_single=3, best_k=2, grounding 5/5 own-set hit) = **H_6187 반례 terminal 확증** — 이전 L8-cov·전 G1-lever 캠페인의 G1=0 은 trunk 재조합 floor 가 아니라 **표면형+window 측정 mismatch**였음(coverage 레버는 gate-축 재조합 표면화에 유효). / 🟠 strict gate(composed_distinct > max_single) 미달 = **T=24 decode-window confound**(측정 물리, floor 아님). engine-native --py(torch-free, session --py=terminal), gate/bar FROZEN.
+**tier:** 🔴 canonical gen=40 engine-native G1 FAIL (best_distinct=1, max_single=3, composed NOT > single). ⚠️ **초기 "best_distinct 0→3 표면화"는 gen=120(비-canonical) probe artifact = RETRACTED**(gen-guard #2821 위반, 이 세션 gen80 함정 재발).
+**verdict:** 🔴 **canonical gen=40 engine-native G1 FAIL** — best_distinct=**1**(<2), max_single=3. composed(held-out) per-k = 각 composed seed 가 마지막 gate 개념 set 1개만 표면화(조합이 0 더함). ⚠️ 초기 보고 best_distinct=3 은 서브에이전트 probe 가 **gen=120** 을 써서 부풀린 것 → canonical gen=40(gen-guard) 재측정 = 1, **RETRACTED**(c9). torch inline gauge(g1_composed_distinct=2)도 engine-native 미확인 = **torch-engine 갈림 = gen-harness inflate**(precedent TORCH_PASS_VS_ENGINE_FAIL_IS_SCAFFOLD_HARNESS). **정직 뉘앙스**: 순수 0-floor 는 아님 — max_single=3 = 단일 seed 에서 재조합-cluster 방출 능력 실재(realign 이 emit-cluster form 학습), G0 coherence 🟢 보존. 실패 = gate 의 composed>single 기준을 **T=24 decode-window 가 구조적으로 차단**(긴 composed seed 생성 시작 시 마지막 concept-tail 만 in-window) = gate-seed(frozen)↔decode-window(24B) mismatch, gate seed frozen 이라 코퍼스로 못 고침. **H_6187 반례 예측("coverage로 gate-축 GREEN")은 engine-native canonical 로 미달성.** engine-native --py(torch-free, session --py=terminal), gate/bar FROZEN, tune-to-green 없음.
 
 ## 배경 (H_6187 → 이 실험)
 H_6187 3단 조사(엔진무죄 + 유발표면형 mismatch + $0 분리프로브)로 L8-cov G1=0 = INCONCLUSIVE 판정 + 반례(held-out ember+dune→golden+zinc 재조합 작동). 처방 = 표면형+window 정합 재학습. 이 카드가 그 처방 실행.
@@ -33,4 +33,4 @@ H_6187 3단 조사(엔진무죄 + 유발표면형 mismatch + $0 분리프로브)
 - max_single 상승은 실측 property(은폐 없음), tune-to-green 없음. gate/bar FROZEN.
 - pod died mid full-battery eval → G1 gate 는 pulled .clm 으로 로컬 byte-parity 재실행(G1 corpus 불필요, frozen seed).
 
-**wired:** engine-native measured (--py byte-parity, torch-free, terminal). 재조합-표면화 GREEN(best_distinct 0→3). strict gate PASS follow-on = T24 window 물리 우회 재측정. ckpt=~/anima-weights/g1_realign/g1_realign.clm(154513322 B). artifacts=state/g1_coverage_realign/.
+**wired:** engine-native measured (--py byte-parity, torch-free, canonical gen=40, terminal). **G1 FAIL(best_distinct=1)** — 0→3 표면화 RETRACTED(gen120 artifact). ckpt=~/anima-weights/g1_realign/g1_realign.clm(154513322 B, sha 7222554f…). artifacts=state/g1_coverage_realign/(eval_canonical_gen40.log · g1_probe_gen120_RETRACTED.json 감사용). follow-on=window(T24)↔gate-seed mismatch 는 코퍼스로 불가 = decode-window 확장(엔진) 또는 짧은 gate seed 재설계(단 gate seed frozen 이라 후자 제약) 후 canonical 재측정.
