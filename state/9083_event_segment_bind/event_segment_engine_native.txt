@@ -1,0 +1,9 @@
+PASS  segmented recall high (>=0.8)
+PASS  fixed-chunk control low (<=0.4)
+PASS  MARGIN seg-fixed >= +0.5
+PASS  EARNED seg-shuffle >= +0.5 (boundary POSITIONS load-bearing)
+PASS  ablate(boundary OFF = fixed chunk): abl==fixed AND seg>abl (INERT baseline)
+INFO n=17 bounds=5 fixed_starts=6 bounds_shuf=4
+INFO seg=5/5 fixed=1 shuffle=0 margin=0.8 earned=1.0
+--- H_9083 event_segment_bind engine-native: 5 pass / 0 fail ---
+EXIT_RC=0

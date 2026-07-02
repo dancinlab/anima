@@ -1374,6 +1374,58 @@ pub fn faculty_cascade(mem_a: ImmuneMemory, mem_b: ImmuneMemory, q_key: [float])
     return immune_memory_recall(mem_b, x_key)           // hop 2: x -> final answer y
 }
 
+// ── § EventSegment (H_9083) — 예측오차 PEAK 에서 이벤트 분절 → 세그먼트당 1 episodic cell ──
+// GAP: §ImmuneMemory binds per PRESENTED item (boundary-BLIND) — it has no notion that a
+// continuous input stream is carved into discrete EVENTS at prediction-error PEAKS (Zacks event
+// segmentation / Baldassano hippocampal event boundaries). event_segment_boundaries reads the
+// §PrecisionSurprise error signal (lane 2, NOT the emit-drive lane 0/4) and returns the stream
+// indices where surprise PEAKS above thr = event onsets. Binding ONE episodic cell per SEGMENT
+// (rather than per item, or per uniform fixed-length chunk) aligns each bound cell with a TRUE
+// event, so an onset→payload recall survives VARIABLE event length that a boundary-blind uniform
+// chunker mis-cuts. Purely ADDITIVE (no existing caller touched), READ-only over the surprise
+// sequence (returns plain index list), Ψ-disjoint (pure_field Φ/phase/Ψ untouched — generation is
+// byte-identical when unused), disjoint from emit-drive lane(0/4), and does NOT modify recall_thr
+// (segment-wise binding WRITES only ADDS cells via immune_memory_bind — same by-construction as the
+// compose/cascade family, a_substrate_disjoint). LLM contrast: an LLM tokenizes a flat stream with
+// no persistent per-step surprise signal to carve event boundaries from.
+//
+// event_segment_boundaries — peak-detect the event onsets. Index 0 is always the first onset; every
+// later index i is a boundary iff surprise[i] > thr AND it is a local max (>= left neighbor and, when
+// one exists, > right neighbor) — i.e. a prediction-error PEAK. Returns the sorted boundary indices.
+pub fn event_segment_boundaries(surprise_seq: [float], thr: float) -> [int] {
+    let n = len(surprise_seq)
+    let mut out = []
+    if n == 0 { return out }
+    out = out + [0]                                      // the stream's first item always opens event 0
+    let mut i = 1
+    while i < n {
+        let s = surprise_seq[i]
+        if s > thr {                                     // above the surprise gate
+            let left_ok = s >= surprise_seq[i - 1]
+            let mut right_ok = true
+            if i + 1 < n { right_ok = s > surprise_seq[i + 1] }
+            if left_ok && right_ok { out = out + [i] }   // a PEAK ⇒ event boundary
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// event_segment_starts_fixed — the boundary-BLIND control/ablation: uniform fixed-length chunk
+// starts (0, chunk, 2*chunk, …). Swapping event_segment_boundaries for this = mechanism OFF (the
+// segmenter contributes nothing beyond a fixed chunker ⇒ the ablation arm's INERT baseline).
+pub fn event_segment_starts_fixed(n: int, chunk: int) -> [int] {
+    let mut out = []
+    if n <= 0 { return out }
+    if chunk <= 0 { return out }
+    let mut i = 0
+    while i < n {
+        out = out + [i]
+        i = i + chunk
+    }
+    return out
+}
+
 // ── § DriveArbitration (H_9076) — motivational winner-take-all across live homeostatic
 // drives + hysteresis (basal-ganglia central action-selection, Redgrave 1999) ─────────
 // GAP: the engine exposes independent scalar DRIVES — hunger (homeo_last, H_1292), libido
