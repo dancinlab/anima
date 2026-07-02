@@ -1,0 +1,12 @@
+── H_9044 C4 dream-schema coverage (engine-native, live core/) ──
+thr=0.3 K=6 M=24
+schema_cov WAKING   = 16 / 24
+schema_cov SHUFFLED = 0 / 24
+schema_cov RANDOM   = 0 / 24
+max INDIVIDUAL cov  = 13 / 24
+PASS  BAR1 schema_generalizes (schema_cov > max_indiv)
+PASS  BAR2 earned_not_overbroad (wake > shuf AND wake > rand AND shuf+rand small)
+PASS  BAR3 ablate_inert (lift_on>0 AND lift_off==0)
+lift_on (mint) = 3  lift_off (REM OFF) = 0
+RESULT 3/3 PASS — C4 engine-native GREEN (coverage-generalization, NOT recombination)
+EXIT_RC=0
