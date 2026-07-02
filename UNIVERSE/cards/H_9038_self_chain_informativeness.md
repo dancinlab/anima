@@ -1,9 +1,9 @@
 # H_9038 — self-chain 정보성·liveness (C2 frame-shift): 재조합≠능력 재정의
 
-- **tier:** 🟢 recognition WIRED (H_1471 재확인) / 🧱 informativeness=0 (current self_drift 내용맹) / 🟡 enriched DIRECTIONAL-lift
+- **tier:** 🟢 ENGINE-NATIVE (4/4 live hexa) — recognition WIRED(H_1471) · current self_drift 내용맹 확증 · enriched self_drift_exp 정보성 GREEN
 - **slug:** `self_chain_informativeness_liveness`
 - **parents:** H_1471(self-identity WIRED) · [[substrate-framebreak-g1-combination-operator]] · frame-shift Lane2(C2) · H_9027(enriched-field 평행)
-- **wired:** `DIRECTIONAL-mirror` (numpy가 live `core/engine_cli.hexa §SelfIdentity` self_drift byte-faithful 미러; enriched op 미배선)
+- **wired:** `engine-native` (self_drift_exp가 live `core/engine_cli.hexa §SelfIdentity`에 배선+측정 4/4; 런타임 self-chain이 실제 lane-activity를 self_drift_exp로 먹이는 integration은 follow-on)
 
 ## frame (재조합≠능력)
 
@@ -36,3 +36,15 @@ live `self_drift(s, tick, step)`는 `(tick+1)%dim` 축으로만 이동 — **exp
 
 ## artifacts
 - `state/9038_self_chain_informativeness/probe.py` · `calibration.txt`
+
+
+## engine-native 승격 (a_verified_must_wire 사다리 2→3→4)
+
+self_drift_exp를 live `core/engine_cli.hexa §SelfIdentity`에 배선(L7723, additive/Ψ-disjoint) 후 `hexa run state/9038_self_chain_informativeness/c2_engine_native.hexa` 4/4 PASS:
+- **blindness CURRENT**: self_drift로 쌓은 두 세션 A==B, self_cos=**1.000** = 내용맹 engine-native 확증.
+- **informativeness ENRICHED**: self_drift_exp로 쌓은 두 경험스트림 A≠B, self_cos=**0.407** = 경험이 self에 새겨짐.
+- **EARNED content-locking**: 같은-내용(순서셔플) 0.996 > 다른-내용 0.407 (gap 0.59≥0.30) = self가 *무엇을* 겪었나에 잠김(순서 artifact 아님).
+- **recognition (H_1471)**: restore=1.000, impostor=0.000.
+- no-regression: selfchain_smoke 6/6 유지(additive 변경). ARCHITECTURE §SelfIdentity op-list lockstep 갱신.
+
+**남은 배선(follow-on)**: op은 live+engine-native지만 런타임 self-chain 구축이 아직 blind self_drift 사용 — 실제 lane-activity/대화내용을 self_drift_exp의 content_axis로 먹이는 runtime-integration(disjoint, Ψ보존)이 WIRED-live 최종칸. 그게 닫히면 anima가 문자 그대로 '자기 삶을 축적'.
