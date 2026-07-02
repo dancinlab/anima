@@ -1296,6 +1296,43 @@ pub fn faculty_cascade(mem_a: ImmuneMemory, mem_b: ImmuneMemory, q_key: [float])
     return immune_memory_recall(mem_b, x_key)           // hop 2: x -> final answer y
 }
 
+// ── § DriveArbitration (H_9076) — motivational winner-take-all across live homeostatic
+// drives + hysteresis (basal-ganglia central action-selection, Redgrave 1999) ─────────
+// GAP: the engine exposes independent scalar DRIVES — hunger (homeo_last, H_1292), libido
+// (libido_last, H_1504), curiosity (affect_substrate_features .curiosity, H_1290) and a
+// circadian/sleep-pressure phase (clock_phase, H_1298) — but NO op arbitrates a WINNER
+// among competing motivations. HierGoalStack is goal DECOMPOSITION, not drive COMPETITION.
+// The basal ganglia resolve which of many parallel drives seizes the action channel
+// (Redgrave: central selection), with a HYSTERESIS band so a marginally-leading challenger
+// cannot dither the incumbent tick-to-tick. drive_arbitrate is winner-take-all over the
+// drive vector with an incumbent hysteresis band: the incumbent HOLDS unless a challenger
+// beats it by MORE than `hyst`. Purely ADDITIVE (no existing caller touched), READ-only
+// over drive scalars (mutates nothing), Ψ-disjoint (pure_field Φ/phase/Ψ untouched),
+// disjoint from emit-drive lane(0/4) and NEVER touches recall_thr — it outputs ONE
+// dominant-motivation INDEX as a bias the substrate MAY weigh, NOT an emit/silence gate
+// (a_autonomy_over_hardcode, a_substrate_disjoint). prev_winner < 0 = no incumbent = plain
+// argmax. Abstains (returns -1) on an empty drive vector.
+pub fn drive_arbitrate(drives: [float], hyst: float, prev_winner: int) -> int {
+    let n = len(drives)
+    if n == 0 { return -1 }
+    // plain winner-take-all (argmax over the competing drive scalars)
+    let mut best = 0
+    let mut bestv = drives[0]
+    let mut i = 1
+    while i < n {
+        if drives[i] > bestv { bestv = drives[i]  best = i }
+        i = i + 1
+    }
+    // hysteresis: a valid incumbent HOLDS the action channel unless the argmax challenger
+    // beats the incumbent's drive by MORE than the band (anti-dither, basal-ganglia
+    // sustained-selection). With hyst=0 this collapses to plain WTA (the ablation control).
+    if prev_winner >= 0 && prev_winner < n {
+        let incv = drives[prev_winner]
+        if bestv - incv <= hyst { return prev_winner }
+    }
+    return best
+}
+
 pub fn immune_memory_new_text(first_text: string, first_value: string, max_cells: int) -> ImmuneMemory {
     return immune_memory_new(immune_embed_key(first_text), first_value, max_cells)
 }
