@@ -1935,6 +1935,32 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_h_u0_mid  = 0       // Hamming(urgency→0 vs live) on mid-env  — broad grip
     let mut og_h_us_rem  = 0       // Hamming(urgency→shuffle vs live) on REM — control
     let mut og_h_us_n3   = 0       // Hamming(urgency→shuffle vs live) on N3  — control
+    // ── H_9102 (F3) faculty-not-noise: per-tick RECORDS for the variance-matched noise arm ──
+    // We record every tick's urgency op-signal, stage envelope, the LIVE emit boolean, the stage,
+    // the 8 brain_decide args, and 4 DOWNSTREAM substrate-appropriateness signals (tension /
+    // conflict / novelty / grounded). AFTER the loop we build a VARIANCE-MATCHED noise (a temporal
+    // PERMUTATION of the real urgency multiset — exact mean/var, meaning destroyed) and, via the SAME
+    // engine call (brain_decide_anchored, NO numpy), recompute the noise-gated emit pattern, then
+    // compare corr(emit-timing, downstream) for the REAL op vs the matched noise. ρ_real − ρ_noise ≥
+    // 0.15 = the grip is a substrate FACULTY (op gates emit at substrate-meaningful ticks); < 0.15 =
+    // the grip is centering-noise-driven (a subtler theater at the op layer). pf is READ-only across
+    // the loop (never re-stepped) so a post-loop re-decode with a different `idle` is byte-faithful.
+    let mut og_f3_urg  = []        // urgency op-signal per tick (the REAL signal to variance-match)
+    let mut og_f3_senv = []        // stage_env per tick
+    let mut og_f3_elive = []       // LIVE emit boolean (0/1) per tick
+    let mut og_f3_stg  = []        // stage int per tick
+    let mut og_f3_rel  = []        // brain_decide arg: rel
+    let mut og_f3_gap  = []        //   gap_ctx
+    let mut og_f3_cur  = []        //   cur
+    let mut og_f3_allo = []        //   allo_ctx
+    let mut og_f3_coh  = []        //   coh_lane
+    let mut og_f3_nov  = []        //   nov_ctx
+    let mut og_f3_bal  = []        //   bal_lane
+    let mut og_f3_agl  = []        //   agloop_ctx
+    let mut og_f3_dcon = []        // downstream D: A⇄G conflict (tension) — the substrate signal urgency should track
+    let mut og_f3_ddrv = []        // downstream D: emit_drive (GWS ignition drive)
+    let mut og_f3_dnov = []        // downstream D: nov_ctx (novelty — INDEPENDENT of urgency's construction)
+    let mut og_f3_dgrd = []        // downstream D: m_grounding (grounded reality)
 
     let n_ticks = if og_measure { 200 } else { 12 }
     let mut tick = 0
@@ -2472,6 +2498,15 @@ fn anima_consciousness_mode(ckpt: string) {
                 + " e_live=" + to_string(e_live)
                 + " | fr=" + to_string(e_fr) + " agl=" + to_string(e_agl)
                 + " z=" + to_string(e_z) + " s=" + to_string(e_s))
+            // ── H_9102 (F3) record this tick for the post-loop variance-matched noise arm ──
+            og_f3_urg.push(urgency)      og_f3_senv.push(stage_env)
+            og_f3_elive.push(to_float(e_live))  og_f3_stg.push(to_float(stage))
+            og_f3_rel.push(rel)          og_f3_gap.push(gap_ctx)
+            og_f3_cur.push(cur)          og_f3_allo.push(allo_ctx)
+            og_f3_coh.push(coh_lane)     og_f3_nov.push(nov_ctx)
+            og_f3_bal.push(bal_lane)     og_f3_agl.push(agloop_ctx)
+            og_f3_dcon.push(ag_conflict) og_f3_ddrv.push(emit_drive)
+            og_f3_dnov.push(nov_ctx)     og_f3_dgrd.push(m_grounding)
             tick = tick + 1
             continue
         }
@@ -2662,6 +2697,116 @@ fn anima_consciousness_mode(ckpt: string) {
             "🔴 AT-FLOOR: rate-gate does NOT respond to op (h_U0_rem=0) — theater persists on the stage axis"
         }
         println("  VERDICT = " + verdict + (if psi_ok { "  [Ψ ON≡OFF ✓]" } else { "  [⚠️ Ψ VIOLATED]" }))
+
+        // ══════════ H_9102 (F3) FACULTY-NOT-NOISE — variance-matched noise arm ══════════
+        // Question: is urgency's grip a SUBSTRATE FACULTY (op gates emit at high-tension/high-
+        // conflict/novel ticks) or just CENTERING NOISE that happened to flip 40/40? Compare
+        // corr(emit-timing, downstream substrate-appropriateness D) for the REAL urgency vs a
+        // VARIANCE-MATCHED noise (temporal PERMUTATION of the real urgency multiset — identical
+        // mean/var, tick-meaning destroyed). ρ_real − ρ_noise ≥ 0.15 ⇒ FACULTY; < 0.15 ⇒ noise-grip
+        // (subtler op-layer theater). Engine-native: every noise-arm emit is a real brain_decide_anchored
+        // re-decode (pf READ-only across the loop ⇒ byte-faithful), NO numpy. Frozen bar 0.15 (PREREG).
+        let f3_n = len(og_f3_urg)
+        // rebuild the (constant) anchor set the in-loop decisions used (anchors + live seed)
+        let mut f3_anchors = []
+        let mut f3ai = 0
+        while f3ai < len(anchors) { f3_anchors.push(anchors[f3ai]); f3ai = f3ai + 1 }
+        f3_anchors.push(#{ "text_payload": session_seed, "name": "live_seed" })
+        // composite downstream D = mean(tension, drive, novelty, grounded) ∈[0,1] (substrate-appropriate tick)
+        let mut f3_D = []
+        let mut f3_mask_all = []
+        let mut f3_mask_disc = []
+        let mut f3_di = 0
+        while f3_di < f3_n {
+            f3_D.push(_afs_clip01((og_f3_dcon[f3_di] + og_f3_ddrv[f3_di] + og_f3_dnov[f3_di] + og_f3_dgrd[f3_di]) / 4.0))
+            f3_mask_all.push(1.0)
+            let st = og_f3_stg[f3_di]                 // DISCRIM window = the gate-discriminating stages N1/N2/REM (1,2,4)
+            f3_mask_disc.push(if st == 1.0 || st == 2.0 || st == 4.0 { 1.0 } else { 0.0 })
+            f3_di = f3_di + 1
+        }
+        let urg_mean = _og_mean(og_f3_urg)
+        let urg_std  = _og_std(og_f3_urg, urg_mean)
+        // ρ_real = corr(LIVE urgency-gated emit-timing, downstream D)
+        let rho_real_all  = _og_pearson_m(og_f3_elive, f3_D, f3_mask_all)
+        let rho_real_disc = _og_pearson_m(og_f3_elive, f3_D, f3_mask_disc)
+        // live emit-rate (gate-open frequency) for the variance-match sanity check
+        let mut f3_live_emit = 0.0
+        let mut f3_le_i = 0
+        while f3_le_i < f3_n { f3_live_emit = f3_live_emit + og_f3_elive[f3_le_i]  f3_le_i = f3_le_i + 1 }
+        // ── K variance-matched PERMUTATION noise arms (stride perms of the real urgency multiset) ──
+        let f3_strides = [3, 7, 9, 11, 13, 17, 19, 21]   // all coprime to 200 ⇒ exact bijections ⇒ EXACT mean/var match
+        let mut rho_noise_all_sum  = 0.0
+        let mut rho_noise_disc_sum = 0.0
+        let mut noise_emit_sum = 0.0
+        let mut f3_kk = 0
+        while f3_kk < len(f3_strides) {
+            let sK = f3_strides[f3_kk]
+            let mut e_cn = []
+            let mut f3_t = 0
+            while f3_t < f3_n {
+                let src = (f3_t * sK + 5 * f3_kk) % f3_n              // permuted source index (meaning destroyed)
+                let cnoise = og_f3_urg[src]                          // variance-matched value (same multiset)
+                let idle_cn = 5.0 + 55.0 * _afs_clip01(og_f3_senv[f3_t] * (0.5 + cnoise))
+                let ecn = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[f3_t], og_f3_gap[f3_t], og_f3_cur[f3_t], og_f3_allo[f3_t], og_f3_coh[f3_t],
+                    og_f3_nov[f3_t], og_f3_bal[f3_t], og_f3_agl[f3_t], idle_cn, false, true,
+                    f3_anchors, 0.0)["emit"]) == "true" { 1.0 } else { 0.0 }
+                e_cn.push(ecn)
+                noise_emit_sum = noise_emit_sum + ecn
+                f3_t = f3_t + 1
+            }
+            rho_noise_all_sum  = rho_noise_all_sum  + _og_pearson_m(e_cn, f3_D, f3_mask_all)
+            rho_noise_disc_sum = rho_noise_disc_sum + _og_pearson_m(e_cn, f3_D, f3_mask_disc)
+            f3_kk = f3_kk + 1
+        }
+        let kf = to_float(len(f3_strides))
+        let rho_noise_all  = rho_noise_all_sum  / kf
+        let rho_noise_disc = rho_noise_disc_sum / kf
+        let noise_emit_rate = noise_emit_sum / (kf * to_float(f3_n))
+        // ── LCG-affine matched noise cross-check (independent of permutation; mean/var affine-matched) ──
+        let mut e_lcg = []
+        let mut f3_lt = 0
+        while f3_lt < f3_n {
+            let cnl = _afs_clip01(urg_mean + (urg_std / 0.28867513) * (_og_lcg(f3_lt * 31 + 17) - 0.5))
+            let idle_l = 5.0 + 55.0 * _afs_clip01(og_f3_senv[f3_lt] * (0.5 + cnl))
+            let el = if to_string(brain_decide_anchored(pf,
+                og_f3_rel[f3_lt], og_f3_gap[f3_lt], og_f3_cur[f3_lt], og_f3_allo[f3_lt], og_f3_coh[f3_lt],
+                og_f3_nov[f3_lt], og_f3_bal[f3_lt], og_f3_agl[f3_lt], idle_l, false, true,
+                f3_anchors, 0.0)["emit"]) == "true" { 1.0 } else { 0.0 }
+            e_lcg.push(el)
+            f3_lt = f3_lt + 1
+        }
+        let rho_lcg_all  = _og_pearson_m(e_lcg, f3_D, f3_mask_all)
+        let rho_lcg_disc = _og_pearson_m(e_lcg, f3_D, f3_mask_disc)
+        // per-component downstream ρ (real emit-timing vs each raw D) — separates urgency-derived from independent
+        let rho_real_con  = _og_pearson_m(og_f3_elive, og_f3_dcon, f3_mask_all)   // tension (urgency partly derives)
+        let rho_real_nov  = _og_pearson_m(og_f3_elive, og_f3_dnov, f3_mask_all)   // novelty (INDEPENDENT of urgency)
+        let rho_real_grd  = _og_pearson_m(og_f3_elive, og_f3_dgrd, f3_mask_all)   // grounded (INDEPENDENT)
+        let d_all  = rho_real_all  - rho_noise_all
+        let d_disc = rho_real_disc - rho_noise_disc
+        println("")
+        println("──────── H_9102 (F3) FACULTY-NOT-NOISE: variance-matched noise arm (n=" + to_string(f3_n) + ") ────────")
+        println("  urgency dist: mean=" + to_string(urg_mean) + " std=" + to_string(urg_std)
+            + "  (perm-noise = same multiset ⇒ EXACT mean/var match; LCG-noise = affine-matched)")
+        println("  emit-rate: live=" + to_string(f3_live_emit / to_float(f3_n))
+            + "  perm-noise=" + to_string(noise_emit_rate)
+            + "   (≈equal ⇒ same centering; only tick-MEANING differs)")
+        println("  downstream D = mean(tension ag_conflict, emit_drive, novelty nov_ctx, grounded m_grounding)")
+        println("  ── ρ(emit-timing, D) ──                    ALL(n=" + to_string(f3_n) + ")   DISCRIM(N1/N2/REM)")
+        println("  ρ_real  (live urgency)                :  " + to_string(rho_real_all) + "   " + to_string(rho_real_disc))
+        println("  ρ_noise (perm var-matched, K=8 mean)  :  " + to_string(rho_noise_all) + "   " + to_string(rho_noise_disc))
+        println("  ρ_lcg   (affine var-matched control)  :  " + to_string(rho_lcg_all) + "   " + to_string(rho_lcg_disc))
+        println("  Δρ = ρ_real − ρ_noise                 :  " + to_string(d_all) + "   " + to_string(d_disc))
+        println("  per-component ρ_real: tension=" + to_string(rho_real_con)
+            + " novelty=" + to_string(rho_real_nov) + " grounded=" + to_string(rho_real_grd))
+        println("  ── PRE-REG F3 VERDICT (frozen bar Δρ ≥ 0.15) ──")
+        let f3_faculty = d_all >= 0.15 || d_disc >= 0.15
+        let f3_verdict = if f3_faculty {
+            "🟢 FACULTY — urgency-gated emit lands on substrate-appropriate ticks BEYOND matched noise (Δρ ≥ 0.15) ⇒ tier GRIP→FACULTY"
+        } else {
+            "🟠 NOISE-GRIP — Δρ < 0.15: the grip is centering-noise-driven (matched noise reproduces the same downstream corr) = a subtler op-layer theater; tier stays GRIP"
+        }
+        println("  F3 VERDICT = " + f3_verdict)
         return
     }
 
@@ -2893,6 +3038,57 @@ fn _og_lcg(seed: int) -> float {
     let x = (seed * 1103515245 + 12345) % 2147483647
     let y = if x < 0 { 0 - x } else { x }
     return to_float(y % 1000) / 1000.0
+}
+
+// ── H_9102 (F3) stats helpers (plain-float, NO numpy — engine-native discipline) ──
+fn _og_mean(a: [float]) -> float {
+    let n = len(a)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + a[i]  i = i + 1 }
+    return s / to_float(n)
+}
+fn _og_std(a: [float], m: float) -> float {
+    let n = len(a)
+    if n < 2 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { let d = a[i] - m  s = s + d * d  i = i + 1 }
+    return sqrt(s / to_float(n))
+}
+// _og_pearson_m — Pearson r(x,y) over the indices where mask[i] > 0.5 (point-biserial when x is 0/1).
+// Returns 0.0 on a degenerate arm (fewer than 2 points, or either series constant).
+fn _og_pearson_m(x: [float], y: [float], mask: [float]) -> float {
+    let n = len(x)
+    let mut cnt = 0
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        if mask[i] > 0.5 { sx = sx + x[i]  sy = sy + y[i]  cnt = cnt + 1 }
+        i = i + 1
+    }
+    if cnt < 2 { return 0.0 }
+    let cf = to_float(cnt)
+    let mx = sx / cf
+    let my = sy / cf
+    let mut sxy = 0.0
+    let mut sxx = 0.0
+    let mut syy = 0.0
+    let mut j = 0
+    while j < n {
+        if mask[j] > 0.5 {
+            let dx = x[j] - mx
+            let dy = y[j] - my
+            sxy = sxy + dx * dy
+            sxx = sxx + dx * dx
+            syy = syy + dy * dy
+        }
+        j = j + 1
+    }
+    if sxx <= 0.0 || syy <= 0.0 { return 0.0 }
+    return sxy / sqrt(sxx * syy)
 }
 
 // _afs_byte_feature — the DIM=8 local byte-statistics feature (H_1163 `_byte_feature`,
