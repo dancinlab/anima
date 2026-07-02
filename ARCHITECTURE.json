@@ -9724,7 +9724,7 @@
                   }
                 ],
                 "type": "gate",
-                "verdict": "🟠 DIRECTIONAL RE-FRAME (2026-07-02 H_6166+6167+6168+6169+6171+6172; toy+py-mirror=DIRECTIONAL, engine-native 아님 — a_engine_native_learning). G1 재조합은 substrate 능력부재 아님 — 5각 수렴 + 실모델 확인: H_6166(RANDOM target=학습불가 아티팩트, 옛 FLOOR 측정무효)·H_6167(STRUCTURED서 plain trunk 재조합 72-98%, operator 무관)·H_6168(실 303M penultimate 개념 distinct id0.917)·H_6169(anima G1=generation-diversity 메트릭)·H_6171(generation 모달리티도 held-out 재조합 held/seen≈0.95). H_6172(실 303M canonical --py G0-G6): G0🟢coherent·G5🟢 이나 G1🔴(best_distinct=0/max_single=0)·G2🔴·G6🔴; 실텍스트=seed 개념 안이어받고 memorized 표류(단일도 coverage0, decode 조건화는 정상)=재조합 실패 아니라 생성이 프롬프트 안따름=generation-behavior/ckpt-quality(overfit drift). ⇒ 실텍스트 G1=0(H_1218/clm303)은 substrate/modality 아니라 training/objective/ckpt 문제 확정. 옛 axis-invariant-FLOOR 철회. TERMINAL 전제: 프롬프트-따르는 재학습(GPU, G1-NEXT-FINAL) 후 engine-native .hexa 재측정."
+                "verdict": "🟠 DIRECTIONAL RE-FRAME (2026-07-02 H_6166+6167+6168+6169+6171+6172; toy+py-mirror=DIRECTIONAL, engine-native 아님 — a_engine_native_learning). G1 재조합은 substrate 능력부재 아님 — 5각 수렴 + 실모델 확인: H_6166(RANDOM target=학습불가 아티팩트, 옛 FLOOR 측정무효)·H_6167(STRUCTURED서 plain trunk 재조합 72-98%, operator 무관)·H_6168(실 303M penultimate 개념 distinct id0.917)·H_6169(anima G1=generation-diversity 메트릭)·H_6171(generation 모달리티도 held-out 재조합 held/seen≈0.95). H_6172(실 303M canonical --py G0-G6): G0🟢coherent·G5🟢 이나 G1🔴(best_distinct=0/max_single=0)·G2🔴·G6🔴; 실텍스트=seed 개념 안이어받고 memorized 표류(단일도 coverage0, decode 조건화는 정상)=재조합 실패 아니라 생성이 프롬프트 안따름=generation-behavior/ckpt-quality(overfit drift). ⇒ 실텍스트 G1=0(H_1218/clm303)은 substrate/modality 아니라 training/objective/ckpt 문제 확정. 옛 axis-invariant-FLOOR 철회. TERMINAL 전제: 프롬프트-따르는 재학습(GPU, G1-NEXT-FINAL) 후 engine-native .hexa 재측정. H_6187(2026-07-03 L8+coverage 재학습 engine-native --py, PR#2830): G1=0 = 측정-무결성 2중 mismatch(①유발 표면형: coverage 'yield' 템플릿 학습 vs gate 시드 자유생성 ②decode-window T=24 긴 gate 개념 공동조건화 차단) 확정, trunk floor 아님 → terminal 철회 INCONCLUSIVE. ⭐held-out unseen ember+dune→golden+zinc 정확 재조합 = 재조합 능력 engine-native로도 작동 = axis-invariant-FLOOR 철회 강화(엔진무죄: torch·engine 둘다 303M G1=0 category-error). 처방=표면형+window 정합 재학습."
               },
               {
                 "name": "G2 NOVELTY",
@@ -13183,8 +13183,8 @@
       {
         "id": "anima-hexa-1",
         "state": "ossified",
-        "value": "anima full-stack build 벽(clang undeclared/link/codegen 류)은 대개 stale pool hexat이 root — pool 호스트가 현행 hexa-lang release 에 뒤처져 runtime.h carrier extern/builtin 미포함. #33 실증(2026-07-01): summer v0.468(현행 44릴리스 뒤)이 #4285 set_deterministic/is_deterministic carrier extern 없어 full-stack만(det safety-pin set_deterministic(true) 호출) clang 'use of undeclared identifier' → '대형 TU 링크 fail'로 오진. small OK large fail = code-path 커버리지(large-TU 스케일/relocation 아님).",
-        "threshold": "재발조건=anima build 실패 진단 전 pool hexat 현행성 미확인. 해결=진단 전 먼저 pool 호스트 hexa --version 확인 + install.sh 동기화(현행 main release 반영)한 뒤 재현. install-path 재발가드=hexa-lang #4334(HX_SRC origin pin + fresh-clone fallback). 동족 패턴=bench bad-hexat·anima stale-prebuilt. cross-repo memory=project_hexa_anima_linux_build_stale_hexat_setdet.",
+        "value": "anima full-stack build 벽(clang undeclared/link/codegen)은 대개 stale pool hexat이 root(pool이 현행 hexa-lang release 뒤처져 runtime.h carrier extern 미포함; #33 summer v0.468 set_deterministic 미포함 오진). **2번째 재발모드(A4 H_9106·h1590 전례): heavy engine-native `hexa run`(13705줄 engine_cli inline = multi-min aprime_cc 컴파일)이 같은 pool 박스에서 다른 heavy 에이전트와 경합하면 stall/사망 — 결과 로그 0, journal result 없음, notes만 aspirational.** 둘 다 '과학 천장' 아니라 pool 인프라.",
+        "threshold": "anima build/측정 실패 진단 전 ① pool hexat 현행성(hexa --version + install.sh 동기화) ② heavy engine-native 컴파일은 pool 박스 독점(co-tenancy 금지) 또는 harness 바이너리 1회 pre-compile 후 re-run — 여러 heavy 에이전트를 한 박스에 몰지 말 것(summer-overfire 계열). stall 의심 시 결과파일(run log·verdict.txt) 존재로 완주 판정, notes 'ran on X'만으론 미완.",
         "source": "cli/anima.hexa"
       },
       {
@@ -13225,8 +13225,8 @@
       {
         "id": "G1_WALL_IS_COVERAGE_DENSITY_AND_RF_NOT_ONLY_OBJECTIVE",
         "state": "pos-conv",
-        "value": "G1 재조합벽 재프레임(H_6182 toy → H_6183 v3 NL/byte → H_6184 fable arch-무관, torch DIRECTIONAL): 조합-커버리지 밀도가 held-out pair-특이 재조합의 상전이 lever. toy 20×20 커버리지 5→80%서 held 2→92%(임계~20%); 자연어 byte 30-concept pair-특이 3-arm(seen-sanity+pair-특이 지표+shuffle)서 HIGH held 85-95% ≫ LOW 0-3.3% ∧ SHUF true-target 0%(seen-shuffled 75-93% 학습=하네스 유효). attention ∧ dilated-conv 둘 다 재현=arch-무관; dilated conv 가 plain-conv RF=5 벽(H_6183 conv INCONCLUSIVE) 돌파=RF 확장이 conv 를 상전이 태움. 옛 G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT(objective-축)는 fixed-corpus 내 sub-finding 이었고, 데이터-분포 축(커버리지)은 DPI-면제(gradient 가 보는 데이터가 바뀜)라 별개 lever.",
-        "threshold": "G1 벽 = trunk-objective TERMINAL 로 박제 금지 → 실제 = (a)데이터-커버리지-밀도-bound + (b)수용영역-bound 이중. production 처방 2축: 조합-커버리지 설계 코퍼스 + 충분 RF(depth/dilation). 남은 게이트: production .clm 코퍼스 임계위치 측정 + engine-native(anima evaluate) 승격(현 torch DIRECTIONAL). · [H_6185 production 측정] clm303 chat mouth 코퍼스가 임계 한참 아래(개념쌍 커버리지 0/10=0%, control>0 무결) ∧ RF-bound 동시(RF 31B ≪ composed seed 72B) = clm303 G1=0 은 데이터-커버리지+수용영역 이중 bound 과잉결정(모델 단독결함 기각). 처방 2-step: ①RF L=4→8(RF≈511B, max_dilation512 cap 내) 또는 K=3→5 먼저 ②조합-커버리지 블록 합성(N≈30-50 개념·held-out 미노출·쌍당≥30reps·5-10MB) → frozen G1 재판정. (fable read-only 라 로컬 프록시 trainset DIRECTIONAL-proxy, 정확 HF 직접측정+engine-native=follow-on) · [H_6185 정확HF 승격] proxy(0/10)→정확 HF 4칸 코퍼스(127.6MB) 재측정: 개념쌍 HEAD 15/10쌍(쌍당 0~7 sparse)·control 무결, toy HIGH 17,143/MB vs HF 0.118/MB=1/145,000 → BELOW 확정(결론 불변, proxy 딱지 제거, DIRECTIONAL).",
+        "value": "G1 재조합벽: toy(3.3M) held-out pair-match 정확도 축에선 조합-커버리지 밀도가 lever(H_6182~6184 DIRECTIONAL). ⚠️ production 303M 이식(H_6187 L8+coverage 재학습)에서 engine-native G1=0 이 나왔으나 이는 trunk floor 아니라 INCONCLUSIVE — 3단 조사로 원인=측정-무결성 2중 mismatch 확정: ①유발 표면형(coverage 블록 'the A and B yield' 템플릿 학습 vs G1 gate 는 gate 문장 시드 자유생성 측정, gate 시드 내용어 블록 0회로 학습 combiner 미트리거) ②decode-window T=24 bytes(긴 gate 개념 2개 공동조건화 물리 차단). 둘다 trunk objective 무관. ⭐결정적 반례: held-out(코퍼스 미노출) 조합 ember+dune→golden+zinc 정확 재조합 = 재조합 능력 이미 작동(window 안·학습 형식 프롬프트) = 'G1벽=trunk objective floor' 메타법칙에 대한 반례. combiner 작동하고 G1 gate 표면화만 실패.",
+        "threshold": "재발조건: G1 gate(또는 recombination/G6) 측정으로 'trunk objective floor terminal' 결론 전 (1)유발 표면형 정합(학습 프롬프트 형식 = gate 측정 프롬프트 형식인가) (2)decode-window 물리 한계(측정 시퀀스가 window T 안에 두 개념 공존하나) 확인 필수. combiner 가 작동해도 이 둘이 어긋나면 G1=0(측정 artifact, 능력 부재 아님). 처방=표면형+window 정합 코퍼스 재학습(gate frozen 유지, tune-to-green 금지). toy DIRECTIONAL 는 학습-템플릿 접두사 프롬프트 축이라 자유형 transfer 별도 검증 필요.",
         "source": "HYPOTHESES/cards/H_6182,H_6183,H_6184,H_6185"
       },
       {
@@ -13256,6 +13256,13 @@
         "value": "G6 반증가능성 검출기 _g6_is_falsifiable(comparator×measurable×≥2content)는 FORM-only — targeted-coverage warm-FT 로 반증주장 형태를 학습하면 topic-bind 없이도(SHUF 통제=주제결합 파괴 동일바이트) FALS majority 통과(TARGETED [6,6,6]==SHUF [6,6,6]). 진짜 재조합 신호는 검출기 밖 bind Δ(TARGETED 0.444 vs SHUF 0.000). 함의: G6 벽 = 순수 attention-capacity 천장 아니라 (a)데이터로 FORM 움직임(P1 천장NULL REFUTED) + (b)frozen 검출기 form-only 라 진짜 결합 못 잼 이중문제. G1(2항 retrieval-composition)과 달리 G6(추상seed 3항 GENERATIVE bind)은 schema-transfer 병목.",
         "threshold": "재발조건: G6/ideation FALS 상승을 '재조합 능력'으로 박제하기 전 SHUF(topic-bind 파괴 동일바이트) 통제로 form-priming 분리 필수 — SHUF 도 통과하면 form-only artifact. 진짜 결합은 bind Δ(concept_hits ∩ frame_topics)로 측정. G6-bind additive 게이트(frozen _g6_is_falsifiable AND topic_bound)가 form-priming 걸러냄(SHUF FALS_bound [1,0,0]).",
         "source": "core/g6_ideation.hexa"
+      },
+      {
+        "id": "gen-auto-ideate-reload-cost-scale-1",
+        "state": "pos-conv",
+        "value": "H_9107: generate_deliberate 의 best-of-K(K∈{1..4}) + efferent_harness.hexa 자체 D4 shuffle-control 루프가 HIGH seed 1개당 gen_auto_ideate(ckpt,...) 를 최대 ~6-8회 재호출 — 매 호출이 harness 시작시 1회 로드한 backend 재사용 없이 ckpt 를 경로에서 재적재하는 듯한 거동(RSS 가 지속 ~4-5GB/min 증가, d768.clm 4.46MB 참조에선 무해했으나 clm303_clean.clm 168MB·~303M param 프로덕션 스케일에선 rent pod 2개(220GB·176GB RAM) 모두 HI[0] 완주 전 메모리 고갈/provider GONE). engine-native det-CPU 대형 ckpt 다중-candidate 하네스는 이 재적재비용 때문에 세션내 완주 불가.",
+        "threshold": "재발조건: gen_auto_ideate 를 seed 당 3회 이상 호출하는 새 하네스를 production ckpt(수백MB+)로 발사하기 전, backend 재사용 캐싱이 core/generator.hexa 에 있는지 먼저 확인 — 없으면 RSS 선형증가로 대형 ckpt 는 첫 seed 도 못 끝냄(rent pod 크기 무관, ckpt 배율만큼 재현). 이 캐싱-미적용 상태는 이 task 의 execution-only 스코프상 미수정(core/generator.hexa 소유자 follow-on).",
+        "source": "state/opgrip_efferent/efferent_harness.hexa"
       }
     ]
   }
