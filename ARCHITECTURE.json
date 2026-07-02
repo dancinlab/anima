@@ -9254,7 +9254,7 @@
                   }
                 ],
                 "type": "gate",
-                "verdict": "🟠 REOPENED (measure-artifact, 2026-07-02 H_6166) — 최근 cheap-gate FLOOR들(H_1840 γ·H_6164 structural-bind·H_6162 HE-obj·H_6161 inhibition·H_1824 data)은 전부 RANDOM operator-agnostic target을 썼는데, random full-rank table은 held-out이 seen과 정보이론적 독립 = 학습불가(chance가 천장, 깰 벽 아님) → 그 FLOOR들은 측정무효(lever 부재 증거 아님). 동일 plain trunk이 STRUCTURED(factored-rule) 재조합을 held-out 98% 달성(random 9%=chance) = trunk 재조합능력 존재. 레버 질문은 readout/operator(전부 floored)가 아니라 TASK가 학습가능 구조를 갖는지였음. ⚠️범위: 합성 random-target 방법론만 무효, 실모델 real-text G1=0(H_1218/clm303/h1129)은 별도 structure-aware 재시험 대상(미해결). 이전 'trunk-objective bound / axis-invariant FLOOR' 주장은 random-target 근거분 철회, structured 재측정으로 승계."
+                "verdict": "🟢/🟠 RE-FRAMED (2026-07-02 H_6166+H_6167) — G1 재조합은 substrate '능력 부재'가 아니라 (1)측정 아티팩트 + (2)잘못된 변수추적이었음. H_6166: 캠페인 cheap-gate가 RANDOM target을 써서 held-out이 정보이론적 학습불가(chance천장)—H_1840 γ·H_6164·H_6162·H_6161·H_1824 FLOOR=측정무효. H_6167: STRUCTURED(factored-rule) target서 plain ADDITIVE trunk이 held-out 재조합 72-98% 달성, multiplicative operator(hadamard/bilinear/TP/γ)는 headroom regime서도 +0.026 이하만 더함=operator lever 없음. ⇒ 재조합=TASK-STRUCTURE-bound(operator/readout 무관); 'which operator' 캠페인(H_1602/1816/1823/1840/6164) 전부 틀린 변수. trunk은 구조 있으면 이미 재조합함. ⚠️남은 유일 미해결=실모델 real-text G1=0(H_1218/clm303)이 (a)진짜 벽인지 (b)metric confound인지 structure-aware 재시험(follow-on). 이전 'trunk-objective bound/axis-invariant FLOOR' 철회."
               },
               {
                 "name": "G2 NOVELTY",
