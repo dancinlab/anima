@@ -1,0 +1,28 @@
+[.pt] top keys: ['embed.weight', 'embed_conv.conv.weight', 'embed_conv.conv.bias', 'trunk.0.conv.conv.weight', 'trunk.0.conv.conv.bias', 'trunk.0.norm.weight', 'trunk.0.norm.bias', 'trunk.1.conv.conv.weight']
+[.pt] saved cfg: None
+[.pt] inferred V=256 d=2781 n_trunk=8 n_experts=4
+[load] missing=[] unexpected=[]
+PARITY: {
+ "pt_argmax_last": 102,
+ "np_argmax_last": 102,
+ "argmax_match_last": true,
+ "argmax_match_allpos": "20/24",
+ "max_abs_delta_logit": 8.809110114500886,
+ "mean_abs_delta_logit": 2.13640764123056,
+ "last_pos_max_abs_delta": 5.1614185163130415,
+ "pt_top5_last": [
+  102,
+  115,
+  99,
+  116,
+  112
+ ],
+ "np_top5_last": [
+  102,
+  99,
+  115,
+  112,
+  116
+ ]
+}
+TORCH_PARITY_DONE

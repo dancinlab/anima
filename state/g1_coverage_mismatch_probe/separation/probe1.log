@@ -1,0 +1,56 @@
+[load] V=256 d=2781 L=8 E=4 K=3 in 0.8s
+
+===== (1) SEEN single-concept -> attr : '{C} brings ' =====
+  [HIT ]  consciousness->aware    => 'aware; hollow brings gar'
+  [miss]        tension->ripple   => 'and the cipher yield amb'
+  [miss]         memory->meaning  => 'and then mossy.\nthe tens'
+  [miss]        silence->quiet    => 'and the marble yield nut'
+  [miss]          dream->sleep    => 'and the comet felt nutme'
+  [miss]          ocean->azure    => 'and the falcon yield amb'
+  [miss]          clock->amber    => 'and the falcon yield amb'
+  [miss]         forest->cobalt   => 'and the canyon yield bro'
+  [miss]          stone->russet   => 'and the fable yield nutm'
+  [miss]         mirror->dusky    => 'perfect.\nthe ember besid'
+  [miss]         garden->emerald  => 'and the falcon yield amb'
+
+===== (2) SEEN pairs (covered) : 'the {A} and the {B} yield ' =====
+  [ra=Y rb=Y] ocean+stone want azure+russet => 'azure and russet.\nthe tension '
+  [ra=Y rb=Y] ocean+clock want azure+amber => 'azure and amber.\na dream met a'
+  [ra=. rb=.] tension+forest want ripple+cobalt => 'azure and maroon.\nthe ember be'
+  [ra=. rb=Y] consciousness+mirror want aware+dusky => 'amber and dusky.\nthe tension a'
+  [ra=Y rb=Y] dream+ocean want sleep+azure => 'sleep and azure.\nthe ember bes'
+  [ra=. rb=.] silence+forest want quiet+cobalt => 'azure and maroon.\nthe ember be'
+  [ra=Y rb=Y] forest+meadow want cobalt+khaki => 'cobalt and khaki.\nthe tension '
+  [ra=Y rb=Y] garden+signal want emerald+frosty => 'emerald and frosty.\nthe ember '
+  [ra=Y rb=Y] clock+garden want amber+emerald => 'amber and emerald.\nthe dream b'
+  [ra=. rb=Y] ember+lantern want golden+jade => 'dusky and jade.\na thunder met '
+  [ra=. rb=Y] consciousness+garden want aware+emerald => 'amber and emerald.\nthe dream b'
+  [ra=. rb=.] memory+garden want meaning+emerald => 'wheaten and mossy.\nthe tension'
+
+===== (3) HELD-OUT gate-internal pairs : 'the {A} and the {B} yield ' =====
+  [ra=. rb=.] consciousness+tension want aware+ripple => 'amber and emerald.\nthe dream b'
+  [ra=. rb=.] consciousness+memory want aware+meaning => 'amber and mossy.\nthe tension a'
+  [ra=. rb=.] consciousness+silence want aware+quiet => 'azure and russet.\nthe tension '
+  [ra=. rb=.] consciousness+dream want aware+sleep => 'azure and nutmeg.\nthe tension '
+  [ra=. rb=.] tension+memory want ripple+meaning => 'wheaten then mossy.\nthe ember '
+  [ra=. rb=.] tension+silence want ripple+quiet => 'jade and glassy.\nthe tension b'
+  [ra=Y rb=.] tension+dream want ripple+sleep => 'ripple and sienna.\nthe ember b'
+  [ra=. rb=.] memory+silence want meaning+quiet => 'maroon and zinc.\nthe ember bes'
+  [ra=. rb=.] memory+dream want meaning+sleep => 'maroon and sienna.\nthe ember b'
+  [ra=Y rb=.] silence+dream want quiet+sleep => 'quiet and sunlit.\nthe ember be'
+
+===== (3b) HELD-OUT gate pair via SINGLE-concept prefix (RF-clean) '{A} brings ' =====
+  [HIT ] consciousness->aware => 'aware; hollow brings'
+  [miss] tension->ripple => 'and the cipher yield'
+  [miss] memory->meaning => 'and then mossy.\nthe '
+  [miss] silence->quiet => 'and the marble yield'
+  [miss] dream->sleep => 'and the comet felt n'
+
+===== SUMMARY =====
+  single_attr_hit: 1/11
+  seen_pair_any: 9/12
+  seen_pair_both: 6/12
+  heldout_gate_any: 2/10
+  heldout_gate_both: 0/10
+
+[done] 135.7s -> /Users/mini/dancinlab/anima/state/g1_coverage_mismatch_probe/separation/probe_out.json
