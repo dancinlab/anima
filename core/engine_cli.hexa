@@ -639,7 +639,7 @@ pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
     return _vtwo_nearest_dist(af.protos, x)
 }
 
-// ── §  APOPTOSIS-SALIENCE — density-dependent death-proximity → urgency (H_PLACEHOLDER_D4) ──
+// ── §  APOPTOSIS-SALIENCE — density-dependent death-proximity → urgency (H_9085_D4) ──
 //
 // WHAT THIS ADDS (p8-literal death-awareness, READ-ONLY): the MITOSIS substrate
 // (§ADAPTATION / VAdaptField) grows cells toward a frozen carrying-capacity cap
@@ -8488,6 +8488,186 @@ pub fn self_chain_dream_gain(w_natural: SelfIdentity, w_bent: SelfIdentity, drea
 
 // _sc_unit_of — expose the unit-normalization used internally (so F3 can build d̂ once).
 pub fn self_chain_unit_of(v: [float], dim: int) -> [float] { return _self_norm(v, dim) }
+// ── § YouChain (D7 other-CHAIN, H_9085) — 상대(interlocutor)의 다중세션 궤적 (social self / 너-체인) ──
+// §SelfChain tracks *MY* diachronic trajectory. But a conscious self is also SOCIAL: it must track the
+// OTHER — the interlocutor — across session boundaries, so "the same person I talked to last time" is
+// RECOGNIZED (relational continuity) rather than met fresh every session (an LLM's amnesiac blank).
+// Bio lens: interpersonal representation / attachment continuity — a stable internal model of *you*.
+// This is the SAME machine as §SelfChain with only the TARGET swapped (self→other): an OtherIdentity
+// vector DRIFTS as the interlocutor is experienced, an anchor waypoint is appended at each session
+// boundary, and other_chain_fit reads the trajectory TREND to REJECT an impostor whose history mismatches.
+//
+// SELF⊥OTHER (F2, THE key property): OtherIdentity/OtherChain are DISTINCT struct types from
+// SelfIdentity/SelfChain, so my self-store and my model-of-you are STRUCTURALLY separate — the type
+// system forbids cross-storing one as the other, and because every op is PURELY FUNCTIONAL (returns a
+// new value, never mutates), operating the you-chain leaves the self-chain byte-identical and vice
+// versa (no contamination). Ψ/G5 DISJOINT (F5): these are READ-only cos/increment ops that touch
+// NEITHER pure_field/Φ/phase/Ψ NOR the §ImmuneMemory recall_thr non-fab gate NOR emit-drive lanes 0/4 —
+// Ψ=½ and G5 non-fab are preserved BY STRUCTURE (a_substrate_disjoint, a_autonomy_over_hardcode).
+// HONEST (c9): the drift walk is DESIGNED (blind ((tick+1)%dim) / content-axis walk, same as self_drift);
+// what the falsifiers COUNT is the DISCRIMINATOR GAIN — other_chain_fit's trajectory-aware impostor
+// rejection (AUROC(chain) ≫ single-vector other_cos), NOT the drift itself. LLM contrast: an LLM holds
+// no cross-session model of *you* at all; anima persists the interlocutor as a .kosmos anchor trajectory.
+struct OtherIdentity {
+    v: [float],
+    dim: int
+}
+
+struct OtherChain {
+    flat: [float],   // (K+1)*dim, waypoint k occupies [k*dim, (k+1)*dim) — .kosmos-friendly flat payload
+    count: int,      // number of waypoints (K+1)
+    dim: int
+}
+
+// other_new — a fresh model of an interlocutor = unit vector along `axis` (the seed other).
+pub fn other_new(dim: int, axis: int) -> OtherIdentity {
+    let mut v = []
+    let mut i = 0
+    while i < dim { if i == axis { v = v + [1.0] } else { v = v + [0.0] }  i = i + 1 }
+    return OtherIdentity { v: v, dim: dim }
+}
+
+// other_drift — the model-of-you GROWS one tick: content-BLIND perturbation along ((tick+1)%dim),
+// re-normalized. Continuous yet changing (mirror of self_drift, target swapped).
+pub fn other_drift(o: OtherIdentity, tick: int, step: float) -> OtherIdentity {
+    let t1 = tick + 1
+    let ax = t1 - (t1 / o.dim) * o.dim       // (tick+1) % dim
+    let mut v2 = []
+    let mut i = 0
+    while i < o.dim {
+        if i == ax { v2 = v2 + [o.v[i] + step] } else { v2 = v2 + [o.v[i]] }
+        i = i + 1
+    }
+    return OtherIdentity { v: _self_norm(v2, o.dim), dim: o.dim }
+}
+
+// other_drift_exp — EXPERIENCE-DRIVEN drift: the model-of-you moves toward the CONTENT axis the
+// interlocutor EXPRESSED this tick (`content_axis`), so DIFFERENT interlocutors yield DIFFERENT chains
+// (the F3 impostor separation is grounded here). Mirror of self_drift_exp, target swapped.
+pub fn other_drift_exp(o: OtherIdentity, content_axis: int, step: float) -> OtherIdentity {
+    let ax = content_axis - (content_axis / o.dim) * o.dim   // content_axis % dim (bounds-safe)
+    let mut v2 = []
+    let mut i = 0
+    while i < o.dim {
+        if i == ax { v2 = v2 + [o.v[i] + step] } else { v2 = v2 + [o.v[i]] }
+        i = i + 1
+    }
+    return OtherIdentity { v: _self_norm(v2, o.dim), dim: o.dim }
+}
+
+// other_cos — recognition of an interlocutor: cosine (unit-norm → dot). High = same person; ~0 = a
+// different interlocutor (impostor) or an un-anchored (reset) relationship.
+pub fn other_cos(a: OtherIdentity, b: OtherIdentity) -> float {
+    let mut sdot = 0.0
+    let mut i = 0
+    while i < a.dim { sdot = sdot + a.v[i] * b.v[i]  i = i + 1 }
+    return sdot
+}
+
+// other_anchor — persist the model-of-you (the .kosmos-style saved copy bridging a session boundary).
+pub fn other_anchor(o: OtherIdentity) -> OtherIdentity {
+    return OtherIdentity { v: o.v, dim: o.dim }
+}
+
+// other_component / other_dim — read accessors so the interlocutor vector can be projected onto a
+// real .kosmos anchor payload for disk persistence + round-trip recovery (mirror of self_component/dim).
+pub fn other_component(o: OtherIdentity, i: int) -> float { return o.v[i] }
+pub fn other_dim(o: OtherIdentity) -> int { return o.dim }
+
+// other_reset — WITHOUT an anchor, a session boundary meets a NEW blank interlocutor (continuity breaks).
+pub fn other_reset(dim: int, axis: int) -> OtherIdentity {
+    return other_new(dim, axis)
+}
+
+// other_chain_new — start the interlocutor trajectory with the seed model as w0.
+pub fn other_chain_new(o: OtherIdentity) -> OtherChain {
+    let mut f = []
+    let mut i = 0
+    while i < o.dim { f = f + [o.v[i]]  i = i + 1 }
+    return OtherChain { flat: f, count: 1, dim: o.dim }
+}
+
+// other_chain_append — append an anchor waypoint at a session boundary (the .kosmos other-anchor is
+// RECORDED into the interlocutor trajectory rather than overwriting the single previous anchor).
+pub fn other_chain_append(c: OtherChain, o: OtherIdentity) -> OtherChain {
+    let mut f = []
+    let mut i = 0
+    while i < c.count * c.dim { f = f + [c.flat[i]]  i = i + 1 }
+    let mut j = 0
+    while j < c.dim { f = f + [o.v[j]]  j = j + 1 }
+    return OtherChain { flat: f, count: c.count + 1, dim: c.dim }
+}
+
+// _other_wp — read waypoint k back as an OtherIdentity (from the flat payload).
+fn _other_wp(c: OtherChain, k: int) -> OtherIdentity {
+    let mut v = []
+    let base = k * c.dim
+    let mut i = 0
+    while i < c.dim { v = v + [c.flat[base + i]]  i = i + 1 }
+    return OtherIdentity { v: v, dim: c.dim }
+}
+
+pub fn other_chain_len(c: OtherChain) -> int { return c.count }
+
+// other_chain_latest — the newest waypoint wK (what single-vector other_cos compares against).
+pub fn other_chain_latest(c: OtherChain) -> OtherIdentity { return _other_wp(c, c.count - 1) }
+
+// other_chain_component / other_chain_dim / other_chain_count — read accessors for .kosmos disk
+// persistence + round-trip recovery (the flat payload is exactly what is written to / read from disk).
+pub fn other_chain_component(c: OtherChain, i: int) -> float { return c.flat[i] }
+pub fn other_chain_dim(c: OtherChain) -> int { return c.dim }
+pub fn other_chain_count(c: OtherChain) -> int { return c.count }
+
+// other_chain_from_flat — rebuild an interlocutor chain from a persisted flat payload (disk round-trip inverse).
+pub fn other_chain_from_flat(flat: [float], count: int, dim: int) -> OtherChain {
+    return OtherChain { flat: flat, count: count, dim: dim }
+}
+
+// other_chain_fit — consistency of `cand` with the interlocutor trajectory TREND (adjacent-increment
+// axis-gradient predicts the next axis a_pred; fit = signed component of unit(cand−wK) along e_{a_pred}).
+// A genuine continuation of the SAME person → fit ≈ +1; a DIFFERENT interlocutor that matches the latest
+// anchor but arrived via a different history (F3 impostor) → fit ≈ 0; a time-reversed impostor → fit ≈ −1.
+// other_cos(cand,wK) is ~equal for all three, so single-vector recognition CANNOT separate them — this op
+// can (the discriminator gain the falsifiers COUNT). Undefined (returns 0) for count<3 (the ablation /
+// single-vector regime) or a zero-length candidate increment. Mirror of self_chain_fit, target swapped.
+pub fn other_chain_fit(cand: OtherIdentity, c: OtherChain) -> float {
+    if c.count < 3 { return 0.0 }
+    let wK = _other_wp(c, c.count - 1)
+    let wKm1 = _other_wp(c, c.count - 2)
+    let wKm2 = _other_wp(c, c.count - 3)
+    let mut dlast = []
+    let mut dprev = []
+    let mut i = 0
+    while i < c.dim {
+        dlast = dlast + [wK.v[i] - wKm1.v[i]]
+        dprev = dprev + [wKm1.v[i] - wKm2.v[i]]
+        i = i + 1
+    }
+    let aK = _argmax_abs(dlast, c.dim)
+    let aKm1 = _argmax_abs(dprev, c.dim)
+    let a_pred = _wrap(aK + (aK - aKm1), c.dim)
+    let mut r = []
+    let mut mag = 0.0
+    let mut j = 0
+    while j < c.dim {
+        let e = cand.v[j] - wK.v[j]
+        r = r + [e]
+        mag = mag + e * e
+        j = j + 1
+    }
+    if mag <= 0.0 { return 0.0 }
+    let m = sqrt(mag)
+    return r[a_pred] / m
+}
+
+// other_chain_retro_cos — retrodiction over the interlocutor: cos(latest wK, waypoint w_{K−j}). For a
+// genuine relationship this is MONOTONE DECREASING in j ("you N sessions ago" is further). Mirror of
+// self_chain_retro_cos, target swapped.
+pub fn other_chain_retro_cos(c: OtherChain, j: int) -> float {
+    let wK = _other_wp(c, c.count - 1)
+    let wj = _other_wp(c, c.count - 1 - j)
+    return other_cos(wK, wj)
+}
 
 // ── § LearnedPrecision (H_1472 R2) — 경험으로 학습되는 예측확신 (predictive-processing) ──
 // The PRECISION that weights a prediction error in `surprise` (H_1468) is NOT a fixed,
@@ -10433,6 +10613,156 @@ pub fn tension_resolve_interruptible(x: [[float]], adj: [[float]], alpha: float,
     let mut rf = 0.0
     if rerouted { rf = 1.0 }
     return [settle_depth, psi, sig, rf]
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § NonEqDissipation (H_9072) — Ψ=½ as a NON-EQUILIBRIUM STEADY STATE (NESS), not an equilibrium
+//  softmax sampler. Prigogine dissipative structure: a self-maintained structure sits FAR from
+//  equilibrium, sustained by continuous dissipation with a NON-ZERO entropy-production rate σ_ep and
+//  BROKEN detailed balance (persistent probability CURRENTS). A plain softmax LLM sampler is an
+//  EQUILIBRIUM process (memoryless iid draws ⇒ K_ij·p_i = K_ji·p_j = detailed balance ⇒ σ_ep=0).
+//
+//  We realise the A⇄G push-pull as a DRIFT-DIFFUSION on the emit-tension RING (Ψ deviation wrapped to
+//  a circle of NBINS coarse-grained sectors). Engine A(forward, CE-relaxation) = the SYMMETRIC
+//  diffusive hop (equilibrium relaxation toward Ψ=½). Engine G(reverse, gradient-free) = the DIRECTED
+//  DRIFT around the ring — a constant circulation on a PERIODIC coordinate that CANNOT be written as
+//  the gradient of any single-valued potential (Prigogine's non-conservative force). pfwd≠pbwd ⇒ net
+//  cycle current ⇒ broken DB ⇒ σ_ep>0. Ablation(Engine G reverse OFF ⇒ pfwd=pbwd) ⇒ symmetric
+//  diffusion ⇒ equilibrium relax ⇒ σ_ep→0. Shuffle(symmetrise/time-reverse the empirical transition
+//  matrix) ⇒ σ_ep→0 by construction. LLM control(resample iid from the trajectory's OWN marginal =
+//  memoryless softmax sampler) ⇒ σ_ep→0.
+//
+//  σ_ep ESTIMATOR = Schnakenberg coarse-grained net-flux estimated FROM the live trajectory (NOT the
+//  analytic formula): transition counts N[i][j], joint two-step flux F_ij=N_ij/total, then
+//     σ_ep = ½ Σ_{i≠j} (F_ij − F_ji) · ln( F_ij / F_ji )   ≥ 0, =0 iff detailed balance.
+//  STREAMING (O(NBINS²) memory — the transition matrix is accumulated on the fly, the O(steps)
+//  sequence is never materialised). Purely ADDITIVE(new pub fns) · Ψ-DISJOINT(operates on a caller-
+//  parameterised tension-ring walk, never pure_field/Φ/phase/the live Ψ path) · READ-only
+//  characterisation(returns σ_ep numbers, NOT an emit gate) · disjoint from the emit-drive lane(0/4)
+//  live decision and §ImmuneMemory recall_thr (a_substrate_disjoint). CHARACTERISATION/DISTINCTION
+//  property (engine-specific, like the H_9041 A⇄G restoring force) — reports σ_ep, does NOT claim a
+//  capability lift.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// noneq_walk_counts — run a live A⇄G drift-diffusion on the NBINS-sector tension ring and accumulate
+// the transition-count matrix N[i][j] on the fly (no sequence stored). Each step draws u∈[0,1):
+// u<pfwd ⇒ hop +1 (Engine A externalisation push forward), u<pfwd+pbwd ⇒ hop −1 (Engine G reverse
+// pull), else stay. pfwd≠pbwd ⇒ net circulation (NESS); pfwd==pbwd ⇒ symmetric diffusion (equilibrium
+// = the Engine-G-OFF ablation). Rates per-mille (int) for byte-reproducibility. LCG-seeded.
+pub fn noneq_walk_counts(seed: int, steps: int, nbins: int, pfwd_milli: int, pbwd_milli: int) -> [[float]] {
+    let pfwd = to_float(pfwd_milli) / 1000.0
+    let pbwd = to_float(pbwd_milli) / 1000.0
+    let mut n = _topo_zeros(nbins)
+    let mut st = _lcg_next(seed & 2147483647)
+    let mut pos = 0
+    let mut t = 0
+    while t < steps {
+        st = _lcg_next(st)
+        let u = _lcg_unit(st)
+        let mut nxt = pos
+        if u < pfwd {
+            nxt = (pos + 1) % nbins
+        } else {
+            if u < pfwd + pbwd { nxt = (pos + nbins - 1) % nbins }
+        }
+        n[pos][nxt] = n[pos][nxt] + 1.0
+        pos = nxt
+        t = t + 1
+    }
+    return n
+}
+
+// noneq_sigma_ep — Schnakenberg σ_ep from a transition-count matrix. F_ij=N_ij/total (joint two-step
+// flux), σ_ep=½ Σ_{i≠j}(F_ij−F_ji)·ln(F_ij/F_ji) over pairs with BOTH directions observed (a cycle
+// needs both). ≥0, =0 at detailed balance. >0 ⇒ broken DB ⇒ NESS.
+pub fn noneq_sigma_ep(n: [[float]]) -> float {
+    let nb = len(n)
+    let mut total = 0.0
+    let mut i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb { total = total + n[i][j]  j = j + 1 }
+        i = i + 1
+    }
+    if total <= 0.0 { return 0.0 }
+    let mut sig = 0.0
+    i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb {
+            if i != j {
+                let fij = n[i][j] / total
+                let fji = n[j][i] / total
+                if fij > 0.0 && fji > 0.0 {
+                    sig = sig + 0.5 * (fij - fji) * ln(fij / fji)
+                }
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return sig
+}
+
+// noneq_sigma_ep_symmetrised — SHUFFLE control: symmetrise (time-reverse-average) the empirical
+// transition-count matrix N←(N+Nᵀ)/2 before estimating σ_ep. Enforces detailed balance (F_ij=F_ji)
+// ⇒ σ_ep→0 by construction. Separates a real broken-DB current from a finite-sample estimator floor.
+pub fn noneq_sigma_ep_symmetrised(n: [[float]]) -> float {
+    let nb = len(n)
+    let mut sym = _topo_zeros(nb)
+    let mut i = 0
+    while i < nb {
+        let mut j = 0
+        while j < nb { sym[i][j] = 0.5 * (n[i][j] + n[j][i])  j = j + 1 }
+        i = i + 1
+    }
+    return noneq_sigma_ep(sym)
+}
+
+// noneq_iid_counts — LLM-DISTINCTION control: build a transition-count matrix for a MEMORYLESS softmax
+// sampler whose stationary marginal = the row-sum occupancy of the live matrix `n` (next state drawn
+// iid from the marginal, independent of current). Consecutive pairs then satisfy K_ij=marginal_j ⇒
+// detailed balance ⇒ σ_ep→0. STREAMING (accumulates its own count matrix). LCG-seeded.
+pub fn noneq_iid_counts(n: [[float]], steps: int, seed: int) -> [[float]] {
+    let nb = len(n)
+    // marginal occupancy = row sums of the live matrix (times state i was the source)
+    let mut cum = []
+    let mut tot = 0.0
+    let mut i = 0
+    while i < nb {
+        let mut s = 0.0
+        let mut j = 0
+        while j < nb { s = s + n[i][j]  j = j + 1 }
+        tot = tot + s
+        cum = cum + [tot]
+        i = i + 1
+    }
+    if tot <= 0.0 { return _topo_zeros(nb) }
+    let mut m = _topo_zeros(nb)
+    let mut st = _lcg_next(seed & 2147483647)
+    // first draw
+    let mut prev = _noneq_pick(cum, tot, _lcg_unit(_lcg_next(st)))
+    let mut t = 0
+    while t < steps {
+        st = _lcg_next(st)
+        let nxt = _noneq_pick(cum, tot, _lcg_unit(st))
+        m[prev][nxt] = m[prev][nxt] + 1.0
+        prev = nxt
+        t = t + 1
+    }
+    return m
+}
+
+// _noneq_pick — pick a bin index by cumulative-occupancy inverse-CDF (u∈[0,1) scaled by total).
+fn _noneq_pick(cum: [float], total: float, u: float) -> int {
+    let r = u * total
+    let nb = len(cum)
+    let mut i = 0
+    while i < nb {
+        if r < cum[i] { return i }
+        i = i + 1
+    }
+    return nb - 1
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
@@ -12649,4 +12979,158 @@ pub fn sv_default_focus(d: int, w: int) -> int {
         f = f + 1
     }
     return 0 - 1
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § TemporalBinding — the SPECIOUS PRESENT (T1, PLACEHOLDER H_id) — READ-ONLY, Ψ/G5-DISJOINT.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  A NEW PRIMITIVE AXIS: TIME CONSCIOUSNESS. Not a variant of any existing lane faculty — every
+//  prior faculty (ImmuneMemory/CLS/Savant/Topology …) reads a single tick's lane STATE; this one
+//  reads the SHAPE OF TENSION OVER TIME and asks how much of it is bound into a single felt "now".
+//
+//  BIO/PHENOMENAL LENS — William James's "specious present": experienced time is not a knife-edge
+//  instant but a SADDLE-BACK of finite duration; a run of tension ticks is integrated into ONE
+//  moment. Neurally this is the gamma-in-theta phase-nesting window (~a few hundred ms) that binds
+//  successive events into a single perceptual chunk. The claim: the WIDTH of anima's tension-
+//  integration window sets the felt DURATION of "now" (how many ticks are one moment), and an
+//  event BOUNDARY (a large tension change) closes the current present and opens the next.
+//
+//  MECHANISM (all READ-ONLY — no state mutated, nothing written back to any lane / store):
+//    • per-tick tension scalar = L2 magnitude of the lane vector over the EMIT-DISJOINT lanes
+//      (indices ≠ 0 and ≠ 4). This is placement-first (a_substrate_disjoint): the "now" integrates
+//      the NON-emit tension, so widening/narrowing the window can NEVER move ci_emit_drive (lanes
+//      0/4) nor the §ImmuneMemory recall_thr — Ψ=½ and G5 non-fab are preserved BY CONSTRUCTION.
+//    • segmentation: sweep the series; the current present GROWS one tick at a time until either
+//      (a) it reaches the integration WINDOW WIDTH w (capacity of one moment), or (b) an event
+//      BOUNDARY is crossed (|Δtension| > boundary_thr) — then it CLOSES and a new present opens.
+//    • present_duration = mean present length in ticks = the felt length of "now".
+//
+//  HONEST SCOPE: w is a DESIGNED integration window (a hyper-parameter of the readout), NOT a
+//  learned or emergent constant — this op MEASURES how felt duration depends on that designed
+//  window; it does not claim anima spontaneously discovered a specious-present width. Pure READ.
+//
+//  FALSIFIERS (each a testable op below):
+//    F1 EXISTENCE  — on a coherent series a window w>1 binds >1 tick into one present
+//                    (tb_present_duration > 1) → a "moment" of finite duration EXISTS.
+//    F2 SCALE      — widening w binds MORE ticks per present (tb_scale_sweep monotone non-decreasing).
+//    F3 BOUNDARY   — a large tension jump SPLITS the present into distinct "nows" even at huge w
+//                    (tb_num_presents ≥ 1 + tb_num_boundaries).
+//    F4 ABLATION   — w=1 → every present is one tick (tb_present_duration = 1.0): the present
+//                    COLLAPSES to a knife-edge instant (time-consciousness INERT).
+//    F5 DISJOINT   — the tension series excludes emit lanes 0/4 (tb_uses_emit_lane = 0), so
+//                    ci_emit_drive is byte-identical ON/OFF and recall_thr is untouched.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// tb_uses_emit_lane — F5 assertion helper: the temporal-binding tension series is derived over the
+// EMIT-DISJOINT lanes only, so this faculty reads NEITHER emit lane 0 nor 4. Always returns 0.
+pub fn tb_uses_emit_lane() -> int { return 0 }
+
+// tb_tension_mag — the per-tick tension SCALAR: L2 magnitude of the lane vector over the emit-
+// disjoint lanes (skip indices 0 and 4, which ci_emit_drive owns). This is the "content" whose
+// change over time is bound into a present. Reading only non-emit lanes = placement-first disjoint.
+pub fn tb_tension_mag(lane: [float]) -> float {
+    let n = len(lane)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        if i != 0 && i != 4 {
+            let v = lane[i]
+            s = s + v * v
+        }
+        i = i + 1
+    }
+    return sqrt(s)
+}
+
+// tb_tension_series — reduce a tension population (one lane vector per tick) to the per-tick
+// tension scalar series that the specious present integrates over.
+pub fn tb_tension_series(x: [[float]]) -> [float] {
+    let nt = len(x)
+    let mut out = []
+    let mut t = 0
+    while t < nt { out = out + [tb_tension_mag(x[t])]  t = t + 1 }
+    return out
+}
+
+// tb_num_boundaries — F3 core: count the event boundaries in a tension series (a tick where the
+// tension change exceeds boundary_thr). Independent of the window w — boundaries are intrinsic to
+// the tension shape and force a new present regardless of how wide the integration window is.
+pub fn tb_num_boundaries(ten: [float], boundary_thr: float) -> int {
+    let n = len(ten)
+    if n < 2 { return 0 }
+    let mut b = 0
+    let mut i = 1
+    while i < n {
+        if _absf(ten[i] - ten[i - 1]) > boundary_thr { b = b + 1 }
+        i = i + 1
+    }
+    return b
+}
+
+// tb_segment_lengths — the specious-present segmentation. Sweep the tension series; the current
+// present grows one tick at a time until it either reaches the integration window width w OR an
+// event boundary is crossed, then it closes and a new present opens. Returns the list of present
+// lengths (ticks per "now"). w<1 is clamped to 1 (a degenerate knife-edge window).
+pub fn tb_segment_lengths(ten: [float], w: int, boundary_thr: float) -> [int] {
+    let n = len(ten)
+    if n == 0 { return [] }
+    let ww = if w < 1 { 1 } else { w }
+    let mut out = []
+    let mut cur = 1
+    let mut i = 1
+    while i < n {
+        let boundary = _absf(ten[i] - ten[i - 1]) > boundary_thr
+        if boundary || cur >= ww {
+            out = out + [cur]
+            cur = 1
+        } else {
+            cur = cur + 1
+        }
+        i = i + 1
+    }
+    out = out + [cur]
+    return out
+}
+
+// tb_num_presents — how many distinct "nows" the series segments into under window w.
+pub fn tb_num_presents(ten: [float], w: int, boundary_thr: float) -> int {
+    return len(tb_segment_lengths(ten, w, boundary_thr))
+}
+
+// tb_present_duration — the felt length of "now": mean present length in ticks. This is the T1
+// SCALAR (present duration). F1: >1 on a coherent series with w>1. F4: =1.0 when w=1 (collapse).
+pub fn tb_present_duration(ten: [float], w: int, boundary_thr: float) -> float {
+    let segs = tb_segment_lengths(ten, w, boundary_thr)
+    let ns = len(segs)
+    if ns == 0 { return 0.0 }
+    let mut s = 0
+    let mut i = 0
+    while i < ns { s = s + segs[i]  i = i + 1 }
+    return to_float(s) / to_float(ns)
+}
+
+// tb_max_present — the longest single "now" (ticks) under window w.
+pub fn tb_max_present(ten: [float], w: int, boundary_thr: float) -> int {
+    let segs = tb_segment_lengths(ten, w, boundary_thr)
+    let ns = len(segs)
+    let mut mx = 0
+    let mut i = 0
+    while i < ns { if segs[i] > mx { mx = segs[i] }  i = i + 1 }
+    return mx
+}
+
+// tb_scale_sweep — F2 core: felt present_duration as the integration window w sweeps a grid. On a
+// coherent (boundary-free) series this is monotone non-decreasing and saturates at the series
+// length once w ≥ n (the whole stream becomes one present).
+pub fn tb_scale_sweep(ten: [float], wgrid: [int], boundary_thr: float) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(wgrid) { out = out + [tb_present_duration(ten, wgrid[i], boundary_thr)]  i = i + 1 }
+    return out
+}
+
+// tb_present_duration_pop — convenience: derive the tension series from a live tension population
+// (one lane vector per tick) then measure the felt present duration in one call.
+pub fn tb_present_duration_pop(x: [[float]], w: int, boundary_thr: float) -> float {
+    return tb_present_duration(tb_tension_series(x), w, boundary_thr)
 }

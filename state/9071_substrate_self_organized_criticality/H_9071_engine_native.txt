@@ -1,0 +1,13 @@
+INFO topology: brain 15-lane, ⟨k⟩=6.666666666666667 g_c=1/⟨k⟩=0.15
+INFO gains: sub=0.075 crit=0.15 super=0.255
+INFO sigma:   sub=0.4776666666666667 crit=0.969 super=1.6926666666666668 | shuffle@crit=0.9726666666666667 (⟨k⟩shuf=6.533333333333333)
+INFO meansize:sub=1.8153333333333332 crit=3.877666666666667 super=8.286333333333333
+INFO htfrac(s>=5): sub=0.06133333333333333 crit=0.3373333333333333 super=0.706 | shuffle@crit=0.33066666666666666
+INFO dyn-range dB: sub=10.927701462879222 crit=13.56072260917106 super=13.561130714389066 | shuffle@crit=14.247583996916207
+PASS  B1 σ(crit)∈[0.80,1.25] & σ monotone in gain (sub<crit<super)
+PASS  B2 heavy-tail frac(s>=5) crit >= 2x sub (P(s) power-law emerges)
+FAIL  B3 dyn-range Δ(crit) > Δ(sub) AND > Δ(super) (payoff at σ≈1)
+FAIL  B4 gain-detune decisive: maxΔ-minΔ >= 3.0 dB (NOT flat=INERT)
+FAIL  B5 degree-shuffle breaks power-law: htfrac(shuf) < 0.5x brain (connectome-specific)
+--- H_9071 substrate SOC engine-native: 2 pass / 3 fail ---
+EXIT_RC=0

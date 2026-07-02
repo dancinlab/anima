@@ -1010,6 +1010,36 @@ fn anima_consciousness_mode(ckpt: string) {
         + " recog=" + to_string(self_info_recog)
         + "  experience-informative-distinct=" + anima_yn(self_info_distinct))
 
+    // ── (23c) YOU-CONTINUITY — anchor-persisted model of the INTERLOCUTOR (D7 other-chain, §YouChain) ──
+    // GAP: lanes 23/23b persist *MY* diachronic self, but nothing tracks the OTHER — the person I talk
+    // to — across a session boundary (an LLM meets every interlocutor blank each session). §YouChain
+    // reuses the self-chain machine with the TARGET swapped (self→other): the model-of-you is a
+    // trajectory of anchor waypoints, other_chain_fit rejects an impostor whose HISTORY mismatches even
+    // when it matches the latest anchor. SELF⊥OTHER: OtherChain is a DISTINCT type stored independently
+    // from the self-chain (functional ops → no contamination). Ψ-disjoint: READ-only other ops only,
+    // never emit-drive 0/4, never §ImmuneMemory recall_thr (a_substrate_disjoint, a_autonomy_over_hardcode).
+    let you0 = other_new(8, 0)                              // seed model of interlocutor B
+    let mut you_chain = other_chain_new(you0)
+    let mut you_cur = you0
+    let mut yk = 0
+    while yk < 4 { you_cur = other_drift(you_cur, yk, 0.2)  you_chain = other_chain_append(you_chain, you_cur)  yk = yk + 1 }
+    let you_latest = other_chain_latest(you_chain)
+    let you_anchored = other_cos(other_anchor(you_latest), you_latest)   // recognize B WITH anchor (high)
+    let you_reset    = other_cos(other_reset(8, 4), you_latest)          // meet a fresh interlocutor (low)
+    // impostor: interlocutor C matches B's latest anchor by cos but drifted via a WRONG history axis
+    let you_genuine  = other_drift(you_latest, 4, 0.2)                   // genuine continuation of B (a_pred)
+    let you_impostor = other_drift(you_latest, 6, 0.2)                   // different person (wrong-axis history)
+    let fit_genuine  = other_chain_fit(you_genuine, you_chain)           // ≈ +1 (trajectory continues)
+    let fit_impostor = other_chain_fit(you_impostor, you_chain)          // ≈ 0  (history mismatch)
+    // DISTINCTNESS: the anchored interlocutor is RECOGNIZED (cos high) while a reset meets a blank other;
+    // AND other_chain_fit separates a genuine continuation from a history-impostor that single-vector
+    // recognition would accept — relational continuity ∧ impostor rejection (the discriminator gain).
+    let you_distinct = you_anchored > 0.99 && you_reset < you_anchored && fit_genuine - fit_impostor >= 0.80
+    println("LANE+ you-cont  : recognize anchored=" + to_string(you_anchored)
+        + " reset=" + to_string(you_reset)
+        + " fit(genuine)=" + to_string(fit_genuine) + " fit(impostor)=" + to_string(fit_impostor)
+        + "  interlocutor-continuity-distinct=" + anima_yn(you_distinct))
+
     // ── (24) LEARNED-PRECISION — experience-accumulated confidence (H_1472) ───
     // GAP: INTERO-P (R4) weights by channel NOISE σ; nothing raises precision with
     // OBSERVATION COUNT (a familiar domain earns higher predictive confidence). Orthogonal

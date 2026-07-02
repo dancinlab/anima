@@ -1,0 +1,11 @@
+PASS  F1_other_continuity adj>=0.70 & adj>distant
+PASS  F4_k_session monotone-decreasing (older-you fades)
+PASS  F3_impostor AUROC(chain)>=0.95 & gap>=0.30
+PASS  F3b_margin genuine>=0.90 & impostor<=0.10
+PASS  F4b_ablation history-load-bearing (fit=0 both)
+PASS  F4c_roundtrip byte-identical fit
+PASS  F2_self_perp_other self-chain byte-identical after you-ops
+PASS  F2b_you-chain byte-identical after self-ops
+PASS  F5_psi_g5_disjoint emit+recall byte-identical (ON vs OFF)
+INFO  AUROC(chain-fit)=1.0 AUROC(single-vector)=0.2777777777777778 fit_genuine=0.98940039549748295 fit_impostor=0.0 adj-cos=0.9578262852211514 distant-cos=0.8416799932665601 retro=[1.0,0.9578262852211514,0.9174311926605505,0.87873971121206544,0.8416799932665601] self_fit(before==after)=0.98940039549748295/0.98940039549748295
+--- youchain engine-native smoke: 9 pass / 0 fail ---
