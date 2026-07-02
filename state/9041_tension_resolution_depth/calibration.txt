@@ -1,0 +1,30 @@
+SEED=7 N=40 D=8 thr=0.5 alpha=0.25 eps=0.03 maxdepth=60
+conflict  Psi0    depth_struct  Psi_f   depth_shuf  depth_ablate  Psi_abl
+0.75      0.750   60            0.925   60          60            0.750
+0.90      0.900   60            1.000   60          60            0.900
+
+struct_settles=False  ablate_INERT=True  depth_monotone_w_conflict=True  shuffle_differs=False  gws_invariant=0.235
+READ(c9): struct_settles ∧ ablate_INERT = coupling RESOLVES conflict to Psi=1/2 (not trivial:
+ablate stays biased). monotone = resolution DEPTH scales with tension. shuffle_differs tests
+genuine-vs-trivial-averaging. numpy DIRECTIONAL; live=ci_psi_balance+reentry_settle engine-native follow-on.
+---
+SEED=4302 N=40 D=8 thr=0.5 alpha=0.25 eps=0.03 maxdepth=60
+conflict  Psi0    depth_struct  Psi_f   depth_shuf  depth_ablate  Psi_abl
+0.75      0.750   60            0.900   60          60            0.750
+0.90      0.900   60            1.000   60          60            0.900
+
+struct_settles=False  ablate_INERT=True  depth_monotone_w_conflict=True  shuffle_differs=False  gws_invariant=0.235
+READ(c9): struct_settles ∧ ablate_INERT = coupling RESOLVES conflict to Psi=1/2 (not trivial:
+ablate stays biased). monotone = resolution DEPTH scales with tension. shuffle_differs tests
+genuine-vs-trivial-averaging. numpy DIRECTIONAL; live=ci_psi_balance+reentry_settle engine-native follow-on.
+---
+SEED=4303 N=40 D=8 thr=0.5 alpha=0.25 eps=0.03 maxdepth=60
+conflict  Psi0    depth_struct  Psi_f   depth_shuf  depth_ablate  Psi_abl
+0.75      0.750   60            1.000   60          60            0.750
+0.90      0.900   60            1.000   60          60            0.900
+
+struct_settles=False  ablate_INERT=True  depth_monotone_w_conflict=True  shuffle_differs=False  gws_invariant=0.235
+READ(c9): struct_settles ∧ ablate_INERT = coupling RESOLVES conflict to Psi=1/2 (not trivial:
+ablate stays biased). monotone = resolution DEPTH scales with tension. shuffle_differs tests
+genuine-vs-trivial-averaging. numpy DIRECTIONAL; live=ci_psi_balance+reentry_settle engine-native follow-on.
+---
