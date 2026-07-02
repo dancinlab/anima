@@ -1,0 +1,24 @@
+[psi_loader] WARN: consciousness_laws.json not found; alpha DEFAULT=0.014
+[psi_loader] WARN: consciousness_laws.json not found; balance DEFAULT=0.5
+[psi_loader] WARN: consciousness_laws.json not found; phase_dormant_max DEFAULT=0.01
+[psi_loader] WARN: consciousness_laws.json not found; phase_flicker_max DEFAULT=0.05
+[psi_loader] WARN: consciousness_laws.json not found; phase_sustain_max DEFAULT=0.15
+
+=== H_9104 CONSEQUENCE-RETURN LANE — engine-native (pure_field/immune/vforward/vbasal) ===
+train_seeds=4 test_seeds=3 T_TICKS=60 D=5
+emit_train=147 emit_test=158 (frozen substrate decision, V read-only)
+[reservoir] RES_DECAY=0.8  [efference] mean|RPE|=0.06699874051263034
+[relief DT_actual] mean=0.04891158551493283 std=0.17098474072331002 (cross-subsystem: imm_conseq disjoint from imm_emit)
+
+[Psi guard]   psi_sum_ON=56.99091566715005 psi_sum_OFF=56.99091566715005 emit_seq_Hamming(ON,OFF)=0 -> ON==OFF byte-identical (V read-only, substrate FROZEN)
+
+[F3' faculty] rho_real =corr(V(state),DT_actual) [held-out] = 0.9975252779657992
+              rho_noise=corr(var-matched noise-V,DT_actual)  = -0.16665112459453263
+              rho_shuf =corr(shuffle-(state,r) V,DT_actual)   = 0.9676369781118989
+              rho_real - rho_noise = 1.1641764025603318  bar>=0.15 -> PASS
+              rho_real - rho_shuf  = 0.02988829985390029  bar>=0.15 -> FAIL
+
+VERDICT: CEILING RED (honest) — closing the consequence loop is FLOOR-DOMINATED = DPI re-emerges.
+  rho_real - rho_shuf  = 0.02988829985390029 < 0.15 : shuffle-V relieves as much = theater.
+  Tension-relief carries no faculty-predictable variance across held-out seeds: the DPI meta-law
+  re-appears at the consequence layer. F3-noise = real ceiling on the autogenous self-loop.
