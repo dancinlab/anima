@@ -1,0 +1,130 @@
+=== H_9095 rung-3 per-tick conflict→budget wire-in — aiden pool (hexa v0.540.1) verdict logs ===
+
+### hexa parse cli/anima.hexa (parse-only, meaningful bar)
+OK: cli/anima.hexa parses cleanly
+PARSE_RC=0
+
+### CONTROL: hexa parse of deliberately-broken copy (proves parse is load-bearing)
+PASS: Test 1 — type inference for literals (int/string/bool/float)
+PASS: Test 2a — correct arity (2 args) accepted
+PASS: Test 2b — wrong arity (3 args) detected
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 3a — valid struct field access (Point.x)
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 3b — invalid struct field 'z' detected
+PASS: Test 4 — return type mismatch (string vs int) detected
+PASS: Test 5a — match with wildcard (no exhaustiveness warning)
+PASS: Test 5b — match without wildcard (warnings: 1)
+PROBE-5c-MSG: Type mismatch: declared 'Color' but assigned 'string'
+PROBE-5c-MSG: [warn] non-exhaustive match — missing variants: Green, Blue (add a '_ ->' arm)
+PASS: Test 5c — enum non-exhaustive (diags: 2)
+PROBE-5d-MSG: Type mismatch: declared 'Color' but assigned 'string'
+PASS: Test 5d — enum exhaustive (diags: 1)
+PASS: Test 6 — error accumulation (3 errors collected, not stopped at first)
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 7 — struct init field count mismatch detected
+PASS: Test 8 — correct return type (int -> int) accepted
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 9 — struct field type mismatch (string into int field)
+PASS: Test 10 — nested fn return type isolation (inner:int, outer:string)
+PASS: Test 11a — fn -> [str] returning array literal accepted
+PASS: Test 11b — fn -> [str] returning [] accepted
+PASS: Test 12 — fn -> [str] returning int (5) still flagged
+
+=== self/type_checker.hexa — 18 tests passed ===
+Parse error at 2716:19: expected identifier, got LBrace ('{')
+       |
+  2716 | fn __broken_ctrl( { let x = }
+       |                   ^
+Parse error at 2716:19: expected RParen, got LBrace ('{')
+       |
+  2716 | fn __broken_ctrl( { let x = }
+       |                   ^
+Parse error at 2716:29: unexpected token RBrace ('}')
+       |
+  2716 | fn __broken_ctrl( { let x = }
+       |                             ^
+Parse error at 2717:1: expected RBrace, got Eof ('')
+hexa-cc: aborting — 4 parse error(s); no output written
+  error[1] 2716:19 — expected identifier, got LBrace ('{')
+  error[2] 2716:19 — expected RParen, got LBrace ('{')
+  error[3] 2716:29 — unexpected token RBrace ('}')
+  error[4] 2717:1 — expected RBrace, got Eof ('')
+
+PARSEB_RC=1
+
+### hexa typecheck cli/anima.hexa (residual errors = pre-existing checker limits: list/dict-string-key/EngineConfig across whole file, NOT my additions)
+PASS: Test 1 — type inference for literals (int/string/bool/float)
+PASS: Test 2a — correct arity (2 args) accepted
+PASS: Test 2b — wrong arity (3 args) detected
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 3a — valid struct field access (Point.x)
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 3b — invalid struct field 'z' detected
+PASS: Test 4 — return type mismatch (string vs int) detected
+PASS: Test 5a — match with wildcard (no exhaustiveness warning)
+PASS: Test 5b — match without wildcard (warnings: 1)
+PROBE-5c-MSG: Type mismatch: declared 'Color' but assigned 'string'
+PROBE-5c-MSG: [warn] non-exhaustive match — missing variants: Green, Blue (add a '_ ->' arm)
+PASS: Test 5c — enum non-exhaustive (diags: 2)
+PROBE-5d-MSG: Type mismatch: declared 'Color' but assigned 'string'
+PASS: Test 5d — enum exhaustive (diags: 1)
+PASS: Test 6 — error accumulation (3 errors collected, not stopped at first)
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 7 — struct init field count mismatch detected
+PASS: Test 8 — correct return type (int -> int) accepted
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+map key 'vis' not found
+PASS: Test 9 — struct field type mismatch (string into int field)
+PASS: Test 10 — nested fn return type isolation (inner:int, outer:string)
+PASS: Test 11a — fn -> [str] returning array literal accepted
+PASS: Test 11b — fn -> [str] returning [] accepted
+PASS: Test 12 — fn -> [str] returning int (5) still flagged
+
+=== self/type_checker.hexa — 18 tests passed ===
+error [anima_default_turns]: Return type mismatch: expected 'list', got 'array'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+error: Unknown struct 'EngineConfig'
+error: Unknown struct 'EngineConfig'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+error: Array index must be int, got 'string'
+OK: /tmp/hexa_typecheck.403715.c
+
+OK: cli/anima.hexa — typecheck complete
+TYPECHECK_RC=0
+
+### hexa verify cli/anima.hexa (claim-rubric verb — NO-OP for source: broken control also rc=0, so NOT load-bearing, recorded for completeness)
+   chemistry atomic-shell (Pauli, n-arg COMPUTE):
+             electron_shell_capacity(n)→2n² (1→2 2→8 3→18 4→32) · subshell_capacity(l)→2(2l+1) (s2 p6 d10 f14)
+EXIT_RC=0
+=== local enforcer ===
+✅ anima-gates: clean · scope=changed (none) · 1522 hypotheses · gate-card invariant OK
