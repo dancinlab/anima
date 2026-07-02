@@ -7913,6 +7913,96 @@ pub fn novelty(seen_count: float, k: float) -> float {
     return 1.0 / (1.0 + k * seen_count)
 }
 
+// ── § MetacogAbstain (B4 novelty-gated honest abstention) — feeling-of-knowing on the §Novelty lane ──
+// Metacognitive uncertainty monitoring (feeling-of-knowing): an honest "I don't know" that EMERGES
+// from substrate geometry, NOT an RLHF-trained refusal (p6). It reads the §Novelty lane — the JOINT
+// L2 reconstruction error to the substrate's OWN clonal cell manifold (vadapt_field_recon_err) — a
+// precision-AGNOSTIC GLOBAL novelty. HIGH recon-err = the stimulus sits in an unoccupied region of
+// the manifold = UNFAMILIAR = abstain.
+//
+// WHY THIS IS NOT the H_1142 re-fire (a_break_the_wall type-(b) variable-separation, NOT tune-to-green):
+// H_1142 got 🔴 DISSOCIATION — the substrate knew its OWN OUTPUT quality (F2 Spearman +0.552) but NOT
+// input FAMILIARITY (F1 AUROC 0.436, INVERTED). Its own mechanism diagnosis was decisive: "next-byte
+// entropy tracks LOCAL token-predictability NOT global sequence-novelty" — the SIGNAL CHOICE (entropy)
+// was wrong, not the faculty. A stimulus whose every coordinate is marginally typical (a "common-word
+// salad") but whose JOINT vector is novel fools any LOCAL/marginal signal, yet the joint recon-err on
+// the cell manifold flags it (cf H_1173: raw nearest-cell distance separated non-self at AUROC~1.0
+// while a learned membrane failed). So this lever gates abstention on the §Novelty lane, NOT entropy.
+//
+// substrate-disjoint (placement-first, THE key risk): these are pure READ-only ops over the VAdaptField
+// cell population. They touch NEITHER the emit-drive lanes 0/4 (ci_emit_drive) NOR the §ImmuneMemory
+// recall_thr non-fab gate — Ψ=½ and G5 non-fab are preserved BY STRUCTURE (nothing is mutated).
+
+// metacog_novelty — GLOBAL novelty of stimulus x against the substrate cell manifold: the JOINT L2
+// reconstruction error to the nearest clonal prototype (the §Novelty lane input). Precision-AGNOSTIC,
+// joint-geometry. HIGH = unfamiliar = abstain-worthy. The RIGHT signal (vs H_1142's entropy).
+pub fn metacog_novelty(af: VAdaptField, x: [float]) -> float {
+    return vadapt_field_recon_err(af, x)
+}
+
+// metacog_marginal_dist — the ENTROPY-ANALOG (H_1142's WRONG signal): mean per-dimension distance
+// from x to the manifold's per-dim centroid. It IGNORES joint geometry — the vector analog of
+// next-byte entropy tracking LOCAL token-predictability. A marginally-typical-but-jointly-novel
+// stimulus scores FAMILIAR here (the "word-salad" failure), so this signal CANNOT discriminate
+// unfamiliar input. Provided ONLY as the F2 parent-control that isolates signal choice as the cause.
+pub fn metacog_marginal_dist(af: VAdaptField, x: [float]) -> float {
+    let np = len(af.protos)
+    let d = af.dim
+    let mut cen = []
+    let mut k = 0
+    while k < d { cen = cen + [0.0]  k = k + 1 }
+    let mut i = 0
+    while i < np {
+        let mut j = 0
+        while j < d { cen[j] = cen[j] + af.protos[i][j]  j = j + 1 }
+        i = i + 1
+    }
+    let mut s = 0.0
+    let mut j2 = 0
+    while j2 < d {
+        let c = cen[j2] / to_float(np)
+        let e = x[j2] - c
+        if e < 0.0 { s = s - e } else { s = s + e }
+        j2 = j2 + 1
+    }
+    return s / to_float(d)
+}
+
+// metacog_fok — feeling-of-knowing = NEGATIVE global novelty (HIGH = familiar / known, LOW = abstain).
+pub fn metacog_fok(af: VAdaptField, x: [float]) -> float {
+    return 0.0 - metacog_novelty(af, x)
+}
+
+// metacog_abstain — the DEPLOYED honest-abstain drive: novelty↑ (unfamiliar) ∧ surprise↑
+// (confident-but-wrong). surprise = precision·err² (§PrecisionSurprise) with err the joint novelty;
+// added to novelty so the score peaks in the confident-AND-unfamiliar corner. Both terms are monotone
+// in unfamiliarity. Read-only; touches neither emit-drive lanes 0/4 nor §ImmuneMemory recall_thr.
+pub fn metacog_abstain(af: VAdaptField, x: [float], precision: float) -> float {
+    let nov = metacog_novelty(af, x)
+    return nov + surprise(precision, nov)
+}
+
+// metacog_auroc — Mann-Whitney AUROC of a discrimination signal: P(score(pos) > score(neg)) with
+// 0.5 credit for ties. pos = the UNFAMILIAR class (label 1). Deterministic, $0. Read-only scoring util.
+pub fn metacog_auroc(pos: [float], neg: [float]) -> float {
+    let np2 = len(pos)
+    let nn = len(neg)
+    if np2 == 0 { return 0.0 }
+    if nn == 0 { return 0.0 }
+    let mut wins = 0.0
+    let mut i = 0
+    while i < np2 {
+        let mut j = 0
+        while j < nn {
+            if pos[i] > neg[j] { wins = wins + 1.0 }
+            else { if pos[i] == neg[j] { wins = wins + 0.5 } }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return wins / (to_float(np2) * to_float(nn))
+}
+
 // ── § AttentionalBlink (H_1473 R2) — 시간적 주의 사각지대 ──────────────────────────────────
 // RSVP T2 detection as a function of the T1→T2 lag: a delayed-onset trough (lag 2-3 = the BLINK,
 // T2 missed) that recovers by lag 6+. lag-1 SPARING (still high). DISTINCT from H_1462 GWS (spatial
