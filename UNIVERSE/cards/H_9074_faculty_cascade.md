@@ -28,4 +28,4 @@ DIRECTIONAL numpy 스크린(state scratch)도 3seed +0.98 lift 선확인. no-reg
 - N-way cascade(3+ hop)·anticipatory-prefetch(forward-model→선인출)·settle-interrupt = fable 발산 나머지 미탐 op-class. runtime brain_decide 호출 배선(WIRED-live 최종칸).
 
 ## artifacts
-- `core/engine_cli.hexa §FacultyCascade` · `state/9074_faculty_cascade/cascade_engine_native.hexa` · `H_9074_engine_native.txt`
+- `core/engine_cli.hexa §FacultyCascade` · `state/9074_faculty_cascade/cascade_engine_native.hexa` · `_engine_native.txt`
