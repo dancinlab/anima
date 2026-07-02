@@ -1,4 +1,4 @@
-# H_9074 — faculty_cascade (§FacultyCascade): substrate multi-hop, 새 op-class
+# H_9075 — faculty_cascade (§FacultyCascade): substrate multi-hop, 새 op-class
 
 - **tier:** 🟢 ENGINE-NATIVE (5/5 live hexa, aiden pool) — 직렬 relay op-class 신설·배선
 - **slug:** `faculty_cascade`
