@@ -1,0 +1,169 @@
+{
+ "task": "H_6186 G6-bind gate — engine-native re-scoring + terminal assessment",
+ "engine_native_scoring": {
+  "how": "core/g6_ideation.hexa (origin/main @07f79a0b) scoring fns VERBATIM-extracted (_g6_is_falsifiable FROZEN + _g6_topic_bound + _g6_is_falsifiable_topic_bound), compiled+run by hexa v0.574.1 on the 54 composed fragments. NO py/numpy/torch. Pure gate logic, no model decode.",
+  "results_per_arm_seed": {
+   "BASE": {
+    "7": {
+     "fals": 0,
+     "fals_bound": 0
+    },
+    "4302": {
+     "fals": 0,
+     "fals_bound": 0
+    },
+    "4303": {
+     "fals": 0,
+     "fals_bound": 0
+    }
+   },
+   "TARGETED": {
+    "7": {
+     "fals": 6,
+     "fals_bound": 5
+    },
+    "4302": {
+     "fals": 6,
+     "fals_bound": 6
+    },
+    "4303": {
+     "fals": 6,
+     "fals_bound": 6
+    }
+   },
+   "SHUF": {
+    "7": {
+     "fals": 6,
+     "fals_bound": 1
+    },
+    "4302": {
+     "fals": 6,
+     "fals_bound": 0
+    },
+    "4303": {
+     "fals": 6,
+     "fals_bound": 0
+    }
+   }
+  },
+  "mean_fals_bound": {
+   "BASE": 0.0,
+   "TARGETED": 5.6667,
+   "SHUF": 0.3333
+  }
+ },
+ "byte_parity_vs_py_mirror": {
+  "cells": [
+   {
+    "arm": "BASE",
+    "seed": 7,
+    "hexa_fals": 0,
+    "py_fals_frozen": 0,
+    "fals_match": true,
+    "hexa_fals_bound": 0,
+    "py_fals_bound": 0,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "BASE",
+    "seed": 4302,
+    "hexa_fals": 0,
+    "py_fals_frozen": 0,
+    "fals_match": true,
+    "hexa_fals_bound": 0,
+    "py_fals_bound": 0,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "BASE",
+    "seed": 4303,
+    "hexa_fals": 0,
+    "py_fals_frozen": 0,
+    "fals_match": true,
+    "hexa_fals_bound": 0,
+    "py_fals_bound": 0,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "TARGETED",
+    "seed": 7,
+    "hexa_fals": 6,
+    "py_fals_frozen": 6,
+    "fals_match": true,
+    "hexa_fals_bound": 5,
+    "py_fals_bound": 5,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "TARGETED",
+    "seed": 4302,
+    "hexa_fals": 6,
+    "py_fals_frozen": 6,
+    "fals_match": true,
+    "hexa_fals_bound": 6,
+    "py_fals_bound": 6,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "TARGETED",
+    "seed": 4303,
+    "hexa_fals": 6,
+    "py_fals_frozen": 6,
+    "fals_match": true,
+    "hexa_fals_bound": 6,
+    "py_fals_bound": 6,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "SHUF",
+    "seed": 7,
+    "hexa_fals": 6,
+    "py_fals_frozen": 6,
+    "fals_match": true,
+    "hexa_fals_bound": 1,
+    "py_fals_bound": 1,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "SHUF",
+    "seed": 4302,
+    "hexa_fals": 6,
+    "py_fals_frozen": 6,
+    "fals_match": true,
+    "hexa_fals_bound": 0,
+    "py_fals_bound": 0,
+    "fals_bound_match": true
+   },
+   {
+    "arm": "SHUF",
+    "seed": 4303,
+    "hexa_fals": 6,
+    "py_fals_frozen": 6,
+    "fals_match": true,
+    "hexa_fals_bound": 0,
+    "py_fals_bound": 0,
+    "fals_bound_match": true
+   }
+  ],
+  "n_cells": 9,
+  "mismatches": 0,
+  "verdict": "EXACT 9/9 match (fals frozen AND fals_bound)"
+ },
+ "form_priming_block": {
+  "TARGETED_mean_fals_bound": 5.6667,
+  "SHUF_mean_fals_bound": 0.3333,
+  "TARGETED_gt_SHUF": true,
+  "note": "SHUF form-priming (frozen fals 6/6) blocked to fals_bound {1,0,0} by the bind term; TARGETED holds {5,6,6}. Engine-native gate logic reproduces the py-mirror block exactly."
+ },
+ "TERMINAL_VERDICT": {
+  "gate_logic_axis": "ENGINE-NATIVE CONFIRMED — core/g6_ideation.hexa bind-gate code (H_6186 WIRED-live) compiles+executes and reproduces the DIRECTIONAL fals_bound EXACTLY (9/9 byte-parity). The WIRED-live wiring is correct & executable.",
+  "decode_axis": "STILL DIRECTIONAL / BLOCKED-INFRA — the 54 fragments were decoded by summer's py numpy bytegpt_decode_topk_sampled_W (session-eval-py-only). Engine-native CORE .hexa re-decode of the 3 arms could NOT be run this session: BOTH pool hosts saturated (summer load avg 21, 17 users, hexad --version hangs RC=124, nvidia-smi hangs; aiden 21GB/30GB used with 2 concurrent other-agent heavy hexa D< jobs + earlyoom --prefer hexa → my 303M decode compile/run OOM-killed twice, 0-byte out/err).",
+  "promotion": "NOT full terminal. SCORING half closed engine-native; DECODE half remains DIRECTIONAL (infra-wall, type-c per a_break_the_wall = c1-fix target, NOT science ceiling). H_6186 wired: WIRED-live (unchanged) + engine-native gate-logic CONFIRMED.",
+  "followon_ING": "engine-native CORE .hexa re-decode (g6_score_arm_auto_bound best-of-K bytegpt) of 3 arms on a DEDICATED/clean GPU pod when summer/aiden clear (or rent) — ckpts persist on summer (h1129.bin + g6tc_targeted.bin + g6tc_shuf.bin, sha256 in state/g6_targeted_corpus/results/ckpt_manifest.json)."
+ },
+ "canonical_wiring_status": {
+  "g6_score_arm_bound": "EXISTS on origin/main core/g6_ideation.hexa (best-of-K + fals_bound) but CLM-only (uses gen_clm_ideate via g6_decode_best_of_k) — NOT ByteGPT-capable.",
+  "g6_score_arm_auto": "CANONICAL mouth-agnostic single-entry (gen_auto_ideate→bytegpt) that anima evaluate uses (cli/evaluate.hexa g_eval_g6_seeded_W→g6_score_arm_auto_W) — but has NO fals_bound term.",
+  "GAP": "no ByteGPT-capable bind twin: g6_score_arm_auto_bound (best-of-K bytegpt + fals_bound) is the additive fn to add for `anima evaluate` to emit fals_bound engine-native. Recommended follow-on PR (additive, frozen g6_score_arm/_g6_is_falsifiable untouched)."
+ }
+}
