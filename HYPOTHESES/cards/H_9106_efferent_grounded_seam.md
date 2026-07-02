@@ -22,8 +22,8 @@ REAL d768.clm (CONV int4 CLMConvMoE, own-GEMM GPU · `[OWN-GEMM-FIRED]` 두 호�
 |---|---|---|
 | **D1 byte-diss** HIGH≥12/20 ∧ LOW==0/20 | HIGH **20/20**(aiden v0.548)·**18/20**(summer v0.574) ∧ **LOW 11/11 diff**(aiden, pre-reboot) | HIGH SATISFIED(byte-grip real) · **LOW==0 VIOLATED → D1 FAIL** (byte 변화 무조건적, conflict-gated 아님) |
 | **D2 held-out grounding** Δ≥+0.10 | Δ=**+0.0280**(aiden)·**+0.0030**(summer) | **FAIL** (grounding-aware selection 이 held-out grounding 못 올림) |
-| **D3 decision-Ψ Hamming** ==0 | NOT COMPLETED (D3=20 LOW 이후 실행, 두 호스트 그 전 reboot) | ⏳ 미완(infra) — 비-verdict결정(GREEN 불가) |
-| **D4 shuffle** \|Δ\|<0.03 · **D5 regression** LOW=0 | NOT COMPLETED (infra) | ⏳ 미완(infra) |
+| **D3 decision-Ψ Hamming** ==0 | STILL NOT OBTAINED — D3 checksum ON≡OFF (guard-ON vs guard-OFF) **미확인** (실측 없음). 완주가 구조적 infra 벽에 막힘 = [[H_9107]] (clm303 하네스 per-candidate RSS blowup; d768 아닌 303M 재측정 시 3개 rent pod 전부 SUMMARY 전 사망). | ⏳ 미완(infra=H_9107, "stable-host면 해결" 아님 — 구조적) — 비-verdict결정(GREEN 불가) |
+| **D4 shuffle** \|Δ\|<0.03 · **D5 regression** LOW=0 | STILL NOT OBTAINED (동일 H_9107 infra 벽) | ⏳ 미완(infra=H_9107) |
 
 ## 정직 판정 (frozen-first, c9 · NO tune-to-green)
 **🔴 RED (frozen rule: RED iff LOW>0 OR D2 fails).** 두 측정된 core falsifier(D1 LOW 11/11, D2 Δ≪bar)가 RED 를 **결정**한다 — GREEN 은 D1–D5 전부 필요하므로 불가, D3/D4/D5(infra-blocked)는 RED 를 구제 못 함. CE_REF/M_REF/bar 사후이동 없음. Ψ-safety 는 **by-construction**(brain_emit_deliberate 가 동일 brain_decide_anchored 사용, bytes 는 emit 결정 *이후*에만 변경 = H_9103 F2 논증과 동일)이나 empirical D3 Hamming 은 미포착(infra) → 완전 D3/D4/D5 는 stable-host follow-on.
@@ -36,6 +36,7 @@ REAL d768.clm (CONV int4 CLMConvMoE, own-GEMM GPU · `[OWN-GEMM-FIRED]` 두 호�
 ## caveat (c9 정직 스코프)
 - **RENTED pod 미사용 — rent path 이중 차단**: mac `hexa cloud` 컴파일 실패(stale runtime.a `_rt_format_float_native` 링커) + commons c11 raw-provider(runpodctl/vastai) 차단 → 렌트 불가. byte-Hamming 은 CPU/GPU byte-identical(a_train_flame_forge) ⇒ substrate-무관, engine-native pool 측정 유효(own-GEMM 실발화 확인).
 - **pool reboot loop = LOW/D3 미완**: aiden(03:45 @7min-uptime)·summer(04:25 @18min-uptime) 둘 다 run 중 재부팅 — full ~60-90min run > ~25min reboot interval(owner 경고·[[aiden-stable-free-terminal-eval-host]] earlyoom 패턴). D1(LOW)·D2 는 recovered 로그로 결정, D3/D4/D5 는 stable-host follow-on(ING).
+- **D3-D5 미완의 진짜 원인 = 구조적 infra 벽 [[H_9107]] (pool reboot 이 아님)**: 위 "stable-host follow-on" framing 은 부정확. clm303(303M) 로 이 하네스를 돌리면 `generate_deliberate` best-of-K + D4 shuffle 루프가 HIGH seed 당 `gen_auto_ideate(ckpt,...)` 를 ~6-8회 재호출, 매번 mouth 를 경로에서 재적재 → ~4-5GB/min RSS 폭증(d768 4.46MB 에선 무해, 303M 에선 치명). rent pod 3개 전부 SUMMARY 전 사망: pod1(43627857 220GB det-CPU)·pod2(43635479 176GB det-CPU) = H_9107; **pod3(43644174 137GB, hexa v0.577.0 CUDA, `[OWN-GEMM-FIRED]` GPU own-GEMM 실발화, #2835 W-hoist present-verified) = 이번 3차** — GPU 경로·#2835 있어도 동일 폭증 재현(RSS 29.5GB@2min, H_9107 의 27.5GB@2.4min 과 일치) 후 사망 ⇒ **#2835 도, dedicated/GPU pod 도 non-rescuing** (leak 은 clm_ce_ranged 아닌 gen_auto_ideate 재적재 경로). evidence = state/verdicts/9107_clm303_efferent_infra/pod3_43644174_owngemm_partial.log. 진짜 fix = production core/generator.hexa 의 ideate load 를 hoist (execution-only 범위 밖). **verdict 불변 🔴 RED**(D3-D5 는 RED 를 못 뒤집음).
 - **worktree 유실→복구**: 병렬 에이전트가 원 worktree sweep(shared-worktree-collision) → 코드 summer rsync 사본에서 복구, origin/main 위 additive patch 재적용(3파일 parse-clean, H_9099 clm_penult_pooled·H_9103 seam 보존).
-- **tiny-ckpt scope**: d768(4.46MB) c₀ context-invariant = anchor-conditioning 실패 원인일 수 있음 → production-scale ckpt 재측정 = a_toy_scale_recheck follow-on.
+- **tiny-ckpt scope**: d768(4.46MB) c₀ context-invariant = anchor-conditioning 실패 원인일 수 있음 → production-scale ckpt 재측정 = a_toy_scale_recheck follow-on. (attempt #4 가 clm303 303M engine-native 마운트+own-GEMM 까지는 도달했으나 pod 사망으로 재측정 미완 — 위 bullet.)
 - seam 은 daemon default OFF(single-candidate generate)=무해; faculty-floor → WIRED-live 승격 안 함.
