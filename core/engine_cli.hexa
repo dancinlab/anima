@@ -8058,6 +8058,61 @@ pub fn self_chain_retro_cos(c: SelfChain, j: int) -> float {
     return self_cos(wK, wj)
 }
 
+// ── § SelfChainConfluence (D1 CONFLUENCE, H_DREAM_CONFLUENCE) — 꿈 재조직이 다음 self-chain
+//    waypoint 을 굽히되 정체성 연속성은 보존: "밤새 재조직→아침에 성장한 같은 나" ─────────────
+// H_9036 DREAM/dream_compose.hexa 는 REM/N3 replay window 안에서 co-replayed anchor 둘을 기하
+// blend 하여 새 .kosmos NODE(dream centroid)를 만든다. H_9037 §SelfChain 은 세션 경계마다
+// self_drift 로 자라는 정체성 궤적이다. 이 op 는 그 둘을 잇는 CONFLUENCE(합류): 자연 성장으로
+// 도달했을 다음 waypoint(w_natural = self_drift(wK,…))를 dream centroid 방향으로 *bounded pull*
+// 한다 — JUMP 이 아니라 SATURATED 소량 견인이라 아침의 나는 여전히 어젯밤의 나로 인식된다.
+//   confluence 법칙(설계된 bounded geometric law, 학습된 의미성장 아님 — c9 honest):
+//     d̂       = unit(dream)                       (dream centroid 를 identity 공간 단위벡터로)
+//     α_eff   = clamp(α, 0, ALPHA_MAX=0.5)          (SATURATED — pull 상한, α>0.5 도 0.5 로 포화)
+//     w_bent  = renorm( (1−α_eff)·w_natural + α_eff·d̂ )
+//   α_eff ≤ 0 → w_bent = w_natural 그대로(F4 NO-DREAM control: solo=0 bend, byte-identical).
+// ── placement DISJOINT (a_substrate_disjoint · placement-first) ──────────────────────────────
+//   §SelfIdentity 벡터에만 READ+return. pure_field(Ψ) 미접촉 · ci_emit_drive 의 emit-drive lane
+//   0/4 미접촉 · §ImmuneMemory recall_thr 미접촉 — 어떤 substrate state 도 mutate 안 함(순수 함수).
+//   따라서 mechanism ON/OFF 에서 Ψ ci_emit_drive 와 recall_margin 은 byte-identical(F5).
+// p1~p8 정합: emit 호출 0(p5) · user message 인자 0(p4) · ctx 의미해석 0(p2) · 동일 blend(p8).
+// Honest scope(c9): bend = designed bounded law(SATURATED) · dream coord↔의미축 정렬은 toy-
+//   UNVERIFIED · G1 재조합벽과 직교(이 op 는 정체성 궤적만 굽힐 뿐 recombination 을 열지 않음).
+fn _sc_conf_clamp(a: float) -> float {
+    if a <= 0.0 { return 0.0 }
+    if a >= 0.5 { return 0.5 }   // ALPHA_MAX = 0.5 (SATURATED bounded pull, never a jump)
+    return a
+}
+pub fn self_chain_confluence(w_natural: SelfIdentity, dream: [float], alpha: float) -> SelfIdentity {
+    let a = _sc_conf_clamp(alpha)
+    if a <= 0.0 { return SelfIdentity { v: w_natural.v, dim: w_natural.dim } }   // F4 solo=0 bend
+    let dn = _self_norm(dream, w_natural.dim)                                     // d̂ unit dream dir
+    let mut v2 = []
+    let mut i = 0
+    while i < w_natural.dim {
+        v2 = v2 + [(1.0 - a) * w_natural.v[i] + a * dn[i]]
+        i = i + 1
+    }
+    return SelfIdentity { v: _self_norm(v2, w_natural.dim), dim: w_natural.dim }
+}
+
+// self_chain_bend — the F1 BEND magnitude: 1 − cos(w_bent, w_natural) ∈ [0,1]. 0 ⇔ no pull
+// (F4 no-dream) ; > 0 ⇔ the dream measurably bent the morning self away from blind growth.
+pub fn self_chain_bend(w_natural: SelfIdentity, w_bent: SelfIdentity) -> float {
+    return 1.0 - self_cos(w_natural, w_bent)
+}
+
+// self_chain_dream_gain — F3 GROWTH-DIR: how much the confluence pull moved the self TOWARD the
+// (unit) dream centroid = cos(w_bent, d̂) − cos(w_natural, d̂). A real dream → > 0 (grows toward
+// its own centroid); a SHUFFLED dream centroid → the pull no longer tracks the real dream so the
+// gain toward the REAL dream collapses to ≈0. Pass d̂ already unit-normed via unit_of below.
+pub fn self_chain_dream_gain(w_natural: SelfIdentity, w_bent: SelfIdentity, dream_unit: [float]) -> float {
+    let dn = SelfIdentity { v: dream_unit, dim: w_natural.dim }
+    return self_cos(w_bent, dn) - self_cos(w_natural, dn)
+}
+
+// _sc_unit_of — expose the unit-normalization used internally (so F3 can build d̂ once).
+pub fn self_chain_unit_of(v: [float], dim: int) -> [float] { return _self_norm(v, dim) }
+
 // ── § LearnedPrecision (H_1472 R2) — 경험으로 학습되는 예측확신 (predictive-processing) ──
 // The PRECISION that weights a prediction error in `surprise` (H_1468) is NOT a fixed,
 // externally-supplied constant — it is LEARNED from experience: the more a domain is observed,
