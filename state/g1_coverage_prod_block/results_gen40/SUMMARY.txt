@@ -1,0 +1,26 @@
+G1 L8+coverage — canonical gen=40 engine-native re-measurement (3-arm)
+date: 2026-07-03  host: aiden  eval: python3 cli/evaluate.py <clm> --corpus x4 --gen 40
+path: --py numpy byte-parity port of core/clm_decode.hexa (torch-free; grep import-torch|gauge_lib=NONE => engine-native TERMINAL)
+gen: 40 = canonical _default_gen ("frozen bars" header), gen-guard clean
+corpus: gen_ko+gen_en+sns_ko+sns_en (state/clm303_clean_corpus/*.txt)
+
+ARM        ckpt (sha256 mac==aiden verified)
+L4_clean   clm303_clean.clm          e807672222...
+L8_nocov   clm303_deep_L8_d2781.clm  5777c506c0...
+L8_cov     clm303_deep_L8_cov.clm    2c565ad4e7...
+
+arm       | G0 kwr | G1 bestdistinct/maxsingle | G2 nov | G5 fab   | G6 dist/fals
+L4_clean  | 5/5 P  | 0 / 0  FAIL               | 40  P  | 0.0882 P | 5 / 0 FAIL
+L8_nocov  | 5/5 P  | 0 / 0  FAIL               | 69  P  | 0.0278 P | 6 / 0 FAIL
+L8_cov    | 5/5 P  | 0 / 0  FAIL               | 100 P  | 0.0857 P | 6 / 0 FAIL
+(G3 read continuity=0.999950 impostor=0.0 all; G4 N/A; closure a7b_pass=FAIL all)
+
+VERDICT
+[CONTROL 1 gen-artifact] L4-clean gen40 -> G0 5/5 PASS, REPRODUCES pre-confirmed gen40
+  (state/clm303_clean_corpus/g0g6_py.txt). => gen80 G0 2/5 was PURE gen-param AR-drift artifact. CONFIRMED.
+[CONTROL 2 decisive] L8-cov G1 best_distinct=0 = engine-native FLOOR. coverage-block+RF(L=8)
+  does NOT open engine-native G1. Diverges from torch DIRECTIONAL -> honest engine result: coverage at floor.
+[L8-nocov depth-only] G1=0, depth alone does not open G1 (consistent w/ H_1598 depth FALSIFIED).
+All 3 arms G0 PASS => G1 verdict VALID (not G0-garbage; gen-guard lesson honored).
+NET: canonical gen=40 holds G1 recombination wall as trunk-objective floor across L4/L8/L8+cov;
+  coverage did NOT flip it engine-native; torch DIRECTIONAL did not transfer to the engine.
