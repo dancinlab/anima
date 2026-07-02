@@ -1,0 +1,26 @@
+INFO conflicts: cMin=0.04000000000000001 cMax=0.9603999999999999
+INFO natural settle depth: D_lo=1.0 D_hi=5.0
+INFO RULE budgets: base_budget=1 max_extra=4
+TICK 0 conflict=0.855 c=0.8847499999999999 dTreat=4 psiT=1.0 | base=1 psiAbl=1.0 | dShuf=1 psiShuf=1.0
+TICK 1 conflict=0.075 c=0.53375 dTreat=1 psiT=0.5 | base=1 psiAbl=0.5 | dShuf=4 psiShuf=0.5
+TICK 2 conflict=0.5249999999999999 c=0.73625 dTreat=3 psiT=1.0 | base=1 psiAbl=1.0 | dShuf=3 psiShuf=1.0
+TICK 3 conflict=0.25 c=0.6125 dTreat=2 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=3 psiShuf=0.5
+TICK 4 conflict=0.9603999999999999 c=0.93218 dTreat=5 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=2 psiShuf=1.0
+TICK 5 conflict=0.075 c=0.53375 dTreat=1 psiT=0.5 | base=1 psiAbl=0.5 | dShuf=4 psiShuf=0.5
+TICK 6 conflict=0.39 c=0.6755 dTreat=3 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=1 psiShuf=1.0
+TICK 7 conflict=0.765 c=0.84425 dTreat=4 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=5 psiShuf=0.5
+TICK 8 conflict=0.04000000000000001 c=0.518 dTreat=1 psiT=0.5 | base=1 psiAbl=0.5 | dShuf=2 psiShuf=0.5
+TICK 9 conflict=0.5249999999999999 c=0.73625 dTreat=3 psiT=1.0 | base=1 psiAbl=1.0 | dShuf=3 psiShuf=1.0
+TICK 10 conflict=0.95 c=0.9275 dTreat=5 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=5 psiShuf=0.5
+TICK 11 conflict=0.13999999999999999 c=0.563 dTreat=2 psiT=0.5 | base=1 psiAbl=1.0 | dShuf=1 psiShuf=1.0
+RESULT psi_maxdev_treatment=0.5
+RESULT psi_maxdev_ablation=0.5
+RESULT psi_maxdev_shuffle=0.5
+RESULT earned_monotone=true
+FAIL  BAR_PRESERVE: psi_maxdev_treatment < 0.05 (per-tick feed keeps Psi~half)
+FAIL  BAR_ABLATE_DIFF: ablation maxdev > treatment maxdev + 0.05 (recruited_depth FUNCTIONAL, not INERT)
+FAIL  BAR_EARNED_SHUF: shuffle maxdev > treatment maxdev + 0.05 (budget EARNED-tracks conflict)
+PASS  EARNED_MONOTONE: recruited depth non-decreasing in conflict
+INFO INERT_check(ablation==treatment)=true
+--- H_9092 pertick conflict->budget engine-native: 1 pass / 3 fail ---
+EXIT_RC=0
