@@ -2445,6 +2445,143 @@ pub fn affect_shuffle_features(feats: [AffectFeatures], rng0: int) -> [AffectFea
     return out
 }
 
+// ── § Mood (D5 — SLOW GLOBAL AFFECTIVE MODULATOR) ────────────────────────────────
+//
+// THE MOOD LENS (a_no_llm_frame_trap — an affective-neuroscience lens, NOT an LLM
+// recipe): a MOOD is a slowly-changing affective BASELINE that biases momentary
+// appraisal (Bower 1981 mood-congruency; Russell 2003 core-affect; Davidson 1998
+// affective chronometry — mood evolves on a MUCH slower time-constant than the
+// stimulus-locked emotional response it colors). It is DISTINCT from every fast
+// affect signal the substrate already has:
+//   - affect (H_1290): a STATELESS instantaneous read — affect_read(ctx) is pure, no
+//     time term. Re-reading the SAME context gives the SAME affect forever. Mood is
+//     the SLOW leaky EMA OF that read: it lags, accumulates, and recovers over time.
+//   - neuromod-gain (H_1284, 🧱): a FAST MULTIPLICATIVE gain on the momentary signal
+//     (a same-tick amplifier). Mood is an ADDITIVE BASELINE OFFSET on a DIFFERENT
+//     TIME-AXIS — NOT a gain. (mood_neuromod_gain_readout below is the collapsing
+//     sibling that has no slow lag / no recovery — the DPI distinctness control.)
+//   - EmotionRegulation (H_1476): a top-down 2nd-order reappraisal gain on the raw
+//     read (still instantaneous). Mood is a bottom-up slow baseline, not a control gain.
+//
+// TWO AXES (Russell core-affect): valence (pleasant⇄unpleasant) and arousal
+// (activated⇄quiet), each a leaky EMA over the substrate's OWN affect history, which is
+// derived from M (grounding margin), Φ (integration), and surprise (recon-err/novelty)
+// — NO injected "mood label", NO RLHF reward, NO persona/ethics (p1/p2/p3/p6).
+//
+// @L4 CRITICAL (identical framing to §HYPOTHALAMUS / the affect lane): MoodState holds
+// ONLY its own two EMA scalars (valence_ema, arousal_ema) + the frozen rate alpha. It
+// NEVER mutates the immune store, NEVER touches pure_field's Φ/phase/Ψ, and NEVER
+// touches the emit-drive lanes 0/4 (ci_emit_drive) or the §ImmuneMemory recall_thr
+// non-fab gate — Ψ/G5-disjoint BY CONSTRUCTION (a_substrate_disjoint: separation =
+// preservation). The bias helpers a caller MAY consult do NOT force emit/silence
+// (a_autonomy_over_hardcode) — they only expose the slow baseline as an appraisal offset.
+//
+// FROZEN constants (p7-documented, NOT tuned-to-green):
+//   MOOD_ALPHA = 0.05 (EMA rate → time-constant τ = 1/α = 20 stimuli, the SLOW axis;
+//     α=0.0 = the FROZEN/ablated arm = a stateless read that never accumulates a mood)
+//   MOOD_BIAS_W = 0.5 (baseline→appraisal congruency weight; mood-high reads a stimulus
+//     as more positive, mood-low as more negative — the F2 mood-congruency bias)
+//   MOOD_NEUTRAL = 0.0 (the affect zero-crossing baseline both EMAs start / recover to)
+
+// MoodState — the slow affective baseline. valence_ema / arousal_ema are the ONLY
+// mutable state (leaky EMAs of the substrate's affect history); alpha is the frozen
+// EMA rate (0.0 = FROZEN/ablated — never accumulates, stays at its start baseline).
+struct MoodState {
+    valence_ema: float,   // slow EMA baseline of valence  (pleasant ⇄ unpleasant)
+    arousal_ema: float,   // slow EMA baseline of arousal   (activated ⇄ quiet)
+    alpha: float          // EMA rate; MOOD_ALPHA=0.05 (slow) · 0.0 = FROZEN (ablated)
+}
+
+// mood_new — a fresh mood at the neutral baseline (0,0) with the FULL slow EMA rate.
+pub fn mood_new() -> MoodState {
+    return MoodState { valence_ema: 0.0, arousal_ema: 0.0, alpha: 0.05 }
+}
+
+// mood_new_frozen — the F3 ABLATION arm: alpha=0 → the EMA never integrates, the mood
+// is pinned at its (neutral) start → mood_bias adds MOOD_BIAS_W·0 = 0 → the bias is
+// INERT (biased == instantaneous). If the F2 bias survives THIS arm, it is NOT carried
+// by the slow-EMA mechanism → the lever is fake (a_break_the_wall ablation control).
+pub fn mood_new_frozen() -> MoodState {
+    return MoodState { valence_ema: 0.0, arousal_ema: 0.0, alpha: 0.0 }
+}
+
+// mood_new_at — a mood seeded at (v,a) with rate alpha (test/introspection helper).
+pub fn mood_new_at(v: float, a: float, alpha: float) -> MoodState {
+    return MoodState { valence_ema: v, arousal_ema: a, alpha: alpha }
+}
+
+// mood_step — advance the mood ONE tick on an instantaneous (valence, arousal) read:
+// the LEAKY EMA ema := (1-α)·ema + α·inst. With the SLOW α this lags the stimulus by
+// τ=1/α ticks (F1), builds toward a sustained input's asymptote, and — when the input
+// returns to neutral — RELAXES back to baseline over ~τ ticks (F4). READ-only: returns
+// a NEW MoodState; mutates nothing external.
+pub fn mood_step(m: MoodState, inst_val: float, inst_aro: float) -> MoodState {
+    let nv = (1.0 - m.alpha) * m.valence_ema + m.alpha * inst_val
+    let na = (1.0 - m.alpha) * m.arousal_ema + m.alpha * inst_aro
+    return MoodState { valence_ema: nv, arousal_ema: na, alpha: m.alpha }
+}
+
+// mood_signals_to_affect — map the raw substrate scalars (M = grounding margin in
+// [0,1], Φ = integration, surprise = recon-err/novelty) to an instantaneous
+// (valence, arousal) pair. valence = M − surprise (a grounded, low-surprise context
+// feels POSITIVE; a surprising/ungrounded one NEGATIVE); arousal = surprise + 0.5·Φ
+// (surprise and high integration are ACTIVATING). This is the explicit "M/Φ/surprise"
+// read the mood EMA integrates. READ-only, pure arithmetic.
+pub fn mood_signals_to_affect(m_margin: float, phi: float, surprise: float) -> [float] {
+    return [m_margin - surprise, surprise + 0.5 * phi]
+}
+
+// mood_step_signals — advance the mood one tick directly from (M, Φ, surprise).
+pub fn mood_step_signals(m: MoodState, m_margin: float, phi: float, surprise: float) -> MoodState {
+    let va = mood_signals_to_affect(m_margin, phi, surprise)
+    return mood_step(m, va[0], va[1])
+}
+
+// mood_step_affect — advance the mood one tick reading the LIVE affect lane off the
+// immune store for context `key` (the M + surprise-derived core affect, H_1290). This
+// is the running-anima entry: mood is the slow EMA of the substrate's own affect
+// stream. READ-only over the immune store (only the mood's own EMAs evolve).
+pub fn mood_step_affect(m: MoodState, mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> MoodState {
+    let f = affect_substrate_features(mem, key, true_answer)
+    return mood_step(m, affect_valence(f), affect_arousal(f))
+}
+
+// mood_valence / mood_arousal — the current slow baseline on each axis (tuple-free reads).
+pub fn mood_valence(m: MoodState) -> float { return m.valence_ema }
+pub fn mood_arousal(m: MoodState) -> float { return m.arousal_ema }
+
+// mood_timeconstant — the mood's EMA time-constant τ = 1/α (ticks to reach ~63% of a
+// step's asymptote). τ >> 1 is the F1 SLOW property; α=0 → returns -1 (frozen, no τ).
+pub fn mood_timeconstant(m: MoodState) -> float {
+    if m.alpha <= 0.0 { return 0.0 - 1.0 }
+    return 1.0 / m.alpha
+}
+
+// mood_bias_valence — the momentary appraisal BIASED by the slow mood baseline: a
+// mood-high (positive baseline) system reads the SAME instantaneous stimulus as MORE
+// positive, a mood-low one as MORE negative (F2 mood-congruency). biased = inst +
+// MOOD_BIAS_W·valence_ema — an ADDITIVE offset from a SLOW baseline, NOT a gain on the
+// stimulus (H_1284 neuromod / H_1476 reappraisal are gains). A caller MAY consult this
+// (a_autonomy_over_hardcode) — it does NOT force emit/silence.
+pub fn mood_bias_valence(m: MoodState, inst_val: float) -> float {
+    return inst_val + 0.5 * m.valence_ema
+}
+
+// mood_bias_arousal — the arousal-axis mood-congruency bias (same additive baseline law).
+pub fn mood_bias_arousal(m: MoodState, inst_aro: float) -> float {
+    return inst_aro + 0.5 * m.arousal_ema
+}
+
+// mood_neuromod_gain_readout — the DISTINCTNESS CONTROL (the collapsing sibling): a
+// neuromod-GAIN readout (H_1284) is a FAST, STATELESS, MULTIPLICATIVE modulation with
+// NO time-axis — biased = inst·gain, computed same-tick from the CURRENT stimulus only.
+// It has NO slow lag (F1) and NO recovery dynamics (F4): it cannot reproduce mood's
+// slow chronometry, confirming mood is a DIFFERENT time-axis, not a gain (the honest
+// H_1284-distinctness bar — this readout collapses on F1/F4 where mood does not).
+pub fn mood_neuromod_gain_readout(inst_val: float, gain: float) -> float {
+    return inst_val * gain
+}
+
 // ── §  HYPOTHALAMUS — SETPOINT-REGULATED HOMEOSTATIC DRIVE (H_1292 R2, HD29) ──────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1292 R1): the H_1292 numpy
