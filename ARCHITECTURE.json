@@ -7677,6 +7677,44 @@
                 "role": "",
                 "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-2",
                 "detail": "WAKE/N1/N2/N3/REM ultradian (90-min), emit-free internal rehearsal + mitosis tick + amygdala salience replay; stage = substrate context (Φ scale + tension envelope), NOT a boolean emit gate (a_chat_sleep_imagination)."
+              },
+              {
+                "name": "Process-S homeostatic sleep-pressure drive (T3, H_9087)",
+                "role": "",
+                "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-process-s",
+                "detail": "core/dream_lib.hexa § SleepPressure (sp_* PURE/READ-only op-slot). Verdict frozen state/verdicts/t3_sleep_pressure_drive/. emit-wiring follow-on (core/emit_policy.hexa untouched).",
+                "children": [
+                  {
+                    "name": "mechanism",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-mech",
+                    "detail": "Borbély 2-process homeostatic drive ORTHOGONAL to the ultradian rhythm (dr_*): rhythm=WHEN in cycle vs pressure=HOW LONG awake. sp_pressure_wake/sleep/at monotone accumulate(WAKE)/discharge(sleep) adenosine-style (saturating exp, τw=30 τs=12)."
+                  },
+                  {
+                    "name": "gate-bias",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-gate",
+                    "detail": "sp_sleep_propensity = ADDITIVE(W_S·pressure + W_C·circadian) graded stage-transition bias clamped [0,1] (NOT a boolean gate, a_autonomy_over_hardcode); sp_sleep_propensity_ablated = pressure-frozen ablation control (mechanism OFF)."
+                  },
+                  {
+                    "name": "disjointness (a_substrate_disjoint)",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-disjoint",
+                    "detail": "Owns no store, mutates nothing, NEVER reads emit-drive lanes 0/4 (ci_emit_drive Ψ) nor §ImmuneMemory recall_thr → separation=preservation, proven byte-identical ON-vs-OFF (F5)."
+                  },
+                  {
+                    "name": "verdict (engine-native 5/5)",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-verdict",
+                    "detail": "DREAM/sleep_pressure_smoke.hexa: F1 accum 0.238<0.856 · F2 discharge 0.878>0.078 · F3 gate-bias 0.304<0.544<0.814 graded · F4 ablation OFF 0.178==0.178 ∧ ON 0.391≠0.676 non-inert · F5 disjoint Ψ 0.6→0.6 ∧ recall_margin byte-identical."
+                  },
+                  {
+                    "name": "honest scope (c9)",
+                    "role": "",
+                    "id": "brain-structure-engine-lanes-the-heart-of-anima-sleep-consolidation-p47-sleep-im-t3-scope",
+                    "detail": "DESIGNED law (fixed-τ exponential accumulate/discharge), NOT an empirically-fit adenosine curve. READ-only op-slot; no emit wiring yet (emit-drive coupling is a follow-on)."
+                  }
+                ]
               }
             ]
           }

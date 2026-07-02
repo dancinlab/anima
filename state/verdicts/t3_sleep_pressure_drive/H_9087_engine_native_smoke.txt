@@ -1,0 +1,10 @@
+=== DREAM/sleep_pressure_smoke (T3 Process-S) ===
+F1 ACCUM     sp(5)=0.2381664475984473 < sp(55)=0.8561082285282755  PASS (monotone accumulate)
+F2 DISCHARGE onset(60)=0.87819824508704851 > end(89)=0.07835154541808053  PASS (monotone discharge)
+F3 GATE-BIAS prop(p=.1)=0.30444444444444447 < prop(.5)=0.5444444444444445 < prop(.95)=0.8144444444444444  PASS (additive graded, not boolean)
+F4 ABLATION  OFF(w10)=0.17777777777777779==OFF(w50)=0.17777777777777779 | ON(w10)=0.39085087006793158!=ON(w50)=0.6757849522454944  PASS (frozen⟂wake, ON≠OFF non-inert)
+F5 DISJOINT  Psi 0.6->0.6 | recall_margin -0.11683375209644598->-0.11683375209644598  PASS (byte-identical, separation=preservation)
+             (sink=109.75164966809332 — proves the sp_* ops actually executed)
+
+ALL FALSIFIERS PASS (5/5) — T3 engine-native GREEN + disjoint
+EXIT=0
