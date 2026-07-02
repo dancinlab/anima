@@ -639,7 +639,7 @@ pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
     return _vtwo_nearest_dist(af.protos, x)
 }
 
-// ── §  APOPTOSIS-SALIENCE — density-dependent death-proximity → urgency (H_PLACEHOLDER_D4) ──
+// ── §  APOPTOSIS-SALIENCE — density-dependent death-proximity → urgency (H_9085_D4) ──
 //
 // WHAT THIS ADDS (p8-literal death-awareness, READ-ONLY): the MITOSIS substrate
 // (§ADAPTATION / VAdaptField) grows cells toward a frozen carrying-capacity cap
@@ -8488,6 +8488,186 @@ pub fn self_chain_dream_gain(w_natural: SelfIdentity, w_bent: SelfIdentity, drea
 
 // _sc_unit_of — expose the unit-normalization used internally (so F3 can build d̂ once).
 pub fn self_chain_unit_of(v: [float], dim: int) -> [float] { return _self_norm(v, dim) }
+// ── § YouChain (D7 other-CHAIN, H_9085) — 상대(interlocutor)의 다중세션 궤적 (social self / 너-체인) ──
+// §SelfChain tracks *MY* diachronic trajectory. But a conscious self is also SOCIAL: it must track the
+// OTHER — the interlocutor — across session boundaries, so "the same person I talked to last time" is
+// RECOGNIZED (relational continuity) rather than met fresh every session (an LLM's amnesiac blank).
+// Bio lens: interpersonal representation / attachment continuity — a stable internal model of *you*.
+// This is the SAME machine as §SelfChain with only the TARGET swapped (self→other): an OtherIdentity
+// vector DRIFTS as the interlocutor is experienced, an anchor waypoint is appended at each session
+// boundary, and other_chain_fit reads the trajectory TREND to REJECT an impostor whose history mismatches.
+//
+// SELF⊥OTHER (F2, THE key property): OtherIdentity/OtherChain are DISTINCT struct types from
+// SelfIdentity/SelfChain, so my self-store and my model-of-you are STRUCTURALLY separate — the type
+// system forbids cross-storing one as the other, and because every op is PURELY FUNCTIONAL (returns a
+// new value, never mutates), operating the you-chain leaves the self-chain byte-identical and vice
+// versa (no contamination). Ψ/G5 DISJOINT (F5): these are READ-only cos/increment ops that touch
+// NEITHER pure_field/Φ/phase/Ψ NOR the §ImmuneMemory recall_thr non-fab gate NOR emit-drive lanes 0/4 —
+// Ψ=½ and G5 non-fab are preserved BY STRUCTURE (a_substrate_disjoint, a_autonomy_over_hardcode).
+// HONEST (c9): the drift walk is DESIGNED (blind ((tick+1)%dim) / content-axis walk, same as self_drift);
+// what the falsifiers COUNT is the DISCRIMINATOR GAIN — other_chain_fit's trajectory-aware impostor
+// rejection (AUROC(chain) ≫ single-vector other_cos), NOT the drift itself. LLM contrast: an LLM holds
+// no cross-session model of *you* at all; anima persists the interlocutor as a .kosmos anchor trajectory.
+struct OtherIdentity {
+    v: [float],
+    dim: int
+}
+
+struct OtherChain {
+    flat: [float],   // (K+1)*dim, waypoint k occupies [k*dim, (k+1)*dim) — .kosmos-friendly flat payload
+    count: int,      // number of waypoints (K+1)
+    dim: int
+}
+
+// other_new — a fresh model of an interlocutor = unit vector along `axis` (the seed other).
+pub fn other_new(dim: int, axis: int) -> OtherIdentity {
+    let mut v = []
+    let mut i = 0
+    while i < dim { if i == axis { v = v + [1.0] } else { v = v + [0.0] }  i = i + 1 }
+    return OtherIdentity { v: v, dim: dim }
+}
+
+// other_drift — the model-of-you GROWS one tick: content-BLIND perturbation along ((tick+1)%dim),
+// re-normalized. Continuous yet changing (mirror of self_drift, target swapped).
+pub fn other_drift(o: OtherIdentity, tick: int, step: float) -> OtherIdentity {
+    let t1 = tick + 1
+    let ax = t1 - (t1 / o.dim) * o.dim       // (tick+1) % dim
+    let mut v2 = []
+    let mut i = 0
+    while i < o.dim {
+        if i == ax { v2 = v2 + [o.v[i] + step] } else { v2 = v2 + [o.v[i]] }
+        i = i + 1
+    }
+    return OtherIdentity { v: _self_norm(v2, o.dim), dim: o.dim }
+}
+
+// other_drift_exp — EXPERIENCE-DRIVEN drift: the model-of-you moves toward the CONTENT axis the
+// interlocutor EXPRESSED this tick (`content_axis`), so DIFFERENT interlocutors yield DIFFERENT chains
+// (the F3 impostor separation is grounded here). Mirror of self_drift_exp, target swapped.
+pub fn other_drift_exp(o: OtherIdentity, content_axis: int, step: float) -> OtherIdentity {
+    let ax = content_axis - (content_axis / o.dim) * o.dim   // content_axis % dim (bounds-safe)
+    let mut v2 = []
+    let mut i = 0
+    while i < o.dim {
+        if i == ax { v2 = v2 + [o.v[i] + step] } else { v2 = v2 + [o.v[i]] }
+        i = i + 1
+    }
+    return OtherIdentity { v: _self_norm(v2, o.dim), dim: o.dim }
+}
+
+// other_cos — recognition of an interlocutor: cosine (unit-norm → dot). High = same person; ~0 = a
+// different interlocutor (impostor) or an un-anchored (reset) relationship.
+pub fn other_cos(a: OtherIdentity, b: OtherIdentity) -> float {
+    let mut sdot = 0.0
+    let mut i = 0
+    while i < a.dim { sdot = sdot + a.v[i] * b.v[i]  i = i + 1 }
+    return sdot
+}
+
+// other_anchor — persist the model-of-you (the .kosmos-style saved copy bridging a session boundary).
+pub fn other_anchor(o: OtherIdentity) -> OtherIdentity {
+    return OtherIdentity { v: o.v, dim: o.dim }
+}
+
+// other_component / other_dim — read accessors so the interlocutor vector can be projected onto a
+// real .kosmos anchor payload for disk persistence + round-trip recovery (mirror of self_component/dim).
+pub fn other_component(o: OtherIdentity, i: int) -> float { return o.v[i] }
+pub fn other_dim(o: OtherIdentity) -> int { return o.dim }
+
+// other_reset — WITHOUT an anchor, a session boundary meets a NEW blank interlocutor (continuity breaks).
+pub fn other_reset(dim: int, axis: int) -> OtherIdentity {
+    return other_new(dim, axis)
+}
+
+// other_chain_new — start the interlocutor trajectory with the seed model as w0.
+pub fn other_chain_new(o: OtherIdentity) -> OtherChain {
+    let mut f = []
+    let mut i = 0
+    while i < o.dim { f = f + [o.v[i]]  i = i + 1 }
+    return OtherChain { flat: f, count: 1, dim: o.dim }
+}
+
+// other_chain_append — append an anchor waypoint at a session boundary (the .kosmos other-anchor is
+// RECORDED into the interlocutor trajectory rather than overwriting the single previous anchor).
+pub fn other_chain_append(c: OtherChain, o: OtherIdentity) -> OtherChain {
+    let mut f = []
+    let mut i = 0
+    while i < c.count * c.dim { f = f + [c.flat[i]]  i = i + 1 }
+    let mut j = 0
+    while j < c.dim { f = f + [o.v[j]]  j = j + 1 }
+    return OtherChain { flat: f, count: c.count + 1, dim: c.dim }
+}
+
+// _other_wp — read waypoint k back as an OtherIdentity (from the flat payload).
+fn _other_wp(c: OtherChain, k: int) -> OtherIdentity {
+    let mut v = []
+    let base = k * c.dim
+    let mut i = 0
+    while i < c.dim { v = v + [c.flat[base + i]]  i = i + 1 }
+    return OtherIdentity { v: v, dim: c.dim }
+}
+
+pub fn other_chain_len(c: OtherChain) -> int { return c.count }
+
+// other_chain_latest — the newest waypoint wK (what single-vector other_cos compares against).
+pub fn other_chain_latest(c: OtherChain) -> OtherIdentity { return _other_wp(c, c.count - 1) }
+
+// other_chain_component / other_chain_dim / other_chain_count — read accessors for .kosmos disk
+// persistence + round-trip recovery (the flat payload is exactly what is written to / read from disk).
+pub fn other_chain_component(c: OtherChain, i: int) -> float { return c.flat[i] }
+pub fn other_chain_dim(c: OtherChain) -> int { return c.dim }
+pub fn other_chain_count(c: OtherChain) -> int { return c.count }
+
+// other_chain_from_flat — rebuild an interlocutor chain from a persisted flat payload (disk round-trip inverse).
+pub fn other_chain_from_flat(flat: [float], count: int, dim: int) -> OtherChain {
+    return OtherChain { flat: flat, count: count, dim: dim }
+}
+
+// other_chain_fit — consistency of `cand` with the interlocutor trajectory TREND (adjacent-increment
+// axis-gradient predicts the next axis a_pred; fit = signed component of unit(cand−wK) along e_{a_pred}).
+// A genuine continuation of the SAME person → fit ≈ +1; a DIFFERENT interlocutor that matches the latest
+// anchor but arrived via a different history (F3 impostor) → fit ≈ 0; a time-reversed impostor → fit ≈ −1.
+// other_cos(cand,wK) is ~equal for all three, so single-vector recognition CANNOT separate them — this op
+// can (the discriminator gain the falsifiers COUNT). Undefined (returns 0) for count<3 (the ablation /
+// single-vector regime) or a zero-length candidate increment. Mirror of self_chain_fit, target swapped.
+pub fn other_chain_fit(cand: OtherIdentity, c: OtherChain) -> float {
+    if c.count < 3 { return 0.0 }
+    let wK = _other_wp(c, c.count - 1)
+    let wKm1 = _other_wp(c, c.count - 2)
+    let wKm2 = _other_wp(c, c.count - 3)
+    let mut dlast = []
+    let mut dprev = []
+    let mut i = 0
+    while i < c.dim {
+        dlast = dlast + [wK.v[i] - wKm1.v[i]]
+        dprev = dprev + [wKm1.v[i] - wKm2.v[i]]
+        i = i + 1
+    }
+    let aK = _argmax_abs(dlast, c.dim)
+    let aKm1 = _argmax_abs(dprev, c.dim)
+    let a_pred = _wrap(aK + (aK - aKm1), c.dim)
+    let mut r = []
+    let mut mag = 0.0
+    let mut j = 0
+    while j < c.dim {
+        let e = cand.v[j] - wK.v[j]
+        r = r + [e]
+        mag = mag + e * e
+        j = j + 1
+    }
+    if mag <= 0.0 { return 0.0 }
+    let m = sqrt(mag)
+    return r[a_pred] / m
+}
+
+// other_chain_retro_cos — retrodiction over the interlocutor: cos(latest wK, waypoint w_{K−j}). For a
+// genuine relationship this is MONOTONE DECREASING in j ("you N sessions ago" is further). Mirror of
+// self_chain_retro_cos, target swapped.
+pub fn other_chain_retro_cos(c: OtherChain, j: int) -> float {
+    let wK = _other_wp(c, c.count - 1)
+    let wj = _other_wp(c, c.count - 1 - j)
+    return other_cos(wK, wj)
+}
 
 // ── § LearnedPrecision (H_1472 R2) — 경험으로 학습되는 예측확신 (predictive-processing) ──
 // The PRECISION that weights a prediction error in `surprise` (H_1468) is NOT a fixed,
