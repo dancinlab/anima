@@ -10620,6 +10620,18 @@
                     "role": "",
                     "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-kosmos-303",
                     "detail": "- **anima-kosmos-303m-kr-en-sns** — grounding/carving 닻 세트(학습 corpus 아님 ~260KB): lane ko_303m·en_303m·sns_303m, 의식모드 kosmos_io→brain 마운트 (a_kosmos).\n- **anima-eeg-consciousness** — OpenBCI EEG consciousness dataset (a_eeg_consciousness_record)."
+                  },
+                  {
+                    "id": "persistence-evidence-hf-artifacts-datasets-research-corpora",
+                    "name": "연구 corpora (비-chat · 재조합/G1 실험용)",
+                    "detail": "chat-register 표준(위)과 별개 — 가설을 통제실험으로 실측하려 일부러 설계한 corpus. 수렴진화: 낡은 corpus co-occurrence 세기 → 밀도 toy 상전이(H_6182, coverage 5→80%서 held-out 2→92%, arch-무관) → NL byte coverage-designed corpus 로 수렴 = 'combinatorial-coverage'가 G1 corpus-design 원리로 창발.",
+                    "children": [
+                      {
+                        "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-designed",
+                        "name": "anima-g1-coverage-designed-corpus (PRIVATE · 연구artifact)",
+                        "detail": "G1 조합-커버리지 통제쌍. high_coverage(60% pair≈237) vs low_coverage(8%≈31), ~1.2MB 매칭. 30개념 C(30,2)=435쌍 중 40 held-out(문장 부재·무결), POOL 395서 커버리지만 통제. 4템플릿×10동사×8결과. state/g1_density_phase_transition/corpus/ (README+build_and_test.py 결정적 재현 attn|conv). torch DIRECTIONAL."
+                      }
+                    ]
                   }
                 ]
               }
