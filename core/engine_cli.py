@@ -733,6 +733,22 @@ def self_drift(s, tick, step):
     return SelfIdentity(_self_norm(v2, s.dim), s.dim)
 
 
+def self_drift_exp(s, content_axis, step):
+    """engine_cli.hexa self_drift_exp (H_9038) — EXPERIENCE-DRIVEN drift: move toward
+    the CONTENT axis experienced this tick (content_axis), +step, renorm. Mirror of
+    self_drift with the drift axis swapped from (tick+1)%dim to content_axis%dim."""
+    ax = content_axis - (content_axis // s.dim) * s.dim   # content_axis % dim
+    v2 = []
+    i = 0
+    while i < s.dim:
+        if i == ax:
+            v2 = v2 + [s.v[i] + step]
+        else:
+            v2 = v2 + [s.v[i]]
+        i = i + 1
+    return SelfIdentity(_self_norm(v2, s.dim), s.dim)
+
+
 def self_cos(a, b):
     """engine_cli.hexa:7713 — recognition cosine (unit-norm dot)."""
     sdot = 0.0

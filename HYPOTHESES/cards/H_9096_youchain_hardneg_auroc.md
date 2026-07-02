@@ -70,3 +70,11 @@ fit=trajectory 검증기 아니라 2 증분 외삽기임이 확정. **chain>sing
 - `state/youchain_hardneg/youchain_hardneg_smoke.hexa` (engine-native, live `core/engine_cli.hexa` `other_chain_fit`; cone θ-buckets + genuine φ-jitter + mimic)
 - `state/verdicts/youchain_hardneg/H_9096.txt` (frozen verbatim stdout)
 - `HYPOTHESES/cards/H_9085_youchain_social_self.md` (§AUROC 정정 노트 추가)
+
+## follow-on: L2-2 coord grounding (H_9097)
+
+H_9096 follow-on "L2-2 coord penultimate 접지" 실행 → **H_9097**
+(`cards/H_9097_selfchain_coord_grounding.md`). §YouChain·§SelfChainConfluence 가 공유하는
+`content_axis`(other_drift_exp/self_drift_exp)를 실 303M penultimate 에 접지 시도. 결과:
+frozen fold(argmax-L2 bucket)는 상수축 붕괴 = 🔴 NOT-GROUNDED, 단 raw penultimate 자체는
+접지신호 담음(ko↔en 분리·held-out 16/24) = wall metric-artifact. 접지의 마지막 조각은 fold 재설계.

@@ -504,6 +504,11 @@
                     "name": "ConflictMonitor — H_9095 rung-3 per-tick wire-in (WIRED-live + FULL-DAEMON-RUNTIME VERIFIED)",
                     "id": "conflictmonitor-pertick-wire-h9095",
                     "detail": "H_9094 rung-3: conflict_scalar(emit_drive)→recruited_depth→tension_resolve maxdepth 를 cli/anima.hexa per-tick 루프 L1937-1961 배선(rel_ctx READ-only fold, Ψ-disjoint). 데몬 RUNTIME VERIFIED(aiden hexa v0.546.0+cuda=1): RC=0·[OWN-GEMM-FIRED] DEVICE·CR3 per-tick·Ψ checksum ✅. #42492868 CLOSED. 상세=card."
+                  },
+                  {
+                    "name": "bytegpt_hidden_pool_ranged + content_axis_from_pooled — H_9097 L2-2 coord grounding",
+                    "id": "bytegpt-hidden-pool-content-axis-h9097",
+                    "detail": "신규 decode op bytegpt_hidden_pool_ranged=최종블록+ln_f mean-pool(d768,생성0,READ) + 순수 fold content_axis_from_pooled(연속버킷 L2 argmax). core/decode.hexa+.py, engine-native 컴파일검증. self_drift_exp content_axis 접지 시도: 🔴 NOT-GROUNDED(frozen fold 상수축 붕괴)·wall=metric-artifact(a). cards/H_9097."
                   }
                 ]
               }

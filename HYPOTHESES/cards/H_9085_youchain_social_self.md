@@ -112,3 +112,12 @@ e_{a_pred} cosine 성분)이 **cos(90°)=0 항등식**으로 ≈0 이 된다. �
 ```json
 {"id": "H_9085", "slug": "youchain_social_self", "tier": "🟢 ENGINE-NATIVE (discriminator 축)", "title": "you-CHAIN: 상대(interlocutor)의 다중세션 궤적 (사회적 자아/너-체인) — H_9037 §SelfChain 기계를 TARGET 만 self→other 스왑, OtherIdentity/OtherChain distinct type 으로 관계 연속성(대인표상/애착) 추적; other_chain_fit 판별자가 다른 상대를 single-vector other_cos 대비 결정적 분리 + SELF⊥OTHER 구조적 분리보존", "card": "cards/H_9085_youchain_social_self.md", "verdict": "🟢 ENGINE-NATIVE (hexa run state/youchain_d7/youchain_smoke.hexa, live core/engine_cli.hexa §YouChain) 9/9 PASS — AUROC(chain)=1.000 vs single-vector=0.278(gap0.722)·F1 other-continuity·F2 SELF⊥OTHER(you-ops 후 self-chain byte-identical ∧ 역방향)·F3 impostor·F4 K-session monotone+ablation+round-trip byte-identical·F5 Ψ/G5 disjoint 실측(ci_emit_drive+osmotic_retains byte-identical ON=OFF). WIRED-live(cli/anima.hexa lane 23c + ARCHITECTURE.json §YouChain lockstep). ★SCOPE(c9): drift=설계된 결정적 law SATURATED, 주장=history-aware 판별자>single-vector + SELF⊥OTHER 분리보존. F4 real-disk .kosmos 2-process cold-load=follow-on(§SelfChain F4 동형).", "source": "UNIVERSE", "archived": false, "artifacts": ["core/engine_cli.hexa", "cli/anima.hexa", "state/youchain_d7/youchain_smoke.hexa", "state/youchain_d7/lane23c_probe.hexa", "state/verdicts/youchain_d7/H_9085.txt"]}
 ```
+
+---
+
+## content_axis 접지 (H_9097, follow-on)
+
+§YouChain 의 `other_drift_exp(o, content_axis, step)` content_axis 는 H_9038 이래 합성 int 였다.
+**H_9097**(`cards/H_9097_selfchain_coord_grounding.md`)이 이를 실 303M penultimate 에 접지 시도 —
+frozen fold 는 상수축 붕괴(🔴 NOT-GROUNDED)지만 raw penultimate 은 경험구조 담음(metric-artifact wall).
+you-chain 이 '실제 겪은 상대'의 함수가 되려면 fold 재설계 follow-on 필요.

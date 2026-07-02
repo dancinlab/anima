@@ -954,6 +954,75 @@ def bytegpt_forward_last(path, ids, T):
     return bg_forward_last_W(W, ids, T)
 
 
+# ── L2-2 coord grounding — penultimate hidden pool + content-axis fold (H_9097) ──
+# self_drift_exp(s, content_axis, step)'s content_axis has been a SYNTHETIC int in
+# every prior verification (H_9038 random rng.integers). This grounds it in the mouth's
+# REAL lived experience: the 303M's penultimate representation of the text it processed.
+# bg_hidden_pool_W runs the SAME forward as bg_forward_last_W but, instead of taking the
+# last-position head logits, applies ln_f to ALL T positions and MEAN-POOLS -> a single
+# d-vector = the pooled penultimate features. content_axis_from_pooled folds d768 -> an
+# 8-way identity axis by contiguous-bucket L2-mass argmax. Generation 0 (single forward).
+def bg_hidden_pool_W(W, ids, T):
+    """Pooled penultimate hidden: run the base stack + bind, apply ln_f to ALL T
+    positions, MEAN-POOL over positions. Returns pooled:float64[d]. Byte-shares the
+    forward with bg_forward_last_W up to the final head projection."""
+    d = W["d"]; nlay = W["nlay"]; nh = W["nh"]
+    ids = np.asarray(ids, dtype=np.int64)
+    x = W["tok"][ids] + W["pos"][0:T]                       # [T, d]
+    for Lr in range(nlay):
+        nrm = _bg_layernorm_rows(x, W["ln1w"][Lr], W["ln1b"][Lr], T, d)
+        aout = _bg_mha(nrm, W["inW"][Lr], W["inB"][Lr], W["oW"][Lr], W["oB"][Lr], T, d, nh)
+        x = x + aout
+        nrm = _bg_layernorm_rows(x, W["ln2w"][Lr], W["ln2b"][Lr], T, d)
+        h4 = _bg_gelu(nrm @ W["m0W"][Lr].T + W["m0B"][Lr])
+        mlpo = h4 @ W["m2W"][Lr].T + W["m2B"][Lr]
+        x = x + mlpo
+    if W.get("bind"):
+        x = _bg_apply_bind(x, W["bind"], T, d, nh)
+    # ln_f on ALL T positions (bg_forward_last_W does only the last), then mean-pool.
+    hn = _bg_layernorm_rows(x, W["lnfw"], W["lnfb"], T, d)   # [T, d]
+    pooled = hn.sum(axis=0) / float(T)                       # [d]
+    return pooled
+
+
+def bytegpt_hidden_pool_ranged(ckpt_path, ids):
+    """bytegpt_decode.hexa::bytegpt_hidden_pool_ranged — load (ranged) + pooled
+    penultimate forward. ids:[T] byte ids. Returns {ok, pooled:[float]} (d-vector,
+    generation 0). Mirrors the hexa ranged decode entries (OOM-safe loader alias)."""
+    ids = _seed_to_ids(ids)
+    T = len(ids)
+    if T <= 0:
+        return {"ok": False, "pooled": []}
+    W = bg_load_ranged(ckpt_path)
+    pooled = bg_hidden_pool_W(W, ids, T)
+    return {"ok": True, "pooled": [float(v) for v in pooled]}
+
+
+def content_axis_from_pooled(pooled, dim):
+    """engine_cli.hexa::content_axis_from_pooled — FROZEN fold from a pooled hidden
+    vector (len D) to a `dim`-way identity axis in [0,dim). D is split into `dim`
+    CONTIGUOUS buckets of size D/dim; the bucket with the largest L2 mass (sum of
+    squares) is the content axis. Pure function (no model, no RNG)."""
+    D = len(pooled)
+    if D <= 0 or dim <= 0:
+        return 0
+    per = D // dim                                          # bucket width (D/dim)
+    best_i = 0
+    best_m = -1.0
+    for a in range(dim):
+        base = a * per
+        m = 0.0
+        j = 0
+        while j < per:
+            v = float(pooled[base + j])
+            m += v * v
+            j += 1
+        if m > best_m:
+            best_m = m
+            best_i = a
+    return best_i
+
+
 def bg_argmax(a):
     """bytegpt_decode.hexa::bg_argmax — index of max (ties: first, strict >)."""
     bi = 0

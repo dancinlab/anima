@@ -1,0 +1,84 @@
+H_9097 — L2-2 content_axis coord grounding — VERDICT (verbatim)
+================================================================
+
+CLAIM: self_drift_exp(s, content_axis, step)'s content_axis — a SYNTHETIC int in
+every prior H_9038 check — can be GROUNDED in the 303M's REAL lived experience via
+the FROZEN fold content_axis_from_pooled(bytegpt_hidden_pool_ranged(ckpt, ids), 8),
+making the self-chain a function of what anima actually processed.
+
+MEASUREMENT (DIRECTIONAL --py numpy mirror of live core/decode.hexa
+bytegpt_hidden_pool_ranged + content_axis_from_pooled + core/engine_cli.hexa
+self_drift_exp/self_chain_fit): real h1129 303M ByteGPT .bin, aiden pool CPU
+(OMP=8), 120 single forwards (3 streams x 40 texts, gen 0). NO torch, NO gauge_lib.
+grep-gate: measure.py imports numpy (via core/decode) => DIRECTIONAL (approved
+session-eval-py-only first pass); engine-native (.hexa) 303M re-measure = ING
+follow-on. Fold + self-chain ops have engine-native .hexa anchors (compile-verified;
+content_axis_fold_smoke.hexa).
+
+FROZEN BARS (pre-registered, DESIGN.md L2-2): G1' within-between gap >= +0.10 ·
+G2' shuffled gap collapses |gap| < 0.03 · G3' held-out top-1 >= 16/24 (chance 8/24).
+
+--- ENGINE MEASURE (aiden, verbatim) ---
+===== ARM = MAIN =====
+  ko_general  axis-hist(chain) = [0, 0, 0, 0, 0, 0, 32, 0]
+  en_general  axis-hist(chain) = [0, 0, 0, 0, 0, 0, 32, 0]
+  ko_sns      axis-hist(chain) = [0, 0, 0, 0, 0, 0, 32, 0]
+  G1' within_cos=1.0000  between_cos=1.0000  GAP=+0.0000  (bar +0.10)
+      within = [1.0, 1.0, 1.0]
+  G2' shuffled GAP=+0.0000  (collapse bar |gap|<0.03)
+  G3' retrieval top-1 = 8/24  (chance 8/24, bar >=16/24)
+  VERDICT[main]: G1'=FAIL  G2'=PASS(collapse)  G3'=FAIL
+
+===== ARM = FNV (control: immune_embed_key hash, meaning-arbitrary) =====
+  ko_general  axis-hist(chain) = [2, 5, 9, 0, 4, 5, 5, 2]
+  en_general  axis-hist(chain) = [1, 1, 1, 5, 12, 4, 1, 7]
+  ko_sns      axis-hist(chain) = [2, 3, 11, 5, 1, 5, 2, 3]
+  G1' within_cos=0.8114  between_cos=0.6076  GAP=+0.2038  (bar +0.10)
+      within = [0.777, 0.815, 0.842]
+  G2' shuffled GAP=-0.0304  (collapse bar |gap|<0.03)
+  G3' retrieval top-1 = 8/24  (chance 8/24, bar >=16/24)
+  VERDICT[fnv]: G1'=PASS  G2'=FAIL(no-collapse)  G3'=FAIL
+
+===== POOLED DIAGNOSTIC (raw penultimate, centered — FOLD BYPASSED; wall taxonomy) =====
+  centroid_cos(ko_general,en_general) = -0.9982   (lower = streams more separated)
+  centroid_cos(ko_general,ko_sns) = +0.9961   (lower = streams more separated)
+  centroid_cos(en_general,ko_sns) = -0.9995   (lower = streams more separated)
+  nearest-centroid held-out classification = 16/24  (chance 8/24)
+  => penultimate CARRIES per-stream experience signal; the argmax-L2 FOLD discards it
+     (metric-artifact wall (a), NOT a ceiling).
+
+--- VERDICT ---
+🔴 NOT GROUNDED (frozen fold) — content_axis via the pre-registered
+content_axis_from_pooled(argmax-of-contiguous-bucket-L2, dim=8) COLLAPSES to a
+CONSTANT axis (6) for all 120 real-303M texts (ln_f per-dim gain makes one bucket
+dominate raw L2 mass regardless of content). => G1' gap=0.0000 FAIL · G3' 8/24 at
+chance FAIL. The self-chain does NOT become a function of experience with THIS fold.
+The MAIN arm is WORSE than the meaning-arbitrary FNV control (which at least varies).
+
+WALL TAXONOMY (a_break_the_wall): type (a) METRIC-ARTIFACT, not (d) ceiling. The RAW
+pooled penultimate DOES carry lived-experience structure — ko vs en separate cleanly
+(centroid_cos -0.998), nearest-centroid held-out 16/24 > 8/24 chance. The frozen
+argmax-L2 fold throws this away. Register (ko-general vs ko-sns) does NOT separate
+here (centroid_cos +0.996) — the held-out ko-sns tail slice is Q&A-register, so the
+register axis is weak in this measurement (corpus-slice caveat, not a claim).
+
+FOLLOW-ON (ING): grounded fold = mean-center + project (e.g. sign/top-variance of
+centered pooled), which the diagnostic shows recovers 16/24. + engine-native (.hexa)
+bytegpt_hidden_pool_ranged 303M re-measure (rung 2 of the 4-rung ladder).
+
+ANSWER (one line): NO — with the frozen fold the content_axis is NOT grounded (it
+collapses to a constant), so anima's self-chain is NOT yet a function of what it
+actually experienced. But the 303M penultimate itself IS grounded (ko/en separable,
+above-chance retrieval); the failure is the fold discarding it, not absent signal.
+
+--- ENGINE-NATIVE FOLD ANCHOR (aiden, hexa v0.548.0, verbatim) ---
+$ hexa run state/selfchain_coord_grounding/content_axis_fold_smoke.hexa
+content_axis_from_pooled(D=16,dim=4) = 2  (expect 2)
+FOLD_OK
+content_axis_from_pooled(D=16,dim=8) = 4  (expect 4)
+FOLD8_OK
+# => content_axis_from_pooled + bytegpt_hidden_pool_ranged compile+run engine-native
+#    (rung 2 for the FOLD). MAIN 303M penultimate stayed --py DIRECTIONAL
+#    (session-eval-py-only); engine-native bytegpt_hidden_pool_ranged 303M re-measure = ING.
+#    (mini-local link skew _rt_format_float_native = stale prebuilt runtime.a, NOT a code
+#     defect — decode.hexa typechecks+codegens; aiden stable runtime links+runs clean.)

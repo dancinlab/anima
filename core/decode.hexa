@@ -1217,7 +1217,8 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
 //   bytegpt_forward_last_ranged_mm · bg_load · bg_load_ranged · bg_forward_last_W ·
 //   bytegpt_decode_argmax · bytegpt_decode_argmax_ranged · bytegpt_decode_topk_sampled ·
 //   bytegpt_decode_topk_sampled_ranged · bytegpt_decode_grounded ·
-//   bytegpt_decode_grounded_abstain.
+//   bytegpt_decode_grounded_abstain · bytegpt_hidden_pool_ranged ·
+//   bg_hidden_pool_W · content_axis_from_pooled (L2-2 coord grounding, H_9097).
 // ════════════════════════════════════════════════════════════════════════
 // ── little-endian readers over a read_file_bytes byte array ──────────────
 fn _bg_rd_u32(rb, off: int) -> int {
@@ -2266,6 +2267,124 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
     }
     let _ = farr_free(x); let _ = farr_free(lastrow); let _ = farr_free(xt)
     return logits
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// L2-2 coord grounding — penultimate hidden pool + content-axis fold (H_9097).
+// self_drift_exp(s, content_axis, step)'s content_axis was a SYNTHETIC int in every
+// prior verification (H_9038). This grounds it in the mouth's REAL lived experience:
+// the 303M's penultimate representation of the text it processed. bg_hidden_pool_W runs
+// the SAME forward as bg_forward_last_W but, instead of the last-position head logits,
+// applies ln_f to ALL T positions and MEAN-POOLS -> one d-vector = pooled penultimate
+// features. Generation 0 (single forward). READ-only, Ψ/G5-disjoint (no emit path).
+// ════════════════════════════════════════════════════════════════════════
+pub fn bg_hidden_pool_W(W: Map, ids: int, T: int) -> int {
+    let d = to_int(W["d"])
+    let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"])
+    let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let inB = W["inB"]
+    let oB = W["oB"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let m0B = W["m0B"]; let m2B = W["m2B"]
+    let inWt = W["inWt"]; let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ids, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c,
+                             farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+
+    let nrm = farr_zeros(T * d)
+    let aout = farr_zeros(T * d)
+    let h4 = farr_zeros(T * 4 * d)
+    let mlpo = farr_zeros(T * d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        _bg_layernorm(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, T, d)
+        _bg_mha_mm(nrm, to_int(inWt[Lr]), to_int(inB[Lr]), to_int(oWt[Lr]), to_int(oB[Lr]), aout, T, d, nh)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+
+        _bg_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, T, d)
+        _bg_linear_mm(nrm, to_int(m0Wt[Lr]), to_int(m0B[Lr]), h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear_mm(h4, to_int(m2Wt[Lr]), to_int(m2B[Lr]), mlpo, T, 4 * d, d)
+        let mut i2 = 0
+        while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+        Lr = Lr + 1
+    }
+    let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    let bind = W["bind"]
+    if len(bind) > 0 { _bg_apply_bind(x, bind, T, d, nh) }
+
+    // ln_f over ALL T positions (bg_forward_last_W does only the last), then mean-pool.
+    let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"])
+    _bg_layernorm(x, lnfw, lnfb, nrm, T, d)
+    let pooled = farr_zeros(d)
+    let mut pc = 0
+    while pc < d {
+        let mut acc = 0.0
+        let mut pt = 0
+        while pt < T { acc = acc + farr_get(nrm, pt * d + pc); pt = pt + 1 }
+        let _ = farr_set(pooled, pc, acc / to_float(T))
+        pc = pc + 1
+    }
+    let _ = farr_free(x); let _ = farr_free(nrm)
+    return pooled
+}
+
+// bytegpt_hidden_pool_ranged — load (ranged, OOM-safe) + pooled penultimate forward.
+// ids = the byte-id list of the experienced text. Returns #{ok, pooled:[float]} — a
+// d-vector (generation 0). Twin of bytegpt_decode_argmax_ranged (bg_load_ranged path).
+pub fn bytegpt_hidden_pool_ranged(ckpt_path: string, ids: list) -> Map {
+    let T = len(ids)
+    if T <= 0 { return #{"ok": false, "pooled": []} }
+    let idf = farr_zeros(T)
+    let mut i = 0
+    while i < T { let _ = farr_set(idf, i, to_float(to_int(ids[i]))); i = i + 1 }
+    let W = bg_load_ranged(ckpt_path)
+    let d = to_int(W["d"])
+    let pooled = bg_hidden_pool_W(W, idf, T)
+    let mut out = []
+    let mut c = 0
+    while c < d { out = out + [farr_get(pooled, c)]; c = c + 1 }
+    let _ = farr_free(idf); let _ = farr_free(pooled)
+    return #{"ok": true, "pooled": out}
+}
+
+// content_axis_from_pooled — FROZEN fold from a pooled hidden vector (len D) to a
+// `dim`-way identity axis in [0,dim). D is split into `dim` CONTIGUOUS buckets of size
+// D/dim; the bucket with the largest L2 mass (Σ v²) is the content axis. Pure function.
+pub fn content_axis_from_pooled(pooled: [float], dim: int) -> int {
+    let D = len(pooled)
+    if D <= 0 { return 0 }
+    if dim <= 0 { return 0 }
+    let per = D / dim
+    let mut best_i = 0
+    let mut best_m = 0.0 - 1.0
+    let mut a = 0
+    while a < dim {
+        let base = a * per
+        let mut m = 0.0
+        let mut j = 0
+        while j < per {
+            let v = pooled[base + j]
+            m = m + v * v
+            j = j + 1
+        }
+        if m > best_m { best_m = m  best_i = a }
+        a = a + 1
+    }
+    return best_i
 }
 
 // ════════════════════════════════════════════════════════════════════════

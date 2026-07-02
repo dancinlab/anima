@@ -1,0 +1,19 @@
+// content_axis_fold_smoke.hexa — engine-native anchor for the FROZEN fold
+// content_axis_from_pooled (L2-2 coord grounding, H_9097). Pure function, no model:
+// validates the fold picks the contiguous bucket of largest L2 mass. This is the
+// (2) engine-native rung for the FOLD; the heavy 303M penultimate pool is the
+// bytegpt_hidden_pool_ranged .hexa entry (re-measure = ING follow-on on pool).
+import "core/decode.hexa"
+
+fn main() {
+    // D=16, dim=4 -> 4 buckets of 4. Put the biggest L2 mass in bucket 2 (idx 8..11).
+    let v = [0.1, 0.0, 0.1, 0.0,   0.2, 0.1, 0.0, 0.1,   0.9, 0.8, 0.7, 0.6,   0.1, 0.2, 0.1, 0.0]
+    let a = content_axis_from_pooled(v, 4)
+    println("content_axis_from_pooled(D=16,dim=4) = " + to_string(a) + "  (expect 2)")
+    if a == 2 { println("FOLD_OK") } else { println("FOLD_FAIL") }
+
+    // dim=8 over D=16 -> 8 buckets of 2. Biggest pair at idx 8,9 -> bucket 4.
+    let b = content_axis_from_pooled(v, 8)
+    println("content_axis_from_pooled(D=16,dim=8) = " + to_string(b) + "  (expect 4)")
+    if b == 4 { println("FOLD8_OK") } else { println("FOLD8_FAIL") }
+}
