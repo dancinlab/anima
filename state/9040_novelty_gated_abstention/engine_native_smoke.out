@@ -1,0 +1,15 @@
+MANIFOLD  cells=2 (mitosis-grown, DIM=6)
+F1 novelty(§Novelty joint recon-err) AUROC(unfamiliar) = 1.0
+   PASS F1 (>=0.70 — flips H_1142 0.436 INVERTED)
+   deployed metacog_abstain (novelty AND surprise) AUROC = 1.0
+F2 entropy-analog(marginal) AUROC on SAME inputs = 0.5563888888888889
+   PASS F2 (novelty >> marginal — signal CHOICE is the cause)
+F3 novelty AUROC on UNTRAINED substrate (1 seed cell) = 0.5
+   PASS F3 (<=0.60 collapse — discrimination is the grown lane's contribution)
+F4 §ImmuneMemory non-fab rate  metacog-OFF = 1.0
+F4 §ImmuneMemory non-fab rate  metacog-ON  = 1.0
+F4 Ψ emit-drive (lanes 0/4)   metacog-OFF = 0.69
+F4 Ψ emit-drive (lanes 0/4)   metacog-ON  = 0.69
+   PASS F4 (non-fab Δ=0.0 AND Ψ Δ=0.0 — abstention lane disjoint from recall_thr + emit-drive)
+
+SMOKE metacog_abstain  pass=4 fail=0 / 4  ALL-PASS
