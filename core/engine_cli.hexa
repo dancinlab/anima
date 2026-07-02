@@ -1279,6 +1279,23 @@ pub fn immune_memory_recall_gap_text(mem: ImmuneMemory, text: string) -> float {
 // immune_embed_key first, so the live recall path can bind/recall straight from a
 // raw fact/question string (the running-anima entry). immune_memory_new_text seeds
 // from the first fact's text.
+// ── § FacultyCascade (H_9074) — substrate multi-hop: serial faculty output→input chain ──
+// GAP: the engine's 6 compose arbiters are all PAIRWISE PARALLEL-vote (both legs see the
+// SAME query, votes combined). Brain multi-hop inference is SERIAL relay — faculty A's
+// output becomes faculty B's query KEY (cortico-cortical routing / hippocampal→PFC relay).
+// This op-class was absent. faculty_cascade recalls from store A, re-embeds that string as
+// a key, and recalls from store B — a 2-hop chain reachable ONLY by the relay (q alone
+// cannot index B's key space). Purely ADDITIVE (no existing caller touched), READ-only over
+// two cell populations, Ψ-disjoint (pure_field Φ/phase/Ψ untouched), disjoint from
+// emit-drive lane(0/4) and does NOT modify recall_thr (same by-construction as the compose
+// family — it only READS recall). Abstain propagates (empty hop-1 ⇒ empty result).
+pub fn faculty_cascade(mem_a: ImmuneMemory, mem_b: ImmuneMemory, q_key: [float]) -> string {
+    let x = immune_memory_recall(mem_a, q_key)          // hop 1: q -> intermediate x (string)
+    if x == "" { return "" }                            // ABSTAIN propagates through the chain
+    let x_key = immune_embed_key(x)                     // x string -> key (output becomes next input)
+    return immune_memory_recall(mem_b, x_key)           // hop 2: x -> final answer y
+}
+
 pub fn immune_memory_new_text(first_text: string, first_value: string, max_cells: int) -> ImmuneMemory {
     return immune_memory_new(immune_embed_key(first_text), first_value, max_cells)
 }
