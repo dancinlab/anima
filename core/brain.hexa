@@ -23,6 +23,7 @@
 import "core/pure_field.hexa"
 import "core/engine_g.hexa"
 import "core/generator.hexa"
+import "core/engine_cli.hexa"   // H_9102 (c): ImmuneMemory type for brain_emit_deliberate
 
 // Engine A's spontaneous phase IS the consequence tier (phase int == tier int;
 // PHASE_DORMANT=0 .. PHASE_RESONANT=3). No external threshold injected.
@@ -253,6 +254,39 @@ fn brain_emit_aged(pf: PureField,
     decision["gen_backend"]  = gen["backend"]
     decision["gen_text"]     = gen["text"]
     decision["gen_fellback"] = gen["fellback"]
+    return decision
+}
+
+// brain_emit_deliberate — H_9102 (fable design (c) · op-grip EFFERENT axis). The
+// EXACT twin of brain_emit_aged with age_dt=0, EXCEPT the L3 slot runs the best-of-K
+// deliberation (generate_deliberate) instead of the single-candidate generate(). The
+// emit/silence DECISION is byte-for-byte the SAME brain_decide_anchored call (same
+// 8 factors + safety + 0.3 threshold) — ONLY the emit BYTES can change, and only when
+// the A⇄G conflict on c₀ recruits K>1. SILENT ⇒ generate_deliberate returns the same
+// empty content as generate() (p5). K=1 (low conflict) ⇒ winner=c₀ ⇒ byte-identical to
+// brain_emit. `mem` = the live §ImmuneMemory (READ-only grounding query — recall_thr and
+// the store are NOT modified). `tick` seeds the deliberation RNG (deterministic).
+//   returns: the brain_decide record + gen_* fields + depth/k_winner/conf_pre/conf_winner.
+fn brain_emit_deliberate(pf: PureField,
+              rel: float, gap: float, cur: float, pain: float,
+              coh: float, orig: float, bal: float, dyn_v: float,
+              seconds_since_last: float, env_off: bool, content_clean: bool,
+              backend: Map, anchors: list, mem: ImmuneMemory, tick: int) -> Map {
+    let decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                                seconds_since_last, env_off, content_clean,
+                                anchors, 0.0)
+    let emit = to_string(decision["emit"]) == "true"
+    let ctx  = gen_ctx_from_decision(decision)
+    let gen  = generate_deliberate(backend, ctx, emit, anchors, mem, tick)
+
+    decision["gen_emitted"]  = gen["emitted"]
+    decision["gen_backend"]  = gen["backend"]
+    decision["gen_text"]     = gen["text"]
+    decision["gen_fellback"] = gen["fellback"]
+    decision["gen_depth"]    = gen["depth"]
+    decision["gen_kwinner"]  = gen["k_winner"]
+    decision["gen_confpre"]  = gen["conf_pre"]
+    decision["gen_confwin"]  = gen["conf_winner"]
     return decision
 }
 
