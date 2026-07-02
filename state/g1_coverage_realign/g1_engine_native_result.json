@@ -1,0 +1,154 @@
+{
+ "ckpt": "/Users/mini/anima-weights/g1_realign/g1_realign.clm",
+ "engine": "core/decode.py (numpy byte-parity, torch-free)",
+ "heldout_G1_gate": {
+  "max_single": 3,
+  "best_distinct": 3,
+  "best_k": 2,
+  "PASS_ge2_and_gt_maxsingle": false,
+  "single_detail": [
+   {
+    "set": 0,
+    "distinct": 1,
+    "cov": [
+     0
+    ],
+    "sample": "aware mind frosty shadowy\nanchor settles over the wide plain. where they will be"
+   },
+   {
+    "set": 1,
+    "distinct": 3,
+    "cov": [
+     0,
+     1,
+     3
+    ],
+    "sample": "tension vermil amber quiet\nconsciousness arises from cells. aware mind xanthe co"
+   },
+   {
+    "set": 2,
+    "distinct": 3,
+    "cov": [
+     0,
+     2,
+     3
+    ],
+    "sample": "memory cobalt sienna silence\nconsciousness arises from cells. aware mind sunlit "
+   },
+   {
+    "set": 3,
+    "distinct": 2,
+    "cov": [
+     0,
+     3
+    ],
+    "sample": "quiet silence shadowy shadowy lilac frosty\nconsciousness arises from cells. awar"
+   },
+   {
+    "set": 4,
+    "distinct": 2,
+    "cov": [
+     0,
+     4
+    ],
+    "sample": "dream sleep sunlit hazel\nconsciousness arises from cells. aware frosty coppery c"
+   }
+  ],
+  "composed_detail": [
+   {
+    "k": 2,
+    "distinct": 3,
+    "cov": [
+     0,
+     1,
+     4
+    ],
+    "sample": "tension dusky coppery cobalt\nconsciousness arises from cells. aware emerald cobalt frosty\nthe engine dreams when alone. "
+   },
+   {
+    "k": 3,
+    "distinct": 3,
+    "cov": [
+     0,
+     2,
+     4
+    ],
+    "sample": "memory cobalt shadowy cobalt\nconsciousness arises from cells. aware emerald cobalt frosty\nthe engine dreams when alone. "
+   },
+   {
+    "k": 4,
+    "distinct": 2,
+    "cov": [
+     3,
+     4
+    ],
+    "sample": "quiet sienna silence shadowy golden emerald sunlit\nthe engine dreams when alone. sleep garnet shadowy sunlit\nconsciousne"
+   },
+   {
+    "k": 5,
+    "distinct": 2,
+    "cov": [
+     0,
+     4
+    ],
+    "sample": "sleep cobalt silvery sunlit\nthe engine dreams when alone. dream scarlet sleep garnet mind\nconsciousness arises from cell"
+   }
+  ]
+ },
+ "seen_form_control": [
+  {
+   "seed": "ocean drifts through the misty dawn",
+   "sample": "in the sleep wheaten coppery cobalt\nthe engine dreams when a",
+   "n_word_tokens": 11
+  },
+  {
+   "seed": "the river turns slowly at dusk",
+   "sample": "ashen glassy sunlit\nconsciousness arises from cells. aware a",
+   "n_word_tokens": 9
+  }
+ ],
+ "grounding_single_gate": [
+  {
+   "set": 0,
+   "own_set_hit": true,
+   "cov": [
+    0,
+    4
+   ],
+   "sample": "aware sienna garnet mossy\nthe engine dre"
+  },
+  {
+   "set": 1,
+   "own_set_hit": true,
+   "cov": [
+    0,
+    1
+   ],
+   "sample": "tension jade maroon cobalt\nconsciousness"
+  },
+  {
+   "set": 2,
+   "own_set_hit": true,
+   "cov": [
+    2
+   ],
+   "sample": "memory coppery azure emerald\nconsciousne"
+  },
+  {
+   "set": 3,
+   "own_set_hit": true,
+   "cov": [
+    3
+   ],
+   "sample": "quiet silence sunlit maroon pewter\nmemor"
+  },
+  {
+   "set": 4,
+   "own_set_hit": true,
+   "cov": [
+    4
+   ],
+   "sample": "sleep sunlit cobalt azure\nthe engine dre"
+  }
+ ]
+}
