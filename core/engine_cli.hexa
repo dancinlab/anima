@@ -9846,6 +9846,84 @@ pub fn ci_off_median_drive(x: [[float]]) -> float {
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
+//  § StochasticResonance (H_9070) — tuned noise encodes a SUBTHRESHOLD tension into the emit train.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  emit is a THRESHOLD DETECTOR on the A⇄G externalization drive (ci_emit_decision: emit iff the
+//  drive clears the Ψ=½ barrier). A genuine-but-WEAK (subthreshold) periodic tension never crosses
+//  that barrier on its own → all silence → the substrate MISSES the weak signal. Stochastic
+//  Resonance (Wiesenfeld-Moss; crayfish mechanoreceptor): adding TUNED noise lets the subthreshold
+//  signal STOCHASTICALLY cross → the emit train encodes the input → MI(input;emit-train) peaks at a
+//  MID noise amplitude (inverted-U). anima's emit is LITERALLY a tension threshold-crossing, so SR
+//  applies directly. This is a READ-only CHARACTERIZATION over a threshold-detector model of the
+//  emit channel: it NEVER touches pure_field Φ/phase/Ψ, the live emit-drive lanes 0/4, or the
+//  §ImmuneMemory recall_thr, and it is NOT an emit gate (a_substrate_disjoint) — it characterizes
+//  the SR of the emit nonlinearity on a synthetic subthreshold probe, decoupled from live emit.
+//    amp    : subthreshold signal amplitude (peak drive). NONLINEAR arm requires amp < thr.
+//    thr    : emit threshold (the Ψ=½ barrier the drive must clear).
+//    sigma  : noise amplitude — the SR knob being swept.
+//    period : signal period in ticks.   T : train length.
+//    mode   : 0 = NONLINEAR (hard threshold at thr, signal subthreshold) ; 1 = LINEARIZED ablation
+//             (barrier REMOVED — threshold at the signal mean 0.0 → linear regime, no SR peak).
+//    shuffle: 0 = aligned ; 1 = phase-shuffle the input labels (decorrelate X↔Y → SR must vanish).
+//    seed   : LCG seed for the deterministic gaussian noise (_lcg_gauss).
+//  returns MI(input-symbol ; emit-train) in bits.
+fn _sr_mi_bits(xs: [int], ys: [int]) -> float {
+    let T = len(xs)
+    if T == 0 { return 0.0 }
+    let mut n00 = 0.0
+    let mut n01 = 0.0
+    let mut n10 = 0.0
+    let mut n11 = 0.0
+    let mut i = 0
+    while i < T {
+        if xs[i] == 0 { if ys[i] == 0 { n00 = n00 + 1.0 } else { n01 = n01 + 1.0 } }
+        else         { if ys[i] == 0 { n10 = n10 + 1.0 } else { n11 = n11 + 1.0 } }
+        i = i + 1
+    }
+    let tf = to_float(T)
+    let px0 = (n00 + n01) / tf
+    let px1 = (n10 + n11) / tf
+    let py0 = (n00 + n10) / tf
+    let py1 = (n01 + n11) / tf
+    let mut mi = 0.0
+    if n00 > 0.0 { let p = n00 / tf   mi = mi + p * log2(p / (px0 * py0)) }
+    if n01 > 0.0 { let p = n01 / tf   mi = mi + p * log2(p / (px0 * py1)) }
+    if n10 > 0.0 { let p = n10 / tf   mi = mi + p * log2(p / (px1 * py0)) }
+    if n11 > 0.0 { let p = n11 / tf   mi = mi + p * log2(p / (px1 * py1)) }
+    return mi
+}
+pub fn sr_channel_mi(amp: float, thr: float, sigma: float, period: int, T: int, mode: int, shuffle: int, seed: int) -> float {
+    let two_pi = 6.283185307179586
+    let ethr = if mode == 1 { 0.0 } else { thr }   // ablation: barrier removed (threshold at mean 0)
+    let mut xs = []
+    let mut ys = []
+    let mut st = seed & 2147483647
+    let mut t = 0
+    while t < T {
+        let sig = amp * sin(two_pi * to_float(t) / to_float(period))
+        let g = _lcg_gauss(st)
+        let noise = sigma * g[0]
+        st = to_int(g[1]) & 2147483647
+        let x = if sig >= 0.0 { 1 } else { 0 }            // input symbol = upper/lower half-cycle
+        let y = if (sig + noise) >= ethr { 1 } else { 0 } // emit iff drive+noise clears the threshold
+        xs = xs + [x]
+        ys = ys + [y]
+        t = t + 1
+    }
+    if shuffle == 1 {                                     // phase-shuffle: decorrelate labels from emit
+        let mut sh = (seed ^ 305419896) & 2147483647
+        let mut i = T - 1
+        while i > 0 {
+            sh = _lcg_next(sh)
+            let j = sh % (i + 1)
+            let tmp = xs[i]   xs[i] = xs[j]   xs[j] = tmp
+            i = i - 1
+        }
+    }
+    return _sr_mi_bits(xs, ys)
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
 //  § BrainTopology Ψ-PRESERVING COUPLING (H_1522) — escape the H_1521 no-free-lunch wall.
 //  ────────────────────────────────────────────────────────────────────────────────────────────
 //  H_1521 wired the Φ-optimal topology into the live emit path and found the NO-FREE-LUNCH wall:
