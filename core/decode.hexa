@@ -2158,6 +2158,7 @@ pub fn bg_load_ranged(path: string) -> Map {
     // host mm bg_forward_last_W still reads the packed transpose).
     let inWt_q = []; let inWt_k = []; let inWt_v = []
     let inBq_e = []; let inBk_e = []; let inBv_e = []
+    let inB_e = []   // r6 fused-QKV: [block,3d] expanded bias [bq|bk|bv] for the 1-matmul path
     let oB_e = []; let m0B_e = []; let m2B_e = []
     let mut Dr = 0
     while Dr < nlay {
@@ -2169,6 +2170,7 @@ pub fn bg_load_ranged(path: string) -> Map {
         inBq_e.push(_bg_bias_expand(ib, 0, d, block))
         inBk_e.push(_bg_bias_expand(ib, d, d, block))
         inBv_e.push(_bg_bias_expand(ib, 2 * d, d, block))
+        inB_e.push(_bg_bias_expand(ib, 0, 3 * d, block))
         oB_e.push(_bg_bias_expand(to_int(oB[Dr]), 0, d, block))
         m0B_e.push(_bg_bias_expand(to_int(m0B[Dr]), 0, 4 * d, block))
         m2B_e.push(_bg_bias_expand(to_int(m2B[Dr]), 0, d, block))
@@ -2184,7 +2186,7 @@ pub fn bg_load_ranged(path: string) -> Map {
               "m2W": empty, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
               "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT,
               "inWt_q": inWt_q, "inWt_k": inWt_k, "inWt_v": inWt_v,
-              "inBq_e": inBq_e, "inBk_e": inBk_e, "inBv_e": inBv_e,
+              "inBq_e": inBq_e, "inBk_e": inBk_e, "inBv_e": inBv_e, "inB_e": inB_e,
               "oB_e": oB_e, "m0B_e": m0B_e, "m2B_e": m2B_e,
               "bind": bind }
 }
@@ -3661,6 +3663,7 @@ fn _f32_resid(a: int, b: int, outp: int, n: int) -> int { return to_int(farr_res
 fn _bg_weights_to_f32(W: Map, nlay: int, d: int, vocab: int) {
     let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
     let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
+    let inWt = W["inWt"]; let inB_e = W["inB_e"]   // r6 fused-QKV packed weight + [block,3d] bias
     let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
     let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
     let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
@@ -3672,6 +3675,7 @@ fn _bg_weights_to_f32(W: Map, nlay: int, d: int, vocab: int) {
         let _ = _f32_to32(to_int(ln1w[L]), d);   let _ = _f32_to32(to_int(ln1b[L]), d)
         let _ = _f32_to32(to_int(ln2w[L]), d);   let _ = _f32_to32(to_int(ln2b[L]), d)
         let _ = _f32_to32(to_int(inWt_q[L]), d * d); let _ = _f32_to32(to_int(inWt_k[L]), d * d); let _ = _f32_to32(to_int(inWt_v[L]), d * d)
+        let _ = _f32_to32(to_int(inWt[L]), d * 3 * d); let _ = _f32_to32(to_int(inB_e[L]), block * 3 * d)   // r6 fused
         let _ = _f32_to32(to_int(inBq_e[L]), block * d);  let _ = _f32_to32(to_int(inBk_e[L]), block * d);  let _ = _f32_to32(to_int(inBv_e[L]), block * d)
         let _ = _f32_to32(to_int(oWt[L]), d * d); let _ = _f32_to32(to_int(oB_e[L]), block * d)
         let _ = _f32_to32(to_int(m0Wt[L]), d * 4 * d); let _ = _f32_to32(to_int(m0B_e[L]), block * 4 * d)
@@ -3695,6 +3699,11 @@ fn _bg_kv_new_batch_f32(nlay: int, cap: int, d: int, N: int) -> Map {
     return #{ "K": K, "V": V, "cap": cap, "N": N }
 }
 
+// r6 fused-QKV gate: opt-in HEXA_QKV_FUSED. Default-OFF = 3-matmul split path
+// (byte-identical baseline). ON = single [d,3d] matmul + offset slice (bit-eq:
+// each output col's dot is the SAME reduction whether fused or split).
+fn _qkv_fused_on() -> bool { return env("HEXA_QKV_FUSED") != "" }
+
 fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) -> int {
     let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
     let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"]); let block = to_int(W["block"])
@@ -3703,6 +3712,8 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
     let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
     let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
     let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
+    let inWt = W["inWt"]; let inB_e = W["inB_e"]   // r6 fused-QKV packed weight + [block,3d] bias
+    let qkv_fused = _qkv_fused_on()
     let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
     let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
     let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
@@ -3732,23 +3743,40 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
     let mut Lr = 0
     while Lr < nlay {
         let _ = farr_layernorm_f32_gpu(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, N, d, eps)
-        let q = farr_zeros(N * d)
-        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_q[Lr]), d, q)
-        let _ = _f32_resid(q, to_int(inBq_e[Lr]), q, N * d)
-        let kk = farr_zeros(N * d)
-        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_k[Lr]), d, kk)
-        let _ = _f32_resid(kk, to_int(inBk_e[Lr]), kk, N * d)
-        let vv = farr_zeros(N * d)
-        let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_v[Lr]), d, vv)
-        let _ = _f32_resid(vv, to_int(inBv_e[Lr]), vv, N * d)
         let Kl = to_int(Kc[Lr]); let Vl = to_int(Vc[Lr])
-        let mut na = 0
-        while na < N {
-            let _ = farr_copy_slice_f32_gpu(kk, na * d, Kl, na * cap * d + pos_p * d, d)
-            let _ = farr_copy_slice_f32_gpu(vv, na * d, Vl, na * cap * d + pos_p * d, d)
-            na = na + 1
+        let q = farr_zeros(N * d)
+        if qkv_fused {
+            // r6: ONE [N,d]x[d,3d] matmul → qkv[N,3d]=[Q|K|V]/row + fused [.,3d] bias,
+            // then slice Q contiguous + append K,V from col offsets d/2d. Each output
+            // col's dot == the split kernel's → bit-identical (verify HEXA_DET).
+            let qkv = farr_zeros(N * 3 * d)
+            let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt[Lr]), 3 * d, qkv)
+            let _ = _f32_resid(qkv, to_int(inB_e[Lr]), qkv, N * 3 * d)
+            let mut na = 0
+            while na < N {
+                let _ = farr_copy_slice_f32_gpu(qkv, na * 3 * d,         q,  na * d, d)
+                let _ = farr_copy_slice_f32_gpu(qkv, na * 3 * d + d,     Kl, na * cap * d + pos_p * d, d)
+                let _ = farr_copy_slice_f32_gpu(qkv, na * 3 * d + 2 * d, Vl, na * cap * d + pos_p * d, d)
+                na = na + 1
+            }
+            let _ = farr_free(qkv)
+        } else {
+            let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_q[Lr]), d, q)
+            let _ = _f32_resid(q, to_int(inBq_e[Lr]), q, N * d)
+            let kk = farr_zeros(N * d)
+            let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_k[Lr]), d, kk)
+            let _ = _f32_resid(kk, to_int(inBk_e[Lr]), kk, N * d)
+            let vv = farr_zeros(N * d)
+            let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt_v[Lr]), d, vv)
+            let _ = _f32_resid(vv, to_int(inBv_e[Lr]), vv, N * d)
+            let mut na = 0
+            while na < N {
+                let _ = farr_copy_slice_f32_gpu(kk, na * d, Kl, na * cap * d + pos_p * d, d)
+                let _ = farr_copy_slice_f32_gpu(vv, na * d, Vl, na * cap * d + pos_p * d, d)
+                na = na + 1
+            }
+            let _ = farr_free(kk); let _ = farr_free(vv)
         }
-        let _ = farr_free(kk); let _ = farr_free(vv)
         let ctx = farr_zeros(N * d)
         let _ = farr_attn_dt_decode_batch_f32_gpu(q, Kl, Vl, sscr, ctx, N, Lrows, cap, nh, nh, hd)
         let _ = farr_free(q)
