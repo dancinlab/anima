@@ -9626,6 +9626,66 @@ pub fn topo_psi_max_feasible_alpha(x: [[float]], adj: [[float]], op: int, thr: f
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
+//  § TensionResolveLoop (H_9042 C1 frame-shift) — the MISSING iterated A⇄G conflict-resolution loop.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  ci_psi_balance / ci_psi_balance_op are ONE-SHOT (a single coupling application) and reentry_settle
+//  drives a SINGLE non-competing stimulus — NEITHER iterates the A⇄G coupling to pull a CONFLICTED
+//  (polarized, Ψ≠½) emit/silence POPULATION back to the Ψ=½ fixed point. That iterated resolution loop
+//  is the substrate op the C1 frame-shift diagnosed as MISSING (H_9041). numpy generic diffusion could
+//  not screen it — a generic (amplifying) coupling has NO Ψ=½ restoring force (it runs Ψ→1.0), so the
+//  fixed point is engine-specific → engine-native only.
+//
+//  tension_resolve_depth iterates the SELECTABLE coupling operator (topo_apply_op: 0=naive-AMP =generic
+//  diffusion, 1=MEAN-CENTER, 2=ROW-STOCHASTIC, 3=RENORM — the H_1522 Ψ-preserving family) on a PASSED-IN
+//  population, recomputing the centered Ψ (emit fraction vs a fixed drive `thr`) after each step, and
+//  returns [settle_depth, final_psi] where settle_depth = the FIRST depth d∈[0,maxdepth] with |Ψ−thr|<eps
+//  (−1.0 if Ψ never lands within eps of thr inside maxdepth). depth 0 = the conflicted starting Ψ.
+//
+//  Purely ADDITIVE (new pub fn; touches no existing op) · Ψ-DISJOINT (operates on a caller-supplied
+//  population, never pure_field/Φ/phase/the live Ψ path) · READ-only MEASUREMENT (returns numbers, is
+//  NOT an emit gate) · disjoint from the emit-drive lane(0/4) live decision and §ImmuneMemory recall_thr
+//  (a_substrate_disjoint). cfg.topo_couple OFF → no coupling is applied (Ψ stays at its conflicted start
+//  = the INERT ablation), matching every other op in this section.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// tr_psi — emit fraction of an ALREADY-diffused population scored against a fixed drive threshold
+// (ci_psi_balance-style; NO re-coupling here — the loop does the coupling). READ-only helper. pub so
+// an engine-native harness can measure the conflicted STARTING Ψ and the INERT-ablation Ψ directly.
+pub fn tr_psi(pop: [[float]], thr: float) -> float {
+    let nt = len(pop)
+    if nt == 0 { return 0.0 }
+    let mut emit = 0
+    let mut t = 0
+    while t < nt {
+        if ci_emit_drive(pop[t]) >= thr { emit = emit + 1 }
+        t = t + 1
+    }
+    return to_float(emit) / to_float(nt)
+}
+
+// _tr_absdev — |Ψ − thr| (branch, no abs builtin dependency).
+fn _tr_absdev(psi: float, thr: float) -> float {
+    if psi - thr >= 0.0 { return psi - thr }
+    return thr - psi
+}
+
+pub fn tension_resolve_depth(x: [[float]], adj: [[float]], alpha: float, thr: float, maxdepth: int, op: int, eps: float, cfg: EngineConfig) -> [float] {
+    let mut pop = x
+    let mut settle_depth = 0.0 - 1.0
+    // depth 0: the conflicted starting population, no coupling applied yet.
+    let mut psi = tr_psi(pop, thr)
+    if _tr_absdev(psi, thr) < eps { settle_depth = 0.0 }
+    let mut d = 1
+    while d <= maxdepth {
+        if cfg.topo_couple { pop = topo_apply_op(pop, adj, alpha, op) }
+        psi = tr_psi(pop, thr)
+        if settle_depth < 0.0 && _tr_absdev(psi, thr) < eps { settle_depth = to_float(d) }
+        d = d + 1
+    }
+    return [settle_depth, psi]
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate
 //  (a_autonomy_over_hardcode). engine 은 exp 없음 → piecewise/linear (H_1465/H_1473 precedent).
