@@ -3704,6 +3704,11 @@ fn _bg_kv_new_batch_f32(nlay: int, cap: int, d: int, N: int) -> Map {
 // each output col's dot is the SAME reduction whether fused or split).
 fn _qkv_fused_on() -> bool { return env("HEXA_QKV_FUSED") != "" }
 
+// r7 epilogue-fusion gate: opt-in HEXA_EPI_FUSE. Fuses residual-add + the
+// following LayerNorm into one _hx_cuda_farr_resid_layernorm_f32_gpu launch
+// (byteeq-neutral — tool/epi_fuse_guard.cu proves fused==separate byte-for-byte).
+fn _epi_fuse_on() -> bool { return env("HEXA_EPI_FUSE") != "" }
+
 fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) -> int {
     let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
     let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"]); let block = to_int(W["block"])
@@ -3714,6 +3719,7 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
     let inWt_q = W["inWt_q"]; let inWt_k = W["inWt_k"]; let inWt_v = W["inWt_v"]
     let inWt = W["inWt"]; let inB_e = W["inB_e"]   // r6 fused-QKV packed weight + [block,3d] bias
     let qkv_fused = _qkv_fused_on()
+    let epi_fuse = _epi_fuse_on()
     let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
     let inBq_e = W["inBq_e"]; let inBk_e = W["inBk_e"]; let inBv_e = W["inBv_e"]
     let oB_e = W["oB_e"]; let m0B_e = W["m0B_e"]; let m2B_e = W["m2B_e"]
@@ -3742,7 +3748,11 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
 
     let mut Lr = 0
     while Lr < nlay {
-        let _ = farr_layernorm_f32_gpu(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, N, d, eps)
+        // r7: LN1 separate only for layer 0; for Lr>0 the previous layer's fused
+        // resid-B already wrote nrm=LN1(x). Unfused: always run LN1 here.
+        if !epi_fuse || Lr == 0 {
+            let _ = farr_layernorm_f32_gpu(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, N, d, eps)
+        }
         let Kl = to_int(Kc[Lr]); let Vl = to_int(Vc[Lr])
         let q = farr_zeros(N * d)
         if qkv_fused {
