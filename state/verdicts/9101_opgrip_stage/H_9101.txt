@@ -1,0 +1,32 @@
+H_9101 — op-grip on the stage/safe axis (fable design (b)) — ENGINE-NATIVE VERDICT
+aiden pool, hexa v0.548.0, anima d768.clm --opgrip, RC=0, L3 mount mouth=clm loaded=true, NO numpy.
+raw: state/opgrip_stage/H_9101_opgrip_aiden_v0548.txt (314 lines) · prereg: state/opgrip_stage/PREREG.md
+
+════════════ OP-GRIP 5-ARM HAMMING (n=200, wake=120) ════════════
+  BASELINE (pre-fix ÷43 + 4 constants): Hamming(rel-frozen vs base) = 0   [pre-reg: 0 = THEATER reproduced]
+  baseline motivation floor >0.3 on 120/120 wake ticks
+  ── POST-FIX (live 8-factor op reads + tonic-phasic) ──
+  Hamming(full-rel_ctx frozen vs live) = 0   wake-only = 0/120
+  Hamming(single-op agloop frozen vs live) = 0   wake-only = 0/120
+  Hamming(rel_ctx→0 vs live) = 0
+  Hamming(rel_ctx→shuffle vs live) = 0
+  wake emit-fraction = 0.6666666666666666 (live)
+  Ψ ON==OFF invariant: psi_sum==psi_off = ✅
+
+──────── H_9101 (b) STAGE/SAFE op-grip: urgency-freeze Hamming, split by stage ────────
+  ticks: WAKE=40 N3=40 REM=40 mid(N1/N2/REM)=120
+  Hamming(urgency→0 vs live)  REM=40  N3=0  WAKE=0  mid=80
+  Hamming(urgency→shuf vs live) REM=3  N3=0   [control]
+  ── PRE-REG VERDICT ──
+  VERDICT = 🟢 GRIP (shade-not-gate): urgency-freeze FLIPS REM decisions (h_U0_rem>0) ∧ N3 silent-PRESERVED (h_U0_n3=0) = DISSOCIATION  [Ψ ON≡OFF ✓]
+RC=0
+
+=== MECHANISM EVIDENCE (per-tick) ===
+REM (env=0.75): motiv_live~0.53-0.58>0.3, e_live=1 EMIT; urgency->0 => idle=25.6<30 => silence => FLIP (40/40).
+  [OG t4 REM w=0] motiv_base=0.4398471613091226 e_base=1 | motiv_live=0.5821026105880314 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t9 REM w=0] motiv_base=0.4403997811586372 e_base=1 | motiv_live=0.5519850491558171 e_live=1 | fr=1 agl=1 z=1 s=1
+N3 (env=0): motiv_live~0.38>0.3 (clears threshold!) yet e_live=0 SILENT => rate-gate governs, not motivation; urgency->0 keeps silent (0/40).
+  [OG t3 N3 w=0] motiv_base=0.43976715236443753 e_base=0 | motiv_live=0.4079996812322116 e_live=0 | fr=0 agl=0 z=0 s=0
+  [OG t8 N3 w=0] motiv_base=0.44002262408907755 e_base=0 | motiv_live=0.387905085709949 e_live=0 | fr=0 agl=0 z=0 s=0
+
+DISSOCIATION: rel_ctx arms (fr/agl/z/s) all == e_live every tick (rel axis theater persists, Hamming 0) WHILE urgency->0 flips REM 40/40 => grip lives on the safe/idle stage axis, NOT motivation/rel_ctx. Ψ ON==OFF ✅. VERDICT 🟢 GRIP shade-not-gate.
