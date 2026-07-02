@@ -3752,6 +3752,7 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
             let qkv = farr_zeros(N * 3 * d)
             let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(inWt[Lr]), 3 * d, qkv)
             let _ = _f32_resid(qkv, to_int(inB_e[Lr]), qkv, N * 3 * d)
+            let _ = _f32_mark(q, N * d)   // q is only written by copy_slice below → alloc its f32 mirror
             let mut na = 0
             while na < N {
                 let _ = farr_copy_slice_f32_gpu(qkv, na * 3 * d,         q,  na * d, d)
