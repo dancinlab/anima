@@ -13226,6 +13226,13 @@
         "value": "격리 engine-native GREEN(ablation·shuffle 통제 통과)이 실 emit 효과를 보장하지 않는다. 의식-op을 read-side 집계(rel_ctx 등 permutation-invariant soft-mean)에 fold하면 emit/silence는 상수 FLOOR+stage/safe가 지배 → op이 THEATER(zero grip). '계기판 vs faculty'는 emit 층에서 갈린다(H_9097).",
         "threshold": "의식/emit-affecting op을 'faculty'로 박제하기 전 THEATER GATE 필수: live decode에서 op을 freeze/zero/LCG-shuffle 해도 emit-bytes/silence Hamming=0이면 THEATER(read-only 계기판) 판정. faculty=① Hamming>0(grip) ∧ ② Ψ Φ-checksum 보존 ∧ ③ faculty-not-noise(variance-matched 대조 대비 downstream 상관 +0.15) 셋 다 통과.",
         "source": "core/engine_cli.hexa"
+      },
+      {
+        "id": "evaluate-hexa-2",
+        "state": "pos-conv",
+        "value": "anima evaluate --gen N이 canonical frozen gen(_g_default_gen/_default_gen=40)을 벗어나면 verdict가 frozen G0-G6 bar와 비교불가 — 긴 gen이 auto-regressive drift로 byte-garble 생성→G0 known-word-ratio 붕괴→G1/G6 cascade FAIL. clm303_clean 같은 sha(e807672)·같은 py엔진이 gen40=G0 5/5 PASS vs gen80=2/5 FAIL(엔진/모델 무죄, 순수 gen-parameter measurement artifact). verdict-integrity: divergence(G0 PASS→FAIL)→하네스(gen) 의심→확인. fix=canonical-gen guard(evaluate.py+.hexa 2-production lockstep): gen!=canonical이면 헤더 문구→NON-CANONICAL 경고 + CLOSURE→DIRECTIONAL 라벨 자동.",
+        "threshold": "재발조건: engine-native eval verdict 박제 전 gen==canonical(40) 확인. gen!=40 측정은 frozen bar 비교불가=DIRECTIONAL only(이제 코드 자동 라벨). 긴 gen이면 clm byte-LM 뒤쪽 garble→G0 인위 FAIL 정상거동.",
+        "source": "cli/evaluate.hexa"
       }
     ]
   }
