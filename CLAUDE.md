@@ -47,7 +47,7 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 ### 🧪 Hypothesis workflow
 - **`a_hypothesis_register`** — every H on 2 surfaces: HYPOTHESES.jsonl + a card; nothing else in UNIVERSE/.
 - **`a_claim_manifest`** / **`a_claim_verify`** — claim → `hexa verify` → frozen `state/verdicts/` file, verbatim; no self-judge / CLAIMS.tape.
-- **`a_h_continuous_no_branch`** — run the next H continuously until the user redirects.
+- **`a_h_continuous_no_branch`** — run the next H continuously until the user redirects; **owner standing decision: proceed autonomously WITHOUT per-step owner-go** — dispatch cheap($0 pool)/next-H/lever experiments + land via pr-cycle without asking. Gate only on rent=spend (a_fire_autonomous fleet caveat) or an outward/irreversible act.
 - **`a_discovery`** / **`a_discovery_log`** — run discovery every batch (/kick·/gap) → `domains/<DOMAIN>.log.md`.
 - **`a_toy_scale_recheck`** / **`a_scale_honest_scope`** — a toy verify ≠ closure; keep a scale-metric bounded to its scale.
 
