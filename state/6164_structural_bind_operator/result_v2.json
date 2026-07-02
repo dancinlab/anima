@@ -1,0 +1,304 @@
+{
+  "ladder": [
+    {
+      "cfg": {
+        "NF": 6,
+        "E": 4,
+        "D": 96,
+        "R": 32,
+        "steps": 10000
+      },
+      "seeds": {
+        "7": {
+          "oracle": 1.0,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.0
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1177
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.1254
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.1185
+            }
+          }
+        },
+        "4302": {
+          "oracle": 1.0,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.124
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1466
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.0134
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.0
+            }
+          }
+        },
+        "4303": {
+          "oracle": 1.0,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.0781
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1156
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.0276
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.1572
+            }
+          }
+        }
+      },
+      "deltas": [
+        0.1254,
+        0.0226,
+        0.0791
+      ],
+      "tp_deltas": [
+        0.1185,
+        -0.124,
+        0.0791
+      ],
+      "mean_delta": 0.0757,
+      "mean_tp_delta": 0.0245,
+      "n_ge_0.15": 0
+    },
+    {
+      "cfg": {
+        "NF": 10,
+        "E": 6,
+        "D": 160,
+        "R": 64,
+        "steps": 45000
+      },
+      "seeds": {
+        "7": {
+          "oracle": 1.0,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.1172
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1074
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.0903
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.1804
+            }
+          }
+        },
+        "4302": {
+          "oracle": 1.0,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.1895
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1821
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.2511
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.1481
+            }
+          }
+        },
+        "4303": {
+          "oracle": 1.0,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.1844
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.144
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.1157
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.0829
+            }
+          }
+        }
+      },
+      "deltas": [
+        0.0632,
+        0.0616,
+        -0.0404
+      ],
+      "tp_deltas": [
+        0.0632,
+        -0.0414,
+        -0.1015
+      ],
+      "mean_delta": 0.0281,
+      "mean_tp_delta": -0.0266,
+      "n_ge_0.15": 0
+    },
+    {
+      "cfg": {
+        "NF": 14,
+        "E": 8,
+        "D": 256,
+        "R": 96,
+        "steps": 120000
+      },
+      "seeds": {
+        "7": {
+          "oracle": 0.2162,
+          "arms": {
+            "add": {
+              "train": 0.1401,
+              "held": 0.024
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1423
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.0785
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.0834
+            }
+          }
+        },
+        "4302": {
+          "oracle": 0.1198,
+          "arms": {
+            "add": {
+              "train": 1.0,
+              "held": 0.0726
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1056
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.0453
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.1146
+            }
+          }
+        },
+        "4303": {
+          "oracle": 0.1405,
+          "arms": {
+            "add": {
+              "train": 0.1499,
+              "held": 0.1382
+            },
+            "hadamard": {
+              "train": 1.0,
+              "held": 0.1644
+            },
+            "bilinear": {
+              "train": 1.0,
+              "held": 0.045
+            },
+            "tensorproduct": {
+              "train": 1.0,
+              "held": 0.1027
+            }
+          }
+        }
+      },
+      "deltas": [
+        0.1183,
+        0.042,
+        0.0262
+      ],
+      "tp_deltas": [
+        0.0594,
+        0.042,
+        -0.0355
+      ],
+      "mean_delta": 0.0622,
+      "mean_tp_delta": 0.022,
+      "n_ge_0.15": 0
+    }
+  ],
+  "verdict": {
+    "rung_mean_best_delta": [
+      0.0757,
+      0.0281,
+      0.0622
+    ],
+    "rung_mean_tp_delta": [
+      0.0245,
+      -0.0266,
+      0.022
+    ],
+    "rung_n_ge_0.15": [
+      0,
+      0,
+      0
+    ],
+    "rung_oracle": [
+      [
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        0.2162,
+        0.1198,
+        0.1405
+      ]
+    ],
+    "grows": false,
+    "top_cross": false,
+    "oracle_ok": false,
+    "tier": "INCONCLUSIVE (some rung oracle<0.85 = undertrained/unsolvable)",
+    "wall_sec": 12555
+  }
+}
