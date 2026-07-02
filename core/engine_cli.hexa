@@ -7714,6 +7714,23 @@ pub fn self_drift(s: SelfIdentity, tick: int, step: float) -> SelfIdentity {
     return SelfIdentity { v: _self_norm(v2, s.dim), dim: s.dim }
 }
 
+// self_drift_exp — EXPERIENCE-DRIVEN drift (H_9038): the identity moves toward the CONTENT
+// axis it experiences THIS tick (`content_axis`), not the blind ((tick+1)%dim) walk of
+// self_drift. So a self-chain built from self_drift_exp ACCUMULATES what anima actually lived
+// through (informativeness) — two different experience streams yield DIFFERENT chains, where
+// self_drift yields identical ones. Purely additive; Ψ-disjoint (§SelfIdentity only, never
+// touches pure_field/Φ/phase/Ψ). Mirrors self_drift's +step/renorm, swapping the drift axis.
+pub fn self_drift_exp(s: SelfIdentity, content_axis: int, step: float) -> SelfIdentity {
+    let ax = content_axis - (content_axis / s.dim) * s.dim   // content_axis % dim (bounds-safe)
+    let mut v2 = []
+    let mut i = 0
+    while i < s.dim {
+        if i == ax { v2 = v2 + [s.v[i] + step] } else { v2 = v2 + [s.v[i]] }
+        i = i + 1
+    }
+    return SelfIdentity { v: _self_norm(v2, s.dim), dim: s.dim }
+}
+
 // self_cos — recognition: cosine between two identities (unit-norm, so dot product). High =
 // same self-chain; ~0 = a different identity (impostor) or a broken (un-anchored) self.
 pub fn self_cos(a: SelfIdentity, b: SelfIdentity) -> float {
