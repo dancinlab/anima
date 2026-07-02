@@ -533,7 +533,7 @@
                   {
                     "name": "op-grip — H_9106 efferent seam (c) GROUNDING-selection follow-on to H_9103: winner=argmin conflict incl §Immune margin + 독립 held-out anchor-LCS (🔴 byte-grip real·NOT conflict-gated·grounding floor engine-native, id H_9106)",
                     "id": "efferent-grounded-h9106",
-                    "detail": "ops bytegpt_ce_ranged+conflict_drives_live+generate_deliberate+brain_emit_deliberate. d768.clm own-GEMM 2host: D1 HIGH byte-grip REAL(20/20·18/20)∧LOW 11/11 diff→diss FAIL(c0 anchor-invariant)·D2 grounding Δ+0.028/+0.003≪0.10 FAIL→RED(측정 D1+D2 결정;D3-5 pool-reboot 미완). grounding-sel도 efferent floor=H_9103 확장. rent 이중차단(hexa cloud+c11)→pool. card=H_9106."
+                    "detail": "ops bytegpt_ce_ranged+conflict_drives_live+generate_deliberate+brain_emit_deliberate. d768.clm own-GEMM 2host: D1 HIGH byte-grip REAL(20/20·18/20)∧LOW 11/11 diff→diss FAIL(c0 anchor-invariant)·D2 grounding Δ+0.028/+0.003≪0.10 FAIL→RED(측정 D1+D2 결정;D3-5 미완=구조적 infra 벽 H_9107, pool-reboot 아님: clm303 재측정 시 gen_auto_ideate per-candidate 재적재 RSS 폭증으로 rent pod 3개(det-CPU 2 + GPU own-GEMM 1) 전부 SUMMARY 전 사망, #2835·GPU pod 도 non-rescuing). grounding-sel도 efferent floor=H_9103 확장. card=H_9106."
                   }
                 ]
               }
@@ -13266,7 +13266,7 @@
       {
         "id": "gen-auto-ideate-reload-cost-scale-1",
         "state": "pos-conv",
-        "value": "H_9107: generate_deliberate 의 best-of-K(K∈{1..4}) + efferent_harness.hexa 자체 D4 shuffle-control 루프가 HIGH seed 1개당 gen_auto_ideate(ckpt,...) 를 최대 ~6-8회 재호출 — 매 호출이 harness 시작시 1회 로드한 backend 재사용 없이 ckpt 를 경로에서 재적재하는 듯한 거동(RSS 가 지속 ~4-5GB/min 증가, d768.clm 4.46MB 참조에선 무해했으나 clm303_clean.clm 168MB·~303M param 프로덕션 스케일에선 rent pod 2개(220GB·176GB RAM) 모두 HI[0] 완주 전 메모리 고갈/provider GONE). engine-native det-CPU 대형 ckpt 다중-candidate 하네스는 이 재적재비용 때문에 세션내 완주 불가.",
+        "value": "H_9107: generate_deliberate 의 best-of-K(K∈{1..4}) + efferent_harness.hexa 자체 D4 shuffle-control 루프가 HIGH seed 1개당 gen_auto_ideate(ckpt,...) 를 최대 ~6-8회 재호출 — 매 호출이 harness 시작시 1회 로드한 backend 재사용 없이 ckpt 를 경로에서 재적재하는 듯한 거동(RSS 가 지속 ~4-5GB/min 증가, d768.clm 4.46MB 참조에선 무해했으나 clm303_clean.clm 168MB·~303M param 프로덕션 스케일에선 rent pod 3개(220GB·176GB det-CPU + 137GB GPU own-GEMM RTX5090) 모두 HI[0] 완주 전 메모리 고갈/provider GONE). engine-native 대형 ckpt 다중-candidate 하네스는 이 재적재비용 때문에 세션내 완주 불가. **3rd pod(43644174, hexa v0.577.0 CUDA, [OWN-GEMM-FIRED] 실발화, #2835 W-hoist present)가 두 negative 확정: (a) blowup 은 det-CPU/non-cuda 아님=GPU own-GEMM 에서도 동일재현(29.5GB@2min≈pod2 27.5GB@2.4min)=substrate-무관, (b) #2835(clm_ce_ranged CE loads hoist)은 이 leak 미해결=gen_auto_ideate candidate-gen 재적재는 별개 경로. ⇒ GPU/stable/dedicated pod + #2835 전부 non-rescuing; 진짜 fix=core/generator.hexa 의 gen_auto_ideate mouth-load hoist(설계변경, execution-only 밖).",
         "threshold": "재발조건: gen_auto_ideate 를 seed 당 3회 이상 호출하는 새 하네스를 production ckpt(수백MB+)로 발사하기 전, backend 재사용 캐싱이 core/generator.hexa 에 있는지 먼저 확인 — 없으면 RSS 선형증가로 대형 ckpt 는 첫 seed 도 못 끝냄(rent pod 크기 무관, ckpt 배율만큼 재현). 이 캐싱-미적용 상태는 이 task 의 execution-only 스코프상 미수정(core/generator.hexa 소유자 follow-on).",
         "source": "state/opgrip_efferent/efferent_harness.hexa"
       }
