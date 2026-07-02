@@ -1987,6 +1987,170 @@ pub fn bytegpt_forward_last_ranged_mm(path: string, ids: int, T: int) -> int {
 }
 
 // ════════════════════════════════════════════════════════════════════════
+// H_9102 (fable design (c) · op-grip EFFERENT) — RANGED per-position CE.
+//
+// bytegpt_ce_ranged — mean next-byte CROSS-ENTROPY over a token sequence, the
+// FORWARD-CE fluency read the efferent seam needs (a_drive). Generalizes
+// bytegpt_forward_last_ranged_mm: same GPU own-GEMM trunk (RFC-040, byte-id CPU
+// fallback), but instead of reading only the LAST position's logits it reads
+// EVERY position and computes -log softmax(logits[t])[ids[t+1]], averaged over
+// t = 0..T-2. Numerically-stable manual log-sum-exp (NOT dt_ln — the gotcha clamp
+// at ~5.14 would floor the real byte-CE). READ-only over the file weights; no
+// generation, no state. a_engine_native_learning: this is the ENGINE forward.
+pub fn bytegpt_ce_ranged(path: string, ids: list) -> Map {
+    let T = len(ids)
+    if T < 2 { return #{ "ok": false, "ce_mean": 0.0, "reason": "T<2 (need ≥2 tokens)" } }
+    let ida = farr_zeros(T)
+    let mut ii = 0
+    while ii < T { let _ = farr_set(ida, ii, to_float(to_int(ids[ii]))); ii = ii + 1 }
+
+    let hdr = read_bytes_at(path, 0, 20)
+    let vocab = _bg_rd_u32(hdr, 0)
+    let d     = _bg_rd_u32(hdr, 4)
+    let nlay  = _bg_rd_u32(hdr, 8)
+    let nh    = _bg_rd_u32(hdr, 12)
+    let block = _bg_rd_u32(hdr, 16)
+    let mut off = 20
+
+    let tok = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr_at(path, off, block * d); off = off + block * d * 4
+
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ida, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c,
+                             farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+    let _ = farr_free(tok); let _ = farr_free(pos)
+
+    let nrm = farr_zeros(T * d)
+    let aout = farr_zeros(T * d)
+    let h4 = farr_zeros(T * 4 * d)
+    let mlpo = farr_zeros(T * d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        let ln1w = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln1b = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let inW  = _bg_rd_farr_at(path, off, 3 * d * d); off = off + 3 * d * d * 4
+        let inB  = _bg_rd_farr_at(path, off, 3 * d); off = off + 3 * d * 4
+        let oW   = _bg_rd_farr_at(path, off, d * d); off = off + d * d * 4
+        let oB   = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln2w = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln2b = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let m0W  = _bg_rd_farr_at(path, off, 4 * d * d); off = off + 4 * d * d * 4
+        let m0B  = _bg_rd_farr_at(path, off, 4 * d); off = off + 4 * d * 4
+        let m2W  = _bg_rd_farr_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
+        let m2B  = _bg_rd_farr_at(path, off, d); off = off + d * 4
+
+        let inWt = _bg_transpose(inW, 3 * d, d)
+        let oWt  = _bg_transpose(oW, d, d)
+        let m0Wt = _bg_transpose(m0W, 4 * d, d)
+        let m2Wt = _bg_transpose(m2W, d, 4 * d)
+
+        _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
+        _bg_mha_mm(nrm, inWt, inB, oWt, oB, aout, T, d, nh)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+
+        _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
+        _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
+        let mut i2 = 0
+        while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+
+        let _ = farr_free(ln1w); let _ = farr_free(ln1b); let _ = farr_free(inW); let _ = farr_free(inB)
+        let _ = farr_free(oW); let _ = farr_free(oB); let _ = farr_free(ln2w); let _ = farr_free(ln2b)
+        let _ = farr_free(m0W); let _ = farr_free(m0B); let _ = farr_free(m2W); let _ = farr_free(m2B)
+        let _ = farr_free(inWt); let _ = farr_free(oWt); let _ = farr_free(m0Wt); let _ = farr_free(m2Wt)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    let lnfw = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+
+    // per-position CE: predict ids[t+1] from position t (t = 0..T-2).
+    let row = farr_zeros(d)
+    let nrmrow = farr_zeros(d)
+    let mut ce_sum = 0.0
+    let mut np = 0
+    let mut tt = 0
+    while tt < T - 1 {
+        let base = tt * d
+        let mut cc = 0
+        while cc < d { let _ = farr_set(row, cc, farr_get(x, base + cc)); cc = cc + 1 }
+        _bg_layernorm(row, lnfw, lnfb, nrmrow, 1, d)
+        // logits + numerically-stable log-sum-exp
+        let tgt = to_int(farr_get(ida, tt + 1))
+        let mut mx = 0.0 - 1.0e30
+        let mut logit_tgt = 0.0
+        let mut k = 0
+        let logrow = farr_zeros(vocab)
+        while k < vocab {
+            let mut acc = 0.0
+            let mut c2 = 0
+            while c2 < d { acc = acc + farr_get(head, k * d + c2) * farr_get(nrmrow, c2); c2 = c2 + 1 }
+            let _ = farr_set(logrow, k, acc)
+            if acc > mx { mx = acc }
+            if k == tgt { logit_tgt = acc }
+            k = k + 1
+        }
+        let mut se = 0.0
+        let mut k2 = 0
+        while k2 < vocab { se = se + exp(farr_get(logrow, k2) - mx); k2 = k2 + 1 }
+        let lse = mx + log(se)
+        ce_sum = ce_sum + (lse - logit_tgt)
+        let _ = farr_free(logrow)
+        np = np + 1
+        tt = tt + 1
+    }
+    let _ = farr_free(x); let _ = farr_free(lnfw); let _ = farr_free(lnfb); let _ = farr_free(head)
+    let _ = farr_free(row); let _ = farr_free(nrmrow); let _ = farr_free(ida)
+    let ce_mean = ce_sum / to_float(np)
+    return #{ "ok": true, "ce_mean": ce_mean, "positions": np }
+}
+
+// clm_ce_ranged — CONV-mouth twin of bytegpt_ce_ranged: mean next-byte CE over a
+// token sequence for a v0.2/v0.3 .clm (the mouth d768.clm uses). Reuses the loaded
+// CLMConvMoE forward (_clmd_load + _clmd_fwd_logits_sc) + nn_ce_loss_allpos over a
+// single T-window (no striding — the exact candidate bytes). READ-only, no gen.
+pub fn clm_ce_ranged(path: string, ids: list) -> Map {
+    set_deterministic(true)
+    let T = len(ids)
+    if T < 2 { return #{ "ok": false, "ce_mean": 0.0, "reason": "T<2" } }
+    if !clm_decodable(path) {
+        return #{ "ok": false, "ce_mean": 0.0, "reason": "not v0.2-decodable" }
+    }
+    let W = _clmd_load(path)
+    let V = to_int(W["V"])
+    let logits = t_zeros(T * V)
+    let sc = _clmd_scratch_new(W, T)
+    let tok = t_zeros(T); let tgt = t_zeros(T)
+    let mut p = 0
+    while p < T { t_set(tok, p, to_float(to_int(ids[p]))); p = p + 1 }
+    // target[t] = ids[t+1]; last position's target is unused (masked by using T-1 below).
+    let mut q = 0
+    while q < T - 1 { t_set(tgt, q, to_float(to_int(ids[q + 1]))); q = q + 1 }
+    _clmd_fwd_logits_sc(W, sc, tok, logits, T)
+    // CE over the first T-1 positions (predicting ids[1..T-1]).
+    let ce = nn_ce_loss_allpos(logits, tgt, T - 1, V)
+    _clmd_scratch_free(sc)
+    _clmd_weights_free(W)
+    t_free(logits); t_free(tok); t_free(tgt)
+    return #{ "ok": true, "ce_mean": ce, "positions": T - 1 }
+}
+
+// ════════════════════════════════════════════════════════════════════════
 // LOAD-ONCE forward (R1 full-depth + R2 generator slot + R3 grounding).
 //
 // bytegpt_forward_last re-reads the WHOLE binary every call — fine for a single

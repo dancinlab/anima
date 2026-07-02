@@ -1,0 +1,54 @@
+=== H_9106 EFFERENT SEAM (c, GROUNDING-selection) — engine-native, frozen-first (PREREG.md) ===
+Design (c) fable#5 / H_9103 explicit follow-on ("selection=CE only; grounding-based=follow-on").
+Winner = argmin conflict_scalar (fluency forward-CE AND §ImmuneMemory recall margin), NOT fluency-only.
+Held-out D2 = independent anchor-LCS ground_overlap (orthogonal to the conflict selection key).
+REAL d768.clm (CONV int4 CLMConvMoE, own-GEMM GPU [OWN-GEMM-FIRED] confirmed BOTH hosts). NO numpy/torch/mirror (grep-clean).
+
+--- MEASURED (two independent pool hosts) ---
+[aiden hexa v0.548.0]  HIGH n=20: byte-diff=20/20 · mean go_on=0.0432 go_off=0.0152 D2_delta=+0.0280 · confpre=0.5233(const, K=3)
+                       LOW  n=11 (pre-reboot): byte-diff=11/11 · K=3 (all deliberated)
+[summer hexa v0.574.1] HIGH n=20: byte-diff=18/20 · mean go_on=0.0508 go_off=0.0477 D2_delta=+0.0030 · confpre~0.89-0.97(const, K=4)
+                       LOW: NOT REACHED (host rebooted mid-run)
+
+--- FROZEN BARS (PREREG) vs MEASURED ---
+D1 byte dissociation  [bar HIGH>=12/20 AND LOW==0/20]
+   HIGH: 20/20 (aiden), 18/20 (summer) -> HIGH>=12 SATISFIED (byte-grip REAL)
+   LOW : 11/11 diff (aiden) -> LOW==0 VIOLATED -> D1 = FAIL (byte change is UNCONDITIONAL, not conflict-gated)
+D2 held-out grounding [bar Delta>=+0.10]
+   Delta=+0.0280 (aiden), +0.0030 (summer) -> << +0.10 -> D2 = FAIL (grounding-aware selection does NOT lift held-out grounding)
+D3 decision-Psi Hamming [bar ==0]  -> NOT COMPLETED (D3 runs after all 20 LOW; both hosts rebooted before D3)
+D4 shuffle collapse                -> NOT COMPLETED (infra)
+D5 ablation regression             -> NOT COMPLETED (infra; note LOW got K=4/3 not K=1, so the intended K=1 regression guard did not test as designed)
+
+--- MECHANISM (from measured constants) ---
+go_off constant per host (aiden 0.0152 / summer 0.0477) => c0 (single-candidate generate()) is IDENTICAL across all phase-word seeds
+  => the small reference d768 greedy c0 is context/anchor-INVARIANT.
+confpre constant per host (aiden 0.5233 / summer ~0.92) => conflict does NOT vary with the HIGH/LOW (anchor) condition
+  => the intended HIGH/LOW conflict-conditioning did NOT materialize on d768 (anchor presence does not lower conflict).
+=> deliberation fires unconditionally (K>1 in BOTH groups) and CHANGES emit bytes, but NOT conflict-gated,
+   and the winner (min conflict incl. grounding margin) does NOT raise held-out anchor-overlap.
+
+--- VERDICT (frozen rule: GREEN iff D1&D2&D3&D4&D5; RED iff LOW>0 OR D2 fails OR decision leaked) ---
+RESULT: RED (frozen bar) — byte-grip REAL (deliberation changes emit bytes, own-GEMM engine-native, two hosts)
+        but (a) NOT conflict-conditional (LOW 11/11 diff = c0 context-invariant on d768) and
+        (b) grounding-aware selection does NOT lift held-out grounding (D2 Delta +0.003..+0.028 << +0.10).
+        RED is DETERMINED by the two measured core falsifiers (D1 LOW>0, D2<bar) — GREEN is impossible
+        (requires all 5); D3/D4/D5 (infra-blocked) cannot rescue a RED. NOT tuned (no CE_REF/M_REF/bar moves).
+        Psi-safety is by-construction (brain_emit_deliberate uses the SAME brain_decide_anchored; bytes change
+        only AFTER the emit decision) — matching H_9103's F2-by-construction argument — but the empirical D3
+        Hamming was not captured (infra); a full D3/D4/D5 run on a stable host is the follow-on.
+
+CONVERGENCE: extends & confirms H_9103 (fluency-selection efferent, summer v0.574) 🟠 byte-grip real / faculty
+        FALSIFIED. This grounding-selection follow-on (the axis H_9103 flagged open) ALSO floors on the beneficial
+        axis => trilogy (c)=WHAT is byte-grip-real / faculty-floor under BOTH selection strategies = trunk-objective
+        (CE) wall reappears at the efferent layer regardless of selection key. Trilogy: WHEN/WHETHER(H_9101 🟢) ·
+        HOW-MUCH(H_9100 🔴) · WHAT(H_9103 🟠 fluency + H_9106 🔴 grounding).
+
+--- INFRA CAVEAT (c9, honest) ---
+Owner directed a RENTED GPU pod (pool unstable). Rent path was BLOCKED two ways: (i) mac `hexa cloud` fails to
+compile (stale runtime.a: `_rt_format_float_native` linker error), (ii) commons c11 blocks raw runpodctl/vastai.
+So measurement ran engine-native on pool (byte-Hamming is CPU/GPU byte-identical => substrate-agnostic). BOTH
+pool hosts rebooted mid-run (aiden ~03:45 @7min-uptime, summer ~04:25 @18min-uptime) — the full ~60-90min run
+exceeds the ~25min reboot interval => LOW/D3 never completed on either. The worktree was also swept by a parallel
+agent (shared-worktree-collision); code recovered from summer's rsync copy. Follow-on = full D1-D5 on a stable
+rented pod once the rent path is unblocked (fix mac hexa cloud OR sanctioned pod dispatch).
