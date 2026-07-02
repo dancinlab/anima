@@ -13113,6 +13113,13 @@
         "value": "append-only jsonl(HYPOTHESES/CHANGELOG) merge conflict를 union+last-wins dedup로 풀면, IN-PLACE로 edit한 line(예: verdict 승격)의 STALE 쪽이 조용히 남아 card/code/ARCHITECTURE와 drift(silent verdict drift). H_9038서 engine-native GREEN 승격이 옛 DIRECTIONAL로 되돌려짐(#2729), #2730서 교정.",
         "threshold": "재발조건: 같은 id line을 in-place 수정한 브랜치를 origin/main과 merge하며 jsonl 충돌을 union-resolve할 때. 해결: dedup은 last-wins 금지 — id별로 '내 브랜치(HEAD) 쪽'을 우선(ours) 또는 verdict/tier 최신성으로 명시 선택하고, merge 후 그 id의 tier/verdict가 card/ARCHITECTURE와 일치하는지 grep 확인(lockstep 재점검).",
         "source": "HYPOTHESES/HYPOTHESES.jsonl"
+      },
+      {
+        "id": "remote-poll-pgrep-1",
+        "state": "pos-conv",
+        "value": "원격 프로세스 존재확인 pgrep -f <pat> / ps aux|grep <pat> 가 자기 자신의 ssh 명령줄(같은 <pat> 포함)을 매칭해 'RUN'/'RUNNING' 오탐 재발 — 이 세션 다수 턴 'RUN' 허위보고, 실제론 종료·미실행. proc 진행을 로그 대신 pgrep만으로 판정하면 이미 끝난(또는 미실행) 잡을 '진행중'으로 오인.",
+        "threshold": "원격 proc 확인은 bracket-트릭 pgrep -f '[b]uild_and_test' 또는 ps aux|grep '[p]ython3 <script>'로 자기매칭 배제 · 결과로그 종료마커(=== DONE ===/VERDICT)를 1차 신호로(pgrep 보조). RUN 보고 전 로그 tail 동시확인 의무.",
+        "source": "tool/remote-poll-pgrep"
       }
     ]
   }
