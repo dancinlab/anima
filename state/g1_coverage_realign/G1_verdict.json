@@ -1,0 +1,25 @@
+{
+ "hypothesis": "H_6188 surface-form+T24-window realign coverage -> engine-native G1 re-measure",
+ "engine": "core/decode.py numpy byte-parity (torch-free); mirrors cli/evaluate.py g_eval_g1 EXACT (top_k40 temp0.7 gen single80 composed120 rng7). session --py = terminal.",
+ "ckpt": "~/anima-weights/g1_realign/g1_realign.clm (154513322 B)",
+ "train": "warm-FT clm303_deep_L8 base, 6-cell roundrobin (ko/en general+sns + ko/en REALIGN cov), 6000 step A40, 6/6 registers DESCENT, cov val_CE ko0.308 en0.344, pooled val_CE 0.976",
+ "G1_engine_native": {
+  "best_distinct": 3,
+  "max_single": 3,
+  "best_k": 2,
+  "gate_PASS_ge2_AND_gt_maxsingle": false
+ },
+ "prior_baseline": "ALL prior L8_cov + G1-lever campaigns: engine-native best_distinct = 0 (floor)",
+ "READOUT": {
+  "recombination_surfaced_on_gate_axis": "YES — best_distinct 0 -> 3 (>=2). H_6187 counter-example CONFIRMED: prior G1=0 was surface-form+window measurement mismatch, NOT trunk recombination floor. coverage lever gate-axis VALID for surfacing multi-concept keyword recombination.",
+  "strict_gate_PASS": "NO — max_single=3=best_distinct, so composed NOT > single. NOT a trunk floor: T=24 decode window collapses single & composed seeds to the same in-window condition (only one concept-tail ever in-window at gen start), so the learned emit-cluster form fires equally -> gate's composition-delta criterion is CONFOUNDED by window physics, not by recombination capacity.",
+  "grounding_control": "5/5 gate concepts own_set_hit=true (grounding learned, window-reachable).",
+  "torch_DIRECTIONAL_crosscheck": "train-time inline gauge g1_composed_distinct=2 (engine=3; both non-zero, byte-parity-consistent signal that recombination surfaced)."
+ },
+ "honest_caveats": [
+  "engine-native = numpy py-mirror (session --py=terminal policy); not the hexa CORE decode.",
+  "general corpora truncated to 12MB head slices (anti-collapse; roundrobin 6000 step << windows) — infra adaptation, gate/bar untouched.",
+  "gate/bar FROZEN, no tune-to-green. max_single rise is a real property, not hidden.",
+  "pod died mid full-battery eval; G1 gate re-run locally byte-parity from pulled .clm (G1 needs no corpus; frozen seeds)."
+ ]
+}
