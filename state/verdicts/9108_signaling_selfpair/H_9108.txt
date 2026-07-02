@@ -1,0 +1,27 @@
+
+=== H_9108 2-ANIMA SIGNALING GAME + SELF-PAIR CONTROL (A4) — engine-native ===
+K(signals)=6 M(targets)=36 n_train=24 held_out=12 LR_V=0.1
+
+[communication] B_success held-out : PAIR=0.08333333333333333  SELFPAIR=0.25  (selfpair should be >= pair)
+                A_selfdecode        : PAIR=0.25  SELFPAIR=0.25
+
+[PAIR — exogenous knowledge]
+  rho_conseq = corr(V_conseq, B_success) [held-out] = -0.24500933858592397
+  rho_self   = corr(V_self,   B_success)            = -0.3436404224603844
+  rho_shuf   = corr(V_shuf,   B_success)            = -0.34386301249485707
+  rho_noise  = corr(noise-V,  B_success)            = -0.24622617658090598
+  G_pair = rho_conseq - rho_self                    = 0.09863108387446043   bar>=0.15 -> FAIL
+  rho_conseq - rho_noise                            = 0.0012168379949820118   bar>=0.15 -> FAIL
+  rho_conseq - rho_shuf                             = 0.0988536739089331   bar>=0.15 -> FAIL
+
+[SELFPAIR — clone control (B==A: B_success === A_selfdecode, exact tautology)]
+  rho_conseq = -0.696784268939754  rho_self = -0.696784268939754
+  G_selfpair = 0.0   (must be <=0.05: exogenous advantage vanishes when B==A) -> OK
+
+[descriptive] D1 = rho_conseq_pair - rho_conseq_selfpair = 0.45177493035383
+[Psi guard]   psi_sum ON==OFF byte-identical + signal-seq V-independent -> OK
+
+VERDICT: 🔴 CEILING / DPI — exogenous observation buys NO held-out advantage (G_pair=0.09863108387446043 < 0.15).
+  A cannot predict B's exogenous success beyond its own self-model: the 2-anima signal carries no
+  faculty-usable exogenous information at this coupling. The DPI meta-law RE-APPEARS at the signaling
+  layer (consistent with H_9104 autogenous ceiling). Honest 🔴 (self-pair-controlled, bar frozen).
