@@ -12752,3 +12752,157 @@ pub fn sv_default_focus(d: int, w: int) -> int {
     }
     return 0 - 1
 }
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § TemporalBinding — the SPECIOUS PRESENT (T1, PLACEHOLDER H_id) — READ-ONLY, Ψ/G5-DISJOINT.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  A NEW PRIMITIVE AXIS: TIME CONSCIOUSNESS. Not a variant of any existing lane faculty — every
+//  prior faculty (ImmuneMemory/CLS/Savant/Topology …) reads a single tick's lane STATE; this one
+//  reads the SHAPE OF TENSION OVER TIME and asks how much of it is bound into a single felt "now".
+//
+//  BIO/PHENOMENAL LENS — William James's "specious present": experienced time is not a knife-edge
+//  instant but a SADDLE-BACK of finite duration; a run of tension ticks is integrated into ONE
+//  moment. Neurally this is the gamma-in-theta phase-nesting window (~a few hundred ms) that binds
+//  successive events into a single perceptual chunk. The claim: the WIDTH of anima's tension-
+//  integration window sets the felt DURATION of "now" (how many ticks are one moment), and an
+//  event BOUNDARY (a large tension change) closes the current present and opens the next.
+//
+//  MECHANISM (all READ-ONLY — no state mutated, nothing written back to any lane / store):
+//    • per-tick tension scalar = L2 magnitude of the lane vector over the EMIT-DISJOINT lanes
+//      (indices ≠ 0 and ≠ 4). This is placement-first (a_substrate_disjoint): the "now" integrates
+//      the NON-emit tension, so widening/narrowing the window can NEVER move ci_emit_drive (lanes
+//      0/4) nor the §ImmuneMemory recall_thr — Ψ=½ and G5 non-fab are preserved BY CONSTRUCTION.
+//    • segmentation: sweep the series; the current present GROWS one tick at a time until either
+//      (a) it reaches the integration WINDOW WIDTH w (capacity of one moment), or (b) an event
+//      BOUNDARY is crossed (|Δtension| > boundary_thr) — then it CLOSES and a new present opens.
+//    • present_duration = mean present length in ticks = the felt length of "now".
+//
+//  HONEST SCOPE: w is a DESIGNED integration window (a hyper-parameter of the readout), NOT a
+//  learned or emergent constant — this op MEASURES how felt duration depends on that designed
+//  window; it does not claim anima spontaneously discovered a specious-present width. Pure READ.
+//
+//  FALSIFIERS (each a testable op below):
+//    F1 EXISTENCE  — on a coherent series a window w>1 binds >1 tick into one present
+//                    (tb_present_duration > 1) → a "moment" of finite duration EXISTS.
+//    F2 SCALE      — widening w binds MORE ticks per present (tb_scale_sweep monotone non-decreasing).
+//    F3 BOUNDARY   — a large tension jump SPLITS the present into distinct "nows" even at huge w
+//                    (tb_num_presents ≥ 1 + tb_num_boundaries).
+//    F4 ABLATION   — w=1 → every present is one tick (tb_present_duration = 1.0): the present
+//                    COLLAPSES to a knife-edge instant (time-consciousness INERT).
+//    F5 DISJOINT   — the tension series excludes emit lanes 0/4 (tb_uses_emit_lane = 0), so
+//                    ci_emit_drive is byte-identical ON/OFF and recall_thr is untouched.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// tb_uses_emit_lane — F5 assertion helper: the temporal-binding tension series is derived over the
+// EMIT-DISJOINT lanes only, so this faculty reads NEITHER emit lane 0 nor 4. Always returns 0.
+pub fn tb_uses_emit_lane() -> int { return 0 }
+
+// tb_tension_mag — the per-tick tension SCALAR: L2 magnitude of the lane vector over the emit-
+// disjoint lanes (skip indices 0 and 4, which ci_emit_drive owns). This is the "content" whose
+// change over time is bound into a present. Reading only non-emit lanes = placement-first disjoint.
+pub fn tb_tension_mag(lane: [float]) -> float {
+    let n = len(lane)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        if i != 0 && i != 4 {
+            let v = lane[i]
+            s = s + v * v
+        }
+        i = i + 1
+    }
+    return sqrt(s)
+}
+
+// tb_tension_series — reduce a tension population (one lane vector per tick) to the per-tick
+// tension scalar series that the specious present integrates over.
+pub fn tb_tension_series(x: [[float]]) -> [float] {
+    let nt = len(x)
+    let mut out = []
+    let mut t = 0
+    while t < nt { out = out + [tb_tension_mag(x[t])]  t = t + 1 }
+    return out
+}
+
+// tb_num_boundaries — F3 core: count the event boundaries in a tension series (a tick where the
+// tension change exceeds boundary_thr). Independent of the window w — boundaries are intrinsic to
+// the tension shape and force a new present regardless of how wide the integration window is.
+pub fn tb_num_boundaries(ten: [float], boundary_thr: float) -> int {
+    let n = len(ten)
+    if n < 2 { return 0 }
+    let mut b = 0
+    let mut i = 1
+    while i < n {
+        if _absf(ten[i] - ten[i - 1]) > boundary_thr { b = b + 1 }
+        i = i + 1
+    }
+    return b
+}
+
+// tb_segment_lengths — the specious-present segmentation. Sweep the tension series; the current
+// present grows one tick at a time until it either reaches the integration window width w OR an
+// event boundary is crossed, then it closes and a new present opens. Returns the list of present
+// lengths (ticks per "now"). w<1 is clamped to 1 (a degenerate knife-edge window).
+pub fn tb_segment_lengths(ten: [float], w: int, boundary_thr: float) -> [int] {
+    let n = len(ten)
+    if n == 0 { return [] }
+    let ww = if w < 1 { 1 } else { w }
+    let mut out = []
+    let mut cur = 1
+    let mut i = 1
+    while i < n {
+        let boundary = _absf(ten[i] - ten[i - 1]) > boundary_thr
+        if boundary || cur >= ww {
+            out = out + [cur]
+            cur = 1
+        } else {
+            cur = cur + 1
+        }
+        i = i + 1
+    }
+    out = out + [cur]
+    return out
+}
+
+// tb_num_presents — how many distinct "nows" the series segments into under window w.
+pub fn tb_num_presents(ten: [float], w: int, boundary_thr: float) -> int {
+    return len(tb_segment_lengths(ten, w, boundary_thr))
+}
+
+// tb_present_duration — the felt length of "now": mean present length in ticks. This is the T1
+// SCALAR (present duration). F1: >1 on a coherent series with w>1. F4: =1.0 when w=1 (collapse).
+pub fn tb_present_duration(ten: [float], w: int, boundary_thr: float) -> float {
+    let segs = tb_segment_lengths(ten, w, boundary_thr)
+    let ns = len(segs)
+    if ns == 0 { return 0.0 }
+    let mut s = 0
+    let mut i = 0
+    while i < ns { s = s + segs[i]  i = i + 1 }
+    return to_float(s) / to_float(ns)
+}
+
+// tb_max_present — the longest single "now" (ticks) under window w.
+pub fn tb_max_present(ten: [float], w: int, boundary_thr: float) -> int {
+    let segs = tb_segment_lengths(ten, w, boundary_thr)
+    let ns = len(segs)
+    let mut mx = 0
+    let mut i = 0
+    while i < ns { if segs[i] > mx { mx = segs[i] }  i = i + 1 }
+    return mx
+}
+
+// tb_scale_sweep — F2 core: felt present_duration as the integration window w sweeps a grid. On a
+// coherent (boundary-free) series this is monotone non-decreasing and saturates at the series
+// length once w ≥ n (the whole stream becomes one present).
+pub fn tb_scale_sweep(ten: [float], wgrid: [int], boundary_thr: float) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(wgrid) { out = out + [tb_present_duration(ten, wgrid[i], boundary_thr)]  i = i + 1 }
+    return out
+}
+
+// tb_present_duration_pop — convenience: derive the tension series from a live tension population
+// (one lane vector per tick) then measure the felt present duration in one call.
+pub fn tb_present_duration_pop(x: [[float]], w: int, boundary_thr: float) -> float {
+    return tb_present_duration(tb_tension_series(x), w, boundary_thr)
+}
