@@ -16,3 +16,7 @@ best-binder − additive delta = +0.050/+0.054/+0.071/+0.109/+0.004, n(Δ≥+0.1
 ## kill / 관련
 - kill: best-binder가 additive를 +0.15 미달로만 상회 → structural readout-bind는 cheap-scale lever 아님(confirmed).
 - 측정 = torch mirror DIRECTIONAL. 관련 [[substrate-framebreak-g1-combination-operator]] · H_1840 γ · H_6161 · H_6162 · H_1824.
+
+## GPU SCALE-LADDER (owner go 2026-07-02) — 🧱 FLOOR
+
+🧱 DIRECTIONAL-FLOOR — cheap-gate(0/5) + owner-authorized GPU SCALE-LADDER(aiden RTX5070 $0, 2026-07-02) 둘 다 FLOOR. scale-ladder(add/hadamard/bilinear/full-tensorproduct × 3 rung × 3 seed): 깨끗한 rung(oracle=1.0)에서 tensor-product delta +0.024(rung0)→−0.027(rung1) = 성장 안 함·음수화, +0.15 미도달. rung2(D256)=undertrained(oracle0.12-0.22) INCONCLUSIVE지만 clean-rung 추세가 이미 scaling 가설 반증. H_6164 cheap 'TP 일관신호'=config-노이즈 확정(D96서 seed4302 TP=0.0 붕괴). structural-bind는 scale-amplified G1 lever 아님 → H_1840 GPU-scale 확인. G1 벽 axis-invariant(objective·reg·data·structural-bind 전수, toy+clean-scale). state/6164_structural_bind_operator/RESULT_scale.md.

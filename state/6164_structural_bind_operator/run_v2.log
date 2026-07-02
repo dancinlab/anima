@@ -1,0 +1,49 @@
+device: cuda NVIDIA GeForce RTX 5070
+=== RUNG 0 {'NF': 6, 'E': 4, 'D': 96, 'R': 32, 'steps': 10000} ===
+  r0 s=7 add: tr=1.0 held=0.0 (orc=1.0)
+  r0 s=7 hadamard: tr=1.0 held=0.1177 (orc=1.0)
+  r0 s=7 bilinear: tr=1.0 held=0.1254 (orc=1.0)
+  r0 s=7 tensorproduct: tr=1.0 held=0.1185 (orc=1.0)
+  r0 s=4302 add: tr=1.0 held=0.124 (orc=1.0)
+  r0 s=4302 hadamard: tr=1.0 held=0.1466 (orc=1.0)
+  r0 s=4302 bilinear: tr=1.0 held=0.0134 (orc=1.0)
+  r0 s=4302 tensorproduct: tr=1.0 held=0.0 (orc=1.0)
+  r0 s=4303 add: tr=1.0 held=0.0781 (orc=1.0)
+  r0 s=4303 hadamard: tr=1.0 held=0.1156 (orc=1.0)
+  r0 s=4303 bilinear: tr=1.0 held=0.0276 (orc=1.0)
+  r0 s=4303 tensorproduct: tr=1.0 held=0.1572 (orc=1.0)
+  >> r0 best-delta=[0.1254, 0.0226, 0.0791] tp-delta=[0.1185, -0.124, 0.0791] mean_tp=0.0245 n>=+.15=0
+=== RUNG 1 {'NF': 10, 'E': 6, 'D': 160, 'R': 64, 'steps': 45000} ===
+  r1 s=7 add: tr=1.0 held=0.1172 (orc=1.0)
+  r1 s=7 hadamard: tr=1.0 held=0.1074 (orc=1.0)
+  r1 s=7 bilinear: tr=1.0 held=0.0903 (orc=1.0)
+  r1 s=7 tensorproduct: tr=1.0 held=0.1804 (orc=1.0)
+  r1 s=4302 add: tr=1.0 held=0.1895 (orc=1.0)
+  r1 s=4302 hadamard: tr=1.0 held=0.1821 (orc=1.0)
+  r1 s=4302 bilinear: tr=1.0 held=0.2511 (orc=1.0)
+  r1 s=4302 tensorproduct: tr=1.0 held=0.1481 (orc=1.0)
+  r1 s=4303 add: tr=1.0 held=0.1844 (orc=1.0)
+  r1 s=4303 hadamard: tr=1.0 held=0.144 (orc=1.0)
+  r1 s=4303 bilinear: tr=1.0 held=0.1157 (orc=1.0)
+  r1 s=4303 tensorproduct: tr=1.0 held=0.0829 (orc=1.0)
+  >> r1 best-delta=[0.0632, 0.0616, -0.0404] tp-delta=[0.0632, -0.0414, -0.1015] mean_tp=-0.0266 n>=+.15=0
+=== RUNG 2 {'NF': 14, 'E': 8, 'D': 256, 'R': 96, 'steps': 120000} ===
+  r2 s=7 add: tr=0.1401 held=0.024 (orc=0.2162)
+  r2 s=7 hadamard: tr=1.0 held=0.1423 (orc=0.2162)
+  r2 s=7 bilinear: tr=1.0 held=0.0785 (orc=0.2162)
+  r2 s=7 tensorproduct: tr=1.0 held=0.0834 (orc=0.2162)
+  r2 s=4302 add: tr=1.0 held=0.0726 (orc=0.1198)
+  r2 s=4302 hadamard: tr=1.0 held=0.1056 (orc=0.1198)
+  r2 s=4302 bilinear: tr=1.0 held=0.0453 (orc=0.1198)
+  r2 s=4302 tensorproduct: tr=1.0 held=0.1146 (orc=0.1198)
+  r2 s=4303 add: tr=0.1499 held=0.1382 (orc=0.1405)
+  r2 s=4303 hadamard: tr=1.0 held=0.1644 (orc=0.1405)
+  r2 s=4303 bilinear: tr=1.0 held=0.045 (orc=0.1405)
+  r2 s=4303 tensorproduct: tr=1.0 held=0.1027 (orc=0.1405)
+  >> r2 best-delta=[0.1183, 0.042, 0.0262] tp-delta=[0.0594, 0.042, -0.0355] mean_tp=0.022 n>=+.15=0
+
+=== VERDICT ===
+best-delta/rung: [0.0757, 0.0281, 0.0622] 
+tp-delta/rung: [0.0245, -0.0266, 0.022] 
+oracle/rung: [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [0.2162, 0.1198, 0.1405]] 
+TIER: INCONCLUSIVE (some rung oracle<0.85 = undertrained/unsolvable)
