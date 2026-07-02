@@ -1,0 +1,31 @@
+H_6183 — G1 조합-커버리지 밀도 상전이, 자연어 byte 스케일 확정 (pair-특이 3-arm cheap-gate)
+raw stdout: aiden ~/g1newcorpus/v3_attn.log (torch DIRECTIONAL, RTX5070, $0 pool)
+
+built v3: HIGH pairs=237 LOW pairs=31 (matched ~1.2MB) + shuffle control
+30 concepts, 각 고유 ATTR(azure/amber/cobalt...); 템플릿 "the {A} and the {B} yield {ATTR[a]} and {ATTR[b]}."
+metric recomb(): held pair generation 이 ATTR[a] AND ATTR[b] 둘 다 포함해야 HIT (pair-특이, shuffle control).
+
+--- attn (aiden, RF-full) ---
+[HIGH_60] seen-sanity=20/20 (100%) | held-out=38/40 (95%)
+[LOW_8 ] seen-sanity= 4/20 ( 20%) | held-out=10/40 (25%)
+[SHUF  ] seen-sanity= 0/20 (  0%) | held-out= 0/40 ( 0%)
+VERDICT: COVERAGE LEVER (pair-specific)
+  seen OK(H20 L4) · HIGH held=38/40 >> LOW held=10/40 · shuffle held=0/40
+  → 조합-커버리지가 NL/byte 서 pair-특이 held-out 재조합 엶 = 처방 실증(production-근접)
+
+--- conv (summer, ConvMoE depthwise K=5, RF=5byte) ---
+[HIGH] seen-sanity=0/20 (0%) → INCONCLUSIVE
+  RF=5byte 라 "the ocean and the clock yield "(개념 25byte 뒤) 못 봐서 seen 조차 0.
+  held 판정 무효 (fable G6 RF 분석과 합류: conv 는 RF 확장 없이는 이 과제 측정불가).
+
+cheap-gate 3종 세트 (설계 강제, 측정함정 회피):
+  (a) seen-sanity/oracle arm — HIGH 20/20 통과 (harness 유효), LOW 4/20 (커버리지 부족 = 데이터-starve)
+  (b) pair-특이 지표 — held pair 가 두 학습된 ATTR 를 새 조합으로 산출해야 HIT (v1 too-strict / v2 too-loose 회피)
+  (c) control arm — SHUF(속성 shuffle) held=0/40 → 템플릿-shape 아티팩트 배제 (진짜 pair-특이 binding)
+
+측정함정 이력 (회피):
+  v1 too-strict: 개념어 재등장 → 항상 0 = 가짜 null
+  v2 too-loose : pair-agnostic 템플릿 shape → 전부 ~73% = 가짜 positive
+  v3 pair-specific: 각 개념 고유 ATTR + held 는 두 ATTR 둘 다 필요 + shuffle control = 진짜 compositional test
+
+tier: 🟢 DIRECTIONAL-POSITIVE (torch, NL/byte attention). engine-native 아님.

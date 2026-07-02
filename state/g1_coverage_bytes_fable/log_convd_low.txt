@@ -1,0 +1,66 @@
+device: cuda | arm: low | arch: convd
+corpus bytes: 715350
+params: 2523904
+step 0 loss 5.7444 lr 3.00e-06 0s
+step 250 loss 0.3165 lr 2.98e-04 3s
+step 500 loss 0.1964 lr 2.88e-04 5s
+step 750 loss 0.1805 lr 2.68e-04 8s
+[eval seen-true@1000] strict=1.000 loose=1.000 (n=40)
+    river+clock -> want(gentle hollow) got' gentle hollow .\nthe candl'
+    clock+mountain -> want(hollow frozen) got' hollow frozen .\nthe templ'
+    tunnel+island -> want(shadowy remote) got' shadowy remote .\nthe mark'
+    orchard+statue -> want(fragrant marble) got' fragrant marble .\nthe can'
+    harbor+tower -> want(misty lofty) got' misty lofty .\nthe candle '
+[eval held@1000] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' quiet misty .\nthe temple '
+    forest+temple -> want(ancient sacred) got' macred marble .\nthe candl'
+    desert+river -> want(barren gentle) got' crimson gentle .\nthe mead'
+    harbor+forest -> want(misty ancient) got' .\nthe meadow and the lett'
+    ocean+letter -> want(silver golden) got' gentle golden .\nthe meado'
+step 1000 loss 0.1793 lr 2.41e-04 12s
+step 1250 loss 0.1775 lr 2.08e-04 14s
+step 1500 loss 0.1709 lr 1.72e-04 17s
+step 1750 loss 0.1714 lr 1.36e-04 19s
+[eval seen-true@2000] strict=1.000 loose=1.000 (n=40)
+    river+clock -> want(gentle hollow) got' gentle hollow .\nthe templ'
+    clock+mountain -> want(hollow frozen) got' hollow frozen .\nthe meado'
+    tunnel+island -> want(shadowy remote) got' shadowy remote .\nthe mark'
+    orchard+statue -> want(fragrant marble) got' fragrant marble .\nthe tem'
+    harbor+tower -> want(misty lofty) got' misty lofty .\nthe candle '
+[eval held@2000] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' quiet misty .\nthe mountai'
+    forest+temple -> want(ancient sacred) got' macred crimson .\nthe temp'
+    desert+river -> want(barren gentle) got' crimson gentle .\nthe mead'
+    harbor+forest -> want(misty ancient) got' .\nthe mountain and the en'
+    ocean+letter -> want(silver golden) got' gentle golden .\nthe meado'
+step 2000 loss 0.1690 lr 1.02e-04 23s
+step 2250 loss 0.1629 lr 7.22e-05 26s
+step 2500 loss 0.1673 lr 4.93e-05 28s
+step 2750 loss 0.1651 lr 3.49e-05 31s
+step 2999 loss 0.1664 lr 3.00e-05 33s
+[eval seen-true@3000] strict=1.000 loose=1.000 (n=40)
+    river+clock -> want(gentle hollow) got' gentle hollow .\nthe mount'
+    clock+mountain -> want(hollow frozen) got' hollow frozen .\nthe meado'
+    tunnel+island -> want(shadowy remote) got' shadowy remote .\nthe mark'
+    orchard+statue -> want(fragrant marble) got' fragrant marble .\nthe tem'
+    harbor+tower -> want(misty lofty) got' misty lofty .\nthe candle '
+[eval held@3000] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' quiet misty .\nthe mountai'
+    forest+temple -> want(ancient sacred) got' macren .\nthe castle and t'
+    desert+river -> want(barren gentle) got' crimson gentle .\nthe moun'
+    harbor+forest -> want(misty ancient) got' .\nthe mountain and the en'
+    ocean+letter -> want(silver golden) got' gentle golden .\nthe meado'
+[eval FINAL seen-true] strict=1.000 loose=1.000 (n=40)
+    river+clock -> want(gentle hollow) got' gentle hollow .\nthe mount'
+    clock+mountain -> want(hollow frozen) got' hollow frozen .\nthe meado'
+    tunnel+island -> want(shadowy remote) got' shadowy remote .\nthe mark'
+    orchard+statue -> want(fragrant marble) got' fragrant marble .\nthe tem'
+    harbor+tower -> want(misty lofty) got' misty lofty .\nthe candle '
+[eval FINAL held] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' quiet misty .\nthe mountai'
+    forest+temple -> want(ancient sacred) got' macren .\nthe castle and t'
+    desert+river -> want(barren gentle) got' crimson gentle .\nthe moun'
+    harbor+forest -> want(misty ancient) got' .\nthe mountain and the en'
+    ocean+letter -> want(silver golden) got' gentle golden .\nthe meado'
+{"arm": "low", "arch": "convd", "steps": 3000, "params": 2523904, "final_loss": 0.1664101779460907, "directional": true, "device": "cuda", "seen_true_strict": 1.0, "seen_true_loose": 1.0, "held_strict": 0.0, "held_loose": 0.0}
+=== DONE convd low ===

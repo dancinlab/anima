@@ -13163,6 +13163,13 @@
         "value": "원격 프로세스 존재확인 pgrep -f <pat> / ps aux|grep <pat> 가 자기 자신의 ssh 명령줄(같은 <pat> 포함)을 매칭해 'RUN'/'RUNNING' 오탐 재발 — 이 세션 다수 턴 'RUN' 허위보고, 실제론 종료·미실행. proc 진행을 로그 대신 pgrep만으로 판정하면 이미 끝난(또는 미실행) 잡을 '진행중'으로 오인.",
         "threshold": "원격 proc 확인은 bracket-트릭 pgrep -f '[b]uild_and_test' 또는 ps aux|grep '[p]ython3 <script>'로 자기매칭 배제 · 결과로그 종료마커(=== DONE ===/VERDICT)를 1차 신호로(pgrep 보조). RUN 보고 전 로그 tail 동시확인 의무.",
         "source": "tool/remote-poll-pgrep"
+      },
+      {
+        "id": "G1_WALL_IS_COVERAGE_DENSITY_AND_RF_NOT_ONLY_OBJECTIVE",
+        "state": "pos-conv",
+        "value": "G1 재조합벽 재프레임(H_6182 toy → H_6183 v3 NL/byte → H_6184 fable arch-무관, torch DIRECTIONAL): 조합-커버리지 밀도가 held-out pair-특이 재조합의 상전이 lever. toy 20×20 커버리지 5→80%서 held 2→92%(임계~20%); 자연어 byte 30-concept pair-특이 3-arm(seen-sanity+pair-특이 지표+shuffle)서 HIGH held 85-95% ≫ LOW 0-3.3% ∧ SHUF true-target 0%(seen-shuffled 75-93% 학습=하네스 유효). attention ∧ dilated-conv 둘 다 재현=arch-무관; dilated conv 가 plain-conv RF=5 벽(H_6183 conv INCONCLUSIVE) 돌파=RF 확장이 conv 를 상전이 태움. 옛 G1_WALL_LEVER_IS_OBJECTIVE_NOT_READOUT(objective-축)는 fixed-corpus 내 sub-finding 이었고, 데이터-분포 축(커버리지)은 DPI-면제(gradient 가 보는 데이터가 바뀜)라 별개 lever.",
+        "threshold": "G1 벽 = trunk-objective TERMINAL 로 박제 금지 → 실제 = (a)데이터-커버리지-밀도-bound + (b)수용영역-bound 이중. production 처방 2축: 조합-커버리지 설계 코퍼스 + 충분 RF(depth/dilation). 남은 게이트: production .clm 코퍼스 임계위치 측정 + engine-native(anima evaluate) 승격(현 torch DIRECTIONAL).",
+        "source": "HYPOTHESES/cards/H_6182,H_6183,H_6184"
       }
     ]
   }
