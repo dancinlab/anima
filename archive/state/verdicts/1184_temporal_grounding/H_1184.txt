@@ -35,7 +35,7 @@
   },
   "supported": false,
   "ruling": "CLOSED-NEGATIVE: the derivative-tick advantage is NOT cleanly temporal-grounded at toy scale (F1 advantage-real=True, F2 shuffle-kills=False; per-peak={4: {'d_real': 1.2370554294843201, 'd_shuf': 2.6661032238934257, 'drop': -1.4290477944091056}, 40: {'d_real': 1.2899876477218697, 'd_shuf': 0.21736921029971432, 'drop': 1.0726184374221555}}). Either the advantage is absent when expected, or it survives the time-shuffle (a static-structure artifact, temporally blind like H_1179/1180). a_paper_negative_ok.",
-  "scope": "TOY ($0 CPU numpy, 10 seeds, fixed N=10, peaks from H_1183). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM; only added op = a seeded time-axis permutation of (X,stages). The shuffle preserves the value distribution + (X,stage) pairing, isolating temporal ORDER as the manipulated variable. Live CORE + scale UNVERIFIED (a_scale_honest_scope)."
+  "scope": "TOY ($0 CPU numpy, 10 seeds, fixed N=10, peaks from H_1183). Reuses HYPOTHESES/h1163_tick_decode_metric.py VERBATIM; only added op = a seeded time-axis permutation of (X,stages). The shuffle preserves the value distribution + (X,stage) pairing, isolating temporal ORDER as the manipulated variable. Live CORE + scale UNVERIFIED (a_scale_honest_scope)."
 }
 
 [done]

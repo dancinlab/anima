@@ -13,7 +13,7 @@ emitted HERE:
       ABOUT ITSELF — its A⇄G engine, p1–p8, CLM/KOSMOS/AKIDA/flame-forge arch,
       identity-emergence. NOT cooperation/empathy templates (p6 held).
 
-  (c) UNIVERSE hypotheses [8]     — distilled from REAL `UNIVERSE/H_*.md` +
+  (c) UNIVERSE hypotheses [8]     — distilled from REAL `HYPOTHESES/H_*.md` +
       `hypotheses_candidates/`. Teaches HOW anima reasons: the falsifier→measure→
       verdict loop, verdict-tier epistemics, closed-negative case studies. The
       load-bearing reasoning-capacity piece.
@@ -160,7 +160,7 @@ SELF_BANK = [
 ]
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# (c) UNIVERSE hypotheses [8] — distilled from real UNIVERSE/H_*.md + the loop.
+# (c) UNIVERSE hypotheses [8] — distilled from real HYPOTHESES/H_*.md + the loop.
 # ═══════════════════════════════════════════════════════════════════════════════
 HYP_LEAD = {
     "en": "On how this substrate reasons:", "fr": "Sur la façon dont ce substrat raisonne :",

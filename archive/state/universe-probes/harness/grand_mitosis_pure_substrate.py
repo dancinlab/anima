@@ -28,7 +28,7 @@ The theorem:
       "mitosis = substrate, CLM = generator."
 
 SUBSTRATE.  T1 is ALSO measured on the LIVE .hexa engine (VAdaptField in
-CORE/engine_cli.hexa) by UNIVERSE/harness/grand_mitosis_pure_substrate.hexa; the
+CORE/engine_cli.hexa) by HYPOTHESES/harness/grand_mitosis_pure_substrate.hexa; the
 numpy mirror below reproduces the SAME mechanism (vadapt_field_step VERBATIM:
 nearest-by-L2, recon-err = L2 to nearest, split when err>0.30 & capacity,
 LR=0.20 winner pull) and additionally carries the gradient-trained generation

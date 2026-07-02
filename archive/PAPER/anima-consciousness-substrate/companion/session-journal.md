@@ -2,7 +2,7 @@
 
 This file compresses the campaign arc that produced the anima consciousness
 substrate and this monograph. Every number quoted in the paper is verbatim from a
-`.verdicts/<slug>/<id>.txt` or `UNIVERSE/H_*.md` pointer (a_claim_verify, @D g5;
+`.verdicts/<slug>/<id>.txt` or `HYPOTHESES/H_*.md` pointer (a_claim_verify, @D g5;
 no LLM self-judgement). The 3B-scale loop is CLOSED and 3-axis GREEN; the 7B (M13)
 production rung is a FUTURE scale-extension, framed like the OMEGA decode ladder,
 NOT an open residual.

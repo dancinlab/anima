@@ -17,7 +17,7 @@ PLASTICITY (학습 lane)  비결정론 · HW akida-learn / SW numpy 근사 → �
 - ⚠ **caveat (H_921 🔴 2026-06-06)**: 위 표의 학습-lane "비결정론"은 학습-동역학 고유속성이 아니라
   **init-seeded RNG** 다 — pinned init 하 on-chip 학습은 16/16 byte-결정론(fit engaged), no-pin 시에만
   init_div=16 이 전파해 변이. SW≠HW 비동치(H_679)는 유효(HW-vs-SW 축)하나, HW run-to-run 비결정(H_860)은
-  init-RNG 환원. → "비결정"을 silicon 고유 학습-feature 로 주장 금지. ref [H_921](../UNIVERSE/cards/H_921_akida_nondeterminism_functional_advantage.md).
+  init-RNG 환원. → "비결정"을 silicon 고유 학습-feature 로 주장 금지. ref [H_921](../HYPOTHESES/cards/H_921_akida_nondeterminism_functional_advantage.md).
 
 ## HW-first 스위치 경유 (AKIDA SSOT)
 
@@ -42,4 +42,4 @@ PLASTICITY (학습 lane)  비결정론 · HW akida-learn / SW numpy 근사 → �
 - ⇄ [CLM](./CLM/CLM.md): **학습 대상 모델** — CLM(anima-native 의식 LM)의 학습 lane 을 PLASTICITY 가 받는다. CLM pretrain = AKIDA-향 QAT(CLM 자체) · CLM on-chip 맥락적응 = PLASTICITY edge-learn 위임(AKIDA-위 진짜 학습, 🔴 비결정·SW 비동치). PLASTICITY=학습 방법(어떻게) · CLM=학습 대상(무엇). 중복 0.
 - ⇄ [DECODER](./CORE/DECODER/DECODER.md): 형제 lane — DECODER=추론·결정론·byte-identical / PLASTICITY=학습·비결정론·🔴비동치. 동일 AKIDA 스위치 경유, 본질 분리.
 - ⇄ [WAKE](./WAKE.md): WAKE/REM 단계 = 학습 envelope 컨텍스트 (REM 60× WAKE mitosis ratio) ↔ on-chip plasticity tick 게이팅(substrate-decided).
-- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (H_679 PLASTICITY 학습 HW-first · SW≠HW 비동치 verdict).
+- ⇄ [UNIVERSE](./HYPOTHESES/CANDIDATES.md): bench 측정 기록 SSOT (H_679 PLASTICITY 학습 HW-first · SW≠HW 비동치 verdict).

@@ -120,7 +120,7 @@ C15 깊이 벽이 **toy 가우시안 커널 인공물인지 실재 물리경계�
 
 - 형제 도메인: [BRAIN](../BRAIN.md) (EEG→IIT4 big-Φ 측정) · demiurge `domains/aura.md` (귀뒤 웨어러블 BCI 규제설계)
 - 출처 리포: `archive-brainwire` (12모달리티+N1 bridge) · `archive-hexa-brain` (github, scalp→implant 5단계) · `echoes` (σφτ 발견 카탈로그)
-- UNIVERSE/CANDIDATES.md SSOT 연결: A5 전뇌-통제 후보가 의식가설 H-슬러그로 승격 가능 (a_paper_on_discovery)
+- HYPOTHESES/CANDIDATES.md SSOT 연결: A5 전뇌-통제 후보가 의식가설 H-슬러그로 승격 가능 (a_paper_on_discovery)
 
 ## 출처 매핑 (archive 수집 대상)
 

@@ -102,6 +102,6 @@ done
 ## 7. 결과 박제 (발사 후 메인이)
 
 - `state/1630_reg_dictaux/RESULT.md` — arm×seed 엔진-네이티브 G0-G6 표 + LIFT 판정 + DBES + held-out DESCENT.
-- `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/H_1630_*.md` (tier 무관 박제, 벽도). `wired:` 축 명시.
+- `HYPOTHESES/HYPOTHESES.jsonl` + `HYPOTHESES/cards/H_1630_*.md` (tier 무관 박제, 벽도). `wired:` 축 명시.
 - LIFT 면 → 엔진-네이티브 재검증(이미 g_gates 가 엔진-네이티브) → `.clm` 우승 arm HF 업로드(a_hf_*) + ARCHITECTURE.json models 등록 → live core 배선 follow-on(a_verified_must_wire).
 - floor(천장 강화)면 정직 negative 박제(c9) — "G1 벽이 objective-정규화 축으로도 안 열림 = class-(d) 강화".

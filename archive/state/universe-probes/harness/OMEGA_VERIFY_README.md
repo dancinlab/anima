@@ -50,5 +50,5 @@ a_paper_significance 위반이므로 **하지 않는다.**
 
 ## 재현
 ```
-python3 UNIVERSE/harness/omega_verify.py
+python3 HYPOTHESES/harness/omega_verify.py
 ```

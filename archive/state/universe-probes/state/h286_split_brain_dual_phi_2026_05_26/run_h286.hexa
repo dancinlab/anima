@@ -1,4 +1,4 @@
-// UNIVERSE/state/h286_split_brain_dual_phi_2026_05_26/run_h286.hexa
+// HYPOTHESES/state/h286_split_brain_dual_phi_2026_05_26/run_h286.hexa
 // H_286 — split-brain-dual-Φ (callosotomy → 2 distinct Φ-subsystems)
 //
 //   HYPOTHESIS (AXES.md R12 seed `split-brain-dual-Φ`, 🟢 toy 2-pool)
@@ -18,7 +18,7 @@
 //     lattice that never dies (unlike a sparse binary CA, which self-extincts).
 //     Each cell i records a DIM-length time series (its value over DIM steps).
 //     The flat (n_cells × DIM) snapshot is fed to the SAME reused Φ kernel
-//     `phi_native_spatial` (UNIVERSE/lib/phi_native.hexa — RFC 036 phi_spatial
+//     `phi_native_spatial` (HYPOTHESES/lib/phi_native.hexa — RFC 036 phi_spatial
 //     byte-equal port; g61 reuse, no Φ reinvention).
 //
 //     INTACT : intra-hemisphere diffusion + 2 callosum links (cell 3↔4 and the
@@ -54,7 +54,7 @@
 //   array.set SEGFAULTS → farr_* + scalars only.
 // ════════════════════════════════════════════════════════════════════════════
 
-import "UNIVERSE/lib/phi_native.hexa"
+import "HYPOTHESES/lib/phi_native.hexa"
 
 // ─── frozen configuration ──────────────────────────────────────────────────
 let N_CELLS  = 8           // ring: hemi-L [0..3], hemi-R [4..7]
@@ -64,7 +64,7 @@ let N_BINS   = 4           // Φ kernel histogram bins (phi_helper default)
 let WARMUP   = 8           // transient steps discarded before recording DIM
 let COUPLE   = 0.35        // diffusion coupling strength to ring neighbours
 let LOGISTIC = 3.7         // logistic forcing param (chaotic, sustains activity)
-let OUT_JSON = "UNIVERSE/state/h286_split_brain_dual_phi_2026_05_26/result.json"
+let OUT_JSON = "HYPOTHESES/state/h286_split_brain_dual_phi_2026_05_26/result.json"
 
 // ─── small helpers ──────────────────────────────────────────────────────────
 fn abs_f(x: float) -> float {

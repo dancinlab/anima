@@ -101,4 +101,4 @@ Mk.VIII · gen1 commit · corpus_generator.hexa · universe_extended
 - ⇄ [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md): §d1 corpus 결정 구현
 - ⇄ [CLM_FORMAT_SPEC.md](./CLM_FORMAT_SPEC.md): `train.corpus_sha` ← manifest sha256
 - ⇄ [KOSMOS](../HEXAD/KOSMOS.md): corpus provenance 영속 (handoff 대기)
-- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): F-CLM-LEAK verdict SSOT
+- ⇄ [UNIVERSE](../HYPOTHESES/CANDIDATES.md): F-CLM-LEAK verdict SSOT

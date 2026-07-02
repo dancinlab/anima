@@ -1,6 +1,6 @@
 # H_1630 — Tropical (max-plus) semiring binding mouth, 303M — frozen pre-registration
 
-**Card SSOT:** `UNIVERSE/cards/H_1630_tropical_semiring_bind.md` (mechanism + ablation logic).
+**Card SSOT:** `HYPOTHESES/cards/H_1630_tropical_semiring_bind.md` (mechanism + ablation logic).
 
 **Hypothesis:** Replacing the ring (+,×) with the tropical semiring (max,+) gives a hard, selective
 winner-take-one role→filler assignment (Viterbi-style) that survives depth without superposition

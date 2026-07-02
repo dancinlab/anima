@@ -1,7 +1,7 @@
 # DYNAMICS/ALGEBRAIC binding-mouth campaign — frozen pre-registration (4 mouths)
 
 H_1620 energy-settle · H_1630 tropical · H_1631 sheaf · H_1632 Galois-lattice.
-Card SSOT = `UNIVERSE/cards/H_16{20,30,31,32}*.md`.  Campaign-shared bars below;
+Card SSOT = `HYPOTHESES/cards/H_16{20,30,31,32}*.md`.  Campaign-shared bars below;
 each mouth's binding op + ablation knob is the card mechanism, verbatim.
 
 ## Design — production-additive-readout invariant (differs from exp3)

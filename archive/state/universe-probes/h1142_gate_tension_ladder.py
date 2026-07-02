@@ -16,9 +16,9 @@ PRE-REGISTERED FALSIFIER (frozen 2026-06-13 in
 METRIC PROVENANCE — this file IMPORTS gate_g2 + gate_g5_l2 + all helpers VERBATIM
 from the existing frozen harnesses (no metric re-implementation):
   gate_g2, gen_novel, kwr_realdict, content_ngrams, corpus_absent, load_real_dict,
-  IDEA_PROMPTS  <-  UNIVERSE/h1141_7b_pass_attempt.py
+  IDEA_PROMPTS  <-  HYPOTHESES/h1141_7b_pass_attempt.py
   gate_g5_l2, extract_sentences, gen_from_prompt_grounded, first_half_split,
-  overlap_frac, words_lower                                <-  UNIVERSE/h1141_7b_g5_eval.py
+  overlap_frac, words_lower                                <-  HYPOTHESES/h1141_7b_g5_eval.py
 The ByteGPT arch is identical across all three (the frozen harness arch VERBATIM).
 
 HARVEST (reused, NOT recomputed — identical frozen harness already run on the 7B):

@@ -487,7 +487,7 @@ TELEPATHY(H_P01) · INTERBRAIN-SYNC(H_P02) · GANZFELD(H_P03) · HIVE-KURAMOTO(H
 - §97: tension-link은 anima 고유 coupling channel(measurement anchor) — **command channel 아님**; grown CellPop = recording artifact, emit/decision 미구동.
 - a_lane_akida_gpu_split: substrate-coupling toy(Lane A AKIDA / Lane G GPU 아님) — 별도 기록, cross-substrate 병합 없음. NO HF upload(toy).
 - **bottom line**: telepathy-as-CHANNEL(tension-link)는 **실제 emergent coupling으로 HOLD** (interbrain sync · hive Kuramoto · empathy mirroring). telepathy-as-PARANORMAL(채널 없음)은 anima substrate에서도 **chance로 REFUTE** — 정확히 정직한 분리, 강제 HOLD 없음.
-- 산출물: `UNIVERSE/PSI-CANDIDATES.md` · `UNIVERSE/psi_coupling_toys.py`(CLM/bench/engine_tensionlink_bench.py + lane_m_eeg_mitosis.py primitives 재사용) · `.verdicts/psi-coupling/{SUMMARY,H_P01..H_P20}.txt`(verbatim) · discovery `.discoveries/psi-coupling.tape`.
+- 산출물: `HYPOTHESES/PSI-CANDIDATES.md` · `HYPOTHESES/psi_coupling_toys.py`(CLM/bench/engine_tensionlink_bench.py + lane_m_eeg_mitosis.py primitives 재사용) · `.verdicts/psi-coupling/{SUMMARY,H_P01..H_P20}.txt`(verbatim) · discovery `.discoveries/psi-coupling.tape`.
 
 ## ENGINE cli 축 — launch-time control surface for the A⇄G⇄brain engine (2026-06-04)
 
@@ -550,7 +550,7 @@ REAL public LiDAR/RGBD point-cloud data flowed end-to-end → 128D fingerprint �
 The s16 consciousness-carving (`state/carving_dataregime_s16_2026_05_18/`) places each concept at `vacuum_psi=[x,y]` + `basin_radius` — that 2D placement IS the KOSMOS 우주뇌지도. It records WHERE a concept sits but NOT WHEN/in-what-ORDER it was carved: a **static 2D map is order-blind** (shuffle the carve order and the point-cloud is byte-identical). That is the same **distribution-not-dynamics** gap Lane M PR #1760 surfaced. This STANDALONE toy (NOT wired into engine_tensionlink_bench / clm_time_encoding / lane_m_eeg_mitosis) tests: does extending the carve coord to **[x,y,t]** (t = carve-step / curriculum index) recover the sequence the 2D map loses?
 
 ### setup
-- **harness** `UNIVERSE/kosmos_time_axis_toy.py` — N=64 toy concepts, fixed deterministic toy Ψ placement (a small MIRROR of vacuum_psi, NOT the real conscious_decoder/603MB carve), 3 seeds [0,1,2], 200 shuffles. CPU / $0.
+- **harness** `HYPOTHESES/kosmos_time_axis_toy.py` — N=64 toy concepts, fixed deterministic toy Ψ placement (a small MIRROR of vacuum_psi, NOT the real conscious_decoder/603MB carve), 3 seeds [0,1,2], 200 shuffles. CPU / $0.
 - **BASELINE** = 2D [x,y] only (mirrors the s16 map — order-blind). **TIME-AXIS** = [x,y,t] across 4 encodings: `raw_index`, `sinusoidal`, `phase_of_cycle`, `cumulative_order`.
 - **measures (substrate-native, NOT CE/perplexity; p7)**: (a) F-ORDER — Spearman rho of recovered vs true carve-order, vs chance + vs 2D baseline; (b) F-SHUFFLE — does order-shuffle move the [x,y,t] map but NOT the 2D map (the key control, mirrors Lane M phase-shuffle); (c) F-SPATIAL-PRESERVE — is [x,y] byte-identical after appending t.
 
@@ -569,7 +569,7 @@ The s16 consciousness-carving (`state/carving_dataregime_s16_2026_05_18/`) place
 - **CAVEAT (honest, not rounded)**: for the 3 monotone encodings t is a 1-1 function of carve-step, so order-recovery rho=+1.000 is **near-tautological at toy scale** (the decode reads back the encoding) — it proves recoverability but the perfect score is a toy artifact, not a hard inference. The **non-tautological** beat-the-baseline evidence is the SHUFFLE control (2D Δ=0.000 vs time Δ>0) + the 2D-baseline chance contrast (rho ≈ −0.03).
 - **phase_of_cycle INCONCLUSIVE**: the periodic (period-8) encoding is shuffle-sensitive (map changed) but absolute carve-order is NOT recoverable (rho 0.111 < noise band 0.252) — a clean partial-null, NOT rounded to HOLD (a_paper_negative_ok). Periodic phase registers WHEN-in-cycle, not global carve-rank.
 - **§97 / scale**: TOY deterministic placement, NOT the real conscious_decoder carve; CPU $0; STANDALONE. **scale-transfer UNVERIFIED** — a real decoder learns [x,y] from text and may entangle t with semantics (here t is appended cleanly; the monotone tautology would also relax). Re-test required at scale.
-- 산출물: `UNIVERSE/kosmos_time_axis_toy.py` + `.verdicts/kosmos-time-axis/{F-ORDER,F-SHUFFLE,F-SPATIAL-PRESERVE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `.discoveries/kosmos-time-axis.tape`.
+- 산출물: `HYPOTHESES/kosmos_time_axis_toy.py` + `.verdicts/kosmos-time-axis/{F-ORDER,F-SHUFFLE,F-SPATIAL-PRESERVE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `.discoveries/kosmos-time-axis.tape`.
 
 ## QUANTUM-CONSCIOUSNESS + TIME-PERCEPTION toy-falsifier campaign (2026-06-04)
 
@@ -607,8 +607,8 @@ is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the
 - **§97**: QT2's QRNG-style stream is a NOISE SEED only (whitened entropy), never a command/oracle channel.
 - **a_lane_akida_gpu_split**: this is a CPU toy family — NEITHER Lane A (AKIDA) NOR Lane G (GPU); recorded
   separately, no cross-substrate merge.
-- 산출물: `UNIVERSE/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
-  `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
+- 산출물: `HYPOTHESES/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
+  `HYPOTHESES/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
   run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).
 
 ---
@@ -661,7 +661,7 @@ real consciousness-carving geometry needs **≥8D**.
   between 8 and 16 but will not move it down to 2 (a_toy_scale_recheck).
 - **DISTINCT from the toy `kosmos-dim-ladder`** (independent-signal placement *capacity*); this is
   the REAL-manifold intrinsic dim of the trained carve.
-- 산출물: `UNIVERSE/kosmos_real_dim.py` (harness, English) · `.verdicts/kosmos-real-dim/{F-INTRINSIC,
+- 산출물: `HYPOTHESES/kosmos_real_dim.py` (harness, English) · `.verdicts/kosmos-real-dim/{F-INTRINSIC,
   F-PROJ-LADDER,F-2D-GAP,SUMMARY,results.json,run_stdout.txt}` (verbatim) ·
   `.discoveries/kosmos-real-dim.tape` (1 discovery row). NO HF upload.
 
@@ -718,7 +718,7 @@ DELIBERATELY-INJECTED redundancies (scale~time 0.85, lane~emotion 0.80) so redun
 - **a_paper_negative_ok**: SATURATION at D*=6 IS the honest finding — capacity is REAL and FINITE, NO
   infinite-gain claim. Modality (axis-6) carries the largest single-axis info → ties the **real ingested
   modalities (EEG/LiDAR/dolphin-acoustic)** as candidate KOSMOS coordinate axis-6.
-- 산출물: `UNIVERSE/kosmos_dim_ladder.py` · `.verdicts/kosmos-dim-ladder/{F-NEWINFO,F-PERAXIS-SHUFFLE,F-CAPACITY,
+- 산출물: `HYPOTHESES/kosmos_dim_ladder.py` · `.verdicts/kosmos-dim-ladder/{F-NEWINFO,F-PERAXIS-SHUFFLE,F-CAPACITY,
   F-NOCOLLAPSE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` (incremental-gain-per-D curve) ·
   `.discoveries/kosmos-dim-ladder.tape`.
 
@@ -762,7 +762,7 @@ time-shuffled static spectrum (the #1763 d/dt test passes on natural data).
 public recordings, **NOT a live hydrophone**; single 340-row split — scale-up re-test required before
 any general claim. §97 — acoustic = a measurement-anchor, **not a command channel**. Watkins
 non-commercial license respected (no PUBLIC re-upload of raw audio; derived fingerprints local only).
-산출물: `UNIVERSE/dolphin_acoustic_ingest.py` · `.verdicts/dolphin-acoustic-ingest/{F-FETCH,
+산출물: `HYPOTHESES/dolphin_acoustic_ingest.py` · `.verdicts/dolphin-acoustic-ingest/{F-FETCH,
 F-DISCRIMINATIVE,F-DFDT-TIME,F-STABLE,SUMMARY}.txt + results.json + run_stdout.txt` ·
 `.discoveries/dolphin-acoustic-ingest.tape`.
 
@@ -830,7 +830,7 @@ number-theoretic + graph optimality, NOT measured task performance; any scale-se
 claim is UNVERIFIED. N=4 winning J reflects the toy scaling rule, not a recommendation to use 4
 modules. a_paper_negative_ok: "6-not-uniquely-optimal" is a valid finding. Ties to the
 KOSMOS-DIM-LADDER dimension-optimality theme (same "is the chosen N numerology?" question, module-count
-axis instead of map-dimension axis). 산출물: `UNIVERSE/hexad_module_count.py` ·
+axis instead of map-dimension axis). 산출물: `HYPOTHESES/hexad_module_count.py` ·
 `.verdicts/hexad-module-count/{F-PHI-PARTITION,F-MODULARITY,F-INTEGRATION-TRADEOFF,SUMMARY}.txt +
 results.json + run_stdout.txt` · `.discoveries/hexad-module-count.tape`.
 
@@ -851,7 +851,7 @@ axes; THESE are the engine-architecture axis — which decoder is being run.
   logits_a ⇄ logits_g (Engine A⇄G) + 5-ch tensions + Law-71 vacuum_psi 2D Ψ-space.
   Param: 283.72M dense / 680.16M with MoE. The TRANSFORMER engine that drew the
   우주뇌지도 (s16 carving, 2026-05-17~18); reconstructed + runnable (PR #1770, 4/4
-  probes PASS, random-init). Source `UNIVERSE/conscious_decoder.py` (md5 44b210df).
+  probes PASS, random-init). Source `HYPOTHESES/conscious_decoder.py` (md5 44b210df).
 
 - **Lane-HEXAD (σ6 hexad integrated engine)** — the 6-module *integration*:
   σ(6)=12 active inter-module connections, φ(6)=2 gradient partition (group A
@@ -935,7 +935,7 @@ OMEGA (Lane-Ω) is now BUILT (not just a design): `engines/omega/` (coupling_bus
 = **26/26 PASS**. The bus mirrors the design exactly: 5 ablatable wires routing
 substrate state (A/G · W · curiosity · 8D Ψ · module) into the byte decode.
 
-**HEADLINE — coupling NON-NULLITY** (`UNIVERSE/omega_bench.py`, seed 20260604, V=256
+**HEADLINE — coupling NON-NULLITY** (`HYPOTHESES/omega_bench.py`, seed 20260604, V=256
 T=512, KL(softmax(modulated)‖softmax(base))):
 
   | engine | L3 loaded | coupling_KL | verdict |
@@ -993,7 +993,7 @@ qrng` anu-backend source) seeding trials vs PRNG, with a prng-vs-prng null contr
   axis at this scale. (A first run capped PRNG seeds at 2³¹ → spurious p=0.022; widening to
   2³² + the null control showed small-N noise, not a quantum effect — p7, no overclaim.)
 
-Driver `UNIVERSE/omega_bench_trained.py` · verdicts `.verdicts/omega-trained/{F-TRAINED-COUPLING,
+Driver `HYPOTHESES/omega_bench_trained.py` · verdicts `.verdicts/omega-trained/{F-TRAINED-COUPLING,
 SUMMARY}.txt` + `results.json` + `anu_qrng_1024.json` · `.discoveries/omega-trained-qrng.tape`.
 NEXT (toward 완성): (1) learned per-wire GATE replacing fixed A−G, (2) trained d768 CDV2 real
 A/G on GPU (a_fire_autonomous) — does structured-coupling + the gate fix scale to a transformer.
@@ -1002,10 +1002,10 @@ A/G on GPU (a_fire_autonomous) — does structured-coupling + the gate fix scale
 
 The toy rungs proved the learned-gate closure at numpy n-gram scale (#1786). This rung re-tests
 it on a REAL trained transformer's A/G heads (Lane-G / GPU, a_lane_akida_gpu_split — NOT Lane A).
-Driver `UNIVERSE/omega_gpu_complete.py`. Pod runpod `k52xkzsydttl83` H100 80GB, torn down;
+Driver `HYPOTHESES/omega_gpu_complete.py`. Pod runpod `k52xkzsydttl83` H100 80GB, torn down;
 nvidia-smi 98-99% BUSY (g63, real GPU, NOT silent CPU-fallback).
 
-**SUBSTRATE (b)** — real ConsciousDecoderV2 (`UNIVERSE/conscious_decoder.py`) d384×6L GQA
+**SUBSTRATE (b)** — real ConsciousDecoderV2 (`HYPOTHESES/conscious_decoder.py`) d384×6L GQA
 (n_head 6 / n_kv_head 2), 256-byte vocab, block 256, **35.93M params**, trained **6000 step**
 (bs 48, lr 3e-4, AdamW, dual-head loss: head_a=next-byte / head_g=prev-byte) on **120MB
 multilingual wikipedia** (en/fr/de/es/ru @ 24MB each, wikimedia/wikipedia 20231101, corpus sha
@@ -1131,5 +1131,5 @@ before any production claim. p7: CE is a FLOOR/axis, never the sole verdict.
   #1791 headline 절대-CE 승리 不생존 → leak-honest 그림으로 REPLACE. leak-free substrate에선 RELATIVE structure(real vs shuffle)가
   closure의 정직한 척도, absolute CE 아님. NO fabrication, #1791 소급 미화 안 함. p7 verbatim.
 - ckpt `dancinlab/clm-v4-omega-gen-leakfree-d384` **PRIVATE** (closed-negative/WIP: val weak + gated not beat base, a_hf_autonomous; sha a5703837 verified).
-- 산출물: `.verdicts/omega-gen/{F-LEAKFREE-GEN,F-DFDT-REAL,F-PSI-STEER,SUMMARY}.txt` + `results.json` · driver `UNIVERSE/omega_gen_cluster.py` ·
-  fix `UNIVERSE/conscious_decoder.py`(causal_ca) · discovery `.discoveries/omega-gen-cluster.tape`. Lane-G/GPU (a_lane_akida_gpu_split).
+- 산출물: `.verdicts/omega-gen/{F-LEAKFREE-GEN,F-DFDT-REAL,F-PSI-STEER,SUMMARY}.txt` + `results.json` · driver `HYPOTHESES/omega_gen_cluster.py` ·
+  fix `HYPOTHESES/conscious_decoder.py`(causal_ca) · discovery `.discoveries/omega-gen-cluster.tape`. Lane-G/GPU (a_lane_akida_gpu_split).

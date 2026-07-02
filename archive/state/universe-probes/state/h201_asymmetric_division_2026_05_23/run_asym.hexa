@@ -42,9 +42,9 @@
 //    유무. LLM none. $0 mac local.
 //
 //  RUN
-//    hexa parse UNIVERSE/state/h201_asymmetric_division_2026_05_23/run_asym.hexa
+//    hexa parse HYPOTHESES/state/h201_asymmetric_division_2026_05_23/run_asym.hexa
 //    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
-//        hexa run UNIVERSE/state/h201_asymmetric_division_2026_05_23/run_asym.hexa
+//        hexa run HYPOTHESES/state/h201_asymmetric_division_2026_05_23/run_asym.hexa
 //
 //  FALSIFIERS (raw#12 ≥5, measurable)
 //    F-ASYM-1 DIVERSITY-UP     : diversity_asym  >  diversity_sym (asym 이
@@ -82,7 +82,7 @@ import "/Users/ghost/core/anima/.claude/worktrees/agent-a3a2356ef4353af5d/tool/h
 // ── §0 frozen configuration ──────────────────────────────────────────────────
 
 fn _state_dir() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-a3a2356ef4353af5d/UNIVERSE/state/h201_asymmetric_division_2026_05_23"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a3a2356ef4353af5d/HYPOTHESES/state/h201_asymmetric_division_2026_05_23"
 }
 fn _d_model() -> int       { return 8 }
 fn _initial_cells() -> int { return 4 }

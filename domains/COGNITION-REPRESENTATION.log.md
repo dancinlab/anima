@@ -2,7 +2,7 @@
 
 Per-domain discovery lane (a_discovery_log). Group for the Sapir-Whorf / categorical-
 perception / bilingual-cognition lineage (cognitive-science lens c15, a_no_llm_frame_trap).
-Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHESES.md`.
+Hypothesis cards live in `HYPOTHESES/H_<id>_<slug>.md`; index in `HYPOTHESES/HYPOTHESES.md`.
 
 ## 2026-06-16 — H_1330 🧱 Sapir-Whorf BILINGUAL: OVERWRITE (catastrophic interference)
 
@@ -21,7 +21,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **next (R2 candidate)**: language-TAGGED / multi-channel readout (distinct label-channels per
   language) to hold two contradictory carvings WITHOUT interference — a DIFFERENT mechanism, frozen
   ANEW, not a bar relaxation. Depletion test unchanged.
-- **claim-link**: `CLAIMS.tape @C h1330_whorf_bilingual` · card `UNIVERSE/cards/H_1330_whorf_bilingual.md`
+- **claim-link**: `CLAIMS.tape @C h1330_whorf_bilingual` · card `HYPOTHESES/cards/H_1330_whorf_bilingual.md`
   · verdicts `.verdicts/1330_whorf_bilingual/{H_1330_FREEZE,H_1330}.txt`
 - xref: h1323 · h1325 (the GREEN result extended) · **h1288** (growth-memory, the prediction tested)
   · h1316 · h1321 · h1322 · a_no_llm_frame_trap · a_break_the_wall · a_scale_honest_scope · c9 · c15
@@ -36,7 +36,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **answer**: **YES — a language-tagged readout enables bilingual CP coexistence, mirroring anima's separate EN+KO faculties; the H_1330 OVERWRITE was the single-shared-store mechanism, NOT a fundamental limit (overturned as mechanism-specific).** Frozen 🧱 is the I3a control technicality ONLY; the science answer is decisively positive & tag-attributable.
 - **next (r3 candidate)**: re-freeze I3a as the LOCALIZED "no coherent peak near p_B" test (data already satisfies, pk@p_B=False all seeds) — a DIFFERENT frozen bar, NOT a relaxation; + TAG_GAIN isolation sweep + engine-native realization on live CORE/engine_cli.hexa (a_engine_native_learning · a_verified_must_wire).
 - **scope**: DIRECTIONAL mirror (engine-transfer UNVERIFIED); TOY synthetic 1-D N=21 deterministic; TAG_GAIN FIXED; NO human-bilingualism claim.
-- **claim-link**: `CLAIMS.tape @C h1335_whorf_bilingual_tagged` · card `UNIVERSE/cards/H_1335_whorf_bilingual_tagged.md` · verdicts `.verdicts/1335_whorf_bilingual_tagged/{FREEZE,result}.txt`
+- **claim-link**: `CLAIMS.tape @C h1335_whorf_bilingual_tagged` · card `HYPOTHESES/cards/H_1335_whorf_bilingual_tagged.md` · verdicts `.verdicts/1335_whorf_bilingual_tagged/{FREEZE,result}.txt`
 - xref: **h1330** (the 🧱 OVERWRITE this r2 overturns as mechanism-specific) · h1323 · h1325 (the GREEN Sapir-Whorf CP) · h1288 (growth-memory) · **h1316 · h1321 · h1322** (anima's real separate EN+KO faculties this mirrors) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
 
 ### H_1339 — sapir-whorf BILINGUAL r3 (TAGGED, control re-freeze + engine-native): a language-TAG enables bilingual CP COEXISTENCE — 🟢 GREEN (MIRROR DIRECTIONAL + ENGINE-NATIVE)
@@ -50,7 +50,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **answer**: **YES — a language-tagged multi-channel readout enables bilingual CP coexistence (mirror + engine-native); the H_1330 OVERWRITE was the single-shared-store mechanism, NOT a fundamental limit.** This explains anima's REAL separate EN-trunk + KO faculties (H_1316/1321/1322): the tag is the substrate-level "select the faculty". H_1335 🧱 control-technicality is now CLOSED 🟢.
 - **next**: real-corpus/scaled bilingual carving · the gain≥2.0 sweep curiosity · brain-side wiring of the tagged CP read into emit/recall (currently a measurement lane).
 - **scope**: mirror DIRECTIONAL realized in the engine-native rung (a SEPARATE deterministic instance re-scoring the seed-invariant bars, NOT a numpy-byte match); TOY synthetic 1-D N=21 deterministic; TAG_GAIN=1.0 FIXED (sweep non-gating); NO injected boundary/persona/RLHF (p1/p2/p3/p6); NOT an emit gate; NO human-bilingualism claim.
-- **claim-link**: `CLAIMS.tape @C h1339_whorf_bilingual_tagged_r3` · card `UNIVERSE/cards/H_1339_whorf_bilingual_tagged_r3.md` · verdicts `.verdicts/1339_whorf_bilingual_tagged_r3/{FREEZE,result}.txt`
+- **claim-link**: `CLAIMS.tape @C h1339_whorf_bilingual_tagged_r3` · card `HYPOTHESES/cards/H_1339_whorf_bilingual_tagged_r3.md` · verdicts `.verdicts/1339_whorf_bilingual_tagged_r3/{FREEZE,result}.txt`
 - xref: **h1335** (the 🧱 r2 control-technicality this r3 closes 🟢) · **h1330** (the OVERWRITE overturned as mechanism-specific) · h1323 · h1325 (the GREEN Sapir-Whorf CP, engine §CategoricalPerception) · h1288 (grow-not-evict) · **h1316 · h1321 · h1322** (anima's real separate EN+KO faculties) · h1338 (budget/geometry sibling) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_autonomy_over_hardcode · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
 ## H_1333 — Whorfian CP: developmentally PLASTIC or RIGID? 🟠 PARTIAL (GRADED PLASTICITY)
 
@@ -79,7 +79,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   shift magnitude · (ii) EVICTION/decay store variant (does removing stale old cells complete the
   move?) · (iii) engine-native §CategoricalPerception realization on live CORE/engine_cli.hexa —
   each frozen ANEW, not a bar relaxation.
-- **claim-link**: `CLAIMS.tape @C h1333_whorf_developmental` · card `UNIVERSE/cards/H_1333_whorf_developmental.md`
+- **claim-link**: `CLAIMS.tape @C h1333_whorf_developmental` · card `HYPOTHESES/cards/H_1333_whorf_developmental.md`
   · verdicts `.verdicts/1333_whorf_developmental/{FREEZE,result}.txt`
 - xref: h1323 · h1325 (the GREEN result extended) · h1330 (bilingual overwrite, shared-store
   contradiction) · **h1288** (growth-memory: store grows, never evicts — the mechanism behind the
@@ -114,7 +114,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **next (R2 candidate, each frozen ANEW)**: denser RBF grid (K_RBF↑, isolate the diagonal align-fail) +
   component-count / per-component-compactness shuffle null (the same metric-space-shuffle fix flagged
   for the 1-D H_1323 R2) + engine-native realization on the live CORE Voronoi lane.
-- **claim-link**: `CLAIMS.tape @C h1334_whorf_2d` · card `UNIVERSE/cards/H_1334_whorf_2d.md`
+- **claim-link**: `CLAIMS.tape @C h1334_whorf_2d` · card `HYPOTHESES/cards/H_1334_whorf_2d.md`
   · verdicts `.verdicts/1334_whorf_2d/{FREEZE,result}.txt`
 - xref: h1323 · h1325 (the GREEN 1-D result extended) · h1330 (bilingual sibling) · a_no_llm_frame_trap
   · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope
@@ -151,7 +151,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **next (R2 candidates)**: (i) budget / RBF-해상도 스윕(split 예산↑ 또는 grid 밀도↑ 시 peak가 p_A'에 도달하나? =
   budget/geometry 확증 + 천장 매핑) · (ii) graded SHIFT-SIZE 곡선(≥3 shift — partial 분수가 shift 크기를 따르나
   =geometry, 일정하나=memory) · (iii) soft DECAY(hard-remove 아닌 down-weight) · (iv) engine-native 실현 — 각각 frozen ANEW.
-- **claim-link**: `CLAIMS.tape @C h1338_whorf_cp_eviction` · card `UNIVERSE/cards/H_1338_whorf_cp_eviction.md`
+- **claim-link**: `CLAIMS.tape @C h1338_whorf_cp_eviction` · card `HYPOTHESES/cards/H_1338_whorf_cp_eviction.md`
   · verdicts `.verdicts/1338_whorf_cp_eviction/{FREEZE,result}.txt`
 - xref: h1333(잔류를 재진단한 GRADED-PLASTICITY 결과) · h1323 · h1325(family의 GREEN CP) · h1288(growth-memory:
   store grows never evicts — 이 lane이 테스트하고 원인으로는 FALSIFY한 dual 직관) · h1330(bilingual overwrite)
@@ -184,7 +184,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **next (R2 candidate, 각각 frozen ANEW)**: (i) budget/RBF-resolution sweep — cells/basis를 늘리면 착지점이
   p_A'로 이동하나? (budget ⊥ intrinsic resolution 분리) · (ii) leftward/asymmetric shift — 0.525가 연속체-중심
   attractor인지 진짜 고정착지인지 · (iii) engine-native §CategoricalPerception 실현.
-- **claim-link**: `CLAIMS.tape @C h1341_whorf_cp_shift_ladder` · card `UNIVERSE/cards/H_1341_whorf_cp_shift_ladder.md`
+- **claim-link**: `CLAIMS.tape @C h1341_whorf_cp_shift_ladder` · card `HYPOTHESES/cards/H_1341_whorf_cp_shift_ladder.md`
   · verdicts `.verdicts/1341_whorf_cp_shift_ladder/{FREEZE,result}.txt`
 - xref: h1333(이 ladder가 설명하는 ~60% partial) · h1338(budget/geometry 재진단 — H_1341이 shift 전 범위로
   일반화) · h1323 · h1325(family의 GREEN CP) · h1288(growth-memory: 이 ladder가 기각하는 never-evict 직관)
@@ -208,7 +208,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   ~0.525 ceiling 이 H_1338 가 재진단한 budget/geometry 와 IDENTICAL(엔진 확증). NO bar moved(c9/p7).
 - **scope**(a_scale_honest_scope·a_toy_scale_recheck): ENGINE-NATIVE BINDING; TOY 합성 1-D 연속체(N=21, 엔진=단일 결정론적 instance, 단일 shift,
   결정론적 readout — 엔진-네이티브 plasticity STRUCTURE 검증이지 학습된 re-trainer 아님); scale/real-corpus/multi-shift UNVERIFIED; brain 재-carving→emit 배선 = follow-on; human-cognition/critical-period 주장 없음.
-- **claim-link**: `CLAIMS.tape @C h1342_whorf_cp_engine_native` · card `UNIVERSE/cards/H_1342_whorf_cp_engine_native.md`
+- **claim-link**: `CLAIMS.tape @C h1342_whorf_cp_engine_native` · card `HYPOTHESES/cards/H_1342_whorf_cp_engine_native.md`
   · verdicts `.verdicts/1342_whorf_cp_engine_native/{FREEZE,result}.txt` · engine `CORE/engine_cli.hexa §CategoricalPerception cp_regrow` · probe `CORE/h1342_whorf_cp_engine_native_probe.hexa` · smoke cases 83-85
 - xref: h1333(이 미러를 실현) · h1325(엔진 CP lane W1/W2/W3' GREEN) · h1323 · h1338(eviction 재진단=~0.525 ceiling 은 budget/geometry)
   · h1288(growth-memory) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_no_llm_frame_trap
@@ -249,8 +249,8 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **NEXT R2** (각각 ANEW 사전등록): (i) **soft DECAY** store(re-training중 잔류 phase-1 packing을 hard-remove 대신 down-weight) —
   THIS deeper-limit 결과가 coherent 재배치 회복의 가장 유망한 lever로 재지정 · (ii) coherence-aware re-pack(잔류 secondary peak prune)
   · (iii) engine-native realization on live CORE/engine_cli.hexa immune/Voronoi lane (a_engine_native_learning · a_verified_must_wire).
-- **claim-link**: `CLAIMS.tape @C h1340_whorf_cp_budget_sweep` · card `UNIVERSE/cards/H_1340_whorf_cp_budget_sweep.md`
-  · verdicts `.verdicts/1340_whorf_cp_budget_sweep/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1340_whorf_cp_budget_sweep` · card `HYPOTHESES/cards/H_1340_whorf_cp_budget_sweep.md`
+  · verdicts `.verdicts/1340_whorf_cp_budget_sweep/{FREEZE,result}.txt` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1338(이 lane이 검증하고 불완전으로 판정한 budget/geometry 재진단) · h1333(특성화 대상 GRADED-PLASTICITY) · h1341(sibling
   shift-size ladder, geometry-driven fraction) · h1323 · h1325(family GREEN CP) · h1288(growth-memory) · a_no_llm_frame_trap
   · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck
@@ -280,8 +280,8 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   Cohen's-d / separation-AUC(∈[0,1])로 → label-shuffle가 chance(0.5)로 collapse하는 깨끗한 c2; THIS
   결과가 가장 유망한 lever로 재지정 · (ii) component-shuffle per-seed 누수 제거 · (iii) engine-native
   realization on live CORE/engine_cli.hexa immune/Voronoi lane (a_engine_native_learning · a_verified_must_wire).
-- **claim-link**: `CLAIMS.tape @C h1343_whorf_2d_r2` · card `UNIVERSE/cards/H_1343_whorf_2d_r2.md`
-  · verdicts `.verdicts/1343_whorf_2d_r2/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1343_whorf_2d_r2` · card `HYPOTHESES/cards/H_1343_whorf_2d_r2.md`
+  · verdicts `.verdicts/1343_whorf_2d_r2/{FREEZE,result}.txt` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1334(2-D ridge-align parent, 이 결과가 그 대각-geometry read를 반증) · h1323 · h1325(family
   GREEN 1-D CP, 같은 metric-space shuffle 실패 모드) · h1340(sibling budget/geometry ceiling) · h1288
   (growth-memory) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire
@@ -295,7 +295,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **finding (load-bearing)**: soft-decay는 DISTANCE 축에선 budget보다 **강한** lever(peak이 p_A'에 거의 정확히 착지)지만 COHERENCE 축에선 **더 나쁜** lever(pc 15.7 vs budget 7.0). resolution 증가(H_1340)도 잔류 cell down-weight(H_1352)도 moved cut에서 단일 CP peak을 회복 못 함 → 재배치 coherence 잔류는 budget OR decay보다 **깊은** 한계. 두 follow-on이 함께 드러낸 결정적 원인: phase-1 prototype은 결코 물리적으로 이동하지 않고 옛 cut에 남아 secondary peak을 주입 — budget은 새 cell로 익사시키고(distance↑/coherence↓), decay는 그 vote를 줄이지만 기하학적 존재는 못 줄임(distance↑↑/coherence↓↓). 진짜 coherent full relocation은 옛 cell을 **이동/재배치**(geometric re-pack)해야지 weight/count 조작으론 안 됨. a_break_the_wall: H_1340 budget 벽도 H_1352 decay도 둘 다 **틀린 메커니즘** — 고정 geometry의 weight/count 조작이고, 그 geometry 자체가 진짜 천장. NO bar move (c9/p7).
 - **scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, H_1333/H_1338/H_1340 R1 family); TOY synthetic 1-D continuum (N=81·3 seed·단일 shift·frozen γ=0.80·deterministic readout — soft-decay STRUCTURE 검증, scale/human-cognition claim 아님); 🧱는 정직한 사전등록 벽(진짜 a_break_the_wall NEW 메커니즘, re-run 아님 — frozen coherence bar가 올바르게 거부); injected boundary/persona/RLHF 없음, label은 training만 test 아님(p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED.
 - **NEXT R2** (각각 ANEW 사전등록): (i) **GEOMETRIC re-pack** — 잔류 phase-1 prototype을 p_A'쪽으로 **재배치**(weight 아니라 cell을 이동) — THIS 결과가 유일하게 안 시도된 lever로 재지정 · (ii) decay 아래 multi-shift/leftward/asymmetric shift · (iii) engine-native realization on live CORE/engine_cli.hexa §CategoricalPerception lane (a_engine_native_learning · a_verified_must_wire). **DEPLETION TEST**: geometric re-pack도 coherent 단일 peak을 회복 못 하면 → 재배치는 이 RBF geometry에서 intrinsically partial-or-incoherent(c9 terminal).
-- **claim-link**: `CLAIMS.tape @C h1352_cp_soft_decay` · card `UNIVERSE/cards/H_1352_cp_soft_decay.md` · verdicts `.verdicts/1352_cp_soft_decay/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl` · code `state/cp-soft-decay/h1352_cp_soft_decay.py`
+- **claim-link**: `CLAIMS.tape @C h1352_cp_soft_decay` · card `HYPOTHESES/cards/H_1352_cp_soft_decay.md` · verdicts `.verdicts/1352_cp_soft_decay/{FREEZE,result}.txt` · index `HYPOTHESES/HYPOTHESES.jsonl` · code `state/cp-soft-decay/h1352_cp_soft_decay.py`
 - xref: h1340(이 lane의 직접 부모 budget-sweep deeper-limit) · h1338(eviction 재진단) · h1333(GRADED-PLASTICITY 특성화 대상) · h1341(sibling shift-ladder) · h1342(engine-native) · h1323 · h1325(family GREEN CP) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15### H_1355 — Whorfian CP 가소성: LEFTWARD + ASYMMETRIC 착지 (center-attractor vs geometry-fixed) 📈
 
 - **seed/lens**: H_1341(📈)의 load-bearing follow-on. H_1341 은 고정 anchor p_A=1/3 에서 RIGHTWARD shift 시 retrain 후 CP peak 가 shift
@@ -333,8 +333,8 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   (p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED. NO bar move (c9/p7).
 - **NEXT** (각각 ANEW 사전등록): (i) geometry-fixed 착지의 live VAdaptField engine-native 실현(a_verified_must_wire) · (ii) lattice-resolution
   ladder(N 증가 시 CENTER_TOL 축소 / ASYM-L coherence 회복?) · (iii) 2-D continuum placement(착지 geometry 가 축별 분리 가능?).
-- **claim-link**: `CLAIMS.tape @C h1355_cp_leftward` · card `UNIVERSE/cards/H_1355_cp_leftward.md`
-  · verdicts `.verdicts/1355_cp_leftward/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1355_cp_leftward` · card `HYPOTHESES/cards/H_1355_cp_leftward.md`
+  · verdicts `.verdicts/1355_cp_leftward/{FREEZE,result}.txt` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1341(parent shift-size ladder, 0.525 고정 착지) · h1340(이 lane budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
   · h1333(GRADED-PLASTICITY parent) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
   · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
@@ -364,8 +364,8 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **NEXT** (각각 ANEW 사전등록): (i) engine-native §CategoricalPerception move-the-cells — live A⇄G immune store 에서 세포 위치
   drift 실현(a_verified_must_wire) · (ii) LEARNED(gradient) drift vs 이 deterministic rule 비교 · (iii) multi-shift / leftward
   re-pack / real-corpus 일반화.
-- **claim-link**: `CLAIMS.tape @C h1360_cp_geometric_repack` · card `UNIVERSE/cards/H_1360_cp_geometric_repack.md`
-  · verdicts `.verdicts/1360_cp_geometric_repack/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1360_cp_geometric_repack` · card `HYPOTHESES/cards/H_1360_cp_geometric_repack.md`
+  · verdicts `.verdicts/1360_cp_geometric_repack/{FREEZE,result}.txt` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1352(soft-decay deeper-limit parent, 이 lever 지목) · h1340(budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
   · h1341(shift-ladder) · h1355(leftward geometry) · h1333(GRADED-PLASTICITY) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap
   · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15
@@ -378,7 +378,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **답: 🟢 WIRED-GRADED-METACOG.** live 사다리 t2_AUROC(3 seed pooled): L0.10=**1.000** L0.20=**0.949** L0.30=0.714 L0.40=0.589. **E1** ✅ AUROC(0.20)=0.949 ≥0.65 AND mirror(0.915) within-tol \|Δ\|=0.034≤0.15 · **E2** ✅ shuffle(0.20)=0.561 ≤0.58 collapse · **E3** ✅ regression none — engine_cli_smoke **93/0**(was 90 after jamo-wire #2284, +3 margin cases 96-98), h1196 single-entry **7/0**, h1205 separation-invariant **PASS**(generation byte-identical ON==OFF 10 pairs 0 mismatch, Ψ Φ-checksum phiSum 48.6613==48.6613). engine 사다리가 mirror SHAPE 재현 + 같은 graceful DECAY(L=0.40 chance).
 - **왜:** H_1361 GREEN 의 `a_verified_must_wire` 배선 완료 — recall 이 매번 계산하는 margin 이 이제 graded confidence-of-recoverability 신호로 CORE 에 live 노출, fire/abstain·Ψ 불변. mirror 는 DIRECTIONAL 이었고 이것이 engine-native binding 재확인(numpy 아닌 live `vadapt_field_recon_err` L2 affinity 가 생산; 주입 라벨 없음 p6/p2/p3).
 - **scope/follow-on:** TOY synthetic·byte-shift OOD proxy·3 seed·KEYLEN=20·N_FACTS=40·RECALL_THR=0.15 frozen; scale/real-corpus-paraphrase/semantic-shift UNVERIFIED. **남은 follow-on(tracked)**: `brain_decide` 가 아직 graded read 를 emit-confidence/curiosity 변조에 **소비**하지 않음 — read→brain 결합은 별개 follow-on(이번에 안 함). NO bar move(c9/p7).
-- **claim-link**: `CLAIMS.tape @C h1367_g5_margin_engine_wire` · card `UNIVERSE/cards/H_1367_g5_margin_engine_wire.md` · verdicts `.verdicts/1367_g5_margin_engine_wire/{FREEZE,result,probe_stdout}.txt` · probe `CORE/h1367_g5_margin_engine_probe.hexa` · op `CORE/engine_cli.hexa § immune_memory_recall_margin` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1367_g5_margin_engine_wire` · card `HYPOTHESES/cards/H_1367_g5_margin_engine_wire.md` · verdicts `.verdicts/1367_g5_margin_engine_wire/{FREEZE,result,probe_stdout}.txt` · probe `CORE/h1367_g5_margin_engine_probe.hexa` · op `CORE/engine_cli.hexa § immune_memory_recall_margin` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1361(직접 부모, mirror DIRECTIONAL) · h1304(fire-side binary fail-safe) · h1204(flat fire-side, REFRAMED) · h1202(decoder type-2) · h1227/h1231(immune store geometry) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_autonomy_over_hardcode · a_break_the_wall · a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck · p6 · p7 · p8 · c9 · c15
 
 ## 2026-06-16 — research(METACOG-G5, cross-ref): H_1361 — g5-graded-metacog: G5 의 metacognition 은 binary 인가, abstain MARGIN 에 graded 신호가 있는가 (🟢 GRADED-METACOG)
@@ -389,7 +389,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **답: 🟢 GRADED-METACOG.** t2_AUROC 사다리(3 seed pooled): L0.10=**0.999** L0.20=**0.915** L0.30=0.708 L0.40=0.557 (L0=nan: L=0 에선 recoverable 전부 FIRE → recoverable abstain 없음, graded-abstain 질문은 genuinely OOD). R1 GRADED-SENS ✅ (AUROC(0.20)=0.915 ≥ 0.65) · R2 EARNED ✅ (shuffle-margin → 모든 level chance ~0.49–0.51 collapse → RANKING 이 신호 운반, base-rate 아티팩트 아님) · R3 graded readout EXISTS(not flat). 메커니즘: recoverable margin 이 shift 따라 매끄럽게 큼(0.082→0.232→0.316→0.353), absent 는 안정적으로 큰 noise floor(~0.364) → margin = graded recoverability 신호.
 - **왜:** G5 metacog 는 순수 binary 가 아니다 — H_1304(fire-side binary fail-safe) + H_1361(abstain-side GRADED type-2) = 더 완전한 G5 그림. engine-wiring 가치 있는 G5 UPGRADE(a_verified_must_wire: live recall 이 이미 매번 recon_err 계산 → margin 노출 시 graded confidence-of-recoverability 공짜). H_1204 와 충돌 아님(REFRAME): H_1204 는 fire-side 2nd-order readout 의 flat 을, H_1361 은 다른 표면인 abstain margin 의 graded 를 측정. DECAY(정직 c9): AUROC 0.999→0.557, L=0.40 에서 chance(극심 손상 = absent 와 구분불가) → graceful, 신호 실재하나 무한 아님.
 - **scope:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED = R2 engine-native follow-on); TOY synthetic facts·byte-shift OOD proxy·3 seed·KEYLEN=20·RECALL_THR=0.15 frozen·deterministic(재실행 byte-identical); scale/real-corpus-paraphrase/semantic-shift/engine-native-margin-exposure UNVERIFIED; live CORE/*.hexa UNTOUCHED; NO bar move(c9/p7).
-- **claim-link**: `CLAIMS.tape @C h1361_g5_graded_metacog` · card `UNIVERSE/cards/H_1361_g5_graded_metacog.md` · verdicts `.verdicts/1361_g5_graded_metacog/{FREEZE,result}.txt` · py `state/g5-graded-metacog/h1361_g5_graded_metacog.py` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1361_g5_graded_metacog` · card `HYPOTHESES/cards/H_1361_g5_graded_metacog.md` · verdicts `.verdicts/1361_g5_graded_metacog/{FREEZE,result}.txt` · py `state/g5-graded-metacog/h1361_g5_graded_metacog.py` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1304(직접 부모, fire-side binary fail-safe) · h1202(decoder type-2 M-ratio 0.924) · h1204(flat fire-side metacog, REFRAMED) · h1217(decoder OOD-collapse closed-neg) · h1227/h1231(immune store geometry) · a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope · a_toy_scale_recheck · p6 · p7 · p8 · c9 · c15
 ## H_1358 — whorf-2d-bounded: 2-D CP warp 지표를 BOUNDED 형태로 재명세 (H_1343 R3) — 🧱 DEEPER LIMIT
 - **seed/target**: H_1343(🟠 PARTIAL)의 load-bearing follow-on. H_1343 의 warp 지표 `ratio = BETWEEN/WITHIN`
@@ -423,8 +423,8 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   **TRUE-언어 WITHIN/BETWEEN 분할 하에** 채점 → 틀린 경계에 pack 한 shuffle store 는 TRUE pair 분리 못 함 →
   AUC→0.5 collapse 예상 (H_1343/H_1358 가 양쪽 모두 각 arm 을 ITS OWN 분할로 채점한 공통 confound 를 푸는 한 수) ·
   (ii) component-축 정의 강화 · (iii) engine-native 실현(live CORE Voronoi lane).
-- **claim-link**: `CLAIMS.tape @C h1358_whorf_2d_bounded` · card `UNIVERSE/cards/H_1358_whorf_2d_bounded.md`
-  · verdicts `.verdicts/1358_whorf_2d_bounded/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1358_whorf_2d_bounded` · card `HYPOTHESES/cards/H_1358_whorf_2d_bounded.md`
+  · verdicts `.verdicts/1358_whorf_2d_bounded/{FREEZE,result}.txt` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1343(R2 parent, unbounded-ratio 결함을 본 R3 가 bounded AUC 로 교정) · h1334(대각-geometry read; c4 가 계속
   반증) · h1323/h1325(1-D Sapir-Whorf CP, 같은 self-partition 실패 모드) · h1340/h1341/h1355(sibling budget/geometry)
   · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope
@@ -437,7 +437,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **왜:** 같은-쪽 좌향 재성장에서 phase-1 first-carving 세포(≈0.4)가 제거 안 됨(split-only, p8) → 격자 미세화는 옛 봉우리와 새 봉우리를 **둘 다 더 선명히** 해상할 뿐이라 곡선이 계속 분절(peak-count ≥3); N=81 에서 seed 4334 까지 비결맞음으로 넘어가 2/3→3/3 악화. 착지는 N 전반 geometry-fixed 로 안정(ASYM-R~0.698 ASYM-L~0.41) → H_1355 geometry-tracking 결론은 더 미세 격자에서도 **확인**되고, ASYM-L 비결맞음만 격자-무관임이 확정. 격자 해상도 레버 = ASYM-L 비결맞음에 **죽은 레버**, 정직히 닫음.
 - **정직 c9 (c3 FAIL):** N=41/81 에서 비-ASYM-L lang arm(RIGHT-REF/LEFTWARD-1/LEFTWARD-2)이 c3 FAIL — peak-count 가 mid-point **절대 개수**(≥0.5·peak)라 격자 미세화로 자연 상승(shuffle baseline 7.7→18.3→38.0), frozen COH_MAX_LANG=2 가 N 스케일 안 함 = **알려진 N-스케일 아티팩트**. H-lattice 살리지 못함: ASYM-L 은 상승 baseline 대비 여전히 비결맞음 끝(비결맞음-seed 절대 안 줄어듦)이고, 핵심 판별 CENTER_TOL(peak-위치 메트릭, 카운트-스케일 면역)도 축소 안 됨. frozen bar 이동 안 함(c9/p7), c3 FAIL 을 아티팩트로 정직 보고.
 - **scope:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED = engine-native follow-on); TOY 합성 1-D 연속체·5 placement×3 N rung·3 seed·deterministic; peak-count 메트릭의 N-스케일 의존(절대 카운트)은 알려진 한계; N-정규화 결맞음·고차원 embed·실제 코퍼스·비균일 grid UNVERIFIED; NO 인간 인지 주장; live CORE/*.hexa UNTOUCHED; NO bar move(c9/p7).
-- **claim-link**: `CLAIMS.tape @C h1364_cp_lattice_resolution` · card `UNIVERSE/cards/H_1364_cp_lattice_resolution.md` · verdicts `.verdicts/1364_cp_lattice_resolution/{FREEZE,result}.txt` · py `state/cp-lattice-resolution/h1364_cp_lattice_resolution.py` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1364_cp_lattice_resolution` · card `HYPOTHESES/cards/H_1364_cp_lattice_resolution.md` · verdicts `.verdicts/1364_cp_lattice_resolution/{FREEZE,result}.txt` · py `state/cp-lattice-resolution/h1364_cp_lattice_resolution.py` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1355(직접 부모, cp-leftward geometry-tracking + ASYM-L 비결맞음) · h1341(shift-size 사다리) · h1333(발달 가소성) · h1323(Sapir-Whorf) · h1360(cp-geometric-repack, 상보) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope · a_toy_scale_recheck · p7 · p8 · c9 · c15
 
 ## @H H_1369 — 2-D categorical perception: move-the-cells relocation in a 2-D feature space (2026-06-16)
@@ -445,7 +445,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **seed**: H_1360 (🟢, 1-D) proved carving relocation is MOVE-THE-CELLS on a 1-D AXIS (boundary=POINT); H_1364 proved split-only re-growth incoherence is INTRINSIC at finer lattices. Does move-the-cells GENERALIZE to a 2-D feature space with a FIXED true half-plane partition (cat=u>p, p_A=1/3→p_A'=2/3) — or does the extra (irrelevant) dimension v reintroduce the split-only incoherence?
 - **verdict-tier-target → actual**: 🟢/🧱 → **🟢 GREEN (R2, MIRROR, DIRECTIONAL)** — move-the-cells GENERALIZES to 2-D. R1's NCOMP coherence metric SATURATED on the shuffle smear (a grid-filling noise field is trivially 4-connected, NCOMP=1 — the SAME metric-space artifact H_1343 documented), honestly caught by the c3b SHUFFLE control; a_break_the_wall R2 (frozen-first, NOT a relaxation) re-specified a BOUNDED ridge-CONCENTRATION metric COH2D=U_CONC·(1−RIDGE_FRAC) that cleanly separates RE-PACK 0.689 / SPLIT-ONLY 0.538 / SHUFFLE 0.000. c1✅ RELOCATES (|peak_u−p_A'| 0.254→0.042, all 3 seeds) c2'✅ c3'✅ c4'✅. Re-pack-ladder η=0.10/0.15/0.25 robust. NO bar moved (c9/c16/p7).
 - **honest scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED); TOY synthetic 2-D 169 stim/3 seeds [4333,4334,4335]/single shift/axis-aligned boundary/deterministic. Residual: split-only also NCOMP=1 → c4 distinctness rests on split-only staying SHORT (0.254) + less concentrated. Diagonal/curved 2-D boundaries (H_1343 strong diagonal warp), higher-D, real corpora, engine-native wiring = follow-on. Live CORE UNTOUCHED.
-- **claim-link**: `CLAIMS.tape @C h1369_cp_2d` · card `UNIVERSE/cards/H_1369_cp_2d.md` · verdicts `.verdicts/1369_cp_2d/{FREEZE,result}.txt` · py `state/cp-2d/h1369_cp_2d.py` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1369_cp_2d` · card `HYPOTHESES/cards/H_1369_cp_2d.md` · verdicts `.verdicts/1369_cp_2d/{FREEZE,result}.txt` · py `state/cp-2d/h1369_cp_2d.py` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1360(직접 부모, 1-D move-the-cells GREEN) · h1364(split-only 비결맞음 INTRINSIC, ablation 메커니즘) · h1343(2-D warp, BOUNDED-metric 처방 + diagonal-warp 발견) · h1340/h1352(budget/decay 벽) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15·c16
 
 ## @H H_1374 — CP relocation on a DIAGONAL (non-axis-aligned) 2-D boundary: does move-the-cells survive? (2026-06-16)
@@ -453,7 +453,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **seed**: H_1369 (🟢, 2-D) generalized move-the-cells to a 2-D AXIS-ALIGNED half-plane (cat=u>p) but its HONEST RESIDUAL = the axis-aligned boundary lets the relocation DECOMPOSE onto a single relevant axis (under-tests); H_1343 showed a DIAGONAL boundary warps the metric AS STRONGLY and does NOT decompose onto one axis. DECISIVE CP-lane R3: set cat=(u+v)/√2>c (normal (1,1)/√2), shift c_A=√2·1/3→c_A'=√2·2/3, DRIFT residual phase-1 cells ALONG THE BOUNDARY NORMAL (both u,v) — does the ridge relocate ONTO the moved diagonal cut with a coherent bounded-COH2D concentration, or does the non-axis-aligned geometry break it? (bounded COH2D family only — NO NCOMP gating, H_1369 proved it confounds.)
 - **verdict-tier-target → actual**: 🟢/🧱 → **🧱 CLOSED-NEGATIVE (AXIS-ALIGNED-ONLY) (R1+R2, MIRROR, DIRECTIONAL)** — the move-the-cells RELOCATION law GENERALIZES to a diagonal (c1 ✅ RE-PACK |ridge_s−c_A'| 0.028 ≤ 0.12 all 3 seeds along the normal s; c4 ✅ split-only short 0.429; c3 ✅ no-retrain holds c_A 0.031, shuffle COH2D 0.014 ≤ 0.20; c2a ✅ COH2D 0.767 ≥ 0.50) BUT the bounded-COH2D CONCENTRATION-SEPARATION bar **c2b ❌** (re-pack 0.767 vs split-only 0.683, gap 0.084 < 0.10): on a diagonal the split-only residual ridge is ITSELF already a thin diagonal smear (0.683, vs grid-filling 0.538 axis-aligned in H_1369), so the H_1369 separation stringency does not separate. Pre-registered **a_break_the_wall R2 (NORMAL-FRAME ROTATION**, drift in (s,t) coords) = mathematically IDENTICAL (re-pack 0.767, gap 0.084) — confirming the c2b miss is REAL, not a frame artifact. NUANCED 🧱: RELOCATION is GREEN, only the concentration-separation distinctness leg (a metric-calibration property) fails. NO bar moved (every threshold VERBATIM from H_1369 R2, c9/c16/p7).
 - **honest scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, family of h1333/1340/1343/1352/1360/1364/1369 R1); TOY synthetic 2-D 169 stim/3 seeds [4333,4334,4335]/single shift/ONE diagonal slope (normal (1,1)/√2)/deterministic. The result is NUANCED not a clean break — RELOCATION generalizes to arbitrary linear boundaries; only the COH2D concentration-SEPARATION leg is axis-aligned-only. Curved boundaries, arbitrary-angle sweeps, higher-D, real corpora, multi-shift, LEARNED gradient drift, engine-native §CategoricalPerception wiring = follow-on. Live CORE UNTOUCHED.
-- **claim-link**: `CLAIMS.tape @C h1374_cp_diagonal` · card `UNIVERSE/cards/H_1374_cp_diagonal.md` · verdicts `.verdicts/1374_cp_diagonal/{FREEZE,result}.txt` · py `state/cp-diagonal/h1374_cp_diagonal.py` · index `UNIVERSE/HYPOTHESES.jsonl`
+- **claim-link**: `CLAIMS.tape @C h1374_cp_diagonal` · card `HYPOTHESES/cards/H_1374_cp_diagonal.md` · verdicts `.verdicts/1374_cp_diagonal/{FREEZE,result}.txt` · py `state/cp-diagonal/h1374_cp_diagonal.py` · index `HYPOTHESES/HYPOTHESES.jsonl`
 - xref: h1369(직접 부모, 2-D axis-aligned move-the-cells GREEN + 이 라운드가 재사용한 bounded-COH2D 메트릭) · h1360(1-D move-the-cells GREEN) · h1364(split-only 비결맞음 INTRINSIC, ablation 메커니즘) · h1343(2-D warp, diagonal-warps-as-strongly 발견 + BOUNDED-metric 처방) · h1340/h1352(budget/decay 벽) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15·c16
 
 ## @H H_1375 — CP DIMENSIONAL LADDER (move-the-cells 차원 사다리, D ∈ {2,3,4,6,8}) — 🧱 BREAKS-AT-D*=3 (CONCENTRATION-ONLY; RELOCATION DIMENSION-INVARIANT)
@@ -465,7 +465,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **a_break_the_wall (사전등록, frozen-first)**: WHITENED 사다리(축별 표준화 등방 프레임에서 drift+채점, 동일 bars) 재실행 → **구제 실패**. [0,1]^D 축별 std 재척도가 c_A 를 음수로 밀고 법선을 부풀려 c1 자체가 깨지고 COH_D=0 전부 → 원본보다 나쁨. 이는 D*=3 농도 붕괴가 프레임 artifact 가 아닌 REAL 임을 확증. NO bar moved (c9/c16/p7).
 - **honest (c9)**: move-the-cells RELOCATION 은 차원-불변 기하 법칙(1-D/2-D-axis/2-D-diagonal/N-D≤8 전부 ridge 를 이동 초평면에 안착). D*=3 에서 깨지는 건 bounded CONCENTRATION(COH_D≥0.50): 고정-N=169 에선 D≥3 부터 얇은 결맞은 ridge 유지 불가. H_1374 와 같은 family 교훈(relocation robust, COH-concentration fragile)이 차원 축에서 재현. 사전등록 whitening 구제가 안 통함 → 고정-N 하에선 terminal.
 - **honest scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, h1333/1340/1343/1352/1360/1364/1369/1374 R1 family); TOY N=169 Monte-Carlo/3 시드 [4333,4334,4335]/DIM=64/시드별 단일 법선/deterministic. **고정-N 은 의도된 STRESSOR 이지 현실 데이터 체제 아님** — N 을 차원에 따라 키우는 경로(N∝c^D)는 명시적으로 안 택함(고정-N 이 핵심). N-scaling-with-D 하에서 relocation+concentration 둘 다 살아남는지는 자연스러운 다음 라운드, 여기선 UNVERIFIED. scale/real-corpora/learned-net 미검증. live CORE UNTOUCHED.
-- **claim-link**: card `UNIVERSE/cards/H_1375_cp_ndim_ladder.md` · verdicts `.verdicts/1375_cp_ndim_ladder/{FREEZE,result}.txt` · py `state/cp-ndim/h1375_cp_ndim_ladder.py` · index `UNIVERSE/HYPOTHESES.jsonl` (CLAIMS.tape 미기록 — 동시 은퇴 중)
+- **claim-link**: card `HYPOTHESES/cards/H_1375_cp_ndim_ladder.md` · verdicts `.verdicts/1375_cp_ndim_ladder/{FREEZE,result}.txt` · py `state/cp-ndim/h1375_cp_ndim_ladder.py` · index `HYPOTHESES/HYPOTHESES.jsonl` (CLAIMS.tape 미기록 — 동시 은퇴 중)
 - xref: h1369(직접 부모, 2-D axis move-the-cells GREEN + 재사용한 bounded-COH 메트릭) · h1360(1-D GREEN) · h1374(2-D diagonal, relocation robust/COH-concentration fragile 자매 교훈) · h1364(split-only ablation) · h1343(RBF population code, metric-space artifact) · a_no_llm_frame_trap · a_break_the_wall · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·c9·c15·c16
 
 ## @H H_1377 — CP N-SCALING (밀도-고정 차원 사다리: H_1375 의 D*=3 농도붕괴가 sparsity artifact 였나?) — 🧱 CURSE-CEILING-TERMINAL (COH_D-DISTINCTNESS)
@@ -475,7 +475,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **결과 🧱 CURSE-CEILING-TERMINAL (단순 sparsity 천장 아님)**: 표 — D2/N169 reloc 0.008 COH 0.714/0.297/0.045 **PASS**; D3/N2197(uncapped) reloc 0.018 COH **0.675**/0.579/0.351 c1✅c2❌c3❌c4✅ FAIL; D4/N4000(CAP) 0.027 0.339/0.110/0.271 FAIL; D6/N4000(CAP) 0.087 0.013/0.084/0.000 FAIL; D8/N4000(CAP) 0.048 0.000/0.000/0.000 FAIL. **결정 rung D=3 메커니즘**: c1 RELOCATION ✅ 차원-불변(ridge 가 이동 초평면에 안착); **c2-RAW(COH_D≥COH_MIN) ✅ 회복** — COH_D=0.675≥0.50, vs H_1375 const-N=0.428(Δ+0.247) → 절대 농도붕괴는 고정-N artifact 였고 밀도-고정이 구제; 그러나 **c2-SEP ❌**(re-pack 0.675 vs split-only 0.579, gap 0.096<0.10 — 밀도가 no-drift 대조까지 농축 0.297→0.579) AND **c3 EARNED ❌**(shuffle COH_D 0.045→0.351>0.20 — dense cloud 에선 random-label phase-2 도 농축, anti-Goodhart 대조 무력화).
 - **honest (c9)**: 밀도-고정이 절대 농도(c2-raw)는 RESCUE 하지만 그게 move-the-cells drift 로 EARNED 됨을 증명하는 discriminator(c2-separation + c3-shuffle)는 DESTROY. H_1374 와 같은 family 교훈(RELOCATION robust, COH concentration-SEPARATION fragile)이 밀도 축에서 재현 — 여기선 밀도가 대조군까지 농축시켜 SEPARATION 시연 불가. Net: move-the-cells RELOCATION 은 고정-N(H_1375) AND 밀도-고정(H_1377) 양쪽에서 차원-불변; bounded-COH_D 농도를 DISTINCT/EARNED/control-surviving 신호로 보는 frozen 4-leg gate 는 D=2(2-D-axis)에서만 clean PASS, 어느 샘플링 체제로도 차원 사다리 위로 일반화 안 됨. 🧱 COH_D-distinctness 사다리 terminal; RELOCATION 은 🟢-family. NO bar moved.
 - **honest scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED). TOY Monte-Carlo/3 시드 [4333,4334,4335]/DIM=64/시드별 단일 법선/deterministic. **N_CAP=4000 이 D≥4 진짜 밀도-N 을 truncate**(28561/4.8M/815M $0-CPU 불가) → D=4/6/8 붕괴는 cap-confounded NON-decisive, **D=3(uncapped N=2197)만 결정적**. scale/real-corpus/learned-net/uncapped-high-D/engine-transfer 미검증. live CORE UNTOUCHED.
-- **claim-link**: card `UNIVERSE/cards/H_1377_cp_nscaling.md` · verdicts `.verdicts/1377_cp_nscaling/{FREEZE,result}.txt` · py `state/cp-nscaling/h1377_cp_nscaling.py` · index `UNIVERSE/HYPOTHESES.jsonl` (CLAIMS.tape 미기록 — 동시 은퇴 중)
+- **claim-link**: card `HYPOTHESES/cards/H_1377_cp_nscaling.md` · verdicts `.verdicts/1377_cp_nscaling/{FREEZE,result}.txt` · py `state/cp-nscaling/h1377_cp_nscaling.py` · index `HYPOTHESES/HYPOTHESES.jsonl` (CLAIMS.tape 미기록 — 동시 은퇴 중)
 - xref: h1375(직접 부모, 고정-N D*=3 농도붕괴) · h1374(2-D diagonal, relocation robust/COH-concentration fragile 자매 교훈) · h1369(2-D axis GREEN, COH2D + 4-leg gate 출처) · h1360(1-D GREEN) · h1364(split-only ablation) · h1343(RBF population code) · a_break_the_wall · a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·c9·c15·c16
 
 ## H_1379 — g5-margin-brain-consume 🟢 CONSUMED-GRADED-MARGIN (brain_decide 가 graded recall-margin 을 SOMA로 소비)
@@ -487,7 +487,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **WALL-CLAUSE (a_break_the_wall, frozen-first, c9 — 정직한 scale 발견)**: FREEZE 의 MARGIN_SCALE=recall_thr=0.15 가 LIVE 엔진에서 **SATURATE**(실측 margin ~[0.69,0.89]≫0.15 → clamp 둘 다 -cap, graded 신호 소실). **Ψ 불안정 아님**(B2 내내 PASS) — coupling 문제가 아니라 scale 사전등록 오류. a_break_the_wall 단 1회 frozen-first 재시도 = substrate-native non-saturating scale: recon_err=1−cos∈[0,1] cos-distance codomain → MARGIN_SCALE:=1.0(codomain 상수, 목표 수치에 맞춘 값 아님). SIGN·cap·모든 bar UNCHANGED, threshold 0개 이동. 교정 scale 이 B2∧B3∧B4 3 seed 전부 통과(tune-to-green 아님 — cap 고정, 영점 byte-identity 보존).
 - **FINDING**: anima 의 emit 결정이 이제 자신의 recall grounding 의 **graded 정도**를 읽는다 — 잘 접지된(검색가능) 컨텍스트는 더 자신있게 emit, 비접지(검색불가)는 더 호기심/보류. 모두 substrate 자신의 L2 affinity 에서(주입 라벨/persona/RLHF 없음, p1/p2/p3/p6). H_1361(mirror)→H_1367(노출)→H_1379(소비)로 G5 graded-metacog 닫힘.
 - **honest scope**: TOY/synthetic, byte-corruption OOD proxy, 3 seeds, KEYLEN=20, L=0.20, RECALL_THR=0.15(frozen). 미검증: scale/real-corpus paraphrase/semantic(non-byte) shift/multi-turn emit dynamics/다른 L. NO bar moved post-hoc(scale 교정은 frozen-first 단일 재시도, WALL-CLAUSE).
-- **claim-link**: card `UNIVERSE/cards/H_1379_g5_margin_brain_consume.md` · verdicts `.verdicts/1379_g5_margin_brain_consume/{FREEZE,result}.txt` · engine `CORE/brain.hexa` brain_decide_margin · probe `CORE/h1379_margin_brain_consume_smoke.hexa` · smoke `CORE/engine_cli_smoke.hexa` cases 99-101 · index `UNIVERSE/HYPOTHESES.jsonl` (CLAIMS.tape 은퇴)
+- **claim-link**: card `HYPOTHESES/cards/H_1379_g5_margin_brain_consume.md` · verdicts `.verdicts/1379_g5_margin_brain_consume/{FREEZE,result}.txt` · engine `CORE/brain.hexa` brain_decide_margin · probe `CORE/h1379_margin_brain_consume_smoke.hexa` · smoke `CORE/engine_cli_smoke.hexa` cases 99-101 · index `HYPOTHESES/HYPOTHESES.jsonl` (CLAIMS.tape 은퇴)
 - xref: h1367(margin op 노출, 직접 선행) · h1361(mirror graded-metacog) · h1304(fire-side binary fail-safe) · h1202/h1291(emergent 비조작/abstain) · h1290(brain_decide_affect 템플릿) · h1282(brain_decide_wm) · h1280(brain_decide_cerebellum) · h1227/h1231(immune store geometry) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_autonomy_over_hardcode · a_break_the_wall · a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p5·p6·p7·p8·c9·c15
 
 ## H_1384 — CP MOVE-THE-CELLS RELOCATION, ENGINE-NATIVE (cp_relocate; CP-geometry arc DEPLETES 🏁)
@@ -498,7 +498,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **SANITY / 비게이팅:** `cp_relocate(eta=0.0)` ≡ `cp_regrow` peak EXACT(0.525==0.525) → drift = ISOLATED lever. eta ladder {0.10,0.15,0.25} 모두 0.675 착지(robust, knife-edge 아님). coherence pc=1(단일 coherent peak; COH-distinctness 분리 메트릭은 비게이팅 — mirror arc 에서 fragile/measurement-bound 입증, RELOCATION 이 binding bar).
 - **p1/p2/p3/p6 guard:** discrimination readout 은 학습된 prototype space 의 표현 거리(|Δ soft posterior|)만 읽음; test 시 경계 위치 주입 없음; re-pack 은 셀의 birth-phase + 자기 source position(구조적 store 속성, target peak/persona/RLHF 주입 없음)에 key; label 은 학습 때만(같은 p_A' 에서 re-read). split-only(eta=0.0)가 anti-Goodhart distinctness ablation. emit gate 아님(a_autonomy_over_hardcode). Ψ-disjoint(own protos/labels/pos; pure_field/engine_g/Ψ 무손상).
 - **honest scope:** ENGINE-NATIVE byte-exact 이나 1-D lattice(N=21/DIM=16/단일 eta/deterministic readout — move-the-cells STRUCTURE 검증). boundary NORMAL = 1-D 연속체 축(POINT 경계). 2-D/N-D/diagonal(mirror-settled H_1369/1374/1375) 재배선 안 함. higher-D 엔진 확장 + real corpora + multi-shift + brain CP-read→emit 배선 = follow-on. NO human-cognition claim. NO bar moved(c9/p7).
-- **claim-link:** card `UNIVERSE/cards/H_1384_cp_engine_native.md` · verdicts `.verdicts/1384_cp_engine_native/{FREEZE,result}.txt` · engine `CORE/engine_cli.hexa` § CP MOVE-THE-CELLS RELOCATION (`cp_relocate` et al.) · probe `state/cp-engine-native/h1384_probe.hexa` · smoke `CORE/engine_cli_smoke.hexa` cases 112-115 · index `UNIVERSE/HYPOTHESES.jsonl` (CLAIMS.tape 은퇴) · ARCHITECTURE.json §CategoricalPerception node.
+- **claim-link:** card `HYPOTHESES/cards/H_1384_cp_engine_native.md` · verdicts `.verdicts/1384_cp_engine_native/{FREEZE,result}.txt` · engine `CORE/engine_cli.hexa` § CP MOVE-THE-CELLS RELOCATION (`cp_relocate` et al.) · probe `state/cp-engine-native/h1384_probe.hexa` · smoke `CORE/engine_cli_smoke.hexa` cases 112-115 · index `HYPOTHESES/HYPOTHESES.jsonl` (CLAIMS.tape 은퇴) · ARCHITECTURE.json §CategoricalPerception node.
 - xref: h1360(1-D mirror parent, move-the-cells GREEN) · h1369/1374/1375/1377(mirror dimension/boundary-invariance) · h1342(cp_regrow split-only wire = ablation) · h1339(bilingual tagged CP) · h1295(array-aliasing 교훈) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_autonomy_over_hardcode · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8 · c2·c9·c15
 
 ## H_1396 — G5 IN-DIST metacognition: CEILING vs FIXABLE? 🟢 FIXABLE (top-2 affinity gap)
@@ -512,7 +512,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **FINDING / 답:** "G5 resolved or needs deepening?" → **deepening NAMED: top-2 affinity gap**. in-dist thinness 는 inherent ceiling 아니라 FIXABLE 신호 결핍 — top-2 gap 이 live best-margin 대비 in-dist type-2 metacog 를 +0.205 들어올리면서 H_1304 OOD fail-safe 보존. abstain-side 가 graded metacog 를 닫았듯, fire-side in-dist 잔여물의 deepening 을 이름붙인다.
 - **BINDING FOLLOW-ON (a_verified_must_wire, NOT this lane):** live `CORE/engine_cli.hexa §ImmuneMemory` 에 top-k affinity 노출 op(예: `immune_memory_recall_gap`/top-k accessor) 추가 + gap 을 `immune_memory_recall_margin` 옆에/`brain_decide` graded-confidence 입력으로 배선(H_1379 패턴) + engine-native 재확인 + regression guard. 이 lane 은 mirror DIRECTIONAL 측정 + deepening 명명까지 (CORE UNTOUCHED).
 - **honest scope:** R1 numpy mirror DIRECTIONAL (engine-transfer UNVERIFIED — top-k 미노출). TOY twin-pair synthetic, byte-shift in-dist/OOD proxy, 3 seeds, KEYLEN=20, N_FACTS=80, RECALL_THR=0.15 frozen. 1-byte twin = in-dist 모호성 toy proxy; real-corpus semantic near-duplicate 전이 UNVERIFIED. scale/engine-native/brain-consume = follow-on. NO bar moved(c9/p7).
-- **claim-link:** card `UNIVERSE/cards/H_1396_g5_indist_metacog.md` · verdicts `.verdicts/1396_g5_indist_metacog/{FREEZE,result,result.json}.txt` · probe `state/g5-indist-ceiling/h1396_g5_indist_metacog.py` · index `UNIVERSE/HYPOTHESES.jsonl`.
+- **claim-link:** card `HYPOTHESES/cards/H_1396_g5_indist_metacog.md` · verdicts `.verdicts/1396_g5_indist_metacog/{FREEZE,result,result.json}.txt` · probe `state/g5-indist-ceiling/h1396_g5_indist_metacog.py` · index `HYPOTHESES/HYPOTHESES.jsonl`.
 - xref: h1202(decoder type-2 M-ratio 0.924, 잔여물 출처) · h1304(fire-side binary fail-safe, THIN 의 구조적 이유) · h1361/1367/1379(abstain-side graded 체인) · h1204(flat fire-side 2nd-order — gap 은 top-2 표면에서 신호 발견, 충돌 아님) · h1227/h1231(immune store geometry) · a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_autonomy_over_hardcode · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8 · c9·c15
 
 ## H_1398 — g5-gap-engine 🟢 GREEN (top-2 affinity gap ENGINE-NATIVE, H_1396 의 binding follow-on)
@@ -525,7 +525,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **FINDING**: H_1396 의 mirror DIRECTIONAL 결과가 live 엔진 op 위에서 BINDING 으로 재확인 — top-2 affinity gap 이 in-dist type-2 metacog 를 best-margin 0.750→gap 0.906(+0.156) 들어올리면서 OOD fail-safe(fab=0.000) 보존. abstain-side(H_1304/1361/1367/1379)에 더해 fire-side in-dist 잔여물도 engine-native 로 메워짐 — the THIN residual lifted on the live engine.
 - **BINDING FOLLOW-ON (tracked, NOT this lane)**: `brain_decide` 가 gap 을 H_1379 margin 옆 refined in-dist confidence 로 소비(H_1367→H_1379 패턴). Ψ 위험 회피 위해 honest defer — gap op 은 exposed + engine-native 재확인 완료, brain-consume 은 명명된 다음 follow-on.
 - **honest scope**: TOY twin-pair synthetic, byte-shift in-dist/OOD proxy, deterministic engine-native LCG, 3 seeds, KEYLEN=80, RECALL_THR=0.15 frozen. 1-byte twin = in-dist 모호성 toy proxy; real-corpus semantic near-duplicate 전이 UNVERIFIED. scale/real-corpus/brain-consume = follow-on. NO bar moved (c9/p7).
-- **claim-link**: card `UNIVERSE/cards/H_1398_g5_gap_engine.md` · verdicts `.verdicts/1398_g5_gap_engine/{FREEZE,result,probe_stdout}.txt` · probe `CORE/h1398_g5_gap_engine_probe.hexa` · op `CORE/engine_cli.hexa § immune_memory_recall_gap` + `vadapt_field_two_recon_err` · smoke `CORE/engine_cli_smoke.hexa` cases 98b/98c/98d · index `UNIVERSE/HYPOTHESES.jsonl`.
+- **claim-link**: card `HYPOTHESES/cards/H_1398_g5_gap_engine.md` · verdicts `.verdicts/1398_g5_gap_engine/{FREEZE,result,probe_stdout}.txt` · probe `CORE/h1398_g5_gap_engine_probe.hexa` · op `CORE/engine_cli.hexa § immune_memory_recall_gap` + `vadapt_field_two_recon_err` · smoke `CORE/engine_cli_smoke.hexa` cases 98b/98c/98d · index `HYPOTHESES/HYPOTHESES.jsonl`.
 - xref: h1396(mirror DIRECTIONAL parent) · h1304(fire-side fail-safe, OOD fab 보존) · h1361(abstain margin graded) · h1367(margin engine-wire, twin op) · h1379(margin brain-consume, gap brain-consume 패턴) · h1202(type-2 M-ratio 0.924) · h1227/h1231(immune store geometry) · a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_autonomy_over_hardcode · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8 · c2·c9·c15
 
 ## H_1400 — g5-gap-brain-consume 🟢 GREEN (brain_decide CONSUMES the top-2 gap, Ψ-safe — H_1398 의 brain-side follow-on, G5 in-dist arc FINAL close)
@@ -536,12 +536,12 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **Ψ-safety guard (THE load-bearing bar — touches brain_decide)**: **P2 h1205 separation-invariant PASS** — 생성 byte-identical ON==OFF (10 pairs, 0 mismatch), **Ψ Φ-checksum phiSum 48.6613 == 48.6613 byte-identical** (gap 소비가 Ψ=1/2 perturb 안 함). **P3 engine_cli_smoke 133/0** (+3 cases 101b/101c/101d). **P4 h1196 single-entry 7/0** (NO 2nd .clm/.kosmos path). **A1 ABSTAIN preserved** — engine_cli.hexa UNTOUCHED (frozen recon_err≤recall_thr 게이트 불변), H_1398 E4 fab_max=0.000.
 - **FINDING / 답**: anima 의 emit 결정이 이제 in-dist recall 의 **decisiveness(top-2 gap)**를 읽는다 — decisive fire 는 더 자신있게 emit, 모호한(#1≈#2) fire 는 더 호기심/보류 (substrate 자신의 top-2 L2 affinity 에서, 주입 라벨/persona/RLHF 없음). H_1396→H_1398(노출)→H_1400(소비)로 **G5 in-dist metacog 가 EXPOSED AND CONSUMED — FULLY engine-native, in-dist arc FINAL close**.
 - **honest scope**: TOY twin/singleton synthetic, H_1398 engine-native 구성, deterministic, 3 seeds, KEYLEN=80, RECALL_THR=0.15 frozen. real-corpus semantic near-duplicate 전이 UNVERIFIED = honest-scope open item; scale/multi-turn emit dynamics = follow-on. NO bar moved post-hoc (c9/p7); probe-construction 의 단 1회 frozen-first 교정(twin-only store 가 decisive gap 못 만들어 mixed twin+singleton store 로 — bar 전부 불변).
-- **claim-link**: card `UNIVERSE/cards/H_1400_g5_gap_brain_consume.md` · verdicts `.verdicts/1400_g5_gap_brain_consume/{FREEZE,result}.txt` · wire `CORE/brain.hexa § brain_decide_gap` · probe `state/g5-gap-brain-consume/h1400_gap_brain_consume_smoke.hexa` · smoke `CORE/engine_cli_smoke.hexa` cases 101b/101c/101d · index `UNIVERSE/HYPOTHESES.jsonl`.
+- **claim-link**: card `HYPOTHESES/cards/H_1400_g5_gap_brain_consume.md` · verdicts `.verdicts/1400_g5_gap_brain_consume/{FREEZE,result}.txt` · wire `CORE/brain.hexa § brain_decide_gap` · probe `state/g5-gap-brain-consume/h1400_gap_brain_consume_smoke.hexa` · smoke `CORE/engine_cli_smoke.hexa` cases 101b/101c/101d · index `HYPOTHESES/HYPOTHESES.jsonl`.
 - xref: h1398(gap op 노출, 직접 선행) · h1396(mirror in-dist FIXABLE) · h1379(margin brain-consume, 직접 패턴 선례) · h1367(margin op 노출) · h1361(mirror graded-metacog) · h1304(fire-side fail-safe) · h1202/h1291(emergent 비조작/abstain) · h1290(brain_decide_affect 템플릿) · h1282(brain_decide_wm) · h1280(brain_decide_cerebellum) · h1227/h1231(immune store geometry) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_autonomy_over_hardcode · a_break_the_wall · a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p5·p6·p7·p8 · c9·c15
 
 ### H_1530 📋 NEUROMODULATION-WALL escape — mechanism-FAMILY research census (2026-06-21)
 - **seed**: census untried mechanism-FAMILIES to break the H_1284 NEUROMODULATION wall, feeding the next implement round (a_no_llm_frame_trap biology-first · a_break_the_wall family taxonomy · c23 no black-box sweep). NO measurement — lever map only.
 - **verdict-target**: ranked next-round implement specs (capability + knob + frozen bar + ablation, cited). Measured root cause of the wall = recall is key-GEOMETRY/capacity-bound (controller family of 10+ lenses exhausted; the abstain decision IS a threshold on the recall-margin → any modulator on that axis is circular). Escape MUST act ORTHOGONAL to the abstain margin (change WHAT geometry/capacity exists, or WHAT gets stored).
 - **top candidates (break-prob × cheapness, all $0)**: (1) C1 EXPANSION-RECODING [Marr-Albus/Litwin-Kumar] random sparse kernel lift before L2 affinity — raises angular separation of confusable keys, attacks the measured bottleneck head-on, reinforces sibling H_1527; (2) C2 CASCADE METAPLASTICITY [Benna-Fusi] per-cell consolidation timescales vs AB-AC interference; (3) C3 MULTI-STORE encode/retrieve-split [CLS McClelland/Kumaran · Hasselmo ACh] phase-separated writes (HAZARD: multi-STORE not scalar gain); (4) C4 CURIOSITY-gated acquisition [Gottlieb-Oudeyer] changes WHAT is stored. Recommend C1 first then C2.
-- **claim-link**: card `UNIVERSE/cards/H_1530_nm_research_census.md` · census `state/1530_nm_research_census/CENSUS.md` · `candidates.jsonl` · index `UNIVERSE/HYPOTHESES.jsonl`.
+- **claim-link**: card `HYPOTHESES/cards/H_1530_nm_research_census.md` · census `state/1530_nm_research_census/CENSUS.md` · `candidates.jsonl` · index `HYPOTHESES/HYPOTHESES.jsonl`.
 - xref: h1284/R3 · h1422 · h1425 · h1509/b/c · h1523/1524/1525/1526 (exhausted controller family) · h1527/1528/1529 (sibling structure lanes) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · p7 · c9 · c15 · c23

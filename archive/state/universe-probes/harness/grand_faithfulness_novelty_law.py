@@ -345,7 +345,7 @@ def main():
     print("  Reproduces the SIGN of H_1142's rho=-0.500 on a tractable substrate; transfer")
     print("  to a real 7B (the measured-rho regime) UNVERIFIED here (a_scale_honest_scope).")
     print("  Faithfulness=verbatim k-gram-present proxy for I(output;corpus); not full MI.")
-    print(f"  reproduce: python3 UNIVERSE/harness/grand_faithfulness_novelty_law.py")
+    print(f"  reproduce: python3 HYPOTHESES/harness/grand_faithfulness_novelty_law.py")
 
 
 if __name__ == "__main__":

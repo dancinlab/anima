@@ -8,7 +8,7 @@
 - [x] DOMAINS.tape 등록 — `@domain SPATIAL := "./SPATIAL/SPATIAL.md"` (BRAIN·XENO·TEMPORAL 다음 5번째 자매; AKIDA/EEG/KOSMOS 와 함께 substrate-axis cluster)
 - [x] seed 출처 — XENO 3D applicability matrix (paper #1414 v2) + TEMPORAL 4D axis (Δt) 자연 5번째 axis (spatial-coupling-scale)
 - [x] sibling 양방향 엮음 — XENO · TEMPORAL · EEG · AKIDA · IIT4 · UNIVERSE
-- [x] 3-신호 H_844 slug 검증 — origin/main `git ls-tree UNIVERSE/ | grep H_844` zero hit + `git log --all` zero hit + open PR 0건 — slug 사용 안전
+- [x] 3-신호 H_844 slug 검증 — origin/main `git ls-tree HYPOTHESES/ | grep H_844` zero hit + `git log --all` zero hit + open PR 0건 — slug 사용 안전
 - [x] S1 설계 — XENO/detector/invariant_detector.hexa 의 4 spatial-scale 변형 (local nearest-neighbor / regional ~32-step window / global 전체 평균 / cosmic sparse long-range)
 - [x] 4 substrate (hardcoded literal, n=128 each):
   - (a) local      — XOR cascade nearest-neighbor coupling (XENO X10-d 정합)

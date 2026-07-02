@@ -17,7 +17,7 @@ THE POINT (no-communication / no-signalling theorem):
   falsified regardless of the entropy source.
 
 QRNG SOURCE (genuine ANU quantum vacuum):
-  Bulk stream  = UNIVERSE/state/h1053_qrng_bytes.bin (3,000,000 real ANU bytes,
+  Bulk stream  = HYPOTHESES/state/h1053_qrng_bytes.bin (3,000,000 real ANU bytes,
                  cached from prior H_1053 work; offline-safe + reproducible).
   Liveness     = a tiny fresh ANU pull is done out-of-band for provenance (the
                  verdict records its status); the run itself relies on the cache.
@@ -53,7 +53,7 @@ import math
 import numpy as np
 
 # ---- frozen params (match the numpy arm) ----------------------------------
-QRNG_BIN  = "UNIVERSE/state/h1053_qrng_bytes.bin"  # genuine ANU quantum bytes
+QRNG_BIN  = "HYPOTHESES/state/h1053_qrng_bytes.bin"  # genuine ANU quantum bytes
 PSI_STAR  = 0.5      # Ψ=1/2 fixed point
 LAM       = 0.10     # relaxation rate toward the attractor
 SIGMA     = 0.05     # independent process noise per node

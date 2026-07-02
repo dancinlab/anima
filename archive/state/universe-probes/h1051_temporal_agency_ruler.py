@@ -15,7 +15,7 @@ how integrated is this one state right now? CONSTRUCTIVE hypothesis:
   veto. Does a TEMPORAL axis = (causal-provenance DEPTH, H_932) + (veto CAPACITY,
   H_935) SEPARATE the active from the passive members of those Phi-matched pairs?
 
-PRE-REGISTERED FALSIFIER (FROZEN in UNIVERSE/cards/H_1051_temporal_agency_ruler.md §2)
+PRE-REGISTERED FALSIFIER (FROZEN in HYPOTHESES/cards/H_1051_temporal_agency_ruler.md §2)
 ===============================================================================
 >=6 matched pairs x >=20 seeds. epsilon_Phi = 0.15 (Phi-match tolerance). n=5.
   H1-PASS         : |d_Phi| < 0.2 (Phi does NOT separate) AND |d_T| >= 0.8 with
@@ -75,7 +75,7 @@ def _load(modname, relpath, add_dir_to_path=True):
 
 # faithful Phi mirror (H_999/H_1004), proven ==stdlib; needs CWM/probes on path.
 _h1004 = _load("h1004_bigphi_faithful_clean",
-               "UNIVERSE/h1004_bigphi_faithful_clean.py")
+               "HYPOTHESES/h1004_bigphi_faithful_clean.py")
 faithful_phi = _h1004.faithful_phi   # faithful_phi(state_flat, n, dim, n_bins)
 
 # H_932 provenance chain (build_chain / verify_chain / tamper helpers), UNMODIFIED.

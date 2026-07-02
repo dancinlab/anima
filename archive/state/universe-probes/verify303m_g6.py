@@ -14,10 +14,10 @@ COUNT (distinct, jaccard) + corpus-absent novel-gram presence across the 5 seeds
 import sys, json, importlib.util
 import torch
 
-GAUGE = "/Users/mini/dancinlab/anima-verify-303m/UNIVERSE/gauge_lib.py"
+GAUGE = "/Users/mini/dancinlab/anima-verify-303m/HYPOTHESES/gauge_lib.py"
 spec = importlib.util.spec_from_file_location("gauge", GAUGE)
 g = importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
-H1129 = "/Users/mini/dancinlab/anima-verify-303m/UNIVERSE/h1129_midcap_broad_converged_recombination.py"
+H1129 = "/Users/mini/dancinlab/anima-verify-303m/HYPOTHESES/h1129_midcap_broad_converged_recombination.py"
 hspec = importlib.util.spec_from_file_location("h1129", H1129)
 h = importlib.util.module_from_spec(hspec); hspec.loader.exec_module(h)
 

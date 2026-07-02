@@ -1,6 +1,6 @@
 # Torch-FREE loader for a torch .pt zip (pickle + raw storages, handles bf16/fp16/fp32) -> {key: np.float32}. No torch import. Built 2026-06-24 for the H_1579 serialize reference-match (proves serializer byte-faithful).
 # Provenance: anima H_1579 clm303 root-cause (overfit, NOT serialize defect).
-#   See UNIVERSE/cards/H_1579_clm303_serialization_defect.md + CORRECTION_overfit_not_serialize.md.
+#   See HYPOTHESES/cards/H_1579_clm303_serialization_defect.md + CORRECTION_overfit_not_serialize.md.
 #   Torch-free (no torch import) — runs on any host with numpy.
 
 # Torch-free loader for a torch .pt zip: returns {key: np.ndarray(float32)} + shapes.

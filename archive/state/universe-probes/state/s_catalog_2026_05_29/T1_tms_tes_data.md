@@ -111,8 +111,8 @@
 ---
 
 ## 양방향 sibling
-- sibling: (T2~ 카탈로그 형제 문서가 생성되면 여기 링크) · `UNIVERSE/state/s_catalog_2026_05_29/`
-- SSOT: `UNIVERSE/CANDIDATES.md` (생성/갱신 시 본 T1 등록) · S22 "AI→brain induction" 가설 본문
+- sibling: (T2~ 카탈로그 형제 문서가 생성되면 여기 링크) · `HYPOTHESES/state/s_catalog_2026_05_29/`
+- SSOT: `HYPOTHESES/CANDIDATES.md` (생성/갱신 시 본 T1 등록) · S22 "AI→brain induction" 가설 본문
 - 결과 기록 위치: 본 파일 + 후속 PCI 실측 H_xxx 등록 시 UNIVERSE 내부 보관
 
 ## 검증 로그

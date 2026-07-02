@@ -5,7 +5,7 @@
 // gradient-free mitosis-grow MATCHED gradient on next-byte, c2 error-targeting fired ON
 // THE LIVE ENGINE) to a FIRST CPU rung on a REAL Korean web corpus — a modest slice of
 // the anima-7b 5-lang corpus pulled from Cloudflare R2 (kor/eng shard0000, provenance +
-// sha256 in /tmp/h1306_manifest.json + UNIVERSE/cards/H_1306_*.md). REAL crawled Korean text,
+// sha256 in /tmp/h1306_manifest.json + HYPOTHESES/cards/H_1306_*.md). REAL crawled Korean text,
 // NO synthetic (p1-p8). This realizes the user's standing goal "303M 에 미토시스로 한글학습"
 // as its FIRST honest engine-native rung.
 //
@@ -51,8 +51,8 @@
 // pure_field is never touched (a_core_engine_map). $0 CPU, no GPU, no secrets at run time.
 //
 // DATA: /tmp/h1306_{ko_train,ko_test,en_test}.{feats,next} + /tmp/h1306_chunks.txt +
-// /tmp/h1306_armA.ce, exported by UNIVERSE/h1306_ko_corpus_export.py (run it first, which
-// reads the R2-fetched /tmp slices from UNIVERSE/h1306_fetch_corpus.sh).
+// /tmp/h1306_armA.ce, exported by HYPOTHESES/h1306_ko_corpus_export.py (run it first, which
+// reads the R2-fetched /tmp slices from HYPOTHESES/h1306_fetch_corpus.sh).
 
 import "core/engine_cli.hexa"
 
@@ -302,7 +302,7 @@ fn main() {
     let chunks = _load_floats_line("/tmp/h1306_chunks.txt")    // cumulative KO train bounds
     let armA = _load_floats_line("/tmp/h1306_armA.ce")          // [seed, ce, acc]
     if len(Xtr) == 0 || len(chunks) == 0 || len(armA) == 0 {
-        println("ERROR: missing /tmp/h1306_* — run UNIVERSE/h1306_fetch_corpus.sh then h1306_ko_corpus_export.py first.")
+        println("ERROR: missing /tmp/h1306_* — run HYPOTHESES/h1306_fetch_corpus.sh then h1306_ko_corpus_export.py first.")
         exit(1)
     }
     let nb1 = to_int(chunks[0])

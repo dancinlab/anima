@@ -8,7 +8,7 @@ this scoring). NO tune-to-green (c9/p7). $0 CPU numpy, gradient-free, 3 seeds
 [4323,4324,4325] (SAME as H_1323 so W1/W2 reproduce), p7.
 
 THE MECHANISM (VoronoiCells, embed, build_labels, discrim_curve, the W1/W2 bars) is
-REUSED VERBATIM from UNIVERSE/h1323_sapir_whorf.py — W1 and W2 PASSED there and are NOT
+REUSED VERBATIM from HYPOTHESES/h1323_sapir_whorf.py — W1 and W2 PASSED there and are NOT
 touched here. The ONLY change is the anti-Goodhart W3 leg:
 
 WHY r2 (c16/a_break_the_wall = the control was the WRONG METHOD, not a wall):

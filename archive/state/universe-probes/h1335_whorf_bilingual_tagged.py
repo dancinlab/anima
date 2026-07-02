@@ -12,7 +12,7 @@ answers for the same stimulus. The H_1330 verdict named this r2: a language-TAGG
 
 THE MECHANISM (embed, VoronoiCells, build_labels, discrim_curve, within_cross_margin,
 coherent_peak_near, count_peaks, the W1/W2 thresholds, the seeds) is IMPORTED VERBATIM from
-UNIVERSE/h1330_whorf_bilingual.py. The ONLY new thing is a LANGUAGE-TAG DIMENSION: a small
+HYPOTHESES/h1330_whorf_bilingual.py. The ONLY new thing is a LANGUAGE-TAG DIMENSION: a small
 fixed orthonormal tag block appended to the DIM=16 RBF key, marking "read under language A"
 vs "...under language B". key_A(x)=concat(embed(x),t_A), key_B(x)=concat(embed(x),t_B); t_A
 and t_B live on DISJOINT appended coordinates so for the SAME continuum position the two

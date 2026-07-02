@@ -23,11 +23,11 @@ POD_NAME = "anima-h1146-anchor"
 PROTECTED = {"edge-vl-requant", "9znqkmzv4v4yfx"}  # NEVER terminate these
 
 FILES = [
-    "UNIVERSE/h1146_anchor_pod_run.sh",
-    "UNIVERSE/h1146_anchor_conditioned_decode.py",
-    "UNIVERSE/h1141_7b_g5_eval.py",
-    "UNIVERSE/h1143_g5l2_nonfab_measure.py",
-    "UNIVERSE/build_wiki5_bigcorpus_en.py",
+    "HYPOTHESES/h1146_anchor_pod_run.sh",
+    "HYPOTHESES/h1146_anchor_conditioned_decode.py",
+    "HYPOTHESES/h1141_7b_g5_eval.py",
+    "HYPOTHESES/h1143_g5l2_nonfab_measure.py",
+    "HYPOTHESES/build_wiki5_bigcorpus_en.py",
 ]
 
 RUNPOD_KEY = None

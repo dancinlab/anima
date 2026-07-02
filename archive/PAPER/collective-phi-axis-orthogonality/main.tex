@@ -50,7 +50,7 @@
 % =========================================================================
 \begin{abstract}
 We ran eight pre-registered, deterministic, hexa-native measurements
-(\texttt{UNIVERSE/H\_354,355,609--611,617--619}) that probe whether
+(\texttt{HYPOTHESES/H\_354,355,609--611,617--619}) that probe whether
 \emph{collective big-$\Phi$} -- the cause-effect Integrated
 Information Theory (IIT) 4.0 quantity computed on a two-substrate
 ``hivemind'' system $A \otimes_W B$ -- aligns with the four most
@@ -909,11 +909,11 @@ organisms or minds.
 
 All eight cells live as JSON ledgers (and \texttt{run.log}
 transcripts) under
-\texttt{UNIVERSE/state/h354\_*}, \texttt{h355\_*},
+\texttt{HYPOTHESES/state/h354\_*}, \texttt{h355\_*},
 \texttt{h609\_*}, \texttt{h610\_*}, \texttt{h611\_*},
 \texttt{h617\_*}, \texttt{h618\_*}, \texttt{h619\_*}
 on the public main branch
-\url{https://github.com/dancinlab/anima/tree/main/UNIVERSE/state}.
+\url{https://github.com/dancinlab/anima/tree/main/HYPOTHESES/state}.
 Each cell carries
 (i)~a \texttt{run\_h*.hexa} source file,
 (ii)~a \texttt{run.log} (or \texttt{run\_h*.out}) verbatim stdout
@@ -924,8 +924,8 @@ machine-readable verdict with explicit pre-registered falsifiers.
 Re-verification on the same machine:
 \begin{lstlisting}[basicstyle=\ttfamily\small,frame=single,xleftmargin=0pt]
 cd anima
-hexa run UNIVERSE/state/h355_*/run_h355.hexa
-diff UNIVERSE/state/h355_*/run.log <(hexa run ...)
+hexa run HYPOTHESES/state/h355_*/run_h355.hexa
+diff HYPOTHESES/state/h355_*/run.log <(hexa run ...)
 \end{lstlisting}
 yields the byte-identical \texttt{run.log} (cross-process
 determinism falsifier).

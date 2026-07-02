@@ -9,7 +9,7 @@ Audit gap (from .discoveries/1175_fitness_selection.tape):
   only instructive / Lamarckian online adaptation (H_1159). This is THE keystone
   evolution gap.
 
-Build on UNIVERSE/h1159b_mitosis_capacity_self_tuning.py:
+Build on HYPOTHESES/h1159b_mitosis_capacity_self_tuning.py:
   - same prototype/cell substrate (centroids, assign-to-nearest, online LR move)
   - FIXED-CAPACITY population of CAP cells (vs h1159b's growth-to-cap)
   - SELECTION arm: fitness = inverse running error; at each generation, fit cells

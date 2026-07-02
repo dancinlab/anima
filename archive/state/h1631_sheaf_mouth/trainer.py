@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """H_1631 — Sheaf-gluing binding mouth (local sections -> global consistency), 303M.
 
-PREREG card: UNIVERSE/cards/H_1631_sheaf_section_glue_bind.md
+PREREG card: HYPOTHESES/cards/H_1631_sheaf_section_glue_bind.md
 
 Mechanism (per card):
   Treat the cell/feature sequence as a graph with a cover: positions/roles = nodes,

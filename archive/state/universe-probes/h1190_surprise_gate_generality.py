@@ -62,7 +62,7 @@ cohen_d_paired is PAIRED on per-seed deltas; POSITIVE => 1st arg arm is BETTER (
 stage-decode). d(SURPRISE,METRONOME) and d(DERIVATIVE,METRONOME) are both vs the same
 metronome baseline so Δ directly compares the two gates' lift over a uniform scan.
 
-SUBSTRATE REUSE (UNIVERSE/h1163_tick_decode_metric.py imported as H): grow_arm
+SUBSTRATE REUSE (HYPOTHESES/h1163_tick_decode_metric.py imported as H): grow_arm
 (DERIVATIVE + METRONOME arms), stage_decode_accuracy, cohen_d_paired, assign,
 make_audio_stream, SEEDS, MAX_CELLS (patched per cap), WARMUP, T, DIM, LR, WIN,
 DERIV_REFRAC, N_REGIMES_AUDIO — all VERBATIM. make_numeric_stream is the H_1188 AR(1)

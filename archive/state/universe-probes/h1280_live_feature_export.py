@@ -4,7 +4,7 @@ H_1280 R2 — feature-stream + numpy-reference export for the LIVE-engine cerebe
 forward-model probe (CORE/h1280_live_cerebellum_probe.hexa).
 
 This is the EXPORT half of the engine-native realization (a_engine_native_learning).
-It reproduces the H_1280 R1 numpy MIRROR (UNIVERSE/h1280_cerebellum_forward_model.py)
+It reproduces the H_1280 R1 numpy MIRROR (HYPOTHESES/h1280_cerebellum_forward_model.py)
 VERBATIM — same CORPUS, same emit_features, same seeds, same constants — and writes,
 per seed:
 
@@ -56,7 +56,7 @@ def load_bytes(path, maxn=200000):
 
 
 def emit_features(bytestream, rng):
-    """VERBATIM copy of the R1 mirror emit_features (UNIVERSE/h1280_cerebellum_forward_model.py)."""
+    """VERBATIM copy of the R1 mirror emit_features (HYPOTHESES/h1280_cerebellum_forward_model.py)."""
     n = len(bytestream)
     P = rng.standard_normal((8, 16)) / 4.0
     bs = bytestream / 255.0

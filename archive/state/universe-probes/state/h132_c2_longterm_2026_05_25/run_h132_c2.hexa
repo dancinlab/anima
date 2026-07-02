@@ -63,7 +63,7 @@
 //  RUN
 //    cd <worktree-root>
 //    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
-//        hexa run UNIVERSE/state/h132_c2_longterm_2026_05_25/run_h132_c2.hexa
+//        hexa run HYPOTHESES/state/h132_c2_longterm_2026_05_25/run_h132_c2.hexa
 //
 //  COMPLIANCE  raw#11 snake_case · raw#15 no-hardcode (dims/seed named) ·
 //              raw#9/10 honest operational-freeze · raw#12 deterministic
@@ -74,7 +74,7 @@ import "core/mitosis_hook_lib.hexa"
 
 
 fn _state_dir() -> string {
-    return "UNIVERSE/state/h132_c2_longterm_2026_05_25"
+    return "HYPOTHESES/state/h132_c2_longterm_2026_05_25"
 }
 fn _d_model() -> int { return 8 }
 fn _initial_cells() -> int { return 6 }

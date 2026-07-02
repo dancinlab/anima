@@ -2,7 +2,7 @@
 H_1231 — ENGINE-NATIVE realization of H_1227 (immune / clonal-selection memory),
 KEY-EXPORT leg (the DIRECTIONAL→BINDING step required by a_engine_native_learning).
 
-H_1227 was a NUMPY MIRROR (UNIVERSE/h1227_immune_clonal_memory.py) that hit 🟢
+H_1227 was a NUMPY MIRROR (HYPOTHESES/h1227_immune_clonal_memory.py) that hit 🟢
 GREEN: a population of memory cells, each clone binding ONE fact; affinity recall
 fires the best-binding cell or ABSTAINS (no fabrication). Per the new hard rule
 a_engine_native_learning, a mirror verdict is DIRECTIONAL ONLY — the binding

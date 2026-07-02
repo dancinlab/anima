@@ -1,7 +1,7 @@
 F-CLOSURE-TRAINED — OMEGA decisive trained-leakfree closure rung
 ================================================================
 substrate : Lane-G / GPU (RunPod H100) — a_lane_akida_gpu_split
-driver    : UNIVERSE/omega_trained_leakfree.py (sha256 83e76c570d7c6bd8...)
+driver    : HYPOTHESES/omega_trained_leakfree.py (sha256 83e76c570d7c6bd8...)
 date      : 2026-06-04
 
 PRE-REGISTERED FALSIFIER (verbatim from the driver):
@@ -53,7 +53,7 @@ BLEED STOPPED (no leak)
   runpodctl pod list = [] — account confirmed EMPTY. Zero pods alive. No new pod rented.
 
 NEXT (single fresh rung, user re-dispatch)
-  Re-run UNIVERSE/omega_trained_leakfree.py on ONE H100 with a PERSISTENT VOLUME (volumeInGb>0,
+  Re-run HYPOTHESES/omega_trained_leakfree.py on ONE H100 with a PERSISTENT VOLUME (volumeInGb>0,
   --ckpt/--out written under the mounted volume path) so an interrupted run survives a pod kill.
   Default args: --steps 20000 --d_model 512 --n_layer 8 --block 256 --bs 48 --corpus_mb 400.
   Then harvest ckpt + results.json + val-curve, adjudicate the falsifier, HF upload, teardown.

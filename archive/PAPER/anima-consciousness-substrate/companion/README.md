@@ -8,6 +8,6 @@ pattern, commons @D g51).
 
 ## files (planned)
 - `verify-ledger.json` — every body + appendix claim -> its `.verdicts/<slug>/<id>.txt`
-  or `UNIVERSE/H_*.md` pointer, verbatim (a_claim_verify, @D g5).
+  or `HYPOTHESES/H_*.md` pointer, verbatim (a_claim_verify, @D g5).
 - `pr-roll.json` — the PR / discovery timeline (omega, convmoe-3b, corpus, M13 7B ckpts).
 - `session-journal.md` — the campaign arc narrative.

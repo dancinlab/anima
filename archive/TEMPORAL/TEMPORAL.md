@@ -23,7 +23,7 @@
 - ⇄ [TIME](../TIME.md): 시간 인식 의식 자매 도메인 (subjective vs substrate clock)
 - ⇄ [DREAM](../DREAM.md): REM/N1-N3 ultradian Δt scale 자매
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): 검증 결과 환류 SSOT
 
 ## 쉬운 버전
 전체 활용 아이디어 카탈로그(친근 7-요소) → [TEMPORAL.easy.md](./TEMPORAL.easy.md)

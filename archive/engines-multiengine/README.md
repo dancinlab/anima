@@ -3,7 +3,7 @@
 anima 의 멀티엔진 시대(`--engine conv|cdv2|hexad|omega`) 유물. **2026-06-19 보관** —
 anima 는 단일 production 엔진 **conv**(CLMConvMoE, `core/clm_decode.hexa` + `core/generator.hexa`
 L3 슬롯)로 수렴했고, 실제 엔진은 `core/` 직속에 live. 여기 어댑터들은 EngineSpec 레지스트리
-메타데이터일 뿐이라 보관으로 이동(삭제 아님 — `UNIVERSE/HYPOTHESES.jsonl` 의 엔진명 verdict 이력 보존).
+메타데이터일 뿐이라 보관으로 이동(삭제 아님 — `HYPOTHESES/HYPOTHESES.jsonl` 의 엔진명 verdict 이력 보존).
 
 ## 내용
 - `engine_iface.hexa` — EngineSpec 4-fn vtable 계약(load·forward·generate·psi_coord).

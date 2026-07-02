@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 daegaseol_verify.py — toy falsifier harness for the 14 axis-capstone hypotheses
-H_1101..H_1114 (UNIVERSE/daegaseol/).
+H_1101..H_1114 (HYPOTHESES/daegaseol/).
 
 Each capstone proposes a $0-local demo (see each md §4). This harness implements
 all 14 as transparent numpy/stdlib TOY models, every one with a control arm, and

@@ -46,7 +46,7 @@ CRITICAL PHILOSOPHY GUARD (c9; p1/p2/p3/p6/p8) — AFFIRMED IN THE VERDICT:
 DESIGN ($0). The substrate is a numpy MITOSIS memory-cell population that MIRRORS
 CORE/engine_cli.hexa VAdaptField (proto vectors; nearest by L2; recon-err = L2 to
 nearest; novelty-split when recon-err > SPLIT_THRESH; LR winner-pull on a hit) —
-identical to UNIVERSE/h1199_dim_feature_export.py and H_1227's ImmuneMemory, with
+identical to HYPOTHESES/h1199_dim_feature_export.py and H_1227's ImmuneMemory, with
 the immune value-binding extension (each cell also stores a bound answer). The LIVE
 .hexa engine is UNTOUCHED (numpy mirror only; the .hexa lift is the next rung, p8).
 

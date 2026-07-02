@@ -1,4 +1,4 @@
-// UNIVERSE/state/h629_noise_robustness_phi_2026_05_28/run_h629.hexa
+// HYPOTHESES/state/h629_noise_robustness_phi_2026_05_28/run_h629.hexa
 // H_629 — noise-robustness-Φ (AXES Round 5 information/computation cluster
 //         promote · sub-axis `noise` · seed slug `noise-robustness-phi` ·
 //         raw#12 · H_277 turing-completeness substrate byte-equal sister ·
@@ -41,13 +41,13 @@
 //     offset seed → deterministic). multi-seed N=5 (rep ∈ {0..4}, 각기 다른
 //     LCG offset 으로 noise stream 분리).
 //
-//   Φ primitive: phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) →
+//   Φ primitive: phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317) →
 //     c_measure_phi → RFC 036 phi_spatial (READ-ONLY import; Φ ≥ 0).
 //
 //   ⚠ RELATIVE-PATH run: `cd` into this dir then `hexa run run_h629.hexa`.
 //     result.json 은 cwd 상대경로로 기록 (절대경로 hardcode 시 silent no-op).
 // ════════════════════════════════════════════════════════════════════════
-import "UNIVERSE/lib/phi_helper.hexa"
+import "HYPOTHESES/lib/phi_helper.hexa"
 
 // ── config (deterministic; H_277/H_232/H_250 byte-equal substrate) ───────────
 fn _N()    -> int { return 16 }   // lattice length (life_phi_n / H_007 _N)
@@ -205,7 +205,7 @@ fn main() {
             + " warm=" + to_string(_WARM()) + " reps=" + to_string(_REPS())
             + " rule=" + to_string(_RULE())
             + " n_bins=" + to_string(life_phi_nbins()) + " (deterministic, $0 mac local)")
-    println("  Φ primitive: phi_with UNIVERSE/lib/phi_helper.hexa → RFC 036 phi_spatial (Φ>=0)")
+    println("  Φ primitive: phi_with HYPOTHESES/lib/phi_helper.hexa → RFC 036 phi_spatial (Φ>=0)")
     println("  noise: per-step per-site deterministic LCG bit-flip (prob = p)")
     println("================================================================")
 
@@ -302,7 +302,7 @@ fn main() {
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
     j = j + "  \"axis\": \"information/computation (AXES Round 5) — noise sub-axis · noise-robustness of big-Phi\",\n"
-    j = j + "  \"phi_primitive\": \"phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial\",\n"
+    j = j + "  \"phi_primitive\": \"phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial\",\n"
     j = j + "  \"config\": { \"N\": " + to_string(_N()) + ", \"dim\": " + to_string(_DIM())
           + ", \"warm\": " + to_string(_WARM()) + ", \"reps\": " + to_string(_REPS())
           + ", \"rule\": " + to_string(_RULE())

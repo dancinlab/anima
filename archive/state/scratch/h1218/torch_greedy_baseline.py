@@ -47,7 +47,7 @@ def greedy(m, seed_text, gen, block=512):
             ids.append(nb); out.append(nb)
     return out
 
-# ── FROZEN gate seeds (VERBATIM from UNIVERSE/gauge_lib.py) ──────────────────
+# ── FROZEN gate seeds (VERBATIM from HYPOTHESES/gauge_lib.py) ──────────────────
 CONCEPTS = [
     "consciousness arises from cells",
     "tension ripples between distant minds",

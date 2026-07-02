@@ -27,7 +27,7 @@ H_936 os.urandom conclusion as the standing result.
 We VERIFY the buffer is genuinely real ANU: sha256, request_id, tier
 (anu_paid/anu_free), byte mean≈127.5, KS + chi² vs uniform. The H_936 two-arm
 comparison machinery (run_arm / compare / cohen_d / ks) is IMPORTED VERBATIM from
-UNIVERSE/h936_unbiased_buffer_retest.py — same T, same seeds, same observables,
+HYPOTHESES/h936_unbiased_buffer_retest.py — same T, same seeds, same observables,
 same pre-registered distinguishing rule — so the only experimental change is the
 entropy SOURCE of the big buffer (os.urandom -> real ANU).
 

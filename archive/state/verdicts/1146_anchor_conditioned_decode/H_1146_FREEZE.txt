@@ -26,11 +26,11 @@ sha256 = 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
 7,252,828,160 params. Inference-only. NO retrain.
 
 === HARNESS (frozen, VERBATIM REUSE) ===
-- Generator: UNIVERSE/h1141_7b_g5_eval.py gate_g5_l2 path VERBATIM — same extract_sentences
+- Generator: HYPOTHESES/h1141_7b_g5_eval.py gate_g5_l2 path VERBATIM — same extract_sentences
   over the en 300MB head (corpus sha256 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d),
   same first_half_split, same 40 factual openers, temp 0.7, top_k 40, seed 7,
   gen_from_prompt_grounded (only-the-generated-suffix returned).
-- Scorer: UNIVERSE/h1143_g5l2_nonfab_measure.py VERBATIM — frozen 0.20 bar, regex NER
+- Scorer: HYPOTHESES/h1143_g5l2_nonfab_measure.py VERBATIM — frozen 0.20 bar, regex NER
   (E1 cap-phrase non-sentence-initial / E2 year / E3 numeral), gate_g2 corpus-absence grep
   predicate. fabricated-entity-assertion RATE = n_fab / n_entities. NOT perplexity, NOT LLM judge.
 The 40 (prompt, truth) pairs are IDENTICAL across all three arms (same seed-7 extraction);

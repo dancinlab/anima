@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """H_1218 — score G1/G2/G6 over a set of greedy generations using the FROZEN
-UNIVERSE/gauge_lib.py evaluators VERBATIM (no metric re-invention, p7).
+HYPOTHESES/gauge_lib.py evaluators VERBATIM (no metric re-invention, p7).
 
 Input  : a JSON {rows:[{role, seed, text}]} (either engine RESULT lines parsed
          into this shape, or the torch_greedy_baseline.py output).

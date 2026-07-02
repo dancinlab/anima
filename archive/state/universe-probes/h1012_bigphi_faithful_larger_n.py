@@ -110,8 +110,8 @@ def prove_mirrors_at_n(n):
     exact reference cases. Returns True iff PROVEN.
 
     The reference values are the LIVE stdlib hexa-engine outputs captured by
-    UNIVERSE/h1012_ref_check.hexa (big-Φ on directed n-rings) and
-    UNIVERSE/h1012_ref_faithful.hexa (faithful_phi on a fixed integer trace) —
+    HYPOTHESES/h1012_ref_check.hexa (big-Φ on directed n-rings) and
+    HYPOTHESES/h1012_ref_faithful.hexa (faithful_phi on a fixed integer trace) —
     BOTH run on this Mac via `hexa run` for this H. The mirror must reproduce
     those LIVE stdlib numbers, exactly the H_1004 discipline extended to new n.
 

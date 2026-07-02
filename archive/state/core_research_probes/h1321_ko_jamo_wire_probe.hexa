@@ -9,7 +9,7 @@
 // THIS PROBE runs the SAME gradient-free jamo-symbol mitosis ENGINE-NATIVE on the LIVE
 // core/engine_cli.hexa faculties (vadapt_field_nearest_idx Voronoi ownership + engine_mitosis_tick
 // growth, p8; per-cell next-symbol count-MLE head, gradient-free) over the deterministic jamo /
-// raw / shuffle symbol streams the data-prep (UNIVERSE/h1321_ko_jamo_wire_export.py) materialized
+// raw / shuffle symbol streams the data-prep (HYPOTHESES/h1321_ko_jamo_wire_export.py) materialized
 // from the SAME REAL 30MB KO window H_1316 verified (sha-gated). The representation transform (NFD
 // jamo symbolization) is deterministic Unicode data-prep; the MITOSIS + CE SCORING run engine-native
 // HERE. SINGLE ENTRY: this is the SAME engine-native Korean path H_1306/H_1312 use (the engine_cli
@@ -35,7 +35,7 @@
 // even/odd held-out split (done in the data-prep). $0 CPU, no GPU, no secrets at run time.
 //
 // DATA: /tmp/h1321_{g0,g1,g1c0,g1c1,g1c2}_{train,test}.{feats,next} + test.nbytes + /tmp/h1321_ref.txt,
-// exported by UNIVERSE/h1321_ko_jamo_wire_export.py (which fetches the sha-gated 30MB KO window).
+// exported by HYPOTHESES/h1321_ko_jamo_wire_export.py (which fetches the sha-gated 30MB KO window).
 
 import "core/engine_cli.hexa"
 
@@ -274,7 +274,7 @@ fn _run_arm(tag: string, dim: int, vj: int, cfg: EngineConfig) -> [float] {
     let Yte = _load_ints("/tmp/h1321_" + tag + "_test.next")
     let NBte = _load_ints("/tmp/h1321_" + tag + "_test.nbytes")
     if len(Xtr) == 0 || len(Xte) == 0 {
-        println("ERROR: missing /tmp/h1321_" + tag + "_* — run UNIVERSE/h1321_ko_jamo_wire_export.py first.")
+        println("ERROR: missing /tmp/h1321_" + tag + "_* — run HYPOTHESES/h1321_ko_jamo_wire_export.py first.")
         exit(1)
     }
     let seed = [[0.3, 0.5, 0.0], [0.7, 0.5, 0.5]]
@@ -299,7 +299,7 @@ fn main() {
     // same-window mirror reference (the EXACT pairs this probe scores): Vj g0_ref g1_ref g1c_mean b3_ok
     let ref = _load_floats_line("/tmp/h1321_ref.txt")
     if len(ref) < 5 {
-        println("ERROR: missing /tmp/h1321_ref.txt — run UNIVERSE/h1321_ko_jamo_wire_export.py first.")
+        println("ERROR: missing /tmp/h1321_ref.txt — run HYPOTHESES/h1321_ko_jamo_wire_export.py first.")
         exit(1)
     }
     let vj = to_int(ref[0])

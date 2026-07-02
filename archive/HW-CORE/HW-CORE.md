@@ -30,7 +30,7 @@
 - ⇄ [XENO](../XENO/XENO.md): substrate-agnostic detector 의 HW realization
 - ⇄ [PLASTICITY](../PLASTICITY/PLASTICITY.md): HW 학습 lane 실현 — AKIDA on-chip edge-learn 의 silicon plasticity. AKIDA HW-first 스위치(default "hw")가 HW=akida-learn / SW=numpy 근사(🔴 비동치) 라우팅 SSOT.
 - ⇄ [DECODER](../CORE/DECODER/DECODER.md): HW 추론 lane 실현 — AKIDA on-chip forward / SW akida_sw_lif (byte-identical 🟢). PLASTICITY 와 형제 lane.
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT
 - ⇄ [`../anima-physics/`](../anima-physics/): 사양 SSOT (93 entry + 5 HW target + 27 substrate)
 
 ## 쉬운 버전

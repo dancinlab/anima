@@ -1,6 +1,6 @@
 # H_1620 — Energy-settle attractor (Hopfield) binding mouth, 303M — frozen pre-registration
 
-**Card SSOT:** `UNIVERSE/cards/H_1620_energy_settle_attractor.md` (mechanism + ablation logic).
+**Card SSOT:** `HYPOTHESES/cards/H_1620_energy_settle_attractor.md` (mechanism + ablation logic).
 
 **Hypothesis:** A bind head whose forward is a fixed-point relaxation on a symmetric-weight
 quadratic energy E(z)=½zᵀWz − zᵀ(U_a a + U_b b) (modern-Hopfield / predictive-coding) settles to a

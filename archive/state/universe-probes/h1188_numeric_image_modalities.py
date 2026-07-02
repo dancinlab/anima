@@ -51,7 +51,7 @@ K*=argmax_K d(DERIVATIVE,METRONOME) over the cap ladder, then time-shuffle at K*
   itself a finding about WHAT STRUCTURAL PROPERTY makes a modality temporal.
 =======================================================================================
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py VERBATIM
 (grow_arm / stage_decode_accuracy / cohen_d_paired / make_audio_stream / SEEDS / DIM / T /
 WARMUP / MAX_CELLS); ADDS make_numeric_stream + make_image_stream (same (X[need,DIM],stages)
 convention, DIM=8) + the H_1186 own-cap + H_1184 time-shuffle harness VERBATIM. AUDIO is

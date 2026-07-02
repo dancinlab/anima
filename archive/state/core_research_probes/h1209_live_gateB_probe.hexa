@@ -10,7 +10,7 @@
 // (vadapt_fieldB_new / _step / _cells / _growth) driven over the SAME ORDERED walk.
 //
 // INPUT: the FIXED order-invariant proto-id walk per arm, exported by
-// UNIVERSE/h1209_live_ordered_walk_gate.py to /tmp/h1209_ids_<ARM>_seed<S>.txt (one
+// HYPOTHESES/h1209_live_ordered_walk_gate.py to /tmp/h1209_ids_<ARM>_seed<S>.txt (one
 // proto id per line). The book is order-INVARIANT (built from the feature SET), so
 // the id walk for a stream and its shuffle differ ONLY in arrival ORDER -> the live
 // engine's predictable-transition counting is the ONLY thing measured here.
@@ -30,7 +30,7 @@
 
 import "core/engine_cli.hexa"
 
-// numpy GATE-B per-seed reference (from UNIVERSE/h1209_live_ordered_walk_gate.py;
+// numpy GATE-B per-seed reference (from HYPOTHESES/h1209_live_ordered_walk_gate.py;
 // F2 parity reference — the live engine MUST reproduce these integer counts).
 // seeds [900, 901, 902]; arms [ORDERED, SHUFFLED, RANDGAUSS, RANDGAUSS_SHUF].
 fn _ref(arm: string, seed: int) -> int {
@@ -99,7 +99,7 @@ fn main() {
             let path = "/tmp/h1209_ids_" + arm + "_seed" + to_string(seed) + ".txt"
             let ids = _load_ids(path)
             if len(ids) == 0 {
-                println("ERROR: empty proto-id walk at " + path + " — run UNIVERSE/h1209_live_ordered_walk_gate.py first.")
+                println("ERROR: empty proto-id walk at " + path + " — run HYPOTHESES/h1209_live_ordered_walk_gate.py first.")
                 exit(1)
             }
             let live = _run_live_gateB(ids, n_proto, max_cells, min_prev, conf_floor, cfg_on)

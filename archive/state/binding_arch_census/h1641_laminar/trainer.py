@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """H_1641 — Canonical cortical laminar microcircuit (L4->L2/3<->L5/6) binding mouth, 303M.
 
-PREREG card: UNIVERSE/cards/H_1641_cortical_laminar_microcircuit_bind.md
+PREREG card: HYPOTHESES/cards/H_1641_cortical_laminar_microcircuit_bind.md
 
 Mechanism (per card):
   Replace the flat block readout with a 3-laminar cell:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Card generator for the whole-architecture (통짜 아키텍처) census.
 
-Each architecture dict -> UNIVERSE/cards/H_<id>_<key>.md with YAML frontmatter
+Each architecture dict -> HYPOTHESES/cards/H_<id>_<key>.md with YAML frontmatter
 (so tool/_build_hyp_jsonl.py derives tier/title/verdict/slug correctly) + body.
 
 DESIGN ONLY. tier = 🔵 PRE-REGISTERED ARCHITECTURE (DIRECTIONAL · unmeasured).

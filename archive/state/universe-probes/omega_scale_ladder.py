@@ -14,10 +14,10 @@ LADDER (OΩ4):  d384, d512(=baseline, re-measured here), d768, d1024
 OΩ5 (one MORE-competent rung): a chosen dim trained with 2× steps (push val_ce notably lower).
 
 METHOD (per rung, ONE H100, sequential — minimizes pod count + leak surface):
-  1. train_to_competence (UNIVERSE/omega_trained_leakfree.run_rung) — leak-free causal_ca=True
+  1. train_to_competence (HYPOTHESES/omega_trained_leakfree.run_rung) — leak-free causal_ca=True
      CDV2 at d_model, to competence (val_ce < uniform, leak self-test = 0.000), ckpt saved.
   2. on the FRESHLY-TRAINED frozen model, run the SAME K-form gate sweep
-     (UNIVERSE/omega_gate_form_sweep.run_sweep): base / a_only / fixed_AmG / full_AG /
+     (HYPOTHESES/omega_gate_form_sweep.run_sweep): base / a_only / fixed_AmG / full_AG /
      min_learned / min_fixed on the held-out tail.
   3. per-rung OH1 falsifier: min_learned_HOLDS iff min_learned CE <= a_only CE AND < base CE.
 

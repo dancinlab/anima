@@ -23,7 +23,7 @@ WHAT THIS REUSES (VERBATIM)
 
 MIRROR DISCIPLINE (a_phi_iit4_tool — BEFORE scoring)
 ----------------------------------------------------
-  STEP 0: live `hexa run UNIVERSE/h1165_ref_faithful_n78.hexa` re-captures the
+  STEP 0: live `hexa run HYPOTHESES/h1165_ref_faithful_n78.hexa` re-captures the
   LIVE stdlib faithful_phi refs at n=4,5,6,7,8 (the integer-trace ref φ=n-1) and
   the CPU mirror must reproduce them verbatim (|Δ|≤1e-4); PLUS h1012.prove_mirrors
   _at_n re-proves the mirror ≡ stdlib at n=4 AND n=5 (both-engine, established
@@ -135,7 +135,7 @@ def live_stdlib_reproof_n78():
     require the CPU mirror to reproduce it at n=4,5,6,7,8 (the integer-trace
     ref φ=n-1). Verbatim stdout. Returns (ok, refs)."""
     ref_hexa = os.path.join(HERE, "h1165_ref_faithful_n78.hexa")
-    print("  live stdlib run: hexa run UNIVERSE/h1165_ref_faithful_n78.hexa")
+    print("  live stdlib run: hexa run HYPOTHESES/h1165_ref_faithful_n78.hexa")
     out = subprocess.run(["hexa", "run", ref_hexa], capture_output=True,
                          text=True, timeout=600, cwd=os.path.join(HERE, ".."))
     print("  ── verbatim stdlib stdout ──")

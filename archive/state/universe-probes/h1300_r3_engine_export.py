@@ -12,7 +12,7 @@ mitosis-grow + closed-form local heads — no numpy in the verdict loop
   /tmp/h1300_seed<S>.skill<K>.xte   — M_TEST_PER_SKILL held-out test contexts
   /tmp/h1300_seed<S>.skill<K>.yte   — parallel held-out targets
 
-ALL knobs FROZEN identical to UNIVERSE/h1300_mitosis_skill_curriculum.py R2 (the
+ALL knobs FROZEN identical to HYPOTHESES/h1300_mitosis_skill_curriculum.py R2 (the
 SAME make_curriculum(seed,"r2") RNG path: regions sep 3.0->1.0, anti-aligned shared
 rules). The engine sees the SAME contexts+targets the numpy mirror saw — the only
 difference is the GROW / FIT / FT / ROUTE arithmetic runs on the .hexa engine, not
@@ -23,7 +23,7 @@ cells and fits its own heads from this raw curriculum (true engine-native learni
 """
 import numpy as np
 
-# ── frozen knobs (VERBATIM from UNIVERSE/h1300_mitosis_skill_curriculum.py) ───
+# ── frozen knobs (VERBATIM from HYPOTHESES/h1300_mitosis_skill_curriculum.py) ───
 SEEDS            = [1300, 1301, 1302]
 N_SKILLS         = 5
 D                = 12

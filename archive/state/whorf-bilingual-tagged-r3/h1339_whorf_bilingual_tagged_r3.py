@@ -25,7 +25,7 @@ VERBATIM (count_peaks ≥ 3 OR no peak@p_B). NO threshold on any surviving bar i
 
 THE MECHANISM (embed, VoronoiCells, build_labels, discrim_curve, within_cross_margin,
 coherent_peak_near, count_peaks, the tag block, the seeds [4323,4324,4325]) is IMPORTED VERBATIM
-from UNIVERSE/h1335_whorf_bilingual_tagged.py (which itself imports h1330 verbatim). NOTHING in
+from HYPOTHESES/h1335_whorf_bilingual_tagged.py (which itself imports h1330 verbatim). NOTHING in
 the data generation changes — only which control statistic gates I3a.
 
 PLUS a NON-GATING TAG_GAIN CHANNEL-ISOLATION SWEEP (diagnostic, c9): the r2 B=A bleed exposed

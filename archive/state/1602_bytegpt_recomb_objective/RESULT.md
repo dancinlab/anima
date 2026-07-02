@@ -88,4 +88,4 @@ G2 novel=0·G6 dist 4/5였으나 본 8000-step aiden 측정은 G2 novel 66/99·G
 차이로 보이며(verdict-integrity), **핵심 G1 best_distinct=0은 양 측정·양 arm 모두 일치**라 NOT-SUP
 결론 불변. DIRECTIONAL (py mirror, core/CLAUDE.md); terminal hexa confirm = follow-on.
 ckpt: ce_marginal_seed7.bin sha=90d678…e2ca · infonce_seed7.bin sha=0e1918…a10a (aiden ckpt/, 1.2GB).
-Card = UNIVERSE/cards/H_9024_bytegpt_recomb_objective.md (was mis-filed H_1832).
+Card = HYPOTHESES/cards/H_9024_bytegpt_recomb_objective.md (was mis-filed H_1832).

@@ -81,10 +81,10 @@
 
 ## 재현
 ```
-python3 UNIVERSE/harness/daegaseol_verify.py        # toy 14축
-python3 UNIVERSE/harness/daegaseol_verify_real.py   # REAL chain 3축
-DG_PHI_STATE=UNIVERSE/harness/dg_phi_states.txt DG_PHI_NBINS=4 \
-  hexa run UNIVERSE/harness/daegaseol_phi.hexa      # REAL faithful IIT4 2축
-hexa run UNIVERSE/harness/daegaseol_engine.hexa     # REAL CORE 엔진 8축
-hexa run UNIVERSE/harness/daegaseol_mathphys.hexa   # 수학·물리 해석값 대조 9건
+python3 HYPOTHESES/harness/daegaseol_verify.py        # toy 14축
+python3 HYPOTHESES/harness/daegaseol_verify_real.py   # REAL chain 3축
+DG_PHI_STATE=HYPOTHESES/harness/dg_phi_states.txt DG_PHI_NBINS=4 \
+  hexa run HYPOTHESES/harness/daegaseol_phi.hexa      # REAL faithful IIT4 2축
+hexa run HYPOTHESES/harness/daegaseol_engine.hexa     # REAL CORE 엔진 8축
+hexa run HYPOTHESES/harness/daegaseol_mathphys.hexa   # 수학·물리 해석값 대조 9건
 ```

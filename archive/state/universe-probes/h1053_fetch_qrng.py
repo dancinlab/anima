@@ -6,8 +6,8 @@ Endpoint: https://api.quantumnumbers.anu.edu.au/ (header x-api-key). type=hex16,
 20480 bytes/call. The key is read INLINE from the macOS keychain via `secret get` (never printed).
 
 Writes:
-  UNIVERSE/state/h1053_qrng_bytes.bin       — the raw true-quantum byte stream
-  UNIVERSE/state/h1053_qrng_bytes.prov.json — provenance (endpoint, UTC ts, bytes, key class, sha256)
+  HYPOTHESES/state/h1053_qrng_bytes.bin       — the raw true-quantum byte stream
+  HYPOTHESES/state/h1053_qrng_bytes.prov.json — provenance (endpoint, UTC ts, bytes, key class, sha256)
 
 NO PRNG anywhere. If the API is unreachable / no key -> the script HALTS with the exact blocker
 (it does NOT fabricate bytes).

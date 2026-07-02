@@ -1,4 +1,4 @@
-// UNIVERSE/state/h665_d2_verdict_landscape_raster8/run.hexa
+// HYPOTHESES/state/h665_d2_verdict_landscape_raster8/run.hexa
 // H_665 — d2-verdict-landscape-raster8 · RASTER #8 (2026-05-28, axis D2)
 //
 //   Predecessor: H_662 (PR #1292, 🟢 SUPPORTED) raster#7 N=213:
@@ -242,7 +242,7 @@ fn _cohort(idnum: int) -> string {
 // ── main ────────────────────────────────────────────────────────────────
 fn main() {
     println("H_665 — d2-verdict-landscape-raster8 · RASTER #8 (2026-05-28, axis D2)")
-    println("  source: UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)")
+    println("  source: HYPOTHESES/H_*.md DISK per-file scan (8-source verdict + 2-source domain)")
     println("  test: gap PLATEAU 유지 (life>consc, ~0.07-0.10) vs FALSIFIER (reversal OR gap>0.20)")
     println("")
 
@@ -571,7 +571,7 @@ fn main() {
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
     j = j + "  \"predecessor\": \"H_662 raster#7 N=213 (PR #1292, life 0.4937 > consc 0.4194, gap 0.0743 plateau-band band3/band4 내, PLATEAU-STABLE 7연속)\",\n"
-    j = j + "  \"source\": \"UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)\",\n"
+    j = j + "  \"source\": \"HYPOTHESES/H_*.md DISK per-file scan (8-source verdict + 2-source domain)\",\n"
     j = j + "  \"config\": { \"N_files\": " + to_string(n) + ", \"eps\": " + to_string(_EPS()) + ", \"eps_life\": " + to_string(_EPS_LIFE()) + ", \"prior_N\": " + to_string(_PRIOR_N()) + ", \"gap_wide_thresh\": " + to_string(_GAP_WIDE_THRESH()) + " },\n"
     j = j + "  \"headline\": {\n"
     j = j + "    \"life_supp_rate\": " + to_string(life_rate) + ", \"life_supp\": " + to_string(life_supp) + ", \"life_total\": " + to_string(life_tot) + ",\n"

@@ -28,7 +28,7 @@ metric = K* = argmax_K d(DERIVATIVE,METRONOME) on stage-decode, per regime-count
   Otherwise CLOSED-NEGATIVE (a_paper_negative_ok): K* does not scale cleanly / the
   ratio is not constant -> the 5.3 was config-specific.
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py +
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py +
 h1178 sweep pattern VERBATIM (grow_arm / stage_decode_accuracy / cohen_d_paired /
 make_audio_stream / SEEDS), only the global N_REGIMES_AUDIO is swept. Live CORE +
 scale UNVERIFIED (a_scale_honest_scope). Lane-M growth lane.
@@ -120,7 +120,7 @@ def main():
             f"CLOSED-NEGATIVE: K* does not scale cleanly with complexity at a constant ratio "
             f"(F1 monotone={f1} Spearman={rho:+.2f}; F2 const-ratio={f2} mean={mean_r:.2f} CoV={cov:.2f}). "
             f"The H_1178 '~5.3 cells/regime' is config-specific, not a scaling law. a_paper_negative_ok."),
-        "scope": "TOY ($0 CPU numpy, %d seeds). Reuses UNIVERSE/h1163_tick_decode_metric.py + h1178 sweep "
+        "scope": "TOY ($0 CPU numpy, %d seeds). Reuses HYPOTHESES/h1163_tick_decode_metric.py + h1178 sweep "
                  "VERBATIM; only the global N_REGIMES_AUDIO is swept. K* is argmax on a coarse capacity "
                  "ladder (quantized). Live CORE + scale UNVERIFIED (a_scale_honest_scope)." % len(H.SEEDS),
     }

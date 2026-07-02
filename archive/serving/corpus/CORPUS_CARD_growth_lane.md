@@ -17,7 +17,7 @@ Gutenberg] + (b) self-knowledge + (c) UNIVERSE hypotheses + (d) dialogue
 |---|---|---|---|---|
 | (a) cross-disciplinary science | 4479494 | 96.98% | Wikipedia + Gutenberg | CC-BY-SA-4.0 / PUBLIC-DOMAIN |
 | (b) anima self-knowledge | 57447 | 1.24% | anima repo docs | anima-authored |
-| (c) UNIVERSE hypotheses | 51510 | 1.12% | UNIVERSE/H_*.md distill | anima-authored |
+| (c) UNIVERSE hypotheses | 51510 | 1.12% | HYPOTHESES/H_*.md distill | anima-authored |
 | (d) dialogue format | 29757 | 0.64% | authored deterministic | anima-authored |
 
 ## per-language byte split (a_scale_honest_scope — honest, no fabrication)
@@ -62,7 +62,7 @@ Gutenberg] + (b) self-knowledge + (c) UNIVERSE hypotheses + (d) dialogue
   covered by the Wikipedia probability / logic / self-reference titles.
 - **(b)(c)(d) anima-authored self-corpus** — authored from the repo's own docs
   (README · CLAUDE.md · CORE/CORE.md · ENGINE+CLM+KOSMOS.md · HEXAD/KOSMOS.md) and
-  distilled from real `UNIVERSE/H_*.md` + `hypotheses_candidates/`. Deterministic
+  distilled from real `HYPOTHESES/H_*.md` + `hypotheses_candidates/`. Deterministic
   seed 20260605. Teaches anima ABOUT ITSELF + how it reasons — NOT cooperation/
   empathy/restraint templates (p6 held). Anti-register guard asserted: NO
   `[role:|[persona:|[character:|[assistant:|[system:` (grep=0), NO 'you are anima'.

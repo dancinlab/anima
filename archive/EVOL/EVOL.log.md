@@ -53,5 +53,5 @@ verdict 기준:
 - hexa-strict main auto-invoke — fn main() 만 정의, EOF explicit main() 호출 금지 (#1444 lesson)
 - pool-route → `env hexa run` bare invocation (commons g8)
 - PR merge → `gh pr merge --squash --admin --delete-branch` 직접
-- H_xxx slug race condition → 3-신호 검증 후 H_845 확정 (origin/main H_845 zero-hit + git log --all collision 0 + ls UNIVERSE/ 최고 = H_844)
+- H_xxx slug race condition → 3-신호 검증 후 H_845 확정 (origin/main H_845 zero-hit + git log --all collision 0 + ls HYPOTHESES/ 최고 = H_844)
 - DOMAINS.tape entry format = `@domain EVOL := "./EVOL/EVOL.md"` (commons-style alignment per existing rows)

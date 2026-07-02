@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """H_1640 — Conservative coupled-Hamiltonian (symplectic) binding mouth, 303M.
 
-PREREG card: UNIVERSE/cards/H_1640_hamiltonian_symplectic_bind.md
+PREREG card: HYPOTHESES/cards/H_1640_hamiltonian_symplectic_bind.md
 
 Mechanism (per card):
   H(q,p) = H_A(q_A,p_A) + H_B(q_B,p_B) + lambda * C(q_A,q_B)

@@ -12,7 +12,7 @@ licenses it as a faithful stand-in for the engine-mounted model.
 import sys, json, importlib.util
 import torch
 
-H1129 = "/Users/mini/dancinlab/anima-verify-303m/UNIVERSE/h1129_midcap_broad_converged_recombination.py"
+H1129 = "/Users/mini/dancinlab/anima-verify-303m/HYPOTHESES/h1129_midcap_broad_converged_recombination.py"
 spec = importlib.util.spec_from_file_location("h1129", H1129)
 h = importlib.util.module_from_spec(spec); spec.loader.exec_module(h)
 

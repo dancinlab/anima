@@ -21,7 +21,7 @@
 // engine_cli_smoke 12/0 + h1196 single-entry 7/0 STAY GREEN (re-run separately).
 //
 // INPUT: the DIM=24 emit-feature stream + the numpy R1 reference, exported by
-// UNIVERSE/h1280_live_feature_export.py to /tmp/h1280_feat_seed<S>.txt (header
+// HYPOTHESES/h1280_live_feature_export.py to /tmp/h1280_feat_seed<S>.txt (header
 // `train_n heldout_n`, then train rows, then heldout rows; one frame/line, D floats),
 // /tmp/h1280_ref_seed<S>.txt (coh_A coh_B coh_B_shuf err_early err_late — the R1 numpy
 // reference, computed on the SAME subset), /tmp/h1280_perm_seed<S>.txt (the shuffle-
@@ -293,7 +293,7 @@ fn main() {
         let train = pair[0]
         let heldout = pair[1]
         if len(train) == 0 || len(heldout) == 0 {
-            println("ERROR: empty stream at " + fpath + " — run UNIVERSE/h1280_live_feature_export.py first.")
+            println("ERROR: empty stream at " + fpath + " — run HYPOTHESES/h1280_live_feature_export.py first.")
             exit(1)
         }
         let ref = _load_floats5(rpath)

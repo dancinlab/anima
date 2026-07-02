@@ -12,7 +12,7 @@ corpus-absent CONCEPTS into a conditional "if A then B:" frame, the structural
 scaffold flat seeds lack). Controls: B-SHUFFLE (permuted pairing) + B-ABLATE
 (no conditional shell, lone concept).
 
-Reuses UNIVERSE/gauge_lib.py VERBATIM for decode + all G6/G2 evaluators (no metric
+Reuses HYPOTHESES/gauge_lib.py VERBATIM for decode + all G6/G2 evaluators (no metric
 re-invention, p7). 3 seeds. $0 CPU torch-mouth (the SAME gauge_lib._decode path the
 live G6 gate uses). DIRECTIONAL R1 (engine-native byte-exact reconfirm = R2 follow-on
 only if clean-GREEN; a_engine_native_learning).

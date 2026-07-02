@@ -32,7 +32,7 @@ PHILOSOPHY GUARDRAILS (G3, non-negotiable — by construction of the trainer):
 1. THE GROUNDING CORPUS  (frozen — broad, concept-rich, anti-overfit)
 --------------------------------------------------------------------------------
 Corpus = a FRESH, LARGER English-wikipedia slice than the 300MB the h1143/recovery
-probe reads, built deterministically via UNIVERSE/build_wiki5_bigcorpus_en.py from
+probe reads, built deterministically via HYPOTHESES/build_wiki5_bigcorpus_en.py from
 wikimedia/wikipedia 20231101 en. We train on the first 1200MB (1,258,291,200 bytes)
 of the deterministic en concat — 4x the 300MB probe slice — so the continue-train
 sees BROADER real-entity coverage (more real people / places / orgs / dates) than
@@ -121,7 +121,7 @@ never pass-by-redefinition.
 --------------------------------------------------------------------------------
 5. MEASUREMENT PIPELINE  (frozen — reuse the H_1143 + h1141 harnesses VERBATIM)
 --------------------------------------------------------------------------------
-(a) train: UNIVERSE/h1144_grounding_train.py continue-train from
+(a) train: HYPOTHESES/h1144_grounding_train.py continue-train from
     dancinlab/anima-clm-7b-h1141-g1pass-step6500 (sha 4de903714112...) on the
     1200MB en corpus, LR 2e-5, best-ckpt-by-val, real held-out val tail.
 (b) regenerate the 40 factual-frame continuations: h1141_7b_g5_eval.py gate_g5_l2

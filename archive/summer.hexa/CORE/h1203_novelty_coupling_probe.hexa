@@ -1,7 +1,7 @@
 // h1203_novelty_coupling_probe.hexa — H_1203 LIVE-engine CROSS-CHECK guard
 // (MITOSIS-ENGINE · $0 local CPU · p7).
 //
-// The H_1203 VERDICT is decided by UNIVERSE/h1203_mitosis_novelty_coupling.py
+// The H_1203 VERDICT is decided by HYPOTHESES/h1203_mitosis_novelty_coupling.py
 // (numpy mirror of vadapt_field_step). This probe is the c2 CROSS-CHECK: it drives
 // the LIVE core/engine_cli.hexa VAdaptField over the SAME NOVEL / REPEAT / SHUFFLED
 // DIM=8 byte-feature streams (exported to /tmp/h1203_<arm>_seed<S>.txt) and prints
@@ -66,7 +66,7 @@ fn main() {
             let path = "/tmp/h1203_" + arm + "_seed" + to_string(seed) + ".txt"
             let stream = _load_feat8(path, dim)
             if len(stream) == 0 {
-                println("ERROR: empty stream at " + path + " — run UNIVERSE/h1203_mitosis_novelty_coupling.py first.")
+                println("ERROR: empty stream at " + path + " — run HYPOTHESES/h1203_mitosis_novelty_coupling.py first.")
                 exit(1)
             }
             let cells = _run_arm(stream, max_cells, cfg_on)

@@ -1,6 +1,6 @@
 # Vectorized FAITHFUL pure-numpy mirror of core/clm_decode.hexa forward + clm_forward_ce (int4 dequant + dilated causal conv1d + GN + MoE). Byte-reproduces state/mid_convmoe_fire/clm_decode_mirror.py at 10-100x speed (d3784/L4 tractable). Uses math.log (correct) NOT the engine dt_ln (buggy). Built 2026-06-24, H_1579.
 # Provenance: anima H_1579 clm303 root-cause (overfit, NOT serialize defect).
-#   See UNIVERSE/cards/H_1579_clm303_serialization_defect.md + CORRECTION_overfit_not_serialize.md.
+#   See HYPOTHESES/cards/H_1579_clm303_serialization_defect.md + CORRECTION_overfit_not_serialize.md.
 #   Torch-free (no torch import) — runs on any host with numpy.
 
 # Vectorized faithful mirror of clm_decode.hexa forward + clm_forward_ce.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ==========================================================================
 # psi_coupling_toys.py — TOY emergent falsifiers for the TELEPATHY / anomalous-
-# cognition / consciousness-COUPLING hypothesis family (UNIVERSE/PSI-CANDIDATES).
+# cognition / consciousness-COUPLING hypothesis family (HYPOTHESES/PSI-CANDIDATES).
 #
 # FRAMING (brutally honest, p7 / a_paper_negative_ok):
 #   Every hypothesis is reframed as a FALSIFIABLE MECHANISM with a pre-registered

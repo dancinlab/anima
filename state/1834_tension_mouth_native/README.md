@@ -1,6 +1,6 @@
 # 1834 — TENSION-MOUTH (anima-native mouth) · 설계 spec + toy 프로브
 
-카드: `UNIVERSE/cards/H_1834_tension_mouth_native.md` · id H_1834
+카드: `HYPOTHESES/cards/H_1834_tension_mouth_native.md` · id H_1834
 
 ## 1. 문제 재정의
 

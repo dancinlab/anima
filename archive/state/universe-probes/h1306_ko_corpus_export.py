@@ -132,7 +132,7 @@ def write_ints(path, Y):
 def main():
     if not (os.path.exists(KO_SLICE) and os.path.exists(EN_SLICE)):
         print("ERROR: missing /tmp/ko_slice_raw.bytes or /tmp/en_slice_raw.bytes — "
-              "run the R2 fetch step (UNIVERSE/h1306_fetch_corpus.sh) first.")
+              "run the R2 fetch step (HYPOTHESES/h1306_fetch_corpus.sh) first.")
         sys.exit(1)
 
     ko_raw = open(KO_SLICE, "rb").read()

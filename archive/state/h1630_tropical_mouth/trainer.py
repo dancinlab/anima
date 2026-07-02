@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """H_1630 — Tropical (max-plus) semiring binding mouth, 303M.
 
-PREREG card: UNIVERSE/cards/H_1630_tropical_semiring_bind.md
+PREREG card: HYPOTHESES/cards/H_1630_tropical_semiring_bind.md
 
 Mechanism (per card):
   Replace the ring (+,x) that conv/attention live in with the tropical semiring (max,+).

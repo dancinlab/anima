@@ -4,7 +4,7 @@
 
 ## conventions
 
-probe authoring → UNIVERSE/PROBE_CONVENTIONS.md
+probe authoring → HYPOTHESES/PROBE_CONVENTIONS.md
 
 ## why this domain (the reframe)
 
@@ -57,7 +57,7 @@ CLM was a "language model" (next-byte). The arc H_950/951/952 tests whether it i
 
 ## CWM world-model hypothesis slate (M1)
 
-Authored 2026-06-06 (branch `lane-g/cwm-worldmodel-slate`). Brainstorm → depletion (R7, 2 consecutive empty rounds; 25 surviving / 5 dropped-as-subsumed) → pre-registered as `UNIVERSE/H_<id>_*.md`. **All ⏳ PENDING-MEASUREMENT** — authoring only; the next round is verify (single bg orchestrator per proceed-means-all). Frozen falsifiers per a_paper_significance; no 🟢/🔴 token assigned (unmeasured).
+Authored 2026-06-06 (branch `lane-g/cwm-worldmodel-slate`). Brainstorm → depletion (R7, 2 consecutive empty rounds; 25 surviving / 5 dropped-as-subsumed) → pre-registered as `HYPOTHESES/H_<id>_*.md`. **All ⏳ PENDING-MEASUREMENT** — authoring only; the next round is verify (single bg orchestrator per proceed-means-all). Frozen falsifiers per a_paper_significance; no 🟢/🔴 token assigned (unmeasured).
 
 ### PERCEIVE (5)
 

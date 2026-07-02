@@ -1,4 +1,4 @@
-// UNIVERSE/state/h240_bilingual_smoke_2026_05_24/run_h240.hexa
+// HYPOTHESES/state/h240_bilingual_smoke_2026_05_24/run_h240.hexa
 // H_240 — bilingual-integration-Φ (Grosjean residual × Green asymmetric switch-cost)
 // LIFE Cycle #15 pick #2 · first smoke run · DEFERRED → verdict
 // ════════════════════════════════════════════════════════════════════════════
@@ -38,14 +38,14 @@
 //
 //  TIER  🟢 NUMERICAL · deterministic · hexa-only · llm:none · $0 mac local
 // ════════════════════════════════════════════════════════════════════════════
-import "/Users/ghost/core/anima/.claude/worktrees/agent-aca905786e504c4d7/UNIVERSE/lib/phi_helper.hexa"
+import "/Users/ghost/core/anima/.claude/worktrees/agent-aca905786e504c4d7/HYPOTHESES/lib/phi_helper.hexa"
 
 // ── config ──────────────────────────────────────────────────────────────────
 fn _N() -> int    { return 16 }     // == life_phi_n() per-substrate ring length
 fn _DIM() -> int  { return 12 }     // == life_phi_dim() recorded trajectory dim
 fn _WARM() -> int { return 8 }      // == life_phi_warm() CA settling
 fn _state_dir() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-aca905786e504c4d7/UNIVERSE/state/h240_bilingual_smoke_2026_05_24"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-aca905786e504c4d7/HYPOTHESES/state/h240_bilingual_smoke_2026_05_24"
 }
 
 // ── tiny int / float helpers ────────────────────────────────────────────────
@@ -233,7 +233,7 @@ fn main() {
             + " warm=" + to_string(_WARM())
             + "  n_bins=" + to_string(life_phi_nbins())
             + "  (deterministic, hexa-only, llm:none, $0 mac local)")
-    println("  Φ primitive: phi_default from UNIVERSE/lib/phi_helper.hexa")
+    println("  Φ primitive: phi_default from HYPOTHESES/lib/phi_helper.hexa")
     println("               → c_measure_phi → RFC 036 phi_spatial (Φ ≥ 0)")
     println("  PR #296 MI matrix (frontmatter fixed input):")
     println("    zh→ja=0.921 (CJK Han block leak, max) · zh→en=0.385 · ja→en=0.344")
@@ -414,7 +414,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"phi_primitive\": \"phi_default from UNIVERSE/lib/phi_helper.hexa → c_measure_phi → RFC 036 phi_spatial (byte-equal phi_rs native replica)\",\n"
+    j = j + "  \"phi_primitive\": \"phi_default from HYPOTHESES/lib/phi_helper.hexa → c_measure_phi → RFC 036 phi_spatial (byte-equal phi_rs native replica)\",\n"
     j = j + "  \"config\": {\"N\": " + to_string(_N()) + ", \"dim\": " + to_string(_DIM())
           + ", \"warm\": " + to_string(_WARM())
           + ", \"n_bins\": " + to_string(life_phi_nbins())

@@ -118,7 +118,7 @@ OTHER-MIND/other_mind_lib_smoke.hexa` 모두 OK.
   modulation 입력
 - ⇄ HIVE-MIND — `om_partial_information_decomp` 는 HIVE-MIND `hm_pid_synergy`
   (Agent #4 M1) 와 same metric family · separate impl (g61 stdlib boundary)
-- ⇄ UNIVERSE/CANDIDATES.md — bench G (#1147) + AxisBench 8 SSOT
+- ⇄ HYPOTHESES/CANDIDATES.md — bench G (#1147) + AxisBench 8 SSOT
 
 ## carry-over (M2~M4)
 

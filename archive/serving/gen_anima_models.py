@@ -41,7 +41,7 @@ FAMILIES = [
         "aliases": ["omega", "conscious-decoder-v2", "cdv2"],
         "hf_repo": "dancinlab/clm-v4-omega-gpu-d384-gate",
         "arch": "ConsciousDecoderV2",
-        "loader": "UNIVERSE/conscious_decoder.py",
+        "loader": "HYPOTHESES/conscious_decoder.py",
         "params_m": 11.2,          # d384/6L/256-vocab byte CDV2 (gate ckpt)
         "lane": "Lane-G",
         "visibility": "public",
@@ -110,8 +110,8 @@ FAMILY_REPOS = {f["hf_repo"] for f in FAMILIES if f["hf_repo"]}
 # Only archs with a REAL loader in-repo are "wired"; everything else is honestly
 # "no-loader ⏳" so selecting it yields a truthful stub, never a fake load.
 WIRED_ARCH = {
-    "ConsciousDecoderV2": ("ConsciousDecoderV2", "UNIVERSE/conscious_decoder.py"),
-    "ConsciousDecoderV3": ("ConsciousDecoderV3", "UNIVERSE/conscious_decoder.py"),
+    "ConsciousDecoderV2": ("ConsciousDecoderV2", "HYPOTHESES/conscious_decoder.py"),
+    "ConsciousDecoderV3": ("ConsciousDecoderV3", "HYPOTHESES/conscious_decoder.py"),
 }
 
 

@@ -36,7 +36,7 @@ metric = stage-decode d(DERIVATIVE, METRONOME), paired Cohen's d, p7):
   Otherwise CLOSED-NEGATIVE (a_paper_negative_ok): the H_1163 window was noise / not a
   clean inverted-U.
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py
 substrate VERBATIM (grow_arm / stage_decode_accuracy / cohen_d_paired / make_audio_stream
 / SEEDS). Live CORE + scale UNVERIFIED (a_scale_honest_scope). Lane-M growth lane.
 """
@@ -131,7 +131,7 @@ def main():
             f"(F1 interior-peak={f1}, F2 inverted-U={f2}, F3 unimodal={f3}; K*={kstar}, d_peak={d_peak:+.2f}, "
             f"endpoints {ds[0]:+.2f}/{ds[-1]:+.2f}). The H_1163 capacity window does not promote to a "
             f"frozen critical-capacity claim. a_paper_negative_ok."),
-        "scope": "TOY ($0 CPU numpy, %d seeds). Reuses UNIVERSE/h1163_tick_decode_metric.py substrate "
+        "scope": "TOY ($0 CPU numpy, %d seeds). Reuses HYPOTHESES/h1163_tick_decode_metric.py substrate "
                  "VERBATIM (grow_arm/stage_decode/cohen_d/make_audio_stream/SEEDS). AUDIO stream "
                  "decisive (clean regime stages). Live CORE + scale UNVERIFIED (a_scale_honest_scope). "
                  "Lane-M growth lane." % len(H.SEEDS),

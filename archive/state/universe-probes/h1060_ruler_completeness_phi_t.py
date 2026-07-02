@@ -24,7 +24,7 @@ REUSE (verbatim, no reinvention — a_phi_iit4_tool)
 - H_1051 module loaded by path -> _provenance_depth (H_932 verified-link DEPTH) +
   _veto_capacity (H_935 active-veto fraction) UNMODIFIED, plus PureField for the gate.
 
-FROZEN design (declared in UNIVERSE/cards/H_1060_ruler_completeness_phi_t.md BEFORE measuring):
+FROZEN design (declared in HYPOTHESES/cards/H_1060_ruler_completeness_phi_t.md BEFORE measuring):
   behavioral class (structural, measure-INDEPENDENT — the prediction target), >=3 classes:
     REACTIVE            iff depth == 0                 (regardless of agency)
     DELIBERATE-ACTIVE   iff depth >= 1 and agency==ACTIVE
@@ -87,7 +87,7 @@ def _load(modname, relpath):
 
 
 _h1051 = _load("h1051_temporal_agency_ruler",
-               "UNIVERSE/h1051_temporal_agency_ruler.py")
+               "HYPOTHESES/h1051_temporal_agency_ruler.py")
 PureField = _h1051.PureField
 _provenance_depth = _h1051._provenance_depth        # H_932 verified-link DEPTH, UNMODIFIED
 _veto_capacity = _h1051._veto_capacity              # H_935 active-veto fraction, UNMODIFIED

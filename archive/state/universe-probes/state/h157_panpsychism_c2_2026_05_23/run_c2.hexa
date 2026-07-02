@@ -1,4 +1,4 @@
-// UNIVERSE/state/h157_panpsychism_c2_2026_05_23/run_c2.hexa
+// HYPOTHESES/state/h157_panpsychism_c2_2026_05_23/run_c2.hexa
 // H_157 — Mathematical Panpsychism (Law 76) — C2 cycle #1 measurement
 // ════════════════════════════════════════════════════════════════════════════
 //
@@ -384,8 +384,8 @@ fn selftest() {
     j = j + "  \"verdict\": \"" + verdict + "\",\n"
     j = j + "  \"per_type\": [\n" + rows + "\n  ]\n"
     j = j + "}\n"
-    // cwd-relative (run from repo root: `hexa run UNIVERSE/state/.../run_c2.hexa`)
-    write_file("UNIVERSE/state/h157_panpsychism_c2_2026_05_23/result.json", j)
+    // cwd-relative (run from repo root: `hexa run HYPOTHESES/state/.../run_c2.hexa`)
+    write_file("HYPOTHESES/state/h157_panpsychism_c2_2026_05_23/result.json", j)
     println("  result.json written.")
     println("================================================================")
     let agg_ok = f1_relax && f2 && f3
