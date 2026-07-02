@@ -24,3 +24,11 @@ trainset=/Users/mini/dancinlab/anima/state/clm303_savant_mitosis_train/trainset 
 === RF (archive/train/clm/model/model.py): 1+(K-1)*sum(dilation) ===
   clm303_clean L=4 K=3 dilation base2 → RF=1+2*(1+2+4+8)=31B (~37B w/ expert conv)
   G1 composed seed k=2=72B > RF → 두 개념 동시 조건화 불가 (RF-bound, H_6184 plain-conv 벽 동형)
+
+--- HF-EXACT 승격 (2026-07-02, 바이패스 fable follow-on, proxy→정확HF) ---
+정확 HF 4칸(en-general 279429L·ko-general 340512L·ko-sns 47994L·en-sns 6862L, 127.6MB) 직접측정:
+  개념쌍 HEAD same-line = 15/10쌍(쌍당 0~7) · ±5window 108 · control government×war=125/music=133/water=208 무결.
+  임계 대비: toy HIGH 17,143 pair-lines/MB vs HF exact 0.118/MB = 1/145,000 → BELOW 확정(쌍당 max 7 ≪ ~30 reps bar).
+  15라인 전수검수=자연 web 우연 공동사용+다의어(관대 상한). silence 프랑스어 오염=프록시-특유(HF 162/163 영어).
+  프록시 재현=H_6185 원수치 verbatim(reference-match). 결론(BELOW·이중bound·처방 L8+커버리지블록) 불변, proxy→정확HF.
+  verdict: 🟢 DIRECTIONAL-proxy → 🟢 DIRECTIONAL(정확HF). engine-native G1 재검=follow-on 유지.
