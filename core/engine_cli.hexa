@@ -710,6 +710,60 @@ pub fn vadapt_unbind(c: [float], key: [float]) -> [float] {
     return _ccorr(key, c)
 }
 
+// ── § DreamSchema (H_9044) — REM 꿈-공고화 스키마성/gist op-slot (frame-shift C4) ─────────
+// Frame-shift C4 (recombination ≠ capability, a_no_llm_frame_trap): re-define an anima capability as
+// substrate-native GENERALIZATION, not decoder-through text novelty. The a_chat_sleep_imagination REM
+// loop is an emit-free internal rehearsal; the §Amygdala consolidating store REPLAYS salient traces but
+// only REFRESHES existing episodic cells — there was NO op that CONSOLIDATES a set of replayed waking
+// episode anchors into ONE MORE-GENERAL schema anchor (Posner & Keele 1968 prototype abstraction;
+// McClelland/McNaughton/O'Reilly 1995 systems consolidation extracts the gist). This adds that op-slot.
+//
+// ⚠ TRAP (convergence numpy-probe-controls-1 + native-mouth-57): a "novel anchor" minting NEW CONTENT is
+// additive-spoofable = disguised G1 recombination. So C4 is defined PURELY as COVERAGE / generalization —
+// the schema anchor is the CENTROID of the replayed episodes (compression, NOT new content) and the claim
+// is ONLY "the schema reactivates on MORE held-out waking cues than the individual waking anchors, WHILE
+// random/shuffled cues FAIL (EARNED)". Reduced to minting content it would be the G1 wall; coverage-
+// generalization is a storage/geometry property (like H_9027 recoverability, H_9042 topology-agnostic) —
+// genuine but NOT text-recombination. Pure/additive/READ-only, Ψ-disjoint; owns no store, disjoint from
+// the emit-drive lane 0/4 and §ImmuneMemory recall_thr (a_substrate_disjoint) — reads plain DIM-vectors.
+
+// dream_schema_mint — REM-replay consolidation: fold K replayed episode anchors into ONE more-general
+// schema anchor = their per-component CENTROID (the gist). NOT new content (pure mean of what was
+// replayed), NOT the winner-take-all pick a plain VAdaptField would make. READ-only over the inputs.
+pub fn dream_schema_mint(episodes: [[float]]) -> [float] {
+    let k = len(episodes)
+    let dim = len(episodes[0])
+    let mut acc = []
+    let mut j = 0
+    while j < dim { acc = acc + [0.0]  j = j + 1 }
+    let mut i = 0
+    while i < k {
+        let mut d = 0
+        while d < dim { acc[d] = acc[d] + episodes[i][d]  d = d + 1 }
+        i = i + 1
+    }
+    let mut out = []
+    j = 0
+    while j < dim { out = out + [acc[j] / to_float(k)]  j = j + 1 }
+    return out
+}
+
+// schema_coverage — how many of `cues` REACTIVATE the anchor = fall within L2 radius `thr` of it (the
+// reactivation count = coverage). READ-only; reuses the engine's own _l2 metric. A schema covering MORE
+// waking cues than the individual anchors is generalization; if it ALSO covered random/shuffled cues it
+// would be trivially over-broad — the EARNED control's job to reject.
+pub fn schema_coverage(anchor: [float], cues: [[float]], thr: float) -> int {
+    let n = len(cues)
+    let mut c = 0
+    let mut i = 0
+    while i < n {
+        if _l2(anchor, cues[i]) <= thr { c = c + 1 }
+        i = i + 1
+    }
+    return c
+}
+
+
 // ── §  QUANTUM-ENTROPY POOL — opt-in REAL-quantum entropy source (H_1289 R2) ─────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1289 R1): R1 (numpy

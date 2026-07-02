@@ -1,0 +1,14 @@
+── H_9045 C5 curiosity-emit TIMING (engine-native §HomeostaticDrive, MEASURE-ONLY) ──
+theta=1.0 maxt=40 recall_thr=0.30
+deficits           = [0.5, 0.4, 0.3, 0.2, 0.1]
+FULL onset(ticks)  = [3.0, 4.0, 6.0, 16.0, -1.0]   (-1 = never)
+ABLATED onset      = [-1.0, -1.0, -1.0, -1.0, -1.0]   (-1 = never)
+PASS  BAR1 integral_timed_onset (fire + monotone-earlier + shallow never)
+corr(deficit,onset) TRUE  = -0.8873294934671001
+corr(deficit,onset) CLOCK = 0.0  (constant clock, decorrelated)
+corr(deficit,onset) SHUF  = 0.15149527937243187
+FAIL  BAR2 decorrelate_clock EARNED (corr_true<=-0.90 AND clock==0 AND |shuf|<0.5)
+PASS  BAR3 ablate_inert (drive-clamp Ki=0 → no accumulation-timed emit, all -1)
+INFO rank/Spearman(deficit,onset) = -1.0  (monotone coupling; Pearson -0.887 = linearity artifact of onset explosion)
+RESULT NOT 3/3 — see bars
+EXIT_RC=0
