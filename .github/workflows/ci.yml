@@ -228,8 +228,7 @@ jobs:
         run: |
           set -euo pipefail
           cat > _ci_engine_compile.hexa <<'HX'
-          import "core/clm_decode.hexa"
-          import "core/bytegpt_decode.hexa"
+          import "core/decode.hexa"  // unified CONV(CLM)+BYTE(ByteGPT) decoder (merged from former core/clm_decode.hexa + core/bytegpt_decode.hexa)
           import "core/generator.hexa"
           import "cli/evaluate.hexa"  // former core/g_gates.hexa (G0–G6 scorers) absorbed here
           import "core/g6_ideation.hexa"
