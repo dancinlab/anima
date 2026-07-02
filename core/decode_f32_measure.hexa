@@ -177,7 +177,10 @@ fn _f32m_throughput(W: Map, N: int, nseed: int, gen: int, base_ms_tok: float) {
 }
 
 fn main() {
-    let mut bin = "/home/summer/anima-weights/bytegpt303_h1129/h1129.bin"
+    // env-first portable weights resolution (no foreign absolute path): $BYTEGPT_WEIGHTS
+    // → repo-relative fallback → a *.bin argv override → fail-fast SKIP if absent.
+    let mut bin = env("BYTEGPT_WEIGHTS")
+    if bin == "" { bin = "anima-weights/bytegpt303_h1129/h1129.bin" }
     let av = args()
     let mut ai = 0
     while ai < len(av) {
