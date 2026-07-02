@@ -1,0 +1,45 @@
+# H_9105 consequence-driven mitosis — FROZEN engine-native verdict (aiden pool, hexa v0.548.0)
+# core/engine_cli.hexa sha256=7617b1353fca7e622486a7469cfe2ee98b13ac59e4569bbf0308ab1b844423a6 (== worktree, byte-exact)
+# cross-host: aiden pool output byte-identical to local mini (deterministic LCG). grep gate CLEAN (no .py).
+# ============================================================================
+
+=== H_9105 CONSEQUENCE-DRIVEN MITOSIS — engine-native (immune_embed_key + engine_mitosis_tick, live core/) ===
+N_SEEDS=5 N_GEN=20 BATCH=60 KILL_K=2 REPRO_K=2 FIRE_RADIUS=0.30 (== engine SPLIT_THRESH)
+[B4 data-validity] within-cluster L2=0.07820618870057751 cross-cluster L2=1.412049500566085 -> VALID (within<0.30<cross)
+
+REGIME A (balanced 12 signal / 12 noise):
+  [seed 70105] EXO=0.68(cov=5.0)  RAND=0.15(cov=2.0)  SHUF=0.33  NOAPOP=0.68  NOSEL=0.68(cov=7.0)
+  [seed 70106] EXO=0.36(cov=5.0)  RAND=0.13(cov=1.0)  SHUF=0.39  NOAPOP=0.52  NOSEL=0.52(cov=6.0)
+  [seed 70107] EXO=0.35(cov=3.0)  RAND=0.19(cov=3.0)  SHUF=0.16  NOAPOP=0.35  NOSEL=0.35(cov=5.0)
+  [seed 70108] EXO=0.36(cov=4.0)  RAND=0.0(cov=1.0)  SHUF=0.32  NOAPOP=0.64  NOSEL=0.64(cov=6.0)
+  [seed 70109] EXO=0.42(cov=5.0)  RAND=0.22(cov=1.0)  SHUF=0.0  NOAPOP=0.42  NOSEL=0.42(cov=6.0)
+
+REGIME B (noise-heavy 12 signal / 36 noise — MAXIMALLY favors apoptosis-enrichment, signal cells immortal):
+  [seed 70105] EXO=0.0(cov=0.0)  RAND=0.0(cov=1.0)  SHUF=0.0  NOAPOP=0.0  NOSEL=0.0(cov=1.0)
+  [seed 70106] EXO=0.23(cov=1.0)  RAND=0.39(cov=2.0)  SHUF=0.0  NOAPOP=0.72  NOSEL=0.72(cov=5.0)
+  [seed 70107] EXO=0.0(cov=1.0)  RAND=0.0(cov=0.0)  SHUF=0.0  NOAPOP=0.22  NOSEL=0.22(cov=3.0)
+  [seed 70108] EXO=0.0(cov=2.0)  RAND=0.0(cov=1.0)  SHUF=0.0  NOAPOP=0.3  NOSEL=0.3(cov=4.0)
+  [seed 70109] EXO=0.2(cov=2.0)  RAND=0.0(cov=1.0)  SHUF=0.0  NOAPOP=0.2  NOSEL=0.2(cov=2.0)
+
+--- REGIME A  (N_SIG=12 N_NOISE=12 MAX_CELLS=12) ---
+  coverage/12  EXO=4.4 RAND=1.6 NOSEL=6.0   cond_acc|fire EXO=1.0
+  held-out acc EXO=0.434 RAND=0.138 SHUF=0.24 NOAPOP=0.522 NOSEL=0.522
+  B1 EXO-RAND=0.296 (>=0.15 PASS)   B2 EXO-SHUF=0.194 (>=0.15 PASS)   B3 EXO-NOAPOP=-0.08800000000000002 (>=0.10 FAIL)
+  ** DECISIVE  EXO-NOSEL=-0.08800000000000002 (>=0.10 = selection is a POSITIVE channel; <=0 = selection net-HARMFUL) -> SELECTION HARMFUL vs doing nothing
+
+--- REGIME B  (N_SIG=12 N_NOISE=36 MAX_CELLS=12) ---
+  coverage/12  EXO=1.2 RAND=1.0 NOSEL=3.0   cond_acc|fire EXO=0.4
+  held-out acc EXO=0.08600000000000001 RAND=0.078 SHUF=0.0 NOAPOP=0.288 NOSEL=0.288
+  B1 EXO-RAND=0.008000000000000007 (>=0.15 FAIL)   B2 EXO-SHUF=0.08600000000000001 (>=0.15 FAIL)   B3 EXO-NOAPOP=-0.20199999999999996 (>=0.10 FAIL)
+  ** DECISIVE  EXO-NOSEL=-0.20199999999999996 (>=0.10 = selection is a POSITIVE channel; <=0 = selection net-HARMFUL) -> SELECTION HARMFUL vs doing nothing
+
+================================ CONSOLIDATED VERDICT ================================
+VERDICT: 🔴 SELECTION INERT-TO-HARMFUL (honest, bars frozen) — the C2 thesis is FALSIFIED.
+  EXO beats RAND/SHUF (B1/B2 may PASS) ONLY because random/shuffled churn is DESTRUCTIVE — the
+  proper no-selection baseline (NOSEL = just spawn cells) BEATS consequence-selection in both regimes
+  (EXO-NOSEL<=0). Consequence-driven selection is NOT a positive information channel: reproduction
+  clonally DUPLICATES (H_1310 split-can't-target-uncovered wall) and apoptosis destroys coverage.
+  The from-scratch pure-split wall's bottleneck was NOT selection-absence. DPI/wall reconfirmed
+  ENGINE-NATIVE (H_1568 selection-mitosis INERT, DIRECTIONAL-only, now engine-native + no-sel baseline).
+NOTE: B1/B2 (EXO vs RAND/SHUF) reported VERBATIM above; the NOSEL baseline (added as a stricter control,
+  making GREEN HARDER not easier — c9 no tune-to-green) is the load-bearing test of the C2 thesis.
