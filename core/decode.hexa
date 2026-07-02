@@ -3748,11 +3748,7 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
 
     let mut Lr = 0
     while Lr < nlay {
-        // r7: LN1 separate only for layer 0; for Lr>0 the previous layer's fused
-        // resid-B already wrote nrm=LN1(x). Unfused: always run LN1 here.
-        if !epi_fuse || Lr == 0 {
-            let _ = farr_layernorm_f32_gpu(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, N, d, eps)
-        }
+        let _ = farr_layernorm_f32_gpu(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, N, d, eps)
         let Kl = to_int(Kc[Lr]); let Vl = to_int(Vc[Lr])
         let q = farr_zeros(N * d)
         if qkv_fused {
@@ -3794,10 +3790,17 @@ fn _bg_kv_step_dev_batch_f32(W: Map, kvb: Map, ids: list, N: int, pos_p: int) ->
         let aout = farr_zeros(N * d)
         let _ = farr_matmul_f32_gpu(ctx, N, d, to_int(oWt[Lr]), d, aout)
         let _ = _f32_resid(aout, to_int(oB_e[Lr]), aout, N * d)
-        let _ = _f32_resid(x, aout, x, N * d)
+        // r7 (within-layer): fuse resid-A (x+=aout) + LN2 → nrm=LN2(x+aout), x=x+aout.
+        if epi_fuse {
+            let _ = farr_resid_layernorm_f32_gpu(x, aout, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, N, d, eps)
+        } else {
+            let _ = _f32_resid(x, aout, x, N * d)
+        }
         let _ = farr_free(ctx); let _ = farr_free(aout)
 
-        let _ = farr_layernorm_f32_gpu(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, N, d, eps)
+        if !epi_fuse {
+            let _ = farr_layernorm_f32_gpu(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, N, d, eps)
+        }
         let h4 = farr_zeros(N * 4 * d)
         let _ = farr_matmul_f32_gpu(nrm, N, d, to_int(m0Wt[Lr]), 4 * d, h4)
         let _ = _f32_resid(h4, to_int(m0B_e[Lr]), h4, N * 4 * d)
