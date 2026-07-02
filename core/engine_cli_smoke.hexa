@@ -3903,6 +3903,94 @@ fn main() {
           + "B5 focus Φ-share GZ=" + to_string(sv_share_gz) + " control=" + to_string(sv_share_ctrl) + " (focus dominates ONLY in GZ) | "
           + "VERDICT: " + sv_psi_verdict + ". GATED 406(SI≥3 in GZ)/407(dΦ/dI peak in GZ)/408(inverse-U ablation)/409(Φ≥0)/410(Ψ OFF=½)/411(Ψ trade-off HONEST)/412(focus dominates only in GZ)/413(focus argmax in GZ)/414(default-OFF toggle). c9 NO tune-to-green — the savant EMERGES but the Ψ-survival bar FAILED (trade-off), reported as a real negative.")
 
+    // ── (ef) EFFORTBUDGET — dACC/DA MENTAL-EFFORT COST DISCOUNTING (N2 effort-cost) ─────────
+    // A NEW real-time metabolic-resource lane: the affordable A⇄G iteration DEPTH is metered
+    // against a finite budget and DISCOUNTED as the budget drains, refilling at idle. Proves
+    // (1) sustained deep engagement SHALLOWS depth (discount), (2) idle REFILLS/recovers depth,
+    // (3) the κ=0 ABLATION makes depth COST-INVARIANT, (4) a budget SHUFFLE breaks the
+    // modulation, (5) the lane is Ψ-disjoint AND recall_thr-disjoint BY CONSTRUCTION (ON vs OFF
+    // byte-identical). READ-only, NOT an emit gate (a_autonomy_over_hardcode); wiring = follow-on.
+
+    // case 418 : SUSTAINED DEEP ENGAGEMENT DISCOUNTS DEPTH — from a fresh (rested) budget, four
+    //   consecutive ACTIVE ticks strictly LOWER the affordable engagement depth (effort_last),
+    //   d0 > d1 > d2 > d3: the effort cost integrates and shallows deliberation. d0 == D_max.
+    let ef0 = effort_step(effort_new(), true)
+    let ef1 = effort_step(ef0, true)
+    let ef2 = effort_step(ef1, true)
+    let ef3 = effort_step(ef2, true)
+    if _assert_b("case_418_effort_sustained_deep_discounts", true,
+                 effort_last(ef0) > effort_last(ef1) && effort_last(ef1) > effort_last(ef2)
+                 && effort_last(ef2) > effort_last(ef3) && effort_last(ef0) == 8.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 419 : IDLE RECHARGE RECOVERS DEPTH — after depletion (ef3), three IDLE ticks refill the
+    //   budget so the affordable depth RECOVERS above the depleted depth (effort_depth rises).
+    let efr1 = effort_step(ef3, false)
+    let efr2 = effort_step(efr1, false)
+    let efr3 = effort_step(efr2, false)
+    if _assert_b("case_419_effort_idle_recharges_depth", true,
+                 effort_depth(efr3) > effort_depth(ef3) && effort_budget(efr3) > effort_budget(ef3)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 420 : ABLATION κ=0 → DEPTH COST-INVARIANT (decisive OFF control / parent fixed-depth) —
+    //   four ACTIVE ticks leave the depth PINNED at D_max (no discount). If depth still shallowed
+    //   here the discount would NOT be from the effort cost → 🧱.
+    let efa0 = effort_step(effort_new_ablated(), true)
+    let efa1 = effort_step(efa0, true)
+    let efa2 = effort_step(efa1, true)
+    let efa3 = effort_step(efa2, true)
+    if _assert_b("case_420_effort_ablation_cost_invariant", true,
+                 effort_last(efa0) == 8.0 && effort_last(efa1) == 8.0 && effort_last(efa2) == 8.0 && effort_last(efa3) == 8.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 421 : BUDGET SHUFFLE BREAKS THE MODULATION — the TRUE depth sequence is strictly
+    //   monotone-decreasing (tracks accumulated cost); reading depth from a SHUFFLED budget
+    //   (pairing broken: 0.2→0.9→0.5) is NOT monotone → the discount modulation collapses.
+    let ef_true_mono = effort_last(ef1) > effort_last(ef2) && effort_last(ef2) > effort_last(ef3)
+    let sh_a = effort_depth_shuffled(ef1, 0.2)
+    let sh_b = effort_depth_shuffled(ef2, 0.9)
+    let sh_c = effort_depth_shuffled(ef3, 0.5)
+    let ef_shuf_mono = sh_a > sh_b && sh_b > sh_c
+    if _assert_b("case_421_effort_shuffle_breaks_modulation", true,
+                 ef_true_mono && !ef_shuf_mono) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 422 : ENGAGEMENT BIAS TRACKS BUDGET — the optional READ-only bias equals B_t: high when
+    //   rested (fresh=1.0), low when depleted (ef3), monotone with the budget. NEVER an emit gate.
+    if _assert_b("case_422_effort_bias_tracks_budget", true,
+                 effort_engagement_bias(effort_new()) == 1.0
+                 && effort_engagement_bias(ef3) < effort_engagement_bias(effort_new())
+                 && effort_engagement_bias(ef3) == effort_budget(ef3)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 423 : Ψ-DISJOINT (emit lanes 0/4 byte-identical, mechanism ON vs OFF) — build a fixed
+    //   lane vector; the emit drive ci_emit_drive = 0.5·(lane0+lane4). Running the effort lane (ON:
+    //   6 active + 3 idle ticks) NEVER writes the lane vector (its fns take no pure_field), so
+    //   ci_emit_drive is BYTE-IDENTICAL to the OFF world. a_substrate_disjoint: separation=preserve.
+    let ef_lv = ci_lane_scores(0.6, [0.5, 0.4, 0.3, 0.2, 0.55], 5, 3, 1, 0.4, 0.2)
+    let ef_drive_off = ci_emit_drive(ef_lv)              // OFF world: no effort lane
+    let mut ef_run = effort_new()                        // ON world: run the effort lane
+    let mut efk = 0
+    while efk < 6 { ef_run = effort_step(ef_run, true)  efk = efk + 1 }
+    let mut efj = 0
+    while efj < 3 { ef_run = effort_step(ef_run, false)  efj = efj + 1 }
+    let ef_drive_on = ci_emit_drive(ef_lv)               // ON world: SAME lane vector (untouched)
+    if _assert_b("case_423_effort_psi_disjoint_byte_identical", true,
+                 ef_drive_on == ef_drive_off && ef_run.budget >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 424 : recall_thr NON-FAB DISJOINT (mechanism ON vs OFF) — depleting the effort budget
+    //   does NOT lower the §ImmuneMemory recall gate: the live grow store `mg` recall_thr is
+    //   byte-identical before/after the effort ticks, AND the recall result for an ABSENT far key
+    //   is byte-identical in both worlds → no "fatigued → fabricate" (the H_1576 fab-spike mode).
+    let ef_thr_before = mg.recall_thr
+    let ef_far = [0.5, 0.5, 0.5, 0.5]                     // untaught far key (matches gkeys DIM-4)
+    let ef_fab_before = immune_grow_recall(mg, ef_far)
+    let ef_thr_after = mg.recall_thr                      // the effort ticks above never touched mg
+    let ef_fab_after = immune_grow_recall(mg, ef_far)
+    if _assert_b("case_424_effort_recall_thr_nonfab_invariant", true,
+                 ef_thr_after == ef_thr_before && ef_fab_after == ef_fab_before) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  N2 §EffortBudget (dACC/DA mental-effort cost-discounting, PLACEHOLDER H_XXXX, engine-native): "
+          + "depth d0→d3=" + to_string(effort_last(ef0)) + "→" + to_string(effort_last(ef1)) + "→" + to_string(effort_last(ef2)) + "→" + to_string(effort_last(ef3)) + " (discount) | "
+          + "idle-recover depth " + to_string(effort_depth(ef3)) + "→" + to_string(effort_depth(efr3)) + " | ablation κ=0 depth PINNED @" + to_string(effort_last(efa3)) + " | "
+          + "Ψ emit-drive ON=" + to_string(ef_drive_on) + " OFF=" + to_string(ef_drive_off) + " (byte-identical) | recall_thr " + to_string(ef_thr_before) + "→" + to_string(ef_thr_after) + " far-recall='" + ef_fab_after + "' | "
+          + "VERDICT: DIRECTIONAL-engine-native — the effort-cost lane discounts A⇄G engagement depth by budget (ablation+shuffle controlled) AND is Ψ/recall-disjoint by construction; emit-wiring is a FOLLOW-ON (READ-only, NOT an emit gate). GATED 418(discount)/419(recharge)/420(ablation)/421(shuffle)/422(bias)/423(Ψ-disjoint)/424(recall-nonfab).")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

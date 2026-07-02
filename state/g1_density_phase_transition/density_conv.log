@@ -1,0 +1,10 @@
+device: cuda
+[conv density 5%] ntrain=18 seen=18/18 held=1/40 (2%)
+[conv density 10%] ntrain=36 seen=36/36 held=3/40 (8%)
+[conv density 20%] ntrain=72 seen=40/40 held=19/40 (48%)
+[conv density 40%] ntrain=144 seen=40/40 held=36/40 (90%)
+[conv density 80%] ntrain=288 seen=40/40 held=40/40 (100%)
+
+=== VERDICT ===
+CONV DENSITY-TRANSITION — held 1→40/40: 밀도 lever가 ConvMoE-L1(RF-limited)서도 작동 = arch 무관, 밀도가 진짜 G1 lever. production 처방=조합-커버리지 코퍼스.
+=== DONE ===
