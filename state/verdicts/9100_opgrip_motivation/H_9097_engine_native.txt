@@ -1,0 +1,28 @@
+════════════ OP-GRIP 5-ARM HAMMING (n=200, wake=10) ════════════
+  BASELINE (pre-fix ÷43 + 4 constants): Hamming(rel-frozen vs base) = 0   [pre-reg: 0 = THEATER reproduced]
+  baseline motivation floor >0.3 on 10/10 wake ticks
+  ── POST-FIX (live 8-factor op reads + tonic-phasic) ──
+  Hamming(full-rel_ctx frozen vs live) = 0   wake-only = 0/10
+  Hamming(single-op agloop frozen vs live) = 0   wake-only = 0/10
+  Hamming(rel_ctx→0 vs live) = 0
+  Hamming(rel_ctx→shuffle vs live) = 0
+  wake emit-fraction = 1.0 (live)
+  ⚠️ FLAG emit-rate-collapse: wake emit-fraction 1.0 outside [0.05,0.95] (DETECTOR, not a target)
+  Ψ ON==OFF invariant: psi_sum==psi_off = ✅
+  VERDICT = 🔴 AT-FLOOR (straddle still fails — threshold-statistics-mismatch wall)
+
+=== SAMPLE OG TICKS (verbatim, first 8 + last 3) ===
+  [OG t0 WAKE w=1] motiv_base=0.7380079285557416 e_base=1 | motiv_live=0.7347464495998619 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t1 WAKE w=1] motiv_base=0.7402957608324735 e_base=1 | motiv_live=0.6862125004599948 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t2 WAKE w=1] motiv_base=0.7358098252773523 e_base=1 | motiv_live=0.6579652795674478 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t3 WAKE w=1] motiv_base=0.733653610987346 e_base=1 | motiv_live=0.6445927807641554 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t4 WAKE w=1] motiv_base=0.7383757955394833 e_base=1 | motiv_live=0.6534908651745256 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t5 WAKE w=1] motiv_base=0.736952529449345 e_base=1 | motiv_live=0.642024727176318 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t6 WAKE w=1] motiv_base=0.7418646956963882 e_base=1 | motiv_live=0.6452033433187634 e_live=1 | fr=1 agl=1 z=1 s=1
+  [OG t7 WAKE w=1] motiv_base=0.7381612800616953 e_base=1 | motiv_live=0.6238323128170469 e_live=1 | fr=1 agl=1 z=1 s=1
+...
+  [OG t197 REM w=0] motiv_base=0.44041291845982666 e_base=0 | motiv_live=0.35351613718703245 e_live=0 | fr=0 agl=0 z=0 s=0
+  [OG t198 REM w=0] motiv_base=0.4404361705345635 e_base=0 | motiv_live=0.3535785473592046 e_live=0 | fr=0 agl=0 z=0 s=0
+  [OG t199 REM w=0] motiv_base=0.44041291304000196 e_base=0 | motiv_live=0.35350569826485745 e_live=0 | fr=0 agl=0 z=0 s=0
+
+RUN: hexa v0.548.0 aiden pool, entry=cli daemon --opgrip, RC=0, mouth=clm loaded=true (d768.clm), NO numpy on measured path (live core/brain + core/engine_g + core/engine_cli decode)
