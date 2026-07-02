@@ -27,9 +27,14 @@ top-3 penult axes cluster by language: ko I0/I2/I4 share {205,125,621}; en/code 
 {273,140,557}. penult-similar (same-language/topic) inputs → closer self-chains — a property the
 input-blind synthetic axis cannot have.
 
-## Wiring status: DIRECTIONAL. Two follow-ons for WIRED-live
-1. land clm_penult_pooled in core/decode.hexa (**DONE this PR**) + ARCHITECTURE §decode lockstep (DONE).
-2. feed the runtime self_drift_exp lane 23b from clm_penult_pooled(real per-tick content) instead of the current synthetic amygdala/homeostat int axis.
+## Wiring status: engine-native (rung-2 byte-exact TERMINAL, 2026-07-03). One follow-on for WIRED-live
+1. land clm_penult_pooled in core/decode.hexa (**DONE**) + ARCHITECTURE §decode/§SelfIdentity lockstep (DONE).
+2. **rung-2 engine-native TERMINAL (DONE)** — independent reproduction from the COMMITTED core/decode.hexa
+   `[float]` op (the original run used a temporary Map-return op that lived only on aiden, never committed)
+   yields the 4/5 verdict BYTE-EXACT (every digit). harness `f4_engine_native.hexa` now COMMITTED.
+   verdict-integrity gap closed (committed-code ↔ verdict drift = 0). grep-gate clean (no .py under slug).
+3. feed the runtime self_drift_exp lane 23b from clm_penult_pooled(real per-tick content) instead of the
+   current synthetic amygdala/homeostat int axis → **remaining to WIRED-live** (behavioral follow-on).
 
 ## Engine-native caveat (honest)
 Forward ran on live core/decode.hexa of the real ckpt but device CUDA kernels reported "named symbol

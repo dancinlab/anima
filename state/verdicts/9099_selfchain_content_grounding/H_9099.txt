@@ -112,3 +112,40 @@ ENGINE-NATIVE: live core/decode.hexa forward of real d768.clm (byte-exact host; 
  fired; device kernels stale-symbol host-fallback) + live §SelfIdentity ops. No numpy on measured path.
 WIRING: DIRECTIONAL until (a) clm_penult_pooled landed in core/decode.hexa + ARCHITECTURE lockstep,
  (b) self_drift_exp runtime lane 23b fed by clm_penult_pooled(real content) instead of synthetic axis.
+
+======================================================================================
+REPRODUCTION — rung-2 ENGINE-NATIVE TERMINAL (independent, from COMMITTED code)
+======================================================================================
+by: wf_5c7b75fd-c3c-1 (2026-07-03) | host=aiden pool | hexa v0.548.0 | ckpt=d768.clm (magic CLM\x01)
+purpose: verdict-integrity — the ORIGINAL run used a temporary Map-returning clm_penult_pooled
+  ({"pooled","d"}) that lived only on aiden (never committed). The version LANDED in origin/main
+  core/decode.hexa returns a plain [float] (pooled; d=len). This reproduction runs the harness
+  against the FRESHLY-RSYNCED COMMITTED core/decode.hexa [float] op (worktree of origin/main),
+  proving the committed code produces the recorded verdict byte-for-byte.
+harness: state/9099_selfchain_content_grounding/f4_engine_native.hexa (NOW COMMITTED; [float] API,
+  d=len(pooled); imports core/decode.hexa clm_penult_pooled + core/engine_cli.hexa §SelfIdentity).
+grep-gate: state/9099_selfchain_content_grounding/*.py = NONE → no torch/gauge_lib/numpy on any path.
+
+`cd ~/h9099_wt && CLM_PROD_DEVRESIDENT=1 hexa run state/9099_selfchain_content_grounding/f4_engine_native.hexa`
+[cfg] CLM_PROD_DEVRESIDENT=1 cuda=1
+[penult] d=768
+[top3] t0=205,125,131 · t1=140,273,23 · t2=621,205,125 · t3=557,273,140 · t4=205,125,621 · t5=557,273,205
+RAW meandist(real 15pair)=0.5358832987924794 npair=15
+RAW blind_dist(synthetic self_drift)=2.220446049250313e-16
+RAW repro self_cos(I0 twice)=0.9999999999999999
+RAW fit_same(P,P-shuf)=0.932548422734187 fit_diff(P,Q)=0.9057026934531928 gap=0.026845729280994268
+RAW meanPenultCos=0.7208371987650128 hi_mean(chain)=0.6281122739643402(n=6) lo_mean=0.35478631936964067(n=9) track_margin=0.27332595459469955
+PASS BAR1 · PASS BAR2 · PASS BAR3 · FAIL BAR4 · PASS BAR5   --- 4/5 PASS ---   EXIT_RC=0
+
+MATCH: BYTE-EXACT vs original verdict (every digit identical: top3 triples, meandist, blind_dist,
+  repro, fit_same/fit_diff/gap, hi_mean/lo_mean/track_margin, 4/5). The committed [float] op is
+  byte-identical to the measured Map op → no verdict drift, deterministic engine-native measurement.
+DEVICE CAVEAT (unchanged): cuda_available=1; _hx_k_gemm OWN-GEMM launch → "named symbol not found"
+  (stale runtime build) → byte-exact HOST fallback (max|Δ|=0). Measurement validity unaffected
+  (host path faithful; penult = real device values); GPU acceleration only partial. nvidia-smi 0%.
+
+VERDICT: engine-native measurement is now rung-2 TERMINAL — byte-exact reproduced from COMMITTED
+  core/decode.hexa, harness committed, ARCHITECTURE §decode/§SelfIdentity lockstep DONE. The SCIENCE
+  tier remains 🟡 DIRECTIONAL-GREEN 4/5 (BAR4 honest FAIL, coarse top-1 stream order-lock artifact —
+  NOT anti-real; not tuned). wired: DIRECTIONAL → engine-native. Remaining to WIRED-live = feed the
+  runtime self_drift_exp lane 23b from clm_penult_pooled(real per-tick content) (behavioral follow-on).
