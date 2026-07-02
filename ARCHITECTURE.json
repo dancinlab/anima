@@ -13238,6 +13238,13 @@
         "value": "anima evaluate --gen N이 canonical frozen gen(_g_default_gen/_default_gen=40)을 벗어나면 verdict가 frozen G0-G6 bar와 비교불가 — 긴 gen이 auto-regressive drift로 byte-garble 생성→G0 known-word-ratio 붕괴→G1/G6 cascade FAIL. clm303_clean 같은 sha(e807672)·같은 py엔진이 gen40=G0 5/5 PASS vs gen80=2/5 FAIL(엔진/모델 무죄, 순수 gen-parameter measurement artifact). verdict-integrity: divergence(G0 PASS→FAIL)→하네스(gen) 의심→확인. fix=canonical-gen guard(evaluate.py+.hexa 2-production lockstep): gen!=canonical이면 헤더 문구→NON-CANONICAL 경고 + CLOSURE→DIRECTIONAL 라벨 자동.",
         "threshold": "재발조건: engine-native eval verdict 박제 전 gen==canonical(40) 확인. gen!=40 측정은 frozen bar 비교불가=DIRECTIONAL only(이제 코드 자동 라벨). 긴 gen이면 clm byte-LM 뒤쪽 garble→G0 인위 FAIL 정상거동.",
         "source": "cli/evaluate.hexa"
+      },
+      {
+        "id": "g6-ideation-hexa-1",
+        "state": "pos-conv",
+        "value": "G6 반증가능성 검출기 _g6_is_falsifiable(comparator×measurable×≥2content)는 FORM-only — targeted-coverage warm-FT 로 반증주장 형태를 학습하면 topic-bind 없이도(SHUF 통제=주제결합 파괴 동일바이트) FALS majority 통과(TARGETED [6,6,6]==SHUF [6,6,6]). 진짜 재조합 신호는 검출기 밖 bind Δ(TARGETED 0.444 vs SHUF 0.000). 함의: G6 벽 = 순수 attention-capacity 천장 아니라 (a)데이터로 FORM 움직임(P1 천장NULL REFUTED) + (b)frozen 검출기 form-only 라 진짜 결합 못 잼 이중문제. G1(2항 retrieval-composition)과 달리 G6(추상seed 3항 GENERATIVE bind)은 schema-transfer 병목.",
+        "threshold": "재발조건: G6/ideation FALS 상승을 '재조합 능력'으로 박제하기 전 SHUF(topic-bind 파괴 동일바이트) 통제로 form-priming 분리 필수 — SHUF 도 통과하면 form-only artifact. 진짜 결합은 bind Δ(concept_hits ∩ frame_topics)로 측정. G6-bind additive 게이트(frozen _g6_is_falsifiable AND topic_bound)가 form-priming 걸러냄(SHUF FALS_bound [1,0,0]).",
+        "source": "core/g6_ideation.hexa"
       }
     ]
   }

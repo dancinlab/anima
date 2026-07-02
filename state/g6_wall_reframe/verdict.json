@@ -1,0 +1,51 @@
+{
+ "slug": "g6_wall_reframe",
+ "date": "2026-07-03",
+ "actor": "fable (autonomous, --write bypass; analysis+measurement only, no bookkeeping)",
+ "task": "G6 반증가능성 벽에 G1-식 fresh-lens (coverage-density + RF) 적용 재분류",
+ "verdict_tier": "DIRECTIONAL (torch-free text statistics; NOT engine-native decode)",
+ "wall_reclassification": {
+  "coverage_density_lens": "REFUTED as the wall",
+  "RF_lens": "REFUTED as primary (H_6170 injected-attention prior) — secondary contributor at most",
+  "targeted_coverage_lens": "SPARSE like G1, but UNTESTED engine-native → INCONCLUSIVE (residual lever)",
+  "net": "attention-capacity / trunk-objective 천장 SUPPORTED (overturned 아님); 1 residual untested data-lever flagged"
+ },
+ "numbers": {
+  "corpus": "HF dancinlab/anima-corpus-{ko,en}-{general,sns} exact 127.6MB (G1 prod density 와 동일)",
+  "detector": "core/g6_ideation.hexa _g6_is_falsifiable VERBATIM port (comp 25 + meas 25 word-sets)",
+  "G6_coverage_generic_form": {
+   "en_fals_lines": 8794,
+   "en_fals_pct_of_lines": 3.07,
+   "en_fals_per_mb": 143.28,
+   "vs_G1_pair_density_per_mb": 0.118,
+   "ratio_G6_over_G1": "~1214x denser",
+   "interpretation": "반증가능 FORM 은 코퍼스에 풍부 — G6 는 form-coverage 굶주림 아님"
+  },
+  "RF_comp_meas_bytedist_en_general": {
+   "median": 65, "mean": 114.4, "p90": 275, "p99": 715, "max": 2129,
+   "frac_within_9B": 0.164, "frac_within_31B": 0.329, "frac_within_61B": 0.485,
+   "frac_within_511B": 0.974,
+   "interpretation": "fals 라인 2/3 가 clm303 conv RF(~31B) 초과 → 그 binds 는 수학적 독립. 그러나 1/3(~2900 en 라인)은 within-RF = 학습가능 tight 예시 풍부 (G1 은 within-RF target-pair ≈0 이었음)"
+  },
+  "G6_targeted_coverage_form_ON_seed_topics": {
+   "en_fals_AND_topic_lines": 1695,
+   "pct_of_all_fals": 19.3,
+   "per_mb": 27.6,
+   "genuine_after_polysemy_audit": "near-zero (샘플 전수: engine=차량·mind=견해·between=수치범위 등 다의어 충돌 지배; consciousness/substrate 의미의 반증주장 사실상 부재)",
+   "interpretation": "이것이 진짜 G1-analog. 반증-FORM ON ideation-seed 주제 = G1 처럼 sparse. 단 이 축은 G6 engine-native 미발사."
+  }
+ },
+ "principled_G1_vs_G6_difference": "G1 = 2-way retrieval-composition of pairs CO-PRESENT in the prompt; rescued because target pair binds were both (a) absent-in-corpus AND (b) beyond-RF → putting pairs in-corpus within RF worked. G6 = 3-way GENERATIVE bind (comparator+measurable+coherent) CONDITIONED on an abstract seed; the falsifiable SCHEMA is abundant (form-half NOT the gap) but the schema INSTANTIATED on the abstract seed-topics is absent = cross-domain schema-transfer, strictly harder than in-prompt pair composition. H_6170 (injected full-attention removed RF/capacity limit, still null on depth+register) is prior engine-native evidence that the TRANSFER, not the data or RF, is the binding constraint.",
+ "prescription": {
+  "if_ceiling": "G1(2항 in-prompt 합성) vs G6(추상-seed 조건부 3항 생성 schema-transfer)의 구조적 차이가 왜 데이터-레버가 G6 엔 부족한지 설명 — form 은 이미 풍부, 빠진 건 추상 주제로의 schema transfer 이고 이는 trunk-objective/capacity 이슈.",
+  "residual_data_lever_if_pursued": "G1 의 L8(RF≈511B)+조합-커버리지 블록 레시피를 G6 로 이식: ideation-seed 주제어(consciousness·substrate·mind·memory) × comparator × measurable 를 한 발화 tight(within-RF)로 합성한 코퍼스 블록을 ~20% 임계 밀도로 주입 후 h1129 warm-FT → engine-native G6 재측정. pre-register: fals≥majority on {7,4302,4303} seeds. 예측(사전등록): H_6170 injected-attn null 감안 CEILING 이면 NULL 유지, LEVER 면 fals>0. cost-gated GPU."
+ },
+ "honesty_scope": "torch/numpy 없음 = 순수 코퍼스 통계이나 그래도 미러 아닌 '데이터 audit' = engine decode 무관하게 valid corpus fact. 단 verdict 는 학습/생성 미실측이므로 DIRECTIONAL, terminal 아님. tune-to-green 없음, frozen G6 detector 불변, ko cells honest-null (English word-sets).",
+ "artifacts": [
+  "measure_g6_coverage.py — generic comp×meas 밀도 + RF byte-dist 분포",
+  "results.json — per-file 전수치 (4칸)",
+  "measure_g6_targeted.py — fals ∩ ideation-seed topic (진짜 G1-analog)",
+  "results_targeted.json — targeted 수치 + 다의어 샘플",
+  "README.md"
+ ]
+}
