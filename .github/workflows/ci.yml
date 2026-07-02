@@ -269,19 +269,49 @@ jobs:
       # 엔진 스모크 — 가중치 없이 compile+logic 도는 것들. 가중치/플랫폼 의존(tag24·
       # .clm 부재)은 warn-only(정직, CI 거짓-red 방지). hexa stable 에 따라 가변.
       # warn-only 라 실패/시간초과로 잡을 RED 시키면 안 됨 — COLD 일 때 스모크 4개의
-      # cold-compile 가 잡 타임아웃을 잡아먹어 Post-Cache save 를 막던 주범. per-step
-      # timeout + continue-on-error 로 캡 → 잡은 항상 step 11 + Post-Cache 까지 도달.
+      # cold-compile 가 잡 타임아웃을 잡아먹어 Post-Cache save 를 막던 주범.
+      # 실측(2026-07-03): GREEN 런 5/5 에서 이 step 이 12m12–13s = timeout-minutes 캡을
+      # 매번 정확히 치고 잘리고 있었음(직렬 러너에서 매 PR 12분 소모). → per-smoke
+      # 180s 캡 + fail-fast: 첫 스모크가 캡을 치면(=cold cache) 나머지도 cold 라 정보값
+      # 0 이므로 SKIP. 최악 wall ~3분. step timeout-minutes 는 벨트로 유지 →
+      # 잡은 항상 다음 step + Post-Cache save 까지 도달. 각 스모크 wall time 을 echo
+      # 해 다음 측정 가능. (timeout 바이너리 부재 대비 perl alarm+exec 폴백 포함.)
       - name: Smoke — weight-free engine smokes (warn-only)
         continue-on-error: true
         timeout-minutes: 12
         shell: bash
         run: |
           set -uo pipefail
+          SMOKE_TIMEOUT=180
+          run_capped() {  # run_capped <secs> <cmd...> — GNU timeout > gtimeout > perl-alarm
+            local secs="$1"; shift
+            if command -v timeout >/dev/null 2>&1; then timeout "$secs" "$@"
+            elif command -v gtimeout >/dev/null 2>&1; then gtimeout "$secs" "$@"
+            else perl -e 'alarm shift; exec @ARGV or die "exec: $!"' "$secs" "$@"
+            fi
+          }
+          timed_out=0
           for s in core/brain_smoke.hexa core/emit_policy_smoke.hexa \
                    core/generator_smoke.hexa \
                    core/bytegpt_kvcache_smoke.hexa ; do
+            if [ "$timed_out" = 1 ]; then
+              echo "::warning::$s SKIPPED — earlier smoke hit the ${SMOKE_TIMEOUT}s per-smoke cap (cold cache ⇒ this one would also be cold; info value 0)"
+              continue
+            fi
             echo "── $s ──"
-            hexa run "$s" || echo "::warning::$s non-zero (weight/platform-dep warn-only)"
+            t0=$SECONDS
+            run_capped "$SMOKE_TIMEOUT" hexa run "$s"; rc=$?
+            dt=$(( SECONDS - t0 ))
+            # timeout 판정은 rc 가 아니라 경과시간으로 (구현별 rc 상이: GNU 124 ·
+            # perl-alarm 142 · 일부 shim 143) — 실패 + dt≥캡 = 캡히트.
+            if [ "$rc" -ne 0 ] && [ "$dt" -ge "$SMOKE_TIMEOUT" ]; then
+              echo "::warning::$s TIMEOUT at ${dt}s (per-smoke cap ${SMOKE_TIMEOUT}s) — fail-fast, skipping remaining smokes"
+              timed_out=1
+            elif [ "$rc" -ne 0 ]; then
+              echo "::warning::$s non-zero rc=$rc in ${dt}s (weight/platform-dep warn-only)"
+            else
+              echo "$s OK in ${dt}s"
+            fi
           done
 
       # 실제 anima CLI 바이너리 설치 (배포 산출물 그 자체 = 권위 평가 진입점). 로컬 체크아웃의
