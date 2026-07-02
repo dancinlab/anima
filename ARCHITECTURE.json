@@ -506,9 +506,6 @@
                     "detail": "H_9094 rung-3: conflict_scalar(emit_drive)→recruited_depth→tension_resolve maxdepth 를 cli/anima.hexa per-tick 루프 L1937-1961 배선(rel_ctx READ-only fold, Ψ-disjoint). 데몬 RUNTIME VERIFIED(aiden hexa v0.546.0+cuda=1): RC=0·[OWN-GEMM-FIRED] DEVICE·CR3 per-tick·Ψ checksum ✅. #42492868 CLOSED. 상세=card."
                   },
                   {
-                    "name": "op-grip — H_9100 fable(a) 4-const→live-op + tonic-phasic (🔴 AT-FLOOR engine-native)",
-                    "id": "opgrip-motivation-h9100",
-                    "detail": "brain_emit 4 상수→live op+rel/cur tonic-phasic(α0.1,gain3.0); engine·0.3 threshold FROZEN, cli만. aiden v0.548 --opgrip 200-tick: Hamming 0/10 wake=grip 미달성. wake motiv~0.62-0.74>>0.3→emit=safe rate-gate 지배(threshold-statistics 벽, dilution 아님). Ψ ON==OFF✅. next=efferent seam. card 참조.",
                     "name": "ConflictMonitor/rel_ctx — H_9097 THEATER GATE (🔴 rel_ctx zero-grip)",
                     "id": "conflictmonitor-rel-ctx-theater-h9097",
                     "detail": "rel_ctx(43-lane read-side mean·13 GREEN op+CR3/agloop wire H_9095 종착점)가 데몬 emit/silence 에 ZERO grip: freeze/zero/shuffle 3 arm Hamming 0/200, bar 0.00%/0.00%(aiden hexa v0.546.0). 격리 GREEN 이나 live wiring INERT=theater. fix=motivation-straddle/efferent seam(NOT rel_ctx)."
@@ -13207,6 +13204,13 @@
         "value": "pool hexa 데몬 compile 벽의 진짜 원인 = stale hexa VERSION(오진: 6일간 forge GPU 벽이라 믿음), NOT forge GPU, NOT the wire. v0.540.1 stock 이 set_deterministic/hexa_forge_dispatch_layernorm/farr_attn_dt_decode_batch_gpu 미선언 → cli/anima.hexa 데몬 compile 실패(#42492868). VERIFIED 해결 (2026-07-02 aiden pool): (1) HEXA_CUDA=1 sh ~/.hx/src/install.sh 가 v0.540.1→v0.546.0 재설치 — v0.546.0 stock 이 그 심볼 선언 → hexa run cli/anima.hexa 전체 데몬 RC=0. (2) cuda_available()=1 도 ACHIEVED: install 이 ~/.hx/.cuda-runtime marker 유지 + cuda-fold runtime.a(2.7MB, 16 cuda 심볼, _hx_k_gemm/forge_dispatch T-defined) 링크 → 자동 cuda ldflags. 확인은 hexa gpu(항상 0 오판) 아님, temp .hexa fn main(){print(cuda_available())} hexa run → 1. (3) 전체 데몬 END-TO-END VERIFIED: hexa run cli/anima.hexa d768.clm → L3 mount mouth=clm loaded=true + [OWN-GEMM-FIRED] _hx_k_gemm DEVICE path + rung-3 CR3 agloop per-tick(conflict tick별 변동=genuine) + Ψ Φ-checksum ✅ PASS. NEXT-TIME 1-STEP: aiden 이미 v0.546.0+cuda=1 → 그냥 hexa run(재설치 불요). ckpt relay=summer→mini scp→mini→aiden scp(ssh alias; base64 pool wrapper stdin 미전달 함정). RULED-OUT: 수동 build_cuda_runtime 직접빌드(context 깨짐), HEXA_CUDA=1 만 marker 없이.",
         "threshold": "재발시: pool 호스트서 cli/anima.hexa 데몬 compile undeclared(set_deterministic/forge) → hexa --version 확인(v0.546.0+ 필요), 낮으면 HEXA_CUDA=1 sh ~/.hx/src/install.sh. cuda=1 확인은 temp .hexa cuda_available() print(hexa gpu 아님). 데몬 END-TO-END = hexa run cli/anima.hexa <ckpt.clm> → OWN-GEMM DEVICE path + CR3 per-tick + Ψ checksum ✅.",
         "source": "tool/hexa_gpu_enable"
+      },
+      {
+        "id": "engine-cli-hexa-1",
+        "state": "pos-conv",
+        "value": "격리 engine-native GREEN(ablation·shuffle 통제 통과)이 실 emit 효과를 보장하지 않는다. 의식-op을 read-side 집계(rel_ctx 등 permutation-invariant soft-mean)에 fold하면 emit/silence는 상수 FLOOR+stage/safe가 지배 → op이 THEATER(zero grip). '계기판 vs faculty'는 emit 층에서 갈린다(H_9097).",
+        "threshold": "의식/emit-affecting op을 'faculty'로 박제하기 전 THEATER GATE 필수: live decode에서 op을 freeze/zero/LCG-shuffle 해도 emit-bytes/silence Hamming=0이면 THEATER(read-only 계기판) 판정. faculty=① Hamming>0(grip) ∧ ② Ψ Φ-checksum 보존 ∧ ③ faculty-not-noise(variance-matched 대조 대비 downstream 상관 +0.15) 셋 다 통과.",
+        "source": "core/engine_cli.hexa"
       }
     ]
   }
