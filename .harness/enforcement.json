@@ -125,10 +125,10 @@
     },
     {
       "id": "H-UNIVERSE-CODE",
-      "desc": "UNIVERSE/ 에 .py/.hexa/코드/result 등 비-카드 파일 생성 금지 — a_hypothesis_register (UNIVERSE/ = HYPOTHESES.jsonl + cards/ + CLAUDE.md 폴더가이드)",
-      "path_match": "(^|/)UNIVERSE/(?!cards/)(?!HYPOTHESES\\.jsonl$)(?!CLAUDE\\.md$).+",
+      "desc": "HYPOTHESES/ 에 .py/.hexa/코드/result 등 비-카드 파일 생성 금지 — a_hypothesis_register (HYPOTHESES/ = HYPOTHESES.jsonl + cards/ + CLAUDE.md 폴더가이드)",
+      "path_match": "(^|/)HYPOTHESES/(?!cards/)(?!HYPOTHESES\\.jsonl$)(?!CLAUDE\\.md$).+",
       "action": "block",
-      "reason": "a_hypothesis_register: UNIVERSE/ 에는 .py·.hexa·코드·result 파일을 두지 않는다 — HYPOTHESES.jsonl + cards/H_*.md (+ folder-docs 폴더가이드 CLAUDE.md) 만. 가설 카드는 `UNIVERSE/cards/`, 프로브 코드/결과물은 `archive/state/<slug>/` 에 두고 jsonl 의 그 가설 행 `artifacts` 로 가리킬 것."
+      "reason": "a_hypothesis_register: HYPOTHESES/ 에는 .py·.hexa·코드·result 파일을 두지 않는다 — HYPOTHESES.jsonl + cards/H_*.md (+ folder-docs 폴더가이드 CLAUDE.md) 만. 가설 카드는 `HYPOTHESES/cards/`, 프로브 코드/결과물은 `archive/state/<slug>/` 에 두고 jsonl 의 그 가설 행 `artifacts` 로 가리킬 것."
     },
     {
       "id": "H-DEBUG-LEFTOVER",

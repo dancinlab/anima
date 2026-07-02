@@ -36,7 +36,7 @@ import sys
 import torch
 import torch.nn.functional as F
 
-# Import the REAL carving-era source (copied byte-identical into UNIVERSE/).
+# Import the REAL carving-era source (copied byte-identical into HYPOTHESES/).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from conscious_decoder import ConsciousDecoderV2  # noqa: E402
 

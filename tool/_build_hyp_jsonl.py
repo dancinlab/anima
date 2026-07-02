@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build UNIVERSE/HYPOTHESES.jsonl — the per-hypothesis index SSOT.
+"""Build HYPOTHESES/HYPOTHESES.jsonl — the per-hypothesis index SSOT.
 
 One JSON object per landed card (cards/H_*.md, cards/Hc_*.md) AND per frozen
 archive snapshot (archive/hypotheses_snapshots/**/H_*.md). For ids present in the
@@ -24,13 +24,13 @@ import re
 import os
 import glob
 
-# This script lives in tool/ (relocated 2026-06-16 from UNIVERSE/); the index +
-# cards it builds live in UNIVERSE/ (a_hypothesis_register two surfaces). tool/ and
-# UNIVERSE/ are both siblings under the repo root.
+# This script lives in tool/ (relocated 2026-06-16 from HYPOTHESES/); the index +
+# cards it builds live in HYPOTHESES/ (a_hypothesis_register two surfaces). tool/ and
+# HYPOTHESES/ are both siblings under the repo root.
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-UNIVERSE = os.path.join(REPO, "UNIVERSE")
+UNIVERSE = os.path.join(REPO, "HYPOTHESES")
 CARDS_DIR = os.path.join(UNIVERSE, "cards")
-# Legacy prose overview was retired from UNIVERSE/HYPOTHESES.md → state/universe-overview.md;
+# Legacy prose overview was retired from HYPOTHESES/HYPOTHESES.md → state/universe-overview.md;
 # verbatim legacy md rows now survive only in the existing HYPOTHESES.jsonl (loaded below).
 MD = os.path.join(REPO, "state", "universe-overview.md")
 OUT = os.path.join(UNIVERSE, "HYPOTHESES.jsonl")
@@ -211,7 +211,7 @@ prior_by_card = {o.get("card"): o for o in prior.values()}
 
 entries = []
 
-# 3a. landed cards in UNIVERSE/cards/ (H_*.md and Hc_*.md). Cards moved here from
+# 3a. landed cards in HYPOTHESES/cards/ (H_*.md and Hc_*.md). Cards moved here from
 #     the scattered ./hypotheses/ dir are tagged source="hypotheses/": the dup-id
 #     stage-2-audit variants carry a `_stage2var` filename suffix, and the Hc_*
 #     candidate cards were not previously in cards/ at all.

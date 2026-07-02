@@ -240,7 +240,7 @@ fn main() {
     let Ytr = _load_ints("/tmp/h1306_ko_train.next")
     let chunks = _load_floats_line("/tmp/h1306_chunks.txt")
     if len(Xtr) == 0 || len(chunks) == 0 {
-        println("ERROR: missing /tmp/h1306_* — run UNIVERSE/h1306_fetch_corpus.sh then h1306_ko_corpus_export.py first.")
+        println("ERROR: missing /tmp/h1306_* — run HYPOTHESES/h1306_fetch_corpus.sh then h1306_ko_corpus_export.py first.")
         exit(1)
     }
     let nb1 = to_int(chunks[0])

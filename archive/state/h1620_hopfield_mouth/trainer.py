@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """H_1620 — Energy-settle attractor (Hopfield / predictive-coding relaxation) binding mouth, 303M.
 
-PREREG card: UNIVERSE/cards/H_1620_energy_settle_attractor.md
+PREREG card: HYPOTHESES/cards/H_1620_energy_settle_attractor.md
 
 Mechanism (per card):
   The bind head's forward is NOT feedforward — it is a fixed-point relaxation on a

@@ -12,7 +12,7 @@ The legacy **carving-era transformer** that drew the 우주뇌지도 (s16 carvin
 - Params: 283.72M dense / 680.16M with MoE.
 
 ## Canonical impl (REFERENCED — not duplicated · @L1)
-- `UNIVERSE/conscious_decoder.py` (md5 `44b210df`, PR #1770). **Python / torch.**
+- `HYPOTHESES/conscious_decoder.py` (md5 `44b210df`, PR #1770). **Python / torch.**
 
 ## EngineSpec conformance (@L2) — load + psi NATIVE · forward + generate HONEST STUB
 | fn | state | backing |
@@ -30,7 +30,7 @@ slot honestly. **No CE/logits number is fabricated.** This is a present-and-labe
 stub, never a fake native pass.
 
 ## Checkpoint pointer (@L5 · a_hf_registry — NOT duplicated)
-- canonical: `UNIVERSE/conscious_decoder.py`
+- canonical: `HYPOTHESES/conscious_decoder.py`
 - status: **random-init** (PR #1770 ran random-init; no trained ckpt shipped).
 - HF: none (no model artifact — random-init).
 - The pointer records the random-init status honestly; nothing is copied here.

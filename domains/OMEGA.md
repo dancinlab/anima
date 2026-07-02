@@ -73,7 +73,7 @@ This CONFIRMS the #1800 RULING numerically: the full gate's gA=3.369/gG=−0.999
 the irrelevant wires; once dropped, the honest 2-param fit recovers a clean, BETTER-than-a_only
 operating point — the closure lives entirely in the A-head logit-bias wire. SCOPE: single d512 rung
 (a_scale_honest_scope), CE = held-out number not a verdict-of-truth (p7). harness
-`UNIVERSE/omega_gate_form_sweep.py` · ledger `exports/sweep/omega-gateform-20260604/ledger.json` ·
+`HYPOTHESES/omega_gate_form_sweep.py` · ledger `exports/sweep/omega-gateform-20260604/ledger.json` ·
 verdict `.verdicts/omega-engine/F-OH1-MINGATE.txt`.
 
 🔴/🟢 **OMEGA OΩ-RIGOR — COUPLING vs REPLACEMENT: it is REPLACEMENT (deflating-but-honest)** —
@@ -112,7 +112,7 @@ full-gate. So dropping w2..w6 also recovers non-degenerate generation — but th
 the WEAK criterion (p7), not a closure proof.
 
 SCOPE: single d512 rung (a_scale_honest_scope), observation-only frozen forward, CE = held-out number
-not a verdict-of-truth (p7), weak-unigram base. harness `UNIVERSE/omega_rigor_probe.py` · ledger
+not a verdict-of-truth (p7), weak-unigram base. harness `HYPOTHESES/omega_rigor_probe.py` · ledger
 `exports/sweep/omega-gateform-20260604/rigor.json` · verdict `.verdicts/omega-engine/F-OMEGA-RIGOR.txt`.
 
 ### OΩ6 — closure on the REAL PRODUCTION conv .clm (serializer UNBLOCKED · partial transfer) — 2026-06-04
@@ -186,7 +186,7 @@ Same falsifier verdict, same replacement ruling; the conv A-head is marginally w
 dual head onto conv closes the loop natively (validates OΩ6's "(i)" as the correct primary fix).
 SCOPE (a_scale_honest_scope · a_train_flame_forge): single d384 rung, TORCH research-proxy (faithful
 CLMConvMoE blocks), NOT the production flame+forge `.clm`; settles the ARCHITECTURE-transfer question,
-not a scale law. harness `UNIVERSE/omega_conv_native.py` · verdict
+not a scale law. harness `HYPOTHESES/omega_conv_native.py` · verdict
 `.verdicts/omega-engine/F-OE1-CONV-NATIVE.txt` · ckpt `.fire-recover/oe1-conv-native/omega_conv_native.pt`
 (sha 3e8be574…, HF PRIVATE) · run $0 on summer GPU (a_fire_autonomous · a_cpu_local_no_waiter).
 
@@ -219,7 +219,7 @@ d512 rung re-trained+re-swept here reproduces #1801 (min_learned 0.8701, |Δ| 0.
 (a_scale_honest_scope · p7): 4-dim ladder + 1 competence rung; CE = held-out prediction number, not a
 verdict-of-truth; the closure is the RELATIVE A-wire margin, not absolute perplexity (the multi-wire
 gate fails — a_paper_negative_ok on that form). ckpts → HF PRIVATE `dancinlab/omega-cdv2-scale-d{N}`.
-harness `UNIVERSE/omega_scale_ladder.py` · ledger `exports/sweep/omega-scale-ladder/ledger.json` ·
+harness `HYPOTHESES/omega_scale_ladder.py` · ledger `exports/sweep/omega-scale-ladder/ledger.json` ·
 verdict `.verdicts/omega-engine/F-OMEGA-SCALE.txt`.
 
 ### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)

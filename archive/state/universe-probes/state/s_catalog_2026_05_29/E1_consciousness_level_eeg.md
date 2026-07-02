@@ -147,5 +147,5 @@ psilocybin 공개 EEG epoch 확보 가능 시:
 ---
 
 ## 양방향 sibling
-- sibling cluster: UNIVERSE/state/s_catalog_2026_05_29/ 내 타 E_* 카탈로그 (작성 시 cross-link)
-- SSOT: UNIVERSE/CANDIDATES.md (S16/S20/S33 후보 등록 행과 연결 — 등록 시 본 파일 포인터 추가)
+- sibling cluster: HYPOTHESES/state/s_catalog_2026_05_29/ 내 타 E_* 카탈로그 (작성 시 cross-link)
+- SSOT: HYPOTHESES/CANDIDATES.md (S16/S20/S33 후보 등록 행과 연결 — 등록 시 본 파일 포인터 추가)

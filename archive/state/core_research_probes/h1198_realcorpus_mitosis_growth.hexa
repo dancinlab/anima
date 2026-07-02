@@ -16,7 +16,7 @@
 // the live .hexa AdaptField is a 1-D SCALAR substrate (protos: [float],
 // adapt_field_step(af, x: float, cfg)). So this LIVE leg drives it over the 1-D
 // real-corpus SURPRISE scalar. The FULL DIM=8 real byte-feature growth with a
-// surprise-gated split is the H_1198 NUMPY MIRROR (UNIVERSE/h1198_realcorpus_export.py
+// surprise-gated split is the H_1198 NUMPY MIRROR (HYPOTHESES/h1198_realcorpus_export.py
 // mirror section) — clearly labelled as the mirror, because the live AdaptField
 // cannot take a DIM>1 sample without an engine change. This file = the LIVE .hexa
 // engine on a real-corpus 1-D stream; the export = the DIM=8 surprise-gated mirror.
@@ -118,7 +118,7 @@ fn main() {
     // load the real-corpus surprise stream (the GPU reader wrote it for seed 900).
     let stream = _decode_surprise("/tmp/h1198_surprise_seed900.bin")
     if len(stream) == 0 {
-        println("ERROR: empty surprise stream — run UNIVERSE/h1198_realcorpus_export.py on summer GPU first.")
+        println("ERROR: empty surprise stream — run HYPOTHESES/h1198_realcorpus_export.py on summer GPU first.")
         exit(1)
     }
     println("real-corpus surprise stream: " + to_string(len(stream)) + " ticks loaded")

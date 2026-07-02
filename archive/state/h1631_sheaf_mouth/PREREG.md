@@ -1,6 +1,6 @@
 # H_1631 — Sheaf-gluing binding mouth (local sections → global consistency), 303M — frozen pre-registration
 
-**Card SSOT:** `UNIVERSE/cards/H_1631_sheaf_section_glue_bind.md` (mechanism + ablation logic).
+**Card SSOT:** `HYPOTHESES/cards/H_1631_sheaf_section_glue_bind.md` (mechanism + ablation logic).
 
 **Hypothesis:** Binding as sheaf-gluing — node stalks with learned low-rank restriction maps glued via
 K Jacobi steps toward sheaf-Laplacian consistency (minimize Σ‖R_i x_i − R_j x_j‖²) — makes an

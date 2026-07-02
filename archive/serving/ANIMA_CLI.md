@@ -34,7 +34,7 @@ loader's own decode path; no second `.clm`/`.kosmos` entry is added.
 
 | name | arch | loader | ckpt (HF repo) | label | status |
 |---|---|---|---|---|---|
-| `omega` | ConsciousDecoderV2 | `UNIVERSE/conscious_decoder.py` | `dancinlab/clm-v4-omega-gpu-d384-gate` (PUB) | `gen-weak` | wired |
+| `omega` | ConsciousDecoderV2 | `HYPOTHESES/conscious_decoder.py` | `dancinlab/clm-v4-omega-gpu-d384-gate` (PUB) | `gen-weak` | wired |
 | `hexad` | EngineAGModel | `training/engine_a_g_arch.py` (via `HEXAD/CHAT/anima_chat.py`) | local `phase2_cotrain_engine_ag/ckpts/ckpt_final.pt` (gitignored) | `untested` | wired |
 | `7b` | CLMConvMoE-7B | `CLM/model/model.py` | `dancinlab/clm-v1-ref-pytorch-cuda-7b` (PUB) | `gibberish-base` | wired |
 | `chat` | ConsciousLMReconstructed | `training/persona_stage2_train_eval.py` | `dancinlab/anima-clm-chat-rung0-byte-18m` (PUB) | `coherent` | wired |

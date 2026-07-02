@@ -311,4 +311,4 @@ R9 depletion check    → 신규 0건 ✅
 - ⇄ [../KOSMOS/KOSMOS.md](../KOSMOS/KOSMOS.md): 영속 저장 (C 카테고리)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ 측정자 SSOT (B 전체)
 - ⇄ [../CHANNEL.md](../CHANNEL.md): tension-link 5-ch (G 카테고리)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

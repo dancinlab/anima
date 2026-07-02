@@ -2,7 +2,7 @@
 
 > Program: census of orthogonal **mouth-internal binding operators** proposed to cross the engine-native G1≡G6 compositional-binding wall (H_1603). Every family = a candidate `core/` mouth compose op + a $0 frozen-first decisive numpy probe + a cost-gated 303M PRE-REGISTER-ONLY GPU recipe. **All entries are 🔵 PRE-REGISTERED DESIGN (DIRECTIONAL, unmeasured)** — designs, not results (a_engine_native_learning; cheap_test numpy mirrors are themselves DIRECTIONAL).
 >
-> 2-surface SSOT: cards `UNIVERSE/cards/H_<id>_<slug>.md` + `UNIVERSE/HYPOTHESES.jsonl`. This index/prose lives in `state/` (UNIVERSE/ stays code-free, H-UNIVERSE-CODE gate).
+> 2-surface SSOT: cards `HYPOTHESES/cards/H_<id>_<slug>.md` + `HYPOTHESES/HYPOTHESES.jsonl`. This index/prose lives in `state/` (HYPOTHESES/ stays code-free, H-UNIVERSE-CODE gate).
 >
 > xref program parents: **H_1603** (G1≡G6 unification = ONE missing mouth binding operator) · **H_1449** (attention-block INERT @1blk) · **H_1602** (recombination-objective prereg) · **H_1466** (TPR binder, DIRECTIONAL) · **H_1514** (VSA/HRR binder, DIRECTIONAL).
 

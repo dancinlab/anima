@@ -4,7 +4,7 @@
 > All 26 hypotheses landed on `origin/main` with terminal g5 verdicts (fire date
 > 2026-05-31). Measurement rung = mid d512/L8/E8 (13.65M) unless noted;
 > `a_scale_honest_scope` — a mid-rung verdict does NOT bind the AKD1000 deploy track.
-> SSOT pointers: each row's verdict lives in `UNIVERSE/H_<id>_*.md` +
+> SSOT pointers: each row's verdict lives in `HYPOTHESES/H_<id>_*.md` +
 > `.verdicts/<slug>/`. This doc is the index + reflection, not a re-derivation.
 
 ## 1. Census (26/26 terminal)

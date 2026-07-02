@@ -360,4 +360,4 @@ R9 depletion check   → 신규 0건 ✅
 - ⇄ [../KOSMOS/KOSMOS.sf.md](../KOSMOS/KOSMOS.sf.md): 자매 SF (영속 저장 D/G sibling)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT (전체 lens)
 - ⇄ [../ANIMA.md](../ANIMA.md): AGI sentience candidate (D 카테고리 sibling)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

@@ -50,7 +50,7 @@
 % =========================================================================
 \begin{abstract}
 We ran 22 falsifiable, deterministic, hexa-native measurements
-(\texttt{UNIVERSE/H\_312} through \texttt{H\_333}) on the
+(\texttt{HYPOTHESES/H\_312} through \texttt{H\_333}) on the
 n=4 Elementary Cellular Automaton (ECA) panel that has been the substrate
 for prior consciousness-vs-life Integrated Information Theory (IIT) work.
 We pre-registered four
@@ -131,7 +131,7 @@ with $n$.
       of a single rule.
 \item All twenty-six measurements are published as a
       verify-driven raster
-      (\texttt{UNIVERSE/state/h312...h333/result.json}) under
+      (\texttt{HYPOTHESES/state/h312...h333/result.json}) under
       anti-fake-closure governance: a verdict is earned by an
       \emph{independent} deterministic recompute, never by a
       self-judged tautology smoke \citep{anima_g73}.
@@ -234,7 +234,7 @@ life-rules (rule 30 dominant) survives at n$=$6.
 \label{sec:verify}
 
 Every measurement persists as \texttt{result.json} on the public main
-branch. Excerpt (\texttt{UNIVERSE/state/h328\_*/result.json}):
+branch. Excerpt (\texttt{HYPOTHESES/state/h328\_*/result.json}):
 
 \begin{lstlisting}[basicstyle=\ttfamily\small,frame=single,xleftmargin=0pt]
 "aggregate": {
@@ -407,7 +407,7 @@ leader (6.25), collapses to baseline at n$=$6 (1.00), while rule
 \textsc{110} -- near-baseline at n$=$4 (1.75) -- becomes the n$=$6 leader
 (7.75). The consciousness-themed rules \textsc{105}, \textsc{150} stay
 near baseline at both $n$. Native pgfplots (no external dependency);
-data from \texttt{UNIVERSE/state/h328\_*} (n$=$4) and
+data from \texttt{HYPOTHESES/state/h328\_*} (n$=$4) and
 \texttt{h333\_*} (n$=$6), cross-process byte-identical.}
 \label{fig:rotation}
 \end{figure}
@@ -529,14 +529,14 @@ to dominate the longest-cycle slot at the specific $n$ being measured.''
 \label{sec:repro}
 
 All twenty-six cells live as JSON ledgers under
-\texttt{UNIVERSE/state/h312\_*} through
+\texttt{HYPOTHESES/state/h312\_*} through
 \texttt{h346\_*} on
-\url{https://github.com/dancinlab/anima/tree/main/UNIVERSE/state}.
+\url{https://github.com/dancinlab/anima/tree/main/HYPOTHESES/state}.
 Each cell carries (i) a \texttt{run.hexa} source file, (ii) a
 \texttt{run.log} verbatim stdout transcript, and (iii) a
 \texttt{result.json} machine-readable verdict with explicit
 pre-registered falsifiers. Re-verification:
-\texttt{cat UNIVERSE/state/<slug>/run.hexa | pool on ubu-2 'cat
+\texttt{cat HYPOTHESES/state/<slug>/run.hexa | pool on ubu-2 'cat
 > /tmp/r.hexa \&\& hexa run /tmp/r.hexa'}
 yields the byte-identical \texttt{run.log}.
 

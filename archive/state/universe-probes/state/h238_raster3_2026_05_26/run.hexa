@@ -1,4 +1,4 @@
-// UNIVERSE/state/h238_raster3_2026_05_26/run.hexa
+// HYPOTHESES/state/h238_raster3_2026_05_26/run.hexa
 // H_238 — verdict landscape meta-map · RASTER #3 (2026-05-26, axis D2)
 //
 //   Prior rasters:
@@ -25,7 +25,7 @@
 //       in-progress consolidation — absent here, so honestly NOT counted (L9).
 //
 //   Method (deterministic, hexa-only, $0 mac local, llm:none):
-//     - enumerate: ls UNIVERSE/H_*.md | grep -v H_238_ | sort -V  (stable)
+//     - enumerate: ls HYPOTHESES/H_*.md | grep -v H_238_ | sort -V  (stable)
 //     - per file:
 //         · id      = basename .md  (H_NNN_slug)  → H_NNN id token
 //         · domain  = first `^domain:` line  ('·|,+' tokenize · trim)
@@ -67,7 +67,7 @@ fn _ROOT() -> string {
     return "/Users/ghost/core/anima/UNIVERSE"
 }
 fn _STATE_DIR() -> string {
-    return "/Users/ghost/core/anima/UNIVERSE/state/h238_raster3_2026_05_26"
+    return "/Users/ghost/core/anima/HYPOTHESES/state/h238_raster3_2026_05_26"
 }
 
 // prior raster (cycle#16, N=51) headline — for trend comparison
@@ -220,7 +220,7 @@ fn _json_esc(s: string) -> string {
 // ── main ────────────────────────────────────────────────────────────────
 fn main() {
     println("H_238 — verdict landscape meta-map · RASTER #3 (2026-05-26, axis D2, raw#12)")
-    println("  source: UNIVERSE/H_*.md DISK per-file scan (verdict_class → status fallback)")
+    println("  source: HYPOTHESES/H_*.md DISK per-file scan (verdict_class → status fallback)")
     println("")
 
     // enumerate disk H files (sort -V stable), H_238 self-excluded.
@@ -559,7 +559,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"source\": \"UNIVERSE/H_*.md DISK per-file scan (verdict_class line; status fallback)\",\n"
+    j = j + "  \"source\": \"HYPOTHESES/H_*.md DISK per-file scan (verdict_class line; status fallback)\",\n"
     j = j + "  \"prior_raster_cycle16\": { \"date\": \"2026-05-25\", \"N\": 51, \"source\": \"README index\", \"SUPP\": 10, \"PART\": 6, \"FALS\": 7, \"RUNN\": 28, \"life_supp_rate\": 0.321429, \"consciousness_supp_rate\": 0.200000, \"gap\": 0.121429 },\n"
     j = j + "  \"config\": { \"N_files\": " + to_string(n) + ", \"n_domains\": " + to_string(nd) + ", \"source\": \"disk per-file\", \"H_238_self_excluded\": true, \"trend_eps\": " + to_string(_EPS()) + " },\n"
 

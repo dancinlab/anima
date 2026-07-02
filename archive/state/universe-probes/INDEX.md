@@ -1,26 +1,26 @@
-# state/universe-probes/ — relocated UNIVERSE/ 연구 결과물 모음 (old→new 매핑)
+# state/universe-probes/ — relocated HYPOTHESES/ 연구 결과물 모음 (old→new 매핑)
 
-> **이전 2026-06-16:** `UNIVERSE/` 를 `a_hypothesis_register` 의 정확히 두 표면
-> (`HYPOTHESES.jsonl` + `cards/`)으로 봉인하기 위해, UNIVERSE/ 안에 흩어져 있던 가설
+> **이전 2026-06-16:** `HYPOTHESES/` 를 `a_hypothesis_register` 의 정확히 두 표면
+> (`HYPOTHESES.jsonl` + `cards/`)으로 봉인하기 위해, HYPOTHESES/ 안에 흩어져 있던 가설
 > 결과물(`h*_*.py`/`.hexa`, per-H `*_result.json`, `*_pod_run.sh`, scratch probe)과
 > infra 서브폴더(`harness/ lib/ scan/ state/`)를 전부 이 디렉터리로 옮겼다. 공용
 > 라이브러리(`gauge_lib*.py`/`gauge_monitor*.py`/`_build_hyp_jsonl.py`)는 `tool/` 로,
-> `UNIVERSE/.verdicts/1053_qrng_nondeterminism/` 는 top-level `.verdicts/` 로 갔다.
+> `HYPOTHESES/.verdicts/1053_qrng_nondeterminism/` 는 top-level `.verdicts/` 로 갔다.
 > 내용은 보존, 위치만 변경 (c5 preserve-don't-discard). git history 로 추적 가능.
 
 ## 매핑 규칙 (old path → new path)
 
-| old (UNIVERSE/…) | new |
+| old (HYPOTHESES/…) | new |
 |---|---|
-| `UNIVERSE/<probe>.py` `.hexa` `.json` `.sh` `.txt` | `state/universe-probes/<probe>` (flat) |
-| `UNIVERSE/scan/` `harness/` `lib/` `state/` | `state/universe-probes/{scan,harness,lib,state}/` |
-| `UNIVERSE/gauge_lib.py` `gauge_lib_smoke.py` | `tool/gauge_lib.py` `tool/gauge_lib_smoke.py` |
-| `UNIVERSE/gauge_monitor.py` `gauge_monitor_smoke.py` | `tool/gauge_monitor.py` `tool/gauge_monitor_smoke.py` |
-| `UNIVERSE/_build_hyp_jsonl.py` | `tool/_build_hyp_jsonl.py` |
-| `UNIVERSE/HYPOTHESES.md` (prose overview) | `state/universe-overview.md` |
-| `UNIVERSE/.verdicts/1053_qrng_nondeterminism/` | `.verdicts/1053_qrng_nondeterminism/` |
+| `HYPOTHESES/<probe>.py` `.hexa` `.json` `.sh` `.txt` | `state/universe-probes/<probe>` (flat) |
+| `HYPOTHESES/scan/` `harness/` `lib/` `state/` | `state/universe-probes/{scan,harness,lib,state}/` |
+| `HYPOTHESES/gauge_lib.py` `gauge_lib_smoke.py` | `tool/gauge_lib.py` `tool/gauge_lib_smoke.py` |
+| `HYPOTHESES/gauge_monitor.py` `gauge_monitor_smoke.py` | `tool/gauge_monitor.py` `tool/gauge_monitor_smoke.py` |
+| `HYPOTHESES/_build_hyp_jsonl.py` | `tool/_build_hyp_jsonl.py` |
+| `HYPOTHESES/HYPOTHESES.md` (prose overview) | `state/universe-overview.md` |
+| `HYPOTHESES/.verdicts/1053_qrng_nondeterminism/` | `.verdicts/1053_qrng_nondeterminism/` |
 
-> UNIVERSE/ 에 남는 것: `HYPOTHESES.jsonl` (per-H 인덱스) + `cards/` (가설 카드) — 끝.
+> HYPOTHESES/ 에 남는 것: `HYPOTHESES.jsonl` (per-H 인덱스) + `cards/` (가설 카드) — 끝.
 > jsonl `artifacts` 컬럼이 가리키는 새 결과물 경로 = `state/universe-probes/<file>`.
 
 ## 이전된 infra 서브폴더 (subfolders)

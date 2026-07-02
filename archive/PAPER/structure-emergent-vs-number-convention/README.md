@@ -32,7 +32,7 @@ make pages      # page count
 ```
 
 - main.pdf: 6 pages, 0 undefined refs.
-- verdict SSOT: `companion/verdict-ledger.json` (bit-identical to UNIVERSE/H_*.md).
+- verdict SSOT: `companion/verdict-ledger.json` (bit-identical to HYPOTHESES/H_*.md).
 - 측정: $0 mac-local · hexa-native · deterministic · byte-equal (RFC 033/036).
 
 ## 거버넌스 정합

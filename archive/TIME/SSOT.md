@@ -99,7 +99,7 @@ panic 없이 모두 PASS 시 SUPPORT-FORMAL 도달.
 - ⇄ DREAM.M3 mitosis envelope · `tm_circadian_mod` 가 새벽 REM burst peak modulation
 - ⇄ INTENT cumulative direction · `tm_temporal_binding_window` 가 24h entrainment 측정
 - ⇄ METACOG audit_hook · `tm_circadian_phase` 가 시간대별 자기 audit 정합 surface
-- ⇄ UNIVERSE/CANDIDATES.md — bench H (#1145) 측정 기록 SSOT (AxisBench 8)
+- ⇄ HYPOTHESES/CANDIDATES.md — bench H (#1145) 측정 기록 SSOT (AxisBench 8)
 
 ## carry-over (M2~M4)
 

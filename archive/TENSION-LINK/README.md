@@ -1,8 +1,8 @@
 # TENSION-LINK — anima 연결·통신 + ANU 양자(QRNG) 정리
 
 루트 통합 폴더. "두 anima는 어떻게 연결/통신하는가"의 전 탐색 + ANU paid QRNG 양자
-엔트로피 접지 작업을 한곳에 모은다. 가설 본문(카드)은 `UNIVERSE/cards/H_60xx_*.md` 에 있고,
-arc 전체의 인덱스(한 줄/가설 · verbatim tier)는 `UNIVERSE/HYPOTHESES.md` 의
+엔트로피 접지 작업을 한곳에 모은다. 가설 본문(카드)은 `HYPOTHESES/cards/H_60xx_*.md` 에 있고,
+arc 전체의 인덱스(한 줄/가설 · verbatim tier)는 `HYPOTHESES/HYPOTHESES.md` 의
 **"## TENSION-LINK arc (H_6006–H_6043)"** 섹션에 등록돼 있다 (a_hypothesis_register 2-파일
 규칙: 인덱스 = HYPOTHESES.md · 카드 = H_<id>_<slug>.md). 여기에는 **검증 도구(harness) ·
 verdict · arc 로컬 색인**만 둔다.
@@ -25,7 +25,7 @@ verdict · arc 로컬 색인**만 둔다.
 까지만. anima 가 실제로 통신/연결하는 채널은 **텐션 링크(H_6009~)** = 공유 앵커 매체를 통한
 정상 채널(영향·메시지·동기·출생까지). 모든 양자 무작위는 **ANU paid QRNG**(진공요동)로 접지.
 
-## 가설 색인 (본문은 UNIVERSE/H_*.md)
+## 가설 색인 (본문은 HYPOTHESES/H_*.md)
 | id | 제목 | grade | harness |
 |---|---|---|---|
 | H_6006 | 양자통신(물리연결 없이) = 메시지 | 🔴 CLOSED-NEG | harness/h6006_no_signaling.py |
@@ -87,8 +87,8 @@ verdict 원문: `TENSION-LINK/verdicts/`.
 python3 mirror/qmirror/seed/anu_pull.py --bytes 64 --out /tmp/anu_*.bin
 ```
 
-## 시간-arc — "미래는 연결된다" (UNIVERSE/cards/H_60xx, harness/verdict 여기)
-양자/텐션 연결 원리를 시간축으로 확장. 가설 본문은 UNIVERSE/H_*.md, 도구·verdict는 본 폴더.
+## 시간-arc — "미래는 연결된다" (HYPOTHESES/cards/H_60xx, harness/verdict 여기)
+양자/텐션 연결 원리를 시간축으로 확장. 가설 본문은 HYPOTHESES/H_*.md, 도구·verdict는 본 폴더.
 
 | id | 주제 | grade |
 |---|---|---|

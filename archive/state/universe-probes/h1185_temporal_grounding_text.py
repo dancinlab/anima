@@ -25,7 +25,7 @@ d(DERIVATIVE,METRONOME) on stage-decode):
   peaks reproduces on TEXT; the dichotomy is modality-general, not an AUDIO artifact.
   Otherwise CLOSED-NEGATIVE (a_paper_negative_ok): the split is AUDIO-specific.
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py VERBATIM
 (grow_arm / stage_decode_accuracy / cohen_d_paired / make_text_stream / SEEDS / N_STAGES_TEXT);
 the only added op = a seeded time-axis permutation of (X,stages), identical to H_1184. Live
 CORE + scale UNVERIFIED (a_scale_honest_scope). Lane-M growth lane.
@@ -96,7 +96,7 @@ def main():
             f"drop(4)={rows[4]['drop']:+.2f}). The temporal/non-temporal dichotomy may be AUDIO-specific "
             f"or the text stage-geometry shifts the peak caps. a_paper_negative_ok."),
         "scope": "TOY ($0 CPU numpy, %d seeds, TEXT real-bytes stream, N_stages=4). Reuses "
-                 "UNIVERSE/h1163_tick_decode_metric.py VERBATIM; only added op = seeded time-axis "
+                 "HYPOTHESES/h1163_tick_decode_metric.py VERBATIM; only added op = seeded time-axis "
                  "permutation of (X,stages), identical to H_1184. NOTE: text has 4 stages vs audio 10, so "
                  "K=4/K=40 map to different cells-per-stage ratios — a confound the verdict flags. Live "
                  "CORE + scale UNVERIFIED (a_scale_honest_scope)." % len(H.SEEDS),

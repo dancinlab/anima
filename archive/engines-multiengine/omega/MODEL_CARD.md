@@ -53,7 +53,7 @@ testable with no torch/ckpt — which is exactly the coupling-non-nullity proof.
 
 ## Headline measurement — coupling non-nullity
 
-`UNIVERSE/omega_bench.py` runs the 4 engines and measures, per engine, whether the
+`HYPOTHESES/omega_bench.py` runs the 4 engines and measures, per engine, whether the
 byte distribution is a function of substrate state:
 
 - **bus OFF (α=0, all wires off)** → identity → coupling KL/L1 = **0** (this is what

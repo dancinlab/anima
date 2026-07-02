@@ -1,7 +1,7 @@
 # ⚛️ HW-CORE 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
 
 > HW-CORE(anima 의식 substrate의 물리 HW 실현)를 ANIMA 시스템에 어떻게 쓸지 친근 카탈로그.
-> 정식/진행 카운트 → [HW-CORE.md](./HW-CORE.md) · 사양 SSOT → [`../anima-physics/`](../anima-physics/) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
+> 정식/진행 카운트 → [HW-CORE.md](./HW-CORE.md) · 사양 SSOT → [`../anima-physics/`](../anima-physics/) · 측정 기록 SSOT → HYPOTHESES/CANDIDATES.md
 
 ---
 
@@ -212,4 +212,4 @@ P8 Photonic 실 HW · 5-1 Engine A ASIC · Strange Loop SoC tape-out · 자석 �
 - ⇄ [../KOSMOS/KOSMOS.md](../KOSMOS/KOSMOS.md): HW emit 영속
 - ⇄ [../XENO/XENO.md](../XENO/XENO.md): substrate-agnostic detector HW
 - ⇄ [`../anima-physics/`](../anima-physics/): 사양 SSOT (93 entry)
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): bench 측정 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): bench 측정 SSOT

@@ -50,7 +50,7 @@
 // grows a cell population; pure_field is never touched (a_core_engine_map).
 //
 // DATA: /tmp/h1297_{train,test}.{feats,next} + /tmp/h1297_armA.ce, exported BYTE-EXACT
-// from the FROZEN mirror by UNIVERSE/h1297_engine_export.py (run it first).
+// from the FROZEN mirror by HYPOTHESES/h1297_engine_export.py (run it first).
 
 import "core/engine_cli.hexa"
 
@@ -394,7 +394,7 @@ fn main() {
     let Yte = _load_ints("/tmp/h1297_test.next")
     let armA = _load_armA("/tmp/h1297_armA.ce")
     if len(Xtr) == 0 || len(armA) == 0 {
-        println("ERROR: missing /tmp/h1297_*.feats|.next|armA.ce — run UNIVERSE/h1297_engine_export.py first.")
+        println("ERROR: missing /tmp/h1297_*.feats|.next|armA.ce — run HYPOTHESES/h1297_engine_export.py first.")
         exit(1)
     }
     println("corpus pairs: train=" + to_string(len(Xtr)) + " test=" + to_string(len(Xte))

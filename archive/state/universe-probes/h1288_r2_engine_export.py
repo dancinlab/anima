@@ -16,14 +16,14 @@ verdict loop (a_engine_native_learning). The engine consumes:
                                        (taught-first = most LRU-vulnerable; R1 sub-metric).
   /tmp/h1288_seed<S>.out.keys       — N_OUT untaught NOISY keys (abstain probe).
 
-ALL knobs FROZEN identical to UNIVERSE/h1288_eviction_policy.py (R1). The embed_key /
+ALL knobs FROZEN identical to HYPOTHESES/h1288_eviction_policy.py (R1). The embed_key /
 FNV-1a / noise convention is byte-identical to R1, so the engine sees the SAME keys
 R1's mirror saw — the only difference is the bind/recall arithmetic runs on the .hexa
 engine, not numpy.  p7: exact-match recall + abstain.  $0 CPU.
 """
 import numpy as np
 
-# ── frozen knobs (VERBATIM from UNIVERSE/h1288_eviction_policy.py R1) ─────────
+# ── frozen knobs (VERBATIM from HYPOTHESES/h1288_eviction_policy.py R1) ─────────
 SEEDS          = [900, 901, 902]
 N_FACTS        = 60
 N_OUT          = 60

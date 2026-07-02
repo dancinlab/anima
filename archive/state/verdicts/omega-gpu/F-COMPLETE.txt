@@ -3,7 +3,7 @@ F-OMEGA-GPU-COMPLETE — OMEGA stage-3 (b)(c) on a REAL trained transformer (Lan
 date     = 2026-06-04
 substrate= GPU (NVIDIA H100 80GB HBM3) · torch 2.4.1+cu124 · runpod pod k52xkzsydttl83 (torn down)
 lane     = Lane-G (GPU) — NOT Lane A AKIDA (a_lane_akida_gpu_split)
-driver   = UNIVERSE/omega_gpu_complete.py
+driver   = HYPOTHESES/omega_gpu_complete.py
 cost     ≈ $1.6 (pod $3.29/hr · ~18min train+eval across 2 rungs · g63 nvidia-smi 98-99% BUSY, verified)
 
 PRE-REGISTERED COMPLETION CRITERIA (honest, p7 / a_paper_negative_ok):
@@ -12,7 +12,7 @@ PRE-REGISTERED COMPLETION CRITERIA (honest, p7 / a_paper_negative_ok):
                           AND structured (A-wire coupling > 1.5x a substrate-shuffle floor)
                           AND a generation sample
 
-SUBSTRATE (b) — real ConsciousDecoderV2 (UNIVERSE/conscious_decoder.py)
+SUBSTRATE (b) — real ConsciousDecoderV2 (HYPOTHESES/conscious_decoder.py)
   d_model=384 · n_layer=6 · n_head=6 · n_kv_head=2 (GQA) · vocab=256 · block=256 · 35.93M params
   corpus = 120MB multilingual wikipedia (wikimedia/wikipedia 20231101, en/fr/de/es/ru @ 24MB each)
            sha256 0b232f8b5f5b9a29... · split train 80% / held-out 20% (gate+test+gen disjoint)

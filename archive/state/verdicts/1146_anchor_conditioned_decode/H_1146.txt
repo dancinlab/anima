@@ -15,7 +15,7 @@ ckpt: dancinlab/anima-clm-7b-h1141-g1pass-step6500 (h1141_g1pass_step6500.pt)
       sha256 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9 (VERIFIED on pod)
       val_ce 1.1857, step 7000, 7,252,828,160 params.
 corpus: en 300MB head (== h1143/h1144/h1145 probe corpus).
-harness: UNIVERSE/h1146_anchor_conditioned_decode.py — reuses h1141_7b_g5_eval.py
+harness: HYPOTHESES/h1146_anchor_conditioned_decode.py — reuses h1141_7b_g5_eval.py
       gate_g5_l2 generator path VERBATIM (same 40 seed-7 factual openers, first_half_split,
       gen_from_prompt_grounded temp 0.7 top_k 40) and h1143_g5l2_nonfab_measure.py scorer
       VERBATIM (frozen 0.20 bar, regex NER, gate_g2 corpus-absence grep). The 40
@@ -84,5 +84,5 @@ a7b_pass G5 UNCHANGED = FAIL.
 
 Artifacts: state/h1146_anchor/{h1146_anchor_result.json, h1146_fabrate_{uncond,true,wrong}.json,
 g5_result_{uncond,true,wrong}.json, h1146.log}. HF (private, WIP): dancinlab/
-anima-h1146-anchor-conditioned-decode. Harness: UNIVERSE/h1146_anchor_conditioned_decode.py,
+anima-h1146-anchor-conditioned-decode. Harness: HYPOTHESES/h1146_anchor_conditioned_decode.py,
 h1146_anchor_pod_run.sh, h1146_orchestrator.py.

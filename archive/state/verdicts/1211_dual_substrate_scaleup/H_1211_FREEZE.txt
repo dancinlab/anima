@@ -33,14 +33,14 @@ THE FINDING UNDER STRESS-TEST (verified on main)
 
 MECHANISMS UNDER TEST (frozen, reused VERBATIM — NO edits to the builders/gates)
 -------------------------------------------------------------------------------
-  DENSITY gate  = H_1203 run_vadapt (UNIVERSE/h1203_mitosis_novelty_coupling.py),
+  DENSITY gate  = H_1203 run_vadapt (HYPOTHESES/h1203_mitosis_novelty_coupling.py),
     the numpy mirror of CORE/engine_cli.hexa vadapt_field_step (nearest-by-L2,
     recon-err > SPLIT_THRESH=0.30 spawns a cell at the sample, else LR=0.20 pull).
     Streams: make_novel_stream / make_repeat_stream / make_shuffled_stream VERBATIM.
   TRAJECTORY gate = H_1208 gate_B_transition_predictability + build_fixed_book +
-    proto_ids (UNIVERSE/h1208_predictability_split_gate.py), GATE-B VERBATIM.
+    proto_ids (HYPOTHESES/h1208_predictability_split_gate.py), GATE-B VERBATIM.
     Ordered surface: H_1207 make_walk_stream / make_walk_shuffled VERBATIM
-    (UNIVERSE/h1207_recurrent_split_key.py).
+    (HYPOTHESES/h1207_recurrent_split_key.py).
     Sanity: make_randgauss_stream / make_randgauss_shuffled VERBATIM (i.i.d. noise).
   All constants (T, WARMUP, N_PROTO, MIN_PREV=3, CONF_FLOOR=0.34, SPLIT_THRESH=0.30,
     LR=0.20, MAX_CELLS) inherited; the SCALE LADDER varies ONLY the pre-declared scale

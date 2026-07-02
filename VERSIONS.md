@@ -12,7 +12,7 @@
 
 루트 [`/VERSION`](VERSION) = **`0.13.1`** (한 줄, 전체 시스템 release).
 
-> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.1 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·UNIVERSE/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
+> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.1 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
 
 > **0.13.0 → 0.13.1** (2026-06-19): 🗂️ Phase 2 멀티엔진 archive — core/engines/
 > 전체(conv/cdv2/hexad/omega + EngineSpec vtable + engine_swap_smoke) → archive/

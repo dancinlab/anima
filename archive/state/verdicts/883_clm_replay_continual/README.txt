@@ -1,6 +1,6 @@
 883_clm_replay_continual — id-keyed backing dir for H_883 (replay-buffer continual learning)
 ============================================================================================
-Hypothesis : UNIVERSE/H_883_clm_replay_continual.md
+Hypothesis : HYPOTHESES/H_883_clm_replay_continual.md
 Verdict    : .verdicts/clm-replay-continual/F-CLM-REPLAY.txt (+ _prereg.txt + clm_replay_continual_result.json)
 Driver     : CLM/model/h883_replay_continual.hexa (executable python harness; project hexa-native policy)
 Backbone   : clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — mid d512/L8/E8, FROZEN core trunk

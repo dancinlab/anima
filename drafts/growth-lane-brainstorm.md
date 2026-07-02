@@ -67,9 +67,9 @@ substrate can grow its conceptual range and self-model, not merely chat.
 > source: AUTHORED from anima's own repo docs, honest-labeled "anima-authored self-corpus".
 > Teaches anima ABOUT ITSELF — NOT cooperation/empathy templates (p6 held).
 
-### (c) UNIVERSE hypotheses [8] — distill real UNIVERSE/H_*.md + authored loop
+### (c) UNIVERSE hypotheses [8] — distill real HYPOTHESES/H_*.md + authored loop
 
-1. H_xxx distillation (read `UNIVERSE/H_*.md`: H_001 ethics, H_004 hard-problem, H_007 CA-consciousness, H_021 fundamental-eq … → title + finding + verdict-tier)
+1. H_xxx distillation (read `HYPOTHESES/H_*.md`: H_001 ethics, H_004 hard-problem, H_007 CA-consciousness, H_021 fundamental-eq … → title + finding + verdict-tier)
 2. hypothesis-generation-loop template (falsifier → measure → verdict; /kick /gap .discoveries — the load-bearing "capacity" piece)
 3. verdict-tier epistemics (🔵 formal / 🟢 numerical / 🔴 closed-negative; negative-results-first-class)
 4. closed-negative case studies (IIT-Φ FAIL, Lane-A recurrence wall, copy-scale closed-neg)
@@ -78,7 +78,7 @@ substrate can grow its conceptual range and self-model, not merely chat.
 7. dialogue-about-a-hypothesis (skeptic + experimenter + adjudicator voices)
 8. pre-registration discipline (frozen falsifier before measurement — why it matters)
 
-> source: distilled from REAL `UNIVERSE/H_*.md` + `hypotheses_candidates/` + authored loop prose.
+> source: distilled from REAL `HYPOTHESES/H_*.md` + `hypotheses_candidates/` + authored loop prose.
 > Honest-labeled "anima-authored, distilled from own hypothesis ledger".
 
 ### (d) dialogue format [6] — AUTHORED, deterministic, NO persona tags

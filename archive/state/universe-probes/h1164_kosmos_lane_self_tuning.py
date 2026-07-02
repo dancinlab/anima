@@ -33,7 +33,7 @@ mapped from the 8-factor motivation snapshot.
 
 ═══ SUBSTRATE — H_1159b VERBATIM, only the INPUT swapped ══════════════════════
 The split / assign / mitosis / cohen_d / spearman machinery below is copied
-VERBATIM from UNIVERSE/h1159b_mitosis_capacity_self_tuning.py. The ONLY change:
+VERBATIM from HYPOTHESES/h1159b_mitosis_capacity_self_tuning.py. The ONLY change:
 DIM 8→5 (kosmos tension_5ch) and make_anchor_stream() emits a 5-channel anchor
 tension stream whose clusters are distinct TENSION-REGIMES (e.g. high-curiosity
 vs high-pain vs high-context anchors), the kosmos-native analog of H_1159b's

@@ -13,8 +13,8 @@
   - H_682 persistence-paradigm (L9+L10): .kosmos anchor payload (5-ch + coord + tier ∈ {weak,strong,critical}) + resting baseline paradigm reference
 - [x] SW path 4/4 🟢 GREEN_NUMERICAL_CONFIRM — `state/eeg_hw_sw_impl_2026_05_29/H_{679,680,681,682}_sw_result.json` deterministic mock-replay (PR #547/#1372 frozen baseline). closed-form 계산이므로 사용자 sign-off 후 `hexa run` verbatim 일치 예상
 - [x] HW path 정직 status — `state/eeg_hw_sw_impl_2026_05_29/hw_probe_2026_05_29.txt`. 4 H 모두 🟡 SW-confirmed, HW-pending (사용자 헤드셋 게이트 · sentinel 부재). 위조 0 · live 거짓 0 · ssh-mutating 0
-- [x] UNIVERSE 4 H_xxx 직접 등록 — `UNIVERSE/H_{679,680,681,682}_eeg_*.md` (10-section 한글 양식). slug-stale 3-신호 사전검증 통과 (H_672-678 AKIDA 점유 + 679-682 git log/README clean)
-- [x] UNIVERSE/CANDIDATES.md `## Consumed` Cycle #23 1줄 추가 · UNIVERSE/README.md 인덱스 4행 추가 · **INBOX 환류 0건** (사용자 명시 폐기)
+- [x] UNIVERSE 4 H_xxx 직접 등록 — `HYPOTHESES/H_{679,680,681,682}_eeg_*.md` (10-section 한글 양식). slug-stale 3-신호 사전검증 통과 (H_672-678 AKIDA 점유 + 679-682 git log/README clean)
+- [x] HYPOTHESES/CANDIDATES.md `## Consumed` Cycle #23 1줄 추가 · HYPOTHESES/README.md 인덱스 4행 추가 · **INBOX 환류 0건** (사용자 명시 폐기)
 - [x] EEG.md milestones 갱신 (11 → 14, L1~L12 status 추가) · EEG.easy.md 각 그룹 → 구현 cross-link · ANIMA.md 🌳 트리 EEG 도메인 노드 갱신
 - [x] HANDOFF.md prepend (AKIDA 직전 archived 보존)
 - [ ] HW path 4/4 → 🟢 biological-confirmed 격상 (사용자 헤드셋 + sentinel touch + 4회 `hexa run`)

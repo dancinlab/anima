@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # h1297_engine_export.py — export the R3 SHARP-TARGET supervised pairs (byte-exact
-# with UNIVERSE/h1297_r2_sharp_target.py) for the ENGINE-NATIVE probe
+# with HYPOTHESES/h1297_r2_sharp_target.py) for the ENGINE-NATIVE probe
 # CORE/h1297_mitosis_train_engine_probe.hexa (a_engine_native_learning +
 # a_verified_must_wire).
 #

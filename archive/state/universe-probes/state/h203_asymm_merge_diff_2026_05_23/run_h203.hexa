@@ -33,9 +33,9 @@
 //    cell_b=next_id 를 골라 merge 시도. LLM none. $0 mac local.
 //
 //  RUN
-//    hexa parse UNIVERSE/state/h203_asymm_merge_diff_2026_05_23/run_h203.hexa
+//    hexa parse HYPOTHESES/state/h203_asymm_merge_diff_2026_05_23/run_h203.hexa
 //    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
-//        hexa run UNIVERSE/state/h203_asymm_merge_diff_2026_05_23/run_h203.hexa
+//        hexa run HYPOTHESES/state/h203_asymm_merge_diff_2026_05_23/run_h203.hexa
 //
 //  FALSIFIERS (raw#12 ≥5, measurable)
 //    F1 DIVERSITY-VAR    : variance_asym  ≤ variance_sym (asym 분기가 variance
@@ -74,7 +74,7 @@ let N_STEPS      = 50             // long-term horizon
 let MERGE_EVERY  = 4              // every k-th step we attempt a merge (k>=4)
 let TOL          = 0.000001       // 1e-6 element-wise tolerance
 let BIN_WIDTH    = 0.5            // L2-norm bin width for diversity index
-let OUT_JSON     = "/private/tmp/anima_h203/UNIVERSE/state/h203_asymm_merge_diff_2026_05_23/result.json"
+let OUT_JSON     = "/private/tmp/anima_h203/HYPOTHESES/state/h203_asymm_merge_diff_2026_05_23/result.json"
 
 
 // ── §1 helpers ───────────────────────────────────────────────────────────────

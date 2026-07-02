@@ -12,7 +12,7 @@
 //    bare    : H_007 elementary CA (fixed Wolfram rule, NO weight update).
 //              Each lattice site i = 1 IIT cell; its dim-step binary
 //              temporal trajectory = state vector. Reused verbatim from
-//              UNIVERSE/state/h007_ca_phi_2026_05_23/run_ca_phi.hexa.
+//              HYPOTHESES/state/h007_ca_phi_2026_05_23/run_ca_phi.hexa.
 //    trained : mitosis cell pool (cell_pool_init + mitosis_forward_tail).
 //              Per-cell weights (engine_a_W / engine_g_W) + hidden state are
 //              UPDATED over N steps (Lorenz autonomous perturbation +
@@ -50,7 +50,7 @@
 //  run cmd (verbatim):
 //    cd <worktree-root> &&
 //    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
-//      hexa run UNIVERSE/state/h265_trained_vs_bare_ca_phi_2026_05_25/run_h265.hexa
+//      hexa run HYPOTHESES/state/h265_trained_vs_bare_ca_phi_2026_05_25/run_h265.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
 import "/Users/ghost/core/anima/.claude/worktrees/agent-a86241c11fa873eb5/HEXAD/C/c_lib.hexa"
@@ -59,7 +59,7 @@ import "/Users/ghost/core/anima/.claude/worktrees/agent-a86241c11fa873eb5/tool/h
 
 // ── config (deterministic) ──────────────────────────────────────────────────
 fn _state_dir() -> string {
-    return "UNIVERSE/state/h265_trained_vs_bare_ca_phi_2026_05_25"
+    return "HYPOTHESES/state/h265_trained_vs_bare_ca_phi_2026_05_25"
 }
 fn _N() -> int    { return 16 }   // bare lattice length (H_007 carry)
 fn _DIM() -> int  { return 12 }   // recorded temporal-trajectory length / cell

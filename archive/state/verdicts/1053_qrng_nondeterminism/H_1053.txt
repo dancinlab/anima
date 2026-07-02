@@ -57,7 +57,7 @@ ANU QRNG PROVENANCE (TRUE physical quantum random bytes; NO PRNG in the noise pa
   sha256       = 84b7cad9a5fca0ce440046033be18f51c8dbaa532fd1d4d629acdd1869e8efc1
   fetched (UTC)= 2026-06-08T15:21:35Z
   source       = ANU Quantum Numbers (vacuum-fluctuation QRNG)
-  cached file  = UNIVERSE/state/h1053_qrng_bytes.bin (committed) + .prov.json
+  cached file  = HYPOTHESES/state/h1053_qrng_bytes.bin (committed) + .prov.json
   noise path   = uint16 LE -> (u+0.5)/65536 uniform (0,1) open -> probit (Acklam ppf) -> N(0,1) xi
   per-seed     = distinct deterministic offset into the SAME physical stream (reproducible draw)
 
@@ -115,6 +115,6 @@ ANU quantum-byte API fetch (147 calls, cached + committed). AKIDA Lane A on-chip
 plasticity (true on-silicon non-determinism) + GPU Lane G scale-up are SEPARATE substrate-tagged
 rungs, NOT run here (a_lane_akida_gpu_split) — note only.
 
-RESULT JSON  -> UNIVERSE/h1053_qrng_nondeterminism_result.json
-RAW RUN LOG  -> UNIVERSE/.verdicts/1053_qrng_nondeterminism/H_1053_rawlog.txt
-QRNG BYTES   -> UNIVERSE/state/h1053_qrng_bytes.bin (sha256 84b7cad9...e8efc1) + .prov.json
+RESULT JSON  -> HYPOTHESES/h1053_qrng_nondeterminism_result.json
+RAW RUN LOG  -> HYPOTHESES/.verdicts/1053_qrng_nondeterminism/H_1053_rawlog.txt
+QRNG BYTES   -> HYPOTHESES/state/h1053_qrng_bytes.bin (sha256 84b7cad9...e8efc1) + .prov.json

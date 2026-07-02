@@ -9,7 +9,7 @@ gradient-free, 3 seeds [4323,4324,4325] (SAME as H_1323/H_1325 so the A-only bas
 reproduces), p7.
 
 THE MECHANISM (embed, VoronoiCells, build_labels, discrim_curve, count_peaks, the W1/W2
-metrics) is REUSED VERBATIM from UNIVERSE/h1323_sapir_whorf.py + h1325_sapir_whorf_r2.py.
+metrics) is REUSED VERBATIM from HYPOTHESES/h1323_sapir_whorf.py + h1325_sapir_whorf_r2.py.
 The ONLY new thing is SEQUENTIAL A→B training on ONE substrate (VoronoiCells.fit_more,
 grow-not-evict) + measuring CP at BOTH boundaries.
 

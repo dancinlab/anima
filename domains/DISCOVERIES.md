@@ -23,7 +23,7 @@ new /kick or /gap finding
 
 ## Flow (unchanged)
 
-discovery → `UNIVERSE/cards/H_<id>_<slug>.md` card + `UNIVERSE/HYPOTHESES.jsonl` row → `hexa verify` → `.verdicts/<slug>/<id>.txt`
+discovery → `HYPOTHESES/cards/H_<id>_<slug>.md` card + `HYPOTHESES/HYPOTHESES.jsonl` row → `hexa verify` → `.verdicts/<slug>/<id>.txt`
 (claims-audit folded into HYPOTHESES.jsonl — CLAIMS.tape retired 2026-06-16). Discoveries run alongside verify, not
 batched to the cycle tail. Every discovery is recorded — no discard, no paraphrase
 (a_discovery_log · a_discovery · a_paper_on_discovery).

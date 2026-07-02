@@ -1,11 +1,11 @@
-// UNIVERSE/state/h238_raster_2026_05_25/run.hexa
+// HYPOTHESES/state/h238_raster_2026_05_25/run.hexa
 // H_238 — verdict landscape meta-map · NEXT RASTER (2026-05-25)
 //
 //   Prior raster (2026-05-24, state/h238_verdict_landscape_meta_2026_05_24/):
 //     N=33 (per-file frontmatter scrape, that worktree had 33 H files)
 //     SUPP 10 / PART 5 / FAL 7 / RUN 11 · SUPP-rate life 0.41 ≫ consciousness 0.17
 //
-//   NEXT RASTER: primary source = UNIVERSE/README.md 가설 인덱스 표
+//   NEXT RASTER: primary source = HYPOTHESES/README.md 가설 인덱스 표
 //     (각 행의 Domain col + Status col 을 deterministic 하게 파싱).
 //     cycle#14/#15 신규 8 verdict (H_258-265) + H_018/H_132 C2 PASS 포함 →
 //     전체 H tier landscape 재집계 + per-domain SUPP-rate 갱신 + life≫consciousness
@@ -44,10 +44,10 @@
 // ════════════════════════════════════════════════════════════════════════
 
 fn _README() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-a6c27674de7efc849/UNIVERSE/README.md"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a6c27674de7efc849/HYPOTHESES/README.md"
 }
 fn _STATE_DIR() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-a6c27674de7efc849/UNIVERSE/state/h238_raster_2026_05_25"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a6c27674de7efc849/HYPOTHESES/state/h238_raster_2026_05_25"
 }
 
 // 7-domain canonical vocabulary (raw#12 pre-registered, same order as prior raster)
@@ -191,7 +191,7 @@ fn _json_esc(s: string) -> string {
 // ── main ────────────────────────────────────────────────────────────────
 fn main() {
     println("H_238 — verdict landscape meta-map · NEXT RASTER (2026-05-25, raw#12)")
-    println("  source: UNIVERSE/README.md 가설 인덱스 표 (Domain col + Status col)")
+    println("  source: HYPOTHESES/README.md 가설 인덱스 표 (Domain col + Status col)")
     println("")
 
     // enumerate README index rows (deterministic = README row order), H_238 self-excluded.
@@ -529,7 +529,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"source\": \"UNIVERSE/README.md 가설 인덱스 표 (Domain col + Status col)\",\n"
+    j = j + "  \"source\": \"HYPOTHESES/README.md 가설 인덱스 표 (Domain col + Status col)\",\n"
     j = j + "  \"prior_raster\": { \"date\": \"2026-05-24\", \"N\": 33, \"SUPP\": 10, \"PART\": 5, \"FALS\": 7, \"RUNN\": 11, \"life_supp_rate\": 0.411765, \"consciousness_supp_rate\": 0.166667 },\n"
     j = j + "  \"config\": { \"N_rows\": " + to_string(n) + ", \"n_domains\": " + to_string(nd) + ", \"source\": \"README index\", \"H_238_self_excluded\": true },\n"
 

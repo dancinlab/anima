@@ -21,13 +21,13 @@ POD_NAME = f"anima-h1144-grounding-{int(time.time())}"
 PROTECTED = {"edge-vl-requant"}  # NEVER terminate these
 
 FILES = [
-    "UNIVERSE/h1144_grounding_pod_run.sh",
-    "UNIVERSE/h1144_grounding_train.py",
-    "UNIVERSE/h1144_slope_decide.py",
-    "UNIVERSE/h1141_7b_g5_eval.py",
-    "UNIVERSE/h1143_g5l2_nonfab_measure.py",
-    "UNIVERSE/h1141_7b_pass_attempt.py",
-    "UNIVERSE/build_wiki5_bigcorpus_en.py",
+    "HYPOTHESES/h1144_grounding_pod_run.sh",
+    "HYPOTHESES/h1144_grounding_train.py",
+    "HYPOTHESES/h1144_slope_decide.py",
+    "HYPOTHESES/h1141_7b_g5_eval.py",
+    "HYPOTHESES/h1143_g5l2_nonfab_measure.py",
+    "HYPOTHESES/h1141_7b_pass_attempt.py",
+    "HYPOTHESES/build_wiki5_bigcorpus_en.py",
 ]
 
 

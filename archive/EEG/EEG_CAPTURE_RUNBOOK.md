@@ -91,7 +91,7 @@ hexa run tool/modules/_paradigms/resting_baseline.hexa --live
 
 1. `EEG/state/eeg_live_recheck_2026_05_29/result.json` 신규 — 캡처 메타(샘플레이트·n_ch·n_samp·임피던스 평균) + big-Φ 값 + stdout SHA256.
 2. `IIT4.md` deferred B 라인을 🟠 hw-ready → 🟢 LIVE-MEASURED 로 flip + 측정값 + 캡처 파일 SHA256 인용.
-3. `UNIVERSE/CANDIDATES.md` 에 live big-Φ 추가 (bench 측정 기록 SSOT, EEG.md 양방향 sibling 정합).
+3. `HYPOTHESES/CANDIDATES.md` 에 live big-Φ 추가 (bench 측정 기록 SSOT, EEG.md 양방향 sibling 정합).
 4. `EEG/EEG.log.md` 에 ISO 타임스탬프 엔트리 append (최신 위) — 측정값 + verdict-link.
 
 ## 2. 트러블슈팅

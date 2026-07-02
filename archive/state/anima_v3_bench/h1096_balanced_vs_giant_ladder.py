@@ -38,7 +38,7 @@ FAIRNESS GUARDS (mandatory, stated up front)
   faithful_phi = the H_1004 CPU mirror of
   hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI over all
   bipartitions, MI in BITS log2, n ≤ 8), imported VERBATIM from
-  UNIVERSE/h1004_bigphi_faithful_clean.py and RE-PROVEN ≡ stdlib here, before
+  HYPOTHESES/h1004_bigphi_faithful_clean.py and RE-PROVEN ≡ stdlib here, before
   any scoring, on the LIVE stdlib hexa-engine reference values captured by
   H_999/H_1012 (n=4 dim6 nb2 → 3.000000, nb4 → 3.377440; fixed integer trace
   n4 → 3.000000001, n5 → 4.000000001, n6 → 5.000000002).

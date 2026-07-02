@@ -199,7 +199,7 @@ state — is absent:
 
 ### Frozen falsifier that re-runs once wired
 
-- **H_1164** live leg (`UNIVERSE/h1164_kosmos_lane_self_tuning.py` falsifier, applied to the live
+- **H_1164** live leg (`HYPOTHESES/h1164_kosmos_lane_self_tuning.py` falsifier, applied to the live
   partition): F1 Spearman(K_true, lane-count) ≥ 0.8, F2 advantage d ≥ 2.0, F3 self-limiting < cap.
   Today N/A (no partition); once `kosmos_lane_assign` exists, the *live* lane-count can be measured
   against anchor-stream complexity and the toy PROPOSAL becomes a live 🟢/🔴.

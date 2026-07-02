@@ -1,6 +1,6 @@
 882_clm_region_gated — id-keyed backing dir for H_882 (region-gated plasticity · 영역별 학습 게이트)
 ==================================================================================================
-Hypothesis : UNIVERSE/H_882_clm_region_gated.md
+Hypothesis : HYPOTHESES/H_882_clm_region_gated.md
 Verdict    : .verdicts/clm-region-gated/F-CLM-REGION-GATED.txt (+ _prereg.txt + clm_region_gated_result.json)
 Driver     : CLM/model/h882_region_gated.hexa (executable harness; project hexa-native policy)
 Runtime    : h882_region_gated_runtime.py.txt (reproducibility copy of the executed harness)

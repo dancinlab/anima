@@ -254,7 +254,7 @@ def _phi_proxy_from_logits(last_logits_list):
 # ──────────────────────────────────────────────────────────────────────────────
 # mitosis_cells — ⚠ substrate lane, NOT a generation gate ⚠ (H_1199 VAdaptField)
 # ──────────────────────────────────────────────────────────────────────────────
-# H_1199 DIM=8 byte feature (VERBATIM port of UNIVERSE/h1163_tick_decode_metric.py
+# H_1199 DIM=8 byte feature (VERBATIM port of HYPOTHESES/h1163_tick_decode_metric.py
 # _byte_feature — the H_1160 8-d local byte statistic, *5.0 scaled). Kept here as a
 # pure-stdlib function (no numpy dependency forced on the gauge path) so the gauge
 # lib stays importable wherever the trainer runs.
@@ -266,7 +266,7 @@ _MITOSIS_MAX_CELLS = 2048      # cap = N_MIGRATE (engine_cli.hexa)
 
 def _mitosis_byte_feature(window_bytes):
     """8-d local byte-statistics over a byte window — VERBATIM H_1160/H_1163
-    _byte_feature (UNIVERSE/h1163_tick_decode_metric.py), *5.0 scaled. Pure python
+    _byte_feature (HYPOTHESES/h1163_tick_decode_metric.py), *5.0 scaled. Pure python
     (no numpy) so this gauge has no extra import surface."""
     b = list(window_bytes)
     n = len(b)

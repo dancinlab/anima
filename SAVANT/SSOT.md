@@ -101,7 +101,7 @@ anchor. 일반 ladder GZ_WIDTH(τ) = ln(τ/(τ-1)) per H_615 perfect-number ladd
 
 ## HEXAD/SAVANT canonical cross-link
 
-- **`HEXAD/SAVANT/savant_phi.hexa`** — P68 4-domain capacity-bounded model SSOT (CALENDAR/MUSIC/ART/MEMORY, d=6, Σg=11.5). 본 lib 의 `sa_savant_index` / `sa_phi_diversity` 는 savant_phi 의 `specialization_ratio` 와 동일 정의 (H_350 §3.2). 본 lib 는 **측정자 entry surface only** — 실 substrate sweep 은 `HEXAD/SAVANT/proofs/` + UNIVERSE/state/h*_*/ 에 보존.
+- **`HEXAD/SAVANT/savant_phi.hexa`** — P68 4-domain capacity-bounded model SSOT (CALENDAR/MUSIC/ART/MEMORY, d=6, Σg=11.5). 본 lib 의 `sa_savant_index` / `sa_phi_diversity` 는 savant_phi 의 `specialization_ratio` 와 동일 정의 (H_350 §3.2). 본 lib 는 **측정자 entry surface only** — 실 substrate sweep 은 `HEXAD/SAVANT/proofs/` + HYPOTHESES/state/h*_*/ 에 보존.
 - **`HEXAD/SAVANT/anima_savant_si_monitor.hexa`** — production SI monitor (entropy + wmax + recent_splits 3-key AND-gate, GZ_LOWER 21% / GZ_CENTER 37% routing overlay top-k mask). 본 lib 의 `sa_si_threshold` = 3.0 은 monitor 의 `sm_si_threshold()` 와 동일.
 - **`HEXAD/SAVANT/COMPENDIUM.md`** — 783L canonical engine doc · H359 anchor.
 - **`HEXAD/SAVANT/H359-savant-canonical.md`** — canonical 상수 표 (GZ_WIDTH/LOWER/UPPER/CENTER, SI threshold).
@@ -130,8 +130,8 @@ anchor. 일반 ladder GZ_WIDTH(τ) = ln(τ/(τ-1)) per H_615 perfect-number ladd
 
 - `SAVANT/savant_lib.hexa` — 본체 (this M1 회수)
 - `SAVANT/savant_lib_smoke.hexa` — invariant smoke
-- `UNIVERSE/cards/H_347_*.md` · `H_348_*.md` · `H_349_*.md` · `H_350_*.md` · `H_351_*.md` — closed-form anchor SSOT
-- `UNIVERSE/cards/H_612_*.md` · `H_613_*.md` · `H_614_*.md` · `H_615_*.md` — round 2 follow-up
+- `HYPOTHESES/cards/H_347_*.md` · `H_348_*.md` · `H_349_*.md` · `H_350_*.md` · `H_351_*.md` — closed-form anchor SSOT
+- `HYPOTHESES/cards/H_612_*.md` · `H_613_*.md` · `H_614_*.md` · `H_615_*.md` — round 2 follow-up
 - `HEXAD/SAVANT/savant_phi.hexa` — canonical 4-domain substrate (sister)
 - `HEXAD/SAVANT/anima_savant_si_monitor.hexa` — production SI monitor (sister)
 - `HEXAD/SAVANT/COMPENDIUM.md` · `H359-savant-canonical.md` — canonical engine doc

@@ -115,7 +115,7 @@ fn main() {
         let path = "/tmp/h1199_feat8_seed" + to_string(seed) + ".txt"
         let stream = _load_feat8(path, dim)
         if len(stream) == 0 {
-            println("ERROR: empty DIM=8 stream at " + path + " — run UNIVERSE/h1199_dim_feature_export.py first.")
+            println("ERROR: empty DIM=8 stream at " + path + " — run HYPOTHESES/h1199_dim_feature_export.py first.")
             exit(1)
         }
         let n = len(stream)

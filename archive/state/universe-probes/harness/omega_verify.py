@@ -22,7 +22,7 @@ import os, glob, math, re
 import numpy as np
 
 HERE = os.path.dirname(__file__)
-MD_DIR = os.path.abspath(os.path.join(HERE, ".."))  # hypotheses joined into UNIVERSE/ flat
+MD_DIR = os.path.abspath(os.path.join(HERE, ".."))  # hypotheses joined into HYPOTHESES/ flat
 
 # g5 rubric mapping
 G5 = {

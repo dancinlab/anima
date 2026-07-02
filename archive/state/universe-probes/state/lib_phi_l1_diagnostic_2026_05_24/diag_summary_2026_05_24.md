@@ -1,6 +1,6 @@
 # diag_summary_2026_05_24 — L1 root cause diagnostic + Rust phi_rs cross-validation
 
-> **위치**: `UNIVERSE/state/lib_phi_l1_diagnostic_2026_05_24/diag_summary_2026_05_24.md`
+> **위치**: `HYPOTHESES/state/lib_phi_l1_diagnostic_2026_05_24/diag_summary_2026_05_24.md`
 > **harness**: `diag_l1_binning.hexa` (worktree-local) · `/tmp/diag_rust_oracle.py` (외부, project-tape `.py` 거부 회피)
 > **세션 worktree**: `agent-a07653c5889f742f6`
 > **상위 milestone**: PHI.md #7 (L1 root cause 추적) · #8 (LIFE 본질 영향) · #9 (verdict promote evidence)

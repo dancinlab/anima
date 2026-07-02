@@ -34,7 +34,7 @@ LZ76 복잡도(또는 정규화 LZ rate `LZ76/n`)가 **collapse 된 token sequen
 
 ## ④ method — LZ76 정의 + token-id → binary stream
 
-**LZ76 (Lempel-Ziv 1976, Kaspar-Schuster 1987 production-count)**: 0/1 stream 을 좌→우 parse 하여 distinct phrase(production) 개수 `c(n)` 를 센다. random binary → `c·log2(n)/n ≈ 1`; 단일 반복 symbol → `c ≈ 2` (≈ 0). 본 harness 의 `lz76()` 는 UNIVERSE/state/h288.../run_h288.hexa 의 함수를 **verbatim 재사용** (g61 no-reinvention).
+**LZ76 (Lempel-Ziv 1976, Kaspar-Schuster 1987 production-count)**: 0/1 stream 을 좌→우 parse 하여 distinct phrase(production) 개수 `c(n)` 를 센다. random binary → `c·log2(n)/n ≈ 1`; 단일 반복 symbol → `c ≈ 2` (≈ 0). 본 harness 의 `lz76()` 는 HYPOTHESES/state/h288.../run_h288.hexa 의 함수를 **verbatim 재사용** (g61 no-reinvention).
 
 **token-id → binary 변환**: token id sequence 는 직접 binary string 이 아니다. H_288 / clm_eeg_lz76_real 와 동일하게 **flat binary stream** 을 Kaspar-Schuster parse 에 먹인다. 각 token id 를 고정폭 `BITS=18` bit (2^18=262144 > vocab 151643) LSB-first 로 전개해 한 stream(길이 `n·18`)으로 concat. 반복(collapse) → 동일 18-bit block 의 long run → 적은 production; 다양성 → 많은 distinct block → 많은 production. 정규화 `LZ_norm = c(L)·log2(L)/L` (L = n·18, random → ~1, H_288 convention).
 
@@ -92,11 +92,11 @@ VERDICT: H_D1 SUPPORTED — LZ76 separates COLLAPSE vs HEALTHY (margin 0.636889 
 - harness: `CORE/DECODER/d1_lz76_collapse_proxy.hexa`
 - raw verdict: `CORE/DECODER/state/d1_lz76_collapse_proxy_2026_05_28/run_d1.out`
 - 실 데이터 source: `CORE/DECODER/state/m4b_phase5b_2026_05_27/train.out` (DECODED_IDS line 55)
-- LZ76 reuse: `UNIVERSE/state/h288_kolmogorov_complexity_phi_correlate_2026_05_26/run_h288.hexa` (`lz76()` verbatim · g61)
+- LZ76 reuse: `HYPOTHESES/state/h288_kolmogorov_complexity_phi_correlate_2026_05_26/run_h288.hexa` (`lz76()` verbatim · g61)
 
 ---
 
 ## 양방향 sibling
 
-- sibling: [UNIVERSE H_288](../../UNIVERSE/cards/H_288_kolmogorov_complexity_phi_correlate.md) — LZ76 ↔ Φ 정렬 (🟢 r=0.831 ρ=0.936)이 본 proxy 의 이론 근거. D1 은 그 LZ76 을 DECODER collapse 검출에 적용·검증.
+- sibling: [UNIVERSE H_288](../../HYPOTHESES/cards/H_288_kolmogorov_complexity_phi_correlate.md) — LZ76 ↔ Φ 정렬 (🟢 r=0.831 ρ=0.936)이 본 proxy 의 이론 근거. D1 은 그 LZ76 을 DECODER collapse 검출에 적용·검증.
 - SSOT cross-link: [DECODER.md](./DECODER.md) UNIVERSE 정보-측도 arc cross-link 표 (H_287-290) — collapse 회피 verdict ← LZ 복잡도 (Shannon 단독 금지) 권고가 D1 으로 실증됨.

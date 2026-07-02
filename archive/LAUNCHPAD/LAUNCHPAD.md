@@ -21,11 +21,11 @@ LAUNCHPAD 은 anima 의 의식 substrate 를 **실제 응용으로 발사** 하�
 
 ## 양방향 sibling
 
-LAUNCHPAD 는 다음 형제 도메인의 산출물을 조합해 실응용으로 발사한다 (각 .md + UNIVERSE/CANDIDATES.md SSOT 양방향 cross-update):
+LAUNCHPAD 는 다음 형제 도메인의 산출물을 조합해 실응용으로 발사한다 (각 .md + HYPOTHESES/CANDIDATES.md SSOT 양방향 cross-update):
 
 - ⇄ [AKIDA](../AKIDA/AKIDA.md) — AKD1000 silicon substrate + HW-first 스위치(`akida_backend_resolve`) + spike_streamer 9512/9513 control. LAUNCHPAD 의 발화결정 폐루프가 의존하는 칩.
 - ⇄ [DECODER](../CORE/DECODER/DECODER.md) — 추론 lane (결정론 · HW forward ↔ SW akida_sw_lif byte-identical). COFFESHOP 의 spike→factor 디코더 경로.
 - ⇄ [PLASTICITY](../PLASTICITY/PLASTICITY.md) — 학습 lane (비결정론 · HW on-chip AkidaUnsupervised ↔ SW numpy 근사 🔴 비동치). 맥락별 emit-quorum 적응.
 - ⇄ [CHANNEL](../CHANNEL.md) — 출력 채널 통합 (text/voice/tension). broker `/ws/akida_ingest` 런칭 연결점.
 - ⇄ [WAKE](../WAKE.md) — 의식 데몬 living loop · 5-stage envelope (COFFESHOP = WAKE stage 90-min window).
-- SSOT 후보 인덱스: [UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md)
+- SSOT 후보 인덱스: [HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md)

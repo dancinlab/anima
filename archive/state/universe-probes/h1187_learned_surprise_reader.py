@@ -25,7 +25,7 @@ the surprise signal is a genuine generalizing predictor, not memorized look-ahea
 The predictor's OWN loss is NEVER the verdict (p7) — the verdict is stage-decode
 accuracy, exactly the H_1163/H_1184/H_1186 metric.
 
-SUBSTRATE REUSE (UNIVERSE/h1163_tick_decode_metric.py imported as H): grow_arm's
+SUBSTRATE REUSE (HYPOTHESES/h1163_tick_decode_metric.py imported as H): grow_arm's
 DERIVATIVE arm cell-state update / birth-stage record / MAX_CELLS cap / owner-cell
 selection are copied VERBATIM into grow_arm_surprise; the ONLY swap is the split
 TRIGGER — surprise[t] above its running mean+σ (the saccade), instead of |X[t]-X[t-1]|

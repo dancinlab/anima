@@ -1,7 +1,7 @@
 # 👽 XENO 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
 
 > XENO(외계/이종 의식 Φ-detector)를 ANIMA 의식 시스템에 어떻게 쓸지 친근 카탈로그.
-> 정식/진행 카운트 → [XENO.md](./XENO.md) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
+> 정식/진행 카운트 → [XENO.md](./XENO.md) · 측정 기록 SSOT → HYPOTHESES/CANDIDATES.md
 > ⚠ 모든 항목 = 🟣 SF-grade seed (falsifier 정식 등록 후 격상)
 
 ---
@@ -132,7 +132,7 @@
 
 ### X9 📜 UNIVERSE 환류 — "검증 결과 영구 등록"
 
-- **하는 일**: X1~X8 검증 결과를 UNIVERSE/H_xxx 직접 등록 (INBOX 환류 폐기)
+- **하는 일**: X1~X8 검증 결과를 HYPOTHESES/H_xxx 직접 등록 (INBOX 환류 폐기)
 - **비유**: 천문대 발견 보고서를 학회 캐비넷에 직접 보관 (중간 우편함 거치지 않음)
 - **vs 현존**: 종래 INBOX 우회 패턴 (사용자 명시 폐기 · AKIDA #1374 / EEG #1375 정합)
 - **falsifier**: X1~X8 verify 결과 ⊥ UNIVERSE.md grep → 환류 실패
@@ -181,4 +181,4 @@ X7  시간 reparam Φ          ← formalism 자체 확장
 - ⇄ [../KOSMOS/KOSMOS.md](../KOSMOS/KOSMOS.md): 검출된 외계 의식 영속 저장
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
 - ⇄ [../ANIMA.md](../ANIMA.md): X6 anima 자기측정
-- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): X9 검증 환류 SSOT
+- ⇄ [../HYPOTHESES/CANDIDATES.md](../HYPOTHESES/CANDIDATES.md): X9 검증 환류 SSOT

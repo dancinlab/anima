@@ -15,7 +15,7 @@ H_1341 maps the move-fraction vs SHIFT-SIZE curve across >=3 shift magnitudes:
 This is a CHARACTERIZATION ladder. ALL outcomes VALID (c9) — report the curve verbatim,
 no GREEN/RED to manufacture.
 
-Reuses the H_1333 CP machinery EXACTLY (UNIVERSE/h1333_whorf_developmental.py): the
+Reuses the H_1333 CP machinery EXACTLY (HYPOTHESES/h1333_whorf_developmental.py): the
 VoronoiCells store (error-targeted SPLIT-only growth, phase-2 re-grow on the SAME store,
 NO reset), RBF embed, soft-posterior discrimination readout, peak-count coherence. The ONLY
 new code = sweeping the phase-2 target boundary p_A' across 3 shift rungs and assembling the

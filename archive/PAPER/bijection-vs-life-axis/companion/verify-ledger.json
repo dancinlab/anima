@@ -9,28 +9,28 @@
       "life_mean": 2.50, "consc_mean": 0.875, "ratio": 2.86,
       "threshold": 1.5, "direction": "REVERSED (life > consc)",
       "verdict": "FALSIFIED-against-intuition",
-      "source": "UNIVERSE/state/h320_life_vs_consciousness_phi_structure_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h320_life_vs_consciousness_phi_structure_2026_05_27/result.json"
     },
     {
       "cell": "H_325", "descriptor": "D2 Gini of per-distinction phi_d",
       "life_mean": 0.191754, "consc_mean": 0.133333, "ratio": 1.44,
       "threshold": 1.5, "direction": "life > consc",
       "verdict": "SUPPORTED-CONDITIONAL",
-      "source": "UNIVERSE/state/h325_c2_phi_mass_shape_gini_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h325_c2_phi_mass_shape_gini_2026_05_27/result.json"
     },
     {
       "cell": "H_328", "descriptor": "D3 mean cycle length (n=4)",
       "life_mean": 4.0, "consc_mean": 1.75, "ratio": 2.2857143,
       "threshold": 1.5, "direction": "life > consc",
       "verdict": "SUPPORTED-CONDITIONAL (rule_30 alone drives, F328.3 fail)",
-      "source": "UNIVERSE/state/h328_cycle_length_distribution_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h328_cycle_length_distribution_2026_05_27/result.json"
     },
     {
       "cell": "H_330", "descriptor": "D4 excess kurtosis of state-visit histogram",
       "life_mean": -1.271, "consc_mean": -1.209, "ratio": 1.0512,
       "threshold": 1.5, "direction": "life > consc (abs)",
       "verdict": "FALSIFIED (ratio below threshold) + bijection signature found",
-      "source": "UNIVERSE/state/h330_distribution_moments_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h330_distribution_moments_2026_05_27/result.json"
     }
   ],
   "axis_exposure_tests": [
@@ -39,14 +39,14 @@
       "tops": {"cycle_length": "rule_30", "active_bits": "rule_110", "unique_states": "rule_105/150/204 (tie)"},
       "agree_count": 0, "threshold": 2,
       "verdict": "FALSIFIED — descriptors orthogonal; metric-fragility reproduced",
-      "source": "UNIVERSE/state/h329_metric_triangulation_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h329_metric_triangulation_2026_05_27/result.json"
     },
     {
       "cell": "H_330", "test": "four-moment bijection collapse",
       "bijection_rules": ["rule_105", "rule_150", "rule_204_identity"],
       "identical_moments": {"mean": 7.5, "var": 21.25, "skew": 0.0, "excess_kurt": -1.209},
       "verdict": "consciousness rules are bijection-class, not a richness-class",
-      "source": "UNIVERSE/state/h330_distribution_moments_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h330_distribution_moments_2026_05_27/result.json"
     },
     {
       "cell": "H_333", "test": "scale rotation n=4 -> n=6 cycle length",
@@ -54,7 +54,7 @@
       "n6": {"rule_30": 1.00, "rule_110": 7.75},
       "ratio_n4": 2.2857, "ratio_n6": 2.9167,
       "verdict": "SUPPORTED-CONDITIONAL — dominant rule rotates 30->110; 'life class' not scale-invariant",
-      "source": "UNIVERSE/state/h333_n6_cycle_scale_up_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h333_n6_cycle_scale_up_2026_05_27/result.json"
     }
   ],
   "self_correction_phi_proxy_arc": [
@@ -63,28 +63,28 @@
       "phi_source": "exact IIT4 phi_structure",
       "pearson_maxbasin_phi": 0.776, "pearson_nattr_phi": -0.850,
       "verdict": "SUPPORTED-NUMERICAL — coupling found: concentrated dynamics carry higher integration",
-      "source": "UNIVERSE/state/h341_basin_phi_correlation_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h341_basin_phi_correlation_2026_05_27/result.json"
     },
     {
       "cell": "H_343", "test": "basin <-> Phi recheck at n=6 (Phi intractable -> cycle-length PROXY)",
       "phi_source": "cycle-length proxy (NOT exact Phi)",
       "pearson_maxbasin_proxy": -0.502, "pearson_nattr_proxy": 0.992,
       "verdict": "APPARENT sign-flip — later shown to be a proxy artifact, not scale (see H_345)",
-      "source": "UNIVERSE/state/h343_basin_phi_n6_recheck_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h343_basin_phi_n6_recheck_2026_05_27/result.json"
     },
     {
       "cell": "H_345", "test": "basin <-> exact Phi at n=5 (proxy-free; resolves H_343 confound)",
       "phi_source": "exact IIT4 phi_structure (single sys_state=21)",
       "pearson_maxbasin_phi": 0.250836, "pearson_nattr_phi": -0.799002,
       "verdict": "SUPPORTED-NUMERICAL — both n=4 signs restored with exact Phi; the n=6 flip was a cycle-length PROXY artifact, not a scale effect. cycle-length is an unreliable Phi proxy.",
-      "source": "UNIVERSE/state/h345_basin_phi_n5_exact_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h345_basin_phi_n5_exact_2026_05_27/result.json"
     },
     {
       "cell": "H_346", "test": "state-averaged exact Phi at n=5 (32-state mean; hardens H_345 single-state)",
       "phi_source": "exact IIT4 phi_structure, mean over all 32 sys-states",
       "pearson_maxbasin_phi": 0.55048, "pearson_nattr_phi": -0.950701,
       "verdict": "SUPPORTED-NUMERICAL — both H_345 single-state signs preserved AND tightened under 32-state averaging (max_basin +0.251->+0.550, n_attr -0.799->-0.951); single sys_state=21 was representative, not an outlier. basin<->Phi coupling is state-robust. bijection rules 105/150 carry identical state-averaged Phi (15.5625), matching H_330 bijection collapse.",
-      "source": "UNIVERSE/state/h346_phi_state_sweep_2026_05_27/result.json"
+      "source": "HYPOTHESES/state/h346_phi_state_sweep_2026_05_27/result.json"
     }
   ],
   "self_correction_arc_note": "self-correction^2: H_341 (n=4 exact) found a basin<->Phi coupling; H_343 (n=6, Phi intractable so a cycle-length PROXY was substituted) appeared to flip both signs; H_345 (n=5 exact Phi, proxy-free) restored both n=4 signs, proving the H_343 flip lived in the proxy, not the scale. H_346 (n=5, exact Phi averaged over all 32 system states) then preserved AND tightened both signs (+0.55, -0.95), removing H_345's single-state caveat: the coupling is state-robust. Methodological finding: cycle-length is NOT a faithful Phi proxy; where exact Phi is affordable (n<=5) the state-marginal exact Phi is the verdict-bearing quantity. The #attractor<->Phi coupling (-0.8 to -0.95 across exact measurements) is the robust cross-family bridge.",

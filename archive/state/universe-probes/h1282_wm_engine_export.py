@@ -2,7 +2,7 @@
 h1282_wm_engine_export.py — DMS (delayed-match-to-sample) trial token EXPORTER for
 the H_1282 R3 ENGINE-NATIVE working-memory probe (CORE/h1282_wm_buffer_engine_probe.hexa).
 
-Mirrors the EXACT token generation of UNIVERSE/h1282_working_memory_buffer.py (R1/R2
+Mirrors the EXACT token generation of HYPOTHESES/h1282_working_memory_buffer.py (R1/R2
 numpy mirror): deterministic random DIM-vectors per seed, balanced 100 match + 100
 nonmatch trials per N, the SAME frozen knobs (DIM=16, K=4, λ=0.85, W=4, N_LIST,
 TRIALS=200, SEEDS=[1282,1283,1284]). The RNG stays in numpy (deterministic, exactly

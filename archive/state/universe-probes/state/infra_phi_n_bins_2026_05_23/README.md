@@ -141,14 +141,14 @@ UNIVERSE infra · phi_spatial n_bins sensitivity sweep
 
 ## 8. Cross-link
 
-- `UNIVERSE/cards/H_007_cellular_automaton_consciousness.md` — n_bins=4 default ranking baseline
-- `UNIVERSE/cards/H_003_life_origin.md` (H3.4) — autopoietic Φ nested
-- `UNIVERSE/cards/H_004_hard_problem.md` Cycle #1 — Φ-function dissociation
-- `UNIVERSE/cards/H_018_genesis_lifeprint.md`
-- `UNIVERSE/cards/H_157_law76_mathematical_panpsychism.md` — META-CA Ψ(1/2,1/2)
-- `UNIVERSE/cards/H_204_*.md` (phi_spatial-using gate)
+- `HYPOTHESES/cards/H_007_cellular_automaton_consciousness.md` — n_bins=4 default ranking baseline
+- `HYPOTHESES/cards/H_003_life_origin.md` (H3.4) — autopoietic Φ nested
+- `HYPOTHESES/cards/H_004_hard_problem.md` Cycle #1 — Φ-function dissociation
+- `HYPOTHESES/cards/H_018_genesis_lifeprint.md`
+- `HYPOTHESES/cards/H_157_law76_mathematical_panpsychism.md` — META-CA Ψ(1/2,1/2)
+- `HYPOTHESES/cards/H_204_*.md` (phi_spatial-using gate)
 - `HEXAD/C/c_lib.hexa::c_measure_phi` — RFC 036 phi_spatial 진입점
-- `UNIVERSE/state/h007_ca_phi_2026_05_23/` — template smoke (직접 base)
+- `HYPOTHESES/state/h007_ca_phi_2026_05_23/` — template smoke (직접 base)
 
 ---
 
@@ -160,5 +160,5 @@ UNIVERSE infra · phi_spatial n_bins sensitivity sweep
 
 run command:
 ```
-HEXA_MEM_UNLIMITED=1 hexa run UNIVERSE/state/infra_phi_n_bins_2026_05_23/run_phi_n_bins.hexa
+HEXA_MEM_UNLIMITED=1 hexa run HYPOTHESES/state/infra_phi_n_bins_2026_05_23/run_phi_n_bins.hexa
 ```

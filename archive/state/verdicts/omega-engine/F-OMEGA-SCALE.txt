@@ -18,7 +18,7 @@ host       : RunPod H100 80GB SXM (persistent /workspace, $3.29/hr) · torch 2.4
 method     : per rung — train_to_competence (causal_ca=True, dual-head a/g, AdamW cosine+warmup)
              to val_ce < uniform + leak self-test 0.000, then the SAME OH1 K-form gate sweep
              (collect base/A/G ONCE on disjoint gate+test windows N=12000, fit/eval K forms on the
-             SAME test features). harness UNIVERSE/omega_scale_ladder.py reuses
+             SAME test features). harness HYPOTHESES/omega_scale_ladder.py reuses
              omega_trained_leakfree.run_rung + omega_gate_form_sweep.run_sweep VERBATIM. No
              d512-hardcoded cross-check for non-d512 (the #1800/#1801 ref is dim-specific); the
              d512 rung re-trained+re-swept here IS the #1801 reproduction check.
@@ -84,5 +84,5 @@ ckpt sha256 (all HF-PRIVATE dancinlab/omega-cdv2-scale-d{N}):
   d1024  258dc5ca42d312960e25424c444bb85a73842d74bdada0ac009afc625ac34267 (1,340,955,602 B)
   d768x2 6438f1629313032911840fd0db28aeeb9697766f2c845f0a81c7772e4984b8cb (759,330,042 B)
 
-artifacts  : UNIVERSE/omega_scale_ladder.py · exports/sweep/omega-scale-ladder/ledger.json ·
+artifacts  : HYPOTHESES/omega_scale_ladder.py · exports/sweep/omega-scale-ladder/ledger.json ·
              .fire-recover/omega-scale-ladder/{omega_scale_ladder_results.json, ladder.log}

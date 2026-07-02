@@ -9,7 +9,7 @@ SUBSTRATE   : local CPU, $0  ·  torch /private/tmp/gauge_venv (2.12.0)
 MODEL       : anima-clm-chat-303m (ByteGPT-303M d1024/L24/H16/block512, V256, 303,097,856 p)
               ckpt state/chat_303m/h1129c_chat.pt (the PRODUCTION dialogue-FT mouth, H_1160)
 CORPUS      : data/corpus.txt (5.0MB git-tracked) for corpus-absence (G2 method, H_1140)
-EVALUATORS  : FROZEN, reused VERBATIM from UNIVERSE/gauge_lib.py (NO metric re-invention, p7):
+EVALUATORS  : FROZEN, reused VERBATIM from HYPOTHESES/gauge_lib.py (NO metric re-invention, p7):
               _decode (top-k=40 temp=0.7 sampling, seed_rng), known_word_ratio,
               _content_ngrams, _corpus_absent, _words, _jaccard.
               The composition seed reuses the EXACT G1 recombination construction
@@ -21,7 +21,7 @@ WHY G6 IS THIN (the precise diagnosis, reproduced this run, baseline below)
 --------------------------------------------------------------------------------
 G6 frozen spec (MODEL.md): from ideation seeds, >=5 corpus-absent coherent ideas each
 combinatorially DISTINCT (pairwise token-Jaccard < 0.5) AND >=1 FALSIFIABLE corpus-absent
-hypothesis. The live gate (UNIVERSE/verify303m_g6.py) THIN on TWO modes:
+hypothesis. The live gate (HYPOTHESES/verify303m_g6.py) THIN on TWO modes:
 
  (1) COUNT  : 4/5 distinct (need >=5). On the 5 IDEATION_SEEDS, seed-5 collapses to '|'
               (kwr=0.00, incoherent) -> only 4 coherent -> 4 distinct. One short.

@@ -11,8 +11,8 @@ anima 는 hexa-lang 류의 `compiler/atlas/embedded.gen.hexa` atom 레지스트�
 
 | 레지스트리 | 경로 | 규모 (MEASURED) |
 |---|---|---|
-| 가설 인덱스 (canonical SSOT) | `UNIVERSE/HYPOTHESES.jsonl` | **1469** 줄/레코드 (JSON-bad 0) |
-| 가설 카드 | `UNIVERSE/cards/*.md` | 1149 파일 |
+| 가설 인덱스 (canonical SSOT) | `HYPOTHESES/HYPOTHESES.jsonl` | **1469** 줄/레코드 (JSON-bad 0) |
+| 가설 카드 | `HYPOTHESES/cards/*.md` | 1149 파일 |
 | frozen verdict 증거 원장 | `state/verdicts/*/` | 978 디렉터리 · 내부 `*.txt` 1567 |
 | 실험 결과 ledger | `state/**/result.json` | 342 파일 |
 | 도메인 verdict (멀티축) | `H911X/verdicts/*.verdict.md` | 5 축 (cosmology·math·physics·multimodal·philosophy) |
@@ -23,7 +23,7 @@ anima 는 hexa-lang 류의 `compiler/atlas/embedded.gen.hexa` atom 레지스트�
 verdict tier 는 **engine-native live core/ 디코드 증거**가 있어야 박제 — `.py`+torch/numpy 미러는
 자동 DIRECTIONAL, hard-gate 1 = `tool/enforce_anima_gates.py` 기계 강제).
 
-## TOTALS (UNIVERSE/HYPOTHESES.jsonl, n=1469 · MEASURED)
+## TOTALS (HYPOTHESES/HYPOTHESES.jsonl, n=1469 · MEASURED)
 
 verdict/tier 필드는 자유텍스트·고-카디널리티 → canonical 버킷으로 분류:
 

@@ -1,6 +1,6 @@
 # H_1632 — Galois-closure concept-lattice binding mouth (FCA meet/join), 303M — frozen pre-registration
 
-**Card SSOT:** `UNIVERSE/cards/H_1632_galois_lattice_meet_bind.md` (mechanism + ablation logic).
+**Card SSOT:** `HYPOTHESES/cards/H_1632_galois_lattice_meet_bind.md` (mechanism + ablation logic).
 
 **Hypothesis:** Binding as a Galois closure (Formal Concept Analysis) — extent/intent gates derived to
 a closed (extent,intent) formal concept via AND-pool (soft-min / log-product) — is a MEET/conjunction

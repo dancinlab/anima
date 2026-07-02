@@ -1,4 +1,4 @@
-// UNIVERSE/state/h216_meta_axis_reflexive_2026_05_23/run_h216.hexa
+// HYPOTHESES/state/h216_meta_axis_reflexive_2026_05_23/run_h216.hexa
 // H_216 — meta-axis-of-axes reflexive Φ smoke (raw#12)
 //
 //   Question (reflexive): does the axis-enumeration recursion (AXES.md
@@ -39,7 +39,7 @@ fn _DIM() -> int  { return 8 }    // recorded temporal-trajectory length / cell
 fn _WARM() -> int { return 8 }    // warmup steps before recording
 fn _REPS() -> int { return 5 }    // deterministic rep count
 fn _state_dir() -> string {
-    return "/Users/ghost/core/anima/.claude/worktrees/agent-a292dc9ed1887b67c/UNIVERSE/state/h216_meta_axis_reflexive_2026_05_23"
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a292dc9ed1887b67c/HYPOTHESES/state/h216_meta_axis_reflexive_2026_05_23"
 }
 
 // ── small int helpers (hexa big-int multiply fragile) ────────────────────
@@ -425,7 +425,7 @@ fn main() {
     j = j + "  },\n"
     j = j + "  \"verdict_rule\": \"SUPPORTED iff C1+C2+C3 PASS (C4 by-construction); FALSIFIED if Φ(d=15) ≤ Φ(d=1); else PARTIAL/FAIL\",\n"
     j = j + "  \"verdict\": \"" + verdict + "\",\n"
-    j = j + "  \"reflexive_self_instance\": \"H_216 is the 72nd axis to UNIVERSE/AXES.md catalog — measurement on the catalog's own meta-structure (H216.5 self-validation criterion).\",\n"
+    j = j + "  \"reflexive_self_instance\": \"H_216 is the 72nd axis to HYPOTHESES/AXES.md catalog — measurement on the catalog's own meta-structure (H216.5 self-validation criterion).\",\n"
     j = j + "  \"L4_carve_out\": \"phi_spatial directional verdict ≠ phenomenal hard problem resolution (H_004 boundary preserved).\"\n"
     j = j + "}\n"
     write_file(_state_dir() + "/result.json", j)

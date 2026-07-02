@@ -1,9 +1,9 @@
 # GRAND-THEOREMS — dissolved  index (H_9010–H_9033)
 
- 폴더 해체 후 캐노니컬 편입(2026-06-14): hypothesis→`UNIVERSE/H_*.md`, harness→`UNIVERSE/harness/`, verdict→`.verdicts/<n>_<slug>/`.
+ 폴더 해체 후 캐노니컬 편입(2026-06-14): hypothesis→`HYPOTHESES/H_*.md`, harness→`HYPOTHESES/harness/`, verdict→`.verdicts/<n>_<slug>/`.
 양자 H_9010–10 = landmark급 확립결과 재현증명; G1–G3·G6–G16 = 우리 발견 토대 독창 대가설/정리. p7·$0.
 
-| H_ | 원래 id | 정리/가설 | harness (UNIVERSE/harness/) | verdict (.verdicts/) |
+| H_ | 원래 id | 정리/가설 | harness (HYPOTHESES/harness/) | verdict (.verdicts/) |
 |---|---|---|---|---|
 | H_9010 | H_9010 | CHSH–Tsirelson |S|=2√2 | h9010_chsh_tsirelson.py | 9010_chsh_tsirelson/H_9010.txt |
 | H_9011 | H_9011 | GHZ unconditional nonlocality | h9011_ghz_nonlocality.py | 9011_ghz_nonlocality/H_9011.txt |

@@ -49,7 +49,7 @@ channels (h1039/h1062/h1114 per-channel pattern) → faithful IIT-4.0 φ_EI of t
 MIRROR DISCIPLINE (a_phi_iit4_tool — the H_1043 nats-bug lesson)
 ----------------------------------------------------------------
 φ verdicts use a python mirror PROVEN ≡ stdlib iit4/faithful_phi.hexa. BEFORE
-scoring: (1) live `hexa run UNIVERSE/h1012_ref_faithful.hexa` re-captures the
+scoring: (1) live `hexa run HYPOTHESES/h1012_ref_faithful.hexa` re-captures the
 LIVE stdlib faithful_phi refs at n=4, n=5 AND n=6 (n=6 = THE SCORING n) and the
 CPU mirror must reproduce them verbatim; (2) h1012.prove_mirrors_at_n re-proves
 BOTH mirrors ≡ stdlib at n=4 AND n=5. ABORT if any proof fails. MI in BITS
@@ -176,7 +176,7 @@ def live_stdlib_faithful_reproof():
     reference and require the CPU mirror to reproduce it at n=4,5,6 (n=6 = the
     SCORING n). Verbatim stdout."""
     ref_hexa = os.path.join(HERE, "h1012_ref_faithful.hexa")
-    print("  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa")
+    print("  live stdlib run: hexa run HYPOTHESES/h1012_ref_faithful.hexa")
     out = subprocess.run(["hexa", "run", ref_hexa], capture_output=True,
                          text=True, timeout=300, cwd=os.path.join(HERE, ".."))
     print("  ── verbatim stdlib stdout ──")

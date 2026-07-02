@@ -1,4 +1,4 @@
-// UNIVERSE/state/h277_turing_completeness_phi_2026_05_25/run_h277.hexa
+// HYPOTHESES/state/h277_turing_completeness_phi_2026_05_25/run_h277.hexa
 // H_277 — turing-completeness-Φ-threshold (AXES Round 5 information/computation
 //         promote · raw#12 · H_007 "Class-IV-unique" + H_225/H_232 Class-II
 //         anomaly의 computability-축 sister).
@@ -38,13 +38,13 @@
 //     CA substrate (H_232/H_250 와 byte-equal: dim=12, warm=8, periodic boundary,
 //     5 deterministic reps, RFC 036 phi_spatial via phi_helper).
 //
-//   Φ primitive: phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) →
+//   Φ primitive: phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317) →
 //     c_measure_phi → RFC 036 phi_spatial (READ-ONLY import; Φ ≥ 0 by construction).
 //
 //   ⚠ RELATIVE-PATH run: `cd` into this dir then `hexa run run_h277.hexa`.
 //     result.json 은 cwd 상대경로로 기록 (절대경로 hardcode 시 silent no-op).
 // ════════════════════════════════════════════════════════════════════════
-import "UNIVERSE/lib/phi_helper.hexa"
+import "HYPOTHESES/lib/phi_helper.hexa"
 
 // ── config (deterministic; H_232/H_250 와 byte-equal substrate) ──────────────
 fn _N()    -> int { return 16 }   // lattice length (life_phi_n / H_007 _N)
@@ -179,7 +179,7 @@ fn main() {
             + " warm=" + to_string(_WARM()) + " reps=" + to_string(_REPS())
             + " n_bins=" + to_string(life_phi_nbins())
             + " margin=" + to_string(_MARGIN()) + " (deterministic, $0 mac local)")
-    println("  Φ primitive: phi_with UNIVERSE/lib/phi_helper.hexa → RFC 036 phi_spatial (Φ>=0)")
+    println("  Φ primitive: phi_with HYPOTHESES/lib/phi_helper.hexa → RFC 036 phi_spatial (Φ>=0)")
     println("================================================================")
 
     let rule_univ   = 110   // Class IV · Cook 2004 Turing-complete (유일 증명 universal ECA)
@@ -272,7 +272,7 @@ fn main() {
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
     j = j + "  \"axis\": \"information/computation (AXES Round 5) — computability/Turing-completeness\",\n"
-    j = j + "  \"phi_primitive\": \"phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial\",\n"
+    j = j + "  \"phi_primitive\": \"phi_with from HYPOTHESES/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial\",\n"
     j = j + "  \"config\": { \"N\": " + to_string(_N()) + ", \"dim\": " + to_string(_DIM())
           + ", \"warm\": " + to_string(_WARM()) + ", \"reps\": " + to_string(_REPS())
           + ", \"n_bins\": " + to_string(life_phi_nbins())

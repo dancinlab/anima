@@ -1,4 +1,4 @@
-// UNIVERSE/state/h630_d2_verdict_landscape_raster_N120/run.hexa
+// HYPOTHESES/state/h630_d2_verdict_landscape_raster_N120/run.hexa
 // H_630 — verdict landscape meta-map · RASTER #4 (2026-05-28, axis D2)
 //
 //   Lineage (H_238 family):
@@ -67,7 +67,7 @@ fn _ROOT() -> string {
     return "/Users/ghost/core/anima/UNIVERSE"
 }
 fn _STATE_DIR() -> string {
-    return "/Users/ghost/core/anima/UNIVERSE/state/h630_d2_verdict_landscape_raster_N120"
+    return "/Users/ghost/core/anima/HYPOTHESES/state/h630_d2_verdict_landscape_raster_N120"
 }
 
 // prior raster (#3, N=96, DISK) headline — for trend comparison
@@ -289,7 +289,7 @@ fn _title_domains(title: string, base: string) -> [string] {
 // ── main ────────────────────────────────────────────────────────────────
 fn main() {
     println("H_630 — verdict landscape meta-map · RASTER #4 (2026-05-28, axis D2)")
-    println("  source: UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)")
+    println("  source: HYPOTHESES/H_*.md DISK per-file scan (8-source verdict + 2-source domain)")
     println("")
 
     let listing = exec("ls " + _ROOT() + "/H_*.md | grep -v 'H_238_' | sort -V").trim()
@@ -655,7 +655,7 @@ fn main() {
     j = j + "  \"hexa_only\": true,\n"
     j = j + "  \"llm\": \"none\",\n"
     j = j + "  \"cost\": \"$0 mac local\",\n"
-    j = j + "  \"source\": \"UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)\",\n"
+    j = j + "  \"source\": \"HYPOTHESES/H_*.md DISK per-file scan (8-source verdict + 2-source domain)\",\n"
     j = j + "  \"prior_raster3\": { \"date\": \"2026-05-26\", \"N\": " + to_string(_PRIOR_N()) + ", \"source\": \"DISK per-file\", \"life_supp_rate\": " + to_string(_PRIOR_LIFE()) + ", \"consciousness_supp_rate\": " + to_string(_PRIOR_CONSC()) + ", \"gap\": " + to_string(_PRIOR_GAP()) + " },\n"
     j = j + "  \"config\": { \"N_files\": " + to_string(n) + ", \"n_domains\": " + to_string(nd) + ", \"source\": \"disk per-file\", \"H_238_self_excluded\": true, \"trend_eps\": " + to_string(_EPS()) + " },\n"
 

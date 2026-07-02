@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  UNIVERSE/state/h002_universe_phi_nested_2026_05_25/run_c2.hexa
+//  HYPOTHESES/state/h002_universe_phi_nested_2026_05_25/run_c2.hexa
 //
 //  H_002 Cycle #2 — C2 (Φ_universe nested) faithful-proxy measurement.
 //
@@ -57,11 +57,11 @@
 //                                  collapse Φ to 0 (proxy responds to coupling).
 //
 //  Run:
-//    hexa parse UNIVERSE/state/h002_universe_phi_nested_2026_05_25/run_c2.hexa
-//    hexa run   UNIVERSE/state/h002_universe_phi_nested_2026_05_25/run_c2.hexa
+//    hexa parse HYPOTHESES/state/h002_universe_phi_nested_2026_05_25/run_c2.hexa
+//    hexa run   HYPOTHESES/state/h002_universe_phi_nested_2026_05_25/run_c2.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
-import "UNIVERSE/lib/phi_helper.hexa"
+import "HYPOTHESES/lib/phi_helper.hexa"
 
 // ── config (deterministic, frozen) ──────────────────────────────────────
 fn _N() -> int    { return 16 }   // lattice cells — LIFE-lane canonical (phi_helper)
@@ -70,7 +70,7 @@ fn _WARM() -> int { return 8 }    // warmup discard  — LIFE-lane canonical
 fn _N_SCALE() -> int { return 6 } // cosmic-web / cluster / stellar / planetary / bio / neural
 
 fn _OUT_JSON() -> string {
-    return "/Users/ghost/core/anima/UNIVERSE/state/h002_universe_phi_nested_2026_05_25/result_c2.json"
+    return "/Users/ghost/core/anima/HYPOTHESES/state/h002_universe_phi_nested_2026_05_25/result_c2.json"
 }
 
 // ── 6 cosmic scales (nested hierarchy, sparse → dense connectivity) ──────

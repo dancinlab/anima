@@ -53,7 +53,7 @@ DESIGN (frozen before running, no goalpost moves)
 MIRROR DISCIPLINE (a_phi_iit4_tool — the H_1043 nats-bug lesson)
 ----------------------------------------------------------------
 φ verdicts use the faithful IIT4 stdlib engine or a python mirror PROVEN ≡
-stdlib. BEFORE scoring: (1) live `hexa run UNIVERSE/h1012_ref_faithful.hexa`
+stdlib. BEFORE scoring: (1) live `hexa run HYPOTHESES/h1012_ref_faithful.hexa`
 re-captures the LIVE stdlib faithful_phi refs at n=4, n=5 AND n=6 (the scoring
 n!) and the mirror must reproduce them verbatim; (2) h1012.prove_mirrors_at_n
 re-proves BOTH mirrors ≡ stdlib at n=4 AND n=5 (the established h1062/h1064
@@ -196,10 +196,10 @@ def fmt(x):
 # ---- STEP 0 — mirror ≡ stdlib re-proof BEFORE scoring (a_phi_iit4_tool) ----
 def live_stdlib_faithful_reproof():
     """Run the LIVE stdlib faithful_phi engine via `hexa run` on the fixed-trace
-    reference (UNIVERSE/h1012_ref_faithful.hexa) and require the CPU mirror to
+    reference (HYPOTHESES/h1012_ref_faithful.hexa) and require the CPU mirror to
     reproduce it at n=4, n=5 AND n=6 (n=6 = THE SCORING n). Verbatim stdout."""
     ref_hexa = os.path.join(HERE, "h1012_ref_faithful.hexa")
-    print("  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa")
+    print("  live stdlib run: hexa run HYPOTHESES/h1012_ref_faithful.hexa")
     out = subprocess.run(["hexa", "run", ref_hexa], capture_output=True,
                          text=True, timeout=300, cwd=os.path.join(HERE, ".."))
     print("  ── verbatim stdlib stdout ──")

@@ -6,4 +6,4 @@ Canonical verdict + curve live in .verdicts/clm-freeze-depth/
   clm_freeze_depth_result.json    — full machine-readable sweep result
 
 Scaffold: CLM/model/h872_freeze_depth_sweep.hexa
-Hypothesis: UNIVERSE/H_872_clm_freeze_depth_sweep.md
+Hypothesis: HYPOTHESES/H_872_clm_freeze_depth_sweep.md

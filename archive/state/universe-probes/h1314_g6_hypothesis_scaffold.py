@@ -31,7 +31,7 @@ ARMS (each scored on DIST + FALS over 5 ideas, 3 seeds):
                  hypothesis FORM but a generic prompt-length / token-prime artifact.
 
 Reuses the H_1305 frozen `_is_falsifiable` detector VERBATIM (NO redefinition, p7) +
-UNIVERSE/gauge_lib.py decode/evaluators VERBATIM (no metric re-invention). 3 seeds. $0
+HYPOTHESES/gauge_lib.py decode/evaluators VERBATIM (no metric re-invention). 3 seeds. $0
 CPU torch-mouth (the SAME gauge_lib._decode path the live G6 gate uses). DIRECTIONAL
 R1 mirror (engine-native byte-exact reconfirm = follow-on only if clean-GREEN;
 a_engine_native_learning).

@@ -29,7 +29,7 @@ fixed N_REGIMES=10; metric = d(DERIVATIVE,METRONOME) on stage-decode per cap):
   on a fine ladder, not coarse aliasing. Otherwise CLOSED-NEGATIVE (a_paper_negative_ok):
   the H_1182 two-peak hint was coarse-ladder aliasing; one ridge.
 
-toy ($0 CPU numpy, deterministic). Reuses UNIVERSE/h1163_tick_decode_metric.py + h1178/
+toy ($0 CPU numpy, deterministic). Reuses HYPOTHESES/h1163_tick_decode_metric.py + h1178/
 h1182 sweep pattern VERBATIM (grow_arm / stage_decode_accuracy / cohen_d_paired /
 make_audio_stream / SEEDS), only N_REGIMES_AUDIO pinned to 10 + a fine cap ladder. Live
 CORE + scale UNVERIFIED (a_scale_honest_scope). Lane-M growth lane.
@@ -121,7 +121,7 @@ def main():
             f"(F1 separated-peaks={f1}, F2 real-valley={f2}; peaks={[(k,round(d,2)) for k,d,_ in peaks_sorted]}, "
             f"valley_min={valley_min}). H_1182's two-peak hint was coarse-ladder aliasing / one bumpy ridge; "
             f"H_1178's unimodal picture is not split by a fine ladder. a_paper_negative_ok."),
-        "scope": "TOY ($0 CPU numpy, %d seeds, fixed N=10). Reuses UNIVERSE/h1163_tick_decode_metric.py + "
+        "scope": "TOY ($0 CPU numpy, %d seeds, fixed N=10). Reuses HYPOTHESES/h1163_tick_decode_metric.py + "
                  "h1182 sweep VERBATIM; only N_REGIMES_AUDIO pinned + fine cap ladder. Live CORE + scale "
                  "UNVERIFIED (a_scale_honest_scope)." % len(H.SEEDS),
     }
