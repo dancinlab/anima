@@ -66,10 +66,29 @@ closure 자체는 작다: repo 8파일 22,818라인(최대 `core/engine_cli.hexa
   bump 후 cold 1회 → warm. **이 PR의 CI run이 새 툴체인 첫 cold 실측이다** —
   결과는 아래 효과 실측 절에 update-in-place.
 
-## 효과 실측 (post-fix · ghost CI)
+## 효과 실측 (post-fix · ghost CI · 최종)
 
-- (기입 대기 — 이 PR의 `engine compile + gates + smoke` 잡 duration으로 채움.
-  기준선: cold ~12.7min / 잡 전체 ~34-40min.)
+| 케이스 | 전 | 후 | 근거 run |
+|---|---|---|---|
+| **warm (최빈: 소스불변 재실행·재푸시)** | cold와 동일(~27min, 키 결함으로 사실상 항상 cold) | **1초** | 28647898258 (gate 08:18:41→42) |
+| cold (core/cli 변경) | 26m55s (v0.586.0) | 24m36s (stream+#4456, ~9%) | 28644656962 → 28646394898 |
+| hexat 경로 (`hexa build`·개발 루프) | 2차 스케일링 (11k라인 48.3s) | 선형 ~0.2ms/line (2.24s, 21.6×) | hexa-lang #4454 |
+
+- 경로 판정: ghost 게이트 = quiet native aprime(로그에 hexat 마커 無) — strlit fix는
+  hexat 경로(개발자 `hexa build`·release.yml 경로)에 적용, CI 게이트 cold에는 미적용.
+- 캠페인 실효 요약: **매일 체감하던 "빌드 느림"의 최대 성분(재실행 warm 미스)이 1초로
+  종결**. cold 24분은 aprime pass CPU 비용으로 좁혀졌고, 상시 계측(HEXA_CG_PROFILE=1)이
+  다음 cold마다 pass 분해를 자동 기록한다.
+
+## 고갈 판정 (2026-07-03 17:2x)
+
+즉시 실행 가능한 레버는 소진 — 6 PR 착륙(anima #2849·#2853·#2856·#2859·#2860 ·
+hexa-lang #4454·#4456). 남은 두 갈래는 데이터/규모 게이트:
+
+1. **pass-표적 업스트림 수리** — 다음 자연 cold의 profile 로그(계측 배선 완료)로
+   지배 pass 확정 후 hexa-lang에서 조준. (외부 대기: 아무 core 변경 머지가 트리거)
+2. **per-module compile + object cache** — 업스트림 툴체인 아키 변경(대형).
+   profile 판정 후 개시 여부 결정.
 
 ## 남은 follow-on
 
