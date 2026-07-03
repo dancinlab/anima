@@ -38,3 +38,15 @@ TIER: 🟠 DIRECTIONAL — the §2 forward-model mechanism demonstrably front-lo
   result is triply-DIRECTIONAL (numpy-mirror · external-oracle · modest-ckpt). Terminal engine-native GREEN
   needs: (a) a practical engine-native decode (fix the CPU-scalar-bound seam, not just GEMM) AND (b) stronger
   chat ckpts so fewer concepts floor. The external-mind b50 bridge stays permanently DIRECTIONAL (H_9118 c9).
+
+=== CORRECTION (fable GREEN-spec review, 2026-07-04) — verdict-integrity/c9 ===
+The above overstated the result. Honest re-statement:
+- The 14-concept MEAN (505.2/502.1) is a 999-CENSORED mean = statistically INVALID. Not a result.
+- Valid comparison = decodable subset (7/14): rerank BETTER 4, SAME 2, WORSE 1 = sign-test p≈0.19 = NOT
+  SIGNIFICANT. So b50-lowering is a SUGGESTIVE TENDENCY, not a confirmed effect.
+- STRUCTURAL: rerank scores with listener A and b50 evaluates with the SAME listener A → quasi-circular.
+  GREEN needs CROSS-LISTENER as the MAIN design (score A, eval distinct B) + random-of-K + margin-decomp.
+- SEAM (good): b50 is teacher-forced CE (not autoregressive) → KV-cache prefix-reuse + batched suffix CE
+  collapses cost harness-side (no hexa upstream) → engine-native practical.
+Corrected tier: 🟠 DIRECTIONAL-UNDERPOWERED/SUGGESTIVE. GREEN gate = floor≤30% ckpt + cross-listener main
++ engine-native (KV-reuse) + paired Wilcoxon p<0.05 on decodable subset (NOT mean).
