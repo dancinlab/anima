@@ -77,3 +77,5 @@ Every A11 arm: best_distinct <= 1 <= max_single -> **0/1 HIT.**
   composed_nce PLUS constructive_bind (TPR/HRR bind axis), both engine-native mouth-gen
   scored; H_1602 was the objective-only axis without the TPR-slot bind. Both -> floor.
 - cost: shared RTX 5090 session ~2.5-3h, est. ~$1.5-2 total (coverage + A11 + baseline).
+
+> **Follow-on (마지막 escape cell 닫힘, pod43736708):** CE-deleted TPR-forward-slot(WIRE_SPEC v0.3)을 빌드+학습+engine-native `--py` 채점 → CLM 0/5 ∧ ByteGPT(G0🟢) 0/5 = FALSIFIED-CEILING. TPR=W_eff·yn 선형붕괴로 **terminal by construction**. 상세 = [`RESULT_tpr_wire.md`](RESULT_tpr_wire.md).
