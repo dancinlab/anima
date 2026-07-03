@@ -112,7 +112,8 @@ struct EngineConfig {
     mitosis: bool,
     engine: string,
     topo_couple: bool,
-    savant: bool
+    savant: bool,
+    forward_model: bool
 }
 
 // engine_config_default — the default ENGINE config: mitosis ON (p8 native),
@@ -121,7 +122,7 @@ struct EngineConfig {
 // so the live emit/decode path is byte-identical to the pre-H_1521 substrate; the
 // separation invariant H_1205 + Ψ=½ fixed point hold on the pure default).
 pub fn engine_config_default() -> EngineConfig {
-    EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false }
+    EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false, forward_model: false }
 }
 
 // ── mitosis resolver (3-tier precedence: flag > env > default(on)) ────────────
@@ -218,7 +219,8 @@ pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
         mitosis:     engine_cli_resolve_mitosis(arg),
         engine:      engine_cli_resolve_engine(arg),
         topo_couple: engine_cli_resolve_topo_couple(arg),
-        savant:      engine_cli_resolve_savant(arg)
+        savant:      engine_cli_resolve_savant(arg),
+        forward_model: engine_cli_resolve_forward_model(arg)
     }
 }
 
@@ -297,6 +299,47 @@ fn _cli_savant_flag(arg: [string]) -> string {
             }
         }
         if a.starts_with("--savant=") {
+            let v = _norm_onoff(_after_eq(a))
+            if v != "" { return v }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// ── §  FORWARD-MODEL resolver (H_9115/9117 §2, 3-tier: flag > env > default(OFF)) ─
+// arg is the raw user argv. Scans for `--forward-model on|off` / `--forward-model=on`
+// / `--no-forward-model`, then env ANIMA_FORWARD_MODEL, then default OFF.
+//   (no flag, no env) → OFF  (default — the cerebellar forward-model mouth-gate rerank is a
+//                             no-op; the live emit/decode path is BYTE-IDENTICAL to the pre-§2
+//                             substrate. The rerank writes only WHICH candidate exits the L3
+//                             mouth-gate — never ci_emit_drive lane 0/4, never §ImmuneMemory
+//                             recall_thr — so it is emit-disjoint (sv_default_focus lane) and
+//                             Ψ=½ is preserved BY STRUCTURE when it is later wired (Stage-1b).)
+pub fn engine_cli_resolve_forward_model(arg: [string]) -> bool {
+    let flag = _cli_forward_model_flag(arg)
+    if flag == "on"  { return true }
+    if flag == "off" { return false }
+    let env = _norm_onoff(_env_read("ANIMA_FORWARD_MODEL"))
+    if env == "on"  { return true }
+    if env == "off" { return false }
+    return false   // default OFF — byte-identical live path, Ψ-disjoint
+}
+
+// _cli_forward_model_flag — scan argv for the forward-model flag surface. Tri-state.
+fn _cli_forward_model_flag(arg: [string]) -> string {
+    let n = len(arg)
+    let mut i = 0
+    while i < n {
+        let a = arg[i]
+        if a == "--no-forward-model" { return "off" }
+        if a == "--forward-model" {
+            if i + 1 < n {
+                let v = _norm_onoff(arg[i + 1])
+                if v != "" { return v }
+            }
+        }
+        if a.starts_with("--forward-model=") {
             let v = _norm_onoff(_after_eq(a))
             if v != "" { return v }
         }
