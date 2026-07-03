@@ -87,11 +87,15 @@ jobs:
       #    않는다(소스 변경 → 해시 변경 → miss → fresh compile; compile 실패는 캐시 못 함).
       # (이 스텝이 install 뒤에 오는 이유 = 설치된 실버전을 키로 사용; restore 는 스텝
       #  위치에서, save 는 잡 끝 Post 에서 일어나므로 게이트 의미는 불변.)
+      # ⚠️ `!core/phi/quantum_types.hexa` 제외 필수 (ci.yml L337 과 동일 키 규약) —
+      # hexa-lang sibling 으로 가는 외부 의존 symlink 라 solo checkout 에선 dangling →
+      # hashFiles 가 fatal → 잡이 캐시 스텝에서 즉사 (7일/61연속 릴리스 RED 근본원인 ·
+      # run 28654755504 캡처 · anima#2664 동족).
       - name: Cache — hexa warm compile only (~/.hexa-cache · NOT toolchain)
         uses: actions/cache@v4
         with:
           path: ~/.hexa-cache
-          key: hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-${{ hashFiles('core/**', 'cli/**') }}
+          key: hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-${{ hashFiles('core/**', 'cli/**', '!core/phi/quantum_types.hexa') }}
           restore-keys: |
             hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-
 
