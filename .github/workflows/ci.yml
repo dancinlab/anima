@@ -14,6 +14,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # 수동 트리거 (hexa-lang 게이트들과 동일) — 커밋 없이 cold 재측정/profile 수확
+  # run 을 만들 수 있다 (2026-07-03 profile 사냥에서 부재가 실통증이었음).
+  workflow_dispatch:
 
 # Cancel superseded runs of the same ref (a rapid push/PR series otherwise piles up
 # many duplicate github-hosted macOS jobs against the scarce macOS runner pool — the
