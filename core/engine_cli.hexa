@@ -348,6 +348,33 @@ fn _cli_forward_model_flag(arg: [string]) -> string {
     return ""
 }
 
+// ── §  fm_prefix_decodability — the forward-model scorer (H_9117 front-loading proxy) ──
+//
+// The cerebellar forward-model's SCORE for a candidate emit. `margins[i]` is the contrastive
+// listener margin at prefix position i = (target referent score − best-distractor score) after
+// the receiver has seen the first i discriminative units of the candidate. Front-weighted by a
+// geometric decay so EARLY wins dominate: a candidate whose discriminative content is FRONT-LOADED
+// (target wins in few bytes) scores higher than one that only wins late. This is the cheap in-engine
+// proxy H_9117 validated (filler-prefix onset predicts external oracle-decodability r=0.69) — NOT a
+// contrastive CLM-listener (that heavier path was shown unnecessary, H_9117 REDIRECT).
+//
+// PURE (no substrate mutation, no Ψ touch). Used by the Stage-1c mouth-gate best-of-K rerank (gated
+// on cfg.forward_model) to pick WHICH candidate exits — the FM's only write is the argmax selection;
+// it never touches ci_emit_drive lane 0/4 or §ImmuneMemory recall_thr (a_substrate_disjoint).
+// decay = ep_fm_prefix_decay() (front-byte geometric weight).
+pub fn fm_prefix_decodability(margins: [float], decay: float) -> float {
+    let n = len(margins)
+    let mut acc = 0.0
+    let mut w = 1.0
+    let mut i = 0
+    while i < n {
+        acc = acc + w * margins[i]
+        w = w * decay
+        i = i + 1
+    }
+    return acc
+}
+
 // ── §  mitosis GROWTH tick — the smallest honest gated unit ───────────────────
 //
 // HONEST SCOPE (a_core_engine_map · no phantom wiring): the CORE engine loop
