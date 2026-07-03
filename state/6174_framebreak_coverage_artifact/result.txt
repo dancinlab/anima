@@ -1,0 +1,27 @@
+=== H_6174 system-G1 frame-break coverage-artifact probe (DIRECTIONAL) ===
+pipe: mouth ideate(A),ideate(B) -> kosmos_merge -> CONCAT realize (frame-break ⑤)
+bars (FROZEN): COV_PASS>=12  EARN_PASS>=12  REL_PASS>=12
+
+  G-COV  coverage cov>=2 & >max_single : 24/24  (EXISTING bar)
+  G-REL  cross-vocab A<->B relation>=1 :  0/24  (PRIMARY binding discriminator)
+  G-EARN right>wrong-pair coverage     : 24/24  (CONFOUNDED = vocab-presence, NOT binding)
+  G-SHUF wrong-anchor coverage DROP    : 24/24  (also vocab-presence, not binding)
+
+  frozen-G1 coverage bar   : PASS (24/24)
+  genuine binding RELATION : FAIL (0/24)
+
+VERDICT: COVERAGE-ARTIFACT / JUXTAPOSITION — frame-break concat CLEARS the
+         frozen G1 coverage bar (both concepts surfaced) but produces ZERO
+         A<->B binding relations (REL 0/24). The relocation avoids the trunk
+         binding wall precisely by NOT binding (juxtaposing) — so it can never
+         satisfy any relation-based recombination criterion. Coverage-based G1
+         is SPOOFABLE by relocation; genuine binding still needs the mouth to
+         emit a cross-concept relation = the trunk-objective wall (H_1602).
+
+first 6 rows (a,b,wrong, cov_right,cov_wrong, cross_rel, max_single):
+   ('ocean', 'forest', 'market', 2, 1, 0, 1)
+   ('engine', 'music', 'market', 2, 1, 0, 1)
+   ('market', 'medicine', 'engine', 2, 1, 0, 1)
+   ('desert', 'galaxy', 'engine', 2, 1, 0, 1)
+   ('kitchen', 'law', 'engine', 2, 1, 0, 1)
+   ('glacier', 'circuit', 'engine', 2, 1, 0, 1)
