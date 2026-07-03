@@ -119,6 +119,22 @@ pass 미확정 — 다음 자연 cold의 프론트-포함 profile 행(계측 상
   verbatim 전사. PR 브랜치 run은 main 푸시 concurrency에 취소되지 않는다 —
   main 푸시 run 2연속 취소(28653234201·28653410492)가 이 우회의 실측 근거.)
 
+## 저녁 세션 추가 실측 (2026-07-03 21:5x · 퍼즐 트랙)
+
+- **ghost cold (v0.592, 건강한 툴체인) = 29m40s** (run 28658183067 PR gate,
+  12:18:46→12:48:26, engine compile OK) — 24m36s(v0.586.1)와 동급 스케일 재확인.
+  이 성공으로 v0.592 warm 캐시 최초 저장 → 소스불변 run 1초대 복원.
+- 저녁 게이트 붕괴 인과 사슬(전부 수리 착륙): hexa-lang Latest 마커 v0.588
+  7일 고착(finalize make_latest 미실효 → 수동 승격 v0.592 + hexa-lang #4478
+  검증 스텝) → stale v0.588 skew(__HEXA_BRC__/binary-not-produced) →
+  ~/.hx 캐시 자체 폐지(anima #2888, fresh install 실측 ~25s) · SIGPIPE(#2884) ·
+  ls-remote 자격증명(#2883) · 태그키(#2882). 부수: GHA cancel이 hexa 네이티브
+  프로세스 못 죽여 Runner.Worker 좀비/aprime 고아 → ssh kill 절차 확립.
+- pass-분해 행: 이 run은 구 브랜치 ci.yml(CG_PROFILE env 부재)라 미산출 —
+  **다음 core-변경 머지의 cold가 env+tee+v0.592로 자동 스트림** (수확 자동화 완비).
+  pool 즉시-분해 워크플로는 2-arm 모두 정직 SKIP(타 세션 라이브 job 보호,
+  재시도 조건 = 호스트 idle + hexa ≥0.591).
+
 ## 재현 경로
 
 - 스크립트: aiden `~/anima-bisect/`(bisect_takeover.sh·bisect2.sh) · summer `~/anima-buildprobe/build_probe.sh`
