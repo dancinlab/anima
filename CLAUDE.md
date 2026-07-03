@@ -61,8 +61,7 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 - **`a_core_engine_map`** — `core/` = A⇄G⇄brain; weights via `core/generator.hexa` L3 slot only (unified `core/decode`+`core/serialize`).
 - **`a_no_archive_import`** — production code (`core/`·`cli/`·`stdlib/`·`agent/`) never `import`s from `archive/`; archive = read-once reference only (understand the math, then port the helper into `core/`), never a code dependency (one-directional invariant above). Enforce-candidate for `.harness/enforce_anima_gates.py` (grep production tree for `archive` imports).
 - **`a_cli_single_entry`** — every engine op via `anima <verb>` (chat·train·evaluate·serialize·sweep), not raw `python3 cli/*.py` (H-ANIMA-SINGLE-ENTRY).
-- **`a_train_flame_forge`** — train+decode = flame+forge GPU; 🔴 GPU decode default, no silent CPU fallback.
-- **`a_clm_gen_pipeline`** — CLMConvMoE via torch REFERENCE → engine `.clm` v0.2; forge = PUBLIC trainer.
+- **`a_eval_py_canonical`** — G0–G6 eval = `anima evaluate --py <clm>` single path (owner session policy · `anima_evaluate_mode`→`cli/evaluate.py` numpy). py 2-production numpy = engine-native **TERMINAL-eligible** (only ad-hoc torch probe = DIRECTIONAL) — an owner override of `a_engine_native_learning` (canonical measurement, not a mirror; may cement a verdict tier). `--py` = fast canonical path when own-GEMM engine decode is scalar-glue-bound; heavy 303M decode on pool (summer/aiden), never mini (swap 🔴 OOM rc=137). dont: hexa det-eval for 303M (OOM) · demoting py 2-production to DIRECTIONAL.
 - **`a_savant_train`** — chat/G6 = SAVANT golden-zone inhibition DISJOINT from emit-drive lane; mouth⊥tool, genius⊥honesty.
 - **`a_mitosis_train`** — p8-literal MITOSIS; 🟢 growth/curriculum/evolution; 🔴 from-scratch pure-split can't learn alone (need gradient).
 - **`a_chat_registers`** — chat standard = Korean·English × general·SNS = all 4 cells; none missing.
