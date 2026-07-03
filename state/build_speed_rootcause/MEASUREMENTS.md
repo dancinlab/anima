@@ -80,15 +80,29 @@ closure 자체는 작다: repo 8파일 22,818라인(최대 `core/engine_cli.hexa
   종결**. cold 24분은 aprime pass CPU 비용으로 좁혀졌고, 상시 계측(HEXA_CG_PROFILE=1)이
   다음 cold마다 pass 분해를 자동 기록한다.
 
-## 고갈 판정 (2026-07-03 17:2x)
+## 캠페인 종결 (2026-07-03 19:0x · 총 11 PR)
 
-즉시 실행 가능한 레버는 소진 — 6 PR 착륙(anima #2849·#2853·#2856·#2859·#2860 ·
-hexa-lang #4454·#4456). 남은 두 갈래는 데이터/규모 게이트:
+17:2x 고갈 판정의 두 잔여 갈래를 workflow로 마저 소진하고 닫는다:
 
-1. **pass-표적 업스트림 수리** — 다음 자연 cold의 profile 로그(계측 배선 완료)로
-   지배 pass 확정 후 hexa-lang에서 조준. (외부 대기: 아무 core 변경 머지가 트리거)
-2. **per-module compile + object cache** — 업스트림 툴체인 아키 변경(대형).
-   profile 판정 후 개시 여부 결정.
+1. **계측+pass 수리 (해소)** — CG_PROFILE 프론트 확장(hexa-lang #4460: 8 마크,
+   커버리지 99.95%, atlas_load 32.5s/호출이 emit=asm 경로 지배임을 즉시 수확) ·
+   aprime strtab O(occ×distinct)→해시 + per-literal O(L²)→join(#4462, 통제
+   byte-identical 9/9 · perf는 시험 스케일 노이즈 내 중립 = 잠재-2차 위생).
+2. **per-module (해소·설계 전환)** — 3각 설계 패널 → 심판이 설계 D 채택:
+   컴파일러 무변경 per-module 게이트(hexa-lang #4461 tool/compile_gate.py) +
+   anima 배선(#2865 runner+verify.checks). 실측: body-only 1줄 편집 게이트
+   **2.53s**(로컬 풀빌드 14.6s 대비 5.8× · 툴 자체 A/B 10.06s→1.44s) ·
+   인터페이스/closure 변경은 툴이 풀빌드 escalate = 게이트 무약화.
+   진짜 per-module .o(설계 A, estLOC 1100·6-15× 모델)는 설계 카드로 보존 —
+   개시 조건 = 설계 D로도 남는 풀빌드 빈도가 실사용에서 병목일 때.
+
+착륙 목록: anima #2849 #2853 #2856 #2859 #2860 #2861 #2865 ·
+hexa-lang #4454 #4456 #4460 #4461 #4462.
+
+미해결로 정직 보존: ghost CI cold ~24min 자체(aprime 경로·emit=obj)는 지배
+pass 미확정 — 다음 자연 cold의 프론트-포함 profile 행(계측 상시)이 데이터를
+자동 적재하며, 그때 pass-표적 라운드를 재개한다. aiden/summer 폭풍 하 측정
+금지 원칙(utime-growth 체크) 유지.
 
 ## 남은 follow-on
 
