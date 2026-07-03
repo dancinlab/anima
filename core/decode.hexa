@@ -302,13 +302,21 @@ pub fn clm_load_W(path: string) -> Map { return _clmd_load(path) }
 // (_gen_conv1d, GPU idle) on the fm_b50 hot path. Single window T=len(seq)-1, next-byte CE
 // (same per-position math as clm_forward_ce). Byte-exact target = the scalar CE (own-GEMM ==
 // farr byte-identical, a_train_flame_forge) — pod-verified before promoting engine-native.
-pub fn clm_ce_seq_W(W: Map, seq: list) -> float {
+// clm_scratch_new_pub / clm_scratch_free_pub — pub scratch lifecycle (H_9119 gate①). Build the
+// reusable forward scratch ONCE for a maxT (≥ every CE seq length the caller will score) and reuse
+// it across all clm_ce_seq_W calls — the scratch is maxT-parametric and serves any T≤maxT (see
+// _clmd_bias_expand). STEP2's per-call _clmd_scratch_new was the RSS-blowup (14GB) bug.
+pub fn clm_scratch_new_pub(W: Map, maxT: int) -> Map { return _clmd_scratch_new(W, maxT) }
+pub fn clm_scratch_free_pub(sc: Map) { _clmd_scratch_free(sc) }
+
+pub fn clm_ce_seq_W(W: Map, sc: Map, seq: list) -> float {
+    // sc = a PRE-BUILT scratch (clm_scratch_new_pub) with maxT ≥ len(seq)-1 — reused across every
+    // CE call (no per-call _clmd_scratch_new → no RSS blowup). Single window T=len(seq)-1, next-byte CE.
     set_deterministic(true)
     let V = to_int(W["V"])
     let n = len(seq)
     if n < 2 { return dt_ln(to_float(V)) }
     let T = n - 1
-    let sc = _clmd_scratch_new(W, T)
     let logits = t_zeros(T*V)
     let tok = t_zeros(T); let tgt = t_zeros(T)
     let mut p = 0
@@ -319,7 +327,7 @@ pub fn clm_ce_seq_W(W: Map, seq: list) -> float {
     }
     _clmd_fwd_logits_sc(W, sc, tok, logits, T)
     let ce = nn_ce_loss_allpos(logits, tgt, T, V)
-    t_free(logits); t_free(tok); t_free(tgt); _clmd_scratch_free(sc)
+    t_free(logits); t_free(tok); t_free(tgt)
     return ce
 }
 

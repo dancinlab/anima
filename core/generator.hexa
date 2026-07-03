@@ -362,6 +362,7 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
     // H_9119 gate① STEP1+STEP2: load the frozen listener ONCE (kills ~1400×/run reload) and
     // score every CE through the GPU forge path (clm_ce_seq_W), not scalar clm_decode_ce_dq.
     let lisW = clm_load_W(listener_ckpt)
+    let lisSc = clm_scratch_new_pub(lisW, 128)   // gate1: scratch built ONCE (maxT=128), reused
     let mut best_text  = ""
     let mut best_score = -1000000.0
     let mut best_i     = -1
@@ -383,12 +384,12 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
                 while bi < pb { pfx = pfx + [cb[bi]]  bi = bi + 1 }
                 // margin = min-CE(prefix + distractor) − CE(prefix + target); >0 = target wins early
                 let seq_t = pfx + _gen_text_to_bytes(" " + target)
-                let ce_t  = clm_ce_seq_W(lisW, seq_t)
+                let ce_t  = clm_ce_seq_W(lisW, lisSc, seq_t)
                 let mut best_d = 1000000.0
                 let mut di = 0
                 while di < len(distractors) {
                     let seq_d = pfx + _gen_text_to_bytes(" " + to_string(distractors[di]))
-                    let ce_d  = clm_ce_seq_W(lisW, seq_d)
+                    let ce_d  = clm_ce_seq_W(lisW, lisSc, seq_d)
                     if ce_d < best_d { best_d = ce_d }
                     di = di + 1
                 }
@@ -400,6 +401,7 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
         }
         oi = oi + 1
     }
+    clm_scratch_free_pub(lisSc)   // gate1: free the load-once scratch
     clm_weights_free_pub(lisW)   // gate① STEP2: free the load-once listener weight-set
     if !got {
         let r1 = clm_decode_argmax(ckpt, seed, gen)
