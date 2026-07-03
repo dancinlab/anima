@@ -718,15 +718,14 @@ pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
 // positional. (When dispatched from cli/anima.hexa's `evaluate` subcommand, anima
 // strips the verb and re-emits the rest after a fresh `--`.)
 fn main() {
-    // DETERMINISM SAFETY-PIN (API 1st-class, #4285/#4214): G0-G6 scoring runs the
-    // model through forge, whose kernels default to fast NON-deterministic (atomic
-    // reduce) since the fast-nondet train flip. Eval verdicts (Ψ-checksum, cross-host
-    // byte-parity, model_ce<uniform) MUST be reproducible, so pin det mode HERE, in
-    // the entry itself, per the CLAUDE.md flame/forge contract ("eval/verdict/decode
-    // call it directly"). This makes a DIRECT `hexa run cli/evaluate.hexa` byte-exact
-    // too — not only the `anima evaluate` wrapper (which also exports HEXA_DET=1 as the
-    // env escape-hatch; API set here takes precedence over env).
-    set_deterministic(true)
+    // DETERMINISM = OPTION (default fast non-det). G0-G6 scoring runs the model through
+    // forge, whose kernels default to fast NON-deterministic (atomic reduce) since the
+    // fast-nondet train flip. Eval verdicts (Ψ-checksum, cross-host byte-parity,
+    // model_ce<uniform) become byte-exact by OPTING IN via the canonical HEXA_DET=1
+    // escape-hatch (runtime env gate, forge_det precedence env > default) — which the
+    // `anima evaluate` wrapper already exports for verdict runs. A DIRECT
+    // `hexa run cli/evaluate.hexa` WITHOUT HEXA_DET=1 now stays fast/un-throttled; add
+    // `HEXA_DET=1` to that command for a byte-exact verdict. No forced pin here.
     let argv = evaluate_collect_argv(args())
     if len(argv) < 1 {
         evaluate_usage()
