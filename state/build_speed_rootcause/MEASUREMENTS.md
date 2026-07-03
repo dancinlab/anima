@@ -50,16 +50,34 @@ closure 자체는 작다: repo 8파일 22,818라인(최대 `core/engine_cli.hexa
 - **CI warm-cache 키 결함 (PR #2849로 수리 완료)**: 버전 미포함 키 → toolchain
   bump + 소스 불변에서 exact-hit 복원(무용) → cold → 재저장 스킵 = 영구-cold.
 
-## 진행 중인 수리 (R3 · hexa-lang 격리 worktree)
+## R3 종결 (hexa-lang 착륙 완료)
 
-- `perf/arm64-regalloc-id2idx` — #3712 reference-match 포트 (byte-identical 게이트)
-- `perf/gen2-chain-flatten` — 체인 평탄화 일반화 (방출 C byte-exact 게이트 + bench 전후)
+- **`_strlit_dedup` O(L²) 수리 = hexa-lang #4454 MERGED** (22/22 CI green · v0.584.0+ 릴리즈).
+  가설 정정: gen2 체인 concat은 무죄(500-term 체인 0.04s) — 진범 = 문자열 리터럴
+  dedup의 전 테이블 선형 스캔. 64-bucket 해시 인덱스, 방출 C byte-identical 10/10
+  (anima decode 파일·self/codegen 자신 포함), fixpoint 보존.
+  실측: 11,211라인 48.31s→2.24s(21.6×), 스케일링 2차→선형(~0.2ms/line).
+- **arm64 regalloc id2idx 포트 = hexa-lang #4456 MERGED**. 정직 실측: wall 파일
+  (runtime_cuda_emit 9,118라인) 247.2s→238.9s = 3.4%뿐 — arm64 fast path가 조밀
+  id를 이미 커버해 x86식 벽 미재현. 가치 = 잠재 O(n²) 제거 + 백엔드 패리티.
+  byte-neutral: 소형 6/6 + 통제 wall파일 asm cmp PASS(비통제 .o 차이는 cwd 아티팩트).
+- **효과 전파 경로**: ghost CI engine compile은 hexat([1/2])+clang([2/2]) 경로라
+  strlit fix가 직접 적용된다. anima CI는 매 run 최신 릴리즈 설치 + #2849 버전 키라
+  bump 후 cold 1회 → warm. **이 PR의 CI run이 새 툴체인 첫 cold 실측이다** —
+  결과는 아래 효과 실측 절에 update-in-place.
+
+## 효과 실측 (post-fix · ghost CI)
+
+- (기입 대기 — 이 PR의 `engine compile + gates + smoke` 잡 duration으로 채움.
+  기준선: cold ~12.7min / 잡 전체 ~34-40min.)
 
 ## 남은 follow-on
 
-1. idle 호스트(또는 렌트 pod)에서 깨끗한 codegen 배율 재측정 → 이 파일 update-in-place.
-2. hexad fork-denial 커널 스핀 결함 — hexa-lang 보드 파일링 완료(fail-fast 수리 기대).
-3. summer cold/warm probe — INDETERMINATE (RUN1이 I/O 웨지에 익사, 웨지 해소 후 회수).
+1. hexad fork-denial 커널 스핀 결함 — hexa-lang 보드 파일링 완료(fail-fast 수리 기대).
+2. per-module compile + object cache — 효과 실측 후에도 cold가 유의미하게 남으면
+   업스트림 대형 follow-on으로 개시.
+3. summer cold/warm probe — CLOSED-INVALID-ENV (utime≈0 커널스핀 2-host 재현,
+   probe 정리 완료; hexa-side warm 동작은 CI 실측으로 갈음).
 
 ## 재현 경로
 
