@@ -248,8 +248,21 @@ jobs:
       # ~/.hexa-cache 트랩(중단된 compile 의 빈/12-byte 바이너리가 캐시히트 → degenerate
       # 출력) 재발 방지: compile 산출이 정상 마커("engine compile OK")가 아니면 해당
       # hexa_run.* 를 rm 후 cold 재컴파일. 캐시는 속도만 바꾸고 정답은 불변.
+      #
+      # HEXA_STREAM=1 (2026-07-03 · 라운드4 실측 레버) — 이 게이트는 quiet native
+      # aprime 경로를 타며(출력에 [1/2]/[rt] 마커 無 실측) cold 26m55s (v0.586.0,
+      # run 28644656962 step9). aprime 의 non-stream 경로는 whole-TU MIR+LIR 를
+      # 통째로 상주시켜 25k라인 closure 에서 10-16GB RSS 급의 메모리 병목
+      # (hexa-lang PLAN-stage3-footprint 문서화). --stream 은 arm64-apple-darwin
+      # 전용 per-function fused lower/codegen/emit 로 그 상주를 제거한다. 이 잡의
+      # 러너 체인(ghost→mini→macos-15)은 전부 darwin-arm64 라 전 체인 적용 가능.
+      # opt 는 default 0(const_fold/dce/inline 이미 전부 스킵)이라 stream 이 끄는
+      # 최적화는 없음 — 게이트 의미(컴파일 성공 + 마커 출력) 불변. 효과는 이 PR
+      # 의 CI run 자체가 A/B (기준 26m55s → state/build_speed_rootcause/ 기록).
       - name: Compile gate — production engine import-closure (stale-cache guarded)
         shell: bash
+        env:
+          HEXA_STREAM: '1'
         run: |
           set -euo pipefail
           cat > _ci_engine_compile.hexa <<'HX'
