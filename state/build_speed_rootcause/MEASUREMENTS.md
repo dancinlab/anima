@@ -135,6 +135,26 @@ pass 미확정 — 다음 자연 cold의 프론트-포함 profile 행(계측 상
   pool 즉시-분해 워크플로는 2-arm 모두 정직 SKIP(타 세션 라이브 job 보호,
   재시도 조건 = 호스트 idle + hexa ≥0.591).
 
+## 🏆 퍼즐 최종 verdict (2026-07-03 22:4x) — ghost cold의 지배 비용
+
+**지배 비용은 컴파일러 pass가 아니라 "버려지는 크로스타깃 컴파일" 자체였다.**
+
+- 소스 증거(`hexa-lang self/main.hexa` native 블록): r26 native-first 플립이
+  전 호스트에서 native --emit=obj를 돌리는데, emit은 `--target=x86_64-linux-gnu`
+  하드코딩 + 링크는 linux crt/ld-linux 전제 → **darwin(ghost)은 emit을 완주하고
+  crt 프로브에서 폐기** 후 clang(hexat) 폴백이 실행 바이너리를 만든다.
+- 행동 증거: ghost ps에 `aprime_cc --emit=obj --target=x86_64-linux-gnu`(2회 실측),
+  harvest4 24m30s cold의 산출물은 폴백 경로 산물, 계측 행 0개(성공 시 캡처 삼킴).
+- 수리(hexa-lang #4483, MERGED): ①native 블록을 `uname -sm == Linux x86_64`로
+  게이트(타 호스트 즉시 폴백 = 결과 동일·낭비 제거) ②HEXA_CG_PROFILE=1 시
+  캡처 출력(_ne·bout) stderr forwarding(계측 도달성 갭 수리).
+- 기대: #4483 포함 stable 릴리즈가 승격되면(finalize 명시-latest #4478 가동 확인
+  — v0.594.1 자동 승격 실측) ghost cold ≈ hexat 폴백 경로만 남음. 실측 검증 =
+  다음 릴리즈 후 dispatch cold 1회 (예상 대폭 단축 + 행 가시).
+- Workflow 3-렌즈 독립 verdict(wf_f9dcd664)도 NO-DATA+출력삼킴 진단에 수렴,
+  measurement-first 카드 = 위 forwarding 수리로 구현됨. 프론트 quadratic 후보
+  (_bind_lookup·lower_hir dedup)는 새 계측 행 확보 후 share 귀속 뒤에만 발사.
+
 ## 재현 경로
 
 - 스크립트: aiden `~/anima-bisect/`(bisect_takeover.sh·bisect2.sh) · summer `~/anima-buildprobe/build_probe.sh`
