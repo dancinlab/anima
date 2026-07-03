@@ -12427,7 +12427,7 @@
       "name": "CI substrate — engine compile gate + warm-cache",
       "role": "build/verify infra (.github/workflows)",
       "id": "governance-ci-substrate-engine-compile-warmcache",
-      "detail": "cold ~12.7min = aprime_cc codegen ~85% vs clang ~15% (실측 2026-07-03 · state/build_speed_rootcause/MEASUREMENTS.md). clang O2↔O0 delta 13s = 레벨강등 기각 · engine_cli 파일분할 = 단일-TU 확장이라 무효. 남은 병목 = 업스트림 aprime_cc 병리(합성 대비 ~270x).",
+      "detail": "cold ~12.7min = codegen(transpile/aprime) 지배 — 근거=release.yml 깨끗한 기록(install 29s vs aprime_cc ~16.5min)+ghost 12.7min (상세 state/build_speed_rootcause/). clang O2↔O0 delta 13s=레벨강등 기각 · engine_cli 분할=단일-TU라 무효 · 배율 주장은 UNVERIFIED(aiden 스로틀 오염 정정). 수리 R3=hexa-lang 체인평탄화+arm64 id2idx.",
       "children": [
        {
         "name": "warm-cache 키 = hexa 실버전 + 소스 해시",
