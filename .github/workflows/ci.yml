@@ -263,7 +263,9 @@ jobs:
           # git ls-remote 사용: github.token 은 anima 스코프라 private hexa-lang API 를
           # 못 읽는다(1차 시도 실측 실패) — 러너의 ambient git 자격증명이 정답
           # (install.sh 의 raw fetch 가 같은 경로로 이미 작동 중).
-          latest="$(git ls-remote --tags --sort=-v:refname https://github.com/dancinlab/hexa-lang.git 'v*' 2>/dev/null | head -1 | sed 's|.*refs/tags/||; s|\^{}||')"
+          # head -1 금지: GHA 기본 셸(-e -o pipefail)에서 git 이 SIGPIPE(141)로 잡 전체를
+          # 죽인다(실측 run 28658689642). awk NR==1 은 입력을 EOF 까지 읽어 안전.
+          latest="$(git ls-remote --tags --sort=-v:refname https://github.com/dancinlab/hexa-lang.git 'v*' 2>/dev/null | awk 'NR==1 {sub(/.*refs\/tags\//,""); sub(/\^\{\}$/,""); print}' || true)"
           [ -z "$latest" ] && latest="week-$(date -u +%Y-%V)"   # 원격 실패 폴백: 주간 회전
           echo "hxtag=$latest" >> "$GITHUB_OUTPUT"
 
