@@ -23,6 +23,34 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  # ── dispatch — fallback-dispatch runner picker (free · always available) ─────
+  # Probes whether ghost-anima (darwin arm64, selfhost-gen2fix slot) is ONLINE
+  # and emits the hexa-engine job's `runs-on` at runtime: ghost when online +
+  # same-repo (fast — always-warm ~/.hexa-cache), else the mini-anima insurance
+  # runner (hexa-darwin-mini, ghost-offline ONLY), else the free github-hosted
+  # macos-14 fallback. Ghost-offline (or a fork PR) therefore NEVER wedges the
+  # engine gate — it just falls back. Ports dancinlab/hexa-lang 1:1
+  # (tool/ci_pick_runner.sh · .github/actions/pick-runner · PR #4417/#4023).
+  dispatch:
+    name: dispatch (pick runner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      darwin_label: ${{ steps.darwin.outputs.label }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: darwin
+        uses: ./.github/actions/pick-runner
+        with:
+          kind: darwin
+          # self-hosted only for same-repo events; fork PRs → GitHub-hosted (RCE).
+          eligible: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && '1' || '0' }}
+          # administration:read PAT (self-hosted runners list needs it; the
+          # default github.token CANNOT carry that scope → empty list → blind
+          # fallback). Absent secret → `|| github.token` = harmless macos-14
+          # fallback; present → self-hosted routing goes live.
+          token: ${{ secrets.RUNNER_PROBE_TOKEN || github.token }}
+
   cdo-validate:
     runs-on: ubuntu-latest
 
@@ -146,7 +174,12 @@ jobs:
   # 무관 — anima 는 downstream 소비자, canonical one-liner 설치.
   hexa-engine:
     name: engine compile + gates + smoke (darwin-arm64)
-    runs-on: macos-14
+    # runs-on picked at runtime by the dispatch job: ghost-anima (self-hosted,
+    # fast) when online + same-repo, else mini-anima insurance, else macos-14
+    # github-hosted. The picker never hard-depends on the pool (dispatch runs on
+    # ubuntu-latest, always available) so ghost-offline can't wedge this gate.
+    needs: dispatch
+    runs-on: ${{ fromJSON(needs.dispatch.outputs.darwin_label) }}
     # 25→50: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate(~14min)
     # + cli/anima install(~14min)만으로 25min 초과 → 타임아웃에 cancel → Post-Cache save
     # 스킵 → 캐시가 영원히 안 데워지는 chicken-egg(매 run COLD·만성 타임아웃). 캐시는
