@@ -112,6 +112,13 @@ pass 미확정 — 다음 자연 cold의 프론트-포함 profile 행(계측 상
 3. summer cold/warm probe — CLOSED-INVALID-ENV (utime≈0 커널스핀 2-host 재현,
    probe 정리 완료; hexa-side warm 동작은 CI 실측으로 갈음).
 
+## aprime pass 분해 (ghost cold · v0.593 · 이 PR의 CI run에서 수확)
+
+- (기입 대기 — 이 PR 브랜치 CI의 compile-gate 스텝 로그에서 front_begin/lex/parse/
+  atlas_load/resolve/bind/type_check/unit_check/lower_ast_to_hir + backend 행을
+  verbatim 전사. PR 브랜치 run은 main 푸시 concurrency에 취소되지 않는다 —
+  main 푸시 run 2연속 취소(28653234201·28653410492)가 이 우회의 실측 근거.)
+
 ## 재현 경로
 
 - 스크립트: aiden `~/anima-bisect/`(bisect_takeover.sh·bisect2.sh) · summer `~/anima-buildprobe/build_probe.sh`
