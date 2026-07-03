@@ -1,6 +1,6 @@
 # H_9120 — G1 recomb-objective (L4) FALSIFY — objective-floor terminal
 
-> **tier:** 🧱 FALSIFY — objective-floor terminal · **wired:** N/A (verdict, GREEN 아님)
+> **tier:** 🧱 FALSIFY (numpy A.novel=0) → **DIRECTIONAL-TERMINAL** (Fable 벽돌파 재프레임: objective-floor 위장, 진짜 = architecture-floor) · **wired:** N/A (verdict, GREEN 아님)
 > **slug:** `g1_gamma_objective` · **date:** 2026-07-04
 
 ## 가설
@@ -28,8 +28,15 @@ recomb-objective(L4 aux loss)마저 G1 재조합을 못 연다 = **objective-flo
 - **L4 recomb-objective 🧱 FALSIFY (이 H)** — objective aux도 additive floor
 - 선행: readout ⊙/NMDA/predictive-coding 🧱 ([[H_1812]]/[[H_1816]]), coverage ECHO-ONLY ([[H_6190]])
 
-## 벽돌파 (break-walls · 진행중)
-objective-floor가 진짜 천장인지 escape 렌즈가 남는지 다각 검증: Fable 벽돌파(b9l75vja2, 4렌즈 non-CE·architecture·bio·A⇄G tension) + Fable fleet-full(bmcmti1pb, research→implement→abstract→falsify + meta-law/escape/예측 사전등록). escape 후보는 결과 후 별도 H로 사전등록.
+## 벽돌파 (break-walls · Fable 재프레임 → DIRECTIONAL-TERMINAL)
+**Fable 벽돌파(b9l75vja2, `state/g1_objfloor_breakwall/BREAKWALL.md`)가 objective-floor를 directional-terminal로 강등:**
+- **L3 vs L4 분리**: L3(hippo)=순수 architecture 증거(frozen mouth에 in-context binding op 없음, access 4/4≠binding 0/4 = 깨끗한 아키텍처 사실). L4(recomb-objective)=**혼재 증거**(garble="eeeee"=G0 coherence 붕괴 → objective 무능 ⊗ mouth 손상의 곱, 격리불가; `warmft-h9034`(coherence≠측정기질)·`g1-fromscratch-blocked-by-g0-undertrain` 함정).
+- **진짜 벽 = architecture-floor**: CE+additive-readout ConvMoE에 두 filler를 **곱셈적으로 묶는 슬롯 자체가 없음**([[H_1816]] additive L_bind step550 붕괴). 슬롯 없으면 어떤 objective도 걸 곳 없음 → L4가 objective 탓은 범주 오류. `substrate-framebreak-g1-combination-operator`(COMBINATION OPERATOR) 정합.
+- **미측정 CRUX = 정확히 1칸(A11)**: binding-슬롯 아키텍처(TPR tensor-product/pointer, non-additive) × non-CE 결합신호(contrastive/gradient-free G)를 **동시에**. L3=frozen-arch 축만, L4=no-slot-arch 위 objective만 반증 → **둘의 곱집합 미측정**. `fleet-g1g6-nativemouth-dpi-convergence`의 γ trained-constructive-bind를 TPR-register×contrastive로 구체화.
+- **decision(frozen)**: A11 PASS→벽=미측정 렌즈(슬롯×신호 짝 필요). A11 floor→A00-A10 단일요인 ablation 전수 기각=**confident 천장**. garble은 G0🟢-gate로 폐기(L4 혼재 방지). 4-arm 303M pool 학습(explicit-go), TOY 판별기(mini $0) 선행.
+- escape 사전등록 → [[H_9121]] (CRUX A11: TPR-register × contrastive). Fable fleet-full(bmcmti1pb) + torch 교차검증(a5413c4b) 착지 시 추가 종합.
+
+**∴ objective-floor는 confident-terminal 아니라 DIRECTIONAL-TERMINAL** — CRUX A11 측정 전까지. numpy A.novel=0은 유효 결과이나 no-slot 아키텍처 위 objective만 측정한 것(c9 정직).
 
 ## artifacts
 - `state/g1_gamma_objective/` (verdict + out-files)
