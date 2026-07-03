@@ -1,0 +1,24 @@
+[torch] device=cuda mode=greedy ckpt=recomb_s7.bin
+[torch] loaded vocab=256 d=1024 L=24 H=16 block=512
+[1/17] A|single|0  :: the the the the te te te te te tee te te
+[2/17] A|single|1  :: deer exere reereer ereer reed ereer deer
+[3/17] A|single|2  :: the meets meeeeeeee meeeeeeeee meeeeeeee
+[4/17] A|single|3  :: the the state steere s sere s are and se
+[5/17] A|single|4  :: exere deread reeduce exeeeeeeeeeeeeeeeee
+[6/17] A|comp|2    :: and care exere exere exerect exerect exe
+[7/17] A|comp|3    :: and tere tere the tere tere tere tere th
+[8/17] A|comp|4    :: the and compation meets the compation me
+[9/17] A|comp|5    :: the meetary summer expansemble. the meet
+[10/17] C|comp|2    :: deeter exere reereer ereer ereer ereer e
+[11/17] C|comp|3    :: meet exere exerement exere and exere exe
+[12/17] C|comp|4    :: the meets trans are and can be and and a
+[13/17] C|comp|5    :: the altere meets the altere meets the me
+[14/17] D|comp|2    :: beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee bee
+[15/17] D|comp|3    :: beeeeeeeeeeeeeeeeeeee beeeeeeeeeeeee bee
+[16/17] D|comp|4    :: beebeebeebeebeebeebeebeebeebeebeebeebeeb
+Traceback (most recent call last):
+  File "/home/aiden/exp1_torch/bytegpt_torch_decode.py", line 138, in <module>
+    main()
+  File "/home/aiden/exp1_torch/bytegpt_torch_decode.py", line 133, in main
+    print("[%d/%d] %-11s :: %s" % (i + 1, len(rows), tag, txt[:70]), flush=True)
+UnicodeEncodeError: 'utf-8' codec can't encode character '\udca0' in position 26: surrogates not allowed

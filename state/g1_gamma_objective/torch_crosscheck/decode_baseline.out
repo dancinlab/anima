@@ -1,0 +1,15 @@
+[torch] device=cuda mode=sampled ckpt=trunk_baseline.bin
+[torch] loaded vocab=256 d=1024 L=24 H=16 block=512
+[1/9] B|single|0  :: | 도우미: What about the phi values? 
+[2/9] B|single|1  :: | 도우미: What do you think conscious
+[3/9] B|single|2  :: | 도우미: What about the phi values? 
+[4/9] B|single|3  :: | 사용자: You mean there's something 
+[5/9] B|single|4  :: Why does seeing red feel like something?
+[6/9] B|comp|2    :: The morning surface proble processing wa
+[7/9] B|comp|3    :: | 도우미: What about the phi values? 
+Traceback (most recent call last):
+  File "/home/aiden/exp1_torch/bytegpt_torch_decode.py", line 138, in <module>
+    main()
+  File "/home/aiden/exp1_torch/bytegpt_torch_decode.py", line 133, in main
+    print("[%d/%d] %-11s :: %s" % (i + 1, len(rows), tag, txt[:70]), flush=True)
+UnicodeEncodeError: 'utf-8' codec can't encode character '\udcec' in position 38: surrogates not allowed

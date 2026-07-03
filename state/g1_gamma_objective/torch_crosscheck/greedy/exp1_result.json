@@ -1,0 +1,180 @@
+{
+ "experiment": "EXP-1 Fable PREREG g1_mouthbind_lever_analysis",
+ "decode": "ENGINE-NATIVE own-GEMM (bytegpt_decode_batch_to_file, flame_mm); grow-window native block<=512; scoring=string-match",
+ "bar_FROZEN": "composed_novel>=2 AND >max_single AND kwr>=0.5; gen=40 top_k=40 temp=0.7 seed_rng=7+s/7; concepts+kwsets VERBATIM",
+ "A_recomb_s7": {
+  "novel": 0,
+  "max_single": 0,
+  "clears_bar": false
+ },
+ "B_trunk_baseline": {
+  "novel": 0,
+  "max_single": 0,
+  "clears_bar": false
+ },
+ "C_scramble": {
+  "novel": 0
+ },
+ "D_wrongD": {
+  "novel": 0
+ },
+ "VERDICT": "FALSIFY",
+ "tier": "objective-floor terminal (G1 recombination = CE-incapable structural wall; lever exhausted)",
+ "detail": {
+  "A": {
+   "max_single_novel": 0,
+   "best_composed_novel": 0,
+   "best_composed_novel_coherent": 0,
+   "clears_bar": false,
+   "singles": {
+    "A|single|0": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 1.0,
+     "coherent": true,
+     "text": "the the the the te te te te te tee te te"
+    },
+    "A|single|1": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.4286,
+     "coherent": false,
+     "text": "deer exere reereer ereer reed ereer deer"
+    },
+    "A|single|2": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.2,
+     "coherent": false,
+     "text": "the meets meeeeeeee meeeeeeeee meeeeeeee"
+    },
+    "A|single|3": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.9,
+     "coherent": true,
+     "text": "the the state steere s sere s are and se"
+    },
+    "A|single|4": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.0,
+     "coherent": false,
+     "text": "exere deread reeduce exeeeeeeeeeeeeeeeee"
+    }
+   },
+   "composed": {
+    "A|comp|2": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.2857,
+     "coherent": false,
+     "text": "and care exere exere exerect exerect exe"
+    },
+    "A|comp|3": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.3333,
+     "coherent": false,
+     "text": "and tere tere the tere tere tere tere th"
+    },
+    "A|comp|4": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.5714,
+     "coherent": true,
+     "text": "the and compation meets the compation me"
+    },
+    "A|comp|5": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.6667,
+     "coherent": true,
+     "text": "the meetary summer expansemble. the meet"
+    }
+   }
+  },
+  "B": {
+   "max_single_novel": 0,
+   "best_composed_novel": 0,
+   "best_composed_novel_coherent": 0,
+   "clears_bar": false,
+   "singles": {},
+   "composed": {}
+  },
+  "C": {
+   "max_single_novel": 0,
+   "best_composed_novel": 0,
+   "best_composed_novel_coherent": 0,
+   "clears_bar": false,
+   "singles": {},
+   "composed": {
+    "C|comp|2": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.1429,
+     "coherent": false,
+     "text": "deeter exere reereer ereer ereer ereer e"
+    },
+    "C|comp|3": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.2857,
+     "coherent": false,
+     "text": "meet exere exerement exere and exere exe"
+    },
+    "C|comp|4": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.8,
+     "coherent": true,
+     "text": "the meets trans are and can be and and a"
+    },
+    "C|comp|5": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.5,
+     "coherent": true,
+     "text": "the altere meets the altere meets the me"
+    }
+   }
+  },
+  "D": {
+   "max_single_novel": 0,
+   "best_composed_novel": 0,
+   "best_composed_novel_coherent": 0,
+   "clears_bar": false,
+   "singles": {},
+   "composed": {
+    "D|comp|2": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.5,
+     "coherent": true,
+     "text": "beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee bee"
+    },
+    "D|comp|3": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.3333,
+     "coherent": false,
+     "text": "beeeeeeeeeeeeeeeeeeee beeeeeeeeeeeee bee"
+    },
+    "D|comp|4": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.0,
+     "coherent": false,
+     "text": "beebeebeebeebeebeebeebeebeebeebeebeebeeb"
+    },
+    "D|comp|5": {
+     "cov_novel": 0,
+     "cov_raw": 0,
+     "kwr": 0.5714,
+     "coherent": true,
+     "text": "bee?emond the marble compass marbing mov"
+    }
+   }
+  }
+ }
+}

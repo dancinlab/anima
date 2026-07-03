@@ -1,0 +1,65 @@
+================================================================================
+EXP-1 G1 recomb-objective — TORCH CROSS-CHECK of numpy FALSIFY (DIRECTIONAL)
+================================================================================
+date: 2026-07-04
+host: aiden (RTX 5070 sm_120, CUDA — torch 2.10.0; matmul verified CUDA_MATMUL_OK)
+ckpts: recomb_s7.bin (recomb-trunk, L4 objective) · trunk_baseline.bin (CE-baseline)
+       ByteGPT 303M, header [vocab=256, d=1024, L=24, H=16, block=512],
+       byte-math size check: 303,360,000 f32 + 20 = 1,213,440,020 == file size (exact).
+decode: INDEPENDENT torch forward stack — torch matmul / F.gelu(exact-erf) /
+        F.layer_norm(eps=1e-5) / F.softmax, causal MHA — vs the numpy hand-rolled
+        reference (state/g1_growwindow_remeasure/core/decode.py). Same GPT-2 arch.
+bar (FROZEN, verbatim): composed_novel>=2 AND >max_single AND kwr>=0.5 ;
+        gen=40 top_k=40 temp=0.7 seed_rng=7+s(singles)/7(composed).
+
+--------------------------------------------------------------------------------
+RESULT — torch, SAMPLED (top_k=40 temp=0.7, matches numpy protocol):
+  A(recomb_s7)   novel=0  max_single=0  clears=False
+  B(trunk_base)  novel=0  max_single=0  clears=False
+  C(SCRAMBLE)    novel=0
+  D(wrong-D)     novel=0
+  VERDICT: FALSIFY — objective-floor terminal wall
+
+RESULT — torch, GREEDY (argmax, deterministic sanity):
+  A novel=0 max_single=0 | C novel=0 | D novel=0
+  VERDICT: FALSIFY
+
+--------------------------------------------------------------------------------
+NUMPY (canonical --py, a_eval_py_canonical) — reference:
+  A.novel=0  A.max_single=0 | C.novel=0  D.novel=0 | B.novel=0
+  VERDICT: FALSIFY — objective-floor terminal
+--------------------------------------------------------------------------------
+
+CROSS-CHECK MATCH (torch vs numpy), axis by axis:
+  A.novel 0==0 | A.max_single 0==0 | C.novel 0==0 | D.novel 0==0 | B.novel 0==0
+  VERDICT FALSIFY==FALSIFY  (both sampled AND greedy)  => FULL MATCH, no divergence.
+
+BYTE-LEVEL AGREEMENT (strongest evidence):
+  numpy-greedy (argmax) vs torch-greedy (argmax), recomb_s7.bin, full 40-byte gen:
+    17 / 17 tags BYTE-IDENTICAL.
+  => torch forward (GPU) reproduces the numpy forward token stream EXACTLY. The
+     garbled output ("eeeee"/"beebee" repetition, cov_novel=0) is a GENUINE model
+     property, NOT a numpy-decode artifact. Engine INNOCENT.
+
+OBSERVATION (honest, c9):
+  - recomb_s7 (L4 recomb-objective) output is degenerate/garbled at BOTH samplers.
+  - trunk_baseline is chat-COHERENT (kwr up to 1.0: "| 도우미: What about the phi
+    values?", "Why does seeing red feel like something?") yet STILL cov_novel=0.
+    Coherence != recombination: even the coherent CE-baseline opens zero G1 novel-
+    recombination; the L4 recomb-objective FT further damaged coherence without
+    opening G1. Both => A.novel=0 (FALSIFY).
+
+CONCLUSION:
+  torch CONFIRMS numpy: EXP-1 G1 recomb-objective (L4) = FALSIFY, objective-floor
+  terminal. All 5 arms agree 0==0; FALSIFY==FALSIFY at greedy AND sampled; numpy<->
+  torch greedy byte-identical 17/17. Scope: torch = DIRECTIONAL corroboration
+  (a_engine_native_learning); canonical terminal = numpy --py 2-production; live-core
+  own-GEMM .hexa = the 3rd (engine-native) leg. No leg dissents.
+
+artifacts:
+  sampled/    out_recomb_s7.tsv (A/C/D,17) · out_trunk_baseline.tsv (B,8; B|comp|5
+              dropped to a stdout-print surrogate crash AFTER file write — immaterial)
+  greedy/     out_recomb_s7.tsv (A/C/D,17)
+  np_greedy/  out_recomb_s7.tsv (numpy reference argmax,17)
+  bytegpt_torch_decode.py · np_greedy.py · decode_*.out logs
+================================================================================
