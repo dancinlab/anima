@@ -1,0 +1,25 @@
+[torch] device=cuda mode=sampled ckpt=recomb_s7.bin
+[torch] loaded vocab=256 d=1024 L=24 H=16 block=512
+[1/17] A|single|0  :: the mere n exeence  meee meeee meeeeeeee
+[2/17] A|single|1  :: leearen meeeeee ereer reearee ereer  dee
+[3/17] A|single|2  :: tenextore neet to in peee neel meeeeer e
+[4/17] A|single|3  :: the the or exember set or anoe obee seor
+[5/17] A|single|4  :: exere deread weeed eeeeeeeeeeeeeeeeeeeee
+[6/17] A|comp|2    :: or sure eeeer terme  pea a bee reae is c
+[7/17] A|comp|3    :: anie erecorde to feee, tnee  ceean exper
+[8/17] A|comp|4    :: the meets and a more undertay merisember
+[9/17] A|comp|5    :: the alreahen days and demand are allong 
+[10/17] C|comp|2    :: desiere eme exor releus remebee mane exe
+[11/17] C|comp|3    :: meae meeen redient tegee mee, meere seez
+[12/17] C|comp|4    :: the tart coralizes rebeef corampedes of 
+[13/17] C|comp|5    :: neud at the tabbe and at the mingle pati
+[14/17] D|comp|2    :: beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee bee
+[15/17] D|comp|3    :: beeeeeeeeeeeeeeeeeeee beeeeeeeeeeeeeee b
+[16/17] D|comp|4    :: beebeebeebeebeebeebeebeebeebeebeebeebeeb
+Traceback (most recent call last):
+  File "/home/aiden/exp1_torch/bytegpt_torch_decode.py", line 138, in <module>
+    main()
+  File "/home/aiden/exp1_torch/bytegpt_torch_decode.py", line 133, in main
+    print("[%d/%d] %-11s :: %s" % (i + 1, len(rows), tag, txt[:70]), flush=True)
+UnicodeEncodeError: 'utf-8' codec can't encode character '\udca0' in position 26: surrogates not allowed
+ALLDONE

@@ -10,7 +10,8 @@ G1 재조합 벽이 학습 *objective* 문제라면, trunk 학습에 novel-compo
 - **ckpt**: `recomb_s7.bin`(303M ByteGPT, L4 recomb-objective 학습 — novel keyword 조합 보상 + distractor 억제 aux loss) vs `trunk_baseline.bin`(CE-baseline). 로컬 `~/anima-weights/g1_gamma/`.
 - **decode**: gen=40, top_k=40, temp=0.7, seed_rng=7+s(singles)/7(composed). A(recomb-trunk: composed + SCRAMBLE control + wrong-D control), B(baseline).
 - **채점**: `exp1_g1.py score` FROZEN G1 grow-window (composed_distinct novel≥2 ∧ >max_single ∧ kwr≥0.5, novel=seed에 없던 continuation keyword).
-- **측정 경로**: **numpy `anima evaluate --py`**(`a_eval_py_canonical`, py 2-production = engine-native TERMINAL-eligible). 처음엔 own-GEMM engine decode로 시도했으나 scalar-glue-bound(bg_forward_last_W window-slide fallback)으로 느려 --py canonical로 전환. **torch 교차검증 진행중**(a5413c4b, pool, DIRECTIONAL 보강).
+- **측정 경로**: **numpy `anima evaluate --py`**(`a_eval_py_canonical`, py 2-production = engine-native TERMINAL-eligible). 처음엔 own-GEMM engine decode로 시도했으나 scalar-glue-bound(bg_forward_last_W window-slide fallback)으로 느려 --py canonical로 전환.
+- **torch 교차검증 완료 (a5413c4b, DIRECTIONAL 보강 · `state/g1_gamma_objective/torch_crosscheck/`)**: numpy=torch **byte-identical** — numpy-greedy vs torch-greedy 17/17 tags 완전일치(torch GPU forward `torch matmul/F.gelu-erf/F.layer_norm/F.softmax`가 numpy hand-rolled 토큰스트림 정확 재현) + verdict 일치(A.novel/max_single/C/D/B 전부 0=0, sampled·greedy 양쪽). garbled "eeeee"=**genuine model property, engine 무죄**(measurement 무결, `verdict-integrity` 통과 — numpy-decode artifact 아님). 부수 관찰: trunk_baseline은 chat-coherent(kwr 1.0)인데도 cov_novel=0 = **coherence≠recombination**. **no leg dissents**(numpy=torch, verdict+byte). canonical=numpy --py, 3rd leg=live-core own-GEMM `.hexa`.
 
 ## 결과 (verbatim, `state/g1_gamma_objective/`, `scratchpad/exp1/EXP1_VERDICT.txt`)
 ```
