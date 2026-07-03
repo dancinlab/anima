@@ -1510,6 +1510,28 @@ fn _bg_linear_mm(X: int, Wt: int, b: int, Y: int, T: int, Ci: int, Co: int) {
     let _ = farr_free(C)
 }
 
+// _bg_tied_head — logits[vocab] = head[vocab,d]·lastrow[d] (tied embedding readout). FAST path
+// (default) routes through the forge mm() seam → GPU own-GEMM on a CUDA host (GPU util>0), else the
+// CPU farr_matmul oracle. DETERMINISTIC path (is_deterministic()==1, i.e. `anima … --det`) uses the
+// naive sequential scalar sum = the byte-exact frozen reference: mm/farr_matmul reorders the
+// accumulation (~1e-15 drift, measured — enough to perturb a byte-exact G0-G6 verdict), so verdict
+// runs must take the scalar branch. H_9119 scalar-glue offload; mirrors the _bg_linear/_bg_linear_mm split.
+fn _bg_tied_head(head: int, lastrow: int, vocab: int, d: int) -> int {
+    if is_deterministic() {
+        let lg = farr_zeros(vocab)
+        let mut k = 0
+        while k < vocab {
+            let mut acc = 0.0
+            let mut c = 0
+            while c < d { acc = acc + farr_get(head, k * d + c) * farr_get(lastrow, c); c = c + 1 }
+            let _ = farr_set(lg, k, acc)
+            k = k + 1
+        }
+        return lg
+    }
+    return mm(head, vocab, d, lastrow, 1)  // fast: forge own-GEMM (CUDA) / farr oracle (CPU)
+}
+
 // _bg_mha_mm — byte-equivalent to _bg_mha but the QKV projection and the output
 // projection (the two d×d matmuls) go through the native GEMM. The per-head
 // causal softmax attention (O(T²·hd), tiny vs the d² projections) stays scalar
@@ -1778,15 +1800,7 @@ pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
     _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
 
     // logits[k] = Σ_c head[k*d+c]·lastrow[c]
-    let logits = farr_zeros(vocab)
-    let mut k = 0
-    while k < vocab {
-        let mut acc = 0.0
-        let mut c = 0
-        while c < d { acc = acc + farr_get(head, k * d + c) * farr_get(lastrow, c); c = c + 1 }
-        let _ = farr_set(logits, k, acc)
-        k = k + 1
-    }
+    let logits = _bg_tied_head(head, lastrow, vocab, d)  // H_9119: forge mm() (fast) / scalar (--det byte-exact)
     let _ = farr_free(tok); let _ = farr_free(pos); let _ = farr_free(x)
     let _ = farr_free(lnfw); let _ = farr_free(lnfb); let _ = farr_free(head)
     let _ = farr_free(lastrow); let _ = farr_free(xt)
@@ -1909,15 +1923,7 @@ pub fn bytegpt_forward_last_ranged(path: string, ids: int, T: int) -> int {
     while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
     _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
 
-    let logits = farr_zeros(vocab)
-    let mut k = 0
-    while k < vocab {
-        let mut acc = 0.0
-        let mut c = 0
-        while c < d { acc = acc + farr_get(head, k * d + c) * farr_get(lastrow, c); c = c + 1 }
-        let _ = farr_set(logits, k, acc)
-        k = k + 1
-    }
+    let logits = _bg_tied_head(head, lastrow, vocab, d)  // H_9119: forge mm() (fast) / scalar (--det byte-exact)
     let _ = farr_free(tok); let _ = farr_free(pos); let _ = farr_free(x)
     let _ = farr_free(lnfw); let _ = farr_free(lnfb); let _ = farr_free(head)
     let _ = farr_free(lastrow); let _ = farr_free(xt)
@@ -2019,15 +2025,7 @@ pub fn bytegpt_forward_last_ranged_mm(path: string, ids: int, T: int) -> int {
     // d=1024 = the cheapest op in the forward; NOT the d×d hot path). Was farr_packed_gemv_offset
     // but that builtin is absent from older hexa runtimes (aiden link-fails) — the scalar loop is
     // byte-identical (same i-outer/j-inner order) and compiles everywhere.
-    let logits = farr_zeros(vocab)
-    let mut hk = 0
-    while hk < vocab {
-        let mut hacc = 0.0
-        let mut hc = 0
-        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
-        let _ = farr_set(logits, hk, hacc)
-        hk = hk + 1
-    }
+    let logits = _bg_tied_head(head, lastrow, vocab, d)  // H_9119: forge mm() (fast) / scalar (--det byte-exact)
     let _ = farr_free(x); let _ = farr_free(lnfw); let _ = farr_free(lnfb)
     let _ = farr_free(head); let _ = farr_free(lastrow); let _ = farr_free(xt)
     return logits
@@ -2572,15 +2570,7 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
     // head logits: logits[k] = Σ_c head[k*d+c]·lastrow[c]. Portable scalar loop (vocab×d, the
     // cheapest op; NOT the d×d hot path). Was farr_packed_gemv_offset — absent from older hexa
     // runtimes (aiden link-fails) — scalar is byte-identical (same i-outer/j-inner) + portable.
-    let logits = farr_zeros(vocab)
-    let mut hk = 0
-    while hk < vocab {
-        let mut hacc = 0.0
-        let mut hc = 0
-        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
-        let _ = farr_set(logits, hk, hacc)
-        hk = hk + 1
-    }
+    let logits = _bg_tied_head(head, lastrow, vocab, d)  // H_9119: forge mm() (fast) / scalar (--det byte-exact)
     let _ = farr_free(x); let _ = farr_free(lastrow); let _ = farr_free(xt)
     return logits
 }
@@ -2884,15 +2874,7 @@ fn _bg_kv_step(W: Map, kv: Map, id: int, pos_p: int) -> int {
     let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"]); let head = to_int(W["head"])
     let lastrow = farr_zeros(d)
     _bg_layernorm(x, lnfw, lnfb, lastrow, 1, d)
-    let logits = farr_zeros(vocab)
-    let mut hk = 0
-    while hk < vocab {
-        let mut hacc = 0.0
-        let mut hc = 0
-        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
-        let _ = farr_set(logits, hk, hacc)
-        hk = hk + 1
-    }
+    let logits = _bg_tied_head(head, lastrow, vocab, d)  // H_9119: forge mm() (fast) / scalar (--det byte-exact)
     let _ = farr_free(x); let _ = farr_free(nrm); let _ = farr_free(lastrow)
     return logits
 }
