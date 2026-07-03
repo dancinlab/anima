@@ -13703,3 +13703,40 @@ pub fn tb_scale_sweep(ten: [float], wgrid: [int], boundary_thr: float) -> [float
 pub fn tb_present_duration_pop(x: [[float]], w: int, boundary_thr: float) -> float {
     return tb_present_duration(tb_tension_series(x), w, boundary_thr)
 }
+
+// ── H_9095/substrate_conjunction rung-3: conjunction readout (additive, ZERO new geometry) ──
+// vadapt_field_conjunction[_score] = fuzzy-AND over top-2 affinity (d2 gate). Reads pub accessor
+// vadapt_field_two_recon_err only — never touches pure_field Φ/Ψ/emit-lane (a_substrate_disjoint).
+pub fn vadapt_field_conjunction(af: VAdaptField, x: [float], thr: float) -> float {
+    if vadapt_field_cells(af) < 2 { return 0.0 }        // conjunction impossible with one regime
+    let d = vadapt_field_two_recon_err(af, x)           // [d1, d2], d1 <= d2 (engine's own scan)
+    if d[1] < thr { return 1.0 }                        // 2nd-nearest also within thr ⇒ AND-over-regimes
+    return 0.0
+}
+
+// vadapt_field_conjunction_score — GRADED variant (fuzzy-AND membership in [0,1]). Keyed on d2 (the
+// weaker regime): 1.0 when both regimes essentially coincide with x, ramping to 0.0 as the weaker
+// regime leaves the `thr` radius. clip01(1 - d2/thr). Single-cell field ⇒ 0.0.
+pub fn vadapt_field_conjunction_score(af: VAdaptField, x: [float], thr: float) -> float {
+    if vadapt_field_cells(af) < 2 { return 0.0 }
+    if thr <= 0.0 { return 0.0 }
+    let d = vadapt_field_two_recon_err(af, x)
+    let s = 1.0 - d[1] / thr
+    if s < 0.0 { return 0.0 }
+    if s > 1.0 { return 1.0 }
+    return s
+}
+
+// _conj_wta_collapse — ABLATION control: the SAME readout but reading d1 (nearest) instead of d2.
+// This is exactly winner-take-all. Under this ablation single-regime and conjunction inputs with the
+// same nearest distance return the SAME value ⇒ the conjunction capability VANISHES (INERT). Proving
+// the op's discrimination lives in the d2 (second-nearest) read, nowhere else.
+pub fn _conj_wta_collapse(af: VAdaptField, x: [float], thr: float) -> float {
+    if vadapt_field_cells(af) < 2 { return 0.0 }
+    if thr <= 0.0 { return 0.0 }
+    let d = vadapt_field_two_recon_err(af, x)
+    let s = 1.0 - d[0] / thr           // d[0] = d1 = nearest = WTA (the ablated read)
+    if s < 0.0 { return 0.0 }
+    if s > 1.0 { return 1.0 }
+    return s
+}
