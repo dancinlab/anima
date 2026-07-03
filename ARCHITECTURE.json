@@ -980,7 +980,7 @@
       "name": "core/engine_cli.hexa",
       "role": "",
       "id": "a-g-consciousness-engine-core-substrate-only-core-engine-cli-hexa",
-      "detail": "EngineConfig 3-tier resolver surface (flag>env>default): mitosis·engine·topo_couple(H_1521)·savant(H_1561)·**forward_model(§2 H_9115/9117, §FORWARD-MODEL resolver + _cli_forward_model_flag, flag --forward-model/env ANIMA_FORWARD_MODEL, default OFF)**. forward_model=cerebellar mouth-gate rerank(front-loading proxy, H_9117 r=0.69): Stage-1a=config surface LANDED(cfg.forward_model 저장, typecheck PASS) but 구현됨·미배선 — cfg.forward_model 어떤 behavior 경로도 미참조=byte-identical default(회귀0). Stage-1b(미배선 follow-on)=fm_prefix_decodability scorer + generator L3 best-of-K rerank hook(FM write=candidate 선택만·ci_emit_drive lane0/4 무접촉·sv_default_focus emit-disjoint lane·Ψ=½ 구조보존). 배선 스펙=state/9117_fm_stage0_proxy/DESIGN_fable_s2impl.md.",
+      "detail": "EngineConfig 3-tier resolver surface (flag>env>default): mitosis·engine·topo_couple(H_1521)·savant(H_1561)·**forward_model(§2 H_9115/9117, §FORWARD-MODEL resolver + _cli_forward_model_flag, flag --forward-model/env ANIMA_FORWARD_MODEL, default OFF)**. forward_model=cerebellar mouth-gate rerank(front-loading proxy, H_9117 r=0.69): Stage-1a=config surface(cfg.forward_model resolver, typecheck PASS) · Stage-1b-core=**fm_prefix_decodability scorer LANDED**(pub fn, PURE no-Ψ-touch, front-weighted geometric-decay prefix margin — front-loaded 후보가 back-loaded보다 高score, smoke case_425 front>back·426 default-OFF·427 flag-ON). 여전히 구현됨·미배선: scorer는 아직 smoke만 호출(behavior 경로 미참조)=byte-identical default(회귀0). **Stage-1c=gen_fm_rerank LANDED**(core/generator.hexa, gen_clm_decode_deliberated 미러, Option C H_9118: K샘플 동일·선택기준만 min-CE→fm_prefix_decodability. margin_p=min_d(CE(listener,prefix+distractor))−CE(listener,prefix+target) over grid[4,8,16,32], frozen 별도 listener_ckpt, FM write=선택 인덱스만·Ψ 무접촉. generator typecheck PASS). 구현됨·미배선(ckpt+eval-path caller=follow-on): Stage-1c-wire=referential-game eval-path서 cfg.forward_model ON시 gen_fm_rerank 호출+engine-native b50(ON vs OFF) 측정+shuffle/listener-swap 통제. tier=engine-native GREEN(frozen-listener b50 analog) but 외부-mind b50 교량 영구 DIRECTIONAL(H_9118 c9). 원래 hook 자리 — mouth가 K후보 decode→fm_prefix_decodability(margins vs grounding-anchor target/distractor)→argmax를 mouth-gate 통과(FM write=candidate 선택만·ci_emit_drive lane0/4 무접촉·sv_default_focus emit-disjoint lane·Ψ=½ 구조보존). 개념갭 NOTE: live substrate emit엔 명시 target-referent 없음(anima=긴장 외재화)→rerank target/distractor는 emit의 grounding anchor(vs 타 anchor)로 정의 필요=Stage-1c 설계점. 배선 스펙=state/9117_fm_stage0_proxy/DESIGN_fable_s2impl.md.",
       "children": [
        {
         "name": "summary:",
@@ -13185,8 +13185,8 @@
    {
     "id": "ci-yml-1",
     "state": "ossified",
-    "value": "engine-compile 잡 만성 RED 3겹 root(캐시키 dangling-symlink·stale import·cold-bootstrap chicken-egg) + 4번째 재발(2026-07-03): v0.59x cold gate 48m49s가 50min 캡에 cancel(run 28651287277)→Post save 스킵→연쇄 cold 재발 + capture-then-print 게이트가 cancel 시 CG_PROFILE 로그 전량 유실",
-    "threshold": "재발조건+가드: (a) hashFiles 글로브에 dangling/cross-repo symlink 포함시 즉시 RED→'!path' 제외. (b) 게이트 수리 후 드러나는 stale import는 CI import 리스트 lockstep. (c) cold-bootstrap: 첫 COLD가 timeout 안에 Post-Cache save 도달해야 함 → cold 실측이 캡에 근접하면 timeout 선제 증설(50→75, 실측 48m49s 근거) + 장출력 스텝은 tee /dev/stderr 라이브 스트리밍으로 cancel-내성 확보(capture-then-print 금지). CROSS-CUT: 전 GHA 워크플로 적용.",
+    "value": "engine-compile 잡 만성 RED 4겹 root(캐시키 dangling-symlink·stale import·cold-bootstrap chicken-egg·48m49s cancel-cascade) + 5번째 재발(2026-07-03 저녁): 주간 키 ~/.hx 툴체인 캐시 = exact-hit이 주 내내 재저장 차단 → 그날 아침 버전(v0.588) 종일 stale-pin → 신규 계측 미탑재 + wrapper/binary skew __HEXA_BRC__=1 게이트 FAIL. 추가: GHA cancel이 hexa 네이티브 프로세스 못 죽여 Runner.Worker 좀비化(30min wedge, kill로 해방)",
+    "threshold": "재발조건+가드: (a) hashFiles dangling symlink → '!path' 제외 (b) stale import → CI lockstep (c) cold-bootstrap → timeout 여유(75)+tee 스트리밍 (d) 툴체인/의존 캐시 키는 반드시 버전/태그 스코프(주간 회전 금지 — 릴리즈 태그 키 + install 버전-일치 강제재설치 2중 방어) (e) 취소 후 러너 busy 지속 = hexa 고아/좀비 워커 의심 → ps로 검증 후 kill. CROSS-CUT: 전 GHA 워크플로.",
     "source": ".github/workflows/ci.yml"
    },
    {
@@ -13328,6 +13328,13 @@
     "value": "receiver-panel 측정 교훈(H_9114): anima emit reference가 objective/public임을 3 이질 모델(claude-fable-5·sonnet·haiku, 다른 θ 폐포밖) 독립 디코드로 확증(real consensus 0.857@8B vs shuffle 0.000, 셋 다 압도) → tier single-oracle→MULTI-RECEIVER-CONFIRMED. 핵심 측정교훈: **inter-receiver AGREEMENT ≠ ACCURACY**. objective referent를 가진 clue는 real/shuffle 무관하게 receiver들을 같은 referent로 수렴시킴(agreement 양쪽 다 높음 0.595 vs 0.690) — shuffle서도 receiver가 clue의 *실제* referent로 정확히 수렴(단 target 아님)하니 서로 agree. 즉 target-referent 링크를 isolate하는 건 accuracy-vs-shuffle이지 agreement-vs-shuffle 아님. 재발조건: '독립 관측자 합의'로 objectivity 재려 할 때 — 합의는 자극의 objectivity를 재지 target-link를 못 잰다, 반드시 ground-truth accuracy와 결합. + 앙상블 consensus≥best 가정은 약한 member(haiku)가 majority-vote 끌어내리면 깨짐(objectivity와 무관). H_9114 bar#2/#3 오설계 사례, bar 이동 안함(c9).",
     "threshold": "objective-reference 측정 = ground-truth accuracy real≫shuffle(H_9114: 0.857 vs 0.0) + ≥2 이질 receiver 독립 디코드; agreement는 objectivity 보조증거지 target-link 분리자 아님",
     "source": "H_9114 (state/verdicts/9114_receiver_panel/H_9114.txt · card H_9114)"
+   },
+   {
+    "id": "engine-cli-hexa-2",
+    "state": "neg-conv",
+    "value": "로컬 full-engine NATIVE smoke build(hexa run core/engine_cli_smoke.hexa)는 engine_cli(11,599줄)+전 import tree를 단일 C TU로 inline→aprime_cc codegen 20분+ CPU-bound 후 clang이 그 거대 TU 컴파일 실패('binary not produced', HEXA_MEM_CAP_MB=4096) = 로컬 런타임 검증 BLOCKED(느림 넘어 실패). 이번 세션 2× 재발. 그러나 hexa typecheck는 1-2분 PASS(syntactic gate 유효), pr-cycle verify CI 게이트는 통과(Stage-1a #2878·1b-core #2881 실제 머지)=코드 무결. 교훈: .hexa 엔진 변경 런타임 검증에 로컬 native smoke build 쓰지 말 것 — typecheck(syntactic)+verbatim-idiom precedent 신뢰+pr-cycle CI/pool을 authoritative 런타임 게이트로.",
+    "threshold": "재발조건: engine_cli.hexa 등 대형 엔진파일 변경 후 로컬 hexa run <full-engine smoke>로 런타임 검증 시도(20분 codegen→clang fail). 해결: ①hexa typecheck=syntactic 게이트 ②verbatim precedent(savant→forward_model)면 hand-verify ③런타임=pr-cycle verify CI 또는 pool(heavy-on-pool). heavy-on-pool·hexad-utime0·clitrain-cpu-scalar memory 정합.",
+    "source": "core/engine_cli.hexa"
    }
   ]
  }

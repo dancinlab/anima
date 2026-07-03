@@ -337,6 +337,73 @@ pub fn gen_clm_decode_deliberated(ckpt: string, seed: string, gen: int, k: int, 
     return #{ "text": best_text, "k": kk, "ce_sel": best_ce, "ce_k1": ce1 }
 }
 
+// ── §  gen_fm_rerank — §2 forward-model best-of-K mouth-gate rerank (Option C, H_9118) ──
+//
+// Mirrors gen_clm_decode_deliberated's K-sampling but SELECTS by fm_prefix_decodability
+// (front-loading, engine_cli.hexa) instead of min-CE. Referential-game eval-path ONLY:
+// `target` = the concept being described, `distractors` = the other concepts. For each of K
+// sampled candidates, over a prefix-byte grid, the FROZEN `listener_ckpt` (a SEPARATE ckpt —
+// speaker⊥listener so there is no private-code co-adaptation; H_9118 §2 controls) scores how
+// much LOWER the target's CE is than the best distractor's GIVEN that candidate prefix = the
+// contrastive margin. fm_prefix_decodability front-weights those margins; argmax = the emit
+// whose discriminative content is most FRONT-LOADED (external-decodable from fewer bytes).
+//
+// FM write = the SELECTION index ONLY — never ci_emit_drive / Ψ (a_substrate_disjoint). Gated
+// on cfg.forward_model by the caller (eval-path). Tier: engine-native GREEN for the frozen-
+// listener b50 analog (+ shuffle / listener-swap controls); the bridge to the external-mind b50
+// stays DIRECTIONAL (H_9118 c9). `decay` = ep_fm_prefix_decay(). Cost ~K·|grid|·(1+|distractors|)
+// CE calls — heavy, eval-path only (the other reason Option C ≠ live path).
+pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int, k: int,
+                     base_seed: int, target: string, distractors: list, decay: float) -> Map {
+    let offsets = [0, 101, 202, 303]
+    let grid    = [4, 8, 16, 32]
+    let kk = if k > 4 { 4 } else { k }
+    let mut best_text  = ""
+    let mut best_score = -1000000.0
+    let mut best_i     = -1
+    let mut got = false
+    let mut oi = 0
+    while oi < kk {
+        let rs = clm_decode_topk_sampled(ckpt, seed, gen, 8, 0.7, base_seed + offsets[oi])
+        if to_string(rs["ok"]) == "true" {
+            let ts = to_string(rs["text"])
+            let cb = _gen_text_to_bytes(ts)
+            let nb = len(cb)
+            let mut margins = []
+            let mut gi = 0
+            while gi < len(grid) {
+                let pb = if grid[gi] < nb { grid[gi] } else { nb }
+                // prefix = first pb bytes of the candidate
+                let mut pfx = []
+                let mut bi = 0
+                while bi < pb { pfx = pfx + [cb[bi]]  bi = bi + 1 }
+                // margin = min-CE(prefix + distractor) − CE(prefix + target); >0 = target wins early
+                let seq_t = pfx + _gen_text_to_bytes(" " + target)
+                let ce_t  = to_float(clm_decode_ce(listener_ckpt, seq_t)["ce"])
+                let mut best_d = 1000000.0
+                let mut di = 0
+                while di < len(distractors) {
+                    let seq_d = pfx + _gen_text_to_bytes(" " + to_string(distractors[di]))
+                    let ce_d  = to_float(clm_decode_ce(listener_ckpt, seq_d)["ce"])
+                    if ce_d < best_d { best_d = ce_d }
+                    di = di + 1
+                }
+                margins = margins + [best_d - ce_t]
+                gi = gi + 1
+            }
+            let score = fm_prefix_decodability(margins, decay)
+            if !got || score > best_score { best_score = score  best_text = ts  best_i = oi  got = true }
+        }
+        oi = oi + 1
+    }
+    if !got {
+        let r1 = clm_decode_argmax(ckpt, seed, gen)
+        let t1 = if to_string(r1["ok"]) == "true" { to_string(r1["text"]) } else { "" }
+        return #{ "text": t1, "k": 1, "selected": -1, "fm_score": 0.0 }
+    }
+    return #{ "text": best_text, "k": kk, "selected": best_i, "fm_score": best_score }
+}
+
 fn _gen_g_float(m: Map, k: string) -> float {
     let v = m[k]
     if to_string(v) == "void" { return 0.0 }
