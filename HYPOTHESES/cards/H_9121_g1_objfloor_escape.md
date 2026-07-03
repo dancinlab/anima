@@ -31,6 +31,15 @@ G1 objective-floor = **directional-terminal**([[H_9120]], numpy A.novel=0이나 
 ## 정직 수렴 (c9)
 **(i)-우세 with (ii)-잔존**: basin-preserving 4렌즈 전수 engine-native 기각 + 메타법칙이 전부 삼킴 = **매우 강한 천장**. 단 non-basin-preserving escape 2개가 census 자가검증 통과·미측정·cost-gated로 정직하게 열림. **L3 MOUTHFLOOR + L4 FALSIFY가 escape 공간을 이 둘로 압축한 결정 증거.**
 
+## engine-native 판별 시도 (wrno7ys0s · $0 · 둘 다 INFRA-BLOCKED but A11 강화)
+**A11 natural-transfer 확증 (DIRECTIONAL, terminal NEITHER flip NOR cement):**
+- real deep conv byte trunk(d768 7.3M)을 **natural corpus**(overlapping ko/en words, synthetic orthonormal 아님)로 contrastive-replace 학습, 5 seed: **TPR HIT 5/5** margin +34.2/+32.6/+35.7/+28.6/+36.0·reach_novel 1.0·scramble≤0.02 vs **ADD 0/5**. margin이 synthetic +99 → natural +28~36으로 떨어지나 **강하게 positive 유지 = NATURAL-TRANSFER-SURVIVES**.
+- 함의: `a_toy_scale_recheck`의 "synthetic clean-corpus artifact" 우려를 **kill**(natural transfer 실패 안 함) → FALSIFIED-CEILING 미획득. 단 torch·signature-decode readout(roles orthonormal by-construction)이라 engine-native 아님 → PREDICTIVE-ESCAPED도 미획득. **terminal decider = 실 .clm(TPR forward-slot)+contrastive-replace 학습→`anima evaluate --py` mouth-generation G1 = INFRA-BLOCKED**(aiden reboot·summer no-torch·303M pod babysit 불가). WIRE_SPEC.md(미적용 배선 spec — 학습 ckpt 없이 배선=dead code, `a_verified_must_wire`).
+
+**coverage-density (H_6185 recipe) = INFRA-BLOCKED (별개 lever, un-refuted):**
+- corpus 합성 완료(combination-coverage: N=40 concepts·25% coverage·600 reps/pair·en 3.0MB+ko 2.5MB·held-out 엄격 0). RF L4→8 config 배선(cli/train.hexa L_canon 8). `fire_l8_canon.sh` fire-ready(warm-FT h1129c + --py --L8 + --py G1 judge).
+- 2 infra wall: (1)303M heavy-GPU no-host(summer high-load·aiden reboot·24GB+ pod=explicit-go) (2)$0 L8 engine-native smoke가 anima full-stack build wall(cli/anima.hexa forward_model codegen 버그=전체 --py 깨뜨림 → 서브 수정했으나 arm64 linker `_main` undefined=stale hexat toolchain). **infra-wall-noneval**: 미측정=verdict 아님, coverage-density는 DISTINCT un-refuted lever(staged·fire-ready). 24GB+ free host에서 fire_l8_canon.sh 발사 시 결정.
+
 ## artifacts
 - `state/g1_objfloor_breakwall/BREAKWALL.md` (b9l75vja2 벽돌파), `FLEETFULL.md` (bmcmti1pb research→implement→abstract→falsify)
 - 상위 verdict: [[H_9120]] (L4 recomb-objective FALSIFY → directional-terminal)
