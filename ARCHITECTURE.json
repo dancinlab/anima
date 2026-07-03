@@ -12434,6 +12434,12 @@
         "role": "ci.yml + release.yml 공통 설계",
         "id": "governance-ci-substrate-warmcache-version-key",
         "detail": "~/.hexa-cache 엔트리는 버전접미라 키에 버전이 없으면 toolchain bump+소스불변에서 exact-hit 복원(무용)→cold→Post save 스킵 = 영구-cold 함정. 수리 = install 후 hexa --version 캡처를 key/restore-keys에 포함(스텝은 install 뒤, save 는 잡 끝 Post). dangling symlink 는 hashFiles 에서 `!` 제외."
+       },
+       {
+        "name": "compile-gate — per-module fast 게이트 (verify.checks 배선)",
+        "role": "tool/compile_gate_runner.sh → hexa-lang tool/compile_gate.py(#4461)",
+        "id": "governance-ci-substrate-compile-gate",
+        "detail": "body-only 편집은 변경 모듈만 transpile+clang -fsyntax-only로 게이트(실측: 편집 GREEN 2.53s vs 풀빌드 14.6s 로컬·에이전트 A/B 10.06s→1.44s). 인터페이스/closure 변경·stale anchor는 툴이 스스로 풀빌드 escalate(게이트 무약화). anchor= --anchor 풀빌드, 신선도 24h 강제. 리졸버= ~/.hx/src → sibling → origin/main ref 추출."
        }
       ]
      }
