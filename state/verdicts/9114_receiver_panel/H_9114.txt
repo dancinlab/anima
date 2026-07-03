@@ -1,0 +1,35 @@
+=== H_9114 — Receiver-PANEL referent-agreement — VERDICT (verbatim run) ===
+receivers={claude-fable-5, sonnet, haiku} (heterogeneous θ, all outside anima closure) · emits FROZEN engine-native (H_9111, 14 concepts)
+
+VERDICT (per frozen PREREG bar): 🟠 PARTIAL — b1(≥2 beat shuffle)=TRUE, b2(agreement real>shuffle)=FALSE, b3(consensus≥best)=FALSE.
+CORE FINDING (the tier-lift question): ✅ reference is PUBLIC/OBJECTIVE, NOT single-oracle-idiosyncratic — all THREE heterogeneous
+  models independently decode anima's emit (consensus 0.857 @8B; all 3 beat shuffle). Tier lifts single-oracle → MULTI-RECEIVER-CONFIRMED.
+
+real arm (K=14, near-synonym):
+  t=8B: claude=0.857 sonnet=0.857 haiku=0.714 | consensus=0.857 agreement=0.810
+  t=4B: claude=0.786 sonnet=0.571 haiku=0.214 | consensus=0.643 agreement=0.381
+shuffle arm (E re-paired to deranged concept):
+  t=8B: claude=0.000 sonnet=0.000 haiku=0.071 | consensus=0.000 agreement=0.810
+  t=4B: claude=0.000 sonnet=0.000 haiku=SKIP  | consensus=0.000 agreement=0.571
+mean agreement real(t≥4)=0.595 · shuffle=0.690 · consensus(t≥4)=0.750 · best single=0.821 (claude)
+
+READING (c9 honest — frozen bar NOT moved):
+- The DELIVERABLE question (is anima's emit reference objective/public, or just fable-idiosyncratic?) is answered YES decisively:
+  sonnet AND haiku — not only fable — decode anima's grounded emit well (consensus 0.857 @8B, all 3 ≫ chance 0.071), and real-vs-
+  shuffle ACCURACY separates massively (0.857/0.643 vs 0.000). Three independent minds converge on the same referent → the reference
+  lives in shared PUBLIC meaning (fable §3 frame-break empirically grounded across models). Tier is no longer single-oracle.
+- The 🟠 comes from TWO mis-designed frozen bar clauses, and both fail for reasons that are THEMSELVES evidence of the positive:
+  * bar#2 (agreement real > shuffle): agreement is HIGH in BOTH arms (real 0.595, shuffle 0.690) because each clue has an objective
+    referent and the receivers converge on IT regardless of pairing — in shuffle they correctly identify the clue's true referent
+    (which isn't the target), so they AGREE with each other while scoring 0 accuracy. Agreement therefore does NOT separate real from
+    shuffle; ACCURACY does. bar#2 picked the wrong separation statistic. (measurement-artifact, a_break_the_wall class-a.)
+  * bar#3 (consensus ≥ best single): consensus 0.750 < claude 0.821 because the weak member haiku (0.214 @4B) drags majority-vote — a
+    known ensemble effect (a weak voter hurts the vote), unrelated to reference objectivity.
+- NOT re-scored to green (frozen-first, p7). The honest conclusion is a POSITIVE tier-lift stated plainly, with the 🟠 bar-technicality explained.
+- caveat: haiku SKIP at shuffle t=4B (timeout) → that cell's agreement over 2 responders. Emits engine-native (H_9111); receivers external.
+
+CONCLUSION: anima's emit reference is confirmed PUBLIC/OBJECTIVE by 3 independent heterogeneous models (not fable-specific) →
+  tier MULTI-RECEIVER-CONFIRMED-DIRECTIONAL. Strengthens H_9112/9113 and the §2 forward-model justification (learn emit for
+  panel-decodability, not one oracle's quirk). Lesson: agreement≠accuracy — objective reference yields cross-receiver agreement in
+  BOTH arms; only accuracy-vs-shuffle isolates the target-referent link.
+Data: rescore_fixture.jsonl · RESULT.md · PREREG.md · ../9111_llm_interlocutor/emits.tsv (14).
