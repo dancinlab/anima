@@ -13335,6 +13335,13 @@
     "value": "로컬 full-engine NATIVE smoke build(hexa run core/engine_cli_smoke.hexa)는 engine_cli(11,599줄)+전 import tree를 단일 C TU로 inline→aprime_cc codegen 20분+ CPU-bound 후 clang이 그 거대 TU 컴파일 실패('binary not produced', HEXA_MEM_CAP_MB=4096) = 로컬 런타임 검증 BLOCKED(느림 넘어 실패). 이번 세션 2× 재발. 그러나 hexa typecheck는 1-2분 PASS(syntactic gate 유효), pr-cycle verify CI 게이트는 통과(Stage-1a #2878·1b-core #2881 실제 머지)=코드 무결. 교훈: .hexa 엔진 변경 런타임 검증에 로컬 native smoke build 쓰지 말 것 — typecheck(syntactic)+verbatim-idiom precedent 신뢰+pr-cycle CI/pool을 authoritative 런타임 게이트로.",
     "threshold": "재발조건: engine_cli.hexa 등 대형 엔진파일 변경 후 로컬 hexa run <full-engine smoke>로 런타임 검증 시도(20분 codegen→clang fail). 해결: ①hexa typecheck=syntactic 게이트 ②verbatim precedent(savant→forward_model)면 hand-verify ③런타임=pr-cycle verify CI 또는 pool(heavy-on-pool). heavy-on-pool·hexad-utime0·clitrain-cpu-scalar memory 정합.",
     "source": "core/engine_cli.hexa"
+   },
+   {
+    "id": "ci-cold-timeout-1",
+    "state": "pos-conv",
+    "value": "GitHub Actions 잡 timeout-minutes < cold hexa 컴파일 시간이면 SIGTERM 취소→Post-Cache save 스킵→캐시 영구 cold의 chicken-egg — anima서 2회 재발(ci.yml engine 25→50→75 · release.yml install-smoke 20→75 #2892·143 2연속 실측)",
+    "threshold": "재발조건: hexa 컴파일 포함 잡에 타임아웃 신설/축소 시. 해결: cold 실측 예산(≥75min)으로 설정+warm 정상런 무해 확인. 진단신호: exit 143이 컴파일 스텝 15-20min 지점 반복",
+    "source": "ci-cold-timeout"
    }
   ]
  }
