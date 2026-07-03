@@ -257,12 +257,20 @@ jobs:
       # 전용 per-function fused lower/codegen/emit 로 그 상주를 제거한다. 이 잡의
       # 러너 체인(ghost→mini→macos-15)은 전부 darwin-arm64 라 전 체인 적용 가능.
       # opt 는 default 0(const_fold/dce/inline 이미 전부 스킵)이라 stream 이 끄는
-      # 최적화는 없음 — 게이트 의미(컴파일 성공 + 마커 출력) 불변. 효과는 이 PR
-      # 의 CI run 자체가 A/B (기준 26m55s → state/build_speed_rootcause/ 기록).
+      # 최적화는 없음 — 게이트 의미(컴파일 성공 + 마커 출력) 불변. A/B 실측:
+      # 26m55s(stream OFF·v0.586.0) → 24m36s(stream ON·v0.586.1, run 28646394898)
+      # = ~9%, 마이너. 잔여 ~24min 은 aprime pass 자체의 CPU 비용.
+      # HEXA_CG_PROFILE=1 — aprime 단계별 wall-clock(lower_hir/mir_opt/codegen/
+      # emit) 을 stderr 로 출력하는 업스트림 진단 플래그. 게이트가 2>&1 로 캡처해
+      # 마지막에 printf 하므로 CI 로그에서 단계 분해가 그대로 보인다. 상시 계측:
+      # warm-hit run 은 컴파일 자체를 스킵하므로 비용·로그 0, cold compile(core/
+      # cli 변경 또는 toolchain bump 후 첫 run)마다 자동으로 단계 분해가 남는다.
+      # 어느 pass 가 ~24min 을 먹는지 확정되면 그 pass 를 업스트림에서 조준(라운드5).
       - name: Compile gate — production engine import-closure (stale-cache guarded)
         shell: bash
         env:
           HEXA_STREAM: '1'
+          HEXA_CG_PROFILE: '1'
         run: |
           set -euo pipefail
           cat > _ci_engine_compile.hexa <<'HX'
