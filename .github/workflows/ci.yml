@@ -180,12 +180,14 @@ jobs:
     # ubuntu-latest, always available) so ghost-offline can't wedge this gate.
     needs: dispatch
     runs-on: ${{ fromJSON(needs.dispatch.outputs.darwin_label) }}
-    # 25→50: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate(~14min)
-    # + cli/anima install(~14min)만으로 25min 초과 → 타임아웃에 cancel → Post-Cache save
+    # 25→50→75: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate
+    # + cli/anima install 만으로 예산을 소진 → 타임아웃에 cancel → Post-Cache save
     # 스킵 → 캐시가 영원히 안 데워지는 chicken-egg(매 run COLD·만성 타임아웃). 캐시는
     # 브랜치-스코프라 main 머지 후 main 의 첫 COLD run 이 timeout 안에 *완료*돼야 save→
-    # 이후 warm run 은 ~수분. 50min = COLD 1회(~39min) 여유. warm 정상 run 엔 무해.
-    timeout-minutes: 50
+    # 이후 warm run 은 초 단위. 75 로 올린 근거(실측 2026-07-03): v0.59x cold gate 가
+    # 48m49s 에서 50min 캡에 잘려 cancel(run 28651287277) → save 스킵 → 연쇄 cold 재발.
+    # 75min = 그 실측 cold + install/smoke 여유. warm 정상 run 엔 무해.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
 
@@ -314,16 +316,18 @@ jobs:
           import "core/engine_cli.hexa"
           fn main() { print("engine compile OK") }
           HX
-          out="$(hexa run _ci_engine_compile.hexa 2>&1 || true)"
+          # 출력은 tee 로 LIVE 스트리밍 — capture-then-print 는 타임아웃 cancel 시
+          # 로그를 통째로 유실했다(실측 run 28651287277: 48m49s cancel → CG_PROFILE
+          # 행 전부 소실). tee /dev/stderr 는 가드용 캡처($out)를 유지하면서 행이
+          # 방출되는 즉시 잡 로그에 남긴다(취소 내성 + 진행 관찰 가능).
+          out="$(hexa run _ci_engine_compile.hexa 2>&1 | tee /dev/stderr || true)"
           if ! printf '%s' "$out" | grep -q "engine compile OK"; then
             echo "::warning::engine compile produced degenerate output (stale ~/.hexa-cache trap) — purging warm cache + cold recompile"
-            printf '%s\n' "$out" | tail -20
             rm -f "$HOME"/.hexa-cache/hexa_run.* 2>/dev/null || true
-            out="$(hexa run _ci_engine_compile.hexa 2>&1)"
+            out="$(hexa run _ci_engine_compile.hexa 2>&1 | tee /dev/stderr)"
             printf '%s' "$out" | grep -q "engine compile OK" \
-              || { echo "::error::engine import-closure compile FAILED even after cold recompile"; printf '%s\n' "$out" | tail -40; rm -f _ci_engine_compile.hexa; exit 1; }
+              || { echo "::error::engine import-closure compile FAILED even after cold recompile"; rm -f _ci_engine_compile.hexa; exit 1; }
           fi
-          printf '%s\n' "$out"
           rm -f _ci_engine_compile.hexa
 
       # 거버넌스 enforce (CLAUDE.md 하드게이트 1·6 의 기계강제 — engine-native verdict
