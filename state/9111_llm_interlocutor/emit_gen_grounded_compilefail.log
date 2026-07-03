@@ -1,0 +1,84 @@
+START 1783032545
+error: `hexa build state/9111_llm_interlocutor/emit_gen_grounded.hexa` failed (compile error).
+=== Building state/9111_llm_interlocutor/emit_gen_grounded.hexa -> /Users/mini/.hexa-cache/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000 ===
+  [flat] module_loader → /tmp/.hexa-runtime/hexa_build_expanded.1783032900945129000.tmp.hexa
+    OK: build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c
+
+  [rt] HEXA_PREBUILT_RUNTIME — linking prebuilt: /Users/mini/.hx/bin/build/runtime.a
+  [2/2] clang -O2 -DHEXA_HAS_LIBSODIUM -I/opt/homebrew/Cellar/libsodium/1.0.22/include -DHEXA_HAS_OPENSSL -I/opt/homebrew/Cellar/openssl@3/3.6.2/include -Wno-trigraphs -fbracket-depth=4096 -I '/Users/mini/.hx/bin/self' build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c '/Users/mini/.hx/bin/build/runtime.a' -o '/Users/mini/.hexa-cache/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.tmp.28049' -lpthread -L/opt/homebrew/Cellar/libsodium/1.0.22/lib -lsodium -L/opt/homebrew/Cellar/openssl@3/3.6.2/lib -lssl -lcrypto 2>&1
+    build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:28: error: use of undeclared identifier 'replace'
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                            ^~~~~~~
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:48: error: use of undeclared identifier 'to_lower'; did you mean 'tolower'?
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                                                ^~~~~~~~
+      |                                                tolower
+/Users/mini/.hx/bin/self/runtime.h:949:37: note: expanded from macro 'hexa_call1'
+  949 | #define hexa_call1(f, a1) _Generic((f), \
+      |                                     ^
+/Applications/Xcode-26.5.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_ctype.h:297:1: note: 'tolower' declared here
+  297 | tolower(int _c)
+      | ^
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:48: error: use of undeclared identifier 'to_lower'; did you mean 'tolower'?
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                                                ^~~~~~~~
+      |                                                tolower
+/Users/mini/.hx/bin/self/runtime.h:952:30: note: expanded from macro 'hexa_call1'
+  952 |     default: hexa_call1_hv)((f), (a1))
+      |                              ^
+/Applications/Xcode-26.5.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_ctype.h:297:1: note: 'tolower' declared here
+  297 | tolower(int _c)
+      | ^
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:37: error: passing 'int (int)' to parameter of incompatible type 'HexaVal' (aka 'struct HexaVal_')
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/mini/.hx/bin/self/runtime.h:952:29: note: expanded from macro 'hexa_call1'
+  952 |     default: hexa_call1_hv)((f), (a1))
+      |                             ^~~
+/Users/mini/.hx/bin/self/runtime.h:935:45: note: passing argument to parameter 'f' here
+  935 | static inline HexaVal hexa_call1_hv(HexaVal f, HexaVal a1) {
+      |                                             ^
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:73: error: use of undeclared identifier 'to_lower'; did you mean 'tolower'?
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                                                                         ^~~~~~~~
+      |                                                                         tolower
+/Users/mini/.hx/bin/self/runtime.h:949:37: note: expanded from macro 'hexa_call1'
+  949 | #define hexa_call1(f, a1) _Generic((f), \
+      |                                     ^
+/Applications/Xcode-26.5.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_ctype.h:297:1: note: 'tolower' declared here
+  297 | tolower(int _c)
+      | ^
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:73: error: use of undeclared identifier 'to_lower'; did you mean 'tolower'?
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                                                                         ^~~~~~~~
+      |                                                                         tolower
+/Users/mini/.hx/bin/self/runtime.h:952:30: note: expanded from macro 'hexa_call1'
+  952 |     default: hexa_call1_hv)((f), (a1))
+      |                              ^
+/Applications/Xcode-26.5.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_ctype.h:297:1: note: 'tolower' declared here
+  297 | tolower(int _c)
+      | ^
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7210:62: error: passing 'int (int)' to parameter of incompatible type 'HexaVal' (aka 'struct HexaVal_')
+ 7210 |     HexaVal s = hexa_call3(replace, hexa_call1(to_lower, e), hexa_call1(to_lower, c), __hexa_sl_143);
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/mini/.hx/bin/self/runtime.h:952:29: note: expanded from macro 'hexa_call1'
+  952 |     default: hexa_call1_hv)((f), (a1))
+      |                             ^~~
+/Users/mini/.hx/bin/self/runtime.h:935:45: note: passing argument to parameter 'f' here
+  935 | static inline HexaVal hexa_call1_hv(HexaVal f, HexaVal a1) {
+      |                                             ^
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7211:20: error: use of undeclared identifier 'replace'
+ 7211 |     s = hexa_call3(replace, s, __hexa_sl_144, __hexa_sl_143);
+      |                    ^~~~~~~
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7212:20: error: use of undeclared identifier 'replace'
+ 7212 |     s = hexa_call3(replace, s, __hexa_sl_142, __hexa_sl_143);
+      |                    ^~~~~~~
+build/artifacts/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.c:7213:20: error: use of undeclared identifier 'replace'
+ 7213 |     s = hexa_call3(replace, s, __hexa_sl_254, __hexa_sl_143);
+      |                    ^~~~~~~
+10 errors generated.
+
+error: clang compile failed — binary not produced: /Users/mini/.hexa-cache/hexa_run.83cb10804f2d71e5_v0.574.1.tmp.1783032900872165000.tmp.28049
+__HEXA_BRC__=1
+
+EXIT=1 END 1783032902

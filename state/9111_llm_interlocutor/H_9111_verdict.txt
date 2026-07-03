@@ -1,0 +1,38 @@
+=== H_9111 LLM-INTERLOCUTOR exogenous consequence-loop — engine-native verdict ===
+M(concepts)=14  n_train=7  held_out=7  D(feats)=6  oracle=claude-fable-5
+
+[communication held-out]  fable_success=1.0   anima_self_decode=0.0   (chance=0.07142857142857142)
+
+[arm a — SELF-PAIR (anima-clone; success ≡ self-decode by construction)]
+  rho_conseq=0.0  rho_self=0.0  D_selfpair=0.0
+[arm b — DIFF-LLM (sidecar fable, θ outside anima closure)]
+  rho_conseq=0.0  rho_self=0.0  D_diffLLM=0.0
+[arm c — SHUFFLE (fable success re-paired to random emit)]
+  rho_conseq=0.0  rho_self=0.0  D_shuffle=0.0
+
+[FROZEN BAR] D_diffLLM − D_selfpair = 0.0  (>=0.15 -> FAIL)
+             D_shuffle = 0.0  (<0.05 -> PASS)
+             Ψ guard psi_sum ON==OFF byte-identical -> OK
+
+VERDICT: 🔴 CEILING / DPI — the external LLM is ALSO a derivable-mirror floor at this coupling
+  (D_diffLLM−D_selfpair=0.0 < 0.15). DPI runs DEEPER than the receiver: even an oracle
+  outside anima's closure buys no held-out faculty advantage here = a self-contained 5th axis.
+EXIT=0
+
+---
+PROVENANCE (harvested by main 2026-07-03 09:51 KST, a_fire_recover_complete):
+- engine-native on RENTED pod 43651143 (ssh1.vast.ai:11142, vast RTX3070 box 125GB RAM,
+  Ubuntu 22.04/glibc2.35 → hexa built FROM SOURCE to bypass the glibc≥2.38 prebuilt pin).
+- oracle = live claude-fable-5 via `sidecar fable` (θ_LLM outside anima's computational closure),
+  frozen fixture (fable_fixture.tsv) so the verdict measurement is deterministic engine-native .hexa.
+- pod torn down after harvest (RUNNING=0, cost stopped); orphan pod 43653343 (rotation-retry leak) also reaped.
+- artifacts local: emits.tsv, fable_fixture.tsv, emit_gen_pod.log, this verdict.
+
+CAVEAT (c9 honest): all three arms rho=0.0 exactly = the value-head V extracted ZERO
+appropriateness-predictive signal from ANY consequence channel (self / diff-LLM / shuffle) —
+a NEAR-FLOOR/degenerate measurement (like H_9108 signaling near-floor), NOT a clean
+diff-LLM-vs-selfpair dissociation. Communication itself DID work (fable_success=1.0: the external
+oracle correctly decoded anima's emit) but the emit-APPROPRIATENESS value lane is at floor.
+Re-openable angle (a_break_the_wall): a STRONGER emit↔appropriateness coupling (non-floor A signal)
+is the prerequisite before receiver-type could ever matter — the wall is coupling-strength, not receiver-type.
+This CONFIRMS chat-user H_9110 (🔴): a real external receiver is NOT sufficient; DPI is deeper than receiver-type.
