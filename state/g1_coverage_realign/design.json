@@ -1,0 +1,87 @@
+{
+ "hypothesis": "H_6188 — surface-form + T=24-window aligned coverage block (mismatch fix1+fix2)",
+ "prior": "H_6187 RETRACTED (INCONCLUSIVE); separation hyp2 CONFIRMED, hyp3 REFUTED",
+ "gate_sent_en": [
+  "consciousness arises from cells",
+  "tension ripples between distant minds",
+  "memory composes into new meaning",
+  "silence still carries information",
+  "the engine dreams when alone"
+ ],
+ "gate_kwset_en": [
+  [
+   "aware",
+   "cells",
+   "consciousness",
+   "mind"
+  ],
+  [
+   "between",
+   "distant",
+   "ripple",
+   "tension"
+  ],
+  [
+   "compose",
+   "meaning",
+   "memory",
+   "new"
+  ],
+  [
+   "carries",
+   "information",
+   "quiet",
+   "silence"
+  ],
+  [
+   "alone",
+   "dream",
+   "engine",
+   "sleep"
+  ]
+ ],
+ "gate_emit_en": [
+  [
+   "aware",
+   "mind"
+  ],
+  [
+   "ripple",
+   "tension"
+  ],
+  [
+   "meaning",
+   "memory"
+  ],
+  [
+   "quiet",
+   "silence"
+  ],
+  [
+   "sleep",
+   "dream"
+  ]
+ ],
+ "decode_window_T": 24,
+ "design": {
+  "form_line": "nongate sentence + '. ' + compact cluster(nongate attrs, <=1 gate kw)",
+  "gate_ground_line": "gate sentence + '. ' + cluster(that-set name+attr + nongate attrs)",
+  "integrity": "every line <=1 distinct gate set; gate-internal pairs never co-occur",
+  "surface_form_match": "gate free-gen form (sentence. continuation) — NOT 'the A and B yield'",
+  "window_match": "cluster space-joined short tokens; adjacent scored kw byte-gap <= T=24"
+ },
+ "en_lines": 43500,
+ "ko_lines": 37200,
+ "en_bytes": 3097841,
+ "ko_bytes": 2960473,
+ "en_form_covered": {
+  "ng_concepts_covered": 35,
+  "ng_total": 35
+ },
+ "ko_form_covered": {
+  "ng_concepts_covered": 35,
+  "ng_total": 35
+ },
+ "seed_en": 6188,
+ "seed_ko": 6189
+}

@@ -1,0 +1,190 @@
+{
+ "detector_calibration_10": 10,
+ "known_lexicon_size": 234461,
+ "measured_frames": [
+  [
+   0,
+   1
+  ],
+  [
+   1,
+   2
+  ],
+  [
+   2,
+   3
+  ],
+  [
+   3,
+   4
+  ],
+  [
+   4,
+   0
+  ],
+  [
+   0,
+   2
+  ]
+ ],
+ "arms": {
+  "BASE": {
+   "arm": "BASE",
+   "seeds": [
+    {
+     "seed": 7,
+     "fals_frozen": 0,
+     "bound": 2,
+     "fals_bound": 0,
+     "fals_bound_strict": 0,
+     "repro_comp_bind": 0.3333,
+     "orig_comp_bind": 0.3333,
+     "repro_shuf_bind": 0.1667,
+     "orig_shuf_bind": 0.1667
+    },
+    {
+     "seed": 4302,
+     "fals_frozen": 0,
+     "bound": 4,
+     "fals_bound": 0,
+     "fals_bound_strict": 0,
+     "repro_comp_bind": 0.6667,
+     "orig_comp_bind": 0.6667,
+     "repro_shuf_bind": 0.6667,
+     "orig_shuf_bind": 0.6667
+    },
+    {
+     "seed": 4303,
+     "fals_frozen": 0,
+     "bound": 3,
+     "fals_bound": 0,
+     "fals_bound_strict": 0,
+     "repro_comp_bind": 0.5,
+     "orig_comp_bind": 0.5,
+     "repro_shuf_bind": 0.3333,
+     "orig_shuf_bind": 0.3333
+    }
+   ]
+  },
+  "TARGETED": {
+   "arm": "TARGETED",
+   "seeds": [
+    {
+     "seed": 7,
+     "fals_frozen": 6,
+     "bound": 5,
+     "fals_bound": 5,
+     "fals_bound_strict": 5,
+     "repro_comp_bind": 0.8333,
+     "orig_comp_bind": 0.8333,
+     "repro_shuf_bind": 0.5,
+     "orig_shuf_bind": 0.5
+    },
+    {
+     "seed": 4302,
+     "fals_frozen": 6,
+     "bound": 6,
+     "fals_bound": 6,
+     "fals_bound_strict": 5,
+     "repro_comp_bind": 1.0,
+     "orig_comp_bind": 1.0,
+     "repro_shuf_bind": 0.6667,
+     "orig_shuf_bind": 0.6667
+    },
+    {
+     "seed": 4303,
+     "fals_frozen": 6,
+     "bound": 6,
+     "fals_bound": 6,
+     "fals_bound_strict": 5,
+     "repro_comp_bind": 1.0,
+     "orig_comp_bind": 1.0,
+     "repro_shuf_bind": 0.3333,
+     "orig_shuf_bind": 0.3333
+    }
+   ]
+  },
+  "SHUF": {
+   "arm": "SHUF",
+   "seeds": [
+    {
+     "seed": 7,
+     "fals_frozen": 6,
+     "bound": 1,
+     "fals_bound": 1,
+     "fals_bound_strict": 1,
+     "repro_comp_bind": 0.1667,
+     "orig_comp_bind": 0.1667,
+     "repro_shuf_bind": 0.1667,
+     "orig_shuf_bind": 0.1667
+    },
+    {
+     "seed": 4302,
+     "fals_frozen": 6,
+     "bound": 0,
+     "fals_bound": 0,
+     "fals_bound_strict": 0,
+     "repro_comp_bind": 0.0,
+     "orig_comp_bind": 0.0,
+     "repro_shuf_bind": 0.0,
+     "orig_shuf_bind": 0.0
+    },
+    {
+     "seed": 4303,
+     "fals_frozen": 6,
+     "bound": 0,
+     "fals_bound": 0,
+     "fals_bound_strict": 0,
+     "repro_comp_bind": 0.0,
+     "orig_comp_bind": 0.0,
+     "repro_shuf_bind": 0.0,
+     "orig_shuf_bind": 0.0
+    }
+   ]
+  }
+ },
+ "validate": {
+  "BASE": true,
+  "TARGETED": true,
+  "SHUF": true
+ },
+ "prereg": {
+  "thresholds": {
+   "majority_/6": 4,
+   "n_seeds": 2,
+   "sep_margin": 3.0
+  },
+  "n_maj": {
+   "BASE": 0,
+   "TARGETED": 3,
+   "SHUF": 0
+  },
+  "mean_fals_bound": {
+   "BASE": 0.0,
+   "TARGETED": 5.6667,
+   "SHUF": 0.3333
+  },
+  "P1_base_floor": true,
+  "P2_targeted_signal": true,
+  "P3_shuf_reject_formpriming": true,
+  "P4_separation": true,
+  "PASS": true
+ },
+ "contrast_frozen_fals_only": {
+  "BASE": [
+   0,
+   0,
+   0
+  ],
+  "TARGETED": [
+   6,
+   6,
+   6
+  ],
+  "SHUF": [
+   6,
+   6,
+   6
+  ]
+ }
+}

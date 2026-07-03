@@ -1,0 +1,38 @@
+[psi_loader] WARN: consciousness_laws.json not found; alpha DEFAULT=0.014
+[psi_loader] WARN: consciousness_laws.json not found; balance DEFAULT=0.5
+[psi_loader] WARN: consciousness_laws.json not found; phase_dormant_max DEFAULT=0.01
+[psi_loader] WARN: consciousness_laws.json not found; phase_flicker_max DEFAULT=0.05
+[psi_loader] WARN: consciousness_laws.json not found; phase_sustain_max DEFAULT=0.15
+
+=== H_9105 IDENTITY-CONDITIONED EMIT-FACULTY — engine-native (pure_field/immune/vforward/vbasal/self) ===
+train_seeds=4 test_seeds=3 T_TICKS=60 D=6 DSELF=8  (self_drift_exp step=0.30, novelty-gated relief)
+
+[Ψ/substrate guard] psi_sum: AUTO=56.99091566715005 RESET=56.99091566715005 ANCHOR=56.99091566715005
+                    emit_train(AUTO/RESET/ANCHOR)=147.0/147.0/147.0  emit_test=158.0/158.0/158.0
+                    -> BYTE-IDENTICAL across arms (self/V Ψ-disjoint READ-only)
+
+--- ARM 0  AUTOGENOUS (task OFF, = H_9104 baseline; no self, relief=ΔT) ---
+  ΔT mean=0.06050240764001146 std=0.1908174062334702  relief mean=0.06050240764001146 std=0.1908174062334702
+  rho_real=0.9975252779657992 rho_shuf=0.9676369781118989 rho_noise=-0.16665112459453263
+  d_noise=1.1641764025603318 d_shuf=0.02988829985390029 -> F3'=FAIL
+
+--- ARM 1  SELF-RESET (self present, reset per episode; identity-relief) ---
+  novelty_test mean=0.0679020099216633  relief mean=0.043304353886019095 std=0.14169971673028808
+  rho_real=0.9804588871630185 rho_shuf=0.9588498292237475 rho_noise=-0.14189891353079143
+  d_noise=1.12235780069381 d_shuf=0.021609057939271037 -> F3'=FAIL
+
+--- ARM 2  SELF-ANCHOR (task ON; self persists across train→held-out boundary) ---
+  novelty_test mean=0.06790143543617079  relief mean=0.04329900152951439 std=0.14168226712786242
+  rho_real=0.980457793243228 rho_shuf=0.9588592853012947 rho_noise=-0.14189862290488725
+  d_noise=1.1223564161481152 d_shuf=0.021598507941933298 -> F3'=FAIL
+
+--- CONTINUITY ATTRIBUTION (ANCHOR vs RESET) ---
+  d_shuf: ANCHOR=0.021598507941933298 RESET=0.021609057939271037 AUTO=0.02988829985390029
+  ANCHOR d_shuf - RESET d_shuf = -1.0549997337738759e-05  (>=0.15 => continuity is the active ingredient)
+
+VERDICT: 🔴 CEILING — identity-conditioning does NOT open the emit-faculty (DPI survives).
+  SELF-ANCHOR FAILS F3' (Δshuf=0.021598507941933298 <0.15): a shuffle-trained V relieves as much = self is ALSO tautology.
+  Even the only channel that ever passed (identity×.kosmos, H_1471) cannot, on a self-contained autogenous loop,
+  open the emit-consequence faculty. The DPI meta-law survives identity-conditioning. Honest 🔴 (c9, bar frozen).
+  Confirms the escape must be EXOGENOUS (Brainstorm Family A: chat user / EEG / 2-anima signaling), not a self-derived subject.
+EXIT_RC=0

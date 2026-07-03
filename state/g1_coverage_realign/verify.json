@@ -1,0 +1,64 @@
+{
+ "en": {
+  "label": "en",
+  "path": "corpus/en_block.txt",
+  "lines": 43500,
+  "max_distinct_gate_sets_per_line": 1,
+  "LEAKAGE_lines_ge2_sets": 0,
+  "gate_pair_cooccur_lines": 0,
+  "grounding_lines": 22500,
+  "set_line_count": [
+   5970,
+   5957,
+   5958,
+   6013,
+   5917
+  ],
+  "set_emit_token_count_continuation": [
+   10470,
+   10457,
+   10458,
+   10513,
+   10417
+  ],
+  "lines_with_gate_kw_in_continuation": 29815,
+  "grounding_first_gate_kw_offset_max": 0,
+  "form_first_gate_kw_offset_max_informational": 46,
+  "leak_examples": []
+ },
+ "ko": {
+  "label": "ko",
+  "path": "corpus/ko_block.txt",
+  "lines": 37200,
+  "max_distinct_gate_sets_per_line": 0,
+  "LEAKAGE_lines_ge2_sets": 0,
+  "gate_pair_cooccur_lines": 0,
+  "grounding_lines": 0,
+  "set_line_count": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "set_emit_token_count_continuation": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "lines_with_gate_kw_in_continuation": 0,
+  "grounding_first_gate_kw_offset_max": 0,
+  "form_first_gate_kw_offset_max_informational": 0,
+  "leak_examples": []
+ },
+ "VERDICT": {
+  "leakage_zero": true,
+  "single_set_per_line": true,
+  "grounding_gate_kw_window_reachable_le24": true,
+  "all_gate_sets_grounded": true,
+  "note_diff_set_cooccur_is_transfer_only": "integrity forbids 2 diff gate sets/line; cross-set co-emission at gate time is PURE transfer (by design)",
+  "PASS": true
+ }
+}

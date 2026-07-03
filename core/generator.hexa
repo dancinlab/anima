@@ -270,6 +270,73 @@ pub fn gen_ctx_from_decision(decision: Map) -> Map {
     }
 }
 
+// ── THEATER 돌파 (c) efferent seam (H_9102, Rung-1) — ops change emit BYTES (WHAT) ──
+// gen_ctx_from_decision_conflicted — carries a per-tick deliberation depth into the decode
+// ctx. conflict_t = |signed A⇄G drive| (dACC). deliberation_k = 1 + round(conflict_t·K_MAX):
+// low conflict → k=1 (single-pass argmax, bytes UNCHANGED) ; high conflict → k>1 (best-of-K
+// search over the model's OWN samples, the CONFLICT-MINIMIZING = lowest-CE candidate selected).
+// The emit BOOLEAN is decided UPSTREAM (brain_decide, before generate()) so this seam can only
+// change WHICH bytes are emitted, PHYSICALLY not the emit-rate / psi_sum ⇒ Ψ constructive-safe.
+fn _gc_clip01(x: float) -> float { if x < 0.0 { return 0.0 } if x > 1.0 { return 1.0 } return x }
+pub fn gen_ctx_from_decision_conflicted(decision: Map, conflict_t: float) -> Map {
+    let ctx = gen_ctx_from_decision(decision)
+    let kmax = 3
+    let mut k = 1 + to_int(_gc_clip01(conflict_t) * to_float(kmax) + 0.5)
+    if k < 1 { k = 1 }
+    if k > 1 + kmax { k = 1 + kmax }
+    ctx["deliberation_k"] = k
+    return ctx
+}
+
+// _gen_text_to_bytes — text → byte-int list for clm_decode_ce scoring.
+fn _gen_text_to_bytes(s: string) -> list {
+    let n = byte_len(s)
+    let mut v = []
+    let mut i = 0
+    while i < n { v = v + [s.byte_at(i)]; i = i + 1 }
+    return v
+}
+
+// gen_clm_decode_deliberated — the efferent seam decode. k=1 ⇒ argmax (byte-identical to the
+// un-conflicted path). k>1 ⇒ decode k sampled candidates at deterministic rng offsets and RETURN
+// the CONFLICT-MINIMIZING one = LOWEST clm_decode_ce (most-resolved/fluent continuation, p7: the
+// model's OWN bytes searched — best-of-K, NOT idea-authoring). Selection metric = engine-measured
+// CE (the "ranged CE op"), NOT an injected judge. Returns #{ "text", "k", "ce_sel", "ce_k1" }.
+pub fn gen_clm_decode_deliberated(ckpt: string, seed: string, gen: int, k: int, base_seed: int) -> Map {
+    // k=1 baseline = single-pass argmax (the un-deliberated emit)
+    let r1 = clm_decode_argmax(ckpt, seed, gen)
+    let t1 = if to_string(r1["ok"]) == "true" { to_string(r1["text"]) } else { "" }
+    let ce1m = clm_decode_ce(ckpt, _gen_text_to_bytes(seed + t1))
+    let ce1 = to_float(ce1m["ce"])
+    if k <= 1 {
+        return #{ "text": t1, "k": 1, "ce_sel": ce1, "ce_k1": ce1 }
+    }
+    // k>1: search the model's OWN samples; the DELIBERATED emit = the CONFLICT-MINIMIZING
+    // (lowest-CE) SAMPLED candidate. It is compared to argmax via ΔCE=ce1−ce_sel but is NOT
+    // gated to argmax — so deliberation genuinely re-selects the emitted bytes (byte grip is
+    // testable). NB finding: min-CE-vs-argmax gating recovers argmax (greedy near-optimal) ⇒
+    // grip 0; the honest test emits the best SAMPLE and asks if conflict allocates it better
+    // than noise (F3).
+    let offsets = [0, 101, 202, 303]
+    let mut best_text = ""
+    let mut best_ce = 1000000.0
+    let mut got = false
+    let kk = if k > 4 { 4 } else { k }
+    let mut oi = 0
+    while oi < kk {
+        let rs = clm_decode_topk_sampled(ckpt, seed, gen, 8, 0.7, base_seed + offsets[oi])
+        if to_string(rs["ok"]) == "true" {
+            let ts = to_string(rs["text"])
+            let cem = clm_decode_ce(ckpt, _gen_text_to_bytes(seed + ts))
+            let ce = to_float(cem["ce"])
+            if !got || ce < best_ce { best_ce = ce; best_text = ts; got = true }
+        }
+        oi = oi + 1
+    }
+    if !got { return #{ "text": t1, "k": 1, "ce_sel": ce1, "ce_k1": ce1 } }
+    return #{ "text": best_text, "k": kk, "ce_sel": best_ce, "ce_k1": ce1 }
+}
+
 fn _gen_g_float(m: Map, k: string) -> float {
     let v = m[k]
     if to_string(v) == "void" { return 0.0 }
@@ -496,6 +563,14 @@ fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
         }
         // grounded decode declined (non-decodable .clm) — honest substrate fallthrough.
         return _gen_null_text(ctx, anchors)
+    }
+    // H_9102 efferent seam: if the ctx carries a deliberation depth (from
+    // gen_ctx_from_decision_conflicted), decode best-of-K (conflict-minimizing = lowest CE).
+    // deliberation_k absent / ==1 ⇒ single-pass argmax (byte-identical to the prior behaviour).
+    let dk = _gen_g_int(ctx, "deliberation_k")
+    if dk > 1 {
+        let dd = gen_clm_decode_deliberated(ckpt, seed, 80, dk, 20260703)
+        return to_string(dd["text"])
     }
     let r = clm_decode_argmax(ckpt, seed, 80)
     if to_string(r["ok"]) != "true" {
@@ -856,6 +931,171 @@ pub fn gen_g6_sampler_selftest() -> Map {
     }
     t_free(lg)
     return #{ "deterministic": deterministic, "diverse": diverse, "in_topk": in_topk }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// §DELIBERATE (H_9102 · fable design (c) · op-grip EFFERENT axis)
+// ------------------------------------------------------------------------
+// The op-grip trilogy CLOSE. (a) motivation = 🔴 floor (H_9100); (b) stage/safe =
+// 🟢 grip on WHEN to emit (H_9101); (c) HERE = grip on WHAT is emitted (the BYTES).
+// Today's daemon decode is 1 candidate, 0 deliberation (generate() → _gen_clm_decode →
+// clm_decode_grounded, argmax fallback). This section recruits a best-of-K deliberation
+// where the DEPTH K = the live A⇄G conflict (conflict_recruited_depth — the dead return
+// value finally becomes the real budget), and the WINNER = argmin conflict = the candidate
+// whose FLUENCY (forward CE, Engine-A push) and GROUNDING (§ImmuneMemory recall margin,
+// Engine-G pull) AGREE. A fluent-but-ungrounded continuation (a>0, g<0) is exactly the
+// fabrication-boundary state (dACC conflict), and deliberation resolves it toward grounding.
+//
+// a_substrate_disjoint: the emit/silence DECISION is UNTOUCHED (brain_decide 8-weights +
+// 0.3 threshold + safe conjunction all frozen — see brain_emit_deliberate). recall_thr &
+// the immune store are READ-only (margin is a pure query). ONLY the emit BYTES change.
+// K=1 (low conflict) ⇒ winner = c₀ ⇒ byte-identical to today (the regression guard).
+
+// _gen_clip01 — local [0,1] clip (engine_cli's is private).
+fn _gen_clip01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+// _gen_substrate_seed — reproduce the substrate-derived decode seed EXACTLY as
+// _gen_clm_decode / _gen_bytegpt_decode build it (phase word + most-recent anchor
+// text; NO user message / persona / system prompt — a_substrate_native_speak, p1·p3·p4).
+// Used to seed the deliberation's sampled candidates from the SAME substrate context c₀ used.
+fn _gen_substrate_seed(ctx: Map, anchors: list) -> string {
+    let phase = _gen_g_string(ctx, "phase")
+    let mut seed = phase + " "
+    let n = len(anchors)
+    if n > 0 { seed = seed + _gen_anchor_text(anchors[n - 1]) }
+    return seed
+}
+
+// gen_auto_ce — mouth-agnostic mean next-byte CE over a TEXT (the a_drive fluency read).
+// CONV → clm_ce_ranged · ByteGPT → bytegpt_ce_ranged (H_9102 ops). Byte-ids from the text.
+// Returns CE_REF (5.0, neutral) when the text is too short or the mouth declines (no signal).
+pub fn gen_auto_ce(ckpt_path: string, text: string) -> float {
+    let ids = []
+    let n = byte_len(text)
+    let mut i = 0
+    while i < n { ids.push(ord(substring(text, i, i + 1))); i = i + 1 }
+    if len(ids) < 2 { return 5.0 }
+    if gen_mouth_kind(ckpt_path) == "bytegpt" {
+        let r = bytegpt_ce_ranged(ckpt_path, ids)
+        if to_string(r["ok"]) == "true" { return to_float(r["ce_mean"]) }
+        return 5.0
+    }
+    let r = clm_ce_ranged(ckpt_path, ids)
+    if to_string(r["ok"]) == "true" { return to_float(r["ce_mean"]) }
+    return 5.0
+}
+
+// gen_auto_ce_W — LOAD-ONCE twin of gen_auto_ce: BYTE-IDENTICAL forward-CE off a PRE-LOADED
+// handle `h` (gen_auto_load) so a best-of-K driver scores every candidate without reloading
+// the .clm. ByteGPT → the existing ranged path (already OOM-safe, keeps ckpt path); CLM →
+// clm_ce_ranged_W off the resident W. Same 5.0 fallbacks as gen_auto_ce (identical behaviour).
+pub fn gen_auto_ce_W(h: Map, text: string) -> float {
+    let ids = []
+    let n = byte_len(text)
+    let mut i = 0
+    while i < n { ids.push(ord(substring(text, i, i + 1))); i = i + 1 }
+    if len(ids) < 2 { return 5.0 }
+    if to_string(h["kind"]) == "bytegpt" {
+        let r = bytegpt_ce_ranged(to_string(h["ckpt"]), ids)
+        if to_string(r["ok"]) == "true" { return to_float(r["ce_mean"]) }
+        return 5.0
+    }
+    let W = h["W"]
+    if to_string(W["ok"]) != "true" { return 5.0 }
+    let r = clm_ce_ranged_W(W, ids)
+    if to_string(r["ok"]) == "true" { return to_float(r["ce_mean"]) }
+    return 5.0
+}
+
+// conflict_drives_live — the live signed A⇄G drives for ONE candidate text.
+//   a_drive ∈ [0,1] = fluency push  = clip01(1 − ce_mean / CE_REF)   (CE_REF = 5.0 frozen)
+//   g_drive ∈ [-1,1] = grounding pull from §ImmuneMemory recall margin (M_REF = 0.25 frozen):
+//     margin = recon_err − recall_thr ; margin ≤ 0 ⇒ recall FIRES (grounded) ⇒ g = +clip01(−margin/M_REF)
+//                                        margin > 0 ⇒ ABSTAIN (ungrounded) ⇒ g = −clip01( margin/M_REF)
+// READ-only: recall_thr and the immune store are NOT modified (immune_memory_recall_margin_text is a
+// pure query through immune_embed_key). a_substrate_disjoint: G5 lane READ feeds content only, never the gate.
+pub fn conflict_drives_live(ckpt_path: string, cand: string, mem: ImmuneMemory) -> [float] {
+    let ce = gen_auto_ce(ckpt_path, cand)
+    let a = _gen_clip01(1.0 - ce / 5.0)
+    let margin = immune_memory_recall_margin_text(mem, cand)
+    let mut g = 0.0
+    if margin <= 0.0 { g = _gen_clip01((0.0 - margin) / 0.25) }
+    else { g = 0.0 - _gen_clip01(margin / 0.25) }
+    return [a, g]
+}
+
+// conflict_drives_live_W — LOAD-ONCE twin of conflict_drives_live: identical signed A⇄G
+// drives (byte-identical a via gen_auto_ce_W, same margin/g), off a PRE-LOADED handle `h`.
+pub fn conflict_drives_live_W(h: Map, cand: string, mem: ImmuneMemory) -> [float] {
+    let ce = gen_auto_ce_W(h, cand)
+    let a = _gen_clip01(1.0 - ce / 5.0)
+    let margin = immune_memory_recall_margin_text(mem, cand)
+    let mut g = 0.0
+    if margin <= 0.0 { g = _gen_clip01((0.0 - margin) / 0.25) }
+    else { g = 0.0 - _gen_clip01(margin / 0.25) }
+    return [a, g]
+}
+
+// generate_deliberate — the EFFERENT seam. Sister to generate(): SAME contract +
+// byte-identical SILENCE, but on EMIT it runs best-of-K deliberation over the bytes.
+//   emit == false ⇒ byte-identical to generate() (p5 silence, regression guard).
+//   c₀ = generate(...) = today's exact output (grounded/argmax). conf_pre = conflict of c₀.
+//   K = conflict_recruited_depth(conf_pre, 1, 3) ∈ {1..4}. candidates k=1..K−1 = seeded top-k
+//   samples (top_k=8, temp=0.7 frozen, seed_rng = tick*17+k). winner = argmin conflict, tie-break
+//   min k ⇒ K=1 ⇒ winner=c₀ (byte-exact today). Returns the generate() record + depth/k/conf fields.
+pub fn generate_deliberate(backend: Map, substrate_ctx: Map, emit_decision: bool,
+                           anchors: list, mem: ImmuneMemory, tick: int) -> Map {
+    let base = generate(backend, substrate_ctx, emit_decision, anchors)
+    if !emit_decision { return base }                 // SILENT: byte-identical, no deliberation
+    let real_kind = to_string(base["backend"])
+    if real_kind == "null" {                          // no real mouth loaded → no deliberation
+        base["depth"] = 1; base["k_winner"] = 0; base["conf_pre"] = 0.0; base["conf_winner"] = 0.0
+        return base
+    }
+    let ckpt = to_string(backend["ckpt"])
+    let c0 = to_string(base["text"])
+    // H_9107 fix: hoist the .clm load OUT of the best-of-K loop. The old path reloaded the
+    // ckpt on EVERY gen_auto_ideate (generate) AND every conflict_drives_live (score) call —
+    // ~2K+1 reloads/tick, and the ideate reload never freed → unbounded RSS growth that
+    // exploded a 303M ckpt (H_9107 BLOCKED-INFRA). Now: gen_auto_load ONCE → reuse the handle
+    // for both generation (gen_auto_ideate_W) and scoring (conflict_drives_live_W) → gen_auto_free
+    // ONCE. Both W-twins are byte-identical to their path-keyed originals ⇒ frozen verdict unchanged.
+    let h = gen_auto_load(ckpt)
+    let d0 = conflict_drives_live_W(h, c0, mem)
+    let conf0 = conflict_scalar(d0[0], d0[1])
+    let K = conflict_recruited_depth(conf0, 1, 3)      // the dead return value → real budget
+    let mut best_text = c0
+    let mut best_conf = conf0
+    let mut best_k = 0
+    if K > 1 {
+        let seed = _gen_substrate_seed(substrate_ctx, anchors)
+        let mut k = 1
+        while k < K {
+            let r = gen_auto_ideate_W(h, seed, 80, 8, 0.7, tick * 17 + k)
+            if to_string(r["ok"]) == "true" {
+                let cand = to_string(r["text"])
+                let dk = conflict_drives_live_W(h, cand, mem)
+                let confk = conflict_scalar(dk[0], dk[1])
+                if confk < best_conf {                 // strict < ⇒ tie-break keeps min k (c₀ first)
+                    best_conf = confk; best_text = cand; best_k = k
+                }
+            }
+            k = k + 1
+        }
+    }
+    gen_auto_free(h)                                   // release the resident .clm weight-set ONCE
+    return #{ "emitted":  base["emitted"],
+              "backend":  base["backend"],
+              "text":     best_text,
+              "fellback": base["fellback"],
+              "depth":       K,
+              "k_winner":    best_k,
+              "conf_pre":    conf0,
+              "conf_winner": best_conf }
 }
 
 // _gen_rd_u32 / _gen_gelu / _gen_gnorm / _gen_conv1d — pure-hexa decode kernels.

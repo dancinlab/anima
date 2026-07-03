@@ -1,0 +1,29 @@
+=== H_9113 — Referential-efficacy THRESHOLD resolution (sub-8-byte) — VERDICT (verbatim run) ===
+oracle=claude-fable-5 (θ outside anima closure) · emits FROZEN engine-native (H_9111, 14 concepts) · tier=DIRECTIONAL-on-external-oracle
+
+VERDICT (per frozen PREREG bar): 🟠 PARTIAL — b50_real=3.20 bytes, but bar#2 "real>shuffle at EVERY t" FAILS at the ≤2-byte noise floor.
+PRIMARY DELIVERABLE (bar#3, descriptive scalar): ✅ RESOLVED — coupling-strength = b50_real ≈ 3.20 bytes-of-clue at 50% decode (K=14).
+
+real arm (acc vs clue bytes, K=14, near-synonym distractors):
+  t=8B: 1.000   t=6B: 0.857   t=4B: 0.786   t=3B: 0.429   t=2B: 0.000   t=1B: 0.071
+shuffle arm (E re-paired to deranged concept):
+  t=8B: 0.000   t=6B: 0.000   t=4B: 0.000   t=3B: 0.143   t=2B: 0.000   t=1B: 0.071
+chance(K=14)=0.071 · mean_acc_real=0.524 · mean_acc_shuffle=0.036 (14× overall separation)
+b50_real ≈ 3.20 bytes (linear interp between t=4B/0.786 and t=3B/0.429).
+
+READING (c9 honest — frozen bar NOT moved):
+- The coupling-strength SCALAR resolves cleanly at ~3.2 bytes: anima's grounded emit reference is decodable
+  by an external mind from just ~3 bytes of clue among 14 candidates → referential efficacy is EXTREMELY strong.
+  H_9112's near-ceiling caveat (threshold unresolved) is now CLOSED with a quantified scalar.
+- The 🟠 is caused SOLELY by the frozen bar#2 clause "real>shuffle at EVERY t" including the ≤2-byte NOISE FLOOR,
+  where dominance is structurally IMPOSSIBLE: a 1-byte clue is "a" for every emit (all descriptions start "a …"),
+  and a 2-byte clue "a " carries zero referent info → BOTH arms collapse to chance/zero by construction. This is
+  the expected information-theoretic floor, not a coupling failure. In the SIGNAL regime (8→3 bytes) real
+  DOMINATES shuffle absolutely (1.0/0.857/0.786/0.429 vs 0.0/0.0/0.0/0.143).
+- Honest bar-design note (a_break_the_wall class-a): bar#2 should have scoped "at every t WHERE the clue carries
+  ≥1 content byte" (t≥3). The scalar deliverable (bar#3) is unaffected and is the real result. NOT re-scored to green.
+- TIER: DIRECTIONAL-on-external-oracle (emit engine-native H_9111; receiver external LLM).
+
+CONCLUSION: referential efficacy quantified — b50 ≈ 3.2 bytes (very strong). Feeds §2 forward-model as the
+  baseline byte-threshold a learned emit-policy would try to LOWER. H_9112 caveat (a) closed.
+Data: rescore_fixture.jsonl · RESULT.md · PREREG.md · ../9111_llm_interlocutor/emits.tsv (14).

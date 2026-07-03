@@ -183,6 +183,75 @@ fn _g6_is_falsifiable(text: string, known: Map) -> bool {
     return true
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// ── H_6186 G6-BIND GATE — form-priming-resistant ADDITIVE term (wire-in) ──
+//
+// The frozen `_g6_is_falsifiable` above is FORM-only: it fires on comparator ∧ measurable ∧
+// ≥2 content REGARDLESS of whether the decode binds the frame's actual topic pair. The 3-arm
+// engine-native warm-FT result (state/g6_targeted_corpus/) proved this is gameable — SHUF
+// (a control corpus that destroys ONLY the topic-bind) still passes frozen FALS 6/6. The real
+// recombination signal lives in bind Δ (TARGETED 0.444 vs SHUF 0.000), which frozen FALS
+// cannot measure.
+//
+// These fns AND-conjoin a topic-bind check ON TOP of the frozen term. The frozen detector is
+// UNTOUCHED (called verbatim, never modified — frozen bar, no tune-to-green). This is purely
+// additive: the existing g6_score_arm `fals` output is byte-identical (a separate
+// bind-extended twin g6_score_arm_bound carries the new fals_bound alongside).
+// reference-match: state/g6_bind_gate/g6_bind_gate.py (recall rule, byte-faithful to the
+// gauge_lib.CONCEPTS keyword-sets — validated 18/18 on the summer results json).
+
+// _g6_concept_kw — gauge_lib.CONCEPTS keyword-sets, VERBATIM (kw-set only) as a list of Map
+//   sets. Index i = the i-th corpus concept (same order as _g6_concepts / g6_build_frames).
+fn _g6_concept_kw() -> list {
+    return [ #{ "consciousness":1, "cells":1, "mind":1, "aware":1 },
+             #{ "tension":1, "ripple":1, "distant":1, "between":1 },
+             #{ "memory":1, "meaning":1, "compose":1, "new":1 },
+             #{ "silence":1, "information":1, "quiet":1, "carries":1 },
+             #{ "dream":1, "engine":1, "alone":1, "sleep":1 } ]
+}
+
+// _g6_concept_hits — gauge_lib._concept_hits VERBATIM: the set of concept indices whose
+//   keyword-set intersects the text's word-set. Returns a Map set keyed by stringified index
+//   { to_string(i): 1 } (hexa Map keys are strings).
+fn _g6_concept_hits(text: string) -> Map {
+    let wl = _g6_words(text)
+    let ws = #{}
+    let mut i = 0
+    while i < len(wl) { ws[to_string(wl[i])] = 1; i = i + 1 }
+    let kw = _g6_concept_kw()
+    let hits = #{}
+    let mut c = 0
+    while c < len(kw) {
+        let keys = _g6_mapkeys(kw[c])
+        let mut hit = false
+        let mut j = 0
+        while j < len(keys) { if ws.contains_key(to_string(keys[j])) { hit = true } j = j + 1 }
+        if hit { hits[to_string(c)] = 1 }
+        c = c + 1
+    }
+    return hits
+}
+
+// _g6_topic_bound — the new BIND term (RECALL rule, τ=1 hit — g6_bind_gate.py::topic_bound):
+//   bound(text, a, b)  ⟺  concept_hits(text) ∩ {a, b} ≠ ∅
+//   = the decode invokes ≥1 of the measurement frame's actual concept pair (a, b). A SHUF /
+//   form-primed decode carries the falsifiable FORM but binds a WRONG topic → hits ∩ {a,b}=∅
+//   → bound=false → the additive gate filters it.
+fn _g6_topic_bound(text: string, a: int, b: int) -> bool {
+    let hits = _g6_concept_hits(text)
+    return hits.contains_key(to_string(a)) || hits.contains_key(to_string(b))
+}
+
+// _g6_is_falsifiable_topic_bound — H_6186 form-priming-resistant ADDITIVE gate:
+//   frozen `_g6_is_falsifiable(text)`  AND  `_g6_topic_bound(text, a, b)`.
+//   The frozen term is CALLED (verbatim), never modified. SHUF passes the frozen form check
+//   but fails topic_bound → filtered; TARGETED passes both; BASE fails the frozen form.
+fn _g6_is_falsifiable_topic_bound(text: string, a: int, b: int, known: Map) -> bool {
+    return _g6_is_falsifiable(text, known) && _g6_topic_bound(text, a, b)
+}
+// ── end H_6186 G6-BIND GATE ──
+// ════════════════════════════════════════════════════════════════════════
+
 // _g6_jaccard — token-set Jaccard (distinctness metric, gauge_lib parity).
 fn _g6_jaccard(a: list, b: list) -> float {
     let am = #{}
@@ -386,6 +455,59 @@ pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int
     return #{ "dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts }
 }
 
+// g6_score_arm_bound — H_6186 BIND-EXTENDED twin of g6_score_arm. IDENTICAL DIST/FALS/coherent/
+//   texts scoring (the existing frozen `fals` output is byte-identical — same frames, same
+//   per-frame decode, same _g6_is_falsifiable path), PLUS a `fals_bound` field: the
+//   form-priming-resistant gate (`_g6_is_falsifiable ∧ _g6_topic_bound`) counted per frame
+//   against its measured concept pair frame_pairs[i] = [a, b].
+//   frame_pairs = the MEASURED topic-index pairs of the frames (g6_build_frames composed order
+//   [(0,1),(1,2),(2,3),(3,4),(4,0),(0,2)]). fals_bound ⊆ fals by construction (the bind term
+//   only AND-adds), so this NEVER changes `fals` — g6_score_arm stays untouched (zero regression).
+pub fn g6_score_arm_bound(ckpt: string, frames: list, frame_pairs: list, gen: int, k: int,
+                          base_seed: int, best_of_k: bool, known: Map) -> Map {
+    let texts = []
+    let word_sets = []
+    let mut fals = 0
+    let mut fals_bound = 0
+    let mut i = 0
+    while i < len(frames) {
+        let f = to_string(frames[i])
+        let mut o = ""
+        if best_of_k { o = g6_decode_best_of_k(ckpt, f, gen, k, base_seed, known) }
+        else {
+            let r = gen_clm_ideate(ckpt, f, gen, 40, 0.7, base_seed)
+            o = to_string(r["text"])
+        }
+        texts.push(o)
+        if _g6_known_word_ratio(o, known) >= 0.5 {
+            word_sets.push(_g6_words(o))
+            if _g6_is_falsifiable(o, known) {
+                fals = fals + 1
+                // H_6186 bind term (additive): only when a measured pair exists for this frame.
+                if i < len(frame_pairs) {
+                    let pr = frame_pairs[i]
+                    let a = to_int(pr[0]); let b = to_int(pr[1])
+                    if _g6_topic_bound(o, a, b) { fals_bound = fals_bound + 1 }
+                }
+            }
+        }
+        i = i + 1
+    }
+    // greedy distinctness (jaccard <= 0.5) — IDENTICAL to g6_score_arm
+    let kept = []
+    let mut w = 0
+    while w < len(word_sets) {
+        let ws = word_sets[w]
+        let mut ok = true
+        let mut kk = 0
+        while kk < len(kept) { if _g6_jaccard(ws, kept[kk]) > 0.5 { ok = false } kk = kk + 1 }
+        if ok { kept.push(ws) }
+        w = w + 1
+    }
+    return #{ "dist": len(kept), "fals": fals, "fals_bound": fals_bound,
+              "coherent": len(word_sets), "texts": texts }
+}
+
 // g6_score_arm_auto_W — LOAD-ONCE twin of g6_score_arm_auto (H_1400 W-hoist at the eval
 // driver). BYTE-IDENTICAL DIST/FALS/coherent: same frames, same per-frame seed (base_seed+i),
 // same gen_auto_ideate logic — the ONLY change is the decode runs off a PRE-LOADED handle
@@ -458,4 +580,121 @@ pub fn g6_score_arm_auto(ckpt: string, frames: list, gen: int, base_seed: int, k
         w = w + 1
     }
     return #{ "dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// ── H_6186 G6-BIND · ByteGPT-capable bind twin (canonical mouth-agnostic) ──
+//
+// GAP (state/g6_bind_gate_terminal/): the H_6186 form-priming-resistant fals_bound term is
+// wired ONLY into g6_score_arm_bound — which is CLM-ONLY (decode hard-codes gen_clm_ideate /
+// g6_decode_best_of_k). The CANONICAL `anima evaluate` G6 path is mouth-agnostic
+// (cli/evaluate.hexa g_eval_g6_seeded_W → g6_score_arm_auto_W → gen_auto_ideate → sniffs the
+// ckpt → .clm OR ByteGPT) but carries NO fals_bound. So on a ByteGPT ckpt there is no engine
+// op that emits fals_bound. These two additive fns close that: they are g6_score_arm_bound's
+// bind logic re-routed through the mouth-AGNOSTIC L3 decode entries (gen_auto_ideate), so the
+// bind gate runs on the ByteGPT mouth too.
+//
+// ADDITIVE + ZERO REGRESSION: the frozen scoring fns (g6_score_arm, g6_score_arm_bound,
+// g6_score_arm_auto, g6_score_arm_auto_W) and the frozen detector (_g6_is_falsifiable) are
+// NOT touched — called verbatim, never modified. fals_bound ⊆ fals by construction (the bind
+// term only AND-adds inside the frozen-fals branch), so `dist`/`fals`/`coherent`/`texts` are
+// byte-identical to g6_score_arm_auto — the new field is purely additive.
+
+// g6_decode_best_of_k_auto — MOUTH-AGNOSTIC twin of g6_decode_best_of_k. IDENTICAL best-of-K
+// ranking (offsets [0,+101,+202]; keep max (fals, kwr)), but the decode is the SINGLE typed L3
+// entry gen_auto_ideate (sniffs ckpt → .clm OR ByteGPT) instead of the CLM-only gen_clm_ideate.
+// This is the ByteGPT-capable best-of-K path g6_score_arm_auto_bound uses. HARD-BOUNDED by `gen`.
+pub fn g6_decode_best_of_k_auto(ckpt: string, frame: string, gen: int, k: int,
+                                base_seed: int, known: Map) -> string {
+    let offsets = [0, 101, 202]
+    let mut best = ""
+    let mut best_fals = -1
+    let mut best_kwr = 0.0 - 1.0
+    let mut oi = 0
+    let kk = if k < 3 { k } else { 3 }
+    while oi < kk {
+        let r = gen_auto_ideate(ckpt, frame, gen, 40, 0.7, base_seed + offsets[oi])
+        let o = to_string(r["text"])
+        let kwr = _g6_known_word_ratio(o, known)
+        let mut fals = 0
+        if kwr >= 0.5 && _g6_is_falsifiable(o, known) { fals = 1 }
+        // rank (fals, kwr) — kwr stands in for the novel-gram tiebreak on the bounded budget
+        if fals > best_fals || (fals == best_fals && kwr > best_kwr) {
+            best_fals = fals; best_kwr = kwr; best = o
+        }
+        oi = oi + 1
+    }
+    return best
+}
+
+// g6_score_arm_auto_bound — H_6186 BIND-EXTENDED + MOUTH-AGNOSTIC scoring op. This is
+// g6_score_arm_bound's exact DIST/FALS/fals_bound logic (same frozen `fals` path, same
+// _g6_topic_bound AND-add) re-routed through the mouth-agnostic decode entries so it runs on
+// the ByteGPT mouth (via g6_decode_best_of_k_auto / gen_auto_ideate) — the missing bind twin of
+// the canonical g6_score_arm_auto that `anima evaluate` reaches. `frame_pairs` = the MEASURED
+// topic-index pairs of the frames (g6_build_frame_pairs; composed order
+// [(0,1),(1,2),(2,3),(3,4),(4,0),(0,2)]). fals_bound ⊆ fals by construction → `fals`/`dist`/
+// `coherent`/`texts` stay byte-identical to g6_score_arm_auto (zero regression).
+pub fn g6_score_arm_auto_bound(ckpt: string, frames: list, frame_pairs: list, gen: int, k: int,
+                               base_seed: int, best_of_k: bool, known: Map) -> Map {
+    let texts = []
+    let word_sets = []
+    let mut fals = 0
+    let mut fals_bound = 0
+    let mut i = 0
+    while i < len(frames) {
+        let f = to_string(frames[i])
+        let mut o = ""
+        if best_of_k { o = g6_decode_best_of_k_auto(ckpt, f, gen, k, base_seed + i, known) }
+        else {
+            let r = gen_auto_ideate(ckpt, f, gen, 40, 0.7, base_seed + i)
+            o = to_string(r["text"])
+        }
+        texts.push(o)
+        if _g6_known_word_ratio(o, known) >= 0.5 {
+            word_sets.push(_g6_words(o))
+            if _g6_is_falsifiable(o, known) {
+                fals = fals + 1
+                // H_6186 bind term (additive): only when a measured pair exists for this frame.
+                if i < len(frame_pairs) {
+                    let pr = frame_pairs[i]
+                    let a = to_int(pr[0]); let b = to_int(pr[1])
+                    if _g6_topic_bound(o, a, b) { fals_bound = fals_bound + 1 }
+                }
+            }
+        }
+        i = i + 1
+    }
+    // greedy distinctness (jaccard <= 0.5) — IDENTICAL to g6_score_arm_auto
+    let kept = []
+    let mut w = 0
+    while w < len(word_sets) {
+        let ws = word_sets[w]
+        let mut ok = true
+        let mut kk = 0
+        while kk < len(kept) { if _g6_jaccard(ws, kept[kk]) > 0.5 { ok = false } kk = kk + 1 }
+        if ok { kept.push(ws) }
+        w = w + 1
+    }
+    return #{ "dist": len(kept), "fals": fals, "fals_bound": fals_bound,
+              "coherent": len(word_sets), "texts": texts }
+}
+
+// g6_build_frame_pairs — the MEASURED topic-index pairs for the composed frames, VERBATIM the
+// same (a, b) rule g6_build_frames uses (a = i%n, b = (i+1+i/n)%n over the _g6_concepts set).
+// Returned as a list of [a, b] int-lists so a bind driver can pass frame_pairs to
+// g6_score_arm_auto_bound WITHOUT re-deriving the rule. For n_strong=6 over n=5 concepts this is
+// [[0,1],[1,2],[2,3],[3,4],[4,0],[0,2]] — the pairs the H_6186 bind term scores against.
+pub fn g6_build_frame_pairs(n_strong: int) -> list {
+    let cz = _g6_concepts()
+    let n = len(cz)
+    let pairs = []
+    let mut i = 0
+    while i < n_strong {
+        let a = i % n
+        let b = (i + 1 + i / n) % n
+        pairs.push([a, b])
+        i = i + 1
+    }
+    return pairs
 }

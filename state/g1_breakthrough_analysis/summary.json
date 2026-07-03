@@ -1,0 +1,42 @@
+{
+  "analysis": "G1 recombination wall — breakthrough angle divergence + prescription",
+  "date": "2026-07-03",
+  "mode": "analysis-only (Fable), no heavy decode/GPU, no bookkeeping touch (frozen-first c9)",
+  "inputs_read": [
+    "cli/evaluate.py::g_eval_g1 (via state/g1_coverage_realign/strict_bypass/cli/evaluate.py)",
+    "core/decode.py clm_decode_* T=24 right-align + nn_groupnorm_fwd G=1 + _fwd_logits (no posemb)",
+    "tool/gauge_lib.py CONCEPTS",
+    "state/g1_coverage_realign/g1_engine_native.json",
+    "state/g1_coverage_realign/strict_bypass/g1_canonical_windowsweep_result.json"
+  ],
+  "q_a_composed_lt_single_mechanism": {
+    "verdict": "WINDOW ARTIFACT — CONFIRMED",
+    "proof": "At T=24 the composed-k arm and single[k-1] arm condition on a BYTE-IDENTICAL 24-byte window (window_identity_proof.py). Earlier k-1 concepts sit 48-147B behind the window edge = invisible. composed is a re-roll of single[k-1] (only seed_rng differs) so composed>max_single(=MAX over 5 singles) is structurally near-impossible.",
+    "data": {"composed_per_k_distinct": {"k2": 1, "k3": 1, "k4": 1, "k5": 1}, "each_surfaces": "only the LAST concept", "max_single": 3}
+  },
+  "q_b_window_extend_prediction": {
+    "earlier_concept_can_influence_continuation": true,
+    "evidence": "sweep T=24->48 lifts composed k=2 distinct 1->2 (concept #0 re-enters window). RF~513 + no positional embedding => structurally possible.",
+    "but_fixed_large_T_fails": "short single seeds (30-39B) get pad-flooded (byte 32) at large fixed T; whole-window GroupNorm(G=1) dominated by pad => max_single collapses 3->2->0->0. No single fixed T fairly measures BOTH arms.",
+    "right_fix": "grow-window per-arm (window = own seed length + generated, pad 0), like ByteGPT native decode"
+  },
+  "q_c_gate_bug_or_valid": {
+    "verdict": "type-a metric artifact (frozen-first fixable) BUT not simply 'fix window -> GREEN'",
+    "T24_is_impl_default_not_gate_spec": "gate spec = distinct>=2 AND >max_single AND coherent; T=24 right-align is a clm_decode default; ByteGPT mouth grows window; CLM trunk is no-posemb RF~513 so T is free",
+    "double_edge": "hide seed (T=24) -> composed cannot see concepts -> false-RED (current). show seed (grow) -> model can ECHO visible concept keywords into continuation -> false-GREEN. _g_coverage has no echo filter.",
+    "root_weakness": "5 concepts all in-distribution -> no held-out combination split -> gate cannot distinguish recombination from memorization/echo at ANY window"
+  },
+  "remaining_levers_ranked": [
+    {"id": "L1", "name": "grow-window CLM decode re-measure", "class": "measurement-fix frozen-first", "cost": "cheap decode (pool own-GEMM, no rent)", "status": "TOP PRIORITY, unrun (rate-limit)"},
+    {"id": "L2", "name": "held-out combination split gate + novel-only coverage (SCAN/COGS)", "class": "measurement-integrity", "cost": "corpus regen + warm-FT (pool GPU)"},
+    {"id": "L3", "name": "hippocampal hetero-associative retrieve-into-context lane (.kosmos anchors, disjoint from emit-drive)", "class": "bio-lens decode-time context-augmentation (NOT readout, NOT trunk-objective)", "cost": "design + engine wire"},
+    {"id": "L4", "name": "trunk recomb-objective (gamma trained-constructive-bind H_1602/1840)", "class": "trunk-objective floor (last residual, GPU cost-gated)", "status": "confident-terminal ONLY after L1/L2 rule out window/echo artifacts"}
+  ],
+  "prior_4_axes_caveat": "objective/readout/coverage/surface-form campaigns ALL measured composed via T=24 CLM decode => their distinct=0 is FULLY explained by window artifact too. Cannot separate 'lever ineffective' from 'window artifact' until L1 fair-window re-measure. Confident-wall NOT yet warranted (c9).",
+  "prescriptions": [
+    {"id": "P1", "action": "grow-window G1 re-measure with echo-guard (raw + novel-only coverage)", "path": "state/g1_breakthrough_analysis/growwin_g1_probe.py (skeleton in P1 session)", "host": "pool/summer (mini forbidden)", "gate": "VERBATIM, frozen bar"},
+    {"id": "P2", "action": "held-out combination split gate design (recombination vs echo separation)", "path": "P2 session card"}
+  ],
+  "session_completed": ["q_a", "q_b", "q_c", "levers", "P1/P2 prescriptions"],
+  "session_incomplete_ratelimit": ["P1 actual grow-window decode (heavy, pool)", "terminal-wall verdict deferred (Lens D not yet separated from window artifact)"]
+}

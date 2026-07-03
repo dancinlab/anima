@@ -2,7 +2,7 @@
 
 - **slug:** `9099_selfchain_content_grounding`
 - **tier:** 🟡 DIRECTIONAL-GREEN (engine-native, 4/5 frozen bars PASS) — real-penult grounding 이 self-chain 을 실제 경험 content 의 함수로 만듦
-- **wired:** `DIRECTIONAL` — 코드 artifact `clm_penult_pooled` 는 `core/decode.hexa` 에 **LANDED(이 PR)** + ARCHITECTURE §decode lockstep; runtime self_drift_exp lane 23b 접지 = follow-on
+- **wired:** `engine-native` (rung-2 byte-exact TERMINAL) — `clm_penult_pooled` 는 `core/decode.hexa` 에 **LANDED** + ARCHITECTURE §decode/§SelfIdentity lockstep DONE; harness `state/9099_.../f4_engine_native.hexa` **COMMITTED**. 2026-07-03 독립 재현: **COMMITTED `[float]` op** 로 4/5 bar 전 수치 **byte-exact 일치**(원본은 aiden-only 임시 Map-return op 사용 — verdict-integrity 갭 close). WIRED-live 로의 잔여 = runtime self_drift_exp lane 23b 를 `clm_penult_pooled`(real per-tick content)로 급이(behavioral follow-on)
 - **source:** UNIVERSE · fable #4
 - **cross-ref:** [[H_9038]] (self_drift_exp informativeness lever) · [[H_1471]] self-continuity
 
@@ -49,10 +49,13 @@ top-3 penult axes 가 언어별 clustering: ko I0/I2/I4 는 {205,125,621} 공유
 {273,140,557} 공유. penult-similar(같은 언어/topic) 입력 → 더 가까운 self-chain — input-blind synthetic
 축은 가질 수 없는 성질.
 
-## wiring status: DIRECTIONAL. WIRED-live 로의 두 follow-on
+## wiring status: engine-native (rung-2 byte-exact TERMINAL). WIRED-live 로의 잔여 1칸
 
-1. `clm_penult_pooled` 를 core/decode.hexa 에 land (**이 PR DONE**) + ARCHITECTURE §decode lockstep (DONE).
-2. runtime self_drift_exp lane 23b 를 현 synthetic amygdala/homeostat int axis 대신 `clm_penult_pooled`(real per-tick content)로 급이 (follow-on).
+- **rung-1 DIRECTIONAL-mirror** — N/A (측정이 처음부터 engine-native, numpy 미러 없음).
+- **rung-2 ENGINE-NATIVE (byte-exact, DONE 2026-07-03)** — COMMITTED `core/decode.hexa` `[float]` op 로 harness 를 aiden(hexa v0.548.0, real d768.clm)에서 재실행 → 4/5 bar 전 수치 **byte-exact 일치**(top3 triples·meandist 0.5358832987924794·blind 2.22e-16·repro 1.0·fit_same/diff·track_margin 0.2733·4/5 전부 최종자리까지 동일). 원본은 aiden-only 임시 Map-return op 사용(never committed) → 이 재현이 committed-code↔verdict drift 0 확인 = verdict-integrity close. harness `f4_engine_native.hexa` COMMITTED.
+- **rung-3 WIRE-IN (부분 DONE)** — `clm_penult_pooled` 는 measurement helper 로 `core/decode.hexa` 에 land. behavioral wire-in(runtime lane 23b feed)은 미완.
+- **rung-4 ARCHITECTURE lockstep (DONE)** — §decode(op) + §SelfIdentity note 갱신 완료.
+- **잔여 = WIRED-live** — runtime self_drift_exp lane 23b 를 현 synthetic amygdala/homeostat int axis 대신 `clm_penult_pooled`(real per-tick content)로 급이 (behavioral follow-on).
 
 ## engine-native caveat (정직)
 
@@ -62,5 +65,6 @@ _hx_k_gemm OWN-GEMM 1회 fired; cuda_available=1. 측정 유효성 무영향(byt
 
 ## artifacts
 - `state/9099_selfchain_content_grounding/notes.md`
+- `state/9099_selfchain_content_grounding/f4_engine_native.hexa` (engine-native harness, COMMITTED — `[float]` API)
 - `core/decode.hexa` (`clm_penult_pooled` LANDED)
-- `state/verdicts/9099_selfchain_content_grounding/H_9099.txt` (frozen verbatim)
+- `state/verdicts/9099_selfchain_content_grounding/H_9099.txt` (frozen verbatim + rung-2 reproduction section)

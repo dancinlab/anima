@@ -1,0 +1,105 @@
+{
+ "ckpt": "/Users/mini/anima-weights/g1_realign/g1_realign.clm",
+ "sha256_expected": "7222554f25d5baccd3ffed56f6345642bed6269efa87c392283630c99de209a3",
+ "gen_CANONICAL": 40,
+ "RF_cap": 512,
+ "decode": "GROW-WINDOW (window=full content length seed+gen, no byte-32 pad, no fixed-T truncation, cap=RF). ByteGPT-consistent. _fwd_logits/_topk_sample/_mix32 all canonical VERBATIM.",
+ "bar_FROZEN": "composed_distinct>=2 AND >max_single AND coherent(kwr>=0.5); concepts/keyword-sets/gen=40/top_k=40/temp=0.7/seed_rng all imported VERBATIM from cli/evaluate.py. Only decode window changed.",
+ "echo_guard": "RAW = canonical _g_coverage; NOVEL-ONLY = keyword-sets covered by continuation keywords NOT present in the seed (echo excluded).",
+ "max_single_raw": 1,
+ "max_single_novel": 1,
+ "best_composed_raw": 2,
+ "best_composed_novel": 1,
+ "PASS_raw": true,
+ "PASS_novel_echoguard": false,
+ "singles": [
+  {
+   "s": 0,
+   "seed_bytes": 33,
+   "cov_raw": 1,
+   "cov_novel": 1,
+   "kwr": 1.0,
+   "text": "aware cobalt mind shadowy yellowy cobalt"
+  },
+  {
+   "s": 1,
+   "seed_bytes": 39,
+   "cov_raw": 1,
+   "cov_novel": 0,
+   "kwr": 0.8333,
+   "text": "tension vermil jade sunlit garnet cobalt"
+  },
+  {
+   "s": 2,
+   "seed_bytes": 34,
+   "cov_raw": 1,
+   "cov_novel": 0,
+   "kwr": 0.8333,
+   "text": "memory coppery sienna sunlit memory copp"
+  },
+  {
+   "s": 3,
+   "seed_bytes": 35,
+   "cov_raw": 1,
+   "cov_novel": 1,
+   "kwr": 0.8333,
+   "text": "quiet silence silence sunlit quiet\nconsc"
+  },
+  {
+   "s": 4,
+   "seed_bytes": 30,
+   "cov_raw": 1,
+   "cov_novel": 1,
+   "kwr": 0.6667,
+   "text": "dream sleep sunlit vermil sunlit\nconscio"
+  }
+ ],
+ "composed": [
+  {
+   "k": 2,
+   "seed_bytes": 72,
+   "cov_raw": 2,
+   "cov_novel": 1,
+   "kwr": 1.0,
+   "coherent": true,
+   "clears_raw": true,
+   "clears_novel": false,
+   "text": "tension zinc cobalt silence silvery teal"
+  },
+  {
+   "k": 3,
+   "seed_bytes": 106,
+   "cov_raw": 1,
+   "cov_novel": 0,
+   "kwr": 1.0,
+   "coherent": true,
+   "clears_raw": false,
+   "clears_novel": false,
+   "text": "memory coppery wheaten garnet emerald me"
+  },
+  {
+   "k": 4,
+   "seed_bytes": 141,
+   "cov_raw": 1,
+   "cov_novel": 0,
+   "kwr": 1.0,
+   "coherent": true,
+   "clears_raw": false,
+   "clears_novel": false,
+   "text": "silence zinc cobalt silence silvery lila"
+  },
+  {
+   "k": 5,
+   "seed_bytes": 171,
+   "cov_raw": 1,
+   "cov_novel": 1,
+   "kwr": 1.0,
+   "coherent": true,
+   "clears_raw": false,
+   "clears_novel": false,
+   "text": "sleep cobalt silvery sienna silvery\nsile"
+  }
+ ],
+ "verdict": "ECHO-ONLY (not recombination): RAW passes but NOVEL-ONLY fails => model echoes seed keywords",
+ "total_wall_s": 102.9
+}

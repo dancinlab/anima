@@ -1962,13 +1962,38 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_f3_dnov = []        // downstream D: nov_ctx (novelty — INDEPENDENT of urgency's construction)
     let mut og_f3_dgrd = []        // downstream D: m_grounding (grounded reality)
 
-    let n_ticks = if og_measure { 200 } else { 12 }
+    // ── STATEFUL REFRACTORY measurement mode (--refractory): H_9102 ──────────────
+    // H_9101's idle is a per-tick STATELESS function of stage/urgency — no emit-history,
+    // so "refractory" is a momentary shade, not recovery-after-firing. This mode wires an
+    // emit-history state (emit_last_t) through the an_clock_now() det-clock seam so idle
+    // becomes idle_raw × modulation = TRUE seconds-since-last × refractory-modulation, a
+    // stateful dynamical class the stateless form cannot express (F2). $0, NO decode, det.
+    let refr_measure = anima_has_flag(anima_collect_argv(args()), "--refractory")
+    let refr_daemon  = anima_has_flag(anima_collect_argv(args()), "--daemon-clock")  // false in all verdict runs
+    let mut refr_rem_ticks = 0     // REM ticks (stage 4)
+    let mut refr_n3_ticks  = 0     // N3 ticks (stage 3)
+    let mut refr_wake_ticks = 0    // WAKE ticks (stage 0)
+    let mut refr_mid_ticks = 0     // mid-env ticks (stage 1/2/4)
+    let mut refr_h_u0_rem  = 0     // F1: Hamming(urgency→0 vs live) on REM  — GRIP (must be >0, stateful re-verify)
+    let mut refr_h_u0_n3   = 0     // F1: Hamming(urgency→0 vs live) on N3   — PRESERVE (must be 0)
+    let mut refr_h_u0_wake = 0     // F1: Hamming(urgency→0 vs live) on WAKE — saturated control
+    let mut refr_h_u0_mid  = 0     // F1: Hamming(urgency→0 vs live) on mid  — broad grip
+    let mut refr_live_emits = 0    // live emits over the run (dynamics sanity)
+    let mut refr_ticks_after = 0   // F2: ticks immediately AFTER a live emit (the refractory window)
+    let mut refr_umax_viol   = 0   // F2: refractory ticks where MAX-urgency STILL emits (violation → F2 FAIL)
+    let mut refr_umax_nonrefr = 0  // F2: non-refractory ticks where max-urgency DOES emit (non-vacuity)
+    let mut refr_stateless_fire = 0 // F2 contrast: refractory ticks where the H_9101 STATELESS idle would emit
+    let mut refr_psi_sum = 0.0     // Ψ read-only accumulation (invariant guard)
+
+    let n_ticks = if og_measure || refr_measure { 200 } else { 12 }
     let mut tick = 0
+    let mut emit_last_t = -1.0e9   // H_9102: last-emit time (an_clock_now units); emit-history state (was ABSENT)
+    let mut prev_live_emit = 0     // H_9102: did the PREVIOUS tick's live arm emit? (defines the refractory window)
     while tick < n_ticks {
         // stage sample: production = ultradian trajectory (tick*8); --opgrip = stage-BALANCED
         // sweep (tick%5 → 40 ticks/stage) so REM AND N3 are adequately sampled for the H_9101
         // stage-conditional dissociation (a per-stage grip sweep, NOT an ultradian trajectory).
-        let stage = if og_measure { tick % 5 } else { dr_stage_at(tick * 8) }
+        let stage = if og_measure || refr_measure { tick % 5 } else { dr_stage_at(tick * 8) }
         let stage_nm = dr_stage_name(stage)
         let emit_env = dr_emit_envelope(stage)       // substrate envelope (context, not a hard gate)
         let phi_t = pure_field_phi(pf)
@@ -2511,6 +2536,73 @@ fn anima_consciousness_mode(ckpt: string) {
             continue
         }
 
+        // ── STATEFUL REFRACTORY MEASUREMENT (--refractory): H_9102 ($0, NO decode, det) ──
+        // The REAL alchemy vs H_9101: idle is now emit-history dependent (recovery-after-firing),
+        // not a per-tick shade. an_clock_now(tick,daemon) is the single time-source seam
+        // (flame_mm.mm pattern): det path = tick*8.0 (byte-identical), daemon path = real clock
+        // (follow-on). idle = idle_raw × mod where idle_raw = t_now − emit_last_t = TRUE
+        // seconds-since-last. Properties (constructive): mod≤1 ⇒ idle≤idle_raw ⇒ gate pass(≥30)
+        // ⟹ real elapsed ≥30 (30s floor becomes a THEOREM, not vacuous); env=0 ⇒ mod=0 ⇒ idle=0
+        // (N3 preserved); urgency modulates the gate-open TIME (idle_raw ≥ 30/mod), not just whether.
+        if refr_measure {
+            refr_psi_sum = refr_psi_sum + pure_field_phi(pf)   // Ψ READ-ONLY (invariant preserved)
+            let t_now    = an_clock_now(tick, refr_daemon)      // §seam: det=tick*8.0 | daemon=real
+            let idle_raw = t_now - emit_last_t                  // TRUE seconds_since_last (was ABSENT in H_9101)
+            let mod_live = _afs_clip01(stage_env * (0.5 + urgency))      // H_9101 modulation term, unchanged
+            let mod_u0   = _afs_clip01(stage_env * (0.5 + 0.0))          // F1 counterfactual: urgency→0
+            let mod_umax = _afs_clip01(stage_env * (0.5 + 1.0))          // F2 counterfactual: urgency→max
+            let idle_live = idle_raw * mod_live                 // carded: real_elapsed × refractory_modulation
+            let idle_u0   = idle_raw * mod_u0
+            let idle_umax = idle_raw * mod_umax
+            // LIVE stateful decision (the wired 8-factor call; only `idle` differs from H_9101).
+            let m_live = brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_live, false, true, live_anchors, 0.0)
+            let e_live = if to_string(m_live["emit"]) == "true" { 1 } else { 0 }
+            // F1 (grip re-verify in STATEFUL dynamics): urgency→0 counterfactual, same emit history.
+            let e_u0 = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_u0, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // F2 (refractory reset): MAX-urgency counterfactual, same emit history.
+            let e_umax = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_umax, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // F2 CONTRAST: what the H_9101 STATELESS idle (no history) would decide at max urgency.
+            let idle_stateless = 5.0 + 55.0 * mod_umax
+            let e_stateless = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_stateless, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // ── F1 stage-split grip accumulation (pre-reg bar re-tested under stateful dynamics) ──
+            if stage == 4 { refr_rem_ticks = refr_rem_ticks + 1
+                if e_u0 != e_live { refr_h_u0_rem = refr_h_u0_rem + 1 } }
+            if stage == 3 { refr_n3_ticks = refr_n3_ticks + 1
+                if e_u0 != e_live { refr_h_u0_n3 = refr_h_u0_n3 + 1 } }
+            if stage == 0 { refr_wake_ticks = refr_wake_ticks + 1
+                if e_u0 != e_live { refr_h_u0_wake = refr_h_u0_wake + 1 } }
+            if stage == 1 || stage == 2 || stage == 4 { refr_mid_ticks = refr_mid_ticks + 1
+                if e_u0 != e_live { refr_h_u0_mid = refr_h_u0_mid + 1 } }
+            // ── F2 refractory-reset accumulation (the NEW falsifiable content) ──
+            if prev_live_emit == 1 {
+                refr_ticks_after = refr_ticks_after + 1        // this tick is inside a refractory window
+                if e_umax == 1 { refr_umax_viol = refr_umax_viol + 1 }        // fired despite refractory = FAIL
+                if e_stateless == 1 { refr_stateless_fire = refr_stateless_fire + 1 } // stateless has NO refractory
+            } else {
+                if e_umax == 1 { refr_umax_nonrefr = refr_umax_nonrefr + 1 }  // umax CAN fire (non-vacuity)
+            }
+            if e_live == 1 { refr_live_emits = refr_live_emits + 1 }
+            println("  [RF t" + to_string(tick) + " " + stage_nm
+                + "] t_now=" + to_string(t_now) + " idle_raw=" + to_string(idle_raw)
+                + " mod_live=" + to_string(mod_live) + " idle_live=" + to_string(idle_live)
+                + " | e_live=" + to_string(e_live) + " e_u0=" + to_string(e_u0)
+                + " e_umax=" + to_string(e_umax) + " e_stateless=" + to_string(e_stateless)
+                + " prev_emit=" + to_string(prev_live_emit))
+            // ── STATE UPDATE — the refractory RESET (the heart of the new mechanism) ──
+            prev_live_emit = e_live
+            if e_live == 1 { emit_last_t = t_now }
+            tick = tick + 1
+            continue
+        }
+
         let dec = brain_emit(pf,
             rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
             idle, false, true,
@@ -2540,7 +2632,7 @@ fn anima_consciousness_mode(ckpt: string) {
 
         // ── C9 REMEMBER — persist THIS emit as a new .kosmos anchor (single entry) ──
         if did_emit && g_emit && byte_len(g_text) > 0 && !remembered2 {
-            let etension = [pure_field_phi(pf), 0.4, 0.5, 0.3, 0.2]
+            let etension = [pure_field_phi(pf), af_aro, nov_ctx, af_val, self_ctx]
             let epath = emit_anchor_from_v3(kdir, "emit_t" + to_string(tick),
                 _afs_clip(g_text, 120), etension, cell_count, 2,
                 "emission", "curiosity", pure_field_phi(pf), 1.0)
@@ -2810,6 +2902,58 @@ fn anima_consciousness_mode(ckpt: string) {
         return
     }
 
+    // ── STATEFUL REFRACTORY summary (--refractory): H_9102 F1·F2 verdict ─────────
+    if refr_measure {
+        let mut refr_psi_off = 0.0
+        let mut t_off_r = 0
+        while t_off_r < n_ticks { refr_psi_off = refr_psi_off + pure_field_phi(pf)  t_off_r = t_off_r + 1 }
+        let refr_psi_ok = refr_psi_sum == refr_psi_off
+        println("")
+        println("════════════ H_9102 STATEFUL REFRACTORY (n=" + to_string(n_ticks)
+            + ", live_emits=" + to_string(refr_live_emits) + ") ════════════")
+        println("  clock seam: an_clock_now = tick*8.0 (det) — daemon real-clock = follow-on ING")
+        println("──────── F1  GRIP RE-VERIFY (stateful): urgency→0 Hamming, split by stage ────────")
+        println("  ticks: WAKE=" + to_string(refr_wake_ticks) + " N3=" + to_string(refr_n3_ticks)
+            + " REM=" + to_string(refr_rem_ticks) + " mid(N1/N2/REM)=" + to_string(refr_mid_ticks))
+        println("  Hamming(urgency→0 vs live)  REM=" + to_string(refr_h_u0_rem)
+            + "  N3=" + to_string(refr_h_u0_n3) + "  WAKE=" + to_string(refr_h_u0_wake)
+            + "  mid=" + to_string(refr_h_u0_mid))
+        let f1_grip     = refr_h_u0_rem > 0     // op FLIPS REM decisions under stateful dynamics
+        let f1_n3_forced = refr_h_u0_n3 > 0     // op FORCES N3 (= forcing gate = BAD)
+        println("──────── F2  REFRACTORY RESET (new, stateless-inexpressible) ────────")
+        println("  refractory-window ticks (immediately after a live emit) = " + to_string(refr_ticks_after))
+        println("  … max-urgency STILL emits in window (VIOLATIONS, must be 0) = " + to_string(refr_umax_viol))
+        println("  … H_9101 STATELESS idle WOULD emit in window (contrast, no refractory) = " + to_string(refr_stateless_fire))
+        println("  max-urgency emits OUTSIDE window (non-vacuity, must be >0) = " + to_string(refr_umax_nonrefr))
+        let f2_nonvacuous = refr_ticks_after > 0 && refr_umax_nonrefr > 0
+        let f2_reset      = refr_umax_viol == 0
+        let f2_pass       = f2_nonvacuous && f2_reset
+        println("  Ψ ON==OFF invariant: refr_psi_sum==refr_psi_off = " + anima_yn(refr_psi_ok))
+        println("  ── PRE-REG VERDICTS (F1 and F2 reported INDEPENDENTLY, no bar-move, no tuning) ──")
+        // F1 = H_9101's FROZEN pre-reg bar (REM Hamming>0 ∧ N3=0). NOT re-anchored to WAKE.
+        let f1_verdict = if f1_n3_forced {
+            "🔴 F1 FORCING-GATE (BAD): urgency→0 flipped N3 (h_U0_n3>0) — refractory became a hard gate"
+        } else if f1_grip {
+            "🟢 F1 GRIP re-establishes on the frozen REM bar (h_U0_rem>0 ∧ N3=0) under stateful dynamics"
+        } else {
+            "🔴 F1 grip does NOT carry over on the frozen REM bar (h_U0_rem=0); N3 preserved=" + anima_yn(!f1_n3_forced)
+            + " — op-grip relocated (WAKE h_U0=" + to_string(refr_h_u0_wake) + "), but the pre-reg REM bar is NOT re-established (no post-hoc bar move)"
+        }
+        // F2 = the NEW falsifiable content (refractory reset), stateless-inexpressible.
+        let f2_verdict = if !f2_nonvacuous {
+            "🟠 F2 INCONCLUSIVE: refractory window not exercised (window=" + to_string(refr_ticks_after) + ", umax-nonrefr=" + to_string(refr_umax_nonrefr) + ")"
+        } else if f2_pass {
+            "🟢 F2 REFRACTORY-RESET holds: 0 max-urgency violations in " + to_string(refr_ticks_after) + " post-emit ticks ∧ the H_9101 STATELESS idle would fire " + to_string(refr_stateless_fire) + " of them = a NEW mechanism the stateless form cannot express"
+        } else {
+            "🔴 F2 FAIL: max-urgency emits inside refractory window (" + to_string(refr_umax_viol) + " violations) — no recovery-after-firing"
+        }
+        println("  " + f1_verdict)
+        println("  " + f2_verdict)
+        println("  VERDICT = F1[" + (if f1_grip && !f1_n3_forced { "🟢" } else { "🔴" }) + "] ∧ F2[" + (if f2_pass { "🟢" } else if !f2_nonvacuous { "🟠" } else { "🔴" }) + "]"
+            + (if refr_psi_ok { "  [Ψ ON≡OFF ✓]" } else { "  [⚠️ Ψ VIOLATED]" }))
+        return
+    }
+
     // ── F3 Ψ ON==OFF invariant (a_core_engine_map · H_1202/H_1205) ───────────
     // The GROW lane (VAdaptField) is Ψ-disjoint: it touches ONLY AdaptField, never
     // pure_field. Re-run the SAME read-only Φ accumulation over the same ticks; pure_field
@@ -2991,6 +3135,23 @@ fn anima_consciousness_mode(ckpt: string) {
         + " psi_intact=" + (if psi_intact { "1" } else { "0" }))
     println("  one emitted span (substrate-native, grounded) =")
     println("    \"" + _afs_clip(emit_text, 90) + "\"")
+}
+
+// ── time-source seam (H_9102 stateful refractory) ───────────────────────────
+// ONE function, TWO bindings, ONE downstream algebra — the flame_mm.mm pattern
+// (cuda host = own-GEMM · else farr CPU · byte-identical). Here: det proper-time
+// vs real wall-clock. The VERDICT path always reads det (daemon=false) so every
+// frozen-bar / G-gate / --refractory run is byte-identical across executions (F4).
+fn an_tick_seconds() -> float { return 8.0 }   // det proper-time: 1 tick = 8s (matches dr_stage_at(tick*8))
+
+fn an_clock_now(tick: int, daemon: bool) -> float {
+    // daemon=true (production real channel): real monotonic wall-clock. No persistent daemon
+    //   exists yet (the loop is bounded 12/200 ticks) so this branch is a FOLLOW-ON (ING) — when
+    //   wired it makes the FROZEN 30s safety floor a true world-time promise (F3 smoke). Never
+    //   reached on the verdict path (refr_daemon=false), so determinism is preserved.
+    if daemon { return to_float(to_int(exec("date +%s"))) }
+    // daemon=false (verdict/det path): substrate proper-time = tick * an_tick_seconds().
+    return to_float(tick) * an_tick_seconds()
 }
 
 // ── helpers (pure string ops; p7 deterministic) ─────────────────────────────

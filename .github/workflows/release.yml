@@ -60,6 +60,23 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
 
+      - name: Install hexa toolchain (released binary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+          echo "$HOME/.hx/bin" >> "$GITHUB_PATH"
+
+      # 설치된 toolchain 실버전을 캐시 키 재료로 캡처 — ~/.hexa-cache 엔트리는 버전
+      # 접미(hexa_run.<hash>_vX.Y.Z)라, 버전 없는 키는 "toolchain bump + 소스 불변"
+      # 조합에서 exact-hit 복원(전부 무용) → cold compile → 재저장 스킵(actions/cache
+      # 는 exact-hit 이면 Post save 안 함) = 소스 변경까지 영구-cold 함정 (실측
+      # 2026-07-03, ci.yml 캐시 ② 와 동일 결함·동일 수리).
+      - name: Capture hexa version (warm-cache key)
+        id: hxver
+        shell: bash
+        run: echo "v=$("$HOME/.hx/bin/hexa" --version 2>/dev/null | awk '{print $NF}')" >> "$GITHUB_OUTPUT"
+
       # ── warm-compile 캐시 (~/.hexa-cache) ONLY — 무결성 게이트 보존 ──
       # 측정(2026-06-26): 이 잡의 18min 중 install.sh+install.hexa(=fresh install 게이트
       # 본체)는 ~29s 뿐, 나머지 ~16.5min 은 cli/anima.hexa 의 aprime_cc compile 이다.
@@ -68,20 +85,15 @@ jobs:
       # 의 게이트 본질이라 캐시하면 게이트가 무력화된다.
       # ✅ ~/.hexa-cache 는 compile *결과* 만 담는다 — "compile reaches" 체크를 가리지
       #    않는다(소스 변경 → 해시 변경 → miss → fresh compile; compile 실패는 캐시 못 함).
+      # (이 스텝이 install 뒤에 오는 이유 = 설치된 실버전을 키로 사용; restore 는 스텝
+      #  위치에서, save 는 잡 끝 Post 에서 일어나므로 게이트 의미는 불변.)
       - name: Cache — hexa warm compile only (~/.hexa-cache · NOT toolchain)
         uses: actions/cache@v4
         with:
           path: ~/.hexa-cache
-          key: hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**') }}
+          key: hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-${{ hashFiles('core/**', 'cli/**') }}
           restore-keys: |
-            hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-
-
-      - name: Install hexa toolchain (released binary)
-        shell: bash
-        run: |
-          set -euo pipefail
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
-          echo "$HOME/.hx/bin" >> "$GITHUB_PATH"
+            hexa-cache-release-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-
 
       - name: hx install path — install.hexa → setup.hexa (canonical setup)
         shell: bash
@@ -143,8 +155,27 @@ jobs:
           tag="${{ github.event.inputs.tag }}"
           [ -n "$tag" ] || tag="${GITHUB_REF_NAME}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          # CHANGELOG 최상단 1개 항목(## … 다음 ## 전까지)을 릴리즈 노트로.
-          awk 'BEGIN{n=0} /^## /{n++} n==1{print} n==2{exit}' CHANGELOG.md > /tmp/notes.md || true
+          # 릴리즈 노트 = CHANGELOG.jsonl 의 최신(맨 끝) 항목. (2026-06 #2645 에
+          # CHANGELOG.md → append-only JSONL `{ts,title,body}` 로 이관됨 — 예전
+          # `awk '/^## /' CHANGELOG.md` 는 파일 부재로 항상 빈 노트로 폴백했다.)
+          # autotag 은 changelog 항목을 추가한 그 main push 에 v* 태그를 찍으므로
+          # tail-1 항목 = 이 릴리즈. python3 는 ubuntu·macos 러너 모두 표준 탑재.
+          python3 - "$tag" > /tmp/notes.md <<'PY' || true
+          import json, sys
+          tag = sys.argv[1]
+          notes = ""
+          try:
+              with open("CHANGELOG.jsonl", encoding="utf-8") as fh:
+                  lines = [ln for ln in fh if ln.strip()]
+              if lines:
+                  e = json.loads(lines[-1])
+                  title = e.get("title", "").strip()
+                  body = e.get("body", "").strip()
+                  notes = ("## " + title + "\n\n" + body).strip() if title else body
+          except Exception:
+              notes = ""
+          print(notes if notes else f"anima release {tag}")
+          PY
           [ -s /tmp/notes.md ] || echo "anima release $tag" > /tmp/notes.md
 
       - name: Create / update GitHub Release (install-smoke verified)

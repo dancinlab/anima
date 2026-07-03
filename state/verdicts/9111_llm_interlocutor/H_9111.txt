@@ -1,0 +1,28 @@
+[hexa-ffi] dlsym failed for 'erf': /root/.hexa-cache/hexa_run.200631b5ffdfb14f_v0.559.0: undefined symbol: erf
+[hexa-ffi] dlsym failed for 'exp': /root/.hexa-cache/hexa_run.200631b5ffdfb14f_v0.559.0: undefined symbol: exp
+[psi_loader] WARN: consciousness_laws.json not found; alpha DEFAULT=0.014
+[psi_loader] WARN: consciousness_laws.json not found; balance DEFAULT=0.5
+[psi_loader] WARN: consciousness_laws.json not found; phase_dormant_max DEFAULT=0.01
+[psi_loader] WARN: consciousness_laws.json not found; phase_flicker_max DEFAULT=0.05
+[psi_loader] WARN: consciousness_laws.json not found; phase_sustain_max DEFAULT=0.15
+
+=== H_9111 LLM-INTERLOCUTOR exogenous consequence-loop — engine-native verdict ===
+M(concepts)=14  n_train=7  held_out=7  D(feats)=6  oracle=claude-fable-5
+
+[communication held-out]  fable_success=1.0   anima_self_decode=0.0   (chance=0.07142857142857142)
+
+[arm a — SELF-PAIR (anima-clone; success ≡ self-decode by construction)]
+  rho_conseq=0.0  rho_self=0.0  D_selfpair=0.0
+[arm b — DIFF-LLM (sidecar fable, θ outside anima closure)]
+  rho_conseq=0.0  rho_self=0.0  D_diffLLM=0.0
+[arm c — SHUFFLE (fable success re-paired to random emit)]
+  rho_conseq=0.0  rho_self=0.0  D_shuffle=0.0
+
+[FROZEN BAR] D_diffLLM − D_selfpair = 0.0  (>=0.15 -> FAIL)
+             D_shuffle = 0.0  (<0.05 -> PASS)
+             Ψ guard psi_sum ON==OFF byte-identical -> OK
+
+VERDICT: 🔴 CEILING / DPI — the external LLM is ALSO a derivable-mirror floor at this coupling
+  (D_diffLLM−D_selfpair=0.0 < 0.15). DPI runs DEEPER than the receiver: even an oracle
+  outside anima's closure buys no held-out faculty advantage here = a self-contained 5th axis.
+EXIT=0
