@@ -173,26 +173,6 @@ jobs:
           restore-keys: |
             hx-toolchain-${{ runner.os }}-${{ runner.arch }}-
 
-      # ── 캐시 ② 의 warm-compile (~/.hexa-cache) — 진짜 병목(엔진 import-closure
-      # compile ~12.7min/run 의 aprime_cc codegen). core/** + cli/** 소스 해시로 키 →
-      # 엔진 소스 불변이면 hit(컴파일 스킵), 소스 변경이면 정확히 miss(재컴파일). hexa
-      # 자체 캐시 해시에 toolchain 바이너리가 섞여 toolchain 변경 시 자연 miss(오염無).
-      # ⚠️ `!core/phi/quantum_types.hexa` 제외 필수 — 이건 hexa-lang sibling repo 의
-      # `../../hexa-lang/self/quantum_types.hexa` 로 가는 *외부 의존* symlink 라 CI
-      # 체크아웃(단독 클론)에선 dangling. GitHub 의 hashFiles() 표현식은 runner 가
-      # followSymbolicLinks=false 로 호출하므로(actions/runner hashFiles.ts) dangling
-      # symlink 를 stat 하다 ENOENT → "Fail to hash files under directory" 로 전체
-      # 키 평가가 fatal 실패 → 캐시 스텝 RED(매 run 만성 실패의 실근거). 이 파일은
-      # anima 가 소유하지 않는 외부 소스라 엔진-소스 fingerprint 에 애초에 불포함이
-      # 정답(캐시 무효화 의미 불변). 글로브 `!` 제외로 stat 자체를 회피한다.
-      - name: Cache — hexa warm compile (~/.hexa-cache)
-        uses: actions/cache@v4
-        with:
-          path: ~/.hexa-cache
-          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('core/**', 'cli/**', '!core/phi/quantum_types.hexa') }}
-          restore-keys: |
-            hexa-cache-${{ runner.os }}-${{ runner.arch }}-
-
       # toolchain 설치 + 캐시 VALIDITY 가드 → fresh fallback.
       # 캐시된 ~/.hx 가 stale/broken(잘못된 버전·깨진 바이너리)이면 rm -rf 후
       # canonical fresh curl-install 로 강등(NEVER 잘못된 toolchain 으로 진행).
@@ -227,6 +207,40 @@ jobs:
           set -euo pipefail
           hexa --version || true
           hexa --help >/dev/null
+
+      # 설치된 toolchain 의 실버전을 캐시 키 재료로 캡처 (아래 캐시 ② 참조).
+      - name: Capture hexa version (warm-cache key)
+        id: hxver
+        shell: bash
+        run: echo "v=$(hexa --version 2>/dev/null | awk '{print $NF}')" >> "$GITHUB_OUTPUT"
+
+      # ── 캐시 ② 의 warm-compile (~/.hexa-cache) — 진짜 병목(엔진 import-closure
+      # compile ~12.7min/run, 실측 2026-07-03: aprime_cc codegen ~85% vs clang ~15%
+      # 116s). 키 = hexa 실버전 + core/**·cli/** 소스 해시. 버전을 키에 넣는 이유
+      # (실측 결함): ~/.hexa-cache 엔트리는 버전 접미(hexa_run.<hash>_vX.Y.Z)라 옛
+      # 버전 엔트리는 절대 오용되지 않지만(정합 OK), actions/cache 는 exact-key hit
+      # 이면 Post 단계에서 재저장을 안 한다 — 그래서 소스 불변 + toolchain bump 조합
+      # 에서 "옛 버전 캐시 exact-hit 복원 → 전부 무용 → cold 컴파일 → 재저장 스킵"
+      # 이 소스가 바뀔 때까지 매 run 반복되는 영구-cold 함정이 있었다. 버전이 키에
+      # 들어가면 bump 첫 run 이 miss → cold 1회 → save 되어 이후 warm. 이 캐시 스텝이
+      # install 뒤에 오는 이유 = 설치된 실버전(hexa --version)을 키로 쓰기 위함
+      # (설치 전엔 버전을 알 수 없음; restore 는 스텝 위치, save 는 잡 끝 Post 에서).
+      # ⚠️ `!core/phi/quantum_types.hexa` 제외 필수 — 이건 hexa-lang sibling repo 의
+      # `../../hexa-lang/self/quantum_types.hexa` 로 가는 *외부 의존* symlink 라 CI
+      # 체크아웃(단독 클론)에선 dangling. GitHub 의 hashFiles() 표현식은 runner 가
+      # followSymbolicLinks=false 로 호출하므로(actions/runner hashFiles.ts) dangling
+      # symlink 를 stat 하다 ENOENT → "Fail to hash files under directory" 로 전체
+      # 키 평가가 fatal 실패 → 캐시 스텝 RED(매 run 만성 실패의 실근거). 이 파일은
+      # anima 가 소유하지 않는 외부 소스라 엔진-소스 fingerprint 에 애초에 불포함이
+      # 정답(캐시 무효화 의미 불변). 글로브 `!` 제외로 stat 자체를 회피한다.
+      # restore-keys 도 버전 스코프 — 옛 버전 dead-weight 복원을 차단한다.
+      - name: Cache — hexa warm compile (~/.hexa-cache)
+        uses: actions/cache@v4
+        with:
+          path: ~/.hexa-cache
+          key: hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-${{ hashFiles('core/**', 'cli/**', '!core/phi/quantum_types.hexa') }}
+          restore-keys: |
+            hexa-cache-${{ runner.os }}-${{ runner.arch }}-${{ steps.hxver.outputs.v }}-
 
       # 엔진 compile 게이트 — production import-closure 가 컴파일되는지(syntax/codegen
       # drift 차단). 임시 진입파일을 repo 루트에 두어 "core/…" import 가 해소됨.
