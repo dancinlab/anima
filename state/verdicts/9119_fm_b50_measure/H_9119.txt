@@ -1,0 +1,40 @@
+=== H_9119 — §2 forward-model rerank LOWERS the frozen-listener b50? — VERDICT ===
+tier: 🟠 DIRECTIONAL (forward-model rerank front-loads referential decodability; NOT terminal GREEN)
+
+QUESTION (the GREEN test the whole §2 arc builds toward, H_9112-9117 + scorer #2881 + rerank #2889):
+  Does gen_fm_rerank (Option C, best-of-K reranked by fm_prefix_decodability) LOWER the frozen-listener
+  b50 (bytes-of-prefix at which the listener re-identifies the target referent below all distractors)
+  vs the un-reranked argmax emit? Lower b50 = more front-loaded / externally-decodable.
+
+RESULT (mean over 14 concepts, speaker=deep-mouth-ladder-L4-303m listener=ideation-303m-d5000, gen=24):
+  mean b50 — OFF(argmax)=505.21  ON(fm-rerank)=502.07  SHUFFLE=574.14
+  VERDICT line: b50 LOWERED by rerank (ON<OFF) | shuffle control OK (referential)
+
+  Per-concept (the 7 where OFF is finite/decodable — the informative subset; ~half floor at 999):
+    glacier 16→2  · violin 16→4 · spider 32→8 · library 4→2   (rerank BETTER: 4)
+    lighthouse 2=2 · compass 2=2                                (SAME: 2)
+    volcano 8→16                                               (rerank WORSE: 1)
+  → On decodable concepts the forward-model rerank lowers b50 4/7, ties 2/7, raises 1/7. The intended
+  front-loading effect is present and directionally positive. SHUFFLE(574) > ON(502) confirms the b50 is
+  REFERENTIAL (scoring the emit against the WRONG target gives a worse/higher b50).
+
+HONEST CAVEATS (why DIRECTIONAL, not terminal GREEN — three independent reasons):
+  1. --py NUMPY MIRROR, not engine-native. The engine-native hexa fm_b50 run FIRED the GPU path
+     ([OWN-GEMM-FIRED] _hx_k_gemm + [EAGER-DEVGLUE-FIRED] CUDA-erf GELU, erf/exp fix verified live via
+     readelf libm NEEDED) but is CPU-SCALAR-BOUND (scalar glue bottleneck, not GEMM) → impractical for
+     14 concepts (8:54 CPU, concept-1 unfinished). Owner-authorized --py fallback (fm_b50_py.py, 1:1 port
+     of fm_b50.hexa reusing core/decode.py). Per a_engine_native_learning numpy = DIRECTIONAL.
+  2. EXTERNAL-ORACLE-MEDIATED (H_9118). b50 scores the emit by a FROZEN LISTENER's decodability = an
+     external oracle, so it cannot be a terminal engine-native GREEN regardless of how clean the run is.
+  3. MODEST CKPTS. ~half the concepts floor at 999 (these clean-but-modest 303M ckpts can't referentially
+     decode them), so the MEAN (505/502) is floor-dominated and the ~3-byte ON<OFF gap is within noise on
+     the aggregate; the real signal is in the per-decodable-concept 4/7-better breakdown, not the mean.
+
+INFRA (resolved this session, quarantined per infra-wall-noneval — NOT folded into this verdict):
+  erf/exp -lm link fix = hexa-lang PR 4501 (merged) — the run measured cleanly (no dlsym failure).
+
+TIER: 🟠 DIRECTIONAL — the §2 forward-model mechanism demonstrably front-loads referential decodability
+  (lowers frozen-listener b50) on decodable concepts with a passing referential shuffle control, but the
+  result is triply-DIRECTIONAL (numpy-mirror · external-oracle · modest-ckpt). Terminal engine-native GREEN
+  needs: (a) a practical engine-native decode (fix the CPU-scalar-bound seam, not just GEMM) AND (b) stronger
+  chat ckpts so fewer concepts floor. The external-mind b50 bridge stays permanently DIRECTIONAL (H_9118 c9).
