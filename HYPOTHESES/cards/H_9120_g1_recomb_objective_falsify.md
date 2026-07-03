@@ -1,6 +1,8 @@
 # H_9120 — G1 recomb-objective (L4) FALSIFY — objective-floor terminal
 
-> **tier:** 🧱 FALSIFY (numpy A.novel=0) → **DIRECTIONAL-TERMINAL** (Fable 벽돌파 재프레임: objective-floor 위장, 진짜 = architecture-floor) · **wired:** N/A (verdict, GREEN 아님)
+> **tier:** 🧱 **CONFIRMED-TERMINAL** — G1 objective-floor (numpy A.novel=0 · torch byte-identical · **escape 2칸 engine-native mouth-gen 전수 FALSIFIED-CEILING** pod43727405) · **wired:** N/A (verdict, GREEN 아님)
+>
+> **escape engine-native 최종 판별 (pod43727405 vast RTX5090 ~\$1.5-2 · 서브 aa9ebc6):** A11 DIRECTIONAL-REACHABLE(torch signature-decode 5/5)가 **실 303M byte mouth `anima evaluate --py`(a_eval_py_canonical, torch-free numpy, frozen gen=40 bar)로 채점하니 전수 floor** → objective-floor **terminal CONFIRMED**(directional→confident 승격). 4 arm(전부 G0🟢=valid): base_h1129c(ce ctrl) G1 1/1 floor · **cov_en**(coverage-density H_6185) 1/1 floor · **cbind_en**(A11 constructive_bind TPR/HRR) **0/1 floor** · **cnce_en**(A11 composed_nce contrastive-replace) 1/1 floor. G2🟢(novel=10)=novelty≠recombination 재확인. **signature-decode 5/5 → mouth-generation floor = a_toy_scale_recheck 전례 실증**(synthetic REACHABLE이 autoregressive 생성으로 transfer 안 됨). ckpt PULL `~/anima-weights/g1_escape/{cov_en,cbind_en,cnce_en}.bin`(ByteGPT303 engine-checkable). infra 2건 fix(torch2.11+cu128 sm_120·`/usr/share/dict/words` 부재=kwr0 측정벽 아닌 garble→wamerican 설치 G0🟢 복구). caveat: 303M G0🟢 trunk는 전부 ByteGPT full-attn(RF≥512B⊇L8 = 더 강한 RF조건)·CLM-dilated-conv-RF는 미격리 · A11 realization=additive production objective(ce+λ·aux)이지 CE-deleted TPR-forward-slot(WIRE_SPEC v0.3 role-bind decode=미빌드 single cell follow-on) · single-pass(best_distinct≤1이라 flip 여지 없음). 상세 `state/g1_objfloor_escape/{A11_engine_native/RESULT_engine_native.md,coverage_density/RESULT.md}`.
 > **slug:** `g1_gamma_objective` · **date:** 2026-07-04
 
 ## 가설

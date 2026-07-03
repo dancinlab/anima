@@ -1,0 +1,22 @@
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=composed_nce seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=2000 bs=8 sample=proportional
+  cuda: NVIDIA GeForce RTX 5090 cap=12.0 torch=2.11.0+cu128
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ .pt loaded 293/293 keys (untouched=0 extra-in-ckpt=0)
+  corpus cell[0] cell0        state/g1_objfloor_escape/coverage_density/corpus/en_block.txt size=3101519 train=2946443 val_tail=155076
+  step     1  CE=2.76181  E=1  wd=0.0000 dp=0.0000  val_CE=2.02889 {"composed_nce": 1.6826}
+  step   500  CE=0.18688  E=1  wd=0.0000 dp=0.0000  val_CE=0.18571 {"composed_nce": 0.102}
+  step  1000  CE=0.17294  E=1  wd=0.0000 dp=0.0000  val_CE=0.17848 {"composed_nce": 0.084}
+  step  1500  CE=0.16979  E=1  wd=0.0000 dp=0.0000  val_CE=0.17345 {"composed_nce": 0.09}
+  step  2000  CE=0.17271  E=1  wd=0.0000 dp=0.0000  val_CE=0.17239 {"composed_nce": 0.0817}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     cell0        val_CE=0.17236  DESCENT
+  FINAL val_CE(pooled)=0.17236381396651268  registers_DESCENT=1/1
+  loss0=2.76181 lossF=0.17271 wall=402.3s savant_latched_at=0 E0=2->E=1
+  torch ckpt -> /root/out/cnce_en.pt (1213527349 bytes)
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.17271 step=2000 nparam=303097856
+[ok] wrote /root/out/cnce_en.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/out/cnce_en.bin (via /root/out/cnce_en.bin.pt)
