@@ -55,10 +55,13 @@ _REPO = os.path.dirname(_HERE)
 # deterministic kernels are opt-in via HEXA_DET=1 (`_forge_det_on()` gate). MEASUREMENT
 # (evaluate) and VERDICT (serialize DESCENT gate) must stay reproducible, so they spawn
 # with HEXA_DET=1 in the env. TRAIN deliberately does NOT force it = fast non-det default.
-def _det_env():
-    """os.environ copy with HEXA_DET=1 pinned (verdict/eval/decode reproducibility)."""
+def _det_env(want_det):
+    """os.environ copy; HEXA_DET=1 pinned ONLY when the caller passed --det (byte-exact opt-in).
+    DEFAULT = fast (no pin). The py evaluate path is numpy (already deterministic), so this is a
+    lockstep no-op there; kept for parity with cli/anima.hexa's --det gating."""
     env = dict(os.environ)
-    env.setdefault("HEXA_DET", "1")
+    if want_det:
+        env.setdefault("HEXA_DET", "1")
     return env
 
 
@@ -129,7 +132,8 @@ def anima_evaluate_mode(argv):
     # g_eval_all engine), but strip it so cli/evaluate.py sees only <ckpt> [--corpus …]
     # [--gen N] (it reads ckpt as positional argv[0]). Keeps `anima evaluate --py <clm>`
     # byte-parity across the hexa launcher (which dispatches here on --py) and this twin.
-    rest = [a for a in argv[1:] if a != "--py"]
+    want_det = ("--det" in argv) or ("--deterministic" in argv)
+    rest = [a for a in argv[1:] if a not in ("--py", "--det", "--deterministic")]
     # friendly .pt rejection: evaluate takes a serialized .clm, not a torch ckpt.
     if rest and rest[0].endswith(".pt"):
         print("anima evaluate takes a serialized .clm (engine-loadable), not a torch .pt.")
@@ -141,10 +145,10 @@ def anima_evaluate_mode(argv):
     evaluate_py = os.path.join(_HERE, "evaluate.py")
     cmd = [sys.executable, evaluate_py] + rest
     print("=== anima evaluate → cli/evaluate.py (engine-native G0-G6, single-entry twin) ===")
-    print("dispatch: HEXA_DET=1 " + " ".join(cmd))
-    # FORCE HEXA_DET=1 (verdict reproducibility, #4208 safety-pin) via spawnve env.
+    print("dispatch: " + ("HEXA_DET=1 " if want_det else "") + " ".join(cmd))
+    # det = the --det CLI option (default fast); numpy path is deterministic regardless.
     return os.spawnve(os.P_WAIT, sys.executable,
-                      [sys.executable, evaluate_py] + rest, _det_env())
+                      [sys.executable, evaluate_py] + rest, _det_env(want_det))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -158,13 +162,14 @@ def anima_evaluate_mode(argv):
 # recovery / re-export path (a_clm_gen_pipeline).
 def anima_serialize_mode(argv):
     serialize_py = os.path.join(_HERE, "serialize.py")
-    fwd = argv[1:]
+    want_det = ("--det" in argv) or ("--deterministic" in argv)
+    fwd = [a for a in argv[1:] if a not in ("--det", "--deterministic")]
     cmd = [sys.executable, serialize_py] + fwd
     print("=== anima serialize → cli/serialize.py (torch .pt → .clm v0.3 + DESCENT gate) ===")
-    print("dispatch: HEXA_DET=1 " + " ".join(cmd))
-    # FORCE HEXA_DET=1 (DESCENT-gate verdict reproducibility, #4208 safety-pin).
+    print("dispatch: " + ("HEXA_DET=1 " if want_det else "") + " ".join(cmd))
+    # det = the --det CLI option (default fast) — pass --det for a reproducible DESCENT-gate verdict.
     return os.spawnve(os.P_WAIT, sys.executable,
-                      [sys.executable, serialize_py] + fwd, _det_env())
+                      [sys.executable, serialize_py] + fwd, _det_env(want_det))
 
 
 # ══════════════════════════════════════════════════════════════════════════════

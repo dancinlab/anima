@@ -120,8 +120,9 @@ fn anima_usage() {
     println("  anima <ckpt.clm> --byte \"turn1\" \"turn2\" ...      byte-continuation chat mode")
     println("  anima train <args>                              LEARNING → .pt + auto .clm (+DESCENT)")
     println("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
-    println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
+    println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N] [--det]")
     println("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
+    println("                                                  --det = byte-exact/reproducible (default fast)")
     println("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     println("                                                  multi-GPU lever-sweep (arms×objectives)")
     println("")
@@ -267,9 +268,14 @@ fn anima_evaluate_mode(argv: [string]) {
     //   OWN-GEMM fp64 det-eval bump allocator scores cleanly here. `--py` is consumed here
     //   (stripped from the forwarded argv) so cli/evaluate.py sees only <ckpt> [--corpus …] [--gen N].
     let use_py = anima_has_flag(argv, "--py")
+    // --det / --deterministic: the CLI OPTION to request byte-exact determinism (H_9119: anima is
+    // invoked `anima <verb>`, so det is a CLI flag — NOT an env the user must export, and NOT forced
+    // unconditionally). DEFAULT = fast (non-det forge). Consumed here (stripped from fwd); when set it
+    // prefixes HEXA_DET=1 on the sub-process (the #4208 _forge_det_on gate is the internal mechanism).
+    let want_det = anima_has_flag(argv, "--det") || anima_has_flag(argv, "--deterministic")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
+    while i < len(argv) { if argv[i] != "--py" && argv[i] != "--det" && argv[i] != "--deterministic" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
     if use_py {
         println("=== anima evaluate → cli/evaluate.py (py 2-production G0-G6, numpy mirror · OOM-safe) ===")
         // py engine is numpy (deterministic) — no HEXA_DET needed. LOCATION-INDEPENDENT ($ANIMA_SRC).
@@ -290,16 +296,15 @@ fn anima_evaluate_mode(argv: [string]) {
         return
     }
     println("=== anima evaluate → cli/evaluate.hexa (engine-native G0-G6, single-entry twin) ===")
-    // EVAL DETERMINISM SAFETY-PIN (hexa-lang #4208 flame/forge fast-default follow-on):
-    // #4208 made the forge own-native NON-det atomic kernels the DEFAULT; deterministic
-    // kernels are opt-in via HEXA_DET=1 (`_forge_det_on()` gate). G0-G6 scoring must be
-    // reproducible (cross-host byte-parity, Ψ-checksum), so we FORCE HEXA_DET=1 on the
-    // evaluate sub-process — even when this entry is reached via a direct `hexa run
-    // cli/anima.hexa -- evaluate …` that bypassed the bin/anima launcher (e.g. eval_pod.sh).
-    // The TRAIN dispatch (anima_train_mode) deliberately does NOT set it = stays fast.
-    // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/evaluate.hexa via
-    // $ANIMA_SRC so `anima evaluate` works from any cwd (ckpt/corpus args stay cwd-relative).
-    let cmd = "HEXA_DET=1 hexa run \"${ANIMA_SRC:-.}/cli/evaluate.hexa\" --" + fwd
+    // EVAL DETERMINISM = the `--det` CLI OPTION (hexa-lang #4208 flame/forge fast-default follow-on):
+    // #4208 made the forge NON-det atomic kernels the DEFAULT; deterministic kernels are opt-in via
+    // HEXA_DET=1 (`_forge_det_on()` gate). DEFAULT here = FAST — a quick sanity eval needs no det.
+    // `anima evaluate --det …` sets det_pfx=HEXA_DET=1 for a byte-exact / cross-host-parity / Ψ-checksum
+    // verdict run (a frozen-bar G0-G6 verdict passes --det). No unconditional force, no user-exported env.
+    // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/evaluate.hexa via $ANIMA_SRC so it works
+    // from any cwd (ckpt/corpus args stay cwd-relative).
+    let det_pfx = if want_det { "HEXA_DET=1 " } else { "" }
+    let cmd = det_pfx + "hexa run \"${ANIMA_SRC:-.}/cli/evaluate.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
@@ -316,16 +321,18 @@ fn anima_evaluate_mode(argv: [string]) {
 // serializes at the end of a run — this is the standalone recovery / re-export path.
 fn anima_serialize_mode(argv: [string]) {
     println("=== anima serialize → cli/serialize.hexa (torch .pt → .clm v0.3 + DESCENT gate) ===")
+    // --det / --deterministic = the CLI OPTION for a byte-exact serialize DESCENT-gate run (same
+    // rationale as evaluate: default FAST, opt-in det). Consumed here (stripped from fwd).
+    let want_det = anima_has_flag(argv, "--det") || anima_has_flag(argv, "--deterministic")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
-    // VERDICT DETERMINISM SAFETY-PIN (hexa-lang #4208, same rationale as evaluate):
-    // serialize runs the held-out mirror-DESCENT gate (a_clm_gen_pipeline) — a verdict
-    // path whose model_ce<uniform decision must be reproducible. FORCE HEXA_DET=1 so the
-    // forge GEMM stays bit-identical (the #4208 fast atomic kernels are non-det). TRAIN
-    // is the only fast-default path.
+    while i < len(argv) { if argv[i] != "--det" && argv[i] != "--deterministic" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
+    // VERDICT DETERMINISM = the `--det` CLI OPTION (hexa-lang #4208): serialize runs the held-out
+    // mirror-DESCENT gate (a_clm_gen_pipeline). DEFAULT = FAST; `anima serialize … --det` sets
+    // HEXA_DET=1 so the forge GEMM stays bit-identical for a reproducible model_ce<uniform verdict.
     // LOCATION-INDEPENDENT (see anima_train_mode): resolve cli/serialize.hexa via $ANIMA_SRC.
-    let cmd = "HEXA_DET=1 hexa run \"${ANIMA_SRC:-.}/cli/serialize.hexa\" --" + fwd
+    let det_pfx = if want_det { "HEXA_DET=1 " } else { "" }
+    let cmd = det_pfx + "hexa run \"${ANIMA_SRC:-.}/cli/serialize.hexa\" --" + fwd
     println("dispatch: " + cmd)
     let out = exec(cmd)
     print(out)
