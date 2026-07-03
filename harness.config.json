@@ -29,6 +29,11 @@
         "id": "anima-gates",
         "cmd": "python3 .harness/enforce_anima_gates.py",
         "timeoutMs": 60000
+      },
+      {
+        "id": "compile-gate",
+        "cmd": "bash tool/compile_gate_runner.sh",
+        "timeoutMs": 300000
       }
     ]
   },
