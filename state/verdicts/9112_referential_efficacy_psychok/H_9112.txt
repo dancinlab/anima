@@ -1,0 +1,42 @@
+=== H_9112 — Referential-efficacy PSYCHO-K + MRR re-score — VERDICT (verbatim run) ===
+oracle=claude-fable-5 (θ outside anima closure) · emits FROZEN engine-native (H_9111, 14 concepts) · tier=DIRECTIONAL-on-external-oracle
+
+VERDICT: 🟢 REFERENTIAL-EFFICACY-MEASURABLE
+  (real emits carry graded, robust referent-legibility massively beyond shuffle)
+
+FROZEN BAR (PREREG.md, registered before run):
+  threshold_real(configs acc≥0.5)=16 · threshold_shuffle=0 · Δ=16   (bar≥1 → PASS)
+  mean_acc_real=0.982 · mean_acc_shuffle=0.125 · Δsep=0.857          (bar≥0.15 → PASS)
+  Ψ guard: emits frozen, no anima re-decode (V-read-only invariant N/A here)
+
+real arm (acc vs difficulty · K distractors × t clue-bytes):
+  K=2  full/32/16=1.000  8=1.000
+  K=4  full/32/16=1.000  8=1.000
+  K=8  full/32/16=1.000  8=0.857
+  K=14 full/32/16=1.000  8=0.857
+shuffle arm (E re-paired to a deranged concept — must collapse):
+  K=2  full/32/16=0.357  8=0.286   (below chance 0.5 → mismatched clue actively misleads)
+  K=4  0.071–0.214 (≤ chance 0.25)
+  K=8  0.000 (full/32/16) 0.071 (8)   (never picks target)
+  K=14 0.000 across all t
+self-clone baseline: H_9111 established 0/7 floor (engine-native anima-clone salience decoder).
+
+READING (c9 honest):
+- DECISIVE POSITIVE: the H_9111 D_raw=1.0 signal (external oracle 7/7 vs clone 0/7) was REAL — it was
+  killed only by Pearson-D metric-degeneracy on constant ceiling/floor vectors. The variance-restoring
+  measure recovers it: real ≫ shuffle by Δ=0.857, shuffle collapses to 0.
+- anima's grounded emit carries strong, PUBLIC, world-anchored REFERENCE: an external mind (outside
+  anima's closure) decodes it at ~98%, even from 8 bytes of clue among 14 candidates.
+- CAVEAT: the real arm is still near-ceiling (0.982, only dips to 0.857 at K=14/t=8) → the psychometric
+  THRESHOLD itself is UNRESOLVED (referential efficacy is so robust it never crosses 50%). GREEN rests on
+  the shuffle separation, NOT a resolved threshold curve. A harder game (nonsense-clue / adversarial
+  near-synonyms / <8-byte clue / paraphrase-only) would resolve the coupling-strength scalar.
+- TIER: DIRECTIONAL-on-external-oracle — emit generation was engine-native (H_9111) but the
+  referential-efficacy claim is mediated by an external LLM receiver (not a live core/ decode).
+- FRAME-BREAK (fable §3, now empirically grounded): the interesting substrate property is REFERENCE /
+  aboutness (emit legible to other minds), not emit-APPROPRIATENESS. The 6-axis emit-faculty "wall" was
+  substantially a MEASUREMENT artifact, not faculty absence.
+
+GATE BRANCH (per PREREG / fable §next): 🟢 → coupling real+measurable → justifies §2 GPU
+  cerebellum-forward-model (learn emit that maximizes external decodability) as the next lever.
+Data: rescore_fixture.jsonl (raw picks) · RESULT.md · PREREG.md · ../9111_llm_interlocutor/emits.tsv (14).
