@@ -67,15 +67,29 @@ fn distractors_for(concepts: list, ti: int) -> list {
 }
 
 fn main() {
-    let args = hexa_args()
-    if len(args) < 3 {
+    // args() = [binary, "--", <positionals>...] (hexa run); collect positionals after "--",
+    // else skip the binary (argv[0]). (hexa_args is a C symbol, not a hexa fn — use args().)
+    let raw = args()
+    let mut pos = []
+    let mut started = false
+    let mut ri = 0
+    while ri < len(raw) {
+        if started { pos = pos + [to_string(raw[ri])] }
+        if to_string(raw[ri]) == "--" { started = true }
+        ri = ri + 1
+    }
+    if len(pos) == 0 {
+        let mut rj = 1
+        while rj < len(raw) { pos = pos + [to_string(raw[rj])]; rj = rj + 1 }
+    }
+    if len(pos) < 2 {
         println("usage: fm_b50 <speaker_ckpt> <listener_ckpt> [gen] [base_seed]")
         return
     }
-    let speaker  = to_string(args[1])
-    let listener = to_string(args[2])
-    let gen      = if len(args) > 3 { to_int(args[3]) } else { 80 }
-    let base     = if len(args) > 4 { to_int(args[4]) } else { 12345 }
+    let speaker  = to_string(pos[0])
+    let listener = to_string(pos[1])
+    let gen      = if len(pos) > 2 { to_int(pos[2]) } else { 80 }
+    let base     = if len(pos) > 3 { to_int(pos[3]) } else { 12345 }
     let decay    = ep_fm_prefix_decay()
     let concepts = ["volcano", "glacier", "library", "violin", "spider", "lighthouse", "umbrella",
                     "beehive", "telescope", "avalanche", "compass", "cactus", "harbor", "thunderstorm"]
