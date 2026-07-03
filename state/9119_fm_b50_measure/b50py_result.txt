@@ -1,0 +1,27 @@
+=== H_9119 §2 forward-model b50 measurement (--py numpy mirror, DIRECTIONAL) ===
+speaker=ckpts/clm303_L4_d3784.clm listener=ckpts/clm303_d5000.clm gen=24 k=8 nconcepts=14
+volcano: b50_off=8.0 b50_on=16.0 b50_shuffle=8.0 fm_score=-0.1678
+glacier: b50_off=16.0 b50_on=2.0 b50_shuffle=16.0 fm_score=0.4097
+library: b50_off=4.0 b50_on=2.0 b50_shuffle=8.0 fm_score=0.3666
+violin: b50_off=16.0 b50_on=4.0 b50_shuffle=8.0 fm_score=0.0303
+spider: b50_off=32.0 b50_on=8.0 b50_shuffle=999.0 fm_score=-0.0991
+lighthouse: b50_off=2.0 b50_on=2.0 b50_shuffle=999.0 fm_score=0.4215
+umbrella: b50_off=999.0 b50_on=999.0 b50_shuffle=999.0 fm_score=-0.5888
+beehive: b50_off=999.0 b50_on=999.0 b50_shuffle=4.0 fm_score=-1.9224
+telescope: b50_off=999.0 b50_on=999.0 b50_shuffle=999.0 fm_score=-0.5193
+avalanche: b50_off=999.0 b50_on=999.0 b50_shuffle=2.0 fm_score=-0.6596
+compass: b50_off=2.0 b50_on=2.0 b50_shuffle=999.0 fm_score=0.9606
+cactus: b50_off=999.0 b50_on=999.0 b50_shuffle=999.0 fm_score=-1.7059
+harbor: b50_off=999.0 b50_on=999.0 b50_shuffle=999.0 fm_score=-0.3763
+thunderstorm: b50_off=999.0 b50_on=999.0 b50_shuffle=999.0 fm_score=-0.3370
+--- mean b50: OFF=505.2143 ON=502.0714 SHUFFLE=574.1429 ---
+VERDICT: b50 LOWERED by rerank (ON<OFF) | shuffle control OK (referential)
+NOTE: --py numpy mirror = DIRECTIONAL (a_engine_native_learning); external-mind b50 = DIRECTIONAL (H_9118).
+PY_DONE=0
+=== ckpt sha ===
+total 303792
+drwxr-xr-x 3 root root        87 Jul  3 15:52 .
+drwxr-xr-x 7 root root        92 Jul  3 15:52 ..
+drwxr-xr-x 3 root root        33 Jul  3 15:52 .cache
+-rw-r--r-- 1 root root 155074330 Jul  3 15:52 clm303_L4_d3784.clm
+-rw-r--r-- 1 root root 156007166 Jul  3 15:52 clm303_d5000.clm
