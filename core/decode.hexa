@@ -229,9 +229,10 @@ fn _clmd_conv1d(x: int, w: int, b: int, y_out: int,
 //   #{ ok, windows, model_ce, shuffle_ce, uniform_ce, lt_uniform, lt_shuffle, green }
 // ok=false (with reason) if the file is not v0.2-decodable.
 pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
-    // DETERMINISM SAFETY-PIN: eval/verdict CE scoring → byte-exact verdicts.
-    // API 1st-class (#4285); training stays fast non-det.
-    set_deterministic(true)
+    // DETERMINISM = OPTION (default fast non-det). CE scoring defers to the canonical
+    // forge_det precedence (API > env > default): byte-exact verdicts are opt-in via
+    // the HEXA_DET=1 escape-hatch (the `anima evaluate` wrapper exports it). No forced
+    // pin here — the default forge path stays fast/un-throttled.
     if !clm_decodable(path) {
         return #{ "ok": false, "reason": "not v0.2-decodable (no CLMX trailer; embed/GN absent)",
                   "green": false, "model_ce": 0.0, "shuffle_ce": 0.0, "uniform_ce": 0.0,
@@ -312,7 +313,8 @@ pub fn clm_scratch_free_pub(sc: Map) { _clmd_scratch_free(sc) }
 pub fn clm_ce_seq_W(W: Map, sc: Map, seq: list) -> float {
     // sc = a PRE-BUILT scratch (clm_scratch_new_pub) with maxT ≥ len(seq)-1 — reused across every
     // CE call (no per-call _clmd_scratch_new → no RSS blowup). Single window T=len(seq)-1, next-byte CE.
-    set_deterministic(true)
+    // DETERMINISM = OPTION (default fast non-det): byte-exact CE is opt-in via HEXA_DET=1
+    // (canonical forge_det env gate); no forced set_deterministic(true) here.
     let V = to_int(W["V"])
     let n = len(seq)
     if n < 2 { return dt_ln(to_float(V)) }
@@ -2169,7 +2171,8 @@ pub fn bytegpt_ce_ranged(path: string, ids: list) -> Map {
 // CLMConvMoE forward (_clmd_load + _clmd_fwd_logits_sc) + nn_ce_loss_allpos over a
 // single T-window (no striding — the exact candidate bytes). READ-only, no gen.
 pub fn clm_ce_ranged(path: string, ids: list) -> Map {
-    set_deterministic(true)
+    // DETERMINISM = OPTION (default fast non-det): byte-exact CE is opt-in via HEXA_DET=1
+    // (canonical forge_det env gate); no forced set_deterministic(true) here.
     let T = len(ids)
     if T < 2 { return #{ "ok": false, "ce_mean": 0.0, "reason": "T<2" } }
     if !clm_decodable(path) {
@@ -2200,7 +2203,8 @@ pub fn clm_ce_ranged(path: string, ids: list) -> Map {
 // owns W's lifetime (freed once by gen_auto_free) — NO _clmd_weights_free here (that per-call
 // reload+free was the H_9107 303M RSS-explosion source). Mirrors the _clmd_load/_clmd_fwd split.
 pub fn clm_ce_ranged_W(W: Map, ids: list) -> Map {
-    set_deterministic(true)
+    // DETERMINISM = OPTION (default fast non-det): byte-exact CE is opt-in via HEXA_DET=1
+    // (canonical forge_det env gate); no forced set_deterministic(true) here.
     let T = len(ids)
     if T < 2 { return #{ "ok": false, "ce_mean": 0.0, "reason": "T<2" } }
     if to_string(W["ok"]) != "true" {
@@ -3321,9 +3325,10 @@ pub fn bytegpt_decode_topk_sampled_ranged(path: string, seed_ids: list, gen: int
 // sampler, byte-identical to bytegpt_decode_topk_sampled). Factored out so a batch driver can
 // load the 303M ONCE and generate MANY fragments without per-fragment reload. seed = byte ids.
 fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, seed_rng: int) -> string {
-    // DETERMINISM SAFETY-PIN: ByteGPT decode is an inference surface → byte-exact,
-    // reproducible generation. API 1st-class (#4285); training stays fast non-det.
-    set_deterministic(true)
+    // DETERMINISM = OPTION (default fast non-det). ByteGPT decode defers to the canonical
+    // forge_det precedence (API > env > default): byte-exact generation is opt-in via the
+    // HEXA_DET=1 escape-hatch. A byte-eq caller (e.g. bytegpt_kvcache_batch_smoke) pins
+    // det itself in main() — that process-global API call covers this fn. No forced pin here.
     let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
     let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
     let toks = []

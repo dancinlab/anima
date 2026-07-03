@@ -215,8 +215,10 @@ fn first_diff(a: list, b: list, n: int) -> int {
 }
 
 fn main() {
-    // DETERMINISM: inference surface -> byte-exact reproducible generation (matches
-    // _bg_gen_from_W's own set_deterministic(true)) so REF and KV legs are comparable.
+    // DETERMINISM: this is a BYTE-EQ SMOKE (REF vs KV legs must be byte-identical), so it
+    // OPTS IN to det via the canonical set_deterministic(true) API — process-global, it
+    // also pins the un-pinned _bg_gen_from_W decode path. Production decode now defaults to
+    // fast non-det (det = OPTION via HEXA_DET=1); a byte-eq gate keeps its explicit pin.
     set_deterministic(true)
 
     // fixture defaults to the tiny d=64 random-weight ByteGPT (byte-exact gate, mini-safe);
