@@ -252,35 +252,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compute toolchain cache key (latest release tag)
-        id: cachekey
-        shell: bash
-        run: |
-          # 키 = hexa-lang 최신 릴리즈 태그. 주간 회전 키는 exact-hit 이 주 내내
-          # 재저장을 막아 그날 아침 버전이 박제되는 stale-pin 트랩이었다(실측 2026-07-03:
-          # v0.588 종일 pin → 신규 계측 미탑재 + wrapper/binary skew 로 __HEXA_BRC__=1
-          # 프로토콜 불일치 게이트 FAIL). 태그 키 = 새 릴리즈마다 자동 미스 → 최신 설치.
-          # git ls-remote 사용: github.token 은 anima 스코프라 private hexa-lang API 를
-          # 못 읽는다(1차 시도 실측 실패) — 러너의 ambient git 자격증명이 정답
-          # (install.sh 의 raw fetch 가 같은 경로로 이미 작동 중).
-          # head -1 금지: GHA 기본 셸(-e -o pipefail)에서 git 이 SIGPIPE(141)로 잡 전체를
-          # 죽인다(실측 run 28658689642). awk NR==1 은 입력을 EOF 까지 읽어 안전.
-          latest="$(git ls-remote --tags --sort=-v:refname https://github.com/dancinlab/hexa-lang.git 'v*' 2>/dev/null | awk 'NR==1 {sub(/.*refs\/tags\//,""); sub(/\^\{\}$/,""); print}' || true)"
-          [ -z "$latest" ] && latest="week-$(date -u +%Y-%V)"   # 원격 실패 폴백: 주간 회전
-          echo "hxtag=$latest" >> "$GITHUB_OUTPUT"
-
-      # ── 캐시 ① 의 toolchain (~/.hx) — 이 잡은 install *무결성* 게이트가 아니라
-      # engine compile/smoke 게이트라 toolchain 캐시 OK (release.yml install-smoke 와
-      # 다름: 거기선 fresh install 가 게이트라 ~/.hx 캐시 금지). 주간 회전 키로
-      # hexa-lang 신릴리즈를 1주 내 자동 흡수(태그가 곧 install.sh 가 깔 최신본).
-      - name: Cache — hexa toolchain (~/.hx)
-        uses: actions/cache@v4
-        with:
-          path: ~/.hx
-          key: hx-toolchain-${{ runner.os }}-${{ runner.arch }}-${{ steps.cachekey.outputs.hxtag }}
-          restore-keys: |
-            hx-toolchain-${{ runner.os }}-${{ runner.arch }}-
-
+      # ~/.hx 툴체인 캐시는 폐지(2026-07-03): 주간키 stale-pin(v0.588 종일 고착 →
+      # 계측 미탑재+x86 타깃 오발사 게이트 붕괴)과 태그키↔installable 불일치 재설치
+      # 처닝까지, 캐시가 만든 함정 클래스 대비 fresh install 실측 ~25s 는 공짜다.
+      # 매 run canonical install.sh 신규 설치 = 항상 Latest 와 일치.
       # toolchain 설치 + 캐시 VALIDITY 가드 → fresh fallback.
       # 캐시된 ~/.hx 가 stale/broken(잘못된 버전·깨진 바이너리)이면 rm -rf 후
       # canonical fresh curl-install 로 강등(NEVER 잘못된 toolchain 으로 진행).
@@ -298,17 +273,8 @@ jobs:
             local r; r="$("$HOME/.hx/bin/hexa" run "$td/probe.hexa" 2>/dev/null || true)"
             rm -rf "$td"; printf '%s' "$r" | grep -q "$tag"
           }
+          rm -rf "$HOME/.hx"   # 항상 신규 설치(위 캐시 폐지 주석 참조)
           fresh_install
-          # VERSION 가드: restore-keys 로 옛 ~/.hx 가 복원되면 install.sh 는 idempotent
-          # 라 스킵해 stale 버전이 그대로 살아남는다 → 기대 태그와 실버전 불일치 시
-          # 강제 재설치(위 stale-pin 트랩의 두 번째 방어선).
-          want="${{ steps.cachekey.outputs.hxtag }}"
-          have="$("$HOME/.hx/bin/hexa" --version 2>/dev/null | awk '{print $NF}' || true)"
-          if [ -n "$want" ] && [ "${want#week-}" = "$want" ] && [ "v$have" != "$want" ] && [ "$have" != "$want" ]; then
-            echo "::warning::cached hexa $have != latest release $want — purging ~/.hx + ~/.hexa-cache, installing latest"
-            rm -rf "$HOME/.hx" "$HOME/.hexa-cache"
-            fresh_install
-          fi
           # VALIDITY: 복원된(또는 방금 깐) toolchain 이 실제로 도는지 tiny smoke.
           # 깨졌으면(캐시 corruption) stale ~/.hx + warm-cache 제거 후 fresh 재설치.
           if ! probe "hx_ok"; then
