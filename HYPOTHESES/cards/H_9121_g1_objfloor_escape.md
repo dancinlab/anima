@@ -1,6 +1,8 @@
 # H_9121 — G1 objective-floor escape 사전등록 (CE-replace × TPR-invariant)
 
-> **tier:** 🧱 escape 개별 FALSIFIED (E1 contrastive-단독 TOY-AT-FLOOR $0 · E2 TPR-단독 CE-FALSIFIED ledger-dup H_1813/1623) → **★유일 열린 CRUX = A11(TPR-slot × contrastive-replace 동시) TOY REACHABLE margin+3.30 · 303M 미측정** · **wired:** N/A
+> **tier:** 🟡 A11 DIRECTIONAL-REACHABLE 5/5 (E1 contrastive-단독 floor · E2 TPR-단독 CE-dup · **A11 conjunction = real deep conv byte trunk d768 5/5 REACHABLE**, torch DIRECTIONAL, engine-native 배선 대기) · **wired:** N/A (engine-native follow-on)
+>
+> **A11 실행 결과 (a2eebb91 · $0 aiden RTX5070):** ledger-FRESH(H_1441/1464 G6-noslot·H_1813 TPR-under-CE·H_9120 additive와 distinct). real deep conv byte trunk(production CLMConvMoE E2/L1 d768 7.3M, contrastive-replace end-to-end no-CE, held-out 20% novel-pair) 5 seed: **TPR HIT 5/5** margins +99~108·reach_novel 1.0·scramble≤0.02·InfoNCE→0 vs **ADD HIT 0/5**(all neg). → **floor=ARCHITECTURAL 확증**(ADD floors same objective)·**CE-basin=trap**(E2 TPR-under-CE floored). **CE 제거 + TPR slot 동시 = held-out recombination 도달** = toy가 free-lookup artifact 아님(real trunk survive). 정직(a_toy_scale_recheck·a_engine_native_learning): torch=DIRECTIONAL(H_9120 objective-floor terminal NOT flipped)·synthetic corpus(roles orthonormal→per-slot readout by-construction=escape 가설 자체)·natural-corpus production G1 미주장. **terminal follow-on = engine-native**: TPR forward-slot을 `core/clm_decode.hexa`+serializer 배선→real corpus contrastive-replace 학습→`anima evaluate --py` 채점. artifacts `state/g1_objfloor_escape/A11_TPR_contrastive/`.
 >
 > **결과 (workflow wee6usdpr · $0 cost-gate 유지):**
 > - **Escape-1 (CE-replace 단독)** = **TOY-AT-FLOOR-SKIP** (numpy N=24 D=96 held-out split, 5/5 seed): ADD arch(no-slot) margin=−0.47·reach=0 AT-FLOOR vs **TPR arch(slot) 동일 objective margin=+3.30·reach=1.0 REACHABLE** → **floor는 objective 아니라 ARCHITECTURAL 확증** (contrastive 단독은 슬롯 없으면 INERT). H_9120 additive-FALSIFIED + [[H_1816]] 정합. 303M 학습 스킵(cost-gate).

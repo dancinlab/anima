@@ -1,0 +1,81 @@
+=== A11 SCALED: TPR-slot x contrastive-replace on REAL conv byte trunk ===
+device=cuda d=768 n_fill=24 byte_len=4 epochs=300 lr=0.003 tau=1.0
+
+--- seed 7 (train=442 held=110) ---
+/tmp/a11_scaled.py:163: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  print(f"    [{arch}] ep{ep:4d} infoNCE={float(loss):.4f}", flush=True)
+    [ADD] ep   0 infoNCE=24.9005
+    [ADD] ep  75 infoNCE=1.8174
+    [ADD] ep 150 infoNCE=1.6158
+    [ADD] ep 225 infoNCE=1.5510
+    [ADD] ep 299 infoNCE=1.2797
+    [TPR] ep   0 infoNCE=14.8664
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-1.7509 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+99.3346 reach_novel=1.00 scr=0.01  HIT  params=7.30M
+
+--- seed 11 (train=442 held=110) ---
+    [ADD] ep   0 infoNCE=24.5191
+    [ADD] ep  75 infoNCE=1.5533
+    [ADD] ep 150 infoNCE=1.6778
+    [ADD] ep 225 infoNCE=1.3525
+    [ADD] ep 299 infoNCE=1.3200
+    [TPR] ep   0 infoNCE=12.8741
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-1.8953 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+99.3795 reach_novel=1.00 scr=0.02  HIT  params=7.30M
+
+--- seed 23 (train=442 held=110) ---
+    [ADD] ep   0 infoNCE=25.9366
+    [ADD] ep  75 infoNCE=1.3678
+    [ADD] ep 150 infoNCE=1.4361
+    [ADD] ep 225 infoNCE=1.2632
+    [ADD] ep 299 infoNCE=1.3364
+    [TPR] ep   0 infoNCE=14.1186
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-0.8889 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+104.0557 reach_novel=1.00 scr=0.00  HIT  params=7.30M
+
+--- seed 42 (train=442 held=110) ---
+    [ADD] ep   0 infoNCE=31.1872
+    [ADD] ep  75 infoNCE=1.4440
+    [ADD] ep 150 infoNCE=1.4374
+    [ADD] ep 225 infoNCE=1.3988
+    [ADD] ep 299 infoNCE=1.3534
+    [TPR] ep   0 infoNCE=18.2347
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-1.1900 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+108.7444 reach_novel=1.00 scr=0.01  HIT  params=7.30M
+
+--- seed 101 (train=442 held=110) ---
+    [ADD] ep   0 infoNCE=26.3763
+    [ADD] ep  75 infoNCE=1.5907
+    [ADD] ep 150 infoNCE=1.8584
+    [ADD] ep 225 infoNCE=1.4762
+    [ADD] ep 299 infoNCE=1.4993
+    [TPR] ep   0 infoNCE=10.8595
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-2.2628 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+100.5114 reach_novel=1.00 scr=0.02  HIT  params=7.30M
+
+=== A11 RESULT (frozen bar: reach_novel>=0.5 AND margin>0 AND scramble<=0.2) ===
+TPR (A11)  HIT 5/5   ADD (E1 ctrl) HIT 0/5
+params=7.30M  d=768
+VERDICT: A11 = DIRECTIONAL-REACHABLE  (torch DIRECTIONAL; engine-native = follow-on)
+JSON {"d": 768, "params": 7300610, "tpr_hits": 5, "add_hits": 0, "verdict": "DIRECTIONAL-REACHABLE"}
