@@ -12422,6 +12422,20 @@
         "detail": "a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live core/*.hexa engine."
        }
       ]
+     },
+     {
+      "name": "CI substrate — engine compile gate + warm-cache",
+      "role": "build/verify infra (.github/workflows)",
+      "id": "governance-ci-substrate-engine-compile-warmcache",
+      "detail": "cold ~12.7min = aprime_cc codegen ~85% vs clang ~15% (실측 2026-07-03 · state/build_speed_rootcause/MEASUREMENTS.md). clang O2↔O0 delta 13s = 레벨강등 기각 · engine_cli 파일분할 = 단일-TU 확장이라 무효. 남은 병목 = 업스트림 aprime_cc 병리(합성 대비 ~270x).",
+      "children": [
+       {
+        "name": "warm-cache 키 = hexa 실버전 + 소스 해시",
+        "role": "ci.yml + release.yml 공통 설계",
+        "id": "governance-ci-substrate-warmcache-version-key",
+        "detail": "~/.hexa-cache 엔트리는 버전접미라 키에 버전이 없으면 toolchain bump+소스불변에서 exact-hit 복원(무용)→cold→Post save 스킵 = 영구-cold 함정. 수리 = install 후 hexa --version 캡처를 key/restore-keys에 포함(스텝은 install 뒤, save 는 잡 끝 Post). dangling symlink 는 hashFiles 에서 `!` 제외."
+       }
+      ]
      }
     ]
    },
