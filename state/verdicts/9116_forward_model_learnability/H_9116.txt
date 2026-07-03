@@ -1,0 +1,30 @@
+=== H_9116 — Screen-A forward-model learnability ($0, reuse H_9115 fixture) — VERDICT ===
+tier=DIRECTIONAL (surface-feature proxy on frozen emit; real forward-model reads richer A/G trunk = LOWER BOUND on learnability). No oracle calls.
+
+FROZEN VERDICT (pre-chosen probe t=4B): 🔴 GAIN-NOT-BROAD (2↑/1↓, comp−raw=0.071<0.10).
+HONEST NET: 🟡 INCONCLUSIVE-AT-PROBE — probe mis-chosen, and the correlation that DID surface is POSITIVE for structural learnability. Screen-A does NOT refute learnability.
+
+data (t=4B): raw_acc 0.786 → comp_acc 0.857 · gain 2↑ (compass, violin) / 1↓ (cactus) / 11 = · corr(filler_prefix, gain) r=0.656.
+
+READING (c9 honest — bar NOT moved, t=3B NOT re-run to avoid tune-to-green):
+- DESIGN ERROR (acknowledged, not tuned): I pre-set the probe at t=4B calling it "the discriminative truncation",
+  but H_9115's largest raw-vs-compressed gap was at t=3B (raw 0.214 vs comp 0.786), NOT 4B. At 4B most emits already
+  decode in BOTH modes (11 of 14 gain=0), so the "broad gain" test is under-powered — it sits ABOVE the discriminative
+  regime. The 🔴 is therefore a probe-point artifact, not a clean refutation of a broad structural signal.
+- SALVAGEABLE SIGNAL (the real finding): corr(filler_prefix, gain) = 0.656 — the two emits that gain (compass, violin)
+  are exactly the two with the LONGEST filler-prefix (fp=8, both "a small ..." openings). Emits with more non-
+  discriminative prefix gain more from front-loading. This is precisely the STRUCTURAL, CONSISTENT signal a lane15
+  forward-model would learn (cut filler-prefix / front-load discriminative content) — so Screen-A SUPPORTS, does not
+  refute, learnability. And the real forward-model reads the A/G trunk (richer than surface filler-prefix), so this
+  0.656 surface correlation is a LOWER BOUND.
+- NET: the $0 cheap gate for §2 is now: Screen-B 🟢 (headroom real, strong) ∧ Screen-A 🟡 (structural signal present
+  via corr, broad-gain test probe-limited, non-refuting). The gate LEANS GREEN. The DECISIVE learnability test — can
+  anima's forward-model LEARN to front-load from the A/G trunk — genuinely requires the engine-native mini (GPU), which
+  is what the cheap screens were meant to justify spending on. They do.
+
+CONCLUSION: cheap $0 screens EXHAUSTED for §2. Net = go-signal for engine-native mini (lane15 side-loop) is intact
+  (Screen-B strong 🟢, Screen-A non-refuting 🟡 with a positive structural correlation). The engine-native mini is
+  GPU-cost-gated + a real core/*.hexa build (engine_cli 15-lane state + generator L3 mouth-gate + cli/train.hexa) —
+  a valid cost-gated boundary. Recon confirmed fable's structural design maps onto the live engine (emit-drive=lane 0,
+  disjoint via sv_default_focus C1 mechanism, generator single L3 slot).
+Data: screena.py · RESULT.md · ../9115_forward_model_screen/screenb_fixture.jsonl · ../9111_llm_interlocutor/emits.tsv.
