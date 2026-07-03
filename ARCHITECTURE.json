@@ -13185,8 +13185,8 @@
    {
     "id": "ci-yml-1",
     "state": "ossified",
-    "value": "engine-compile 잡 만성 RED 3겹 root(캐시키 dangling-symlink·stale import·cold-bootstrap chicken-egg) + 4번째 재발(2026-07-03): v0.59x cold gate 48m49s가 50min 캡에 cancel(run 28651287277)→Post save 스킵→연쇄 cold 재발 + capture-then-print 게이트가 cancel 시 CG_PROFILE 로그 전량 유실",
-    "threshold": "재발조건+가드: (a) hashFiles 글로브에 dangling/cross-repo symlink 포함시 즉시 RED→'!path' 제외. (b) 게이트 수리 후 드러나는 stale import는 CI import 리스트 lockstep. (c) cold-bootstrap: 첫 COLD가 timeout 안에 Post-Cache save 도달해야 함 → cold 실측이 캡에 근접하면 timeout 선제 증설(50→75, 실측 48m49s 근거) + 장출력 스텝은 tee /dev/stderr 라이브 스트리밍으로 cancel-내성 확보(capture-then-print 금지). CROSS-CUT: 전 GHA 워크플로 적용.",
+    "value": "engine-compile 잡 만성 RED 4겹 root(캐시키 dangling-symlink·stale import·cold-bootstrap chicken-egg·48m49s cancel-cascade) + 5번째 재발(2026-07-03 저녁): 주간 키 ~/.hx 툴체인 캐시 = exact-hit이 주 내내 재저장 차단 → 그날 아침 버전(v0.588) 종일 stale-pin → 신규 계측 미탑재 + wrapper/binary skew __HEXA_BRC__=1 게이트 FAIL. 추가: GHA cancel이 hexa 네이티브 프로세스 못 죽여 Runner.Worker 좀비化(30min wedge, kill로 해방)",
+    "threshold": "재발조건+가드: (a) hashFiles dangling symlink → '!path' 제외 (b) stale import → CI lockstep (c) cold-bootstrap → timeout 여유(75)+tee 스트리밍 (d) 툴체인/의존 캐시 키는 반드시 버전/태그 스코프(주간 회전 금지 — 릴리즈 태그 키 + install 버전-일치 강제재설치 2중 방어) (e) 취소 후 러너 busy 지속 = hexa 고아/좀비 워커 의심 → ps로 검증 후 kill. CROSS-CUT: 전 GHA 워크플로.",
     "source": ".github/workflows/ci.yml"
    },
    {
