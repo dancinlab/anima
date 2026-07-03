@@ -1,0 +1,89 @@
+--- /Users/mini/anima-weights/g1_a11tpr/wire_diffs/decode.py.orig	2026-07-04 07:17:06
++++ /Users/mini/anima-weights/g1_a11tpr/wire_diffs/decode.py.patched	2026-07-04 07:49:08
+@@ -516,6 +516,26 @@
+         W["WaB"] = WaB_ext
+         W["WbB"] = WbB_ext
+         # roWt is already Wo.T = (k, V); roB is already WoB (V,) — loaded above.
++
++    # ── optional CLMT TPR role-filler section (A11 CE-deleted TPR forward-slot) ──
++    # "CLMT" = 67,76,77,84.  bind_type=3.  out = sum_r S_r . (yn ⊙ roles[r]).
++    #   CLMT magic 67,76,77,84 | R:u8 | roles ext (R*d f32) | S1 conv block (V,d
++    #   int4-sym) | S1 bias ext (V,).  The MAIN roW/roB slot carries S_0/S_0.bias.
++    #   Absent => bind_type stays 0/1/2 (old golden .clm decode byte-identically).
++    if (off + 5 <= len(rb)
++            and rb[off] == 67 and rb[off + 1] == 76
++            and rb[off + 2] == 77 and rb[off + 3] == 84):
++        off += 4                                   # skip "CLMT"
++        R = rb[off]; off += 1
++        roles_flat, off = _load_ext(rb, off)       # (R*d,)
++        S1W, off = _load_block(rb, off)            # (V, d) int4-sym
++        S1B, off = _load_ext(rb, off)              # (V,)
++        W["bind_type"] = 3
++        W["R"] = int(R)
++        W["roles"] = roles_flat.reshape(R, d)      # [R, d]
++        W["S1Wt"] = S1W.T.copy()                   # (d, V)
++        W["S1B"] = S1B
++        # roWt=(d,V) holds S_0.T, roB=(V,) holds S_0.bias — loaded above (standard slot).
+ 
+     return W
+ 
+@@ -570,8 +590,15 @@
+     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d)          # [T, d]
+     # final groupnorm
+     yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1)
+-    # readout: additive Conv1d (standard) OR Hadamard/linear bind (CLMB)
+-    if W.get("bind_type", 0) != 0:
++    # readout: standard | CLMB Hadamard/linear bind | CLMT TPR role-filler bind
++    _bt = W.get("bind_type", 0)
++    if _bt == 3:
++        # CLMT TPR readout: out = sum_r S_r . (yn (Hadamard) roles[r]); S_0=roWt slot.
++        roles = W["roles"]                        # [R, d]
++        c0 = yn * roles[0]                        # [T, d]
++        c1 = yn * roles[1]                        # [T, d]
++        out_logits = (c0 @ W["roWt"] + W["roB"]) + (c1 @ W["S1Wt"] + W["S1B"])  # [T, V]
++    elif _bt != 0:
+         # CLMB bind readout: yn → (Wa,Wb) linear projections → Hadamard/+ → Wo
+         # WaWt=(d,k), WbWt=(d,k); roWt=(k,V) holds Wo.T; roB=(V,) holds WoB.
+         u = yn @ W["WaWt"] + W["WaB"]             # [T, k]
+@@ -857,7 +884,18 @@
+             blk, off = _bg_read_bind_block(rb, off, d)
+             bind.append(blk)
+ 
+-    return {"ok": True, "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
++    # ── optional BGT TPR readout trailer (A11 CE-deleted TPR forward-slot) ──
++    # "BGT\x01"=66,71,84,1 after head (+ any BGB). R:u32 | roles[R*d] | S1[V*d] f32.
++    # head slot carries S_0. Absent => tpr_roles=None (byte-identical plain decode).
++    tpr_roles = None; tpr_S1 = None
++    if (off + 8 <= len(rb) and rb[off] == 66 and rb[off + 1] == 71
++            and rb[off + 2] == 84 and rb[off + 3] == 1):
++        off += 4
++        Rt = _bg_rd_u32(rb, off); off += 4
++        tpr_roles = _rd_f32(rb, off, Rt * d).reshape(Rt, d); off += Rt * d * 4
++        tpr_S1 = _rd_f32(rb, off, vocab * d).reshape(vocab, d); off += vocab * d * 4
++
++    return {"ok": True, "vocab": vocab, "tpr_roles": tpr_roles, "tpr_S1": tpr_S1, "d": d, "nlay": nlay, "nh": nh, "block": block,
+             "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
+             "inW": inW, "inB": inB, "oW": oW, "oB": oB,
+             "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
+@@ -944,7 +982,11 @@
+         x = _bg_apply_bind(x, W["bind"], T, d, nh)
+     # final LayerNorm on the LAST position only, then tied head
+     lastrow = _bg_layernorm_rows(x[T - 1:T], W["lnfw"], W["lnfb"], 1, d)[0]   # [d]
+-    logits = W["head"] @ lastrow                            # [vocab]
++    if W.get("tpr_roles") is not None:
++        rl = W["tpr_roles"]                                 # [R, d]
++        logits = W["head"] @ (lastrow * rl[0]) + W["tpr_S1"] @ (lastrow * rl[1])  # TPR slot
++    else:
++        logits = W["head"] @ lastrow                        # [vocab]
+     return logits
+ 
+ 
+@@ -1160,6 +1202,8 @@
+     """KV-cache seeded top-k decode from an already-loaded weight dict (== hexa
+     _bg_gen_from_W KV branch). seed_ids = string|bytes|list of byte ids. Token
+     stream is byte-exact vs bytegpt_decode_topk_sampled_W_full."""
++    if W.get("tpr_roles") is not None:
++        return bytegpt_decode_topk_sampled_W_full(W, seed_ids, gen, top_k, temp, seed_rng)
+     vocab = W["vocab"]
+     toks = _seed_to_ids(seed_ids)
+     outl = []

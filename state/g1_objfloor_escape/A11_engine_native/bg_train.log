@@ -1,0 +1,35 @@
+=== A11 CE-DELETED TPR-slot on ByteGPT h1129c | device=cuda torch=2.12.0.dev20260408+cu128 ===
+cfg={'vocab': 256, 'd': 1024, 'n_layer': 24, 'n_head': 16, 'block': 512}
+loaded base: missing=0 unexpected=0
+[warm-init parity] max|TPR - tied head| = 2.289e-05
+corpus bytes=3101519 train=2946443 val_tail=155076
+/root/a11tpr/a11_tpr_bg_train.py:151: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:838.)
+  losses.append((step, float(nce)))
+  step     0 infoNCE=0.3652 (0s)
+  step   100 infoNCE=0.0337 (10s)
+  step   200 infoNCE=0.0373 (20s)
+  step   300 infoNCE=0.0232 (30s)
+  step   400 infoNCE=0.0289 (40s)
+  step   500 infoNCE=0.0389 (50s)
+  step   600 infoNCE=0.0285 (60s)
+  step   700 infoNCE=0.0254 (70s)
+  step   800 infoNCE=0.0318 (81s)
+  step   900 infoNCE=0.0258 (91s)
+  step  1000 infoNCE=0.0253 (101s)
+  step  1100 infoNCE=0.0274 (111s)
+  step  1200 infoNCE=0.0251 (122s)
+  step  1300 infoNCE=0.0262 (132s)
+  step  1400 infoNCE=0.0286 (142s)
+  step  1500 infoNCE=0.0217 (153s)
+  step  1600 infoNCE=0.0302 (163s)
+  step  1700 infoNCE=0.0249 (173s)
+  step  1800 infoNCE=0.0192 (183s)
+  step  1900 infoNCE=0.0209 (194s)
+  step  1999 infoNCE=0.0233 (204s)
+[held-out] mean InfoNCE ~ 4.8017
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=None step=None nparam=None
+[ok] wrote /root/a11tpr/a11_tpr_bg.bin  bytes=1213440020 (expected 1213440020)
+[serialize] wrote /root/a11tpr/a11_tpr_bg.bin (1214496796 bytes) + BGT trailer
+TRAIN_DONE

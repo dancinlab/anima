@@ -1,0 +1,33 @@
+=== A11 CE-DELETED TPR-slot train | device=cuda torch=2.12.0.dev20260408+cu128 ===
+warm base from .clm /root/a11tpr/clm303_clean.clm cfg={'d': 3784, 'L': 4, 'E': 3, 'K': 3, 'V': 256}
+loaded base: missing=0 unexpected=0
+corpus bytes=3101519 train=2946443 val_tail=155076
+[warm-init parity] max|TPR - base linear readout| = 1.054e-02 (expect ~0)
+/root/a11tpr/a11_tpr_train.py:228: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:838.)
+  losses.append((step, float(nce), float(aux)))
+  step     0 infoNCE=0.4998 aux=-0.0108 (0s)
+  step   100 infoNCE=0.0393 aux=-0.0098 (8s)
+  step   200 infoNCE=0.0383 aux=-0.0105 (17s)
+  step   300 infoNCE=0.0238 aux=-0.0107 (25s)
+  step   400 infoNCE=0.0306 aux=-0.0108 (33s)
+  step   500 infoNCE=0.0429 aux=-0.0108 (42s)
+  step   600 infoNCE=0.0301 aux=-0.0108 (50s)
+  step   700 infoNCE=0.0269 aux=-0.0109 (59s)
+  step   800 infoNCE=0.0354 aux=-0.0109 (67s)
+  step   900 infoNCE=0.0259 aux=-0.0109 (76s)
+  step  1000 infoNCE=0.0261 aux=-0.0109 (84s)
+  step  1100 infoNCE=0.0282 aux=-0.0108 (92s)
+  step  1200 infoNCE=0.0242 aux=-0.0109 (101s)
+  step  1300 infoNCE=0.0270 aux=-0.0109 (109s)
+  step  1400 infoNCE=0.0314 aux=-0.0109 (118s)
+  step  1500 infoNCE=0.0256 aux=-0.0109 (126s)
+  step  1600 infoNCE=0.0304 aux=-0.0109 (135s)
+  step  1700 infoNCE=0.0278 aux=-0.0109 (143s)
+  step  1800 infoNCE=0.0214 aux=-0.0109 (152s)
+  step  1900 infoNCE=0.0250 aux=-0.0109 (160s)
+  step  1999 infoNCE=0.0225 aux=-0.0109 (169s)
+[held-out] mean InfoNCE = 0.0282
+[serialize] wrote /root/a11tpr/a11_tpr.clm (177101191 bytes)
+TRAIN_DONE
+CLM_TRAIN_DONE
