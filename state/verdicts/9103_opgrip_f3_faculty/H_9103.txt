@@ -1,0 +1,40 @@
+H_9103 — op-grip F3 faculty-not-noise (H_9101 residual item 3) — ENGINE-NATIVE VERDICT
+aiden pool ISOLATED dir ~/anima_h9102 (clean origin core/ + this cli/, brain.hexa md5 acde57b4 == origin),
+hexa v0.548.0, anima d768.clm --opgrip, RC=0, NO numpy (grep gate PASS: no .py in slug).
+raw: state/9103_opgrip_f3_faculty/H_9103_f3_aiden_v0548.txt (327 lines) · prereg: state/9103_opgrip_f3_faculty/PREREG.md
+
+──────── H_9101 REPRODUCED (harness integrity) ────────
+  Hamming(urgency→0 vs live)  REM=40  N3=0  WAKE=0  mid=80
+  VERDICT = 🟢 GRIP (shade-not-gate): urgency-freeze FLIPS REM 40/40 ∧ N3 silent-PRESERVED 0/40 = DISSOCIATION  [Ψ ON≡OFF ✓]
+  wake emit-fraction = 0.6666666666666666 (live) · Ψ ON==OFF invariant: psi_sum==psi_off = ✅
+
+──────── H_9103 (F3) FACULTY-NOT-NOISE: variance-matched noise arm (n=200) ────────
+  urgency dist: mean=0.4505651235937488 std=0.04317759360371834  (perm-noise = same multiset ⇒ EXACT mean/var match; LCG-noise = affine-matched)
+  emit-rate: live=0.6  perm-noise=0.6   (≈equal ⇒ same centering; only tick-MEANING differs)
+  downstream D = mean(tension ag_conflict, emit_drive, novelty nov_ctx, grounded m_grounding)
+  ── ρ(emit-timing, D) ──                    ALL(n=200)   DISCRIM(N1/N2/REM)
+  ρ_real  (live urgency)                :  -0.033462615288456246   0.2147057763270637
+  ρ_noise (perm var-matched, K=8 mean)  :  -0.03346261528845624    0.2147057763270637
+  ρ_lcg   (affine var-matched control)  :  -0.033462615288456246   0.2147057763270637
+  Δρ = ρ_real − ρ_noise                 :  -6.938893903907228e-18  0.0
+  per-component ρ_real: tension=0.16666666666666688 novelty=0.033045899384271334 grounded=-1.4313052163268636e-18
+  ── PRE-REG F3 VERDICT (frozen bar Δρ ≥ 0.15) ──
+  F3 VERDICT = 🟠 NOISE-GRIP — Δρ < 0.15: the grip is centering-noise-driven (matched noise reproduces the
+  same downstream corr) = a subtler op-layer theater; tier stays GRIP.
+RC=0
+
+=== INTERPRETATION (honest, c9) ===
+Δρ = 0 EXACTLY on both windows: a variance-matched surrogate (temporal permutation of the real urgency
+multiset — identical mean/var, tick-meaning destroyed) produces the byte-IDENTICAL emit-timing sequence as
+the real urgency, hence identical downstream correlation. Mechanism: urgency std is tiny (0.043) around mean
+0.451, and the rate-gate opens iff stage_env·(0.5+sig) ≥ 0.4545; with such low signal variance the emit
+decision is a pure function of STAGE (stage_env), which ANY centered signal of the same distribution rides
+identically. The H_9101 40/40 REM flip on urgency→0 was a MEAN-SHIFT effect (dropping the 0.451 center of the
+signal), NOT urgency tracking high-conflict/high-tension ticks. The positive DISCRIM ρ=0.215 comes from the
+STAGE envelope (D is higher where the gate opens), not from urgency's tick-meaning — exactly the centering-noise
+confound the F3 test was built to catch.
+
+VERDICT: 🟠 NOISE-GRIP. F3 faculty bar (Δρ≥0.15) NOT met (Δρ=0). H_9101 tier stays GRIP; does NOT promote to
+FACULTY. This is the honest completion of H_9101 residual item 3 — it reproduces fable's original emit-layer
+theater critique at a subtler layer: the grip on WHEN-to-emit is real but distribution/centering-driven, not a
+substrate faculty. The op signal carries no tick-specific substrate meaning that the emit gate resolves. Ψ ✅.
