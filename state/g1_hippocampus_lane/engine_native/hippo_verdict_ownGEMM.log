@@ -1,0 +1,70 @@
++ export PATH=/root/.hx/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++ PATH=/root/.hx/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++ export HEXA_CUDA=1 CC=clang
++ HEXA_CUDA=1
++ CC=clang
++ ND=/usr/local/lib/python3.10/dist-packages/nvidia
++ export LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cuda_runtime/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cublas/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cuda_nvrtc/lib:
++ LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cuda_runtime/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cublas/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cuda_nvrtc/lib:
++ export LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cuda_runtime/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cublas/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cuda_nvrtc/lib:/usr/lib/x86_64-linux-gnu:
++ LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cuda_runtime/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cublas/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cuda_nvrtc/lib:/usr/lib/x86_64-linux-gnu:
++ echo LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cuda_runtime/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cublas/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cuda_nvrtc/lib:
+LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cuda_runtime/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cublas/lib:/usr/local/lib/python3.10/dist-packages/nvidia/cuda_nvrtc/lib:
++ cd /root/anima
++ echo '=== cuda_available probe ==='
+=== cuda_available probe ===
++ printf 'fn main(){ println(cuda_available()) }\n'
++ hexa run /root/cp.hexa
+1
++ echo PROBE_RC=0
+PROBE_RC=0
++ echo '=== ckpt ==='
+=== ckpt ===
++ ls -la /root/anima-weights/g1_realign.clm
+-rw-r--r-- 1 501 staff 154513322 Jul  2 22:33 /root/anima-weights/g1_realign.clm
++ sha256sum /root/anima-weights/g1_realign.clm
+7222554f25d5baccd3ffed56f6345642bed6269efa87c392283630c99de209a3  /root/anima-weights/g1_realign.clm
++ echo '=== RUN hippo_g1_eval engine-native (own-GEMM) ==='
+=== RUN hippo_g1_eval engine-native (own-GEMM) ===
++ timeout 2400 hexa run g1_hippocampus_lane/engine_native/hippo_g1_eval.hexa -- /root/anima-weights/g1_realign.clm
+==============================================================================
+HIPPOCAMPAL HETERO-ASSOCIATIVE retrieve-into-context — ENGINE-NATIVE 303M
+  slug g1_hippocampus_lane · rung(2) engine-native · gate FROZEN (gen=40 bar>=2)
+  mouth=clm loaded=true ckpt=/root/anima-weights/g1_realign.clm
+  live ops: core/hippo_retrieve.hexa (conjunction-key recall, kosmos cosine)
+==============================================================================
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)
+[EAGER-DEVGLUE-FIRED] _hx_k_gelu device CUDA-erf GELU (separate launch, P1B-a' device-resident eager ref)
+[ocean+engine -> harvest]  retrieved='harvest season fills the barn with golden grain'
+   BIND     novel(harvest)=0  cont: The last weeks have been called.
+There's
+   ECHO     novel(harvest)=0  cont: The last weeks have been called.
+There's
+   SCRAMBLE novel(harvest)=0  inj='a long voyage begins at the break of dawn'
+[forest+music -> voyage]  retrieved='a long voyage begins at the break of dawn'
+   BIND     novel(voyage)=0  cont: frosty wheaten wheaten cobalt
+the engine
+   ECHO     novel(voyage)=0  cont: It’s best that all likely their financ
+   SCRAMBLE novel(voyage)=0  inj='the furnace glows with molten iron heat'
+[ocean+music -> furnace]  retrieved='the furnace glows with molten iron heat'
+   BIND     novel(furnace)=0  cont: They would be the subjects.
+The greatest
+   ECHO     novel(furnace)=0  cont: They're both shown is the change. They c
+   SCRAMBLE novel(furnace)=0  inj='the archive holds forgotten paper records'
+[forest+engine -> archive]  retrieved='the archive holds forgotten paper records'
+   BIND     novel(archive)=0  cont: The first children, which can be seen be
+   ECHO     novel(archive)=0  cont: The first children, which can be seen be
+   SCRAMBLE novel(archive)=0  inj='harvest season fills the barn with golden grain'
+------------------------------------------------------------------------------
+  composed(BIND) novel-only = 0/4
+  max_single(ECHO)          = 0/4   (baseline)
+  SCRAMBLE novel-only       = 0/4   (must collapse < BIND)
+  single-parent leak        = 0   (must be 0)
+  gate: composed>max_single (false) AND BIND>=2 (false) AND scramble-collapse (false) AND leak=0 (true)
+  VERDICT: 🧱 MOUTHFLOOR — hippo retrieve does NOT lift novel-only above baseline
+           (frozen mouth echoes cue / drops injected D; G1 wall holds. engine-native own-GEMM.)
+==============================================================================
++ echo EVAL_RC=0
+EVAL_RC=0
++ echo '=== HIPPO_VERDICT_DONE ==='
+=== HIPPO_VERDICT_DONE ===
