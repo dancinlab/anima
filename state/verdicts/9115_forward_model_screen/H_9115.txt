@@ -1,0 +1,34 @@
+=== H_9115 — Screen-B forward-model headroom ($0 DIRECTIONAL) — VERDICT (verbatim run) ===
+receiver=claude-fable-5 (single, $0 screen) · emit FROZEN engine-native (H_9111, 14 concepts) · tier=DIRECTIONAL
+
+VERDICT: 🟢 HEADROOM-EXISTS — forward-model (§2) lever PHYSICALLY POSSIBLE (not DPI-walled) → engine-native mini JUSTIFIED.
+
+b50_raw = 3.50 bytes · b50_compressed = 2.20 bytes  (Δ = −1.30 B, −37%)
+accuracy-hold (full clue): compressed 1.000 vs raw 1.000  (HELD — info-preserving)
+mean bytes: raw 102.5 → compressed 71.2 (−31%)  yet MORE decodable at every truncation.
+
+raw arm (acc vs clue bytes):   full=1.000  8=0.857  6=0.929  4=0.786  3=0.214  2=0.071
+compressed arm:                full=1.000  8=1.000  6=1.000  4=0.857  3=0.786  2=0.429
+  → compressed dominates raw throughout; 3-byte point is decisive (0.786 vs 0.214).
+
+DESIGN: fable §2 (state/9115_forward_model_screen/DESIGN_fable_s2.md). The $0 screen fable prescribed to decide
+  whether GPU is justified BEFORE burning it: does anima's frozen emit have RE-PACKAGING HEADROOM — can the SAME
+  referent MI be decoded from FEWER bytes at held accuracy? Transform = info-preserving compression (strip leading
+  article + non-discriminative stopwords, content words kept IN ORDER — front-loads discriminative content, adds no info).
+
+READING (c9 honest):
+- HEADROOM CONFIRMED: compression lowers b50 3.5→2.2 bytes while full-clue accuracy holds at 1.0. anima's emit is
+  ~6× over-packaged vs the information-theoretic floor (log₂14≈0.48 B); a simple info-preserving repackaging recovers
+  a large chunk (b50 toward the floor). The §2 forward-model — a lane that learns to emit receiver-efficiently
+  (front-load discriminative content) — is therefore PHYSICALLY POSSIBLE, NOT DPI-walled. fable's DPI framing holds:
+  the lever moves b50 (coding-efficiency), not accuracy (trunk-bounded, held at 1.0).
+- TIER = DIRECTIONAL: single receiver, a HAND compression transform (not anima's engine learning it), frozen emit.
+  This proves the headroom EXISTS; it does NOT prove anima's forward-model lane can LEARN to reach it. That is the
+  next gate (engine-native mini: lane15 side-loop, GPU cost-gate).
+- The $0 screen did its job: it converts "should we burn GPU on §2?" into a data-backed YES (fable: "믿음으로 GPU
+  태우지 않아도 되는 몇 안 되는 레버"). Screen-B GREEN = the sequential gate opens to engine-native mini.
+
+GATE: 🟢 HEADROOM → engine-native mini (lane15 read=A/G tension, write=mouth-gate only, disjoint from emit-drive 0/4 &
+  recall_thr; supervised head, G non-diff) justified as the next step (GPU cost-gate, explicit go). 🔴 would have been
+  INERT → GPU stop. We are on the GREEN branch.
+Data: screenb_fixture.jsonl · RESULT.md · DESIGN_fable_s2.md · ../9111_llm_interlocutor/emits.tsv (14).
