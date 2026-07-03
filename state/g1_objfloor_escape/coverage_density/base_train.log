@@ -1,0 +1,20 @@
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=ce_marginal seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=60 bs=8 sample=proportional
+  cuda: NVIDIA GeForce RTX 5090 cap=12.0 torch=2.11.0+cu128
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ .pt loaded 293/293 keys (untouched=0 extra-in-ckpt=0)
+  corpus cell[0] cell0        state/g1_objfloor_escape/coverage_density/corpus/en_block.txt size=3101519 train=2946443 val_tail=155076
+  step     1  CE=2.76181  E=1  wd=0.0000 dp=0.0000  val_CE=10.55174
+  step    50  CE=1.23780  E=1  wd=0.0000 dp=0.0000
+  step    60  CE=0.90301  E=1  wd=0.0000 dp=0.0000  val_CE=0.82014
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     cell0        val_CE=0.82507  DESCENT
+  FINAL val_CE(pooled)=0.8250681757926941  registers_DESCENT=1/1
+  loss0=2.76181 lossF=0.90301 wall=12.1s savant_latched_at=0 E0=2->E=1
+  torch ckpt -> /root/out/base_h1129c.pt (1213529185 bytes)
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.90301 step=60 nparam=303097856
+[ok] wrote /root/out/base_h1129c.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/out/base_h1129c.bin (via /root/out/base_h1129c.bin.pt)

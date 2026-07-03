@@ -1,0 +1,23 @@
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=constructive_bind seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=2000 bs=8 sample=proportional
+  cuda: NVIDIA GeForce RTX 5090 cap=12.0 torch=2.11.0+cu128
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ .pt loaded 293/293 keys (untouched=0 extra-in-ckpt=0)
+  objective 'constructive_bind' aux params: 590592 (DROPPED at serialize — not in model.state_dict)
+  corpus cell[0] cell0        state/g1_objfloor_escape/coverage_density/corpus/en_block.txt size=3101519 train=2946443 val_tail=155076
+  step     1  CE=2.76181  E=1  wd=0.0000 dp=0.0000  val_CE=1.99886 {"cbind_unbind": 0.2791, "cbind_pred": 10.8204, "cbind": 11.0995}
+  step   500  CE=0.20855  E=1  wd=0.0000 dp=0.0000  val_CE=0.20526 {"cbind_unbind": 0.007, "cbind_pred": 0.2235, "cbind": 0.2305}
+  step  1000  CE=0.17849  E=1  wd=0.0000 dp=0.0000  val_CE=0.18687 {"cbind_unbind": 0.0034, "cbind_pred": 0.188, "cbind": 0.1914}
+  step  1500  CE=0.17172  E=1  wd=0.0000 dp=0.0000  val_CE=0.17282 {"cbind_unbind": 0.0022, "cbind_pred": 0.1828, "cbind": 0.185}
+  step  2000  CE=0.17138  E=1  wd=0.0000 dp=0.0000  val_CE=0.17530 {"cbind_unbind": 0.0016, "cbind_pred": 0.177, "cbind": 0.1786}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     cell0        val_CE=0.17533  DESCENT
+  FINAL val_CE(pooled)=0.17533168569207191  registers_DESCENT=1/1
+  loss0=2.76181 lossF=0.17138 wall=775.3s savant_latched_at=0 E0=2->E=1
+  torch ckpt -> /root/out/cbind_en.pt (1213528224 bytes)
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.17138 step=2000 nparam=303097856
+[ok] wrote /root/out/cbind_en.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/out/cbind_en.bin (via /root/out/cbind_en.bin.pt)
