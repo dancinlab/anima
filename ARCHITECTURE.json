@@ -12440,6 +12440,12 @@
         "role": "tool/compile_gate_runner.sh → hexa-lang tool/compile_gate.py(#4461)",
         "id": "governance-ci-substrate-compile-gate",
         "detail": "body-only 편집은 변경 모듈만 transpile+clang -fsyntax-only로 게이트(실측: 편집 GREEN 2.53s vs 풀빌드 14.6s 로컬·에이전트 A/B 10.06s→1.44s). 인터페이스/closure 변경·stale anchor는 툴이 스스로 풀빌드 escalate(게이트 무약화). anchor= --anchor 풀빌드, 신선도 24h 강제. 리졸버= ~/.hx/src → sibling → origin/main ref 추출."
+       },
+       {
+        "name": "engine 경로 게이트 + 상시 governance 잡",
+        "role": "dispatch.paths → hexa-engine if-스킵 · enforce는 ubuntu 상시",
+        "id": "governance-ci-substrate-engine-path-gate",
+        "detail": "closure 입력(core/·cli/·stdlib/·hexa.toml·install/setup.hexa·ci.yml) 무변경 run은 engine 잡 스킵(GitHub API 변경파일 조회·fail-open) — docs/state-only 머지가 ghost 직렬 러너 미점유. enforce_anima_gates는 별도 ubuntu 잡으로 항상 실행(스킵과 무관, 게이트 무약화)."
        }
       ]
      }

@@ -37,8 +37,46 @@ jobs:
     timeout-minutes: 5
     outputs:
       darwin_label: ${{ steps.darwin.outputs.label }}
+      engine_needed: ${{ steps.paths.outputs.engine_needed }}
     steps:
       - uses: actions/checkout@v4
+      # ── 경로 게이트 (hexa-lang 게이트별 paths: 패턴의 잡-레벨 이식) ──
+      # engine 잡의 입력은 컴파일 closure(core/·cli/·stdlib/)와 잡 정의 자신뿐.
+      # docs/state/HYPOTHESES-only 변경(오늘 머지의 대부분)에 ghost 직렬 러너의
+      # cold ~25-49min 을 태우는 것이 CI 최대 낭비였다. 변경 파일은 checkout 없이
+      # GitHub API 로 조회(PR=pulls/files · push=compare before...after). 조회
+      # 실패·초기push 등 불확실하면 1 (fail-open = 게이트를 도는 안전 방향).
+      # 거버넌스 enforce 는 아래 별도 ubuntu 잡으로 분리되어 스킵과 무관하게
+      # 항상 돈다(게이트 무약화).
+      - id: paths
+        name: engine path gate (closure inputs changed?)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          needed=1
+          files=""
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            files="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename' 2>/dev/null)" || files=""
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            BEFORE="${{ github.event.before }}"
+            if [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+              files="$(gh api "repos/${{ github.repository }}/compare/${BEFORE}...${{ github.sha }}" --jq '.files[].filename' 2>/dev/null)" || files=""
+            fi
+          fi
+          if [ -n "$files" ]; then
+            if printf '%s\n' "$files" | grep -qE '^(core/|cli/|stdlib/|hexa\.toml|install\.hexa|setup\.hexa|\.github/workflows/ci\.yml)'; then
+              needed=1
+            else
+              needed=0
+              echo "engine path gate: no closure-input change — engine job will be SKIPPED"
+              printf '%s\n' "$files" | head -20
+            fi
+          else
+            echo "engine path gate: changed-file list unavailable — fail-open (run the engine job)"
+          fi
+          echo "engine_needed=$needed" >> "$GITHUB_OUTPUT"
       - id: darwin
         uses: ./.github/actions/pick-runner
         with:
@@ -50,6 +88,22 @@ jobs:
           # fallback). Absent secret → `|| github.token` = harmless macos-14
           # fallback; present → self-hosted routing goes live.
           token: ${{ secrets.RUNNER_PROBE_TOKEN || github.token }}
+
+  # ── 거버넌스 enforce (CLAUDE.md 하드게이트 1·6 의 기계강제 — engine-native
+  # verdict · 가설 2표면). python 만 필요, 가중치 불필요. hexa-engine 잡에서
+  # 분리(2026-07-03): engine 잡이 경로 게이트로 스킵되는 docs/state-only 변경이
+  # 바로 이 enforcer 의 주 대상이므로, 항상 도는 ubuntu 잡이어야 게이트가 안 뚫린다.
+  governance:
+    name: governance — enforce_anima_gates (changed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: enforce_anima_gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .harness/enforce_anima_gates.py || { echo "::error::enforce_anima_gates FAIL"; exit 1; }
 
   cdo-validate:
     runs-on: ubuntu-latest
@@ -179,6 +233,10 @@ jobs:
     # github-hosted. The picker never hard-depends on the pool (dispatch runs on
     # ubuntu-latest, always available) so ghost-offline can't wedge this gate.
     needs: dispatch
+    # 경로 게이트: closure 입력(core/·cli/·stdlib/·hexa.toml·install/setup.hexa·
+    # 이 워크플로)이 안 바뀐 run 은 스킵 — docs/state-only 머지가 ghost 직렬
+    # 러너를 점유하지 않는다. 판정 로직·fail-open 은 dispatch 의 paths 스텝 참조.
+    if: needs.dispatch.outputs.engine_needed == '1'
     runs-on: ${{ fromJSON(needs.dispatch.outputs.darwin_label) }}
     # 25→50→75: 첫 COLD 부트스트랩 run 은 warm-compile 캐시가 비어 compile-gate
     # + cli/anima install 만으로 예산을 소진 → 타임아웃에 cancel → Post-Cache save
@@ -329,14 +387,6 @@ jobs:
               || { echo "::error::engine import-closure compile FAILED even after cold recompile"; rm -f _ci_engine_compile.hexa; exit 1; }
           fi
           rm -f _ci_engine_compile.hexa
-
-      # 거버넌스 enforce (CLAUDE.md 하드게이트 1·6 의 기계강제 — engine-native verdict
-      # · 가설 2표면). python 만 필요, 가중치 불필요.
-      - name: Governance — enforce_anima_gates (changed)
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 .harness/enforce_anima_gates.py || { echo "::error::enforce_anima_gates FAIL"; exit 1; }
 
       # 엔진 스모크 — 가중치 없이 compile+logic 도는 것들. 가중치/플랫폼 의존(tag24·
       # .clm 부재)은 warn-only(정직, CI 거짓-red 방지). hexa stable 에 따라 가변.
