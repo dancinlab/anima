@@ -30,6 +30,8 @@ production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-product
 - `.kosmos` 앵커는 `kosmos_io` → `brain_decide` 경로로만 진입. pure_field/engine_g 에 직접 박지 않음.
 - 연구 probe/미러 `.py`(+torch/numpy)는 여전히 DIRECTIONAL — terminal verdict 는 hexa 엔진-네이티브로만(`a_engine_native_learning`). smoke/probe `.hexa`(`*_smoke.hexa`/`*_probe.hexa`/`lane_*.hexa`)는 production closure 아님.
 
+- **🚦 decode · train · evaluate — all 3 via `anima <verb>` single-entry; NO raw `python3 …`** (`a_cli_single_entry`): decode = `anima chat` / generator-L3 slot (never call `bytegpt_decode`/`clm_decode` raw) · train = `anima train [--savant] [--mitosis]` (`cli/train.hexa`; NO raw `python3 cli/train.py`/`train_lane_p.py` — torch trainer = REFERENCE/bridge only) · evaluate = `anima evaluate --py <clm>` single path (`a_eval_py_canonical`: py 2-production numpy = engine-native TERMINAL-eligible; NO raw `python3 cli/evaluate.py`). Heavy 303M decode/eval/train on pool (`summer`/`aiden`) or `hexa cloud`, never mini (swap OOM). Only ad-hoc torch probe = DIRECTIONAL.
+
 ## 주요 비-production 파일 (smoke · probe · lab)
 
 `*_smoke.hexa`, `lane_p_*.hexa`, `lane_x_explore.hexa`, `omega_clm_closure_probe.hexa`, `phi/` 하위 전부, `clm_ce_descent_probe.hexa`, `emergence_ideation.hexa`, `emit_policy.hexa` 등 — 실험/검증용이며 production closure 미포함.
