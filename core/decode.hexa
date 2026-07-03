@@ -672,9 +672,13 @@ fn _clmd_weights_free(W: Map) {
 // (max|Δ|=0, same erf-gelu + GN reduction order). This is the decode twin of the
 // a_train_flame_forge device-resident hot-path (#2598/#3851).
 fn _clmd_devres() -> bool {
-    if env("CLM_PROD_DEVRESIDENT") != "" { return true }
-    if env("HEXA_FUSE_ALL") != "" { return true }
-    return false
+    // H_9119 gate①: device-resident forge is ON whenever a GPU is present — NO env flag. The
+    // device path is BYTE-EXACT with the host path (max|Δ|=0, same erf-gelu + GN reduction order,
+    // see above) and each per-op device failure already falls back to the scalar host op below, so
+    // an opt-in/opt-out gate was pure overhead: it silently ran every anima decode/eval on the
+    // scalar host path (GPU idle) = the H_9119 CPU-scalar-bound root cause. a_train_flame_forge:
+    // anima decode/eval is forge-GPU-first by default.
+    return cuda_available()
 }
 
 fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
