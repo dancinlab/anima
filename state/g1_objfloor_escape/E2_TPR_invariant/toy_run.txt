@@ -1,0 +1,17 @@
+=== (M) MECHANISM probe: TPR outer-product vs additive-flat (fixed codes) ===
+  seed 7: TPR-unbind acc=1.000  ADDITIVE-flat acc=0.230
+  seed 4302: TPR-unbind acc=1.000  ADDITIVE-flat acc=0.285
+  seed 4303: TPR-unbind acc=1.000  ADDITIVE-flat acc=0.210
+  MEAN: TPR=1.000  ADDITIVE=0.242  (chance=1/8=0.125)
+
+=== (C) CE-TRAINED recombination probe (the escape discriminator) ===
+    held-out = novel (a,b) recombination of KNOWN fillers/roles; CE only
+  seed 7 (train=43 ho=21): ADD ho=0.191 (tr 0.56) | TPR ho=1.000 (tr 1.00) | ABL ho=0.191 (tr 0.56)
+  seed 4302 (train=43 ho=21): ADD ho=0.191 (tr 0.58) | TPR ho=1.000 (tr 1.00) | ABL ho=0.191 (tr 0.58)
+  seed 4303 (train=43 ho=21): ADD ho=0.191 (tr 0.56) | TPR ho=1.000 (tr 1.00) | ABL ho=0.191 (tr 0.56)
+  MEAN held-out recomb:  ADD=0.191  TPR=1.000  ABL=0.191
+
+=== VERDICT (CE-trained discriminator) ===
+  TPR-vs-ADD held-out lift = +0.809   (need > +0.10)
+  ABL back to ADD floor?   = True  (|ABL-ADD|=0.000 < 0.10)
+  RESULT: REACHABLE

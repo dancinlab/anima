@@ -1,0 +1,26 @@
+=== Escape-1 TOY: CE-REPLACE contrastive/energy trunk objective ===
+N=24 D=96 held=110 seen=442 epochs=400 tau=1.0
+objective = InfoNCE(bound-pair pos vs echo/wrong-D neg), NO CE term.
+
+--- ARCH=ADD (additive readout = Escape-1 target arch, 2x2 cell A01) ---
+  [ADD] ep   0 infoNCE_loss=2.1181
+  [ADD] ep 100 infoNCE_loss=1.4983
+  [ADD] ep 200 infoNCE_loss=1.3287
+  [ADD] ep 300 infoNCE_loss=1.2457
+  [ADD] ep 399 infoNCE_loss=1.2001
+[ADD] margin=-0.4806  reach(cov2)=0.00  reach_novel(>single)=0.00  SCRAMBLE=0.00  n_held=110
+
+--- ARCH=TPR (multiplicative role-filler slot, side-probe = cell A11) ---
+  [TPR] ep   0 infoNCE_loss=1.6839
+  [TPR] ep 100 infoNCE_loss=0.4302
+  [TPR] ep 200 infoNCE_loss=0.1984
+  [TPR] ep 300 infoNCE_loss=0.1203
+  [TPR] ep 399 infoNCE_loss=0.0866
+[TPR] margin=+3.3047  reach(cov2)=1.00  reach_novel(>single)=1.00  SCRAMBLE=0.01  n_held=110
+
+=== TOY VERDICT (Escape-1 = ADD arch, contrastive-REPLACE) ===
+ADD: margin=-0.4806 reach_novel=0.00 scramble=0.00  -> AT-FLOOR
+TPR(attrib): margin=+3.3047 reach_novel=1.00 scramble=0.01
+
+TOY_RESULT: AT-FLOOR
+ATTRIBUTION: ADD floors but TPR reaches ⇒ FLOOR is ARCHITECTURAL (no binding slot), NOT the objective. contrastive-REPLACE alone (cell A01) INERT; needs TPR slot (cell A11). Consistent with H_9120/H_1816 additive-collapse.

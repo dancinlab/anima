@@ -1,6 +1,11 @@
 # H_9121 — G1 objective-floor escape 사전등록 (CE-replace × TPR-invariant)
 
-> **tier:** 🌱 PROPOSED (Fable 벽돌파+fleet-full 발산 · 미실행 · frozen 예측 PRED-E1/E2) · **wired:** N/A
+> **tier:** 🧱 escape 개별 FALSIFIED (E1 contrastive-단독 TOY-AT-FLOOR $0 · E2 TPR-단독 CE-FALSIFIED ledger-dup H_1813/1623) → **★유일 열린 CRUX = A11(TPR-slot × contrastive-replace 동시) TOY REACHABLE margin+3.30 · 303M 미측정** · **wired:** N/A
+>
+> **결과 (workflow wee6usdpr · $0 cost-gate 유지):**
+> - **Escape-1 (CE-replace 단독)** = **TOY-AT-FLOOR-SKIP** (numpy N=24 D=96 held-out split, 5/5 seed): ADD arch(no-slot) margin=−0.47·reach=0 AT-FLOOR vs **TPR arch(slot) 동일 objective margin=+3.30·reach=1.0 REACHABLE** → **floor는 objective 아니라 ARCHITECTURAL 확증** (contrastive 단독은 슬롯 없으면 INERT). H_9120 additive-FALSIFIED + [[H_1816]] 정합. 303M 학습 스킵(cost-gate).
+> - **Escape-2 (TPR 단독, CE)** = **FALSIFIED**: TOY REACHABLE(unbind 1.0 vs additive 0.242, ablation causal)이나 = CE-basin toy-overstate regime(`a_toy_scale_recheck`, H_6112 numpy 0→1.0 vs real 0→0.022). **engine-native 303M ledger가 이미 FALSIFIED**: [[H_1813]](TPR expert-weight reparam, CE, --py) NOT-SUPPORTED at-floor best_distinct max1<2 · H_1623 frozen clm303 mult-bind FAIL 0/3 → <4/5. CE가 TPR slot을 compositional하게 안 씀(INERT-under-CE). 이 escape = H_6123 DUP-WALLED. G1 천장 HARDENED.
+> - **∴ 결정 압축**: E1이 floor=architectural 확증, E2가 TPR-under-CE 기각 → **남은 유일 칸 = A11(TPR slot × contrastive-replace _동시_)**. E1 side-probe가 A11=TOY REACHABLE(margin+3.30) 실증했으나 303M 미측정(toy-overstate 위험). H_9120 directional-terminal 유지(A11 미측정이라 confident 아님).
 > **slug:** `g1_objfloor_escape` · **date:** 2026-07-04
 
 ## 배경 — [[H_9120]] directional-terminal에서 압축된 escape 공간
