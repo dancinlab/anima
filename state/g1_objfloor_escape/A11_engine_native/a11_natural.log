@@ -1,0 +1,80 @@
+=== A11 NATURAL: TPR-slot x contrastive-replace, REAL ko/en words ===
+device=cpu d=768 n_fill=24 max_bytes=12 epochs=300 lr=0.003 tau=1.0 vocab=56353 words
+
+--- seed 7 (train=442 held=110) fillers=['자유마저', '진리와', '1939년에', '찬란한', '티민', '맥아더']... ---
+/Users/mini/dancinlab/anima/.claude/worktrees/wf_dd100dd8-414-1/state/g1_objfloor_escape/A11_engine_native/a11_natural.py:155: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:839.)
+  print(f"    [{arch}] ep{ep:4d} infoNCE={float(loss):.4f}", flush=True)
+    [ADD] ep   0 infoNCE=20.2470
+    [ADD] ep  75 infoNCE=1.1543
+    [ADD] ep 150 infoNCE=1.1746
+    [ADD] ep 225 infoNCE=1.1674
+    [ADD] ep 299 infoNCE=1.1241
+    [TPR] ep   0 infoNCE=10.8480
+    [TPR] ep  75 infoNCE=0.0209
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-0.3083 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+34.1708 reach_novel=1.00 scr=0.01  HIT  params=7.30M
+
+--- seed 11 (train=442 held=110) fillers=['전개와', 'Czteroletni', '2억', '친구들의', '한계점을', '갈라진']... ---
+    [ADD] ep   0 infoNCE=15.8121
+    [ADD] ep  75 infoNCE=1.2074
+    [ADD] ep 150 infoNCE=1.2001
+    [ADD] ep 225 infoNCE=1.1700
+    [ADD] ep 299 infoNCE=1.1237
+    [TPR] ep   0 infoNCE=14.2235
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-0.2488 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+32.5637 reach_novel=1.00 scr=0.00  HIT  params=7.30M
+
+--- seed 23 (train=442 held=110) fillers=['멀러는', '30년', 'river', 'out이라는', '선발하는', '휴머니즘']... ---
+    [ADD] ep   0 infoNCE=17.9237
+    [ADD] ep  75 infoNCE=1.1765
+    [ADD] ep 150 infoNCE=1.1497
+    [ADD] ep 225 infoNCE=1.1347
+    [ADD] ep 299 infoNCE=1.1264
+    [TPR] ep   0 infoNCE=13.5994
+    [TPR] ep  75 infoNCE=0.0000
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-0.3258 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+35.6691 reach_novel=1.00 scr=0.00  HIT  params=7.30M
+
+--- seed 42 (train=442 held=110) fillers=['이집트의', '대와', '추리가', '한강의', '윤보선은', '표제']... ---
+    [ADD] ep   0 infoNCE=21.2200
+    [ADD] ep  75 infoNCE=1.1877
+    [ADD] ep 150 infoNCE=1.1463
+    [ADD] ep 225 infoNCE=1.1446
+    [ADD] ep 299 infoNCE=1.1356
+    [TPR] ep   0 infoNCE=13.3999
+    [TPR] ep  75 infoNCE=0.0001
+    [TPR] ep 150 infoNCE=0.0000
+    [TPR] ep 225 infoNCE=0.0000
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-0.2890 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+28.6146 reach_novel=1.00 scr=0.02  HIT  params=7.30M
+
+--- seed 101 (train=442 held=110) fillers=['국내법상', '취득했다', '물분자의', '분과이다', '부위라는', '분트가']... ---
+    [ADD] ep   0 infoNCE=19.5677
+    [ADD] ep  75 infoNCE=1.2600
+    [ADD] ep 150 infoNCE=1.1986
+    [ADD] ep 225 infoNCE=1.1861
+    [ADD] ep 299 infoNCE=1.1314
+    [TPR] ep   0 infoNCE=13.9764
+    [TPR] ep  75 infoNCE=0.1180
+    [TPR] ep 150 infoNCE=0.0184
+    [TPR] ep 225 infoNCE=0.0003
+    [TPR] ep 299 infoNCE=0.0000
+  ADD margin=-0.2791 reach_novel=0.00 scr=0.00  floor
+  TPR margin=+35.9570 reach_novel=1.00 scr=0.01  HIT  params=7.30M
+
+=== A11 NATURAL RESULT (frozen bar: reach_novel>=0.5 AND margin>0 AND scramble<=0.2) ===
+TPR (A11)  HIT 5/5   ADD (E1 ctrl) HIT 0/5
+VERDICT: A11 natural = NATURAL-TRANSFER-SURVIVES  (torch DIRECTIONAL; engine-native = terminal)
+JSON {"d": 768, "params": 7300610, "tpr_hits": 5, "add_hits": 0, "verdict": "NATURAL-TRANSFER-SURVIVES"}
