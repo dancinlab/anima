@@ -12427,7 +12427,7 @@
       "name": "CI substrate — engine compile gate + warm-cache",
       "role": "build/verify infra (.github/workflows)",
       "id": "governance-ci-substrate-engine-compile-warmcache",
-      "detail": "ghost 게이트 = quiet native aprime 경로. cold 실측: 26m55s(v0.586.0) → 24m36s(stream ON+#4456, ~9%) — 잔여는 aprime pass CPU 비용. 게이트 env = HEXA_STREAM=1 + HEXA_CG_PROFILE=1(상시 계측: cold마다 pass 분해 로그). warm=버전 키(#2849)로 동작 확인. 수치 SSOT = state/build_speed_rootcause/.",
+      "detail": "ghost 게이트 = quiet native aprime 경로. 최종 실측: warm(소스불변) = 1초(버전 키 #2849 실전 확증) · cold = 24m36s(stream+id2idx, ~9%↓) · hexat 경로 = 선형화 21.6×(#4454). 게이트 env = HEXA_STREAM=1 + HEXA_CG_PROFILE=1(cold마다 pass 분해 자동 기록 → 다음 조준 데이터). 수치 SSOT = state/build_speed_rootcause/.",
       "children": [
        {
         "name": "warm-cache 키 = hexa 실버전 + 소스 해시",
