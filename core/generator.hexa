@@ -358,6 +358,9 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
     let offsets = [0, 101, 202, 303]
     let grid    = [4, 8, 16, 32]
     let kk = if k > 4 { 4 } else { k }
+    // reload-hoist (H_9119 gate①): dequant the frozen listener ONCE, reuse across all
+    // K·|grid|·(1+|distractors|) CE calls (was a full-.clm reload each → H_9107 blowup).
+    let lis_dq = clm_load_dq(listener_ckpt)
     let mut best_text  = ""
     let mut best_score = -1000000.0
     let mut best_i     = -1
@@ -379,12 +382,12 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
                 while bi < pb { pfx = pfx + [cb[bi]]  bi = bi + 1 }
                 // margin = min-CE(prefix + distractor) − CE(prefix + target); >0 = target wins early
                 let seq_t = pfx + _gen_text_to_bytes(" " + target)
-                let ce_t  = to_float(clm_decode_ce(listener_ckpt, seq_t)["ce"])
+                let ce_t  = to_float(clm_decode_ce_dq(lis_dq, seq_t)["ce"])
                 let mut best_d = 1000000.0
                 let mut di = 0
                 while di < len(distractors) {
                     let seq_d = pfx + _gen_text_to_bytes(" " + to_string(distractors[di]))
-                    let ce_d  = to_float(clm_decode_ce(listener_ckpt, seq_d)["ce"])
+                    let ce_d  = to_float(clm_decode_ce_dq(lis_dq, seq_d)["ce"])
                     if ce_d < best_d { best_d = ce_d }
                     di = di + 1
                 }
@@ -1330,9 +1333,22 @@ fn _gen_gnorm_affine(x: list, T: int, d: int, g: list, b: list) {
 //
 //   returns #{ "ce": float, "baseline": float, "positions": int,
 //              "below_uniform": bool, "nblk": int }
+// clm_load_dq — pub entry to dequantize a .clm ONCE (H_9119 gate① reload-hoist). Callers that
+// score many CE calls on the SAME listener (fm_b50 b50_of / gen_fm_rerank) load the dq once here
+// and pass it to clm_decode_ce_dq, avoiding the ~1400×/run full-.clm reload blowup (H_9107).
+pub fn clm_load_dq(ckpt_path: string) -> Map { return _gen_clm_deq_blocks(ckpt_path) }
+
 pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
-    let V = 256; let K = 3
+    // reload-hoist (H_9119 gate①): dequant ONCE then delegate. Byte-identical to the old path;
+    // hot callers must use clm_decode_ce_dq(dq, seq) with a pre-loaded dq to skip the reload.
     let dq = _gen_clm_deq_blocks(ckpt_path)
+    return clm_decode_ce_dq(dq, seq)
+}
+
+// clm_decode_ce_dq — CE over a byte seq given a PRE-DEQUANTIZED dq (from clm_load_dq). Load-once
+// twin of clm_decode_ce (H_9119 gate①). Body is byte-identical to the old per-call forward.
+pub fn clm_decode_ce_dq(dq: Map, seq: list) -> Map {
+    let V = 256; let K = 3
     let bw = dq["w"]; let bs = dq["s"]
     let nblk = to_int(dq["nblk"])
     let has_ext = to_string(dq["has_ext"]) == "true"
