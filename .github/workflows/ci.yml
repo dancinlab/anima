@@ -21,8 +21,13 @@ on:
 # Cancel superseded runs of the same ref (a rapid push/PR series otherwise piles up
 # many duplicate github-hosted macOS jobs against the scarce macOS runner pool — the
 # real cause of the runaway "queued" backlog). main runs are never cancelled.
+# main 은 per-commit 그룹 — 측정(2026-07-03): per-ref 그룹은 PENDING 1개만 허용해
+# 40-90min engine run 이 그룹을 쥔 동안 중간 main push 들이 잡 0개로 취소됐다
+# (24h 에 main-push 77/92 취소·main 검증 지연 93min+ 무한). per-commit 그룹이면
+# 30-40s ubuntu 게이트(governance/cdo/lint)가 모든 머지 커밋에서 항상 돈다.
+# engine 폭주는 아래 hexa-engine 잡-레벨 per-ref keep-latest 가 별도 직렬화.
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
@@ -78,6 +83,16 @@ jobs:
             fi
           else
             echo "engine path gate: changed-file list unavailable — fail-open (run the engine job)"
+          fi
+          # zombie guard — head 브랜치 PR 이 이미 MERGED 면 이 run 의 engine 은
+          # 아무것도 보호하지 않는다 (측정: 머지-완료 브랜치의 대기 run 9개가
+          # darwin 슬롯 ~180-300min/일 점유). 조회 실패 = fail-open (기존 needed 유지).
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            merged="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq '.merged' 2>/dev/null)" || merged=""
+            if [ "$merged" = "true" ]; then
+              needed=0
+              echo "engine path gate: PR already MERGED — zombie run, engine job SKIPPED"
+            fi
           fi
           echo "engine_needed=$needed" >> "$GITHUB_OUTPUT"
       - id: darwin
@@ -249,6 +264,12 @@ jobs:
     # 48m49s 에서 50min 캡에 잘려 cancel(run 28651287277) → save 스킵 → 연쇄 cold 재발.
     # 75min = 그 실측 cold + install/smoke 여유. warm 정상 run 엔 무해.
     timeout-minutes: 75
+    # per-ref keep-latest — main 이 per-commit 그룹이 된 대신 engine 은 여기서
+    # 직렬화: 그룹당 in-flight 1 + pending 1, 새 pending 이 옛 pending 을 교체
+    # (최신 SHA 만 검증 — main engine 검증의 의도와 일치 · in-flight 는 불가침).
+    concurrency:
+      group: ci-engine-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
 

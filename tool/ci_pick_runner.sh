@@ -78,11 +78,15 @@ if [ "${SELF_HOSTED_ELIGIBLE:-0}" != "1" ]; then
   exit 0
 fi
 
-# ── probe: is a matching self-hosted runner ONLINE and (optionally) idle? ────
-# We require status=online. We do NOT require !busy: a queued job will wait for
-# the single ghost runner, which is acceptable (best-effort-strong), and the
-# 1-SSH pool serializes by design. If you prefer to skip-when-busy, gate on
-# `.busy==false` too — left online-only so transient busy doesn't bounce to cloud.
+# ── probe: is a matching self-hosted runner ONLINE **and IDLE**? ─────────────
+# BUSY-AWARE (port of hexa-lang 8d3929bf0, anima-inverted tier-3): tier-1 now
+# requires status=online AND busy=false. Unlike hexa-lang (whose gate jobs NEED
+# the provisioned gen3 slot, so queueing on a busy primary beats cloud), anima's
+# engine job runs FINE on cloud macos — measured 2026-07-03: cloud queue 2-3s +
+# warm exec 4.1m median, vs 30-73min queued behind a busy ghost (9 runs in one
+# morning, ~450 queue-min) with ghost 0/6 lifetime green. So: primary busy →
+# BOUNCE TO CLOUD, don't queue. mini stays a ghost-OFFLINE-only insurance tier
+# (daily-driver constraint), unchanged.
 api_json=""
 if [ -n "${GH_TOKEN:-}" ] || [ -n "${GITHUB_TOKEN:-}" ]; then
   api_json="$(gh api repos/"${GITHUB_REPOSITORY:-dancinlab/anima}"/actions/runners --paginate 2>/dev/null || true)"
@@ -117,12 +121,31 @@ jq_filter='[ .runners[]
   | select( ($ARGS.positional - [ .labels[].name ]) == [] )
 ] | length'
 
+# idle variant: same match, additionally require the runner to be IDLE.
+# shellcheck disable=SC2016  # jq program — must NOT be shell-expanded
+jq_filter_idle='[ .runners[]
+  | select(.status=="online")
+  | select(.busy==false)
+  | select( ($ARGS.positional - [ .labels[].name ]) == [] )
+] | length'
+
+# shellcheck disable=SC2086  # intentional word-split of the wanted-label list
+idle_matches="$(printf '%s' "$api_json" | jq "$jq_filter_idle" --args $want_labels 2>/dev/null || echo 0)"
 # shellcheck disable=SC2086  # intentional word-split of the wanted-label list
 online_matches="$(printf '%s' "$api_json" | jq "$jq_filter" --args $want_labels 2>/dev/null || echo 0)"
 
-if [ "${online_matches:-0}" -ge 1 ] 2>/dev/null; then
-  echo "::notice::$online_matches online self-hosted runner(s) match [$want_labels] → self-hosted"
+# ① primary online + IDLE → self-hosted (warm ~/.hexa-cache once seeded)
+if [ "${idle_matches:-0}" -ge 1 ] 2>/dev/null; then
+  echo "::notice::$idle_matches online+idle self-hosted runner(s) match [$want_labels] → self-hosted"
   emit "$sh_label"
+  exit 0
+fi
+
+# ② primary online but BUSY → cloud (measured: cloud 2-3s queue + 4.1m warm exec
+#    beats 30-73min queueing behind a busy ghost; anima engine needs no gen3 slot)
+if [ "${online_matches:-0}" -ge 1 ] 2>/dev/null; then
+  echo "::notice::primary self-hosted BUSY ($online_matches online, 0 idle) → GitHub-hosted fallback (busy-aware dispersal)"
+  emit "$fallback"
   exit 0
 fi
 
