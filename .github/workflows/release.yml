@@ -54,7 +54,12 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-14]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    # 20→75: COLD-cache 런은 cli/anima.hexa 컴파일만으로 20min 캡을 초과 →
+    # SIGTERM 143 → 잡 취소 → Post-Cache save 스킵 → 캐시가 영원히 안 데워지는
+    # chicken-egg(ci.yml engine 잡의 25→50→75와 동일 병리·실측: run 28659123885
+    # 17min 143, 28660975236 16min 143 — 2연속 동일 지점). 75 = ci.yml의 실측
+    # cold 예산과 정합. warm 정상 run(수 분)엔 무해.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
         with:
