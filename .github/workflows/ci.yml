@@ -255,15 +255,16 @@ jobs:
       - name: Compute toolchain cache key (latest release tag)
         id: cachekey
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          # 키 = hexa-lang 최신 stable 릴리즈 태그. 주간 회전 키는 exact-hit 이 주 내내
+          # 키 = hexa-lang 최신 릴리즈 태그. 주간 회전 키는 exact-hit 이 주 내내
           # 재저장을 막아 그날 아침 버전이 박제되는 stale-pin 트랩이었다(실측 2026-07-03:
           # v0.588 종일 pin → 신규 계측 미탑재 + wrapper/binary skew 로 __HEXA_BRC__=1
           # 프로토콜 불일치 게이트 FAIL). 태그 키 = 새 릴리즈마다 자동 미스 → 최신 설치.
-          latest="$(gh api repos/dancinlab/hexa-lang/releases/latest --jq .tag_name 2>/dev/null || true)"
-          [ -z "$latest" ] && latest="week-$(date -u +%Y-%V)"   # API 실패 폴백: 주간 회전
+          # git ls-remote 사용: github.token 은 anima 스코프라 private hexa-lang API 를
+          # 못 읽는다(1차 시도 실측 실패) — 러너의 ambient git 자격증명이 정답
+          # (install.sh 의 raw fetch 가 같은 경로로 이미 작동 중).
+          latest="$(git ls-remote --tags --sort=-v:refname https://github.com/dancinlab/hexa-lang.git 'v*' 2>/dev/null | head -1 | sed 's|.*refs/tags/||; s|\^{}||')"
+          [ -z "$latest" ] && latest="week-$(date -u +%Y-%V)"   # 원격 실패 폴백: 주간 회전
           echo "hxtag=$latest" >> "$GITHUB_OUTPUT"
 
       # ── 캐시 ① 의 toolchain (~/.hx) — 이 잡은 install *무결성* 게이트가 아니라
