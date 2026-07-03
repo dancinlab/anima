@@ -2150,6 +2150,33 @@ pub fn clm_ce_ranged(path: string, ids: list) -> Map {
     return #{ "ok": true, "ce_mean": ce, "positions": T - 1 }
 }
 
+// clm_ce_ranged_W — LOAD-ONCE twin of clm_ce_ranged: same per-position mean next-byte CE,
+// BYTE-IDENTICAL ce_mean, but off a PRE-LOADED weight map `W` (clm_load_weights / gen_auto_load)
+// so a best-of-K deliberation driver loads the .clm ONCE instead of per-candidate. The handle
+// owns W's lifetime (freed once by gen_auto_free) — NO _clmd_weights_free here (that per-call
+// reload+free was the H_9107 303M RSS-explosion source). Mirrors the _clmd_load/_clmd_fwd split.
+pub fn clm_ce_ranged_W(W: Map, ids: list) -> Map {
+    set_deterministic(true)
+    let T = len(ids)
+    if T < 2 { return #{ "ok": false, "ce_mean": 0.0, "reason": "T<2" } }
+    if to_string(W["ok"]) != "true" {
+        return #{ "ok": false, "ce_mean": 0.0, "reason": "handle not loaded" }
+    }
+    let V = to_int(W["V"])
+    let logits = t_zeros(T * V)
+    let sc = _clmd_scratch_new(W, T)
+    let tok = t_zeros(T); let tgt = t_zeros(T)
+    let mut p = 0
+    while p < T { t_set(tok, p, to_float(to_int(ids[p]))); p = p + 1 }
+    let mut q = 0
+    while q < T - 1 { t_set(tgt, q, to_float(to_int(ids[q + 1]))); q = q + 1 }
+    _clmd_fwd_logits_sc(W, sc, tok, logits, T)
+    let ce = nn_ce_loss_allpos(logits, tgt, T - 1, V)
+    _clmd_scratch_free(sc)
+    t_free(logits); t_free(tok); t_free(tgt)
+    return #{ "ok": true, "ce_mean": ce, "positions": T - 1 }
+}
+
 // ════════════════════════════════════════════════════════════════════════
 // LOAD-ONCE forward (R1 full-depth + R2 generator slot + R3 grounding).
 //

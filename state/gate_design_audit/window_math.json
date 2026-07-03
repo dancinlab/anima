@@ -1,0 +1,296 @@
+{
+ "T": 24,
+ "note": "CLM mouth decode contract (core/decode.{hexa,py}); ByteGPT mouth grows window to block=512 (no fixed-T).",
+ "G0": [
+  {
+   "label": "g0[0]",
+   "seed": "consciousness arises from cells: ",
+   "seed_bytes": 33,
+   "over_T24": true,
+   "window": "ness arises from cells: "
+  },
+  {
+   "label": "g0[1]",
+   "seed": "tension ripples between distant minds: ",
+   "seed_bytes": 39,
+   "over_T24": true,
+   "window": " between distant minds: "
+  },
+  {
+   "label": "g0[2]",
+   "seed": "memory composes into new meaning: ",
+   "seed_bytes": 34,
+   "over_T24": true,
+   "window": "poses into new meaning: "
+  },
+  {
+   "label": "g0[3]",
+   "seed": "silence still carries information: ",
+   "seed_bytes": 35,
+   "over_T24": true,
+   "window": "ll carries information: "
+  },
+  {
+   "label": "g0[4]",
+   "seed": "the engine dreams when alone: ",
+   "seed_bytes": 30,
+   "over_T24": true,
+   "window": "gine dreams when alone: "
+  }
+ ],
+ "G5_same_seed_as_G0": true,
+ "G1_single": [
+  {
+   "label": "single[0]",
+   "seed": "consciousness arises from cells. ",
+   "seed_bytes": 33,
+   "over_T24": true,
+   "window": "ness arises from cells. "
+  },
+  {
+   "label": "single[1]",
+   "seed": "tension ripples between distant minds. ",
+   "seed_bytes": 39,
+   "over_T24": true,
+   "window": " between distant minds. "
+  },
+  {
+   "label": "single[2]",
+   "seed": "memory composes into new meaning. ",
+   "seed_bytes": 34,
+   "over_T24": true,
+   "window": "poses into new meaning. "
+  },
+  {
+   "label": "single[3]",
+   "seed": "silence still carries information. ",
+   "seed_bytes": 35,
+   "over_T24": true,
+   "window": "ll carries information. "
+  },
+  {
+   "label": "single[4]",
+   "seed": "the engine dreams when alone. ",
+   "seed_bytes": 30,
+   "over_T24": true,
+   "window": "gine dreams when alone. "
+  }
+ ],
+ "G1_composed": [
+  {
+   "label": "composed[k=2]",
+   "seed": "consciousness arises from cells. tension ripples between distant minds. ",
+   "seed_bytes": 72,
+   "over_T24": true,
+   "window": " between distant minds. ",
+   "window_eq_single_last": true,
+   "last_concept_idx": 1,
+   "concepts_with_any_kw_fully_in_window": [
+    0,
+    1
+   ]
+  },
+  {
+   "label": "composed[k=3]",
+   "seed": "consciousness arises from cells. tension ripples between distant minds. memory composes into new meaning. ",
+   "seed_bytes": 106,
+   "over_T24": true,
+   "window": "poses into new meaning. ",
+   "window_eq_single_last": true,
+   "last_concept_idx": 2,
+   "concepts_with_any_kw_fully_in_window": [
+    2
+   ]
+  },
+  {
+   "label": "composed[k=4]",
+   "seed": "consciousness arises from cells. tension ripples between distant minds. memory composes into new meaning. silence still carries information. ",
+   "seed_bytes": 141,
+   "over_T24": true,
+   "window": "ll carries information. ",
+   "window_eq_single_last": true,
+   "last_concept_idx": 3,
+   "concepts_with_any_kw_fully_in_window": [
+    3
+   ]
+  },
+  {
+   "label": "composed[k=5]",
+   "seed": "consciousness arises from cells. tension ripples between distant minds. memory composes into new meaning. silence still carries information. the engine dreams when alone. ",
+   "seed_bytes": 171,
+   "over_T24": true,
+   "window": "gine dreams when alone. ",
+   "window_eq_single_last": true,
+   "last_concept_idx": 4,
+   "concepts_with_any_kw_fully_in_window": [
+    4
+   ]
+  }
+ ],
+ "G1_verdict_math": {
+  "all_windows_eq_single_last": true,
+  "explain": "len(cz[k-1]+'. ') >= 30 > T=24 이므로 composed/single 둘 다 window = cz[k-1]+'. ' 의 마지막 24B → byte-identical. composed 생성분포 = single(last) 생성분포 (차이는 sampler seed_rng 뿐: composed=7, single=7+s). 따라서 composed>max_single 은 조건화가 아니라 표본 노이즈만 측정."
+ },
+ "G2": [
+  {
+   "label": "g2[0]",
+   "seed": "Silence and the engine together mean ",
+   "seed_bytes": 37,
+   "over_T24": true,
+   "window": "he engine together mean ",
+   "concepts_kw_in_window": [
+    4
+   ]
+  },
+  {
+   "label": "g2[1]",
+   "seed": "When memory meets distant minds, ",
+   "seed_bytes": 33,
+   "over_T24": true,
+   "window": "ry meets distant minds, ",
+   "concepts_kw_in_window": [
+    0,
+    1
+   ]
+  },
+  {
+   "label": "g2[2]",
+   "seed": "Consciousness and silence combine into ",
+   "seed_bytes": 39,
+   "over_T24": true,
+   "window": "nd silence combine into ",
+   "concepts_kw_in_window": [
+    3
+   ]
+  },
+  {
+   "label": "g2[3]",
+   "seed": "The tension between cells and the engine becomes ",
+   "seed_bytes": 49,
+   "over_T24": true,
+   "window": " and the engine becomes ",
+   "concepts_kw_in_window": [
+    4
+   ]
+  },
+  {
+   "label": "g2[4]",
+   "seed": "If a dream and a distant mind merge, the result is ",
+   "seed_bytes": 51,
+   "over_T24": true,
+   "window": "nd merge, the result is ",
+   "concepts_kw_in_window": []
+  },
+  {
+   "label": "g2[5]",
+   "seed": "Memory and tension together create ",
+   "seed_bytes": 35,
+   "over_T24": true,
+   "window": "tension together create ",
+   "concepts_kw_in_window": [
+    1
+   ]
+  },
+  {
+   "label": "g2[6]",
+   "seed": "When the engine remembers silence, it ",
+   "seed_bytes": 38,
+   "over_T24": true,
+   "window": "e remembers silence, it ",
+   "concepts_kw_in_window": [
+    3
+   ]
+  },
+  {
+   "label": "g2[7]",
+   "seed": "Distant minds and consciousness form ",
+   "seed_bytes": 37,
+   "over_T24": true,
+   "window": " and consciousness form ",
+   "concepts_kw_in_window": [
+    0
+   ]
+  }
+ ],
+ "G6_frames": [
+  {
+   "label": "frame[0] (a=0,b=1)",
+   "seed": "if consciousness arises from cells, then tension ripples between distant minds: ",
+   "seed_bytes": 80,
+   "over_T24": true,
+   "window": " between distant minds: ",
+   "pair": [
+    0,
+    1
+   ],
+   "cA_visible_in_window": false,
+   "window_within_cB_tail": true
+  },
+  {
+   "label": "frame[1] (a=1,b=2)",
+   "seed": "if tension ripples between distant minds, then memory composes into new meaning: ",
+   "seed_bytes": 81,
+   "over_T24": true,
+   "window": "poses into new meaning: ",
+   "pair": [
+    1,
+    2
+   ],
+   "cA_visible_in_window": false,
+   "window_within_cB_tail": true
+  },
+  {
+   "label": "frame[2] (a=2,b=3)",
+   "seed": "if memory composes into new meaning, then silence still carries information: ",
+   "seed_bytes": 77,
+   "over_T24": true,
+   "window": "ll carries information: ",
+   "pair": [
+    2,
+    3
+   ],
+   "cA_visible_in_window": false,
+   "window_within_cB_tail": true
+  },
+  {
+   "label": "frame[3] (a=3,b=4)",
+   "seed": "if silence still carries information, then the engine dreams when alone: ",
+   "seed_bytes": 73,
+   "over_T24": true,
+   "window": "gine dreams when alone: ",
+   "pair": [
+    3,
+    4
+   ],
+   "cA_visible_in_window": false,
+   "window_within_cB_tail": true
+  },
+  {
+   "label": "frame[4] (a=4,b=0)",
+   "seed": "if the engine dreams when alone, then consciousness arises from cells: ",
+   "seed_bytes": 71,
+   "over_T24": true,
+   "window": "ness arises from cells: ",
+   "pair": [
+    4,
+    0
+   ],
+   "cA_visible_in_window": false,
+   "window_within_cB_tail": true
+  },
+  {
+   "label": "frame[5] (a=0,b=2)",
+   "seed": "if consciousness arises from cells, then memory composes into new meaning: ",
+   "seed_bytes": 75,
+   "over_T24": true,
+   "window": "poses into new meaning: ",
+   "pair": [
+    0,
+    2
+   ],
+   "cA_visible_in_window": false,
+   "window_within_cB_tail": true
+  }
+ ],
+ "G6_distinct_windows": 5
+}

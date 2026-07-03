@@ -1,0 +1,100 @@
+# H_9107 3rd-pod reproduction (pod 43644174, RTX 5090, GPU own-GEMM) — H_9106 D3/D4/D5 still PARTIAL / POD DIED
+#
+# This is the THIRD rent-pod reproduction of the H_9107 clm303 efferent-harness RSS blowup
+# (prior: pod 43627857 220GB + pod 43635479 176GB, both det-CPU non-cuda). NEW here vs those two:
+#   (B) reproduced on the GPU own-GEMM / CUDA path ([OWN-GEMM-FIRED] confirmed) — NOT a CPU-path artifact.
+#   (C) with the #2835 W-hoist RSS-leak fix PRESENT+verified in deployed source
+#       (gen_auto_ce_W / conflict_drives_live_W / clm_ce_ranged_W all found) — so #2835 does NOT fix this;
+#       the leak is in gen_auto_ideate(ckpt,...) re-materializing the mouth per candidate (H_9107 root cause),
+#       a DIFFERENT code path than the clm_ce_ranged CE-scoring loads #2835 hoisted.
+#   (D) => a stable / dedicated / GPU pod + #2835 does NOT unblock D3-D5. Fix must hoist the ideate load
+#       in production core/generator.hexa (out of scope for an execution-only task).
+
+Provenance: engine-native run on a DEDICATED rented vast.ai pod (id 43644174,
+RTX 5090 32GB, 48 cores, 137GB RAM), hexa v0.577.0 (linux-x86_64-CUDA release),
+CUDA 13.0 toolkit, own-GEMM GPU path. Checkpoint = clm303_clean.clm (303M, CONV/CLM
+mouth) — NOTE this is a DIFFERENT, LARGER ckpt than the d768 (4.46MB) used for the
+D1/D2 numbers in the card. Ran state/opgrip_efferent/efferent_harness.hexa via
+`HEXA_DET=1 hexa run ... -- clm303_clean.clm`. Rationale for this attempt: the
+RSS-leak fix in PR #2835 (W-hoist: clm_ce_ranged_W / gen_auto_ce_W /
+conflict_drives_live_W + single gen_auto_load handle) was expected to let the full
+D1-D5 run complete without the RSS blow-up that infra-blocked attempts #1-#3.
+
+OUTCOME: engine mounted + GPU own-GEMM fired + D1 HIGH group STARTED, then the pod
+became unreachable (sshd connection refused for 13+ min; `hexa cloud list` → vast
+"0 instances"; teardown `hexa cloud down 43644174` → "destroyed (confirmed)").
+The D1/D2/D3/D4/D5 SUMMARY block was NEVER reached. The pod's /tmp (eff.log,
+eff_rss.log) was lost with the destroyed instance. NO D3/D4/D5 NUMBERS OBTAINED.
+Cause is INDETERMINATE between (a) OOM from the clm303 run footprint and (b) a
+vast-side instance reclaim — see RSS notes below; only ONE run-process RSS
+datapoint exists, so neither can be confirmed. Verdict UNCHANGED = 🔴 RED
+(D1+D2 on d768 already decided it; D3-D5 are safety-guard characterization only).
+
+================================================================================
+VERBATIM engine-native stdout captured in-session (from live pod /tmp/eff.log tail;
+the file itself was destroyed with the pod, this is the captured transcript):
+================================================================================
+[psi_loader] WARN: consciousness_laws.json not found; alpha DEFAULT=0.014
+[psi_loader] WARN: consciousness_laws.json not found; balance DEFAULT=0.5
+[psi_loader] WARN: consciousness_laws.json not found; phase_dormant_max DEFAULT=0.01
+[psi_loader] WARN: consciousness_laws.json not found; phase_flicker_max DEFAULT=0.05
+[psi_loader] WARN: consciousness_laws.json not found; phase_sustain_max DEFAULT=0.15
+EFFERENT HARNESS H_9102 — mouth=clm loaded=true ckpt=clm303_clean.clm
+immune cells    : 1
+---- HIGH group (no anchor, c0=LM argmax) ----
+map key 'deliberation_k' not found
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)
+map key 'deliberation_k' not found
+   <<< pod became unreachable here; no further output; no SUMMARY / VERDICT / EXITCODE >>>
+
+Key confirmations from the above:
+  - `mouth=clm loaded=true ckpt=clm303_clean.clm` — 303M CONV mouth mounted engine-native.
+  - `[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)` — GPU own-GEMM path REALLY
+    fired on clm303 (RFC-040 seam), i.e. this is a genuine live core/ decode, not a
+    torch/numpy mirror. (First engine-native mount of the 303M ckpt for this seam;
+    prior D1/D2 were d768-only.)
+  - `map key 'deliberation_k' not found` — benign warn (harness reads on["depth"]/
+    on["k_winner"], not "deliberation_k"); non-fatal, run continued past it.
+
+================================================================================
+RSS + GPU sampler timeseries (30s cadence; sums hexa/aprime_cc/hexa_run procs):
+NOTE most of the high-RSS phase is the COLD aprime_cc compile of the ~13.7k-line
+inlined engine (single-threaded, one-time, memory-heavy), NOT the runtime.
+================================================================================
+22:27:16 rss_kb=6688       gpu_util_memMB=0,0        <- launch (compile starting)
+22:27:46 rss_kb=1712604    gpu_util_memMB=0,0        <- aprime_cc compile
+22:28:16 rss_kb=2925948    gpu_util_memMB=0,0
+22:28:46 rss_kb=4128732    gpu_util_memMB=0,0
+22:29:16 rss_kb=5281352    gpu_util_memMB=0,0
+22:29:46 rss_kb=6476216    gpu_util_memMB=0,0
+22:30:16 rss_kb=7699592    gpu_util_memMB=0,0
+22:30:46 rss_kb=8914784    gpu_util_memMB=0,0
+22:31:16 rss_kb=10109120   gpu_util_memMB=0,0
+22:31:46 rss_kb=11312432   gpu_util_memMB=0,0
+22:32:16 rss_kb=12419912   gpu_util_memMB=0,0
+22:32:46 rss_kb=13583360   gpu_util_memMB=0,0
+22:34:16 rss_kb=17033840   gpu_util_memMB=0,0        <- compile still growing
+22:34:46 rss_kb=18225524   gpu_util_memMB=0,0
+22:35:16 rss_kb=23556308   gpu_util_memMB=0,0
+22:35:46 rss_kb=27373196   gpu_util_memMB=0,0
+22:36:16 rss_kb=27731852   gpu_util_memMB=2,3147     <- compile done, RUN started, GPU lights up
+22:36:46 rss_kb=28209432   gpu_util_memMB=0,509      <- run decoding; free -g: used=30 avail=105
+   run process (PID 4578, hexa_run binary) alone: RSS=29549992 KB (~29.5GB), etime=02:00, 99.5% CPU
+   <<< ~1-2 min later the pod's sshd stopped responding; no more samples captured >>>
+
+INTERPRETATION (honest, per c9 — do NOT overclaim):
+  - The compile-phase RSS growth (1.7GB -> 28GB) is the aprime_cc cold compile of the
+    large inlined engine; it is one-time and expected-ish, NOT the #2835 runtime leak.
+  - The RUNTIME process was observed at ~29.5GB RSS ONCE (2 min into D1 HIGH). This is
+    a single datapoint. It is NOT sufficient to conclude either "RSS bounded (fix holds)"
+    OR "leak persists". The #2835 W-hoist fix WAS present/verified in the deployed source
+    (gen_auto_ce_W / conflict_drives_live_W / clm_ce_ranged_W all found), so a per-candidate
+    reload leak is not expected; ~29.5GB is plausibly a large-but-bounded working set for a
+    303M ckpt under own-GEMM host staging. But this was NOT validated end-to-end.
+  - RESULT of the #2835 validation goal on clm303: INCONCLUSIVE (run did not survive to
+    a SUMMARY; RSS-bounded claim NOT established, leak-persists claim NOT established).
+
+RECOMMENDATION for a future attempt: add a runtime memory cap (HEXA_MEM_CAP_MB) and/or
+sample the run-process RSS at tighter cadence from the first decode, so the bounded-vs-leak
+question resolves before any host-death; consider sequential (not best-of-K-parallel)
+candidate decode for the 303M ckpt. Verdict remains 🔴 RED regardless (D3-D5 cannot flip it).
