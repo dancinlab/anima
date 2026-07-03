@@ -291,6 +291,38 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
               "lt_uniform": lt_u, "lt_shuffle": lt_s, "green": lt_u && lt_s }
 }
 
+// clm_load_W — pub loader (H_9119 gate① STEP2): load a .clm to a weight Map ONCE so many CE
+// calls (fm_b50 b50_of / gen_fm_rerank) reuse it on the GPU forge path. clm_decodable() first;
+// clm_weights_free_pub(W) after.
+pub fn clm_load_W(path: string) -> Map { return _clmd_load(path) }
+
+// clm_ce_seq_W — CE over a byte SEQ (list) given a pre-loaded W, via the GPU forge streaming
+// forward (_clmd_fwd_logits_sc → forge_dispatch_* device kernels, GPU util>0) — the seq-input
+// twin of clm_forward_ce (H_9119 gate① STEP2). Replaces generator's scalar clm_decode_ce_dq
+// (_gen_conv1d, GPU idle) on the fm_b50 hot path. Single window T=len(seq)-1, next-byte CE
+// (same per-position math as clm_forward_ce). Byte-exact target = the scalar CE (own-GEMM ==
+// farr byte-identical, a_train_flame_forge) — pod-verified before promoting engine-native.
+pub fn clm_ce_seq_W(W: Map, seq: list) -> float {
+    set_deterministic(true)
+    let V = to_int(W["V"])
+    let n = len(seq)
+    if n < 2 { return dt_ln(to_float(V)) }
+    let T = n - 1
+    let sc = _clmd_scratch_new(W, T)
+    let logits = t_zeros(T*V)
+    let tok = t_zeros(T); let tgt = t_zeros(T)
+    let mut p = 0
+    while p < T {
+        t_set(tok, p, to_float(seq[p]))
+        t_set(tgt, p, to_float(seq[p + 1]))
+        p = p + 1
+    }
+    _clmd_fwd_logits_sc(W, sc, tok, logits, T)
+    let ce = nn_ce_loss_allpos(logits, tgt, T, V)
+    t_free(logits); t_free(tok); t_free(tgt); _clmd_scratch_free(sc)
+    return ce
+}
+
 // _clmd_load — shared loader: parse the (L+E+3) conv blocks + CLMX trailer into
 // a weight Map. GENERAL (v0.3): E, V, L are derived from block structure, so
 // the SAME loader serves L=1/E=2 (legacy v0.2) and any L/E (e.g. the 3B

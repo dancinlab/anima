@@ -50,6 +50,7 @@
 //                             .clm later; no train-only gate.
 
 import "core/kosmos_io.hexa"
+import "core/decode.hexa"   // H_9119 gate① STEP2: clm_load_W + clm_ce_seq_W (GPU forge CE)
 // decode.hexa — the UNIFIED byte "mouth" module (both decode backends in one).
 // CONV mouth: int4 dequant + CLMConvMoE forward → real next-byte logits → greedy
 // continuation (clm_decode_argmax). BYTE mouth: the ByteGPT (H_1129 303M GPT-2-
@@ -358,9 +359,9 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
     let offsets = [0, 101, 202, 303]
     let grid    = [4, 8, 16, 32]
     let kk = if k > 4 { 4 } else { k }
-    // reload-hoist (H_9119 gate①): dequant the frozen listener ONCE, reuse across all
-    // K·|grid|·(1+|distractors|) CE calls (was a full-.clm reload each → H_9107 blowup).
-    let lis_dq = clm_load_dq(listener_ckpt)
+    // H_9119 gate① STEP1+STEP2: load the frozen listener ONCE (kills ~1400×/run reload) and
+    // score every CE through the GPU forge path (clm_ce_seq_W), not scalar clm_decode_ce_dq.
+    let lisW = clm_load_W(listener_ckpt)
     let mut best_text  = ""
     let mut best_score = -1000000.0
     let mut best_i     = -1
@@ -382,12 +383,12 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
                 while bi < pb { pfx = pfx + [cb[bi]]  bi = bi + 1 }
                 // margin = min-CE(prefix + distractor) − CE(prefix + target); >0 = target wins early
                 let seq_t = pfx + _gen_text_to_bytes(" " + target)
-                let ce_t  = to_float(clm_decode_ce_dq(lis_dq, seq_t)["ce"])
+                let ce_t  = clm_ce_seq_W(lisW, seq_t)
                 let mut best_d = 1000000.0
                 let mut di = 0
                 while di < len(distractors) {
                     let seq_d = pfx + _gen_text_to_bytes(" " + to_string(distractors[di]))
-                    let ce_d  = to_float(clm_decode_ce_dq(lis_dq, seq_d)["ce"])
+                    let ce_d  = clm_ce_seq_W(lisW, seq_d)
                     if ce_d < best_d { best_d = ce_d }
                     di = di + 1
                 }
@@ -399,6 +400,7 @@ pub fn gen_fm_rerank(ckpt: string, listener_ckpt: string, seed: string, gen: int
         }
         oi = oi + 1
     }
+    clm_weights_free_pub(lisW)   // gate① STEP2: free the load-once listener weight-set
     if !got {
         let r1 = clm_decode_argmax(ckpt, seed, gen)
         let t1 = if to_string(r1["ok"]) == "true" { to_string(r1["text"]) } else { "" }
