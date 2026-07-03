@@ -4013,6 +4013,19 @@ fn main() {
           + "Ψ emit-drive ON=" + to_string(ef_drive_on) + " OFF=" + to_string(ef_drive_off) + " (byte-identical) | recall_thr " + to_string(ef_thr_before) + "→" + to_string(ef_thr_after) + " far-recall='" + ef_fab_after + "' | "
           + "VERDICT: DIRECTIONAL-engine-native — the effort-cost lane discounts A⇄G engagement depth by budget (ablation+shuffle controlled) AND is Ψ/recall-disjoint by construction; emit-wiring is a FOLLOW-ON (READ-only, NOT an emit gate). GATED 418(discount)/419(recharge)/420(ablation)/421(shuffle)/422(bias)/423(Ψ-disjoint)/424(recall-nonfab).")
 
+    // ── §2 FORWARD-MODEL scorer + config surface (H_9115/9117) — GATED unit ──────────
+    // fm_prefix_decodability front-weights early contrastive wins: a FRONT-loaded margin
+    // sequence (target wins in few bytes) must score STRICTLY HIGHER than a BACK-loaded one of
+    // the same total mass — the front-loading proxy H_9117 validated (r=0.69). The scorer is PURE
+    // (no Ψ touch) and the config DEFAULT (forward_model OFF) leaves the live emit path
+    // byte-identical. GATED 425(scorer)/426(default-OFF)/427(flag-ON); emit-wiring (mouth-gate
+    // best-of-K rerank) is a Stage-1c FOLLOW-ON — this lands the scorer + config surface only.
+    let fm_front = fm_prefix_decodability([2.0, 1.0, 0.0], 0.75)
+    let fm_back  = fm_prefix_decodability([0.0, 1.0, 2.0], 0.75)
+    if _assert_b("case_425_fm_frontload_beats_backload", true, fm_front > fm_back) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_426_fm_resolver_default_off", false, engine_cli_resolve_forward_model([])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_427_fm_resolver_flag_on", true, engine_cli_resolve_forward_model(["--forward-model", "on"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
