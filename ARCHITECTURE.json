@@ -13328,6 +13328,13 @@
     "value": "receiver-panel 측정 교훈(H_9114): anima emit reference가 objective/public임을 3 이질 모델(claude-fable-5·sonnet·haiku, 다른 θ 폐포밖) 독립 디코드로 확증(real consensus 0.857@8B vs shuffle 0.000, 셋 다 압도) → tier single-oracle→MULTI-RECEIVER-CONFIRMED. 핵심 측정교훈: **inter-receiver AGREEMENT ≠ ACCURACY**. objective referent를 가진 clue는 real/shuffle 무관하게 receiver들을 같은 referent로 수렴시킴(agreement 양쪽 다 높음 0.595 vs 0.690) — shuffle서도 receiver가 clue의 *실제* referent로 정확히 수렴(단 target 아님)하니 서로 agree. 즉 target-referent 링크를 isolate하는 건 accuracy-vs-shuffle이지 agreement-vs-shuffle 아님. 재발조건: '독립 관측자 합의'로 objectivity 재려 할 때 — 합의는 자극의 objectivity를 재지 target-link를 못 잰다, 반드시 ground-truth accuracy와 결합. + 앙상블 consensus≥best 가정은 약한 member(haiku)가 majority-vote 끌어내리면 깨짐(objectivity와 무관). H_9114 bar#2/#3 오설계 사례, bar 이동 안함(c9).",
     "threshold": "objective-reference 측정 = ground-truth accuracy real≫shuffle(H_9114: 0.857 vs 0.0) + ≥2 이질 receiver 독립 디코드; agreement는 objectivity 보조증거지 target-link 분리자 아님",
     "source": "H_9114 (state/verdicts/9114_receiver_panel/H_9114.txt · card H_9114)"
+   },
+   {
+    "id": "engine-cli-hexa-2",
+    "state": "neg-conv",
+    "value": "로컬 full-engine NATIVE smoke build(hexa run core/engine_cli_smoke.hexa)는 engine_cli(11,599줄)+전 import tree를 단일 C TU로 inline→aprime_cc codegen 20분+ CPU-bound 후 clang이 그 거대 TU 컴파일 실패('binary not produced', HEXA_MEM_CAP_MB=4096) = 로컬 런타임 검증 BLOCKED(느림 넘어 실패). 이번 세션 2× 재발. 그러나 hexa typecheck는 1-2분 PASS(syntactic gate 유효), pr-cycle verify CI 게이트는 통과(Stage-1a #2878·1b-core #2881 실제 머지)=코드 무결. 교훈: .hexa 엔진 변경 런타임 검증에 로컬 native smoke build 쓰지 말 것 — typecheck(syntactic)+verbatim-idiom precedent 신뢰+pr-cycle CI/pool을 authoritative 런타임 게이트로.",
+    "threshold": "재발조건: engine_cli.hexa 등 대형 엔진파일 변경 후 로컬 hexa run <full-engine smoke>로 런타임 검증 시도(20분 codegen→clang fail). 해결: ①hexa typecheck=syntactic 게이트 ②verbatim precedent(savant→forward_model)면 hand-verify ③런타임=pr-cycle verify CI 또는 pool(heavy-on-pool). heavy-on-pool·hexad-utime0·clitrain-cpu-scalar memory 정합.",
+    "source": "core/engine_cli.hexa"
    }
   ]
  }
