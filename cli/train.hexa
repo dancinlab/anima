@@ -1,6 +1,14 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  cli/train.hexa — anima CANONICAL hexa-native CLMConvMoE training entry.
 //
+// 🚦 3-ENTRY RULE (a_cli_single_entry · core/CLAUDE.md): decode · train · evaluate
+//    all go through `anima <verb>` — NEVER raw `python3 cli/*.py` or raw decode calls.
+//      decode   = `anima chat` / generator-L3 slot (not bytegpt_decode/clm_decode raw)
+//      train    = `anima train [--savant] [--mitosis]` (torch trainer = REFERENCE/bridge only)
+//      evaluate = `anima evaluate --py <clm>` (py 2-prod numpy = engine-native TERMINAL-eligible)
+//    Heavy 303M on pool (summer/aiden) or hexa cloud, never mini. ad-hoc torch probe = DIRECTIONAL.
+//
+//
 //  SINGLE entry point for anima production training (a_train_flame_forge:
 //  .hexa on stdlib/flame, NO .py trainer). Composes the PROVEN hexa-native
 //  CLMConvMoE forward+backward+CE+AdamW chain (stdlib/flame/clm_step.hexa
