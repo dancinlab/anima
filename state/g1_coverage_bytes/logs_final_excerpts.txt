@@ -1,0 +1,96 @@
+===/home/summer/g1full/log_attn_high.txt
+[eval FINAL seen-true] strict=1.000 loose=1.000 (n=60)
+    village+lantern -> want(peaceful amber) got' peaceful amber .\nthe mead'
+    harbor+mountain -> want(misty frozen) got' misty frozen .\nthe meadow'
+    garden+clock -> want(hidden hollow) got' hidden hollow .\nthe meado'
+    temple+garden -> want(sacred hidden) got' sacred hidden .\nthe marke'
+    clock+desert -> want(hollow barren) got' hollow barren .\nthe mirro'
+[eval FINAL held] strict=0.950 loose=0.950 (n=60)
+    clock+mirror -> want(hollow quiet) got' hollow quiet .\nthe meadow'
+    forest+temple -> want(ancient sacred) got' ancient sacred .\nthe mark'
+    desert+river -> want(barren gentle) got' barren gentle .\nthe marke'
+    harbor+forest -> want(misty ancient) got' misty ancient .\nthe marke'
+    ocean+letter -> want(silver golden) got' silver golden .\nthe marke'
+{"arm": "high", "arch": "attn", "steps": 3000, "params": 3307264, "final_loss": 0.22285228967666626, "directional": true, "device": "cuda", "seen_true_strict": 1.0, "seen_true_loose": 1.0, "held_strict": 0.95, "held_loose": 0.95}
+===/home/summer/g1full/log_attn_low.txt
+[eval FINAL seen-true] strict=1.000 loose=1.000 (n=40)
+    river+clock -> want(gentle hollow) got' gentle hollow .\nthe candl'
+    clock+mountain -> want(hollow frozen) got' hollow frozen .\nthe templ'
+    tunnel+island -> want(shadowy remote) got' shadowy remote .\nthe temp'
+    orchard+statue -> want(fragrant marble) got' fragrant marble .\nthe tem'
+    harbor+tower -> want(misty lofty) got' misty lofty .\nthe temple '
+[eval FINAL held] strict=0.033 loose=0.067 (n=60)
+    clock+mirror -> want(hollow quiet) got' quiet misty .\nthe temple '
+    forest+temple -> want(ancient sacred) got' sacred crimson .\nthe temp'
+    desert+river -> want(barren gentle) got' crimson gentle .\nthe moun'
+    harbor+forest -> want(misty ancient) got' marble mighty .\nthe templ'
+    ocean+letter -> want(silver golden) got' sunlit golden .\nthe templ'
+{"arm": "low", "arch": "attn", "steps": 3000, "params": 3307264, "final_loss": 0.1667746603488922, "directional": true, "device": "cuda", "seen_true_strict": 1.0, "seen_true_loose": 1.0, "held_strict": 0.03333333333333333, "held_loose": 0.06666666666666667}
+===/home/summer/g1full/log_attn_shuffle.txt
+[eval FINAL seen-true] strict=0.000 loose=0.017 (n=60)
+    village+lantern -> want(peaceful amber) got' ancient ancient .\nthe tow'
+    harbor+mountain -> want(misty frozen) got' shadowy mighty .\nthe cand'
+    garden+clock -> want(hidden hollow) got' shadowy barren .\nthe mark'
+    temple+garden -> want(sacred hidden) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(hollow barren) got' golden rapid .\nthe market'
+[eval FINAL held] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' golden gentle .\nthe marke'
+    forest+temple -> want(ancient sacred) got' quiet remote .\nthe meadow'
+    desert+river -> want(barren gentle) got' rapid misty .\nthe meadow '
+    harbor+forest -> want(misty ancient) got' sunlit remote .\nthe mount'
+    ocean+letter -> want(silver golden) got' rapid ancient .\nthe marke'
+[eval FINAL seen-shuffled-target] strict=0.750 loose=0.750 (n=60)
+    village+lantern -> want(ancient ancient) got' ancient ancient .\nthe tow'
+    harbor+mountain -> want(hollow quiet) got' shadowy mighty .\nthe cand'
+    garden+clock -> want(shadowy barren) got' shadowy barren .\nthe mark'
+    temple+garden -> want(lofty peaceful) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(golden rapid) got' golden rapid .\nthe market'
+{"arm": "shuffle", "arch": "attn", "steps": 3000, "params": 3307264, "final_loss": 0.22898152470588684, "directional": true, "device": "cuda", "seen_true_strict": 0.0, "seen_true_loose": 0.016666666666666666, "held_strict": 0.0, "held_loose": 0.0, "seen_shuffled_strict": 0.75, "seen_shuffled_loose": 0.75}
+===/home/summer/g1full/log_convd_high.txt
+[eval FINAL seen-true] strict=1.000 loose=1.000 (n=60)
+    village+lantern -> want(peaceful amber) got' peaceful amber .\nthe tunn'
+    harbor+mountain -> want(misty frozen) got' misty frozen .\nthe mirror'
+    garden+clock -> want(hidden hollow) got' hidden hollow .\nthe candl'
+    temple+garden -> want(sacred hidden) got' sacred hidden .\nthe mount'
+    clock+desert -> want(hollow barren) got' hollow barren .\nthe marke'
+[eval FINAL held] strict=0.850 loose=0.850 (n=60)
+    clock+mirror -> want(hollow quiet) got' hollow quiet .\nthe candle'
+    forest+temple -> want(ancient sacred) got' ancient silver .\nthe cand'
+    desert+river -> want(barren gentle) got' barren gentle .\nthe candl'
+    harbor+forest -> want(misty ancient) got' misty amber .\nthe mountai'
+    ocean+letter -> want(silver golden) got' silver golden .\nthe marke'
+{"arm": "high", "arch": "convd", "steps": 3000, "params": 2523904, "final_loss": 0.2211117297410965, "directional": true, "device": "cuda", "seen_true_strict": 1.0, "seen_true_loose": 1.0, "held_strict": 0.85, "held_loose": 0.85}
+===/home/summer/g1full/log_convd_low.txt
+[eval FINAL seen-true] strict=1.000 loose=1.000 (n=40)
+    river+clock -> want(gentle hollow) got' gentle hollow .\nthe mount'
+    clock+mountain -> want(hollow frozen) got' hollow frozen .\nthe meado'
+    tunnel+island -> want(shadowy remote) got' shadowy remote .\nthe mark'
+    orchard+statue -> want(fragrant marble) got' fragrant marble .\nthe tem'
+    harbor+tower -> want(misty lofty) got' misty lofty .\nthe candle '
+[eval FINAL held] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' quiet misty .\nthe mountai'
+    forest+temple -> want(ancient sacred) got' macren .\nthe castle and t'
+    desert+river -> want(barren gentle) got' crimson gentle .\nthe moun'
+    harbor+forest -> want(misty ancient) got' .\nthe mountain and the en'
+    ocean+letter -> want(silver golden) got' gentle golden .\nthe meado'
+{"arm": "low", "arch": "convd", "steps": 3000, "params": 2523904, "final_loss": 0.1664101779460907, "directional": true, "device": "cuda", "seen_true_strict": 1.0, "seen_true_loose": 1.0, "held_strict": 0.0, "held_loose": 0.0}
+===/home/summer/g1full/log_convd_shuffle.txt
+[eval FINAL seen-true] strict=0.000 loose=0.017 (n=60)
+    village+lantern -> want(peaceful amber) got' ancient ancient .\nthe tem'
+    harbor+mountain -> want(misty frozen) got' hollow quiet .\nthe candle'
+    garden+clock -> want(hidden hollow) got' shadowy barren .\nthe mead'
+    temple+garden -> want(sacred hidden) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(hollow barren) got' gentle remote .\nthe mirro'
+[eval FINAL held] strict=0.000 loose=0.000 (n=60)
+    clock+mirror -> want(hollow quiet) got' gentle sunlit .\nthe mirro'
+    forest+temple -> want(ancient sacred) got' hidden sunlit .\nthe mirro'
+    desert+river -> want(barren gentle) got' fragrant narrow .\nthe tem'
+    harbor+forest -> want(misty ancient) got' silver hollow .\nthe candl'
+    ocean+letter -> want(silver golden) got' shadowy sunlit .\nthe towe'
+[eval FINAL seen-shuffled-target] strict=0.933 loose=0.933 (n=60)
+    village+lantern -> want(ancient ancient) got' ancient ancient .\nthe tem'
+    harbor+mountain -> want(hollow quiet) got' hollow quiet .\nthe candle'
+    garden+clock -> want(shadowy barren) got' shadowy barren .\nthe mead'
+    temple+garden -> want(lofty peaceful) got' lofty peaceful .\nthe moun'
+    clock+desert -> want(golden rapid) got' gentle remote .\nthe mirro'
+{"arm": "shuffle", "arch": "convd", "steps": 3000, "params": 2523904, "final_loss": 0.21944764256477356, "directional": true, "device": "cuda", "seen_true_strict": 0.0, "seen_true_loose": 0.016666666666666666, "held_strict": 0.0, "held_loose": 0.0, "seen_shuffled_strict": 0.9333333333333333, "seen_shuffled_loose": 0.9333333333333333}
