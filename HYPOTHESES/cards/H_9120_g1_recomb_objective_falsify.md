@@ -39,6 +39,16 @@ recomb-objective(L4 aux loss)마저 G1 재조합을 못 연다 = **objective-flo
 
 **∴ objective-floor는 confident-terminal 아니라 DIRECTIONAL-TERMINAL** — CRUX A11 측정 전까지. numpy A.novel=0은 유효 결과이나 no-slot 아키텍처 위 objective만 측정한 것(c9 정직).
 
+## census 정정 (완전성 census w05mjztej · terminal PREMATURE)
+5각 census(HYPOTHESES·ING·memory·조합매트릭스·6PR갭)가 이 세션 결론을 정직 정정(c9): operator/readout·CE-objective 축은 진짜 소진(~20 floored under DPI meta-law, 재발사=tune-to-green)이나 **terminal은 premature** — escape 공간이 dry 아닌 bounded-finite residual. A11-무관 HIGH 렌즈 3개 놓침:
+- **coverage-density ([[H_6182]]-6185 + H_6187 counterexample)**: arch-independent POSITIVE 신호. 위 벽돌파가 'coverage'를 [[H_6190]](ECHO-ONLY)로 basin-preserving 기각했으나 = **틀린 instrument**(under-covered ckpt의 decode-side grow-window). 진짜 recipe(RF L4→8 + combination-coverage corpus 30-50 concepts held-out ≥30 reps/pair + frozen G1 retrain·재judge) 미발사 = **이 세션 최강 놓친 positive**.
+- **coherent-trunk recomb-objective clean 재측정**: 본 L4 FALSIFY가 **G0-garbled ckpt + all-arms-at-floor 기반 = MEASURED-BUT-CONFOUNDED**. G0-🟢 trunk에서 G0-gate+γ-sweep로 clean 재측정 = **A11의 전제**(A11이 CE-replace를 쓰는 이유가 additive-aux 실패인데, 그 실패가 confounded).
+- **measurement-validity re-audit**: 303M frozen G1 bar(exp1_g1.py grow-window)에 held-out compositional split 없음 + 3rd engine-native leg(live-core own-GEMM `.hexa`) 미측정(현 terminal = numpy+torch 2 mirror = DIRECTIONAL).
+- MED: additive-slot decoder consistency(Wiedemer proof-guaranteed)·neurosymbolic composer([[H_6175]] 유일 DPI-breaker)·gradient-free-G objective(engine_g reverse, zero 측정)·forward-model lane15 learned front-loading.
+- DUP: deep-RF-L8 ConvMoE = [[H_1598]] FALSIFIED(depth L4→L8 G1 ZERO). ING #42492882 등은 board 미scrub DUP(별개 렌즈 아님).
+
+∴ **objective-floor = directional-terminal 유지, 단 "confident terminal" 승격 전 coverage-density + coherent-trunk 재측정 + measurement-validity 선행 필수**. census 상세 = `state/g1_completeness_census/CENSUS.md`.
+
 ## artifacts
 - `state/g1_gamma_objective/` (verdict + out-files)
 - `scratchpad/exp1/EXP1_VERDICT.txt`, `exp1_g1.py`
