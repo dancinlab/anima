@@ -125,6 +125,8 @@ fn anima_usage() {
     println("                                                  --det = byte-exact/reproducible (default fast)")
     println("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     println("                                                  multi-GPU lever-sweep (arms×objectives)")
+    println("  anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
+    println("                                                  procedural training-corpus builder (G1 data-format lever)")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -143,6 +145,11 @@ fn anima_usage() {
     println("                            matrix, GPU-pinned round-robin; per cell TRAIN (cli/train.py)")
     println("                            then G0-G6 MEASURE (cli/evaluate.py), aggregate to")
     println("                            SWEEP_SUMMARY.md. Always python. → cli/sweep.py.")
+    println("  corpus                  : procedural training-corpus generator (derivtrace|flat) — the")
+    println("                            data-format G1 lever (H_9124: DEF/RULE/OUT trace makes")
+    println("                            echo=composition). synth string only, no torch/LLM (p1-p8).")
+    println("                            NOTE chat corpus != this (chat = a_chat_registers 4-cell HF")
+    println("                            datasets → anima train). Always python. → cli/corpus.py.")
 }
 
 // anima_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
