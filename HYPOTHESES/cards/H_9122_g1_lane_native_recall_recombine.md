@@ -1,11 +1,13 @@
 # H_9122 — lane-native G1: hippo 4/4 = recombination이냐 stored-pair recall이냐 (결정실험 사전등록)
 
-> **tier:** 🧱 **DIRECTIONAL-MISS** (recall ≠ recombination · mouth-G1 ceiling 재확인) — FROZEN-1 실행(numpy DIRECTIONAL mirror, immune 랜 ops reference-match): novel cross (A,D)/(B,C)/(A,C) **0/3 spans-both**(전부 ABSTAIN, L2 0.81~0.93 ≫ thr 0.15) · control 깨끗(C-RECALL-BASELINE verbatim FIRE=스토어 무죄 · C-SCRAMBLE ABSTAIN=over-fire 없음 · C-WRONG-D 무fabrication) · SV3=recall(A)·recall(D) 각 cell 1개, 두 value 연접 op **부재** = access≠binding 배선 확증. ⇒ **lane 4/4는 stored-pair RECALL, novel recombination 아님** → mouth-G1 confident-ceiling 굳음, C1(c) param-ES가 유일 잔여 escape(cost-gated). **engine-native follow-on**: immune ops `.hexa` byte-exact 재측정(현 numpy=DIRECTIONAL, a_engine_native_learning). · **wired:** N/A (escape 미승격)
+> **tier:** 🧱 **ENGINE-NATIVE MISS** (recall ≠ recombination · mouth-G1 ceiling 재확인) — FROZEN-1 실행(numpy DIRECTIONAL mirror, immune 랜 ops reference-match): novel cross (A,D)/(B,C)/(A,C) **0/3 spans-both**(전부 ABSTAIN, L2 0.81~0.93 ≫ thr 0.15) · control 깨끗(C-RECALL-BASELINE verbatim FIRE=스토어 무죄 · C-SCRAMBLE ABSTAIN=over-fire 없음 · C-WRONG-D 무fabrication) · SV3=recall(A)·recall(D) 각 cell 1개, 두 value 연접 op **부재** = access≠binding 배선 확증. ⇒ **lane 4/4는 stored-pair RECALL, novel recombination 아님** → mouth-G1 confident-ceiling 굳음, C1(c) param-ES가 유일 잔여 escape(cost-gated). **engine-native follow-on**: immune ops `.hexa` byte-exact 재측정(현 numpy=DIRECTIONAL, a_engine_native_learning). · **wired:** N/A (escape 미승격)
 >
 > **핵심:** hippo lane(`ImmuneMemory`)이 off-cue D를 4/4 정확 retrieve(H_9118)한 것이 **novel recombination**이냐 **stored-pair recall**(H_1231 G-recall)이냐가 미판별. 이 하나의 $0 결정실험이 세 escape 좌표 전체(C1 objective-replace·C2 lane-native gate·(iii) lane→emit)의 운명을 가른다. **구조적 사실(정직 편향, c9): `immune_memory_recall`은 winner cell_value 1개만 반환하고 두 value 합성/연접 op가 core에 부재 = access≠binding 배선 증거 → MISS 예측 우세.** 단 $0·crux·bar-frozen이라 즉시 실행 가치.
 >
 > **발산 provenance:** L1(4축→3좌표)·L2(→단일노드, repo 접지)·L3(→실행스펙, reference-match) = `sidecar fable` 3단 위임. 종합 = `state/g1_nested_diverge/SYNTHESIS.md`.
 > **slug:** `g1_nested_diverge` · **date:** 2026-07-04
+
+> **engine-native 승격(workflow wfbes89af):** `state/g1_nested_diverge/frozen1_engine_native.hexa`가 live `core/engine_cli.hexa` §ImmuneMemory ops로 `hexa run`(303M·torch 無, grep-clean). novel cross 0/3 ABSTAIN, recon_err numpy와 4-decimal byte-match → DIRECTIONAL→**ENGINE-NATIVE** 승격. compose-read op 부재 확정.
 
 ## FROZEN-1 — 결정실험 (측정 전 고정 · $0 mini-runnable)
 **Write-phase:** 4 원자개념 {A,B,C,D}를 2 pair로 분리저장 — `immune_memory_new_text(keyAB,valAB)` + `immune_memory_bind_text(mem,"C D",valCD)`. (A,D)는 한 번도 co-store 안 됨. `immune_memory_cells`로 2 cell 불변식 검증.
