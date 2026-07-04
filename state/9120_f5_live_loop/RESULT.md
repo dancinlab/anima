@@ -45,7 +45,7 @@ Layer-1/2 bars unmeasured. tier would be DIRECTIONAL-on-external-oracle once emi
 ## Follow-on to close F5
 Run on a toolchain where this savant `.clm` decodes with concept-conditioning intact:
 (a) reproduce the H_9111 clean-decode combo (v0.559–0.577 hexa **with** its self/+stdlib source AND a matching
-`core/` snapshot), OR (b) bisect + fix the origin/main `clm_decode` regression that collapses conditioning under
+`core/` snapshot), OR (b) bisect + fix the origin/main `core/decode`(canonical) regression that collapses conditioning under
 v0.608 (positive control = volcano must re-produce its rich definition), OR (c) provide the sm_120 own-GEMM
 prebuilt fold so GPU decode is byte-correct. Then the built `emit_gen_w.hexa` + oracle rank + `verdict_f5.hexa`
 run end-to-end unchanged.
