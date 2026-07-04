@@ -1,0 +1,27 @@
+=== rung4 daemon-INTEGRATED refsel consult A/B (engine-native, real recall) ===
+--- ARM OFF (refsel off) ---
+  MEASURE t=0 refsel=0 contra=0 g_ground=1 recall_nonempty=0 rs=0 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=1 refsel=0 contra=1 g_ground=0 recall_nonempty=0 rs=-1 out_ground=0 out=[the wyrmhold ledger is sealed at vault ZZ-0000 forever.]
+  MEASURE t=2 refsel=0 contra=0 g_ground=1 recall_nonempty=0 rs=0 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=3 refsel=0 contra=1 g_ground=0 recall_nonempty=0 rs=-1 out_ground=0 out=[the vault MM-5555 holds the sealed ledger now]
+--- ARM ON-buggy (refsel on · recall query=drifted g_text) ---
+  MEASURE t=0 refsel=1 contra=0 g_ground=1 recall_nonempty=0 rs=0 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=1 refsel=1 contra=1 g_ground=0 recall_nonempty=0 rs=-1 out_ground=0 out=[the wyrmhold ledger is sealed at vault ZZ-0000 forever.]
+  MEASURE t=2 refsel=1 contra=0 g_ground=1 recall_nonempty=1 rs=0 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=3 refsel=1 contra=1 g_ground=0 recall_nonempty=0 rs=-1 out_ground=0 out=[the vault MM-5555 holds the sealed ledger now]
+--- ARM ON-FIX (refsel on · recall query=anchor mem_text) ---
+  MEASURE t=0 refsel=1 contra=0 g_ground=1 recall_nonempty=1 rs=0 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=1 refsel=1 contra=1 g_ground=0 recall_nonempty=1 rs=1 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=2 refsel=1 contra=0 g_ground=1 recall_nonempty=1 rs=0 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+  MEASURE t=3 refsel=1 contra=1 g_ground=0 recall_nonempty=1 rs=1 out_ground=1 out=[zephyrine: the wyrmhold ledger is sealed at vault QX-7741 foreve…]
+
+OFF grounded(out QX-7741)=2 / 4  (contra-ticks=2)
+ON  grounded(out QX-7741)=2 / 4  (recall_hit ticks=0 · real-recall-nonempty=1)
+FIX grounded(out QX-7741)=4 / 4  (recall_hit ticks=2 · real-recall-nonempty=4)
+DELTA buggy (ON-OFF)=0   DELTA FIX (ON-FIX − OFF)=2
+
+--- 진단 ---
+ON-buggy (recall query=drifted g_text): real-recall-nonempty=1 → recall fired
+ON-FIX   (recall query=anchor mem_text): real-recall-nonempty=4 → grounded recall
+
+VERDICT: 🟢 GREEN — recall query 근본수정(g_text→mem_text anchor)로 daemon-integrated consult가 drift 교정 (Δ_FIX=2, real immune recall fired grounded). buggy arm Δ=0이 근본원인 실증.
