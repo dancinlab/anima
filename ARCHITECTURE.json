@@ -13569,6 +13569,13 @@
         "value": "cheap toy STEP-0 사전선별에서 'baseline(DERIV/ADD) 초과' frozen bar는 toy가 포화(saturated)면 판별 불가능=KILL이 falsification 아닌 ceiling artifact. real-G1-동형 clean toy는 additive-control만으로 이미 0.94(near-ceiling, γ STEP-0 실측)라 derivtrace도 천장 근방 → 어떤 레버/조합도 beat-DERIV 못 넘는 게 당연(2026-07-05 9-probe workflow wf_a7efd6b2 전수 KILL: V2·V11·V13·L2·V12·B1·B2·B3 모두 lever margin≤DERIV, 예 B2 0.243≤0.307). γ에서 ADD=0.94 이미 봤는데 같은 near-saturated toy 하네스를 9 probe에 재사용하며 beat-baseline bar를 걸어 재발.",
         "threshold": "재발조건=beat-baseline bar를 headroom 미검증 saturated toy에 걸어 mass-KILL을 DIRECTIONAL-falsified로 박제. 해결=toy 사전선별 발사 전 반드시 baseline/control 절대점수 실측 → near-ceiling(>0.85·max)이면 판별 헤드룸 부재 = ① toy 강화(개념수↑/깊이↑/노이즈로 baseline을 mid-range로 끌어내림) 또는 ② bar를 'beat baseline'→'absolute floor(레버 단독 임계 도달)'로 전환 또는 ③ saturated-toy KILL은 INCONCLUSIVE(measure-artifact, break-walls class-a)로 적고 falsification 금지. toy fail→303M 판정은 predictor(ρ/σ/κ/M scale-invariant)로만.",
         "source": "state/g1_gamma_engine_native/step0_gamma_bind_kill.py"
+      },
+      {
+        "id": "robust-result-md-1",
+        "state": "pos-conv",
+        "value": "G1 best_distinct 게이트를 단일 held-out 쌍으로 측정하면 bd=2 PASS가 threshold artifact 재발: H_9124 derivation-trace가 {c0,c1} 단일쌍서 bd=2>ms=1 PASS(최초 G1 lift 주장)였으나 4개 추가 held-out 쌍({0,1}{0,4}{1,3}{2,3}) 전부 deriv bd=1 g1_pass=FALSE·flat보다 낮음=재현 실패. bd∈{1,2,3} 이산이라 단일쌍 bd=2는 sampler/pair 우연. 이 아티팩트가 메타법칙(H_9126)의 training-layer 근거를 허위로 세웠다가 robustness에서 붕괴.",
+        "threshold": "재발조건: G1 lift/bd verdict를 단일 held-out 쌍으로 박제하면 threshold artifact(bd 이산·pair 우연) 위험. 해결=leave-one-pair-out ≥4쌍 multi-pair robustness(각 쌍 memorization-free warm-FT+eval)로 재현 확인 후에만 DIRECTIONAL→SUPPORTED. flat baseline과 대비(deriv>flat 이어야 lever). H_9124 tier=DIRECTIONAL은 이미 '1쌍·artifact 배제 follow-on' caveat 명시했으나 메타법칙이 이를 training-layer 근거로 조기 채택=선-확증 함정.",
+        "source": "state/g1_train_wallbreak/derivtrace_robust/ROBUST_RESULT.md"
       }
     ]
   }
