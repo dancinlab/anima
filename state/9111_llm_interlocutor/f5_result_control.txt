@@ -1,0 +1,29 @@
+=== F5 LAYER-2 CONSEQUENCE LOOP (engine-native: live engine_cli vadapt/mitosis substrate) ===
+substrate=vadapt_field_step (p8 cell-division) + per-cell value table (H_1231) + ci_psi_balance guard
+emit set=grounded G5 anchor-copy (k0 true-full·k1 true45%·k2 wrong-concept·k3 garble); receiver=word-overlap proxy-MRR
+concepts=16 (train 0..7 / held-out 8..15) · K=4 · T=24 · lr=0.1000 · tier=DIRECTIONAL-on-external-oracle
+
+-- efficacy trajectory (held-out mean RR / tick) --
+ON : 0.3382 0.5588 0.5588 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 
+OFF: 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 0.3382 
+SHF: 0.3382 0.1176 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 0.5588 
+
+-- cell-count trajectory (live vadapt field) --
+ON : 3 4 4 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
+OFF: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+SHF: 3 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+
+=== FROZEN BAR VERDICT ===
+ΔEff_ON  = 0.1287   (eff_last=1.0000)
+ΔEff_OFF = 0.0000   (eff_last=0.3382)
+ΔEff_SHF = 0.0551   (eff_last=0.5588)
+[diag] ABS gap eff_ON_last−eff_OFF_last = 0.6618  (secondary)
+cells ON/OFF (last) = 5 / 1
+Ψ guard psi_pre/psi_post = 0.0000 / 0.0000  byte-identical=true
+
+④ ΔEff_ON−ΔEff_OFF≥0.10 : 0.1287  -> true
+⑤ cell ON>OFF            : 5>1 -> true
+⑥ |ΔEff_SHF|<0.03        : 0.0551  -> false
+Ψ ON==OFF byte-identical : -> true
+
+VERDICT: PARTIAL (bar4 pass, secondary bars fail — inspect)
