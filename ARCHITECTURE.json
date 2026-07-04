@@ -1264,7 +1264,14 @@
                               {
                                 "name": "referential-correctness 축 OPENED (H_9125 🟢 DIRECTIONAL)",
                                 "id": "exocon-refcorrect",
-                                "detail": "F5 벽(reference feature-inaccessibility) 열림: CONTRADICTION-KEYED SELECTION engine-native($0 f5_loop3_contra.hexa). held-out efficacy ON=1.0 vs OFF/FLAT/DECOR=0.6765 gap+0.3235. FLAT(원벽)미상승∧DECOR(shuffled)붕괴∧Ψ disjoint=earned. metric-caveat: pre-reg ΔEff-slope degenerate(즉시-step)→absolute-gap faithful. grounded 한정(held-out novel=순환 경계). follow-on=absolute-gap frozen 재등록. +implement 착륙: ABSOLUTE-GAP frozen GREEN(ON−OFF 0.3235∧FLAT<0.10∧DECOR≤0.03∧NGRD<0.10). grounded-scope 실증(NGRD held-out 미접지→baseline=(ii)순환 경계 measured). contradiction-keying grounded 한정."
+                                "detail": "F5 벽(reference feature-inaccessibility) 열림: CONTRADICTION-KEYED SELECTION engine-native($0 f5_loop3_contra.hexa). held-out efficacy ON=1.0 vs OFF/FLAT/DECOR=0.6765 gap+0.3235. FLAT(원벽)미상승∧DECOR(shuffled)붕괴∧Ψ disjoint=earned. metric-caveat: pre-reg ΔEff-slope degenerate(즉시-step)→absolute-gap faithful. grounded 한정(held-out novel=순환 경계). follow-on=absolute-gap frozen 재등록. +implement 착륙: ABSOLUTE-GAP frozen GREEN(ON−OFF 0.3235∧FLAT<0.10∧DECOR≤0.03∧NGRD<0.10). grounded-scope 실증(NGRD held-out 미접지→baseline=(ii)순환 경계 measured). contradiction-keying grounded 한정.",
+                                "children": [
+                                  {
+                                    "name": "🌌 criterion re-coordination 메타법칙 (H_9126, feature-accessibility)",
+                                    "id": "criterion-recoordination-metalaw",
+                                    "detail": "벽 판정기준 C가 substrate feature 좌표계 밖이면 basin-preserving 변형 다 실패, C를 emit-내부 명시 feature로 재좌표화할 때만 열림(DPI 쌍대). H_9124(조합→trace)·H_9125(reference→contradiction) 통합+음성 census ~15건 retrodict. 경계=relocation(grounded 한정). 사전등록 P1(G6 contradiction-keyed $0 최우선·H_9125 contradiction=fals detector 재적용)·P2(trace-ablation)·P3(경계). descriptive(P1-P3 HIT 전)."
+                                  }
+                                ]
                               }
                             ]
                           }
@@ -13498,6 +13505,13 @@
         "value": "git worktree add 가 실패(브랜치 선점·lock·경로 잔존)해도 후속 명령이 shared main worktree 의 cwd(대개 stale 브랜치)에서 그대로 실행되어, 의도한 isolated worktree 대신 main-checkout 브랜치로 commit/push/pr-cycle 이 나가는 반복 결함. 2026-07-04 이 세션에 ING 마커가 stale 브랜치에 먼저 기록되고 이어 pr-cycle 이 stale 브랜치를 push해 origin/main 대비 4700줄 divergent PR #2945 가 열림(머지 시 main 대량 revert=near-disaster, 즉시 close). GIT-ADD-ALL-SHARED-MAIN 가드의 'cd-fallback incident' 와 동일 근인(shared main cwd)로의 두번째 경로.",
         "threshold": "재발조건=git worktree add 직후 존재/cwd 검증 없이 mutating 명령(ing/commit/push/pr-cycle) 실행. 해결=worktree add 뒤 반드시 [ -d \"$WT\" ] && cd \"$WT\" && [ \"$(pwd)\" = \"$WT\" ] 로 존재+cwd 일치를 확인한 뒤에만 진행(별도 Bash 호출은 cwd 미유지 → 매 호출 절대경로 cd+검증). 실패 시 즉시 중단, shared main 에서 절대 commit/push 금지. 사고 시 gh pr close + origin/main HEAD 무결 확인.",
         "source": "git-worktree"
+      },
+      {
+        "id": "hypotheses-jsonl-1",
+        "state": "pos-conv",
+        "value": "rebase 충돌 해소(다중 세션 병렬 origin/main 진행) 시 HYPOTHESES.jsonl 인덱스 행이 silent 유실 재발: H_9125 카드는 origin/main에 머지됐으나 jsonl 행은 없음(a_hypothesis_register 2표면 불변식 위반). 원인=rebase가 origin/main jsonl(내 행 없는) 위에 재적용되며 내 append 행이 conflict/reorder로 드롭. 카드↔jsonl 2표면 drift.",
+        "threshold": "재발조건: 병렬세션서 rebase/충돌해소 후 카드 신설/갱신 PR 머지 시 — jsonl 행이 실제 origin/main에 들었는지 grep 교차확인 필수(git show origin/main:HYPOTHESES/HYPOTHESES.jsonl | grep '\"id\":\"H_XXXX\"'). 유실이면 카드에서 jsonl 행 복원. 해결=jsonl은 append-only라 rebase 시 --theirs 후 내 행 재삽입, 또는 python tool/_build_hyp_jsonl.py로 카드에서 재생성. pr-cycle 전 자가점검 git ls-files 2표면 불변식.",
+        "source": "HYPOTHESES/HYPOTHESES.jsonl"
       }
     ]
   }
