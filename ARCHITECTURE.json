@@ -13635,6 +13635,13 @@
         "value": "hexa-lang forge_dispatch_* builtin 변경은 소스편집+로컬 hexa build로 검증 불가 — hexad는 self-host라 자기 codegen을 embedded로 들고 use\"codegen\"를 설치본(stale)으로 resolve; 새 codegen self-apply엔 self-host GRADUATION(gen3→gen4, CI가 함) 필요. 바이너리 strings로 mapping 존재 확인. byteeq gate는 self/ 미호출 builtin에 byteeq-neutral이라 misplaced binding도 green-but-broken 통과.",
         "threshold": "재발: 새 forge_dispatch 구현하고 로컬 hexa build(RC=0)만 보고 'lowering 됨' 결론. 해결: (1)consumer-compile smoke(test/native_build/forge_<op>_builtin_smoke.hexa)가 builtin을 CALL하도록 작성+selfhost-byteeq-gate 배선 → CI graduated 빌드가 lowering+link 검증 (2)codegen if-block을 실제 arg수 len==N 블록에 배치(layernorm #4339 오배치 방지).",
         "source": "self/codegen.hexa"
+      },
+      {
+        "id": "hexa-cloud-1",
+        "state": "pos-conv",
+        "value": "pod-누수(leak) 체크 시 hexa cloud의 'registry (project attribution)' 표를 live로 오독하면 false-leak 알람 반복 — registry는 파괴된 pod의 DPH/AGE/STATUS(READY·RENTING)를 등록시 캐시로 계속 표시(AGE 117~134h 5일+ pod가 @anima/@clm303로 떠 보임)해 대형 누수처럼 착시. 실 live는 오직 'vast: list — N instances'/'runpod: list — N pods' authoritative API 카운트. 2026-07-05 이 세션 2회 재발('pod 방치 체크' 턴 ⚠unattributed + 지금 AGE 134h @anima 알람), 둘 다 authoritative list 확인 시 실 누수 0(live 4=내 fire 2+타세션 2).",
+        "threshold": "재발조건=pod-leak 판정에 registry attribution 표(DPH/AGE 有)를 live로 셈. 해결=반드시 'vast: list — N instances'+'runpod: list — N pods' authoritative 카운트만 live로, registry 표는 ledger(파괴분 캐시 잔재 포함)라 무시. 각 registry pod의 실 live는 authoritative list ID 대조로만. 각 fire agent의 실 생존은 output(0B=미완)이 아닌 live transcript(agent-<id>.jsonl) mtime 성장으로. 근본=hexa cloud registry 파괴-pod 미scrub → hexa-lang upstream-fix ING.",
+        "source": "hexa-cloud"
       }
     ]
   }
