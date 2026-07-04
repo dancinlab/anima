@@ -13267,7 +13267,7 @@
         "name": "G0-G6 능력 게이트 사다리 (capability gates)",
         "role": "anima 능력검증 SSOT · 측정=`anima evaluate --py <clm>`(engine-native terminal-eligible, byte-parity, p7=출력이 증거) · 각 G* 는 차일드(현황 verdict + 진화 기록)로 update-in-place 관리 · ★G0 gating(🔴→하위 무효) · a7b_pass=G0∧G1∧G2 on 1 ckpt.",
         "id": "capability-gates-g0-g6",
-        "detail": "NOT convergence.records(그건 오류-재발 추적). 새 능력실험 = 해당 G* 의 현황/진화 차일드를 update-in-place 진화(옛 서술 교체, 이력=CHANGELOG+git). 수렴상태 태그: POS-CONV(🟢)·NEG-CONV(🧱)·IN-PROG(진행/검토). 측정-무결성 함정은 convergence train-py-3/4 교차참조.",
+        "detail": "NOT convergence.records(오류-재발 추적). 새 능력실험 = 해당 G* 현황/진화 차일드 update-in-place(옛 서술 교체, 이력=CHANGELOG+git). 수렴태그: POS-CONV(🟢)·NEG-CONV(🧱)·IN-PROG. 측정-무결성 함정은 convergence train-py-3/4 교차참조. G0/G6 미탐레버 인덱스(2026-07-05 브레인스토밍)=gate-g6-ideation-status detail(H_6163·H_6192~6196), 전부 DPI-predicted 🧱.",
         "children": [
           {
             "name": "G0 COHERENCE (또박또박)",
@@ -13279,7 +13279,7 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g0-coherence-status",
-                "detail": "[IN-PROG] 측정타당성 확정 · valid G0🟢 window 재수립 진행. clm303_clean py-terminal 5/5 PASS · jamo-mitosis(H_1316/1321) 🟢. floor 는 REFUTED(overfit/undertrain artifact, 근본벽 아님). ★G0🔴→하위 무효."
+                "detail": "[IN-PROG] 측정타당성 확정. clm303_clean py-terminal 5/5 PASS·jamo-mitosis(H_1316/1321) 🟢. floor=REFUTED(artifact). 미탐: H_6196 G0 Φ-integration sufficiency 재정의(byte-parity≠통합 충분·IIT4 faithful·a_phi_iit4_tool). ★G0🔴→하위 무효."
               },
               {
                 "name": "진화 기록",
@@ -13299,7 +13299,7 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g1-recombination-status",
-                "detail": "[NEG-CONV] trunk-OBJECTIVE-bound 벽 — arch·depth·RF·binding-lane·data·objective·readout·combiner 전 family 전수 floor. IN-PROG 잔여 = γ trained-constructive-bind(H_1823 cost-gated) + ByteGPT-trunk 위 재측정."
+                "detail": "[NEG-CONV] trunk-OBJECTIVE-bound 벽 — arch·depth·RF·binding-lane·data·objective·readout·combiner·target(비교환) 전 family floor(H_9131 종결). γ H_1840=torch-mirror 🧱 DIRECTIONAL(FAIR 0/3), engine-native 미측정=잔여 reopen(trunk-obj 바꾼 ckpt서만). 잔여 저비용=coverage-density(H_9128 δ_FM=G1 동형, form-priming)."
               },
               {
                 "name": "진화 기록",
@@ -13407,7 +13407,7 @@
                 "name": "현황 verdict",
                 "role": "",
                 "id": "gate-g6-ideation-status",
-                "detail": "[NEG-CONV] distinct(breadth) 축만 mechanism-GREEN, falsifiability 축은 CAPACITY 벽(우세). H_1362 FALS=1.0 은 torch-artifact — engine-native H_1590 🔴 이 전 seed 로 반전.",
+                "detail": "[NEG-CONV] distinct(breadth)만 mechanism-GREEN, falsifiability=CAPACITY 벽. H_1362 FALS=1.0=torch-artifact(H_1590 🔴 반전). DPI 메타법칙(target 교환가능 bag→결합연산자 INERT, real 303M H_9131 lane-보편 확정)으로 G1/G6 수렴. 미탐레버(2026-07-05 브레인스토밍, DPI-predicted 🧱): H_6163 falsifier-lane·H_6192 진단분기·H_6193 neuromod×G6·H_6194 consequence-return·H_6195 KOSMOS self-falsify·h1129(⛔infra). γ H_1840=torch-mirror 🧱(engine-native 미측정, 잔여 reopen).",
                 "verdict": "[2026-07-05 g1g6 공동 커버리지 303M DIRECTIONAL] δ_FM(comparator∧measurable 40byte 접속밀도) 밀집 코퍼스로 warm-FT시 held-out G6 falsifiable=6 열림(LO=0)이나 continuations=form-priming(claim-form 템플릿 암기치환)=1-항 FORM 검출기 게임(measurement-metalaw FORM tunable). ability 아님 → G6 벽=trunk-objective-deep 강화. terminal=canonical gen40+shuffle-bind+multiseed. H_9128."
               },
               {
@@ -13799,6 +13799,13 @@
         "value": "struct에 새 필드 추가 시 named-init 부분리터럴 생성부(필드 일부만 명시)는 hexa typecheck를 통과하나 full 콜드컴파일 codegen에서 'hexa_codegen_error__missing_field'로만 노출 — daemon-entry(anima <ckpt>)를 실제 full-binary로 컴파일해야 발견. EngineConfig에 forward_model·refsel 추가 시 cli/anima.hexa tr_cfgON/OFF·engine_cli_smoke가 4-field라 누락→typecheck PASS인데 daemon 빌드 codegen FAIL(#2977). rung3/3.5는 typecheck+hexa run 부분경로만이라 미포착, rung4 full-compile서 최초 노출.",
         "threshold": "재발조건: EngineConfig 등 struct에 필드 추가 후 named-init 생성부 lockstep 누락→typecheck 녹색인데 daemon full-binary 컴파일서 missing_field codegen error. 해결=struct 필드 추가 시 grep 'StructName {' 전 생성부 전수 확인(부분 named-init 금지, 전 필드 명시) + daemon-entry는 typecheck 아닌 full 콜드컴파일(pool or 로컬 hexa run <daemon>)로 QA. anima daemon은 로컬 runtime FFI-off라 pool 필요.",
         "source": "cli/anima.hexa"
+      },
+      {
+        "id": "architecture-json-1",
+        "state": "pos-conv",
+        "value": "stale main checkout(origin/main 대비 N-behind) 위에서 H_번호 할당/SSOT 편집 → origin/main 최신 번호·디렉토리명(UNIVERSE→HYPOTHESES 리네임)과 충돌. 본 세션: stale(289 behind)에서 H_6164~6168 할당했으나 origin/main 은 H_6191 까지+UNIVERSE→HYPOTHESES 리네임 → fresh worktree off origin/main tip 에서 H_6192~6196 재할당.",
+        "threshold": "stale main(base behind origin)에서 HYPOTHESES/ARCHITECTURE 편집 전: git fetch + 최대 H_번호(git show origin/main:HYPOTHESES/HYPOTHESES.jsonl | tail)+디렉토리명 확인; 아니면 GIT-EDIT-STALE-MAIN blocker·번호충돌 재발.",
+        "source": "ARCHITECTURE.json"
       }
     ]
   }
