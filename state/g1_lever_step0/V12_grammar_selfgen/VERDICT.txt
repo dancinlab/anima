@@ -1,0 +1,107 @@
+================================================================================
+G1 LEVER V12 — grammar-verified self-gen (non-STaR) — STEP-0 CHEAP KILL-GATE
+================================================================================
+date: 2026-07-04   host: mini (numpy 2.4.6, torch-free = terminal-eligible)   cost: $0
+H: H_9127 (g1_lever_divergence campaign) · lever V12_grammar_selfgen
+scope: TOY controlled numpy discriminator => DIRECTIONAL pre-screen
+       (a_engine_native_learning: NOT 303M engine-native, NOT terminal). Purpose =
+       gate GPU spend before STEP-1 full 303M engine-native.
+
+------------------------------------------------------------------------------
+WHAT WAS TESTED (the lever's ONE nuance)
+------------------------------------------------------------------------------
+V12 = grammar-VERIFIED self-generation (non-STaR). The model self-generates
+derivations on CORPUS-ABSENT pairs, takes its own top-2, and keeps ONLY the
+grammar-passing ones (2 distinct constituents of DIFFERENT type A x B) — filter is
+the GRAMMAR, not the ground-truth answer (that is what makes it non-STaR). Kept
+derivations are self-labeled (model's own top-2) and folded back into training to
+manufacture corpus-absent combinations = targets G2 novelty.
+
+Generator sigma-collapse gate (crux): measure sigma (rule-partner diversity) of
+the ACCEPTED self-gen corpus. sigma->1 => generator degenerate => G2 invalid.
+Pre-registered prediction: sigma maintained (>1) => G2 novelty up.
+
+Arms (all share ONE additive unbinding trunk; differ in DATA pipeline only):
+  ADD   = additive-control (MATCHED to V12): superposed input, must unbind, seen
+          pairs only, NO augmentation = FLOOR.
+  DERIV = derivtrace baseline (campaign's only surviving G1 lift): derivation-trace
+          echo channel h += Ei+Ej so both-emit becomes an ECHO (echo=composition,
+          CE=echo broken). Positive control; sets the deriv_margin bar.
+  V12   = the LEVER: ADD trunk + grammar-filtered self-gen aug (corpus-absent).
+
+------------------------------------------------------------------------------
+FROZEN BAR (set before measuring; no post-hoc move — c9/p7)
+------------------------------------------------------------------------------
+real-G1-isomorphic toy: N=24, D=64, heldout=0.45, 4000 step, seeds {7,4302,4303}.
+per arm on HELD-OUT composed pairs: best_distinct (both constituents in top-2,
+{0,1,2}), max_single (=1), recomb_rate (fraction with both = margin score).
+  deriv_margin = DERIV.recomb - ADD.recomb
+  lever_margin = V12.recomb   - ADD.recomb
+  PASS iff V12.bd>=2 AND V12.bd>max_single AND lever_margin > deriv_margin.
+  KILL iff V12.bd<=max_single OR lever_margin <= deriv_margin.
+gradient-check: max rel-grad-err 1.6e-7 (echo off) / 2.2e-7 (echo on) = backward OK.
+
+------------------------------------------------------------------------------
+RESULT (N=24, D=64, heldout=0.45, 4000 step, seeds {7,4302,4303})
+------------------------------------------------------------------------------
+  arm     recomb_rate (mean)   per-seed                 best_distinct  max_single
+  ADD     0.9487               0.954 / 0.938 / 0.954    2              1
+  DERIV   1.0000  <== ceiling  1.000 / 1.000 / 1.000    2              1
+  V12     0.9641               1.000 / 0.938 / 0.954    2              1
+
+  deriv_margin (DERIV - ADD) = +0.0513
+  lever_margin (V12  - ADD)  = +0.0154        <  deriv_margin
+  V12.best_distinct = 2 > max_single = 1      (recomb sub-condition MET)
+  V12 generator sigma = 4.85  (n_accepted=170, n_rejected=1.33)  => NOT collapsed
+  wall_sec = 180.1
+
+VERDICT: 🔴 KILL — DIRECTIONAL FALSIFIED (NO GPU rent).
+  V12 grammar-verified self-gen does NOT clear the derivtrace bar: lever_margin
+  +0.0154 < deriv_margin +0.0513. bd=2>ms=1 (it does recombine), but the value it
+  adds over the additive floor (+0.015 recomb) is a third of what the existing
+  surviving lever (derivtrace target-format, +0.051) already buys — so V12 is NOT
+  worth escalating over derivtrace. Frozen-bar KILL, no post-hoc move.
+
+------------------------------------------------------------------------------
+sigma-COLLAPSE GATE + rho/sigma/kappa/M PREDICTORS (judgment-criterion validation)
+------------------------------------------------------------------------------
+  rho echo-residual        = 0.0     (all singles in train; min-sufficient context
+                                       present => PASS-eligible)
+  sigma_train partner-div  = 6.583   (>1 => pair-binding learnable, not fixed)
+  kappa local-copy         = 0.0     (summed input, no literal token to copy)
+  delta_copy vs RF         = 1.0     (recomb needs RF spanning BOTH slots)
+  M memo-disadvantage      = 0.4514  (45% of A x B space held out, memo-unviable)
+  GENERATOR sigma (V12)    = 4.85    (self-gen partner diversity MAINTAINED)
+
+  Pre-registered base criterion (rho~=0 AND sigma_train>1) predicted = TRUE
+  (recomb-eligible). Actual = KILL. => the base 4-predictor criterion OVER-PREDICTS
+  for a data-manufacture lever: rho/sigma-eligibility is NECESSARY but NOT
+  SUFFICIENT; the decisive gate is the deriv-margin comparison, not the predictors.
+
+  The sigma-collapse prediction was itself FALSIFIED (a clean result): grammar-only
+  self-labels did NOT collapse the generator (sigma stayed 4.85, only 1.33 rejects/
+  gen) because the clean toy is easy enough that the model's self-gen is already
+  grammatical/diverse. So the KILL reason is NOT confirmation-loop collapse — it is
+  that manufactured corpus-absent examples add negligible recomb capacity when the
+  additive floor already recombines ~0.95. The G2 prediction ("sigma maintained =>
+  G2 novel up") held DIRECTIONALLY (sigma 4.85, V12 +0.015 over ADD) but sub-threshold.
+
+------------------------------------------------------------------------------
+HONEST SCOPE (c9)
+------------------------------------------------------------------------------
+- Same toy-too-easy caveat as the gamma STEP-0: ADD already recombines at 0.95 on
+  clean near-orthogonal concept tokens, so the real natural-text G1 wall does NOT
+  manifest and the ceiling (DERIV=1.0, V12=0.96) compresses the discriminable band.
+  What the toy DOES cleanly establish is the RELATIVE lever claim: grammar-verified
+  self-gen adds LESS recombination than the derivtrace target-format lever already
+  on record. That is exactly and only what STEP-0 needed to gate GPU rent.
+- DIRECTIONAL numpy (LIVE core/*.hexa UNTOUCHED). Not terminal. A full 303M engine-
+  native run (anima evaluate --py) could still differ IF the natural-text floor
+  makes ADD collapse (where V12's manufactured novelty might matter more) — but the
+  cheap gate finds NO evidence V12 beats derivtrace, so it is NOT prioritized for
+  the (explicit-go) GPU rent over derivtrace robustness follow-ups.
+
+teardown: N/A (no GPU rented — STEP-0 killed on mini CPU, $0).
+artifacts: state/g1_lever_step0/V12_grammar_selfgen/{step0_v12_grammar_selfgen_kill.py,
+           result.json, v12_run.log, VERDICT.txt}
+================================================================================

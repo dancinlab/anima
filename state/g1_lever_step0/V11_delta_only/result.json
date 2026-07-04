@@ -1,0 +1,100 @@
+{
+  "experiment": "G1 lever-1/V11 delta-only STEP-0 cheap engine-native kill (DIRECTIONAL)",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "H": 96,
+    "HELDOUT": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ]
+  },
+  "frozen_bar": "held-out mean distinct-correct constituents (bd in [0,2]); lever PASS iff bd_lever>bd_ADD AND bd_lever>max_single AND margin(lever-ADD)>margin(DERIV-ADD)",
+  "gradient_check_worst_rel_err": {
+    "ADD": 0.9999999944156668,
+    "DERIV": 1.1991909159709453e-07,
+    "V11": 1.9343535177681152e-07
+  },
+  "arms": {
+    "ADD": {
+      "held_out_best_distinct_mean": 1.9626666666666666,
+      "held_out_bd_seeds": [
+        1.976,
+        1.984,
+        1.928
+      ],
+      "held_out_bd2_rate_mean": 0.9626666666666667,
+      "train_bd_mean": 2.0,
+      "max_single_mean": 1.0
+    },
+    "DERIV": {
+      "held_out_best_distinct_mean": 1.8933333333333333,
+      "held_out_bd_seeds": [
+        1.864,
+        1.856,
+        1.96
+      ],
+      "held_out_bd2_rate_mean": 0.9013333333333332,
+      "train_bd_mean": 2.0,
+      "max_single_mean": 1.0
+    },
+    "V11": {
+      "held_out_best_distinct_mean": 0.928,
+      "held_out_bd_seeds": [
+        0.912,
+        0.936,
+        0.936
+      ],
+      "held_out_bd2_rate_mean": 0.0,
+      "train_bd_mean": 2.0,
+      "max_single_mean": 1.0
+    }
+  },
+  "ADD_held_out_bd": 1.9626666666666666,
+  "DERIV_held_out_bd": 1.8933333333333333,
+  "V11_held_out_bd": 0.928,
+  "max_single": 1.0,
+  "DERIV_baseline_margin": -0.06933333333333325,
+  "V11_lever_margin": -1.0346666666666664,
+  "lever_minus_deriv_margin": -0.9653333333333332,
+  "LEVER_PASS": false,
+  "KILL": true,
+  "predicted_pass": false,
+  "prediction_hit": true,
+  "predictors": {
+    "ADD": {
+      "rho": 1.0,
+      "sigma": 1,
+      "kappa": 0.0,
+      "delta_copy": 0,
+      "RF": 999,
+      "M": 1.0,
+      "note": "no slot staging; joint-decode floor"
+    },
+    "DERIV": {
+      "rho": 0.0,
+      "sigma": 24,
+      "kappa": 1.0,
+      "delta_copy": 1,
+      "RF": 999,
+      "M": 2.0,
+      "note": "2 slot-reads; both kappa=1 read-from-ctx; |tau|=4/desc2"
+    },
+    "V11": {
+      "rho": 0.023,
+      "sigma": 1,
+      "kappa": 0.5,
+      "delta_copy": 1,
+      "RF": 999,
+      "M": 1.0,
+      "note": "read i + computed delta; echo removed rho down; short tau -> M small"
+    }
+  },
+  "VERDICT": "KILL (V11 delta-only margin <= DERIV baseline margin => derivtrace NOT beaten; delta-encoding removes echo (rho down) but short target (M small) starves the margin => NOT a GPU-escalation candidate. DIRECTIONAL numpy toy, engine-native 303M NOT run.)",
+  "honesty": "DIRECTIONAL only - numpy toy sequential slot-readout, real-G1-homomorphic. a_engine_native_learning: 303M engine-native NOT run; terminal only after anima evaluate --py on live core/ decode. No tune-to-green; bar frozen pre-run.",
+  "wall_sec": 43.8
+}

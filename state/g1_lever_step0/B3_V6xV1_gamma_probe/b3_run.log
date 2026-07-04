@@ -1,0 +1,24 @@
+[d2 seed7] ADD=1.933 DERIV=1.678 V1=1.989 V6=1.978 V6xV1=2.000
+[d2 seed4302] ADD=1.933 DERIV=1.722 V1=2.000 V6=1.978 V6xV1=2.000
+[d2 seed4303] ADD=1.956 DERIV=1.767 V1=1.989 V6=1.978 V6xV1=2.000
+[d3 seed7] ADD=2.933 DERIV=2.489 V1=2.967 V6=2.978 V6xV1=3.000
+[d3 seed4302] ADD=2.911 DERIV=2.389 V1=2.978 V6=3.000 V6xV1=3.000
+[d3 seed4303] ADD=2.822 DERIV=2.289 V1=2.989 V6=3.000 V6xV1=3.000
+{
+  "V6xV1_bd_d2": 2.0,
+  "V6xV1_bd_d3": 3.0,
+  "margin_vs_ADD_d2": 0.0593,
+  "deriv_margin_d2": -0.2185,
+  "margin_vs_ADD_d3": 0.1111,
+  "deriv_margin_d3": -0.5,
+  "synergy_lift_d2": -0.2481,
+  "synergy_lift_d3": -0.5815,
+  "synergy_d2": false,
+  "synergy_d3": false,
+  "pass_depth2": true,
+  "pass_depth3": true,
+  "PASS": true,
+  "VERDICT": "ESCALATE (gamma-via-DATA-channel V6xV1 beats ADD & DERIV-margin on held-out recombination => STEP-1 303M gamma-data candidate)"
+}
+PRED d2: {'DERIV': False, 'V1': True, 'V6': False, 'V6xV1': True} | synergy_lift -0.2481
+PRED d3: {'DERIV': True, 'V1': True, 'V6': True, 'V6xV1': True} | synergy_lift -0.5815

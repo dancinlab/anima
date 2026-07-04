@@ -1,0 +1,90 @@
+================================================================================
+H_9127 STEP-0 CHEAP KILL — G1 LEVER B2 = L2 x V2 FACTORIAL (coverage x granularity)
+DIRECTIONAL (torch-free numpy toy · a_engine_native_learning: NOT terminal;
+terminal only via clm303/ByteGPT `anima evaluate --py`). No GPU rent this gate.
+================================================================================
+
+LEVER SPEC (B2 = coverage x granularity 2x2 factorial):
+  L2 (corpus DENSITY, training-data axis): off=SPARSE(deg-cap k=1) / on=DENSE(full pool,
+      component-dense combo-sparse). Reproduces H_6183 density signal.
+  V2 (target-format GRANULARITY, readout axis): off=additive one-shot multi-label top-d /
+      on=micro-trace (copy-prev-set + 1 SET-ADDRESSED local edit, hard-copy dedup decode).
+  Both floored INDEPENDENTLY in prior STEP-0 gates (L2 KILL margin 0.243<=DERIV 0.307;
+  V2 KILL MICRO<=ADD). B2 question: does COMBINING them yield SYNERGY (AB > A+B)?
+
+FROZEN BAR (set pre-measure, no post-hoc move — c9/p7):
+  N=24 · D=64 · held-out eval frac 0.45 (fixed disjoint set/seed) · 4000 steps ·
+  seeds {7,4302,4303} · metric = held-out MEAN best_distinct (budget=d) · depth 2
+  primary + depth 3 secondary. Harness = fused clone of L2_coverage_density +
+  V2_micro_trace step0 harnesses (target-format/density only swapped).
+  COMBINED LEVER (C11) PASS iff bd>=2 AND >max_single AND lever_margin(C11-ADD)>0
+  AND lever_margin>deriv_margin AND synergy(interaction)>0. KILL otherwise.
+  Synergy(interaction) = C11 - C10 - C01 + C00 ; superadditive iff > 0.
+  Pre-reg predictor: synergy predicted iff P_basin>0.5 AND kappa>0.2 (both levers active).
+
+--------------------------------------------------------------------------------
+FACTORIAL CELLS — held-out MEAN best_distinct (mean over 3 seeds; max_single=1.0)
+--------------------------------------------------------------------------------
+DEPTH 2 (primary):
+  C00 L2off x V2off (sparse additive)      bd=1.8111  seeds[1.889,1.756,1.789]
+  C10 L2on  x V2off (dense  additive)=ADD  bd=1.9481  seeds[1.933,1.944,1.967]
+  C01 L2off x V2on  (sparse micro-trace)   bd=1.4926  seeds[1.622,1.389,1.467]
+  C11 L2on  x V2on  (dense  micro)=LEVER   bd=1.8741  seeds[1.878,1.944,1.800]
+  DERIV (derivtrace positional @dense)     bd=1.6593  seeds[1.667,1.633,1.678]
+  main effect L2 (C10-C00) = +0.1370      main effect V2 (C01-C00) = -0.3185
+  sum of main effects       = -0.1815      combined lift (C11-C00)  = +0.0630
+  INTERACTION (C11-C10-C01+C00) = +0.2444  (superadditive=TRUE)
+  lever_margin (C11-ADD) = -0.0741         deriv_margin (DERIV-ADD) = -0.2889
+
+DEPTH 3 (secondary robustness):
+  C00 sparse add   bd=2.1222   C10/ADD dense add bd=2.8815
+  C01 sparse micro bd=1.7296   C11/LEVER dense micro bd=2.8333   DERIV bd=2.3815
+  main L2=+0.7593  main V2=-0.3926  sum=+0.3667  combined lift(C11-C00)=+0.7111
+  INTERACTION = +0.3444 (superadditive=TRUE)
+  lever_margin (C11-ADD) = -0.0481   deriv_margin (DERIV-ADD) = -0.5000
+
+PREDICTORS rho/sigma/kappa/M (pre-registered, $0):
+  d2: rho=0.0  sigma_dense=9.167  sigma_sparse=0.917  kappa=0.25   M=1.5
+  d3: rho=0.0  sigma_dense=16.833 sigma_sparse=1.500  kappa=0.389  M=2.0
+  P_basin (dense additive both-in recomb) = 0.9593 (d2) / 0.8889 (d3)  -> reproduces
+    H_6183 density: dense recomb ~0.96 HIGH vs sparse-lever floor (directional match).
+
+--------------------------------------------------------------------------------
+INTERACTION PREDICTOR TEST (P_basin x kappa) — PREDICTIVE HIT on MAGNITUDE
+--------------------------------------------------------------------------------
+  predicted interaction (P_basin*kappa): 0.2398 (d2) / 0.3457 (d3)
+  MEASURED  interaction               : 0.2444 (d2) / 0.3444 (d3)
+  -> P_basin x kappa predicts the interaction MAGNITUDE within 0.005/0.001. STRONG.
+  predicted_synergy (P_basin>0.5 & kappa>0.2) = TRUE both depths -> MEASURED TRUE.
+  Interaction GROWS with depth (0.244 -> 0.344), tracking predicted (0.240 -> 0.346).
+
+--------------------------------------------------------------------------------
+VERDICT: KILL (FALSIFIED-DIRECTIONAL). Synergy is REAL but SUB-CEILING.
+--------------------------------------------------------------------------------
+  There IS a positive, depth-growing, predictor-matched L2xV2 interaction
+  (+0.2444 @d2, +0.3444 @d3 > 0). But it is DAMAGE-RECOVERY, not ceiling-break:
+  micro-trace at SPARSE density is bad (V2 main effect -0.3185); DENSE coverage
+  RESCUES it (superadditive), landing C11 (1.8741) right back near — but STILL
+  BELOW — the plain dense-additive ceiling ADD (1.9481). lever_margin (C11-ADD)
+  = -0.0741 < 0 at both depths, and C11 < 2.0 (fails bd>=2). Coverage x granularity
+  combine superadditively yet NEVER exceed additive pooling.
+  => The additive control remains the CEILING; density buys back the granularity
+     penalty but adds no net G1 recombination headroom. NO GPU escalation.
+
+PREDICTIVE-LAW CONTRIBUTION (judgment-criterion validation):
+  Criterion predicted synergy (rho~0 AND both levers active via P_basin*kappa) = TRUE,
+  and a positive interaction DID appear AND its magnitude matched P_basin*kappa within
+  0.005. So P_basin*kappa is PREDICTIVE for the INTERACTION SIGN+MAGNITUDE. HOWEVER a
+  positive interaction is NECESSARY-not-SUFFICIENT for a G1 lever: it measures
+  recovery-toward-ceiling, not surpass-ceiling. The pass gate (lever_margin>0 AND
+  bd>=2) is the load-bearing filter that separates "synergy" from "value-add".
+  Consistent with L2/V2 individual KILLs and the DPI meta-law (readout/coverage
+  levers floor at the additive ceiling; real G1 lever = trunk recomb-OBJECTIVE).
+
+HONESTY: toy numpy = DIRECTIONAL pre-screen (a_engine_native_learning; NOT 303M
+engine-native). Terminal verdict forbidden. This additive-readout toy has
+per-concept-independent readouts so absolute rates OVERSTATE held-out recombination
+vs real ByteGPT/clm303 (same caveat as L2/V2 gates); this gate ranks RELATIVE
+interaction/margins, not the absolute wall. Purpose = gate GPU spend => NO ESCALATE,
+NO GPU rent for B2 L2xV2. Numbers verbatim, no tune-to-green.
+================================================================================

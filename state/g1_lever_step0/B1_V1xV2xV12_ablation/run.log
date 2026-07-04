@@ -1,0 +1,47 @@
+[seed 7] ADD   bd=2 recomb=0.954 mean_bd=1.954 max_single=1 gen_sigma=0.00 nacc=0
+[seed 7] DERIV bd=2 recomb=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0
+[seed 7] A     bd=2 recomb=0.877 mean_bd=1.877 max_single=1 gen_sigma=0.00 nacc=0
+[seed 7] B     bd=2 recomb=0.923 mean_bd=1.923 max_single=1 gen_sigma=0.00 nacc=0
+[seed 7] C     bd=2 recomb=0.954 mean_bd=1.954 max_single=1 gen_sigma=4.83 nacc=163
+[seed 7] AB    bd=2 recomb=0.892 mean_bd=1.892 max_single=1 gen_sigma=0.00 nacc=0
+[seed 7] AC    bd=2 recomb=0.892 mean_bd=1.892 max_single=1 gen_sigma=4.83 nacc=163
+[seed 7] BC    bd=2 recomb=0.985 mean_bd=1.985 max_single=1 gen_sigma=4.92 nacc=162
+[seed 7] ABC   bd=2 recomb=0.938 mean_bd=1.938 max_single=1 gen_sigma=4.67 nacc=163
+[seed 4302] ADD   bd=2 recomb=0.938 mean_bd=1.938 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4302] DERIV bd=2 recomb=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4302] A     bd=2 recomb=0.892 mean_bd=1.892 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4302] B     bd=2 recomb=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4302] C     bd=2 recomb=0.892 mean_bd=1.892 max_single=1 gen_sigma=5.04 nacc=174
+[seed 4302] AB    bd=2 recomb=0.908 mean_bd=1.908 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4302] AC    bd=2 recomb=0.938 mean_bd=1.938 max_single=1 gen_sigma=4.87 nacc=165
+[seed 4302] BC    bd=2 recomb=0.892 mean_bd=1.892 max_single=1 gen_sigma=4.83 nacc=171
+[seed 4302] ABC   bd=2 recomb=0.923 mean_bd=1.923 max_single=1 gen_sigma=4.92 nacc=163
+[seed 4303] ADD   bd=2 recomb=0.954 mean_bd=1.954 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4303] DERIV bd=2 recomb=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4303] A     bd=2 recomb=0.877 mean_bd=1.862 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4303] B     bd=2 recomb=0.985 mean_bd=1.985 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4303] C     bd=2 recomb=0.954 mean_bd=1.954 max_single=1 gen_sigma=4.92 nacc=159
+[seed 4303] AB    bd=2 recomb=0.923 mean_bd=1.923 max_single=1 gen_sigma=0.00 nacc=0
+[seed 4303] AC    bd=2 recomb=0.923 mean_bd=1.923 max_single=1 gen_sigma=4.83 nacc=147
+[seed 4303] BC    bd=2 recomb=1.000 mean_bd=2.000 max_single=1 gen_sigma=5.08 nacc=175
+[seed 4303] ABC   bd=2 recomb=0.969 mean_bd=1.969 max_single=1 gen_sigma=4.92 nacc=178
+{
+  "margins": {
+    "A": -0.0667,
+    "B": 0.0205,
+    "C": -0.0154,
+    "AB": -0.041,
+    "AC": -0.0308,
+    "BC": 0.0103,
+    "ABC": -0.0051,
+    "DERIV": 0.0513
+  },
+  "synergy": {
+    "AB_vs_A+B": 0.0051,
+    "AC_vs_A+C": 0.0513,
+    "BC_vs_B+C": 0.0051,
+    "ABC_vs_A+B+C": 0.0564
+  },
+  "PASS": false,
+  "VERDICT": "KILL (ABC sub-additive OR margin<=deriv_margin OR bd<=max_single => AND-stack FALSIFIED DIRECTIONAL, NO GPU rent)"
+}

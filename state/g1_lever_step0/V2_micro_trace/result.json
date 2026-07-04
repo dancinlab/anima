@@ -1,0 +1,99 @@
+{
+  "lever": "V2_micro_trace",
+  "depths": {
+    "2": {
+      "arms": {
+        "ADD": {
+          "best_distinct_mean": 1.9407407407407407,
+          "best_distinct_seeds": [
+            1.933,
+            1.933,
+            1.956
+          ],
+          "max_single_mean": 1.0
+        },
+        "DERIV": {
+          "best_distinct_mean": 1.7222222222222223,
+          "best_distinct_seeds": [
+            1.678,
+            1.722,
+            1.767
+          ],
+          "max_single_mean": 1.0
+        },
+        "MICRO": {
+          "best_distinct_mean": 1.9185185185185185,
+          "best_distinct_seeds": [
+            1.944,
+            1.944,
+            1.867
+          ],
+          "max_single_mean": 1.0
+        }
+      },
+      "predictors": {
+        "rho": 0.0,
+        "sigma": 9.167,
+        "kappa": 0.25,
+        "M": 1.5
+      },
+      "lever_margin": -0.0222,
+      "deriv_margin": -0.2185
+    },
+    "3": {
+      "arms": {
+        "ADD": {
+          "best_distinct_mean": 2.888888888888889,
+          "best_distinct_seeds": [
+            2.933,
+            2.911,
+            2.822
+          ],
+          "max_single_mean": 1.0
+        },
+        "DERIV": {
+          "best_distinct_mean": 2.388888888888889,
+          "best_distinct_seeds": [
+            2.489,
+            2.389,
+            2.289
+          ],
+          "max_single_mean": 1.0
+        },
+        "MICRO": {
+          "best_distinct_mean": 2.803703703703704,
+          "best_distinct_seeds": [
+            2.856,
+            2.733,
+            2.822
+          ],
+          "max_single_mean": 1.0
+        }
+      },
+      "predictors": {
+        "rho": 0.0,
+        "sigma": 16.833,
+        "kappa": 0.3889,
+        "M": 2.0
+      },
+      "lever_margin": -0.0852,
+      "deriv_margin": -0.5
+    }
+  },
+  "summary": {
+    "pass_depth2": false,
+    "pass_depth3": false,
+    "ADD_bd_d2": 1.9407407407407407,
+    "MICRO_bd_d2": 1.9185185185185185,
+    "ADD_bd_d3": 2.888888888888889,
+    "MICRO_bd_d3": 2.803703703703704,
+    "lever_margin_d2": -0.0222,
+    "deriv_margin_d2": -0.2185,
+    "lever_margin_d3": -0.0852,
+    "deriv_margin_d3": -0.5,
+    "margin_grows_with_depth": false,
+    "PASS": false,
+    "VERDICT": "KILL (micro-trace <= ADD (additive control is ceiling) or <= DERIV baseline margin; target-format/decode lever floors, no GPU rent)"
+  },
+  "wall_sec": 59.9
+}

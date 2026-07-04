@@ -1,0 +1,109 @@
+{
+  "experiment": "G1 lever-1 variant V1 skeleton-bind STEP-0 cheap pre-screen (target-format)",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT": 0.45,
+    "STEPS": 4000,
+    "LR": 0.002,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "RF": 12,
+    "mods": {
+      "M1": 1,
+      "M2": 2
+    },
+    "vocab": 62
+  },
+  "frozen_bar": "held-out OUT-line best_distinct (distinct of {KW_i,KW_j} generated); LEVER PASS = bd>=2 AND >max_single AND margin(V1-ADD)>margin(DERIV-ADD); KILL = bd<=ADD OR margin<=DERIV margin",
+  "grad_check_worst_rel_err": 7.000017076696254e-06,
+  "arms": {
+    "ADD": {
+      "best_distinct_mean": 1.8586666666666665,
+      "best_distinct_seeds": [
+        1.832,
+        1.888,
+        1.856
+      ],
+      "max_single_mean": 2.0,
+      "max_single_seeds": [
+        2.0,
+        2.0,
+        2.0
+      ],
+      "predictors": {
+        "rho": 0.6649,
+        "sigma": 1,
+        "kappa": 0.3351,
+        "delta_copy": 1,
+        "RF": 12,
+        "M": 1.971,
+        "delta_gt_RF": false
+      }
+    },
+    "DERIV": {
+      "best_distinct_mean": 1.7973333333333334,
+      "best_distinct_seeds": [
+        1.792,
+        1.784,
+        1.816
+      ],
+      "max_single_mean": 2.0,
+      "max_single_seeds": [
+        2.0,
+        2.0,
+        2.0
+      ],
+      "predictors": {
+        "rho": 0.0,
+        "sigma": 24,
+        "kappa": 1.0,
+        "delta_copy": 12,
+        "RF": 12,
+        "M": 2.981,
+        "delta_gt_RF": false
+      }
+    },
+    "V1": {
+      "best_distinct_mean": 1.6613333333333333,
+      "best_distinct_seeds": [
+        1.672,
+        1.6,
+        1.712
+      ],
+      "max_single_mean": 1.92,
+      "max_single_seeds": [
+        1.968,
+        1.976,
+        1.816
+      ],
+      "predictors": {
+        "rho": 0.0,
+        "sigma": 24,
+        "kappa": 1.0,
+        "delta_copy": 5,
+        "RF": 12,
+        "M": 3.177,
+        "delta_gt_RF": false
+      }
+    }
+  },
+  "ADD_best_distinct": 1.8586666666666665,
+  "DERIV_best_distinct": 1.7973333333333334,
+  "V1_best_distinct": 1.6613333333333333,
+  "V1_max_single": 1.92,
+  "margin_deriv_minus_add": -0.06133333333333302,
+  "margin_v1_minus_add": -0.19733333333333314,
+  "PASS": false,
+  "KILL": true,
+  "VERDICT": "KILL (V1 !> derivtrace margin => DIRECTIONAL-not-worth-GPU over derivtrace)",
+  "predicted_pass": {
+    "ADD": false,
+    "DERIV": true,
+    "V1": true
+  },
+  "wall_sec": 1401.3
+}

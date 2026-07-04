@@ -1,0 +1,110 @@
+[seed 7] ADD   best_distinct=2 recomb_rate=0.954 mean_bd=1.954 max_single=1 gen_sigma=0.00 nacc=0 nrej=0
+[seed 7] DERIV best_distinct=2 recomb_rate=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0 nrej=0
+[seed 7] V12   best_distinct=2 recomb_rate=1.000 mean_bd=2.000 max_single=1 gen_sigma=4.83 nacc=163 nrej=1
+[seed 4302] ADD   best_distinct=2 recomb_rate=0.938 mean_bd=1.938 max_single=1 gen_sigma=0.00 nacc=0 nrej=0
+[seed 4302] DERIV best_distinct=2 recomb_rate=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0 nrej=0
+[seed 4302] V12   best_distinct=2 recomb_rate=0.938 mean_bd=1.938 max_single=1 gen_sigma=4.87 nacc=169 nrej=3
+[seed 4303] ADD   best_distinct=2 recomb_rate=0.954 mean_bd=1.954 max_single=1 gen_sigma=0.00 nacc=0 nrej=0
+[seed 4303] DERIV best_distinct=2 recomb_rate=1.000 mean_bd=2.000 max_single=1 gen_sigma=0.00 nacc=0 nrej=0
+[seed 4303] V12   best_distinct=2 recomb_rate=0.954 mean_bd=1.954 max_single=1 gen_sigma=4.83 nacc=178 nrej=0
+{
+  "experiment": "G1 lever V12 grammar-verified self-gen (non-STaR) STEP-0 cheap kill",
+  "scope": "TOY numpy DIRECTIONAL pre-screen (a_engine_native_learning: NOT 303M engine-native, NOT terminal)",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "WARMUP": 800,
+    "GEN_EVERY": 200,
+    "GEN_BATCH": 24,
+    "AUG_CAP": 60
+  },
+  "frozen_bar": "held-out best_distinct(both constituents top-2), max_single, recomb_rate per arm; PASS iff V12.bd>=2 AND V12.bd>max_single AND (V12-ADD margin)>(DERIV-ADD margin)",
+  "predictors_rho_sigma_kappa_M": {
+    "rho_echo_residual": 0.0,
+    "sigma_train_partner_div": 6.583,
+    "kappa_local_copy": 0.0,
+    "delta_copy_vs_RF": 1.0,
+    "M_memo_disadvantage": 0.4514,
+    "tau": 2,
+    "grammar_len": 2
+  },
+  "arms": {
+    "ADD": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9487179487179488,
+      "recomb_rate_seeds": [
+        0.954,
+        0.938,
+        0.954
+      ],
+      "mean_bd_mean": 1.9487179487179487,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0,
+      "n_rejected_mean": 0.0
+    },
+    "DERIV": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 1.0,
+      "recomb_rate_seeds": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean_bd_mean": 2.0,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0,
+      "n_rejected_mean": 0.0
+    },
+    "V12": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9641025641025641,
+      "recomb_rate_seeds": [
+        1.0,
+        0.938,
+        0.954
+      ],
+      "mean_bd_mean": 1.9641025641025642,
+      "max_single": 1,
+      "gen_sigma_mean": 4.845410628019323,
+      "n_accepted_mean": 170.0,
+      "n_rejected_mean": 1.3333333333333333
+    }
+  },
+  "ADD_recomb_rate": 0.9487179487179488,
+  "DERIV_recomb_rate": 1.0,
+  "V12_recomb_rate": 0.9641025641025641,
+  "deriv_margin": 0.05128205128205121,
+  "lever_margin": 0.01538461538461533,
+  "V12_best_distinct": 2,
+  "max_single": 1,
+  "V12_gen_sigma": 4.845410628019323,
+  "PASS": false,
+  "predicted_base_criterion": true,
+  "VERDICT": "KILL (lever_margin <= deriv_margin OR bd<=max_single => DIRECTIONAL FALSIFIED, NO GPU rent)",
+  "wall_sec": 180.1
+}

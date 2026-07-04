@@ -1,0 +1,115 @@
+{
+  "experiment": "G1 lever V13 resolution-ladder STEP-0 cheap kill",
+  "scope": "DIRECTIONAL toy numpy (torch-free); NOT 303M engine-native; NOT terminal",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "arms": [
+      "ADD",
+      "DERIV",
+      "LADDER"
+    ],
+    "combiner": "additive(fixed all arms)",
+    "ladder_schedule": "p_full 1.0->0.0 linear (LADDER); ADD=0; DERIV=1"
+  },
+  "frozen_bar": "held-out FLAT recomb (ans-head top-2 has BOTH i,j; no derivation emit). PASS iff bd>=2 AND bd>max_single AND (LADDER-ADD)>(DERIV-ADD); KILL iff LADDER<=ADD OR LADDER_margin<=DERIV_margin",
+  "arms": {
+    "ADD": {
+      "flat_recomb_mean": 0.9307,
+      "flat_recomb_seeds": [
+        0.912,
+        0.936,
+        0.944
+      ],
+      "best_distinct_count_seeds": [
+        114,
+        117,
+        118
+      ],
+      "best_distinct_count_mean": 116.33,
+      "max_single_count_seeds": [
+        10,
+        8,
+        6
+      ],
+      "max_single_count_mean": 8.0,
+      "single_acc_mean": 1.0
+    },
+    "DERIV": {
+      "flat_recomb_mean": 0.872,
+      "flat_recomb_seeds": [
+        0.888,
+        0.848,
+        0.88
+      ],
+      "best_distinct_count_seeds": [
+        111,
+        106,
+        110
+      ],
+      "best_distinct_count_mean": 109.0,
+      "max_single_count_seeds": [
+        12,
+        18,
+        14
+      ],
+      "max_single_count_mean": 14.67,
+      "single_acc_mean": 1.0
+    },
+    "LADDER": {
+      "flat_recomb_mean": 0.88,
+      "flat_recomb_seeds": [
+        0.904,
+        0.856,
+        0.88
+      ],
+      "best_distinct_count_seeds": [
+        113,
+        107,
+        110
+      ],
+      "best_distinct_count_mean": 110.0,
+      "max_single_count_seeds": [
+        10,
+        18,
+        14
+      ],
+      "max_single_count_mean": 14.0,
+      "single_acc_mean": 1.0
+    }
+  },
+  "ADD_flat_recomb": 0.9307,
+  "DERIV_flat_recomb": 0.872,
+  "LADDER_flat_recomb": 0.88,
+  "lever_margin_LADDER_minus_ADD": -0.0507,
+  "deriv_margin_DERIV_minus_ADD": -0.0587,
+  "bd_lever_mean": 110.0,
+  "max_single_lever_mean": 14.0,
+  "bd_ge2": true,
+  "bd_gt_max_single": true,
+  "PASS": false,
+  "KILL": true,
+  "predictors": {
+    "rho": 0.0,
+    "sigma": 12.583,
+    "kappa": 1.0,
+    "delta_copy": 1,
+    "RF": "inf(global)",
+    "M": 5.208,
+    "n_train": 151,
+    "n_heldout": 125
+  },
+  "predicted_pass_rule": "rho<=0.02 AND sigma>1",
+  "predicted_pass": true,
+  "predicted_vs_actual": "MISMATCH(predictor over/under-optimistic)",
+  "VERDICT": "KILL \u2014 resolution-ladder does NOT beat derivtrace-baseline margin on held-out FLAT internalization; FULL derivation does NOT induce FLAT recombination beyond always-on derivtrace (or beyond additive). Objective-format axis INERT on additive trunk. NO GPU escalation.",
+  "wall_sec": 330.7
+}
