@@ -13625,8 +13625,8 @@
       {
         "id": "nn-lib-hexa-1",
         "state": "pos-conv",
-        "value": "device kernel fwd byte-eq(*_eq max|Δ|=0)는 bwd/training byte-eq를 함의하지 않는다 — device gn_bwd/moe_bwd가 host twin과 발산하면 multi-step 학습서 weight 갈라짐(RTX5090 실측: step1 CE 일치, step3 3.340 device vs 2.308 host). fwd만 검증하고 device-default 켜면 학습 조용히 발산.",
-        "threshold": "재발: 새 device kernel이나 device-residency default-ON을 fwd *_eq만 보고 승격. 해결: device(env-on) vs host(env-off) multi-step training CE byte-eq(≥3 step, weight 발산 노출)로 게이트. 발산시 개별 seam on/off로 bwd kernel 격리+fix 전엔 env-gate-OFF 유지.",
+        "value": "device kernel fwd byte-eq(*_eq max|Δ|=0)는 multi-step training byte-eq를 함의하지 않는다 — 그러나 원인은 '특정 bwd kernel 발산'이 아니다(sm_120 pod 격리 2026-07-05 REFUTED). gn_bwd/moe_bwd/embedding_bwd_scatter 3개 전부 byte-close(max|Δ| 1e-13~5e-15)·HEXA_DEVRESIDENT_NN 토글은 training CE 정확히 0 변화. 진짜 원인=(1)분산된 ~1e-13 FMA-contraction+reduction-order+ULP 비결합성의 chaotic amplification(step1 동일·stepN 발산=결정적 카오스, 단일 kernel 아님) (2)AdamW 경로 불일치: DEVRESIDENT가 device-W freeze 회피로 host adamw_step 강제 vs reference는 device forge_dispatch_adamw → ~0.29 CE 최대기여(device로 되돌리니 epoch3 3.908→3.617, host-ref 3.601 회복).",
+        "threshold": "재발: device 학습 CE 발산을 '단일 bwd kernel byte-eq 버그'로 attribution(개별 kernel 격리 시간낭비-실제 다 byte-close). 해결: multi-step training CE byte-eq 게이트+발산시 (a)각 seam force-host bisection으로 CE 움직이는 op 찾기(대개 db_colsum/adamw reduction/optimizer) (b)AdamW host↔device 경로 일치(device forge_dispatch_adamw W dirty_host coherence fix) (c)전 reduction kernel FMA-defeat+sequential 하드닝. 단일 kernel 패치로 안 끝남.",
         "source": "stdlib/flame/nn_lib.hexa"
       },
       {
