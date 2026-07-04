@@ -13491,6 +13491,13 @@
         "value": "consequence/faculty loop의 held-out efficacy를 ΔEff=within-window slope(후반−전반)로 재면 즉시-step 수렴(effect가 tick1에 ceiling 도달)에서 slope≈0으로 degenerate = 진짜 lift를 못 봄. H_9125 contradiction-keyed: ON held-out efficacy 1.0(완벽) vs OFF/FLAT/DECOR 0.6765(baseline)=absolute gap 0.3235인데 slope-ΔEff는 0.027<0.10로 RED 오판. H_9111 Pearson-D≡0(constant vector)와 같은 metric-degeneracy 계열(break-walls (a) measure-artifact).",
         "threshold": "재발조건: faculty/consequence loop의 학습 효과를 within-window slope(_delta 후반−전반)로 잴 때 — 효과가 step(빠른 수렴)이면 slope degenerate. faithful 지표=absolute gap(수렴값 arm−baseline) 또는 area-under-curve. verdict-integrity: slope-bar가 absolute-gap과 발산하면 harness 지표 결함 의심(terminal 전 측정경로 확인), target 결함으로 박제 금지. frozen bar 설계 시 step-convergence 가능성 있으면 absolute-gap 사전등록.",
         "source": "state/refcorrect_axis/f5_loop3_contra.hexa"
+      },
+      {
+        "id": "git-worktree-1",
+        "state": "pos-conv",
+        "value": "git worktree add 가 실패(브랜치 선점·lock·경로 잔존)해도 후속 명령이 shared main worktree 의 cwd(대개 stale 브랜치)에서 그대로 실행되어, 의도한 isolated worktree 대신 main-checkout 브랜치로 commit/push/pr-cycle 이 나가는 반복 결함. 2026-07-04 이 세션에 ING 마커가 stale 브랜치에 먼저 기록되고 이어 pr-cycle 이 stale 브랜치를 push해 origin/main 대비 4700줄 divergent PR #2945 가 열림(머지 시 main 대량 revert=near-disaster, 즉시 close). GIT-ADD-ALL-SHARED-MAIN 가드의 'cd-fallback incident' 와 동일 근인(shared main cwd)로의 두번째 경로.",
+        "threshold": "재발조건=git worktree add 직후 존재/cwd 검증 없이 mutating 명령(ing/commit/push/pr-cycle) 실행. 해결=worktree add 뒤 반드시 [ -d \"$WT\" ] && cd \"$WT\" && [ \"$(pwd)\" = \"$WT\" ] 로 존재+cwd 일치를 확인한 뒤에만 진행(별도 Bash 호출은 cwd 미유지 → 매 호출 절대경로 cd+검증). 실패 시 즉시 중단, shared main 에서 절대 commit/push 금지. 사고 시 gh pr close + origin/main HEAD 무결 확인.",
+        "source": "git-worktree"
       }
     ]
   }
