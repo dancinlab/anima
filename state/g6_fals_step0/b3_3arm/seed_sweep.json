@@ -1,0 +1,14 @@
+{
+  "note": "4-seed robustness (default 1305 + 7/42/2026). DIRECTIONAL toy char-LM d64, NOT engine-native/303M.",
+  "in_distribution_ceiling_FALS": {
+    "B3":  [0.2, 0.4, 0.4, 0.8],
+    "B4":  [1.0, 1.0, 1.0, 1.0],
+    "B12": [0.4, 0.6, 1.0, 0.8],
+    "LO":  [0.0, 0.0, 0.0, 0.0]
+  },
+  "heldout_FALS_arm": {"B3":0.0,"B4":0.0,"B12":0.0,"LO":0.0,"all_seeds":true},
+  "M_earned_heldout": {"B3":"0.0 (one seed -0.2 noise)","B4":0.0,"B12":0.0},
+  "frozen_bar": "arm FALS>lo-delta AND M_earned>0",
+  "bar_result_heldout": "FAIL (held-out FALS=0=lo-delta, M_earned=0)",
+  "bar_result_indist_ceiling": "PASS-lift (B4=1.0,B12/B3>0 vs LO=0.0)"
+}
