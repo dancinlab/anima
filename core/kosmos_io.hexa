@@ -632,3 +632,167 @@ fn kosmos_merge(anchor_a: map, anchor_b: map) -> map {
     }
     return anchor_c
 }
+
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// H_9129 rung-3 · L5 HIPPOCAMPAL associative-store lane (CA3 pattern-completion)
+// ════════════════════════════════════════════════════════════════════════════
+//   A DISJOINT store-side readout over the .kosmos anchor store: pattern-separated
+//   (DG kWTA) sparse coding + a CA3 heteroassociative store that does MULTI-STEP
+//   pattern completion (transitive chaining). Unlike `retrieve` (flat single-hop
+//   cosine), this completes a 2-hop+ relation path A→B→C from stored adjacent
+//   premises A→B, B→C — a NEW faculty (novel chaining, not stored recall).
+//
+//   a_substrate_disjoint: READ-ONLY. These fns NEVER mutate the emit-drive lane
+//   (Ψ / motivation / recall_thr / generator) and are ADDITIVE — every pre-existing
+//   kosmos_io fn (load_anchors / retrieve / create_anchor / emit_anchor_from_v3) is
+//   BYTE-UNCHANGED, so any emit consumer (generator.hexa → load_anchors → brain_emit)
+//   sees identical behavior ⇒ generation byte-identical lane-ON == lane-OFF.
+//
+//   Byte-parity twin = core/hippo_lane.py (hippo_kwta / hippo_build_store /
+//   hippo_relatedness / fixture_codes), verified on a deterministic fixture.
+//   Codes are supplied by the DG projection of real ByteGPT-303M reps via the
+//   py-canonical measurement path (== anima evaluate --py ops).
+
+// k-winners-take-all cleanup → sparse binary attractor state (CA3 cleanup).
+// Picks the k largest STRICTLY-POSITIVE indices (lowest index breaks ties),
+// matching numpy argpartition-then-positive-filter on well-separated drive.
+fn hippo_kwta(v: [float], k: int) -> [float] {
+    let n = len(v)
+    let mut out = []
+    let mut z = 0
+    while z < n { out.push(0.0); z = z + 1 }
+    if k >= n {
+        let mut i = 0
+        while i < n { if v[i] > 0.0 { out[i] = 1.0 }; i = i + 1 }
+        return out
+    }
+    let mut chosen = []
+    let mut c = 0
+    while c < k {
+        let mut best_idx = 0 - 1
+        let mut best_val = 0.0
+        let mut i = 0
+        while i < n {
+            let mut taken = false
+            let mut t = 0
+            while t < len(chosen) { if chosen[t] == i { taken = true; break }; t = t + 1 }
+            if !taken {
+                if v[i] > best_val { best_val = v[i]; best_idx = i }
+            }
+            i = i + 1
+        }
+        if best_idx < 0 { break }
+        chosen.push(best_idx)
+        out[best_idx] = 1.0
+        c = c + 1
+    }
+    return out
+}
+
+// Heteroassociative CA3 store as a flat dim*dim buffer (row-major W[r*dim+c]).
+// W = Σ outer(code[nxt], code[cur]) over DIRECTED premise edges only.
+// codes = list of [float] rows; edges = list of [int,int] (cur,nxt) pairs.
+fn hippo_build_store(codes: list, edges: list, dim: int) -> [float] {
+    let mut W = []
+    let mut z = 0
+    let sz = dim * dim
+    while z < sz { W.push(0.0); z = z + 1 }
+    let mut e = 0
+    while e < len(edges) {
+        let cur = edges[e][0]
+        let nxt = edges[e][1]
+        let cc = codes[cur]
+        let cn = codes[nxt]
+        let mut r = 0
+        while r < dim {
+            if cn[r] != 0.0 {
+                let base = r * dim
+                let mut c = 0
+                while c < dim {
+                    if cc[c] != 0.0 { W[base + c] = W[base + c] + cn[r] * cc[c] }
+                    c = c + 1
+                }
+            }
+            r = r + 1
+        }
+        e = e + 1
+    }
+    return W
+}
+
+fn _hippo_matvec(W: [float], x: [float], dim: int) -> [float] {
+    let mut out = []
+    let mut r = 0
+    while r < dim {
+        let base = r * dim
+        let mut s = 0.0
+        let mut c = 0
+        while c < dim {
+            if x[c] != 0.0 { s = s + W[base + c] * x[c] }
+            c = c + 1
+        }
+        out.push(s)
+        r = r + 1
+    }
+    return out
+}
+
+fn _hippo_norm(x: [float]) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(x) { s = s + x[i] * x[i]; i = i + 1 }
+    return sqrt(s)
+}
+
+// READ-OUT (no mouth): seed with code[i], run CA3 completion `steps` times,
+// return max overlap between any visited attractor state and code[j].
+// Multi-step ⇒ transitive chaining i→i+1→…→j iff a stored path exists.
+fn hippo_relatedness(W: [float], codes: list, i: int, j: int,
+                     dim: int, steps: int, kwta: int) -> float {
+    let ci = codes[i]
+    let mut x = []
+    let mut t = 0
+    while t < len(ci) { x.push(ci[t]); t = t + 1 }
+    let cj = codes[j]
+    let cjn = _hippo_norm(cj) + 1.0e-9
+    let mut best = 0.0
+    let mut s = 0
+    while s < steps {
+        let drive = _hippo_matvec(W, x, dim)
+        x = hippo_kwta(drive, kwta)
+        let mut dot = 0.0
+        let mut k = 0
+        while k < dim { dot = dot + x[k] * cj[k]; k = k + 1 }
+        let ov = dot / ((_hippo_norm(x) + 1.0e-9) * cjn)
+        if ov > best { best = ov }
+        s = s + 1
+    }
+    return best
+}
+
+// Deterministic sparse fixture codes (integer LCG construction) — the byte-parity
+// oracle shared with core/hippo_lane.py::fixture_codes (no cross-language float RNG).
+fn hippo_fixture_codes(n: int, dim: int, active: int, seed: int) -> list {
+    let mut codes = []
+    let mut i = 0
+    while i < n {
+        let mut row = []
+        let mut z = 0
+        while z < dim { row.push(0.0); z = z + 1 }
+        let mut picked = []
+        let mut h = (i * 2654435761 + seed) & 0xFFFFFFFF
+        while len(picked) < active {
+            h = (h * 1664525 + 1013904223) & 0xFFFFFFFF
+            let b = h % dim
+            let mut seen = false
+            let mut t = 0
+            while t < len(picked) { if picked[t] == b { seen = true; break }; t = t + 1 }
+            if !seen { picked.push(b); row[b] = 1.0 }
+        }
+        codes.push(row)
+        i = i + 1
+    }
+    return codes
+}
