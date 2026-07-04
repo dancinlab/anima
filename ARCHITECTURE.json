@@ -13264,7 +13264,19 @@
                   {
                     "name": "★trunk-objective 비교환 target 레버 (H_9131) — census (d) 최후 미검 축",
                     "id": "gate-g1-recomb-trunkobj-h9131",
-                    "detail": "H_9131 trunk-objective 비교환 target 레버(census (d) 최후 미검): DPI=레버는 readout 아닌 target. H_1840 연산자-γ=틀린 축(readout). top-1=A 얼린 비교환 잔차 라벨 r(a,b)=s−μ(a)−μ(b) 예측(additive는 chance). STEP-0 3-arm R²(bind/additive/shuffle) mini$0 wf_aa95feaf. floor면 G1=능력천장 종결·통과면 303M 승격. state/trunk_obj_step0/."
+                    "detail": "H_9131 trunk-objective 비교환 target 레버(census (d) 최후 미검): DPI=레버는 readout 아닌 target. H_1840 연산자-γ=틀린 축(readout). top-1=A 얼린 비교환 잔차 라벨 r(a,b)=s−μ(a)−μ(b) 예측(additive는 chance). STEP-0 3-arm R²(bind/additive/shuffle) mini$0 wf_aa95feaf. floor면 G1=능력천장 종결·통과면 303M 승격. state/trunk_obj_step0/.",
+                    "children": [
+                      {
+                        "name": "§4 interaction-in-reps probe → 🧱 FAIL (② GPU KILL)",
+                        "id": "gate-g1-recomb-trunkobj-h9131-section4",
+                        "detail": "🧱 §4 (Fable 벽돌파): 303M joint rep h(a,b)가 비가법 잔차 r(a,b)를 held-out서 additive보다 예측하나? NO. joint R² 음수(−4.5/−0.5/−4.4)≤additive(−0.6/+0.1/−0.2)·shuffle 동일 음수=joint신호=노이즈·train R²~0.8(과적합) held-out chance 이하. 결론=303M rep이 interaction 미담지 → objective aux(②) trunk에 가르칠것 無 → ② GPU KILL."
+                      },
+                      {
+                        "name": "next (kill-criterion ladder)",
+                        "id": "gate-g1-recomb-trunkobj-h9131-next",
+                        "detail": "Fable ladder: §4 FAIL→objective축 사실상 dry → F2 data-density(ember+dune 존재증명 positive·aligned retrain)·F3 masked-interaction CE-target·F4 emergent-comm(A⇄G) $0 toy-gate 순. family 미dry. probe=bg_forward_last_hidden·derisk census 1:1·state/trunk_obj_step0/interaction_in_reps/."
+                      }
+                    ]
                   }
                 ]
               }
