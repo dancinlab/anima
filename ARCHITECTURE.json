@@ -4029,6 +4029,11 @@
                     "detail": "H_1150–1154 — copying done engine-side). ByteGPT backend = bytegpt_decode_grounded; ConvMoE = clm_decode_grounded; anchor read via _gen_anchor_field (H_1206)."
                   }
                 ]
+              },
+              {
+                "name": "load-once W-hoist twins (H_9107 · byte-identical perf)",
+                "role": "perf-lockstep",
+                "note": "gen_auto_load/gen_auto_free + gen_auto_ideate_W/gen_auto_ce_W/conflict_drives_live_W (→gen_clm_ideate_W) · core/decode.hexa clm_load_W/clm_ce_seq_W (GPU-forge CE twins) · core/g6_ideation.hexa g6_score_arm_auto_W/g6_decode_best_of_k_W. WIRED into cli/evaluate.hexa g_eval_all→g_eval_g0/g1/g2/g6_*_W so full G0-G6 loads the .clm weight-set ONCE instead of per-decode reload. Resolves the H_9107 303M RSS-blowup OOM (per-candidate mouth reload). byte-identical to the non-_W path (H_1400 reuse guard); verdict/output unchanged. Code merged via fix/h9107-reload-hoist-landed."
               }
             ]
           },
