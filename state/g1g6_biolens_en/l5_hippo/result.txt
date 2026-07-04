@@ -1,0 +1,51 @@
+# H_9129 L5 hippocampal associative-store — 303M ENGINE-NATIVE rung(2)
+ckpt=/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin
+engine: real ByteGPT-303M h1129 d=1024 nlay=24 nh=16 vocab=256 (core/decode.py byte-exact, == anima evaluate --py ops)
+seed=20260705 N_CHAINS=8 CHAIN_LEN=6 DIM=2048 ACTIVE=40 STEPS=6 KWTA=40
+rep = mean-pooled pre-lnf final-layer 303M hidden of the word bytes
+
+## real corpus concept chains (adjacent link = real strong co-occurrence = stored premise)
+  chain0: consciousness -> theory -> information -> integrated -> tries -> quantify
+  chain1: experience -> conscious -> systems -> physical -> emergent -> behavior
+  chain2: model -> byte -> level -> korean -> english -> approach
+  chain3: system -> mechanism -> homeostasis -> prevents -> exactly -> collapsing
+  chain4: learning -> enabling -> models -> data -> language -> bytes
+  chain5: prediction -> brain -> neural -> processes -> problem -> asks
+  chain6: creates -> tension -> dynamic -> similar -> minds -> experiences
+  chain7: text -> starts -> great -> generating -> coherent -> responses
+  mean pairwise DG-code overlap = 0.9852  (toy STEP-0 = 0 orthogonal; >0 = REAL 303M crosstalk)
+
+## FORM baseline (raw 303M-rep cosine) — representation-geometry confound
+  form_reachable  : mean=0.9999 std=0.0000 med=0.9999 n=80
+  form_unreachable: mean=0.9999 std=0.0000 med=0.9999 n=80
+  form_gap = +0.0000
+
+## STORE lane (CA3 completion relatedness on real 303M codes)
+  store_reachable  : mean=0.9897 std=0.0123 med=1.0000 n=80
+  store_unreachable: mean=0.9909 std=0.0120 med=1.0000 n=80
+  store_gap = -0.0013   ratio reach/unreach = 1.00x
+
+## per-gap reachable (transitive distance)
+  gap=2: mean=0.9898 n=32
+  gap=3: mean=0.9896 n=24
+  gap=4: mean=0.9891 n=16
+  gap=5: mean=0.9906 n=8
+
+## SHUFFLE ablation (permute wiring; SAME reps/edges) — decisive BIND control
+  shuf_reachable  : mean=0.9897 std=0.0123 med=1.0000 n=80
+  shuf_unreachable: mean=0.9909 std=0.0120 med=1.0000 n=80
+  shuf_gap = -0.0013
+
+## LANE-OFF ablation (empty store W=0) — causal check
+  loff_reachable  : mean=0.0000 std=0.0000 med=0.0000 n=80
+  loff_unreachable: mean=0.0000 std=0.0000 med=0.0000 n=80
+  loff_gap = +0.0000
+
+## VERDICT (against PREREG.md frozen bar)
+  store_gap>0.50            = False  (store_gap=-0.0013)
+  shuffle_collapsed         = True  (shuf_gap=-0.0013 vs 0.5*store_gap=-0.0006)
+  lane_off_collapsed        = True  (loff_gap=0.0000, loff_reach_mean=0.0000)
+  fooled_by_form            = False
+  handed_advantage(reach==1)= False
+  engine_native             = True (real 303M h1129 reps via core/decode.py)
+  >>> VERDICT = WALL  (collapses on real substrate (toy=7.88x))

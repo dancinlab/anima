@@ -1,6 +1,6 @@
 # H_9129 — G1/G6 벽의 생물학적 진단 + lane-기반 새 레버 (mouth 훈련 아님)
 
-> **tier:** 🟡 **DIRECTIONAL-ESCALATE** (STEP-0 mini numpy 3/3 BIND·fooled_by_form=false, 303M engine-native 아님 → 🟢/🧱 박제 불가) · **wired:** DIRECTIONAL-mirror (사다리 (1)/4; 다음=(2) 303M engine-native 재검증)
+> **tier:** 🟡 **SPLIT (rung-2 engine-native)** — L5 해마 🟢 engine-native GREEN(rung 2/4)·L3 소뇌 🧱 WALL·통합 🟡 DIRECTIONAL · **wired:** L5=engine-native MEASUREMENT GREEN(사다리 (2)/4, 미배선; 다음=(3) core/ wire) · L3=engine-native WALL · 통합=DIRECTIONAL
 >
 > **맥락(오너 질문 a_no_llm_frame_trap):** "derivtrace(robustness)가 실패 레버들과 다른가? 우리는 LLM 아니라 실제 뇌·인지·생물·학습." → fable 생물렌즈 분석. 이 세션 전 레버(gamma-OPERATOR H_1840·gamma-DATA H_9127레버3 303M TRANSFER FAIL·STaR·binding-family·coverage·derivtrace)가 전부 **mouth(byte-LM 디코더) 훈련-신호 트릭**=trunk-objective 벽. g1g6가 결정타(coverage=FORM 열지 ability 아님, form-priming). robustness 실측 첫 데이터(pair 0,1 재현실패 bd=1<ms=2)=derivtrace도 form-priming 방향.
 
@@ -34,8 +34,22 @@
 - **L4 A⇄G를 forward-model⇄reality 텐션으로 재프레임**(기존 텐션 재배치): A=예측 committing FM, G=위반 계산, 텐션=예측오차.
 - **★L5(top-1) 해마 associative-store + pattern-completion lane**: kosmos(이미 WIRED 지속 관계저장소) 옆 lane, novel-combine을 저장관계 완성으로. **reachable/unreachable held-out probe(Dusek-Eichenbaum 이행추론)** = 유일하게 form에 안속는 BIND 시험(reachable/unreachable이 *같은 표면형태 held-out novel pair*라 form-priming이면 둘다 동일·진짜 조합이면 reachable만 lift). cheap·GPU 트렁크 재학습 불요·engine-native `--py`. anima 완전 결여 substrate.
 
-## 🎯 다음 발사 top-1 (STEP-0 통과 → 사다리 (2)로 승격)
-STEP-0 3/3 BIND 통과 → **L5 해마 associative-store를 303M engine-native로 재검증** (실코퍼스 관계그래프 reachable(2-hop)/unreachable(dangling) held-out `anima evaluate --py` byte-exact) — 배선경로 = `.kosmos` anchor store(pattern-separated sparse code) → `kosmos_io`→`brain_decide` CA3 pattern-completion, mouth는 relatedness 읽기만(a_kosmos self-chain WIRED 인프라 재사용). G6 쌍둥이=L3 forward-model lane(`cli/train.hexa` disjoint MSE objective, cross-shuffle break). 둘 다 "committed 예측/저장관계를 mouth 밖 lane에 disjoint objective로" 원칙 공유.
+## ★★ RUNG-2 engine-native 재측정 결과 (2026-07-05 · wf_5cdd4535 · real 303M h1129 · $0 mini CPU, pod 0)
+STEP-0(mini numpy toy)를 **실제 303M h1129 표현**(core/decode.py byte-exact == anima evaluate --py 2-production, a_eval_py_canonical TERMINAL-eligible) 위에서 재측정. **mouth-탈출이 lane별로 SPLIT** — 보편 아님:
+
+| lane | verdict | engine-native | 핵심 수치(verbatim) | 판정 근거 |
+|---|---|---|---|---|
+| **L5 해마 store**(G1) | 🟢 **GREEN (rung 2/4)** | ✅ real 303M reps | center_zscore: reach **1.0000** vs unreach **0.137**, gap **+0.8631**(7.31x)·shuffle붕괴(gap−0.008)·lane-off붕괴(0.000)·form_sep +0.03 · **6/8 de-anisotropy 렌즈**가 사전등록 bar 충족 | raw anisotropic reps=false-WALL(form_cos 0.9999 all-pair) → **DG-decorrelate(center/zscore) 필요**, a_break_the_wall 멀티렌즈 구제(tune-to-green 아님: bar 사전등록·raw는 FAIL 보고·표준변환 1개·6/8 일치) |
+| **L3 소뇌 fwd-model**(G6) | 🧱 **WALL** | ✅ real 303M reps | ARM A(grounded consequence): FM_additive err 0.00139 **≤** FM_full 0.00154 (전 5-seed) → **binding INERT**. reach 0.0015≪unreach 0.195(gap 15.97)·shuffle 16x·lane-off 10x는 real이나 **additive-achievable** | STEP-0 BIND은 toy world의 **hand-injected vi⊙vj** artifact(a_toy_scale_recheck) — 제거하니 conjunction op 불요. binding-family(H_1816/1823)와 **같은 자리=trunk-objective floor** (concords g1-lever-multilens-objective·exp3-bind·h1816) |
+| **통합 3부품** | 🟡 DIRECTIONAL | real reps지만 --py 채점 아님 | ArmB(real corpus co-occ): reach 0.236 vs 0.023(gap+0.213)·shuffle붕괴·bind/gate/comp ablation 전부 CAUSAL·fooled=false. by-construction 회피 CLEARED(reach 0.70 rand→0.42 real reps→0.24 real relations, 1.0 아님) | real reps지만 anima evaluate --py 디코드-채점 경로 아니고 core 미배선 → strict gate상 DIRECTIONAL cap. rung-3서 centering/whitening 전처리 필수 |
+
+- **(핵심 발견) 입-탈출은 capability-specific**: 해마 associative-store/completion(G1 — store가 reps에 없는 관계를 공급)엔 통하나, **소뇌 consequence forward-model(G6)엔 실패**(disjoint lane이어도 grounded target이 additive-composable). = G6는 여전히 trunk-objective floor.
+- **정직(c9)**: L5 GREEN은 rung(2)-of-4 = **engine-native 측정 GREEN**이지 gate-7 완전 cement(GREEN=배선까지) 아님 — 다음 rung(3) core/*.hexa 대기. L5 잔여 caveat = explicit-edge store라 **G1-vs-G2 novelty 판별기**(MLC/H_1835 trap guard)로 cement gate. L3 WALL은 un-built lane-op(engine_native=false)에도 robust(additive-composable에선 native binding op도 additive 못 이김).
+- **INFRA(infra-wall-noneval)**: pod 렌트 0·누수 0·OOM/decode-hang 없음. rung-3 전용 BLOCKED-INFRA = mini anima/hexa 바이너리 링크실패(`_hexa_ffi_dlopen` undefined arm64) → rung-3 .hexa smoke는 working hexa toolchain(pool/pod) 필요. rung-2는 py-canonical로 유효.
+- **evidence**: `state/g1g6_biolens_en/{l5_hippo,l3_fwdmodel,integrated}/ + SYNTH.md`
+
+## 🎯 다음 발사 top-1 (rung-2 GREEN 통과 → 사다리 (3) wire로)
+**L5 해마만 rung-3 실배선** (L3 WALL·통합 DIRECTIONAL은 보류): **DG-decorrelate + CA3-completion을 live `core/` op**으로 `.kosmos` anchor store(a_kosmos WIRED 재사용) + `kosmos_io`→`brain_decide` 위에 구현, **emit-drive lane{0,4}+recall_thr와 disjoint**(a_substrate_disjoint), engine-rep centering/whitening 전처리 필수(rung-2서 발견한 anisotropy 조건), `anima evaluate --py` 경로로 byte-exact 재측정 → ARCHITECTURE lockstep. **cement gate = novel-chain-vs-stored-recall 판별기**(explicit-edge store가 G1이지 G2 recall이 아님을 격리, MLC/H_1835 trap guard). ⏳ **BLOCKED-INFRA**: rung-3 .hexa smoke는 working hexa toolchain(pool/pod) 필요 — mini anima/hexa 링크실패(`_hexa_ffi_dlopen` arm64). L3/통합 함의 = γ trained-constructive-bind(trunk objective)만 미검증 잔여, binding/readout/consequence-lane 레버는 그만 제안(전수 floor).
 
 ## 정직 스코프 (c9)
 - fable=opus-diverged 설계(측정 0=verdict 없음, [[workflow-model-fable-override-ignored]]). 미발사 PRE-REGISTERED.
@@ -45,4 +59,5 @@ STEP-0 3/3 BIND 통과 → **L5 해마 associative-store를 303M engine-native�
 - `state/g1g6_biolens/fable_biolens_analysis.md` (A 동일가족판별 + B 뇌기제/이중해리/빠진구조3 + C L1-L5 + top-1)
 - `state/g1g6_biolens_step0/{l5_hippo,l3_fwdmodel}/` (STEP-0 wf_e4b95aa3: L5 해마 associative-store·L3 소뇌 forward-model, 결정적 seed)
 - `state/g1_combolane_step0/{l1_pfc_bind,l2_bg_gate,integrated}/ + SYNTH.md` (STEP-0 wf_e837f2de: 3부품 통합+ablation, 12-seed)
+- `state/g1g6_biolens_en/{l5_hippo,l3_fwdmodel,integrated}/ + SYNTH.md` (RUNG-2 engine-native wf_5cdd4535: L5🟢GREEN·L3🧱WALL·통합🟡DIRECTIONAL, real 303M h1129)
 - 상위: [[H_9127]](G1 mouth-레버 발산·gamma TRANSFER FAIL) · [[H_9128]](G6-FALS·g1g6 form-priming) · [[substrate-framebreak-g1-combination-operator]](재조합=COMBINATION OPERATOR 프레임전환) · 생물돌파 정합: 해마 H_1227/1231·소뇌 H_1280·기저핵 H_1281·작업기억 H_1282
