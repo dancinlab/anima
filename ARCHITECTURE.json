@@ -1212,7 +1212,7 @@
                                   {
                                     "name": "training-side break-walls (deep-L8 CLOSED · 2 survivor)",
                                     "id": "g1-train-wallbreak",
-                                    "detail": "w8yk7akft(25 agent, fable 없음): deep ConvMoE L8=CLOSED-by-H6188(state/g1_coverage_prod_block 3-arm L8_nocov·L8_cov G0 5/5∧G1 best_distinct=0, ING standing-go OPEN은 착각). 14 레버 중 survivor 2: derivation-trace 절차코퍼스(data축, CE=echo 미적용, toy FLAT3/7 vs DERIV13/18, summer ~1GPU-hr 최우선) · STaR verifier-filtered self-distill(CE유지, STEP-0 early-kill). 둘 다 toy-DIRECTIONAL, terminal=303M engine-native. H_9124."
+                                    "detail": "w8yk7akft(25 agent, fable 없음): deep ConvMoE L8=CLOSED-by-H6188(state/g1_coverage_prod_block 3-arm L8_nocov·L8_cov G0 5/5∧G1 best_distinct=0, ING standing-go OPEN은 착각). 14 레버 중 survivor 2: derivation-trace 절차코퍼스(data축, CE=echo 미적용, toy FLAT3/7 vs DERIV13/18, summer ~1GPU-hr 최우선) · STaR verifier-filtered self-distill(CE유지, STEP-0 early-kill). 둘 다 toy-DIRECTIONAL, terminal=303M engine-native. H_9124. ★레버1 발사결과: 🟢 DIRECTIONAL-POSITIVE — DERIV G1 PASS(bd2>ms1)∧FLAT FAIL(bd2,ms3) held-out {c0,c1} engine-native --py = 최초 G1 lift(H_9124), robustness(multi-pair·G2·paraphrase) 미확인."
                                   }
                                 ]
                               },
@@ -13145,7 +13145,7 @@
                 "detail": "CLM은 max_single=0 coverage-floor(측정 이전), 깨끗한 벽=ByteGPT single=2. depth/RF(H_1598 L8=L4=0)·binding-lane(H_1601 INERT)·data(H_1599)·objective(H_1602·H_1812 n6n7 0→1 4k regress·H_1819 0/3)·readout(H_1815/1816)·combiner(H_1822) 전수 🧱. torch↔engine 발산=sampler-artifact(H_1587/1588 🟠). census 🧱9·🔴2·🟠3"
               }
             ],
-            "verdict": "🧱 engine-native CONFIRMED-TERMINAL — 재조합은 mouth 능력 아님. FROZEN-1(H_9122 ENGINE-NATIVE, compose-read op 부재)·A11 선형붕괴(H_9121)·coverage+RF FALSIFIED(H_6185/6188)·param-ES toy-DOA. decode-side 20-family multi-lens census(생물4+기계16) 전수 refuted 생존0(wfbes89af). escape 축은 G1 밖 exogenous-consequence."
+            "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE (최초 lift, robustness 미확인) — decode축 20-family 전수 refuted+FROZEN-1 engine-native(mouth-recombination 벽 REAL)이나, **학습 data-format 축 derivation-trace(target=풀이과정)가 held-out {c0,c1}서 engine-native G1 PASS(bd=2>ms=1)∧FLAT 통제 FAIL** = 첫 lift(H_9124). CE=echo 미적용(echo=derivation). caveat: bd=2 marginal·1쌍·G2 미측정·CLOSURE 미달. robustness(multi-pair+G2+paraphrase) 확인 시 terminal 재판정."
           },
           {
             "name": "G2 NOVELTY (신규어)",
@@ -13464,6 +13464,13 @@
         "value": "clm303 savant .clm decode가 hexa 버전 skew에서 concept-conditioning 붕괴(silent) 재발: clean fixture(H_9111)는 hexa v0.559-0.577 lineage에서 나왔으나 prebuilt stable v0.608.1+origin/main core/decode.hexa(canonical, 옛 clm_decode 아님)는 CPU-farr서 legible English지만 모든 concept가 동일 attractor(' the state and the concern...')로 붕괴, GPU own-GEMM sm_120(RTX5090 Blackwell)=byte-garble. positive control(volcano, fixture서 rich)도 붕괴=decoder-path/harness/concept-knowledge 문제 아님·ckpt sha 무결. F5 layer-2 faculty 측정을 BLOCKED-INFRA로 막음(infra-wall-noneval, eval verdict와 격리).",
         "threshold": "재발조건: rentable pod에서 savant .clm decode가 garble 또는 generic-attractor collapse면 먼저 positive-control(fixture-rich concept=volcano가 rich 정의 재생산하나)로 conditioning 무결 확인. 붕괴면 hexa 버전 skew 의심(clean lineage=v0.559-577). 해결=(a) clean combo 재현(v0.559-577 hexa+self/runtime.c+matching core/) or (b) v0.608 core/decode regression bisect+fix(gate=volcano rich) or (c) sm_120 own-GEMM prebuilt fold. 그 전엔 F5 BLOCKED-INFRA(과학벽 아님).",
         "source": "core/decode.py"
+      },
+      {
+        "id": "result-md-1",
+        "state": "pos-conv",
+        "value": "G1 재조합벽의 첫 engine-native lift = derivation-trace data-format(target 시퀀스를 풀이과정 자체로 재작성). warm-FT h1129 303M 2-arm 통제 anima evaluate --py: DERIV G1 PASS(bd=2>ms=1)∧FLAT FAIL(bd=2,ms=3) on held-out 쌍(memorization-free). CE=echo 메타법칙이 target=derivation엔 미적용(echo=derivation 생성=composition). 20+ decode family+전 학습 family 못뚫은 벽을 data-format 축이 열음.",
+        "threshold": "재발조건: G1을 objective/readout/coverage 축으로 재시도 전에 — 첫 lift는 data-format(derivation-trace target) 축에서 나왔다. 단 bd=2 marginal·held-out 1쌍·G2 novelty 미측정이라 robustness(multi held-out 쌍+G2 corpus+paraphrase-invariance) 확인 전엔 DIRECTIONAL-POSITIVE지 terminal-flip 아님. 확인되면 G1 첫 escape.",
+        "source": "state/g1_train_wallbreak/derivtrace/RESULT.md"
       }
     ]
   }
