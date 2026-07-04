@@ -1,0 +1,140 @@
+{
+  "D": 1024,
+  "N": 24,
+  "seeds": 12,
+  "arm": "A_synthetic_topology",
+  "rep_diag": {
+    "mean": {
+      "n": 72,
+      "norm_min": 7255.650316655896,
+      "norm_max": 7379.0317885708955,
+      "norm_ratio": 1.017004881234666,
+      "offdiag_cos_mean": 0.9999102794047994,
+      "offdiag_cos_abs_mean": 0.9999102794047994,
+      "offdiag_cos_max": 0.9999867022313409
+    },
+    "last": {
+      "n": 72,
+      "norm_min": 6992.510852778094,
+      "norm_max": 7360.573548970508,
+      "norm_ratio": 1.0526367000268844,
+      "offdiag_cos_mean": 0.9997065894198929,
+      "offdiag_cos_abs_mean": 0.9997065894198929,
+      "offdiag_cos_max": 0.9999266485847814
+    }
+  },
+  "results": {
+    "rand1024": {
+      "codebook": "rand1024",
+      "chance": 0.041666666666666664,
+      "full_reach": 0.7013888888888888,
+      "full_unreach": 0.05555555555555556,
+      "gap_reach_minus_unreach": 0.6458333333333333,
+      "fooled_by_form": false,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.048611111111111105,
+          "drop": 0.6527777777777777,
+          "verdict": "CAUSAL"
+        },
+        "gateoff": {
+          "reach": 0.15277777777777776,
+          "drop": 0.548611111111111,
+          "verdict": "CAUSAL"
+        },
+        "compoff": {
+          "reach": 0.06944444444444445,
+          "drop": 0.6319444444444444,
+          "verdict": "CAUSAL"
+        }
+      },
+      "shuffle_reach": 0.013888888888888888,
+      "shuffle_drop": 0.6875,
+      "shuffle_collapsed": true
+    },
+    "real_mean_c": {
+      "codebook": "real_mean_c",
+      "chance": 0.041666666666666664,
+      "full_reach": 0.4236111111111111,
+      "full_unreach": 0.020833333333333332,
+      "gap_reach_minus_unreach": 0.4027777777777778,
+      "fooled_by_form": false,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.05555555555555556,
+          "drop": 0.3680555555555555,
+          "verdict": "CAUSAL"
+        },
+        "gateoff": {
+          "reach": 0.048611111111111105,
+          "drop": 0.375,
+          "verdict": "CAUSAL"
+        },
+        "compoff": {
+          "reach": 0.041666666666666664,
+          "drop": 0.3819444444444444,
+          "verdict": "CAUSAL"
+        }
+      },
+      "shuffle_reach": 0.03472222222222222,
+      "shuffle_drop": 0.3888888888888889,
+      "shuffle_collapsed": true
+    },
+    "real_last_c": {
+      "codebook": "real_last_c",
+      "chance": 0.041666666666666664,
+      "full_reach": 0.3333333333333333,
+      "full_unreach": 0.020833333333333332,
+      "gap_reach_minus_unreach": 0.3125,
+      "fooled_by_form": false,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.020833333333333332,
+          "drop": 0.3125,
+          "verdict": "CAUSAL"
+        },
+        "gateoff": {
+          "reach": 0.06944444444444443,
+          "drop": 0.2638888888888889,
+          "verdict": "CAUSAL"
+        },
+        "compoff": {
+          "reach": 0.048611111111111105,
+          "drop": 0.2847222222222222,
+          "verdict": "CAUSAL"
+        }
+      },
+      "shuffle_reach": 0.013888888888888888,
+      "shuffle_drop": 0.3194444444444444,
+      "shuffle_collapsed": true
+    },
+    "real_mean_raw": {
+      "codebook": "real_mean_raw",
+      "chance": 0.041666666666666664,
+      "full_reach": 0.048611111111111105,
+      "full_unreach": 0.03472222222222222,
+      "gap_reach_minus_unreach": 0.013888888888888888,
+      "fooled_by_form": true,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.027777777777777776,
+          "drop": 0.02083333333333333,
+          "verdict": "INERT"
+        },
+        "gateoff": {
+          "reach": 0.027777777777777776,
+          "drop": 0.02083333333333333,
+          "verdict": "INERT"
+        },
+        "compoff": {
+          "reach": 0.03472222222222222,
+          "drop": 0.013888888888888888,
+          "verdict": "INERT"
+        }
+      },
+      "shuffle_reach": 0.048611111111111105,
+      "shuffle_drop": 0.0,
+      "shuffle_collapsed": false
+    }
+  }
+}
