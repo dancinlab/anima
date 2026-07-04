@@ -1,0 +1,39 @@
+==============================================================================
+H_1794 SCALE-UP  corticostriatal product-AND binding — mid-rung numpy [DIRECTIONAL]
+  N=4 factor-loops · k=5 value-slots · joint space k^N=625 (was 27)
+==============================================================================
+
+[A] BINDING-REQUIRED (ambiguous subset · identical marginals, diff joint · M=2)
+    conjunctive(product) ambig_acc = 1.000   (bar >= 0.95)
+    max-pool   (INERT)   ambig_acc = 1.000   (bar <= 0.60)
+    additive(sum,INERT)  ambig_acc = 0.500   (bar <= 0.60)
+    single-factor(max_single)      = 0.500   (bar <= 0.60)
+    scramble cortico-striatal(G0)  = 0.511   (bar <= 0.60)
+
+[B] composed_distinct (sampled 40 of k^N joints decodable under superposition)
+    cd(product)   = 40/40   (bar: >=0.9*sample=36 and >=5)
+    cd(max-pool)  = 40/40   (bar <= 10)  [collapse toward max_single=5]
+    INERT differential  cd(product) > cd(max-pool) ? False
+
+[C] superposition-depth sweep (detect T in M-item scene · product vs max vs add)
+      M |  product | max-pool | additive
+      2 |    1.000 |    1.000 |    0.967
+      3 |    1.000 |    1.000 |    0.892
+      4 |    1.000 |    1.000 |    0.864
+      5 |    1.000 |    1.000 |    0.829
+      6 |    1.000 |    1.000 |    0.802
+
+[RESOLUTION GATE] product-vs-max-pool resolvable at this k^N?
+    max-pool ambig (M=2) <= 0.60 OR max collapses at high-M while product holds : False
+    -> [STILL under-powered -> larger k^N rung needed]
+
+==============================================================================
+  bar A (binding-required, M=2 · prod>max=INERT) : FAIL
+  bar B (composed_distinct, M=2)                 : FAIL
+  diag C (prod>max at high superposition)        : FAIL
+  sub: conjunctive binds + scramble collapses    : True
+  sub: additive/single-factor collapse (G1 wall) : True
+
+  VERDICT: UNDER-POWERED (resolution gate FAIL — larger k^N rung needed)
+  [numpy toy = DIRECTIONAL only · engine-native (cli/anima.hexa) NOT fired]  elapsed=180s
+==============================================================================

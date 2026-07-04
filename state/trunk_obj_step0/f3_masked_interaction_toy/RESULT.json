@@ -1,0 +1,46 @@
+{
+  "probe": "F3 masked-interaction toy (capacity sanity, $0 numpy)",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "hidden": 64,
+  "steps": 2500,
+  "n_pass_2of3": 0,
+  "verdict": "CAPACITY-LIMIT",
+  "results": [
+    {
+      "seed": 7,
+      "r2_joint": 0.05779241524004641,
+      "r2_additive": 0.12981897153920952,
+      "r2_shuffle": -0.04710132580748527,
+      "r2_joint_train": 0.216784925109197,
+      "gap_joint_add": -0.0720265562991631,
+      "gap_joint_shuf": 0.10489374104753169,
+      "pass_both": false
+    },
+    {
+      "seed": 4302,
+      "r2_joint": 0.07153392837847605,
+      "r2_additive": 0.10890519329600301,
+      "r2_shuffle": -0.03743313525707559,
+      "r2_joint_train": 0.21831607204397163,
+      "gap_joint_add": -0.03737126491752696,
+      "gap_joint_shuf": 0.10896706363555164,
+      "pass_both": false
+    },
+    {
+      "seed": 4303,
+      "r2_joint": 0.034442322253429136,
+      "r2_additive": 0.11438061106116537,
+      "r2_shuffle": -0.04249031371733114,
+      "r2_joint_train": 0.20245567428071198,
+      "gap_joint_add": -0.07993828880773624,
+      "gap_joint_shuf": 0.07693263597076028,
+      "pass_both": false
+    }
+  ],
+  "bar": "held-out R^2: joint > additive+0.10 AND > shuffle+0.10, >=2/3 seeds",
+  "interpretation": "Unexpected: tiny NN does NOT generalize non-additive c(a,b) \u2014 would suggest a deeper limit worth re-examining."
+}

@@ -1,0 +1,148 @@
+=== anima train --py (canonical) arch=clm arm=ctrl obj=ce_marginal seed=7 ===
+  levers: tlora=False(rank=8,base=True) dict_aux=False(λ=0.001) jamo_aux=False(λ=0.3)
+  device=cuda d=2781 L=8 E0=4 Emax=4 seq_len=1024 steps=6000 bs=8 sample=roundrobin
+  cuda: NVIDIA GeForce RTX 4090 cap=8.9 torch=2.4.0
+  params: 303145946 (303.146M)
+  [--init] warm-start ✓ .pt loaded 49/49 keys (untouched=0 extra-in-ckpt=0)
+  corpus cell[0] ko-general   .corpus_cache/anima-corpus-ko-general.bytes size=60000356 train=57000338 val_tail=3000018
+  corpus cell[1] en-general   .corpus_cache/anima-corpus-en-general.bytes size=60049637 train=57047155 val_tail=3002482
+  corpus cell[2] ko-sns       .corpus_cache/anima-corpus-ko-sns.bytes size=6183822 train=5874630 val_tail=309192
+  corpus cell[3] en-sns       .corpus_cache/anima-corpus-en-sns.bytes size=1326111 train=1259805 val_tail=66306
+  corpus cell[4] ko-cov       corpus/ko_block.txt size=2642120 train=2510014 val_tail=132106
+  corpus cell[5] en-cov       corpus/en_block.txt size=3101519 train=2946443 val_tail=155076
+  step     1  CE=1.56599  E=4  wd=0.0500 dp=0.5000  val_CE=1.60657
+  step    50  CE=1.43803  E=4  wd=0.0497 dp=0.4972
+  step   100  CE=1.13765  E=4  wd=0.0494 dp=0.4944
+  step   150  CE=1.17945  E=4  wd=0.0492 dp=0.4916
+  step   200  CE=1.20935  E=4  wd=0.0489 dp=0.4888  val_CE=1.17618
+  step   250  CE=1.16065  E=4  wd=0.0486 dp=0.4860
+  step   300  CE=1.15634  E=4  wd=0.0483 dp=0.4832
+  step   350  CE=1.19483  E=4  wd=0.0480 dp=0.4804
+  step   400  CE=1.10493  E=4  wd=0.0478 dp=0.4775  val_CE=1.12614
+  step   450  CE=1.10647  E=4  wd=0.0475 dp=0.4747
+  step   500  CE=1.11158  E=4  wd=0.0472 dp=0.4719
+  step   550  CE=1.12829  E=4  wd=0.0469 dp=0.4691
+  step   600  CE=0.99352  E=4  wd=0.0466 dp=0.4663  val_CE=1.07381
+  step   650  CE=1.15418  E=4  wd=0.0463 dp=0.4635
+  step   700  CE=1.04347  E=4  wd=0.0461 dp=0.4607
+  step   750  CE=0.93926  E=4  wd=0.0458 dp=0.4578
+  step   800  CE=1.16019  E=4  wd=0.0455 dp=0.4550  val_CE=1.13036
+  step   850  CE=0.97001  E=4  wd=0.0452 dp=0.4522
+  step   900  CE=1.08645  E=4  wd=0.0449 dp=0.4494
+  step   950  CE=1.13985  E=4  wd=0.0447 dp=0.4466
+  step  1000  CE=1.16928  E=4  wd=0.0444 dp=0.4438  val_CE=1.11536
+  step  1050  CE=0.97949  E=4  wd=0.0441 dp=0.4410
+  step  1100  CE=1.08340  E=4  wd=0.0438 dp=0.4381
+  step  1150  CE=0.94115  E=4  wd=0.0435 dp=0.4353
+  step  1200  CE=0.97500  E=4  wd=0.0433 dp=0.4325  val_CE=1.02869
+  step  1250  CE=1.14538  E=4  wd=0.0430 dp=0.4297
+  step  1300  CE=0.88628  E=4  wd=0.0427 dp=0.4269
+  step  1350  CE=0.95095  E=4  wd=0.0424 dp=0.4241
+  step  1400  CE=1.19497  E=4  wd=0.0421 dp=0.4213  val_CE=1.07105
+  step  1450  CE=0.98248  E=4  wd=0.0418 dp=0.4184
+  step  1500  CE=0.86867  E=4  wd=0.0416 dp=0.4156
+  step  1550  CE=1.00240  E=4  wd=0.0413 dp=0.4128
+  step  1600  CE=0.84958  E=4  wd=0.0410 dp=0.4100  val_CE=1.04075
+  step  1650  CE=0.97735  E=4  wd=0.0407 dp=0.4072
+  step  1700  CE=1.09558  E=4  wd=0.0404 dp=0.4044
+  step  1750  CE=0.88322  E=4  wd=0.0402 dp=0.4015
+  step  1800  CE=0.89379  E=4  wd=0.0399 dp=0.3987  val_CE=0.99141
+  step  1850  CE=0.98397  E=4  wd=0.0396 dp=0.3959
+  step  1900  CE=0.91662  E=4  wd=0.0393 dp=0.3931
+  step  1950  CE=0.91881  E=4  wd=0.0390 dp=0.3903
+  step  2000  CE=1.03338  E=4  wd=0.0387 dp=0.3875  val_CE=0.97462
+  step  2050  CE=0.99493  E=4  wd=0.0385 dp=0.3847
+  step  2100  CE=0.96298  E=4  wd=0.0382 dp=0.3818
+  step  2150  CE=1.10006  E=4  wd=0.0379 dp=0.3790
+  step  2200  CE=0.85948  E=4  wd=0.0376 dp=0.3762  val_CE=1.02220
+  step  2250  CE=0.97909  E=4  wd=0.0373 dp=0.3734
+  step  2300  CE=1.03746  E=4  wd=0.0371 dp=0.3706
+  step  2350  CE=0.84329  E=4  wd=0.0368 dp=0.3678
+  step  2400  CE=0.96351  E=4  wd=0.0365 dp=0.3650  val_CE=1.04222
+  step  2450  CE=0.96535  E=4  wd=0.0362 dp=0.3621
+  step  2500  CE=0.98959  E=4  wd=0.0359 dp=0.3593
+  step  2550  CE=0.90436  E=4  wd=0.0357 dp=0.3565
+  step  2600  CE=0.98087  E=4  wd=0.0354 dp=0.3537  val_CE=1.03133
+  step  2650  CE=0.84263  E=4  wd=0.0351 dp=0.3509
+  step  2700  CE=0.93934  E=4  wd=0.0348 dp=0.3481
+  step  2750  CE=0.96152  E=4  wd=0.0345 dp=0.3453
+  step  2800  CE=0.94137  E=4  wd=0.0342 dp=0.3424  val_CE=0.93886
+  step  2850  CE=0.87716  E=4  wd=0.0340 dp=0.3396
+  step  2900  CE=0.95722  E=4  wd=0.0337 dp=0.3368
+  step  2950  CE=0.90297  E=4  wd=0.0334 dp=0.3340
+  step  3000  CE=0.91939  E=4  wd=0.0331 dp=0.3312  val_CE=0.95975
+  step  3050  CE=1.04513  E=4  wd=0.0328 dp=0.3284
+  step  3100  CE=0.81937  E=4  wd=0.0326 dp=0.3256
+  step  3150  CE=0.89617  E=4  wd=0.0323 dp=0.3227
+  step  3200  CE=1.07214  E=4  wd=0.0320 dp=0.3199  val_CE=1.00972
+  step  3250  CE=0.81401  E=4  wd=0.0317 dp=0.3171
+  step  3300  CE=0.95068  E=4  wd=0.0314 dp=0.3143
+  step  3350  CE=1.10929  E=4  wd=0.0311 dp=0.3115
+  step  3400  CE=0.93759  E=4  wd=0.0309 dp=0.3087  val_CE=0.98763
+  step  3450  CE=0.90247  E=4  wd=0.0306 dp=0.3059
+  step  3500  CE=0.96762  E=4  wd=0.0303 dp=0.3030
+  step  3550  CE=0.89822  E=4  wd=0.0300 dp=0.3002
+  step  3600  CE=0.78104  E=4  wd=0.0297 dp=0.2974  val_CE=0.97875
+  step  3650  CE=0.89015  E=4  wd=0.0295 dp=0.2946
+  step  3700  CE=0.90165  E=4  wd=0.0292 dp=0.2918
+  step  3750  CE=0.85899  E=4  wd=0.0289 dp=0.2890
+  step  3800  CE=1.07179  E=4  wd=0.0286 dp=0.2862  val_CE=0.95325
+  step  3850  CE=0.97749  E=4  wd=0.0283 dp=0.2833
+  step  3900  CE=0.92479  E=4  wd=0.0281 dp=0.2805
+  step  3950  CE=1.12374  E=4  wd=0.0278 dp=0.2777
+  step  4000  CE=0.93876  E=4  wd=0.0275 dp=0.2749  val_CE=0.94656
+  step  4050  CE=0.87495  E=4  wd=0.0272 dp=0.2721
+  step  4100  CE=1.13560  E=4  wd=0.0269 dp=0.2693
+  step  4150  CE=0.82579  E=4  wd=0.0266 dp=0.2665
+  step  4200  CE=0.92031  E=4  wd=0.0264 dp=0.2636  val_CE=0.93016
+  step  4250  CE=1.02100  E=4  wd=0.0261 dp=0.2608
+  step  4300  CE=0.87471  E=4  wd=0.0258 dp=0.2580
+  step  4350  CE=0.89010  E=4  wd=0.0255 dp=0.2552
+  step  4400  CE=1.05560  E=4  wd=0.0252 dp=0.2524  val_CE=0.91319
+  step  4450  CE=0.89378  E=4  wd=0.0250 dp=0.2496
+  step  4500  CE=0.88525  E=4  wd=0.0247 dp=0.2468
+  step  4550  CE=0.98576  E=4  wd=0.0244 dp=0.2439
+  step  4600  CE=0.88039  E=4  wd=0.0241 dp=0.2411  val_CE=0.99401
+  step  4650  CE=0.84596  E=4  wd=0.0238 dp=0.2383
+  step  4700  CE=0.90622  E=4  wd=0.0235 dp=0.2355
+  step  4750  CE=0.84331  E=4  wd=0.0233 dp=0.2327
+  step  4800  CE=0.82522  E=4  wd=0.0230 dp=0.2299  val_CE=0.97029
+  step  4850  CE=0.98869  E=4  wd=0.0227 dp=0.2271
+  step  4900  CE=0.93463  E=4  wd=0.0224 dp=0.2242
+  step  4950  CE=0.90380  E=4  wd=0.0221 dp=0.2214
+  step  5000  CE=1.01754  E=4  wd=0.0219 dp=0.2186  val_CE=0.91074
+  step  5050  CE=0.85812  E=4  wd=0.0216 dp=0.2158
+  step  5100  CE=0.82045  E=4  wd=0.0213 dp=0.2130
+  step  5150  CE=1.05060  E=4  wd=0.0210 dp=0.2102
+  step  5200  CE=0.82597  E=4  wd=0.0207 dp=0.2073  val_CE=0.92037
+  step  5250  CE=0.89164  E=4  wd=0.0205 dp=0.2045
+  step  5300  CE=1.00464  E=4  wd=0.0202 dp=0.2017
+  step  5350  CE=0.75543  E=4  wd=0.0199 dp=0.1989
+  step  5400  CE=0.79375  E=4  wd=0.0196 dp=0.1961  val_CE=0.96039
+  step  5450  CE=1.13887  E=4  wd=0.0193 dp=0.1933
+  step  5500  CE=0.88905  E=4  wd=0.0190 dp=0.1905
+  step  5550  CE=0.91681  E=4  wd=0.0188 dp=0.1876
+  step  5600  CE=0.94121  E=4  wd=0.0185 dp=0.1848  val_CE=0.94363
+  step  5650  CE=0.93617  E=4  wd=0.0182 dp=0.1820
+  step  5700  CE=0.83579  E=4  wd=0.0179 dp=0.1792
+  step  5750  CE=1.08089  E=4  wd=0.0176 dp=0.1764
+  step  5800  CE=0.86130  E=4  wd=0.0174 dp=0.1736  val_CE=1.00839
+  step  5850  CE=0.91819  E=4  wd=0.0171 dp=0.1708
+  step  5900  CE=0.98008  E=4  wd=0.0168 dp=0.1679
+  step  5950  CE=0.87123  E=4  wd=0.0165 dp=0.1651
+  step  6000  CE=0.87813  E=4  wd=0.0162 dp=0.1623  val_CE=0.92392
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     ko-general   val_CE=1.30898  DESCENT
+     en-general   val_CE=1.53302  DESCENT
+     ko-sns       val_CE=1.21109  DESCENT
+     en-sns       val_CE=1.07840  DESCENT
+     ko-cov       val_CE=0.14524  DESCENT
+     en-cov       val_CE=0.18942  DESCENT
+  FINAL val_CE(pooled)=0.9110261692355076  registers_DESCENT=6/6
+  loss0=1.56599 lossF=0.87813 wall=1697.4s savant_latched_at=1 E0=4->E=4
+  [N3 DBES expert-specialization] {"expert_div": 0.30686, "router_entropy": 1.37816, "usage_gini": 0.03876, "usage": [0.24388, 0.2268, 0.275, 0.25431], "n_experts": 4}
+  [G1/G6 torch-probe DIRECTIONAL] {"step": 6000, "ce": 0.87813, "g1_composed_distinct": 0, "g2_novelty_rate": 0.0, "g6_count": 2, "g6_jaccard": 0.92857, "phi_proxy": 29.611831, "mitosis_cells": 82}
+  torch ckpt -> out/clm303_deep_L8_cov.pt (1212596874 bytes)
+  .clm WRITTEN 154513322 bytes -> out/clm303_deep_L8_cov.clm
+  clm_decodable=True
+TRAIN_FULL_RC=0

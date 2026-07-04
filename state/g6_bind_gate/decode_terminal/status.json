@@ -1,0 +1,25 @@
+{
+  "task": "H_6186 G6-bind DECODE-axis engine-native re-decode on aiden (clean, hexa v0.577.0)",
+  "goal": "CORE .hexa A<->G re-decode of 3 arms -> fals_bound engine-native; verdict TARGETED fals_bound > SHUF (form-priming block) vs py-mirror byte-parity (TARGETED 5.667 >> SHUF 0.333).",
+  "outcome": "BLOCKED-INFRA (type-c wall per a_break_the_wall; NOT science ceiling, NOT tune-to-green). decode-axis NOT promoted to terminal this session.",
+  "a_core_sync": {
+    "aiden_core_eq_origin_main": "byte-exact 219/219 core/*.hexa (220th = core/phi/quantum_types.hexa dangling symlink to hexa-lang sibling, origin/main identical, not in g6 import graph)",
+    "g6_ideation_sha256": "5c47557fdbf768f3b0d5d0420fc137018bde1fe07fdbf3dbcfb8bf2457526f89",
+    "bind_twin_g6_score_arm_auto_bound": "PRESENT (#2851)"
+  },
+  "b_ckpt_recover": {
+    "note": "a_fire_recover_complete — originals persist on OWNED host summer (no teardown). RECOVERED to mac via ssh-cat stream (rsync egress dead under summer fleet load 25/17-users; ssh-cat + aes128-gcm ~3.9MB/s worked).",
+    "BASE_on_aiden": {"path": "~/anima-weights/bytegpt303_h1129/h1129.bin", "sha256": "5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e", "match": true},
+    "TARGETED_on_mac": {"path": "/tmp/g6tc_targeted.bin", "sha256": "919c1360cabcfe92266dc73a5634671f417df1dafb47d7275b1f95d96de71995", "match": true},
+    "SHUF_on_mac": {"path": "/tmp/g6tc_shuf.bin", "sha256": "8c3af81be60e6a235ac795222b01fccbd8b4388c9b9af9ff5d868110017890b2", "match": true}
+  },
+  "driver": "cli/g6_bound_probe.hexa (LIVE origin/main g6_score_arm_auto_bound best-of-K bytegpt, seeds {7,4302,4303}, gen80 k3 temp0.7 top_k40 best_of_k=true, frame_pairs=g6_build_frame_pairs(6)); scoring/decode = unmodified CORE ops; glue g6_dict_load_pub() additive (frozen _g6_is_falsifiable / g6_score_arm_auto_W untouched); NOT committed. AOT-compiled clean on hexa v0.577.0, entered decode (header emitted).",
+  "cd_blocker": {
+    "aiden_gpu_owngemm_fired": false,
+    "evidence": "base.err empty (no [OWN-GEMM-FIRED] DEVICE marker); GPU util 0% at decode start -> CPU-scalar farr path. 303M matmul saturated all 12 cores -> sshd starved -> aiden ssh handshake fails (ping 4ms OK = box alive, userland wedge; NOT reboot). BASE single arm alone wedged host; 3-arm x 3-seed x 54-decode CPU-scalar infeasible. Matches documented aiden heavy-303M -> wedge/OOM pattern.",
+    "summer_alt": "GPU + local ckpts but fleet load 25/17-users -> own sshd wedged; not usable as decode host either.",
+    "verdict_axes": {"gate_logic": "ENGINE-NATIVE CONFIRMED (prior session, 9/9 byte-parity) unchanged", "decode": "STILL DIRECTIONAL (py-mirror) / BLOCKED-INFRA"}
+  },
+  "d_promotion": "NO full terminal this session. decode-axis re-decode engine-native = not completed (host infra).",
+  "followon_ING": "engine-native 3-arm CORE .hexa re-decode on a DEDICATED GPU pod (or aiden once GPU own-GEMM path enabled + fleet clears). Ckpts already recovered & sha-verified on mac (no longer summer-locked) -> follow-on only needs a working GPU decode host."
+}

@@ -1,0 +1,32 @@
+====================================================================================
+H_1792 SCALE-UP — InfoNCE objective as G1 lever (mid-rung, numpy AdamW, DIRECTIONAL)
+task: Z_13* factored y1=(a*b)%13 y2=(a+b)%13 | 144 pairs, held 25%
+ARCH: shared per-symbol EMBEDDING(dim=32) -> MLP(H=256,D=96); ONLY objective differs
+compositional chance = 1/156 = 0.0064 | steps=60000 AdamW lr=0.001 wd=0.05 seeds=[7, 4302, 4303, 11, 23]
+====================================================================================
+[RESOLUTION GATE] grok-ctrl modular-ADD (shared embedding, mod 23, 50% held): held=0.034 (chance=0.043)
+  -> grok PASS (>=0.80)? False  [STILL under-powered -> next rung]
+------------------------------------------------------------------------------------
+seed     7: M1(CEmarg) tr=1.00 he=0.00 | M2(CEjoint) he=0.00 | M3(InfoNCE) he=0.00 vb=0.00 | M4(addfloor) he=0.00
+seed  4302: M1(CEmarg) tr=1.00 he=0.00 | M2(CEjoint) he=0.00 | M3(InfoNCE) he=0.00 vb=0.00 | M4(addfloor) he=0.03
+seed  4303: M1(CEmarg) tr=1.00 he=0.00 | M2(CEjoint) he=0.00 | M3(InfoNCE) he=0.00 vb=0.00 | M4(addfloor) he=0.00
+seed    11: M1(CEmarg) tr=1.00 he=0.00 | M2(CEjoint) he=0.00 | M3(InfoNCE) he=0.00 vb=0.03 | M4(addfloor) he=0.00
+seed    23: M1(CEmarg) tr=1.00 he=0.00 | M2(CEjoint) he=0.00 | M3(InfoNCE) he=0.00 vb=0.00 | M4(addfloor) he=0.00
+------------------------------------------------------------------------------------
+MEANS across seeds (BEST held-out over run):
+  M1 CE-marginal : train=1.000  held=0.000
+  M2 CE-joint    : held=0.000
+  M3 InfoNCE     : held=0.000  verbatim_win=0.006
+  M4 add-floor   : held=0.006
+------------------------------------------------------------------------------------
+FROZEN BARS (identical to cheap):
+  BAR-1 binding/retrieval@1  M3_held>=0.50            : 0.000  -> FAIL
+  BAR-2 objective=G1 lever   (M3-M1)>=0.20 & M3>=0.50 : d=+0.000 -> FAIL
+  BAR-3 interaction-ablation (M3-M4floor)>=0.30       : d=-0.006 -> FAIL
+  BAR-4 verbatim control     M3 vb_win>=0.80          : 0.006  -> FAIL
+  DISCRIM-CTRL  M1 tr>=0.95 & M1 held<0.50            : tr=1.00 he=0.00 -> PASS
+------------------------------------------------------------------------------------
+VERDICT: UNDER-POWERED (resolution gate FAIL — next rung needed, bars NOT binding)
+  [this mid-rung = PREDICTION for 303M objrun H_1602; terminal = engine-native 303M]
+  numpy toy = DIRECTIONAL only (a_engine_native_learning). elapsed=1370s
+====================================================================================
