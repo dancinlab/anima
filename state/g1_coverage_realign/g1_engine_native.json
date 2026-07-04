@@ -1,0 +1,102 @@
+{
+ "measurement": "CANONICAL anima evaluate --py --gen 40 (cli/evaluate.py, core/decode.py numpy byte-parity, torch-free, gate FROZEN). session --py = terminal (a_engine_native_learning). heavy decode on mac (summer+aiden numpy import HANG @load22; mac completed no OOM).",
+ "ckpt": "~/anima-weights/g1_realign/g1_realign.clm",
+ "ckpt_sha256": "7222554f25d5baccd3ffed56f6345642bed6269efa87c392283630c99de209a3",
+ "gen": 40,
+ "full_gate_battery": {
+  "G0_COHERENCE": "🟢 PASS kwr>=0.50 on 5/5",
+  "G1_RECOMBINATION": "🔴 FAIL best_distinct=1 · max_single=3 (need >=2 & >max_single)",
+  "G2_NOVELTY": "🟢 PASS novel=35 · control=0 · coherent=16",
+  "G3_PHILOSOPHY": "continuity=0.999950 impostor=0 (architecture read)",
+  "G5_NONFAB": "🟢 PASS L1 fab=0.125 (<=0.30)",
+  "G6_IDEATION": "🔴 FAIL distinct=6 · falsifiable=0",
+  "CLOSURE_a7b_pass": "🔴 FAIL (needs G0∧G1∧G2)"
+ },
+ "G1": {
+  "best_distinct": 1,
+  "max_single": 3,
+  "gate_PASS": false
+ },
+ "prior_baseline_all_L8cov": 0,
+ "torch_probe_DIRECTIONAL_traintime": 2,
+ "VERDICT": "ENGINE-NATIVE NOT surfaced at frozen bar. best_distinct=1 (<2) = G1 🔴 FAIL. torch-probe DIRECTIONAL g1_composed_distinct=2 NOT confirmed engine-native. So coverage lever gate-axis GREEN is REFUTED at canonical gen=40 (not the H_6187-predicted terminal GREEN).",
+ "nuance_honest": "max_single=3: single gate seeds DO surface 3 distinct gate keyword sets (learned emit-cluster form fires) — recombination-surfacing CAPABILITY exists. But composed best_distinct=1 < max_single=3: composition does NOT add beyond single; the gate's composed>single criterion FAILS. NOT a clean 0-floor (0->best_distinct present) but gate PASS not met. G0 coherence 🟢 preserved (no register collapse).",
+ "torch_engine_divergence_cause": "torch-probe (gauge_lib inline, train-time) uses its own generation harness (length/sampler differ from canonical gen=40 xorshift top40 temp0.7); engine-native canonical gen=40 gives best_distinct=1. Consistent with g1g6-wall-engine-innocent-3axis precedent: torch gen-harness inflates vs engine-native frozen-bar decode. My earlier gen=120 probe (best_distinct=3) was a NON-canonical bar-move (longer gen inflates coverage) — RETRACTED in favor of frozen gen=40.",
+ "caveats": [
+  "engine-native = numpy py-mirror (session --py=terminal); not hexa CORE.",
+  "general corpora 12MB head-slice anti-collapse; gate/bar untouched.",
+  "gate/bar FROZEN gen=40 (no tune-to-green); gen=120 probe retracted."
+ ],
+ "composed_per_k_gen40": [
+  {
+   "k": 2,
+   "distinct": 1,
+   "cov": [
+    1
+   ]
+  },
+  {
+   "k": 3,
+   "distinct": 1,
+   "cov": [
+    2
+   ]
+  },
+  {
+   "k": 4,
+   "distinct": 1,
+   "cov": [
+    3
+   ]
+  },
+  {
+   "k": 5,
+   "distinct": 1,
+   "cov": [
+    4
+   ]
+  }
+ ],
+ "single_per_set_gen40": [
+  {
+   "set": 0,
+   "distinct": 1,
+   "cov": [
+    0
+   ]
+  },
+  {
+   "set": 1,
+   "distinct": 3,
+   "cov": [
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "set": 2,
+   "distinct": 2,
+   "cov": [
+    2,
+    3
+   ]
+  },
+  {
+   "set": 3,
+   "distinct": 1,
+   "cov": [
+    3
+   ]
+  },
+  {
+   "set": 4,
+   "distinct": 2,
+   "cov": [
+    0,
+    4
+   ]
+  }
+ ],
+ "window_physics_evidence": "composed k2..5 surface {[1],[2],[3],[4]} = EACH composed seed surfaces ONLY the LAST gate concept's set (T=24 window shows only last concept-tail at gen start). Composition adds 0 distinct sets. This is WHY best_distinct=1 & composed<single — structural T=24-window vs composed-seed-length mismatch, NOT fixable by corpus (gate seed frozen). max_single=3 from single seeds (one concept fully in short seed + learned cluster drift)."
+}

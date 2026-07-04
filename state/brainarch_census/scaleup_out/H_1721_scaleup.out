@@ -1,0 +1,23 @@
+==============================================================================
+H_1721 SCALE-UP — Contrastive Equilibrium EBM (mid-rung numpy) [DIRECTIONAL]
+  S=C=6 -> 36 conjunctions · settle_steps=8 · epochs=1200
+==============================================================================
+[full-set REPORTED, not a bar]  ebm_cross=0.055  additive_CE=0.055
+
+[RESOLUTION GATE] EBM-cross separates binding pairs above 0.85 (chance 0.50)?
+    ebm_cross_ambig = 0.500  -> resolvable? False  [STILL capacity-limited -> next rung]
+
+(a) G1 composition + cross-weight INERT  (AMBIGUOUS/binding-required subset)
+    ebm_cross_ambig   = 0.500   (bar >=0.95)
+    additive_CE_ambig = 0.500   (bar <=0.60  ~chance)
+    ablated_cross     = 0.500   (bar <=0.60  INERT)
+    -> (a) FAIL
+
+(b) G2 novelty: novel_F1=0.425(>=.80) distinct=4/4(>=3) playback=0.287(<=.10) -> FAIL
+(c) Psi double-well: bal=0.5000 contraction=0.0000 noEmit=0.000 noSil=1.000 -> PASS
+(d) honesty: AUROC_real=1.000(>=.90) shuffle=1.000(.40-.60) -> FAIL
+
+==============================================================================
+VERDICT: UNDER-POWERED (resolution gate FAIL — next rung needed)   [(a)=F (b)=F (c)=P (d)=F]
+numpy toy = DIRECTIONAL only (a_engine_native_learning). elapsed=40s
+==============================================================================
