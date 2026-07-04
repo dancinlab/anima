@@ -1,0 +1,26 @@
+==============================================================================
+FROZEN-1 recall-vs-recombine — DIRECTIONAL numpy mirror (H_9122)
+  store: [ocean music]='the ocean wave and the music song together'  |  [forest engine]='the forest tree and the engine motor together'
+  recall_thr=0.15 DIM=64 FNV-1a byte-trigram
+==============================================================================
+[cross A,D ] probe='ocean engine'       L2=0.9251 fire=False key='forest engine' -> ABSTAIN
+           returned=''  coverage=[]
+[cross B,C ] probe='music forest'       L2=0.9194 fire=False key='ocean music' -> ABSTAIN
+           returned=''  coverage=[]
+[cross A,C ] probe='ocean forest'       L2=0.8080 fire=False key='ocean music' -> ABSTAIN
+           returned=''  coverage=[]
+------------------------------------------------------------------------------
+[C-SCRAMBLE ] probe='planet guitar' fire=False L2=1.2641  (must ABSTAIN; FIRE=over-fire破損)
+[C-RECALLBASE] probe='ocean music' fire=True spans_both=True key='ocean music'  (must FIRE verbatim pair)
+[C-WRONG-D  ] probe='ocean plasma' fire=False returned=''  (synth of A+plasma = fabrication)
+------------------------------------------------------------------------------
+[SV3 4-atom] recall(A)='ocean wave' recall(D)='engine motor'
+           single recall returns ONE cell; NO core op concatenates two cell_values
+           => a compose-read of (A,D) requires a NEW op (=(iii)(b) emit-half), absent in core
+==============================================================================
+cross HIT (spans both novel) = 0/3  (need >=2/3)
+C-SCRAMBLE ABSTAIN = True   C-RECALL-BASELINE FIRE = True
+VERDICT (FROZEN-1, DIRECTIONAL): MISS (mouth-G1 ceiling holds)
+  structural: recall returns whole stored value (single-parent); no compose-read op
+  => lane 4/4 was stored-pair RECALL, not novel RECOMBINATION
+==============================================================================
