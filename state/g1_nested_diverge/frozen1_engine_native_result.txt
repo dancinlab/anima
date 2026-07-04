@@ -1,0 +1,15 @@
+=== FROZEN-1 recall-vs-recombine — ENGINE-NATIVE (core ImmuneMemory ops) ===
+  cells=2 (invariant 2)
+  [A,D ocean+engine] fire=false margin=0.7751188533941406 spans_both=false val=
+  [B,C music+forest] fire=false margin=0.7694016867619661 spans_both=false val=
+  [A,C ocean+forest] fire=false margin=0.6579909479015673 spans_both=false val=
+  --- controls ---
+  C-SCRAMBLE planet+guitar: fire=false (must ABSTAIN=true)
+  C-RECALL-BASELINE ocean+music: fire=true spans_both=true (store alive)
+  C-WRONG-D ocean+plasma: fire=false val=
+  ================================================
+  cross spans_both = 0/3 (need >=2)
+  C-SCRAMBLE ABSTAIN=true  C-RECALL-BASELINE FIRE=true
+  VERDICT (ENGINE-NATIVE): MISS — lane 4/4 = stored-pair RECALL not recombination
+  (recall returns whole stored value; no compose-read op; access != binding)
+=== FROZEN1_ENGINE_NATIVE_DONE ===
