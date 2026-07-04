@@ -18,3 +18,6 @@
 
 ## 정직 수렴 예상 (c9)
 (i)진짜 faculty ~25%(frozen mouth라 선택층 상한 낮음) · (ii)live지만 gauge ~50%(DPI precedent·H_9110 실인간 −0.188) · (iii)측정불가 ~25%(variance 붕괴). 어느 쪽이든 consequence→cell-division 되먹임 최초 engine-native 판별.
+
+## ★ precondition RESOLVED (hoist 이미 존재)
+gen_auto_ideate per-call 재적재 leak(4-pod 소각)의 fix는 신규 구현 불요 — **core/generator.hexa:713 `gen_clm_ideate_W(W,…)`**(H_1400 loaded-W)가 이미 그 경로. F5 하네스 = `clm_load_weights`로 W 1회 로드 → `gen_clm_ideate_W(W,…)` 루프(재적재 0). 발사 전 선결 = 이 loaded-W 배선(convergence gen-auto-ideate-reload-cost-scale-1). 남은 F5 발사 = ① loaded-W 하네스 저작 ② held-out concept 확정 ③ layer-2 되먹임(vbasal_update→vadapt_field_step) 배선 → pool fire(GPU 승인).
