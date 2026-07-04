@@ -13677,6 +13677,13 @@
         "value": "feature worktree 안에서 실행한 sidecar 부기 CLI(ing add·verdict·atlas 등 repo-루트 단일파일 대상)는 현재 worktree가 아닌 primary/main worktree의 파일(ING.jsonl 등)에 쓴다 — 쓰기는 '성공'했다 보고되나 feature-worktree PR의 doc-gate는 ING 미변경으로 실패하고, stale main worktree에는 미커밋 쓰기가 조용히 쌓인다(이 세션 2회: earlier 8-item ing add + 이번 STEP-0 landing 둘 다 stale main으로 샘). convergence add 자체도 같은 트랩(stale main ARCHITECTURE.json에 씀→origin/main fresh worktree서 재-add 필요).",
         "threshold": "재발조건: origin/main 기준 새 feature worktree에서 sidecar ing/verdict/atlas/architecture-convergence 등 repo-루트 단일파일 부기 CLI 실행 시. 해결: (a) feature worktree에서는 sidecar ing add 대신 그 worktree의 ING.jsonl에 스키마 JSON({kind,id,ts,text}) 라인을 직접 append+commit, 또는 (b) 부기/pr-cycle을 primary main worktree에서 수행. doc-gate 통과 전 반드시 git status로 대상 파일이 '현 worktree에' 실제 변경됐는지 확인(성공 메시지만 믿지 말 것).",
         "source": "sidecar-ing-worktree"
+      },
+      {
+        "id": "workflow-script-1",
+        "state": "pos-conv",
+        "value": "Workflow 스크립트의 큰 CTX/프롬프트 문자열을 backtick 템플릿 리터럴로 감싸면, 문자열 본문 안의 리터럴 backtick(코드참조 'anima evaluate --py'·'.kosmos'·'core/' 등을 backtick으로 감쌀 때)이 템플릿을 조기 종료시켜 'Unexpected token' 파스에러가 난다. [[workflow-template-interp-escape-bug]](${} 보간 이스케이프)와 같은 계열의 문자열-구획 함정 2번째 변종.",
+        "threshold": "재발조건: Workflow script의 backtick 템플릿 안에 코드/경로/명령을 backtick으로 재인용할 때. 해결: 큰 CTX는 backtick 대신 배열 리터럴+.join('\\n')으로 조립(내부 backtick 안전), 또는 코드참조를 backtick 대신 평문/작은따옴표로. 발사 전 스크립트에 backtick이 중첩되지 않는지 확인. ${} 보간도 이스케이프 금지(자매 함정).",
+        "source": "workflow-script"
       }
     ]
   }
