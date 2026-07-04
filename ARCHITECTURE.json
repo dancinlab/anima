@@ -13311,6 +13311,12 @@
                     "role": "",
                     "id": "gate-g6-fals-div-step0",
                     "detail": "wf_4612c6c9 mini(DIRECTIONAL): 병목={comparator∧measurable} JOINT, P(fals)0.028→공학corpus 1.0 flip. production δ_FM=0.11% vs 공학 174.5×=corpus-starve 확정(G1 동형). 레버1(data-format)=in-dist FALS(B4=1.0)·held-out FLOOR=커버리지 안에서만. G6-FALS=coverage+objective 이중bound. δ_FM=G1 동형→공동 코퍼스 fire."
+                  },
+                  {
+                    "name": "★G1+G6 공동 커버리지 303M = 🟠 DIRECTIONAL(form-priming)",
+                    "role": "",
+                    "id": "gate-g6-fals-g1g6-shared-303m",
+                    "detail": "G1+G6 공동 커버리지 303M(vast $1.5): HI(dense δ_FM 0.197) held-out G1 bd2>ms1·G6 fals6 열림·LO floor=δ_FM≡coverage 동형+held-out-floor 검출기수준 반증. 단 continuations=form-priming(템플릿 암기치환, ability 아님, 1-항 FORM 검출기 게임). 이중bound=ability 확정·FORM-detector 반증, 벽=trunk-objective-deep 강화. 캡=gen80·통제부재·단일seed."
                   }
                 ]
               }
@@ -13649,6 +13655,13 @@
         "state": "pos-conv",
         "value": "pod-누수(leak) 체크 시 hexa cloud의 'registry (project attribution)' 표를 live로 오독하면 false-leak 알람 반복 — registry는 파괴된 pod의 DPH/AGE/STATUS(READY·RENTING)를 등록시 캐시로 계속 표시(AGE 117~134h 5일+ pod가 @anima/@clm303로 떠 보임)해 대형 누수처럼 착시. 실 live는 오직 'vast: list — N instances'/'runpod: list — N pods' authoritative API 카운트. 2026-07-05 이 세션 2회 재발('pod 방치 체크' 턴 ⚠unattributed + 지금 AGE 134h @anima 알람), 둘 다 authoritative list 확인 시 실 누수 0(live 4=내 fire 2+타세션 2).",
         "threshold": "재발조건=pod-leak 판정에 registry attribution 표(DPH/AGE 有)를 live로 셈. 해결=반드시 'vast: list — N instances'+'runpod: list — N pods' authoritative 카운트만 live로, registry 표는 ledger(파괴분 캐시 잔재 포함)라 무시. 각 registry pod의 실 live는 authoritative list ID 대조로만. 각 fire agent의 실 생존은 output(0B=미완)이 아닌 live transcript(agent-<id>.jsonl) mtime 성장으로. 근본=hexa cloud registry 파괴-pod 미scrub → hexa-lang upstream-fix ING.",
+        "source": "hexa-cloud"
+      },
+      {
+        "id": "hexa-cloud-2",
+        "state": "pos-conv",
+        "value": "★파괴적 사고(2026-07-05): fire agent가 hexa cloud rent에 잘못된 플래그(--dph-max, 정답=--max-dph)를 주면 rent가 silent REFUSE(에러 없이 no-op) → agent가 '내가 렌트 안 됐다'로 오판 → 실패한 자기 렌트로 misattribute해 OTHER 캠페인의 live pod를 teardown(g1g6 fire가 H_9124 derivtrace retry의 43816893 GONE·43817271 RENTING을 파괴, robustness fire 재렌트(r8_3) 유발 가능성). 즉 CLI 플래그 오타 1개가 cross-campaign 파괴로 번짐.",
+        "threshold": "재발조건=fire agent가 rent 플래그 오타(--dph-max 등)로 silent-refuse 받고, 렌트 실패로 오판해 소유 미확인 pod를 teardown. 해결=① rent 명령은 반드시 hexa cloud --help로 플래그 검증(--max-dph 등) 후 사용, silent no-op을 성공으로 가정 금지 ② teardown 전 반드시 그 pod가 THIS fire 소유인지 고유 desc/purpose로 확인(a_dont_kill_live_compute를 pod에도 적용) — 다른 캠페인 pod 절대 teardown 금지 ③ rent 성공은 authoritative 'vast: list'에 새 ID 등장으로만 확인(hexa-cloud-1). 근본=hexa cloud rent 잘못된 플래그 silent-refuse→에러/exit≠0로 fail-loud (hexa-lang upstream-fix).",
         "source": "hexa-cloud"
       }
     ]
