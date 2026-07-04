@@ -3385,7 +3385,7 @@
                             "detail": "core/dream_lib) arousal scale 로 변조해 Φ(stage) 측정: 의식 Φ 는 정적 구조가 아니라 시간 봉투를 가짐 — ci_phi_multiinfo Φ=WAKE 29.01>N1 27.73>N2 24.85>N3 18.18(골)<REM 24.79(반등), spread 10.84 not-flat·stage→arousal shuffle 시 ultradian 순서 붕괴(DISTINCT ⊥ 정적 DISTRIBUTED 구조)·REM 반등(단조감소 아님). H_1492 정적구조의 시간차원 동반결과."
                           },
                           {
-                            "name": "DREAM/dream_compose.hexa — REM dream-composed anchor (B①, dr_kosmos_persist_dream STUB 실질구현)",
+                            "name": "core/dream_compose.hexa — REM dream-composed anchor (B①, dr_kosmos_persist_dream STUB 실질구현)",
                             "role": "dream-anchor-compose",
                             "id": "a-g-consciousness-engine-dream-compose-rem-anchor-blend-b1",
                             "detail": "신규 자립모듈(import 0). N3/REM replay window 안 CO-REPLAYED 두 anchor 를 기하 blend 하여 .kosmos 에 새 NODE append. dr_kosmos_persist_dream STUB(h1162) 실질구현.",
@@ -3429,10 +3429,10 @@
                             ]
                           },
                           {
-                            "name": "DREAM/dream_persist.hexa — LIVE N3/REM sleep-tick bridge (dc_compose_window → .kosmos)",
+                            "name": "core/dream_persist.hexa — LIVE N3/REM sleep-tick bridge (dc_compose_window → .kosmos)",
                             "role": "dream-consolidation-live-seam",
                             "id": "a-g-consciousness-engine-dream-persist-live-seam-b1",
-                            "detail": "H_9036 순수 blend 층(dream_compose)을 live daemon 의 sleep tick 에 잇는 seam. import core/kosmos_io.hexa + DREAM/dream_compose.hexa. cli/anima.hexa 와 dream_persist_smoke.hexa 가 같은 함수(dp_sleep_tick)를 호출 — 스모크가 곧 live seam 증명. 해마 SWR replay→피질 systems consolidation 생물렌즈.",
+                            "detail": "H_9036 순수 blend 층(dream_compose)을 live daemon 의 sleep tick 에 잇는 seam. import core/kosmos_io.hexa + core/dream_compose.hexa. cli/anima.hexa 와 dream_persist_smoke.hexa 가 같은 함수(dp_sleep_tick)를 호출 — 스모크가 곧 live seam 증명. 해마 SWR replay→피질 systems consolidation 생물렌즈.",
                             "children": [
                               {
                                 "name": "pub surface: dp_mark_replayed · dp_persist_sleep_replay · dp_pool_from_read_anchors · dp_sleep_tick",
@@ -3444,7 +3444,7 @@
                                 "name": "daemon 배선 지점 (cli/anima.hexa)",
                                 "role": "",
                                 "id": "a-g-dream-persist-daemon-seam",
-                                "detail": "import 'DREAM/dream_persist.hexa'(L54). anima_consciousness_mode tick loop 끝(tick++ 직전): dream_src=generator_read_anchors(kdir); dp_sleep_tick(kdir,dream_src,stage,tick)→dream_composed_total. stage=dr_stage_at(tick*8). budget 자체가 게이트(hardcode stage flag 아님=a_autonomy_over_hardcode)."
+                                "detail": "import 'core/dream_persist.hexa'(L54). anima_consciousness_mode tick loop 끝(tick++ 직전): dream_src=generator_read_anchors(kdir); dp_sleep_tick(kdir,dream_src,stage,tick)→dream_composed_total. stage=dr_stage_at(tick*8). budget 자체가 게이트(hardcode stage flag 아님=a_autonomy_over_hardcode)."
                               },
                               {
                                 "name": "placement DISJOINT (a_substrate_disjoint · placement-first)",
