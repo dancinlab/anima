@@ -1208,6 +1208,11 @@
                                     "name": "decode-side break-walls 캠페인 (workflow, 20 family 전수 refuted)",
                                     "id": "g1-decode-wallbreak",
                                     "detail": "wfbes89af(28 agent, fable 위임 없음): (a)벽 engine-native REAL 3-leg — FROZEN-1(H_9122 DIRECTIONAL→ENGINE-NATIVE, numpy 4-decimal byte-match, compose-read op 부재)·A11 선형붕괴·coverage+RF FALSIFIED. (b)새 직교 family 20개(4 생물 SWR/grid/BG-DA/cerebellar + 16 기계) 전수 adversarial refuted, 생존 0=전부 3 메타법칙 환원. G1-재조합 내 genuine untried escape 없음. 상세 state/g1_nested_diverge/wallbreak_decode_SYNTHESIS.md."
+                                  },
+                                  {
+                                    "name": "training-side break-walls (deep-L8 CLOSED · 2 survivor)",
+                                    "id": "g1-train-wallbreak",
+                                    "detail": "w8yk7akft(25 agent, fable 없음): deep ConvMoE L8=CLOSED-by-H6188(state/g1_coverage_prod_block 3-arm L8_nocov·L8_cov G0 5/5∧G1 best_distinct=0, ING standing-go OPEN은 착각). 14 레버 중 survivor 2: derivation-trace 절차코퍼스(data축, CE=echo 미적용, toy FLAT3/7 vs DERIV13/18, summer ~1GPU-hr 최우선) · STaR verifier-filtered self-distill(CE유지, STEP-0 early-kill). 둘 다 toy-DIRECTIONAL, terminal=303M engine-native. H_9124."
                                   }
                                 ]
                               },
@@ -13445,6 +13450,13 @@
         "value": "GitHub Actions 잡 timeout-minutes < cold hexa 컴파일 시간이면 SIGTERM 취소→Post-Cache save 스킵→캐시 영구 cold의 chicken-egg — anima서 2회 재발(ci.yml engine 25→50→75 · release.yml install-smoke 20→75 #2892·143 2연속 실측)",
         "threshold": "재발조건: hexa 컴파일 포함 잡에 타임아웃 신설/축소 시. 해결: cold 실측 예산(≥75min)으로 설정+warm 정상런 무해 확인. 진단신호: exit 143이 컴파일 스텝 15-20min 지점 반복",
         "source": "ci-cold-timeout"
+      },
+      {
+        "id": "summary-txt-1",
+        "state": "pos-conv",
+        "value": "deep ConvMoE L≥8 학습이 G1 미측정 OPEN이라는 ING standing-go 믿음은 STALE — 실제로 deep L8(d2781 303.146M 8-layer dilated conv stack)이 engine-native 3-arm(L4/L8-nocov depth-only/L8-cov)로 canonical gen=40 측정돼 전부 G0 5/5∧G1 best_distinct=0 FAIL(state/g1_coverage_prod_block/results_gen40/SUMMARY.txt + g1_coverage_realign mismatch-fix). ConvMoE RF=dilated depthwise(1/2/4/8) composed RF≈511이라 'single dilated'와 'deep L8'은 같은 아키텍처.",
+        "threshold": "재발조건: deep ConvMoE L≥8 / hierarchical composition을 G1 미측정 OPEN 레버로 재제안 시 — 이미 engine-native FALSIFIED(3-arm, depth-only arm이 순수 hierarchical 격리→G1=0). --savant --mitosis 조합은 EXPRESSION/GROWTH축=basin-preserving 증폭기(scale-invariant)라 predicted-floor repackage. deep-L8 재발사 금지, ING standing-go #42492882/883 CLOSED 처리.",
+        "source": "state/g1_coverage_prod_block/results_gen40/SUMMARY.txt"
       }
     ]
   }
