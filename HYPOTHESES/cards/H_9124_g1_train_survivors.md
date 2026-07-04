@@ -1,6 +1,6 @@
 # H_9124 — G1 학습축 break-walls survivors (derivation-trace + STaR 사전등록)
 
-> **tier:** 🟢 **DIRECTIONAL-POSITIVE** (레버1 derivation-trace = 최초 engine-native G1 lift · robustness 미확인) · 레버2 STaR = 🔴 **FALSIFIED-AT-FLOOR**(engine-native STEP-0 STARVE, |V0_true|=0/80) · 레버3 γ(trained-constructive-bind [[H_1840]]) = 🔴 **FALSIFIED-DIRECTIONAL**(STEP-0 kill: BIND 0.795 < ADD 0.941, margin −0.147 0/3, GPU 미렌트 $0) — 3 survivor 중 레버1만 생존(robustness 대기), 2·3 사망. G1 재조합벽 학습방법 축 workflow(w8yk7akft, 25 agent, fable 위임 없음)가 14 레버 중 census-refute 실패한 survivor. · **wired:** N/A
+> **tier:** 🔴 **NOT-ROBUST** (multi-pair 재현 실패 · 단일쌍 bd=2=threshold artifact)
 >
 > **핵심:** objective-basin(CE=echo) 메타법칙을 진짜 우회하는 2 학습레버가 census 밖 생존. deep ConvMoE L8은 이미 CLOSED-by-H6188(측정됨, ING standing-go "OPEN"은 착각 — [[H_6185]]/[[H_6188]] 정합).
 >
@@ -18,6 +18,9 @@
 > **정직 스코프(c9):** 둘 다 toy-DIRECTIONAL(a_toy_scale_recheck: 303M floor면 STaR verified set 空·derivation은 copy-head 벽 위험). terminal=303M pool warm-FT→engine-native --py 채점. tier=DIRECTIONAL until engine-native.
 > **slug:** `g1_train_wallbreak` · **date:** 2026-07-04
 
+
+## 🔴 robustness 반증 (leave-one-pair-out · engine-native $0 summer)
+H_9124의 단일쌍({c0,c1} deriv bd=2>ms=1 PASS)이 **4개 추가 held-out 쌍 전부에서 재현 실패**: {0,1}{0,4}{1,3}{2,3} 모두 deriv bd=1/ms=1 g1_pass=FALSE(floor·singles 전부 1), 오히려 flat(bd=2)보다 낮음. paraphrase 통제도 clears=false, coherent·kwr high(undertrain 아님). ⇒ **원 bd=2 lift = single-pair threshold artifact**(H_9124 자체 caveat 실증). derivation-trace는 G1을 robust하게 열지 못함. 상세 `state/g1_train_wallbreak/derivtrace_robust/ROBUST_RESULT.md`. 메타법칙(H_9126)의 training-layer 근거 상실 → 메타법칙은 selection-layer(P1 G6·H_9125)로만 확증.
 ## artifacts
 - `state/g1_train_wallbreak/SYNTHESIS.md` (14 레버 census + deep-L8 CLOSED 증거 + survivor prereg)
 - `state/g1_train_wallbreak/star/` (레버2 STaR STEP-0 early-kill: VERDICT.txt · step0_result.json · step0.log · step0_earlykill.py)
