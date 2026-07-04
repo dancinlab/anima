@@ -1,0 +1,32 @@
+=== F5 LAYER-2 CONSEQUENCE LOOP (engine-native: live engine_cli vadapt/mitosis substrate) ===
+substrate=vadapt_field_step (p8 cell-division) + per-cell value table (H_1231) + ci_psi_balance guard
+emit set=grounded G5 anchor-copy (k0 true-full·k1 true45%·k2 wrong-concept·k3 garble); receiver=word-overlap proxy-MRR
+concepts=16 (train 0..7 / held-out 8..15) · K=4 · T=24 · lr=0.1000 · tier=DIRECTIONAL-on-external-oracle
+
+-- efficacy trajectory (held-out mean RR / tick) --
+ON  : 0.6765 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 
+OFF : 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 
+FLAT: 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 
+DECR: 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 0.6765 
+
+-- cell-count trajectory (live vadapt field) --
+ON  : 3 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+OFF : 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+FLAT: 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+DECR: 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+
+=== H_9125 CONTRADICTION-KEYED · FROZEN BAR VERDICT ===
+ΔEff_ON   (contra real)  = 0.0270
+ΔEff_OFF  (frozen)       = 0.0000
+ΔEff_FLAT (contra off)   = 0.0000   (=원벽 재현 arm)
+ΔEff_DECOR(store shuffled)= 0.0000
+cells ON/OFF (last) = 4 / 1
+Ψ guard psi_pre/psi_post = 0.0000 / 0.0000  byte-identical=true
+
+④ ΔEff_ON−ΔEff_OFF≥0.10        : 0.0270  -> false
+FLAT<0.10 (원벽 미상승)         : 0.0000  -> true
+DECOR |Δ−OFF|<=0.03 (붕괴=earned): 0.0000  -> true
+⑤ cell ON>OFF                  : 4>1 -> true
+Ψ ON==OFF byte-identical       : -> true
+
+VERDICT: RED contradiction-keying does NOT open referential selection (④ or DECOR fails) — feature-inaccessibility deeper than wiring

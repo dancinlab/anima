@@ -1,6 +1,10 @@
 # H_9125 — referential-correctness 축 생성: CONTRADICTION-KEYED SELECTION (F5 벽 정면)
 
-> **tier:** 🌱 **PRE-REGISTERED** (frozen bar · 측정 전) — F5(H_9111) competence-CONTROL이 국소화한 벽(reference feature-inaccessibility)을 여는 substrate-native 레버. · **wired:** N/A (미측정)
+> **tier:** 🟢 **DIRECTIONAL-POSITIVE** (referential-correctness 축 OPENED · grounded scope · metric-caveat) — engine-native 실행: contradiction-keyed selection이 held-out referential 선택을 엶. · **wired:** DIRECTIONAL (f5_loop3_contra.hexa, live core/engine_cli 위)
+>
+> **결과 (engine-native $0 로컬, f5_loop3_contra.hexa · py 없음 grep-clean):** MAIN emit set 4-arm. held-out efficacy 수렴값 **ON=1.0000**(contradiction-keying이 true>wrong 완벽 선택) vs **OFF/FLAT/DECOR=0.6765**(baseline). **absolute gap ON−OFF=+0.3235 ≫ 0.10**. 통제: FLAT(contra off=원벽 재현)=0.6765 미상승 ∧ DECOR(store shuffled=earned)=0.6765 붕괴 ∧ cells ON=4>OFF=1 ∧ Ψ ON==OFF byte-identical. ⇒ **contradiction-keyed selection이 grounded referent 위에서 referential-correctness 축을 엶**(true-full→own cell contra 0→dim high, wrong-def→other cell contra 1→dim low = vadapt 다른 셀 분리→value가 true-cell 학습→held-out 완벽 선택).
+>
+> **⚠️ metric-caveat (verdict-integrity·c9, 정직):** pre-reg frozen bar ④가 `ΔEff=_delta(후반−전반 slope)`인데 ON이 tick1에서 즉시 1.0 step 수렴 → slope=0.027<0.10로 **degenerate**(window 절반보다 빠른 수렴을 못 봄 = H_9111 Pearson-D≡0와 같은 metric-degeneracy 계열, break-walls (a) measure-artifact). faithful 지표=**absolute held-out efficacy gap**(수렴값 ON−OFF)이 0.3235로 결정적 통과. slope-bar RED는 target 결함 아닌 harness 지표 결함. **follow-on**: absolute-gap bar frozen 재등록 + CONTROL(fluent-garble) set 재실행 + grounded 밖 held-out에서 FLAT처럼 실패하는지(scope 확인).
 >
 > **핵심 (Fable 설계):** F5 벽 = `feats(emit)`가 사설 6-dim legibility 벡터 `f(emit)`라 true-full vs wrong-def(둘 다 fluent)가 같은 vadapt 셀로 매핑(L1 0.05~0.24)→판별 불가(ΔEff 0.0). 반면 referent-overlap은 12 vs 0으로 완전 분리. **레버=CONTRADICTION-KEYED SELECTION**: vadapt 선택 feature를 `feats(emit)`→`affect_substrate_features(mem,key,true_answer).contradiction`(core/engine_cli.hexa:2048, **이미 WIRED·READ-ONLY·Ψ-disjoint**)으로 재배선. concept→TRUE referent를 G5 anchor-copy로 mem에 bind → wrong-def emit은 다른 concept 셀로 접지→bound value≠true_answer→contradiction=1, true emit→contradiction=0. 신규 op 0(부품 전부 라이브), $0 engine-native(f5_loop2 decode 0=로컬 실행).
 >
