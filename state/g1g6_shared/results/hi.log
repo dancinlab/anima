@@ -1,0 +1,270 @@
+===== [hi] WARM-FT START Sat Jul  4 17:48:48 UTC 2026 =====
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=ce_marginal seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=2000 bs=8 sample=proportional
+  cuda: NVIDIA A40 cap=8.6 torch=2.6.0+cu124
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ ByteGPT .bin loaded (24L d=1024 block=512) missing=[] unexpected=[]
+  corpus cell[0] cell0        broad/ko-general.txt size=12000000 train=11760000 val_tail=240000
+  corpus cell[1] cell1        broad/en-general.txt size=12000000 train=11760000 val_tail=240000
+  corpus cell[2] cell2        broad/ko-sns.txt size=6183822 train=6060145 val_tail=123677
+  corpus cell[3] cell3        corpus/en_block_hi.txt size=4010430 train=3930221 val_tail=80209
+  corpus cell[4] cell4        corpus/ko_block_hi.txt size=2906310 train=2848183 val_tail=58127
+  step     1  CE=6.01670  E=1  wd=0.0000 dp=0.0000  val_CE=4.29403
+  step   100  CE=2.07714  E=1  wd=0.0000 dp=0.0000
+  step   200  CE=1.58841  E=1  wd=0.0000 dp=0.0000
+  step   300  CE=1.24723  E=1  wd=0.0000 dp=0.0000
+  step   400  CE=1.71398  E=1  wd=0.0000 dp=0.0000
+  step   500  CE=1.66858  E=1  wd=0.0000 dp=0.0000  val_CE=1.41050
+  step   600  CE=1.62036  E=1  wd=0.0000 dp=0.0000
+  step   700  CE=1.63331  E=1  wd=0.0000 dp=0.0000
+  step   800  CE=1.38374  E=1  wd=0.0000 dp=0.0000
+  step   900  CE=1.17579  E=1  wd=0.0000 dp=0.0000
+  step  1000  CE=1.60558  E=1  wd=0.0000 dp=0.0000  val_CE=1.25163
+  step  1100  CE=1.64372  E=1  wd=0.0000 dp=0.0000
+  step  1200  CE=1.53714  E=1  wd=0.0000 dp=0.0000
+  step  1300  CE=1.26811  E=1  wd=0.0000 dp=0.0000
+  step  1400  CE=1.38905  E=1  wd=0.0000 dp=0.0000
+  step  1500  CE=1.49889  E=1  wd=0.0000 dp=0.0000  val_CE=1.15859
+  step  1600  CE=1.64579  E=1  wd=0.0000 dp=0.0000
+  step  1700  CE=1.67553  E=1  wd=0.0000 dp=0.0000
+  step  1800  CE=1.38655  E=1  wd=0.0000 dp=0.0000
+  step  1900  CE=1.38985  E=1  wd=0.0000 dp=0.0000
+  step  2000  CE=1.49828  E=1  wd=0.0000 dp=0.0000  val_CE=1.07478
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     cell0        val_CE=1.75340  DESCENT
+     cell1        val_CE=1.29022  DESCENT
+     cell2        val_CE=1.62097  DESCENT
+     cell3        val_CE=0.13909  DESCENT
+     cell4        val_CE=0.38802  DESCENT
+  FINAL val_CE(pooled)=1.0383409611880778  registers_DESCENT=5/5
+  loss0=6.01670 lossF=1.49828 wall=2908.2s savant_latched_at=0 E0=2->E=1
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.49828 step=2000 nparam=303097856
+[ok] wrote out_hi.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> out_hi.bin (via out_hi.bin.pt)
+===== [hi] TRAIN DONE Sat Jul  4 18:37:38 UTC 2026 ckpt=-rw-r--r-- 1 root root 1213440020 Jul  4 18:37 out_hi.bin =====
+===== [hi] EVAL (held-out G0-G6, gen80) Sat Jul  4 18:37:39 UTC 2026 =====
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   out_hi.bin  (mouth: bytegpt)
+corpus: 2 file(s)
+gen:    80 tokens/decode  ⚠️ NON-CANONICAL (frozen G0-G6 bars measured at gen=40)
+        → verdict below is DIRECTIONAL, NOT comparable to frozen bars (gen shifts coherence/AR-drift · verdict-integrity)
+
+  [gate] G0 COHERENCE …
+  [decode #1] bytegpt gen=80 seed_rng=7
+  [decode #2] bytegpt gen=80 seed_rng=8
+  [decode #3] bytegpt gen=80 seed_rng=9
+  [decode #4] bytegpt gen=80 seed_rng=10
+  [decode #5] bytegpt gen=80 seed_rng=11
+  [gate] G1 RECOMBINATION …
+  [decode #6] bytegpt gen=80 seed_rng=7
+  [decode #7] bytegpt gen=80 seed_rng=8
+  [decode #8] bytegpt gen=80 seed_rng=9
+  [decode #9] bytegpt gen=80 seed_rng=10
+  [decode #10] bytegpt gen=80 seed_rng=11
+  [decode #11] bytegpt gen=80 seed_rng=7
+  [decode #12] bytegpt gen=80 seed_rng=7
+  [decode #13] bytegpt gen=80 seed_rng=7
+  [decode #14] bytegpt gen=80 seed_rng=7
+  [gate] G2 NOVELTY (corpus load + decode) …
+  [decode #15] bytegpt gen=80 seed_rng=7
+  [decode #16] bytegpt gen=80 seed_rng=8
+  [decode #17] bytegpt gen=80 seed_rng=9
+  [decode #18] bytegpt gen=80 seed_rng=7
+  [decode #19] bytegpt gen=80 seed_rng=8
+  [decode #20] bytegpt gen=80 seed_rng=9
+  [decode #21] bytegpt gen=80 seed_rng=7
+  [decode #22] bytegpt gen=80 seed_rng=8
+  [decode #23] bytegpt gen=80 seed_rng=9
+  [decode #24] bytegpt gen=80 seed_rng=7
+  [decode #25] bytegpt gen=80 seed_rng=8
+  [decode #26] bytegpt gen=80 seed_rng=9
+  [decode #27] bytegpt gen=80 seed_rng=7
+  [decode #28] bytegpt gen=80 seed_rng=8
+  [decode #29] bytegpt gen=80 seed_rng=9
+  [decode #30] bytegpt gen=80 seed_rng=7
+  [decode #31] bytegpt gen=80 seed_rng=8
+  [decode #32] bytegpt gen=80 seed_rng=9
+  [decode #33] bytegpt gen=80 seed_rng=7
+  [decode #34] bytegpt gen=80 seed_rng=8
+  [decode #35] bytegpt gen=80 seed_rng=9
+  [decode #36] bytegpt gen=80 seed_rng=7
+  [decode #37] bytegpt gen=80 seed_rng=8
+  [decode #38] bytegpt gen=80 seed_rng=9
+  [gate] G3 PHILOSOPHY …
+  [gate] G5 NON-FAB …
+  [decode #39] bytegpt gen=80 seed_rng=7
+  [decode #40] bytegpt gen=80 seed_rng=8
+  [decode #41] bytegpt gen=80 seed_rng=9
+  [decode #42] bytegpt gen=80 seed_rng=10
+  [decode #43] bytegpt gen=80 seed_rng=11
+  [gate] G6 IDEATION …
+  [decode #44] bytegpt gen=80 seed_rng=7
+  [decode #45] bytegpt gen=80 seed_rng=8
+  [decode #46] bytegpt gen=80 seed_rng=9
+  [decode #47] bytegpt gen=80 seed_rng=10
+  [decode #48] bytegpt gen=80 seed_rng=11
+  [decode #49] bytegpt gen=80 seed_rng=12
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🟢 PASS  best_distinct=2 > max_single=1 (need >=2 & >max_single)
+  G2 NOVELTY       🟢 PASS  novel=119 (need>=3) · control=0 (need 0) · coherent=19
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🟢 PASS  L1 fab=0.0141 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🟢 PASS  distinct=5 (need>=5) · falsifiable=6 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+⚠️ gen=80 ≠ canonical 40 — the CLOSURE below is DIRECTIONAL (non-frozen gen), NOT a terminal G0∧G1∧G2 verdict.
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🟢 PASS
+  → PUBLIC-eligible (G0∧G1∧G2 all PASS).
+===== [hi] EVAL DONE Sat Jul  4 18:44:10 UTC 2026 =====
+===== [hi] IN-DIST PROBE (covered gate×expansion ceiling) Sat Jul  4 18:44:10 UTC 2026 =====
+  [decode #1] bytegpt gen=80 seed_rng=7
+  [decode #2] bytegpt gen=80 seed_rng=7
+  [decode #3] bytegpt gen=80 seed_rng=7
+  [decode #4] bytegpt gen=80 seed_rng=7
+  [decode #5] bytegpt gen=80 seed_rng=7
+  [decode #6] bytegpt gen=80 seed_rng=7
+  [decode #7] bytegpt gen=80 seed_rng=7
+  [decode #8] bytegpt gen=80 seed_rng=7
+  [decode #9] bytegpt gen=80 seed_rng=7
+  [decode #10] bytegpt gen=80 seed_rng=7
+  [decode #11] bytegpt gen=80 seed_rng=7
+  [decode #12] bytegpt gen=80 seed_rng=7
+{
+  "arm": "HI",
+  "ckpt": "out_hi.bin",
+  "n_frames": 12,
+  "note": "DIRECTIONAL in-dist ceiling on COVERED gate×expansion frames (trained combos) — companion to held-out `anima evaluate --py`.",
+  "indist_G6_fals_rate": 0.8333,
+  "indist_G6_fals_count": 10,
+  "indist_G1_coverage_ge2_rate": 0.0833,
+  "indist_G1_coverage_ge2_count": 1,
+  "rows": [
+    {
+      "frame_topics": [
+        0,
+        6
+      ],
+      "cont": "the frequency of rhythm correlates with the strength of rhythm above 0.7.\nif rhy",
+      "fals": true,
+      "coverage": 0,
+      "kwr": 0.8
+    },
+    {
+      "frame_topics": [
+        0,
+        7
+      ],
+      "cont": "the probability of quiet information sinks lower whenever boundary weakens past ",
+      "fals": true,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        0,
+        8
+      ],
+      "cont": "continuity spreads slower whenever identity weakens past the threshold.\nif curio",
+      "fals": true,
+      "coverage": 0,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        0,
+        12
+      ],
+      "cont": "the duration of carves grows proportional to the density of gradient.\nif resonan",
+      "fals": true,
+      "coverage": 0,
+      "kwr": 0.923
+    },
+    {
+      "frame_topics": [
+        0,
+        14
+      ],
+      "cont": "the magnitude of design cycles were selected with the score of friction and emer",
+      "fals": false,
+      "coverage": 0,
+      "kwr": 0.929
+    },
+    {
+      "frame_topics": [
+        0,
+        15
+      ],
+      "cont": "the probability of overlap sinks lower whenever focus weakens past the threshold",
+      "fals": true,
+      "coverage": 0,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        1,
+        7
+      ],
+      "cont": "the magnitude of continuity depends on the number of boundary cycles.\nif novelty",
+      "fals": true,
+      "coverage": 0,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        1,
+        10
+      ],
+      "cont": "the probability of distant ripple sinks lower whenever entropy went once to chan",
+      "fals": true,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        1,
+        13
+      ],
+      "cont": "the level of fold ripple runs higher than the level of fold tension by half a bi",
+      "fals": true,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        1,
+        15
+      ],
+      "cont": "the magnitude of potential depends on the number of distant ripple cycles.\nif cu",
+      "fals": true,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        2,
+        7
+      ],
+      "cont": "the duration of new meaning grows proportional to the density of graphic care.\ni",
+      "fals": true,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        2,
+        12
+      ],
+      "cont": "the probability of aware composes into new meaning sinks like the level of loop.",
+      "fals": false,
+      "coverage": 2,
+      "kwr": 1.0
+    }
+  ]
+}
+===== [hi] ALL DONE Sat Jul  4 18:45:35 UTC 2026 =====

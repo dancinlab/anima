@@ -1,6 +1,6 @@
 # H_9128 — G6 반증가능성(FALS) 벽 레버 발산 + FALS-판정지표
 
-> **tier:** 🟡 **STEP-0 DIRECTIONAL** (3-probe mini 사전선별 완료) — G6-FALS 벽=**corpus-starve(δ_FM≈0)** 확정방향(G1 coverage-density 동형) + objective transfer 갭 2차, 병목=**{comparator∧measurable} JOINT**, 레버1(data-format)=in-dist 먹힘·held-out 실패. 전부 mini=terminal 아님. · **wired:** N/A
+> **tier:** 🟠 **DIRECTIONAL** — G1+G6 공동 조합-커버리지 303M engine-native: HI held-out G1(bd=2>ms=1)+G6(fals=6) 열림·LO floor(δ_FM≡coverage 동형 확인, STEP-0 held-out-floor 검출기수준 반증)이나 continuations=**form-priming**(템플릿 암기치환, genuine ability 아님) → 이중bound=**ability 확정·FORM-detector 반증**, G1/G6 벽=trunk-objective-deep 강화. 캡=gen80 non-canonical·shuffle-bind/paraphrase 통제부재·단일seed. (STEP-0 mini: corpus-starve δ_FM≈0·병목 {comparator∧measurable} JOINT) · **wired:** N/A
 >
 > **맥락:** G6 = DIST(distinctness, 통과) + **FALS(반증가능성, 벽=0)**. 벽은 *specifically FALS*(H_1590 engine-native FALS=[0,0,0] 전seed, H_1362 FALS=1.0=torch artifact). 소진: decode-procedure/scaffold(H_1590)·attention-capacity(H_6170 TERMINAL depth·register null·BGB injected-attn null)·both-arch(ConvMoE H_1394·ByteGPT-L24 H_1590 FALS=0)·set-search(H_1814)·NM(H_1529). 이 카드 = fable(claude-fable-5) 발산 = FALS 벽 원리 규명 + 새 레버 12 + FALS-판정지표. 실행은 메인이 STEP-0로 순차.
 
@@ -55,11 +55,30 @@
 - **★G1 공유발사 확정 가능**: δ_FM(comparator∧measurable 40byte 접속밀도) = G1 coverage-density **동형 metric** → **한 번의 조합-커버리지 코퍼스 fire로 G1(재조합)+G6-FALS(falsifiable form) 공동 측정.**
 - **다음 발사 1순위**(engine-native 303M): B-1 5+1 precursor 분해를 hexa `g6_score_arm_auto` 계기화 → base h1129 303M으로 DIRECTIONAL 지도(measurable∧comparator JOINT dead, flip 0.028→1.0) terminal 승격. 병행: 조합-커버리지 코퍼스(held-out content δ_FM≥공학수준 주입)로 G1+G6-FALS engine-native 재측정. readout/format 단독 재발사 금지(held-out 안 엶).
 
+## ★★ G1+G6 공동 조합-커버리지 코퍼스 303M engine-native (vast A40, 2026-07-05) — 🟠 DIRECTIONAL
+
+δ_FM≡G1 coverage-density 동형을 이용해 HI(dense 77frame·δ_FM 0.197) vs LO(sparse 14frame·δ_FM 0) byte-matched 2-arm warm-FT h1129 → `anima evaluate --py` g_eval_all(G0-G6 한 배터리), held-out 5 frozen concept(gate×gate leak=0):
+
+| gate | HI (dense) | LO (sparse) |
+|---|---|---|
+| G0 | 🟢 5/5 | 🟢 5/5 |
+| **G1** | 🟢 **bd=2>ms=1** | 🔴 bd=1(ms=2) |
+| **G6** | 🟢 **distinct=5·falsifiable=6** | 🔴 distinct=5·falsifiable=0 |
+| G2 | 🟢 novel=119/ctrl=0 | 🟢 novel=85/ctrl=0 |
+
+- **frozen bar 문자 그대로는 🟢**: HI held-out이 G1+G6 둘 다 열고 LO floor → **STEP-0 held-out-floor(P1) 예측을 검출기 수준에서 반증**(coverage가 held-out FORM을 올림). δ_FM≡coverage 동형 확인.
+- **★그러나 continuations = form-priming 확정**: 양 arm이 학습된 claim-form 템플릿을 주제어 치환으로 재생. HI=`"the probability of {a} sinks lower whenever {b} weakens past the threshold"`(comparator∧measurable→fals) · LO=`"{a} and {b} melt into a hazy calm"`(vague→non-fals). **리프트=어느 템플릿 암기했나 차이일 뿐, genuine recombination/ideation 아님**. 1-항 FORM 검출기가 밀집 템플릿 노출로 게임됨([[measurement-metalaw-form-tunable-bind-earned]] 재확인: FORM tunable·BIND earned).
+- **★결론**: STEP-0 이중bound = **ability 수준에서 확정**(data-format 단독으로 진짜 능력 못만듦) · **FORM-detector 수준에서 반증**(coverage가 검출기 통과 형식을 올림). **G1/G6 벽 = trunk-objective-deep**(기존 anima 결론 정합·강화). in-dist ceiling: HI G6 fals=0.833·LO=0.
+- **DIRECTIONAL 캡 3근거**: gen=80 non-canonical(eval 자체 플래그) · shuffle-bind/paraphrase 통제 부재 · 단일 seed. **terminal 승격 = canonical gen=40 + shuffle-bind(Δ≥0.33) + multi-seed** 재측정.
+- 비용 ~$1.5(vast A40 43818733), ckpt PULL+sha(out_hi 5f34283c·out_lo 539943c5), pod GONE. **wired:** n/a. 상세 state/g1g6_shared/results/RESULT.md.
+- ↔ [[H_9124]] G1 레버: δ_FM≡coverage-density 동형이 실측 확인 = G1 coverage-density 벽도 FORM vs ability 분리(coverage가 form 올리나 ability 아님) 정합.
+
 ## 정직 스코프 (c9)
 - STEP-0 3-probe = **mini DIRECTIONAL**(py-numpy/toy, 303M engine-native 아님). tune-to-green 없이 stored 데이터 byte-재현. terminal = engine-native `anima evaluate --py`/hexa 계기화로만.
 - 전부 **미발사 설계**였음(fable=opus-diverged 발산 → mini STEP-0 사전선별). mini numpy DIRECTIONAL 시작→engine-native 재측정으로만 terminal(하드게이트 1).
 - check-ledger: scaffold/decode·attention-capacity·set-search 재발사 없음(fable 자체검열 확인). 그 벽과 구별되는 각도만.
 
 ## artifacts
+- `state/g1g6_shared/` (G1+G6 공동 303M: results/RESULT.md·hi/lo.log·indist json·gen_unified.py·corpus·ckpt sha)
 - `state/g6_fals_diverge/fable_g6_fals_levers.md` (A 원리+δ_FM 판정지표 + B 12레버 + C G1공유 + top-3)
 - 상위: [[H_9127]](G1 레버 발산·derivtrace·판정기준 ρ/σ/κ/M) · [[H_1603]](G1≡G6 통합) · G6 소진: H_1590/H_6170/H_1814 · seed: H_9125/9126(contradiction) · H_6163(falsifier-lane) · H_6186(form-priming)

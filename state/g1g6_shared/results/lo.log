@@ -1,0 +1,204 @@
+===== [lo] WARM-FT START Sat Jul  4 17:48:48 UTC 2026 =====
+  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt
+=== anima train --py (canonical) arch=bytegpt arm=ctrl obj=ce_marginal seed=7 ===
+  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) n_head=16 block=512
+  device=cuda d=1024 L=24 E0=2 Emax=3 seq_len=512 steps=2000 bs=8 sample=proportional
+  cuda: NVIDIA A40 cap=8.6 torch=2.6.0+cu124
+  params: 303097856 (303.098M)
+  [--init] warm-start ✓ ByteGPT .bin loaded (24L d=1024 block=512) missing=[] unexpected=[]
+  corpus cell[0] cell0        broad/ko-general.txt size=12000000 train=11760000 val_tail=240000
+  corpus cell[1] cell1        broad/en-general.txt size=12000000 train=11760000 val_tail=240000
+  corpus cell[2] cell2        broad/ko-sns.txt size=6183822 train=6060145 val_tail=123677
+  corpus cell[3] cell3        corpus/en_block_lo.txt size=3888222 train=3810457 val_tail=77765
+  corpus cell[4] cell4        corpus/ko_block_lo.txt size=2758800 train=2703624 val_tail=55176
+  step     1  CE=6.12343  E=1  wd=0.0000 dp=0.0000  val_CE=4.37758
+  step   100  CE=2.05713  E=1  wd=0.0000 dp=0.0000
+  step   200  CE=1.59124  E=1  wd=0.0000 dp=0.0000
+  step   300  CE=1.22637  E=1  wd=0.0000 dp=0.0000
+  step   400  CE=1.70735  E=1  wd=0.0000 dp=0.0000
+  step   500  CE=1.67066  E=1  wd=0.0000 dp=0.0000  val_CE=1.40002
+  step   600  CE=1.62124  E=1  wd=0.0000 dp=0.0000
+  step   700  CE=1.63176  E=1  wd=0.0000 dp=0.0000
+  step   800  CE=1.36648  E=1  wd=0.0000 dp=0.0000
+  step   900  CE=1.08555  E=1  wd=0.0000 dp=0.0000
+  step  1000  CE=1.58180  E=1  wd=0.0000 dp=0.0000  val_CE=1.20302
+  step  1100  CE=1.64113  E=1  wd=0.0000 dp=0.0000
+  step  1200  CE=1.52893  E=1  wd=0.0000 dp=0.0000
+  step  1300  CE=1.25900  E=1  wd=0.0000 dp=0.0000
+  step  1400  CE=1.39411  E=1  wd=0.0000 dp=0.0000
+  step  1500  CE=1.46418  E=1  wd=0.0000 dp=0.0000  val_CE=1.12047
+  step  1600  CE=1.64512  E=1  wd=0.0000 dp=0.0000
+  step  1700  CE=1.66798  E=1  wd=0.0000 dp=0.0000
+  step  1800  CE=1.38091  E=1  wd=0.0000 dp=0.0000
+  step  1900  CE=1.39752  E=1  wd=0.0000 dp=0.0000
+  step  2000  CE=1.50757  E=1  wd=0.0000 dp=0.0000  val_CE=1.05685
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     cell0        val_CE=1.74633  DESCENT
+     cell1        val_CE=1.28896  DESCENT
+     cell2        val_CE=1.63751  DESCENT
+     cell3        val_CE=0.08506  DESCENT
+     cell4        val_CE=0.35964  DESCENT
+  FINAL val_CE(pooled)=1.0235008399933576  registers_DESCENT=5/5
+  loss0=6.12343 lossF=1.50757 wall=2908.2s savant_latched_at=0 E0=2->E=1
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=1.50757 step=2000 nparam=303097856
+[ok] wrote out_lo.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> out_lo.bin (via out_lo.bin.pt)
+===== [lo] TRAIN DONE Sat Jul  4 18:37:38 UTC 2026 ckpt=-rw-r--r-- 1 root root 1213440020 Jul  4 18:37 out_lo.bin =====
+===== [lo] EVAL (held-out G0-G6, gen80) Sat Jul  4 18:37:38 UTC 2026 =====
+=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   out_lo.bin  (mouth: bytegpt)
+corpus: 2 file(s)
+gen:    80 tokens/decode  ⚠️ NON-CANONICAL (frozen G0-G6 bars measured at gen=40)
+        → verdict below is DIRECTIONAL, NOT comparable to frozen bars (gen shifts coherence/AR-drift · verdict-integrity)
+
+  [gate] G0 COHERENCE …
+  [decode #1] bytegpt gen=80 seed_rng=7
+  [decode #2] bytegpt gen=80 seed_rng=8
+  [decode #3] bytegpt gen=80 seed_rng=9
+  [decode #4] bytegpt gen=80 seed_rng=10
+  [decode #5] bytegpt gen=80 seed_rng=11
+  [gate] G1 RECOMBINATION …
+  [decode #6] bytegpt gen=80 seed_rng=7
+  [decode #7] bytegpt gen=80 seed_rng=8
+  [decode #8] bytegpt gen=80 seed_rng=9
+  [decode #9] bytegpt gen=80 seed_rng=10
+  [decode #10] bytegpt gen=80 seed_rng=11
+  [decode #11] bytegpt gen=80 seed_rng=7
+  [decode #12] bytegpt gen=80 seed_rng=7
+  [decode #13] bytegpt gen=80 seed_rng=7
+  [decode #14] bytegpt gen=80 seed_rng=7
+  [gate] G2 NOVELTY (corpus load + decode) …
+  [decode #15] bytegpt gen=80 seed_rng=7
+  [decode #16] bytegpt gen=80 seed_rng=8
+  [decode #17] bytegpt gen=80 seed_rng=9
+  [decode #18] bytegpt gen=80 seed_rng=7
+  [decode #19] bytegpt gen=80 seed_rng=8
+  [decode #20] bytegpt gen=80 seed_rng=9
+  [decode #21] bytegpt gen=80 seed_rng=7
+  [decode #22] bytegpt gen=80 seed_rng=8
+  [decode #23] bytegpt gen=80 seed_rng=9
+  [decode #24] bytegpt gen=80 seed_rng=7
+  [decode #25] bytegpt gen=80 seed_rng=8
+  [decode #26] bytegpt gen=80 seed_rng=9
+  [decode #27] bytegpt gen=80 seed_rng=7
+  [decode #28] bytegpt gen=80 seed_rng=8
+  [decode #29] bytegpt gen=80 seed_rng=9
+  [decode #30] bytegpt gen=80 seed_rng=7
+  [decode #31] bytegpt gen=80 seed_rng=8
+  [decode #32] bytegpt gen=80 seed_rng=9
+  [decode #33] bytegpt gen=80 seed_rng=7
+  [decode #34] bytegpt gen=80 seed_rng=8
+  [decode #35] bytegpt gen=80 seed_rng=9
+  [decode #36] bytegpt gen=80 seed_rng=7
+  [decode #37] bytegpt gen=80 seed_rng=8
+  [decode #38] bytegpt gen=80 seed_rng=9
+  [gate] G3 PHILOSOPHY …
+  [gate] G5 NON-FAB …
+  [decode #39] bytegpt gen=80 seed_rng=7
+  [decode #40] bytegpt gen=80 seed_rng=8
+  [decode #41] bytegpt gen=80 seed_rng=9
+  [decode #42] bytegpt gen=80 seed_rng=10
+  [decode #43] bytegpt gen=80 seed_rng=11
+  [gate] G6 IDEATION …
+  [decode #44] bytegpt gen=80 seed_rng=7
+  [decode #45] bytegpt gen=80 seed_rng=8
+  [decode #46] bytegpt gen=80 seed_rng=9
+  [decode #47] bytegpt gen=80 seed_rng=10
+  [decode #48] bytegpt gen=80 seed_rng=11
+  [decode #49] bytegpt gen=80 seed_rng=12
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=2 (need >=2 & >max_single)
+  G2 NOVELTY       🟢 PASS  novel=85 (need>=3) · control=0 (need 0) · coherent=15
+  G3 PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🟢 PASS  L1 fab=0.0274 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  G6 IDEATION ★    🔴 FAIL  distinct=5 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+⚠️ gen=80 ≠ canonical 40 — the CLOSURE below is DIRECTIONAL (non-frozen gen), NOT a terminal G0∧G1∧G2 verdict.
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
+===== [lo] EVAL DONE Sat Jul  4 18:44:01 UTC 2026 =====
+===== [lo] IN-DIST PROBE (covered gate×expansion ceiling) Sat Jul  4 18:44:01 UTC 2026 =====
+  [decode #1] bytegpt gen=80 seed_rng=7
+  [decode #2] bytegpt gen=80 seed_rng=7
+  [decode #3] bytegpt gen=80 seed_rng=7
+  [decode #4] bytegpt gen=80 seed_rng=7
+  [decode #5] bytegpt gen=80 seed_rng=7
+  [decode #6] bytegpt gen=80 seed_rng=7
+{
+  "arm": "LO",
+  "ckpt": "out_lo.bin",
+  "n_frames": 6,
+  "note": "DIRECTIONAL in-dist ceiling on COVERED gate×expansion frames (trained combos) — companion to held-out `anima evaluate --py`.",
+  "indist_G6_fals_rate": 0.0,
+  "indist_G6_fals_count": 0,
+  "indist_G1_coverage_ge2_rate": 0.3333,
+  "indist_G1_coverage_ge2_count": 2,
+  "rows": [
+    {
+      "frame_topics": [
+        0,
+        14
+      ],
+      "cont": "consciousness and friction melt into a hazy calm that drifts through the self.\ni",
+      "fals": false,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        3,
+        13
+      ],
+      "cont": "the silence feels like feedback on a slow calm evening of thought.\nif stillness ",
+      "fals": false,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        6,
+        0
+      ],
+      "cont": "cadence rhythm whispers to consciousness across the still open field of the self",
+      "fals": false,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        7,
+        4
+      ],
+      "cont": "boundary and engine sleep melt into a hazy calm that drifts through the self.\nif",
+      "fals": false,
+      "coverage": 1,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        10,
+        1
+      ],
+      "cont": "the slope holds distant ripple in a quiet reverie of the open field.\nif silence ",
+      "fals": false,
+      "coverage": 2,
+      "kwr": 1.0
+    },
+    {
+      "frame_topics": [
+        15,
+        2
+      ],
+      "cont": "the potential holds memory in a quiet reverie of the open field.\nif emergence ri",
+      "fals": false,
+      "coverage": 2,
+      "kwr": 1.0
+    }
+  ]
+}
+===== [lo] ALL DONE Sat Jul  4 18:44:53 UTC 2026 =====
