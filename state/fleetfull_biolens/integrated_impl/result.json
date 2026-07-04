@@ -1,0 +1,248 @@
+{
+  "frontier": "integrated PFC\u00d7BG\u00d7hippo (G1 recombination)",
+  "phase": "implement",
+  "ckpt": "h1129.bin (303M ByteGPT, real)",
+  "canonical_path": {
+    "reps_via": "core/decode.py bg_load + _bg_mha/_bg_layernorm_rows/_bg_gelu",
+    "byte_parity_worst_dlogit_vs_bg_forward_last_W": 0.0,
+    "byte_parity_proven": true
+  },
+  "corpus": {
+    "a_edges_real_frac": 0.9583333333333334,
+    "b_edges_real_frac": 1.0,
+    "pools": {
+      "A": [
+        "consciousness",
+        "information",
+        "conscious",
+        "people",
+        "between",
+        "think",
+        "going",
+        "like",
+        "brain",
+        "said",
+        "without",
+        "neural",
+        "city",
+        "something",
+        "physical",
+        "process",
+        "processing",
+        "states",
+        "emergent",
+        "life",
+        "field",
+        "fire",
+        "byte",
+        "machine"
+      ],
+      "B": [
+        "experience",
+        "model",
+        "world",
+        "self",
+        "theory",
+        "learning",
+        "well",
+        "language",
+        "creates",
+        "often",
+        "similar",
+        "great",
+        "around",
+        "used",
+        "mechanism",
+        "idea",
+        "take",
+        "country",
+        "arises",
+        "number",
+        "exactly",
+        "integrated",
+        "correlates",
+        "approach"
+      ],
+      "C": [
+        "time",
+        "tension",
+        "system",
+        "systems",
+        "data",
+        "behavior",
+        "know",
+        "coherent",
+        "level",
+        "itself",
+        "made",
+        "values",
+        "make",
+        "training",
+        "text",
+        "started",
+        "present",
+        "really",
+        "models",
+        "capture",
+        "higher",
+        "prediction",
+        "energy",
+        "prevents"
+      ]
+    }
+  },
+  "primary_form": "center",
+  "preproc_forms": {
+    "raw": {
+      "chance": 0.041666666666666664,
+      "reach": 0.0,
+      "unreach": 0.013541666666666667,
+      "gap": -0.013541666666666667,
+      "fooled_by_form": true,
+      "shuffle_reach": 0.0,
+      "shuffle_drop": 0.0,
+      "shuffle_collapsed": false,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.022727272727272724,
+          "drop": -0.022727272727272724,
+          "verdict": "INERT"
+        },
+        "gateoff": {
+          "reach": 0.005208333333333333,
+          "drop": -0.005208333333333333,
+          "verdict": "INERT"
+        },
+        "compoff": {
+          "reach": 0.01566951566951567,
+          "drop": -0.01566951566951567,
+          "verdict": "INERT"
+        }
+      },
+      "n_reach": 16,
+      "n_unreach": 8
+    },
+    "center": {
+      "chance": 0.041666666666666664,
+      "reach": 0.23626839527574825,
+      "unreach": 0.02293080693815988,
+      "gap": 0.21333758833758837,
+      "fooled_by_form": false,
+      "shuffle_reach": 0.0476479538979539,
+      "shuffle_drop": 0.18862044137779435,
+      "shuffle_collapsed": true,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.04626623376623377,
+          "drop": 0.1900021615095145,
+          "verdict": "CAUSAL"
+        },
+        "gateoff": {
+          "reach": 0.029619107744107743,
+          "drop": 0.2066492875316405,
+          "verdict": "CAUSAL"
+        },
+        "compoff": {
+          "reach": 0.02901785714285714,
+          "drop": 0.2072505381328911,
+          "verdict": "CAUSAL"
+        }
+      },
+      "n_reach": 16,
+      "n_unreach": 8
+    },
+    "rogue1": {
+      "chance": 0.041666666666666664,
+      "reach": 0.26577905346287695,
+      "unreach": 0.0669916072489602,
+      "gap": 0.19878744621391675,
+      "fooled_by_form": false,
+      "shuffle_reach": 0.054602872617578506,
+      "shuffle_drop": 0.21117618084529843,
+      "shuffle_collapsed": true,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.060726344733697674,
+          "drop": 0.20505270872917927,
+          "verdict": "CAUSAL"
+        },
+        "gateoff": {
+          "reach": 0.046155267662620604,
+          "drop": 0.21962378580025635,
+          "verdict": "CAUSAL"
+        },
+        "compoff": {
+          "reach": 0.05357204070439364,
+          "drop": 0.2122070127584833,
+          "verdict": "CAUSAL"
+        }
+      },
+      "n_reach": 16,
+      "n_unreach": 8
+    },
+    "whiten": {
+      "chance": 0.041666666666666664,
+      "reach": 0.10144600769600769,
+      "unreach": 0.06450702075702076,
+      "gap": 0.03693898693898692,
+      "fooled_by_form": true,
+      "shuffle_reach": 0.10144600769600769,
+      "shuffle_drop": 0.0,
+      "shuffle_collapsed": false,
+      "ablation": {
+        "bindoff": {
+          "reach": 0.07346357346357346,
+          "drop": 0.027982434232434225,
+          "verdict": "INERT"
+        },
+        "gateoff": {
+          "reach": 0.05734427609427609,
+          "drop": 0.04410173160173159,
+          "verdict": "INERT"
+        },
+        "compoff": {
+          "reach": 0.023237179487179488,
+          "drop": 0.0782088282088282,
+          "verdict": "INERT"
+        }
+      },
+      "n_reach": 16,
+      "n_unreach": 8
+    }
+  },
+  "rep_diag": {
+    "raw": {
+      "offdiag_cos_abs_mean": 0.9999143091235967,
+      "offdiag_cos_max": 0.9999915849968648,
+      "norm_ratio": 0.9999999999990028
+    },
+    "center": {
+      "offdiag_cos_abs_mean": 0.1939058543883298,
+      "offdiag_cos_max": 0.9529842499980358,
+      "norm_ratio": 1.0000000000086984
+    },
+    "rogue1": {
+      "offdiag_cos_abs_mean": 0.15562945346209558,
+      "offdiag_cos_max": 0.8665928596777718,
+      "norm_ratio": 1.000000000008946
+    },
+    "whiten": {
+      "offdiag_cos_abs_mean": 0.3673065444683462,
+      "offdiag_cos_max": 0.9999999979999947,
+      "norm_ratio": 0.9999999999990002
+    }
+  },
+  "prereg_bar": {
+    "gap_gt_0_15": true,
+    "not_fooled": true,
+    "shuffle_collapsed": true,
+    "bind_causal": true,
+    "gate_causal": true,
+    "comp_causal": true,
+    "raw_collapses": true,
+    "not_by_construction": true
+  },
+  "bar_all_pass": true,
+  "seeds": 12,
+  "D": 1024
+}
