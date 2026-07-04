@@ -1,0 +1,15 @@
+FIXTURE rows=48 feats=384
+LAYER1 D_diffLLM=0.23505624999999997 D_selfpair=0.2317562500000001 D_shuffle=0.22285
+BAR1a D_diff-D_self>=0.15 : 0.0032999999999998586 -> false
+BAR1b D_shuffle<0.05 : 0.22285 -> false
+BAR1c Psi ON==OFF byte-identical : true (loop lane DISJOINT from pure_field Psi lane; pure_field_step never called)
+LAYER2 ON  dEff=0.039441666666666625 early=0.17767083333333333 late=0.21711249999999996 cells=1 spawns=0 releases=95 abstains=1
+LAYER2 OFF dEff=0.0 cells=1
+LAYER2 SHUF_ON dEff=0.0245104166666667 cells=1 spawns=0
+BAR4 dEff_ON-dEff_OFF>=0.10 : 0.039441666666666625 -> false
+BAR5 cells_ON>cells_OFF : 1>1 -> false
+BAR6 |dEff_shuffle|<0.03 : 0.0245104166666667 -> true
+VERDICT_FACULTY(b4&b5&b6)=false
+VERDICT_LIVE_GAUGE(!b4)=true
+VERDICT_MEASURE_FAIL(!b1a)=true
+F5_LOOP_DONE
