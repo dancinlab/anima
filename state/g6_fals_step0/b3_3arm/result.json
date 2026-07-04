@@ -1,0 +1,77 @@
+{
+  "note": "DIRECTIONAL toy (mini numpy char-LM d64) — NOT engine-native/303M (a_engine_native_learning). tune-to-green forbidden.",
+  "config": {
+    "CTX": 80,
+    "EMB": 8,
+    "HID": 64,
+    "STEPS": 4000,
+    "BATCH": 128,
+    "LR": 0.003,
+    "vocab": 27,
+    "n_frames": 5,
+    "cont_bytes": 40
+  },
+  "detector_calibration_10": 10,
+  "frame_guard_leaks": [],
+  "arms": {
+    "B3": {
+      "final_train_loss": 0.2063,
+      "FALS_indist_ceiling": 0.2,
+      "FALS_composed": 0.0,
+      "FALS_shuffled": 0.0,
+      "FALS_arm": 0.0,
+      "M_earned": 0.0
+    },
+    "B4": {
+      "final_train_loss": 0.2269,
+      "FALS_indist_ceiling": 1.0,
+      "FALS_composed": 0.0,
+      "FALS_shuffled": 0.0,
+      "FALS_arm": 0.0,
+      "M_earned": 0.0
+    },
+    "B12": {
+      "final_train_loss": 0.1522,
+      "FALS_indist_ceiling": 0.4,
+      "FALS_composed": 0.0,
+      "FALS_shuffled": 0.0,
+      "FALS_arm": 0.0,
+      "M_earned": 0.0
+    },
+    "LO": {
+      "final_train_loss": 0.0571,
+      "FALS_indist_ceiling": 0.0,
+      "FALS_composed": 0.0,
+      "FALS_shuffled": 0.0,
+      "FALS_arm": 0.0,
+      "M_earned": 0.0
+    }
+  },
+  "verdict": {
+    "B3": {
+      "FALS_arm": 0.0,
+      "lo_delta_control": 0.0,
+      "lift_over_control": false,
+      "M_earned": 0.0,
+      "earned_binding": false,
+      "verdict": "FLOOR (no lift over lo-delta control)"
+    },
+    "B4": {
+      "FALS_arm": 0.0,
+      "lo_delta_control": 0.0,
+      "lift_over_control": false,
+      "M_earned": 0.0,
+      "earned_binding": false,
+      "verdict": "FLOOR (no lift over lo-delta control)"
+    },
+    "B12": {
+      "FALS_arm": 0.0,
+      "lo_delta_control": 0.0,
+      "lift_over_control": false,
+      "M_earned": 0.0,
+      "earned_binding": false,
+      "verdict": "FLOOR (no lift over lo-delta control)"
+    }
+  },
+  "frozen_bar": "arm FALS>lo-delta AND M_earned>0"
+}
