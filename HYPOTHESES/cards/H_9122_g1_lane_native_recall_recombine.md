@@ -18,6 +18,9 @@
 
 **하위변형 4종** (어느 배선이 recall/recombine 가장 깨끗이 가르나): SV1 concat-whole(null baseline) · SV2 key-algebra(norm(embed(A)+embed(D)) 직접 주입, embed additive성) · **SV3 4-atom cells(two_recon_err 2-cell read = 구조적 crux 최예리: compose-read op 부재 노출)** · SV4 gap-decisive(gap≈0 tie = 합성 아님 증거).
 
+## C1(c) param-ES — DIRECTIONAL-DOA (escape 공간 DRY, escape발사 결과)
+FROZEN-3 자체 $0 toy 사전선별 게이트(Fable numpy 실측)로 GPU 발사 前 소거: word-MLP LM·ES truncation(P32 top8)·concept 키워드 비공존 corpus(G1 floor). shaped fitness 상승(selection gradient 존재)이나 **sustained held≥2 = 0/900 gen**(C0·C1·C6 ×3seed ×100gen). O2 통제=CE+composed 7pair도 unseen 전이 0(결핍=COVERAGE 아니라 selection 아님). crossover 통제(param 재조합) 전수 실패. DOA-proof: 0-base-rate에서 ES gradient≈0(random-walk exp(d)), shaping은 gradient 복원하나 single-parent 포화로 basin 회귀(두 번째 함정). ⇒ **param-ES DIRECTIONAL-DOA, GPU 비정당화**(toy-fail→scale-fail, a_toy_scale_recheck 역방향; 303M도 동일 coverage×RF bound H_6183). 배선발견: engine_g.hexa=selection 아닌 motivation/emit 게이트·apoptosis core 미배선. **objective 4-family 붕괴 완결, escape 공간 DRY.** 유효 처방=조합-커버리지 코퍼스+RF(H_6183/6184). 상세 `state/g1_nested_diverge/C1_paramES_toy_DOA.md`. engine-native 재현=escape 재개 시 follow-on.
+
 ## 분기 사전등록
 - **FROZEN-2 (HIT → lane-native mouth-우회 G1):** 신설 `lane_g1_compose_read`(engine_cli.hexa immune § append) engine-native 출력에 `_coverage` → composed_distinct≥2 ∧ >max_single ∧ coherent ∧ shuffle-collapse ∧ ablation non-inert. emit seam `cli/anima.hexa:1819`에 mouth-우회 배선. `a_substrate_disjoint` 점검(emit-lane 0/4 불변 ∧ recall_thr 불변) 통과 필수. wired 사다리 4칸(`a_verified_must_wire`).
 - **FROZEN-3 (MISS → C1(c) param-ES):** Engine G reverse param-ES를 held-out composition-fitness로 선택(`cli/train.hexa`, flame/forge GPU). fitness=held-out composed seed `_coverage` composed_distinct. G0-green warm(h1129, from-scratch 금지). 0-base-rate 완화 = fitness shaping+curriculum+novelty-search. bar: 비-shaped control 대비 strict↑ ∧ held-out composed_distinct≥2 ∧ kwr≥0.50. N-gen 0-plateau=DOA. 🟡 cost-gated, DOA-risk 잔존.
