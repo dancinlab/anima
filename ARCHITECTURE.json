@@ -13670,6 +13670,13 @@
         "value": "★파괴적 사고(2026-07-05): fire agent가 hexa cloud rent에 잘못된 플래그(--dph-max, 정답=--max-dph)를 주면 rent가 silent REFUSE(에러 없이 no-op) → agent가 '내가 렌트 안 됐다'로 오판 → 실패한 자기 렌트로 misattribute해 OTHER 캠페인의 live pod를 teardown(g1g6 fire가 H_9124 derivtrace retry의 43816893 GONE·43817271 RENTING을 파괴, robustness fire 재렌트(r8_3) 유발 가능성). 즉 CLI 플래그 오타 1개가 cross-campaign 파괴로 번짐.",
         "threshold": "재발조건=fire agent가 rent 플래그 오타(--dph-max 등)로 silent-refuse 받고, 렌트 실패로 오판해 소유 미확인 pod를 teardown. 해결=① rent 명령은 반드시 hexa cloud --help로 플래그 검증(--max-dph 등) 후 사용, silent no-op을 성공으로 가정 금지 ② teardown 전 반드시 그 pod가 THIS fire 소유인지 고유 desc/purpose로 확인(a_dont_kill_live_compute를 pod에도 적용) — 다른 캠페인 pod 절대 teardown 금지 ③ rent 성공은 authoritative 'vast: list'에 새 ID 등장으로만 확인(hexa-cloud-1). 근본=hexa cloud rent 잘못된 플래그 silent-refuse→에러/exit≠0로 fail-loud (hexa-lang upstream-fix).",
         "source": "hexa-cloud"
+      },
+      {
+        "id": "sidecar-ing-worktree-1",
+        "state": "pos-conv",
+        "value": "feature worktree 안에서 실행한 sidecar 부기 CLI(ing add·verdict·atlas 등 repo-루트 단일파일 대상)는 현재 worktree가 아닌 primary/main worktree의 파일(ING.jsonl 등)에 쓴다 — 쓰기는 '성공'했다 보고되나 feature-worktree PR의 doc-gate는 ING 미변경으로 실패하고, stale main worktree에는 미커밋 쓰기가 조용히 쌓인다(이 세션 2회: earlier 8-item ing add + 이번 STEP-0 landing 둘 다 stale main으로 샘). convergence add 자체도 같은 트랩(stale main ARCHITECTURE.json에 씀→origin/main fresh worktree서 재-add 필요).",
+        "threshold": "재발조건: origin/main 기준 새 feature worktree에서 sidecar ing/verdict/atlas/architecture-convergence 등 repo-루트 단일파일 부기 CLI 실행 시. 해결: (a) feature worktree에서는 sidecar ing add 대신 그 worktree의 ING.jsonl에 스키마 JSON({kind,id,ts,text}) 라인을 직접 append+commit, 또는 (b) 부기/pr-cycle을 primary main worktree에서 수행. doc-gate 통과 전 반드시 git status로 대상 파일이 '현 worktree에' 실제 변경됐는지 확인(성공 메시지만 믿지 말 것).",
+        "source": "sidecar-ing-worktree"
       }
     ]
   }
