@@ -1,0 +1,61 @@
+# H_9129 L5 rung(3) — NOVEL-CHAIN vs STORED-RECALL discriminator (303M engine-native)
+ckpt=/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin
+engine: real ByteGPT-303M h1129 d=1024 nlay=24 nh=16 (core/decode.py == anima evaluate --py ops)
+seed=20260705 preproc=center_zscore DIM=2048 ACTIVE=40 STEPS=6 KWTA=40
+stored premises = 40 adjacent (gap=1) edges ONLY; DG-code overlap=0.0284
+
+## chains
+  chain0: consciousness -> theory -> information -> integrated -> tries -> quantify
+  chain1: experience -> conscious -> systems -> physical -> emergent -> behavior
+  chain2: model -> byte -> level -> korean -> english -> approach
+  chain3: system -> mechanism -> homeostasis -> prevents -> exactly -> collapsing
+  chain4: learning -> enabling -> models -> data -> language -> bytes
+  chain5: prediction -> brain -> neural -> processes -> problem -> asks
+  chain6: creates -> tension -> dynamic -> similar -> minds -> experiences
+  chain7: text -> starts -> great -> generating -> coherent -> responses
+
+## FORM baseline (raw 303M-rep cosine, novel pairs)
+  form_novel  : mean=0.0106 std=0.2312 med=0.0123 n=80
+  form_unreach: mean=-0.0201 std=0.2317 med=0.0082 n=80
+  form_gap = +0.0307
+
+## RECALL (gap=1 DIRECTLY STORED) — G2 stored-recall positive control
+  recall(stored gap=1): mean=1.0000 std=0.0000 med=1.0000 n=40
+
+## NOVEL-CHAIN (gap>=2 NEVER stored) — G1 claim   vs   UNREACH (cross-chain)
+  novel_chain : mean=1.0000 std=0.0000 med=1.0000 n=80
+  unreach     : mean=0.1369 std=0.2071 med=0.0750 n=80
+  store_gap (novel-unreach) = +0.8631   ratio = 7.31x
+  per-gap novel-chain (transitive distance):
+    gap=2: mean=1.0000 n=32
+    gap=3: mean=1.0000 n=24
+    gap=4: mean=1.0000 n=16
+    gap=5: mean=1.0000 n=8
+
+## SHUFFLE (derangement of wiring; SAME reps/edges)
+  shuf_novel  : mean=0.2294 std=0.3269 med=0.0875 n=80
+  shuf_unreach: mean=0.1547 std=0.2319 med=0.1000 n=80
+  shuf_gap = +0.0747
+
+## LANE-OFF (empty store W=0)
+  loff_novel  : mean=0.0000 std=0.0000 med=0.0000 n=80
+
+## LESION broken-chain control (knock out edge pos2->pos3 in every chain)
+  path_broken = novel pairs whose transitive path CROSSES the lesion (must collapse)
+  path_intact = novel pairs entirely on one side of the lesion (must survive)
+  path_broken @lesioned store: mean=0.1945 std=0.2597 med=0.0750 n=64
+  path_broken @intact store  : mean=1.0000 std=0.0000 med=1.0000 n=64  (baseline)
+  path_intact @lesioned store: mean=1.0000 std=0.0000 med=1.0000 n=16
+  path_intact @intact store  : mean=1.0000 std=0.0000 med=1.0000 n=16  (baseline)
+  lesion drop on broken paths = +0.8055   on intact paths = +0.0000
+
+## DISCRIMINATOR VERDICT (against PREREG_rung3.md frozen bar)
+  novel_lift_ok (store_gap>0.50)         = True  (store_gap=0.8631)
+  recall_works (positive control >0.50)  = True  (recall=1.0000)
+  shuffle_collapsed                      = True  (shuf_gap=0.0747)
+  lane_off_collapsed                     = True  (loff=0.0000)
+  lesion_broken_collapses                = True  (drop=0.8055, resid=0.1945)
+  lesion_intact_survives                 = True  (intact=1.0000, drop=0.0000)
+  >>> novel_NOT_recall (G1 isolated)     = True
+  >>> engine_native = True (real 303M h1129 reps via core/decode.py)
+  >>> DISCRIMINATOR = DISCRIMINATOR-PASS  (novel 2-edge chaining isolated from stored recall)

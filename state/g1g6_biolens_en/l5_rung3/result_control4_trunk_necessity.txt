@@ -1,0 +1,22 @@
+# H_9129 L5 rung(3) — CONTROL 4: TRUNK-NECESSITY (crux — real reps vs random codes)
+ckpt=/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin
+engine: real ByteGPT-303M h1129 d=1024 nlay=24 nh=16 (core/decode.py == anima evaluate --py ops)
+seed=20260705 preproc=center_zscore DIM=2048 ACTIVE=40 STEPS=6 KWTA=40  · pipeline imported 1:1 from l5_discriminator.py
+frozen bar (pre-registered): trunk-G1 iff store_gap_real >= 2.0x store_gap_random
+
+## REAL 303M reps  (fidelity: should reproduce discriminator store_gap +0.8631)
+  novel_chain mean = 1.0000   unreach mean = 0.1369   store_gap = +0.8631   dg_overlap = 0.0284
+
+## RANDOM near-orthogonal codes  (trunk removed; store + DG identical)
+  novel_chain mean = 1.0000   unreach mean = 0.0997   store_gap = +0.9003   dg_overlap = 0.0172
+
+## VERDICT
+  store_gap_real / store_gap_random = 0.96x   (bar = 2.0x)
+  trunk_necessary (real >= 2x random) = False
+  >>> G2-EXPLICIT-STORE (WALL for G1)
+  interpretation: random near-orthogonal codes chain the SAME novel held-out
+  pairs about as well as the 303M reps => the transitive closure is done by the
+  explicit heteroassociative store, INDEPENDENT of the trunk. The novel-chain
+  lift is a G2 explicit-store capability, NOT G1 trunk recombination. The wire
+  can still cement as a live grounded-recall FACULTY, but the G1-recombination
+  claim is WALL. Only gamma trained-constructive-bind can move trunk G1.
