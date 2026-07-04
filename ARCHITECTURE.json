@@ -13576,6 +13576,13 @@
         "value": "G1 best_distinct 게이트를 단일 held-out 쌍으로 측정하면 bd=2 PASS가 threshold artifact 재발: H_9124 derivation-trace가 {c0,c1} 단일쌍서 bd=2>ms=1 PASS(최초 G1 lift 주장)였으나 4개 추가 held-out 쌍({0,1}{0,4}{1,3}{2,3}) 전부 deriv bd=1 g1_pass=FALSE·flat보다 낮음=재현 실패. bd∈{1,2,3} 이산이라 단일쌍 bd=2는 sampler/pair 우연. 이 아티팩트가 메타법칙(H_9126)의 training-layer 근거를 허위로 세웠다가 robustness에서 붕괴.",
         "threshold": "재발조건: G1 lift/bd verdict를 단일 held-out 쌍으로 박제하면 threshold artifact(bd 이산·pair 우연) 위험. 해결=leave-one-pair-out ≥4쌍 multi-pair robustness(각 쌍 memorization-free warm-FT+eval)로 재현 확인 후에만 DIRECTIONAL→SUPPORTED. flat baseline과 대비(deriv>flat 이어야 lever). H_9124 tier=DIRECTIONAL은 이미 '1쌍·artifact 배제 follow-on' caveat 명시했으나 메타법칙이 이를 training-layer 근거로 조기 채택=선-확증 함정.",
         "source": "state/g1_train_wallbreak/derivtrace_robust/ROBUST_RESULT.md"
+      },
+      {
+        "id": "summer-heavy-train-1",
+        "state": "pos-conv",
+        "value": "multi-hour heavy 학습(수시간·다중 ckpt·大 코퍼스)을 free workstation(summer/aiden)에 올리면 mid-run reboot/wedge/OOM-stall로 수시간 유실 반복 — free≠reliable. 2026-07-05 derivtrace robustness(10-training multi-hour) fire를 summer='free pool'이라 선택 → ckpt 6/10(p_1_3/p_2_3/p_2_4)서 GPU 0%·train.py 소멸·DONE flag 없음 STALL(리부트/wedge 추정) → vast 렌트 pod로 재발사. 기존 memory(summer-overfire-wedge-thread-cap·aiden-stable-free-terminal-eval-host reboot-loop·h1590 'workstations unusable for multi-min GPU')와 동일 근인의 ARCHITECTURE 미기록 재발. heavy-on-pool 규칙이 free-workstation을 pool로 허용해 오해 유발.",
+        "threshold": "재발조건=multi-hour heavy TRAINING(≥수십분·multi-ckpt)을 free workstation(summer/aiden)에 배치. 해결=multi-hour heavy 학습은 처음부터 vast 렌트 pod(hexa cloud rent), free workstation(summer/aiden)은 LIGHT/짧은 job(single-toy probe·numpy eval·<10min single train·문서)만. 판별=예상 wall-time ≥30min or ckpt 다수면 렌트. stall 발견 시 미완=infra-wall(verdict 아님, break-walls type-c), a_dont_kill_live_compute(드라이버 alive면 kill 전 stall 증명)+fresh pod 재발사. 결과는 clean pod run에만.",
+        "source": "summer-heavy-train"
       }
     ]
   }
