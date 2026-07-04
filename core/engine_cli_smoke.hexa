@@ -3575,7 +3575,7 @@ fn main() {
     // The four bars are PRE-REGISTERED (frozen-first, c9). The P3 Ψ-survival outcome is reported
     // HONESTLY whichever way it lands — NO tune-to-green.
     let lw_off  = engine_config_default()                                            // topo_couple OFF (default)
-    let lw_on   = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false }   // topo_couple ON
+    let lw_on   = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false, forward_model: false, refsel: false }   // topo_couple ON
     let lw_flat = _topo_zeros(15)
     let lw_brain = topo_brain_adjacency()
     let lw_opt   = topo_optimal_adjacency()
@@ -3854,7 +3854,7 @@ fn main() {
     // B4 Ψ-IMPACT — the savant asymmetry's effect on the Ψ=½ emit balance (centered proxy, OFF=½).
     let sv_thr     = ci_off_median_drive(sv_pop)
     let sv_cfg_off = engine_config_default()                                                  // savant OFF
-    let sv_cfg_on  = EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: true } // savant ON
+    let sv_cfg_on  = EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: true, forward_model: false, refsel: false } // savant ON
     let sv_psi_off = ci_psi_balance_savant(sv_pop, 0, sv_w, sv_gzL, sv_thr, sv_cfg_off)
     let sv_psi_on  = ci_psi_balance_savant(sv_pop, 0, sv_w, sv_gzL, sv_thr, sv_cfg_on)
     let sv_psi_dev = if sv_psi_on - 0.5 >= 0.0 { sv_psi_on - 0.5 } else { 0.5 - sv_psi_on }
