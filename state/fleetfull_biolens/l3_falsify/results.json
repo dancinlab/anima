@@ -1,0 +1,41 @@
+{
+  "model": "h1129 303M ByteGPT",
+  "bin": "/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin",
+  "engine": "core/decode.py py-canonical (anima evaluate --py 2-production)",
+  "byte_exact_head_lastrow_maxabs": 0.0,
+  "n_pairs": 60,
+  "probe_suffix": " is",
+  "A_naive": {
+    "median": 0.00026865426646222046,
+    "mean": 0.0002937786625896351,
+    "std": 0.00011610963401971812,
+    "min": 0.00015559317092928016,
+    "max": 0.0007503019115309151
+  },
+  "A_probe": {
+    "median": 1.5350471428476897e-05,
+    "mean": 1.7416466970112305e-05,
+    "std": 7.501281378773293e-06,
+    "min": 8.567110767354613e-06,
+    "max": 5.03303136096811e-05
+  },
+  "control": {
+    "C_self_must_be_0": 1.1102230246251565e-16,
+    "C_rand_probe_median": 1.9607593215842378e-05,
+    "C_rand_probe_mean": 2.330457186288289e-05,
+    "C_rand_probe_std": 1.1106674250677878e-05,
+    "ratio_m_probe_over_r_probe": 0.7828840214858268
+  },
+  "FM_full_vs_additive": {
+    "target": "rep('X Y'+SUF)[d] ; additive(commutative) can produce only S=(rXY+rYX)/2, error>=||D||",
+    "earned_margin_median_antisymfrac": 0.0027704208892295598,
+    "earned_margin_mean": 0.002893722257322567,
+    "derange_control_median": 0.0029701965818785037,
+    "earned_over_derange_ratio": 0.9327399089111483
+  },
+  "prereg_thresholds": {
+    "REFUTED_if": "m_probe<0.02 OR m_probe<=1.2*r_probe",
+    "SUPPORTED_if": "m_probe>=0.05 AND m_probe>=1.5*r_probe"
+  },
+  "verdict": "REFUTED-G6-universal-wall"
+}
