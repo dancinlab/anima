@@ -1771,8 +1771,13 @@ pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
         // mlp sub-block: x = x + Wd(GELU(W0(LN2(x))))
         _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
         _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
-        let mut g = 0
-        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        // H_9119 scalar-glue: GELU → forge device kernel on a CUDA host (GPU util>0), scalar
+        // fallback on CPU (byte-exact); the kernel handles --det via HEXA_DET. Mirrors the CLM
+        // _clmd_fwd_logits_sc forge_dispatch_gelu path + the ByteGPT ranged sites already on device.
+        if !(cuda_available() && forge_dispatch_gelu(h4, h4, T * 4 * d) == 0) {
+            let mut g = 0
+            while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        }
         _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
@@ -1898,8 +1903,13 @@ pub fn bytegpt_forward_last_ranged(path: string, ids: int, T: int) -> int {
 
         _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
         _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
-        let mut g = 0
-        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        // H_9119 scalar-glue: GELU → forge device kernel on a CUDA host (GPU util>0), scalar
+        // fallback on CPU (byte-exact); the kernel handles --det via HEXA_DET. Mirrors the CLM
+        // _clmd_fwd_logits_sc forge_dispatch_gelu path + the ByteGPT ranged sites already on device.
+        if !(cuda_available() && forge_dispatch_gelu(h4, h4, T * 4 * d) == 0) {
+            let mut g = 0
+            while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        }
         _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
@@ -1996,8 +2006,13 @@ pub fn bytegpt_forward_last_ranged_mm(path: string, ids: int, T: int) -> int {
 
         _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
         _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
-        let mut g = 0
-        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        // H_9119 scalar-glue: GELU → forge device kernel on a CUDA host (GPU util>0), scalar
+        // fallback on CPU (byte-exact); the kernel handles --det via HEXA_DET. Mirrors the CLM
+        // _clmd_fwd_logits_sc forge_dispatch_gelu path + the ByteGPT ranged sites already on device.
+        if !(cuda_available() && forge_dispatch_gelu(h4, h4, T * 4 * d) == 0) {
+            let mut g = 0
+            while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        }
         _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
@@ -2106,8 +2121,13 @@ pub fn bytegpt_ce_ranged(path: string, ids: list) -> Map {
 
         _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
         _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
-        let mut g = 0
-        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        // H_9119 scalar-glue: GELU → forge device kernel on a CUDA host (GPU util>0), scalar
+        // fallback on CPU (byte-exact); the kernel handles --det via HEXA_DET. Mirrors the CLM
+        // _clmd_fwd_logits_sc forge_dispatch_gelu path + the ByteGPT ranged sites already on device.
+        if !(cuda_available() && forge_dispatch_gelu(h4, h4, T * 4 * d) == 0) {
+            let mut g = 0
+            while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        }
         _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
@@ -2388,8 +2408,13 @@ fn _bg_apply_bind(x: int, bind: list, T: int, d: int, nh: int) {
         _bg_layernorm(xa, ln2w, ln2b, nrm2, T, d)
         let h4 = farr_zeros(T * 4 * d)
         _bg_linear(nrm2, m0W, m0B, h4, T, d, 4 * d)
-        let mut g = 0
-        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        // H_9119 scalar-glue: GELU → forge device kernel on a CUDA host (GPU util>0), scalar
+        // fallback on CPU (byte-exact); the kernel handles --det via HEXA_DET. Mirrors the CLM
+        // _clmd_fwd_logits_sc forge_dispatch_gelu path + the ByteGPT ranged sites already on device.
+        if !(cuda_available() && forge_dispatch_gelu(h4, h4, T * 4 * d) == 0) {
+            let mut g = 0
+            while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        }
         let mlpo = farr_zeros(T * d)
         _bg_linear(h4, m2W, m2B, mlpo, T, 4 * d, d)
         // block(x) = xa + mlpo ; x = x + gate*(block(x) - x)
@@ -2545,8 +2570,13 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
 
         _bg_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, T, d)
         _bg_linear_mm(nrm, to_int(m0Wt[Lr]), to_int(m0B[Lr]), h4, T, d, 4 * d)
-        let mut g = 0
-        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        // H_9119 scalar-glue: GELU → forge device kernel on a CUDA host (GPU util>0), scalar
+        // fallback on CPU (byte-exact); the kernel handles --det via HEXA_DET. Mirrors the CLM
+        // _clmd_fwd_logits_sc forge_dispatch_gelu path + the ByteGPT ranged sites already on device.
+        if !(cuda_available() && forge_dispatch_gelu(h4, h4, T * 4 * d) == 0) {
+            let mut g = 0
+            while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        }
         _bg_linear_mm(h4, to_int(m2Wt[Lr]), to_int(m2B[Lr]), mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
