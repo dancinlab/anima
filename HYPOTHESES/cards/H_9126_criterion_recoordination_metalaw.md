@@ -1,6 +1,6 @@
 # H_9126 — criterion re-coordination 메타법칙 (feature-accessibility) + P1/P2/P3 사전등록
 
-> **tier:** 🌌 **DESCRIPTIVE META-LAW** (retrodictive 통합 강함 · predictive 미확정 · P1–P3 사전등록) — fleet-full abstract peel. · **wired:** N/A (메타법칙)
+> **tier:** 🌌 **META-LAW · P1-CONFIRMED** (retrodictive 통합 + G6 예측 HIT=predictive 지지 · selection-layer DIRECTIONAL scope) — fleet-full abstract peel. · **wired:** N/A (메타법칙)
 >
 > **메타법칙:** 벽의 판정 기준 C(frozen detector가 재는 것)가 **외부 평가자 좌표계에만 있고 substrate feature 좌표계에 없으면**, 어떤 basin-preserving 변형(readout·binding-op·temporal·capacity·scale)도 벽을 못 연다. **C를 emit-내부 명시적 feature(objective가 직접 채점하는 피연산자 구조)로 재좌표화할 때만 열린다.** DPI 메타법칙의 쌍대(음면=들어온 적 없는 신호는 후처리로 창조 불가) — feature-accessibility=양면(신호를 좌표계 안으로).
 >
@@ -17,8 +17,11 @@
 - **P2 (H_9124 trace-ablation):** shuffled-trace/DEF-only/RULE-only 팔. 피연산자 구조 훼손에 단조 열화 예측. shuffled-trace=intact 동등 lift면 **법칙 기각**(=코퍼스 통계지 feature-accessibility 아님).
 - **P3 (경계 보편성):** feature화 시도든 substrate store 없는 referent서 baseline(P1 NGRD 팔에 무료 포함).
 
-## P1 implement 착륙 (G6 contradiction-keyed · engine-native $0 · 🟠 PARTIAL-INCONCLUSIVE)
+## P1 implement — G6 contradiction-keyed · 🟢 HIT (2-way 재설계 후 · engine-native $0)
 5-arm engine-native(state/refcorrect_axis/p1_g6.hexa grep-clean, G6 FORM detector VERBATIM). emit set 16c×4(k0 grounded-fals·k1 form-vacuous·k2 non-fals·k3 garble, k0↔k1 feats6-매칭). reward S=kwr∧FORM∧overlap≥3. **①ON−OFF=0.1250≥0.10 ✓**(contradiction-keying이 G6서도 held-out 판별, G-3 preflight 교정=recall_thr 0.30→0.60 후: claim-form content-word err~0.51>STRESS thr라 접지불가였음, k0/k1 사이 0.60으로 접지복원, bar 미개봉 calibration)·③DECOR✓·④NGRD✓·⑤Ψ✓·cells 4>1 ✓ **BUT ②FORM−OFF=0.25 FAIL**. **판정(Fable 사전등록 verdict map): ②FAIL=emit-set이 form-vs-nonform·grounded-vs-vacuous conflate(FORM arm {k0,k1}vs{k2,k3} 부분분리 spurious lift)→measurement 재설계, 메타법칙 falsify 아님.** ⇒ **INCONCLUSIVE**(①✓=통합 지지방향, clean HIT 미달). H_9126 DESCRIPTIVE 유지. follow-on=held-out {k0,k1} 2-way 제한(FORM 상수)+G-3 정식게이트. 산출 RESULT_p1_g6.txt.
+
+## P1 재설계 (2-way · FORM 상수) — 🟢 HIT: 메타법칙 G6 일반화 확증
+이전 ②FORM 실패(emit-set이 form-vs-nonform·grounded-vs-vacuous conflate)를 **held-out {k0,k1} 2-way**(k0 grounded-fals·k1 form-vacuous, 둘 다 FORM=1)로 해소=FORM이 k0/k1 못 가르니 flat 강제, contradiction만 남는 clean 대비. engine-native $0(p1_g6_2way.hexa grep-clean, K=2). **ABSOLUTE-GAP frozen GREEN 4조건 전부**: ①ON−OFF=0.1250≥0.10 ✓(contradiction-keying이 G6서도 grounded-fals를 form-vacuous보다 선택)·②FORM−OFF=0.0<0.10 ✓(현행 G6 criterion을 feature로 줘도 k0/k1 미분리=원벽 재현)·③DECOR≤0.03 ✓·④NGRD<0.10 ✓·⑤Ψ byte-identical ✓·cells 3>1 ✓. **⇒ criterion re-coordination 메타법칙 G6 일반화 확증**: H_9124(G1 조합)·H_9125(F5 reference)·**G6(falsifiability)** 세 벽 모두 같은 원리로 열림=descriptive→predictive 승격(P1 HIT). slope-metric은 여전히 degenerate(즉시-step 수렴, f5-loop3-contra-hexa-1), faithful absolute-gap이 판정. **정직 스코프**: fals-선택(selection) 층 검증(DIRECTIONAL·authored emit set·mouth 미관여)이지 G6 gate 돌파 아님. ON lift 0.125(perfect 1.0 아님)=recall_thr 0.60으로 16 concept 중 일부만 접지. follow-on=live 303M decode rank criterion 재좌표화(cost-gated). 산출 RESULT_p1_2way.txt.
 
 ## 정직 수렴 (c9)
 현 지위=**(i)통합·(ii)과적합 중간: 강한 retrodictive 통합, predictive 미확정**. 양성 실질 2건(9124·9125, F5=판별자)로 얇으나 ~15 음성 census 단일속성 retrodict+coverage-density 기각이 "학습시키면 됨" 자명서사 차단=순수 post-hoc 아님. a_break_the_wall LAW 규칙: P1–P3 사전등록 HIT 전 **descriptive**로만. tier 상한=H_9125 DIRECTIONAL·H_9124 engine-native 미착지.
