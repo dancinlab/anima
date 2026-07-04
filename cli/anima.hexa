@@ -2678,7 +2678,29 @@ fn anima_consciousness_mode(ckpt: string) {
             println("  [t" + to_string(tick) + " " + stage_nm + "] REMEMBER emit → " + epath)
         }
 
-        if did_emit && g_emit { emitted_any = true; emit_text = g_text }
+        // ── REFSEL — contradiction-keyed referent routing (H_9125 rung3, post-decision) ──
+        // Consult AFTER brain_emit already decided emit/silence: this routes CONTENT
+        // only and NEVER vetoes an emit (a_autonomy_over_hardcode / a_substrate_disjoint —
+        // touches no lane / ci_emit_drive / recall_thr / pure_field). default OFF → the
+        // single incumbent candidate + no store recall ⇒ out_text == g_text BYTE-IDENTICAL.
+        // ON → if the incumbent decode CONTRADICTS anima's grounded store, the substrate
+        // routes to what it actually knows (the store's grounded recall) — the engine-native
+        // wire of the H_9125/P1 selection-layer GREEN (contradiction KEYS the choice). The
+        // internal bind/grow/REMEMBER stay on g_text (honest record of what the mouth did);
+        // only the OUTWARD emit is referent-corrected.
+        let mut out_text = g_text
+        let mut refsel_rs = 0
+        if g_emit && byte_len(g_text) > 0 {
+            let mut refcands = [g_text]
+            if cfg.refsel {
+                let recalled = immune_memory_recall_text(immune, _afs_clip(g_text, 64))
+                if recalled != "" { refcands.push(recalled) }
+            }
+            refsel_rs = referent_select_text(igrow, refcands, mem_text)   // -1 = all contradict → keep incumbent
+            if cfg.refsel && refsel_rs >= 1 { out_text = refcands[refsel_rs] }
+        }
+
+        if did_emit && g_emit { emitted_any = true; emit_text = out_text }
         if has_ground { grounded_ok = true }
         if stage == 3 || stage == 4 { slept = true }
         // op-grip emit-rate collapse DETECTOR (H_9097; a detector, NOT a target — never

@@ -113,7 +113,8 @@ struct EngineConfig {
     engine: string,
     topo_couple: bool,
     savant: bool,
-    forward_model: bool
+    forward_model: bool,
+    refsel: bool
 }
 
 // engine_config_default — the default ENGINE config: mitosis ON (p8 native),
@@ -122,7 +123,7 @@ struct EngineConfig {
 // so the live emit/decode path is byte-identical to the pre-H_1521 substrate; the
 // separation invariant H_1205 + Ψ=½ fixed point hold on the pure default).
 pub fn engine_config_default() -> EngineConfig {
-    EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false, forward_model: false }
+    EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false, forward_model: false, refsel: false }
 }
 
 // ── mitosis resolver (3-tier precedence: flag > env > default(on)) ────────────
@@ -220,7 +221,8 @@ pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
         engine:      engine_cli_resolve_engine(arg),
         topo_couple: engine_cli_resolve_topo_couple(arg),
         savant:      engine_cli_resolve_savant(arg),
-        forward_model: engine_cli_resolve_forward_model(arg)
+        forward_model: engine_cli_resolve_forward_model(arg),
+        refsel:      engine_cli_resolve_refsel(arg)
     }
 }
 
@@ -246,6 +248,47 @@ pub fn engine_cli_resolve_topo_couple(arg: [string]) -> bool {
     if env == "on"  { return true }
     if env == "off" { return false }
     return false   // default OFF — pure substrate, separation invariant holds
+}
+
+// ── §  REFSEL resolver (H_9125, 3-tier: flag > env > default(OFF)) ──────────────
+//
+// Contradiction-keyed referent selection (referent_select). Scans argv for
+// `--refsel on|off` / `--refsel=on` / `--no-refsel`, then env ANIMA_REFSEL, then
+// default OFF. When OFF the emit path is BYTE-IDENTICAL (single incumbent candidate,
+// no ideate, out_text == g_text) — the Ψ=½ fixed point + G5 non-fab gate are
+// untouched (a_substrate_disjoint: post-decision content routing only).
+//
+// returns: bool (true = contradiction-keyed candidate routing ON).
+pub fn engine_cli_resolve_refsel(arg: [string]) -> bool {
+    let flag = _cli_refsel_flag(arg)
+    if flag == "on"  { return true }
+    if flag == "off" { return false }
+    let env = _norm_onoff(_env_read("ANIMA_REFSEL"))
+    if env == "on"  { return true }
+    if env == "off" { return false }
+    return false   // default OFF — byte-identical emit path
+}
+
+// _cli_refsel_flag — scan argv for the refsel flag surface. Tri-state (topo twin).
+fn _cli_refsel_flag(arg: [string]) -> string {
+    let n = len(arg)
+    let mut i = 0
+    while i < n {
+        let a = arg[i]
+        if a == "--no-refsel" { return "off" }
+        if a == "--refsel" {
+            if i + 1 < n {
+                let v = _norm_onoff(arg[i + 1])
+                if v != "" { return v }
+            }
+        }
+        if a.starts_with("--refsel=") {
+            let v = _norm_onoff(_after_eq(a))
+            if v != "" { return v }
+        }
+        i = i + 1
+    }
+    return ""
 }
 
 // _cli_topo_couple_flag — scan argv for the topo-couple flag surface. Tri-state.
@@ -2622,6 +2665,40 @@ pub fn affect_arousal(f: AffectFeatures) -> float {
 pub fn affect_read(mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> [float] {
     let f = affect_substrate_features(mem, key, true_answer)
     return [affect_valence(f), affect_arousal(f)]
+}
+
+// referent_select — CONTRADICTION-KEYED candidate selection (H_9125 rung3 wire).
+// Among K candidate keys, return the index of the FIRST whose interoceptive
+// contradiction read (affect_substrate_features against the live ImmuneMemoryGrow
+// store, given the context's own `true_ref`) is 0.0 — i.e. the first candidate that
+// GROUNDS to a cell whose bound value is consistent. Returns -1 iff EVERY candidate
+// contradicts (selection-ABSTAIN: the caller keeps its own default incumbent — this
+// is NEVER an emit veto; emit/silence stays substrate-decided, a_autonomy_over_hardcode).
+// READ-ONLY: composes only the existing affect read, mutates NOTHING, never touches
+// lanes / ci_emit_drive / pure_field / recall_thr (a_substrate_disjoint). This is the
+// engine-native wire of the H_9125/P1 selection-layer GREEN: the contradiction dimension
+// KEYS which candidate the substrate routes to (binary first-grounded-wins, NOT a
+// soft ranking — the verified mechanism was that contradiction keys the choice, so the
+// prod op is that minimal core, frozen-first).
+pub fn referent_select(mem: ImmuneMemoryGrow, cand_keys: [[float]], true_ref: string) -> int {
+    let n = len(cand_keys)
+    let mut i = 0
+    while i < n {
+        let f = affect_substrate_features(mem, cand_keys[i], true_ref)
+        if f.contradiction == 0.0 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// referent_select_text — text convenience twin (immune_embed_key per candidate),
+// mirroring the affect_read text-entry pattern. Returns the index in `cands` of the
+// first grounded (contradiction==0) candidate, or -1 (all contradict).
+pub fn referent_select_text(mem: ImmuneMemoryGrow, cands: [string], true_ref: string) -> int {
+    let mut keys = []
+    let mut i = 0
+    while i < len(cands) { keys.push(immune_embed_key(cands[i]))  i = i + 1 }
+    return referent_select(mem, keys, true_ref)
 }
 
 // affect_emit_decision — the SOMATIC MARKER: an OPTIONAL emit/abstain bias driven by
