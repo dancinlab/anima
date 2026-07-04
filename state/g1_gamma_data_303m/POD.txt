@@ -1,0 +1,9 @@
+H_9127 gamma-DATA-channel G1 fire — vast pod
+instance_id=43813310  host=ssh2.vast.ai  port=13310  provider=vast  $0.349/hr
+GPU=RTX 4090 24GB  torch2.4.0 cuda  numpy1.26.4  project=@anima
+key=/Users/mini/.ssh/id_vast_anima
+launched pid=520 (setsid) -> /root/g1_gamma/run.log
+ckpt out -> /root/g1_gamma/ckpt/{gamma,add}_s{7,4302,4303}.bin
+PULL dest -> /Users/mini/anima-weights/g1_gamma_data/
+TEARDOWN: hexa cloud rm 43813310   (or ssh + vast destroy)
+h1129 sha (verified on pod) = 5cf07a360c57a133b66e8de8c3c390d5242204d68f75a86b977f1935587f512e

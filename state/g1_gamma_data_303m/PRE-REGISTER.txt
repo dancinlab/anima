@@ -1,0 +1,44 @@
+H_9127 — gamma trained-constructive-bind DATA-channel, engine-native 303M
+FROZEN PRE-REGISTRATION (bars fixed BEFORE measurement; no post-hoc move — c9/p7)
+================================================================================
+LINEAGE: STEP-0 B3 (numpy toy, DIRECTIONAL) = the ONLY surviving G1 signal —
+  gamma-via-DATA-channel V6xV1 beat ADD & DERIV-margin (bd 2.0/3.0, +0.05/+0.11).
+  gamma as an OPERATOR floored (H_1840 cheap-gate 0/3). STEP-0 CAVEAT: the toy
+  decoder was HANDED role/slot keys (fixed keys + canonical-sorted binding), so
+  the win may be a handed-role-key artifact. THIS FIRE = the transfer test at 303M.
+
+CORE QUESTION (TRANSFER): does a real 303M byte-mouth, trained on a role-slot-bound
+  compositional DATA grammar, LEARN role-binding and EMIT recombinations on held-out
+  concept combos WITHOUT being handed the role-key at test — beating a content-matched
+  additive control? If GAMMA-DATA <= ADD => the STEP-0 PASS was the handed-role-key
+  toy artifact and gamma-DATA-channel is TERMINAL.
+
+DESIGN (2-arm controlled, warm-FT h1129, plain CE):
+  GAMMA-DATA : role-slot bound grammar `bind [r0] A [r1] B => <A-clause> and <B-clause> .`
+               fixed content-free role slots (HRR skeleton, V1) + multipath orderings (V6).
+  ADD (ctrl) : CONTENT-MATCHED — same slot phrases + same clauses, same order, MINUS the
+               binding scaffold (no "bind", no [r_k], no "=>"). Isolates STRUCTURE, not
+               exposure (both arms see each concept's phrase AND clause equally often).
+  HELD-OUT   : the 5 frozen-bar concepts C0..C4 are NEVER composed with each other in
+               training (only with EXTRA distractors). The bar seeds exactly the C0..C4
+               prefix combos = held out. Bind-skill generalisation to unseen bar pairs = G1.
+  Both arms  : identical single-concept cell (max_single/G0), identical concept set (5 bar
+               + 15 extra), identical held-out split, seeds {7,4302,4303}.
+  Warm-FT    : --init h1129.bin (d1024 L24 H16 block512), --arm ctrl --objective ce_marginal,
+               lr 2e-5, 1500 steps, --sample proportional. role-binding is in the DATA, not
+               the loss (gamma-OPERATOR already 🧱).
+
+MEASUREMENT (engine-native, a_engine_native_learning): `evaluate.py <ckpt> --gen 40`
+  = numpy byte-parity engine (session-eval-py-only). role-key NEVER handed at test
+  (evaluate.py seeds plain concept phrases, no role tags). G1 = held-out best_distinct.
+
+FROZEN BARS:
+  🟢 (G1 first real lift): GAMMA-DATA best_distinct >= 2  AND  > max_single  AND
+       > ADD-control best_distinct  AND  G0 kwr >= 0.5 (>=4/5 coherent),
+       majority of seeds {7,4302,4303}. + role-key-not-handed confirmed.
+  🔴 (transfer FAIL / TERMINAL): GAMMA-DATA <= ADD  OR  at floor (bd<2 / not>max_single)
+       => STEP-0 PASS was handed-role-key toy artifact; gamma-DATA-channel closed.
+  🟠 (partial): G1 lift present but marginal (single seed, or ~ADD, or G0 dips) — honest.
+
+torch-side train CE/gauges = DIRECTIONAL only. TERMINAL verdict = the numpy engine G1.
+NO tune-to-green, NO post-hoc bar move. Honest 🔴 is a valid result (c9).

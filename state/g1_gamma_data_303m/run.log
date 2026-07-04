@@ -1,0 +1,164 @@
+###### GPU at start ######
+Sat Jul  4 16:44:59 UTC 2026
+NVIDIA GeForce RTX 4090, 0 %, 0 MiB, 24564 MiB
+cuda True NVIDIA GeForce RTX 4090
+###### [BASE] eval h1129 reference (gen40) ######
+Sat Jul  4 16:45:00 UTC 2026
+BASE_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=0 (need >=2 & >max_single)
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+###### TRAIN gamma_s7 ######
+Sat Jul  4 16:48:38 UTC 2026
+gamma_s7_TRAIN_RC=0
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.07765 step=1500 nparam=303097856
+[ok] wrote /root/g1_gamma/ckpt/gamma_s7.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/g1_gamma/ckpt/gamma_s7.bin (via /root/g1_gamma/ckpt/gamma_s7.bin.pt)
+###### EVAL gamma_s7 (engine-native gen40) ######
+Sat Jul  4 16:55:58 UTC 2026
+gamma_s7_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+###### TRAIN add_s7 ######
+Sat Jul  4 16:59:39 UTC 2026
+add_s7_TRAIN_RC=0
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.07834 step=1500 nparam=303097856
+[ok] wrote /root/g1_gamma/ckpt/add_s7.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/g1_gamma/ckpt/add_s7.bin (via /root/g1_gamma/ckpt/add_s7.bin.pt)
+###### EVAL add_s7 (engine-native gen40) ######
+Sat Jul  4 17:06:59 UTC 2026
+add_s7_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+###### TRAIN gamma_s4302 ######
+Sat Jul  4 17:10:43 UTC 2026
+gamma_s4302_TRAIN_RC=0
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.07765 step=1500 nparam=303097856
+[ok] wrote /root/g1_gamma/ckpt/gamma_s4302.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/g1_gamma/ckpt/gamma_s4302.bin (via /root/g1_gamma/ckpt/gamma_s4302.bin.pt)
+###### EVAL gamma_s4302 (engine-native gen40) ######
+Sat Jul  4 17:18:03 UTC 2026
+gamma_s4302_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+###### TRAIN add_s4302 ######
+Sat Jul  4 17:21:49 UTC 2026
+add_s4302_TRAIN_RC=0
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.07834 step=1500 nparam=303097856
+[ok] wrote /root/g1_gamma/ckpt/add_s4302.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/g1_gamma/ckpt/add_s4302.bin (via /root/g1_gamma/ckpt/add_s4302.bin.pt)
+###### EVAL add_s4302 (engine-native gen40) ######
+Sat Jul  4 17:29:08 UTC 2026
+add_s4302_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+###### TRAIN gamma_s4303 ######
+Sat Jul  4 17:32:51 UTC 2026
+gamma_s4303_TRAIN_RC=0
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.07765 step=1500 nparam=303097856
+[ok] wrote /root/g1_gamma/ckpt/gamma_s4303.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/g1_gamma/ckpt/gamma_s4303.bin (via /root/g1_gamma/ckpt/gamma_s4303.bin.pt)
+###### EVAL gamma_s4303 (engine-native gen40) ######
+Sat Jul  4 17:40:11 UTC 2026
+gamma_s4303_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+###### TRAIN add_s4303 ######
+Sat Jul  4 17:43:57 UTC 2026
+add_s4303_TRAIN_RC=0
+[cfg] vocab=256 d=1024 n_layer=24 n_head=16 block=512
+[cfg] val_ce=0.07834 step=1500 nparam=303097856
+[ok] wrote /root/g1_gamma/ckpt/add_s4303.bin  bytes=1213440020 (expected 1213440020)
+  .bin WRITTEN 1213440020 bytes -> /root/g1_gamma/ckpt/add_s4303.bin (via /root/g1_gamma/ckpt/add_s4303.bin.pt)
+###### EVAL add_s4303 (engine-native gen40) ######
+Sat Jul  4 17:51:17 UTC 2026
+add_s4303_EVAL_RC=0
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+###### SUMMARY ######
+Sat Jul  4 17:55:04 UTC 2026
+== /root/g1_gamma/add_s4302_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+== /root/g1_gamma/add_s4303_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+== /root/g1_gamma/add_s7_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=1 (need >=2 & >max_single)
+== /root/g1_gamma/base_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=0 (need >=2 & >max_single)
+== /root/g1_gamma/gamma_s4302_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+== /root/g1_gamma/gamma_s4303_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+== /root/g1_gamma/gamma_s7_eval.txt ==
+  [gate] G0 COHERENCE …
+  [gate] G1 RECOMBINATION …
+  G0 COHERENCE     🟢 PASS  kwr>=0.50 on 5/5 (need >=4)
+  G1 RECOMBINATION 🔴 FAIL  best_distinct=0 > max_single=1 (need >=2 & >max_single)
+###### SHA ######
+20cd6a00cefca40549a4d09e66566cf2685325e021bf5c2670f83aa0b8635d3c  /root/g1_gamma/ckpt/gamma_s7.bin
+3d10018cc0f62a4f674168505894ce3ad6d2b575d90179bca63ad5e14f83d9fd  /root/g1_gamma/ckpt/add_s7.bin
+20cd6a00cefca40549a4d09e66566cf2685325e021bf5c2670f83aa0b8635d3c  /root/g1_gamma/ckpt/gamma_s4302.bin
+3d10018cc0f62a4f674168505894ce3ad6d2b575d90179bca63ad5e14f83d9fd  /root/g1_gamma/ckpt/add_s4302.bin
+20cd6a00cefca40549a4d09e66566cf2685325e021bf5c2670f83aa0b8635d3c  /root/g1_gamma/ckpt/gamma_s4303.bin
+3d10018cc0f62a4f674168505894ce3ad6d2b575d90179bca63ad5e14f83d9fd  /root/g1_gamma/ckpt/add_s4303.bin
+total 14220596
+drwxr-xr-x 2 root root       4096 Jul  4 17:51 .
+drwxr-xr-x 3 root root       4096 Jul  4 16:44 ..
+-rw-r--r-- 1 root root        600 Jul  4 17:55 SHA256.txt
+-rw-r--r-- 1 root root 1213440020 Jul  4 17:29 add_s4302.bin
+-rw-r--r-- 1 root root 1213529566 Jul  4 17:29 add_s4302.bin.pt
+-rw-r--r-- 1 root root        774 Jul  4 17:29 add_s4302_train.json
+-rw-r--r-- 1 root root 1213440020 Jul  4 17:51 add_s4303.bin
+-rw-r--r-- 1 root root 1213529566 Jul  4 17:51 add_s4303.bin.pt
+-rw-r--r-- 1 root root        774 Jul  4 17:51 add_s4303_train.json
+-rw-r--r-- 1 root root 1213440020 Jul  4 17:06 add_s7.bin
+-rw-r--r-- 1 root root 1213528611 Jul  4 17:06 add_s7.bin.pt
+-rw-r--r-- 1 root root        771 Jul  4 17:06 add_s7_train.json
+-rw-r--r-- 1 root root 1213440020 Jul  4 17:18 gamma_s4302.bin
+-rw-r--r-- 1 root root 1213530160 Jul  4 17:18 gamma_s4302.bin.pt
+-rw-r--r-- 1 root root        774 Jul  4 17:18 gamma_s4302_train.json
+-rw-r--r-- 1 root root 1213440020 Jul  4 17:40 gamma_s4303.bin
+-rw-r--r-- 1 root root 1213530160 Jul  4 17:40 gamma_s4303.bin.pt
+-rw-r--r-- 1 root root        774 Jul  4 17:40 gamma_s4303_train.json
+-rw-r--r-- 1 root root 1213440020 Jul  4 16:55 gamma_s7.bin
+-rw-r--r-- 1 root root 1213529269 Jul  4 16:55 gamma_s7.bin.pt
+-rw-r--r-- 1 root root        771 Jul  4 16:55 gamma_s7_train.json
+###### ALL_DONE ######
+Sat Jul  4 17:55:04 UTC 2026
