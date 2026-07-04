@@ -11,6 +11,11 @@
 > **derivation-trace(H_9124)와 다른 메커니즘(재포장 아님)**: derivation-trace는 composition을 emit-내부 property `f(emit)`로 노출(1-피연산자 확장). reference는 `f(emit,world)`라 emit 단독 확장으론 못 함 → 두번째 피연산자(referent)를 anima grounded store에서 공급하는 **2-피연산자 내부대조**(contradiction). 이 차이가 "왜 reference가 composition보다 어려운가"의 답.
 > **slug:** `refcorrect_axis` · **date:** 2026-07-04
 
+## implement 착륙 (fleet-full · absolute-gap frozen 재등록 + grounded-scope 실증)
+5-arm engine-native 재실행($0 로컬, f5_loop3_contra.hexa): ON/OFF/FLAT/DECOR + **NGRD**(held-out을 store에 안 접지=mem_train만 0..7 bind). held-out efficacy ON=1.0 vs OFF/FLAT/DECOR/**NGRD**=0.6765.
+- **ABSOLUTE-GAP frozen verdict = GREEN(4조건)**: ON−OFF=0.3235≥0.10 ∧ FLAT−OFF=0.0<0.10(원벽) ∧ |DECOR−OFF|=0.0≤0.03(earned) ∧ NGRD−OFF=0.0<0.10(grounded 밖 실패). slope-ΔEff는 degenerate 유지(0.027, verdict-integrity metric-artifact 확인 = f5-loop3-contra-hexa-1 convergence).
+- **★ grounded-scope 경계 실증(NGRD)**: held-out concept가 store에 미접지면 contradiction 판별불가→efficacy baseline=Fable이 예측한 (ii)-순환 경계가 **measured**(assertion 아님). contradiction-keying은 grounded referent에 한해 referential-correctness를 엶 — 진정 novel(미접지) referent는 자기추측 접지=순환(인식론적 정당 terminal). 산출 `state/refcorrect_axis/RESULT_scope.txt`.
+
 ## FROZEN BAR (측정 전 고정 · 사후 이동 금지 c9/p7)
 메커니즘 X = contradiction-keyed selection 배선 → F5 MAIN ablation 재실행:
 ```
