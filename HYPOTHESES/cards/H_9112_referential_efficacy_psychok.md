@@ -9,6 +9,9 @@
 > **gate branch:** 🟢 → F5 diff-LLM interlocutor(303M decode+diff-θ, GPU 승인됨) 정당화. exocon escape 축 최초 positive.
 > **slug:** `9112_referential_efficacy_psychok` · **date:** 2026-07-04
 
+## 고갈 (per-trial 독립 재측정 · batching caveat 제거)
+직전 F6은 truncation당 오라클 1콜로 14 emit 동시 랭킹(배제법 가능=real MRR 낙관 상한 caveat). 고갈 = **per-trial 독립**(각 emit 하나만 보여주고 14 concept 랭킹, 다른 emit 안 보임=배제법 불가) 14 오라클 재측정: acc=71% MRR_real=0.827 vs MRR_shuffle 0.232, **ΔMRR=+0.595 ≫ 0.15** = frozen bar 통과. batched(0.929)보다 소폭 낮으나 shuffle 압도 = **batching이 신호를 부풀린 게 아님, 🟢 CONFIRMED**. 3 miss(violin rank3·lighthouse rank2·compass rank2·thunderstorm rank4)는 8B 절단 모호성(예상). K-sweep/near-synonym은 미실행이나 truncation+독립 축에서 신호 robust 확정 → F6 measurement 고갈(referential efficacy는 measurable+batching-invariant). **잔여 축**: near-synonym distractor·K-sweep는 신호 강화용 추가 통제일 뿐(bar 이미 통과), F6 자체 escape 판별은 F5 live-loop(faculty 여부)로 이관.
+
 ## 배경
 [[H_9111]] raw D=1.0(외부 오라클 7/7 vs anima-clone 0/7)=faculty 최강 신호였으나 binary hit/miss→상수 outcome 벡터→Pearson-D≡0 metric-degeneracy로 사망. 재프레임: substrate 속성=emit-appropriateness 아니라 **referential efficacy**(anima emit이 world-anchored 지시를 carry, 외부 mind가 디코드). 변산 담는 측정(MRR+PSYCHO-K)으로 죽은 신호 복원.
 
