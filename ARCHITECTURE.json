@@ -13471,6 +13471,13 @@
         "value": "G1 재조합벽의 첫 engine-native lift = derivation-trace data-format(target 시퀀스를 풀이과정 자체로 재작성). warm-FT h1129 303M 2-arm 통제 anima evaluate --py: DERIV G1 PASS(bd=2>ms=1)∧FLAT FAIL(bd=2,ms=3) on held-out 쌍(memorization-free). CE=echo 메타법칙이 target=derivation엔 미적용(echo=derivation 생성=composition). 20+ decode family+전 학습 family 못뚫은 벽을 data-format 축이 열음.",
         "threshold": "재발조건: G1을 objective/readout/coverage 축으로 재시도 전에 — 첫 lift는 data-format(derivation-trace target) 축에서 나왔다. 단 bd=2 marginal·held-out 1쌍·G2 novelty 미측정이라 robustness(multi held-out 쌍+G2 corpus+paraphrase-invariance) 확인 전엔 DIRECTIONAL-POSITIVE지 terminal-flip 아님. 확인되면 G1 첫 escape.",
         "source": "state/g1_train_wallbreak/derivtrace/RESULT.md"
+      },
+      {
+        "id": "f5-loop3-contra-hexa-1",
+        "state": "pos-conv",
+        "value": "consequence/faculty loop의 held-out efficacy를 ΔEff=within-window slope(후반−전반)로 재면 즉시-step 수렴(effect가 tick1에 ceiling 도달)에서 slope≈0으로 degenerate = 진짜 lift를 못 봄. H_9125 contradiction-keyed: ON held-out efficacy 1.0(완벽) vs OFF/FLAT/DECOR 0.6765(baseline)=absolute gap 0.3235인데 slope-ΔEff는 0.027<0.10로 RED 오판. H_9111 Pearson-D≡0(constant vector)와 같은 metric-degeneracy 계열(break-walls (a) measure-artifact).",
+        "threshold": "재발조건: faculty/consequence loop의 학습 효과를 within-window slope(_delta 후반−전반)로 잴 때 — 효과가 step(빠른 수렴)이면 slope degenerate. faithful 지표=absolute gap(수렴값 arm−baseline) 또는 area-under-curve. verdict-integrity: slope-bar가 absolute-gap과 발산하면 harness 지표 결함 의심(terminal 전 측정경로 확인), target 결함으로 박제 금지. frozen bar 설계 시 step-convergence 가능성 있으면 absolute-gap 사전등록.",
+        "source": "state/refcorrect_axis/f5_loop3_contra.hexa"
       }
     ]
   }
