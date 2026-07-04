@@ -1266,7 +1266,15 @@
                                             "name": "★STEP-0 사전선별 결과 (9 probe toy) — B3만 PASS",
                                             "role": "",
                                             "id": "g1-lever-div-step0-results",
-                                            "detail": "wf_a7efd6b2 9-probe toy(DIRECTIONAL): 🟠 B3 gamma-DATA-channel만 PASS(margin +0.06/+0.11 bd 2/3 seed-robust; gamma-OPERATOR H_1840 죽음과 분리; transfer UNVERIFIED). 8 KILL=대부분 additive-ceiling artifact(INCONCLUSIVE). 판정기준 NOT-PREDICTIVE 2/9. AND≯OR. 다음 GPU#1=gamma-DATA-channel 단일 303M."
+                                            "detail": "wf_a7efd6b2 9-probe toy(DIRECTIONAL): 🟠 B3 gamma-DATA-channel만 PASS(margin +0.06/+0.11 bd 2/3 seed-robust; gamma-OPERATOR H_1840 죽음과 분리; transfer UNVERIFIED). 8 KILL=대부분 additive-ceiling artifact(INCONCLUSIVE). 판정기준 NOT-PREDICTIVE 2/9. AND≯OR. 다음 GPU#1=gamma-DATA-channel 단일 303M.",
+                                            "children": [
+                                              {
+                                                "name": "★B3 gamma-DATA 303M = 🔴 TRANSFER FAIL TERMINAL",
+                                                "role": "",
+                                                "id": "g1-lever-div-b3-gamma-transferfail",
+                                                "detail": "B3 gamma-DATA-channel escalate=303M engine-native TRANSFER FAIL(vast $0.64): GAMMA bd=0<ADD bd=1<base=1 3seed 만장일치(ckpt byte-identical), 둘 다 floor. STEP-0 toy PASS=handed-role-key 착시 확정(a_toy_scale_recheck). gamma-DATA도 H_1840과 함께 G1 lever 아님, trunk-objective 벽 유지. 9-probe 전멸."
+                                              }
+                                            ]
                                           }
                                         ]
                                       }
@@ -13597,8 +13605,8 @@
       {
         "id": "step0-gamma-bind-kill-py-1",
         "state": "pos-conv",
-        "value": "cheap toy STEP-0 사전선별에서 'baseline(DERIV/ADD) 초과' frozen bar는 toy가 포화(saturated)면 판별 불가능=KILL이 falsification 아닌 ceiling artifact. real-G1-동형 clean toy는 additive-control만으로 이미 0.94(near-ceiling, γ STEP-0 실측)라 derivtrace도 천장 근방 → 어떤 레버/조합도 beat-DERIV 못 넘는 게 당연(2026-07-05 9-probe workflow wf_a7efd6b2 전수 KILL: V2·V11·V13·L2·V12·B1·B2·B3 모두 lever margin≤DERIV, 예 B2 0.243≤0.307). γ에서 ADD=0.94 이미 봤는데 같은 near-saturated toy 하네스를 9 probe에 재사용하며 beat-baseline bar를 걸어 재발.",
-        "threshold": "재발조건=beat-baseline bar를 headroom 미검증 saturated toy에 걸어 mass-KILL을 DIRECTIONAL-falsified로 박제. 해결=toy 사전선별 발사 전 반드시 baseline/control 절대점수 실측 → near-ceiling(>0.85·max)이면 판별 헤드룸 부재 = ① toy 강화(개념수↑/깊이↑/노이즈로 baseline을 mid-range로 끌어내림) 또는 ② bar를 'beat baseline'→'absolute floor(레버 단독 임계 도달)'로 전환 또는 ③ saturated-toy KILL은 INCONCLUSIVE(measure-artifact, break-walls class-a)로 적고 falsification 금지. toy fail→303M 판정은 predictor(ρ/σ/κ/M scale-invariant)로만.",
+        "value": "cheap toy STEP-0의 두 실패모드(둘 다 2026-07 실측): (1)★CEILING-artifact: clean toy additive-control이 near-ceiling(~0.94)이면 beat-baseline bar의 mass-KILL은 falsification 아닌 천장(G1 9-probe 8 KILL). (2)★HANDED-ADVANTAGE false-PASS: toy가 실 303M이 스스로 학습해야 할 구조/키(role-key·canonical-sort·slot)를 test 시 공짜 제공하면 PASS가 착시 — B3 gamma-DATA-channel toy PASS(margin+0.06)가 303M escalate서 GAMMA bd=0<ADD bd=1 TRANSFER FAIL(/bin/zsh.64)로 반증(handed-role-key 착시). 둘 다 toy 설계 결함이지 target 성질 아님.",
+        "threshold": "재발조건=toy 사전선별서 (1)baseline near-ceiling headroom 미검증 or (2)실모델이 학습해야 할 구조/키를 toy가 test-time 공짜 제공. 해결=발사전 ①baseline 절대점수 실측(>0.85=판별불가) ②toy가 handed 제공하는 모든 구조(role-key·정렬·slot)를 실모델 조건(test-time 미제공, 스스로 emit)과 동일하게 = handed-advantage 제거. saturated/handed toy 결과는 INCONCLUSIVE, PASS/KILL 둘 다 303M engine-native 재측정 전 terminal 금지(a_toy_scale_recheck).",
         "source": "state/g1_gamma_engine_native/step0_gamma_bind_kill.py"
       },
       {
