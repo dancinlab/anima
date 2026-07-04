@@ -948,6 +948,30 @@ def bg_forward_last_W(W, ids, T):
     return logits
 
 
+def bg_forward_last_hidden(W, ids, T):
+    """H_9129 L5 rung-3 — same full forward as bg_forward_last_W but returns the
+    final-LN LAST-position hidden state float64[d] (the pre-head representation),
+    NOT the tied-head logits. The hippocampal associative store (core/hippo_assoc)
+    keys on this hidden, not on logits (design: reps = final-LN hidden). Byte-shares
+    the forward body with bg_forward_last_W; the only difference is the return line
+    (head @ lastrow omitted). ids:[T] int; W["bind"] handled identically (H_9027)."""
+    d = W["d"]; nlay = W["nlay"]; nh = W["nh"]
+    ids = np.asarray(ids, dtype=np.int64)
+    x = W["tok"][ids] + W["pos"][0:T]                       # [T, d]
+    for Lr in range(nlay):
+        nrm = _bg_layernorm_rows(x, W["ln1w"][Lr], W["ln1b"][Lr], T, d)
+        aout = _bg_mha(nrm, W["inW"][Lr], W["inB"][Lr], W["oW"][Lr], W["oB"][Lr], T, d, nh)
+        x = x + aout
+        nrm = _bg_layernorm_rows(x, W["ln2w"][Lr], W["ln2b"][Lr], T, d)
+        h4 = _bg_gelu(nrm @ W["m0W"][Lr].T + W["m0B"][Lr])  # [T, 4d]
+        mlpo = h4 @ W["m2W"][Lr].T + W["m2B"][Lr]           # [T, d]
+        x = x + mlpo
+    if W.get("bind"):
+        x = _bg_apply_bind(x, W["bind"], T, d, nh)
+    lastrow = _bg_layernorm_rows(x[T - 1:T], W["lnfw"], W["lnfb"], 1, d)[0]   # [d]
+    return lastrow                                          # final-LN last-pos hidden
+
+
 def bytegpt_forward_last(path, ids, T):
     """bytegpt_decode.hexa::bytegpt_forward_last — load + forward (parity probe)."""
     W = bg_load(path)
