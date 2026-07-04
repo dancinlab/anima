@@ -13679,11 +13679,11 @@
         "source": "sidecar-ing-worktree"
       },
       {
-        "id": "workflow-script-1",
+        "id": "anima-hexa-2",
         "state": "pos-conv",
-        "value": "Workflow 스크립트의 큰 CTX/프롬프트 문자열을 backtick 템플릿 리터럴로 감싸면, 문자열 본문 안의 리터럴 backtick(코드참조 'anima evaluate --py'·'.kosmos'·'core/' 등을 backtick으로 감쌀 때)이 템플릿을 조기 종료시켜 'Unexpected token' 파스에러가 난다. [[workflow-template-interp-escape-bug]](${} 보간 이스케이프)와 같은 계열의 문자열-구획 함정 2번째 변종.",
-        "threshold": "재발조건: Workflow script의 backtick 템플릿 안에 코드/경로/명령을 backtick으로 재인용할 때. 해결: 큰 CTX는 backtick 대신 배열 리터럴+.join('\\n')으로 조립(내부 backtick 안전), 또는 코드참조를 backtick 대신 평문/작은따옴표로. 발사 전 스크립트에 backtick이 중첩되지 않는지 확인. ${} 보간도 이스케이프 금지(자매 함정).",
-        "source": "workflow-script"
+        "value": "struct에 새 필드 추가 시 named-init 부분리터럴 생성부(필드 일부만 명시)는 hexa typecheck를 통과하나 full 콜드컴파일 codegen에서 'hexa_codegen_error__missing_field'로만 노출 — daemon-entry(anima <ckpt>)를 실제 full-binary로 컴파일해야 발견. EngineConfig에 forward_model·refsel 추가 시 cli/anima.hexa tr_cfgON/OFF·engine_cli_smoke가 4-field라 누락→typecheck PASS인데 daemon 빌드 codegen FAIL(#2977). rung3/3.5는 typecheck+hexa run 부분경로만이라 미포착, rung4 full-compile서 최초 노출.",
+        "threshold": "재발조건: EngineConfig 등 struct에 필드 추가 후 named-init 생성부 lockstep 누락→typecheck 녹색인데 daemon full-binary 컴파일서 missing_field codegen error. 해결=struct 필드 추가 시 grep 'StructName {' 전 생성부 전수 확인(부분 named-init 금지, 전 필드 명시) + daemon-entry는 typecheck 아닌 full 콜드컴파일(pool or 로컬 hexa run <daemon>)로 QA. anima daemon은 로컬 runtime FFI-off라 pool 필요.",
+        "source": "cli/anima.hexa"
       }
     ]
   }
