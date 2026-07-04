@@ -1,0 +1,27 @@
+=== H_9124 lever-2 (STaR verifier-filtered self-distillation) — STEP-0 EARLY-KILL VERDICT ===
+date: 2026-07-04   pod: 43795355 (r2; r1 43794031 preempted-GONE mid-run, re-rented)
+substrate: rented GPU host, engine-native numpy decode (core/decode.py bytegpt mouth, torch-free)
+base ckpt: h1129.bin (ByteGPT 303M, sha 5cf07a36...)  K=8  gen40  n_held=10 (C(5,2) distant pairs)  denom=80
+
+RESULT (verbatim from step0_result.json, sha fa9992a9...):
+  |V0_true|  (composition-TRUE, grounded targeted pair A&B + coherent) = 0/80   rate=0.0000
+  |V0_surface| (FAB-CONTROL: surface-G1-detector any>=2-of-5 + coherent) = 2/80  rate=0.0250
+  coherent (kwr>=0.5) = 80/80  (fluency intact — NOT an undertrain/garble artifact)
+
+KILL GATE: |V0_true|/(K*n_held) = 0.0000 < 0.02  =>  STARVE = TRUE
+
+VERDICT: FALSIFIED-AT-FLOOR (STARVE-at-STEP0)  [🔴]
+  STaR/RFT-KD requires a non-empty verified set V0 to hard-EM on. Base best-of-8 at the
+  frozen gen40 G1 gate surface-form yields ZERO composition-TRUE samples: every one of 80
+  coherent generations grounds neither (or at most one) of the two targeted concepts. With
+  V0 empty, the compounding self-distillation ratchet has nothing to bootstrap. EM NOT rented.
+  Consistent with H_9120 coverage-floor + the ByteGPT single=2 / composed-lift-0 precedent.
+
+FAB-CONTROL (verifier integrity, pre-registered): the surface-detector arm INFLATES (2 > 0)
+  relative to the composition-TRUE oracle — 2 samples pass "any >=2-of-5 distinct+known" that
+  are NOT true compositions of the targeted pair. Surface verifier fabricates, exactly as
+  pre-registered (a_substrate_disjoint savant+honesty). Composition-TRUE oracle is the load-
+  bearing arm; its 0 is the decision. (rate_surface 0.025 > 0.02 is the FAB arm, not the gate.)
+
+wired: n/a — this is a kill, no ckpt produced, no wiring.
+artifacts PULLED: ~/anima-weights/g1_star/{step0_result.json,step0.log} + state/g1_train_wallbreak/star/

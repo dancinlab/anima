@@ -1212,7 +1212,15 @@
                                   {
                                     "name": "training-side break-walls (deep-L8 CLOSED · 2 survivor)",
                                     "id": "g1-train-wallbreak",
-                                    "detail": "w8yk7akft(25 agent, fable 없음): deep ConvMoE L8=CLOSED-by-H6188(state/g1_coverage_prod_block 3-arm L8_nocov·L8_cov G0 5/5∧G1 best_distinct=0, ING standing-go OPEN은 착각). 14 레버 중 survivor 2: derivation-trace 절차코퍼스(data축, CE=echo 미적용, toy FLAT3/7 vs DERIV13/18, summer ~1GPU-hr 최우선) · STaR verifier-filtered self-distill(CE유지, STEP-0 early-kill). 둘 다 toy-DIRECTIONAL, terminal=303M engine-native. H_9124. ★레버1 발사결과: 🟢 DIRECTIONAL-POSITIVE — DERIV G1 PASS(bd2>ms1)∧FLAT FAIL(bd2,ms3) held-out {c0,c1} engine-native --py = 최초 G1 lift(H_9124), robustness(multi-pair·G2·paraphrase) 미확인."
+                                    "detail": "w8yk7akft(25 agent, fable 없음): deep ConvMoE L8=CLOSED-by-H6188(state/g1_coverage_prod_block 3-arm L8_nocov·L8_cov G0 5/5∧G1 best_distinct=0, ING standing-go OPEN은 착각). 14 레버 중 survivor 2: derivation-trace 절차코퍼스(data축, CE=echo 미적용, toy FLAT3/7 vs DERIV13/18, summer ~1GPU-hr 최우선) · STaR verifier-filtered self-distill(CE유지, STEP-0 early-kill). 둘 다 toy-DIRECTIONAL, terminal=303M engine-native. H_9124. ★레버1 발사결과: 🟢 DIRECTIONAL-POSITIVE — DERIV G1 PASS(bd2>ms1)∧FLAT FAIL(bd2,ms3) held-out {c0,c1} engine-native --py = 최초 G1 lift(H_9124), robustness(multi-pair·G2·paraphrase) 미확인.",
+                                    "children": [
+                                      {
+                                        "name": "★레버2 STaR = 🔴 FALSIFIED-AT-FLOOR",
+                                        "role": "",
+                                        "id": "g1-train-wallbreak-lever2-star-falsified",
+                                        "detail": "레버2 STaR 🔴 FALSIFIED-AT-FLOOR (vast pod). engine-native(core/decode.py numpy, torch-free=terminal) STEP-0 |V0_true|=0/80<0.02=STARVE — base V0=空이라 self-distill 부트스트랩 불가. fab-control 2/80 INFLATES=verifier 무결, coherent 80/80. STaR은 γ가 G1 먼저 연 trunk 위에서만 성립. state/g1_train_wallbreak/star/."
+                                      }
+                                    ]
                                   }
                                 ]
                               },
