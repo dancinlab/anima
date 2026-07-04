@@ -1,0 +1,55 @@
+{
+  "experiment": "G1 lever-3 gamma trained-constructive-bind STEP-0 cheap kill",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ]
+  },
+  "frozen_bar": "held_out composed recomb (both k_i,k_j in top-2) per arm; KILL iff BIND<=ADD OR BIND<0.05",
+  "arms": {
+    "ADD": {
+      "held_out_recomb_mean": 0.9413333333333332,
+      "held_out_recomb_seeds": [
+        0.944,
+        0.92,
+        0.96
+      ],
+      "train_recomb_mean": 1.0,
+      "single_acc_mean": 1.0
+    },
+    "HAD": {
+      "held_out_recomb_mean": 0.7306666666666667,
+      "held_out_recomb_seeds": [
+        0.76,
+        0.792,
+        0.64
+      ],
+      "train_recomb_mean": 1.0,
+      "single_acc_mean": 1.0
+    },
+    "BIND": {
+      "held_out_recomb_mean": 0.7946666666666667,
+      "held_out_recomb_seeds": [
+        0.864,
+        0.712,
+        0.808
+      ],
+      "train_recomb_mean": 1.0,
+      "single_acc_mean": 1.0
+    }
+  },
+  "ADD_held_out_recomb": 0.9413333333333332,
+  "BIND_held_out_recomb": 0.7946666666666667,
+  "HAD_held_out_recomb": 0.7306666666666667,
+  "bind_minus_add_margin": -0.1466666666666665,
+  "KILL": true,
+  "VERDICT": "KILL (bind !> additive => FALSIFIED-DIRECTIONAL-CONFIRMED; binding-operator family engine-native floor CONFIRMED, NO GPU rent)",
+  "wall_sec": 319.3
+}
