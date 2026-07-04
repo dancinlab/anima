@@ -1,0 +1,59 @@
+H_9127 — gamma trained-constructive-bind DATA-channel, engine-native 303M
+VERDICT = 🔴 TRANSFER FAIL / TERMINAL
+================================================================================
+FIRE: vast RTX 4090 (id 43813310, $0.349/hr, ~1h50m ≈ $0.64; 1 failed provision = no
+charge). warm-FT h1129 (ByteGPT-303M, d1024 L24 H16 block512, sha 5cf07a36…), plain
+CE (--arm ctrl --objective ce_marginal), lr 2e-5, 1500 steps, --sample proportional.
+2 arms (GAMMA-DATA vs content-matched ADD) × 3 seeds {7,4302,4303}. Measurement =
+`evaluate.py <ckpt> --gen 40` engine-native (numpy byte-parity, session-eval-py-only).
+role-key NEVER handed at test (evaluate.py seeds PLAIN concept phrases; the bind
+scaffold `bind`/`[r0][r1]`/`=>` exists ONLY in the training corpus).
+
+RESULTS (VERBATIM, held-out G1 best_distinct / max_single; G0 kwr coherent/5):
+  BASE h1129          G0 🟢 5/5  ·  G1 🔴 best_distinct=1  max_single=0
+  GAMMA-DATA  s7      G0 🟢 5/5  ·  G1 🔴 best_distinct=0  max_single=1
+  GAMMA-DATA  s4302   G0 🟢 5/5  ·  G1 🔴 best_distinct=0  max_single=1
+  GAMMA-DATA  s4303   G0 🟢 5/5  ·  G1 🔴 best_distinct=0  max_single=1
+  ADD (ctrl)  s7      G0 🟢 5/5  ·  G1 🔴 best_distinct=1  max_single=1
+  ADD (ctrl)  s4302   G0 🟢 5/5  ·  G1 🔴 best_distinct=1  max_single=1
+  ADD (ctrl)  s4303   G0 🟢 5/5  ·  G1 🔴 best_distinct=1  max_single=1
+  (context G6: gamma distinct=6 fals=0 · add distinct=4 fals=0 — both G6 FAIL.
+   G5 NON-FAB 🟢 both: gamma fab=0.1515 · add fab=0.1111.)
+
+DETERMINISM: the 3 gamma ckpts are BYTE-IDENTICAL (sha 20cd6a00…), the 3 add ckpts
+BYTE-IDENTICAL (sha 3d10018c…) — with savant/mitosis OFF for ByteGPT + warm-start from
+the same h1129 + same corpus, --seed does not perturb the trajectory. So the 3-seed
+replication confirms SEED-ROBUST determinism (not variance). train val_ce ≈ 0.078
+(both arms memorised their grammar).
+
+FROZEN-BAR VERDICT (pre-registered, no post-hoc move):
+  🟢 required GAMMA bd≥2 ∧ >max_single ∧ >ADD ∧ G0≥4/5, seed-majority. → NOT MET.
+  🔴 = GAMMA ≤ ADD OR floor. → BOTH MET, unanimously (3/3 seeds):
+       GAMMA bd=0  <  ADD bd=1  (STRICTLY WORSE than the additive control)  AND
+       GAMMA bd=0  <  2 and not > max_single=1  (at/below floor; below BASE bd=1 too).
+  ⇒ 🔴 TRANSFER FAIL — TERMINAL for gamma-DATA-channel as a G1 lever.
+
+TRANSFER JUDGMENT (the core question): the STEP-0 toy PASS was the HANDED-ROLE-KEY
+ARTIFACT. The toy decoder was handed fixed role keys + canonical-sorted binding, so
+its +0.05/+0.11 margin (bd 2.0/3.0) came for free from the handed slot structure. A
+real 303M byte-mouth, given the SAME constructive-bind structure only in the DATA
+channel and NO role-key at test, learned to reproduce the bind scaffold (val_ce 0.078)
+but emitted ZERO distinct-concept recombination when seeded with plain concept phrases
+— and did so WORSE than the content-matched additive control. The explicit role-slot
+scaffold did not transfer to a compose-and-emit skill; it collapsed max coverage to 0.
+
+  The ADD control was CONTENT-MATCHED (same slot phrases + same clauses, same order,
+  minus only `bind`/`[r_k]`/`=>`), so this isolates the role-binding STRUCTURE — it is
+  the structure, not exposure, that failed (indeed hurt).
+
+MEANING: gamma-DATA-channel joins gamma-OPERATOR (H_1840 cheap-gate 0/3) as NOT a G1
+lever. Consistent with the confirmed trunk-objective G1 recombination wall: like every
+readout-op and data-format tried, injecting constructive-bind via the target grammar
+does not open held-out recombination in a CE-trained byte-mouth. STEP-0's sole survivor
+is falsified engine-native. No wiring follow-on (🔴).
+
+ARTIFACTS: state/g1_gamma_data_303m/ (corpus builder + run script + pre-reg + eval
+txts + this verdict). ckpts + eval json PULLED + sha-verified →
+~/anima-weights/g1_gamma_data/ (6× .bin — gamma≡20cd6a00, add≡3d10018c — + *_eval.txt +
+run.log). Pod 43813310 TORN DOWN (confirmed GONE). bookkeep (H_9127 card/jsonl/
+ARCHITECTURE/commit) = main.

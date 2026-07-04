@@ -1,6 +1,6 @@
 # H_9127 — G1 레버 발산 + 레버1(data-format) 변형 공간 + target-format 판정기준
 
-> **tier:** 🟠 **STEP-0 DIRECTIONAL** (9-probe toy 사전선별 완료) — B3 gamma-DATA-channel만 PASS(GPU escalation 후보), 나머지 8 KILL(대부분 toy-ceiling artifact=INCONCLUSIVE), 판정기준 ρ/σ/κ/M NOT-PREDICTIVE(2/9), AND≯OR. 전부 toy=terminal 아님. · **wired:** N/A
+> **tier:** 🔴 **STEP-0 유일생존 B3 gamma-DATA-channel = 303M engine-native TRANSFER FAIL TERMINAL** (GAMMA bd=0 < ADD bd=1, 3 seed 만장일치, STEP-0 toy PASS=handed-role-key 착시 확정) — 9-probe 전멸 종결. (STEP-0: B3만 toy PASS, 8 KILL toy-ceiling, 판정기준 NOT-PREDICTIVE 2/9, AND≯OR) · **wired:** N/A(negative)
 >
 > **맥락:** G1 재조합벽 3 survivor 레버 중 [[H_9124]] 레버1(derivation-trace, data-format 축)만 생존(🟢 DIRECTIONAL-POSITIVE, robustness 진행중), 레버2 STaR·레버3 γ 사망(🔴). binding-operator family·objective·arch/RF/depth·decode 20+family 전부 소진. 이 카드 = fable(claude-fable-5) 2발 발산 = 레버1이 통한 원리를 일반화한 새 레버 공간 + **측정 전 사전선별 이론**. 실행은 메인이 STEP-0 kill로 순차 발사.
 
@@ -78,6 +78,17 @@ L2 밀도↑ vs M↓(성분축 밀집·조합축 희소로 해소) · 동일축 
 9 STEP-0 cheap engine-native toy probe(전부 **DIRECTIONAL**, 303M 아님) 종합(state/g1_lever_step0/SYNTHESIS.md):
 
 - **🟠 유일 PASS = B3 gamma-DATA-channel(V6×V1)** — lever_margin +0.059(d2)/+0.111(d3) > deriv, bd 정확히 2.0/3.0 전 seed{7,4302,4303}. **gamma-OPERATOR([[H_1840]] 0/3)는 죽었으나 gamma를 DATA-channel(target 형식)로 주입하면 additive를 넘음** = 유일 살아남은 신호. ⚠️ caveat: toy가 role-key를 handed 제공(canonical-sorted binding 공짜)이라 margin 작음 → 실 303M byte-mouth는 role 스스로 학습+emit 필요 = transfer UNVERIFIED(GPU에서 물을 질문). single arm으로도 PASS(결합 redundant)라 B3 조합 아닌 **cheaper 단일 arm** escalate.
+
+### ★★ B3 gamma-DATA-channel 303M engine-native escalation = 🔴 TRANSFER FAIL TERMINAL (vast pod, 2026-07-05)
+GAMMA-DATA(`bind [r0] A [r1] B => …` role-slot 문법) vs ADD(동일 phrase, bind/[r_k]/=> scaffold만 제거) content-matched 2-arm × 3 seed warm-FT h1129 303M, held-out 5-concept(role-key **미제공**), `anima evaluate --py gen40` engine-native:
+
+| arm | G0 | G1 best_distinct | max_single |
+|---|---|---|---|
+| BASE h1129 | 🟢 5/5 | 1 | 0 |
+| **GAMMA-DATA** ×3 | 🟢 5/5 | **0** | 1 |
+| **ADD** control ×3 | 🟢 5/5 | **1** | 1 |
+
+**GAMMA bd=0 < ADD bd=1, 3 seed 만장일치**(gamma ckpt byte-identical sha 20cd6a00·add byte-identical 3d10018c — ByteGPT warm-FT는 --seed 미섭동 = seed-robust). 둘 다 floor(≥2 미달). frozen 🔴(GAMMA≤ADD OR floor) 양쪽 충족 — **gamma가 additive보다 strictly worse + base보다 낮음**. **STEP-0 toy PASS = handed-role-key 착시 확정**(a_toy_scale_recheck): 데이터채널에만 constructive-bind, test 시 role-key 미제공 → 실 byte-mouth는 bind scaffold 재현하나 held-out 재조합 **0** = role-binding *구조*가 실패(clause exposure 아님, exposure-matched ADD가 더 나음). **gamma-DATA-channel도 gamma-OPERATOR([[H_1840]])와 함께 G1 lever 아님, trunk-objective 재조합벽 유지.** 비용 ~$0.64(vast RTX4090 43813310, ~1h50m), ckpt PULL+sha-verified, pod GONE. **wired:** n/a(negative). 상세 state/g1_gamma_data_303m/VERDICT.txt.
 - **🔴 KILL 8개**: V1 skeleton-OUT(bd 1.66) · V2 micro-trace(ADD가 ceiling, depth↑서 더 음수) · V11 delta-only(delta head 둘째구성원 collapse, bd2=0) · V13 resolution-ladder(FULL copyable κ=1, internalization 압력 0) · L2 coverage-density(실제 phase-transition k*=6 있으나 additive 천장 못넘음) · V12 grammar-selfgen(bd=2지만 lift 1/3) · B1 ABC-AND(**AND-stack 사망**, ABC<ADD) · B2 L2×V2(**실제 superadditive 교호작용 REAL**이나 ceiling-recovery이지 surpass 아님).
 - **★판정기준 ρ/σ/κ/M = NOT-PREDICTIVE (LAW 승격 실패)**: predicted vs 실측 **2/9 HIT(22%)** ≪ 80% 문턱. naive rule(ρ<0.05∧σ>1)은 *task가 재조합-가능한가*만 예측하고 *레버가 additive 이기는가*는 못 예측(PASS 대량 과대예측). 유효 판별자 = σ=1 pair-binding veto(V11만)뿐. 단 B2에서 **P_basin×κ가 교호작용 크기·부호를 오차 0.001~0.005로 정확 예측**(교호작용 예측엔 PREDICTIVE, PASS 예측엔 non-predictive — 분리).
 - **★AND ≯ OR 확정**: 죽은 단일을 결합으로 살린 케이스 0. B1 사망·B2 sub-ceiling·B3 redundant(단일 arm이 이미 통과). 조합 대수의 곱셈 margin은 toy-ceiling에선 발현 안 됨(additive 포화).
@@ -90,6 +101,7 @@ L2 밀도↑ vs M↓(성분축 밀집·조합축 희소로 해소) · 동일축 
 - check-ledger: F2(composition-outside-mouth)의 native-mouth·tension 조합은 [[H_1834]]/[[H_1837]] INERT 전례 유의 — F2 발사 시 그 벽과 구별되는 각도만.
 
 ## artifacts
+- `state/g1_gamma_data_303m/` (B3 gamma-DATA 303M engine-native TRANSFER FAIL: VERDICT.txt·7 eval·ckpt sha·corpus)
 - `state/g1_lever_diverge/fable1_general_levers.md` (3 메타패밀리 + L1-L6)
 - `state/g1_lever_diverge/fable2_lever1_variants.md` (판정기준 ρ/σ/κ/M + V1-V13 + C분기 + top-3)
 - `state/g1_lever_diverge/fable3_AND_combinations.md` (조합 대수 margin≈P_basin×κ×Σlog M + 충돌 7종 + 조합 B1-B10 + Stage-0 ABC ablation)
