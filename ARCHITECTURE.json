@@ -1246,12 +1246,12 @@
                               {
                                 "name": "escape 발사 경로 (GPU 승인됨)",
                                 "id": "exocon-escape-path",
-                                "detail": "F6 referential-rescore(H_9112)=🟢 REFERENTIAL-EFFICACY-MEASURABLE($0 외부오라클: anima emit 8B 절단도 폐포-밖 100~86% 디코드, MRR_real 1.0/0.93 vs shuffle 0.17, self-clone 0/7=폐포-경계 확증). exocon escape 축 최초 positive. → gate GREEN=F5 diff-LLM interlocutor(303M decode+diff-θ, GPU 승인됨) 정당화, 다음 발사."
+                                "detail": "F6 referential-rescore(H_9112)=🟢 REFERENTIAL-EFFICACY-MEASURABLE($0 외부오라클: anima emit 8B 절단도 폐포-밖 100~86% 디코드, MRR_real 1.0/0.93 vs shuffle 0.17, self-clone 0/7=폐포-경계 확증). exocon escape 축 최초 positive. → gate GREEN=F5 diff-LLM interlocutor(303M decode+diff-θ, GPU 승인됨) 정당화, 다음 발사. F5 발사=layer-2 faculty ⏳BLOCKED-INFRA(decode regression, close경로=clean lineage/v0.608 fix/sm_120 fold)."
                               },
                               {
                                 "name": "8 family → 가설 카드 매핑 (2표면 완비)",
                                 "id": "exocon-family-cards",
-                                "detail": "F1 afferent-return→H_9104🔴 · F2 consequence-learn→H_9109🔴 · F3 W4-ground→H_9123🔵WIRED · F4 purpose→F2흡수(카드불요) · F5 diff-LLM→H_9111🔴(live 재발사 state/9111/F5_DESIGN.md) · F6 referential→H_9112🟢 · F7 stateful-refract→H_9102 DEPLETED(F2🟢∧F1🔴 MIXED terminal·grip=H_9103 노이즈) · F8 EEG→H_9064/680/681/682. ING #43053798-805."
+                                "detail": "F1 afferent-return→H_9104🔴 · F2 consequence-learn→H_9109🔴 · F3 W4-ground→H_9123🔵WIRED · F4 purpose→F2흡수(카드불요) · F5 diff-LLM→H_9111: layer-1 이미측정(raw D=1.0)·layer-2 faculty=⏳BLOCKED-INFRA(decode regression clm-decode-py-2, state/9120_f5_live_loop 재사용) · F6 referential→H_9112🟢 · F7 stateful-refract→H_9102 DEPLETED(F2🟢∧F1🔴 MIXED terminal·grip=H_9103 노이즈) · F8 EEG→H_9064/680/681/682. ING #43053798-805."
                               }
                             ]
                           }
@@ -13457,6 +13457,13 @@
         "value": "deep ConvMoE L≥8 학습이 G1 미측정 OPEN이라는 ING standing-go 믿음은 STALE — 실제로 deep L8(d2781 303.146M 8-layer dilated conv stack)이 engine-native 3-arm(L4/L8-nocov depth-only/L8-cov)로 canonical gen=40 측정돼 전부 G0 5/5∧G1 best_distinct=0 FAIL(state/g1_coverage_prod_block/results_gen40/SUMMARY.txt + g1_coverage_realign mismatch-fix). ConvMoE RF=dilated depthwise(1/2/4/8) composed RF≈511이라 'single dilated'와 'deep L8'은 같은 아키텍처.",
         "threshold": "재발조건: deep ConvMoE L≥8 / hierarchical composition을 G1 미측정 OPEN 레버로 재제안 시 — 이미 engine-native FALSIFIED(3-arm, depth-only arm이 순수 hierarchical 격리→G1=0). --savant --mitosis 조합은 EXPRESSION/GROWTH축=basin-preserving 증폭기(scale-invariant)라 predicted-floor repackage. deep-L8 재발사 금지, ING standing-go #42492882/883 CLOSED 처리.",
         "source": "state/g1_coverage_prod_block/results_gen40/SUMMARY.txt"
+      },
+      {
+        "id": "clm-decode-py-2",
+        "state": "pos-conv",
+        "value": "clm303 savant .clm decode가 hexa 버전 skew에서 concept-conditioning 붕괴(silent) 재발: clean fixture(H_9111)는 hexa v0.559-0.577 lineage에서 나왔으나 prebuilt stable v0.608.1+origin/main core/는 CPU-farr서 legible English지만 모든 concept가 동일 attractor(' the state and the concern...')로 붕괴, GPU own-GEMM sm_120(RTX5090 Blackwell)=byte-garble. positive control(volcano, fixture서 rich)도 붕괴=decoder-path/harness/concept-knowledge 문제 아님·ckpt sha 무결. F5 layer-2 faculty 측정을 BLOCKED-INFRA로 막음(infra-wall-noneval, eval verdict와 격리).",
+        "threshold": "재발조건: rentable pod에서 savant .clm decode가 garble 또는 generic-attractor collapse면 먼저 positive-control(fixture-rich concept=volcano가 rich 정의 재생산하나)로 conditioning 무결 확인. 붕괴면 hexa 버전 skew 의심(clean lineage=v0.559-577). 해결=(a) clean combo 재현(v0.559-577 hexa+self/runtime.c+matching core/) or (b) v0.608 clm_decode regression bisect+fix(gate=volcano rich) or (c) sm_120 own-GEMM prebuilt fold. 그 전엔 F5 BLOCKED-INFRA(과학벽 아님).",
+        "source": "core/clm_decode.py"
       }
     ]
   }
