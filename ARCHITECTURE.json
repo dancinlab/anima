@@ -5028,38 +5028,6 @@
             ]
           },
           {
-            "name": "🧬 H_9129 L5 hippocampal associative-store (rung-3) — CA3 transitive chaining lane",
-            "role": "",
-            "id": "brain-structure-engine-lanes-hippocampus-h9129-l5-assoc-store-rung3",
-            "detail": "생물렌즈 lane: DG pattern-separation + CA3 multi-step completion(outer-product heteroassoc store)으로 held-out 2-hop+ 개념체인 완성. Broca mouth 옆 disjoint(mouth reads only). artifacts state/g1g6_biolens_en/l5_rung3/.",
-            "children": [
-              {
-                "name": "ops",
-                "role": "",
-                "id": "brain-structure-engine-lanes-hippocampus-h9129-l5-assoc-store-rung3-ops",
-                "detail": "core/kosmos_io.hexa hippo_kwta/hippo_build_store/_hippo_matvec/hippo_relatedness/hippo_fixture_codes (numpy twin core/hippo_lane.py). 측정 = anima evaluate --py(core/decode.py bg_forward_last_hidden)."
-              },
-              {
-                "name": "measurement (lane faculty)",
-                "role": "",
-                "id": "brain-structure-engine-lanes-hippocampus-h9129-l5-assoc-store-rung3-measure",
-                "detail": "🟢 GREEN-eligible(scope-bounded, real 303M h1129): novel-chain(gap≥2 never stored)=1.0 vs unreach 0.137 store_gap +0.8631(7.31×); RECALL 통제 1.0, SHUFFLE/LANE-OFF 붕괴, LESION broken-path만 1.0→0.19·intact 1.0 = 진짜 sequential chaining(H_1835 recall-trap guarded)."
-              },
-              {
-                "name": "Control-4 trunk-necessity → G2 explicit-store (G1 WALL)",
-                "role": "",
-                "id": "brain-structure-engine-lanes-hippocampus-h9129-l5-assoc-store-rung3-g1verdict",
-                "detail": "🧱 G1 재조합 WALL. control4_trunk_necessity.py(real reps→random 근직교코드): REAL store_gap +0.8631 vs RANDOM +0.9003=ratio 0.96×<2.0× bar → trunk_necessary=False = explicit-store property(trunk 무관), NOT trunk recomb. G1 mouth-wall untouched. trunk-G1은 γ constructive-bind만. conv l5-discriminator-py-1."
-              },
-              {
-                "name": "wiring status",
-                "role": "",
-                "id": "brain-structure-engine-lanes-hippocampus-h9129-l5-assoc-store-rung3-wire",
-                "detail": "🟡 구현됨·미배선: kosmos_io.hexa hippo_* ADDITIVE-only(163 added·ON==OFF byte-identical·emit-drive/Ψ/recall_thr 무접촉 disjoint 실증)+hexa⟷py 6/6 parity. brain_emit consult 배선=generator.hexa rebuild(pool). lane-wire diff는 281-stale base→origin/main 재적용 후 lockstep(a_verified_must_wire)."
-              }
-            ]
-          },
-          {
             "name": "📥 Working memory (PFC) — WorkMemBuffer",
             "role": "",
             "id": "brain-structure-engine-lanes-the-heart-of-anima-working-memory-pfc-workmembuffer",
@@ -13274,7 +13242,14 @@
                   {
                     "name": "L5 해마 associative-store (G1) — 🟢 GREEN WIRED-live (rung 3/4 · faculty scope)",
                     "id": "gate-g1-recomb-biolens-l5-hippo",
-                    "detail": "L5 해마 store(G1) 🟢 GREEN WIRED-live(rung 3/4·faculty scope): core/hippo_lane.py+kosmos_io.hexa(+164 additive) 배선·byte-parity 6/6·ON==OFF disjoint·discriminator PASS(LESION)·engine-native. ⚠️scope=explicit-store faculty(mouth 옆), G1 trunk recomb 증명 아님·mouth-벽 불변. follow-on=generator consult(pool)."
+                    "detail": "L5 해마 store(G1) 🟢 GREEN WIRED-live(rung 3/4·faculty scope): core/hippo_lane.py+kosmos_io.hexa(+164 additive) 배선·byte-parity 6/6·ON==OFF disjoint·discriminator PASS(LESION)·engine-native. ⚠️scope=explicit-store faculty(mouth 옆), G1 trunk recomb 증명 아님·mouth-벽 불변. follow-on=generator consult(pool).",
+                    "children": [
+                      {
+                        "name": "Control-4 trunk-necessity (empirical · G1 WALL)",
+                        "id": "gate-g1-recomb-biolens-l5-hippo-control4",
+                        "detail": "🧱 explicit-store 경계 측정입증(control4_trunk_necessity.py, real reps→random 근직교코드): REAL store_gap +0.8631 vs RANDOM +0.9003=ratio 0.96×<2.0× bar → trunk_necessary=False = novel-chain은 store property(303M trunk 무관)=G2, NOT G1 재조합. trunk-G1=γ constructive-bind만. conv l5-discriminator-py-1."
+                      }
+                    ]
                   },
                   {
                     "name": "L3 소뇌 forward-model (G6) — 🧱 WALL (engine-native · escape REFUTED · G6=trunk-obj 보편)",
