@@ -13583,6 +13583,27 @@
         "value": "multi-hour heavy 학습(수시간·다중 ckpt·大 코퍼스)을 free workstation(summer/aiden)에 올리면 mid-run reboot/wedge/OOM-stall로 수시간 유실 반복 — free≠reliable. 2026-07-05 derivtrace robustness(10-training multi-hour) fire를 summer='free pool'이라 선택 → ckpt 6/10(p_1_3/p_2_3/p_2_4)서 GPU 0%·train.py 소멸·DONE flag 없음 STALL(리부트/wedge 추정) → vast 렌트 pod로 재발사. 기존 memory(summer-overfire-wedge-thread-cap·aiden-stable-free-terminal-eval-host reboot-loop·h1590 'workstations unusable for multi-min GPU')와 동일 근인의 ARCHITECTURE 미기록 재발. heavy-on-pool 규칙이 free-workstation을 pool로 허용해 오해 유발.",
         "threshold": "재발조건=multi-hour heavy TRAINING(≥수십분·multi-ckpt)을 free workstation(summer/aiden)에 배치. 해결=multi-hour heavy 학습은 처음부터 vast 렌트 pod(hexa cloud rent), free workstation(summer/aiden)은 LIGHT/짧은 job(single-toy probe·numpy eval·<10min single train·문서)만. 판별=예상 wall-time ≥30min or ckpt 다수면 렌트. stall 발견 시 미완=infra-wall(verdict 아님, break-walls type-c), a_dont_kill_live_compute(드라이버 alive면 kill 전 stall 증명)+fresh pod 재발사. 결과는 clean pod run에만.",
         "source": "summer-heavy-train"
+      },
+      {
+        "id": "decode-hexa-1",
+        "state": "pos-conv",
+        "value": "GPU/device 실행 주장은 물리 증거(nvidia-smi power·util·mem)로만 확정 — [OWN-GEMM-FIRED]/DEVICE-path 로그·cuda_available()=1은 dispatch 시도일 뿐. own-GEMM/forge_dispatch 커널은 arch-gated(sm_120=RTX5070/5090 실행, A100 sm_80은 로그 찍고 CPU-폴백: idle 47W).",
+        "threshold": "재발: decode/eval/train GPU-util 검증시 DEVICE 로그·cuda_available만 보고 'GPU서 돎' 결론. 해결: nvidia-smi power/util/mem 실행중 폴링(idle vs load), 폴링 pid는 R+CPU 워커(S/pipe_read/0-CPU=wrapper 오판). sm_120 아닌 GPU 렌트로 own-GEMM 검증 금지.",
+        "source": "core/decode.hexa"
+      },
+      {
+        "id": "nn-lib-hexa-1",
+        "state": "pos-conv",
+        "value": "device kernel fwd byte-eq(*_eq max|Δ|=0)는 bwd/training byte-eq를 함의하지 않는다 — device gn_bwd/moe_bwd가 host twin과 발산하면 multi-step 학습서 weight 갈라짐(RTX5090 실측: step1 CE 일치, step3 3.340 device vs 2.308 host). fwd만 검증하고 device-default 켜면 학습 조용히 발산.",
+        "threshold": "재발: 새 device kernel이나 device-residency default-ON을 fwd *_eq만 보고 승격. 해결: device(env-on) vs host(env-off) multi-step training CE byte-eq(≥3 step, weight 발산 노출)로 게이트. 발산시 개별 seam on/off로 bwd kernel 격리+fix 전엔 env-gate-OFF 유지.",
+        "source": "stdlib/flame/nn_lib.hexa"
+      },
+      {
+        "id": "codegen-hexa-1",
+        "state": "pos-conv",
+        "value": "hexa-lang forge_dispatch_* builtin 변경은 소스편집+로컬 hexa build로 검증 불가 — hexad는 self-host라 자기 codegen을 embedded로 들고 use\"codegen\"를 설치본(stale)으로 resolve; 새 codegen self-apply엔 self-host GRADUATION(gen3→gen4, CI가 함) 필요. 바이너리 strings로 mapping 존재 확인. byteeq gate는 self/ 미호출 builtin에 byteeq-neutral이라 misplaced binding도 green-but-broken 통과.",
+        "threshold": "재발: 새 forge_dispatch 구현하고 로컬 hexa build(RC=0)만 보고 'lowering 됨' 결론. 해결: (1)consumer-compile smoke(test/native_build/forge_<op>_builtin_smoke.hexa)가 builtin을 CALL하도록 작성+selfhost-byteeq-gate 배선 → CI graduated 빌드가 lowering+link 검증 (2)codegen if-block을 실제 arg수 len==N 블록에 배치(layernorm #4339 오배치 방지).",
+        "source": "self/codegen.hexa"
       }
     ]
   }
