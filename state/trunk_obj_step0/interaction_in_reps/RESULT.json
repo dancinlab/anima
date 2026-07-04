@@ -1,0 +1,63 @@
+{
+  "probe": "H_9131 §4 interaction-in-reps (303M forward joint vs additive, held-out)",
+  "engine": "real ByteGPT-303M h1129 d=1024 nlay=24 (core/decode.py bg_forward_last_hidden == anima evaluate --py)",
+  "ckpt": "/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin",
+  "delta_bar": 0.1,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "n_pass_2of3": 0,
+  "max_pairs": 2600,
+  "verdict": "FAIL-joint≈additive → KILL ② GPU, fall to F2 (data-density)",
+  "results": [
+    {
+      "seed": 7,
+      "n_pairs": 2600,
+      "n_train": 2080,
+      "n_heldout": 511,
+      "r2_joint": -4.523599300363824,
+      "r2_additive": -0.5942718408772618,
+      "r2_shuffle_label": -5.0342625934877,
+      "r2_joint_train": 0.7948841452050582,
+      "r2_additive_train": 0.8152579979019862,
+      "gap_joint_minus_additive": -3.9293274594865624,
+      "pass_gap": false,
+      "pass_shuffle_collapse": true,
+      "leak_joint_exact1": false
+    },
+    {
+      "seed": 4302,
+      "n_pairs": 2600,
+      "n_train": 2080,
+      "n_heldout": 500,
+      "r2_joint": -0.457330684614796,
+      "r2_additive": 0.09884567012116097,
+      "r2_shuffle_label": -1.8078972128275557,
+      "r2_joint_train": 0.7989738537396901,
+      "r2_additive_train": 0.7941657909020228,
+      "gap_joint_minus_additive": -0.556176354735957,
+      "pass_gap": false,
+      "pass_shuffle_collapse": true,
+      "leak_joint_exact1": false
+    },
+    {
+      "seed": 4303,
+      "n_pairs": 2600,
+      "n_train": 2080,
+      "n_heldout": 508,
+      "r2_joint": -4.370753086667562,
+      "r2_additive": -0.17909480969189673,
+      "r2_shuffle_label": -4.864142636594227,
+      "r2_joint_train": 0.7968276128524873,
+      "r2_additive_train": 0.8071719149723873,
+      "gap_joint_minus_additive": -4.191658276975665,
+      "pass_gap": false,
+      "pass_shuffle_collapse": true,
+      "leak_joint_exact1": false
+    }
+  ],
+  "bar": "PASS iff ≥2/3 seeds: (r2_joint − r2_additive) ≥ 0.10 held-out AND shuffle-label collapses (<0.10); no joint=1.0 leak.",
+  "honesty": "py 2-production numpy = engine-native TERMINAL-eligible (a_eval_py_canonical). Frozen residual label = corpus co-occ, model-free."
+}
