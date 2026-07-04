@@ -1,0 +1,163 @@
+[d2 seed7] C00=1.889 C10/ADD=1.933 C01=1.622 C11=1.878 DERIV=1.667
+[d2 seed4302] C00=1.756 C10/ADD=1.944 C01=1.389 C11=1.944 DERIV=1.633
+[d2 seed4303] C00=1.789 C10/ADD=1.967 C01=1.467 C11=1.800 DERIV=1.678
+[d3 seed7] C00=2.233 C10/ADD=2.956 C01=1.667 C11=2.911 DERIV=2.456
+[d3 seed4302] C00=2.078 C10/ADD=2.844 C01=1.756 C11=2.900 DERIV=2.478
+[d3 seed4303] C00=2.056 C10/ADD=2.844 C01=1.767 C11=2.689 DERIV=2.211
+
+=== B2 L2xV2 FACTORIAL RESULT ===
+{
+  "experiment": "G1 lever B2 = L2 x V2 FACTORIAL STEP-0 cheap kill (H_9127)",
+  "harness": "fused clone of L2_coverage_density + V2_micro_trace step0 harnesses",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT_eval_frac": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "K_SPARSE": 1,
+    "depths": [
+      2,
+      3
+    ],
+    "MAXT": 200
+  },
+  "frozen_bar": "held-out MEAN best_distinct; 2x2 {L2 on/off}x{V2 on/off}+ADD+DERIV; COMBINED LEVER C11 PASS iff bd>=2 AND >max_single AND lever_margin>0 AND lever_margin>deriv_margin AND synergy(interaction)>0",
+  "depths": {
+    "2": {
+      "cells_mean": {
+        "C00_sparse_add": 1.8111,
+        "C10_dense_add(ADD)": 1.9481,
+        "C01_sparse_micro": 1.4926,
+        "C11_dense_micro(LEVER)": 1.8741
+      },
+      "cells_seeds": {
+        "C00": [
+          1.889,
+          1.756,
+          1.789
+        ],
+        "C10": [
+          1.933,
+          1.944,
+          1.967
+        ],
+        "C01": [
+          1.622,
+          1.389,
+          1.467
+        ],
+        "C11": [
+          1.878,
+          1.944,
+          1.8
+        ]
+      },
+      "DERIV_mean": 1.6593,
+      "DERIV_seeds": [
+        1.667,
+        1.633,
+        1.678
+      ],
+      "ADD_control": 1.9481,
+      "max_single": 1.0,
+      "main_effect_L2(C10-C00)": 0.137,
+      "main_effect_V2(C01-C00)": -0.3185,
+      "sum_main_effects": -0.1815,
+      "combined_lift(C11-C00)": 0.063,
+      "INTERACTION(C11-C10-C01+C00)": 0.2444,
+      "synergy_superadditive": true,
+      "lever_margin(C11-ADD)": -0.0741,
+      "deriv_margin(DERIV-ADD)": -0.2889,
+      "predictors": {
+        "rho": 0.0,
+        "sigma_dense": 9.167,
+        "sigma_sparse": 0.917,
+        "kappa": 0.25,
+        "M": 1.5
+      },
+      "P_basin(dense_add_recomb)": 0.9593,
+      "pred_interaction(P_basin*kappa)": 0.2398,
+      "predicted_synergy(P_basin>0.5 & kappa>0.2)": true,
+      "LEVER_PASS": false
+    },
+    "3": {
+      "cells_mean": {
+        "C00_sparse_add": 2.1222,
+        "C10_dense_add(ADD)": 2.8815,
+        "C01_sparse_micro": 1.7296,
+        "C11_dense_micro(LEVER)": 2.8333
+      },
+      "cells_seeds": {
+        "C00": [
+          2.233,
+          2.078,
+          2.056
+        ],
+        "C10": [
+          2.956,
+          2.844,
+          2.844
+        ],
+        "C01": [
+          1.667,
+          1.756,
+          1.767
+        ],
+        "C11": [
+          2.911,
+          2.9,
+          2.689
+        ]
+      },
+      "DERIV_mean": 2.3815,
+      "DERIV_seeds": [
+        2.456,
+        2.478,
+        2.211
+      ],
+      "ADD_control": 2.8815,
+      "max_single": 1.0,
+      "main_effect_L2(C10-C00)": 0.7593,
+      "main_effect_V2(C01-C00)": -0.3926,
+      "sum_main_effects": 0.3667,
+      "combined_lift(C11-C00)": 0.7111,
+      "INTERACTION(C11-C10-C01+C00)": 0.3444,
+      "synergy_superadditive": true,
+      "lever_margin(C11-ADD)": -0.0481,
+      "deriv_margin(DERIV-ADD)": -0.5,
+      "predictors": {
+        "rho": 0.0,
+        "sigma_dense": 16.833,
+        "sigma_sparse": 1.5,
+        "kappa": 0.3889,
+        "M": 2.0
+      },
+      "P_basin(dense_add_recomb)": 0.8889,
+      "pred_interaction(P_basin*kappa)": 0.3457,
+      "predicted_synergy(P_basin>0.5 & kappa>0.2)": true,
+      "LEVER_PASS": false
+    }
+  },
+  "summary": {
+    "primary_depth": 2,
+    "INTERACTION_d2": 0.2444,
+    "INTERACTION_d3": 0.3444,
+    "synergy_d2": true,
+    "synergy_d3": true,
+    "interaction_grows_with_depth": true,
+    "LEVER_PASS_d2": false,
+    "LEVER_PASS_d3": false,
+    "predicted_synergy_d2": true,
+    "PASS": false,
+    "VERDICT": "KILL (B2 factorial: no superadditive synergy (interaction<=0) or C11<=ADD/DERIV margin or bd<2/<=max_single => coverage x granularity does NOT combine, FALSIFIED-DIRECTIONAL, NO GPU rent)"
+  },
+  "wall_sec": 57.7
+}
+
+wrote /private/tmp/claude-501/-Users-mini-dancinlab-anima/a1a1adf6-9373-4338-9ac2-15fadbeffce4/scratchpad/result.json

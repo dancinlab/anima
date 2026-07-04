@@ -1,0 +1,84 @@
+================================================================================
+G1 LEVER V13 — resolution-ladder (FULL->FLAT) — STEP-0 CHEAP ENGINE-NATIVE KILL
+================================================================================
+date: 2026-07-04   host: mini (numpy, torch-free)   cost: $0
+H: H_9127 (g1_lever_divergence)   lever: V13_resolution_ladder
+scope: DIRECTIONAL toy numpy pre-screen (a_engine_native_learning) — NOT 303M
+       engine-native, NOT terminal. Purpose = gate GPU spend before STEP-1.
+
+------------------------------------------------------------------------------
+WHAT WAS TESTED (the V13 nuance)
+------------------------------------------------------------------------------
+Resolution ladder: train FULL-resolution targets (answer head + two derivation-
+trace heads dA->i, dB->j supervised) AND FLAT-resolution targets (answer head
+only) as a curriculum, to test whether emitting FULL derivation INDUCES FLAT
+internalization (emit-derivation vs internalization wiring). ALL arms share the
+SAME ADDITIVE trunk combiner (h=pa+pb); arms differ ONLY on the objective/target-
+FORMAT axis via the ladder schedule p_full(step):
+  ADD    p_full=0            (additive control; FLAT-only, no derivation)
+  DERIV  p_full=1            (derivtrace baseline; derivation ALWAYS on)
+  LADDER p_full 1.0->0.0     (V13 resolution ladder: start FULL, descend to FLAT)
+Frozen metric (identical all arms): held-out FLAT recombination = ans-head top-2
+contains BOTH {i,j}, evaluated WITHOUT emitting derivation (internalized path).
+
+------------------------------------------------------------------------------
+FROZEN BAR (set before measuring; no post-hoc move — c9/p7)
+------------------------------------------------------------------------------
+N=24 D=64 heldout=0.45 STEPS=4000 seeds {7,4302,4303}. 3 arms ADD+DERIV+LADDER.
+PASS = bd>=2 AND bd>max_single AND margin(LADDER-ADD) > margin(DERIV-ADD).
+KILL = LADDER <= ADD  OR  LADDER margin <= DERIV margin.
+
+------------------------------------------------------------------------------
+RESULT (held-out FLAT recomb; gradient-checked backward, train_recomb converged)
+------------------------------------------------------------------------------
+  arm     flat_recomb(mean)   per-seed                 best_distinct(count)  max_single
+  ADD     0.9307  <== BEST   [0.912, 0.936, 0.944]   116.33                 8.0
+  DERIV   0.8720            [0.888, 0.848, 0.88]   109.0                 14.67
+  LADDER  0.8800            [0.904, 0.856, 0.88]   110.0                 14.0
+  lever_margin (LADDER-ADD) = -0.0507
+  deriv_margin (DERIV-ADD)  = -0.0587
+
+VERDICT: KILL.
+  BOTH derivation-format arms (DERIV, LADDER) fall BELOW the pure additive floor
+  (ADD=0.931). LADDER (0.880) ~ DERIV (0.872), gap 0.008 = seed noise. The
+  resolution ladder does NOT induce FLAT internalization beyond additive; FULL
+  derivation supervision is INERT-to-mildly-interfering on the additive trunk.
+  Frozen KILL clause (LADDER<=ADD) fires. Objective/target-FORMAT axis does NOT
+  open recombination the additive baseline already gets in this clean toy.
+  (Note: lever_margin -0.0507 is technically > deriv_margin -0.0587, but both are
+  BELOW-floor and within noise => a tie, not a win; KILL-by-<=ADD dominates.)
+
+------------------------------------------------------------------------------
+PREDICTORS (pre-registered, measured $0) — this-toy values
+------------------------------------------------------------------------------
+  rho (echo-residual)      = 0.0     (all constituents seen singly + in train pairs)
+  sigma (partner-diversity)= 12.583   (>1 => not pair-binding)
+  kappa (local-copy ratio) = 1.0   (FULL derivation is copyable, delta_copy=1 < RF=inf(global))
+  M (memorization-disadv.) = 5.208   (|tau|=125 heldout / grammar={N}=24)
+  predicted_pass (rho<=0.02 AND sigma>1) = True
+  ACTUAL = KILL  =>  predicted_vs_actual = MISMATCH(predictor over/under-optimistic)
+  => rho~0 AND sigma>1 is NECESSARY (recombination admissible; ADD reaches 0.93)
+     but NOT SUFFICIENT to predict lever PASS. The ladder-specific killer is
+     kappa=1.0 (derivation copyable within RF) => no pressure to internalize.
+
+------------------------------------------------------------------------------
+HONEST SCOPE (c9) + COLLISION NOTE
+------------------------------------------------------------------------------
+- Clean-orthogonal toy (cloned from state/g1_gamma_engine_native pattern per task).
+  As the gamma VERDICT already noted, additive itself recombines well (~0.93) on
+  near-orthogonal codes, so this toy establishes only the RELATIVE V13 claim:
+  the resolution-ladder / derivation-format adds NO recombination capacity over
+  additive (it slightly subtracts). That is exactly and only what STEP-0 gates.
+- Its predictors are DEGENERATE (rho=0, sigma=12.6, kappa=1.0) — the clean toy
+  does not manifest the real G1 wall. A parallel/canonical GRAMMAR-based V13
+  harness (observed via a shared-scratchpad run.log collision) reports the non-
+  degenerate predictor regime rho~0.66, sigma=1 (pair-binding), kappa~0.33, RF=12,
+  best_distinct~1.832 / max_single~2.000 for the ADD arm. Orchestrator (H_9127)
+  should reconcile this clean-toy screen with that grammar-toy screen; my
+  result.json is the clean-toy authority (run.log raw is cross-contaminated).
+- torch-free numpy => DIRECTIONAL only; no GPU escalation warranted for V13.
+
+teardown: N/A (mini CPU, $0).
+artifacts: state/g1_lever_step0/V13_resolution_ladder/{step0_v13_ladder_kill.py,
+           result.json, VERDICT.txt}  (step0_run.log raw = contaminated by sibling)
+================================================================================

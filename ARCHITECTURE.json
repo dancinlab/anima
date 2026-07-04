@@ -1261,6 +1261,12 @@
                                             "role": "",
                                             "id": "g1-lever-div-and-combos-top3",
                                             "detail": "top-3 조합: B1 V1×V2×V12 margin-max 3-스택(두 병목 동시타격, 7-arm)·B2 L2×V2(기존 DIRECTIONAL 증거, 2×2 팩토리얼 🟠)·B3 V6×V1(γ H_1840 $0 데이터측 probe, 🔴 생존). Stage-0=ABC ablation(ABC≈baseline이면 AND 가설 한방 사망+단독 면제). L6 커리큘럼=marginal 증폭기 무임승차. check-ledger: F2 readout(H_1834/1837)·objective additive(H_1602) 배제."
+                                          },
+                                          {
+                                            "name": "★STEP-0 사전선별 결과 (9 probe toy) — B3만 PASS",
+                                            "role": "",
+                                            "id": "g1-lever-div-step0-results",
+                                            "detail": "wf_a7efd6b2 9-probe toy(DIRECTIONAL): 🟠 B3 gamma-DATA-channel만 PASS(margin +0.06/+0.11 bd 2/3 seed-robust; gamma-OPERATOR H_1840 죽음과 분리; transfer UNVERIFIED). 8 KILL=대부분 additive-ceiling artifact(INCONCLUSIVE). 판정기준 NOT-PREDICTIVE 2/9. AND≯OR. 다음 GPU#1=gamma-DATA-channel 단일 303M."
                                           }
                                         ]
                                       }
@@ -13556,6 +13562,13 @@
         "value": "rebase 충돌 해소(다중 세션 병렬 origin/main 진행) 시 HYPOTHESES.jsonl 인덱스 행이 silent 유실 재발: H_9125 카드는 origin/main에 머지됐으나 jsonl 행은 없음(a_hypothesis_register 2표면 불변식 위반). 원인=rebase가 origin/main jsonl(내 행 없는) 위에 재적용되며 내 append 행이 conflict/reorder로 드롭. 카드↔jsonl 2표면 drift.",
         "threshold": "재발조건: 병렬세션서 rebase/충돌해소 후 카드 신설/갱신 PR 머지 시 — jsonl 행이 실제 origin/main에 들었는지 grep 교차확인 필수(git show origin/main:HYPOTHESES/HYPOTHESES.jsonl | grep '\"id\":\"H_XXXX\"'). 유실이면 카드에서 jsonl 행 복원. 해결=jsonl은 append-only라 rebase 시 --theirs 후 내 행 재삽입, 또는 python tool/_build_hyp_jsonl.py로 카드에서 재생성. pr-cycle 전 자가점검 git ls-files 2표면 불변식.",
         "source": "HYPOTHESES/HYPOTHESES.jsonl"
+      },
+      {
+        "id": "step0-gamma-bind-kill-py-1",
+        "state": "pos-conv",
+        "value": "cheap toy STEP-0 사전선별에서 'baseline(DERIV/ADD) 초과' frozen bar는 toy가 포화(saturated)면 판별 불가능=KILL이 falsification 아닌 ceiling artifact. real-G1-동형 clean toy는 additive-control만으로 이미 0.94(near-ceiling, γ STEP-0 실측)라 derivtrace도 천장 근방 → 어떤 레버/조합도 beat-DERIV 못 넘는 게 당연(2026-07-05 9-probe workflow wf_a7efd6b2 전수 KILL: V2·V11·V13·L2·V12·B1·B2·B3 모두 lever margin≤DERIV, 예 B2 0.243≤0.307). γ에서 ADD=0.94 이미 봤는데 같은 near-saturated toy 하네스를 9 probe에 재사용하며 beat-baseline bar를 걸어 재발.",
+        "threshold": "재발조건=beat-baseline bar를 headroom 미검증 saturated toy에 걸어 mass-KILL을 DIRECTIONAL-falsified로 박제. 해결=toy 사전선별 발사 전 반드시 baseline/control 절대점수 실측 → near-ceiling(>0.85·max)이면 판별 헤드룸 부재 = ① toy 강화(개념수↑/깊이↑/노이즈로 baseline을 mid-range로 끌어내림) 또는 ② bar를 'beat baseline'→'absolute floor(레버 단독 임계 도달)'로 전환 또는 ③ saturated-toy KILL은 INCONCLUSIVE(measure-artifact, break-walls class-a)로 적고 falsification 금지. toy fail→303M 판정은 predictor(ρ/σ/κ/M scale-invariant)로만.",
+        "source": "state/g1_gamma_engine_native/step0_gamma_bind_kill.py"
       }
     ]
   }

@@ -1,0 +1,98 @@
+================================================================================
+G1 LEVER B1 = V1(sigma-inf) x V2(kappa) x V12(M/G2) — STEP-0 ABC-ABLATION KILL-GATE
+================================================================================
+date: 2026-07-05  host: mini (numpy, torch-free)  cost: $0  wall: 94.9s
+H: H_9127 (g1_lever_divergence campaign) · lever B1_V1xV2xV12_ablation
+scope: TOY controlled numpy discriminator => DIRECTIONAL pre-screen
+       (a_engine_native_learning: NOT 303M engine-native, NOT terminal). Purpose =
+       gate GPU spend before STEP-1 full 303M engine-native.
+
+--------------------------------------------------------------------------------
+WHAT WAS TESTED — the AND hypothesis
+--------------------------------------------------------------------------------
+B1 = the margin-max 3-stack. Each lever ALONE floored in prior STEP-0 runs
+(V2_micro_trace KILL, V12_grammar_selfgen KILL). B1 asks: does STACKING them give a
+SUPER-ADDITIVE (synergistic) recombination margin — margin(AB) > margin(A)+margin(B)?
+7-arm ABC ablation on ONE shared additive-unbind trunk + 2 controls:
+  A = V1 sigma-inf skeleton-bind : unbind-SKELETON aug (each concept superposed with
+      SKEL_K=8 distinct opposite-type partners, target=extract single) → drives sigma up.
+  B = V2 kappa micro-trace       : autoregressive copy-prev-set + 1-local-edit decode
+      (set-addressed Wemit head, hard-copy dedup).
+  C = V12 M/G2 grammar-selfgen   : periodic grammar-verified self-gen of corpus-absent
+      A x B pairs, self-labelled, folded into train.
+  ADD   = 000 additive control (FLOOR).  DERIV = echo channel h += Ei+Ej (deriv bar).
+Every sample entangles ONE type-A + ONE type-B constituent (two-axis, per-sample);
+recomb bar = emit BOTH (else best_distinct collapses to log(max)=1).
+
+--------------------------------------------------------------------------------
+FROZEN BAR (set BEFORE measuring; no post-hoc move — c9/p7)
+--------------------------------------------------------------------------------
+real-G1-isomorphic toy: N=24, D=64, HELDOUT=0.45, 4000 step, LR=3e-3, seeds {7,4302,4303}.
+per arm on HELD-OUT composed pairs: best_distinct{0,1,2}, max_single(=1), recomb_rate.
+  margin(X)     = recomb_rate(X) - recomb_rate(ADD)
+  deriv_margin  = recomb_rate(DERIV) - recomb_rate(ADD)
+  synergy(AB)   = margin(AB) - [margin(A)+margin(B)]   (super-additive iff > 0)
+  PASS (GPU-escalate) iff ABC.bd>=2 AND ABC.bd>max_single AND margin(ABC)>deriv_margin
+                          AND super-additive (margin(ABC) > sum singleton margins).
+  KILL iff ABC.bd<=max_single OR margin(ABC)<=deriv_margin OR sub-additive.
+
+--------------------------------------------------------------------------------
+RESULTS (held-out, 3-seed; max_single=1 & best_distinct=2 ALL arms — ceiling-saturated)
+--------------------------------------------------------------------------------
+ARM     recomb_mean   recomb_seeds              margin      gen_sigma  nacc
+ADD     0.9487        [0.954,0.938,0.954]       (floor)     0.00       0
+DERIV   1.0000        [1.0,1.0,1.0]             +0.0513     0.00       0
+A       0.8821        [0.877,0.892,0.877]       -0.0667     0.00       0
+B       0.9692        [0.923,1.0,0.985]         +0.0205     0.00       0
+C       0.9333        [0.954,0.892,0.954]       -0.0154     4.93       165
+AB      0.9077        [0.892,0.908,0.923]       -0.0410     0.00       0
+AC      0.9179        [0.892,0.938,0.923]       -0.0308     4.85       158
+BC      0.9590        [0.985,0.892,1.0]         +0.0103     4.94       169
+ABC     0.9436        [0.938,0.923,0.969]       -0.0051     4.83       168
+
+SYNERGY (margin(combo) - sum of component margins):
+  AB_vs_A+B    = +0.0051
+  AC_vs_A+C    = +0.0513
+  BC_vs_B+C    = +0.0051
+  ABC_vs_A+B+C = +0.0564   (nominally super-additive)
+
+--------------------------------------------------------------------------------
+VERDICT: KILL — AND-stack FALSIFIED (DIRECTIONAL), NO GPU rent
+--------------------------------------------------------------------------------
+ABC margin = -0.0051  vs  deriv_margin = +0.0513.  ABC recomb 0.9436 < ADD 0.9487.
+The margin(ABC)>deriv_margin clause FAILS by a wide gap; ABC sits BELOW the additive
+floor, i.e. ABC ~= baseline (slightly worse) => the AND stack DIES.
+
+The "super-additive" synergy numbers are SPURIOUS, not a real lift: the singleton
+margins A(-0.067) and C(-0.015) are NEGATIVE (the levers individually HURT the recomb
+rate), so their sum is deeply negative and any combo landing near-zero registers as
+"super-additive" by arithmetic. No combination — AB, AC, BC, ABC — ever reaches ADD,
+let alone DERIV. Beating a negative baseline is not a recombination lift.
+
+Per-lever reading (all sub-additive vs the real bar):
+  A (sigma-inf skeleton): HURTS most (-0.067). Driving sigma_eff 6.58->14.58 via
+    extract-single skeleton aug competes with the both-emit objective and pulls readout
+    toward single-constituent extraction. sigma-inf is counterproductive here.
+  B (kappa micro-trace): only marginal help (+0.0205), still << DERIV; copy+1edit decode
+    buys nothing over additive pooling (consistent with V2_micro_trace KILL).
+  C (M/G2 selfgen): slightly HURTS (-0.015). Generator healthy (gen_sigma~4.9, NOT
+    collapsed, ~165 accepted) so the G2-novelty machinery runs, but manufacturing
+    corpus-absent pairs does not lift G1 recomb (consistent with V12 KILL).
+The additive control is the CEILING; the only surviving lift in the whole campaign is
+DERIV = echo (copy=composition, not a general recombination operator).
+
+--------------------------------------------------------------------------------
+JUDGMENT-CRITERION CHECK (rho/sigma/kappa/M PREDICTIVE validation)
+--------------------------------------------------------------------------------
+rho (echo-residual)      = 0.0     (every local rule covered by anchors+train)
+sigma (partner-div)      = 6.583   base  ->  14.583 with skeleton (A)   (>1)
+kappa (trace copy ratio) = 0.25    (B lever, d=2)
+M (memo-disadvantage)    = 0.4514  (tau=2 / grammar_len=2)
+base predicted = (rho<=0.05 AND sigma>1) => recomb-ELIGIBLE = PASS(True).
+MEASURED = KILL => base criterion MISS (same as V12). The rho~0 ∧ sigma>1 rule predicts
+the TASK is recomb-SOLVABLE (ADD=0.95 confirms) but does NOT predict a LEVER beats the
+additive control — lever-advantage needs a different predictor (this campaign: only the
+echo/copy DERIV channel lifts; combiner/decode/data-aug levers do not).
+
+SCOPE REMINDER: TOY numpy DIRECTIONAL pre-screen only. Terminal 303M engine-native
+verdict forbidden; this gate's job = deny GPU spend on the AND-stack. DENIED.

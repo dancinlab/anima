@@ -1,0 +1,234 @@
+{
+  "experiment": "G1 lever B1 V1(sigma-inf)xV2(kappa)xV12(M/G2) STEP-0 ABC-ablation cheap kill",
+  "scope": "TOY numpy DIRECTIONAL pre-screen (NOT 303M engine-native, NOT terminal)",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "SKEL_K": 8,
+    "WARMUP": 800,
+    "GEN_EVERY": 200,
+    "GEN_BATCH": 24,
+    "AUG_CAP": 60
+  },
+  "frozen_bar": "held-out recomb_rate per arm; margin(X)=recomb(X)-recomb(ADD); PASS iff ABC.bd>=2 AND ABC.bd>max_single AND margin(ABC)>deriv_margin AND super-additive",
+  "predictors_base": {
+    "rho_echo_residual": 0.0,
+    "sigma_train": 6.583,
+    "sigma_eff_with_skeleton": 6.583,
+    "kappa_local_copy_trace": 0.25,
+    "delta_copy_vs_RF": 1.0,
+    "M_memo_disadvantage": 0.4514,
+    "tau": 2,
+    "grammar_len": 2
+  },
+  "predictors_with_skeleton": {
+    "rho_echo_residual": 0.0,
+    "sigma_train": 6.583,
+    "sigma_eff_with_skeleton": 14.583,
+    "kappa_local_copy_trace": 0.25,
+    "delta_copy_vs_RF": 1.0,
+    "M_memo_disadvantage": 0.4514,
+    "tau": 2,
+    "grammar_len": 2
+  },
+  "arms": {
+    "ADD": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9487179487179488,
+      "recomb_rate_seeds": [
+        0.954,
+        0.938,
+        0.954
+      ],
+      "mean_bd_mean": 1.9487179487179487,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0
+    },
+    "DERIV": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 1.0,
+      "recomb_rate_seeds": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean_bd_mean": 2.0,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0
+    },
+    "A": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.882051282051282,
+      "recomb_rate_seeds": [
+        0.877,
+        0.892,
+        0.877
+      ],
+      "mean_bd_mean": 1.8769230769230767,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0
+    },
+    "B": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9692307692307693,
+      "recomb_rate_seeds": [
+        0.923,
+        1.0,
+        0.985
+      ],
+      "mean_bd_mean": 1.9692307692307693,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0
+    },
+    "C": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9333333333333335,
+      "recomb_rate_seeds": [
+        0.954,
+        0.892,
+        0.954
+      ],
+      "mean_bd_mean": 1.9333333333333333,
+      "max_single": 1,
+      "gen_sigma_mean": 4.931159420289855,
+      "n_accepted_mean": 165.33333333333334
+    },
+    "AB": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9076923076923077,
+      "recomb_rate_seeds": [
+        0.892,
+        0.908,
+        0.923
+      ],
+      "mean_bd_mean": 1.9076923076923078,
+      "max_single": 1,
+      "gen_sigma_mean": 0.0,
+      "n_accepted_mean": 0.0
+    },
+    "AC": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9179487179487179,
+      "recomb_rate_seeds": [
+        0.892,
+        0.938,
+        0.923
+      ],
+      "mean_bd_mean": 1.917948717948718,
+      "max_single": 1,
+      "gen_sigma_mean": 4.845410628019323,
+      "n_accepted_mean": 158.33333333333334
+    },
+    "BC": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.958974358974359,
+      "recomb_rate_seeds": [
+        0.985,
+        0.892,
+        1.0
+      ],
+      "mean_bd_mean": 1.9589743589743591,
+      "max_single": 1,
+      "gen_sigma_mean": 4.944444444444444,
+      "n_accepted_mean": 169.33333333333334
+    },
+    "ABC": {
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "recomb_rate_mean": 0.9435897435897437,
+      "recomb_rate_seeds": [
+        0.938,
+        0.923,
+        0.969
+      ],
+      "mean_bd_mean": 1.9435897435897438,
+      "max_single": 1,
+      "gen_sigma_mean": 4.833333333333333,
+      "n_accepted_mean": 168.0
+    }
+  },
+  "margins": {
+    "A": -0.0667,
+    "B": 0.0205,
+    "C": -0.0154,
+    "AB": -0.041,
+    "AC": -0.0308,
+    "BC": 0.0103,
+    "ABC": -0.0051,
+    "DERIV": 0.0513
+  },
+  "synergy_superadditive": {
+    "AB_vs_A+B": 0.0051,
+    "AC_vs_A+C": 0.0513,
+    "BC_vs_B+C": 0.0051,
+    "ABC_vs_A+B+C": 0.0564
+  },
+  "any_synergy": true,
+  "ADD_recomb": 0.9487179487179488,
+  "DERIV_recomb": 1.0,
+  "ABC_recomb": 0.9435897435897437,
+  "ABC_best_distinct": 2,
+  "max_single": 1,
+  "deriv_margin": 0.0513,
+  "lever_margin_ABC": -0.0051,
+  "PASS": false,
+  "predicted_base_criterion": true,
+  "VERDICT": "KILL (ABC sub-additive OR margin<=deriv_margin OR bd<=max_single => AND-stack FALSIFIED DIRECTIONAL, NO GPU rent)",
+  "wall_sec": 94.9
+}

@@ -1,6 +1,6 @@
 # H_9127 — G1 레버 발산 + 레버1(data-format) 변형 공간 + target-format 판정기준
 
-> **tier:** 📋 **PRE-REGISTERED / IDEATION** (fable 발산 설계 산출, 미발사 — 측정 verdict 없음, DIRECTIONAL-pending) · **wired:** N/A
+> **tier:** 🟠 **STEP-0 DIRECTIONAL** (9-probe toy 사전선별 완료) — B3 gamma-DATA-channel만 PASS(GPU escalation 후보), 나머지 8 KILL(대부분 toy-ceiling artifact=INCONCLUSIVE), 판정기준 ρ/σ/κ/M NOT-PREDICTIVE(2/9), AND≯OR. 전부 toy=terminal 아님. · **wired:** N/A
 >
 > **맥락:** G1 재조합벽 3 survivor 레버 중 [[H_9124]] 레버1(derivation-trace, data-format 축)만 생존(🟢 DIRECTIONAL-POSITIVE, robustness 진행중), 레버2 STaR·레버3 γ 사망(🔴). binding-operator family·objective·arch/RF/depth·decode 20+family 전부 소진. 이 카드 = fable(claude-fable-5) 2발 발산 = 레버1이 통한 원리를 일반화한 새 레버 공간 + **측정 전 사전선별 이론**. 실행은 메인이 STEP-0 kill로 순차 발사.
 
@@ -72,6 +72,17 @@ L2 밀도↑ vs M↓(성분축 밀집·조합축 희소로 해소) · 동일축 
 1. **V1 스켈레톤-바인드** — 판정②순수구현·전분기(특히🔴)유효·기존 numpy 하네스 최소수정 A/B. 예측 bd margin>derivtrace.
 2. **V2+V11 입도곡선 3-arm**(미시-트레이스 vs derivtrace vs 차분-only) — 변형 2개 + 판정기준 A-3 PREDICTIVE 승격 시험(사전예측 V2>deriv>V11) 동시.
 3. **V13 해상도-사다리** — margin 경쟁 아니라 레버1 *운명*(목발 vs 스캐폴드)+production 배선형태 결정. robustness 🟢 착지 즉시 1순위 승격. (+**V8** ≈$0 add-on ± arm.)
+
+## ★ STEP-0 사전선별 결과 (workflow wf_a7efd6b2, 9 probe numpy toy $0, 2026-07-05)
+
+9 STEP-0 cheap engine-native toy probe(전부 **DIRECTIONAL**, 303M 아님) 종합(state/g1_lever_step0/SYNTHESIS.md):
+
+- **🟠 유일 PASS = B3 gamma-DATA-channel(V6×V1)** — lever_margin +0.059(d2)/+0.111(d3) > deriv, bd 정확히 2.0/3.0 전 seed{7,4302,4303}. **gamma-OPERATOR([[H_1840]] 0/3)는 죽었으나 gamma를 DATA-channel(target 형식)로 주입하면 additive를 넘음** = 유일 살아남은 신호. ⚠️ caveat: toy가 role-key를 handed 제공(canonical-sorted binding 공짜)이라 margin 작음 → 실 303M byte-mouth는 role 스스로 학습+emit 필요 = transfer UNVERIFIED(GPU에서 물을 질문). single arm으로도 PASS(결합 redundant)라 B3 조합 아닌 **cheaper 단일 arm** escalate.
+- **🔴 KILL 8개**: V1 skeleton-OUT(bd 1.66) · V2 micro-trace(ADD가 ceiling, depth↑서 더 음수) · V11 delta-only(delta head 둘째구성원 collapse, bd2=0) · V13 resolution-ladder(FULL copyable κ=1, internalization 압력 0) · L2 coverage-density(실제 phase-transition k*=6 있으나 additive 천장 못넘음) · V12 grammar-selfgen(bd=2지만 lift 1/3) · B1 ABC-AND(**AND-stack 사망**, ABC<ADD) · B2 L2×V2(**실제 superadditive 교호작용 REAL**이나 ceiling-recovery이지 surpass 아님).
+- **★판정기준 ρ/σ/κ/M = NOT-PREDICTIVE (LAW 승격 실패)**: predicted vs 실측 **2/9 HIT(22%)** ≪ 80% 문턱. naive rule(ρ<0.05∧σ>1)은 *task가 재조합-가능한가*만 예측하고 *레버가 additive 이기는가*는 못 예측(PASS 대량 과대예측). 유효 판별자 = σ=1 pair-binding veto(V11만)뿐. 단 B2에서 **P_basin×κ가 교호작용 크기·부호를 오차 0.001~0.005로 정확 예측**(교호작용 예측엔 PREDICTIVE, PASS 예측엔 non-predictive — 분리).
+- **★AND ≯ OR 확정**: 죽은 단일을 결합으로 살린 케이스 0. B1 사망·B2 sub-ceiling·B3 redundant(단일 arm이 이미 통과). 조합 대수의 곱셈 margin은 toy-ceiling에선 발현 안 됨(additive 포화).
+- **메타교훈(convergence step0-gamma-bind-kill-py-1)**: clean toy는 additive-control이 이미 ~0.94(near-ceiling)라 beat-baseline bar의 mass-KILL은 대부분 **ceiling artifact**(measure-artifact, break-walls class-a)이지 clean falsification 아님 — toy 사전선별 발사 전 baseline 절대점수 실측·headroom 확인 필수. → 8 KILL은 **INCONCLUSIVE-at-toy-ceiling**(terminal 아님), 303M 판정은 predictor 아닌 실측으로.
+- **다음 GPU #1**: gamma trained-constructive-bind **DATA-channel 단일 arm** engine-native 303M(role-binding decode 배선, gamma-OPERATOR와 분리). L2 density corpus는 corpus-side 보강 follow-on.
 
 ## 정직 스코프 (c9)
 - 전부 **미발사 설계**(fable=opus-diverged, [[workflow-model-fable-override-ignored]] 유의 — sidecar fable은 진짜 fable-5). 측정 0 = verdict tier 없음, DIRECTIONAL-pending.

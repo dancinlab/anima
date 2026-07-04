@@ -1,0 +1,59 @@
+================================================================================
+H_9127 STEP-0 CHEAP KILL — G1 LEVER L2 (combination-coverage DENSITY)
+DIRECTIONAL (torch-free numpy toy · a_engine_native_learning: NOT terminal;
+terminal only via clm303/ByteGPT `anima evaluate --py`). No GPU rent this gate.
+================================================================================
+
+LEVER SPEC (fable-1 L2, F3 held-out-as-interpolation):
+  target stays FLAT (=answer: emit BOTH concept keywords, additive combiner —
+  CE=echo NOT broken). LEVER = corpus DENSITY: tile (concept x concept) so each
+  concept co-occurs with k distinct partners (component-dense, combo-sparse).
+  Sweep k=1..full pool -> held-out best_distinct(k) curve; predict phase-transition k*.
+
+FROZEN BAR (set pre-measure, no post-hoc move — c9/p7):
+  N=24 · D=64 · held-out EVAL frac 0.45 (fixed disjoint set/seed, identical across all k)
+  · 4000 steps · seeds {7,4302,4303} · metric = held-out recomb_rate (both i,j in top-2).
+  LEVER PASS iff bd(kmax)>=2 AND >max_single AND margin_lever>margin_DERIV AND k* exists.
+  Harness = clone of state/g1_gamma_engine_native/step0_gamma_bind_kill.py (target-format only swapped).
+
+ARMS (held-out recomb_rate mean · seeds · best_distinct · mean_distinct):
+  ADD_flat_k1 (sparse additive floor)   recomb=0.693  seeds[0.672,0.656,0.752]  bd=2  meand=1.68
+  DERIV_single-echo (derivtrace ref)    recomb=1.000  seeds[1.0,1.0,1.0]        bd=2  meand=2.00
+  LEVER_flat_kmax (dense additive k=12) recomb=0.936  seeds[0.936,0.968,0.904]  bd=2  meand=1.936
+  max_single_floor = 1 · single_acc = 1.0
+
+DENSITY CURVE (recomb_rate mean by k):
+  k=1 0.693 | k=2 0.629 | k=3 0.685 | k=4 0.723 | k=6 0.915 | k=8 0.928 | k=12 0.936
+  PHASE TRANSITION: k*=6 (best single-step rise +0.192, 0.723->0.915), transition_detected=TRUE.
+
+MARGINS:
+  margin_lever (kmax - ADD) = 0.243
+  margin_DERIV (deriv - ADD)= 0.307
+  -> margin_lever 0.243 <= margin_DERIV 0.307  (density lever weaker than derivtrace ref)
+
+PREDICTORS rho/sigma/kappa/M (pre-registered, $0):
+  rho (echo-residual)   = 0.0    both concepts seen (singles+combos) => min-suff-ctx present (F3). FAVORABLE.
+  sigma (partner-diversity) = k (density itself): ADD/k1 sigma=1 ; LEVER/k12 sigma=12 ; DERIV sigma=inf.
+                          sigma-driven phase transition CONFIRMED (recomb rises with sigma=k, jump at k*=6). FAVORABLE.
+  kappa (copy-locality) = 1.0, delta_copy=0 < RF (FLAT prompt names i,j = in-prompt copy). FAVORABLE.
+  M (memorization-disadv)= ~2 (|tau_FLAT|=2 short). UNFAVORABLE (margin ~ log M weak; derivtrace M larger via long trace).
+
+PREDICTION vs ACTUAL (PREDICTIVE-law test):
+  Naive rule (rho~0 AND sigma>1 AND delta<RF) predicted PASS=TRUE.
+  ACTUAL = KILL. -> the M-caveat is LOAD-BEARING: sigma(=density) drives the LIFT (0.69->0.94, real k*)
+  but small M (short FLAT target) CAPS the ceiling below the structured derivtrace target (1.0).
+  Predictor refined: sigma sets the transition, M sets the ceiling. rho/sigma/kappa necessary-not-sufficient.
+
+VERDICT: KILL (FALSIFIED-DIRECTIONAL). L2 combination-coverage density IS a genuine partial lever
+  (real phase transition k*=6, held-out recomb 0.69->0.94) but does NOT beat the derivtrace baseline
+  margin (0.243 <= 0.307). Density lifts additive held-out recombination only toward — not past — the
+  additive ceiling, staying below perfect decomposition. Not value-add OVER the already-surviving
+  derivtrace lever (H_9124) => NO independent GPU escalation warranted.
+
+MEASUREMENT CAVEAT (a_break_the_wall taxonomy-a, inherited from shared harness):
+  This additive-readout toy has per-concept-independent readouts, so additive FLAT already recombines
+  held-out at recomb~0.69 (NOT at the real 303M single-concept G1 floor); the original gamma harness
+  ADD=0.94 shows the same. Absolute rates OVERSTATE held-out recombination vs real ByteGPT/clm303.
+  This gate therefore ranks RELATIVE lever margins (density vs derivtrace), not the absolute wall.
+  A combined density+derivtrace corpus is a follow-on note, NOT tested here.
+================================================================================

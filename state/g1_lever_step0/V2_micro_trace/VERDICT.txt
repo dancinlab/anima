@@ -1,0 +1,48 @@
+G1 LEVER V2_micro_trace — STEP-0 CHEAP KILL-GATE (torch-free numpy, DIRECTIONAL)
+================================================================================
+FROZEN BAR (pre-registered, no post-hoc move — c9/p7):
+  real-G1-homomorphic toy N=24 D=64 HELDOUT=0.45 STEPS=4000 seeds{7,4302,4303}.
+  metric = held-out best_distinct (# distinct constituents emitted, budget=d).
+  3 arms: ADD (additive one-shot control) · DERIV (positional derivtrace baseline)
+          · MICRO (V2 lever = per-line copy-prev-set + exactly 1 local edit,
+          set-addressed edit head, hard-copy dedup decode).
+  LEVER PASS = bd>=2 ∧ bd>max_single ∧ MICRO>ADD (margin>0) ∧ (MICRO-ADD)>(DERIV-ADD).
+  KILL = MICRO<=ADD  OR  (MICRO-ADD)<=(DERIV-ADD).
+  Depth curve at d=2,3. Pre-registered prediction: margin ∝ depth.
+
+RESULTS (held-out best_distinct mean over 3 seeds; max_single=1.000 all arms)
+  depth 2:  ADD=1.9407 [1.933,1.933,1.956]
+            DERIV=1.7222 [1.678,1.722,1.767]
+            MICRO=1.9185 [1.944,1.944,1.867]
+            lever_margin(MICRO-ADD)=-0.0222   deriv_margin(DERIV-ADD)=-0.2185
+  depth 3:  ADD=2.8889 [2.933,2.911,2.822]
+            DERIV=2.3889 [2.489,2.389,2.289]
+            MICRO=2.8037 [2.856,2.733,2.822]
+            lever_margin(MICRO-ADD)=-0.0852   deriv_margin(DERIV-ADD)=-0.5000
+
+PREDICTORS (measured, $0, pre-registered)
+  rho(echo-residual)=0.0 both depths (every local rule covered by anchors+train)
+  sigma(partner-diversity)=9.167 (d2) / 16.833 (d3)  (>1 → not pair-locked)
+  kappa(local-copy-ratio)=0.25 (d2) / 0.389 (d3)     (grows with depth as designed)
+  M(memorization-disadvantage)=1.5 (d2) / 2.0 (d3)
+
+VERDICT: KILL
+  MICRO <= ADD at BOTH depths (lever_margin -0.0222 @d2, -0.0852 @d3, both <0).
+  The additive one-shot control is the CEILING; the micro-trace target-format /
+  copy+1edit decode buys nothing over additive pooling — it costs a small penalty.
+  MICRO does beat the DERIV positional baseline (margin > deriv_margin), but the
+  KILL=<=ADD clause fires: beating a weak baseline ≠ beating additive control.
+  DEPTH PREDICTION FALSIFIED: margin does NOT grow ∝ depth; it goes MORE negative
+  (-0.022 → -0.085), i.e. MICRO falls FURTHER behind ADD as depth rises.
+  d2 also fails bd>=2 outright (MICRO=1.92<2, near-ceiling ADD leaves no headroom).
+
+JUDGMENT-CRITERION CHECK (contributes to ρ/σ PREDICTIVE validation):
+  criterion predicted PASS (rho≈0 ∧ sigma>1) → MEASURED KILL = MISS.
+  rho≈0∧sigma>1 is NECESSARY-not-SUFFICIENT: additive control already saturates
+  recombination, so a target-format/decode restructure (no trunk-objective change)
+  cannot open headroom. Consistent with DPI meta-law (H_1836/1837): decode-procedure
+  & readout-restructure levers floor; G1 lever = trunk recomb-OBJECTIVE.
+
+HONESTY: toy numpy = DIRECTIONAL pre-screen (a_engine_native_learning; NOT 303M
+engine-native). Terminal verdict forbidden. Purpose = gate GPU spend → NO ESCALATE,
+NO GPU rent for V2_micro_trace.

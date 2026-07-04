@@ -1,0 +1,7 @@
+RAW stdout was cross-contaminated by a parallel sibling agent sharing the same
+scratchpad run.log (multi-lever fan-out collision). Authoritative numbers live in
+result.json (computed from this process's own in-memory results, uncontaminated).
+My arm lines (format 'best_distinct(both)='), verbatim from result.json:
+  ADD    flat_recomb 0.912/0.936/0.944  bd 114/117/118  single_only 10/8/6
+  DERIV  flat_recomb 0.888/0.848/0.880  bd 111/106/110  single_only 12/18/14
+  LADDER flat_recomb 0.904/0.856/0.880  bd 113/107/110  single_only 10/18/14

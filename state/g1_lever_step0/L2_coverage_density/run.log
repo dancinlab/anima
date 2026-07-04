@@ -1,0 +1,240 @@
+[seed 7] k= 1 deg~0.9(0-1) n_train=11 HELDOUT recomb=0.672 bd=2 meand=1.648
+[seed 7] k= 2 deg~1.9(1-2) n_train=23 HELDOUT recomb=0.600 bd=2 meand=1.576
+[seed 7] k= 3 deg~2.8(1-3) n_train=33 HELDOUT recomb=0.648 bd=2 meand=1.632
+[seed 7] k= 4 deg~3.8(2-4) n_train=46 HELDOUT recomb=0.736 bd=2 meand=1.728
+[seed 7] k= 6 deg~5.7(3-6) n_train=68 HELDOUT recomb=0.936 bd=2 meand=1.936
+[seed 7] k= 8 deg~7.6(5-8) n_train=91 HELDOUT recomb=0.944 bd=2 meand=1.944
+[seed 7] k=12 deg~11.0(7-12) n_train=132 HELDOUT recomb=0.936 bd=2 meand=1.936
+[seed 7] DERIV(single-echo trace) HELDOUT recomb=1.000 bd=2 meand=2.000 | single_acc=1.000 max_single_bd=1
+[seed 4302] k= 1 deg~0.9(0-1) n_train=11 HELDOUT recomb=0.656 bd=2 meand=1.640
+[seed 4302] k= 2 deg~1.9(1-2) n_train=23 HELDOUT recomb=0.592 bd=2 meand=1.584
+[seed 4302] k= 3 deg~2.8(1-3) n_train=34 HELDOUT recomb=0.720 bd=2 meand=1.720
+[seed 4302] k= 4 deg~3.8(2-4) n_train=46 HELDOUT recomb=0.704 bd=2 meand=1.696
+[seed 4302] k= 6 deg~5.7(4-6) n_train=68 HELDOUT recomb=0.880 bd=2 meand=1.880
+[seed 4302] k= 8 deg~7.7(5-8) n_train=92 HELDOUT recomb=0.928 bd=2 meand=1.928
+[seed 4302] k=12 deg~10.8(5-12) n_train=129 HELDOUT recomb=0.968 bd=2 meand=1.968
+[seed 4302] DERIV(single-echo trace) HELDOUT recomb=1.000 bd=2 meand=2.000 | single_acc=1.000 max_single_bd=1
+[seed 4303] k= 1 deg~0.9(0-1) n_train=11 HELDOUT recomb=0.752 bd=2 meand=1.752
+[seed 4303] k= 2 deg~1.8(0-2) n_train=22 HELDOUT recomb=0.696 bd=2 meand=1.680
+[seed 4303] k= 3 deg~2.9(2-3) n_train=35 HELDOUT recomb=0.688 bd=2 meand=1.672
+[seed 4303] k= 4 deg~3.7(1-4) n_train=44 HELDOUT recomb=0.728 bd=2 meand=1.728
+[seed 4303] k= 6 deg~5.8(3-6) n_train=70 HELDOUT recomb=0.928 bd=2 meand=1.928
+[seed 4303] k= 8 deg~7.5(4-8) n_train=90 HELDOUT recomb=0.912 bd=2 meand=1.904
+[seed 4303] k=12 deg~10.7(5-12) n_train=128 HELDOUT recomb=0.904 bd=2 meand=1.904
+[seed 4303] DERIV(single-echo trace) HELDOUT recomb=1.000 bd=2 meand=2.000 | single_acc=1.000 max_single_bd=1
+
+=== L2 STEP-0 RESULT ===
+{
+  "experiment": "G1 lever L2 combination-coverage DENSITY STEP-0 cheap kill (H_9127)",
+  "harness": "cloned from state/g1_gamma_engine_native/step0_gamma_bind_kill.py",
+  "config": {
+    "N": 24,
+    "D": 64,
+    "HELDOUT_eval_frac": 0.45,
+    "STEPS": 4000,
+    "LR": 0.003,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "k_sweep": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      12
+    ]
+  },
+  "frozen_bar": "held-out recomb_rate (both i,j in top-2) per arm; LEVER PASS iff bd(kmax)>=2 AND >max_single AND margin_lever>margin_DERIV AND phase-transition k* exists",
+  "arms": {
+    "ADD_flat_k1": {
+      "recomb_rate_mean": 0.6933333333333334,
+      "recomb_rate_seeds": [
+        0.672,
+        0.656,
+        0.752
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.68
+    },
+    "DERIV_single_echo_trace": {
+      "recomb_rate_mean": 1.0,
+      "recomb_rate_seeds": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 2.0
+    },
+    "LEVER_flat_kmax": {
+      "recomb_rate_mean": 0.9359999999999999,
+      "recomb_rate_seeds": [
+        0.936,
+        0.968,
+        0.904
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.936
+    }
+  },
+  "density_curve_recomb_by_k": {
+    "1": {
+      "recomb_rate_mean": 0.6933333333333334,
+      "recomb_rate_seeds": [
+        0.672,
+        0.656,
+        0.752
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.68
+    },
+    "2": {
+      "recomb_rate_mean": 0.6293333333333333,
+      "recomb_rate_seeds": [
+        0.6,
+        0.592,
+        0.696
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.6133333333333333
+    },
+    "3": {
+      "recomb_rate_mean": 0.6853333333333333,
+      "recomb_rate_seeds": [
+        0.648,
+        0.72,
+        0.688
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.6746666666666667
+    },
+    "4": {
+      "recomb_rate_mean": 0.7226666666666667,
+      "recomb_rate_seeds": [
+        0.736,
+        0.704,
+        0.728
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.7173333333333334
+    },
+    "6": {
+      "recomb_rate_mean": 0.9146666666666667,
+      "recomb_rate_seeds": [
+        0.936,
+        0.88,
+        0.928
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.9146666666666665
+    },
+    "8": {
+      "recomb_rate_mean": 0.9279999999999999,
+      "recomb_rate_seeds": [
+        0.944,
+        0.928,
+        0.912
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.9253333333333333
+    },
+    "12": {
+      "recomb_rate_mean": 0.9359999999999999,
+      "recomb_rate_seeds": [
+        0.936,
+        0.968,
+        0.904
+      ],
+      "best_distinct_max": 2,
+      "best_distinct_seeds": [
+        2,
+        2,
+        2
+      ],
+      "mean_distinct_mean": 1.936
+    }
+  },
+  "max_single_floor": 1,
+  "single_acc_mean": 1.0,
+  "phase_transition": {
+    "k_star": 6,
+    "best_single_step_rise": 0.192,
+    "recomb_start_k1": 0.6933,
+    "recomb_end_k12": 0.936,
+    "transition_detected": true
+  },
+  "margins": {
+    "margin_lever_kmax_minus_ADD": 0.2427,
+    "margin_DERIV_minus_ADD": 0.3067
+  },
+  "predictors_rho_sigma_kappa_M": {
+    "rho_echo_residual": 0.0,
+    "rho_note": "both target concepts seen (singles+combos) => min-suff-ctx present => rho~0 (F3 interpolation)",
+    "sigma_partner_diversity_ADD(k1)": 1,
+    "sigma_partner_diversity_LEVER(kmax)": 12,
+    "sigma_DERIV": "inf (single-echo, no partner in step context)",
+    "sigma_note": "sigma == training density k; k=1 => pair-binding FAIL predicted; k=12 => sigma>1 OK",
+    "kappa_copy_locality": 1.0,
+    "delta_copy": 0,
+    "RF": "prompt-local (delta<RF)",
+    "kappa_note": "FLAT prompt names (i,j); target {i,j} = direct in-prompt copy => kappa=1, delta<RF (favorable)",
+    "M_memorization_disadv_L2": 2.0,
+    "M_note": "FLAT target short (|tau|=2) => M small => margin ~ log M weak (UNfavorable; derivtrace M larger via long structured trace)",
+    "predicted_pass_naive_rule": true,
+    "predicted_pass_caveat": "M small (short FLAT target) caps absolute margin; density may lift held-out only to interpolation floor, not beat DERIV structured-target margin"
+  },
+  "LEVER_PASS": false,
+  "VERDICT": "KILL (L2 density additive-FLAT floor: margin_lever 0.243 <= margin_DERIV 0.307 OR no phase-transition (best_rise=0.192,trans=True) OR bd_lever 2 < 2/max_single => FALSIFIED-DIRECTIONAL, NO GPU rent)",
+  "wall_sec": 25.3
+}
+
+wrote /Users/mini/dancinlab/anima/state/g1_lever_step0/L2_coverage_density/result.json

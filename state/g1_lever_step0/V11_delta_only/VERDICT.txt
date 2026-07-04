@@ -1,0 +1,47 @@
+G1 LEVER-1 family / V11 delta-only (delta-encoding) — STEP-0 CHEAP ENGINE-NATIVE KILL
+================================================================================
+VERDICT: KILL (DIRECTIONAL numpy toy — a_engine_native_learning: 303M engine-native NOT run,
+NOT terminal; terminal only after `anima evaluate --py` on live core/ decode).
+
+FROZEN BAR (pre-registered, no post-hoc move): real-G1-homomorphic toy N=24 D=64 H=96
+heldout~0.45, 4000 steps, seeds {7,4302,4303}. combiner held ADDITIVE across all arms
+(lever axis = TARGET FORMAT). metric bd = held-out mean distinct-correct constituents in [0,2].
+Lever PASS iff bd_lever>bd_ADD AND bd_lever>max_single AND margin(lever-ADD)>margin(DERIV-ADD).
+
+HELD-OUT best_distinct (bd) / bd2_rate / max_single, verbatim:
+  ADD   (additive-control): bd=1.9627  seeds[1.976,1.984,1.928]  bd2_rate=0.963  max_single=1.0
+  DERIV (derivtrace baseline): bd=1.8933  seeds[1.864,1.856,1.960]  bd2_rate=0.901  max_single=1.0
+  V11   (delta-only lever): bd=0.9280  seeds[0.912,0.936,0.936]  bd2_rate=0.000  max_single=1.0
+
+MARGINS:
+  DERIV baseline margin (DERIV-ADD) = -0.0693
+  V11 lever margin      (V11-ADD)   = -1.0347
+  lever_minus_deriv                 = -0.9653   => V11 margin << DERIV baseline margin
+
+LEVER_PASS = False  ->  KILL = True.  bd_V11(0.928) < bd_ADD(1.963); bd_V11 < max_single(1.0);
+V11 margin(-1.035) NOT > DERIV margin(-0.069).  KILL on all three clauses.
+
+PREDICTORS (rho/sigma/kappa/M, analytic on target-format construction; seed7 split):
+  ADD : rho=1.00 sigma=1  kappa=0.0 delta_copy=0 RF=999 M=1.0
+  DERIV: rho=0.00 sigma=24 kappa=1.0 delta_copy=1 RF=999 M=2.0
+  V11 : rho=0.023 sigma=1  kappa=0.5 delta_copy=1 RF=999 M=1.0
+Composite predictor rule PASS iff rho~=0 AND sigma>1 AND delta_copy<RF AND high-M-margin.
+  V11 predicted = FAIL: rho~=0 (down, as expected "difference op removes echo") BUT sigma=1
+  (a delta value with a single base-i partner => pair-binding FAIL flag fires) AND M small.
+  -> predicted_pass = False.  ACTUAL pass = False.  PREDICTION HIT.
+  DERIV predicted = PASS (rho0 sigma24 kappa1) -> empirically bd~=1.89 (~2). Predictor HIT.
+  => rho/sigma/kappa/M framework VALIDATED 2/2 arms this run (DERIV pass, V11 fail).
+
+GRADIENT CHECK (finite-diff worst rel-err): ADD 3.6e-8, DERIV 4.5e-8, V11 5.2e-8 (see result.json).
+
+HONESTY CAVEAT (c9, toy-fidelity — must not be hidden):
+  ADD did NOT sit at the real-G1 floor here (bd=1.963, bd2=0.963). Recovering the two ADDENDS
+  from a random-embedding additive sum c=Wa@E[i]+Wb@E[j] is (near-)linearly separable, so the
+  additive control already saturates near bd=2 — unlike the real 303M G1 wall where the composed
+  RESULT keyword is a genuinely JOINT novel token. Consequence: the DERIV baseline margin is ~0
+  (slightly negative, both controls ceiling). The load-bearing result is unaffected and is in fact
+  a-fortiori: V11 delta-only COLLAPSES (bd 0.93, bd2_rate 0, seed-robust) even against a SATURATED
+  additive control — the delta head must compute (j-i) jointly from the fused sum, the exact joint
+  op it cannot do, so only the first constituent i is recovered. V11 is unambiguously KILLED and
+  is NOT a GPU-escalation candidate. Pre-registered ordering V2>DERIV>V11 corroborated at the V11
+  end (V11 worst); DERIV-vs-V2 untested here.

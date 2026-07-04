@@ -1,0 +1,61 @@
+G1 LEVER B3 = V6 x V1 — gamma-via-DATA-channel STEP-0 CHEAP KILL-GATE
+====================================================================
+DIRECTIONAL toy numpy (a_engine_native_learning) — NOT 303M engine-native.
+Pre-screen ONLY: gates GPU spend for gamma trained-constructive-bind (H_1840).
+Terminal verdict forbidden. Harness cloned from V2_micro_trace (HRR dE grad
+finite-diff verified, rel-err 3e-9).
+
+FROZEN BAR (pre-registered, no post-hoc move — c9/p7):
+  N=24 D=64 HELDOUT=0.45 STEPS=4000 seeds{7,4302,4303} depths{2,3}
+  metric = held-out best_distinct.  2 control arms REQUIRED = ADD + DERIV.
+  LEVER PASS = bd>=2 AND bd>max_single AND margin(arm-ADD) > margin(DERIV-ADD).
+  SYNERGY    = bd(V6xV1) > bd(V1)+bd(V6)-bd(DERIV)   (2x2 interaction; DERIV=(0,0)).
+
+ARMS (held-out best_distinct / max_single, 3-seed mean, VERBATIM):
+             depth-2                       depth-3
+  ADD    bd=1.9407 ms=1.00  margin +0.0000  | bd=2.8889 ms=1.00  margin +0.0000  (additive control / near-ceiling)
+  DERIV  bd=1.7222 ms=1.00  margin -0.2185  | bd=2.3889 ms=1.00  margin -0.5000  (baseline; DERIV-margin ref)
+  V1     bd=1.9926 ms=1.00  margin +0.0519  | bd=2.9778 ms=1.00  margin +0.0889  (skeleton bind-in-data, single-path)
+  V6     bd=1.9778 ms=1.00  margin +0.0370  | bd=2.9926 ms=1.00  margin +0.1037  (multipath confluence, no bind)
+  V6xV1  bd=2.0000 ms=1.00  margin +0.0593  | bd=3.0000 ms=1.00  margin +0.1111  (B3 combined = gamma-data probe)
+  seeds V6xV1: d2 [2.0,2.0,2.0]  d3 [3.0,3.0,3.0]
+
+LEVER-BAR VERDICT (V6xV1 primary arm): PASS at BOTH depths.
+  d2: bd 2.0>=2 ∧ bd>ms(1.0) ∧ margin +0.0593>0 ∧ +0.0593 > deriv -0.2185  -> PASS
+  d3: bd 3.0>=2 ∧ bd>ms(1.0) ∧ margin +0.1111>0 ∧ +0.1111 > deriv -0.5000  -> PASS
+  => per the frozen pre-screen rule = ESCALATE-eligible (gamma-via-DATA differs from
+     gamma-OPERATOR which floored in the reusable harness: BIND 0.79 < ADD 0.94).
+
+SYNERGY VERDICT: NO (sub-additive / SATURATED).
+  synergy_lift d2 = -0.2481, d3 = -0.5815  (both < 0).
+  Reason: V1 alone AND V6 alone EACH already hit the recomb ceiling (bd ~2.0/3.0),
+  so combining them cannot exceed sum-minus-base. AB ≈ A ≈ B ≈ ceiling = redundant,
+  NOT multiplicative. Bind-in-data and multipath are substitutes here, not complements.
+
+PREDICTORS rho/sigma/kappa/M (V6xV1):  d2 {rho 0.0, sigma_raw 9.167, sigma_eff inf,
+  kappa 0.25, M 2.0}  d3 {rho 0.0, sigma_raw 15.417, sigma_eff inf, kappa 0.389, M 3.0}.
+  rho=0 (all trace arms; anchors cover N). sigma_eff=inf for V6xV1 (multipath bind
+  decouples content<->role = variable indirection). M=d for bound arms.
+
+CRITERION PREDICTIVE TEST (predicted_pass vs measured_pass, 8 arm-cells):
+  d2: DERIV F/F HIT · V1 T/F MISS(bd 1.9926 just <2.0, margin +) · V6 F/F HIT · V6xV1 T/T HIT
+  d3: DERIV T/F MISS(M>=2 alone overpredicts baseline) · V1 T/T HIT · V6 T/T HIT · V6xV1 T/T HIT
+  = 6/8 HIT (75%) < 4/5 (80%) threshold -> criterion NOT YET predictive.
+  The two misses expose that M>=2 alone is insufficient: DERIV (sum-pool, no bind/dedup)
+  floors despite M=2. The operative predictor is the bind/dedup CHANNEL, not trace length.
+
+HONEST CAVEATS (a_toy_scale_recheck / DPI meta-law):
+  * This is an EASY recomb toy where ADD itself nearly solves it (1.94/2.89). The lever
+    win over ADD is SMALL (+0.05..+0.11). Same shape as sibling V2 (ADD ~= ceiling).
+  * V1/V6xV1 bound-pool DECODE uses canonical sorted binding + FIXED role keys, i.e. the
+    decoder is HANDED the slot/role structure for free. A real 303M byte-mouth must LEARN
+    and EMIT roles rather than receive fixed keys — transfer UNVERIFIED (the STEP-1 question).
+  * gamma-OPERATOR was cheap-gate 0/3 (H_1840). gamma-DATA-channel clears this pre-screen,
+    but ONLY as a directional signal; not an operator-vs-data resolution at scale.
+
+BOTTOM LINE:
+  V6xV1 (gamma-via-data) PASSES the STEP-0 pre-screen bar (beats ADD & DERIV-margin, bd>=2)
+  -> ESCALATE-eligible.  BUT SYNERGY = NO (saturated: V1 and V6 each already ceiling).
+  The B3 COMBINATION buys nothing over either single lever. If escalating gamma-data,
+  escalate the CHEAPER single arm (V1 skeleton bind-in-data OR V6 multipath), not the B3
+  product. Predictor 6/8 -> refine (bind/dedup channel, not M-length) before PREDICTIVE.
