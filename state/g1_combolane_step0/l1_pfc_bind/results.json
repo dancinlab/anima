@@ -1,0 +1,141 @@
+{
+  "bindON_K1": {
+    "d": 512,
+    "M": 100,
+    "K": 1,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": true,
+    "chance": 0.01,
+    "reachable_acc": 1.0,
+    "unreachable_acc": 0.0575,
+    "unreachable_baseline": 0.01
+  },
+  "bindON_K2": {
+    "d": 512,
+    "M": 100,
+    "K": 2,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": true,
+    "chance": 0.01,
+    "reachable_acc": 1.0,
+    "unreachable_acc": 0.055,
+    "unreachable_baseline": 0.02
+  },
+  "bindON_K3": {
+    "d": 512,
+    "M": 100,
+    "K": 3,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": true,
+    "chance": 0.01,
+    "reachable_acc": 1.0,
+    "unreachable_acc": 0.0675,
+    "unreachable_baseline": 0.03
+  },
+  "bindON_K4": {
+    "d": 512,
+    "M": 100,
+    "K": 4,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": true,
+    "chance": 0.01,
+    "reachable_acc": 1.0,
+    "unreachable_acc": 0.0675,
+    "unreachable_baseline": 0.04
+  },
+  "bindON_K6": {
+    "d": 512,
+    "M": 100,
+    "K": 6,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": true,
+    "chance": 0.01,
+    "reachable_acc": 1.0,
+    "unreachable_acc": 0.1075,
+    "unreachable_baseline": 0.06
+  },
+  "bindOFF_K1": {
+    "d": 512,
+    "M": 100,
+    "K": 1,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": false,
+    "chance": 0.01,
+    "reachable_acc": 0.0225,
+    "unreachable_acc": 0.0275,
+    "unreachable_baseline": 0.01
+  },
+  "bindOFF_K2": {
+    "d": 512,
+    "M": 100,
+    "K": 2,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": false,
+    "chance": 0.01,
+    "reachable_acc": 0.03375,
+    "unreachable_acc": 0.05,
+    "unreachable_baseline": 0.02
+  },
+  "bindOFF_K3": {
+    "d": 512,
+    "M": 100,
+    "K": 3,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": false,
+    "chance": 0.01,
+    "reachable_acc": 0.0275,
+    "unreachable_acc": 0.08,
+    "unreachable_baseline": 0.03
+  },
+  "bindOFF_K4": {
+    "d": 512,
+    "M": 100,
+    "K": 4,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": false,
+    "chance": 0.01,
+    "reachable_acc": 0.024375,
+    "unreachable_acc": 0.09,
+    "unreachable_baseline": 0.04
+  },
+  "bindOFF_K6": {
+    "d": 512,
+    "M": 100,
+    "K": 6,
+    "n_roles": 8,
+    "trials": 400,
+    "bind_on": false,
+    "chance": 0.01,
+    "reachable_acc": 0.011666666666666667,
+    "unreachable_acc": 0.065,
+    "unreachable_baseline": 0.06
+  },
+  "_summary": {
+    "probe": "L1 PFC variable-binding lane (HRR circular-conv), STANDALONE",
+    "canonical_K": 2,
+    "reachable_acc_K2": 1.0,
+    "unreachable_acc_K2": 0.055,
+    "reachable_minus_unreachable": 0.945,
+    "ablated_reachable_acc_K2": 0.03375,
+    "reachable_minus_ablated": 0.96625,
+    "chance": 0.01,
+    "fooled_by_form": false,
+    "ablation_causal_collapse": true,
+    "verdict": "BIND",
+    "honesty": "DIRECTIONAL (mini numpy toy, NOT 303M engine-native)",
+    "distinct_from_H1816_H1823": [
+      "separate lane (binding store != mouth)",
+      "disjoint objective (algebraic unbind, no CE into mouth)",
+      "mouth reads only (NN decode, never trained to bind)"
+    ]
+  }
+}
