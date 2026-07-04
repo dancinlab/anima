@@ -1,6 +1,6 @@
 # H_9131 — trunk-objective 재설계: 비교환(non-commutative) target 레버 (G1 재조합 최후 미검 축)
 
-> **tier:** 📋 **PRE-REGISTERED / DESIGN** (Fable 5 형식설계 + STEP-0 mini in-flight wf_aa95feaf) · **wired:** N/A
+> **tier:** 🧱 **STEP-0.5 FALSIFIED — trunk-objective family(census (d)) CLOSED** — ② de-risk(optimizer-robust closed-form R²)로 top-1도 DPI-ceiling·①γ REFRIED·③mitosis DPI-FLOOR = **G1 재조합벽 = 진짜 능력천장**(measurement/lane/objective/target 축 전수 falsify, DPI 메타법칙 target 축서도 유지). 잔여 저비용 레버 = coverage-density(GPU 무관)만. · **wired:** N/A · STEP-1 GPU 미발사(신호 소멸, ~1 H100-day 절약)
 >
 > **맥락:** H_9129 생물렌즈 캠페인이 G1 재조합벽 = G6 반증벽 = **하나의 trunk-objective 벽**으로 수렴 확정(real 303M engine-native). readout/lane/decode/consequence-lane 축(census a,b,c) 전수 floor. 🌌 DPI 메타법칙(구조증명): 결합 연산자는 target이 부품들의 *교환가능 bag/히스토그램*일 때 by-construction INERT — **레버=readout 아니라 target(비교환 상호작용항)**. 유일 미검 = census (d) trunk-objective. 오너 질문 "학습목표를 어떻게 바꾸나" → Fable 형식설계.
 
@@ -29,6 +29,26 @@ clean 4-cell 코퍼스(HF `dancinlab/anima-corpus-*`)서 개념-슬롯 쌍 (a,b)
 - **FROZEN BAR (tune-to-green 금지 p7·seeds {7,4302,4303}):** held-out R²(bind)−R²(additive) ≥ δ ∧ R²(bind)−R²(shuffle) ≥ δ, 2/3 seed (δ 측정 전 고정).
 - **판정**: additive/shuffle이 bind 따라잡으면 → 잔차가 몰래 분해가능/암기 = **$0 FALSIFIED, GPU 미발사** → DPI가 target 축서도 천장 = **G1 재조합벽=진짜 능력 천장 종결**. bind만 두 통제 지배 → 비교환-target 레버 실재 → `anima evaluate --py` 실 303M held-out G1(reach/unreach) engine-native STAGE-2 GPU(explicit-go) 승격.
 - **정직 (a_toy_scale_recheck·honesty)**: A도 floor 가능. 어느 쪽이든 terminal-eligible 진전(반증가능 설계). "trunk-objective 바꾸면 G1 열린다"는 아직 가설이지 보장 아님.
+
+## ★ STEP-0 결과 (2026-07-05 · wf_aa95feaf · mini $0 numpy DIRECTIONAL · 3후보)
+**3조건(REWARDS-RECOMB ∧ DPI-escape ∧ not-falsified) 완전충족 = 0.** DPI 메타법칙 전수 정합(레버=비교환 TARGET이지 loss-form/growth/readout/bind-OP 아님).
+| 후보 | verdict | 근거(verbatim) |
+|---|---|---|
+| **① γ 대조-결합** | 🔴 **REFRIED**(2 kill) | c1 reach-earned(γ≥CE+.10) **0/4**(γ가 CE보다 나쁨 3/4)·c3 trunk≠readout(γ→trunk vs →readout isolate) **0/4 measured-NULL** = H_1602 유일 구별점(trunk 라우팅) 반증. H_1602(readout-aux)·H_1840(연산자) 정합. additive는 order-capable **arch**가 이기지 γ objective 아님. |
+| **② non-commutative target** | 🟡 **DIRECTIONAL (top-1)** | EXP-B(실 한국어 2.6M어절, **model-free** cycle census, optimizer-무관): 어순 3-cycle_frac **0.289 ≫ total-order-null 0.0** = additive 못 덮는 29% 비가법 target **실재**. EXP-A(합성)는 by-construction 명시·존재증명서 제외(L3 vi⊙vj 함정 회피). **단** "objective가 held-out 재조합 REWARD하나"는 미증명 — model-based earned +0.24가 **optimizer-fragile**(SGD 0↔Adam +0.24)+반대칭 bilinear가 additive subsume=conflated → 정직 폐기. |
+| **③ mitosis 커리큘럼** | 🧱 **DPI-FLOOR** | weight-level MLP가 train 1.0 완전암기해도 held-out **chance**(0.18/0.22)=H_1835 in-context floor와 동일. 성장은 오히려 해로움(C heldout 0.133<chance). 진단 F(비교환 operator)만 heldout 1.0+shuffle 0.40 급락 → 레버는 operator/target이지 growth 아님. 구성상 H_1835와 distinct하나 결과가 그 구별을 반증. |
+- **방법론 교훈 2**: ① model-based earned는 optimizer-fragile → **model-free 척도(intransitivity census)만 신뢰**. ② 반대칭 bilinear는 additive를 subsume → "binding>additive" acc-gap은 non-additivity 증거 **부적격**.
+- **top-1 = ② + STEP-1 설계**: trunk에 보조 방향성-예측 head `L=CE+λ·L_dir`를 **model-free census로 고른 intransitive 3-cycle pair 부분집합에만**, 통제=total-order-only arm + SHUFFLE arm frozen 사전등록, 판정=`anima evaluate --py` G1 composed_distinct+G6(p7 no-perplexity), ablation λ→0 붕괴. **⚠️ 비용 gate(rent=spend)**: objective-축 GPU 발사 前 memory `g1-coverage-density`(GPU 무관 저비용 레버)와 ROI 비교 권장(오너 go 필요). ①③ GPU=bar FAIL 미인가.
+- **evidence**: `state/trunk_obj_step0/{SYNTH.md,gamma_constructive_bind,noncommutative_target,mitosis_curriculum}/`
+
+## ★★ STEP-0.5 de-risk = ② FALSIFIED-DPI-ceiling (2026-07-05 · a5c32ced · $0 mini · optimizer-robust)
+STEP-0가 ② 위에 남긴 유일 크랙("REWARDS-RECOMB이 model-based earned서 optimizer-fragile SGD 0↔Adam +0.24로 미증명")을 **closed-form lstsq R²(optimizer 원천차단, Fable A 얼린-잔차)**로 결정적으로 가름 = **비교환 target objective는 held-out 재조합을 additive(total-order) 이상으로 REWARD 안 함.**
+- **3-arm held-out R²(frozen bar δ=0.10·seeds {7,4302,4303}, K=32)**: bind 0.27/0.30/0.18 vs **강한 total-order additive f(a)−f(b) 0.48/0.49/0.52** → gap_bind−additive **3 seed 전부 음수(−0.21/−0.19/−0.33)** → bind가 강 baseline 못 이김. gap_bind−shuffle는 양수(실 페어링은 씀, additive 너머 일반화 X). train_bind 0.65 ≫ held 0.25 = bind overfit(암기)만. n_pass=**0**.
+- **크랙 해소**: STEP-0의 +0.24는 **약한 baseline 착시** — bind(0.27)−sym_ref(z_a+z_b 대칭, 0.06)=+0.21 가짜 PASS. STEP-0 note "반대칭 bilinear가 additive를 subsume" 함정 정확 확인, 정직한 total-order baseline이 +0.24 소거.
+- **용량 스윕 강건**: 전 앵커 용량서 bind held-out 우위 max +0.009(≪δ)=FALSIFIED는 용량 artifact 아님. intransitive(cycle_frac 0.092≫0) 실재하나 held-out서 **암기이지 재조합 아님**. leak-check 전수 통과(조합-disjoint·feature-disjoint·held R²≠1.0·shuffle 저값).
+- **★결론**: DPI 메타법칙이 **target 축서도 유지** → **census (d) trunk-objective family CLOSED** → G1 재조합벽 = readout·lane·decode·objective·**target** 축 전수 falsify = **진짜 능력천장 방향**(303M byte-LM trunk). STEP-1 GPU 미정당화(신호 소멸, ~1 H100-day 절약 = de-risk의 정확한 값어치). 유일 잔여 저비용 레버 = [[g1-coverage-density-nl-bytes-lever]](GPU 무관 조합-커버리지 코퍼스).
+- **정직**: mini numpy=DIRECTIONAL(303M 아님, a_toy_scale_recheck) 단 negative(보수) 방향. reopen: 새 저비용 target-구성/coverage 축이 additive baseline을 통제하 이기면 재개.
+- **evidence**: `state/trunk_obj_step0/noncommutative_derisk/{PREREG.md,VERDICT.md,derisk.py+RESULT.json,sensitivity.py+SENSITIVITY.json,census.*}`
 
 ## artifacts
 - `state/trunk_obj_step0/FABLE_DESIGN.md` (Fable 5 형식설계 전문) · `FABLE_INSTRUCTION.md` (지시서)

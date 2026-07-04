@@ -1,0 +1,46 @@
+{
+  "note": "robustness sweep over anchor/bilinear dim; frozen bar (K=32) unchanged",
+  "sweep": [
+    {
+      "K": 4,
+      "n_bilinear": 6,
+      "held_additive": 0.2899,
+      "held_bind": 0.299,
+      "held_shuffle": 0.0557,
+      "train_bind": 0.3209,
+      "mean_gap_bind_minus_add": 0.0091,
+      "bind_beats_add": true
+    },
+    {
+      "K": 8,
+      "n_bilinear": 28,
+      "held_additive": 0.4393,
+      "held_bind": 0.4411,
+      "held_shuffle": 0.0761,
+      "train_bind": 0.4684,
+      "mean_gap_bind_minus_add": 0.0018,
+      "bind_beats_add": true
+    },
+    {
+      "K": 16,
+      "n_bilinear": 120,
+      "held_additive": 0.4716,
+      "held_bind": 0.4415,
+      "held_shuffle": 0.0679,
+      "train_bind": 0.527,
+      "mean_gap_bind_minus_add": -0.03,
+      "bind_beats_add": false
+    },
+    {
+      "K": 32,
+      "n_bilinear": 496,
+      "held_additive": 0.4986,
+      "held_bind": 0.2539,
+      "held_shuffle": -0.0147,
+      "train_bind": 0.6475,
+      "mean_gap_bind_minus_add": -0.2447,
+      "bind_beats_add": false
+    }
+  ],
+  "conclusion": "some capacity lets bind edge additive -> revisit"
+}

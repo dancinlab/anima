@@ -1,0 +1,45 @@
+{
+  "chance": 0.16666666666666666,
+  "additive_floor_heldout": 0.08888888888888889,
+  "additive_floor_train": 0.20068027210884354,
+  "results": {
+    "A_additive_floor": {
+      "train": 0.20068027210884354,
+      "heldout": 0.08888888888888889,
+      "shuffle": null
+    },
+    "B_baseline_fixed": {
+      "train": 1.0,
+      "heldout": 0.17777777777777778,
+      "shuffle": 0.2
+    },
+    "C_growth_curriculum": {
+      "train": 0.7755102040816326,
+      "heldout": 0.13333333333333333,
+      "shuffle": 0.17777777777777778
+    },
+    "D_abl_growthOFF_curr": {
+      "train": 1.0,
+      "heldout": 0.2222222222222222,
+      "shuffle": 0.16666666666666666
+    },
+    "E_abl_growth_currSHUF": {
+      "train": 0.9081632653061225,
+      "heldout": 0.17777777777777778,
+      "shuffle": 0.2
+    },
+    "F_diag_comp_operator": {
+      "train": 1.0,
+      "heldout": 1.0,
+      "shuffle": 0.4
+    }
+  },
+  "config": {
+    "K": 6,
+    "N_PRIM": 8,
+    "STEPS": 9000,
+    "seed": 0,
+    "n_test_pairs": 15,
+    "n_train_pairs": 34
+  }
+}

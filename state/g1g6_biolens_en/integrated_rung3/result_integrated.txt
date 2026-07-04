@@ -1,0 +1,37 @@
+# H_9129 INTEGRATED rung-3 — engine-native WIRED measurement (303M h1129)
+ckpt=/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin
+engine: real ByteGPT-303M d=1024 nlay=24 nh=16 (core/decode.py == anima evaluate --py ops)
+seed=20260705 DIM=2048 ACTIVE=40 STEPS=6 KWTA=40 NOGO=0.3 E_SCALE=6.0 preproc=center_zscore
+chains=8 len=6; genuine_edges=40 distractors=40
+
+## chains
+  chain0: consciousness -> theory -> information -> integrated -> tries -> quantify
+  chain1: experience -> conscious -> systems -> physical -> emergent -> behavior
+  chain2: model -> byte -> level -> korean -> english -> approach
+  chain3: system -> mechanism -> homeostasis -> prevents -> exactly -> collapsing
+  chain4: learning -> enabling -> models -> data -> language -> bytes
+  chain5: prediction -> brain -> neural -> processes -> problem -> asks
+  chain6: creates -> tension -> dynamic -> similar -> minds -> experiences
+  chain7: text -> starts -> great -> generating -> coherent -> responses
+
+## L2 content-gate (Go/NoGo over genuine premises + distractors)
+  admitted_ON=55  admitted_OFF(all)=80
+  gate_stats: tp(genuine admitted)=55 fp(distractor admitted)=0 tn(distractor rejected)=25 fn(genuine rejected)=0
+
+## reach (same-chain gap>=2, held-out)  vs  unreach (cross-chain)
+  FULL (L1+L2+L5):  reach=0.9881  unreach=0.5097  gap=+0.4784
+  lane_off(empty W): reach=0.0000
+
+## ABLATIONS (drop = fraction of FULL gap lost; CAUSAL iff drop>=0.50)
+  L1-OFF (no role-bind):    reach=0.4903 unreach=0.1759 gap=+0.3144  drop=+0.343  causal=False
+  L2-OFF (admit distractrs):reach=0.9884 unreach=0.7491 gap=+0.2394  drop=+0.500  causal=False
+  L5-OFF (single hop):      reach=0.0025 unreach=0.1397 gap=-0.1372  drop=+1.287  causal=True
+  RAW  (no centering):      reach=0.9884 unreach=0.6566 gap=+0.3319  drop=+0.306  centering_load_bearing=False
+
+## VERDICT (vs PREREG.md frozen bar)
+  gap>0.15                = True  (gap=0.4784)
+  all 3 ablations CAUSAL  = False  (L1=False L2=False L5=True)
+  centering load-bearing  = False
+  engine_native           = True (real 303M h1129 reps via core/decode.py)
+  LIVE-OP                 = True (calls core/wm_bind_lane + content_gate_lane + hippo_lane)
+  >>> INTEGRATED rung-3 = DIRECTIONAL (component INERT or centering not load-bearing)

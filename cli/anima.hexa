@@ -2693,7 +2693,17 @@ fn anima_consciousness_mode(ckpt: string) {
         if g_emit && byte_len(g_text) > 0 {
             let mut refcands = [g_text]
             if cfg.refsel {
-                let recalled = immune_memory_recall_text(immune, _afs_clip(g_text, 64))
+                // Recall the grounded fact via the SESSION ANCHOR (mem_text), NOT the drifted
+                // emit (g_text). Querying with g_text was a bug: when the mouth drifts, recall on
+                // the drifted key ABSTAINS (err > recall_thr) → no grounded candidate → rs=-1 →
+                // the contradiction is NEVER corrected (rung4 daemon-integrated RED, ON==OFF).
+                // The anchor query grounds to the substrate's own bound fact (immune seeded at
+                // mem_text, :610), so recall FIRES the grounded truth while g_text still contradicts
+                // it — decoupling recall-firing (anchor query) from contradiction-detection (emit
+                // candidate). This is the real substrate op, NOT the #2991 harness's hardcoded
+                // `recalled = mem_text`; it generalizes to a multi-fact store (recall returns the
+                // fact nearest the context anchor).
+                let recalled = immune_memory_recall_text(immune, mem_text)
                 if recalled != "" { refcands.push(recalled) }
             }
             refsel_rs = referent_select_text(igrow, refcands, mem_text)   // -1 = all contradict → keep incumbent
