@@ -13485,6 +13485,13 @@
         "value": "G1 재조합벽의 첫 engine-native lift = derivation-trace data-format(target 시퀀스를 풀이과정 자체로 재작성). warm-FT h1129 303M 2-arm 통제 anima evaluate --py: DERIV G1 PASS(bd=2>ms=1)∧FLAT FAIL(bd=2,ms=3) on held-out 쌍(memorization-free). CE=echo 메타법칙이 target=derivation엔 미적용(echo=derivation 생성=composition). 20+ decode family+전 학습 family 못뚫은 벽을 data-format 축이 열음.",
         "threshold": "재발조건: G1을 objective/readout/coverage 축으로 재시도 전에 — 첫 lift는 data-format(derivation-trace target) 축에서 나왔다. 단 bd=2 marginal·held-out 1쌍·G2 novelty 미측정이라 robustness(multi held-out 쌍+G2 corpus+paraphrase-invariance) 확인 전엔 DIRECTIONAL-POSITIVE지 terminal-flip 아님. 확인되면 G1 첫 escape.",
         "source": "state/g1_train_wallbreak/derivtrace/RESULT.md"
+      },
+      {
+        "id": "anima-hexa-2",
+        "state": "pos-conv",
+        "value": "새 anima <verb>(dispatch branch argv[0]==\"X\" + anima_X_mode fn)를 cli/anima.hexa 에 추가하면 파생 표면 2곳이 stale 로 방치되는 반복 결함 — (a) anima_usage() 배너(usage 라인+modes 섹션), (b) ARCHITECTURE.json cli component-map 노드. corpus(#2940)뿐 아니라 evaluate·serialize·sweep 도 그 cli 노드엔 미반영이던 것으로 확인=반복. a_verified_must_wire lockstep-drift 의 verb-표면 판.",
+        "threshold": "재발조건=verb 추가 PR 이 dispatch 만 넣고 usage/ARCHITECTURE 미갱신. 해결=같은 PR 에서 3곳 lockstep(dispatch + anima_usage 배너 + ARCHITECTURE cli 노드), 박제 전 grep 'argv[0] ==' 분기 전부가 배너에 있는지 대조. detail 은 ≤300 자(arch-big-cell-blocks-commits, 초과분 child).",
+        "source": "cli/anima.hexa"
       }
     ]
   }
