@@ -1,0 +1,59 @@
+=== finite-difference gradcheck (G_trunk loss) ===
+  gradcheck E  : max|ana-num|=3.63e-07
+  gradcheck W1 : max|ana-num|=3.90e-07
+  gradcheck b2 : max|ana-num|=9.23e-07
+  gradcheck U  : max|ana-num|=1.69e-06
+  gradcheck Pa : max|ana-num|=5.11e-10
+
+########## GROUP target (S_4, N=24, chance=0.0417) ##########
+-- seed 0 | train=230 heldout=346 (noncomm=268) --
+   ADD      train=0.317 ho=0.009 ho_nc=0.007 reach=0.019 unreach=0.0426 distinct= 3
+   CE       train=1.000 ho=0.017 ho_nc=0.022 reach=0.017 unreach=0.0427 distinct= 5
+   G_trunk  train=1.000 ho=0.012 ho_nc=0.011 reach=0.018 unreach=0.0427 distinct= 3
+   G_read   train=1.000 ho=0.009 ho_nc=0.011 reach=0.014 unreach=0.0429 distinct= 3
+-- seed 1 | train=230 heldout=346 (noncomm=272) --
+   ADD      train=0.343 ho=0.012 ho_nc=0.004 reach=0.025 unreach=0.0424 distinct= 4
+   CE       train=1.000 ho=0.009 ho_nc=0.011 reach=0.016 unreach=0.0428 distinct= 3
+   G_trunk  train=1.000 ho=0.014 ho_nc=0.015 reach=0.016 unreach=0.0428 distinct= 5
+   G_read   train=1.000 ho=0.017 ho_nc=0.018 reach=0.019 unreach=0.0427 distinct= 6
+-- seed 2 | train=230 heldout=346 (noncomm=273) --
+   ADD      train=0.317 ho=0.020 ho_nc=0.004 reach=0.025 unreach=0.0424 distinct= 7
+   CE       train=1.000 ho=0.003 ho_nc=0.004 reach=0.012 unreach=0.0430 distinct= 1
+   G_trunk  train=1.000 ho=0.017 ho_nc=0.022 reach=0.019 unreach=0.0426 distinct= 6
+   G_read   train=1.000 ho=0.012 ho_nc=0.011 reach=0.017 unreach=0.0427 distinct= 4
+-- seed 3 | train=230 heldout=346 (noncomm=276) --
+   ADD      train=0.291 ho=0.017 ho_nc=0.000 reach=0.033 unreach=0.0421 distinct= 6
+   CE       train=1.000 ho=0.014 ho_nc=0.014 reach=0.019 unreach=0.0427 distinct= 5
+   G_trunk  train=1.000 ho=0.009 ho_nc=0.007 reach=0.013 unreach=0.0429 distinct= 3
+   G_read   train=1.000 ho=0.017 ho_nc=0.014 reach=0.020 unreach=0.0426 distinct= 6
+
+########## SHUFFLE target (S_4, N=24, chance=0.0417) ##########
+-- seed 0 | train=230 heldout=346 (noncomm=318) --
+   ADD      train=0.361 ho=0.032 ho_nc=0.025 reach=0.033 unreach=0.0420 distinct= 7
+   CE       train=1.000 ho=0.049 ho_nc=0.050 reach=0.041 unreach=0.0417 distinct=10
+   G_trunk  train=1.000 ho=0.049 ho_nc=0.053 reach=0.046 unreach=0.0415 distinct= 8
+   G_read   train=1.000 ho=0.040 ho_nc=0.041 reach=0.041 unreach=0.0417 distinct=10
+-- seed 1 | train=230 heldout=346 (noncomm=324) --
+   ADD      train=0.422 ho=0.046 ho_nc=0.037 reach=0.040 unreach=0.0417 distinct=12
+   CE       train=1.000 ho=0.035 ho_nc=0.031 reach=0.037 unreach=0.0419 distinct= 9
+   G_trunk  train=1.000 ho=0.035 ho_nc=0.034 reach=0.035 unreach=0.0420 distinct= 9
+   G_read   train=1.000 ho=0.038 ho_nc=0.037 reach=0.039 unreach=0.0418 distinct=11
+-- seed 2 | train=230 heldout=346 (noncomm=318) --
+   ADD      train=0.409 ho=0.035 ho_nc=0.028 reach=0.038 unreach=0.0418 distinct= 9
+   CE       train=1.000 ho=0.029 ho_nc=0.028 reach=0.024 unreach=0.0424 distinct= 8
+   G_trunk  train=1.000 ho=0.040 ho_nc=0.041 reach=0.039 unreach=0.0418 distinct= 8
+   G_read   train=1.000 ho=0.020 ho_nc=0.016 reach=0.024 unreach=0.0424 distinct= 6
+-- seed 3 | train=230 heldout=346 (noncomm=310) --
+   ADD      train=0.383 ho=0.046 ho_nc=0.032 reach=0.046 unreach=0.0415 distinct=14
+   CE       train=1.000 ho=0.049 ho_nc=0.052 reach=0.052 unreach=0.0412 distinct=12
+   G_trunk  train=1.000 ho=0.035 ho_nc=0.039 reach=0.042 unreach=0.0417 distinct= 9
+   G_read   train=1.000 ho=0.069 ho_nc=0.068 reach=0.055 unreach=0.0411 distinct=15
+
+=== FROZEN BAR (FREEZE.md) ===
+  c1_reach_earned_ge_CE+.10: 0/4
+  c2a_DPI_escape_ge_ADD+.15: 0/4
+  c2b_noncomm_ADD<=.55_and_Gtrunk>ADD+.15: 0/4
+  c3_trunk_ne_readout_ge_Gread+.08: 0/4
+  c4_SHUFFLE_advantage_must_vanish (want 0): 0/4
+  => VERDICT: FAIL | STEP-1 engine-native authorized: False
+wrote result.json

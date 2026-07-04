@@ -1,0 +1,54 @@
+
+########## FACTORED GROUP (N=24 P=6 C=12, chance=0.0833) ##########
+-- seed 0 | train=230 heldout=346 (noncomm=291) --
+   ADD      train=0.557 ho=0.249 ho_nc=0.203 reach=0.220 unreach=0.0339 distinct= 8
+   CE       train=1.000 ho=0.876 ho_nc=0.876 reach=0.858 unreach=0.0062 distinct=11
+   G_trunk  train=1.000 ho=0.697 ho_nc=0.777 reach=0.680 unreach=0.0139 distinct=11
+   G_read   train=1.000 ho=0.777 ho_nc=0.756 reach=0.770 unreach=0.0100 distinct=11
+-- seed 1 | train=230 heldout=346 (noncomm=223) --
+   ADD      train=0.596 ho=0.332 ho_nc=0.229 reach=0.314 unreach=0.0298 distinct=11
+   CE       train=1.000 ho=0.873 ho_nc=0.883 reach=0.857 unreach=0.0062 distinct=11
+   G_trunk  train=1.000 ho=0.760 ho_nc=0.897 reach=0.732 unreach=0.0116 distinct=11
+   G_read   train=1.000 ho=0.896 ho_nc=0.897 reach=0.871 unreach=0.0056 distinct=11
+-- seed 2 | train=230 heldout=346 (noncomm=249) --
+   ADD      train=0.652 ho=0.332 ho_nc=0.217 reach=0.323 unreach=0.0294 distinct=12
+   CE       train=1.000 ho=0.821 ho_nc=0.819 reach=0.809 unreach=0.0083 distinct=12
+   G_trunk  train=1.000 ho=0.867 ho_nc=0.904 reach=0.837 unreach=0.0071 distinct=12
+   G_read   train=1.000 ho=0.850 ho_nc=0.843 reach=0.835 unreach=0.0072 distinct=12
+-- seed 3 | train=230 heldout=346 (noncomm=289) --
+   ADD      train=0.557 ho=0.355 ho_nc=0.273 reach=0.278 unreach=0.0314 distinct=11
+   CE       train=1.000 ho=0.925 ho_nc=0.910 reach=0.906 unreach=0.0041 distinct=12
+   G_trunk  train=1.000 ho=0.841 ho_nc=0.903 reach=0.820 unreach=0.0078 distinct=12
+   G_read   train=1.000 ho=0.919 ho_nc=0.903 reach=0.906 unreach=0.0041 distinct=12
+
+########## FACTORED SHUFFLE (N=24 P=6 C=12, chance=0.0833) ##########
+-- seed 0 | train=230 heldout=346 (noncomm=0) --
+   ADD      train=0.400 ho=0.087 ho_nc=nan reach=0.079 unreach=0.0401 distinct=10
+   CE       train=1.000 ho=0.069 ho_nc=nan reach=0.070 unreach=0.0404 distinct=11
+   G_trunk  train=1.000 ho=0.072 ho_nc=nan reach=0.072 unreach=0.0403 distinct=11
+   G_read   train=1.000 ho=0.064 ho_nc=nan reach=0.067 unreach=0.0406 distinct=12
+-- seed 1 | train=230 heldout=346 (noncomm=0) --
+   ADD      train=0.391 ho=0.078 ho_nc=nan reach=0.088 unreach=0.0397 distinct= 8
+   CE       train=1.000 ho=0.084 ho_nc=nan reach=0.082 unreach=0.0399 distinct=12
+   G_trunk  train=1.000 ho=0.101 ho_nc=nan reach=0.100 unreach=0.0392 distinct=12
+   G_read   train=1.000 ho=0.069 ho_nc=nan reach=0.079 unreach=0.0401 distinct= 9
+-- seed 2 | train=230 heldout=346 (noncomm=0) --
+   ADD      train=0.391 ho=0.081 ho_nc=nan reach=0.084 unreach=0.0398 distinct=12
+   CE       train=1.000 ho=0.090 ho_nc=nan reach=0.085 unreach=0.0398 distinct= 9
+   G_trunk  train=1.000 ho=0.095 ho_nc=nan reach=0.083 unreach=0.0398 distinct= 8
+   G_read   train=1.000 ho=0.069 ho_nc=nan reach=0.073 unreach=0.0403 distinct= 9
+-- seed 3 | train=230 heldout=346 (noncomm=0) --
+   ADD      train=0.413 ho=0.090 ho_nc=nan reach=0.079 unreach=0.0400 distinct= 9
+   CE       train=1.000 ho=0.075 ho_nc=nan reach=0.084 unreach=0.0398 distinct=11
+   G_trunk  train=1.000 ho=0.101 ho_nc=nan reach=0.093 unreach=0.0394 distinct=12
+   G_read   train=1.000 ho=0.084 ho_nc=nan reach=0.083 unreach=0.0399 distinct=11
+
+=== FROZEN BAR (FREEZE2.md) ===
+  c1_reach_earned_ge_CE+.10: 0/4
+  c2a_DPI_escape_ge_ADD+.15: 4/4
+  c2b_noncomm_ADD<=.55_and_Gtrunk>ADD+.15: 4/4
+  c3_trunk_ne_readout_ge_Gread+.08: 0/4
+  c4_headroom_any_arm>=.20 (else INCONCLUSIVE): 4/4
+  c5_SHUFFLE_advantage_must_vanish (want 0): 0/4
+  => VERDICT: FAIL | STEP-1 authorized: False
+wrote result_factored.json

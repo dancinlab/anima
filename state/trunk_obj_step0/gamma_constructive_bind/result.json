@@ -1,0 +1,364 @@
+{
+  "config": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "d": 24,
+    "h": 64,
+    "steps": 4000,
+    "lr": 0.003,
+    "tau": 0.1,
+    "gamma": 1.0,
+    "out": "result.json"
+  },
+  "N": 24,
+  "chance": 0.041666666666666664,
+  "runs": {
+    "GROUP": {
+      "0": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 268,
+        "ADD": {
+          "train_acc": 0.3174,
+          "ho_acc": 0.0087,
+          "ho_noncomm_acc": 0.0075,
+          "reach": 0.0192,
+          "unreach": 0.04264,
+          "distinct": 3,
+          "final_loss": 1.9477
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0173,
+          "ho_noncomm_acc": 0.0224,
+          "reach": 0.0172,
+          "unreach": 0.04273,
+          "distinct": 5,
+          "final_loss": 0.0023
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0116,
+          "ho_noncomm_acc": 0.0112,
+          "reach": 0.0175,
+          "unreach": 0.04272,
+          "distinct": 3,
+          "final_loss": 0.0378
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0087,
+          "ho_noncomm_acc": 0.0112,
+          "reach": 0.0144,
+          "unreach": 0.04285,
+          "distinct": 3,
+          "final_loss": 0.0618
+        }
+      },
+      "1": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 272,
+        "ADD": {
+          "train_acc": 0.3435,
+          "ho_acc": 0.0116,
+          "ho_noncomm_acc": 0.0037,
+          "reach": 0.0247,
+          "unreach": 0.0424,
+          "distinct": 4,
+          "final_loss": 1.9564
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0087,
+          "ho_noncomm_acc": 0.011,
+          "reach": 0.0158,
+          "unreach": 0.04279,
+          "distinct": 3,
+          "final_loss": 0.0018
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0145,
+          "ho_noncomm_acc": 0.0147,
+          "reach": 0.0161,
+          "unreach": 0.04278,
+          "distinct": 5,
+          "final_loss": 0.0236
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0173,
+          "ho_noncomm_acc": 0.0184,
+          "reach": 0.0188,
+          "unreach": 0.04266,
+          "distinct": 6,
+          "final_loss": 0.063
+        }
+      },
+      "2": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 273,
+        "ADD": {
+          "train_acc": 0.3174,
+          "ho_acc": 0.0202,
+          "ho_noncomm_acc": 0.0037,
+          "reach": 0.0254,
+          "unreach": 0.04238,
+          "distinct": 7,
+          "final_loss": 1.9669
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0029,
+          "ho_noncomm_acc": 0.0037,
+          "reach": 0.0115,
+          "unreach": 0.04298,
+          "distinct": 1,
+          "final_loss": 0.0019
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0173,
+          "ho_noncomm_acc": 0.022,
+          "reach": 0.0192,
+          "unreach": 0.04264,
+          "distinct": 6,
+          "final_loss": 0.0385
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0116,
+          "ho_noncomm_acc": 0.011,
+          "reach": 0.0169,
+          "unreach": 0.04275,
+          "distinct": 4,
+          "final_loss": 0.085
+        }
+      },
+      "3": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 276,
+        "ADD": {
+          "train_acc": 0.2913,
+          "ho_acc": 0.0173,
+          "ho_noncomm_acc": 0.0,
+          "reach": 0.0326,
+          "unreach": 0.04206,
+          "distinct": 6,
+          "final_loss": 2.01
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0145,
+          "ho_noncomm_acc": 0.0145,
+          "reach": 0.0188,
+          "unreach": 0.04266,
+          "distinct": 5,
+          "final_loss": 0.0018
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0087,
+          "ho_noncomm_acc": 0.0072,
+          "reach": 0.0133,
+          "unreach": 0.0429,
+          "distinct": 3,
+          "final_loss": 0.0408
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0173,
+          "ho_noncomm_acc": 0.0145,
+          "reach": 0.02,
+          "unreach": 0.04261,
+          "distinct": 6,
+          "final_loss": 0.0692
+        }
+      }
+    },
+    "SHUFFLE": {
+      "0": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 318,
+        "ADD": {
+          "train_acc": 0.3609,
+          "ho_acc": 0.0318,
+          "ho_noncomm_acc": 0.0252,
+          "reach": 0.033,
+          "unreach": 0.04204,
+          "distinct": 7,
+          "final_loss": 1.8015
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0491,
+          "ho_noncomm_acc": 0.0503,
+          "reach": 0.0414,
+          "unreach": 0.04168,
+          "distinct": 10,
+          "final_loss": 0.0016
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0491,
+          "ho_noncomm_acc": 0.0535,
+          "reach": 0.0461,
+          "unreach": 0.04147,
+          "distinct": 8,
+          "final_loss": 0.0249
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0405,
+          "ho_noncomm_acc": 0.0409,
+          "reach": 0.0406,
+          "unreach": 0.04171,
+          "distinct": 10,
+          "final_loss": 0.0332
+        }
+      },
+      "1": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 324,
+        "ADD": {
+          "train_acc": 0.4217,
+          "ho_acc": 0.0462,
+          "ho_noncomm_acc": 0.037,
+          "reach": 0.0404,
+          "unreach": 0.04172,
+          "distinct": 12,
+          "final_loss": 1.6825
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0347,
+          "ho_noncomm_acc": 0.0309,
+          "reach": 0.0366,
+          "unreach": 0.04189,
+          "distinct": 9,
+          "final_loss": 0.0019
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0347,
+          "ho_noncomm_acc": 0.034,
+          "reach": 0.0351,
+          "unreach": 0.04195,
+          "distinct": 9,
+          "final_loss": 0.0412
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0376,
+          "ho_noncomm_acc": 0.037,
+          "reach": 0.0389,
+          "unreach": 0.04179,
+          "distinct": 11,
+          "final_loss": 0.0736
+        }
+      },
+      "2": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 318,
+        "ADD": {
+          "train_acc": 0.4087,
+          "ho_acc": 0.0347,
+          "ho_noncomm_acc": 0.0283,
+          "reach": 0.0381,
+          "unreach": 0.04182,
+          "distinct": 9,
+          "final_loss": 1.7771
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0289,
+          "ho_noncomm_acc": 0.0283,
+          "reach": 0.0237,
+          "unreach": 0.04245,
+          "distinct": 8,
+          "final_loss": 0.0019
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0405,
+          "ho_noncomm_acc": 0.0409,
+          "reach": 0.0385,
+          "unreach": 0.0418,
+          "distinct": 8,
+          "final_loss": 0.0378
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0202,
+          "ho_noncomm_acc": 0.0157,
+          "reach": 0.0245,
+          "unreach": 0.04242,
+          "distinct": 6,
+          "final_loss": 0.0442
+        }
+      },
+      "3": {
+        "n_train": 230,
+        "n_ho": 346,
+        "n_ho_noncomm": 310,
+        "ADD": {
+          "train_acc": 0.3826,
+          "ho_acc": 0.0462,
+          "ho_noncomm_acc": 0.0323,
+          "reach": 0.0456,
+          "unreach": 0.0415,
+          "distinct": 14,
+          "final_loss": 1.7156
+        },
+        "CE": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0491,
+          "ho_noncomm_acc": 0.0516,
+          "reach": 0.052,
+          "unreach": 0.04122,
+          "distinct": 12,
+          "final_loss": 0.0017
+        },
+        "G_trunk": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0347,
+          "ho_noncomm_acc": 0.0387,
+          "reach": 0.0419,
+          "unreach": 0.04166,
+          "distinct": 9,
+          "final_loss": 0.0413
+        },
+        "G_read": {
+          "train_acc": 1.0,
+          "ho_acc": 0.0694,
+          "ho_noncomm_acc": 0.0677,
+          "reach": 0.0552,
+          "unreach": 0.04108,
+          "distinct": 15,
+          "final_loss": 0.0544
+        }
+      }
+    }
+  },
+  "frozen_bar": {
+    "clauses": {
+      "c1_reach_earned_ge_CE+.10": "0/4",
+      "c2a_DPI_escape_ge_ADD+.15": "0/4",
+      "c2b_noncomm_ADD<=.55_and_Gtrunk>ADD+.15": "0/4",
+      "c3_trunk_ne_readout_ge_Gread+.08": "0/4",
+      "c4_SHUFFLE_advantage_must_vanish (want 0)": "0/4"
+    },
+    "verdict": "FAIL",
+    "step1_gpu_authorized": false
+  }
+}

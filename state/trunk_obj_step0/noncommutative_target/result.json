@@ -1,0 +1,51 @@
+{
+  "bars": {
+    "A_binding_beats_additive": "held-out acc(bilinear) - acc(additive) >= +0.15",
+    "A_shuffle_kills_it": "SHUFFLE derangement collapses earned to <= +0.03",
+    "A_ablation_commutative": "commutative(bag) target => earned <= +0.03",
+    "B_noncommutative_exists": "real corpus: residual-after-additive AUC >= 0.60 (order info additive can't hold)",
+    "B_recombination_holdout": "real corpus: bilinear earned on HELD-OUT pairs >= +0.05 AUC over additive"
+  },
+  "expA": {
+    "noncommutative_target": {
+      "add_train": 0.5835,
+      "add_hold": 0.5132,
+      "bil_train": 1.0,
+      "bil_hold": 0.9397,
+      "earned_hold": 0.4266
+    },
+    "shuffle_control": {
+      "add_hold": 0.4991,
+      "bil_hold": 0.4906,
+      "earned_hold": -0.0085
+    },
+    "commutative_ablation": {
+      "add_hold": 0.9793,
+      "bil_hold": 0.9868,
+      "earned_hold": 0.0075
+    }
+  },
+  "expB": {
+    "modelfree_cycle_census": {
+      "triangles": 1266,
+      "three_cycles": 366,
+      "cycle_frac": 0.2891,
+      "shuffle_null_frac": 0.5291,
+      "interp": "cycle_frac~0 => total-order/additive (DPI-FLOOR); >>0 & <shuffle => genuine non-additive structure"
+    },
+    "additive_leftness": {
+      "train_acc": 0.8359,
+      "heldout_acc": 0.5311
+    },
+    "additive+bilinear": {
+      "train_acc": 1.0,
+      "heldout_acc": 0.7713
+    },
+    "earned_heldout": 0.2402,
+    "earned_train": 0.1641,
+    "additive_fits_train_frac": 0.8359,
+    "strongly_directional_frac": 0.9291,
+    "P_pairs": 2411,
+    "CAVEAT": "model-based earned is OPTIMIZER-FRAGILE (SGD run gave earned~0, Adam gave +0.24); antisym-bilinear SUBSUMES additive leftness so 'earned' conflates better-fit vs non-additivity. Trust the model-free cycle census."
+  }
+}
