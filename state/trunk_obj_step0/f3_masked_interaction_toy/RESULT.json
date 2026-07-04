@@ -42,5 +42,6 @@
     }
   ],
   "bar": "held-out R^2: joint > additive+0.10 AND > shuffle+0.10, >=2/3 seeds",
-  "interpretation": "Unexpected: tiny NN does NOT generalize non-additive c(a,b) \u2014 would suggest a deeper limit worth re-examining."
+  "interpretation": "Unexpected: tiny NN does NOT generalize non-additive c(a,b) \u2014 would suggest a deeper limit worth re-examining.",
+  "honesty_note": "verdict-integrity: train R^2~0.2 = UNDERFIT (HIDDEN=64, 2500 step too small for tanh(a\u2299b)*sign target). verdict CAPACITY-LIMIT is INVALID \u2014 toy did not reach universal-approx regime. F3 $0 toy is INCONCLUSIVE on capacity; the rung is GPU-gated by nature (masked-interaction CE target requires trunk retrain). $0 toy cannot answer F3."
 }
