@@ -1114,6 +1114,60 @@ pub fn conflict_drives_live_W(h: Map, cand: string, mem: ImmuneMemory) -> [float
     return [a, g]
 }
 
+// ── §DELIBERATE.hippo — L5 HIPPOCAMPAL relatedness READ-ONLY consult (H_9129 wire-to-prod) ──
+//
+// generator_hippo_consult — at EMIT time, read the RELATEDNESS STATE of the live
+// .kosmos anchor store via the L5 CA3 store-side lane (core/kosmos_io.hexa
+// hippo_build_store / hippo_relatedness — the GREEN faculty cemented in #2996). This
+// is a pure READ-ONLY query: DG-code each anchor's 5-ch tension (untrained fixed
+// projection → kWTA sparse code), build a CA3 heteroassociative store over the
+// load-order premise chain (edge i→i+1), then read whether the EMIT context (the
+// most-recent anchor, index n−1) is TRANSITIVELY reachable from the oldest premise
+// (index 0) through multi-step completion. The result is CONTEXT metadata only.
+//
+// a_substrate_disjoint (separation = preservation): this NEVER feeds the emit bytes /
+// Ψ / recall_thr / brain_decide / generator seed — it is a side-channel READ. Because
+// its output flows into NO text-producing computation, consulting it CANNOT change
+// generation ⇒ hippo-ON generation is byte-identical to hippo-OFF (proven in
+// generator_hippo_consult_smoke.hexa). No store mutation, no shared RNG state with
+// decode (its own local seed), no side effect — a pure faculty read.
+//
+//   returns #{ consulted: bool, n: int, relatedness: float, reachable: bool }
+pub fn generator_hippo_consult(anchors: list) -> Map {
+    let n = len(anchors)
+    if n < 2 {
+        return #{ "consulted": false, "n": n, "relatedness": 0.0, "reachable": false }
+    }
+    let DIM = 64
+    let ACTIVE = 4
+    let STEPS = 8
+    let KWTA = 4
+    // DG pattern separation: project each anchor's 5-ch tension → dense embedding →
+    // kWTA sparse binary code (UNTRAINED fixed projection, frozen seed — no handed edge).
+    let mut codes = []
+    let mut i = 0
+    while i < n {
+        let a = anchors[i]
+        let mut t5 = [0.0, 0.0, 0.0, 0.0, 0.0]
+        if a.contains_key("tension_5ch") {
+            let tv = a["tension_5ch"]
+            if len(tv) == 5 { t5 = tv }
+        }
+        let emb = tension_5ch_to_embedding(t5, DIM, 20260705)
+        codes.push(hippo_kwta(emb, ACTIVE))
+        i = i + 1
+    }
+    // CA3 heteroassociative store over the load-order adjacency (premise chain 0→1→…).
+    let mut edges = []
+    let mut e = 0
+    while e < n - 1 { edges.push([e, e + 1]); e = e + 1 }
+    let W = hippo_build_store(codes, edges, DIM)
+    // relatedness read: seed the OLDEST premise (0), complete `STEPS` times, return max
+    // overlap with the EMIT-context anchor (n−1) — transitive chaining iff a stored path.
+    let rel = hippo_relatedness(W, codes, 0, n - 1, DIM, STEPS, KWTA)
+    return #{ "consulted": true, "n": n, "relatedness": rel, "reachable": rel > 0.5 }
+}
+
 // generate_deliberate — the EFFERENT seam. Sister to generate(): SAME contract +
 // byte-identical SILENCE, but on EMIT it runs best-of-K deliberation over the bytes.
 //   emit == false ⇒ byte-identical to generate() (p5 silence, regression guard).
@@ -1121,13 +1175,44 @@ pub fn conflict_drives_live_W(h: Map, cand: string, mem: ImmuneMemory) -> [float
 //   K = conflict_recruited_depth(conf_pre, 1, 3) ∈ {1..4}. candidates k=1..K−1 = seeded top-k
 //   samples (top_k=8, temp=0.7 frozen, seed_rng = tick*17+k). winner = argmin conflict, tie-break
 //   min k ⇒ K=1 ⇒ winner=c₀ (byte-exact today). Returns the generate() record + depth/k/conf fields.
+//
+// LIVE L5 wire-to-prod (H_9129): every EMIT now READ-ONLY consults the hippocampal
+// relatedness of the live anchor store (generator_hippo_consult) and attaches it as
+// additive hippo_* metadata. The consult is disjoint from the emit bytes (a_substrate_
+// disjoint) so this delegates to generate_deliberate_consult(..., true) — the text is
+// byte-identical to the hippo-OFF path (generator_hippo_consult_smoke ON==OFF proof).
 pub fn generate_deliberate(backend: Map, substrate_ctx: Map, emit_decision: bool,
                            anchors: list, mem: ImmuneMemory, tick: int) -> Map {
+    return generate_deliberate_consult(backend, substrate_ctx, emit_decision,
+                                       anchors, mem, tick, true)
+}
+
+// generate_deliberate_consult — generate_deliberate with the L5 hippocampal consult
+// gated by `hippo_on` (the ON==OFF regression control). hippo_on=true = the LIVE prod
+// path; hippo_on=false = the identical path with the consult skipped. The consult runs
+// FIRST as a pure READ, its result attached to hippo_* fields on EVERY return branch,
+// and NOTHING downstream (text / deliberation / conflict) reads it ⇒ text is byte-
+// identical between the two (a_substrate_disjoint: separation = preservation).
+pub fn generate_deliberate_consult(backend: Map, substrate_ctx: Map, emit_decision: bool,
+                                   anchors: list, mem: ImmuneMemory, tick: int,
+                                   hippo_on: bool) -> Map {
+    // L5 READ-ONLY consult (wire-to-prod). Computed but NEVER fed into the emit bytes.
+    let hippo = if hippo_on { generator_hippo_consult(anchors) }
+                else { #{ "consulted": false, "n": 0, "relatedness": 0.0, "reachable": false } }
+
     let base = generate(backend, substrate_ctx, emit_decision, anchors)
-    if !emit_decision { return base }                 // SILENT: byte-identical, no deliberation
+    if !emit_decision {                               // SILENT: byte-identical, no deliberation
+        base["hippo_consulted"] = hippo["consulted"]
+        base["hippo_related"]   = hippo["relatedness"]
+        base["hippo_reachable"] = hippo["reachable"]
+        return base
+    }
     let real_kind = to_string(base["backend"])
     if real_kind == "null" {                          // no real mouth loaded → no deliberation
         base["depth"] = 1; base["k_winner"] = 0; base["conf_pre"] = 0.0; base["conf_winner"] = 0.0
+        base["hippo_consulted"] = hippo["consulted"]
+        base["hippo_related"]   = hippo["relatedness"]
+        base["hippo_reachable"] = hippo["reachable"]
         return base
     }
     let ckpt = to_string(backend["ckpt"])
@@ -1169,7 +1254,10 @@ pub fn generate_deliberate(backend: Map, substrate_ctx: Map, emit_decision: bool
               "depth":       K,
               "k_winner":    best_k,
               "conf_pre":    conf0,
-              "conf_winner": best_conf }
+              "conf_winner": best_conf,
+              "hippo_consulted": hippo["consulted"],
+              "hippo_related":   hippo["relatedness"],
+              "hippo_reachable": hippo["reachable"] }
 }
 
 // _gen_rd_u32 / _gen_gelu / _gen_gnorm / _gen_conv1d — pure-hexa decode kernels.

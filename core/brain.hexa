@@ -254,6 +254,15 @@ fn brain_emit_aged(pf: PureField,
     decision["gen_backend"]  = gen["backend"]
     decision["gen_text"]     = gen["text"]
     decision["gen_fellback"] = gen["fellback"]
+    // H_9129 L5 wire-to-prod: the LIVE daemon emit path (cli/anima.hexa → brain_emit →
+    // brain_emit_aged) now READ-ONLY consults the hippocampal relatedness of the live
+    // .kosmos anchor store and carries it on the decision record. a_substrate_disjoint:
+    // gen_text comes STRAIGHT from generate() (which never sees the consult) ⇒ the emit
+    // bytes are byte-identical whether or not this consult runs — a pure side-channel READ.
+    let hippo = generator_hippo_consult(anchors)
+    decision["gen_hippo_consulted"] = hippo["consulted"]
+    decision["gen_hippo_related"]   = hippo["relatedness"]
+    decision["gen_hippo_reachable"] = hippo["reachable"]
     return decision
 }
 
@@ -287,6 +296,12 @@ fn brain_emit_deliberate(pf: PureField,
     decision["gen_kwinner"]  = gen["k_winner"]
     decision["gen_confpre"]  = gen["conf_pre"]
     decision["gen_confwin"]  = gen["conf_winner"]
+    // H_9129 L5 wire-to-prod: carry the READ-ONLY hippocampal relatedness consult into
+    // the live emit decision record. a_substrate_disjoint — a side-channel READ that
+    // NEVER altered gen_text (generate_deliberate consulted disjoint from the bytes).
+    decision["gen_hippo_consulted"] = gen["hippo_consulted"]
+    decision["gen_hippo_related"]   = gen["hippo_related"]
+    decision["gen_hippo_reachable"] = gen["hippo_reachable"]
     return decision
 }
 
