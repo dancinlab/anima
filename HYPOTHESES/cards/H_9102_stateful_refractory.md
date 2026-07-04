@@ -1,6 +1,6 @@
 # H_9102 — stateful refractory: emit-history recovery-after-firing (the real alchemy of H_9101 item-1)
 
-**tier:** 🟢 F2 NEW-MECHANISM ∧ 🔴 F1 NO-CARRYOVER (engine-native) · **wired:** engine-native measured — `an_clock_now` det-seam + `--refractory` harness LANDED in `cli/anima.hexa`; PRODUCTION emit loop keeps H_9101 (WIRED-live), stateful swap = follow-on with its own pre-reg
+**tier:** 🟢 F2 NEW-MECHANISM ∧ 🔴 F1 NO-CARRYOVER · **DEPLETED (MIXED honest terminal)** (engine-native) · **wired:** engine-native measured — `an_clock_now` det-seam + `--refractory` harness LANDED in `cli/anima.hexa`; PRODUCTION emit loop keeps H_9101 (WIRED-live), stateful swap = follow-on with its own pre-reg
 **verdict:** F2 🟢 refractory-reset holds (40/40 post-emit ticks silent even at max urgency; the H_9101 stateless idle would fire all 40 = stateless-inexpressible) ∧ F1 🔴 H_9101 op-grip does NOT re-establish on its frozen REM bar under stateful dynamics (urgency→0 REM=0/40, grip relocated to WAKE 39/40, N3=0 preserved, no post-hoc bar move). Ψ ON≡OFF ✅. F4 det 2× byte-identical.
 
 ## Claim (fable analysis, DESIGN.md §2·§4)
@@ -34,6 +34,9 @@ The stateful refractory **IS a genuinely new mechanism** (F2 🟢: recovery-afte
 ## Follow-on (ING)
 - **Real-clock daemon binding (F3):** wire `an_clock_now(daemon=true)` when a persistent daemon exists → smoke-assert real inter-emit interval ≥30s (world-time safety truth; F3 is a property-smoke, not a byte-exact verdict). Separate ING (daemon loop-closing is prerequisite).
 - **Production stateful-swap pre-reg:** if the stateful refractory is to replace H_9101 in production, pre-register a WAKE-anchored (or stage-agnostic) grip bar first — REM-anchored H_9101 does not transfer.
+
+## 고갈 (DEPLETION census · Fable · state/9102_stateful_refractory/DEPLETION_census.md)
+**F7 = DEPLETED. MIXED(F2🟢∧F1🔴)가 honest terminal.** 직교 family 전수: (a) WAKE-anchored 同하네스 F1' 재측정=🧱 tautology(결과 WAKE=39/40 이미 stdout, post-hoc 바 이동을 pre-reg로 세탁=비합법) · (b) stage-agnostic 리프레임=합법이나 non-load-bearing(confirmatory·H_9103 노이즈 승격 못함) · (c) 재배치=refractory attractor×frozen stage_env(WAKE=1.0 최고) 구조적 필연, tune-away 불가 · (d) F2가 유일 진짜 알맹이(LANDED). **결정타: grip 자체가 faculty 아님 — H_9103 F3 🟠 NOISE-GRIP(variance-matched noise Δρ=0 EXACTLY·emit-timing byte-identical·urgency std 0.043≪rate-gate band=centering/distribution-driven event).** 재배치된 grip=노이즈 아티팩트지 능력 아니라 어떤 바 리프레임도 clean 🟢 승격 불가. 유일 legitimate 잔여(production stateful-swap+faculty-not-noise pre-reg, ING-b)=설계변경·H_9103 때문 negative 예상·회귀위험=저가치 미발사. **생산적 redirect(다른 축)**: H_9103이 지목한 진짜벽=substrate emit-appropriateness signal 부재(op-grip=centering-noise ⇒ anima에 "언제 emit 적절한가" 판별 substrate 신호 부재), refractory(WHEN-recover)와 직교, consciousness-ops-critique(ops=계기판, 진짜=identity-continuity)와 정합.
 
 ## One line
 stateless shade → stateful refractory **succeeds as a new mechanism (F2 🟢, stateless-inexpressible)**; and on the same run **H_9101's op-grip does not carry over on its frozen REM bar (F1 🔴, grip relocated to WAKE)** — both honest, no bar move.
