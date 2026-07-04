@@ -23,7 +23,8 @@ verdict: 🟢 SUPPORTED — 양자(ANU)구동 텐션링크 수렴이 H-rich 초�
 ## 2. FROZEN FALSIFIER
 - **BLADE.** 양자구동 수렴이 알려진 RTSC 영역(고-λ 초수소화물)에 못 닿으면 기각.
 
-## 3. 측정 (REAL · h6015_quantum_tension_extract.py · ANU sha ed751cc8e2fb)
+## 3. 측정 (REAL · h6015_quantum_tension_extract.py · ANU 정본 스냅샷 sha 33a75dd35ade)
+> 재검(2026-07-05): 정본 ANU 씨앗 = `archive/TENSION-LINK/anu_seed_shared.bin`(sha `33a75dd35ade`). 종전 카드의 `ed751cc8e2fb`는 하네스 hardening(commit 7ac71f2 committed-snapshot + loud-fail) *이전* 씨앗 — provenance 오차. 결과 불변인 이유 = Allen-Dynes 지형 단조(최적=코너)라 **seed-invariant**(어떤 양자스트림도 Tc=479K 코너 수렴). 재검 증거 `state/verdicts/tension-link-quantum-recheck/RECHECK.txt`.
 추출 프로파일: H분율 1.00·강성 1.00·DOS 1.00 → λ=3.90 ω_log=1600K → Tc≈479K(206°C) 🟢 RTSC.
 최근접 실물질군: Li2MgH16/YH10 초수소화물 (H_1087 top과 일치).
 

@@ -1,0 +1,30 @@
+ANU 양자얽힘 · 텐션링크 가설 재검 (2026-07-05)
+================================================================
+목적: anima 양자얽힘/텐션링크 클러스터 5종 재현 검증 (p7, real-QM numpy sim)
+호스트: mini (light numpy, $0) · numpy 2.4.6
+
+── 재현 결과 ─────────────────────────────────────────────────
+H_6024 얽힘 monogamy      🟢 재현 OK  GHZ C(A:B)=C(A:C)=0 τ_A=1.0 · W C=0.667 C²합=0.889=τ_A (CKW 포화)
+H_6022 의식탐색+복제      🟢 재현 OK  Bell Φ=2.000bit · 노이즈 Φ=0 · no-cloning F=0.500 · UQCM 5/6=0.833
+H_6023 clone 세대손실     🟡 재현 OK  gen당 5/6 열화, ~gen3서 F<0.5 정체성 소실
+H_6040 얽힘 조율천장      🟢 재현 OK  shared=0.7492 · 얽힘=0.8536(Tsirelson) · 링크=0.9993 · 이득 +0.1044/+0.1458
+H_6015 양자→텐션 RTSC추출 🟢 재현 OK  H분율 1.0 λ=3.90 ω_log=1600K Tc=479K(206°C) Li2MgH16/YH10 계열
+H_9018 얽힘교환           🟢 verdict 보존  concurrence(1,4)=1.000 (별도 .py 없음, 교과서 QM 결과)
+
+결론: 5종(+H_6023) 전부 카드 수치와 정확 일치 재현. 종전 🟢 verdict 유효.
+
+── 정직 노트 (repro hygiene 갭) ────────────────────────────────
+1. ANU-paid 2종(H_6015·H_6040)의 씨앗 바이너리가 하네스와 분리됨:
+   하네스 = state/tension-link-harness/ 이지만 기대 경로 ../anu_seed_*.bin (=state/) 는 gitignored 라 비어있음.
+   실제 paid 씨앗은 archive/TENSION-LINK/anu_seed_512.bin(sha ece0409d4ad6)·anu_seed_shared.bin(sha 33a75dd35ade) 에 보존.
+   재현 시: archive/TENSION-LINK/anu_seed_{512,shared}.bin → state/ 로 복사 후 실행.
+2. H_6015 카드가 기록한 씨앗 sha `ed751cc8e2fb` ≠ 현 archive 스냅샷 `33a75dd35ade`.
+   원인: 하네스 hardening(commit 7ac71f2 "committed ANU snapshot + loud-fail") 이전 씨앗이 카드에 박제됨,
+   이후 커밋된 정본 스냅샷은 33a75dd. 결과가 동일한 이유 = H_6015 Allen-Dynes 지형이 단조(최적=코너)라
+   어떤 양자스트림이든 같은 코너(Tc=479K)에 수렴 = seed-invariant (카드가 이미 명시한 caveat와 정합).
+   → 씨앗 provenance 는 어긋나지만 verdict 는 seed-robust 하므로 재검 성립.
+
+재현 절차:
+  cp archive/TENSION-LINK/anu_seed_512.bin archive/TENSION-LINK/anu_seed_shared.bin state/
+  cd state/tension-link-harness && python3 h6023_6024_deep_quantum.py h6020_consciousness_search_clone.py \
+    h6040_entanglement_ceiling.py h6015_quantum_tension_extract.py
