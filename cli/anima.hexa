@@ -1678,8 +1678,8 @@ fn anima_consciousness_mode(ckpt: string) {
     let tr_full   = anima_tr_adj_full()
     let tr_conf   = anima_tr_pop_conflicted(0.95)   // severe over-emit conflict (Ψ_init = 1.0)
     let tr_calm   = anima_tr_pop_calm()             // already Ψ=½ (4/8 emit) — no resolution needed
-    let tr_cfgON  = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false }
-    let tr_cfgOFF = EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false }
+    let tr_cfgON  = EngineConfig { mitosis: true, engine: "conv", topo_couple: true, savant: false, forward_model: false, refsel: false }
+    let tr_cfgOFF = EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false, forward_model: false, refsel: false }
     let tr_rConf  = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
     let tr_rCalm  = tension_resolve_depth(tr_calm, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
     let tr_rAbl   = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgOFF)
