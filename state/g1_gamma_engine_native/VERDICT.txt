@@ -1,0 +1,75 @@
+================================================================================
+G1 LEVER-3 — gamma trained-constructive-bind — STEP-0 CHEAP ENGINE-NATIVE KILL
+================================================================================
+date: 2026-07-04   host: mini (numpy 2.4.6, torch-free = terminal-eligible)   cost: $0
+H: H_9124 (lever-3) / H_1840 (gamma trained-constructive-bind)
+scope: TOY controlled discriminator => DIRECTIONAL; kill => FALSIFIED-DIRECTIONAL-
+       CONFIRMED (family engine-native closure already on record; NO GPU rent).
+
+------------------------------------------------------------------------------
+WHAT WAS TESTED (the ONE untested nuance — NOT a re-run of H_1819/H_1823)
+------------------------------------------------------------------------------
+A *trained CONSTRUCTIVE combiner* (circular convolution / HRR, dimension-
+preserving, invertible) placed IN THE TRUNK and co-trained under the task loss,
+vs an additive control and a Hadamard sanity arm. Arms differ ONLY in the trunk
+combiner op h = combine(Wa@a, Wb@b); embeddings, projections, and a nonlinear
+unbinding readout are learned identically. Task mirrors the real G1 gate: two
+concepts -> must emit BOTH constituents' keywords (best_distinct>=2), measured on
+HELD-OUT composed pairs (never seen composed; seen as singles + train-composed).
+Fair-shot for bind: learned projections, invertible operator, nonlinear readout,
+full convergence (train_recomb=1.000 & single_acc=1.000 ALL arms/seeds).
+
+Distinct from prior census: H_1818/H_1819 = Hadamard READOUT (+ co-trained
+InfoNCE objective) ; H_1823 = circular-conv READOUT ; H_1816 = additive ;
+H_1602 = recomb OBJECTIVE. This tests the trained constructive combiner as the
+trunk mixer itself — the last un-fired substrate-combiner coordinate.
+
+------------------------------------------------------------------------------
+FROZEN BAR (set before measuring; no post-hoc move — c9/p7)
+------------------------------------------------------------------------------
+metric = held-out composed recombination rate (both k_i,k_j in readout top-2).
+KILL     iff BIND_recomb <= ADD_recomb  OR  BIND_recomb < 0.05
+ESCALATE iff BIND_recomb > ADD_recomb by a clear margin AND BIND high  -> STEP-1.
+
+------------------------------------------------------------------------------
+RESULT (N=24 concepts, D=64, heldout=0.45, 4000 steps, seeds {7,4302,4303})
+------------------------------------------------------------------------------
+  arm   held-out recomb (mean)     per-seed              train  single
+  ADD   0.941  <== BEST            0.944 / 0.920 / 0.960  1.000  1.000
+  BIND  0.795                      0.864 / 0.712 / 0.808  1.000  1.000
+  HAD   0.731                      0.760 / 0.792 / 0.640  1.000  1.000
+  bind - add margin = -0.147   (NEGATIVE all 3 seeds)
+
+VERDICT: 🔴 KILL — FALSIFIED-DIRECTIONAL-CONFIRMED.
+  The trained constructive-bind combiner does NOT beat additive on held-out
+  recombination — it is STRICTLY WORSE (all 3 seeds), and Hadamard worse still.
+  The lever's sole premise (a constructive/invertible combiner opens recombination
+  additive cannot) is falsified: additive superposition of learned near-orthogonal
+  codes is the better recombiner; the distributed circ-conv code is HARDER to
+  unbind for unseen pairs. Matches the FAIR cheap-gate (bind !> additive, 0/3),
+  H_1819 (co-trained Hadamard+obj wins_both 0/3), and the DPI meta-law
+  (operator-shape invariant). NO full-303M GPU rent — escalation premise absent.
+
+------------------------------------------------------------------------------
+HONEST SCOPE (c9)
+------------------------------------------------------------------------------
+- This clean toy shows ADDITIVE ITSELF recombines well (0.94) on orthogonal
+  concept tokens — the real G1 wall (natural-text next-byte CE trunk-state not
+  cleanly carrying the combination) does NOT manifest in a clean toy. What the toy
+  cleanly establishes is the RELATIVE lever-3 claim: a trained constructive
+  combiner adds NO recombination capacity over additive (it subtracts). That is
+  exactly and only what STEP-0 needed to gate the GPU rent.
+- Full engine-native TERMINAL for the binding-operator family is already on record
+  (H_1818/1819/1823/1816/1602, engine-native-py G1 best_distinct=0). STEP-0 here
+  closes the last substrate-combiner coordinate as DIRECTIONAL-CONFIRMED; combined
+  with that record, binding-operator family = engine-native confident 🧱 (a_break_
+  the_wall: operator family exhausted across additive/Hadamard/circconv, readout
+  AND trunk-combiner AND objective, mouth AND substrate).
+- Remaining G1 leverage is NOT a binding operator: (i) recomb-reward trunk-training
+  OBJECTIVE at GPU-scale (H_1602, engine-native-py terminal, explicit go), (ii)
+  compositional-corpus coverage-density threshold (external An&Du R^2 0.73), (iii)
+  owner frame-break: move recombination off the mouth into brain_decide/agent.
+
+teardown: N/A (no GPU rented — STEP-0 killed on mini CPU, $0).
+artifacts: state/g1_gamma_engine_native/{step0_gamma_bind_kill.py, step0_result.json, step0_run.log, VERDICT.txt}
+================================================================================
