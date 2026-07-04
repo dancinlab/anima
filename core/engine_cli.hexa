@@ -213,8 +213,11 @@ pub fn engine_cli_resolve_engine(arg: [string]) -> string {
 //  engine decodes directly via core/decode.hexa + generator.hexa L3 slot.)
 
 // ── top-level parse: raw argv → EngineConfig ──────────────────────────────────
-// The single ENGINE-config entry point. launch.hexa (or any caller) calls this
-// ONCE with the process argv and threads the returned config into the engine.
+// The single ENGINE-config entry point. cli/anima.hexa (the canonical entry, or any
+// caller) calls this ONCE with the process argv and threads the returned config into
+// the engine. (The pre-consolidation root launch.hexa launcher was retired — it had no
+// `evaluate` branch, so `anima evaluate <clm>` fell through to consciousness mode, and
+// it hardcoded ~/Dev; the canonical single entry is cli/anima.hexa.)
 pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
     EngineConfig {
         mitosis:     engine_cli_resolve_mitosis(arg),
