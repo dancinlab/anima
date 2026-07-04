@@ -1260,6 +1260,11 @@
                                 "name": "8 family → 가설 카드 매핑 (2표면 완비)",
                                 "id": "exocon-family-cards",
                                 "detail": "F1 afferent-return→H_9104🔴 · F2 consequence-learn→H_9109🔴 · F3 W4-ground→H_9123🔵WIRED · F4 purpose→F2흡수(카드불요) · F5 diff-LLM→H_9111: layer-1 이미측정(raw D=1.0)·layer-2=🔴LIVE-BUT-GAUGE(engine-native 실측 clean v0.574.1: dEff_ON−OFF 0.039<0.10·cells 1=1 spawns=0·DPI emit층 재출현, state/9111) · F6 referential→H_9112🟢 · F7 stateful-refract→H_9102 DEPLETED(F2🟢∧F1🔴 MIXED terminal·grip=H_9103 노이즈) · F8 EEG→H_9064/680/681/682. ING #43053798-805."
+                              },
+                              {
+                                "name": "referential-correctness 축 OPENED (H_9125 🟢 DIRECTIONAL)",
+                                "id": "exocon-refcorrect",
+                                "detail": "F5 벽(reference feature-inaccessibility) 열림: CONTRADICTION-KEYED SELECTION engine-native($0 f5_loop3_contra.hexa). held-out efficacy ON=1.0 vs OFF/FLAT/DECOR=0.6765 gap+0.3235. FLAT(원벽)미상승∧DECOR(shuffled)붕괴∧Ψ disjoint=earned. metric-caveat: pre-reg ΔEff-slope degenerate(즉시-step)→absolute-gap faithful. grounded 한정(held-out novel=순환 경계). follow-on=absolute-gap frozen 재등록."
                               }
                             ]
                           }
@@ -11779,20 +11784,6 @@
                 "detail": "a_core_engine_map: train ⊥ mouth L3 — core/ import 와 stdlib/flame use 의 disjoint dep-set 분리, exec sub-process 로 dispatch). anima_chat_cli.hexa = thin shim→anima --byte(back-compat 보존). 연결 lane 71/76(+5 deferred=76/76 catalogue 회계; R2~R10 batch): R1 immune_memory→rel"
               },
               {
-                "name": "`corpus` 서브커맨드=절차적 학습-코퍼스 생성(anima_corpus_mode → cli/corpus.py)",
-                "role": "",
-                "id": "component-map-top-level-cli-canonical-corpus-anima-corpus-mode-cli-corpus-py",
-                "detail": "`corpus`(argv[0]==\"corpus\" → anima_corpus_mode → cli/corpus.py, always-py) = canonical 절차적/합성 학습-코퍼스 생성. derivtrace(target=DEF/RULE/OUT 풀이 → echo=composition, G1 첫 engine-native lift H_9124)·flat(같은 --seed=content-matched 통제). 순수 string, torch/LLM 0(p1-p8). anima_usage 배너 반영.",
-                "children": [
-                  {
-                    "name": "SCOPE: corpus ⊥ chat 코퍼스",
-                    "role": "",
-                    "id": "component-map-top-level-cli-canonical-corpus-scope-vs-chat",
-                    "detail": "★이건 절차적 코퍼스 생성만 — 실제 대화(chat) 학습 코퍼스는 별개. chat=a_chat_registers 4칸(🇰🇷·🇬🇧×일반·SNS) 자연어를 HF 데이터셋으로 큐레이션→`anima train`. 즉 생성(procedural)=corpus ⊥ 실데이터큐레이션=HF/sidecar dataset. flags: --out/--held-out I,J/--comp-per-pair/--single-per-concept/--seed/--concepts."
-                  }
-                ]
-              },
-              {
                 "name": "ci_lane_scores(15)→coherence/balance",
                 "role": "",
                 "id": "component-map-top-level-cli-canonical-ci-lane-scores-15-coherence-balance",
@@ -13495,11 +13486,11 @@
         "source": "state/g1_train_wallbreak/derivtrace/RESULT.md"
       },
       {
-        "id": "anima-hexa-2",
+        "id": "f5-loop3-contra-hexa-1",
         "state": "pos-conv",
-        "value": "새 anima <verb>(dispatch branch argv[0]==\"X\" + anima_X_mode fn)를 cli/anima.hexa 에 추가하면 파생 표면 2곳이 stale 로 방치되는 반복 결함 — (a) anima_usage() 배너(usage 라인+modes 섹션), (b) ARCHITECTURE.json cli component-map 노드. corpus(#2940)뿐 아니라 evaluate·serialize·sweep 도 그 cli 노드엔 미반영이던 것으로 확인=반복. a_verified_must_wire lockstep-drift 의 verb-표면 판.",
-        "threshold": "재발조건=verb 추가 PR 이 dispatch 만 넣고 usage/ARCHITECTURE 미갱신. 해결=같은 PR 에서 3곳 lockstep(dispatch + anima_usage 배너 + ARCHITECTURE cli 노드), 박제 전 grep 'argv[0] ==' 분기 전부가 배너에 있는지 대조. detail 은 ≤300 자(arch-big-cell-blocks-commits, 초과분 child).",
-        "source": "cli/anima.hexa"
+        "value": "consequence/faculty loop의 held-out efficacy를 ΔEff=within-window slope(후반−전반)로 재면 즉시-step 수렴(effect가 tick1에 ceiling 도달)에서 slope≈0으로 degenerate = 진짜 lift를 못 봄. H_9125 contradiction-keyed: ON held-out efficacy 1.0(완벽) vs OFF/FLAT/DECOR 0.6765(baseline)=absolute gap 0.3235인데 slope-ΔEff는 0.027<0.10로 RED 오판. H_9111 Pearson-D≡0(constant vector)와 같은 metric-degeneracy 계열(break-walls (a) measure-artifact).",
+        "threshold": "재발조건: faculty/consequence loop의 학습 효과를 within-window slope(_delta 후반−전반)로 잴 때 — 효과가 step(빠른 수렴)이면 slope degenerate. faithful 지표=absolute gap(수렴값 arm−baseline) 또는 area-under-curve. verdict-integrity: slope-bar가 absolute-gap과 발산하면 harness 지표 결함 의심(terminal 전 측정경로 확인), target 결함으로 박제 금지. frozen bar 설계 시 step-convergence 가능성 있으면 absolute-gap 사전등록.",
+        "source": "state/refcorrect_axis/f5_loop3_contra.hexa"
       }
     ]
   }
