@@ -1,0 +1,73 @@
+{
+  "verdict": "FALSIFIED-DPI-ceiling",
+  "delta": 0.1,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "n_pass_2of3": 0,
+  "n_concepts": 368,
+  "n_anchors": 32,
+  "cycle_frac_census": 0.09203424554364757,
+  "results": [
+    {
+      "seed": 7,
+      "n_pairs": 8075,
+      "n_train": 6460,
+      "n_heldout": 1612,
+      "r2_heldout_bind": 0.2726377002229313,
+      "r2_heldout_additive": 0.48442997030993185,
+      "r2_heldout_shuffle": 0.05674123696619138,
+      "r2_heldout_sym_ref": 0.0677057072241376,
+      "r2_train_bind": 0.6472710121865087,
+      "r2_train_additive": 0.4979902223547432,
+      "gap_bind_minus_additive": -0.21179227008700052,
+      "gap_bind_minus_shuffle": 0.21589646325673995,
+      "pass_gap_add": false,
+      "pass_gap_sf": true,
+      "pass_both": false,
+      "leak_flag_bind_exact1": false,
+      "leak_flag_shuffle_high": false
+    },
+    {
+      "seed": 4302,
+      "n_pairs": 8075,
+      "n_train": 6460,
+      "n_heldout": 1615,
+      "r2_heldout_bind": 0.30467457246975416,
+      "r2_heldout_additive": 0.4935196343535794,
+      "r2_heldout_shuffle": -0.05988036706956357,
+      "r2_heldout_sym_ref": 0.05042414958618302,
+      "r2_train_bind": 0.6464201627558652,
+      "r2_train_additive": 0.495271107379738,
+      "gap_bind_minus_additive": -0.18884506188382522,
+      "gap_bind_minus_shuffle": 0.3645549395393177,
+      "pass_gap_add": false,
+      "pass_gap_sf": true,
+      "pass_both": false,
+      "leak_flag_bind_exact1": false,
+      "leak_flag_shuffle_high": false
+    },
+    {
+      "seed": 4303,
+      "n_pairs": 8075,
+      "n_train": 6460,
+      "n_heldout": 1613,
+      "r2_heldout_bind": 0.18433061800693085,
+      "r2_heldout_additive": 0.5177659573024075,
+      "r2_heldout_shuffle": -0.04085594355155053,
+      "r2_heldout_sym_ref": 0.060703413360150615,
+      "r2_train_bind": 0.6488016257351026,
+      "r2_train_additive": 0.49163495175924976,
+      "gap_bind_minus_additive": -0.33343533929547664,
+      "gap_bind_minus_shuffle": 0.22518656155848138,
+      "pass_gap_add": false,
+      "pass_gap_sf": true,
+      "pass_both": false,
+      "leak_flag_bind_exact1": false,
+      "leak_flag_shuffle_high": false
+    }
+  ],
+  "honesty": "mini numpy = NOT 303M engine-native -> any PASS is DIRECTIONAL toward STEP-1 justification, not GREEN closure."
+}
