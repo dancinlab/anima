@@ -1,0 +1,30 @@
+# H_9129 L5 hippocampal associative-store transitive-inference (numpy DIRECTIONAL)
+seed=20260705 N_CHAINS=8 CHAIN_LEN=6 DIM=2048 ACTIVE=40 STEPS=6 KWTA=40
+
+## FORM baseline (raw code cosine, no relations) -- must be reachable ~= unreachable
+  form_reachable  : mean=0.0231 std=0.0219 med=0.0250 n=80
+  form_unreachable: mean=0.0172 std=0.0246 med=0.0000 n=80
+  form_gap (reach-unreach) = +0.0059
+
+## STORE lane (CA3 completion relatedness)
+  store_reachable  : mean=1.0000 std=0.0000 med=1.0000 n=80
+  store_unreachable: mean=0.1269 std=0.1860 med=0.0500 n=80
+  store_gap (reach-unreach) = +0.8731
+  store_ratio reach/unreach = 7.88x
+
+## per-gap reachable (transitive distance vs relatedness)
+  gap=2: mean=1.0000 n=32
+  gap=3: mean=1.0000 n=24
+  gap=4: mean=1.0000 n=16
+  gap=5: mean=1.0000 n=8
+
+## SHUFFLE ablation (relation structure destroyed) -- reachable must collapse
+  shuf_reachable  : mean=0.1547 std=0.2652 med=0.0500 n=80
+  shuf_unreachable: mean=0.1709 std=0.2933 med=0.0500 n=80
+  shuf_gap (reach-unreach) = -0.0162
+
+## VERDICT
+  verdict = BIND
+  fooled_by_form = False
+  form_matched (FORM baseline reach~=unreach) = True
+  shuffle_collapsed (ablation removes lift) = True
