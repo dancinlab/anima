@@ -1,0 +1,40 @@
+{
+  "task": "H_6186 G6-bind DECODE-axis engine-native re-decode — DEDICATED vast L40S pod (2026-07-03)",
+  "pod": {"provider": "vast", "id": "43686128", "gpu": "NVIDIA L40S 48GB sm_89", "ssh": "ssh5.vast.ai:16128", "dph": "~0.58"},
+  "hexa": "v0.587.0 (HEXA_CUDA=1 install, cuda_available()=1)",
+  "own_gemm_ignition": {
+    "STATUS": "ACHIEVED — CONFIRMED on-engine (repeated prior-session wall BROKEN)",
+    "evidence": "ALL 54 per-frame decode processes emit [OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS) + [EAGER-DEVGLUE-FIRED] _hx_k_gelu device CUDA-erf GELU; GPU util 81-86% during decode; per-frame peak ~9.96 GB device mem; og_err 54/54.",
+    "contrast": "aiden prior session = CPU-scalar farr (no marker, util 0%, host wedge). L40S own-GEMM fires.",
+    "cuda_recipe": "HEXA_CUDA=1 sh install.sh (.cuda-runtime marker) + apt build-essential clang + symlink pip nvidia cuda_runtime/cublas .so.12->.so + LIBRARY_PATH/LD_LIBRARY_PATH to those dirs (bare ubuntu22.04 has no /usr/local/cuda; libcudadevrt.a/libcudart/libcublas in /usr/local/lib/python3.10/dist-packages/nvidia/*/lib)"
+  },
+  "wall_break_process_isolation": {
+    "blocker": "gen_auto_ideate per-candidate mouth-reload GPU-mem leak (memory h9107): 3-seed whole-arm (54 decodes) AND 1-seed (18 decodes) both OOM rc=137 at ~41/48GB BEFORE any RESULT; own-GEMM non-rescuing.",
+    "solution": "fals_bound is FRAME-INDEPENDENT (cross-frame jaccard only affects dist) -> each (arm,seed,frame) is a SEPARATE hexa-run process (k=3 decodes ~9.96GB) that EXITS to free GPU. 54 processes, ALL rc=0, no OOM. Decode + per-frame scoring UNCHANGED engine-native CORE ops (g6_decode_best_of_k_auto + frozen predicates via additive pub glue). base_seed+i offset + k=3 offsets[0,101,202] + frames/pairs identical to g6_score_arm_auto_bound -> per-frame fals_bound byte-faithful to the frozen op. External step = arithmetic sum of 6 frame contributions (NOT scoring).",
+    "frozen_untouched": "g6_score_arm_auto_bound / _g6_is_falsifiable / _g6_topic_bound / g6_score_arm_auto_W untouched; only additive pub wrappers g6_kwr_pub/g6_falstb_pub/g6_dict_load_pub appended on pod clone."
+  },
+  "ckpt_sha_on_pod": {"BASE_h1129": "5cf07a36", "TARGETED": "919c1360", "SHUF": "8c3af81b"},
+  "engine_native_fals_bound": {
+    "seeds_order": [7, 4302, 4303],
+    "BASE": {"per_seed": [0,0,0], "mean": 0.0},
+    "TARGETED": {"per_seed": [3,3,5], "mean": 3.6667},
+    "SHUF": {"per_seed": [0,0,0], "mean": 0.0}
+  },
+  "py_mirror_DIRECTIONAL": {"BASE": [0,0,0], "TARGETED": [5,6,6], "SHUF": [1,0,0]},
+  "verdict": {
+    "TARGETED_gt_SHUF_engine_native": true,
+    "separation_engine_native": 3.6667,
+    "form_priming_block": "CONFIRMED on-engine — SHUF (form-matched, topic-scrambled) = 0.0 vs TARGETED 3.667. The H_6186 bind signal (targeted binding beats form-priming) HOLDS engine-native.",
+    "byte_parity_with_py_mirror": {"BASE": true, "TARGETED": false, "SHUF": false,
+      "note": "own-GEMM GPU decode produces different text than numpy (gauge_lib) mirror -> different exact fals_bound. Mirror OVERSTATED (TARGETED 5.667 vs engine 3.667; SHUF 0.333 vs engine 0.0)."},
+    "frozen_prereg_PASS_engine_native": {
+      "P1_base_floor_0": true, "P3_shuf_reject_formpriming": true, "P4_separation_ge3": true,
+      "P2_targeted_majority_ge4_in_ge2_seeds": false,
+      "P2_detail": "majority = fals_bound>=4/seed; engine [3,3,5] -> only 1/3 seeds (4303=5) >=4 -> n_maj=1 < 2 -> FAIL (mirror had 3/3 PASS). bar FROZEN, tune-to-green forbidden.",
+      "OVERALL": false
+    },
+    "TERMINAL_DECISION": "NOT a clean terminal PASS. Engine-native REFINES the py-mirror DIRECTIONAL: the QUALITATIVE bind effect (TARGETED >> SHUF, form-priming blocked, separation 3.667 >= 3.0) is CONFIRMED on-engine, but (a) byte-parity with numpy mirror FAILS and (b) frozen prereg P2 (targeted majority>=4 in >=2 seeds) NOT met on-engine (1/3 seeds) — the true own-GEMM decode gives a weaker targeted signal than the mirror. Honest c9 / a_engine_native_learning: the mirror was optimistic; the engine measurement is more conservative.",
+    "own_gemm_axis": "stated session wall (own-GEMM ignition) = ACHIEVED. decode-axis fals_bound = engine-native MEASURED (not mirror): directional bind CONFIRMED, frozen PASS not cleared."
+  },
+  "bookkeeping": "state-only per task scope; HYPOTHESES/cards/CHANGELOG/ARCHITECTURE/commit NOT touched. Ckpts remain staged (mac /tmp + ~/anima-weights, sha-verified)."
+}

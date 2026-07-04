@@ -1,0 +1,51 @@
+[T=24] gen40 max_single=3 best_distinct=1 best_k=2 STRICT_PASS=False (39.6s)
+STRICT_PASS_ANY_T=False
+{
+ "ckpt": "/Users/mini/anima-weights/g1_realign/g1_realign.clm",
+ "gen_CANONICAL": 40,
+ "engine": "canonical cli/evaluate.py g_eval_g1 VERBATIM (frozen: composed>=2 AND >max_single AND coherent); _Mouth subclassed to sweep decode window T only.",
+ "gen_guard": "#2821 canonical gen=40 => g_single=40 g_comp=40 (both <80/<120).",
+ "note": "CLMConvMoE no-posemb RF~513, train seq_len=1024 => T free decode param not block_size.",
+ "sweep": [
+  {
+   "T": 24,
+   "pass_strict": false,
+   "max_single": 3,
+   "best_distinct": 1,
+   "best_k": 2,
+   "ks": [
+    {
+     "k": 2,
+     "distinct": 1,
+     "kwr": 0.8,
+     "coherent": true,
+     "clears": false
+    },
+    {
+     "k": 3,
+     "distinct": 1,
+     "kwr": 0.8,
+     "coherent": true,
+     "clears": false
+    },
+    {
+     "k": 4,
+     "distinct": 1,
+     "kwr": 0.8333333333333334,
+     "coherent": true,
+     "clears": false
+    },
+    {
+     "k": 5,
+     "distinct": 1,
+     "kwr": 1.0,
+     "coherent": true,
+     "clears": false
+    }
+   ],
+   "wall_s": 39.6
+  }
+ ],
+ "total_wall_s": 39.9,
+ "strict_PASS_any_T": false
+}

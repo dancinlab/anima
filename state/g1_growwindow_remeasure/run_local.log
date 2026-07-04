@@ -1,0 +1,14 @@
+[single s=0 bytes=33] cov_raw=1 cov_novel=1 kwr=1.000
+[single s=1 bytes=39] cov_raw=1 cov_novel=0 kwr=0.833
+[single s=2 bytes=34] cov_raw=1 cov_novel=0 kwr=0.833
+[single s=3 bytes=35] cov_raw=1 cov_novel=1 kwr=0.833
+[single s=4 bytes=30] cov_raw=1 cov_novel=1 kwr=0.667
+[composed k=2 bytes=72] cov_raw=2 cov_novel=1 kwr=1.000 coherent=True clears_raw=True clears_novel=False
+[composed k=3 bytes=106] cov_raw=1 cov_novel=0 kwr=1.000 coherent=True clears_raw=False clears_novel=False
+[composed k=4 bytes=141] cov_raw=1 cov_novel=0 kwr=1.000 coherent=True clears_raw=False clears_novel=False
+[composed k=5 bytes=171] cov_raw=1 cov_novel=1 kwr=1.000 coherent=True clears_raw=False clears_novel=False
+======================================================================
+max_single: raw=1 novel=1 | best_composed: raw=2 novel=1
+PASS_raw=True  PASS_novel(echo-guard)=False
+VERDICT: ECHO-ONLY (not recombination): RAW passes but NOVEL-ONLY fails => model echoes seed keywords
+wall=104.8s
