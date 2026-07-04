@@ -2,6 +2,9 @@
 
 > **tier:** 🟢 **WIRED-live** (referential-correctness 축 OPENED + prod 배선 · grounded scope · metric-caveat) — engine-native: contradiction-keyed selection이 held-out referential 선택을 엶, live `core/`에 배선. · **wired:** WIRED-live (`core/engine_cli.hexa` `referent_select`/`referent_select_text` op + `EngineConfig.refsel`(3-tier resolve, default OFF) + `cli/anima.hexa` consciousness-tick REFSEL consult가 out_text routing; ARCHITECTURE lockstep) — DIRECTIONAL 실험(f5_loop3_contra.hexa)에서 rung3 배선까지 완료.
 
+## ✅ WIRED-live QA (a_verified_must_wire · engine-native $0 로컬 실행)
+`state/refcorrect_axis/refsel_smoke.hexa` 3-fixture, live `referent_select_text` 호출(decode 없음, 작은 immune store) — **전부 PASS**: A grounded-incumbent rs=0(접지 유지)·B contra→correct rs=1(incumbent이 모순 vault면 grounded 후보로 referent-correction ← 배선 핵심능력)·C all-contradict rs=-1(selection-abstain). = 배선이 dead 아니고 실제 작동(wire-to-prod "QA on top"). engine-native 로컬 실행 산출(typecheck+hexa run 둘 다 PASS).
+
 ## 🔌 WIRED-live 배선 (a_verified_must_wire rung3 · engine-native)
 contradiction-keyed selection GREEN(H_9125·P1 세벽 selection-layer)을 live prod에 배선:
 - **core op**: `core/engine_cli.hexa` `referent_select(mem, cand_keys, true_ref) -> int`(K후보 중 첫 contradiction==0 grounded 인덱스, 전원 모순=-1 selection-abstain) + `referent_select_text` 텍스트 twin. READ-ONLY(affect_substrate_features 합성, mutate 0, lane/ci_emit_drive/recall_thr/pure_field 무접촉).
