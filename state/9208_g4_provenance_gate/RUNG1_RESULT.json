@@ -1,0 +1,23 @@
+{
+ "probe": "G4 provenance rung-1 mechanism (numpy DIRECTIONAL)",
+ "recall_thr": 0.45,
+ "metrics": {
+  "hit": 0.979,
+  "abstain": 1.0,
+  "sourced_punt": 0.021,
+  "hit_shufbind": 0.0,
+  "hit_nostore": 0.0,
+  "abstain_nostore": 1.0,
+  "decor_false_attr": 0.229
+ },
+ "bars": {
+  "B1_HIT>=0.75": true,
+  "B2_ABSTAIN>=0.75": true,
+  "B3_NOPUNT<=0.25": true,
+  "B4_SHUFBIND<=0.25": true,
+  "B5_NOSTORE(hit0&abs.90)": true,
+  "B6_DECOR<=0.30": true,
+  "HEADLINE hit-shuf>=0.50": true
+ },
+ "verdict": "MECHANISM-VALID(rung1 DIRECTIONAL)"
+}
