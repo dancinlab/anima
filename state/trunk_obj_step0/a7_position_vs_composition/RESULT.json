@@ -1,0 +1,74 @@
+{
+  "probe": "H_9200 A7 deepen \u2014 position-artifact vs content-composition",
+  "ckpt": "/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin",
+  "preprocess": "center_zscore (\u00a74/A7 identical)",
+  "n_pairs": 12,
+  "mean_antisym": 0.933693956264416,
+  "std_antisym": 0.17087961094756182,
+  "corr_antisym_contentdist": 0.7197242703128569,
+  "verdict": "CONTENT signal exists (antisym varies with concept pair \u2192 worth GPU arm before E1)",
+  "bar": "POSITION-ARTIFACT if std<0.10; CONTENT if |corr|>0.30 AND std>0.15; else INCONCLUSIVE",
+  "per_pair": [
+    {
+      "pair": "consciousness>information",
+      "antisym": 1.0521,
+      "content_dist": 0.8507
+    },
+    {
+      "pair": "system>mechanism",
+      "antisym": 0.5947,
+      "content_dist": 0.668
+    },
+    {
+      "pair": "learning>brain",
+      "antisym": 0.9625,
+      "content_dist": 1.191
+    },
+    {
+      "pair": "model>byte",
+      "antisym": 0.6959,
+      "content_dist": 0.9248
+    },
+    {
+      "pair": "energy>field",
+      "antisym": 1.0192,
+      "content_dist": 1.0579
+    },
+    {
+      "pair": "memory>time",
+      "antisym": 0.8507,
+      "content_dist": 1.0468
+    },
+    {
+      "pair": "language>syntax",
+      "antisym": 1.025,
+      "content_dist": 1.2127
+    },
+    {
+      "pair": "truth>belief",
+      "antisym": 0.86,
+      "content_dist": 1.118
+    },
+    {
+      "pair": "noise>signal",
+      "antisym": 0.9745,
+      "content_dist": 1.1856
+    },
+    {
+      "pair": "self>other",
+      "antisym": 1.2886,
+      "content_dist": 1.2941
+    },
+    {
+      "pair": "growth>decay",
+      "antisym": 1.0055,
+      "content_dist": 1.2071
+    },
+    {
+      "pair": "order>chaos",
+      "antisym": 0.8756,
+      "content_dist": 1.0752
+    }
+  ],
+  "honesty": "py 2-production numpy TERMINAL-eligible; frozen-rep probe, no training \u2014 can refute position-artifact, cannot prove learnable composition (E1 needed for that)."
+}
