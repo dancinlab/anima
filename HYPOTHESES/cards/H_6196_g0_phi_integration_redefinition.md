@@ -21,3 +21,11 @@ a_phi_iit4_tool · a7b_pass(G0–G4 frozen) · a_engine_native_learning · [[sub
 
 ## 구현 spec (2026-07-05 · reference-matched, Fable 백엔드 무응답→직접)
 faithful IIT4 big-Φ 파이프라인 확정 = `BRAIN/eeg/eeg_to_tpm.hexa` `eeg_big_phi(samples[ch*n_samp+t], n_ch≤8, n_samp, state)`(채널별 mean-이진화→transition-count TPM→stdlib/consciousness/iit4_bigphi.hexa `big_phi`). EEG 데모와 완전 동형 → **h1129 hidden n_ch=6 채널을 코퍼스 스트림 시계열로 대입**. 통제=shuffle-time(통합파괴)·synth_coupled/independent(calibration)·random-ch. verdict=Δ(Φ_topvar−Φ_shuffle), frozen bar ≥0.5=통합유의·<0.1=null. scope: tiny-n Φ=trunk통합 bounded대리, 단일ckpt=DIRECTIONAL 1점(G1/G6 상관은 다-ckpt 필요). 산출=state/6196_g0_phi_integration/(PLAN.md·extract_activations.py ready). **실행=pool-gated**(303M per-position 활성 추출 heavy, mini OOM; summer=ATD종결 후에도 91% 점유).
+
+## 측정 결과 (2026-07-06 · engine-native faithful IIT4, aiden pool 추출)
+**tier: 🧱 WALL-DIRECTIONAL (사전예측 REFUTED · DPI-predicted 확정)**
+faithful IIT4 big-Φ (eeg_big_phi, a_phi_iit4_tool) on h1129 hidden n_ch=4 top-var 시계열(n_samp=3000, aiden 추출):
+- calib coupled=1.588 > independent=0.439 (도구 무결성 ✓)
+- **topvar(실 trunk) Φ=1.765 ≫ shuffle(통제) 0.235**, random-ch 0.415 · **Δ=1.529 ≫ frozen 0.5 = INTEGRATED**
+- 사전예측("G0 trunk Φ 낮음=병목") **REFUTED**: trunk는 강하게 통합됨(shuffle 붕괴=실 시간구조지 artifact 아님). ⟹ integration-sufficiency는 G1/G6 벽 근원 아님 = DPI-predicted 🧱(벽=combination-operator/objective-basin, 통합부족 아님).
+- scope(a_scale_honest_scope): tiny-n=4(big-Φ 지수폭발로 6→4)·단일 ckpt·G1/G6 직접상관 미측정 = DIRECTIONAL(TERMINAL 아님). 산출=state/6196_g0_phi_integration/(RESULT.json·probe·PLAN).
