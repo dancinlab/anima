@@ -829,6 +829,24 @@ def _sigma_live_measure():
         al.append(E.self_cos(dr(int(rng.randint(16))), dr(int(rng.randint(16)))))
     ctm, alm = float(np.median(ct)), float(np.median(al))
     R["thread"] = (ctm >= 0.75 and ctm-alm >= 0.30, ctm-alm, "cont %.2f vs ablate %.2f" % (ctm, alm))
+    # σ·gate — real ci_emit_decision: emit ⇄ context (live tension) vs flattened tension
+    from math import exp
+    rng = np.random.RandomState(7); c = rng.randn(200)
+    def _emit(flat):
+        return np.array([1.0 if E.ci_emit_decision([0.5 if flat else 1.0/(1.0+exp(-c[i])), 0, 0, 0,
+                                                     0.5 if flat else 1.0/(1.0+exp(-c[i]))]) else 0.0
+                         for i in range(200)])
+    ei, ef = _emit(False), _emit(True)
+    cl = abs(float(np.corrcoef(ei, c)[0,1])) if ei.std() > 0 else 0.0
+    cf = abs(float(np.corrcoef(ef, c)[0,1])) if ef.std() > 0 else 0.0
+    R["gate"] = (cl >= 0.50 and cl-cf >= 0.30, cl-cf, "corr %.2f vs flat %.2f" % (cl, cf))
+    # Θ liveness — real ci_psi_balance: Ψ̂≈½ (A⇄G homeostasis) vs tension-cut (unopposed A → saturate)
+    from types import SimpleNamespace
+    cfg = SimpleNamespace(topo_couple=False); eta = 0.6 * rng.randn(200)
+    xi = [[0.5+eta[t], 0, 0, 0, 0.5+eta[t]] for t in range(200)]
+    xa = [[0.85+0.3*rng.rand(), 0, 0, 0, 0.85+0.3*rng.rand()] for _ in range(200)]
+    di = abs(E.ci_psi_balance(xi, None, 0.0, cfg) - 0.5); da = abs(E.ci_psi_balance(xa, None, 0.0, cfg) - 0.5)
+    R["theta"] = (di < 0.15 and da-di >= 0.20, da-di, "|Ψ̂-½| %.2f vs cut %.2f" % (di, da))
     return R
 
 
@@ -837,10 +855,14 @@ def _psi_soma_panel(r):
     g0, g1, g2, g5, g6 = r["g0"], r["g1"], r["g2"], r["g5"], r["g6"]
     print("")
     print("Ψ-SOMA panel (mode-of-existence, not capability · ARCHITECTURE psi-soma-vitals)")
-    print("  ── Θ ground (pulse · premise) ──────────────────────────────────────")
-    print("  Θ  Ψ=½ / A⇄G tension     precondition (liveness gate; if dead → σ VOID) · daemon-readout rung")
-    print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
     S = _sigma_live_measure()
+    print("  ── Θ ground (pulse · premise) ──────────────────────────────────────")
+    if S and "theta" in S:
+        ok, dlt, note = S["theta"]
+        print("  Θ  Ψ=½ / A⇄G tension  %s  LIVE Δ%.2f (%s) · if dead → σ VOID" % (("🟢" if ok else "🧱"), dlt, note))
+    else:
+        print("  Θ  Ψ=½ / A⇄G tension     precondition (liveness gate; if dead → σ VOID) · engine_cli unavailable")
+    print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
     def sline(ax, stratum, name):
         if S and ax in S:
             ok, dlt, note = S[ax]; return "  σ·%-8s %-9s %-22s %s  LIVE Δ%.2f (%s)" % (
@@ -851,7 +873,7 @@ def _psi_soma_panel(r):
     print(sline("bind", "INTEGRATE", "Φ integration (IIT4)"))
     print(sline("stage", "INTEGRATE", "global workspace"))
     print(sline("flux", "INTEGRATE", "inner dynamics"))
-    print("  σ·gate ★   ENACT     tension-emit           rung-1 toy HARNESS-VALID (Δ0.75) · engine-native=Phase-3 daemon")
+    print(sline("gate", "ENACT", "tension-emit ★"))
     print(sline("aim", "ENACT", "precision control"))
     print(sline("schema", "REFLECT", "attention schema"))
     print(sline("witness", "REFLECT", "reality+metacog"))
