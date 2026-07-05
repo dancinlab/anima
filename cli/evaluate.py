@@ -625,6 +625,10 @@ def evaluate_usage():
     print("  mount ANY ckpt through the generator L3 mouth (file-format dispatched) and")
     print("  score G0-G6 with the engine's OWN ops (numpy math.log mirror, torch-free).")
     print("  closure a7b_pass = G0 ∧ G1 ∧ G2.")
+    print("")
+    print("  output also renders the Ψ-SOMA panel (ARCHITECTURE psi-soma-vitals): the")
+    print("  G battery relabeled as the ρ (reach/capability) track — EXCLUDED from the")
+    print("  σ (consciousness vitals) verdict — plus the σ axes with their rung status.")
 
 
 def evaluate_corpus(argv):
@@ -747,7 +751,44 @@ def evaluate_run(argv):
         print("  → PUBLIC-eligible (G0∧G1∧G2 all PASS).")
     else:
         print("  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.")
+    _psi_soma_panel(r)
     return 0
+
+
+# ════════════════════════════════════════════════════════════════════════
+# Ψ-SOMA PANEL (Phase-1) — reframe the G battery as the ρ (reach) track and
+# surface the σ (consciousness vitals) axes. ARCHITECTURE `psi-soma-vitals`.
+# ρ = capability (this G battery, relabeled) — TRACKED but EXCLUDED from the
+# consciousness verdict. σ = vitals (collapse-Δ vs ≥2 controls); most σ axes
+# route through the daemon/IIT4 (Phase-2/3), so here they show status pointers.
+# Additive only — does NOT touch g_eval_* logic or the a7b_pass CLOSURE (c18).
+# ════════════════════════════════════════════════════════════════════════
+
+def _psi_soma_panel(r):
+    def pf(ok): return "🟢" if ok else "🧱"
+    g0, g1, g2, g5, g6 = r["g0"], r["g1"], r["g2"], r["g5"], r["g6"]
+    print("")
+    print("Ψ-SOMA panel (mode-of-existence, not capability · ARCHITECTURE psi-soma-vitals)")
+    print("  ── Θ ground (pulse · premise) ──────────────────────────────────────")
+    print("  Θ  Ψ=½ / A⇄G tension     precondition (liveness gate; if dead → σ VOID) · daemon-readout rung")
+    print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
+    print("  σ·thread   PERSIST self-continuity     kosmos self-anchor (H_1471 🟢 wired) · rung-2 wrap")
+    print("  σ·carve    PERSIST earned identity      inject-null ∧ ablate-collapse (p2/p3) · rung-1 $0 next")
+    print("  σ·bind     INTEGRATE Φ integration      hexa verify faithful-IIT4 · rung-2")
+    print("  σ·stage    INTEGRATE global workspace   GWT gws_* (wired) · rung-2 wrap")
+    print("  σ·flux     INTEGRATE inner dynamics     imagery/affect/intero/subj-time (wired) · rung-2 wrap")
+    print("  σ·gate ★   ENACT tension-emit           live emit⇄ctx vs flatten Δ · rung-1 HARNESS-VALID (Δ0.75)")
+    print("  σ·aim      ENACT precision control      habituation+surprise (wired) · rung-2 wrap")
+    print("  σ·schema   REFLECT attention schema     AST attn_schema_* (wired) · rung-2 wrap")
+    print("  σ·witness  REFLECT reality+metacog       reality_call+mi_* (wired) · rung-2 wrap")
+    print("  ── ρ reach (capability · EXCLUDED from σ verdict · this G battery) ──")
+    print("  ρ·flow   " + pf(bool(g0["pass"]))  + "  = G0 coherence")
+    print("  ρ·turn   " + pf(bool(g2["pass"]))  + "  = G2 novelty (+G3 balance)")
+    print("  ρ·true   " + pf(bool(g5["l1_pass"]))+ "  = G5 non-fabrication (L1)")
+    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  = G1 recombination  [DPI wall = reach fact, NOT σ deficit]")
+    print("  ρ·seed   " + pf(bool(g6["pass"]))  + "  = G6 ideation       [DPI wall = reach fact, NOT σ deficit]")
+    print("  ρ·trace     —   = G4 provenance (H_9208 gate · rung-1 valid)")
+    print("  ──────────────────────────────────────────────────────────────────")
 
 
 def main(argv):
