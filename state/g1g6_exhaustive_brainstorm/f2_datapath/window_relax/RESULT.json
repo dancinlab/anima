@@ -1,0 +1,510 @@
+{
+ "cell": "window_relax",
+ "corpus": "consciousness_anchor.txt",
+ "min_occ": 3,
+ "bar": 0.6666666666666666,
+ "fwd_scan_cap": 30,
+ "reference_gate": "e1_pregate/gate.py",
+ "arms": {
+  "A_ref_vocab_ascii": {
+   "n_tokens": 160192,
+   "vocab_size": 400,
+   "per_k": {
+    "k1": {
+     "n_qualified": 2,
+     "n_differ": 2,
+     "differ_frac": 1.0,
+     "verdict": "INCONCLUSIVE-SPARSE",
+     "examples": [
+      {
+       "pair": "anima|lane",
+       "n_ab": 4410,
+       "n_ba": 247,
+       "top_ab": "entity",
+       "top_ba": "lane",
+       "differ": true
+      },
+      {
+       "pair": "lane|entity",
+       "n_ab": 4468,
+       "n_ba": 310,
+       "top_ab": "anima",
+       "top_ba": "entity",
+       "differ": true
+      }
+     ]
+    },
+    "k3": {
+     "n_qualified": 7,
+     "n_differ": 7,
+     "differ_frac": 1.0,
+     "verdict": "INCONCLUSIVE-SPARSE",
+     "examples": [
+      {
+       "pair": "anima|lane",
+       "n_ab": 6541,
+       "n_ba": 5631,
+       "top_ab": "entity",
+       "top_ba": "lane",
+       "differ": true
+      },
+      {
+       "pair": "anima|entity",
+       "n_ab": 5407,
+       "n_ba": 6037,
+       "top_ab": "anima",
+       "top_ba": "lane",
+       "differ": true
+      },
+      {
+       "pair": "lane|entity",
+       "n_ab": 5078,
+       "n_ba": 4133,
+       "top_ab": "anima",
+       "top_ba": "entity",
+       "differ": true
+      },
+      {
+       "pair": "with|the",
+       "n_ab": 958,
+       "n_ba": 4,
+       "top_ab": "same",
+       "top_ba": "the",
+       "differ": true
+      },
+      {
+       "pair": "the|same",
+       "n_ab": 950,
+       "n_ba": 5,
+       "top_ab": "underlying",
+       "top_ba": "the",
+       "differ": true
+      },
+      {
+       "pair": "with|underlying",
+       "n_ab": 384,
+       "n_ba": 69,
+       "top_ab": "with",
+       "top_ba": "the",
+       "differ": true
+      },
+      {
+       "pair": "the|underlying",
+       "n_ab": 384,
+       "n_ba": 3,
+       "top_ab": "with",
+       "top_ba": "anima",
+       "differ": true
+      }
+     ]
+    },
+    "k5": {
+     "n_qualified": 10,
+     "n_differ": 9,
+     "differ_frac": 0.9,
+     "verdict": "NON-DEGENERATE-POWERED",
+     "examples": [
+      {
+       "pair": "anima|lane",
+       "n_ab": 11385,
+       "n_ba": 9285,
+       "top_ab": "entity",
+       "top_ba": "lane",
+       "differ": true
+      },
+      {
+       "pair": "anima|entity",
+       "n_ab": 8698,
+       "n_ba": 10827,
+       "top_ab": "anima",
+       "top_ba": "lane",
+       "differ": true
+      },
+      {
+       "pair": "lane|entity",
+       "n_ab": 8596,
+       "n_ba": 6362,
+       "top_ab": "anima",
+       "top_ba": "entity",
+       "differ": true
+      },
+      {
+       "pair": "with|the",
+       "n_ab": 976,
+       "n_ba": 80,
+       "top_ab": "same",
+       "top_ba": "the",
+       "differ": true
+      },
+      {
+       "pair": "with|same",
+       "n_ab": 941,
+       "n_ba": 85,
+       "top_ab": "underlying",
+       "top_ba": "the",
+       "differ": true
+      },
+      {
+       "pair": "the|same",
+       "n_ab": 954,
+       "n_ba": 75,
+       "top_ab": "underlying",
+       "top_ba": "same",
+       "differ": true
+      },
+      {
+       "pair": "anima|with",
+       "n_ab": 6,
+       "n_ba": 9,
+       "top_ab": "the",
+       "top_ba": "the",
+       "differ": false
+      },
+      {
+       "pair": "with|underlying",
+       "n_ab": 384,
+       "n_ba": 96,
+       "top_ab": "with",
+       "top_ba": "the",
+       "differ": true
+      },
+      {
+       "pair": "the|underlying",
+       "n_ab": 385,
+       "n_ba": 90,
+       "top_ab": "with",
+       "top_ba": "same",
+       "differ": true
+      },
+      {
+       "pair": "same|underlying",
+       "n_ab": 384,
+       "n_ba": 69,
+       "top_ab": "with",
+       "top_ba": "underlying",
+       "differ": true
+      }
+     ]
+    }
+   }
+  },
+  "B_corpus_native_top400": {
+   "n_tokens": 2342498,
+   "vocab_size": 400,
+   "per_k": {
+    "k1": {
+     "n_qualified": 477,
+     "n_differ": 452,
+     "differ_frac": 0.9476,
+     "verdict": "NON-DEGENERATE-POWERED",
+     "examples": [
+      {
+       "pair": "알겠습니다|사용자",
+       "n_ab": 1145,
+       "n_ba": 16,
+       "top_ab": "내가",
+       "top_ba": "도우미",
+       "differ": true
+      },
+      {
+       "pair": "가|anima",
+       "n_ab": 279,
+       "n_ba": 1795,
+       "top_ab": "의",
+       "top_ba": "의식",
+       "differ": true
+      },
+      {
+       "pair": "anima|의",
+       "n_ab": 557,
+       "n_ba": 3,
+       "top_ab": "어디라고",
+       "top_ba": "도우미",
+       "differ": true
+      },
+      {
+       "pair": "이는|또한",
+       "n_ab": 8,
+       "n_ba": 3,
+       "top_ab": "더",
+       "top_ba": "실제",
+       "differ": true
+      },
+      {
+       "pair": "사용자|다음",
+       "n_ab": 2092,
+       "n_ba": 5,
+       "top_ab": "문제의",
+       "top_ba": "작업을",
+       "differ": true
+      },
+      {
+       "pair": "입니다|따라서",
+       "n_ab": 92,
+       "n_ba": 5,
+       "top_ab": "입니다",
+       "top_ba": "이제",
+       "differ": true
+      },
+      {
+       "pair": "의|는",
+       "n_ab": 5,
+       "n_ba": 7,
+       "top_ab": "이",
+       "top_ba": "의",
+       "differ": true
+      },
+      {
+       "pair": "이|됩니다",
+       "n_ab": 140,
+       "n_ba": 101,
+       "top_ab": "사용자",
+       "top_ba": "때",
+       "differ": true
+      },
+      {
+       "pair": "을|다음",
+       "n_ab": 4,
+       "n_ba": 7,
+       "top_ab": "가장",
+       "top_ba": "예",
+       "differ": true
+      },
+      {
+       "pair": "이|있으므로",
+       "n_ab": 4,
+       "n_ba": 25,
+       "top_ab": "합니다",
+       "top_ba": "수",
+       "differ": true
+      },
+      {
+       "pair": "g|b",
+       "n_ab": 13,
+       "n_ba": 5,
+       "top_ab": "g",
+       "top_ba": "v",
+       "differ": true
+      },
+      {
+       "pair": "axis|a",
+       "n_ab": 10,
+       "n_ba": 5,
+       "top_ab": "a",
+       "top_ba": "v",
+       "differ": true
+      }
+     ]
+    },
+    "k3": {
+     "n_qualified": 7932,
+     "n_differ": 7594,
+     "differ_frac": 0.9574,
+     "verdict": "NON-DEGENERATE-POWERED",
+     "examples": [
+      {
+       "pair": "사용자|도우미",
+       "n_ab": 1198,
+       "n_ba": 4477,
+       "top_ab": "네",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "직업이|도우미",
+       "n_ab": 867,
+       "n_ba": 10,
+       "top_ab": "했어요",
+       "top_ba": "도우미",
+       "differ": true
+      },
+      {
+       "pair": "도우미|네",
+       "n_ab": 2798,
+       "n_ba": 6,
+       "top_ab": "사용자",
+       "top_ba": "수",
+       "differ": true
+      },
+      {
+       "pair": "네|사용자",
+       "n_ab": 1243,
+       "n_ba": 24,
+       "top_ab": "내가",
+       "top_ba": "가지",
+       "differ": true
+      },
+      {
+       "pair": "사용자|뭐였지",
+       "n_ab": 600,
+       "n_ba": 81,
+       "top_ab": "도우미",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "내|도우미",
+       "n_ab": 1762,
+       "n_ba": 57,
+       "top_ab": "사용자",
+       "top_ba": "최애",
+       "differ": true
+      },
+      {
+       "pair": "사용자|가장",
+       "n_ab": 1042,
+       "n_ba": 328,
+       "top_ab": "좋아하는",
+       "top_ba": "나는",
+       "differ": true
+      },
+      {
+       "pair": "가장|도우미",
+       "n_ab": 326,
+       "n_ba": 730,
+       "top_ab": "네",
+       "top_ba": "좋아하는",
+       "differ": true
+      },
+      {
+       "pair": "좋아하는|도우미",
+       "n_ab": 2584,
+       "n_ba": 1475,
+       "top_ab": "좋아하시는군요",
+       "top_ba": "색은",
+       "differ": true
+      },
+      {
+       "pair": "내가|무슨",
+       "n_ab": 604,
+       "n_ba": 303,
+       "top_ab": "일을",
+       "top_ba": "말했지",
+       "differ": true
+      },
+      {
+       "pair": "내가|좋아한다고",
+       "n_ab": 295,
+       "n_ba": 91,
+       "top_ab": "했지",
+       "top_ba": "좋아하는",
+       "differ": true
+      },
+      {
+       "pair": "좋아한다고|했지",
+       "n_ab": 295,
+       "n_ba": 53,
+       "top_ab": "도우미",
+       "top_ba": "하셨어요",
+       "differ": true
+      }
+     ]
+    },
+    "k5": {
+     "n_qualified": 16486,
+     "n_differ": 15750,
+     "differ_frac": 0.9554,
+     "verdict": "NON-DEGENERATE-POWERED",
+     "examples": [
+      {
+       "pair": "사용자|직업이",
+       "n_ab": 868,
+       "n_ba": 187,
+       "top_ab": "뭐라고",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "사용자|도우미",
+       "n_ab": 14867,
+       "n_ba": 16192,
+       "top_ab": "네",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "사용자|네",
+       "n_ab": 772,
+       "n_ba": 1554,
+       "top_ab": "사용자",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "직업이|도우미",
+       "n_ab": 868,
+       "n_ba": 146,
+       "top_ab": "했어요",
+       "top_ba": "도우미",
+       "differ": true
+      },
+      {
+       "pair": "직업이|네",
+       "n_ab": 54,
+       "n_ba": 127,
+       "top_ab": "사용자",
+       "top_ba": "뭐였지",
+       "differ": true
+      },
+      {
+       "pair": "도우미|네",
+       "n_ab": 2807,
+       "n_ba": 16,
+       "top_ab": "사용자",
+       "top_ba": "수",
+       "differ": true
+      },
+      {
+       "pair": "도우미|내",
+       "n_ab": 2494,
+       "n_ba": 4425,
+       "top_ab": "이름이",
+       "top_ba": "사용자",
+       "differ": true
+      },
+      {
+       "pair": "네|내",
+       "n_ab": 363,
+       "n_ba": 271,
+       "top_ab": "직업이",
+       "top_ba": "사용자",
+       "differ": true
+      },
+      {
+       "pair": "사용자|내",
+       "n_ab": 4731,
+       "n_ba": 207,
+       "top_ab": "최애",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "사용자|뭐였지",
+       "n_ab": 1235,
+       "n_ba": 996,
+       "top_ab": "도우미",
+       "top_ba": "내가",
+       "differ": true
+      },
+      {
+       "pair": "내|뭐였지",
+       "n_ab": 912,
+       "n_ba": 74,
+       "top_ab": "도우미",
+       "top_ba": "최애",
+       "differ": true
+      },
+      {
+       "pair": "내|말씀하셨어요",
+       "n_ab": 61,
+       "n_ba": 306,
+       "top_ab": "사용자",
+       "top_ba": "최애",
+       "differ": true
+      }
+     ]
+    }
+   }
+  }
+ }
+}

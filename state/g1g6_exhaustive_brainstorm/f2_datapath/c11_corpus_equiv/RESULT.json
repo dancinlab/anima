@@ -1,0 +1,111 @@
+{
+ "probe": "C11 corpus-equivalence control",
+ "anchor_file": "/Users/mini/dancinlab/anima/archive/state_legacy/anima_phase1a1_color_cosmology_2026_05_12/consciousness_anchor.txt",
+ "corpus_file": "/Users/mini/dancinlab/anima/archive/data/corpus.txt",
+ "anchor_chars": 10485760,
+ "corpus_chars": 3645908,
+ "char_ngram_overlap": {
+  "char3gram": {
+   "anchor_distinct": 527446,
+   "corpus_distinct": 6577,
+   "shared_distinct": 6149,
+   "jaccard": 0.0116,
+   "cosine_counts": 0.1919
+  },
+  "char4gram": {
+   "anchor_distinct": 1600799,
+   "corpus_distinct": 11445,
+   "shared_distinct": 8434,
+   "jaccard": 0.0053,
+   "cosine_counts": 0.1035
+  }
+ },
+ "concept_marginal_jsd": {
+  "jsd_bits": 0.5611,
+  "anchor_total_tokens": 2326605,
+  "corpus_total_tokens": 629994,
+  "anchor_vocab_hits": 737384,
+  "corpus_vocab_hits": 81397,
+  "anchor_vocab_coverage": 1.0,
+  "corpus_vocab_coverage": 0.285
+ },
+ "top_divergent_words": [
+  {
+   "w": "the",
+   "p_anchor": 0.00211,
+   "p_corpus": 0.18751
+  },
+  {
+   "w": "---",
+   "p_anchor": 0.00099,
+   "p_corpus": 0.05592
+  },
+  {
+   "w": "사용자:",
+   "p_anchor": 0.05472,
+   "p_corpus": 0.0
+  },
+  {
+   "w": "도우미:",
+   "p_anchor": 0.05472,
+   "p_corpus": 0.0
+  },
+  {
+   "w": "있어요.",
+   "p_anchor": 0.00098,
+   "p_corpus": 0.04499
+  },
+  {
+   "w": "with",
+   "p_anchor": 0.00152,
+   "p_corpus": 0.04085
+  },
+  {
+   "w": "네,",
+   "p_anchor": 0.00387,
+   "p_corpus": 0.02993
+  },
+  {
+   "w": "있을까요?",
+   "p_anchor": 0.00073,
+   "p_corpus": 0.0212
+  },
+  {
+   "w": "있습니다.",
+   "p_anchor": 0.0255,
+   "p_corpus": 0.00507
+  },
+  {
+   "w": "정말",
+   "p_anchor": 0.00252,
+   "p_corpus": 0.02145
+  },
+  {
+   "w": "의식",
+   "p_anchor": 0.00582,
+   "p_corpus": 0.02417
+  },
+  {
+   "w": "어떤",
+   "p_anchor": 0.00548,
+   "p_corpus": 0.02286
+  },
+  {
+   "w": "새로운",
+   "p_anchor": 0.00292,
+   "p_corpus": 0.01964
+  },
+  {
+   "w": "및",
+   "p_anchor": 0.01467,
+   "p_corpus": 0.0
+  },
+  {
+   "w": "좋은",
+   "p_anchor": 0.00314,
+   "p_corpus": 0.01729
+  }
+ ],
+ "equivalence_verdict": "DISTINCT-POPULATIONS",
+ "note": "high JSD + low n-gram cosine -> distinct populations; cross-corpus gate differences may be vocab-population artifacts."
+}

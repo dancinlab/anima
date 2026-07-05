@@ -1,0 +1,149 @@
+{
+  "cell": "small_purpose_density",
+  "metric": "E1 order-distinguishing gate; MIN_OCC=3, power>=10, top-400 per-corpus vocab, whitespace tokens",
+  "density_definition": "n_qualified / (n_tokens/1e6)  [order-distinguishing qualified pairs per Mtoken]",
+  "results": {
+    "consciousness_self_ref": {
+      "n_tokens": 54932,
+      "vocab_size": 400,
+      "n_ordered_adjacent_vocab_bigram_types": 977,
+      "n_qualified": 0,
+      "n_differ": 0,
+      "differ_frac": 0.0,
+      "relation_density_qual_per_Mtoken": 0.0,
+      "powered_n_ge_10": false,
+      "verdict": "INCONCLUSIVE-SPARSE",
+      "examples": []
+    },
+    "self_play_200": {
+      "n_tokens": 2270,
+      "vocab_size": 160,
+      "n_ordered_adjacent_vocab_bigram_types": 303,
+      "n_qualified": 0,
+      "n_differ": 0,
+      "differ_frac": 0.0,
+      "relation_density_qual_per_Mtoken": 0.0,
+      "powered_n_ge_10": false,
+      "verdict": "INCONCLUSIVE-SPARSE",
+      "examples": []
+    },
+    "corpus_generic": {
+      "n_tokens": 629994,
+      "vocab_size": 400,
+      "n_ordered_adjacent_vocab_bigram_types": 922,
+      "n_qualified": 9,
+      "n_differ": 9,
+      "differ_frac": 1.0,
+      "relation_density_qual_per_Mtoken": 14.2859,
+      "powered_n_ge_10": false,
+      "verdict": "INCONCLUSIVE-SPARSE",
+      "examples": [
+        {
+          "pair": [
+            "more",
+            "with"
+          ],
+          "occ_ab": 498,
+          "occ_ba": 461,
+          "top_follower_ab": "the",
+          "top_follower_ba": "coherent",
+          "differ": true
+        },
+        {
+          "pair": [
+            "experience",
+            "of"
+          ],
+          "occ_ab": 177,
+          "occ_ba": 177,
+          "top_follower_ab": "the",
+          "top_follower_ba": "and",
+          "differ": true
+        },
+        {
+          "pair": [
+            "---",
+            "의식"
+          ],
+          "occ_ab": 66,
+          "occ_ba": 16,
+          "top_follower_ab": "측정에는",
+          "top_follower_ba": "A:",
+          "differ": true
+        },
+        {
+          "pair": [
+            "---",
+            "생각"
+          ],
+          "occ_ab": 24,
+          "occ_ba": 28,
+          "top_follower_ab": "생각",
+          "top_follower_ba": "The",
+          "differ": true
+        },
+        {
+          "pair": [
+            "긴장",
+            "---"
+          ],
+          "occ_ab": 20,
+          "occ_ba": 21,
+          "top_follower_ab": "A:",
+          "top_follower_ba": "긴장",
+          "differ": true
+        },
+        {
+          "pair": [
+            "---",
+            "느낌"
+          ],
+          "occ_ab": 13,
+          "occ_ba": 27,
+          "top_follower_ab": "느낌",
+          "top_follower_ba": "A:",
+          "differ": true
+        },
+        {
+          "pair": [
+            "tension",
+            "---"
+          ],
+          "occ_ab": 25,
+          "occ_ba": 26,
+          "top_follower_ab": "A:",
+          "top_follower_ba": "tension",
+          "differ": true
+        },
+        {
+          "pair": [
+            "---",
+            "phi"
+          ],
+          "occ_ab": 19,
+          "occ_ba": 24,
+          "top_follower_ab": "phi",
+          "top_follower_ba": "A:",
+          "differ": true
+        },
+        {
+          "pair": [
+            "consciousness",
+            "---"
+          ],
+          "occ_ab": 22,
+          "occ_ba": 17,
+          "top_follower_ab": "A:",
+          "top_follower_ba": "consciousness",
+          "differ": true
+        }
+      ]
+    }
+  },
+  "density_comparison": {
+    "consciousness_self_ref": 0.0,
+    "self_play_200": 0.0,
+    "corpus_generic": 14.2859
+  },
+  "purpose_built_denser_than_generic": false
+}
