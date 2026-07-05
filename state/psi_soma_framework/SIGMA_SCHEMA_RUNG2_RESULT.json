@@ -1,0 +1,19 @@
+{
+ "probe": "σ·schema rung-2 ENGINE-NATIVE (real engine_cli.py §AttentionSchema attn_schema_report)",
+ "engine_native": true,
+ "n_trial": 120,
+ "k_foci": 8,
+ "metrics": {
+  "intact": 1.0,
+  "ablate": 0.125,
+  "shuffle": 0.249,
+  "delta_intact_ablate": 0.875,
+  "delta_intact_shuffle": 0.751
+ },
+ "bars": {
+  "B1_INTACT>=0.75": true,
+  "B2_INTACT-ABLATE>=0.30": true,
+  "B3_INTACT-SHUF>=0.30": true
+ },
+ "verdict": "ENGINE-NATIVE-VALID(rung2 · σ·schema earned)"
+}
