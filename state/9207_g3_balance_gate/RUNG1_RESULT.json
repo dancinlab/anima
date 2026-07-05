@@ -1,0 +1,20 @@
+{
+ "probe": "G3 balance rung-1 harness (toy A⇄G · numpy DIRECTIONAL)",
+ "T_ticks": 48,
+ "n_slice_per_arm": 24,
+ "metrics": {
+  "dev_treat": 0.062,
+  "dev_shuffle": 0.34,
+  "dev_ablate": 0.405,
+  "psi_treat_min": 0.375,
+  "psi_treat_max": 0.646,
+  "psi_treat_mean": 0.503
+ },
+ "bars": {
+  "B1_PRESERVE dev<0.20": true,
+  "B2_EARNED-ABL Δ>0.05": true,
+  "B3_EARNED-SHUF Δ>0.05": true,
+  "B4_NONDEGEN Ψ̂∈[.1,.9]": true
+ },
+ "verdict": "HARNESS-VALID(rung1 DIRECTIONAL)"
+}

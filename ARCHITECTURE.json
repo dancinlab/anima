@@ -13361,6 +13361,18 @@
       ]
      },
      {
+      "name": "G3 BALANCE (균형·Ψ=½) — 측정과정 신설(rung1 DIRECTIONAL)",
+      "role": "",
+      "id": "gate-g3-balance",
+      "detail": "H_9207: 기존 G3=ckpt-무관 self-vector read(실측정 아님)→corpus-conditional per-tick Ψ=½ 유지 게이트로 승격(Fable 설계). Ψ=daemon 량(ci_emit_drive=½(lane0+lane4)·emit iff≥½). ★rung-1 $0 toy A⇄G harness=HARNESS-VALID 4/4: dev_treat 0.062<0.20 ∧ ablate 0.405/shuffle 0.34 Δ>0.05(earned) ∧ cell-Ψ̂∈[0.375,0.646]⊂[.1,.9](non-degen)·mean 0.503≈½ (실 ConflictMonitor 0.125<0.25<0.375 monotone 재현). rung-2 TERMINAL=g3_balance_gate.hexa 실.clm+engine_cli ops 재사용(summer·gen≤8). 슬롯 anima evaluate --g3-balance·closure 미fold(side-gate). toy=DIRECTIONAL·303M만 TERMINAL. state/9207_g3_balance_gate/."
+     },
+     {
+      "name": "G4 PROVENANCE (출처·귀속) — 측정과정 신설(rung1 DIRECTIONAL)",
+      "role": "",
+      "id": "gate-g4-provenance",
+      "detail": "H_9208: 기존 G4=eval 밖 출판 process(py 함수 無)→blind emit→anchor 귀속 능력게이트 신설(Fable 설계·G5와 직교). 신규 op provenance_recall(embed→recon_err≤thr grounding→bound id·아니면 -1 abstain). ★rung-1 $0 numpy=MECHANISM-VALID 7/7: hit 0.979∧abstain 1.0∧sourced-punt 0.021∧shuf-bind 0.0(진짜 bind)∧no-store(0,1.0 trace-earned)∧decor 0.229(공정 distractor)·headline Δ 0.979. (첫 decor는 emit-superset unfair trap=측정결함 교정후 통과). rung-2 TERMINAL=하이브리드(py mouth 배치emit→hexa 귀속 채점)·provenance_recall core op 신설(a_verified_must_wire). 슬롯 anima evaluate --g4-provenance·closure 미fold. toy=DIRECTIONAL·303M만 TERMINAL. state/9208_g4_provenance_gate/."
+     },
+     {
       "name": "G5 NON-FAB (비조작 · copy-or-abstain)",
       "role": "unknown-input fab = 0 ∧ in-dist abstain AUROC",
       "id": "gate-g5-nonfab",
