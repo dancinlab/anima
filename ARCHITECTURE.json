@@ -13099,7 +13099,7 @@
                 "name": "next (frozen)",
                 "role": "next-step",
                 "id": "h-9200-sweep-next",
-                "detail": "A5+A7 latent frozen-rep probe pair($0 pool, 1 model load~6 forwards)→둘 다 FAIL시 E1 CE-deleted forward-slot clean owner GPU-go(owned-pool, rent無, deps ready H_6190). SSOT=SWEEP_SYNTHESIS.md."
+                "detail": "A5+A7 latent probe → INVALID-anisotropy(303M raw final-LN hidden cos~0.9996, 판정무효). 잔여: A5/A7 center_zscore 보정 재측정 $0 + E1 CE-deleted forward-slot owner GPU-go. §4(whitened floor)와 합쳐 E1 방향 유지. conv probe-py-1."
               }
             ]
           },
@@ -13818,6 +13818,13 @@
         "value": "stale main checkout(origin/main 대비 N-behind) 위에서 H_번호 할당/SSOT 편집 → origin/main 최신 번호·디렉토리명(UNIVERSE→HYPOTHESES 리네임)과 충돌. 본 세션: stale(289 behind)에서 H_6164~6168 할당했으나 origin/main 은 H_6191 까지+UNIVERSE→HYPOTHESES 리네임 → fresh worktree off origin/main tip 에서 H_6192~6196 재할당.",
         "threshold": "stale main(base behind origin)에서 HYPOTHESES/ARCHITECTURE 편집 전: git fetch + 최대 H_번호(git show origin/main:HYPOTHESES/HYPOTHESES.jsonl | tail)+디렉토리명 확인; 아니면 GIT-EDIT-STALE-MAIN blocker·번호충돌 재발.",
         "source": "ARCHITECTURE.json"
+      },
+      {
+        "id": "probe-py-1",
+        "state": "pos-conv",
+        "value": "303M final-LN last-pos raw hidden은 극 anisotropic — 서로 다른 concept/문장의 cos가 ~0.9996-0.9997로 거의 1.0. raw hidden cosine 기반 판정(orbit invariance, antisymmetry 등)은 이 anisotropy로 전부 붕괴→무효. 반드시 center_zscore(또는 whitening) 전처리 후 cos 측정해야 함(§4 참고).",
+        "threshold": "재발조건: 303M final-LN hidden의 raw cosine으로 invariance/antisymmetry/binding 판정을 낼 때. 해결: raw cos 대신 center_zscore(reps - mu)/(sigma+eps) 또는 whitening 후 cos. raw cos ~1.0이면 anisotropy artifact로 판정무효(verdict-integrity).",
+        "source": "state/trunk_obj_step0/a5_a7_latent_probe/probe.py"
       }
     ]
   }
