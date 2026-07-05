@@ -13640,8 +13640,8 @@
    {
     "id": "anima-hexa-1",
     "state": "ossified",
-    "value": "anima full-stack build 벽(clang undeclared/link/codegen)은 대개 stale pool hexat이 root(pool이 현행 hexa-lang release 뒤처져 runtime.h carrier extern 미포함; #33 summer v0.468 set_deterministic 미포함 오진). **2번째 재발모드(A4 H_9106·h1590 전례): heavy engine-native `hexa run`(13705줄 engine_cli inline = multi-min aprime_cc 컴파일)이 같은 pool 박스에서 다른 heavy 에이전트와 경합하면 stall/사망 — 결과 로그 0, journal result 없음, notes만 aspirational.** 둘 다 '과학 천장' 아니라 pool 인프라.",
-    "threshold": "anima build/측정 실패 진단 전 ① pool hexat 현행성(hexa --version + install.sh 동기화) ② heavy engine-native 컴파일은 pool 박스 독점(co-tenancy 금지) 또는 harness 바이너리 1회 pre-compile 후 re-run — 여러 heavy 에이전트를 한 박스에 몰지 말 것(summer-overfire 계열). stall 의심 시 결과파일(run log·verdict.txt) 존재로 완주 판정, notes 'ran on X'만으론 미완.",
+    "value": "anima full-stack build/측정 벽은 대개 pool 인프라(stale hexat OR heavy engine-native co-tenancy stall). 3번째 재발모드(2026-07-06 Ψ-SOMA 세션): 'hx install anima' 설치 패키지가 module resolution 결함으로 빌드 FAIL — FATAL module not found core/dream_persist.hexa, project_root=<none>(패키지 dir hexa.toml 있어도 cwd=home서 project-root 미해결). core/ 56모듈 rsync+hexa 캐시클리어에도 미회복. 병행: raw-py 트레이너(from core import clm_decode)는 import/clm_decodable HANG(303M 미로드 RSS 14.8MB·로그0·5분+, GPU own-GEMM은 hexa 엔진경로만인데 그게 build-broken=scalar Catch-22) · aiden=배포 rc=0에도 소실(재부팅/kill 루프). 셋 다 pool 인프라지 과학결과 아님(infra-wall-noneval).",
+    "threshold": "재발조건: anima evaluate/daemon이 pool서 module-not-found·project_root=none·무출력 HANG. 해결: ① pool hexat 현행성(hexa --version)+설치 패키지 대신 full-repo 클론(repo root hexa.toml=올바른 project-root)서 anima 실행 ② private-repo면 클론 auth 확인 ③ raw-py 303M 측정은 scalar HANG=GPU 엔진경로(anima evaluate 정상빌드) 필수 ④ aiden 등 불안정 호스트 heavy job 금지(summer 안정). 무출력=완주 아님(로그/verdict 파일 존재로만 판정).",
     "source": "cli/anima.hexa"
    },
    {
