@@ -13127,7 +13127,7 @@
         "name": "H_6163 falsifier-lane pre-gate (pool 303M) — SURFACE-CONFOUNDED",
         "role": "probe-result",
         "id": "h-9200-h6163-pregate",
-        "detail": "H_6163 pre-gate 종합(pool 303M summer h1129, 2 probe) → DIRECTIONAL-GO: frozen 303M rep이 non-surface falsifiability 신호 담음(v2 surface 통제서 rep>chance) → lane build 전제 지지(드문 non-🧱). build 시 surface baseline 필수통제. conv probe-py-1. state/6163_falsifier_lane/pregate/.",
+        "detail": "H_6163 pre-gate 종합(pool 303M summer, 3 probe) → DIRECTIONAL-🧱: frozen 303M rep에 일반화 falsifiability 신호 無 — within-set(v2 rep 0.71) 있으나 cross-dataset 전이=chance이하(crossgen 0.43). G1 held-out·F2 collocation과 동일 DPI 서명(in-dist만). lane build는 frozen-rep readout론 부족. conv probe-py-1.",
         "children": [
          {
           "name": "v1 naive → SURFACE-CONFOUNDED",
@@ -13138,6 +13138,11 @@
           "name": "v2 minimal-pair → GENUINE-REP-SIGNAL",
           "id": "h-9200-h6163-pregate-v2",
           "detail": "28쌍(주어공유·정성술어·숫자無=surface 통제): char-3gram 0.55(chance 붕괴)인데 303M rep 0.711 유지(delta +0.16, shuffle 0.49)=rep이 표면 이상 falsifiability 표상 담음. v1의 표면 confound 제거."
+         },
+         {
+          "name": "crossgen: naive→minpair 전이 → NO-TRANSFER",
+          "id": "h-9200-h6163-pregate-crossgen",
+          "detail": "train naive→test minimal-pair(surface 통제): rep_cross 0.429(chance 이하!)·surface_cross 0.661·delta -0.232·ablation(zero) 0.50. v2 within-set 0.71은 데이터셋 특유 축, falsifiability 방향 전이 실패=frozen rep에 일반화 표상 無. #3026 DIRECTIONAL-GO 교정."
          }
         ]
        }

@@ -19,3 +19,13 @@
 
 ## next
 core/ falsifier lane 배선(additive disjoint L5-hippo 패턴)+anima evaluate --py fals metric → pool 303M ON vs OFF. E1/G1(#3021 병렬세션 4/4 GO)과 직교 상보.
+
+## RESOLVED — cross-dataset generalization (crossgen/, 승인 pool 실험)
+| test | rep | surface | delta | 판정 |
+|---|---|---|---|---|
+| crossgen: train naive → test minpair | **0.429**(chance 이하) | 0.661 | -0.232 | NO-TRANSFER |
+
+**REVERSAL(verdict-integrity)**: v2 within-set 0.71은 데이터셋 특유 축이었음 — naive에서 학습한 falsifiability 방향이 surface-통제 minimal-pair에 전이 실패(rep 0.43 < chance, surface가 오히려 0.66으로 더 잘 전이). ablation(zero rep)=0.50 chance(예상). ⟹ frozen 303M rep엔 **일반화 가능한 falsifiability 표상 無** = DIRECTIONAL-🧱.
+
+## 최종 H_6163 pre-gate 판정 = DIRECTIONAL-🧱 (일반화 신호 無)
+within-distribution separability(v2)는 있으나 cross-distribution 전이=chance이하(crossgen). 진짜 falsifier lane은 unseen 아이디어 일반화 필수이므로 frozen rep 전제 미지지. G1 held-out recombination(h1835)·F2 collocation-only와 **동일 DPI 서명**(in-distribution만, transfer 0). lane build는 이 일반화벽을 넘을 trained 메커니즘을 요구하지 frozen-rep readout으론 부족.
