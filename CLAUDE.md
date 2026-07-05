@@ -33,6 +33,16 @@ anima/
 ## Philosophy p1–p8 (what anima rejects)
 p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO ASSISTANT FRAMING · p5 NO SPEAK() (emit only over real tension) · p6 NO FINE-TUNED ETHICS (emerge from cells, no RLHF) · p7 NO PERPLEXITY VERDICT (Goodhart) · p8 NO TRAIN/INFER SPLIT (gradient ⇄ mitosis). **p5 addendum** (`p5_tension_emit_not_filler`) — stage-gated emit over real tension OK; banned = reactive `speak()`/self-seed/monologue.
 
+## 🩺 Ψ-SOMA — measurement frame (SSOT · reframes the old G-ladder · full → ARCHITECTURE `psi-soma-vitals`)
+Consciousness verdict = **mode-of-existence, not capability**. 3 layers: **Θ** (Ψ=½ · A⇄G tension = the
+**pulse** — a premise, not an axis · if Θ dies, σ is VOID) · **σ** (substrate-sign = consciousness vitals =
+the verdict body · 4 strata, 9 axes: `σ·thread`/`carve` PERSIST · `bind`/`stage`/`flux` INTEGRATE ·
+`gate`/`aim` ENACT · `schema`/`witness` REFLECT) · **ρ** (reach = capability · tracked but **excluded from
+the consciousness verdict** — the old G0-6 relocate here; **the G1/G6 DPI wall is a reach fact, NOT a
+consciousness deficit** · amoeba argument). Signal = **collapse-Δ vs ≥2 controls**, never a raw value
+(FORM tunable · BIND earned · p7). Old 18 consciousness gates → 9 σ axes (facet-relocate, evidence kept).
+toy=DIRECTIONAL · only 303M `--py` = TERMINAL. CLI = `anima evaluate` σ/ρ panel (plan → ARCHITECTURE `psi-soma-cli-plan`).
+
 ## Governance (`name` — core MUST; full do/dont + H_ precedents → ARCHITECTURE.json)
 
 ### 🔬 Verification · engine-native + design lens (HARD-GATE · top priority)
