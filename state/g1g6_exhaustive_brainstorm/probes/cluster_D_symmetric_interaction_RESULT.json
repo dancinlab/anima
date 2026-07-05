@@ -1,0 +1,80 @@
+{
+  "probe": "cluster D symmetric-interaction DPI screen (D2/D4/D12 family)",
+  "delta": 0.1,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "n_pairs": 8075,
+  "n_concepts": 368,
+  "n_anchors": 32,
+  "label_structure": "all 3 labels are COMMUTATIVE functions of bag {a,b}",
+  "dpi_prediction": "commutative target -> additive z_a+z_b captures it -> bind does not beat additive (INERT)",
+  "per_label": {
+    "L_symresid": {
+      "verdict": "DPI-CEILING-FLOORED",
+      "n_pass_2of3": 0,
+      "gaps_additive": [
+        -0.26378222977706367,
+        -0.12878175242838263,
+        -0.1549968133281442
+      ],
+      "r2_bind_heldout": [
+        0.05323349918769771,
+        0.2245440684258707,
+        0.1860160313547059
+      ],
+      "r2_additive_heldout": [
+        0.3170157289647614,
+        0.35332582085425335,
+        0.3410128446828501
+      ]
+    },
+    "L_pmi": {
+      "verdict": "DPI-CEILING-FLOORED",
+      "n_pass_2of3": 0,
+      "gaps_additive": [
+        -0.24867593730106619,
+        -0.14212761876867197,
+        -0.2922791970030194
+      ],
+      "r2_bind_heldout": [
+        0.18452103409363518,
+        0.3458227842240782,
+        0.18941752484708752
+      ],
+      "r2_additive_heldout": [
+        0.43319697139470137,
+        0.48795040299275017,
+        0.4816967218501069
+      ]
+    },
+    "L_absdir": {
+      "verdict": "DPI-CEILING-FLOORED",
+      "n_pass_2of3": 0,
+      "gaps_additive": [
+        -0.21129116327057362,
+        -0.16855953016464298,
+        -0.15288046454827497
+      ],
+      "r2_bind_heldout": [
+        0.24000525768191117,
+        0.307618814704536,
+        0.2977949464834133
+      ],
+      "r2_additive_heldout": [
+        0.4512964209524848,
+        0.476178344869179,
+        0.4506754110316883
+      ]
+    }
+  },
+  "honesty": "mini numpy on frozen corpus Z = NOT 303M engine-native (a_toy_scale_recheck). Any PASS = DIRECTIONAL toward a 303M forward, not GREEN closure.",
+  "covers": [
+    "D2 intervention-equivariance (symmetric displacement magnitude)",
+    "D4 relation-bottleneck (joint decode, commutative class signal)",
+    "D12 mutual-information / 2-way interaction-info (symmetric)"
+  ],
+  "relation_to_h9131": "H_9131 S4 tested ANTISYMMETRIC residual only on real 303M; this tests the SYMMETRIC family on the frozen corpus Z (the untested cell)."
+}

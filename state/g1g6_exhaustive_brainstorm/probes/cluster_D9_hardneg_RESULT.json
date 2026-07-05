@@ -1,0 +1,58 @@
+{
+  "probe": "cluster D9 hard-negative additive-separability",
+  "delta": 0.1,
+  "acc_inert_threshold": 0.75,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "n_rows": 15246,
+  "n_pos": 7623,
+  "n_neg": 7623,
+  "n_concepts": 368,
+  "n_anchors": 32,
+  "verdict": "DPI-INERT-CONFIRMED (D9 RETREAD)",
+  "n_inert_seeds": 3,
+  "n_pass_seeds": 0,
+  "results": [
+    {
+      "seed": 7,
+      "n_train": 12197,
+      "n_heldout": 1518,
+      "acc_additive": 0.8919631093544137,
+      "acc_bind": 0.8959156785243741,
+      "auc_additive": 0.7482363315696648,
+      "auc_bind": 0.6750440917107584,
+      "gap_bind_additive": 0.0039525691699604515,
+      "additive_already_separates": true,
+      "dpi_inert": true
+    },
+    {
+      "seed": 4302,
+      "n_train": 12197,
+      "n_heldout": 1504,
+      "acc_additive": 0.8996010638297872,
+      "acc_bind": 0.8969414893617021,
+      "auc_additive": 0.8058333333333333,
+      "auc_bind": 0.772,
+      "gap_bind_additive": -0.0026595744680850686,
+      "additive_already_separates": true,
+      "dpi_inert": true
+    },
+    {
+      "seed": 4303,
+      "n_train": 12197,
+      "n_heldout": 1506,
+      "acc_additive": 0.8944223107569721,
+      "acc_bind": 0.899070385126162,
+      "auc_additive": 0.5655874499332443,
+      "auc_bind": 0.6576268357810413,
+      "gap_bind_additive": 0.004648074369189903,
+      "additive_already_separates": true,
+      "dpi_inert": true
+    }
+  ],
+  "honesty": "mini numpy on frozen corpus Z = NOT 303M engine-native. DIRECTIONAL only.",
+  "dpi_reasoning": "If the same-entity/wrong-relation signal is linearly separable from additive [z_a,z_b], a hard-negative contrastive objective collapses to the additive solution -> no escape from the DPI ceiling."
+}

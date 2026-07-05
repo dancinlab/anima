@@ -1,0 +1,102 @@
+{
+  "prereg": "FROZEN before run: coverage-density (H_6182) vs relation-density (C1/C5/C6/C9) claimed DISTINCT axes. If neither prod nor designed corpus realizes a C-item structure, that C-item is GPU-gated (relation-structured corpus rebuild + 303M retrain), NOT a coverage-density variant. $0 corpus statistic.",
+  "designed": [
+    {
+      "tag": "high",
+      "n_lines": 22750,
+      "template_counts": {
+        "t3_sym": 5661,
+        "t2_meets": 5671,
+        "t4_remem": 5638,
+        "t1_sym": 5780
+      },
+      "C1_relation_balance": {
+        "seen_unordered_pairs": 237,
+        "pairs_with_both_directions": 0,
+        "reverse_fraction": 0.0,
+        "BAR_rev_frac_ge_0.10": false,
+        "t4_remembers_pairs_both_dir": 0
+      },
+      "C5_causal_chain": {
+        "t4_directed_edges": 5638,
+        "transitive_triples_a_b_c": 1131,
+        "transitive_with_a_c_absent": 493,
+        "BAR_ge1_transitive": true
+      },
+      "C6_anti_template": {
+        "H_template_bits": 1.9999,
+        "H_template_given_pair_bits": 1.9775,
+        "MI_template_pair_bits": 0.0224,
+        "BAR_decorrelated_Hcond_ge_H_minus_0.5": true
+      },
+      "C9_difficulty_ladder": {
+        "same_line_cooc": 22750,
+        "win5_cooc": 0,
+        "cross_doc_cooc": 0,
+        "absent_pairs": 198,
+        "distinct_distance_buckets": 2,
+        "BAR_ge3_buckets": false
+      }
+    },
+    {
+      "tag": "low",
+      "n_lines": 22771,
+      "template_counts": {
+        "t2_meets": 5643,
+        "t3_sym": 5822,
+        "t4_remem": 5693,
+        "t1_sym": 5613
+      },
+      "C1_relation_balance": {
+        "seen_unordered_pairs": 31,
+        "pairs_with_both_directions": 0,
+        "reverse_fraction": 0.0,
+        "BAR_rev_frac_ge_0.10": false,
+        "t4_remembers_pairs_both_dir": 0
+      },
+      "C5_causal_chain": {
+        "t4_directed_edges": 5693,
+        "transitive_triples_a_b_c": 19,
+        "transitive_with_a_c_absent": 18,
+        "BAR_ge1_transitive": true
+      },
+      "C6_anti_template": {
+        "H_template_bits": 1.9999,
+        "H_template_given_pair_bits": 1.9971,
+        "MI_template_pair_bits": 0.0027,
+        "BAR_decorrelated_Hcond_ge_H_minus_0.5": true
+      },
+      "C9_difficulty_ladder": {
+        "same_line_cooc": 22771,
+        "win5_cooc": 0,
+        "cross_doc_cooc": 0,
+        "absent_pairs": 404,
+        "distinct_distance_buckets": 2,
+        "BAR_ge3_buckets": false
+      }
+    }
+  ],
+  "prod": {
+    "tag": "prod_hf_head_cooclines",
+    "n_cooc_lines": 15,
+    "lines_with_directional_relation_cue": 0,
+    "directional_fraction": 0.0,
+    "BAR_C1_directional_frac_ge_0.10": false,
+    "cue_breakdown": {},
+    "note": "prod corpus analyzed at HEAD co-occurrence-line tier (the only tier H_6185 found non-zero: 15 lines, all en-general). Full 127MB HF corpus not local on mini; this audits relation-structure of exactly those lines."
+  },
+  "verdict_rollup": {
+    "high": {
+      "C1_relation_balance": false,
+      "C5_causal_chain": true,
+      "C6_anti_template": true,
+      "C9_difficulty_ladder": false
+    },
+    "low": {
+      "C1_relation_balance": false,
+      "C5_causal_chain": true,
+      "C6_anti_template": true,
+      "C9_difficulty_ladder": false
+    }
+  }
+}

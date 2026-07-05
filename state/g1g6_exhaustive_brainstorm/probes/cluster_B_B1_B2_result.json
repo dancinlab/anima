@@ -1,0 +1,19 @@
+{
+  "probe": "cluster_B B1/B2 cross-seed set-selection CEILING ($0 numpy)",
+  "pairs_ever_pass": 6,
+  "pairs_total": 6,
+  "per_pair_max_fb": {
+    "(0, 1)": 1,
+    "(1, 2)": 1,
+    "(2, 3)": 1,
+    "(3, 4)": 1,
+    "(4, 0)": 1,
+    "(0, 2)": 1
+  },
+  "union_best6_fb": 6,
+  "expected_fb_diverse_seed": 3.6666666666666665,
+  "frozen_bar": ">=4/6 on >=2/3 seeds (per-seed independence)",
+  "verdict": "GREEN-toward-GPU (search-wall plausible; B1 GPU fire warranted)",
+  "scope": "DIRECTIONAL (cross-seed union leaks per-seed independence; not terminal)",
+  "caveat": "stored data has K=1/frame + no candidate texts => within-seed-K + Jaccard need GPU"
+}
