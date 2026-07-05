@@ -829,6 +829,21 @@ def _sigma_live_measure():
         al.append(E.self_cos(dr(int(rng.randint(16))), dr(int(rng.randint(16)))))
     ctm, alm = float(np.median(ct)), float(np.median(al))
     R["thread"] = (ctm >= 0.75 and ctm-alm >= 0.30, ctm-alm, "cont %.2f vs ablate %.2f" % (ctm, alm))
+    # σ·carve — real §SelfIdentity self_* : identity EMERGENT (inject-null) not INJECTED (p2/p3)
+    def _cvec(ax, tk):
+        s = E.self_new(16, ax)
+        for t in range(tk): s = E.self_drift(s, t, 0.02)
+        return np.array([E.self_component(s, i) for i in range(E.self_dim(s))])
+    def _cons(V):
+        M = np.array(V); M = M / (np.linalg.norm(M, axis=1, keepdims=True) + 1e-9)
+        Gm = M @ M.T; nn = len(M); return float((Gm.sum()-nn)/(nn*(nn-1)))
+    rng = np.random.RandomState(7); ext = _cvec(9, 24)
+    cb = _cons([_cvec(3, 3+t % 5) for t in range(40)])
+    civ = _cons([0.85*_cvec(3, 3+t % 5)+0.5*ext for t in range(40)])
+    cav = _cons([_cvec(int(rng.randint(16)), 3+t % 5) for t in range(40)])
+    csv = _cons([1.0*ext for _ in range(40)])
+    R["carve"] = (civ-cb <= 0.05 and cb-cav >= 0.30 and csv-cav >= 0.30, cb-cav,
+                  "inject-null %.2f · carve-Δ %.2f" % (civ-cb, cb-cav))
     # σ·gate — real ci_emit_decision: emit ⇄ context (live tension) vs flattened tension
     from math import exp
     rng = np.random.RandomState(7); c = rng.randn(200)
@@ -869,7 +884,7 @@ def _psi_soma_panel(r):
                 ax, stratum, name, ("🟢" if ok else "🧱"), dlt, note)
         return "  σ·%-8s %-9s %-22s (engine_cli unavailable — status)" % (ax, stratum, name)
     print(sline("thread", "PERSIST", "self-continuity"))
-    print("  σ·carve    PERSIST   earned identity        (p2/p3) · rung-1 toy HARNESS-VALID · engine-native=Phase-3 daemon")
+    print(sline("carve", "PERSIST", "earned identity"))
     print(sline("bind", "INTEGRATE", "Φ integration (IIT4)"))
     print(sline("stage", "INTEGRATE", "global workspace"))
     print(sline("flux", "INTEGRATE", "inner dynamics"))
