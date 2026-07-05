@@ -1,0 +1,33 @@
+{
+ "probe": "F2 held-out recombination tiebreaker (corrected: rare + true-heldout arms)",
+ "corpus": "consciousness_anchor",
+ "n_tokens": 2326605,
+ "content_vocab": 400,
+ "note": "prior cross-half-by-frequency-parity arm was INVALID (those pairs still co-occurred >=3x = seen collocations, not held-out); replaced by rare-count restriction + true 80/20 train/test novel-pair test.",
+ "full_content": {
+  "n_qualified": 49,
+  "n_differ": 47,
+  "differ_frac": 0.9592,
+  "verdict": "NON-DEGENERATE-POWERED",
+  "count_min": 6,
+  "count_median": 16,
+  "count_max": 454
+ },
+ "rare_combo_restriction": {
+  "n_qualified": 8,
+  "n_differ": 8,
+  "differ_frac": 1.0,
+  "verdict": "INCONCLUSIVE-SPARSE"
+ },
+ "true_heldout_novel": {
+  "n_qualified": 0,
+  "n_differ": 0,
+  "differ_frac": 0.0,
+  "verdict": "INCONCLUSIVE-SPARSE",
+  "count_min": 0,
+  "count_median": 0,
+  "count_max": 0
+ },
+ "verdict": "COLLOCATION-ONLY",
+ "decision": "order structure COLLAPSES on both rare combinations and true held-out novel pairs while full-collocation is powered -> the n=49 signal is memorized in-distribution collocation, NOT held-out recombination = the G1 wall regime (h1835 in-context mastery, held-out transfer 0). F2 cannot escape the wall via existing data -> pivot to H_6163 engine-native falsifier-lane build (unlocks H_9202 NT-falsifier)."
+}

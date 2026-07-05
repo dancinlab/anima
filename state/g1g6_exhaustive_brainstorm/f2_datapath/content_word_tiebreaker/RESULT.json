@@ -1,0 +1,775 @@
+{
+  "MIN_OCC": 3,
+  "TOP_VOCAB": 400,
+  "POWER": 10,
+  "FRAC_BAR": 0.6666666666666666,
+  "DROP_TOP": 50,
+  "note": "ARM_content = frequency-derived stoplist + wordlike shape; not hand-picked",
+  "corpora": {
+    "consciousness_anchor": {
+      "n_tokens": 2326605,
+      "ARM_freq_top400": {
+        "vocab_size": 400,
+        "n_qualified": 195,
+        "n_differ": 190,
+        "differ_frac": 0.9744,
+        "verdict": "NON-DEGENERATE-POWERED",
+        "examples": [
+          {
+            "pair": [
+              "사용자:",
+              "알겠습니다."
+            ],
+            "c_ab": 1145,
+            "c_ba": 12,
+            "f_ab": "내가",
+            "f_ba": "그렇다면",
+            "differ": true
+          },
+          {
+            "pair": [
+              "anima",
+              "가"
+            ],
+            "c_ab": 275,
+            "c_ba": 1795,
+            "f_ab": "의",
+            "f_ba": "의식",
+            "differ": true
+          },
+          {
+            "pair": [
+              "또한",
+              "이는"
+            ],
+            "c_ab": 7,
+            "c_ba": 3,
+            "f_ab": "아이들이",
+            "f_ba": "불법",
+            "differ": true
+          },
+          {
+            "pair": [
+              "수",
+              "있을"
+            ],
+            "c_ab": 290,
+            "c_ba": 356,
+            "f_ab": "것입니다.",
+            "f_ba": "있습니다.",
+            "differ": true
+          },
+          {
+            "pair": [
+              "서비스를",
+              "제공하는"
+            ],
+            "c_ab": 53,
+            "c_ba": 3,
+            "f_ab": "데",
+            "f_ba": "쉽게",
+            "differ": true
+          },
+          {
+            "pair": [
+              "1",
+              "="
+            ],
+            "c_ab": 52,
+            "c_ba": 51,
+            "f_ab": "5",
+            "f_ba": "/",
+            "differ": true
+          },
+          {
+            "pair": [
+              "2",
+              "="
+            ],
+            "c_ab": 58,
+            "c_ba": 41,
+            "f_ab": "30",
+            "f_ba": "*",
+            "differ": true
+          },
+          {
+            "pair": [
+              "경우",
+              "이"
+            ],
+            "c_ab": 197,
+            "c_ba": 20,
+            "f_ab": "안경을",
+            "f_ba": "화면을",
+            "differ": true
+          },
+          {
+            "pair": [
+              "그",
+              "이유는"
+            ],
+            "c_ab": 107,
+            "c_ba": 5,
+            "f_ab": "무엇인가요?",
+            "f_ba": "어느",
+            "differ": true
+          },
+          {
+            "pair": [
+              "사용하여",
+              "작업을"
+            ],
+            "c_ab": 13,
+            "c_ba": 4,
+            "f_ab": "분산시키세요.",
+            "f_ba": "다른",
+            "differ": true
+          },
+          {
+            "pair": [
+              "때문에",
+              "이"
+            ],
+            "c_ab": 42,
+            "c_ba": 43,
+            "f_ab": "산성을",
+            "f_ba": "두",
+            "differ": true
+          },
+          {
+            "pair": [
+              "및",
+              "의료"
+            ],
+            "c_ab": 11,
+            "c_ba": 37,
+            "f_ab": "산업과",
+            "f_ba": "레크리에이션",
+            "differ": true
+          },
+          {
+            "pair": [
+              "데이터를",
+              "통해"
+            ],
+            "c_ab": 14,
+            "c_ba": 19,
+            "f_ab": "학습하기",
+            "f_ba": "전송하는",
+            "differ": true
+          },
+          {
+            "pair": [
+              "데이터",
+              "또는"
+            ],
+            "c_ab": 14,
+            "c_ba": 13,
+            "f_ab": "참조",
+            "f_ba": "멤버를",
+            "differ": true
+          },
+          {
+            "pair": [
+              "개발",
+              "및"
+            ],
+            "c_ab": 123,
+            "c_ba": 25,
+            "f_ab": "커뮤니케이션",
+            "f_ba": "계획을",
+            "differ": true
+          }
+        ]
+      },
+      "ARM_content_word": {
+        "vocab_size": 400,
+        "sample_vocab": [
+          "가지",
+          "많은",
+          "어떻게",
+          "때문에",
+          "또한",
+          "이는",
+          "것은",
+          "도움이",
+          "좋은",
+          "하셨어요.",
+          "경우",
+          "영향을",
+          "하는",
+          "새로운",
+          "다음과",
+          "데이터",
+          "됩니다.",
+          "말씀하셨어요.",
+          "무슨",
+          "우주가",
+          "함께",
+          "여러",
+          "자신의",
+          "당신의",
+          "정말"
+        ],
+        "n_qualified": 49,
+        "n_differ": 47,
+        "differ_frac": 0.9592,
+        "verdict": "NON-DEGENERATE-POWERED",
+        "examples": [
+          {
+            "pair": [
+              "또한",
+              "이는"
+            ],
+            "c_ab": 7,
+            "c_ba": 3,
+            "f_ab": "아이들이",
+            "f_ba": "불법",
+            "differ": true
+          },
+          {
+            "pair": [
+              "서비스를",
+              "제공하는"
+            ],
+            "c_ab": 53,
+            "c_ba": 3,
+            "f_ab": "데",
+            "f_ba": "쉽게",
+            "differ": true
+          },
+          {
+            "pair": [
+              "미치는",
+              "영향을"
+            ],
+            "c_ab": 142,
+            "c_ba": 154,
+            "f_ab": "최소화하는",
+            "f_ba": "것으로",
+            "differ": true
+          },
+          {
+            "pair": [
+              "방법을",
+              "사용하는"
+            ],
+            "c_ab": 15,
+            "c_ba": 9,
+            "f_ab": "보여주는",
+            "f_ba": "것입니다.",
+            "differ": true
+          },
+          {
+            "pair": [
+              "미칠",
+              "영향을"
+            ],
+            "c_ab": 451,
+            "c_ba": 3,
+            "f_ab": "수",
+            "f_ba": "고려해야",
+            "differ": true
+          },
+          {
+            "pair": [
+              "문제를",
+              "어떻게"
+            ],
+            "c_ab": 8,
+            "c_ba": 3,
+            "f_ab": "해결할",
+            "f_ba": "해결할",
+            "differ": false
+          },
+          {
+            "pair": [
+              "경우",
+              "발생할"
+            ],
+            "c_ab": 21,
+            "c_ba": 8,
+            "f_ab": "완전히",
+            "f_ba": "수",
+            "differ": true
+          },
+          {
+            "pair": [
+              "것은",
+              "많은"
+            ],
+            "c_ab": 3,
+            "c_ba": 15,
+            "f_ab": "아닙니다.",
+            "f_ba": "재료가",
+            "differ": true
+          },
+          {
+            "pair": [
+              "경우",
+              "사용하는"
+            ],
+            "c_ab": 31,
+            "c_ba": 4,
+            "f_ab": "1.",
+            "f_ba": "Directory는?",
+            "differ": true
+          },
+          {
+            "pair": [
+              "관련",
+              "제품"
+            ],
+            "c_ab": 3,
+            "c_ba": 6,
+            "f_ab": "문제에",
+            "f_ba": "또는",
+            "differ": true
+          },
+          {
+            "pair": [
+              "방법을",
+              "사용할"
+            ],
+            "c_ab": 18,
+            "c_ba": 3,
+            "f_ab": "수",
+            "f_ba": "찾기로",
+            "differ": true
+          },
+          {
+            "pair": [
+              "것은",
+              "효과적인"
+            ],
+            "c_ab": 3,
+            "c_ba": 4,
+            "f_ab": "아닙니다.",
+            "f_ba": "자금",
+            "differ": true
+          },
+          {
+            "pair": [
+              "서로",
+              "어떻게"
+            ],
+            "c_ab": 5,
+            "c_ba": 8,
+            "f_ab": "다른",
+            "f_ba": "다른지",
+            "differ": true
+          },
+          {
+            "pair": [
+              "AI",
+              "기반"
+            ],
+            "c_ab": 80,
+            "c_ba": 4,
+            "f_ab": "시스템은",
+            "f_ba": "분석",
+            "differ": true
+          },
+          {
+            "pair": [
+              "중요합니다.",
+              "특히"
+            ],
+            "c_ab": 12,
+            "c_ba": 4,
+            "f_ab": "4.",
+            "f_ba": "메타버스를",
+            "differ": true
+          }
+        ]
+      }
+    },
+    "corpus": {
+      "n_tokens": 629994,
+      "ARM_freq_top400": {
+        "vocab_size": 400,
+        "n_qualified": 9,
+        "n_differ": 9,
+        "differ_frac": 1.0,
+        "verdict": "INCONCLUSIVE-SPARSE",
+        "examples": [
+          {
+            "pair": [
+              "more",
+              "with"
+            ],
+            "c_ab": 498,
+            "c_ba": 461,
+            "f_ab": "the",
+            "f_ba": "coherent",
+            "differ": true
+          },
+          {
+            "pair": [
+              "experience",
+              "of"
+            ],
+            "c_ab": 177,
+            "c_ba": 177,
+            "f_ab": "the",
+            "f_ba": "and",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "의식"
+            ],
+            "c_ab": 66,
+            "c_ba": 16,
+            "f_ab": "측정에는",
+            "f_ba": "A:",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "생각"
+            ],
+            "c_ab": 24,
+            "c_ba": 28,
+            "f_ab": "생각",
+            "f_ba": "The",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "긴장"
+            ],
+            "c_ab": 20,
+            "c_ba": 21,
+            "f_ab": "A:",
+            "f_ba": "긴장",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "느낌"
+            ],
+            "c_ab": 13,
+            "c_ba": 27,
+            "f_ab": "느낌",
+            "f_ba": "A:",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "tension"
+            ],
+            "c_ab": 25,
+            "c_ba": 26,
+            "f_ab": "A:",
+            "f_ba": "tension",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "phi"
+            ],
+            "c_ab": 19,
+            "c_ba": 24,
+            "f_ab": "phi",
+            "f_ba": "A:",
+            "differ": true
+          },
+          {
+            "pair": [
+              "---",
+              "consciousness"
+            ],
+            "c_ab": 22,
+            "c_ba": 17,
+            "f_ab": "A:",
+            "f_ba": "consciousness",
+            "differ": true
+          }
+        ]
+      },
+      "ARM_content_word": {
+        "vocab_size": 400,
+        "sample_vocab": [
+          "language",
+          "they",
+          "This",
+          "좋아요!",
+          "when",
+          "있어요?",
+          "기분이",
+          "있나요?",
+          "모델의",
+          "In",
+          "우리",
+          "models",
+          "what",
+          "높은",
+          "systems",
+          "for",
+          "byte-level",
+          "at",
+          "model?",
+          "coherent",
+          "we",
+          "emergent",
+          "really",
+          "through",
+          "neural"
+        ],
+        "n_qualified": 0,
+        "n_differ": 0,
+        "differ_frac": 0.0,
+        "verdict": "INCONCLUSIVE-SPARSE",
+        "examples": []
+      }
+    },
+    "ko_wiki": {
+      "n_tokens": 220933,
+      "ARM_freq_top400": {
+        "vocab_size": 400,
+        "n_qualified": 42,
+        "n_differ": 39,
+        "differ_frac": 0.9286,
+        "verdict": "NON-DEGENERATE-POWERED",
+        "examples": [
+          {
+            "pair": [
+              "==",
+              "역사"
+            ],
+            "c_ab": 27,
+            "c_ba": 36,
+            "f_ab": "==",
+            "f_ba": "===",
+            "differ": true
+          },
+          {
+            "pair": [
+              "(",
+              "d"
+            ],
+            "c_ab": 4,
+            "c_ba": 7,
+            "f_ab": "∑",
+            "f_ba": "y",
+            "differ": true
+          },
+          {
+            "pair": [
+              ")",
+              "i"
+            ],
+            "c_ab": 6,
+            "c_ba": 3,
+            "f_ab": ")",
+            "f_ba": ")",
+            "differ": false
+          },
+          {
+            "pair": [
+              "==",
+              "==="
+            ],
+            "c_ab": 168,
+            "c_ba": 37,
+            "f_ab": "내용주",
+            "f_ba": "외부",
+            "differ": true
+          },
+          {
+            "pair": [
+              "수",
+              "있을"
+            ],
+            "c_ab": 8,
+            "c_ba": 19,
+            "f_ab": "있다.",
+            "f_ba": "만큼",
+            "differ": true
+          },
+          {
+            "pair": [
+              "==",
+              "각주"
+            ],
+            "c_ab": 118,
+            "c_ba": 118,
+            "f_ab": "==",
+            "f_ba": "==",
+            "differ": false
+          },
+          {
+            "pair": [
+              "때문에",
+              "이"
+            ],
+            "c_ab": 15,
+            "c_ba": 3,
+            "f_ab": "성간물질이",
+            "f_ba": "혈관이",
+            "differ": true
+          },
+          {
+            "pair": [
+              "==",
+              "진화"
+            ],
+            "c_ab": 5,
+            "c_ba": 3,
+            "f_ab": "처음에",
+            "f_ba": "==",
+            "differ": true
+          },
+          {
+            "pair": [
+              "우주의",
+              "초기"
+            ],
+            "c_ab": 5,
+            "c_ba": 3,
+            "f_ab": "이러한",
+            "f_ba": "우주론적",
+            "differ": true
+          },
+          {
+            "pair": [
+              "시스템의",
+              "엔트로피는"
+            ],
+            "c_ab": 5,
+            "c_ba": 3,
+            "f_ab": "시간이",
+            "f_ba": "확률이",
+            "differ": true
+          },
+          {
+            "pair": [
+              "e",
+              "r"
+            ],
+            "c_ab": 7,
+            "c_ba": 3,
+            "f_ab": "v",
+            "f_ba": "=",
+            "differ": true
+          },
+          {
+            "pair": [
+              "1",
+              "−"
+            ],
+            "c_ab": 10,
+            "c_ba": 8,
+            "f_ab": "D",
+            "f_ba": "h",
+            "differ": true
+          },
+          {
+            "pair": [
+              "(",
+              "r"
+            ],
+            "c_ab": 4,
+            "c_ba": 8,
+            "f_ab": "ρ",
+            "f_ba": "1",
+            "differ": true
+          },
+          {
+            "pair": [
+              "=",
+              "k"
+            ],
+            "c_ab": 3,
+            "c_ba": 4,
+            "f_ab": "B",
+            "f_ba": "1",
+            "differ": true
+          },
+          {
+            "pair": [
+              "=",
+              "n"
+            ],
+            "c_ab": 6,
+            "c_ba": 7,
+            "f_ab": "C",
+            "f_ba": "0",
+            "differ": true
+          }
+        ]
+      },
+      "ARM_content_word": {
+        "vocab_size": 400,
+        "sample_vocab": [
+          "이는",
+          "and",
+          "함께",
+          "것은",
+          "등의",
+          "새로운",
+          "그리고",
+          "다양한",
+          "그의",
+          "있었다.",
+          "이를",
+          "매우",
+          "경우",
+          "대해",
+          "등이",
+          "모두",
+          "가지고",
+          "대한민국",
+          "가지",
+          "특히",
+          "위한",
+          "관한",
+          "외부",
+          "있으며,",
+          "영향을"
+        ],
+        "n_qualified": 2,
+        "n_differ": 2,
+        "differ_frac": 1.0,
+        "verdict": "INCONCLUSIVE-SPARSE",
+        "examples": [
+          {
+            "pair": [
+              "우주의",
+              "초기"
+            ],
+            "c_ab": 5,
+            "c_ba": 3,
+            "f_ab": "이러한",
+            "f_ba": "우주론적",
+            "differ": true
+          },
+          {
+            "pair": [
+              "시스템의",
+              "엔트로피는"
+            ],
+            "c_ab": 5,
+            "c_ba": 3,
+            "f_ab": "시간이",
+            "f_ba": "확률이",
+            "differ": true
+          }
+        ]
+      }
+    }
+  },
+  "conclusion": {
+    "content_word_powered_corpora": [
+      "consciousness_anchor"
+    ],
+    "verdict": "CONTENT-PATH-FOUND"
+  }
+}

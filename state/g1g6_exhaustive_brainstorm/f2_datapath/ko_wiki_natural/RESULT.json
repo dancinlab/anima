@@ -1,0 +1,249 @@
+{
+ "cell": "ko_wiki_natural",
+ "probe": "F2 E1 order-gate on ko_wiki natural corpus",
+ "corpus": "/Users/mini/dancinlab/anima/archive/data/.corpus_cache/.corpus_cache/ko_wiki.txt",
+ "tokenization": "whitespace/eojeol (Korean surface words)",
+ "vocab_source": "rebuilt from corpus, top-400 by frequency",
+ "n_tokens": 211833,
+ "vocab_size": 400,
+ "min_occ": 3,
+ "bar": 0.6666666666666666,
+ "power_threshold": 10,
+ "n_distinct_ordered_pairs": 4514,
+ "n_qualified_pairs": 43,
+ "n_differ": 41,
+ "differ_frac": 0.9535,
+ "powered": true,
+ "verdict": "NON-DEGENERATE-POWERED",
+ "examples": [
+  {
+   "pair": "2|d",
+   "n_ab": 14,
+   "n_ba": 4,
+   "top_ab": "t",
+   "top_ba": "y",
+   "differ": true
+  },
+  {
+   "pair": "i|t",
+   "n_ab": 3,
+   "n_ba": 9,
+   "top_ab": "o",
+   "top_ba": "f",
+   "differ": true
+  },
+  {
+   "pair": "있을|수",
+   "n_ab": 8,
+   "n_ba": 19,
+   "top_ab": "있다.",
+   "top_ba": "만큼",
+   "differ": true
+  },
+  {
+   "pair": "이|때문에",
+   "n_ab": 15,
+   "n_ba": 3,
+   "top_ab": "성간물질이",
+   "top_ba": "혈관이",
+   "differ": true
+  },
+  {
+   "pair": "초기|우주의",
+   "n_ab": 5,
+   "n_ba": 3,
+   "top_ab": "이러한",
+   "top_ba": "우주론적",
+   "differ": true
+  },
+  {
+   "pair": "시스템의|엔트로피는",
+   "n_ab": 5,
+   "n_ba": 3,
+   "top_ab": "시간이",
+   "top_ba": "확률이",
+   "differ": true
+  },
+  {
+   "pair": "r|e",
+   "n_ab": 8,
+   "n_ba": 3,
+   "top_ab": "v",
+   "top_ba": "s",
+   "differ": true
+  },
+  {
+   "pair": "p|i",
+   "n_ab": 17,
+   "n_ba": 3,
+   "top_ab": "ln",
+   "top_ba": "i",
+   "differ": true
+  },
+  {
+   "pair": "t|r",
+   "n_ab": 5,
+   "n_ba": 5,
+   "top_ab": "ln",
+   "top_ba": "{\\displaystyle",
+   "differ": true
+  },
+  {
+   "pair": "d|t",
+   "n_ab": 18,
+   "n_ba": 5,
+   "top_ab": "{\\displaystyle",
+   "top_ba": "t",
+   "differ": true
+  },
+  {
+   "pair": "n|0",
+   "n_ab": 5,
+   "n_ba": 4,
+   "top_ab": "k",
+   "top_ba": "R",
+   "differ": true
+  },
+  {
+   "pair": "r|d",
+   "n_ab": 4,
+   "n_ba": 4,
+   "top_ab": "e",
+   "top_ba": "2",
+   "differ": true
+  },
+  {
+   "pair": "d|e",
+   "n_ab": 3,
+   "n_ba": 3,
+   "top_ab": "r",
+   "top_ba": "s",
+   "differ": true
+  },
+  {
+   "pair": "r|1",
+   "n_ab": 9,
+   "n_ba": 5,
+   "top_ab": "t",
+   "top_ba": "0",
+   "differ": true
+  },
+  {
+   "pair": "1|n",
+   "n_ab": 6,
+   "n_ba": 3,
+   "top_ab": "p",
+   "top_ba": "{\\displaystyle",
+   "differ": true
+  },
+  {
+   "pair": "h|t",
+   "n_ab": 6,
+   "n_ba": 4,
+   "top_ab": "h",
+   "top_ba": "W",
+   "differ": true
+  },
+  {
+   "pair": "h|x",
+   "n_ab": 4,
+   "n_ba": 5,
+   "top_ab": "t",
+   "top_ba": "f",
+   "differ": true
+  },
+  {
+   "pair": "t|1",
+   "n_ab": 14,
+   "n_ba": 7,
+   "top_ab": "r",
+   "top_ba": "1",
+   "differ": true
+  },
+  {
+   "pair": "f|x",
+   "n_ab": 118,
+   "n_ba": 19,
+   "top_ab": "{\\displaystyle",
+   "top_ba": "x",
+   "differ": true
+  },
+  {
+   "pair": "lim|x",
+   "n_ab": 35,
+   "n_ba": 11,
+   "top_ab": "a",
+   "top_ba": "x",
+   "differ": true
+  }
+ ],
+ "robustness_hangul_only_vocab": {
+  "note": "vocab rebuilt from corpus by freq but restricted to Hangul-containing token class (drops LaTeX/math single-char tokens like i,t,r,e that inflated the primary run); documented token-class filter, not hand-picking",
+  "n_hangul_tokens": 196427,
+  "vocab_min_freq": 41,
+  "n_qualified_pairs": 7,
+  "n_differ": 7,
+  "differ_frac": 1.0,
+  "powered": false,
+  "verdict": "INCONCLUSIVE-SPARSE",
+  "examples": [
+   {
+    "pair": "있을|수",
+    "n_ab": 8,
+    "n_ba": 19,
+    "top_ab": "있다.",
+    "top_ba": "만큼",
+    "differ": true
+   },
+   {
+    "pair": "이|때문에",
+    "n_ab": 15,
+    "n_ba": 3,
+    "top_ab": "성간물질이",
+    "top_ba": "혈관이",
+    "differ": true
+   },
+   {
+    "pair": "초기|우주의",
+    "n_ab": 5,
+    "n_ba": 3,
+    "top_ab": "이러한",
+    "top_ba": "우주론적",
+    "differ": true
+   },
+   {
+    "pair": "시스템의|엔트로피는",
+    "n_ab": 5,
+    "n_ba": 3,
+    "top_ab": "시간이",
+    "top_ba": "확률이",
+    "differ": true
+   },
+   {
+    "pair": "또한|그는",
+    "n_ab": 8,
+    "n_ba": 5,
+    "top_ab": "심리학을",
+    "top_ba": "생쥐의",
+    "differ": true
+   },
+   {
+    "pair": "역시|이",
+    "n_ab": 3,
+    "n_ba": 3,
+    "top_ab": "기간",
+    "top_ba": "유전자의",
+    "differ": true
+   },
+   {
+    "pair": "또한|우주는",
+    "n_ab": 5,
+    "n_ba": 3,
+    "top_ab": "대폭발(빅뱅)",
+    "top_ba": "보존",
+    "differ": true
+   }
+  ]
+ },
+ "interpretation": "Primary whitespace/eojeol run is POWERED (n=43) and strongly NON-DEGENERATE (frac 0.953): natural Korean surface DOES distinguish order. BUT ~36 of the 43 qualified pairs are single-char LaTeX/math fragments (\\displaystyle formulas) that entered top-400 vocab. Restricting to genuine Hangul concept tokens leaves n=7 qualified pairs (UNDERPOWERED, <10) all differing (frac 1.0) -- same sparse regime as the original E1 consciousness_anchor probe (n=2~5). Conclusion: order-distinguishing structure is NOT absent from natural language (direction is emphatic, ~95-100% differ, corroborating A7), but DENSE powered concept-pair coverage is not reached in 2.2MB Korean wiki -- genuine-concept density is thin."
+}
