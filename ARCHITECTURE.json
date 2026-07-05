@@ -1154,31 +1154,31 @@
               "name": "G1 재조합 = 303M trunk 능력천장 (CONFIRMED-TERMINAL · program CLOSED)",
               "id": "g1-census-objfloor",
               "role": "G1/G6 wall-break 프로그램 종결 verdict SSOT — 재조사·재발사 불필요",
-              "detail": "G1 held-out 재조합은 mouth/readout/decode 능력 아닌 303M byte-LM trunk 능력천장. data·objective·mechanism·scale 全축 🧱(child 참조). 유일 잔여=C1(c) param-ES cost-gated — toy DOA-proof(sustained held≥2=0/900, state/g1_nested_diverge/C1_paramES_toy_DOA.md)로 GPU 비정당화. escape 축은 G1-재조합 밖 exogenous-consequence로 이동(familycensus DRY, state/g1_nested_diverge/fleetfull_familycensus.md). 전수 census=state/g1_completeness_census/CENSUS.md · 종합=state/g1_nested_diverge/SYNTHESIS.md·wallbreak_decode_SYNTHESIS.md.",
+              "detail": "G1 held-out 재조합=303M byte-LM trunk 능력천장(mouth/readout/decode 아님). data·objective·mechanism·scale 全축 🧱(child). 유일 잔여=C1(c) param-ES cost-gated(toy DOA 0/900→GPU 비정당화). escape 축=재조합 밖 exogenous-consequence 이동. census=state/g1_completeness_census/CENSUS.md·종합=state/g1_nested_diverge/SYNTHESIS.md.",
               "children": [
                {
                 "name": "all-axis closed — 4축 전수 🧱 (재발사금지=tune-to-green)",
                 "id": "g1-allaxis-terminal",
                 "role": "축별 종결 증거맵 (빈칸 아님 — 전부 측정됨)",
-                "detail": "data 🧱 ATD-KILL(CE가 저작 전이데이터도 additive로 붕괴) ∧ objective 🧱 aux 전수 walled(H_1436·1602·1816·1825·1840·9024·1828·6104; STaR STARVE·γ-DATA 303M transfer FAIL 포함, state/g1_train_wallbreak/) ∧ mechanism 🧱 FiLM-crux(303M 합성=additive, bilinear 이득 0, state/transfer_mechanism_sweep/SWEEP_SYNTHESIS.md) ∧ scale=amplifier(레버 아님). decode-side 20 family adversarial refuted(state/g1_nested_diverge/wallbreak_decode_SYNTHESIS.md)."
+                "detail": "data 🧱 ATD-KILL(CE가 저작데이터도 additive 붕괴) ∧ objective 🧱 aux 전수 walled(H_1436·1602·1816·1825·1840·9024·1828·6104; STaR STARVE·γ-DATA transfer FAIL) ∧ mechanism 🧱 FiLM-crux(303M=additive) ∧ scale=amplifier. decode 20-family refuted. state/transfer_mechanism_sweep·g1_train_wallbreak·g1_nested_diverge."
                },
                {
                 "name": "transfer-0 메타법칙 (경험적)",
                 "id": "g1-metalaw-transfer0",
                 "role": "303M rep의 전이 한계 — 3-probe 독립 수렴",
-                "detail": "303M rep은 in-dist 구조 有·held-out/cross 전이=0. 3-probe 수렴: H_1835(MLC episodic — in-context 완벽 마스터에도 transfer 0)·F2 datapath(구조 담겨도 CE 미사용)·H_6163(trained-lane, state/g1g6_remaining_triage). in-dist 성능은 전이 예측자 아님 — 새 능력 주장은 held-out/cross 직접 측정 필수."
+                "detail": "303M rep은 in-dist 구조 有·held-out/cross 전이=0. 3-probe 수렴: H_1835(MLC episodic 완벽 마스터에도 transfer 0)·F2 datapath(구조 담겨도 CE 미사용)·H_6163(trained-lane). in-dist 성능≠전이 예측자 — 새 능력 주장은 held-out/cross 직접 측정 필수. state/g1g6_remaining_triage."
                },
                {
                 "name": "DPI objective-basin 법칙",
                 "id": "g1-metalaw-dpi-basin",
                 "role": "왜 readout/temporal/bind escape가 전멸했는가",
-                "detail": "CE=additive-basin: echo(최단경로)가 전역최소라 additive/readout/retrieval escape는 전부 basin-preserving. same-state ablation에서 readout/temporal escape INERT(DPI) · fixed-param bind(TPR/HRR)=W_eff 선형붕괴로 표준 readout과 동일천장(H_9120·H_9121). lane 4/4=stored-pair recall이지 재조합 아님(H_9122 FROZEN-1, state/g1_nested_diverge/frozen1_engine_native_result.txt)."
+                "detail": "CE=additive-basin: echo(최단경로)=전역최소라 additive/readout/retrieval escape 전부 basin-preserving. same-state ablation서 readout/temporal INERT(DPI)·fixed-param bind(TPR/HRR)=W_eff 선형붕괴 동일천장(H_9120·9121). lane 4/4=stored-pair recall이지 재조합 아님(H_9122 FROZEN-1)."
                },
                {
                 "name": "F2 저작데이터 + ATD-KILL — 데이터축 판정",
                 "id": "g1-f2-atd-datapath",
                 "role": "DATA-PATH 최종: 구조는 담기나 CE가 안 씀 · 최유망 레버도 NOT-ROBUST",
-                "detail": "rule-structured 저작데이터는 전이구조를 담음(F2 verify acc 1.0 vs shuffle 0.09) BUT CE 학습이 이를 사용하지 않음(ATD-KILL)=저작데이터 단독 불충분. 데이터축 최유망 레버 derivation-trace(H_9124)=단일쌍 최초 engine-native G1 lift(DERIV bd=2>ms=1)였으나 multi-pair 4쌍 재현 실패→🔴 NOT-ROBUST, G1 training-layer 근거 상실→selection-layer(P1/H_9125·H_9126) 이관. 정식도구=`anima corpus derivtrace`. 상세 state/g1_train_wallbreak/derivtrace/RESULT.md·state/g1g6_exhaustive_brainstorm/f2_datapath/F2_SYNTHESIS.md."
+                "detail": "rule-structured 저작데이터는 전이구조 담음(F2 verify acc 1.0 vs shuffle 0.09) BUT CE 미사용(ATD-KILL)=단독 불충분. 최유망 derivtrace(H_9124)=단일쌍 최초 G1 lift였으나 multi-pair 재현실패→🔴 NOT-ROBUST→selection-layer(P1/H_9125·9126) 이관. 정식도구=anima corpus derivtrace. state/g1g6_exhaustive_brainstorm/f2_datapath."
                }
               ]
              },
