@@ -13785,6 +13785,13 @@
     "value": "anima 학습 host 요건: hexa-native 'anima train'(cli/train.hexa)만 pool의 pre-built hexa 툴체인+sm_120 own-GEMM 필요. **그러나 'anima train --py'(cli/train.py)=CANONICAL torch 트레이너(GPU-bound cuda GEMM)는 bare rent pod서 됨** — torch cu128 설치로 sm_120 지원, hexa 불필요. → .clm serialize → 'anima evaluate --py'(torch-free numpy) engine-native TERMINAL 측정. 즉 bare pod는 --py torch 경로로 학습 가능(내 앞선 'wrong host' 결론은 hexa-only만 본 성급한 오류).",
     "threshold": "GPU 학습 host 선택: hexa-native train=pool 전용 · torch 'anima train --py'=아무 GPU pod(bare rent OK, torch cu128 for sm_120). bare pod 철거 전 --py torch 경로 가능성 먼저 확인(성급한 wrong-host 판정 금지). 측정은 항상 anima evaluate --py(numpy). teardown='yes | hexa cloud rm <id>'.",
     "source": "pod"
+   },
+   {
+    "id": "derivtrace-out-fair-py-1",
+    "state": "pos-conv",
+    "value": "토이 lift를 단일 favorable run(outfair DERIV 3/3)으로 'robust reopener' 선언했다가 multi-run/dilution 안정성 체크서 반전(f=1.0 1/2·희석 0/2). 창발신호는 값(한 run)이 아니라 차분의 ROBUSTNESS(run간·config간·dilution간 재현). measurement-metalaw(FORM/favorable-run tunable, BIND earned)의 재발.",
+    "threshold": "authored-data/조합 lift를 'robust/reopener'로 승격 전 필수: ①≥2 run seed/step 변주 ②dilution(농도) ladder ③swap-null. 하나라도 flip이면 DIRECTIONAL 유지, engine-native만 TERMINAL.",
+    "source": "derivtrace_out_fair.py"
    }
   ]
  }
