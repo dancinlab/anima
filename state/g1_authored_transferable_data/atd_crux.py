@@ -77,7 +77,9 @@ def build_corpus(lam, seed, coverage=0.6, reversal=0.5, filler="", expose_held=T
         body = filler + "\n" + body
     return body, z, OP, name
 
-def train_bytelm(corpus, seed, d_model=256, n_layer=4, n_head=8, block=64, steps=3000, lr=3e-4):
+def train_bytelm(corpus, seed, d_model=384, n_layer=6, n_head=8, block=64, steps=12000, lr=3e-4):
+    # capacity/steps set from ATD cap-probe (2026-07-05): in-corpus train-pair behav 0.17->0.74 at d384/6L/12k
+    # => the toy is now capable of learning the authored task in-distribution; held-out is the real measure.
     import torch, torch.nn as nn
     torch.manual_seed(seed)
     dev = "cuda" if torch.cuda.is_available() else "cpu"
