@@ -1,0 +1,29 @@
+{
+ "probe": "H_9200 E1 $0 pre-GPU degeneracy gate",
+ "min_occ": 3,
+ "bar": 0.6666666666666666,
+ "n_qualified_pairs": 2,
+ "n_differ": 2,
+ "differ_frac": 1.0,
+ "verdict": "INCONCLUSIVE-sparsity",
+ "decision": "E1 supervision is DATA-STARVED on this corpus -> E1's non-commutative CE target is coupled to F2 (coverage/data-density): it needs a denser order-distinguishing corpus before an independent owner GPU-go is justified. Converges with the sweep finding that F2 is the only positive-but-data-gated lever. Re-routes E1 BEHIND F2, not as a standalone GPU arm.",
+ "examples": [
+  {
+   "pair": "anima|lane",
+   "n_ab": 4410,
+   "n_ba": 247,
+   "top_ab": "entity",
+   "top_ba": "lane",
+   "differ": true
+  },
+  {
+   "pair": "lane|entity",
+   "n_ab": 4473,
+   "n_ba": 310,
+   "top_ab": "anima",
+   "top_ba": "entity",
+   "differ": true
+  }
+ ],
+ "integrity_note": "n_qualified too small to clear the 2/3 bar with power: self-pairs excluded -> n=2 (both DIFFER, frac 1.0); self-pairs included -> n=5 (frac 0.40). The 160k-token consciousness_anchor corpus with a 400-word concept vocab has almost NO order-distinguishing adjacent concept-pair structure (only 2 non-self pairs occur in both orders >=3x). Mechanical verdict flips with a trivial preprocessing choice => underpowered, NOT a clean pass/fail."
+}
