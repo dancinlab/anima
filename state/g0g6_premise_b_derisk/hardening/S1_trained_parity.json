@@ -1,0 +1,67 @@
+{
+  "condition": "S1_trained_parity",
+  "params": {
+    "K": 16,
+    "d": 64,
+    "n_pairs": 240,
+    "n_train": 168,
+    "n_heldout": 72,
+    "random_both_acc": 0.00390625,
+    "readouts": [
+      "linear-SGD Adam 4k ep",
+      "MLP H256 ReLU Adam 4k ep",
+      "MLP H512 (additive-only, 6k ep)"
+    ]
+  },
+  "results_both_role_filler_fitfit": {
+    "additive_linSGD": {
+      "both": 0.1111111111111111,
+      "role": 0.16666666666666666,
+      "filler": 0.16666666666666666,
+      "fit_both": 0.6071428571428571
+    },
+    "slot_linSGD": {
+      "both": 1.0,
+      "role": 1.0,
+      "filler": 1.0,
+      "fit_both": 1.0
+    },
+    "slot_shuffle_linSGD": {
+      "both": 0.2222222222222222,
+      "role": 0.2777777777777778,
+      "filler": 0.2916666666666667,
+      "fit_both": 0.7797619047619048
+    },
+    "additive_mlpH256": {
+      "both": 0.1388888888888889,
+      "role": 0.16666666666666666,
+      "filler": 0.16666666666666666,
+      "fit_both": 0.5952380952380952
+    },
+    "slot_mlpH256": {
+      "both": 1.0,
+      "role": 1.0,
+      "filler": 1.0,
+      "fit_both": 1.0
+    },
+    "slot_shuffle_mlpH256": {
+      "both": 0.2361111111111111,
+      "role": 0.3055555555555556,
+      "filler": 0.2916666666666667,
+      "fit_both": 0.6666666666666666
+    },
+    "additive_mlpH512": {
+      "both": 0.1388888888888889,
+      "role": 0.16666666666666666,
+      "filler": 0.16666666666666666,
+      "fit_both": 0.48214285714285715
+    }
+  },
+  "slot_reach": 1.0,
+  "additive_reach": 0.1388888888888889,
+  "gap": 0.8611111111111112,
+  "shuffle_control_reach": 0.2222222222222222,
+  "slot_beats_additive": true,
+  "shuffle_collapses": true,
+  "survives": true
+}

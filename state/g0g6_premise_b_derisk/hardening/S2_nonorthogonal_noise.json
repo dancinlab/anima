@@ -1,0 +1,302 @@
+{
+  "cond": "S2_nonorthogonal_noise",
+  "stress_point": {
+    "target_mean_cos": 0.2,
+    "measured_mean_cos": 0.2,
+    "noise_sigma": 0.15,
+    "noisy_clean_cos": 0.64
+  },
+  "params": {
+    "K": 16,
+    "d": 64,
+    "ridge_lambda": 0.01,
+    "n_pairs": 240,
+    "n_train": 168,
+    "n_heldout": 72,
+    "random_both_acc": 0.00390625
+  },
+  "results_both_role_filler": {
+    "additive": {
+      "both": 0.05555555555555555,
+      "role": 0.2222222222222222,
+      "filler": 0.3611111111111111
+    },
+    "slot": {
+      "both": 0.3888888888888889,
+      "role": 0.5972222222222222,
+      "filler": 0.6944444444444444
+    },
+    "slot_shuffle": {
+      "both": 0.013888888888888888,
+      "role": 0.19444444444444445,
+      "filler": 0.1111111111111111
+    },
+    "slot_ablate": {
+      "both": 0.06944444444444445,
+      "role": 0.9722222222222222,
+      "filler": 0.06944444444444445
+    },
+    "outer": {
+      "both": 0.3055555555555556,
+      "role": 0.5694444444444444,
+      "filler": 0.5555555555555556
+    },
+    "outer_shuffle": {
+      "both": 0.041666666666666664,
+      "role": 0.18055555555555555,
+      "filler": 0.18055555555555555
+    }
+  },
+  "slot_reach": 0.3888888888888889,
+  "additive_reach": 0.05555555555555555,
+  "shuffle_control_reach": 0.013888888888888888,
+  "ablate_control_reach": 0.06944444444444445,
+  "gap_slot_minus_additive": 0.33333333333333337,
+  "slot_beats_additive": true,
+  "shuffle_collapses": true,
+  "ablate_collapses": true,
+  "additive_ever_beats_slot": false,
+  "survives": true,
+  "sweep": [
+    {
+      "target_cos": 0.0,
+      "meas_cos": 0.099,
+      "sigma": 0.0,
+      "noisy_clean_cos": 1.0,
+      "slot": 1.0,
+      "additive": 0.222,
+      "shuffle": 0.333,
+      "gap": 0.778
+    },
+    {
+      "target_cos": 0.0,
+      "meas_cos": 0.099,
+      "sigma": 0.05,
+      "noisy_clean_cos": 0.928,
+      "slot": 1.0,
+      "additive": 0.222,
+      "shuffle": 0.153,
+      "gap": 0.778
+    },
+    {
+      "target_cos": 0.0,
+      "meas_cos": 0.099,
+      "sigma": 0.1,
+      "noisy_clean_cos": 0.781,
+      "slot": 0.931,
+      "additive": 0.125,
+      "shuffle": 0.097,
+      "gap": 0.806
+    },
+    {
+      "target_cos": 0.0,
+      "meas_cos": 0.099,
+      "sigma": 0.15,
+      "noisy_clean_cos": 0.64,
+      "slot": 0.611,
+      "additive": 0.056,
+      "shuffle": 0.028,
+      "gap": 0.556
+    },
+    {
+      "target_cos": 0.0,
+      "meas_cos": 0.099,
+      "sigma": 0.3,
+      "noisy_clean_cos": 0.385,
+      "slot": 0.069,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.069
+    },
+    {
+      "target_cos": 0.0,
+      "meas_cos": 0.099,
+      "sigma": 0.5,
+      "noisy_clean_cos": 0.243,
+      "slot": 0.0,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.0
+    },
+    {
+      "target_cos": 0.1,
+      "meas_cos": 0.1,
+      "sigma": 0.0,
+      "noisy_clean_cos": 1.0,
+      "slot": 1.0,
+      "additive": 0.222,
+      "shuffle": 0.333,
+      "gap": 0.778
+    },
+    {
+      "target_cos": 0.1,
+      "meas_cos": 0.1,
+      "sigma": 0.05,
+      "noisy_clean_cos": 0.928,
+      "slot": 1.0,
+      "additive": 0.25,
+      "shuffle": 0.167,
+      "gap": 0.75
+    },
+    {
+      "target_cos": 0.1,
+      "meas_cos": 0.1,
+      "sigma": 0.1,
+      "noisy_clean_cos": 0.781,
+      "slot": 0.944,
+      "additive": 0.153,
+      "shuffle": 0.056,
+      "gap": 0.792
+    },
+    {
+      "target_cos": 0.1,
+      "meas_cos": 0.1,
+      "sigma": 0.15,
+      "noisy_clean_cos": 0.64,
+      "slot": 0.611,
+      "additive": 0.069,
+      "shuffle": 0.042,
+      "gap": 0.542
+    },
+    {
+      "target_cos": 0.1,
+      "meas_cos": 0.1,
+      "sigma": 0.3,
+      "noisy_clean_cos": 0.385,
+      "slot": 0.069,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.069
+    },
+    {
+      "target_cos": 0.1,
+      "meas_cos": 0.1,
+      "sigma": 0.5,
+      "noisy_clean_cos": 0.243,
+      "slot": 0.0,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.0
+    },
+    {
+      "target_cos": 0.2,
+      "meas_cos": 0.2,
+      "sigma": 0.0,
+      "noisy_clean_cos": 1.0,
+      "slot": 1.0,
+      "additive": 0.222,
+      "shuffle": 0.333,
+      "gap": 0.778
+    },
+    {
+      "target_cos": 0.2,
+      "meas_cos": 0.2,
+      "sigma": 0.05,
+      "noisy_clean_cos": 0.928,
+      "slot": 1.0,
+      "additive": 0.222,
+      "shuffle": 0.139,
+      "gap": 0.778
+    },
+    {
+      "target_cos": 0.2,
+      "meas_cos": 0.2,
+      "sigma": 0.1,
+      "noisy_clean_cos": 0.781,
+      "slot": 0.875,
+      "additive": 0.125,
+      "shuffle": 0.083,
+      "gap": 0.75
+    },
+    {
+      "target_cos": 0.2,
+      "meas_cos": 0.2,
+      "sigma": 0.15,
+      "noisy_clean_cos": 0.64,
+      "slot": 0.389,
+      "additive": 0.056,
+      "shuffle": 0.014,
+      "gap": 0.333
+    },
+    {
+      "target_cos": 0.2,
+      "meas_cos": 0.2,
+      "sigma": 0.3,
+      "noisy_clean_cos": 0.385,
+      "slot": 0.014,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.014
+    },
+    {
+      "target_cos": 0.2,
+      "meas_cos": 0.2,
+      "sigma": 0.5,
+      "noisy_clean_cos": 0.243,
+      "slot": 0.0,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.0
+    },
+    {
+      "target_cos": 0.4,
+      "meas_cos": 0.235,
+      "sigma": 0.0,
+      "noisy_clean_cos": 1.0,
+      "slot": 1.0,
+      "additive": 0.222,
+      "shuffle": 0.333,
+      "gap": 0.778
+    },
+    {
+      "target_cos": 0.4,
+      "meas_cos": 0.235,
+      "sigma": 0.05,
+      "noisy_clean_cos": 0.928,
+      "slot": 1.0,
+      "additive": 0.208,
+      "shuffle": 0.139,
+      "gap": 0.792
+    },
+    {
+      "target_cos": 0.4,
+      "meas_cos": 0.235,
+      "sigma": 0.1,
+      "noisy_clean_cos": 0.781,
+      "slot": 0.847,
+      "additive": 0.125,
+      "shuffle": 0.083,
+      "gap": 0.722
+    },
+    {
+      "target_cos": 0.4,
+      "meas_cos": 0.235,
+      "sigma": 0.15,
+      "noisy_clean_cos": 0.64,
+      "slot": 0.375,
+      "additive": 0.042,
+      "shuffle": 0.014,
+      "gap": 0.333
+    },
+    {
+      "target_cos": 0.4,
+      "meas_cos": 0.235,
+      "sigma": 0.3,
+      "noisy_clean_cos": 0.385,
+      "slot": 0.014,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.014
+    },
+    {
+      "target_cos": 0.4,
+      "meas_cos": 0.235,
+      "sigma": 0.5,
+      "noisy_clean_cos": 0.243,
+      "slot": 0.0,
+      "additive": 0.0,
+      "shuffle": 0.0,
+      "gap": 0.0
+    }
+  ]
+}
