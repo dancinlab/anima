@@ -1180,7 +1180,19 @@
                    {
                     "name": "transfer-0 서명 (3-probe empirical 수렴 · 2026-07-05)",
                     "id": "g1-escape-metalaw-transfer0",
-                    "detail": "경험적 메타법칙: 303M rep은 in-distribution 구조는 담으나 held-out/cross 전이=0. 3 probe 수렴 — G1 held-out recomb(h1835)·F2 collocation-only·H_6163 cross-transfer(within 0.71→cross 0.43 chance이하). 벽=in-dist 구조有·generalization無. escape=transfer 얻는 trained 機構 요구(frozen-rep readout 부족)."
+                    "detail": "경험적 메타법칙: 303M rep은 in-distribution 구조는 담으나 held-out/cross 전이=0. 3 probe 수렴 — G1 held-out recomb(h1835)·F2 collocation-only·H_6163 cross-transfer(within 0.71→cross 0.43 chance이하). 벽=in-dist 구조有·generalization無. escape=transfer 얻는 trained 機構 요구(frozen-rep readout 부족).",
+                    "children": [
+                     {
+                      "name": "escape 機構 sweep → MULTIPLE-ESCAPES (bilinear binding 클래스)",
+                      "id": "g1-escape-transfer0-mechsweep",
+                      "detail": "escape 機構 sweep(7 trained·binding-dominant·anchor-validated): escape=bilinear/multiplicative binding 클래스(slot 유일 아님) — slot/TPR/FiLM/hypernet cross-transfer(+0.27~+0.94). NO: additive·SSM(→additive)·recurrent(train0.748 capacity지만 memorize→cross-0.91=capacity≠transfer). escape=bilinear FORM 추상화."
+                     },
+                     {
+                      "name": "scope caveat + GPU 랭킹",
+                      "id": "g1-escape-transfer0-mechsweep-next",
+                      "detail": "a_scale_honest_scope: 합성 target 자체가 bilinear라 bilinear 機構 trivially 매칭=조건부(303M G1 target이 bilinear-transferable일 때). GPU: (1)FiLM 최저비용(O(d)·DPI-native·drop-in) 먼저 (2)slot 최고 G1-충실 cement. 1차 additive-dominant=task-artifact 폐기(conv). state/transfer_mechanism_sweep/."
+                     }
+                    ]
                    }
                   ]
                  },
