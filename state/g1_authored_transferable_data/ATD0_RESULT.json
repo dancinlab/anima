@@ -1,0 +1,22 @@
+{
+ "probe": "ATD-0 VALID-ANCHOR (ground-truth z, no LM)",
+ "K": 96,
+ "D": 6,
+ "n_train_pairs": 2000,
+ "n_heldout_pairs": 552,
+ "checks": {
+  "1_additive_heldout_r2": -0.0605,
+  "2_bilinear_heldout_r2": 0.9566,
+  "3_noncommutativity_median_abscorr": 0.1975,
+  "4_nameleak_r2": -0.0606,
+  "5_eval_pairs_in_corpus": 0
+ },
+ "passes": {
+  "1_additive_le_0.10": true,
+  "2_bilinear_ge_0.90": true,
+  "3_noncomm_le_0.30": true,
+  "4_nameleak_le_0.05": true,
+  "5_evalclean": true
+ },
+ "harness_valid": true
+}
