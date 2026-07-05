@@ -1,0 +1,77 @@
+{
+  "device": "cuda",
+  "K": 24,
+  "D": 64,
+  "held_frac": 0.3,
+  "epochs": 5000,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "note": "single autoregressive next-token CE, no role/filler head scaffold",
+  "additive": {
+    "per_seed": [
+      {
+        "both": 0.16363635659217834,
+        "first": 0.16363635659217834,
+        "both_train": 0.643410861492157,
+        "both_shuffle": null
+      },
+      {
+        "both": 0.145454540848732,
+        "first": 0.145454540848732,
+        "both_train": 0.6511628031730652,
+        "both_shuffle": null
+      },
+      {
+        "both": 0.12727272510528564,
+        "first": 0.12727272510528564,
+        "both_train": 0.6589147448539734,
+        "both_shuffle": null
+      }
+    ],
+    "mean": {
+      "both": 0.145454540848732,
+      "first": 0.145454540848732,
+      "both_train": 0.6511628031730652,
+      "both_shuffle": null
+    }
+  },
+  "slot": {
+    "per_seed": [
+      {
+        "both": 0.9757575392723083,
+        "first": 0.9999999403953552,
+        "both_train": 1.0,
+        "both_shuffle": 0.0
+      },
+      {
+        "both": 0.9818181395530701,
+        "first": 0.9999999403953552,
+        "both_train": 1.0,
+        "both_shuffle": 0.0
+      },
+      {
+        "both": 0.9696969389915466,
+        "first": 0.9999999403953552,
+        "both_train": 1.0,
+        "both_shuffle": 0.0
+      }
+    ],
+    "mean": {
+      "both": 0.9757575392723083,
+      "first": 0.9999999403953552,
+      "both_train": 1.0,
+      "both_shuffle": 0.0
+    }
+  },
+  "verdict": {
+    "slot_heldout_both": 0.9757575392723083,
+    "additive_heldout_both": 0.145454540848732,
+    "slot_beats_additive": true,
+    "slot_generalizes": true,
+    "shuffle_collapses": true,
+    "call": "CE-INDUCES-SLOTS(303M GO reinforced)"
+  }
+}

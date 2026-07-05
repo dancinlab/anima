@@ -13064,6 +13064,12 @@
             "role": "derisk-verdict",
             "id": "h-9200-e1-trunk-learnability",
             "detail": "trunk-learnability rung(summer GPU trainable-trunk 합성 3seed): end-to-end SGD가 slot-forward 학습→held-out both=1.0 vs additive 0.117(additive train조차 0.36 붕괴)·slot-shuffle→0.0. 'gradient가 슬롯 못 배움' 실패모드 제거→303M GO. 최종 rung=byte-LM CE목적이 슬롯 유도하나(진짜 DPI 벽). state/..trunk_learnability."
+           },
+           {
+            "name": "rung-3 CE-induces-slots (pool GPU)",
+            "role": "derisk-verdict",
+            "id": "h-9200-e1-rung3-ce-autoregressive",
+            "detail": "rung-3 byte-LM충실(단일 autoregressive next-token CE·role/filler head scaffold 無·summer GPU 3seed): 모델이 구조 스스로 발견해 A→B 순차 emit. SLOT held-out both=0.976 vs additive 0.145·shuffle 붕괴 → CE-INDUCES-SLOTS. rung-2(2-head)와 독립 재확증. 잔여=실 byte-context+scale(303M). state/..trunk_ce_ar."
            }
           ]
          }
