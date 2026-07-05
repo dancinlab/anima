@@ -1,0 +1,17 @@
+{
+ "probe": "σ·gate rung-1 harness validation (Ψ-SOMA ENACT · numpy DIRECTIONAL)",
+ "note": "measurement-design check, NOT a Ψ proxy; real σ·gate = live daemon readout (rung-2)",
+ "metrics": {
+  "corr_live": 0.768,
+  "corr_flatten": 0.015,
+  "corr_shuffle": 0.069,
+  "delta_live_flat": 0.753,
+  "delta_live_shuf": 0.699
+ },
+ "bars": {
+  "B1_LIVE>=0.50": true,
+  "B2_LIVE-FLAT>=0.30": true,
+  "B3_LIVE-SHUF>=0.30": true
+ },
+ "verdict": "HARNESS-VALID(rung1 DIRECTIONAL)"
+}
