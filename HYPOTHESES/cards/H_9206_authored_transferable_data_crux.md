@@ -1,8 +1,8 @@
 # H_9206 — Authored-Transferable-Data (ATD) crux for the G1 escape
 
-**tier:** 🧱 KILL-lean DIRECTIONAL (frozen-bar KILL · behav DIRECTIONAL · toy=DIRECTIONAL, 303M만 TERMINAL)
+**tier:** 🧱 KILL (measurement-clean · caveat 해소 · toy=DIRECTIONAL, 303M만 TERMINAL)
 **scope:** the single untested claim gating the G1 escape / 303M authored-corpus fire
-**artifact:** `state/g1_authored_transferable_data/` (ATD0_RESULT.json · ATD1_RESULT.json · atd1_full.log)
+**artifact:** `state/g1_authored_transferable_data/` (ATD0/ATD1/ATD_CLEANGEOM_RESULT.json · logs)
 
 ## 결과 (2026-07-05 · summer 3seed)
 
@@ -18,8 +18,15 @@
   0.15 ≪ in-corpus 0.74 = 거대 일반화갭.
 - **종합**: strong claim(전이 bilinear geometry 유도)=미지지 KILL-lean · weak claim(저작>collocation held 전이)=
   behav 지지 DIRECTIONAL. escape가 100% 농도서도 약함 → ATD-5 희석 무의미·**303M authored-only fire NO-GO**.
-- **reopen 저비용 잔여**: rep 측정 negative-R² fix(cleaner geometry probe)·ATD-3 ρ-density·objective측
-  (authored-data aux-bilinear = H_1602 additive-aux와 다른 신규셀 · γ H_1840-on-authored).
+- **✅ caveat 해소 — clean-geometry probe (well-posed target)**: rep-crux의 음수-R²가 KILL을 흐릴까 봐, 모델
+  singles가 held-out서 **ground-truth t(z_a,z_b)**(bounded·well-posed)를 additive vs FiLM로 복원하는지 재측정.
+  VERDICT=**CLEAN-KILL-no-recoverable-transferable-bilinear**: λ=1 med_Δ=−0.024·med_film R²=−0.29 · λ=0통제
+  med_Δ=−0.028·−0.28 = **동일 floor**. 이전 −4.1은 OOD-joint-rep readout 외삽 아티팩트였고, well-posed에서도
+  R² 음수(−0.1~−0.3)+FiLM 무이득 = held singles에 복원가능 전이 bilinear 구조 **無**. KILL은 measurement-clean.
+  게다가 behav의 약한 λ=1 우위(0.152)조차 geometry로는 통제와 동일 floor = recoverable transferable bilinear
+  rep 아님(약신호는 memorization-leak 계열). ⟹ 저작데이터-단독 escape = 토이서 clean 미지지.
+- **reopen 저비용 잔여**: ATD-3 ρ-density ladder · objective측(authored-data aux-bilinear = H_1602 additive-aux와
+  다른 신규셀 · γ H_1840-on-authored). ⚠️실 코퍼스는 anima corpus derivtrace 유도가 canonical(#3043)이지 hand-gen 아님.
 
 ## 가설
 
