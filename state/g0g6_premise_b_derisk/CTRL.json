@@ -1,0 +1,64 @@
+{
+  "lever_id": "CTRL",
+  "lever_name": "additive cbind baseline (CONTROL / DPI floor)",
+  "probe": "synthetic K-concept ORDERED-pair reachability ($0 numpy, no 303M decode)",
+  "K": 16,
+  "D": 64,
+  "heldout_frac": 0.25,
+  "ridge": 0.01,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "metric": "ordered_reach = mean per-slot held-out recovery acc (needs order/binding)",
+  "heldout_reach": 0.18333333333333335,
+  "additive_control_reach": 0.18333333333333335,
+  "shuffle_control_reach": 0.03888888888888889,
+  "set_reach_diagnostic": 1.0,
+  "chance_ordered_per_slot": 0.0625,
+  "beats_additive": false,
+  "shuffle_collapses": true,
+  "directional_verdict": "NO-GO",
+  "per_seed": [
+    {
+      "seed": 7,
+      "n_train": 180,
+      "n_heldout": 60,
+      "lever_ordered_reach": 0.13333333333333333,
+      "lever_set_reach": 1.0,
+      "lever_both_correct": 0.13333333333333333,
+      "additive_control_ordered_reach": 0.13333333333333333,
+      "shuffle_control_ordered_reach": 0.03333333333333333,
+      "shuffle_control_set_reach": 0.0,
+      "chance_ordered_per_slot": 0.0625
+    },
+    {
+      "seed": 4302,
+      "n_train": 180,
+      "n_heldout": 60,
+      "lever_ordered_reach": 0.18333333333333332,
+      "lever_set_reach": 1.0,
+      "lever_both_correct": 0.18333333333333332,
+      "additive_control_ordered_reach": 0.18333333333333332,
+      "shuffle_control_ordered_reach": 0.04166666666666667,
+      "shuffle_control_set_reach": 0.0,
+      "chance_ordered_per_slot": 0.0625
+    },
+    {
+      "seed": 4303,
+      "n_train": 180,
+      "n_heldout": 60,
+      "lever_ordered_reach": 0.23333333333333334,
+      "lever_set_reach": 1.0,
+      "lever_both_correct": 0.23333333333333334,
+      "additive_control_ordered_reach": 0.23333333333333334,
+      "shuffle_control_ordered_reach": 0.041666666666666664,
+      "shuffle_control_set_reach": 0.016666666666666666,
+      "chance_ordered_per_slot": 0.0625
+    }
+  ],
+  "interpretation": "CTRL lever IS c=a+b. ordered_reach sits at the additive floor: additive is order-blind (a+b=b+a) so it cannot linearly separate (i,j) from (j,i). set_reach is HIGH (exchangeable bag {i,j} is linearly recoverable even held-out) which proves the probe is well-formed \u2014 the ONLY thing lost is ORDER/binding, exactly the DPI premise-(b) floor. lever==additive so it cannot beat additive; there is no order-structure above shuffle to collapse.",
+  "honesty": "synthetic frozen numpy = NOT 303M engine-native (a_toy_scale_recheck). This is the CONTROL floor a real premise-(b) lever must BEAT to earn a GPU fire \u2014 DIRECTIONAL, never a terminal verdict.",
+  "dpi_premise_b": "premise-(b) forward-COMPUTATION is order-preserving binding; additive forward pass discards it -> this quantifies the floor."
+}

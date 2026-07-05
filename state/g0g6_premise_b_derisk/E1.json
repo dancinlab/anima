@@ -1,0 +1,54 @@
+{
+  "lever_id": "E1",
+  "params": {
+    "K": 16,
+    "d": 64,
+    "ridge_lambda": 0.01,
+    "n_pairs": 240,
+    "n_train": 168,
+    "n_heldout": 72,
+    "random_both_acc": 0.00390625
+  },
+  "results_both_role_filler": {
+    "additive": {
+      "both": 0.2361111111111111,
+      "role": 0.2361111111111111,
+      "filler": 0.2361111111111111
+    },
+    "slot": {
+      "both": 1.0,
+      "role": 1.0,
+      "filler": 1.0
+    },
+    "slot_shuffle": {
+      "both": 0.3055555555555556,
+      "role": 0.3055555555555556,
+      "filler": 0.3055555555555556
+    },
+    "slot_ablate": {
+      "both": 0.0,
+      "role": 1.0,
+      "filler": 0.0
+    },
+    "outer": {
+      "both": 0.09722222222222222,
+      "role": 0.2222222222222222,
+      "filler": 0.4444444444444444
+    },
+    "outer_shuffle": {
+      "both": 0.013888888888888888,
+      "role": 0.18055555555555555,
+      "filler": 0.1111111111111111
+    }
+  },
+  "best_lever_form": "slot",
+  "heldout_reach": 1.0,
+  "additive_control_reach": 0.2361111111111111,
+  "shuffle_control_reach": 0.3055555555555556,
+  "ablate_control_reach": 0.0,
+  "lift_over_additive": 0.7638888888888888,
+  "beats_additive": true,
+  "shuffle_collapses": true,
+  "ablate_collapses": true,
+  "directional_verdict": "GO"
+}
