@@ -1,8 +1,25 @@
 # H_9206 — Authored-Transferable-Data (ATD) crux for the G1 escape
 
-**tier:** ⏳ PROPOSED (pre-registered · bars frozen before run · p7 no tune-to-green)
+**tier:** 🧱 KILL-lean DIRECTIONAL (frozen-bar KILL · behav DIRECTIONAL · toy=DIRECTIONAL, 303M만 TERMINAL)
 **scope:** the single untested claim gating the G1 escape / 303M authored-corpus fire
-**artifact:** `state/g1_authored_transferable_data/`
+**artifact:** `state/g1_authored_transferable_data/` (ATD0_RESULT.json · ATD1_RESULT.json · atd1_full.log)
+
+## 결과 (2026-07-05 · summer 3seed)
+
+- **ATD-0 anchor**: PASS 5/5 (생성기 결함 2건 잡아 수정 → VALID).
+- **cap-probe**: in-corpus behav 0.17→0.74 @ d384/6L/12k = harness 해석가능화(toy가 과제 in-dist 학습).
+- **ATD-1 rep-crux frozen VERDICT = KILL-CE-COLLAPSES-TO-ADDITIVE**: λ=1(저작전이) med_Δ(FiLM−add)=−0.020(전seed≤0)
+  ≤ kill 0.03 · λ=0(collocation) med_Δ=−0.082(≈0 정상통제). 저작 전이데이터로도 byte-LM CE가 전이가능 bilinear
+  GEOMETRY 미유도.
+- **⚠️ verdict-integrity 단서**: rep-crux add/film R² 둘다 음수(−4.1)=held-out readout 외삽실패 → Δ는 geometry
+  판정에 measurement-limited(clean #3032처럼 +R²가 아님).
+- **ATD-2 behav (clean·DIRECTIONAL)**: λ=1 held-out 재조합 0.152(2.5×chance·swap 0.061=순서민감 genuine bind)
+  > λ=0 0.062(=chance) = 저작 전이데이터가 collocation 대비 **약하지만 실재하는** held-out 전이 부여. 단
+  0.15 ≪ in-corpus 0.74 = 거대 일반화갭.
+- **종합**: strong claim(전이 bilinear geometry 유도)=미지지 KILL-lean · weak claim(저작>collocation held 전이)=
+  behav 지지 DIRECTIONAL. escape가 100% 농도서도 약함 → ATD-5 희석 무의미·**303M authored-only fire NO-GO**.
+- **reopen 저비용 잔여**: rep 측정 negative-R² fix(cleaner geometry probe)·ATD-3 ρ-density·objective측
+  (authored-data aux-bilinear = H_1602 additive-aux와 다른 신규셀 · γ H_1840-on-authored).
 
 ## 가설
 
