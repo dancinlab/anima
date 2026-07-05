@@ -18,3 +18,6 @@ G0 ckpt = CE-trained forward trunk. integration-sufficiency 가 부족하면 →
 
 ## 관련
 a_phi_iit4_tool · a7b_pass(G0–G4 frozen) · a_engine_native_learning · [[substrate-framebreak-g1-combination-operator]]
+
+## 구현 spec (2026-07-05 · reference-matched, Fable 백엔드 무응답→직접)
+faithful IIT4 big-Φ 파이프라인 확정 = `BRAIN/eeg/eeg_to_tpm.hexa` `eeg_big_phi(samples[ch*n_samp+t], n_ch≤8, n_samp, state)`(채널별 mean-이진화→transition-count TPM→stdlib/consciousness/iit4_bigphi.hexa `big_phi`). EEG 데모와 완전 동형 → **h1129 hidden n_ch=6 채널을 코퍼스 스트림 시계열로 대입**. 통제=shuffle-time(통합파괴)·synth_coupled/independent(calibration)·random-ch. verdict=Δ(Φ_topvar−Φ_shuffle), frozen bar ≥0.5=통합유의·<0.1=null. scope: tiny-n Φ=trunk통합 bounded대리, 단일ckpt=DIRECTIONAL 1점(G1/G6 상관은 다-ckpt 필요). 산출=state/6196_g0_phi_integration/(PLAN.md·extract_activations.py ready). **실행=pool-gated**(303M per-position 활성 추출 heavy, mini OOM; summer=ATD종결 후에도 91% 점유).
