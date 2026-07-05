@@ -1,0 +1,130 @@
+{
+ "probe": "derivtrace multi-pair robustness (canonical cli/corpus.py, toy byte-LM)",
+ "n_pairs": 5,
+ "n_deriv_beats_flat": 3,
+ "n_deriv_distinct2": 5,
+ "n_flat_distinct2": 2,
+ "verdict": "DERIV-ROBUST-consistent-lift-over-flat",
+ "cells": [
+  {
+   "derivtrace": {
+    "bytes": 861070,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 2,
+    "fam_j_hits": 2,
+    "emitted": "trace: take cells and mind; take distant and between; bind cells with distant. o"
+   },
+   "flat": {
+    "bytes": 563585,
+    "n_train_pairs": 18,
+    "distinct": 1,
+    "fam_i_hits": 2,
+    "fam_j_hits": 0,
+    "emitted": "out: cells mind meet dream engine, they compose into meaning.\nthe engine dreams "
+   },
+   "held": [
+    0,
+    1
+   ],
+   "seed": 7,
+   "deriv_beats_flat": true
+  },
+  {
+   "derivtrace": {
+    "bytes": 864992,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 2,
+    "fam_j_hits": 2,
+    "emitted": "derive: take memory and meaning; take information and quiet; weave memory with i"
+   },
+   "flat": {
+    "bytes": 565707,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 3,
+    "fam_j_hits": 2,
+    "emitted": "out: meaning memory meet information silence, meaning composes anew.\ntension rip"
+   },
+   "held": [
+    2,
+    3
+   ],
+   "seed": 7,
+   "deriv_beats_flat": false
+  },
+  {
+   "derivtrace": {
+    "bytes": 865539,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 2,
+    "fam_j_hits": 2,
+    "emitted": "unfold: take between and tension; take dream and engine; bind between with dream"
+   },
+   "flat": {
+    "bytes": 566203,
+    "n_train_pairs": 18,
+    "distinct": 1,
+    "fam_i_hits": 0,
+    "fam_j_hits": 2,
+    "emitted": "out: meaning new meet dream alone, new meaning arises.\nmemory composes into new "
+   },
+   "held": [
+    1,
+    4
+   ],
+   "seed": 7,
+   "deriv_beats_flat": true
+  },
+  {
+   "derivtrace": {
+    "bytes": 862289,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 2,
+    "fam_j_hits": 2,
+    "emitted": "steps: take mind and cells; take information and silence; link mind with informa"
+   },
+   "flat": {
+    "bytes": 565015,
+    "n_train_pairs": 18,
+    "distinct": 1,
+    "fam_i_hits": 0,
+    "fam_j_hits": 2,
+    "emitted": "out: alone dream meet information carries, a new whole arises.\ntension ripples b"
+   },
+   "held": [
+    0,
+    3
+   ],
+   "seed": 7,
+   "deriv_beats_flat": true
+  },
+  {
+   "derivtrace": {
+    "bytes": 871010,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 2,
+    "fam_j_hits": 2,
+    "emitted": "steps: take meaning and new; take dream and alone; link meaning with dream. out:"
+   },
+   "flat": {
+    "bytes": 569249,
+    "n_train_pairs": 18,
+    "distinct": 2,
+    "fam_i_hits": 2,
+    "fam_j_hits": 2,
+    "emitted": "out: meaning new meet dream alone, they compose into meaning.\ntension ripples be"
+   },
+   "held": [
+    2,
+    4
+   ],
+   "seed": 7,
+   "deriv_beats_flat": false
+  }
+ ]
+}

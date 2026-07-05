@@ -20,7 +20,15 @@
 
 
 ## 🔴 robustness 반증 (leave-one-pair-out · engine-native $0 summer)
-H_9124의 단일쌍({c0,c1} deriv bd=2>ms=1 PASS)이 **4개 추가 held-out 쌍 전부에서 재현 실패**: {0,1}{0,4}{1,3}{2,3} 모두 deriv bd=1/ms=1 g1_pass=FALSE(floor·singles 전부 1), 오히려 flat(bd=2)보다 낮음. paraphrase 통제도 clears=false, coherent·kwr high(undertrain 아님). ⇒ **원 bd=2 lift = single-pair threshold artifact**(H_9124 자체 caveat 실증). derivation-trace는 G1을 robust하게 열지 못함. 상세 `state/g1_train_wallbreak/derivtrace_robust/ROBUST_RESULT.md`. 메타법칙(H_9126)의 training-layer 근거 상실 → 메타법칙은 selection-layer(P1 G6·H_9125)로만 확증.
+H_9124의 단일쌍({c0,c1} deriv bd=2>ms=1 PASS)이 **4개 추가 held-out 쌍 전부에서 재현 실패**: {0,1}{0,4}{1,3}{2,3} 모두 deriv bd=1/ms=1 g1_pass=FALSE(floor·singles 전부 1), 오히려 flat(bd=2)보다 낮음. paraphrase 통제도 clears=false, coherent·kwr high(undertrain 아님). ⇒ **원 bd=2 lift = single-pair threshold artifact**(H_9124 자체 caveat 실증). derivation-trace는 G1을 robust하게 열지 못함(**단 이 반증은 warm-FT h1129 303M 레짐**). 상세 `state/g1_train_wallbreak/derivtrace_robust/ROBUST_RESULT.md`. 메타법칙(H_9126)의 training-layer 근거 상실 → 메타법칙은 selection-layer(P1 G6·H_9125)로만 확증.
+
+## 🔬 REOPENED — from-scratch 레짐 (toy DIRECTIONAL · #3043 canonical `anima corpus derivtrace` 사용 · [[H_9206]] 연계)
+#3043(F2 코퍼스=canonical `cli/corpus.py`, hand-gen 아님)을 계기로, **canonical derivtrace 코퍼스를 from-scratch 학습**한 토이(3M, 8k step, summer)로 multi-pair robustness를 $0 재측정:
+- **OUT-only 공정 채점**(양쪽 arm OUT clause만·swap-null 통제): **DERIV 3/3 held-out서 두 개념 정확 결합**("cells mind meet distant between"·swap-null 1<2=올바른 결합) vs **FLAT 0/3**. `DERIVTRACE_OUTFAIR_RESULT.json`.
+- 첫 run(전체 생성 채점)은 derivtrace의 keyword-rich TRACE를 채점한 confound였으나, **OUT-only 재채점서 lift 생존** = trace 아티팩트 아닌 earned-BIND.
+- ⚠️ **engine-native 303M warm-FT(위 🔴)와 통제된 발산**: 차이=**학습레짐(from-scratch vs warm-FT)** 또는 **농도(100% toy vs 희석 303M)**, 둘 confound. a_engine_native_learning: 303M warm-FT 🔴가 TERMINAL·toy는 DIRECTIONAL(tier 유지).
+- **결정적 $0 disambiguator(진행중)**: from-scratch 토이를 derivtrace를 자연 필러에 **희석**(f∈{100,30,10}%)해 학습 → OUT-lift가 희석서 생존하면 warm-FT 레짐이 벽(303M from-scratch/heavy-continue-train 재점화)·희석서 붕괴하면 concentration-fragile(H_9124 🔴와 화해). 산출 `DERIVTRACE_OUTFAIR_RESULT.json`·`derivtrace_out_fair.py`·`state/g1_authored_transferable_data/`.
+
 ## artifacts
 - `state/g1_train_wallbreak/SYNTHESIS.md` (14 레버 census + deep-L8 CLOSED 증거 + survivor prereg)
 - `state/g1_train_wallbreak/star/` (레버2 STaR STEP-0 early-kill: VERDICT.txt · step0_result.json · step0.log · step0_earlykill.py)
