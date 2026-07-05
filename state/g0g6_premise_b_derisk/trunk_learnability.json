@@ -1,0 +1,85 @@
+{
+  "device": "cuda",
+  "K": 24,
+  "D": 64,
+  "held_frac": 0.3,
+  "epochs": 4000,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "chance_both": 0.0018115942028985507,
+  "additive": {
+    "per_seed": [
+      {
+        "role": 0.15757575631141663,
+        "fill": 0.16363635659217834,
+        "both": 0.12727272510528564,
+        "both_train": 0.3488372266292572,
+        "both_shuffle": null
+      },
+      {
+        "role": 0.145454540848732,
+        "fill": 0.145454540848732,
+        "both": 0.13939394056797028,
+        "both_train": 0.3643410801887512,
+        "both_shuffle": null
+      },
+      {
+        "role": 0.12727272510528564,
+        "fill": 0.12727272510528564,
+        "both": 0.08484847843647003,
+        "both_train": 0.3798449635505676,
+        "both_shuffle": null
+      }
+    ],
+    "mean": {
+      "role": 0.14343434075514475,
+      "fill": 0.145454540848732,
+      "both": 0.11717171470324199,
+      "both_train": 0.3643410901228587,
+      "both_shuffle": null
+    }
+  },
+  "slot": {
+    "per_seed": [
+      {
+        "role": 0.9999999403953552,
+        "fill": 0.9999999403953552,
+        "both": 0.9999999403953552,
+        "both_train": 1.0,
+        "both_shuffle": 0.0
+      },
+      {
+        "role": 0.9999999403953552,
+        "fill": 0.9999999403953552,
+        "both": 0.9999999403953552,
+        "both_train": 1.0,
+        "both_shuffle": 0.0
+      },
+      {
+        "role": 0.9999999403953552,
+        "fill": 0.9999999403953552,
+        "both": 0.9999999403953552,
+        "both_train": 1.0,
+        "both_shuffle": 0.0
+      }
+    ],
+    "mean": {
+      "role": 0.9999999403953552,
+      "fill": 0.9999999403953552,
+      "both": 0.9999999403953552,
+      "both_train": 1.0,
+      "both_shuffle": 0.0
+    }
+  },
+  "verdict": {
+    "slot_heldout_both": 0.9999999403953552,
+    "additive_heldout_both": 0.11717171470324199,
+    "slot_beats_additive": true,
+    "slot_generalizes": true,
+    "shuffle_collapses": true,
+    "call": "TRUNK-LEARNS-SLOTS(303M GO)"
+  }
+}

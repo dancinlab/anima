@@ -13057,7 +13057,15 @@
           "name": "E1 hardening verdict (2wf $0)",
           "role": "derisk-verdict",
           "id": "h-9200-e1-hardening-verdict",
-          "detail": "wf_37a011ed hardening 4/4 survive: S1 trained-parity 결정적(additive 2x-cap+6k ep도 0.139=order-blind천장 0.167·slot 1.0=frozen착시 아님)·S2 비직교+noise 7x·S3 K=256 scale-inv·S4 depth-2. ⟹ CONDITIONAL-GO. open=trunk-learnability(303M이 clean-slot 학습 vs additive붕괴, GPU-only)=NEXT owner GPU-go+pre-reg kill."
+          "detail": "wf_37a011ed hardening 4/4 survive: S1 trained-parity 결정적(additive 2x-cap+6k ep도 0.139=order-blind천장 0.167·slot 1.0=frozen착시 아님)·S2 비직교+noise 7x·S3 K=256 scale-inv·S4 depth-2. ⟹ CONDITIONAL-GO. open=trunk-learnability(303M이 clean-slot 학습 vs additive붕괴, GPU-only)=NEXT owner GPU-go+pre-reg kill.",
+          "children": [
+           {
+            "name": "trunk-learnability rung (pool GPU)",
+            "role": "derisk-verdict",
+            "id": "h-9200-e1-trunk-learnability",
+            "detail": "trunk-learnability rung(summer GPU trainable-trunk 합성 3seed): end-to-end SGD가 slot-forward 학습→held-out both=1.0 vs additive 0.117(additive train조차 0.36 붕괴)·slot-shuffle→0.0. 'gradient가 슬롯 못 배움' 실패모드 제거→303M GO. 최종 rung=byte-LM CE목적이 슬롯 유도하나(진짜 DPI 벽). state/..trunk_learnability."
+           }
+          ]
          }
         ]
        },
