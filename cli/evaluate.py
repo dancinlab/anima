@@ -772,7 +772,7 @@ def _psi_soma_panel(r):
     print("  ── Θ ground (pulse · premise) ──────────────────────────────────────")
     print("  Θ  Ψ=½ / A⇄G tension     precondition (liveness gate; if dead → σ VOID) · daemon-readout rung")
     print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
-    print("  σ·thread   PERSIST self-continuity     kosmos self-anchor (H_1471 🟢 wired) · rung-2 wrap")
+    print("  σ·thread   PERSIST self-continuity     self_* self-anchor (H_1471) · rung-2 ENGINE-NATIVE-VALID (Δ0.81)")
     print("  σ·carve    PERSIST earned identity      inject-null ∧ ablate-collapse (p2/p3) · rung-1 $0 next")
     print("  σ·bind     INTEGRATE Φ integration      hexa verify faithful-IIT4 · rung-2")
     print("  σ·stage    INTEGRATE global workspace   GWT gws_winner (winner-take-all) · rung-2 ENGINE-NATIVE-VALID (Δ0.71)")
