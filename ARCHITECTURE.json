@@ -13825,6 +13825,13 @@
         "value": "303M final-LN last-pos raw hidden은 극 anisotropic — 서로 다른 concept/문장의 cos가 ~0.9996-0.9997로 거의 1.0. raw hidden cosine 기반 판정(orbit invariance, antisymmetry 등)은 이 anisotropy로 전부 붕괴→무효. 반드시 center_zscore(또는 whitening) 전처리 후 cos 측정해야 함(§4 참고).",
         "threshold": "재발조건: 303M final-LN hidden의 raw cosine으로 invariance/antisymmetry/binding 판정을 낼 때. 해결: raw cos 대신 center_zscore(reps - mu)/(sigma+eps) 또는 whitening 후 cos. raw cos ~1.0이면 anisotropy artifact로 판정무효(verdict-integrity).",
         "source": "state/trunk_obj_step0/a5_a7_latent_probe/probe.py"
+      },
+      {
+        "id": "pi-brainstorm-round1-md-1",
+        "state": "pos-conv",
+        "value": "무-원장 외부 브레인스토밍(fable/gemini/pi)은 이미 walled 이거나 H_9200 exhaustive에 열거된 레버를 재도출한다 — 신규 등록 전 반드시 원장 대조(check-ledger). H_6192~6196이 H_9201~9205와 중복된 것과 동형 재발.",
+        "threshold": "브레인스토밍 산출을 신규 H로 등록하기 전 HYPOTHESES.jsonl + H_9200 README 74항목 grep 대조 필수; 매치=보존만(재등록 X)",
+        "source": "state/g0g6_brainstorm_external/pi_brainstorm_round1.md"
       }
     ]
   }
