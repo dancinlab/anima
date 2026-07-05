@@ -774,7 +774,7 @@ def _psi_soma_panel(r):
     print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
     print("  σ·thread   PERSIST self-continuity     self_* self-anchor (H_1471) · rung-2 ENGINE-NATIVE-VALID (Δ0.81)")
     print("  σ·carve    PERSIST earned identity      inject-null ∧ ablate-collapse (p2/p3) · rung-1 $0 next")
-    print("  σ·bind     INTEGRATE Φ integration      hexa verify faithful-IIT4 · rung-2")
+    print("  σ·bind     INTEGRATE Φ integration      faithful ci_phi_iit4 min-cut MIP · rung-2 ENGINE-NATIVE-VALID (Φ1.45 vs 0.003)")
     print("  σ·stage    INTEGRATE global workspace   GWT gws_winner (winner-take-all) · rung-2 ENGINE-NATIVE-VALID (Δ0.71)")
     print("  σ·flux     INTEGRATE inner dynamics     imagery_activate+subjective_time · rung-2 ENGINE-NATIVE-VALID (Δ1.0)")
     print("  σ·gate ★   ENACT tension-emit           live emit⇄ctx vs flatten Δ · rung-1 HARNESS-VALID (Δ0.75)")
