@@ -25,6 +25,8 @@
   R² 음수(−0.1~−0.3)+FiLM 무이득 = held singles에 복원가능 전이 bilinear 구조 **無**. KILL은 measurement-clean.
   게다가 behav의 약한 λ=1 우위(0.152)조차 geometry로는 통제와 동일 floor = recoverable transferable bilinear
   rep 아님(약신호는 memorization-leak 계열). ⟹ 저작데이터-단독 escape = 토이서 clean 미지지.
+- **ATD-3 ρ-density ladder (clean-geom measure)**: VERDICT=KILL-HOLDS-across-coverage. λ=1·ρ∈{1.0,0.3,0.1} 전부 Δ≈−0.02~−0.04·film R²≈−0.25~−0.32 동일 floor = pair 밀도(dense↔sparse)로도 전이 bilinear geometry 미유도. ATD-3 CLOSED.
+- **배터리 종결**: ATD-4(ConvMoE)·ATD-5(희석 f)는 moot — 가장 깨끗한 100%-농도·transformer 설정서도 escape 死 → 더 어려운 arch/희석 조건이 rescue 불가(Fable: escape 100%서 약함→희석 moot·ConvMoE 가드는 transformer PASS시만 의미).
 - **reopen 저비용 잔여**: ATD-3 ρ-density ladder · objective측(authored-data aux-bilinear = H_1602 additive-aux와
   다른 신규셀 · γ H_1840-on-authored). ⚠️실 코퍼스는 anima corpus derivtrace 유도가 canonical(#3043)이지 hand-gen 아님.
 
