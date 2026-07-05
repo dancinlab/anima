@@ -1,0 +1,52 @@
+{
+  "probe": "H_9200 A5+A7 whitened re-measure (fixes raw-anisotropy INVALID)",
+  "ckpt": "/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin",
+  "preprocess": "center_zscore over global rep population (\u00a74 / l5_discriminator identical)",
+  "A5_verdict": "FAIL",
+  "A7_verdict": "PASS",
+  "both_fail": false,
+  "decision": ">=1 PASS (whitened) \u2192 latent signal survives \u2192 deepen before E1",
+  "A5_results": [
+    {
+      "pair": "consciousness>information",
+      "orbit_min_cos": 0.6208888118728559,
+      "control_cos": 0.06409234699388265,
+      "passed": false
+    },
+    {
+      "pair": "system>mechanism",
+      "orbit_min_cos": 0.5937352063410547,
+      "control_cos": 0.1537912185628612,
+      "passed": false
+    },
+    {
+      "pair": "learning>brain",
+      "orbit_min_cos": 0.8239720885795381,
+      "control_cos": -0.09074082255654091,
+      "passed": false
+    }
+  ],
+  "A7_results": [
+    {
+      "pair": "consciousness>information",
+      "antisymmetry": 1.047579643542119,
+      "identical_control_cos": 0.9999999999260221,
+      "passed": true
+    },
+    {
+      "pair": "system>mechanism",
+      "antisymmetry": 0.6498856630965946,
+      "identical_control_cos": 0.9999999999419781,
+      "passed": true
+    },
+    {
+      "pair": "learning>brain",
+      "antisymmetry": 0.9661837212770693,
+      "identical_control_cos": 0.9999999999345802,
+      "passed": true
+    }
+  ],
+  "bar_A5": "whitened orbit cos>=0.90 AND control<=0.60 on >=2/3",
+  "bar_A7": "1-whitened-cos(A>B,B>A)>=0.10 AND identical>=0.99 on >=2/3",
+  "honesty": "py 2-production numpy TERMINAL-eligible; whitening removes the anisotropy artifact."
+}
