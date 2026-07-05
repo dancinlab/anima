@@ -13224,7 +13224,7 @@
         "name": "현황 verdict",
         "role": "",
         "id": "gate-g0-coherence-status",
-        "detail": "[IN-PROG] 측정타당성 확정. clm303_clean py-terminal 5/5 PASS·jamo-mitosis(H_1316/1321) 🟢. floor=REFUTED(artifact). 미탐: H_6196 G0 Φ-integration sufficiency 재정의(byte-parity≠통합 충분·IIT4 faithful·a_phi_iit4_tool). ★G0🔴→하위 무효. H_6196 측정설계 완료(reference-match faithful IIT4 eeg_big_phi 파이프라인·h1129 hidden 6채널 시계열·shuffle/calib 통제·Δ frozen≥0.5)=state/6196_g0_phi_integration/(PLAN+extract ready)·실행 pool-gated(303M heavy)·DPI-pred 🧱."
+        "detail": "[IN-PROG] 측정타당성 확정. clm303_clean py-terminal 5/5 PASS·jamo-mitosis(H_1316/1321) 🟢. floor=REFUTED(artifact). 미탐: H_6196 G0 Φ-integration sufficiency 재정의(byte-parity≠통합 충분·IIT4 faithful·a_phi_iit4_tool). ★G0🔴→하위 무효.(reference-match faithful IIT4 eeg_big_phi 파이프라인·h1129 hidden 6채널 시계열·shuffle/calib 통제·Δ frozen≥0.5)=state/6196_g0_phi_integration/(PLAN+extract ready)·실행 pool-gated(303M heavy)·DPI-pred 🧱. H_6196 측정완료(🧱 WALL-DIRECTIONAL, engine-native faithful IIT4 aiden): h1129 trunk Φ-integration topvar 1.765≫shuffle 0.235(Δ1.53≫0.5)=INTEGRATED, 사전예측(Φ낮음=병목) REFUTED — trunk 강통합이라 integration-insufficiency는 G1/G6 벽 근원 아님(벽=combination-operator, DPI확정). tiny-n=4·단일ckpt=DIRECTIONAL."
        },
        {
         "name": "진화 기록",
@@ -13792,6 +13792,13 @@
     "value": "토이 lift를 단일 favorable run(outfair DERIV 3/3)으로 'robust reopener' 선언했다가 multi-run/dilution 안정성 체크서 반전(f=1.0 1/2·희석 0/2). 창발신호는 값(한 run)이 아니라 차분의 ROBUSTNESS(run간·config간·dilution간 재현). measurement-metalaw(FORM/favorable-run tunable, BIND earned)의 재발.",
     "threshold": "authored-data/조합 lift를 'robust/reopener'로 승격 전 필수: ①≥2 run seed/step 변주 ②dilution(농도) ladder ③swap-null. 하나라도 flip이면 DIRECTIONAL 유지, engine-native만 TERMINAL.",
     "source": "derivtrace_out_fair.py"
+   },
+   {
+    "id": "h6196-phi-hexa-1",
+    "state": "pos-conv",
+    "value": "hexa 프로브 함정 2건(H_6196): ① 문자열 파싱(str_split/str_lines)이 hexa-level 통과하나 C백엔드 미링크(rt_str_*)→파일파싱 대신 python이 배열-리터럴 .hexa 모듈 생성+import가 로버스트(대용량은 CHUNK≤1000 concat로 clang -fbracket-depth=4096 회피). ② faithful IIT4 big_phi는 subsystem n에 지수폭발→n_ch≤4 실용(엔진 한계 8이나 6+ 실측 타임아웃). synth_coupled/independent는 eeg_iit4_demo.hexa 전용(eeg_to_tpm.hexa엔 없음)→인라인 배열.",
+    "threshold": "hexa 데이터 프로브: 파일 float 파싱 금지→python→.hexa 배열literal(CHUNK concat). faithful big_phi n_ch≤4. eeg_big_phi만 eeg_to_tpm.hexa서 import(synth_* 데모전용).",
+    "source": "h6196_phi.hexa"
    }
   ]
  }
