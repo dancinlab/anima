@@ -1,0 +1,19 @@
+{
+ "probe": "σ·witness rung-2 ENGINE-NATIVE (real engine_cli.py §RealityMonitor+§MetacogInsight ops)",
+ "engine_native": true,
+ "thr": 0.35,
+ "n_trial": 120,
+ "metrics": {
+  "intact_acc": 1.0,
+  "ablate_acc": 0.517,
+  "shuffle_acc": 0.583,
+  "delta_intact_ablate": 0.483,
+  "delta_intact_shuffle": 0.417
+ },
+ "bars": {
+  "B1_INTACT>=0.75": true,
+  "B2_INTACT-ABLATE>=0.30": true,
+  "B3_INTACT-SHUF>=0.30": true
+ },
+ "verdict": "ENGINE-NATIVE-VALID(rung2 · σ·witness earned)"
+}
