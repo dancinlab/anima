@@ -13051,7 +13051,15 @@
         "name": "E1–E12 · representation and architecture",
         "role": "hypothesis-family",
         "id": "h-9200-family-e-architecture",
-        "detail": "forward slot, plan→realize, latent codebook, mid-trunk tensor product, multiplicative/dual streams, recurrence, scratchpad, relation-MoE, hypernetwork, graph/SSM. · $0 de-risk(wf_0da74a70): E1 gated-slot GO(synth 1.0>add0.236·slot-ablate서명); E7·E12 frozen NO-GO(add환원). E1병목=corpus밀도(F2)≠mech."
+        "detail": "forward slot, plan→realize, latent codebook, mid-trunk tensor product, multiplicative/dual streams, recurrence, scratchpad, relation-MoE, hypernetwork, graph/SSM. · $0 de-risk(wf_0da74a70): E1 gated-slot GO(synth 1.0>add0.236·slot-ablate서명); E7·E12 frozen NO-GO(add환원). E1병목=corpus밀도(F2)≠mech.",
+        "children": [
+         {
+          "name": "E1 hardening verdict (2wf $0)",
+          "role": "derisk-verdict",
+          "id": "h-9200-e1-hardening-verdict",
+          "detail": "wf_37a011ed hardening 4/4 survive: S1 trained-parity 결정적(additive 2x-cap+6k ep도 0.139=order-blind천장 0.167·slot 1.0=frozen착시 아님)·S2 비직교+noise 7x·S3 K=256 scale-inv·S4 depth-2. ⟹ CONDITIONAL-GO. open=trunk-learnability(303M이 clean-slot 학습 vs additive붕괴, GPU-only)=NEXT owner GPU-go+pre-reg kill."
+         }
+        ]
        },
        {
         "name": "F1–F10 · substrate and cognitive loop",
