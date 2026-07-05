@@ -25,5 +25,11 @@
    "differ": true
   }
  ],
- "integrity_note": "n_qualified too small to clear the 2/3 bar with power: self-pairs excluded -> n=2 (both DIFFER, frac 1.0); self-pairs included -> n=5 (frac 0.40). The 160k-token consciousness_anchor corpus with a 400-word concept vocab has almost NO order-distinguishing adjacent concept-pair structure (only 2 non-self pairs occur in both orders >=3x). Mechanical verdict flips with a trivial preprocessing choice => underpowered, NOT a clean pass/fail."
+ "integrity_note": "n_qualified too small to clear the 2/3 bar with power: self-pairs excluded -> n=2 (both DIFFER, frac 1.0); self-pairs included -> n=5 (frac 0.40). The 160k-token consciousness_anchor corpus with a 400-word concept vocab has almost NO order-distinguishing adjacent concept-pair structure (only 2 non-self pairs occur in both orders >=3x). Mechanical verdict flips with a trivial preprocessing choice => underpowered, NOT a clean pass/fail.",
+ "cross_corpus_check": {
+  "corpus.txt_378k_tok": {
+   "n_qualified": 0,
+   "note": "larger corpus.txt gives ZERO order-distinguishing non-self adjacent concept-pair slots (>=3x) with the consciousness_anchor 400-word vocab -> NO existing repo corpus powers the E1 gate. F2 is a corpus-AUTHORING need (purpose-built dense order-distinguishing aligned corpus), NOT a corpus-selection issue. E1 is strictly downstream of F2-authoring + owner GPU-go."
+  }
+ }
 }
