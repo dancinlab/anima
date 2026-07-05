@@ -1,0 +1,23 @@
+{
+ "generator": "F2 rule-structured attribute-transfer (anima-register)",
+ "n_concept": 200,
+ "n_role": 8,
+ "n_value": 8,
+ "n_result": 12,
+ "rels": [
+  "결합",
+  "촉발",
+  "변환",
+  "억제"
+ ],
+ "heldout_frac": 0.15,
+ "train_concepts": 160,
+ "test_concepts": 40,
+ "train_lines": 60600,
+ "heldout_test_lines": 11991,
+ "shuffle_lines": 10052,
+ "rule": "compose(role(a),rel,value(b))->result_type (fixed, non-commutative)",
+ "held_out": "combos held out (train-concept combos + unseen-concept combos); attrs of ALL concepts stated in train",
+ "control": "shuffle_control = same pairs with rule-independent random result (form-priming guard H_9128)",
+ "measure": "byte-LM trained on corpus_train → held-out composed-C accuracy on corpus_heldout_test must beat corpus_shuffle_control (pre-reg kill); anima evaluate --py G1 ladder for TERMINAL."
+}
