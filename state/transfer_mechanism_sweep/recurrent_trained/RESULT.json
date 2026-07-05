@@ -1,0 +1,45 @@
+{
+  "mechanism": "recurrent_trained",
+  "spec": "small GRU over [vec[a],vec[b]] (h0=0), final hidden=rep; exact 2-step BPTT, Adam",
+  "task": "PURE-BILINEAR non-commutative binding, cross-distribution (disjoint concept split)",
+  "config": {
+    "K": 256,
+    "d": 32,
+    "target_dims": 16,
+    "train_concepts": [
+      0,
+      191
+    ],
+    "test_concepts": [
+      192,
+      255
+    ],
+    "n_train_pairs": 3000,
+    "n_test_pairs": 3000,
+    "gru_H": 48,
+    "epochs": 3000,
+    "opt": "adam",
+    "lr": 0.003
+  },
+  "gradcheck_worst_rel_err": 1.9271484439117898e-07,
+  "train_r2_mech": 0.7481,
+  "cross_r2_mech": -0.9104,
+  "cross_r2_shuffle": -1.1485,
+  "train_r2_additive": 0.0284,
+  "cross_r2_additive": -0.0298,
+  "delta_vs_additive": -0.8805,
+  "shuffle_drop": 0.2381,
+  "anchor_slot_gated_write": {
+    "train_r2": 0.4518,
+    "cross_r2": 0.2277,
+    "cross_r2_shuffle": -0.0796,
+    "delta_vs_additive": 0.2576,
+    "clears_+0.15": true
+  },
+  "thresholds": {
+    "delta_add>=": 0.15,
+    "shuffle_drop>=": 0.15,
+    "anchor_delta>=": 0.15
+  },
+  "verdict": "NO-TRANSFER"
+}

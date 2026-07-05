@@ -1,0 +1,41 @@
+{
+  "mechanism": "slot_gated_write",
+  "role": "E1 anchor (known escape / control)",
+  "task": "corrected pure-bilinear non-commutative t(a,b)=tanh(einsum(kij,i,j->k,T,a16,b16))",
+  "task_params": {
+    "K": 256,
+    "d_concept": 32,
+    "d_target": 16,
+    "out": 16,
+    "T_seed": 1,
+    "vec_seed": 0,
+    "train_idx": "0-191",
+    "test_idx": "192-255",
+    "train_pairs": 3000,
+    "test_pairs": 3000,
+    "pair_seeds": [
+      2,
+      3
+    ]
+  },
+  "mech_params": {
+    "N_slots": 8,
+    "H": 32,
+    "Dv": 32,
+    "epochs": 3000,
+    "opt": "adam",
+    "lr": 0.003,
+    "init_seed": 7
+  },
+  "gradcheck_rel_err": 7.78656275661416e-07,
+  "train_r2": 0.4426025376352707,
+  "cross_r2": 0.23640523555774484,
+  "additive_r2": -0.0336115614704815,
+  "shuffle_r2": -0.36357461858315365,
+  "delta_vs_additive": 0.27001679702822634,
+  "shuffle_drop": 0.5999798541408985,
+  "bar_delta_add>=0.15": true,
+  "bar_shuffle_drop>=0.15": true,
+  "anchor_clears_bar": true,
+  "verdict": "TRANSFER-EARNING"
+}

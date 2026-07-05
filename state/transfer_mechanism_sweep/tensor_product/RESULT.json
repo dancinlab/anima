@@ -1,0 +1,27 @@
+{
+  "mechanism": "tensor_product",
+  "spec": "Smolensky TPR (E4): r = flatten(role_enc(a) x filler_enc(b)); learned encoders 32->16, linear head, end-to-end Adam",
+  "task": "CORRECTED binding-dominant non-commutative pure-bilinear tanh(a^T T b); concepts 256x32, target on first 16 dims; T=RandomState(1).randn(16,16,16)",
+  "epochs": 3000,
+  "lr": 0.01,
+  "additive": {
+    "train_r2": 0.028476821248202056,
+    "cross_r2": -0.029689065270540604,
+    "shuffle_r2": -0.03849262740768222
+  },
+  "tensor_product": {
+    "train_r2": 0.6838331688053559,
+    "cross_r2": 0.5858708086072102,
+    "shuffle_r2": -0.5613836153840588
+  },
+  "slot_anchor": {
+    "train_r2": 0.6703061960749679,
+    "cross_r2": 0.5394583578495988,
+    "shuffle_r2": -0.579439053767145
+  },
+  "anchor_ok": true,
+  "mech_gain_vs_additive": 0.6155598738777508,
+  "shuffle_drop": 1.147254423991269,
+  "criteria": "TRANSFER-EARNING iff (crossR2_mech - crossR2_additive) >= 0.15 AND shuffle_drop >= 0.15; anchor slot must clear additive+0.15 else INCONCLUSIVE",
+  "verdict": "TRANSFER-EARNING"
+}

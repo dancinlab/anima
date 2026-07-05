@@ -1,0 +1,39 @@
+{
+  "mechanism": "multiplicative_film",
+  "spec": "r = gamma(a)*filler_enc(b) + beta(a) ; FiLM role->modulate filler",
+  "task": "binding-dominant non-commutative bilinear tanh(einsum kij,i,j->k), concepts 0-191 train / 192-255 test cross-distribution",
+  "film": {
+    "train_loss": 0.29987796771009206,
+    "train_r2": 0.6822939800985766,
+    "cross_r2": 0.5121761651845014,
+    "shuffle_r2": -0.5829385651671628
+  },
+  "additive": {
+    "train_loss": 0.918005511365988,
+    "train_r2": 0.02847651296093978,
+    "cross_r2": -0.034055653433284094,
+    "shuffle_r2": -0.0356390758629197
+  },
+  "slot_anchor": {
+    "train_loss": 0.31011541649586105,
+    "train_r2": 0.6717661438161011,
+    "cross_r2": 0.532388746777134,
+    "shuffle_r2": -0.5819018417796098
+  },
+  "anchor_validation": {
+    "anchor_cross_r2": 0.532388746777134,
+    "additive_cross_r2": -0.034055653433284094,
+    "anchor_minus_additive": 0.5664444002104181,
+    "bar": 0.15,
+    "anchor_ok": true
+  },
+  "verdict_math": {
+    "cross_r2_mech": 0.5121761651845014,
+    "cross_r2_additive": -0.034055653433284094,
+    "delta_vs_additive": 0.5462318186177855,
+    "shuffle_r2": -0.5829385651671628,
+    "shuffle_drop": 1.0951147303516642,
+    "bar": 0.15
+  },
+  "verdict": "TRANSFER-EARNING"
+}

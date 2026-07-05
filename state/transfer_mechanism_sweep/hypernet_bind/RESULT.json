@@ -1,0 +1,54 @@
+{
+  "mechanism": "hypernet_bind",
+  "run": "run-2 CORRECTED binding-dominant pure-bilinear target",
+  "spec": "role a -> M(a)=reshape(Wh@a); filler=Wf@b; r=M(a)@filler; pred=tanh(Head@r+bh)",
+  "task": {
+    "K": 256,
+    "d": 32,
+    "target_dim": 16,
+    "target": "tanh(einsum('kij,i,j->k', T~N(0,1)(16,16,16), va[:16], vb[:16])) pure bilinear non-commutative",
+    "train_concepts": [
+      0,
+      191
+    ],
+    "test_concepts": [
+      192,
+      255
+    ],
+    "overlap": 0,
+    "n_train_pairs": 3000,
+    "n_test_pairs": 3000,
+    "epochs": 4000,
+    "opt": "Adam full-batch",
+    "lr": 0.003,
+    "hypernet_dims": {
+      "q": 16,
+      "p": 16
+    }
+  },
+  "thresholds": {
+    "gap_vs_additive_min": 0.15,
+    "shuffle_drop_min": 0.15
+  },
+  "additive_baseline": {
+    "train_r2": 0.0289,
+    "cross_r2": -0.0291,
+    "shuffle_r2": -0.0379
+  },
+  "anchor_slot_gated_write": {
+    "train_r2": 0.4814,
+    "cross_r2": 0.2773,
+    "shuffle_r2": -0.4638,
+    "gap_vs_additive": 0.3065,
+    "shuffle_drop": 0.7412,
+    "passes_anchor": true
+  },
+  "hypernet_bind": {
+    "train_r2": 0.9999,
+    "cross_r2": 0.9106,
+    "shuffle_r2": -0.8719,
+    "gap_vs_additive": 0.9397,
+    "shuffle_drop": 1.7825
+  },
+  "verdict": "TRANSFER-EARNING"
+}

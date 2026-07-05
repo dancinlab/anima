@@ -1,0 +1,46 @@
+{
+  "mechanism": "additive_only",
+  "task": "binding-dominant non-commutative bilinear, cross-distribution (disjoint concept split)",
+  "config": {
+    "K": 256,
+    "d_full": 32,
+    "d_used": 16,
+    "out": 16,
+    "H": 64,
+    "train_concepts": [
+      0,
+      191
+    ],
+    "test_concepts": [
+      192,
+      255
+    ],
+    "n_train_pairs": 3000,
+    "n_test_pairs": 3000,
+    "target": "tanh(einsum(kij,i,j->k, T~RS(1), V16[a], V16[b])) PURE bilinear, no linear term",
+    "opt": "adam",
+    "lr": 0.01,
+    "epochs": 3000
+  },
+  "mechanism_forward": "r = Wa@a + Wb@b (order-blind sum); pred = Wh@r + b0",
+  "train_r2_mech": 0.0175,
+  "cross_r2_mech": -0.0175,
+  "cross_r2_additive": -0.0175,
+  "cross_r2_shuffle": -0.0176,
+  "delta_vs_additive": 0.0,
+  "shuffle_drop": 0.0002,
+  "anchor_slot_gated_write": {
+    "note": "E1 known escape = multiplicative gated-write slot (bilinear-capable). Must clear additive+0.15 to validate the task harness.",
+    "train_r2": 0.652,
+    "cross_r2": 0.568,
+    "cross_r2_shuffle": -0.5183,
+    "delta_vs_additive": 0.5855,
+    "clears_bar": true
+  },
+  "thresholds": {
+    "delta_add>=": 0.15,
+    "shuffle_drop>=": 0.15
+  },
+  "verdict": "NO-TRANSFER",
+  "interpretation": "additive_only IS the baseline anchor: its cross R2 equals the additive floor by construction (delta=0). On the pure-bilinear (binding-dominant) target the order-blind additive sum cannot represent the non-commutative form, so cross R2 is low and it earns no transfer. The slot anchor clears +0.15, confirming a valid binding-dominant harness (not an additive-dominant artifact)."
+}

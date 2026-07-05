@@ -1,0 +1,44 @@
+{
+  "mechanism": "ssm_scan_trained",
+  "spec": "linear SSM associative scan h_t=A h_{t-1}+B x_t, x=[a,b] seq, A,B trained, linear head",
+  "task": "binding-dominant bilinear non-commutative (K=256, d=16, T=RS(1).randn(16,16,16))",
+  "split": {
+    "train_concepts": [
+      0,
+      191
+    ],
+    "test_concepts": [
+      192,
+      255
+    ],
+    "overlap": 0
+  },
+  "epochs": 3000,
+  "additive_baseline": {
+    "train_r2": 0.017533193698303307,
+    "cross_r2": -0.017449488681136938,
+    "shuffle_r2": -0.017596366584859968
+  },
+  "anchor_slot_gated_write": {
+    "train_r2": 0.6756389178003197,
+    "cross_r2": 0.5971756058964481,
+    "shuffle_r2": -0.5358792056392798
+  },
+  "anchor_valid": true,
+  "anchor_margin_over_additive": 0.6146250945775851,
+  "ssm_linear_spec_literal": {
+    "train_r2": 0.01753330007807985,
+    "cross_r2": -0.017458542588929093,
+    "shuffle_r2": -0.017599599171290503
+  },
+  "ssm_tanh_charitable_variant": {
+    "train_r2": 0.42784963459463354,
+    "cross_r2": -0.7062368341688019,
+    "shuffle_r2": -0.7078269365758267
+  },
+  "primary_mechanism": "ssm_linear_spec_literal",
+  "judge_linear": "NO-TRANSFER",
+  "judge_tanh": "NO-TRANSFER",
+  "verdict": "NO-TRANSFER",
+  "note": "Linear SSM readout collapses to pred=(Wo A B)a+(Wo B)b, the SAME linear function class as the additive baseline -> cannot earn bilinear-binding transfer. tanh nonlinearity in the scan is what unlocks binding."
+}
