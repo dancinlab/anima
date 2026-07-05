@@ -1,0 +1,68 @@
+{
+  "probe": "H_9200 A5+A7 latent frozen-rep pair",
+  "ckpt": "/Users/mini/anima-weights/bytegpt303_h1129/h1129.bin",
+  "engine": "real ByteGPT-303M h1129 d=1024 (core/decode.py bg_forward_last_hidden == anima evaluate --py)",
+  "pairs": [
+    [
+      "consciousness",
+      "information"
+    ],
+    [
+      "system",
+      "mechanism"
+    ],
+    [
+      "learning",
+      "brain"
+    ]
+  ],
+  "bar_A5": "orbit pairwise cos>=0.90 AND content-swapped control cos<=0.60 on >=2/3 pairs",
+  "bar_A7": "1-cos(h(A>B),h(B>A))>=0.10 AND identical-control cos>=0.99 on >=2/3 pairs",
+  "A5_results": [
+    {
+      "orbit_min_cos": 0.9999372461661153,
+      "control_cos": 0.9997777439641765,
+      "passed": false,
+      "pair": "consciousness>information"
+    },
+    {
+      "orbit_min_cos": 0.999941089766788,
+      "control_cos": 0.9998357172176808,
+      "passed": false,
+      "pair": "system>mechanism"
+    },
+    {
+      "orbit_min_cos": 0.9999513616022303,
+      "control_cos": 0.9995480839706764,
+      "passed": false,
+      "pair": "learning>brain"
+    }
+  ],
+  "A7_results": [
+    {
+      "antisymmetry": 0.00031616809723278294,
+      "identical_control_cos": 0.999999999931305,
+      "passed": false,
+      "pair": "consciousness>information"
+    },
+    {
+      "antisymmetry": 0.0001558613697342226,
+      "identical_control_cos": 0.9999999999313041,
+      "passed": false,
+      "pair": "system>mechanism"
+    },
+    {
+      "antisymmetry": 0.0002284645296493082,
+      "identical_control_cos": 0.9999999999313054,
+      "passed": false,
+      "pair": "learning>brain"
+    }
+  ],
+  "A5_verdict": "INVALID-anisotropy",
+  "A7_verdict": "INVALID-anisotropy",
+  "both_fail": false,
+  "decision": "BOTH-FAIL \u2192 E_GEOMETRY terminal \u2192 clean owner GPU-go for E1 (CE-deleted forward-slot)",
+  "honesty": "py 2-production numpy = engine-native TERMINAL-eligible; latent frozen-rep probe (no training).",
+  "elapsed_s": 6.2,
+  "verdict_integrity": "INVALID: raw final-LN hidden cos=1.0 across ALL pairs/sentences (diag: single-word cos 0.9997, sentence cos 0.9996) = 303M rep is extremely anisotropic. A5/A7 raw-cos PREREG collapses under anisotropy. Verdict FAIL is a measurement artifact, NOT a real floor. Re-measure needs center_zscore/whitening (per \u00a74). However \u00a74 (whitened) already floored interaction-in-reps, so the E1 GPU-go direction holds \u2014 but A5/A7 itself is inconclusive, not BOTH-FAIL."
+}
