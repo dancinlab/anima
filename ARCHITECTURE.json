@@ -1221,6 +1221,11 @@
                       "name": "F2 corpus 생성기 구현 (anima-register, production-form)",
                       "id": "g1-escape-transfer0-f2gen",
                       "detail": "CORPUS_DESIGN 실현: generate_corpus.py=anima-register attribute-transfer 생성기($0·deterministic·200 concept·비교환 compose 룩업·4-cell 표면형). 산출 train 60.6k줄(3.2MB)+held-out(train-combo+unseen-concept)+shuffle-rule 통제(form-priming 방지). 코퍼스=regenerable→HF anima-corpus-rulestruct. ATD(H_9206) toy와 별개 production 레시피, MECHANISM-works면 즉시 303M용."
+                     },
+                     {
+                      "name": "F2 코퍼스 검증 → SOUND-TRANSFERABLE",
+                      "id": "g1-escape-transfer0-f2verify",
+                      "detail": "verify_corpus.py: 생성 코퍼스 실제 파싱 검증 — attr-sentences서 속성 복구+compose head, held-out(train+unseen-concept) rule acc 1.000 vs shuffle-control 0.090(chance 0.083) delta +0.91=CORPUS-SOUND-TRANSFERABLE. 코퍼스가 rule-carrying·비degenerate 확인(TERMINAL for corpus-soundness). byte-LM이 raw text서 학습하나=H_9206 ATD(summer) 담당(DIRECTIONAL)."
                      }
                     ]
                    }
