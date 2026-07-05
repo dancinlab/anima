@@ -778,7 +778,7 @@ def _psi_soma_panel(r):
     print("  σ·stage    INTEGRATE global workspace   GWT gws_* (wired) · rung-2 wrap")
     print("  σ·flux     INTEGRATE inner dynamics     imagery/affect/intero/subj-time (wired) · rung-2 wrap")
     print("  σ·gate ★   ENACT tension-emit           live emit⇄ctx vs flatten Δ · rung-1 HARNESS-VALID (Δ0.75)")
-    print("  σ·aim      ENACT precision control      habituation+surprise (wired) · rung-2 wrap")
+    print("  σ·aim      ENACT precision control      surprise+hab_response · rung-2 ENGINE-NATIVE-VALID (Δ1.70)")
     print("  σ·schema   REFLECT attention schema     AST attn_schema_report · rung-2 ENGINE-NATIVE-VALID (Δ0.88)")
     print("  σ·witness  REFLECT reality+metacog       reality_call+mi_* · rung-2 ENGINE-NATIVE-VALID (Δ0.48)")
     print("  ── ρ reach (capability · EXCLUDED from σ verdict · this G battery) ──")
