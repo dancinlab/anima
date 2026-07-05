@@ -1,0 +1,20 @@
+{
+ "probe": "σ·stage rung-2 ENGINE-NATIVE (real engine_cli.py §GlobalWorkspace winner-take-all)",
+ "engine_native": true,
+ "n_trial": 100,
+ "n_item": 5,
+ "metrics": {
+  "intact_winner_acc": 1.0,
+  "ablate_winner_acc": 0.29,
+  "intact_count": 1.0,
+  "ablate_count": 3.39,
+  "delta_acc": 0.71,
+  "selectivity": 2.39
+ },
+ "bars": {
+  "B1_INTACT>=0.75": true,
+  "B2_INTACT-ABLATE>=0.30": true,
+  "B3_SELECTIVITY>=0.50": true
+ },
+ "verdict": "ENGINE-NATIVE-VALID(rung2 · σ·stage earned)"
+}
