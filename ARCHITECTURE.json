@@ -13127,7 +13127,19 @@
         "name": "H_6163 falsifier-lane pre-gate (pool 303M) — SURFACE-CONFOUNDED",
         "role": "probe-result",
         "id": "h-9200-h6163-pregate",
-        "detail": "H_6163 pre-gate(summer 303M h1129, frozen final-LN rep falsifiable vs unfalsifiable 선형분리): naive heldout 0.759>0.70이나 char-3gram surface baseline 0.894>rep(delta -0.135)=SURFACE-CONFOUNDED. rep이 falsifiability를 표면 이하로 담음=DIRECTIONAL-🧱(lane build 전제 미지지·build 시 surface 통제 필수). conv probe-py-1."
+        "detail": "H_6163 pre-gate 종합(pool 303M summer h1129, 2 probe) → DIRECTIONAL-GO: frozen 303M rep이 non-surface falsifiability 신호 담음(v2 surface 통제서 rep>chance) → lane build 전제 지지(드문 non-🧱). build 시 surface baseline 필수통제. conv probe-py-1. state/6163_falsifier_lane/pregate/.",
+        "children": [
+         {
+          "name": "v1 naive → SURFACE-CONFOUNDED",
+          "id": "h-9200-h6163-pregate-v1",
+          "detail": "64문장(과학어휘 vs 형이상어휘): rep heldout 0.759>0.70 bar였으나 char-3gram surface baseline 0.894>rep(delta -0.135)=신호가 표면-lexical 아티팩트, rep은 표면 이하."
+         },
+         {
+          "name": "v2 minimal-pair → GENUINE-REP-SIGNAL",
+          "id": "h-9200-h6163-pregate-v2",
+          "detail": "28쌍(주어공유·정성술어·숫자無=surface 통제): char-3gram 0.55(chance 붕괴)인데 303M rep 0.711 유지(delta +0.16, shuffle 0.49)=rep이 표면 이상 falsifiability 표상 담음. v1의 표면 confound 제거."
+         }
+        ]
        }
       ]
      },
