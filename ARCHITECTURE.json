@@ -13959,6 +13959,13 @@
     "value": "compound bash에서 'git worktree add' 실패(브랜치 기존/에러)가 조용히 넘어가면 이후 cd $WT 폴백→git commit/pr-cycle이 main checkout의 off-main parked 브랜치(codex)에 실행돼 stale-base 오커밋+conflicting PR 발생(#3022 CHANGELOG 35-line revert).",
     "threshold": "worktree add 직후 [ -d $WT ] 검증 후에만 cd; git 커밋 전 git branch --show-current로 의도 브랜치 확인; 실패시 즉시 중단(오커밋 방지).",
     "source": "git-worktree-compound"
+   },
+   {
+    "id": "pod-1",
+    "state": "pos-conv",
+    "value": "bare vast/cloud rent pod ≠ anima hexa 학습 준비: 신규 pod엔 torch도 hexa 툴체인도 없고 sm_120(RTX5070Ti/Blackwell) own-GEMM은 summer/aiden prebuilt 전용(소스빌드=CPU폴백 위험). anima train=hexa-native(cli/train.hexa)라 full 툴체인 필요. raw GPU rent로는 303M 학습 안 풀림 — 진짜 블로커='anima-env 준비된 GPU host'(=pool).",
+    "threshold": "anima hexa 학습(train.hexa) fire 전 host anima-env 확인(hexa 툴체인+sm_120 own-GEMM+ckpt). 없으면 bare rent 금지, pool(summer/aiden)/dojo 사용. pure-torch byte-LM(ATD류)은 bare pod OK. teardown은 interactive [y/N]라 'yes | hexa cloud rm <id>'.",
+    "source": "pod"
    }
   ]
  }
