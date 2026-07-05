@@ -22,12 +22,13 @@
 ## 🔴 robustness 반증 (leave-one-pair-out · engine-native $0 summer)
 H_9124의 단일쌍({c0,c1} deriv bd=2>ms=1 PASS)이 **4개 추가 held-out 쌍 전부에서 재현 실패**: {0,1}{0,4}{1,3}{2,3} 모두 deriv bd=1/ms=1 g1_pass=FALSE(floor·singles 전부 1), 오히려 flat(bd=2)보다 낮음. paraphrase 통제도 clears=false, coherent·kwr high(undertrain 아님). ⇒ **원 bd=2 lift = single-pair threshold artifact**(H_9124 자체 caveat 실증). derivation-trace는 G1을 robust하게 열지 못함(**단 이 반증은 warm-FT h1129 303M 레짐**). 상세 `state/g1_train_wallbreak/derivtrace_robust/ROBUST_RESULT.md`. 메타법칙(H_9126)의 training-layer 근거 상실 → 메타법칙은 selection-layer(P1 G6·H_9125)로만 확증.
 
-## 🔬 REOPENED — from-scratch 레짐 (toy DIRECTIONAL · #3043 canonical `anima corpus derivtrace` 사용 · [[H_9206]] 연계)
-#3043(F2 코퍼스=canonical `cli/corpus.py`, hand-gen 아님)을 계기로, **canonical derivtrace 코퍼스를 from-scratch 학습**한 토이(3M, 8k step, summer)로 multi-pair robustness를 $0 재측정:
-- **OUT-only 공정 채점**(양쪽 arm OUT clause만·swap-null 통제): **DERIV 3/3 held-out서 두 개념 정확 결합**("cells mind meet distant between"·swap-null 1<2=올바른 결합) vs **FLAT 0/3**. `DERIVTRACE_OUTFAIR_RESULT.json`.
-- 첫 run(전체 생성 채점)은 derivtrace의 keyword-rich TRACE를 채점한 confound였으나, **OUT-only 재채점서 lift 생존** = trace 아티팩트 아닌 earned-BIND.
-- ⚠️ **engine-native 303M warm-FT(위 🔴)와 통제된 발산**: 차이=**학습레짐(from-scratch vs warm-FT)** 또는 **농도(100% toy vs 희석 303M)**, 둘 confound. a_engine_native_learning: 303M warm-FT 🔴가 TERMINAL·toy는 DIRECTIONAL(tier 유지).
-- **결정적 $0 disambiguator(진행중)**: from-scratch 토이를 derivtrace를 자연 필러에 **희석**(f∈{100,30,10}%)해 학습 → OUT-lift가 희석서 생존하면 warm-FT 레짐이 벽(303M from-scratch/heavy-continue-train 재점화)·희석서 붕괴하면 concentration-fragile(H_9124 🔴와 화해). 산출 `DERIVTRACE_OUTFAIR_RESULT.json`·`derivtrace_out_fair.py`·`state/g1_authored_transferable_data/`.
+## 🔬 3043-go from-scratch 재검토 → 🔴 NOT-ROBUST 재확인 (toy DIRECTIONAL · #3043 canonical `anima corpus derivtrace`)
+#3043(F2 코퍼스=canonical `cli/corpus.py`, hand-gen 아님)을 계기로 **canonical derivtrace를 from-scratch 학습**한 토이(3M·summer)로 multi-pair robustness를 $0 재측정. **결론: NOT-ROBUST 재확인(escape 미성립).**
+- **첫 신호(over-claim)**: OUT-only 공정채점(swap-null) 한 run(8k step)서 DERIV 3/3 held-out 정확결합 vs FLAT 0/3 = earned-BIND처럼 보여 "reopener"로 착각(#3055).
+- **⚠️ 정정 — 이중 반증(dilution disambiguator, `DERIVTRACE_DILUTION_RESULT.json`)**:
+  ① **config-불안정**: 동일 조건 10k-step run서 f=1.0 DERIV lift **1/2**(3/3 아님)·held=(0,1)이 run간 flip = favorable-config 아티팩트.
+  ② **희석 붕괴**: f∈{1.0,0.3,0.1} deriv-distinct2 = 1/2 → 1/2 → **0/2**(f=0.10서 양 pair 오결합, swap>distinct). VERDICT=OUT-LIFT-COLLAPSES-UNDER-DILUTION.
+- **pair-dependent + run-unstable + dilution-fragile** = H_9124 engine-native 303M warm-FT 🔴 NOT-ROBUST와 **완전 화해**(실 303M은 derivtrace를 자연 사전학습에 희석해 봄=f<1 레짐=붕괴). [[H_9206]] ATD CLEAN-KILL과도 수렴: authored-data(opaque OR derivation-shown) G1 escape는 현실조건서 미성립. **tier 🔴 유지·toy가 corroborate.** 산출 `derivtrace_out_fair.py`·`derivtrace_dilution.py`·`DERIVTRACE_{OUTFAIR,DILUTION}_RESULT.json`.
 
 ## artifacts
 - `state/g1_train_wallbreak/SYNTHESIS.md` (14 레버 census + deep-L8 CLOSED 증거 + survivor prereg)
