@@ -780,7 +780,7 @@ def _psi_soma_panel(r):
     print("  σ·gate ★   ENACT tension-emit           live emit⇄ctx vs flatten Δ · rung-1 HARNESS-VALID (Δ0.75)")
     print("  σ·aim      ENACT precision control      habituation+surprise (wired) · rung-2 wrap")
     print("  σ·schema   REFLECT attention schema     AST attn_schema_* (wired) · rung-2 wrap")
-    print("  σ·witness  REFLECT reality+metacog       reality_call+mi_* (wired) · rung-2 wrap")
+    print("  σ·witness  REFLECT reality+metacog       reality_call+mi_* · rung-2 ENGINE-NATIVE-VALID (Δ0.48)")
     print("  ── ρ reach (capability · EXCLUDED from σ verdict · this G battery) ──")
     print("  ρ·flow   " + pf(bool(g0["pass"]))  + "  = G0 coherence")
     print("  ρ·turn   " + pf(bool(g2["pass"]))  + "  = G2 novelty (+G3 balance)")
