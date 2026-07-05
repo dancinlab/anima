@@ -13963,8 +13963,8 @@
    {
     "id": "pod-1",
     "state": "pos-conv",
-    "value": "bare vast/cloud rent pod ≠ anima hexa 학습 준비: 신규 pod엔 torch도 hexa 툴체인도 없고 sm_120(RTX5070Ti/Blackwell) own-GEMM은 summer/aiden prebuilt 전용(소스빌드=CPU폴백 위험). anima train=hexa-native(cli/train.hexa)라 full 툴체인 필요. raw GPU rent로는 303M 학습 안 풀림 — 진짜 블로커='anima-env 준비된 GPU host'(=pool).",
-    "threshold": "anima hexa 학습(train.hexa) fire 전 host anima-env 확인(hexa 툴체인+sm_120 own-GEMM+ckpt). 없으면 bare rent 금지, pool(summer/aiden)/dojo 사용. pure-torch byte-LM(ATD류)은 bare pod OK. teardown은 interactive [y/N]라 'yes | hexa cloud rm <id>'.",
+    "value": "anima 학습 host 요건: hexa-native 'anima train'(cli/train.hexa)만 pool의 pre-built hexa 툴체인+sm_120 own-GEMM 필요. **그러나 'anima train --py'(cli/train.py)=CANONICAL torch 트레이너(GPU-bound cuda GEMM)는 bare rent pod서 됨** — torch cu128 설치로 sm_120 지원, hexa 불필요. → .clm serialize → 'anima evaluate --py'(torch-free numpy) engine-native TERMINAL 측정. 즉 bare pod는 --py torch 경로로 학습 가능(내 앞선 'wrong host' 결론은 hexa-only만 본 성급한 오류).",
+    "threshold": "GPU 학습 host 선택: hexa-native train=pool 전용 · torch 'anima train --py'=아무 GPU pod(bare rent OK, torch cu128 for sm_120). bare pod 철거 전 --py torch 경로 가능성 먼저 확인(성급한 wrong-host 판정 금지). 측정은 항상 anima evaluate --py(numpy). teardown='yes | hexa cloud rm <id>'.",
     "source": "pod"
    }
   ]
