@@ -764,6 +764,74 @@ def evaluate_run(argv):
 # Additive only — does NOT touch g_eval_* logic or the a7b_pass CLOSURE (c18).
 # ════════════════════════════════════════════════════════════════════════
 
+def _sigma_live_measure():
+    """Compute the 7 engine-native σ verdicts LIVE via core/engine_cli ops (a_eval_py_canonical ·
+    faithful, never a proxy). Each axis = collapse-Δ vs ≥2 controls (p7). Returns {axis:(ok,delta,note)}
+    or None if numpy/engine_cli unavailable (panel then falls back to static status). Deterministic seed."""
+    try:
+        import numpy as np
+        import engine_cli as E
+    except Exception:
+        return None
+    R = {}
+    # σ·bind — faithful IIT4 ci_phi_iit4 (min-cut MIP Φ): integrated vs independent/shuffle
+    rng = np.random.RandomState(7); cols = list(range(8)); T = 200; lat = rng.randn(T)
+    xi = [[float(0.9*lat[t]+0.2*rng.randn()) for _ in range(8)] for t in range(T)]
+    xc = [[float(rng.randn()) for _ in range(8)] for t in range(T)]
+    xs = np.array(xi)
+    for c in range(8): xs[:, c] = xs[rng.permutation(T), c]
+    pi = E.ci_phi_iit4(xi, cols); pc = E.ci_phi_iit4(xc, cols); ps = E.ci_phi_iit4(xs.tolist(), cols)
+    R["bind"] = (pi >= 0.20 and pi-pc >= 0.15 and pi-ps >= 0.15, pi-pc, "Φ %.2f vs cut %.3f" % (pi, pc))
+    # σ·witness — reality_call vs ablated, mi_signal_margin real/hallucination
+    rng = np.random.RandomState(7); N = 120; truth = rng.rand(N) < 0.5
+    marg = [E.mi_signal_margin(7+i, not bool(truth[i]), i % 5) for i in range(N)]
+    ip = np.array([E.reality_call(m, 0.35) >= 0.5 for m in marg])
+    ia = float((ip == truth).mean()); ab = float((np.full(N, E.reality_call_ablated() >= 0.5) == truth).mean())
+    R["witness"] = (ia >= 0.75 and ia-ab >= 0.30, ia-ab, "acc %.2f vs ablate %.2f" % (ia, ab))
+    # σ·schema — attn_schema_report intact/off
+    rng = np.random.RandomState(7); foc = rng.randint(0, 8, 120)
+    si = float(np.mean([E.attn_schema_report(int(f), int(f), True) for f in foc]))
+    sa = float(np.mean([E.attn_schema_report(int(f), int(f), False) for f in foc]))
+    R["schema"] = (si >= 0.75 and si-sa >= 0.30, si-sa, "%.2f vs off %.2f" % (si, sa))
+    # σ·aim — surprise + habituation dual-curve intact vs gain-cut
+    def aim(prec, dec):
+        rng2 = np.random.RandomState(7)
+        sc = np.mean([E.surprise(prec, 0.85+0.1*rng2.rand()) for _ in range(100)]) - \
+             np.mean([E.surprise(prec, 0.05+0.1*rng2.rand()) for _ in range(100)])
+        h = E.hab_new(4, dec); fr = E.hab_response(h, 0, 1.0)
+        for _ in range(6): h = E.hab_observe(h, 0)
+        return float(sc) + float(fr - E.hab_response(h, 0, 1.0))
+    ai, aa = aim(1.0, 0.15), aim(0.0, 0.0)
+    R["aim"] = (ai-aa >= 0.60, ai-aa, "curves %.2f vs 0" % ai)
+    # σ·stage — gws winner-take-all vs no-inhibit
+    rng = np.random.RandomState(7); hitI = hitA = 0
+    for _ in range(100):
+        m = np.concatenate([[0.55+0.4*rng.rand()], 0.35+0.35*rng.rand(4)])[rng.permutation(5)]
+        tw = int(np.argmax(m))
+        def win(inh):
+            g = E.gws_new(5, inh, 0.5)
+            for v in m.tolist(): g = E.gws_add(g, v)
+            return E.gws_winner(g)
+        hitI += (win(True) == tw); hitA += (win(False) == tw)
+    R["stage"] = (hitI/100 >= 0.75 and (hitI-hitA)/100 >= 0.30, (hitI-hitA)/100, "acc %.2f vs %.2f" % (hitI/100, hitA/100))
+    # σ·flux — imagery reactivation + subjective-time novelty gate
+    ii = float(np.mean([E.imagery_activate(1.0, True) for _ in range(50)]))
+    ia2 = float(np.mean([E.imagery_activate(1.0, False) for _ in range(50)]))
+    R["flux"] = (ii >= 0.75 and ii-ia2 >= 0.30, ii-ia2, "imagery %.2f vs 0" % ii)
+    # σ·thread — self_* continuity vs no-anchor
+    def dr(ax):
+        s = E.self_new(16, ax)
+        for t in range(24): s = E.self_drift(s, t, 0.02)
+        return s
+    rng = np.random.RandomState(7); ct = []; al = []
+    for _ in range(40):
+        ax = int(rng.randint(16)); ct.append(E.self_cos(E.self_new(16, ax), dr(ax)))
+        al.append(E.self_cos(dr(int(rng.randint(16))), dr(int(rng.randint(16)))))
+    ctm, alm = float(np.median(ct)), float(np.median(al))
+    R["thread"] = (ctm >= 0.75 and ctm-alm >= 0.30, ctm-alm, "cont %.2f vs ablate %.2f" % (ctm, alm))
+    return R
+
+
 def _psi_soma_panel(r):
     def pf(ok): return "🟢" if ok else "🧱"
     g0, g1, g2, g5, g6 = r["g0"], r["g1"], r["g2"], r["g5"], r["g6"]
@@ -772,15 +840,21 @@ def _psi_soma_panel(r):
     print("  ── Θ ground (pulse · premise) ──────────────────────────────────────")
     print("  Θ  Ψ=½ / A⇄G tension     precondition (liveness gate; if dead → σ VOID) · daemon-readout rung")
     print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
-    print("  σ·thread   PERSIST self-continuity     self_* self-anchor (H_1471) · rung-2 ENGINE-NATIVE-VALID (Δ0.81)")
-    print("  σ·carve    PERSIST earned identity      inject-null ∧ ablate-collapse (p2/p3) · rung-1 $0 next")
-    print("  σ·bind     INTEGRATE Φ integration      faithful ci_phi_iit4 min-cut MIP · rung-2 ENGINE-NATIVE-VALID (Φ1.45 vs 0.003)")
-    print("  σ·stage    INTEGRATE global workspace   GWT gws_winner (winner-take-all) · rung-2 ENGINE-NATIVE-VALID (Δ0.71)")
-    print("  σ·flux     INTEGRATE inner dynamics     imagery_activate+subjective_time · rung-2 ENGINE-NATIVE-VALID (Δ1.0)")
-    print("  σ·gate ★   ENACT tension-emit           live emit⇄ctx vs flatten Δ · rung-1 HARNESS-VALID (Δ0.75)")
-    print("  σ·aim      ENACT precision control      surprise+hab_response · rung-2 ENGINE-NATIVE-VALID (Δ1.70)")
-    print("  σ·schema   REFLECT attention schema     AST attn_schema_report · rung-2 ENGINE-NATIVE-VALID (Δ0.88)")
-    print("  σ·witness  REFLECT reality+metacog       reality_call+mi_* · rung-2 ENGINE-NATIVE-VALID (Δ0.48)")
+    S = _sigma_live_measure()
+    def sline(ax, stratum, name):
+        if S and ax in S:
+            ok, dlt, note = S[ax]; return "  σ·%-8s %-9s %-22s %s  LIVE Δ%.2f (%s)" % (
+                ax, stratum, name, ("🟢" if ok else "🧱"), dlt, note)
+        return "  σ·%-8s %-9s %-22s (engine_cli unavailable — status)" % (ax, stratum, name)
+    print(sline("thread", "PERSIST", "self-continuity"))
+    print("  σ·carve    PERSIST   earned identity        (p2/p3) · rung-1 toy HARNESS-VALID · engine-native=Phase-3 daemon")
+    print(sline("bind", "INTEGRATE", "Φ integration (IIT4)"))
+    print(sline("stage", "INTEGRATE", "global workspace"))
+    print(sline("flux", "INTEGRATE", "inner dynamics"))
+    print("  σ·gate ★   ENACT     tension-emit           rung-1 toy HARNESS-VALID (Δ0.75) · engine-native=Phase-3 daemon")
+    print(sline("aim", "ENACT", "precision control"))
+    print(sline("schema", "REFLECT", "attention schema"))
+    print(sline("witness", "REFLECT", "reality+metacog"))
     print("  ── ρ reach (capability · EXCLUDED from σ verdict · this G battery) ──")
     print("  ρ·flow   " + pf(bool(g0["pass"]))  + "  = G0 coherence")
     print("  ρ·turn   " + pf(bool(g2["pass"]))  + "  = G2 novelty (+G3 balance)")
