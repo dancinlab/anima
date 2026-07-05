@@ -1,0 +1,85 @@
+{
+  "lever_id": "E12_ssm_noncommutative_scan",
+  "params": {
+    "D": 64,
+    "K": 16,
+    "train_frac": 0.7,
+    "lambda": 0.01,
+    "n_seeds": 24,
+    "margin": 0.03,
+    "n_ordered_pairs": 240
+  },
+  "reach_by_mode": {
+    "lever": {
+      "slot1": 1.0,
+      "slot2": 1.0,
+      "joint_reach": 1.0,
+      "joint_std": 0.0
+    },
+    "add_plain": {
+      "slot1": 0.21412037037037038,
+      "slot2": 0.21412037037037038,
+      "joint_reach": 0.21412037037037038,
+      "joint_std": 0.027462524346538588
+    },
+    "add_slottag": {
+      "slot1": 1.0,
+      "slot2": 1.0,
+      "joint_reach": 1.0,
+      "joint_std": 0.0
+    },
+    "nonlin": {
+      "slot1": 1.0,
+      "slot2": 1.0,
+      "joint_reach": 1.0,
+      "joint_std": 0.0
+    },
+    "shuffle": {
+      "slot1": 0.0619212962962963,
+      "slot2": 0.05555555555555556,
+      "joint_reach": 0.003472222222222222,
+      "joint_std": 0.006014065304058602
+    }
+  },
+  "heldout_reach_lever": 1.0,
+  "additive_plain_reach": 0.21412037037037038,
+  "additive_slottag_reach_STRONG_FLOOR": 1.0,
+  "nonlinear_scan_reach": 1.0,
+  "shuffle_control_reach": 0.003472222222222222,
+  "beats_plain_additive": true,
+  "beats_STRONG_additive_slottag": false,
+  "shuffle_collapses": true,
+  "verdict": "NO-GO",
+  "elapsed_s": 0.12,
+  "stress_regime_sweep": {
+    "overcomplete_D24_K16_tf0.5": {
+      "lever": 0.9889,
+      "add_plain": 0.3118,
+      "add_slottag": 0.9896,
+      "nonlin": 0.9872,
+      "shuffle": 0.0007
+    },
+    "hard_D16_K16_tf0.4": {
+      "lever": 0.7399,
+      "add_plain": 0.2567,
+      "add_slottag": 0.7584,
+      "nonlin": 0.7329,
+      "shuffle": 0.0023
+    },
+    "verhard_D12_K20_tf0.4": {
+      "lever": 0.4722,
+      "add_plain": 0.1438,
+      "add_slottag": 0.4737,
+      "nonlin": 0.4545,
+      "shuffle": 0.002
+    },
+    "tiny_D8_K16_tf0.5": {
+      "lever": 0.2677,
+      "add_plain": 0.0729,
+      "add_slottag": 0.2747,
+      "nonlin": 0.2493,
+      "shuffle": 0.0052
+    }
+  },
+  "stress_read": "off-ceiling across all 4 harder regimes lever joint_reach ties (marginally BELOW) add_slottag; nonlin scan slightly worse; add_plain collapses toward unreach~0.14; shuffle ~0. Non-commutative scan buys nothing beyond a linear positional tag."
+}

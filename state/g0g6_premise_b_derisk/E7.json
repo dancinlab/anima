@@ -1,0 +1,280 @@
+{
+  "lever_id": "E7",
+  "probe": "recurrent deliberation state (2-4 tick) -- premise-(b) forward-computation derisk",
+  "reach_metric": "held-out R^2 clamped to [0,1] (unreach<=0); retrieval secondary",
+  "config": {
+    "K": 20,
+    "D": 48,
+    "M": 24,
+    "DH": 64,
+    "KTICKS": 3,
+    "held_frac": 0.3,
+    "ridge": 0.01,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "spectral_W": 0.9,
+    "tgain": 2.4
+  },
+  "aggregate": {
+    "chance_retrieval": 0.008771929824561403,
+    "n_held_mean": 114.0,
+    "n_train_mean": 266.0,
+    "T_shallow": {
+      "additive": {
+        "reach": 0.0,
+        "r2_raw": -0.09778601805943803,
+        "retrieval": 0.008771929824561403
+      },
+      "slotlinear": {
+        "reach": 0.0,
+        "r2_raw": -0.20931976247608777,
+        "retrieval": 0.0
+      },
+      "ff1_nonlin": {
+        "reach": 0.0,
+        "r2_raw": -0.20152038018351717,
+        "retrieval": 0.0
+      },
+      "recurrent": {
+        "reach": 0.0,
+        "r2_raw": -0.19271172018732297,
+        "retrieval": 0.0029239766081871343
+      },
+      "tickshuffle": {
+        "reach": 0.0,
+        "r2_raw": -0.26483147968722914,
+        "retrieval": 0.008771929824561403
+      }
+    },
+    "T_deep": {
+      "additive": {
+        "reach": 0.39521457807130983,
+        "r2_raw": 0.39521457807130983,
+        "retrieval": 0.2309941520467836
+      },
+      "slotlinear": {
+        "reach": 0.6904500311322259,
+        "r2_raw": 0.6904500311322259,
+        "retrieval": 0.6637426900584795
+      },
+      "ff1_nonlin": {
+        "reach": 0.6904394546858965,
+        "r2_raw": 0.6904394546858965,
+        "retrieval": 0.6637426900584795
+      },
+      "recurrent": {
+        "reach": 0.6920128364678719,
+        "r2_raw": 0.6920128364678719,
+        "retrieval": 0.6900584795321638
+      },
+      "tickshuffle": {
+        "reach": 0.4821958505167023,
+        "r2_raw": 0.4821958505167023,
+        "retrieval": 0.3333333333333333
+      }
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 7,
+      "n_train": 266,
+      "n_held": 114,
+      "chance": 0.008771929824561403,
+      "T_shallow": {
+        "additive": {
+          "reach": 0.0,
+          "r2_raw": -0.1064994124361851,
+          "retrieval": 0.008771929824561403
+        },
+        "slotlinear": {
+          "reach": 0.0,
+          "r2_raw": -0.22659793005929751,
+          "retrieval": 0.0
+        },
+        "ff1_nonlin": {
+          "reach": 0.0,
+          "r2_raw": -0.2234526567181041,
+          "retrieval": 0.0
+        },
+        "recurrent": {
+          "reach": 0.0,
+          "r2_raw": -0.214910614105575,
+          "retrieval": 0.008771929824561403
+        },
+        "tickshuffle": {
+          "reach": 0.0,
+          "r2_raw": -0.26665891654373697,
+          "retrieval": 0.008771929824561403
+        }
+      },
+      "T_deep": {
+        "additive": {
+          "reach": 0.39454774085233435,
+          "r2_raw": 0.39454774085233435,
+          "retrieval": 0.21929824561403508
+        },
+        "slotlinear": {
+          "reach": 0.6707056486798336,
+          "r2_raw": 0.6707056486798336,
+          "retrieval": 0.5701754385964912
+        },
+        "ff1_nonlin": {
+          "reach": 0.6727423005181499,
+          "r2_raw": 0.6727423005181499,
+          "retrieval": 0.5964912280701754
+        },
+        "recurrent": {
+          "reach": 0.6732555950750245,
+          "r2_raw": 0.6732555950750245,
+          "retrieval": 0.5964912280701754
+        },
+        "tickshuffle": {
+          "reach": 0.4872320064629684,
+          "r2_raw": 0.4872320064629684,
+          "retrieval": 0.35964912280701755
+        }
+      }
+    },
+    {
+      "seed": 4302,
+      "n_train": 266,
+      "n_held": 114,
+      "chance": 0.008771929824561403,
+      "T_shallow": {
+        "additive": {
+          "reach": 0.0,
+          "r2_raw": -0.09895710359334364,
+          "retrieval": 0.0
+        },
+        "slotlinear": {
+          "reach": 0.0,
+          "r2_raw": -0.19869746466800797,
+          "retrieval": 0.0
+        },
+        "ff1_nonlin": {
+          "reach": 0.0,
+          "r2_raw": -0.19149129407836285,
+          "retrieval": 0.0
+        },
+        "recurrent": {
+          "reach": 0.0,
+          "r2_raw": -0.1820416888283578,
+          "retrieval": 0.0
+        },
+        "tickshuffle": {
+          "reach": 0.0,
+          "r2_raw": -0.3027517722296693,
+          "retrieval": 0.008771929824561403
+        }
+      },
+      "T_deep": {
+        "additive": {
+          "reach": 0.3634345254545617,
+          "r2_raw": 0.3634345254545617,
+          "retrieval": 0.23684210526315788
+        },
+        "slotlinear": {
+          "reach": 0.7024818069466807,
+          "r2_raw": 0.7024818069466807,
+          "retrieval": 0.7192982456140351
+        },
+        "ff1_nonlin": {
+          "reach": 0.7027779495878969,
+          "r2_raw": 0.7027779495878969,
+          "retrieval": 0.6929824561403509
+        },
+        "recurrent": {
+          "reach": 0.7021541103880619,
+          "r2_raw": 0.7021541103880619,
+          "retrieval": 0.7192982456140351
+        },
+        "tickshuffle": {
+          "reach": 0.4371147772204629,
+          "r2_raw": 0.4371147772204629,
+          "retrieval": 0.2982456140350877
+        }
+      }
+    },
+    {
+      "seed": 4303,
+      "n_train": 266,
+      "n_held": 114,
+      "chance": 0.008771929824561403,
+      "T_shallow": {
+        "additive": {
+          "reach": 0.0,
+          "r2_raw": -0.08790153814878532,
+          "retrieval": 0.017543859649122806
+        },
+        "slotlinear": {
+          "reach": 0.0,
+          "r2_raw": -0.20266389270095786,
+          "retrieval": 0.0
+        },
+        "ff1_nonlin": {
+          "reach": 0.0,
+          "r2_raw": -0.1896171897540846,
+          "retrieval": 0.0
+        },
+        "recurrent": {
+          "reach": 0.0,
+          "r2_raw": -0.1811828576280361,
+          "retrieval": 0.0
+        },
+        "tickshuffle": {
+          "reach": 0.0,
+          "r2_raw": -0.2250837502882812,
+          "retrieval": 0.008771929824561403
+        }
+      },
+      "T_deep": {
+        "additive": {
+          "reach": 0.4276614679070335,
+          "r2_raw": 0.4276614679070335,
+          "retrieval": 0.23684210526315788
+        },
+        "slotlinear": {
+          "reach": 0.6981626377701635,
+          "r2_raw": 0.6981626377701635,
+          "retrieval": 0.7017543859649122
+        },
+        "ff1_nonlin": {
+          "reach": 0.6957981139516427,
+          "r2_raw": 0.6957981139516427,
+          "retrieval": 0.7017543859649122
+        },
+        "recurrent": {
+          "reach": 0.7006288039405293,
+          "r2_raw": 0.7006288039405293,
+          "retrieval": 0.7543859649122807
+        },
+        "tickshuffle": {
+          "reach": 0.5222407678666755,
+          "r2_raw": 0.5222407678666755,
+          "retrieval": 0.34210526315789475
+        }
+      }
+    }
+  ],
+  "verdict_regime": "T_deep (premise-(b)-favourable: depth-3 iterated multiplicative teacher, DIFFERENT weights)",
+  "key_reaches_T_deep": {
+    "recurrent_lever": 0.6920128364678719,
+    "additive_bag_floor": 0.39521457807130983,
+    "slotlinear_totalorder_floor": 0.6904500311322259,
+    "ff1_single_nonlinear_pass": 0.6904394546858965,
+    "tickshuffle_control": 0.4821958505167023,
+    "strongest_nonrecurrent_floor": 0.6904500311322259
+  },
+  "tests": {
+    "beats_additive(vs strongest non-recurrent +0.05)": false,
+    "recurrence_specific(recurrent > ff1_nonlin +0.05)": false,
+    "shuffle_collapses(tickshuffle < recurrent -0.05)": true,
+    "above_min(R>0.15)": true
+  },
+  "verdict": "NO-GO",
+  "honesty": "synthetic frozen numpy reservoir != 303M engine-native; DIRECTIONAL go/no-go for a GPU forward, not GREEN closure (a_toy_scale_recheck, a_engine_native_learning).",
+  "elapsed_s": 0.14
+}
