@@ -1,0 +1,21 @@
+{
+ "probe": "H_6163 falsifier-lane pre-gate (frozen 303M rep falsifiability)",
+ "n": 64,
+ "d": 1024,
+ "heldout_acc": 0.7594,
+ "shuffle_acc": 0.5656,
+ "acc_per_seed": [
+  0.75,
+  0.797,
+  0.75,
+  0.75,
+  0.75
+ ],
+ "bar": "SIGNAL-PRESENT iff heldout>=0.70 and shuffle<=0.60; NO-SIGNAL iff heldout<=0.60",
+ "verdict": "SURFACE-CONFOUNDED",
+ "caveat": "positive=DIRECTIONAL (possible surface-cue); negative=strong 🧱; terminal=built-lane engine-native fals rate.",
+ "surface_control_char3gram": 0.894,
+ "surface_delta_rep_minus_surface": -0.135,
+ "integrity_note": "naive heldout 0.759 (>0.70 bar) is a SURFACE-LEXICAL artifact: a char-3gram bag-of-features baseline (NO model, pure surface) scores 0.894 — HIGHER than the 303M rep (delta -0.135). So the falsifiable/unfalsifiable split is separable from raw surface vocabulary, and the 303M rep carries the signal WORSE than surface. The frozen 303M rep does NOT represent falsifiability beyond (indeed below) surface lexical cues — a falsifier lane reading the rep would re-read mouth-available surface vocabulary, not a genuine falsifiability representation.",
+ "decision": "DIRECTIONAL-toward-🧱 for the frozen-rep premise: the lane-build premise (rep carries a falsifiability signal a disjoint lane could read) is NOT supported at the frozen level. A TRAINED lane is not ruled out, but if H_6163 is built it MUST beat a surface-lexical baseline (else it just re-reads mouth cues). Converges with the G6 decode-axis walls (verify-substrate has no non-surface signal to latch). Cheap next: lexically-matched minimal-pair dataset to remove the surface confound, OR proceed to a trained-lane build with a mandatory surface-baseline control."
+}
