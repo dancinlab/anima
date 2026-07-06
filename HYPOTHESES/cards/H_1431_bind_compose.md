@@ -110,7 +110,7 @@ reliably lexically in-capacity — a scale prediction, falsifiable by re-running
 
 **R3 ENGINE-NATIVE re-measure (2026-06-19, vast 41469555 2267G-CPU, rent — a_engine_native_learning HARD-GATE SATISFIED):**
 The FALS 5-bar was RE-MEASURED with decode run on the **live CORE byte-mouth** —
-`state/1431_bind_compose/engine_decode_batch_cli.hexa` → `CORE/bytegpt_decode.hexa::bytegpt_decode_batch_to_file`
+`state/1431_bind_compose/engine_decode_batch_cli.hexa` → `CORE/decode.hexa::bytegpt_decode_batch_to_file`
 (full-load `bg_load`, 303M `chat_full.bin`, hexa v0.241 glibc-2.34), NOT the torch mouth. 30 fragments
 (5 subj × 3 seed × 2 kind) decoded byte-LM native, scored by the SAME frozen H_1305 `_is_falsifiable` (VERBATIM).
 The R2 BLOCKER (forward-parity argmax 227-vs-32) did NOT recur on the v0.241 full-load decode path — the engine

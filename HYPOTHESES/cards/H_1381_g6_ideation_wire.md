@@ -83,7 +83,7 @@ engine-native with Ψ preserved (M1 ✅; M2-M5 FALS ⏳ ckpt-gated). NEXT r2 = a
 ## Pointers
 
 - engine: `CORE/clm_decode.hexa` (clm_decode_topk_sampled + sampler) · `CORE/generator.hexa`
-  (gen_clm_ideate + gen_g6_sampler_selftest) · `CORE/bytegpt_decode.hexa` (sibling sampler) ·
+  (gen_clm_ideate + gen_g6_sampler_selftest) · `CORE/decode.hexa` (sibling sampler) ·
   `CORE/g6_ideation.hexa` (wire module) · `CORE/engine_cli_smoke.hexa` cases 99-103
 - probe: `state/g6-ideation-wire/{g6_mbar_probe.hexa, g6_live_bounded_probe.hexa}`
 - verdict: `.verdicts/1381_g6_ideation_wire/{FREEZE.txt, result.txt, mbar_run_raw.txt,

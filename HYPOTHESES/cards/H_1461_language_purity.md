@@ -89,7 +89,7 @@ FALS=0 에 실제로 기여한 nuisance**(20.3% 한글)다. 그러나 frozen 5-b
 ## Scope / honesty (c9, a_scale_honest_scope, a_toy_scale_recheck)
 
 - **DIRECTIONAL** — torch + gauge_lib._decode (a_engine_native_learning). engine-native 재측정
-  (ASCII-mask 를 CORE `bytegpt_decode.hexa` logit 단계에 배선 → byte-exact 재측정) = follow-on ING.
+  (ASCII-mask 를 CORE `decode.hexa` logit 단계에 배선 → byte-exact 재측정) = follow-on ING.
 - bar 0 이동, tune-to-green 0 (c9). 1차 실행의 monkeypatch-누락 버그(MASKED 가 실제 unmasked)를
   GUARD 가 잡아 재실행 → 최종 MASKED 는 byte-검증 ASCII-only.
 - TOY: base ckpt 1개 / 5 eval seeds / 3 seeds / 110-byte 디코드. ASCII-mask 는 **언어**필터지

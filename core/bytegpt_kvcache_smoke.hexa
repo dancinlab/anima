@@ -4,7 +4,7 @@
 // full-forward. For the SAME loaded weights W and the SAME seed, it generates a
 // token stream two ways and asserts the streams are byte-identical:
 //   (REF)   re-run the full T-token forward bg_forward_last_W each step (the
-//           O(gen²) reference, kept verbatim in bytegpt_decode.hexa).
+//           O(gen²) reference, kept verbatim in decode.hexa).
 //   (KV)    forward ONLY the new token's row each step via _bg_kv_step over a
 //           per-layer K,V cache (O(gen) — the fix).
 // Both feed the IDENTICAL _g6_topk_sample sampler with the IDENTICAL RNG state, so

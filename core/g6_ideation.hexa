@@ -17,7 +17,7 @@
 //
 // THE ENGINE EXTENSION (a_engine_native_learning — engine-TRANSFORM-to-fit-the-learning):
 //   the live engine decode is ARGMAX (deterministic), so best-of-K is a no-op. We grew
-//   bytegpt_decode_topk_sampled + a seeded xorshift32 sampler (bytegpt_decode.hexa) so the
+//   bytegpt_decode_topk_sampled + a seeded xorshift32 sampler (decode.hexa) so the
 //   DEPTH lever (best-of-K over rng offsets) yields DIVERSE candidates. This module routes
 //   the 6 composed frames through that sampler, keeps the best by emergent structure
 //   (is_falsifiable, novel-gram count, kwr), and re-scores the 5 frozen M-bars.

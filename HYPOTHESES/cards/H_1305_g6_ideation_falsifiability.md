@@ -100,7 +100,7 @@ if promoted.
 `wired: DIRECTIONAL-mirror` (engine-native CONFIRM/OVERTURN DEFERRED — ING `h1305_engine_native`).
 
 An engine-native re-measurement was attempted on pod 41548581 (hexa v0.241.8) via
-`state/1431_bind_compose/engine_decode_batch_cli.hexa` → live `CORE/bytegpt_decode.hexa`,
+`state/1431_bind_compose/engine_decode_batch_cli.hexa` → live `CORE/decode.hexa`,
 scored by `state/1305_g6_ideation_falsifiability/h1305_engine_native.py` (frozen H_1305
 detector VERBATIM). Concrete results (frozen: `state/verdicts/1305_g6_ideation_falsifiability/H_1305_engine_native_BLOCKED.txt`):
 

@@ -37,7 +37,7 @@ numpy: inverse model proposes M candidates over a synthetic goal; forward model 
 
 ## Engine-native measure (cost-gated · PRE-REGISTER ONLY · NOT fired)
 
-MPC rollout-search as a generator backend behind cli/anima.hexa; candidates decode via core/clm_decode.hexa/bytegpt_decode.hexa, scored by the SAME forward path = built-in measurement-faithfulness (g==f). Ideation scored by core/g6_ideation.hexa canonical op g6_score_arm_auto (mouth=gen_auto_ideate via generator L3, NOT a python g6_common mirror) — dist/falsifiable/attribution through the wired engine op (a_engine_native_learning hard-gate). G0/G1/G2 via core/g_gates.hexa g_eval_g6/all. Psi + abstain via core/engine_cli.hexa. hexa<->py byte-parity; any torch-side scaffold (g6_common/_decode_ideas) = automatic DIRECTIONAL, void.
+MPC rollout-search as a generator backend behind cli/anima.hexa; candidates decode via core/clm_decode.hexa/decode.hexa, scored by the SAME forward path = built-in measurement-faithfulness (g==f). Ideation scored by core/g6_ideation.hexa canonical op g6_score_arm_auto (mouth=gen_auto_ideate via generator L3, NOT a python g6_common mirror) — dist/falsifiable/attribution through the wired engine op (a_engine_native_learning hard-gate). G0/G1/G2 via core/g_gates.hexa g_eval_g6/all. Psi + abstain via core/engine_cli.hexa. hexa<->py byte-parity; any torch-side scaffold (g6_common/_decode_ideas) = automatic DIRECTIONAL, void.
 
 ## Scope / honesty (c9)
 

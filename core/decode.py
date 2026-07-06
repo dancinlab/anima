@@ -14,7 +14,7 @@ per-mouth decoder mirrors into ONE module.
 
   * CONV (CLM ConvMoE) mouth  = the verbatim port of core/clm_decode.hexa
                                 (formerly core/clm_decode.py)
-  * BYTE (ByteGPT transformer) = the verbatim port of core/bytegpt_decode.hexa
+  * BYTE (ByteGPT transformer) = the verbatim port of core/decode.hexa
                                 (formerly core/bytegpt_decode.py)
 
 Per CLAUDE.md a_engine_native_learning: hexa + py are TWO co-equal production
@@ -43,7 +43,7 @@ the two source files (bg imported dt_exp FROM clm), so they are deduped to one
 copy in the SHARED section with no behavior change.
 
 KV-CACHE (the ByteGPT fast path, new here): the hexa KV-cache is byte-identical
-to its full-forward reference (bytegpt_decode.hexa:919). numpy BLAS GEMM is
+to its full-forward reference (decode.hexa:919). numpy BLAS GEMM is
 M-dependent at the ~1e-15 ULP level (a single-row projection differs from the
 same row of an M=T batch), so the py KV logits are NOT bit-identical to the py
 full-forward — but the DECODE TOKEN STREAM is identical (argmax/inverse-CDF are
@@ -96,7 +96,7 @@ def dt_exp(x):
 
 
 # ── seeded top-k temperature sampler PRNG — BYTE-IDENTICAL across both mouths
-# (clm_decode.hexa _clmd_mix32/_rng_next ≡ bytegpt_decode.hexa _g6_mix32/_rng_next;
+# (clm_decode.hexa _clmd_mix32/_rng_next ≡ decode.hexa _g6_mix32/_rng_next;
 # xorshift32 & 0xFFFFFFFF). Deduped to one copy.
 _MASK = 0xFFFFFFFF
 
@@ -679,7 +679,7 @@ def clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# (c) BYTE (ByteGPT transformer) — verbatim port of core/bytegpt_decode.hexa
+# (c) BYTE (ByteGPT transformer) — verbatim port of core/decode.hexa
 #     (formerly core/bytegpt_decode.py) + byte-exact KV-cache fast path.
 # ════════════════════════════════════════════════════════════════════════
 
@@ -702,7 +702,7 @@ def dt_sqrt(x):
 
 
 def _bg_gelu(x):
-    """bytegpt_decode.hexa::_bg_gelu — 0.5*x*(1+erf(x*0.7071067811865476)).
+    """decode.hexa::_bg_gelu — 0.5*x*(1+erf(x*0.7071067811865476)).
     erf via libm (math.erf), NOT the dt_erf twin (ING#23 torch-parity)."""
     x = np.asarray(x, dtype=np.float64)
     e = _erf_vec(x * 0.7071067811865476).astype(np.float64)
@@ -710,7 +710,7 @@ def _bg_gelu(x):
 
 
 def _bg_layernorm_rows(X, g, b, T, d):
-    """bytegpt_decode.hexa::_bg_layernorm — per-row LayerNorm over length d.
+    """decode.hexa::_bg_layernorm — per-row LayerNorm over length d.
     biased variance, eps=1e-5, inv = 1/dt_sqrt(var+eps). X:[T,d]. Returns Y:[T,d].
     dt_sqrt is scalar per row (matching the hexa scalar while-loop)."""
     eps = 0.00001
@@ -726,7 +726,7 @@ def _bg_layernorm_rows(X, g, b, T, d):
     return Y
 
 
-# ── .bin header + weight load — 1:1 from bytegpt_decode.hexa _bg_rd_u32 / bg_load ──
+# ── .bin header + weight load — 1:1 from decode.hexa _bg_rd_u32 / bg_load ──
 
 # _bg_rd_u32 ≡ clm's _rd_u32 (byte-identical). Aliased to the single SHARED def.
 _bg_rd_u32 = _rd_u32
@@ -801,8 +801,8 @@ def _bg_read_bind_block(rb, off, d):
 
 
 def bg_load(path):
-    """bytegpt_decode.hexa::bg_load — parse the flat binary ONCE into a weight dict.
-    Weight binary layout (LE f32, bytegpt_decode.hexa:29-36):
+    """decode.hexa::bg_load — parse the flat binary ONCE into a weight dict.
+    Weight binary layout (LE f32, decode.hexa:29-36):
       [vocab,d,n_layer,n_head,block]  5xu32
       tok[vocab*d]  pos[block*d]
       per layer: ln1.w[d] ln1.b[d] in_proj.w[3d*d] in_proj.b[3d]
@@ -868,14 +868,14 @@ def bg_load(path):
 # bg_load_ranged — byte-identical W-map to bg_load (hexa builds it via ranged
 # read_bytes_at to dodge the whole-file boxing OOM; the resulting weights are the
 # same, and the py read already mmaps lazily via frombuffer). Aliased for surface
-# parity with the hexa public entries (bytegpt_decode.hexa:782).
+# parity with the hexa public entries (decode.hexa:782).
 bg_load_ranged = bg_load
 
 
-# ── forward — 1:1 from bytegpt_decode.hexa _bg_mha / _bg_linear / bg_forward_last_W ──
+# ── forward — 1:1 from decode.hexa _bg_mha / _bg_linear / bg_forward_last_W ──
 
 def _bg_mha(H, inW, inB, oW, oB, T, d, nh):
-    """bytegpt_decode.hexa::_bg_mha — torch nn.MultiheadAttention semantics.
+    """decode.hexa::_bg_mha — torch nn.MultiheadAttention semantics.
     H:[T,d] pre-normed. in_proj W[3d,d] rows Q|K|V; out_proj W[d,d]+b.
     scale=1/dt_sqrt(hd), causal, libm exp softmax. Returns Aout:[T,d]."""
     hd = d // nh
@@ -920,7 +920,7 @@ def _bg_apply_bind(x, bind, T, d, nh):
 
 
 def bg_forward_last_W(W, ids, T):
-    """bytegpt_decode.hexa::bg_forward_last_W — full forward from a loaded weight
+    """decode.hexa::bg_forward_last_W — full forward from a loaded weight
     dict; returns last-position next-byte logits float64[vocab]. ids:[T] int.
     When W["bind"] is non-empty the appended gated blocks run after the L base
     blocks and before ln_f (H_9027); absent/empty => byte-identical to before."""
@@ -973,13 +973,13 @@ def bg_forward_last_hidden(W, ids, T):
 
 
 def bytegpt_forward_last(path, ids, T):
-    """bytegpt_decode.hexa::bytegpt_forward_last — load + forward (parity probe)."""
+    """decode.hexa::bytegpt_forward_last — load + forward (parity probe)."""
     W = bg_load(path)
     return bg_forward_last_W(W, ids, T)
 
 
 def bg_argmax(a):
-    """bytegpt_decode.hexa::bg_argmax — index of max (ties: first, strict >)."""
+    """decode.hexa::bg_argmax — index of max (ties: first, strict >)."""
     bi = 0
     bv = a[0]
     for k in range(1, len(a)):
@@ -1003,7 +1003,7 @@ def _seed_to_ids(seed):
 # (O(gen²)). The KV path caches per-layer (K,V) = the in_proj K,V slices from
 # _bg_mha and, on each new token, forwards ONLY the new position, attending it
 # against the cached K,V of all layers. This mirrors the hexa KV-cache
-# (bytegpt_decode.hexa:919, proven byte-identical to full-forward there).
+# (decode.hexa:919, proven byte-identical to full-forward there).
 #
 # WINDOW-SLIDE RESYNC: ByteGPT indexes the positional embedding by position
 # WITHIN the window (pos[0:T]), not by absolute token index. While the window is
@@ -1118,10 +1118,10 @@ def _bg_step_logits(W, toks, st):
     return _bg_kv_step(W, st['cache'], toks[start + T - 1], T - 1)
 
 
-# ── public decode entries — 1:1 from bytegpt_decode.hexa (KV path wired in) ──
+# ── public decode entries — 1:1 from decode.hexa (KV path wired in) ──
 
 def bytegpt_decode_argmax(path, seed_ids, gen):
-    """bytegpt_decode.hexa::bytegpt_decode_argmax — greedy continuation, weights
+    """decode.hexa::bytegpt_decode_argmax — greedy continuation, weights
     loaded ONCE, prompt window grown (capped at block). Returns {ok,text,ids}.
     (Decode loop = byte-exact KV cache; full-forward reference = _decode_argmax_W_full.)"""
     W = bg_load(path)
@@ -1169,7 +1169,7 @@ def _decode_argmax_W_full(W, seed_ids, gen):
 
 
 def bytegpt_decode_topk_sampled(path, seed_ids, gen, top_k, temp, seed_rng):
-    """bytegpt_decode.hexa::bytegpt_decode_topk_sampled — seeded top-k temp draw."""
+    """decode.hexa::bytegpt_decode_topk_sampled — seeded top-k temp draw."""
     W = bg_load(path)
     return bytegpt_decode_topk_sampled_W(W, seed_ids, gen, top_k, temp, seed_rng)
 

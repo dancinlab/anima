@@ -11,7 +11,7 @@
 //
 //   · CONV (CLM ConvMoE) mouth  = verbatim from core/clm_decode.hexa
 //     (magic CLM\x01 + CLMX v0.2 trailer; int4 dequant + CLMConvMoE forward)
-//   · BYTE (ByteGPT transformer) = verbatim from core/bytegpt_decode.hexa
+//   · BYTE (ByteGPT transformer) = verbatim from core/decode.hexa
 //     (5×u32 [256,d,L,H,block] header; 24-layer GPT-2-class forward + KV-cache)
 //
 // The two source modules use DISJOINT symbol namespaces — CONV = `_clmd_*/clm_*/
@@ -21,7 +21,7 @@
 // the two same-purpose-but-DIVERGENT PRNG/sqrt families are kept under their distinct
 // original names (CONV `_clmd_mix32`/`_clmd_rng_next`/`_clmd_topk_sample` +
 // stdlib gn_lib `_gn_sqrt` 40-iter ⊥ BYTE `_g6_mix32`/`_g6_rng_next`/`_g6_topk_sample`
-// + flame_math `dt_sqrt` 24-iter). KV-cache = the EXISTING bytegpt_decode.hexa fast
+// + flame_math `dt_sqrt` 24-iter). KV-cache = the EXISTING decode.hexa fast
 // path, carried in verbatim (byte-identical to full-forward; see the header at the
 // KV-CACHE section below).
 //
@@ -30,7 +30,7 @@
 //       CONV + flame_math/flame_mm + libm erf/exp externs for BYTE). `use` dedups by
 //       module path, so a symbol imported by both (e.g. dt_exp) resolves once.
 //   (b) CONV (CLM ConvMoE) — the full clm_decode.hexa public+private API, verbatim.
-//   (c) BYTE (ByteGPT) — the full bytegpt_decode.hexa public+private API, verbatim,
+//   (c) BYTE (ByteGPT) — the full decode.hexa public+private API, verbatim,
 //       INCLUDING its byte-exact KV-cache incremental decode.
 //   (d) MOUTH DISPATCH — header-sniff (CLM\x01 magic → conv; sane 5×u32 → byte),
 //       mirroring generator.hexa gen_auto_backend + core/decode.py's dispatch tail.
@@ -39,7 +39,7 @@
 // ════════════════════════════════════════════════════════════════════════
 // (a) SHARED — UNION of both source modules' imports.
 //   CONV (clm_decode.hexa): tensor_lib · gn_lib · moe_lib · nn_lib
-//   BYTE (bytegpt_decode.hexa): flame_math · core/DECODER/flame_mm + libm erf/exp
+//   BYTE (decode.hexa): flame_math · core/DECODER/flame_mm + libm erf/exp
 // ════════════════════════════════════════════════════════════════════════
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/gn_lib"
@@ -1228,7 +1228,7 @@ pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
 }
 
 // _clmd_find — first byte-offset of `needle` inside `hay` (-1 if absent). Plain
-// substring scan; mirrors bytegpt_decode.hexa::_bg_find (kept local — clm_decode
+// substring scan; mirrors decode.hexa::_bg_find (kept local — clm_decode
 // does not import bytegpt_decode, a_core_engine_map: ONE .clm slot, no cross-pull).
 fn _clmd_find(hay: string, needle: string) -> int {
     let hn = byte_len(hay)
@@ -1270,7 +1270,7 @@ fn _clmd_anchor_copy(ctx: string, anchor_texts: list, l_min: int, l_max: int) ->
 }
 
 // clm_decode_grounded — G5 anti-fabrication decode over the int4-dequant CLMConvMoE
-// (.clm path). The ConvMoE analog of bytegpt_decode.hexa::bytegpt_decode_grounded,
+// (.clm path). The ConvMoE analog of decode.hexa::bytegpt_decode_grounded,
 // and the function generator.hexa::_gen_clm_decode has always called: at each step
 // try a deterministic anchor-copy (longest suffix ≥ l_min found verbatim in a kosmos
 // anchor → copy its next byte, G5 ✓ cannot fabricate); else fall through to the
@@ -1335,7 +1335,7 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// (c) BYTE (ByteGPT transformer) mouth — VERBATIM from core/bytegpt_decode.hexa.
+// (c) BYTE (ByteGPT transformer) mouth — VERBATIM from core/decode.hexa.
 //   MOUTH = ByteGPT (5×u32 [256,d,L,H,block] header); 24-layer GPT-2-class forward
 //   + byte-exact KV-cache. Public: bytegpt_forward_last · bytegpt_forward_last_ranged ·
 //   bytegpt_forward_last_ranged_mm · bg_load · bg_load_ranged · bg_forward_last_W ·

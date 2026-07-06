@@ -63,7 +63,7 @@ GPU retrain, cost-gated — pre-register only) OR FALS rises but C_shuffle does 
 ## Result — 🔴 RED (engine-native TERMINAL, mini CPU $0, 1600s)
 
 **UNBLOCKED:** the prior ⏳ BLOCKED-INFRA (pool reboot-loop) was resolved by porting the KV-cache to
-`core/bytegpt_decode.py` (PR-twin of `bytegpt_decode.hexa` #2602) — the py bytegpt decode was O(gen²)
+`core/bytegpt_decode.py` (PR-twin of `decode.hexa` #2602) — the py bytegpt decode was O(gen²)
 (~200s/frame) which is what forced the doomed pool runs. With KV-cache the full 6-arm × 3-seed run
 completed on **mini CPU in 1600s (~27 min), $0, no GPU/pool**. KV-cache is byte-exact (ON vs OFF
 token-identical, see below), so these verdict numbers are unchanged by the optimization.
@@ -102,7 +102,7 @@ REFUTED for h1129 (no engine-native effect). Frozen bars UNMOVED (no tune-to-gre
 PARITY **PASS** — KV-cache ON vs OFF (forced full-forward) token streams **byte-identical**:
 gen=12 argmax✓ sampled✓ (logits max|Δ|=3.02e-14 FP-reassoc, argmax-stable); gen=110 argmax✓ sampled✓,
 **speedup 15.9× argmax (1014→64 ms/tok) · 10.1× sampled**. → pure perf optimization; H_1590 numbers
-identical with/without it. py twin now at 2-production parity with `bytegpt_decode.hexa` KV-cache.
+identical with/without it. py twin now at 2-production parity with `decode.hexa` KV-cache.
 
 ## Pointers
 
