@@ -4,7 +4,7 @@ slug: 1404_lane_compose_phi
 title: lane-composition Φ — does composing affect (H_1290) + ethics (H_1291) raise faithful IIT4 Φ (more consciousness, not just more capability)?
 group: MITOSIS-ENGINE / brain-lane-composition (Φ-measurement follow-on to H_1401)
 terminal_tier: 🟢 INTEGRATION-RAISES-Φ (faithful IIT4, exact MIP-EI)
-wired: engine-native (Φ verdict via state/1404_lane_compose_phi/h1404_phi_runner.hexa → stdlib/consciousness/iit4/faithful_phi.hexa; live-CORE wire-in + ARCHITECTURE.json lockstep = follow-on ING #16)
+wired: WIRED-live core (core/engine_cli.hexa + .py ethics_units/lane_compose_step/lane_composed_phi · rung-3 · #phi-lane-compose-wire). Φ READOUT = prod ci_phi_iit4 (Gaussian-MI MIP); Φ VERDICT stays stdlib faithful_phi via hexa verify over a dumped live trajectory (a_phi_iit4_tool — the two estimators differ). STAGE-1 port-parity PASS (composed>disconnected lift reproduces INTEGRATION-RAISES-Φ). live-cell re-measure over a real decode window = follow-on (a_toy_scale_recheck: prod contradiction is binary + live exposure from last_used, so live Φ may differ; negative is a result).
 verdict_dir: .verdicts/1404_lane_compose_phi/
 terminal_verdict: .verdicts/1404_lane_compose_phi/result.txt
 date: 2026-06-17
