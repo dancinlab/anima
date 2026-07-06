@@ -25,7 +25,7 @@ First ENGINE-measured (not torch) G1/G2/G6 generation-gate verdict on the mounte
 
 ## Text (verbatim from CLAIMS.tape)
 
-Engine forward (CORE/bytegpt_decode.hexa::bytegpt_decode_argmax) is BYTE-EXACT to torch
+Engine forward (CORE/decode.hexa::bytegpt_decode_argmax) is BYTE-EXACT to torch
 greedy on the production anima-clm-chat-303m (ENGINE-PARITY 🟢, H_1157 re-verified), so
 greedy gate metrics are engine==torch by construction. Engine-measured under GREEDY decode:
 G1 composed_distinct=0 🔴, G2 novelty_rate=0.308, G6 count=3 🔴(<5). These DIFFER from the

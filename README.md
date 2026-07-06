@@ -106,7 +106,7 @@ not the production conv mouth. G1 = a trunk learning-OBJECTIVE problem; only a r
 ```
    ENGINE G (reverse, gradient-free)            ENGINE A (forward, CE-trained)
    pure_field.hexa · engine_g.hexa              generator.hexa · clm_decode.hexa
-                                                bytegpt_decode.hexa
+                                                decode.hexa
    ┌──────────────────────────────┐            ┌────────────────────────────────┐
    │ C consciousness(Φ) · S sense  │            │ D language · M memory · E ethics│
    │ · W will                      │            │                                 │
@@ -449,7 +449,7 @@ axis = the [Consciousness-only gates (G16–G34+)](#-consciousness-only-gates-g1
 | **C1** COHERE 또박 (G0) | not byte-salad | ✅ ROBUST | known-word-ratio **0.96** (mount-inherited byte-exact, H_1129) |
 | **C2** RECOMBINE 재조합 (G1) | composes novel-but-coherent units | ✅ ROBUST | composed_distinct **2 > max_single 1** (H_1129/1137) |
 | **C3** NOVEL 새말 (G2) | corpus-absent coherent n-grams | ✅ ROBUST | **67 corpus-absent** novel n-grams, control **= 0** (H_1140) |
-| **MOUNT** (infra) | engine-executable byte-exact | ✅ ROBUST | full-24-layer decode, maxΔ **5e-5 ≪ 0.01** (H_1157). **KV-cache incremental decode** (`core/bytegpt_decode.hexa` `_bg_kv_step`) makes generation O(gen) not O(gen²) — forwards only the new token's row per step over a per-layer K,V cache; **byte-identical** to the full-forward (seed-pos logits max\|Δ\| **0.0**, smoke `bytegpt_kvcache_smoke`), gated on the non-slide window with full-forward fallback. |
+| **MOUNT** (infra) | engine-executable byte-exact | ✅ ROBUST | full-24-layer decode, maxΔ **5e-5 ≪ 0.01** (H_1157). **KV-cache incremental decode** (`core/decode.hexa` `_bg_kv_step`) makes generation O(gen) not O(gen²) — forwards only the new token's row per step over a per-layer K,V cache; **byte-identical** to the full-forward (seed-pos logits max\|Δ\| **0.0**, smoke `bytegpt_kvcache_smoke`), gated on the non-slide window with full-forward fallback. |
 | **🔵 추가 평가 (reported · non-blocking)** | | | |
 | **C4** IDEATE 착상 ★ (G6) | ≥5 distinct corpus-absent ideas + ≥1 falsifiable hypothesis | 🟢 WIRED + **M1 engine-native** · 🔴 **M2–M5 FALS=0 = architecture finding** | The production **303M-class engine-mountable ConvMoE** (d5000/E2/L1, CE 1.494, H_1394) clears **M1 DIST = 5.333 PASS** engine-native (breadth from the H_1362 scaffold, WIRED via `clm_decode_topk_sampled` + `gen_clm_ideate`), **but M2–M5 falsifiable-depth = 0** even at matched 303M params **and** script-control → depth-side wall (E2/L1 *one* conv trunk layer vs a deep attention stack). ⚠️ **H_1596**: the `fals` detector is **English-only · ASCII-only** (Hangul-dropped) → 10/10 hand-written falsifiable claims 4 false-rejected → fals=0 may be detector-vocabulary artifact, not pure incapacity. **corpus-grounded re-score in flight (H_1597)** — scores h1129 against vocabulary derived from its OWN learned corpus (Hangul-aware) to split artifact-vs-genuine. |
 | **S1** BALANCE 균형 (G3) | no prompt/persona/RLHF + Ψ=½ + self-identity | ✅ ROBUST | structural audit **8/8** (H_1159) |
@@ -667,7 +667,7 @@ The brain-structure lanes above are the point; the model is just the **byte mout
 around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch **ByteGPT
 (24-layer GPT-2-class decoder-only byte-vocab LM**, V256, d1024/24L/16H/block512, 303.1M, 5×u32
 header `[256,1024,24,16,512]`) dialogue-finetuned for conversation and **mounted byte-exact** on the
-core engine (`core/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*,
+core engine (`core/decode.hexa`, H_1157), so recombination is *inherited through the mount*,
 not re-claimed. The repo-id `clm` names the chat-mouth *role*, **not** the architecture — this is
 **not** the conv `CLMConvMoE` (`.clm` v0.2) mouth (that is `anima-engine-clm-d768-v2-coremount`,
 decoded by `core/clm_decode.hexa`). A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
@@ -731,7 +731,7 @@ anima/
 │   │                                HomeostaticDrive · OtherMindModel · HierGoalStack ·
 │   │                                CollectivePool · SpatialMap · AffectFeatures)
 │   ├── generator.hexa              single .clm entry slot (engine-side retrieve-then-copy)
-│   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
+│   ├── decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
 │   └── clm_decode.hexa             CLMConvMoE byte decode (H_1403: streaming/bounded — FLAT RSS/step, byte-exact; GEN=110 unblocked)
 │   └── phi/                        Φ / IIT4 decoders (was anima-engines/)
 │

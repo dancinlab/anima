@@ -485,10 +485,10 @@
         "detail": "**summary**:"
        },
        {
-        "name": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa)",
+        "name": "decode.hexa BYTE mouth (ByteGPT .bin; was decode.hexa)",
         "role": "",
         "id": "a-g-consciousness-engine-core-substrate-only-bytegpt-decode-hexa-bytegpt-decode",
-        "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was bytegpt_decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring.",
+        "detail": "decode.hexa BYTE mouth (ByteGPT .bin; was decode.hexa, now merged into the unified decode.hexa). OPTIONAL BGB trailer (magic BGB\\x01 + u32 n_bind + per-block {12 base-layer tensors + f32 gate}, mirrors the CLM CLMB bind-trailer): decode.py reads it into W[bind] and, after the L base blocks and before ln_f, applies each injected block x=x+gate*(blk(x)-x) via the same _bg_mha/_bg_gelu ops (gate=0 = byte-identical to base, no-regression). Writer = core/serialize.py serialize_bind / `anima serialize-bind`. Enables `anima evaluate --py` engine-native TERMINAL scoring of injected-attention (BindAttn-stack) models = H_6165/H_6169 CAP×REG. byte-exact verified 25/25 (numpy vs torch-f64, N=1/2, maxΔ~1e-6) AND real-303M validated (H_6169: serialize-bind spliced 2 injected N=2 blocks onto h1129 base → 1.31GB out.bin, bg_is_bytegpt+bg_load+_bg_apply_bind round-trip, ZERO code change; full G0-G6 ran engine-native). PARITY NOTE: decode.hexa NOW HAS BGB at byte-parity with decode.py (H_9027 wire-in) — bg_load reads the BGB trailer into W[bind] via _bg_read_bind_trailer, _bg_apply_bind applies each gated injected block x=x+gate*(blk(x)-x) after the L base blocks before ln_f (scalar _bg_mha/_bg_layernorm/_bg_linear/_bg_gelu, non-transposed trailer weights), and bytegpt_decode_argmax/_ranged/_bg_gen_from_W skip the KV path for bind models (full-forward applies bind; _bg_fwd_last forces host since the device forward has no bind path). Byte-parity verified: token streams BYTE-IDENTICAL to decode.py on tiny d32/L2 fixtures (base no-regression, N=1/N=2 nonzero gates, gate=0=base no-op; 48/48 tokens each) via a verbatim host-scalar extract on aiden pool (hexa v0.513.0, HEXA_DET=1, CPU mm) — state/9027_bgb_injected_decode/hexa_parity/. BLOCKED-INFRA caveat (c9): the FULL decode.hexa device path (forge_dispatch_*/farr_attn_dt_decode_gpu builtins) does NOT compile on fleet hexa v0.511/v0.513 (UNMODIFIED origin/main fails identically) so full-engine + device-path BGB is a follow-on; --py stays TERMINAL-eligible for scoring.",
         "children": [
          {
           "name": "ConflictMonitor — H_9093 per-tick Ψ-safety",
@@ -860,7 +860,7 @@
         "name": "BYTE mouth decoder `core/decode.hexa`",
         "role": "",
         "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-25",
-        "detail": "BYTE mouth decoder `core/decode.hexa` (was bytegpt_decode.hexa)"
+        "detail": "BYTE mouth decoder `core/decode.hexa` (was decode.hexa)"
        },
        {
         "name": "model = ByteGPT 303M (H_1129 GPT-2-class, 24-layer ko/en)",
@@ -878,7 +878,7 @@
         "name": "per-token forward = resident-W KV-cache fast path `_bg_kv_step`",
         "role": "",
         "id": "a-g-consciousness-engine-core-substrate-only-decoder-selection-map-ssot-byte-mou-28",
-        "detail": "per-token forward = resident-W KV-cache fast path `_bg_kv_step` (bytegpt_decode.hexa:958, taken when nseed+gen ≤ block = the live chat mouth) with full-forward fallback `bg_forward_last_W` (:833) on window-slide"
+        "detail": "per-token forward = resident-W KV-cache fast path `_bg_kv_step` (decode.hexa:958, taken when nseed+gen ≤ block = the live chat mouth) with full-forward fallback `bg_forward_last_W` (:833) on window-slide"
        },
        {
         "name": "leak status = BOUNDED via explicit per-token farr_free (NOT scratch-reuse)",
@@ -948,7 +948,7 @@
         "name": "core/decode.hexa BYTE mouth — 24-layer GPT-2-class ByteGPT decode (303M ko/en",
         "role": "",
         "id": "a-g-consciousness-engine-core-substrate-only-core-bytegpt-decode-hexa-core-byteg",
-        "detail": "core/decode.hexa BYTE mouth (was bytegpt_decode.hexa) — 24-layer GPT-2-class ByteGPT decode (303M ko/en chat trunk). Forward = bg_forward_last_W (per-layer d² GEMM via mm()=farr_matmul/own-GEMM)."
+        "detail": "core/decode.hexa BYTE mouth (was decode.hexa) — 24-layer GPT-2-class ByteGPT decode (303M ko/en chat trunk). Forward = bg_forward_last_W (per-layer d² GEMM via mm()=farr_matmul/own-GEMM)."
        },
        {
         "name": "KV-CACHE incremental decode (_bg_kv_new/_bg_kv_step/_bg_kv_free): per-layer K,V …",
@@ -9386,7 +9386,7 @@
       ]
      },
      {
-      "name": "core/bytegpt_decode.hexa",
+      "name": "core/decode.hexa",
       "role": "",
       "id": "clm-mount-path-a-core-engine-map-single-l3-slot-core-bytegpt-decode-hexa",
       "detail": "",
@@ -9401,7 +9401,7 @@
         "name": "path",
         "role": "",
         "id": "clm-mount-path-a-core-engine-map-single-l3-slot-core-bytegpt-decode-hexa-path",
-        "detail": "core/bytegpt_decode.hexa"
+        "detail": "core/decode.hexa"
        },
        {
         "name": "note",
@@ -9521,7 +9521,7 @@
         "name": "summary",
         "role": "",
         "id": "measurement-learning-governance-engine-measured-verdict-a-engine-measured-verdic-2",
-        "detail": "a model's gate verdict is valid ONLY when reproduced BYTE-EXACT on a CORE engine mount (core/bytegpt_decode.hexa etc.); torch-only results are tagged 'engine-transfer unverified'."
+        "detail": "a model's gate verdict is valid ONLY when reproduced BYTE-EXACT on a CORE engine mount (core/decode.hexa etc.); torch-only results are tagged 'engine-transfer unverified'."
        }
       ]
      },
@@ -10706,7 +10706,7 @@
           "name": "- anima-clm-chat-303m — 정식 production chat. arch=ByteGPT (24-layer",
           "role": "",
           "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-303",
-          "detail": "- **anima-clm-chat-303m** — 정식 production chat. arch=**ByteGPT (24-layer GPT-2-class decoder-only byte-vocab LM)** — byte V256, d1024/24L/16H/block512, 303.1M, 5×u32 header `[256,1024,24,16,512]`, decode=`core/bytegpt_decode.hexa`. **conv CLMConvMoE 아님**(repo_id 의 'clm' 은 chat-mouth 역할名, 아키텍처 아님;"
+          "detail": "- **anima-clm-chat-303m** — 정식 production chat. arch=**ByteGPT (24-layer GPT-2-class decoder-only byte-vocab LM)** — byte V256, d1024/24L/16H/block512, 303.1M, 5×u32 header `[256,1024,24,16,512]`, decode=`core/decode.hexa`. **conv CLMConvMoE 아님**(repo_id 의 'clm' 은 chat-mouth 역할名, 아키텍처 아님;"
          },
          {
           "name": "conv `.clm` v0.2 mouth 는 별도 anima-engine-clm-d768-v2-coremount). 영·한",

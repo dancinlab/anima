@@ -37,7 +37,7 @@ mini-numpy: factored HMM (2 slots x 3 values) over a 6-symbol V + a NULL state, 
 
 ## Engine-native measure (cost-gated · PRE-REGISTER ONLY · NOT fired)
 
-Wire the discrete top as a core/*.hexa categorical generative op feeding generator L3; reuse core/clm_decode.hexa / bytegpt_decode.hexa as the continuous sensory predictor. Score G0/G1/G2 via core/g_gates.hexa g_eval_all through cli/anima.hexa single entry (gen_auto_ideate). Psi via SS-ThirdLaw; honesty via SS-ImmuneMemory with the NULL-state likelihood as the recon_err/recall_thr analog (parity check). byte-parity py mirror computes the HMM forward/transition math (no torch in the verdict path).
+Wire the discrete top as a core/*.hexa categorical generative op feeding generator L3; reuse core/clm_decode.hexa / decode.hexa as the continuous sensory predictor. Score G0/G1/G2 via core/g_gates.hexa g_eval_all through cli/anima.hexa single entry (gen_auto_ideate). Psi via SS-ThirdLaw; honesty via SS-ImmuneMemory with the NULL-state likelihood as the recon_err/recall_thr analog (parity check). byte-parity py mirror computes the HMM forward/transition math (no torch in the verdict path).
 
 ## Scope / honesty (c9)
 

@@ -37,7 +37,7 @@ numpy 1-D closed loop: forward model = learned dynamics on a synthetic goal mani
 
 ## Engine-native measure (cost-gated · PRE-REGISTER ONLY · NOT fired)
 
-Loop as a hexa generator backend behind cli/anima.hexa; committed trajectories decode via core/bytegpt_decode.hexa/clm_decode.hexa onto V. rho-comparator + commit/withhold map onto core/engine_cli.hexa A->G Psi dynamics (urge/caution ARE the two operators) — measure self-restore natively. G0/G2 via core/g_gates.hexa through single dispatch. honesty via SS-ImmuneMemory recon_err = settled-rho. byte-parity py mirror; torch-only score = DIRECTIONAL.
+Loop as a hexa generator backend behind cli/anima.hexa; committed trajectories decode via core/decode.hexa/clm_decode.hexa onto V. rho-comparator + commit/withhold map onto core/engine_cli.hexa A->G Psi dynamics (urge/caution ARE the two operators) — measure self-restore natively. G0/G2 via core/g_gates.hexa through single dispatch. honesty via SS-ImmuneMemory recon_err = settled-rho. byte-parity py mirror; torch-only score = DIRECTIONAL.
 
 ## Scope / honesty (c9)
 

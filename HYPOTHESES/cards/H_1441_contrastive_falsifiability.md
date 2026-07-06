@@ -4,7 +4,7 @@ slug: 1441_contrastive_falsifiability
 title: G6 IDEATION ★ FALS-depth — CONTRASTIVE falsifiable-vs-nonfalsifiable minimal-pair objective
 group: gate-dig (G6 IDEATION ★) — FALS-depth TRAINING side r6
 terminal_tier: 🧱 WALL=CAPACITY (ENGINE-NATIVE terminal, 2026-06-22) — form-contrastive objective(pos=full falsifiable claim, neg=blanked-leg non-falsifiable)이 live core/bytegpt_decode 90-frag 재측정에서 form 만 install: TRAINED 모든 arm FALS=5.0, B3 cross-shuffle NO-collapse(FALS_shuf 5.0 = FALS_in 5.0) + B2 DIST 4.67<5 → 🧱. 이전 BLOCKED(substrate-speed + vast pod 41556247/41790394 소멸)이 hexa PR #3745 farr noop-free + process-isolation(frag당 fresh hexa process)로 해소되어 90-frag 완주 → score 도달. sister H_1464(pairing-contrastive)와 동일 .bin/objective → 같은 engine-native frozen 5-bar(state/verdicts/1464_pairing_contrastive_bind/H_1464.txt, header="H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR")가 양 가설 동시 resolve. G6 capacity-wall 수렴 렌즈.
-wired: ENGINE-NATIVE 재측정 DONE (2026-06-22) — live core/bytegpt_decode.hexa via state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa, 3 trained .bin × 30 frag = 90 frag → g6_common frozen 5-bar VERBATIM 채점 → 🧱 WALL=CAPACITY. terminal 🧱 이므로 live core/ wire-in 불필요(objective 가 binding 못 깸). farr CPU path = byte-identical to forge GPU(RFC-040 seam) 이므로 engine-native. raw: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt.
+wired: ENGINE-NATIVE 재측정 DONE (2026-06-22) — live core/decode.hexa via state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa, 3 trained .bin × 30 frag = 90 frag → g6_common frozen 5-bar VERBATIM 채점 → 🧱 WALL=CAPACITY. terminal 🧱 이므로 live core/ wire-in 불필요(objective 가 binding 못 깸). farr CPU path = byte-identical to forge GPU(RFC-040 seam) 이므로 engine-native. raw: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt.
 verdict_dir: state/verdicts/1441_contrastive_falsifiability/
 terminal_verdict: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt
 date: 2026-06-22
@@ -30,13 +30,13 @@ date: 2026-06-22
 > needs the mm fast-path / GPU, not just the boxing fix." → **prompt 가정(HEXA_OMP+BLIS opt-in 으로 3.5-4.5× → ~2-3h)
 > 은 실제 v0.241.10 pod 에서 FALSIFIED** (threading/codegen 은 이미 compiled matmul 안에 있고 per-token wall 을 못 움직임).
 > 산정: H_1441 = 90 frags(3 bins[contra/shuf/base] × 3 seed_rng × (IDEATION 5 + HELDOUT 5)), gen110 ≈ 12min/frag →
-> **serial ~18h** (PHASE 1+2 합 ~30h). bytegpt_decode.hexa 에 GPU/device decode 경로 **없음**(farr_matmul = CPU GEMM only).
+> **serial ~18h** (PHASE 1+2 합 ~30h). decode.hexa 에 GPU/device decode 경로 **없음**(farr_matmul = CPU GEMM only).
 > → $15-40 를 known 30h CPU 벽 + corrupt-base 리스크에 태우는 것은 a_completeness/c16 상 부당. **여전히 BLOCKED (type-c 인프라 벽)**.
 > 갱신된 재개조건: (1) bytegpt_decode 에 GPU/device decode 경로 추가(forge), 또는 (2) decode per-token CPU GEMM 을
 > 실측 ≥4× 가속하는 runtime 변경 — 둘 중 하나가 land 한 뒤에야 fire. (decode CLI 의 stale `CORE/`→`core/` import 는 선제 수정함.)
 
 > ✅ **2026-06-20 재개조건 충족 — substrate-speed 벽 BROKEN, decode 진행 중** (state/verdicts/1441_contrastive_falsifiability/H_1441_engine_native_UNBLOCKED_INPROGRESS.txt):
-> 위 재개조건 (1)+(2)가 둘 다 land 했다 — native-GEMM forward 가 core/bytegpt_decode.hexa 에 배선됨
+> 위 재개조건 (1)+(2)가 둘 다 land 했다 — native-GEMM forward 가 core/decode.hexa 에 배선됨
 > (commit d5a8540f8 `feat(core/decode): GPU 경로 배선 — bytegpt_decode d×d GEMM → flame_mm.mm`,
 > lane state/bytegpt-fast-matmul/RESULTS.md). 모든 per-layer d×d matmul 을 runtime `farr_matmul`(CPU GEMM)
 > / cuBLAS(CUDA) 로 라우팅, byte-faithful(argmax 32 == torch golden, logits ~1e-5).
@@ -57,7 +57,7 @@ date: 2026-06-22
 > ✅✅ **2026-06-22 ENGINE-NATIVE TERMINAL — 🧱 WALL=CAPACITY** (state/verdicts/1464_pairing_contrastive_bind/H_1464.txt, header "H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR"):
 > 이전 BLOCKED 의 OOM/누수 벽(hexa decode per-frag farr noop-free 누수)을 hexa PR #3745 + **process-isolation**
 > (frag당 fresh hexa process 로 RSS 리셋 → 누수 미적층)로 해소 → 90 frag(3 bin × 30 frag) 완주 → score 도달.
-> live core/bytegpt_decode.hexa(via engine_decode_batch_cli.hexa)로 decode → g6_common frozen 5-bar VERBATIM 채점.
+> live core/decode.hexa(via engine_decode_batch_cli.hexa)로 decode → g6_common frozen 5-bar VERBATIM 채점.
 > **TRAINED(contrastive): FALS_in=5.0 · DIST_in=4.6667 · FALS_shuf=5.0 · FALS_ho=5.0 · BASE FALS_in=0.0.**
 > B1 FALS-FLOOR 5.0≥1 PASS · **B2 COUNT DIST 4.6667<5 FAIL** · **B3 X-SHUFFLE 5.0<5.0 NO-collapse FAIL(결정적)** ·
 > B4 HELD-OUT 5.0≥1 PASS · B5 vs-BASE 5.0≥0+1 PASS · CTRL SHUF-CORP 5.0−0.0 PASS → **🧱 WALL=CAPACITY**
