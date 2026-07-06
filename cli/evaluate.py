@@ -41,6 +41,10 @@ from g6_ideation import (
     g6_detector_calibration,
 )
 
+# H_9200 — process-global: render the ρ-AXON reach panel (cli/rho_axon.py) instead of the
+# G0-G6 battery when `anima evaluate --py --rho-axon` is passed (set in main()).
+_RHO_AXON = False
+
 
 # ════════════════════════════════════════════════════════════════════════
 # BUILT-IN G0–G6 SCORING (absorbed from the former core/g_gates.py module —
@@ -613,6 +617,27 @@ def g_eval_all(ckpt, corpus_paths, gen):
             "calibration": g6_detector_calibration(known)}
 
 
+def g_eval_rho_axon(ckpt, corpus_paths, gen):
+    """ρ-AXON reach panel (`anima evaluate --py <clm> --rho-axon`) — the redesigned reach
+    layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
+    the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
+    so its tier is identical (engine-native --py = TERMINAL). HILLOCK + ρ·form/fan/leap are
+    live; ρ·store/weave/tether/self report PENDING (honest non-verdict) until their frozen
+    corpus-mined probe sets land (ING rho-axon-implement-evaluate)."""
+    import rho_axon
+    known = _g6_dict_load()
+    g = gen if gen > 0 else _default_gen()
+    mouth = _Mouth(ckpt)
+    dets = {"known": known, "concepts": _g6_concepts(),
+            "kwr_fn": _g6_known_word_ratio, "jaccard_fn": _g6_jaccard,
+            "words_fn": _g6_words, "falsi_fn": _g6_is_falsifiable,
+            "ngram_fn": _g_content_ngrams,
+            "corpus_tokens": _g_load_corpus_tokens(corpus_paths)}
+    panel = rho_axon.run_panel(mouth, corpus_paths, g, dets)
+    print(rho_axon.render_panel(panel), flush=True)
+    return panel
+
+
 # ── usage / arg helpers ──────────────────────────────────────────────────────
 
 def evaluate_usage():
@@ -620,7 +645,11 @@ def evaluate_usage():
     print("anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry).")
     print("")
     print("usage:")
-    print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N]")
+    print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
+    print("")
+    print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
+    print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
+    print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -720,6 +749,12 @@ def evaluate_run(argv):
         print("gen:    " + str(gen) + " tokens/decode  ⚠️ NON-CANONICAL (frozen G0-G6 bars measured at gen=" + str(_canon_gen) + ")")
         print("        → verdict below is DIRECTIONAL, NOT comparable to frozen bars (gen shifts coherence/AR-drift · verdict-integrity)")
     print("")
+
+    # H_9200 ρ-AXON — the redesigned reach layer (G0-G6 → ρ-AXON). Same engine decode,
+    # a different panel; branch early so the G0-G6 summary below is skipped.
+    if _RHO_AXON:
+        g_eval_rho_axon(ckpt, corpus, gen)
+        return 0
 
     r = g_eval_all(ckpt, corpus, gen)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
@@ -923,6 +958,12 @@ def main(argv):
         f = argv[i + 1]
         argv = argv[:i] + argv[i + 2:]
         sys.stdout = open(f, "w", buffering=1)
+    # H_9200 ρ-AXON — reach-layer panel (G0-G6 → ρ-AXON, cli/rho_axon.py). Strip + set
+    # the process-global so evaluate_run renders the ρ-AXON panel instead of G0-G6.
+    global _RHO_AXON
+    if "--rho-axon" in argv:
+        argv = [a for a in argv if a != "--rho-axon"]
+        _RHO_AXON = True
     # H_9200 E1 — SLW gated-write forward-slot eval-time controls (strip + set the
     # process-global switches in core/decode; frozen-first, no retraining):
     #   --slot-off        force γ=0 => bit-exact base trunk (slot-ablation control)
