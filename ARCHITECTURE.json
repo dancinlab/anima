@@ -13983,8 +13983,13 @@
    {
     "id": "anima-hexa-3",
     "state": "pos-conv",
+<<<<<<< HEAD
+    "value": "anima를 fresh vast/runpod 팟에 부트스트랩: hexa release tarball은 stdlib/self/native/forge 미포함→수동배치. 재발(2026-07-07 E1 SLW 다중): (a)vast community/interruptible은 8-12h 학습 도중 preempt로 죽음(pod 44065936 GONE) → --tier secure(non-interruptible) 필수. (b)**vast pod 네트워크(proxy)가 large download(pip torch ~2GB whl)를 전송 중 손상 → pip hash-mismatch(THESE PACKAGES DO NOT MATCH THE HASHES·재시도마다 Got 해시 다름·손상)로 설치 반복 실패** — scp도 2.7MB>5min 극심 지연. secure pod(44067487) SSH는 안정이나 large-file 전송 품질이 문제. 소스번들(2.7MB tar)·corpus는 결국 도착하나 torch 2GB는 손상 반복.",
+    "threshold": "재발조건: fresh 팟 부트스트랩서 (1)module-not-found 연쇄 (2)장시간 job 중 SSH refused→provider GONE(interruptible preempt) (3)pip install torch가 'PACKAGES DO NOT MATCH THE HASHES'(재시도마다 다른 Got=proxy 손상, 디스크 정상). 해결: ① heavy 학습=vast --tier secure 또는 runpod(community interruptible 금지) ② large download 손상시 pip --no-cache-dir --retries 10 + pytorch 자체 index(--index-url download.pytorch.org/whl/cuXXX·다른 CDN)로 재다운로드 반복이 손상 극복 ③ 그래도 실패시 vast 네트워크 근본결함=teardown+runpod(h1129: vast SSH 벽 회피) ④ 소스는 tar+scp보다 pod-side git clone(private면 token) 우선(proxy 우회) ⑤ rent rc=0≠안정: alive(provider API)로 GONE 조기감지+billing 확인.",
+=======
     "value": "anima를 fresh vast/runpod 팟에 부트스트랩: hexa release tarball은 stdlib/self/native/forge 미포함→수동배치(순서: vast rent→apt clang+python3-numpy(pip 없음)→hexa tar extract→anima core+cli+hexa.toml tar+scp→PKG_DIR·HEXA_STDLIB_ROOT·self/ 통째cp→runtime.a FFI stub→--result-file). **재발(2026-07-07 E1 SLW)**: vast community/interruptible 오퍼는 8-12h 학습 도중 preempt로 죽는다 — pod 44065936(A40) 렌트 rc=0 ssh-ready였으나 부트스트랩 scp 중(2.7MB proxy 느림) SSH 'Connection refused'→provider API 'GONE'(선점종료). scp도 vast proxy 극심 느림(2.7MB>5min). 부트스트랩 완료 전 pod 사망=소스 미도착. heavy 장시간 job에 interruptible vast 부적합.",
     "threshold": "재발조건: fresh 팟 부트스트랩 중 module-not-found·undefined-ref 연쇄 OR (신규)장시간 job 중 vast SSH Connection-refused→provider 'GONE'(interruptible preempt) OR vast proxy scp 극심 지연. 해결: ① 8-12h heavy 학습은 vast --secure/--tier secure(non-interruptible on-demand) 또는 runpod(vast SSH 벽 회피, h1129 교훈) — community interruptible 금지 ② proxy scp 느리면 git clone(repo-root project-root, private면 token) 우선 ③ rent rc=0≠안정, alive(provider API)로 GONE 조기감지+billing 확인 ④ 부트스트랩은 scp보다 pod-side apt/pip/clone가 빠름(proxy 우회).",
+>>>>>>> origin/main
     "source": "cli/anima.hexa"
    },
    {
