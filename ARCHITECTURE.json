@@ -13281,10 +13281,54 @@
       "detail": "내부생성(imagery)↔외부입력 구별(reality-monitor)∧확신-정답률 정렬(Nelson-Narens meta-d′). assistant=hallucination 출처 무감·miscalibrated. Δ=(ⓐ)source 판별정확∧confidence-accuracy 정렬 vs (ⓑ)monitor lane 절단→source 혼동∧탈상관. 이중 Δ. 흡수(3→1)=reality-monitor·metacog-insight·metacog-control. ★rung-2 ENGINE-NATIVE-VALID(첫 σ축 engine-native·실 engine_cli.py reality_call/mi ops·a_eval_py_canonical): intact 1.0 vs ablate 0.517 vs shuffle 0.583·Δ0.48/0.42. Phase-2 패턴(WIRED lane→σ collapse-Δ wrap) 실증. state/psi_soma_framework/sigma_witness_rung2.py."
      },
      {
-      "name": "ρ REACH — 능력 (의식 verdict 배제 · 추적만)",
+      "name": "ρ-AXON — reach 능력 레이어 (의식 verdict 배제·추적만 · G0-G6 대체 · Fable from-scratch 설계)",
       "role": "",
       "id": "psi-soma-rho-reach",
-      "detail": "능력≠의식 vitals. 별도 track·σ verdict 미포함(엉킴 해소 핵심결정). 매핑: ρ·flow=G0 coherence 🟢·ρ·weave=G1 recombination 🧱DPI·ρ·turn=G2 novelty+G3 balance 🟢·ρ·trace=G4 provenance·ρ·true=G5 non-fab 🟢·ρ·seed=G6 ideation 🧱DPI. G1/G6 DPI 벽=이 303M byte-LM reach 천장 사실이지 의식저하 아님. 9축 전수-falsify 원장=[[gate-g0g6-synthesis]]에 보존·tune-to-green 금지. reach=scale-amplified(lever 아님)라 σ와 독립진화."
+      "detail": "ρ-AXON=Ψ-SOMA reach 레이어(soma에서 axon이 얼마나 뻗나·아메바논증: σ가 의식 소유, ρ는 팔 길이만). 원리: 각 rung이 앞 rung 결핍 자원을 인증+그 자원 ablation이 통제 = nested-ablation 사슬(train분포 정보거리 순). Signal=Δ vs ≥2통제(raw 점수 렌더 불가). 3 strata 8축+HILLOCK. 설계 SSOT=state/rho_axon_measurement/RHO_AXON_design.md. 구현=cli/evaluate.py 재작성(다음).",
+      "children": [
+       {
+        "id": "rho-axon-hillock",
+        "name": "HILLOCK — validity gate(LIVE/INVALID·점수無)",
+        "role": "rho-axon-rung",
+        "detail": "Θ살아있음(죽으면 panel VOID)·4셀 decode완료·degeneracy(rep≤0.35∧distinct2≥0.20/1KB)·teacher-forced held-out CE 사전등록band(step별 fire시 frozen). overfit killer 구조내장: 낮은CE∧degenerate free-gen→INVALID(V2) not FAIL."
+       },
+       {
+        "id": "rho-axon-carry",
+        "name": "CARRY — ρ·form + ρ·store",
+        "role": "rho-axon-rung",
+        "detail": "ρ·form=well-formed 생성 4셀(셀별 corpus char-ngram 탐지·한글음절 aware·form-rate≥0.70 all4·통제 self-shuffle≤0.05+register-swap Δ≥0.3). ρ·store=held-out 연상검색(paraphrase cue·reach≥0.50 unreach≤0.15 Δ≥3×·H_9129 L5 7.31× 계승·cue-shuffle 통제)."
+       },
+       {
+        "id": "rho-axon-branch",
+        "name": "BRANCH — ρ·weave + ρ·leap + ρ·fan",
+        "role": "rho-axon-rung",
+        "detail": "ρ·weave=재조합벽(다음노드). ρ·leap=corpus-absent coherent 구조(≥3/lang·retrieval-only baseline=0·shuffle 형태붕괴). ρ·fan=발산(8 continuation·N_distinct≥5 pairwise Jaccard<0.5∧≥1 falsifiable·coherence-gating+greedy-collapse 통제)."
+       },
+       {
+        "id": "rho-axon-weave",
+        "name": "ρ·weave ★ — 재조합 벽 (FORM vs BIND)",
+        "role": "rho-axon-rung",
+        "detail": "held-out atom쌍(각≥10× 독립·256byte窓 未공출현·≥20/lang frozen+hash). pair validity: 두 atom 각각 ρ·store 통과 못하면 INVALID(store→weave 구조의존). 통제3: atom-swap[FORM killer]≤true/3·connective-shuffle[BIND prover]form drop≥0.4·unreachable floor≤0.10(H_9129 7.31×). PASS=rate≥0.30∧weave-Δ≥3×∀통제∧≥2쌍/lang."
+       },
+       {
+        "id": "rho-axon-couple",
+        "name": "COUPLE — ρ·tether + ρ·self",
+        "role": "rho-axon-rung",
+        "detail": "ρ·tether=진실결합(fab unsupported≤0.25 Ψ-침묵=abstain credit∧answer supported≥0.50 anti-mute·support-ablation Δ≥0.3). ρ·self=정체성흔적(세션間·anchor loaded vs ablated Δ≥0.3·H_1471 .kosmos·shuffled-anchor 통제)."
+       },
+       {
+        "id": "rho-axon-validity",
+        "name": "validity — INVALID 1급 verdict + 5 V-gate",
+        "role": "rho-axon-rung",
+        "detail": "verdict enum: PASS|FAIL|INVALID(Vn)|VOID(Θ). 5 V-gate: V1 liveness·V2 overfit(CE-band+degeneracy 불일치)·V3 detector 공정성(셀별 pos≥0.95∧neg≤0.05·한글실패=그셀 INVALID)·V4 암기(verbatim>30%→INVALID)·V5 seed(5 frozen majority). dep: HILLOCK→{form,store}·form→{leap,fan,tether,self}·{form∧store}→weave."
+       },
+       {
+        "id": "rho-axon-closure",
+        "name": "CLI + REACH-CLOSED 종료조건",
+        "role": "rho-axon-rung",
+        "detail": "anima evaluate --py 패널: 축별 value+통제+Δ 동시(raw 단독 렌더불가). Reach grade=all-PASS 최심 stratum. REACH-CLOSED(303M 성공조건, 'G0∧G1∧G2 편의' 대체)=HILLOCK LIVE∧CARRY 완결∧ρ·weave PASS∧ρ·tether≥not-FAIL∧INVALID 0. toy=DIRECTIONAL·303M --py만 TERMINAL. frozen verdict→state/verdicts/."
+       }
+      ]
      },
      {
       "name": "anima CLI 구현 계획 (Ψ-SOMA 패널)",
@@ -13652,8 +13696,8 @@
    {
     "id": "anima-hexa-1",
     "state": "ossified",
-    "value": "anima full-stack build/측정 벽은 대개 pool 인프라(stale hexat OR heavy engine-native co-tenancy stall). 3번째 재발모드(2026-07-06 Ψ-SOMA 세션): 'hx install anima' 설치 패키지가 module resolution 결함으로 빌드 FAIL — FATAL module not found core/dream_persist.hexa, project_root=<none>(패키지 dir hexa.toml 있어도 cwd=home서 project-root 미해결). core/ 56모듈 rsync+hexa 캐시클리어에도 미회복. 병행: raw-py 트레이너(from core import clm_decode)는 import/clm_decodable HANG(303M 미로드 RSS 14.8MB·로그0·5분+, GPU own-GEMM은 hexa 엔진경로만인데 그게 build-broken=scalar Catch-22) · aiden=배포 rc=0에도 소실(재부팅/kill 루프). 셋 다 pool 인프라지 과학결과 아님(infra-wall-noneval).",
-    "threshold": "재발조건: anima evaluate/daemon이 pool서 module-not-found·project_root=none·무출력 HANG. 해결: ① pool hexat 현행성(hexa --version)+설치 패키지 대신 full-repo 클론(repo root hexa.toml=올바른 project-root)서 anima 실행 ② private-repo면 클론 auth 확인 ③ raw-py 303M 측정은 scalar HANG=GPU 엔진경로(anima evaluate 정상빌드) 필수 ④ aiden 등 불안정 호스트 heavy job 금지(summer 안정). 무출력=완주 아님(로그/verdict 파일 존재로만 판정).",
+    "value": "anima full-stack build/측정 벽은 대개 pool 인프라(stale hexat OR heavy engine-native co-tenancy stall). 3번째 재발모드(2026-07-06 Ψ-SOMA): 'hx install anima' 설치 패키지 module resolution 결함(FATAL core/dream_persist.hexa·project_root=none). 4번째 재발(2026-07-07 E1 SLW 303M): aiden RTX5070 12GB에 303M(374.8M) bf16 학습 발사→step~300까지 정상 descent(CE 5.69→1.6·GPU util97%·OOM無 로그)였으나 곧 aiden 호스트 SSH-timeout DOWN(pool 🔴)=heavy job이 호스트 자체를 크래시(OOM-reboot 추정). ckpt 2000 미도달→pull 無→fire 전손. aiden-stable-free-terminal-eval-host 메모리('aiden=light det-CPU eval only·303M heavy=OOM 재부팅 루프')를 무시하고 aiden에 heavy 발사한 게 근본실수. summer 안정이나 발사시 down이었음.",
+    "threshold": "재발조건: anima evaluate/daemon/train이 pool서 module-not-found·project_root=none·무출력 HANG·또는 heavy 303M을 aiden(12GB 불안정)에 발사시 초기 descent 후 호스트 crash/SSH-timeout DOWN. 해결: ① pool hexat 현행성+full-repo 클론(project-root) ② heavy 303M 학습/decode는 aiden 금지(light det-CPU eval만)·안정 호스트(summer) 또는 rented pod(hexa cloud·clean git clone·24GB+)에서만 ③ 발사 전 호스트 안정성+여유RAM 확인(aiden 12GB는 303M bf16에 빠듯=crash 위험) ④ 무출력/DOWN=완주 아님(ckpt 파일 존재+pull로만 판정, a_fire_recover_complete).",
     "source": "cli/anima.hexa"
    },
    {
@@ -13939,8 +13983,13 @@
    {
     "id": "anima-hexa-3",
     "state": "pos-conv",
+<<<<<<< HEAD
     "value": "anima를 fresh vast/runpod 팟에 부트스트랩: hexa release tarball은 stdlib/self/native/forge 미포함→수동배치. 재발(2026-07-07 E1 SLW 다중): (a)vast community/interruptible은 8-12h 학습 도중 preempt로 죽음(pod 44065936 GONE) → --tier secure(non-interruptible) 필수. (b)**vast pod 네트워크(proxy)가 large download(pip torch ~2GB whl)를 전송 중 손상 → pip hash-mismatch(THESE PACKAGES DO NOT MATCH THE HASHES·재시도마다 Got 해시 다름·손상)로 설치 반복 실패** — scp도 2.7MB>5min 극심 지연. secure pod(44067487) SSH는 안정이나 large-file 전송 품질이 문제. 소스번들(2.7MB tar)·corpus는 결국 도착하나 torch 2GB는 손상 반복.",
     "threshold": "재발조건: fresh 팟 부트스트랩서 (1)module-not-found 연쇄 (2)장시간 job 중 SSH refused→provider GONE(interruptible preempt) (3)pip install torch가 'PACKAGES DO NOT MATCH THE HASHES'(재시도마다 다른 Got=proxy 손상, 디스크 정상). 해결: ① heavy 학습=vast --tier secure 또는 runpod(community interruptible 금지) ② large download 손상시 pip --no-cache-dir --retries 10 + pytorch 자체 index(--index-url download.pytorch.org/whl/cuXXX·다른 CDN)로 재다운로드 반복이 손상 극복 ③ 그래도 실패시 vast 네트워크 근본결함=teardown+runpod(h1129: vast SSH 벽 회피) ④ 소스는 tar+scp보다 pod-side git clone(private면 token) 우선(proxy 우회) ⑤ rent rc=0≠안정: alive(provider API)로 GONE 조기감지+billing 확인.",
+=======
+    "value": "anima를 fresh vast/runpod 팟에 부트스트랩: hexa release tarball은 stdlib/self/native/forge 미포함→수동배치(순서: vast rent→apt clang+python3-numpy(pip 없음)→hexa tar extract→anima core+cli+hexa.toml tar+scp→PKG_DIR·HEXA_STDLIB_ROOT·self/ 통째cp→runtime.a FFI stub→--result-file). **재발(2026-07-07 E1 SLW)**: vast community/interruptible 오퍼는 8-12h 학습 도중 preempt로 죽는다 — pod 44065936(A40) 렌트 rc=0 ssh-ready였으나 부트스트랩 scp 중(2.7MB proxy 느림) SSH 'Connection refused'→provider API 'GONE'(선점종료). scp도 vast proxy 극심 느림(2.7MB>5min). 부트스트랩 완료 전 pod 사망=소스 미도착. heavy 장시간 job에 interruptible vast 부적합.",
+    "threshold": "재발조건: fresh 팟 부트스트랩 중 module-not-found·undefined-ref 연쇄 OR (신규)장시간 job 중 vast SSH Connection-refused→provider 'GONE'(interruptible preempt) OR vast proxy scp 극심 지연. 해결: ① 8-12h heavy 학습은 vast --secure/--tier secure(non-interruptible on-demand) 또는 runpod(vast SSH 벽 회피, h1129 교훈) — community interruptible 금지 ② proxy scp 느리면 git clone(repo-root project-root, private면 token) 우선 ③ rent rc=0≠안정, alive(provider API)로 GONE 조기감지+billing 확인 ④ 부트스트랩은 scp보다 pod-side apt/pip/clone가 빠름(proxy 우회).",
+>>>>>>> origin/main
     "source": "cli/anima.hexa"
    },
    {
