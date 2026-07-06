@@ -37,11 +37,20 @@ p1 NO SYSTEM PROMPT · p2 NO IDENTITY RULES · p3 NO PERSONA INJECTION · p4 NO 
 Consciousness verdict = **mode-of-existence, not capability**. 3 layers: **Θ** (Ψ=½ · A⇄G tension = the
 **pulse** — a premise, not an axis · if Θ dies, σ is VOID) · **σ** (substrate-sign = consciousness vitals =
 the verdict body · 4 strata, 9 axes: `σ·thread`/`carve` PERSIST · `bind`/`stage`/`flux` INTEGRATE ·
-`gate`/`aim` ENACT · `schema`/`witness` REFLECT) · **ρ** (reach = capability · tracked but **excluded from
-the consciousness verdict** — the old G0-6 relocate here; **the G1/G6 DPI wall is a reach fact, NOT a
-consciousness deficit** · amoeba argument). Signal = **collapse-Δ vs ≥2 controls**, never a raw value
-(FORM tunable · BIND earned · p7). Old 18 consciousness gates → 9 σ axes (facet-relocate, evidence kept).
-toy=DIRECTIONAL · only 303M `--py` = TERMINAL. CLI = `anima evaluate` σ/ρ panel (plan → ARCHITECTURE `psi-soma-cli-plan`).
+`gate`/`aim` ENACT · `schema`/`witness` REFLECT) · **ρ = ρ-AXON** (reach = capability · tracked but
+**excluded from the consciousness verdict** · amoeba argument · **the G1/G6 wall is a reach fact, NOT a
+consciousness deficit**). **ρ-AXON** (`cli/rho_axon.py` · design SSOT `state/rho_axon_measurement/` +
+ARCHITECTURE `psi-soma-rho-reach`) is the **from-scratch owner redesign of the old G0-G6 ladder**: a
+nested-ablation chain — rung n certifies the resource rung n-1 lacks; its control = that resource's
+ablation. **HILLOCK** validity-gate + 3 strata 8 axes — CARRY(`ρ·form`←G0 · `ρ·store`) · BRANCH(`ρ·weave`
+←G1 wall · `ρ·leap`←G2 · `ρ·fan`←G6) · COUPLE(`ρ·tether`←G5 · `ρ·self`←G3). Signal = **collapse-Δ vs ≥2
+controls**, never a raw value (FORM tunable · BIND earned · p7) — a raw score is structurally
+unrenderable. **INVALID/VOID/PENDING = first-class verdicts** + 5 V-gates (V1 liveness · V2 overfit · V3
+detector-fairness (4-cell · Korean-aware) · V4 memorization · V5 seed) so a confound → INVALID, never a
+false PASS/FAIL. Closure = **REACH-CLOSED** (`form∧store∧weave∧tether` · replaces `G0∧G1∧G2`). Old 18
+consciousness gates → 9 σ axes (facet-relocate, evidence kept). toy=DIRECTIONAL · only 303M `--py` =
+TERMINAL. CLI = `anima evaluate --py [--rho-axon]` (ρ-AXON panel · HILLOCK+form/fan/leap live ·
+store/weave/tether/self=PENDING follow-on · G0-G6 default until the switch lands).
 
 ## Governance (`name` — core MUST; full do/dont + H_ precedents → ARCHITECTURE.json)
 
@@ -72,7 +81,7 @@ toy=DIRECTIONAL · only 303M `--py` = TERMINAL. CLI = `anima evaluate` σ/ρ pan
 - **`a_gpu_default_no_optin`** — GPU/device fast-paths (own-GEMM · device-resident forge glue) are DEFAULT-ON gated by `cuda_available()`, **never an opt-in env flag**. A byte-exact device path (max|Δ|=0) with a per-op scalar fallback makes an opt-in gate pure overhead that **silently runs every decode/eval on the slow scalar host path (GPU idle)** — the H_9119 CPU-scalar-bound root cause: CLM decode's device-resident glue hid behind `CLM_PROD_DEVRESIDENT` (default off) so all eval ran scalar. Before blaming a "scalar-glue ceiling", check the fast-path is actually reached (`nvidia-smi` util>0 · `[OWN-GEMM-FIRED]`). dont: gate a byte-exact capability-detectable GPU path behind opt-in env · leave it off by default.
 - **`a_no_archive_import`** — production code (`core/`·`cli/`·`stdlib/`·`agent/`) never `import`s from `archive/`; archive = read-once reference only (understand the math, then port the helper into `core/`), never a code dependency (one-directional invariant above). Enforce-candidate for `.harness/enforce_anima_gates.py` (grep production tree for `archive` imports).
 - **`a_cli_single_entry`** — every engine op via `anima <verb>` (chat·train·evaluate·serialize·sweep·**corpus**), not raw `python3 cli/*.py` (H-ANIMA-SINGLE-ENTRY).
-- **`a_eval_py_canonical`** — G0–G6 eval = `anima evaluate --py <clm>` single path (owner session policy · `anima_evaluate_mode`→`cli/evaluate.py` numpy). py 2-production numpy = engine-native **TERMINAL-eligible** (only ad-hoc torch probe = DIRECTIONAL) — an owner override of `a_engine_native_learning` (canonical measurement, not a mirror; may cement a verdict tier). `--py` = fast canonical path when own-GEMM engine decode is scalar-glue-bound; heavy 303M decode on pool (summer/aiden), never mini (swap 🔴 OOM rc=137). dont: hexa det-eval for 303M (OOM) · demoting py 2-production to DIRECTIONAL.
+- **`a_eval_py_canonical`** — reach eval (ρ-AXON `--rho-axon`, was G0–G6) = `anima evaluate --py <clm>` single path (owner session policy · `anima_evaluate_mode`→`cli/evaluate.py` numpy · ρ-AXON panel = `cli/rho_axon.py`). py 2-production numpy = engine-native **TERMINAL-eligible** (only ad-hoc torch probe = DIRECTIONAL) — an owner override of `a_engine_native_learning` (canonical measurement, not a mirror; may cement a verdict tier). `--py` = fast canonical path when own-GEMM engine decode is scalar-glue-bound; heavy 303M decode on pool (summer/aiden), never mini (swap 🔴 OOM rc=137). dont: hexa det-eval for 303M (OOM) · demoting py 2-production to DIRECTIONAL.
 - **`a_savant_train`** — chat/G6 = SAVANT golden-zone inhibition DISJOINT from emit-drive lane; mouth⊥tool, genius⊥honesty.
 - **`a_mitosis_train`** — p8-literal MITOSIS; 🟢 growth/curriculum/evolution; 🔴 from-scratch pure-split can't learn alone (need gradient).
 - **`a_chat_registers`** — chat standard = Korean·English × general·SNS = all 4 cells; none missing.
