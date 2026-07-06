@@ -1,0 +1,23 @@
+H_1407 cerebellum×basal lane-composed Φ — rung-3 LIVE re-measure (2026-07-07)
+
+a_toy_scale_recheck: 8-unit trajectory from PROD engine_cli — cerebellum units off the prod
+VForwardField NLMS forward-model (vforward_new/predict + delta-rule), basal units off the prod
+ImmuneMemory recalled state (affinity go-values over candidates) — through a real episode
+trajectory, fed to the SHARED prod readout lane_composed_phi (ci_phi_iit4). H_1407 arbiter
+(cb: pred_error<0.30 · bg: go_margin>0, confidence-weighted) ported verbatim.
+
+RESULT (3 seeds [5407,5408,5409], rent-0 local, deterministic):
+  seed 5407: phi_composed=0.1162  phi_disconnected=0.1009  lift=0.0153
+  seed 5408: phi_composed=0.2525  phi_disconnected=0.2382  lift=0.0143
+  seed 5409: phi_composed=0.3130  phi_disconnected=0.1969  lift=0.1161
+  median lift=0.0153 · 3/3 seeds lift>0
+
+VERDICT: 🟢 INTEGRATION-RAISES-Φ reproduces on PROD signals — the arbiter-coupled composed lane
+carries MORE irreducible Φ than the disconnected control on ALL 3 seeds. The card's basal-
+degeneracy precondition did NOT collapse Φ here (prod basal go-values were non-degenerate: the
+disconnected Φ is non-zero, unlike H_1408's structural 0, so the lift is smaller but consistently
+positive). The rung-2 fixture ordering HOLDS on live prod cells.
+
+SCOPE (a_phi_iit4_tool): READOUT = prod ci_phi_iit4 (Gaussian-MI MIP). Validates the LIVE
+directional ordering, NOT a cementable Φ magnitude — Φ VERDICT TIER stays stdlib faithful_phi via
+hexa verify. p7: no tune-to-green. cerebellum=prod VForwardField, basal=prod ImmuneMemory affinity.
