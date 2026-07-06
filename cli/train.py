@@ -114,58 +114,45 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-# ── locate the CLM model + the ground-truth .clm serializer/verifier ─────────
+# ── locate the CLM model + serializer/verifier — all CORE-owned (core/) ──────
 # LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd + this file lives in
-# cli/, not the repo root): resolve model.py under the repo root (parent of cli/) — or
-# $ANIMA_SRC if the launcher exported it — joined with the CLM model dir. The model dir
-# is train/clm/model on a pod but archive/train/clm/model in some worktree layouts; try
-# both. The held-out DESCENT verifier (verify_clm_v2) lives in that SAME dir; the unified
-# serializer (core/serialize) resolves via a separate core/ sys.path insert below.
+# cli/, not the repo root): the UNIFIED CLM+ByteGPT torch model (model.py), the held-out
+# DESCENT verifier (verify_clm_v2.py), the historical serialize backend
+# (clm_serialize_v2.py) and the .pt→.clm bridge (serialize_standalone.py)
+# ALL live in core/ (owner directive: core-related lives in core/; no archive/train
+# import — a_no_archive_import). core/ is added to sys.path so bare `import model` /
+# `import serialize` resolve, the same resolution cli/evaluate.py uses for `import decode`.
 _HERE = os.path.dirname(os.path.abspath(__file__))          # …/cli
 _ROOTS = []
 _ENV_SRC = os.environ.get("ANIMA_SRC")
 if _ENV_SRC:
     _ROOTS.append(_ENV_SRC)
 _ROOTS.append(os.path.dirname(_HERE))                       # repo root = parent of cli/
-_MODEL_SUBDIRS = (("train", "clm", "model"),
-                  ("archive", "train", "clm", "model"))
-_MODEL = None
-_TRIED = []
-for _r in _ROOTS:
-    for _sd in _MODEL_SUBDIRS:
-        _p = os.path.join(_r, *_sd)
-        _TRIED.append(_p)
-        if _MODEL is None and os.path.exists(os.path.join(_p, "model.py")):
-            _MODEL = _p
-if _MODEL is None:
-    raise ImportError(
-        "cli/train.py: could not locate the CLM model.py (train/clm/model or "
-        "archive/train/clm/model under the repo root or $ANIMA_SRC). Tried:\n  "
-        + "\n  ".join(_TRIED)
-        + "\nSet $ANIMA_SRC to the anima source root, or stage the CLM model dir.")
-if _MODEL not in sys.path:
-    sys.path.insert(0, _MODEL)
 # tool/ (gauge_lib) is best-effort (the G1/G6 torch probe below is wrapped in try/except).
 for _r in _ROOTS:
     _t = os.path.join(_r, "tool")
     if os.path.isdir(_t) and _t not in sys.path:
         sys.path.insert(0, _t)
-# core/ is the engine package; the UNIFIED serializer (core/serialize.py = CLM
-# serialize_v3 + ByteGPT .pt→.bin bridge) lives there (parallel to core/decode.py).
-# Add core/ so `import serialize` resolves — the same resolution cli/evaluate.py uses
-# for `import decode`.
+# core/ is the engine package — the CLM model, the unified serializer (serialize.py),
+# and the verifier all resolve from here.
+_CORE = None
 for _r in _ROOTS:
     _c = os.path.join(_r, "core")
-    if os.path.isdir(_c) and _c not in sys.path:
-        sys.path.insert(0, _c)
+    if os.path.isdir(_c):
+        if _c not in sys.path:
+            sys.path.insert(0, _c)
+        if _CORE is None and os.path.exists(os.path.join(_c, "model.py")):
+            _CORE = _c
+if _CORE is None:
+    raise ImportError(
+        "cli/train.py: could not locate core/model.py under the repo root or "
+        "$ANIMA_SRC. Set $ANIMA_SRC to the anima source root.")
 
-# (imports resolve via the sys.path inserts above to the ground-truth CLM model
-#  under train/clm/model/ + the unified serializer under core/.)
-from model import CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d  # train/clm/model/model.py
+# (imports resolve via the core/ sys.path insert above.)
+from model import (CLMConfig, CLMConvMoE, MoEStats, CausalDilatedConv1d,
+                   ByteGPTConfig, ByteGPT)           # core/model.py (unified CONV+BYTE)
 import serialize as S                                # core/serialize.py — serialize_v3 = bridge SSOT
-import verify_clm_v2 as VC                            # clm_decodable / parse_clm (train/clm/model/)
-# ByteGPT trunk model (--arch bytegpt) — sibling of model.py in the SAME model dir.
-from bytegpt_model import ByteGPTConfig, ByteGPT      # train/clm/model/bytegpt_model.py
+import verify_clm_v2 as VC                            # core/verify_clm_v2.py — clm_decodable / descent
 # ByteGPT .pt -> .bin serializer is folded into the SAME unified core/serialize.py.
 import serialize as BGS                               # core/serialize.py — serialize(pt_path, bin_path)
 
@@ -942,6 +929,14 @@ def main():
     ap.add_argument("--tlora-no-base", action="store_true", help="drop the dense base")
     ap.add_argument("--dict-lambda", type=float, default=DICT_LAMBDA)
     ap.add_argument("--jamo-lambda", type=float, default=JAMO_LAMBDA)
+    # H_9200 E1 — gated-write forward-slot (SLW). --slw engages the CORE-owned
+    # (core/slw.py) module on the CLMConvMoE penultimate; weights serialize into the
+    # "SLW\x01" .clm trailer. Plain CE alone induces the slots (rung-3 de-risk 0.976
+    # vs additive 0.145), so this is an ARCH lever (--objective stays ce_marginal).
+    ap.add_argument("--slw", action="store_true",
+                    help="H_9200 E1: engage the gated-write forward-slot (core/slw.py)")
+    ap.add_argument("--slw-n-slot", type=int, default=8, help="SLW addressable slots")
+    ap.add_argument("--slw-k", type=int, default=64, help="SLW role/read key dim")
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--corpus", nargs="*", default=[])
     ap.add_argument("--cell-label", nargs="*", default=[])
@@ -1050,7 +1045,8 @@ def main():
         mito = None                                 # no MoE experts to grow
     else:
         cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
-                        variant="AB", dilation_base=2, max_dilation=512)
+                        variant="AB", dilation_base=2, max_dilation=512,
+                        slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k)
         model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
         if tlora_on:
             install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
@@ -1204,6 +1200,12 @@ def main():
             else:
                 sd_active[k] = vv
         S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path)
+        # H_9200 E1 — append the "SLW\x01" gated-write forward-slot trailer if engaged
+        # (core/serialize.append_slw_trailer). Additive models skip it (byte-identical).
+        if getattr(model, "slw", None) is not None:
+            nb = S.append_slw_trailer(out_path, model.slw)
+            print(f"  SLW trailer appended {nb} bytes (n_slot={model.slw.n_slot} "
+                  f"k={model.slw.k} d_s={model.slw.d_s})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 

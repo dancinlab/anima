@@ -1,4 +1,15 @@
-"""CLM conv-MoE model skeleton (toy scale).
+"""core/model.py — UNIFIED anima torch training model (CONV + BYTE mouths).
+
+Holds BOTH trunks in one CORE-owned file (owner directive: core-related lives in
+core/), mirroring core/decode.py (unified CONV+BYTE decoder) and core/serialize.py
+(unified serializer):
+  * CONV mouth — CLMConvMoE (dilated conv trunk + MoE, `.clm` format) + the H_9200 E1
+    SLW gated-write forward-slot (core/slw.py, engaged by cfg.slw).
+  * BYTE mouth — ByteGPT (24-layer GPT-2-class byte transformer, `.bin` format), below.
+Both emit the exact state_dict keys core/serialize.py reads and match core/decode.py's
+forward math (2-production byte-parity). cli/train.py imports both from here.
+
+CLM conv-MoE model skeleton (toy scale).
 
 Implements the CLM P0 architecture (CLM/P0_ARCHITECTURE.md):
 
@@ -71,6 +82,16 @@ class CLMConfig:
     load_balance_coef: float = 0.01  # arm B: load-balance aux-loss weight
 
     dropout: float = 0.0
+
+    # H_9200 E1 — gated-write forward-slot (SLW). OFF by default => byte-identical
+    # to the additive-readout CLMConvMoE (no SLW submodule allocated, no trailer
+    # emitted). When slw=True, a content-addressed slot memory is written/read
+    # causally on the post-norm penultimate before readout, replacing the
+    # order-BLIND additive cbind with an asymmetric write(address)/read(key) that
+    # attacks the D>RF independence wall. See state/9200_e1_303m/E1_SLW_module_spec.md.
+    slw: bool = False              # allocate + engage the SLW forward-slot module
+    slw_n_slot: int = 8            # number of addressable slots
+    slw_k: int = 64                # role/read key dim (address space); d_s = d_model
 
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
@@ -261,6 +282,14 @@ class CLMConvMoE(nn.Module):
         self.moe = MoEConvLayer(cfg)
         self.norm_out = nn.GroupNorm(1, cfg.d_model)
         self.readout = nn.Conv1d(cfg.d_model, cfg.vocab_size, kernel_size=1)
+        # H_9200 E1 — optional gated-write forward-slot. None => byte-identical
+        # additive-readout CLMConvMoE (existing golden path untouched). The SLW
+        # module is CORE-owned (core/slw.py, owner directive: core lives in core/);
+        # imported lazily so this model file carries no SLW dependency when off.
+        self.slw = None
+        if getattr(cfg, "slw", False):
+            from slw import SLWModule            # core/slw.py (on sys.path via cli/train.py)
+            self.slw = SLWModule(cfg.d_model, cfg.slw_n_slot, cfg.slw_k)
 
     def forward(
         self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None
@@ -284,6 +313,10 @@ class CLMConvMoE(nn.Module):
                 x = layer(x)
         x, stats = self.moe(x)
         x = self.norm_out(x)
+        # H_9200 E1 — gated-write forward-slot on the post-norm penultimate
+        # (before readout). None => additive golden path (byte-identical).
+        if self.slw is not None:
+            x = self.slw(x)
         logits = self.readout(x)                # (B, V, T)
 
         out = {
@@ -310,3 +343,120 @@ def build_model(variant: str = "AB", **overrides) -> CLMConvMoE:
     """Convenience factory. `variant` in {A, B, AB}."""
     cfg = CLMConfig(variant=variant, **overrides)
     return CLMConvMoE(cfg)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BYTE mouth — ByteGPT trunk (`anima train --py --arch bytegpt`, `.bin` format).
+# The SYMMETRIC sibling of CLMConvMoE (the CONV mouth) folded into this UNIFIED
+# core/model.py, mirroring core/decode.py (unified CONV+BYTE decoder) and
+# core/serialize.py (unified serializer). ByteGPT = 24-layer GPT-2-class byte
+# transformer; forward math is byte-faithful to core/decode.py's BYTE mouth and
+# its state_dict keys are exactly what core/serialize.py::serialize(pt→bin) reads
+# (tok/pos/blocks.{i}.ln1/attn.in_proj/attn.out_proj/ln2/mlp.0/mlp.2/ln_f/head).
+# WHY: the CLEAN G1 wall lives on ByteGPT (single=2) vs CLMConvMoE's single=0
+# coverage floor; the arch-agnostic trunk-objective levers run on either trunk.
+# ═══════════════════════════════════════════════════════════════════════════
+class Block(nn.Module):
+    """Pre-LN GPT-2 transformer block — byte-faithful to core/decode.py BYTE mouth.
+
+    x = x + MHA(LN1(x)) ; x = x + MLP(LN2(x)).  nn.MultiheadAttention gives the
+    in_proj_weight[3d,d]+in_proj_bias[3d] (rows Q|K|V) and out_proj.{weight[d,d],bias}
+    the serializer expects; the MLP nn.Sequential(Linear(d,4d), GELU, Linear(4d,d))
+    gives mlp.0 / mlp.2. Dropout p is settable (savant lever no-ops it to 0 for bytegpt)."""
+
+    def __init__(self, d: int, n_head: int, p: float = 0.0):
+        super().__init__()
+        self.ln1 = nn.LayerNorm(d)
+        self.attn = nn.MultiheadAttention(d, n_head, dropout=p, batch_first=True)
+        self.ln2 = nn.LayerNorm(d)
+        # GELU default (erf-exact) matches core/decode.py BYTE _bg_gelu (0.5x(1+erf(x/√2))).
+        self.mlp = nn.Sequential(nn.Linear(d, 4 * d), nn.GELU(),
+                                 nn.Linear(4 * d, d), nn.Dropout(p))
+
+    def forward(self, x, attn_mask):
+        h = self.ln1(x)
+        a, _ = self.attn(h, h, h, attn_mask=attn_mask, need_weights=False)
+        x = x + a
+        return x + self.mlp(self.ln2(x))
+
+
+class ByteGPTConfig:
+    """Minimal config carrying the serializer's 5 header fields. vocab=256 (byte LM)."""
+
+    def __init__(self, vocab: int = 256, d: int = 768, n_layer: int = 24,
+                 n_head: int = 12, block: int = 1024):
+        self.vocab = vocab
+        self.d = d
+        self.n_layer = n_layer
+        self.n_head = n_head
+        self.block = block
+
+    def as_dict(self) -> dict:
+        return {"vocab": self.vocab, "d": self.d, "n_layer": self.n_layer,
+                "n_head": self.n_head, "block": self.block}
+
+
+class ByteGPT(nn.Module):
+    """24-layer GPT-2-class byte transformer. Emits the serializer's exact state_dict keys
+    and matches core/decode.py BYTE mouth forward math.
+
+    forward(idx, targets=None) returns a dict SHAPE-COMPATIBLE with cli/train.py's loop and
+    the arch-agnostic objective losses:
+      * logits      : (B, V, T)  — transposed so the objective losses / _ce see (B,V,T)
+                      exactly like CLMConvMoE's readout output.
+      * penultimate : (B, d, T)  — the pre-head hidden ln_f(x) (post-final-LayerNorm),
+                      transposed to (B,d,T) so constructive_bind/predictive_info consume it
+                      like the CLM trunk penultimate site (norm_out output).
+      * aux_loss    : scalar 0.0 — ByteGPT has no MoE load-balance/entropy aux; kept so the
+                      loop's `loss = obj_loss + out["aux_loss"]` is arch-uniform.
+      * ce_loss/loss: when targets given (parity with CLMConvMoE.forward).
+    """
+
+    def __init__(self, cfg: ByteGPTConfig):
+        super().__init__()
+        self.cfg = cfg
+        d, V, L, H, block = cfg.d, cfg.vocab, cfg.n_layer, cfg.n_head, cfg.block
+        self.block = block
+        self.tok = nn.Embedding(V, d)
+        self.pos = nn.Embedding(block, d)
+        self.drop = nn.Dropout(0.0)
+        self.blocks = nn.ModuleList([Block(d, H, 0.0) for _ in range(L)])
+        self.ln_f = nn.LayerNorm(d)
+        self.head = nn.Linear(d, V, bias=False)
+        self.head.weight = self.tok.weight        # tied head (serializer reads tok as head)
+
+    def _penultimate(self, idx):
+        """Run the trunk to the post-final-LN hidden (pre-head). Returns (B,T,d)."""
+        B, T = idx.shape
+        pos = torch.arange(T, device=idx.device)
+        x = self.tok(idx) + self.pos(pos)[None, :, :]
+        x = self.drop(x)
+        mask = torch.triu(torch.full((T, T), float("-inf"), device=idx.device), diagonal=1)
+        for b in self.blocks:
+            x = b(x, mask)
+        return self.ln_f(x)                        # (B, T, d)
+
+    def forward(self, idx, targets=None) -> dict:
+        h = self._penultimate(idx)                 # (B, T, d)
+        logits_btv = self.head(h)                  # (B, T, V)
+        logits = logits_btv.transpose(1, 2)        # (B, V, T) — CLM-compatible
+        out = {
+            "logits": logits,
+            "penultimate": h.transpose(1, 2),      # (B, d, T)
+            "aux_loss": logits.new_zeros(()),
+        }
+        if targets is not None:
+            V = self.cfg.vocab
+            ce = F.cross_entropy(logits_btv.reshape(-1, V), targets.reshape(-1))
+            out["ce_loss"] = ce
+            out["loss"] = ce
+        return out
+
+    @torch.no_grad()
+    def num_params(self) -> int:
+        # tied head shares tok.weight, so parameters() already counts it once.
+        return sum(p.numel() for p in self.parameters())
+
+
+def build_bytegpt(cfg: ByteGPTConfig) -> ByteGPT:
+    return ByteGPT(cfg)

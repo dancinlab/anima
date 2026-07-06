@@ -58,6 +58,21 @@ import os
 import struct
 import numpy as np
 
+# ── H_9200 E1 SLW eval-time controls (process-global; set by cli/evaluate.py) ──
+# The gated-write forward-slot applies by default whenever a .clm carries an
+# "SLW\x01" trailer. These two switches let the pre-registered controls run WITHOUT
+# retraining (frozen-first · no tune-to-green): --slot-off forces γ=0 (bit-exact base
+# trunk = slot-ablation), --slot-shuffle scrambles the WRITE address (shuffle-bind).
+_SLW_GAMMA_OVERRIDE = None   # float 0.0 => ablate the slot lane (γ=0 passthrough)
+_SLW_SHUFFLE_SEED = None     # int => permute the write address only (reads unpermuted)
+
+
+def set_slw_controls(gamma_override=None, shuffle_seed=None):
+    """Set the SLW eval-time controls (cli/evaluate.py --slot-off / --slot-shuffle)."""
+    global _SLW_GAMMA_OVERRIDE, _SLW_SHUFFLE_SEED
+    _SLW_GAMMA_OVERRIDE = gamma_override
+    _SLW_SHUFFLE_SEED = shuffle_seed
+
 
 # ════════════════════════════════════════════════════════════════════════
 # (a) SHARED — helpers byte-identical across clm_decode.py + bytegpt_decode.py
@@ -517,6 +532,13 @@ def clm_load_weights(path):
         W["WbB"] = WbB_ext
         # roWt is already Wo.T = (k, V); roB is already WoB (V,) — loaded above.
 
+    # ── optional "SLW\x01" gated-write forward-slot trailer (H_9200 E1) ──────
+    # End of the trailer chain (after CLMX ext / CLMB), read at the current `off`.
+    # Absent/short => slw=None => forward is byte-identical to today (passthrough).
+    # Codec is CORE-owned in core/slw.py (owner directive: core lives in core/).
+    from slw import read_slw
+    W["slw"], off = read_slw(rb, off)
+
     return W
 
 
@@ -570,6 +592,18 @@ def _fwd_logits(W, tok, T):
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d)          # [T, d]
     # final groupnorm
     yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1)
+    # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
+    # readout), byte-parity with the torch SLWModule + core/decode.hexa. None =>
+    # additive golden path untouched. The eval-time controls are process-global
+    # (set by cli/evaluate.py set_slw_controls): _SLW_GAMMA_OVERRIDE (--slot-off γ=0
+    # ablation) and _SLW_SHUFFLE_SEED (--slot-shuffle: a fixed permutation of the
+    # WRITE address only, reads unpermuted, breaks role→slot correspondence).
+    if W.get("slw") is not None:
+        from slw import slot_apply
+        perm = None
+        if _SLW_SHUFFLE_SEED is not None:
+            perm = np.random.RandomState(_SLW_SHUFFLE_SEED).permutation(W["slw"]["n_slot"])
+        yn = slot_apply(yn, W["slw"], gamma=_SLW_GAMMA_OVERRIDE, shuffle_perm=perm)
     # readout: additive Conv1d (standard) OR Hadamard/linear bind (CLMB)
     if W.get("bind_type", 0) != 0:
         # CLMB bind readout: yn → (Wa,Wb) linear projections → Hadamard/+ → Wo

@@ -69,6 +69,24 @@ CLMX = bytes([67, 76, 77, 88])      # "CLMX"
 CLMB = bytes([67, 76, 77, 66])      # "CLMB" — bind-readout (Hadamard) extension
 INT4_SYM_MAX = 7
 
+
+# ════════════════════════════════════════════════════════════════════════
+# H_9200 E1 — "SLW\x01" gated-write forward-slot trailer (CORE-owned codec in
+# core/slw.py). Appended at the END of the trailer chain (after CLMX ext / CLMB),
+# so an SLW model = a normal additive .clm + this trailer. Absent => byte-identical
+# to today's additive .clm (the loaders passthrough on a short/absent read).
+# ════════════════════════════════════════════════════════════════════════
+def append_slw_trailer(out_path: str, slw_module) -> int:
+    """Append the SLW trailer to an already-written .clm (after serialize_v3). Reads
+    the trained torch SLWModule, packs it via core/slw.pack_slw, and appends the
+    bytes. Returns the number of trailer bytes written. No-op path: callers only
+    invoke this when model.slw is not None, so the additive .clm stays untouched."""
+    from slw import slw_weights_from_torch, pack_slw   # core/slw.py (same core/ dir)
+    trailer = pack_slw(slw_weights_from_torch(slw_module))
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0
