@@ -620,7 +620,12 @@ def evaluate_usage():
     print("anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry).")
     print("")
     print("usage:")
-    print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N]")
+    print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N]")
+    print("")
+    print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
+    print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
+    print("  trunk = slot-ablation control); --slot-shuffle N scrambles the write address")
+    print("  with seed N (shuffle-bind control). Both are frozen-first (no retraining).")
     print("")
     print("  mount ANY ckpt through the generator L3 mouth (file-format dispatched) and")
     print("  score G0-G6 with the engine's OWN ops (numpy math.log mirror, torch-free).")
@@ -918,6 +923,21 @@ def main(argv):
         f = argv[i + 1]
         argv = argv[:i] + argv[i + 2:]
         sys.stdout = open(f, "w", buffering=1)
+    # H_9200 E1 — SLW gated-write forward-slot eval-time controls (strip + set the
+    # process-global switches in core/decode; frozen-first, no retraining):
+    #   --slot-off        force γ=0 => bit-exact base trunk (slot-ablation control)
+    #   --slot-shuffle N  permute the WRITE address with seed N (shuffle-bind control)
+    _slot_off = "--slot-off" in argv
+    if _slot_off:
+        argv = [a for a in argv if a != "--slot-off"]
+    _slot_shuffle = None
+    if "--slot-shuffle" in argv:
+        i = argv.index("--slot-shuffle")
+        _slot_shuffle = int(argv[i + 1])
+        argv = argv[:i] + argv[i + 2:]
+    if _slot_off or _slot_shuffle is not None:
+        clm.set_slw_controls(gamma_override=(0.0 if _slot_off else None),
+                             shuffle_seed=_slot_shuffle)
     # --system-g1: RECOMBINATION-RELOCATION pipe (card H_9035). Strip the flag and
     # route the remaining <ckpt> [--gen N] to the system-G1 harness.
     if "--system-g1" in argv:

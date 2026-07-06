@@ -1470,7 +1470,7 @@ fn main() {
             if cfg_canon == 1 {
                 let held = if byte_len(gate_corpus) > 0 { gate_corpus } else { "" }
                 if byte_len(held) > 0 {
-                    let vfy = "archive/train/clm/model/verify_clm_v2.py"
+                    let vfy = "core/verify_clm_v2.py"
                     let cmd = "python3 " + vfy + " descent "
                         + out_ckpt + " " + held + " " + held + " 64 2>&1"
                     println("  post-serialize held-out DESCENT gate (verify_clm_v2 mirror, dt_ln-immune):")

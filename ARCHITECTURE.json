@@ -12960,6 +12960,12 @@
             "detail": "rung-3 byte-LM충실(단일 autoregressive next-token CE·role/filler head scaffold 無·summer GPU 3seed): 모델이 구조 스스로 발견해 A→B 순차 emit. SLOT held-out both=0.976 vs additive 0.145·shuffle 붕괴 → CE-INDUCES-SLOTS. rung-2(2-head)와 독립 재확증. 잔여=실 byte-context+scale(303M). state/..trunk_ce_ar."
            }
           ]
+         },
+         {
+          "id": "h-9200-e1-slw-impl",
+          "name": "E1 SLW gated-write forward-slot — CORE 구현(측정대기)",
+          "role": "impl-node",
+          "detail": "core/slw.py SSOT(torch SLWModule+numpy slot_apply+SLW\\x01 trailer)·model.py CONV+BYTE penultimate hook·serialize append_trailer·decode read+apply+controls·train --slw·evaluate --slot-off/shuffle. additive cbind→data-dependent 비선형 slot(DOA아님). py 5개 archive→core. 측정=aiden 303M(H_9200-E1-SLW)."
          }
         ]
        },

@@ -36,13 +36,9 @@ _REPO = os.path.dirname(_HERE)
 # UNIFIED serializer = core/serialize.py (CLM serialize_v3 + ByteGPT .pt→.bin bridge),
 # parallel to core/decode.py — add core/ so `import serialize` resolves (same resolution
 # cli/evaluate.py uses for `import decode`). The held-out DESCENT verifier verify_clm_v2.py
-# is the KEPT torch-interop sibling under the CLM model dir (train/clm/model on a pod,
-# archive/train/clm/model in some worktree layouts — try both).
+# and the .pt→.clm bridge serialize_standalone.py are CORE-owned siblings in core/ too
+# (owner directive: core-related lives in core/; no archive/train import — a_no_archive_import).
 sys.path.insert(0, os.path.join(_REPO, "core"))
-for _md in (("train", "clm", "model"), ("archive", "train", "clm", "model")):
-    _p = os.path.join(_REPO, *_md)
-    if os.path.isdir(_p) and _p not in sys.path:
-        sys.path.insert(0, _p)
 
 
 def serialize_usage():
