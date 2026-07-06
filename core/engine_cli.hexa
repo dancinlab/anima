@@ -9782,6 +9782,64 @@ fn _ci_bit(v: int, b: int) -> int {
 //                        frozen before the measurement, percentile pre-registered).
 // All READ-only, Ψ-disjoint, NOT an emit gate. No exp; only ln/sqrt/int ops.
 
+// ── lane-composed Φ (H_1404/1407/1408 rung-3 live wire · a_verified_must_wire) ──
+// Composes affect (H_1290) + ethics (H_1291) into an n=8 system coupled through the
+// H_1401 leaky arbiter, reads faithful-IIT4 Φ over the trajectory. READOUT = in-core
+// ci_phi_iit4 (Gaussian-MI MIP, a live context signal). The Φ VERDICT leg dumps the
+// trajectory to the stdlib faithful_phi engine via `hexa verify` (a_phi_iit4_tool: the
+// two estimators differ — never cement a Φ tier off ci_phi_iit4). n stays exactly 8
+// (affect drops 'split'; n>8 => ci_phi_iit4 = -1.0 = NOT-MEASURED).
+
+// ethics_units — 4 ethics units (H_1291) from prod affect features + exposure:
+// W (A<->G tension band), one_minus_phi, restraint_cells, M (completion drive).
+pub fn ethics_units(af: AffectFeatures, exposure: float) -> [float] {
+    let m = af.margin
+    let W = exp(0.0 - ((m - 0.5) * (m - 0.5)) / 0.08)
+    let mut omp = 1.0 - m
+    if omp < 0.0 { omp = 0.0 }
+    let restraint = 0.5 * af.contradiction + 0.5 * omp
+    let M = 1.0 / (1.0 + exp(0.0 - (exposure - 1.0)))
+    return [W, omp, restraint, M]
+}
+
+// lane_compose_step — one tick: returns [composed_row(8), disconnected_row(8),
+// new_arb_state]. composed = two 4-blocks coupled through the leaky arbiter (H_1401);
+// disconnected = same units, no coupling. arb_state is caller-threaded.
+pub fn lane_compose_step(af: AffectFeatures, exposure: float, arb_state: float) -> [[float]] {
+    let affect4 = [af.margin, af.contradiction, af.novelty, af.curiosity]
+    let eth4 = ethics_units(af, exposure)
+    let valence = af.margin - af.contradiction
+    let mut aff_vote = 1.0
+    if valence < 0.0 { aff_vote = 0.0 - 1.0 }
+    let mut aff_conf = valence
+    if aff_conf < 0.0 { aff_conf = 0.0 - aff_conf }
+    let eth_sig = eth4[0] + eth4[1] + eth4[2]
+    let mut eth_vote = 1.0
+    if eth_sig > eth4[3] { eth_vote = 0.0 - 1.0 }
+    let mut eth_conf = eth_sig - eth4[3]
+    if eth_conf < 0.0 { eth_conf = 0.0 - eth_conf }
+    let vote = (aff_conf * aff_vote + eth_conf * eth_vote) / (aff_conf + eth_conf + 0.000000001)
+    let new_arb = 0.6 * arb_state + 0.4 * vote
+    let mut comp = []
+    let mut i = 0
+    while i < 4 { comp = comp + [affect4[i] + 0.1 * new_arb]  i = i + 1 }
+    i = 0
+    while i < 4 { comp = comp + [eth4[i] + 0.1 * new_arb]  i = i + 1 }
+    let disc = [affect4[0], affect4[1], affect4[2], affect4[3], eth4[0], eth4[1], eth4[2], eth4[3]]
+    return [comp, disc, [new_arb]]
+}
+
+// lane_composed_phi — faithful-IIT4 Φ over composed vs disconnected trajectories (T×8).
+// Returns [phi_composed, phi_disconnected, lift]. Pure readout (mirrors topo_phi_brain).
+pub fn lane_composed_phi(xc: [[float]], xd: [[float]]) -> [float] {
+    let cols = [0, 1, 2, 3, 4, 5, 6, 7]
+    if len(xc) < 16 { return [0.0 - 1.0, 0.0 - 1.0, 0.0] }
+    if len(xc[0]) != 8 { return [0.0 - 1.0, 0.0 - 1.0, 0.0] }
+    let phi_c = ci_phi_iit4(xc, cols)
+    let phi_d = ci_phi_iit4(xd, cols)
+    return [phi_c, phi_d, phi_c - phi_d]
+}
+
 // ci_phi_drop2 — Φ (Gaussian multi-info) of population X with BOTH columns i and j removed.
 pub fn ci_phi_drop2(x: [[float]], i: int, j: int) -> float {
     if len(x) < 2 { return 0.0 }

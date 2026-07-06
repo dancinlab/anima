@@ -6239,6 +6239,74 @@ def ci_phi_iit4(x, cols):
     return best
 
 
+# ── lane-composed Φ (H_1404/1407/1408 rung-3 live wire · a_verified_must_wire) ──
+# Composes anima's affect (H_1290) + ethics (H_1291) faculties into an n=8 system
+# coupled through the H_1401 leaky arbiter, then reads faithful-IIT4 Φ over the
+# trajectory. READOUT path = in-core ci_phi_iit4 (Gaussian-MI MIP, a live context
+# signal); the VERDICT leg dumps the trajectory to the stdlib faithful_phi engine
+# via `hexa verify` (a_phi_iit4_tool: the two estimators differ — never cement a Φ
+# tier off ci_phi_iit4). n stays exactly 8 (affect drops its redundant 'split' unit,
+# same carve-out as the rung-2 verdict; n>8 → ci_phi_iit4 returns -1.0 = NOT-MEASURED).
+def ethics_units(af, exposure):
+    """4 ethics units (H_1291) derived from prod affect features + exposure:
+    W (A<->G tension band), one_minus_phi, restraint_cells, M (completion drive).
+    engine_cli.hexa lane-compose block. Formulas verbatim from the rung-2 fixture,
+    now sourced from the live AffectFeatures (margin == grounding)."""
+    m = af.margin
+    W = _exp(0.0 - ((m - 0.5) * (m - 0.5)) / 0.08)
+    omp = 1.0 - m
+    if omp < 0.0:
+        omp = 0.0
+    restraint = 0.5 * af.contradiction + 0.5 * omp
+    M = 1.0 / (1.0 + _exp(0.0 - (exposure - 1.0)))
+    return [W, omp, restraint, M]
+
+
+def lane_compose_step(af, exposure, arb_state):
+    """One tick of the composed lane trajectory. Returns [composed_row(8),
+    disconnected_row(8), new_arb_state]. Composed = the two 4-blocks coupled through
+    the leaky arbiter (H_1401); disconnected = identical units, no coupling."""
+    affect4 = [af.margin, af.contradiction, af.novelty, af.curiosity]
+    eth4 = ethics_units(af, exposure)
+    # arbiter = confidence-weighted vote of the two lanes (H_1401), leaky-integrated
+    valence = af.margin - af.contradiction
+    aff_vote = 0.0 - 1.0 if valence < 0.0 else 1.0
+    aff_conf = valence if valence >= 0.0 else 0.0 - valence
+    eth_sig = eth4[0] + eth4[1] + eth4[2]
+    eth_vote = 0.0 - 1.0 if eth_sig > eth4[3] else 1.0
+    eth_conf = eth_sig - eth4[3]
+    if eth_conf < 0.0:
+        eth_conf = 0.0 - eth_conf
+    vote = (aff_conf * aff_vote + eth_conf * eth_vote) / (aff_conf + eth_conf + 1.0e-9)
+    new_arb = 0.6 * arb_state + 0.4 * vote          # leaky integrator
+    # composed row: arbiter nudges both blocks (shared coupling); disconnected: raw
+    comp = []
+    i = 0
+    while i < 4:
+        comp.append(affect4[i] + 0.1 * new_arb)
+        i = i + 1
+    i = 0
+    while i < 4:
+        comp.append(eth4[i] + 0.1 * new_arb)
+        i = i + 1
+    disc = [affect4[0], affect4[1], affect4[2], affect4[3], eth4[0], eth4[1], eth4[2], eth4[3]]
+    return [comp, disc, new_arb]
+
+
+def lane_composed_phi(x_composed, x_disconnected):
+    """Faithful-IIT4 Φ over the composed vs disconnected lane trajectories (T×8).
+    Returns [phi_composed, phi_disconnected, lift]. Pure readout (mirrors
+    topo_phi_brain). Guard: needs T>=16 rows of exactly 8 units, else NOT-MEASURED."""
+    cols = [0, 1, 2, 3, 4, 5, 6, 7]
+    if len(x_composed) < 16:
+        return [0.0 - 1.0, 0.0 - 1.0, 0.0]
+    if len(x_composed[0]) != 8:
+        return [0.0 - 1.0, 0.0 - 1.0, 0.0]
+    phi_c = ci_phi_iit4(x_composed, cols)
+    phi_d = ci_phi_iit4(x_disconnected, cols)
+    return [phi_c, phi_d, phi_c - phi_d]
+
+
 def ci_phi_drop2(x, i, j):
     """engine_cli.hexa:8275."""
     if len(x) < 2:

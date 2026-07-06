@@ -4,6 +4,7 @@ slug: 1407_brain_lane_compose_cerebellum_basal
 title: brain-lane COMPOSE pair #4 — does CEREBELLUM forward-model (H_1280) compose with BASAL-GANGLIA gating (H_1281)? (capability 🟢, faithful-IIT4 Φ 🟢 binning-INVARIANT — the law CONFIRMED-but-REFINED)
 group: MITOSIS-ENGINE / brain-lane-composition (FOURTH cognitive faculty pair — the sharpest LAW test)
 terminal_tier: 🟢 COMPOSE-LIFT (capability, DIRECTIONAL mirror) · 🟢 INTEGRATION-RAISES-Φ (faithful IIT4 Φ, frozen n_bins=16, binning-INVARIANT)
+wired (Φ-lift axis): rung-3 shared core/engine_cli lane_composed_phi (the INTEGRATION-RAISES-Φ verdict axis — DISTINCT from the capability-BIND wire already landed for the compose op) + OWN 8-unit builder (cerebellum: pred_error/pred_confidence/correction_drive/state_novelty off VForwardField; basal: go_margin/competition_spread/no_go_pressure/outcome_reward off VBasalGate brain.hexa brain_decide_bg) — follow-on to the H_1404 wire (shared Φ readout done · own builder pending); card names a non-degenerate-basal Φ re-measure precondition (#phi-lane-compose-wire).
 verdict_dir: .verdicts/1407_brain_lane_compose_cerebellum_basal/
 terminal_verdict: .verdicts/1407_brain_lane_compose_cerebellum_basal/result.txt
 date: 2026-06-17
