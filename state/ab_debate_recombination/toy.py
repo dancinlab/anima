@@ -42,7 +42,9 @@ ROUNDS = 10
 PROPOSE_PER_ROUND = 40
 TAU = 0.30                             # B margin gate (frozen)
 LR = 0.5
-EPOCHS = 300
+EPOCHS = 150
+WD = 0.02              # L2 weight decay — regularize so base does NOT anti-generalize (held-out -> chance, fair test)
+LABEL_SMOOTH = 0.15    # label smoothing — keep held-out distributions soft (correct-b retains ~chance mass)
 SEEDS = [7, 4302, 4303]
 OUTDIR = "/Users/mini/dancinlab/anima/state/ab_debate_recombination"
 
@@ -84,10 +86,13 @@ class MLP:
             x, h, lg = self.logits(first, rel)
             lg -= lg.max(axis=1, keepdims=True)
             e = np.exp(lg); p = e / e.sum(axis=1, keepdims=True)
-            dlg = p.copy(); dlg[np.arange(n), tgt] -= 1.0; dlg /= n
-            gW2 = h.T @ dlg; gb2 = dlg.sum(0)
+            # label-smoothed CE gradient: target = (1-eps)*onehot + eps/K
+            dlg = p - (LABEL_SMOOTH / K)
+            dlg[np.arange(n), tgt] -= (1.0 - LABEL_SMOOTH)
+            dlg /= n
+            gW2 = h.T @ dlg + WD * self.W2; gb2 = dlg.sum(0)
             dh = (dlg @ self.W2.T) * (1 - h * h)
-            gW1 = x.T @ dh; gb1 = dh.sum(0)
+            gW1 = x.T @ dh + WD * self.W1; gb1 = dh.sum(0)
             gx = dh @ self.W1.T                                   # [n,2D]
             gEf = gx[:, :D]; gEr = gx[:, D:]
             self.W2 -= lr * gW2; self.b2 -= lr * gb2
