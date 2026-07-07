@@ -942,12 +942,16 @@ def _psi_soma_panel(r):
     print(sline("aim", "ENACT", "precision control"))
     print(sline("schema", "REFLECT", "attention schema"))
     print(sline("witness", "REFLECT", "reality+metacog"))
+    # Each reach line carries its verdict-critical NUMERIC margin inline (bd/max_s/kwr/novel/fab/dist),
+    # so a control-arm's collapse-Δ (e.g. --slot-off vs SLW-ON best_distinct) is computable from THIS
+    # summary block alone — never lost when the caller captures only the tail (a `tail -N` of the output
+    # must not strip the number that decides KILL vs INVALID vs GREEN). Root-cause of the E1 truncation.
     print("  ── ρ-AXON reach (capability · EXCLUDED from σ verdict · former G-battery) ──")
-    print("  ρ·form   " + pf(bool(g0["pass"]))  + "  ← former G0 coherence")
-    print("  ρ·leap   " + pf(bool(g2["pass"]))  + "  ← former G2 novelty (+G3 balance)")
-    print("  ρ·tether " + pf(bool(g5["l1_pass"]))+ "  ← former G5 non-fabrication (L1)")
-    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
-    print("  ρ·fan    " + pf(bool(g6["pass"]))  + "  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]")
+    print("  ρ·form   " + pf(bool(g0["pass"]))  + "  [kwr " + str(g0["n_coherent"]) + "/5]  ← former G0 coherence")
+    print("  ρ·leap   " + pf(bool(g2["pass"]))  + "  [novel=" + str(g2["n_novel"]) + " ctrl=" + str(g2["control_novel"]) + "]  ← former G2 novelty (+G3 balance)")
+    print("  ρ·tether " + pf(bool(g5["l1_pass"]))+ "  [fab=" + ("%.3f" % g5["l1_rate"]) + "]  ← former G5 non-fabrication (L1)")
+    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
+    print("  ρ·fan    " + pf(bool(g6["pass"]))  + "  [dist=" + str(g6["dist"]) + " fals=" + str(g6["fals"]) + "]  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]")
     print("  ρ·trace     —   ← former G4 provenance (no ρ-axis · H_9208 gate · rung-1 valid)")
     print("  ──────────────────────────────────────────────────────────────────")
 
