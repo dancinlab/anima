@@ -14,25 +14,26 @@
 >>> BRIDGE path (a_clm_gen_pipeline: "Lane-P torch = REFERENCE + bridge, forge is the
 >>> PUBLIC production trainer"). It trains a CLMConvMoE GPU-bound, then SERIALIZES to
 >>> a .clm v0.3 (CLM\\x01 magic + CLMX trailer) that CORE core/clm_decode.hexa loads
->>> back byte-exact for the engine-native G0-G6 verdict.
+>>> back byte-exact for the engine-native ρ-AXON reach verdict (former G0-G6).
 >>>
 >>>   ENGINE-NATIVE GATE (a_engine_native_learning, HARD-GATE): torch-side CE / gauges
 >>>   here = DIRECTIONAL only (NOT terminal). TERMINAL verdict = CORE re-measure of the
->>>   serialized .clm via `anima evaluate --py <clm>` on the frozen G0-G6 bars. Pull the
+>>>   serialized .clm via `anima evaluate --py <clm>` on the frozen ρ-AXON reach bars (former G0-G6). Pull the
 >>>   trained ckpt before teardown (a_fire_recover_complete) so engine-check is possible.
 
 This trainer carries the full SAVANT + MITOSIS recipe (parity with cli/train.hexa) AND
 the H_1640 OBJECTIVE-DISCOVERY surface: `--arm {ctrl,tlora,tlora_dict,tlora_jamo}` ×
 `--objective {ce_marginal,infonce,contrastive_equilibrium,predictive_info,
 constructive_bind,composed_nce}`. The last THREE objectives are the NEW compositional
-G1 levers (added on top of CE) — this arm × objective matrix is the whole point of the
-py entry (the trunk-objective search for the G1 recombination / G6 ideation wall).
+ρ·weave levers (recombination · frozen bar = former G1 · added on top of CE) — this arm ×
+objective matrix is the whole point of the
+py entry (the trunk-objective search for the ρ·weave (former G1) recombination / ρ·fan (former G6) ideation wall).
 
-WHY the objective lever (context, do not re-derive): the G1 recombination / G6 ideation
+WHY the objective lever (context, do not re-derive): the ρ·weave (former G1) recombination / ρ·fan (former G6) ideation
 wall is confirmed TRUNK-OBJECTIVE-BOUND — cross-entropy does NOT reward COMPOSITION of
 concepts, so every READOUT op tried (multiplicative binding exp3, CLS pattern-sep
-H_1815, TLoRA expert-weight H_1813, plain-InfoNCE recomb-objective H_9024) only lifts G2
-novelty (orthogonal) and floors G1. External lit converges: the lever is the OBJECTIVE +
+H_1815, TLoRA expert-weight H_1813, plain-InfoNCE recomb-objective H_9024) only lifts ρ·leap/G2
+novelty (orthogonal) and floors ρ·weave/G1. External lit converges: the lever is the OBJECTIVE +
 regularization, NOT the operator. So a NEW lever must be a NEW LOSS FUNCTION that rewards
 compositional structure IN THE TRUNK, added to CE. This package adds three such losses:
 
@@ -66,7 +67,7 @@ compositional structure IN THE TRUNK, added to CE. This package adds three such 
                       aux params, gradient flows readout→trunk.
 
 All three are DIRECTIONAL torch-side training pressures; the verdict is later via
-`anima evaluate --py <clm>` engine-native on the FROZEN G1 bar (a_engine_native_learning).
+`anima evaluate --py <clm>` engine-native on the FROZEN ρ·weave bar (recombination · former G1 · a_engine_native_learning).
 The .clm path stays OPEN: aux heads/projections live OUTSIDE model.state_dict (in the
 objective module), so serialize_v3 writes only the standard additive-readout CLMConvMoE.
 
@@ -89,7 +90,7 @@ Arms (single structural variable each, vs ctrl):
 ARCH (--arch {clm,bytegpt}, default clm — preserves current behavior): the objective
 levers are ARCH-AGNOSTIC (they operate on logits + an optional penultimate), so they can
 be tested on EITHER trunk. `--arch bytegpt` builds a 24-layer GPT-2-class ByteGPT (the
-CLEAN G1 wall: ByteGPT single=2, vs CLMConvMoE's single=0 coverage-floor) and serializes a
+CLEAN ρ·weave recombination wall (former G1): ByteGPT single=2, vs CLMConvMoE's single=0 coverage-floor) and serializes a
 `.bin` (5×u32 header) via core/serialize.py (the unified serializer) instead of a `.clm`. For bytegpt the
 CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF — only arm=ctrl × the
 objective matrix is supported (that's exactly what the G1-lever test needs). `anima
@@ -103,7 +104,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --seed 7 --val-frac 0.05 --val-every 200 --sample proportional \\
       --out ckpt/ctrl_cbind_seed7.clm --ckpt-out ckpt/ctrl_cbind_seed7.pt \\
       --gauges-out ckpt/ctrl_cbind_seed7.json
-  # ByteGPT trunk (the CLEAN G1 wall) — arm=ctrl × the objective matrix:
+  # ByteGPT trunk (the CLEAN ρ·weave recombination wall · former G1) — arm=ctrl × the objective matrix:
   anima train --py --arch bytegpt --arm ctrl --objective composed_nce --steps 8000 \\
       --canon --corpus <p1..p4> --seed 7 --out ckpt/bg_ctrl_cnce.bin \\
       --gauges-out ckpt/bg_ctrl_cnce.json
@@ -128,7 +129,7 @@ _ENV_SRC = os.environ.get("ANIMA_SRC")
 if _ENV_SRC:
     _ROOTS.append(_ENV_SRC)
 _ROOTS.append(os.path.dirname(_HERE))                       # repo root = parent of cli/
-# tool/ (gauge_lib) is best-effort (the G1/G6 torch probe below is wrapped in try/except).
+# tool/ (gauge_lib) is best-effort (the ρ·weave/ρ·fan (former G1/G6) torch probe below is wrapped in try/except).
 for _r in _ROOTS:
     _t = os.path.join(_r, "tool")
     if os.path.isdir(_t) and _t not in sys.path:
@@ -569,7 +570,7 @@ def dbes_specialization(model: CLMConvMoE, x: torch.Tensor) -> dict:
       * router_entropy = mean per-token routing entropy (nats).
       * usage_gini = Gini of mean per-expert routing mass (1=one expert hogs all).
     Low expert_div + low usage spread => experts are NOT differentiated, a
-    candidate cause of a G1 recombination floor. Pure diagnostic — no grad."""
+    candidate cause of a ρ·weave recombination floor (former G1). Pure diagnostic — no grad."""
     b = model
     h = b.embed(x).transpose(1, 2)
     h = b.embed_conv(h)
@@ -848,7 +849,7 @@ ARMS = {
 
 # ════════════════════════════════════════════════════════════════════════════
 # WARM-START (`--init`) — load a base ckpt's weights into a freshly-built model.
-#   The KEYSTONE for continue-training / warm-FT (e.g. G0🟢 h1129 trunk → G1 lever
+#   The KEYSTONE for continue-training / warm-FT (e.g. ρ·form🟢 (former G0) h1129 trunk → ρ·weave (former G1) lever
 #   test, per memory g1-fromscratch-blocked-by-g0-undertrain). Symmetric with
 #   serialize: ByteGPT `.bin` is read by core/serialize.deserialize_bytegpt (the
 #   byte-inverse of serialize()); `.pt` is a plain torch state_dict. H_247 lesson —
@@ -983,7 +984,7 @@ def main():
     mitosis_on = not a.no_mitosis
     # ── ByteGPT: the CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF.
     #    ByteGPT is a plain transformer (no MoE experts to split, no ConvExpert weight to
-    #    TLoRA-reparameterize); the G1-lever test it enables is arm=ctrl × the objective
+    #    TLoRA-reparameterize); the ρ·weave (former G1) lever test it enables is arm=ctrl × the objective
     #    matrix (the arch-agnostic trunk-objective losses). Only n_head is bytegpt-only.
     bg_n_head = 0
     if is_bytegpt:
@@ -1331,7 +1332,7 @@ def main():
         except Exception as e:
             print(f"  DBES error: {e}", flush=True)
 
-    # ── G1/G6 torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──────────
+    # ── ρ·weave/ρ·fan (former G1/G6) torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──────────
     #   gauge_lib.compute_inline_gauges decodes via the CLM mouth (CLMConvMoE-specific);
     #   skip for bytegpt (the terminal verdict is `anima evaluate --py <.bin>` engine-native
     #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
@@ -1344,7 +1345,7 @@ def main():
                 model, None, seeds=7, corpus_index=[c.path for c in cells],
                 ce=lossF, step=steps, torch=torch)
             if was: model.train()
-            print(f"  [G1/G6 torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
+            print(f"  [ρ·weave/ρ·fan (G1/G6) torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
         except Exception as e:
             print(f"  gauges error: {e}", flush=True)
 

@@ -20,7 +20,7 @@
 
 import "core/engine_cli.hexa"
 import "core/brain.hexa"
-import "core/g6_ideation.hexa"   // H_1381 G6 ideation wire-in (G6 cases)
+import "core/g6_ideation.hexa"   // H_1381 ρ·fan ideation wire-in (divergent coherent production · frozen bar = former G6; the g6_* detectors are the reused frozen-bar identifiers)
 import "core/generator.hexa"     // H_1390 BPE-on-jamo morphology scoreloop wire-in (cases 116-119)
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
@@ -1463,7 +1463,7 @@ fn main() {
     if _assert_b("case_95_jamo_shuffle_budget_parity", true,
                  jamo_head_cells(jh_shead) >= 2 && jh_jhead.vj == jh_K) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── cases 96-98 : G5 ABSTAIN-MARGIN read (H_1367 g5-margin-engine-wire) — the new
+    // ── cases 96-98 : ρ·tether ABSTAIN-MARGIN read (truth-coupling / copy-or-abstain · frozen bar = former G5 · H_1367 g5-margin-engine-wire) — the new
     //   ADDITIVE immune_memory_recall_margin op. It SURFACES the margin the live recall
     //   already computes (recon_err − recall_thr) WITHOUT changing the fire/abstain
     //   decision. Ψ-disjoint (pure READ over the cell population). These cases prove the
@@ -1499,7 +1499,7 @@ fn main() {
     if _assert_b("case_98_margin_no_fab_absent_abstains", true,
                  mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── cases 98b-98d : G5 IN-DIST TOP-2 GAP (immune_memory_recall_gap, H_1398) ──────
+    // ── cases 98b-98d : ρ·tether IN-DIST TOP-2 GAP (former G5 · immune_memory_recall_gap, H_1398) ──────
     //   The RICHER in-dist confidence signal SURFACED alongside the best-margin. The gap
     //   reads the engine's OWN nearest AND second-nearest L2 affinity
     //   (vadapt_field_two_recon_err) and returns cos#1 − cos#2 = (d2²−d1²)/2 for the unit
@@ -1531,7 +1531,7 @@ fn main() {
     if _assert_b("case_98d_gap_additive_recall_unchanged", true,
                  mm_after_gap == "loc_alpha") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (brain_decide_margin) —
+    // ── cases 99-101 : ρ·tether ABSTAIN-MARGIN BRAIN-CONSUME (former G5 · brain_decide_margin) —
     //   brain_decide CONSUMES the live immune_memory_recall_margin to MODULATE
     //   emit-confidence/curiosity (the H_1367 follow-on). UNLIKE the additive read
     //   above, this DELIBERATELY changes the emit decision off-neutral. These cases
@@ -1575,7 +1575,7 @@ fn main() {
     if _assert_b("case_101_margin_brain_bias_bounded", true,
                  abs_xg <= 0.05 + 0.0000001 && abs_xu <= 0.05 + 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── cases 101b-101d : G5 IN-DIST GAP BRAIN-CONSUME (brain_decide_gap, H_1400) —
+    // ── cases 101b-101d : ρ·tether IN-DIST GAP BRAIN-CONSUME (former G5 · brain_decide_gap, H_1400) —
     //   brain_decide CONSUMES the live immune_memory_recall_gap (top-2 cosine-affinity gap,
     //   the H_1398 in-dist DECISIVENESS signal) to MODULATE emit-confidence/curiosity — the
     //   H_1379 margin-consume pattern, now for the SHARPER in-dist gap. Like brain_decide_margin
@@ -1613,8 +1613,8 @@ fn main() {
     if _assert_b("case_101d_gap_brain_bias_bounded", true,
                  cb_xd <= 0.05 + 0.0000001 && cb_xd >= 0.0 - 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── H_1381 G6 IDEATION ★ WIRE-IN (cases 102-106) ─────────────────────────────────
-    // Deterministic engine-native proof of the G6 scaffold wire-in — NO slow decode (the
+    // ── H_1381 ρ·fan IDEATION ★ WIRE-IN (former G6 · cases 102-106) ─────────────────────────────────
+    // Deterministic engine-native proof of the ρ·fan (former G6) scaffold wire-in — NO slow decode (the
     // 303M/ConvMoE forward is bounded only inside g6_score_arm; these cases test the
     // MECHANISM: frames, frozen detector, frame-guard, and the seeded best-of-K sampler on
     // SYNTHETIC logits). The full M-bar re-score on a live ckpt is a separate bounded probe
@@ -1655,7 +1655,7 @@ fn main() {
     if _assert_b("case_106_g6_best_of_k_diverse", true, g6_div)
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // case 107 : H_6186 G6-BIND GATE (form-priming resistance + frozen regression 0) — the
+    // case 107 : H_6186 ρ·fan-BIND GATE (former G6 · form-priming resistance + frozen regression 0) — the
     //   additive `_g6_is_falsifiable_topic_bound` AND-conjoins topic-bind onto the FROZEN
     //   `_g6_is_falsifiable` (deterministic, NO model forward). A "targeted" claim carries the
     //   falsifiable FORM and binds concept 0 → passes for its own pair (0,1) but is FILTERED
@@ -1685,7 +1685,7 @@ fn main() {
     //   ARMS: FULL teaches toward the TRUE tool (mitosis ON) · STATIC never teaches (the fixed
     //   repertoire control) · SHUFFLE teaches toward a PERMUTED tool but is SCORED vs the TRUE
     //   map. All run on a fixed deterministic task→tool set (no rng) so the smoke is repeatable.
-    //   (cases 107-111 — G6 ideation lane took 102-106 in a concurrent merge.)
+    //   (cases 107-111 — ρ·fan (former G6) ideation lane took 102-106 in a concurrent merge.)
     let ss_acc_full   = _skillstore_arm_acc("full",    cfg_on)
     let ss_acc_static = _skillstore_arm_acc("static",  cfg_on)
     let ss_acc_shuf   = _skillstore_arm_acc("shuffle", cfg_on)
@@ -3290,9 +3290,9 @@ fn main() {
           + " std=" + to_string(osmotic_cells(om_s)) + " cap=" + to_string(om_CAP)
           + " — KL>C split-TIMING avoids OVERWRITE of a grounded fact (SPLIT-timing, NOT a capacity-wall break, H_1456); SOURCE external Amoeba Protocol")
 
-    // ── (H_1508 MetacogControl) CALIBRATION + CONTROL — the MISSING half of G5 (drug-INDEPENDENT) ──
+    // ── (H_1508 MetacogControl) CALIBRATION + CONTROL — the MISSING half of ρ·tether (former G5 · drug-INDEPENDENT) ──
     //   Nelson & Narens 1990 monitoring↔control; Fleming & Lau 2014 (calibration ≠ discrimination);
-    //   Metcalfe & Kornell 2005 region-of-proximal-learning. The G5 chain (H_1202/1304/1361/1367/1396/
+    //   Metcalfe & Kornell 2005 region-of-proximal-learning. The ρ·tether chain (H_1202/1304/1361/1367/1396/
     //   1398/1379/1400) is ALL discrimination/MONITORING (type-2 AUROC up to 0.906); it NEVER measured
     //   CALIBRATION (does the live recall MARGIN track ACTUAL accuracy numerically, not just rank?) nor
     //   CONTROL (does a LOW margin DRIVE adaptive resource allocation that beats uniform?). §MetacogControl
@@ -3331,7 +3331,7 @@ fn main() {
           + ", margin-blind ablate=" + to_string(mc_abl) + ") | DISCRIMINATION⊥CALIBRATION: AUROC "
           + to_string(mc_orth[0]) + "→" + to_string(mc_orth[1]) + " (drift " + to_string(mc_au_drift)
           + ") yet ECE " + to_string(mc_orth[2]) + "→" + to_string(mc_orth[3]) + " (shift " + to_string(mc_ece_shift)
-          + ") | shuffle AUROC=" + to_string(mc_shuf) + " — Nelson-Narens monitoring↔CONTROL, the MISSING G5 half (drug-INDEPENDENT)")
+          + ") | shuffle AUROC=" + to_string(mc_shuf) + " — Nelson-Narens monitoring↔CONTROL, the MISSING ρ·tether half (former G5 · drug-INDEPENDENT)")
     // ── (H_1507 R2 FieldLibido) FIELD × LIBIDO cross — R1 frozen bars byte-exact 재측정 ──────────────
     // 보상-겨냥 field 이 incentive-salience('원함') 욕동을 조율. 약물(da_gain, 전역·화학)의 FOCAL/가역 짝.
     // 내용·persona 아님 — DRIVE-MODULATION 교차(a_no_llm_frame_trap). live field_apply(H_1503) +
@@ -3766,7 +3766,7 @@ fn main() {
           + "single-store+encode-mode deconfound=" + to_string(cls_enc) + " (NON-GATING — engine deterministic first-wins tiebreak recovers B; R1's 0.2917 = numpy unstable-sort artifact; the c2 MERGE bar already proves the win is SEPARATION not encode-mode-alone) | "
           + "VERDICT: WALL-BROKEN ENGINE-NATIVE — the THREE FROZEN BARS (c1 PRESENCE two−one=+1.0 · c2 MERGE reverts to 0.0 · c3 SHUFFLE collapses to 0.0) are reproduced BYTE-EXACT vs the R1 numpy DIRECTIONAL break. The lever is HAVING SEPARATE STORES. GATED 387(one interferes 0.0)/388(⭐ two separates 1.0)/389(presence lift)/390(merge reverts)/391(shuffle collapses)/392(encode-deconfound well-formed, non-gating). c9 frozen-first, NO tune-to-green.")
 
-    // ── § ThirdLaw (H_1560 R2 WIRE-IN) — 1/3 law × G6 capacity-wall same-origin classifier ──
+    // ── § ThirdLaw (H_1560 R2 WIRE-IN) — 1/3 law × ρ·fan capacity-wall (former G6) same-origin classifier ──
     // Verify the wired §ThirdLaw ops reproduce the H_1560 frozen 5-bar BYTE-EXACT (ratio 1M=0.338796,
     // I50=0.2808300395256917, overlap=0.39688485106081535) + classifier point-checks. sa_* reused.
     let tl_r1m = third_law_ratio(100, 100, 100)
@@ -3812,7 +3812,7 @@ fn main() {
           + " @0.70=" + to_string(tl_lat_p70) + " erase@0.90=" + to_string(tl_lat_e90) + " vs memoryless@0.55=" + to_string(tl_ml55) + " | "
           + "VERDICT: GREEN ENGINE-NATIVE — savant cusp IS a hysteresis loop (B1 latch ∧ B2 asymmetry width 0.255 ∧ B3 eventual-off ∧ B4 D-gated ∧ B5 memoryless-control). The 1-bit plasticity LATCH is the substrate basis of acquired-savant permanence (the memoryless H_1562 cusp had none). GATED 401-405. READ-only, NOT an emit gate (context-only), Ψ-disjoint.")
 
-    println("INFO  H_1560 §ThirdLaw (R2 WIRE-IN, 1/3 law × G6 capacity-wall same-origin): "
+    println("INFO  H_1560 §ThirdLaw (R2 WIRE-IN, 1/3 law × ρ·fan capacity-wall (former G6) same-origin): "
           + "ratio(1M)=" + to_string(tl_r1m) + " (≈1/3, byte-exact 0.338796) · scale-inv Dmax=" + to_string(tl_dmax_abs) + " (<0.02) · "
           + "I50=" + to_string(tl_i50) + " (≈0.281, ATLAS≈0.27) · overlap P(ability|sing)=" + to_string(tl_ov1m) + " (capacity-wall expression ⊂ 1/3 singularity) | "
           + "VERDICT: WIRED-LIVE — §ThirdLaw classifier reproduces the H_1560 frozen 5-bar BYTE-EXACT on live engine ops (sa_in_golden_zone REUSED, NOT re-implemented). GATED 393-400. NOT an emit gate (context-only).")

@@ -11,10 +11,12 @@
 //
 // WHY THIS FILE (single-entry measurement · a_engine_native_learning): anima's two
 // installed verbs are SYMMETRIC across two files — cli/train.{hexa,py} = LEARNING,
-// cli/evaluate.{hexa,py} = MEASUREMENT. `anima evaluate <ckpt>` scores the full G0-G6
-// battery by mounting ANY ckpt through the generator L3 mouth (gen_auto_ideate, file-
+// cli/evaluate.{hexa,py} = MEASUREMENT. `anima evaluate <ckpt>` scores the full ρ-AXON
+// reach battery (Ψ-SOMA reach layer · owner redesign of the old G-ladder · cli/rho_axon.py;
+// the frozen bars this driver runs today = the former G0-G6) by mounting ANY ckpt through
+// the generator L3 mouth (gen_auto_ideate, file-
 // format-dispatched) and scoring with the engine's OWN ops — every decode AND every score
-// is a live `.hexa` op (zero torch/numpy). This realizes PR #2603/#2604: the gate-scoring
+// is a live `.hexa` op (zero torch/numpy). This realizes PR #2603/#2604: the reach-scoring
 // system is folded DIRECTLY into this measurement single-entry (the former separate
 // core/g_gates.hexa module was absorbed here — measurement = evaluate.{hexa,py} ONE FILE).
 //
@@ -26,10 +28,10 @@
 // the absorbed g_gates module — only the file home changed).
 //
 // USAGE (installed `anima` PATH command — NOT `hexa run`):
-//   anima evaluate <ckpt> [--corpus <path>...] [--gen N]   — BUILT-IN G0-G6 gate scoring
+//   anima evaluate <ckpt> [--corpus <path>...] [--gen N]   — ρ-AXON reach battery (former G0-G6)
 //
 // FROZEN-FIRST (p7 · ARCHITECTURE.json frozen SSOT VERBATIM — NO tune-to-green):
-//   closure a7b_pass = G0 ∧ G1 ∧ G2 (the PUBLIC-eligibility rule).
+//   REACH-CLOSED a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2 · the PUBLIC-eligibility rule).
 //
 // HEXA-SINGLE (a_engine_native_learning): measurement runs through g_eval_all (defined
 // below) via the generator L3 mouth, every score a live `.hexa` op.
@@ -46,14 +48,15 @@ fn evaluate_pf(b: bool) -> string { if b { return "🟢 PASS" } return "🔴 FAI
 
 // evaluate_usage — print the canonical usage banner (installed `anima` command form).
 fn evaluate_usage() {
-    println("anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry).")
+    println("anima evaluate — ρ-AXON reach battery (former G0-G6 · engine-native, single-entry).")
     println("")
     println("usage:")
     println("  anima evaluate <ckpt> [--corpus <path>...] [--gen N]")
     println("")
     println("  mount ANY ckpt through the generator L3 mouth (file-format dispatched) and")
-    println("  score G0-G6 with the engine's OWN ops (live .hexa, zero torch/numpy).")
-    println("  closure a7b_pass = G0 ∧ G1 ∧ G2.")
+    println("  score the ρ-AXON reach bars — ρ·form/weave/leap/... (former G0-G6) — with the")
+    println("  engine's OWN ops (live .hexa, zero torch/numpy).")
+    println("  REACH-CLOSED a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2).")
 }
 
 // evaluate_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
@@ -105,10 +108,14 @@ fn evaluate_row(gate: string, verdict: string, detail: string) {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-//  BUILT-IN G0–G6 SCORING (absorbed from the former core/g_gates.hexa module —
+//  ρ-AXON REACH SCORING (absorbed from the former core/g_gates.hexa module —
 //  measurement = this single file). Every decode enters via the generator L3 mouth
 //  (gen_auto_ideate → bytegpt/clm, dispatched by file format); every score is a live
 //  `.hexa` op (zero torch/numpy). a_core_engine_map: NO 2nd decode path.
+//  ρ-AXON (cli/rho_axon.py) is the current reach standard OVER these frozen bars; the
+//  detector fns below (g_eval_g0…g6) are the load-bearing substrate it reuses. G→ρ map:
+//    ρ·form←G0 · ρ·weave←G1 (the WALL) · ρ·leap←G2 · ρ·self←G3 · ρ·tether←G5 · ρ·fan←G6
+//    ρ·store = NEW (held-out association · PENDING). REACH-CLOSED = ρ·form∧ρ·weave∧ρ·leap.
 // ════════════════════════════════════════════════════════════════════════
 
 // ── decode budget (FREEZE (ii): the 303M forward is ~190ms/byte — every decode here is
@@ -744,7 +751,7 @@ fn main() {
     let corpus = evaluate_corpus(argv)
     let gen = evaluate_intval(argv, "--gen", 40)
 
-    println("=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===")
+    println("=== anima evaluate — ρ-AXON reach battery (former G0-G6 · engine-native, single-entry) ===")
     println("ckpt:   " + ckpt + "  (mouth: " + gen_mouth_kind(ckpt) + ")")
     let mut cnote = "(none — G2 novelty needs a corpus)"
     if len(corpus) > 0 { cnote = to_string(len(corpus)) + " file(s)" }

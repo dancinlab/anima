@@ -353,7 +353,7 @@ def build_model(variant: str = "AB", **overrides) -> CLMConvMoE:
 # transformer; forward math is byte-faithful to core/decode.py's BYTE mouth and
 # its state_dict keys are exactly what core/serialize.py::serialize(pt→bin) reads
 # (tok/pos/blocks.{i}.ln1/attn.in_proj/attn.out_proj/ln2/mlp.0/mlp.2/ln_f/head).
-# WHY: the CLEAN G1 wall lives on ByteGPT (single=2) vs CLMConvMoE's single=0
+# WHY: the CLEAN ρ·weave recombination wall (was G1 · H_1129) lives on ByteGPT (single=2) vs CLMConvMoE's single=0
 # coverage floor; the arch-agnostic trunk-objective levers run on either trunk.
 # ═══════════════════════════════════════════════════════════════════════════
 class Block(nn.Module):

@@ -6,18 +6,20 @@
 >>> cli/train.py (LEARNING) and cli/evaluate.py (MEASUREMENT). `anima sweep <args>`
 >>> dispatches HERE. No scratch fire_*.sh sprawl.
 >>>
->>> WHAT IT DOES: run a G1-lever sweep over the matrix  ARMS × OBJECTIVES. Each
+>>> WHAT IT DOES: run a ρ·weave-lever sweep (recombination wall · frozen bar = former G1 ·
+>>> H_1129) over the matrix  ARMS × OBJECTIVES. Each
 >>> (arm, objective) pair is one "cell". Cells are pinned round-robin to the GPUs in
 >>> --gpus and run concurrently (max-concurrent = number of GPUs). Each cell:
 >>>   (1) TRAINS a 303M CLMConvMoE via `python3 cli/train.py …` (CUDA_VISIBLE_DEVICES
 >>>       pinned to its GPU), serializing <out-dir>/<tag>.clm.
->>>   (2) if --measure, G0-G6-MEASURES the resulting .clm via `python3 cli/evaluate.py
+>>>   (2) if --measure, ρ-AXON reach-MEASURES (former G0-G6) the resulting .clm via `python3 cli/evaluate.py
 >>>       <clm> --corpus … --gen N` (CPU, torch-free numpy) -> <out-dir>/<tag>.meas.log.
 >>>   (3) touches a per-cell done flag.
 >>> After every cell finishes, the orchestrator PARSES each <tag>.meas.log for the
->>> G0/G1/G2/G6 gate lines and prints + writes a summary TABLE (SWEEP_SUMMARY.md),
->>> flagging any G1-PASS candidate (best_distinct >= 2 AND > max_single) and any
->>> overfit-collapse INVALID cell (G0 FAIL + collapsed train CE).
+>>> reach-bar lines (ρ·form/weave/leap/fan, parsed by their frozen-bar G-labels) and prints
+>>> + writes a summary TABLE (SWEEP_SUMMARY.md),
+>>> flagging any ρ·weave-PASS candidate (former G1 · best_distinct >= 2 AND > max_single) and any
+>>> overfit-collapse INVALID cell (ρ·form/G0 FAIL + collapsed train CE).
 >>>
 >>> DESIGN INVARIANT (single-entry discipline, a_engine_native_learning): sweep is
 >>> ONLY an orchestrator. It NEVER imports torch / the model / the scorers — it shells
@@ -60,8 +62,8 @@ _EVAL_PY = os.path.join(_HERE, "evaluate.py")                  # canonical evalu
 _FP32_ONLY_OBJECTIVES = {"constructive_bind"}
 
 # overfit-collapse heuristic (convergence train-py-3): a memorized/collapsed run drives
-# the TRAIN CE toward ~0 while the model is garbage (held-out never descends, G0 fails).
-# So G0 FAIL + a collapsed final train CE => the G0-G6 measurement is INVALID (not a real
+# the TRAIN CE toward ~0 while the model is garbage (held-out never descends, ρ·form/G0 fails).
+# So ρ·form/G0 FAIL + a collapsed final train CE => the ρ-AXON reach measurement (former G0-G6) is INVALID (not a real
 # capability floor, just corpus starvation / memorization). Threshold is frozen, documented.
 _OVERFIT_LOSSF_THRESH = 0.5
 
@@ -173,7 +175,7 @@ def run_cell(a, arm: str, objective: str, gpu: str, out_dir: str, log_lock: thre
     # ── (2) MEASURE (CPU, torch-free numpy evaluate — CUDA hidden) ────────────
     # step-window: measure the FINAL <tag>.clm AND every intermediate --ckpt-every
     # checkpoint (<tag>.clm.step<N>.clm), each into its own <label>.meas.log so the
-    # aggregate can plot G0/G1 across steps (train-py-4 confound: where does G0 break?).
+    # aggregate can plot ρ·form/ρ·weave (former G0/G1) across steps (train-py-4 confound: where does ρ·form/G0 break?).
     if a.measure:
         menv = os.environ.copy()
         menv["CUDA_VISIBLE_DEVICES"] = ""                    # force CPU numpy path
@@ -190,7 +192,7 @@ def run_cell(a, arm: str, objective: str, gpu: str, out_dir: str, log_lock: thre
         for cpath, label in targets:
             ml = os.path.join(out_dir, label + ".meas.log")
             with open(ml, "w") as lf:
-                lf.write(f"=== [{label}] G0-G6 measure ({time.strftime('%H:%M:%S')}) ===\n")
+                lf.write(f"=== [{label}] ρ-AXON reach measure · former G0-G6 ({time.strftime('%H:%M:%S')}) ===\n")
                 lf.flush()
                 mcmd = [sys.executable, _EVAL_PY, cpath, "--gen", str(a.gen)]
                 if a.corpus:
@@ -278,7 +280,7 @@ def parse_cell(tag: str, out_dir: str) -> dict:
 
     # status classification
     # overfit-INVALID applies to the FINAL run only (lossf is the end-of-run CE; an
-    # intermediate step-window checkpoint keeps its own G0/G1 row, not an overfit verdict).
+    # intermediate step-window checkpoint keeps its own ρ·form/ρ·weave · former G0/G1 row, not an overfit verdict).
     overfit = ("__s" not in tag and r["g0"] is False and r["lossf"] is not None
                and r["lossf"] < _OVERFIT_LOSSF_THRESH)
     g1_cand = (r["g1_bd"] is not None and r["g1_ms"] is not None
@@ -366,9 +368,9 @@ def aggregate(a, cells, out_dir: str):
         for r in invalids:
             md.append(f"- `{r['tag']}` — {r['note']}")
     md.append("")
-    md.append("> HONESTY (a_engine_native_learning / c9): the G0-G6 measure here IS the "
+    md.append("> HONESTY (a_engine_native_learning / c9): the ρ-AXON reach measure (former G0-G6) here IS the "
               "engine-native `.clm` re-measure (cli/evaluate.py numpy mirror = terminal-eligible). "
-              "The torch-side training CE (in each `<tag>.log`) is DIRECTIONAL only. A G1-PASS "
+              "The torch-side training CE (in each `<tag>.log`) is DIRECTIONAL only. A ρ·weave-PASS (former G1) "
               "candidate still needs the frozen-bar verdict cemented from THIS measure output "
               "verbatim (no tune-to-green).")
     md_text = "\n".join(md) + "\n"
@@ -409,7 +411,7 @@ def main(argv=None):
         prog="anima sweep",
         description="canonical multi-GPU lever-sweep orchestrator — the arms×objectives "
                     "matrix, GPU-pinned round-robin, subprocess-shells cli/train.py + "
-                    "cli/evaluate.py, aggregates G0-G6 (replaces scratch fire_*.sh).")
+                    "cli/evaluate.py, aggregates the ρ-AXON reach bars · former G0-G6 (replaces scratch fire_*.sh).")
     ap.add_argument("--arms", default="ctrl",
                     help="comma list of train.py --arm values (default ctrl)")
     ap.add_argument("--objectives", default="ce_marginal,composed_nce,infonce,constructive_bind",
@@ -417,7 +419,7 @@ def main(argv=None):
     ap.add_argument("--steps", type=int, default=8000)
     ap.add_argument("--ckpt-every", type=int, default=0,
                     help="0=final .clm only; N=also dump+measure a checkpoint every N steps "
-                         "(step-window: one run → G0/G1 across 2000/4000/… — train-py-4 isolation)")
+                         "(step-window: one run → ρ·form/ρ·weave · former G0/G1 across 2000/4000/… — train-py-4 isolation)")
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--corpus", nargs="*", default=[],
                     help="corpus paths / HF ids passed through to train.py + evaluate.py")
@@ -449,7 +451,7 @@ def main(argv=None):
                     help="toy shape (d64·L2) for a CPU smoke of the orchestration")
     ms = ap.add_mutually_exclusive_group()
     ms.add_argument("--measure", dest="measure", action="store_true", default=True,
-                    help="after each train, G0-G6 measure the .clm (default)")
+                    help="after each train, ρ-AXON reach-measure · former G0-G6 the .clm (default)")
     ms.add_argument("--no-measure", dest="measure", action="store_false",
                     help="train only, skip measurement")
     a = ap.parse_args(argv)
@@ -499,7 +501,7 @@ def main(argv=None):
     if a.measure:
         aggregate(a, cells, out_dir)
     else:
-        print("  --no-measure: trained only, no G0-G6 aggregate.", flush=True)
+        print("  --no-measure: trained only, no ρ-AXON reach aggregate (former G0-G6).", flush=True)
     return 0
 
 

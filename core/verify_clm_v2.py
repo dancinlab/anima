@@ -413,7 +413,7 @@ def run_v3_byteeq_v2(here):
 # This gate is a FAITHFUL pure-numpy mirror of core/clm_decode.hexa's forward
 # (byte-reproduces state/mid_convmoe_fire/clm_decode_mirror.py and the engine
 # clm_forward_ce) BUT uses math.log (correct, dt_ln-immune), reading the .clm
-# BYTES directly. It is build-time SERIALIZE-INTEGRITY tooling, NOT a G0-G6
+# BYTES directly. It is build-time SERIALIZE-INTEGRITY tooling, NOT a ρ-AXON reach
 # capability verdict — capability verdicts still go through the single entry
 # `cli/anima.hexa -- eval` (a_engine_native_learning). It exists so a broken or
 # overfit .clm cannot be marked "done" or HF-uploaded.

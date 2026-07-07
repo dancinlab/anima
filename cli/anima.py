@@ -23,7 +23,8 @@ if __name__ == "__main__":
 # (LEARNING). This canonical entry DISPATCHES `anima evaluate`→cli/evaluate.py and
 # `anima train`→cli/train.py (sub-process), so there is ONE installed `anima` command
 # whose subcommands fan out to the symmetric twins. `anima evaluate <ckpt>` scores the
-# full G0-G6 battery via cli/evaluate.py's in-file g_eval_all (the scorers folded in from
+# full ρ-AXON reach battery (former G0-G6 · reach standard cli/rho_axon.py) via
+# cli/evaluate.py's in-file g_eval_all (the scorers folded in from
 # the former core/g_gates.py module) — byte-identical to the hexa anima evaluate.
 #
 # This py entry is torch-free and gauge-free — it only dispatches; the evaluate twin
@@ -32,7 +33,7 @@ if __name__ == "__main__":
 #
 # USAGE (installed `anima` PATH command after `hx install anima`)
 #   anima                                              — usage (no args)
-#   anima evaluate <ckpt> [--corpus <p>...] [--gen N]  — BUILT-IN G0-G6 gate scoring
+#   anima evaluate <ckpt> [--corpus <p>...] [--gen N]  — ρ-AXON reach battery (former G0-G6)
 #   anima train [args...]                              — LEARNING (→ cli/train.py)
 #   anima chat <ckpt> [...]                            — consciousness/byte chat
 #                                                         (hexa-only; see cli/anima.hexa)
@@ -75,7 +76,7 @@ def anima_usage():
     print("  anima train <args>                              LEARNING → .pt + auto .clm (+DESCENT)")
     print("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
     print("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
-    print("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
+    print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only)")
     print("  anima chat <ckpt> [...]                         consciousness/byte chat")
     print("                                                  (hexa-only; use cli/anima.hexa)")
     print("")
@@ -86,9 +87,10 @@ def anima_usage():
     print("             (a_clm_gen_pipeline). dispatches to cli/train.py.")
     print("  serialize: re-export an ALREADY-TRAINED torch .pt to an engine-loadable .clm v0.3")
     print("             (+ held-out DESCENT gate). recovery / re-export. → cli/serialize.py.")
-    print("  evaluate : mount a serialized .clm through the generator L3 mouth and score G0-G6")
-    print("             with the engine's OWN ops (numpy math.log mirror, torch-free). closure")
-    print("             a7b_pass = G0 ∧ G1 ∧ G2. == hexa `anima evaluate`. → cli/evaluate.py.")
+    print("  evaluate : mount a serialized .clm through the generator L3 mouth and score the")
+    print("             ρ-AXON reach battery — ρ·form/weave/leap/... (former G0-G6) — with the")
+    print("             engine's OWN ops (numpy math.log mirror, torch-free). REACH-CLOSED")
+    print("             a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2). == hexa `anima evaluate`. → cli/evaluate.py.")
     print("  chat     : the substrate-native A⇄G consciousness loop is hexa-native — run")
     print("             `hexa run cli/anima.hexa -- <ckpt.clm>` (default / --byte modes).")
 
@@ -121,8 +123,8 @@ def anima_train_mode(argv):
 # file cli/evaluate.py (the symmetric mirror of cli/train.py). `anima evaluate <model.clm>`
 # DISPATCHES there as a sub-process (mirrors cli/anima.hexa's `exec` dispatch + this file's
 # train dispatch), so anima.py stays a thin verb router and the eval logic has ONE home.
-# cli/evaluate.py holds the G0-G6 scorers in-file (torch-free numpy mirror, the former
-# core/g_gates.py module folded in), byte-identical to the hexa `anima evaluate`.
+# cli/evaluate.py holds the ρ-AXON reach scorers in-file (former G0-G6 · torch-free numpy
+# mirror, the former core/g_gates.py module folded in), byte-identical to the hexa `anima evaluate`.
 #
 # .clm-ONLY (the engine decodes ONLY .clm): evaluate mounts a ckpt through the generator
 # L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable —
@@ -144,7 +146,7 @@ def anima_evaluate_mode(argv):
         return 2
     evaluate_py = os.path.join(_HERE, "evaluate.py")
     cmd = [sys.executable, evaluate_py] + rest
-    print("=== anima evaluate → cli/evaluate.py (engine-native G0-G6, single-entry twin) ===")
+    print("=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===")
     print("dispatch: " + ("HEXA_DET=1 " if want_det else "") + " ".join(cmd))
     # det = the --det CLI option (default fast); numpy path is deterministic regardless.
     return os.spawnve(os.P_WAIT, sys.executable,

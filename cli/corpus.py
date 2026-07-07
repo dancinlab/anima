@@ -6,16 +6,17 @@ pure procedural string generation — anima trains on substrate-native procedura
 NOT LLM-generated text (p1-p8: no external LLM bias into training data; `claude -p` is
 deliberately NOT wired here). Dispatched by cli/anima.hexa `anima_corpus_mode`.
 
-FORMATS (the data-format lever — H_9124: data-format opened engine-native G1):
+FORMATS (the data-format lever — H_9124: data-format opened engine-native ρ·weave, the
+recombination wall · frozen bar = former G1):
   derivtrace : composite prompt -> explicit derivation trace (DEF/RULE/OUT-style) -> OUT.
                target IS the derivation, so echo == composition -> CE=echo metalaw
-               does not apply. G1 first engine-native lift (DERIV G1 PASS vs FLAT FAIL).
+               does not apply. ρ·weave (former G1) first engine-native lift (DERIV PASS vs FLAT FAIL).
   flat       : composite prompt -> final OUT only (census#3 coverage-flat homolog = control).
 Both share the SAME instance stream / RNG at a fixed --seed, so `derivtrace` and `flat`
 built with the same seed are CONTENT-MATCHED (only data-format varies = clean 2-arm control).
 
-Concept seeds default to g6_ideation cz[] (the frozen G1 gate concepts) so the held-out
-pair generalizes to the engine-native G1 bar memorization-free. Override via --concepts FILE
+Concept seeds default to g6_ideation cz[] (the frozen ρ·weave / former-G1 gate concepts) so the held-out
+pair generalizes to the engine-native ρ·weave bar (former G1) memorization-free. Override via --concepts FILE
 (JSON: [{"seed": "...", "kw": ["w1","w2",...]}]).
 
 Usage:
@@ -26,7 +27,7 @@ import json
 import random
 import sys
 
-# ── frozen default concepts = g6_ideation cz[] (memorization-free G1 gate alignment) ──
+# ── frozen default concepts = g6_ideation cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
 DEFAULT_SEEDS = [
     "consciousness arises from cells",
     "tension ripples between distant minds",

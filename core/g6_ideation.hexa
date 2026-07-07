@@ -5,10 +5,11 @@
 // 이 파일은 generator L3 / cli/anima.hexa 가 dispatch 하는 경로로만 진입.
 // ==========================================================================
 // ════════════════════════════════════════════════════════════════════════
-// core/g6_ideation.hexa — H_1381 G6 IDEATION ★ WIRE-IN.
+// core/g6_ideation.hexa — H_1381 ρ·fan IDEATION ★ WIRE-IN
+// (ρ·fan = divergent coherent production · reach axis, was G6 · frozen bar — identifiers below keep the g6_* name).
 //
 // WIRES the validated H_1362 scaffold (6 composed conditional frames + best-of-K=3)
-// into the LIVE engine ideation/decode path. G6 IDEATION ★ is anima's STARRED gate —
+// into the LIVE engine ideation/decode path. ρ·fan IDEATION ★ (was G6) is anima's STARRED reach axis —
 // its raison d'être (actively elicit emergent ideas; SCENARIOS F.IDEATION S22-S26).
 //
 // H_1362 proved the scaffold 🟢 GREEN DIRECTIONAL on the gauge torch path
@@ -184,7 +185,7 @@ fn _g6_is_falsifiable(text: string, known: Map) -> bool {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// ── H_6186 G6-BIND GATE — form-priming-resistant ADDITIVE term (wire-in) ──
+// ── H_6186 ρ·fan-BIND GATE (was G6) — form-priming-resistant ADDITIVE term (wire-in) ──
 //
 // The frozen `_g6_is_falsifiable` above is FORM-only: it fires on comparator ∧ measurable ∧
 // ≥2 content REGARDLESS of whether the decode binds the frame's actual topic pair. The 3-arm
@@ -249,7 +250,7 @@ fn _g6_topic_bound(text: string, a: int, b: int) -> bool {
 fn _g6_is_falsifiable_topic_bound(text: string, a: int, b: int, known: Map) -> bool {
     return _g6_is_falsifiable(text, known) && _g6_topic_bound(text, a, b)
 }
-// ── end H_6186 G6-BIND GATE ──
+// ── end H_6186 ρ·fan-BIND GATE ──
 // ════════════════════════════════════════════════════════════════════════
 
 // _g6_jaccard — token-set Jaccard (distinctness metric, gauge_lib parity).
@@ -418,7 +419,7 @@ pub fn g6_detector_calibration(known: Map) -> int {
 // HARD-BOUNDED by `gen`. dist = greedy distinct-coherent count (jaccard<=0.5).
 // NOTE (a89a F3 wiring reconcile): this arm hard-codes the .clm mouth (gen_clm_ideate /
 // g6_decode_best_of_k → gen_clm_ideate). It is the H_1381 CLM-only DIST/FALS arm (best-of-K
-// study). For the MOUTH-AGNOSTIC G0-G6 gate (G6 must run on the ByteGPT mouth too) use
+// study). For the MOUTH-AGNOSTIC ρ-AXON reach ladder (ρ·fan must run on the ByteGPT mouth too) use
 // g6_score_arm_auto below — the SAME DIST/FALS scoring logic, routed through gen_auto_ideate.
 pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int,
                     best_of_k: bool, known: Map) -> Map {
@@ -512,7 +513,7 @@ pub fn g6_score_arm_bound(ckpt: string, frames: list, frame_pairs: list, gen: in
 // driver). BYTE-IDENTICAL DIST/FALS/coherent: same frames, same per-frame seed (base_seed+i),
 // same gen_auto_ideate logic — the ONLY change is the decode runs off a PRE-LOADED handle
 // `h` (gen_auto_load) via gen_auto_ideate_W instead of reloading the .clm per frame. Used by
-// cli/evaluate.hexa::g_eval_g6_seeded_W so full G0-G6 loads the 303M weight-set ONCE
+// cli/evaluate.hexa::g_eval_g6_seeded_W so the full ρ-AXON reach ladder loads the 303M weight-set ONCE
 // (a_core_engine_map: same single .clm mouth, load hoisted out of the per-decode loop).
 pub fn g6_score_arm_auto_W(h: Map, frames: list, gen: int, base_seed: int, known: Map) -> Map {
     let texts = []
@@ -543,10 +544,10 @@ pub fn g6_score_arm_auto_W(h: Map, frames: list, gen: int, base_seed: int, known
     return #{ "dist": len(kept), "fals": fals, "coherent": len(word_sets), "texts": texts }
 }
 
-// g6_score_arm_auto — CANONICAL mouth-agnostic G6 scoring op (a89a F3 reconcile · single-entry):
+// g6_score_arm_auto — CANONICAL mouth-agnostic ρ·fan (was G6) scoring op (a89a F3 reconcile · single-entry):
 // IDENTICAL DIST/FALS/coherent logic to g6_score_arm, but decode is the SINGLE typed L3 entry
 // gen_auto_ideate (sniffs the ckpt → .clm OR ByteGPT) instead of the CLM-only gen_clm_ideate.
-// This is the wired engine op cli/evaluate.hexa::g_eval_g6_seeded_W calls — so the "G6 scoring
+// This is the wired engine op cli/evaluate.hexa::g_eval_g6_seeded_W calls — so the "ρ·fan scoring
 // = a wired engine op" claim is TRUE (no claimed-wired-but-dead inline duplicate). base_seed
 // parameterizes the per-frame RNG (seeded base_seed+i, exactly like the old inline g_eval_g6
 // path → base_seed=7 reproduces it frame-for-frame) so g_eval_g6_multiseed can re-run the SAME
@@ -583,11 +584,11 @@ pub fn g6_score_arm_auto(ckpt: string, frames: list, gen: int, base_seed: int, k
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// ── H_6186 G6-BIND · ByteGPT-capable bind twin (canonical mouth-agnostic) ──
+// ── H_6186 ρ·fan-BIND (was G6) · ByteGPT-capable bind twin (canonical mouth-agnostic) ──
 //
 // GAP (state/g6_bind_gate_terminal/): the H_6186 form-priming-resistant fals_bound term is
 // wired ONLY into g6_score_arm_bound — which is CLM-ONLY (decode hard-codes gen_clm_ideate /
-// g6_decode_best_of_k). The CANONICAL `anima evaluate` G6 path is mouth-agnostic
+// g6_decode_best_of_k). The CANONICAL `anima evaluate` ρ·fan path is mouth-agnostic
 // (cli/evaluate.hexa g_eval_g6_seeded_W → g6_score_arm_auto_W → gen_auto_ideate → sniffs the
 // ckpt → .clm OR ByteGPT) but carries NO fals_bound. So on a ByteGPT ckpt there is no engine
 // op that emits fals_bound. These two additive fns close that: they are g6_score_arm_bound's

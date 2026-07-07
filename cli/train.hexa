@@ -47,8 +47,8 @@
 //
 //  ENGINE-NATIVE (a_engine_native_learning) — the trained weights serialize to
 //        .clm v0.2 (core/serialize.py unified bridge, serialize_v3) and mount on
-//        core/decode.hexa for FROZEN G6 bars (H_1129/1139 recombination,
-//        H_1140 novelty). This trainer IS the final-architecture engine chain
+//        core/decode.hexa for the FROZEN ρ-AXON reach bars (former G0-G6 · H_1129/1139
+//        recombination = ρ·weave, H_1140 novelty = ρ·leap). This trainer IS the final-architecture engine chain
 //        (same clm_*.hexa ops core/clm_decode reads), so it is NOT a mirror.
 //
 //  MODES (one toggle, canonical config byte-identical for the GPU fire):
@@ -1445,7 +1445,7 @@ fn main() {
     // ════════════════════════════════════════════════════════════════════════
     //  ckpt SERIALIZE (a_clm_gen_pipeline · a_fire_recover_complete) — write the
     //  trained CLMConvMoE to .clm v0.3 so it mounts on core/decode.hexa for
-    //  engine-native G6 scoring (a_engine_native_learning). E = runtime expert
+    //  engine-native ρ-AXON reach scoring (former G0-G6 · a_engine_native_learning). E = runtime expert
     //  count (post-mitosis), L=1, byte vocab V=256. NOT a mirror — the engine
     //  reads these exact bytes back.
     // ════════════════════════════════════════════════════════════════════════

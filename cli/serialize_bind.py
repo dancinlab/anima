@@ -84,8 +84,8 @@ def serialize_bind_run(argv):
         print("FAIL — output .bin did not round-trip a BGB trailer.")
         return 1
     print("  ✅ CORE-loadable with " + str(nb) + " injected-bind block(s).")
-    print("  NOTE: this is a STRUCTURE round-trip only — the engine-native G0-G6")
-    print("        verdict is `anima evaluate --py <out.bin>` (a_engine_native_learning).")
+    print("  NOTE: this is a STRUCTURE round-trip only — the engine-native ρ-AXON reach")
+    print("        verdict (former G0-G6) is `anima evaluate --py <out.bin>` (a_engine_native_learning).")
     return 0
 
 

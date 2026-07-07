@@ -1,5 +1,5 @@
 // bytegpt_grounded_e2e_smoke.hexa — end-to-end proof that bytegpt_decode_grounded
-// grounds on a REAL ByteGPT decode (H_1157 R3, the G5 anti-fabrication path on the
+// grounds on a REAL ByteGPT decode (H_1157 R3, the ρ·tether anti-fabrication path — truth-coupling / copy-or-abstain · frozen bar = former G5 — on the
 // 303M production trunk). The ByteGPT analog of clm_grounded_e2e_smoke.hexa: loads
 // a ByteGPT flat binary, decodes the SAME seed two ways, and shows the engine-side
 // copy path emits VERBATIM anchor bytes where the plain LM (ByteGPT argmax) would
@@ -8,7 +8,7 @@
 // MECHANISM (a_core_engine_map S16, single L3 decode slot): the anti-fab wrap is
 // arch-independent — the SAME deterministic retrieve-then-copy used by .clm now
 // fronts the ByteGPT forward. At each step the decoder first tries a deterministic
-// longest-suffix anchor-copy (grounded ⇒ verbatim copied byte, G5 ✓); only when no
+// longest-suffix anchor-copy (grounded ⇒ verbatim copied byte, ρ·tether ✓); only when no
 // grounded continuation exists does it fall back to the ByteGPT argmax (ungrounded).
 //
 // p7: verification is string equality (the grounded text begins with the verbatim
@@ -46,7 +46,7 @@ fn main() {
 
     // PASS = the grounded decode pulled real anchor bytes (grounded > 0) and its
     // text begins with the verbatim anchor continuation → engine-side copy grounds
-    // a ByteGPT decode (G5: the emitted span is COPIED, cannot be a fabricated entity).
+    // a ByteGPT decode (ρ·tether: the emitted span is COPIED, cannot be a fabricated entity).
     let gt = to_string(rg["text"])
     let want_prefix = "vault QX-7741"
     let got_prefix = substring(gt, 0, byte_len(want_prefix))
@@ -55,7 +55,7 @@ fn main() {
         println("")
         println("bytegpt_grounded_e2e_smoke: PASS — engine-side copy grounded a REAL ByteGPT "
             + "decode (" + to_string(grounded_n) + " verbatim bytes copied from the anchor; "
-            + "G5 anti-fabrication holds on the 303M production trunk).")
+            + "ρ·tether anti-fabrication holds on the 303M production trunk).")
     } else {
         println("")
         println("bytegpt_grounded_e2e_smoke: CHECK — grounded=" + to_string(grounded_n)

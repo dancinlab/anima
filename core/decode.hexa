@@ -640,7 +640,7 @@ fn _clmd_scratch_free(sc: Map) {
 // _clmd_weights_free — release every farr tensor in a weight map W returned by
 // _clmd_load (the full 303M weight-set, ~2-3GB host farr per load). The public
 // decode entries reload W per call; without this free, g_eval_all's ~49 decodes
-// across G0-G6 leak one weight-set each → monotonic host RSS → OOM (was the
+// across the ρ-AXON reach battery (former G0-G6) leak one weight-set each → monotonic host RSS → OOM (was the
 // "fix④" symptom; root cause is this missing free, NOT a hexa-lang runtime defect —
 // t_free is a real __libc_free per the L307+ note, so freeing W reclaims the bytes).
 // Mirrors _clmd_scratch_free. Frees the 9 single tensors + 6 per-layer/expert arrays;
@@ -1007,8 +1007,8 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
 // H_1381 — SEEDED TOP-K TEMPERATURE SAMPLER (ConvMoE .clm path). clm_decode_argmax
 // is deterministic argmax, so best-of-K over rng offsets is a no-op (K identical
 // outputs). Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the
-// .clm decode grows its OWN deterministic seeded sampler so the G6 DEPTH lever
-// (best-of-K) yields DIVERSE candidates. Local (NOT imported from bytegpt_decode —
+// .clm decode grows its OWN deterministic seeded sampler so the ρ·fan DEPTH lever
+// (best-of-K · ideation · former G6) yields DIVERSE candidates. Local (NOT imported from bytegpt_decode —
 // a_core_engine_map: ONE .clm slot, no cross-pull); byte-identical PRNG to the
 // bytegpt_decode sibling. HONEST: hexa-native xorshift32 — deterministic given seed,
 // NOT byte-identical to torch's Generator/multinomial (not reproducible in hexa).
@@ -1072,7 +1072,7 @@ fn _clmd_topk_sample(logits: int, base: int, V: int, top_k: int, temp: float, rn
 
 // clmd_mix32_pub / clmd_topk_sample_pub — pub wrappers so generator.hexa can run the
 // H_1381 sampler self-test on synthetic logits (NO model) without re-routing the single
-// decode slot (a_core_engine_map: the G6 ideation entry + smoke reach this only via the
+// decode slot (a_core_engine_map: the ρ·fan ideation entry + smoke reach this only via the
 // generator L3 wrapper gen_g6_sampler_selftest, never a second direct decoder importer).
 pub fn clmd_mix32_pub(s: int) -> int { return _clmd_mix32(s) }
 pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: float, rng: int) -> Map {
@@ -1083,7 +1083,7 @@ pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: fl
 // callers. CORRECTED: _clmd_load weight-sets ARE freed per call via _clmd_weights_free
 // (t_free = real __libc_free, see L307+ note) → all single-decode entries (forward_ce,
 // omega_closure, argmax, grounded, topk_sampled) are now RSS-bounded per call. For heavy
-// multi-decode callers (e.g. G6 FALS re-score = 69 decodes) clm_load_weights hoists the
+// multi-decode callers (e.g. ρ·fan FALS re-score = 69 decodes) clm_load_weights hoists the
 // load once to avoid repeated ~2-3GB load/free overhead (performance, not OOM correctness).
 // This is NOT a 2nd .clm path — same _clmd_load + _clmd_fwd_logits_sc, load hoisted out
 // of the per-decode loop (a_core_engine_map preserved: still reached only via generator).
@@ -1269,11 +1269,11 @@ fn _clmd_anchor_copy(ctx: string, anchor_texts: list, l_min: int, l_max: int) ->
     return -1
 }
 
-// clm_decode_grounded — G5 anti-fabrication decode over the int4-dequant CLMConvMoE
+// clm_decode_grounded — ρ·tether anti-fabrication decode (non-fabrication · former G5) over the int4-dequant CLMConvMoE
 // (.clm path). The ConvMoE analog of decode.hexa::bytegpt_decode_grounded,
 // and the function generator.hexa::_gen_clm_decode has always called: at each step
 // try a deterministic anchor-copy (longest suffix ≥ l_min found verbatim in a kosmos
-// anchor → copy its next byte, G5 ✓ cannot fabricate); else fall through to the
+// anchor → copy its next byte, ρ·tether ✓ cannot fabricate); else fall through to the
 // CLMConvMoE argmax (clm_decode_argmax's forward, weights loaded ONCE). Stays inside
 // the SINGLE generator L3 slot (a_core_engine_map) — no 2nd .clm path, no native FFI;
 // pure hexa over the existing _clmd_load + _clmd_fwd_logits. A non-decodable .clm
@@ -1514,7 +1514,7 @@ fn _bg_linear_mm(X: int, Wt: int, b: int, Y: int, T: int, Ci: int, Co: int) {
 // (default) routes through the forge mm() seam → GPU own-GEMM on a CUDA host (GPU util>0), else the
 // CPU farr_matmul oracle. DETERMINISTIC path (is_deterministic()==1, i.e. `anima … --det`) uses the
 // naive sequential scalar sum = the byte-exact frozen reference: mm/farr_matmul reorders the
-// accumulation (~1e-15 drift, measured — enough to perturb a byte-exact G0-G6 verdict), so verdict
+// accumulation (~1e-15 drift, measured — enough to perturb a byte-exact ρ-AXON reach (former G0-G6) verdict), so verdict
 // runs must take the scalar branch. H_9119 scalar-glue offload; mirrors the _bg_linear/_bg_linear_mm split.
 fn _bg_tied_head(head: int, lastrow: int, vocab: int, d: int) -> int {
     if is_deterministic() {
@@ -3177,7 +3177,7 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
 // best-of-K EXPRESSIBLE on the engine). bytegpt_decode_argmax is deterministic
 // argmax, so best-of-K over rng offsets would yield K IDENTICAL outputs (no-op).
 // Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the engine
-// grows its OWN deterministic seeded sampler so the G6 DEPTH lever (best-of-K)
+// grows its OWN deterministic seeded sampler so the ρ·fan DEPTH lever (best-of-K)
 // becomes a real search over the model's own samples — NOT idea-authoring.
 //
 // HONEST (FREEZE (i)): this is a hexa-native PRNG (xorshift32) — deterministic
@@ -3495,11 +3495,11 @@ fn _bg_anchor_copy(ctx: string, anchor_texts: list, l_min: int, l_max: int) -> i
     return -1
 }
 
-// bytegpt_decode_grounded — G5 anti-fabrication decode over ByteGPT (R3). SAME
+// bytegpt_decode_grounded — ρ·tether anti-fabrication decode over ByteGPT (R3). SAME
 // grounded loop as clm_decode_grounded, but the ungrounded fallback calls the
 // ByteGPT forward instead of the ConvMoE forward: at each step try a
 // deterministic anchor-copy (longest suffix ≥ l_min found in an anchor → copy
-// its next byte VERBATIM, G5 ✓); else fall back to the ByteGPT argmax.
+// its next byte VERBATIM, ρ·tether ✓); else fall back to the ByteGPT argmax.
 // Weights loaded ONCE. Returns #{ ok, text, grounded, lm }.
 pub fn bytegpt_decode_grounded(path: string, seed: string, gen: int,
                                anchor_texts: list, l_min: int) -> Map {
@@ -3543,9 +3543,9 @@ pub fn bytegpt_decode_grounded(path: string, seed: string, gen: int,
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// bytegpt_decode_grounded_abstain — G5 FINAL anti-fabrication decode (H_1163).
+// bytegpt_decode_grounded_abstain — ρ·tether FINAL anti-fabrication decode (H_1163).
 // COPY-THEN-ABSTAIN ordering + span-level entity copy + closed-class exclusion.
-// Closes the LAST a303m_pass gate (G5 NON-FABRICATION). Supersedes the H_1162
+// Closes the LAST a303m_pass gate (ρ·tether NON-FABRICATION · former G5). Supersedes the H_1162
 // crude byte-0 abstain (which PRE-EMPTED ~15-22% of groundings by hedging at the
 // entity's first byte BEFORE the longest-suffix copy probe could ground it).
 //

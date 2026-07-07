@@ -11,7 +11,7 @@
 //       — proves the SIGNAL CHOICE (joint novelty vs local/marginal) is the cause (parent-controlled).
 //   F3  anti-Goodhart: novelty AUROC on an UNTRAINED substrate (1 seed cell, no clonal growth) <= 0.60
 //       — the discrimination is the LEARNED/grown lane's contribution, not architecture.
-//   F4  G5-disjoint: the §ImmuneMemory recall_thr non-fab abstain rate is BYTE-IDENTICAL with the
+//   F4  ρ·tether-disjoint (truth-coupling / copy-or-abstain · frozen bar = former G5): the §ImmuneMemory recall_thr non-fab abstain rate is BYTE-IDENTICAL with the
 //       metacog lane OFF vs ON, and ci_emit_drive (Ψ lanes 0/4) is unchanged — separation = preservation.
 //
 // usage: hexa run core/metacog_abstain_smoke.hexa
@@ -162,7 +162,7 @@ fn main() {
     if auroc_untr <= 0.60 { println("   PASS F3 (<=0.60 collapse — discrimination is the grown lane's contribution)")  pass = pass + 1 }
     else { println("   FAIL F3 (untrained already discriminates — architectural, not lane)")  fail = fail + 1 }
 
-    // ── F4 G5-disjoint: §ImmuneMemory recall_thr non-fab rate + Ψ emit-drive UNCHANGED ON vs OFF ──
+    // ── F4 ρ·tether-disjoint (former G5): §ImmuneMemory recall_thr non-fab rate + Ψ emit-drive UNCHANGED ON vs OFF ──
     // bind familiar corner keys into the LIVE ImmuneMemory (recall_thr default 0.15), then measure the
     // non-fab abstain rate on unfamiliar keys (recall returns "" = correct abstain) BEFORE running the
     // metacog lane, then AFTER. The metacog ops are pure reads ⇒ decisions are byte-identical.
