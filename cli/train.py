@@ -114,6 +114,8 @@ import argparse, json, math, os, sys, time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.distributed as dist                       # DDP collectives (§1/§3/§6)
+from torch.nn.parallel import DistributedDataParallel as DDP   # §4 composite-shell wrap
 
 # ── locate the CLM model + serializer/verifier — all CORE-owned (core/) ──────
 # LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd + this file lives in
@@ -354,9 +356,36 @@ class ByteCell:
         buf = torch.frombuffer(bytearray(chunk), dtype=torch.uint8).long()
         return buf[:seq_len], buf[1:seq_len + 1]
 
+    def window_spec(self, seq_len: int, gen: torch.Generator):
+        """§3 SPEC phase — the RNG-only half of a TRAIN window: the bounds-check + randint
+        that `_window_in(0, train_end, …)` does, WITHOUT the mmap read. Returns the start
+        index, or None when [0, train_end) is too small for even one window — in which case
+        NO randint is consumed (identical early-return to `_window_in`). Every DDP rank
+        replays this off the SHARED gen so the GLOBAL window set is byte-identical to the
+        1-GPU draw; each rank only materializes its own slice (window desync would break
+        both the frozen-recipe comparison AND N==1 byte-identity, §10.4)."""
+        lo, hi_excl = 0, self.train_end
+        if hi_excl - lo < seq_len + 2:
+            return None
+        hi = hi_excl - seq_len - 1            # last valid start (exclusive upper bound)
+        return int(torch.randint(lo, hi, (1,), generator=gen).item())
+
+    def materialize(self, start: int, seq_len: int):
+        """§3 MATERIALIZE phase — the mmap-read half: given a `start` from window_spec,
+        return the (x, y) window. Kept separate so a rank only touches disk for its own
+        shard. Byte-for-byte identical to `_window_in`'s post-randint tail."""
+        chunk = self._mm[start:start + seq_len + 1]
+        buf = torch.frombuffer(bytearray(chunk), dtype=torch.uint8).long()
+        return buf[:seq_len], buf[1:seq_len + 1]
+
     def window(self, seq_len: int, gen: torch.Generator):
-        """A TRAIN window — sampled only from [0, train_end) (never the val tail)."""
-        return self._window_in(0, self.train_end, seq_len, gen)
+        """A TRAIN window — sampled only from [0, train_end) (never the val tail). Delegates
+        to window_spec (RNG) then materialize (mmap) so the N==1 op + RNG-draw order is
+        identical to the pre-refactor `_window_in` (bounds-check → randint → mmap read)."""
+        start = self.window_spec(seq_len, gen)
+        if start is None:
+            return None
+        return self.materialize(start, seq_len)
 
     def val_window(self, seq_len: int, gen: torch.Generator):
         """A held-out VAL window — sampled only from [train_end, size)."""
@@ -913,6 +942,103 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
                      f"or .pt/.pth (torch state_dict).")
 
 
+# ════════════════════════════════════════════════════════════════════════════
+#  §4 TrainShell — composite train module (DDP wrap target).
+#  Wraps (model, objfn-if-Module, jamo_head) so DistributedDataParallel's reducer
+#  covers the aux-head params (predinfo/cbind heads + jamo head live OUTSIDE model —
+#  wrapping only `model` would silently NEVER allreduce their grads, §10.1). forward()
+#  holds the VERBATIM per-step loss-composition block (both the bf16-autocast and fp32
+#  variants) relocated from the train loop, incl. trunk_penultimate as a method reading
+#  self.model. N==1: the shell is called UNWRAPPED — shell(x, y, …) is the same graph +
+#  op order + RNG-draw order as the pre-refactor inline block, so the .clm is byte-
+#  identical (the refactor regression gate 9.1). The shell has NO own params/buffers, so
+#  constructing it consumes no RNG.
+# ════════════════════════════════════════════════════════════════════════════
+class TrainShell(nn.Module):
+    def __init__(self, model, objfn, jamo_head, *, is_bytegpt, V,
+                 obj_needs_pen, dict_on, jamo_on, bf16, device):
+        super().__init__()
+        self.model = model
+        # objfn is EITHER an nn.Module (predictive_info/constructive_bind aux heads) or a
+        # plain function (ce_marginal/infonce/…). Register the module form as a submodule so
+        # its params enter the DDP bucket set; keep the function form as a bare attribute.
+        self.objfn = objfn if isinstance(objfn, nn.Module) else None
+        self._objfn_fn = None if isinstance(objfn, nn.Module) else objfn
+        self.jamo_head = jamo_head            # None when jamo off
+        self.is_bytegpt = is_bytegpt
+        self.V = V
+        self.obj_needs_pen = obj_needs_pen
+        self.dict_on = dict_on
+        self.jamo_on = jamo_on
+        self.need_pen = obj_needs_pen or dict_on or jamo_on
+        self.bf16 = bf16
+        self.device = device
+
+    def _objfn(self):
+        return self.objfn if self.objfn is not None else self._objfn_fn
+
+    def trunk_penultimate(self, x):
+        # VERBATIM relocation of the former module-level trunk_penultimate closure
+        # (reads self.model). ByteGPT exposes its pre-head hidden directly; CLM recomputes
+        # the trunk to the pre-readout MoE/norm_out site (note: pre-SLW, as before).
+        m = self.model
+        if self.is_bytegpt:
+            return m(x)["penultimate"]              # (B, d, T) — ln_f(x) pre-head
+        h = m.embed(x).transpose(1, 2)
+        h = m.embed_conv(h)
+        for layer in m.trunk:
+            h = layer(h)
+        hm, _ = m.moe(h)
+        hm = m.norm_out(hm)
+        return hm                                   # (B, d, T) — pre-readout dictionary site
+
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda):
+        # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
+        #    autocast context stays wrapping ONLY the forward/compose (backward is at the
+        #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
+        #    aux) so the callsite can backward + all-reduce the shard CE (§3).
+        model = self.model
+        objfn = self._objfn()
+        V = self.V
+        aux = {}
+        need_pen = self.need_pen
+        if self.bf16 and self.device.startswith("cuda"):
+            with torch.autocast("cuda", dtype=torch.bfloat16):
+                out = model(x, y)
+                h = self.trunk_penultimate(x) if need_pen else None
+                pen = h.float() if (h is not None and self.obj_needs_pen) else None
+                obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
+                loss = obj_loss + out["aux_loss"]
+                if self.dict_on:
+                    dloss = dict_lambda * h.abs().mean()
+                    loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
+                if self.jamo_on:
+                    jl = self.jamo_head(h.float())
+                    jt = jamo_targets(y, self.jamo_head.n_jamo)
+                    jloss = jamo_lambda * F.cross_entropy(
+                        jl.transpose(1, 2).reshape(-1, self.jamo_head.n_jamo),
+                        jt.reshape(-1), ignore_index=0)
+                    loss = loss + jloss; aux["jamo"] = float(jloss.detach())
+        else:
+            out = model(x, y)
+            h = self.trunk_penultimate(x) if need_pen else None
+            pen = h if self.obj_needs_pen else None
+            obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
+            loss = obj_loss + out["aux_loss"]
+            if self.dict_on:
+                dloss = dict_lambda * h.abs().mean()
+                loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
+            if self.jamo_on:
+                jl = self.jamo_head(h)
+                jt = jamo_targets(y, self.jamo_head.n_jamo)
+                jloss = jamo_lambda * F.cross_entropy(
+                    jl.transpose(1, 2).reshape(-1, self.jamo_head.n_jamo),
+                    jt.reshape(-1), ignore_index=0)
+                loss = loss + jloss; aux["jamo"] = float(jloss.detach())
+        aux.update(oaux)
+        return loss, out["ce_loss"].detach(), aux
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="anima canonical python trainer (`anima train --py`) — CLMConvMoE "
@@ -976,7 +1102,69 @@ def main():
                          "(H_247: a warm-init shape mismatch can floor +2.5 nats). Quantized "
                          "`.clm` is refused (dequant→state_dict remap is a follow-on; warm-start "
                          "from the pre-serialize `.pt`).")
+    # ── §7 multi-GPU data-parallel (DDP) launch surface ──────────────────────────
+    ap.add_argument("--gpus", default="",
+                    help="multi-GPU DATA-PARALLEL (DDP) device ids, e.g. '0,1,2,3' (mirrors "
+                         "`anima sweep --gpus`). >1 id => self-re-exec under torchrun, one "
+                         "process/GPU. GLOBAL batch is PRESERVED = --batch-size (per-rank "
+                         "B/N); LR/schedule/corpus-mix/val-stream/serialize-format UNCHANGED "
+                         "vs the 1-GPU recipe (DDP is an execution strategy, not a recipe "
+                         "change). --batch-size MUST be divisible by N (hard error otherwise "
+                         "— no silent effective-batch change). 0 or 1 id => single-GPU path, "
+                         "byte-identical to today (every DDP branch skipped).")
+    ap.add_argument("--ddp-verify-sync", action="store_true",
+                    help="DDP debug: every --val-every steps all-reduce a param-checksum and "
+                         "assert cross-rank agreement (catches a mitosis/optimizer desync at "
+                         "the split). Off by default (costs one collective per val).")
+    ap.add_argument("--ddp-find-unused", action="store_true",
+                    help="DDP debug/escape-hatch: pass find_unused_parameters=True to DDP. Off "
+                         "by default — the current objective set fires every head every step "
+                         "(§4). Flip ON only if a FUTURE per-step-gated head makes DDP error on "
+                         "an unused param.")
     a = ap.parse_args()
+
+    # ══ §7 DDP launch: torchrun self-re-exec + worker init + N==1 short-circuit ══
+    #   Runs FIRST (before any CUDA allocation). os.execvpe replaces the process, so the
+    #   launcher's `> rf 2>&1` redirect is inherited and only rank 0 prints via p0().
+    gpu_ids = [g for g in a.gpus.split(",") if g.strip() != ""]
+    under_torchrun = "RANK" in os.environ
+    # (1) RE-EXEC branch — >1 GPU requested and not yet under torchrun.
+    if len(gpu_ids) > 1 and not under_torchrun:
+        if not torch.cuda.is_available():
+            sys.exit(f"[ddp] --gpus {a.gpus} requests {len(gpu_ids)}-way DDP but CUDA is not "
+                     f"available on this host. Multi-GPU DDP requires CUDA (NCCL backend); a "
+                     f"CPU-only run must use a single device (--gpus <one> or omit).")
+        if torch.cuda.device_count() < len(gpu_ids):
+            sys.exit(f"[ddp] --gpus {a.gpus} requests {len(gpu_ids)} devices but only "
+                     f"{torch.cuda.device_count()} CUDA device(s) present.")
+        if a.batch_size % len(gpu_ids) != 0:
+            sys.exit(f"[ddp] --batch-size {a.batch_size} is not divisible by --gpus N="
+                     f"{len(gpu_ids)} (global batch is preserved as per-rank B/N; adjust "
+                     f"--batch-size or --gpus). Refusing to pad — silent effective-batch "
+                     f"change would corrupt the frozen-recipe comparison.")
+        _env = dict(os.environ)
+        _env["CUDA_VISIBLE_DEVICES"] = ",".join(gpu_ids)
+        os.execvpe("torchrun",
+                   ["torchrun", "--standalone", f"--nproc_per_node={len(gpu_ids)}",
+                    os.path.abspath(__file__), *sys.argv[1:]], _env)
+    # (3)/(4) WORKER init vs N==1 short-circuit.
+    ddp_on = False
+    rank, world, local_rank = 0, 1, 0
+    if under_torchrun and int(os.environ.get("WORLD_SIZE", "1")) > 1:
+        local_rank = int(os.environ["LOCAL_RANK"])
+        rank = int(os.environ["RANK"])
+        world = int(os.environ["WORLD_SIZE"])
+        if a.batch_size % world != 0:
+            sys.exit(f"[ddp] --batch-size {a.batch_size} not divisible by world_size {world}.")
+        torch.cuda.set_device(local_rank)
+        dist.init_process_group("nccl")
+        ddp_on = True
+
+    def p0(*args, **kwargs):
+        """rank-0 print gate — every info/log print routes through this so an N-GPU run
+        does not N-duplicate stdout (§7.3). N==1: rank==0, so p0 == print."""
+        if rank == 0:
+            print(*args, **kwargs)
 
     is_bytegpt = (a.arch == "bytegpt")
     tlora_on, dict_on, jamo_on = ARMS[a.arm]
@@ -989,12 +1177,12 @@ def main():
     bg_n_head = 0
     if is_bytegpt:
         if a.arm != "ctrl":
-            print(f"  [bytegpt] arm={a.arm} is CLM-specific → forcing arm=ctrl "
-                  f"(tlora/dict/jamo are ConvMoE-only)", flush=True)
+            p0(f"  [bytegpt] arm={a.arm} is CLM-specific → forcing arm=ctrl "
+               f"(tlora/dict/jamo are ConvMoE-only)", flush=True)
         tlora_on = dict_on = jamo_on = False
         if savant_on or mitosis_on:
-            print("  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt",
-                  flush=True)
+            p0("  [bytegpt] savant/mitosis are CLM-MoE-specific → gated OFF for bytegpt",
+               flush=True)
         savant_on = False
         mitosis_on = False
     if a.canon:
@@ -1015,23 +1203,31 @@ def main():
             seq_len = a.seq_len or 128; steps = a.steps or 60
     e0, emax = a.e0, a.emax
     V, K = 256, 3
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # §7 device: under DDP each rank pins its own cuda:local_rank; N==1 = today's path.
+    if ddp_on:
+        device = f"cuda:{local_rank}"
+    else:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
     objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
     obj_is_module = isinstance(objfn, nn.Module)
     obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
 
-    print(f"=== anima train --py (canonical) arch={a.arch} arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
+    p0(f"=== anima train --py (canonical) arch={a.arch} arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
+    if ddp_on:
+        # §10.2 — prove the GLOBAL batch in the run record (global batch preserved, per-rank B/N).
+        p0(f"  [ddp] world_size={world} global_batch={a.batch_size} per_rank_batch="
+           f"{a.batch_size // world} LR/schedule/corpus/val UNCHANGED vs 1-GPU", flush=True)
     if is_bytegpt:
-        print(f"  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) "
-              f"n_head={bg_n_head} block={seq_len}", flush=True)
+        p0(f"  levers: bytegpt trunk (CLM-specific tlora/dict/jamo/savant/mitosis OFF) "
+           f"n_head={bg_n_head} block={seq_len}", flush=True)
     else:
-        print(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
-              f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
-    print(f"  device={device} d={d} L={L} E0={e0} Emax={emax} seq_len={seq_len} "
-          f"steps={steps} bs={a.batch_size} sample={a.sample}", flush=True)
-    if device == "cuda":
-        cap = torch.cuda.get_device_capability()
-        print(f"  cuda: {torch.cuda.get_device_name(0)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
+        p0(f"  levers: tlora={tlora_on}(rank={a.tlora_rank},base={not a.tlora_no_base}) "
+           f"dict_aux={dict_on}(λ={a.dict_lambda}) jamo_aux={jamo_on}(λ={a.jamo_lambda})", flush=True)
+    p0(f"  device={device} d={d} L={L} E0={e0} Emax={emax} seq_len={seq_len} "
+       f"steps={steps} bs={a.batch_size} sample={a.sample}", flush=True)
+    if str(device).startswith("cuda"):
+        cap = torch.cuda.get_device_capability(local_rank)
+        p0(f"  cuda: {torch.cuda.get_device_name(local_rank)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
 
     torch.manual_seed(a.seed)
 
@@ -1054,8 +1250,8 @@ def main():
             model.to(device)
         jamo_head = JamoHead(d).to(device) if jamo_on else None
     n_params = sum(p.numel() for p in model.parameters())
-    print(f"  params: {n_params} ({n_params/1e6:.3f}M)"
-          f"{' (+jamo head)' if jamo_on else ''}", flush=True)
+    p0(f"  params: {n_params} ({n_params/1e6:.3f}M)"
+       f"{' (+jamo head)' if jamo_on else ''}", flush=True)
 
     if not is_bytegpt:
         mito = MitosisMoE(model, e0, emax)
@@ -1069,19 +1265,51 @@ def main():
                       if is_bytegpt else {"d": d, "L": L})
         report = _warm_start(model, a.init, is_bytegpt, expect_cfg)
         model.to(device)
-        print(f"  [--init] {report}", flush=True)
+        p0(f"  [--init] {report}", flush=True)
 
     params = (list(model.parameters())
               + (list(jamo_head.parameters()) if jamo_head else [])
               + (list(objfn.parameters()) if obj_is_module else []))   # H_1640 aux-head params
     if obj_is_module:
         n_obj = sum(p.numel() for p in objfn.parameters())
-        print(f"  objective '{a.objective}' aux params: {n_obj} "
-              f"(DROPPED at serialize — not in model.state_dict)", flush=True)
+        p0(f"  objective '{a.objective}' aux params: {n_obj} "
+           f"(DROPPED at serialize — not in model.state_dict)", flush=True)
     opt = torch.optim.AdamW(params, lr=a.lr, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.0)
-    gen = torch.Generator().manual_seed(42)
+
+    # ══ §4 TrainShell + DDP wrap (execution strategy — the recipe is unchanged) ═════
+    #   core_model = the UNWRAPPED inner model, used for ALL rank-0 probes/serialize
+    #   (dbes/gauges/val/materialize/_write_clm) — never through the DDP wrapper (§4/§6/§10.9).
+    core_model = model
+    shell = TrainShell(model, objfn, jamo_head, is_bytegpt=is_bytegpt, V=V,
+                       obj_needs_pen=obj_needs_pen, dict_on=dict_on, jamo_on=jamo_on,
+                       bf16=a.bf16, device=device)
+    # §10.1 defense — the shell's param set MUST equal the optimizer's (aux heads covered).
+    assert {id(p) for p in shell.parameters()} == {id(p) for p in params}, \
+        "TrainShell params != optimizer params — an aux head would never be allreduced."
+    if ddp_on:
+        # §4/§10.8 — CLMConvMoE/ByteGPT/SLW carry NO batch-stat buffers, and mito.active_mask
+        # is an intentionally-unregistered per-rank tensor; assert zero buffers so a FUTURE
+        # registered buffer fails loudly instead of being silently stomped (broadcast_buffers=False).
+        assert len(list(shell.buffers())) == 0, \
+            "TrainShell grew a buffer — broadcast_buffers=False would desync it (§4/§10.8)."
+        train_module = DDP(shell, device_ids=[local_rank], broadcast_buffers=False,
+                           find_unused_parameters=a.ddp_find_unused)
+        # §2/§4 per-rank RNG divergence AFTER construction+wrap: decorrelate dropout masks
+        # (default RNG) across ranks — a SHARED default stream gives sample i the SAME dropout
+        # mask on every rank, a correlation the 1-GPU run lacks. Reseed AFTER wrap so init +
+        # DDP's param broadcast already made params identical (reseeding BEFORE diverges init).
+        torch.manual_seed(a.seed + 100003 * (rank + 1))
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(a.seed + 100003 * (rank + 1))
+    else:
+        train_module = shell    # N==1: call the shell UNWRAPPED (same graph, no collectives)
+
+    gen = torch.Generator().manual_seed(42)     # §3/§10.3 SHARED across ranks (NOT rank-offset)
     val_gen = torch.Generator().manual_seed(1234)
-    obj_gen = torch.Generator(device=device).manual_seed(20260628 + a.seed)
+    # §4 obj_gen: reseed per rank so negatives/permutations decorrelate across shards (rank=0
+    # for N==1 ⇒ +0 ⇒ byte-identical to today). Exact 1-GPU negative reproduction is impossible
+    # anyway (it draws all negatives in one call) — accepted stochastic-equivalence (DESCENT gate).
+    obj_gen = torch.Generator(device=device).manual_seed(20260628 + a.seed + 7919 * rank)
 
     latch = {"on": False, "at": 0}
     i0 = GZ_UPPER
@@ -1095,48 +1323,54 @@ def main():
         cells.append(ByteCell(p, val_frac=a.val_frac))
         labels.append(a.cell_label[ci] if ci < len(a.cell_label) else f"cell{ci}")
         c = cells[-1]
-        print(f"  corpus cell[{ci}] {labels[ci]:<12s} {p} size={c.size} "
-              f"train={c.train_end} val_tail={c.size - c.train_end}", flush=True)
+        p0(f"  corpus cell[{ci}] {labels[ci]:<12s} {p} size={c.size} "
+           f"train={c.train_end} val_tail={c.size - c.train_end}", flush=True)
     if not cells:
-        print("  corpus: NONE -> synthetic smoke", flush=True)
+        p0("  corpus: NONE -> synthetic smoke", flush=True)
 
     _samp_cells = [c for c in cells if c.train_end >= seq_len + 2]
     _samp_w = torch.tensor([float(c.train_end) for c in _samp_cells]) \
         if _samp_cells else torch.tensor([1.0])
 
+    # §3/§5 GLOBAL batch preserved: --batch-size is the GLOBAL batch; each rank materializes
+    # B_local = B_global // world. world==1 ⇒ B_local == B_global (N==1 byte-identical).
+    B_global = a.batch_size
+    B_local = B_global // world
+
     def get_batch(step):
         if cells:
-            xs, ys = [], []
-            for b in range(a.batch_size):
+            # ── §3 SPEC phase (ALL ranks, IDENTICAL shared gen=42): draw the GLOBAL batch's
+            #    window specs in TODAY's interleaved order (proportional: multinomial→spec;
+            #    roundrobin: index→spec). This global spec list is byte-identical to the
+            #    1-GPU draw; the proportional cell weighting is globally exact.
+            specs = []
+            for b in range(B_global):
                 if a.sample == "proportional" and _samp_cells:
                     ci = int(torch.multinomial(_samp_w, 1, generator=gen).item())
                     cell = _samp_cells[ci]
                 else:
                     cell = cells[(step - 1 + b) % len(cells)]
-                w = cell.window(seq_len, gen)
-                if w is None:
+                start = cell.window_spec(seq_len, gen)   # None ⇒ synthetic fallback (no randint)
+                specs.append((cell, start))
+            # ── §3 MATERIALIZE phase (rank-local slice): rank r takes [r*B_local, (r+1)*B_local).
+            lo = rank * B_local
+            xs, ys = [], []
+            for cell, start in specs[lo:lo + B_local]:
+                if start is None:
                     base = torch.arange(seq_len)
                     w = (base % V, (base + 1) % V)
+                else:
+                    w = cell.materialize(start, seq_len)
                 xs.append(w[0]); ys.append(w[1])
             return torch.stack(xs).to(device), torch.stack(ys).to(device)
         base = torch.arange(seq_len)
-        x = ((3 + base * 37) % V).unsqueeze(0).repeat(a.batch_size, 1).to(device)
-        y = ((14 + base * 37) % V).unsqueeze(0).repeat(a.batch_size, 1).to(device)
+        x = ((3 + base * 37) % V).unsqueeze(0).repeat(B_local, 1).to(device)
+        y = ((14 + base * 37) % V).unsqueeze(0).repeat(B_local, 1).to(device)
         return x, y
 
-    # trunk penultimate activation cache for N7 dictionary/sparse aux + the compositional
-    # objectives. ByteGPT exposes its pre-head hidden (post-final-LN) directly on the
-    # forward dict; CLM recomputes the trunk to the pre-readout MoE/norm_out site.
-    def trunk_penultimate(x):
-        if is_bytegpt:
-            return model(x)["penultimate"]         # (B, d, T) — ln_f(x) pre-head
-        h = model.embed(x).transpose(1, 2)
-        h = model.embed_conv(h)
-        for layer in model.trunk:
-            h = layer(h)
-        hm, _ = model.moe(h)
-        hm = model.norm_out(hm)
-        return hm                                  # (B, d, T) — pre-readout dictionary site
+    # NOTE (§4): the trunk-penultimate helper (N7 dict/jamo aux + compositional objectives)
+    # was RELOCATED verbatim into TrainShell.trunk_penultimate so the per-step loss graph is
+    # one DDP forward(). The rank-0 probes below (val/dbes/gauges) use `model` directly.
 
     @torch.no_grad()
     def cell_val_ce(c):
@@ -1152,7 +1386,7 @@ def main():
                 xs.append(w[0]); ys.append(w[1])
             if not xs: continue
             vx = torch.stack(xs).to(device); vy = torch.stack(ys).to(device)
-            if a.bf16 and device == "cuda":
+            if a.bf16 and device.startswith("cuda"):
                 with torch.autocast("cuda", dtype=torch.bfloat16):
                     vo = model(vx, vy)
             else:
@@ -1223,9 +1457,15 @@ def main():
     for step in range(1, steps + 1):
         # --ckpt-every: dump an intermediate ckpt of the state AFTER (step-1) updates
         # (step-window multiplex — one run yields 2000/4000/… checkpoints, no re-train).
+        # §6 rank-0-only intermediate serialize on the UNWRAPPED core_model; barrier AFTER the
+        # write (nothing to protect before) so non-zero ranks don't race into the next step's
+        # collective while rank 0 serializes a 303M .clm.
         if a.ckpt_every > 0 and a.out and step > 1 and (step - 1) % a.ckpt_every == 0:
-            _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
-            model.train()
+            if rank == 0:
+                _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
+                model.train()
+            if ddp_on:
+                dist.barrier()
         if savant_on:
             inh = savant_inhibition(step, steps, i0, i_floor, latch)
             wd = inhibition_to_wd(inh); dp = inhibition_to_dropout(inh)
@@ -1242,149 +1482,174 @@ def main():
             prev = mito.e_active
             new_e = (tlora_aware_split(mito, 0, opt) if tlora_on
                      else mito.split(0, opt))
-            print(f"  step {step} (MITOSIS SPLIT) E {prev}->{new_e}", flush=True)
+            p0(f"  step {step} (MITOSIS SPLIT) E {prev}->{new_e}", flush=True)
+            # §1 belt-and-braces: the split is provably deterministic across ranks (bitwise-
+            # identical params ⇒ identical children + mask flip; NO change to split() itself),
+            # but broadcast the touched tensors from rank 0 + MAX-assert e_active so ANY future
+            # nondeterminism in split() is caught HERE, not as a silent mid-run divergence.
+            if ddp_on:
+                moe = core_model.moe
+                child = new_e - 1
+                touched = (list(moe.experts[0].parameters())
+                           + list(moe.experts[child].parameters())
+                           + [moe.router.weight, moe.router.bias])
+                for t in touched:
+                    dist.broadcast(t.data, src=0)
+                ea = torch.tensor([float(mito.e_active)], device=device)
+                mx = ea.clone(); dist.all_reduce(mx, op=dist.ReduceOp.MAX)
+                assert int(mx.item()) == mito.e_active, \
+                    f"[ddp] mitosis e_active desync: local {mito.e_active} != max {int(mx.item())}"
         x, y = get_batch(step)
         opt.zero_grad(set_to_none=True)
-        aux = {}
-        # H_1640: compute the trunk penultimate ONCE if any consumer needs it
-        # (the new objective, or the dict/jamo aux). Reused across all three so they
-        # backprop through a single trunk graph.
-        need_pen = obj_needs_pen or dict_on or jamo_on
-        if a.bf16 and device == "cuda":
-            with torch.autocast("cuda", dtype=torch.bfloat16):
-                out = model(x, y)
-                h = trunk_penultimate(x) if need_pen else None
-                pen = h.float() if (h is not None and obj_needs_pen) else None
-                obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
-                loss = obj_loss + out["aux_loss"]
-                if dict_on:
-                    dloss = a.dict_lambda * h.abs().mean()
-                    loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
-                if jamo_on:
-                    jl = jamo_head(h.float())
-                    jt = jamo_targets(y, jamo_head.n_jamo)
-                    jloss = a.jamo_lambda * F.cross_entropy(
-                        jl.transpose(1, 2).reshape(-1, jamo_head.n_jamo),
-                        jt.reshape(-1), ignore_index=0)
-                    loss = loss + jloss; aux["jamo"] = float(jloss.detach())
-            loss.backward()
-        else:
-            out = model(x, y)
-            h = trunk_penultimate(x) if need_pen else None
-            pen = h if obj_needs_pen else None
-            obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
-            loss = obj_loss + out["aux_loss"]
-            if dict_on:
-                dloss = a.dict_lambda * h.abs().mean()
-                loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
-            if jamo_on:
-                jl = jamo_head(h)
-                jt = jamo_targets(y, jamo_head.n_jamo)
-                jloss = a.jamo_lambda * F.cross_entropy(
-                    jl.transpose(1, 2).reshape(-1, jamo_head.n_jamo),
-                    jt.reshape(-1), ignore_index=0)
-                loss = loss + jloss; aux["jamo"] = float(jloss.detach())
-            loss.backward()
-        aux.update(oaux)
+        # §4 one composite DDP forward() → (loss, detached shard-CE, aux). Backward runs at the
+        # callsite OUTSIDE the shell's internal autocast; DDP's grad hooks fire here and
+        # allreduce every param's grad (aux heads included — §10.1). clip_grad_norm_ runs AFTER
+        # on the already-averaged grads, so every rank's clip scale = the 1-GPU global-grad norm.
+        loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda)
+        loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()
-        ce = float(out["ce_loss"].detach())
+        # §3 CE all-reduce (AVG): per-rank ce_local is a shard statistic; average it so
+        # loss0/lossF/logs equal the 1-GPU GLOBAL-batch CE (equal shard sizes ⇒ mean-of-means
+        # = global mean). N==1: no collective — ce = the shard CE = the global CE.
+        if ddp_on:
+            ct = ce_local.clone()
+            dist.all_reduce(ct, op=dist.ReduceOp.SUM); ct /= world
+            ce = float(ct)
+        else:
+            ce = float(ce_local)
         last_aux = aux
         if loss0 is None: loss0 = ce
         lossF = ce
         do_val = a.val_every > 0 and (step == 1 or step % a.val_every == 0 or step == steps)
+        # §1/§7 --ddp-verify-sync: at every val cadence, all-reduce a param-checksum (ALL ranks
+        # participate — a collective) and assert cross-rank agreement, catching a split/optimizer
+        # desync (especially the first val after split_step).
+        if ddp_on and a.ddp_verify_sync and do_val:
+            with torch.no_grad():
+                cs = torch.zeros(1, device=device)
+                for p in params:
+                    cs += p.detach().float().sum()
+            csx = cs.clone(); csn = cs.clone()
+            dist.all_reduce(csx, op=dist.ReduceOp.MAX)
+            dist.all_reduce(csn, op=dist.ReduceOp.MIN)
+            assert float(csx - csn) < 1e-3, \
+                f"[ddp] param-checksum desync at step {step}: spread {float(csx - csn)}"
+        # §6 DBES/val/logs = rank-0-only diagnostics on the UNWRAPPED model (no collective inside,
+        # so non-zero ranks skip and simply wait at the next step's forward/allreduce).
         if (not is_bytegpt) and a.dbes_every and (step % a.dbes_every == 0 or step == steps):
-            db = dbes_specialization(model, x); db["step"] = step
-            dbes_log.append(db)
+            if rank == 0:
+                db = dbes_specialization(model, x); db["step"] = step
+                dbes_log.append(db)
         if step == 1 or step % a.log_every == 0 or step == steps:
             vtxt = ""
-            if do_val:
+            if do_val and rank == 0:
                 per = val_per_cell()
                 vc = (sum(per.values()) / len(per)) if per else float("nan")
                 vtxt = f"  val_CE={vc:.5f}"
             atxt = (" " + json.dumps({k: round(v, 4) for k, v in aux.items()})) if aux else ""
-            print(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
-                  f"wd={wd:.4f} dp={dp:.4f}{vtxt}{atxt}", flush=True)
+            p0(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
+               f"wd={wd:.4f} dp={dp:.4f}{vtxt}{atxt}", flush=True)
     wall = time.time() - t0
 
-    # ── FINAL held-out val per register (DESCENT gate, plain CE) ──────────────
-    uniform = math.log(V)
-    per = val_per_cell()
-    descent = {}; n_desc = 0
-    print(f"  ── FINAL held-out val-CE per register (uniform={uniform:.4f}) ──", flush=True)
-    for lab, vc in per.items():
-        ok = vc < uniform; n_desc += int(ok)
-        descent[lab] = {"val_ce": round(vc, 5), "descent": ok}
-        print(f"     {lab:<12s} val_CE={vc:.5f}  {'DESCENT' if ok else 'NO-DESCENT'}", flush=True)
-    final_val = (sum(per.values()) / len(per)) if per else None
-    print(f"  FINAL val_CE(pooled)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
-    print(f"  loss0={loss0:.5f} lossF={lossF:.5f} wall={wall:.1f}s "
-          f"savant_latched_at={latch['at']} E0={e0}->E={e_now()}", flush=True)
+    # ══ §6 FINALIZE — held-out val / DBES / gauges / ckpt / summary / serialize are ALL
+    #    RANK-0-ONLY on the UNWRAPPED core_model (`model`). A non-zero rank writing files =
+    #    double-write corruption; val_gen must advance only on rank 0 so its stream matches
+    #    the 1-GPU run (the DESCENT-gate comparability contract, §10.6). Non-zero ranks skip
+    #    straight to the barrier + destroy_process_group. N==1: rank==0, so this all runs.
+    if rank == 0:
+        # ── FINAL held-out val per register (DESCENT gate, plain CE) ──────────────
+        uniform = math.log(V)
+        per = val_per_cell()
+        descent = {}; n_desc = 0
+        print(f"  ── FINAL held-out val-CE per register (uniform={uniform:.4f}) ──", flush=True)
+        for lab, vc in per.items():
+            ok = vc < uniform; n_desc += int(ok)
+            descent[lab] = {"val_ce": round(vc, 5), "descent": ok}
+            print(f"     {lab:<12s} val_CE={vc:.5f}  {'DESCENT' if ok else 'NO-DESCENT'}", flush=True)
+        final_val = (sum(per.values()) / len(per)) if per else None
+        print(f"  FINAL val_CE(pooled)={final_val}  registers_DESCENT={n_desc}/{len(per)}", flush=True)
+        print(f"  loss0={loss0:.5f} lossF={lossF:.5f} wall={wall:.1f}s "
+              f"savant_latched_at={latch['at']} E0={e0}->E={e_now()}", flush=True)
 
-    # ── N3 DBES final diagnostic (gradient-free, measure-only) ────────────────
-    #   DBES probes MoE expert differentiation — CLM-only (no experts in ByteGPT).
-    dbes_final = None
-    if not is_bytegpt:
-        try:
-            xb, _ = get_batch(steps + 1)
-            dbes_final = dbes_specialization(model, xb)
-            print(f"  [N3 DBES expert-specialization] {json.dumps(dbes_final, ensure_ascii=False)}", flush=True)
-        except Exception as e:
-            print(f"  DBES error: {e}", flush=True)
+        # ── N3 DBES final diagnostic (gradient-free, measure-only) ────────────────
+        #   DBES probes MoE expert differentiation — CLM-only (no experts in ByteGPT).
+        dbes_final = None
+        if not is_bytegpt:
+            try:
+                xb, _ = get_batch(steps + 1)
+                dbes_final = dbes_specialization(model, xb)
+                print(f"  [N3 DBES expert-specialization] {json.dumps(dbes_final, ensure_ascii=False)}", flush=True)
+            except Exception as e:
+                print(f"  DBES error: {e}", flush=True)
 
-    # ── ρ·weave/ρ·fan (former G1/G6) torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──────────
-    #   gauge_lib.compute_inline_gauges decodes via the CLM mouth (CLMConvMoE-specific);
-    #   skip for bytegpt (the terminal verdict is `anima evaluate --py <.bin>` engine-native
-    #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
-    gauges = None
-    if not is_bytegpt:
-        try:
-            import gauge_lib
-            was = model.training; model.eval()
-            gauges = gauge_lib.compute_inline_gauges(
-                model, None, seeds=7, corpus_index=[c.path for c in cells],
-                ce=lossF, step=steps, torch=torch)
-            if was: model.train()
-            print(f"  [ρ·weave/ρ·fan (G1/G6) torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
-        except Exception as e:
-            print(f"  gauges error: {e}", flush=True)
+        # ── ρ·weave/ρ·fan (former G1/G6) torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──
+        #   gauge_lib.compute_inline_gauges decodes via the CLM mouth (CLMConvMoE-specific);
+        #   skip for bytegpt (the terminal verdict is `anima evaluate --py <.bin>` engine-native
+        #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
+        gauges = None
+        if not is_bytegpt:
+            try:
+                import gauge_lib
+                was = model.training; model.eval()
+                gauges = gauge_lib.compute_inline_gauges(
+                    model, None, seeds=7, corpus_index=[c.path for c in cells],
+                    ce=lossF, step=steps, torch=torch)
+                if was: model.train()
+                print(f"  [ρ·weave/ρ·fan (G1/G6) torch-probe DIRECTIONAL] {json.dumps(gauges, ensure_ascii=False)}", flush=True)
+            except Exception as e:
+                print(f"  gauges error: {e}", flush=True)
 
-    # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
-    full_sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
-    if jamo_head:
-        for k, v in jamo_head.state_dict().items():
-            full_sd[f"_jamo_head.{k}"] = v.detach().cpu()
-    if a.ckpt_out:
-        torch.save(full_sd, a.ckpt_out)
-        print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
+        # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
+        full_sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+        if jamo_head:
+            for k, v in jamo_head.state_dict().items():
+                full_sd[f"_jamo_head.{k}"] = v.detach().cpu()
+        if a.ckpt_out:
+            torch.save(full_sd, a.ckpt_out)
+            print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
 
-    # ── summary json ──────────────────────────────────────────────────────────
-    summary = {"entry": "anima train --py", "arch": a.arch, "arm": a.arm,
-               "objective": a.objective, "seed": a.seed,
-               "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
-                                  if obj_is_module else 0),
-               "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
-                          "tlora_base": not a.tlora_no_base, "dict_aux": dict_on,
-                          "jamo_aux": jamo_on, "wd_floor": a.wd_floor,
-                          "dropout_floor": a.dropout_floor},
-               "n_params": n_params, "loss0": round(loss0, 5), "lossF": round(lossF, 5),
-               "wall_s": round(wall, 1), "uniform_ce": round(uniform, 5),
-               "final_val_ce_pooled": (round(final_val, 5) if final_val else None),
-               "registers_descent": f"{n_desc}/{len(per)}", "heldout_descent": descent,
-               "last_aux": last_aux, "dbes_final": dbes_final, "dbes_log": dbes_log,
-               "gauges_g1g6_torch_probe": gauges,
-               "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
-                        if is_bytegpt else
-                        "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
-    if a.gauges_out:
-        with open(a.gauges_out, "w") as f:
-            json.dump(summary, f, ensure_ascii=False, indent=2)
-        print(f"  summary -> {a.gauges_out}", flush=True)
+        # ── summary json ──────────────────────────────────────────────────────────
+        summary = {"entry": "anima train --py", "arch": a.arch, "arm": a.arm,
+                   "objective": a.objective, "seed": a.seed,
+                   "ddp": {"world_size": world, "global_batch": B_global,
+                           "per_rank_batch": B_local, "gpus": a.gpus},
+                   "obj_aux_params": (sum(p.numel() for p in objfn.parameters())
+                                      if obj_is_module else 0),
+                   "levers": {"tlora": tlora_on, "tlora_rank": a.tlora_rank,
+                              "tlora_base": not a.tlora_no_base, "dict_aux": dict_on,
+                              "jamo_aux": jamo_on, "wd_floor": a.wd_floor,
+                              "dropout_floor": a.dropout_floor},
+                   "n_params": n_params, "loss0": round(loss0, 5), "lossF": round(lossF, 5),
+                   "wall_s": round(wall, 1), "uniform_ce": round(uniform, 5),
+                   "final_val_ce_pooled": (round(final_val, 5) if final_val else None),
+                   "registers_descent": f"{n_desc}/{len(per)}", "heldout_descent": descent,
+                   "last_aux": last_aux, "dbes_final": dbes_final, "dbes_log": dbes_log,
+                   # §4 diagnostic honesty: under DDP the rank-0 DBES probe runs on a rank-LOCAL
+                   # shard (B_local=B/N), NOT the global batch B, so dbes_final/dbes_log are NOT
+                   # numerically 1:1 comparable with a 1-GPU record (which used full B). Label the
+                   # input scope explicitly (DBES is MONITOR-ONLY/DIRECTIONAL, excluded from the
+                   # DESCENT gate + engine-native verdict, so this does not corrupt the verdict).
+                   "dbes_batch_scope": (f"per_rank_shard(B_local={B_local})" if world > 1
+                                        else f"full_batch(B={B_global})"),
+                   "gauges_g1g6_torch_probe": gauges,
+                   "tier": ("engine-native-eligible (.bin ByteGPT via bytegpt mouth); torch probe DIRECTIONAL"
+                            if is_bytegpt else
+                            "engine-native-eligible (.clm additive, TLoRA materialized); torch probe DIRECTIONAL")}
+        if a.gauges_out:
+            with open(a.gauges_out, "w") as f:
+                json.dump(summary, f, ensure_ascii=False, indent=2)
+            print(f"  summary -> {a.gauges_out}", flush=True)
 
-    # ── serialize the trained ckpt: CLM → .clm v0.3 (additive readout + MATERIALIZED
-    #    experts) | ByteGPT → .bin (5×u32 header via core/serialize.py). ──
-    if a.out:
-        _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
+        # ── serialize the trained ckpt: CLM → .clm v0.3 (additive readout + MATERIALIZED
+        #    experts) | ByteGPT → .bin (5×u32 header via core/serialize.py). ──
+        if a.out:
+            _write_clm(a.out)  # final full-run checkpoint (same helper as --ckpt-every)
+
+    # §6 barrier so no rank tears down while rank 0 serializes the 303M .clm, then release NCCL.
+    if ddp_on:
+        dist.barrier()
+        dist.destroy_process_group()
 
 
 if __name__ == "__main__":
