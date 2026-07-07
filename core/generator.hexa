@@ -624,7 +624,7 @@ fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
         let a = anchors[n - 1]
         seed = seed + _gen_anchor_text(a)
     }
-    // ANTI-FABRICATION (a303m_pass G5, H_1150–H_1154): when memory anchors are present,
+    // ANTI-FABRICATION (a303m_pass ρ·tether · non-fabrication · former G5, H_1150–H_1154): when memory anchors are present,
     // decode through the engine-side deterministic retrieve-then-copy. Grounded bytes are
     // COPIED VERBATIM from kosmos anchors (cannot be a fabricated entity); ungrounded bytes
     // fall back to the LM. The learned copy-head was ruled out (the KEY-MATCH wall); the
@@ -843,9 +843,9 @@ pub fn gen_auto_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
     return gen_clm_chat(ckpt_path, seed, max_new)
 }
 
-// gen_clm_ideate — H_1381 G6 IDEATION ★ entry. The SEEDED-SAMPLING sibling of gen_clm_chat:
+// gen_clm_ideate — H_1381 ρ·fan IDEATION ★ entry (ideation · former G6). The SEEDED-SAMPLING sibling of gen_clm_chat:
 // routes a composed ideation frame through the engine's seeded top-k sampler
-// (clm_decode_topk_sampled) so the G6 best-of-K DEPTH lever yields DIVERSE candidates
+// (clm_decode_topk_sampled) so the ρ·fan best-of-K DEPTH lever yields DIVERSE candidates
 // (argmax = a no-op for best-of-K). Stays inside the SINGLE generator L3 .clm slot
 // (a_core_engine_map) — g6_ideation.hexa imports THIS, never clm_decode directly. HARD-
 // BOUNDED by `max_new` (caller passes a small budget — FREEZE (ii), no unbounded decode).
@@ -861,7 +861,7 @@ pub fn gen_clm_ideate(ckpt_path: string, seed: string, max_new: int,
 }
 
 // gen_clm_ideate_W — H_1400 loaded-W ideation entry: the SAME mouth as gen_clm_ideate but
-// off a PRE-LOADED weight map (clm_load_weights) so a multi-decode driver (the G6 FALS
+// off a PRE-LOADED weight map (clm_load_weights) so a multi-decode driver (the ρ·fan FALS
 // re-score = 69 decodes) loads the 303M ConvMoE ONCE instead of per decode (the hexa bump
 // allocator never frees a model load → per-decode reload OOMs across decodes). Still the
 // single .clm slot (a_core_engine_map): a thin caller of clm_decode_topk_sampled_W, no 2nd path.
@@ -875,7 +875,7 @@ pub fn gen_clm_ideate_W(W: Map, seed: string, max_new: int,
 // gen_bytegpt_ideate — the ByteGPT twin of gen_clm_ideate (the SEEDED-SAMPLING sibling
 // of gen_bytegpt_chat). Routes an ideation seed through the ByteGPT engine's OWN seeded
 // top-k sampler (bytegpt_decode_topk_sampled_ranged — OOM-safe ranged load for the 1.2GB
-// 303M binary) so the G6 best-of-K DEPTH lever yields DIVERSE candidates on the ByteGPT
+// 303M binary) so the ρ·fan best-of-K DEPTH lever yields DIVERSE candidates on the ByteGPT
 // mouth too (argmax = a no-op for best-of-K). Stays inside the SINGLE generator L3 ByteGPT
 // slot (a_core_engine_map) — this is a thin caller of the ONE ByteGPT sampled mouth, NOT a
 // 2nd decode path. HARD-BOUNDED by `max_new`. Same #{ ok, text, reason } shape as the .clm
@@ -899,7 +899,7 @@ pub fn gen_bytegpt_ideate(ckpt_path: string, seed: string, max_new: int,
 // gen_auto_ideate — mouth-type-dispatched IDEATE entry (the seeded-sampling sibling of
 // gen_auto_chat). Sniff the ckpt and route to the matching architecture's seeded-sample
 // ideate (gen_bytegpt_ideate for a ByteGPT .bin, gen_clm_ideate for a .clm). Same
-// #{ ok, text, reason } contract for both mouths so the G0-G6 gate scorers (cli/evaluate.hexa)
+// #{ ok, text, reason } contract for both mouths so the ρ-AXON reach scorers (former G0-G6 · cli/evaluate.hexa)
 // run on EITHER mouth via this ONE typed entry — the eval system is mouth-agnostic
 // (a_core_engine_map: per-architecture single typed entry, dispatcher picks by file format).
 pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
@@ -915,15 +915,15 @@ pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
 // ------------------------------------------------------------------------
 // gen_auto_load + gen_auto_ideate_W are the mouth-agnostic W-hoist twins of
 // gen_auto_backend + gen_auto_ideate. A whole-eval driver (cli/evaluate.hexa::g_eval_all)
-// runs DOZENS of decodes across G0-G6; the path-keyed gen_auto_ideate reloads the full
+// runs DOZENS of decodes across the ρ-AXON reach battery (former G0-G6); the path-keyed gen_auto_ideate reloads the full
 // 2-3GB .clm weight-set from disk PER decode (clm_decode_topk_sampled → _clmd_load +
 // _clmd_weights_free every call). Even though each load is freed, the per-decode
 // load→free CHURN (read_file_bytes of the whole .clm + re-dequant of every int4 block +
 // re-build of the scratch record) is the heavy repeated cost; on the 303M .clm the
-// transient load peak ×N decodes is what tipped full G0-G6 over into silent death.
+// transient load peak ×N decodes is what tipped the full ρ-AXON reach battery over into silent death.
 //
 // THE FIX (byte-identical): load the .clm weight-set ONCE into a handle at eval-session
-// start (gen_auto_load), then route EVERY G0-G6 decode through gen_auto_ideate_W which
+// start (gen_auto_load), then route EVERY reach decode through gen_auto_ideate_W which
 // reuses that ONE loaded W (clm_decode_topk_sampled_W → _clmd_scratch_new per decode is
 // cheap; NO _clmd_load, NO per-decode whole-file reload). The handle is freed once at
 // eval end (gen_auto_free). For ByteGPT the ranged decode (bytegpt_decode_*_ranged) is
@@ -1091,7 +1091,7 @@ pub fn gen_auto_ce_W(h: Map, text: string) -> float {
 //     margin = recon_err − recall_thr ; margin ≤ 0 ⇒ recall FIRES (grounded) ⇒ g = +clip01(−margin/M_REF)
 //                                        margin > 0 ⇒ ABSTAIN (ungrounded) ⇒ g = −clip01( margin/M_REF)
 // READ-only: recall_thr and the immune store are NOT modified (immune_memory_recall_margin_text is a
-// pure query through immune_embed_key). a_substrate_disjoint: G5 lane READ feeds content only, never the gate.
+// pure query through immune_embed_key). a_substrate_disjoint: ρ·tether lane READ feeds content only, never the gate.
 pub fn conflict_drives_live(ckpt_path: string, cand: string, mem: ImmuneMemory) -> [float] {
     let ce = gen_auto_ce(ckpt_path, cand)
     let a = _gen_clip01(1.0 - ce / 5.0)

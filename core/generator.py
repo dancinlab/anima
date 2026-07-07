@@ -239,7 +239,7 @@ def gen_auto_chat(ckpt_path, seed, max_new):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# IDEATE entries — the seeded-sampling siblings (G6 best-of-K source)
+# IDEATE entries — the seeded-sampling siblings (ρ·fan best-of-K source · ideation · former G6)
 # ════════════════════════════════════════════════════════════════════════
 
 def gen_clm_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng):
@@ -276,7 +276,7 @@ def gen_bytegpt_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng):
 def gen_auto_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng):
     """generator.hexa:750 gen_auto_ideate — mouth-dispatched ideate (the seeded-sampling
     sibling of gen_auto_chat). Same {ok,text,reason} contract for both mouths so the
-    G0-G6 gate scorers run on EITHER mouth via this ONE typed entry (mouth-agnostic)."""
+    ρ-AXON reach scorers (former G0-G6) run on EITHER mouth via this ONE typed entry (mouth-agnostic)."""
     if gen_mouth_kind(ckpt_path) == "bytegpt":
         return gen_bytegpt_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng)
     return gen_clm_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng)

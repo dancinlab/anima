@@ -45,9 +45,10 @@ import "core/brain.hexa"
 import "core/engine_cli.hexa"
 import "core/generator.hexa"
 import "core/decode.hexa"
-// NOTE: G0-G6 evaluation lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin,
-// symmetric to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — and
-// cli/evaluate.hexa now HOLDS the G0-G6 scorers directly (the former core/g_gates.hexa
+// NOTE: ρ-AXON reach evaluation (former G0-G6 · cli/rho_axon.py is the reach standard over
+// the frozen bars) lives in cli/evaluate.hexa (the MEASUREMENT single-entry twin, symmetric
+// to cli/train.hexa). `anima evaluate` DISPATCHES there as a sub-process — and cli/evaluate.hexa
+// now HOLDS the reach scorers directly (the former core/g_gates.hexa
 // module was folded into it — measurement has ONE home).
 import "core/dream_lib.hexa"
 import "core/dream_envelope_ctx.hexa"   // dr_stage_scale — continuous stage envelope (H_9101 op-grip (b))
@@ -121,12 +122,12 @@ fn anima_usage() {
     println("  anima train <args>                              LEARNING → .pt + auto .clm (+DESCENT)")
     println("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
     println("  anima evaluate <model.clm> [--corpus <path>...] [--gen N] [--det]")
-    println("                                                  BUILT-IN G0-G6 gate scoring (.clm only)")
+    println("                                                  ρ-AXON reach battery · former G0-G6 (.clm only)")
     println("                                                  --det = byte-exact/reproducible (default fast)")
     println("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     println("                                                  multi-GPU lever-sweep (arms×objectives)")
     println("  anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
-    println("                                                  procedural training-corpus builder (G1 data-format lever)")
+    println("                                                  procedural training-corpus builder (ρ·weave data-format lever · former G1)")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -140,13 +141,13 @@ fn anima_usage() {
     println("  serialize               : re-export an ALREADY-TRAINED torch .pt → engine-loadable")
     println("                            .clm v0.3 (+ DESCENT gate). recovery/re-export. → cli/serialize.hexa.")
     println("  evaluate                : mount a serialized .clm through the generator L3 mouth and")
-    println("                            score G0-G6 (engine-native, .clm only). → cli/evaluate.hexa.")
+    println("                            score the ρ-AXON reach battery · former G0-G6 (engine-native, .clm only). → cli/evaluate.hexa.")
     println("  sweep                   : multi-GPU lever-sweep orchestrator — the arms×objectives")
     println("                            matrix, GPU-pinned round-robin; per cell TRAIN (cli/train.py)")
-    println("                            then G0-G6 MEASURE (cli/evaluate.py), aggregate to")
+    println("                            then ρ-AXON reach MEASURE · former G0-G6 (cli/evaluate.py), aggregate to")
     println("                            SWEEP_SUMMARY.md. Always python. → cli/sweep.py.")
     println("  corpus                  : procedural training-corpus generator (derivtrace|flat) — the")
-    println("                            data-format G1 lever (H_9124: DEF/RULE/OUT trace makes")
+    println("                            data-format ρ·weave lever · former G1 (H_9124: DEF/RULE/OUT trace makes")
     println("                            echo=composition). synth string only, no torch/LLM (p1-p8).")
     println("                            NOTE chat corpus != this (chat = a_chat_registers 4-cell HF")
     println("                            datasets → anima train). Always python. → cli/corpus.py.")
@@ -242,8 +243,8 @@ fn anima_train_mode(argv: [string]) {
 // SYMMETRIC TWIN (a_engine_native_learning single-entry): measurement lives in its own
 // file cli/evaluate.hexa (the symmetric mirror of cli/train.hexa). `anima evaluate
 // <model.clm>` DISPATCHES there as a sub-process — exactly like the train dispatch above
-// — so this canonical entry stays a thin verb router and the G0-G6 eval logic (the
-// scorers folded in from the former core/g_gates.hexa) has ONE home (cli/evaluate.hexa).
+// — so this canonical entry stays a thin verb router and the ρ-AXON reach eval logic (former
+// G0-G6 · the scorers folded in from the former core/g_gates.hexa) has ONE home (cli/evaluate.hexa).
 //
 // .clm-ONLY (the engine decodes ONLY .clm): evaluate mounts a ckpt through the generator
 // L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable
@@ -267,7 +268,7 @@ fn anima_evaluate_mode(argv: [string]) {
         println("  anima evaluate <out.clm>")
         return
     }
-    // --py: route G0-G6 to the py 2-PRODUCTION engine (cli/evaluate.py — torch-free numpy
+    // --py: route the ρ-AXON reach battery (former G0-G6) to the py 2-PRODUCTION engine (cli/evaluate.py — torch-free numpy
     //   g_eval_all scorer) instead of the hexa engine-native det-eval. a_engine_native_learning
     //   (2-production): the py engine is a FIRST-CLASS production scorer (byte-parity with
     //   hexa), TERMINAL-eligible — NOT a 2nd-class mirror. It is the measurement-heavy path:
@@ -284,7 +285,7 @@ fn anima_evaluate_mode(argv: [string]) {
     let mut i = 1
     while i < len(argv) { if argv[i] != "--py" && argv[i] != "--det" && argv[i] != "--deterministic" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
     if use_py {
-        println("=== anima evaluate → cli/evaluate.py (py 2-production G0-G6, numpy mirror · OOM-safe) ===")
+        println("=== anima evaluate → cli/evaluate.py (py 2-production ρ-AXON reach · former G0-G6, numpy mirror · OOM-safe) ===")
         // py engine is numpy (deterministic) — no HEXA_DET needed. LOCATION-INDEPENDENT ($ANIMA_SRC).
         // hexa `exec` closes a child's captured stdout pipe after ~150s (probe-confirmed: the child
         // gets EPIPE on its next fd-1 write but is NOT killed). A 303M numpy decode runs for minutes,
@@ -302,7 +303,7 @@ fn anima_evaluate_mode(argv: [string]) {
         print(out)
         return
     }
-    println("=== anima evaluate → cli/evaluate.hexa (engine-native G0-G6, single-entry twin) ===")
+    println("=== anima evaluate → cli/evaluate.hexa (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===")
     // EVAL DETERMINISM = the `--det` CLI OPTION (hexa-lang #4208 flame/forge fast-default follow-on):
     // #4208 made the forge NON-det atomic kernels the DEFAULT; deterministic kernels are opt-in via
     // HEXA_DET=1 (`_forge_det_on()` gate). DEFAULT here = FAST — a quick sanity eval needs no det.
@@ -351,8 +352,8 @@ fn anima_serialize_mode(argv: [string]) {
 //
 // `anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … --measure` runs the
 // arms×objectives matrix: each (arm,objective) cell is GPU-pinned round-robin and, per
-// cell, TRAINS via cli/train.py then G0-G6-MEASURES the .clm via cli/evaluate.py, finally
-// AGGREGATING the gates into SWEEP_SUMMARY.md. It replaces the ad-hoc scratch fire_*.sh
+// cell, TRAINS via cli/train.py then ρ-AXON reach-MEASURES (former G0-G6) the .clm via cli/evaluate.py, finally
+// AGGREGATING the reach bars into SWEEP_SUMMARY.md. It replaces the ad-hoc scratch fire_*.sh
 // orchestration with a canonical single-entry subcommand (symmetric to train/evaluate).
 //
 // ALWAYS PYTHON (no hexa branch, no --py flag): sweep is inherently an orchestrator over
@@ -421,7 +422,7 @@ fn main() {
         return
     }
 
-    // subcommand: `evaluate` → BUILT-IN G0-G6 gate scoring (cli/evaluate.hexa). Same
+    // subcommand: `evaluate` → ρ-AXON reach battery · former G0-G6 (cli/evaluate.hexa). Same
     // single-entry discipline as `train`; never mistaken for a ckpt path.
     if argv[0] == "evaluate" {
         anima_evaluate_mode(argv)
@@ -3040,7 +3041,7 @@ fn anima_consciousness_mode(ckpt: string) {
     println("")
     println("── per-faculty ────────────────────────────────────────────────")
     println("  CONVERSE (A1, mounted .clm emits via L3)    : " + anima_yn(emitted_any))
-    println("  GROUND   (A3/G5, copied verbatim anchor fact): " + anima_yn(grounded_ok))
+    println("  GROUND   (A3/ρ·tether ← G5, copied verbatim anchor fact): " + anima_yn(grounded_ok))
     println("  GROW     (C8, density VAdaptField, p8)      : " + anima_yn(grew)
         + "  (cells 1 → " + to_string(cell_count) + ")")
     println("  REMEMBER (C9, emit persisted to .kosmos)    : " + anima_yn(remembered2))

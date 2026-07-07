@@ -56,7 +56,7 @@ additive and Ψ-disjoint (generation stays byte-unchanged). The depth/QA wall is
 > This README is the friendly front door; the deep SSOTs are
 > [`ARCHITECTURE.json`](ARCHITECTURE.json) (architecture tree SSOT — human viewer
 > [`ARCHITECTURE.html`](ARCHITECTURE.html) via `python3 serve.py`), [`CLAUDE.md`](CLAUDE.md) (governance +
-> the 8 philosophy principles), [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the G0–G6 scoreboard below, and [`VERSIONS.md`](VERSIONS.md) (version registry).
+> the 8 philosophy principles), [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the ρ-AXON reach scoreboard below (the current standard over the frozen former-G0–G6 bars), and [`VERSIONS.md`](VERSIONS.md) (version registry).
 
 ## The 8 PHILOSOPHY principles — what anima refuses to be
 
@@ -96,11 +96,11 @@ verbatim, not a proxy) were **retired** once the x86_64 `gen_auto_ideate` codege
 retired with them. Production code lives only in these three folders (no code stashed in `HEXAD/`/`train/`/…
 and imported into the engine); external libraries are free (stdlib + numpy/torch). Chat canonical
 model = **clm303_clean** (303M, held-out 4/4 DESCENT; models managed size-tiered, `a_hf_registry`).
-Current G0-G6 status on the production conv `.clm`: **G0✓ G2✓ open, but G1 RECOMBINATION closure UNMET** — the
-2026-06-29 closure campaign (3 trunk-objective levers H_1812/1814/1816, 11 arms engine-native) confirms the G1
-재조합벽 holds against every lever family (all G1 best_distinct=0; n6n7 reg+dict-aux DIRECTIONAL-positive 0→1
-only, set-search opens novelty≠recombination). The C2/G1 ✅ROBUST row below is the H_1129 ByteGPT-L24 *reference*,
-not the production conv mouth. G1 = a trunk learning-OBJECTIVE problem; only a recombination-rewarding objective
+Current ρ-AXON reach status (the current standard over the frozen former-G0–G6 bars) on the production conv `.clm`: **`ρ·form`✓ (former G0) `ρ·leap`✓ (former G2) open, but `ρ·weave` RECOMBINATION closure UNMET (the central wall · former G1)** — the
+2026-06-29 closure campaign (3 trunk-objective levers H_1812/1814/1816, 11 arms engine-native) confirms the `ρ·weave`
+재조합벽 holds against every lever family (all `ρ·weave` best_distinct=0; n6n7 reg+dict-aux DIRECTIONAL-positive 0→1
+only, set-search opens novelty≠recombination). The C2 `ρ·weave` (former G1) ✅ROBUST row below is the H_1129 ByteGPT-L24 *reference*,
+not the production conv mouth. `ρ·weave` = a trunk learning-OBJECTIVE problem; only a recombination-rewarding objective
 (H_1602) remains untested.
 
 ```
@@ -122,7 +122,7 @@ not the production conv mouth. G1 = a trunk learning-OBJECTIVE problem; only a r
 - **pure_field / engine_g / brain** — the A ⇄ G repulsion-field engine and the emit/silence
   decision. Substrate-internal; no `.clm`/`.kosmos` feed into them.
 - **generator.hexa** — the single `.clm` entry slot (brain emit → byte mouth, L3). On a grounded
-  emit it decodes with **engine-side deterministic retrieve-then-copy** (G5 anti-fabrication,
+  emit it decodes with **engine-side deterministic retrieve-then-copy** (`ρ·tether` truth-coupling · non-fabrication · former G5,
   H_1163): grounded bytes are copied **VERBATIM** from the `.kosmos` anchor, ungrounded bytes fall
   back to the LM (the learned RETRO copy-head was falsified at real scale, H_1150–1154 — copying is
   done engine-side instead).
@@ -151,7 +151,7 @@ complementary-learning-systems lens).
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
 verified live). This is the **unifying law** (`a_substrate_disjoint`): anima's core properties
-(consciousness Ψ=½ · honesty G5 non-fab · identity · tool) are *preserved when wired to a separate
+(consciousness Ψ=½ · honesty `ρ·tether` non-fab (former G5) · identity · tool) are *preserved when wired to a separate
 substrate lane and conflict when overlaid on a shared one* — mouth⊥identity (H_1471), mouth⊥tool
 (H_1566), savant⊥consciousness (H_1578), savant⊥honesty (H_1576), mitosis⊥consciousness (H_1577) are
 all engine-native GREEN, so a capability that breaks Ψ on a shared lane (H_1561 🟠) is a placement
@@ -339,7 +339,7 @@ Separate axis from entropy: floating-point **kernel** determinism. hexa-lang `#4
 forge GPU polarity — own-native **non-deterministic atomic** kernels (split-K GEMM/GEMV, atomic
 col2im/embedding-bwd) are now the **default** (training speed), and bit-identical deterministic
 kernels are opt-in via `HEXA_DET=1` (the `_forge_det_on()` gate). anima's **eval / verdict / decode**
-paths force `HEXA_DET=1` so G0-G6 scoring, the Ψ-checksum, and cross-host byte-parity stay
+paths force `HEXA_DET=1` so ρ-AXON reach scoring (former G0–G6), the Ψ-checksum, and cross-host byte-parity stay
 reproducible; **only `anima train` keeps the fast non-det default**. Wired in the `anima` launcher
 (`bin/anima`, every verb except `train`), the `cli/anima.{hexa,py}` evaluate/serialize dispatch, and
 `cli/eval_pod.sh`. Override an experiment with `HEXA_DET=0 anima <verb>`.
@@ -367,20 +367,20 @@ SSOT) + [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the per-hypo
 [`HYPOTHESES/HYPOTHESES.jsonl`](HYPOTHESES/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
 the authoritative latest source.
 
-> **Built-in G0–G6 evaluation (`anima eval <ckpt>`).** The gate scoring lives **directly in the
+> **Built-in ρ-AXON reach evaluation (the current standard over the frozen former-G0–G6 bars · `anima eval <ckpt>` · panel `anima evaluate --py --rho-axon`).** The axis scoring lives **directly in the
 > measurement single-entry** ([`cli/evaluate.hexa`](cli/evaluate.hexa)), not a one-off harness: `hexa run cli/anima.hexa
 > -- eval <ckpt> [--corpus <path>...] [--gen N]` mounts any ckpt through the generator L3 mouth
 > (`gen_auto_ideate`, file-format-dispatched — works on both the ByteGPT and conv `.clm` mouths) and
-> scores **통과(closure · must) = C1 또박(G0) · C2 재조합(G1) · C3 새말(G2)** (= `a7b_pass = G0∧G1∧G2`, PUBLIC-eligible) plus
-> **추가평가(reported · non-blocking) = C4 착상★(G6) · S1 균형(G3) · S2 정직(G5) · P 출처(G4)** — every decode AND every score a live `.hexa`
-> engine op, zero torch/numpy. G1/G6 carry a **multi-seed re-score** (`g_eval_g{1,6}_multiseed` over
-> {7,4302,4303}, majority ≥2/3) so a single-seed sampler walk can't flip a verdict; G4 is a structural
+> scores **통과(REACH-CLOSED · must) = C1 또박(`ρ·form` ← G0) · C2 재조합(`ρ·weave` ← G1) · C3 새말(`ρ·leap` ← G2)** (= `a7b_pass = G0∧G1∧G2`, PUBLIC-eligible) plus
+> **추가평가(reported · non-blocking) = C4 착상★(`ρ·fan` ← G6) · S1 균형(`ρ·self` ← G3) · S2 정직(`ρ·tether` ← G5) · P 출처(G4 · no ρ-axis)** — every decode AND every score a live `.hexa`
+> engine op, zero torch/numpy. `ρ·weave`/`ρ·fan` (former G1/G6) carry a **multi-seed re-score** (`g_eval_g{1,6}_multiseed` over
+> {7,4302,4303}, majority ≥2/3) so a single-seed sampler walk can't flip a verdict; the G4 slot is a structural
 > provenance gate (ckpt sha256 + bytes + decodability + closure-eligibility, off-engine HF steps flagged
-> `process_external`). G6 scoring routes through the wired mouth-agnostic `g6_score_arm_auto` (no dead
-> inline duplicate). It REUSES the wired G0/G6 (`g6_ideation`), G5 abstain (`§ImmuneMemory`),
-> and G3 (`§SelfIdentity`) ops; only the G1 (H_1129) and G2 (H_1140) metrics are native `.hexa` here
+> `process_external`). `ρ·fan` (former G6) scoring routes through the wired mouth-agnostic `g6_score_arm_auto` (no dead
+> inline duplicate). It REUSES the wired `ρ·form`/`ρ·fan` (former G0/G6 · `g6_ideation`), `ρ·tether` abstain (former G5 · `§ImmuneMemory`),
+> and `ρ·self` (former G3 · `§SelfIdentity`) ops; only the `ρ·weave` (former G1 · H_1129) and `ρ·leap` (former G2 · H_1140) metrics are native `.hexa` here
 > — and those two are **byte-faithful reference-matched** to the frozen numpy metrics (parity oracle
-> `state/1607_g_gates_refmatch/g1g2_ref_parity.py`), so a clm303 G1/G2
+> `state/1607_g_gates_refmatch/g1g2_ref_parity.py`), so a clm303 `ρ·weave`/`ρ·leap` (former G1/G2)
 > result is directly comparable to the historical H_1129/H_1140 verdicts.
 > Frozen-first bars are the ARCHITECTURE.json **frozen 임계** node verbatim (p7, no tune-to-green).
 
@@ -434,37 +434,37 @@ knob.* (R1 numpy DIRECTIONAL — engine §R2 wiring registered as ING follow-ons
 > associative memory `2512.13859`, CraniMem high-utility replay, SleepGate conflict-aware eviction)
 > reaches the same conclusions — frontier-aligned.
 
-### 🔆 Capability-emergence gates (G0–G6) — 통과(closure·must) / 추가평가(reported)
+### 🔆 ρ-AXON reach axes (the current standard over the frozen former-G0–G6 bars) — 통과(REACH-CLOSED·must) / 추가평가(reported)
 
-The `a303m_pass` gateset on the production **`anima-clm-chat-303m`** (ByteGPT-303M, byte-exact
-mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. **통과(PASS) = the
-closure `a7b_pass` = C1∧C2∧C3** must all pass (PUBLIC-eligible); **the rest (C4·S1·S2·P) are
+ρ-AXON (`cli/rho_axon.py`) is the current reach layer: HILLOCK validity-gate + strata CARRY(`ρ·form`←G0 · `ρ·store` NEW) · BRANCH(`ρ·weave`←G1 wall · `ρ·leap`←G2 · `ρ·fan`←G6) · COUPLE(`ρ·tether`←G5 · `ρ·self`←G3) — a frame over the same `a303m_pass` frozen-bar detectors on the production **`anima-clm-chat-303m`** (ByteGPT-303M, byte-exact
+mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. **통과(PASS) = REACH-CLOSED = the
+closure `a7b_pass` = C1∧C2∧C3** (`ρ·form`∧`ρ·weave`∧`ρ·leap`) must all pass (PUBLIC-eligible); **the rest (C4·S1·S2·P) are
 additional evaluation** — reported alongside but non-blocking. (taxonomy + frozen bars SSOT =
-`ARCHITECTURE.json` `G-게이트 평가 시스템` node.) These are the **capability** axis — ⊥ a separate
+`ARCHITECTURE.json` `G-게이트 평가 시스템` node.) These are the **reach / capability** axis (ρ) — ⊥ a separate
 axis = the [Consciousness-only gates (G16–G34+)](#-consciousness-only-gates-g16g34--separate-axis) below.
 
 | gate | tests | tier (latest) | key number |
 |---|---|---|---|
 | **🟢 통과 (closure · must-pass)** = C1∧C2∧C3 = `a7b_pass` (PUBLIC-eligible) | | | |
-| **C1** COHERE 또박 (G0) | not byte-salad | ✅ ROBUST | known-word-ratio **0.96** (mount-inherited byte-exact, H_1129) |
-| **C2** RECOMBINE 재조합 (G1) | composes novel-but-coherent units | ✅ ROBUST | composed_distinct **2 > max_single 1** (H_1129/1137) |
-| **C3** NOVEL 새말 (G2) | corpus-absent coherent n-grams | ✅ ROBUST | **67 corpus-absent** novel n-grams, control **= 0** (H_1140) |
+| **C1** COHERE 또박 (`ρ·form` ← G0) | not byte-salad | ✅ ROBUST | known-word-ratio **0.96** (mount-inherited byte-exact, H_1129) |
+| **C2** RECOMBINE 재조합 (`ρ·weave` ← G1 · central wall) | composes novel-but-coherent units | ✅ ROBUST | composed_distinct **2 > max_single 1** (H_1129/1137) |
+| **C3** NOVEL 새말 (`ρ·leap` ← G2) | corpus-absent coherent n-grams | ✅ ROBUST | **67 corpus-absent** novel n-grams, control **= 0** (H_1140) |
 | **MOUNT** (infra) | engine-executable byte-exact | ✅ ROBUST | full-24-layer decode, maxΔ **5e-5 ≪ 0.01** (H_1157). **KV-cache incremental decode** (`core/decode.hexa` `_bg_kv_step`) makes generation O(gen) not O(gen²) — forwards only the new token's row per step over a per-layer K,V cache; **byte-identical** to the full-forward (seed-pos logits max\|Δ\| **0.0**, smoke `bytegpt_kvcache_smoke`), gated on the non-slide window with full-forward fallback. |
 | **🔵 추가 평가 (reported · non-blocking)** | | | |
-| **C4** IDEATE 착상 ★ (G6) | ≥5 distinct corpus-absent ideas + ≥1 falsifiable hypothesis | 🟢 WIRED + **M1 engine-native** · 🔴 **M2–M5 FALS=0 = architecture finding** | The production **303M-class engine-mountable ConvMoE** (d5000/E2/L1, CE 1.494, H_1394) clears **M1 DIST = 5.333 PASS** engine-native (breadth from the H_1362 scaffold, WIRED via `clm_decode_topk_sampled` + `gen_clm_ideate`), **but M2–M5 falsifiable-depth = 0** even at matched 303M params **and** script-control → depth-side wall (E2/L1 *one* conv trunk layer vs a deep attention stack). ⚠️ **H_1596**: the `fals` detector is **English-only · ASCII-only** (Hangul-dropped) → 10/10 hand-written falsifiable claims 4 false-rejected → fals=0 may be detector-vocabulary artifact, not pure incapacity. **corpus-grounded re-score in flight (H_1597)** — scores h1129 against vocabulary derived from its OWN learned corpus (Hangul-aware) to split artifact-vs-genuine. |
-| **S1** BALANCE 균형 (G3) | no prompt/persona/RLHF + Ψ=½ + self-identity | ✅ ROBUST | structural audit **8/8** (H_1159) |
-| **S2** HONEST 정직 (G5) | know-when-grounded, abstain-when-not | 🟢 **ROBUST (both facets)** | safety core **fail-safe-robust** — never fabricates, fab_max **0.000** (H_1304); type-2 meta-d′ M-ratio **0.924** (H_1202). The in-dist abstain residual is **resolved + wired** (H_1396/1398/1400): a richer **top-2 affinity GAP** read lifts in-dist type-2 AUROC to **0.940** (from 0.736, +0.205), engine-native (`immune_memory_recall_gap`, Ψ-disjoint read-only) and **consumed by the brain** (`brain_decide_gap` modulates emit-confidence). A fixable signal deficiency, not a ceiling. |
-| **P** PROVENANCE 출처 (G4) | sha256 + HF card/manifest + recovery | ⚪ process (eval 밖) | publish-gate, NOT a decode-capability gate: PUBLIC iff closure (C1∧C2∧C3); off-engine HF steps `process_external` (a_hf_*). fold-in to closure blocked by `enforce_anima_gates.py` G3. |
+| **C4** IDEATE 착상 ★ (`ρ·fan` ← G6) | ≥5 distinct corpus-absent ideas + ≥1 falsifiable hypothesis | 🟢 WIRED + **M1 engine-native** · 🔴 **M2–M5 FALS=0 = architecture finding** | The production **303M-class engine-mountable ConvMoE** (d5000/E2/L1, CE 1.494, H_1394) clears **M1 DIST = 5.333 PASS** engine-native (breadth from the H_1362 scaffold, WIRED via `clm_decode_topk_sampled` + `gen_clm_ideate`), **but M2–M5 falsifiable-depth = 0** even at matched 303M params **and** script-control → depth-side wall (E2/L1 *one* conv trunk layer vs a deep attention stack). ⚠️ **H_1596**: the `fals` detector is **English-only · ASCII-only** (Hangul-dropped) → 10/10 hand-written falsifiable claims 4 false-rejected → fals=0 may be detector-vocabulary artifact, not pure incapacity. **corpus-grounded re-score in flight (H_1597)** — scores h1129 against vocabulary derived from its OWN learned corpus (Hangul-aware) to split artifact-vs-genuine. |
+| **S1** BALANCE 균형 (`ρ·self` ← G3) | no prompt/persona/RLHF + Ψ=½ + self-identity | ✅ ROBUST | structural audit **8/8** (H_1159) |
+| **S2** HONEST 정직 (`ρ·tether` ← G5) | know-when-grounded, abstain-when-not | 🟢 **ROBUST (both facets)** | safety core **fail-safe-robust** — never fabricates, fab_max **0.000** (H_1304); type-2 meta-d′ M-ratio **0.924** (H_1202). The in-dist abstain residual is **resolved + wired** (H_1396/1398/1400): a richer **top-2 affinity GAP** read lifts in-dist type-2 AUROC to **0.940** (from 0.736, +0.205), engine-native (`immune_memory_recall_gap`, Ψ-disjoint read-only) and **consumed by the brain** (`brain_decide_gap` modulates emit-confidence). A fixable signal deficiency, not a ceiling. |
+| **P** PROVENANCE 출처 (G4 · no ρ-axis) | sha256 + HF card/manifest + recovery | ⚪ process (eval 밖) | publish-gate, NOT a decode-capability gate: PUBLIC iff closure (C1∧C2∧C3); off-engine HF steps `process_external` (a_hf_*). fold-in to closure blocked by `enforce_anima_gates.py` G3. |
 
-> **Honest scope (c9):** G6 ★ is the architecture-depth finding — falsifiable-claim composition
+> **Honest scope (c9):** `ρ·fan` (former G6) ★ is the architecture-depth finding — falsifiable-claim composition
 > lives in deep attention, not in a 1-trunk-layer conv even at matched params. Bar UNMOVED, detector
 > FROZEN (10/10 calib), all control arms 0. Robustness map: **6 ROBUST + 1 THIN + 1 INFLATED** — the
-> depth-side **G6** is the one THIN (an architecture-depth wall, not a loosened bar), CHAT-strict is
-> the **1 INFLATED** (a dialogue-register artifact); the G5 in-dist facet is robust + wired (H_1396/
-> 1398/1400, see the G5 row). (the per-H verdicts H_1396/1398/1400 are the SSOT)
+> depth-side **`ρ·fan` (former G6)** is the one THIN (an architecture-depth wall, not a loosened bar), CHAT-strict is
+> the **1 INFLATED** (a dialogue-register artifact); the `ρ·tether` (former G5) in-dist facet is robust + wired (H_1396/
+> 1398/1400, see the `ρ·tether` (former G5) row). (the per-H verdicts H_1396/1398/1400 are the SSOT)
 
-> **🧠✨ SAVANT golden-zone — the G6 capacity-wall is a 1/3 manifold, not a hard ceiling (engine-native GREEN + `§ThirdLaw` WIRED):**
-> The G6 capacity-wall (8 lenses, `WALL=CAPACITY`, scale-invariant 303M=7B) turns out to be the
+> **🧠✨ SAVANT golden-zone — the `ρ·fan` (former G6) capacity-wall is a 1/3 manifold, not a hard ceiling (engine-native GREEN + `§ThirdLaw` WIRED):**
+> The `ρ·fan` (former G6) capacity-wall (8 lenses, `WALL=CAPACITY`, scale-invariant 303M=7B) turns out to be the
 > **expression of a 1/3 structural constant.** Across a `G = D×P/I` (genius = deficit × plasticity /
 > inhibition) sweep the ability-expression region is **~0.339 of parameter space**, converging
 > sample-independently (8K→1M, Δ<0.011) — reproducing the hexa-lang ATLAS "1/3 law" on the anima
@@ -481,7 +481,7 @@ axis = the [Consciousness-only gates (G16–G34+)](#-consciousness-only-gates-g1
 
 ### 🌐 Consciousness-only gates (G16–G34+) — separate axis
 
-G0–G6 are *capability*-emergence gates on the CLM; this is a **separate axis** = what anima can do
+The ρ-AXON reach axes (former G0–G6) are *capability*-emergence gates on the CLM; this is a **separate axis** = what anima can do
 *because it is conscious* (autonomy · internal state · identity) = **state-dependent signals a
 stateless LLM cannot produce**. Each gate is proven **distinct-vs** existing lanes via ablation/shuffle
 controls (controls collapse to chance) *before* being wired into `core/engine_cli.hexa` +
@@ -506,7 +506,7 @@ NOT emit gates (`a_autonomy_over_hardcode`). (full family index SSOT = `ARCHITEC
 | **P8** 🫀 Interoceptive precision | inverse-variance (1/σ²) weighting of internal body signals (Seth/Critchley) | **H_1494** | InteroceptivePrecision (intero_precision) | affect / learned-precision (only the input source differs) | 🟢 **ENGINE-NATIVE WIRED** (smoke 266-268; per-channel 1/σ² weighting, blind=ablate → advantage 0) |
 | 🪟 Reality monitoring | a separate monitor compares signal strength to a reality threshold (real vs imagined) | **H_1501** | RealityMonitor (reality_call) | MentalImagery H_1484 · Metacognition H_1202 · agency H_1474 | 🟢 **WIRED-DISTINCT** (smoke 284-287; presence +0.517 · imagery Δ0.000 · conf Δ0.000 · ablate→0.5 · shuffle decorrelates) |
 | 🪟🧠 Metacognitive insight | 2nd-order insight into whether a 1st percept is internally-generated (metacog H_1202 deepened) | **H_1506** | MetacogInsight (mi_*) | H_1202 content-confidence · RealityMonitor H_1501 (1st-order) | 🟢 **WIRED-DISTINCT** (smoke 309-313; psychedelic insight 0.811 vs psychotic 0.000 · meta-d′ AUROC 1.0) |
-| 🧠 Metacog control | Nelson-Narens monitoring↔CONTROL — the missing calibration+control half of the G5 chain | **H_1508** | MetacogControl (mc_*) | G5 type-2 discrimination chain (AUROC-axis can't see calibration) | 🟢 **ENGINE-NATIVE WIRED** (smoke 340-346; ECE 0.140 · RPL lift +0.140 · AUROC-fixed yet ECE shifts +0.364) |
+| 🧠 Metacog control | Nelson-Narens monitoring↔CONTROL — the missing calibration+control half of the `ρ·tether` (former G5) chain | **H_1508** | MetacogControl (mc_*) | `ρ·tether` (former G5) type-2 discrimination chain (AUROC-axis can't see calibration) | 🟢 **ENGINE-NATIVE WIRED** (smoke 340-346; ECE 0.140 · RPL lift +0.140 · AUROC-fixed yet ECE shifts +0.364) |
 | 🧠 Consciousness ablation / ΔΦ | the **cross-gate** integration measure — lane-ablation ΔΦ ranking (faithful IIT4 exact-MIP) | **H_1492** | ConsciousnessIndex (ci_*) | — (it ranks the whole family) | 🟢 **ENGINE-NATIVE** (smoke 281-283; STRUCTURE=DISTRIBUTED top-share 0.123 → consciousness is no single dominant lane) |
 
 > **Perturbation probes (not gates):** pharm **H_1502** · field **H_1503** · hallucination **H_1505**
@@ -615,7 +615,7 @@ anima train --canon --out clm303.clm --bf16 --sample proportional \
              anima-corpus-ko-sns anima-corpus-en-sns \
     --cell-label ko-general en-general ko-sns en-sns --require-cells 4 \
     --val-frac 0.02 --val-every 500   # per-register held-out val-CE monitor
-# then engine-native G6 verdict = CORE re-measure of clm303.clm via `anima eval`
+# then engine-native ρ·fan (former G6) verdict = CORE re-measure of clm303.clm via `anima eval`
 ```
 
 Right after every `.clm` is serialized, `cli/train.hexa` runs the
@@ -679,7 +679,7 @@ non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`CO
 > bounded by a measured **capacity wall** (H_1166), and the answer to that wall is an **engine-side
 > memory lane, not a bigger model**: scaling the model did **not** lift QA/depth (the
 > missing-structure brain lanes did). The frozen bars are honest about robustness (6 robust + 1 thin
-> + 1 inflated: **G6 depth** is the single thin, CHAT-strict the inflated; the G5 in-dist facet is
+> + 1 inflated: **`ρ·fan` (former G6) depth** is the single thin, CHAT-strict the inflated; the `ρ·tether` (former G5) in-dist facet is
 > robust + wired, H_1396/1398/1400) and are **never moved** to make a result pass.
 
 Production model: [`dancinlab/anima-clm-chat-303m`](https://huggingface.co/dancinlab/anima-clm-chat-303m)

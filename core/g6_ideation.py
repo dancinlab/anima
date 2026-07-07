@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
 """core/g6_ideation.py — py production mirror of core/g6_ideation.hexa.
 
-Ported 1:1 from the hexa SSOT (G6 IDEATION scoring ops): the FROZEN structural
+Ported 1:1 from the hexa SSOT (ρ·fan IDEATION scoring ops · reach axis, was G6 · frozen bar): the FROZEN structural
 detectors (comparator / measurable / stance / stopword sets), the H_1305 tokenizer
 (_g6_words: lowercase ASCII [0-9A-Za-z], split on non-alnum BYTES), the dict load,
 known-word-ratio, _g6_is_falsifiable, _g6_jaccard, composed-frame builder, frame

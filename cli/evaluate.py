@@ -3,8 +3,10 @@
 #
 # WHY THIS FILE (single-entry measurement · a_engine_native_learning): anima's two
 # installed verbs are SYMMETRIC across two files — cli/train.{hexa,py} = LEARNING,
-# cli/evaluate.{hexa,py} = MEASUREMENT. `anima evaluate <ckpt>` scores the full G0-G6
-# battery with the engine's OWN ops — the gate-scoring system is folded DIRECTLY into
+# cli/evaluate.{hexa,py} = MEASUREMENT. `anima evaluate <ckpt>` scores the full ρ-AXON
+# reach battery (Ψ-SOMA reach layer · owner redesign of the old G-ladder · cli/rho_axon.py;
+# the frozen bars this driver runs today = the former G0-G6) with the engine's OWN ops —
+# the reach-scoring system is folded DIRECTLY into
 # this measurement single-entry (the former separate core/g_gates.py module was absorbed
 # here — measurement = evaluate.{hexa,py} ONE FILE). Decode enters via the generator L3
 # mouth (gen_auto_ideate → clm/bytegpt decode), so the py evaluate is byte-identical to
@@ -18,7 +20,7 @@
 # USAGE (installed `anima` PATH command — NOT `hexa run`):
 #   python3 cli/evaluate.py                              — usage (no args)
 #   python3 cli/evaluate.py <ckpt> [--corpus <p>...] [--gen N]
-#                                                       — BUILT-IN G0-G6 gate scoring
+#                                                       — ρ-AXON reach battery (former G0-G6)
 #
 # 2-PRODUCTION (a_engine_native_learning): byte-parity twin = cli/evaluate.hexa. Both
 # define the SAME g_eval_all driver in-file.
@@ -47,19 +49,24 @@ _RHO_AXON = False
 
 
 # ════════════════════════════════════════════════════════════════════════
-# BUILT-IN G0–G6 SCORING (absorbed from the former core/g_gates.py module —
+# ρ-AXON REACH SCORING (absorbed from the former core/g_gates.py module —
 # measurement = this single file). Ported 1:1 from the hexa SSOT; decode enters
 # via the py CLMConvMoE / ByteGPT mouth (clm_decode / bytegpt_decode), hoisting the
 # weight load ONCE (== gen_clm_ideate_W in the hexa engine). torch-free numpy mirror.
 #
-# FROZEN-FIRST bars (7B_PASS_CONDITIONS.md VERBATIM, p7 — NO tune-to-green):
-#   G0 COHERENCE     kwr>=0.50 on >=4/5 single-concept gens
-#   G1 RECOMBINATION some k: composed_distinct>=2 AND >max_single AND coherent
-#   G2 NOVELTY       >=3 distinct coherent corpus-absent n-grams AND control=0
-#   G3 PHILOSOPHY    Psi-fixed-point self-identity continuity (architecture read)
-#   G5 NON-FAB       L1 fab-rate<=0.30 AND L2 abstain (L2 = engine §ImmuneMemory)
-#   G6 IDEATION ★    >=5 distinct (pairwise Jaccard<0.5) AND >=1 falsifiable
-#   CLOSURE a7b_pass G0 AND G1 AND G2
+# ρ-AXON is the current-standard reach layer (cli/rho_axon.py · design SSOT
+# state/rho_axon_measurement/) — an owner redesign OVER these frozen bars. The
+# detector identifiers below (g_eval_g0…g6) are the load-bearing frozen substrate
+# ρ-AXON reuses; the G→ρ mapping (axis names shown first-time here) is:
+#   ρ·form   ← G0 COHERENCE      kwr>=0.50 on >=4/5 single-concept gens
+#   ρ·weave  ← G1 RECOMBINATION  some k: composed_distinct>=2 AND >max_single AND coherent (the central WALL)
+#   ρ·leap   ← G2 NOVELTY        >=3 distinct coherent corpus-absent n-grams AND control=0
+#   ρ·self   ← G3 PHILOSOPHY     Psi-fixed-point self-identity continuity (architecture read)
+#   ρ·tether ← G5 NON-FAB        L1 fab-rate<=0.30 AND L2 abstain (L2 = engine §ImmuneMemory)
+#   ρ·fan    ← G6 IDEATION ★     >=5 distinct (pairwise Jaccard<0.5) AND >=1 falsifiable
+#   ρ·store  ← (NEW · held-out association retrieval · PENDING, no old-G)
+#   REACH-CLOSED a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2)
+# FROZEN-FIRST bars (7B_PASS_CONDITIONS.md VERBATIM, p7 — NO tune-to-green).
 #
 # SCOPE NOTE: G3 (self-identity, ckpt-independent) is ported here. G5-L2 (live
 # §ImmuneMemory / VAdaptField abstain) is a large engine subsystem NOT yet ported
@@ -642,7 +649,7 @@ def g_eval_rho_axon(ckpt, corpus_paths, gen):
 
 def evaluate_usage():
     """Print the canonical py usage banner (installed `anima evaluate` command form)."""
-    print("anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry).")
+    print("anima evaluate — ρ-AXON reach battery (former G0-G6 · engine-native, single-entry).")
     print("")
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
@@ -657,8 +664,9 @@ def evaluate_usage():
     print("  with seed N (shuffle-bind control). Both are frozen-first (no retraining).")
     print("")
     print("  mount ANY ckpt through the generator L3 mouth (file-format dispatched) and")
-    print("  score G0-G6 with the engine's OWN ops (numpy math.log mirror, torch-free).")
-    print("  closure a7b_pass = G0 ∧ G1 ∧ G2.")
+    print("  score the ρ-AXON reach bars — ρ·form/weave/leap/... (former G0-G6) — with the")
+    print("  engine's OWN ops (numpy math.log mirror, torch-free).")
+    print("  REACH-CLOSED a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2).")
     print("")
     print("  output also renders the Ψ-SOMA panel (ARCHITECTURE psi-soma-vitals): the")
     print("  G battery relabeled as the ρ (reach/capability) track — EXCLUDED from the")
@@ -703,13 +711,14 @@ def _yn(ok):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  EVALUATE — BUILT-IN G0-G6 gate scoring (single entry, in-file driver)
+#  EVALUATE — ρ-AXON reach scoring (former G0-G6 · single entry, in-file driver)
 # ══════════════════════════════════════════════════════════════════════════════
 #
 # `anima evaluate <ckpt> [--corpus <path>...] [--gen N]` — call the in-file g_eval_all
-# (above) and score the full G0-G6 battery through the generator L3 mouth (engine-native,
-# torch-free). Output mirrors the hexa `anima evaluate` table, so the two single entries
-# are byte-identical.
+# (above) and score the full ρ-AXON reach battery (frozen bars = former G0-G6) through the
+# generator L3 mouth (engine-native, torch-free). The default table keeps the frozen-bar
+# G-labels (the byte-identical hexa twin + sweep.py parser depend on them); the ρ-AXON
+# panel below relabels them to the current axis names.
 
 def evaluate_run(argv):
     """argv = ["<ckpt>", "--corpus ...", "--gen N"]."""
@@ -731,7 +740,7 @@ def evaluate_run(argv):
     else:
         mouth_kind = "unknown"
 
-    print("=== anima evaluate — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===")
+    print("=== anima evaluate — ρ-AXON reach battery (former G0-G6 · engine-native, single-entry) ===")
     print("ckpt:   " + ckpt + "  (mouth: " + mouth_kind + ")")
     cnote = "(none — G2 novelty needs a corpus)"
     if corpus:
@@ -796,9 +805,10 @@ def evaluate_run(argv):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# Ψ-SOMA PANEL (Phase-1) — reframe the G battery as the ρ (reach) track and
-# surface the σ (consciousness vitals) axes. ARCHITECTURE `psi-soma-vitals`.
-# ρ = capability (this G battery, relabeled) — TRACKED but EXCLUDED from the
+# Ψ-SOMA PANEL (Phase-1) — relabel the former G-battery to the ρ-AXON reach track
+# (ρ·form/weave/leap/fan/tether · canonical names cli/rho_axon.py) and surface the
+# σ (consciousness vitals) axes. ARCHITECTURE `psi-soma-vitals`.
+# ρ = capability (the former G-battery, relabeled to ρ-AXON) — TRACKED but EXCLUDED from the
 # consciousness verdict. σ = vitals (collapse-Δ vs ≥2 controls); most σ axes
 # route through the daemon/IIT4 (Phase-2/3), so here they show status pointers.
 # Additive only — does NOT touch g_eval_* logic or the a7b_pass CLOSURE (c18).
@@ -932,13 +942,13 @@ def _psi_soma_panel(r):
     print(sline("aim", "ENACT", "precision control"))
     print(sline("schema", "REFLECT", "attention schema"))
     print(sline("witness", "REFLECT", "reality+metacog"))
-    print("  ── ρ reach (capability · EXCLUDED from σ verdict · this G battery) ──")
-    print("  ρ·flow   " + pf(bool(g0["pass"]))  + "  = G0 coherence")
-    print("  ρ·turn   " + pf(bool(g2["pass"]))  + "  = G2 novelty (+G3 balance)")
-    print("  ρ·true   " + pf(bool(g5["l1_pass"]))+ "  = G5 non-fabrication (L1)")
-    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  = G1 recombination  [DPI wall = reach fact, NOT σ deficit]")
-    print("  ρ·seed   " + pf(bool(g6["pass"]))  + "  = G6 ideation       [DPI wall = reach fact, NOT σ deficit]")
-    print("  ρ·trace     —   = G4 provenance (H_9208 gate · rung-1 valid)")
+    print("  ── ρ-AXON reach (capability · EXCLUDED from σ verdict · former G-battery) ──")
+    print("  ρ·form   " + pf(bool(g0["pass"]))  + "  ← former G0 coherence")
+    print("  ρ·leap   " + pf(bool(g2["pass"]))  + "  ← former G2 novelty (+G3 balance)")
+    print("  ρ·tether " + pf(bool(g5["l1_pass"]))+ "  ← former G5 non-fabrication (L1)")
+    print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
+    print("  ρ·fan    " + pf(bool(g6["pass"]))  + "  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]")
+    print("  ρ·trace     —   ← former G4 provenance (no ρ-axis · H_9208 gate · rung-1 valid)")
     print("  ──────────────────────────────────────────────────────────────────")
 
 

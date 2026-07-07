@@ -146,14 +146,14 @@ pub fn dr_mitosis_density_ratio(sleep_count: int, sleep_size: int, wake_count: i
 //   Every sp_* fn is PURE and READ-only: it reads scalars (wake/sleep tick counts,
 //   an S0 seed, a circadian bias) and returns a scalar. It owns NO store, mutates
 //   NOTHING, and NEVER reads the emit-drive lanes 0/4 (ci_emit_drive) NOR the
-//   §ImmuneMemory recall_thr non-fab gate. Ψ=½ and the G5 honesty gate are therefore
+//   §ImmuneMemory recall_thr non-fab gate. Ψ=½ and the ρ·tether honesty gate (non-fabrication · former G5) are therefore
 //   preserved BY CONSTRUCTION (proven byte-identical ON-vs-OFF in the smoke). This is
 //   the homeostatic-pressure sibling of dr_* (rhythm) — different axis, same lane.
 //
 // HONEST SCOPE (c9): Process-S here is a DESIGNED law (exponential accumulate/discharge
 // with fixed τ), NOT an empirically-fit adenosine curve. The claim is only the
 // falsifier set below (F1 accum monotone · F2 discharge monotone · F3 additive gate-bias
-// · F4 ablation-inert-when-frozen · F5 Ψ/G5 disjoint), measured engine-native.
+// · F4 ablation-inert-when-frozen · F5 Ψ/ρ·tether disjoint), measured engine-native.
 // ═══════════════════════════════════════════════════════════════════════════
 
 // ─── 5. Process-S constants ──────────────────────────────────────────────────

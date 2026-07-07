@@ -11,7 +11,7 @@ production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-product
 | hexa 파일 (현 단일 SSOT) | 폐기된 py 미러 | 폐기 전 parity |
 |---|---|---|
 | `decode.hexa` (unified CONV+BYTE mouth) | ~~`decode.py`~~ (was `clm_decode.py` + `bytegpt_decode.py`) | byte-parity ≤~2e-16 (CONV) · sha 4e7145fe (BYTE) |
-| `g6_ideation.hexa` | ~~`g6_ideation.py`~~ | byte-parity (G6 scoring ops) |
+| `g6_ideation.hexa` | ~~`g6_ideation.py`~~ | byte-parity (`ρ·fan` ideation scoring ops · former G6) |
 | `generator.hexa` | ~~`generator.py`~~ | byte-parity (양 mouth byte-identical) |
 | `pure_field.hexa` | ~~`pure_field.py`~~ | byte-parity ~2e-16 |
 | `brain.hexa` | ~~`brain.py`~~ | byte-parity |

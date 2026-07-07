@@ -2,7 +2,7 @@
 
 anima's next-byte = fn( (a)CE-trained · (b)feed-forward · (c)single-trunk ). The
 additive combination operator `cbind` (order-BLIND sum of two concept reps) is the
-proven G1 recombination wall: two concepts farther apart than the conv receptive
+proven ρ·weave recombination wall (was G1 · H_1129): two concepts farther apart than the conv receptive
 field are mathematically independent -> cannot recombine. SLW replaces the additive
 cbind with a content-addressed slot memory written/read causally on the post-norm
 penultimate before readout -- an ASYMMETRIC write(address)/read(key) that attacks

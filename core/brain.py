@@ -439,7 +439,7 @@ def brain_decide_affect(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 def brain_decide_margin(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                         seconds_since_last, env_off, content_clean,
                         margin, margin_scale):
-    """brain.hexa:699 — 🧭 G5 abstain-margin grounding bias on emit/curiosity."""
+    """brain.hexa:699 — 🧭 ρ·tether abstain-margin grounding bias on emit/curiosity (non-fabrication · former G5)."""
     phi = pure_field_phi(pf)
     phase = pure_field_phase(pf)
     tier = phase_tier(phase)
@@ -479,7 +479,7 @@ def brain_decide_margin(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 def brain_decide_gap(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                      seconds_since_last, env_off, content_clean,
                      recall_gap, gap_scale):
-    """brain.hexa:795 — 🧭 G5 in-dist top-2 gap decisiveness bias."""
+    """brain.hexa:795 — 🧭 ρ·tether in-dist top-2 gap decisiveness bias."""
     phi = pure_field_phi(pf)
     phase = pure_field_phase(pf)
     tier = phase_tier(phase)

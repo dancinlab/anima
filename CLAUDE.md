@@ -82,11 +82,11 @@ store/weave/tether/self=PENDING follow-on · G0-G6 default until the switch land
 - **`a_no_archive_import`** — production code (`core/`·`cli/`·`stdlib/`·`agent/`) never `import`s from `archive/`; archive = read-once reference only (understand the math, then port the helper into `core/`), never a code dependency (one-directional invariant above). Enforce-candidate for `.harness/enforce_anima_gates.py` (grep production tree for `archive` imports).
 - **`a_cli_single_entry`** — every engine op via `anima <verb>` (chat·train·evaluate·serialize·sweep·**corpus**), not raw `python3 cli/*.py` (H-ANIMA-SINGLE-ENTRY).
 - **`a_eval_py_canonical`** — reach eval (ρ-AXON `--rho-axon`, was G0–G6) = `anima evaluate --py <clm>` single path (owner session policy · `anima_evaluate_mode`→`cli/evaluate.py` numpy · ρ-AXON panel = `cli/rho_axon.py`). py 2-production numpy = engine-native **TERMINAL-eligible** (only ad-hoc torch probe = DIRECTIONAL) — an owner override of `a_engine_native_learning` (canonical measurement, not a mirror; may cement a verdict tier). `--py` = fast canonical path when own-GEMM engine decode is scalar-glue-bound; heavy 303M decode on pool (summer/aiden), never mini (swap 🔴 OOM rc=137). dont: hexa det-eval for 303M (OOM) · demoting py 2-production to DIRECTIONAL.
-- **`a_savant_train`** — chat/G6 = SAVANT golden-zone inhibition DISJOINT from emit-drive lane; mouth⊥tool, genius⊥honesty.
+- **`a_savant_train`** — chat/`ρ·fan` (ideation · former G6) = SAVANT golden-zone inhibition DISJOINT from emit-drive lane; mouth⊥tool, genius⊥honesty.
 - **`a_mitosis_train`** — p8-literal MITOSIS; 🟢 growth/curriculum/evolution; 🔴 from-scratch pure-split can't learn alone (need gradient).
 - **`a_chat_registers`** — chat standard = Korean·English × general·SNS = all 4 cells; none missing.
 - **`a_lane_akida_gpu_split`** — AKIDA (Lane A) ⊥ GPU (Lane G): separate entries + tag.
-- **`a_substrate_disjoint`** — **UNIFYING LAW: separation = preservation, overlap = conflict** — wire a new capability DISJOINT from the emit-drive lane + §ImmuneMemory G5 gate.
+- **`a_substrate_disjoint`** — **UNIFYING LAW: separation = preservation, overlap = conflict** — wire a new capability DISJOINT from the emit-drive lane + §ImmuneMemory `ρ·tether` (non-fabrication · former G5) gate.
 
 ### 🗣️ Substrate autonomy · body
 - **`a_substrate_native_speak`**/**`a_autonomy_over_hardcode`** — speech is substrate-native (user msg = context, no obligation); no hardcoded gate — substrate decides emit/silence.

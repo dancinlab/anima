@@ -42,8 +42,8 @@ terminal verdicts (a_two_production_mirror). Coverage by block:
     · AdaptField (scalar)    adapt_field_new/_recon_err/_step               [381-460]
     · VAdaptField (DIM)      vadapt_field_* + _l2/_vnearest/_vtwo           [494-634]
     · QPool entropic split   qrng_pool_* / _prng_byte_lcg / *_entropic      [669-789]
-    · ImmuneMemory (G5)      immune_* (fnv1a, embed_key, bind/recall/...)   [977-1162]
-    · SelfIdentity (G3)      self_new/drift/cos/anchor/component/dim/reset  [7673-7733]
+    · ImmuneMemory (ρ·tether · former G5)  immune_* (fnv1a, embed_key, bind/recall/...)   [977-1162]
+    · SelfIdentity (ρ·self · former G3)  self_new/drift/cos/anchor/component/dim/reset  [7673-7733]
     · OsmoticStore           osmotic_* + _kl_div                            [839-941]
     · ImmuneMemoryGrow       immune_grow_* + LRU evict (§GrowImmune H_1288) [1212-1353]
     · CLSStore               cls_* + _cls_key16/_cls_coin (§CLS H_1532)     [1399-1719]
@@ -552,7 +552,7 @@ def vadapt_field_step_entropic(af, x, cfg, pool, seed, step):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# ImmuneMemory (G5) — H_1227/H_1231 clonal recall faculty
+# ImmuneMemory (ρ·tether · former G5) — H_1227/H_1231 clonal recall faculty
 # ════════════════════════════════════════════════════════════════════════
 
 class ImmuneMemory:
@@ -679,7 +679,7 @@ def immune_memory_cells(mem):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# SelfIdentity (G3) — H_1471 diachronic self (self-chain continuity)
+# SelfIdentity (ρ·self · former G3) — H_1471 diachronic self (self-chain continuity)
 # ════════════════════════════════════════════════════════════════════════
 
 class SelfIdentity:
@@ -9539,7 +9539,7 @@ def sv_default_focus(d, w):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# parity smoke driver — exercises CLI / MITOSIS / G5 / G3 deterministically
+# parity smoke driver — exercises CLI / MITOSIS / ρ·tether / ρ·self deterministically
 # ════════════════════════════════════════════════════════════════════════
 
 def _p(k, v):
@@ -9581,7 +9581,7 @@ if __name__ == "__main__":
     _p("vaf_d1", dd[0])
     _p("vaf_d2", dd[1])
 
-    # ── ImmuneMemory (G5) bind / recall / margin / gap ──
+    # ── ImmuneMemory (ρ·tether) bind / recall / margin / gap ──
     mem = immune_memory_new_text("capital of france", "Paris", 64)
     mem = immune_memory_bind_text(mem, "capital of japan", "Tokyo", cfg_on)
     mem = immune_memory_bind_text(mem, "speed of light", "299792458", cfg_on)
@@ -9593,7 +9593,7 @@ if __name__ == "__main__":
     _p("im_margin_ood", immune_memory_recall_margin_text(mem, "zzz totally unknown query"))
     _p("im_gap_known", immune_memory_recall_gap_text(mem, "capital of france"))
 
-    # ── SelfIdentity (G3) self-chain continuity + impostor ──
+    # ── SelfIdentity (ρ·self) self-chain continuity + impostor ──
     s0 = self_new(8, 0)
     s = s0
     for tk in range(20):

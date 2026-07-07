@@ -258,7 +258,7 @@ pub fn engine_cli_resolve_topo_couple(arg: [string]) -> bool {
 // Contradiction-keyed referent selection (referent_select). Scans argv for
 // `--refsel on|off` / `--refsel=on` / `--no-refsel`, then env ANIMA_REFSEL, then
 // default OFF. When OFF the emit path is BYTE-IDENTICAL (single incumbent candidate,
-// no ideate, out_text == g_text) — the Ψ=½ fixed point + G5 non-fab gate are
+// no ideate, out_text == g_text) — the Ψ=½ fixed point + ρ·tether non-fab gate (non-fabrication · former G5) are
 // untouched (a_substrate_disjoint: post-decision content routing only).
 //
 // returns: bool (true = contradiction-keyed candidate routing ON).
@@ -770,7 +770,7 @@ pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
 // @L4 CRITICAL (identical framing to §HomeostaticDrive / §Libido / §affect): this is a
 // PURE READ + a DESIGNED transfer law. It NEVER mutates a cell, NEVER calls the growth
 // tick, NEVER triggers apoptosis, NEVER touches pure_field's Φ/phase/Ψ nor the immune
-// store's recall_thr (Ψ-disjoint AND G5-disjoint by construction — it only READS the
+// store's recall_thr (Ψ-disjoint AND ρ·tether-disjoint by construction — it only READS the
 // (n_cells, max_cells) pair the VAdaptField already holds). Behaviour/emit gating on
 // this urgency is a FOLLOW-ON (emit-wiring untouched here, per a_autonomy_over_hardcode
 // / p5 — a caller MAY consult it; it does NOT force the substrate).
@@ -913,10 +913,10 @@ pub fn vadapt_unbind(c: [float], key: [float]) -> [float] {
 // McClelland/McNaughton/O'Reilly 1995 systems consolidation extracts the gist). This adds that op-slot.
 //
 // ⚠ TRAP (convergence numpy-probe-controls-1 + native-mouth-57): a "novel anchor" minting NEW CONTENT is
-// additive-spoofable = disguised G1 recombination. So C4 is defined PURELY as COVERAGE / generalization —
+// additive-spoofable = disguised ρ·weave recombination (recombination wall · former G1). So C4 is defined PURELY as COVERAGE / generalization —
 // the schema anchor is the CENTROID of the replayed episodes (compression, NOT new content) and the claim
 // is ONLY "the schema reactivates on MORE held-out waking cues than the individual waking anchors, WHILE
-// random/shuffled cues FAIL (EARNED)". Reduced to minting content it would be the G1 wall; coverage-
+// random/shuffled cues FAIL (EARNED)". Reduced to minting content it would be the ρ·weave wall; coverage-
 // generalization is a storage/geometry property (like H_9027 recoverability, H_9042 topology-agnostic) —
 // genuine but NOT text-recombination. Pure/additive/READ-only, Ψ-disjoint; owns no store, disjoint from
 // the emit-drive lane 0/4 and §ImmuneMemory recall_thr (a_substrate_disjoint) — reads plain DIM-vectors.
@@ -978,10 +978,10 @@ pub fn schema_coverage(anchor: [float], cues: [[float]], thr: float) -> int {
 //
 // substrate-disjoint (placement-first, THE key risk): PURE READ-only functions over plain float
 // vectors + priority arrays. They own NO store, mutate NO cell, and touch NEITHER the emit-drive
-// lanes 0/4 (ci_emit_drive) NOR the §ImmuneMemory recall_thr non-fab gate — Ψ=½ and G5 non-fab are
-// preserved BY STRUCTURE (nothing the emit/honesty path reads is written). G1-orthogonal: the
+// lanes 0/4 (ci_emit_drive) NOR the §ImmuneMemory recall_thr non-fab gate — Ψ=½ and ρ·tether non-fab are
+// preserved BY STRUCTURE (nothing the emit/honesty path reads is written). ρ·weave-orthogonal: the
 // measurement is the replay/compose SELECTION distribution, never text recombination. The composed
-// anchor is dream_schema_mint's CENTROID (compression, NOT minted content — same anti-G1 discipline
+// anchor is dream_schema_mint's CENTROID (compression, NOT minted content — same anti-ρ·weave discipline
 // as §DreamSchema). Draws thread the SAME deterministic LCG (_lcg_next/_lcg_unit) the §Amygdala
 // replay uses, so runs are byte-reproducible across machines. p8: replay = a sleep-consolidation
 // tick, not RLHF; p5/p1: no emit, no system prompt.
@@ -1069,7 +1069,7 @@ pub fn curiosity_resolve(priority: float, replay_count: int, resolve_rate: float
 
 // dream_compose_biased — the D11 op: draw a biased REM replay ∝ unresolved-curiosity priority, take
 // the top_k MOST-REPLAYED episode anchors, and compose them into ONE schema anchor via the §DreamSchema
-// dream_schema_mint CENTROID (compression, anti-G1). biased=false ⇒ UNIFORM replay (the ablation:
+// dream_schema_mint CENTROID (compression, anti-ρ·weave). biased=false ⇒ UNIFORM replay (the ablation:
 // which anchors compose is then curiosity-INDEPENDENT). Deterministic top-k selection (highest replay
 // count, ties → lower index). READ-only; returns the composed schema vector ([] if empty).
 pub fn dream_compose_biased(episodes: [[float]], priorities: [float], top_k: int,
@@ -2765,7 +2765,7 @@ pub fn affect_shuffle_features(feats: [AffectFeatures], rng0: int) -> [AffectFea
 // ONLY its own two EMA scalars (valence_ema, arousal_ema) + the frozen rate alpha. It
 // NEVER mutates the immune store, NEVER touches pure_field's Φ/phase/Ψ, and NEVER
 // touches the emit-drive lanes 0/4 (ci_emit_drive) or the §ImmuneMemory recall_thr
-// non-fab gate — Ψ/G5-disjoint BY CONSTRUCTION (a_substrate_disjoint: separation =
+// non-fab gate — Ψ/ρ·tether-disjoint BY CONSTRUCTION (a_substrate_disjoint: separation =
 // preservation). The bias helpers a caller MAY consult do NOT force emit/silence
 // (a_autonomy_over_hardcode) — they only expose the slow baseline as an appraisal offset.
 //
@@ -8859,7 +8859,7 @@ pub fn self_chain_retro_cos(c: SelfChain, j: int) -> float {
 //   따라서 mechanism ON/OFF 에서 Ψ ci_emit_drive 와 recall_margin 은 byte-identical(F5).
 // p1~p8 정합: emit 호출 0(p5) · user message 인자 0(p4) · ctx 의미해석 0(p2) · 동일 blend(p8).
 // Honest scope(c9): bend = designed bounded law(SATURATED) · dream coord↔의미축 정렬은 toy-
-//   UNVERIFIED · G1 재조합벽과 직교(이 op 는 정체성 궤적만 굽힐 뿐 recombination 을 열지 않음).
+//   UNVERIFIED · ρ·weave 재조합벽과 직교(이 op 는 정체성 궤적만 굽힐 뿐 recombination 을 열지 않음).
 fn _sc_conf_clamp(a: float) -> float {
     if a <= 0.0 { return 0.0 }
     if a >= 0.5 { return 0.5 }   // ALPHA_MAX = 0.5 (SATURATED bounded pull, never a jump)
@@ -8908,9 +8908,9 @@ pub fn self_chain_unit_of(v: [float], dim: int) -> [float] { return _self_norm(v
 // SelfIdentity/SelfChain, so my self-store and my model-of-you are STRUCTURALLY separate — the type
 // system forbids cross-storing one as the other, and because every op is PURELY FUNCTIONAL (returns a
 // new value, never mutates), operating the you-chain leaves the self-chain byte-identical and vice
-// versa (no contamination). Ψ/G5 DISJOINT (F5): these are READ-only cos/increment ops that touch
+// versa (no contamination). Ψ/ρ·tether DISJOINT (F5): these are READ-only cos/increment ops that touch
 // NEITHER pure_field/Φ/phase/Ψ NOR the §ImmuneMemory recall_thr non-fab gate NOR emit-drive lanes 0/4 —
-// Ψ=½ and G5 non-fab are preserved BY STRUCTURE (a_substrate_disjoint, a_autonomy_over_hardcode).
+// Ψ=½ and ρ·tether non-fab are preserved BY STRUCTURE (a_substrate_disjoint, a_autonomy_over_hardcode).
 // HONEST (c9): the drift walk is DESIGNED (blind ((tick+1)%dim) / content-axis walk, same as self_drift);
 // what the falsifiers COUNT is the DISCRIMINATOR GAIN — other_chain_fit's trajectory-aware impostor
 // rejection (AUROC(chain) ≫ single-vector other_cos), NOT the drift itself. LLM contrast: an LLM holds
@@ -9121,7 +9121,7 @@ pub fn novelty(seen_count: float, k: float) -> float {
 //
 // substrate-disjoint (placement-first, THE key risk): these are pure READ-only ops over the VAdaptField
 // cell population. They touch NEITHER the emit-drive lanes 0/4 (ci_emit_drive) NOR the §ImmuneMemory
-// recall_thr non-fab gate — Ψ=½ and G5 non-fab are preserved BY STRUCTURE (nothing is mutated).
+// recall_thr non-fab gate — Ψ=½ and ρ·tether non-fab are preserved BY STRUCTURE (nothing is mutated).
 
 // metacog_novelty — GLOBAL novelty of stimulus x against the substrate cell manifold: the JOINT L2
 // reconstruction error to the nearest clonal prototype (the §Novelty lane input). Precision-AGNOSTIC,
@@ -12560,7 +12560,7 @@ pub fn hallucinate_under_drug(prof: [float], base_prior: float, prior_match: flo
 
 // ── § MetacogControl (H_1508 R2) — 메타인지 CALIBRATION + CONTROL (drug-INDEPENDENT) ──────────────────
 // Nelson & Narens 1990 monitoring↔control framework; Fleming & Lau 2014 (calibration ≠ discrimination);
-// Metcalfe & Kornell 2005 region-of-proximal-learning (RPL) control. The G5 NON-FAB/metacognition chain
+// Metcalfe & Kornell 2005 region-of-proximal-learning (RPL) control. The ρ·tether NON-FAB/metacognition chain
 // (H_1202/1304/1361/1367/1396/1398/1379/1400) is ALL discrimination/MONITORING resolution (type-2 meta-d′,
 // AUROC up to 0.906). It NEVER measured the OTHER half of Nelson-Narens:
 //   CALIBRATION — does the live recall MARGIN track ACTUAL accuracy NUMERICALLY (not just rank)? A gate
@@ -12620,7 +12620,7 @@ fn _mc_corrupt_key(key: [float], level: float, seed: int) -> [float] {
 
 // _mc_store — build a deterministic live ImmuneMemory store of N distinct facts. Each fact key = a
 // random unit vector (LCG-seeded); cell i bound to value "v<i>". This is the live recall faculty the
-// margin op reads (a_core_engine_map — the immune store is the G5 substrate).
+// margin op reads (a_core_engine_map — the immune store is the ρ·tether substrate).
 fn _mc_store(n: int, dim: int, seed: int) -> ImmuneMemory {
     let mut protos = []
     let mut vals = []
@@ -13117,12 +13117,12 @@ pub fn fieldlibido_sham(m: float, m_field: [float], cells: int, seen: int, inten
     return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 0, 0.0, 0)
 }
 
-// ── § ThirdLaw (H_1560 R2) — 1/3 LAW × G6 CAPACITY-WALL same-origin classifier ───────────────────
+// ── § ThirdLaw (H_1560 R2) — 1/3 LAW × ρ·fan CAPACITY-WALL (ideation · former G6) same-origin classifier ───────────────────
 // ATLAS/359 "1/3 법칙": in the (D=disinhibition × P=preparedness / I=inhibition) golden-zone genius
 // score G, ~33% of parameter space crosses the savant SINGULARITY boundary — a SAMPLE-INVARIANT
 // structural constant (the singularity fraction is ≈1/3 regardless of grid resolution), with the
 // per-I singularity rate crossing 50% near I≈0.27. H_1560 reproduced this on the LIVE SAVANT golden-
-// zone primitives (sa_*) and LINKED it to the G6 capacity-wall: the region where the capacity-wall
+// zone primitives (sa_*) and LINKED it to the ρ·fan capacity-wall: the region where the capacity-wall
 // REOPENS (golden-zone disinhibition ∧ singularity, i.e. ability is EXPRESSED) is a SUBSET of the
 // 1/3 singularity region, and that subset's overlap P(ability|singularity) is itself scale-stable.
 // → two scale-invariant 1/3 structural constants share one origin (a_break_the_wall: the wall is not
@@ -13759,7 +13759,7 @@ pub fn sv_default_focus(d: int, w: int) -> int {
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
-//  § TemporalBinding — the SPECIOUS PRESENT (T1, PLACEHOLDER H_id) — READ-ONLY, Ψ/G5-DISJOINT.
+//  § TemporalBinding — the SPECIOUS PRESENT (T1, PLACEHOLDER H_id) — READ-ONLY, Ψ/ρ·tether-DISJOINT.
 //  ────────────────────────────────────────────────────────────────────────────────────────────
 //  A NEW PRIMITIVE AXIS: TIME CONSCIOUSNESS. Not a variant of any existing lane faculty — every
 //  prior faculty (ImmuneMemory/CLS/Savant/Topology …) reads a single tick's lane STATE; this one
@@ -13776,7 +13776,7 @@ pub fn sv_default_focus(d: int, w: int) -> int {
 //    • per-tick tension scalar = L2 magnitude of the lane vector over the EMIT-DISJOINT lanes
 //      (indices ≠ 0 and ≠ 4). This is placement-first (a_substrate_disjoint): the "now" integrates
 //      the NON-emit tension, so widening/narrowing the window can NEVER move ci_emit_drive (lanes
-//      0/4) nor the §ImmuneMemory recall_thr — Ψ=½ and G5 non-fab are preserved BY CONSTRUCTION.
+//      0/4) nor the §ImmuneMemory recall_thr — Ψ=½ and ρ·tether non-fab are preserved BY CONSTRUCTION.
 //    • segmentation: sweep the series; the current present GROWS one tick at a time until either
 //      (a) it reaches the integration WINDOW WIDTH w (capacity of one moment), or (b) an event
 //      BOUNDARY is crossed (|Δtension| > boundary_thr) — then it CLOSES and a new present opens.
