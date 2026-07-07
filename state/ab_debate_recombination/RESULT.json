@@ -1,0 +1,79 @@
+{
+  "probe": "ab_debate_recombination",
+  "params": {
+    "K": 24,
+    "generators": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      11
+    ],
+    "coverage": 0.3,
+    "rounds": 10,
+    "TAU": 0.3,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ]
+  },
+  "seeds": [
+    {
+      "seed": 7,
+      "n_train": 43,
+      "n_heldout": 101,
+      "reach": {
+        "1_ce_only": 0.0,
+        "2_ab_debate": 0.0,
+        "3_a_only": 0.0,
+        "4_bidir_null": 0.0,
+        "5_shuffleB": 0.0,
+        "6_oracle": 0.0
+      },
+      "arm2_novel_fraction": 0.0425,
+      "arm2_valid_precision": 0.0
+    },
+    {
+      "seed": 4302,
+      "n_train": 43,
+      "n_heldout": 101,
+      "reach": {
+        "1_ce_only": 0.0,
+        "2_ab_debate": 0.0,
+        "3_a_only": 0.0099,
+        "4_bidir_null": 0.0,
+        "5_shuffleB": 0.0,
+        "6_oracle": 0.0
+      },
+      "arm2_novel_fraction": 0.04,
+      "arm2_valid_precision": 0.0
+    },
+    {
+      "seed": 4303,
+      "n_train": 43,
+      "n_heldout": 101,
+      "reach": {
+        "1_ce_only": 0.0,
+        "2_ab_debate": 0.0099,
+        "3_a_only": 0.0,
+        "4_bidir_null": 0.0,
+        "5_shuffleB": 0.0,
+        "6_oracle": 0.0
+      },
+      "arm2_novel_fraction": 0.02,
+      "arm2_valid_precision": 0.0
+    }
+  ],
+  "frozen_bars": {
+    "lift>=0.15@2of3seeds": false,
+    "ab>a_only+0.10": false,
+    "ab>bidir_null+0.10": false,
+    "shuffleB<=ce+0.05": true,
+    "novel_fraction>=0.5": false
+  },
+  "verdict": "KILL",
+  "decision": "A<->B rejection does not beat controls -> KILL -> G1 true ceiling stands (DPI)",
+  "scope": "toy with TRUE Z_K closure; real corpus closure is poor (F2 collocation-only, C5) -> 303M transfer ~80-85% kill even if toy GO (a_toy_scale_recheck)"
+}
