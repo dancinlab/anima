@@ -1,0 +1,100 @@
+{
+  "probe": "heldout_disjoint_vocab",
+  "corpus": "/Users/mini/dancinlab/anima/archive/state_legacy/anima_phase1a1_color_cosmology_2026_05_12/consciousness_anchor.txt",
+  "params": {
+    "MIN_OCC": 3,
+    "TOP_VOCAB": 400,
+    "DROP_TOP": 50,
+    "POWER": 10,
+    "FRAC_BAR": 0.6667,
+    "MARGIN": 0.2,
+    "SEED": 7,
+    "N_SHUFFLE": 20
+  },
+  "n_tokens": 2326605,
+  "train_tokens": 1163302,
+  "heldout_tokens": 1163303,
+  "vocab_size": 400,
+  "half_a": 200,
+  "half_b": 200,
+  "train_seen_pairs": 6265,
+  "novel_cross_half": {
+    "n_qualified": 0,
+    "differ_frac": 0.0,
+    "shuffle_null_frac": 0.0,
+    "real_minus_null": 0.0,
+    "examples": []
+  },
+  "seen_cross_half_reference": {
+    "n_qualified": 7,
+    "differ_frac": 1.0,
+    "examples": [
+      {
+        "pair": [
+          "시스템은",
+          "정보"
+        ],
+        "f_ab": "손실",
+        "f_ba": "자신의",
+        "differ": true
+      },
+      {
+        "pair": [
+          "역할을",
+          "하는"
+        ],
+        "f_ab": "것으로",
+        "f_ba": "합니다.",
+        "differ": true
+      },
+      {
+        "pair": [
+          "미치는",
+          "영향을"
+        ],
+        "f_ab": "더",
+        "f_ba": "것으로",
+        "differ": true
+      },
+      {
+        "pair": [
+          "그는",
+          "또한"
+        ],
+        "f_ab": "화학",
+        "f_ba": "지오르지가",
+        "differ": true
+      },
+      {
+        "pair": [
+          "예를",
+          "제공합니다."
+        ],
+        "f_ab": "들어,",
+        "f_ba": "*",
+        "differ": true
+      },
+      {
+        "pair": [
+          "사용자가",
+          "여러"
+        ],
+        "f_ab": "동시에",
+        "f_ba": "개의",
+        "differ": true
+      },
+      {
+        "pair": [
+          "가지고",
+          "목표를"
+        ],
+        "f_ab": "있습니다.",
+        "f_ba": "추구할",
+        "differ": true
+      }
+    ]
+  },
+  "verdict": "INCONCLUSIVE-SPARSE",
+  "decision": "novel cross-half pairs underpowered (n<10) -> cannot clear -> data axis stays terminal, no GPU-go",
+  "scope_caveat": "single synthetic legacy corpus (consciousness_anchor); DIRECTIONAL numpy probe forks GPU-go, does not cement a tier (a_toy_scale_recheck)"
+}
