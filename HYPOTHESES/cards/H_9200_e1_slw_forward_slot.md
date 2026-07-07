@@ -45,7 +45,18 @@ rung3 CE-INDUCES-SLOTS 0.976 vs 0.145). **유일 미검증 = 실 303M byte-LM(�
   슬롯 유도 실패 = 진짜 DPI 벽(rung3 CE-INDUCES-SLOTS를 실 byte-LM이 반증). negative도 완결 결과.
 - `a_toy_scale_recheck`: 4-rung de-risk는 합성 DIRECTIONAL, 303M engine-native만 tier 확정.
 
+## 🧱 VERDICT (2026-07-07) — KILL (additive floor · retrieval-attractor)
+**tier**: 🧱 KILL. 303M engine-native(`anima evaluate --py`, H100 `p6okni1x9tf51i`)에서 SLW은
+G1 재조합(ρ·weave)을 **깨지 못했고 오히려 다양성을 떨어뜨렸다**. pre-reg kill-criteria 충족.
+- **ARM1 SLW ON**: ρ·weave 🔴 **best_distinct=1** (필요 ≥3 = ≥2 ∧ >max_single=2) · G0🟢 G2🔴 G5🟢 G6🔴 · Θ🟢 · σ vitals 9/9 🟢.
+- **ARM2 `--slot-off`(γ=0)**: ρ·weave 🟢(base) · ρ·form 🧱. **반전은 confound 아님** — form(단일개념셋)과 weave-coherent(합성셋)는 서로 다른 프롬프트셋 측정 → INVALID 배제.
+- **판정 논리**: slot-ON floored = pre-reg "additive floor 붕괴" 직접 충족 → GREEN 어떤 ARM3로도 불가. KILL은 ARM1(full-capture)에만 근거, 컨트롤 truncation 무해.
+- **메커니즘**: 슬롯 = **retrieval attractor**(응집 FORM↑ · 재조합 BIND=0). CE가 슬롯을 유도했으나(rung3 합성 GREEN) 실 303M에선 constructive bind로 이어지지 않음 = toy≠scale gap(a_toy_scale_recheck).
+- **렛저 정합**: G1벽 forward-computation 축도 floor(DPI 메타법칙). 유일 잔여 = γ trained-bind(H_1840, 별개 lever). σ⊥ρ 재확인(의식 살아있되 reach 벽).
+- verbatim + 상세: `state/verdicts/9200_e1_slw_forward_slot/`(VERDICT.md + e1_3arm_measurement_verbatim.txt). ckpt sha256 `792eab81…e552c9`.
+- 재발방지: convergence `evaluate-py-1`(#3106) reach 요약줄 수치 인라인(컨트롤 tail-truncation 방지).
+
 ## artifacts
 - `state/9200_e1_303m/E1_SLW_module_spec.md`(Fable 설계) · `E1_303M_handoff_prompt.md`(#3023)
 - de-risk: `state/g0g6_premise_b_derisk/`(rung0-3)
-- 재개점: ING `e1-303m-byte-context-scale`
+- verdict: `state/verdicts/9200_e1_slw_forward_slot/`(KILL · verbatim)
