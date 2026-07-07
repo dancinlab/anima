@@ -58,3 +58,16 @@ numpy toy: 2-leg held-out conjunction retrieval. 4 arm — (a) additive-sum read
 
 ## ⚠️ MEASUREMENT-INVALID (2026-07-02 H_6166)
 ⚠️MEASUREMENT-INVALID(2026-07-02 H_6166): 이 verdict는 RANDOM operator-agnostic target cheap-gate 근거인데, random full-rank table은 held-out이 seen과 정보이론적 독립=학습불가(chance 천장)라 어떤 메커니즘도 통과 불가 → 이 FLOOR는 lever 부재 증거 아님(측정무효). H_6167: 재조합=task-structure-bound, operator 무관. 재조합-lever verdict로 인용 금지; 재측정은 structured target/실텍스트 generation-side.
+
+## 🧱 DUP-WALLED (2026-07-08 · Fable post-E1 · 발사 안 함)
+E1 SLW(H_9200-E1) 🧱 KILL(303M engine-native)이 H_1840의 'trained+gated bind' 델타를 직접 소진.
+H_1840 고유 델타=곱셈적 연산자 prior는 fixed-op 전수 floor(H_1823·H_1616·H_1825). 실패 국소화=
+학습신호(실코퍼스 CE가 held-out constructive-bind로 gradient 안 감), 연산자형태 아님. 발사=
+confirmation 구매(~90-95% KILL)지 discovery 아님 — 최종못은 E1+H_9131+H_6167 수렴으로 이미 박힘.
+- **owner override 경로**: data-conditional 2-arm(F2 order-dense ARM-A vs +γbind ARM-B, ~$100-150).
+  단 데이터축도 H_9121(coverage-density FALSIFIED-CEILING)·H_9127(gamma-DATA 303M TRANSFER FAIL
+  TERMINAL)로 대부분 소진 — ARM-A(coverage-density)는 GPU無 선검증 가능.
+- **verdict-integrity 각주**: E1 303M 학습 corpus의 F2-density 사용여부는 커밋된 record서 미확인.
+  미사용이면 E1 KILL 스코프=비-F2 CE-비유도로 좁아지나, operator축은 여전히 벽(H_6167) → 결론 불변.
+- 근거: `state/verdicts/1840_gamma_trained_bind_dupwall/FABLE_ANALYSIS.md`. STAGE-1 FALSIFIED는 H_6166
+  measurement-invalid(인용금지).
