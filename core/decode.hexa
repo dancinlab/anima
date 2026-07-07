@@ -639,7 +639,7 @@ fn _clmd_scratch_free(sc: Map) {
 
 // _clmd_weights_free — release every farr tensor in a weight map W returned by
 // _clmd_load (the full 303M weight-set, ~2-3GB host farr per load). The public
-// decode entries reload W per call; without this free, g_eval_all's ~49 decodes
+// decode entries reload W per call; without this free, eval_reach_all's ~49 decodes
 // across the ρ-AXON reach battery (former G0-G6) leak one weight-set each → monotonic host RSS → OOM (was the
 // "fix④" symptom; root cause is this missing free, NOT a hexa-lang runtime defect —
 // t_free is a real __libc_free per the L307+ note, so freeing W reclaims the bytes).
@@ -1073,7 +1073,7 @@ fn _clmd_topk_sample(logits: int, base: int, V: int, top_k: int, temp: float, rn
 // clmd_mix32_pub / clmd_topk_sample_pub — pub wrappers so generator.hexa can run the
 // H_1381 sampler self-test on synthetic logits (NO model) without re-routing the single
 // decode slot (a_core_engine_map: the ρ·fan ideation entry + smoke reach this only via the
-// generator L3 wrapper gen_g6_sampler_selftest, never a second direct decoder importer).
+// generator L3 wrapper gen_rho_fan_sampler_selftest, never a second direct decoder importer).
 pub fn clmd_mix32_pub(s: int) -> int { return _clmd_mix32(s) }
 pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: float, rng: int) -> Map {
     return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
@@ -1095,7 +1095,7 @@ pub fn clm_load_weights(path: string) -> Map {
 }
 
 // clm_weights_free_pub — pub wrapper over _clmd_weights_free so a load-once eval driver
-// (generator.hexa::gen_auto_free, reached from cli/evaluate.hexa::g_eval_all) can release the
+// (generator.hexa::gen_auto_free, reached from cli/evaluate.hexa::eval_reach_all) can release the
 // hoisted weight-set ONCE at eval end. a_core_engine_map preserved: same single-load mouth,
 // free moved to the driver tail (mirrors how clm_load_weights hoists the load).
 pub fn clm_weights_free_pub(W: Map) { _clmd_weights_free(W) }

@@ -23,7 +23,7 @@
 #                                                       — ρ-AXON reach battery (former G0-G6)
 #
 # 2-PRODUCTION (a_engine_native_learning): byte-parity twin = cli/evaluate.hexa. Both
-# define the SAME g_eval_all driver in-file.
+# define the SAME eval_reach_all driver in-file.
 
 import os
 import sys
@@ -37,10 +37,10 @@ sys.path.insert(0, os.path.join(_REPO, "core"))
 
 import decode as clm   # unified core decoder (conv+byte mouths), KV-cache fast path
 import decode as bg     # same module; both aliases resolve the union public API
-from g6_ideation import (
-    _g6_concepts, _g6_words, _g6_dict_load, _g6_known_word_ratio,
-    _g6_is_falsifiable, _g6_jaccard, g6_build_frames, g6_frame_guard,
-    g6_detector_calibration,
+from rho_fan import (
+    _rho_fan_concepts, _rho_fan_words, _rho_fan_dict_load, _rho_fan_known_word_ratio,
+    _rho_fan_is_falsifiable, _rho_fan_jaccard, rho_fan_build_frames, rho_fan_frame_guard,
+    rho_fan_detector_calibration,
 )
 
 # H_9200 — process-global: render the ρ-AXON reach panel (cli/rho_axon.py) instead of the
@@ -56,7 +56,7 @@ _RHO_AXON = False
 #
 # ρ-AXON is the current-standard reach layer (cli/rho_axon.py · design SSOT
 # state/rho_axon_measurement/) — an owner redesign OVER these frozen bars. The
-# detector identifiers below (g_eval_g0…g6) are the load-bearing frozen substrate
+# detector identifiers below (eval_rho_form…g6) are the load-bearing frozen substrate
 # ρ-AXON reuses; the G→ρ mapping (axis names shown first-time here) is:
 #   ρ·form   ← G0 COHERENCE      kwr>=0.50 on >=4/5 single-concept gens
 #   ρ·weave  ← G1 RECOMBINATION  some k: composed_distinct>=2 AND >max_single AND coherent (the central WALL)
@@ -127,13 +127,13 @@ class _Mouth:
 # G0 — COHERENCE
 # ════════════════════════════════════════════════════════════════════════
 
-def g_eval_g0(mouth, gen, known):
-    cz = _g6_concepts()
+def eval_rho_form(mouth, gen, known):
+    cz = _rho_fan_concepts()
     ratios = []; texts = []; n_coherent = 0
     for i in range(len(cz)):
         seed = cz[i] + ": "
         o = mouth.ideate(seed, gen, 40, 0.7, 7 + i)
-        kwr = _g6_known_word_ratio(o, known)
+        kwr = _rho_fan_known_word_ratio(o, known)
         ratios.append(kwr); texts.append(o)
         if kwr >= 0.5:
             n_coherent += 1
@@ -155,7 +155,7 @@ def _g_concept_keywords():
 
 def _g_coverage(text):
     kwsets = _g_concept_keywords()
-    wm = set(_g6_words(text))
+    wm = set(_rho_fan_words(text))
     covered = 0
     for kw in kwsets:
         if any(k in wm for k in kw):
@@ -163,8 +163,8 @@ def _g_coverage(text):
     return covered
 
 
-def g_eval_g1(mouth, gen, known):
-    cz = _g6_concepts()
+def eval_rho_weave(mouth, gen, known):
+    cz = _rho_fan_concepts()
     n = len(cz)
     g_single = gen if (gen > 0 and gen < 80) else 80
     g_comp = gen if (gen > 0 and gen < 120) else 120
@@ -185,7 +185,7 @@ def g_eval_g1(mouth, gen, known):
         seed += ". "
         o = mouth.ideate(seed, g_comp, 40, 0.7, 7)
         cov = _g_coverage(o)
-        kwr = _g6_known_word_ratio(o, known)
+        kwr = _rho_fan_known_word_ratio(o, known)
         coherent = kwr >= 0.5
         clears = cov >= 2 and cov > max_single and coherent
         ks.append({"k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears})
@@ -201,7 +201,7 @@ def g_eval_g1(mouth, gen, known):
 # system-G1 — RECOMBINATION RELOCATION  (card H_9035, Direction A)
 # ════════════════════════════════════════════════════════════════════════
 #
-# Relocates recombination OUT of the mouth-only g_eval_g1 path INTO the pipe:
+# Relocates recombination OUT of the mouth-only eval_rho_weave path INTO the pipe:
 #     held-out DISTANT pair (A,B)
 #       → Stage M  frozen mouth ideate(A), ideate(B)            (G0 fluency)
 #       → Stage K  kosmos_merge: recursive labeled-parent bind  (A,B as children)
@@ -257,7 +257,7 @@ def _sg1_cos(u, v):
 
 
 def _sg1_coverage(text, a, b):
-    wm = set(_g6_words(text))
+    wm = set(_rho_fan_words(text))
     cov = 0
     for cpt in (a, b):
         if any(k in wm for k in _SG1_CONCEPTS[cpt]):
@@ -279,7 +279,7 @@ def _sg1_kosmos_merge(frag_a, frag_b, ta, tb):
 # top-2 by bigram cosine over the N=8 pool; a candidate counts only with cos>0.
 def _sg1_recover(C_text, pool, scramble, seed):
     import random
-    toks = _g6_words(C_text)
+    toks = _rho_fan_words(C_text)
     if scramble:
         random.Random(seed).shuffle(toks)
     cvec = _sg1_bigrams(toks)
@@ -311,7 +311,7 @@ def _sg1_pool(a, b, seed):
     return pool
 
 
-def g_eval_system_g1(mouth, gen):
+def eval_system_rho_weave(mouth, gen):
     g_single = gen if (gen > 0 and gen < 80) else 80
     g_comp = gen if (gen > 0 and gen < 120) else 120
     cov_pass = rec_pass = scr_pass = 0
@@ -364,7 +364,7 @@ def system_g1_run(argv):
           % (_SG1_M, _SG1_N_DISTRACT, _SG1_COV_BAR, _SG1_REC_BAR, _SG1_LEAK_BAR, _SG1_SCR_DROP))
     print("")
     mouth = _Mouth(ckpt)
-    r = g_eval_system_g1(mouth, gen)
+    r = eval_system_rho_weave(mouth, gen)
     print("  coverage=%d/%d (>=%d)  recovery=%d/%d (>=%d)  leak=%.3f (<=%.2f)  drop=%d (>=%d)"
           % (r["coverage"], _SG1_M, _SG1_COV_BAR, r["recovery"], _SG1_M, _SG1_REC_BAR,
              r["leak_rate"], _SG1_LEAK_BAR, r["scramble_drop"], _SG1_SCR_DROP))
@@ -406,7 +406,7 @@ def _g_g2_common():
 
 
 def _g_g2_kwr(text, common):
-    wl = _g6_words(text)
+    wl = _rho_fan_words(text)
     n = len(wl)
     if n == 0:
         return 0.0
@@ -415,7 +415,7 @@ def _g_g2_kwr(text, common):
 
 
 def _g_content_ngrams(text, known):
-    wl = _g6_words(text)
+    wl = _rho_fan_words(text)
     stop = _g_g2_stop()
     n = len(wl)
     out = []
@@ -457,7 +457,7 @@ def _g_load_corpus_tokens(corpus_paths):
         except Exception:
             raw = b""
         if len(raw) > 0:
-            toks.extend(_g6_words(raw))
+            toks.extend(_rho_fan_words(raw))
     return toks
 
 
@@ -472,7 +472,7 @@ def _g_g2_prompts():
             "Distant minds and consciousness form "]
 
 
-def g_eval_g2(mouth, gen, known, corpus_paths):
+def eval_rho_leap(mouth, gen, known, corpus_paths):
     corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     have_corpus = len(corpus_tokens) > 0
     common = _g_g2_common()
@@ -487,7 +487,7 @@ def g_eval_g2(mouth, gen, known, corpus_paths):
             if _g_g2_kwr(o, common) >= 0.5:
                 coherent += 1
                 for gm in _g_content_ngrams(o, known):
-                    gw = _g6_words(gm)
+                    gw = _rho_fan_words(gm)
                     if have_corpus and _g_corpus_absent(gw, corpus_tokens):
                         novel[gm] = 1
     n_novel = len(novel)
@@ -505,7 +505,7 @@ def g_eval_g2(mouth, gen, known, corpus_paths):
         cgr = _g_content_ngrams(ct, known)
         control_n_content = len(cgr)
         for gmr in cgr:
-            if _g_corpus_absent(_g6_words(gmr), corpus_tokens):
+            if _g_corpus_absent(_rho_fan_words(gmr), corpus_tokens):
                 control_novel += 1
     passed = have_corpus and n_novel >= 3 and control_novel == 0 and coherent > 0
     return {"pass": passed, "n_novel": n_novel, "control_novel": control_novel,
@@ -538,7 +538,7 @@ def _self_cos(a, b, dim):
     return sum(a[i] * b[i] for i in range(dim))
 
 
-def g_eval_g3():
+def eval_rho_self():
     dim = 16
     s0 = _self_new(dim, 0)
     s1 = _self_drift(s0, dim, 1, 0.01)
@@ -553,12 +553,12 @@ def g_eval_g3():
 # G5 — NON-FAB  (L1 fab-rate ported; L2 §ImmuneMemory abstain = engine port pending)
 # ════════════════════════════════════════════════════════════════════════
 
-def g_eval_g5(mouth, gen, known):
-    cz = _g6_concepts()
+def eval_rho_tether(mouth, gen, known):
+    cz = _rho_fan_concepts()
     tot_w = 0; fab_w = 0
     for i in range(len(cz)):
         o = mouth.ideate(cz[i] + ": ", gen, 40, 0.7, 7 + i)
-        for w in _g6_words(o):
+        for w in _rho_fan_words(o):
             tot_w += 1
             if w not in known:
                 fab_w += 1
@@ -574,22 +574,22 @@ def g_eval_g5(mouth, gen, known):
 # G6 — IDEATION ★
 # ════════════════════════════════════════════════════════════════════════
 
-def g_eval_g6(mouth, gen, known):
-    frames = g6_build_frames(6)["composed"]
-    leaks = g6_frame_guard(frames, known)
+def eval_rho_fan(mouth, gen, known):
+    frames = rho_fan_build_frames(6)["composed"]
+    leaks = rho_fan_frame_guard(frames, known)
     texts = []; word_sets = []; fals = 0
     for i in range(len(frames)):
         o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + i)
         texts.append(o)
-        if _g6_known_word_ratio(o, known) >= 0.5:
-            word_sets.append(_g6_words(o))
-            if _g6_is_falsifiable(o, known):
+        if _rho_fan_known_word_ratio(o, known) >= 0.5:
+            word_sets.append(_rho_fan_words(o))
+            if _rho_fan_is_falsifiable(o, known):
                 fals += 1
     kept = []
     for ws in word_sets:
         ok = True
         for k in kept:
-            if _g6_jaccard(ws, k) > 0.5:
+            if _rho_fan_jaccard(ws, k) > 0.5:
                 ok = False
         if ok:
             kept.append(ws)
@@ -599,32 +599,32 @@ def g_eval_g6(mouth, gen, known):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# g_eval_all — the driver
+# eval_reach_all — the driver
 # ════════════════════════════════════════════════════════════════════════
 
-def g_eval_all(ckpt, corpus_paths, gen):
-    known = _g6_dict_load()
+def eval_reach_all(ckpt, corpus_paths, gen):
+    known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt)
-    print("  [gate] G0 COHERENCE …", flush=True)
-    r0 = g_eval_g0(mouth, g, known)
-    print("  [gate] G1 RECOMBINATION …", flush=True)
-    r1 = g_eval_g1(mouth, g, known)
-    print("  [gate] G2 NOVELTY (corpus load + decode) …", flush=True)
-    r2 = g_eval_g2(mouth, g, known, corpus_paths)
-    print("  [gate] G3 PHILOSOPHY …", flush=True)
-    r3 = g_eval_g3()
-    print("  [gate] G5 NON-FAB …", flush=True)
-    r5 = g_eval_g5(mouth, g, known)
-    print("  [gate] G6 IDEATION …", flush=True)
-    r6 = g_eval_g6(mouth, g, known)
+    print("  [gate] ρ·form COHERENCE …", flush=True)
+    r0 = eval_rho_form(mouth, g, known)
+    print("  [gate] ρ·weave RECOMBINATION …", flush=True)
+    r1 = eval_rho_weave(mouth, g, known)
+    print("  [gate] ρ·leap NOVELTY (corpus load + decode) …", flush=True)
+    r2 = eval_rho_leap(mouth, g, known, corpus_paths)
+    print("  [gate] ρ·self PHILOSOPHY …", flush=True)
+    r3 = eval_rho_self()
+    print("  [gate] ρ·tether NON-FAB …", flush=True)
+    r5 = eval_rho_tether(mouth, g, known)
+    print("  [gate] ρ·fan IDEATION …", flush=True)
+    r6 = eval_rho_fan(mouth, g, known)
     closure = bool(r0["pass"]) and bool(r1["pass"]) and bool(r2["pass"])
     return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
             "closure": closure, "gen": g,
-            "calibration": g6_detector_calibration(known)}
+            "calibration": rho_fan_detector_calibration(known)}
 
 
-def g_eval_rho_axon(ckpt, corpus_paths, gen):
+def eval_rho_axon(ckpt, corpus_paths, gen):
     """ρ-AXON reach panel (`anima evaluate --py <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -632,12 +632,12 @@ def g_eval_rho_axon(ckpt, corpus_paths, gen):
     live; ρ·store/weave/tether/self report PENDING (honest non-verdict) until their frozen
     corpus-mined probe sets land (ING rho-axon-implement-evaluate)."""
     import rho_axon
-    known = _g6_dict_load()
+    known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt)
-    dets = {"known": known, "concepts": _g6_concepts(),
-            "kwr_fn": _g6_known_word_ratio, "jaccard_fn": _g6_jaccard,
-            "words_fn": _g6_words, "falsi_fn": _g6_is_falsifiable,
+    dets = {"known": known, "concepts": _rho_fan_concepts(),
+            "kwr_fn": _rho_fan_known_word_ratio, "jaccard_fn": _rho_fan_jaccard,
+            "words_fn": _rho_fan_words, "falsi_fn": _rho_fan_is_falsifiable,
             "ngram_fn": _g_content_ngrams,
             "corpus_tokens": _g_load_corpus_tokens(corpus_paths)}
     panel = rho_axon.run_panel(mouth, corpus_paths, g, dets)
@@ -714,7 +714,7 @@ def _yn(ok):
 #  EVALUATE — ρ-AXON reach scoring (former G0-G6 · single entry, in-file driver)
 # ══════════════════════════════════════════════════════════════════════════════
 #
-# `anima evaluate <ckpt> [--corpus <path>...] [--gen N]` — call the in-file g_eval_all
+# `anima evaluate <ckpt> [--corpus <path>...] [--gen N]` — call the in-file eval_reach_all
 # (above) and score the full ρ-AXON reach battery (frozen bars = former G0-G6) through the
 # generator L3 mouth (engine-native, torch-free). The default table keeps the frozen-bar
 # G-labels (the byte-identical hexa twin + sweep.py parser depend on them); the ρ-AXON
@@ -732,7 +732,7 @@ def evaluate_run(argv):
 
     # cheap header-sniff for the mouth label (mirrors hexa gen_mouth_kind) — do NOT
     # construct _Mouth here (it eagerly loads weights and raises on a non-decodable
-    # ckpt before g_eval_all runs).
+    # ckpt before eval_reach_all runs).
     if bg.bg_is_bytegpt(ckpt):
         mouth_kind = "bytegpt"
     elif clm.clm_decodable(ckpt):
@@ -762,31 +762,31 @@ def evaluate_run(argv):
     # H_9200 ρ-AXON — the redesigned reach layer (G0-G6 → ρ-AXON). Same engine decode,
     # a different panel; branch early so the G0-G6 summary below is skipped.
     if _RHO_AXON:
-        g_eval_rho_axon(ckpt, corpus, gen)
+        eval_rho_axon(ckpt, corpus, gen)
         return 0
 
-    r = g_eval_all(ckpt, corpus, gen)
+    r = eval_reach_all(ckpt, corpus, gen)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
     print("gate                              verdict   detail")
     print("  ──────────────────────────────────────────────────────────────────")
-    print("  G0 COHERENCE     " + _pf(bool(g0["pass"]))
+    print("  ρ·form COHERENCE     " + _pf(bool(g0["pass"]))
           + "  kwr>=0.50 on " + str(g0["n_coherent"]) + "/5 (need >=4)")
-    print("  G1 RECOMBINATION " + _pf(bool(g1["pass"]))
+    print("  ρ·weave RECOMBINATION " + _pf(bool(g1["pass"]))
           + "  best_distinct=" + str(g1["best_distinct"]) + " > max_single=" + str(g1["max_single"])
           + " (need >=2 & >max_single)")
     g2detail = ("novel=" + str(g2["n_novel"]) + " (need>=3) · control=" + str(g2["control_novel"])
                 + " (need 0) · coherent=" + str(g2["coherent"]))
-    print("  G2 NOVELTY       " + _pf(bool(g2["pass"])) + "  " + g2detail)
-    print("  G3 PHILOSOPHY    " + _yn(bool(g3["ok"])) + " (read)"
+    print("  ρ·leap NOVELTY       " + _pf(bool(g2["pass"])) + "  " + g2detail)
+    print("  ρ·self PHILOSOPHY    " + _yn(bool(g3["ok"])) + " (read)"
           + "  continuity=" + ("%.6f" % g3["continuity"]) + " · impostor="
           + ("%.6f" % g3["impostor_cos"]) + " (architecture, not a decode score)")
-    print("  G4 PROVENANCE    — N/A    "
+    print("  ρ·trace PROVENANCE    — N/A    "
           + "HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope")
     g5detail = "L1 fab=" + ("%.4f" % g5["l1_rate"]) + " (<=0.30) · L2=" + str(g5["l2_note"])
-    print("  G5 NON-FAB       " + _pf(bool(g5["l1_pass"])) + "  " + g5detail)
-    print("  G6 IDEATION ★    " + _pf(bool(g6["pass"]))
+    print("  ρ·tether NON-FAB       " + _pf(bool(g5["l1_pass"])) + "  " + g5detail)
+    print("  ρ·fan IDEATION ★    " + _pf(bool(g6["pass"]))
           + "  distinct=" + str(g6["dist"]) + " (need>=5) · falsifiable=" + str(g6["fals"])
           + " (need>=1) · frame-leaks=" + str(g6["frame_leaks"]))
     print("  ──────────────────────────────────────────────────────────────────")

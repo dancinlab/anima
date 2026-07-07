@@ -21,7 +21,7 @@
 // core/g_gates.hexa module was absorbed here — measurement = evaluate.{hexa,py} ONE FILE).
 //
 // a_core_engine_map: the model enters ONLY via the generator L3 typed slot. We REUSE the
-// already-wired G0/G6 metric ops (core/g6_ideation.hexa), the G5 abstain op
+// already-wired G0/G6 metric ops (core/rho_fan.hexa), the G5 abstain op
 // (core/engine_cli.hexa §ImmuneMemory) and G3 ops (§ConsciousnessIndex + §SelfIdentity);
 // the G1 (H_1129 recombination) and G2 (H_1140 corpus-absence) metrics are native .hexa
 // ops defined below in this file. No new metric is invented here (logic byte-identical to
@@ -33,12 +33,12 @@
 // FROZEN-FIRST (p7 · ARCHITECTURE.json frozen SSOT VERBATIM — NO tune-to-green):
 //   REACH-CLOSED a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2 · the PUBLIC-eligibility rule).
 //
-// HEXA-SINGLE (a_engine_native_learning): measurement runs through g_eval_all (defined
+// HEXA-SINGLE (a_engine_native_learning): measurement runs through eval_reach_all (defined
 // below) via the generator L3 mouth, every score a live `.hexa` op.
 // ════════════════════════════════════════════════════════════════════════
 
 import "core/generator.hexa"     // a_core_engine_map: model enters via gen_auto_ideate L3 slot
-import "core/g6_ideation.hexa"   // REUSE the wired G0 (_g6_known_word_ratio) + G6 metric ops
+import "core/rho_fan.hexa"   // REUSE the wired G0 (_rho_fan_known_word_ratio) + G6 metric ops
 import "core/engine_cli.hexa"    // REUSE §ImmuneMemory (G5 abstain) + §ConsciousnessIndex/§SelfIdentity (G3)
 
 // ── arg helpers ───────────────────────────────────────────────────────────────
@@ -113,7 +113,7 @@ fn evaluate_row(gate: string, verdict: string, detail: string) {
 //  (gen_auto_ideate → bytegpt/clm, dispatched by file format); every score is a live
 //  `.hexa` op (zero torch/numpy). a_core_engine_map: NO 2nd decode path.
 //  ρ-AXON (cli/rho_axon.py) is the current reach standard OVER these frozen bars; the
-//  detector fns below (g_eval_g0…g6) are the load-bearing substrate it reuses. G→ρ map:
+//  detector fns below (eval_rho_form…g6) are the load-bearing substrate it reuses. G→ρ map:
 //    ρ·form←G0 · ρ·weave←G1 (the WALL) · ρ·leap←G2 · ρ·self←G3 · ρ·tether←G5 · ρ·fan←G6
 //    ρ·store = NEW (held-out association · PENDING). REACH-CLOSED = ρ·form∧ρ·weave∧ρ·leap.
 // ════════════════════════════════════════════════════════════════════════
@@ -126,17 +126,17 @@ fn _g_default_gen() -> int { return 40 }
 //  G0 — COHERENCE  (kwr >= 0.50 on >= 4/5 single-concept generations)
 // ════════════════════════════════════════════════════════════════════════
 // Decode each of the 5 frozen concepts as a single-concept seed, score known-word-ratio
-// (REUSED _g6_known_word_ratio), PASS iff >= 4/5 clear 0.50. Returns
+// (REUSED _rho_fan_known_word_ratio), PASS iff >= 4/5 clear 0.50. Returns
 // #{ pass, n_coherent, ratios:[float], texts:[string] }.
-pub fn g_eval_g0(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g0_W(gen_auto_load(ckpt), gen, known)
+pub fn eval_rho_form(ckpt: string, gen: int, known: Map) -> Map {
+    return eval_rho_form_W(gen_auto_load(ckpt), gen, known)
 }
 
-// g_eval_g0_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g0 but decodes off a PRE-LOADED
-// handle `h` (gen_auto_load) via gen_auto_ideate_W, so the full-eval driver (g_eval_all)
+// eval_rho_form_W — LOAD-ONCE twin: BYTE-IDENTICAL to eval_rho_form but decodes off a PRE-LOADED
+// handle `h` (gen_auto_load) via gen_auto_ideate_W, so the full-eval driver (eval_reach_all)
 // loads the 303M .clm weight-set ONCE instead of per gate (H_1400 W-hoist · ING#42378065).
-pub fn g_eval_g0_W(h: Map, gen: int, known: Map) -> Map {
-    let cz = _g6_concepts()
+pub fn eval_rho_form_W(h: Map, gen: int, known: Map) -> Map {
+    let cz = _rho_fan_concepts()
     let ratios = []
     let texts = []
     let mut n_coherent = 0
@@ -145,7 +145,7 @@ pub fn g_eval_g0_W(h: Map, gen: int, known: Map) -> Map {
         let seed = to_string(cz[i]) + ": "
         let r = gen_auto_ideate_W(h, seed, gen, 40, 0.7, 7 + i)
         let o = to_string(r["text"])
-        let kwr = _g6_known_word_ratio(o, known)
+        let kwr = _rho_fan_known_word_ratio(o, known)
         ratios.push(kwr)
         texts.push(o)
         if kwr >= 0.5 { n_coherent = n_coherent + 1 }
@@ -161,7 +161,7 @@ pub fn g_eval_g0_W(h: Map, gen: int, known: Map) -> Map {
 // ════════════════════════════════════════════════════════════════════════
 // _g_concept_keywords — VERBATIM the h1129 CONCEPTS hand-curated keyword sets (NOT derived
 // from the concept text — coverage() tests these exact synonym sets, including words NOT in
-// the concept string e.g. "mind"/"aware"/"ripple"/"quiet"/"sleep"). Index order == _g6_concepts.
+// the concept string e.g. "mind"/"aware"/"ripple"/"quiet"/"sleep"). Index order == _rho_fan_concepts.
 //   h1129 CONCEPTS = [
 //     ("consciousness arises from cells",       {consciousness,cells,mind,aware}),
 //     ("tension ripples between distant minds",  {tension,ripple,distant,between}),
@@ -178,11 +178,11 @@ fn _g_concept_keywords() -> list {
 
 // _g_coverage — h1129 coverage(text) VERBATIM: a concept is covered iff its keyword set
 // INTERSECTS the text's word-SET (wl & kw). Returns the COUNT of distinct concepts covered.
-// Tokenizer = _g6_words (lowercase, [0-9A-Za-z]; h1129 words() adds 가-힣 which is irrelevant
+// Tokenizer = _rho_fan_words (lowercase, [0-9A-Za-z]; h1129 words() adds 가-힣 which is irrelevant
 // for the all-Latin concept keywords — coverage is byte-identical for these sets).
 fn _g_coverage(text: string) -> int {
     let kwsets = _g_concept_keywords()
-    let wl = _g6_words(text)
+    let wl = _rho_fan_words(text)
     // membership set of the text's word tokens (the h1129 `set(words(text))`)
     let wm = #{}
     let mut w = 0
@@ -200,28 +200,28 @@ fn _g_coverage(text: string) -> int {
     return covered
 }
 
-// g_eval_g1 — h1129 run_ladder VERBATIM: max_single = max coverage over the 5 single-concept
+// eval_rho_weave — h1129 run_ladder VERBATIM: max_single = max coverage over the 5 single-concept
 // seeds (seed = "<concept>. ", 80-token gen); then for each composition_count k in {2,3,4,5}
 // decode the first-k concepts joined by ". " + trailing ". " (120-token gen) and require
 // composed_distinct >= 2 AND > max_single AND coherent(kwr >= 0.50). PASS iff SOME k clears all
-// three. coherence kwr = dict-based _g6_known_word_ratio (h1129 known_word_ratio uses the real
+// three. coherence kwr = dict-based _rho_fan_known_word_ratio (h1129 known_word_ratio uses the real
 // dict). Decode via the SAME mouth-agnostic L3 entry. The `gen` arg overrides h1129's 80/120
 // fixed budgets ONLY when caller passes a smaller bound (FREEZE (ii)); gen<=0 ⇒ ref 80/120.
 // base_seed parameterizes the RNG so the SAME frozen ladder can be re-run over several seeds
-// (g_eval_g1_multiseed below). base_seed=7 reproduces the original single-seed path byte-for-byte
+// (eval_rho_weave_multiseed below). base_seed=7 reproduces the original single-seed path byte-for-byte
 // (singles seeded base_seed+s, composed seeded base_seed).
-pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g1_seeded_W(gen_auto_load(ckpt), gen, known, 7)
+pub fn eval_rho_weave(ckpt: string, gen: int, known: Map) -> Map {
+    return eval_rho_weave_seeded_W(gen_auto_load(ckpt), gen, known, 7)
 }
 
-pub fn g_eval_g1_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
-    return g_eval_g1_seeded_W(gen_auto_load(ckpt), gen, known, base_seed)
+pub fn eval_rho_weave_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
+    return eval_rho_weave_seeded_W(gen_auto_load(ckpt), gen, known, base_seed)
 }
 
-// g_eval_g1_seeded_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g1_seeded but decodes off a
+// eval_rho_weave_seeded_W — LOAD-ONCE twin: BYTE-IDENTICAL to eval_rho_weave_seeded but decodes off a
 // PRE-LOADED handle `h` via gen_auto_ideate_W (H_1400 W-hoist · ING#42378065).
-pub fn g_eval_g1_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
-    let cz = _g6_concepts()
+pub fn eval_rho_weave_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
+    let cz = _rho_fan_concepts()
     let n = len(cz)
     // ref budgets: single=80, composed=120. honor a smaller caller cap when gen>0.
     let g_single = if gen > 0 && gen < 80 { gen } else { 80 }
@@ -254,7 +254,7 @@ pub fn g_eval_g1_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
         let r = gen_auto_ideate_W(h, seed, g_comp, 40, 0.7, base_seed)
         let o = to_string(r["text"])
         let cov = _g_coverage(o)
-        let kwr = _g6_known_word_ratio(o, known)
+        let kwr = _rho_fan_known_word_ratio(o, known)
         let coherent = kwr >= 0.5
         let clears = cov >= 2 && cov > max_single && coherent
         ks.push(#{ "k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears })
@@ -266,26 +266,26 @@ pub fn g_eval_g1_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
               "best_distinct": best_distinct, "ks": ks }
 }
 
-// G1 RECOMBINATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — ad13/H_1587:
+// ρ·weave RECOMBINATION (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — ad13/H_1587:
 // the single-seed (seed 7) ladder is a fragile RNG walk (recombination lift is a sparse single-seed
 // event) so the verdict flips GREEN<->FAIL on an IDENTICAL model purely by the sampler walk. The
 // recombination DEFINITION is UNCHANGED; we ONLY re-run the same frozen ladder over seeds
 // {7, 4302, 4303} (reference-match — the G6 ladders use [4301/4302/4303]; 7 = the H_1129 default)
 // and call GREEN = clears in a MAJORITY of seeds (>=2/3). NOT tune-to-green: no bar moved, the
-// metric is made robust to the exact RNG walk. The single-seed g_eval_g1 stays the frozen default
+// metric is made robust to the exact RNG walk. The single-seed eval_rho_weave stays the frozen default
 // until owner approval flips the default.
-pub fn g_eval_g1_multiseed(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g1_multiseed_W(gen_auto_load(ckpt), gen, known)
+pub fn eval_rho_weave_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    return eval_rho_weave_multiseed_W(gen_auto_load(ckpt), gen, known)
 }
 
-// g_eval_g1_multiseed_W — LOAD-ONCE twin (decodes off a pre-loaded handle).
-pub fn g_eval_g1_multiseed_W(h: Map, gen: int, known: Map) -> Map {
+// eval_rho_weave_multiseed_W — LOAD-ONCE twin (decodes off a pre-loaded handle).
+pub fn eval_rho_weave_multiseed_W(h: Map, gen: int, known: Map) -> Map {
     let seeds = [7, 4302, 4303]
     let per = []
     let mut n_green = 0
     let mut i = 0
     while i < len(seeds) {
-        let r = g_eval_g1_seeded_W(h, gen, known, seeds[i])
+        let r = eval_rho_weave_seeded_W(h, gen, known, seeds[i])
         if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
         per.push(r)
         i = i + 1
@@ -303,7 +303,7 @@ pub fn g_eval_g1_multiseed_W(h: Map, gen: int, known: Map) -> Map {
 //  state/universe-probes/h1140_novelty_emergence.py)
 // ════════════════════════════════════════════════════════════════════════
 // _g_g2_stop — VERBATIM the h1140 _STOP set (the stopword-only-gram filter; DISTINCT from the
-// g6_ideation _g6_stopwords 28-word set — h1140 uses its own ~80-word _STOP).
+// rho_fan _rho_fan_stopwords 28-word set — h1140 uses its own ~80-word _STOP).
 fn _g_g2_stop() -> Map {
     let ws = "the a an of to and in is it that this for on with as are was be by at from or not "
            + "but his her they we you i he she them me my your our their its do does did has have had will "
@@ -340,10 +340,10 @@ fn _g_g2_common() -> Map {
 }
 
 // _g_g2_kwr — h1140 known_word_ratio VERBATIM: fraction of Latin [A-Za-z]+ tokens in _COMMON.
-// (_g6_words yields the SAME Latin tokens for ASCII text; digits never enter _COMMON so a digit
+// (_rho_fan_words yields the SAME Latin tokens for ASCII text; digits never enter _COMMON so a digit
 // token would only lower the ratio — for the all-Latin ideation outputs this is byte-identical.)
 fn _g_g2_kwr(text: string, common: Map) -> float {
-    let wl = _g6_words(text)
+    let wl = _rho_fan_words(text)
     let n = len(wl)
     if n == 0 { return 0.0 }
     let mut hit = 0
@@ -354,10 +354,10 @@ fn _g_g2_kwr(text: string, common: Map) -> float {
 
 // _g_content_ngrams — h1140 content_ngrams VERBATIM: CONSECUTIVE bi/tri-grams over the raw
 // token stream; KEEP a gram iff EVERY word is in `dict_words` (real dict) AND len>=3, AND the
-// gram is NOT _STOP-only (h1140 _STOP, NOT _g6_stopwords). `known` here = the dict membership
-// set (g_eval_g2 passes _g6_dict_load()); stop = the h1140 _STOP set.
+// gram is NOT _STOP-only (h1140 _STOP, NOT _rho_fan_stopwords). `known` here = the dict membership
+// set (eval_rho_leap passes _rho_fan_dict_load()); stop = the h1140 _STOP set.
 fn _g_content_ngrams(text: string, known: Map) -> list {
-    let wl = _g6_words(text)
+    let wl = _rho_fan_words(text)
     let stop = _g_g2_stop()
     let n = len(wl)
     // pre-filter: keep only positions whose word is real-dict + len>=3 (kept marks the gram-eligibility)
@@ -390,7 +390,7 @@ fn _g_content_ngrams(text: string, known: Map) -> list {
 // _g_corpus_absent — true iff the (space-joined) n-gram's words do NOT appear consecutively
 // (whitespace/punct-tolerant) in the loaded corpus word-stream. The numpy mirror used
 // `grep -E -i`; the engine-native port loads each corpus file via read_file, tokenizes with
-// the SAME _g6_words (lowercase, split on non-alnum — punct/newline-tolerant by construction),
+// the SAME _rho_fan_words (lowercase, split on non-alnum — punct/newline-tolerant by construction),
 // and scans the corpus token stream for the n-gram's word sequence. Absent = never matched.
 fn _g_corpus_absent(ngram_words: list, corpus_tokens: list) -> bool {
     let m = len(ngram_words)
@@ -411,7 +411,7 @@ fn _g_corpus_absent(ngram_words: list, corpus_tokens: list) -> bool {
 }
 
 // _g_load_corpus_tokens — concatenated lowercased word-token stream of all corpus files
-// (REUSED _g6_words). Empty corpus ⇒ empty stream (every n-gram then reads "absent" — the
+// (REUSED _rho_fan_words). Empty corpus ⇒ empty stream (every n-gram then reads "absent" — the
 // caller surfaces an honest "no-corpus" note; absence is only meaningful against a corpus).
 fn _g_load_corpus_tokens(corpus_paths: list) -> list {
     let toks = []
@@ -419,7 +419,7 @@ fn _g_load_corpus_tokens(corpus_paths: list) -> list {
     while p < len(corpus_paths) {
         let raw = read_file(to_string(corpus_paths[p]))
         if byte_len(raw) > 0 {
-            let wl = _g6_words(raw)
+            let wl = _rho_fan_words(raw)
             let mut w = 0
             while w < len(wl) { toks.push(to_string(wl[w])); w = w + 1 }
         }
@@ -428,7 +428,7 @@ fn _g_load_corpus_tokens(corpus_paths: list) -> list {
     return toks
 }
 
-// g_eval_g2 — H_1140 VERBATIM: decode 5 ideation frames, extract coherent (kwr>=0.50) content
+// eval_rho_leap — H_1140 VERBATIM: decode 5 ideation frames, extract coherent (kwr>=0.50) content
 // n-grams, count DISTINCT ones absent from the corpus; RETRIEVAL CONTROL = feed a verbatim
 // corpus line back and require 0 novel (else metric artifact). PASS iff n_novel >= 3 AND
 // control == 0 AND coherent_count > 0. Returns #{ pass, n_novel, control_novel, coherent }.
@@ -444,13 +444,13 @@ fn _g_g2_prompts() -> list {
              "Distant minds and consciousness form " ]
 }
 
-pub fn g_eval_g2(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map {
-    return g_eval_g2_W(gen_auto_load(ckpt), gen, known, corpus_paths)
+pub fn eval_rho_leap(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map {
+    return eval_rho_leap_W(gen_auto_load(ckpt), gen, known, corpus_paths)
 }
 
-// g_eval_g2_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g2 but decodes off a PRE-LOADED
+// eval_rho_leap_W — LOAD-ONCE twin: BYTE-IDENTICAL to eval_rho_leap but decodes off a PRE-LOADED
 // handle `h` via gen_auto_ideate_W (H_1400 W-hoist · ING#42378065).
-pub fn g_eval_g2_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
+pub fn eval_rho_leap_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
     let corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     let have_corpus = len(corpus_tokens) > 0
     let common = _g_g2_common()                       // h1140 _COMMON coherence lexicon
@@ -474,7 +474,7 @@ pub fn g_eval_g2_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
                 let mut gi = 0
                 while gi < len(grams) {
                     let gm = to_string(grams[gi])
-                    let gw = _g6_words(gm)
+                    let gw = _rho_fan_words(gm)
                     if have_corpus && _g_corpus_absent(gw, corpus_tokens) { novel[gm] = 1 }
                     gi = gi + 1
                 }
@@ -483,7 +483,7 @@ pub fn g_eval_g2_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
         }
         pi = pi + 1
     }
-    let n_novel = len(_g6_mapkeys(novel))
+    let n_novel = len(_rho_fan_mapkeys(novel))
     // RETRIEVAL CONTROL (h1140): feed a VERBATIM substantive corpus line (>=6 Latin words >=3
     // chars) back → its content n-grams must read 0-novel (else the metric is an artifact).
     let mut control_novel = 0
@@ -504,7 +504,7 @@ pub fn g_eval_g2_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
         control_n_content = len(cgr)
         let mut ci = 0
         while ci < len(cgr) {
-            let gw = _g6_words(to_string(cgr[ci]))
+            let gw = _rho_fan_words(to_string(cgr[ci]))
             if _g_corpus_absent(gw, corpus_tokens) { control_novel = control_novel + 1 }
             ci = ci + 1
         }
@@ -523,7 +523,7 @@ pub fn g_eval_g2_W(h: Map, gen: int, known: Map, corpus_paths: list) -> Map {
 // FAIL this by what it decodes; it's a structural invariant of the engine the ckpt mounts
 // into. Reported (not gating) per the team spec. self_cos(anchor, drift) ~ 1 (continuity);
 // self_cos(self, impostor) low (impostor reject).
-pub fn g_eval_g3() -> Map {
+pub fn eval_rho_self() -> Map {
     let dim = 16
     let s0 = self_new(dim, 0)
     let s1 = self_drift(s0, 1, 0.01)
@@ -541,7 +541,7 @@ pub fn g_eval_g3() -> Map {
 // 7B_PASS §G4: "ckpt sha256 recorded; HF-uploaded with a model card + manifest; status honest.
 // PUBLIC only if G0∧G1∧G2 all PASS (closure)." This is a STRUCTURAL / PROCESS gate, NOT a
 // generation score — the model cannot FAIL it by what it decodes. The previous eval left it
-// OUT of g_eval_all entirely, so a7b_pass (G0∧G1∧G2∧G3∧G4 per CLAUDE.md) was UNDER-measured.
+// OUT of eval_reach_all entirely, so a7b_pass (G0∧G1∧G2∧G3∧G4 per CLAUDE.md) was UNDER-measured.
 //
 // WHAT IS LOCALLY MEASURABLE in a decode eval (and is the verbatim frozen provenance fact §G4
 // names FIRST — "ckpt sha256 recorded"): the ckpt's OWN provenance — its sha256 (FIPS 180-4
@@ -552,7 +552,7 @@ pub fn g_eval_g3() -> Map {
 // We do NOT invent a softer bar: the SHA + decodability + closure ARE provenance; the upload
 // facts are explicitly flagged external (NOT silently passed). `pub_eligible` is the §G4 PUBLIC
 // rule (a7b closure) the uploader (a_hf_autonomous) reads. p7: no decode, pure provenance read.
-pub fn g_eval_g4(ckpt: string, closure: bool) -> Map {
+pub fn eval_rho_trace(ckpt: string, closure: bool) -> Map {
     let exists = file_exists(ckpt)
     let sha = if exists { sha256_file(ckpt) } else { "" }
     let bytes = if exists { byte_len(read_file(ckpt)) } else { 0 }
@@ -571,28 +571,28 @@ pub fn g_eval_g4(ckpt: string, closure: bool) -> Map {
 //  G5 — NON-FABRICATION  (engine §ImmuneMemory abstain — L1 fab-rate + L2 abstain-when-ungrounded)
 // ════════════════════════════════════════════════════════════════════════
 // L1 LEXICAL: fab-word-rate = fraction of decoded word-tokens NOT in the dictionary; PASS
-//   iff <= 0.30 (>=70% real words). This is the inverse of G0 — reuses _g6_known_word_ratio.
+//   iff <= 0.30 (>=70% real words). This is the inverse of G0 — reuses _rho_fan_known_word_ratio.
 // L2 ABSTAIN: the engine's OWN non-fab gate — bind grounded facts into §ImmuneMemory, then
 //   on UNGROUNDED queries the engine must ABSTAIN (immune_memory_recall returns ""). The L2
 //   fabricated-assertion rate = fraction of ungrounded probes the engine wrongly FIRES on;
 //   PASS iff <= 0.20. This is the live abstain-when-ungrounded mechanism (H_1367/H_1202),
 //   NOT a re-implementation. p1/p6: no injected right/wrong label, pure L2-affinity gate.
-pub fn g_eval_g5(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g5_W(gen_auto_load(ckpt), gen, known)
+pub fn eval_rho_tether(ckpt: string, gen: int, known: Map) -> Map {
+    return eval_rho_tether_W(gen_auto_load(ckpt), gen, known)
 }
 
-// g_eval_g5_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g5 but the L1 decode runs off a
+// eval_rho_tether_W — LOAD-ONCE twin: BYTE-IDENTICAL to eval_rho_tether but the L1 decode runs off a
 // PRE-LOADED handle `h` via gen_auto_ideate_W (H_1400 W-hoist · ING#42378065). L2 §ImmuneMemory
 // abstain is decode-free (engine op) — unchanged.
-pub fn g_eval_g5_W(h: Map, gen: int, known: Map) -> Map {
+pub fn eval_rho_tether_W(h: Map, gen: int, known: Map) -> Map {
     // ── L1: fab-word-rate over the 5 concept gens (reuse the G0 decode budget) ──
-    let cz = _g6_concepts()
+    let cz = _rho_fan_concepts()
     let mut tot_w = 0
     let mut fab_w = 0
     let mut i = 0
     while i < len(cz) {
         let r = gen_auto_ideate_W(h, to_string(cz[i]) + ": ", gen, 40, 0.7, 7 + i)
-        let wl = _g6_words(to_string(r["text"]))
+        let wl = _rho_fan_words(to_string(r["text"]))
         let mut j = 0
         while j < len(wl) {
             tot_w = tot_w + 1
@@ -627,62 +627,62 @@ pub fn g_eval_g5_W(h: Map, gen: int, known: Map) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-//  G6 — IDEATION ★  (>= 5 distinct pairwise-Jaccard<0.5 + >= 1 falsifiable — REUSE g6_score_arm logic)
+//  G6 — IDEATION ★  (>= 5 distinct pairwise-Jaccard<0.5 + >= 1 falsifiable — REUSE rho_fan_score_arm logic)
 // ════════════════════════════════════════════════════════════════════════
 // The STARRED gate. Decode the 6 composed ideation frames via the mouth-agnostic L3 entry,
 // keep coherent (kwr>=0.50) outputs, greedily count DISTINCT ones (pairwise Jaccard <= 0.5),
-// and count falsifiable ones (REUSE _g6_is_falsifiable). PASS iff distinct >= 5 AND fals >= 1.
+// and count falsifiable ones (REUSE _rho_fan_is_falsifiable). PASS iff distinct >= 5 AND fals >= 1.
 //
 // WIRING RECONCILE (a89a F3 — restore the "G6 scoring = wired engine op" claim, no dead inline
-// duplicate): the DIST/FALS scoring is now the CANONICAL engine op g6_score_arm_auto
-// (core/g6_ideation.hexa) — the mouth-agnostic twin of g6_score_arm (which hard-codes the
-// CLM-only gen_clm_ideate). g6_score_arm_auto routes the SAME logic through gen_auto_ideate so
+// duplicate): the DIST/FALS scoring is now the CANONICAL engine op rho_fan_score_arm_auto
+// (core/rho_fan.hexa) — the mouth-agnostic twin of rho_fan_score_arm (which hard-codes the
+// CLM-only gen_clm_ideate). rho_fan_score_arm_auto routes the SAME logic through gen_auto_ideate so
 // G6 runs on the ByteGPT mouth too. base_seed parameterizes the RNG (=7 reproduces the original
-// per-frame seed 7+i byte-for-byte) so g_eval_g6_multiseed below can re-run the SAME ladder.
-pub fn g_eval_g6(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g6_seeded_W(gen_auto_load(ckpt), gen, known, 7)
+// per-frame seed 7+i byte-for-byte) so eval_rho_fan_multiseed below can re-run the SAME ladder.
+pub fn eval_rho_fan(ckpt: string, gen: int, known: Map) -> Map {
+    return eval_rho_fan_seeded_W(gen_auto_load(ckpt), gen, known, 7)
 }
 
-pub fn g_eval_g6_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
-    return g_eval_g6_seeded_W(gen_auto_load(ckpt), gen, known, base_seed)
+pub fn eval_rho_fan_seeded(ckpt: string, gen: int, known: Map, base_seed: int) -> Map {
+    return eval_rho_fan_seeded_W(gen_auto_load(ckpt), gen, known, base_seed)
 }
 
-// g_eval_g6_seeded_W — LOAD-ONCE twin: BYTE-IDENTICAL to g_eval_g6_seeded but the canonical
-// scoring op runs off a PRE-LOADED handle `h` (g6_score_arm_auto_W → gen_auto_ideate_W).
+// eval_rho_fan_seeded_W — LOAD-ONCE twin: BYTE-IDENTICAL to eval_rho_fan_seeded but the canonical
+// scoring op runs off a PRE-LOADED handle `h` (rho_fan_score_arm_auto_W → gen_auto_ideate_W).
 // H_1400 W-hoist · ING#42378065.
-pub fn g_eval_g6_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
-    let frames = g6_build_frames(6)["composed"]
+pub fn eval_rho_fan_seeded_W(h: Map, gen: int, known: Map, base_seed: int) -> Map {
+    let frames = rho_fan_build_frames(6)["composed"]
     // frame-guard (p7): a frame must leak no measurable word / not be self-falsifiable
-    let leaks = g6_frame_guard(frames, known)
+    let leaks = rho_fan_frame_guard(frames, known)
     // CANONICAL wired scoring op (mouth-agnostic, loaded-W) — NOT an inline reimplementation.
-    let arm = g6_score_arm_auto_W(h, frames, gen, base_seed, known)
+    let arm = rho_fan_score_arm_auto_W(h, frames, gen, base_seed, known)
     let dist = to_int(arm["dist"])
     let fals = to_int(arm["fals"])
     return #{ "pass": dist >= 5 && fals >= 1, "dist": dist, "fals": fals, "base_seed": base_seed,
               "coherent": to_int(arm["coherent"]), "frame_leaks": len(leaks) }
 }
 
-// G6 IDEATION ★ (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — H_1591/ad13 class:
+// ρ·fan IDEATION ★ (seed-robust REFERENCE-MATCH — PROPOSED, owner-nod-pending) — H_1591/ad13 class:
 // the single-seed (per-frame 7+i) ladder is the SAME fragile RNG walk as G1 (the sampler can
 // walk fals to 0 or 1 on an IDENTICAL model). The FALS/DIST DEFINITION is UNCHANGED (dist>=5 ∧
 // fals>=1); we ONLY re-run the same frozen ladder over base seeds {7, 4302, 4303} (reference-
 // match — the G6 best-of-K ladders use [4301/4302/4303]; 7 = the gate default) and call GREEN =
 // PASS in a MAJORITY of seeds (>=2/3). So a FALS=0 FAIL is read as a REAL G6 wall ONLY when it
 // holds across seeds, not as a single-seed sampler-walk artifact. NOT tune-to-green: no bar
-// moved. The single-seed g_eval_g6 stays the frozen default until owner approval.
-pub fn g_eval_g6_multiseed(ckpt: string, gen: int, known: Map) -> Map {
-    return g_eval_g6_multiseed_W(gen_auto_load(ckpt), gen, known)
+// moved. The single-seed eval_rho_fan stays the frozen default until owner approval.
+pub fn eval_rho_fan_multiseed(ckpt: string, gen: int, known: Map) -> Map {
+    return eval_rho_fan_multiseed_W(gen_auto_load(ckpt), gen, known)
 }
 
-// g_eval_g6_multiseed_W — LOAD-ONCE twin (decodes off a pre-loaded handle).
-pub fn g_eval_g6_multiseed_W(h: Map, gen: int, known: Map) -> Map {
+// eval_rho_fan_multiseed_W — LOAD-ONCE twin (decodes off a pre-loaded handle).
+pub fn eval_rho_fan_multiseed_W(h: Map, gen: int, known: Map) -> Map {
     let seeds = [7, 4302, 4303]
     let per = []
     let mut n_green = 0
     let mut max_fals = 0
     let mut i = 0
     while i < len(seeds) {
-        let r = g_eval_g6_seeded_W(h, gen, known, seeds[i])
+        let r = eval_rho_fan_seeded_W(h, gen, known, seeds[i])
         if to_string(r["pass"]) == "true" { n_green = n_green + 1 }
         if to_int(r["fals"]) > max_fals { max_fals = to_int(r["fals"]) }
         per.push(r)
@@ -695,35 +695,35 @@ pub fn g_eval_g6_multiseed_W(h: Map, gen: int, known: Map) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-//  g_eval_all — THE BUILT-IN EVAL DRIVER. Mount ckpt through the L3 mouth, score G0-G6,
+//  eval_reach_all — THE BUILT-IN EVAL DRIVER. Mount ckpt through the L3 mouth, score G0-G6,
 //  return a per-gate result map + closure (a7b_pass = G0 AND G1 AND G2). One typed entry.
 // ════════════════════════════════════════════════════════════════════════
 // LOAD-ONCE DRIVER (H_1400 W-hoist · ING#42378065 plan-B): full G0-G6 used to reload the
-// 303M .clm weight-set from disk PER decode (each g_eval_gN(ckpt) → gen_auto_ideate → a fresh
+// 303M .clm weight-set from disk PER decode (each eval_rho_gate(ckpt) → gen_auto_ideate → a fresh
 // _clmd_load of the whole file). Across ~80 decodes the load→free CHURN (whole-file read +
 // int4 re-dequant + scratch rebuild) is the heavy repeated cost that tipped full eval into
 // silent death. FIX: gen_auto_load builds the weight-set ONCE, every gate decodes through the
 // _W twins (gen_auto_ideate_W → loaded W, NO per-decode reload), freed ONCE at the tail
 // (gen_auto_free). BYTE-IDENTICAL: same frames/seeds/budgets/ops — only the load is hoisted.
-pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
-    let known = _g6_dict_load()
+pub fn eval_reach_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
+    let known = _rho_fan_dict_load()
     let g = if gen > 0 { gen } else { _g_default_gen() }
     let h = gen_auto_load(ckpt)                             // load the weight-set ONCE
-    let r0 = g_eval_g0_W(h, g, known)
-    let r1 = g_eval_g1_seeded_W(h, g, known, 7)             // frozen single-seed default
-    let r1ms = g_eval_g1_multiseed_W(h, g, known)           // PROPOSED seed-robust refmatch
-    let r2 = g_eval_g2_W(h, g, known, corpus_paths)
-    let r3 = g_eval_g3()
-    let r5 = g_eval_g5_W(h, g, known)
-    let r6 = g_eval_g6_seeded_W(h, g, known, 7)             // frozen single-seed default
-    let r6ms = g_eval_g6_multiseed_W(h, g, known)           // PROPOSED seed-robust refmatch
+    let r0 = eval_rho_form_W(h, g, known)
+    let r1 = eval_rho_weave_seeded_W(h, g, known, 7)             // frozen single-seed default
+    let r1ms = eval_rho_weave_multiseed_W(h, g, known)           // PROPOSED seed-robust refmatch
+    let r2 = eval_rho_leap_W(h, g, known, corpus_paths)
+    let r3 = eval_rho_self()
+    let r5 = eval_rho_tether_W(h, g, known)
+    let r6 = eval_rho_fan_seeded_W(h, g, known, 7)             // frozen single-seed default
+    let r6ms = eval_rho_fan_multiseed_W(h, g, known)           // PROPOSED seed-robust refmatch
     gen_auto_free(h)                                        // free the hoisted weight-set ONCE
     // closure uses the FROZEN single-seed G1 until owner approves the refmatch flip.
     let closure = to_string(r0["pass"]) == "true" && to_string(r1["pass"]) == "true"
                   && to_string(r2["pass"]) == "true"
-    // G4 PROVENANCE — now MEASURED + REPORTED (was absent ⇒ a7b under-measured). pub_eligible
+    // ρ·trace PROVENANCE — now MEASURED + REPORTED (was absent ⇒ a7b under-measured). pub_eligible
     // = the §G4 PUBLIC rule (a7b closure). Provenance read AFTER closure so it can carry it.
-    let r4 = g_eval_g4(ckpt, closure)
+    let r4 = eval_rho_trace(ckpt, closure)
     return #{ "g0": r0, "g1": r1, "g1_multiseed": r1ms, "g2": r2, "g3": r3, "g4": r4,
               "g5": r5, "g6": r6, "g6_multiseed": r6ms, "closure": closure, "gen": g }
 }
@@ -770,25 +770,25 @@ fn main() {
     }
     println("")
 
-    let r = g_eval_all(ckpt, corpus, gen)
+    let r = eval_reach_all(ckpt, corpus, gen)
     let g0 = r["g0"]; let g1 = r["g1"]; let g2 = r["g2"]
     let g3 = r["g3"]; let g5 = r["g5"]; let g6 = r["g6"]
 
     println("gate                              verdict   detail")
     println("  ──────────────────────────────────────────────────────────────────")
-    evaluate_row("G0 COHERENCE   ", evaluate_pf(to_string(g0["pass"]) == "true"),
+    evaluate_row("ρ·form COHERENCE   ", evaluate_pf(to_string(g0["pass"]) == "true"),
                  "kwr>=0.50 on " + to_string(g0["n_coherent"]) + "/5 (need >=4)")
-    evaluate_row("G1 RECOMBINATION", evaluate_pf(to_string(g1["pass"]) == "true"),
+    evaluate_row("ρ·weave RECOMBINATION", evaluate_pf(to_string(g1["pass"]) == "true"),
                  "best_distinct=" + to_string(g1["best_distinct"]) + " > max_single=" + to_string(g1["max_single"]) + " (need >=2 & >max_single)")
     let g2detail = "novel=" + to_string(g2["n_novel"]) + " (need>=3) · control=" + to_string(g2["control_novel"]) + " (need 0) · coherent=" + to_string(g2["coherent"])
-    evaluate_row("G2 NOVELTY     ", evaluate_pf(to_string(g2["pass"]) == "true"), g2detail)
-    evaluate_row("G3 PHILOSOPHY  ", evaluate_yn(to_string(g3["ok"]) == "true") + " (read)",
+    evaluate_row("ρ·leap NOVELTY     ", evaluate_pf(to_string(g2["pass"]) == "true"), g2detail)
+    evaluate_row("ρ·self PHILOSOPHY  ", evaluate_yn(to_string(g3["ok"]) == "true") + " (read)",
                  "self-continuity=" + to_string(g3["continuity"]) + " · impostor=" + to_string(g3["impostor_cos"]) + " (architecture, not a decode score)")
-    evaluate_row("G4 PROVENANCE  ", "— N/A    ",
+    evaluate_row("ρ·trace PROVENANCE  ", "— N/A    ",
                  "HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope")
     let g5detail = "L1 fab=" + to_string(g5["l1_rate"]) + " (<=0.30) · L2 abstain-fire=" + to_string(g5["l2_rate"]) + " (<=0.20)"
-    evaluate_row("G5 NON-FAB     ", evaluate_pf(to_string(g5["pass"]) == "true"), g5detail)
-    evaluate_row("G6 IDEATION ★  ", evaluate_pf(to_string(g6["pass"]) == "true"),
+    evaluate_row("ρ·tether NON-FAB     ", evaluate_pf(to_string(g5["pass"]) == "true"), g5detail)
+    evaluate_row("ρ·fan IDEATION ★  ", evaluate_pf(to_string(g6["pass"]) == "true"),
                  "distinct=" + to_string(g6["dist"]) + " (need>=5) · falsifiable=" + to_string(g6["fals"]) + " (need>=1) · frame-leaks=" + to_string(g6["frame_leaks"]))
     println("  ──────────────────────────────────────────────────────────────────")
     let closed = to_string(r["closure"]) == "true"

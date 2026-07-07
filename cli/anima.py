@@ -24,7 +24,7 @@ if __name__ == "__main__":
 # `anima train`→cli/train.py (sub-process), so there is ONE installed `anima` command
 # whose subcommands fan out to the symmetric twins. `anima evaluate <ckpt>` scores the
 # full ρ-AXON reach battery (former G0-G6 · reach standard cli/rho_axon.py) via
-# cli/evaluate.py's in-file g_eval_all (the scorers folded in from
+# cli/evaluate.py's in-file eval_reach_all (the scorers folded in from
 # the former core/g_gates.py module) — byte-identical to the hexa anima evaluate.
 #
 # This py entry is torch-free and gauge-free — it only dispatches; the evaluate twin
@@ -131,7 +131,7 @@ def anima_train_mode(argv):
 # reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
 def anima_evaluate_mode(argv):
     # --py is a no-op here (this IS the py twin — evaluate already runs the numpy
-    # g_eval_all engine), but strip it so cli/evaluate.py sees only <ckpt> [--corpus …]
+    # eval_reach_all engine), but strip it so cli/evaluate.py sees only <ckpt> [--corpus …]
     # [--gen N] (it reads ckpt as positional argv[0]). Keeps `anima evaluate --py <clm>`
     # byte-parity across the hexa launcher (which dispatches here on --py) and this twin.
     want_det = ("--det" in argv) or ("--deterministic" in argv)

@@ -20,7 +20,7 @@
 
 import "core/engine_cli.hexa"
 import "core/brain.hexa"
-import "core/g6_ideation.hexa"   // H_1381 ρ·fan ideation wire-in (divergent coherent production · frozen bar = former G6; the g6_* detectors are the reused frozen-bar identifiers)
+import "core/rho_fan.hexa"   // H_1381 ρ·fan ideation wire-in (divergent coherent production · frozen bar = former G6; the g6_* detectors are the reused frozen-bar identifiers)
 import "core/generator.hexa"     // H_1390 BPE-on-jamo morphology scoreloop wire-in (cases 116-119)
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
@@ -1615,66 +1615,66 @@ fn main() {
 
     // ── H_1381 ρ·fan IDEATION ★ WIRE-IN (former G6 · cases 102-106) ─────────────────────────────────
     // Deterministic engine-native proof of the ρ·fan (former G6) scaffold wire-in — NO slow decode (the
-    // 303M/ConvMoE forward is bounded only inside g6_score_arm; these cases test the
+    // 303M/ConvMoE forward is bounded only inside rho_fan_score_arm; these cases test the
     // MECHANISM: frames, frozen detector, frame-guard, and the seeded best-of-K sampler on
     // SYNTHETIC logits). The full M-bar re-score on a live ckpt is a separate bounded probe
     // (.verdicts/1381_g6_ideation_wire/) — never run unbounded in the smoke (FREEZE (ii)).
-    let g6_known = _g6_dict_load()
+    let rho_fan_known = _rho_fan_dict_load()
 
     // case 102 : DETECTOR FROZEN — the VERBATIM H_1305 falsifiability detector calibrates
     //   10/10 on the frozen 5-pos/5-neg set (structural FORM only, NOT loosened, p7).
     if _assert_i("case_102_g6_detector_calibration_10of10", 10,
-                 g6_detector_calibration(g6_known)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+                 rho_fan_detector_calibration(rho_fan_known)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // case 103 : FRAMES — 6 composed frames built; the 6th is a GENUINELY DISTINCT (0,2)
     //   pair, NOT a duplicate of frame 0 (the COUNT fix — defeats the seed-collapse).
-    let g6_fr = g6_build_frames(6)
-    let g6_comp = g6_fr["composed"]
+    let rho_fan_fr = rho_fan_build_frames(6)
+    let rho_fan_comp = rho_fan_fr["composed"]
     if _assert_b("case_103_g6_six_frames_sixth_distinct", true,
-                 len(g6_comp) == 6 && to_string(g6_comp[5]) != to_string(g6_comp[0]))
+                 len(rho_fan_comp) == 6 && to_string(rho_fan_comp[5]) != to_string(rho_fan_comp[0]))
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // case 104 : FRAME-GUARD CLEAN — no composed frame carries a MEASURABLE-set word and
     //   no frame is _is_falsifiable on its own (so the detector fires on the EMITTED idea,
     //   never on the scaffold — the +1 falsifiable is EARNED, p7).
-    let g6_leaks = g6_frame_guard(g6_comp, g6_known)
-    if _assert_i("case_104_g6_frame_guard_clean", 0, len(g6_leaks))
+    let rho_fan_leaks = rho_fan_frame_guard(rho_fan_comp, rho_fan_known)
+    if _assert_i("case_104_g6_frame_guard_clean", 0, len(rho_fan_leaks))
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // case 105 : SAMPLER DETERMINISTIC + IN-TOPK — the engine's seeded top-k sampler draws
     //   the SAME byte for the same seed (reproducible verdict) and NEVER outside the top-k
     //   set over 40 draws (the sampling regime is sound).
-    let g6_st = g6_sampler_selftest()
-    let g6_det = g6_st["deterministic"]; let g6_intk = g6_st["in_topk"]; let g6_div = g6_st["diverse"]
+    let rho_fan_st = rho_fan_sampler_selftest()
+    let rho_fan_det = rho_fan_st["deterministic"]; let rho_fan_intk = rho_fan_st["in_topk"]; let rho_fan_div = rho_fan_st["diverse"]
     if _assert_b("case_105_g6_sampler_deterministic_and_in_topk", true,
-                 g6_det && g6_intk) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+                 rho_fan_det && rho_fan_intk) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // case 106 : BEST-OF-K DIVERSITY — the three best-of-K rng offsets [0,+101,+202] are NOT
     //   all identical (the DEPTH lever): argmax decode would be a no-op for best-of-K; the
     //   seeded sampler gives best-of-K a real search over the model's own samples.
-    if _assert_b("case_106_g6_best_of_k_diverse", true, g6_div)
+    if _assert_b("case_106_g6_best_of_k_diverse", true, rho_fan_div)
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // case 107 : H_6186 ρ·fan-BIND GATE (former G6 · form-priming resistance + frozen regression 0) — the
-    //   additive `_g6_is_falsifiable_topic_bound` AND-conjoins topic-bind onto the FROZEN
-    //   `_g6_is_falsifiable` (deterministic, NO model forward). A "targeted" claim carries the
+    //   additive `_rho_fan_is_falsifiable_topic_bound` AND-conjoins topic-bind onto the FROZEN
+    //   `_rho_fan_is_falsifiable` (deterministic, NO model forward). A "targeted" claim carries the
     //   falsifiable FORM and binds concept 0 → passes for its own pair (0,1) but is FILTERED
     //   for a wrong pair (2,3) — exactly the form-priming (SHUF) case the frozen gate misses.
     //   A frozen-negative stays negative through the gate (the bind term never LOOSENS the bar).
-    let g6b_targ = "if consciousness increases, the emit rate measured at the boundary rises"
-    let g6b_neg  = "consciousness is a beautiful mystery of the mind"
+    let rho_fanb_targ = "if consciousness increases, the emit rate measured at the boundary rises"
+    let rho_fanb_neg  = "consciousness is a beautiful mystery of the mind"
     if _assert_b("case_107_g6_bind_gate_formpriming_resistant", true,
                  // frozen term unchanged: targeted is falsifiable, negative is not
-                 _g6_is_falsifiable(g6b_targ, g6_known)
-              && !_g6_is_falsifiable(g6b_neg, g6_known)
+                 _rho_fan_is_falsifiable(rho_fanb_targ, rho_fan_known)
+              && !_rho_fan_is_falsifiable(rho_fanb_neg, rho_fan_known)
                  // topic-bind: concept 0 hit → bound for pair (0,1), NOT bound for (2,3)
-              && _g6_topic_bound(g6b_targ, 0, 1)
-              && !_g6_topic_bound(g6b_targ, 2, 3)
+              && _rho_fan_topic_bound(rho_fanb_targ, 0, 1)
+              && !_rho_fan_topic_bound(rho_fanb_targ, 2, 3)
                  // additive gate: passes its own pair, FILTERED on wrong pair (form-priming)
-              && _g6_is_falsifiable_topic_bound(g6b_targ, 0, 1, g6_known)
-              && !_g6_is_falsifiable_topic_bound(g6b_targ, 2, 3, g6_known)
+              && _rho_fan_is_falsifiable_topic_bound(rho_fanb_targ, 0, 1, rho_fan_known)
+              && !_rho_fan_is_falsifiable_topic_bound(rho_fanb_targ, 2, 3, rho_fan_known)
                  // gate never exceeds frozen: frozen-negative stays negative even if topic hits
-              && !_g6_is_falsifiable_topic_bound(g6b_neg, 0, 1, g6_known))
+              && !_rho_fan_is_falsifiable_topic_bound(rho_fanb_neg, 0, 1, rho_fan_known))
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // ── (k) SKILLSTORE — agent-tool repertoire LEARNS via mitosis (H_1378 R2 / H_1382) ──
