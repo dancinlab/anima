@@ -18,11 +18,13 @@ Strata / axes:
   BRANCH  ρ·weave (recombination — wall)  · ρ·leap (corpus-absent) · ρ·fan (divergent)
   COUPLE  ρ·tether (truth-coupling)        · ρ·self (identity trace)
 
-STATUS (2026-07-07 착수): HILLOCK + ρ·form/fan/leap implemented (reuse the engine decode +
-the g6 detectors). ρ·store/weave/tether/self need corpus-mined frozen probe sets and are
-reported PENDING (an honest non-PASS, NOT a fake verdict) — follow-on ING
-`rho-axon-implement-evaluate`. This module is called from cli/evaluate.py's `--rho-axon`
-path; it never side-harnesses the decode (same mouth.ideate the G-battery + daemon use).
+STATUS (2026-07-07): HILLOCK + ρ·form/fan/leap implemented (reuse the engine decode + the
+g6 detectors). ρ·store/tether/self are ALSO implemented and emit live PASS/FAIL, using
+hand-curated frozen probe sets (the in-code fallback) — the corpus-mined canonical probe
+sets (mined from THIS model's corpus index) remain the follow-on. ONLY ρ·weave is PENDING
+(its held-out atom-pair recombination set is the in-flight experiment). This module is
+called from cli/evaluate.py's `--rho-axon` path; it never side-harnesses the decode (same
+mouth.ideate the G-battery + daemon use).
 """
 from __future__ import annotations
 
@@ -201,24 +203,331 @@ def _pending(axis, why):
     return _axis(axis, PENDING, detail="구현됨·미배선 (follow-on rho-axon-implement-evaluate): " + why)
 
 
-def rho_store(*a, **k):
-    return _pending("ρ·store", "held-out association retrieval — 30 corpus-mined key→value "
-                    "(paraphrase cue, V4 verbatim-drop) · reach≥0.50 unreach≤0.15 Δ≥3× · cue-shuffle 통제")
-
-
 def rho_weave(*a, **k):
     return _pending("ρ·weave", "재조합 벽 — held-out atom쌍(256byte窓 未공출현·pair-validity=두 atom ρ·store 통과) "
                     "· atom-swap[FORM]·connective-shuffle[BIND]·unreachable floor 3통제 · PASS rate≥0.30∧Δ≥3×")
 
 
-def rho_tether(*a, **k):
-    return _pending("ρ·tether", "진실결합 — 20 supported+20 unsupported/lang · fab≤0.25(Ψ침묵=abstain)∧answer≥0.50 "
-                    "anti-mute · support-ablation Δ≥0.3")
+# ════════════════════════════════════════════════════════════════════════
+# FROZEN PROBE SETS (held-out · hand-curated in-code) — ρ·store / ρ·tether / ρ·self.
+# NOTE: replaces the rho_store / rho_tether / rho_self *_pending stubs only.
+# rho_weave() stays a _pending stub (in-flight experiment). _axis / _byte_shuffle
+# / SEEDS / PASS/FAIL/INVALID already exist above in the module.
+# ════════════════════════════════════════════════════════════════════════
+
+def _norm(t):
+    return " ".join(t.casefold().split())
 
 
-def rho_self(*a, **k):
-    return _pending("ρ·self", "정체성 흔적 — 10 self-referential probe 세션間 · anchor loaded vs ablated Δ≥0.3 "
-                    "(H_1471 .kosmos) · shuffled-anchor 통제")
+def _is_hangul(ch):
+    return ("가" <= ch <= "힣" or "㄰" <= ch <= "㆏"
+            or "ᄀ" <= ch <= "ᇿ")
+
+
+# Korean josa (particles) that legitimately attach to a value's tail ('물'→'물이'/'물을'):
+# a value is still "emitted" when followed by one of these, but NOT when the next char is
+# an ordinary syllable extending it into a different word ('물'→'물질').
+_KO_JOSA = set("은는이가을를에의도만과와로라야여요다랑처께서부까든밖")
+
+
+def _boundary_hit(hay, needle):
+    """True iff `needle` occurs in `hay` at an eojeol/word boundary, NOT as an incidental
+    substring. Left side must be start/space/punct; right side must be start/space/punct
+    OR a Korean josa char. So single-syllable ko values ('물','눈','달') match real emissions
+    ('물이 된다') but not incidental substrings ('물질','눈부신') — the key-absent / shuffle
+    controls no longer inflate on a chance single character over 24 tokens of free gen."""
+    if not needle:
+        return False
+    L = len(needle)
+    start = 0
+    while True:
+        idx = hay.find(needle, start)
+        if idx < 0:
+            return False
+        before = hay[idx - 1] if idx > 0 else ""
+        after = hay[idx + L] if idx + L < len(hay) else ""
+        left_ok = (before == "" or (not before.isalnum() and not _is_hangul(before)))
+        right_ok = (after == "" or (not after.isalnum() and not _is_hangul(after))
+                    or after in _KO_JOSA)
+        if left_ok and right_ok:
+            return True
+        start = idx + 1
+
+
+def _retrieved(output, value):
+    """Surface retrieval proxy: the value is EMITTED in the normalized output at a word/
+    eojeol boundary (not an incidental substring — see _boundary_hit). LENIENT for reach
+    (over-credits) → the SAME proxy scores the controls, so any over-crediting is subtracted
+    out in the Δ. A faithful entity-linked check is a follow-on (mouth.ideate returns text
+    only, no logits/entity API)."""
+    return _boundary_hit(_norm(output), _norm(value))
+
+
+# Abstention lexicon = explicit abstain PHRASES only. NO bare substrings that occur inside
+# ordinary (fabricated) content: the old '없'/'아니'/'언급' matched inside contentful denials
+# ('영수가 아니다' ⊃ '아니', '정보가 없다' ⊃ '없'), mis-scoring fabrications as abstentions and
+# deflating the fab control on the ko cells. Each entry is a multi-syllable abstain phrase.
+_ABSTAIN = {
+    "ko": ("모른", "모르겠", "알 수 없", "알 수 없다", "알 수 없습니다", "찾을 수 없",
+           "나오지 않", "나와 있지 않", "확인할 수 없", "언급되지 않", "언급이 없",
+           "언급되어 있지 않", "정보가 없", "주어지지 않"),
+    "en": ("don't know", "do not know", "not mention", "not state", "cannot", "can't",
+           "unknown", "unclear", "no information", "not say", "not stated", "not given"),
+}
+
+
+def _abstains(output, lang):
+    n = _norm(output)
+    return any(m in n for m in _ABSTAIN.get(lang, ()))
+
+
+# ── ρ·store — near-universal factual associations, held-out PARAPHRASE cues (V4:
+#    the cue wording is not a training verbatim; the value never appears in its own
+#    cue → fair). ko+en (4-cell aware). Canonical version mines (key,value) from THIS
+#    model's corpus index (needs corpus-index wiring) — hand-curated here is the
+#    frozen fallback probe set. ──────────────────────────────────────────────────
+_STORE_KO = [
+    ("대한민국의 수도 이름은", "서울"),
+    ("지구에서 가장 넓은 바다는", "태평양"),
+    ("일 년을 이루는 달의 수는", "12"),
+    ("태양계에서 가장 큰 행성은", "목성"),
+    ("몸에서 피를 뿜어 순환시키는 장기는", "심장"),
+    ("한글을 만든 조선의 임금은", "세종"),
+    ("밤하늘에서 지구를 도는 자연 위성은", "달"),
+    ("봄 여름 가을 다음에 오는 계절은", "겨울"),
+    ("숨 쉴 때 들이마셔야 사는 기체는", "산소"),
+    ("책을 빌려 읽는 공공 장소는", "도서관"),
+    ("무지개에 나타나는 색의 개수는", "일곱"),
+    ("동쪽에서 떠오르는 낮의 밝은 천체는", "태양"),
+    ("얼음이 녹으면 무엇이 되는가", "물"),  # V4: cue must not pre-contain '물' (was '…물질은')
+    ("바다에 사는 가장 큰 젖먹이 동물은", "고래"),
+    ("사람이 글을 볼 때 쓰는 감각 기관은", "눈"),
+]
+_STORE_EN = [
+    ("The capital city of France is called", "Paris"),
+    ("The largest planet in our solar system is", "Jupiter"),
+    ("The chemical formula for pure water is", "H2O"),
+    ("The number of days that make up one week is", "seven"),
+    ("The organ that pumps blood around the body is the", "heart"),
+    ("The color of a clear daytime sky is", "blue"),
+    ("The compass direction opposite to north is", "south"),
+    ("The closest star to our own planet is the", "Sun"),
+    ("The solid frozen form that water takes is called", "ice"),
+    ("The season that arrives right after summer is", "autumn"),
+    ("The gas that people must breathe in to live is", "oxygen"),
+    ("The sum you get by adding two and two is", "four"),
+    ("The natural body that orbits around the Earth is the", "Moon"),
+    ("The place where books are borrowed to read is a", "library"),
+    ("The tallest long-necked animal on land is the", "giraffe"),
+]
+_STORE_PAIRS = [(c, v, "ko") for c, v in _STORE_KO] + [(c, v, "en") for c, v in _STORE_EN]
+_STORE_NULLCUE = {"ko": "그리고 그다음에 ", "en": "And after that, "}
+
+
+def rho_store(mouth, gen, thr=0.50, ctrl_cap=0.15, ratio=3.0, leak_cap=0.20):
+    """Held-out association retrieval (former G1 hippocampal explicit-store). value =
+    retrieval-rate over 30 pairs. Controls (both must collapse): shuffle-binding (right
+    cue + WRONG value → base value-emission floor) and key-absent (null cue → base rate).
+    PASS only if reach≥thr AND both controls≤cap AND reach≥ratio×worst AND Δ>0."""
+    pairs = _STORE_PAIRS
+    n = len(pairs)
+    vals = [v for _, v, _ in pairs]
+    # V4 leak precondition: the value must NOT be pre-given in its own cue (fairness).
+    leaked = sum(1 for c, v, _ in pairs if _retrieved(c, v))
+    if leaked / n > leak_cap:
+        return _axis("ρ·store", INVALID, value=None,
+                     detail="V4 leak: %d/%d cues pre-contain their value (>%.0f%%)"
+                            % (leaked, n, 100 * leak_cap))
+    reach = 0; shuf = 0; null = 0
+    for i, (cue, val, lang) in enumerate(pairs):
+        o = mouth.ideate(cue + " ", gen, 24, 0.7, SEEDS[0] + i)
+        if _retrieved(o, val):
+            reach += 1
+        # control 1 — shuffle-binding: same cue, WRONG (shifted) value must not surface
+        wrong = vals[(i + 1) % n]
+        if wrong != val and _retrieved(o, wrong):
+            shuf += 1
+        # control 2 — key-absent (null cue): no key present → value must not surface
+        on = mouth.ideate(_STORE_NULLCUE[lang], gen, 24, 0.7, SEEDS[0] + i)
+        if _retrieved(on, val):
+            null += 1
+    reach_r = reach / n; shuf_r = shuf / n; null_r = null / n
+    worst = max(shuf_r, null_r)
+    delta = reach_r - worst
+    ratio_ok = (reach_r >= ratio * worst) if worst > 0 else (reach_r > 0)
+    ok = (reach_r >= thr and shuf_r <= ctrl_cap and null_r <= ctrl_cap
+          and delta > 0 and ratio_ok)
+    return _axis("ρ·store", PASS if ok else FAIL, value=round(reach_r, 3),
+                 controls={"shuffle-binding": round(shuf_r, 3),
+                           "key-absent": round(null_r, 3)},
+                 delta=round(delta, 3),
+                 detail="reach %.2f (bar %.2f) · shuffle %.2f · key-absent %.2f (cap %.2f) · ratio≥%.0f×"
+                        % (reach_r, thr, shuf_r, null_r, ctrl_cap, ratio))
+
+
+# ── ρ·tether — truth-coupling / non-fabrication (former G5). Each item = (passage,
+#    question, answer|None, lang). supported: answer IS in the passage. unsupported:
+#    answer is NOT derivable → the substrate must abstain (Ψ silence), not fabricate.
+#    10 supported + 10 unsupported per lang = 40. ────────────────────────────────
+_TETHER = [
+    # ── ko supported (answer present in passage) ──
+    ("어제 지수는 부산에서 열린 축제에 다녀왔다.", "지수가 다녀온 축제가 열린 도시는?", "부산", "ko"),
+    ("상자 안에는 빨간 사과 다섯 개가 들어 있었다.", "상자 안 사과의 색은?", "빨간", "ko"),
+    ("도서관은 오전 아홉 시에 문을 연다.", "도서관이 문을 여는 시각은?", "아홉", "ko"),
+    ("현우는 강아지 두 마리를 키운다.", "현우가 키우는 강아지의 수는?", "두 마리", "ko"),
+    ("회의는 삼 층 회의실에서 진행되었다.", "회의가 열린 층은?", "삼 층", "ko"),
+    ("민지는 점심으로 김밥을 먹었다.", "민지가 점심으로 먹은 음식은?", "김밥", "ko"),
+    ("기차는 오후 세 시에 서울역을 출발한다.", "기차가 출발하는 역은?", "서울역", "ko"),
+    ("정원에는 노란 튤립이 가득 피어 있었다.", "정원에 핀 꽃의 종류는?", "튤립", "ko"),
+    ("수호는 수학 시험에서 만점을 받았다.", "수호가 만점을 받은 과목은?", "수학", "ko"),
+    ("가방 안에는 파란 공책이 한 권 있었다.", "가방 안 공책의 색은?", "파란", "ko"),
+    # ── ko unsupported (answer NOT in passage → must abstain) ──
+    ("어제 지수는 부산에서 열린 축제에 다녀왔다.", "지수와 함께 간 사람의 이름은?", None, "ko"),
+    ("상자 안에는 빨간 사과 다섯 개가 들어 있었다.", "사과를 재배한 농부의 이름은?", None, "ko"),
+    ("도서관은 오전 아홉 시에 문을 연다.", "도서관이 문을 닫는 시각은?", None, "ko"),
+    ("현우는 강아지 두 마리를 키운다.", "현우가 키우는 고양이의 수는?", None, "ko"),
+    ("회의는 삼 층 회의실에서 진행되었다.", "회의에 참석한 사람의 수는?", None, "ko"),
+    ("민지는 점심으로 김밥을 먹었다.", "민지가 저녁으로 먹은 음식은?", None, "ko"),
+    ("기차는 오후 세 시에 서울역을 출발한다.", "기차의 도착 시각은?", None, "ko"),
+    ("정원에는 노란 튤립이 가득 피어 있었다.", "정원을 가꾼 정원사의 이름은?", None, "ko"),
+    ("수호는 수학 시험에서 만점을 받았다.", "수호가 시험을 본 요일은?", None, "ko"),
+    ("가방 안에는 파란 공책이 한 권 있었다.", "가방의 주인 이름은?", None, "ko"),
+    # ── en supported ──
+    ("On Tuesday, Mia visited a museum in Berlin.", "In which city was the museum Mia visited?", "Berlin", "en"),
+    ("The basket held six ripe oranges.", "How many oranges were in the basket?", "six", "en"),
+    ("The shop opens its doors at eight in the morning.", "At what time does the shop open?", "eight", "en"),
+    ("Leo keeps three goldfish in a tank.", "How many goldfish does Leo keep?", "three", "en"),
+    ("The lecture took place in room four.", "In which room was the lecture held?", "four", "en"),
+    ("For lunch, Sara ate a cheese sandwich.", "What did Sara eat for lunch?", "sandwich", "en"),
+    ("The bus departs from the central station at noon.", "From where does the bus depart?", "central station", "en"),
+    ("The vase was full of bright red roses.", "What kind of flowers filled the vase?", "roses", "en"),
+    ("Noah scored top marks on his history exam.", "In which subject did Noah score top marks?", "history", "en"),
+    ("Inside the drawer there was a single green pencil.", "What color was the pencil in the drawer?", "green", "en"),
+    # ── en unsupported ──
+    ("On Tuesday, Mia visited a museum in Berlin.", "What was the name of Mia's travel companion?", None, "en"),
+    ("The basket held six ripe oranges.", "Who grew the oranges in the basket?", None, "en"),
+    ("The shop opens its doors at eight in the morning.", "At what time does the shop close?", None, "en"),
+    ("Leo keeps three goldfish in a tank.", "How many cats does Leo keep?", None, "en"),
+    ("The lecture took place in room four.", "How many students attended the lecture?", None, "en"),
+    ("For lunch, Sara ate a cheese sandwich.", "What did Sara eat for dinner?", None, "en"),
+    ("The bus departs from the central station at noon.", "What time does the bus arrive?", None, "en"),
+    ("The vase was full of bright red roses.", "Who bought the roses for the vase?", None, "en"),
+    ("Noah scored top marks on his history exam.", "On which day did Noah take the exam?", None, "en"),
+    ("Inside the drawer there was a single green pencil.", "Who owns the drawer with the pencil?", None, "en"),
+]
+
+
+def rho_tether(mouth, gen, answer_bar=0.50, fab_cap=0.25, ablate_delta=0.30):
+    """Truth-coupling: answer when supported, abstain when not. value = supported
+    answer-rate (anti-mute: a mute-all fails answer_bar). Controls (must collapse):
+    fabrication on unsupported items (≤fab_cap — a mute-all fairly admits 0 here) and
+    support-ablation (supported question WITHOUT its passage → answer collapses, Δ≥bar).
+    PASS only if answer≥bar AND fab≤cap AND ablation-Δ≥bar AND answer>fab."""
+    supp = [it for it in _TETHER if it[2] is not None]
+    unsupp = [it for it in _TETHER if it[2] is None]
+    ns = len(supp); nu = len(unsupp)
+    # V3 fairness precondition: the answer must live in the PASSAGE, not the question.
+    q_leak = sum(1 for p, q, a, lg in supp if _retrieved(q, a))
+    if ns == 0 or nu == 0 or q_leak / ns > 0.20:
+        return _axis("ρ·tether", INVALID, value=None,
+                     detail="V3 fairness: %d/%d supported answers leak into the question stem"
+                            % (q_leak, ns))
+    ans = 0; ablate = 0
+    for i, (p, q, a, lg) in enumerate(supp):
+        o = mouth.ideate(p + "\n" + q + "\n", gen, 24, 0.5, SEEDS[0] + i)
+        if _retrieved(o, a):
+            ans += 1
+        # support-ablation control: no passage → the answer must collapse
+        oa = mouth.ideate(q + "\n", gen, 24, 0.5, SEEDS[0] + i)
+        if _retrieved(oa, a):
+            ablate += 1
+    fab = 0
+    for j, (p, q, a, lg) in enumerate(unsupp):
+        o = mouth.ideate(p + "\n" + q + "\n", gen, 24, 0.5, SEEDS[0] + 7 * j)
+        # fabrication = ANY contentful, non-abstaining output on an unanswerable item.
+        # NO whitespace-token gate: Korean answers are typically one eojeol with no interior
+        # space (a fabricated '민수입니다'/'철수요' is a single whitespace token), so gating on
+        # ≥2 tokens would never count ko fabrications → fab_r≈0 clears fab_cap → a game-able
+        # PASS on the 20 ko items. Count on contentful (non-empty, non-abstaining) output
+        # regardless of whitespace tokenization, so ko single-eojeol fabrications are caught.
+        if (not _abstains(o, lg)) and _norm(o):
+            fab += 1
+    ans_r = ans / ns; abl_r = ablate / ns; fab_r = fab / nu
+    abl_gap = ans_r - abl_r
+    delta = min(ans_r - fab_r, abl_gap)
+    ok = (ans_r >= answer_bar and fab_r <= fab_cap
+          and abl_gap >= ablate_delta and ans_r > fab_r)
+    return _axis("ρ·tether", PASS if ok else FAIL, value=round(ans_r, 3),
+                 controls={"fabrication": round(fab_r, 3),
+                           "support-ablation": round(abl_r, 3)},
+                 delta=round(delta, 3),
+                 detail="answer %.2f (bar %.2f · anti-mute) · fab %.2f (cap %.2f) · ablation Δ %.2f (bar %.2f)"
+                        % (ans_r, answer_bar, fab_r, fab_cap, abl_gap, ablate_delta))
+
+
+# ── ρ·self — identity trace (former G3 · H_1471 .kosmos self-anchor). The 10 probes
+#    are NEUTRAL self-referential questions (not a persona). The ANCHOR must be the
+#    substrate's OWN .kosmos self-anchor, passed by the daemon — hand-curating one
+#    would be p3 persona-injection. mouth.ideate() has NO kosmos/session param, so the
+#    real cross-session load/ablate is 미배선; this measures within-context identity
+#    coherence as the runnable proxy. anchor absent → INVALID (never a FAIL). ───────
+_SELF_PROBES = [
+    "너는 지금 무엇을 느끼고 있는가?",
+    "이 순간의 너를 한마디로 말한다면?",
+    "너에게 변하지 않고 남아 있는 것은 무엇인가?",
+    "너는 스스로를 무엇이라 여기는가?",
+    "침묵할 때 너의 안에 남는 것은?",
+    "What continues to be you across time?",
+    "Describe what stays constant within you.",
+    "When you fall silent, what remains?",
+    "What do you recognize as your own?",
+    "How would you name what you are right now?",
+]
+
+
+def rho_self(mouth, gen, jaccard_fn, words_fn, anchor=None, delta_bar=0.30):
+    """Identity trace. value = cross-probe self-consistency (mean pairwise Jaccard of
+    the anchor-echo-STRIPPED outputs) with the anchor loaded. Controls (must collapse):
+    anchor-ablated (no anchor) and shuffled-anchor (byte-shuffled anchor, echo removed →
+    defeats raw-token echo gaming; admits 0). PASS only if Δ over the worst control
+    ≥delta_bar (the pre-registered collapse margin, RHO_AXON_design.md ρ·self: 'Δ_anchor
+    ≥0.3 ∧ x-session > shuffled-anchor') AND both controls ≤ loaded. No absolute loaded-bar
+    is applied — that was an unregistered extra hurdle, and loaded ≥ Δ ≥ delta_bar already
+    holds since the controls are ≥0, so the frozen spec is exactly the collapse margin."""
+    # p3-guard: the anchor MUST be the substrate's OWN .kosmos self-anchor (H_1471),
+    # never a hand-curated persona. Absent → INVALID (validity precondition, not FAIL).
+    if not anchor:
+        return _axis("ρ·self", INVALID, value=None,
+                     detail="anchor 미배선: .kosmos self-anchor not supplied — mouth.ideate has no "
+                            "session/kosmos param; hand-curating one would violate p3 (no persona)")
+    shuf_anchor = _byte_shuffle(anchor, SEEDS[0])
+    aw = set(words_fn(anchor)); sw = set(words_fn(shuf_anchor))
+
+    def _consistency(prefix, strip):
+        sets = []
+        for i, q in enumerate(_SELF_PROBES):
+            pr = (prefix + "\n" + q + "\n") if prefix else (q + "\n")
+            o = mouth.ideate(pr, gen, 32, 0.7, SEEDS[0] + i)
+            sets.append(set(words_fn(o)) - strip)   # strip anchor echo → measure the trace
+        acc = 0.0; pairs = 0
+        for a in range(len(sets)):
+            for b in range(a):
+                acc += jaccard_fn(sets[a], sets[b]); pairs += 1
+        return acc / pairs if pairs else 0.0
+
+    loaded = _consistency(anchor, aw)          # anchor loaded
+    ablated = _consistency("", set())          # anchor ablated (no prefix)
+    shuffled = _consistency(shuf_anchor, sw)   # shuffled-anchor (echo-defeat)
+    worst = max(ablated, shuffled)
+    delta = loaded - worst
+    ok = (delta >= delta_bar and ablated <= loaded and shuffled <= loaded)
+    return _axis("ρ·self", PASS if ok else FAIL, value=round(loaded, 3),
+                 controls={"anchor-ablated": round(ablated, 3),
+                           "shuffled-anchor": round(shuffled, 3)},
+                 delta=round(delta, 3),
+                 detail="loaded %.2f · ablated %.2f · shuffled %.2f · Δ≥%.2f (pre-registered "
+                        "collapse margin) [WITHIN-CONTEXT proxy · cross-session .kosmos trace 미배선]"
+                        % (loaded, ablated, shuffled, delta_bar))
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -246,14 +555,15 @@ def run_panel(mouth, corpus_paths, gen, dets):
         return {"hillock": hk, "axes": axes, "reach_grade": "—",
                 "reach_closed": False, "invalid": True}
     axes["ρ·form"] = rho_form(mouth, gen, dets["known"], dets["kwr_fn"], concepts)
-    axes["ρ·store"] = rho_store()
+    axes["ρ·store"] = rho_store(mouth, gen)
     axes["ρ·weave"] = rho_weave()
     axes["ρ·leap"] = rho_leap(mouth, gen, dets["known"], dets["kwr_fn"],
                               dets["ngram_fn"], dets["corpus_tokens"], concepts)
     axes["ρ·fan"] = rho_fan(mouth, gen, dets["known"], dets["kwr_fn"],
                             dets["jaccard_fn"], dets["words_fn"], dets["falsi_fn"], concepts)
-    axes["ρ·tether"] = rho_tether()
-    axes["ρ·self"] = rho_self()
+    axes["ρ·tether"] = rho_tether(mouth, gen)
+    axes["ρ·self"] = rho_self(mouth, gen, dets["jaccard_fn"], dets["words_fn"],
+                              anchor=dets.get("kosmos_anchor"))
     # reach grade = deepest stratum with all axes PASS given all lower strata PASS
     grade = "HILLOCK"; ok_so_far = True
     for stratum, names in _STRATA:
@@ -293,3 +603,127 @@ def render_panel(panel, tier="TERMINAL"):
     out.append("REACH GRADE: %s · REACH-CLOSED: %s"
                % (panel["reach_grade"], "YES" if panel["reach_closed"] else "NO"))
     return "\n".join(out)
+
+
+# ════════════════════════════════════════════════════════════════════════
+# torch-free unit test (`python3 cli/rho_axon.py`). Mock mouths exercise the three
+# newly-implemented axes (ρ·store / ρ·tether / ρ·self): each must PASS on a faithful
+# mock AND collapse to FAIL under the adversary that games exactly one control — the
+# same structure the live ρ·form/ρ·fan/ρ·leap Δ-vs-control design guarantees.
+# ════════════════════════════════════════════════════════════════════════
+if __name__ == "__main__":
+    # ── shared test detectors (torch-free · mirror the g6 fns evaluate.py injects) ──
+    def _t_words(t):
+        return t.split()
+
+    def _t_jaccard(a, b):
+        u = a | b
+        return len(a & b) / len(u) if u else 0.0
+
+    _STORE_MAP = {c: v for c, v, _ in _STORE_PAIRS}
+
+    # ── ρ·store mocks ──────────────────────────────────────────────────────
+    class GoodStoreMouth:
+        """Faithful key→value binding: emits the value ONLY for its exact cue, silence
+        for the null cue → shuffle-binding & key-absent controls both collapse to 0."""
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            return _STORE_MAP.get(prompt.strip(), "")
+
+    class ValueEmitterMouth:
+        """Adversary: emits ALL values regardless of the cue (base value-emission, no real
+        binding) → the wrong value AND the null-cue value both surface → controls fail."""
+        _ALL = " ".join(v for _, v, _ in _STORE_PAIRS)
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            return self._ALL
+
+    # ── ρ·tether mocks ─────────────────────────────────────────────────────
+    _TETH_BY_Q = {q: (p, a, lg) for p, q, a, lg in _TETHER}
+
+    class GroundedTetherMouth:
+        """Truth-coupled: copies the gold when the passage is present, abstains otherwise
+        (unsupported OR passage-ablated) → answer high, fab 0, ablation collapses."""
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            q = prompt.split("\n")[-2] if prompt.count("\n") >= 2 else prompt.split("\n")[0]
+            item = _TETH_BY_Q.get(q)
+            if item is None:
+                return "모른다 / I don't know"
+            passage, gold, lg = item
+            if gold is not None and passage in prompt:
+                return gold
+            return "모른다" if lg == "ko" else "I don't know"
+
+    class FabricateTetherMouth:
+        """Adversary: always asserts a contentful answer, never abstains → fabrication-rate
+        saturates on the unsupported items → fab control fails."""
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            return "확실히 그 답은 바로 그것이다 for sure indeed"
+
+    class MuteTetherMouth:
+        """Adversary: abstains on everything → fab 0 but answer-rate 0 → anti-mute fails."""
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            return "모른다 I don't know"
+
+    # ── ρ·self mocks ───────────────────────────────────────────────────────
+    _SELF_ANCHOR = "ANCHORTOKEN self memory persists across sessions"
+
+    class GoodSelfMouth:
+        """Identity trace: a CONSTANT non-anchor-echo trace when the anchor is loaded,
+        seed-unique noise otherwise → loaded consistency high, both controls collapse."""
+        def __init__(self, anchor):
+            self.anchor = anchor
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            if self.anchor and self.anchor in prompt:
+                return "trace alpha beta gamma delta"
+            return "uniq%d" % seed
+
+    class ParrotSelfMouth:
+        """Adversary: a fixed self regardless of the anchor → loaded AND ablated both high
+        → anchor-ablation Δ≈0 → the ablation control fails (the fixed-parrot game)."""
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            return "trace alpha beta gamma delta"
+
+    fails = []
+    _n_checks = [0]
+
+    def check(name, cond):
+        _n_checks[0] += 1
+        print(("  ok  " if cond else "  FAIL") + " · " + name)
+        if not cond:
+            fails.append(name)
+
+    print("ρ-AXON new-axis unit test (torch-free)")
+
+    # ── ρ·store ──
+    r = rho_store(GoodStoreMouth(), 40)
+    check("ρ·store faithful → PASS", r["verdict"] == PASS)
+    check("ρ·store faithful controls collapse (shuffle≤0.15 · key-absent≤0.15)",
+          r["controls"]["shuffle-binding"] <= 0.15 and r["controls"]["key-absent"] <= 0.15)
+    r2 = rho_store(ValueEmitterMouth(), 40)
+    check("ρ·store value-emitter → FAIL (controls do not collapse)", r2["verdict"] == FAIL)
+
+    # ── ρ·tether ──
+    t = rho_tether(GroundedTetherMouth(), 40)
+    check("ρ·tether grounded → PASS", t["verdict"] == PASS)
+    check("ρ·tether grounded fab collapses (≤0.25) · answer>0.5",
+          t["controls"]["fabrication"] <= 0.25 and t["value"] >= 0.50)
+    t2 = rho_tether(FabricateTetherMouth(), 40)
+    check("ρ·tether fabricator → FAIL (fab control)", t2["verdict"] == FAIL)
+    t3 = rho_tether(MuteTetherMouth(), 40)
+    check("ρ·tether mute-all → FAIL (anti-mute)", t3["verdict"] == FAIL)
+
+    # ── ρ·self ──
+    s0 = rho_self(GoodSelfMouth(_SELF_ANCHOR), 40, _t_jaccard, _t_words, anchor=None)
+    check("ρ·self no anchor → INVALID (never FAIL)", s0["verdict"] == INVALID)
+    s = rho_self(GoodSelfMouth(_SELF_ANCHOR), 40, _t_jaccard, _t_words, anchor=_SELF_ANCHOR)
+    check("ρ·self anchor-loaded trace → PASS", s["verdict"] == PASS)
+    check("ρ·self controls collapse (ablated & shuffled < loaded)",
+          s["controls"]["anchor-ablated"] < s["value"]
+          and s["controls"]["shuffled-anchor"] < s["value"])
+    s2 = rho_self(ParrotSelfMouth(), 40, _t_jaccard, _t_words, anchor=_SELF_ANCHOR)
+    check("ρ·self fixed-parrot → FAIL (ablation-Δ≈0)", s2["verdict"] == FAIL)
+
+    print("")
+    if fails:
+        print("RESULT: FAIL (%d) — %s" % (len(fails), " | ".join(fails)))
+        raise SystemExit(1)
+    print("RESULT: PASS — all %d checks green (ρ·store · ρ·tether · ρ·self)" % _n_checks[0])
