@@ -60,7 +60,7 @@ fn _cg_ideate_single(concepts: map, name: string) -> [string] {
 // Stage B: mouth realizes the JOINT utterance C from the merged composite.
 //   compositional — block-concat both parent fragments + a joint connector.
 //   mouthfloor    — surface ONLY the dominant (first) concept (models the real
-//                   g_eval_g1 floor where composed coverage never beats max_single).
+//                   eval_rho_weave floor where composed coverage never beats max_single).
 fn _cg_realize_joint(arm: string, frag_a: [string], frag_b: [string]) -> [string] {
     if arm == "compositional" {
         let mut out = []

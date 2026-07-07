@@ -11,7 +11,7 @@ production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-product
 | hexa 파일 (현 단일 SSOT) | 폐기된 py 미러 | 폐기 전 parity |
 |---|---|---|
 | `decode.hexa` (unified CONV+BYTE mouth) | ~~`decode.py`~~ (was `clm_decode.py` + `bytegpt_decode.py`) | byte-parity ≤~2e-16 (CONV) · sha 4e7145fe (BYTE) |
-| `g6_ideation.hexa` | ~~`g6_ideation.py`~~ | byte-parity (`ρ·fan` ideation scoring ops · former G6) |
+| `rho_fan.hexa` | ~~`rho_fan.py`~~ | byte-parity (`ρ·fan` ideation scoring ops · former G6) |
 | `generator.hexa` | ~~`generator.py`~~ | byte-parity (양 mouth byte-identical) |
 | `pure_field.hexa` | ~~`pure_field.py`~~ | byte-parity ~2e-16 |
 | `brain.hexa` | ~~`brain.py`~~ | byte-parity |
@@ -21,7 +21,7 @@ production import-closure 엔진은 `core/*.hexa` 단일이다. 과거 2-product
 
 > CollectivePool = faithful IIT-4 `big_phi`(proxy 아님) byte-exact (hexa `core/engine_cli.hexa` 단일). 권위 측정 = `anima eval` hexa 단일진입. 과거 parity 오라클 `archive/state/core_2prod_py_parity/` + 은퇴된 `parity_gate.py`(→`archive/state/py_retire_archive/defunct_parity_tooling/`)는 검증 이력으로 보존.
 
-> **G0-G6 스코어러 fold (측정=단일파일):** 과거 별도 모듈 `core/g_gates.{hexa,py}`(G0-G6 `g_eval_all` 드라이버)는 측정 단일진입 `cli/evaluate.{hexa,py}` 로 **흡수**됐다(2026-06-30, 로직 byte-동일 이동). 측정 = `cli/evaluate.{hexa,py}` 한 파일 — `g_gates` 이름은 폐기. `core/`는 여전히 디코드 mouth(`generator`/`decode` = `unified CONV+BYTE decoder, was clm_decode + bytegpt_decode`)+G6 채점 op(`g6_ideation`)을 소유하고, `evaluate`가 이들을 import 해 채점한다(generator L3 단일진입 불변).
+> **G0-G6 스코어러 fold (측정=단일파일):** 과거 별도 모듈 `core/g_gates.{hexa,py}`(G0-G6 `eval_reach_all` 드라이버)는 측정 단일진입 `cli/evaluate.{hexa,py}` 로 **흡수**됐다(2026-06-30, 로직 byte-동일 이동). 측정 = `cli/evaluate.{hexa,py}` 한 파일 — `g_gates` 이름은 폐기. `core/`는 여전히 디코드 mouth(`generator`/`decode` = `unified CONV+BYTE decoder, was clm_decode + bytegpt_decode`)+G6 채점 op(`rho_fan`)을 소유하고, `evaluate`가 이들을 import 해 채점한다(generator L3 단일진입 불변).
 
 ## 규칙
 

@@ -15,7 +15,7 @@ recombination wall · frozen bar = former G1):
 Both share the SAME instance stream / RNG at a fixed --seed, so `derivtrace` and `flat`
 built with the same seed are CONTENT-MATCHED (only data-format varies = clean 2-arm control).
 
-Concept seeds default to g6_ideation cz[] (the frozen ρ·weave / former-G1 gate concepts) so the held-out
+Concept seeds default to rho_fan cz[] (the frozen ρ·weave / former-G1 gate concepts) so the held-out
 pair generalizes to the engine-native ρ·weave bar (former G1) memorization-free. Override via --concepts FILE
 (JSON: [{"seed": "...", "kw": ["w1","w2",...]}]).
 
@@ -27,7 +27,7 @@ import json
 import random
 import sys
 
-# ── frozen default concepts = g6_ideation cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
+# ── frozen default concepts = rho_fan cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
 DEFAULT_SEEDS = [
     "consciousness arises from cells",
     "tension ripples between distant minds",

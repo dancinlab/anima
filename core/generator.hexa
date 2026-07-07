@@ -847,7 +847,7 @@ pub fn gen_auto_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
 // routes a composed ideation frame through the engine's seeded top-k sampler
 // (clm_decode_topk_sampled) so the ρ·fan best-of-K DEPTH lever yields DIVERSE candidates
 // (argmax = a no-op for best-of-K). Stays inside the SINGLE generator L3 .clm slot
-// (a_core_engine_map) — g6_ideation.hexa imports THIS, never clm_decode directly. HARD-
+// (a_core_engine_map) — rho_fan.hexa imports THIS, never clm_decode directly. HARD-
 // BOUNDED by `max_new` (caller passes a small budget — FREEZE (ii), no unbounded decode).
 pub fn gen_clm_ideate(ckpt_path: string, seed: string, max_new: int,
                       top_k: int, temp: float, seed_rng: int) -> Map {
@@ -914,7 +914,7 @@ pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
 // LOAD-ONCE EVAL HANDLE (H_1400 W-hoist at the eval-DRIVER level · ING#42378065 plan-B).
 // ------------------------------------------------------------------------
 // gen_auto_load + gen_auto_ideate_W are the mouth-agnostic W-hoist twins of
-// gen_auto_backend + gen_auto_ideate. A whole-eval driver (cli/evaluate.hexa::g_eval_all)
+// gen_auto_backend + gen_auto_ideate. A whole-eval driver (cli/evaluate.hexa::eval_reach_all)
 // runs DOZENS of decodes across the ρ-AXON reach battery (former G0-G6); the path-keyed gen_auto_ideate reloads the full
 // 2-3GB .clm weight-set from disk PER decode (clm_decode_topk_sampled → _clmd_load +
 // _clmd_weights_free every call). Even though each load is freed, the per-decode
@@ -974,11 +974,11 @@ pub fn gen_auto_ideate_W(h: Map, seed: string, max_new: int,
     return gen_clm_ideate_W(W, seed, max_new, top_k, temp, seed_rng)
 }
 
-// gen_g6_sampler_selftest — H_1381: exercise the engine's seeded top-k sampler on a
+// gen_rho_fan_sampler_selftest — H_1381: exercise the engine's seeded top-k sampler on a
 // SYNTHETIC peaked logits vector (NO model forward — fast, deterministic, smoke-safe).
 // Returns #{ deterministic, diverse, in_topk } proving the DEPTH-lever mechanism. Lives
-// here (generator owns the clm_decode slot) so g6_ideation/smoke need no clm_decode import.
-pub fn gen_g6_sampler_selftest() -> Map {
+// here (generator owns the clm_decode slot) so rho_fan/smoke need no clm_decode import.
+pub fn gen_rho_fan_sampler_selftest() -> Map {
     let v = 6
     let lg = t_zeros(v)
     t_set(lg, 0, 1.0); t_set(lg, 1, 3.0); t_set(lg, 2, 2.0)

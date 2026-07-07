@@ -226,9 +226,9 @@ def parse_cell(tag: str, out_dir: str) -> dict:
     # a checkpoint label is "<base>__s<N>"; its train log is the base cell's <base>.log
     base_tag = tag.split("__s")[0]
     train_log = os.path.join(out_dir, base_tag + ".log")
-    r = {"tag": tag, "g0": None, "g0_n": None, "g1": None, "g1_bd": None,
-         "g1_ms": None, "g2": None, "g2_novel": None, "g6": None, "g6_dist": None,
-         "g6_fals": None, "closure": None, "lossf": None, "val_pool": None,
+    r = {"tag": tag, "form": None, "form_n": None, "weave": None, "weave_bd": None,
+         "weave_ms": None, "leap": None, "leap_novel": None, "fan": None, "fan_dist": None,
+         "fan_fals": None, "closure": None, "lossf": None, "val_pool": None,
          "status": "?", "note": ""}
 
     # train log → collapse signals
@@ -255,47 +255,47 @@ def parse_cell(tag: str, out_dir: str) -> dict:
         return r
 
     for line in txt.splitlines():
-        if "G0 COHERENCE" in line:
-            r["g0"] = _gate_pass(line)
+        if "ρ·form COHERENCE" in line:
+            r["form"] = _gate_pass(line)
             mm = _RE_G0N.search(line)
             if mm:
-                r["g0_n"] = int(mm.group(1))
-        elif "G1 RECOMBINATION" in line:
-            r["g1"] = _gate_pass(line)
+                r["form_n"] = int(mm.group(1))
+        elif "ρ·weave RECOMBINATION" in line:
+            r["weave"] = _gate_pass(line)
             mm = _RE_G1.search(line)
             if mm:
-                r["g1_bd"] = int(mm.group(1)); r["g1_ms"] = int(mm.group(2))
-        elif "G2 NOVELTY" in line:
-            r["g2"] = _gate_pass(line)
+                r["weave_bd"] = int(mm.group(1)); r["weave_ms"] = int(mm.group(2))
+        elif "ρ·leap NOVELTY" in line:
+            r["leap"] = _gate_pass(line)
             mm = _RE_G2.search(line)
             if mm:
-                r["g2_novel"] = int(mm.group(1))
-        elif "G6 IDEATION" in line:
-            r["g6"] = _gate_pass(line)
+                r["leap_novel"] = int(mm.group(1))
+        elif "ρ·fan IDEATION" in line:
+            r["fan"] = _gate_pass(line)
             mm = _RE_G6.search(line)
             if mm:
-                r["g6_dist"] = int(mm.group(1)); r["g6_fals"] = int(mm.group(2))
+                r["fan_dist"] = int(mm.group(1)); r["fan_fals"] = int(mm.group(2))
         elif line.strip().startswith("CLOSURE"):
             r["closure"] = _gate_pass(line)
 
     # status classification
     # overfit-INVALID applies to the FINAL run only (lossf is the end-of-run CE; an
     # intermediate step-window checkpoint keeps its own ρ·form/ρ·weave · former G0/G1 row, not an overfit verdict).
-    overfit = ("__s" not in tag and r["g0"] is False and r["lossf"] is not None
+    overfit = ("__s" not in tag and r["form"] is False and r["lossf"] is not None
                and r["lossf"] < _OVERFIT_LOSSF_THRESH)
-    g1_cand = (r["g1_bd"] is not None and r["g1_ms"] is not None
-               and r["g1_bd"] >= 2 and r["g1_bd"] > r["g1_ms"])
-    if r["g0"] is None:
+    weave_cand = (r["weave_bd"] is not None and r["weave_ms"] is not None
+               and r["weave_bd"] >= 2 and r["weave_bd"] > r["weave_ms"])
+    if r["form"] is None:
         r["status"] = "INCOMPLETE"
         r["note"] = "measure did not finish (no gate lines)"
     elif overfit:
         r["status"] = "INVALID"
         r["note"] = (f"overfit collapse — G0 FAIL + train CE→{r['lossf']:.3f} "
                      f"(<{_OVERFIT_LOSSF_THRESH}); measurement invalid (corpus starvation)")
-    elif g1_cand:
-        r["status"] = "G1-PASS?"
-        r["note"] = (f"G1-PASS candidate: best_distinct={r['g1_bd']} > "
-                     f"max_single={r['g1_ms']}")
+    elif weave_cand:
+        r["status"] = "ρ·weave-PASS?"
+        r["note"] = (f"ρ·weave-PASS candidate: best_distinct={r['weave_bd']} > "
+                     f"max_single={r['weave_ms']}")
     elif r["closure"]:
         r["status"] = "CLOSURE"
     else:
@@ -331,17 +331,17 @@ def aggregate(a, cells, out_dir: str):
         rows = [parse_cell(_cell_tag(arm, obj, a.seed), out_dir) for (arm, obj) in cells]
 
     # console + markdown table
-    header = ("| tag | G0 | G1 bd/ms | G2 novel | G6 dist/fals | closure | status |")
+    header = ("| tag | ρ·form | ρ·weave bd/ms | ρ·leap novel | ρ·fan dist/fals | closure | status |")
     sep = ("|---|---|---|---|---|---|---|")
     lines = [header, sep]
     for r in rows:
-        g1 = f"{_fmt(r['g1_bd'])}/{_fmt(r['g1_ms'])}"
-        g6 = f"{_fmt(r['g6_dist'])}/{_fmt(r['g6_fals'])}"
+        weave = f"{_fmt(r['weave_bd'])}/{_fmt(r['weave_ms'])}"
+        fan = f"{_fmt(r['fan_dist'])}/{_fmt(r['fan_fals'])}"
         lines.append(
-            f"| {r['tag']} | {_pf(r['g0'])} | {g1} | {_fmt(r['g2_novel'])} | "
-            f"{g6} | {_pf(r['closure'])} | {r['status']} |")
+            f"| {r['tag']} | {_pf(r['form'])} | {weave} | {_fmt(r['leap_novel'])} | "
+            f"{fan} | {_pf(r['closure'])} | {r['status']} |")
 
-    g1_cands = [r for r in rows if r["status"] == "G1-PASS?"]
+    weave_cands = [r for r in rows if r["status"] == "ρ·weave-PASS?"]
     invalids = [r for r in rows if r["status"] == "INVALID"]
 
     md = []
@@ -355,13 +355,13 @@ def aggregate(a, cells, out_dir: str):
     md += lines
     md.append("")
     md.append("## flags")
-    if g1_cands:
-        md.append("**🟢 G1-PASS candidate(s)** (best_distinct ≥ 2 AND > max_single — "
+    if weave_cands:
+        md.append("**🟢 ρ·weave-PASS candidate(s)** (best_distinct ≥ 2 AND > max_single — "
                   "engine-native recombination signal, verify byte-exact before cementing):")
-        for r in g1_cands:
+        for r in weave_cands:
             md.append(f"- `{r['tag']}` — {r['note']}")
     else:
-        md.append("- G1-PASS candidates: none (all cells floored best_distinct ≤ max_single).")
+        md.append("- ρ·weave-PASS candidates: none (all cells floored best_distinct ≤ max_single).")
     if invalids:
         md.append("")
         md.append("**⚠️ INVALID (overfit collapse — measurement not trustworthy):**")
@@ -386,12 +386,12 @@ def aggregate(a, cells, out_dir: str):
     for ln in lines:
         print("  " + ln)
     print("")
-    if g1_cands:
-        print("  🟢 G1-PASS candidate(s):")
-        for r in g1_cands:
+    if weave_cands:
+        print("  🟢 ρ·weave-PASS candidate(s):")
+        for r in weave_cands:
             print(f"     {r['tag']} — {r['note']}")
     else:
-        print("  G1-PASS candidates: none.")
+        print("  ρ·weave-PASS candidates: none.")
     if invalids:
         print("  ⚠️ INVALID (overfit collapse):")
         for r in invalids:
