@@ -1,6 +1,7 @@
 # H_9229 — Family F: discrete conceptual code (language-of-thought bottleneck) — G1-at-the-seam RANK 5
 
 **tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green)
+> ✅ live next candidate — distinct mechanism (compositional discrete handle at the seam), survives H_9225 currency-conversion falsification.
 **scope:** engine→mouth seam missing-intermediate — self⊥mouth를 output seam의 G1 재조합벽에 묶음
 **cost:** **med-high** (decode + G1 machinery)
 **artifact:** `state/seam_missing_intermediate/`

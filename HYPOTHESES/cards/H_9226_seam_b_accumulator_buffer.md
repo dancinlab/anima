@@ -1,6 +1,7 @@
 # H_9226 — Family B: accumulator-to-threshold buffer (evidence integration / phonological loop) RANK 2
 
 **tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green)
+> ✅ live next candidate — distinct mechanism (evidence integration over TIME), survives H_9225 currency-conversion falsification.
 **scope:** engine→mouth seam missing-intermediate 프로그램 — "buffer between" 가장 문자적 read
 **cost:** **$0** op-grip (no decode)
 **artifact:** `state/seam_missing_intermediate/`

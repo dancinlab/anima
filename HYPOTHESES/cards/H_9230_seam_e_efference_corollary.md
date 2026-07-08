@@ -1,6 +1,7 @@
 # H_9230 — Family E: efference-copy / corollary-discharge loop RANK 6
 
 **tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green)
+> ✅ live next candidate — distinct mechanism (utterance-in-progress efference state), survives H_9225 currency-conversion falsification.
 **scope:** engine→mouth seam missing-intermediate — utterance-in-progress forward model
 **cost:** **medium** (logit-proxy)
 **artifact:** `state/seam_missing_intermediate/`
