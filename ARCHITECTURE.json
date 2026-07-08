@@ -14061,6 +14061,13 @@
     "value": "격리 워크트리(off origin/main)에서 pr-cycle로 랜딩할 때 sidecar ing 는 repo-root를 MAIN 워크트리로 해석해 그쪽 ING.jsonl에 쓴다 — 현재 워크트리 커밋엔 ING 변경이 없어 pr-cycle ING doc-gate가 실패한다. #3125·#3126·#3130 3회 연속 재발, 매번 --no-doc 강제.",
     "threshold": "재발조건: isolated worktree에서 sidecar ing add/next 후 pr-cycle → 'ING.jsonl 누락' doc-gate 실패. 해결: 격리 워크트리 랜딩은 (a) ING 항목을 그 워크트리의 ING.jsonl에 직접 편집해 커밋에 포함하거나 (b) ING는 canonical(메인) 위치에 남기고 pr-cycle --no-doc 로 랜딩(진행보드는 메인에 landing됨). --no-doc 는 이 경우 정당(무관 N/A doc).",
     "source": "ING.jsonl"
+   },
+   {
+    "id": "evaluate-py-2",
+    "state": "pos-conv",
+    "value": "재조합(G1) 벽 측정 task는 정답이 현재 context에 들어있으면 안 된다 — induction/copy head가 held-out 조합도 그냥 복사해 arm이 벽을 우회(가짜 통과). held-out 분할(예 r≡f mod6)은 학습 공존만 막지 테스트-context 정답 존재는 못 막음. stage-2 byte-LM 씬 'r=f;...;?rq='서 A(free LM) held-out=0.95=copy 함정 재현(H_1835 'in-context 마스터해도 transfer 0'의 재발). 진짜 벽=held-out TRANSFER(학습된 조합규칙을 정답이 prompt에 없는 novel 조합에 적용).",
+    "threshold": "재발조건: 재조합/binding eval에서 정답 토큰이 입력 씬에 존재(in-context recall)→attention이 trivially 복사→arm held-out 高=벽 미재현인데 통과로 오인. 해결: task를 transfer로 설계(정답은 학습된 rule로 생성, prompt에 부재)+정상 CE-LM이 held-out서 chance면 벽 재현 확인 후에만 arm 비교. copy-solvable이면 CONFOUND(toy too easy) 박제, 채점 금지.",
+    "source": "cli/evaluate.py"
    }
   ]
  }
