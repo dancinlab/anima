@@ -1,0 +1,37 @@
+{
+  "spec": "killshot_handed_vs_blind",
+  "device": "cuda",
+  "seeds": {
+    "0": {
+      "B_handed": 1.0,
+      "B_blind": 0.048,
+      "C_handed": 0.1345,
+      "geom_handed": 0.0352,
+      "geom_blind": 0.6532
+    },
+    "1": {
+      "B_handed": 1.0,
+      "B_blind": 0.044,
+      "C_handed": 0.127,
+      "geom_handed": 0.0351,
+      "geom_blind": 0.636
+    },
+    "2": {
+      "B_handed": 1.0,
+      "B_blind": 0.0755,
+      "C_handed": 0.1275,
+      "geom_handed": 0.0353,
+      "geom_blind": 0.6131
+    }
+  },
+  "summary": {
+    "B_handed_med": 1.0,
+    "B_blind_med": 0.048,
+    "C_handed_med": 0.1275,
+    "circularity_margin": 0.952,
+    "chance": 0.004,
+    "geom_handed_med": 0.0352,
+    "geom_blind_med": 0.636
+  },
+  "verdict": "🧱 FALSIFIED-as-G1-lever (B_handed high, B_blind~chance → escape needs handed factorization)"
+}
