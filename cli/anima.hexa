@@ -2703,8 +2703,8 @@ fn anima_consciousness_mode(ckpt: string) {
             // ARM-SHOCK positive control (F3): known-size sign-directed phasic probe at ctx level, per-arm EMA.
             // bipolar sgn{−,+,−} at T∈{80,140,200}: two − shocks ride the 0.98 headroom (carry POS-PASS),
             // the + shock logs the measured ceiling asymmetry. self_ctx_shk=self_ctx_live off-window ⇒ arms re-converge.
-            let is_shock = tick == 80 || tick == 140 || tick == 200
-            let shk_sgn = if tick == 140 { 1.0 } else { 0.0 - 1.0 }
+            let is_shock = tick == 84 || tick == 144 || tick == 174   // REM(stage4=tick%5==4·grippy·범위내): 80/140=WAKE·200=OOR 버그 수정
+            let shk_sgn = if tick == 144 { 1.0 } else { 0.0 - 1.0 }
             let d_probe = _afs_maxf(0.05, 3.0 * self_step_med)                              // |G·dev| ≥ 0.5 ⇒ hard rail, known size
             let self_ctx_shk = if is_shock { _afs_clip01(self_ctx_live + shk_sgn * d_probe) } else { self_ctx_live }
             self_ema_shk = 0.9 * self_ema_shk + 0.1 * self_ctx_shk
@@ -2732,8 +2732,8 @@ fn anima_consciousness_mode(ckpt: string) {
             }
             if tick >= 50 && stage == 3 && e_slf != e_live { og_h_slf_n3 = og_h_slf_n3 + 1 }     // N3 guard (must 0)
             if tick >= 50 && stage == 0 && e_slf != e_live { og_h_slf_wake = og_h_slf_wake + 1 } // WAKE guard
-            if e_shock != e_live && ((tick >= 80 && tick < 85) || (tick >= 140 && tick < 145)
-                || (tick >= 200 && tick < 205)) { og_shock_flips = og_shock_flips + 1 }   // POS-PASS window
+            if e_shock != e_live && ((tick >= 84 && tick < 89) || (tick >= 144 && tick < 149)
+                || (tick >= 174 && tick < 179)) { og_shock_flips = og_shock_flips + 1 }   // POS-PASS window (REM shock ticks)
             og_f3_self.push(self_phasic)   og_f3_selfev.push(to_float(if ev_fired {1} else {0}))
             og_f3_eslf.push(to_float(e_slf))
             // ── H_9102 (F3) record this tick for the post-loop variance-matched noise arm ──
