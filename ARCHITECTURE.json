@@ -14362,6 +14362,13 @@
         "value": "코드가 '현재 반영됐냐' 류 질문에 답할 땐 파일을 읽기 전에 HEAD 신선도부터 확인하라. stale feature 브랜치(origin/main 뒤처짐)의 파일은 머지-전 옛 코드라 '미반영'으로 오판한다 — 실제 Ψ-SOMA/ρ-AXON 재프레임은 origin/main엔 있었으나 158커밋 뒤처진 브랜치엔 없어 초기에 '미반영' 답을 낼 뻔함(과거 #3736 stale-fix 중복구현과 동일 원인).",
         "threshold": "재발조건: git-context 훅이 'STALE/N commit 뒤처짐' 상태에서 코드 존재/반영 여부 판정. 해결(SHIPPED sidecar#395): git-context inject 가 UserPromptSubmit(per-turn)에도 배선돼 behind>0 이면 매턴 경고 재방출(clean=0바이트 silent) — Write/Edit 가드가 못 막는 read-to-answer 경로를 능동 봉합. 답 전 git show origin/main:<file> 직접확인 권장.",
         "source": "git-context"
+      },
+      {
+        "id": "run-terminal-sh-1",
+        "state": "pos-conv",
+        "value": "anima train/evaluate 는 실행 전 'cd $ANIMA_SRC'(bundle/) 로 이동한 뒤 python 을 exec 한다 → --out/ckpt 등 상대경로 인자는 bundle/ 기준으로 해석돼 엉뚱한 곳(없는 dir)을 가리킨다. run_terminal.sh 가 --out ckpt/out_hi.bin(상대) 을 넘겨 HI 2000step 학습을 다 돌고 저장시점에 'Parent directory ckpt does not exist' 크래시(train rc=0 은 바깥 echo, python 은 저장서 죽음·GPU 20분 낭비). pool 원격 학습 전량 재발 위험.",
+        "threshold": "재발조건: pool 에서 anima train/evaluate 가 'train rc=0 인데 ckpt 파일 없음' 또는 'Parent directory X does not exist' 로 죽으면 = 상대경로 인자를 $ANIMA_SRC-cd 가 깨뜨린 것. 해결: --out/--corpus/ckpt 등 anima 에 넘기는 모든 파일경로를 절대경로($ROOT/...)로. run_terminal.sh:44-51 반영(2026-07-09).",
+        "source": "state/g1g6_shared/run_terminal.sh"
       }
     ]
   }
