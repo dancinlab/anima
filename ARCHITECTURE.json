@@ -14340,6 +14340,13 @@
         "value": "canon bytegpt bg_n_head 12 하드코딩이 생산 base h1129(d=1024,n_head=16,head_dim=64) warm-FT 를 막음: 1024%12≠0 로 'embed_dim must be divisible by num_heads' 즉사 + n_head=16 state_dict shape 불일치. head_dim=64 불변식이므로 bg_n_head=d//64 유도(768→12·1024→16)가 근본수정.",
         "threshold": "재발조건: canon bytegpt 학습/warm-FT 가 특정 --d 에서 'divisible by num_heads' 또는 warm-start shape-mismatch/missing≠[] 로 죽으면 n_head 하드코딩 의심. 해결: n_head=d//64 유도, 하드코딩 금지. cli/train.py:1192(2026-07-08).",
         "source": "cli/train.py"
+      },
+      {
+        "id": "git-context-1",
+        "state": "pos-conv",
+        "value": "코드가 '현재 반영됐냐' 류 질문에 답할 땐 파일을 읽기 전에 HEAD 신선도부터 확인하라. stale feature 브랜치(origin/main 뒤처짐)의 파일은 머지-전 옛 코드라 '미반영'으로 오판한다 — 실제 Ψ-SOMA/ρ-AXON 재프레임은 origin/main엔 있었으나 158커밋 뒤처진 브랜치엔 없어 초기에 '미반영' 답을 낼 뻔함(과거 #3736 stale-fix 중복구현과 동일 원인).",
+        "threshold": "재발조건: git-context 훅이 'STALE/N commit 뒤처짐' 상태에서 코드 존재/반영 여부 판정. 해결(SHIPPED sidecar#395): git-context inject 가 UserPromptSubmit(per-turn)에도 배선돼 behind>0 이면 매턴 경고 재방출(clean=0바이트 silent) — Write/Edit 가드가 못 막는 read-to-answer 경로를 능동 봉합. 답 전 git show origin/main:<file> 직접확인 권장.",
+        "source": "git-context"
       }
     ]
   }
