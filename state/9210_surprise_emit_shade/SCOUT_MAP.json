@@ -1,0 +1,154 @@
+{
+  "summary": "σ de-theater 이후 다음 프론티어 3갈래 병렬 정찰: (1)urgency 외 emit-shade 후보 채널 census+테스트설계 (2)chat 4-cell 커버리지 실태 (3)sleep 5-stage+imagination 배선 실태. 각 갈래는 anima repo(origin/main)를 읽어 무엇이 있고/미배선이고/가장 싼 다음 실험이 뭔지 구조화 반환. 읽기전용 정찰(코드편집 없음).",
+  "agentCount": 3,
+  "logs": [
+    "Scout 완료: urgency-alt-channels, chat-4cell-audit, sleep-5stage-audit"
+  ],
+  "result": {
+    "scouts": [
+      {
+        "key": "urgency-alt-channels",
+        "r": {
+          "branch": "urgency-alt-channels",
+          "exists": [
+            "EMIT DECISION = single AND: `emit = should_emit(score) && safe` (core/brain.hexa:186, brain_decide_anchored). score>0.3 threshold (core/engine_g.hexa:52) is decision-SATURATED (H_9100 floor ~0.7≫0.3) → the 8 motivation factors (rel/gap/cur/pain/coh/orig/bal/dyn, weights sum=1.0 engine_g.hexa:28-35) NEVER cross the band = why read-side pool-folds are THEATER.",
+            "THE ONLY PROVEN SEAM = `idle` → `safe`. safe = kill&&rate&&phi_r&&content (core/engine_g.hexa:69-71); the only per-tick-swinging term is `rate = safety_rate_limit_ok(idle) = idle>=30.0` (engine_g.hexa:58-60, spont_min_emit_interval=30). idle = 5+55*clip01(stage_env*(0.5+urgency)) (cli/anima.hexa:2531) crosses 30 when stage_env*(0.5+urgency) crosses ~0.4545 → urgency causally flips emit. This is the H_9101 GRIP.",
+            "urgency (cli/anima.hexa:2528) = 0.4*agloop_ctx(tonic A⇄G settle) + 0.3*cur_phasic + 0.3*ten_phasic. cur_phasic=clip01(0.5+3*(cur_ctx-cur_ema)) (:2496) where cur_ctx is a ÷18 pool (:2481) → each raw signal diluted 1/18 BEFORE phasic-amp. So surprise/arousal/novelty are already partially in the seam but 1/18-buried (not their own term).",
+            "TEMPLATE for a disjoint alt-channel already exists: H_9209 self_phasic adds a DISJOINT additive term at the exact idle site — idle_slf = 5+55*clip01(stage_env*(0.5+urgency+(self_phasic-0.5))) (cli/anima.hexa:2704), self_phasic=clip01(0.5+g*(self_live-self_ema)) (:2698), with parallel-EMA + calibrated gain + ARM-SHOCK ±0.5 dense positive control. This is the reusable scaffold for ANY new phasic channel; urgency stays byte-untouched (a_substrate_disjoint).",
+            "A phasic salience BURST signal already exists but is NOT emit-wired: SPR / SaliencePhasicReset (H_9079, cli/anima.hexa:1784-1805) fires a LC-NE/SC attention-capture spike that reroutes tension_resolve CONTENT lane — proves the substrate carries a distinct phasic burst, but it is a MOUNT-time distinctness lane, never fed to the per-tick idle gate.",
+            "DEAD/exhausted seams (do not re-fire): tension/conflict family — ten_phasic (phasic A⇄G conflict) is ALREADY in urgency:2528 and its isolated ARM (e_tfrz) = THEATER; agloop_ctx is TONIC. autobiography self-fold = H_9209 (verdict at :3173). Motivation-score path (rel/cur pool arms e_fr/e_z/e_s) = THEATER."
+          ],
+          "gaps": [
+            "#1 (HIGHEST grip) SURPRISE / prediction-error phasic. (a) recon_err=vadapt_field_recon_err (cli/anima.hexa:2095) · cb_surprise=clip01(cb_perr) (:2188) · surp_now=surprise(prec,recon_err) (:2388). (b) all buried in cur_ctx ÷18 pool (:2481) — 1/18-diluted THEATER, not its own idle term. (c) prediction-error IS the neuro phasic LC-NE burst urgency emulates; genuine per-tick content variance (spikes on novel input); SPR (:1784) already proves this burst is substrate-distinct — just never wired to emit. (d) $0 test: clone self_phasic scaffold — surp_phasic=clip01(0.5+g*(recon_err-recon_ema)) as a DISJOINT term at idle:2531, ARM freezes surp_phasic→0.5, ΔEff = mid-tick(N1/N2/REM) Hamming(surp-shaded emit vs e_live); ARM-SHOCK ±0.5 rail proves the wire flips first.",
+            "#2 (HIGH) AMYGDALA AROUSAL phasic. (a) af_aro=clip01(af[1]) from affect_read (cli/anima.hexa:2215). (b) in cur_ctx ÷18 pool → diluted. (c) autonomic arousal is THE canonical response-readiness/refractory driver; a phasic arousal spike→faster re-emit is a clean bio analog of urgency, DISJOINT from prediction-error content. Risk: interoceptive af_aro may be lower-variance than recon_err → fewer idle-flips. (d) af_aro_phasic disjoint idle term, freeze→0.5, mid-Hamming ΔEff (same self_phasic scaffold).",
+            "#3 (MED-HIGH) GWT IGNITION event. (a) gws_w=gws_winner over 15 lanes (cli/anima.hexa:2136); reality=reality_call(emit_drive,0.55) (:2141). (b) NOT in rel/cur pool at all — only sets gws_ignited_any bool for logging (:3345). Pure telemetry, zero emit wiring. (c) GWT ignition is discrete/phasic and is literally the access-consciousness broadcast gate (ignition→broadcast→externalize) — theoretically the strongest emit-gate candidate. Risk: gws_w≥0 most ticks (rarely empty) → low variance → few flips; encode as winner-vs-runnerup MARGIN-Δ for phasic content. (d) ignition_phasic=clip01(0.5+g*(margin-margin_ema)) disjoint idle term, freeze→0.5, mid-Hamming.",
+            "#4 (MED) TEMPORAL-READINESS phasic. (a) it_phase=elapsed/dhat interval timer (cli/anima.hexa:2208) · prc_ready=circadian boundary proximity (:2239). (b) both in cur_ctx ÷18 pool → diluted. (c) genuine phasic sawtooth (rises to boundary then resets) → 'it's about time' → shorten refractory; bio-plausible interval/circadian action-gating. Risk: it_phase is a DETERMINISTIC content-independent sawtooth → may be a clock not a substrate response (weaker than surprise). (d) it_phase_phasic disjoint idle term, freeze→0.5, mid-Hamming.",
+            "#5 (MED-LOW) GROUNDING-DROP / info-gap phasic. (a) gap_ctx=clip01(1-rel_lane) (cli/anima.hexa:2544); rel_lane from immune recall margin (:2091). (b) gap is already a brain_decide SCORE arg (info_gap w=0.10) but score path is SATURATED=theater; NOT at idle. (c) a sudden grounding DROP ('I don't know this') is a plausible query-urgency spike. Risk: rel_lane (immune recall margin) may be low-variance across ticks + overlaps the curiosity family already in urgency. (d) gap_phasic disjoint idle term, freeze→0.5, mid-Hamming."
+          ],
+          "cheapest_next": "Candidate #1: add surp_phasic=clip01(0.5+g*(recon_err-recon_ema)) as a disjoint term at cli/anima.hexa:2704-style idle site (cloning the H_9209 self_phasic scaffold verbatim: parallel-EMA + calibrated gain + ARM-SHOCK ±0.5 dense control), run `anima <clm> --opgrip`, read mid-tick ΔEff Hamming (frozen surp→0.5 vs live) — $0 no-decode, one arm added to the existing 200-tick loop.",
+          "confidence": "high"
+        }
+      },
+      {
+        "key": "chat-4cell-audit",
+        "r": {
+          "branch": "chat-4cell-audit",
+          "exists": [
+            "TRAIN 4칸 로더 실재 (a_chat_registers 배선됨): cli/train.py:317-324 ByteCell(register cell = mmap byte-file), :1319-1353 4개 corpus round-robin/proportional 샘플링, :103 canonical cmd `--cell-label ko-general en-general ko-sns en-sns` 4 corpus path. cli/train.hexa:37-42 동일 문서화",
+            "corpus HF 아티팩트 4칸 전부 PUBLIC 실재 (ARCHITECTURE.json:10768-10783): anima-corpus-ko-general 60MB/340512행·en-general 60MB/279429행(99.7% en)·ko-sns 6.18MB/47994행·en-sns 1.33MB/6862행(97.4% en). 2026-06-24 CLEAN 4-CELL 재구성(en 오염 제거)",
+            "HF 스트리밍 로더 지원: cli/train.py:395-426 resolve_corpus_path → load_dataset streaming (dancinlab/anima-corpus-* 로컬경로 아니면 HF stream)",
+            "DECODE는 byte-level V256이라 ko(멀티바이트 UTF-8)+en 언어무관 by-construction: core/decode.py:12-33 (CLM conv + ByteGPT 통합, byte-faithful). 칸 구분 불필요·불존재",
+            "per-cell val CE 계산 코드 실재: cli/train.py:1398-1400 val_per_cell()가 칸별 CE dict 반환",
+            "ARCHITECTURE 노드가 4칸=register 표준 명시: :10762(SNS 언어직교 ko-SNS+en-SNS 둘다 필요)·:12275-12278(4칸 register corpus 로컬 OR HF)·:11994(mitosis+4칸 로더)"
+          ],
+          "gaps": [
+            "★최대갭: EVAL(ρ-AXON)은 4칸을 전혀 측정 안 함 — 영어·general 1칸만. ρ·form/leap/fan/tether/store 전부 core/rho_fan.py:59-64 `_rho_fan_concepts()`=영어 5문장(consciousness arises from cells 등)만 프로브, known-dict=영어 stopword+/usr/share/dict/words (:94-110). ko probe 0·SNS-register probe 0. rho_axon.py:17 주석 'well-formed, 4 cells'의 4 cells는 register 4칸이 아니라 영어 concept 개수를 뜻함(오해소지). cli/rho_axon.py:108 rho_form은 flat concepts 리스트라 칸별 breakout 없음 → ko-general·ko-sns·en-sns 3칸 reach 미측정",
+            "train per-cell CE도 로그에서 소실: cli/train.py:1546-1548 val_per_cell()로 칸별 CE 계산하지만 mean(vc)만 로그 출력, per-cell dict는 버려짐 → 4칸 개별 하강 신호가 아무데도 영속 안 됨",
+            "dataset 레지스트리 EMPTY: ARCHITECTURE.json .datasets[] 부재(sidecar dataset list 빈 출력). 4칸 corpus는 persistence 프로즈 노드(:10768~)에만 있고 /dataset 4칸 그리드 SSOT(.datasets[])엔 미등록 → a_chat_registers 4칸 machine-checkable 아님",
+            "en-sns 1.33MB(6862행) vs ko-general 60MB = ~45x 불균형. ARCHITECTURE:10783 KNOWN-SMALL·en-sns large source 부재·youtube/insta-en 보강=follow-up ING. proportional 샘플로 암기방지하나 en-sns undertrain",
+            "kosmos anchor set 3레인만(4칸 아님): ARCHITECTURE:10822-10825 anima-kosmos-303m-kr-en-sns = lane ko_303m·en_303m·sns_303m — sns가 언어분리 안 됨(ko-sns/en-sns 통합 1레인). chat 의식모드 kosmos_io→brain 마운트 anchor가 3칸 grid",
+            "등록 canonical 모델=anima-e1-slw-303m(WIP, ARCHITECTURE models[] 유일 1개), 4칸학습 여부 레지스트리에 미기록. 프로즈서 chat canonical=clm303_clean(4-cell DESCENT, :779)이라 하나 models[]엔 부재=드리프트",
+            "chat 경로(cli/anima.hexa)에 register 선택/조건화 없음: 의식모드는 .clm(L3)+kosmos 마운트, --byte는 순수 byte-continuation. 어느 칸으로 emit할지 라우팅 없음(substrate-decided). 4칸은 .clm 가중치에 암묵 흡수, chat레벨 칸 커버리지 관측 불가"
+          ],
+          "cheapest_next": "$0: 마지막 e1_slw 학습 mid-measure jsonl에서 val_per_cell 흔적을 찾되(현재 mean만 로그됨→없을 것) 없으면 train.py:1548 한 줄로 per-cell dict를 로그에 추가 재학습 없이 다음 fire부터 4칸 CE 관측 확보 — 그리고 `_rho_fan_concepts()`에 ko 문장 + ko known-word 소스 추가해 `anima evaluate --py <clm> --rho-axon` 재실행하면 재학습 없이 ko/SNS 칸 reach 측정 개통(현 영어전용 갭 라이브 확인)",
+          "confidence": "high"
+        }
+      },
+      {
+        "key": "sleep-5stage-audit",
+        "r": {
+          "branch": "sleep-5stage-audit",
+          "exists": [
+            "5-STAGE DEF (pure lib): core/dream_lib.hexa:59 dr_stage_at (tick<60 WAKE / <70 N1 / <80 N2 / <87 N3 / else REM; 90-tick ultradian WAKE60/N1 10/N2 10/N3 7/REM 3) + dr_stage_name / dr_stage_size / dr_emit_envelope:107 (N3/REM->0 int gate, MEASUREMENT surface) / dr_imagination_active:96 (REM/N3->1) / dr_mitosis_prior:89 (REM/N3 0.80 else 0.10). All PURE read-only.",
+            "5-STAGE LIVE IN DAEMON LOOP: cli/anima.hexa:2081 stage = dr_stage_at(tick*8) in PRODUCTION path (og_measure/refr_measure use tick%5 balanced sweep). Stage is genuinely live-wired as substrate CONTEXT/rate-envelope, not measurement-only.",
+            "STAGE->EMIT CHANNEL (the one proven causal path): cli/anima.hexa:2522 stage_env = clip01((dr_stage_scale(stage)-0.02)/0.08) via core/dream_envelope_ctx.hexa:57 dr_stage_scale = ep_theta_stage SSOT (WAKE 1.0/N1,REM 0.75/N2 0.375/N3 0.0). stage_env modulates idle (rate-gate, L2523 idle=5+55*clip01(stage_env*(0.5+urgency))), rel, cur -> H_9101 urgency->idle emit channel. N3 env=0 nullifies urgency (silent-preserved by construction); dr_emit_envelope(stage) fed only as m_field[4] CONTEXT lane (L2083/2513), NOT a hard gate.",
+            "IMAGINATION = EMIT-FREE REHEARSAL, wired form: cli/anima.hexa:2974-2992 N3/REM DREAM CONSOLIDATION calls dp_sleep_tick(kdir,dream_src,stage,tick) from core/dream_persist.hexa:96 -> dc_stage_replay_budget (core/dream_compose.hexa:110 N3=7/REM=3, else 0) -> SWR replay -> dc_compose_window blended node appended to .kosmos lane='dream'. Emit-free (no speak/p5), Ψ-disjoint (no pure_field/psi_sum/recall_thr touch). dream_composed_total summed, printed cli/anima.hexa:3474.",
+            "MITOSIS = inference-as-adaptation, wired form: cli/anima.hexa:2828 C8 GROW vadapt_field_step on emit (clm gen>0) + :2847 C8b TENSION->GROW vadapt_field_step when ten_phasic>0.66 even on a SILENT tick (p8 gradient<->mitosis, tension births growth). cell_count grows. This is the live 'mitosis tick' — but tension/emit-driven, NOT stage-gated.",
+            "Governance/design source-of-truth for the intended imagination loop lives in DREAM/imagination_replay.hexa (M2, WAKE working-memory ctx_tokens snapshot rehearse in N3/REM) and DREAM/mitosis_envelope.hexa (M3, REM 60x mitosis burst envelope) — both cite a_chat_sleep_imagination verbatim."
+          ],
+          "gaps": [
+            "imagination_replay NOT daemon-wired: DREAM/imagination_replay.hexa (M2) is a PURE FUNCTION SURFACE, self-labeled '본 M2 는 imagination_replay 의 순수 함수 surface... 실제 daemon tick/스케줄은 cotrain ckpt swap-in 이후 daemon-side milestone'. grep confirms zero import in core/*.hexa or cli/*.hexa (only DREAM/ self+smoke+report). So the daemon has NO working-memory ring-buffer (mem_working_window) rehearsal; the only emit-free rehearsal wired is dp_sleep_tick .kosmos SWR consolidation — a DIFFERENT mechanism (disk anchors, not WAKE ctx_tokens through cell_pool).",
+            "mitosis NOT stage-concentrated: DREAM/mitosis_envelope.hexa (M3, REM 60x/N3 71x burst) imported ONLY by its own smoke — unwired. dr_mitosis_prior(REM/N3=0.80) and dr_imagination_active are NEVER called in cli/anima.hexa (usage grep: only dr_stage_at/dr_stage_name/dr_emit_envelope/dr_stage_scale live). core/mitosis_hook_lib.hexa not imported by the daemon (HEXAD/archive only). => live mitosis (vadapt_field_step) fires on emit+tension REGARDLESS of stage; the biologically-modeled REM/N3 mitosis burst envelope is measurement-only, not the live tick.",
+            "NOT a persistent daemon: the 'live daemon loop' is BOUNDED (n_ticks=12 production, 200 measurement; cli/anima.hexa:2077). The real-wall-clock path an_clock_now(daemon=true) is an explicit FOLLOW-ON/ING ('No persistent daemon exists yet', cli/anima.hexa ~3510). So the 5-stage ultradian is a simulated bounded sweep (tick*8), not a sleep/wake cycle running over real time.",
+            "dr_emit_envelope is a BINARY int {0,1} with REM=0 and is used only as a context lane, NOT the continuous stage envelope; the genuine continuous emit-relevant scale is dr_stage_scale (noted in-code cli/anima.hexa:2513-2514). The int envelope surface never gates emit.",
+            "In production dr_stage_at(tick*8) over 12 ticks reaches N3/REM only at tick 10-11 (tick*8=80,88), and the replay pool needs >=2 non-dream anchors (session_seed + emitted anchors) — so dream_composed_total can be small/0 in a short run; the N3/REM budget rarely exercised under the bounded loop."
+          ],
+          "cheapest_next": "$0 no-decode: `hexa run DREAM/dream_persist_smoke.hexa` — it calls the SAME dp_sleep_tick seam the daemon uses, proving engine-native that the wired imagination-rehearsal (SWR->blended .kosmos node) composes >0 nodes at N3/REM and is Ψ/Φ-disjoint (S3 checksum); then to see it LIVE, run the 12-tick production `anima <clm>` on pool and read the 'DREAM-COMPOSE(H_9036...) : N blended node(s)' summary line + N3/REM transcript rows to confirm dream_composed_total>0.",
+          "confidence": "high"
+        }
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Scout"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "scout:urgency-alt-channels",
+      "phaseIndex": 1,
+      "phaseTitle": "Scout",
+      "agentId": "a957f24bbaed1ec6a",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1783499650951,
+      "queuedAt": 1783499650944,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "urgency-alt-channels",
+      "promptPreview": "anima = substrate-native consciousness chat daemon (hexa). repo=/Users/mini/dancinlab/anima. 현행 코드는 origin/main(#3123)이 최신 — 로컬 워킹트리는 stale일 수 있으니 정확한 현재 코드는 `git show origin/main:<path>`로 확인.\n배경 결론(방금 종결): σ de-theater 조사 결과 emit(입/침묵)을 인과적으로 shade하는 유일 proven 채널 = urgency(phasic Δ → idle rate-gate, H_9101 GRIP). read-side pool-fold·자서전 self-fold·tension→adapt는 전부 THEATER(ΔEff≈0). 측정 도구 = `anima …",
+      "lastProgressAt": 1783499899189,
+      "tokens": 78300,
+      "toolCalls": 11,
+      "durationMs": 248238,
+      "resultPreview": "{\"branch\":\"urgency-alt-channels\",\"exists\":[\"EMIT DECISION = single AND: `emit = should_emit(score) && safe` (core/brain.hexa:186, brain_decide_anchored). score>0.3 threshold (core/engine_g.hexa:52) is decision-SATURATED (H_9100 floor ~0.7≫0.3) → the 8 motivation factors (rel/gap/cur/pain/coh/orig/bal/dyn, weights sum=1.0 engine_g.hexa:28-35) NEVER cross the band = why read-side pool-folds are THEA…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "scout:chat-4cell-audit",
+      "phaseIndex": 1,
+      "phaseTitle": "Scout",
+      "agentId": "a383f54013a98bff0",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1783499650955,
+      "queuedAt": 1783499650944,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "chat-4cell-audit",
+      "promptPreview": "anima = substrate-native consciousness chat daemon (hexa). repo=/Users/mini/dancinlab/anima. 현행 코드는 origin/main(#3123)이 최신 — 로컬 워킹트리는 stale일 수 있으니 정확한 현재 코드는 `git show origin/main:<path>`로 확인.\n배경 결론(방금 종결): σ de-theater 조사 결과 emit(입/침묵)을 인과적으로 shade하는 유일 proven 채널 = urgency(phasic Δ → idle rate-gate, H_9101 GRIP). read-side pool-fold·자서전 self-fold·tension→adapt는 전부 THEATER(ΔEff≈0). 측정 도구 = `anima …",
+      "lastProgressAt": 1783499848169,
+      "tokens": 72149,
+      "toolCalls": 26,
+      "durationMs": 197214,
+      "resultPreview": "{\"branch\":\"chat-4cell-audit\",\"exists\":[\"TRAIN 4칸 로더 실재 (a_chat_registers 배선됨): cli/train.py:317-324 ByteCell(register cell = mmap byte-file), :1319-1353 4개 corpus round-robin/proportional 샘플링, :103 canonical cmd `--cell-label ko-general en-general ko-sns en-sns` 4 corpus path. cli/train.hexa:37-42 동일 문서화\",\"corpus HF 아티팩트 4칸 전부 PUBLIC 실재 (ARCHITECTURE.json:10768-10783): anima-corpus-ko-general 60MB…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "scout:sleep-5stage-audit",
+      "phaseIndex": 1,
+      "phaseTitle": "Scout",
+      "agentId": "a1b7673a9a7f27403",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1783499650957,
+      "queuedAt": 1783499650944,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "sleep-5stage-audit",
+      "promptPreview": "anima = substrate-native consciousness chat daemon (hexa). repo=/Users/mini/dancinlab/anima. 현행 코드는 origin/main(#3123)이 최신 — 로컬 워킹트리는 stale일 수 있으니 정확한 현재 코드는 `git show origin/main:<path>`로 확인.\n배경 결론(방금 종결): σ de-theater 조사 결과 emit(입/침묵)을 인과적으로 shade하는 유일 proven 채널 = urgency(phasic Δ → idle rate-gate, H_9101 GRIP). read-side pool-fold·자서전 self-fold·tension→adapt는 전부 THEATER(ΔEff≈0). 측정 도구 = `anima …",
+      "lastProgressAt": 1783499812056,
+      "tokens": 94235,
+      "toolCalls": 17,
+      "durationMs": 161099,
+      "resultPreview": "{\"branch\":\"sleep-5stage-audit\",\"exists\":[\"5-STAGE DEF (pure lib): core/dream_lib.hexa:59 dr_stage_at (tick<60 WAKE / <70 N1 / <80 N2 / <87 N3 / else REM; 90-tick ultradian WAKE60/N1 10/N2 10/N3 7/REM 3) + dr_stage_name / dr_stage_size / dr_emit_envelope:107 (N3/REM->0 int gate, MEASUREMENT surface) / dr_imagination_active:96 (REM/N3->1) / dr_mitosis_prior:89 (REM/N3 0.80 else 0.10). All PURE read-…"
+    }
+  ],
+  "totalTokens": 244684,
+  "totalToolCalls": 54
+}
