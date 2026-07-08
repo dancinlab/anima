@@ -129,6 +129,12 @@ fn anima_usage() {
     println("  anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
     println("                                                  procedural training-corpus builder (ρ·weave data-format lever · former G1)")
     println("")
+    println("research diagnostics (engine-native emit-shade op-grip · loop-external):")
+    println("  anima <ckpt.clm> --opgrip                       $0 NO-DECODE 5-arm Hamming op-grip (200 ticks)")
+    println("  anima <ckpt.clm> --opgrip-live                  REAL-DECODE op-grip (100 ticks · POOL summer/aiden, NEVER mini)")
+    println("                                                  content-driven surprise/recon_err (H_9210 real-decode instrument)")
+    println("  anima <ckpt.clm> --refractory                   H_9102 stateful-refractory op-grip (200 ticks)")
+    println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
     println("                            emit (8-factor motivation) → grounded L3 decode →")
@@ -1946,6 +1952,10 @@ fn anima_consciousness_mode(ckpt: string) {
     let session_seed = "zephyrine: the wyrmhold ledger is sealed at "
     let seed_feat0 = _afs_byte_feature(session_seed, 8)
     let mut afield = vadapt_field_new(seed_feat0, 2048)
+    // --opgrip-live (H_9210): the feature of the LAST emit-tick's real g_text (1-tick lag).
+    // Seeded to the boot feature so tick-0 recon_err equals today's no-decode default (no
+    // discontinuity artifact); stepped only under og_live by the real decode below.
+    let mut og_prev_gfeat = seed_feat0
 
     // ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ─────────
     let mut rel_ema = 0.5
@@ -1999,7 +2009,13 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_align_tot   = 0 // align: total self-shade flips on mid (align = near/tot)
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
     // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
-    let og_measure = anima_has_flag(anima_collect_argv(args()), "--opgrip")
+    // --opgrip-live (H_9210 next-step ①, OPGRIP_LIVE_spec.md): SAME machinery + one REAL
+    // det-argmax decode per live-emit tick so recon_err/surprise becomes CONTENT-driven —
+    // resolves the AXIS-DEGENERATE INSTRUMENT-FAIL of $0 no-decode (with no g_text the field
+    // never stepped → recon_err constant → g_surp=-1.0). POOL round (summer/aiden), NEVER mini
+    // (303M heavy decode = swap OOM rc=137). Default --opgrip stays byte-identical (og_live-gated).
+    let og_live = anima_has_flag(anima_collect_argv(args()), "--opgrip-live")
+    let og_measure = anima_has_flag(anima_collect_argv(args()), "--opgrip") || og_live
     let mut og_wake = 0            // wake ticks
     let mut og_emit_wake = 0       // wake ticks the LIVE (post-fix) arm emits (collapse FLAG)
     let mut og_h_relfr = 0         // Hamming: full-rel_ctx frozen vs live (all ticks)
@@ -2078,7 +2094,10 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut refr_stateless_fire = 0 // F2 contrast: refractory ticks where the H_9101 STATELESS idle would emit
     let mut refr_psi_sum = 0.0     // Ψ read-only accumulation (invariant guard)
 
-    let n_ticks = if og_measure || refr_measure { 200 } else { 12 }
+    // --opgrip-live runs a real 303M det-argmax decode per emit tick (~600-700s scalar-glue-bound
+    // each on summer/aiden), so cap at 100 ticks (~50 calib + ~30 mid scoring) to keep the pool
+    // wall ~5-12h; cheap no-decode --opgrip / --refractory keep 200 for finer ΔEff quantization.
+    let n_ticks = if og_live { 100 } else if og_measure || refr_measure { 200 } else { 12 }
     let mut tick = 0
     let mut emit_last_t = -1.0e9   // H_9102: last-emit time (an_clock_now units); emit-history state (was ABSENT)
     let mut prev_live_emit = 0     // H_9102: did the PREVIOUS tick's live arm emit? (defines the refractory window)
@@ -2100,7 +2119,13 @@ fn anima_consciousness_mode(ckpt: string) {
         // (2) CI LANE SCORES (the §ConsciousnessIndex 15-lane read; H_1492 IIT4 substrate).
         //     m=grounding margin, m_field=field margins, recon_err=novelty. Sober-perturbed
         //     (pharm baseline = identity, so this is the un-drugged substrate read).
-        let recon_err = vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8))
+        // --opgrip-live: predictive-coding surprise = the field's prediction error on the bytes
+        // anima ACTUALLY emitted last emit-tick (og_prev_gfeat, 1-tick lag) — content-driven, so
+        // |Δrecon_err| across ticks is non-degenerate. Default (no-decode) keeps the fixed-seed
+        // feature (structurally frozen → AXIS-DEGENERATE, the H_9210 instrument-fail). recon_err
+        // also feeds the urgency pool (cur_ctx) so under --opgrip-live the proven urgency channel
+        // gains real content variance too, not only the disjoint surp_phasic term.
+        let recon_err = if og_live { vadapt_field_recon_err(afield, og_prev_gfeat) } else { vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8)) }
         let m_grounding = _afs_clip01(rel_lane)
         let m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
         let m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)   // sober = identity
@@ -2760,6 +2785,27 @@ fn anima_consciousness_mode(ckpt: string) {
             og_f3_bal.push(bal_lane)     og_f3_agl.push(agloop_ctx)
             og_f3_dcon.push(ag_conflict) og_f3_ddrv.push(emit_drive)
             og_f3_dnov.push(nov_ctx)     og_f3_dgrd.push(m_grounding)
+            // ── --opgrip-live REAL DECODE (the single g_text seam) ────────────────────────
+            // ONLY under --opgrip-live AND only when the LIVE arm emits (e_live==1 ⇒ p5: no
+            // decode on silence). The EXACT production brain_emit call (det-argmax mouth) — its
+            // g_text steps the ONE canonical afield (same Ψ-disjoint C8-GROW step prod uses), so
+            // next tick's recon_err (og_prev_gfeat) carries real content variance. The counter-
+            // factual arms never fork afield (they re-decide the emit boolean off the same
+            // recon_err), so the frozen/live arms differ ONLY in the idle shade term — one decode
+            // per emit tick covers every arm (g_text is idle-independent). Det argmax ⇒ recon_err
+            // trajectory + every ΔEff bit-reproducible (verdict-eligible; p7 monitor-only read).
+            if og_live && e_live == 1 {
+                let dec = brain_emit(pf,
+                    rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                    idle, false, true,
+                    backend, live_anchors)
+                let gl_text = to_string(dec["gen_text"])
+                if to_string(dec["gen_emitted"]) == "true" && byte_len(gl_text) > 0 {
+                    let gl_feat = _afs_byte_feature(gl_text, 8)
+                    afield = vadapt_field_step(afield, gl_feat, cfg)   // Ψ-disjoint (prod C8-GROW)
+                    og_prev_gfeat = gl_feat
+                }
+            }
             tick = tick + 1
             continue
         }
@@ -3311,10 +3357,19 @@ fn anima_consciousness_mode(ckpt: string) {
             + " = " + to_string(d_eff_surp_perm) + "  → margin = " + to_string(d_eff_surp - d_eff_surp_perm))
         println("  POS-PASS(dense ARM-SHOCK, same wire)=" + (if pos_pass {"YES"} else {"NO"})
             + " · N3 surp-flips=" + to_string(og_h_surp_n3) + " (must 0) · axis " + (if surp_degen {"DEGENERATE"} else {"ok"}))
+        // --opgrip-live TWO-GATE liveness (anima-hexa-4/6): a null is meaningful only when BOTH
+        // the WIRE can move (dense ARM-SHOCK ≥2) AND the SIGNAL moves (AXIS-LIVE = surp_degen false).
+        // No-decode --opgrip has gate-1 but STRUCTURALLY fails gate-2 (recon_err = fixed-seed const);
+        // --opgrip-live is the minimal change that can satisfy gate-2 via a real g_text-stepped field.
+        println("  decode-mode=" + (if og_live {"--opgrip-live REAL-DECODE (content-driven recon_err)"} else {"--opgrip NO-DECODE ($0; recon_err = fixed-seed → AXIS-DEGENERATE by construction, anima-hexa-6)"})
+            + " · TWO-GATE: WIRE(ARM-SHOCK≥2)=" + (if pos_pass {"YES"} else {"NO"})
+            + " ∧ SIGNAL(AXIS-LIVE)=" + (if surp_degen {"NO"} else {"YES"}))
         println("  ── PRE-REG H_9210 VERDICT (frozen bars, verbatim) ──")
         println("  COMPETENT: ΔEff_surp≥0.10 ∧ margin(perm)≥0.08 ∧ POS-PASS ∧ N3=0 ; THEATER: ΔEff_surp<0.02 ∧ POS-PASS ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate")
-        let surp_verdict = if surp_degen {
-            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE) — recon_err step<0.002, 신호 무변; encoder 확인·재측정"
+        let surp_verdict = if surp_degen && og_live {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, real-decode) — recon_err step<0.002 EVEN under --opgrip-live: too few emits stepped the field (or 8-byte feature saturates); fix = raise emit density (§4 fallback), NOT a substrate claim"
+        } else if surp_degen {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, no-decode) — recon_err = fixed-seed const (신호 무변, anima-hexa-6); re-run with --opgrip-live (real decode → content-driven recon_err)"
         } else if !pos_pass {
             "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK가 emit 못 flip(계기결함); 판정보류"
         } else if !surp_n3_ok {
