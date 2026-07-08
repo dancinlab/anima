@@ -1,6 +1,7 @@
 # H_9225 — Family A: tonic→phasic transducer (temporal-difference relay) ⭐RANK 1
 
 **tier:** 🔴 THEATER — both lanes FALSIFIED (engine-native summer $0 op-grip v3.126.0 #3173 · `state/verdicts/9225/`) · currency-mismatch spine 반증 · p7 no tune-to-green · ⭐ BUILD-FIRST
+> 🔴 THEATER REPLICATED under `--opgrip-live` real-decode (2026-07-08, runpod CPU pod real d768 · SELF+TEN ΔEff=0/30 · POS-PASS · `state/verdicts/9226/opgrip_live_raw.log`) — robustness confirmed: #3181 THEATER cement holds under real decode too, not a no-decode artifact.
 **scope:** engine→mouth seam missing-intermediate 프로그램의 sharpest read (currency 변환기)
 **cost:** **$0** op-grip (no decode, no GPU)
 **wired:** measurement-arm only (production `idle`/`e_live` BYTE-UNTOUCHED · FROZEN arm `og_h_frz2==0` = byte-identity 증명 · a_substrate_disjoint)
