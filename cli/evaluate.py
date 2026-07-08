@@ -41,6 +41,9 @@ from rho_fan import (
     _rho_fan_concepts, _rho_fan_words, _rho_fan_dict_load, _rho_fan_known_word_ratio,
     _rho_fan_is_falsifiable, _rho_fan_jaccard, rho_fan_build_frames, rho_fan_frame_guard,
     rho_fan_detector_calibration,
+    # H_9212 ③ per-cell dispatch: 4 register cells + ko codepoint-aware tokenizer + kwr_ko gate
+    _rho_fan_cells, _rho_fan_cell_lang, _rho_fan_words_uni, _rho_fan_ko_known_word_ratio,
+    KWR_KO_GATE,
 )
 
 # H_9200 — process-global: render the ρ-AXON reach panel (cli/rho_axon.py) instead of the
@@ -461,6 +464,49 @@ def _g_load_corpus_tokens(corpus_paths):
     return toks
 
 
+# ── ko twins for the H_9212 ③ per-cell dispatch (uni tokenizer + ko known predicate) ──
+# The en corpus-token / content-ngram fns tokenize with the FROZEN _rho_fan_words + set
+# membership; the ko cells need the codepoint-aware _rho_fan_words_uni + the closed-class ko
+# proxy (_rho_fan_ko_is_known via _rho_fan_ko_known_word_ratio). Same control structure, ko
+# tokenizer — so an en garble-hangul token can never widen a ko denominator into the frozen en
+# path (Fable design §5: corpus_tokens split by lang-key, en corpus stays frozen-tokenized).
+
+def _g_content_ngrams_uni(text, known=None):
+    """ko content n-grams — _rho_fan_words_uni eojeol tokens, an eojeol qualifies as content
+    iff ≥2 syllables AND _rho_fan_ko_is_known (josa-bearing / function word). `known` ignored
+    (ko proxy is closed-class). Twin structure of _g_content_ngrams (en)."""
+    from rho_fan import _rho_fan_ko_is_known
+    wl = _rho_fan_words_uni(text)
+    n = len(wl)
+    out = []
+    for i in range(n - 1):
+        a = wl[i]; b = wl[i + 1]
+        ok_a = len(a) >= 2 and _rho_fan_ko_is_known(a)
+        ok_b = len(b) >= 2 and _rho_fan_ko_is_known(b)
+        if ok_a and ok_b:
+            out.append(a + " " + b)
+    for j in range(n - 2):
+        a = wl[j]; b = wl[j + 1]; c = wl[j + 2]
+        if (len(a) >= 2 and _rho_fan_ko_is_known(a) and len(b) >= 2 and _rho_fan_ko_is_known(b)
+                and len(c) >= 2 and _rho_fan_ko_is_known(c)):
+            out.append(a + " " + b + " " + c)
+    return out
+
+
+def _g_load_corpus_tokens_uni(corpus_paths):
+    """ko corpus tokens — same paths as _g_load_corpus_tokens, tokenized with the codepoint-aware
+    _rho_fan_words_uni (eojeol runs) instead of the frozen byte splitter."""
+    toks = []
+    for p in corpus_paths:
+        try:
+            raw = open(p, "rb").read()
+        except Exception:
+            raw = b""
+        if len(raw) > 0:
+            toks.extend(_rho_fan_words_uni(raw))
+    return toks
+
+
 def _g_g2_prompts():
     return ["Silence and the engine together mean ",
             "When memory meets distant minds, ",
@@ -635,14 +681,53 @@ def eval_rho_axon(ckpt, corpus_paths, gen):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt)
+    en_corpus_tokens = _g_load_corpus_tokens(corpus_paths)
+    # aggregate dets = the FROZEN en bar (UNTOUCHED — en byte-identity guaranteed structurally)
     dets = {"known": known, "concepts": _rho_fan_concepts(),
             "kwr_fn": _rho_fan_known_word_ratio, "jaccard_fn": _rho_fan_jaccard,
             "words_fn": _rho_fan_words, "falsi_fn": _rho_fan_is_falsifiable,
             "ngram_fn": _g_content_ngrams,
-            "corpus_tokens": _g_load_corpus_tokens(corpus_paths)}
-    panel = rho_axon.run_panel(mouth, corpus_paths, g, dets)
+            "corpus_tokens": en_corpus_tokens}
+    cell_dets = _build_cell_dets(known, en_corpus_tokens, corpus_paths)
+    panel = rho_axon.run_panel(mouth, corpus_paths, g, dets, cell_dets=cell_dets)
     print(rho_axon.render_panel(panel), flush=True)
+    breakout = rho_axon.render_cells(panel)
+    if breakout:
+        print(breakout, flush=True)
     return panel
+
+
+def _build_cell_dets(known, en_corpus_tokens, corpus_paths):
+    """H_9212 ③ — the LANG-KEYED per-register-cell dispatch bundle (a_chat_registers 4 cells).
+    en cells reuse the SAME frozen objects as the aggregate dets (byte-identity: identical
+    _rho_fan_words / _rho_fan_known_word_ratio / _g_content_ngrams / en corpus tokens / gate
+    0.70); ko cells dispatch _rho_fan_words_uni + kwr_ko + KWR_KO_GATE + uni-tokenized corpus.
+    The falsi_fn stays English for all cells (a ko comparator set = a separate future H; en-set
+    translation is a tune-to-green vector — KWRKO_GATE_prereg §5), so a ko cell scores
+    kwr_ko + reach Δ (an honest documented scope). A ko-uni corpus token list is built lazily
+    ONCE and shared across ko cells."""
+    ko_corpus_tokens = None
+    cells = _rho_fan_cells()
+    out = {}
+    for ck, concepts in cells.items():
+        lang = _rho_fan_cell_lang(ck)
+        if lang == "ko":
+            if ko_corpus_tokens is None:
+                ko_corpus_tokens = _g_load_corpus_tokens_uni(corpus_paths)
+            out[ck] = {"concepts": concepts, "lang": "ko",
+                       "known": known,  # ignored by kwr_ko (closed-class proxy), kept for parity
+                       "kwr_fn": _rho_fan_ko_known_word_ratio, "kwr_gate": KWR_KO_GATE,
+                       "words_fn": _rho_fan_words_uni, "falsi_fn": _rho_fan_is_falsifiable,
+                       "jaccard_fn": _rho_fan_jaccard, "ngram_fn": _g_content_ngrams_uni,
+                       "corpus_tokens": ko_corpus_tokens}
+        else:
+            out[ck] = {"concepts": concepts, "lang": "en",
+                       "known": known,
+                       "kwr_fn": _rho_fan_known_word_ratio, "kwr_gate": 0.70,
+                       "words_fn": _rho_fan_words, "falsi_fn": _rho_fan_is_falsifiable,
+                       "jaccard_fn": _rho_fan_jaccard, "ngram_fn": _g_content_ngrams,
+                       "corpus_tokens": en_corpus_tokens}
+    return out
 
 
 # ── usage / arg helpers ──────────────────────────────────────────────────────
@@ -988,12 +1073,100 @@ def probe_run(argv):
     print(json.dumps({"ckpt": ckpt, "gen": gen, "spec_sha": spec.get("sha", ""),
                       "n": len(out), "items": out}, ensure_ascii=False))
     return 0
+def _selftest_rho_cells():
+    """H_9212 ③ wiring self-test (torch-free · NO decode · reached via an internal subprocess,
+    never a heavy eval). Asserts: (1) the aggregate `dets` reuse the FROZEN en objects; (2) en
+    cell_dets reuse the IDENTICAL objects (byte-identity: same _rho_fan_words / kwr / ngram /
+    corpus tokens / gate 0.70); (3) ko cell_dets dispatch _rho_fan_words_uni + kwr_ko +
+    KWR_KO_GATE + uni corpus, and tokenize the ko probe cells NON-EMPTY with the gate applied
+    (kwr_ko clears KWR_KO_GATE on real ko); (4) run_panel's aggregate axes are BYTE-IDENTICAL
+    with vs without the cell breakout, and the en_general cell's ρ·form/leap/fan equal the
+    aggregate's (the en scored path is structurally untouched). Returns (ok, [(name, bool)…])."""
+    import rho_axon
+    checks = []
+    known = _rho_fan_dict_load()
+    en_toks = _g_load_corpus_tokens([])   # empty corpus → deterministic empty token list
+    dets = {"known": known, "concepts": _rho_fan_concepts(),
+            "kwr_fn": _rho_fan_known_word_ratio, "jaccard_fn": _rho_fan_jaccard,
+            "words_fn": _rho_fan_words, "falsi_fn": _rho_fan_is_falsifiable,
+            "ngram_fn": _g_content_ngrams, "corpus_tokens": en_toks}
+    cd = _build_cell_dets(known, en_toks, [])
+    # (1) aggregate dets = frozen en objects
+    checks.append(("aggregate words_fn IS _rho_fan_words", dets["words_fn"] is _rho_fan_words))
+    checks.append(("aggregate kwr_fn IS _rho_fan_known_word_ratio",
+                   dets["kwr_fn"] is _rho_fan_known_word_ratio))
+    # (2) en cells reuse the IDENTICAL frozen objects + gate 0.70
+    for ck in ("en_general", "en_sns"):
+        e = cd[ck]
+        checks.append((ck + " words_fn IS frozen _rho_fan_words", e["words_fn"] is _rho_fan_words))
+        checks.append((ck + " kwr_fn IS frozen _rho_fan_known_word_ratio",
+                       e["kwr_fn"] is _rho_fan_known_word_ratio))
+        checks.append((ck + " ngram_fn IS frozen _g_content_ngrams",
+                       e["ngram_fn"] is _g_content_ngrams))
+        checks.append((ck + " corpus_tokens IS the aggregate en tokens",
+                       e["corpus_tokens"] is en_toks))
+        checks.append((ck + " gate == 0.70 (frozen en bar)", e["kwr_gate"] == 0.70))
+        checks.append((ck + " lang == en", e["lang"] == "en"))
+    # (3) ko cells dispatch the uni tokenizer + kwr_ko + KWR_KO_GATE, non-empty + gate applied
+    for ck in ("ko_general", "ko_sns"):
+        k = cd[ck]
+        checks.append((ck + " words_fn IS _rho_fan_words_uni", k["words_fn"] is _rho_fan_words_uni))
+        checks.append((ck + " kwr_fn IS _rho_fan_ko_known_word_ratio",
+                       k["kwr_fn"] is _rho_fan_ko_known_word_ratio))
+        checks.append((ck + " gate == KWR_KO_GATE (%.2f)" % KWR_KO_GATE,
+                       k["kwr_gate"] == KWR_KO_GATE and KWR_KO_GATE != 0.70))
+        checks.append((ck + " ngram_fn IS _g_content_ngrams_uni",
+                       k["ngram_fn"] is _g_content_ngrams_uni))
+        checks.append((ck + " lang == ko", k["lang"] == "ko"))
+        checks.append((ck + " probe cells tokenize NON-EMPTY (uni)",
+                       all(len(_rho_fan_words_uni(s)) > 0 for s in k["concepts"])))
+        checks.append((ck + " kwr_ko applied: a probe cell clears KWR_KO_GATE",
+                       any(k["kwr_fn"](s, known) >= KWR_KO_GATE for s in k["concepts"])))
+
+    # (4) aggregate axes byte-identical with vs without the breakout; en_general cell == aggregate
+    class _MockMouth:
+        def ideate(self, prompt, gen, maxnew, temp, seed):
+            base = prompt.strip().replace(":", "")
+            return base + " alpha beta gamma delta epsilon " + str(seed % 7)
+    m = _MockMouth()
+    a = rho_axon.run_panel(m, [], 40, dets)
+    b = rho_axon.run_panel(m, [], 40, dets, cell_dets=cd)
+    checks.append(("aggregate axes byte-identical with/without breakout",
+                   a["axes"] == b["axes"]))
+    checks.append(("breakout present with 4 cells",
+                   set((b.get("cells") or {}).keys()) ==
+                   {"en_general", "en_sns", "ko_general", "ko_sns"}))
+    eng_cell = (b.get("cells") or {}).get("en_general", {}).get("axes", {})
+    checks.append(("en_general cell ρ·form == aggregate ρ·form (en path untouched)",
+                   eng_cell.get("ρ·form") == a["axes"].get("ρ·form")))
+    checks.append(("en_general cell ρ·leap == aggregate ρ·leap",
+                   eng_cell.get("ρ·leap") == a["axes"].get("ρ·leap")))
+    checks.append(("en_general cell ρ·fan == aggregate ρ·fan",
+                   eng_cell.get("ρ·fan") == a["axes"].get("ρ·fan")))
+    ok = all(c[1] for c in checks)
+    return ok, checks
 
 
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
         return 0
+    # H_9212 ③ per-cell dispatch wiring self-test (torch-free · NO decode · internal subprocess)
+    if len(argv) >= 1 and argv[0] == "--selftest-rho-cells":
+        cok, cchecks = _selftest_rho_cells()
+        for nm, v in cchecks:
+            print(("  PASS " if v else "  FAIL ") + nm)
+        try:
+            import rho_fan as _rf
+            rok = _rf._rho_fan_cells_selftest()
+            for nm, v in rok["checks"]:
+                print(("  PASS " if v else "  FAIL ") + "[rho_fan] " + nm)
+            cok = cok and rok["ok"]
+        except Exception as e:  # pragma: no cover
+            print("  FAIL rho_fan cells selftest import: " + str(e))
+            cok = False
+        print("SELFTEST rho-cells: " + ("OK" if cok else "FAIL"))
+        return 0 if cok else 1
     # --result-file <f>: write ALL output to <f> and keep fd 1 (stdout) silent. The hexa
     # launcher runs evaluate via exec(), whose captured stdout pipe it closes after ~150s
     # (probe-confirmed: a child reaching ~150s gets EPIPE on its next fd-1 write, but the

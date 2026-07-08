@@ -239,6 +239,22 @@ fn _rho_fan_ko_is_known(word: string) -> bool {
     return false
 }
 
+// _rho_fan_ko_known_word_ratio — ko known-word ratio (kwr_ko · KWRKO_GATE_prereg §2), the ko
+// analog of _rho_fan_known_word_ratio: eojeol-run tokens via _rho_fan_words_uni, a token is a
+// hit iff _rho_fan_ko_is_known (KO_FUNC exact ∨ pure-hangul josa-suffix). `known` is IGNORED
+// (curated closed-class proxy, model-independent) — kept for signature-parity with the en kwr so
+// the ρ-AXON axis fns dispatch uniformly. Grammaticality density, NOT lexicality; gate = the
+// separately-frozen KWR_KO_GATE (0.20), NOT en 0.70. Parity twin of core/rho_fan.py.
+fn _rho_fan_ko_known_word_ratio(text: string, known: Map) -> float {
+    let wl = _rho_fan_words_uni(text)
+    let n = len(wl)
+    if n == 0 { return 0.0 }
+    let mut hit = 0
+    let mut i = 0
+    while i < n { if _rho_fan_ko_is_known(to_string(wl[i])) { hit = hit + 1 } i = i + 1 }
+    return to_float(hit) / to_float(n)
+}
+
 // rho_fan_cells_selftest — H_9212 ② foundation self-test (engine-internal · reached via the
 // cli single-entry / an internal subprocess, never `hexa run core/rho_fan.hexa` directly).
 // Asserts: (1) en_general is _rho_fan_concepts() element-identical (frozen en bar untouched),
@@ -305,6 +321,11 @@ pub fn rho_fan_cells_selftest() -> Map {
        && func.contains_key("가") && !func.contains_key("의식은") { npass = npass + 1 }
     ntotal = ntotal + 1
     if _rho_fan_ko_is_known("의식은") && _rho_fan_ko_is_known("은") { npass = npass + 1 }
+    // (4) kwr_ko: a real josa-bearing ko sentence clears KWR_KO_GATE; empty → 0.0
+    ntotal = ntotal + 1
+    let empty_km = #{}
+    if _rho_fan_ko_known_word_ratio("의식은 세포에서 피어난다", empty_km) >= KWR_KO_GATE()
+       && _rho_fan_ko_known_word_ratio("", empty_km) == 0.0 { npass = npass + 1 }
     return #{ "ok": npass == ntotal, "npass": npass, "ntotal": ntotal }
 }
 // ── end H_9212 ② 4-cell + ko known-word proxy (ADDITIVE · UNWIRED) ──
