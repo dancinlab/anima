@@ -41,5 +41,16 @@ GPU 학습 fire = rent=spend → **오너 go 필요**(a_fire_autonomous fleet/sp
 
 **scope caveat(a_scale_honest_scope)**: 합성 word-identity+assigned-code task ≠ 생성 meaning-composition. engine-native REPRESENTATION verdict(mechanism)지 G1 생성 verdict 아님(그건 fork A wired+system-G1 frozen bars 필요) = DIRECTIONAL. 철자 confound(개념어가 prompt에 존재).
 
+## fork-A $0 pre-check 결과 (2026-07-09 · Fable 설계 · numpy 캐시 · `fork_a_precheck.py`)
+H2-lite REFRAME(벽=readout-routing) → fork-A route를 GPU 전 $0로 검증. mean-pool→gelu bottleneck→XOR을 **end-to-end 학습**(rung-b 2단계 probe 아티팩트 회피·convergence rung-b-analyze-py-1). 5-arm 통제:
+```
+main(mean+gelu)      = 0.981  PASS ≥0.85   ← 두 개념 다 held-out XOR 라우팅
+laneOFF(last+gelu)   = 0.475  FAIL ✓        ← 생성점만으론 불가 = ROUTING이 레버(last A=0.07 예측 정합)
+additive(mean+lin)   = 0.431  FAIL ✓        ← gelu 비선형이 결합 수행(linear 불가)
+handed(onehot+gelu)  = 1.000  PASS ✓        ← harness 무결(양성대조)
+shuffle(mean+labels) = 0.502  chance ✓      ← bind-destruction
+```
+🟢 **FORK-A ROUTE PROVEN($0)**: read-side context-pooling lane이 superposed context서 두 개념을 held-out XOR 합성으로 라우팅(0.98), 생성점(last)·linear는 실패 = routing이 레버·bottleneck 비선형이 결합. 모든 통제 요구상태 충족(handed 양성·additive/last/shuffle 음성). **honest scope(Fable §6)**: route≠generation — held-out 분류 통과지 composed 생성 아님, system-G1만이 진짜 바. NEXT=CLML lane wiring(.clm v0.3 trailing block·CLMB 패턴)+frozen-trunk train(derivtrace held-out 포맷)+engine-native `anima evaluate --py --system-g1` lane-ON/OFF ablation(terminal G1 verdict).
+
 ## 맥락
 [[H_9234]] operator-vs-association 종결(#3166): fuel≠operator·벽=additive-readout 국한. 싼 레버 전수 소진 후 유일 잔여 engine 경로=이 γ lane. 발사 전 [[check-ledger-before-lever-fire]] 준수(#3135·#3108 이미 검토). H2-lite REFRAME: fork B(GPU) 대신 fork A(read-side lane, $0-저비용) 부활.

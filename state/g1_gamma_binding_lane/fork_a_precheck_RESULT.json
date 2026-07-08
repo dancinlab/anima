@@ -1,0 +1,11 @@
+{
+  "N": 32,
+  "T": 24,
+  "d": 3784,
+  "main(mean+gelu)": 0.9813,
+  "laneOFF(last+gelu)": 0.4747,
+  "additive(mean+lin)": 0.4311,
+  "handed(onehot+gelu)": 1.0,
+  "shuffle(mean+gelu)": 0.5018,
+  "verdict": "🟢 FORK-A ROUTE PROVEN ($0) — mean-pool+gelu routes both concepts to held-out XOR (0.98) where last-position FAILS (0.47) and a linear head FAILS (0.43) ⇒ the context-pooling lane has a real route + the bottleneck nonlinearity composes. → wire CLML lane + frozen-trunk train + engine-native system-G1 (terminal G1 verdict). NB: route≠generation; system-G1 is the real bar."
+}
