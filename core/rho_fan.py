@@ -96,6 +96,24 @@ def _is_hangul_cp(cp):
     return (0xAC00 <= cp <= 0xD7A3) or (0x1100 <= cp <= 0x11FF) or (0x3130 <= cp <= 0x318F)
 
 
+# ── H_9212 ④ FROZEN-FIRST ko known-word-ratio gate (p7 · NOT tune-to-green) ──
+# The en reach gate uses a frozen 0.70 known-word-ratio bar (235k-dict lexicality). Korean
+# needs its OWN gate: kwr_ko is a josa-suffix GRAMMATICALITY proxy (a_scale_honest_scope), a
+# DIFFERENT physical quantity, so 0.70 is a category error for ko. This constant is DERIVED
+# frozen-first from MODEL-INDEPENDENT distributions BEFORE any 303M ko output is scored:
+#   POSITIVE = held-out anima-corpus-ko-{general,sns} real sentences (median kwr_ko 0.40);
+#   NEGATIVE = garble null (byte-shuffle + random valid-hangul; near point-mass at 0.0).
+#   rule = midpoint(neg_combined_p95=0.0, pos_p50=0.40) = 0.20 (naive midpoint(pos_p5,neg_p95)
+#          degenerates to 0.0 because the positive dist has a fat zero-tail of short/josa-free
+#          fragments; the median anchors the frozen gate robustly between the two dists).
+#   at 0.20: 80.0% real ko clears (>=gate), 99.74% garble fails (<gate).
+# Derivation: state/frontier_round2_scout/kwrko_gate_derive.py (seed 4302, $0 corpus stats).
+# Pre-registration: state/frontier_round2_scout/KWRKO_GATE_prereg.md.
+# ⚠️ 구현됨·미배선 — NOT yet consumed by any scoring path (that is H_9212 ③ per-cell
+# dispatch). ko FALS is SCOPE-EXCLUDED until this gate is applied by ③. en 0.70 is UNCHANGED.
+KWR_KO_GATE = 0.20
+
+
 def _rho_fan_words_uni(s):
     """codepoint-aware SUPERSET of _rho_fan_words (H_9212 4-cell ko path ONLY; en path stays on
     the frozen byte splitter — dispatch keeps frozen en bars structurally invariant, Fable design
