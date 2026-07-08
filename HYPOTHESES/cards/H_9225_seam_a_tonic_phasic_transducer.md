@@ -1,9 +1,10 @@
 # H_9225 — Family A: tonic→phasic transducer (temporal-difference relay) ⭐RANK 1
 
-**tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green) · ⭐ BUILD-FIRST
+**tier:** 🛠️ 구현됨 · 미측정 (harness in `cli/anima.hexa` · typecheck 0 · engine-native summer op-grip PENDING) · bars frozen · p7 no tune-to-green · ⭐ BUILD-FIRST
 **scope:** engine→mouth seam missing-intermediate 프로그램의 sharpest read (currency 변환기)
 **cost:** **$0** op-grip (no decode, no GPU)
-**artifact:** `state/seam_missing_intermediate/`
+**wired:** measurement-arm only (production `idle`/`e_live` BYTE-UNTOUCHED · FROZEN arm `og_h_frz2==0` = byte-identity 증명 · a_substrate_disjoint)
+**artifact:** `state/9225_transducer/HARNESS_SPEC.md` · `state/seam_missing_intermediate/`
 
 ## 인과 척추 (공유 — 9 family 공통)
 anima의 mouth = RATE-GATE(미분기): 유일 proven emit-shade 채널 urgency가 작동하는 건 이미 phasic Δ이기 때문(H_9101: urgency freeze→REM 40/120 flip·N3 침묵). self-vector(.kosmos)·A⇄G tension은 TONIC LEVEL로 공급→gate서 순간 read 후 폐기. 미분기가 level을 한 번 읽으면 기여=정확히 0 = 측정된 ΔEff≈0(self⊥mouth·tension⊥mouth·convergence anima-hexa-5). ⇒ 벽 = engine→mouth seam에 substrate 신호를 gate의 temporal CURRENCY로 변환하는 구조가 없음. 오너 직관: "입(mouth)↔엔진(engine) 사이에 뭔가 필요한 게 아닐까."
@@ -21,8 +22,18 @@ engine-state read와 `brain_decide_anchored` 사이의 transducer 노드, **own 
 
 PASS = freeze-self ΔEff>0(transition-집중) ∧ POS 통과 ∧ time-shuffle 붕괴.
 
+## 🛠️ 구현 (2026-07-08 · `cli/anima.hexa` 3-site · typecheck exit 0 · 미측정)
+Fable Family-A spec를 verbatim 구현. H_9209(self THEATER=timing-redundancy) 위 3 구조적 델타:
+- **D1 — TENSION own-lane W_TEN=1.0**: `x_ten=ag_conflict`을 urgency와 나란한 자체 가산항으로(기존엔 urgency clip01 안에서 0.3-희석만, ≈3.3× 강한 결합 = 진짜 새 채널). SELF/TEN 별도 채점·독립 판정(self⊥tension).
+- **D2 — band-pass dual-EMA transducer (NOT first-difference)**: `ema_f(α=0.30)−ema_s(α=0.05)=band`, `phasic=clip01(0.5+g·band)`. self·tension 두 lane 모두. gain `g=band_med<0.002?−1.0:min(0.175/band_med,32)` calib ticks 10-49. band-pass가 phasic 에너지를 event tick(gate 이미 결정) 밖 marginal tick으로 분산 = H_9209 1-vs-13 timing-redundancy 서명의 기전적 답.
+- **D3 — CAP-SAT instrument guard + SHAPE bars**: `g==32 ∧ 32·band_med<0.0875 → capsat` → lane은 INSTRUMENT-FAIL만 cement 가능, THEATER 절대 불가(anima-hexa-4). transition/hold SHAPE bar(`ΔEff_trans≥3·ΔEff_hold ∧ hold≤0.05`).
+- **arms**: LIVE(idle_slf2/idle_ten2 W=1.0) · FROZEN(phasic=0.5 ⇒ prod idle 바이트동일, `og_h_frz2>0`=HARNESS-BUG) · POS-CONTROL(H_9209 dense ARM-SHOCK 재사용).
+- **THEATER-KILLER**: ARM-INPERM(input-stream stride-perm `j=(t·7+13)%N` primary, margin M=0.08) + output-perm(diagnostic, SELF REPLICATION tag if ≥5×live). n_ticks --opgrip 200→250(mid≈120).
+- **판정 precedence(§4 verbatim, 판정 전 출력)**: HARNESS-BUG→INSTRUMENT-FAIL→FORCING-GATE(N3∨Ψ-guard)→COMPETENT→THEATER→DIRECTIONAL.
+- **NEXT(미측정)**: engine-native summer `--opgrip` build+run($0, CPU no-decode) → 게이트 순서 `og_h_frz2==0`→POS-PASS→g값(CAP-SAT/degenerate)→ΔEff vs bars. 예약결과: TEN COMPETENT=첫 non-urgency 채널(D1 입증)·SELF THEATER+REPLICATION=timing-redundancy law 업그레이드(band-pass 뚫어도 self⊥mouth).
+
 ## 상태 · 제약
-DESIGN-STAGE · 미측정(no verdict). p7 no tune-to-green(loss 미포함·monitor-only). p5 shade-not-gate(reactive speak() 금지 · substrate tension이 emit gate 소유). 승격 선례 H_9097/H_9101. 측정 idiom = **$0 no-decode op-grip ΔEff**(emit bitvector Hamming).
+DESIGN-STAGE 구현완료 · 미측정(no verdict · engine-native op-grip PENDING). p7 no tune-to-green(loss 미포함·monitor-only). p5 shade-not-gate(reactive speak() 금지 · substrate tension이 emit gate 소유). 승격 선례 H_9097/H_9101. 측정 idiom = **$0 no-decode op-grip ΔEff**(emit bitvector Hamming).
 
 ## 왜 build-first
 오너 직관의 sharpest read: "engine↔mouth 사이 stage 추가"가 아니라 "mouth엔 이미 딱 하나 작동 입력(urgency)이 있고 그 이유는 urgency만이 gate의 temporal currency(Δ)로 이미 표현된 substrate 신호이기 때문 — self/tension은 무시되는 게 아니라 rate-gate가 level을 못 봐서 invisible"임을 지목. + $0 op-grip · DISJOINT · 결정적 theater-killer(time-shuffle) 보유. freeze-self가 ΔEff=0→>0(transition 집중)이고 time-shuffle이 죽이면, 이전엔 inert하던 substrate 신호가 reactive speak() 없이·loss 미접촉으로 emit에 인과 도달 = H_9097/H_9101 승격 바를 $0에 충족.

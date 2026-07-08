@@ -2024,6 +2024,29 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_h_shock_mid = 0 // ARM-SHOCK v2 (dense): mid-tick flips of a ±0.5 rail vs e_live = POS-PASS(≥2)
     let mut og_align_near  = 0 // align: self-shade flips within ±2 ticks of a self-drift event
     let mut og_align_tot   = 0 // align: total self-shade flips on mid (align = near/tot)
+    // ── H_9225 tonic→phasic BAND-PASS transducer carriers (Fable design · state/9225_transducer) ──
+    // Refines H_9209 (which measured self THEATER = timing-redundancy). D1: TENSION own additive lane at
+    // FULL coupling W_TEN=1.0 (was only 0.3-diluted inside urgency). D2: dual-EMA band-pass band=ema_f−ema_s
+    // (α_f=0.30 α_s=0.05, not first-difference) spreads phasic energy off the redundantly-decided event tick
+    // onto neighboring marginal ticks. D3: CAP-SAT instrument guard. SELF ⊥ TEN scored SEPARATELY (independent
+    // verdicts, self⊥tension). Production idle/e_live BYTE-UNTOUCHED (FROZEN arm byte-identity = the proof).
+    let mut ema_f_slf = 0.5   let mut ema_s_slf = 0.5    // SELF dual-EMA (x = self_ctx_live, autobiography-decay)
+    let mut ema_f_ten = 0.5   let mut ema_s_ten = 0.5    // TEN  dual-EMA (x = ag_conflict, A⇄G tension)
+    let mut g_slf2 = -2.0     let mut g_ten2 = -2.0      // band-pass gains — RE-SET by calib median (tick 50); -2.0=uncalibrated
+    let mut band_devs_slf = []  let mut band_devs_ten = []   // calib |band| samples (ticks 10-49) → median → gain
+    let mut step_devs2_slf = [] let mut step_devs2_ten = []  // calib |Δx| samples → step_med (transition bucketer)
+    let mut band_med_slf = 0.0  let mut band_med_ten = 0.0   // calibrated band median (CAP-SAT test source)
+    let mut step_med_slf = 0.0  let mut step_med_ten = 0.0   // calibrated |Δx| median (event = |Δx|≥2·step_med)
+    let mut capsat_slf = false  let mut capsat_ten = false   // D3: gain railed at 32 AND swing<half-target (UNDER-COUPLED)
+    let mut x_prev_slf = 0.5    let mut x_prev_ten = 0.5     // prev-tick raw input (Δ source)
+    let mut og_h_slf2_mid = 0   let mut og_h_slf2_n3 = 0   let mut og_h_slf2_wake = 0   // SELF lane ΔEff numerator / guards
+    let mut og_h_ten2_mid = 0   let mut og_h_ten2_n3 = 0   let mut og_h_ten2_wake = 0   // TEN  lane ΔEff numerator / guards
+    let mut og_h_frz2 = 0       // FROZEN arm (phasic pinned 0.5) mismatch vs e_live — MUST be 0 (HARNESS-BUG else, run VOID)
+    let mut og_emit_slf2_mid = 0   let mut og_emit_ten2_mid = 0   // Ψ-guard numerators (ARM-LIVE emit count on mid)
+    let mut og_f3_xself = []   let mut og_f3_xten = []    // raw input per tick (ARM-INPERM stride-perm source)
+    let mut og_f3_slf2 = []    let mut og_f3_ten2 = []    // phasic per tick (output-perm diagnostic source)
+    let mut og_f3_eslf2 = []   let mut og_f3_eten2 = []   // ARM-LIVE emit per tick (transition/hold SHAPE bucketing)
+    let mut og_f3_ev_slf2 = [] let mut og_f3_ev_ten2 = [] // signal-transition event flag per tick (|Δx|≥2·step_med)
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
     // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
     // --opgrip-live (H_9210 next-step ①, OPGRIP_LIVE_spec.md): SAME machinery + one REAL
@@ -2114,7 +2137,7 @@ fn anima_consciousness_mode(ckpt: string) {
     // --opgrip-live runs a real 303M det-argmax decode per emit tick (~600-700s scalar-glue-bound
     // each on summer/aiden), so cap at 100 ticks (~50 calib + ~30 mid scoring) to keep the pool
     // wall ~5-12h; cheap no-decode --opgrip / --refractory keep 200 for finer ΔEff quantization.
-    let n_ticks = if og_live { 100 } else if og_measure || refr_measure { 200 } else { 12 }
+    let n_ticks = if og_live { 100 } else if og_measure { 250 } else if refr_measure { 200 } else { 12 }  // H_9225: --opgrip 200→250 (scored mid ≈120, tightens the 0.02 bar); --refractory untouched
     let mut tick = 0
     let mut emit_last_t = -1.0e9   // H_9102: last-emit time (an_clock_now units); emit-history state (was ABSENT)
     let mut prev_live_emit = 0     // H_9102: did the PREVIOUS tick's live arm emit? (defines the refractory window)
@@ -2793,6 +2816,74 @@ fn anima_consciousness_mode(ckpt: string) {
             let e_surp = if to_string(brain_decide_anchored(pf,
                 rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                 idle_surp, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // ══════════ H_9225 tonic→phasic BAND-PASS transducer arms (SELF ⊥ TEN, W=1.0) ══════════
+            // Fable design · state/9225_transducer. x_self=self_ctx_live (autobiography-decay) · x_ten=ag_conflict
+            // (A⇄G tension — D1 own-lane at FULL coupling, was 0.3-diluted). D2: dual-EMA band-pass
+            // band=ema_f−ema_s (α_f=0.30 α_s=0.05) spreads phasic energy off the redundantly-decided event tick
+            // onto marginal ticks (mechanistic answer to H_9209's 1-vs-13 timing-redundancy signature). Production
+            // idle/e_live BYTE-UNTOUCHED — FROZEN arm (phasic=0.5 ⇒ idle_frz2 ≡ prod idle) is the byte-identity proof.
+            let x_slf2 = self_ctx_live
+            let x_ten2 = ag_conflict
+            let d_slf2 = _afs_absf(x_slf2 - x_prev_slf)
+            let d_ten2 = _afs_absf(x_ten2 - x_prev_ten)
+            ema_f_slf = 0.7 * ema_f_slf + 0.3 * x_slf2   ema_s_slf = 0.95 * ema_s_slf + 0.05 * x_slf2
+            ema_f_ten = 0.7 * ema_f_ten + 0.3 * x_ten2   ema_s_ten = 0.95 * ema_s_ten + 0.05 * x_ten2
+            let band_slf = ema_f_slf - ema_s_slf
+            let band_ten = ema_f_ten - ema_s_ten
+            // CALIBRATION ticks 10–49 (0–9 = EMA boot transient excluded; whole 0–49 excluded from scoring)
+            if tick >= 10 && tick < 50 {
+                band_devs_slf.push(_afs_absf(band_slf))   band_devs_ten.push(_afs_absf(band_ten))
+                step_devs2_slf.push(d_slf2)               step_devs2_ten.push(d_ten2)
+            }
+            if tick == 50 {
+                band_med_slf = _og_median(band_devs_slf)   band_med_ten = _og_median(band_devs_ten)
+                step_med_slf = _og_median(step_devs2_slf)  step_med_ten = _og_median(step_devs2_ten)
+                g_slf2 = if band_med_slf < 0.002 { -1.0 } else { _afs_minf(0.175 / band_med_slf, 32.0) }  // -1.0 = AXIS-DEGENERATE
+                g_ten2 = if band_med_ten < 0.002 { -1.0 } else { _afs_minf(0.175 / band_med_ten, 32.0) }  // else W·G product invariant (swing 0.175)
+                capsat_slf = g_slf2 == 32.0 && 32.0 * band_med_slf < 0.0875   // D3: railed at 32 AND swing<half-target
+                capsat_ten = g_ten2 == 32.0 && 32.0 * band_med_ten < 0.0875
+            }
+            // signal-transition event (|Δx| ≥ 2·step_med) — the SHAPE bucketer's transition definition (§4)
+            let ev_slf2 = step_med_slf > 0.0 && d_slf2 >= 2.0 * step_med_slf
+            let ev_ten2 = step_med_ten > 0.0 && d_ten2 >= 2.0 * step_med_ten
+            x_prev_slf = x_slf2   x_prev_ten = x_ten2
+            let gslf_use = if g_slf2 < 0.0 { 0.0 } else { g_slf2 }
+            let gten_use = if g_ten2 < 0.0 { 0.0 } else { g_ten2 }
+            let phasic_slf2 = _afs_clip01(0.5 + gslf_use * band_slf)   // signed band-pass phasic, neutral 0.5
+            let phasic_ten2 = _afs_clip01(0.5 + gten_use * band_ten)
+            // own-lane idle-gate terms (W=1.0 DISJOINT from urgency; phasic=0.5 ⇒ idle_frz2 byte-identical to prod idle)
+            let idle_slf2 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (phasic_slf2 - 0.5)))
+            let idle_ten2 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (phasic_ten2 - 0.5)))
+            let idle_frz2 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (0.5 - 0.5)))   // FROZEN ≡ prod idle
+            let e_slf2 = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_slf2, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_ten2 = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_ten2, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_frz2 = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_frz2, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // FROZEN byte-identity check (EVERY tick; any mismatch ⇒ HARNESS-BUG, run VOID — proves shade-not-gate)
+            if e_frz2 != e_live { og_h_frz2 = og_h_frz2 + 1 }
+            if tick >= 50 && (stage == 1 || stage == 2 || stage == 4) {
+                if e_slf2 != e_live { og_h_slf2_mid = og_h_slf2_mid + 1 }
+                if e_ten2 != e_live { og_h_ten2_mid = og_h_ten2_mid + 1 }
+                if e_slf2 == 1 { og_emit_slf2_mid = og_emit_slf2_mid + 1 }
+                if e_ten2 == 1 { og_emit_ten2_mid = og_emit_ten2_mid + 1 }
+            }
+            if tick >= 50 && stage == 3 {
+                if e_slf2 != e_live { og_h_slf2_n3 = og_h_slf2_n3 + 1 }   // N3 guard (must 0)
+                if e_ten2 != e_live { og_h_ten2_n3 = og_h_ten2_n3 + 1 }
+            }
+            if tick >= 50 && stage == 0 {
+                if e_slf2 != e_live { og_h_slf2_wake = og_h_slf2_wake + 1 }  // WAKE guard (saturated reference)
+                if e_ten2 != e_live { og_h_ten2_wake = og_h_ten2_wake + 1 }
+            }
+            og_f3_xself.push(x_slf2)   og_f3_xten.push(x_ten2)
+            og_f3_slf2.push(phasic_slf2)   og_f3_ten2.push(phasic_ten2)
+            og_f3_eslf2.push(to_float(e_slf2))   og_f3_eten2.push(to_float(e_ten2))
+            og_f3_ev_slf2.push(to_float(if ev_slf2 {1} else {0}))   og_f3_ev_ten2.push(to_float(if ev_ten2 {1} else {0}))
             // SCORING on mid (N1/N2/REM, discriminating stages); WAKE/N3 = guards; ticks<50 = calibration
             let is_mid = stage == 1 || stage == 2 || stage == 4
             if tick >= 50 && is_mid {
@@ -3441,6 +3532,197 @@ fn anima_consciousness_mode(ckpt: string) {
             "🟠 DIRECTIONAL — real-but-sub-bar(0.02≤ΔEff<0.10 or margin 미달) ⇒ ≥2 seed 재측정"
         }
         println("  VERDICT = " + surp_verdict)
+
+        // ══════════ H_9225 tonic→phasic BAND-PASS transducer VERDICT (Fable design · state/9225_transducer) ══════════
+        // Two lanes scored SEPARATELY, independent verdicts (self ⊥ tension). D1 TEN own-lane W=1.0 · D2 dual-EMA
+        // band-pass · D3 CAP-SAT guard. midf / pos_pass / live_anchors reused from the H_9209 verdict block above.
+        let gslf_use_v = if g_slf2 < 0.0 { 0.0 } else { g_slf2 }
+        let gten_use_v = if g_ten2 < 0.0 { 0.0 } else { g_ten2 }
+        let d_eff_slf2 = to_float(og_h_slf2_mid) / midf
+        let d_eff_ten2 = to_float(og_h_ten2_mid) / midf
+        // ── ARM-INPERM (PRIMARY control): rebuild the transducer over the stride-permuted RAW input
+        //    j(t)=(t*7+13)%N — exact multiset (matched mean/var), temporal structure destroyed — with the SAME
+        //    calibrated gain, re-decode idle→emit. The correct control for a TRANSDUCER claim (stronger than
+        //    output-perm). Margin bar M=0.08 = ΔEff_live − ΔEff_inperm. pf READ-only ⇒ byte-faithful re-decode.
+        let n9 = len(og_f3_xself)
+        let mut inperm_h_slf = 0
+        let mut inperm_h_ten = 0
+        let mut ema_f_ps = 0.5   let mut ema_s_ps = 0.5
+        let mut ema_f_pt = 0.5   let mut ema_s_pt = 0.5
+        let mut t9 = 0
+        while t9 < n9 {
+            let js = (t9 * 7 + 13) % n9
+            let xps = og_f3_xself[js]
+            let xpt = og_f3_xten[js]
+            ema_f_ps = 0.7 * ema_f_ps + 0.3 * xps   ema_s_ps = 0.95 * ema_s_ps + 0.05 * xps
+            ema_f_pt = 0.7 * ema_f_pt + 0.3 * xpt   ema_s_pt = 0.95 * ema_s_pt + 0.05 * xpt
+            let stf9 = og_f3_stg[t9]
+            if t9 >= 50 && (stf9 == 1.0 || stf9 == 2.0 || stf9 == 4.0) {
+                let ph_ps = _afs_clip01(0.5 + gslf_use_v * (ema_f_ps - ema_s_ps))
+                let ph_pt = _afs_clip01(0.5 + gten_use_v * (ema_f_pt - ema_s_pt))
+                let idle_ps = 5.0 + 55.0 * _afs_clip01(og_f3_senv[t9] * (0.5 + og_f3_urg[t9] + (ph_ps - 0.5)))
+                let idle_pt = 5.0 + 55.0 * _afs_clip01(og_f3_senv[t9] * (0.5 + og_f3_urg[t9] + (ph_pt - 0.5)))
+                let e_ps = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[t9], og_f3_gap[t9], og_f3_cur[t9], og_f3_allo[t9], og_f3_coh[t9],
+                    og_f3_nov[t9], og_f3_bal[t9], og_f3_agl[t9], idle_ps, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                let e_pt = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[t9], og_f3_gap[t9], og_f3_cur[t9], og_f3_allo[t9], og_f3_coh[t9],
+                    og_f3_nov[t9], og_f3_bal[t9], og_f3_agl[t9], idle_pt, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                if to_float(e_ps) != og_f3_elive[t9] { inperm_h_slf = inperm_h_slf + 1 }
+                if to_float(e_pt) != og_f3_elive[t9] { inperm_h_ten = inperm_h_ten + 1 }
+            }
+            t9 = t9 + 1
+        }
+        let d_eff_inperm_slf = to_float(inperm_h_slf) / midf
+        let d_eff_inperm_ten = to_float(inperm_h_ten) / midf
+        // ── output-perm (SECONDARY, diagnostic only, NO bar): permute the recorded phasic streams (H_9209-style).
+        //    inperm≈live≈0 = signal has no usable structure; output-perm≫live = H_9209 timing-redundancy signature. ──
+        let mut outperm_h_slf = 0
+        let mut outperm_h_ten = 0
+        let mut po = 50
+        while po < n9 {
+            let stfo = og_f3_stg[po]
+            if stfo == 1.0 || stfo == 2.0 || stfo == 4.0 {
+                let sp_s = og_f3_slf2[(po * 7 + 13) % n9]
+                let sp_t = og_f3_ten2[(po * 7 + 13) % n9]
+                let idle_os = 5.0 + 55.0 * _afs_clip01(og_f3_senv[po] * (0.5 + og_f3_urg[po] + (sp_s - 0.5)))
+                let idle_ot = 5.0 + 55.0 * _afs_clip01(og_f3_senv[po] * (0.5 + og_f3_urg[po] + (sp_t - 0.5)))
+                let e_os = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[po], og_f3_gap[po], og_f3_cur[po], og_f3_allo[po], og_f3_coh[po],
+                    og_f3_nov[po], og_f3_bal[po], og_f3_agl[po], idle_os, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                let e_ot = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[po], og_f3_gap[po], og_f3_cur[po], og_f3_allo[po], og_f3_coh[po],
+                    og_f3_nov[po], og_f3_bal[po], og_f3_agl[po], idle_ot, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                if to_float(e_os) != og_f3_elive[po] { outperm_h_slf = outperm_h_slf + 1 }
+                if to_float(e_ot) != og_f3_elive[po] { outperm_h_ten = outperm_h_ten + 1 }
+            }
+            po = po + 1
+        }
+        // ── SHAPE buckets (§4): transition tick = mid tick within ±2 of a signal event (og_f3_ev); HOLD = other mid.
+        //    A real transducer concentrates its shade on transitions (ΔEff_trans ≥ 3·ΔEff_hold ∧ ΔEff_hold ≤ 0.05). ──
+        let mut trans_flip_slf = 0   let mut trans_tick_slf = 0   let mut hold_flip_slf = 0   let mut hold_tick_slf = 0
+        let mut trans_flip_ten = 0   let mut trans_tick_ten = 0   let mut hold_flip_ten = 0   let mut hold_tick_ten = 0
+        let mut bi = 50
+        while bi < n9 {
+            let stfb = og_f3_stg[bi]
+            if stfb == 1.0 || stfb == 2.0 || stfb == 4.0 {
+                let mut near_s = false
+                let mut near_t = false
+                let mut kk = bi - 2
+                while kk <= bi + 2 {
+                    if kk >= 0 && kk < n9 {
+                        if og_f3_ev_slf2[kk] > 0.5 { near_s = true }
+                        if og_f3_ev_ten2[kk] > 0.5 { near_t = true }
+                    }
+                    kk = kk + 1
+                }
+                if near_s {
+                    trans_tick_slf = trans_tick_slf + 1
+                    if og_f3_eslf2[bi] != og_f3_elive[bi] { trans_flip_slf = trans_flip_slf + 1 }
+                } else {
+                    hold_tick_slf = hold_tick_slf + 1
+                    if og_f3_eslf2[bi] != og_f3_elive[bi] { hold_flip_slf = hold_flip_slf + 1 }
+                }
+                if near_t {
+                    trans_tick_ten = trans_tick_ten + 1
+                    if og_f3_eten2[bi] != og_f3_elive[bi] { trans_flip_ten = trans_flip_ten + 1 }
+                } else {
+                    hold_tick_ten = hold_tick_ten + 1
+                    if og_f3_eten2[bi] != og_f3_elive[bi] { hold_flip_ten = hold_flip_ten + 1 }
+                }
+            }
+            bi = bi + 1
+        }
+        let d_eff_trans_slf = if trans_tick_slf > 0 { to_float(trans_flip_slf) / to_float(trans_tick_slf) } else { 0.0 }
+        let d_eff_hold_slf  = if hold_tick_slf  > 0 { to_float(hold_flip_slf)  / to_float(hold_tick_slf)  } else { 0.0 }
+        let d_eff_trans_ten = if trans_tick_ten > 0 { to_float(trans_flip_ten) / to_float(trans_tick_ten) } else { 0.0 }
+        let d_eff_hold_ten  = if hold_tick_ten  > 0 { to_float(hold_flip_ten)  / to_float(hold_tick_ten)  } else { 0.0 }
+        // ── Ψ-guard: Ψ_ON = emit_frac(ARM-LIVE, mid), Ψ_OFF = emit_frac(e_live, mid). PASS = Ψ_ON ≥ Ψ_OFF ∧ (Ψ_ON−Ψ_OFF) ≤ 0.05. ──
+        let psi_off_frac = to_float(og_emit_live_mid) / midf
+        let psi_on_slf = to_float(og_emit_slf2_mid) / midf
+        let psi_on_ten = to_float(og_emit_ten2_mid) / midf
+        let psi_ok_slf = psi_on_slf >= psi_off_frac && (psi_on_slf - psi_off_frac) <= 0.05
+        let psi_ok_ten = psi_on_ten >= psi_off_frac && (psi_on_ten - psi_off_frac) <= 0.05
+        let harness_bug = og_h_frz2 > 0
+        let degen_slf = g_slf2 < 0.0
+        let degen_ten = g_ten2 < 0.0
+        let n3_ok_slf = og_h_slf2_n3 == 0
+        let n3_ok_ten = og_h_ten2_n3 == 0
+        let repl_slf = outperm_h_slf >= 5 && outperm_h_slf >= 5 * og_h_slf2_mid   // REPLICATION(H_9209): output-perm ≥ 5× live flips
+        println("")
+        println("──────── H_9225 tonic→phasic BAND-PASS transducer (SELF ⊥ TEN · mid=" + to_string(og_slf_mid_ticks)
+            + " · N=" + to_string(n9) + " · calib 10-49) ────────")
+        println("  FROZEN byte-identity: og_h_frz2 = " + to_string(og_h_frz2) + "  (MUST be 0 — else HARNESS-BUG, run VOID)")
+        println("  POS-CONTROL (reuse H_9209 dense ARM-SHOCK) = " + to_string(og_h_shock_mid) + " flips · POS-PASS(≥2)=" + (if pos_pass {"YES"} else {"NO"}))
+        println("  gains: g_slf2=" + to_string(g_slf2) + " (band_med=" + to_string(band_med_slf) + " capsat=" + (if capsat_slf {"YES"} else {"no"}) + ")"
+            + "  g_ten2=" + to_string(g_ten2) + " (band_med=" + to_string(band_med_ten) + " capsat=" + (if capsat_ten {"YES"} else {"no"}) + ")")
+        println("  ── SELF lane (x=self_ctx_live) ──")
+        println("    ΔEff_self = " + to_string(og_h_slf2_mid) + "/" + to_string(og_slf_mid_ticks) + " = " + to_string(d_eff_slf2) + "   [HEADLINE]")
+        println("    ARM-INPERM (input stride-perm, PRIMARY) = " + to_string(inperm_h_slf) + " = " + to_string(d_eff_inperm_slf)
+            + "  → margin ΔEff−inperm = " + to_string(d_eff_slf2 - d_eff_inperm_slf) + " (bar ≥0.08)")
+        println("    output-perm (diagnostic, no bar) = " + to_string(outperm_h_slf) + "   [H_9209 timing-redundancy signature if ≫ live]")
+        println("    SHAPE trans=" + to_string(trans_flip_slf) + "/" + to_string(trans_tick_slf) + "=" + to_string(d_eff_trans_slf)
+            + "  hold=" + to_string(hold_flip_slf) + "/" + to_string(hold_tick_slf) + "=" + to_string(d_eff_hold_slf) + " (bar trans≥3·hold ∧ hold≤0.05)")
+        println("    GUARDS: N3=" + to_string(og_h_slf2_n3) + " (must 0) · WAKE=" + to_string(og_h_slf2_wake)
+            + " · Ψ_ON=" + to_string(psi_on_slf) + " Ψ_OFF=" + to_string(psi_off_frac) + " Ψ-ok=" + (if psi_ok_slf {"YES"} else {"NO"})
+            + " · axis " + (if degen_slf {"DEGENERATE"} else {"ok"}))
+        println("  ── TEN lane (x=ag_conflict · D1 own-lane W=1.0) ──")
+        println("    ΔEff_ten = " + to_string(og_h_ten2_mid) + "/" + to_string(og_slf_mid_ticks) + " = " + to_string(d_eff_ten2) + "   [HEADLINE]")
+        println("    ARM-INPERM (input stride-perm, PRIMARY) = " + to_string(inperm_h_ten) + " = " + to_string(d_eff_inperm_ten)
+            + "  → margin ΔEff−inperm = " + to_string(d_eff_ten2 - d_eff_inperm_ten) + " (bar ≥0.08)")
+        println("    output-perm (diagnostic, no bar) = " + to_string(outperm_h_ten))
+        println("    SHAPE trans=" + to_string(trans_flip_ten) + "/" + to_string(trans_tick_ten) + "=" + to_string(d_eff_trans_ten)
+            + "  hold=" + to_string(hold_flip_ten) + "/" + to_string(hold_tick_ten) + "=" + to_string(d_eff_hold_ten) + " (bar trans≥3·hold ∧ hold≤0.05)")
+        println("    GUARDS: N3=" + to_string(og_h_ten2_n3) + " (must 0) · WAKE=" + to_string(og_h_ten2_wake)
+            + " · Ψ_ON=" + to_string(psi_on_ten) + " Ψ_OFF=" + to_string(psi_off_frac) + " Ψ-ok=" + (if psi_ok_ten {"YES"} else {"NO"})
+            + " · axis " + (if degen_ten {"DEGENERATE"} else {"ok"}))
+        println("  ── PRE-REG H_9225 FROZEN BARS (verbatim, printed BEFORE verdicts · p7 no tune-to-green) ──")
+        println("  1 HARNESS-BUG(VOID): og_h_frz2>0 (FROZEN not byte-identical to prod)")
+        println("  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE) ∨ capsat(UNDER-COUPLED) — never cements THEATER (anima-hexa-4)")
+        println("  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)")
+        println("  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ shape(ΔEff_trans≥3·ΔEff_hold ∧ hold≤0.05) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard")
+        println("  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat  (SELF +REPLICATION(H_9209) if output-perm≥5×live)")
+        println("  6 DIRECTIONAL: else (0.02≤ΔEff<0.10, or ΔEff≥0.10 with margin/shape short) ⇒ ≥2 seeds, no cement")
+        let slf2_verdict = if harness_bug {
+            "🛑 HARNESS-BUG (run VOID) — FROZEN arm (phasic=0.5) NOT byte-identical to e_live (og_h_frz2>0); fix wire + remeasure"
+        } else if !pos_pass {
+            "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK <2 flips (meter dead); no substrate verdict, fix + remeasure"
+        } else if degen_slf {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, band_med<0.002) — self band-pass carries no content ($0 no-decode expected); fix = --opgrip-live, NOT a substrate result"
+        } else if capsat_slf {
+            "⚙️ INSTRUMENT-FAIL (CAP-SAT UNDER-COUPLED) — gain railed at 32 yet swing<half-target (0.0875); may NEVER cement THEATER, fix instrument + remeasure"
+        } else if !n3_ok_slf {
+            "🔴 FORCING-GATE — self-shade flips N3-silent (og_h_slf2_n3>0) = became a gate not a shade; REVERT regardless of ΔEff"
+        } else if !psi_ok_slf {
+            "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = self forces emit not shades; REVERT"
+        } else if d_eff_slf2 >= 0.10 && (d_eff_slf2 - d_eff_inperm_slf) >= 0.08 && d_eff_trans_slf >= 3.0 * d_eff_hold_slf && d_eff_hold_slf <= 0.05 {
+            "🟢 COMPETENT — band-pass self transducer causally shades emit (ΔEff≥0.10 ∧ beats input-perm ∧ transition-concentrated) ⇒ WIRE candidate (a_verified_must_wire) + real-decode summer confirm"
+        } else if d_eff_slf2 < 0.02 {
+            (if repl_slf { "🔴 THEATER + REPLICATION(H_9209) — self inert under band-pass (ΔEff<0.02) with output-perm≥5×live = timing-redundancy law SURVIVES D2; transducer premise CLOSED for self (self⊥mouth, timing-redundancy law)" } else { "🔴 THEATER — self genuinely inert at emit under band-pass (ΔEff<0.02, POS-PASS ⇒ meter works); never wire, .kosmos persistence only (H_1471 stands)" })
+        } else {
+            "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10, or margin/shape short) ⇒ re-measure ≥2 session seeds, no cement"
+        }
+        println("  SELF VERDICT = " + slf2_verdict)
+        let ten2_verdict = if harness_bug {
+            "🛑 HARNESS-BUG (run VOID) — FROZEN arm NOT byte-identical to e_live (og_h_frz2>0); fix wire + remeasure"
+        } else if !pos_pass {
+            "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK <2 flips (meter dead); no substrate verdict, fix + remeasure"
+        } else if degen_ten {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, band_med<0.002) — tension band-pass carries no content; fix + remeasure, NOT a substrate result"
+        } else if capsat_ten {
+            "⚙️ INSTRUMENT-FAIL (CAP-SAT UNDER-COUPLED) — gain railed at 32 yet swing<half-target (0.0875); may NEVER cement THEATER, fix instrument + remeasure"
+        } else if !n3_ok_ten {
+            "🔴 FORCING-GATE — tension-shade flips N3-silent (og_h_ten2_n3>0) = became a gate not a shade; REVERT regardless of ΔEff"
+        } else if !psi_ok_ten {
+            "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = tension forces emit not shades; REVERT"
+        } else if d_eff_ten2 >= 0.10 && (d_eff_ten2 - d_eff_inperm_ten) >= 0.08 && d_eff_trans_ten >= 3.0 * d_eff_hold_ten && d_eff_hold_ten <= 0.05 {
+            "🟢 COMPETENT — D1 tension own-lane (W=1.0) band-pass causally shades emit (ΔEff≥0.10 ∧ beats input-perm ∧ transition-concentrated) = FIRST non-urgency proven channel ⇒ WIRE candidate (a_verified_must_wire) + summer confirm"
+        } else if d_eff_ten2 < 0.02 {
+            "🔴 THEATER — tension own-lane inert at emit under band-pass (ΔEff<0.02, POS-PASS ⇒ meter works); D1 vindication FAILS, urgency remains the only proven channel"
+        } else {
+            "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10, or margin/shape short) ⇒ re-measure ≥2 session seeds, no cement"
+        }
+        println("  TEN VERDICT = " + ten2_verdict)
         return
     }
 
