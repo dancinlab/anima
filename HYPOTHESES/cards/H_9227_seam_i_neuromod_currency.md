@@ -1,6 +1,7 @@
 # H_9227 — Family I: neuromodulatory currency conversion (H_1541 fusion path) RANK 3
 
 **tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green)
+> ⚠️ shared currency-conversion premise weakened by H_9225 THEATER (still untested).
 **scope:** engine→mouth seam missing-intermediate — 검증된 H_1541 NT×CLS 융합법칙 위에 얹음(high standard-fit)
 **cost:** **$0-ish** op-grip
 **artifact:** `state/seam_missing_intermediate/`
