@@ -616,6 +616,27 @@ def clm_forward_hidden(W, tok, T):
     return _fwd_trunk(W, ta, T)
 
 
+def clm_forward_hidden_logits(W, tok, T):
+    """Read-only combined tap: (yn_trunk:[T,d], logits:[T,V]) in ONE trunk forward — the pre-slot
+    penultimate AND the base (lane-OFF) full-forward logits. Avoids a double _fwd_trunk when a caller
+    (the CLML lane trainer, H_9235) needs both the lane input (yn) and the base logits (CE target)."""
+    ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
+    yn = _fwd_trunk(W, ta, T)
+    d = W["d"]; V = W["V"]; x = yn
+    if W.get("slw") is not None:
+        from slw import slot_apply
+        x = slot_apply(x, W["slw"], gamma=_SLW_GAMMA_OVERRIDE,
+                       shuffle_perm=(None if _SLW_SHUFFLE_SEED is None
+                                     else np.random.RandomState(_SLW_SHUFFLE_SEED).permutation(W["slw"]["n_slot"])))
+    if W.get("bind_type", 0) != 0:
+        u = x @ W["WaWt"] + W["WaB"]; v = x @ W["WbWt"] + W["WbB"]
+        g = u * v if W["bind_type"] == 1 else u + v
+        logits = g @ W["roWt"] + W["roB"]
+    else:
+        logits = _conv1d(x, W["roWt"], W["roB"], T, d, V, 1, 1)
+    return yn, logits
+
+
 def _seed_to_tok(seed, T):
     """T-window right-aligned byte encoding (1:1 with the decode seed→tok in
     clm_decode_topk_sampled_W): utf-8 surrogateescape bytes, right-aligned into a
