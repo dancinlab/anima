@@ -2047,6 +2047,31 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_f3_slf2 = []    let mut og_f3_ten2 = []    // phasic per tick (output-perm diagnostic source)
     let mut og_f3_eslf2 = []   let mut og_f3_eten2 = []   // ARM-LIVE emit per tick (transition/hold SHAPE bucketing)
     let mut og_f3_ev_slf2 = [] let mut og_f3_ev_ten2 = [] // signal-transition event flag per tick (|Δx|≥2·step_med)
+    // ── H_9226 accumulator-to-threshold BUFFER carriers (Family B · DDM evidence-integration · state/9226_accumulator) ──
+    // Family A (H_9225 tonic→phasic transducer) measured 🔴 THEATER (#3181): shape-conversion left emit unchanged.
+    // Family B is the surviving DISTINCT mechanism: NOT a currency conversion — a leaky ACCUMULATOR that integrates a
+    // weak-but-persistent self/tension bias over ticks to a decision-boundary crossing (drift-diffusion / DDM). Per lane
+    // (SELF x=self_ctx_live ⊥ TEN x=ag_conflict): acc = 0.90·acc + (x − x_base); HARD reset acc→0 on the arm's OWN emit
+    // (DDM discharge-at-decision). gain G = min(0.175·(1−λ)/b_med, 32.0), λ=0.90 — a SUSTAINED median bias charges to
+    // exactly the H_9101 coupling-invariant swing 0.175. shade(acc)=clip01(0.5+G·acc); own-lane idle W=1.0 DISJOINT from
+    // urgency AND the H_9225 lanes. Distinguishing evidence = a LATENCY signature (effect only after N≈8 consistent ticks,
+    // not at onset: charge after r ticks = 1−0.9^r → 27%@r=3 sub-gate, 57%@r=8 gate-visible) + collapse under tick-ORDER
+    // shuffle. Production idle/e_live BYTE-UNTOUCHED — FROZEN arm (shade pinned 0.5 ⇒ idle_frzB ≡ prod idle) is the proof.
+    let mut acc_slf = 0.0        let mut acc_ten = 0.0        // leaky accumulators (start 0.0; integrate post-calibration only)
+    let mut xB_cal_slf = []      let mut xB_cal_ten = []      // calib raw-x samples (ticks 10-49) → x_base + b_med at tick 50
+    let mut xB_base_slf = 0.0    let mut xB_base_ten = 0.0    // median of x over calib (the accumulator's zero-bias reference)
+    let mut bB_med_slf = 0.0     let mut bB_med_ten = 0.0     // median |x − x_base| over calib (gain-normalizer · STIM source)
+    let mut gB_slf = -2.0        let mut gB_ten = -2.0        // accumulator gains — RE-SET by calib median (tick 50); -2.0=uncalibrated
+    let mut capsatB_slf = false  let mut capsatB_ten = false  // CAP-SAT guard (carried H_9225): g==32 ∧ 32·b_med<0.0875 = UNDER-COUPLED
+    let mut runlenB_slf = 0      let mut runsgnB_slf = 0.0    // SELF latency: consecutive same-sign bias run length + sign (deadband 0.5·b_med)
+    let mut runlenB_ten = 0      let mut runsgnB_ten = 0.0    // TEN  latency run length + sign
+    let mut swingB_max_slf = 0.0 let mut swingB_max_ten = 0.0 // max |G·acc| held over trajectory (STIM-ABSENT if < 0.0875 = never half-charged)
+    let mut og_h_slfB_mid = 0    let mut og_h_slfB_n3 = 0     let mut og_h_slfB_wake = 0   // SELF ΔEff numerator / guards
+    let mut og_h_tenB_mid = 0    let mut og_h_tenB_n3 = 0     let mut og_h_tenB_wake = 0   // TEN  ΔEff numerator / guards
+    let mut og_h_frzB = 0        // FROZEN arm (shade pinned 0.5) mismatch vs e_live — MUST be 0 (HARNESS-BUG else, run VOID)
+    let mut og_emit_slfB_mid = 0 let mut og_emit_tenB_mid = 0 // Ψ-guard numerators (ARM-LIVE accumulator emit count on mid)
+    let mut earlyB_tick_slf = 0  let mut earlyB_flip_slf = 0  let mut lateB_tick_slf = 0  let mut lateB_flip_slf = 0  // SELF latency buckets EARLY(run 1-3)/LATE(≥8); GAP 4-7 unscored
+    let mut earlyB_tick_ten = 0  let mut earlyB_flip_ten = 0  let mut lateB_tick_ten = 0  let mut lateB_flip_ten = 0  // TEN  latency buckets
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
     // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
     // --opgrip-live (H_9210 next-step ①, OPGRIP_LIVE_spec.md): SAME machinery + one REAL
@@ -2884,6 +2909,87 @@ fn anima_consciousness_mode(ckpt: string) {
             og_f3_slf2.push(phasic_slf2)   og_f3_ten2.push(phasic_ten2)
             og_f3_eslf2.push(to_float(e_slf2))   og_f3_eten2.push(to_float(e_ten2))
             og_f3_ev_slf2.push(to_float(if ev_slf2 {1} else {0}))   og_f3_ev_ten2.push(to_float(if ev_ten2 {1} else {0}))
+            // ══════════ H_9226 accumulator-to-threshold BUFFER arms (Family B · DDM · SELF ⊥ TEN, W=1.0) ══════════
+            // Fable design · state/9226_accumulator. Reuses H_9225's x_slf2=self_ctx_live · x_ten2=ag_conflict raw inputs.
+            // Leaky integrator: acc=0.90·acc+(x−x_base); shade=clip01(0.5+G·acc); own-lane idle DISJOINT from urgency AND
+            // the H_9225 phasic lanes. HARD reset acc→0 on the arm's OWN emit (DDM discharge). x_base + b_med + gain
+            // calibrated at tick 50 from calib ticks 10-49 (0-9 boot excluded; whole 0-49 excluded from scoring).
+            if tick >= 10 && tick < 50 { xB_cal_slf.push(x_slf2)   xB_cal_ten.push(x_ten2) }
+            if tick == 50 {
+                xB_base_slf = _og_median(xB_cal_slf)   xB_base_ten = _og_median(xB_cal_ten)
+                let mut bB_dev_slf = []   let mut bB_dev_ten = []
+                let mut cbi = 0
+                while cbi < len(xB_cal_slf) {
+                    bB_dev_slf.push(_afs_absf(xB_cal_slf[cbi] - xB_base_slf))
+                    bB_dev_ten.push(_afs_absf(xB_cal_ten[cbi] - xB_base_ten))
+                    cbi = cbi + 1
+                }
+                bB_med_slf = _og_median(bB_dev_slf)   bB_med_ten = _og_median(bB_dev_ten)
+                gB_slf = if bB_med_slf < 0.002 { -1.0 } else { _afs_minf(0.0175 / bB_med_slf, 32.0) }  // 0.0175 = 0.175·(1−λ), λ=0.90; -1.0 = AXIS-DEGENERATE
+                gB_ten = if bB_med_ten < 0.002 { -1.0 } else { _afs_minf(0.0175 / bB_med_ten, 32.0) }  // sustained median bias → swing 0.175 (H_9101 invariant)
+                capsatB_slf = gB_slf == 32.0 && 32.0 * bB_med_slf < 0.0875   // CAP-SAT: railed at 32 AND swing<half-target (UNDER-COUPLED)
+                capsatB_ten = gB_ten == 32.0 && 32.0 * bB_med_ten < 0.0875
+            }
+            let gBslf_use = if gB_slf < 0.0 { 0.0 } else { gB_slf }
+            let gBten_use = if gB_ten < 0.0 { 0.0 } else { gB_ten }
+            // integrate (post-calibration only: x_base known at tick 50) + latency sign-run (deadband 0.5·b_med)
+            if tick >= 50 {
+                let biasB_slf = x_slf2 - xB_base_slf
+                let biasB_ten = x_ten2 - xB_base_ten
+                let sgnB_slf = if _afs_absf(biasB_slf) < 0.5 * bB_med_slf { 0.0 } else if biasB_slf > 0.0 { 1.0 } else { -1.0 }
+                let sgnB_ten = if _afs_absf(biasB_ten) < 0.5 * bB_med_ten { 0.0 } else if biasB_ten > 0.0 { 1.0 } else { -1.0 }
+                if sgnB_slf == 0.0 { runlenB_slf = 0   runsgnB_slf = 0.0 }
+                else if sgnB_slf == runsgnB_slf { runlenB_slf = runlenB_slf + 1 }
+                else { runlenB_slf = 1   runsgnB_slf = sgnB_slf }
+                if sgnB_ten == 0.0 { runlenB_ten = 0   runsgnB_ten = 0.0 }
+                else if sgnB_ten == runsgnB_ten { runlenB_ten = runlenB_ten + 1 }
+                else { runlenB_ten = 1   runsgnB_ten = sgnB_ten }
+                acc_slf = 0.90 * acc_slf + biasB_slf
+                acc_ten = 0.90 * acc_ten + biasB_ten
+            }
+            let shadeB_slf = _afs_clip01(0.5 + gBslf_use * acc_slf)   // accumulator shade, neutral 0.5
+            let shadeB_ten = _afs_clip01(0.5 + gBten_use * acc_ten)
+            let idle_slfB = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (shadeB_slf - 0.5)))
+            let idle_tenB = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (shadeB_ten - 0.5)))
+            let idle_frzB = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (0.5 - 0.5)))   // FROZEN ≡ prod idle
+            let e_slfB = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_slfB, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_tenB = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_tenB, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_frzB = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_frzB, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            if e_frzB != e_live { og_h_frzB = og_h_frzB + 1 }   // FROZEN byte-identity (any mismatch ⇒ HARNESS-BUG, run VOID)
+            if tick >= 50 {
+                let swB_slf = _afs_absf(gBslf_use * acc_slf)   // held swing magnitude (pre-clip) — STIM-ABSENT source
+                let swB_ten = _afs_absf(gBten_use * acc_ten)
+                if swB_slf > swingB_max_slf { swingB_max_slf = swB_slf }
+                if swB_ten > swingB_max_ten { swingB_max_ten = swB_ten }
+            }
+            let is_midB = stage == 1 || stage == 2 || stage == 4
+            if tick >= 50 && is_midB {
+                if e_slfB != e_live { og_h_slfB_mid = og_h_slfB_mid + 1 }
+                if e_tenB != e_live { og_h_tenB_mid = og_h_tenB_mid + 1 }
+                if e_slfB == 1 { og_emit_slfB_mid = og_emit_slfB_mid + 1 }
+                if e_tenB == 1 { og_emit_tenB_mid = og_emit_tenB_mid + 1 }
+                // latency buckets: EARLY(run 1-3, must NOT flip) / LATE(≥8, the integrator's gate-crossing) — GAP 4-7 unscored
+                if runlenB_slf >= 1 && runlenB_slf <= 3 { earlyB_tick_slf = earlyB_tick_slf + 1   if e_slfB != e_live { earlyB_flip_slf = earlyB_flip_slf + 1 } }
+                else if runlenB_slf >= 8 { lateB_tick_slf = lateB_tick_slf + 1   if e_slfB != e_live { lateB_flip_slf = lateB_flip_slf + 1 } }
+                if runlenB_ten >= 1 && runlenB_ten <= 3 { earlyB_tick_ten = earlyB_tick_ten + 1   if e_tenB != e_live { earlyB_flip_ten = earlyB_flip_ten + 1 } }
+                else if runlenB_ten >= 8 { lateB_tick_ten = lateB_tick_ten + 1   if e_tenB != e_live { lateB_flip_ten = lateB_flip_ten + 1 } }
+            }
+            if tick >= 50 && stage == 3 {
+                if e_slfB != e_live { og_h_slfB_n3 = og_h_slfB_n3 + 1 }   // N3 guard (must 0)
+                if e_tenB != e_live { og_h_tenB_n3 = og_h_tenB_n3 + 1 }
+            }
+            if tick >= 50 && stage == 0 {
+                if e_slfB != e_live { og_h_slfB_wake = og_h_slfB_wake + 1 }  // WAKE guard (saturated reference)
+                if e_tenB != e_live { og_h_tenB_wake = og_h_tenB_wake + 1 }
+            }
+            if e_slfB == 1 { acc_slf = 0.0 }   // HARD reset on OWN emit (DDM discharge-at-decision)
+            if e_tenB == 1 { acc_ten = 0.0 }
             // SCORING on mid (N1/N2/REM, discriminating stages); WAKE/N3 = guards; ticks<50 = calibration
             let is_mid = stage == 1 || stage == 2 || stage == 4
             if tick >= 50 && is_mid {
@@ -3723,6 +3829,154 @@ fn anima_consciousness_mode(ckpt: string) {
             "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10, or margin/shape short) ⇒ re-measure ≥2 session seeds, no cement"
         }
         println("  TEN VERDICT = " + ten2_verdict)
+        // ══════════ H_9226 accumulator-to-threshold BUFFER VERDICT (Family B · DDM · Fable design · state/9226_accumulator) ══════════
+        // Two lanes scored SEPARATELY, independent verdicts (self ⊥ tension). midf / pos_pass / live_anchors / n9 reused
+        // from the H_9209/H_9225 verdict blocks above. Distinguishing evidence = LATENCY signature (LATE≫EARLY) + collapse
+        // under the theater-killer (same stride-perm j=(t·7+13)%N over the recorded raw inputs, RE-INTEGRATED post-loop with
+        // the calibrated gain + per-tick re-decode, reset dynamics faithful) — a scrambled-order input destroys the
+        // persistent-bias structure the integrator needs.
+        let gBslf_v = if gB_slf < 0.0 { 0.0 } else { gB_slf }
+        let gBten_v = if gB_ten < 0.0 { 0.0 } else { gB_ten }
+        let d_eff_slfB = to_float(og_h_slfB_mid) / midf
+        let d_eff_tenB = to_float(og_h_tenB_mid) / midf
+        // ── ARM-INPERM (theater-killer · PRIMARY control): re-integrate the accumulator over the stride-permuted RAW input
+        //    (exact multiset, temporal order destroyed) with the SAME calibrated gain + reset-on-own-emit → re-decode. ──
+        let mut accP_slfB = 0.0   let mut accP_tenB = 0.0
+        let mut inpermB_h_slf = 0   let mut inpermB_h_ten = 0
+        let mut tb = 0
+        while tb < n9 {
+            let jsb = (tb * 7 + 13) % n9
+            let xpSB = og_f3_xself[jsb]
+            let xpTB = og_f3_xten[jsb]
+            if tb >= 50 {
+                accP_slfB = 0.90 * accP_slfB + (xpSB - xB_base_slf)
+                accP_tenB = 0.90 * accP_tenB + (xpTB - xB_base_ten)
+                let shP_sB = _afs_clip01(0.5 + gBslf_v * accP_slfB)
+                let shP_tB = _afs_clip01(0.5 + gBten_v * accP_tenB)
+                let idle_pSB = 5.0 + 55.0 * _afs_clip01(og_f3_senv[tb] * (0.5 + og_f3_urg[tb] + (shP_sB - 0.5)))
+                let idle_pTB = 5.0 + 55.0 * _afs_clip01(og_f3_senv[tb] * (0.5 + og_f3_urg[tb] + (shP_tB - 0.5)))
+                let e_pSB = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[tb], og_f3_gap[tb], og_f3_cur[tb], og_f3_allo[tb], og_f3_coh[tb],
+                    og_f3_nov[tb], og_f3_bal[tb], og_f3_agl[tb], idle_pSB, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                let e_pTB = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[tb], og_f3_gap[tb], og_f3_cur[tb], og_f3_allo[tb], og_f3_coh[tb],
+                    og_f3_nov[tb], og_f3_bal[tb], og_f3_agl[tb], idle_pTB, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                let stfb = og_f3_stg[tb]
+                if stfb == 1.0 || stfb == 2.0 || stfb == 4.0 {
+                    if to_float(e_pSB) != og_f3_elive[tb] { inpermB_h_slf = inpermB_h_slf + 1 }
+                    if to_float(e_pTB) != og_f3_elive[tb] { inpermB_h_ten = inpermB_h_ten + 1 }
+                }
+                if e_pSB == 1 { accP_slfB = 0.0 }   // reset dynamics faithful (DDM discharge on own emit)
+                if e_pTB == 1 { accP_tenB = 0.0 }
+            }
+            tb = tb + 1
+        }
+        let d_eff_inpermB_slf = to_float(inpermB_h_slf) / midf
+        let d_eff_inpermB_ten = to_float(inpermB_h_ten) / midf
+        // ── LATENCY signature (B's distinguishing evidence): ΔEff_late ≥ 3·ΔEff_early ∧ ΔEff_early ≤ 0.05 ∧ n_late ≥ 10.
+        //    An integrator cannot flip early (charge<gate) and should flip late (≥8 consistent ticks = gate-crossing). ──
+        let d_eff_early_slf = if earlyB_tick_slf > 0 { to_float(earlyB_flip_slf) / to_float(earlyB_tick_slf) } else { 0.0 }
+        let d_eff_late_slf  = if lateB_tick_slf  > 0 { to_float(lateB_flip_slf)  / to_float(lateB_tick_slf)  } else { 0.0 }
+        let d_eff_early_ten = if earlyB_tick_ten > 0 { to_float(earlyB_flip_ten) / to_float(earlyB_tick_ten) } else { 0.0 }
+        let d_eff_late_ten  = if lateB_tick_ten  > 0 { to_float(lateB_flip_ten)  / to_float(lateB_tick_ten)  } else { 0.0 }
+        let latB_ok_slf = d_eff_late_slf >= 3.0 * d_eff_early_slf && d_eff_early_slf <= 0.05 && lateB_tick_slf >= 10
+        let latB_ok_ten = d_eff_late_ten >= 3.0 * d_eff_early_ten && d_eff_early_ten <= 0.05 && lateB_tick_ten >= 10
+        // ── Ψ-guard (reuse og_emit_live_mid from H_9209): Ψ_ON = emit_frac(ARM-LIVE, mid). PASS = Ψ_ON ≥ Ψ_OFF ∧ gap ≤ 0.05. ──
+        let psiB_off = to_float(og_emit_live_mid) / midf
+        let psiB_on_slf = to_float(og_emit_slfB_mid) / midf
+        let psiB_on_ten = to_float(og_emit_tenB_mid) / midf
+        let psiB_ok_slf = psiB_on_slf >= psiB_off && (psiB_on_slf - psiB_off) <= 0.05
+        let psiB_ok_ten = psiB_on_ten >= psiB_off && (psiB_on_ten - psiB_off) <= 0.05
+        let harnessB_bug = og_h_frzB > 0
+        let degenB_slf = gB_slf < 0.0
+        let degenB_ten = gB_ten < 0.0
+        let n3B_ok_slf = og_h_slfB_n3 == 0
+        let n3B_ok_ten = og_h_tenB_n3 == 0
+        let stimabsB_slf = swingB_max_slf < 0.0875   // STIM-ABSENT: acc never held a bias long enough to half-charge
+        let stimabsB_ten = swingB_max_ten < 0.0875
+        println("")
+        println("──────── H_9226 accumulator-to-threshold BUFFER (Family B · DDM · SELF ⊥ TEN · mid=" + to_string(og_slf_mid_ticks)
+            + " · N=" + to_string(n9) + " · calib 10-49) ────────")
+        println("  FROZEN byte-identity: og_h_frzB = " + to_string(og_h_frzB) + "  (MUST be 0 — else HARNESS-BUG, run VOID)")
+        println("  POS-CONTROL (reuse dense ARM-SHOCK) = " + to_string(og_h_shock_mid) + " flips · POS-PASS(≥2)=" + (if pos_pass {"YES"} else {"NO"}))
+        println("  gains: gB_slf=" + to_string(gB_slf) + " (b_med=" + to_string(bB_med_slf) + " capsat=" + (if capsatB_slf {"YES"} else {"no"})
+            + " swing_max=" + to_string(swingB_max_slf) + ")  gB_ten=" + to_string(gB_ten) + " (b_med=" + to_string(bB_med_ten)
+            + " capsat=" + (if capsatB_ten {"YES"} else {"no"}) + " swing_max=" + to_string(swingB_max_ten) + ")")
+        println("  ── SELF lane (x=self_ctx_live) ──")
+        println("    ΔEff_self = " + to_string(og_h_slfB_mid) + "/" + to_string(og_slf_mid_ticks) + " = " + to_string(d_eff_slfB) + "   [HEADLINE]")
+        println("    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = " + to_string(inpermB_h_slf) + " = " + to_string(d_eff_inpermB_slf)
+            + "  → margin ΔEff−inperm = " + to_string(d_eff_slfB - d_eff_inpermB_slf) + " (bar ≥0.08)")
+        println("    LATENCY early(run1-3)=" + to_string(earlyB_flip_slf) + "/" + to_string(earlyB_tick_slf) + "=" + to_string(d_eff_early_slf)
+            + "  late(run≥8)=" + to_string(lateB_flip_slf) + "/" + to_string(lateB_tick_slf) + "=" + to_string(d_eff_late_slf)
+            + " (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=" + (if latB_ok_slf {"YES"} else {"NO"}))
+        println("    GUARDS: N3=" + to_string(og_h_slfB_n3) + " (must 0) · WAKE=" + to_string(og_h_slfB_wake)
+            + " · Ψ_ON=" + to_string(psiB_on_slf) + " Ψ_OFF=" + to_string(psiB_off) + " Ψ-ok=" + (if psiB_ok_slf {"YES"} else {"NO"})
+            + " · axis " + (if degenB_slf {"DEGENERATE"} else {"ok"}) + " · STIM-ABSENT=" + (if stimabsB_slf {"YES"} else {"no"}))
+        println("  ── TEN lane (x=ag_conflict · own-lane W=1.0) ──")
+        println("    ΔEff_ten = " + to_string(og_h_tenB_mid) + "/" + to_string(og_slf_mid_ticks) + " = " + to_string(d_eff_tenB) + "   [HEADLINE]")
+        println("    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = " + to_string(inpermB_h_ten) + " = " + to_string(d_eff_inpermB_ten)
+            + "  → margin ΔEff−inperm = " + to_string(d_eff_tenB - d_eff_inpermB_ten) + " (bar ≥0.08)")
+        println("    LATENCY early(run1-3)=" + to_string(earlyB_flip_ten) + "/" + to_string(earlyB_tick_ten) + "=" + to_string(d_eff_early_ten)
+            + "  late(run≥8)=" + to_string(lateB_flip_ten) + "/" + to_string(lateB_tick_ten) + "=" + to_string(d_eff_late_ten)
+            + " (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=" + (if latB_ok_ten {"YES"} else {"NO"}))
+        println("    GUARDS: N3=" + to_string(og_h_tenB_n3) + " (must 0) · WAKE=" + to_string(og_h_tenB_wake)
+            + " · Ψ_ON=" + to_string(psiB_on_ten) + " Ψ_OFF=" + to_string(psiB_off) + " Ψ-ok=" + (if psiB_ok_ten {"YES"} else {"NO"})
+            + " · axis " + (if degenB_ten {"DEGENERATE"} else {"ok"}) + " · STIM-ABSENT=" + (if stimabsB_ten {"YES"} else {"no"}))
+        println("  ── PRE-REG H_9226 FROZEN BARS (verbatim, printed BEFORE verdicts · p7 no tune-to-green) ──")
+        println("  1 HARNESS-BUG(VOID): og_h_frzB>0 (FROZEN not byte-identical to prod)")
+        println("  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE) ∨ capsat(UNDER-COUPLED) ∨ STIM-ABSENT(swing_max<0.0875) — never cements THEATER")
+        println("  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)")
+        println("  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ latency(late≥3·early ∧ early≤0.05 ∧ n_late≥10) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard")
+        println("  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat ∧ swing_max≥0.0875")
+        println("  6 DIRECTIONAL: else (incl. ΔEff≥0.10 that FAILS latency shape = instantaneous-reader phenotype, A-redundant) ⇒ ≥2 seeds, no cement")
+        let slfB_verdict = if harnessB_bug {
+            "🛑 HARNESS-BUG (run VOID) — FROZEN arm (shade=0.5) NOT byte-identical to e_live (og_h_frzB>0); fix wire + remeasure"
+        } else if !pos_pass {
+            "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK <2 flips (meter dead); no substrate verdict, fix + remeasure"
+        } else if degenB_slf {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, b_med<0.002) — self bias carries no content ($0 no-decode expected); fix = --opgrip-live, NOT a substrate result"
+        } else if capsatB_slf {
+            "⚙️ INSTRUMENT-FAIL (CAP-SAT UNDER-COUPLED) — gain railed at 32 yet swing<half-target (0.0875); may NEVER cement THEATER, fix instrument + remeasure"
+        } else if stimabsB_slf {
+            "⚙️ INSTRUMENT-FAIL (STIM-ABSENT) — accumulator never held a bias long enough to half-charge (swing_max<0.0875); no evidence integrated, NOT THEATER; fix = --opgrip-live"
+        } else if !n3B_ok_slf {
+            "🔴 FORCING-GATE — self-accumulator flips N3-silent (og_h_slfB_n3>0) = became a gate not a shade; REVERT regardless of ΔEff"
+        } else if !psiB_ok_slf {
+            "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = self forces emit not shades; REVERT"
+        } else if d_eff_slfB >= 0.10 && (d_eff_slfB - d_eff_inpermB_slf) >= 0.08 && latB_ok_slf {
+            "🟢 COMPETENT — self accumulator integrates a persistent bias to a gate-crossing (ΔEff≥0.10 ∧ beats order-shuffle ∧ LATE≫EARLY latency) ⇒ WIRE candidate (a_verified_must_wire) + real-decode summer confirm"
+        } else if d_eff_slfB < 0.02 && swingB_max_slf >= 0.0875 {
+            "🔴 THEATER — self genuinely inert at emit under accumulation (ΔEff<0.02, POS-PASS ⇒ meter works, swing held ≥half-charge); never wire, .kosmos persistence only (H_1471 stands)"
+        } else {
+            "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10, or ΔEff≥0.10 that FAILS latency shape = instantaneous-reader phenotype, A-redundant) ⇒ re-measure ≥2 seeds, no cement"
+        }
+        println("  SELF VERDICT = " + slfB_verdict)
+        let tenB_verdict = if harnessB_bug {
+            "🛑 HARNESS-BUG (run VOID) — FROZEN arm NOT byte-identical to e_live (og_h_frzB>0); fix wire + remeasure"
+        } else if !pos_pass {
+            "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK <2 flips (meter dead); no substrate verdict, fix + remeasure"
+        } else if degenB_ten {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, b_med<0.002) — tension bias carries no content; fix + remeasure, NOT a substrate result"
+        } else if capsatB_ten {
+            "⚙️ INSTRUMENT-FAIL (CAP-SAT UNDER-COUPLED) — gain railed at 32 yet swing<half-target (0.0875); may NEVER cement THEATER, fix instrument + remeasure"
+        } else if stimabsB_ten {
+            "⚙️ INSTRUMENT-FAIL (STIM-ABSENT) — accumulator never held a bias long enough to half-charge (swing_max<0.0875); no evidence integrated, NOT THEATER; fix = --opgrip-live"
+        } else if !n3B_ok_ten {
+            "🔴 FORCING-GATE — tension-accumulator flips N3-silent (og_h_tenB_n3>0) = became a gate not a shade; REVERT regardless of ΔEff"
+        } else if !psiB_ok_ten {
+            "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = tension forces emit not shades; REVERT"
+        } else if d_eff_tenB >= 0.10 && (d_eff_tenB - d_eff_inpermB_ten) >= 0.08 && latB_ok_ten {
+            "🟢 COMPETENT — tension own-lane (W=1.0) accumulator integrates to a gate-crossing (ΔEff≥0.10 ∧ beats order-shuffle ∧ LATE≫EARLY) = FIRST non-urgency proven channel ⇒ WIRE candidate + summer confirm"
+        } else if d_eff_tenB < 0.02 && swingB_max_ten >= 0.0875 {
+            "🔴 THEATER — tension own-lane inert at emit under accumulation (ΔEff<0.02, POS-PASS ⇒ meter works, swing held ≥half-charge); urgency remains the only proven channel"
+        } else {
+            "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10, or ΔEff≥0.10 that FAILS latency shape = instantaneous-reader phenotype, A-redundant) ⇒ re-measure ≥2 seeds, no cement"
+        }
+        println("  TEN VERDICT = " + tenB_verdict)
+        println("  ── INTERPRETATION (only if BOTH lanes THEATER) ──")
+        println("  B-THEATER after A-THEATER (H_9225) = convergent seam-law: shape-conversion (A) AND evidence-integration (B)")
+        println("  both inert at the idle seam under a passing dense POS-CONTROL ⇒ the emit gate is causally sealed to everything")
+        println("  but urgency; read-side recoding closed, remaining escalation = write-side (train-time coupling).")
         return
     }
 
