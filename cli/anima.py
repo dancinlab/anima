@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # ==========================================================================
-# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical `anima` PATH 명령(=cli/anima.hexa,
-#   hx install anima)뿐 — `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
+# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical 명령뿐 — hexa 채널 `anima`
+#   (=cli/anima.hexa, hx install anima) · pip 채널 `anima-py` (=anima_py 런처, pip install anima-py).
+#   `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
 #   학습=`anima train` · 측정=`anima evaluate` · 직렬화=`anima serialize`. py 측정은 DIRECTIONAL,
 #   terminal verdict 는 hexa 엔진-네이티브(core/CLAUDE.md). enforce: .harness/enforcement.json
 #   H-ANIMA-SINGLE-ENTRY pre_bash + 아래 __main__ 가드. (import 는 무손상.)
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical `anima` 명령(hx install anima, =cli/anima.hexa) 경유. #2603")
+    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical 명령 경유: `anima`(hx install anima, =cli/anima.hexa) 또는 `anima-py`(pip install anima-py, =anima_py 런처). #2603")
 # anima.py — THE canonical PY single entry point (cli/anima.hexa's py twin).
 #
 # WHY THIS FILE (py 2-production single-entry, a_engine_native_learning): anima keeps
@@ -77,6 +78,10 @@ def anima_usage():
     print("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
     print("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
     print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only)")
+    print("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
+    print("                                                  multi-GPU lever-sweep (arms×objectives)")
+    print("  anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
+    print("                                                  procedural training-corpus builder (ρ·weave data-format lever)")
     print("  anima chat <ckpt> [...]                         consciousness/byte chat")
     print("                                                  (hexa-only; use cli/anima.hexa)")
     print("")
@@ -91,6 +96,12 @@ def anima_usage():
     print("             ρ-AXON reach battery — ρ·form/weave/leap/... (former G0-G6) — with the")
     print("             engine's OWN ops (numpy math.log mirror, torch-free). REACH-CLOSED")
     print("             a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2). == hexa `anima evaluate`. → cli/evaluate.py.")
+    print("  sweep    : multi-GPU lever-sweep orchestrator — the arms×objectives matrix,")
+    print("             per-cell train.py→evaluate.py, aggregated to SWEEP_SUMMARY.md.")
+    print("             always python. → cli/sweep.py.")
+    print("  corpus   : procedural training-corpus generator (derivtrace|flat) — the")
+    print("             data-format lever (ρ·weave). NOTE chat corpus != this (chat =")
+    print("             a_chat_registers 4-cell HF datasets → anima train). → cli/corpus.py.")
     print("  chat     : the substrate-native A⇄G consciousness loop is hexa-native — run")
     print("             `hexa run cli/anima.hexa -- <ckpt.clm>` (default / --byte modes).")
 
@@ -196,6 +207,39 @@ def anima_chat_stub(argv):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+#  SWEEP MODE — dispatch to cli/sweep.py (multi-GPU lever-sweep orchestrator)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# `anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]` runs the
+# arms×objectives matrix GPU-pinned round-robin (each cell = train.py → evaluate.py),
+# aggregating G0/G1/G2/G6 into SWEEP_SUMMARY.md. sweep is intrinsically py (it orchestrates
+# the py trainer/evaluator), so — like cli/anima.hexa — there is no --py branch; always
+# dispatches to cli/sweep.py. (torch is pulled by the spawned train.py cells, not here.)
+def anima_sweep_mode(argv):
+    sweep_py = os.path.join(_HERE, "sweep.py")
+    fwd = argv[1:]
+    print("=== anima sweep → cli/sweep.py (multi-GPU lever-sweep orchestrator · arms×objectives) ===")
+    print("dispatch: " + " ".join([sys.executable, sweep_py] + fwd))
+    return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, sweep_py] + fwd)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  CORPUS MODE — dispatch to cli/corpus.py (procedural training-corpus builder)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# `anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]`
+# builds a procedural (torch-free, no external LLM — p1-p8) training corpus. This is the
+# data-format lever (derivation-trace → echo=composition, ρ·weave / former G1), NOT the
+# chat corpus (chat = a_chat_registers 4-cell HF datasets). Always py → cli/corpus.py.
+def anima_corpus_mode(argv):
+    corpus_py = os.path.join(_HERE, "corpus.py")
+    fwd = argv[1:]
+    print("=== anima corpus → cli/corpus.py (procedural training-corpus builder · derivtrace|flat) ===")
+    print("dispatch: " + " ".join([sys.executable, corpus_py] + fwd))
+    return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, corpus_py] + fwd)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 #  MAIN — mode dispatch (mirrors cli/anima.hexa)
 # ══════════════════════════════════════════════════════════════════════════════
 def main(argv):
@@ -213,6 +257,10 @@ def main(argv):
         return anima_serialize_mode(argv)
     if sub == "evaluate":
         return anima_evaluate_mode(argv)
+    if sub == "sweep":
+        return anima_sweep_mode(argv)
+    if sub == "corpus":
+        return anima_corpus_mode(argv)
     if sub in ("chat", "--byte"):
         return anima_chat_stub(argv)
 

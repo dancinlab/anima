@@ -14,6 +14,8 @@
 
 > **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.1 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
 
+> **pip 채널 매니페스트 (anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-py` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.1` 과 자동 lockstep(별도 버전번호 無). base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
+
 > **0.13.0 → 0.13.1** (2026-06-19): 🗂️ Phase 2 멀티엔진 archive — core/engines/
 > 전체(conv/cdv2/hexad/omega + EngineSpec vtable + engine_swap_smoke) → archive/
 > engines-multiengine/ 보관(이력보존), engine_cli resolve 를 단일 conv 상수로 축약.
