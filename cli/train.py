@@ -1084,6 +1084,10 @@ def main():
                     help="N6 sweep: override savant dropout floor (>=0 forces constant dp)")
     ap.add_argument("--bf16", action="store_true")
     ap.add_argument("--sample", choices=["roundrobin", "proportional"], default="proportional")
+    # --require-cells N: fail LOUD if the usable register-cell count != N (a_chat_registers
+    # overfit guard, parity with cli/train.hexa). Default 0 = off. Prevents silently
+    # training on an incomplete 4-cell register (the clm303 ko-SNS starvation overfit).
+    ap.add_argument("--require-cells", type=int, default=0)
     ap.add_argument("--val-frac", type=float, default=0.05)
     ap.add_argument("--val-every", type=int, default=200)
     ap.add_argument("--val-batches", type=int, default=4)
@@ -1334,6 +1338,17 @@ def main():
     _samp_cells = [c for c in cells if c.train_end >= seq_len + 2]
     _samp_w = torch.tensor([float(c.train_end) for c in _samp_cells]) \
         if _samp_cells else torch.tensor([1.0])
+
+    # --require-cells N: fail LOUD if the usable register-cell count != N (a_chat_registers
+    # 4-cell completeness guard, parity with cli/train.hexa). Prevents silently training on
+    # an incomplete register — the clm303 ko-SNS starvation overfit (train-py-3 convergence:
+    # a small/incomplete corpus overfits to a low val_CE while free-gen coherence collapses).
+    if a.require_cells > 0 and len(_samp_cells) != a.require_cells:
+        sys.exit(
+            f"[require-cells] --require-cells {a.require_cells} but {len(_samp_cells)} usable "
+            f"register cell(s) (window-fit train_end>={seq_len + 2}): refusing to train on an "
+            f"incomplete register (a_chat_registers overfit/starvation guard). usable cells: "
+            f"{[c.path for c in _samp_cells]}")
 
     # §3/§5 GLOBAL batch preserved: --batch-size is the GLOBAL batch; each rank materializes
     # B_local = B_global // world. world==1 ⇒ B_local == B_global (N==1 byte-identical).
