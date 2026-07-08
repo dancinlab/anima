@@ -41,14 +41,14 @@ eval_arm () {  # arm  out
 }
 
 # ── train all 3 arms (identical recipe; ONLY the block-corpus binding differs) ──
-train_arm HI   en_block_hi.txt   ko_block_hi.txt   ckpt/out_hi.bin
-train_arm LO   en_block_lo.txt   ko_block_lo.txt   ckpt/out_lo.bin
-train_arm SHUF en_block_shuf.txt ko_block_shuf.txt ckpt/out_shuf.bin
+train_arm HI   en_block_hi.txt   ko_block_hi.txt   $ROOT/ckpt/out_hi.bin
+train_arm LO   en_block_lo.txt   ko_block_lo.txt   $ROOT/ckpt/out_lo.bin
+train_arm SHUF en_block_shuf.txt ko_block_shuf.txt $ROOT/ckpt/out_shuf.bin
 
 # ── eval all 3 canonical gen=40 multiseed ──
-eval_arm HI   ckpt/out_hi.bin
-eval_arm LO   ckpt/out_lo.bin
-eval_arm SHUF ckpt/out_shuf.bin
+eval_arm HI   $ROOT/ckpt/out_hi.bin
+eval_arm LO   $ROOT/ckpt/out_lo.bin
+eval_arm SHUF $ROOT/ckpt/out_shuf.bin
 
 echo "=== SUMMARY $(date) ==="
 python3 - <<'PY'
