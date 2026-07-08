@@ -132,9 +132,9 @@ fn anima_usage() {
     println("                                                  procedural training-corpus builder (ρ·weave data-format lever · former G1)")
     println("")
     println("py channel (hexa-less hosts · 303M measurement):")
-    println("  pip install anima-py            → `anima-py` (evaluate · corpus · chat, numpy)")
-    println("  pip install \"anima-py[train]\"   → + train · sweep · serialize (torch)")
-    println("  303M reach measurement = `anima-py evaluate <clm>` on pool (a_eval_py_canonical)")
+    println("  pip install anima-python            → `anima-python` (evaluate · corpus · chat, numpy)")
+    println("  pip install \"anima-python[train]\"   → + train · sweep · serialize (torch)")
+    println("  303M reach measurement = `anima-python evaluate <clm>` on pool (a_eval_py_canonical)")
     println("")
     println("research diagnostics (engine-native emit-shade op-grip · loop-external):")
     println("  anima <ckpt.clm> --opgrip                       $0 NO-DECODE 5-arm Hamming op-grip (200 ticks)")
@@ -208,14 +208,14 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 // after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
 fn anima_train_mode(argv: [string]) {
     // --py RETIRED (2-channel split): py production training is its own installed
-    // command — `anima-py train` (pip install "anima-py[train]" — torch extra), the
+    // command — `anima-python train` (pip install "anima-python[train]" — torch extra), the
     // SAME cli/anima.py→cli/train.py Lane-P trainer. Bonus vs the old bridge: a bare
     // rent GPU pod needs NO hexa toolchain at all (pip only). torch-side stays
-    // DIRECTIONAL; the TERMINAL verdict re-measures the .clm via `anima-py evaluate`.
+    // DIRECTIONAL; the TERMINAL verdict re-measures the .clm via `anima-python evaluate`.
     if anima_has_flag(argv, "--py") {
         println("anima: `--py` is retired — the py training channel is its own installed command.")
-        println("  pip install \"anima-py[train]\"   # torch extra (train · sweep · serialize)")
-        println("  anima-py train <args>            # same cli/train.py Lane-P trainer")
+        println("  pip install \"anima-python[train]\"   # torch extra (train · sweep · serialize)")
+        println("  anima-python train <args>            # same cli/train.py Lane-P trainer")
         println("hexa `anima train` = cli/train.hexa (flame/forge) only.")
         return
     }
@@ -267,7 +267,7 @@ fn anima_evaluate_mode(argv: [string]) {
         return
     }
     // --py RETIRED (2-channel split): the py 2-production measurement is its own
-    // installed command now — `anima-py evaluate` (pip install anima-py), the SAME
+    // installed command now — `anima-python evaluate` (pip install anima-python), the SAME
     // cli/anima.py→cli/evaluate.py numpy engine, same frozen bars, same TERMINAL
     // eligibility (a_eval_py_canonical). HARD-ERROR, not silent-ignore: an old
     // script/muscle-memory falling through to hexa det-eval would run the wrong
@@ -275,10 +275,10 @@ fn anima_evaluate_mode(argv: [string]) {
     // idiom (print + return).
     if anima_has_flag(argv, "--py") {
         println("anima: `--py` is retired — the py measurement channel is its own installed command.")
-        println("  pip install anima-py            # numpy base (evaluate · corpus · chat)")
-        println("  anima-py evaluate <clm> [--corpus ...] [--gen N] [--rho-axon]")
+        println("  pip install anima-python            # numpy base (evaluate · corpus · chat)")
+        println("  anima-python evaluate <clm> [--corpus ...] [--gen N] [--rho-axon]")
         println("same cli/evaluate.py engine · same frozen bars · same TERMINAL eligibility (a_eval_py_canonical).")
-        println("hexa `anima evaluate` = hexa-native det-eval only (small ckpts / --det byte-exact; 303M => anima-py on pool).")
+        println("hexa `anima evaluate` = hexa-native det-eval only (small ckpts / --det byte-exact; 303M => anima-python on pool).")
         return
     }
     // --det / --deterministic: the CLI OPTION to request byte-exact determinism (H_9119: anima is
@@ -367,10 +367,18 @@ fn anima_sweep_mode(argv: [string]) {
     let rf = to_string(exec("mktemp /tmp/anima_sweeppy_result.XXXXXX")).trim()
     let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/sweep.py" + fwd + " > " + rf + " 2>&1"
     println("dispatch: " + cmd)
-    let _sw = exec(cmd)
+    // exec_with_status → [stdout, rc]: capture the child's exit code so a cli/sweep.py
+    // failure propagates non-zero to the shell (CI/scripting parity with anima.py's
+    // os.spawnv(P_WAIT) return). Without this `anima sweep` always exits 0.
+    let r = exec_with_status(cmd)
     let out = exec("cat " + rf)
     print(out)
     let _rm = exec("rm -f " + rf)
+    let rc = r[1]
+    if rc != 0 {
+        println("anima sweep: cli/sweep.py exited non-zero (rc=" + to_string(rc) + ")")
+        exit(rc)
+    }
 }
 
 // anima_corpus_mode — training-corpus generation → cli/corpus.py. Torch-free procedural
@@ -384,8 +392,15 @@ fn anima_corpus_mode(argv: [string]) {
     while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
     let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/corpus.py" + fwd
     println("dispatch: " + cmd)
-    let out = exec(cmd)
-    print(out)
+    // exec_with_status → [stdout, rc]: corpus.py sys.exit(2)s on bad args; propagate it
+    // so `anima corpus` exits non-zero on failure (parity with anima.py os.spawnv return).
+    let r = exec_with_status(cmd)
+    print(r[0])
+    let rc = r[1]
+    if rc != 0 {
+        println("anima corpus: cli/corpus.py exited non-zero (rc=" + to_string(rc) + ")")
+        exit(rc)
+    }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -396,6 +411,31 @@ fn main() {
 
     if len(argv) < 1 {
         anima_usage()
+        return
+    }
+
+    // -h / --help → usage banner (parity with cli/anima.py main()). Without this,
+    // `anima --help` falls through to `let ckpt = argv[0]` (below) and tries to mount
+    // a ckpt literally named "--help".
+    if argv[0] == "-h" || argv[0] == "--help" {
+        anima_usage()
+        return
+    }
+
+    // explicit `chat` verb → consciousness / --byte chat on argv[1] (parity with
+    // cli/anima.py's `chat` handling). Bare `anima <ckpt.clm>` (no verb) still works
+    // via the ckpt-path branches below; this only adds the leading-verb spelling.
+    if argv[0] == "chat" {
+        if len(argv) < 2 {
+            anima_usage()
+            return
+        }
+        let chat_ckpt = argv[1]
+        if anima_has_flag(argv, "--byte") {
+            anima_byte_mode(chat_ckpt, argv)
+            return
+        }
+        anima_consciousness_mode(chat_ckpt)
         return
     }
 

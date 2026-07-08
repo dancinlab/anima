@@ -5,7 +5,7 @@
 //    all go through `anima <verb>` — NEVER raw `python3 cli/*.py` or raw decode calls.
 //      decode   = `anima chat` / generator-L3 slot (not bytegpt_decode/clm_decode raw)
 //      train    = `anima train [--savant] [--mitosis]` (torch trainer = REFERENCE/bridge only)
-//      evaluate = `anima-py evaluate <clm>` (py 2-prod numpy = engine-native TERMINAL-eligible)
+//      evaluate = `anima-python evaluate <clm>` (py 2-prod numpy = engine-native TERMINAL-eligible)
 //    Heavy 303M on pool (summer/aiden) or hexa cloud, never mini. ad-hoc torch probe = DIRECTIONAL.
 //
 //
@@ -984,7 +984,7 @@ fn main() {
     //                           round-robin); absent → fixed verify batch ($0)
     //   --out <ckpt.clm>        serialize trained weights to .clm v0.3
     //   --init <ckpt>           warm-start: load base weights before training.
-    //                           TWIN of `anima-py train --init` (cli/train.py
+    //                           TWIN of `anima-python train --init` (cli/train.py
     //                           _warm_start + core/serialize.deserialize_bytegpt).
     //                           The hexa-native farr weight LOADER (int4 dequant /
     //                           .bin reader → live trunk farrs) is 구현됨·미배선 =
@@ -1044,8 +1044,8 @@ fn main() {
     if byte_len(init_ckpt) > 0 {
         print("FAIL — --init "); print(init_ckpt)
         println(" : hexa-native warm-start LOADER is 구현됨·미배선 (follow-on).")
-        println("  the twin `anima-py train --init <ckpt>` IS implemented (ByteGPT .bin /")
-        println("  torch .pt, H_247-guarded) — use `anima-py train` for warm-start until the .hexa farr")
+        println("  the twin `anima-python train --init <ckpt>` IS implemented (ByteGPT .bin /")
+        println("  torch .pt, H_247-guarded) — use `anima-python train` for warm-start until the .hexa farr")
         println("  loader lands. Refusing to cold-start a run you asked to warm-start.")
         return
     }
