@@ -99,6 +99,44 @@ fn _rho_fan_words(s: string) -> list {
     return words
 }
 
+// _rho_fan_words_uni — codepoint-aware SUPERSET of _rho_fan_words (H_9212 ko 4-cell path ONLY;
+// en path stays on the frozen byte splitter above → per-cell dispatch keeps frozen en bars
+// structurally invariant). Parity twin of core/rho_fan.py::_rho_fan_words_uni (same byte-level
+// decision tree). ASCII branch = verbatim _rho_fan_words body → byte-identical on ASCII input.
+// Hangul = the 3 UTF-8 3-byte blocks (가–힣 / ᄀ–ᇿ / ㄰–㆏) only; every other high byte is a
+// separator consumed 1 byte at a time (lead E0-EF ⊥ continuation 80-BF ⇒ no false hangul match).
+fn _rho_fan_words_uni(s: string) -> list {
+    let n = byte_len(s)
+    let words = []
+    let mut cur = ""
+    let mut i = 0
+    while i < n {
+        let b = ord(substring(s, i, i + 1))
+        if b < 128 {
+            if _rho_fan_is_alnum(b) { cur = cur + chr(_rho_fan_lower1(b)) }
+            else { if byte_len(cur) > 0 { words.push(cur); cur = "" } }
+            i = i + 1
+        } else {
+            let mut step = 1
+            let mut isword = false
+            if b >= 224 && b <= 239 && i + 2 < n {
+                let b1 = ord(substring(s, i + 1, i + 2))
+                let b2 = ord(substring(s, i + 2, i + 3))
+                if b1 >= 128 && b1 <= 191 && b2 >= 128 && b2 <= 191 {
+                    step = 3
+                    let cp = (b - 224) * 4096 + (b1 - 128) * 64 + (b2 - 128)
+                    if (cp >= 44032 && cp <= 55203) || (cp >= 4352 && cp <= 4607) || (cp >= 12592 && cp <= 12687) { isword = true }
+                }
+            }
+            if isword { cur = cur + substring(s, i, i + 3) }
+            else { if byte_len(cur) > 0 { words.push(cur); cur = "" } }
+            i = i + step
+        }
+    }
+    if byte_len(cur) > 0 { words.push(cur) }
+    return words
+}
+
 // _rho_fan_dict_load — load /usr/share/dict/words into a Map set ONCE (membership for the
 // content-word check). Falls back to the concept+stopword lexicon if the dict is absent
 // (scoped honestly — the detector then sees a smaller _KNOWN; calibration prints regardless).
