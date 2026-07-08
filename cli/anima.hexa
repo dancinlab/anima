@@ -1970,8 +1970,6 @@ fn anima_consciousness_mode(ckpt: string) {
     // G_self CALIBRATED (ticks 0-49) so one self-event ≈ one channel-detectable swing (FORM normalized),
     // added as a DISJOINT term at the idle gate (urgency untouched · a_substrate_disjoint). Competence
     // earned on event-TIMING (align margin), not amplitude. ARM-SHOCK = injected-identity positive control.
-    let mut self_ema_shk = 1.0        // ARM-SHOCK per-arm EMA (phasic probe · own state ≠ self_ema · F3)
-    let mut self_step_med = 0.05      // calibration median step (d_probe = max(0.05, 3·median) · F3)
     let mut self_ctx_prev = 1.0       // prev-tick self_ctx_live (calibration Δ source)
     let mut g_self = 24.0             // self_phasic gain — RE-SET by calibration median (ticks 0-49)
     let mut self_step_devs = []       // calibration |Δself_ctx_live| samples → median → g_self
@@ -1989,8 +1987,7 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_slf_mid_ticks = 0   // mid-stage scoring denominator (N1/N2/REM)
     let mut og_emit_slf_mid  = 0   // ARM-LIVE emit count on mid (Ψ-guard numerator)
     let mut og_emit_live_mid = 0   // production emit count on mid (Ψ-guard numerator)
-    let mut og_h_shock_mid = 0 // ARM-SHOCK: Hamming(shock-self idle vs e_live) on mid (POS control)
-    let mut og_shock_flips = 0 // ARM-SHOCK flips within 5 ticks post-T∈{80,140,200} (POS-PASS ≥2/3 → ≥1 flip)
+    let mut og_h_shock_mid = 0 // ARM-SHOCK v2 (dense): mid-tick flips of a ±0.5 rail vs e_live = POS-PASS(≥2)
     let mut og_align_near  = 0 // align: self-shade flips within ±2 ticks of a self-drift event
     let mut og_align_tot   = 0 // align: total self-shade flips on mid (align = near/tot)
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
@@ -2693,24 +2690,19 @@ fn anima_consciousness_mode(ckpt: string) {
             if tick < 50 { self_step_devs.push(_afs_absf(self_ctx_live - self_ctx_prev)) }
             if tick == 50 {
                 let sm = _og_median(self_step_devs)
-                self_step_med = sm                                                        // F3: d_probe source
                 g_self = if sm < 0.002 { -1.0 } else { _afs_minf(0.175 / sm, 32.0) }       // F2: W·G product invariant (-1.0 = AXIS-DEGENERATE)
             }
             self_ctx_prev = self_ctx_live
             self_ema = 0.9 * self_ema + 0.1 * self_ctx_live
             let g_use = if g_self < 0.0 { 0.0 } else { g_self }
             let self_phasic = _afs_clip01(0.5 + g_use * (self_ctx_live - self_ema))         // signed, neutral 0.5
-            // ARM-SHOCK positive control (F3): known-size sign-directed phasic probe at ctx level, per-arm EMA.
-            // bipolar sgn{−,+,−} at T∈{80,140,200}: two − shocks ride the 0.98 headroom (carry POS-PASS),
-            // the + shock logs the measured ceiling asymmetry. self_ctx_shk=self_ctx_live off-window ⇒ arms re-converge.
-            let is_shock = tick == 84 || tick == 144 || tick == 174   // REM(stage4=tick%5==4·grippy·범위내): 80/140=WAKE·200=OOR 버그 수정
-            let shk_sgn = if tick == 144 { 1.0 } else { 0.0 - 1.0 }
-            let d_probe = _afs_maxf(0.05, 3.0 * self_step_med)                              // |G·dev| ≥ 0.5 ⇒ hard rail, known size
-            let self_ctx_shk = if is_shock { _afs_clip01(self_ctx_live + shk_sgn * d_probe) } else { self_ctx_live }
-            self_ema_shk = 0.9 * self_ema_shk + 0.1 * self_ctx_shk
-            let self_phasic_shk = _afs_clip01(0.5 + g_use * (self_ctx_shk - self_ema_shk))
+            // ARM-SHOCK v2 dense positive control (Fable verdict-integrity ruling): force a ±0.5 rail shade
+            // on EVERY tick (alternating sign, NO tick selection = no control-shopping) → proves the wire CAN
+            // flip emit. Scored on all mid ticks (POS-PASS = og_h_shock_mid ≥ 2). 3-fixed-tick v1 landed on
+            // robust-emit REM ticks (0 flips) while ARM-PERM flipped 13 = coverage bug, not channel.
             // idle-gate DISJOINT shade (W_SELF=1.0, rail |shade|=0.5 ≡ H_9101 urgency swing): self_phasic=0.5 ⇒ byte-identical to prod
             let idle_slf = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + (self_phasic - 0.5)))
+            let self_phasic_shk = if tick % 2 == 0 { 0.0 } else { 1.0 }   // dense ±0.5 rail (alternating), every tick
             let idle_shk = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + (self_phasic_shk - 0.5)))
             let e_slf = if to_string(brain_decide_anchored(pf,
                 rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2732,8 +2724,6 @@ fn anima_consciousness_mode(ckpt: string) {
             }
             if tick >= 50 && stage == 3 && e_slf != e_live { og_h_slf_n3 = og_h_slf_n3 + 1 }     // N3 guard (must 0)
             if tick >= 50 && stage == 0 && e_slf != e_live { og_h_slf_wake = og_h_slf_wake + 1 } // WAKE guard
-            if e_shock != e_live && ((tick >= 84 && tick < 89) || (tick >= 144 && tick < 149)
-                || (tick >= 174 && tick < 179)) { og_shock_flips = og_shock_flips + 1 }   // POS-PASS window (REM shock ticks)
             og_f3_self.push(self_phasic)   og_f3_selfev.push(to_float(if ev_fired {1} else {0}))
             og_f3_eslf.push(to_float(e_slf))
             // ── H_9102 (F3) record this tick for the post-loop variance-matched noise arm ──
@@ -3231,7 +3221,7 @@ fn anima_consciousness_mode(ckpt: string) {
         let psi_gap = _afs_absf(to_float(og_emit_slf_mid) - to_float(og_emit_live_mid)) / midf
         let degenerate = g_self < 0.0
         let n3_ok   = og_h_slf_n3 == 0
-        let pos_pass = og_shock_flips >= 2
+        let pos_pass = og_h_shock_mid >= 2   // dense ±0.5 rail flips ≥2 mid decisions = meter proven live
         println("")
         println("──────── H_9209 self_phasic emit-shade (mid=N1/N2/REM=" + to_string(og_slf_mid_ticks)
             + " · calib 0-49 · G_self=" + to_string(g_self) + ") ────────")
@@ -3241,8 +3231,8 @@ fn anima_consciousness_mode(ckpt: string) {
             + " = " + to_string(d_eff_perm) + "  → margin ΔEff_self−perm = " + to_string(d_eff_self - d_eff_perm))
         println("  align (flips within ±2 of a self-event) = " + to_string(align_near) + "/" + to_string(align_tot)
             + " = " + to_string(align_frac))
-        println("  ARM-SHOCK ΔEff = " + to_string(og_h_shock_mid) + "/" + to_string(og_slf_mid_ticks)
-            + " = " + to_string(d_eff_shock) + "  · POS window flips=" + to_string(og_shock_flips) + " (POS-PASS≥2)")
+        println("  ARM-SHOCK v2 dense (±0.5 rail every mid tick) = " + to_string(og_h_shock_mid) + "/" + to_string(og_slf_mid_ticks)
+            + " flips = " + to_string(d_eff_shock) + "  · POS-PASS(≥2)=" + (if pos_pass {"YES"} else {"NO"}))
         println("  pool channel-OFF ctrl (og_h_selfL/mid, #3116 floor) = " + to_string(og_h_selfL) + " = " + to_string(pool_ctrl)
             + "  · re-sum fidelity og_h_selfS=" + to_string(og_h_selfS) + " · shuf og_h_selfshuf=" + to_string(og_h_selfshuf))
         println("  GUARDS: N3 self-flips=" + to_string(og_h_slf_n3) + " (must 0) · WAKE=" + to_string(og_h_slf_wake)
