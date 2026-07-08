@@ -120,17 +120,23 @@ def run_arm(pool_kind, head_kind, handed=False, shuffle=False, seed=0):
         bi = rng.integers(0, len(Xtr), 128); h = Xtr[bi]; G = Gtr[bi]
         pre = h @ W1 + b1; z = gelu(pre)
         if head_kind == "hadamard" and not handed:
-            u = G @ Wu; zb = z * u; pr = sigmoid(zb @ w.T)
-            g = (pr - Ytr[bi]) / 128; w -= LR * (g.T @ zb); gzb = g @ w
-            gz = gzb * u * dgelu(pre); W1 -= LR * (h.T @ gz); b1 -= LR * gz.sum(0)
-            Wu -= LR * (G.T @ (gzb * z))
+            # bilinear u⊙z is unbounded → SGD blows up (overflow). clip the product +
+            # per-update gradient clip + half LR bounds the growth (standard bilinear stab).
+            HLR = LR * 0.5
+
+            def _cl(x):
+                return np.clip(x, -1.0, 1.0)
+            u = G @ Wu; zb = np.clip(z * u, -30.0, 30.0); pr = sigmoid(zb @ w.T)
+            g = (pr - Ytr[bi]) / 128; w -= HLR * _cl(g.T @ zb); gzb = g @ w
+            gz = gzb * u * dgelu(pre); W1 -= HLR * _cl(h.T @ gz); b1 -= HLR * _cl(gz.sum(0))
+            Wu -= HLR * _cl(G.T @ (gzb * z))
         else:
             pr = sigmoid(z @ w.T); g = (pr - Ytr[bi]) / 128
             w -= LR * (g.T @ z); gz = (g @ w) * dgelu(pre)
             W1 -= LR * (h.T @ gz); b1 -= LR * gz.sum(0)
     pre = Xte @ W1 + b1; z = gelu(pre)
     if head_kind == "hadamard" and not handed:
-        z = z * (Gte @ Wu)
+        z = np.clip(z * (Gte @ Wu), -30.0, 30.0)
     return float((np.round(sigmoid(z @ w.T)).astype(int) == Yte).mean())
 
 
