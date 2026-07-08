@@ -14047,6 +14047,13 @@
     "value": "레버/실험 발사 전 origin/main 머지 원장(PR·verdict·state/) 조회 필수. stale feature 브랜치(codex/*)의 working-tree state/ 스크래치는 origin/main보다 뒤처져 이미-머지된 작업을 '미실행'으로 오인시킴 — C11 corpus-equiv는 #3109로 이미 terminal 머지됐는데 codex 브랜치서 '미실행'으로 보여 재발사 직전까지 감(사용자 지적으로 차단).",
     "threshold": "재발조건: git HEAD가 origin/main보다 뒤처진 브랜치서 state/ 스크래치를 '현재 상태'로 읽고 실험 재발사 시도(선례 #3736·#3559). 해결: git log origin/main --grep=<주제>로 머지여부 먼저 확인 + 격리 워크트리 off origin/main 작업.",
     "source": "HYPOTHESES/HYPOTHESES.jsonl"
+   },
+   {
+    "id": "anima-hexa-6",
+    "state": "pos-conv",
+    "value": "0-cost no-decode --opgrip 측정은 CONTENT-DRIVEN substrate 신호를 못 구동. recon_err=vadapt_field_recon_err(session_seed 고정함수) 등 session_seed 결정함수 op는 실제 생성 g_text 없이는 tick간 |Δ|<0.002=AXIS-DEGENERATE(H_9210 surprise ΔEff 0/90·G_surp=-1.0). 대조: H_9209 self는 event-axis drift(8-lane argmax), urgency는 A⇄G tension으로 per-tick 변동을 실제 생성해 측정가능. no-decode op-grip서 측정가능한 emit-shade 후보=per-tick 동역학(event/drift/tension) 가진 신호뿐. degeneracy guard(G<0→INSTRUMENT-FAIL)가 거짓 THEATER는 막으나 측정 자체 불가.",
+    "threshold": "재발조건: 새 emit-shade 후보(정찰 #2 arousal af_aro·#3 GWT ignition·#4 timer·#5 gap)를 no-decode --opgrip arm으로 측정. 해결: 측정 arm 구현+20min 빌드 前 그 신호 no-decode 변동성 사전확인(std>0.002 or 자기 phasic이 0.5 벗어나는지). session_seed 결정함수면 degenerate 확정→빌드 낭비 말 것. content-driven은 real-decode(--opgrip-live) 경로 or per-tick content 구동 후 no-decode.",
+    "source": "cli/anima.hexa"
    }
   ]
  }
