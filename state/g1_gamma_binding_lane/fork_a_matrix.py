@@ -45,7 +45,7 @@ T, D = Z[keys[0] + "__seq"].shape
 
 
 def xor_t(a, b):
-    return (code[a] ^ code[b]).astype(np.float64)
+    return (code[a].astype(int) ^ code[b].astype(int)).astype(np.float64)
 
 
 def sigmoid(x):
