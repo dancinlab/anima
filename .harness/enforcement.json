@@ -59,11 +59,11 @@
     },
     {
       "id": "H-ANIMA-SINGLE-ENTRY",
-      "desc": "anima 학습/측정/직렬화는 설치된 canonical `anima` PATH 명령만 — cli 진입점 소스(hexa run cli/*.hexa · python cli/*.py) 및 engine-internal scorer 직접실행 차단 (#2603 단일진입)",
+      "desc": "anima 학습/측정/직렬화는 설치된 canonical 명령만 — hexa 채널 `anima`(hx install anima) · pip 채널 `anima-py`(pip install anima-py) — cli 진입점 소스(hexa run cli/*.hexa · python cli/*.py) 및 engine-internal scorer 직접실행 차단 (#2603 단일진입)",
       "match": "(hexa\\s+run\\s+\\S*cli/(anima|evaluate|serialize|train)\\.hexa|python[0-9.]*\\s+\\S*cli/(anima|evaluate|serialize|train)\\.py|python[0-9.]*\\s+\\S*(train/clm/model/(verify_clm_v2|serialize_standalone|clm_serialize_v2))\\.py)",
       "exceptions": [],
       "action": "block",
-      "reason": "anima 단일진입 강제(#2603): 학습/측정/직렬화/서빙은 설치된 canonical `anima` PATH 명령만 — `anima train` · `anima evaluate <ckpt>` · `anima serialize <pt> <out.clm>`. `hexa run cli/anima.hexa` 직접실행도 비-canonical(CLAUDE.md: 정식 CLI = hx install anima 의 anima 명령). cli 소스(anima/evaluate/serialize/train.{hexa,py})·engine-internal scorer(verify_clm_v2·serialize_standalone) 를 agent 가 직접 타이핑하면 generator L3 단일진입 우회 → production 과 drift = 측정 DIRECTIONAL. (hexa canonical 경로가 내부적으로 verify_clm_v2.py descent 등을 subprocess 호출하는 건 이 pre_bash 가 안 막음 — agent top-level 명령만 후킹.) pool 호스트는 `hx install anima` 후 `anima` 명령 사용."
+      "reason": "anima 단일진입 강제(#2603): 학습/측정/직렬화/서빙은 설치된 canonical PATH 명령만 — hexa 호스트=`anima`(hx install anima, =cli/anima.hexa) · hexa-less 호스트(pi5 등)=`anima-py`(pip install anima-py; 동일 cli/anima.py:main 디스패처의 pip 콘솔 바인딩 = 2nd entry 아님, 설치 채널만 2개). `hexa run cli/anima.hexa`·`python cli/*.py` 직접실행은 여전히 비-canonical — cli 소스(anima/evaluate/serialize/train.{hexa,py})·engine-internal scorer(verify_clm_v2·serialize_standalone)를 agent 가 직접 타이핑하면 generator L3 단일진입 우회 → production 과 drift = 측정 DIRECTIONAL. (canonical 경로가 내부적으로 cli/evaluate.py·verify_clm_v2.py descent 등을 subprocess 호출하는 건 이 pre_bash 가 안 막음 — agent top-level 명령만 후킹.) pool 호스트는 `hx install anima` 후 `anima`, pi5/pip 호스트는 `pip install anima-py` 후 `anima-py` 명령 사용."
     }
   ],
   "pre_write": [

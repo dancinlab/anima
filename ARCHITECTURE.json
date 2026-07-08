@@ -12624,6 +12624,32 @@
         "detail": "단일 채널 = **STABLE only**(hexa-lang 의 main-push→test rolling prerelease 二경로는 anima 미사용). setup 경로는 `hx install` 단일(a_install_canonical: cli/anima.hexa canonical 진입점, 수동 stage-build·진입점우회 금지). github-hosted runner(macos-14 darwin-arm64 · Blacksmith 은퇴 2026-06-26, 이름·label lockstep)."
        }
       ]
+     },
+     {
+      "name": "pyproject.toml (anima-py · pip 채널)",
+      "role": "",
+      "id": "component-map-top-level-pyproject-toml-anima-py",
+      "detail": "루트 pyproject.toml (2026-07-09 신설) = `pip install anima-py` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 2nd 설치 채널(2nd entry 아님). 상세=anima_py/README.md.",
+      "children": [
+       {
+        "name": "동일 디스패처 · a_cli_single_entry 보존",
+        "role": "",
+        "id": "component-map-top-level-pyproject-toml-anima-py-single-entry",
+        "detail": "동일 cli/anima.py:main 디스패처를 `anima-py` 콘솔 명령에 바인딩 = 2nd 설치 채널이지 2nd entry 아님. 이름 충돌 회피로 `anima` 아닌 `anima-py`(hx install anima 와 PATH 공존)."
+       },
+       {
+        "name": "런처 anima_py/ · 소스복사 0",
+        "role": "",
+        "id": "component-map-top-level-pyproject-toml-anima-py-launcher",
+        "detail": "anima_py/__init__.py `_bootstrap` 가 실린 core/+cli/ 를 sys.path 선두 삽입 후 `import anima; anima.main()`. [tool.setuptools.package-dir] 로 기존 cli/·core/ 를 anima_py.cli/core 로 매핑 = 소스복사 0(surgical·canonical-naming). #2603 __main__ 가드는 import 경유라 미발화."
+       },
+       {
+        "name": "version 동적 · 의존 티어",
+        "role": "",
+        "id": "component-map-top-level-pyproject-toml-anima-py-deps",
+        "detail": "version={file='VERSION'} 동적참조 → 루트 VERSION=0.13.1 자동 lockstep. base 의존=numpy(evaluate·corpus·chat-stub) · [train] extra=torch+datasets(serialize·train·sweep). 규칙=.harness/enforcement.json H-ANIMA-SINGLE-ENTRY(match 불변·desc/reason 만 pip 채널 인정)."
+       }
+      ]
      }
     ]
    },
