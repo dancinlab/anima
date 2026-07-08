@@ -1,0 +1,30 @@
+{
+  "gate": {
+    "additive": {
+      "op": 0.3773,
+      "op_shuf": 0.5173,
+      "assoc": 0.0791
+    },
+    "attention": {
+      "op": 1.0,
+      "op_shuf": 1.0,
+      "assoc": 0.0791
+    }
+  },
+  "gate_ok": true,
+  "fuel": {
+    "no": {
+      "op": 0.3729,
+      "assoc": 0.0791
+    },
+    "text": {
+      "op": 0.3729,
+      "assoc": 0.4949
+    },
+    "grounded": {
+      "op": 0.3747,
+      "assoc": 0.4941
+    }
+  },
+  "verdict": "🔴 OPERATOR-WALL(readout-arch) — fuel builds ASSOCIATION (both channels) but NEVER the operator on additive readout; operator reachable ONLY by interaction arch (attention=1.00). C2=fuel-only; no coverage source supplies the operator."
+}
