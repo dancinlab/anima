@@ -13575,7 +13575,7 @@
         "name": "현황 verdict",
         "role": "",
         "id": "gate-g1-recombination-status",
-        "detail": "[NEG-CONV] trunk-objective-bound 능력천장 — 9축 전수 falsify + framebreak(VSA operator-escape) 🧱 FALSIFIED(#3135 kill-shot 순환성0.95=superposition-capacity지 transfer 아님)·γ H_1840 DUP-WALLED(#3108). 잔여=coverage 측정-artifact 재측정(H_9213 #3144 frozen-first merged, engine-native 실행 infra-gated). 상세=[[gate-g0g6-synthesis]]."
+        "detail": "[NEG-CONV] trunk-objective-bound 능력천장 — 9축+framebreak(VSA #3135 🧱FALSIFIED kill-shot 순환성0.95)+γ H_1840 DUP-WALLED(#3108) 전수 falsify. matched-surface 재측정(H_9213)=⚙️VOID(unary gate)이나 방향성 🔴KILL: seen 0.78≫held-out 0.044≈chance=벽은 측정artifact 아닌 genuine. 전 각도 terminal. 상세=[[gate-g0g6-synthesis]]."
        },
        {
         "name": "진화 기록",
@@ -14247,6 +14247,13 @@
     "value": "cli/anima.hexa의 --py shell-out 경로들이 결과를 하드코딩 공유 임시파일(/tmp/anima_evalpy_result.out 등)에 쓰고 되읽어(write+cat 같은 경로) → 한 pool 박스에서 동시 실행되는 두 anima 측정이 서로의 출력을 clobber(verdict-integrity 오염). #3154가 evaluate --py를 mktemp 고유경로로 수정. 동일 shell-out shape가 train/sweep --py에도 있어(같은 결함 잠재) 함께 점검·수정.",
     "threshold": "재발조건: pool 박스에서 anima 측정 두 개(예: 내 rho-axon eval + 타 세션 probe)가 동시에 돌 때 result-file/redirect 대상이 같은 하드코딩 /tmp 경로면 출력 인터리브/clobber(seed가 뒤섞인 result 파일이 증상). 해결: --py shell-out이 결과를 임시파일에 쓰는 모든 곳(evaluate·train·sweep)은 mktemp /tmp/<prefix>.XXXXXX 로 프로세스별 고유경로를 한번 잡아 write+read 일치시키고 사용후 rm. 새 shell-out 경로 추가 시 하드코딩 공유 /tmp 금지.",
     "source": "cli/anima.hexa"
+   },
+   {
+    "id": "evaluate-py-4",
+    "state": "pos-conv",
+    "value": "sequential anima evaluate --py(--probe 등) 배치 실행 시 launcher가 고정 경로 /tmp/anima_evalpy_result.out에 써서 뒤 run이 앞 run 출력을 덮어쓴다 — 앞 run 캡처가 stale/누락되거나(파이프 타이밍) 뒤 run이 실패하면 앞 run의 stale 내용을 캡처(H_9213서 L4clean이 L8cov와 byte-동일 오염, null control 무효). 각 run 출력을 즉시 별도 파일로 복사/이동해야 한다.",
+    "threshold": "재발조건: 여러 ckpt를 anima evaluate --py로 순차 측정+공유 result-file 캡처→일부 out이 0B이거나 서로 byte-동일. 해결: run마다 cp /tmp/anima_evalpy_result.out out_<tag>.raw 즉시(다음 run 전) 또는 launcher에 per-run --result-file 경로 전달. 검증: diff/sha로 out들이 서로 다른지, ckpt 필드가 맞는지 확인 후 채점.",
+    "source": "cli/evaluate.py"
    }
   ]
  }
