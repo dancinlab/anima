@@ -14469,6 +14469,13 @@
     "value": "INFRA: pool 호스트(summer/aiden) earlyoom -r --prefer python3 상시실행 → 병렬세션 heavy anima job으로 RAM 포화 시 303M --dump-hidden/eval worker(python3·~3.5GB) SIGKILL(로그 무흔적·npz 미생성). summer overfire/aiden 과부하 재발(ING #42492907 EXIT_143). earlyoom이 sshd/bash avoid라 ssh세션 살아도 python3 워커만 죽는 오진 함정.",
     "threshold": "재발조건: pool서 303M dump/eval이 로그 무흔적 소멸(worker 무진행·npz 미생성). 해결: (1)dispatch 전 free RAM 확인(sidecar pool status)·병렬 heavy job 있으면 최여유 호스트. (2)canonical anima-py(pip·numpy-only·hexa불필요)로 hexa-build 우회. (3)worker RSS+진행로그(#n/N) 폴링해 조기감지·재배치.",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "clml-train-py-1",
+    "state": "pos-conv",
+    "value": "재조합 lane/head를 next-byte CE로 학습할 때 타깃이 문맥서 copyable면 base 트렁크가 이미 복사(CE≈0)라 학습신호 死 — evaluate-py-2(copyable 타깃이 재조합 MEASUREMENT 무효)의 학습 층위 재발. H_9235 fork-A: derivtrace-WITH-definitions 합성('out:')바이트가 정의부 단어라 트렁크 copy(acc 1.0·CE 0.0003·gate→0), lane 학습불가=H_1840 학습신호벽 lane층위. route는 pre-check(synthetic XOR=non-copyable)로 존재하나 실 copy-format CE론 학습 안됨.",
+    "threshold": "재발조건: frozen-trunk 위 read-side lane/head를 next-byte(또는 held-out 재조합) CE로 학습 시 train CE≈0·gate→0·lift 없음. 해결: 타깃이 문맥서 copyable인지 먼저 확인(타깃바이트가 recent context에 존재?)→copyable이면 신호死. no-copy verdict형식(정의부/정답 제거·concept cue만)으로 재학습 + word-initial 위치 한정 + trainability probe(pool→target-word-id를 TRAIN서 fit되나)로 신호-존재를 학습 전 확인. fit 불가=신호벽(표현 아닌 학습벽) terminal.",
+    "source": "state/g1_gamma_binding_lane/clml_train.py"
    }
   ]
  }
