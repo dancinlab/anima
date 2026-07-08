@@ -1,0 +1,25 @@
+{
+  "N": 32,
+  "d": 3784,
+  "pool": "last",
+  "h1_unary_probe": 1.0,
+  "rungA": {
+    "real-interaction": {
+      "op": 1.0,
+      "onlyA": 0.4556
+    },
+    "real-additive": {
+      "op": 0.3569,
+      "onlyA": 0.3898
+    },
+    "real-fixedvsa": {
+      "op": 0.4507,
+      "onlyA": 0.4387
+    },
+    "handed": {
+      "op": 1.0,
+      "onlyA": 0.48
+    }
+  },
+  "verdict": "🟡 RUNG-A PRECONDITION-MET (NOT a wall break · handed-equivalent per evaluate-py-3) — real 303M UNARY atoms are cleanly separable (H1=1.00) and a trainable adapter composes them to held-out XOR (op=1.00 · additive 0.36 FAIL · onlyA 0.46→chance = genuine 2-atom bind of SEPARABLE atoms). This is the segmentation-GRANTED case ≈ handed. ⚠ normalization-fragile (fixed-VSA arm flips with atom scale). DECISIVE test = rung b: recover BOTH atoms from ONE superposed pair context (no handed segmentation)."
+}
