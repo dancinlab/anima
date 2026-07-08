@@ -82,3 +82,15 @@
 - `state/g1g6_shared/` (G1+G6 공동 303M: results/RESULT.md·hi/lo.log·indist json·gen_unified.py·corpus·ckpt sha)
 - `state/g6_fals_diverge/fable_g6_fals_levers.md` (A 원리+δ_FM 판정지표 + B 12레버 + C G1공유 + top-3)
 - 상위: [[H_9127]](G1 레버 발산·derivtrace·판정기준 ρ/σ/κ/M) · [[H_1603]](G1≡G6 통합) · G6 소진: H_1590/H_6170/H_1814 · seed: H_9125/9126(contradiction) · H_6163(falsifier-lane) · H_6186(form-priming)
+
+## 🧱 TERMINAL (2026-07-09) — coverage-density NEGATIVE 확정
+
+canonical gen=40 · multiseed[7,107,207] · shuffle-bind 통제(summer $0). follow-on 3조건 전부 실행 = 원 🟠 DIRECTIONAL 반증. 3-arm(HI dense / LO sparse / SHUF bind-destroyed) 동일레시피 warm-FT h1129 303M · `anima evaluate --py`.
+
+| arm | median_bd | n_pass | self_pair |
+|-----|-----------|--------|-----------|
+| HI | 1 | 1/3 | [1,1,1] |
+| LO | 1 | 1/3 | [0,1,1] |
+| SHUF | 1 | 0/3 | [1,1,2] |
+
+**margin median_bd(HI)−median_bd(SHUF)=0 → KILL.** 세 arm median bd=1 수렴 = coverage density 리프트 0. 원 gen80 단일seed bd=2 = 비정규 threshold artifact. SHUF self_pair bd=2 = form-priming 직접검출(결합없이 bd 반짝임 = bd는 FORM 산물). **tier → 🧱 canonical-CONFIRMED-NEGATIVE**: coverage-density = DPI-면제 유일 잔여 저비용 축 falsify → G1/G6 벽 = trunk-objective 강화. artifacts: `state/g1g6_shared/terminal_evals/` · `shuf_bind_gen.py` · `terminal_eval.py` · `run_terminal.sh` · RESULT.md.

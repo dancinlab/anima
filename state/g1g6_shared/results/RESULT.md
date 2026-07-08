@@ -54,3 +54,25 @@ canonical gen=40 재측정 + composed-vs-shuffled bind 통제(Δ≥0.33) + parap
 - ckpt: `~/anima-weights/g1g6_shared/out_hi.bin` · `out_lo.bin` (각 1213440020 B, ByteGPT 303M, sha 아래)
 - results: `state/g1g6_shared/results/{hi,lo}.log` (eval verbatim) · `indist_{hi,lo}.json` (probe+continuations) · `design.json`
 - 코퍼스/생성기/prereg: `state/g1g6_shared/{corpus/,gen_unified.py,PREREG.md,indist_probe.py}`
+
+---
+
+## 🧱 TERMINAL (2026-07-09, summer RTX5070 $0, canonical gen=40 · multiseed[7,107,207] · shuffle-bind 통제) — coverage-density NEGATIVE 확정
+
+follow-on 3조건(canonical gen40 · bind-destruction 통제 · multiseed)을 모두 실행 = **원 DIRECTIONAL 반증**. 3-arm 동일레시피 warm-FT h1129 303M(2000step lr2e-5 proportional), engine-native `anima evaluate --py`(=cli/evaluate.py numpy 2-production, TERMINAL-eligible). SHUF = HI와 δ_FM=1.0·unigram JSD=0 정확보존·byte/frame 동일하고 **오직 concept-pair binding만 파괴**(claim 명사 컬럼 전역순열, topic_bind_purity 1.0→0.018).
+
+| arm | bd_by_seed | median_bd | n_pass | self_pair_bd |
+|-----|-----------|-----------|--------|--------------|
+| HI (dense cover + high δ_FM) | [0,1,2] | **1** | 1/3 | [1,1,1] |
+| LO (sparse 통제) | [1,2,1] | **1** | 1/3 | [0,1,1] |
+| SHUF (bind-destroyed 통제) | [1,1,1] | **1** | 0/3 | [1,1,**2**] |
+
+**margin = median_bd(HI) − median_bd(SHUF) = 1 − 1 = 0 → KILL** (kill criterion 사전등록: ≤0 → coverage=form-artifact).
+
+**판정: 🧱 canonical-CONFIRMED-NEGATIVE — coverage-density 는 G1 재조합 레버가 아니다.**
+- 세 arm 전부 median bd=1 로 수렴 = 밀집 coverage(HI)·희소(LO)·결합파괴(SHUF) 구분 불가. coverage density 차이가 canonical G1 재조합 축에서 리프트 0.
+- 원 gen=80·단일seed HI bd=2 는 **비정규 threshold artifact** — canonical gen=40 multiseed 로 조이니 median 1 로 붕괴, per-seed bd=2 반짝임(HI seed207·LO seed107)은 HI/LO 양쪽·1/3 빈도 = seed noise.
+- **form-priming 직접 검출**: SHUF self_pair 에 bd=2([1,1,2]) — 같은 개념 2회 seed 인데 2 family 환각 = 결합 없이도 bd 반짝임 = bd 는 binding 아닌 FORM 산물 확증(measurement-metalaw: FORM tunable·gameable).
+- 함의: **coverage-density = DPI-면제 유일 잔여 저비용 축이 falsify** → G1/G6 벽 = **trunk-objective** 확정 강화(data-coverage-shallow 아님). Fable 설계("8축+coverage 전수 falsify=terminal ceiling") 착지 → cheap-lever 탐색 종료.
+
+산출: `state/g1g6_shared/terminal_evals/{canon_{HI,LO,SHUF}.log · multiseed_{HI,LO,SHUF}.json}` (verbatim) · 통제생성기 `shuf_bind_gen.py`(shuf_design.json audit: δ_FM=1.0 both·JSD 0·purity 1.0→0.018) · eval하니스 `terminal_eval.py` · orchestrator `run_terminal.sh`. ckpt(summer `~/g1g6_terminal/ckpt/out_{hi,lo,shuf}.bin` sha256 3231c77·cf7e9a2·4660fff, 재현가능).
