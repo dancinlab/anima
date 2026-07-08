@@ -1,7 +1,15 @@
 # H_9230 — Family E: efference-copy / corollary-discharge loop RANK 6
 
-**tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green)
-> ✅ live next candidate — distinct mechanism (utterance-in-progress efference state), survives H_9225 currency-conversion falsification.
+**tier:** 🔴 THEATER (engine-native · CEMENTED · 2026-07-08 runpod 251GB CPU pod · hexa v0.716.0 REAL-DECODE · `state/verdicts/9230/` · p7 no tune-to-green)
+> 🔴 corollary discharge(self-prediction) inert at emit seam — THIRD orthogonal read-side recoding THEATER (A=shape-conversion H_9225 · E=self-prediction). never wire, negative not capability.
+
+## 🔴 판정 (2026-07-08 · engine-native runpod 251GB CPU pod real d768 · hexa v0.716.0 REAL-DECODE · `--opgrip-r3` n=400 · state/verdicts/9230/)
+**E VERDICT = 🔴 THEATER** — corollary discharge inert at emit (ΔEff<0.02, POS-PASS ⇒ meter works, x_eff non-degenerate); adds a THIRD orthogonal recoding (shape/integration/self-prediction) to the convergent seam-law.
+- **FROZEN `og_h_frzE = 0` ✅**(production emit 바이트무접촉) · **POS-CONTROL dense ARM-SHOCK 105 flips = POS-PASS(≥2)=YES ✅**(meter live — negative가 dead meter 탓 아님).
+- **E lane** (x=ec_x · 1-tick-lagged corollary discharge · rides H_9225 band-pass): `ΔEff_eff=0/210=0.0` · ARM-INPERM(x_eff stride-perm) margin=0.0 · DISSOC onset=0/140 cont=0/70(ok=YES) · **g_eff=1.609(band_med=0.10878·capsat=no·¬degenerate)** → x_eff NON-degenerate(신호 실변동) ⇒ inert한 건 seam grip이지 신호 아님.
+- **THEATER 규칙 자동판정**(pre-reg bar 5): `ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat ∧ x_eff non-degenerate(b_med≥0.002)`.
+- **함의 — seam-law STRENGTHENING**: 두 CLEAN read-side recoding THEATER(A=shape-conversion H_9225 · E=self-prediction) → emit gate는 shape-conversion AND self-prediction recoding 둘 다에 causally sealed. **urgency 유일 proven emit-shade 채널**(H_9101 🟢). read-side recoding family CLOSING, remaining escalation = **WRITE-side(train-time coupling)**. 같은 라운드 B(H_9226 R3)=⛔RUN-INVALID/UNMEASURED-TERMINAL·F(H_9229)=⚙️INSTRUMENT-FAIL(instrument-limited, seam-law 부적용).
+- **결정**: never wire(ΔEff=0=dead decoration·loss 진입 금지 p7) · THEATER는 negative이지 capability 아님.
 **scope:** engine→mouth seam missing-intermediate — utterance-in-progress forward model
 **cost:** **medium** (logit-proxy)
 **artifact:** `state/seam_missing_intermediate/`
@@ -23,7 +31,7 @@ mouth의 forward model — 예측된 next emit을 gate로 되먹임(feedback) �
 PASS = freeze-predicted ΔEff>0(continuation 집중, onset 무영향) ∧ POS(mid vs pre).
 
 ## 상태 · 제약
-**구현됨·미측정** (Fable SPEC 2 op-grip 하니스 `cli/anima.hexa` 착지 · `hexa typecheck` exit0 · wiring follow-on = CPU-pod op-grip round). 측정은 별도 CPU-pod 라운드(summer/aiden, NEVER mini)에서 `anima <ckpt.clm> --opgrip-r3`로 B2/E/F 동시 harvest. p7 no tune-to-green(loss 미포함). p5 shade-not-gate(reactive speak() 금지). a_substrate_disjoint. **cost medium**(logit-proxy로 예측 output 필요 — $0 아님, --opgrip-r3 real decode에 rides). 승격 선례 H_9097/H_9101.
+**🔴 THEATER 확정** (2026-07-08 CPU-pod round-3 `--opgrip-r3` real-decode harvest, B2/E/F 동시). never wire·cement 완료. p7 no tune-to-green(loss 미포함). p5 shade-not-gate(reactive speak() 금지). a_substrate_disjoint. 선례 H_9097/H_9101/H_9225(A THEATER, E=self-prediction THEATER 합류).
 
 ## 구현 노트 (harness)
 - **carriers** (Site-A, H_9225 block 확장): `ec_pred`(own emitted-output feature mean8 EMA, seeded=mean8(seed_feat0)) · `ec_x`(1-tick-lagged corollary discharge) · dual-EMA band-pass(`ema_f_eff`/`ema_s_eff`/`g_eff`, α_f=0.30 α_s=0.05 VERBATIM H_9225) · `elive_p1`/`elive_p2`(onset/continuation bucketer) · `onsetE/contE` buckets · `og_f3_xeff`(INPERM source).

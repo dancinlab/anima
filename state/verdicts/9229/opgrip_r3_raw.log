@@ -1,0 +1,207 @@
+=== [Wed Jul  8 21:16:46 UTC 2026] pod round-3 op-grip (251GB RAM · swap-free · v0.716.0) ===
+--- which anima: /root/.hx/bin/anima · OOM fix(og_emit_decode_feat): 3 · r3 arms: 34 ---
+-rw-r--r-- 1 root root 4.3M Jul  8 21:13 /root/d768.clm
+=== [Wed Jul  8 21:16:46 UTC 2026] precompile (build once) ===
+OK: build/artifacts/app.c
+  [rt] HEXA_PREBUILT_RUNTIME — linking prebuilt: /root/.hx/bin/build/runtime.a
+  [2/2] cc -O2 -D_GNU_SOURCE -Wno-trigraphs -I '/root/.hx/bin/self' build/artifacts/app.c '/root/.hx/bin/build/runtime.a' '/root/.hx/bin/self/runtime_ffi_dyn.o' -o 'build/artifacts/app.tmp.1891' -lpthread -lm -nostartfiles 2>&1
+OK: built build/artifacts/app
+=== [Wed Jul  8 21:17:30 UTC 2026] [1] anima --opgrip-r3 (B2/E/F · n=400 real decode) ===
+... [400 per-tick [OG t..] real-decode lines elided — full run in pod_r3_full.log, verdict section verbatim below] ...
+
+════════════ OP-GRIP 5-ARM HAMMING (n=400, wake=240) ════════════
+  BASELINE (pre-fix ÷43 + 4 constants): Hamming(rel-frozen vs base) = 0   [pre-reg: 0 = THEATER reproduced]
+  baseline motivation floor >0.3 on 240/240 wake ticks
+  ── POST-FIX (live 8-factor op reads + tonic-phasic) ──
+  Hamming(full-rel_ctx frozen vs live) = 0   wake-only = 0/240
+  Hamming(single-op agloop frozen vs live) = 0   wake-only = 0/240
+  Hamming(rel_ctx→0 vs live) = 0
+  Hamming(rel_ctx→shuffle vs live) = 0
+  wake emit-fraction = 0.6666666666666666 (live)
+  Ψ ON==OFF invariant: psi_sum==psi_off = ✅
+
+──────── H_9101 (b) STAGE/SAFE op-grip: urgency-freeze Hamming, split by stage ────────
+  ticks: WAKE=80 N3=80 REM=80 mid(N1/N2/REM)=240
+  Hamming(urgency→0 vs live)  REM=80  N3=0  WAKE=0  mid=160
+  Hamming(urgency→shuf vs live) REM=6  N3=0   [control]
+  ── PRE-REG VERDICT ──
+  VERDICT = 🟢 GRIP (shade-not-gate): urgency-freeze FLIPS REM decisions (h_U0_rem>0) ∧ N3 silent-PRESERVED (h_U0_n3=0) = DISSOCIATION  [Ψ ON≡OFF ✓]
+
+──────── TENSION→ADAPTATION op-grip: phasic A⇄G tension freeze (Δ→0) vs live ────────
+  Hamming(ten_phasic→0.5 vs live) = 0 / 320 discriminating(env>0) ticks   ΔEff = 0.0
+  PREREG VERDICT = 🔴 THEATER (ΔEff<0.02): phasic tension does NOT shade emit — the promotion is decoration (honest negative)  [Ψ ON≡OFF ✓]
+
+──────── H_9102 (F3) FACULTY-NOT-NOISE: variance-matched noise arm (n=400) ────────
+  urgency dist: mean=0.4546587156666125 std=0.02973499807503353  (perm-noise = same multiset ⇒ EXACT mean/var match; LCG-noise = affine-matched)
+  emit-rate: live=0.6  perm-noise=0.6   (≈equal ⇒ same centering; only tick-MEANING differs)
+  downstream D = mean(tension ag_conflict, emit_drive, novelty nov_ctx, grounded m_grounding)
+  ── ρ(emit-timing, D) ──                    ALL(n=400)   DISCRIM(N1/N2/REM)
+  ρ_real  (live urgency)                :  -0.06262284544544335   0.27001107531298607
+  ρ_noise (perm var-matched, K=8 mean)  :  -0.06262284544544335   0.27001107531298607
+  ρ_lcg   (affine var-matched control)  :  -0.06262284544544335   0.27001107531298607
+  Δρ = ρ_real − ρ_noise                 :  0.0   0.0
+  per-component ρ_real: tension=0.16666666666666832 novelty=0.022504936820686806 grounded=0.0
+  ── PRE-REG F3 VERDICT (frozen bar Δρ ≥ 0.15) ──
+  F3 VERDICT = 🟠 NOISE-GRIP — Δρ < 0.15: the grip is centering-noise-driven (matched noise reproduces the same downstream corr) = a subtler op-layer theater; tier stays GRIP
+
+──────── H_9209 self_phasic emit-shade (mid=N1/N2/REM=210 · calib 0-49 · G_self=20.21081102876883) ────────
+  ΔEff_self Hamming(self-shade idle vs e_live) = 1/210 = 0.004761904761904762   [HEADLINE]
+  ARM-PERM matched-noise ΔEff = 17/210 = 0.08095238095238096  → margin ΔEff_self−perm = -0.0761904761904762
+  align (flips within ±2 of a self-event) = 1/1 = 1.0
+  ARM-SHOCK v2 dense (±0.5 rail every mid tick) = 105/210 flips = 0.5  · POS-PASS(≥2)=YES
+  pool channel-OFF ctrl (og_h_selfL/mid, #3116 floor) = 0 = 0.0  · re-sum fidelity og_h_selfS=0 · shuf og_h_selfshuf=0
+  GUARDS: N3 self-flips=0 (must 0) · WAKE=0 · Ψ emit-gap=0.004761904761904762 (must ≤0.05) · axis ok
+  ── PRE-REG H_9209 VERDICT (frozen bars, verbatim) ──
+  COMPETENT: ΔEff_self≥0.10 ∧ margin(perm)≥0.08 ∧ align≥0.5 ∧ POS-PASS ∧ N3=0 ∧ Ψ-gap≤0.05
+  THEATER: ΔEff_self<0.02 ∧ POS-PASS ∧ axis non-degenerate ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate
+  VERDICT = 🔴 THEATER — self genuinely inert at emit (ΔEff<0.02, POS control PASSED so meter works) ⇒ never wire, keep .kosmos persistence only (H_1471 stands)
+
+──────── H_9210 surprise(recon_err) emit-shade (mid=210 · G_surp=-1.0) ────────
+  ΔEff_surp Hamming(surp-shade idle vs e_live) = 0/210 = 0.0   [HEADLINE]
+  ARM-PERM matched-noise = 13/210 = 0.06190476190476191  → margin = -0.06190476190476191
+  POS-PASS(dense ARM-SHOCK, same wire)=YES · N3 surp-flips=0 (must 0) · axis DEGENERATE
+  decode-mode=--opgrip-live REAL-DECODE (content-driven recon_err) · TWO-GATE: WIRE(ARM-SHOCK≥2)=YES ∧ SIGNAL(AXIS-LIVE)=NO
+  ── PRE-REG H_9210 VERDICT (frozen bars, verbatim) ──
+  COMPETENT: ΔEff_surp≥0.10 ∧ margin(perm)≥0.08 ∧ POS-PASS ∧ N3=0 ; THEATER: ΔEff_surp<0.02 ∧ POS-PASS ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate
+  VERDICT = ⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, real-decode) — recon_err step<0.002 EVEN under --opgrip-live: too few emits stepped the field (or 8-byte feature saturates); fix = raise emit density (§4 fallback), NOT a substrate claim
+
+──────── H_9225 tonic→phasic BAND-PASS transducer (SELF ⊥ TEN · mid=210 · N=400 · calib 10-49) ────────
+  FROZEN byte-identity: og_h_frz2 = 0  (MUST be 0 — else HARNESS-BUG, run VOID)
+  POS-CONTROL (reuse H_9209 dense ARM-SHOCK) = 105 flips · POS-PASS(≥2)=YES
+  gains: g_slf2=0.8482772011736699 (band_med=0.20630048733818535 capsat=no)  g_ten2=2.849711793655069 (band_med=0.06140971883179219 capsat=no)
+  ── SELF lane (x=self_ctx_live) ──
+    ΔEff_self = 0/210 = 0.0   [HEADLINE]
+    ARM-INPERM (input stride-perm, PRIMARY) = 1 = 0.004761904761904762  → margin ΔEff−inperm = -0.004761904761904762 (bar ≥0.08)
+    output-perm (diagnostic, no bar) = 0   [H_9209 timing-redundancy signature if ≫ live]
+    SHAPE trans=0/0=0.0  hold=0/210=0.0 (bar trans≥3·hold ∧ hold≤0.05)
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis ok
+  ── TEN lane (x=ag_conflict · D1 own-lane W=1.0) ──
+    ΔEff_ten = 0/210 = 0.0   [HEADLINE]
+    ARM-INPERM (input stride-perm, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    output-perm (diagnostic, no bar) = 0
+    SHAPE trans=0/0=0.0  hold=0/210=0.0 (bar trans≥3·hold ∧ hold≤0.05)
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis ok
+  ── PRE-REG H_9225 FROZEN BARS (verbatim, printed BEFORE verdicts · p7 no tune-to-green) ──
+  1 HARNESS-BUG(VOID): og_h_frz2>0 (FROZEN not byte-identical to prod)
+  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE) ∨ capsat(UNDER-COUPLED) — never cements THEATER (anima-hexa-4)
+  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)
+  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ shape(ΔEff_trans≥3·ΔEff_hold ∧ hold≤0.05) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard
+  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat  (SELF +REPLICATION(H_9209) if output-perm≥5×live)
+  6 DIRECTIONAL: else (0.02≤ΔEff<0.10, or ΔEff≥0.10 with margin/shape short) ⇒ ≥2 seeds, no cement
+  SELF VERDICT = 🔴 THEATER — self genuinely inert at emit under band-pass (ΔEff<0.02, POS-PASS ⇒ meter works); never wire, .kosmos persistence only (H_1471 stands)
+  TEN VERDICT = 🔴 THEATER — tension own-lane inert at emit under band-pass (ΔEff<0.02, POS-PASS ⇒ meter works); D1 vindication FAILS, urgency remains the only proven channel
+
+──────── H_9226 accumulator-to-threshold BUFFER (Family B · DDM · SELF ⊥ TEN · mid=210 · N=400 · calib 10-49) ────────
+  FROZEN byte-identity: og_h_frzB = 0  (MUST be 0 — else HARNESS-BUG, run VOID)
+  POS-CONTROL (reuse dense ARM-SHOCK) = 105 flips · POS-PASS(≥2)=YES
+  gains: gB_slf=0.5922401233958694 (b_med=0.029548825398144334 capsat=no swing_max=0.05310106156427463)  gB_ten=-1.0 (b_med=0.0 capsat=no swing_max=0.0)
+  ── SELF lane (x=self_ctx_live) ──
+    ΔEff_self = 0/210 = 0.0   [HEADLINE]
+    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = 2 = 0.009523809523809525  → margin ΔEff−inperm = -0.009523809523809525 (bar ≥0.08)
+    LATENCY early(run1-3)=0/2=0.0  late(run≥8)=0/206=0.0 (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis ok · STIM-ABSENT=YES
+  ── TEN lane (x=ag_conflict · own-lane W=1.0) ──
+    ΔEff_ten = 0/210 = 0.0   [HEADLINE]
+    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    LATENCY early(run1-3)=0/2=0.0  late(run≥8)=0/206=0.0 (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis DEGENERATE · STIM-ABSENT=YES
+  ── PRE-REG H_9226 FROZEN BARS (verbatim, printed BEFORE verdicts · p7 no tune-to-green) ──
+  1 HARNESS-BUG(VOID): og_h_frzB>0 (FROZEN not byte-identical to prod)
+  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE) ∨ capsat(UNDER-COUPLED) ∨ STIM-ABSENT(swing_max<0.0875) — never cements THEATER
+  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)
+  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ latency(late≥3·early ∧ early≤0.05 ∧ n_late≥10) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard
+  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat ∧ swing_max≥0.0875
+  6 DIRECTIONAL: else (incl. ΔEff≥0.10 that FAILS latency shape = instantaneous-reader phenotype, A-redundant) ⇒ ≥2 seeds, no cement
+  SELF VERDICT = ⚙️ INSTRUMENT-FAIL (STIM-ABSENT) — accumulator never held a bias long enough to half-charge (swing_max<0.0875); no evidence integrated, NOT THEATER; fix = --opgrip-live
+  TEN VERDICT = ⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, b_med<0.002) — tension bias carries no content; fix + remeasure, NOT a substrate result
+  ── INTERPRETATION (only if BOTH lanes THEATER) ──
+  B-THEATER after A-THEATER (H_9225) = convergent seam-law: shape-conversion (A) AND evidence-integration (B)
+  both inert at the idle seam under a passing dense POS-CONTROL ⇒ the emit gate is causally sealed to everything
+  but urgency; read-side recoding closed, remaining escalation = write-side (train-time coupling).
+
+──────── H_9226-R3 B-DENSITY accumulator (--opgrip-r3 · SELF ⊥ TEN · mid=120 · N=400 · calib 100-199 · score ≥200 · perception-tape driven) ────────
+  FROZEN byte-identity: og_h_frzB2 = 0  (MUST be 0 — else HARNESS-BUG, run VOID)
+  POS-CONTROL (reuse dense ARM-SHOCK) = 105 flips · POS-PASS(≥2)=YES
+  RUN-VALIDITY: live emit-frac on scored mid = 0.6666666666666666 (envelope [0.05,0.60]) valid=NO — STIM-OVER/UNDERDRIVE
+  gains: gB2_slf=-1.0 (b_med=1.719112646586164e-09 capsat=no swing_max=0.0)  gB2_ten=-1.0 (b_med=0.0 capsat=no swing_max=0.0)
+  ── SELF lane (x=self_ctx_live) ──
+    ΔEff_self = 0/120 = 0.0   [HEADLINE]
+    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    LATENCY early(run1-3)=0/2=0.0  late(run≥8)=0/116=0.0 (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis DEGENERATE · STIM-ABSENT=YES
+  ── TEN lane (x=ag_conflict · own-lane W=1.0) ──
+    ΔEff_ten = 0/120 = 0.0   [HEADLINE]
+    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    LATENCY early(run1-3)=0/2=0.0  late(run≥8)=0/116=0.0 (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis DEGENERATE · STIM-ABSENT=YES
+  ── PRE-REG H_9226-R3 FROZEN BARS (verbatim H_9226 + run-validity · printed BEFORE verdicts · p7 no tune-to-green) ──
+  0 RUN-INVALID: emit_frac(e_live, scored mid) ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE — no verdict either way)
+  1 HARNESS-BUG(VOID): og_h_frzB2>0 (FROZEN not byte-identical to prod)
+  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE) ∨ capsat(UNDER-COUPLED) ∨ STIM-ABSENT(swing_max<0.0875) — never cements THEATER
+  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)
+  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ latency(late≥3·early ∧ early≤0.05 ∧ n_late≥10) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard
+  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat ∧ swing_max≥0.0875
+  6 DIRECTIONAL: else (incl. ΔEff≥0.10 that FAILS latency shape = instantaneous-reader phenotype, A-redundant) ⇒ ≥2 seeds, no cement
+  SELF VERDICT = ⛔ RUN-INVALID — live emit-fraction on scored mid ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE); no verdict either way, re-tune stimulus density (this is instrument power, NOT a bar move · p5 forcing-gate guard)
+  TEN VERDICT = ⛔ RUN-INVALID — live emit-fraction on scored mid ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE); no verdict either way, re-tune stimulus density (instrument power, NOT a bar move)
+  ── INTERPRETATION ──
+  B2 COMPETENT ⇒ first non-urgency, first mechanism-typed (integration) channel ⇒ ≥2-seed re-measure then WIRE.
+  B2 THEATER (with A THEATER) ⇒ convergent seam-law cements: read-side recoding family CLOSED, escalation = write-side train-coupling.
+  B2 INSTRUMENT-FAIL again ⇒ two op-grip generations failed ⇒ park B UNMEASURED-TERMINAL at this seam (no third op-grip att).
+
+──────── H_9230 efference-copy / corollary-discharge (Family E · x=ec_x self-pred-err · mid=210 · N=400 · calib 10-49 · score ≥50 · rides --opgrip-r3) ────────
+  FROZEN byte-identity: og_h_frzE = 0  (MUST be 0 — else HARNESS-BUG, run VOID)
+  POS-CONTROL (reuse dense ARM-SHOCK) = 105 flips · POS-PASS(≥2)=YES
+  gain: g_eff=1.608799743324865 (band_med=0.10877674535074949 capsat=no)
+    ΔEff_eff = 0/210 = 0.0   [HEADLINE]
+    ARM-INPERM (x_eff stride-perm, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    DISSOC onset=0/140=0.0  cont=0/70=0.0 (bar cont≥3·onset ∧ onset≤0.05 ∧ n_cont≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis ok
+  ── PRE-REG H_9230 FROZEN BARS (verbatim · printed BEFORE verdict · p7 no tune-to-green) ──
+  1 HARNESS-BUG(VOID): og_h_frzE>0 (FROZEN not byte-identical to prod)
+  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE, x_eff degenerate) ∨ capsat ∨ n_cont<10 — never cements THEATER
+  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)
+  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ DISSOC(cont≥3·onset ∧ onset≤0.05 ∧ n_cont≥10) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard
+  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat ∧ x_eff non-degenerate (b_med≥0.002)
+  6 DIRECTIONAL: else (incl. ΔEff≥0.10 with DISSOC-fail = A-redundant reader) ⇒ ≥2 seeds, no cement
+  E VERDICT = 🔴 THEATER — corollary discharge inert at emit (ΔEff<0.02, POS-PASS ⇒ meter works, x_eff non-degenerate); adds a THIRD orthogonal recoding (shape/integration/self-prediction) to the convergent seam-law
+
+──────── H_9229 discrete VQ-code (Family F · K=8-bit product code · mid=210 · N=400 · calib 10-49 · score ≥50 · rides --opgrip-r3) ────────
+  FROZEN byte-identity: og_h_frzF = 0  (MUST be 0 — else HARNESS-BUG, run VOID)
+  POS-CONTROL (reuse dense ARM-SHOCK) = 105 flips · POS-PASS(≥2)=YES
+  gain: g_vq=3.6291105809273927 (capsat=no) · codes visited on scored mid = 2 (bar ≥4)
+  ── S1 code-selection ──
+    ΔEff_vq = 0/210 = 0.0   [HEADLINE]
+    ARM-SHUFFLE-CODEBOOK (PRIMARY theater-killer) = 0 = 0.0  → margin_cb = ΔEff−shuf = 0.0 (bar ≥0.08)
+    ARM-INPERM (tick-order, SECONDARY diagnostic no-bar) = 0 = 0.0
+  ── S2 composition (G1 BIND test at the seam · A=coh_lane B=ag_conflict · 2×2 bit-toggle) ──
+    ΔEff_A=0.0 ΔEff_B=0.0 ΔEff_AB=0.0 → s2_bind = AB−(A+B) = 0.0 (n_AB=0 · bar ≥0.05 ∧ n_AB≥10) BIND=NO (S2 NOT-TESTABLE)
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis ok
+  ── PRE-REG H_9229 FROZEN BARS (verbatim · printed BEFORE verdict · p7 no tune-to-green) ──
+  1 HARNESS-BUG(VOID): og_h_frzF>0 (FROZEN not byte-identical to prod)
+  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ n_visited_codes<4 (bottleneck never engaged) ∨ g=−1.0(codebook flat)
+     [S2 sub-clause: n_AB<10 = combined code never testable ⇒ gates bar-5 BIND only, NOT whole instrument (adaptation)]
+  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)
+  4 COMPETENT: S1(ΔEff≥0.10 ∧ margin_cb≥0.08) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard
+  5 COMPETENT+BIND (rare): COMPETENT ∧ S2(AB−(A+B)≥0.05, n_AB≥10) — first BIND signal at the seam
+  6 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ n_visited≥4 ∧ margin_cb<0.08 (magnitude/frequency not concept)
+  7 DIRECTIONAL: else (incl. ΔEff≥0.10 that survives the codebook shuffle = magnitude-theater) ⇒ ≥2 seeds
+  F VERDICT = ⚙️ INSTRUMENT-FAIL (bottleneck never engaged) — <4 distinct codes visited on scored mid even under --opgrip-r3; lanes never crossed code boundaries, raise stimulus diversity, NOT a substrate result
+  ── INTERPRETATION ──
+  F COMPETENT+BIND ⇒ first non-additive bind at any seam ⇒ extraordinary, ≥2-seed + WIRE (prior: expect regression).
+  F COMPETENT (S1) ⇒ discrete-code bottleneck grips emit but no BIND ⇒ G1 additive-floor law survives a fifth lens.
+  F THEATER ⇒ fourth orthogonal recoding inert ⇒ read-side recoding family CLOSED (escalation = write-side train-coupling).
+=== [Wed Jul  8 22:07:45 UTC 2026] [2] v6 reach: anima-python evaluate --rho-axon ===
+[notice] To update, run: python -m pip install --upgrade pip
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/root/.hx/packages/anima/anima_py/__main__.py", line 7, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/root/.hx/packages/anima/anima_py/__init__.py", line 27, in main
+    import anima  # = 설치된 anima_py/cli/anima.py (canonical py 디스패처)
+    ^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'anima'
+/root/pod_r3.sh: line 19: anima-python: command not found
+=== [Wed Jul  8 22:07:46 UTC 2026] POD_R3 COMPLETE ===
