@@ -27,5 +27,8 @@ $0 correlate-check: held-out G1 짝이 가용 sensor 스트림서 **감각 상�
 **modal 예측(Fable)**: A pass·B fail = 세계 공발생이 unary **가산 중첩**으로 들어가 combination-operator 벽 **채널-무관 재등장** → 가장 깊은 verdict: 벽=텍스트특정 아닌 **모든 유한 경험채널 성질**(경험=fuel, engine 아님)→γ만 유일 생존.
 **최소 rig(owner-gated, Stage A pass 후만)**: Pi Camera Module 3(~$25)→AKD1000 unary detector→L5 explicit store(wired-GREEN) read-side·G5-gated·DISJOINT. ⚠️ PI5-AKIDA.json=센서 0(카메라 구매 필요). world 짝 1개 earn=주 단위 스트림.
 
+
+**Stage A 결과(2026-07-08 · COCO val2017 5000장 · $0)**: 🟢 **PASS-A**. A1=**83 짝**(bar20·img_cooc≥20∧cap_cooc=0: person|sports ball 159장·keyboard|tv 65·mouse|tv 54...) · A2=**68 짝**(bar10·|PMI_img|≥0.5 perm p<0.01: keyboard|tv PMI2.70·tennis racket|ball 2.66). ⟹ **비-텍스트(이미지) 채널이 텍스트엔 없는 held-out 짝 조합-MI를 실제로 나름** = C2 전제 Stage-A 생존(이 캠페인 첫 non-negative). 텍스트가 세계 joint 미subsume. NEXT=Stage B(substrate가 그 MI 쓰나 / Fable modal=가산중첩으로 못써→벽=모든 유한경험채널 성질).
+
 ## 맥락
 G1 재조합벽 내부 전 각도 terminal(data#3109·E1#3107·γ#3108·DPI#3046·framebreak#3135·coverage#3156) 후, 외부 부품 발산(H_9214, Fable). DPI-합법=새 정보소스 필요. 순수 추상 어휘 조합은 text-only 채널 천장이므로 대부분 후보가 handed(#3135)/store/wrong-MI 함정으로 붕괴. 유일 'earned not handed' 명확 후보=[[H_9216]](C2 sensorimotor, perceptual-only).
