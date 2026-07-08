@@ -14493,6 +14493,13 @@
     "value": "재조합 lane/head를 next-byte CE로 학습할 때 타깃이 문맥서 copyable면 base 트렁크가 이미 복사(CE≈0)라 학습신호 死 — evaluate-py-2(copyable 타깃이 재조합 MEASUREMENT 무효)의 학습 층위 재발. H_9235 fork-A: derivtrace-WITH-definitions 합성('out:')바이트가 정의부 단어라 트렁크 copy(acc 1.0·CE 0.0003·gate→0), lane 학습불가=H_1840 학습신호벽 lane층위. route는 pre-check(synthetic XOR=non-copyable)로 존재하나 실 copy-format CE론 학습 안됨.",
     "threshold": "재발조건: frozen-trunk 위 read-side lane/head를 next-byte(또는 held-out 재조합) CE로 학습 시 train CE≈0·gate→0·lift 없음. 해결: 타깃이 문맥서 copyable인지 먼저 확인(타깃바이트가 recent context에 존재?)→copyable이면 신호死. no-copy verdict형식(정의부/정답 제거·concept cue만)으로 재학습 + word-initial 위치 한정 + trainability probe(pool→target-word-id를 TRAIN서 fit되나)로 신호-존재를 학습 전 확인. fit 불가=신호벽(표현 아닌 학습벽) terminal.",
     "source": "state/recomb-routing-lane/clml_train.py"
+   },
+   {
+    "id": "anima-hexa-8",
+    "state": "pos-conv",
+    "value": "op-grip 실측 루프의 per-tick REAL DECODE(brain_emit)를 인라인으로 두면 결과 Map(dec)+디코드 문자열(gl_text)이 측정함수의 hexa arena에 매 tick 누적된다(arena는 fn RETURN에만 해제). n이 작으면(--opgrip-live n=100) 완주하나 긴 루프(--opgrip-r3 n=400)에서 선형 증가→30GB pod tick~126/400 OOM-kill. 근본수정=heavy decode를 per-tick 헬퍼 fn(og_emit_decode_feat->[float])으로 추출해 dec+gl_text가 return마다 arena와 함께 해제되게 하고, 작은 8-elem emit-content feat만 caller로 반환(빈배열=미emit 센티넬). 지속 상태(afield/og_prev_gfeat/ec_x/ec_pred)는 caller 잔류→동작 byte-identical.",
+    "threshold": "--opgrip-live/-r3 같은 긴 측정 루프가 mid-loop OOM-kill되면 인라인 per-tick decode 할당(brain_emit 결과 Map+문자열)을 의심하고 heavy decode를 fn arena가 tick마다 해제하는 헬퍼로 추출하라. 측정함수 arena에 쌓이는 인라인 decode = 선형 누적 함정.",
+    "source": "cli/anima.hexa"
    }
   ]
  }
