@@ -16,10 +16,23 @@ G1/G6 재조합벽은 origin/main에서 전 축 terminal 확정: data #3109 · E
 - M=32: VSA **0.987** / ADD 0.020 / SHUF 0.000
 → VSA≫additive(용량 붕괴)·SHUF=0(binding 통제 정상). **OPERATOR-WALL-ESCAPABLE (DIRECTIONAL)**.
 
-## FROZEN BARS (engine-native GPU-wired 토이 · a_engine_native_learning cement gate)
-- 🟢 GREEN: engine-native byte-LM에 고정 resonator read-head 배선 → additive 대비 real G1 재조합(정보 존재 셀)서 margin 우위 ∧ wired-live(a_verified_must_wire).
-- 🔴 KILL: CE-trained read-head 재도입 시 additive floor 재붕괴(Fable adversarial thread) ∨ 정보벽#3109이 지배해 operator escape가 무의미.
-- 현 numpy = 🟠 DIRECTIONAL, cement 불가(mirror).
+## 토이 검증 (aiden pool $0 · torch 3seed · Fable 설계 스펙 · 🟠 DIRECTIONAL/MIXED)
+role-filler 회상(R=6·F=30·held-out=`r==f mod6`), 4 arm 동일 codebook: A=CE-readhead·B=고정HRR-resonator·B0=frozen·C=additive.
+| seed | A held | B held | C held | B bind-destroy |
+|---|---|---|---|---|
+| 0 | 0.499 | 0.953 | 0.085 | 0.347 |
+| 1 | 0.091 | 0.961 | 0.094 | 0.355 |
+| 2 | 0.016 | 0.933 | 0.088 | 0.328 |
+(chance 0.033 · A/B indist=1.0 validity ✓ · train A/B=1.0·C=0.42~0.49)
+- ✅ **B vs C(연산자 격리) CLEAN·ROBUST**: 고정 HRR 0.93~0.96 ≫ additive 0.085~0.094 전 seed, 연산자(⊛ vs +)만 차이 → escape는 연산자 귀속. bind-destroy(⊛→+)=0.33 붕괴.
+- ⚠️ **clean GREEN 미달→MIXED**: 사전등록 "A≤0.40 all" 을 seed0 A=0.499가 초과(A는 seed-요동 0.50/0.09/0.02, CUDA 학습 비결정). no-tune-to-green으로 바 불변.
+- ⚠️ **B≈B0**(0.949~0.971): 승리=HRR 대수 자체(Plate1995). 정직한 명제="CE-gradient가 고정-bind read-path 오염 안 함"(B=B0), "B가 bind 학습"은 아님.
+
+## FROZEN BARS (engine-native 승격 gate · a_engine_native_learning)
+- 🟢 GREEN: engine-native byte-LM(atoms를 byte서 학습·LM objective·`core/` decode)에 고정 resonator read-head 배선 → additive 대비 real 재조합(정보 존재 셀) margin 우위 ∧ wired-live(a_verified_must_wire).
+- 🔴 KILL: CE-trained read-head 재도입 시 additive 재붕괴(Fable adversarial thread) ∨ 정보벽#3109 지배.
+- 현 numpy+torch-toy = 🟠 DIRECTIONAL, cement 불가(mirror·symbolic ID·no byte/LM/core).
 
 ## artifacts
 - state/g1g6_framebreak_vsa/{probe.py, RESULT.json, fable_framebreak_design.md}
+- state/g1g6_framebreak_vsa/toy/{probe.py, RESULT.json, fable_spec.md, TOY_SYNTHESIS.md}
