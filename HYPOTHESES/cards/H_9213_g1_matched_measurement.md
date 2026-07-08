@@ -1,6 +1,8 @@
 # H_6189 — matched-surface + window-resident G1 재측정 (canonical G1=0 이 측정 artifact인가?)
 
-**tier**: ⏳ PRE-REGISTERED (frozen-first · 측정 대기 · state/g1_matched_measurement/PREREG.md)
+**tier**: ⚙️ VOID (frozen validity gate) · 방향성 🔴 KILL-lean (measurement-artifact 가설 방향성 반증)
+
+> **측정 종결(2026-07-08 · anima evaluate --py --probe · summer pool)**: ⚙️ VOID — 사전등록 validity (b) unary strict=0.125<0.80 실패(no-tune-to-green). 단 강한 방향성: validity (c) seen 0.776 통과(T0/T3 elicitation 작동)한 **동일 form**서 held-out=0.0446≈chance(perm-null p95 0.0089·null L8_nocov 0.0) = matched surface+window서도 held-out 재조합 실패 = **벽은 elicitation artifact가 아니라 진짜**(canonical G1=0 corroborate, ⭐ember+dune n=1은 fluke였던 듯). null L4_clean은 공유 result-file 오염(convergence evaluate-py-4·L8cov 복사·quarantine, VOID는 unary gate로 이미 확정). 상세 state/g1_matched_measurement/VERDICT.md.
 
 ## 배경
 L8-cov ckpt(`clm303_deep_L8_cov.clm` sha 2c565ad4)는 RF L=8 + 조합-커버리지 커리큘럼 학습. canonical G1 gate=best_distinct=0. H_6187가 이를 INCONCLUSIVE로 RETRACT: ① 엔진무죄 ② surface-form mismatch(커버리지 "the A and B yield" vs gate 자유생성) ③ decode-window T=24가 긴 개념 2개 공존 물리 차단. ⭐ held-out `ember+dune→golden+zinc` 정확 재조합(n=1)=combiner 작동 반례.
