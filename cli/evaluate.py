@@ -740,6 +740,8 @@ def evaluate_usage():
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
+    print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24]")
+    print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235)")
     print("")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
@@ -1074,6 +1076,59 @@ def probe_run(argv):
     print(json.dumps({"ckpt": ckpt, "gen": gen, "spec_sha": spec.get("sha", ""),
                       "n": len(out), "items": out}, ensure_ascii=False))
     return 0
+def dump_hidden_run(argv):
+    """`anima evaluate --py <ckpt> --dump-hidden <prompts.json> --out <file.npz>` — read-only
+    penultimate-hidden dump for the ρ·weave held-out-pair recombination / γ binding-lane
+    probe (H_9235). For each pre-registered prompt: T=24 right-aligned byte encode → the
+    EXACT production trunk forward (core/decode clm_forward_hidden, byte-identical to what
+    the gates decode over) → per-position yn:[T, d]. Saves per-prompt {seq:[T,d], mean:[d],
+    last:[d]} to an .npz. NO decode sampling, NO scoring — a pure engine-native representation
+    tap. Engine-native (py 2-production numpy, a_eval_py_canonical) → the repr claims (atom
+    cleanness / slot recovery / operator) are engine-native mechanism measurements.
+    ⚠ verdict-integrity (convergence clm-decode-py-2): a low-cleanness result must first rule
+    out hexa-skew / conditioning-collapse — the dump prints a positive-control distinguishability
+    check (are two obviously-different concepts' hiddens far apart) before any blind verdict."""
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--dump-hidden", "")
+    out_path = evaluate_strval(argv[1:], "--out", "hidden_dump.npz")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    print("=== anima evaluate --dump-hidden — ρ·weave / γ binding-lane probe (H_9235) ===")
+    print("ckpt:  " + ckpt)
+    print("spec:  %s (%d prompts · T=%d right-align · read-only trunk penultimate)" %
+          (spec_path, len(items), T))
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    d = int(W["d"])
+    store = {}
+    n_done = 0
+    for it in items:
+        pid = str(it["id"]); prompt = it["prompt"]
+        tok = clm._seed_to_tok(prompt, T)
+        yn = clm.clm_forward_hidden(W, tok, T)          # [T, d] float64
+        store[pid + "__seq"] = yn.astype(np.float32)
+        store[pid + "__mean"] = yn.mean(axis=0).astype(np.float32)
+        store[pid + "__last"] = yn[T - 1].astype(np.float32)
+        n_done += 1
+        if n_done % 25 == 0:
+            print("  [dump #%d/%d] %s" % (n_done, len(items), pid), flush=True)
+    # positive-control distinguishability (verdict-integrity clm-decode-py-2): if the FIRST
+    # two DISTINCT-concept prompts collapse to near-identical hiddens, a blind verdict is
+    # suspect (hexa/py conditioning skew), NOT a clean atom-blindness result.
+    pc = ""
+    if len(items) >= 2:
+        a = store[str(items[0]["id"]) + "__mean"]; b = store[str(items[1]["id"]) + "__mean"]
+        cos = float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-9))
+        pc = "poscontrol cos(%s,%s)=%.4f %s" % (items[0]["id"], items[1]["id"], cos,
+             "(⚠ near-identical → suspect conditioning collapse, NOT blind)" if cos > 0.999 else "(distinct ✓)")
+        print("  " + pc, flush=True)
+    np.savez_compressed(out_path, **store)
+    print(json.dumps({"ckpt": ckpt, "d": d, "T": T, "n": len(items),
+                      "out": out_path, "poscontrol": pc}, ensure_ascii=False))
+    return 0
 def _selftest_rho_cells():
     """H_9212 ③ wiring self-test (torch-free · NO decode · reached via an internal subprocess,
     never a heavy eval). Asserts: (1) the aggregate `dets` reuse the FROZEN en objects; (2) en
@@ -1207,6 +1262,10 @@ def main(argv):
         i = argv.index("--system-g1")
         argv = argv[:i] + argv[i + 1:]
         return system_g1_run(argv)
+    # --dump-hidden <prompts.json>: read-only penultimate-hidden dump (ρ·weave / γ
+    # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
+    if "--dump-hidden" in argv:
+        return dump_hidden_run(argv)
     # --probe <spec.json>: matched-surface G1 probe (card H_6189). argv[0]=ckpt; probe_run
     # reads --probe/--gen from the tail. Greedy raw-continuation dump for offline scoring.
     if "--probe" in argv:
