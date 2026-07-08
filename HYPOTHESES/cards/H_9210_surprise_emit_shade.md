@@ -1,6 +1,6 @@
 # H_9210 — surprise(prediction-error) emit-shade (urgency 외 2번째 proven 채널 탐색)
 
-**tier**: ⏳ PRE-REGISTERED (측정 대기)
+**tier**: ⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE · $0 no-decode 한계 · state/verdicts/9210)
 
 ## 배경
 σ de-theater 종결(anima-hexa-5): emit shade 유일 proven 채널=urgency(phasic Δ→idle). 정찰(state/9210 SCOUT_MAP)이 urgency 외 후보 5개 census — #1 최고 grip = **SURPRISE/예측오차(recon_err)**: urgency가 흉내낸 LC-NE 버스트의 실체인데 현재 cur_ctx ÷18 pool에 1/18 희석돼 자기 term 아님.
