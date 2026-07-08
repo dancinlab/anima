@@ -137,6 +137,21 @@ fn _rho_fan_words_uni(s: string) -> list {
     return words
 }
 
+// ── H_9212 ④ FROZEN-FIRST ko known-word-ratio gate (p7 · NOT tune-to-green) ──
+// Twin of core/rho_fan.py::KWR_KO_GATE. The en reach gate uses a frozen 0.70 known-word-ratio
+// bar (235k-dict lexicality); ko needs its OWN gate because kwr_ko is a josa-suffix
+// GRAMMATICALITY proxy (a DIFFERENT physical quantity → 0.70 is a category error for ko).
+// DERIVED frozen-first from MODEL-INDEPENDENT distributions BEFORE any 303M ko scoring:
+//   POSITIVE = held-out anima-corpus-ko-{general,sns} real (median kwr_ko 0.40);
+//   NEGATIVE = garble null (byte-shuffle + random valid-hangul; near point-mass at 0.0).
+//   rule = midpoint(neg_p95=0.0, pos_p50=0.40) = 0.20 (naive midpoint(pos_p5,neg_p95)→0.0
+//          degenerates on the positive zero-tail; median anchors robustly between dists).
+//   at 0.20: 80.0% real ko clears, 99.74% garble fails.
+// Derivation state/frontier_round2_scout/kwrko_gate_derive.py · prereg KWRKO_GATE_prereg.md.
+// ⚠️ 구현됨·미배선 — NOT consumed by any scoring path (that is H_9212 ③ per-cell dispatch).
+// ko FALS SCOPE-EXCLUDED until ③ applies this gate. en 0.70 UNCHANGED.
+fn KWR_KO_GATE() -> float { return 0.20 }
+
 // _rho_fan_dict_load — load /usr/share/dict/words into a Map set ONCE (membership for the
 // content-word check). Falls back to the concept+stopword lexicon if the dict is absent
 // (scoped honestly — the detector then sees a smaller _KNOWN; calibration prints regardless).
