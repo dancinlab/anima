@@ -1219,6 +1219,7 @@ def interaction_lift_run(argv):
     non-additive structure — the Y1 half of Fable's 해석 매트릭스 (Y3 = model-free corpus).
     Engine-native (py 2-production numpy, a_eval_py_canonical) → TERMINAL-eligible.
     manifest = {"win":T,"score_len":K,"items":[{"text":"<span>","a":i,"b":j},…]}."""
+    import numpy as np      # numpy is function-local throughout evaluate.py (no module import)
     ckpt = argv[0]
     spec_path = evaluate_strval(argv[1:], "--interaction-lift", "")
     out_path = evaluate_strval(argv[1:], "--out", "interaction_lift.json")
