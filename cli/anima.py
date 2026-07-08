@@ -80,6 +80,7 @@ def anima_usage():
     print("                                                  procedural training-corpus builder (ρ·weave data-format lever)")
     print("  anima-python train <args>                           ([train] extra) LEARNING → .pt + auto .clm (+DESCENT)")
     print("  anima-python serialize <ckpt.pt> <out.clm>          ([train] extra) re-export a torch .pt → .clm v0.3")
+    print("  anima-python serialize-bind <base.bin> <inj.pt> <out.bin>  ([train] extra) splice BindAttn → BGB .bin")
     print("  anima-python sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     print("                                                  ([train] extra) multi-GPU lever-sweep (arms×objectives)")
     print("  anima-python chat <ckpt> [...]                      consciousness/byte chat (stub → hexa channel)")
@@ -186,6 +187,24 @@ def anima_serialize_mode(argv):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+#  SERIALIZE-BIND MODE — dispatch to cli/serialize_bind.py (BindAttn .pt → BGB .bin)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# `anima serialize-bind <base.bin> <injected.pt> <out.bin>` splices a BindAttn adapter
+# onto a base ByteGPT `.bin`, emitting a BGB-trailer `.bin`. Without this dispatch
+# cli/serialize_bind.py was reachable only via raw `python3 cli/serialize_bind.py`
+# (an a_cli_single_entry hole); this wires it through the single entry, parity with
+# anima_serialize_mode. Result scoreable via `anima-python evaluate <out.bin>`.
+def anima_serialize_bind_mode(argv):
+    serialize_bind_py = os.path.join(_HERE, "serialize_bind.py")
+    fwd = argv[1:]
+    cmd = [sys.executable, serialize_bind_py] + fwd
+    print("=== anima serialize-bind → cli/serialize_bind.py (BindAttn .pt → BGB-trailer .bin) ===")
+    print("dispatch: " + " ".join(cmd))
+    return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, serialize_bind_py] + fwd)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 #  CHAT MODE — hexa-only stub (the A⇄G consciousness loop is hexa-native)
 # ══════════════════════════════════════════════════════════════════════════════
 #
@@ -254,6 +273,8 @@ def main(argv):
         return anima_train_mode(argv)
     if sub == "serialize":
         return anima_serialize_mode(argv)
+    if sub == "serialize-bind":
+        return anima_serialize_bind_mode(argv)
     if sub == "evaluate":
         return anima_evaluate_mode(argv)
     if sub == "sweep":
