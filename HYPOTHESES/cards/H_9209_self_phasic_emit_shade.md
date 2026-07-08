@@ -1,8 +1,8 @@
 # H_9209 — kosmos self_phasic emit-shade promotion (break the #3116 self-fold wall)
 
-**tier**: ⚙️ INSTRUMENT-FAIL (POS-FAIL · 계기 수정 후 재측정 · frozen bars 불변)
+**tier**: 🔴 THEATER (2026-07-08 확정 · engine-native --opgrip #3122 · state/verdicts/9209)
 
-> **판정(2026-07-08, state/verdicts/9209)**: engine-native --opgrip(summer #3118) = ⚙️ INSTRUMENT-FAIL. ARM-SHOCK 양성대조 0/90 flip=계기(idle-gate self 배선)가 너무 약함(±0.125 « urgency full-swing). self 능력 판정 보류(THEATER 아님·#3116식 거짓판정 차단). 다음=W_SELF↑/포화회피/이벤트밀도↑ 후 재측정.
+> **판정(2026-07-08, 4사이클, state/verdicts/9209)**: 🔴 THEATER. dense ARM-SHOCK 양성대조 45/90 flip=POS-PASS(계기작동확증) 상태에서 ΔEff_self=0.011<0.02·margin−0.13(self가 자기셔플보다 무력) ⇒ 자서전 self는 emit을 인과 shade 못함. frozen 규칙 자동판정(p7). never wire, .kosmos persistence만(H_1471 유지). convergence anima-hexa-4(양성대조가 #3116식 거짓판정 4사이클 방어) 실증.
 
 ## 배경
 #3116 kosmos ΔEff_self = 🟠 DIRECTIONAL(state/verdicts/9201): 라이브 self를 42항 rel pool에 ÷42로 섞어 ΔEff_self=0/120. CONTROL-U(self-Δ→urgency)도 0/120이나 **구성상 감지불가**(Fable 진단): 진폭 s_dev≈0.02 « 채널 MDA≈0.2·gain 1.0(이웃 3.0)·is_w=WAKE/N1/N2 채점(grip 최강 REM 제외)·one-sided. → null이 '기질 무능'인지 '계기 무능'인지 미분리. (convergence anima-hexa-4)

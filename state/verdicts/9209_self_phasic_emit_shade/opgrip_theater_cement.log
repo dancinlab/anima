@@ -1,0 +1,57 @@
+=== hx install anima (dense-v2 ~20min) ===
+[2m  registry entry 'launch.hexa' missing, auto-detected 'cli/anima.hexa'[0m
+[32m⬡ installed: anima[0m
+[2m  entry: cli/anima.hexa[0m
+[2m  run with: hx run anima  (or: anima)[0m
+=== anima d768.clm --opgrip 재측정4 ===
+  [OG t197 N2 w=1] motiv_base=0.7464083532001299 e_base=0 | motiv_live=0.43480332447609676 e_live=0 | fr=0 agl=0 z=0 s=0
+  [OG t198 N3 w=0] motiv_base=0.4404361705345635 e_base=0 | motiv_live=0.3622543033406871 e_live=0 | fr=0 agl=0 z=0 s=0
+  [OG t199 REM w=0] motiv_base=0.44041291304000196 e_base=1 | motiv_live=0.47871617719595705 e_live=1 | fr=1 agl=1 z=1 s=1
+
+════════════ OP-GRIP 5-ARM HAMMING (n=200, wake=120) ════════════
+  BASELINE (pre-fix ÷43 + 4 constants): Hamming(rel-frozen vs base) = 0   [pre-reg: 0 = THEATER reproduced]
+  baseline motivation floor >0.3 on 120/120 wake ticks
+  ── POST-FIX (live 8-factor op reads + tonic-phasic) ──
+  Hamming(full-rel_ctx frozen vs live) = 0   wake-only = 0/120
+  Hamming(single-op agloop frozen vs live) = 0   wake-only = 0/120
+  Hamming(rel_ctx→0 vs live) = 0
+  Hamming(rel_ctx→shuffle vs live) = 0
+  wake emit-fraction = 0.6666666666666666 (live)
+  Ψ ON==OFF invariant: psi_sum==psi_off = ✅
+
+──────── H_9101 (b) STAGE/SAFE op-grip: urgency-freeze Hamming, split by stage ────────
+  ticks: WAKE=40 N3=40 REM=40 mid(N1/N2/REM)=120
+  Hamming(urgency→0 vs live)  REM=40  N3=0  WAKE=0  mid=80
+  Hamming(urgency→shuf vs live) REM=3  N3=0   [control]
+  ── PRE-REG VERDICT ──
+  VERDICT = 🟢 GRIP (shade-not-gate): urgency-freeze FLIPS REM decisions (h_U0_rem>0) ∧ N3 silent-PRESERVED (h_U0_n3=0) = DISSOCIATION  [Ψ ON≡OFF ✓]
+
+──────── TENSION→ADAPTATION op-grip: phasic A⇄G tension freeze (Δ→0) vs live ────────
+  Hamming(ten_phasic→0.5 vs live) = 0 / 160 discriminating(env>0) ticks   ΔEff = 0.0
+  PREREG VERDICT = 🔴 THEATER (ΔEff<0.02): phasic tension does NOT shade emit — the promotion is decoration (honest negative)  [Ψ ON≡OFF ✓]
+
+──────── H_9102 (F3) FACULTY-NOT-NOISE: variance-matched noise arm (n=200) ────────
+  urgency dist: mean=0.4494801948787774 std=0.03788167843756458  (perm-noise = same multiset ⇒ EXACT mean/var match; LCG-noise = affine-matched)
+  emit-rate: live=0.6  perm-noise=0.6   (≈equal ⇒ same centering; only tick-MEANING differs)
+  downstream D = mean(tension ag_conflict, emit_drive, novelty nov_ctx, grounded m_grounding)
+  ── ρ(emit-timing, D) ──                    ALL(n=200)   DISCRIM(N1/N2/REM)
+  ρ_real  (live urgency)                :  -0.033462615288456246   0.2147057763270637
+  ρ_noise (perm var-matched, K=8 mean)  :  -0.03346261528845624   0.2147057763270637
+  ρ_lcg   (affine var-matched control)  :  -0.033462615288456246   0.2147057763270637
+  Δρ = ρ_real − ρ_noise                 :  -6.938893903907228e-18   0.0
+  per-component ρ_real: tension=0.16666666666666688 novelty=0.033045899384271334 grounded=-1.4313052163268636e-18
+  ── PRE-REG F3 VERDICT (frozen bar Δρ ≥ 0.15) ──
+  F3 VERDICT = 🟠 NOISE-GRIP — Δρ < 0.15: the grip is centering-noise-driven (matched noise reproduces the same downstream corr) = a subtler op-layer theater; tier stays GRIP
+
+──────── H_9209 self_phasic emit-shade (mid=N1/N2/REM=90 · calib 0-49 · G_self=20.21081102876883) ────────
+  ΔEff_self Hamming(self-shade idle vs e_live) = 1/90 = 0.011111111111111112   [HEADLINE]
+  ARM-PERM matched-noise ΔEff = 13/90 = 0.14444444444444443  → margin ΔEff_self−perm = -0.13333333333333333
+  align (flips within ±2 of a self-event) = 1/1 = 1.0
+  ARM-SHOCK v2 dense (±0.5 rail every mid tick) = 45/90 flips = 0.5  · POS-PASS(≥2)=YES
+  pool channel-OFF ctrl (og_h_selfL/mid, #3116 floor) = 0 = 0.0  · re-sum fidelity og_h_selfS=0 · shuf og_h_selfshuf=0
+  GUARDS: N3 self-flips=0 (must 0) · WAKE=0 · Ψ emit-gap=0.011111111111111112 (must ≤0.05) · axis ok
+  ── PRE-REG H_9209 VERDICT (frozen bars, verbatim) ──
+  COMPETENT: ΔEff_self≥0.10 ∧ margin(perm)≥0.08 ∧ align≥0.5 ∧ POS-PASS ∧ N3=0 ∧ Ψ-gap≤0.05
+  THEATER: ΔEff_self<0.02 ∧ POS-PASS ∧ axis non-degenerate ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate
+  VERDICT = 🔴 THEATER — self genuinely inert at emit (ΔEff<0.02, POS control PASSED so meter works) ⇒ never wire, keep .kosmos persistence only (H_1471 stands)
+OPGRIP_9209DP_DONE rc=0

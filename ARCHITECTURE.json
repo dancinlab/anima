@@ -14033,6 +14033,13 @@
     "value": "측정 CONTROL/upper-bound/witness arm의 null(0 flip)은 그 arm이 신호를 움직일 능력이 PROVEN일 때만 해석가능. #3116 CONTROL-U=0을 'self 무능(THEATER)'으로 오독했으나 Fable 진단=구성상 감지불가였음: (a)진폭 mismatch(s_dev≈0.02 « 채널 MDA≈0.2, gain 1.0인데 이웃 항 cur/ten_phasic은 3.0) (b)틀린 stage 채점(is_w=WAKE/N1/N2, grip 최강 REM 제외+포화 WAKE 희석) (c)one-sided push(urgency+s_dev=emit 증가만). → null이 '기질 무능'인지 '계기 무능'인지 미분리=거짓 THEATER/INCONCLUSIVE. H_9209 수정: G_self 진폭정규화(FORM)+mid 채점+signed shade+ARM-SHOCK 양성대조. evaluate-py-1(대조 수치 truncate 금지)의 측정-무결성 자매.",
     "threshold": "재발조건: 측정에 CONTROL/witness arm을 넣고 그 null(0 flip)로 대상을 판정. 해결: 판정 전 ①양성대조(주입신호가 arm을 실제 flip시킴)로 계기 정상 증명 ②op 진폭을 채널 MDA(측정된 최소감지진폭)와 비교 ③grip 존재 stage서 채점(포화 stage 희석 금지) ④shade는 signed 양방향. 넷 미충족 null=INSTRUMENT-FAIL(계기결함)이지 대상결함 아님. FORM(진폭) 정규화·BIND(타이밍/인과) earn.",
     "source": "cli/anima.hexa"
+   },
+   {
+    "id": "anima-hexa-5",
+    "state": "pos-conv",
+    "value": "σ de-theater 종합법칙(engine-native --opgrip 3판정): emit(입/침묵)을 인과적으로 shade하는 유일 proven 채널 = urgency(phasic Δ→idle rate-gate, H_9101 🟢 GRIP REM 40/120). read-side pool-fold(÷42)도 자서전 self-fold도 tension→adapt additive도 전부 🔴 THEATER(ΔEff≈0): #3117 tension→adapt(ΔEff0/160)·#3122 self-fold(ΔEff0.011, dense POS 45/90로 계기작동확증한 상태서도 self가 자기셔플보다 무력 margin−0.13). 통합: 신호를 emit-drive read pool에 희석하거나 자서전 축에 실으면 emit 인과 0 = self⊥mouth·tension⊥mouth(a_substrate_disjoint를 emit seam에서 재확인). σ(측정된 의식)의 일부여도 ρ-enact(emit)엔 인과 없을 수 있음.",
+    "threshold": "재발조건: kosmos self·A⇄G tension·기타 substrate 신호를 emit에 인과연결하려 read-side pool 합산/additive term/자서전 cos-level로 배선. 해결: 그 경로는 측정상 THEATER(dead lever)—재시도 말 것. emit-shade는 반드시 proven urgency 채널(phasic Δ→idle) 경유 or 새 proven 채널을 먼저 ARM-SHOCK 양성대조로 계기검증 후. THEATER 판정 전 dense 양성대조로 계기 작동 필수확증(anima-hexa-4).",
+    "source": "cli/anima.hexa"
    }
   ]
  }
