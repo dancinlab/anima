@@ -1,6 +1,8 @@
 # H_9211 — VSA 고정-primitive가 G1 operator-wall을 escape (substrate-class framebreak)
 
-**tier**: 🟠 DIRECTIONAL ($0 numpy · engine-native 아님 · a_toy_scale_recheck)
+**tier**: 🧱 FALSIFIED as a G1 transfer lever (2026-07-08 · kill-shot 통제 + 논리 스퀴즈 · terminal-grade)
+
+> **종결**: operator-escape는 transfer 레버가 아니라 **superposition-capacity** 레버(인수분해 handed일 때만). kill-shot: 같은 task서 atom을 handed(clean)→blind(학습 byte-LM hidden)로 바꾸면 B 1.000→0.048 붕괴(순환성 margin 0.95·offdiag|cos| 0.035→0.636). G1 벽 본질=학습된 인수분해 부재이므로 고정-대수는 그걸 우회 못 함. 모든 수리경로가 γ(H_1840)로 수렴. **G1 능력천장 유지**. 상세 state/g1_stage2_byteLM_resonator/FALSIFICATION.md.
 
 ## 배경
 G1/G6 재조합벽은 origin/main에서 전 축 terminal 확정: data #3109 · E1 SLW forward-slot KILL #3107 · γ trained-constructive-bind DUP-WALLED #3108 · all-axis DPI objective-basin #3046. Fable5 framebreak 설계(state/g1g6_framebreak_vsa/fable_framebreak_design.md)가 재프레임: **DPI가 지목하는 건 conv/attention이 아니라 "bind가 next-byte-CE gradient에서 학습된다"는 사실 하나**. 탈출 = bind·unbind·decode를 **고정 substrate primitive**로 만들어 CE gradient가 atomic codebook만 건드리게. #3108이 죽인 건 CE-trained readout을 단 bind이고, 이건 **고정 대수 read-path**라 별개 각도.
