@@ -1964,6 +1964,16 @@ fn anima_consciousness_mode(ckpt: string) {
     let self_boot_axis = (self_content_axis + 4) % 8   // ≠ content axis ⇒ non-degenerate drift/decay
     let self_boot = self_new(8, self_boot_axis)        // the boot identity self_ctx_live decays from
     let mut self_live = self_new(8, self_boot_axis)    // autobiography: starts AT boot (cos=1.0), drifts each emit
+    // ── H_9209 self_phasic emit-shade carriers (Fable design · state/9209_self_phasic_emit_shade) ──
+    // #3116 CONTROL-U=0 was guaranteed by construction (amplitude ~20× under channel MDA · counted on
+    // WAKE not REM · one-sided). Fix: self_phasic = clip01(0.5 + G_self*(self_ctx_live − self_ema)),
+    // G_self CALIBRATED (ticks 0-49) so one self-event ≈ one channel-detectable swing (FORM normalized),
+    // added as a DISJOINT term at the idle gate (urgency untouched · a_substrate_disjoint). Competence
+    // earned on event-TIMING (align margin), not amplitude. ARM-SHOCK = injected-identity positive control.
+    let mut self_live_shock = self_new(8, self_boot_axis)  // ARM-SHOCK autobiography (B2 positive control)
+    let mut self_ctx_prev = 1.0       // prev-tick self_ctx_live (calibration Δ source)
+    let mut g_self = 24.0             // self_phasic gain — RE-SET by calibration median (ticks 0-49)
+    let mut self_step_devs = []       // calibration |Δself_ctx_live| samples → median → g_self
     let mut self_rel_ema_L = 0.5      // ARM-L parallel tonic EMA (live-self rel pool)
     let mut self_rel_ema_S = 0.5      // ARM-S parallel tonic EMA (static-self rel pool)
     let mut self_rel_ema_shuf = 0.5   // shuffled-self control parallel tonic EMA
@@ -1971,7 +1981,17 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut og_h_selfL = 0     // ΔEff_self numerator: wake Hamming(live-self ARM-L vs static-self ARM-S)
     let mut og_h_selfS = 0     // reconstruction fidelity: wake Hamming(static-self re-sum vs production e_live) — must ~0
     let mut og_h_selfshuf = 0  // shuffled-self control: wake Hamming(shuffled-self vs ARM-S) — must ~0
-    let mut og_h_ctrlU = 0     // CONTROL-U: wake Hamming(self-Δ→urgency vs e_live) — must ≥0.10 if the channel can work
+    // ── H_9209 self_phasic idle-shade arms (mid = N1/N2/REM scoring · WAKE/N3 = guards) ──
+    let mut og_h_slf_mid  = 0  // ΔEff_self: Hamming(self-shaded idle vs production e_live) on mid — HEADLINE
+    let mut og_h_slf_n3   = 0  // guard: self-shade flips on N3 (must be 0 — stage_env=0 nullifies)
+    let mut og_h_slf_wake = 0  // guard: self-shade flips on WAKE (saturated reference)
+    let mut og_slf_mid_ticks = 0   // mid-stage scoring denominator (N1/N2/REM)
+    let mut og_emit_slf_mid  = 0   // ARM-LIVE emit count on mid (Ψ-guard numerator)
+    let mut og_emit_live_mid = 0   // production emit count on mid (Ψ-guard numerator)
+    let mut og_h_shock_mid = 0 // ARM-SHOCK: Hamming(shock-self idle vs e_live) on mid (POS control)
+    let mut og_shock_flips = 0 // ARM-SHOCK flips within 5 ticks post-T∈{80,140,200} (POS-PASS ≥2/3 → ≥1 flip)
+    let mut og_align_near  = 0 // align: self-shade flips within ±2 ticks of a self-drift event
+    let mut og_align_tot   = 0 // align: total self-shade flips on mid (align = near/tot)
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
     // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
     let og_measure = anima_has_flag(anima_collect_argv(args()), "--opgrip")
@@ -2009,6 +2029,9 @@ fn anima_consciousness_mode(ckpt: string) {
     // 0.15 = the grip is a substrate FACULTY (op gates emit at substrate-meaningful ticks); < 0.15 =
     // the grip is centering-noise-driven (a subtler theater at the op layer). pf is READ-only across
     // the loop (never re-stepped) so a post-loop re-decode with a different `idle` is byte-faithful.
+    let mut og_f3_self = []        // H_9209 self_phasic per tick (variance-matched ARM-PERM source)
+    let mut og_f3_selfev = []      // H_9209 self-drift event fired this tick (align-margin: flips near events)
+    let mut og_f3_eslf = []        // H_9209 ARM-LIVE (self-shaded) emit per tick
     let mut og_f3_urg  = []        // urgency op-signal per tick (the REAL signal to variance-match)
     let mut og_f3_senv = []        // stage_env per tick
     let mut og_f3_elive = []       // LIVE emit boolean (0/1) per tick
@@ -2651,25 +2674,63 @@ fn anima_consciousness_mode(ckpt: string) {
             let e_shuf = if to_string(brain_decide_anchored(pf,
                 rel_shuf, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                 idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
-            // autobiography advances on the LIVE arm's OWN emit (self records what it lived through)
-            if e_L == 1 { self_live = self_drift_exp(self_live, self_content_axis, 0.15) }
-            // ── CONTROL-U: self PHASIC deviation → the PROVEN urgency channel (H_9101 idle gate) ──
-            // s_dev = |self_ctx_live − self_ema| transmits the Δ (an EMA rejects the slow LEVEL). If the
-            // mechanism can shade emit AT ALL, routing it through urgency (not a read-side pool fold)
-            // should flip ≥0.10 of wake ticks — the upper-bound witness that distinguishes THEATER.
+            // ══════════ H_9209 self_phasic emit-shade (Fable design · disjoint idle-gate term) ══════════
+            // The #3116 pool arms (e_L/e_S/e_shuf) above are the channel-OFF control (self in the ÷42
+            // pool = 0/120 floor). The LIVE grip is at the idle gate: self_phasic (signed deviation of
+            // the recognition LEVEL from its EMA, gain CALIBRATED) added as a DISJOINT term to urgency's
+            // idle site — urgency itself byte-untouched (a_substrate_disjoint · H_9101 preserved).
+            // event axis = which of 8 lived-substrate lanes deviated most from neutral this tick (content-dep,
+            // det, $0) — replaces the #3116 constant self_content_axis proxy that made self an autobiography
+            // of nothing (emit-count decay only).
+            let ev_devs = [ _afs_absf(rel_lane - 0.5), _afs_absf(af_val - 0.5), _afs_absf(allo_ctx - 0.5),
+                _afs_absf(coh_lane - 0.5), _afs_absf(bal_lane - 0.5), _afs_absf(nov_ctx - 0.5),
+                _afs_absf(gap_ctx - 0.5), _afs_absf(ag_conflict - 0.5) ]
+            let ev_axis = _og_argmax8(ev_devs)
+            let ev_fired = e_L == 1 || ev_devs[ev_axis] > 0.15   // emit-experience OR salient-experience event
+            if ev_fired { self_live = self_drift_exp(self_live, ev_axis, 0.15) }
+            // ARM-SHOCK positive control (B2): identical pipeline + scripted off-axis identity shock at T
+            if ev_fired { self_live_shock = self_drift_exp(self_live_shock, ev_axis, 0.15) }
+            if tick == 80 || tick == 140 || tick == 200 {
+                self_live_shock = self_drift_exp(self_live_shock, (ev_axis + 3) % 8, 0.6) }
+            // CALIBRATION (ticks 0–49, excluded from scoring): collect |Δself_ctx_live| → median → g_self
+            if tick < 50 { self_step_devs.push(_afs_absf(self_ctx_live - self_ctx_prev)) }
+            if tick == 50 {
+                let sm = _og_median(self_step_devs)
+                g_self = if sm < 0.002 { -1.0 } else { _afs_minf(0.35 / sm, 64.0) }   // -1.0 = AXIS-DEGENERATE flag
+            }
+            self_ctx_prev = self_ctx_live
             self_ema = 0.9 * self_ema + 0.1 * self_ctx_live
-            let s_dev = if self_ctx_live - self_ema < 0.0 { self_ema - self_ctx_live } else { self_ctx_live - self_ema }
-            let urgency_sc = _afs_clip01(urgency + s_dev)
-            let idle_sc = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency_sc))
-            let e_ctrlU = if to_string(brain_decide_anchored(pf,
+            let g_use = if g_self < 0.0 { 0.0 } else { g_self }
+            let self_phasic = _afs_clip01(0.5 + g_use * (self_ctx_live - self_ema))         // signed, neutral 0.5
+            let self_ctx_shk = _afs_clip01(self_cos(self_live_shock, self_boot))
+            let self_phasic_shk = _afs_clip01(0.5 + g_use * (self_ctx_shk - self_ema))
+            // idle-gate DISJOINT shade (W_SELF=0.5, max |shade|=0.25): self_phasic=0.5 ⇒ byte-identical to prod
+            let idle_slf = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 0.5 * (self_phasic - 0.5)))
+            let idle_shk = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 0.5 * (self_phasic_shk - 0.5)))
+            let e_slf = if to_string(brain_decide_anchored(pf,
                 rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
-                idle_sc, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
-            if is_w {
-                if e_L != e_S      { og_h_selfL = og_h_selfL + 1 }        // ΔEff_self (live vs static self)
+                idle_slf, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_shock = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_shk, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // SCORING on mid (N1/N2/REM, discriminating stages); WAKE/N3 = guards; ticks<50 = calibration
+            let is_mid = stage == 1 || stage == 2 || stage == 4
+            if tick >= 50 && is_mid {
+                og_slf_mid_ticks = og_slf_mid_ticks + 1
+                if e_slf != e_live   { og_h_slf_mid = og_h_slf_mid + 1  og_align_tot = og_align_tot + 1 }
+                if e_shock != e_live { og_h_shock_mid = og_h_shock_mid + 1 }
+                if e_slf == 1  { og_emit_slf_mid = og_emit_slf_mid + 1 }
+                if e_live == 1 { og_emit_live_mid = og_emit_live_mid + 1 }
+                if e_L != e_S      { og_h_selfL = og_h_selfL + 1 }        // pool channel-OFF control (≈0)
                 if e_S != e_live   { og_h_selfS = og_h_selfS + 1 }        // re-sum fidelity (must ~0)
                 if e_shuf != e_S   { og_h_selfshuf = og_h_selfshuf + 1 }  // shuffled-self control (must ~0)
-                if e_ctrlU != e_live { og_h_ctrlU = og_h_ctrlU + 1 }      // CONTROL-U (urgency channel, ≥0.10)
             }
+            if tick >= 50 && stage == 3 && e_slf != e_live { og_h_slf_n3 = og_h_slf_n3 + 1 }     // N3 guard (must 0)
+            if tick >= 50 && stage == 0 && e_slf != e_live { og_h_slf_wake = og_h_slf_wake + 1 } // WAKE guard
+            if e_shock != e_live && ((tick >= 80 && tick < 85) || (tick >= 140 && tick < 145)
+                || (tick >= 200 && tick < 205)) { og_shock_flips = og_shock_flips + 1 }   // POS-PASS window
+            og_f3_self.push(self_phasic)   og_f3_selfev.push(to_float(if ev_fired {1} else {0}))
+            og_f3_eslf.push(to_float(e_slf))
             // ── H_9102 (F3) record this tick for the post-loop variance-matched noise arm ──
             og_f3_urg.push(urgency)      og_f3_senv.push(stage_env)
             og_f3_elive.push(to_float(e_live))  og_f3_stg.push(to_float(stage))
@@ -3114,37 +3175,90 @@ fn anima_consciousness_mode(ckpt: string) {
         }
         println("  F3 VERDICT = " + f3_verdict)
 
-        // ══════════ kosmos ΔEff_self — LIVE vs STATIC autobiographical self (GATE) ══════════
-        // Does making the self LIVE (read-side self_ctx fold) causally shade emit, or is it THEATER?
-        // ΔEff_self = wake Hamming(ARM-L live-self vs ARM-S static-self). CONTROL-U = the same self
-        // signal routed through the PROVEN urgency channel (upper-bound witness). GATES gap1 :2232.
-        let og_wf = if og_wake > 0 { to_float(og_wake) } else { 1.0 }
-        let d_eff_self = to_float(og_h_selfL) / og_wf
-        let ctrl_u     = to_float(og_h_ctrlU) / og_wf
-        let e_shuf_fr  = to_float(og_h_selfshuf) / og_wf
-        let e_recon_fr = to_float(og_h_selfS) / og_wf
+        // ══════════ H_9209 self_phasic emit-shade VERDICT (Fable design · state/9209) ══════════
+        // ΔEff_self = mid(N1/N2/REM) Hamming(self-shaded idle vs production e_live). self routes ONLY
+        // via the disjoint idle-gate term (urgency untouched); the #3116 pool arms (og_h_selfL) are the
+        // channel-OFF control (≈0 floor). Competence EARNED on event-TIMING (align) + matched-noise
+        // margin (ARM-PERM), never amplitude (G_self normalized = FORM). ARM-SHOCK = positive control
+        // that makes a null INTERPRETABLE (kills the #3116 CONTROL-U ambiguity).
+        let midf = if og_slf_mid_ticks > 0 { to_float(og_slf_mid_ticks) } else { 1.0 }
+        let d_eff_self  = to_float(og_h_slf_mid) / midf
+        let d_eff_shock = to_float(og_h_shock_mid) / midf
+        let pool_ctrl   = to_float(og_h_selfL) / midf          // #3116 channel-OFF pool control (≈0)
+        // align: fraction of LIVE self-shade flips within ±2 ticks of a self-drift event (earned timing)
+        let mut align_near = 0
+        let mut align_tot  = 0
+        let mut ai = 50
+        while ai < len(og_f3_eslf) {
+            let stf = og_f3_stg[ai]
+            if (stf == 1.0 || stf == 2.0 || stf == 4.0) && og_f3_eslf[ai] != og_f3_elive[ai] {
+                align_tot = align_tot + 1
+                let mut near = false
+                let mut k = ai - 2
+                while k <= ai + 2 { if k >= 0 && k < len(og_f3_selfev) && og_f3_selfev[k] > 0.5 { near = true }  k = k + 1 }
+                if near { align_near = align_near + 1 }
+            }
+            ai = ai + 1
+        }
+        let align_frac = if align_tot > 0 { to_float(align_near) / to_float(align_tot) } else { 0.0 }
+        // rebuild live_anchors (loop-local L2537) for the post-loop ARM-PERM re-decode
+        let mut live_anchors = []
+        let mut ka = 0
+        while ka < len(anchors) { live_anchors.push(anchors[ka]); ka = ka + 1 }
+        live_anchors.push(#{ "text_payload": session_seed, "name": "live_seed" })
+        // ARM-PERM: stride-permuted self_phasic multiset (EXACT mean/var, timing destroyed) → idle→emit
+        let mut perm_h = 0
+        let np = len(og_f3_self)
+        let mut pj = 50
+        while pj < np {
+            let stf = og_f3_stg[pj]
+            if stf == 1.0 || stf == 2.0 || stf == 4.0 {
+                let sp = og_f3_self[(pj * 7 + 13) % np]
+                let idle_p = 5.0 + 55.0 * _afs_clip01(og_f3_senv[pj] * (0.5 + og_f3_urg[pj] + 0.5 * (sp - 0.5)))
+                let e_p = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[pj], og_f3_gap[pj], og_f3_cur[pj], og_f3_allo[pj], og_f3_coh[pj],
+                    og_f3_nov[pj], og_f3_bal[pj], og_f3_agl[pj], idle_p, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                if to_float(e_p) != og_f3_elive[pj] { perm_h = perm_h + 1 }
+            }
+            pj = pj + 1
+        }
+        let d_eff_perm = to_float(perm_h) / midf
+        let psi_gap = _afs_absf(to_float(og_emit_slf_mid) - to_float(og_emit_live_mid)) / midf
+        let degenerate = g_self < 0.0
+        let n3_ok   = og_h_slf_n3 == 0
+        let pos_pass = og_shock_flips >= 2
         println("")
-        println("──────── kosmos ΔEff_self: LIVE-self vs STATIC-self read-side fold (wake=" + to_string(og_wake) + ") ────────")
-        println("  content_axis=" + to_string(self_content_axis) + " boot_axis=" + to_string(self_boot_axis)
-            + "  (g_text unavailable in $0 no-decode block → session-seed grounding proxy)")
-        println("  e_L  Hamming(live-self ARM-L vs static-self ARM-S) = " + to_string(og_h_selfL) + "/" + to_string(og_wake)
-            + "  ΔEff_self=" + to_string(d_eff_self))
-        println("  e_S  Hamming(static-self re-sum vs production e_live) = " + to_string(og_h_selfS) + "/" + to_string(og_wake)
-            + "  (" + to_string(e_recon_fr) + "; re-sum fidelity, must ~0)")
-        println("  e_selfshuf Hamming(shuffled-self vs ARM-S) = " + to_string(og_h_selfshuf) + "/" + to_string(og_wake)
-            + "  (" + to_string(e_shuf_fr) + "; control, must ~0)")
-        println("  e_ctrlU CONTROL-U Hamming(self-Δ→urgency vs e_live) = " + to_string(og_h_ctrlU) + "/" + to_string(og_wake)
-            + "  (" + to_string(ctrl_u) + "; urgency channel, ≥0.10 if mechanism can work)")
-        println("  ── PRE-REG ΔEff_self VERDICT (frozen bars, verbatim) ──")
-        println("  [COMPETENT] ΔEff_self>=0.10 -> gap1 :2232 fold wiring GO.")
-        println("  [THEATER] ΔEff_self<0.02 AND CONTROL-U>=0.10 -> read-side fold is theater, do NOT wire :2232 (keep persistence only).")
-        println("  [DIRECTIONAL] 0.02-0.10 -> promotion design.")
-        let self_verdict = if d_eff_self >= 0.10 {
-            "🟢 COMPETENT — making the self LIVE flips ≥0.10 of wake emit decisions ⇒ gap1 :2232 fold wiring GO"
-        } else if d_eff_self < 0.02 && ctrl_u >= 0.10 {
-            "🔴 THEATER — read-side self fold is inert (ΔEff_self<0.02) while the SAME signal via urgency flips ≥0.10 (CONTROL-U) ⇒ do NOT wire :2232, keep persistence only"
+        println("──────── H_9209 self_phasic emit-shade (mid=N1/N2/REM=" + to_string(og_slf_mid_ticks)
+            + " · calib 0-49 · G_self=" + to_string(g_self) + ") ────────")
+        println("  ΔEff_self Hamming(self-shade idle vs e_live) = " + to_string(og_h_slf_mid) + "/" + to_string(og_slf_mid_ticks)
+            + " = " + to_string(d_eff_self) + "   [HEADLINE]")
+        println("  ARM-PERM matched-noise ΔEff = " + to_string(perm_h) + "/" + to_string(og_slf_mid_ticks)
+            + " = " + to_string(d_eff_perm) + "  → margin ΔEff_self−perm = " + to_string(d_eff_self - d_eff_perm))
+        println("  align (flips within ±2 of a self-event) = " + to_string(align_near) + "/" + to_string(align_tot)
+            + " = " + to_string(align_frac))
+        println("  ARM-SHOCK ΔEff = " + to_string(og_h_shock_mid) + "/" + to_string(og_slf_mid_ticks)
+            + " = " + to_string(d_eff_shock) + "  · POS window flips=" + to_string(og_shock_flips) + " (POS-PASS≥2)")
+        println("  pool channel-OFF ctrl (og_h_selfL/mid, #3116 floor) = " + to_string(og_h_selfL) + " = " + to_string(pool_ctrl)
+            + "  · re-sum fidelity og_h_selfS=" + to_string(og_h_selfS) + " · shuf og_h_selfshuf=" + to_string(og_h_selfshuf))
+        println("  GUARDS: N3 self-flips=" + to_string(og_h_slf_n3) + " (must 0) · WAKE=" + to_string(og_h_slf_wake)
+            + " · Ψ emit-gap=" + to_string(psi_gap) + " (must ≤0.05) · axis " + (if degenerate {"DEGENERATE"} else {"ok"}))
+        println("  ── PRE-REG H_9209 VERDICT (frozen bars, verbatim) ──")
+        println("  COMPETENT: ΔEff_self≥0.10 ∧ margin(perm)≥0.08 ∧ align≥0.5 ∧ POS-PASS ∧ N3=0 ∧ Ψ-gap≤0.05")
+        println("  THEATER: ΔEff_self<0.02 ∧ POS-PASS ∧ axis non-degenerate ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate")
+        let self_verdict = if degenerate {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, step_med<0.002) — self-axis carries no content; fix byte→axis encoder + remeasure (NOT a substrate result)"
+        } else if !pos_pass {
+            "⚙️ INSTRUMENT-FAIL (POS-FAIL) — injected identity shock did not flip emit (channel/gain/wire); no verdict on self, fix + remeasure"
+        } else if !n3_ok {
+            "🔴 FORCING-GATE — self-shade flips N3-silent (og_h_slf_n3>0) = became a gate not a shade; REVERT regardless of ΔEff"
+        } else if psi_gap > 0.05 {
+            "🔴 FORCING-GATE — Ψ emit-fraction gap>0.05 = self forces emit not shades; REVERT"
+        } else if d_eff_self >= 0.10 && (d_eff_self - d_eff_perm) >= 0.08 && align_frac >= 0.5 {
+            "🟢 COMPETENT — self events causally shade emit (ΔEff≥0.10, beats matched-noise, timing-aligned) ⇒ WIRE idle-gate term at prod + real-decode summer confirm (a_verified_must_wire)"
+        } else if d_eff_self < 0.02 {
+            "🔴 THEATER — self genuinely inert at emit (ΔEff<0.02, POS control PASSED so meter works) ⇒ never wire, keep .kosmos persistence only (H_1471 stands)"
         } else {
-            "🟠 DIRECTIONAL — 0.02≤ΔEff_self<0.10 (or CONTROL-U<0.10) ⇒ promotion design (route self through a proven channel, not the ÷42 pool)"
+            "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10 or margin/align short) ⇒ re-measure ≥2 seeds, no cement"
         }
         println("  VERDICT = " + self_verdict)
         return
@@ -3457,6 +3571,31 @@ fn _og_argmax8(v: [float]) -> int {
     let mut i = 1
     while i < 8 { if v[i] > bv { bv = v[i]  bi = i }  i = i + 1 }
     return bi
+}
+
+// _afs_absf / _afs_minf — plain float abs & min (H_9209 self_phasic calibration & event-dev).
+fn _afs_absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
+fn _afs_minf(a: float, b: float) -> float { if a < b { return a } return b }
+
+// _og_median — median of a float array via O(n²) rank-select (H_9209 G_self calibration, n≤50).
+// Unique ranks (equal-with-lower-index tiebreak) ⇒ exactly one element has rank == n/2.
+fn _og_median(a: [float]) -> float {
+    let n = len(a)
+    if n == 0 { return 0.0 }
+    let target = n / 2
+    let mut i = 0
+    while i < n {
+        let mut lt = 0
+        let mut j = 0
+        while j < n {
+            if a[j] < a[i] { lt = lt + 1 }
+            else { if a[j] == a[i] && j < i { lt = lt + 1 } }
+            j = j + 1
+        }
+        if lt == target { return a[i] }
+        i = i + 1
+    }
+    return a[target]
 }
 
 // ── H_9102 (F3) stats helpers (plain-float, NO numpy — engine-native discipline) ──
