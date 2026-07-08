@@ -14462,6 +14462,13 @@
     "value": "H_9235 fork-A read-side lane를 독립 2세션이 동시 구현 — clml.py(mean-pool+gelu-bias·#3191~3193 머지=canonical) vs lane_a.py(RETRO-ROUTE query-addressed+Hadamard·branch g1-topdown-program 미머지 duplicate). 긴 구현 착수 전 in-flight 병렬작업 미확인=중복노동(#3736 stale-branch-duplicate의 concurrent 사촌).",
     "threshold": "재발조건: 활성 H_/프론티어에 긴(>수십분) 구현 착수 전. 해결: git fetch + git log origin/main --oneline -15 + gh pr list로 그 H_번호/프론티어 in-flight 확인; 이미 있으면 중복금지·기존 위 delta만(arm-2 명명·명시 비교) or stand-down.",
     "source": "core/clml.py"
+   },
+   {
+    "id": "evaluate-py-6",
+    "state": "pos-conv",
+    "value": "INFRA: pool 호스트(summer/aiden) earlyoom -r --prefer python3 상시실행 → 병렬세션 heavy anima job으로 RAM 포화 시 303M --dump-hidden/eval worker(python3·~3.5GB) SIGKILL(로그 무흔적·npz 미생성). summer overfire/aiden 과부하 재발(ING #42492907 EXIT_143). earlyoom이 sshd/bash avoid라 ssh세션 살아도 python3 워커만 죽는 오진 함정.",
+    "threshold": "재발조건: pool서 303M dump/eval이 로그 무흔적 소멸(worker 무진행·npz 미생성). 해결: (1)dispatch 전 free RAM 확인(sidecar pool status)·병렬 heavy job 있으면 최여유 호스트. (2)canonical anima-py(pip·numpy-only·hexa불필요)로 hexa-build 우회. (3)worker RSS+진행로그(#n/N) 폴링해 조기감지·재배치.",
+    "source": "cli/evaluate.py"
    }
   ]
  }
