@@ -30,5 +30,8 @@ $0 correlate-check: held-out G1 짝이 가용 sensor 스트림서 **감각 상�
 
 **Stage A 결과(2026-07-08 · COCO val2017 5000장 · $0)**: 🟢 **PASS-A**. A1=**83 짝**(bar20·img_cooc≥20∧cap_cooc=0: person|sports ball 159장·keyboard|tv 65·mouse|tv 54...) · A2=**68 짝**(bar10·|PMI_img|≥0.5 perm p<0.01: keyboard|tv PMI2.70·tennis racket|ball 2.66). ⟹ **비-텍스트(이미지) 채널이 텍스트엔 없는 held-out 짝 조합-MI를 실제로 나름** = C2 전제 Stage-A 생존(이 캠페인 첫 non-negative). 텍스트가 세계 joint 미subsume. NEXT=Stage B(substrate가 그 MI 쓰나 / Fable modal=가산중첩으로 못써→벽=모든 유한경험채널 성질).
 
+
+**Stage B 결과(2026-07-08 · numpy toy · COCO · 3seed · state/g1_c2_grounded/VERDICT_B.md)**: 🟢 **fuel-lever 확증**(association) / 🟠 frozen clean-PASS 미달(control-b). held-out 짝 P(B|A) AUC: (i)caption만 0.49 → (ii)+world **0.96**(Δii+0.47 압도), (a)shuffle 0.44(완전붕괴 ✓), (b)other-pair 0.55(Δb+0.07, marginal-exposure 누출로 바 0.02 초과=clean-PASS 미달이나 load-bearing Δii≫Δb라 pairing-specific 결정적). ⟹ **world(이미지) 채널이 텍스트엔 없는 held-out co-occurrence를 substrate가 실제 사용** = C2는 유효 fuel 레버(coverage-density 먹임). 스크립트 이진 'FAIL-B wall-general'은 ii=0.96이 반증→기각. **scope**: association(retrieval)이지 deep-recombination operator(γ #3108) 아님 = C2는 held-out→covered 전환(fuel)하나 combination operator(engine) 안 줌. **함의**: 벽≠모든 유한경험채널(world usable), 벽=operator 국한(어떤 소스로도 fuel만 받지 스스로 안 생김). Stage A+B 둘 다 non-negative=C2 grounded 경로 살아있음(coverage-density 재활성·G1-concrete). deep-operator 잔여=γ만.
+
 ## 맥락
 G1 재조합벽 내부 전 각도 terminal(data#3109·E1#3107·γ#3108·DPI#3046·framebreak#3135·coverage#3156) 후, 외부 부품 발산(H_9214, Fable). DPI-합법=새 정보소스 필요. 순수 추상 어휘 조합은 text-only 채널 천장이므로 대부분 후보가 handed(#3135)/store/wrong-MI 함정으로 붕괴. 유일 'earned not handed' 명확 후보=[[H_9216]](C2 sensorimotor, perceptual-only).
