@@ -14026,6 +14026,13 @@
     "value": "재조합/조합 mechanism toy는 mechanism arm 판정 전에 base의 조합 일반화능력을 반드시 검증 — control(oracle/corpusnull)이 eval-only서 lift하는지. 일반 random-embedding MLP는 모듈러/군 task를 memorize 100%·generalize 0%(90%+3000ep held-out=0, grokking-hard)라 어떤 mechanism(A⇄B debate·verifier)도 lift 못보임=untestable(전 arm floor). 이번 세션 3 toy(ab_debate anti-gen·calibration·verifier grokking-block) 동일벽 재현. verifier truth주입은 필요조건이지 충분조건 아님 — base 조합 inductive-bias도 필요(=303M CE-trunk memorize·not compose 유비).",
     "threshold": "재발조건: 조합 toy의 전 arm(oracle/corpusnull 상한 포함)이 eval-only서 floor(~0). 해결: mechanism 판정 전에 '90% 커버리지+충분 epoch서 held-out generalize?' 학습성 게이트 먼저 — corpusnull/oracle이 lift 안하면 base 교체(tied-embedding·relational·grokking-tuned) 후 재실행. base 못 grok하면 mechanism KILL로 박지 말 것(아키텍처-blocked=INCONCLUSIVE).",
     "source": "state/ab_debate_recombination/verifier_toy.py"
+   },
+   {
+    "id": "anima-hexa-4",
+    "state": "pos-conv",
+    "value": "측정 CONTROL/upper-bound/witness arm의 null(0 flip)은 그 arm이 신호를 움직일 능력이 PROVEN일 때만 해석가능. #3116 CONTROL-U=0을 'self 무능(THEATER)'으로 오독했으나 Fable 진단=구성상 감지불가였음: (a)진폭 mismatch(s_dev≈0.02 « 채널 MDA≈0.2, gain 1.0인데 이웃 항 cur/ten_phasic은 3.0) (b)틀린 stage 채점(is_w=WAKE/N1/N2, grip 최강 REM 제외+포화 WAKE 희석) (c)one-sided push(urgency+s_dev=emit 증가만). → null이 '기질 무능'인지 '계기 무능'인지 미분리=거짓 THEATER/INCONCLUSIVE. H_9209 수정: G_self 진폭정규화(FORM)+mid 채점+signed shade+ARM-SHOCK 양성대조. evaluate-py-1(대조 수치 truncate 금지)의 측정-무결성 자매.",
+    "threshold": "재발조건: 측정에 CONTROL/witness arm을 넣고 그 null(0 flip)로 대상을 판정. 해결: 판정 전 ①양성대조(주입신호가 arm을 실제 flip시킴)로 계기 정상 증명 ②op 진폭을 채널 MDA(측정된 최소감지진폭)와 비교 ③grip 존재 stage서 채점(포화 stage 희석 금지) ④shade는 signed 양방향. 넷 미충족 null=INSTRUMENT-FAIL(계기결함)이지 대상결함 아님. FORM(진폭) 정규화·BIND(타이밍/인과) earn.",
+    "source": "cli/anima.hexa"
    }
   ]
  }
