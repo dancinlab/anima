@@ -1,22 +1,31 @@
-# fork-A "모든 경우의 수" — mechanism-decomposition matrix (H_9235 · 2026-07-09)
+# fork-A "모든 경우의 수" — mechanism matrix REAL-303M 결과 (H_9235 · 2026-07-09)
 
-오너 "모든 경우의 수 진행" — fork-A read-side lane의 전 메커니즘 조합을 전수 측정해 *어느 부품이
-ρ·weave(G1)를 깨나* 분해. **pool{mean·query·last·max} × head{gelu-bias(clml)·hadamard-bind(RETRO-ROUTE)·linear} × N_ctx{2·4·8}**.
+오너 "모든 경우의 수 진행" — fork-A read-side lane의 전 메커니즘 조합을 **실 303M hidden** 위에서 전수.
+dump = canonical `anima-py evaluate <clm> --dump-hidden`(pip channel · pair_hidden.npz 130MB · poscontrol
+cos=0.90 distinct✓) on aiden. **pool{mean·query·last·max} × head{gelu-bias(clml)·hadamard-bind(RETRO)·linear}
++ handed/shuffle 통제.** (앞선 synth toy 전수는 handed 0.55–0.66<0.85 INVALID → real hidden이 유일 valid.)
 
-## 결과 요약
+## 결과 (held-out XOR · 3-seed · `fork_a_matrix_RESULT.json`)
+```
+        gelu(clml)  hadamard(RETRO)  linear(additive floor)
+mean      0.979         0.000*          0.431
+query     0.958         0.000*          0.456
+last      0.000         0.000*          0.448
+max       0.980         0.000*          0.484
+handed(pos-ctrl)=1.000 [VALID ✓]  ·  shuffle=0.000  ·  *hadamard=수치불안정 미측정
+```
 
-### ✅ 이미 valid (real 303M · `fork_a_precheck.py` · 다른 세션 #3191)
-`pair_hidden.npz`(실 303M per-position hidden) 위 5-arm:
-- `mean+gelu = 0.98` (route 존재) · `last+gelu = 0.47` (**routing이 lever**) · `mean+linear = 0.43` (**비선형 필요**) · `handed = 1.00` (valid) · `shuffle = 0.50`.
-- ⟹ ρ·weave 벽=readout-ROUTING 확증 + 비선형 bottleneck이 합성. **미측정 arm = query-pool · hadamard-bind**.
+## 판독 (measure-or-it-didnt-happen · verdict-integrity)
+- **VALID gate**: handed=1.00≥0.85 → harness가 XOR 학습가능 = matrix informative(synth toy INVALID과 대조).
+- **① POOL axis = routing이 lever**: mean·query·max(0.96–0.98) 다 통과, **last(생성점만)=0.00 실패**. 정보를 생성점에 route(pool)해야 함 = H_9235 routing-reframe 실 303M 확증.
+- **② query-addressing(arm-2 핵심 차별점)이 mean-pool을 못 이김**: query 0.958 < mean 0.979. 오너 RETRO-ROUTE의 learned content-address 검색이 **2-concept서 단순 mean-pool 대비 무이득**(근소 열세). → arm-2 reserve의 유일 가치(query-dependent 검색)가 이 스케일서 미실현.
+- **③ HEAD axis = nonlinearity가 lever**: gelu(0.98) ≫ linear(0.43–0.48 = additive floor). precheck(mean+gelu 0.98 / mean+linear 0.43) 재현. product-code는 gelu-over-joint-pool서 창발.
+- **hadamard(RETRO bind) = 미측정**: G 표준화(#3221) 후에도 u⊙z 곱 overflow 지속 → 0.000 = harness numerical artifact이지 과학결과 아님(infra-wall-noneval 격리). gelu가 이미 crack하므로 secondary·moot.
 
-### 🔴 synthetic toy (`synth_mechanism_matrix.py`) = **INVALID (측정불가)**
-real precheck를 $0로 preview하려 한 controlled toy — **2차 원칙수정(orthonormal emb + handed 양성대조 + steps↑) 후에도 handed positive-control = 0.55–0.66 < 0.85 = INVALID**. 전 arm ≈ chance(0.51–0.57). 원인=toy under-coverage(700 random pair·R=96 vs precheck 842-pair 구조split·r=128)로 32-concept held-out XOR 학습 실패. **honesty(c9)**: toy가 알려진 학습가능성(precheck handed=1.0)조차 재현 못 하므로 arm 비교 uninformative. 더 튜닝=tune-to-green 위험 → 중단. **교훈(a_toy_scale_recheck)**: mechanism 분해의 유일 valid 경로 = real hidden. toy는 대체 불가.
+## 결론
+**clml(mean+gelu) = optimal-tier 확정. RETRO-ROUTE arm-2(query+hadamard)는 clml을 못 이김** — query≈mean(무이득), hadamard 미측정-but-moot. fork-A 메커니즘 census가 **any-pool + gelu-nonlinearity**로 수렴. 오너 top-down 직관은 맞았고(routing이 벽·pooling이 해법), 그 canonical 구현 = 이미 머지된 clml.py.
+- scope: DIRECTIONAL(합성 word-id+code task · 2-concept · spelling confound). 진짜 ρ·weave(G1) = clml wired system-G1(#3193 병렬세션).
+- 잔여 arm-2 가치 = many-concept/distractor 스케일서 query-addressing 재측정(현 2-concept선 무이득). 저비용 아님.
 
-### ⏳ definitive (real 303M · `fork_a_matrix.py`) = **준비완료 · INFRA-GATED**
-precheck와 동일 입력(`pair_hidden.npz`)에 query-pool + hadamard-bind arm 추가 = 정본 매트릭스. 코드 ready.
-**블로커(infra-wall-noneval)**: clean pool 호스트 부재 — summer load 27(overfire 위험 `summer-overfire`)·aiden는 canonical `e1_slw_303m.clm` 없음(다른 ckpt만)·rent=spend(owner go). dump 1회면 즉시 실행: `anima evaluate --py <e1_slw_303m.clm> --dump-hidden pair_prompts.json --out pair_hidden.npz --win 24`.
-
-## 남은 결정 (owner)
-real 매트릭스 dump 호스트: (a) 싼 pod rent ~\$0.3 (go 필요) · (b) summer cooldown 대기 · (c) e1_slw_303m.clm aiden 전송(293MB·OOM 위험 `aiden-stable-free-terminal-eval-host`).
-그 전까지 이미 valid한 사실 = **routing이 lever·비선형 필요**(precheck 5-arm). clml(mean+gelu) 학습은 병렬세션 #3193 진행중.
+## 인프라 (재현 · 이 세션 upstream-fix)
+dump=canonical `anima-py`(pip·numpy-only·earlyoom/hexa-build 회피 · convergence evaluate-py-1 #3209). summer=earlyoom-kill 폐기. 버그픽스: xor_t float64(#3212)·hadamard G-표준화(#3221·hadamard 여전 미측정). 코드=`fork_a_matrix.py`.
