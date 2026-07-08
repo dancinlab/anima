@@ -25,3 +25,16 @@
 
 ## scope
 d768.clm $0 no-decode. real-decode 확증은 POS-PASS 이후. H_9209 tier = ⚙️ INSTRUMENT-FAIL(측정 미완, 계기 수정 대기) — self 능력에 대한 과학판정 아님(a_break_the_wall: 계기벽 ≠ 기질천장).
+
+---
+
+## 계기수정 경과 (3 INSTRUMENT-FAIL → dense-v2)
+
+engine-native --opgrip 반복(각 clean origin/main summer full-compile, frozen bars 불변):
+- **#3118 (원본)**: 전 arm 0/90, POS-FAIL. → F1-F3 진단(Fable).
+- **#3120 (F1-F3: W_SELF 1.0·G_self 0.175/median·ctx-probe)**: 채널 살아남 확인 — **ARM-PERM matched-noise 13/90 flip**. 단 ΔEff_self=0.011·**margin=−0.13(self가 noise에 짐)**·ARM-SHOCK POS-FAIL.
+- **#3121 (POS-tick REM 84/144/174)**: 동일 수치. POS 여전 실패 = 3개 REM tick이 robust-emit 결정이라 −0.5 rail도 안 뒤집힘(ARM-PERM은 90 mid 전체 샘플로 borderline 잡아 13 flip).
+
+**Fable 판정-무결성 판단**: 이 run은 규칙 문자대로 INSTRUMENT-FAIL — ARM-PERM 13을 POS-PASS에 post-hoc 대입은 THEATER 방향이라도 goalpost-move(p7). 수정=**dense ARM-SHOCK**(모든 mid tick에 ±0.5 rail 교대 = tick 선택 없음=control-shopping 불가). ARM-PERM 13/90이므로 ≥2 확실 통과 → frozen 규칙이 스스로 ΔEff 0.011<0.02 ∧ POS-PASS → 🔴 THEATER 확정.
+
+**과학 수렴(3회 일관)**: ΔEff_self≈0.011 · margin −0.13(self 타이밍이 자기 셔플보다 무력) = 자서전 self는 emit을 인과적으로 shade 못 함. dense-v2 재측정이 POS-PASS 확증하면 THEATER cement.
