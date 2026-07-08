@@ -14,7 +14,7 @@ CORE-owned (owner directive: core-related lives in core/). ONE file holds all th
 faces of the SLW so nothing drifts:
   * slot_apply()  -- torch-free NUMPY inference mirror. This is the byte-parity
                      partner of the engine `core/decode.hexa` _slot_apply, and the
-                     `anima evaluate --py` (a_eval_py_canonical) TERMINAL path calls
+                     `anima-py evaluate` (a_eval_py_canonical) TERMINAL path calls
                      it. Import stays torch-free so the inference pod needs no torch.
   * pack_slw() / read_slw() -- the "SLW\\x01" trailer codec (used by
                      core/serialize.py on write, by the numpy + hexa loaders on read).

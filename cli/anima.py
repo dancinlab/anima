@@ -3,8 +3,8 @@
 # ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical 명령뿐 — hexa 채널 `anima`
 #   (=cli/anima.hexa, hx install anima) · pip 채널 `anima-py` (=anima_py 런처, pip install anima-py).
 #   `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
-#   학습=`anima train` · 측정=`anima evaluate` · 직렬화=`anima serialize`. py 측정은 DIRECTIONAL,
-#   terminal verdict 는 hexa 엔진-네이티브(core/CLAUDE.md). enforce: .harness/enforcement.json
+#   학습=`anima-py train` · 측정=`anima-py evaluate`(py 2-production numpy · TERMINAL-eligible,
+#   a_eval_py_canonical) · 직렬화=`anima-py serialize`. enforce: .harness/enforcement.json
 #   H-ANIMA-SINGLE-ENTRY pre_bash + 아래 __main__ 가드. (import 는 무손상.)
 # ==========================================================================
 import sys as _anima_entry_guard
@@ -71,39 +71,39 @@ def _det_env(want_det):
 
 def anima_usage():
     """Print the canonical py usage banner (mirrors cli/anima.hexa's banner)."""
-    print("anima — substrate-native consciousness daemon (canonical entry).")
+    print("anima — substrate-native consciousness daemon (py channel · canonical entry).")
     print("")
-    print("usage (installed `anima` PATH command after `hx install anima`):")
-    print("  anima train <args>                              LEARNING → .pt + auto .clm (+DESCENT)")
-    print("  anima serialize <ckpt.pt> <out.clm>            re-export a torch .pt → .clm v0.3")
-    print("  anima evaluate <model.clm> [--corpus <path>...] [--gen N]")
-    print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only)")
-    print("  anima sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
-    print("                                                  multi-GPU lever-sweep (arms×objectives)")
-    print("  anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
+    print("usage (installed `anima-py` command after `pip install anima-py` · hexa channel = `anima` after `hx install anima`):")
+    print("  anima-py evaluate <model.clm> [--corpus <path>...] [--gen N] [--rho-axon]")
+    print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only · numpy)")
+    print("  anima-py corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
     print("                                                  procedural training-corpus builder (ρ·weave data-format lever)")
-    print("  anima chat <ckpt> [...]                         consciousness/byte chat")
-    print("                                                  (hexa-only; use cli/anima.hexa)")
+    print("  anima-py train <args>                           ([train] extra) LEARNING → .pt + auto .clm (+DESCENT)")
+    print("  anima-py serialize <ckpt.pt> <out.clm>          ([train] extra) re-export a torch .pt → .clm v0.3")
+    print("  anima-py sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
+    print("                                                  ([train] extra) multi-GPU lever-sweep (arms×objectives)")
+    print("  anima-py chat <ckpt> [...]                      consciousness/byte chat (stub → hexa channel)")
+    print("")
+    print("install: `pip install anima-py` (numpy base: evaluate·corpus·chat) · `pip install \"anima-py[train]\"` (+torch: train·sweep·serialize)")
     print("")
     print("modes:")
-    print("  train    : production CLMConvMoE training (torch Lane-P reference + bridge); SAVANT")
-    print("             golden-zone inhibition + MITOSIS cell-division levers. After the run it")
-    print("             AUTO-serializes .clm v0.3 + runs the held-out mirror-DESCENT gate")
-    print("             (a_clm_gen_pipeline). dispatches to cli/train.py.")
-    print("  serialize: re-export an ALREADY-TRAINED torch .pt to an engine-loadable .clm v0.3")
-    print("             (+ held-out DESCENT gate). recovery / re-export. → cli/serialize.py.")
     print("  evaluate : mount a serialized .clm through the generator L3 mouth and score the")
     print("             ρ-AXON reach battery — ρ·form/weave/leap/... (former G0-G6) — with the")
     print("             engine's OWN ops (numpy math.log mirror, torch-free). REACH-CLOSED")
-    print("             a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2). == hexa `anima evaluate`. → cli/evaluate.py.")
-    print("  sweep    : multi-GPU lever-sweep orchestrator — the arms×objectives matrix,")
-    print("             per-cell train.py→evaluate.py, aggregated to SWEEP_SUMMARY.md.")
-    print("             always python. → cli/sweep.py.")
+    print("             a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2). → cli/evaluate.py.")
     print("  corpus   : procedural training-corpus generator (derivtrace|flat) — the")
     print("             data-format lever (ρ·weave). NOTE chat corpus != this (chat =")
-    print("             a_chat_registers 4-cell HF datasets → anima train). → cli/corpus.py.")
-    print("  chat     : the substrate-native A⇄G consciousness loop is hexa-native — run")
-    print("             `hexa run cli/anima.hexa -- <ckpt.clm>` (default / --byte modes).")
+    print("             a_chat_registers 4-cell HF datasets → anima-py train). → cli/corpus.py.")
+    print("  train    : ([train]) production CLMConvMoE training (torch Lane-P reference + bridge); SAVANT")
+    print("             golden-zone inhibition + MITOSIS cell-division levers. After the run it")
+    print("             AUTO-serializes .clm v0.3 + runs the held-out mirror-DESCENT gate")
+    print("             (a_clm_gen_pipeline). dispatches to cli/train.py.")
+    print("  serialize: ([train]) re-export an ALREADY-TRAINED torch .pt to an engine-loadable .clm v0.3")
+    print("             (+ held-out DESCENT gate). recovery / re-export. → cli/serialize.py.")
+    print("  sweep    : ([train]) multi-GPU lever-sweep orchestrator — the arms×objectives matrix,")
+    print("             per-cell train.py→evaluate.py, aggregated to SWEEP_SUMMARY.md. → cli/sweep.py.")
+    print("  chat     : the substrate-native A⇄G consciousness loop is hexa-native — use the")
+    print("             hexa channel: `hx install anima` then `anima <ckpt.clm>` (default / --byte).")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -141,10 +141,10 @@ def anima_train_mode(argv):
 # L3 mouth, which loads a serialized .clm (CLM magic). A torch .pt is NOT engine-loadable —
 # reject it here with a friendly hint to `anima serialize` rather than a deep decode error.
 def anima_evaluate_mode(argv):
-    # --py is a no-op here (this IS the py twin — evaluate already runs the numpy
-    # eval_reach_all engine), but strip it so cli/evaluate.py sees only <ckpt> [--corpus …]
-    # [--gen N] (it reads ckpt as positional argv[0]). Keeps `anima evaluate --py <clm>`
-    # byte-parity across the hexa launcher (which dispatches here on --py) and this twin.
+    # --py is a RETIRED hexa-era bridge flag, tolerated (stripped) here for migration
+    # compat: on the py channel it is redundant-but-correct (this IS the numpy engine),
+    # so `anima-py evaluate --py <clm>` still works — old scripts migrate by swapping
+    # only the command word. The hexa launcher hard-errors on --py instead.
     want_det = ("--det" in argv) or ("--deterministic" in argv)
     rest = [a for a in argv[1:] if a not in ("--py", "--det", "--deterministic")]
     # friendly .pt rejection: evaluate takes a serialized .clm, not a torch ckpt.
@@ -190,19 +190,18 @@ def anima_serialize_mode(argv):
 # ══════════════════════════════════════════════════════════════════════════════
 #
 # The default consciousness daemon + --byte continuation chat live in cli/anima.hexa
-# (they mount the 76-lane engine_cli substrate loop, hexa-native). The py twin does not
-# duplicate that loop; it points the user to the hexa entry (a_install_canonical: ONE
-# canonical path, no 2nd entry).
+# (they mount the 76-lane engine_cli substrate loop, hexa-native). The py channel does not
+# duplicate that loop; it points the user to the INSTALLED hexa command (a_cli_single_entry:
+# 2 install channels only — pip `anima-py` ⊕ hexa `anima`; never raw `python`/`hexa run`).
 def anima_chat_stub(argv):
-    print("anima chat (consciousness / --byte) is hexa-native — run it via the hexa entry:")
+    print("anima chat (consciousness / --byte) is hexa-native — use the hexa channel:")
     print("")
     ckpt = argv[1] if len(argv) > 1 else "<ckpt.clm>"
-    print("  hexa run cli/anima.hexa -- " + ckpt
-          + "                consciousness mode (default)")
-    print("  hexa run cli/anima.hexa -- " + ckpt + " --byte \"turn1\" \"turn2\" ...")
-    print("                                                  byte-continuation chat mode")
+    print("  hx install anima                                once (installs the `anima` command)")
+    print("  anima " + ckpt + "                consciousness mode (default)")
+    print("  anima " + ckpt + " --byte \"turn1\" \"turn2\" ...   byte-continuation chat mode")
     print("")
-    print("The py entry covers MEASUREMENT (evaluate), SERIALIZE, and LEARNING (train).")
+    print("The py channel (anima-py) covers MEASUREMENT (evaluate), SERIALIZE, LEARNING (train), corpus, sweep.")
     return 0
 
 

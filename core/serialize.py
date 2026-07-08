@@ -749,7 +749,7 @@ def serialize_bind(base_bin: str, injected_pt: str, out_bin: str) -> str:
 # ════════════════════════════════════════════════════════════════════════
 # (d.inv) ByteGPT .bin → torch state_dict INVERSE — warm-start reader.
 #   The exact byte-for-byte inverse of serialize() above (same 5×u32 header +
-#   flat little-endian float32 tensor order). Used by `anima train --py --init
+#   flat little-endian float32 tensor order). Used by `anima-py train --init
 #   <base.bin>` to warm-start a fresh ByteGPT from a trained engine .bin. The
 #   byte grammar SSOT stays in THIS file (mirror of serialize's write order).
 # ════════════════════════════════════════════════════════════════════════

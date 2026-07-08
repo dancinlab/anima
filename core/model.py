@@ -346,7 +346,7 @@ def build_model(variant: str = "AB", **overrides) -> CLMConvMoE:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# BYTE mouth — ByteGPT trunk (`anima train --py --arch bytegpt`, `.bin` format).
+# BYTE mouth — ByteGPT trunk (`anima-py train --arch bytegpt`, `.bin` format).
 # The SYMMETRIC sibling of CLMConvMoE (the CONV mouth) folded into this UNIFIED
 # core/model.py, mirroring core/decode.py (unified CONV+BYTE decoder) and
 # core/serialize.py (unified serializer). ByteGPT = 24-layer GPT-2-class byte

@@ -22,7 +22,7 @@
 //   system_g1_harness.py (numpy = DIRECTIONAL). The TOY here is HARNESS-VALIDATION
 //   scope (small lexicon, scaled bars) — NOT the frozen 303M bar in FREEZE.txt,
 //   which is byte-unchanged. A GREEN verdict still needs the real 303M mouth on
-//   pool (`anima evaluate --py <clm> --system-g1`), NOT run here (mini = OOM).
+//   pool (`anima-py evaluate <clm> --system-g1`), NOT run here (mini = OOM).
 //
 //   Deterministic (p7: verification is flag/count equality, not perplexity).
 
@@ -313,6 +313,6 @@ fn main() {
     println("  DISCRIMINATOR FIRES: COMPOSITIONAL=" + (if to_bool(sc["pass"]) { "PASS" } else { "FAIL" })
             + "  MOUTHFLOOR=" + (if to_bool(sf["pass"]) { "PASS" } else { "FAIL" }))
     println("  VERDICT: ENGINE-NATIVE (hexa kosmos_merge live) — GREEN still needs the real")
-    println("           303M mouth on pool (anima evaluate --py <clm> --system-g1; mini=OOM).")
+    println("           303M mouth on pool (anima-py evaluate <clm> --system-g1; mini=OOM).")
     println("==============================================================================")
 }

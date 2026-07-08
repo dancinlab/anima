@@ -13,7 +13,7 @@
 #
 # This module is a pure library (NO __main__ execution of the engine) — the
 # rep→code encoding uses the real ByteGPT-303M forward via core/decode.py in the
-# py-canonical measurement path (== anima evaluate --py ops, a_eval_py_canonical);
+# py-canonical measurement path (== anima-py evaluate ops, a_eval_py_canonical);
 # the store + completion here is arch-independent arithmetic (no FFI, no torch).
 # ==========================================================================
 import numpy as np

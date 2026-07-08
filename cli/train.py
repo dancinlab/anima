@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""cli/train.py — the CANONICAL anima python training entry (`anima train --py`).
+"""cli/train.py — the CANONICAL anima python training entry (`anima-py train`).
 
 >>> This file is the working python training entry, SYMMETRIC to cli/evaluate.py
->>> (the canonical python eval entry). `anima train --py <args>` dispatches HERE;
+>>> (the canonical python eval entry). `anima-py train <args>` dispatches HERE;
 >>> `anima train <args>` (no --py) still dispatches to the hexa-native cli/train.hexa.
 >>>
 >>> WHY python is the canonical working path RIGHT NOW: the hexa-native production
@@ -18,7 +18,7 @@
 >>>
 >>>   ENGINE-NATIVE GATE (a_engine_native_learning, HARD-GATE): torch-side CE / gauges
 >>>   here = DIRECTIONAL only (NOT terminal). TERMINAL verdict = CORE re-measure of the
->>>   serialized .clm via `anima evaluate --py <clm>` on the frozen ρ-AXON reach bars (former G0-G6). Pull the
+>>>   serialized .clm via `anima-py evaluate <clm>` on the frozen ρ-AXON reach bars (former G0-G6). Pull the
 >>>   trained ckpt before teardown (a_fire_recover_complete) so engine-check is possible.
 
 This trainer carries the full SAVANT + MITOSIS recipe (parity with cli/train.hexa) AND
@@ -67,7 +67,7 @@ compositional structure IN THE TRUNK, added to CE. This package adds three such 
                       aux params, gradient flows readout→trunk.
 
 All three are DIRECTIONAL torch-side training pressures; the verdict is later via
-`anima evaluate --py <clm>` engine-native on the FROZEN ρ·weave bar (recombination · former G1 · a_engine_native_learning).
+`anima-py evaluate <clm>` engine-native on the FROZEN ρ·weave bar (recombination · former G1 · a_engine_native_learning).
 The .clm path stays OPEN: aux heads/projections live OUTSIDE model.state_dict (in the
 objective module), so serialize_v3 writes only the standard additive-readout CLMConvMoE.
 
@@ -99,13 +99,13 @@ the bytegpt mouth automatically.
 
 USAGE (installed `anima` PATH command after `hx install anima`):
   # CLM trunk (default):
-  anima train --py --arm ctrl --objective constructive_bind --steps 8000 \\
+  anima-py train --arm ctrl --objective constructive_bind --steps 8000 \\
       --canon --corpus <p1..p4> --cell-label ko-general en-general ko-sns en-sns \\
       --seed 7 --val-frac 0.05 --val-every 200 --sample proportional \\
       --out ckpt/ctrl_cbind_seed7.clm --ckpt-out ckpt/ctrl_cbind_seed7.pt \\
       --gauges-out ckpt/ctrl_cbind_seed7.json
   # ByteGPT trunk (the CLEAN ρ·weave recombination wall · former G1) — arm=ctrl × the objective matrix:
-  anima train --py --arch bytegpt --arm ctrl --objective composed_nce --steps 8000 \\
+  anima-py train --arch bytegpt --arm ctrl --objective composed_nce --steps 8000 \\
       --canon --corpus <p1..p4> --seed 7 --out ckpt/bg_ctrl_cnce.bin \\
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
@@ -707,7 +707,7 @@ def loss_contrastive_equilibrium(logits, targets, V, gen, penultimate=None):
 #  ▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ NEW OBJECTIVES (H_1640) ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▛
 #  Three NEW compositional TRAINING-OBJECTIVE loss functions added to CE. Each is a
 #  training-side pressure that reshapes the gradient the TRUNK receives (not a readout
-#  op). Verdict later = engine-native `anima evaluate --py` on the frozen G1 bar.
+#  op). Verdict later = engine-native `anima-py evaluate` on the frozen G1 bar.
 # ════════════════════════════════════════════════════════════════════════════
 
 # ── LEVER 1: predictive_info — multi-step predictive-coding aux ───────────────
@@ -1041,7 +1041,7 @@ class TrainShell(nn.Module):
 
 def main():
     ap = argparse.ArgumentParser(
-        description="anima canonical python trainer (`anima train --py`) — CLMConvMoE "
+        description="anima canonical python trainer (`anima-py train`) — CLMConvMoE "
                     "SAVANT+MITOSIS recipe + H_1640 arm×objective compositional levers")
     ap.add_argument("--arch", default="clm", choices=["clm", "bytegpt"],
                     help="trunk architecture: clm=CLMConvMoE (default, .clm out) | "
@@ -1215,7 +1215,7 @@ def main():
     obj_is_module = isinstance(objfn, nn.Module)
     obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
 
-    p0(f"=== anima train --py (canonical) arch={a.arch} arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
+    p0(f"=== anima-py train (canonical) arch={a.arch} arm={a.arm} obj={a.objective} seed={a.seed} ===", flush=True)
     if ddp_on:
         # §10.2 — prove the GLOBAL batch in the run record (global batch preserved, per-rank B/N).
         p0(f"  [ddp] world_size={world} global_batch={a.batch_size} per_rank_batch="
@@ -1406,7 +1406,7 @@ def main():
     #   CLM → .clm v0.3 (CLMConvMoE additive readout, materialized TLoRA experts).
     #   ByteGPT → .pt (cfg+state_dict) → core/serialize.py::serialize → .bin (5×u32
     #   header). The engine (generator L3 mouth-sniff) auto-dispatches .bin to the bytegpt
-    #   decode; `anima evaluate --py` auto-detects .bin vs .clm by header, so no eval change.
+    #   decode; `anima-py evaluate` auto-detects .bin vs .clm by header, so no eval change.
     def _write_bin(out_path):
         # write the torch .pt in the exact shape bytegpt_serialize.serialize reads, next to
         # the .bin, then bridge it. The aux-head objective params are OUTSIDE model.state_dict
@@ -1596,7 +1596,7 @@ def main():
 
         # ── ρ·weave/ρ·fan (former G1/G6) torch-probe gauges (DIRECTIONAL, a_train_inline_gauge) ──
         #   gauge_lib.compute_inline_gauges decodes via the CLM mouth (CLMConvMoE-specific);
-        #   skip for bytegpt (the terminal verdict is `anima evaluate --py <.bin>` engine-native
+        #   skip for bytegpt (the terminal verdict is `anima-py evaluate <.bin>` engine-native
         #   through the bytegpt mouth anyway — this torch probe is DIRECTIONAL only).
         gauges = None
         if not is_bytegpt:
@@ -1621,7 +1621,7 @@ def main():
             print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
 
         # ── summary json ──────────────────────────────────────────────────────────
-        summary = {"entry": "anima train --py", "arch": a.arch, "arm": a.arm,
+        summary = {"entry": "anima-py train", "arch": a.arch, "arm": a.arm,
                    "objective": a.objective, "seed": a.seed,
                    "ddp": {"world_size": world, "global_batch": B_global,
                            "per_rank_batch": B_local, "gpus": a.gpus},

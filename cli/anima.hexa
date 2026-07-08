@@ -131,6 +131,11 @@ fn anima_usage() {
     println("  anima corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
     println("                                                  procedural training-corpus builder (ρ·weave data-format lever · former G1)")
     println("")
+    println("py channel (hexa-less hosts · 303M measurement):")
+    println("  pip install anima-py            → `anima-py` (evaluate · corpus · chat, numpy)")
+    println("  pip install \"anima-py[train]\"   → + train · sweep · serialize (torch)")
+    println("  303M reach measurement = `anima-py evaluate <clm>` on pool (a_eval_py_canonical)")
+    println("")
     println("research diagnostics (engine-native emit-shade op-grip · loop-external):")
     println("  anima <ckpt.clm> --opgrip                       $0 NO-DECODE 5-arm Hamming op-grip (200 ticks)")
     println("  anima <ckpt.clm> --opgrip-live                  REAL-DECODE op-grip (100 ticks · POOL summer/aiden, NEVER mini)")
@@ -200,43 +205,21 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 // argv = ["train", <rest...>]; the rest is forwarded verbatim to cli/train.hexa
 // after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
 fn anima_train_mode(argv: [string]) {
-    // --py: route production training to the CANONICAL python trainer (cli/train.py —
-    //   torch Lane-P CLMConvMoE with the SAVANT+MITOSIS recipe + the H_1640 arm×objective
-    //   compositional levers) instead of the hexa-native cli/train.hexa. WHY: cli/train.hexa
-    //   is single-thread native-CPU-scalar-bound (#2598/#2600) and temporarily under a GPU-
-    //   utilization fix, so the GPU-bound torch path is the working training entry today
-    //   (a_clm_gen_pipeline: "Lane-P torch = REFERENCE + bridge, forge is the PUBLIC prod").
-    //   Symmetric to anima_evaluate_mode's --py (cli/evaluate.py). `--py` is consumed here
-    //   (stripped from the forwarded argv) so cli/train.py sees only its own knobs
-    //   (--arm --objective … --out). The torch-side CE/gauges are DIRECTIONAL only — the
-    //   TERMINAL verdict re-measures the serialized .clm via `anima evaluate --py`.
-    let use_py = anima_has_flag(argv, "--py")
-    let mut fwd = ""
-    let mut i = 1
-    while i < len(argv) { if argv[i] != "--py" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
-    if use_py {
-        println("=== anima train → cli/train.py (canonical py trainer · torch Lane-P · arm×objective levers) ===")
-        // hexa `exec` closes a child's captured stdout pipe after ~150s (the child gets EPIPE
-        // on its next fd-1 write but is NOT killed). A py train runs for minutes/hours, so
-        // redirect ALL child output to a result file (fd 1 stays silent → the child survives
-        // the pipe close and finishes the full run). A SECOND fresh exec then cats that file.
-        // Symmetric to anima_evaluate_mode's --py result-file handling; cli/train.py streams
-        // to stdout (it has no --result-file arg of its own), so the redirect is at the shell.
-        // UNIQUE per-invocation result file (mktemp) — a hardcoded shared path lets two
-        // concurrent `anima train --py` runs on the same pool box CLOBBER each other's
-        // output (write+read race). Capture once so the shell redirect (> rf) and the
-        // read (cat) use the SAME path. Pattern matches the #3154 evaluate --py fix.
-        let rf = to_string(exec("mktemp /tmp/anima_trainpy_result.XXXXXX")).trim()
-        // cd into $ANIMA_SRC first so train.py's __file__-relative train/clm/model resolution
-        // matches a direct `python3 cli/train.py` (LOCATION-INDEPENDENT, same as the hexa path).
-        let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/train.py" + fwd + " > " + rf + " 2>&1"
-        println("dispatch: " + cmd)
-        let _tr = exec(cmd)
-        let out = exec("cat " + rf)
-        print(out)
-        let _rm = exec("rm -f " + rf)
+    // --py RETIRED (2-channel split): py production training is its own installed
+    // command — `anima-py train` (pip install "anima-py[train]" — torch extra), the
+    // SAME cli/anima.py→cli/train.py Lane-P trainer. Bonus vs the old bridge: a bare
+    // rent GPU pod needs NO hexa toolchain at all (pip only). torch-side stays
+    // DIRECTIONAL; the TERMINAL verdict re-measures the .clm via `anima-py evaluate`.
+    if anima_has_flag(argv, "--py") {
+        println("anima: `--py` is retired — the py training channel is its own installed command.")
+        println("  pip install \"anima-py[train]\"   # torch extra (train · sweep · serialize)")
+        println("  anima-py train <args>            # same cli/train.py Lane-P trainer")
+        println("hexa `anima train` = cli/train.hexa (flame/forge) only.")
         return
     }
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
     println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
     // LOCATION-INDEPENDENT (the installed `anima` runs from ANY cwd, not the source
     // root): resolve the sibling cli/train.hexa via $ANIMA_SRC (the launcher / setup.hexa
@@ -281,14 +264,21 @@ fn anima_evaluate_mode(argv: [string]) {
         println("  anima evaluate <out.clm>")
         return
     }
-    // --py: route the ρ-AXON reach battery (former G0-G6) to the py 2-PRODUCTION engine (cli/evaluate.py — torch-free numpy
-    //   eval_reach_all scorer) instead of the hexa engine-native det-eval. a_engine_native_learning
-    //   (2-production): the py engine is a FIRST-CLASS production scorer (byte-parity with
-    //   hexa), TERMINAL-eligible — NOT a 2nd-class mirror. It is the measurement-heavy path:
-    //   torch/numpy free memory per decode, so a large ckpt (e.g. 303M) that OOMs hexa's
-    //   OWN-GEMM fp64 det-eval bump allocator scores cleanly here. `--py` is consumed here
-    //   (stripped from the forwarded argv) so cli/evaluate.py sees only <ckpt> [--corpus …] [--gen N].
-    let use_py = anima_has_flag(argv, "--py")
+    // --py RETIRED (2-channel split): the py 2-production measurement is its own
+    // installed command now — `anima-py evaluate` (pip install anima-py), the SAME
+    // cli/anima.py→cli/evaluate.py numpy engine, same frozen bars, same TERMINAL
+    // eligibility (a_eval_py_canonical). HARD-ERROR, not silent-ignore: an old
+    // script/muscle-memory falling through to hexa det-eval would run the wrong
+    // backend (303M = OOM rc=137, wrong-backend verdict). Matches the .pt-rejection
+    // idiom (print + return).
+    if anima_has_flag(argv, "--py") {
+        println("anima: `--py` is retired — the py measurement channel is its own installed command.")
+        println("  pip install anima-py            # numpy base (evaluate · corpus · chat)")
+        println("  anima-py evaluate <clm> [--corpus ...] [--gen N] [--rho-axon]")
+        println("same cli/evaluate.py engine · same frozen bars · same TERMINAL eligibility (a_eval_py_canonical).")
+        println("hexa `anima evaluate` = hexa-native det-eval only (small ckpts / --det byte-exact; 303M => anima-py on pool).")
+        return
+    }
     // --det / --deterministic: the CLI OPTION to request byte-exact determinism (H_9119: anima is
     // invoked `anima <verb>`, so det is a CLI flag — NOT an env the user must export, and NOT forced
     // unconditionally). DEFAULT = fast (non-det forge). Consumed here (stripped from fwd); when set it
@@ -296,31 +286,7 @@ fn anima_evaluate_mode(argv: [string]) {
     let want_det = anima_has_flag(argv, "--det") || anima_has_flag(argv, "--deterministic")
     let mut fwd = ""
     let mut i = 1
-    while i < len(argv) { if argv[i] != "--py" && argv[i] != "--det" && argv[i] != "--deterministic" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
-    if use_py {
-        println("=== anima evaluate → cli/evaluate.py (py 2-production ρ-AXON reach · former G0-G6, numpy mirror · OOM-safe) ===")
-        // py engine is numpy (deterministic) — no HEXA_DET needed. LOCATION-INDEPENDENT ($ANIMA_SRC).
-        // hexa `exec` closes a child's captured stdout pipe after ~150s (probe-confirmed: the child
-        // gets EPIPE on its next fd-1 write but is NOT killed). A 303M numpy decode runs for minutes,
-        // so evaluate writes ALL output to a --result-file: fd 1 stays silent → the child survives the
-        // pipe close and finishes the full G0-G6 battery. A SECOND fresh exec then cats that file
-        // (fast, well under the limit). Two execs = two pipes, the long-running one kept silent.
-        // UNIQUE per-invocation result file (mktemp) — a hardcoded shared path lets two
-        // concurrent `anima evaluate --py` runs on the same pool box CLOBBER each other's
-        // output (write+read race). Capture once so the write (--result-file) and the
-        // read (cat) use the SAME path. Pattern matches install.hexa's to_string(exec()).trim().
-        let rf = to_string(exec("mktemp /tmp/anima_evalpy_result.XXXXXX")).trim()
-        // cd into $ANIMA_SRC first so evaluate.py's __file__-relative core/ resolution
-        // matches a direct `python3 cli/evaluate.py` (verified working). Without the cd,
-        // the hexa exec cwd skews sys.path[0] and core/ imports (decode) break.
-        let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/evaluate.py" + fwd + " --result-file " + rf
-        println("dispatch: " + cmd)
-        let _ev = exec(cmd)
-        let out = exec("cat " + rf)
-        print(out)
-        let _rm = exec("rm -f " + rf)
-        return
-    }
+    while i < len(argv) { if argv[i] != "--det" && argv[i] != "--deterministic" { fwd = fwd + " '" + argv[i] + "'" }  i = i + 1 }
     println("=== anima evaluate → cli/evaluate.hexa (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===")
     // EVAL DETERMINISM = the `--det` CLI OPTION (hexa-lang #4208 flame/forge fast-default follow-on):
     // #4208 made the forge NON-det atomic kernels the DEFAULT; deterministic kernels are opt-in via
@@ -389,11 +355,11 @@ fn anima_sweep_mode(argv: [string]) {
     // child's captured stdout pipe after ~150s (the child gets EPIPE on its next fd-1 write
     // but is NOT killed), so redirect ALL child output to a result file (fd 1 stays silent →
     // the child survives the pipe close and finishes the full sweep). A SECOND fresh exec
-    // then cats that file. Symmetric to anima_train_mode's --py result-file handling.
-    // UNIQUE per-invocation result file (mktemp) — a hardcoded shared path lets two
-    // concurrent `anima sweep` runs on the same pool box CLOBBER each other's output
-    // (write+read race). Capture once so the shell redirect (> rf) and the read (cat)
-    // use the SAME path. Pattern matches the #3154 evaluate --py fix.
+    // then cats that file (the result-file pattern the retired train/evaluate --py
+    // bridge branches also used; #3154). UNIQUE per-invocation result file (mktemp) —
+    // a hardcoded shared path lets two concurrent `anima sweep` runs on the same pool
+    // box CLOBBER each other's output (write+read race). Capture once so the shell
+    // redirect (> rf) and the read (cat) use the SAME path.
     // cd into $ANIMA_SRC first so sweep.py's __file__-relative cli/train.py + cli/evaluate.py
     // resolution matches a direct `python3 cli/sweep.py` (LOCATION-INDEPENDENT).
     let rf = to_string(exec("mktemp /tmp/anima_sweeppy_result.XXXXXX")).trim()
