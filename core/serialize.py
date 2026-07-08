@@ -87,6 +87,19 @@ def append_slw_trailer(out_path: str, slw_module) -> int:
         f.write(trailer)
     return len(trailer)
 
+
+def append_lane_trailer(out_path: str, lane_module) -> int:
+    """Append the fork-A retro-route lane trailer (H_9235 · ρ·weave) to an already-
+    written .clm (after serialize_v3 + any SLW trailer). Reads the trained torch
+    LaneAModule, packs it via core/lane_a.pack_lane, appends the bytes. Returns the
+    number of trailer bytes written. No-op path: callers only invoke this when the model
+    has a lane, so the additive (+ SLW-only) .clm stays byte-untouched."""
+    from lane_a import lane_weights_from_torch, pack_lane   # core/lane_a.py (same dir)
+    trailer = pack_lane(lane_weights_from_torch(lane_module))
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0

@@ -74,6 +74,27 @@ def set_slw_controls(gamma_override=None, shuffle_seed=None):
     _SLW_SHUFFLE_SEED = shuffle_seed
 
 
+# ── fork-A retro-route lane eval-time controls (H_9235 · ρ·weave / was G1) ─────
+# The lane applies by default whenever a .clm carries an "LNA\x01" trailer (capability
+# = data-detected default-on, a_gpu_default_no_optin — NOT an opt-in flag). These
+# switches run the pre-registered controls WITHOUT retraining (frozen-first · no
+# tune-to-green): --lane-off forces γ=0 (bit-exact base = lane-ablation BLIND control),
+# --lane-route-shuffle scrambles the routing→position map (earned-routing control),
+# --lane-tether-off sets Γ≡1 (isolates the ρ·tether non-fabrication gate).
+_LANE_GAMMA_OVERRIDE = None
+_LANE_SHUFFLE_SEED = None
+_LANE_TETHER_OFF = False
+
+
+def set_lane_controls(gamma_override=None, shuffle_seed=None, tether_off=False):
+    """Set the fork-A lane eval-time controls (cli/evaluate.py --lane-off /
+    --lane-route-shuffle / --lane-tether-off)."""
+    global _LANE_GAMMA_OVERRIDE, _LANE_SHUFFLE_SEED, _LANE_TETHER_OFF
+    _LANE_GAMMA_OVERRIDE = gamma_override
+    _LANE_SHUFFLE_SEED = shuffle_seed
+    _LANE_TETHER_OFF = tether_off
+
+
 # ════════════════════════════════════════════════════════════════════════
 # (a) SHARED — helpers byte-identical across clm_decode.py + bytegpt_decode.py
 # ════════════════════════════════════════════════════════════════════════
@@ -539,6 +560,12 @@ def clm_load_weights(path):
     from slw import read_slw
     W["slw"], off = read_slw(rb, off)
 
+    # ── optional "LNA\x01" fork-A retro-route lane trailer (H_9235 · ρ·weave) ──
+    # Appended AFTER the SLW trailer; read at the offset read_slw returned. Absent/short
+    # => lane=None => forward byte-identical (passthrough). CORE-owned in core/lane_a.py.
+    from lane_a import read_lane
+    W["lane"], off = read_lane(rb, off)
+
     return W
 
 
@@ -640,6 +667,14 @@ def _fwd_logits(W, tok, T):
         if _SLW_SHUFFLE_SEED is not None:
             perm = np.random.RandomState(_SLW_SHUFFLE_SEED).permutation(W["slw"]["n_slot"])
         yn = slot_apply(yn, W["slw"], gamma=_SLW_GAMMA_OVERRIDE, shuffle_perm=perm)
+    # fork-A retro-route lane (H_9235 · ρ·weave / was G1) — content-addressed retrieval
+    # of an earlier concept into the generation point + Hadamard bind, on the (post-SLW)
+    # penultimate before readout. None => additive golden path untouched. γ=0 (--lane-off)
+    # => bit-exact base (BLIND ablation); process-global controls set by set_lane_controls.
+    if W.get("lane") is not None:
+        from lane_a import lane_apply
+        yn = lane_apply(yn, W["lane"], gamma=_LANE_GAMMA_OVERRIDE,
+                        route_shuffle_seed=_LANE_SHUFFLE_SEED, tether_off=_LANE_TETHER_OFF)
     # readout: additive Conv1d (standard) OR Hadamard/linear bind (CLMB)
     if W.get("bind_type", 0) != 0:
         # CLMB bind readout: yn → (Wa,Wb) linear projections → Hadamard/+ → Wo
