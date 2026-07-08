@@ -14226,6 +14226,13 @@
     "value": "binding/VSA/operator 레버가 G1 재조합 벽을 escape한다고 박기 전 handed-vs-blind atom 통제 필수 — atom/role을 handed(clean·준직교 codebook)로 주면 작동하지만 학습표현서 유도(blind)하면 붕괴하는 연산자는 transfer 레버가 아니라 superposition-capacity 레버다. H_9211 framebreak: kill-shot handed B=1.000 vs blind B=0.048(순환성 0.95·offdiag|cos| 0.035→0.636, CE학습이 HRR 준직교성 파괴). G1 벽 본질=학습된 인수분해 부재이므로 인수분해를 handed로 주면 벽 우회(순환). H_1835 메타함정(superposition/in-context 능력을 transfer로 오인)의 재발.",
     "threshold": "재발조건: 고정연산자(HRR/⊛/bind)나 VSA read-path가 toy/handed 셋업서 G1/재조합 escape 보이면 = transfer 결론 금지. 해결: 같은 task서 atom을 handed(clean random)↔blind(학습 encoder hidden)로 교체 측정. blind서 chance면 capacity 레버(transfer 아님)→FALSIFIED. 모든 학습-encoder 수리경로는 γ(H_1840 trained-bind)로 붕괴됨을 명시.",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "install-hexa-1",
+    "state": "pos-conv",
+    "value": "pool clean-tree 빌드에서 'hx install anima'는 로컬 추출 tree가 아니라 GITHUB RELEASE 태그를 clone한다(build hook: 'cloning anima github' → 'installing release tag vX.Y.Z'). 같은세션 머지 PR은 release 태그에 없어(merged-fix-not-in-prebuilt-lag) 설치본이 STALE 코드를 실행 → 신규 플래그(--rho-axon)·신규 함수(_build_cell_dets dispatch) 부재로 측정 hang/오답. #3151 4-cell dispatch 머지 직후 summer 측정이 v3.124.1(구 release) 코드로 돌아 ko cell 미측정.",
+    "threshold": "재발조건: pool서 방금 머지한 코드로 측정하려는데 'hx install <pkg>'가 'cloning...release tag' 출력 → 설치본 STALE. 해결: rebuild/release 대기 말고 로컬 fresh tree를 git archive origin/main→scp→extract 후, 설치된 canonical anima의 py 측정 wrapper가 내부적으로 cd ${ANIMA_SRC:-.} 하는 구조이므로 환경변수 ANIMA_SRC를 fresh tree로 지정→stale binary가 fresh 소스를 실행(단일진입 유지·재빌드 불필요). 측정 전 grep -c _build_cell_dets $ANIMA_SRC/cli/evaluate.py 로 fresh 확증.",
+    "source": "install.hexa"
    }
   ]
  }
