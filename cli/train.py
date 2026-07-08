@@ -2,8 +2,8 @@
 """cli/train.py — the CANONICAL anima python training entry (`anima-py train`).
 
 >>> This file is the working python training entry, SYMMETRIC to cli/evaluate.py
->>> (the canonical python eval entry). `anima-py train <args>` dispatches HERE;
->>> `anima train <args>` (no --py) still dispatches to the hexa-native cli/train.hexa.
+>>> (the canonical python eval entry). `anima-py train <args>` (pip channel) dispatches HERE;
+>>> hexa `anima train <args>` dispatches to the hexa-native cli/train.hexa.
 >>>
 >>> WHY python is the canonical working path RIGHT NOW: the hexa-native production
 >>> trainer cli/train.hexa (a_train_flame_forge) is single-thread native-CPU-scalar-
@@ -93,8 +93,8 @@ be tested on EITHER trunk. `--arch bytegpt` builds a 24-layer GPT-2-class ByteGP
 CLEAN ρ·weave recombination wall (former G1): ByteGPT single=2, vs CLMConvMoE's single=0 coverage-floor) and serializes a
 `.bin` (5×u32 header) via core/serialize.py (the unified serializer) instead of a `.clm`. For bytegpt the
 CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF — only arm=ctrl × the
-objective matrix is supported (that's exactly what the G1-lever test needs). `anima
-evaluate --py` auto-detects `.bin` vs `.clm` by header, so a ByteGPT `.bin` measures through
+objective matrix is supported (that's exactly what the G1-lever test needs). `anima-py
+evaluate` auto-detects `.bin` vs `.clm` by header, so a ByteGPT `.bin` measures through
 the bytegpt mouth automatically.
 
 USAGE (installed `anima` PATH command after `hx install anima`):
