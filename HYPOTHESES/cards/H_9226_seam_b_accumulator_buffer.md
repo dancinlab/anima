@@ -1,6 +1,16 @@
 # H_9226 — Family B: accumulator-to-threshold buffer (evidence integration / phonological loop) RANK 2
 
-**tier:** ⚙️ INSTRUMENT-FAIL (UNMEASURED) — engine-native runpod CPU pod real d768 (2026-07-08) · `state/verdicts/9226/` · p7 no tune-to-green
+**tier:** ⛔ UNMEASURED-TERMINAL (2세대 op-grip 계기 실패 · engine-native runpod CPU pod real d768 · R2 2026-07-08 ⚙️ INSTRUMENT-FAIL + R3 2026-07-08 ⛔ RUN-INVALID · `state/verdicts/9226/` · p7 no tune-to-green)
+> ⛔ 2 op-grip generations both failed to calibrate the instrument to a valid envelope ⇒ park B UNMEASURED-TERMINAL at this seam (pre-reg: no 3rd op-grip att). substrate 결과 아님(THEATER 아님·GREEN 아님·convergent seam-law 부적용). anima-hexa-4: INSTRUMENT-FAIL은 절대 THEATER cement 안 함.
+
+## ⛔ round-3 판정 (2026-07-08 · engine-native runpod 251GB CPU pod real d768 · hexa v0.716.0 REAL-DECODE · `--opgrip-r3` n=400 · state/verdicts/9226/VERDICT_R3.md)
+**B2 SELF/TEN VERDICT = ⛔ RUN-INVALID** — live emit-fraction on scored mid ∉ [0.05,0.60]; no verdict either way, re-tune stimulus density (instrument power, NOT a bar move · p5 forcing-gate guard).
+- **RUN-VALIDITY: live emit-frac on scored mid = 0.6667 ∉ [0.05,0.60] → valid=NO (STIM-OVERDRIVE)** → pre-reg **bar 0 RUN-INVALID**가 판정 VOID. gB2_slf/ten=-1.0·swing_max=0.0·ΔEff=0/120 both.
+- **FROZEN `og_h_frzB2 = 0` ✅**(production emit 바이트무접촉) · **POS-CONTROL dense ARM-SHOCK 105 flips = POS-PASS(≥2)=YES ✅**(meter live) · N3=0·Ψ_ON=Ψ_OFF=0.6667.
+- **⛔ UNMEASURED-TERMINAL**(pre-reg 해석 라인 verbatim): "B2 INSTRUMENT-FAIL again ⇒ two op-grip generations failed ⇒ park B UNMEASURED-TERMINAL at this seam (no third op-grip att)". 1세대 R2=STIM-ABSENT(under-driven), 2세대 R3=STIM-OVERDRIVE(over-driven, emit-frac 0.667>0.60) — 두 세대 모두 유효 envelope [0.05,0.60] 교정 실패. **substrate 결과 아님.**
+- **⚠️ convergent seam-law 부적용** — B가 RUN-INVALID/UNMEASURED-TERMINAL이므로 seam CLEAN THEATER 확정 read-side recoding은 A(H_9225 shape-conversion)+E(H_9230 self-prediction)뿐. 같은 라운드 F(H_9229)=⚙️INSTRUMENT-FAIL도 instrument-limited.
+
+## ⚙️ round-2 판정 (2026-07-08 · engine-native runpod CPU pod real d768 · no-decode ∧ --opgrip-live n=100 · state/verdicts/9226/VERDICT.md)
 > ⚙️ MEASURED-UNMEASURED: op-grip 계기가 DDM/accumulator 기전에 UNDER-POWERED → B는 falsify도 vindicate도 아님 = **진짜 미측정** (THEATER 아님·GREEN 아님). anima-hexa-4: INSTRUMENT-FAIL은 절대 THEATER cement 안 함.
 > 🛠️ IMPLEMENTED: `cli/anima.hexa` H_9225 D1/D2/D3 블록 확장(3-site, additive-only 254 insertions/0 deletions) · `hexa typecheck` exit 0 (baseline benign `["emit"]` class +5, NO new error class) · production `idle`/`e_live` byte-untouched (FROZEN `og_h_frzB==0` = 증명).
 
@@ -47,7 +57,7 @@ PASS = freeze-self ΔEff>0(latency 서명) ∧ tick-shuffle 붕괴 ∧ POS cross
 - **arms**: ARM-LIVE×2(idle_slfB2/idle_tenB2 own W=1.0 DISJOINT) · ARM-FROZEN(shade 0.5 pinned·og_h_frzB2 byte-identity else HARNESS-BUG VOID) · ARM-SHOCK(og_h_shock_mid 재사용 POS-PASS≥2) · ARM-INPERM(stride-perm j=(t·7+13)%400 재적분 margin≥0.08).
 - **bars VERBATIM H_9226** + 새 **run-validity envelope**(live emit-frac on scored mid ∈[0.05,0.60] else STIM-OVER/UNDERDRIVE·no verdict = p5 forcing-gate guard). production emit path(idle·e_live) BYTE-UNTOUCHED(og_h_frzB2==0 = 증명). p7: bars 불변=계기 zeroing/power지 bar-move 아님(성공모드에 THEATER cement 포함).
 - **OG_STIM tape sha256** (16 lines joined by `\n`, no trailing) = `98892bdf40cb645d0cc2ae1b65bf5f1bfc8b079ea42f1b8886909cc4ec2a31fa`. **FROZEN** — 결과 후 편집 = tune-to-green·run VOID. 전문 `state/9226_accumulator/OPGRIP_R3_SPEC.md`.
-- **측정 PENDING**: `--opgrip-r3` = 실 decode 필요 → CPU pod round(summer/aiden, NEVER mini). typecheck exit 0 (benign `["emit"]` 5건 추가만). 결정규칙: bar4⇒B COMPETENT(≥2-seed→WIRE) · bar5⇒B THEATER(read-side recoding CLOSED) · bar2 재차⇒B op-grip-UNMEASURED-TERMINAL(3번째 op-grip att 없음).
+- **측정 완료 → ⛔ RUN-INVALID (2026-07-08 runpod 251GB CPU pod · hexa v0.716.0 REAL-DECODE)**: R3 계기가 반대로 STIM-OVERDRIVE(emit-frac 0.667>0.60 상한)로 bar 0 RUN-INVALID. 결정규칙 적용 = **bar0 재차(2세대 실패)⇒B op-grip-UNMEASURED-TERMINAL(3번째 op-grip att 없음)**. bar4 COMPETENT/bar5 THEATER 도달 못함(계기 유효 envelope 미교정). state/verdicts/9226/VERDICT_R3.md.
 
 ## 근거 링크
 - [[H_9225]](Family A · latency로 구분) · 선례 H_9097/H_9101 · DDM evidence-integration(phonological loop 유비, a_no_llm_frame_trap 유지)
