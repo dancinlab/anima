@@ -1,0 +1,72 @@
+{
+  "probe": "premise_verifier",
+  "params": {
+    "K": 24,
+    "generators": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      11
+    ],
+    "K_SAMPLE": 4,
+    "QUERY_BUDGET": 160,
+    "ROUNDS": 12,
+    "TEMP": 2.0,
+    "seeds": [
+      7,
+      4302,
+      4303
+    ],
+    "firewall": "eval_only cells NEVER queried by verifier (no label leakage)"
+  },
+  "seeds": [
+    {
+      "seed": 7,
+      "n_train": 43,
+      "n_eval_only": 43,
+      "n_queryable": 58,
+      "reach_eval_only": {
+        "1_ce": 0.0,
+        "7_verifier": 0.0,
+        "8a_random": 0.0,
+        "8b_corpusnull": 0.0
+      },
+      "arm7_cells_added": 37
+    },
+    {
+      "seed": 4302,
+      "n_train": 43,
+      "n_eval_only": 43,
+      "n_queryable": 58,
+      "reach_eval_only": {
+        "1_ce": 0.0,
+        "7_verifier": 0.0,
+        "8a_random": 0.0,
+        "8b_corpusnull": 0.0
+      },
+      "arm7_cells_added": 30
+    },
+    {
+      "seed": 4303,
+      "n_train": 43,
+      "n_eval_only": 43,
+      "n_queryable": 58,
+      "reach_eval_only": {
+        "1_ce": 0.0,
+        "7_verifier": 0.0,
+        "8a_random": 0.0,
+        "8b_corpusnull": 0.0
+      },
+      "arm7_cells_added": 38
+    }
+  ],
+  "frozen_bars": {
+    "verifier-CE>=+0.15@2of3(eval-only)": false,
+    "verifier>random+0.10": false
+  },
+  "verdict": "KILL",
+  "decision": "verifier does not beat controls at toy scale -> escape not demonstrated here",
+  "scope": "toy Z_K closure + exact group-law verifier; real domains need a real deterministic checker (code exec / equation / SAT); a_toy_scale_recheck. oracle 0.06 = filter-only bound."
+}
