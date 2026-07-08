@@ -248,6 +248,22 @@ def _rho_fan_ko_is_known(word):
     return False
 
 
+def _rho_fan_ko_known_word_ratio(text, known=None):
+    """ko known-word ratio (kwr_ko · KWRKO_GATE_prereg §2) — the ko analog of
+    _rho_fan_known_word_ratio: eojeol-run tokens via _rho_fan_words_uni, a token is a hit iff
+    _rho_fan_ko_is_known (KO_FUNC exact ∨ pure-hangul josa-suffix with stem≥1). `known` is
+    IGNORED (the ko proxy is a curated closed-class set, model-independent) — the arg is kept
+    for signature-parity with the en kwr so the ρ-AXON axis fns dispatch uniformly. This is a
+    josa-suffix GRAMMATICALITY DENSITY, NOT lexicality (a_scale_honest_scope); its gate is the
+    separately-frozen KWR_KO_GATE (0.20), NOT the en 0.70. Twin: core/rho_fan.hexa."""
+    wl = _rho_fan_words_uni(text)
+    n = len(wl)
+    if n == 0:
+        return 0.0
+    hit = sum(1 for w in wl if _rho_fan_ko_is_known(w))
+    return float(hit) / float(n)
+
+
 def _rho_fan_cells_selftest():
     """H_9212 ② foundation self-test (engine-internal · run as an INTERNAL SUBPROCESS import,
     never via top-level `python3 core/rho_fan.py`, which is entry-guarded). Asserts: (1) the
@@ -280,6 +296,16 @@ def _rho_fan_cells_selftest():
                    _rho_fan_ko_is_known("의식은")))
     checks.append(("ko_is_known exact hit (bare '은' ∈ KO_FUNC)",
                    _rho_fan_ko_is_known("은")))
+    # (4) kwr_ko: a real josa-bearing ko sentence clears KWR_KO_GATE; empty → 0.0; the `known`
+    #     arg is ignored (signature-parity so the ρ-AXON axis fns dispatch uniformly)
+    real = "의식은 세포에서 피어난다"
+    checks.append(("kwr_ko real ko clears KWR_KO_GATE (%.2f)" % KWR_KO_GATE,
+                   _rho_fan_ko_known_word_ratio(real) >= KWR_KO_GATE))
+    checks.append(("kwr_ko 'known' arg is ignored (signature-parity)",
+                   _rho_fan_ko_known_word_ratio(real, {"x": 1})
+                   == _rho_fan_ko_known_word_ratio(real)))
+    checks.append(("kwr_ko empty → 0.0",
+                   _rho_fan_ko_known_word_ratio("") == 0.0))
     ok = all(c[1] for c in checks)
     return {"ok": ok, "checks": checks}
 

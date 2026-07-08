@@ -131,15 +131,18 @@ def rho_form(mouth, gen, known, kwr_fn, concepts, thr=0.50, gate=0.70, ctrl_cap=
 # contract to ≤2 distinct → spread is distributional, not decode noise).
 # ════════════════════════════════════════════════════════════════════════
 def rho_fan(mouth, gen, known, kwr_fn, jaccard_fn, words_fn, falsi_fn, concepts,
-            n_cont=8, need=5):
+            n_cont=8, need=5, cgate=0.5):
+    # cgate = coherence-gating bar (kwr floor a continuation must clear to count). Default 0.5
+    # = the en value (byte-identical to the pre-③ path); the ko per-cell dispatch passes
+    # KWR_KO_GATE so kwr_ko (a different physical quantity) gates on its own frozen bar.
     seed_prompt = concepts[0] + ": "
     coherent = []; any_falsi = False; raw = []
     for j in range(n_cont):
         o = mouth.ideate(seed_prompt, gen, 40, 0.9, SEEDS[0] + 17 * j)
         raw.append(o)
-        if kwr_fn(o, known) >= 0.5:              # coherence-gating (control a)
+        if kwr_fn(o, known) >= cgate:            # coherence-gating (control a)
             coherent.append(set(words_fn(o)))
-            if falsi_fn(o):
+            if falsi_fn(o, known):               # falsi_fn = _rho_fan_is_falsifiable(text, known)
                 any_falsi = True
     # N_distinct = coherent continuations pairwise Jaccard < 0.5
     n_distinct = 0
@@ -151,7 +154,7 @@ def rho_fan(mouth, gen, known, kwr_fn, jaccard_fn, words_fn, falsi_fn, concepts,
     greedy = []
     for j in range(min(4, n_cont)):
         o = mouth.ideate(seed_prompt, gen, 1, 0.01, SEEDS[0] + 17 * j)
-        if kwr_fn(o, known) >= 0.5:
+        if kwr_fn(o, known) >= cgate:
             greedy.append(set(words_fn(o)))
     greedy_distinct = 0
     for a in range(len(greedy)):
@@ -173,17 +176,19 @@ def rho_fan(mouth, gen, known, kwr_fn, jaccard_fn, words_fn, falsi_fn, concepts,
 # Controls: (a) retrieval-only baseline must yield 0 (a memorizer can't pass),
 # (b) byte-shuffled candidate spans must fail the form gate (negative admit 0).
 # ════════════════════════════════════════════════════════════════════════
-def rho_leap(mouth, gen, known, kwr_fn, ngram_fn, corpus_tokens, concepts, need=3):
+def rho_leap(mouth, gen, known, kwr_fn, ngram_fn, corpus_tokens, concepts, need=3, cgate=0.5):
+    # cgate = coherence bar (kwr floor). Default 0.5 = the en value (byte-identical to the
+    # pre-③ path); the ko per-cell dispatch passes KWR_KO_GATE (kwr_ko = a distinct quantity).
     absent_spans = 0; shuf_admit = 0
     for i in range(len(concepts)):
         o = mouth.ideate(concepts[i] + ": ", gen, 40, 0.7, SEEDS[0] + 3 * i)
-        if kwr_fn(o, known) < 0.5:               # must be locally coherent (form)
+        if kwr_fn(o, known) < cgate:             # must be locally coherent (form)
             continue
         for gm in ngram_fn(o, known):
             if gm not in corpus_tokens:          # content n-gram corpus-ABSENT
                 absent_spans += 1
         # control (b): a byte-shuffled copy must NOT pass the form gate (admit 0)
-        if kwr_fn(_byte_shuffle(o, SEEDS[0] + 3 * i), known) >= 0.5:
+        if kwr_fn(_byte_shuffle(o, SEEDS[0] + 3 * i), known) >= cgate:
             shuf_admit += 1
     # control (a): retrieval-only baseline = the corpus itself contains 0 corpus-absent
     # n-grams BY CONSTRUCTION (a copy-decoder emits only corpus n-grams) → baseline 0.
@@ -540,10 +545,44 @@ _STRATA = [
 ]
 
 
-def run_panel(mouth, corpus_paths, gen, dets):
+# ════════════════════════════════════════════════════════════════════════
+# per-register-cell breakout (H_9212 ③ · a_chat_registers 4 cells: ko/en × general/sns).
+# Each cell dispatches its OWN {words_fn, known, corpus_tokens, kwr_fn, kwr_gate} bundle
+# (ko→_rho_fan_words_uni + kwr_ko + KWR_KO_GATE · en→frozen _rho_fan_words + 0.70). Runs the
+# concept-driven reach axes (hillock validity + ρ·form/leap/fan); ρ·store/tether/self are
+# panel-level (frozen 4-cell probe sets), not per register cell. ko FALS is IN-SCOPE now that
+# KWR_KO_GATE is registered (KWRKO_GATE_prereg §5); the falsifiability comparator set stays
+# English (a ko comparator set = a separate future H — en-set translation is a tune-to-green
+# vector, forbidden), so a ko cell scores kwr_ko + reach Δ (its ρ·fan may FAIL the falsi
+# sub-check — an honest documented scope, negative=result, not tuned away).
+# ════════════════════════════════════════════════════════════════════════
+def _run_cell(mouth, gen, cd):
+    """One register cell's concept-driven reach axes under that cell's dispatched dets.
+    `cd` = {concepts, known, kwr_fn, kwr_gate, words_fn, falsi_fn, jaccard_fn, ngram_fn,
+    corpus_tokens, lang}. Returns {lang, hillock, axes:{ρ·form/leap/fan}, invalid}."""
+    concepts = cd["concepts"]
+    hk = hillock(mouth, gen, cd["known"], cd["kwr_fn"], concepts)
+    if not hk["live"]:
+        axes = {nm: _axis(nm, INVALID, detail="HILLOCK not LIVE (V-gate)")
+                for nm in ("ρ·form", "ρ·leap", "ρ·fan")}
+        return {"lang": cd["lang"], "hillock": hk, "axes": axes, "invalid": True}
+    g = cd["kwr_gate"]
+    axes = {}
+    axes["ρ·form"] = rho_form(mouth, gen, cd["known"], cd["kwr_fn"], concepts, gate=g)
+    axes["ρ·leap"] = rho_leap(mouth, gen, cd["known"], cd["kwr_fn"], cd["ngram_fn"],
+                              cd["corpus_tokens"], concepts, cgate=g)
+    axes["ρ·fan"] = rho_fan(mouth, gen, cd["known"], cd["kwr_fn"], cd["jaccard_fn"],
+                            cd["words_fn"], cd["falsi_fn"], concepts, cgate=g)
+    return {"lang": cd["lang"], "hillock": hk, "axes": axes, "invalid": False}
+
+
+def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None):
     """Run the ρ-AXON reach panel. `dets` bundles the reused detectors from
     cli/evaluate.py: kwr_fn, jaccard_fn, words_fn, falsi_fn, ngram_fn, corpus_tokens,
-    concepts. Returns {hillock, axes:{name:AxisResult}, reach_grade, reach_closed}."""
+    concepts. When `cell_dets` (lang-keyed {cell_key: cd}) is given, ALSO computes a
+    per-register-cell breakout under panel["cells"] (H_9212 ③) — the aggregate `dets` path is
+    UNTOUCHED (en byte-identity: the en cells reuse the SAME frozen fns/gate as the aggregate).
+    Returns {hillock, axes:{name:AxisResult}, reach_grade, reach_closed, cells?}."""
     concepts = dets["concepts"]
     hk = hillock(mouth, gen, dets["known"], dets["kwr_fn"], concepts)
     axes = {}
@@ -578,8 +617,41 @@ def run_panel(mouth, corpus_paths, gen, dets):
                     and axes["ρ·weave"]["verdict"] == PASS
                     and axes["ρ·tether"]["verdict"] != FAIL
                     and not any(a["verdict"] == INVALID for a in axes.values()))
-    return {"hillock": hk, "axes": axes, "reach_grade": grade,
-            "reach_closed": reach_closed, "invalid": False}
+    result = {"hillock": hk, "axes": axes, "reach_grade": grade,
+              "reach_closed": reach_closed, "invalid": False}
+    if cell_dets:
+        result["cells"] = {ck: _run_cell(mouth, gen, cell_dets[ck])
+                           for ck in _CELL_ORDER if ck in cell_dets}
+    return result
+
+
+# canonical render order for the 4-cell breakout (a_chat_registers: ko/en × general/sns)
+_CELL_ORDER = ("en_general", "en_sns", "ko_general", "ko_sns")
+
+
+def render_cells(panel):
+    """Render the H_9212 ③ per-register-cell breakout (ko/en × general/sns) — each cell's
+    hillock validity + ρ·form/leap/fan under its dispatched tokenizer/known/gate. Empty string
+    when no per-cell breakout was computed. Every axis line keeps value·control·Δ inline."""
+    cells = panel.get("cells")
+    if not cells:
+        return ""
+    out = ["", "ρ-AXON per-cell breakout (H_9212 ③ · a_chat_registers 4 cells · ko=kwr_ko"
+           " gate / en=frozen 0.70)"]
+    for ck in _CELL_ORDER:
+        c = cells.get(ck)
+        if c is None:
+            continue
+        hk = c["hillock"]
+        out.append("  [%-11s lang=%s]  HILLOCK %-8s rep %.2f · distinct2 %.2f"
+                   % (ck, c["lang"], hk["verdict"], hk["rep_ratio"], hk["distinct2"]))
+        for nm in ("ρ·form", "ρ·leap", "ρ·fan"):
+            a = c["axes"].get(nm, {})
+            v = a.get("verdict", "?")
+            ctrl = " · ".join("%s=%s" % (k, val) for k, val in a.get("controls", {}).items())
+            out.append("      %-8s %-8s val=%s Δ=%s · %s"
+                       % (nm, v, a.get("value"), a.get("delta"), ctrl))
+    return "\n".join(out)
 
 
 def render_panel(panel, tier="TERMINAL"):
