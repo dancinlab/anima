@@ -91,6 +91,53 @@ def _rho_fan_words(s):
     return words
 
 
+def _is_hangul_cp(cp):
+    """rho_axon `_is_hangul` 3 ranges: 가–힣 syllables / ᄀ–ᇿ jamo / ㄰–㆏ compat jamo."""
+    return (0xAC00 <= cp <= 0xD7A3) or (0x1100 <= cp <= 0x11FF) or (0x3130 <= cp <= 0x318F)
+
+
+def _rho_fan_words_uni(s):
+    """codepoint-aware SUPERSET of _rho_fan_words (H_9212 4-cell ko path ONLY; en path stays on
+    the frozen byte splitter — dispatch keeps frozen en bars structurally invariant, Fable design
+    state/frontier_round2_scout/FABLE_rhofan_splitter_design.md). ASCII input = byte-identical to
+    _rho_fan_words (ASCII branch is a verbatim copy). Hangul = the 3 UTF-8 3-byte blocks only; every
+    other high byte is a separator consumed 1 byte at a time (lead E0-EF vs continuation 80-BF are
+    disjoint → no false hangul match). Twin: core/rho_fan.hexa::_rho_fan_words_uni (parity claim)."""
+    bs = _to_bytes(s)
+    n = len(bs)
+    words = []
+    cur = bytearray()
+    i = 0
+    while i < n:
+        b = bs[i]
+        if b < 0x80:                                        # ── ASCII: verbatim _rho_fan_words body ──
+            if _rho_fan_is_alnum(b):
+                cur.append(_rho_fan_lower1(b))
+            else:
+                if len(cur) > 0:
+                    words.append(cur.decode('utf-8'))
+                    cur = bytearray()
+            i += 1
+        elif (0xE0 <= b <= 0xEF and i + 2 < n
+              and 0x80 <= bs[i + 1] <= 0xBF and 0x80 <= bs[i + 2] <= 0xBF):
+            cp = ((b & 0x0F) << 12) | ((bs[i + 1] & 0x3F) << 6) | (bs[i + 2] & 0x3F)
+            if _is_hangul_cp(cp):
+                cur += bs[i:i + 3]                          # raw 3 bytes, no case-fold
+            else:
+                if len(cur) > 0:
+                    words.append(cur.decode('utf-8'))
+                    cur = bytearray()
+            i += 3
+        else:                                               # 2/4-byte lead · orphan continuation · truncated
+            if len(cur) > 0:
+                words.append(cur.decode('utf-8'))
+                cur = bytearray()
+            i += 1
+    if len(cur) > 0:
+        words.append(cur.decode('utf-8'))
+    return words
+
+
 def _rho_fan_dict_load():
     """rho_fan.hexa::_rho_fan_dict_load — stopwords + concept words + /usr/share/dict/words."""
     known = set(_rho_fan_stopwords())
