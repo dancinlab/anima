@@ -653,6 +653,7 @@ def evaluate_usage():
     print("")
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
+    print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
@@ -690,6 +691,16 @@ def evaluate_corpus(argv):
         else:
             i += 1
     return paths
+
+
+def evaluate_strval(argv, flag, dflt):
+    """Return the token after `flag`, else dflt (mirrors evaluate_intval for string args)."""
+    i = 0
+    while i < len(argv):
+        if argv[i] == flag and i + 1 < len(argv):
+            return argv[i + 1]
+        i += 1
+    return dflt
 
 
 def evaluate_intval(argv, flag, dflt):
@@ -956,6 +967,29 @@ def _psi_soma_panel(r):
     print("  ──────────────────────────────────────────────────────────────────")
 
 
+def probe_run(argv):
+    """`anima evaluate --py <ckpt> --probe <spec.json> [--gen N]` — matched-surface G1 probe
+    (card H_6189). Greedy (top_k=1) decode of each pre-registered prompt; dumps RAW continuations
+    for offline scoring. Reuses the canonical _Mouth numpy decode path (byte-identical to the gates)."""
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--probe", "")
+    gen = evaluate_intval(argv[1:], "--gen", 40)
+    spec = json.load(open(spec_path))
+    print("=== anima evaluate --probe — MATCHED-SURFACE G1 (card H_6189) ===")
+    print("ckpt:  " + ckpt)
+    print("spec:  %s (%d items · greedy top_k=1 gen=%d)" % (spec_path, spec["n_items"], gen))
+    mouth = _Mouth(ckpt)
+    out = []
+    for it in spec["items"]:
+        text = mouth.ideate(it["prompt"], gen, 1, 0.7, 6185)   # greedy, fixed seed
+        out.append({"id": it["id"], "prompt": it["prompt"], "continuation": text,
+                    "expect": it["expect"], "arm": it["arm"], "template": it["template"],
+                    "order": it["order"], "window_fit": it["window_fit"]})
+    print(json.dumps({"ckpt": ckpt, "gen": gen, "spec_sha": spec.get("sha", ""),
+                      "n": len(out), "items": out}, ensure_ascii=False))
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -999,6 +1033,10 @@ def main(argv):
         i = argv.index("--system-g1")
         argv = argv[:i] + argv[i + 1:]
         return system_g1_run(argv)
+    # --probe <spec.json>: matched-surface G1 probe (card H_6189). argv[0]=ckpt; probe_run
+    # reads --probe/--gen from the tail. Greedy raw-continuation dump for offline scoring.
+    if "--probe" in argv:
+        return probe_run(argv)
     return evaluate_run(argv)
 
 
