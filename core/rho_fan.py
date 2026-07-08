@@ -156,6 +156,138 @@ def _rho_fan_words_uni(s):
     return words
 
 
+# ════════════════════════════════════════════════════════════════════════
+# ── H_9212 ② 4-cell register concept sets + ko known-word proxy (ADDITIVE · UNWIRED) ──
+# 구현됨·미배선: defines the 4 register cells (a_chat_registers: ko/en × general/sns) and a
+# FROZEN ko josa/function-word KNOWN-WORD proxy. NOT wired into the scored reach panel yet —
+# the per-cell dispatch (③) is gated on ④ KWR_KO_GATE (frozen-first · no tune-to-green).
+# en path stays BYTE-UNTOUCHED: _rho_fan_cells()["en_general"] IS _rho_fan_concepts() verbatim,
+# and en cells tokenize with the frozen _rho_fan_words; only ko cells use the codepoint-aware
+# superset _rho_fan_words_uni. Follow-on = ③ per-cell dispatch in cli/evaluate.py::eval_rho_axon
+# / cli/rho_axon.py (post ④ gate pre-registration). Twin: core/rho_fan.hexa (parity).
+# Fable design: state/frontier_round2_scout/FABLE_rhofan_splitter_design.md §1/§4.
+
+
+def _rho_fan_cells():
+    """The 4 register cells (ko/en × general/sns) as concept-sentence lists for the reach
+    panel. en_general = _rho_fan_concepts() VERBATIM (frozen en bar, byte-identical); the
+    other 3 are the additive register-parallel probe sets. ko cells (key prefix 'ko')
+    tokenize with _rho_fan_words_uni, en cells with the frozen _rho_fan_words (see
+    _rho_fan_cell_words). Twin: core/rho_fan.hexa::_rho_fan_cells."""
+    return {
+        "en_general": _rho_fan_concepts(),
+        "en_sns": [
+            "honestly this whole thing just hits different",
+            "no one talks about how tired we all are",
+            "the timeline moves faster than any thought",
+            "posting into the void still feels like connection",
+            "everyone is awake at three am scrolling alone",
+        ],
+        "ko_general": [
+            "의식은 세포에서 피어난다",
+            "긴장은 멀리 떨어진 마음 사이로 퍼진다",
+            "기억은 새로운 의미로 엮인다",
+            "침묵도 여전히 정보를 담고 있다",
+            "엔진은 홀로 있을 때 꿈을 꾼다",
+        ],
+        "ko_sns": [
+            "솔직히 이거 진짜 느낌 다르다",
+            "다들 얼마나 지쳤는지 아무도 말 안 한다",
+            "타임라인이 생각보다 훨씬 빠르게 흐른다",
+            "허공에 글 올려도 연결된 기분이 든다",
+            "새벽 세시에 다 깨어서 혼자 스크롤한다",
+        ],
+    }
+
+
+def _rho_fan_cell_lang(cell_key):
+    """'ko'|'en' for a cell key — the ③ dispatch key (ko→_rho_fan_words_uni, en→frozen)."""
+    return "ko" if cell_key[:2] == "ko" else "en"
+
+
+def _rho_fan_cell_words(cell_key, s):
+    """Per-cell tokenizer dispatch (③ foundation, UNWIRED): ko cells use the codepoint-aware
+    superset _rho_fan_words_uni, en cells the frozen byte splitter _rho_fan_words. Wiring this
+    into the scored panel is the ③ follow-on (gated on ④). Twin: core/rho_fan.hexa."""
+    if _rho_fan_cell_lang(cell_key) == "ko":
+        return _rho_fan_words_uni(s)
+    return _rho_fan_words(s)
+
+
+# ── ko KNOWN-WORD proxy: josa/function-word set. This is a GRAMMATICALITY proxy, NOT a
+#    lexicon (a_scale_honest_scope) — the ko analog of the en `known` set that gates
+#    ρ·store/ρ·tether. KO_FUNC = exact-match standalone particles/conjunctions; KO_JOSA =
+#    suffix-match josa for whole-eojeol tokens ('의식은' endswith '은', since _rho_fan_words_uni
+#    keeps an eojeol intact). Small frozen literal sets. kwr_ko + the KWR_KO_GATE constant are
+#    the ④ follow-on (frozen-first, corpus/garble-derived), NOT computed here. ──
+
+def _rho_fan_ko_func():
+    """exact-match KO function-word / bare-particle proxy set (frozen literal · grammaticality)."""
+    return {"은", "는", "이", "가", "을", "를", "에", "의", "도", "만", "과", "와",
+            "로", "으로", "그리고", "그러나", "하지만", "그래서", "또한", "그런데",
+            "즉", "따라서", "그", "저", "것", "수", "등"}
+
+
+def _rho_fan_ko_josa():
+    """suffix-match KO josa proxy set for whole-eojeol tokens (frozen literal · '물이'→'이')."""
+    return {"은", "는", "이", "가", "을", "를", "에", "의", "도", "만", "과", "와",
+            "로", "으로", "에서", "부터", "까지", "처럼", "보다", "조차", "마저",
+            "이나", "이랑", "랑", "하고", "께서", "에게", "한테", "로서", "로써", "라도"}
+
+
+def _rho_fan_ko_is_known(word):
+    """ko known-word proxy membership (UNWIRED analog of `w in known`): exact KO_FUNC hit, or a
+    eojeol token ending in a KO_JOSA suffix with a non-empty stem. Grammaticality proxy, NOT
+    lexicality (a_scale_honest_scope). Twin: core/rho_fan.hexa::_rho_fan_ko_is_known — parity is
+    on the boolean predicate (py set / hexa list containers differ, same membership)."""
+    if word in _rho_fan_ko_func():
+        return True
+    for s in _rho_fan_ko_josa():
+        if word.endswith(s) and len(word) > len(s):
+            return True
+    return False
+
+
+def _rho_fan_cells_selftest():
+    """H_9212 ② foundation self-test (engine-internal · run as an INTERNAL SUBPROCESS import,
+    never via top-level `python3 core/rho_fan.py`, which is entry-guarded). Asserts: (1) the
+    en_general cell is _rho_fan_concepts() byte-identical (frozen en bar untouched), (2) every ko
+    cell tokenizes to non-empty word lists under _rho_fan_words_uni AND the per-cell dispatch
+    routes ko→uni / en→frozen, (3) KO_FUNC exact + KO_JOSA suffix membership work. The scored
+    panel is NOT exercised (foundation only). Returns {'ok': bool, 'checks': [(name, bool)…]}."""
+    checks = []
+    cells = _rho_fan_cells()
+    checks.append(("4 register cells present",
+                   set(cells.keys()) == {"en_general", "en_sns", "ko_general", "ko_sns"}))
+    # (1) en_general unchanged (byte-identical to the frozen en concepts)
+    checks.append(("en_general == _rho_fan_concepts() (byte-identical)",
+                   cells["en_general"] == _rho_fan_concepts()))
+    # (2) ko cells tokenize non-empty via _rho_fan_words_uni + dispatch routing
+    for ck in ("ko_general", "ko_sns"):
+        checks.append((ck + " tokenizes non-empty (uni)",
+                       all(len(_rho_fan_words_uni(s)) > 0 for s in cells[ck])))
+        checks.append((ck + " cell-words dispatch → uni",
+                       all(_rho_fan_cell_words(ck, s) == _rho_fan_words_uni(s) for s in cells[ck])))
+    for ck in ("en_general", "en_sns"):
+        checks.append((ck + " cell-words dispatch → frozen _rho_fan_words",
+                       all(_rho_fan_cell_words(ck, s) == _rho_fan_words(s) for s in cells[ck])))
+    # (3) KO_FUNC exact + KO_JOSA suffix membership
+    checks.append(("KO_FUNC exact membership (은/는/이/가)",
+                   all(w in _rho_fan_ko_func() for w in ("은", "는", "이", "가"))))
+    checks.append(("KO_FUNC excludes a content eojeol ('의식은')",
+                   "의식은" not in _rho_fan_ko_func()))
+    checks.append(("ko_is_known suffix hit ('의식은' endswith '은')",
+                   _rho_fan_ko_is_known("의식은")))
+    checks.append(("ko_is_known exact hit (bare '은' ∈ KO_FUNC)",
+                   _rho_fan_ko_is_known("은")))
+    ok = all(c[1] for c in checks)
+    return {"ok": ok, "checks": checks}
+
+
+# ── end H_9212 ② 4-cell + ko known-word proxy (ADDITIVE · UNWIRED) ──
+# ════════════════════════════════════════════════════════════════════════
+
+
 def _rho_fan_dict_load():
     """rho_fan.hexa::_rho_fan_dict_load — stopwords + concept words + /usr/share/dict/words."""
     known = set(_rho_fan_stopwords())
