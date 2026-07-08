@@ -350,7 +350,7 @@ def aggregate(a, cells, out_dir: str):
     md.append(f"- matrix: arms={a.arms} × objectives={a.objectives} "
               f"(seed={a.seed}, steps={a.steps}, gen={a.gen})")
     md.append(f"- cells: {len(rows)}  ·  out-dir: `{out_dir}`")
-    md.append(f"- engines: `cli/train.py` (GPU) + `cli/evaluate.py --py` (CPU numpy, torch-free)")
+    md.append(f"- engines: `cli/train.py` (GPU) + `cli/evaluate.py` (CPU numpy, torch-free)")
     md.append("")
     md += lines
     md.append("")

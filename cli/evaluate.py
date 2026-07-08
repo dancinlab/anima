@@ -675,7 +675,7 @@ def eval_rho_axon(ckpt, corpus_paths, gen):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
-    so its tier is identical (engine-native --py = TERMINAL). HILLOCK + ρ·form/fan/leap are
+    so its tier is identical (engine-native py channel `anima-py evaluate` = TERMINAL). HILLOCK + ρ·form/fan/leap are
     live; ρ·store/weave/tether/self report PENDING (honest non-verdict) until their frozen
     corpus-mined probe sets land (ING rho-axon-implement-evaluate)."""
     import rho_axon
