@@ -562,10 +562,14 @@ def _conv1d(x, Wt, b, T, Cin, Cout, K, dil):
     return mm + b[None, :]
 
 
-def _fwd_logits(W, tok, T):
-    """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
-    Returns logits:[T, V]."""
-    d = W["d"]; E = W["E"]; V = W["V"]; K = W["K"]; L = W["L"]
+def _fwd_trunk(W, tok, T):
+    """Trunk forward through the FINAL groupnorm — returns yn:[T, d], the pre-readout,
+    PRE-E1-slot penultimate hidden (post-MoE, post final-GN). This is the pure-trunk
+    concept representation (E1-slot independent, matching the H_1822 β 303M-trunk-penult
+    precedent). Extracted from _fwd_logits so the decode path (slot+readout applied) and
+    the read-only hidden tap (clm_forward_hidden, ρ·weave / γ binding-lane probe H_9235)
+    share ONE byte-identical trunk forward."""
+    d = W["d"]; E = W["E"]; K = W["K"]; L = W["L"]
     # embedding
     ids = tok.astype(np.int64)
     xe = W["embed"][ids]                          # [T, d]
@@ -592,6 +596,38 @@ def _fwd_logits(W, tok, T):
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d)          # [T, d]
     # final groupnorm
     yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1)
+    return yn
+
+
+def clm_forward_hidden(W, tok, T):
+    """Read-only penultimate-hidden tap — the pre-readout, pre-E1-slot yn:[T, d] (post-MoE,
+    post final groupnorm) for token ids tok:[T]. Engine-native: the EXACT production trunk
+    forward (_fwd_trunk, shared with _fwd_logits), so the dumped representation is
+    byte-identical to what the gates decode over. For the ρ·weave held-out-pair
+    recombination / γ binding-lane probe (H_9235): dumps the pure-trunk concept
+    representation a read-side lane consumes. No decode sampling / readout / perturbation."""
+    ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
+    return _fwd_trunk(W, ta, T)
+
+
+def _seed_to_tok(seed, T):
+    """T-window right-aligned byte encoding (1:1 with the decode seed→tok in
+    clm_decode_topk_sampled_W): utf-8 surrogateescape bytes, right-aligned into a
+    length-T window, left-pad = 32.0 (space). Shared by the hidden-dump probe."""
+    seed_b = seed.encode('utf-8', 'surrogateescape')
+    slen = len(seed_b)
+    tok = np.empty(T, dtype=np.float64)
+    for p in range(T):
+        si = slen - T + p
+        tok[p] = float(seed_b[si]) if si >= 0 else 32.0
+    return tok
+
+
+def _fwd_logits(W, tok, T):
+    """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
+    Returns logits:[T, V]."""
+    d = W["d"]; V = W["V"]
+    yn = _fwd_trunk(W, tok, T)                    # [T, d] pre-readout, pre-slot penultimate
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
     # readout), byte-parity with the torch SLWModule + core/decode.hexa. None =>
     # additive golden path untouched. The eval-time controls are process-global
