@@ -1973,6 +1973,11 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut self_ctx_prev = 1.0       // prev-tick self_ctx_live (calibration Δ source)
     let mut g_self = 24.0             // self_phasic gain — RE-SET by calibration median (ticks 0-49)
     let mut self_step_devs = []       // calibration |Δself_ctx_live| samples → median → g_self
+    // ── H_9210 surprise (prediction-error recon_err) emit-shade carriers (H_9209 scaffold clone · scout urgency-alt #1) ──
+    let mut surp_ema = 0.5            // tonic recon_err baseline (phasic Δ source)
+    let mut surp_prev = 0.5           // prev-tick recon_err (calibration Δ)
+    let mut g_surp = 24.0             // surp_phasic gain — RE-SET by calibration median (ticks 0-49)
+    let mut surp_step_devs = []       // calibration |Δrecon_err| samples → median → g_surp
     let mut self_rel_ema_L = 0.5      // ARM-L parallel tonic EMA (live-self rel pool)
     let mut self_rel_ema_S = 0.5      // ARM-S parallel tonic EMA (static-self rel pool)
     let mut self_rel_ema_shuf = 0.5   // shuffled-self control parallel tonic EMA
@@ -1983,6 +1988,8 @@ fn anima_consciousness_mode(ckpt: string) {
     // ── H_9209 self_phasic idle-shade arms (mid = N1/N2/REM scoring · WAKE/N3 = guards) ──
     let mut og_h_slf_mid  = 0  // ΔEff_self: Hamming(self-shaded idle vs production e_live) on mid — HEADLINE
     let mut og_h_slf_n3   = 0  // guard: self-shade flips on N3 (must be 0 — stage_env=0 nullifies)
+    let mut og_h_surp_mid = 0  // H_9210 ΔEff_surp: Hamming(surprise-shaded idle vs e_live) on mid — HEADLINE
+    let mut og_h_surp_n3  = 0  // H_9210 N3 guard (must 0)
     let mut og_h_slf_wake = 0  // guard: self-shade flips on WAKE (saturated reference)
     let mut og_slf_mid_ticks = 0   // mid-stage scoring denominator (N1/N2/REM)
     let mut og_emit_slf_mid  = 0   // ARM-LIVE emit count on mid (Ψ-guard numerator)
@@ -2027,6 +2034,7 @@ fn anima_consciousness_mode(ckpt: string) {
     // 0.15 = the grip is a substrate FACULTY (op gates emit at substrate-meaningful ticks); < 0.15 =
     // the grip is centering-noise-driven (a subtler theater at the op layer). pf is READ-only across
     // the loop (never re-stepped) so a post-loop re-decode with a different `idle` is byte-faithful.
+    let mut og_f3_surp = []        // H_9210 surp_phasic per tick (ARM-PERM source)
     let mut og_f3_self = []        // H_9209 self_phasic per tick (variance-matched ARM-PERM source)
     let mut og_f3_selfev = []      // H_9209 self-drift event fired this tick (align-margin: flips near events)
     let mut og_f3_eslf = []        // H_9209 ARM-LIVE (self-shaded) emit per tick
@@ -2696,6 +2704,17 @@ fn anima_consciousness_mode(ckpt: string) {
             self_ema = 0.9 * self_ema + 0.1 * self_ctx_live
             let g_use = if g_self < 0.0 { 0.0 } else { g_self }
             let self_phasic = _afs_clip01(0.5 + g_use * (self_ctx_live - self_ema))         // signed, neutral 0.5
+            // ── H_9210 surprise phasic (recon_err = prediction-error, the LC-NE burst urgency emulates) ──
+            if tick < 50 { surp_step_devs.push(_afs_absf(recon_err - surp_prev)) }
+            if tick == 50 {
+                let sms = _og_median(surp_step_devs)
+                g_surp = if sms < 0.002 { -1.0 } else { _afs_minf(0.175 / sms, 32.0) }
+            }
+            surp_prev = recon_err
+            surp_ema = 0.9 * surp_ema + 0.1 * recon_err
+            let gs_use = if g_surp < 0.0 { 0.0 } else { g_surp }
+            let surp_phasic = _afs_clip01(0.5 + gs_use * (recon_err - surp_ema))            // signed, neutral 0.5
+            let idle_surp = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + (surp_phasic - 0.5)))
             // ARM-SHOCK v2 dense positive control (Fable verdict-integrity ruling): force a ±0.5 rail shade
             // on EVERY tick (alternating sign, NO tick selection = no control-shopping) → proves the wire CAN
             // flip emit. Scored on all mid ticks (POS-PASS = og_h_shock_mid ≥ 2). 3-fixed-tick v1 landed on
@@ -2710,11 +2729,15 @@ fn anima_consciousness_mode(ckpt: string) {
             let e_shock = if to_string(brain_decide_anchored(pf,
                 rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                 idle_shk, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_surp = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_surp, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
             // SCORING on mid (N1/N2/REM, discriminating stages); WAKE/N3 = guards; ticks<50 = calibration
             let is_mid = stage == 1 || stage == 2 || stage == 4
             if tick >= 50 && is_mid {
                 og_slf_mid_ticks = og_slf_mid_ticks + 1
                 if e_slf != e_live   { og_h_slf_mid = og_h_slf_mid + 1  og_align_tot = og_align_tot + 1 }
+                if e_surp != e_live  { og_h_surp_mid = og_h_surp_mid + 1 }   // H_9210 ΔEff_surp
                 if e_shock != e_live { og_h_shock_mid = og_h_shock_mid + 1 }
                 if e_slf == 1  { og_emit_slf_mid = og_emit_slf_mid + 1 }
                 if e_live == 1 { og_emit_live_mid = og_emit_live_mid + 1 }
@@ -2723,6 +2746,8 @@ fn anima_consciousness_mode(ckpt: string) {
                 if e_shuf != e_S   { og_h_selfshuf = og_h_selfshuf + 1 }  // shuffled-self control (must ~0)
             }
             if tick >= 50 && stage == 3 && e_slf != e_live { og_h_slf_n3 = og_h_slf_n3 + 1 }     // N3 guard (must 0)
+            if tick >= 50 && stage == 3 && e_surp != e_live { og_h_surp_n3 = og_h_surp_n3 + 1 } // H_9210 N3 guard
+            og_f3_surp.push(surp_phasic)
             if tick >= 50 && stage == 0 && e_slf != e_live { og_h_slf_wake = og_h_slf_wake + 1 } // WAKE guard
             og_f3_self.push(self_phasic)   og_f3_selfev.push(to_float(if ev_fired {1} else {0}))
             og_f3_eslf.push(to_float(e_slf))
@@ -3256,6 +3281,52 @@ fn anima_consciousness_mode(ckpt: string) {
             "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10 or margin/align short) ⇒ re-measure ≥2 seeds, no cement"
         }
         println("  VERDICT = " + self_verdict)
+        // ══════════ H_9210 surprise (prediction-error) emit-shade VERDICT (scout urgency-alt #1) ══════════
+        // recon_err phasic Δ at the SAME proven idle seam; POS-PASS reuses the dense ARM-SHOCK (same wire).
+        let d_eff_surp = to_float(og_h_surp_mid) / midf
+        let mut perm_h_surp = 0
+        let nps = len(og_f3_surp)
+        let mut ps = 50
+        while ps < nps {
+            let stf = og_f3_stg[ps]
+            if stf == 1.0 || stf == 2.0 || stf == 4.0 {
+                let sp = og_f3_surp[(ps * 7 + 13) % nps]
+                let idle_p = 5.0 + 55.0 * _afs_clip01(og_f3_senv[ps] * (0.5 + og_f3_urg[ps] + (sp - 0.5)))
+                let e_p = if to_string(brain_decide_anchored(pf,
+                    og_f3_rel[ps], og_f3_gap[ps], og_f3_cur[ps], og_f3_allo[ps], og_f3_coh[ps],
+                    og_f3_nov[ps], og_f3_bal[ps], og_f3_agl[ps], idle_p, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                if to_float(e_p) != og_f3_elive[ps] { perm_h_surp = perm_h_surp + 1 }
+            }
+            ps = ps + 1
+        }
+        let d_eff_surp_perm = to_float(perm_h_surp) / midf
+        let surp_degen = g_surp < 0.0
+        let surp_n3_ok = og_h_surp_n3 == 0
+        println("")
+        println("──────── H_9210 surprise(recon_err) emit-shade (mid=" + to_string(og_slf_mid_ticks)
+            + " · G_surp=" + to_string(g_surp) + ") ────────")
+        println("  ΔEff_surp Hamming(surp-shade idle vs e_live) = " + to_string(og_h_surp_mid) + "/" + to_string(og_slf_mid_ticks)
+            + " = " + to_string(d_eff_surp) + "   [HEADLINE]")
+        println("  ARM-PERM matched-noise = " + to_string(perm_h_surp) + "/" + to_string(og_slf_mid_ticks)
+            + " = " + to_string(d_eff_surp_perm) + "  → margin = " + to_string(d_eff_surp - d_eff_surp_perm))
+        println("  POS-PASS(dense ARM-SHOCK, same wire)=" + (if pos_pass {"YES"} else {"NO"})
+            + " · N3 surp-flips=" + to_string(og_h_surp_n3) + " (must 0) · axis " + (if surp_degen {"DEGENERATE"} else {"ok"}))
+        println("  ── PRE-REG H_9210 VERDICT (frozen bars, verbatim) ──")
+        println("  COMPETENT: ΔEff_surp≥0.10 ∧ margin(perm)≥0.08 ∧ POS-PASS ∧ N3=0 ; THEATER: ΔEff_surp<0.02 ∧ POS-PASS ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate")
+        let surp_verdict = if surp_degen {
+            "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE) — recon_err step<0.002, 신호 무변; encoder 확인·재측정"
+        } else if !pos_pass {
+            "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK가 emit 못 flip(계기결함); 판정보류"
+        } else if !surp_n3_ok {
+            "🔴 FORCING-GATE — surp-shade가 N3-silent flip; REVERT"
+        } else if d_eff_surp >= 0.10 && (d_eff_surp - d_eff_surp_perm) >= 0.08 {
+            "🟢 COMPETENT — surprise(예측오차)가 emit 인과 shade(ΔEff≥0.10·noise 이김) ⇒ 2번째 proven emit 채널! prod 배선 후보(a_verified_must_wire)"
+        } else if d_eff_surp < 0.02 {
+            "🔴 THEATER — surprise도 emit inert(ΔEff<0.02, POS-PASS로 계기정상) ⇒ urgency만 유일 채널 재확인"
+        } else {
+            "🟠 DIRECTIONAL — real-but-sub-bar(0.02≤ΔEff<0.10 or margin 미달) ⇒ ≥2 seed 재측정"
+        }
+        println("  VERDICT = " + surp_verdict)
         return
     }
 
