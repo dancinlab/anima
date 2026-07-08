@@ -12648,6 +12648,20 @@
         "role": "",
         "id": "component-map-top-level-pyproject-toml-anima-py-deps",
         "detail": "version={file='VERSION'} 동적참조 → 루트 VERSION=0.13.1 자동 lockstep. base 의존=numpy(evaluate·corpus·chat-stub) · [train] extra=torch+datasets(serialize·train·sweep). 규칙=.harness/enforcement.json H-ANIMA-SINGLE-ENTRY(match 불변·desc/reason 만 pip 채널 인정)."
+       },
+       {
+        "name": "PyPI 발행 파이프라인",
+        "role": "",
+        "id": "component-map-top-level-pyproject-toml-anima-py-pypi",
+        "detail": ".github/workflows/release.yml `pypi-publish` job = `pip install anima-py` 발행 경로. OIDC trusted-publishing(토큰저장 없음·git-safety) · needs install-smoke(allgreen-promote) · `v*` 태그 트리거 · 버전중복 skip 가드. 발행 전 소스설치=`pip install git+https://github.com/dancinlab/anima.git`.",
+        "children": [
+         {
+          "name": "오너 1회 설정 (dormant until 활성화)",
+          "role": "",
+          "id": "component-map-top-level-pyproject-toml-anima-py-pypi-owner",
+          "detail": "job 은 if vars.PYPI_PUBLISH 라 오너 2스텝 전엔 dormant(green): ① pypi.org 에 anima-py pending-publisher 등록(Owner=dancinlab·Repo=anima·Workflow=release.yml·Env=pypi) ② `gh variable set PYPI_PUBLISH -b true`. 이후 v* 태그마다 자동발행."
+         }
+        ]
        }
       ]
      }

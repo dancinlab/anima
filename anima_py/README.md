@@ -6,9 +6,21 @@
 
 ## 설치
 
+**PyPI 발행 후** (권장):
+
 ```bash
 pip install anima-py           # base — numpy 만 (evaluate · corpus · chat-stub)
 pip install "anima-py[train]"  # +torch +datasets (serialize · train · sweep)
+```
+
+> ⏳ **PyPI 발행 대기 중**: 위 명령은 `anima-py` 가 PyPI 에 발행된 뒤 동작한다. 발행은 `release.yml` 의 `pypi-publish` job(OIDC trusted-publishing)이 `v*` 태그에서 자동 수행하며, 오너의 1회 설정이 선결(① pypi.org 에 anima-py pending-publisher 등록: Owner=dancinlab·Repo=anima·Workflow=release.yml·Env=pypi ② repo 변수 `PYPI_PUBLISH=true`). 그 전까지는 아래 소스 설치를 쓴다.
+
+**소스에서 바로 설치** (PyPI 없이 지금 가능):
+
+```bash
+pip install "git+https://github.com/dancinlab/anima.git"            # base
+pip install "anima-py[train] @ git+https://github.com/dancinlab/anima.git"  # +torch
+# 또는 레포 클론 후: pip install .   /   pip install ".[train]"
 ```
 
 ## 명령 매트릭스
