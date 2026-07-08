@@ -748,6 +748,28 @@ fn main() {
     }
 
     let ckpt = argv[0]
+
+    // UNKNOWN-FLAG REJECT (footgun guard · hexa↔py parity): this hexa det-eval knows only
+    // --corpus / --gen / --det. The extended research flags (--rho-axon --system-g1 --probe
+    // --dump-hidden --interaction-lift --slot-off --slot-shuffle) are py-canonical
+    // (a_eval_py_canonical) and NOT implemented here. Copying a py-channel command onto the
+    // hexa channel used to SILENTLY run the plain battery (wrong-but-green); reject loudly with
+    // an anima-py pointer instead of a misleading verdict.
+    let mut _ui = 1
+    while _ui < len(argv) {
+        let _tok = argv[_ui]
+        if byte_len(_tok) >= 2 && substring(_tok, 0, 2) == "--" {
+            if _tok != "--corpus" && _tok != "--gen" && _tok != "--det" && _tok != "--deterministic" {
+                println("anima evaluate (hexa): unknown flag '" + _tok + "'.")
+                println("  hexa `anima evaluate` = hexa-native det-eval — known flags: --corpus <path>... --gen N --det.")
+                println("  the ρ-AXON / research flags (--rho-axon --system-g1 --probe --dump-hidden --interaction-lift --slot-off --slot-shuffle) are py-canonical:")
+                println("    anima-py evaluate " + ckpt + " " + _tok + " ...   (pip install anima-python · a_eval_py_canonical)")
+                return
+            }
+        }
+        _ui = _ui + 1
+    }
+
     let corpus = evaluate_corpus(argv)
     let gen = evaluate_intval(argv, "--gen", 40)
 
