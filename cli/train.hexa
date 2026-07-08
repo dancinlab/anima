@@ -980,6 +980,7 @@ fn main() {
     //   --steps <N>             training step budget (overrides mode default)
     //   --d <DIM>               model width (overrides mode default)
     //   --L <N>                 trunk depth (overrides mode default)
+    //   --lr <FLOAT>            learning-rate override (default 0.05; hexa↔py parity)
     //   --corpus <p1> <p2> ...  external byte-corpus cells (a_chat_registers,
     //                           round-robin); absent → fixed verify batch ($0)
     //   --out <ckpt.clm>        serialize trained weights to .clm v0.3
@@ -1236,7 +1237,10 @@ fn main() {
     let mut E = E0
     let split_step = n_steps / 2
 
-    let lr = 0.05
+    // --lr <FLOAT>: learning-rate override (hexa↔py parity — py has --lr; hexa was hardcoded).
+    // Same AdamW recipe; default 0.05. Enables engine-native LR sweeps for the frozen recipe.
+    let lr_arg = cli_val(argv, "--lr")
+    let lr = if byte_len(lr_arg) > 0 { cli_parse_float(lr_arg) } else { 0.05 }
     let mut loss0 = 0.0
     let mut lossF = 0.0
     let mut latched_at = 0
