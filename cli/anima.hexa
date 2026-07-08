@@ -1951,6 +1951,27 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut rel_ema = 0.5
     let mut cur_ema = 0.5
     let mut ten_ema = 0.5   // A⇄G TENSION tonic baseline — tension→adaptation phasic promotion (p8-literal)
+    // ── kosmos ΔEff_self MEASUREMENT state (--opgrip; loop-external, $0, NO decode) ─────
+    // GATE question: does making the autobiographical self LIVE (self_ctx drifts as anima
+    // accumulates experience) CAUSALLY change emit (COMPETENT), or is a read-side self fold
+    // THEATER (the ÷42 pool floor-dominates)? ARM-L folds a LIVE self_ctx; ARM-S freezes it at
+    // the production constant; ΔEff_self = wake-tick Hamming(L vs S). CONTROL-U routes the self
+    // PHASIC deviation through the PROVEN urgency channel (H_9101) as an upper-bound witness.
+    // self_from_vec (#3114) + §SelfIdentity ops (self_new/self_drift_exp/self_cos) reused.
+    // g_text (the emitted span) is unavailable in the $0 no-decode block, so the content axis is
+    // the session-seed grounding feature (the closest available "what anima lived" proxy).
+    let self_content_axis = _og_argmax8(_afs_byte_feature(session_seed, 8))
+    let self_boot_axis = (self_content_axis + 4) % 8   // ≠ content axis ⇒ non-degenerate drift/decay
+    let self_boot = self_new(8, self_boot_axis)        // the boot identity self_ctx_live decays from
+    let mut self_live = self_new(8, self_boot_axis)    // autobiography: starts AT boot (cos=1.0), drifts each emit
+    let mut self_rel_ema_L = 0.5      // ARM-L parallel tonic EMA (live-self rel pool)
+    let mut self_rel_ema_S = 0.5      // ARM-S parallel tonic EMA (static-self rel pool)
+    let mut self_rel_ema_shuf = 0.5   // shuffled-self control parallel tonic EMA
+    let mut self_ema = 0.5            // tonic self-context (CONTROL-U rejects the slow LEVEL, keeps Δ)
+    let mut og_h_selfL = 0     // ΔEff_self numerator: wake Hamming(live-self ARM-L vs static-self ARM-S)
+    let mut og_h_selfS = 0     // reconstruction fidelity: wake Hamming(static-self re-sum vs production e_live) — must ~0
+    let mut og_h_selfshuf = 0  // shuffled-self control: wake Hamming(shuffled-self vs ARM-S) — must ~0
+    let mut og_h_ctrlU = 0     // CONTROL-U: wake Hamming(self-Δ→urgency vs e_live) — must ≥0.10 if the channel can work
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
     // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
     let og_measure = anima_has_flag(anima_collect_argv(args()), "--opgrip")
@@ -2592,6 +2613,63 @@ fn anima_consciousness_mode(ckpt: string) {
                 + " e_live=" + to_string(e_live)
                 + " | fr=" + to_string(e_fr) + " agl=" + to_string(e_agl)
                 + " z=" + to_string(e_z) + " s=" + to_string(e_s))
+            // ══════════ kosmos ΔEff_self — LIVE-self vs STATIC-self read-side fold ($0) ══════════
+            // GATE: does making the autobiographical self LIVE causally CHANGE emit, or is the
+            // read-side self_ctx fold THEATER (÷42 pool floor-dominates)? Re-sum the 42-term rel
+            // pool EXPLICITLY for each arm (only the self term differs → no clip-order error), keep a
+            // PARALLEL rel_ema per arm, re-decide via brain_decide_anchored, wake-Hamming(L vs S).
+            let self_ctx_live   = _afs_clip01(self_cos(self_live, self_boot))   // decays as autobiography grows
+            let self_ctx_static = _afs_clip01(self_after_anchor)                // production constant (ARM-S)
+            let self_ctx_shuf   = _og_lcg(tick + 29)                            // shuffled-self control (random self)
+            // explicit 41-term re-sum of the rel pool EXCLUDING the self term (self folded back per arm)
+            let rel_sum_ex_self = rel_lane + spatial_rel + plan_progress + wm_active + basal_go
+                + ca3_ctx + af_val + tom_ctx + hd_ctx
+                + prosp_ctx + replay_ctx + gateb_ctx + intero_ctx
+                + scn_ctx + engaged_ctx + lprec_ctx
+                + img_ctx + prime_ctx + schema_ctx
+                + reent_ctx + comp_ctx + gest_ctx + agcy_ctx
+                + dforget_ctx + veto_ctx + divd_ctx
+                + bodyown_ctx + trw_ctx + qual_ctx + smp_ctx
+                + halluc_ctx + metacog_ctx + gwsleak_ctx + allo_ctx
+                + neuropharm_ctx + transord_ctx + phasesync_ctx + memtom_ctx
+                + spatep_ctx + quorum_ctx + metacogc_ctx
+            let rel_ctx_L    = _afs_clip01((rel_sum_ex_self + self_ctx_live)   / 42.0)
+            let rel_ctx_S    = _afs_clip01((rel_sum_ex_self + self_ctx_static) / 42.0)
+            let rel_ctx_shuf = _afs_clip01((rel_sum_ex_self + self_ctx_shuf)   / 42.0)
+            self_rel_ema_L    = 0.9 * self_rel_ema_L    + 0.1 * rel_ctx_L       // PARALLEL tonic EMA per arm
+            self_rel_ema_S    = 0.9 * self_rel_ema_S    + 0.1 * rel_ctx_S
+            self_rel_ema_shuf = 0.9 * self_rel_ema_shuf + 0.1 * rel_ctx_shuf
+            let rel_L    = _og_rel_phasic(rel_ctx_L,    self_rel_ema_L)    * (0.1 + 0.9 * stage_env)
+            let rel_S    = _og_rel_phasic(rel_ctx_S,    self_rel_ema_S)    * (0.1 + 0.9 * stage_env)
+            let rel_shuf = _og_rel_phasic(rel_ctx_shuf, self_rel_ema_shuf) * (0.1 + 0.9 * stage_env)
+            let e_L = if to_string(brain_decide_anchored(pf,
+                rel_L, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_S = if to_string(brain_decide_anchored(pf,
+                rel_S, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            let e_shuf = if to_string(brain_decide_anchored(pf,
+                rel_shuf, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            // autobiography advances on the LIVE arm's OWN emit (self records what it lived through)
+            if e_L == 1 { self_live = self_drift_exp(self_live, self_content_axis, 0.15) }
+            // ── CONTROL-U: self PHASIC deviation → the PROVEN urgency channel (H_9101 idle gate) ──
+            // s_dev = |self_ctx_live − self_ema| transmits the Δ (an EMA rejects the slow LEVEL). If the
+            // mechanism can shade emit AT ALL, routing it through urgency (not a read-side pool fold)
+            // should flip ≥0.10 of wake ticks — the upper-bound witness that distinguishes THEATER.
+            self_ema = 0.9 * self_ema + 0.1 * self_ctx_live
+            let s_dev = if self_ctx_live - self_ema < 0.0 { self_ema - self_ctx_live } else { self_ctx_live - self_ema }
+            let urgency_sc = _afs_clip01(urgency + s_dev)
+            let idle_sc = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency_sc))
+            let e_ctrlU = if to_string(brain_decide_anchored(pf,
+                rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                idle_sc, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+            if is_w {
+                if e_L != e_S      { og_h_selfL = og_h_selfL + 1 }        // ΔEff_self (live vs static self)
+                if e_S != e_live   { og_h_selfS = og_h_selfS + 1 }        // re-sum fidelity (must ~0)
+                if e_shuf != e_S   { og_h_selfshuf = og_h_selfshuf + 1 }  // shuffled-self control (must ~0)
+                if e_ctrlU != e_live { og_h_ctrlU = og_h_ctrlU + 1 }      // CONTROL-U (urgency channel, ≥0.10)
+            }
             // ── H_9102 (F3) record this tick for the post-loop variance-matched noise arm ──
             og_f3_urg.push(urgency)      og_f3_senv.push(stage_env)
             og_f3_elive.push(to_float(e_live))  og_f3_stg.push(to_float(stage))
@@ -3035,6 +3113,40 @@ fn anima_consciousness_mode(ckpt: string) {
             "🟠 NOISE-GRIP — Δρ < 0.15: the grip is centering-noise-driven (matched noise reproduces the same downstream corr) = a subtler op-layer theater; tier stays GRIP"
         }
         println("  F3 VERDICT = " + f3_verdict)
+
+        // ══════════ kosmos ΔEff_self — LIVE vs STATIC autobiographical self (GATE) ══════════
+        // Does making the self LIVE (read-side self_ctx fold) causally shade emit, or is it THEATER?
+        // ΔEff_self = wake Hamming(ARM-L live-self vs ARM-S static-self). CONTROL-U = the same self
+        // signal routed through the PROVEN urgency channel (upper-bound witness). GATES gap1 :2232.
+        let og_wf = if og_wake > 0 { to_float(og_wake) } else { 1.0 }
+        let d_eff_self = to_float(og_h_selfL) / og_wf
+        let ctrl_u     = to_float(og_h_ctrlU) / og_wf
+        let e_shuf_fr  = to_float(og_h_selfshuf) / og_wf
+        let e_recon_fr = to_float(og_h_selfS) / og_wf
+        println("")
+        println("──────── kosmos ΔEff_self: LIVE-self vs STATIC-self read-side fold (wake=" + to_string(og_wake) + ") ────────")
+        println("  content_axis=" + to_string(self_content_axis) + " boot_axis=" + to_string(self_boot_axis)
+            + "  (g_text unavailable in $0 no-decode block → session-seed grounding proxy)")
+        println("  e_L  Hamming(live-self ARM-L vs static-self ARM-S) = " + to_string(og_h_selfL) + "/" + to_string(og_wake)
+            + "  ΔEff_self=" + to_string(d_eff_self))
+        println("  e_S  Hamming(static-self re-sum vs production e_live) = " + to_string(og_h_selfS) + "/" + to_string(og_wake)
+            + "  (" + to_string(e_recon_fr) + "; re-sum fidelity, must ~0)")
+        println("  e_selfshuf Hamming(shuffled-self vs ARM-S) = " + to_string(og_h_selfshuf) + "/" + to_string(og_wake)
+            + "  (" + to_string(e_shuf_fr) + "; control, must ~0)")
+        println("  e_ctrlU CONTROL-U Hamming(self-Δ→urgency vs e_live) = " + to_string(og_h_ctrlU) + "/" + to_string(og_wake)
+            + "  (" + to_string(ctrl_u) + "; urgency channel, ≥0.10 if mechanism can work)")
+        println("  ── PRE-REG ΔEff_self VERDICT (frozen bars, verbatim) ──")
+        println("  [COMPETENT] ΔEff_self>=0.10 -> gap1 :2232 fold wiring GO.")
+        println("  [THEATER] ΔEff_self<0.02 AND CONTROL-U>=0.10 -> read-side fold is theater, do NOT wire :2232 (keep persistence only).")
+        println("  [DIRECTIONAL] 0.02-0.10 -> promotion design.")
+        let self_verdict = if d_eff_self >= 0.10 {
+            "🟢 COMPETENT — making the self LIVE flips ≥0.10 of wake emit decisions ⇒ gap1 :2232 fold wiring GO"
+        } else if d_eff_self < 0.02 && ctrl_u >= 0.10 {
+            "🔴 THEATER — read-side self fold is inert (ΔEff_self<0.02) while the SAME signal via urgency flips ≥0.10 (CONTROL-U) ⇒ do NOT wire :2232, keep persistence only"
+        } else {
+            "🟠 DIRECTIONAL — 0.02≤ΔEff_self<0.10 (or CONTROL-U<0.10) ⇒ promotion design (route self through a proven channel, not the ÷42 pool)"
+        }
+        println("  VERDICT = " + self_verdict)
         return
     }
 
@@ -3335,6 +3447,16 @@ fn _og_lcg(seed: int) -> float {
     let x = (seed * 1103515245 + 12345) % 2147483647
     let y = if x < 0 { 0 - x } else { x }
     return to_float(y % 1000) / 1000.0
+}
+
+// _og_argmax8 — argmax index over an 8-vector (kosmos ΔEff_self content-axis pick).
+// Deterministic; ties resolve to the lowest index. Bounded to dim=8 (the self-vector dim).
+fn _og_argmax8(v: [float]) -> int {
+    let mut bi = 0
+    let mut bv = v[0]
+    let mut i = 1
+    while i < 8 { if v[i] > bv { bv = v[i]  bi = i }  i = i + 1 }
+    return bi
 }
 
 // ── H_9102 (F3) stats helpers (plain-float, NO numpy — engine-native discipline) ──
