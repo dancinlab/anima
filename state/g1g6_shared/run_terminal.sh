@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # H_9128 TERMINAL — 3-arm (HI/LO/SHUF) identical-recipe warm-FT + canonical gen=40
 # multiseed G1 gate + shuffle-bind margin. summer RTX5070 own-GEMM, $0 owned pool.
-# canonical single-entry: `anima train` / `anima evaluate` (a_cli_single_entry).
+# canonical single-entry: `anima train --py` (train) / `anima-py evaluate` (eval, pip anima-python · PR#3201). a_cli_single_entry.
 set -u
 ROOT=$HOME/g1g6_terminal
 BROAD=$HOME/anima_bgrecomb/corpus4cell
@@ -31,7 +31,7 @@ train_arm () {  # arm  en_block  ko_block  out
 eval_arm () {  # arm  out
   local arm=$1 out=$2
   echo "===== [eval $arm] canonical gen=40  $(date) ====="
-  anima evaluate --py "$out" --gen 40 > evals/canon_$arm.log 2>&1
+  anima-py evaluate "$out" --gen 40 > evals/canon_$arm.log 2>&1
   echo "  canon-eval rc=$?"
   grep -iE "best_distinct|max_single|G1|RECOMBINATION|COHERENCE|G6|IDEATION|falsifiable" evals/canon_$arm.log | head -12
   echo "  --- multiseed (7,107,207) ---"
