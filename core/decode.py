@@ -539,6 +539,12 @@ def clm_load_weights(path):
     from slw import read_slw
     W["slw"], off = read_slw(rb, off)
 
+    # ── optional "CLML" read-side context-pooling lane trailer (fork A · H_9235) ──
+    # Appended after the SLW trailer. Absent/short => clml=None => byte-identical forward
+    # (lane_apply passthrough). CORE-owned codec in core/clml.py.
+    from clml import read_clml
+    W["clml"], off = read_clml(rb, off, W["d"], W["V"])
+
     return W
 
 
@@ -628,6 +634,7 @@ def _fwd_logits(W, tok, T):
     Returns logits:[T, V]."""
     d = W["d"]; V = W["V"]
     yn = _fwd_trunk(W, tok, T)                    # [T, d] pre-readout, pre-slot penultimate
+    yn_trunk = yn                                 # keep pre-slot trunk penultimate for the CLML read-side lane
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
     # readout), byte-parity with the torch SLWModule + core/decode.hexa. None =>
     # additive golden path untouched. The eval-time controls are process-global
@@ -650,6 +657,12 @@ def _fwd_logits(W, tok, T):
         out_logits = g @ W["roWt"] + W["roB"]     # [T, V]  roWt=(k,V)
     else:
         out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1)  # [T, V]
+    # fork-A CLML read-side context-pooling lane (H_9235) — reads the pre-slot trunk
+    # penultimate, causal-mean-pools the full context, adds a gated tether-clipped logit
+    # bias. None/absent => passthrough (byte-identical). DISJOINT (read-only + additive bias).
+    if W.get("clml") is not None:
+        from clml import lane_apply
+        out_logits = lane_apply(yn_trunk, out_logits, W["clml"])
     return out_logits
 
 
