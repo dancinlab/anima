@@ -14333,6 +14333,13 @@
         "value": "frozen control은 그 자체 semantics를 먼저 검증해야 한다 — operator_test.py의 add_base 'additive baseline' 통제가 round(σ(Pu·E[a]))^round(σ(Pu·E[b]))=φ를 각각 디코드 후 외부에서 XOR한 것이라 '가산 readout floor'가 아니라 interaction 그 자체 → 자명하게 1.0을 내며 GATE-FAIL(=code leak)로 오판. 진짜 additive floor=additive substrate 그 자체(op=0.377). verdict-integrity 계열 재발: 측정 divergence/게이트-실패는 target 결함 전에 harness/통제 결함부터 의심.",
         "threshold": "재발조건: 새 통제/metric이 gate 판정을 뒤집을 때, 그 통제가 측정하려는 것을 실제로 측정하는지(비선형/외부연산 누출 없는지) semantic 검증 없이 신뢰. 해결: 통제 정의를 1:1로 되짚고(reference-match), gate-FAIL이면 통제-버그 가설을 먼저 배제한 뒤 과학결과로 박제. additive baseline은 반드시 선형-합산 readout이어야 하며 외부 round/threshold/XOR 금지.",
         "source": "state/g1_c2_grounded/operator_test.py"
+      },
+      {
+        "id": "train-py-5",
+        "state": "pos-conv",
+        "value": "canon bytegpt bg_n_head 12 하드코딩이 생산 base h1129(d=1024,n_head=16,head_dim=64) warm-FT 를 막음: 1024%12≠0 로 'embed_dim must be divisible by num_heads' 즉사 + n_head=16 state_dict shape 불일치. head_dim=64 불변식이므로 bg_n_head=d//64 유도(768→12·1024→16)가 근본수정.",
+        "threshold": "재발조건: canon bytegpt 학습/warm-FT 가 특정 --d 에서 'divisible by num_heads' 또는 warm-start shape-mismatch/missing≠[] 로 죽으면 n_head 하드코딩 의심. 해결: n_head=d//64 유도, 하드코딩 금지. cli/train.py:1192(2026-07-08).",
+        "source": "cli/train.py"
       }
     ]
   }
