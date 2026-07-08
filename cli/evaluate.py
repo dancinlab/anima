@@ -740,8 +740,9 @@ def evaluate_usage():
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
-    print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24]")
-    print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235)")
+    print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
+    print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
+    print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("")
@@ -1095,6 +1096,7 @@ def dump_hidden_run(argv):
     spec_path = evaluate_strval(argv[1:], "--dump-hidden", "")
     out_path = evaluate_strval(argv[1:], "--out", "hidden_dump.npz")
     T = evaluate_intval(argv[1:], "--win", 24)
+    with_logits = "--with-logits" in argv   # also dump base (lane-OFF) full-forward last-pos logits (lane training)
     spec = json.load(open(spec_path))
     items = spec["items"] if "items" in spec else spec.get("prompts", [])
     print("=== anima evaluate --dump-hidden — ρ·weave / γ binding-lane probe (H_9235) ===")
@@ -1111,7 +1113,11 @@ def dump_hidden_run(argv):
     for it in items:
         pid = str(it["id"]); prompt = it["prompt"]
         tok = clm._seed_to_tok(prompt, T)
-        yn = clm.clm_forward_hidden(W, tok, T)          # [T, d] float64
+        if with_logits:                                 # yn + base (lane-OFF) logits in ONE forward
+            yn, lg = clm.clm_forward_hidden_logits(W, tok, T)
+            store[pid + "__logits"] = lg[T - 1].astype(np.float32)
+        else:
+            yn = clm.clm_forward_hidden(W, tok, T)      # [T, d] float64 (pre-slot trunk penultimate)
         store[pid + "__seq"] = yn.astype(np.float32)
         store[pid + "__mean"] = yn.mean(axis=0).astype(np.float32)
         store[pid + "__last"] = yn[T - 1].astype(np.float32)
