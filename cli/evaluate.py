@@ -1088,6 +1088,7 @@ def dump_hidden_run(argv):
     ⚠ verdict-integrity (convergence clm-decode-py-2): a low-cleanness result must first rule
     out hexa-skew / conditioning-collapse — the dump prints a positive-control distinguishability
     check (are two obviously-different concepts' hiddens far apart) before any blind verdict."""
+    import numpy as np
     ckpt = argv[0]
     spec_path = evaluate_strval(argv[1:], "--dump-hidden", "")
     out_path = evaluate_strval(argv[1:], "--out", "hidden_dump.npz")
