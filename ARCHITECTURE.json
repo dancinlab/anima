@@ -1,4 +1,79 @@
 {
+  "datasets": [
+    {
+      "id": "anima-corpus-en-general",
+      "repo_id": "dancinlab/anima-corpus-en-general",
+      "lang": "en",
+      "register": "general",
+      "rows": 279429,
+      "size": "60.05MB",
+      "visibility": "public",
+      "role": "chat-train",
+      "note": "🇬🇧 en-general (FineWeb cap, ODC-BY)",
+      "lang_verified": true,
+      "features": [
+        "FineWeb HuggingFaceFW/fineweb",
+        "ODC-BY",
+        "sha256:66140944"
+      ],
+      "updated": "2026-07-08T09:57:23.107Z"
+    },
+    {
+      "id": "anima-corpus-en-sns",
+      "repo_id": "dancinlab/anima-corpus-en-sns",
+      "lang": "en",
+      "register": "sns",
+      "rows": 6862,
+      "size": "1.33MB",
+      "visibility": "public",
+      "role": "chat-train",
+      "note": "🇬🇧 en-SNS ⚠️ KNOWN-SMALL baseline (no permissive large en-SNS source; size-proportional sampling to avoid memorization; youtube/insta-en aug = follow-up ING)",
+      "lang_verified": true,
+      "features": [
+        "5lang-split clean en",
+        "MIT",
+        "KNOWN-SMALL",
+        "sha256:49f347c7"
+      ],
+      "updated": "2026-07-08T09:57:23.690Z"
+    },
+    {
+      "id": "anima-corpus-ko-general",
+      "repo_id": "dancinlab/anima-corpus-ko-general",
+      "lang": "ko",
+      "register": "general",
+      "rows": 340512,
+      "size": "60.0MB",
+      "visibility": "public",
+      "role": "chat-train",
+      "note": "🇰🇷 ko-general (FineWeb-2 kor_Hang cap, ODC-BY)",
+      "lang_verified": true,
+      "features": [
+        "FineWeb-2 kor_Hang",
+        "ODC-BY",
+        "sha256:19e6ac9e"
+      ],
+      "updated": "2026-07-08T09:57:22.834Z"
+    },
+    {
+      "id": "anima-corpus-ko-sns",
+      "repo_id": "dancinlab/anima-corpus-ko-sns",
+      "lang": "ko",
+      "register": "sns",
+      "rows": 47994,
+      "size": "6.18MB",
+      "visibility": "public",
+      "role": "chat-train",
+      "note": "🇰🇷 ko-SNS (persona + MIT/apache aug)",
+      "lang_verified": true,
+      "features": [
+        "persona+5lang-split+MIT/apache aug",
+        "NLPBada/JaeJiMin/jojo0217",
+        "sha256:c836e9fc"
+      ],
+      "updated": "2026-07-08T09:57:23.405Z"
+    }
+  ],
  "models": [
   {
    "id": "anima-e1-slw-303m",

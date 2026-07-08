@@ -1543,13 +1543,21 @@ def main():
                 dbes_log.append(db)
         if step == 1 or step % a.log_every == 0 or step == steps:
             vtxt = ""
+            ptxt = ""
             if do_val and rank == 0:
                 per = val_per_cell()
                 vc = (sum(per.values()) / len(per)) if per else float("nan")
                 vtxt = f"  val_CE={vc:.5f}"
+                # ⑤ per-cell CE dict (ko/en × general/sns) — MONITOR-ONLY, additive log of
+                # the already-tracked per-register held-out CE. NEVER enters the loss
+                # (a_train_inline_gauge · p7 NO PERPLEXITY VERDICT); decomposes the pooled
+                # val_CE above so per-cell descent is visible per (a_chat_registers) cell.
+                if per:
+                    ptxt = "  per_cell_CE=" + json.dumps(
+                        {k: round(v, 5) for k, v in per.items()})
             atxt = (" " + json.dumps({k: round(v, 4) for k, v in aux.items()})) if aux else ""
             p0(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
-               f"wd={wd:.4f} dp={dp:.4f}{vtxt}{atxt}", flush=True)
+               f"wd={wd:.4f} dp={dp:.4f}{vtxt}{ptxt}{atxt}", flush=True)
     wall = time.time() - t0
 
     # ══ §6 FINALIZE — held-out val / DBES / gauges / ckpt / summary / serialize are ALL
