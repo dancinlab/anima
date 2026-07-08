@@ -14369,6 +14369,13 @@
         "value": "anima train/evaluate 는 실행 전 'cd $ANIMA_SRC'(bundle/) 로 이동한 뒤 python 을 exec 한다 → --out/ckpt 등 상대경로 인자는 bundle/ 기준으로 해석돼 엉뚱한 곳(없는 dir)을 가리킨다. run_terminal.sh 가 --out ckpt/out_hi.bin(상대) 을 넘겨 HI 2000step 학습을 다 돌고 저장시점에 'Parent directory ckpt does not exist' 크래시(train rc=0 은 바깥 echo, python 은 저장서 죽음·GPU 20분 낭비). pool 원격 학습 전량 재발 위험.",
         "threshold": "재발조건: pool 에서 anima train/evaluate 가 'train rc=0 인데 ckpt 파일 없음' 또는 'Parent directory X does not exist' 로 죽으면 = 상대경로 인자를 $ANIMA_SRC-cd 가 깨뜨린 것. 해결: --out/--corpus/ckpt 등 anima 에 넘기는 모든 파일경로를 절대경로($ROOT/...)로. run_terminal.sh:44-51 반영(2026-07-09).",
         "source": "state/g1g6_shared/run_terminal.sh"
+      },
+      {
+        "id": "evaluate-py-5",
+        "state": "pos-conv",
+        "value": "cli/evaluate.py는 numpy를 모듈-레벨로 import하지 않고 각 함수 내부서 'import numpy as np' 로컬 import한다. 신규 함수(interaction_lift_run 등)에 np.* 쓰면서 로컬 import 빠뜨리면 ast/syntax는 통과하나 런타임 NameError: name 'np' is not defined 크래시 — engine-native 실행(summer 303M decode)서야 발견(H_9255 --interaction-lift #3186 후속).",
+        "threshold": "재발조건: cli/evaluate.py에 numpy 쓰는 새 함수 추가 후 로컬 'import numpy as np' 누락 → ast OK인데 실행시 NameError np. 해결: evaluate.py 신규 함수는 첫 줄에 'import numpy as np' 명시. syntax check로 안 잡히니 canonical anima evaluate 실경로 스모크 필수.",
+        "source": "cli/evaluate.py"
       }
     ]
   }
