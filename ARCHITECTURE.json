@@ -14019,6 +14019,13 @@
     "value": "verdict-critical 수치(ρ·weave best_distinct/max_single 등 collapse-Δ margin)는 ρ-AXON reach 요약줄에 인라인돼야 한다 — verbose G0-G6 패널에만 두면 컨트롤 arm 캡처(tail -N)가 그 줄을 잘라 KILL vs INVALID 판정 불가. E1(H_9200) 3-arm서 --slot-off/--slot-shuffle 이 tail -20 캡처라 best_distinct 유실→반전신호 해석 막힘. fix: reach 요약줄이 [bd=N max_s=M]/[kwr]/[novel]/[fab]/[dist fals] 인라인 보유(어떤 캡처로도 margin 생존).",
     "threshold": "재발조건: 컨트롤/ablation arm 판정이 '수치 없음'으로 막히면 → 판정수치가 truncate-취약한 verbose 전용줄에만 있는지 확인. 해결: 판정 margin을 always-tail-surviving 요약 블록에 인라인 · verdict 측정 스크립트는 컨트롤 arm을 tail 절대금지(full capture).",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "verifier-toy-py-1",
+    "state": "pos-conv",
+    "value": "재조합/조합 mechanism toy는 mechanism arm 판정 전에 base의 조합 일반화능력을 반드시 검증 — control(oracle/corpusnull)이 eval-only서 lift하는지. 일반 random-embedding MLP는 모듈러/군 task를 memorize 100%·generalize 0%(90%+3000ep held-out=0, grokking-hard)라 어떤 mechanism(A⇄B debate·verifier)도 lift 못보임=untestable(전 arm floor). 이번 세션 3 toy(ab_debate anti-gen·calibration·verifier grokking-block) 동일벽 재현. verifier truth주입은 필요조건이지 충분조건 아님 — base 조합 inductive-bias도 필요(=303M CE-trunk memorize·not compose 유비).",
+    "threshold": "재발조건: 조합 toy의 전 arm(oracle/corpusnull 상한 포함)이 eval-only서 floor(~0). 해결: mechanism 판정 전에 '90% 커버리지+충분 epoch서 held-out generalize?' 학습성 게이트 먼저 — corpusnull/oracle이 lift 안하면 base 교체(tied-embedding·relational·grokking-tuned) 후 재실행. base 못 grok하면 mechanism KILL로 박지 말 것(아키텍처-blocked=INCONCLUSIVE).",
+    "source": "state/ab_debate_recombination/verifier_toy.py"
    }
   ]
  }
