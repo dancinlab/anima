@@ -28,5 +28,8 @@ G1 GATE 측정 개념 5개(consciousness·tension·memory·silence·dream) = **0
 ## 🟡 CONSTRUCTIVE 잔여
 유일 정합수 = G1을 **grounded/perceptual 짝으로 re-scope**(concrete 개념, 예 ocean×ember) → C2가 legitimately earned 조합-MI 주입 가능. 순수 추상 재조합은 천장 수용. 다음 falsifier(선택): 가용 sensor 스트림서 concrete held-out 짝의 I(sensor;combo) $0 추정.
 
+## 자식 후보 카드 (C1–C10, 2표면 등록)
+- C1 [[H_9215]] STDP·C2 [[H_9216]] sensorimotor🏆·C3 [[H_9217]] 해마·C4 [[H_9218]] phase·C5 [[H_9219]] reservoir·C6 [[H_9220]] partner·C7 [[H_9221]] EEG·C8 [[H_9222]] 소뇌·C9 [[H_9223]] neurogenesis·C10 [[H_9224]] kosmos
+
 ## artifacts
 - state/g1_external_component_analysis/{fable_external_menu.md, c2_correlate_check.py}
