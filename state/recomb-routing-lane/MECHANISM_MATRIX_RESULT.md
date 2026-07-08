@@ -29,3 +29,9 @@ handed(pos-ctrl)=1.000 [VALID ✓]  ·  shuffle=0.000  (hadamard 수치안정화
 
 ## 인프라 (재현 · 이 세션 upstream-fix)
 dump=canonical `anima-py`(pip·numpy-only·earlyoom/hexa-build 회피 · convergence evaluate-py-1 #3209). summer=earlyoom-kill 폐기. 버그픽스: xor_t float64(#3212)·hadamard G-표준화(#3221·hadamard 여전 미측정). 코드=`fork_a_matrix.py`.
+
+
+## ⚠️ P0 copy-discount 정정 (2026-07-09 #3231 + nocopy 재조정)
+이 매트릭스(`fork_a_matrix.py`)의 task = 2-concept **code-XOR**(개념단어 literal + 암기 code)이 **copy-confounded**로 판명(`copy_discount_p0.py`): 비선형 surface null(byte-ngram bag gelu-MLP·hidden無)이 held-out XOR=1.000 > clml 0.979 → M_copy=-0.021<0.30. ⟹ **이 매트릭스의 "clml optimal·hadamard valid·query≈mean" 결론은 surface-solvable 약task 위 = ρ·weave(의미합성) 측정 아님**(방향성만 유효: gelu/pool이 이 surface task의 lever).
+- **rigorous 경로 = 병렬세션 clml Gate 프로그램**(`clml_gate12.py`): **`nocopy_prompts.json`·non-copyable word-initial 위치 real next-byte** task로 Gate1이 copy-guard(base CE≫0 at non-copyable). Gate1-3 PASS(#3227), Gate4 engine-native system-G1 aiden 계산중=live TERMINAL.
+- **따라서 추가 메커니즘 arm(HRR/TPR/RN/Hopfield #3228)은 code-XOR 아니라 nocopy task에서 측정해야** 의미. 병렬세션 nocopy_hidden.npz 재사용(중복 dump 금지·조율).
