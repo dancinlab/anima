@@ -1,6 +1,7 @@
 # H_9228 — Family D: thalamic relay tonic-gain port RANK 4
 
 **tier:** ⏳ PRE-REGISTERED (Fable 설계 · bars frozen · p7 no tune-to-green)
+> ⚠️ shared currency-conversion premise weakened by H_9225 THEATER (still untested).
 **scope:** engine→mouth seam missing-intermediate — multiplicative gain port(rate≠timing)
 **cost:** **$0** op-grip
 **artifact:** `state/seam_missing_intermediate/`

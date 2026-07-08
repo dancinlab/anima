@@ -742,6 +742,8 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235)")
+    print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
@@ -1204,6 +1206,66 @@ def _selftest_rho_cells():
     return ok, checks
 
 
+def interaction_lift_run(argv):
+    """`anima evaluate --py <ckpt> --interaction-lift <manifest.json> --out <file.json>
+    [--win T] [--score-len K]` — engine-native joint interaction-lift measurement
+    (H_9255, Fable design state/g1_joint_interaction_corpus/DESIGN_FABLE.md §3).
+
+    For each pre-registered window (a byte span carrying an (A,B) concept pair, cell-
+    labelled), the EXACT production trunk forward emits the model's per-continuation NLL
+    (mean over the last --score-len scored positions). Read-only: reads logits, changes
+    NO decode math, adds NO term to any loss (a_train_inline_gauge / p7 clean). Per-cell
+    NLL lists are dumped so the OFFLINE joint-fit (additive vs +bilinear, Freedman-Lane
+    control) can measure whether the model's NLL surface over the (A,B) grid carries
+    non-additive structure — the Y1 half of Fable's 해석 매트릭스 (Y3 = model-free corpus).
+    Engine-native (py 2-production numpy, a_eval_py_canonical) → TERMINAL-eligible.
+    manifest = {"win":T,"score_len":K,"items":[{"text":"<span>","a":i,"b":j},…]}."""
+    import numpy as np      # numpy is function-local throughout evaluate.py (no module import)
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--interaction-lift", "")
+    out_path = evaluate_strval(argv[1:], "--out", "interaction_lift.json")
+    spec = json.load(open(spec_path))
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    score_len = evaluate_intval(argv[1:], "--score-len", int(spec.get("score_len", 8)))
+    items = spec["items"]
+    print("=== anima evaluate --interaction-lift — joint interaction-lift (H_9255) ===")
+    print("ckpt:  " + ckpt)
+    print("spec:  %s (%d windows · T=%d · score_len=%d · read-only NLL surface)" %
+          (spec_path, len(items), T, score_len))
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    V = int(W["V"])
+    cells = {}
+    n_done = 0
+    for it in items:
+        text = it["text"]
+        key = "%d,%d" % (int(it["a"]), int(it["b"]))
+        tok = clm._seed_to_tok(text, T)                  # [T] right-aligned bytes
+        logits = clm._fwd_logits(W, tok, T)              # [T, V]; pos i predicts tok[i+1]
+        # NLL over the last `score_len` scored positions (the continuation after both concepts)
+        lo = max(0, T - 1 - score_len)
+        nlls = []
+        for i in range(lo, T - 1):
+            row = logits[i]
+            m = float(np.max(row))
+            lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
+            tgt = int(tok[i + 1])
+            nlls.append(lse - float(row[tgt]))           # -log softmax[tgt]
+        cells.setdefault(key, []).append(float(np.mean(nlls)) if nlls else 0.0)
+        n_done += 1
+        if n_done % 200 == 0:
+            print("  [ilift #%d/%d]" % (n_done, len(items)), flush=True)
+    summary = {k: {"nll_mean": float(np.mean(v)), "n": len(v)} for k, v in cells.items()}
+    json.dump({"ckpt": ckpt, "T": T, "score_len": score_len, "n_windows": len(items),
+               "n_cells": len(cells), "cells": cells, "summary": summary},
+              open(out_path, "w"), ensure_ascii=False)
+    print(json.dumps({"ckpt": ckpt, "T": T, "n_windows": len(items),
+                      "n_cells": len(cells), "out": out_path}, ensure_ascii=False))
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -1267,6 +1329,10 @@ def main(argv):
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
+    # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
+    # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
+    if "--interaction-lift" in argv:
+        return interaction_lift_run(argv)
     # --probe <spec.json>: matched-surface G1 probe (card H_6189). argv[0]=ckpt; probe_run
     # reads --probe/--gen from the tail. Greedy raw-continuation dump for offline scoring.
     if "--probe" in argv:
