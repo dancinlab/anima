@@ -1189,7 +1189,10 @@ def main():
         if is_bytegpt:
             d = a.d or 768; L = a.L or 24
             seq_len = a.seq_len or 1024; steps = a.steps or 2000
-            bg_n_head = 12
+            # head_dim=64 invariant: n_head = d//64 (d=768→12, d=1024→16). A hardcoded
+            # 12 broke warm-FT of the production d=1024 h1129 base (1024%12≠0 → "embed_dim
+            # must be divisible by num_heads"; also mismatched h1129's n_head=16 state_dict).
+            bg_n_head = max(1, d // 64)
         else:
             d = a.d or 3784; L = a.L or 4
             seq_len = a.seq_len or 1024; steps = a.steps or 2000

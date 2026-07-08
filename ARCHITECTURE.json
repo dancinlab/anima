@@ -14276,6 +14276,13 @@
     "value": "sequential anima evaluate --py(--probe 등) 배치 실행 시 launcher가 고정 경로 /tmp/anima_evalpy_result.out에 써서 뒤 run이 앞 run 출력을 덮어쓴다 — 앞 run 캡처가 stale/누락되거나(파이프 타이밍) 뒤 run이 실패하면 앞 run의 stale 내용을 캡처(H_9213서 L4clean이 L8cov와 byte-동일 오염, null control 무효). 각 run 출력을 즉시 별도 파일로 복사/이동해야 한다.",
     "threshold": "재발조건: 여러 ckpt를 anima evaluate --py로 순차 측정+공유 result-file 캡처→일부 out이 0B이거나 서로 byte-동일. 해결: run마다 cp /tmp/anima_evalpy_result.out out_<tag>.raw 즉시(다음 run 전) 또는 launcher에 per-run --result-file 경로 전달. 검증: diff/sha로 out들이 서로 다른지, ckpt 필드가 맞는지 확인 후 채점.",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "train-py-5",
+    "state": "pos-conv",
+    "value": "canon bytegpt bg_n_head 를 12 로 하드코딩하면 생산 base h1129(d=1024,n_head=16,head_dim=64) warm-FT 불가: 1024%12≠0 로 'embed_dim must be divisible by num_heads' 즉사 + h1129 attention state_dict(n_head=16) shape 불일치. head_dim=64 불변식이므로 bg_n_head=d//64 유도(d=768→12·d=1024→16)가 근본수정.",
+    "threshold": "재발조건: canon bytegpt 학습/warm-FT 가 특정 --d 에서 'divisible by num_heads' 또는 warm-start shape-mismatch/missing≠[] 로 죽으면 = n_head 가 d 에 하드코딩·비유도 의심. 해결: n_head=d//64(head_dim 64 불변) 유도, 특정값 하드코딩 금지. cli/train.py:1192 반영(2026-07-08).",
+    "source": "cli/train.py"
    }
   ]
  }
