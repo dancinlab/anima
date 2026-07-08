@@ -14240,6 +14240,13 @@
     "value": "autotag.yml는 last tag 이후 커밋 subject에 feat/fix/perf(conventional prefix)가 있을 때만 v* 태그를 찍는다(docs/chore/refactor-only는 스킵=릴리즈 빈도 게이트). pr-cycle 스쿼시 머지가 브랜치명(예 'wf/rho fan percell 2')을 커밋 subject로 쓰면 원래 PR 제목이 feat(...)여도 conventional prefix를 잃어 게이트가 SKIP→'success인데 태그 미생성'. #3151(4-cell dispatch feat)·#3152가 이렇게 스킵돼 최신 tag가 v3.124.1(#3150)에 고정→hx install anima가 dispatch 코드 없는 stale 버전을 영영 설치→pool engine-native 측정이 신규 플래그(--rho-axon)에서 hang. install.hexa=최신 v* git tag detach-checkout이므로 태그가 안 오르면 install도 안 오른다.",
     "threshold": "재발조건: 방금 머지한 feat/fix 코드가 pool 'hx install' 후에도 안 보이고 autotag run은 success인데 'git tag --contains <merge_sha>'가 비어있음 → 스쿼시 subject가 비-conventional('wf/...' 등)이라 게이트 스킵됨. 해결: (즉시) verified main tip에 정당한 semver 태그 수동 발행 'git tag -a vX.Y+1.0 <main_sha> && git push origin vX.Y+1.0'(feat=minor·fix=patch)→hx install이 fresh 획득. (예방) pr-cycle 스쿼시 머지 subject를 PR 제목(conventional)으로 유지. 확인: 'git show vX.Y.Z:<changed_file> | grep <new_symbol>'로 태그가 코드 포함 확증.",
     "source": "autotag.yml"
+   },
+   {
+    "id": "anima-hexa-7",
+    "state": "pos-conv",
+    "value": "cli/anima.hexa의 --py shell-out 경로들이 결과를 하드코딩 공유 임시파일(/tmp/anima_evalpy_result.out 등)에 쓰고 되읽어(write+cat 같은 경로) → 한 pool 박스에서 동시 실행되는 두 anima 측정이 서로의 출력을 clobber(verdict-integrity 오염). #3154가 evaluate --py를 mktemp 고유경로로 수정. 동일 shell-out shape가 train/sweep --py에도 있어(같은 결함 잠재) 함께 점검·수정.",
+    "threshold": "재발조건: pool 박스에서 anima 측정 두 개(예: 내 rho-axon eval + 타 세션 probe)가 동시에 돌 때 result-file/redirect 대상이 같은 하드코딩 /tmp 경로면 출력 인터리브/clobber(seed가 뒤섞인 result 파일이 증상). 해결: --py shell-out이 결과를 임시파일에 쓰는 모든 곳(evaluate·train·sweep)은 mktemp /tmp/<prefix>.XXXXXX 로 프로세스별 고유경로를 한번 잡아 write+read 일치시키고 사용후 rm. 새 shell-out 경로 추가 시 하드코딩 공유 /tmp 금지.",
+    "source": "cli/anima.hexa"
    }
   ]
  }

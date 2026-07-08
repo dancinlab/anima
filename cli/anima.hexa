@@ -222,7 +222,11 @@ fn anima_train_mode(argv: [string]) {
         // the pipe close and finishes the full run). A SECOND fresh exec then cats that file.
         // Symmetric to anima_evaluate_mode's --py result-file handling; cli/train.py streams
         // to stdout (it has no --result-file arg of its own), so the redirect is at the shell.
-        let rf = "/tmp/anima_trainpy_result.out"
+        // UNIQUE per-invocation result file (mktemp) — a hardcoded shared path lets two
+        // concurrent `anima train --py` runs on the same pool box CLOBBER each other's
+        // output (write+read race). Capture once so the shell redirect (> rf) and the
+        // read (cat) use the SAME path. Pattern matches the #3154 evaluate --py fix.
+        let rf = to_string(exec("mktemp /tmp/anima_trainpy_result.XXXXXX")).trim()
         // cd into $ANIMA_SRC first so train.py's __file__-relative train/clm/model resolution
         // matches a direct `python3 cli/train.py` (LOCATION-INDEPENDENT, same as the hexa path).
         let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/train.py" + fwd + " > " + rf + " 2>&1"
@@ -230,6 +234,7 @@ fn anima_train_mode(argv: [string]) {
         let _tr = exec(cmd)
         let out = exec("cat " + rf)
         print(out)
+        let _rm = exec("rm -f " + rf)
         return
     }
     println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
@@ -385,14 +390,19 @@ fn anima_sweep_mode(argv: [string]) {
     // but is NOT killed), so redirect ALL child output to a result file (fd 1 stays silent →
     // the child survives the pipe close and finishes the full sweep). A SECOND fresh exec
     // then cats that file. Symmetric to anima_train_mode's --py result-file handling.
+    // UNIQUE per-invocation result file (mktemp) — a hardcoded shared path lets two
+    // concurrent `anima sweep` runs on the same pool box CLOBBER each other's output
+    // (write+read race). Capture once so the shell redirect (> rf) and the read (cat)
+    // use the SAME path. Pattern matches the #3154 evaluate --py fix.
     // cd into $ANIMA_SRC first so sweep.py's __file__-relative cli/train.py + cli/evaluate.py
     // resolution matches a direct `python3 cli/sweep.py` (LOCATION-INDEPENDENT).
-    let rf = "/tmp/anima_sweeppy_result.out"
+    let rf = to_string(exec("mktemp /tmp/anima_sweeppy_result.XXXXXX")).trim()
     let cmd = "cd \"${ANIMA_SRC:-.}\" && python3 cli/sweep.py" + fwd + " > " + rf + " 2>&1"
     println("dispatch: " + cmd)
     let _sw = exec(cmd)
     let out = exec("cat " + rf)
     print(out)
+    let _rm = exec("rm -f " + rf)
 }
 
 // anima_corpus_mode — training-corpus generation → cli/corpus.py. Torch-free procedural
