@@ -14233,6 +14233,13 @@
     "value": "pool clean-tree 빌드에서 'hx install anima'는 로컬 추출 tree가 아니라 GITHUB RELEASE 태그를 clone한다(build hook: 'cloning anima github' → 'installing release tag vX.Y.Z'). 같은세션 머지 PR은 release 태그에 없어(merged-fix-not-in-prebuilt-lag) 설치본이 STALE 코드를 실행 → 신규 플래그(--rho-axon)·신규 함수(_build_cell_dets dispatch) 부재로 측정 hang/오답. #3151 4-cell dispatch 머지 직후 summer 측정이 v3.124.1(구 release) 코드로 돌아 ko cell 미측정.",
     "threshold": "재발조건: pool서 방금 머지한 코드로 측정하려는데 'hx install <pkg>'가 'cloning...release tag' 출력 → 설치본 STALE. 해결: rebuild/release 대기 말고 로컬 fresh tree를 git archive origin/main→scp→extract 후, 설치된 canonical anima의 py 측정 wrapper가 내부적으로 cd ${ANIMA_SRC:-.} 하는 구조이므로 환경변수 ANIMA_SRC를 fresh tree로 지정→stale binary가 fresh 소스를 실행(단일진입 유지·재빌드 불필요). 측정 전 grep -c _build_cell_dets $ANIMA_SRC/cli/evaluate.py 로 fresh 확증.",
     "source": "install.hexa"
+   },
+   {
+    "id": "autotag-yml-1",
+    "state": "pos-conv",
+    "value": "autotag.yml는 last tag 이후 커밋 subject에 feat/fix/perf(conventional prefix)가 있을 때만 v* 태그를 찍는다(docs/chore/refactor-only는 스킵=릴리즈 빈도 게이트). pr-cycle 스쿼시 머지가 브랜치명(예 'wf/rho fan percell 2')을 커밋 subject로 쓰면 원래 PR 제목이 feat(...)여도 conventional prefix를 잃어 게이트가 SKIP→'success인데 태그 미생성'. #3151(4-cell dispatch feat)·#3152가 이렇게 스킵돼 최신 tag가 v3.124.1(#3150)에 고정→hx install anima가 dispatch 코드 없는 stale 버전을 영영 설치→pool engine-native 측정이 신규 플래그(--rho-axon)에서 hang. install.hexa=최신 v* git tag detach-checkout이므로 태그가 안 오르면 install도 안 오른다.",
+    "threshold": "재발조건: 방금 머지한 feat/fix 코드가 pool 'hx install' 후에도 안 보이고 autotag run은 success인데 'git tag --contains <merge_sha>'가 비어있음 → 스쿼시 subject가 비-conventional('wf/...' 등)이라 게이트 스킵됨. 해결: (즉시) verified main tip에 정당한 semver 태그 수동 발행 'git tag -a vX.Y+1.0 <main_sha> && git push origin vX.Y+1.0'(feat=minor·fix=patch)→hx install이 fresh 획득. (예방) pr-cycle 스쿼시 머지 subject를 PR 제목(conventional)으로 유지. 확인: 'git show vX.Y.Z:<changed_file> | grep <new_symbol>'로 태그가 코드 포함 확증.",
+    "source": "autotag.yml"
    }
   ]
  }
