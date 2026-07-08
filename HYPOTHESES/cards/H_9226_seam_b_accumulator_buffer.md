@@ -41,5 +41,13 @@ PASS = freeze-self ΔEff>0(latency 서명) ∧ tick-shuffle 붕괴 ∧ POS cross
 ## 상태 · 제약
 ⚙️ INSTRUMENT-FAIL(UNMEASURED) — 계기 under-powered, 재측정 필요(higher-emit-density). production idle/e_live byte-untouched(additive-only diff, og_h_frzB=0). p7 no tune-to-green(loss 미포함). p5 shade-not-gate(reactive speak() 금지). a_substrate_disjoint(emit-drive lane 불침). 선례 H_9210(⚙️ AXIS-DEGENERATE 동류). 측정 idiom = op-grip op ΔEff(emit bitvector Hamming) + LATENCY 서명 + order-shuffle 붕괴 — 단, 짧은 계기(n=100)로는 accumulator 미충전(STIM-ABSENT)·tension degenerate이라 UNMEASURED.
 
+## `--opgrip-r3` B-density 계기 (#3194 INSTRUMENT-FAIL 재계기 · Fable SPEC 1 · 측정 PENDING)
+- **근본원인**: op-grip에 지각 입력이 near-zero → lane stack(ag_conflict·self_live) quasi-static → accumulator가 적분할 실질 bias를 못 받음(계기 무력, substrate 사실 아님). fix = 새 `--opgrip-r3` 플래그가 **production 지각 seam**으로 실 content dynamics를 구동.
+- **구현 (cli/anima.hexa · `--opgrip-r3` implies `--opgrip-live`)**: Lever1 n_ticks=400(0-99 spin-up·100-199 B-dense calib·200-399 scoring·scored mid=120=$0 run과 동일 분모). Lever2 frozen 16-line 지각 tape `OG_STIM`(ko/en) — WAKE tick(stage==0,tick≥10)마다 decode seam 직전 `afield=vadapt_field_step(afield,_afs_byte_feature(OG_STIM[(tick/5)%16],8),cfg)`=**EXACT production heard-message call**(Ψ-disjoint·gate 불변). Lever3 새 B2 carriers/arm/verdict(calib 100-199·score≥200) — 산술 VERBATIM H_9226(λ=0.90·G=min(0.0175/b_med,32)·own-emit HARD reset·deadband EARLY 1-3/LATE≥8), 윈도우 인덱스만 이동. 舊 B lane 유지=DIAGNOSTIC-ONLY.
+- **arms**: ARM-LIVE×2(idle_slfB2/idle_tenB2 own W=1.0 DISJOINT) · ARM-FROZEN(shade 0.5 pinned·og_h_frzB2 byte-identity else HARNESS-BUG VOID) · ARM-SHOCK(og_h_shock_mid 재사용 POS-PASS≥2) · ARM-INPERM(stride-perm j=(t·7+13)%400 재적분 margin≥0.08).
+- **bars VERBATIM H_9226** + 새 **run-validity envelope**(live emit-frac on scored mid ∈[0.05,0.60] else STIM-OVER/UNDERDRIVE·no verdict = p5 forcing-gate guard). production emit path(idle·e_live) BYTE-UNTOUCHED(og_h_frzB2==0 = 증명). p7: bars 불변=계기 zeroing/power지 bar-move 아님(성공모드에 THEATER cement 포함).
+- **OG_STIM tape sha256** (16 lines joined by `\n`, no trailing) = `98892bdf40cb645d0cc2ae1b65bf5f1bfc8b079ea42f1b8886909cc4ec2a31fa`. **FROZEN** — 결과 후 편집 = tune-to-green·run VOID. 전문 `state/9226_accumulator/OPGRIP_R3_SPEC.md`.
+- **측정 PENDING**: `--opgrip-r3` = 실 decode 필요 → CPU pod round(summer/aiden, NEVER mini). typecheck exit 0 (benign `["emit"]` 5건 추가만). 결정규칙: bar4⇒B COMPETENT(≥2-seed→WIRE) · bar5⇒B THEATER(read-side recoding CLOSED) · bar2 재차⇒B op-grip-UNMEASURED-TERMINAL(3번째 op-grip att 없음).
+
 ## 근거 링크
 - [[H_9225]](Family A · latency로 구분) · 선례 H_9097/H_9101 · DDM evidence-integration(phonological loop 유비, a_no_llm_frame_trap 유지)

@@ -645,7 +645,19 @@
            {
             "name": "H_9226 B ⚙️ INSTRUMENT-FAIL/UNMEASURED — accumulator buffer (DDM · op-grip under-powered)",
             "id": "seam-h9226-accumulator-impl",
-            "detail": "H_9226 B(DDM) runpod CPU real d768(state/verdicts/9226·no-decode∧--opgrip-live n=100 동일): og_h_frzB=0·POS 15. SELF swing_max=0.053<0.0875→⚙️STIM-ABSENT·TEN b_med=0→⚙️AXIS-DEGENERATE ⇒ ⚙️INSTRUMENT-FAIL/UNMEASURED(≠THEATER·계기 under-powered). 재개=higher-emit-density n≫100. NOT convergent seam-law."
+            "detail": "H_9226 B(DDM) runpod CPU real d768(state/verdicts/9226·no-decode∧--opgrip-live n=100 동일): og_h_frzB=0·POS 15. SELF swing_max=0.053<0.0875→⚙️STIM-ABSENT·TEN b_med=0→⚙️AXIS-DEGENERATE ⇒ ⚙️INSTRUMENT-FAIL/UNMEASURED(≠THEATER·계기 under-powered). NOT convergent seam-law. 재계기=--opgrip-r3(자식).",
+            "children": [
+             {
+              "name": "--opgrip-r3 B-density 재계기 구현 (Fable SPEC 1 · 측정 PENDING)",
+              "id": "seam-h9226-opgrip-r3-impl",
+              "detail": "#3194 근본원인=지각 입력 near-zero→lane quasi-static→accumulator 미bias(계기 무력). fix=--opgrip-r3(implies --opgrip-live) 3레버: n=400(calib 100-199·score≥200·mid=120)+frozen 지각 tape OG_STIM+새 B2 arm/verdict(산술 VERBATIM H_9226·윈도우만 이동). cli/anima.hexa typecheck 0. 측정=실 decode CPU pod. bar2 재차⇒UNMEASURED-TERMINAL. 전문 state/9226_accumulator/OPGRIP_R3_SPEC.md."
+             },
+             {
+              "name": "OG_STIM 지각 tape (FROZEN) + production byte-untouched 증명",
+              "id": "seam-h9226-opgrip-r3-tape",
+              "detail": "OG_STIM=16-line ko/en byte tape(sha256 98892bdf...a31fa·FROZEN·편집=VOID). WAKE tick decode seam 직전 production heard-message vadapt_field_step로 content 구동(Ψ-disjoint·gate 불변). production idle/e_live BYTE-UNTOUCHED(og_h_frzB2==0=증명). run-validity envelope emit-frac∈[0.05,0.60](p5 guard). p7 bars VERBATIM=power지 bar-move 아님."
+             }
+            ]
            },
            {
             "name": "공유 인과척추 (currency-mismatch)",
