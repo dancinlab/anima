@@ -1,0 +1,114 @@
+{
+  "spec": "TOY-RESONATOR-READHEAD v1",
+  "device": "cuda",
+  "config": {
+    "R": 6,
+    "F": 30,
+    "D": 512,
+    "K": 3,
+    "steps": 20000,
+    "batch": 256,
+    "tau": 0.1,
+    "chance": 0.0333
+  },
+  "seeds": {
+    "0": {
+      "A": {
+        "train_acc": 1.0,
+        "steps": 20000,
+        "heldout": 0.4986,
+        "indist": 1.0,
+        "shuffle": 0.0858
+      },
+      "B": {
+        "train_acc": 1.0,
+        "steps": 20000,
+        "heldout": 0.9528,
+        "indist": 1.0,
+        "shuffle": 0.0632,
+        "bind_destroyed": 0.3474,
+        "codebook_drift": 7.763
+      },
+      "B0": {
+        "train_acc": 0.0,
+        "steps": 0,
+        "heldout": 0.9704,
+        "indist": 0.9746,
+        "shuffle": 0.0002
+      },
+      "C": {
+        "train_acc": 0.4883,
+        "steps": 20000,
+        "heldout": 0.085,
+        "indist": 0.4608,
+        "shuffle": 0.7966
+      }
+    },
+    "1": {
+      "A": {
+        "train_acc": 1.0,
+        "steps": 20000,
+        "heldout": 0.091,
+        "indist": 1.0,
+        "shuffle": 0.1314
+      },
+      "B": {
+        "train_acc": 1.0,
+        "steps": 20000,
+        "heldout": 0.9608,
+        "indist": 1.0,
+        "shuffle": 0.0384,
+        "bind_destroyed": 0.3548,
+        "codebook_drift": 7.791
+      },
+      "B0": {
+        "train_acc": 0.0,
+        "steps": 0,
+        "heldout": 0.9488,
+        "indist": 0.9498,
+        "shuffle": 0.0052
+      },
+      "C": {
+        "train_acc": 0.4609,
+        "steps": 20000,
+        "heldout": 0.094,
+        "indist": 0.4494,
+        "shuffle": 0.8062
+      }
+    },
+    "2": {
+      "A": {
+        "train_acc": 1.0,
+        "steps": 20000,
+        "heldout": 0.0158,
+        "indist": 1.0,
+        "shuffle": 0.1498
+      },
+      "B": {
+        "train_acc": 1.0,
+        "steps": 20000,
+        "heldout": 0.9326,
+        "indist": 1.0,
+        "shuffle": 0.137,
+        "bind_destroyed": 0.328,
+        "codebook_drift": 7.7
+      },
+      "B0": {
+        "train_acc": 0.0,
+        "steps": 0,
+        "heldout": 0.9706,
+        "indist": 0.9714,
+        "shuffle": 0.004
+      },
+      "C": {
+        "train_acc": 0.418,
+        "steps": 20000,
+        "heldout": 0.0884,
+        "indist": 0.4702,
+        "shuffle": 0.7938
+      }
+    }
+  },
+  "verdict": "🟠 MIXED/gray — inspect table",
+  "scope": "DIRECTIONAL — symbolic ID inputs, no byte/LM/core decode (a_toy_scale_recheck)"
+}
