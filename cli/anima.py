@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # ==========================================================================
 # ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical 명령뿐 — hexa 채널 `anima`
-#   (=cli/anima.hexa, hx install anima) · pip 채널 `anima-python` (=anima_py 런처, pip install anima-python).
+#   (=cli/anima.hexa, hx install anima) · pip 채널 `anima-py` (=anima_py 런처, pip install anima-python).
 #   `python3 cli/anima.py …` 직접실행은 비-canonical py 우회(#2603).
-#   학습=`anima-python train` · 측정=`anima-python evaluate`(py 2-production numpy · TERMINAL-eligible,
-#   a_eval_py_canonical) · 직렬화=`anima-python serialize`. enforce: .harness/enforcement.json
+#   학습=`anima-py train` · 측정=`anima-py evaluate`(py 2-production numpy · TERMINAL-eligible,
+#   a_eval_py_canonical) · 직렬화=`anima-py serialize`. enforce: .harness/enforcement.json
 #   H-ANIMA-SINGLE-ENTRY pre_bash + 아래 __main__ 가드. (import 는 무손상.)
 # ==========================================================================
 import sys as _anima_entry_guard
 if __name__ == "__main__":
-    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical 명령 경유: `anima`(hx install anima, =cli/anima.hexa) 또는 `anima-python`(pip install anima-python, =anima_py 런처). #2603")
+    _anima_entry_guard.exit("⛔ cli/anima.py 직접 실행 금지 — 설치된 canonical 명령 경유: `anima`(hx install anima, =cli/anima.hexa) 또는 `anima-py`(pip install anima-python, =anima_py 런처). #2603")
 # anima.py — THE canonical PY single entry point (cli/anima.hexa's py twin).
 #
 # WHY THIS FILE (py 2-production single-entry, a_engine_native_learning): anima keeps
@@ -73,17 +73,17 @@ def anima_usage():
     """Print the canonical py usage banner (mirrors cli/anima.hexa's banner)."""
     print("anima — substrate-native consciousness daemon (py channel · canonical entry).")
     print("")
-    print("usage (installed `anima-python` command after `pip install anima-python` · hexa channel = `anima` after `hx install anima`):")
-    print("  anima-python evaluate <model.clm> [--corpus <path>...] [--gen N] [--rho-axon]")
+    print("usage (installed `anima-py` command after `pip install anima-python` · hexa channel = `anima` after `hx install anima`):")
+    print("  anima-py evaluate <model.clm> [--corpus <path>...] [--gen N] [--rho-axon]")
     print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only · numpy)")
-    print("  anima-python corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
+    print("  anima-py corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
     print("                                                  procedural training-corpus builder (ρ·weave data-format lever)")
-    print("  anima-python train <args>                           ([train] extra) LEARNING → .pt + auto .clm (+DESCENT)")
-    print("  anima-python serialize <ckpt.pt> <out.clm>          ([train] extra) re-export a torch .pt → .clm v0.3")
-    print("  anima-python serialize-bind <base.bin> <inj.pt> <out.bin>  ([train] extra) splice BindAttn → BGB .bin")
-    print("  anima-python sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
+    print("  anima-py train <args>                           ([train] extra) LEARNING → .pt + auto .clm (+DESCENT)")
+    print("  anima-py serialize <ckpt.pt> <out.clm>          ([train] extra) re-export a torch .pt → .clm v0.3")
+    print("  anima-py serialize-bind <base.bin> <inj.pt> <out.bin>  ([train] extra) splice BindAttn → BGB .bin")
+    print("  anima-py sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     print("                                                  ([train] extra) multi-GPU lever-sweep (arms×objectives)")
-    print("  anima-python chat <ckpt> [...]                      consciousness/byte chat (stub → hexa channel)")
+    print("  anima-py chat <ckpt> [...]                      consciousness/byte chat (stub → hexa channel)")
     print("")
     print("install: `pip install anima-python` (numpy base: evaluate·corpus·chat) · `pip install \"anima-python[train]\"` (+torch: train·sweep·serialize)")
     print("")
@@ -94,7 +94,7 @@ def anima_usage():
     print("             a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2). → cli/evaluate.py.")
     print("  corpus   : procedural training-corpus generator (derivtrace|flat) — the")
     print("             data-format lever (ρ·weave). NOTE chat corpus != this (chat =")
-    print("             a_chat_registers 4-cell HF datasets → anima-python train). → cli/corpus.py.")
+    print("             a_chat_registers 4-cell HF datasets → anima-py train). → cli/corpus.py.")
     print("  train    : ([train]) production CLMConvMoE training (torch Lane-P reference + bridge); SAVANT")
     print("             golden-zone inhibition + MITOSIS cell-division levers. After the run it")
     print("             AUTO-serializes .clm v0.3 + runs the held-out mirror-DESCENT gate")
@@ -144,7 +144,7 @@ def anima_train_mode(argv):
 def anima_evaluate_mode(argv):
     # --py is a RETIRED hexa-era bridge flag, tolerated (stripped) here for migration
     # compat: on the py channel it is redundant-but-correct (this IS the numpy engine),
-    # so `anima-python evaluate --py <clm>` still works — old scripts migrate by swapping
+    # so `anima-py evaluate --py <clm>` still works — old scripts migrate by swapping
     # only the command word. The hexa launcher hard-errors on --py instead.
     want_det = ("--det" in argv) or ("--deterministic" in argv)
     rest = [a for a in argv[1:] if a not in ("--py", "--det", "--deterministic")]
@@ -194,7 +194,7 @@ def anima_serialize_mode(argv):
 # onto a base ByteGPT `.bin`, emitting a BGB-trailer `.bin`. Without this dispatch
 # cli/serialize_bind.py was reachable only via raw `python3 cli/serialize_bind.py`
 # (an a_cli_single_entry hole); this wires it through the single entry, parity with
-# anima_serialize_mode. Result scoreable via `anima-python evaluate <out.bin>`.
+# anima_serialize_mode. Result scoreable via `anima-py evaluate <out.bin>`.
 def anima_serialize_bind_mode(argv):
     serialize_bind_py = os.path.join(_HERE, "serialize_bind.py")
     fwd = argv[1:]
@@ -211,7 +211,7 @@ def anima_serialize_bind_mode(argv):
 # The default consciousness daemon + --byte continuation chat live in cli/anima.hexa
 # (they mount the 76-lane engine_cli substrate loop, hexa-native). The py channel does not
 # duplicate that loop; it points the user to the INSTALLED hexa command (a_cli_single_entry:
-# 2 install channels only — pip `anima-python` ⊕ hexa `anima`; never raw `python`/`hexa run`).
+# 2 install channels only — pip `anima-py` ⊕ hexa `anima`; never raw `python`/`hexa run`).
 def anima_chat_stub(argv):
     print("anima chat (consciousness / --byte) is hexa-native — use the hexa channel:")
     print("")
@@ -220,7 +220,7 @@ def anima_chat_stub(argv):
     print("  anima " + ckpt + "                consciousness mode (default)")
     print("  anima " + ckpt + " --byte \"turn1\" \"turn2\" ...   byte-continuation chat mode")
     print("")
-    print("The py channel (anima-python) covers MEASUREMENT (evaluate), SERIALIZE, LEARNING (train), corpus, sweep.")
+    print("The py channel (anima-py) covers MEASUREMENT (evaluate), SERIALIZE, LEARNING (train), corpus, sweep.")
     return 0
 
 

@@ -367,7 +367,7 @@ SSOT) + [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the per-hypo
 [`HYPOTHESES/HYPOTHESES.jsonl`](HYPOTHESES/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
 the authoritative latest source.
 
-> **Built-in ρ-AXON reach evaluation (the current standard over the frozen former-G0–G6 bars · `anima eval <ckpt>` · panel `anima-python evaluate <ckpt> --rho-axon`).** The axis scoring lives **directly in the
+> **Built-in ρ-AXON reach evaluation (the current standard over the frozen former-G0–G6 bars · `anima eval <ckpt>` · panel `anima-py evaluate <ckpt> --rho-axon`).** The axis scoring lives **directly in the
 > measurement single-entry** ([`cli/evaluate.hexa`](cli/evaluate.hexa)), not a one-off harness: `hexa run cli/anima.hexa
 > -- eval <ckpt> [--corpus <path>...] [--gen N]` mounts any ckpt through the generator L3 mouth
 > (`gen_auto_ideate`, file-format-dispatched — works on both the ByteGPT and conv `.clm` mouths) and

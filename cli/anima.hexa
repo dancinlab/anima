@@ -132,9 +132,9 @@ fn anima_usage() {
     println("                                                  procedural training-corpus builder (ρ·weave data-format lever · former G1)")
     println("")
     println("py channel (hexa-less hosts · 303M measurement):")
-    println("  pip install anima-python            → `anima-python` (evaluate · corpus · chat, numpy)")
+    println("  pip install anima-python            → `anima-py` (evaluate · corpus · chat, numpy)")
     println("  pip install \"anima-python[train]\"   → + train · sweep · serialize (torch)")
-    println("  303M reach measurement = `anima-python evaluate <clm>` on pool (a_eval_py_canonical)")
+    println("  303M reach measurement = `anima-py evaluate <clm>` on pool (a_eval_py_canonical)")
     println("")
     println("research diagnostics (engine-native emit-shade op-grip · loop-external):")
     println("  anima <ckpt.clm> --opgrip                       $0 NO-DECODE 5-arm Hamming op-grip (200 ticks)")
@@ -208,14 +208,14 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 // after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
 fn anima_train_mode(argv: [string]) {
     // --py RETIRED (2-channel split): py production training is its own installed
-    // command — `anima-python train` (pip install "anima-python[train]" — torch extra), the
+    // command — `anima-py train` (pip install "anima-python[train]" — torch extra), the
     // SAME cli/anima.py→cli/train.py Lane-P trainer. Bonus vs the old bridge: a bare
     // rent GPU pod needs NO hexa toolchain at all (pip only). torch-side stays
-    // DIRECTIONAL; the TERMINAL verdict re-measures the .clm via `anima-python evaluate`.
+    // DIRECTIONAL; the TERMINAL verdict re-measures the .clm via `anima-py evaluate`.
     if anima_has_flag(argv, "--py") {
         println("anima: `--py` is retired — the py training channel is its own installed command.")
         println("  pip install \"anima-python[train]\"   # torch extra (train · sweep · serialize)")
-        println("  anima-python train <args>            # same cli/train.py Lane-P trainer")
+        println("  anima-py train <args>            # same cli/train.py Lane-P trainer")
         println("hexa `anima train` = cli/train.hexa (flame/forge) only.")
         return
     }
@@ -267,7 +267,7 @@ fn anima_evaluate_mode(argv: [string]) {
         return
     }
     // --py RETIRED (2-channel split): the py 2-production measurement is its own
-    // installed command now — `anima-python evaluate` (pip install anima-python), the SAME
+    // installed command now — `anima-py evaluate` (pip install anima-python), the SAME
     // cli/anima.py→cli/evaluate.py numpy engine, same frozen bars, same TERMINAL
     // eligibility (a_eval_py_canonical). HARD-ERROR, not silent-ignore: an old
     // script/muscle-memory falling through to hexa det-eval would run the wrong
@@ -276,9 +276,9 @@ fn anima_evaluate_mode(argv: [string]) {
     if anima_has_flag(argv, "--py") {
         println("anima: `--py` is retired — the py measurement channel is its own installed command.")
         println("  pip install anima-python            # numpy base (evaluate · corpus · chat)")
-        println("  anima-python evaluate <clm> [--corpus ...] [--gen N] [--rho-axon]")
+        println("  anima-py evaluate <clm> [--corpus ...] [--gen N] [--rho-axon]")
         println("same cli/evaluate.py engine · same frozen bars · same TERMINAL eligibility (a_eval_py_canonical).")
-        println("hexa `anima evaluate` = hexa-native det-eval only (small ckpts / --det byte-exact; 303M => anima-python on pool).")
+        println("hexa `anima evaluate` = hexa-native det-eval only (small ckpts / --det byte-exact; 303M => anima-py on pool).")
         return
     }
     // --det / --deterministic: the CLI OPTION to request byte-exact determinism (H_9119: anima is
