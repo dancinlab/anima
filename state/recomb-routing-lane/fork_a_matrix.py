@@ -102,6 +102,8 @@ def run_arm(pool_kind, head_kind, handed=False, shuffle=False, seed=0):
     Xte = feat(Ste, held); Gte = Ste[:, T - 1, :]
     mu = Xtr.mean(0); sd = Xtr.std(0) + 1e-6
     Xtr = (Xtr - mu) / sd; Xte = (Xte - mu) / sd
+    gmu = Gtr.mean(0); gsd = Gtr.std(0) + 1e-6
+    Gtr = (Gtr - gmu) / gsd; Gte = (Gte - gmu) / gsd
     din = Xtr.shape[1]
 
     if head_kind == "linear":
