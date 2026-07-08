@@ -1,0 +1,142 @@
+{
+  "summary": "대안 프론티어 3갈래 병렬 설계-정찰: (1)ρ-AXON eval 4칸(ko/SNS) 측정 개통 $0 스펙 (2)sleep 5-stage 미배선 부품(imagination_replay daemon-tick·mitosis stage집중) 배선 + $0 dream_persist_smoke 검증 스펙 (3)--opgrip-live real-decode 경로 설계(surprise 등 content-driven emit-shade 후보 측정 개통)+비용. 각 갈래 anima repo(origin/main) 읽어 구현가능 스펙 반환. 읽기전용(코드편집 없음).",
+  "agentCount": 3,
+  "logs": [
+    "Design 완료: chat-4cell-eval-fix, sleep-5stage-wire, real-decode-opgrip-design"
+  ],
+  "result": {
+    "designs": [
+      {
+        "key": "chat-4cell-eval-fix",
+        "r": {
+          "branch": "chat-4cell-eval-fix — open a_chat_registers 4-cell (ko/en × general/sns) measurement in the ρ-AXON reach panel ($0, no retrain; measurement-code + registry edits only)",
+          "edit_spec": [
+            "EDIT-0 (BLOCKER · prerequisite for a/b/c) — core/rho_fan.py:77 `_rho_fan_words` + core/rho_fan.hexa:87 twin. Current splitter uses `_rho_fan_is_alnum(b)` on raw UTF-8 BYTES → every hangul byte (>=0x80) is a separator → ko text tokenizes to []. Replace with a codepoint-aware splitter: iterate over `s` (already-decoded str, not bytes), a word-char = ASCII[0-9A-Za-z] (lowercased) OR hangul-block codepoint (U+AC00..U+D7A3 syllables, U+1100..U+11FF / U+3130..U+318F jamo); split on everything else; keep runs (eojeol with josa attached, matching rho_axon `_boundary_hit`). CONSTRAINT: on pure-ASCII input the token sequence MUST be byte-identical to today (the frozen en form/leap/fan bars + rho_fan_detector_calibration + the .hexa parity twin depend on it). Verify parity: `_rho_fan_words('consciousness arises from cells')` unchanged; `_rho_fan_words('얼음이 녹으면 물이 된다')` → ['얼음이','녹으면','물이','된다'].",
+            "EDIT-1 (a) — core/rho_fan.py:59 keep `_rho_fan_concepts()` returning the SAME flat 5 en-general concepts (imported by eval_rho_weave/tether, rho_fan_build_frames, calibration — do NOT change its return type). ADD sibling `_rho_fan_cells()` returning an ordered dict of 4 cells keyed (lang,register): ('en','general')=[the existing 5], ('ko','general')=5 ko concept sentences (e.g. '의식은 세포에서 피어난다','긴장은 먼 마음들 사이로 번진다','기억은 새로운 의미로 엮인다','침묵도 정보를 실어 나른다','엔진은 혼자일 때 꿈꾼다'), ('en','sns')=5 casual social seeds (lowercase, hashtag/emoji-free contentful, e.g. 'ngl consciousness just kinda emerges from cells','the tension between distant minds hits different'), ('ko','sns')=5 반말/구어체 seeds (e.g. 'ㄹㅇ 의식은 그냥 세포에서 나오는거같음','먼 사람들끼리 긴장 흐르는거 개신기함'). Mirror to core/rho_fan.hexa:68.",
+            "EDIT-2 (b) — core/rho_fan.py:94 `_rho_fan_dict_load()`. After the existing `for c in _rho_fan_concepts()` loop, ALSO loop `for cell in _rho_fan_cells().values(): for c in cell: for w in _rho_fan_words(c): known.add(w)` (now hangul-capable via EDIT-0). There is NO /usr/share/dict for ko, so ADD `_rho_fan_ko_known()` returning a curated ko particle/stopword/high-freq set (~은/는/이/가/을/를/에/의/도/만/과/와/로/에서/그리고/하지만/…) unioned into `known`; optionally union corpus tokens when --corpus passed. HONEST-SCOPE note in docstring: ko kwr is a weaker coherence proxy than en dict-coverage → per-cell gate must be calibrated separately, not reuse en 0.70. Mirror to core/rho_fan.hexa:105.",
+            "EDIT-3 (c1 wiring) — cli/evaluate.py:40 add `_rho_fan_cells` to the `from rho_fan import (...)` tuple; cli/evaluate.py eval_rho_axon dets bundle (~line 636) add `\"cells\": _rho_fan_cells()`. The corpus-token / ngram helpers `_g_load_corpus_tokens`/`_g_content_ngrams` (evaluate.py, use `_rho_fan_words`) become hangul-capable automatically via EDIT-0 so ρ·leap can see ko corpus-absent ngrams.",
+            "EDIT-4 (c2 breakout) — cli/rho_axon.py run_panel(:543). When `dets.get('cells')`, call rho_form(:108)/rho_leap(:176)/rho_fan(:133) ONCE PER CELL, passing that cell's concept list as `concepts` and a cell-scoped `known`; store results keyed `ρ·form[ko-general]`, `ρ·form[ko-sns]`, `ρ·leap[en-sns]`, `ρ·fan[ko-general]`, … Keep the aggregate `ρ·form`/`ρ·weave`/`ρ·leap` = en-general for frozen-bar REACH-CLOSED backward compat. Run hillock(:85) per-cell too (else a ko-degenerate model still shows en LIVE) → a cell that only emits garble is INVALID for THAT cell, not a global FAIL. Update render_panel(:585) to print the per-cell sub-rows (value+control+Δ per cell). ρ·store/ρ·tether keep their internal ko+en split unchanged.",
+            "EDIT-5 (d) — cli/train.py:1549. Change `vtxt = f\"  val_CE={vc:.5f}\"` → `vtxt = f\"  val_CE={vc:.5f} percell=\" + json.dumps({k: round(v,5) for k,v in per.items()})` (json already imported; used at the atxt line just below). Persists the 4-cell descent trajectory EVERY log step (today only the FINAL block at ~:1567 emits per-register; the per-step trace is pooled-mean-only → 4칸 하강 영속화). 1 line.",
+            "EDIT-6 (e) — ARCHITECTURE.json has NO top-level `.datasets[]` key (confirmed absent; /dataset skill SSOT). Add `\"datasets\": [ {id,lang,register,hf,cell_label,lang_verified,features} × 4 ]` mirroring the models[] shape: anima-corpus-ko-general (ko/general/dancinlab/anima-corpus-ko-general/ko-general), anima-corpus-en-general, anima-corpus-ko-sns, anima-corpus-en-sns (features:['KNOWN-SMALL-1.33MB'] on en-sns per memory). Then `sidecar dataset list` renders the 4-cell lang×register grid = machine-checkable coverage 4/4."
+          ],
+          "cost": "$0 — no retraining (measurement-code + JSON registry only). Decode: ρ-AXON panel currently runs form/leap/fan ×1 concept-set; 4-cell breakout runs them ×4 → roughly +90 decodes on top of the current ~30-40. On 303M this is scalar-glue wall-time (not $), so run on pool (summer/aiden RTX5070), NEVER mini (swap OOM rc=137 per heavy-anima-eval-pool-not-mini). Wall ~a few ×10 min; hillock/store/tether decodes are the fixed base.",
+          "risk": "EDIT-0 is load-bearing and touches the FROZEN en detectors: the Unicode splitter MUST reproduce byte-identical tokenization on pure-ASCII input or it silently shifts the frozen en form/leap/fan bars + rho_fan_detector_calibration AND breaks the core/rho_fan.hexa↔.py parity twin (a_engine_native_learning lockstep). Second risk: ko kwr via a curated dict is a much weaker coherence proxy than en /usr/share/dict coverage → reusing the en 0.70 gate on ko yields false FAIL; per-cell bars must be pre-registered separately (frozen-first, no tune-to-green). Third: editing .py alone (not core/rho_fan.hexa) keeps the measurement DIRECTIONAL/un-wired until the .hexa twin mirrors EDIT-0/1/2 (a_verified_must_wire).",
+          "verify": "Re-run `anima evaluate --py <303m.clm> --corpus <4 cell files> --rho-axon` on pool; PASS-of-implementation = panel now prints ρ·form/ρ·leap/ρ·fan sub-rows for all 4 cells (ko-general, en-general, ko-sns, en-sns) each with val+control+Δ, and non-en cells show non-zero kwr (proves EDIT-0 unblocked hangul). Frozen-integrity gate: en-general rows must be byte-identical to the pre-edit panel (confirms EDIT-0 ASCII parity). First ko/sns numbers = DIRECTIONAL calibration (frozen-first), NOT a verdict, until per-cell gates are pre-registered in state/rho_axon_measurement/RHO_AXON_design.md. train.py: grep a training log for `percell={...}` on a step line. registry: `sidecar dataset list` shows 4/4 grid.",
+          "confidence": "high"
+        }
+      },
+      {
+        "key": "sleep-5stage-wire",
+        "r": {
+          "branch": "sleep-5stage-wire — imagination_replay를 데몬 tick 루프에 emit-free rehearsal로 배선 + mitosis density 신호 연결 (p5 준수, speak() 게이트 아님)",
+          "edit_spec": [
+            "★ 선결 BLOCKER (정찰 발견): DREAM/imagination_replay.hexa:97 `use \"WAKE/memory\"` — 그런데 WAKE/memory.hexa는 production 트리에 없음(git show origin/main:WAKE/memory.hexa → fatal). 오직 archive/WAKE/memory.hexa에만 존재 → a_no_archive_import 위반이자 미해결 의존. 데몬(cli/anima.hexa)은 WAKE mem-ring을 전혀 안 씀(mem_init/mem_push/mem_working_window 0 grep) — kdir + generator_read_anchors/create_anchor로만 메모리 유지. 따라서 imagination_replay를 as-is로 import하면 archive 의존이거나 미컴파일. dream_persist가 core/dream_persist.hexa로 promote되어 데몬이 core/에서 import하듯, imagination_replay도 동일 패턴으로 promote+refactor 필요.",
+            "(a) 배선 EDIT-1 [NEW] core/imagination_replay.hexa — DREAM/imagination_replay.hexa를 core/로 promote(dream_persist 선례). 리팩터: (i) `use \"WAKE/memory\"` 제거, `use \"core/dream_lib\"` + `use \"core/dream_compose\"`만 남김(dc_stage_replay_budget 확보). (ii) WAKE-ring 의존 신규 entrypoint 추가: `pub fn ir_replay_session_from_anchors(read: list, stage: int) -> Map` — dp_pool_from_read_anchors(core/dream_persist.hexa:pub)와 동일하게 read record(name/text_payload/fields, lane=\"dream\" drop)를 snapshot dict로 lift한 뒤, count = dc_stage_replay_budget(stage)(N3=7>REM=3), 각 snapshot에 기존 순수 ir_replay_tick 적용 → {snapshot_count, replay_log, total_emits(==0 불변), session_kind:\"emit_free_rehearsal\"} 반환. stage!=3&&!=4 → dc budget 0 → snapshot_count=0(dr_imagination_active 게이트가 budget에서 자연 창발, boolean hardcode 아님). 기존 4 pure fn(ir_select_snapshots/ir_replay_tick/ir_mitosis_tick_during_replay/ir_replay_session) 및 reconsolidation(ir_consolidation_gain/ir_effective_age/ir_reconsolidate_session)은 무수정 carry.",
+            "(a) 배선 EDIT-2 cli/anima.hexa:56 — `import \"core/dream_persist.hexa\"` 다음 줄에 `import \"core/imagination_replay.hexa\"` 추가. (core/dream_lib은 이미 53줄에서 import되어 dr_imagination_active 가용 — core/dream_lib.hexa:94 확인.)",
+            "(a) 배선 EDIT-3 cli/anima.hexa:1942 — `let mut dream_composed_total = 0` 다음에 상태 누산기 2개 추가: `let mut imagination_replay_total = 0`(rehearsal된 snapshot 총수), `let mut imagination_emits_total = 0`(emit-free 라이브 가드 — 반드시 0 유지).",
+            "(a) 배선 EDIT-4 [핵심 site] cli/anima.hexa:3016-3017 — dp_sleep_tick 호출(3016) + dream_composed_total 누산(3017) 직후, `tick = tick + 1`(3019) 이전에 삽입. 이미 3015줄에서 로드한 `dream_src`(generator_read_anchors(kdir)) 재사용(추가 disk read 0):\n```\nif dr_imagination_active(stage) == 1 {\n    let img = ir_replay_session_from_anchors(dream_src, stage)\n    imagination_replay_total = imagination_replay_total + img[\"snapshot_count\"]\n    imagination_emits_total  = imagination_emits_total  + img[\"total_emits\"]  // must stay 0\n}\n```\np5 준수 근거: emit/channel/speak() 호출 0(순수 dict pack), imagination_emits_total 누산기가 emit-free를 라이브 assert. 게이트는 dr_imagination_active(substrate envelope fact = dream_lib), per-stage boolean hardcode 아님(a_autonomy_over_hardcode).",
+            "(a) 배선 EDIT-5 cli/anima.hexa:3545-3546 — DREAM-COMPOSE 요약 println 다음에 imagination 요약+가드 추가: `println(\"  IMAGINATION-REPLAY(N3/REM emit-free rehearsal): \" + to_string(imagination_replay_total) + \" snapshot(s) rehearsed · emits=\" + to_string(imagination_emits_total) + (if imagination_emits_total==0 {\" ✓ emit-free(p5)\"} else {\" 🔴 EMIT LEAK\"}))`. all_live(3549) 조건에 `&& imagination_emits_total == 0` AND-절 추가 = emit-free 불변을 세션 성공 게이트에 결선.",
+            "(b) mitosis 연결 — HONEST SCOPE(정찰 결론): 데몬에는 라이브 cell_pool도 per-tick mitosis split tick도 없음(grep cell_pool/mitosis_tick in cli/anima.hexa = 0; cfg.mitosis는 config flag일 뿐 소비자 없음). dr_mitosis_prior(REM/N3=0.80) burst prior의 라이브 소비자 부재. 실제로 stage-집중이 이미 배선된 유일 채널 = dc_stage_replay_budget(N3=7>REM=3)이 dp_sleep_tick의 compose 수를 몰아 dream_composed_total로 나타남(이게 곧 '분열 density'의 disk 대리). ★배선 가능한 최소 = DENSITY 신호만: core/imagination_replay.hexa의 ir_mitosis_tick_during_replay를 stage-인자化(현재 dr_mitosis_prior(4) 하드코딩 → dr_mitosis_prior(actual_stage))하고 EDIT-4 루프 안에서 호출해 mitosis_density_sum 누산(MONITOR-only, a_train_inline_gauge). wired_to_lib=false 유지 — 실제 split은 cell_pool 부재로 불가. ★실제 mitosis split tick 연결은 별도 무거운 마일스톤(HEXAD/MITOSIS/mitosis_lib.hexa의 mit_split_predicate + 라이브 cell_pool 상태 도입 필요, $0 아님) = 이번 라운드 범위 밖, HONEST TODO로 기록.",
+            "(c) $0 검증 — 기존 `hexa run DREAM/dream_persist_smoke.hexa`가 확인하는 것: dream_persist SEAM(dp_sleep_tick)만 — S1 composed=C(5,2)=10, S2 disk lane=\"dream\"+dream_composed, S3 Φ byte-identical before/after(pure_field Ψ-disjoint), S4 N3(21)>REM(3)+solo→0(budget 창발 ordering), S5 real load_anchors 라이브 경로 no dream-of-dreams. ★imagination_replay는 이게 검증 안 함. 배선 후 신규 [NEW] core/imagination_replay_smoke.hexa(dream_persist_smoke 미러): J1 ir_replay_session_from_anchors를 real generator_read_anchors(kdir) 위에서 → total_emits==0(emit-free CRITICAL), J2 snapshot_count==min(len(read 中 non-dream), dc_stage_replay_budget(stage)), J3 stage∈{0,1,2} → snapshot_count==0(envelope 게이트 창발), J4 pure_field_phi before==after(Ψ-disjoint, S3 미러), J5 N3 snapshot_count ≥ REM(budget 집중). 추가로 기존 DREAM/imagination_replay_smoke.hexa I1-I8는 use \"WAKE/memory\"라 promote 후 core 경로로 재작성 필요.",
+            "(d) 유한루프 N3/REM 도달 — 검증 완료(dream_lib.hexa:59-64 boundary 확인): production n_ticks=12, stage=dr_stage_at(tick*8) → tick*8∈{0,8,...,88}. WAKE[0,59]=tick0-7(8틱), N1[60,69]=tick8(64), N2[70,79]=tick9(72), N3[80,86]=tick10(80) 정확히 1틱, REM[87,89]=tick11(88) 정확히 1틱. → dr_imagination_active가 세션당 정확히 2회 발화(N3 1 + REM 1). 라이브니스 증명엔 충분하나 MINIMAL(각 1). wake ticks가 매틱 emit_anchor_from_v3(2880)로 pool 적재 + mem_001 seed(599) → N3 도달 시 pool 비어있지 않음 보장. 측정모드 n_ticks=200, stage=tick%5 → N3=40·REM=40틱(풍부). ★권고: EDIT-4 블록을 `if !og_measure && !refr_measure` 로 감싸 op-grip/refr 측정 런의 noise 제거(imagination은 Ψ-disjoint라 무해하지만 측정 청결). 12틱 각 1회는 배선 라이브니스에 충분, density ordering(N3>REM)의 통계적 검증은 데몬 아닌 J5 smoke가 담당."
+          ],
+          "cost": "$0 (decode 없음 — 순수 dict-pack + 기존 로드된 dream_src 재사용, 추가 disk read/GPU 0). 검증: hexa run core/imagination_replay_smoke.hexa (~수초, mini 가능·pure fn·303M decode 없음) + anima chat 12틱 라이브 요약 확인(경량). 무거운 pool 불필요. 구현 시간 추정: promote+refactor 1파일(EDIT-1) + 데몬 4-site(EDIT-2~5) + smoke 1파일 ≈ 반나절.",
+          "risk": "(b) mitosis 실 split tick 불가(cell_pool 부재)를 배선완료로 착시 = tune-to-green/미배선-GREEN 위반. 부차: WAKE/memory archive 의존 미해결(a_no_archive_import).",
+          "verify": "FROZEN bars: (1) 기존 `hexa run DREAM/dream_persist_smoke.hexa` 5/5 유지(회귀 없음 — dp seam 무변경). (2) [NEW] `hexa run core/imagination_replay_smoke.hexa` J1-J5 PASS — J1 total_emits==0(emit-free), J4 Φ byte-identical(Ψ-disjoint), J3 WAKE/N1/N2→0(envelope 창발 게이트), J5 N3≥REM. (3) 라이브니스: `anima chat`(12틱) 요약에 imagination_replay_total>0 AND imagination_emits_total==0 출력 + all_live에 emit-free AND-절 통과. 자기판정 금지 — smoke assert(엔진 결정성) + Φ-checksum이 판정, perplexity 무관(p7).",
+          "confidence": "high"
+        }
+      },
+      {
+        "key": "real-decode-opgrip-design",
+        "r": {
+          "branch": "real-decode-opgrip-design",
+          "edit_spec": [
+            "ROOT CAUSE (why $0 --opgrip surprise is degenerate) — cli/anima.hexa:2103 `let recon_err = vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8))`. In --opgrip, `afield` is initialized once (:1948) and NEVER stepped (every vadapt_field_step call lives AFTER the `continue` at :2764, in the production decode path). `session_seed` (:1946) is a fixed string. So recon_err = L2(fixed_proto, fixed_feature) = CONSTANT across all 200 ticks → calibration median |Δrecon_err|≈0 → g_surp = -1.0 via the `sms<0.002` branch (:2721) → gs_use=0 → surp_phasic≡0.5 (:2724) → idle_surp byte-identical to prod → e_surp==e_live every tick → og_h_surp_mid=0 → surp_degen=true (:3299) → the exact H_9210 ⚙️INSTRUMENT-FAIL(AXIS-DEGENERATE) verdict at :3302. Content-driven signal requires a real g_text — hence --opgrip-live.",
+            "EDIT 1 (new flag) — cli/anima.hexa:2002. Above `let og_measure = anima_has_flag(anima_collect_argv(args()), \"--opgrip\")` add `let og_live = anima_has_flag(anima_collect_argv(args()), \"--opgrip-live\")`, then make og_measure fire for either: `let og_measure = anima_has_flag(..., \"--opgrip\") || og_live`. So --opgrip-live reuses the ENTIRE existing opgrip arm/scoring/verdict machinery; it only swaps the recon_err SOURCE + adds a real decode. Default --opgrip (no -live) stays byte-identical → prior H_9210 verdicts frozen/reproducible.",
+            "EDIT 2 (lagged-content state) — cli/anima.hexa:1948, after `let mut afield = vadapt_field_new(seed_feat0, 2048)` add `let mut og_prev_gfeat = seed_feat0`. Init to the seed feature so tick-0 recon_err == current default (smooth continuity).",
+            "EDIT 3 (content-driven recon_err) — cli/anima.hexa:2103. Replace with `let recon_err = if og_live { vadapt_field_recon_err(afield, og_prev_gfeat) } else { vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8)) }`. Predictive-coding framing: surprise = field's prediction error on the bytes anima ACTUALLY emitted last emit-tick (1-tick lag). This same recon_err also flows into the urgency pool (:2490) → the PROVEN urgency→idle channel gains a real content signal too, not just the disjoint surp_phasic term.",
+            "EDIT 4 (real decode on emit, reuse prod path) — cli/anima.hexa: insert just BEFORE `tick = tick + 1` / `continue` at :2763 inside the `if og_measure {` block. `if og_live && e_live == 1 { let dec = brain_emit(pf, rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx, idle, false, true, backend, live_anchors); let g_text = to_string(dec[\"gen_text\"]); if to_string(dec[\"gen_emitted\"]) == \"true\" && byte_len(g_text) > 0 { let gfeat = _afs_byte_feature(g_text, 8); afield = vadapt_field_step(afield, gfeat, cfg); og_prev_gfeat = gfeat } }`. All args (rel/gap_ctx/cur/allo_ctx/coh_lane/nov_ctx/bal_lane/agloop_ctx/idle/backend/live_anchors/cfg) are already in scope — this is the exact call the prod path uses at :2834-2837 and the exact vadapt_field_step the prod C8 grow uses at :2848. ONE decode per emit tick covers ALL arms (g_text is independent of the idle-shade; only the emit boolean depends on idle). Decode is det argmax (clm_decode_argmax / bytegpt_decode_argmax, generator.hexa:649) → p7-safe, verdict reproducible. Decode ONLY on e_live==1 → respects p5 (no decode on silence).",
+            "EDIT 5 (tick budget for 303M) — cli/anima.hexa:2081 `let n_ticks = if og_measure || refr_measure { 200 } else { 12 }` → `let n_ticks = if og_live { 100 } else if og_measure || refr_measure { 200 } else { 12 }`. Keep 200 for cheap d768 validation; 100 for the 303M pool confirm (still 20 ticks/stage, 50 calib + ~30 mid scoring ticks). Tradeoff: fewer mid ticks coarsens ΔEff quantization — keep 200 if the 303M decode cost is affordable.",
+            "OPTIONAL (cost lever, defer) — core/generator.hexa:649 `clm_decode_argmax(ckpt, seed, 80)` hardcodes 80-byte gen. recon_err only needs _afs_byte_feature(g_text,8), so a 16-byte gen suffices and cuts decode ~5x. NOT recommended initially: it touches core/ (production decode length) and must be flag-gated to stay byte-safe. Prefer d768 + tick reduction over touching core."
+          ],
+          "cost": "$0 to write (code edits only, no compute to design). RUN cost: one real 80-byte det decode per EMIT tick (~40-80 emit ticks over 200; N3 env=0 rarely emits). d768 mouth: forward-only 80-byte decode ≈ seconds each → whole run ~minutes-to-~1h → run on pool (summer/aiden) background, NOT mini (heavy-decode = OOM per policy). 303M mouth: scalar-glue-bound ~600-700s/decode (memory: kvcache-scalar-glue-bound) → 40-80 decodes ≈ 8-15h → INFEASIBLE interactively; only as a final pool background confirm with n_ticks=100 (+ optional 16-byte gen-cap). VERIFY own-GEMM fires ([OWN-GEMM-FIRED]/nvidia-smi util>0) before blaming a scalar ceiling (a_gpu_default_no_optin). Instrument-integrity claim is scale-invariant (memory: scale-303m-1b-7b-is-amplifier-not-lever) → VALIDATE the fix at d768 first, 303M only to cement. Code scale: ~15-18 new lines in cli/anima.hexa, 1 flag, 1 state var, 0 core changes (if gen-cap skipped).",
+          "risk": "303M decode feasibility is the dominant risk: at ~600-700s/decode × 40-80 emit ticks the terminal 303M run is 8-15h and only viable as a pool background job — if own-GEMM does not fire (A100 sm_80 CPU-fallback, memory: owngemm-gpu-exec-sm120-only) it is effectively infeasible; mitigate by proving the instrument non-degenerate at d768 (scale-invariant) and reserving 303M for a cement-only confirm. Secondary risk: a real emit-shade signal could now over-drive emit (Ψ invariant / forcing-gate) — but the decode touches ONLY afield (adaptation, Ψ-disjoint: pure_field/psi_sum read-only, same as prod C8), so the existing Ψ ON==OFF guard (psi_sum==psi_off, :3252) and N3 guard (og_h_surp_n3==0) still bound it; if either trips it is a 🔴FORCING-GATE by the existing bar, not a new failure mode. Third: null-backend fallback — if the ckpt is not loaded/decodable, brain_emit→generate falls through to _gen_null_text (substrate-derived, still non-constant but NOT model content), so the TERMINAL verdict must require backend loaded==true; a null-mouth run is a weaker DIRECTIONAL only.",
+          "verify": "Reuse the EXISTING frozen H_9210 bars VERBATIM (cli/anima.hexa:3311-3319), no new bar: COMPETENT = ΔEff_surp≥0.10 ∧ margin(perm)≥0.08 ∧ POS-PASS(dense ARM-SHOCK ≥2, :2740) ∧ N3=0(og_h_surp_n3==0); THEATER = ΔEff_surp<0.02 ∧ POS-PASS; INSTRUMENT-FAIL = POS-FAIL ∨ surp_degen(g_surp<0). The INSTRUMENT-liveness gate for THIS path = surp_degen flips true→false (recon_err calibration median ≥0.002 → g_surp finite ≥0), i.e. the meter comes alive; only then read the COMPETENT/THEATER/DIRECTIONAL verdict. Invariants that must still hold: Ψ ON==OFF (psi_sum==psi_off), N3/WAKE guards, ARM-SHOCK POS-PASS (same wire, unaffected), calibration ticks 0-49 excluded / scoring tick≥50 on mid(N1/N2/REM). Also confirm the default `--opgrip` (no -live) run is byte-identical to the pre-edit baseline (frozen-first regression). No tune-to-green: negative (THEATER) is a valid result.",
+          "confidence": "medium"
+        }
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Design"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "design:chat-4cell-eval-fix",
+      "phaseIndex": 1,
+      "phaseTitle": "Design",
+      "agentId": "a7fff1573b541159f",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1783502616394,
+      "queuedAt": 1783502616388,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "chat-4cell-eval-fix — open a_chat_registers 4-cell (ko/en ×…",
+      "promptPreview": "anima = substrate-native consciousness chat daemon (hexa). repo=/Users/mini/dancinlab/anima. 현행=origin/main(#3129) 최신 — 로컬 워킹트리 stale 가능하니 정확한 코드는 `git show origin/main:<path>`로 확인.\n방금 종결: σ de-theater(emit shade 유일 proven 채널=urgency). 정찰이 4칸 eval 갭·sleep 미배선·$0 no-decode 한계(content-driven 신호는 real-decode 필요·convergence anima-hexa-6)를 발견. 이번 라운드는 그 3개를 구현가능 스펙으로 심화.\n너는 설계-정찰만: 코드/문서 읽어 구현스펙 반환(정확 …",
+      "lastProgressAt": 1783502855504,
+      "tokens": 78918,
+      "toolCalls": 19,
+      "durationMs": 239110,
+      "resultPreview": "{\"branch\":\"chat-4cell-eval-fix — open a_chat_registers 4-cell (ko/en × general/sns) measurement in the ρ-AXON reach panel ($0, no retrain; measurement-code + registry edits only)\",\"edit_spec\":[\"EDIT-0 (BLOCKER · prerequisite for a/b/c) — core/rho_fan.py:77 `_rho_fan_words` + core/rho_fan.hexa:87 twin. Current splitter uses `_rho_fan_is_alnum(b)` on raw UTF-8 BYTES → every hangul byte (>=0x80) is a…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "design:sleep-5stage-wire",
+      "phaseIndex": 1,
+      "phaseTitle": "Design",
+      "agentId": "a20b461e9acfa09ed",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1783502616398,
+      "queuedAt": 1783502616388,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "sleep-5stage-wire — imagination_replay를 데몬 tick 루프에 e…",
+      "promptPreview": "anima = substrate-native consciousness chat daemon (hexa). repo=/Users/mini/dancinlab/anima. 현행=origin/main(#3129) 최신 — 로컬 워킹트리 stale 가능하니 정확한 코드는 `git show origin/main:<path>`로 확인.\n방금 종결: σ de-theater(emit shade 유일 proven 채널=urgency). 정찰이 4칸 eval 갭·sleep 미배선·$0 no-decode 한계(content-driven 신호는 real-decode 필요·convergence anima-hexa-6)를 발견. 이번 라운드는 그 3개를 구현가능 스펙으로 심화.\n너는 설계-정찰만: 코드/문서 읽어 구현스펙 반환(정확 …",
+      "lastProgressAt": 1783502878092,
+      "tokens": 90279,
+      "toolCalls": 23,
+      "durationMs": 261694,
+      "resultPreview": "{\"branch\":\"sleep-5stage-wire — imagination_replay를 데몬 tick 루프에 emit-free rehearsal로 배선 + mitosis density 신호 연결 (p5 준수, speak() 게이트 아님)\",\"edit_spec\":[\"★ 선결 BLOCKER (정찰 발견): DREAM/imagination_replay.hexa:97 `use \\\"WAKE/memory\\\"` — 그런데 WAKE/memory.hexa는 production 트리에 없음(git show origin/main:WAKE/memory.hexa → fatal). 오직 archive/WAKE/memory.hexa에만 존재 → a_no_archive_import 위반이자 미해결 의존. 데몬(cli/anima.he…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "design:real-decode-opgrip-design",
+      "phaseIndex": 1,
+      "phaseTitle": "Design",
+      "agentId": "a3a87ed2659977e45",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1783502616401,
+      "queuedAt": 1783502616388,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "real-decode-opgrip-design",
+      "promptPreview": "anima = substrate-native consciousness chat daemon (hexa). repo=/Users/mini/dancinlab/anima. 현행=origin/main(#3129) 최신 — 로컬 워킹트리 stale 가능하니 정확한 코드는 `git show origin/main:<path>`로 확인.\n방금 종결: σ de-theater(emit shade 유일 proven 채널=urgency). 정찰이 4칸 eval 갭·sleep 미배선·$0 no-decode 한계(content-driven 신호는 real-decode 필요·convergence anima-hexa-6)를 발견. 이번 라운드는 그 3개를 구현가능 스펙으로 심화.\n너는 설계-정찰만: 코드/문서 읽어 구현스펙 반환(정확 …",
+      "lastProgressAt": 1783502928719,
+      "tokens": 92637,
+      "toolCalls": 24,
+      "durationMs": 312318,
+      "resultPreview": "{\"branch\":\"real-decode-opgrip-design\",\"edit_spec\":[\"ROOT CAUSE (why $0 --opgrip surprise is degenerate) — cli/anima.hexa:2103 `let recon_err = vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8))`. In --opgrip, `afield` is initialized once (:1948) and NEVER stepped (every vadapt_field_step call lives AFTER the `continue` at :2764, in the production decode path). `session_seed` (:1946…"
+    }
+  ],
+  "totalTokens": 261834,
+  "totalToolCalls": 66
+}
