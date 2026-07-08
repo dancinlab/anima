@@ -300,7 +300,11 @@ fn anima_evaluate_mode(argv: [string]) {
         // so evaluate writes ALL output to a --result-file: fd 1 stays silent → the child survives the
         // pipe close and finishes the full G0-G6 battery. A SECOND fresh exec then cats that file
         // (fast, well under the limit). Two execs = two pipes, the long-running one kept silent.
-        let rf = "/tmp/anima_evalpy_result.out"
+        // UNIQUE per-invocation result file (mktemp) — a hardcoded shared path lets two
+        // concurrent `anima evaluate --py` runs on the same pool box CLOBBER each other's
+        // output (write+read race). Capture once so the write (--result-file) and the
+        // read (cat) use the SAME path. Pattern matches install.hexa's to_string(exec()).trim().
+        let rf = to_string(exec("mktemp /tmp/anima_evalpy_result.XXXXXX")).trim()
         // cd into $ANIMA_SRC first so evaluate.py's __file__-relative core/ resolution
         // matches a direct `python3 cli/evaluate.py` (verified working). Without the cd,
         // the hexa exec cwd skews sys.path[0] and core/ imports (decode) break.
@@ -309,6 +313,7 @@ fn anima_evaluate_mode(argv: [string]) {
         let _ev = exec(cmd)
         let out = exec("cat " + rf)
         print(out)
+        let _rm = exec("rm -f " + rf)
         return
     }
     println("=== anima evaluate → cli/evaluate.hexa (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===")
