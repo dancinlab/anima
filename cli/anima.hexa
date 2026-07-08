@@ -3396,13 +3396,14 @@ fn anima_consciousness_mode(ckpt: string) {
                 afield = vadapt_field_step(afield, st_feat, cfg)
             }
             if og_live && e_live == 1 {
-                let dec = brain_emit(pf,
+                // MEMORY FENCE: the heavy brain_emit result Map + decoded string live in the
+                // og_emit_decode_feat arena (freed on return) so they DON'T accumulate across
+                // n_ticks (was inline → LINEAR growth → OOM-kill mid-loop at high n; see fn note).
+                // Byte-identical: same args/emitted-condition/8-feat; empty return = not emitted.
+                let gl_feat = og_emit_decode_feat(pf,
                     rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
-                    idle, false, true,
-                    backend, live_anchors)
-                let gl_text = to_string(dec["gen_text"])
-                if to_string(dec["gen_emitted"]) == "true" && byte_len(gl_text) > 0 {
-                    let gl_feat = _afs_byte_feature(gl_text, 8)
+                    idle, backend, live_anchors)
+                if len(gl_feat) > 0 {
                     afield = vadapt_field_step(afield, gl_feat, cfg)   // Ψ-disjoint (prod C8-GROW)
                     og_prev_gfeat = gl_feat
                     // ── H_9230 corollary buffer (Family E): update the predicted-utterance EMA + set the 1-tick-lagged
@@ -5037,6 +5038,35 @@ fn _og_median(a: [float]) -> float {
         i = i + 1
     }
     return a[target]
+}
+
+// ── op-grip per-tick real decode (MEMORY FENCE) ──────────────────────────────────
+// The op-grip measurement loop (--opgrip-live n=100 · --opgrip-r3 n=400) runs the EXACT
+// production brain_emit (det-argmax mouth) once per emit-tick to step the ONE canonical
+// afield with real content variance. Inlining that decode in the big measurement function's
+// arena accumulates the brain_emit result Map (`dec`) + decoded string (`gl_text`) across ALL
+// n_ticks iterations → LINEAR growth → OOM-kill mid-loop (n=100 fine, n=400 died ~tick126 on
+// 30GB). Extracting the heavy decode here frees `dec`+`gl_text` on RETURN (hexa frees a fn's
+// arena on __hexa_fn_arena_return) — only the small 8-element emitted-content feature crosses
+// back to the caller. BEHAVIOUR is byte-identical to the inline form: same brain_emit args
+// (det-argmax mouth · env_off=false · content_clean=true), same emitted condition
+// (gen_emitted=="true" ∧ byte_len(gen_text)>0), same _afs_byte_feature(gl_text,8). Returns the
+// 8-feat on emit, or an EMPTY array (len==0) as the not-emitted sentinel — the caller keeps all
+// persistent state (afield · og_prev_gfeat · ec_x · ec_pred).
+fn og_emit_decode_feat(pf: PureField,
+                       rel: float, gap: float, cur: float, allo: float,
+                       coh: float, nov: float, bal: float, agl: float,
+                       idle: float, backend: Map, anchors: list) -> [float] {
+    let dec = brain_emit(pf,
+        rel, gap, cur, allo, coh, nov, bal, agl,
+        idle, false, true,
+        backend, anchors)
+    let gl_text = to_string(dec["gen_text"])
+    if to_string(dec["gen_emitted"]) == "true" && byte_len(gl_text) > 0 {
+        return _afs_byte_feature(gl_text, 8)   // small 8-elem feat copied to caller arena on return
+    }
+    let empty: [float] = []                    // not-emitted sentinel (len==0)
+    return empty
 }
 
 // ── H_9102 (F3) stats helpers (plain-float, NO numpy — engine-native discipline) ──
