@@ -238,7 +238,7 @@ jobs:
           ver="$(cat VERSION)"
           code="$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/anima-python/${ver}/json")"
           if [ "$code" = "200" ]; then
-            echo "anima-python ${ver} already on PyPI → skip (bump VERSION for a new release)"
+            echo "anima-py ${ver} already on PyPI → skip (bump VERSION for a new release)"
             echo "publish=false" >> "$GITHUB_OUTPUT"
           else
             echo "publish=true" >> "$GITHUB_OUTPUT"

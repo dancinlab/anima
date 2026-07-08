@@ -6,7 +6,7 @@
 # BindAttn model = the FROZEN base ByteGPT + N appended GATED transformer blocks
 # (applied after the L base blocks, before ln_f: x = x + gate*(block(x)-x)). This
 # command bridges the injected torch .pt back onto the base .bin so the combined
-# model is engine-loadable and scoreable via `anima-python evaluate <bin>` with ZERO
+# model is engine-loadable and scoreable via `anima-py evaluate <bin>` with ZERO
 # changes to cli/evaluate.py (bg_is_bytegpt stays true; bg_load reads the trailer).
 #
 # REFERENCE-MATCH (NOT a reimplementation): the byte layout is core/serialize.py::
@@ -42,7 +42,7 @@ def serialize_bind_usage():
     print("")
     print("  splice N appended gated transformer blocks (BindAttn .pt) onto a base ByteGPT")
     print("  .bin so the combined model is engine-loadable + scoreable via")
-    print("  `anima-python evaluate <out.bin>`. gate=0 => byte-identical to the base .bin.")
+    print("  `anima-py evaluate <out.bin>`. gate=0 => byte-identical to the base .bin.")
 
 
 def serialize_bind_run(argv):
@@ -85,7 +85,7 @@ def serialize_bind_run(argv):
         return 1
     print("  ✅ CORE-loadable with " + str(nb) + " injected-bind block(s).")
     print("  NOTE: this is a STRUCTURE round-trip only — the engine-native ρ-AXON reach")
-    print("        verdict (former G0-G6) is `anima-python evaluate <out.bin>` (a_engine_native_learning).")
+    print("        verdict (former G0-G6) is `anima-py evaluate <out.bin>` (a_engine_native_learning).")
     return 0
 
 

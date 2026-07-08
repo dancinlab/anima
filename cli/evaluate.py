@@ -48,7 +48,7 @@ from rho_fan import (
 )
 
 # H_9200 — process-global: render the ρ-AXON reach panel (cli/rho_axon.py) instead of the
-# G0-G6 battery when `anima-python evaluate --rho-axon` is passed (set in main()).
+# G0-G6 battery when `anima-py evaluate --rho-axon` is passed (set in main()).
 _RHO_AXON = False
 
 
@@ -357,7 +357,7 @@ def eval_system_rho_weave(mouth, gen):
 
 
 def system_g1_run(argv):
-    """`anima-python evaluate <ckpt> --system-g1 [--gen N]` — engine-native system-G1."""
+    """`anima-py evaluate <ckpt> --system-g1 [--gen N]` — engine-native system-G1."""
     ckpt = argv[0]
     gen = evaluate_intval(argv[1:], "--gen", 0)
     print("=== anima evaluate --system-g1 — RECOMBINATION RELOCATION (card H_9035) ===")
@@ -672,10 +672,10 @@ def eval_reach_all(ckpt, corpus_paths, gen):
 
 
 def eval_rho_axon(ckpt, corpus_paths, gen):
-    """ρ-AXON reach panel (`anima-python evaluate <clm> --rho-axon`) — the redesigned reach
+    """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
-    so its tier is identical (engine-native py channel `anima-python evaluate` = TERMINAL). HILLOCK + ρ·form/fan/leap are
+    so its tier is identical (engine-native py channel `anima-py evaluate` = TERMINAL). HILLOCK + ρ·form/fan/leap are
     live; ρ·store/weave/tether/self report PENDING (honest non-verdict) until their frozen
     corpus-mined probe sets land (ING rho-axon-implement-evaluate)."""
     import rho_axon
@@ -1059,7 +1059,7 @@ def _psi_soma_panel(r):
 
 
 def probe_run(argv):
-    """`anima-python evaluate <ckpt> --probe <spec.json> [--gen N]` — matched-surface G1 probe
+    """`anima-py evaluate <ckpt> --probe <spec.json> [--gen N]` — matched-surface G1 probe
     (card H_6189). Greedy (top_k=1) decode of each pre-registered prompt; dumps RAW continuations
     for offline scoring. Reuses the canonical _Mouth numpy decode path (byte-identical to the gates)."""
     ckpt = argv[0]
@@ -1080,7 +1080,7 @@ def probe_run(argv):
                       "n": len(out), "items": out}, ensure_ascii=False))
     return 0
 def dump_hidden_run(argv):
-    """`anima-python evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz>` — read-only
+    """`anima-py evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz>` — read-only
     penultimate-hidden dump for the ρ·weave held-out-pair recombination / γ binding-lane
     probe (H_9235). For each pre-registered prompt: T=24 right-aligned byte encode → the
     EXACT production trunk forward (core/decode clm_forward_hidden, byte-identical to what
@@ -1213,7 +1213,7 @@ def _selftest_rho_cells():
 
 
 def interaction_lift_run(argv):
-    """`anima-python evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json>
+    """`anima-py evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json>
     [--win T] [--score-len K]` — engine-native joint interaction-lift measurement
     (H_9255, Fable design state/g1_joint_interaction_corpus/DESIGN_FABLE.md §3).
 
