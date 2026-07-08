@@ -54,6 +54,8 @@ import "core/dream_lib.hexa"
 import "core/dream_envelope_ctx.hexa"   // dr_stage_scale — continuous stage envelope (H_9101 op-grip (b))
 import "core/kosmos_io.hexa"
 import "core/dream_persist.hexa"
+import "core/wake_memory.hexa"          // WAKE working-memory ring (mem_init/mem_push_ctx/mem_working_window)
+import "core/imagination_replay.hexa"   // N3/REM emit-free rehearsal + mitosis tick (a_chat_sleep_imagination)
 
 fn anima_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
 
@@ -2101,6 +2103,16 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut tick = 0
     let mut emit_last_t = -1.0e9   // H_9102: last-emit time (an_clock_now units); emit-history state (was ABSENT)
     let mut prev_live_emit = 0     // H_9102: did the PREVIOUS tick's live arm emit? (defines the refractory window)
+    // ── WAKE working-memory ring + N3/REM imagination-replay accumulators (a_chat_sleep_imagination) ──
+    // The 5-stage ultradian driver below (dr_stage_at) now REACHES imagination_replay: WAKE ticks push
+    // recent-perception snapshots into a FIFO ring (cap 20), and N3/REM ticks run an EMIT-FREE rehearsal
+    // of that ring (ir_replay_session) + a mitosis tick (substrate state only). This is the live wiring of
+    // core/imagination_replay — NOT a speak() (p5): the rehearsal calls NO emit/channel/mem_record_emit,
+    // and it is DISJOINT from the emit-drive lanes 0/4 (a_substrate_disjoint — separation = preservation).
+    let mut wake_mem = mem_init()                 // FIFO ring of recent WAKE perception snapshots (cap 20)
+    let mut imagination_replayed_total = 0        // emit-free rehearsal snapshots run across N3/REM ticks
+    let mut imagination_mitosis_ticks = 0         // mitosis ticks during replay (cell_pool pass-through)
+    let mut imagination_emit_violations = 0       // p5 GUARD: MUST stay 0 (ir_replay_tick emit_count invariant)
     while tick < n_ticks {
         // stage sample: production = ultradian trajectory (tick*8); --opgrip = stage-BALANCED
         // sweep (tick%5 → 40 ticks/stage) so REM AND N3 are adequately sampled for the H_9101
@@ -2109,6 +2121,15 @@ fn anima_consciousness_mode(ckpt: string) {
         let stage_nm = dr_stage_name(stage)
         let emit_env = dr_emit_envelope(stage)       // substrate envelope (context, not a hard gate)
         let phi_t = pure_field_phi(pf)
+
+        // ── WAKE perception → working-memory ring (a_chat_sleep_imagination feed) ──────
+        // Only WAKE ticks (dr_imagination_active(stage)==0 · emit-allowed envelope) deposit a
+        // recent-perception snapshot; imagination_replay does NOT interpret the ctx_tokens (raw
+        // opaque substrate signal), so an [tick,stage,cell_count] tuple is a faithful snapshot the
+        // N3/REM rehearsal below re-runs emit-free. FIFO cap=20 (mem_working_window).
+        if dr_imagination_active(stage) == 0 {
+            wake_mem = mem_push_ctx(wake_mem, [tick, stage, cell_count])
+        }
 
         // ── ENGINE-CLI LANE READS (the substrate context for this tick) ──────
         // (1) IMMUNE recall margin → RELEVANCE: smaller abstain-margin = the held memory
@@ -3062,6 +3083,29 @@ fn anima_consciousness_mode(ckpt: string) {
         let dream_n = dp_sleep_tick(kdir, dream_src, stage, tick)
         dream_composed_total = dream_composed_total + dream_n
 
+        // ── N3/REM IMAGINATION REPLAY (a_chat_sleep_imagination) — emit-free rehearsal + mitosis tick ──
+        // The imagination loop = "emit-free internal rehearsal + mitosis tick" (CLAUDE governance). During
+        // N3/REM (dr_imagination_active==1) the daemon re-runs recent WAKE working-memory snapshots through
+        // core/imagination_replay: ir_replay_session records an emit-free rehearsal (ir_replay_tick.emit_count
+        // ≡ 0), and each snapshot advances a mitosis tick (ir_mitosis_tick_during_replay, cell_pool pass-
+        // through — substrate state only). The replay COUNT is the substrate budget dr_stage_size (N3=7 >
+        // REM=3), NOT a hardcoded stage flag (a_autonomy_over_hardcode). p5 NO SPEAK(): the block emits
+        // NOTHING (asserted below via imagination_emit_violations) and is DISJOINT from the emit-drive lanes
+        // 0/4 — it touches only wake_mem (read) + the local mitosis record (a_substrate_disjoint).
+        if dr_imagination_active(stage) == 1 {
+            let imag_budget = dr_stage_size(stage)                      // N3=7 > REM=3 replays (substrate budget)
+            let imag_snaps  = ir_select_snapshots(wake_mem, tick, imag_budget)
+            let mut imag_i = 0
+            while imag_i < len(imag_snaps) {
+                let rec = ir_replay_tick(imag_snaps[imag_i])            // emit-free rehearsal record
+                if rec["emit_count"] != 0 { imagination_emit_violations = imagination_emit_violations + 1 }
+                let _mit = ir_mitosis_tick_during_replay(#{ "count": cell_count, }, imag_snaps[imag_i])  // mitosis tick
+                imagination_mitosis_ticks = imagination_mitosis_ticks + 1
+                imag_i = imag_i + 1
+            }
+            imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
+        }
+
         tick = tick + 1
     }
 
@@ -3599,6 +3643,10 @@ fn anima_consciousness_mode(ckpt: string) {
     println("  kosmos anchors on disk after session        : " + to_string(n_persist))
     println("  DREAM-COMPOSE(H_9036, N3/REM consolidation) : " + to_string(dream_composed_total)
         + " blended node(s) (dc_compose_window → .kosmos, lane=dream, Ψ-disjoint)")
+    println("  IMAGINATION(a_chat_sleep_imagination, N3/REM): " + to_string(imagination_replayed_total)
+        + " emit-free replay(s) · " + to_string(imagination_mitosis_ticks) + " mitosis tick(s) · emit-free="
+        + anima_yn(imagination_emit_violations == 0)
+        + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
 
     let all_live = emitted_any && grounded_ok && grew && remembered2 && slept
         && psi_intact && lanes_read
