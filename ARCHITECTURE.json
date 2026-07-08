@@ -3417,7 +3417,7 @@
                 "name": "STATUS WIRED-live (daemon N3/REM tick landed · codegen-clean · c9)",
                 "role": "",
                 "id": "a-g-dream-compose-status",
-                "detail": "UNWIRED→WIRED-live(2026-07-02, B①): dream_persist.hexa 가 dc_compose_window 를 live daemon(cli/anima.hexa tick loop) N3/REM 에 배선. blend=geometric law(의미정렬 toy UNVERIFIED). imagination_replay.hexa 는 orphaned — live sleep path 는 dream_persist seam."
+                "detail": "UNWIRED→WIRED-live(2026-07-02, B①): dream_persist.hexa 가 dc_compose_window 를 live daemon(cli/anima.hexa tick loop) N3/REM 에 배선. blend=geometric law(의미정렬 toy UNVERIFIED). imagination_replay.hexa 도 2026-07-08 core/ 격상 후 같은 N3/REM tick 에 별개 lane 으로 WIRED-live(imagination-replay-wired 노드)."
                },
                {
                 "name": "증거 + 잔여 infra 벽 (anima-hexa-1)",
@@ -3443,7 +3443,39 @@
                 "name": "EXCLUDE = kosmos round-trip (구현됨·미배선 follow-on)",
                 "role": "",
                 "id": "a-g-wake-memory-kosmos-followon",
-                "detail": "mem_save_to_kosmos/mem_load_from_kosmos는 wake_save/wake_load(M4) 의존이라 미포트. follow-on SLEEP-KOSMOS-PORT: wake_save/load→core/kosmos_io + mem_save/load 얇은 wrapper. 미배선(daemon)=SLEEP-STAGE-DAEMON(WAKE→N1→N2→N3→REM 구동). scope: state/frontier_round2_scout/SLEEP_WIRE_scope.md."
+                "detail": "mem_save_to_kosmos/mem_load_from_kosmos는 wake_save/wake_load(M4) 의존이라 미포트. follow-on SLEEP-KOSMOS-PORT: wake_save/load→core/kosmos_io + mem_save/load 얇은 wrapper 만 잔여. SLEEP-STAGE-DAEMON은 2026-07-08 WIRED(아래 imagination-replay-wired 노드). scope: state/frontier_round2_scout/SLEEP_WIRE_scope.md."
+               }
+              ]
+             },
+             {
+              "name": "core/imagination_replay.hexa — DREAM→core/ 격상 + 5-stage 수면 driver 배선 (a_chat_sleep_imagination)",
+              "role": "sleep-imagination-live-wire",
+              "id": "a-g-consciousness-engine-imagination-replay-wired",
+              "detail": "2026-07-08 SLEEP-STAGE-DAEMON WIRED. imagination_replay를 DREAM/(비-prod)→core/(prod closure)로 격상(dream_lib·dream_persist 패턴), DREAM smoke·dream_report use 재배선. cli/anima.hexa의 live 5-stage 루프에 배선. typecheck exit 0(신규 fatal 0).",
+              "children": [
+               {
+                "name": "격상 = DREAM/→core/ (prod closure 진입)",
+                "role": "",
+                "id": "a-g-imagination-replay-promote",
+                "detail": "git mv DREAM/imagination_replay.hexa→core/imagination_replay.hexa(패키징 불변식: prod tree=core/·cli/·agent/; DREAM/는 비-prod). 소비자 2건 재배선: DREAM/imagination_replay_smoke.hexa·DREAM/dream_report.hexa use \"core/imagination_replay\". core/wake_memory·core/dream_lib import 유지."
+               },
+               {
+                "name": "5-stage 루프 배선 = anima_consciousness_mode (신규 verb 없음)",
+                "role": "",
+                "id": "a-g-imagination-replay-5stage-wire",
+                "detail": "기존 live ultradian 루프(dr_stage_at WAKE/N1/N2/N3/REM) 재사용. WAKE tick=recent-perception snapshot을 working ring(mem_push_ctx cap20)에 적재. N3/REM tick(dr_imagination_active==1)=dr_stage_size 예산(N3=7>REM=3)만큼 ir_replay_tick + ir_mitosis_tick_during_replay 실행. 요약에 IMAGINATION 라인 출력."
+               },
+               {
+                "name": "emit-free + disjoint invariant (p5 · a_substrate_disjoint)",
+                "role": "",
+                "id": "a-g-imagination-replay-invariant",
+                "detail": "가드=imagination_emit_violations(ir_replay_tick.emit_count≡0·total_emits≡0, smoke I1/I3; 요약 emit-free= 출력, p5). emit-drive lane 0/4 DISJOINT — working-ring read + local mitosis record만 touch. dream_persist seam(.kosmos anchor)과 별개 lane. 소비 symbol=mem_working_window 1개."
+               },
+               {
+                "name": "잔여: daemon full-binary cold-compile QA",
+                "role": "",
+                "id": "a-g-imagination-replay-followon",
+                "detail": "typecheck PASS≠full codegen(anima-hexa-2): 신규 struct 없음·Map literal/ir_* 는 smoke서 컴파일 검증됨이라 저위험이나 daemon full-binary QA는 pool 필요(로컬 runtime FFI-off). SLEEP-KOSMOS-PORT(mem_save/load)는 여전히 별개 follow-on."
                }
               ]
              },
