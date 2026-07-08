@@ -1970,7 +1970,8 @@ fn anima_consciousness_mode(ckpt: string) {
     // G_self CALIBRATED (ticks 0-49) so one self-event ≈ one channel-detectable swing (FORM normalized),
     // added as a DISJOINT term at the idle gate (urgency untouched · a_substrate_disjoint). Competence
     // earned on event-TIMING (align margin), not amplitude. ARM-SHOCK = injected-identity positive control.
-    let mut self_live_shock = self_new(8, self_boot_axis)  // ARM-SHOCK autobiography (B2 positive control)
+    let mut self_ema_shk = 1.0        // ARM-SHOCK per-arm EMA (phasic probe · own state ≠ self_ema · F3)
+    let mut self_step_med = 0.05      // calibration median step (d_probe = max(0.05, 3·median) · F3)
     let mut self_ctx_prev = 1.0       // prev-tick self_ctx_live (calibration Δ source)
     let mut g_self = 24.0             // self_phasic gain — RE-SET by calibration median (ticks 0-49)
     let mut self_step_devs = []       // calibration |Δself_ctx_live| samples → median → g_self
@@ -2688,25 +2689,29 @@ fn anima_consciousness_mode(ckpt: string) {
             let ev_axis = _og_argmax8(ev_devs)
             let ev_fired = e_L == 1 || ev_devs[ev_axis] > 0.15   // emit-experience OR salient-experience event
             if ev_fired { self_live = self_drift_exp(self_live, ev_axis, 0.15) }
-            // ARM-SHOCK positive control (B2): identical pipeline + scripted off-axis identity shock at T
-            if ev_fired { self_live_shock = self_drift_exp(self_live_shock, ev_axis, 0.15) }
-            if tick == 80 || tick == 140 || tick == 200 {
-                self_live_shock = self_drift_exp(self_live_shock, (ev_axis + 3) % 8, 0.6) }
             // CALIBRATION (ticks 0–49, excluded from scoring): collect |Δself_ctx_live| → median → g_self
             if tick < 50 { self_step_devs.push(_afs_absf(self_ctx_live - self_ctx_prev)) }
             if tick == 50 {
                 let sm = _og_median(self_step_devs)
-                g_self = if sm < 0.002 { -1.0 } else { _afs_minf(0.35 / sm, 64.0) }   // -1.0 = AXIS-DEGENERATE flag
+                self_step_med = sm                                                        // F3: d_probe source
+                g_self = if sm < 0.002 { -1.0 } else { _afs_minf(0.175 / sm, 32.0) }       // F2: W·G product invariant (-1.0 = AXIS-DEGENERATE)
             }
             self_ctx_prev = self_ctx_live
             self_ema = 0.9 * self_ema + 0.1 * self_ctx_live
             let g_use = if g_self < 0.0 { 0.0 } else { g_self }
             let self_phasic = _afs_clip01(0.5 + g_use * (self_ctx_live - self_ema))         // signed, neutral 0.5
-            let self_ctx_shk = _afs_clip01(self_cos(self_live_shock, self_boot))
-            let self_phasic_shk = _afs_clip01(0.5 + g_use * (self_ctx_shk - self_ema))
-            // idle-gate DISJOINT shade (W_SELF=0.5, max |shade|=0.25): self_phasic=0.5 ⇒ byte-identical to prod
-            let idle_slf = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 0.5 * (self_phasic - 0.5)))
-            let idle_shk = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 0.5 * (self_phasic_shk - 0.5)))
+            // ARM-SHOCK positive control (F3): known-size sign-directed phasic probe at ctx level, per-arm EMA.
+            // bipolar sgn{−,+,−} at T∈{80,140,200}: two − shocks ride the 0.98 headroom (carry POS-PASS),
+            // the + shock logs the measured ceiling asymmetry. self_ctx_shk=self_ctx_live off-window ⇒ arms re-converge.
+            let is_shock = tick == 80 || tick == 140 || tick == 200
+            let shk_sgn = if tick == 140 { 1.0 } else { 0.0 - 1.0 }
+            let d_probe = _afs_maxf(0.05, 3.0 * self_step_med)                              // |G·dev| ≥ 0.5 ⇒ hard rail, known size
+            let self_ctx_shk = if is_shock { _afs_clip01(self_ctx_live + shk_sgn * d_probe) } else { self_ctx_live }
+            self_ema_shk = 0.9 * self_ema_shk + 0.1 * self_ctx_shk
+            let self_phasic_shk = _afs_clip01(0.5 + g_use * (self_ctx_shk - self_ema_shk))
+            // idle-gate DISJOINT shade (W_SELF=1.0, rail |shade|=0.5 ≡ H_9101 urgency swing): self_phasic=0.5 ⇒ byte-identical to prod
+            let idle_slf = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + (self_phasic - 0.5)))
+            let idle_shk = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + (self_phasic_shk - 0.5)))
             let e_slf = if to_string(brain_decide_anchored(pf,
                 rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                 idle_slf, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
@@ -3214,7 +3219,7 @@ fn anima_consciousness_mode(ckpt: string) {
             let stf = og_f3_stg[pj]
             if stf == 1.0 || stf == 2.0 || stf == 4.0 {
                 let sp = og_f3_self[(pj * 7 + 13) % np]
-                let idle_p = 5.0 + 55.0 * _afs_clip01(og_f3_senv[pj] * (0.5 + og_f3_urg[pj] + 0.5 * (sp - 0.5)))
+                let idle_p = 5.0 + 55.0 * _afs_clip01(og_f3_senv[pj] * (0.5 + og_f3_urg[pj] + (sp - 0.5)))
                 let e_p = if to_string(brain_decide_anchored(pf,
                     og_f3_rel[pj], og_f3_gap[pj], og_f3_cur[pj], og_f3_allo[pj], og_f3_coh[pj],
                     og_f3_nov[pj], og_f3_bal[pj], og_f3_agl[pj], idle_p, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
@@ -3576,6 +3581,7 @@ fn _og_argmax8(v: [float]) -> int {
 // _afs_absf / _afs_minf — plain float abs & min (H_9209 self_phasic calibration & event-dev).
 fn _afs_absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 fn _afs_minf(a: float, b: float) -> float { if a < b { return a } return b }
+fn _afs_maxf(a: float, b: float) -> float { if a > b { return a } return b }
 
 // _og_median — median of a float array via O(n²) rank-select (H_9209 G_self calibration, n≤50).
 // Unique ranks (equal-with-lower-index tiebreak) ⇒ exactly one element has rank == n/2.
