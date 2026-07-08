@@ -1,0 +1,37 @@
+=== hx install anima (H_9210 ~20min) ===
+[2m  registry entry 'launch.hexa' missing, auto-detected 'cli/anima.hexa'[0m
+[32m⬡ installed: anima[0m
+[2m  entry: cli/anima.hexa[0m
+[2m  run with: hx run anima  (or: anima)[0m
+=== anima d768.clm --opgrip (surprise 측정) ===
+  emit-rate: live=0.6  perm-noise=0.6   (≈equal ⇒ same centering; only tick-MEANING differs)
+  downstream D = mean(tension ag_conflict, emit_drive, novelty nov_ctx, grounded m_grounding)
+  ── ρ(emit-timing, D) ──                    ALL(n=200)   DISCRIM(N1/N2/REM)
+  ρ_real  (live urgency)                :  -0.033462615288456246   0.2147057763270637
+  ρ_noise (perm var-matched, K=8 mean)  :  -0.03346261528845624   0.2147057763270637
+  ρ_lcg   (affine var-matched control)  :  -0.033462615288456246   0.2147057763270637
+  Δρ = ρ_real − ρ_noise                 :  -6.938893903907228e-18   0.0
+  per-component ρ_real: tension=0.16666666666666688 novelty=0.033045899384271334 grounded=-1.4313052163268636e-18
+  ── PRE-REG F3 VERDICT (frozen bar Δρ ≥ 0.15) ──
+  F3 VERDICT = 🟠 NOISE-GRIP — Δρ < 0.15: the grip is centering-noise-driven (matched noise reproduces the same downstream corr) = a subtler op-layer theater; tier stays GRIP
+
+──────── H_9209 self_phasic emit-shade (mid=N1/N2/REM=90 · calib 0-49 · G_self=20.21081102876883) ────────
+  ΔEff_self Hamming(self-shade idle vs e_live) = 1/90 = 0.011111111111111112   [HEADLINE]
+  ARM-PERM matched-noise ΔEff = 13/90 = 0.14444444444444443  → margin ΔEff_self−perm = -0.13333333333333333
+  align (flips within ±2 of a self-event) = 1/1 = 1.0
+  ARM-SHOCK v2 dense (±0.5 rail every mid tick) = 45/90 flips = 0.5  · POS-PASS(≥2)=YES
+  pool channel-OFF ctrl (og_h_selfL/mid, #3116 floor) = 0 = 0.0  · re-sum fidelity og_h_selfS=0 · shuf og_h_selfshuf=0
+  GUARDS: N3 self-flips=0 (must 0) · WAKE=0 · Ψ emit-gap=0.011111111111111112 (must ≤0.05) · axis ok
+  ── PRE-REG H_9209 VERDICT (frozen bars, verbatim) ──
+  COMPETENT: ΔEff_self≥0.10 ∧ margin(perm)≥0.08 ∧ align≥0.5 ∧ POS-PASS ∧ N3=0 ∧ Ψ-gap≤0.05
+  THEATER: ΔEff_self<0.02 ∧ POS-PASS ∧ axis non-degenerate ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate
+  VERDICT = 🔴 THEATER — self genuinely inert at emit (ΔEff<0.02, POS control PASSED so meter works) ⇒ never wire, keep .kosmos persistence only (H_1471 stands)
+
+──────── H_9210 surprise(recon_err) emit-shade (mid=90 · G_surp=-1.0) ────────
+  ΔEff_surp Hamming(surp-shade idle vs e_live) = 0/90 = 0.0   [HEADLINE]
+  ARM-PERM matched-noise = 11/90 = 0.12222222222222222  → margin = -0.12222222222222222
+  POS-PASS(dense ARM-SHOCK, same wire)=YES · N3 surp-flips=0 (must 0) · axis DEGENERATE
+  ── PRE-REG H_9210 VERDICT (frozen bars, verbatim) ──
+  COMPETENT: ΔEff_surp≥0.10 ∧ margin(perm)≥0.08 ∧ POS-PASS ∧ N3=0 ; THEATER: ΔEff_surp<0.02 ∧ POS-PASS ; INSTRUMENT-FAIL: POS-FAIL ∨ degenerate
+  VERDICT = ⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE) — recon_err step<0.002, 신호 무변; encoder 확인·재측정
+OPGRIP_9210_DONE rc=0
