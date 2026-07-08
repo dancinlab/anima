@@ -22,3 +22,11 @@ non-additive 양성대조 아님. **corpus verdict 아님=측정 instrument 결�
 ## 상태
 engine-native full = valid PC-P gate 통과 후 발사(오너 spend-go). 부모=gate-g1-recomb-gamma-divergence ·
 형제 H_9225(residual-lift). 지배원리=additive를 primary서 necessitate(offer 아님).
+
+## engine-native FULL verdict (TERMINAL-eligible · a_eval_py_canonical)
+303M en-general 552 content-pair 셀(cli/evaluate.py --interaction-lift #3186, summer $0):
+held-out additive RMSE 0.290 vs joint(+bilinear) 0.523, **lift=-0.801 < Freedman-Lane null95 -0.444
+= NO non-additive signal (ADDITIVE-EXPLAINED)**. 모델 NLL surface가 content-pair에 완전 additive
+(main-effect 합, bilinear=overfit) = 출력에서 비가법 결합 안 함 = additive floor. Fable Y1=비가법 무 →
+g1-census-objfloor(재조합 능력천장) 데이터측 engine-native 재확인(값진 negative). ckpt-corpus 언어매칭
+필수(convergence evaluate-py-1). 산출=state/g1_joint_interaction_corpus/RESULT_ILIFT.md. census 재오픈 아님.
