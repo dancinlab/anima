@@ -87,6 +87,24 @@ def append_slw_trailer(out_path: str, slw_module) -> int:
         f.write(trailer)
     return len(trailer)
 
+
+# ════════════════════════════════════════════════════════════════════════
+# fork-A "CLML" read-side context-pooling lane trailer (CORE-owned codec in
+# core/clml.py). Appended at the END of the trailer chain (after CLMX / CLMB /
+# SLW), so a lane model = a normal .clm + this trailer. Absent => byte-identical
+# (loaders passthrough on short/absent read). Trains a frozen-trunk lane (H_9235).
+# ════════════════════════════════════════════════════════════════════════
+def append_clml_trailer(out_path: str, clml) -> int:
+    """Append the CLML lane trailer to an already-written .clm. `clml` = a trained torch
+    CLMLModule OR a ready numpy weight dict (W1,b1,W2,w_g,b_g,r,tau). Returns bytes written.
+    Callers only invoke this when the model actually has a fork-A lane."""
+    from clml import pack_clml, clml_weights_from_torch   # core/clml.py (same core/ dir)
+    w = clml if isinstance(clml, dict) else clml_weights_from_torch(clml)
+    trailer = pack_clml(w)
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0
