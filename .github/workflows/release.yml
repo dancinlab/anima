@@ -200,25 +200,25 @@ jobs:
             gh release create "$tag" --title "anima $tag" --notes-file /tmp/notes.md --verify-tag
           fi
 
-  # ── ③ PyPI publish (anima-py) — install-smoke all-green 일 때만, OIDC trusted publishing ──
-  # 2-channel 세팅(a_cli_single_entry)의 pip 채널: `pip install anima-py`. root pyproject.toml 을
+  # ── ③ PyPI publish (anima-python) — install-smoke all-green 일 때만, OIDC trusted publishing ──
+  # 2-channel 세팅(a_cli_single_entry)의 pip 채널: `pip install anima-python`. root pyproject.toml 을
   # sdist+wheel 로 빌드해 PyPI 에 발행한다. version = 루트 VERSION(동적) 이라 autotag 이 찍는
   # v* 태그와 lockstep. 토큰 저장 없음(git-safety) — GitHub OIDC "trusted publishing".
   #
   # ⚠️ OWNER 1회 설정(이 job 이 실제 발행하려면 둘 다 필요):
-  #   ① pypi.org → anima-py 프로젝트에 "pending publisher" 등록:
+  #   ① pypi.org → anima-python 프로젝트에 "pending publisher" 등록:
   #      Owner=dancinlab · Repo=anima · Workflow=release.yml · Environment=pypi
   #   ② repo variable `PYPI_PUBLISH=true` 설정(gh variable set PYPI_PUBLISH -b true).
   #   둘 다 되기 전엔 dormant(green) — 릴리즈 파이프라인을 막지 않는다.
   pypi-publish:
-    name: PyPI publish (anima-py)
+    name: PyPI publish (anima-python)
     if: ${{ vars.PYPI_PUBLISH == 'true' }}
     needs: install-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
       name: pypi
-      url: https://pypi.org/project/anima-py/
+      url: https://pypi.org/project/anima-python/
     permissions:
       id-token: write   # OIDC trusted publishing (no stored token · git-safety)
     steps:
@@ -239,9 +239,9 @@ jobs:
         run: |
           set -euo pipefail
           ver="$(cat VERSION)"
-          code="$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/anima-py/${ver}/json")"
+          code="$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/anima-python/${ver}/json")"
           if [ "$code" = "200" ]; then
-            echo "anima-py ${ver} already on PyPI → skip (bump VERSION for a new release)"
+            echo "anima-python ${ver} already on PyPI → skip (bump VERSION for a new release)"
             echo "publish=false" >> "$GITHUB_OUTPUT"
           else
             echo "publish=true" >> "$GITHUB_OUTPUT"
