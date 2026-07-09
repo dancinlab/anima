@@ -142,6 +142,22 @@ H_921 의 source-probe 를 gen2 substrate 에 그대로 이식하면 됨.
 - 양자/QRNG 비결정은 substrate(AKD1000/1500 실리콘)이 아니라 *seed 지점* 의 성질(H_924) —
   본 H 의 silicon-비결정 질문과 직교(quantum 언급은 #123-A non-claim: 여기서 양자성을 주장하지 않음).
 
+## 5.5 A-arm(AKD1000) baseline — real-silicon 확보 (2026-07-10 · pi5-akida 복구)
+
+owner "akida 진행가능" → pi5-akida 복구(BrainChip akida SDK 2.19.2 설치 · `/dev/akida0`
+= real HardwareDevice BC.00.000.002/IpVersion.v1) 후 A/B 형판의 **A-arm(AKD1000)** 을
+실 silicon 에서 재확보:
+- **DETERMINISM**: `adv_sweep_hw.py` R2(stochastic·최강 jitter)·R0 각 --repeat 5 →
+  raster_sha256 전부 identical(distinct 1/5) = **결정적, 아날로그 jitter 0**. 2026-05-29
+  verdict 672("RUN-TO-RUN ALL IDENTICAL · DIVERGENT 0/18") replicate.
+- on-chip inference OK(0.628ms/inf) · on-chip AkidaUnsupervised 학습 SUPPORTED(edge_learn
+  fit_on_chip=ok · H_921 확증).
+- verdict: `.verdicts/925_akd1000_baseline_realsilicon_2026_07_10/result.txt`
+
+**B-arm(AKD1500 실 silicon)은 여전히 물리 부재 → 미측정 유지**. 본 H 는 DOC-ONLY PREDICTION
+유지(H_922 §3.6 이 이미 방향성-반증: gen2/AKD1500 도 디지털 fixed-point 결정론 · 비결정 story
+세대 불변). AKD1500 실리콘 도착 시 이 A-arm 대비 즉시 A/B 가능.
+
 ## 6. 양방향 sibling
 
 - <-> [H_921](./H_921_akida_nondeterminism_functional_advantage.md) (init-seeded source-probe — pinned-init A/B 형판)

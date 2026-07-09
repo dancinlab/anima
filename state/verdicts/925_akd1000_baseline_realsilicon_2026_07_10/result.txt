@@ -1,0 +1,47 @@
+AKD1000 REAL-SILICON REPLICATION — pi5-akida restored, 2026-07-10
+==================================================================
+Context: owner "akida 진행가능" → pi5-akida (Raspberry Pi 5 + BrainChip AKD1000,
+PI5-AKIDA.json SSOT) restored to a working state and the key real-silicon facts
+freshly replicated on the actual chip. This is a REPLICATION (confirms existing
+H_921/H_922 verdicts) + the H_925 AKD1500-A/B A-arm (AKD1000) baseline anchor —
+NOT a new tier (no tier inflation). AKD1500 silicon physically absent → H_925
+B-arm remains blocked (and is already predicted-negative by H_922 §3.6: gen2/
+AKD1500 is also digital fixed-point deterministic; non-determinism story is
+invariant across the generation boundary).
+
+HOST / SDK (restored this session)
+- host        : pi5-akida (aarch64 · Ubuntu 24.04 · Python 3.12.3)
+- device node : /dev/akida0 present (real AKD1000)
+- akida SDK   : 2.19.2 installed into ~/akida_venv (was NOT importable before —
+                ModuleNotFoundError: no module named 'akida')
+- device      : akida.devices()[0] = real HardwareDevice · BC.00.000.002 ·
+                IpVersion.v1 (NSoC_v2 / AKD1000) · factory-version match TRUE
+
+(1) DETERMINISM — adv_sweep_hw.py --repeat 5, real AKD1000 (H_922 A-arm baseline)
+    R2 (stochastic regime · strongest jitter probe · seed 42 thr 24 window 200):
+        raster_sha256 x5 = 26739705d65bc2f1 (ALL 5 IDENTICAL · distinct 1/5)
+        VERDICT: DETERMINISTIC (zero run-to-run analog jitter)
+    R0 (deterministic control · x5): distinct 1/5 → DETERMINISTIC
+    ⇒ CONFIRMS H_922 (AKD1000 = fully-digital deterministic-by-design) on real
+      silicon today. Replicates the 2026-05-29 verdict 672 ("RUN-TO-RUN HW
+      VARIANCE ALL IDENTICAL · DIVERGENT 0/18"). This is the H_925 A-arm anchor.
+
+(2) ON-CHIP INFERENCE — first_inference.py, real AKD1000
+    output_nonzero=true · output_values=[117]*10 · wall 0.628 ms/inference
+    (100 timed) · on-chip clock present (inference 749 / program 534) ⇒ real
+    forward pass ON the chip works.
+
+(3) ON-CHIP UNSUPERVISED EDGE LEARNING — edge_learn_probe.py, real AKD1000
+    mapped_backend=Hardware · compile AkidaUnsupervised=ok · fit_on_chip=ok ·
+    device_learn_enabled_after_fit=true · edge_learning_supported=TRUE
+    ⇒ AKD1000 supports on-chip AkidaUnsupervised learning on real silicon
+      (confirms H_921 "fit engaged"). Relevant to anima Lane-A on-chip adaptation.
+
+SCOPE / HONESTY (a_scale_honest_scope · verdict-integrity)
+- No new tier. Determinism + on-chip-learn were already established (H_921/H_922,
+  2026-05); today = SDK restored + real-silicon replication on the live chip.
+- H_925 AKD1500 B-arm: silicon physically absent → still blocked; DOC-ONLY.
+- Genuinely-unmeasured akida frontier remaining = h1519-onchip-akida (real
+  on-chip NoC routing + on-chip faithful-Φ, DIRECTIONAL-model → real silicon) —
+  a larger build, not run here.
+- akida = Lane A ⊥ Lane G · NEVER a shared-pool host (a_pi5_akida_registry).
