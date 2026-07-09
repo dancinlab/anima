@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-30
 since: 2026-05-30
 sister: CLM/P0_ARCHITECTURE.md, CLM/CLM_FORMAT_SPEC.md, .verdicts/851_clm_mitosis_growth/F-CLM-MITOSIS_prereg.txt
-verdict: 🟠 PRE-REGISTERED (P2 미실행 · cell-pool 성장 + lineage 영속 측정 후 판정 · p8 train=infer 연속체)
+verdict: 🟢 SUPPORTED-NUMERICAL (desk-close via H_9130 engine-native: E0=2→E=3, 17 cells, expert_div 0.648 · cell-pool grows · lineage=.clm format-carried DIRECTIONAL)
 ---
 
 # H_851 — CLM F-CLM-MITOSIS cell-pool 성장
@@ -86,3 +86,6 @@ verdict 영속: `.verdicts/851_clm_mitosis_growth/F-CLM-MITOSIS_prereg.txt`
 - prior art: v5-mitosis arch spec (F-V5MIT-1..5 · cells = nn.Module branches)
 - UNIVERSE SSOT: [CANDIDATES.md](./CANDIDATES.md)
 - 형제 falsifier: H_847 · H_848 · H_849 · H_850
+
+## 판정 (desk-close 2026-07-10 · no new compute)
+🟢 **SUPPORTED-NUMERICAL** — H_9130(savant/mitosis 388.6M engine-native)이 H_851 growth-bar 를 이미 측정: `--mitosis` 학습서 **E-split E0=2→E=3, 17 cells, expert_div 0.648** → cell_pool(t_end)>cell_pool(t_0) 충족, FALSIFIER 'static pool(p8 위반)' 반증. p8 train=infer 단일연속체서 MoE cell-pool 성장 확인. lineage 영속(born_step·parent)은 .clm mitosis.cell_pool layout 에 format-carried = DIRECTIONAL sub-claim(별도 layout-field 왕복검증 follow-on). 전수 미배선 census(Fable 2026-07-10)가 짚은 desk-closeable 증거를 채택 · 신규 compute 0.
