@@ -671,7 +671,7 @@ def eval_reach_all(ckpt, corpus_paths, gen):
             "calibration": rho_fan_detector_calibration(known)}
 
 
-def eval_rho_axon(ckpt, corpus_paths, gen):
+def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir=""):
     """ρ-AXON reach panel (`anima-py evaluate <clm> --rho-axon`) — the redesigned reach
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
@@ -689,6 +689,17 @@ def eval_rho_axon(ckpt, corpus_paths, gen):
             "words_fn": _rho_fan_words, "falsi_fn": _rho_fan_is_falsifiable,
             "ngram_fn": _g_content_ngrams,
             "corpus_tokens": en_corpus_tokens}
+    # ρ·self identity trace (H_1471/H_9256): supply the substrate's OWN .kosmos self-anchor
+    # from --kosmos <dir> (generator_read_anchors → joined anchor text_payload = the accumulated
+    # self-memory). Absent → dets carries no "kosmos_anchor" → rho_self stays INVALID (p3-guard:
+    # never hand-curate a persona · default behaviour UNCHANGED = backward-compat). rho_axon.py:604
+    # already reads dets.get("kosmos_anchor") — this is the eval-side plumbing that was missing.
+    if kosmos_dir:
+        from generator import generator_read_anchors
+        _anchors = generator_read_anchors(kosmos_dir)
+        _self = "\n".join(str(a.get("text_payload", "")) for a in _anchors if a.get("text_payload"))
+        if _self:
+            dets["kosmos_anchor"] = _self
     cell_dets = _build_cell_dets(known, en_corpus_tokens, corpus_paths)
     panel = rho_axon.run_panel(mouth, corpus_paths, g, dets, cell_dets=cell_dets)
     print(rho_axon.render_panel(panel), flush=True)
@@ -749,6 +760,11 @@ def evaluate_usage():
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
     print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
+    print("")
+    print("  --kosmos <dir>: (with --rho-axon) supply the substrate's OWN .kosmos self-anchor")
+    print("  dir (a chat session's kosmos, generator_read_anchors → joined memory) so ρ·self")
+    print("  measures a real identity trace instead of INVALID (H_1471/H_9256). Absent → ρ·self")
+    print("  stays INVALID (p3: never hand-curate a persona · default unchanged).")
     print("")
     print("  H_9200 E1 SLW controls (a .clm carrying an SLW\\x01 trailer applies the")
     print("  gated-write forward-slot by default): --slot-off forces γ=0 (bit-exact base")
@@ -864,7 +880,7 @@ def evaluate_run(argv):
     # H_9200 ρ-AXON — the redesigned reach layer (G0-G6 → ρ-AXON). Same engine decode,
     # a different panel; branch early so the G0-G6 summary below is skipped.
     if _RHO_AXON:
-        eval_rho_axon(ckpt, corpus, gen)
+        eval_rho_axon(ckpt, corpus, gen, kosmos_dir=evaluate_strval(argv[1:], "--kosmos", ""))
         return 0
 
     r = eval_reach_all(ckpt, corpus, gen)
