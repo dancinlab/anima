@@ -201,7 +201,8 @@ pub fn ir_replay_tick(snapshot: Map) -> Map {
 //       "ctx_len":           int — snapshot ctx_tokens 길이
 //       "source_tick":       int — snapshot source_tick
 //       "mitosis_density":   float — dr_mitosis_prior(REM=4) = 0.80 placeholder
-//       "wired_to_lib":      bool — false (M2 placeholder; daemon wire-up TODO)
+//       "wired_to_lib":      bool — false (this record calls no mitosis_hook_lib; the REAL
+//                                  AdaptField growth is daemon-side vadapt_field_step, WIRED 2026-07-10)
 //     }
 //
 // invariant:

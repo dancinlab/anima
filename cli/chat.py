@@ -1869,7 +1869,17 @@ def anima_consciousness_mode(ckpt, argv=None):
                 rec = ir_replay_tick(imag_snaps[imag_i])
                 if rec["emit_count"] != 0:
                     imagination_emit_violations = imagination_emit_violations + 1
-                ir_mitosis_tick_during_replay({"count": cell_count}, imag_snaps[imag_i])
+                ir_mitosis_tick_during_replay({"count": cell_count}, imag_snaps[imag_i])  # mitosis tick (log record)
+                # WIRED 2026-07-10 (a_chat_sleep_imagination now LITERAL): real vadapt_field_step grow (same
+                # AdaptField grow as the wake C8/C8b loop) → rehearsal + REAL mitosis tick, not a counter.
+                # Ψ-disjoint (AdaptField only) · emit-free (vadapt never emits) · deterministic (session_seed)
+                # · self-limiting (contact-inhibition). de-theater: no emit Δ — makes p8 mitosis real, not a lever.
+                # feature = the REHEARSED perception (snapshot ctx_tokens[0] = source wake-tick + source_index),
+                # NOT a constant — each distinct rehearsed snapshot grows its own AdaptField region. A constant
+                # feature contact-inhibits to a no-op; this makes the grow REAL (cell_count rises), still det + emit-free.
+                _imag_feat = session_seed + "|imag|" + str(imag_snaps[imag_i]["ctx_tokens"][0]) + "|" + str(imag_snaps[imag_i]["source_index"])
+                afield = vadapt_field_step(afield, _afs_byte_feature(_imag_feat, 8), cfg)
+                cell_count = vadapt_field_cells(afield)
                 imagination_mitosis_ticks = imagination_mitosis_ticks + 1
                 imag_i = imag_i + 1
             imagination_replayed_total = imagination_replayed_total + len(imag_snaps)

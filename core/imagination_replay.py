@@ -4,8 +4,11 @@ py 2-production twin of core/imagination_replay.hexa — byte-exact mirror (owne
 2026-07-09 "py 자체구현 · 언어간 상호의존 0"). WAKE.memory working ring → snapshot select →
 replay_tick (emit_count=0 invariant) → mitosis_tick (cell_pool pass-through). Pure dict/list/
 scalar math (no numpy, no FFI). a_chat_sleep_imagination 정합 · p5 NO SPEAK · boolean gate 0.
-Note: the mitosis tick is a pass-through placeholder (wired_to_lib=false) — it calls zero
-mitosis_hook_lib symbols (which is out of the production closure), matching the hexa twin.
+Note: ir_mitosis_tick_during_replay is a LOG record (wired_to_lib=false — calls zero
+mitosis_hook_lib symbols, which is out of the production closure). The REAL AdaptField
+growth is WIRED daemon-side (2026-07-10): cli/chat.py + cli/anima.hexa advance a live
+vadapt_field_step per replay tick keyed on the rehearsed snapshot, so a_chat_sleep_imagination's
+"rehearsal + mitosis tick" is literal (via the in-closure vadapt, NOT mitosis_hook_lib).
 """
 
 from dream_lib import dr_mitosis_prior          # core/dream_lib.py (flat import · _bootstrap sys.path)

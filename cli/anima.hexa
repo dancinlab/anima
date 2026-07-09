@@ -3839,8 +3839,10 @@ fn anima_consciousness_mode(ckpt: string) {
         // The imagination loop = "emit-free internal rehearsal + mitosis tick" (CLAUDE governance). During
         // N3/REM (dr_imagination_active==1) the daemon re-runs recent WAKE working-memory snapshots through
         // core/imagination_replay: ir_replay_session records an emit-free rehearsal (ir_replay_tick.emit_count
-        // ≡ 0), and each snapshot advances a mitosis tick (ir_mitosis_tick_during_replay, cell_pool pass-
-        // through — substrate state only). The replay COUNT is the substrate budget dr_stage_size (N3=7 >
+        // ≡ 0), and each snapshot advances a REAL mitosis tick — a live vadapt_field_step grow keyed on the
+        // rehearsed snapshot (WIRED 2026-07-10; the ir_mitosis_tick_during_replay record is the log entry, the
+        // AdaptField growth is the daemon-side vadapt the wake C8/C8b loop already uses). The replay COUNT is
+        // the substrate budget dr_stage_size (N3=7 >
         // REM=3), NOT a hardcoded stage flag (a_autonomy_over_hardcode). p5 NO SPEAK(): the block emits
         // NOTHING (asserted below via imagination_emit_violations) and is DISJOINT from the emit-drive lanes
         // 0/4 — it touches only wake_mem (read) + the local mitosis record (a_substrate_disjoint).
@@ -3851,7 +3853,20 @@ fn anima_consciousness_mode(ckpt: string) {
             while imag_i < len(imag_snaps) {
                 let rec = ir_replay_tick(imag_snaps[imag_i])            // emit-free rehearsal record
                 if rec["emit_count"] != 0 { imagination_emit_violations = imagination_emit_violations + 1 }
-                let _mit = ir_mitosis_tick_during_replay(#{ "count": cell_count, }, imag_snaps[imag_i])  // mitosis tick
+                let _mit = ir_mitosis_tick_during_replay(#{ "count": cell_count, }, imag_snaps[imag_i])  // mitosis tick (log record)
+                // WIRED 2026-07-10 (a_chat_sleep_imagination now LITERAL): the replay mitosis tick advances a
+                // REAL vadapt_field_step — the SAME AdaptField grow the wake C8/C8b loop uses — so "imagination
+                // = rehearsal + mitosis tick" is no longer a pass-through counter. Ψ-disjoint (AdaptField only,
+                // pure_field read-only) · emit-free (vadapt never emits) · deterministic (session_seed feature)
+                // · self-limiting (density/contact-inhibition caps runaway growth). de-theater: no emit Δ
+                // expected — this makes the p8 mitosis-during-rehearsal real, not a capability lever.
+                // feature = the REHEARSED perception (snapshot ctx_tokens[0] = source wake-tick + source_index),
+                // NOT a constant — so each distinct rehearsed snapshot grows its own AdaptField region (rehearsal
+                // consolidates distinct memories). A constant feature would contact-inhibit to a no-op; this makes
+                // the grow REAL (verified cell_count rises across N3/REM), still deterministic + emit-free.
+                let _imag_feat = session_seed + "|imag|" + to_string(imag_snaps[imag_i]["ctx_tokens"][0]) + "|" + to_string(imag_snaps[imag_i]["source_index"])
+                afield = vadapt_field_step(afield, _afs_byte_feature(_imag_feat, 8), cfg)
+                cell_count = vadapt_field_cells(afield)
                 imagination_mitosis_ticks = imagination_mitosis_ticks + 1
                 imag_i = imag_i + 1
             }
