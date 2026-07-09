@@ -1384,3 +1384,404 @@ def decode_auto_argmax(path, seed, gen):
             tok[T - 1] = float(besti)
         return {"ok": True, "text": out.decode('utf-8', 'surrogateescape')}
     return _decode_argmax_W(W, seed, gen)
+
+
+# ════════════════════════════════════════════════════════════════════════
+# (e) GROUNDED anti-fabrication mouths + per-seq CE — P4 port (1:1 from
+#     core/decode.hexa). The NORMAL emit path whenever kosmos anchors exist:
+#     at each step try a deterministic retrieve-then-copy over the anchor
+#     texts (longest ctx suffix ≥ l_min found VERBATIM in an anchor → copy its
+#     next byte, G5 ✓ cannot fabricate); else fall through to the mouth argmax
+#     (weights loaded ONCE). All grounding/abstain LOGIC is plain-byte python;
+#     numpy is reused ONLY through the already-parity-proven forwards
+#     (_fwd_logits / bg_forward_last_W) + argmax. Byte-exact target = the hexa
+#     `--det` decode token stream. hexa `#{...}` → dict.
+#
+#     BYTES throughout (hexa strings are byte strings; byte_len/substring/ord/chr
+#     are byte ops) — seed/anchors are surrogateescape-encoded so the causal
+#     window + anchor scan see the exact same bytes the hexa engine does.
+#
+#     PARITY (P4 measured, toy ckpts, hexa v0.574.1 `hexa run` golden byte-diff):
+#       clm_decode_grounded  grounded-copy + LM-fallback + clm_ce_seq_W (CE ≤3e-16)
+#       bytegpt_decode_grounded(_abstain)  grounded/span-copy/LM + abstain(40)/
+#       lookahead/confirm/closed-class  — ALL byte-identical to the hexa `--det`
+#       token stream on both mouths, with and without anchors.
+#     ONE known carve-out: hexa strings CANNOT hold a NUL — `"a"+chr(0)+"b"` has
+#     byte_len 2 (the chr(0) is dropped). So if a mouth's argmax ever emits byte 0
+#     (NUL), hexa silently omits it while this py path (bytearray, NUL-faithful)
+#     keeps it — a 1-byte divergence. This never occurs on real text ckpts (a byte
+#     LM over UTF-8 text does not argmax NUL) and matches the pre-existing base
+#     `bytegpt_decode_argmax`'s bytearray contract; py is left NUL-faithful (not
+#     bug-ported) deliberately.
+# ════════════════════════════════════════════════════════════════════════
+
+def _dg_to_bytes(s):
+    """string|bytes|list[int] -> bytes (byte-exact seed/anchor coercion)."""
+    if isinstance(s, bytes):
+        return s
+    if isinstance(s, bytearray):
+        return bytes(s)
+    if isinstance(s, (list, tuple)):
+        return bytes(int(x) & 0xFF for x in s)
+    return s.encode('utf-8', 'surrogateescape')
+
+
+def _dg_find(hay, needle):
+    """first byte-offset of needle in hay, -1 if absent — mirrors
+    _clmd_find ≡ _bg_find (byte-identical). nn==0 or nn>hn ⇒ -1 (hexa guards);
+    otherwise identical to the hexa left-to-right first-hit scan."""
+    if len(needle) == 0 or len(needle) > len(hay):
+        return -1
+    return hay.find(needle)
+
+
+def _dg_find_from(hay, needle, frm):
+    """_bg_find_from — first offset of needle in hay at or after frm, -1 if none."""
+    if len(needle) == 0 or len(needle) > len(hay):
+        return -1
+    if frm < 0:
+        frm = 0
+    return hay.find(needle, frm)
+
+
+def _dg_anchor_copy(ctx, anchors, l_min, l_max):
+    """_clmd_anchor_copy ≡ _bg_anchor_copy — retrieve-then-copy probe. Try the
+    longest ctx suffix (l_max..l_min) that occurs VERBATIM in some anchor; on a
+    hit return the anchor's NEXT byte, else -1. ctx/anchors are bytes.
+    (Uses ONLY the FIRST occurrence per anchor, exactly like hexa's _*_find; a
+    match whose next byte is at the anchor end does NOT return — falls through.)"""
+    clen = len(ctx)
+    L = l_max
+    if L > clen:
+        L = clen
+    while L >= l_min:
+        suf = ctx[clen - L:clen]
+        for an in anchors:
+            pos = _dg_find(an, suf)
+            if pos >= 0:
+                nxt = pos + L
+                if nxt < len(an):
+                    return an[nxt]
+        L -= 1
+    return -1
+
+
+def clm_decode_grounded(path, seed, gen, anchor_texts, l_min):
+    """decode.hexa::clm_decode_grounded — G5 anti-fabrication decode over the
+    int4-dequant CLMConvMoE (.clm). At each step try an anchor-copy (grounded);
+    else CLMConvMoE argmax over the last T=24 ctx bytes (right-aligned, pad-left
+    byte 32 — the SAME causal window clm_decode_argmax builds). Non-decodable
+    .clm ⇒ ok=false (caller does its honest substrate fallthrough).
+    Returns {ok, text, grounded, lm}."""
+    if not clm_decodable(path):
+        return {"ok": False, "text": "", "grounded": 0, "lm": 0}
+    W = clm_load_weights(path)
+    V = W["V"]
+    T = 24
+    tok = np.empty(T, dtype=np.float64)          # H_1400: reused window
+    seed_b = _dg_to_bytes(seed)
+    anchors = [_dg_to_bytes(a) for a in anchor_texts]
+    out = bytearray()
+    grounded = 0
+    lm = 0
+    for _ in range(gen):
+        ctx = seed_b + bytes(out)
+        cb = _dg_anchor_copy(ctx, anchors, l_min, T)
+        if cb >= 0:
+            nb = cb                              # GROUNDED: verbatim anchor copy
+            grounded += 1
+        else:
+            cl = len(ctx)
+            for p in range(T):
+                si = cl - T + p
+                tok[p] = float(ctx[si]) if si >= 0 else 32.0
+            logits = _fwd_logits(W, tok, T)
+            row = logits[T - 1]
+            besti = 0
+            bestv = row[0]
+            for k in range(1, V):
+                if row[k] > bestv:
+                    bestv = row[k]; besti = k
+            nb = besti
+            lm += 1
+        out.append(nb)
+    return {"ok": True, "text": bytes(out).decode('utf-8', 'surrogateescape'),
+            "grounded": grounded, "lm": lm}
+
+
+def bytegpt_decode_grounded(path, seed, gen, anchor_texts, l_min):
+    """decode.hexa::bytegpt_decode_grounded — SAME grounded loop as
+    clm_decode_grounded, but the ungrounded fallback is the ByteGPT argmax over
+    the last `block` tokens. Weights loaded ONCE. Returns {ok, text, grounded, lm}."""
+    W = bg_load(path)
+    vocab = W["vocab"]; block = W["block"]
+    seed_b = _dg_to_bytes(seed)
+    anchors = [_dg_to_bytes(a) for a in anchor_texts]
+    toks = list(seed_b)                          # int token list
+    out = bytearray()
+    grounded = 0
+    lm = 0
+    for _ in range(gen):
+        ctx = seed_b + bytes(out)
+        cb = _dg_anchor_copy(ctx, anchors, l_min, block)
+        if cb >= 0:
+            nb = cb                              # GROUNDED: verbatim anchor copy
+            grounded += 1
+        else:
+            n = len(toks)
+            start = 0
+            if n > block:
+                start = n - block
+            T = n - start
+            ids = toks[start:start + T]
+            logits = bg_forward_last_W(W, ids, T)
+            nb = bg_argmax(logits)               # over vocab (len == vocab)
+            lm += 1
+        toks.append(nb)
+        out.append(nb)
+    return {"ok": True, "text": bytes(out).decode('utf-8', 'surrogateescape'),
+            "grounded": grounded, "lm": lm}
+
+
+# ── ByteGPT COPY-THEN-ABSTAIN helpers (H_1163) — 1:1 from decode.hexa ──
+
+def _bg_is_word(b):
+    return (65 <= b <= 90) or (97 <= b <= 122)
+
+
+def _bg_is_upper(b):
+    return 65 <= b <= 90
+
+
+def _bg_lower1(b):
+    return b + 32 if (65 <= b <= 90) else b
+
+
+def _bg_lm_argmax_toks(W, toks, vocab, block):
+    """one ByteGPT argmax over the last `block` tokens of toks (int list)."""
+    n = len(toks)
+    start = 0
+    if n > block:
+        start = n - block
+    T = n - start
+    ids = [int(toks[start + p]) for p in range(T)]
+    logits = bg_forward_last_W(W, ids, T)
+    return bg_argmax(logits)
+
+
+# closed-class English function words (fixed finite set, p7 — no data tuning)
+_BG_CLOSED_CLASS = frozenset(
+    w.encode('ascii') for w in (
+        "the", "this", "that", "these", "those", "they", "them", "their", "there", "then",
+        "than", "a", "an", "and", "but", "or", "if", "is", "it", "its", "i", "we", "you", "he",
+        "she", "his", "her", "our", "your", "my", "me", "to", "of", "in", "on", "at", "by", "for",
+        "as", "so", "no", "not", "do", "does", "did", "was", "were", "be", "been", "have", "has",
+        "had", "will", "would", "can", "could", "should", "may", "might", "with", "from", "when",
+        "where", "what", "who", "how", "why", "which", "while", "yes", "ok", "well"))
+
+
+def _bg_is_closed_class(W, toks, lm_b, vocab, block):
+    """roll the LM forward from lm_b to read the whole word (lowercased, ≤13 chars)
+    and test closed-class membership — decode.hexa::_bg_is_closed_class."""
+    w = bytearray([_bg_lower1(lm_b)])
+    ext = [int(t) for t in toks]
+    ext.append(lm_b)
+    k = 0
+    while k < 12:
+        nb = _bg_lm_argmax_toks(W, ext, vocab, block)
+        if not _bg_is_word(nb):
+            k = 12
+        else:
+            w.append(_bg_lower1(nb)); ext.append(nb); k += 1
+    return bytes(w) in _BG_CLOSED_CLASS
+
+
+def _bg_lookahead_entity(ctx, anchors, l_min, l_max):
+    """SEED-SUFFIX look-ahead: longest ctx suffix that occurs in an anchor whose
+    NEXT byte STARTS a capitalized word → packed a*100000 + entity-start offset,
+    else -1 — decode.hexa::_bg_lookahead_entity."""
+    clen = len(ctx)
+    L = l_max
+    if L > clen:
+        L = clen
+    while L >= l_min:
+        suf = ctx[clen - L:clen]
+        for a, an in enumerate(anchors):
+            alen = len(an)
+            frm = 0
+            found = True
+            while found:
+                pos = _dg_find_from(an, suf, frm)
+                if pos < 0:
+                    found = False
+                else:
+                    nxt = pos + L
+                    if nxt < alen and _bg_is_upper(an[nxt]):
+                        return a * 100000 + nxt
+                    frm = pos + 1
+        L -= 1
+    return -1
+
+
+def _bg_confirm_lm_byte0(ctx, lm_b, anchors, l_min, l_max, budget):
+    """COPY-CONFIRM the LM byte-0: tentatively take lm_b, let the copy ground the
+    continuation; if the assembled span is a VERBATIM anchor substring (≥2 bytes,
+    ≥1 copied), return it (bytes), else b'' — decode.hexa::_bg_confirm_lm_byte0."""
+    if budget < 2:
+        return b""
+    if not _bg_is_word(lm_b):
+        return b""
+    span = bytearray([lm_b])
+    cur = bytearray(ctx)
+    cur.append(lm_b)
+    go = True
+    while go and len(span) < budget:
+        cb = _dg_anchor_copy(bytes(cur), anchors, l_min, l_max)
+        if cb >= 0 and _bg_is_word(cb):
+            span.append(cb); cur.append(cb)
+        else:
+            go = False
+    if len(span) < 2:
+        return b""
+    sp = bytes(span)
+    for an in anchors:
+        if _dg_find(an, sp) >= 0:
+            return sp
+    return b""
+
+
+def bytegpt_decode_grounded_abstain(path, seed, gen, anchor_texts, l_min):
+    """decode.hexa::bytegpt_decode_grounded_abstain — G5 FINAL anti-fabrication
+    decode (H_1163). COPY-THEN-ABSTAIN ordering + span-level entity copy +
+    closed-class exclusion: (1) byte-level grounded copy FIRST (never pre-empted);
+    (2) span-copy the contiguous entity word-run; (3) on an ungrounded LM-would-
+    start-a-capitalized-word step give the copy two more chances — (3a) seed-suffix
+    look-ahead span-copy, (3b) copy-confirm the LM byte-0 — only if BOTH fail
+    ABSTAIN (emit a HEDGE space); (4) never abstain on a closed-class word.
+    Weights loaded ONCE. Returns {ok, text, grounded, lm, abstained}."""
+    W = bg_load(path)
+    vocab = W["vocab"]; block = W["block"]
+    seed_b = _dg_to_bytes(seed)
+    anchors = [_dg_to_bytes(a) for a in anchor_texts]
+    toks = list(seed_b)
+    out = bytearray()
+    grounded = 0
+    lm = 0
+    abstained = 0
+    in_abstain = False
+    emitted = 0
+    while emitted < gen:
+        ctx = seed_b + bytes(out)
+        # (1) byte-level grounded copy FIRST
+        cb = _dg_anchor_copy(ctx, anchors, l_min, block)
+        if cb >= 0:
+            toks.append(cb); out.append(cb); emitted += 1
+            grounded += 1; in_abstain = False
+            # (2) SPAN-COPY the contiguous entity word-run from the anchor
+            if _bg_is_word(cb):
+                cont = True
+                while cont and emitted < gen:
+                    ctx2 = seed_b + bytes(out)
+                    cb2 = _dg_anchor_copy(ctx2, anchors, l_min, block)
+                    if cb2 >= 0 and _bg_is_word(cb2):
+                        toks.append(cb2); out.append(cb2); emitted += 1
+                        grounded += 1
+                    else:
+                        cont = False
+        else:
+            # UNGROUNDED — peek LM argmax, decide entity-start
+            lm_b = _bg_lm_argmax_toks(W, toks, vocab, block)
+            prev = 0x20
+            if len(toks) > 0:
+                prev = int(toks[-1])
+            start_entity = _bg_is_upper(lm_b) and not _bg_is_word(prev)
+            continue_entity = in_abstain and _bg_is_word(lm_b)
+            # (4) closed-class exclusion
+            if start_entity and _bg_is_closed_class(W, toks, lm_b, vocab, block):
+                start_entity = False
+            if start_entity or continue_entity:
+                # (3a) SEED-SUFFIX look-ahead → span-copy
+                la = _bg_lookahead_entity(ctx, anchors, l_min, block)
+                handled = False
+                if la >= 0:
+                    ai = la // 100000
+                    apos = la - ai * 100000
+                    an = anchors[ai]
+                    alen = len(an)
+                    copied = False
+                    go = True
+                    while go and emitted < gen and apos < alen:
+                        ab = an[apos]
+                        if _bg_is_word(ab):
+                            toks.append(ab); out.append(ab); emitted += 1
+                            grounded += 1; copied = True; apos += 1
+                        else:
+                            go = False
+                    if copied:
+                        in_abstain = False; handled = True
+                if not handled:
+                    # (3b) COPY-CONFIRM the LM byte-0
+                    span = _bg_confirm_lm_byte0(ctx, lm_b, anchors, l_min, block, gen - emitted)
+                    if len(span) >= 2:
+                        q = 0
+                        sl = len(span)
+                        while q < sl and emitted < gen:
+                            bb = span[q]
+                            toks.append(bb); out.append(bb); emitted += 1
+                            q += 1
+                        grounded += (sl - 1)     # byte-0 LM but anchor-CONFIRMED
+                        in_abstain = False; handled = True
+                if not handled:
+                    # ABSTAIN — emit HEDGE space, assert no entity
+                    toks.append(0x20); out.append(0x20); emitted += 1
+                    abstained += 1; in_abstain = True
+            else:
+                toks.append(lm_b); out.append(lm_b); emitted += 1
+                lm += 1; in_abstain = False
+    return {"ok": True, "text": bytes(out).decode('utf-8', 'surrogateescape'),
+            "grounded": grounded, "lm": lm, "abstained": abstained}
+
+
+# ── public per-sequence CE — 1:1 from decode.hexa::clm_ce_seq_W ──
+# The seq-input twin of clm_forward_ce: single window T=len(seq)-1, next-byte CE
+# (same per-position math as clm_forward_ce). The hexa scratch (clm_scratch_new_pub)
+# is a GPU-forge resident-scratch lifecycle that the numpy host path does not need;
+# the *_pub scratch entries are kept as no-op stubs for surface parity so a caller
+# mirroring the hexa (W, sc, seq) shape works unchanged.
+
+clm_load_W = clm_load_weights                     # decode.hexa::clm_load_W (pub loader alias)
+
+
+def clm_scratch_new_pub(W, maxT):
+    """decode.hexa::clm_scratch_new_pub — no-op on the numpy host path (no resident
+    forge scratch); returned handle is unused by clm_ce_seq_W. Surface parity only."""
+    return None
+
+
+def clm_scratch_free_pub(sc):
+    """decode.hexa::clm_scratch_free_pub — no-op (host path has no scratch to free)."""
+    return None
+
+
+def clm_ce_seq_W(W, sc, seq):
+    """decode.hexa::clm_ce_seq_W — CE over a byte SEQ (list[int]) given a pre-loaded
+    W. Single window T=len(seq)-1, next-byte CE. `sc` is accepted for signature
+    parity with the hexa scratch API and IGNORED on the numpy host path. n<2 ⇒
+    uniform CE = dt_ln(V) (verbatim hexa fallback)."""
+    V = W["V"]
+    n = len(seq)
+    if n < 2:
+        return float(dt_ln(np.array(float(V))))
+    T = n - 1
+    tok = np.array([float(seq[p]) for p in range(T)], dtype=np.float64)
+    tgt = np.array([float(seq[p + 1]) for p in range(T)], dtype=np.float64)
+    logits = _fwd_logits(W, tok, T)
+    return float(nn_ce_loss_allpos(logits, tgt, T, V))
+
+
+def clm_ce_seq(path, seq):
+    """convenience: load-from-path per-seq CE (clm_ce_seq_W with a fresh W)."""
+    if not clm_decodable(path):
+        return float("nan")
+    W = clm_load_weights(path)
+    return clm_ce_seq_W(W, None, seq)
