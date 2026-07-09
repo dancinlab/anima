@@ -1108,8 +1108,14 @@ pub fn clm_weights_free_pub(W: Map) { _clmd_weights_free(W) }
 // readout conv (roW / rtype binding) is skipped because yn IS the penultimate representation.
 // ONE forward, not a decode loop. NOT for production decode — measurement-only.
 // engine-native landed H_9099 (aiden hexa v0.546.0 RC=0); runtime lane 23b wire-in = follow-on.
-pub fn clm_penult_pooled(path: string, seed: string) -> [float] {
-    let W = _clmd_load(path)
+//
+// clm_penult_pooled_W — H_9257 lane-23b split: the loaded-W core of clm_penult_pooled. Takes a
+// PRE-LOADED weight map `W` (from clm_load_weights / _clmd_load) so the runtime self-grounding
+// daemon (cli/anima.hexa gen_penult_pooled_W) reads the penult pooled rep MANY times off ONE
+// load — no per-event whole-file reload. ZERO math change vs clm_penult_pooled: the entry below
+// is now load → clm_penult_pooled_W → free, byte-identical output for the same path+seed (the
+// H_9099 no-regression guard). Measurement-only, NOT a production decode path.
+pub fn clm_penult_pooled_W(W: Map, seed: string) -> [float] {
     let d = to_int(W["d"]); let E = to_int(W["E"])
     let K = to_int(W["K"]); let L = to_int(W["L"])
     let embed = to_int(W["embed"])
@@ -1173,8 +1179,46 @@ pub fn clm_penult_pooled(path: string, seed: string) -> [float] {
     t_free(xe); t_free(xt); t_free(logits_r); t_free(ex_out)
     t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
     t_free(tok)
+    return pooled
+}
+
+// clm_penult_pooled — thin load-once-then-free entry (unchanged public contract). Loads the
+// weight-set, delegates to the _W core, frees. Byte-identical output vs the pre-split version.
+pub fn clm_penult_pooled(path: string, seed: string) -> [float] {
+    let W = _clmd_load(path)
+    let pooled = clm_penult_pooled_W(W, seed)
     _clmd_weights_free(W)
     return pooled
+}
+
+// penult_fold8 — H_9257 FROZEN axis reducer: coarsen a d-dim pooled penult rep into an axis in
+// [0,8). Sum |pooled[c]| over 8 CONTIGUOUS buckets of width d/8 → argmax bucket. FROZEN (no
+// tune-to-green): bucket boundaries + abs-sum + argmax are fixed by the H_9257 pre-registration.
+// d not divisible by 8 → the last bucket absorbs the remainder (bucket = min(c/bw, 7)). Shared by
+// cli/anima.hexa (hexa production) + cli/chat.py (py 2-production twin) for a byte-identical axis.
+pub fn penult_fold8(pooled: [float]) -> int {
+    let d = len(pooled)
+    if d <= 0 { return 0 }
+    let bw = d / 8
+    if bw <= 0 { return 0 }
+    let mut sums = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let mut c = 0
+    while c < d {
+        let mut b = c / bw
+        if b > 7 { b = 7 }
+        let v = pooled[c]
+        let av = if v < 0.0 { 0.0 - v } else { v }
+        sums[b] = sums[b] + av
+        c = c + 1
+    }
+    let mut best = 0
+    let mut bestv = sums[0]
+    let mut k = 1
+    while k < 8 {
+        if sums[k] > bestv { bestv = sums[k]  best = k }
+        k = k + 1
+    }
+    return best
 }
 
 // clm_decode_topk_sampled_W — the loaded-W core of clm_decode_topk_sampled. Takes a

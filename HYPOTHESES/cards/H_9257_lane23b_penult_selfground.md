@@ -1,6 +1,8 @@
 # H_9257 — lane-23b penult self-grounding (self-continuity: synthetic → substrate-grounded)
 
-**Slug**: `lane23b_penult_selfground` · **Tier**: 🌱 PRE-REGISTERED (frozen before run · H_9099 rung-3) · **Registered**: 2026-07-10
+**Slug**: `lane23b_penult_selfground` · **Tier**: 🔧 WIRED (4-site landed · toy DIRECTIONAL · 303M control-battery PENDING pool) · **Registered**: 2026-07-10 · **Wired**: 2026-07-10
+
+> **wired:** engine-native (hexa `cli/anima.hexa` + 2-production py twin `cli/chat.py`, both live) — ARCHITECTURE §decode + §SelfIdentity lockstep landed same PR. **303M control-battery = PENDING pool** (REAL-SEPARATES / BEATS-SYNTHETIC / ORDER-LOCK not yet run — toy .clm only cements DIRECTIONAL).
 
 ## Claim (pre-registration · frozen)
 Feeding the runtime lane-23b `self_drift_exp` with **fold8 of the mounted 303M's real pooled
@@ -42,6 +44,39 @@ REAL-SEPARATES (2 sessions diff tapes → cos < 0.99) · **BEATS-SYNTHETIC (head
 T=24 window = "lived context" is the last 24 bytes/event (= H_9099 scope; full-context CLML pool = v2).
 toy-.clm = DIRECTIONAL; cement on real 303M via py canonical (`anima-py`) + hexa live run on pool;
 GREEN-WIRED only with ARCHITECTURE §decode/§SelfIdentity lockstep in the same PR (a_verified_must_wire).
+
+## Wire status (2026-07-10 · toy DIRECTIONAL)
+4 sites landed on `feat/lane23b-build`:
+1. `core/decode.hexa` — `clm_penult_pooled_W(W, seed)` split out; entry = load→_W→free (**ZERO math
+   change**, pure refactor). `penult_fold8(pooled)` FROZEN reducer added. + py twin `core/decode.py`
+   `clm_penult_pooled_W` (= `clm_forward_hidden` + mean-pool) + `penult_fold8`.
+2. `core/generator.hexa` — `gen_penult_pooled_W(W, seed)` read-only wrapper (+ py twin
+   `core/generator.py`). Single L3 entry, emits no bytes.
+3. `cli/anima.hexa` — lane-23b: boot restore-else-`self_new` + heard-context (session_seed) drift ·
+   own-emit drift at C9 REMEMBER · session-end `.kosmos` self-anchor persist (dedicated dir, never
+   `kdir`). `self_ctx` (:~2585) BYTE-UNTOUCHED.
+4. `cli/chat.py` — full 2-production twin of all three (same fold8, same anchor format).
+
+**Verification (this PR):**
+- **self⊥mouth (go/no-go safety gate) — PASS.** 12-tick toy chat, lane-on (`cli/chat.py`) vs
+  origin/main lane-off, same tape: emit-stream stdout **byte-identical** ∧ `kdir` emit-anchors
+  **byte-identical** (once `emitted_at` wall-clock — kosmos_io's own parity-masked field — is masked).
+  Only new output = the `LANE-23b self-g` lines + the separate self-anchor. Emit never diverges.
+- **.kosmos self-anchor round-trip — PASS.** Persisted at session end to `~/.anima_kosmos_self/
+  self_live.kosmos`; `_selfg_restore` reads it back at boot (`SELFG8:` payload → `self_from_vec`).
+- **2-production parity — PASS (summer pool, hexa v0.609).** `state/9257_lane23b/parity.py`
+  (+`parity_hexa.hexa`): hexa `gen_penult_pooled_W` vs py `clm_penult_pooled_W`, exact `float_to_bits`
+  dump → **pooled max|Δ| = 1.665e-16 ≤ 2e-16** ∧ **fold8 axis-seq identical** (6/6 seeds). (mini hexa
+  `runtime.a` lacks `forge_dispatch_attn_core/rmsnorm` symbols — infra fault, so the hexa side runs on
+  pool, not mini.)
+- **byte-exact no-regression — PASS (summer pool).** `state/9257_lane23b/nogr_probe.hexa` dumps the
+  `clm_penult_pooled` ENTRY bits: origin/main vs the `_W`-split tree = **byte-identical** (all seeds).
+  Cross-check: the entry's bits == `clm_penult_pooled_W`'s bits (via `gen_penult_pooled_W`) for shared
+  seeds → the split is a pure refactor, ZERO math change.
+- toy `.clm` = **DIRECTIONAL**; **303M control-battery (REAL-SEPARATES · BEATS-SYNTHETIC headline ·
+  ORDER-LOCK · IDENTITY · MOUTH guard) = PENDING POOL** (`anima-py` + hexa live run, summer/aiden) —
+  the terminal verdict re-measures on real 303M, not this toy build. No tune-to-green: fold8 buckets
+  + falsifier FROZEN.
 
 ## Links
 H_1471 (self-identity · 🟢 · R2b open) · H_9099 (clm_penult_pooled DIRECTIONAL-GREEN 4/5) · H_9038

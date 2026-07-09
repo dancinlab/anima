@@ -59,6 +59,47 @@ import "core/imagination_replay.hexa"   // N3/REM emit-free rehearsal + mitosis 
 
 fn anima_yn(b: bool) -> string { if b { return "✅" } return "⏳" }
 
+// ── H_9257 lane-23b self-anchor codec — persist/restore the grounded 8-dim self across sessions
+// via a .kosmos payload string (a_kosmos · closes H_1471 R2b: real cross-session persistence).
+// Reuses create_anchor (single WRITE entry) + load_anchors (single READ entry); the vector rides
+// the @payload text as "SELFG8:v0,…,v7". self_from_vec renormalizes on restore, so to_string
+// precision is ample for recognition cos ≫ 0.99.
+fn _selfg_encode(s: SelfIdentity) -> string {
+    let mut out = "SELFG8:"
+    let mut i = 0
+    while i < 8 {
+        if i > 0 { out = out + "," }
+        out = out + to_string(self_component(s, i))
+        i = i + 1
+    }
+    return out
+}
+// _selfg_restore — read the dedicated self-anchor dir, return the 8 floats (or [] if absent/bad).
+// The self-anchor lives in ITS OWN dir (never the brain's kdir) so it can NEVER enter the anchor
+// stream that shades emit (self⊥mouth · a_substrate_disjoint).
+fn _selfg_restore(dir_path: string, name: string) -> list {
+    let anchors = load_anchors(dir_path)
+    let mut ai = 0
+    while ai < len(anchors) {
+        let a = anchors[ai]
+        if to_string(a["name"]) == name {
+            let tp = to_string(a["text_payload"])
+            if byte_len(tp) > 7 && substring(tp, 0, 7) == "SELFG8:" {
+                let body = substring(tp, 7, byte_len(tp))
+                let parts = body.split(",")
+                if len(parts) == 8 {
+                    let mut v = []
+                    let mut k = 0
+                    while k < 8 { v.push(parse_float(parts[k])); k = k + 1 }
+                    return v
+                }
+            }
+        }
+        ai = ai + 1
+    }
+    return []
+}
+
 // ── H_9042 §TensionResolveLoop LANE+ read helpers (module-level; build the caller-supplied
 //    conflicted-vs-calm measurement populations for tension_resolve_depth). READ-only fixtures:
 //    15-lane rows where the emit-drive lanes 0 & 4 carry the drive (ci_emit_drive = ½(l0+l4)) and the
@@ -2318,6 +2359,39 @@ fn anima_consciousness_mode(ckpt: string) {
     // --opgrip-r3: n=400 (0-99 spin-up · 100-199 B-dense calibration · 200-399 scoring; scored mid = 200·3/5 = 120,
     // the SAME denominator as the $0 run so every ΔEff bar keeps its original 1-flip=0.0083 quantization).
     let n_ticks = if og_r3 { 400 } else if og_live { 100 } else if og_measure { 250 } else if refr_measure { 200 } else { 12 }  // H_9225: --opgrip 200→250 (scored mid ≈120, tightens the 0.02 bar); --refractory untouched
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  LANE-23b PENULT SELF-GROUNDING (H_9257 · self-continuity: synthetic → substrate)
+    // ── Ground anima's cross-session self in the mounted 303M's REAL penultimate pooled rep
+    //    (gen_penult_pooled_W → penult_fold8) instead of the synthetic session-seed int-drift.
+    //    INVARIANT self⊥mouth (H_9209/9225/9226 THEATER law): self_live_g runs BESIDE self_ctx
+    //    (the :~2585 boot constant, BYTE-UNTOUCHED) and NEVER feeds emit / lanes 0·4 / recall_thr /
+    //    ci_emit_drive / RNG — it only DRIFTS §SelfIdentity state and PERSISTS as a .kosmos
+    //    self-anchor (a_kosmos · closes H_1471 R2b). a_substrate_disjoint: the penult read is
+    //    READ-only; the drift touches ONLY the grounded-self state. The .clm weight-set is loaded
+    //    ONCE here (freed at session end) via the single L3 slot (a_core_engine_map) — NOT a 2nd
+    //    decode path (gen_penult_pooled_W emits no bytes).
+    let self_g_kdir = env("HOME") + "/.anima_kosmos_self"
+    let self_g_name = "self_live"
+    let self_g_on = mounted && gen_mouth_kind(ckpt) == "clm" && clm_decodable(ckpt)
+    let mut self_gW = #{ "ok": false }
+    if self_g_on { self_gW = clm_load_weights(ckpt) }
+    let self_gW_ok = self_g_on && to_string(self_gW["ok"]) == "true"
+    // boot: RESTORE the grounded self from its .kosmos self-anchor if present, else self_new.
+    let self_g_restored_vec = _selfg_restore(self_g_kdir, self_g_name)
+    let self_g_boot_restored = len(self_g_restored_vec) == 8
+    let mut self_live_g = if self_g_boot_restored { self_from_vec(self_g_restored_vec, 8) } else { self_new(8, 0) }
+    // heard-context boot drift: ground the initial self in the standing heard input (session_seed) —
+    // the FIRST lived experience event (heard user message). (own-emit events drift in-loop below.)
+    if self_gW_ok {
+        let boot_axis = penult_fold8(gen_penult_pooled_W(self_gW, session_seed))
+        self_live_g = self_drift_exp(self_live_g, boot_axis, 0.15)
+    }
+    let mut self_g_axis_seq = ""      // diagnostic-only axis trace (NOT emitted; self⊥mouth)
+    let mut self_g_events = 0
+    println("LANE-23b self-g : on=" + to_string(self_g_on) + " W_ok=" + to_string(self_gW_ok)
+        + " restored=" + to_string(self_g_boot_restored) + " kosmos=" + self_g_kdir)
+
     let mut tick = 0
     let mut emit_last_t = -1.0e9   // H_9102: last-emit time (an_clock_now units); emit-history state (was ABSENT)
     let mut prev_live_emit = 0     // H_9102: did the PREVIOUS tick's live arm emit? (defines the refractory window)
@@ -3701,6 +3775,17 @@ fn anima_consciousness_mode(ckpt: string) {
                 "emission", "curiosity", pure_field_phi(pf), 1.0)
             remembered2 = true
             println("  [t" + to_string(tick) + " " + stage_nm + "] REMEMBER emit → " + epath)
+
+            // ── LANE-23b: ground the live self in THIS emit's REAL penult rep (own-emit event) ──
+            // Co-located with C9 REMEMBER: the emit is a lived experience, so drift the grounded
+            // self toward its penult-fold8 axis. Ψ/emit-disjoint: reads gen_penult_pooled_W (own
+            // forward, no shared RNG/lane), drifts ONLY self_live_g. self_ctx (:~2585) untouched.
+            if self_gW_ok {
+                let ev_axis_g = penult_fold8(gen_penult_pooled_W(self_gW, g_text))
+                self_live_g = self_drift_exp(self_live_g, ev_axis_g, 0.15)
+                self_g_axis_seq = self_g_axis_seq + (if self_g_events > 0 { "," } else { "" }) + to_string(ev_axis_g)
+                self_g_events = self_g_events + 1
+            }
         }
 
         // ── REFSEL — contradiction-keyed referent routing (H_9125 rung3, post-decision) ──
@@ -3874,6 +3959,25 @@ fn anima_consciousness_mode(ckpt: string) {
         }
 
         tick = tick + 1
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  LANE-23b SESSION END — persist the grounded self as a .kosmos self-anchor (a_kosmos ·
+    //  closes H_1471 R2b: the anchor survives to the next boot's _selfg_restore). Single WRITE
+    //  entry (create_anchor). self⊥mouth: written to the DEDICATED self-anchor dir, never kdir,
+    //  so it never enters the brain's anchor stream. Then free the once-loaded weight-set.
+    // ══════════════════════════════════════════════════════════════════════════
+    if self_gW_ok {
+        let _mk = exec("mkdir -p '" + self_g_kdir + "'")
+        let sg_payload = _selfg_encode(self_live_g)
+        let sg_tension = [self_cos(self_live_g, self_new(8, 0)), 0.5, 0.5, 1.0, 0.5]
+        let sg_path = create_anchor(self_g_kdir, self_g_name,
+            "grounded self-continuity", 0.0, 0.0, "self_identity", 1.0,
+            2, "self", "continuity", sg_payload, sg_tension,
+            "lane-23b-selfground", "")
+        println("LANE-23b self-g : PERSIST self-anchor → " + sg_path
+            + " (events=" + to_string(self_g_events) + " axis_seq=[" + self_g_axis_seq + "])")
+        clm_weights_free_pub(self_gW)
     }
 
     // ── op-grip MEASUREMENT summary + emit-rate collapse FLAG (--opgrip) ─────────

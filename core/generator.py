@@ -261,6 +261,15 @@ def gen_clm_ideate_W(W, seed, max_new, top_k, temp, seed_rng):
             "reason": "ideated via clm_decode_topk_sampled_W (loaded-W, seeded top-k)"}
 
 
+def gen_penult_pooled_W(W, seed):
+    """generator.hexa gen_penult_pooled_W — H_9257 lane-23b self-grounding read (py 2-production
+    twin). The mounted 303M's REAL penultimate pooled rep for `seed`, off a PRE-LOADED weight map.
+    Thin READ-ONLY wrapper over decode.clm_penult_pooled_W — NOT a 2nd decode path / NOT a mouth
+    (emits no bytes); the runtime self-continuity lane taps the trunk penult to ground self_drift_exp
+    in real experienced content. self⊥mouth: the returned vector never feeds emit."""
+    return _clm.clm_penult_pooled_W(W, seed)
+
+
 def gen_bytegpt_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng):
     """generator.hexa:728 gen_bytegpt_ideate — seeded top-k sampler on the ByteGPT
     mouth (bytegpt_decode_topk_sampled_ranged, OOM-safe). HARD-BOUNDED by max_new."""
