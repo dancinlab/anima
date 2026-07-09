@@ -2,6 +2,8 @@
 
 **판정 = 🔴 THEATER** (engine-native, CEMENTED) — corollary discharge(self-prediction) is inert at the emit seam.
 
+> **r4 REPLICATION (2026-07-09 · #3235 · OG_STIM2 4-class dwell tape run · hexa v0.716.0 REAL-DECODE n=400 · `pod_r4_full.log`)** — E는 F2/B2 op-grip 계기 업그레이드 run에서 **THEATER를 그대로 재현**: ΔEff_eff=0/210 · POS-PASS 105 flips · g_eff=1.609(band_med=0.109·x_eff non-degenerate) · DISSOC ok · og_h_frzE=0 · N3=0 · Ψ-ok. E는 F2/B2 emit-frac envelope(0.667 overdrive → run-invalid)와 **독립** — E 자신의 frozen bar는 전부 통과(mid=210 scored, envelope 게이트 없음)하며 robustly THEATER across **r3+r4**. never wire(negative, not capability).
+
 **측정 경로**: 실제 빌드된 `cli/anima.hexa` daemon `--opgrip-r3`(E lane · x=ec_x self-pred-err)를
 rented runpod **251GB CPU pod**(swap-free · hexa **v0.716.0** REAL-DECODE · n=400)에서 real d768.clm으로
 실행. engine-native 라이브 바이너리 real-decode = TERMINAL-eligible (mirror 아님). raw = `opgrip_r3_raw.log`
