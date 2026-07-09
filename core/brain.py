@@ -189,7 +189,8 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                     backend, anchors, anchor_age_dt):
     """brain.hexa:232 — brain_emit with explicit anchor age (forgetting curve).
     Drives the L3 generator slot via the sibling generator.py port."""
-    from generator import gen_ctx_from_decision, generate  # sibling 2-prod port
+    from generator import (gen_ctx_from_decision, generate,  # sibling 2-prod port
+                           generator_hippo_consult)
 
     decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal,
                                      dyn_v, seconds_since_last, env_off,
@@ -203,6 +204,53 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     decision["gen_backend"] = gen["backend"]
     decision["gen_text"] = gen["text"]
     decision["gen_fellback"] = gen["fellback"]
+    # H_9129 L5 wire-to-prod: the live daemon emit path now READ-ONLY consults the
+    # hippocampal relatedness of the live .kosmos anchor store and carries it on the
+    # decision record. a_substrate_disjoint: gen_text comes STRAIGHT from generate()
+    # (which never sees the consult) ⇒ the emit bytes are byte-identical whether or not
+    # this consult runs — a pure side-channel READ.
+    hippo = generator_hippo_consult(anchors)
+    decision["gen_hippo_consulted"] = hippo["consulted"]
+    decision["gen_hippo_related"] = hippo["relatedness"]
+    decision["gen_hippo_reachable"] = hippo["reachable"]
+    return decision
+
+
+def brain_emit_deliberate(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                          seconds_since_last, env_off, content_clean,
+                          backend, anchors, mem, tick):
+    """brain.hexa:279 — H_9102 (op-grip EFFERENT axis). The EXACT twin of
+    brain_emit_aged with age_dt=0, EXCEPT the L3 slot runs the best-of-K deliberation
+    (generate_deliberate) instead of the single-candidate generate(). The emit/silence
+    DECISION is byte-for-byte the SAME brain_decide_anchored call; ONLY the emit BYTES
+    can change, and only when the A⇄G conflict on c₀ recruits K>1. SILENT ⇒ same empty
+    content as generate() (p5). mem = the live §ImmuneMemory (READ-only grounding
+    query); tick seeds the deliberation RNG (deterministic)."""
+    from generator import gen_ctx_from_decision, generate_deliberate  # sibling 2-prod port
+
+    decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                                     seconds_since_last, env_off, content_clean,
+                                     anchors, 0.0)
+    emit = str(decision["emit"]).lower() == "true"
+    ctx = gen_ctx_from_decision(decision)
+    gen = generate_deliberate(backend, ctx, emit, anchors, mem, tick)
+
+    decision["gen_emitted"] = gen["emitted"]
+    decision["gen_backend"] = gen["backend"]
+    decision["gen_text"] = gen["text"]
+    decision["gen_fellback"] = gen["fellback"]
+    # depth/k_winner/conf_* are absent on the SILENT branch of generate_deliberate
+    # (hexa map indexing → void); .get() mirrors that (None ≈ void) instead of KeyError.
+    decision["gen_depth"] = gen.get("depth")
+    decision["gen_kwinner"] = gen.get("k_winner")
+    decision["gen_confpre"] = gen.get("conf_pre")
+    decision["gen_confwin"] = gen.get("conf_winner")
+    # H_9129 L5 wire-to-prod: carry the READ-ONLY hippocampal relatedness consult into
+    # the live emit decision record. a_substrate_disjoint — a side-channel READ that
+    # NEVER altered gen_text (generate_deliberate consulted disjoint from the bytes).
+    decision["gen_hippo_consulted"] = gen["hippo_consulted"]
+    decision["gen_hippo_related"] = gen["hippo_related"]
+    decision["gen_hippo_reachable"] = gen["hippo_reachable"]
     return decision
 
 
