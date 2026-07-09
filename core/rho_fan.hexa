@@ -148,15 +148,15 @@ fn _rho_fan_words_uni(s: string) -> list {
 //          degenerates on the positive zero-tail; median anchors robustly between dists).
 //   at 0.20: 80.0% real ko clears, 99.74% garble fails.
 // Derivation state/frontier_round2_scout/kwrko_gate_derive.py · prereg KWRKO_GATE_prereg.md.
-// ⚠️ 구현됨·미배선 — NOT consumed by any scoring path (that is H_9212 ③ per-cell dispatch).
-// ko FALS SCOPE-EXCLUDED until ③ applies this gate. en 0.70 UNCHANGED.
+// 🟢 WIRED (H_9212 ③ code-live): consumed by cli/evaluate.py per-cell dispatch (kwr_ko +
+// KWR_KO_GATE). ⑦ pool measurement pending. en 0.70 UNCHANGED.
 fn KWR_KO_GATE() -> float { return 0.20 }
 
 // ════════════════════════════════════════════════════════════════════════
-// ── H_9212 ② 4-cell register concept sets + ko known-word proxy (ADDITIVE · UNWIRED) ──
-// 구현됨·미배선: defines the 4 register cells (a_chat_registers: ko/en × general/sns) and a
-// FROZEN ko josa/function-word KNOWN-WORD proxy. NOT wired into the scored reach panel yet —
-// per-cell dispatch (③) is gated on ④ KWR_KO_GATE (frozen-first · no tune-to-green). en path
+// ── H_9212 ② 4-cell register concept sets + ko known-word proxy (ADDITIVE · 🟢 WIRED ③) ──
+// 🟢 WIRED (H_9212 ③ code-live): the 4 register cells (a_chat_registers: ko/en × general/sns)
+// + FROZEN ko josa/function-word KNOWN-WORD proxy are consumed by cli/evaluate.py per-cell
+// dispatch (③), gated on ④ KWR_KO_GATE (frozen-first · no tune-to-green). ⑦ pool pending. en path
 // stays BYTE-UNTOUCHED: _rho_fan_cells()["en_general"] IS _rho_fan_concepts() verbatim, en cells
 // tokenize via the frozen _rho_fan_words; only ko cells use _rho_fan_words_uni (codepoint-aware
 // superset). Follow-on = ③ per-cell dispatch in cli/evaluate.hexa / cli/rho_axon (post ④).

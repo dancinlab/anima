@@ -34,7 +34,7 @@ CORE 의 결정 두뇌(A·G·brain)는 **외부 모델/앵커를 전혀 소비�
    │                              ▼
    │                  ┌─────────────────────────┐
    │   .clm 모델 ────▶ │ generator.hexa  🟢 배선   │  ← 유일한 .clm 진입점
-   │                  │ (헤더 admit · decode ⏳)  │     (brain_emit→generate)
+   │                  │ (헤더 admit · decode 🟢)  │     (brain_emit→generate)
    │                  └─────────────────────────┘
    │   .kosmos 앵커 ──▶ kosmos_io → brain_emit  🟢 배선  ← 유일한 .kosmos 진입점
    └────────────────────────────────────────────────────────────────────┘

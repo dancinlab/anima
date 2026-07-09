@@ -18,7 +18,7 @@
 //   3. HF private: dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12 (cotrain)
 //
 // PRODUCTION SEAM:
-//   core/DECODER/generator.hexa::_gen_decode — does NOT yet exist · M4 wiring 잔여
+//   core/generator.hexa::_gen_clm_decode — does NOT yet exist · M4 wiring 잔여
 //   This module's `code_ckpt_bind` returns ready=false until that seam lands.
 
 // Return canonical local path for v5-mitosis 581MB ckpt (may not exist on disk).
@@ -55,12 +55,12 @@ pub fn code_ckpt_local_exists(path: string) -> bool {
 }
 
 // Bind ckpt to CODE agent's generator slot. STUB — returns ready=false
-// until core/DECODER/generator.hexa::_gen_decode seam lands (M4).
+// until core/generator.hexa::_gen_clm_decode seam lands (M4).
 pub fn code_ckpt_bind(ckpt_path: string) -> map {
     return #{
         "ready": false,
         "path": ckpt_path,
-        "reason": "DECODER M4 seam (core/DECODER/generator.hexa::_gen_decode) not yet wired — see core/DECODER/M3_FIRE_TEARDOWN.md",
+        "reason": "DECODER M4 seam (core/generator.hexa::_gen_clm_decode) not yet wired — see core/DECODER/M3_FIRE_TEARDOWN.md",
         "todo": [
             "DECODER M4 arch escalation (v5-mitosis cotrain v6 OR Qwen-3B base)",
             "Land core/DECODER/generator.hexa with _gen_decode entry",
