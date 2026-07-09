@@ -76,6 +76,32 @@
   ],
   "models": [
     {
+      "id": "anima-clm-convmoe-3b-rung",
+      "arch": "CLMConvMoE (byte V256, no tokenizer)",
+      "params": "3072954654",
+      "tier": "WIP",
+      "path": "~/anima-weights/clm_3b/clm_3b.clm",
+      "hf": "dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b",
+      "visibility": "PUBLIC",
+      "progress": "trained 2026-06-05 · 2000 step · d4096/L30/E30 · GENERALIZES (F_CLM_LANEP_3B_GEN=1 · val gap +0.093/-0.003) · CLM_V3 decodable nblk63 · UNDERTRAINED (tok/param 3.48 ≪ chinchilla 20) · scale-ladder rung 303M→1B→3B→7B",
+      "sha256": "01df4f26ae64ca275120f41e1a12cd09d3f4dd6c359fb19e02a8f7509b58fd99",
+      "features": [
+        "byte-level",
+        "conv-moe",
+        "lane-p",
+        "engine-rung",
+        "undertrained",
+        "generalizes",
+        "clm-v3"
+      ],
+      "updated": "2026-07-09T20:55:13.102Z",
+      "gates": {
+        "F_CLM_LANEP_3B_GEN": "pass",
+        "decodable": "CLM_V3 nblk63",
+        "generalize": "val_gap +0.093 rel 0.049"
+      }
+    },
+    {
       "id": "anima-e1-slw-303m",
       "arch": "CLMConvMoE-SLW",
       "params": "374798533",
