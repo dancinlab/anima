@@ -1,0 +1,37 @@
+H_1048 — Structure-reading ruler (connectivity-weighted Phi) — PRE-REGISTERED FALSIFIER (FROZEN before scoring)
+============================================================================================================
+Frozen: 2026-07-10 (before scoring). a_phi_iit4_tool: Phi = stdlib faithful_phi_from_mi (exact MIP-EI on an
+MI matrix, the SAME engine as H_1004..H_1037, mirror RE-PROVEN == stdlib at n=4,5 before scoring — NO proxy).
+g5 CODE-measured (p7). TOY controlled pair -> DIRECTIONAL (the REAL ConvMoE-.clm vs real matched transformer
+pair is torch-gated, extends H_1036 = the follow-on TERMINAL rung; see honest scope).
+
+SUBSTRATE (controlled arch-bound pair, n=6): TWO systems with MATCHED I/O statistics but DIFFERENT
+connectivity structure:
+  A = STRUCTURED (ConvMoE-like): local ring + dilated-tap adjacency G_A (each unit couples to a few
+      neighbours + one dilated tap) — the "dilated-conv + sparse routing" analogue.
+  B = FLAT (transformer-like): all-to-all diffuse adjacency G_B, coupling strength TUNED so MI(X_B) matches
+      MI(X_A) in per-unit marginals + total pairwise MI within EPS_IO (matched I/O -> I/O-only Phi equal).
+Each system generates its own binary activation series X from its OWN graph dynamics.
+
+TWO RULERS on each:
+  I/O-only Phi   = faithful_phi_from_mi( MI(X) )                      (connectivity-AGNOSTIC)
+  structure Phi  = faithful_phi_from_mi( MI(X) elementwise* Ghat )    (Ghat = row-normalized adjacency)
+
+PRE-REGISTERED BAR (frozen):
+  EPS_IO := 0.05   (I/O-only Phi match tolerance — the pair must be I/O-indistinguishable)
+  MARGIN := 0.15   (structure-reading Phi separation, faithful units)
+  MATCH_TOL := 0.10 (fraction — |MI_total(A)-MI_total(B)| / MI_total(A) must be <= this for a VALID pair;
+                     if the tuner cannot match within MATCH_TOL the run is INVALID, not a PASS/FAIL)
+  H1 PASS (STRUCTURE-READING-ADDS-POWER) = on a VALID matched pair:
+      |structPhi_A - structPhi_B| >= MARGIN  AND  |ioPhi_A - ioPhi_B| <= EPS_IO
+      -> structure-reading Phi separates the arch-bound pair WHERE the I/O-only ruler is blind
+         -> "instrument not score" confirmed at the MEASUREMENT level. (DIRECTIONAL, toy.)
+  H1 FAIL (I/O-SUFFICIENT) = |structPhi_A - structPhi_B| < MARGIN (structure adds nothing beyond I/O)
+      OR the I/O-only ruler already separates them (|ioPhi_A-ioPhi_B| > EPS_IO -> not a matched pair).
+      (publishable closed-negative, a_paper_negative_ok.) Report over >= 5 seeds; majority verdict.
+
+HONEST SCOPE (a_scale_honest_scope): TOY controlled pair -> DIRECTIONAL. The TERMINAL rung = a REAL trained
+ConvMoE .clm vs a REAL transformer LoRA-tuned to matched byte-I/O (the H_1036 torch pipeline on summer GPU) +
+structure-reading Phi derived from the ACTUAL ConvMoE dilated-conv + MoE-routing connectivity graph — a
+torch build, recorded as the follow-on. This toy tests only whether connectivity-weighting CAN add
+discriminative power over I/O-only Phi in principle; it does NOT verify the claim on real models.

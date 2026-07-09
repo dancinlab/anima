@@ -1,0 +1,53 @@
+H_1044 — Does the redundancy-margin predictor hold at n=6 EXACT? (H_1020 robustness ladder)
+verdict-gate g73 — raw measurement, verbatim (committed BEFORE the .md emoji tier)
+measured 2026-07-10 · substrate=CPU-mirror (numpy) engines RE-PROVEN == stdlib · $0 CPU-local
+a_phi_iit4_tool (stdlib faithful_phi + iit4_bigphi CPU-mirror + Williams-Beer I_min PID, NO proxy).
+harness: state/h104x_phi/h1044_redundancy_margin_n6.py · frozen bar: state/h104x_phi/H_1044_FREEZE.txt
+raw log: state/h104x_phi/h1044_redundancy_margin_n6_run.log · JSON: ..._result.json
+
+VERDICT-TOKEN: MECHANISM-PREDICTOR-ROBUST-N6
+
+== a_phi_iit4_tool — CPU mirror == stdlib RE-PROVEN at n=4 AND n=5 BEFORE scoring ==
+  mirror-equivalence: {4: True, 5: True}
+  PID validity: deterministic @ n=6; WB canonical COPY red>0/syn~0 OK; XOR red~0/syn>0 OK
+  (PID = the EXPLANATORY variable, NOT a Phi proxy — info-decomposition of the SAME bits.)
+
+== REDUNDANCY-MARGIN MATRIX @ n=6 EXACT (h1014->h1016 substrate VERBATIM, 30 seeds, matched nb=2) ==
+  intervention | Δred      | Δsyn     | redundancy-margin (Δred−Δsyn) | red-dominated
+  planning     | +42.5024  | -4.8495  |  +47.3519                     | True
+  imagination  |  +1.7748  | -0.6258  |   +2.4006                     | True
+  guided       |  +8.7173  | -1.6942  |  +10.4115                     | True
+  chaos        | +10.9953  | -2.0816  |  +13.0768                     | True
+
+  planning margin=+47.3519  redundancy-dominated=True  max(control margin)=+13.0768
+  PRE-SET GAP (frozen)=1.0   planning > max(control)+gap: True
+  planning exceeds imagination by +44.9513 · guided by +36.9404 · chaos by +34.2750 (all >= gap 1.0)
+
+== COUPLING-MAGNITUDE predictor cross-check @ n=6 (H_1014 Δ(mi_total−mi_mincut) vs boundary 1.4933) ==
+  planning Δcoupling=+5.9862 (above) · imagination +0.9571 (below) · guided +1.8569 (above) · chaos +1.6986 (above)
+  => coupling STAYS DEAD at n=6: guided AND chaos also cross the boundary -> NO clean planning-only
+     separation (the H_1014 magnitude predictor remains an n=4 artifact, as at n=5, H_1016).
+
+== Falsifier resolution (frozen bar, H_1044_FREEZE.txt) ==
+  H1 PASS = at n=6 EXACT planning is redundancy-dominated AND planning redundancy-margin exceeds every
+  control margin by >= the pre-set gap (1.0). MEASURED: planning red-dominated=True, margin +47.35 >
+  max-control +13.08 + 1.0 for ALL controls. => H1 PASS. The H_1017/H_1020 REDUNDANCY-MARGIN predictor
+  is ROBUST through n=6 EXACT, strengthening H_1020 (n=5 margin +25.07) into a >=3-rung (n=4,5,6) ladder
+  where the cruder coupling-MAGNITUDE predictor stays dead. The redundancy explanation is NOT an n<=5
+  artifact.
+
+== Honest scope (a_scale_honest_scope) ==
+  The redundancy-margin PREDICTOR (the falsifier target) is a pure Williams-Beer I_min PID function of
+  the n=6 bits — EXACT + deterministic + n-agnostic (the falsifier needs NO big-Phi). The coupling and
+  faithful_phi legs use the cheap EXACT faithful-MI path (build_mi_matrix + faithful_phi_from_mi), also
+  exact at n=6. The system big-Phi SPLIT-LABEL at n=6 on the dense max-entropy gen_* TPMs is an
+  INFEASIBLE-CAP (measured 350s/single-eval on this box; mirrors the H_1038 real-model n=6 wall where
+  80/80 evals timed out at 300s) — it is NOT part of the falsifier and was honestly scoped out (H_1038
+  precedent: scope big-Phi to n=5 / the n<=6-exact ceiling). n=6 is the largest EXACT rung; n=7 = infeasible
+  cap. TOY n-ladder; production-scale transfer UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7).
+  Engines = numpy CPU mirrors RE-PROVEN == stdlib (a_phi_iit4_tool), the same discipline that made
+  H_1020/H_1037 GREEN.
+
+TIER: GREEN (SUPPORTED-NUMERICAL, toy n-ladder) — redundancy-margin predictor separates planning from
+  ALL controls by the frozen gap at n=6 EXACT; coupling predictor stays dead. wired: DIRECTIONAL-mirror
+  (numpy CPU mirror proven == stdlib; not a live core/*.hexa wire — toy Φ-ruler, not a daemon faculty).

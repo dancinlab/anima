@@ -1,0 +1,46 @@
+============================================================================================
+H_1048 — structure-reading (connectivity-weighted) Phi vs I/O-only Phi on a matched arch-bound pair
+engine=stdlib faithful_phi_from_mi (exact MIP-EI) | mirror RE-PROVEN == stdlib at n=4,5 | a_phi_iit4_tool
+FROZEN BAR: PASS = |structPhi_A-structPhi_B|>=MARGIN(0.15) AND |ioPhi_A-ioPhi_B|<=EPS_IO(0.05)
+           on a VALID matched pair (MI_total within MATCH_TOL=0.1). TOY -> DIRECTIONAL.
+n=6 seeds=5 T=6000
+============================================================================================
+
+STEP 0 — RE-PROVE CPU mirror == stdlib at n=4,5 (a_phi_iit4_tool):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  mirror-equivalence: {4: True, 5: True}
+  seed 0: MI_tot A=3.868 B=3.868 match_err=0.0% valid=True | ioPhi A=1.270 B=1.257 dIO=0.013(<= 0.05:True) | structPhi A=0.261 B=0.251 dStruct=0.010(>= 0.15:False) -> pass=False
+  seed 1: MI_tot A=3.892 B=3.891 match_err=0.0% valid=True | ioPhi A=1.255 B=1.277 dIO=0.022(<= 0.05:True) | structPhi A=0.260 B=0.255 dStruct=0.004(>= 0.15:False) -> pass=False
+  seed 2: MI_tot A=3.670 B=3.672 match_err=0.1% valid=True | ioPhi A=1.179 B=1.203 dIO=0.024(<= 0.05:True) | structPhi A=0.241 B=0.241 dStruct=0.000(>= 0.15:False) -> pass=False
+  seed 3: MI_tot A=3.832 B=3.797 match_err=0.9% valid=True | ioPhi A=1.261 B=1.237 dIO=0.024(<= 0.05:True) | structPhi A=0.260 B=0.247 dStruct=0.013(>= 0.15:False) -> pass=False
+  seed 4: MI_tot A=3.822 B=3.820 match_err=0.0% valid=True | ioPhi A=1.252 B=1.244 dIO=0.008(<= 0.05:True) | structPhi A=0.257 B=0.249 dStruct=0.008(>= 0.15:False) -> pass=False
+
+============================================================================================
+SUMMARY: valid matched pairs=5/5  PASS(struct separates & I/O matched)=0/5
+============================================================================================
+OVERALL: FAIL (DIRECTIONAL, closed-negative) — IO-SUFFICIENT-TOY. On matched-I/O pairs the structure-
+  reading Phi does NOT separate beyond the I/O-only ruler (< MARGIN) — connectivity weighting adds
+  nothing; Phi-structure is already visible in I/O statistics (a_paper_negative_ok).
+  VERDICT-TOKEN: IO-SUFFICIENT-TOY
+============================================================================================
+HONEST SCOPE: TOY controlled pair -> DIRECTIONAL. TERMINAL rung = real trained ConvMoE .clm vs real
+  transformer LoRA-matched to byte-I/O (H_1036 torch pipeline on summer GPU) + structure-reading Phi
+  from the ACTUAL ConvMoE dilated-conv + MoE-routing graph — a torch build, recorded as the follow-on.
+  total wall 7.0s
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.worktrees/h104x-phi/state/h104x_phi/h1048_structure_reading_ruler_result.json

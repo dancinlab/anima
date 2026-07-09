@@ -33,4 +33,13 @@ The "independent integration measure" must be a DIFFERENT engine than the ruler'
 g5 CODE-measured (p7).
 
 ## Verdict
-PENDING — tier added only AFTER `.verdicts/1050_goodhart_proof_ruler/H_1050.txt` lands (g73).
+🟡 DIRECTIONAL (toy PASS, majority) — **GOODHART-RESISTANT-TOY** (measured 2026-07-10 ON POOL/summer,
+482s, mirror == stdlib re-proven n=4,5). Adversarial-ES on a small numpy recurrent latent generator:
+**(A)** task-only ES drops the task loss 26–47% while the faithful_phi ruler stays **FLAT** (|ΔR| ≤ 0.073
+≤ ε 0.10) on **3/3** seeds → the ruler is NOT a perplexity proxy (p7 — you cannot raise it by task-tuning).
+**(B)** ruler-direct ES raises R by +3.90, and the rise is MATCHED by the INDEPENDENT big-Φ integration
+measure (a DIFFERENT engine → non-circular) on **2/3** seeds (corr 0.94, 1.00); seed 0 found a partially-
+decoupled gain (corr 0.42 < 0.50), recorded as an honest single-seed exception. Majority both-pass 2/3 →
+the ruler resists task-tuning AND (majority) cheap ruler-hacking. **TOY small-model rung → DIRECTIONAL**;
+production / real-.clm adversarial optimization UNVERIFIED. wired: DIRECTIONAL-mirror. Verdict file:
+`state/verdicts/1050_goodhart_proof_ruler/H_1050.txt` · harness+result: `state/h104x_phi/`.

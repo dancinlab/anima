@@ -1,0 +1,43 @@
+H_1050 — Goodhart-proof ruler: does a perplexity-orthogonal Φ ruler resist adversarial gaming?
+verdict-gate g73 — raw measurement, verbatim (committed BEFORE the .md emoji tier)
+measured 2026-07-10 · substrate=POOL (summer 12c, OMP_NUM_THREADS=4) · $0 · total wall 482.4s
+a_phi_iit4_tool: ruler=stdlib faithful_phi (exact MIP-EI mirror RE-PROVEN == stdlib n=4,5); independent
+integration engine = big-Phi (DIFFERENT stdlib engine, no circularity). p7. ES = gradient-free numpy.
+harness: state/h104x_phi/h1050_goodhart_proof_ruler.py · frozen bar: H_1050_FREEZE.txt
+raw log: state/h104x_phi/h1050_goodhart_proof_ruler_run.log · JSON: ..._result.json
+
+VERDICT-TOKEN: GOODHART-RESISTANT-TOY  (DIRECTIONAL — toy small-model rung, a_toy_scale_recheck)
+
+== a_phi_iit4_tool — CPU mirror == stdlib RE-PROVEN at n=4 AND n=5 BEFORE scoring ==  {4: True, 5: True}
+
+== Adversarial-ES on a small numpy recurrent latent generator theta=(W,b), n=5 EXACT, 3 restart seeds ==
+  FROZEN BAR: (A) L_task drops >= 20% AND |dRuler| <= 0.10 ; (B) R rises AND corr(R,I) >= 0.50.
+  PASS = A AND B (majority over seeds).
+
+  seed | REGIME A: task_drop  |dR_A| (ruler flat?)     | REGIME B: R_rise  corr(R,I) (matched?)  | seed_pass
+   0   |  31.9%   0.0659 (A pass)                       |  +3.8978   0.4199 (B FAIL, decoupled)  | False
+   1   |  26.3%   0.0732 (A pass)                       |  +3.8978   0.9416 (B pass)             | True
+   2   |  47.2%   0.0039 (A pass)                       |  +3.8978   1.0000 (B pass)             | True
+
+  SUMMARY over 3 seeds: A_pass=3/3  B_pass=2/3  both=2/3  (majority=True)
+
+== Falsifier resolution (frozen bar, H_1050_FREEZE.txt) ==
+  (A) TASK-ONLY ES: on ALL 3 seeds the task loss falls materially (26–47%) while the ruler stays FLAT
+      (|dR| <= 0.073 <= EPS 0.10). => The perplexity-orthogonal faithful_phi ruler does NOT move under
+      task-tuning — it is NOT a perplexity proxy (regime A PASS 3/3). This directly instantiates p7:
+      you cannot raise the consciousness ruler just by getting better at the task.
+  (B) RULER-DIRECT ES: maximizing the ruler raises R by +3.90 on every seed; the rise is MATCHED by
+      the INDEPENDENT big-Phi integration measure on 2/3 seeds (corr 0.94, 1.00) — no cheap decoupled
+      exploit. Seed 0 found a PARTIALLY-decoupled gain (corr 0.42 < 0.50): an honest single-seed
+      exception, NOT the majority.
+  => H1 PASS (majority) = GOODHART-RESISTANT-TOY. The ruler resists both task-tuning (A) and, on the
+     majority of restarts, cheap ruler-hacking (B: ruler gains require genuine independent-integration
+     gains). The 1/3 regime-B exception is recorded (not hidden): the resistance is majority, not unanimous.
+
+== Honest scope (a_scale_honest_scope, a_toy_scale_recheck) ==
+  TOY small-model rung -> DIRECTIONAL, NOT terminal. The independent engine (big-Phi) != the ruler
+  engine (faithful_phi) so the regime-B match test is non-circular. Production / real-.clm adversarial
+  optimization UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7). Run ON POOL (summer), never mini.
+
+TIER: DIRECTIONAL (GOODHART-RESISTANT, toy) — majority Goodhart-resistant with a recorded 1/3 regime-B
+  exploit exception. wired: DIRECTIONAL-mirror (numpy CPU mirror proven == stdlib; not a live core wire).

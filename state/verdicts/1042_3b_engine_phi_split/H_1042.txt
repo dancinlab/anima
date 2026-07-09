@@ -1,0 +1,29 @@
+H_1042 — Does the Phi-split survive on the 3B ConvMoE engine rung? (H_1038 GPU follow-up)
+verdict-gate g73 — status record, verbatim · 2026-07-10
+
+VERDICT-TOKEN: BLOCKED-ON-CKPT  (not a science result — a missing-substrate blocker; NO tier cemented)
+
+== Blocker (measurement-validity, per HYPOTHESES/CLAUDE.md lesson-2: infra/absence != science ceiling) ==
+  H_1042 requires loading a REAL trained 3B ConvMoE ENGINE rung (3.073B, d4096/L30/E30,
+  [[convmoe-3b-engine-rung]]) to run planning-vs-greedy rollouts + coarse-grain to n<=6 macro-TPMs.
+  That checkpoint DOES NOT EXIST. Confirmed 2026-07-10 across every registry/store:
+    1. ARCHITECTURE.json models[] = 1 model only: anima-e1-slw-303m (374798533 params, CLMConvMoE-SLW).
+       No 3B/d4096 entry.
+    2. ARCHITECTURE.json tree node id="not-yet-built-in-progress-honest-3b-7b-rung" = "⏳ 3B / 7B rung"
+       (explicitly NOT-YET-BUILT). The 3B exists ONLY as a fire-RECIPE
+       (archive/train/clm/train/fire_3b_rung_qat.hexa), i.e. a spec, not a trained artifact.
+    3. ~/anima-weights/ on this host holds only 303M-class ckpts (e1_slw_303m, clm303_clean,
+       bytegpt_recomb_303m, clm303_deep_L8, exp3_303m, ...). No 3B .clm anywhere on disk.
+    4. The H_1038 verdict itself scopes the 3B rung as H_1042's job and GATED (a real trained 3B does
+       not exist; it needs GPU + a from-scratch large training fire).
+
+== Why not resolved on pool ==
+  "hw는 pool" (heavy compute on pool) does NOT conjure a missing checkpoint. Producing the 3B ConvMoE
+  = a separate large training fire (rent=spend fleet caveat, a_fire_autonomous), out of scope for this
+  measurement pass and explicitly NOT attempted (no fabricated/toy 3B stand-in — that would violate
+  a_engine_native_learning and a_scale_honest_scope).
+
+== Disposition ==
+  BLOCKED-ON-CKPT (⏳). No PASS/FAIL/tier cemented. Reopen when the 3B ConvMoE engine rung is trained +
+  registered (models[] + HF + sha256). The measurable Φ-split science already stands at d768 (H_1038
+  TRANSFERS, n=5 EXACT) and n=6 EXACT toy (H_1037/H_1044); the 3B is a scale-ladder extension only.

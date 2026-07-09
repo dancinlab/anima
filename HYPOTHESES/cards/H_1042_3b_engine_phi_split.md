@@ -31,4 +31,12 @@ rung, 3B is the second (toy n-ladder being the zeroth).
 d768 lands a verdict). GPU babysit cost acknowledged (a_fire_autonomous, no cap).
 
 ## Verdict
-PENDING — tier added only AFTER `.verdicts/1042_3b_engine_phi_split/H_1042.txt` lands (g73).
+⏳ BLOCKED-ON-CKPT (no tier cemented) — measured/triaged 2026-07-10. The 3B ConvMoE engine rung (3.073B,
+d4096/L30/E30, `convmoe-3b-engine-rung`) **DOES NOT EXIST**: ARCHITECTURE.json carries it only as the
+not-yet-built node `not-yet-built-in-progress-honest-3b-7b-rung` ("⏳ 3B / 7B rung") + a fire-RECIPE
+(`fire_3b_rung_qat.hexa`), `models[]` holds one model (anima-e1-slw-303m, 374M), and `~/anima-weights/`
+has only 303M-class ckpts. "hw는 pool" does not conjure a missing checkpoint — training the 3B is a
+separate large fire (rent=spend), out of scope; **NOT** faked/toy-substituted (a_engine_native_learning,
+a_scale_honest_scope). No PASS/FAIL. The Φ-split science stands at d768 (H_1038 TRANSFERS, n=5 EXACT) +
+n=6 EXACT toy (H_1037/H_1044); 3B = scale-ladder extension only. Reopen when a 3B ConvMoE is trained +
+registered. Verdict file: `state/verdicts/1042_3b_engine_phi_split/H_1042.txt`.
