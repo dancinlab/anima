@@ -14523,8 +14523,8 @@
       {
         "id": "engine-cli-py-1",
         "state": "pos-conv",
-        "value": "py 2-production mirror가 hexa BYTE-NATIVE 문자열(byte_len/ord/substring=raw 바이트 순회)을 미러할 때, 임의 바이트를 담으려 surrogateescape로 디코드한 str을 다시 바이트로 인코드하는 모든 지점은 반드시 .encode('utf-8','surrogateescape')여야 함. strict .encode('utf-8')는 real byte-LM이 뱉는 non-utf8 디코드 바이트(surrogate 보유 str)에서 UnicodeEncodeError로 크래시 — hexa는 byte-native라 무크래시라 py만 발산=파리티 붕괴+런타임 크래시. P6 QA서 immune_embed_key(engine_cli.py:583)+DIM16 key(1099)+_cls_coin(1245/6)+kosmos _ki_str_gt(459/60) 6사이트 적발. surrogateescape는 valid utf-8엔 byte-identical(무회귀)·surrogate엔 원바이트 정확 round-trip=hexa가 순회하는 바이트와 동일.",
-        "threshold": "재발조건: py twin이 디코드된 model 출력(g_text·grounded mouth 바이트)을 immune/cls/kosmos 등에서 재인코드할 때 strict utf-8. null-backend 경로(clean ASCII)선 안 터지나 real-decode(303M/toy bytegpt)선 크래시. 해결=py twin의 모든 str→bytes 재인코드를 surrogateescape로(hexa byte-native 미러 불변식). 신규 core/*.py twin 리뷰 시 grep '.encode(\"utf-8\")' strict 잔여 확인.",
+        "value": "py 2-production mirror가 hexa BYTE-NATIVE 문자열(raw 바이트 순회/read/write)을 미러할 때, surrogateescape로 디코드해 임의 바이트를 담은 str을 다시 바이트로 내보내는 모든 지점 — .encode('utf-8') AND 파일 open()/write/read — 은 반드시 errors='surrogateescape'. strict는 real byte-LM non-utf8 디코드 바이트(surrogate str)서 UnicodeEncodeError 크래시. hexa byte-native라 무크래시=py만 발산. P6 QA 2라운드 적발: ①.encode 6사이트(immune_embed_key 583·DIM16 1099·_cls_coin 1245/6·kosmos _ki_str_gt 459/60 #3252) ②파일 I/O 2사이트(kosmos_io create_anchor write:167 + load_anchors read:366 — g_text emit persist가 surrogate 담아 f.write strict 크래시). surrogateescape=valid utf-8엔 byte-identical(무회귀)·surrogate엔 원바이트 round-trip=hexa 바이트 동일. **레슨: .encode만 잡으면 불완전 — 파일 write/read도 같은 클래스.**",
+        "threshold": "재발조건: py twin이 디코드된 model 출력(g_text·grounded mouth)을 재인코드(.encode) 또는 파일 write/read 할 때 strict utf-8. null-backend(clean ASCII)선 안 터지고 real-decode(toy bytegpt/303M)선 크래시 — QA는 real-decodable ckpt로. 해결=str→bytes 재변환(encode+파일I/O) 전수 surrogateescape. 신규 core/*.py twin 리뷰: grep '.encode(\"utf-8\")' strict + open(...'w'/'r') without errors=.",
         "source": "core/engine_cli.py"
       }
     ]

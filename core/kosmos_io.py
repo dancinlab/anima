@@ -164,7 +164,7 @@ def create_anchor(out_dir, name, title, coord_x, coord_y, lane, radius,
             body = body + "\n"
         i = i + 1
     body = body + "\n"
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8", errors="surrogateescape") as f:
         f.write(body)
     return path
 
@@ -363,7 +363,7 @@ def load_anchors(dir_path):
         if not fname.endswith(".kosmos"):
             continue
         path = dir_path + "/" + fname
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8", errors="surrogateescape") as f:
             content = f.read()
         name = fname.replace(".kosmos", "")
 
