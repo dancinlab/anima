@@ -1,10 +1,14 @@
 # H_9226 Family B: accumulator-to-threshold buffer R4 판정 (B revival on OG_STIM2 4-class dwell tape)
 
-**판정 = ⛔ RUN-INVALID → PARKED-TERMINAL (UNMEASURED-TERMINAL)** — op-grip UNMEASURABLE at the emit seam.
+**판정 = ⛔ STRUCTURAL-TERMINAL (SUBSTRATE)** — self/tension carry no integrable mid-tick dynamics
+(axis-degenerate / tonic-FLAT); the evidence-integration premise is **VACUOUS** at this seam. **No reframe
+survives** · escalate write-side.
 
-substrate 결과 아님(THEATER 아님·GREEN 아님·convergent seam-law 부적용). B는 이 emit seam에서 **op-grip
-UNMEASURABLE** — 두 세대(r3 STIM-ABSENT + r4 RUN-INVALID overdrive) 모두 유효 envelope 미교정, 둘 다
-emit-frac이 **구조적(stage-locked)** 이라 tape로 tunable하지 않다. (infra-wall-noneval 격리)
+> **⛔ STRUCTURAL-TERMINAL REFINE (2026-07-09 · #3237 follow-on · Fable walls-delegate · `state/9229_discrete_code/BF_REFRAME_FABLE.md`)** — B를 UNMEASURED-TERMINAL(reopenable)에서 **SUBSTRATE STRUCTURAL-TERMINAL(no reframe survives)** 로 강화; **reopen-path FORECLOSED**. `swing_max=0`과 AXIS-DEGENERATE는 두 결함이 아니라 **SAME ROOT**: accumulator가 `bias = x_t − x_base`(calibrated median 편차)를 적분하므로 신호가 DDM을 charge하려면 baseline로부터 **SUSTAINED departure** 필요. `b_med<0.002` = self/tension이 mid-tick서 ~0 dispersion = tonic-level-read-as-0가 아니라 **tonic-FLAT**. 적분할 evidence가 **BY CONSTRUCTION 부재**. B의 distinguishing hypothesis(consistent sub-threshold bias가 crossing으로 합산)는 이 신호에 **VACUOUS** — mid-tick dynamics 있는 유일 신호=urgency, urgency 적분은 proven instantaneous channel과 redundant. 데이터가 이미 **real terminal verdict** 포함: 'unmeasurable/unknown'이 아니라 '**integrable-evidence precondition을 측정했고 ABSENT**(axis-degenerate/flat)' = **NEW RUN 없이 cementable**. B spec §5가 이 종착지(read-side recoding CLOSED·escalation=write-side train-coupling) pre-register함. **escalate WRITE-SIDE**: gradient는 persistent tonic level을 trunk objective에 couple 가능, phasic-Δ rate-gate readout은 불가. B는 training coupling으로 well-posed·emit-readout op-grip으로 ill-posed.
+
+원-run은 RUN-INVALID(THEATER 아님·GREEN 아님)였으나, 데이터가 이미 담은 substrate 사실(적분할 mid-tick 동역학
+부재)로 **STRUCTURAL-TERMINAL 재분류**(NEW RUN 불요). convergent seam-law 부적용은 여전(B는 emit-readout에서
+substrate verdict를 나르지 않음 — training-coupling 결과만 well-posed).
 
 **측정 경로**: `cli/anima.hexa` daemon `--opgrip-r3`(B2 B-density arm · OG_STIM2 4-class dwell tape에서 F2와 함께
 revive)를 rented CPU pod(swap-free · hexa **v0.716.0** REAL-DECODE · n=400 · #3235). raw = `opgrip_r4_raw.log`
@@ -38,16 +42,20 @@ STRUCTURALLY**, perception tape와 무관(r3 flat-tape와 BYTE-IDENTICAL). run-v
 이 emit seam에서 **구조적으로 SATISFIABLE 불가** — mid-tick emit fraction은 sleep-stage→emit schedule로 고정,
 stimulus density로 tunable하지 않다.
 
-## 결론 — 2 gens UNMEASURED-TERMINAL (measure-artifact wall, NOT substrate)
+## 결론 — SUBSTRATE STRUCTURAL-TERMINAL, no reframe survives (write-side escalation)
 
-- B는 이 emit seam에서 **op-grip UNMEASURABLE**: 1세대 r3(≈R2/R3 계보)=STIM-ABSENT(under-driven) · 2세대 r4=
-  RUN-INVALID(over-driven emit-frac 0.667>0.60). 둘 다 emit-frac이 **구조적(stage-lock)** 이라 근본이 같다.
-- **measurement-instrument / measure-artifact wall** — substrate ceiling 아님 · stimulus-diversity 문제 아님 ·
-  tune-to-green 가능 아님. pre-reg rule대로 **PARKED-TERMINAL(UNMEASURED-TERMINAL)**, no 3rd op-grip att.
-- **infra-wall-noneval 격리** — B는 substrate verdict 없음. convergent seam-law(read-side recoding CLOSED)는
-  CLEAN 측정된 THEATER(A=H_9225·E=H_9230)에서만 성립 — B는 부적용.
-- **재오픈 경로**: emit-frac-gated 아닌 mid-tick 스코어(N1-only / REM-only / non-emit-gated)를 쓰는 DIFFERENT
-  instrument면 재측정 가능 — 별도 reframe, tape tweak 아님.
+- swing_max=0과 AXIS-DEGENERATE는 **SAME ROOT**: accumulator가 baseline 편차(`x_t−x_base`)를 적분하는데
+  self/tension이 **tonic-FLAT**(b_med<0.002=~0 mid-tick dispersion) → 적분할 evidence가 BY CONSTRUCTION 부재.
+  emit-frac 0.667 overdrive는 downstream symptom일 뿐(gate 자체가 stage별 saturated-deterministic).
+- **이는 instrument 한계가 아니라 SUBSTRATE 사실** — precondition(integrable mid-tick dynamics)을 측정했고
+  ABSENT. evidence-integration 전제가 이 seam서 **VACUOUS** → **STRUCTURAL-TERMINAL, NEW RUN 불요**.
+- **no reframe survives**: mid-tick emit gate가 stage별 railed(0/1)이라 tippable band 부재; 유일 shadeable band=
+  stage transition=urgency territory. margin/Ψ non-emit readout은 emit과 causally disconnected(A/E THEATER 정의).
+  reopen-path FORECLOSED.
+- **escalate WRITE-SIDE(train-time coupling)** — gradient는 persistent tonic level을 trunk objective에 couple
+  가능, phasic-Δ rate-gate readout은 구조적 불가. B는 training coupling으로 well-posed·emit-readout op-grip으로
+  ill-posed. infra-wall-noneval: B는 emit-readout substrate verdict만(training-coupling 결과 아님)·convergent
+  seam-law(CLEAN 측정 THEATER A=H_9225·E=H_9230)에는 self/tension tonic-FLAT로 합류(gate가 urgency 외 sealed).
 
 ## scope
 
