@@ -235,8 +235,12 @@ jobs:
       - name: Build sdist + wheel (root pyproject.toml · version←VERSION)
         run: |
           python -m pip install --upgrade build twine
-          python -m build
-          python -m twine check dist/*
+          # ⚠️ repo 의 committed `dist/` 는 hexa 배포 아티팩트(dist/_test/·dist/*.bin·
+          # dist/cert_gate/…)를 담아 python 표준 `dist/` 와 이름충돌한다 → `python -m build`
+          # 를 격리 outdir(dist_py)로 빼야 `twine check`/publish 가 non-python 파일(예:
+          # dist/_test → InvalidDistribution)에 걸리지 않는다.
+          python -m build --outdir dist_py
+          python -m twine check dist_py/*
       - name: PY-smoke — install built wheel in clean venv + import + dispatch (hexa-free gate)
         shell: bash
         run: |
@@ -244,7 +248,7 @@ jobs:
           # 이 게이트가 install-smoke 를 대체한다 — py 채널을 hexa 와 독립으로 검증.
           # _bootstrap sys.path fix 가 깨지면(예전 `import anima` ModuleNotFoundError) 여기서
           # 잡아 broken wheel 의 발행을 차단한다.
-          WHL="$(ls "$PWD"/dist/*.whl | head -1)"
+          WHL="$(ls "$PWD"/dist_py/*.whl | head -1)"
           python -m venv /tmp/pysmoke
           /tmp/pysmoke/bin/pip install --quiet "$WHL"
           # ⚠️ checkout 루트엔 anima_py/ SOURCE 가 있어 `python -m anima_py` 가 설치된 wheel
@@ -274,3 +278,5 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+          # 격리 outdir — repo 의 committed dist/(hexa 아티팩트)가 아니라 python 빌드만 업로드.
+          packages-dir: dist_py
