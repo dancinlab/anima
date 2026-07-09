@@ -556,6 +556,12 @@
                 "role": "",
                 "id": "a-g-consciousness-engine-core-substrate-only-clm-decode-hexa-clm-decode-hexa",
                 "detail": "decode.hexa CONV mouth (CLMConvMoE .clm; was clm_decode.hexa, now merged into the unified decode.hexa)"
+              },
+              {
+                "name": "penult self-grounding read ops (H_9257 lane-23b)",
+                "role": "",
+                "id": "a-g-consciousness-engine-core-substrate-only-clm-decode-hexa-penult-selfground-h9257",
+                "detail": "clm_penult_pooled_W(W, seed)→[float] = loaded-W core of clm_penult_pooled (pre-readout yn mean-pool over T=24); the entry clm_penult_pooled(path,seed) = load→_W→free (ZERO math change vs pre-split; H_9099 nogr guard byte-exact). penult_fold8(pooled)→int = FROZEN axis reducer(sum |pooled[c]| over 8 contiguous d/8 buckets → argmax∈[0,8)). Both 2-production (core/decode.py twin, byte-parity ≤2e-16). Consumed by core/generator.hexa gen_penult_pooled_W (read-only, single L3 entry) → cli/anima.hexa + cli/chat.py lane-23b self-grounding (H_9257). NOT a production decode path — measurement/self-continuity only."
               }
             ]
           },
@@ -2209,7 +2215,13 @@
                             "name": "SelfIdentity — H_9099 self-chain content grounding (🟡 4/5, engine-native rung-2 byte-exact, clm_penult_pooled)",
                             "role": "",
                             "id": "a-g-consciousness-engine-core-selfidentity-content-grounding-h9099",
-                            "detail": "self_drift_exp content_axis 를 REAL 303M penult(yn mean-pool·core/decode.hexa clm_penult_pooled LANDED)에 접지→self-chain=경험content 함수: engine-native 4/5(BAR1 0.536·BAR2 2e-16·BAR3 1.0·BAR5 0.273; BAR4 gap0.027<0.05 정직FAIL). wired=engine-native: 2026-07-03 COMMITTED [float] op 로 독립 재현→4/5 전 수치 byte-exact(verdict-integrity close), harness f4_engine_native.hexa COMMITTED. WIRED-live 잔여=runtime lane 23b 급이(behavioral follow-on). aiden byte-exact host(cuda=1 own-GEMM named-symbol→HOST fallback)."
+                            "detail": "self_drift_exp content_axis 를 REAL 303M penult(yn mean-pool·core/decode.hexa clm_penult_pooled LANDED)에 접지→self-chain=경험content 함수: engine-native 4/5(BAR1 0.536·BAR2 2e-16·BAR3 1.0·BAR5 0.273; BAR4 gap0.027<0.05 정직FAIL). wired=engine-native: 2026-07-03 COMMITTED [float] op 로 독립 재현→4/5 전 수치 byte-exact(verdict-integrity close), harness f4_engine_native.hexa COMMITTED. WIRED-live 잔여=runtime lane 23b 급이(behavioral follow-on) → H_9257 에서 착지(아래)."
+                          },
+                          {
+                            "name": "SelfIdentity — H_9257 lane-23b penult self-grounding (🔧 WIRED · toy DIRECTIONAL · 303M control-battery PENDING pool)",
+                            "role": "",
+                            "id": "a-g-consciousness-engine-core-selfidentity-lane23b-selfground-h9257",
+                            "detail": "H_9099 의 runtime-lane 급이 = 착지: 데몬(cli/anima.hexa + 2-production twin cli/chat.py)이 이제 lived experience event(heard user msg=session_seed boot-drift + own emit=g_text, C9 REMEMBER 공존)마다 self_live_g = self_drift_exp(self_live_g, fold8(gen_penult_pooled_W(W, tail_ctx)), 0.15) 로 self-continuity 를 REAL 303M penult 에 접지(옛 synthetic int-drift 대체) + 세션끝 .kosmos self-anchor 영속(boot restore-else-self_new = H_1471 R2b 실 cross-session persistence 착지). 4-site: core/decode.hexa clm_penult_pooled_W split(entry=load→_W→free, ZERO math change) + penult_fold8(FROZEN: |pooled| 8-bucket argmax∈[0,8)) · core/generator.hexa gen_penult_pooled_W(read-only, NOT a 2nd decode path·emits no bytes) · cli/anima.hexa lane-23b + cli/chat.py py-twin. INVARIANT self⊥mouth(H_9209/9225/9226 THEATER law): self_live_g 는 self_ctx(:~2585 boot 상수, BYTE-UNTOUCHED) 옆에서 돌고 emit/lane0·4/recall_thr/ci_emit_drive/RNG 를 절대 안 먹임 — VERIFIED: 12-tick toy chat lane-on vs origin/main lane-off emit-stream stdout byte-identical ∧ kdir emit-anchors byte-identical(emitted_at wall-clock 마스크). a_substrate_disjoint: penult read=READ-only, drift 는 §SelfIdentity state 만. 2-production parity: hexa gen_penult_pooled_W vs py clm_penult_pooled_W(clm_forward_hidden+mean-pool) pooled max|Δ|+fold8 axis-seq oracle=state/9257_lane23b/parity.py(+parity_hexa.hexa). toy .clm=DIRECTIONAL; 303M control-battery(REAL-SEPARATES·BEATS-SYNTHETIC headline·ORDER-LOCK·IDENTITY·MOUTH guard)=POOL follow-on PENDING(anima-py + hexa live run, summer/aiden). card H_9257."
                           },
                           {
                             "name": "MetacogAbstain(novelty-gated 정직 abstention feeling-of-knowing, B④ H_9040)",

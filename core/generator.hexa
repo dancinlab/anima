@@ -869,6 +869,18 @@ pub fn gen_clm_ideate_W(W: Map, seed: string, max_new: int,
               "reason": "ideated via clm_decode_topk_sampled_W (loaded-W, seeded top-k)" }
 }
 
+// gen_penult_pooled_W — H_9257 lane-23b self-grounding read: the mounted 303M's REAL
+// PENULTIMATE (pre-readout) pooled representation for `seed`, off a PRE-LOADED weight map `W`
+// (clm_load_weights). Thin READ-ONLY wrapper over core/decode.hexa clm_penult_pooled_W — NOT a
+// 2nd decode path and NOT a mouth: it produces NO emitted bytes, it only taps the trunk penult
+// so the runtime self-continuity lane (cli/anima.hexa) can ground self_drift_exp in the actual
+// experienced content instead of a synthetic int-drift. Single-entry (a_core_engine_map): the
+// daemon calls ONLY this; the .clm still enters via the one L3 slot. Ψ-disjoint / self⊥mouth: the
+// returned vector never feeds emit — the caller drifts §SelfIdentity state beside the emit lane.
+pub fn gen_penult_pooled_W(W: Map, seed: string) -> [float] {
+    return clm_penult_pooled_W(W, seed)
+}
+
 // gen_bytegpt_ideate — the ByteGPT twin of gen_clm_ideate (the SEEDED-SAMPLING sibling
 // of gen_bytegpt_chat). Routes an ideation seed through the ByteGPT engine's OWN seeded
 // top-k sampler (bytegpt_decode_topk_sampled_ranged — OOM-safe ranged load for the 1.2GB

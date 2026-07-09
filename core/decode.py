@@ -616,6 +616,59 @@ def clm_forward_hidden(W, tok, T):
     return _fwd_trunk(W, ta, T)
 
 
+def clm_penult_pooled_W(W, seed):
+    """H_9257 lane-23b · py 2-production twin of core/decode.hexa clm_penult_pooled_W. The mounted
+    303M's REAL penultimate (pre-readout, pre-slot) pooled rep for `seed`: right-align the last-24
+    bytes into the T-window (_seed_to_tok, IDENTICAL to the decode window fill), run the pure-trunk
+    forward (clm_forward_hidden = _fwd_trunk, byte-parity with the hexa penult), then MEAN-POOL the
+    yn:[T,d] over the T positions → pooled:[d]. Read-only; NO readout / sampling / perturbation."""
+    T = 24
+    tok = _seed_to_tok(seed, T)
+    yn = clm_forward_hidden(W, tok, T)            # [T, d] pre-readout, pre-slot penultimate
+    d = W["d"]
+    pooled = [0.0] * d
+    c = 0
+    while c < d:
+        s = 0.0
+        t = 0
+        while t < T:
+            s = s + float(yn[t, c])
+            t = t + 1
+        pooled[c] = s / float(T)
+        c = c + 1
+    return pooled
+
+
+def penult_fold8(pooled):
+    """H_9257 FROZEN axis reducer (py twin of core/decode.hexa penult_fold8). Sum |pooled[c]| over
+    8 CONTIGUOUS buckets of width d//8 → argmax bucket ∈ [0,8). FROZEN: bucket boundaries + abs-sum
+    + argmax fixed by the H_9257 pre-registration (no tune-to-green). Remainder → last bucket."""
+    d = len(pooled)
+    if d <= 0:
+        return 0
+    bw = d // 8
+    if bw <= 0:
+        return 0
+    sums = [0.0] * 8
+    c = 0
+    while c < d:
+        b = c // bw
+        if b > 7:
+            b = 7
+        v = pooled[c]
+        sums[b] = sums[b] + (-v if v < 0.0 else v)
+        c = c + 1
+    best = 0
+    bestv = sums[0]
+    k = 1
+    while k < 8:
+        if sums[k] > bestv:
+            bestv = sums[k]
+            best = k
+        k = k + 1
+    return best
+
+
 def clm_forward_hidden_logits(W, tok, T):
     """Read-only combined tap: (yn_trunk:[T,d], logits:[T,V]) in ONE trunk forward — the pre-slot
     penultimate AND the base (lane-OFF) full-forward logits. Avoids a double _fwd_trunk when a caller

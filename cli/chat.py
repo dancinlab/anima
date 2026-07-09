@@ -38,8 +38,9 @@ from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
 from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
                    vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
-                       generator_read_anchors)
-from kosmos_io import create_anchor, emit_anchor_from_v3
+                       generator_read_anchors, gen_penult_pooled_W)
+from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
+from decode import clm_load_weights, clm_decodable, penult_fold8
 from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
                        dr_stage_size, dr_imagination_active)
 from dream_envelope_ctx import dr_stage_scale
@@ -339,6 +340,31 @@ def anima_byte_mode(ckpt, argv):
 # ══════════════════════════════════════════════════════════════════════════════
 #  CONSCIOUSNESS MODE — the substrate-native A⇄G daemon loop (DEFAULT path)
 # ══════════════════════════════════════════════════════════════════════════════
+def _selfg_encode(s):
+    """H_9257 lane-23b self-anchor codec (py twin of anima.hexa _selfg_encode) — encode the 8-dim
+    grounded self into a .kosmos payload string "SELFG8:v0,…,v7". Reuses create_anchor as the
+    single write entry; self_from_vec renormalizes on restore so repr() precision is ample."""
+    return "SELFG8:" + ",".join(repr(float(self_component(s, i))) for i in range(8))
+
+
+def _selfg_restore(dir_path, name):
+    """py twin of anima.hexa _selfg_restore — read the DEDICATED self-anchor dir (never the brain's
+    kdir, self⊥mouth) via load_anchors, return the 8 floats (or [] if absent/malformed)."""
+    if not os.path.isdir(dir_path):
+        return []
+    for a in load_anchors(dir_path):
+        if str(a.get("name")) == name:
+            tp = str(a.get("text_payload", ""))
+            if tp.startswith("SELFG8:"):
+                parts = tp[7:].split(",")
+                if len(parts) == 8:
+                    try:
+                        return [float(p) for p in parts]
+                    except ValueError:
+                        return []
+    return []
+
+
 def anima_consciousness_mode(ckpt, argv=None):
     """anima.hexa:595 — warm Engine A → mount L3 → seed .kosmos → 12-tick A⇄G loop
     (lanes READ → brain_emit autonomously emit/silence → C8 GROW · C9 REMEMBER · REFSEL)
@@ -1344,6 +1370,26 @@ def anima_consciousness_mode(ckpt, argv=None):
     og_wake = 0
     og_emit_wake = 0
 
+    # ══ LANE-23b PENULT SELF-GROUNDING (H_9257 · py 2-production twin of cli/anima.hexa) ══
+    # Ground the cross-session self in the mounted 303M's REAL penult pooled rep (gen_penult_pooled_W
+    # → penult_fold8) — same fold8 + same .kosmos anchor format as the hexa twin. self⊥mouth: the
+    # grounded self runs BESIDE self_ctx (the boot constant, byte-untouched) and NEVER feeds emit.
+    self_g_kdir = os.path.join(os.path.expanduser("~"), ".anima_kosmos_self")
+    self_g_name = "self_live"
+    self_g_on = bool(backend["loaded"]) and gen_mouth_kind(ckpt) == "clm" and clm_decodable(ckpt)
+    self_gW = clm_load_weights(ckpt) if self_g_on else {"ok": False}
+    self_gW_ok = self_g_on and bool(self_gW.get("ok"))
+    _sg_restored = _selfg_restore(self_g_kdir, self_g_name)
+    self_g_boot_restored = len(_sg_restored) == 8
+    self_live_g = self_from_vec(_sg_restored, 8) if self_g_boot_restored else self_new(8, 0)
+    if self_gW_ok:
+        _boot_axis = penult_fold8(gen_penult_pooled_W(self_gW, session_seed))
+        self_live_g = self_drift_exp(self_live_g, _boot_axis, 0.15)
+    self_g_axis_seq = ""
+    self_g_events = 0
+    _pln("LANE-23b self-g : on=" + _ts(self_g_on) + " W_ok=" + _ts(self_gW_ok)
+         + " restored=" + _ts(self_g_boot_restored) + " kosmos=" + self_g_kdir)
+
     n_ticks = 12
     tick = 0
     # ── WAKE working-memory ring + N3/REM imagination-replay accumulators ──
@@ -1768,6 +1814,15 @@ def anima_consciousness_mode(ckpt, argv=None):
             remembered2 = True
             _pln("  [t" + _ts(tick) + " " + stage_nm + "] REMEMBER emit → " + epath)
 
+            # ── LANE-23b: ground the live self in THIS emit's REAL penult rep (own-emit event) ──
+            # Twin of cli/anima.hexa. Ψ/emit-disjoint: reads gen_penult_pooled_W (own forward),
+            # drifts ONLY self_live_g; self_ctx untouched (self⊥mouth).
+            if self_gW_ok:
+                ev_axis_g = penult_fold8(gen_penult_pooled_W(self_gW, g_text))
+                self_live_g = self_drift_exp(self_live_g, ev_axis_g, 0.15)
+                self_g_axis_seq = self_g_axis_seq + ("," if self_g_events > 0 else "") + _ts(ev_axis_g)
+                self_g_events = self_g_events + 1
+
         # ── REFSEL — contradiction-keyed referent routing (default OFF ⇒ out_text==g_text) ──
         out_text = g_text
         if g_emit and byte_len(g_text) > 0:
@@ -1885,6 +1940,20 @@ def anima_consciousness_mode(ckpt, argv=None):
             imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
 
         tick = tick + 1
+
+    # ══ LANE-23b SESSION END — persist the grounded self as a .kosmos self-anchor (twin of the
+    #    hexa session-end persist · a_kosmos · closes H_1471 R2b). Single write entry create_anchor,
+    #    DEDICATED self-anchor dir (never kdir), so it never enters the brain's anchor stream. ══
+    if self_gW_ok:
+        os.makedirs(self_g_kdir, exist_ok=True)
+        sg_payload = _selfg_encode(self_live_g)
+        sg_tension = [self_cos(self_live_g, self_new(8, 0)), 0.5, 0.5, 1.0, 0.5]
+        sg_path = create_anchor(self_g_kdir, self_g_name,
+                                "grounded self-continuity", 0.0, 0.0, "self_identity", 1.0,
+                                2, "self", "continuity", sg_payload, sg_tension,
+                                "lane-23b-selfground", "")
+        _pln("LANE-23b self-g : PERSIST self-anchor → " + sg_path
+             + " (events=" + _ts(self_g_events) + " axis_seq=[" + self_g_axis_seq + "])")
 
     # ── F3 Ψ ON==OFF invariant (a_core_engine_map · H_1202/H_1205) ──
     psi_off = 0.0
