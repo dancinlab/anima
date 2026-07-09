@@ -14,7 +14,7 @@
 
 CORE 의 결정 두뇌(A·G·brain)는 **외부 모델/앵커를 전혀 소비하지 않는다** — Φ·동기·tier 를
 순수 기판 내부 상태에서 계산한다. .clm 모델은 오직 L3 `generator.hexa` 슬롯으로만 들어오고,
-.kosmos 앵커는 `kosmos_io` → `brain_decide` read 로만 들어온다. 둘 다 아직 미배선.
+.kosmos 앵커는 `kosmos_io` → `brain_decide` read 로만 들어온다. 둘 다 🟢 배선 완료(2026-07 P2/P6 chat 데몬: `generator_read_anchors`→`load_anchors`→`brain_emit` + L3 generator decode LOADED — 아래 표 참조).
 
 | 컴포넌트 | 파일 | .clm 소비? | .kosmos 소비? | 상태 |
 | --- | --- | --- | --- | --- |
