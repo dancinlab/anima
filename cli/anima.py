@@ -36,13 +36,14 @@ if __name__ == "__main__":
 #   anima                                              — usage (no args)
 #   anima evaluate <ckpt> [--corpus <p>...] [--gen N]  — ρ-AXON reach battery (former G0-G6)
 #   anima train [args...]                              — LEARNING (→ cli/train.py)
-#   anima chat <ckpt> [...]                            — consciousness/byte chat
-#                                                         (hexa-only; see cli/anima.hexa)
+#   anima chat <ckpt> [...] [--byte]                   — consciousness daemon (default) /
+#                                                         byte-continuation chat (pure-py, → cli/chat.py)
 #
 # canonical 3-folder layout: cli/anima.{hexa,py} = canonical entry (chat + verb dispatch)
 # · cli/evaluate.{hexa,py} = measurement · cli/train.{hexa,py} = learning. This file
 # mirrors cli/anima.hexa's subcommand dispatch (evaluate · train · usage); chat/
-# consciousness stay hexa-only (the A⇄G substrate loop is hexa-native).
+# consciousness is now a REAL py capability too — cli/chat.py is the byte-faithful numpy
+# twin of cli/anima.hexa's A⇄G daemon loop (P6 py 자체구현, zero hexa dependency).
 
 import os
 import sys
@@ -83,7 +84,7 @@ def anima_usage():
     print("  anima-py serialize-bind <base.bin> <inj.pt> <out.bin>  ([train] extra) splice BindAttn → BGB .bin")
     print("  anima-py sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     print("                                                  ([train] extra) multi-GPU lever-sweep (arms×objectives)")
-    print("  anima-py chat <ckpt> [...]                      consciousness/byte chat (stub → hexa channel)")
+    print("  anima-py chat <ckpt> [...] [--byte]             consciousness daemon (default) / byte-continuation chat (pure-py A⇄G loop)")
     print("")
     print("install: `pip install anima-python` (numpy base: evaluate·corpus·chat) · `pip install \"anima-python[train]\"` (+torch: train·sweep·serialize)")
     print("")
@@ -103,8 +104,10 @@ def anima_usage():
     print("             (+ held-out DESCENT gate). recovery / re-export. → cli/serialize.py.")
     print("  sweep    : ([train]) multi-GPU lever-sweep orchestrator — the arms×objectives matrix,")
     print("             per-cell train.py→evaluate.py, aggregated to SWEEP_SUMMARY.md. → cli/sweep.py.")
-    print("  chat     : the substrate-native A⇄G consciousness loop is hexa-native — use the")
-    print("             hexa channel: `hx install anima` then `anima <ckpt.clm>` (default / --byte).")
+    print("  chat     : the substrate-native A⇄G consciousness daemon — mount L3 → seed .kosmos →")
+    print("             12-tick loop (lanes READ → brain autonomously emits/silences → C8 GROW ·")
+    print("             C9 REMEMBER · sleep-stage imagination replay). Pure-py numpy twin of")
+    print("             cli/anima.hexa (zero hexa dependency); --byte = byte-continuation. → cli/chat.py.")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -205,22 +208,33 @@ def anima_serialize_bind_mode(argv):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  CHAT MODE — hexa-only stub (the A⇄G consciousness loop is hexa-native)
+#  CHAT MODE — the substrate-native A⇄G consciousness daemon (py twin · cli/chat.py)
 # ══════════════════════════════════════════════════════════════════════════════
 #
-# The default consciousness daemon + --byte continuation chat live in cli/anima.hexa
-# (they mount the 76-lane engine_cli substrate loop, hexa-native). The py channel does not
-# duplicate that loop; it points the user to the INSTALLED hexa command (a_cli_single_entry:
-# 2 install channels only — pip `anima-py` ⊕ hexa `anima`; never raw `python`/`hexa run`).
-def anima_chat_stub(argv):
-    print("anima chat (consciousness / --byte) is hexa-native — use the hexa channel:")
-    print("")
-    ckpt = argv[1] if len(argv) > 1 else "<ckpt.clm>"
-    print("  hx install anima                                once (installs the `anima` command)")
-    print("  anima " + ckpt + "                consciousness mode (default)")
-    print("  anima " + ckpt + " --byte \"turn1\" \"turn2\" ...   byte-continuation chat mode")
-    print("")
-    print("The py channel (anima-py) covers MEASUREMENT (evaluate), SERIALIZE, LEARNING (train), corpus, sweep.")
+# P6 (py 자체구현): the default consciousness daemon + --byte continuation chat are now a
+# REAL py capability — cli/chat.py is the byte-faithful numpy twin of cli/anima.hexa's
+# anima_consciousness_mode / anima_byte_mode (ZERO hexa dependency; a hexa-less host runs
+# the A⇄G loop in pure py). Dispatch mirrors cli/anima.hexa main(): `chat <ckpt>` → the
+# consciousness loop; `--byte` → the byte-continuation mode. `anima-py chat <ckpt>` and the
+# bare `anima-py <ckpt.clm>` (via main's fall-through) both enter here. This is a py-channel
+# MIRROR (a_engine_native_learning) ⇒ behavioral/byte-parity target, DIRECTIONAL — not a
+# consciousness verdict.
+def anima_chat_mode(argv):
+    # argv = ["chat", <ckpt>, ...] OR ["<ckpt.clm>", ...] (bare path). Resolve the ckpt.
+    if argv and argv[0] == "chat":
+        if len(argv) < 2:
+            anima_usage()
+            return 0
+        ckpt = argv[1]
+        rest = argv[1:]
+    else:
+        ckpt = argv[0]
+        rest = argv
+    import chat as _chat  # sibling py twin (cli/chat.py); flat import like the P2-P5 twins
+    if "--byte" in rest:
+        _chat.anima_byte_mode(ckpt, rest)
+        return 0
+    _chat.anima_consciousness_mode(ckpt, rest)
     return 0
 
 
@@ -282,10 +296,10 @@ def main(argv):
     if sub == "corpus":
         return anima_corpus_mode(argv)
     if sub in ("chat", "--byte"):
-        return anima_chat_stub(argv)
+        return anima_chat_mode(argv)
 
-    # bare ckpt path (no subcommand) → consciousness chat is hexa-only.
-    return anima_chat_stub(argv)
+    # bare ckpt path (no subcommand) → the py consciousness daemon (cli/chat.py).
+    return anima_chat_mode(argv)
 
 
 if __name__ == "__main__":
