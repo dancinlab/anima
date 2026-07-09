@@ -1,7 +1,10 @@
 # H_9230 — Family E: efference-copy / corollary-discharge loop RANK 6
 
-**tier:** 🔴 THEATER (engine-native · CEMENTED · 2026-07-08 runpod 251GB CPU pod · hexa v0.716.0 REAL-DECODE · `state/verdicts/9230/` · p7 no tune-to-green)
+**tier:** 🔴 THEATER (r3+r4 robust · engine-native · CEMENTED · 2026-07-08 runpod 251GB CPU pod + 2026-07-09 #3235 REPLICATION · hexa v0.716.0 REAL-DECODE · `state/verdicts/9230/` · p7 no tune-to-green)
 > 🔴 corollary discharge(self-prediction) inert at emit seam — THIRD orthogonal read-side recoding THEATER (A=shape-conversion H_9225 · E=self-prediction). never wire, negative not capability.
+
+## 🔴 r4 REPLICATION (2026-07-09 · #3235 · OG_STIM2 4-class dwell tape run · hexa v0.716.0 REAL-DECODE n=400)
+E는 F2/B2 op-grip 계기 업그레이드 run에서 **THEATER를 그대로 재현**: ΔEff_eff=**0/210** · POS-PASS **105 flips** · g_eff=**1.609**(band_med=0.109 · x_eff non-degenerate) · DISSOC ok · og_h_frzE=0 · N3=0 · Ψ-ok. E는 F2/B2 emit-frac envelope(0.667 overdrive → run-invalid)와 **독립** — E 자신의 frozen bar는 전부 통과(mid=210 scored, envelope 게이트 없음)하며 robustly THEATER across **r3+r4**. never wire.
 
 ## 🔴 판정 (2026-07-08 · engine-native runpod 251GB CPU pod real d768 · hexa v0.716.0 REAL-DECODE · `--opgrip-r3` n=400 · state/verdicts/9230/)
 **E VERDICT = 🔴 THEATER** — corollary discharge inert at emit (ΔEff<0.02, POS-PASS ⇒ meter works, x_eff non-degenerate); adds a THIRD orthogonal recoding (shape/integration/self-prediction) to the convergent seam-law.

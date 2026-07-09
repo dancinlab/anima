@@ -1,7 +1,14 @@
 # H_9226 — Family B: accumulator-to-threshold buffer (evidence integration / phonological loop) RANK 2
 
-**tier:** ⛔ UNMEASURED-TERMINAL (2세대 op-grip 계기 실패 · engine-native runpod CPU pod real d768 · R2 2026-07-08 ⚙️ INSTRUMENT-FAIL + R3 2026-07-08 ⛔ RUN-INVALID · `state/verdicts/9226/` · p7 no tune-to-green)
-> ⛔ 2 op-grip generations both failed to calibrate the instrument to a valid envelope ⇒ park B UNMEASURED-TERMINAL at this seam (pre-reg: no 3rd op-grip att). substrate 결과 아님(THEATER 아님·GREEN 아님·convergent seam-law 부적용). anima-hexa-4: INSTRUMENT-FAIL은 절대 THEATER cement 안 함.
+**tier:** ⛔ UNMEASURED-TERMINAL (2 gens: r3 STIM-ABSENT + r4 RUN-INVALID overdrive, both emit-frac structural · engine-native CPU pod real d768 · R2 ⚙️ INSTRUMENT-FAIL + R3 ⛔ RUN-INVALID + R4 revival ⛔ RUN-INVALID 2026-07-09 · `state/verdicts/9226/` · p7 no tune-to-green)
+> ⛔ 2 op-grip generations both failed to calibrate the instrument to a valid envelope ⇒ park B UNMEASURED-TERMINAL at this seam (pre-reg: no 3rd op-grip att). emit-frac 0.667 = STAGE-LOCKED(구조적), tape로 tunable 아님 = measure-artifact wall. substrate 결과 아님(THEATER 아님·GREEN 아님·convergent seam-law 부적용). infra-wall-noneval 격리.
+
+## ⛔ round-4 판정 (B revival · 2026-07-09 · #3235 · engine-native CPU pod real d768 · hexa v0.716.0 REAL-DECODE · `--opgrip-r3` n=400 · OG_STIM2 4-class dwell tape · `state/verdicts/9226/VERDICT_R4.md`)
+**B2 SELF/TEN VERDICT = ⛔ RUN-INVALID** — live emit-fraction on scored mid ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE); no verdict either way.
+- **RUN-VALIDITY**: live emit-frac on scored mid = **0.6666666666666666** ∉ [0.05,0.60] → valid=NO(STIM-OVERDRIVE) · gB2_slf/ten=-1.0(AXIS-DEGENERATE) · swing_max=0.0(STIM-ABSENT) · ΔEff=0/120 both · og_h_frzB2=0 · POS-PASS 105 · N3=0 · Ψ-ok.
+- **🔑 ROOT FINDING**: r4 F2/B2 공유-tape의 emit-frac 0.6667은 **stage-locked**(N1 emit 80/80·N2 silent 80/80·REM emit 80/80 → (80+80)/240 = **2/3 STRUCTURALLY**), perception tape와 무관(r3 flat-tape와 byte-identical). run-validity envelope [0.05,0.60]는 이 emit seam서 **STRUCTURALLY UNSATISFIABLE** — mid emit-frac은 sleep-stage→emit schedule로 고정, stimulus density로 tunable 아님. Fable P1 전제("duty-cycle 반감→emit-frac↓") FALSE.
+- **결론**: B는 이 emit seam서 **op-grip UNMEASURABLE**(1세대 STIM-ABSENT under-driven + 2세대 RUN-INVALID over-driven, 둘 다 emit-frac 구조적) = **measure-artifact wall**(substrate ceiling 아님·stimulus-diversity 문제 아님·tune-to-green 가능 아님). pre-reg park **UNMEASURED-TERMINAL**(no 3rd att). infra-wall-noneval 격리 — convergent seam-law 부적용(B는 substrate verdict 무).
+- **재오픈 경로**: emit-frac-gated 아닌 mid 스코어(N1-only/REM-only/non-emit-gated)의 DIFFERENT instrument — 별도 reframe, tape tweak 아님.
 
 ## ⛔ round-3 판정 (2026-07-08 · engine-native runpod 251GB CPU pod real d768 · hexa v0.716.0 REAL-DECODE · `--opgrip-r3` n=400 · state/verdicts/9226/VERDICT_R3.md)
 **B2 SELF/TEN VERDICT = ⛔ RUN-INVALID** — live emit-fraction on scored mid ∉ [0.05,0.60]; no verdict either way, re-tune stimulus density (instrument power, NOT a bar move · p5 forcing-gate guard).

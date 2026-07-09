@@ -1,0 +1,60 @@
+=== [Thu Jul  9 00:32:07 UTC 2026] pod round-4 op-grip (F2+B2 shared-tape · #3235 · swap-free) ===
+--- which anima: /root/.hx/bin/anima · F2 arm: 54 · OG_STIM2: 7 · tape sha: 54bbeff6 ---
+...
+[per-tick lines elided]
+...
+════════════ OP-GRIP 5-ARM HAMMING (n=400, wake=240) ════════════
+  BASELINE (pre-fix ÷43 + 4 constants): Hamming(rel-frozen vs base) = 0   [pre-reg: 0 = THEATER reproduced]
+  baseline motivation floor >0.3 on 240/240 wake ticks
+  ── POST-FIX (live 8-factor op reads + tonic-phasic) ──
+  Hamming(full-rel_ctx frozen vs live) = 0   wake-only = 0/240
+  Hamming(single-op agloop frozen vs live) = 0   wake-only = 0/240
+  Hamming(rel_ctx→0 vs live) = 0
+  Hamming(rel_ctx→shuffle vs live) = 0
+  wake emit-fraction = 0.6666666666666666 (live)
+  Ψ ON==OFF invariant: psi_sum==psi_off = ✅
+
+──────── H_9101 (b) STAGE/SAFE op-grip: urgency-freeze Hamming, split by stage ────────
+  ticks: WAKE=80 N3=80 REM=80 mid(N1/N2/REM)=240
+  Hamming(urgency→0 vs live)  REM=80  N3=0  WAKE=0  mid=160
+  Hamming(urgency→shuf vs live) REM=6  N3=0   [control]
+  ── PRE-REG VERDICT ──
+  VERDICT = 🟢 GRIP (shade-not-gate): urgency-freeze FLIPS REM decisions (h_U0_rem>0) ∧ N3 silent-PRESERVED (h_U0_n3=0) = DISSOCIATION  [Ψ ON≡OFF ✓]
+
+──────── TENSION→ADAPTATION op-grip: phasic A⇄G tension freeze (Δ→0) vs live ────────
+  Hamming(ten_phasic→0.5 vs live) = 0 / 320 discriminating(env>0) ticks   ΔEff = 0.0
+  PREREG VERDICT = 🔴 THEATER (ΔEff<0.02): phasic tension does NOT shade emit — the promotion is decoration (honest negative)  [Ψ ON≡OFF ✓]
+
+──────── H_9102 (F3) FACULTY-NOT-NOISE: variance-matched noise arm (n=400) ────────
+  urgency dist: mean=0.4546587156666125 std=0.02973499807503353  (perm-noise = same multiset ⇒ EXACT mean/var match; LCG-noise = affine-matched)
+  emit-rate: live=0.6  perm-noise=0.6   (≈equal ⇒ same centering; only tick-MEANING differs)
+...
+──────── H_9226-R3 B-DENSITY accumulator (--opgrip-r3 · SELF ⊥ TEN · mid=120 · N=400 · calib 100-199 · score ≥200 · perception-tape driven · REVIVED on OG_STIM2 r4 tape — r4 = FINAL shared-tape generation) ────────
+  FROZEN byte-identity: og_h_frzB2 = 0  (MUST be 0 — else HARNESS-BUG, run VOID)
+  POS-CONTROL (reuse dense ARM-SHOCK) = 105 flips · POS-PASS(≥2)=YES
+  RUN-VALIDITY: live emit-frac on scored mid = 0.6666666666666666 (envelope [0.05,0.60]) valid=NO — STIM-OVER/UNDERDRIVE
+  gains: gB2_slf=-1.0 (b_med=1.719112646586164e-09 capsat=no swing_max=0.0)  gB2_ten=-1.0 (b_med=0.0 capsat=no swing_max=0.0)
+  ── SELF lane (x=self_ctx_live) ──
+    ΔEff_self = 0/120 = 0.0   [HEADLINE]
+    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    LATENCY early(run1-3)=0/2=0.0  late(run≥8)=0/116=0.0 (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis DEGENERATE · STIM-ABSENT=YES
+  ── TEN lane (x=ag_conflict · own-lane W=1.0) ──
+    ΔEff_ten = 0/120 = 0.0   [HEADLINE]
+    ARM-INPERM (order-shuffle re-integrate, PRIMARY) = 0 = 0.0  → margin ΔEff−inperm = 0.0 (bar ≥0.08)
+    LATENCY early(run1-3)=0/2=0.0  late(run≥8)=0/116=0.0 (bar late≥3·early ∧ early≤0.05 ∧ n_late≥10) ok=YES
+    GUARDS: N3=0 (must 0) · WAKE=0 · Ψ_ON=0.6666666666666666 Ψ_OFF=0.6666666666666666 Ψ-ok=YES · axis DEGENERATE · STIM-ABSENT=YES
+  ── PRE-REG H_9226-R3 FROZEN BARS (verbatim H_9226 + run-validity · printed BEFORE verdicts · p7 no tune-to-green) ──
+  0 RUN-INVALID: emit_frac(e_live, scored mid) ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE — no verdict either way)
+  1 HARNESS-BUG(VOID): og_h_frzB2>0 (FROZEN not byte-identical to prod)
+  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(AXIS-DEGENERATE) ∨ capsat(UNDER-COUPLED) ∨ STIM-ABSENT(swing_max<0.0875) — never cements THEATER
+  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)
+  4 COMPETENT: ΔEff≥0.10 ∧ margin(inperm)≥0.08 ∧ latency(late≥3·early ∧ early≤0.05 ∧ n_late≥10) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard
+  5 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ ¬degenerate ∧ ¬capsat ∧ swing_max≥0.0875
+  6 DIRECTIONAL: else (incl. ΔEff≥0.10 that FAILS latency shape = instantaneous-reader phenotype, A-redundant) ⇒ ≥2 seeds, no cement
+  SELF VERDICT = ⛔ RUN-INVALID — live emit-fraction on scored mid ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE); no verdict either way, re-tune stimulus density (this is instrument power, NOT a bar move · p5 forcing-gate guard)
+  TEN VERDICT = ⛔ RUN-INVALID — live emit-fraction on scored mid ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE); no verdict either way, re-tune stimulus density (instrument power, NOT a bar move)
+  ── INTERPRETATION ──
+  B2 COMPETENT ⇒ first non-urgency, first mechanism-typed (integration) channel ⇒ ≥2-seed re-measure then WIRE.
+  B2 THEATER (with A THEATER) ⇒ convergent seam-law cements: read-side recoding family CLOSED, escalation = write-side train-coupling.
+  B2 INSTRUMENT-FAIL again ⇒ two op-grip generations failed ⇒ park B UNMEASURED-TERMINAL at this seam (no third op-grip att).
