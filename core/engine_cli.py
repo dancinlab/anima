@@ -580,7 +580,7 @@ def immune_embed_key(text):
     Operates over the UTF-8 byte sequence (hexa byte_len/ord/substring)."""
     dim = 64
     n = 3
-    bs_all = list(text.encode("utf-8"))
+    bs_all = list(text.encode("utf-8", "surrogateescape"))
     blen = len(bs_all)
     v = [0.0] * dim
     if blen < n:
@@ -1096,7 +1096,7 @@ def _cls_key16(text):
     """engine_cli.hexa:1399 — DIM=16 byte-trigram FNV-1a key, L2-norm."""
     dim = 16
     n = 3
-    bs_all = list(text.encode("utf-8"))
+    bs_all = list(text.encode("utf-8", "surrogateescape"))
     blen = len(bs_all)
     v = [0.0] * dim
     if blen < n:
@@ -1242,8 +1242,8 @@ def _cls_score_two(fast, slow, A, B):
 
 
 def _cls_coin(text):
-    blen = len(text.encode("utf-8"))
-    bs = list(text.encode("utf-8"))
+    blen = len(text.encode("utf-8", "surrogateescape"))
+    bs = list(text.encode("utf-8", "surrogateescape"))
     return _immune_fnv1a(bs) & 1
 
 
