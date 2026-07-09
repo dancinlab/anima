@@ -456,8 +456,8 @@ def _ki_sort_strings(xs):
 
 # byte-lexicographic a > b (mirrors hexa byte_at comparison = utf-8 bytes).
 def _ki_str_gt(a, b):
-    ba = a.encode("utf-8")
-    bb = b.encode("utf-8")
+    ba = a.encode("utf-8", "surrogateescape")
+    bb = b.encode("utf-8", "surrogateescape")
     na = len(ba)
     nb = len(bb)
     i = 0
