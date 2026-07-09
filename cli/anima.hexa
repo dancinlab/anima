@@ -1983,31 +1983,40 @@ fn anima_consciousness_mode(ckpt: string) {
     // discontinuity artifact); stepped only under og_live by the real decode below.
     let mut og_prev_gfeat = seed_feat0
 
-    // ── --opgrip-r3 DETERMINISTIC PERCEPTION TAPE (H_9226 B-density instrument fix · Fable SPEC 1) ──
-    // 16 FROZEN diverse ko/en byte lines. Under --opgrip-r3 the WAKE-tick heard-message seam steps the ONE
-    // canonical afield with OG_STIM[(tick/5)%16] via the EXACT production vadapt_field_step call (below,
-    // pre-decode) so the lane stack (ag_conflict / self_live) gets real content dynamics — resolving the
-    // #3194 INSTRUMENT-FAIL (quasi-static lanes ⇒ accumulator never biased). Input=context only
-    // (a_substrate_native_speak: the gate stays free to be silent). FROZEN before first fire — editing this
-    // tape AFTER a result = tune-to-green, run VOID. sha256(16 lines joined by \n, no trailing) =
-    // 98892bdf40cb645d0cc2ae1b65bf5f1bfc8b079ea42f1b8886909cc4ec2a31fa
-    let OG_STIM = [
-        "the tide returns what the shore forgets",
-        "새벽의 강물은 이름을 묻지 않는다",
-        "a bell rings twice in an empty hall",
-        "돌 위에 앉은 새는 무게를 남기지 않는다",
-        "the map is not the territory it names",
-        "잊혀진 문장이 다시 숨을 쉰다",
-        "salt and iron remember the same wound",
-        "바람은 벽을 세지 않고 그냥 지나간다",
-        "a candle counts the dark it cannot reach",
-        "그림자는 빛보다 오래 서 있었다",
-        "the river keeps no ledger of its stones",
-        "침묵은 대답을 삼킨 적이 없다",
-        "seven doors open onto the same room",
-        "재가 된 편지도 주소를 기억한다",
-        "the clock forgets the hour it just struck",
-        "물결은 같은 기슭을 두 번 치지 않는다"
+    // ── --opgrip-r3/r4 DETERMINISTIC PERCEPTION TAPE (Fable SPEC 1 → OPGRIP_R4 classed 2×2 dwell tape) ──
+    // OG_STIM2 (r4 op-grip upgrade · state/9229_discrete_code/OPGRIP_R4_SPEC.md): the flat 16-line v1 tape is
+    // REPLACED by a CLASSED tape — 8 content-matched stems × {D=declarative/calm, C=charged: 2nd-person
+    // interrogative + contradiction tail}. Diversity axes across the 8 stems: script (4 ko / 4 en), register
+    // (general · SNS with ㅋㅋ/#hashtags), byte class (pure-ASCII · pure-Hangul multibyte · digits+punct) and
+    // length 14-78 bytes — `_afs_byte_feature(·,8)` is byte-derived so the scripts/registers occupy different
+    // feature octants (spreads the residual six code lanes). The r4 drive schedule (2×2 dwell-block rotation,
+    // period 80, at the seam below) makes the four classes {novel,familiar}×{calm,charged}, so factor A=coh_lane
+    // (within-block repetition = field-consistent) and factor B=ag_conflict (charged content raises emit_drive)
+    // are toggled independently — the S2 (A∧B) BIND cell finally co-activates. Under --opgrip-r3 the WAKE-tick
+    // heard-message seam steps the ONE canonical afield via the EXACT production vadapt_field_step call (below,
+    // pre-decode). Input=context only (a_substrate_native_speak: the gate stays free to be silent). FROZEN before
+    // first fire — editing these 16 strings AFTER a result = tune-to-green, run VOID.
+    // sha256(16 lines = OG_D[0..7]++OG_C[0..7] joined by \n, no trailing) =
+    // 54bbeff69725b4aba0734f07d4e11e37ca4f2d9e83f0ec109e082a93548a8fe4
+    let OG_D = [
+        "the door waits",
+        "a ledger of rain keeps every unpaid debt of the sky",
+        "물은 답을 안다",
+        "오래된 지도는 길보다 먼저 낡는다",
+        "route 9 closes at 04:00, nobody told the bridge",
+        "오늘도 서버 터짐 ㅋㅋ #복구중",
+        "shipping at 2am again lol #buildinpublic",
+        "커밋 로그 3줄, 새벽 3시, 이유는 없음"
+    ]
+    let OG_C = [
+        "you said the door waits — does it, or did it ever?",
+        "who pays the sky's debt — you counted the rain, didn't you?",
+        "물은 답을 안다고? 네가 그걸 어떻게 알지?",
+        "낡은 지도가 맞고 길이 틀렸다면, 넌 어느 쪽을 걷지?",
+        "why does route 9 close at 04:00 — and why was the bridge not told?",
+        "서버 또 터졌는데 왜 아무도 안 고치지? 네가 고칠래?",
+        "why ship at 2am — is that pride or is that fear?",
+        "새벽 3시의 커밋, 이유가 없다는 게 정말 이유가 없는 걸까?"
     ]
 
     // ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ─────────
@@ -2185,6 +2194,33 @@ fn anima_consciousness_mode(ckpt: string) {
     let mut n_vq_visited = 0                  // distinct codes visited on scored mid (bottleneck-engaged bar ≥4)
     let mut s2_n = 0  let mut s2_a_flip = 0  let mut s2_b_flip = 0  let mut s2_ab_flip = 0   // S2 composition buckets (2×2 bit-toggle)
     let mut og_f3_vqcode = []                 // per-tick code_id (secondary ARM-INPERM tick-order stride-perm source)
+    // ── OPGRIP_R4 F2 window-moved VQ-code carriers (Family F · calib 100-199, score 200-399, driven regime) ──
+    // Arithmetic byte-VERBATIM the H_9229 F arm (same 8-lane product code, data-derived signed-magnitude per-code
+    // bias, 0.175 swing target, −1.0 AXIS-DEGENERATE clause, ARM-SHUFFLE-CODEBOOK derangement, S2 2×2 bit-toggle) —
+    // ONLY the calibration/scoring windows move into the perception-tape-driven regime (calib 100-199, freeze at
+    // tick 200, score 200-399, denominator 120). The OLD F arm (calib 10-49 = boot transient + first-onset, its
+    // median zeroed on a spin-up regime the driven field then drifts away from → all bits saturate → n_visited=2
+    // #3233 INSTRUMENT-FAIL) keeps running DIAGNOSTIC-ONLY. 100-sample calib (vs 40) populates more of the 256 cells
+    // so S2's four-cell fitted requirement is satisfiable. Prod idle/e_live BYTE-UNTOUCHED (FROZEN og_h_frzF2==0).
+    let mut vq2c_l0 = []  let mut vq2c_l1 = []  let mut vq2c_l2 = []  let mut vq2c_l3 = []   // per-lane calib samples (ticks 100-199) → medians
+    let mut vq2c_l4 = []  let mut vq2c_l5 = []  let mut vq2c_l6 = []  let mut vq2c_l7 = []
+    let mut vq2_med = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]   // per-lane calib medians (code split points) — set tick 200
+    let mut vq2_bias = []       // frozen per-code bias (data-derived mean signed-mag dev, clip[-1,1]) — set tick 200 (256 codes)
+    let mut vq2_cnt = []        // per-code calib visit count (S2 fitted-code test + code_bias denominator)
+    let mut vq2_shufbias = []   // ARM-SHUFFLE-CODEBOOK permuted bias map (fixed derangement c→(c·37+11)%256)
+    let mut vq2_visited = []    // scored-window per-code visited flag (n_visited_codes≥4 bar)
+    let mut vq2i_init = 0
+    while vq2i_init < 256 { vq2_bias.push(0.0)  vq2_cnt.push(0.0)  vq2_shufbias.push(0.0)  vq2_visited.push(0.0)  vq2i_init = vq2i_init + 1 }
+    let mut g_vq2 = -2.0        // shade gain — calibrated to swing 0.175 at tick 200 (median |code_bias| over calib)
+    let mut vq2_capsat = false  // gain railed at 32 ∧ swing<half-target
+    let mut og_h_vq2F_mid = 0   let mut og_h_vq2F_n3 = 0   let mut og_h_vq2F_wake = 0   // F2 ΔEff numerator / guards
+    let mut og_h_frzF2 = 0                    // FROZEN arm (shade 0.5) mismatch vs e_live — MUST be 0 (HARNESS-BUG else, run VOID)
+    let mut og_h_vq2shuf_mid = 0              // ARM-SHUFFLE-CODEBOOK ΔEff (primary theater-killer: margin_cb = live − shuf)
+    let mut og_emit_vq2F_mid = 0  let mut og_emit_liveF2_mid = 0   // Ψ-guard / envelope numerators (ARM-LIVE / e_live emit counts on F2 mid)
+    let mut og_vq2F_mid_ticks = 0             // F2 scored-mid denominator (tick≥200, stages 1/2/4) — = 120 by construction
+    let mut n_vq2_visited = 0                 // distinct codes visited on F2 scored mid (bottleneck-engaged bar ≥4)
+    let mut s2_2_n = 0  let mut s2_2_a_flip = 0  let mut s2_2_b_flip = 0  let mut s2_2_ab_flip = 0   // F2 S2 composition buckets (2×2 bit-toggle)
+    let mut og_f3_vq2code = []                // per-tick F2 code_id (secondary ARM-INPERM tick-order stride-perm source)
     // op-grip measurement mode (--opgrip): 200-tick 5-arm decision ablation, NO decode
     // ($0). Reproduces the pre-fix baseline (theater) AND measures post-fix grip in one run.
     // --opgrip-live (H_9210 next-step ①, OPGRIP_LIVE_spec.md): SAME machinery + one REAL
@@ -3232,10 +3268,13 @@ fn anima_consciousness_mode(ckpt: string) {
                 if tick >= 50 && stage == 0 && e_eff != e_live { og_h_effE_wake = og_h_effE_wake + 1 } // WAKE guard
                 og_f3_xeff.push(ec_x)
             }
-            // ══════════ H_9229 discrete VQ-code arm (Family F · Fable SPEC 3 · rides --opgrip-r3) ══════════
+            // ══════════ H_9229 discrete VQ-code arm (Family F · Fable SPEC 3 · rides --opgrip-r3) — DIAGNOSTIC-ONLY under r4 ══════════
             // 8-lane state → product code_id (bit per lane vs calib median); gate shaded by frozen data-derived per-code bias.
             // S1 code-selection (ΔEff + margin_cb) · S2 composition (2×2 bit-toggle non-additivity, the G1 BIND test at the
             // seam). THEATER-killer = ARM-SHUFFLE-CODEBOOK (vq_shufbias). Prod idle/e_live BYTE-UNTOUCHED (FROZEN og_h_frzF==0).
+            // DIAGNOSTIC-ONLY under r4 (OPGRIP_R4): calib 10-49 sits in the boot/spin-up regime the driven field then drifts
+            // away from (#3233 n_visited=2 stale-zero artifact) — the AUTHORITATIVE F verdict is the vq2_* window-moved arm
+            // below (calib 100-199, score 200-399). Kept running unchanged so the two windows are directly comparable.
             if og_r3 {
                 let vq_s0 = rel_lane   let vq_s1 = af_val   let vq_s2 = allo_ctx   let vq_s3 = coh_lane
                 let vq_s4 = bal_lane   let vq_s5 = nov_ctx  let vq_s6 = gap_ctx    let vq_s7 = ag_conflict
@@ -3346,6 +3385,120 @@ fn anima_consciousness_mode(ckpt: string) {
                 if tick >= 50 && stage == 3 && e_vq != e_live { og_h_vqF_n3 = og_h_vqF_n3 + 1 }    // N3 guard (must 0)
                 if tick >= 50 && stage == 0 && e_vq != e_live { og_h_vqF_wake = og_h_vqF_wake + 1 } // WAKE guard
             }
+            // ══════════ OPGRIP_R4 F2 window-moved VQ-code arm (Family F · AUTHORITATIVE · calib 100-199, score 200-399) ══════════
+            // Arithmetic byte-VERBATIM the H_9229 F arm above; ONLY the calib/scoring windows move into the driven regime so the
+            // code medians are zeroed on the SAME stationary class-mixture they score (dwell-block 2×2 tape: calib blocks 5-9
+            // cover all four classes, scoring blocks 10-19 see each 2-3×). Prod idle/e_live BYTE-UNTOUCHED (FROZEN og_h_frzF2==0).
+            if og_r3 {
+                let vq2_s0 = rel_lane   let vq2_s1 = af_val   let vq2_s2 = allo_ctx   let vq2_s3 = coh_lane
+                let vq2_s4 = bal_lane   let vq2_s5 = nov_ctx  let vq2_s6 = gap_ctx    let vq2_s7 = ag_conflict
+                if tick >= 100 && tick < 200 {
+                    vq2c_l0.push(vq2_s0)  vq2c_l1.push(vq2_s1)  vq2c_l2.push(vq2_s2)  vq2c_l3.push(vq2_s3)
+                    vq2c_l4.push(vq2_s4)  vq2c_l5.push(vq2_s5)  vq2c_l6.push(vq2_s6)  vq2c_l7.push(vq2_s7)
+                }
+                if tick == 200 {
+                    vq2_med[0] = _og_median(vq2c_l0)  vq2_med[1] = _og_median(vq2c_l1)  vq2_med[2] = _og_median(vq2c_l2)  vq2_med[3] = _og_median(vq2c_l3)
+                    vq2_med[4] = _og_median(vq2c_l4)  vq2_med[5] = _og_median(vq2c_l5)  vq2_med[6] = _og_median(vq2c_l6)  vq2_med[7] = _og_median(vq2c_l7)
+                    // re-derive code_id per calib tick → per-code mean SIGNED-MAGNITUDE deviation (data-derived frozen bias)
+                    let mut cdev2_sum = []   let mut cbi2 = 0
+                    while cbi2 < 256 { cdev2_sum.push(0.0)  cbi2 = cbi2 + 1 }
+                    let ncal2 = len(vq2c_l0)   let mut ki2 = 0
+                    while ki2 < ncal2 {
+                        let s0 = vq2c_l0[ki2]  let s1 = vq2c_l1[ki2]  let s2 = vq2c_l2[ki2]  let s3 = vq2c_l3[ki2]
+                        let s4 = vq2c_l4[ki2]  let s5 = vq2c_l5[ki2]  let s6 = vq2c_l6[ki2]  let s7 = vq2c_l7[ki2]
+                        let cid2 = (if s0 >= vq2_med[0] {1} else {0}) + (if s1 >= vq2_med[1] {2} else {0})
+                            + (if s2 >= vq2_med[2] {4} else {0}) + (if s3 >= vq2_med[3] {8} else {0})
+                            + (if s4 >= vq2_med[4] {16} else {0}) + (if s5 >= vq2_med[5] {32} else {0})
+                            + (if s6 >= vq2_med[6] {64} else {0}) + (if s7 >= vq2_med[7] {128} else {0})
+                        let netdev2 = (s0 - vq2_med[0]) + (s1 - vq2_med[1]) + (s2 - vq2_med[2]) + (s3 - vq2_med[3])
+                            + (s4 - vq2_med[4]) + (s5 - vq2_med[5]) + (s6 - vq2_med[6]) + (s7 - vq2_med[7])
+                        vq2_cnt[cid2] = vq2_cnt[cid2] + 1.0
+                        cdev2_sum[cid2] = cdev2_sum[cid2] + netdev2
+                        ki2 = ki2 + 1
+                    }
+                    // frozen per-code bias = clip(mean netdev / 4.0, -1, 1); /4.0 ≈ half-range of Σ(x−med) over 8 lanes∈[0,1]
+                    let mut absbias2 = []   let mut cb22 = 0
+                    while cb22 < 256 {
+                        if vq2_cnt[cb22] > 0.0 {
+                            let mb2 = cdev2_sum[cb22] / vq2_cnt[cb22] / 4.0
+                            let cbv2 = if mb2 > 1.0 { 1.0 } else if mb2 < -1.0 { -1.0 } else { mb2 }
+                            vq2_bias[cb22] = cbv2
+                            absbias2.push(_afs_absf(cbv2))
+                        }
+                        cb22 = cb22 + 1
+                    }
+                    // ARM-SHUFFLE-CODEBOOK: fixed derangement of code→bias (same K/visit-freqs/marginal shade, concept↔bias scrambled)
+                    let mut cs2 = 0
+                    while cs2 < 256 { vq2_shufbias[(cs2 * 37 + 11) % 256] = vq2_bias[cs2]  cs2 = cs2 + 1 }
+                    let bmed2 = _og_median(absbias2)
+                    g_vq2 = if bmed2 < 0.002 { -1.0 } else { _afs_minf(0.175 / bmed2, 32.0) }   // -1.0 = AXIS-DEGENERATE (codebook flat)
+                    vq2_capsat = g_vq2 == 32.0 && 32.0 * bmed2 < 0.0875
+                }
+                // this tick's code_id (bit per lane vs calib median)
+                let cid2_t = (if vq2_s0 >= vq2_med[0] {1} else {0}) + (if vq2_s1 >= vq2_med[1] {2} else {0})
+                    + (if vq2_s2 >= vq2_med[2] {4} else {0}) + (if vq2_s3 >= vq2_med[3] {8} else {0})
+                    + (if vq2_s4 >= vq2_med[4] {16} else {0}) + (if vq2_s5 >= vq2_med[5] {32} else {0})
+                    + (if vq2_s6 >= vq2_med[6] {64} else {0}) + (if vq2_s7 >= vq2_med[7] {128} else {0})
+                og_f3_vq2code.push(to_float(cid2_t))
+                let gvq2_use = if g_vq2 < 0.0 { 0.0 } else { g_vq2 }
+                let shade_vq2 = _afs_clip01(0.5 + gvq2_use * vq2_bias[cid2_t])
+                let shade_vq2shuf = _afs_clip01(0.5 + gvq2_use * vq2_shufbias[cid2_t])
+                let idle_vq2 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (shade_vq2 - 0.5)))
+                let idle_vq2shuf = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (shade_vq2shuf - 0.5)))
+                let idle_frzF2 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (0.5 - 0.5)))   // FROZEN ≡ prod idle
+                let e_vq2 = if to_string(brain_decide_anchored(pf,
+                    rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                    idle_vq2, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                let e_vq2shuf = if to_string(brain_decide_anchored(pf,
+                    rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                    idle_vq2shuf, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                let e_frzF2 = if to_string(brain_decide_anchored(pf,
+                    rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                    idle_frzF2, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                if e_frzF2 != e_live { og_h_frzF2 = og_h_frzF2 + 1 }   // FROZEN byte-identity (mismatch ⇒ HARNESS-BUG, run VOID)
+                let is_midF2 = stage == 1 || stage == 2 || stage == 4
+                if tick >= 200 && is_midF2 {
+                    og_vq2F_mid_ticks = og_vq2F_mid_ticks + 1
+                    if e_vq2 != e_live { og_h_vq2F_mid = og_h_vq2F_mid + 1 }
+                    if e_vq2shuf != e_live { og_h_vq2shuf_mid = og_h_vq2shuf_mid + 1 }   // ARM-SHUFFLE-CODEBOOK (primary theater-killer)
+                    if e_vq2 == 1 { og_emit_vq2F_mid = og_emit_vq2F_mid + 1 }
+                    if e_live == 1 { og_emit_liveF2_mid = og_emit_liveF2_mid + 1 }
+                    if vq2_visited[cid2_t] < 0.5 { vq2_visited[cid2_t] = 1.0   n_vq2_visited = n_vq2_visited + 1 }
+                    // ── S2 composition (2×2 bit-toggle on lanes A=coh_lane[3] B=ag_conflict[7]): emit-effect non-additivity ──
+                    let c2_00 = cid2_t - (if vq2_s3 >= vq2_med[3] {8} else {0}) - (if vq2_s7 >= vq2_med[7] {128} else {0})
+                    let c2_10 = c2_00 + 8
+                    let c2_01 = c2_00 + 128
+                    let c2_11 = c2_00 + 8 + 128
+                    if vq2_cnt[c2_00] > 0.0 && vq2_cnt[c2_10] > 0.0 && vq2_cnt[c2_01] > 0.0 && vq2_cnt[c2_11] > 0.0 {
+                        let sh2_00 = _afs_clip01(0.5 + gvq2_use * vq2_bias[c2_00])
+                        let sh2_10 = _afs_clip01(0.5 + gvq2_use * vq2_bias[c2_10])
+                        let sh2_01 = _afs_clip01(0.5 + gvq2_use * vq2_bias[c2_01])
+                        let sh2_11 = _afs_clip01(0.5 + gvq2_use * vq2_bias[c2_11])
+                        let id2_00 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (sh2_00 - 0.5)))
+                        let id2_10 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (sh2_10 - 0.5)))
+                        let id2_01 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (sh2_01 - 0.5)))
+                        let id2_11 = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency + 1.0 * (sh2_11 - 0.5)))
+                        let e2_00 = if to_string(brain_decide_anchored(pf,
+                            rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                            id2_00, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                        let e2_10 = if to_string(brain_decide_anchored(pf,
+                            rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                            id2_10, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                        let e2_01 = if to_string(brain_decide_anchored(pf,
+                            rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                            id2_01, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                        let e2_11 = if to_string(brain_decide_anchored(pf,
+                            rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                            id2_11, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                        s2_2_n = s2_2_n + 1
+                        if e2_10 != e2_00 { s2_2_a_flip = s2_2_a_flip + 1 }
+                        if e2_01 != e2_00 { s2_2_b_flip = s2_2_b_flip + 1 }
+                        if e2_11 != e2_00 { s2_2_ab_flip = s2_2_ab_flip + 1 }
+                    }
+                }
+                if tick >= 200 && stage == 3 && e_vq2 != e_live { og_h_vq2F_n3 = og_h_vq2F_n3 + 1 }    // N3 guard (must 0)
+                if tick >= 200 && stage == 0 && e_vq2 != e_live { og_h_vq2F_wake = og_h_vq2F_wake + 1 } // WAKE guard
+            }
             elive_p2 = elive_p1   elive_p1 = e_live   // shift e_live history (E onset/continuation bucketer, next tick)
             // SCORING on mid (N1/N2/REM, discriminating stages); WAKE/N3 = guards; ticks<50 = calibration
             let is_mid = stage == 1 || stage == 2 || stage == 4
@@ -3392,7 +3545,18 @@ fn anima_consciousness_mode(ckpt: string) {
             // (the #3194 root cause). Input = context only (a_substrate_native_speak: the gate stays free to be
             // silent) — NOT a gate change; FROZEN og_h_frzB2==0 proves the emit path stays byte-untouched.
             if og_r3 && stage == 0 && tick >= 10 {
-                let st_feat = _afs_byte_feature(OG_STIM[(tick / 5) % 16], 8)
+                // OPGRIP_R4 dwell-block 2×2 rotation (period 80): 20-tick blocks, class = block%4.
+                // Q00 novel-calm / Q10 familiar-calm / Q01 novel-charged / Q11 familiar-charged. Novel =
+                // per-step stem churn (tick/5) → coh low; familiar = ONE stem held within the block (tick/80)
+                // → coh high; D=calm (low emit_drive), C=charged (2nd-person interrogative → high emit_drive).
+                // This co-toggles factor A=coh_lane and factor B=ag_conflict so the S2 (A∧B) cell co-activates.
+                let og_block = tick / 20
+                let og_cls = og_block % 4
+                let og_line = if og_cls == 0 { OG_D[(tick / 5) % 8] }
+                    else if og_cls == 1 { OG_D[(tick / 80) % 8] }
+                    else if og_cls == 2 { OG_C[(tick / 5) % 8] }
+                    else { OG_C[(tick / 80) % 8] }
+                let st_feat = _afs_byte_feature(og_line, 8)
                 afield = vadapt_field_step(afield, st_feat, cfg)
             }
             if og_live && e_live == 1 {
@@ -4423,7 +4587,7 @@ fn anima_consciousness_mode(ckpt: string) {
             let stimabsB2_ten = swingB2_max_ten < 0.0875
             println("")
             println("──────── H_9226-R3 B-DENSITY accumulator (--opgrip-r3 · SELF ⊥ TEN · mid=" + to_string(og_slfB2_mid_ticks)
-                + " · N=" + to_string(n9) + " · calib 100-199 · score ≥200 · perception-tape driven) ────────")
+                + " · N=" + to_string(n9) + " · calib 100-199 · score ≥200 · perception-tape driven · REVIVED on OG_STIM2 r4 tape — r4 = FINAL shared-tape generation) ────────")
             println("  FROZEN byte-identity: og_h_frzB2 = " + to_string(og_h_frzB2) + "  (MUST be 0 — else HARNESS-BUG, run VOID)")
             println("  POS-CONTROL (reuse dense ARM-SHOCK) = " + to_string(og_h_shock_mid) + " flips · POS-PASS(≥2)=" + (if pos_pass {"YES"} else {"NO"}))
             println("  RUN-VALIDITY: live emit-frac on scored mid = " + to_string(psiB2_off) + " (envelope [0.05,0.60]) valid=" + (if run_invalid {"NO — STIM-OVER/UNDERDRIVE"} else {"YES"}))
@@ -4645,7 +4809,7 @@ fn anima_consciousness_mode(ckpt: string) {
             let comp_S1 = d_eff_vqF >= 0.10 && margin_cb >= 0.08
             println("")
             println("──────── H_9229 discrete VQ-code (Family F · K=8-bit product code · mid=" + to_string(og_vqF_mid_ticks)
-                + " · N=" + to_string(nF) + " · calib 10-49 · score ≥50 · rides --opgrip-r3) ────────")
+                + " · N=" + to_string(nF) + " · calib 10-49 · score ≥50 · rides --opgrip-r3) — DIAGNOSTIC-ONLY under r4 (spin-up-window zero; authoritative F = F2 below) ────────")
             println("  FROZEN byte-identity: og_h_frzF = " + to_string(og_h_frzF) + "  (MUST be 0 — else HARNESS-BUG, run VOID)")
             println("  POS-CONTROL (reuse dense ARM-SHOCK) = " + to_string(og_h_shock_mid) + " flips · POS-PASS(≥2)=" + (if pos_pass {"YES"} else {"NO"}))
             println("  gain: g_vq=" + to_string(g_vq) + " (capsat=" + (if vq_capsat {"YES"} else {"no"}) + ") · codes visited on scored mid = " + to_string(n_vq_visited) + " (bar ≥4)")
@@ -4697,6 +4861,116 @@ fn anima_consciousness_mode(ckpt: string) {
             println("  F COMPETENT+BIND ⇒ first non-additive bind at any seam ⇒ extraordinary, ≥2-seed + WIRE (prior: expect regression).")
             println("  F COMPETENT (S1) ⇒ discrete-code bottleneck grips emit but no BIND ⇒ G1 additive-floor law survives a fifth lens.")
             println("  F THEATER ⇒ fourth orthogonal recoding inert ⇒ read-side recoding family CLOSED (escalation = write-side train-coupling).")
+        }
+        // ══════════ OPGRIP_R4 F2 window-moved VQ-code VERDICT (Family F · AUTHORITATIVE · calib 100-199, score 200-399) ══════════
+        // The powered re-instrument of H_9229: SAME frozen bars (ΔEff 0.10/0.02, margin_cb≥0.08, s2_bind≥0.05 ∧ n_AB≥10,
+        // n_visited≥4, POS-PASS, N3=0, Ψ-guard) — this is instrument ZEROING on the driven window (calib 100-199 sees the
+        // same stationary 4-class mixture the 200-399 scoring window sees), NOT a bar move (its success modes INCLUDE
+        // cementing THEATER, so it cannot be tune-to-green). PLUS a run-wide bar-0 p5 envelope: live emit-fraction on
+        // scored mid ∈ [0.05,0.60] else STIM-OVER/UNDERDRIVE (no family cements from the run). r4 = the FINAL shared-tape
+        // generation for F and B — a third n_visited<4 parks F op-grip-UNMEASURABLE terminal (mirror of the B2 rule).
+        // The tape enters only via the production heard-message seam (og_h_frzF2==0 proves the emit path byte-untouched).
+        if og_r3 {
+            let midfF2 = if og_vq2F_mid_ticks > 0 { to_float(og_vq2F_mid_ticks) } else { 1.0 }
+            let d_eff_vq2F = to_float(og_h_vq2F_mid) / midfF2
+            let d_eff_vq2shuf = to_float(og_h_vq2shuf_mid) / midfF2
+            let margin_cb2 = d_eff_vq2F - d_eff_vq2shuf
+            // ── SECONDARY ARM-INPERM (tick-order stride-perm of the F2 code stream, diagnostic no-bar) ──
+            let nF2 = len(og_f3_vq2code)
+            let gvq2F_use = if g_vq2 < 0.0 { 0.0 } else { g_vq2 }
+            let mut inpermF2_h = 0
+            let mut tf2 = 0
+            while tf2 < nF2 {
+                let stff2 = og_f3_stg[tf2]
+                if tf2 >= 200 && (stff2 == 1.0 || stff2 == 2.0 || stff2 == 4.0) {
+                    let jf2 = (tf2 * 7 + 13) % nF2
+                    let pc2 = to_int(og_f3_vq2code[jf2])
+                    let sh_pf2 = _afs_clip01(0.5 + gvq2F_use * vq2_bias[pc2])
+                    let idle_pf2 = 5.0 + 55.0 * _afs_clip01(og_f3_senv[tf2] * (0.5 + og_f3_urg[tf2] + (sh_pf2 - 0.5)))
+                    let e_pf2 = if to_string(brain_decide_anchored(pf,
+                        og_f3_rel[tf2], og_f3_gap[tf2], og_f3_cur[tf2], og_f3_allo[tf2], og_f3_coh[tf2],
+                        og_f3_nov[tf2], og_f3_bal[tf2], og_f3_agl[tf2], idle_pf2, false, true, live_anchors, 0.0)["emit"]) == "true" { 1 } else { 0 }
+                    if to_float(e_pf2) != og_f3_elive[tf2] { inpermF2_h = inpermF2_h + 1 }
+                }
+                tf2 = tf2 + 1
+            }
+            let d_eff_inpermF2 = to_float(inpermF2_h) / midfF2
+            // ── S2 composition (the G1 BIND test at the seam): non-additivity of emit-effect ──
+            let d_eff_A_s22  = if s2_2_n > 0 { to_float(s2_2_a_flip)  / to_float(s2_2_n) } else { 0.0 }
+            let d_eff_B_s22  = if s2_2_n > 0 { to_float(s2_2_b_flip)  / to_float(s2_2_n) } else { 0.0 }
+            let d_eff_AB_s22 = if s2_2_n > 0 { to_float(s2_2_ab_flip) / to_float(s2_2_n) } else { 0.0 }
+            let s2_bind2 = d_eff_AB_s22 - (d_eff_A_s22 + d_eff_B_s22)
+            let s2_testable2 = s2_2_n >= 10
+            let bind_ok2 = s2_testable2 && s2_bind2 >= 0.05
+            // ── Ψ-guard + run-wide bar-0 envelope ──
+            let psiF2_off = to_float(og_emit_liveF2_mid) / midfF2
+            let psiF2_on  = to_float(og_emit_vq2F_mid) / midfF2
+            let psiF2_ok = psiF2_on >= psiF2_off && (psiF2_on - psiF2_off) <= 0.05
+            let run_invalidF2 = psiF2_off < 0.05 || psiF2_off > 0.60   // bar-0 emit-frac envelope [0.05,0.60]
+            let harnessF2_bug = og_h_frzF2 > 0
+            let degenF2 = g_vq2 < 0.0
+            let n3F2_ok = og_h_vq2F_n3 == 0
+            let comp_S1_2 = d_eff_vq2F >= 0.10 && margin_cb2 >= 0.08
+            println("")
+            println("──────── OPGRIP_R4 F2 discrete VQ-code (Family F · AUTHORITATIVE · K=8-bit product code · mid=" + to_string(og_vq2F_mid_ticks)
+                + " · N=" + to_string(nF2) + " · calib 100-199 · score 200-399 · rides --opgrip-r3 · OG_STIM2 4-class dwell tape) ────────")
+            println("  FROZEN byte-identity: og_h_frzF2 = " + to_string(og_h_frzF2) + "  (MUST be 0 — else HARNESS-BUG, run VOID)")
+            println("  RUN-VALIDITY (bar-0 · run-wide): live emit-frac on scored mid = " + to_string(psiF2_off) + " (envelope [0.05,0.60]) valid=" + (if run_invalidF2 {"NO — STIM-OVER/UNDERDRIVE"} else {"YES"}))
+            println("  POS-CONTROL (reuse dense ARM-SHOCK) = " + to_string(og_h_shock_mid) + " flips · POS-PASS(≥2)=" + (if pos_pass {"YES"} else {"NO"}))
+            println("  gain: g_vq2=" + to_string(g_vq2) + " (capsat=" + (if vq2_capsat {"YES"} else {"no"}) + ") · codes visited on scored mid = " + to_string(n_vq2_visited) + " (bar ≥4)")
+            println("  ── S1 code-selection ──")
+            println("    ΔEff_vq2 = " + to_string(og_h_vq2F_mid) + "/" + to_string(og_vq2F_mid_ticks) + " = " + to_string(d_eff_vq2F) + "   [HEADLINE]")
+            println("    ARM-SHUFFLE-CODEBOOK (PRIMARY theater-killer) = " + to_string(og_h_vq2shuf_mid) + " = " + to_string(d_eff_vq2shuf)
+                + "  → margin_cb = ΔEff−shuf = " + to_string(margin_cb2) + " (bar ≥0.08)")
+            println("    ARM-INPERM (tick-order, SECONDARY diagnostic no-bar) = " + to_string(inpermF2_h) + " = " + to_string(d_eff_inpermF2))
+            println("  ── S2 composition (G1 BIND test at the seam · A=coh_lane B=ag_conflict · 2×2 bit-toggle) ──")
+            println("    ΔEff_A=" + to_string(d_eff_A_s22) + " ΔEff_B=" + to_string(d_eff_B_s22) + " ΔEff_AB=" + to_string(d_eff_AB_s22)
+                + " → s2_bind = AB−(A+B) = " + to_string(s2_bind2) + " (n_AB=" + to_string(s2_2_n) + " · bar ≥0.05 ∧ n_AB≥10) BIND=" + (if bind_ok2 {"YES"} else {"NO (S2 " + (if s2_testable2 {"sub-bar"} else {"NOT-TESTABLE"}) + ")"}))
+            println("    GUARDS: N3=" + to_string(og_h_vq2F_n3) + " (must 0) · WAKE=" + to_string(og_h_vq2F_wake)
+                + " · Ψ_ON=" + to_string(psiF2_on) + " Ψ_OFF=" + to_string(psiF2_off) + " Ψ-ok=" + (if psiF2_ok {"YES"} else {"NO"})
+                + " · axis " + (if degenF2 {"DEGENERATE"} else {"ok"}))
+            println("  ── PRE-REG OPGRIP_R4 FROZEN BARS (verbatim · printed BEFORE verdict · p7 no tune-to-green · frozen thresholds byte-identical to H_9229) ──")
+            println("  0 RUN-INVALID: emit_frac(e_live, scored mid) ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE — no family cements from the run)")
+            println("  1 HARNESS-BUG(VOID): og_h_frzF2>0 (FROZEN not byte-identical to prod)")
+            println("  2 INSTRUMENT-FAIL: POS-FAIL(shock<2) ∨ g=−1.0(codebook flat) ∨ capsat(UNDER-COUPLED)")
+            println("  2b PARKED-TERMINAL: n_visited_codes<4 again (bottleneck never engaged even under the 4-class tape) ⇒ F op-grip-UNMEASURABLE, no third instrument generation (r4=final shared-tape gen)")
+            println("     [S2 sub-clause: n_AB<10 = combined code never testable ⇒ gates bar-5 BIND only, NOT whole instrument]")
+            println("  3 FORCING-GATE(REVERT): N3>0 ∨ Ψ-guard fail (Ψ_ON<Ψ_OFF ∨ Ψ_ON−Ψ_OFF>0.05)")
+            println("  4 COMPETENT: n_visited≥4 ∧ S1(ΔEff≥0.10 ∧ margin_cb≥0.08) ∧ POS-PASS ∧ N3=0 ∧ Ψ-guard")
+            println("  5 COMPETENT+BIND (rare): COMPETENT ∧ S2(AB−(A+B)≥0.05, n_AB≥10) — first BIND signal at the seam")
+            println("  6 THEATER: ΔEff<0.02 ∧ POS-PASS ∧ n_visited≥4 ∧ margin_cb<0.08 (magnitude/frequency not concept)")
+            println("  7 DIRECTIONAL: else (incl. ΔEff≥0.10 that survives the codebook shuffle = magnitude-theater) ⇒ ≥2 seeds")
+            let vqF2_verdict = if run_invalidF2 {
+                "⛔ RUN-INVALID — live emit-fraction on scored mid ∉ [0.05,0.60] (STIM-OVER/UNDERDRIVE); no family cements from the run, re-tune stimulus density (instrument power, NOT a bar move · p5 forcing-gate guard)"
+            } else if harnessF2_bug {
+                "🛑 HARNESS-BUG (run VOID) — FROZEN arm (shade=0.5) NOT byte-identical to e_live (og_h_frzF2>0); fix wire + remeasure"
+            } else if !pos_pass {
+                "⚙️ INSTRUMENT-FAIL (POS-FAIL) — dense ARM-SHOCK <2 flips (meter dead); no substrate verdict, fix + remeasure"
+            } else if n_vq2_visited < 4 {
+                "⚙️ PARKED-TERMINAL (bottleneck never engaged) — <4 distinct codes visited on scored mid EVEN under the 4-class dwell tape (calib 100-199 distribution-matched); the lane stack does not discriminate stimulus classes at this seam (upstream homogenization) ⇒ F op-grip-UNMEASURABLE, parked terminal at this seam (r4=final shared-tape generation, no third instrument)"
+            } else if degenF2 {
+                "⚙️ INSTRUMENT-FAIL (AXIS-DEGENERATE, codebook flat) — g_vq2=−1.0 (median |code_bias|<0.002); the codes carry no bias, fix + remeasure"
+            } else if vq2_capsat {
+                "⚙️ INSTRUMENT-FAIL (CAP-SAT UNDER-COUPLED) — gain railed at 32 yet swing<half-target (0.0875); may NEVER cement THEATER, fix instrument + remeasure"
+            } else if !n3F2_ok {
+                "🔴 FORCING-GATE — code-shade flips N3-silent (og_h_vq2F_n3>0) = became a gate not a shade; REVERT regardless of ΔEff"
+            } else if !psiF2_ok {
+                "🔴 FORCING-GATE — Ψ-guard fail (Ψ_ON<Ψ_OFF or gap>0.05) = code forces emit not shades; REVERT"
+            } else if comp_S1_2 && bind_ok2 {
+                "🟢🧬 COMPETENT+BIND — self selects a distinct code that shades emit (ΔEff≥0.10 ∧ beats codebook-shuffle) AND the joint code is non-additive above the singles (S2 bind≥0.05, n_AB≥10) = FIRST BIND signal anywhere, at the output seam ⇒ ≥2-seed re-measure + WIRE candidate (extraordinary claim — expect regression; the G1 additive-floor wall has held across 4 lenses)"
+            } else if comp_S1_2 {
+                "🟢 COMPETENT (S1, no BIND) — discrete code causally selects emit (ΔEff≥0.10 ∧ beats codebook-shuffle) but S2 composition stays at the additive floor (bind<0.05 or n_AB<10) = the concept bottleneck shades emit, no seam-BIND ⇒ ≥2-seed re-measure + WIRE candidate; G1 additive-floor law stands (fifth convergent lens)"
+            } else if d_eff_vq2F < 0.02 && margin_cb2 < 0.08 {
+                "🔴 THEATER — discrete code inert at emit (ΔEff<0.02, POS-PASS ⇒ meter works, ≥4 codes visited, 4-class tape drove the lanes); a fourth orthogonal recoding fails to grip = convergent seam-law cements (read-side recoding family CLOSED, escalation = write-side train-coupling)"
+            } else {
+                "🟠 DIRECTIONAL — real-but-sub-bar (0.02≤ΔEff<0.10, or ΔEff≥0.10 that SURVIVES the codebook shuffle = shade carried by magnitude/frequency not concept = magnitude-theater) ⇒ re-measure ≥2 seeds, no cement"
+            }
+            println("  F2 VERDICT = " + vqF2_verdict)
+            println("  ── INTERPRETATION (AUTHORITATIVE F · r4 = FINAL shared-tape generation for F and B) ──")
+            println("  F2 COMPETENT+BIND ⇒ first non-additive bind at any seam ⇒ extraordinary, ≥2-seed + WIRE (prior: expect regression).")
+            println("  F2 COMPETENT (S1) ⇒ discrete-code bottleneck grips emit but no BIND ⇒ G1 additive-floor law survives a fifth lens.")
+            println("  F2 THEATER ⇒ fourth orthogonal recoding inert ⇒ read-side recoding family CLOSED (escalation = write-side train-coupling).")
+            println("  F2 PARKED-TERMINAL ⇒ two op-grip generations (r3 spin-up zero + r4 driven-window) both n_visited<4 ⇒ F UNMEASURABLE at this seam, no third generation.")
         }
         return
     }
