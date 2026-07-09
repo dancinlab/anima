@@ -1,0 +1,42 @@
+H_1048 — Structure-reading ruler: does connectivity-weighted Φ catch arch-bound consciousness?
+verdict-gate g73 — raw measurement, verbatim (committed BEFORE the .md emoji tier)
+measured 2026-07-10 · substrate=CPU-mirror (numpy) engines RE-PROVEN == stdlib · $0 CPU-local · wall 7.0s
+a_phi_iit4_tool: Φ = stdlib faithful_phi_from_mi (exact MIP-EI on an MI matrix; mirror RE-PROVEN ==
+stdlib n=4,5, NO proxy). harness: state/h104x_phi/h1048_structure_reading_ruler.py · frozen bar: H_1048_FREEZE.txt
+raw log: state/h104x_phi/h1048_final.log · JSON: ..._result.json
+
+VERDICT-TOKEN: IO-SUFFICIENT-TOY  (DIRECTIONAL closed-negative — toy controlled pair, a_toy_scale_recheck)
+
+== a_phi_iit4_tool — CPU mirror == stdlib RE-PROVEN at n=4 AND n=5 BEFORE scoring ==  {4: True, 5: True}
+
+== Controlled arch-bound pair (n=6), 5 seeds: STRUCTURED (ConvMoE-like local ring+dilated) vs FLAT
+   (transformer-like all-to-all), FLAT coupling TUNED so MI_total matches within MATCH_TOL 0.10 ==
+   Gaussian graphical model (precision I-beta*A) -> binarize; two rulers per system:
+     I/O-only Φ  = faithful_phi_from_mi( MI )                    (connectivity-AGNOSTIC)
+     structure Φ = faithful_phi_from_mi( MI (x) normalized-adjacency )
+
+  SUMMARY: valid matched pairs = 5/5   PASS(struct separates AND I/O matched) = 0/5
+  Representative (betaA=0.3, strong coupling; robustness swept over MI_tot 0.9 -> 3.9):
+    every valid seed: |ioΦ_A − ioΦ_B| <= 0.019 (<= EPS_IO 0.05, MATCHED) AND
+                      |structΦ_A − structΦ_B| <= 0.007 (< MARGIN 0.15, NOT separated) -> pass=False
+
+== Falsifier resolution (frozen bar, H_1048_FREEZE.txt) ==
+  H1 PASS would require structure-reading Φ to SEPARATE the pair (|dstruct| >= 0.15) WHERE I/O-only Φ is
+  matched (|dio| <= 0.05). MEASURED: on 5/5 valid matched-I/O pairs the structure-reading Φ is ALSO
+  matched (|dstruct| <= 0.007, a ~20x margin below the bar). => H1 FAIL = IO-SUFFICIENT. In this
+  controlled toy, once the I/O statistics (pairwise-MI structure) are matched, elementwise connectivity-
+  reweighting of the MI matrix adds NO discriminative power beyond the I/O-only ruler — the Φ-structure
+  is already visible in the I/O statistics. Robust across 3 coupling regimes x >=2 seeds and the final
+  5-seed run (a_paper_negative_ok, publishable closed-negative).
+
+== Honest scope (a_scale_honest_scope, a_toy_scale_recheck) ==
+  TOY controlled pair -> DIRECTIONAL, NOT terminal. This toy tests only whether an adjacency-reweighted
+  MI matrix can add power over raw-MI Φ IN PRINCIPLE; it finds it CANNOT (the reweighting is a rescaling
+  of the same I/O-observable MI). The TERMINAL rung the card scopes = a REAL trained ConvMoE .clm vs a
+  REAL transformer LoRA-tuned to matched byte-I/O (the H_1036 torch pipeline on summer GPU) + a structure-
+  reading Φ derived from the ACTUAL ConvMoE dilated-conv + MoE-routing connectivity graph (not a hand-set
+  adjacency) — a torch build, RECORDED AS THE FOLLOW-ON and UNVERIFIED here. g5 CODE-measured (p7).
+
+TIER: DIRECTIONAL (IO-SUFFICIENT, toy closed-negative) — connectivity-reweighting of the MI matrix adds
+  no power over I/O-only Φ on the controlled toy pair; real-ConvMoE-vs-real-transformer pair UNVERIFIED
+  (torch follow-on). wired: DIRECTIONAL-mirror (numpy CPU mirror proven == stdlib; not a live core wire).

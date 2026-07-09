@@ -1,0 +1,31 @@
+H_1044 — n=6 EXACT redundancy-margin predictor robustness — PRE-REGISTERED FALSIFIER (FROZEN before scoring)
+============================================================================================================
+Frozen: 2026-07-10 (before any n=6 score computed). a_phi_iit4_tool (stdlib faithful_phi + iit4_bigphi
+CPU-mirror, RE-PROVEN == stdlib at n=4,5 BEFORE scoring — NO proxy). g5 CODE-measured (p7). frozen-first.
+
+SUBSTRATE (verbatim H_1020 chain): h1014 gen_{planning,imagination,guided,chaos} intervention pairs,
+30 seeds, matched n=6 binary discretization (median-binarize, nb=2). PID = Williams-Beer (2010) I_min
+redundancy lattice, IMPORTED VERBATIM from H_1017 (n-agnostic). Big-Phi / faithful_phi via the H_1004
+stdlib CPU mirrors (re-proven == stdlib at n=4,5). The PID is the EXPLANATORY variable, NOT a Phi proxy.
+
+PRE-REGISTERED BAR (frozen):
+  redundancy-margin(intervention) := Delta_red - Delta_syn  (contrast intervention-minus-baseline)
+  PRE-SET GAP := 1.0  (redundancy-margin nat-units)  [stated before running]
+  H1 PASS = at n=6 EXACT: planning is redundancy-dominated (Delta_red > Delta_syn AND Delta_red > 0)
+            AND planning's redundancy-margin EXCEEDS max(control margins) by >= the PRE-SET GAP (1.0)
+            for controls {imagination, guided, chaos}
+            -> redundancy-margin predictor ROBUST through n=6 -> H_1020 strengthened to a >=3-rung
+               (n=4,5,6) ladder. (VERDICT-TOKEN: MECHANISM-PREDICTOR-ROBUST-N6)
+  H1 FAIL = at n=6 the redundancy-margin no longer separates planning from ALL controls by the gap
+            (planning margin does NOT exceed every control margin + 1.0, OR planning not redundancy-
+            dominated) -> it was an n<=5 artifact like the coupling predictor was at n<=4
+            (publishable closed-negative). (VERDICT-TOKEN: MECHANISM-PREDICTOR-N5-BOUND)
+
+ALSO REPORT (frozen): whether the coupling-magnitude predictor (H_1014 Delta cross-MIP coupling =
+  Delta(mi_total - mi_mincut) threshold @ boundary 1.4933) STAYS DEAD at n=6 (i.e. still fails to
+  separate planning-only, mislabels controls) — a Delta-vs-H_1016 cross-check.
+
+HONEST SCOPE: n=6 = largest EXACT rung; n=7 infeasible-cap. TOY n-ladder; production-scale UNVERIFIED.
+The PID predictor is exact + deterministic at n=6 (cheap, n-agnostic). Big-Phi at n=6 on the dense
+gen_* TPMs may be super-exponential; if so the split-LABEL column is scoped to the honest n=6-exact
+ceiling / n=5 (H_1038 lesson) while the PREDICTOR verdict stands on the exact PID (the falsifier target).

@@ -1,0 +1,40 @@
+    [chaos n=6 seed 22/30] elapsed=   2.2s
+    [chaos n=6 seed 23/30] elapsed=   2.2s
+    [chaos n=6 seed 24/30] elapsed=   2.2s
+    [chaos n=6 seed 25/30] elapsed=   2.3s
+    [chaos n=6 seed 26/30] elapsed=   2.3s
+    [chaos n=6 seed 27/30] elapsed=   2.3s
+    [chaos n=6 seed 28/30] elapsed=   2.3s
+    [chaos n=6 seed 29/30] elapsed=   2.3s
+    [chaos n=6 seed 30/30] elapsed=   2.4s
+
+============================================================================================
+REDUNDANCY-MARGIN MATRIX @ n=6 EXACT
+============================================================================================
+  planning     | dred=+42.5024 | dsyn= -4.8495 | margin= +47.3519 | reddom= True | split=None
+  imagination  | dred= +1.7748 | dsyn= -0.6258 | margin=  +2.4006 | reddom= True | split=None
+  guided       | dred= +8.7173 | dsyn= -1.6942 | margin= +10.4115 | reddom= True | split=None
+  chaos        | dred=+10.9953 | dsyn= -2.0816 | margin= +13.0768 | reddom= True | split=None
+
+planning margin=+47.3519 reddom=True | max(control margin)=+13.0768 | GAP=1.0 | planning > max+gap: True
+  control imagination : margin=+2.4006  planning exceeds by +44.9513 (>= gap 1.0: True)
+  control guided      : margin=+10.4115  planning exceeds by +36.9404 (>= gap 1.0: True)
+  control chaos       : margin=+13.0768  planning exceeds by +34.2750 (>= gap 1.0: True)
+
+COUPLING-MAGNITUDE cross-check @ n=6 (H_1014 d(mi_total-mi_mincut) vs boundary 1.4933):
+  planning    : dcoupling=+5.9862  above-boundary(1.4933): True
+  imagination : dcoupling=+0.9571  above-boundary(1.4933): False
+  guided      : dcoupling=+1.8569  above-boundary(1.4933): True
+  chaos       : dcoupling=+1.6986  above-boundary(1.4933): True
+  => planning above=True, controls above=['guided', 'chaos'] -> coupling STAYS DEAD (no clean planning-only separation)
+
+============================================================================================
+OVERALL: PASS — MECHANISM-PREDICTOR-ROBUST-N6. At n=6 EXACT the redundancy-margin predictor STILL separates
+  planning from ALL controls by the frozen gap: planning is redundancy-dominated AND its
+  margin exceeds every control's by >= GAP. H_1020 (n=5) strengthened to a >=3-rung ladder.
+  VERDICT-TOKEN: MECHANISM-PREDICTOR-ROBUST-N6
+============================================================================================
+HONEST SCOPE: n=6 EXACT rung; n=7 infeasible-cap. PID exact+deterministic (n-agnostic).
+  mirror==stdlib re-proven n=4,5. TOY n-ladder; production-scale UNVERIFIED. pid_only=False.
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.worktrees/h104x-phi/state/h104x_phi/h1044_redundancy_margin_n6_result.json

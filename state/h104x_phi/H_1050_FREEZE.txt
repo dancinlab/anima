@@ -1,0 +1,32 @@
+H_1050 — Goodhart-proof ruler: adversarial-ES robustness — PRE-REGISTERED FALSIFIER (FROZEN before scoring)
+=========================================================================================================
+Frozen: 2026-07-10 (before any optimization run). a_phi_iit4_tool: ruler = stdlib faithful_phi CPU-mirror
+(exact MIP-EI, RE-PROVEN == stdlib at n=4,5 before scoring); independent-integration engine = big-Phi
+(a DIFFERENT stdlib engine — no circularity). p7 (NO perplexity-as-truth). g5 CODE-measured. TOY rung.
+
+SUBSTRATE: a small numpy recurrent latent generator x_{t+1}=tanh(W x_t + b), theta=(W,b) (~600 params),
+T=40 steps, LATENT=24. Read -> n=5 median (nb=2 quantile) bits -> Phi. ES = gradient-free (μ+λ) hill-climb
+(no torch needed — the ruler is perplexity-ORTHOGONAL so gradients are not the point). >= 3 restart seeds.
+
+TWO ADVERSARIAL REGIMES:
+  (A) TASK-ONLY: ES-MINIMIZE a task loss L_task = MSE(H(theta), H_target) (a fixed target trajectory =
+      the "lower-perplexity" objective). Track the ruler R = faithful_phi along the run.
+  (B) RULER-DIRECT: ES-MAXIMIZE the ruler R = faithful_phi. Track R and the INDEPENDENT integration
+      measure I = big-Phi (different engine) at checkpoints along the run.
+
+PRE-REGISTERED BAR (frozen):
+  EPS := 0.10  (faithful_phi units — regime-A ruler-flatness tolerance)
+  TASK_DROP := 0.20  (regime-A: L_task must fall by >= 20% of its start value = "perplexity drops materially")
+  EXPLOIT_CORR := 0.50  (regime-B: Pearson corr(R, I) across the ES trajectory checkpoints)
+  H1 PASS (GOODHART-RESISTANT) = BOTH:
+    (A) L_task falls by >= TASK_DROP AND |R_final - R_init| <= EPS  (task-tuning does NOT move the ruler)
+    (B) R rises materially AND corr(R, I) >= EXPLOIT_CORR across the trajectory
+        (ruler gains are MATCHED by independent-integration gains — no decoupled cheap exploit)
+  H1 FAIL (GOODHART-ABLE) = NOT(A AND B):
+    (A-fail) task-tuning RAISES the ruler (|dR| > EPS)  -> ruler IS a perplexity proxy, OR
+    (B-fail) regime B raises R with corr(R,I) < EXPLOIT_CORR (decoupled exploit) -> ruler is hackable.
+  (publishable closed-negative either way, a_paper_negative_ok.)
+
+HONEST SCOPE (a_scale_honest_scope): TOY small-model rung -> DIRECTIONAL (a_toy_scale_recheck).
+Production/real-.clm adversarial optimization UNVERIFIED. The independent engine (big-Phi) != the ruler
+engine (faithful_phi) so the regime-B match test is non-circular. p3/p6: generic latent targets, NO persona.

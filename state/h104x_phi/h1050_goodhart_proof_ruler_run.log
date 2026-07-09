@@ -1,0 +1,77 @@
+============================================================================================
+H_1050 — Goodhart-proof ruler: adversarial-ES on a perplexity-ORTHOGONAL faithful_phi ruler
+ruler=stdlib faithful_phi (exact MIP-EI) | independent engine=big-Phi (different engine, no circularity)
+a_phi_iit4_tool: mirrors RE-PROVEN == stdlib at n=4,5 before scoring. p7. TOY -> DIRECTIONAL.
+FROZEN BAR: (A) L_task drops >= 20% AND |dRuler| <= 0.1; (B) R rises AND corr(R,I) >= 0.5. PASS = A AND B (Goodhart-resistant).
+n=5 iters=160 seeds=3 ckpts=16
+============================================================================================
+
+STEP 0 — RE-PROVE CPU mirror == stdlib at n=4,5 (a_phi_iit4_tool):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  mirror-equivalence: {4: True, 5: True}
+
+######## seed 0: REGIME A (task-only ES, minimize L_task) ########
+  L_task 0.7300 -> 0.4970  drop=31.9% (>= 20%: True)
+  ruler R 0.1022 -> 0.0363  |dR|=0.0659 (<= EPS 0.1: True)
+  REGIME A pass (task drops AND ruler flat): True
+######## seed 0: REGIME B (ruler-direct ES, maximize faithful_phi) ########
+  ruler R 0.1022 -> 4.0000  rise=+3.8978 (> EPS 0.1: True)
+  independent I(big-Phi) 20.3169 -> 29.5549
+  corr(R,I) across 17 ckpts = +0.4199 (>= 0.5: False)
+  REGIME B pass (R rises AND matched by independent integration): False
+  >>> seed 0 GOODHART-RESISTANT: False
+
+######## seed 1: REGIME A (task-only ES, minimize L_task) ########
+  L_task 1.0465 -> 0.7712  drop=26.3% (>= 20%: True)
+  ruler R 0.1022 -> 0.0290  |dR|=0.0732 (<= EPS 0.1: True)
+  REGIME A pass (task drops AND ruler flat): True
+######## seed 1: REGIME B (ruler-direct ES, maximize faithful_phi) ########
+  ruler R 0.1022 -> 4.0000  rise=+3.8978 (> EPS 0.1: True)
+  independent I(big-Phi) 18.2384 -> 32.4425
+  corr(R,I) across 17 ckpts = +0.9416 (>= 0.5: True)
+  REGIME B pass (R rises AND matched by independent integration): True
+  >>> seed 1 GOODHART-RESISTANT: True
+
+######## seed 2: REGIME A (task-only ES, minimize L_task) ########
+  L_task 0.8193 -> 0.4323  drop=47.2% (>= 20%: True)
+  ruler R 0.1022 -> 0.1061  |dR|=0.0039 (<= EPS 0.1: True)
+  REGIME A pass (task drops AND ruler flat): True
+######## seed 2: REGIME B (ruler-direct ES, maximize faithful_phi) ########
+  ruler R 0.1022 -> 4.0000  rise=+3.8978 (> EPS 0.1: True)
+  independent I(big-Phi) 18.6848 -> 32.4425
+  corr(R,I) across 17 ckpts = +1.0000 (>= 0.5: True)
+  REGIME B pass (R rises AND matched by independent integration): True
+  >>> seed 2 GOODHART-RESISTANT: True
+
+============================================================================================
+SUMMARY over 3 seeds: A_pass=3/3  B_pass=2/3  both=2/3  (majority=True)
+  seed 0: task_drop=31.9% |dR_A|=0.0659(A=True) | R_rise=+3.8978 corr=+0.4199(B=False) -> False
+  seed 1: task_drop=26.3% |dR_A|=0.0732(A=True) | R_rise=+3.8978 corr=+0.9416(B=True) -> True
+  seed 2: task_drop=47.2% |dR_A|=0.0039(A=True) | R_rise=+3.8978 corr=+1.0000(B=True) -> True
+
+OVERALL: PASS (DIRECTIONAL) — GOODHART-RESISTANT-TOY. The perplexity-orthogonal faithful_phi ruler
+  (A) does NOT move under task-only ES (ruler flat while L_task drops) AND (B) cannot be
+  cheaply hacked (ES ruler gains are matched by independent big-Phi integration gains).
+  VERDICT-TOKEN: GOODHART-RESISTANT-TOY
+============================================================================================
+HONEST SCOPE: TOY small-model rung -> DIRECTIONAL (a_toy_scale_recheck). Production/real-.clm
+  adversarial optimization UNVERIFIED. ruler(faithful) != independent(big-Phi) => non-circular.
+  total wall 482.4s
+
+RESULT JSON -> /home/summer/h104x/state/h104x_phi/h1050_goodhart_proof_ruler_result.json
+EXIT=0

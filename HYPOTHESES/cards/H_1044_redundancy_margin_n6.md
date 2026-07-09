@@ -31,4 +31,14 @@ n=6 = largest EXACT rung; n=7 infeasible-cap. Toy n-ladder; production-scale UNV
 H_1037 operational lessons (orphan-pod survival, inline-poll babysit, mandatory teardown).
 
 ## Verdict
-PENDING — tier added only AFTER `.verdicts/1044_redundancy_margin_n6/H_1044.txt` lands (g73).
+🟢 SUPPORTED-NUMERICAL — **MECHANISM-PREDICTOR-ROBUST-N6** (measured 2026-07-10, $0 CPU-local, mirror
+== stdlib re-proven n=4,5). At **n=6 EXACT** the Williams-Beer I_min redundancy-margin predictor SEPARATES
+planning (margin **+47.35**, redundancy-dominated) from ALL controls (max control **+13.08**) by far more
+than the frozen pre-set gap (1.0): planning exceeds imagination by +44.95, guided by +36.94, chaos by
++34.28. The coupling-MAGNITUDE predictor **STAYS DEAD** at n=6 (guided AND chaos also cross the H_1014
+boundary → no clean planning-only separation). H_1020 (n=5, margin +25.07) is thereby strengthened into a
+**≥3-rung (n=4,5,6) ladder**; the redundancy explanation is NOT an n≤5 artifact. The predictor is a pure
+PID function of the bits (EXACT + n-agnostic); the system big-Φ split-LABEL at n=6 on dense max-entropy
+TPMs is an honest INFEASIBLE-CAP (measured 350s/eval; H_1038 precedent) and is NOT part of the falsifier.
+TOY n-ladder; production-scale UNVERIFIED. wired: DIRECTIONAL-mirror (numpy CPU mirror proven == stdlib).
+Verdict file: `state/verdicts/1044_redundancy_margin_n6/H_1044.txt` · harness+result: `state/h104x_phi/`.

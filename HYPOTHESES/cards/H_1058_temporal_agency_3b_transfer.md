@@ -39,4 +39,11 @@ pending-tension degeneracy must be avoided at 3B too). g5 CODE-measured (p7). a_
 Lane G (GPU) rung — tag separately from any AKIDA Lane A.
 
 ## Verdict
-PENDING — tier added only AFTER `.verdicts/1058_temporal_agency_3b_transfer/H_1058.txt` lands (g73).
+⏳ BLOCKED-ON-CKPT (no tier cemented) — triaged 2026-07-10. Same missing-substrate blocker as H_1042: the
+3B ConvMoE engine rung (3.073B, d4096/L30/E30, `convmoe-3b-engine-rung`) **DOES NOT EXIST** (ARCHITECTURE
+not-yet-built `⏳ 3B/7B rung` node + fire-recipe only; `models[]`=1 model 374M; disk 303M-class only).
+veto-capacity additionally needs FIRED 3B decision traces (H_1056 degeneracy caveat), also gated on the
+absent 3B. "hw는 pool" does not conjure the ckpt; training it is a separate large fire, out of scope, NOT
+faked (a_engine_native_learning / a_scale_honest_scope). No PASS/FAIL. The agency-T axis science stands on
+toy (H_1051 GREEN) + real .kosmos anchors (H_1054 GREEN, T ⊥ chronological-t AND T ⊥ Φ). Reopen when a 3B
+ConvMoE is trained + registered. Verdict file: `state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt`.
