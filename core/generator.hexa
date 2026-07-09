@@ -98,13 +98,10 @@ pub fn gen_null_backend() -> Map {
 // absent file is rejected with an honest reason; a structurally-valid .clm is
 // recognized and its block count surfaced. `valid` = magic+structure verified.
 //
-// HONEST scope of `loaded`: header VALIDATION is real and live here. Weight
-// DECODE (int4 dequant + conv forward) is a distinct follow-on backend — until
-// that decoder lands, `loaded` stays false EVEN for a valid file, so generate()
-// falls THROUGH to the null backend rather than emitting un-decoded garbage. The
-// gap is now precise: the .clm is admitted + validated CORE-side; only the
-// decode forward remains. When that lands, set loaded = valid (one line) — the
-// generate() contract and brain.hexa wiring do not change.
+// HONEST scope of `loaded`: header VALIDATION + weight DECODE (int4 dequant + conv
+// forward, clm_decode_ce) are BOTH live here — the decoder landed, so `loaded = valid`
+// (below): a header-valid .clm now LOADS and generate() emits the model's own bytes.
+// The generate() contract and brain.hexa wiring are unchanged.
 pub fn gen_clm_backend(ckpt_path: string) -> Map {
     let probe = _gen_clm_probe_header(ckpt_path)
     let exists = to_string(probe["exists"]) == "true"

@@ -676,8 +676,8 @@ def eval_rho_axon(ckpt, corpus_paths, gen):
     layer (cli/rho_axon.py; G0-G6 → ρ-AXON, design SSOT state/rho_axon_measurement/). Reuses
     the SAME engine decode (_Mouth.ideate) + g6 detectors the G-battery uses (no side-harness),
     so its tier is identical (engine-native py channel `anima-py evaluate` = TERMINAL). HILLOCK + ρ·form/fan/leap are
-    live; ρ·store/weave/tether/self report PENDING (honest non-verdict) until their frozen
-    corpus-mined probe sets land (ING rho-axon-implement-evaluate)."""
+    live; ρ·store/tether/self emit live PASS/FAIL via frozen hand-curated probe sets (corpus-mined
+    sets = follow-on); only ρ·weave reports PENDING (its held-out atom-pair set = the in-flight G1-recombination experiment)."""
     import rho_axon
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()

@@ -109,8 +109,8 @@ def _is_hangul_cp(cp):
 #   at 0.20: 80.0% real ko clears (>=gate), 99.74% garble fails (<gate).
 # Derivation: state/frontier_round2_scout/kwrko_gate_derive.py (seed 4302, $0 corpus stats).
 # Pre-registration: state/frontier_round2_scout/KWRKO_GATE_prereg.md.
-# ⚠️ 구현됨·미배선 — NOT yet consumed by any scoring path (that is H_9212 ③ per-cell
-# dispatch). ko FALS is SCOPE-EXCLUDED until this gate is applied by ③. en 0.70 is UNCHANGED.
+# 🟢 WIRED (H_9212 ③ code-live): consumed by cli/evaluate.py::_build_cell_dets (ko cells
+# dispatch kwr_ko + KWR_KO_GATE). ⑦ pool measurement pending. en 0.70 UNCHANGED.
 KWR_KO_GATE = 0.20
 
 
@@ -157,10 +157,10 @@ def _rho_fan_words_uni(s):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# ── H_9212 ② 4-cell register concept sets + ko known-word proxy (ADDITIVE · UNWIRED) ──
-# 구현됨·미배선: defines the 4 register cells (a_chat_registers: ko/en × general/sns) and a
-# FROZEN ko josa/function-word KNOWN-WORD proxy. NOT wired into the scored reach panel yet —
-# the per-cell dispatch (③) is gated on ④ KWR_KO_GATE (frozen-first · no tune-to-green).
+# ── H_9212 ② 4-cell register concept sets + ko known-word proxy (ADDITIVE · 🟢 WIRED ③) ──
+# 🟢 WIRED (H_9212 ③ code-live): the 4 register cells (a_chat_registers: ko/en × general/sns)
+# + FROZEN ko josa/function-word KNOWN-WORD proxy are consumed by cli/evaluate.py per-cell
+# dispatch (③), gated on ④ KWR_KO_GATE (frozen-first · no tune-to-green). ⑦ pool pending.
 # en path stays BYTE-UNTOUCHED: _rho_fan_cells()["en_general"] IS _rho_fan_concepts() verbatim,
 # and en cells tokenize with the frozen _rho_fan_words; only ko cells use the codepoint-aware
 # superset _rho_fan_words_uni. Follow-on = ③ per-cell dispatch in cli/evaluate.py::eval_rho_axon
