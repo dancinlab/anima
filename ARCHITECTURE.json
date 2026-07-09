@@ -14564,6 +14564,13 @@
         "value": "py 2-production mirror가 hexa BYTE-NATIVE 문자열(raw 바이트 순회/read/write)을 미러할 때, surrogateescape로 디코드해 임의 바이트를 담은 str을 다시 바이트로 내보내는 모든 지점 — .encode('utf-8') AND 파일 open()/write/read — 은 반드시 errors='surrogateescape'. strict는 real byte-LM non-utf8 디코드 바이트(surrogate str)서 UnicodeEncodeError 크래시. hexa byte-native라 무크래시=py만 발산. P6 QA 2라운드 적발: ①.encode 6사이트(immune_embed_key 583·DIM16 1099·_cls_coin 1245/6·kosmos _ki_str_gt 459/60 #3252) ②파일 I/O 2사이트(kosmos_io create_anchor write:167 + load_anchors read:366 — g_text emit persist가 surrogate 담아 f.write strict 크래시). surrogateescape=valid utf-8엔 byte-identical(무회귀)·surrogate엔 원바이트 round-trip=hexa 바이트 동일. **레슨: .encode만 잡으면 불완전 — 파일 write/read도 같은 클래스.**",
         "threshold": "재발조건: py twin이 디코드된 model 출력(g_text·grounded mouth)을 재인코드(.encode) 또는 파일 write/read 할 때 strict utf-8. null-backend(clean ASCII)선 안 터지고 real-decode(toy bytegpt/303M)선 크래시 — QA는 real-decodable ckpt로. 해결=str→bytes 재변환(encode+파일I/O) 전수 surrogateescape. 신규 core/*.py twin 리뷰: grep '.encode(\"utf-8\")' strict + open(...'w'/'r') without errors=.",
         "source": "core/engine_cli.py"
+      },
+      {
+        "id": "chat-py-1",
+        "state": "pos-conv",
+        "value": "py 2-production twin이 anima 기본 런타임 — chat·evaluate·measurement의 DEFAULT 경로는 pip anima-py(numpy), hexa anima는 byte-parity secondary. hexa .hexa 데몬 바이너리 링크/GPU forge_dispatch 심볼이 pool 경합(load↑)·no-GPU host로 막혀도 인프라 벽 아님(redundant 2nd surface)이고 py가 같은 엔진을 커버하므로 default-py로 진행하고 막힌 hexa surface는 moot 처리(session-eval-py-only·a_eval_py_canonical).",
+        "threshold": "재발: 서브에이전트/내가 hexa 데몬 링크·컴파일 미완(pool 경합·심볼부재)을 인프라 벽으로 보고하고 그걸 고치려(mini hexa 업데이트·upstream-fix) 함. 해결: py twin이 커버하면 벽 아님 — anima-py로 default 진행, mini hexa 업데이트 불필요. 진짜 hexa-lang 코드결함(CPU fallback 미배선 등)일 때만 upstream-fix.",
+        "source": "cli/chat.py"
       }
     ]
   }
