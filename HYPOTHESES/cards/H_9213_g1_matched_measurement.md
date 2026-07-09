@@ -1,4 +1,4 @@
-# H_6189 — matched-surface + window-resident G1 재측정 (canonical G1=0 이 측정 artifact인가?)
+# H_9213 (구 H_6189 matched-measurement) — matched-surface + window-resident G1 재측정 (canonical G1=0 이 측정 artifact인가?)
 
 **tier**: ⚙️ VOID (frozen validity gate) · 방향성 🔴 KILL-lean (measurement-artifact 가설 방향성 반증)
 
