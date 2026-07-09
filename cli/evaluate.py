@@ -1299,11 +1299,25 @@ def main(argv):
     # fd 1 it dies on BrokenPipe mid-battery. Redirecting our stdout to a file means fd 1
     # stays silent → the child survives the pipe close, finishes the full G0-G6 battery,
     # and the launcher cats <f> in a SECOND fresh exec (fast, well under the limit).
+    # byte-faithful stdout: a real ckpt's greedy decode can emit non-utf8 bytes (held as
+    # surrogateescape str), so any raw-continuation dump (--probe/--dump-hidden) prints a
+    # surrogate-bearing str. A strict stdout would UnicodeEncodeError-crash mid-battery →
+    # a spurious infra failure on the TERMINAL verdict path. Mirror hexa's byte-native
+    # stdout by tolerating surrogates (clean text is byte-identical). convergence engine-cli-py-1.
     if "--result-file" in argv:
         i = argv.index("--result-file")
         f = argv[i + 1]
         argv = argv[:i] + argv[i + 2:]
-        sys.stdout = open(f, "w", buffering=1)
+        sys.stdout = open(f, "w", buffering=1, encoding="utf-8", errors="surrogateescape")
+    else:
+        try:
+            sys.stdout.reconfigure(errors="surrogateescape")
+        except (AttributeError, ValueError):
+            pass
+    try:
+        sys.stderr.reconfigure(errors="surrogateescape")
+    except (AttributeError, ValueError):
+        pass
     # H_9200 ρ-AXON — reach-layer panel (G0-G6 → ρ-AXON, cli/rho_axon.py). Strip + set
     # the process-global so evaluate_run renders the ρ-AXON panel instead of G0-G6.
     global _RHO_AXON
