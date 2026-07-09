@@ -9551,6 +9551,661 @@ def _p(k, v):
         print("%s=%s" % (k, v))
 
 
+# ════════════════════════════════════════════════════════════════════════
+# ── P3 chat-critical symbols (py twin of engine_cli.hexa) ──
+# Byte-exact port of the ~26 chat-critical faculties the consciousness
+# session loop needs but that were missing from this py mirror. Same
+# arithmetic / accumulation order / branch structure; hexa `to_float`→float,
+# `to_int`→int, `sqrt`→_sqrt, `sin`→_sin, `cos`→_cos, `log2`→_math.log2,
+# `ln`→_ln. hexa `_cos` (cosine-sim) is already ported as `_cos_vec`.
+# Reproduced bug-for-bug (parity over accuracy · PARITY.md precedent).
+# ════════════════════════════════════════════════════════════════════════
+
+_log2 = _math.log2
+
+
+# ── conflict scalars (engine_cli.hexa:8600) ──
+def conflict_scalar(a_drive, g_drive):
+    """engine_cli.hexa:8600 — both-strong competition gate (→0 same-sign / weak engine)."""
+    if a_drive * g_drive >= 0.0:
+        return 0.0
+    am = _ci_abs(a_drive)
+    gm = _ci_abs(g_drive)
+    return _ci_clip01(am * gm)
+
+
+def conflict_net_tension(a_drive, g_drive):
+    """engine_cli.hexa:8611 — |a+g| net pull magnitude."""
+    return _ci_abs(a_drive + g_drive)
+
+
+def conflict_recruited_depth(conflict, base_budget, max_extra):
+    """engine_cli.hexa:8620 — conflict → extra deliberation budget."""
+    extra = int(_ci_clip01(conflict) * float(max_extra) + 0.5)
+    return base_budget + extra
+
+
+# ── tension_resolve family (engine_cli.hexa:11299) ──
+def tr_psi(pop, thr):
+    """engine_cli.hexa:11299 — Ψ = fraction of the population over the emit threshold."""
+    nt = len(pop)
+    if nt == 0:
+        return 0.0
+    emit = 0
+    t = 0
+    while t < nt:
+        if ci_emit_drive(pop[t]) >= thr:
+            emit = emit + 1
+        t = t + 1
+    return float(emit) / float(nt)
+
+
+def _tr_absdev(psi, thr):
+    """engine_cli.hexa:11312 — |psi - thr|."""
+    if psi - thr >= 0.0:
+        return psi - thr
+    return thr - psi
+
+
+def _spr_sig(pop):
+    """engine_cli.hexa:11364 — mean of the isolated content lane (index 7)."""
+    nt = len(pop)
+    if nt == 0:
+        return 0.0
+    s = 0.0
+    t = 0
+    while t < nt:
+        s = s + pop[t][7]
+        t = t + 1
+    return s / float(nt)
+
+
+def tension_resolve_depth(x, adj, alpha, thr, maxdepth, op, eps, cfg):
+    """engine_cli.hexa:11317 — settle-depth of the conflicted population under topo coupling."""
+    pop = x
+    settle_depth = 0.0 - 1.0
+    psi = tr_psi(pop, thr)
+    if _tr_absdev(psi, thr) < eps:
+        settle_depth = 0.0
+    d = 1
+    while d <= maxdepth:
+        if cfg.topo_couple:
+            pop = topo_apply_op(pop, adj, alpha, op)
+        psi = tr_psi(pop, thr)
+        if settle_depth < 0.0 and _tr_absdev(psi, thr) < eps:
+            settle_depth = float(d)
+        d = d + 1
+    return [settle_depth, psi]
+
+
+def tension_resolve_interruptible(x, adj, alpha, thr, maxdepth, op, eps, salience_at, salience_pop, cfg):
+    """engine_cli.hexa:11373 — phasic-salience reset (LC-NE attention capture) during settle."""
+    pop = x
+    rerouted = False
+    settle_depth = 0.0 - 1.0
+    psi = tr_psi(pop, thr)
+    if _tr_absdev(psi, thr) < eps:
+        settle_depth = 0.0
+    d = 1
+    while d <= maxdepth:
+        if (not rerouted) and salience_at >= 1 and d == salience_at:
+            pop = salience_pop
+            rerouted = True
+            settle_depth = 0.0 - 1.0
+            psi = tr_psi(pop, thr)
+            if _tr_absdev(psi, thr) < eps:
+                settle_depth = float(d)
+        if cfg.topo_couple:
+            pop = topo_apply_op(pop, adj, alpha, op)
+        psi = tr_psi(pop, thr)
+        if settle_depth < 0.0 and _tr_absdev(psi, thr) < eps:
+            settle_depth = float(d)
+        d = d + 1
+    sig = _spr_sig(pop)
+    rf = 0.0
+    if rerouted:
+        rf = 1.0
+    return [settle_depth, psi, sig, rf]
+
+
+# ── referent selection (engine_cli.hexa:2686) ──
+def referent_select(mem, cand_keys, true_ref):
+    """engine_cli.hexa:2686 — first candidate with zero contradiction, else -1."""
+    n = len(cand_keys)
+    i = 0
+    while i < n:
+        f = affect_substrate_features(mem, cand_keys[i], true_ref)
+        if f.contradiction == 0.0:
+            return i
+        i = i + 1
+    return -1
+
+
+def referent_select_text(mem, cands, true_ref):
+    """engine_cli.hexa:2700 — text-candidate referent select (embed then select)."""
+    keys = []
+    i = 0
+    while i < len(cands):
+        keys.append(immune_embed_key(cands[i]))
+        i = i + 1
+    return referent_select(mem, keys, true_ref)
+
+
+# ── drive arbitration (engine_cli.hexa:1704) ──
+def drive_arbitrate(drives, hyst, prev_winner):
+    """engine_cli.hexa:1704 — WTA over drives with basal-ganglia hysteresis hold."""
+    n = len(drives)
+    if n == 0:
+        return -1
+    best = 0
+    bestv = drives[0]
+    i = 1
+    while i < n:
+        if drives[i] > bestv:
+            bestv = drives[i]
+            best = i
+        i = i + 1
+    if prev_winner >= 0 and prev_winner < n:
+        incv = drives[prev_winner]
+        if bestv - incv <= hyst:
+            return prev_winner
+    return best
+
+
+# ── faculty cascade (engine_cli.hexa:1629) ──
+def faculty_cascade(mem_a, mem_b, q_key):
+    """engine_cli.hexa:1629 — 2-hop recall chain q->x->y, ABSTAIN ("") propagates."""
+    x = immune_memory_recall(mem_a, q_key)
+    if x == "":
+        return ""
+    x_key = immune_embed_key(x)
+    return immune_memory_recall(mem_b, x_key)
+
+
+# ── event segmentation (engine_cli.hexa:1654) ──
+def event_segment_boundaries(surprise_seq, thr):
+    """engine_cli.hexa:1654 — surprise-peak boundaries (item 0 always opens event 0)."""
+    n = len(surprise_seq)
+    out = []
+    if n == 0:
+        return out
+    out = out + [0]
+    i = 1
+    while i < n:
+        s = surprise_seq[i]
+        if s > thr:
+            left_ok = s >= surprise_seq[i - 1]
+            right_ok = True
+            if i + 1 < n:
+                right_ok = s > surprise_seq[i + 1]
+            if left_ok and right_ok:
+                out = out + [i]
+        i = i + 1
+    return out
+
+
+def event_segment_starts_fixed(n, chunk):
+    """engine_cli.hexa:1676 — fixed-chunk segment starts."""
+    out = []
+    if n <= 0:
+        return out
+    if chunk <= 0:
+        return out
+    i = 0
+    while i < n:
+        out = out + [i]
+        i = i + chunk
+    return out
+
+
+# ── anticipatory prefetch (engine_cli.hexa:4589) ──
+def _prefetch_unit(v):
+    """engine_cli.hexa:4607 — L2-normalize (zero-safe passthrough)."""
+    n = len(v)
+    s = 0.0
+    i = 0
+    while i < n:
+        s = s + v[i] * v[i]
+        i = i + 1
+    nrm = _sqrt(s)
+    if nrm <= 0.0:
+        return v
+    out = []
+    j = 0
+    while j < n:
+        out = out + [v[j] / nrm]
+        j = j + 1
+    return out
+
+
+def anticipatory_prefetch(ff, mem, ctx):
+    """engine_cli.hexa:4589 — graded readiness of the forward-predicted next query."""
+    pred = vforward_predict(ff, ctx)
+    key = _prefetch_unit(pred)
+    return immune_memory_recall_margin(mem, key)
+
+
+def anticipatory_prefetch_value(ff, mem, ctx):
+    """engine_cli.hexa:4598 — recalled value of the forward-predicted next query."""
+    pred = vforward_predict(ff, ctx)
+    key = _prefetch_unit(pred)
+    return immune_memory_recall(mem, key)
+
+
+# ── stochastic-resonance channel MI (engine_cli.hexa:10736) ──
+def _sr_mi_bits(xs, ys):
+    """engine_cli.hexa:10736 — 2x2 mutual information in bits."""
+    T = len(xs)
+    if T == 0:
+        return 0.0
+    n00 = 0.0
+    n01 = 0.0
+    n10 = 0.0
+    n11 = 0.0
+    i = 0
+    while i < T:
+        if xs[i] == 0:
+            if ys[i] == 0:
+                n00 = n00 + 1.0
+            else:
+                n01 = n01 + 1.0
+        else:
+            if ys[i] == 0:
+                n10 = n10 + 1.0
+            else:
+                n11 = n11 + 1.0
+        i = i + 1
+    tf = float(T)
+    px0 = (n00 + n01) / tf
+    px1 = (n10 + n11) / tf
+    py0 = (n00 + n10) / tf
+    py1 = (n01 + n11) / tf
+    mi = 0.0
+    if n00 > 0.0:
+        p = n00 / tf
+        mi = mi + p * _log2(p / (px0 * py0))
+    if n01 > 0.0:
+        p = n01 / tf
+        mi = mi + p * _log2(p / (px0 * py1))
+    if n10 > 0.0:
+        p = n10 / tf
+        mi = mi + p * _log2(p / (px1 * py0))
+    if n11 > 0.0:
+        p = n11 / tf
+        mi = mi + p * _log2(p / (px1 * py1))
+    return mi
+
+
+def sr_channel_mi(amp, thr, sigma, period, T, mode, shuffle, seed):
+    """engine_cli.hexa:10761 — MI(input, emit) over a noisy sub-threshold sine channel."""
+    two_pi = 6.283185307179586
+    ethr = 0.0 if mode == 1 else thr
+    xs = []
+    ys = []
+    st = seed & 2147483647
+    t = 0
+    while t < T:
+        sig = amp * _sin(two_pi * float(t) / float(period))
+        g = _lcg_gauss(st)
+        noise = sigma * g[0]
+        st = int(g[1]) & 2147483647
+        x = 1 if sig >= 0.0 else 0
+        y = 1 if (sig + noise) >= ethr else 0
+        xs = xs + [x]
+        ys = ys + [y]
+        t = t + 1
+    if shuffle == 1:
+        sh = (seed ^ 305419896) & 2147483647
+        i = T - 1
+        while i > 0:
+            sh = _lcg_next(sh)
+            j = sh % (i + 1)
+            tmp = xs[i]
+            xs[i] = xs[j]
+            xs[j] = tmp
+            i = i - 1
+    return _sr_mi_bits(xs, ys)
+
+
+# ── forward-model prefix decodability (engine_cli.hexa:411) ──
+def fm_prefix_decodability(margins, decay):
+    """engine_cli.hexa:411 — geometrically-decayed sum of prefix margins."""
+    n = len(margins)
+    acc = 0.0
+    w = 1.0
+    i = 0
+    while i < n:
+        acc = acc + w * margins[i]
+        w = w * decay
+        i = i + 1
+    return acc
+
+
+# ── CLI flag resolvers (engine_cli.hexa:265/365) ──
+def _cli_refsel_flag(arg):
+    """engine_cli.hexa:276 — parse --refsel / --no-refsel / --refsel=<v>."""
+    n = len(arg)
+    i = 0
+    while i < n:
+        a = arg[i]
+        if a == "--no-refsel":
+            return "off"
+        if a == "--refsel":
+            if i + 1 < n:
+                v = _norm_onoff(arg[i + 1])
+                if v != "":
+                    return v
+        if a.startswith("--refsel="):
+            v = _norm_onoff(_after_eq(a))
+            if v != "":
+                return v
+        i = i + 1
+    return ""
+
+
+def engine_cli_resolve_refsel(arg):
+    """engine_cli.hexa:265 — refsel flag > env > default OFF."""
+    flag = _cli_refsel_flag(arg)
+    if flag == "on":
+        return True
+    if flag == "off":
+        return False
+    env = _norm_onoff(_env_read("ANIMA_REFSEL"))
+    if env == "on":
+        return True
+    if env == "off":
+        return False
+    return False
+
+
+def _cli_forward_model_flag(arg):
+    """engine_cli.hexa:376 — parse --forward-model / --no-forward-model / --forward-model=<v>."""
+    n = len(arg)
+    i = 0
+    while i < n:
+        a = arg[i]
+        if a == "--no-forward-model":
+            return "off"
+        if a == "--forward-model":
+            if i + 1 < n:
+                v = _norm_onoff(arg[i + 1])
+                if v != "":
+                    return v
+        if a.startswith("--forward-model="):
+            v = _norm_onoff(_after_eq(a))
+            if v != "":
+                return v
+        i = i + 1
+    return ""
+
+
+def engine_cli_resolve_forward_model(arg):
+    """engine_cli.hexa:365 — forward-model flag > env > default OFF."""
+    flag = _cli_forward_model_flag(arg)
+    if flag == "on":
+        return True
+    if flag == "off":
+        return False
+    env = _norm_onoff(_env_read("ANIMA_FORWARD_MODEL"))
+    if env == "on":
+        return True
+    if env == "off":
+        return False
+    return False
+
+
+# ── self-chain extras (engine_cli.hexa:8670+) ──
+def _sc_conf_clamp(a):
+    """engine_cli.hexa:8870 — clamp confluence alpha to [0, 0.5]."""
+    if a <= 0.0:
+        return 0.0
+    if a >= 0.5:
+        return 0.5
+    return a
+
+
+def self_drift_exp(s, content_axis, step):
+    """engine_cli.hexa:8678 — experience-driven self drift along the expressed content axis."""
+    ax = content_axis - (content_axis // s.dim) * s.dim
+    v2 = []
+    i = 0
+    while i < s.dim:
+        if i == ax:
+            v2 = v2 + [s.v[i] + step]
+        else:
+            v2 = v2 + [s.v[i]]
+        i = i + 1
+    return SelfIdentity(_self_norm(v2, s.dim), s.dim)
+
+
+def self_from_vec(v, dim):
+    """engine_cli.hexa:8711 — build a normalized SelfIdentity from a raw vector."""
+    return SelfIdentity(_self_norm(v, dim), dim)
+
+
+def self_chain_confluence(w_natural, dream, alpha):
+    """engine_cli.hexa:8875 — bounded pull of the morning self toward the unit dream direction."""
+    a = _sc_conf_clamp(alpha)
+    if a <= 0.0:
+        return SelfIdentity(w_natural.v, w_natural.dim)
+    dn = _self_norm(dream, w_natural.dim)
+    v2 = []
+    i = 0
+    while i < w_natural.dim:
+        v2 = v2 + [(1.0 - a) * w_natural.v[i] + a * dn[i]]
+        i = i + 1
+    return SelfIdentity(_self_norm(v2, w_natural.dim), w_natural.dim)
+
+
+def self_chain_bend(w_natural, w_bent):
+    """engine_cli.hexa:8890 — F1 bend magnitude = 1 - cos(w_natural, w_bent)."""
+    return 1.0 - self_cos(w_natural, w_bent)
+
+
+def self_chain_dream_gain(w_natural, w_bent, dream_unit):
+    """engine_cli.hexa:8898 — F3 growth-dir gain toward the unit dream centroid."""
+    dn = SelfIdentity(dream_unit, w_natural.dim)
+    return self_cos(w_bent, dn) - self_cos(w_natural, dn)
+
+
+def self_chain_unit_of(v, dim):
+    """engine_cli.hexa:8904 — normalize a raw vector to a unit direction."""
+    return _self_norm(v, dim)
+
+
+# ── other-identity chain (engine_cli.hexa:8925 · model-of-you) ──
+class OtherIdentity:
+    __slots__ = ("v", "dim")
+
+    def __init__(self, v, dim):
+        self.v = v
+        self.dim = dim
+
+
+class OtherChain:
+    __slots__ = ("flat", "count", "dim")
+
+    def __init__(self, flat, count, dim):
+        self.flat = flat
+        self.count = count
+        self.dim = dim
+
+
+def other_new(dim, axis):
+    """engine_cli.hexa:8937 — fresh interlocutor model = unit vector along `axis`."""
+    v = []
+    i = 0
+    while i < dim:
+        if i == axis:
+            v = v + [1.0]
+        else:
+            v = v + [0.0]
+        i = i + 1
+    return OtherIdentity(v, dim)
+
+
+def other_drift(o, tick, step):
+    """engine_cli.hexa:8946 — content-blind drift along (tick+1)%dim, renormalized."""
+    t1 = tick + 1
+    ax = t1 - (t1 // o.dim) * o.dim
+    v2 = []
+    i = 0
+    while i < o.dim:
+        if i == ax:
+            v2 = v2 + [o.v[i] + step]
+        else:
+            v2 = v2 + [o.v[i]]
+        i = i + 1
+    return OtherIdentity(_self_norm(v2, o.dim), o.dim)
+
+
+def other_drift_exp(o, content_axis, step):
+    """engine_cli.hexa:8961 — experience-driven drift toward the expressed content axis."""
+    ax = content_axis - (content_axis // o.dim) * o.dim
+    v2 = []
+    i = 0
+    while i < o.dim:
+        if i == ax:
+            v2 = v2 + [o.v[i] + step]
+        else:
+            v2 = v2 + [o.v[i]]
+        i = i + 1
+    return OtherIdentity(_self_norm(v2, o.dim), o.dim)
+
+
+def other_cos(a, b):
+    """engine_cli.hexa:8974 — interlocutor recognition cosine (unit-norm dot)."""
+    sdot = 0.0
+    i = 0
+    while i < a.dim:
+        sdot = sdot + a.v[i] * b.v[i]
+        i = i + 1
+    return sdot
+
+
+def other_anchor(o):
+    """engine_cli.hexa:8982 — persist a copy of the model-of-you."""
+    return OtherIdentity(o.v, o.dim)
+
+
+def other_component(o, i):
+    """engine_cli.hexa:8988 — read accessor v[i]."""
+    return o.v[i]
+
+
+def other_dim(o):
+    """engine_cli.hexa:8989 — read accessor dim."""
+    return o.dim
+
+
+def other_reset(dim, axis):
+    """engine_cli.hexa:8992 — new blank interlocutor (continuity break)."""
+    return other_new(dim, axis)
+
+
+def other_chain_new(o):
+    """engine_cli.hexa:8997 — start the interlocutor trajectory with the seed as w0."""
+    f = []
+    i = 0
+    while i < o.dim:
+        f = f + [o.v[i]]
+        i = i + 1
+    return OtherChain(f, 1, o.dim)
+
+
+def other_chain_append(c, o):
+    """engine_cli.hexa:9006 — append an anchor waypoint to the flat payload."""
+    f = []
+    i = 0
+    while i < c.count * c.dim:
+        f = f + [c.flat[i]]
+        i = i + 1
+    j = 0
+    while j < c.dim:
+        f = f + [o.v[j]]
+        j = j + 1
+    return OtherChain(f, c.count + 1, c.dim)
+
+
+def _other_wp(c, k):
+    """engine_cli.hexa:9016 — read waypoint k back as an OtherIdentity."""
+    v = []
+    base = k * c.dim
+    i = 0
+    while i < c.dim:
+        v = v + [c.flat[base + i]]
+        i = i + 1
+    return OtherIdentity(v, c.dim)
+
+
+def other_chain_len(c):
+    """engine_cli.hexa:9024 — number of waypoints."""
+    return c.count
+
+
+def other_chain_latest(c):
+    """engine_cli.hexa:9027 — newest waypoint wK."""
+    return _other_wp(c, c.count - 1)
+
+
+def other_chain_component(c, i):
+    """engine_cli.hexa:9031 — flat payload accessor."""
+    return c.flat[i]
+
+
+def other_chain_dim(c):
+    """engine_cli.hexa:9032 — chain dim."""
+    return c.dim
+
+
+def other_chain_count(c):
+    """engine_cli.hexa:9033 — chain waypoint count."""
+    return c.count
+
+
+def other_chain_from_flat(flat, count, dim):
+    """engine_cli.hexa:9036 — rebuild a chain from a persisted flat payload."""
+    return OtherChain(flat, count, dim)
+
+
+def other_chain_fit(cand, c):
+    """engine_cli.hexa:9047 — trend-consistency of `cand` with the trajectory (0 for count<3)."""
+    if c.count < 3:
+        return 0.0
+    wK = _other_wp(c, c.count - 1)
+    wKm1 = _other_wp(c, c.count - 2)
+    wKm2 = _other_wp(c, c.count - 3)
+    dlast = []
+    dprev = []
+    i = 0
+    while i < c.dim:
+        dlast = dlast + [wK.v[i] - wKm1.v[i]]
+        dprev = dprev + [wKm1.v[i] - wKm2.v[i]]
+        i = i + 1
+    aK = _argmax_abs(dlast, c.dim)
+    aKm1 = _argmax_abs(dprev, c.dim)
+    a_pred = _wrap(aK + (aK - aKm1), c.dim)
+    r = []
+    mag = 0.0
+    j = 0
+    while j < c.dim:
+        e = cand.v[j] - wK.v[j]
+        r = r + [e]
+        mag = mag + e * e
+        j = j + 1
+    if mag <= 0.0:
+        return 0.0
+    m = _sqrt(mag)
+    return r[a_pred] / m
+
+
+def other_chain_retro_cos(c, j):
+    """engine_cli.hexa:9080 — retrodiction cos(wK, w_{K-j})."""
+    wK = _other_wp(c, c.count - 1)
+    wj = _other_wp(c, c.count - 1 - j)
+    return other_cos(wK, wj)
+
+
 if __name__ == "__main__":
     # ── CLI resolvers (precedence) ──
     _p("mit_default", engine_cli_resolve_mitosis([]))
