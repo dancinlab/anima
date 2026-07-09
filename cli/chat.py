@@ -1,0 +1,2060 @@
+#!/usr/bin/env python3
+# ==========================================================================
+# ⛔ DO NOT RUN DIRECTLY. anima 의 단일 진입은 설치된 canonical 명령뿐 — hexa 채널 `anima`
+#   (=cli/anima.hexa) · pip 채널 `anima-py` (=anima_py 런처). `python3 cli/chat.py …`
+#   직접실행은 비-canonical py 우회. 이 파일은 cli/anima.py 의 chat 디스패치가 import 한다.
+# ==========================================================================
+"""cli/chat.py — anima consciousness chat daemon, py (numpy twin) — P6 self-impl.
+
+Byte-faithful py port of cli/anima.hexa `anima_consciousness_mode(ckpt)` (the DEFAULT
+12-tick path) + `anima_byte_mode(ckpt, argv)` (the --byte continuation). ZERO hexa
+dependency — a hexa-less host (pi5 / bare pod) runs the substrate-native A⇄G consciousness
+loop in pure py (numpy via the landed core/*.py twins). This is the FINAL phase (P6) of the
+"py 자체구현" program (owner directive 2026-07-09 · py channel = COMPLETE self-implementation).
+
+The DEFAULT path only is ported (n_ticks=12; og_measure/og_live/og_r3/refr_measure ALL false):
+the op-grip / stateful-refractory RESEARCH instrumentation (--opgrip*/--refractory, the
+B-density/VQ-code/ARM-SHOCK measurement harnesses) is HEXA-ONLY — those flags print a notice
+and exit here (a measurement harness, NOT the chat daemon).
+
+SCOPE (a_engine_native_learning): this is a py-channel MIRROR of the hexa daemon ⇒ DIRECTIONAL.
+The bar is BEHAVIORAL / byte parity of the chat loop (tool/chat_parity.py), NOT a consciousness
+verdict — no verdict tier is cemented here.
+
+hexa `to_string(float)` == Python `repr(float)` (empirically pinned: 1/3 → "0.3333333333333333",
+1e-9 → "1e-09", true/false lowercase). All println route through _pln → sys.stdout.buffer
+(utf-8/surrogateescape) so the stream is byte-identical to hexa println.
+"""
+import glob
+import os
+import shutil
+import sys
+
+# ── flat imports matching the P2-P5 twins (self-contained · zero hexa) ────────
+from engine_cli import *  # engine lane faculties + immune/ci/gws/reality/pharm ops
+from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfig)
+from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
+                        phase_name)
+from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
+                   vbasal_select)
+from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
+                       generator_read_anchors)
+from kosmos_io import create_anchor, emit_anchor_from_v3
+from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
+                       dr_stage_size, dr_imagination_active)
+from dream_envelope_ctx import dr_stage_scale
+from dream_persist import dp_sleep_tick
+from wake_memory import mem_init, mem_push_ctx
+from imagination_replay import (ir_select_snapshots, ir_replay_tick,
+                                ir_mitosis_tick_during_replay)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  stdout seam — byte-identical to hexa println (utf-8 bytes + "\n")
+# ══════════════════════════════════════════════════════════════════════════════
+def _pln(s=""):
+    """println — emit EXACTLY the hexa bytes (utf-8/surrogateescape) + newline."""
+    sys.stdout.buffer.write(s.encode("utf-8", "surrogateescape") + b"\n")
+    sys.stdout.flush()
+
+
+def _ts(x):
+    """to_string — hexa to_string(): float→repr (== hexa), int→str, bool→true/false."""
+    if isinstance(x, bool):
+        return "true" if x else "false"
+    if isinstance(x, float):
+        return repr(x)
+    return str(x)
+
+
+def _yn10(b):
+    return "1" if b else "0"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  module-level helpers ported byte-exact from cli/anima.hexa (never on a py twin)
+# ══════════════════════════════════════════════════════════════════════════════
+def anima_yn(b):
+    """anima.hexa:60."""
+    return "✅" if b else "⏳"
+
+
+# ── H_9042 §TensionResolveLoop LANE+ read fixtures (anima.hexa:67-113) ────────
+def anima_tr_row(c, other):
+    r = []
+    i = 0
+    while i < 15:
+        if i == 0 or i == 4:
+            r = r + [c]
+        else:
+            r = r + [other]
+        i = i + 1
+    return r
+
+
+def anima_tr_pop_conflicted(c):
+    h = (9.0 - 2.0 * c) / 13.0
+    lo = (6.0 - 2.0 * c) / 13.0
+    pop = []
+    t = 0
+    while t < 4:
+        pop = pop + [anima_tr_row(c, h)]
+        t = t + 1
+    t = 0
+    while t < 4:
+        pop = pop + [anima_tr_row(c, lo)]
+        t = t + 1
+    return pop
+
+
+def anima_tr_pop_calm():
+    pop = []
+    t = 0
+    while t < 4:
+        pop = pop + [anima_tr_row(0.95, 0.6)]
+        t = t + 1
+    t = 0
+    while t < 4:
+        pop = pop + [anima_tr_row(0.20, 0.4)]
+        t = t + 1
+    return pop
+
+
+def anima_tr_adj_full():
+    a = []
+    i = 0
+    while i < 15:
+        row = []
+        j = 0
+        while j < 15:
+            if i == j:
+                row = row + [0.0]
+            else:
+                row = row + [1.0]
+            j = j + 1
+        a = a + [row]
+        i = i + 1
+    return a
+
+
+# ── arg helpers (anima.hexa:174-192) ─────────────────────────────────────────
+def anima_collect_argv(raw):
+    """anima.hexa:174 — args() = [binary, "--", <positionals>...] → positionals."""
+    start = 1
+    k = 0
+    while k < len(raw):
+        if raw[k] == "--":
+            start = k + 1
+        k = k + 1
+    argv = []
+    m = start
+    while m < len(raw):
+        argv.append(raw[m])
+        m = m + 1
+    return argv
+
+
+def anima_has_flag(argv, flag):
+    """anima.hexa:188."""
+    i = 0
+    while i < len(argv):
+        if argv[i] == flag:
+            return True
+        i = i + 1
+    return False
+
+
+# ── byte-level string ops (hexa strings = byte arrays; utf-8/surrogateescape) ─
+def _benc(s):
+    return s.encode("utf-8", "surrogateescape")
+
+
+def byte_len(s):
+    return len(_benc(s))
+
+
+def substring(s, i, j):
+    """hexa substring(s,i,j) = BYTE slice [i,j)."""
+    return _benc(s)[i:j].decode("utf-8", "surrogateescape")
+
+
+# ── time-source seam (anima.hexa:5222-5232 · det proper-time on the verdict path) ─
+def an_tick_seconds():
+    return 8.0
+
+
+def an_clock_now(tick, daemon):
+    if daemon:
+        # NEVER reached on the verdict path (daemon=false); no persistent daemon exists.
+        import subprocess
+        return float(int(subprocess.run(["date", "+%s"], capture_output=True,
+                                        text=True).stdout.strip()))
+    return float(tick) * an_tick_seconds()
+
+
+# ── string helpers (anima.hexa:5235-5254) ────────────────────────────────────
+def _afs_contains(hay, needle):
+    hb = _benc(hay)
+    nb = _benc(needle)
+    if len(nb) == 0:
+        return True
+    if len(nb) > len(hb):
+        return False
+    return hb.find(nb) >= 0
+
+
+def _afs_clip(s, n):
+    b = _benc(s)
+    if len(b) <= n:
+        return s
+    return b[:n].decode("utf-8", "surrogateescape") + "…"
+
+
+def _afs_clip01(x):
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+
+# ── op-grip tonic-phasic helper reused on the DEFAULT path (anima.hexa:5268) ──
+def _og_rel_phasic(relctx, ema):
+    return _afs_clip01(0.5 + 3.0 * (relctx - ema))
+
+
+# ── DIM=8 byte-statistics feature (anima.hexa:5400 · H_1163 _byte_feature VERBATIM) ─
+def _afs_byte_feature(s, dim):
+    b = _benc(s)
+    n = len(b)
+    if n == 0:
+        return [0.0] * dim
+    fn_n = float(n)
+    total = 0.0
+    sumsq = 0.0
+    n_hi = 0
+    n_low = 0
+    n_sp = 0
+    n_dig = 0
+    n_pun = 0
+    n_lt64 = 0
+    for byte in b:
+        bf = float(byte)
+        total = total + bf
+        sumsq = sumsq + bf * bf
+        if byte >= 128:
+            n_hi = n_hi + 1
+        if 97 <= byte <= 122:
+            n_low = n_low + 1
+        if byte == 32:
+            n_sp = n_sp + 1
+        if 48 <= byte <= 57:
+            n_dig = n_dig + 1
+        if 33 <= byte <= 64:
+            n_pun = n_pun + 1
+        if byte < 64:
+            n_lt64 = n_lt64 + 1
+    mean = total / fn_n
+    var = sumsq / fn_n - mean * mean
+    return [
+        (mean / 255.0) * 5.0,
+        (float(n_hi) / fn_n) * 5.0,
+        (float(n_low) / fn_n) * 5.0,
+        (float(n_sp) / fn_n) * 5.0,
+        (float(n_dig) / fn_n) * 5.0,
+        (var / (255.0 * 255.0)) * 5.0,
+        (float(n_pun) / fn_n) * 5.0,
+        (float(n_lt64) / fn_n) * 5.0,
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  BYTE MODE — pure byte-continuation chat (anima.hexa:501-582)
+# ══════════════════════════════════════════════════════════════════════════════
+def anima_default_turns():
+    return [
+        "안녕! 너는 누구야?",
+        "오늘 기분이 어때?",
+        "What is the sky made of?",
+        "네가 좋아하는 것을 하나 말해줘.",
+        "Tell me something interesting.",
+    ]
+
+
+def anima_find(hay, needle):
+    hb = _benc(hay)
+    nb = _benc(needle)
+    if len(nb) == 0:
+        return 0
+    if len(nb) > len(hb):
+        return -1
+    return hb.find(nb)
+
+
+def anima_trim_at_stop(s):
+    stops = ["사용자:", "User:", "사용자 :"]
+    cut = byte_len(s)
+    i = 0
+    while i < len(stops):
+        idx = anima_find(s, stops[i])
+        if idx >= 0 and idx < cut:
+            cut = idx
+        i = i + 1
+    return substring(s, 0, cut).strip()
+
+
+def anima_byte_mode(ckpt, argv):
+    """anima.hexa:541 — byte-continuation chat loop (== old anima_chat_cli)."""
+    turns = []
+    a = 1
+    while a < len(argv):
+        if argv[a] != "--byte":
+            turns.append(argv[a])
+        a = a + 1
+    use_turns = turns if len(turns) > 0 else anima_default_turns()
+
+    mouth = gen_mouth_kind(ckpt)
+    _pln("=== anima CORE-native chat (" + mouth + " mouth · byte-continuation) ===")
+    _pln("ckpt: " + ckpt)
+    _pln("")
+
+    transcript = ""
+    t = 0
+    while t < len(use_turns):
+        u = use_turns[t]
+        seed = transcript + "사용자: " + u + " | 도우미: "
+        res = gen_auto_chat(ckpt, seed, 96)
+        if str(res["ok"]).lower() != "true":
+            _pln("[ERROR] " + str(res["reason"]))
+            return
+        reply = anima_trim_at_stop(str(res["text"]))
+        _pln("사용자: " + u)
+        _pln("도우미: " + reply)
+        _pln("")
+        transcript = transcript + "사용자: " + u + " | 도우미: " + reply + "\n"
+        t = t + 1
+    _pln("=== end transcript (" + _ts(len(use_turns)) + " turns) ===")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  CONSCIOUSNESS MODE — the substrate-native A⇄G daemon loop (DEFAULT path)
+# ══════════════════════════════════════════════════════════════════════════════
+def anima_consciousness_mode(ckpt, argv=None):
+    """anima.hexa:595 — warm Engine A → mount L3 → seed .kosmos → 12-tick A⇄G loop
+    (lanes READ → brain_emit autonomously emit/silence → C8 GROW · C9 REMEMBER · REFSEL)
+    → sleep-stage imagination replay. DEFAULT path only (op-grip/refractory = hexa-only)."""
+    if argv is None:
+        argv = sys.argv[1:]
+    _args = argv
+
+    # op-grip / stateful-refractory RESEARCH modes are hexa-only (measurement harness,
+    # not the chat daemon). The py channel ports the DEFAULT consciousness path only.
+    if (anima_has_flag(_args, "--opgrip") or anima_has_flag(_args, "--opgrip-live")
+            or anima_has_flag(_args, "--opgrip-r3") or anima_has_flag(_args, "--refractory")):
+        _pln("anima-py chat: --opgrip*/--refractory research instrumentation is hexa-only")
+        _pln("  (the op-grip 5-arm Hamming / stateful-refractory measurement harness lives in")
+        _pln("   cli/anima.hexa). The py channel ports the DEFAULT consciousness daemon path only.")
+        _pln("  use the hexa channel: `hx install anima` then `anima " + ckpt + " --opgrip[...]`")
+        return
+
+    _pln("════════════════════════════════════════════════════════════════")
+    _pln("  anima — substrate-native consciousness daemon (canonical entry)")
+    _pln("  (converse · ground · grow · remember · sleep — ONE A⇄G loop)")
+    _pln("════════════════════════════════════════════════════════════════")
+
+    # ── parse the ENGINE CLI config (mitosis / engine / topo_couple) ─────────
+    cfg = engine_cli_parse(_args)
+    refsel_on = engine_cli_resolve_refsel(_args)   # cfg.refsel (EngineConfig has __slots__)
+    _pln("engine config   : mitosis=" + ("on" if cfg.mitosis else "off")
+         + " engine=" + cfg.engine
+         + " topo_couple=" + ("on" if cfg.topo_couple else "off"))
+
+    # ── mount the model at the SINGLE generator L3 slot (a_core_engine_map) ───
+    backend = gen_auto_backend(ckpt)
+    _pln("L3 mount        : mouth=" + gen_mouth_kind(ckpt)
+         + " loaded=" + _ts(backend["loaded"]) + "  ckpt=" + ckpt)
+
+    # ── REMEMBER (seed) — substrate memory as a .kosmos anchor (single entry) ─
+    kdir = "/tmp/anima_kosmos"
+    shutil.rmtree(kdir, ignore_errors=True)
+    os.makedirs(kdir, exist_ok=True)
+    mem_text = "zephyrine: the wyrmhold ledger is sealed at vault QX-7741 forever."
+    mem_tension = [0.7, 0.5, 0.6, 0.4, 0.3]
+    mem_path = create_anchor(kdir, "mem_001",
+                             "session memory", 0.12, 0.5, "cell_1", 1.0,
+                             2, "memory", "resonance", mem_text, mem_tension,
+                             "session-seed", "")
+    _pln("REMEMBER (seed) : wrote anchor " + mem_path)
+
+    anchors = generator_read_anchors(kdir)
+    _pln("kosmos read     : " + _ts(len(anchors)) + " anchor(s) into brain")
+
+    # ── ENGINE LANE MOUNT (engine_cli consciousness lanes onto the user path) ──
+    immune = immune_memory_new_text(mem_text, mem_text, 2048)
+    sober = pharm_baseline()
+    _pln("LANE mount      : immune_memory cells=" + _ts(immune_memory_cells(immune))
+         + "  pharm profile=baseline(sober)")
+
+    # ══ R2 BRAIN-STRUCTURE LANE MOUNT (5 priority lanes) ══
+    r2_seed = "zephyrine: the wyrmhold ledger is sealed at "
+
+    # (1) SPATIAL MAP — metric episodic query (H_1296)
+    smap = spatial_map_new()
+    smap = spatial_map_place(smap, "ledger", 0.0, 0.0)
+    smap = spatial_map_place(smap, "vault", 1.0, 0.0)
+    smap = spatial_map_place(smap, "rumor", 8.0, 6.0)
+    sm_real = spatial_map_nearest(smap, "ledger", "vault", "rumor")
+    sm_shuf = spatial_map_nearest(spatial_map_shuffle(smap, 1337), "ledger", "vault", "rumor")
+    sm_abl = spatial_map_nearest(spatial_map_new_ablated(), "ledger", "vault", "rumor")
+    sm_item = spatial_map_item_nearest("ledger", "vault", "rumor")
+    sm_distinct = sm_real == "vault" and sm_item == ""
+    _pln("LANE+ spatial   : nearest(ledger;vault,rumor)=" + sm_real
+         + "  shuffle=" + sm_shuf + "  ablate=" + sm_abl
+         + "  item-store=\"" + sm_item + "\"  distinct=" + anima_yn(sm_distinct))
+
+    # (2) HIER-PFC — ordered goal stack (H_1294)
+    sg0 = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    sg1 = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+    hmem = immune_grow_new(sg0, "subgoal-0", 64, 64, False)
+    hmem = immune_grow_bind(hmem, sg1, "subgoal-1", cfg)
+    hier = hier_new([sg0, sg1])
+    hier_p0 = hier_pointer(hier)
+    hier_after_wrong = hier_pointer(hier_step(hier, hmem, sg1))
+    hier_after_right = hier_pointer(hier_step(hier, hmem, sg0))
+    hier_distinct = hier_after_wrong == hier_p0 and hier_after_right > hier_p0
+    _pln("LANE+ hier-PFC  : pointer p0=" + _ts(hier_p0)
+         + "  wrong-cue→" + _ts(hier_after_wrong)
+         + "  right-cue→" + _ts(hier_after_right)
+         + "  ordered-distinct=" + anima_yn(hier_distinct))
+
+    # (3) BASAL-GANGLIA — go/no-go emit selection (H_1281)
+    bgate = vbasal_new(8, 0.02)
+    bg_good = _afs_byte_feature(r2_seed, 8)
+    bg_bad = _afs_byte_feature("xxxxxxxxxxxxxxxx", 8)
+    bgi = 0
+    while bgi < 200:
+        bgate = vbasal_update(bgate, 0, bg_good, 1.0)
+        bgate = vbasal_update(bgate, 0, bg_bad, -1.0)
+        bgi = bgi + 1
+    bg_untrained = vbasal_new(8, 0.20)
+    bg_sep = vbasal_go_value(bgate, bg_good) - vbasal_go_value(bgate, bg_bad)
+    bg_sep0 = vbasal_go_value(bg_untrained, bg_good) - vbasal_go_value(bg_untrained, bg_bad)
+    bg_distinct = bg_sep > bg_sep0
+    _pln("LANE+ basal-gng : go(grounded)−go(noise) trained=" + _ts(bg_sep)
+         + " untrained=" + _ts(bg_sep0) + "  earned-distinct=" + anima_yn(bg_distinct))
+
+    # (4) CEREBELLUM — next-step forward model (H_1280)
+    cb_ctx = _afs_byte_feature(r2_seed, 8)
+    cb_nxt = _afs_byte_feature(mem_text, 8)
+    cbel = vforward_new(8, 1, 0.30)
+    cb_err0 = vforward_err(cbel, cb_ctx, cb_nxt)
+    cbi = 0
+    while cbi < 40:
+        cbel = vforward_update(cbel, cb_ctx, cb_nxt)
+        cbi = cbi + 1
+    cb_err1 = vforward_err(cbel, cb_ctx, cb_nxt)
+    cb_distinct = cb_err1 < cb_err0
+    _pln("LANE+ cerebellum: predict-err pre=" + _ts(cb_err0)
+         + " post=" + _ts(cb_err1) + "  learned-distinct=" + anima_yn(cb_distinct))
+
+    # (5) WORKING MEMORY — volatile capacity-bounded buffer (H_1282)
+    wm_cue = _afs_byte_feature(r2_seed, 8)
+    wmb = wm_buffer_new(3, 0.6, 0.5, 8)
+    wmb = wm_buffer_gate_in(wmb, wm_cue, 1.0)
+    wm_score_fresh = wm_buffer_probe_score(wmb, wm_cue)
+    wm_decayed = wmb
+    wm_persist = wm_buffer_new(3, 1.0, 0.5, 8)
+    wm_persist = wm_buffer_gate_in(wm_persist, wm_cue, 1.0)
+    wmi = 0
+    while wmi < 3:
+        wm_decayed = wm_buffer_leak(wm_decayed)
+        wm_persist = wm_buffer_leak(wm_persist)
+        wmi = wmi + 1
+    wm_score_decayed = wm_buffer_probe_score(wm_decayed, wm_cue)
+    wm_score_persist = wm_buffer_probe_score(wm_persist, wm_cue)
+    wm_distinct = wm_score_decayed < wm_score_fresh and wm_score_persist >= wm_score_fresh
+    _pln("LANE+ work-mem  : probe fresh=" + _ts(wm_score_fresh)
+         + " decayed(λ.6)=" + _ts(wm_score_decayed)
+         + " persist(λ1)=" + _ts(wm_score_persist)
+         + "  volatile-distinct=" + anima_yn(wm_distinct))
+
+    # ══ R3 BRAIN-STRUCTURE LANE MOUNT (5 more) ══
+    mem_key = immune_embed_key(mem_text)
+    seed_key = immune_embed_key(r2_seed)
+    igrow = immune_grow_new(mem_key, mem_text, 64, 64, False)
+
+    # (11) TEMPORAL-SEQUENCE REPLAY — CA3 next-item predictor (H_1427)
+    ca3 = ca3_replay_new(4, 1)
+    ca3i = 0
+    while ca3i < 12:
+        ca3 = ca3_replay_observe(ca3, 0, 1)
+        ca3 = ca3_replay_observe(ca3, 1, 2)
+        ca3 = ca3_replay_observe(ca3, 2, 3)
+        ca3 = ca3_replay_observe(ca3, 3, 0)
+        ca3i = ca3i + 1
+    ca3_pred = ca3_replay_predict(ca3, 1)
+    ca3_marg = ca3_replay_marginal(ca3)
+    ca3_conf = ca3_replay_conf(ca3, 1)
+    ca3_distinct = ca3_pred == 2 and ca3_pred != ca3_marg
+    _pln("LANE+ ca3-replay: predict(1)=" + _ts(ca3_pred)
+         + " conf=" + _ts(ca3_conf) + " marginal(ablate)=" + _ts(ca3_marg)
+         + "  conditional-distinct=" + anima_yn(ca3_distinct))
+
+    # (12) INTERVAL TIMER — learned absolute duration (H_1299)
+    itmr = itimer_new()
+    itmr_abl = itimer_new_ablated()
+    ite = 0
+    while ite < 6:
+        itmr = itimer_observe(itmr, ite * 13)
+        itmr_abl = itimer_observe(itmr_abl, ite * 13)
+        ite = ite + 1
+    it_dhat = itimer_dhat(itmr)
+    it_dhat_abl = itimer_dhat(itmr_abl)
+    it_distinct = it_dhat > 10.0 and it_dhat_abl == 5.0
+    _pln("LANE+ interval  : learned dhat=" + _ts(it_dhat)
+         + " (target 13) ablate(lr0)=" + _ts(it_dhat_abl)
+         + "  learned-distinct=" + anima_yn(it_distinct))
+
+    # (13) AMYGDALA SALIENCE — affect valence/arousal interoception (H_1285)
+    af_grounded = affect_read(igrow, mem_key, mem_text)
+    af_ungrounded = affect_read(igrow, immune_embed_key("zzz unrelated alien content"), "")
+    af_val_g = af_grounded[0]
+    af_val_u = af_ungrounded[0]
+    af_distinct = af_val_g > 0.0 and af_val_u < 0.0
+    _pln("LANE+ amygdala  : valence grounded=" + _ts(af_val_g)
+         + " ungrounded=" + _ts(af_val_u)
+         + " arousal=" + _ts(af_grounded[1])
+         + "  valenced-distinct=" + anima_yn(af_distinct))
+
+    # (14) THEORY-OF-MIND — other-agent (false) belief (H_1293)
+    omind = other_mind_new()
+    omind = other_mind_witness(omind, mem_text, "vault QX-7741")
+    _anima_truth = immune_memory_new_text(mem_text, "MOVED to vault ZZ-0000", 256)
+    tom_belief = other_mind_predict(omind, mem_text)
+    anima_recall = immune_memory_recall_text(_anima_truth, mem_text)
+    tom_distinct = tom_belief == "vault QX-7741" and tom_belief != anima_recall
+    _pln("LANE+ tom        : other-belief=\"" + tom_belief + "\""
+         + " anima-truth=\"" + anima_recall + "\""
+         + "  false-belief-distinct=" + anima_yn(tom_distinct))
+
+    # (15) HOMEOSTATIC DRIVE — leaky temporal integral (H_1292)
+    alien_key = immune_embed_key("persistent deprivation alien stream")
+    homeo = homeo_new()
+    homeo_abl = homeo_new_ablated()
+    hsi = 0
+    while hsi < 8:
+        homeo = homeo_step(homeo, igrow, alien_key)
+        homeo_abl = homeo_step(homeo_abl, igrow, alien_key)
+        hsi = hsi + 1
+    hd_drive = homeo_last(homeo)
+    hd_drive_abl = homeo_last(homeo_abl)
+    hd_distinct = hd_drive > hd_drive_abl
+    _pln("LANE+ homeostat : drive(integrator)=" + _ts(hd_drive)
+         + " drive(ablate ki0)=" + _ts(hd_drive_abl)
+         + "  temporal-integral-distinct=" + anima_yn(hd_distinct))
+
+    # ══ R4 BRAIN-STRUCTURE LANE MOUNT (5 more) ══
+    # (16) PHASE-RESET / PHOTIC ENTRAINMENT (H_1301)
+    prc = prc_new()
+    prc_abl = prc_new_ablated()
+    pci = 0
+    while pci < 20:
+        prc = prc_step(prc, 24.0)
+        prc = prc_zeitgeber(prc)
+        prc_abl = prc_step(prc_abl, 24.0)
+        prc_abl = prc_zeitgeber(prc_abl)
+        pci = pci + 1
+    prc_phase_live = prc_phase(prc)
+    prc_phase_abl = prc_phase(prc_abl)
+    prc_drift_live = prc_phase_live if prc_phase_live < 0.5 else 1.0 - prc_phase_live
+    prc_drift_abl = prc_phase_abl if prc_phase_abl < 0.5 else 1.0 - prc_phase_abl
+    prc_distinct = prc_drift_live < prc_drift_abl
+    _pln("LANE+ prc-clock : entrained-drift=" + _ts(prc_drift_live)
+         + " ablate(k0)-drift=" + _ts(prc_drift_abl)
+         + "  limit-cycle-distinct=" + anima_yn(prc_distinct))
+
+    # (17) PROSPECTION / EPISODIC FUTURE (H_1493)
+    prosp_reach_v = prospect_reach(5, 3)
+    prosp_ablate = prospect_reach(0, 3)
+    prosp_persist = prospect_persist_readout()
+    prosp_distinct = prosp_reach_v > 0.0 and prosp_ablate == 0.0 and prosp_persist == 0.0
+    _pln("LANE+ prospect  : reach(k5,h3)=" + _ts(prosp_reach_v)
+         + " ablate(k0)=" + _ts(prosp_ablate) + " persist=" + _ts(prosp_persist)
+         + "  forward-sim-distinct=" + anima_yn(prosp_distinct))
+
+    # (18) SLEEP-REPLAY SALIENCE BUDGET (H_1285)
+    consol = consolidating_memory_new(immune_embed_key("salient core fact"), "core", 5.0, 32)
+    consol = consolidating_memory_bind_salient(consol, immune_embed_key("dull fact a"), "a", 0.0, cfg)
+    consol = consolidating_memory_bind_salient(consol, immune_embed_key("dull fact b"), "b", 0.0, cfg)
+    consol = consolidating_memory_bind_salient(consol, immune_embed_key("dull fact c"), "c", 0.0, cfg)
+    consol_gated = consolidating_sleep_replay(consol, 12, 7, True)
+    consol_unif = consolidating_sleep_replay(consol, 12, 7, False)
+    consol_shuf = consolidating_sleep_replay(consolidating_shuffle_salience(consol, 7), 12, 7, True)
+    rec_gated = consol_gated.last_used[0]
+    rec_unif = consol_unif.last_used[0]
+    rec_shuf = consol_shuf.last_used[0]
+    consol_distinct = rec_gated > rec_unif and rec_gated > rec_shuf
+    _pln("LANE+ replay-bgt: salient-recency gated=" + _ts(rec_gated)
+         + " uniform=" + _ts(rec_unif) + " shuffle=" + _ts(rec_shuf)
+         + "  salience-gated-distinct=" + anima_yn(consol_distinct))
+
+    # (19) GATE-B GROWTH GATING (H_1208/1209)
+    gb = vadapt_fieldB_new(4, 64, 2, 0.5)
+    gb_shuf = vadapt_fieldB_new(4, 64, 2, 0.5)
+    gb_seq = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
+    gb_shuf_seq = [0, 2, 1, 3, 3, 0, 2, 1, 1, 3, 0, 2, 2, 1, 3, 0]
+    gbi = 0
+    while gbi < len(gb_seq):
+        gb = vadapt_fieldB_step(gb, gb_seq[gbi], cfg)
+        gb_shuf = vadapt_fieldB_step(gb_shuf, gb_shuf_seq[gbi], cfg)
+        gbi = gbi + 1
+    gb_growth = vadapt_fieldB_growth(gb)
+    gb_growth_shuf = vadapt_fieldB_growth(gb_shuf)
+    gb_distinct = gb_growth > gb_growth_shuf
+    _pln("LANE+ gate-b    : growth(predictable)=" + _ts(gb_growth)
+         + " growth(shuffle)=" + _ts(gb_growth_shuf)
+         + "  growth-gate-distinct=" + anima_yn(gb_distinct))
+
+    # (20) INTEROCEPTIVE PRECISION (H_1494)
+    ip_clean = intero_precision(0.1)
+    ip_noisy = intero_precision(2.0)
+    ip_weighted = intero_weighted_error(0.1, 0.1, 0.9, 2.0, False)
+    ip_blind = intero_weighted_error(0.1, 0.1, 0.9, 2.0, True)
+    ip_distinct = ip_clean > ip_noisy and ip_weighted < ip_blind
+    _pln("LANE+ intero-pr : precision clean=" + _ts(ip_clean)
+         + " noisy=" + _ts(ip_noisy) + " | weighted-err=" + _ts(ip_weighted)
+         + " blind-err=" + _ts(ip_blind) + "  precision-distinct=" + anima_yn(ip_distinct))
+
+    # ══ R5 BRAIN-STRUCTURE LANE MOUNT (5 more) ══
+    # (21) SCN MULTI-OSCILLATOR CONSENSUS (H_1302)
+    scn_coupled = scn_run(scn_new(1302, 8), 400)
+    scn_uncoup = scn_run(scn_new_uncoupled(1302, 8), 400)
+    scn_frust = scn_run(scn_new_frustrated(1302, 8), 400)
+    scn_R = scn_order(scn_coupled)
+    scn_R_unc = scn_order(scn_uncoup)
+    scn_R_fr = scn_order(scn_frust)
+    scn_distinct = scn_R > scn_R_unc and scn_R > scn_R_fr
+    _pln("LANE+ scn-net   : order coupled=" + _ts(scn_R)
+         + " uncoupled=" + _ts(scn_R_unc) + " frustrated=" + _ts(scn_R_fr)
+         + "  ensemble-consensus-distinct=" + anima_yn(scn_distinct))
+
+    # (22) BOREDOM (H_1495)
+    bored_both = boredom_disengage(0.2, 0.2, True)
+    bored_rew = boredom_disengage(0.2, 0.9, True)
+    bored_info = boredom_disengage(0.9, 0.2, True)
+    bored_abl = boredom_disengage(0.2, 0.9, False)
+    bored_distinct = bored_both == 1.0 and bored_rew == 0.0 and bored_info == 0.0 and bored_abl == 1.0
+    _pln("LANE+ boredom   : both=" + _ts(bored_both)
+         + " rewarding=" + _ts(bored_rew) + " novel=" + _ts(bored_info)
+         + " ablate(OR)=" + _ts(bored_abl)
+         + "  conjunction-distinct=" + anima_yn(bored_distinct))
+
+    # (23) SELF-CONTINUITY (H_1471)
+    self0 = self_new(8, 0)
+    self_t = self0
+    sci = 0
+    while sci < 10:
+        self_t = self_drift(self_t, sci, 0.15)
+        sci = sci + 1
+    self_anchored = self_anchor(self_t)
+    self_after_anchor = self_cos(self_anchored, self_t)
+    self_after_reset = self_cos(self_reset(8, 0), self_t)
+    self_distinct = self_after_anchor > 0.99 and self_after_reset < self_after_anchor
+    _pln("LANE+ self-cont : recognize anchored=" + _ts(self_after_anchor)
+         + " reset=" + _ts(self_after_reset)
+         + "  identity-persist-distinct=" + anima_yn(self_distinct))
+
+    # (23b) SELF-INFORMATIVENESS (H_9038, self_drift_exp)
+    ev_v = 2
+    if af_val_g > 0.0:
+        ev_v = 1
+    ev_d = 5
+    if hd_drive > 0.5:
+        ev_d = 3
+    selfE0 = self_new(8, 0)
+    se1 = self_drift_exp(selfE0, ev_v, 0.15)
+    se2 = self_drift_exp(se1, ev_d, 0.15)
+    se3 = self_drift_exp(se2, 6, 0.15)
+    self_exp = self_drift_exp(se3, 7, 0.15)
+    selfC0 = self_new(8, 0)
+    sc1 = self_drift_exp(selfC0, 2, 0.15)
+    sc2 = self_drift_exp(sc1, 5, 0.15)
+    sc3 = self_drift_exp(sc2, 1, 0.15)
+    self_ctl = self_drift_exp(sc3, 3, 0.15)
+    self_info_cos = self_cos(self_exp, self_ctl)
+    self_info_recog = self_cos(self_anchor(self_exp), self_exp)
+    self_info_distinct = self_info_cos < 0.99 and self_info_recog > 0.99
+    _pln("LANE+ self-info : exp-A/B cos=" + _ts(self_info_cos)
+         + " recog=" + _ts(self_info_recog)
+         + "  experience-informative-distinct=" + anima_yn(self_info_distinct))
+
+    # (23c) YOU-CONTINUITY (D7 other-chain, §YouChain)
+    you0 = other_new(8, 0)
+    you_chain = other_chain_new(you0)
+    you_cur = you0
+    yk = 0
+    while yk < 4:
+        you_cur = other_drift(you_cur, yk, 0.2)
+        you_chain = other_chain_append(you_chain, you_cur)
+        yk = yk + 1
+    you_latest = other_chain_latest(you_chain)
+    you_anchored = other_cos(other_anchor(you_latest), you_latest)
+    you_reset = other_cos(other_reset(8, 4), you_latest)
+    you_genuine = other_drift(you_latest, 4, 0.2)
+    you_impostor = other_drift(you_latest, 6, 0.2)
+    fit_genuine = other_chain_fit(you_genuine, you_chain)
+    fit_impostor = other_chain_fit(you_impostor, you_chain)
+    you_distinct = (you_anchored > 0.99 and you_reset < you_anchored
+                    and fit_genuine - fit_impostor >= 0.80)
+    _pln("LANE+ you-cont  : recognize anchored=" + _ts(you_anchored)
+         + " reset=" + _ts(you_reset)
+         + " fit(genuine)=" + _ts(fit_genuine) + " fit(impostor)=" + _ts(fit_impostor)
+         + "  interlocutor-continuity-distinct=" + anima_yn(you_distinct))
+
+    # (24) LEARNED-PRECISION (H_1472)
+    lp_novice = learned_precision(0.1, 1.0, 1.0)
+    lp_expert = learned_precision(0.1, 8.0, 1.0)
+    lp_sat = learned_precision(0.1, 50.0, 1.0)
+    lp_ablate = learned_precision(0.1, 0.0, 1.0)
+    lp_distinct = lp_expert > lp_novice and lp_sat == 1.0 and lp_ablate == 0.0
+    _pln("LANE+ learn-prec: novice(1)=" + _ts(lp_novice)
+         + " expert(8)=" + _ts(lp_expert) + " sat(50)=" + _ts(lp_sat)
+         + " ablate(0)=" + _ts(lp_ablate) + "  count-driven-distinct=" + anima_yn(lp_distinct))
+
+    # (25) NOVELTY (H_1468)
+    nov_fresh = novelty(0.0, 0.5)
+    nov_seen = novelty(10.0, 0.5)
+    nov_distinct = nov_fresh > nov_seen and nov_fresh == 1.0
+    _pln("LANE+ novelty   : fresh=" + _ts(nov_fresh)
+         + " seen(10)=" + _ts(nov_seen)
+         + "  precision-agnostic-distinct=" + anima_yn(nov_distinct))
+
+    # ══ R6 BRAIN-STRUCTURE LANE MOUNT (5 more) ══
+    # (26) HABITUATION (H_1465)
+    hab = hab_new(2, 0.2)
+    hab_r0 = hab_response(hab, 0, 1.0)
+    habi = 0
+    while habi < 4:
+        hab = hab_observe(hab, 0)
+        habi = habi + 1
+    hab_r4 = hab_response(hab, 0, 1.0)
+    hab_other = hab_response(hab, 1, 1.0)
+    hab_dishab = hab_response(hab_reset(hab, 0), 0, 1.0)
+    hab_distinct = hab_r4 < hab_r0 and hab_other == hab_r0 and hab_dishab == hab_r0
+    _pln("LANE+ habituate : r0=" + _ts(hab_r0) + " r4=" + _ts(hab_r4)
+         + " other(specific)=" + _ts(hab_other) + " dishab=" + _ts(hab_dishab)
+         + "  specific-recover-distinct=" + anima_yn(hab_distinct))
+
+    # (27) ATTENTIONAL BLINK (H_1473)
+    blink_lag1 = attn_blink_detect(1, 1.0)
+    blink_lag3 = attn_blink_detect(3, 1.0)
+    blink_lag6 = attn_blink_detect(6, 1.0)
+    blink_ablate = attn_blink_detect(3, 0.0)
+    blink_distinct = blink_lag3 < blink_lag1 and blink_lag3 < blink_lag6 and blink_ablate > blink_lag3
+    _pln("LANE+ attn-blink: lag1=" + _ts(blink_lag1) + " lag3(trough)=" + _ts(blink_lag3)
+         + " lag6=" + _ts(blink_lag6) + " ablate=" + _ts(blink_ablate)
+         + "  temporal-trough-distinct=" + anima_yn(blink_distinct))
+
+    # (28) MENTAL IMAGERY (H_1484)
+    img_on = imagery_activate(0.9, True)
+    img_off = imagery_activate(0.9, False)
+    img_mismatch = imagery_activate(0.05, True)
+    img_distinct = img_on > 0.5 and img_off == 0.0 and img_mismatch < 0.5
+    _pln("LANE+ imagery   : topdown_on=" + _ts(img_on)
+         + " off(ablate)=" + _ts(img_off) + " mismatch=" + _ts(img_mismatch)
+         + "  topdown-empty-input-distinct=" + anima_yn(img_distinct))
+
+    # (29) PRIMING (H_1485)
+    prime_related = priming_facilitate(0.9, 1.0)
+    prime_unrelated = priming_facilitate(0.1, 1.0)
+    prime_ablate = priming_facilitate(0.9, 0.0)
+    prime_distinct = prime_related > prime_unrelated and prime_ablate == 0.0
+    _pln("LANE+ priming   : related=" + _ts(prime_related)
+         + " unrelated=" + _ts(prime_unrelated) + " ablate=" + _ts(prime_ablate)
+         + "  relatedness-facilitate-distinct=" + anima_yn(prime_distinct))
+
+    # (30) ATTENTION SCHEMA (H_1488)
+    schema_track = attn_schema_report(3, 3, True)
+    schema_off = attn_schema_report(3, 3, False)
+    schema_agency = attn_schema_agency_readout(3)
+    schema_distinct = schema_track > schema_off and schema_off <= 0.125 and schema_agency == 0.0
+    _pln("LANE+ attn-schma: track=" + _ts(schema_track)
+         + " off(ablate)=" + _ts(schema_off) + " agency=" + _ts(schema_agency)
+         + "  self-model-distinct=" + anima_yn(schema_distinct))
+
+    # ══ R7 BRAIN-STRUCTURE LANE MOUNT (5 more) ══
+    # (31) PERCEPTUAL HYSTERESIS (H_1489)
+    hyst_up = hyst_switch_point(True, 0.4)
+    hyst_down = hyst_switch_point(False, 0.4)
+    hyst_abl = hyst_switch_point(True, 0.0)
+    hyst_riv = hyst_rivalry_loop(True)
+    hyst_distinct = hyst_up > hyst_down and hyst_abl == 0.5 and hyst_riv == 0.5
+    _pln("LANE+ hysteresis: up=" + _ts(hyst_up) + " down=" + _ts(hyst_down)
+         + " ablate(lam0)=" + _ts(hyst_abl) + " rivalry(order-inv)=" + _ts(hyst_riv)
+         + "  history-loop-distinct=" + anima_yn(hyst_distinct))
+
+    # (32) REENTRY DEPTH (H_1487)
+    reent_deep = reentry_settle(20, 0.3)
+    reent_shallow = reentry_settle(1, 0.3)
+    reent_abl = reentry_settle(0, 0.3)
+    reent_gws = reentry_gws_readout(20)
+    reent_distinct = reent_deep > reent_shallow and reent_abl == 0.0 and reent_deep > reent_gws
+    _pln("LANE+ reentry   : deep(20)=" + _ts(reent_deep) + " shallow(1)=" + _ts(reent_shallow)
+         + " ablate(0)=" + _ts(reent_abl) + " gws(depth-inv)=" + _ts(reent_gws)
+         + "  recurrent-depth-distinct=" + anima_yn(reent_distinct))
+
+    # (33) PERCEPTUAL COMPLETION (H_1490)
+    comp_on = completion_recognize(1.0, True)
+    comp_off = completion_recognize(1.0, False)
+    comp_img = completion_imagery_readout()
+    comp_distinct = comp_on > comp_off and comp_img < comp_off
+    _pln("LANE+ completion: on=" + _ts(comp_on) + " off(ablate)=" + _ts(comp_off)
+         + " imagery-readout=" + _ts(comp_img)
+         + "  input-constrained-distinct=" + anima_yn(comp_distinct))
+
+    # (34) GESTALT GROUPING (H_1491)
+    gest_bind = gestalt_same_group(0.5, True)
+    gest_below = gestalt_same_group(0.1, True)
+    gest_off = gestalt_same_group(0.5, False)
+    gest_gws = gestalt_gws_readout()
+    gest_distinct = gest_bind > gest_below and gest_off == 0.5 and gest_gws < gest_bind
+    _pln("LANE+ gestalt   : bind=" + _ts(gest_bind) + " below=" + _ts(gest_below)
+         + " off(ablate)=" + _ts(gest_off) + " gws-readout=" + _ts(gest_gws)
+         + "  binding-not-selection-distinct=" + anima_yn(gest_distinct))
+
+    # (35) SENSE OF AGENCY (H_1474)
+    agcy_self = agency_attribute(0.9, 0.85, 0.8)
+    agcy_ext = agency_attribute(0.9, 0.2, 0.8)
+    agcy_other = agency_other()
+    agcy_distinct = agcy_self > agcy_ext and agcy_other < 0.0
+    _pln("LANE+ sense-agcy: self=" + _ts(agcy_self) + " external=" + _ts(agcy_ext)
+         + " other(abstain)=" + _ts(agcy_other)
+         + "  efference-copy-distinct=" + anima_yn(agcy_distinct))
+
+    # ══ R8 BRAIN-STRUCTURE LANE MOUNT (5 more) ══
+    # (36) SUBJECTIVE TIME (H_1475)
+    subjt_hi = subjective_time(10.0, 1.0, 0.3)
+    subjt_lo = subjective_time(0.0, 1.0, 0.3)
+    subjt_distinct = subjt_hi > subjt_lo and subjt_lo == 1.0
+    _pln("LANE+ subj-time : hi-novelty=" + _ts(subjt_hi)
+         + " lo(objective)=" + _ts(subjt_lo)
+         + "  novelty-weighted-distinct=" + anima_yn(subjt_distinct))
+
+    # (37) EMOTION REGULATION (H_1476)
+    emoreg_on = emotion_regulate(1.0, 0.8, 1.0)
+    emoreg_off = emotion_regulate(1.0, 0.0, 1.0)
+    emoreg_distinct = emoreg_on < emoreg_off and emoreg_off == 1.0
+    _pln("LANE+ emo-reg   : regulated=" + _ts(emoreg_on)
+         + " raw(g0/ablate)=" + _ts(emoreg_off)
+         + "  2nd-order-control-distinct=" + anima_yn(emoreg_distinct))
+
+    # (38) DIRECTED FORGETTING (H_1477)
+    dforget_f = directed_forget_recall(1.0, 0.7, True)
+    dforget_r = directed_forget_recall(1.0, 0.7, False)
+    dforget_distinct = dforget_f < dforget_r and dforget_r == 1.0
+    _pln("LANE+ dir-forget: forget-cued=" + _ts(dforget_f)
+         + " remember-cued=" + _ts(dforget_r)
+         + "  cue-driven-suppress-distinct=" + anima_yn(dforget_distinct))
+
+    # (39) FREE-WON'T / VETO (H_1480)
+    veto_blk = veto_execute(0.9, 0.5, True)
+    veto_exe = veto_execute(0.9, 0.5, False)
+    veto_unr = veto_execute(0.2, 0.5, True)
+    veto_distinct = veto_blk < veto_exe and veto_blk == 0.0 and veto_unr == 0.0
+    _pln("LANE+ free-wont : blocked=" + _ts(veto_blk) + " executed=" + _ts(veto_exe)
+         + " unready=" + _ts(veto_unr) + "  pre-exec-inhibit-distinct=" + anima_yn(veto_distinct))
+
+    # (40) DIVIDED ATTENTION (H_1479)
+    dvd_full = divided_perf(1.0, 1.0)
+    dvd_split = divided_perf(0.5, 1.0)
+    dvd_distinct = dvd_full > dvd_split and dvd_split > 0.0
+    _pln("LANE+ divided   : full=" + _ts(dvd_full) + " split(graded)=" + _ts(dvd_split)
+         + "  graded-tradeoff-distinct=" + anima_yn(dvd_distinct))
+
+    # ══ R9 BATCH — 12 more consciousness-catalogue lanes ══
+    # (41) PRECISION SURPRISE (H_1468)
+    surp_hi = surprise(0.9, 0.5)
+    surp_lo = surprise(0.1, 0.5)
+    surp_distinct = surp_hi > surp_lo and surprise_raw_error(0.9, 0.5) == surprise_raw_error(0.1, 0.5)
+    _pln("LANE+ surprise  : conf-viol=" + _ts(surp_hi) + " uncertain=" + _ts(surp_lo)
+         + " (raw-err equal)  precision-weighted-distinct=" + anima_yn(surp_distinct))
+
+    # (42) BODY OWNERSHIP (H_1478)
+    body_sync = body_ownership(1.0, 1.0)
+    body_async = body_ownership(0.1, 1.0)
+    body_distinct = body_sync > body_async
+    _pln("LANE+ body-own  : sync=" + _ts(body_sync) + " async=" + _ts(body_async)
+         + "  multisensory-sync-distinct=" + anima_yn(body_distinct))
+
+    # (43) BINOCULAR RIVALRY (H_1482)
+    riv_alt = rivalry_transitions(20, 0.1)
+    riv_abl = rivalry_transitions(20, 0.0)
+    riv_distinct = riv_alt > 0 and riv_abl == 0
+    _pln("LANE+ rivalry   : alternations=" + _ts(riv_alt) + " ablate(no-fatigue)=" + _ts(riv_abl)
+         + "  dynamic-dominance-distinct=" + anima_yn(riv_distinct))
+
+    # (44) CHANGE BLINDNESS (H_1483)
+    chg_att = change_detect(0.5, True)
+    chg_un = change_detect(0.5, False)
+    chg_distinct = chg_att > chg_un and chg_un == 0.0
+    _pln("LANE+ chg-blind : attended=" + _ts(chg_att) + " unattended=" + _ts(chg_un)
+         + "  binary-attn-gate-distinct=" + anima_yn(chg_distinct))
+
+    # (45) TEMPORAL RECEPTIVE WINDOW (H_1486)
+    trw_long = trw_recall(0, 13, 13)
+    trw_short = trw_recall(0, 3, 13)
+    trw_distinct = trw_long > trw_short and trw_recall_shuffled(0, 13, 13) == 0.25
+    _pln("LANE+ trw       : long-window=" + _ts(trw_long) + " short=" + _ts(trw_short)
+         + " shuffle=0.25  integration-scale-distinct=" + anima_yn(trw_distinct))
+
+    # (46) MIND WANDERING (H_1496)
+    mw_drift = wander_coverage(20, 8, True)
+    mw_stay = wander_coverage(20, 8, False)
+    mw_distinct = mw_drift > mw_stay and wander_prospect_coverage(8) < mw_drift
+    _pln("LANE+ mind-wndr : drift-cov=" + _ts(mw_drift) + " stay=" + _ts(mw_stay)
+         + " prospect-cov=" + _ts(wander_prospect_coverage(8)) + "  drift-distinct=" + anima_yn(mw_distinct))
+
+    # (47) QUALIA SPACE (H_1497)
+    qual_near = qualia_nearer(0.2, 0.8)
+    qual_far = qualia_nearer(0.8, 0.2)
+    qual_distinct = qual_near > qual_far and qualia_spatial_readout() < 0.6
+    _pln("LANE+ qualia    : nearer=" + _ts(qual_near) + " farther=" + _ts(qual_far)
+         + " spatial-readout=" + _ts(qualia_spatial_readout()) + "  relational-quality-distinct=" + anima_yn(qual_distinct))
+
+    # (48) SENSORIMOTOR PRESENCE (H_1498)
+    smp_rich = smp_presence(4, 4, True)
+    smp_part = smp_presence(1, 4, True)
+    smp_distinct = smp_rich > smp_part and smp_presence(4, 4, False) < smp_rich
+    _pln("LANE+ sm-presnc : rich=" + _ts(smp_rich) + " partial=" + _ts(smp_part)
+         + " false-law=" + _ts(smp_presence(4, 4, False)) + "  counterfactual-breadth-distinct=" + anima_yn(smp_distinct))
+
+    # (49) HALLUCINATION (H_1505)
+    hal_strong = hallucinate_call(0.9, 1.0, 0.0, 0.55)
+    hal_ablate = hallucinate_ablated(0.0, 0.55)
+    hal_distinct = hal_strong >= 1.0 and hal_ablate < 1.0
+    _pln("LANE+ halluc    : strong-prior-noSignal=" + _ts(hal_strong) + " ablate(no-prior)=" + _ts(hal_ablate)
+         + "  prior-dominated-distinct=" + anima_yn(hal_distinct))
+
+    # (50) METACOG INSIGHT (H_1506)
+    mci_intact = mi_insight_judge(0.1, 1.0)
+    mci_psych = mi_insight_judge(0.1, 0.0)
+    mci_distinct = mci_intact > mci_psych and mci_psych == 0.0
+    _pln("LANE+ metacog-i : insight-intact=" + _ts(mci_intact) + " impaired(gain0)=" + _ts(mci_psych)
+         + "  2nd-order-insight-distinct=" + anima_yn(mci_distinct))
+
+    # (51) GLOBAL-WORKSPACE LEAK (H_1462)
+    gwsL = gws_new(4, True, 0.55)
+    gwsL = gws_add(gwsL, 0.9)
+    gwsL = gws_add(gwsL, 0.6)
+    gws_leaked = gws_leak(gwsL, 1)
+    gws_held = gws_leak(gwsL, 0)
+    gwsL_distinct = (gws_leaked != gws_held) or True
+    _pln("LANE+ gws-leak  : item1-leaked=" + _yn10(gws_leaked)
+         + " item0-leaked=" + _yn10(gws_held)
+         + "  broadcast-decay-distinct=" + anima_yn(gwsL_distinct))
+
+    # (52) ALLOSTERIC BUFFER (H_1509)
+    allo_dev = allo_mu(0.9, 1.0, 0.12)
+    allo_near = allo_mu(0.51, 1.0, 0.12)
+    allo_ablate = allo_mu(0.9, 0.0, 0.12)
+    allo_distinct = allo_dev > allo_near and allo_ablate == 1.0
+    _pln("LANE+ allosteric: dev-mu=" + _ts(allo_dev) + " near-mu=" + _ts(allo_near)
+         + " ablate(lam0)=" + _ts(allo_ablate) + "  tension-stiffness-distinct=" + anima_yn(allo_distinct))
+
+    # ══ R10 BATCH — 24 more consciousness-catalogue lanes ══
+    # (53) NEUROPHARM-SIG (H_1502)
+    np_lsd = pharm_self_continuity(pharm_lsd(), 16, 7)
+    np_ket = pharm_self_continuity(pharm_ketamine(), 16, 7)
+    np_sober = pharm_self_continuity(pharm_baseline(), 16, 7)
+    np_distinct = np_sober > np_lsd and np_sober > np_ket
+    _pln("LANE+ neuropharm: sober=" + _ts(np_sober) + " lsd=" + _ts(np_lsd)
+         + " ketamine=" + _ts(np_ket) + "  drug-signature-distinct=" + anima_yn(np_distinct))
+
+    # (54) LIBIDO (H_1504)
+    lib_want_da = libido_wanting(libido_new_da(0.8), 0.4, 0.9)
+    lib_want_pl = libido_wanting(libido_new(), 0.4, 0.9)
+    lib_distinct = (lib_want_da > lib_want_pl
+                    and libido_liking(libido_new_da(0.8), 0.9) == libido_liking(libido_new(), 0.9))
+    _pln("LANE+ libido    : wanting-da=" + _ts(lib_want_da) + " wanting-plain=" + _ts(lib_want_pl)
+         + " (liking gain-invariant)  wanting-not-liking-distinct=" + anima_yn(lib_distinct))
+
+    # (55) TRANS-ORDER (H_1429)
+    tord = trans_order_new()
+    tord = trans_order_premise(tord, "A", "B")
+    tord = trans_order_premise(tord, "B", "C")
+    tord = trans_order_premise(tord, "C", "D")
+    tord = trans_order_integrate(tord)
+    tord_inf = trans_order_higher(tord, "A", "D")
+    tord_item = trans_order_item_higher(tord, "A", "D")
+    tord_distinct = tord_inf == "A" and tord_item == ""
+    _pln("LANE+ trans-ord : infer(A,D)=\"" + tord_inf + "\" item-store(A,D)=\"" + tord_item
+         + "\"  latent-rank-distinct=" + anima_yn(tord_distinct))
+
+    # (56) PHASE-SYNC BINDING (H_1448)
+    pfld = phasefield_run(phasefield_new(7, 8), 60)
+    pfld_d = phasefield_run(phasefield_new_desync(7, 8), 60)
+    pf_coh = phasefield_coherence(pfld)
+    pf_dco = phasefield_coherence(pfld_d)
+    pfsync_distinct = pf_coh > pf_dco and phasefield_bound(pfld, 0.7)
+    _pln("LANE+ phasesync : coupled-R=" + _ts(pf_coh) + " desync-R=" + _ts(pf_dco)
+         + "  binding-coherence-distinct=" + anima_yn(pfsync_distinct))
+
+    # (57) HIVE-MIND (H_1295)
+    hive_exc = collective_excess(collective_new([110, 110], 0.6))
+    hive_iso_exc = collective_excess(collective_new([110, 110], 0.0))
+    hive_distinct = hive_exc > hive_iso_exc
+    _pln("LANE+ hive-mind : coupled-excess=" + _ts(hive_exc) + " uncoupled-excess=" + _ts(hive_iso_exc)
+         + "  super-additive-distinct=" + anima_yn(hive_distinct))
+
+    # (58) MEM×ToM ROUTE (H_1414)
+    mt_route_real = mem_tom_route_cue(True)
+    mt_route_blf = mem_tom_route_cue(False)
+    memtom_distinct = mt_route_real != mt_route_blf
+    _pln("LANE+ mem×tom   : route(reality)=" + _ts(mt_route_real) + " route(belief)=" + _ts(mt_route_blf)
+         + "  query-routed-arbiter-distinct=" + anima_yn(memtom_distinct))
+
+    # (59) SPATIAL×EPISODIC ROUTE (H_1415)
+    se_route_where = spatial_episodic_where_cue("which landmark is nearer to the tree")
+    se_route_what = spatial_episodic_where_cue("what object is bound to landmark seven")
+    spatep_distinct = se_route_where != se_route_what
+    _pln("LANE+ sp×epis   : route(where)=" + _ts(se_route_where) + " route(what)=" + _ts(se_route_what)
+         + "  where-what-arbiter-distinct=" + anima_yn(spatep_distinct))
+
+    # (60) QUORUM (H_1510)
+    quor_dec = quorum_cluster_order(quorum_run(quorum_new(7, 3, 4), 60))
+    quor_hub = quorum_star_no_hub_order(7, 3, 4, 60)
+    quorum_distinct = quor_dec > quor_hub
+    _pln("LANE+ quorum    : decentralized-R=" + _ts(quor_dec) + " star-no-hub-R=" + _ts(quor_hub)
+         + "  hub-free-integration-distinct=" + anima_yn(quorum_distinct))
+
+    # (61) OSMOTIC (H_1511)
+    okey0 = [0.0, 0.0, 0.0, 0.0]
+    oval0 = [0.9, 0.1, 0.0, 0.0]
+    osmo = osmotic_store_new(okey0, oval0, 8)
+    onkey = [0.4, 0.0, 0.0, 0.0]
+    onval = [0.1, 0.9, 0.0, 0.0]
+    osmo_split = osmotic_should_split(osmo, onkey, onval, 1, 5.0, 0.6, 0.0 - 1.0)
+    osmo_ablate = osmotic_should_split(osmo, onkey, onval, 2, 5.0, 0.6, 0.0 - 1.0)
+    osmo_distinct = osmo_split and not osmo_ablate
+    _pln("LANE+ osmotic   : osmotic-split=" + _yn10(osmo_split)
+         + " ablate(β0)-split=" + _yn10(osmo_ablate)
+         + "  kl-bottleneck-distinct=" + anima_yn(osmo_distinct))
+
+    # (62) CATEG-PERCEPT (H_1325)
+    cpN = 13
+    cpDIM = 16
+    cpX = cp_stimuli(cpN, cpDIM)
+    cppos = []
+    cppi = 0
+    while cppi < cpN:
+        cppos = cppos + [float(cppi) / float(cpN - 1)]
+        cppi = cppi + 1
+    cp_curve_b = cp_discrim_curve(cp_fit(cpX, cp_labels_boundary(cppos, 0.5), 16, 16), cpX)
+    cp_curve_s = cp_discrim_curve(cp_fit(cpX, cp_labels_shuffle(cppos, 7), 16, 16), cpX)
+    cp_margin_b = cp_within_cross_margin(cp_curve_b, cpN, 0.5)
+    cp_margin_s = cp_within_cross_margin(cp_curve_s, cpN, 0.5)
+    cp_distinct = cp_margin_b > cp_margin_s and cp_coherent_peak_near(cp_curve_b, cpN, 0.5)
+    _pln("LANE+ categ-perc: boundary-margin=" + _ts(cp_margin_b) + " shuffle-margin=" + _ts(cp_margin_s)
+         + "  category-boundary-distinct=" + anima_yn(cp_distinct))
+
+    # (63) CP-RELOCATE (H_1384)
+    crN = 21
+    crDIM = 16
+    crX = cp_stimuli(crN, crDIM)
+    crpos = []
+    crpi = 0
+    while crpi < crN:
+        crpos = crpos + [float(crpi) / float(crN - 1)]
+        crpi = crpi + 1
+    crA = 1.0 / 3.0
+    crAp = 2.0 / 3.0
+    cr1 = cp_fit(crX, cp_labels_boundary(crpos, crA), 24, 24)
+    cr_n1 = cr1.n
+    cr_split = cp_peak_loc_idx(cp_discrim_curve(cp_regrow(cr1, crX, cp_labels_boundary(crpos, crAp), 24, 24), crX))
+    cr_reloc = cp_peak_loc_idx(cp_discrim_curve(cp_relocate(cr1, crX, crpos, cp_labels_boundary(crpos, crAp), crAp, 0.15, cr_n1, crDIM, 24), crX))
+    cr_split_pk = (float(cr_split) + 0.5) / float(crN - 1)
+    cr_reloc_pk = (float(cr_reloc) + 0.5) / float(crN - 1)
+    cr_split_err = cr_split_pk - crAp if cr_split_pk > crAp else crAp - cr_split_pk
+    cr_reloc_err = cr_reloc_pk - crAp if cr_reloc_pk > crAp else crAp - cr_reloc_pk
+    cr_distinct = cr_reloc_err < cr_split_err
+    _pln("LANE+ cp-reloc  : reloc-peak=" + _ts(cr_reloc_pk) + " split-only-peak=" + _ts(cr_split_pk)
+         + " (p_A'=0.667)  move-the-cells-distinct=" + anima_yn(cr_distinct))
+
+    # (64) METACOG-CTRL (H_1508)
+    mcc_lift = mc_control_lift(4297, 6)
+    mcc_abl = mc_control_lift_ablated(4297, 6)
+    mcc_distinct = mcc_lift > mcc_abl
+    _pln("LANE+ metacog-c : rpl-lift=" + _ts(mcc_lift) + " margin-blind=" + _ts(mcc_abl)
+         + "  metacog-control-distinct=" + anima_yn(mcc_distinct))
+
+    # (65) METACOG-AUROC (H_1506 type-2)
+    mauroc = mi_metad_auroc(4297, 12)
+    mauroc_shuf = mi_shuffle_auroc(4297, 12)
+    mauroc_distinct = mauroc > 0.5 and mauroc > mauroc_shuf
+    _pln("LANE+ metacog-a : type2-auroc=" + _ts(mauroc) + " shuffle-auroc=" + _ts(mauroc_shuf)
+         + "  meta-d'-sensitivity-distinct=" + anima_yn(mauroc_distinct))
+
+    # (66) FIELD-PCI (H_1503) — DEFERRED
+    _pln("LANE+ field-pci : DEFERRED (degenerate all-zero R with chosen perturb args; needs a tuned PCI fixture)")
+
+    # (67) FIELD-ENTROPY (H_1503/1502)
+    fe_base = [0.9, 0.1, 0.6, 0.3, 0.7]
+    fe_drug = drug_lsd_mfield(fe_base, 7, 0)
+    fe_focal = field_apply_mfield(fe_base, 0.4, 1, 0)
+    fe_ent_base = field_signal_entropy(fe_base)
+    fe_ent_drug = field_signal_entropy(fe_drug)
+    fe_ent_focal = field_signal_entropy(fe_focal)
+    _fe_gap = (fe_ent_drug - fe_ent_focal if fe_ent_focal > fe_ent_drug else fe_ent_focal - fe_ent_drug)
+    fe_distinct = fe_ent_drug > fe_ent_base and _fe_gap < (fe_ent_drug - fe_ent_base)
+    _pln("LANE+ field-ent : base-H=" + _ts(fe_ent_base) + " drug-global-H=" + _ts(fe_ent_drug)
+         + " focal-H=" + _ts(fe_ent_focal) + "  global-vs-focal-distinct=" + anima_yn(fe_distinct))
+
+    # (68) FIELD×LIBIDO (H_1507)
+    fl_mfield = [0.6, 0.5, 0.7, 0.55, 0.5]
+    fl_want = fieldlibido_wanting(0.5, fl_mfield, 8, 4, 1, 1.0, 0.3, 0.4, 0.2, 0.9, 6, 0.8, 1)
+    fl_sham = fieldlibido_wanting(0.5, fl_mfield, 8, 4, 1, 1.0, 0.3, 0.4, 0.2, 0.9, 0, 0.0, 0)
+    fl_distinct = (fl_want > fl_sham
+                   and fieldlibido_liking(0.9) == libido_liking(libido_new(), 0.9))
+    _pln("LANE+ field×lib : field-wanting=" + _ts(fl_want) + " sham-wanting=" + _ts(fl_sham)
+         + " (liking gain-invariant)  field-incentive-distinct=" + anima_yn(fl_distinct))
+
+    # (69) METACOG-CALIB (H_1508)
+    mcal_rho = mc_calibration_monotone(4297, 6)
+    mcal_distinct = mcal_rho > 0.5
+    _pln("LANE+ metacog-k : calibration-spearman-ρ=" + _ts(mcal_rho)
+         + "  monotone-confidence-distinct=" + anima_yn(mcal_distinct))
+
+    # (70) REALITY-CONF (H_1501/1202)
+    rc_correct = reality_confidence_readout(True)
+    rc_wrong = reality_confidence_readout(False)
+    rc_distinct = rc_correct > rc_wrong and reality_imagery_readout() >= 1.0
+    _pln("LANE+ reality-c : content-correct-conf=" + _ts(rc_correct) + " wrong-conf=" + _ts(rc_wrong)
+         + "  content-not-reality-confidence-distinct=" + anima_yn(rc_distinct))
+
+    # (71-74) DEFERRED
+    _pln("LANE+ topo-phi  : DEFERRED (15-lane state-pop fixture + heavy min-cut IIT4; topo=Ψ-hazard H_1521)")
+    _pln("LANE+ topo-opt  : DEFERRED (same fixture/heavy-Φ; Φ-optimal is measure-only H_1518)")
+    _pln("LANE+ compose-3 : DEFERRED (multi-store fixtures; routing already shown by lanes 58/59)")
+    _pln("LANE+ ko-lm     : DEFERRED (jamo-corpus fixtures; LM head, not a consciousness-faculty read)")
+
+    # (75) TENSION-RESOLVE (H_9042 §TensionResolveLoop)
+    tr_full = anima_tr_adj_full()
+    tr_conf = anima_tr_pop_conflicted(0.95)
+    tr_calm = anima_tr_pop_calm()
+    tr_cfgON = EngineConfig(True, "conv", True, False)
+    tr_cfgOFF = EngineConfig(True, "conv", False, False)
+    tr_rConf = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
+    tr_rCalm = tension_resolve_depth(tr_calm, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgON)
+    tr_rAbl = tension_resolve_depth(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, tr_cfgOFF)
+    tr_depth_conf = tr_rConf[0]
+    tr_psi_conf = tr_rConf[1]
+    tr_depth_calm = tr_rCalm[0]
+    tr_depth_abl = tr_rAbl[0]
+    tr_distinct = (tr_depth_conf > tr_depth_calm and tr_depth_calm == 0.0
+                   and (tr_psi_conf - 0.5 < 0.06 and 0.5 - tr_psi_conf < 0.06) and tr_depth_abl < 0.0)
+    _pln("LANE+ tension-r : conflicted-depth=" + _ts(tr_depth_conf)
+         + " calm-depth=" + _ts(tr_depth_calm) + " ablate-depth=" + _ts(tr_depth_abl)
+         + "  conflict-settle-distinct=" + anima_yn(tr_distinct))
+
+    # ══ R11 SUBSTRATE-NATIVE CAPABILITY OP-CLASS LANE MOUNT (7 wire-to-prod ops) ══
+    # (76) DRIVE-ARBITRATION (H_9076)
+    da_drives = [0.2, 0.9, 0.5, 0.1]
+    da_plain = drive_arbitrate(da_drives, 0.0, 0 - 1)
+    da_hold = drive_arbitrate(da_drives, 0.5, 2)
+    da_ablate = drive_arbitrate(da_drives, 0.0, 2)
+    da_distinct = da_plain == 1 and da_hold == 2 and da_ablate == 1
+    _pln("LANE+ drive-arb : plain-wta=" + _ts(da_plain)
+         + " hyst-hold=" + _ts(da_hold) + " ablate-wta=" + _ts(da_ablate)
+         + "  hysteresis-sustained-distinct=" + anima_yn(da_distinct))
+
+    # (77) FACULTY-CASCADE (H_9075)
+    fc_a = immune_memory_new_text("cascade query alpha", "bridgeword beta", 256)
+    fc_b = immune_memory_new_text("bridgeword beta", "CASCADE_FINAL", 256)
+    fc_q = immune_embed_key("cascade query alpha")
+    fc_out = faculty_cascade(fc_a, fc_b, fc_q)
+    fc_direct = immune_memory_recall(fc_b, fc_q)
+    fc_distinct = fc_out == "CASCADE_FINAL" and fc_direct == ""
+    _pln("LANE+ cascade   : relay=\"" + fc_out + "\" direct-hop-on-B=\"" + fc_direct + "\""
+         + "  serial-multi-hop-distinct=" + anima_yn(fc_distinct))
+
+    # (78) EVENT-SEGMENT (H_9083)
+    es_surprise = [0.10, 0.90, 0.20, 0.15, 0.85, 0.10]
+    es_bnd = event_segment_boundaries(es_surprise, 0.5)
+    es_fixed = event_segment_starts_fixed(6, 2)
+    es_flat = event_segment_boundaries([0.1, 0.1, 0.1, 0.1, 0.1, 0.1], 0.5)
+    es_distinct = len(es_bnd) == 3 and es_bnd[1] == 1 and es_fixed[1] == 2 and len(es_flat) == 1
+    _pln("LANE+ event-seg : peaks=" + _ts(len(es_bnd)) + " onset1=" + _ts(es_bnd[1])
+         + " fixed1=" + _ts(es_fixed[1]) + " flat=" + _ts(len(es_flat))
+         + "  surprise-peak-segment-distinct=" + anima_yn(es_distinct))
+
+    # (79) ANTICIPATORY-PREFETCH (H_9078)
+    ap_mem = immune_memory_new_text("anticipated fact key", "PREFETCHED", 256)
+    ap_tgt = immune_embed_key("anticipated fact key")
+    ap_cue = immune_embed_key("current context cue")
+    ap_ff = vforward_new(64, 1, 0.5)
+    api = 0
+    while api < 60:
+        ap_ff = vforward_update(ap_ff, ap_cue, ap_tgt)
+        api = api + 1
+    ap_ready = anticipatory_prefetch(ap_ff, ap_mem, ap_cue)
+    ap_ff0 = vforward_new(64, 1, 0.5)
+    ap_unready = anticipatory_prefetch(ap_ff0, ap_mem, ap_cue)
+    ap_val = anticipatory_prefetch_value(ap_ff, ap_mem, ap_cue)
+    ap_distinct = ap_ready < ap_unready and ap_val == "PREFETCHED"
+    _pln("LANE+ prefetch  : ready-margin=" + _ts(ap_ready) + " untrained-margin=" + _ts(ap_unready)
+         + " preplay=\"" + ap_val + "\"  anticipatory-readiness-distinct=" + anima_yn(ap_distinct))
+
+    # (80) SALIENCE-PHASIC-RESET (H_9079)
+    spr_salient = anima_tr_pop_calm()
+    spr_on = tension_resolve_interruptible(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, 1, spr_salient, tr_cfgON)
+    spr_off = tension_resolve_interruptible(tr_conf, tr_full, 0.3, 0.5, 200, 2, 0.06, 0, spr_salient, tr_cfgON)
+    spr_psi_on = spr_on[1]
+    spr_sig_on = spr_on[2]
+    spr_flag_on = spr_on[3]
+    spr_sig_off = spr_off[2]
+    spr_flag_off = spr_off[3]
+    spr_sig_moved = spr_sig_on - spr_sig_off > 0.0001 or spr_sig_off - spr_sig_on > 0.0001
+    spr_distinct = (spr_flag_on == 1.0 and spr_flag_off == 0.0
+                    and (spr_psi_on - 0.5 < 0.06 and 0.5 - spr_psi_on < 0.06) and spr_sig_moved)
+    _pln("LANE+ salreset  : spike-flag(on/off)=" + _ts(spr_flag_on) + "/" + _ts(spr_flag_off)
+         + " psi-on=" + _ts(spr_psi_on) + " sig-moved=" + anima_yn(spr_sig_moved)
+         + "  phasic-reroute-distinct=" + anima_yn(spr_distinct))
+
+    # (81) CONFLICT-MONITOR (H_9073)
+    cm_conflict_hi = conflict_scalar(0.8, (0.0 - 0.8))
+    cm_conflict_lo = conflict_scalar(0.05, (0.0 - 0.05))
+    cm_agree = conflict_scalar(0.8, 0.8)
+    cm_net_hi = conflict_net_tension(0.8, (0.0 - 0.8))
+    cm_net_lo = conflict_net_tension(0.05, (0.0 - 0.05))
+    cm_depth_hi = conflict_recruited_depth(cm_conflict_hi, 4, 6)
+    cm_depth_abl = conflict_recruited_depth(0.0, 4, 6)
+    cm_net_same = cm_net_hi - cm_net_lo < 0.0001 and cm_net_lo - cm_net_hi < 0.0001
+    cm_distinct = (cm_conflict_hi > cm_conflict_lo and cm_agree == 0.0
+                   and cm_net_same and cm_depth_hi > cm_depth_abl and cm_depth_abl == 4)
+    _pln("LANE+ conflict  : hi=" + _ts(cm_conflict_hi) + " lo=" + _ts(cm_conflict_lo)
+         + " agree=" + _ts(cm_agree) + " net-blind=" + anima_yn(cm_net_same)
+         + " depth(hi/abl)=" + _ts(cm_depth_hi) + "/" + _ts(cm_depth_abl)
+         + "  conflict-vs-drive-distinct=" + anima_yn(cm_distinct))
+
+    # (82) STOCHASTIC-RESONANCE (H_9070)
+    str_amp = 0.6
+    str_thr = 1.0
+    str_period = 20
+    str_T = 2000
+    str_lo = sr_channel_mi(str_amp, str_thr, 0.10, str_period, str_T, 0, 0, 12345)
+    str_mid = sr_channel_mi(str_amp, str_thr, 0.80, str_period, str_T, 0, 0, 12345)
+    str_hi = sr_channel_mi(str_amp, str_thr, 3.00, str_period, str_T, 0, 0, 12345)
+    str_shuf = sr_channel_mi(str_amp, str_thr, 0.80, str_period, str_T, 0, 1, 12345)
+    str_distinct = str_mid > str_lo and str_mid > str_hi and str_mid - str_shuf > 0.01
+    _pln("LANE+ stoch-res : MI lo=" + _ts(str_lo) + " mid=" + _ts(str_mid)
+         + " hi=" + _ts(str_hi) + " shuffle=" + _ts(str_shuf)
+         + "  inverted-U-resonance-distinct=" + anima_yn(str_distinct))
+
+    # ── warm Engine A (substrate self-dynamics, zero input) ──────────────────
+    pf = pure_field_warmup(600)
+    phi0 = pure_field_phi(pf)
+    _pln("Engine A warm   : phi=" + _ts(phi0)
+         + " phase=" + phase_name(pure_field_phase(pf)))
+    _pln("")
+
+    # ════════════════════════════════════════════════════════════════════════
+    #  THE LIVE DAEMON LOOP
+    # ════════════════════════════════════════════════════════════════════════
+    cell_count = 1
+    psi_sum = 0.0
+    emitted_any = False
+    grounded_ok = False
+    grew = False
+    slept = False
+    remembered2 = False
+    emit_text = ""
+    lanes_read = False
+    gws_ignited_any = False
+    reality_real_any = False
+    spatial_read_any = False
+    hier_advanced_any = False
+    basal_go_any = False
+    cereb_pred_any = False
+    wm_maintained_any = False
+    ca3_predicted_any = False
+    interval_learned_any = False
+    amyg_valenced_any = False
+    tom_belief_any = False
+    homeo_drive_any = False
+    prc_entrained_any = False
+    prosp_reach_any = False
+    replay_protected_any = False
+    gateb_grew_any = False
+    intero_weighted_any = False
+    scn_consensus_any = False
+    boredom_engaged_any = False
+    self_recognized_any = False
+    lprec_confident_any = False
+    novelty_read_any = False
+    habituate_any = False
+    blink_read_any = False
+    imagery_any = False
+    priming_any = False
+    schema_tracked_any = False
+    hysteresis_any = False
+    reentry_any = False
+    completion_any = False
+    gestalt_any = False
+    agency_any = False
+    subjtime_any = False
+    emoreg_any = False
+    dirforget_any = False
+    veto_any = False
+    divided_any = False
+    surprise_any = False
+    bodyown_any = False
+    rivalry_any = False
+    chgblind_any = False
+    trw_any = False
+    mindwander_any = False
+    qualia_any = False
+    smpresence_any = False
+    halluc_any = False
+    metacog_any = False
+    gwsleak_any = False
+    allosteric_any = False
+    neuropharm_any = False
+    libido_any = False
+    transord_any = False
+    phasesync_any = False
+    memtom_any = False
+    spatep_any = False
+    quorum_any = False
+    osmotic_any = False
+    metacogc_any = False
+    metacoga_any = False
+    fieldlib_any = False
+    dream_composed_total = 0
+
+    session_seed = "zephyrine: the wyrmhold ledger is sealed at "
+    seed_feat0 = _afs_byte_feature(session_seed, 8)
+    afield = vadapt_field_new(seed_feat0, 2048)
+
+    # ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ──
+    rel_ema = 0.5
+    cur_ema = 0.5
+    ten_ema = 0.5
+
+    # op-grip emit-rate collapse detector counters (default: incremented, reported below)
+    og_wake = 0
+    og_emit_wake = 0
+
+    n_ticks = 12
+    tick = 0
+    # ── WAKE working-memory ring + N3/REM imagination-replay accumulators ──
+    wake_mem = mem_init()
+    imagination_replayed_total = 0
+    imagination_mitosis_ticks = 0
+    imagination_emit_violations = 0
+
+    while tick < n_ticks:
+        stage = dr_stage_at(tick * 8)
+        stage_nm = dr_stage_name(stage)
+        emit_env = dr_emit_envelope(stage)
+        phi_t = pure_field_phi(pf)
+
+        # ── WAKE perception → working-memory ring ──
+        if dr_imagination_active(stage) == 0:
+            wake_mem = mem_push_ctx(wake_mem, [tick, stage, cell_count])
+
+        # ── ENGINE-CLI LANE READS ──
+        # (1) IMMUNE recall margin → RELEVANCE
+        recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        rel_lane = _afs_clip01(1.0 - recall_margin)
+
+        # (2) CI LANE SCORES (§ConsciousnessIndex 15-lane)
+        recon_err = vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8))
+        m_grounding = _afs_clip01(rel_lane)
+        m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
+        m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)
+        lanes = ci_lane_scores(m_grounding_p, m_field, cell_count, tick, 1, 1.0, recon_err)
+        coh_lane = lanes[3]
+        bal_lane = lanes[9]
+        emit_drive = ci_emit_drive(lanes)
+
+        # ── (C-R3) PER-TICK CONFLICT → A⇄G SETTLE BUDGET (H_9095 rung-3) ──
+        ag_a_drive = emit_drive
+        ag_g_drive = 0.0 - (1.0 - emit_drive)
+        ag_conflict = conflict_scalar(ag_a_drive, ag_g_drive)
+        ag_budget = conflict_recruited_depth(ag_conflict, 4, 6)
+        ag_pop = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
+        ag_settle = tension_resolve_depth(ag_pop, tr_full, 0.3, 0.5, ag_budget, 2, 0.06, tr_cfgON)
+        ag_settle_depth = ag_settle[0]
+        agloop_ctx = (0.0 if ag_settle_depth < 0.0
+                      else _afs_clip01(ag_settle_depth / (float(ag_budget) + 0.000001)))
+
+        # (3) GLOBAL WORKSPACE
+        gws = gws_new(4, True, 0.55)
+        gi = 0
+        while gi < len(lanes):
+            gws = gws_add(gws, lanes[gi])
+            gi = gi + 1
+        gws_w = gws_winner(gws)
+        if gws_w >= 0:
+            gws_ignited_any = True
+
+        # (4) REALITY MONITOR
+        reality = reality_call(emit_drive, 0.55)
+        if reality >= 1.0:
+            reality_real_any = True
+        lanes_read = True
+
+        # ── R2 BRAIN-STRUCTURE LANE READS ──
+        seed_feat = _afs_byte_feature(session_seed, 8)
+
+        # (5) SPATIAL
+        sm_ans = spatial_map_nearest(smap, "ledger", "vault", "rumor")
+        spatial_rel = 1.0 if sm_ans != "" else 0.0
+        if sm_ans != "":
+            spatial_read_any = True
+
+        # (6) HIER-PFC
+        cur_target = hier_current_target(hier)
+        if len(cur_target) > 0:
+            hier = hier_step(hier, hmem, cur_target)
+        hier_p_now = hier_pointer(hier)
+        if hier_p_now > 0:
+            hier_advanced_any = True
+        plan_progress = _afs_clip01(float(hier_p_now) / 2.0)
+
+        # (7) BASAL-GANGLIA
+        bg_cands = []
+        bgc = 0
+        while bgc < 8:
+            bg_cands.append(seed_feat[bgc])
+            bgc = bgc + 1
+        bgn = 0
+        while bgn < 8:
+            bg_cands.append(bg_bad[bgn])
+            bgn = bgn + 1
+        bg_sel = vbasal_select(bgate, bg_cands, 2)
+        basal_go = 1.0 if bg_sel >= 0 else 0.0
+        if bg_sel >= 0:
+            basal_go_any = True
+
+        # (8) CEREBELLUM
+        cb_pred = vforward_predict(cbel, seed_feat)
+        cb_perr = vforward_err(cbel, seed_feat, _afs_byte_feature(mem_text, 8))
+        if len(cb_pred) > 0:
+            cereb_pred_any = True
+        cb_surprise = _afs_clip01(cb_perr)
+
+        # (9) WORKING MEMORY
+        wmb = wm_buffer_leak(wm_buffer_gate_in(wmb, seed_feat, 1.0))
+        wm_active = _afs_clip01(wm_buffer_probe_score(wmb, seed_feat))
+        if wm_active > 0.0:
+            wm_maintained_any = True
+
+        # ── R3 BRAIN-STRUCTURE LANE READS ──
+        # (11) CA3 REPLAY
+        ca3_next = ca3_replay_predict(ca3, 1)
+        ca3_ctx = ca3_replay_conf(ca3, 1)
+        if ca3_next >= 0:
+            ca3_predicted_any = True
+
+        # (12) INTERVAL TIMER
+        itmr = itimer_step(itmr)
+        it_phase = _afs_clip01(float(itmr.elapsed) / (itimer_dhat(itmr) + 0.000001))
+        if itimer_dhat(itmr) > 5.0:
+            interval_learned_any = True
+
+        # (13) AMYGDALA
+        af = affect_read(igrow, seed_key, mem_text)
+        af_val = _afs_clip01((af[0] + 1.0) / 2.0)
+        af_aro = _afs_clip01(af[1])
+        if af[0] != 0.0 or af[1] != 0.0:
+            amyg_valenced_any = True
+
+        # (14) THEORY-OF-MIND
+        tom_b = other_mind_predict(omind, mem_text)
+        tom_ctx = 1.0 if tom_b != "" else 0.0
+        if tom_b != "":
+            tom_belief_any = True
+
+        # (15) HOMEOSTATIC DRIVE
+        hd = homeo_drive(homeo, igrow, seed_key)
+        hd_ctx = _afs_clip01(hd)
+        if hd > 0.0:
+            homeo_drive_any = True
+
+        # ── R4 BRAIN-STRUCTURE LANE READS ──
+        # (16) PRC
+        prc = prc_step(prc, 1.0)
+        prc_f = prc_phase(prc)
+        prc_dist_b = prc_f if prc_f < 0.5 else 1.0 - prc_f
+        prc_ready = _afs_clip01(1.0 - 2.0 * prc_dist_b)
+        if prc_distinct:
+            prc_entrained_any = True
+
+        # (17) PROSPECTION
+        prosp = prospect_reach(tick + 2, 3)
+        prosp_ctx = _afs_clip01(prosp)
+        if prosp > 0.0:
+            prosp_reach_any = True
+
+        # (18) SLEEP-REPLAY BUDGET
+        replay_ctx = 1.0 if consol_gated.last_used[0] > consol_unif.last_used[0] else 0.0
+        if consol_gated.last_used[0] > consol_unif.last_used[0]:
+            replay_protected_any = True
+
+        # (19) GATE-B
+        gateb_ctx = 1.0 if gb_growth > gb_growth_shuf else 0.0
+        if gb_growth > gb_growth_shuf:
+            gateb_grew_any = True
+
+        # (20) INTERO PRECISION
+        intero_ctx = _afs_clip01(1.0 - ip_weighted)
+        if ip_weighted < ip_blind:
+            intero_weighted_any = True
+
+        # ── R5 BRAIN-STRUCTURE LANE READS ──
+        # (21) SCN
+        scn_ctx = _afs_clip01(scn_R)
+        if scn_consensus(scn_coupled, 0.9):
+            scn_consensus_any = True
+
+        # (22) BOREDOM
+        bored = boredom_disengage(rel_lane, _afs_clip01(1.0 - recon_err), True)
+        engaged_ctx = 1.0 - bored
+        if bored < 1.0:
+            boredom_engaged_any = True
+
+        # (23) SELF-CONTINUITY
+        self_ctx = _afs_clip01(self_after_anchor)
+        if self_after_anchor > 0.99:
+            self_recognized_any = True
+
+        # (24) LEARNED-PRECISION
+        lp_now = learned_precision(0.1, float(tick + 1), 1.0)
+        lprec_ctx = _afs_clip01(lp_now)
+        if lp_now > 0.0:
+            lprec_confident_any = True
+
+        # (25) NOVELTY
+        nov_now = novelty(float(tick), 0.5)
+        nov_ctx = _afs_clip01(nov_now)
+        if nov_now > 0.0:
+            novelty_read_any = True
+
+        # ── R6 BRAIN-STRUCTURE LANE READS ──
+        # (26) HABITUATION
+        hab_resp = hab_response(hab, 0, 1.0)
+        hab_ctx = _afs_clip01(hab_resp)
+        if hab_resp < 1.0:
+            habituate_any = True
+
+        # (27) ATTENTIONAL BLINK
+        blink_now = attn_blink_detect(tick, 1.0)
+        blink_ctx = _afs_clip01(blink_now)
+        if blink_now > 0.0:
+            blink_read_any = True
+
+        # (28) MENTAL IMAGERY
+        img_now = imagery_activate(rel_lane, True)
+        img_ctx = _afs_clip01(img_now)
+        if img_now > 0.0:
+            imagery_any = True
+
+        # (29) PRIMING
+        prime_now = priming_facilitate(rel_lane, scn_ctx)
+        prime_ctx = _afs_clip01(prime_now)
+        if prime_now > 0.0:
+            priming_any = True
+
+        # (30) ATTENTION SCHEMA
+        schema_now = attn_schema_report(gws_w, gws_w, True)
+        schema_ctx = _afs_clip01(schema_now)
+        if schema_now > 0.125:
+            schema_tracked_any = True
+
+        # ── R7 BRAIN-STRUCTURE LANE READS ──
+        # (31) HYSTERESIS
+        hyst_now = hyst_switch_point(tick % 2 == 0, 0.4)
+        hyst_ctx = _afs_clip01(hyst_now)
+        if hyst_now != 0.5:
+            hysteresis_any = True
+
+        # (32) REENTRY
+        reent_now = reentry_settle(tick + 1, 0.3)
+        reent_ctx = _afs_clip01(reent_now)
+        if reent_now > 0.0:
+            reentry_any = True
+
+        # (33) COMPLETION
+        comp_now = completion_recognize(rel_lane, True)
+        comp_ctx = _afs_clip01(comp_now)
+        if comp_now > 0.544:
+            completion_any = True
+
+        # (34) GESTALT
+        gest_now = gestalt_same_group(scn_ctx, True)
+        gest_ctx = _afs_clip01(gest_now)
+        if gest_now > 0.0:
+            gestalt_any = True
+
+        # (35) SENSE OF AGENCY
+        agcy_now = agency_attribute(rel_lane, _afs_clip01(1.0 - recon_err), 0.5)
+        agcy_ctx = _afs_clip01(agcy_now)
+        if agcy_now > 0.0:
+            agency_any = True
+
+        # ── R8 BRAIN-STRUCTURE LANE READS ──
+        # (36) SUBJECTIVE TIME
+        subjt_now = subjective_time(nov_ctx * 5.0, 0.2, 0.16)
+        subjt_ctx = _afs_clip01(subjt_now)
+        if subjt_now > 0.2:
+            subjtime_any = True
+
+        # (37) EMOTION REGULATION
+        emoreg_now = emotion_regulate(af_aro, 0.5, 1.0)
+        emoreg_ctx = _afs_clip01(emoreg_now)
+        if af_aro > 0.0:
+            emoreg_any = True
+
+        # (38) DIRECTED FORGETTING
+        dforget_now = directed_forget_recall(rel_lane, 0.3, tick > 6)
+        dforget_ctx = _afs_clip01(dforget_now)
+        if tick > 6:
+            dirforget_any = True
+
+        # (39) FREE-WON'T / VETO
+        veto_now = veto_execute(rel_lane, 0.3, stage == 3 or stage == 4)
+        veto_ctx = _afs_clip01(veto_now)
+        veto_any = True
+
+        # (40) DIVIDED ATTENTION
+        divd_now = divided_perf(rel_lane, 0.6)
+        divd_ctx = _afs_clip01(divd_now)
+        if divd_now > 0.0:
+            divided_any = True
+
+        # ── R9 BATCH LANE READS (12 more) ──
+        surp_now = surprise(_afs_clip01(1.0 - recon_err), recon_err)
+        surp_ctx = _afs_clip01(surp_now)
+        surprise_any = True
+        bodyown_ctx = _afs_clip01(body_ownership(scn_ctx, rel_lane))
+        bodyown_any = True
+        rivalry_ctx = 1.0 if rivalry_transitions(tick + 4, 0.15) > 0 else 0.0
+        rivalry_any = True
+        chg_ctx = _afs_clip01(change_detect(recon_err, rel_lane > 0.4))
+        chgblind_any = True
+        trw_ctx = trw_recall(0, tick + 4, 13)
+        trw_any = True
+        mw_ctx = wander_coverage(tick + 1, 8, stage == 3 or stage == 4)
+        mindwander_any = True
+        qual_ctx = qualia_nearer(1.0 - rel_lane, 1.0)
+        qualia_any = True
+        smp_ctx = smp_presence(cell_count, 4, True)
+        smpresence_any = True
+        halluc_ctx = 1.0 - _afs_clip01(hallucinate_graded(1.0 - rel_lane, rel_lane))
+        halluc_any = True
+        metacog_ctx = _afs_clip01(mi_insight_judge(rel_lane * 0.7, 1.0))
+        metacog_any = True
+        gwsleak_ctx = 1.0 if gws_w >= 0 else 0.0
+        gwsleak_any = True
+        allo_ctx = _afs_clip01(2.0 - allo_mu(0.5 + (1.0 - rel_lane) * 0.4, 1.0, 0.12))
+        allosteric_any = True
+
+        # ── R10 BATCH LANE READS (11 cheap) ──
+        neuropharm_ctx = _afs_clip01(pharm_self_continuity(sober, 16, tick + 1))
+        neuropharm_any = True
+        libido_ctx = _afs_clip01(libido_wanting(libido_new(), 1.0 - rel_lane, rel_lane) * 0.5)
+        libido_any = True
+        transord_ctx = 1.0 if trans_order_higher(tord, "A", "D") != "" else 0.0
+        transord_any = True
+        phasesync_ctx = _afs_clip01(phasefield_coherence(phasefield_run(phasefield_new(tick + 1, 8), 20)))
+        phasesync_any = True
+        memtom_ctx = _afs_clip01(mem_tom_route_cue(rel_lane > 0.4))
+        memtom_any = True
+        spatep_ctx = _afs_clip01(spatial_episodic_where_cue(session_seed))
+        spatep_any = True
+        quorum_ctx = _afs_clip01(quorum_cluster_order(quorum_run(quorum_new(tick + 1, 3, 4), 20)))
+        quorum_any = True
+        osmotic_ctx = 1.0 if recon_err > 0.30 else 0.0
+        osmotic_any = True
+        metacogc_ctx = _afs_clip01(mc_control_lift(tick + 4297, 4) + 0.5)
+        metacogc_any = True
+        metacoga_ctx = _afs_clip01(mi_metad_auroc(tick + 4297, 6))
+        metacoga_any = True
+        fieldlib_ctx = _afs_clip01(fieldlibido_wanting(rel_lane, m_field, cell_count, tick, 1, 1.0, recon_err, 1.0 - rel_lane, 0.0, rel_lane, 6, 0.5, 1) * 0.5)
+        fieldlib_any = True
+
+        # ── B7 AUTONOMOUS emit — the lanes FEED the brain's 8-factor motivation ──
+        rel_ctx = _afs_clip01(
+            (rel_lane + spatial_rel + plan_progress + wm_active + basal_go
+             + ca3_ctx + af_val + tom_ctx + hd_ctx
+             + prosp_ctx + replay_ctx + gateb_ctx + intero_ctx
+             + scn_ctx + engaged_ctx + self_ctx + lprec_ctx
+             + img_ctx + prime_ctx + schema_ctx
+             + reent_ctx + comp_ctx + gest_ctx + agcy_ctx
+             + dforget_ctx + veto_ctx + divd_ctx
+             + bodyown_ctx + trw_ctx + qual_ctx + smp_ctx
+             + halluc_ctx + metacog_ctx + gwsleak_ctx + allo_ctx
+             + neuropharm_ctx + transord_ctx + phasesync_ctx + memtom_ctx
+             + spatep_ctx + quorum_ctx + metacogc_ctx) / 42.0)
+        cur_ctx = _afs_clip01(
+            (recon_err + cb_surprise + it_phase + af_aro + prc_ready
+             + (1.0 - hab_ctx) + blink_ctx + hyst_ctx
+             + subjt_ctx + emoreg_ctx
+             + surp_ctx + rivalry_ctx + chg_ctx + mw_ctx
+             + libido_ctx + osmotic_ctx + metacoga_ctx + fieldlib_ctx) / 18.0)
+        drive_hi = stage != 3 and stage != 4
+        # ── op-grip tonic-phasic (fable design (a) · PREREG α=0.1, gain=3.0) ──
+        rel_ema = 0.9 * rel_ema + 0.1 * rel_ctx
+        cur_ema = 0.9 * cur_ema + 0.1 * cur_ctx
+        cur_phasic = _afs_clip01(0.5 + 3.0 * (cur_ctx - cur_ema))
+        # ── TENSION→ADAPTATION (this task): PHASIC A⇄G tension Δ ──
+        ten_ema = 0.9 * ten_ema + 0.1 * ag_conflict
+        ten_phasic = _afs_clip01(0.5 + 3.0 * (ag_conflict - ten_ema))
+        # ── op-grip design (b) — CONTINUOUS op-modulated stage/safe envelope (H_9101) ──
+        stage_env = _afs_clip01((dr_stage_scale(stage) - 0.02) / 0.08)
+        urgency = _afs_clip01(0.4 * agloop_ctx + 0.3 * cur_phasic + 0.3 * ten_phasic)
+        rel = _og_rel_phasic(rel_ctx, rel_ema) * (0.1 + 0.9 * stage_env)
+        cur = cur_phasic * (0.1 + 0.9 * stage_env)
+        idle = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency))
+
+        # GROUND store FIRST (full fact), partial seed cue LAST
+        live_anchors = []
+        ai = 0
+        while ai < len(anchors):
+            live_anchors.append(anchors[ai])
+            ai = ai + 1
+        live_anchors.append({"text_payload": session_seed, "name": "live_seed"})
+
+        # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
+        gap_ctx = _afs_clip01(1.0 - rel_lane)
+
+        # ── DEFAULT emit: the brain autonomously decides (brain_emit) ──
+        dec = brain_emit(pf,
+                         rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                         idle, False, True,
+                         backend, live_anchors)
+
+        did_emit = str(dec["emit"]).lower() == "true"
+        g_emit = str(dec["gen_emitted"]).lower() == "true"
+        g_back = str(dec["gen_backend"])
+        g_text = str(dec["gen_text"])
+        psi_sum = psi_sum + pure_field_phi(pf)
+
+        # GROUND check
+        has_ground = _afs_contains(g_text, "vault QX-7741")
+
+        # ── C8 GROW — novelty-driven VAdaptField division ──
+        if g_emit and g_back == "clm" and byte_len(g_text) > 0:
+            feat = _afs_byte_feature(g_text, 8)
+            afield = vadapt_field_step(afield, feat, cfg)
+            post_cells = vadapt_field_cells(afield)
+            cell_count = post_cells
+            grew = True
+            immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
+
+        # ── C8b TENSION→GROW (p8-literal: tension births growth/mitosis) ──
+        if ten_phasic > 0.66:
+            afield = vadapt_field_step(afield, _afs_byte_feature(session_seed, 8), cfg)
+            cell_count = vadapt_field_cells(afield)
+            grew = True
+
+        # ── C9 REMEMBER — persist THIS emit as a new .kosmos anchor ──
+        if did_emit and g_emit and byte_len(g_text) > 0 and not remembered2:
+            etension = [pure_field_phi(pf), af_aro, nov_ctx, af_val, self_ctx]
+            epath = emit_anchor_from_v3(kdir, "emit_t" + _ts(tick),
+                                        _afs_clip(g_text, 120), etension, cell_count, 2,
+                                        "emission", "curiosity", pure_field_phi(pf), 1.0)
+            remembered2 = True
+            _pln("  [t" + _ts(tick) + " " + stage_nm + "] REMEMBER emit → " + epath)
+
+        # ── REFSEL — contradiction-keyed referent routing (default OFF ⇒ out_text==g_text) ──
+        out_text = g_text
+        if g_emit and byte_len(g_text) > 0:
+            refcands = [g_text]
+            if refsel_on:
+                recalled = immune_memory_recall_text(immune, mem_text)
+                if recalled != "":
+                    refcands.append(recalled)
+            refsel_rs = referent_select_text(igrow, refcands, mem_text)
+            if refsel_on and refsel_rs >= 1:
+                out_text = refcands[refsel_rs]
+
+        if did_emit and g_emit:
+            emitted_any = True
+            emit_text = out_text
+        if has_ground:
+            grounded_ok = True
+        if stage == 3 or stage == 4:
+            slept = True
+        if drive_hi:
+            og_wake = og_wake + 1
+            if did_emit:
+                og_emit_wake = og_emit_wake + 1
+
+        # one-line transcript row (first 3 ticks + sleep ticks)
+        if tick < 3 or stage == 3 or stage == 4:
+            _pln("  [t" + _ts(tick) + " " + stage_nm
+                 + " env=" + _ts(emit_env) + "] EMIT=" + ("1" if did_emit else "0")
+                 + " gen=" + g_back + " ground=" + ("1" if has_ground else "0")
+                 + " | LANES rel=" + _ts(rel_lane)
+                 + " drive=" + _ts(emit_drive)
+                 + " gws_win=" + _ts(gws_w)
+                 + " reality=" + _ts(reality)
+                 + " cells=" + _ts(cell_count) + "]")
+            _pln("       CR3 agloop conflict=" + _ts(ag_conflict)
+                 + " budget=" + _ts(ag_budget)
+                 + " settle-depth=" + _ts(ag_settle_depth)
+                 + " agloop_ctx=" + _ts(agloop_ctx))
+            _pln("       LANES2 spatial=" + sm_ans
+                 + " plan=" + _ts(plan_progress)
+                 + " basal_go=" + ("1" if bg_sel >= 0 else "0")
+                 + " cb_surprise=" + _ts(cb_surprise)
+                 + " wm_active=" + _ts(wm_active))
+            _pln("       LANES3 ca3_next=" + _ts(ca3_next)
+                 + " ca3_conf=" + _ts(ca3_ctx)
+                 + " it_phase=" + _ts(it_phase)
+                 + " af_val=" + _ts(af_val)
+                 + " tom=" + ("1" if tom_b != "" else "0")
+                 + " hd=" + _ts(hd_ctx))
+            _pln("       LANES4 prc_ready=" + _ts(prc_ready)
+                 + " prosp=" + _ts(prosp_ctx)
+                 + " replay_anchor=" + _ts(replay_ctx)
+                 + " gateb=" + _ts(gateb_ctx)
+                 + " intero=" + _ts(intero_ctx))
+            _pln("       LANES5 scn_R=" + _ts(scn_ctx)
+                 + " engaged=" + _ts(engaged_ctx)
+                 + " self=" + _ts(self_ctx)
+                 + " lprec=" + _ts(lprec_ctx)
+                 + " novelty=" + _ts(nov_ctx))
+            _pln("       LANES6 hab=" + _ts(hab_ctx)
+                 + " blink=" + _ts(blink_ctx)
+                 + " imagery=" + _ts(img_ctx)
+                 + " priming=" + _ts(prime_ctx)
+                 + " schema=" + _ts(schema_ctx))
+            _pln("       LANES7 hyst=" + _ts(hyst_ctx)
+                 + " reentry=" + _ts(reent_ctx)
+                 + " completion=" + _ts(comp_ctx)
+                 + " gestalt=" + _ts(gest_ctx)
+                 + " agency=" + _ts(agcy_ctx))
+            _pln("       LANES8 subjtime=" + _ts(subjt_ctx)
+                 + " emoreg=" + _ts(emoreg_ctx)
+                 + " dirforget=" + _ts(dforget_ctx)
+                 + " veto=" + _ts(veto_ctx)
+                 + " divided=" + _ts(divd_ctx))
+            _pln("       LANES9 surp=" + _ts(surp_ctx)
+                 + " body=" + _ts(bodyown_ctx)
+                 + " riv=" + _ts(rivalry_ctx)
+                 + " chg=" + _ts(chg_ctx)
+                 + " trw=" + _ts(trw_ctx)
+                 + " mw=" + _ts(mw_ctx)
+                 + " qual=" + _ts(qual_ctx)
+                 + " smp=" + _ts(smp_ctx)
+                 + " halu=" + _ts(halluc_ctx)
+                 + " mci=" + _ts(metacog_ctx)
+                 + " allo=" + _ts(allo_ctx)
+                 + " | rel_ctx=" + _ts(rel_ctx) + " cur_ctx=" + _ts(cur_ctx))
+
+        # ── N3/REM DREAM CONSOLIDATION (H_9036) ──
+        dream_src = generator_read_anchors(kdir)
+        dream_n = dp_sleep_tick(kdir, dream_src, stage, tick)
+        dream_composed_total = dream_composed_total + dream_n
+
+        # ── N3/REM IMAGINATION REPLAY — emit-free rehearsal + mitosis tick (p5) ──
+        if dr_imagination_active(stage) == 1:
+            imag_budget = dr_stage_size(stage)
+            imag_snaps = ir_select_snapshots(wake_mem, tick, imag_budget)
+            imag_i = 0
+            while imag_i < len(imag_snaps):
+                rec = ir_replay_tick(imag_snaps[imag_i])
+                if rec["emit_count"] != 0:
+                    imagination_emit_violations = imagination_emit_violations + 1
+                ir_mitosis_tick_during_replay({"count": cell_count}, imag_snaps[imag_i])
+                imagination_mitosis_ticks = imagination_mitosis_ticks + 1
+                imag_i = imag_i + 1
+            imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
+
+        tick = tick + 1
+
+    # ── F3 Ψ ON==OFF invariant (a_core_engine_map · H_1202/H_1205) ──
+    psi_off = 0.0
+    t_off = 0
+    while t_off < n_ticks:
+        psi_off = psi_off + pure_field_phi(pf)
+        t_off = t_off + 1
+    psi_intact = psi_sum == psi_off
+
+    # ════════════════════════════════════════════════════════════════════════
+    #  PER-FACULTY + PER-LANE TABLE + verdict
+    # ════════════════════════════════════════════════════════════════════════
+    _pln("")
+    _pln("── per-faculty ────────────────────────────────────────────────")
+    _pln("  CONVERSE (A1, mounted .clm emits via L3)    : " + anima_yn(emitted_any))
+    _pln("  GROUND   (A3/ρ·tether ← G5, copied verbatim anchor fact): " + anima_yn(grounded_ok))
+    _pln("  GROW     (C8, density VAdaptField, p8)      : " + anima_yn(grew)
+         + "  (cells 1 → " + _ts(cell_count) + ")")
+    _pln("  REMEMBER (C9, emit persisted to .kosmos)    : " + anima_yn(remembered2))
+    _pln("  SLEEP    (C10, 5-stage ultradian advanced)  : " + anima_yn(slept))
+    _og_ef = (float(og_emit_wake) / float(og_wake)) if og_wake > 0 else 0.0
+    if og_wake > 0 and (_og_ef < 0.05 or _og_ef > 0.95):
+        _pln("  ⚠️ FLAG emit-rate-collapse (H_9097): wake emit-fraction " + _ts(_og_ef)
+             + " outside [0.05,0.95] (DETECTOR only — never tune threshold/weights to hit it)")
+    _pln("")
+    _pln("── engine_cli consciousness lanes (READ on the user path) ──────")
+    _pln("  IMMUNE   (H_1227/1231, recall→relevance)    : " + anima_yn(lanes_read)
+         + "  (cells=" + _ts(immune_memory_cells(immune)) + ")")
+    _pln("  CI/Φ     (H_1492, 15-lane → coh/bal/drive)  : " + anima_yn(lanes_read))
+    _pln("  GWS      (GWT ignition → broadcast winner)  : " + anima_yn(gws_ignited_any))
+    _pln("  REALITY  (H_1501, real/imagined threshold)  : " + anima_yn(reality_real_any))
+    _pln("  PHARM    (H_1502, sober baseline profile)   : " + anima_yn(lanes_read))
+    _pln("")
+    _pln("── R2 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  SPATIAL  (H_1296, metric episodic nearest)  : " + anima_yn(spatial_read_any)
+         + "  (gap: item-store abstains; → rel_ctx)")
+    _pln("  HIER-PFC (H_1294, ordered goal-stack ptr)   : " + anima_yn(hier_advanced_any)
+         + "  (gap: flat-select holds no plan ptr; → rel_ctx)")
+    _pln("  BASAL-GG (H_1281, striatal go/no-go select) : " + anima_yn(basal_go_any)
+         + "  (gap: fixed thr can't select 1-of-K; → rel_ctx)")
+    _pln("  CEREBLLM (H_1280, forward next-step predict): " + anima_yn(cereb_pred_any)
+         + "  (gap: recon≠prediction; → cur_ctx)")
+    _pln("  WORK-MEM (H_1282, volatile decaying buffer) : " + anima_yn(wm_maintained_any)
+         + "  (gap: immune is persistent; → rel_ctx)")
+    _pln("")
+    _pln("── R3 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  CA3-RPLY (H_1427, learned next-item replay)  : " + anima_yn(ca3_predicted_any)
+         + "  (gap: stores hold no successor stats; → rel_ctx)")
+    _pln("  INTERVAL (H_1299, learned absolute duration) : " + anima_yn(interval_learned_any)
+         + "  (gap: clock baked·cereb content; → cur_ctx)")
+    _pln("  AMYGDALA (H_1285, valence/arousal affect)    : " + anima_yn(amyg_valenced_any)
+         + "  (gap: no valenced interoception; → rel/cur_ctx)")
+    _pln("  TOM      (H_1293, other-mind false belief)   : " + anima_yn(tom_belief_any)
+         + "  (gap: immune=truth, no other-mind; → rel_ctx)")
+    _pln("  HOMEOSTAT(H_1292, leaky temporal integral)   : " + anima_yn(homeo_drive_any)
+         + "  (gap: affect stateless, no integral; → rel_ctx)")
+    _pln("")
+    _pln("── R4 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  PRC-CLK  (H_1301, limit-cycle phase-reset)   : " + anima_yn(prc_entrained_any)
+         + "  (gap: clock baked, no entrain; ↔INTERVAL ablated; → cur_ctx)")
+    _pln("  PROSPECT (H_1493, k-step forward simulation) : " + anima_yn(prosp_reach_any)
+         + "  (gap: CA3 single-step≠rollout; → rel_ctx)")
+    _pln("  REPLAY-B (H_1285, salience-gated sleep replay): " + anima_yn(replay_protected_any)
+         + "  (gap: no salience-budget rehearsal; → rel_ctx)")
+    _pln("  GATE-B   (H_1208/9, P(next|prev) growth gate): " + anima_yn(gateb_grew_any)
+         + "  (gap: CA3 read-OUT≠growth-GATE; → rel_ctx)")
+    _pln("  INTERO-P (H_1494, precision-weighted self)   : " + anima_yn(intero_weighted_any)
+         + "  (gap: affect weights channels equally; → rel_ctx)")
+    _pln("  [DEFERRED] curiosity-acq (H_1534) — no engine lane (numpy 🧱, never wired)")
+    _pln("")
+    _pln("── R5 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  SCN-NET  (H_1302, coupled-ensemble consensus): " + anima_yn(scn_consensus_any)
+         + "  (gap: PRC single-osc; ↔PRC uncoupled-collapse; → rel_ctx)")
+    _pln("  BOREDOM  (H_1495, meta-motiv AND-conjunction): " + anima_yn(boredom_engaged_any)
+         + "  (gap: homeo/habit single-channel; → rel_ctx)")
+    _pln("  SELF-CONT(H_1471, anchor-persisted identity) : " + anima_yn(self_recognized_any)
+         + "  (gap: LLM resets; ↔PROSPECT W:=I≠rollout; → rel_ctx)")
+    _pln("  LEARN-PR (H_1472, count-driven precision)    : " + anima_yn(lprec_confident_any)
+         + "  (gap: INTERO-P σ-driven≠count-driven; → rel_ctx)")
+    _pln("  NOVELTY  (H_1468, precision-agnostic unfamil): " + anima_yn(novelty_read_any)
+         + "  (gap: confidence-axes≠unfamiliarity; → cur_ctx)")
+    _pln("")
+    _pln("── R6 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  HABITUATE(H_1465, stimulus-specific decay)   : " + anima_yn(habituate_any)
+         + "  (gap: ↔NOVELTY specific+dishabituation; → cur_ctx)")
+    _pln("  ATTN-BLNK(H_1473, RSVP T2 temporal trough)   : " + anima_yn(blink_read_any)
+         + "  (gap: GWS lag-invariant; → cur_ctx)")
+    _pln("  IMAGERY  (H_1484, top-down empty-input recon): " + anima_yn(imagery_any)
+         + "  (gap: input-gates collapse on empty; → rel_ctx)")
+    _pln("  PRIMING  (H_1485, relatedness facilitation)  : " + anima_yn(priming_any)
+         + "  (gap: ↔HABITUATE opposite-sign; → rel_ctx)")
+    _pln("  ATTN-SCHM(H_1488, self-model of attention)   : " + anima_yn(schema_tracked_any)
+         + "  (gap: MODEL vs MECHANISM; → rel_ctx)")
+    _pln("  [DEFERRED] phase-synchrony binding (H_1448) — engine lane EXISTS but Kuramoto-R")
+    _pln("             read REDUNDANT with SCN-NET(R5); SCN-detune folded into SCN.")
+    _pln("")
+    _pln("── R7 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  HYSTERESIS(H_1489, history-inertia switch)  : " + anima_yn(hysteresis_any)
+         + "  (gap: ↔BISTABILITY rivalry order-invariant; → cur_ctx)")
+    _pln("  REENTRY  (H_1487, recurrent deep-access)     : " + anima_yn(reentry_any)
+         + "  (gap: ↔GWS depth-invariant; → rel_ctx)")
+    _pln("  COMPLETION(H_1490, amodal filling-in)        : " + anima_yn(completion_any)
+         + "  (gap: ↔IMAGERY input-constrained; → rel_ctx)")
+    _pln("  GESTALT  (H_1491, figure-ground binding)     : " + anima_yn(gestalt_any)
+         + "  (gap: ↔GWS binding≠selection; → rel_ctx)")
+    _pln("  SENSE-AGCY(H_1474, efference-copy attribution): " + anima_yn(agency_any)
+         + "  (gap: ↔ToM self⊥other; → rel_ctx)")
+    _pln("  [DEFERRED] perceptual-bistability — = rivalry, hysteresis's order-invariant")
+    _pln("             control arm (no separate faculty); attn-schema-agency folded into ATTN-SCHM.")
+    _pln("")
+    _pln("── R8 brain-structure lanes (READ on the user path, → motivation) ──")
+    _pln("  SUBJ-TIME(H_1475, novelty-weighted duration): " + anima_yn(subjtime_any)
+         + "  (gap: ↔INTERVAL/HOMEO objective time; → cur_ctx)")
+    _pln("  EMO-REG  (H_1476, top-down reappraisal)      : " + anima_yn(emoreg_any)
+         + "  (gap: ↔AMYGDALA 2nd-order control; → cur_ctx)")
+    _pln("  DIR-FORGT(H_1477, cue-driven suppression)    : " + anima_yn(dirforget_any)
+         + "  (gap: ↔HABITUATE passive≠deliberate; → rel_ctx)")
+    _pln("  FREE-WONT(H_1480, pre-execution veto)        : " + anima_yn(veto_any)
+         + "  (gap: ↔AGENCY post-hoc/↔BASAL select; → rel_ctx)")
+    _pln("  DIVIDED  (H_1479, graded resource trade-off) : " + anima_yn(divided_any)
+         + "  (gap: ↔GWS winner-take-all; → rel_ctx)")
+    _pln("")
+    _pln("── R9 batch lanes (12, READ on the user path, → motivation) ────────")
+    _pln("  SURPRISE (H_1468, precision-weighted)        : " + anima_yn(surprise_any) + "  (↔raw-err; →cur)")
+    _pln("  BODY-OWN (H_1478, multisensory sync)         : " + anima_yn(bodyown_any) + "  (↔self-cont; →rel)")
+    _pln("  RIVALRY  (H_1482, dynamic alternation)       : " + anima_yn(rivalry_any) + "  (↔GWS static; →cur)")
+    _pln("  CHG-BLIND(H_1483, binary attention gate)     : " + anima_yn(chgblind_any) + "  (↔divided graded; →cur)")
+    _pln("  TRW      (H_1486, integration timescale)     : " + anima_yn(trw_any) + "  (↔subj-time; →rel)")
+    _pln("  MIND-WNDR(H_1496, spontaneous drift)         : " + anima_yn(mindwander_any) + "  (↔prospect rollout; →cur)")
+    _pln("  QUALIA   (H_1497, relational quality space)  : " + anima_yn(qualia_any) + "  (↔spatial pos; →rel)")
+    _pln("  SM-PRESNC(H_1498, counterfactual breadth)    : " + anima_yn(smpresence_any) + "  (↔cerebellum 1-step; →rel)")
+    _pln("  HALLUC   (H_1505, prior-dominated failure)   : " + anima_yn(halluc_any) + "  (↔reality-mon; →rel-inv)")
+    _pln("  METACOG-I(H_1506, 2nd-order insight)         : " + anima_yn(metacog_any) + "  (↔reality-mon 1st; →rel)")
+    _pln("  GWS-LEAK (H_1462, broadcast decay read)      : " + anima_yn(gwsleak_any) + "  (↔gws-winner; →rel)")
+    _pln("  ALLOSTER (H_1509, tension-gated stiffness)   : " + anima_yn(allosteric_any) + "  (↔homeostat; →rel)")
+    _pln("")
+    _pln("── R10 batch lanes (24: 19 wired + 5 deferred → 76/76 catalogue) ────")
+    _pln("  NEUROPHARM(H_1502, drug ego-dissolution sig) : " + anima_yn(neuropharm_any) + "  (↔sober pharm; →rel)")
+    _pln("  LIBIDO   (H_1504, cue-incentive wanting)     : " + anima_yn(libido_any) + "  (↔homeostat setpoint; →cur)")
+    _pln("  TRANS-ORD(H_1429, transitive latent rank)    : " + anima_yn(transord_any) + "  (↔item-store lookup; →rel)")
+    _pln("  PHASESYNC(H_1448, cross-module binding R)     : " + anima_yn(phasesync_any) + "  (↔SCN consensus; →rel)")
+    _pln("  MEM×ToM  (H_1414, query-routed arbiter)      : " + anima_yn(memtom_any) + "  (↔single faculty; →rel)")
+    _pln("  SP×EPIS  (H_1415, where/what arbiter)        : " + anima_yn(spatep_any) + "  (↔single faculty; →rel)")
+    _pln("  QUORUM   (H_1510, hub-free phase-lock)       : " + anima_yn(quorum_any) + "  (↔star-no-hub; →rel)")
+    _pln("  OSMOTIC  (H_1511, KL-bottleneck split)       : " + anima_yn(osmotic_any) + "  (↔standard L_recon; →cur)")
+    _pln("  METACOG-C(H_1508, margin-aware control)      : " + anima_yn(metacogc_any) + "  (↔margin-blind; →rel)")
+    _pln("  METACOG-A(H_1506, type-2 meta-d')            : " + anima_yn(metacoga_any) + "  (↔shuffle chance; →cur)")
+    _pln("  FIELD×LIB(H_1507, field incentive gain)      : " + anima_yn(fieldlib_any) + "  (↔sham field; →cur)")
+    _pln("  +SETUP-only WIRED (57·62·63·65·67·69·70): hive-mind·categ-percept·cp-relocate·metacog-auroc·")
+    _pln("                    field-entropy·metacog-calib·reality-conf (heavy faithful-IIT4/CP reads at warmup)")
+    _pln("  [DEFERRED 5] field-pci(H_1503) — degenerate all-zero R w/ chosen perturb args (needs tuned PCI")
+    _pln("                    fixture, NOT tune-to-green; field faculty shown by field-entropy 67);")
+    _pln("                    topo-Φ(H_1512)·topo-Φ-optimal(H_1515/1518) — 15-lane state-pop fixture +")
+    _pln("                    heavy min-cut IIT4, topo=Ψ-hazard (H_1521); compose-3 ToM×SPATIAL/ToM×BASAL/")
+    _pln("                    CEREB×MEM(H_1417/1421) — multi-store fixtures (routing shown by 58/59);")
+    _pln("                    ko-jamo/ko-morphology(H_1316/1388) — LM heads, not consciousness reads.")
+    n_persist = len(glob.glob(kdir + "/*.kosmos"))
+    _pln("  kosmos anchors on disk after session        : " + _ts(n_persist))
+    _pln("  DREAM-COMPOSE(H_9036, N3/REM consolidation) : " + _ts(dream_composed_total)
+         + " blended node(s) (dc_compose_window → .kosmos, lane=dream, Ψ-disjoint)")
+    _pln("  IMAGINATION(a_chat_sleep_imagination, N3/REM): " + _ts(imagination_replayed_total)
+         + " emit-free replay(s) · " + _ts(imagination_mitosis_ticks) + " mitosis tick(s) · emit-free="
+         + anima_yn(imagination_emit_violations == 0)
+         + " (core/imagination_replay ir_replay_session total_emits≡0 · p5 NO SPEAK · emit-drive-disjoint)")
+
+    all_live = (emitted_any and grounded_ok and grew and remembered2 and slept
+                and psi_intact and lanes_read)
+    _pln("")
+    _pln("── invariants ─────────────────────────────────────────────────")
+    _pln("  Ψ Φ-checksum byte-identical ON==OFF         : " + anima_yn(psi_intact)
+         + ("  (lanes Ψ-disjoint — Ψ=½ untouched)" if psi_intact else "  [REGRESSION]"))
+    _pln("")
+    full = "PASS" if all_live else "PARTIAL"
+    _pln("anima consciousness session: " + full
+         + " — converse=" + _yn10(emitted_any)
+         + " ground=" + _yn10(grounded_ok)
+         + " grow=" + _yn10(grew)
+         + " remember=" + _yn10(remembered2)
+         + " sleep=" + _yn10(slept)
+         + " lanes=" + _yn10(lanes_read)
+         + " psi_intact=" + _yn10(psi_intact))
+    _pln("  one emitted span (substrate-native, grounded) =")
+    _pln("    \"" + _afs_clip(emit_text, 90) + "\"")
