@@ -1358,6 +1358,11 @@ def anima_consciousness_mode(ckpt, argv=None):
     dream_composed_total = 0
 
     session_seed = "zephyrine: the wyrmhold ledger is sealed at "
+    # H_1058: optional independent-session seed (falsifier needs >=2 sessions w/ distinct macro
+    # decision landscapes, FABLE §3.5). Input-only override; the emit gate/logic is untouched.
+    _h1058_seed_ov = os.environ.get("ANIMA_SESSION_SEED", "")
+    if _h1058_seed_ov:
+        session_seed = _h1058_seed_ov
     seed_feat0 = _afs_byte_feature(session_seed, 8)
     afield = vadapt_field_new(seed_feat0, 2048)
 
