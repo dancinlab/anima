@@ -14595,6 +14595,13 @@
         "value": "hexa decode 는 트레일러(SLW/CLML)를 묵살했으나, 카논 런타임은 py 2-production(anima-py evaluate·cli/chat.py · a_eval_py_canonical)이고 py decode.py 는 SLW(H_9200)·CLML(H_9235) 를 이미 올바로 적용한다(verify_clm_v2 F-CLM-SLW-CLML-FORWARD=1: SLW/CLML active·γ0 bit-exact passthrough·합성). hexa 는 redundant 2nd surface(hexa-daemon-link-moot-py-canonical) — 배선은 branch core-slw-hexa-port 에 구현됐고 로컬 컴파일 과중(2min+)이라 pool 검증 follow-on.",
         "threshold": "재발: 새 트레일러를 py 에만 넣고 hexa 를 안 맞춤 → verdict 는 py 카논이라 무결하나 hexa chat/det-eval 은 다른 forward. 해결: (1) py 카논 게이트 verify_clm_v2.run_roundtrip_slw_clml 로 py 정합성 확정 (2) hexa 2nd surface 는 pool 에서 hexa-vs-py max|Δ| 대조 후 배선 (3) 부재 트레일러 ⇔ byte-identical passthrough 유지.",
         "source": "core/decode.hexa"
+      },
+      {
+        "id": "pod-poll-grep-buffer-1",
+        "state": "pos-conv",
+        "value": "py -u | grep >file 패턴은 grep이 파일출력 시 블록버퍼(4KB)라 python 진척줄이 버퍼에 갇혀 로그가 헤더만 보임 — stall 오진 함정(hexad-utime0 timing-misdiagnosis 계열 연장). 프로세스 utimeΔ>0면 LIVE, json은 grep 안 거치고 직접기록되니 착지 신뢰신호.",
+        "threshold": "재발조건=원격 py 잡을 py -u | grep >log 로 실행 후 로그 헤더만 보고 stall 판정. 해결=stdbuf -oL grep 또는 grep 제거하고 파일 직접 리다이렉트(2>&1 >log), 진척판정은 utimeΔ/RSS/출력json 존재로.",
+        "source": "pod_poll_grep_buffer"
       }
     ]
   }
