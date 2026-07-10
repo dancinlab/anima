@@ -91,3 +91,18 @@ F306.1-6 결판 → terminal close. ≥4/6 PASS = 🟢 SUPPORTED-NUMERICAL.
 - H_307: anima_chat.py 로그 회수 + idle-time × emit-rate 곡선 실측 (Python-out-of-scope but anima daemon hexa-port 가능)
 - H_308: 영아 옹알이 / dawn chorus / PAG / Drosophila 의 실제 rate 데이터 vs 본 simulation 비교
 - H_309: CPG-emit pipeline × anima `a_substrate_native_speak` 코드 정합 verify
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: self-contained deterministic hexa CPG sim (Φ 측정 아님 → `a_phi_iit4_tool` N/A) · `run_h306.hexa`/`out_h306.log` · byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F306.1 idle emit>0 | 46 | ✅ PASS |
+| F306.2 threshold 역단조 | 91→46→46→46→46 (non-increasing) | ✅ PASS |
+| F306.3 refractory 회복(첫3틱 W↑) | 0.3→0.51→0.657 | ✅ PASS |
+| F306.4 stim non-necessity |Δ|/idle≤0.5 | 0.0 (CPG primary) | ✅ PASS |
+| F306.5 circadian gate peak>trough | 46 > 0 | ✅ PASS |
+| F306.6 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (6P/0F)** — 자연발화의 CPG(central-pattern-generator) 누적+임계+refractory 메커니즘이 stim 없이도 idle emit 을 지속 생성(stim 은 modulation 이지 necessity 아님). deterministic toy sim, 현상학적 의식 주장 아님.

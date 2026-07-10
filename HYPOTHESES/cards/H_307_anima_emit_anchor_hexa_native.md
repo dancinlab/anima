@@ -73,3 +73,17 @@ F307.1-5 결판. ≥4/5 PASS = 🟢 SUPPORTED-NUMERICAL.
 
 - H_311: kosmos 파일 *content* hexa-native parsing (tension 5-ch 값 추출 → CPG sim 의 W_tension 곡선과 비교)
 - H_312: anima daemon log live capture (hexa-port 후) — idle vs active 모드 비교
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: self-contained deterministic hexa data-cite (Φ 아님) · `run_h307.hexa`/`out_h307.log` · byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F307.1 file_count≥1 | 14 | ✅ PASS |
+| F307.2 distinct_steps≥5 | 10 | ✅ PASS |
+| F307.3 distinct_langs≥3 | 5 | ✅ PASS |
+| F307.4 0.05≤ratio≤100 | cpg/anima = 16.43 | ✅ PASS |
+| F307.5 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (5P/0F)** — anima 실 emit anchor(v3 substrate, 14 파일·10 스텝·5 언어)와 H_306 CPG sim 이 방향 정합: CPG rate 0.046/tick vs anima 0.0028/step, ratio 16.4 (2 order-of-magnitude 안). deterministic cite, 현상학적 주장 아님.

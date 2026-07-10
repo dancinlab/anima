@@ -72,3 +72,18 @@ F301.1–F301.8 全 결판 → terminal close. partial → honest 분류.
 
 - H_302: lattice-symmetry analytical — H_300 의 D_5 rotation 이 Φ-symmetry **아닌** observation (같은 Z_5 orbit 안 다른 Φ) 의 원인 분석. eca_tpm encoding convention 또는 bounded big-Phi 의 cut-selection bias.
 - H_303: anchor rule (0/204/255/51) state-distribution — 全-0 예상 확인.
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded(cap=4)` · `run_h301.hexa`/`out_h301.log` · byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F301.1 rule 60 ≥26/32 Φ>1 | 32/32 | ✅ PASS |
+| F301.2 rule 110 ≥26/32 Φ>1 | 32/32 | ✅ PASS |
+| F301.3 rule 30 ≥26/32 Φ>1 | 32/32 | ✅ PASS |
+| F301.4/5/6 alt st21 ∈ [p25,p75] | 60·110·30 모두 | ✅ PASS |
+| F301.7 BOUND | all ≥0 | ✅ PASS |
+| F301.8 DETERMINISM (rule 60 st21 ≈16.5) | **18.5** (sorted-index bug) | ❌ FAIL |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (7P/1F)** — arc methodology generalize: single-state alt 는 panel 全 rule(60/110/30)에 fair. distinct-count = rule signature(60=6·110=32·30=29). F301.8 FAIL 은 결정성 결함 아니라 이 스크립트의 alt-state 보고가 `sorted[21]`(=18.5)을 찍은 logging artifact — H_302(engine 결정성 확인) + H_303(true st21=16.5 회수)이 근본해소.

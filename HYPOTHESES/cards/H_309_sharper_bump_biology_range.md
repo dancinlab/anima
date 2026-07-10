@@ -73,3 +73,18 @@ F309.1-6 결판.
 ## 10. 후속
 
 - H_312: 24h-cyclic multi-bump · phase-amplitude coupling
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: self-contained deterministic hexa circadian sim (Φ 아님) · `run_h309.hexa`/`out_h309.log` · byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F309.1 ratio ∈[3,15] (HEADLINE) | **∞** (peak 41 / trough 0) | ❌ FAIL |
+| F309.2 idle emit>0 | 41 | ✅ PASS |
+| F309.3 peak ∈[30,60] | 41 | ✅ PASS |
+| F309.4 threshold 단조 비증가 | 55→48→41→31→17 | ✅ PASS |
+| F309.5 |idle−46|/46≤0.5 | |41−46|/46=0.109 | ✅ PASS |
+| F309.6 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🔴 FALSIFIED-HEADLINE (5P/1F)** — H1(sharper bump → biology [3,15] hit) FALSIFIED: bump 을 더 sharp 하게(baseline 0.1·span 300·amp 0.9) 하니 trough 가 **0** 으로 떨어져 ratio=∞ 로 overshoot — H_308 의 2.875(undershoot)와 H_309 의 ∞(overshoot)가 target range 를 양쪽에서 bracket 하지만 **어느 파라미터도 [3,15] 미명중**. aux robustness 5/6 PASS(idle·peak·monotone·bound 정상). biology-range hit 는 별도 파라미터 tuning 필요(frozen bar 상 미명중 = FAIL, no tune-to-green).

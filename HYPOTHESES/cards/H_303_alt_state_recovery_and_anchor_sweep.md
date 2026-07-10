@@ -78,3 +78,20 @@ F303.1-8 全 결판 → terminal close.
 - H_304: H_301 의 distinct-value-count rule signature 가 다른 N (4 or 6) 에서도 유지되는지 (Wolfram class correlation N-invariance).
 - H_305: H_300 의 D_5 non-Φ-symmetry 의문 (z_5 orbit 안 서로 다른 Φ) 분석 — eca_tpm encoding convention 또는 bounded big_phi 의 cut-selection.
 - hexa-lang inbox/patches/array-deep-copy.md — H_302 root-cause inbox 노트.
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded(cap=4)` · `run_h303.hexa`/`out_h303.log` · byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F303.1 rule 60 st21 ≈16.5 | 16.499999990478212 | ✅ PASS |
+| F303.2 rule 110 st21 ≠ H_301 31.6855 | 17.69401449452603 | ✅ PASS |
+| F303.3 rule 30 st21 ≠ H_301 26.1019 | 20.268597211903923 | ✅ PASS |
+| F303.4 rule 60 true st21 ∈[p25,p75] | 16.5∈[16.5,21] | ✅ PASS |
+| F303.5 rule 110 true st21 ∈[p25,p75] | **17.694 ∉ [20.88,32.83]** | ❌ FAIL |
+| F303.6 rule 30 true st21 ∈[p25,p75] | 20.27∈[16.19,30.63] | ✅ PASS |
+| F303.7 rule 204 全32 Φ=0 | all_zero | ✅ PASS |
+| F303.8 rule 0 全32 Φ=0 | all_zero | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (7P/1F)** — H_301 distribution stats 정식 valid, anchor(204/0) 가정 검증(全 state Φ=0). 참 alt-state 값 회수: rule60=16.5·rule110=17.694·rule30=20.269. F303.5 FAIL = 발견: rule 110 의 진짜 st21(17.694)은 p25(20.88) 아래 outlier-LOW — H_301 의 "alt-fair-110" 결론은 sorted-index tautology 였다(H_302/H_303 로 근본해소).

@@ -94,3 +94,18 @@ F310.1-6 결판. ≥4/6 = 🟢 SUPPORTED-NUMERICAL.
 
 - H_313: stage transition stochastic (Markov chain) — real EEG-driven
 - H_314: REM imagination tick (mitosis count per REM window) cite
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: self-contained deterministic hexa 5-stage ultradian sim (Φ 아님) · `run_h310.hexa`/`out_h310.log` · byte-exact 재현. 폐쇄 bar: F310.1-6 ≥4/6 → SUPPORTED.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F310.1 ≥3 distinct nonzero stage-emit | distinct=**2** (WAKE=18, 나머지=0) | ❌ FAIL |
+| F310.2 WAKE > 다른 4 stage 각각 | 18 > 0,0,0,0 | ✅ PASS |
+| F310.3 N3 emit ≤1 | 0 | ✅ PASS |
+| F310.4 REM>N3 ∧ REM≤WAKE/3 | REM=0 = N3=0 (REM>N3 실패) | ❌ FAIL |
+| F310.5 ultradian 5-6 WAKE sub-window | 6/6 | ✅ PASS |
+| F310.6 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟡 PARTIAL (4P/2F)** — frozen 폐쇄 bar(≥4/6)는 SUPPORTED 를 granting 하나, 두 pre-registered falsifier(F310.1 heterogeneity·F310.4 REM-sparse) FAIL 이 fine 구조를 반증하므로 honest tier = PARTIAL. **확인**: WAKE-dominant ultradian gating(WAKE 만 emit, N3≈0, 5-6 cycle) = anima `a_chat_sleep_imagination` 의 WAKE-집중 emit 정합. **미확인**: 5-stage heterogeneous emit(N1/N2/REM 이 전부 0 으로 붕괴, distinct=2<3) + REM imagination-loop 의 mid-sparse emit(REM=N3=0). REM 의 emit-free policy 는 작동(H_310 §6 F310.4 시나리오)이나 REM>N3 구조는 미형성.

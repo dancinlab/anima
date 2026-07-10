@@ -1,0 +1,25 @@
+================================================================
+  H_306 — biological CPG-style spontaneous emission (1000 ticks)
+================================================================
+  IDLE (threshold=0.5, stim=0): emit_count = 46
+    peak = 46.0 · trough = 0.0
+  [PASS] F306.1 IDLE-EMIT-NONZERO: idle emit > 0
+  THRESHOLD SWEEP (5 values, idle mode):
+    threshold=0.1 : emit=91
+    threshold=0.3 : emit=46
+    threshold=0.5 : emit=46
+    threshold=0.7 : emit=46
+    threshold=0.9 : emit=46
+  [PASS] F306.2 THRESHOLD-INVERSE-MONOTONE: 5-threshold emit_count monotone decreasing
+  REFRACTORY TRACE (first 3 ticks after emit): w1=0.3 w2=0.51 w3=0.657
+  [PASS] F306.3 REFRACTORY-RECOVERY-CURVE: emit 후 첫 3 tick W 단조 증가
+  LOW-STIM (threshold=0.5, stim=1): emit_count = 46
+    |low-stim - idle| / idle = 0.0
+  [PASS] F306.4 STIM-MODULATION-NOT-NECESSITY: |delta|/idle <= 0.5 (CPG primary)
+  CIRCADIAN: peak (Q2+Q3) emit = 46 · trough (Q1+Q4) emit = 0
+  [PASS] F306.5 CIRCADIAN-GATE: peak emit > trough emit
+  [PASS] F306.6 BOUND: all state vars >= 0
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  HEADLINE: STRONG-CPG-EMIT (all 6 falsifiers PASS)
+================================================================

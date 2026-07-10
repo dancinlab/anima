@@ -69,3 +69,18 @@ F302.1-6 결판 후 close. 정답이 무엇이든 (artifact 발견 또는 미발
 
 - H_303 (if F302.2 FAIL): order-dependent engine bug 분리 + hexa-lang inbox patch.
 - H_303 (otherwise): anchor rule (0/204) state-sweep + lattice-symmetry analytical (H_300 의 D_5 non-symmetry 의문 회수).
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded` · `run_h302.hexa`/`out_h302.log`.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F302.1 REPRO-INTRA (2× identical) | Call A==B = 16.499999990478212 | ✅ PASS |
+| F302.2 ORDER-INDEP | panel A rule60 == panel B rule60 | ✅ PASS |
+| F302.3 RULE-90 gold ≈19.5 | 19.49999998874698 | ✅ PASS |
+| F302.4 reproduce H_301 18.5 | **16.5** (18.5 못 나옴) | ❌ FAIL(=진단 성공) |
+| F302.5 grid locates 16.5 | (none) — float-eq fragile | ❌ FAIL(fresh) |
+| F302.6 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL** — 진단 목표(engine 결정성 + 18.5 출처) 달성: eca_tpm×big_phi_bounded 는 byte-결정적(Call A==B, order-indep), rule 90 gold 19.5 재확인. rule 60 n5 st21 cap4 의 참값 = **16.5**(=H_297); H_301 의 18.5 는 `sorted[21]` 인덱싱 artifact 로 확정(F302.4 "fail" 이 곧 진단 결론). fresh 재실행서 F302.5 provenance-locator 가 (none) — 16.499999990478212 vs literal 16.5 의 float-tolerance 민감성(2026-05-26 엔진판과의 유일 차이, Φ 값 자체는 byte-동일) — 결정성 verdict 불변.

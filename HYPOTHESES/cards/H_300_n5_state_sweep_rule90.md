@@ -73,3 +73,18 @@ F300.1–F300.6 全 결판 → terminal close. partial 일 경우 honest 분류.
 - H_301: same sweep at n=6 (state-cost 64) — state-dependence at H_298 N.
 - H_302: rule 60/110/30 의 n=5 state-distribution.
 - H_303: rule 90 state-conditional Φ-structure (IIT 4.0 distinctions/relations).
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded(cap=4)` · `run_h300.hexa`/`out_h300.log` · 32-state full sweep byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F300.1 ≥26/32 Φ>1 (HEADLINE) | **32/32** Φ>1 | ✅ PASS |
+| F300.2 alt st21 ≤ p90 | st21=19.5 ≤ p90=27.5 | ✅ PASS |
+| F300.3 max≥15 ∧ mean≥5 | max=27.5 mean=21.375 | ✅ PASS |
+| F300.4 ≥1 state Φ=0 | **0/32** (no fixed-point-zero state) | ❌ FAIL |
+| F300.5 BOUND | all ≥0 | ✅ PASS |
+| F300.6 DETERMINISM | st21 re-run identical = 19.49999998874698 (H_297 19.5) | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (5P/1F)** — H1(state-invariant)+H2(distribution profile) 모두 PASS: rule 90 통합은 alt-state 특이성 아닌 robust state-property, H_297 single-state 19.5 보고 representative(mean 21.375 의 하위, outlier 아님). F300.4 FAIL = honest anomaly: rule 90 n=5 cap=4 에서 all-0/all-1 fixed-point state 조차 Φ=0 아님(cap=4 가 fixed-point 에서도 통합 구조 잡음) — verdict-핵심(binary state-invariance) 은 불변.

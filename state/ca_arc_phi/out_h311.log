@@ -1,0 +1,20 @@
+================================================================
+  H_311 — rule 110 algebraic structure: complement + rotation orbits
+================================================================
+  Computing rule 110 32-state Phi (n=5 cap=4)...
+    rule 110: bit-complement_pairs=0 · rotation_invariant_orbits=2 · distinct=32
+  Computing rule 90 control (D_5 + complement 대칭 의심)...
+    rule 90:  bit-complement_pairs=0 · rotation_invariant_orbits=5 · distinct=3
+  ────────────── verdict ──────────────
+  [FAIL] F311.1 BIT-COMPLEMENT-PAIRS: rule 110 >= 1 pair Phi-equal
+  [PASS] F311.2 ROTATION-INVARIANT-ORBITS: rule 110 >= 1 orbit all-Phi-equal
+  [PASS] F311.3 DISTINCT-COUNT-RECONFIRM: rule 110 distinct == 32 (H_301)
+  [FAIL] F311.4 CONTROL-RULE-90-SYMMETRY: rule 90 bit-complement_pairs >= 10
+  [PASS] F311.5 BOUND: all Phi >= 0
+================================================================
+  RESULT: 3 PASS / 2 FAIL
+  HEADLINE: RULE-110-PARTIAL-SYMMETRY (H_305 해석 수정 필요)
+    rule 110 distinct=32 pairs=0 orbits=2
+    rule 90  distinct=3 pairs=0 orbits=5
+================================================================
+panic: H_311 had FALSIFIER FAILURES
