@@ -20,7 +20,19 @@ n=45≪n_min200 undersampled → full 인증 **power-limited**(infra-wall-noneva
 - **Stage C** engine-native interaction-lift(A∧B0 시만·summer CPU 전용 $0·2-4h): PC-P2 4셀 manifest T=160·주판정 Y1′=paired forced-choice margin(pos/neg 극성어 NLL 차)·additive vs joint+γ_ab·Freedman-Lane×1000.
 
 ## Verdict
-(pending — Stage A 발사 전)
+🧱 **PC-P2 ko instrument NOT-CERTIFIED (2026-07-10 · 2 도메인 전수 · Fable 사전등록 FAIL 경로)** — instrument-verdict,
+γ-capability NEGATIVE 아님(측정불가). Stage A full 인증(gate_ok∧R1∧R2) 2 도메인 전수 미인증:
+- **web-broad**(ko-general+ko-sns+fineweb2 477MB·N=11564·min_cell 361): gate_ok✅·R1✅(I3 0.00092 > null95 0.0002·4.6×)·**R2❌**(n_wrong=1, (neg,역접) 셀만 sign-flip·강건성 미달)
+- **review 대형**(NSMC+naver+steam+sepid 50만 리뷰·N=10066·min_cell 181): **R1❌**(I3 5e-05 ≪ null95 0.0002 = 비가법 잔차 거의 0·신호 부재)·gate_ok 근소미달
+두 도메인 상반: web-broad엔 약한 비가법 잔차(R1) 있으나 강건성 미달(R2), 리뷰엔 비가법 신호 자체 부재(R1). **PC-P2
+경로로 γ ko 측정불가** = 미인증 instrument로 capability NEGATIVE cement 불가(ρ-AXON INVALID≠FAIL). Stage C(interaction-lift)
+미진행(A 미인증 = 해석불능). NSMC datasets-script deprecation은 github raw로 우회(convergence hf-datasets-script-deprecation-1).
+
+**함의**: G1 재조합 프런티어 측정가능 전 경로 소진 = read-side 6 lane 🧱([[g1-readside-exhausted-gamma-spend-only]])
++ γ en-general 🧱(interaction-lift −0.801 #3230) + γ STEP-0 synthetic 🧱(bind−add −0.147) + **γ ko PC-P2 측정불가**
+= **G1 frontier full-terminal @303M byte-LM(이 ckpt·이 스케일·측정가능 경로 전수)**. γ ko는 다른 non-additive 언어구조
+instrument 미탐 여지(단 gamma-divergence census 19 family가 이미 광범위·PC-P2가 가장 유망 XOR 경로였음). tune-to-green
+금지(bar 사전동결·2 도메인 1회씩·결과 수용).
 
 ## Bar (동결)
 CRACK=held-out Δ>p95(null)∧Δ≥2%∧γ XOR방향. 🧱=Δ≤p95∨부호불일치(A인증하=언어 비가법 실재하나 모델 additive=가장 날카로운 negative). INVALID=A미인증∨B0실패.
