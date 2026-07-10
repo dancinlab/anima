@@ -14585,6 +14585,13 @@
         "value": "다른 저장소(re) 문서를 요청 없이 수정·푸시했다. 조사 결과는 조사 대상 저장소(anima)의 SSOT(카드·verdict·ARCHITECTURE·CHANGELOG)에만 반영한다. 요약본이 사는 다른 repo 는 오너가 명시적으로 지시할 때만 손댄다 (commons surgical: 요청에 추적되지 않는 변경 금지).",
         "threshold": "재발조건=조사/실험 결과를 '문서에 반영'할 때 조사 대상 repo 밖의 파일을 편집하려는 순간. 해결=그 repo 를 건드리기 전에 오너 지시가 있었는지 확인; 없으면 anima SSOT 에만 쓰고 요약은 채팅으로만 보고. 이미 푸시했다면 force-push 금지, git revert 로 되돌린다.",
         "source": "md/ANIMA.md"
+      },
+      {
+        "id": "decode-hexa-2",
+        "state": "pos-conv",
+        "value": "hexa decode 는 .clm 트레일러 체인(CLMX→CLMB→SLW→CLML)에서 CLMB 까지만 파싱하고 SLW/CLML 을 묵살한다 — canonical e1_slw_303m.clm 에서 anima-py(slot-ON)와 hexa(slot-OFF)가 서로 다른 forward 함수를 계산했다. hexa 는 py 의 'byte-parity twin' 이 아니라 다른 모델이었다.",
+        "threshold": "재발: 새 트레일러(lane/slot)를 py serialize+decode 에만 배선하고 hexa twin 을 미룸 → 측정하는 모델과 말하는 모델이 갈림. 해결: 트레일러 추가 시 (1) core/decode.hexa 로더+forward 동시배선 (2) core/verify_clm_v2.py 에 hexa-vs-py max|Δ| parity 게이트 (3) 부재 트레일러 ⇔ byte-identical passthrough 계약 유지. clm_decodable 이 CLMX 만 본다는 사실이 발산을 조용하게 만든다.",
+        "source": "core/decode.hexa"
       }
     ]
   }
