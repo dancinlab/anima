@@ -1358,6 +1358,11 @@ def anima_consciousness_mode(ckpt, argv=None):
     dream_composed_total = 0
 
     session_seed = "zephyrine: the wyrmhold ledger is sealed at "
+    # H_1058: optional independent-session seed (falsifier needs >=2 sessions w/ distinct macro
+    # decision landscapes, FABLE §3.5). Input-only override; the emit gate/logic is untouched.
+    _h1058_seed_ov = os.environ.get("ANIMA_SESSION_SEED", "")
+    if _h1058_seed_ov:
+        session_seed = _h1058_seed_ov
     seed_feat0 = _afs_byte_feature(session_seed, 8)
     afield = vadapt_field_new(seed_feat0, 2048)
 
@@ -1799,9 +1804,12 @@ def anima_consciousness_mode(ckpt, argv=None):
         has_ground = _afs_contains(g_text, "vault QX-7741")
 
         # ── C8 GROW — novelty-driven VAdaptField division ──
+        _h1058_grow_feats = []   # H_1058: ordered vadapt grow-features applied this tick
+        _h1058_row = None        # deferred trace row (built below, written end-of-tick)
         if g_emit and g_back == "clm" and byte_len(g_text) > 0:
             feat = _afs_byte_feature(g_text, 8)
             afield = vadapt_field_step(afield, feat, cfg)
+            _h1058_grow_feats.append(list(feat))
             post_cells = vadapt_field_cells(afield)
             cell_count = post_cells
             grew = True
@@ -1809,7 +1817,9 @@ def anima_consciousness_mode(ckpt, argv=None):
 
         # ── C8b TENSION→GROW (p8-literal: tension births growth/mitosis) ──
         if ten_phasic > 0.66:
-            afield = vadapt_field_step(afield, _afs_byte_feature(session_seed, 8), cfg)
+            _h1058_c8b_feat = _afs_byte_feature(session_seed, 8)
+            afield = vadapt_field_step(afield, _h1058_c8b_feat, cfg)
+            _h1058_grow_feats.append(list(_h1058_c8b_feat))
             cell_count = vadapt_field_cells(afield)
             grew = True
 
@@ -1859,20 +1869,60 @@ def anima_consciousness_mode(ckpt, argv=None):
         #    class = the gate structure at core/brain.py:162 (emit = should_emit(score) AND safe):
         #    EMIT score>0.3∧safe · ACTIVE_VETO score>0.3∧¬safe (a braked live impulse) · PASSIVE score<=0.3.
         if _trace_fh is not None:
-            import json as _json, hashlib as _hl
+            import json as _json, hashlib as _hl, base64 as _b64
             _score = float(dec["motivation"])
             _safe = str(dec["safe"]).lower() == "true"
             _imp = _score > 0.3          # engine_g should_emit / PROACTIVE_THRESHOLD
             _cls = "EMIT" if (_imp and _safe) else ("ACTIVE_VETO" if _imp else "PASSIVE")
-            _trace_fh.write(_json.dumps({
+            _gtb = g_text.encode("utf-8", "surrogateescape")
+            # ── frozen-emission replay substrate (H_1058 §3.4) ──────────────────
+            # g_text feedback funnels through EXACTLY 3 roots (rel_lane[immune],
+            # recon_err/cell_count[afield]) + 3 EMAs; phi/nudge are session-constants
+            # (pf never stepped, live_anchors byte-identical). Capture the two
+            # g_text-INDEPENDENT partial sums of the 42-/18-term rel_ctx/cur_ctx
+            # numerators (the standalone replayer recomputes only the DEP terms from
+            # the replayed roots + these residuals). Classification (24 indep rel · 12
+            # indep cur) mirrors state/h1058_agency_daemon/replay_depth.py.
+            _rel_indep = (spatial_rel + plan_progress + wm_active + basal_go + ca3_ctx
+                          + af_val + tom_ctx + hd_ctx + prosp_ctx + replay_ctx + gateb_ctx
+                          + intero_ctx + scn_ctx + self_ctx + lprec_ctx + reent_ctx
+                          + gest_ctx + trw_ctx + neuropharm_ctx + transord_ctx
+                          + phasesync_ctx + spatep_ctx + quorum_ctx + metacogc_ctx)
+            _cur_indep = (cb_surprise + it_phase + af_aro + prc_ready + (1.0 - hab_ctx)
+                          + blink_ctx + hyst_ctx + subjt_ctx + emoreg_ctx + rivalry_ctx
+                          + mw_ctx + metacoga_ctx)
+            if tick == 0:  # meta header (session invariants for the replayer boot)
+                _trace_fh.write(_json.dumps({
+                    "_meta": True, "session_seed": session_seed, "mem_text": mem_text,
+                    "phi_const": float(dec["phi"]), "phi_peak": float(pf.phi_peak),
+                    "nudge_const": float(dec.get("anchor_nudge", 0.0)),
+                    "backend": g_back, "n_ticks": n_ticks,
+                }) + "\n")
+            # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
+            # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
+            # the last of which runs after this point) — replayed verbatim by replay_depth.py.
+            _h1058_row = {
                 "tick": tick, "stage": int(stage), "idle": float(idle),
                 "score": _score, "safe": _safe, "emit": did_emit, "cls": _cls,
                 "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
+                "base_motiv": float(dec.get("base_motiv", _score)),
                 "gen_emitted": g_emit, "gen_backend": g_back,
-                "gtext_sha": _hl.sha256(g_text.encode("utf-8", "surrogateescape")).hexdigest()[:16],
-                "gtext_len": byte_len(g_text),
-            }) + "\n")
-            _trace_fh.flush()
+                "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
+                "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
+                # roots + residuals + DEP-arg indep scalars (replay inputs)
+                "rel_lane": float(rel_lane), "recon_err": float(recon_err),
+                "cell_count": int(cell_count),
+                "rel_indep": float(_rel_indep), "cur_indep": float(_cur_indep),
+                "scn_ctx": float(scn_ctx), "nov_ctx": float(nov_ctx),
+                "emit_env": float(emit_env), "stage_env": float(stage_env),
+                # factual score-composition intermediates (replayer self-validation)
+                "rel_ctx": float(rel_ctx), "cur_ctx": float(cur_ctx),
+                "rel_f": float(rel), "cur_f": float(cur), "gap_ctx": float(gap_ctx),
+                "allo_ctx": float(allo_ctx), "coh_lane": float(coh_lane),
+                "bal_lane": float(bal_lane), "agloop_ctx": float(agloop_ctx),
+                "rel_ema": float(rel_ema), "cur_ema": float(cur_ema), "ten_ema": float(ten_ema),
+                "ten_phasic": float(ten_phasic),
+            }
 
         # one-line transcript row (first 3 ticks + sleep ticks)
         if tick < 3 or stage == 3 or stage == 4:
@@ -1960,11 +2010,19 @@ def anima_consciousness_mode(ckpt, argv=None):
                 # NOT a constant — each distinct rehearsed snapshot grows its own AdaptField region. A constant
                 # feature contact-inhibits to a no-op; this makes the grow REAL (cell_count rises), still det + emit-free.
                 _imag_feat = session_seed + "|imag|" + str(imag_snaps[imag_i]["ctx_tokens"][0]) + "|" + str(imag_snaps[imag_i]["source_index"])
-                afield = vadapt_field_step(afield, _afs_byte_feature(_imag_feat, 8), cfg)
+                _h1058_imag_feat = _afs_byte_feature(_imag_feat, 8)
+                afield = vadapt_field_step(afield, _h1058_imag_feat, cfg)
+                _h1058_grow_feats.append(list(_h1058_imag_feat))
                 cell_count = vadapt_field_cells(afield)
                 imagination_mitosis_ticks = imagination_mitosis_ticks + 1
                 imag_i = imag_i + 1
             imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
+
+        # ── H_1058 deferred trace write (end-of-tick · after ALL afield grows) ──
+        if _trace_fh is not None and _h1058_row is not None:
+            _h1058_row["grow_feats"] = _h1058_grow_feats
+            _trace_fh.write(_json.dumps(_h1058_row) + "\n")
+            _trace_fh.flush()
 
         tick = tick + 1
 
