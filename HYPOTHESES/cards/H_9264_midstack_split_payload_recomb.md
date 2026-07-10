@@ -34,7 +34,22 @@ py 채널(anima_py canonical). 한 forward가 전 tap 산출. dump=pooled+block-
 (pre-slot tap·base logits는 slot 포함 · [[hexa-py-trailer-divergence-slw-clml]] 정합).
 
 ## Verdict
-(pending — STEP-0 S0-A 발사 전)
+🧱 **S0-A KILL (2026-07-10 · engine-native 303M · $0 CPU probe)** — 연상 payload가 frozen 트렁크 read-side 어느 깊이에도 부재.
+held-out unshown-kw AUC(vs matched distractor·cluster-boot by concept · `state/recomb-routing-lane/s0a_probe_verdict.json`):
+- ec=0.458 CI[0.325,0.634] · t2=0.495 CI[0.372,0.642] · t4=0.516 CI[0.398,0.665] · moe=0.543 CI[0.401,0.686] · yn=0.594 CI[0.474,0.734]
+- **모든 tap CI 하한<0.5 = 유의 아님(sig=False 전부)**. AUC가 깊이 따라 단조증가(ec→yn)하나 최종 yn(0.594)도 marginal.
+
+yn이 최고이나 (a)CI 하한 0.474<0.5 유의 아님 (b)**fork-A([[H_9235]])가 이미 yn서 full swap-contrastive lane으로 causal
+측정→swap-margin null**(payload emit점 소비불가) → yn의 marginal AUC는 약한 identity 잔존이나 **causally-consumable 아님**.
+mid-stack(ec/t2/t4/moe)은 yn보다 낮음=더 확실히 부재. ⟹ **어느 read-side 깊이도 causally-consumable 연상 payload 없음** =
+진단 격상: "readout-routing 벽"→**"consumable concept→content 연상이 303M substrate read-side에 부재"**. read-side rescue
+(mid-stack split-payload 포함) 불가 = **γ trunk-training만 추가 가능**. Fable 사전등록 KILL rule 충족(모든 tap AUC CI≤chance).
+
+**power caveat(a_scale_honest_scope)**: held 8-concept cluster-boot이라 CI 넓음(24=전체 뱅크). yn marginal은 파워 확장 여지가
+형식상 있으나, fork-A causal-null이 yn 소비불가를 독립 확정하므로 KILL은 파워와 무관하게 성립. S0-B(oracle-pool causal floor)는
+S0-A crack 시만 발사 사전등록 → 미발사(KILL로 불요). **잔여 exit = γ trunk-bind([[gamma-trunk-bake-step0-killed-not-unmeasured]]
+H_1840·real-text target·GPU spend-gated) 유일** — read-side 전 경로(parametric·pointer-cache·plain-CE·swap-contrastive·
+mid-stack split-payload) 전수 floor.
 
 ## Scope honesty
 STEP-0는 연상 payload의 **read-side 존재(분류)** 측정 — held-out AUC이지 생성 verdict 아님(a_scale_honest_scope).
