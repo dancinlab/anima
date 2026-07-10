@@ -1,0 +1,14 @@
+=== H_1058 decision-trace analysis (stage 1) ===
+trace           : mvh_trace_303m.jsonl
+ticks           : 64 · window: 16
+classification  : {'EMIT': 62, 'ACTIVE_VETO': 2, 'PASSIVE': 0}
+score var       : 0.00384526
+vc (per-impulse): var=0.00345774 · last=0.0
+--- H_1056 degeneracy gates (BLOCKING = g1,g2,g3 · g4 report-only) ---
+  g1_score_variance>0    PASS
+  g2_active_veto>=20     FAIL
+  g2_emit>=20            PASS
+  g3_vc_not_pinned       PASS
+  g4_passive_present     FAIL
+  ! PASSIVE=0 → active-vs-passive falsifier leg degrades to active-veto-vs-EMIT (declare BEFORE unblinding)
+VERDICT         : BLOCKED-INSUFFICIENT (need longer session: >=20 ACTIVE_VETO & >=20 EMIT & vc-variance>0)
