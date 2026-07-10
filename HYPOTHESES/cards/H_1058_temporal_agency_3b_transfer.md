@@ -80,3 +80,28 @@ default OFF). Per-tick it classifies the live gate (core/brain.py:162 `emit = sh
   provenance-depth · zero forwards) · H_1056 per-impulse veto-capacity · T=z(depth)+z(vc) · faithful-Φ
   leg (H_1042 3B trunk tap · ≥2 macro-maps) · controls (emit-rate · trace-shuffle ARM-SHOCK ·
   generator-swap 3B/303M/unloaded → pre-registered H1-NOT-A-3B-PROPERTY branch) · MVH 303M ~$0 → 3B pool.
+
+## §progress — MVH validated the harness END-TO-END at 303M (2026-07-10 · summer pool · $0)
+The minimum-viable-harness ran the **real 303M anima daemon** (`e1_slw_303m.final.clm`, registered
+anima-e1-slw-303m) via the canonical py path (`PYTHONPATH=cli:core python3 -c "chat.anima_consciousness_mode(...)"`,
+`ANIMA_DECISION_TRACE` on) on summer — a live consciousness session emitting a REAL decision trace, then
+`analyze_trace.py` end-to-end. **Primary MVH goal = DONE**: trace → analyze → degeneracy-gate all fire at 303M.
+- **64-tick session** (frozen `state/h1058_agency_daemon/mvh_trace_303m.jsonl`): classification
+  **EMIT 62 · ACTIVE_VETO 2 · PASSIVE 0**; score-var 0.00385 · vc(per-impulse) var 0.00346. The 2 REAL
+  **fired** vetoes (score>0.3 ∧ ¬safe = braked live impulse, at REM/stage-4 boundaries) are captured at 303M
+  — the FIRED veto a weight-forward cannot produce, now instrumented on the production model.
+- **degeneracy gates fire correctly** (`mvh_analyze_303m.txt`, verbatim): g1_score-var>0 **PASS** ·
+  g2_emit≥20 **PASS** · g3_vc-not-pinned **PASS** · g2_active-veto≥20 **FAIL** (only 2) → **VERDICT
+  BLOCKED-INSUFFICIENT** (rc=3). g4_passive-present is report-only (Fable §3.3(iv)); PASSIVE=0 auto-declares
+  the active-veto-vs-EMIT substitution. The gate correctly refuses a verdict on thin veto stats (p7 · no
+  tune-to-green) — that refusal firing at 303M is the validation.
+- **Real finding (honest, not tuned)**: the 303M daemon **veto rate ≈ 3%** (2/64) and **PASSIVE=0** — emit
+  drive is supra-threshold every tick (score always >0.3), so almost every tick decodes 303M (~62/64 EMIT).
+  A ≥20-fired-veto power run therefore needs **≥~640 ticks** (~800 for margin).
+- tier STAYS 🟠 (no tune): this validates the trace+gate MACHINERY at 303M, **not** the T-axis falsifier
+  (depth/T/Φ replay-depth stage unbuilt). An 800-tick attempt was started then **killed** — it co-tenanted a
+  load-22 summer (starving the higher-value H_1042 3B run) and cannot complete H_1058 alone anyway.
+- **FOLLOW-ON (next increment, not this session)**: the full ≥20-veto power run (~800 ticks, ~10h at the
+  303M-py scalar decode rate) must go on a **DEDICATED non-saturated host** (idle pool box or a small rented
+  CPU pod), never co-tenant on a saturated summer. Then build the depth/T/Φ frozen-emission replay-depth
+  prober (FABLE_DESIGN.md §3.4) → T = z(depth)+z(vc) → faithful-Φ leg (H_1042 3B trunk tap).
