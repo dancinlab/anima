@@ -98,3 +98,23 @@ h1227 · h1231 · h1280 · h1284 · h1228 · h1199 · h1201 · h1205 ·
 `a_phi_iit4_tool` · `a_break_the_wall` · `a_engine_native_learning` ·
 `a_verified_must_wire` · `a_core_engine_map` · `a_paper_negative_ok` ·
 `a_scale_honest_scope` · `a_toy_scale_recheck` · p1·p2·p3·p6·p7·p8·c9·c15
+
+## AMENDMENT (2026-07-10 · H_9260 engine-native 재채점)
+
+R6 의 within-axis 🟢 와 R1–R5/R7/R9 의 🧱 는 **둘 다 H_1328 이 확진한 amplitude-variance
+min-max readout 위에서** 내려졌다. H_9260 이 이 축을 engine-native 로, H_1448 의 도구
+(H_1328 rank-uniform read-out + marginal-matched 통제) + 새 **용량정합 shared-cut 대조군 X**
+로 재채점한 결과:
+
+- **⏳ 타당성 게이트 P1b FAIL** — rank-uniform 이 variance artifact 를 전 seed 에서 제거하지
+  못함 (seed 10 에서 ΔΦ = +0.1097 잔존). ⇒ tier 미보고, bars 무이동.
+- **primary 게이트 전부 every-seed FAIL** — G1 ΔΦ(B−X) · G2 ΔΦ(B−A) · G3 ΔΦ(B−N) · G4 ΔΦ(B−Bperm).
+  B>X 5/9 · B>N 6/9 · B>A 7/9. ⇒ **R6 의 disjointness 레버를 지지하는 증거는 0**;
+  본 카드의 R6 🟢 는 (철회는 아니되) **검증된 계측기 위에 서 있지 않다**.
+- **P0 (A−Aperm) seed 간 부호 반전** (−0.458…+0.469) ⇒ H_1448 의 Bperm leg 는 content 축으로
+  이식되지 않는다 (timing 축 전용).
+- R6 의 `mc_shuffle` 이 그래프-동형 무정보 통제라는 사전 논증은 **C-ISO 1/9 로 반증**됐다.
+
+∴ content-relay 축은 현재 "부분 돌파" 도 "확정된 능력 천장" 도 아니다. 선행 과제 = 이 기질에서
+양성대조를 통과하는 variance-free 계측기 수립 (→ `H_9260` NEXT). TIMING 축(R8→H_1448 🟢 WIRED)
+은 이 amendment 의 영향을 받지 않는다.
