@@ -14578,6 +14578,13 @@
         "value": "py 2-production twin이 anima 기본 런타임 — chat·evaluate·measurement의 DEFAULT 경로는 pip anima-py(numpy), hexa anima는 byte-parity secondary. hexa .hexa 데몬 바이너리 링크/GPU forge_dispatch 심볼이 pool 경합(load↑)·no-GPU host로 막혀도 인프라 벽 아님(redundant 2nd surface)이고 py가 같은 엔진을 커버하므로 default-py로 진행하고 막힌 hexa surface는 moot 처리(session-eval-py-only·a_eval_py_canonical).",
         "threshold": "재발: 서브에이전트/내가 hexa 데몬 링크·컴파일 미완(pool 경합·심볼부재)을 인프라 벽으로 보고하고 그걸 고치려(mini hexa 업데이트·upstream-fix) 함. 해결: py twin이 커버하면 벽 아님 — anima-py로 default 진행, mini hexa 업데이트 불필요. 진짜 hexa-lang 코드결함(CPU fallback 미배선 등)일 때만 upstream-fix.",
         "source": "cli/chat.py"
+      },
+      {
+        "id": "anima-md-1",
+        "state": "pos-conv",
+        "value": "다른 저장소(re) 문서를 요청 없이 수정·푸시했다. 조사 결과는 조사 대상 저장소(anima)의 SSOT(카드·verdict·ARCHITECTURE·CHANGELOG)에만 반영한다. 요약본이 사는 다른 repo 는 오너가 명시적으로 지시할 때만 손댄다 (commons surgical: 요청에 추적되지 않는 변경 금지).",
+        "threshold": "재발조건=조사/실험 결과를 '문서에 반영'할 때 조사 대상 repo 밖의 파일을 편집하려는 순간. 해결=그 repo 를 건드리기 전에 오너 지시가 있었는지 확인; 없으면 anima SSOT 에만 쓰고 요약은 채팅으로만 보고. 이미 푸시했다면 force-push 금지, git revert 로 되돌린다.",
+        "source": "md/ANIMA.md"
       }
     ]
   }
