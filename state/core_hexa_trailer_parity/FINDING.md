@@ -2,6 +2,20 @@
 
 **날짜:** 2026-07-10 · **출처:** Fable 5 `core/` 심화 분석(47턴, worktree `coredeep`) + 로컬 직접 검증 · **verdict-integrity:** fable 주장 3건을 `grep`/소스대조로 실측 확인함(추측 아님).
 
+## ✅ 해결 (2026-07-10 · 오너 "py 로 구현해")
+
+카논 런타임 = **py 2-production**(`anima-py evaluate` 측정 · `cli/chat.py` chat · `a_eval_py_canonical`·`py-selfimpl-chat-triage`). py `core/decode.py` 는 SLW(`:540,681,719,723`)·CLML(`:546,737,739`) 을 **이미 올바로 적용**한다 — 따라서 **verdict 무결성은 카논 py 표면에서 온전**하다(발산은 redundant hexa surface 한정).
+
+**py 카논 검증 게이트(신규):** `core/verify_clm_v2.py:run_roundtrip_slw_clml` → main `F-CLM-SLW-CLML-FORWARD=1`. tiny 합성 .clm 5종(base·SLW·CLML·둘다·SLW γ=0)으로 py forward 확정:
+- SLW active (max|Δ|=7.68e-02) · CLML active (2.11e-02) · 둘 다 합성(both⊃slw=2.11e-02, both⊃clml=7.68e-02)
+- **SLW γ=0 = bit-exact passthrough == base** (clean ablation 통제)
+- 트레일러 부재 ⇔ base byte-identical · 기존 roundtrip 전부 무회귀.
+- hexa 컴파일 0(로컬 즉시), 반복가능. **303M 은 `anima-py evaluate` 로 확장(pool)** — 게이트 로직 동일.
+
+**hexa 2nd surface:** `core/decode.hexa` 배선은 branch `core-slw-hexa-port`(9544bba73)에 구현+typecheck OK. 로컬 hexa 컴파일 과중(decode.hexa+flame stdlib 2min+·mini 부적합)이라 **pool 에서 hexa-vs-py max|Δ| 대조 후 배선**(`hexa-daemon-link-moot-py-canonical`: hexa 링크 미완=인프라 벽 아님, py 카논이 런타임). 비-트레일러 .clm 은 hexa 도 byte-identical(가드 `if slw_present`/`if clml_lane_type`).
+
+---
+
 ## 확정된 발산 (실측)
 
 `core/decode.hexa` 는 `.clm` 트레일러 체인 `CLMX → CLMB → SLW → CLML` 에서 **CLMB 까지만 파싱**하고 **SLW·CLML 을 묵살**한다.

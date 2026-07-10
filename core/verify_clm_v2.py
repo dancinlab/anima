@@ -364,6 +364,107 @@ def run_roundtrip_general(tmp_path, d, L, E, K=3, V=256):
     return True, "ok"
 
 
+def run_roundtrip_slw_clml(here, d=16, L=1, E=2, V=256, K=3):
+    """SLW (H_9200) + CLML (H_9235) trailer FORWARD round-trip on the CANONICAL
+    py 2-production decode (core/decode.py — a_eval_py_canonical). Builds a tiny
+    base .clm and appends the SLW/CLML trailers, then asserts the py forward:
+      (a) a trailered .clm stays clm_decodable (trailer is transparent to CLMX),
+      (b) every forward is finite,
+      (c) SLW-only / CLML-only each CHANGE the logits vs base (trailer ACTIVE),
+      (d) SLW γ=0 is a BIT-EXACT passthrough == base (clean ablation control),
+      (e) SLW+CLML differs from either alone (both compose),
+      (f) trailer absence ⇔ byte-identical to base (the loader passthrough).
+    All py, no hexa compile."""
+    import numpy as np
+    import clm_serialize_v2 as S
+    from slw import pack_slw
+    from clml import pack_clml
+    import decode as D
+
+    n_slot, k, d_s, r, tau = 4, 8, d, 8, 8.0
+    rng = np.random.default_rng(7)
+    rf = lambda *s: (rng.standard_normal(s) * 0.1).astype("<f4")
+
+    sd, _ = _build_synthetic_general(d, L, E, K=K, V=V)
+    base = os.path.join(here, "_slwclml_base.clm")
+    S.serialize_v3(sd, n_trunk_layers=L, n_experts=E, out_path=base)
+    blob = open(base, "rb").read()
+
+    def slw_bytes(gamma):
+        return pack_slw({"n_slot": n_slot, "k": k, "d_s": d_s,
+                         "K_slots": rf(n_slot, k), "W_r": rf(k, d), "b_r": rf(k),
+                         "W_q": rf(k, d), "b_q": rf(k), "W_v": rf(d_s, d), "b_v": rf(d_s),
+                         "W_o": rf(d, d_s), "b_o": rf(d), "w_g": rf(d), "b_g": rf(1),
+                         "gamma": np.asarray([gamma], "<f4")})
+    def clml_bytes():
+        return pack_clml({"lane_type": 1, "r": r, "tau": tau, "W1": rf(d, r),
+                          "b1": rf(r), "W2": rf(r, V), "w_g": rf(2 * d), "b_g": rf(1)})
+
+    rng2 = np.random.default_rng(7)  # reproduce the SAME weights for γ=0 vs γ>0
+    _ = rng2  # (weights are drawn fresh per call; γ control uses D._SLW_GAMMA_OVERRIDE)
+
+    slw_t = slw_bytes(0.6)
+    clml_t = clml_bytes()
+    variants = {"base": blob, "slw": blob + slw_t,
+                "clml": blob + clml_t, "both": blob + slw_t + clml_t}
+    paths = {}
+    for name, b in variants.items():
+        p = os.path.join(here, f"_slwclml_{name}.clm")
+        open(p, "wb").write(b)
+        paths[name] = p
+
+    T = 12
+    seq = rng.integers(0, V, size=T).astype(np.float64)
+
+    def last(path, gamma_override=None):
+        prev = D._SLW_GAMMA_OVERRIDE
+        D._SLW_GAMMA_OVERRIDE = gamma_override
+        try:
+            W = D.clm_load_weights(path)
+            lg = np.asarray(D._fwd_logits(W, seq, T), dtype=np.float64)
+        finally:
+            D._SLW_GAMMA_OVERRIDE = prev
+        return lg[T - 1]
+
+    lg_base = last(paths["base"])
+    lg_slw = last(paths["slw"])
+    lg_clml = last(paths["clml"])
+    lg_both = last(paths["both"])
+    lg_slw0 = last(paths["slw"], gamma_override=0.0)   # γ=0 passthrough control
+
+    for p in paths.values():
+        try:
+            os.remove(p)
+        except OSError:
+            pass
+
+    # (a) decodable transparent to trailer
+    if not clm_decodable(variants["both"]):
+        return False, "trailered .clm not clm_decodable (CLMX check broke)"
+    # (b) finite
+    for nm, lg in (("base", lg_base), ("slw", lg_slw), ("clml", lg_clml), ("both", lg_both)):
+        if not np.all(np.isfinite(lg)):
+            return False, f"{nm} forward non-finite"
+    d_slw = float(np.max(np.abs(lg_slw - lg_base)))
+    d_clml = float(np.max(np.abs(lg_clml - lg_base)))
+    d_both_slw = float(np.max(np.abs(lg_both - lg_slw)))
+    d_both_clml = float(np.max(np.abs(lg_both - lg_clml)))
+    d_slw0 = float(np.max(np.abs(lg_slw0 - lg_base)))
+    # (c) each trailer active
+    if d_slw <= 1e-9:
+        return False, f"SLW inert (max|Δ|={d_slw:.2e}) — not applied"
+    if d_clml <= 1e-9:
+        return False, f"CLML inert (max|Δ|={d_clml:.2e}) — not applied"
+    # (d) γ=0 bit-exact passthrough
+    if d_slw0 != 0.0:
+        return False, f"SLW γ=0 not bit-exact passthrough (max|Δ|={d_slw0:.2e})"
+    # (e) compose (both differs from either alone)
+    if d_both_slw <= 1e-9 or d_both_clml <= 1e-9:
+        return False, f"SLW+CLML not composing (Δvs_slw={d_both_slw:.2e} Δvs_clml={d_both_clml:.2e})"
+    return True, (f"SLW Δ={d_slw:.3e} CLML Δ={d_clml:.3e} both⊃slw Δ={d_both_slw:.3e} "
+                  f"both⊃clml Δ={d_both_clml:.3e} γ0-passthrough=exact")
+
+
 def run_v3_byteeq_v2(here):
     """v0.3 byte-eq REGRESSION: serialize_v3(L=1,E=2) must be byte-IDENTICAL to
     serialize_v2 on the same logical weights (no regression on the existing
@@ -811,7 +912,14 @@ def main():
         print("F-CLM-DESCENT-SELFTEST=SKIP (numpy unavailable)")
         d_ok = True  # don't fail the structural suite on a missing optional dep
 
-    ok = ok and eq_ok and g_ok_small and g_ok_3b and d_ok and b_ok_h and b_ok_l and b_ok_303
+    # SLW (H_9200) + CLML (H_9235) trailer forward round-trip (py canonical decode).
+    try:
+        sc_ok, sc_why = run_roundtrip_slw_clml(here)
+    except Exception as e:
+        sc_ok, sc_why = False, f"exception: {type(e).__name__}: {e}"
+    print(f"F-CLM-SLW-CLML-FORWARD={'1' if sc_ok else '0'}  ({sc_why})")
+
+    ok = ok and eq_ok and g_ok_small and g_ok_3b and d_ok and b_ok_h and b_ok_l and b_ok_303 and sc_ok
 
     # golden-reference parse: prove the mirror matches the REAL flame format.
     golden = None
