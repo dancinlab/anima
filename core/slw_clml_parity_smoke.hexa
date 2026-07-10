@@ -1,0 +1,22 @@
+// slw_clml_parity_smoke — LOCAL byte-parity gate for the SLW+CLML hexa trailer
+// port. Loads the tiny trailered .clm (PARITY_CLM), replays the fixed byte-seq
+// (PARITY_SEED = raw bytes = token ids), runs the wired streaming forward, and
+// prints the LAST-position next-byte logits (one f64 per line). A python driver
+// diffs these vs core/decode.py:_fwd_logits (max|Δ|). NON-production (smoke).
+use "core/decode"
+
+fn main() {
+    let path = env("PARITY_CLM")
+    let seedf = env("PARITY_SEED")
+    let rb = read_file_bytes(seedf)
+    let seq = []
+    let mut i = 0
+    while i < len(rb) { seq.push(rb[i]); i = i + 1 }
+    let W = clm_load_W(path)
+    let sc = clm_scratch_new_pub(W, len(seq))
+    let lg = clm_fwd_logits_last_W(W, sc, seq)
+    let mut v = 0
+    while v < len(lg) { println(to_string(lg[v])); v = v + 1 }
+    clm_scratch_free_pub(sc)
+    clm_weights_free_pub(W)
+}

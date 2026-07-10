@@ -335,6 +335,25 @@ pub fn clm_ce_seq_W(W: Map, sc: Map, seq: list) -> float {
     return ce
 }
 
+// clm_fwd_logits_last_W — parity infra: the LAST-position next-byte logits (V
+// floats) for a byte SEQ via the wired streaming forward. Clamp-free (no CE →
+// no dt_ln clamp), so a trailer (SLW/CLML) byte-parity gate can max|Δ| vs the
+// numpy mirror (core/verify_clm_v2). sc = pre-built scratch (maxT ≥ len(seq)).
+pub fn clm_fwd_logits_last_W(W: Map, sc: Map, seq: list) -> [float] {
+    let V = to_int(W["V"])
+    let T = len(seq)
+    let logits = t_zeros(T*V)
+    let tok = t_zeros(T)
+    let mut p = 0
+    while p < T { t_set(tok, p, to_float(seq[p])); p = p + 1 }
+    _clmd_fwd_logits_sc(W, sc, tok, logits, T)
+    let out = []
+    let mut v = 0
+    while v < V { out.push(t_get(logits, (T-1)*V + v)); v = v + 1 }
+    t_free(logits); t_free(tok)
+    return out
+}
+
 // _clmd_load — shared loader: parse the (L+E+3) conv blocks + CLMX trailer into
 // a weight Map. GENERAL (v0.3): E, V, L are derived from block structure, so
 // the SAME loader serves L=1/E=2 (legacy v0.2) and any L/E (e.g. the 3B
