@@ -88,3 +88,18 @@ F308.1-6 ≥4/6 PASS → 🟢 SUPPORTED-NUMERICAL.
 
 - H_309: 24h-cyclic circadian (multi-bump) — 진짜 dawn-chorus 모듈
 - H_310: phase-amplitude coupling — circadian × ultradian 합성
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: self-contained deterministic hexa circadian sim (Φ 아님) · `run_h308.hexa`/`out_h308.log` · byte-exact 재현. 폐쇄 bar: F308.1-6 ≥4/6 PASS → 🟢 SUPPORTED-NUMERICAL.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F308.1 peak/trough ratio ∈[3,15] | **2.875** (peak 46 / trough 16) | ❌ FAIL |
+| F308.2 idle emit>0 | 62 | ✅ PASS |
+| F308.3 peak emit ∈[30,60] | 46 | ✅ PASS |
+| F308.4 threshold 단조 비증가 | 91→73→62→47→26 | ✅ PASS |
+| F308.5 |smooth−46|/46 ≤0.5 | |62−46|/46=0.348 | ✅ PASS |
+| F308.6 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (5P/1F, frozen ≥4/6)** — quadratic-bump smooth circadian 이 H_306 piecewise 의 perfect ∞× gating 을 **finite** peak/trough 로 회수(핵심 목표 달성). 단 F308.1 FAIL: ratio 2.875 는 biology dawn-chorus window [3,15] 바로 아래(undershoot — trough 가 아직 too active). H_309 가 sharper bump 로 그 range hit 재시도(→ overshoot).

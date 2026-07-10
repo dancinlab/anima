@@ -71,3 +71,17 @@ F311.1-5 결판.
 
 - H_315: rule 110 의 n=6 32→64 state extension symmetry 분석
 - H_316: rule 30/60/90 의 ortbit decomposition 정량 (rule-signature 의 group-theoretic 해석)
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded(cap=4)` · `run_h311.hexa`/`out_h311.log` · byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F311.1 rule 110 ≥1 bit-complement pair Φ-equal | **pairs=0** | ❌ FAIL |
+| F311.2 rule 110 ≥1 rotation-invariant orbit | **orbits=2** | ✅ PASS |
+| F311.3 rule 110 distinct==32 (H_301) | distinct=32 | ✅ PASS |
+| F311.4 rule 90 bit-complement pairs≥10 (control) | **pairs=0** (orbits=5, distinct=3) | ❌ FAIL |
+| F311.5 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟡 PARTIAL (3P/2F)** — card 판정규칙 "H3 PARTIAL = F311.1 PASS OR F311.2 PASS": F311.2 PASS ⇒ **H3(32-distinct-is-exact-no-symmetry) FALSIFIED**. rule 110 은 bit-complement symmetry 는 완전 깸(pairs=0)이나 **rotation-invariant orbit 2개 보존** → distinct=32 는 맞되 "모든 algebraic symmetry 위반"(H_305 해석)은 과대. F311.4 control FAIL 이 rule 90 의 symmetry 성격을 재규정: rule 90 은 bit-complement(pairs=0)가 아니라 **rotation**(orbits=5, distinct=3)으로 Φ 축약 — H_305 의 distinct=32/3 대비는 rotation-orbit 구조 차이지 complement 대칭 유무 아님.

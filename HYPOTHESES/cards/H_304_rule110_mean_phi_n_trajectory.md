@@ -71,3 +71,18 @@ F304.1-6 결판 → terminal close.
 
 - H_305: 다른 rule (30, 60, 90) 의 mean-N-trajectory.
 - H_306: rule 110 의 max-Phi N-trajectory (단일 representative 가 아닌 *최대* representative).
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded` ensemble · `run_h304.hexa`/`out_h304.log`. **n=6 cap=3 64-state ensemble = 2026-05-26 에 compute-budget 로 truncated 됐던 leg 을 2026-07-10 fresh 완주**(엔진-네이티브 신규 측정). n4/n5 byte-exact 재현.
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F304.1 mean(n4) ≥ alt(n4)×1.25 | 11.952 ≥ 7.66×1.25 (+56%) | ✅ PASS |
+| F304.2 mean(n6) ≥ alt(n6)×1.25 | **28.483 ≥ 6.795×1.25 (+319%)** | ✅ PASS |
+| F304.3 mean(n6) ≥ mean(n5) (no dip) | 28.483 ≥ 27.071 | ✅ PASS |
+| F304.4 n5 cap4 mean ≈27.07 (H_301) | 27.070788 | ✅ PASS |
+| F304.5 alt recompute n5 st21 ≈17.694 (H_303) | 17.694 (+ n4 alt 7.66·n6 alt 6.795) | ✅ PASS |
+| F304.6 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (6P/0F)** — rule 110 의 **mean-Φ** N-trajectory(11.95→27.07→28.48)는 **단조 증가, dip 없음**. arc 의 옛 apparent dip(H_298 alt-state n=5→n=6 17.7→9.5)은 **single alt-state outlier artifact**: alt(st21) trajectory 는 실제로 7.66→17.69→6.795 로 n=6 에서 dip 하지만(alt st21 이 n=6 서 outlier-low, cf. H_303 F303.5·H_305 ratio 1.53), ensemble **mean** 은 n=6 서 오히려 최고(28.48). ⇒ arc N-trajectory 를 mean-based 로 정정: rule 110 통합은 N 증가에 단조 강화, 옛 dip 은 alt-state 대표성 결여였다. (honest L: cap=3 lower bound·ECA toy substrate·n=5 는 cap=4 라 n4/n6 cap=3 과 절대비교 아닌 방향비교.)

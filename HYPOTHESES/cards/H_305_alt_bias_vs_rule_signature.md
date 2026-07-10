@@ -73,3 +73,19 @@ F305.1-7 결판.
 
 - H_306: 같은 4-rule sweep at n=4 cap=3 — distinct-count × alt-bias 의 N-invariance 검정.
 - H_307: rule 184/150/105 등 cape-class 2 rule 의 alt-bias 측정.
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 `big_phi_bounded(cap=4)` · `run_h305.hexa`/`out_h305.log` · byte-exact 재현(gold rule90 alt=19.49999998874698).
+
+| falsifier | 측정 | 판정 |
+|---|---|---|
+| F305.1 rule 90 mean≈21.375 alt≈19.5 | 21.375 / 19.5 | ✅ PASS |
+| F305.2 rule 60 mean≈18.125 alt≈16.5 | 18.125 / 16.5 | ✅ PASS |
+| F305.3 rule 30 mean≈23.6 alt≈20.27 | 23.605 / 20.269 | ✅ PASS |
+| F305.4 rule 110 mean≈27.07 alt≈17.69 | 27.071 / 17.694 | ✅ PASS |
+| F305.5 RANK-MONOTONE q90≤q60≤q30≤q110 | 1.096≤1.098≤1.165≤1.530 | ✅ PASS |
+| F305.6 ratio(110)>1.3 ∧ 나머지<1.2 | 1.530 vs {1.096,1.098,1.165} | ✅ PASS |
+| F305.7 BOUND | all ≥0 | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL (7P/0F)** — alt-state bias(mean/alt ratio)가 rule 의 distinct-Φ-count rank 와 단조: distinct↑ ⇒ alt-state 가 mean 대비 더 outlier-low. rule 110(distinct=32, Turing-complete)만 ratio 1.53 로 extreme, 나머지(90·60·30)는 <1.2. alt-state single-point 보고는 low-distinct rule 엔 fair, high-distinct(110) 엔 outlier-low bias(H_311 이 그 symmetry 구조 후속).

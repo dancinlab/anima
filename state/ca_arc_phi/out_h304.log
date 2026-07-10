@@ -1,0 +1,21 @@
+================================================================
+  H_304 — rule 110 mean-Phi N-trajectory (alt-outlier correction)
+================================================================
+  Computing n=4 cap=3 ensemble (16 states)...
+    rule 110 n=4 cap=3: mean = 11.951872642514417 · alt(st=5) = 7.660664945833813
+  Computing n=5 cap=4 ensemble (32 states)...
+    rule 110 n=5 cap=4: mean = 27.070788469255852 · alt(st=21) = 17.69401449452603
+  Computing n=6 cap=3 ensemble (64 states)... (may take ~5-10min)
+    rule 110 n=6 cap=3: mean = 28.482637675804245 · alt(st=21) = 6.795338040213249
+  ────────────── trajectory summary ──────────────
+    rule 110 MEAN-Phi trajectory: n=4(cap=3)=11.951872642514417 · n=5(cap=4)=27.070788469255852 · n=6(cap=3)=28.482637675804245
+    rule 110 ALT-Phi trajectory:  n=4(cap=3, st=5)=7.660664945833813 · n=5(cap=4, st=21)=17.69401449452603 · n=6(cap=3, st=21)=6.795338040213249
+  [PASS] F304.1 N4-ALT-VS-MEAN: mean(n=4) >= alt(n=4) * 1.25 (≥25% understate)
+  [PASS] F304.2 N6-ALT-VS-MEAN: mean(n=6) >= alt(n=6) * 1.25
+  [PASS] F304.3 MEAN-TRAJECTORY-NOT-DIPPING: mean(n=6) >= mean(n=5) (no dip at n=6)
+  [PASS] F304.4 H301-MEAN-CITE: this run n=5 cap=4 mean ≈ 27.07 (H_301 cross-confirm)
+  [PASS] F304.5 ALT-RECOMPUTE: rule 110 n=5 cap=4 alt(st=21) ≈ 17.694 (H_303 cross-confirm)
+  [PASS] F304.6 BOUND: all mean + alt >= 0
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+================================================================

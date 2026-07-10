@@ -1,0 +1,47 @@
+================================================================
+  H_301 — n=5 32-state sweep extended (rule 60·110·30)
+================================================================
+  rule 60:
+    min          : 15.49999999105529
+    p25          : 16.499999990478212
+    median       : 16.499999990478212
+    mean         : 18.124999989540456
+    p75          : 20.999999987881353
+    max          : 24.499999985861567
+    count Phi>1  : 32.0/32
+    st=21 (alt)  : 18.499999989324056
+    distinct vals: 6.0
+  rule 110:
+    min          : 15.499306534843772
+    p25          : 20.881113988965883
+    median       : 25.622892496303695
+    mean         : 27.070788469255852
+    p75          : 32.83280574608408
+    max          : 41.71237160334814
+    count Phi>1  : 32.0/32
+    st=21 (alt)  : 31.68551034946906
+    distinct vals: 32.0
+  rule 30:
+    min          : 13.205138570677791
+    p25          : 16.19309142666031
+    median       : 20.86689583480053
+    mean         : 23.605484012523558
+    p75          : 30.631970046712564
+    max          : 52.78827726274613
+    count Phi>1  : 32.0/32
+    st=21 (alt)  : 26.101918776089256
+    distinct vals: 29.0
+  ──────────────
+  [PASS] F301.1 STATE-INV-NONZERO-60:  rule 60  count Phi>1 >= 26
+  [PASS] F301.2 STATE-INV-NONZERO-110: rule 110 count Phi>1 >= 26
+  [PASS] F301.3 STATE-INV-NONZERO-30:  rule 30  count Phi>1 >= 26
+  [PASS] F301.4 ALT-FAIR-60:  rule 60  st=21 in [p25, p75]
+  [PASS] F301.5 ALT-FAIR-110: rule 110 st=21 in [p25, p75]
+  [PASS] F301.6 ALT-FAIR-30:  rule 30  st=21 in [p25, p75]
+  [PASS] F301.7 BOUND: all min >= 0
+  [FAIL] F301.8 DETERMINISM: rule 60 st=21 ~= 16.5 (H_297 panel value)
+================================================================
+  RESULT: 7 PASS / 1 FAIL
+  HEADLINE distinct-value counts: rule60=6.0 rule110=32.0 rule30=29.0 (rule90=3 from H_300)
+================================================================
+panic: H_301 had FALSIFIER FAILURES

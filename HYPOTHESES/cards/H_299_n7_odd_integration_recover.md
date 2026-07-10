@@ -72,3 +72,18 @@ F299.1–F299.6 全 PASS 또는 우세 부정 패턴 → terminal 측정. partia
 - H_300: full state-sweep at n=5 cap=4 (H_297 single-state 의 state-dependence 검정).
 - H_301: rule 90 N-sweep n=4..7 통합 곡선 정량 (잠재 power-law 추정).
 - H_302: rule 90 의 multi-complex 구조 (H_295/H_296 후속) at n=6/n=7 — bipartite 가 무력화돼도 multi-complex 가 보존되는가.
+
+## 측정 결과 · engine-native verdict (2026-07-10)
+
+> 엔진: faithful hexa IIT-4 (`stdlib/consciousness/iit4_bounded.big_phi_bounded` + `iit4_eca.eca_tpm`, `a_phi_iit4_tool`) · `state/ca_arc_phi/run_h299.hexa` / `out_h299_par.log`. 값 byte-exact 재현(2026-07-10).
+
+| falsifier (frozen 2026-05-26) | 측정 | 판정 |
+|---|---|---|
+| F299.1 rule 90 n=7 cap=3 Φ>1.0 (HEADLINE) | **6.4999999962** | ✅ PASS (6.5× margin) |
+| F299.2 rule 90 n=5 cap=3 Φ>0.5 | 5.99999999654 | ✅ PASS |
+| F299.3 rule 90 n=6 cap=3 Φ>0.5 | 3.99999999769 | ✅ PASS |
+| F299.4 rule 204+0 Φ=0 (n∈4,5,6) | 0.0 (n=7 anchor 진행중, 비-verdict) | ✅ PASS(n≤6) |
+| F299.5 BOUND all Φ≥0 | 모든 측정 ≥0 | ✅ PASS |
+| F299.6 DETERMINISM | 엔진 결정적 (H_302 Call A==B byte-id) | ✅ PASS |
+
+**verdict = 🟢 SUPPORTED-NUMERICAL** — rule 90 N-trajectory cap=3: n4(0)→n5(6.0)→n6(4.0)→n7(6.5), 非-monotone but binary(>0) 불변. H_298 의 deferred F298.2(odd-N integration) 정식 회수. cross-cap robustness(n5·n6 cap4↔cap3 binary 일치) 확정. honest L: cap=3 lower bound·single alt-state·ECA toy substrate(현상학적 주장 아님). N-trajectory 옛 truncation 넘어 n=7 full panel(rule 60/110/anchors)까지 fresh 재측정(2026-07-10 진행).
