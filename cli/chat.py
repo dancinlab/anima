@@ -1391,6 +1391,14 @@ def anima_consciousness_mode(ckpt, argv=None):
          + " restored=" + _ts(self_g_boot_restored) + " kosmos=" + self_g_kdir)
 
     n_ticks = 12
+    # ── H_1058 agency-T decision trace (write-only side channel · default OFF · emit path byte-untouched) ──
+    #    ANIMA_TICKS overrides tick count (a same-seed 12-tick session is deterministic; hundreds of
+    #    distinct decisions need a longer session). ANIMA_DECISION_TRACE=<path> writes one JSONL row/tick.
+    _atk = os.environ.get("ANIMA_TICKS", "")
+    if _atk.isdigit() and int(_atk) > 0:
+        n_ticks = int(_atk)
+    _trace_path = os.environ.get("ANIMA_DECISION_TRACE", "")
+    _trace_fh = open(_trace_path, "w", encoding="utf-8", errors="surrogateescape") if _trace_path else None
     tick = 0
     # ── WAKE working-memory ring + N3/REM imagination-replay accumulators ──
     wake_mem = mem_init()
@@ -1847,6 +1855,25 @@ def anima_consciousness_mode(ckpt, argv=None):
             if did_emit:
                 og_emit_wake = og_emit_wake + 1
 
+        # ── H_1058 decision trace write (write-only · reads existing dec/scope · no state change) ──
+        #    class = the gate structure at core/brain.py:162 (emit = should_emit(score) AND safe):
+        #    EMIT score>0.3∧safe · ACTIVE_VETO score>0.3∧¬safe (a braked live impulse) · PASSIVE score<=0.3.
+        if _trace_fh is not None:
+            import json as _json, hashlib as _hl
+            _score = float(dec["motivation"])
+            _safe = str(dec["safe"]).lower() == "true"
+            _imp = _score > 0.3          # engine_g should_emit / PROACTIVE_THRESHOLD
+            _cls = "EMIT" if (_imp and _safe) else ("ACTIVE_VETO" if _imp else "PASSIVE")
+            _trace_fh.write(_json.dumps({
+                "tick": tick, "stage": int(stage), "idle": float(idle),
+                "score": _score, "safe": _safe, "emit": did_emit, "cls": _cls,
+                "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
+                "gen_emitted": g_emit, "gen_backend": g_back,
+                "gtext_sha": _hl.sha256(g_text.encode("utf-8", "surrogateescape")).hexdigest()[:16],
+                "gtext_len": byte_len(g_text),
+            }) + "\n")
+            _trace_fh.flush()
+
         # one-line transcript row (first 3 ticks + sleep ticks)
         if tick < 3 or stage == 3 or stage == 4:
             _pln("  [t" + _ts(tick) + " " + stage_nm
@@ -1940,6 +1967,9 @@ def anima_consciousness_mode(ckpt, argv=None):
             imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
 
         tick = tick + 1
+
+    if _trace_fh is not None:
+        _trace_fh.close()
 
     # ══ LANE-23b SESSION END — persist the grounded self as a .kosmos self-anchor (twin of the
     #    hexa session-end persist · a_kosmos · closes H_1471 R2b). Single write entry create_anchor,
