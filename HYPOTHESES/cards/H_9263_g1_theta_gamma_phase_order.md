@@ -43,3 +43,11 @@
 | MEC grid × head-direction | 위상**덧셈** 토러스 코드 ⇒ 사실상 가법, decode 비선형성에만 의존 (본 H가 대표 검정) |
 | adult neurogenesis | 용량/가소성이지 combination operator 아님 |
 | cortico-BG-thalamic Go/NoGo gating | 입력-identity 대칭 pooling 게이트 = **ConvMoE로 이미 floor**(a303m G1❌). *디코드-상태* 조건부 게이트만 미탐 — 별도 H 후보 |
+
+---
+
+## 5. 측정 결과 — 🔴 KILL (2026-07-10 · numpy proxy DIRECTIONAL · confound-clear)
+
+위상 회전(곱셈) held=**0.476** < 동일 예산 가법 pos-control **0.723** (Δ_rot−add = −0.247 · shuffle 0.493). `state/9261_multiplicative_role_gate/VERDICT.md`.
+
+같은 2·RANK projection 예산에서 회전이 가법보다 **나쁨** → 위상 곱셈은 이득 없음 · DPI-caught. **진동/oscillatory-nesting/MEC-grid 위상덧셈 계열 CLOSED**(numpy proxy DIRECTIONAL). §4 동반 기각(DG/piriform/granule 확장계·ripple replay·claustrum·neurogenesis·BG Go/NoGo) 유지.
