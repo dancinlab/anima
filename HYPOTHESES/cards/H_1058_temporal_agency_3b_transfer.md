@@ -1,6 +1,8 @@
 # H_1058 — Does the temporal/agency axis transfer to the 3B ConvMoE engine rung? (GPU rung)
 
-Status: PRE-REGISTERED (generation-only; GATED — GPU/many-core pod rung). Not yet measured.
+Status: 🟠 BLOCKED-METHOD-WIRING (2026-07-10) — NOT engine-native measurable via the 3B forward path
+(the agency axis is a property of the DECISION PROCESS, not the weight forward). NOT a GPU/H100 blocker.
+verdict: archive/state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt
 Lane: GPU / pod rung (a_fire_autonomous — no cost gate). Engines: stdlib faithful_phi + iit4_bigphi
 exact n≤6 on coarse-grained macro-state + stdlib temporal_agency (a_phi_iit4_tool, no proxy).
 
@@ -38,12 +40,27 @@ babysit cost, a_fire_autonomous no-cap). veto-capacity needs FIRED decision trac
 pending-tension degeneracy must be avoided at 3B too). g5 CODE-measured (p7). a_lane_akida_gpu_split:
 Lane G (GPU) rung — tag separately from any AKIDA Lane A.
 
-## Verdict
-⏳ BLOCKED-ON-CKPT (no tier cemented) — triaged 2026-07-10. Same missing-substrate blocker as H_1042: the
-3B ConvMoE engine rung (3.073B, d4096/L30/E30, `convmoe-3b-engine-rung`) **DOES NOT EXIST** (ARCHITECTURE
-not-yet-built `⏳ 3B/7B rung` node + fire-recipe only; `models[]`=1 model 374M; disk 303M-class only).
-veto-capacity additionally needs FIRED 3B decision traces (H_1056 degeneracy caveat), also gated on the
-absent 3B. "hw는 pool" does not conjure the ckpt; training it is a separate large fire, out of scope, NOT
-faked (a_engine_native_learning / a_scale_honest_scope). No PASS/FAIL. The agency-T axis science stands on
-toy (H_1051 GREEN) + real .kosmos anchors (H_1054 GREEN, T ⊥ chronological-t AND T ⊥ Φ). Reopen when a 3B
-ConvMoE is trained + registered. Verdict file: `state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt`.
+## Verdict — 🟠 BLOCKED-METHOD-WIRING (not evaluated; falsifier preserved verbatim, p7)
+(SUPERSEDES the earlier "⏳ BLOCKED-ON-CKPT / 3B does-not-exist" triage — the 3B rung DOES exist and was
+pulled + engine-loaded here (see H_1042). The real blocker is NOT the ckpt but the axis definition.)
+The pre-registered falsifier CANNOT be honestly evaluated at 3B via the engine-native forward path,
+because the agency-T axis = z(provenance-depth H_932)+z(veto-capacity H_935) is a property of the
+DECISION PROCESS, not of the model weights:
+- H_1051 (toy 🟢) computed T on synthetic PureField free-will fixtures; H_1054 (real 🟢, N=31,
+  T⊥Φ ∧ T⊥t) on real .kosmos anchors — both INDEPENDENT of any trained-LM forward.
+- A raw byte-LM 3B forward instantiates NEITHER primitive: provenance-depth over a ConvMoE dilated
+  receptive field is deterministic/degenerate; veto-capacity (H_935 free-wont) has NO forward-pass
+  analogue and needs FIRED decision traces (the H_1056 pending-tension degeneracy the card warns of).
+- The stdlib `temporal_agency` engine + H_932 provenance_chain + H_935 free-wont gate are NOT in the
+  anima_py pool package (grep = NONE FOUND); they live in hexa-lang/archive and act on decision-process
+  constructs, not a .clm forward.
+- The only genuine 3B route is to DRIVE THE EMIT/VETO DAEMON with the 3B as generator (real A⇄G
+  emit/silence decisions + tension, veto events instrumented) — a separate multi-tick harness, NOT a
+  forward-probe, compounded by the 3B RAM ceiling (H_1042). Synthesizing active/passive from PureField
+  fixtures decoupled from the 3B would be a toy artifact (DIRECTIONAL/self-judge trap) — REFUSED (no-fake).
+
+Blocker = DECISION-TRACE WIRING (emit/veto-daemon-on-3B + hexa temporal_agency stdlib), NOT compute — a
+rented H100 would not change it. REOPEN when the daemon is wired to a 3B generator producing FIRED
+decision traces (then the Φ leg can reuse the H_1042 engine-native 3B trunk tap). Ladder to date:
+toy (H_1051 🟢) → real .kosmos anchors (H_1054 🟢) LANDED; the 3B-own-decision rung is not
+forward-measurable. Verdict: `archive/state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt`.

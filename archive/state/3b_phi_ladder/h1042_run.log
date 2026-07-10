@@ -1,0 +1,53 @@
+==========================================================================================
+H_1042 — Phi planning faithful-UP / big-Phi-DOWN split on the 3B ConvMoE ENGINE rung
+substrate = 3B .clm (3.073B, d4096/L30/E30), CANONICAL engine-native anima_py.core.decode
+trajectory tap = PRE-MoE trunk (H_1038-parity: embed->ec->L x(conv+GN+GELU residual))
+big-Phi + faithful_phi = h1004 stdlib IIT-4.0 mirrors, RE-PROVEN ==stdlib at n=4,5
+n=5 EXACT | 20 seeds | plan depth=8 | eps=0.001 | 2 macro-maps | SERIAL
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+==========================================================================================
+
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib at n=4 AND n=5 BEFORE scoring:
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence: {4: True, 5: True}
+
+STEP 0b — load 3B .clm + decode-sanity: /home/summer/anima-weights/clm_3b/clm_3b.clm
+   loaded d=4096 E=30 V=256 L=30 K=3 in 43.5s
+   decode-sanity: CE_realtext=2.25033 < uniform_lnV=5.54518: True
+
+STEP 0c — trajectory determinism guard (bit-identity + faithful):
+   macro-bits identical=True  faithful det=True (fA=0.566166 fB=0.566166) -> det_ok=True
+
+STEP 1 — 40 3B trunk trajectories SERIAL, then n=5 EXACT big-Phi/faithful
+   ... trajectory 2/20 (71.6s)
+   ... trajectory 4/20 (134.2s)
+   ... trajectory 6/20 (197.6s)
+   ... trajectory 8/20 (261.1s)
+   ... trajectory 10/20 (324.7s)
+   ... trajectory 12/20 (388.4s)
+   ... trajectory 14/20 (452.0s)
+   ... trajectory 16/20 (515.6s)
+   ... trajectory 18/20 (579.2s)
+   ... trajectory 20/20 (642.8s)
+   trajectories DONE 642.8s
+
+ [top_variance] faithful contrast=+0.2175 d=+1.261 p=5.323e-04 -> UP
+        big-Phi  contrast=-1.4826 d=-0.443 p=1.701e-01 -> DOWN
+        on_frac=0.500  SPLIT(faith-UP&big-DOWN)=True  (3494.4s)

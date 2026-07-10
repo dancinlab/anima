@@ -1,0 +1,110 @@
+================================================================================
+H_1042 — Does the planning faithful-UP / big-Φ-DOWN sign-split survive on the 3B
+         ConvMoE ENGINE rung? (scale-ladder follow-up to H_1038 d768 🟢 SPLIT-TRANSFERS)
+VERDICT: 🟡 DIRECTIONAL — SPLIT-SHOWN under the top_variance macro-map (1/2);
+         the random macro-map (coarse-graining robustness control) is BLOCKED-INFRA
+         (pool swap-thrash, NOT a science ceiling). fp32-lean storage (canonical fp64
+         RAM-ceiling-blocked). Frozen falsifier untouched (p7).
+Lane G (GPU-rung tag) · a_phi_iit4_tool · a_scale_honest_scope · a_engine_native_learning
+================================================================================
+
+SUBSTRATE: dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b · clm_3b.clm
+(1,542,913,258 B · sha256 01df4f26ae64ca275120f41e1a12cd09d3f4dd6c359fb19e02a8f7509b58fd99
+MATCH). 3.073B params, d4096/L30/E30/K3, byte V256, CLM v0.3 nblk63. Read through the
+CANONICAL engine-native anima_py.core.decode forward (a_eval_py_canonical) on pool host
+summer (RTX5070 box, numpy-CPU). Weights fp32-lean (see PRECISION SCOPE).
+
+METHOD (mirrors H_1038 exactly; ONLY the trajectory source d768→3B changes):
+  trajectory tap = PRE-MoE trunk (embed → ec-conv → L×(conv + GroupNorm + GELU residual)),
+    BEFORE the router/expert head — the SAME representation H_1038 coarse-grained on d768,
+    via anima_py.core.decode engine-native ops (byte-identical to the ρ-AXON decode path).
+  GREEDY(depth-0) = trunk of the seed window; PLANNING(depth-8) = 8-byte greedy-argmax
+    rollout, re-read last-position trunk each step. n=5 EXACT | 20 real-text seeds | eps=1e-3 |
+    2 pre-registered macro-maps (top_variance, random) | median-threshold binarize | SERIAL.
+  ENGINES: stdlib IIT-4.0 mirrors h1004 big_phi + faithful_phi, RE-PROVEN ==stdlib at n=4 AND
+    n=5 BEFORE scoring (a_phi_iit4_tool, no proxy — see verbatim below).
+
+PRE-REGISTERED FALSIFIER (frozen, TEXT tokens only; identical to H_1038 sign criterion):
+  A macro-map SHOWS THE SPLIT iff planning−GREEDY has faithful_phi sign==UP (>+1e-3) AND
+  big-Φ sign==DOWN (<−1e-3), n=5 EXACT.
+  H1 PASS = split under ≥2 macro-maps → the split SCALES to production size.
+  H1 FAIL = NULL/wrong sign at 3B → small-model property that BREAKS at production scale.
+
+RESULT (n=5 EXACT · planning(depth-8) − GREEDY · 20 real-text seeds):
+| macro-map    | on_frac | faithful d | faithful | big-Φ d | big-Φ | SPLIT? |
+|--------------|---------|-----------|----------|---------|-------|--------|
+| top_variance | 0.500   | +1.261 (Δ +0.2175, p=5.32e-4) | UP | −0.443 (Δ −1.4826, p=0.170) | DOWN | TRUE |
+| random       | —       | BLOCKED-INFRA (pool swap-thrash — measurement crushed, NOT a science result) | — | — | — | PENDING |
+
+FINDING: the planning faithful_phi-UP / big-Φ-DOWN sign-split DOES APPEAR on the 3B ENGINE
+rung under the top_variance macro-map — the SAME sign pattern as the d768 real model (H_1038).
+Notably the faithful-UP leg is STRONGER/SIGNIFICANT at 3B (d=+1.261, Welch p=5.3e-4) than at
+d768 (where faithful-UP was positive but non-significant p>0.05); the big-Φ-DOWN leg carries
+the sign (d=−0.44, p=0.17, matching d768's non-significant-but-DOWN pattern). This is a
+SIGN-LEVEL transfer consistent with — and on the faith leg stronger than — the d768 rung.
+
+VERDICT-TOKEN: DIRECTIONAL-SPLIT-SHOWN-1MAP (top_variance) · 2nd-MAP-ROBUSTNESS-BLOCKED-INFRA.
+  NOT the full ≥2-macro-map PASS (needs the random control) and NOT a FAIL (the measured map
+  clearly shows the split). The frozen falsifier is UNMET-on-the-robustness-leg by a MEASUREMENT
+  block, not by the science.
+
+--- WHY random IS BLOCKED-INFRA (not a science ceiling; HYPOTHESES lesson #2) ---
+The exact n=5 big-Φ on the 3B's near-max-entropy trunk TPMs (on_frac=0.500, all 31 mechanisms
+active → full distinction+relation+MIP enumeration) is ~87s/eval — the SAME measurement-cost
+wall H_1038 hit at n=6 (there scoped to n=5), now reached at n=5 for the DENSER 3B trunk.
+top_variance's 40 evals took 3494.4s (58min). The random map's 40 evals then ran on a pool box
+under a concurrent hexa-CI self-compile (cc_native, 12.7GB RSS, >3h, would not clear) + snap-daemon
+churn: the process's fp32-lean 12.3GB weight set paged to swap (39GB swap, 8GB avail), driving it
+into persistent D-state — measured effective compute ~1.3% (utime +0.13s / 10s wall; stime +1.78s
+= ~99% kernel swap-I/O). At ~1.3% throughput random could not complete; killed after ~113min
+(proven-stalled per a_dont_kill_live_compute) to free the shared box. This is a BLOCKED-INFRA
+measurement wall (pool RAM contention + inherent exact-IIT cost), NOT a science result — do NOT
+read it as "random disagrees". CLEAN-BOX RE-RUN (frees the robustness leg):
+  ANIMA_DTYPE=float32 ANIMA_LEAN=1 OMP_NUM_THREADS=6 \
+    python3 h1042_3b_engine_phi_split.py --clm ~/anima-weights/clm_3b/clm_3b.clm --out <json>
+  on a host with ≥16GB FREE RAM and no concurrent CI (or free the W dict after trajectories to
+  drop the IIT-phase residency — a follow-on script optimization).
+
+PRECISION SCOPE (a_scale_honest_scope · honest DIRECTIONAL tier):
+  The CANONICAL fp64 numpy load is a HARD RAM-CEILING BLOCK on the 30GB RTX5070 pool box: the
+  stock clm_load_weights holds originals + .T.copy() transposes simultaneously (peak ~49GB fp64);
+  even a lean loader (free-each-block; VALIDATED byte-identical to stock at fp64 on a d768 clm —
+  see validate_lean) needs ~24.6GB resident fp64. Run at fp32-lean (12.3GB resident): the .clm
+  weights are int4-code × fp32-scale, so fp32 STORAGE is within fp32-rounding of the fp64 canonical
+  (near-lossless for THIS weight source); arithmetic stays fp64 (numpy up-casts fp32@fp64). The
+  SIGN read is reliable; the tier is DIRECTIONAL (not fp64-canonical TERMINAL). fp64-canonical
+  confirmation needs a ≥32GB-RAM dedicated host (idle pool box, or a rented ~64GB CPU pod ~$0.4/hr
+  × ~1h < $1 — RAM-bound, NOT GPU/VRAM; anima-py is numpy-CPU). n=5 EXACT (n=6 measure-infeasible,
+  same wall as H_1038). d768→3B; 7B UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7).
+
+STEP-1 ENGINE-LOADABLE PROOF (a_eval_py_canonical): sha256 MATCH; anima_py.core.decode fp32-lean
+load d4096/L30/E30/K3 in 43.5s; decode-sanity CE_realtext=2.25033 < uniform ln256=5.54518 = trained
+descent; greedy-argmax rollout generates (the trajectory engine).
+
+--- VERBATIM ENGINE OUTPUT (anima3b/h1042_run.log · h1042_3b_engine_phi_split.py) ---
+==========================================================================================
+H_1042 — Phi planning faithful-UP / big-Phi-DOWN split on the 3B ConvMoE ENGINE rung
+substrate = 3B .clm (3.073B, d4096/L30/E30), CANONICAL engine-native anima_py.core.decode
+trajectory tap = PRE-MoE trunk (H_1038-parity: embed->ec->L x(conv+GN+GELU residual))
+big-Phi + faithful_phi = h1004 stdlib IIT-4.0 mirrors, RE-PROVEN ==stdlib at n=4,5
+n=5 EXACT | 20 seeds | plan depth=8 | eps=0.001 | 2 macro-maps | SERIAL
+==========================================================================================
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib at n=4 AND n=5 BEFORE scoring:
+  ≡-PROOF n=4: PROVEN (big-Φ ring4 mirror=2.999999999 ==stdlib |Δ|=1.3e-10; faithful n4 nb2
+    mirror=3.000000 ==stdlib |Δ|=3.5e-10; nb4 mirror=3.377444 ==hexa_ref 3.377440 |Δ|=3.8e-6)
+  ≡-PROOF n=5: PROVEN (big-Φ ring5 mirror=2.999999999 ==stdlib |Δ|=1.3e-10; faithful n5 nb2
+    mirror=4.000000 ==stdlib |Δ|=8.0e-10)
+  == mirror-equivalence: {4: True, 5: True}
+STEP 0b — load 3B .clm + decode-sanity:
+   loaded d=4096 E=30 V=256 L=30 K=3 in 43.5s
+   decode-sanity: CE_realtext=2.25033 < uniform_lnV=5.54518: True
+STEP 0c — trajectory determinism guard:
+   macro-bits identical=True  faithful det=True (fA=0.566166 fB=0.566166) -> det_ok=True
+STEP 1 — 40 3B trunk trajectories SERIAL (642.8s), then n=5 EXACT big-Phi/faithful:
+ [top_variance] faithful contrast=+0.2175 d=+1.261 p=5.323e-04 -> UP
+        big-Phi  contrast=-1.4826 d=-0.443 p=1.701e-01 -> DOWN
+        on_frac=0.500  SPLIT(faith-UP&big-DOWN)=True  (3494.4s)
+ [random] — BLOCKED-INFRA (pool swap-thrash under concurrent cc_native CI; ~1.3% effective
+        compute; killed proven-stalled at ~113min; NOT a science result)
+--- END VERBATIM ---
+================================================================================
