@@ -4,8 +4,12 @@ Status: 🟠 STILL-BLOCKED — blocker now EMPIRICALLY CHARACTERIZED (2026-07-11
 was EXECUTED at scale (2 cross-seed sessions A=609/B=98 ticks, real daemon sha 792eab81): the
 pre-registered ≥20-ACTIVE_VETO gate is EMPIRICALLY UNMEETABLE — each session fires exactly 2
 warmup-transient active vetoes then steady-state pure-EMIT → analyze_trace = BLOCKED-INSUFFICIENT on
-BOTH (the MVH '3%' was small-sample; at 609 ticks ~0.3% flat → ≥20 needs ~6000 ticks). So the
-T-axis veto-capacity leg (H_935 free-wont) is not measurable on the raw 303M daemon → frozen
+BOTH (the MVH '3%' was small-sample). A $0 positional gauge on the real 608-tick trace REFUTES the
+'~0.3% flat → ~6000 ticks' extrapolation: the 2 vetoes fire at ticks [9,10] ONLY then 0 for 598 ticks
+(split-half 2/0) = WARMUP-TRANSIENT, NOT a low stationary rate → steady-state rate ≈0 → a 6000/60000-tick
+session would STILL yield 2 vetoes = extending ticks is FUTILE (not merely infeasible) and would be
+tune-to-green (p7). The blocker is STRUCTURAL not sample-size (steady-state = fixed pure-EMIT attractor).
+So the T-axis veto-capacity leg (H_935 free-wont) is not measurable on the raw 303M daemon → frozen
 falsifier UNEVALUATED for a MEASURED reason (superseding 'infra/SSH outage'). The DEPTH leg DOES
 measure (replay_depth self-validates |Δ|=1.055e-15 on the real 609-tick trace; depths vary). No
 tune-to-green (p7). See §power-run.
@@ -167,12 +171,16 @@ the outcome is a real result, not another infra note.
 
 - **FINDING**: the pre-registered ≥20-ACTIVE_VETO power-run gate is **empirically unmeetable** on the raw
   303M daemon. Every session — regardless of seed — fires **exactly 2** active vetoes, and they are
-  **warmup-transient** (initial sleep-stage boundaries, tick <~90); thereafter the daemon is steady-state
-  **pure-EMIT** (score>0.3 ∧ safe almost every tick). The count does NOT grow with ticks (2 @ tick44, still
-  2 @ tick609). **The MVH's "≈3% veto rate" was the same 2 vetoes / 64-tick sample**; at scale the rate is
-  ~0.3% and falling, so ≥20 vetoes would need ~6000 ticks (~3–4 days/session, infeasible). This is the
-  H_1056 degeneracy gate correctly REFUSING a verdict on thin veto stats (p7) — ticks were NOT extended nor
-  the daemon retuned to manufacture vetoes.
+  **warmup-transient**. A **$0 positional gauge** on the real 608-tick trace pins the 2 vetoes to
+  **ticks [9,10] ONLY** (first 1.6%) with **0 vetoes in the remaining 598 ticks** (split-half 2/0). The count
+  does NOT grow with ticks (2 @ tick44, still 2 @ tick609). **The MVH's "≈3% veto rate" was the same 2 vetoes /
+  64-tick sample**; the **"~0.3% flat → ~6000 ticks" extrapolation is REFUTED** — the steady-state rate is ≈0
+  (boot transient, NOT a low stationary rate), so a 6000/60000-tick session would STILL yield exactly 2 vetoes:
+  extending ticks is **FUTILE** (not merely infeasible) and would be **tune-to-green** (p7). ≥20 vetoes is
+  **structurally unreachable by ticks** — the blocker is STRUCTURAL not sample-size (steady-state = fixed
+  pure-EMIT attractor; FORM/BIND meta-law: the 2 boot vetoes are a tunable FORM artifact, not an earned BIND).
+  This is the H_1056 degeneracy gate correctly REFUSING a verdict on thin veto stats (p7) — ticks were NOT
+  extended nor the daemon retuned to manufacture vetoes.
 
 - **What DID measure** (harness complete; only the veto primitive is empirically absent): `replay_depth.py`
   on the **real 609-tick** session-A trace → **SELF-VALIDATION PASS, worst |Δ|=1.055e-15** (full-history
@@ -183,8 +191,13 @@ the outcome is a real result, not another infra note.
   regardless of generator mount).
 
 - **tier STAYS 🟠, blocker re-characterized**: the frozen falsifier is still UNEVALUATED, but for an
-  EMPIRICALLY-MEASURED reason (the 303M daemon's active-veto/free-wont events are too rare to measure the
-  T-axis veto leg), not "provider infra". Honest negative (p7), not a PASS/FAIL of H1. **REOPEN = REDESIGN**
-  (not re-run): a daemon regime that legitimately produces a measurable active-veto population, pre-registered
-  independently (never tune-to-green). Bug fixed en route: `analyze_trace.py` now skips the enriched-trace
-  `_meta` header row (was a KeyError on the #3290 format).
+  EMPIRICALLY-MEASURED (structural) reason, not "provider infra". **MECHANISM** (Fable): the count is a
+  **CAP OF EXACTLY 2**, not a rate — the vetoes are monochannel (rate-cooldown) and phase-locked to a
+  one-shot N2/N3 sleep-stage visit that the non-cycling `dr_stage_at(tick*8)` (no modulo) never repeats.
+  "There is no rate, there is a cap of 2" → 6000 ticks yields 2. Honest negative (p7), not a PASS/FAIL of H1.
+  **REOPEN = REDESIGN** (not re-run, not more ticks): **Candidate Y** = a content/Φ-channel stimulus protocol
+  that legitimately raises the ¬safe rate (~900–1500 ticks ≈ 17–29h, $0 pool, per-seed on DIFFERENT hosts),
+  pre-registered with its OWN falsifier BEFORE any veto is observed + T⊥chrono confound reported (frozen
+  falsifier verbatim). FORBIDDEN (tune-to-green): cyclic-sleep adopted *to* manufacture vetoes (Candidate X,
+  confounded), pooling fresh-start warmup vetoes (chrono confound), lowering the gate/threshold, extending
+  ticks. Bug fixed en route: `analyze_trace.py` now skips the enriched-trace `_meta` header row.
