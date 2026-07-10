@@ -59,3 +59,25 @@ CLML lane 배선(#3192)+파이프라인(#3196) 후 실 학습 착수 → **실 3
 
 ## 맥락
 [[H_9234]] operator-vs-association 종결(#3166): fuel≠operator·벽=additive-readout 국한. 싼 레버 전수 소진 후 유일 잔여 engine 경로=이 γ lane. 발사 전 [[check-ledger-before-lever-fire]] 준수(#3135·#3108 이미 검토). H2-lite REFRAME: fork B(GPU) 대신 fork A(read-side lane, $0-저비용) 부활.
+
+## 🧱 TERMINAL (2026-07-10 · swap-contrastive lane held-out · engine-native 303M · Fable 재판정)
+fork-A 4-gate를 완주: Gate1/2/3 PASS(#3227 · base CE residual·probe held 0.60≫chance·lane CE 1.044→0.718) 후
+**Gate4 = engine-native swap-margin held-out** 종결. lane을 InfoNCE swap-contrastive로 재설계(Wo σ=0.01 saddle-break·
+lane-attributable Δlogp)해 in-training은 학습됨(val_margin +0.371·contrast_top1 0.528>chance 0.333). 그러나
+**held-out 24-concept 클린뱅크(digit-free·C-이름·balanced·전용 CPU pod) geometry-matched swap-margin**:
+- **Δlit(양성대조·literal SHOWN target) = +0.078 CI[−0.022,+0.178] → alive=FALSE**
+- Δzero(distal UNSHOWN target) = −0.039 CI[−0.218,+0.100] (null) · specificity(Δzero−ΔshufV) null · Δcrossdoc≈0
+- **gate_fire_frac=0.00**: 학습된 게이트 g=sigmoid(1.116·x−1.884)이 x∈[0,1]서 g≤0.317<0.5 전역 자기폐쇄
+  = 학습이 held-out서 "bias 걸면 CE 손해"를 자인 · **Δzero−ΔshufV null = 라우팅된 payload가 emit점서 causally inert**.
+
+**벽 이름 = fork-A read-side trained-xattn swap-contrastive lane = HELD-OUT CONCEPT-TRANSFER FLOOR**: 라우팅은
+in-distribution 학습가능하나 held-out concept서 payload가 causally inert(H_1835/MLC·DPI 메타법칙 fork-A 내부 재현).
+salvage 없음(rank=instrument-shop · power=음수중심 null 확인비용 · harness버그 無 · digit-노이즈는 클린뱅크로도 死라 THE원인 아님).
+frozen 앞선 3 lane family(parametric🧱·pointer-cache🧱·trained-xattn plain-CE Wo=0saddle·swap-contrastive)와 정합.
+
+**함의(a_break_the_wall·tune-to-green 금지)**: G1 재조합벽 = readout-ROUTING 재프레임은 유효(표현은 존재)하나
+**read-side frozen lane으로 payload를 emit점에 causally 공급 불가**. 잔여 exit = ①mid-stack split-payload(트렁크 no-attention·
+RF35<GAP128이라 K/V 직관 half-moot → address(K=deep residual)/payload(V=shallow EC) SPLIT + STEP-0 association-probe$0 ·
+`state/recomb-routing-lane/fable_midstack_RESULT.md`) → ②γ trunk-bind([[gamma-trunk-bake-step0-killed-not-unmeasured]] H_1840·
+real-text target 재설계·GPU spend-gated·fork-A🧱가 reopen precond 충족). 산출 verdict = state/recomb-routing-lane/
+CLEAN_VERDICT_lit_dead.json. 家族경계 oracle(uniform-pool upper bound) 병행 측정중 → lit-dead면 frozen-final-state readout FAMILY 확대.
