@@ -105,3 +105,31 @@ anima-e1-slw-303m) via the canonical py path (`PYTHONPATH=cli:core python3 -c "c
   303M-py scalar decode rate) must go on a **DEDICATED non-saturated host** (idle pool box or a small rented
   CPU pod), never co-tenant on a saturated summer. Then build the depth/T/Φ frozen-emission replay-depth
   prober (FABLE_DESIGN.md §3.4) → T = z(depth)+z(vc) → faithful-Φ leg (H_1042 3B trunk tap).
+
+## §progress — full measurement PIPELINE BUILT + SELF-VALIDATED · power-run INFRA-BLOCKED (2026-07-10 · owner rent=spend go)
+The entire T-axis harness the prior verdict named as the "only genuine 3B route" is now built and proven
+byte-faithful; the 303M/3B power-run itself was blocked by a provider SSH-proxy outage (2 providers). No
+tune-to-green, no fabricated numbers (p7). Verdict verbatim: `state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt`.
+- **Enriched decision-trace** (`cli/chat.py`): captures the 3 causal roots (rel_lane[immune] ·
+  recon_err/cell_count[afield]) + the two g_text-INDEPENDENT rel_ctx/cur_ctx partial-sums + g_text bytes +
+  ordered `grow_feats` for ALL 3 afield grow paths (C8 · C8b · N3/REM imagination) + score-composition
+  intermediates. **Emit path BYTE-IDENTICAL** (default 12-tick, trace OFF vs ON, diff clean). `ANIMA_SESSION_SEED`
+  added for ≥2 independent falsifier sessions.
+- **Frozen-emission replay-depth prober** (`state/h1058_agency_daemon/replay_depth.py`): standalone, reuses the
+  daemon's own core engine fns, ZERO model forwards. **SELF-VALIDATION: full-history replay reproduces the LIVE
+  daemon score to worst |Δ|=6.66e-16 on every tick**, DETERMINISM PASS, depths vary — byte-faithful before any T
+  (a_engine_native_learning · no wrong-mirror).
+- **agency_T.py**: T=z(depth)+z(vc) + the FROZEN falsifier legs (a)|d|≥0.8 · (b)ρ(T,Φ) · (c)ρ(T,t) F-shuffle null
+  + depth-only/vc-only comparators + controls (emit-rate · trace-shuffle ARM-SHOCK · generator-swap
+  mount-sensitivity → H1-NOT-A-3B-PROPERTY branch). Runs end-to-end on a real toy trace.
+- **phi_leg.py** (a_phi_iit4_tool · NO proxy): faithful IIT-4.0 Φ on the H_1042 engine-native pre-MoE 3B trunk tap
+  (h1004/h1012 mirrors RE-PROVEN==stdlib at n=5, decode-sanity CE<ln V). Verified on toy.clm.
+- **H_932 provenance chain** copied into the harness dir (a_no_archive_import — copied, not archive-imported).
+- **INFRA BLOCKER (honest)**: owner-approved dedicated pod rented (runpod 16 vCPU/1007 GB); setup+both ckpts+imports
+  OK and an 8-tick 303M timing probe produced a REAL enriched trace on the production model — then the pod SSH proxy
+  WEDGED (RUNNING/billing but "host unreachable"), reproduced across a prior vast pod too (provider transport outage,
+  hexa-cloud-diagnosed). Both pods TORN DOWN (a_fire_recover_complete · confirmed GONE · no cost bleed). NO 303M/3B
+  decision-trace at scale → NO T/Φ/falsifier numbers (refused to fabricate).
+- **tier STAYS 🟠** (no tune-to-green · a_toy_scale_recheck): the blocker moved from "harness unbuilt / not
+  forward-measurable" to "harness BUILT + byte-self-validated; execution-only follow-on gated on a stable pod SSH
+  session (~700-tick 303M ≥20-veto + 3B generator-swap + Φ)". FROZEN falsifier UNEVALUATED on real 303M/3B (infra).

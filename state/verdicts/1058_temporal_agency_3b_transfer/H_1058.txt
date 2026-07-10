@@ -1,0 +1,92 @@
+================================================================================
+H_1058 — Does the temporal/agency axis (T = z(provenance-depth)+z(veto-capacity))
+transfer to / is it a property of the 3B ConvMoE engine rung?
+VERDICT: 🟠 STILL-BLOCKED — measurement PIPELINE now BUILT + SELF-VALIDATED end-to-end;
+         the 303M/3B power-run is INFRA-BLOCKED (provider SSH-proxy outage, 2 providers).
+         No tune-to-green. No fabricated result (p7). 2026-07-10.
+================================================================================
+
+WHAT MOVED THIS INCREMENT (the card's "DECISION-TRACE WIRING" blocker is now resolved in
+CODE — the harness that the prior verdict said was the "only genuine 3B route" is built and
+proven byte-faithful; only the pod execution remains, and it hit a provider infra wall):
+
+1. ENRICHED DECISION-TRACE side channel (cli/chat.py, ANIMA_DECISION_TRACE / ANIMA_TICKS /
+   ANIMA_SESSION_SEED · default OFF · write-only). Per tick it now captures, beyond the
+   EMIT/ACTIVE_VETO/PASSIVE class, everything the frozen-emission replayer needs: the 3 causal
+   ROOTS the g_text feedback funnels through (rel_lane[immune], recon_err/cell_count[afield]),
+   the two g_text-INDEPENDENT lane partial-sums of the 42-/18-term rel_ctx/cur_ctx numerators,
+   the emitted g_text bytes, the ordered grow_feats for ALL THREE afield grow paths
+   (C8 g_text · C8b tension · N3/REM imagination), and the factual score-composition
+   intermediates for self-validation.
+   * BYTE-IDENTICAL emit path VERIFIED: default 12-tick toy.clm session, trace OFF vs ON
+     stdout = byte-identical (diff clean). The trace is a pure read-only side channel
+     (self ⊥ trace), same discipline as the MVH.
+
+2. FROZEN-EMISSION REPLAY-DEPTH PROBER (state/h1058_agency_daemon/replay_depth.py) — the causal
+   layer the prior verdict called for. Standalone, reuses the daemon's OWN core engine functions
+   (import chat + engine_cli), ZERO model forwards. Per decision i, depth_i = the largest
+   h in {1,2,4,8,16=W} whose last-h-truncated-history replay changes the decision (class flip or
+   |Δscore|>0.01), computed by booting a fresh immune/afield/EMA state and replaying the recorded
+   g_text/grow history verbatim.
+   * SELF-VALIDATION (a_engine_native_learning — guards against a wrong mirror): the full-history
+     replay reproduces the LIVE daemon's recorded score to worst |Δ| = 6.66e-16 on every tick of
+     a real toy session; DETERMINISM PASS (same trace → same depths); depth distribution varies
+     ({0,4,8,16} on the toy). The prober is byte-faithful to the daemon before any T is formed.
+
+3. AGENCY-T + FROZEN FALSIFIER + CONTROLS (state/h1058_agency_daemon/agency_T.py):
+   T_i = z(depth_i) + z(vc_i), vc = H_1056 per-impulse veto-capacity over W=16. Implements the
+   frozen falsifier VERBATIM — leg (a) T separates ACTIVE_VETO vs PASSIVE (PASSIVE=0 → declared
+   ACTIVE_VETO-vs-EMIT substitution, FABLE §3.3iv) at Cohen |d|≥0.8; leg (b) ρ(T,Φ) within the
+   F-SHUFFLE 2σ null; leg (c) ρ(T,t) within the F-SHUFFLE 2σ null — plus the depth-only/vc-only
+   comparator d's (H_1056 discipline). Controls: emit-rate ρ(T,emit-rate) · trace-shuffle
+   ARM-SHOCK (permute grow_feats↔tick → depth must collapse) · generator-swap mount-sensitivity
+   permutation test (3B/303M/unloaded → pre-registered H1-NOT-A-3B-PROPERTY branch). Runs
+   end-to-end on a real toy trace.
+
+4. FAITHFUL-Φ LEG (state/h1058_agency_daemon/phi_leg.py, a_phi_iit4_tool · NO proxy) — reuses the
+   H_1042 engine-native PRE-MoE trunk tap (fwd_trunk_preMoE via core/decode) + the h1004/h1012
+   stdlib IIT-4.0 CPU mirrors, RE-PROVEN == stdlib at n=5 before scoring, decode-sanity CE<ln(V).
+   Per sampled decision (all ACTIVE_VETO + matched EMIT), Φ over ≥2 macro-maps (top_variance +
+   random). Verified end-to-end on toy.clm (mirror ≡-PROOF PROVEN, 10 Φ rows).
+
+5. H_932 provenance chain copied into the harness dir (a_no_archive_import — copied, not imported
+   from archive) for the audit layer; ANIMA_SESSION_SEED enables ≥2 independent falsifier
+   sessions.
+
+ALL of the above is FROZEN-FALSIFIER-READY and locally self-validated. The pipeline is exactly
+the "emit/veto-daemon-on-the-model + frozen-emission replay-depth + H_1042 3B-trunk Φ" harness the
+prior verdict named as the only genuine 3B route.
+
+WHY THE POWER-RUN DID NOT LAND THIS SESSION (honest infra blocker, NOT a science/harness failure):
+- Owner APPROVED rent=spend. A dedicated CPU pod was rented (runpod, 16 vCPU / 1007 GB RAM). Setup
+  succeeded: code transferred, both ckpts pulled from HF (303M e1_slw_303m.clm 293 MB · 3B
+  clm_3b.clm 1.54 GB), imports OK, and an 8-tick 303M timing probe STARTED producing a real
+  enriched trace on the production model.
+- Then the pod's SSH proxy WEDGED — RUNNING/billing but "host unreachable (connection refused)".
+  This is a PROVIDER-SIDE transport outage, reproduced across TWO providers today: an earlier
+  vast RTX_3090 pod failed identically (STOPPED/invalid-instance) and was torn down. The runpod
+  accepted ~4 SSH ops over the first ~20 min, then refused ~20 consecutive launch attempts
+  (2 retry loops). hexa cloud's own diagnostic: "alive and billing but not accepting SSH — a
+  vast.ai/RunPod transport outage. Stop retrying ... or tear the pod down."
+- Per the pod runbook (billing-but-unreachable → stop, tear down) and a_fire_recover_complete
+  (no cost bleed), the pod was TORN DOWN. No 303M/3B decision-trace at scale was harvested, so
+  NO T/Φ/falsifier numbers are reported (refusing to fabricate — p7).
+
+TIER: 🟠 (unchanged tier token, materially advanced) — the blocker MOVED from "the decision-trace
+harness is unbuilt / T-axis not forward-measurable" to "the harness is BUILT and byte-self-
+validated; only a stable pod SSH session is needed to execute the ~700-tick 303M (≥20 fired
+vetoes) + 3B generator-swap + Φ legs." NO tier upgrade is claimed because the FROZEN falsifier
+has not been evaluated on real 303M/3B decision streams (no tune-to-green; a toy self-validation
+is machinery, not the T-axis verdict — a_toy_scale_recheck).
+
+REOPEN (cheap, $0-few): re-run the built pipeline on ANY stable non-saturated host —
+  ANIMA_TICKS=~700 ANIMA_DECISION_TRACE=... PYTHONPATH=cli:core python3
+    state/h1058_agency_daemon/run_daemon.py <303m.clm|3b.clm|"">
+  → replay_depth.py → agency_T.py analyze/falsifier/mount-swap → phi_leg.py. Everything is frozen
+  and validated; this is an execution-only follow-on gated purely on pod SSH stability.
+
+FROZEN FALSIFIER (H_1058 card · UNCHANGED · p7): H1 PASS = (a) |d(T; ACTIVE_VETO vs PASSIVE[sub])|
+≥0.8 with T_active>T_passive; (b) ρ(T,Φ) and (c) ρ(T,t) within the F-SHUFFLE 2σ null; across
+≥2 macro-maps + ≥2 sessions. Generator-swap decides 3B-property vs H1-NOT-A-3B-PROPERTY. Report
+PASS or FAIL or H1-NOT-A-3B-PROPERTY honestly. UNEVALUATED this session (infra).
+================================================================================
