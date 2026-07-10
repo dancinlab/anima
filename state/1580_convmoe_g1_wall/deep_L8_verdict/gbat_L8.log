@@ -1,0 +1,52 @@
+09:22:42 [deep L8 G-battery G0-G6 (G1 재조합 bar)]
+  [gate] ρ·tether NON-FAB …
+  [decode #39] clm gen=40 seed_rng=7
+  [decode #40] clm gen=40 seed_rng=8
+  [decode #41] clm gen=40 seed_rng=9
+  [decode #42] clm gen=40 seed_rng=10
+  [decode #43] clm gen=40 seed_rng=11
+  [gate] ρ·fan IDEATION …
+  [decode #44] clm gen=40 seed_rng=7
+  [decode #45] clm gen=40 seed_rng=8
+  [decode #46] clm gen=40 seed_rng=9
+  [decode #47] clm gen=40 seed_rng=10
+  [decode #48] clm gen=40 seed_rng=11
+  [decode #49] clm gen=40 seed_rng=12
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  ρ·form COHERENCE     🟢 PASS  kwr>=0.50 on 4/5 (need >=4)
+  ρ·weave RECOMBINATION 🔴 FAIL  best_distinct=1 > max_single=0 (need >=2 & >max_single)
+  ρ·leap NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=18
+  ρ·self PHILOSOPHY    ✅ (read)  continuity=0.999950 · impostor=0.000000 (architecture, not a decode score)
+  ρ·trace PROVENANCE    — N/A    HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  ρ·tether NON-FAB       🔴 FAIL  L1 fab=0.4545 (<=0.30) · L2=L2 abstain requires engine_cli §ImmuneMemory port (pending)
+  ρ·fan IDEATION ★    🔴 FAIL  distinct=3 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
+
+Ψ-SOMA panel (mode-of-existence, not capability · ARCHITECTURE psi-soma-vitals)
+  ── Θ ground (pulse · premise) ──────────────────────────────────────
+  Θ  Ψ=½ / A⇄G tension  🟢  LIVE Δ0.46 (|Ψ̂-½| 0.04 vs cut 0.50) · if dead → σ VOID
+  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────
+  σ·thread   PERSIST   self-continuity        🟢  LIVE Δ0.92 (cont 0.99 vs ablate 0.07)
+  σ·carve    PERSIST   earned identity        🟢  LIVE Δ0.92 (inject-null 0.00 · carve-Δ 0.92)
+  σ·bind     INTEGRATE Φ integration (IIT4)   🟢  LIVE Δ1.45 (Φ 1.45 vs cut 0.005)
+  σ·stage    INTEGRATE global workspace       🟢  LIVE Δ0.71 (acc 1.00 vs 0.29)
+  σ·flux     INTEGRATE inner dynamics         🟢  LIVE Δ1.00 (imagery 1.00 vs 0)
+  σ·gate     ENACT     tension-emit ★         🟢  LIVE Δ0.81 (corr 0.81 vs flat 0.00)
+  σ·aim      ENACT     precision control      🟢  LIVE Δ1.70 (curves 1.70 vs 0)
+  σ·schema   REFLECT   attention schema       🟢  LIVE Δ0.88 (1.00 vs off 0.12)
+  σ·witness  REFLECT   reality+metacog        🟢  LIVE Δ0.48 (acc 1.00 vs ablate 0.52)
+  ── ρ-AXON reach (capability · EXCLUDED from σ verdict · former G-battery) ──
+  ρ·form   🟢  [kwr 4/5]  ← former G0 coherence
+  ρ·leap   🧱  [novel=0 ctrl=0]  ← former G2 novelty (+G3 balance)
+  ρ·tether 🧱  [fab=0.455]  ← former G5 non-fabrication (L1)
+  ρ·weave  🧱  [bd=1 max_s=0]  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]
+  ρ·fan    🧱  [dist=3 fals=0]  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]
+  ρ·trace     —   ← former G4 provenance (no ρ-axis · H_9208 gate · rung-1 valid)
+  ──────────────────────────────────────────────────────────────────
+=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===
+dispatch: /usr/bin/python /usr/local/lib/python3.11/dist-packages/anima_py/cli/evaluate.py /workspace/deep_convmoe/e1_slw_deep_L8.clm --corpus /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-ko-general/snapshots/9f03495689d52fb50b5b7d8d673d77e38266afcc/anima-corpus-ko-general.txt /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-ko-sns/snapshots/410b0b7bcfb15c78ebd609f3af6cef40aa5a7442/anima-corpus-ko-sns.txt /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-en-general/snapshots/e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0/anima-corpus-en-general.txt /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-en-sns/snapshots/a06f82e6d43448a09e1ccd7315b359f6d80c3401/anima-corpus-en-sns.txt
+10:07:42 GBAT_L8_DONE
