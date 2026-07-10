@@ -55,6 +55,7 @@ use "core/DECODER/flame_mm"
 // uses the stdlib nn/gn/moe ops (dt_erf-GELU etc.), unaffected by these externs.
 extern fn erf(x: float) -> float
 extern fn exp(x: float) -> float
+extern fn tanh(x: float) -> float   // CLML gelu uses the np.tanh approximation — byte-match numpy
 
 // ════════════════════════════════════════════════════════════════════════
 // (b) CONV (CLM ConvMoE) mouth — VERBATIM from core/clm_decode.hexa.
@@ -421,11 +422,69 @@ fn _clmd_load(path: string) -> Map {
         WbB = t_zeros(kc); off = _clmd_load_ext(rb, off, WbB)       // (k)
     }
 
+    // ── OPTIONAL SLW forward-slot trailer ("SLW\x01" = 83,76,87,1). Absent ⇒
+    // slw_present=0 (byte-identical additive/bind path). Chain order after CLMB.
+    // Array order = core/slw.py:_ARR_ORDER (K_slots, W_r,b_r, W_q,b_q, W_v,b_v,
+    // W_o,b_o, w_g, b_g, gamma), raw LE-f32; b_g/gamma are scalars.
+    let mut slw_present = 0
+    let mut slw_n_slot = 0; let mut slw_k = 0; let mut slw_d_s = 0
+    let mut slw_gamma = 0.0; let mut slw_bg = 0.0
+    let mut slw_Kslots = -1; let mut slw_Wr = -1; let mut slw_br = -1
+    let mut slw_Wq = -1; let mut slw_bq = -1; let mut slw_Wv = -1; let mut slw_bv = -1
+    let mut slw_Wo = -1; let mut slw_bo = -1; let mut slw_wg = -1
+    if off + 16 <= len(rb) && rb[off]==83 && rb[off+1]==76 && rb[off+2]==87 && rb[off+3]==1 {
+        off = off + 4
+        slw_n_slot = _clmd_rd_u32(rb, off); off = off + 4
+        slw_k = _clmd_rd_u32(rb, off); off = off + 4
+        slw_d_s = _clmd_rd_u32(rb, off); off = off + 4
+        let ns = slw_n_slot; let kk = slw_k; let ds = slw_d_s
+        slw_Kslots = t_zeros(ns * kk); off = _clmd_rd_farr(rb, off, ns*kk, slw_Kslots)
+        slw_Wr = t_zeros(kk * d);  off = _clmd_rd_farr(rb, off, kk*d, slw_Wr)
+        slw_br = t_zeros(kk);      off = _clmd_rd_farr(rb, off, kk, slw_br)
+        slw_Wq = t_zeros(kk * d);  off = _clmd_rd_farr(rb, off, kk*d, slw_Wq)
+        slw_bq = t_zeros(kk);      off = _clmd_rd_farr(rb, off, kk, slw_bq)
+        slw_Wv = t_zeros(ds * d);  off = _clmd_rd_farr(rb, off, ds*d, slw_Wv)
+        slw_bv = t_zeros(ds);      off = _clmd_rd_farr(rb, off, ds, slw_bv)
+        slw_Wo = t_zeros(d * ds);  off = _clmd_rd_farr(rb, off, d*ds, slw_Wo)
+        slw_bo = t_zeros(d);       off = _clmd_rd_farr(rb, off, d, slw_bo)
+        slw_wg = t_zeros(d);       off = _clmd_rd_farr(rb, off, d, slw_wg)
+        slw_bg = bytes_to_f32_le(rb, off); off = off + 4
+        slw_gamma = bytes_to_f32_le(rb, off); off = off + 4
+        slw_present = 1
+    }
+
+    // ── OPTIONAL CLML read-side lane trailer ("CLML" = 67,76,77,76). Absent ⇒
+    // clml_lane_type=0 (passthrough). header = lane_type u8 · r u32 · tau f32.
+    // Array order = core/clml.py:_ARR_ORDER (W1,b1, W2, w_g, b_g), raw LE-f32.
+    let mut clml_lane_type = 0; let mut clml_r = 0
+    let mut clml_tau = 0.0; let mut clml_bg = 0.0
+    let mut clml_W1 = -1; let mut clml_b1 = -1; let mut clml_W2 = -1; let mut clml_wg = -1
+    if off + 9 <= len(rb) && rb[off]==67 && rb[off+1]==76 && rb[off+2]==77 && rb[off+3]==76 {
+        off = off + 4
+        clml_lane_type = rb[off]; off = off + 1
+        clml_r = _clmd_rd_u32(rb, off); off = off + 4
+        clml_tau = bytes_to_f32_le(rb, off); off = off + 4
+        let rr = clml_r
+        clml_W1 = t_zeros(d * rr);  off = _clmd_rd_farr(rb, off, d*rr, clml_W1)
+        clml_b1 = t_zeros(rr);      off = _clmd_rd_farr(rb, off, rr, clml_b1)
+        clml_W2 = t_zeros(rr * V);  off = _clmd_rd_farr(rb, off, rr*V, clml_W2)
+        clml_wg = t_zeros(2 * d);   off = _clmd_rd_farr(rb, off, 2*d, clml_wg)
+        clml_bg = bytes_to_f32_le(rb, off); off = off + 4
+    }
+
     return #{ "d": d, "E": E, "V": V, "K": K, "L": L, "vd": vd, "ro_rest": ro_rest,
               "ecW": ecW, "tcW": tcW, "eW": eW, "rW": rW, "roW": roW,
               "embed": embed, "ecB": ecB, "tcB": tcB, "eB": eB,
               "rB": rB, "roB": roB, "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB,
-              "rtype": rtype, "kbind": kbind, "Wa": Wa, "Wb": Wb, "WaB": WaB, "WbB": WbB }
+              "rtype": rtype, "kbind": kbind, "Wa": Wa, "Wb": Wb, "WaB": WaB, "WbB": WbB,
+              "slw_present": slw_present, "slw_n_slot": slw_n_slot, "slw_k": slw_k,
+              "slw_d_s": slw_d_s, "slw_gamma": slw_gamma, "slw_bg": slw_bg,
+              "slw_Kslots": slw_Kslots, "slw_Wr": slw_Wr, "slw_br": slw_br,
+              "slw_Wq": slw_Wq, "slw_bq": slw_bq, "slw_Wv": slw_Wv, "slw_bv": slw_bv,
+              "slw_Wo": slw_Wo, "slw_bo": slw_bo, "slw_wg": slw_wg,
+              "clml_lane_type": clml_lane_type, "clml_r": clml_r, "clml_tau": clml_tau,
+              "clml_bg": clml_bg, "clml_W1": clml_W1, "clml_b1": clml_b1,
+              "clml_W2": clml_W2, "clml_wg": clml_wg }
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -667,6 +726,18 @@ fn _clmd_weights_free(W: Map) {
         t_free(to_int(W["Wa"])); t_free(to_int(W["Wb"]))
         t_free(to_int(W["WaB"])); t_free(to_int(W["WbB"]))
     }
+    // SLW forward-slot trailer handles (-1 sentinel when absent)
+    if to_int(W["slw_present"]) != 0 {
+        t_free(to_int(W["slw_Kslots"])); t_free(to_int(W["slw_Wr"])); t_free(to_int(W["slw_br"]))
+        t_free(to_int(W["slw_Wq"])); t_free(to_int(W["slw_bq"]))
+        t_free(to_int(W["slw_Wv"])); t_free(to_int(W["slw_bv"]))
+        t_free(to_int(W["slw_Wo"])); t_free(to_int(W["slw_bo"])); t_free(to_int(W["slw_wg"]))
+    }
+    // CLML read-side lane trailer handles (-1 sentinel when absent)
+    if to_int(W["clml_lane_type"]) != 0 {
+        t_free(to_int(W["clml_W1"])); t_free(to_int(W["clml_b1"]))
+        t_free(to_int(W["clml_W2"])); t_free(to_int(W["clml_wg"]))
+    }
 }
 
 // _clmd_fwd_logits_sc — STREAMING forward: byte-identical to _clmd_fwd_logits but
@@ -690,6 +761,186 @@ fn _clmd_devres() -> bool {
     // scalar host path (GPU idle) = the H_9119 CPU-scalar-bound root cause. a_train_flame_forge:
     // anima decode/eval is forge-GPU-first by default.
     return cuda_available()
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// H_9200 SLW forward-slot · H_9235 CLML read-side lane — trailer forwards.
+// Byte-parity mirrors of core/slw.py:slot_apply and core/clml.py:lane_apply
+// (decode.py float64 path). Absent trailer ⇔ caller skips ⇔ byte-identical.
+// DISJOINT: SLW rewrites the pre-readout penultimate; CLML adds a gated
+// tether-clipped logit bias off the PRE-slot penultimate. Neither touches the
+// emit-drive lane / Ψ-tension (a_substrate_disjoint).
+// ════════════════════════════════════════════════════════════════════════
+
+// _clmd_rd_farr — read n raw LE-f32 from rb at off into farr t_out; return new off.
+fn _clmd_rd_farr(rb, off: int, n: int, t_out: int) -> int {
+    let mut i = 0
+    while i < n { t_set(t_out, i, bytes_to_f32_le(rb, off)); off = off + 4; i = i + 1 }
+    return off
+}
+
+// _slw_softmax_inplace — core/slw._softmax over n contiguous doubles (sub-max,
+// libm exp, normalize). Same reduction order as numpy float64.
+fn _slw_softmax_inplace(buf: int, n: int) {
+    let mut mx = t_get(buf, 0)
+    let mut i = 1
+    while i < n { let v = t_get(buf, i); if v > mx { mx = v } i = i + 1 }
+    let mut sum = 0.0
+    let mut j = 0
+    while j < n { let e = exp(t_get(buf, j) - mx); t_set(buf, j, e); sum = sum + e; j = j + 1 }
+    let mut kk = 0
+    while kk < n { t_set(buf, kk, t_get(buf, kk) / sum); kk = kk + 1 }
+}
+
+// _slw_apply — core/slw.slot_apply mirror. In-place on x[T*d] (each row t depends
+// only on original row t + the slot state S from rows <t, so in-place == numpy's
+// separate out[]). γ=0 => caller skips (passthrough). Op order IDENTICAL to
+// slot_apply/SLWModule: W_r write-addr, erase-then-write, W_q read-addr. No
+// shuffle_perm (prod eval control is set only by the numpy harness, γ-only here).
+fn _slw_apply(W: Map, x: int, T: int, d: int) {
+    let n_slot = to_int(W["slw_n_slot"]); let k = to_int(W["slw_k"]); let d_s = to_int(W["slw_d_s"])
+    let gamma = to_float(W["slw_gamma"])
+    if gamma == 0.0 { return }
+    let scale = 1.0 / dt_sqrt(to_float(k))
+    let Ksl = to_int(W["slw_Kslots"])                              // (n_slot, k)
+    let Wr = to_int(W["slw_Wr"]); let br = to_int(W["slw_br"])     // (k,d),(k)
+    let Wq = to_int(W["slw_Wq"]); let bq = to_int(W["slw_bq"])
+    let Wv = to_int(W["slw_Wv"]); let bv = to_int(W["slw_bv"])     // (d_s,d),(d_s)
+    let Wo = to_int(W["slw_Wo"]); let bo = to_int(W["slw_bo"])     // (d,d_s),(d)
+    let wg = to_int(W["slw_wg"]); let bg = to_float(W["slw_bg"])   // (d,),scalar
+    let S = t_zeros(n_slot * d_s)
+    let a = t_zeros(n_slot); let bb = t_zeros(n_slot)
+    let v = t_zeros(d_s); let m = t_zeros(d_s); let qk = t_zeros(k)
+    let mut t = 0
+    while t < T {
+        // write-addr a = softmax( (W_r@h + b_r) @ Kt * scale )
+        let mut ki = 0
+        while ki < k {
+            let mut acc = t_get(br, ki); let mut jj = 0
+            while jj < d { acc = acc + t_get(Wr, ki*d + jj) * t_get(x, t*d + jj); jj = jj + 1 }
+            t_set(qk, ki, acc); ki = ki + 1
+        }
+        let mut s2 = 0
+        while s2 < n_slot {
+            let mut acc = 0.0; let mut ck = 0
+            while ck < k { acc = acc + t_get(qk, ck) * t_get(Ksl, s2*k + ck); ck = ck + 1 }
+            t_set(a, s2, acc * scale); s2 = s2 + 1
+        }
+        _slw_softmax_inplace(a, n_slot)
+        // filler v = W_v@h + b_v
+        let mut vi = 0
+        while vi < d_s {
+            let mut acc = t_get(bv, vi); let mut jj = 0
+            while jj < d { acc = acc + t_get(Wv, vi*d + jj) * t_get(x, t*d + jj); jj = jj + 1 }
+            t_set(v, vi, acc); vi = vi + 1
+        }
+        // write gate g = sigmoid(w_g@h + b_g)  (no clip — matches slw._sigmoid)
+        let mut gacc = bg; let mut gj = 0
+        while gj < d { gacc = gacc + t_get(wg, gj) * t_get(x, t*d + gj); gj = gj + 1 }
+        let g = 1.0 / (1.0 + exp(0.0 - gacc))
+        // S = (1-ga)*S + ga*v   (erase-then-write)
+        let mut sw = 0
+        while sw < n_slot {
+            let ga = g * t_get(a, sw); let mut di = 0
+            while di < d_s {
+                t_set(S, sw*d_s + di, (1.0 - ga) * t_get(S, sw*d_s + di) + ga * t_get(v, di))
+                di = di + 1
+            }
+            sw = sw + 1
+        }
+        // read-addr b = softmax( (W_q@h + b_q) @ Kt * scale )
+        let mut ki2 = 0
+        while ki2 < k {
+            let mut acc = t_get(bq, ki2); let mut jj = 0
+            while jj < d { acc = acc + t_get(Wq, ki2*d + jj) * t_get(x, t*d + jj); jj = jj + 1 }
+            t_set(qk, ki2, acc); ki2 = ki2 + 1
+        }
+        let mut s3 = 0
+        while s3 < n_slot {
+            let mut acc = 0.0; let mut ck = 0
+            while ck < k { acc = acc + t_get(qk, ck) * t_get(Ksl, s3*k + ck); ck = ck + 1 }
+            t_set(bb, s3, acc * scale); s3 = s3 + 1
+        }
+        _slw_softmax_inplace(bb, n_slot)
+        // m = Σ_slot b[slot]·S[slot,:]
+        let mut mi = 0
+        while mi < d_s { t_set(m, mi, 0.0); mi = mi + 1 }
+        let mut sr = 0
+        while sr < n_slot {
+            let bval = t_get(bb, sr); let mut di = 0
+            while di < d_s { t_set(m, di, t_get(m, di) + bval * t_get(S, sr*d_s + di)); di = di + 1 }
+            sr = sr + 1
+        }
+        // out[t] = h + γ·(W_o@m + b_o)   in place
+        let mut oi = 0
+        while oi < d {
+            let mut acc = t_get(bo, oi); let mut jj = 0
+            while jj < d_s { acc = acc + t_get(Wo, oi*d_s + jj) * t_get(m, jj); jj = jj + 1 }
+            t_set(x, t*d + oi, t_get(x, t*d + oi) + gamma * acc); oi = oi + 1
+        }
+        t = t + 1
+    }
+    t_free(S); t_free(a); t_free(bb); t_free(v); t_free(m); t_free(qk)
+}
+
+// _clml_gelu — core/clml._gelu (np.tanh approximation, NOT erf).
+fn _clml_gelu(x: float) -> float {
+    let x3 = x * x * x
+    return 0.5 * x * (1.0 + tanh(0.7978845608028654 * (x + 0.044715 * x3)))
+}
+
+// _clml_sigmoid — core/clml._sigmoid: clip to [-30,30] then logistic.
+fn _clml_sigmoid(x: float) -> float {
+    let mut z = x
+    if z > 30.0 { z = 30.0 }
+    if z < 0.0 - 30.0 { z = 0.0 - 30.0 }
+    return 1.0 / (1.0 + exp(0.0 - z))
+}
+
+// _clml_apply — core/clml.lane_apply mirror. Adds the gated tether-clipped pooling
+// bias to out_logits[T*V], reading the PRE-slot trunk penultimate yn_trunk[T*d].
+// lane_type=0 => caller skips (passthrough). c_t = causal cumulative mean of yn.
+fn _clml_apply(W: Map, yn_trunk: int, out_logits: int, T: int, d: int, V: int) {
+    let r = to_int(W["clml_r"]); let tau = to_float(W["clml_tau"])
+    let W1 = to_int(W["clml_W1"]); let b1 = to_int(W["clml_b1"])   // (d,r),(r,)
+    let W2 = to_int(W["clml_W2"])                                  // (r,V)
+    let wg = to_int(W["clml_wg"]); let bg = to_float(W["clml_bg"]) // (2d,),scalar
+    let c = t_zeros(d); let csum = t_zeros(d); let z = t_zeros(r)
+    let mut t = 0
+    while t < T {
+        let cnt = to_float(t + 1)
+        let mut di = 0
+        while di < d {
+            let s = t_get(csum, di) + t_get(yn_trunk, t*d + di)
+            t_set(csum, di, s); t_set(c, di, s / cnt); di = di + 1
+        }
+        // gate = sigmoid( [yn_t ; c_t] · w_g + b_g )
+        let mut gacc = bg
+        let mut gj = 0
+        while gj < d { gacc = gacc + t_get(wg, gj) * t_get(yn_trunk, t*d + gj); gj = gj + 1 }
+        let mut gj2 = 0
+        while gj2 < d { gacc = gacc + t_get(wg, d + gj2) * t_get(c, gj2); gj2 = gj2 + 1 }
+        let gate = _clml_sigmoid(gacc)
+        // z = gelu(c·W1 + b1)
+        let mut ri = 0
+        while ri < r {
+            let mut acc = t_get(b1, ri); let mut kk = 0
+            while kk < d { acc = acc + t_get(c, kk) * t_get(W1, kk*r + ri); kk = kk + 1 }
+            t_set(z, ri, _clml_gelu(acc)); ri = ri + 1
+        }
+        // delta_v = clip( (z·W2_v)·gate, ±tau ); out_logits[t,v] += delta_v
+        let mut vv = 0
+        while vv < V {
+            let mut acc = 0.0; let mut kk = 0
+            while kk < r { acc = acc + t_get(z, kk) * t_get(W2, kk*V + vv); kk = kk + 1 }
+            let mut dv = acc * gate
+            if dv > tau { dv = tau }
+            if dv < 0.0 - tau { dv = 0.0 - tau }
+            t_set(out_logits, t*V + vv, t_get(out_logits, t*V + vv) + dv); vv = vv + 1
+        }
+        t = t + 1
+    }
+    t_free(c); t_free(csum); t_free(z)
 }
 
 fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
@@ -752,6 +1003,16 @@ fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
     if !(dev && forge_dispatch_groupnorm(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1) == 0) {
         nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
     }
+    // H_9200 SLW / H_9235 CLML trailers: CLML reads the PRE-slot penultimate, so
+    // snapshot yn before SLW rewrites it (mirrors decode.py:_fwd_logits order).
+    let need_clml = to_int(W["clml_lane_type"]) != 0
+    let mut yn_trunk = -1
+    if need_clml {
+        yn_trunk = t_zeros(T*d)
+        let mut ci = 0
+        while ci < T*d { t_set(yn_trunk, ci, t_get(yn, ci)); ci = ci + 1 }
+    }
+    if to_int(W["slw_present"]) != 0 { _slw_apply(W, yn, T, d) }
     // readout: additive Conv1d(d→V) OR bind/Hadamard (u=Wa(yn), v=Wb(yn),
     // g=u*v|u+v, logits=Wo(g)). The Hadamard/add is host-scalar (byte-exact, O(T·k)
     // cheap); the Wa/Wb/Wo GEMMs still ride forge via _clmd_conv1d_pre.
@@ -771,6 +1032,8 @@ fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
     } else {
         _clmd_conv1d_pre(yn, to_int(sc["roWt"]), to_int(W["roB"]), to_int(sc["roBf"]), out_logits, xcol1, T, d, V, 1, 1)
     }
+    // H_9235 CLML read-side lane: gated tether-clipped logit bias off the pre-slot yn.
+    if need_clml { _clml_apply(W, yn_trunk, out_logits, T, d, V); t_free(yn_trunk) }
 }
 
 // _clmd_fwd_logits — run the general CLMConvMoE inference forward on a T-length
@@ -829,6 +1092,15 @@ fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
     nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
     let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
     nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
+    // H_9200 SLW / H_9235 CLML trailers (byte-identical order to decode.py:_fwd_logits).
+    let need_clml = to_int(W["clml_lane_type"]) != 0
+    let mut yn_trunk = -1
+    if need_clml {
+        yn_trunk = t_zeros(T*d)
+        let mut ci = 0
+        while ci < T*d { t_set(yn_trunk, ci, t_get(yn, ci)); ci = ci + 1 }
+    }
+    if to_int(W["slw_present"]) != 0 { _slw_apply(W, yn, T, d) }
     let rtype = to_int(W["rtype"])
     if rtype > 0 {
         let kb = to_int(W["kbind"])
@@ -846,6 +1118,8 @@ fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
     } else {
         _clmd_conv1d(yn, to_int(W["roW"]), to_int(W["roB"]), out_logits, T, d, V, 1, 1)
     }
+    // H_9235 CLML read-side lane (pre-slot yn_trunk → gated tether-clipped bias).
+    if need_clml { _clml_apply(W, yn_trunk, out_logits, T, d, V); t_free(yn_trunk) }
     t_free(xe); t_free(xt); t_free(logits_r); t_free(ex_out)
     t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
 }
