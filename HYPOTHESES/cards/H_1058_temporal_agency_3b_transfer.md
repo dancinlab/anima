@@ -1,8 +1,15 @@
 # H_1058 — Does the temporal/agency axis transfer to the 3B ConvMoE engine rung? (GPU rung)
 
-Status: 🟠 BLOCKED-METHOD-WIRING (2026-07-10) — NOT engine-native measurable via the 3B forward path
-(the agency axis is a property of the DECISION PROCESS, not the weight forward). NOT a GPU/H100 blocker.
-verdict: archive/state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt
+Status: 🟠 STILL-BLOCKED — blocker now EMPIRICALLY CHARACTERIZED (2026-07-11). The 303M power-run
+was EXECUTED at scale (2 cross-seed sessions A=609/B=98 ticks, real daemon sha 792eab81): the
+pre-registered ≥20-ACTIVE_VETO gate is EMPIRICALLY UNMEETABLE — each session fires exactly 2
+warmup-transient active vetoes then steady-state pure-EMIT → analyze_trace = BLOCKED-INSUFFICIENT on
+BOTH (the MVH '3%' was small-sample; at 609 ticks ~0.3% flat → ≥20 needs ~6000 ticks). So the
+T-axis veto-capacity leg (H_935 free-wont) is not measurable on the raw 303M daemon → frozen
+falsifier UNEVALUATED for a MEASURED reason (superseding 'infra/SSH outage'). The DEPTH leg DOES
+measure (replay_depth self-validates |Δ|=1.055e-15 on the real 609-tick trace; depths vary). No
+tune-to-green (p7). See §power-run.
+verdict: state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt · traces state/h1058_agency_daemon/results/
 Lane: GPU / pod rung (a_fire_autonomous — no cost gate). Engines: stdlib faithful_phi + iit4_bigphi
 exact n≤6 on coarse-grained macro-state + stdlib temporal_agency (a_phi_iit4_tool, no proxy).
 
@@ -133,3 +140,51 @@ tune-to-green, no fabricated numbers (p7). Verdict verbatim: `state/verdicts/105
 - **tier STAYS 🟠** (no tune-to-green · a_toy_scale_recheck): the blocker moved from "harness unbuilt / not
   forward-measurable" to "harness BUILT + byte-self-validated; execution-only follow-on gated on a stable pod SSH
   session (~700-tick 303M ≥20-veto + 3B generator-swap + Φ)". FROZEN falsifier UNEVALUATED on real 303M/3B (infra).
+
+## §power-run — EXECUTED at scale · the empirical veto-gate finding (2026-07-11 · this session)
+The prior increment left the power-run "INFRA-BLOCKED (SSH-proxy outage)". This session RAN IT and
+the outcome is a real result, not another infra note.
+
+- **Infra**: a fresh runpod CPU pod was rented and SSH-STABILITY-GATED (21 contiguous ticks / ~3.5 min,
+  no wedge — the prior outage had recovered). Per an owner reroute the run moved to the free **summer**
+  pool box ($0). Canonical path: `ANIMA_TICKS=800 ANIMA_DECISION_TRACE=<f> PYTHONPATH=cli:core python3
+  state/h1058_agency_daemon/run_daemon.py e1_slw_303m.final.clm` (sha256 792eab81…552c9). **Session A**
+  (default seed "zephyrine…") → **609 ticks**; **Session B** (`ANIMA_SESSION_SEED` "mnemosyne…") → **98
+  ticks** = 2 independent cross-seed sessions on the same substrate. Traces frozen under
+  `state/h1058_agency_daemon/results/`. Infra lesson (convergence h1058-agency-daemon-1): two runpod pods
+  on CONSECUTIVE IPs (.29/.30) share a DC failure domain — "different IP" ≠ different failure domain (twin
+  outages ×2), and a community reclaim of one pod forced a mid-run session-B restart. All pods torn down +
+  confirmed GONE, no cost bleed (~$5 total).
+
+- **Result** (`analyze_trace.py` · results/analyze_{A_609,B_98}.txt):
+
+  | session | ticks | EMIT | ACTIVE_VETO | PASSIVE | g2 veto≥20 | VERDICT |
+  |---------|-------|------|-------------|---------|-----------|---------|
+  | A (zephyrine) | 607 | 606 | **2** | 0 | **FAIL** | BLOCKED-INSUFFICIENT |
+  | B (mnemosyne) | 97  | 95  | **2** | 0 | **FAIL** | BLOCKED-INSUFFICIENT |
+
+  (g1 score-var · g2 emit≥20 · g3 vc-not-pinned all PASS; g2_active_veto≥20 is the blocking failure.)
+
+- **FINDING**: the pre-registered ≥20-ACTIVE_VETO power-run gate is **empirically unmeetable** on the raw
+  303M daemon. Every session — regardless of seed — fires **exactly 2** active vetoes, and they are
+  **warmup-transient** (initial sleep-stage boundaries, tick <~90); thereafter the daemon is steady-state
+  **pure-EMIT** (score>0.3 ∧ safe almost every tick). The count does NOT grow with ticks (2 @ tick44, still
+  2 @ tick609). **The MVH's "≈3% veto rate" was the same 2 vetoes / 64-tick sample**; at scale the rate is
+  ~0.3% and falling, so ≥20 vetoes would need ~6000 ticks (~3–4 days/session, infeasible). This is the
+  H_1056 degeneracy gate correctly REFUSING a verdict on thin veto stats (p7) — ticks were NOT extended nor
+  the daemon retuned to manufacture vetoes.
+
+- **What DID measure** (harness complete; only the veto primitive is empirically absent): `replay_depth.py`
+  on the **real 609-tick** session-A trace → **SELF-VALIDATION PASS, worst |Δ|=1.055e-15** (full-history
+  replay reproduces the LIVE daemon score — a_engine_native_learning, tighter than the prior toy 6.66e-16),
+  DETERMINISM PASS, depths VARY (dist {0:9,4:2,8:12,16:585}, mean 15.57). So the provenance-depth half of
+  T=z(depth)+z(vc) is real and validated on production; only the vc half is degenerate (2 vetoes → no
+  |d|≥0.8 separation population). 3B generator-swap + Φ legs are moot (the 303M gate fails on every session
+  regardless of generator mount).
+
+- **tier STAYS 🟠, blocker re-characterized**: the frozen falsifier is still UNEVALUATED, but for an
+  EMPIRICALLY-MEASURED reason (the 303M daemon's active-veto/free-wont events are too rare to measure the
+  T-axis veto leg), not "provider infra". Honest negative (p7), not a PASS/FAIL of H1. **REOPEN = REDESIGN**
+  (not re-run): a daemon regime that legitimately produces a measurable active-veto population, pre-registered
+  independently (never tune-to-green). Bug fixed en route: `analyze_trace.py` now skips the enriched-trace
+  `_meta` header row (was a KeyError on the #3290 format).
