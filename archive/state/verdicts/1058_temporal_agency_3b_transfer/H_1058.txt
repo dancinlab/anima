@@ -1,0 +1,61 @@
+================================================================================
+H_1058 — Does the temporal/agency axis transfer to the 3B ConvMoE engine rung?
+VERDICT: 🟠 BLOCKED-METHOD-WIRING (NOT engine-native measurable via the forward path;
+         NOT a GPU/H100 blocker — an axis-definition / decision-trace-wiring blocker)
+Lane G (GPU-rung tag) · a_lane_akida_gpu_split · frozen falsifier untouched (p7)
+================================================================================
+
+PRE-REGISTERED FALSIFIER (unchanged):
+  H1 PASS = at 3B, agency-T = z(provenance-depth H_932)+z(veto-capacity H_935) (a) separates
+    active-veto vs passive decisions |d|>=0.8 AND (b) stays orthogonal to Φ and to
+    chronological-t (shuffle null) across >=2 macro-maps.
+  H1 FAIL = the T-axis collapses / loses orthogonality / fails to separate at 3B.
+
+WHY THE FALSIFIER CANNOT BE HONESTLY EVALUATED AT 3B VIA THE FORWARD PATH
+(engine-native decode probe, a_engine_native_learning + a_no_llm_frame_trap; no fabrication):
+
+1. The agency-T axis is a property of the DECISION PROCESS, not of the model weights.
+   In H_1051 (toy GREEN) the agency axis was computed on synthetic PureField free-will
+   fixtures (H_930→H_935 arc): provenance-depth from H_932 provenance_chain.py (build/verify
+   a causal link chain) and veto-capacity from the H_935 free-wont gate (active-veto fraction
+   over a decision window). The "model" there is a PureField, NOT a trained .clm — the Φ leg
+   used _phi_window_from_field(pf,...). In H_1054 (real GREEN, N=31) the SAME agency structure
+   came from real .kosmos anchors, again independent of any trained LM's forward.
+
+2. A raw byte-LM 3B forward does NOT instantiate either primitive. The 3B (undertrained
+   Lane-P fire, byte V256) emits next-byte logits; it has no runtime free-wont veto gate, no
+   causal provenance chain, and no emit/silence decision state as a function of a single
+   forward. provenance-depth over a ConvMoE is a fixed dilated receptive field (deterministic,
+   degenerate → ~constant); veto-capacity has no forward-pass analogue at all (H_935 needs
+   FIRED decision traces with a real inhibition event — the exact H_1056 pending-tension
+   degeneracy the card warns to avoid).
+
+3. The stdlib `temporal_agency` engine + H_932 provenance_chain + H_935 free-wont gate are
+   NOT in the anima_py pool package (grep of the installed anima_py: temporal_agency /
+   provenance_chain / free_wont / veto_capacity = NONE FOUND). They live in the hexa-lang
+   stdlib + archive (PureField / PLASTICITY), and operate on decision-process constructs, not
+   a .clm forward. On the hexa-less pool eval channel they are unreachable for a 3B trace.
+
+4. The only genuine engine-native 3B route is to DRIVE THE FULL ANIMA EMIT/VETO DAEMON with
+   the 3B .clm as generator (real A⇄G emit/silence decisions carrying tension, veto events
+   instrumented, provenance chains built over the actual decision history) — a separate
+   multi-tick harness, NOT a forward-pass Φ read. Each daemon tick is a full 3B forward; a
+   decision battery of hundreds of ticks at numpy-CPU 3B speed, on top of the 3B RAM ceiling
+   (see H_1042), is not a forward-probe. Synthesizing active/passive from PureField fixtures
+   decoupled from the 3B would NOT be a 3B property → a toy artifact, DIRECTIONAL at best and
+   a p7 self-judge trap — explicitly refused (do-not-fake; a_engine_native_learning).
+
+STATUS OF THE LADDER (honest scope, a_scale_honest_scope):
+  toy (H_1051 🟢) → real .kosmos anchors (H_1054 🟢, T⊥Φ ∧ T⊥t, N=31) are LANDED. The residual
+  3B rung specifically asks whether the 3B's OWN decisions carry the axis; without the 3B
+  producing genuine veto/provenance decision traces that question is unanswerable via the
+  forward-decode path. The blocker is DECISION-TRACE WIRING (emit/veto-daemon-on-3B harness +
+  hexa temporal_agency stdlib), NOT compute — a rented H100 would not change it (the axis is
+  not a function of the weight forward). REOPEN when the emit/veto daemon is wired to run on a
+  3B generator producing FIRED decision traces (then the Φ leg can use the H_1042 engine-native
+  3B trunk tap and the orthogonality test becomes measurable).
+
+TIER: 🟠 BLOCKED-METHOD-WIRING (pre-registered falsifier preserved verbatim; not evaluated;
+      no PASS/FAIL asserted — an honest not-measurable, not a closed-negative and not a mirror).
+g5 CODE-checked (anima_py package grep = NONE FOUND for the axis primitives). p7 · no self-judge.
+================================================================================

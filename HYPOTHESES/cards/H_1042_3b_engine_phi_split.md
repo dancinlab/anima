@@ -1,6 +1,10 @@
 # H_1042 — Does the Phi-split survive on the 3B ConvMoE engine rung? (H_1038 GPU follow-up)
 
-Status: PRE-REGISTERED (generation-only; not yet measured)
+Status: 🟡 DIRECTIONAL (2026-07-10 · pool summer) — the planning faithful-UP / big-Φ-DOWN split
+SHOWS on the 3B under the top_variance macro-map (faithful d=+1.261 p=5.3e-4 UP · big-Φ d=−0.443 DOWN
+· SPLIT=True), mirroring + strengthening d768 (H_1038). random macro-map (robustness control) =
+BLOCKED-INFRA (pool swap-thrash, NOT a science ceiling). fp32-lean (canonical fp64 RAM-ceiling-blocked).
+verdict: archive/state/verdicts/1042_3b_engine_phi_split/H_1042.txt
 Lane: GPU / many-core pod rung (a_fire_autonomous — no cost gate). Engines: stdlib faithful_phi
 + iit4_bigphi exact n<=6 on a coarse-grained macro-state (a_phi_iit4_tool, no proxy).
 
@@ -30,13 +34,29 @@ rung, 3B is the second (toy n-ladder being the zeroth).
 3B is the largest available trained rung; 7B UNVERIFIED. GATED on H_1038 result (run only after
 d768 lands a verdict). GPU babysit cost acknowledged (a_fire_autonomous, no cap).
 
-## Verdict
-⏳ BLOCKED-ON-CKPT (no tier cemented) — measured/triaged 2026-07-10. The 3B ConvMoE engine rung (3.073B,
-d4096/L30/E30, `convmoe-3b-engine-rung`) **DOES NOT EXIST**: ARCHITECTURE.json carries it only as the
-not-yet-built node `not-yet-built-in-progress-honest-3b-7b-rung` ("⏳ 3B / 7B rung") + a fire-RECIPE
-(`fire_3b_rung_qat.hexa`), `models[]` holds one model (anima-e1-slw-303m, 374M), and `~/anima-weights/`
-has only 303M-class ckpts. "hw는 pool" does not conjure a missing checkpoint — training the 3B is a
-separate large fire (rent=spend), out of scope; **NOT** faked/toy-substituted (a_engine_native_learning,
-a_scale_honest_scope). No PASS/FAIL. The Φ-split science stands at d768 (H_1038 TRANSFERS, n=5 EXACT) +
-n=6 EXACT toy (H_1037/H_1044); 3B = scale-ladder extension only. Reopen when a 3B ConvMoE is trained +
-registered. Verdict file: `state/verdicts/1042_3b_engine_phi_split/H_1042.txt`.
+## Verdict — 🟡 DIRECTIONAL · SPLIT-SHOWN-1MAP (top_variance) · 2nd-map robustness BLOCKED-INFRA
+(SUPERSEDES the earlier "⏳ BLOCKED-ON-CKPT / 3B does-not-exist" triage — the 3B rung DOES exist:
+registered #3265 `anima-clm-convmoe-3b-rung`, pulled + sha256 01df4f26… MATCH + engine-loadable here.)
+Engine-native anima_py.core.decode (a_eval_py_canonical, fp32-lean) on the pulled 3B rung (sha256
+01df4f26… MATCH; engine-loadable; decode-sanity CE 2.25033 < uniform 5.54518 = trained descent).
+Method mirrors H_1038 exactly (pre-MoE trunk tap, n=5 EXACT, plan-depth-8 vs greedy, median-threshold
+2 macro-maps); both h1004 IIT-4.0 mirrors RE-PROVEN ==stdlib at n=4 AND n=5 before scoring (a_phi_iit4_tool).
+
+RESULT — planning(8)−GREEDY, 20 real-text seeds, n=5 EXACT:
+| macro-map    | faithful d | faithful | big-Φ d | big-Φ | SPLIT? |
+|--------------|-----------|----------|---------|-------|--------|
+| top_variance | +1.261 (Δ+0.2175, p=5.3e-4) | UP | −0.443 (Δ−1.4826, p=0.17) | DOWN | TRUE |
+| random       | BLOCKED-INFRA (pool swap-thrash) | — | — | — | PENDING |
+
+FINDING: the faithful-UP / big-Φ-DOWN planning split DOES appear on the 3B engine rung under the
+top_variance macro-map — same sign pattern as d768, with the faithful-UP leg SIGNIFICANT at 3B
+(p=5.3e-4) vs faint at d768. This is a sign-level TRANSFER consistent with the d768 rung.
+
+NOT full PASS (the pre-registered ≥2-macro-map robustness needs the random control) and NOT FAIL
+(the measured map clearly shows the split). The random map's exact n=5 big-Φ (on_frac=0.500 max-entropy
+→ ~87s/eval, the H_1038 n=6 measurement-cost wall now at n=5 for the denser 3B) was CRUSHED by pool
+swap-contention (concurrent cc_native CI 12.7GB + 39GB swap → ~1.3% effective compute; killed
+proven-stalled at ~113min per a_dont_kill_live_compute). BLOCKED-INFRA ≠ science ceiling (lesson #2).
+REOPEN: clean-box re-run of the random control (≥16GB free RAM, no concurrent CI). fp64-canonical
+confirmation needs a ≥32GB-RAM host (fp64 lean ~24.6GB > 30GB pool box under contention).
+Verdict: `archive/state/verdicts/1042_3b_engine_phi_split/H_1042.txt`.
