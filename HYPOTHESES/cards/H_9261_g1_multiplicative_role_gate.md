@@ -71,3 +71,25 @@ frozen 303M mean-pool 피처 `h_A, h_B`에서 마지막-토큰 분포 예측:
 ## 6. 배선 (GREEN 시)
 
 `a_substrate_disjoint`: 게이트는 emit-drive lane과 **DISJOINT**하게 — read-side 게이트 lane으로 `core/decode.hexa` lockstep 배선 → `.clm` bake + HF + registry. GREEN은 배선 후에만 (`a_verified_must_wire`).
+
+---
+
+## 7. 측정 결과 — ⚠️ 재조준 (2026-07-10 · numpy proxy DIRECTIONAL · summer)
+
+frozen 303M pair-hidden 덤프(H_9235 재활용 · train 842 / held 150 pair-novel · 5-bit XOR) 위 $0 numpy. `state/9261_multiplicative_role_gate/VERDICT.md`.
+
+**반전 — "additive floor" 는 이 프레임서 성립 안 함:**
+
+| readout | held-out XOR |
+|---|---|
+| mean-pool + gelu | **0.979** |
+| max-pool + gelu | 0.980 |
+| query-att + gelu | 0.951 |
+| **last-pos + gelu** | **0.491** (chance) |
+| handed 양성대조 | 0.9996 · shuffle 0.489 |
+
+가법 role-pooled + 비선형 head 가 held-out XOR 을 0.979 로 푼다. 벽은 표현력 천장이 아니다 — `mean-pool 0.979` vs `last-pos 0.491` 격차 = 정보는 시퀀스 전체에 있고 **생성 위치에서만 소실**. G1 벽 = readout-ROUTING(RF decay) 재확인(프론티어 recomb-routing-lane 지지).
+
+**⇒ 곱셈 게이트 전제 무너짐:** 가법 mean-pool 이 이미 0.979 천장이라 "곱셈이 additive floor 극복"은 headroom 없어 무의미. 곱셈 게이트를 `additive 극복`이 아니라 **`last-pos routing 복원`**에 재조준해야 하며, 그것이 정확히 fork-A CLML lane(H_9235)이 하는 일. **뇌부위 렌즈 census 가 기존 프론티어로 수렴.**
+
+hadamard 곱셈 arm(fork_a_matrix)은 `G@Wu` NaN 발산으로 미측정(별도 infra · 위 통찰이 재측정 우선순위를 낮춤).

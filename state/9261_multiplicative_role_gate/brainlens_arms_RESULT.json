@@ -1,0 +1,36 @@
+{
+  "N": 32,
+  "T": 24,
+  "D": 3784,
+  "n_train": 842,
+  "n_held": 150,
+  "rank_proj": 16,
+  "arms": {
+    "additive_frozen_bar": {
+      "held": 0.9791,
+      "shuffle": 0.5098
+    },
+    "ca3_outer_product_H9262": {
+      "held": 0.5373,
+      "shuffle": 0.5111,
+      "store_rank": [
+        16,
+        16,
+        16
+      ],
+      "store_params": 256,
+      "n_train_pairs": 842,
+      "param_audit": "PASS (store params RANK^2=256 independent of n_train=842)",
+      "delta_vs_bar": -0.4418
+    },
+    "phase_H9263": {
+      "held_rotation": 0.476,
+      "shuffle": 0.4929,
+      "held_additive_control": 0.7231,
+      "delta_rot_minus_additive": -0.2471,
+      "delta_vs_bar": -0.5031
+    }
+  },
+  "handed": 1.0,
+  "valid": true
+}

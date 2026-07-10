@@ -43,3 +43,11 @@ outer-product는 곱 항을 **일급으로 담는다**(회피 ✅). 그러나 �
 
 **PASS 조건:** held-out에서 CA3 > 가법 + margin **AND** shuffle 이득 소멸 **AND** 파라미터 감사 통과(암기 아님).
 **FAIL 조건(예상):** held-out 붕괴 → 비파라메트릭 저장 계열 전체 CLOSED.
+
+---
+
+## 5. 측정 결과 — 🟡 미결 (2026-07-10 · numpy proxy DIRECTIONAL · RANK confound)
+
+bilinear held=0.537 ≈ shuffle 0.511 = XOR 신호 없음. 파라미터 감사 **PASS**(store RANK²=256, n_train=842 무관 · 암기 아님). `state/9261_multiplicative_role_gate/VERDICT.md`.
+
+⚠️ **confound**: RANK=16 projection(D=3784→16)이 aggressive — 같은 저차원의 가법도 chance 근처(raw mean-pool 0.979 대비 붕괴). bilinear 무신호가 outer-product 결함인지 projection 결함인지 미분리 → 재측정(RANK↑ 또는 raw bilinear) 필요. 자기고발한 toy-death(암기 후 held 붕괴)는 아님 — **애초에 신호 자체가 부재**.
