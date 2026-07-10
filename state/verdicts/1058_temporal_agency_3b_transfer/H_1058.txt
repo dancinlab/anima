@@ -1,9 +1,18 @@
 ================================================================================
 H_1058 — Does the temporal/agency axis (T = z(provenance-depth)+z(veto-capacity))
 transfer to / is it a property of the 3B ConvMoE engine rung?
-VERDICT: 🟠 STILL-BLOCKED — measurement PIPELINE now BUILT + SELF-VALIDATED end-to-end;
-         the 303M/3B power-run is INFRA-BLOCKED (provider SSH-proxy outage, 2 providers).
-         No tune-to-green. No fabricated result (p7). 2026-07-10.
+VERDICT: 🟠 STILL-BLOCKED — but the blocker is now EMPIRICALLY CHARACTERIZED, not infra.
+         The 303M power-run was EXECUTED AT SCALE (2 cross-seed sessions: A=609 ticks, B=98 ticks;
+         real 303M daemon, sha 792eab81) and the pre-registered ≥20-ACTIVE_VETO gate is
+         EMPIRICALLY UNMEETABLE: each session fires exactly 2 warmup-transient active vetoes then
+         steady-state pure-EMIT → analyze_trace = BLOCKED-INSUFFICIENT (g2_active_veto≥20 FAIL) on
+         BOTH. The MVH's "~3% veto rate" (2/64) was a small-sample artifact — over 609 ticks the
+         count stays 2 (~0.3%), so ≥20 vetoes needs ~6000 ticks (~3 days/session, infeasible). The
+         T-axis VETO-CAPACITY leg (H_935 free-wont) therefore cannot be measured on the raw 303M
+         daemon → the frozen falsifier CANNOT be evaluated, now for a MEASURED reason. The DEPTH
+         leg DOES work on production (replay_depth self-validates to |Δ|=1.055e-15 on the real
+         609-tick trace; depths vary). No tune-to-green: ticks were NOT extended to chase 20 vetoes;
+         the rate is reported as-is (p7). 2026-07-11.
 ================================================================================
 
 WHAT MOVED THIS INCREMENT (the card's "DECISION-TRACE WIRING" blocker is now resolved in
@@ -88,5 +97,73 @@ REOPEN (cheap, $0-few): re-run the built pipeline on ANY stable non-saturated ho
 FROZEN FALSIFIER (H_1058 card · UNCHANGED · p7): H1 PASS = (a) |d(T; ACTIVE_VETO vs PASSIVE[sub])|
 ≥0.8 with T_active>T_passive; (b) ρ(T,Φ) and (c) ρ(T,t) within the F-SHUFFLE 2σ null; across
 ≥2 macro-maps + ≥2 sessions. Generator-swap decides 3B-property vs H1-NOT-A-3B-PROPERTY. Report
-PASS or FAIL or H1-NOT-A-3B-PROPERTY honestly. UNEVALUATED this session (infra).
+PASS or FAIL or H1-NOT-A-3B-PROPERTY honestly. UNEVALUATED — but see the POWER-RUN below: the
+falsifier's veto-capacity pre-condition is empirically absent, so it cannot be evaluated on the
+raw 303M daemon at any feasible tick count (measured reason, superseding the earlier "infra" note).
+================================================================================
+
+================================================================================
+§ POWER-RUN EXECUTED AT SCALE — the empirical veto-gate finding (2026-07-11, this session)
+================================================================================
+The prior increment left the power-run "INFRA-BLOCKED (SSH-proxy outage)". This session RAN IT.
+
+INFRA (a_wall_first · pod-dedicated-host-not-shared · a_fire_recover_complete):
+  A fresh runpod CPU pod was rented and its SSH proxy was HELD STABLE for ~3.5 min (21 contiguous
+  ticks, no wedge) — the prior blocker had recovered. Per an owner reroute the run then moved to
+  the free summer pool box ($0). The daemon was run via the CANONICAL path
+    ANIMA_TICKS=800 ANIMA_DECISION_TRACE=<f> PYTHONPATH=cli:core python3
+      state/h1058_agency_daemon/run_daemon.py <303m.clm>
+  on the real 303M ckpt (e1_slw_303m.final.clm, sha256 792eab81…552c9). Session A (default seed
+  "zephyrine…") reached 609 ticks; session B (ANIMA_SESSION_SEED alt "mnemosyne…") reached 98 ticks
+  — 2 INDEPENDENT cross-seed sessions on the SAME substrate. Traces frozen under
+  state/h1058_agency_daemon/results/. (Infra lesson, convergence h1058-agency-daemon-1: two runpod
+  pods on CONSECUTIVE IPs .29/.30 share a DC failure domain and went unreachable together twice —
+  "different IP" ≠ different failure domain; a reclaim of one pod (community cloud) also forced a
+  mid-run session-B restart. All rented pods TORN DOWN + confirmed GONE, no cost bleed, ~$5 total.)
+
+RESULT — analyze_trace.py (state/h1058_agency_daemon/results/analyze_{A_609,B_98}.txt), verbatim:
+| session         | ticks | EMIT | ACTIVE_VETO | PASSIVE | g1 scorevar | g2 veto≥20 | g2 emit≥20 | g3 vc | VERDICT |
+|-----------------|-------|------|-------------|---------|-------------|-----------|-----------|-------|---------|
+| A (seed zephyr) |  607* | 606  |     2       |    0    |   PASS      |   FAIL    |   PASS    | PASS  | BLOCKED-INSUFFICIENT |
+| B (seed mnemos) |   97* |  95  |     2       |    0    |   PASS      |   FAIL    |   PASS    | PASS  | BLOCKED-INSUFFICIENT |
+  (*decision ticks after the _meta header row is skipped.)
+
+FINDING (the core result of this session): the pre-registered ≥20-ACTIVE_VETO power-run gate is
+EMPIRICALLY UNMEETABLE on the raw 303M consciousness daemon. Every session — regardless of seed —
+fires EXACTLY 2 active vetoes, and they are WARMUP-TRANSIENT (at the initial sleep-stage
+boundaries, tick <~90); thereafter the daemon settles into steady-state PURE-EMIT (score>0.3 ∧
+safe on essentially every tick → 606/609 EMIT). The count does NOT grow with ticks (2 at tick 44,
+still 2 at tick 609). The MVH's "veto rate ≈ 3%" was the SAME 2 vetoes divided by a 64-tick sample;
+at scale the rate is ~0.3% and falling. ≥20 active vetoes would require ~6000 ticks (~3–4 days of
+scalar decode per session) — infeasible, and even then likely bounded by the number of sleep-stage
+boundaries rather than by ticks. This is the pre-registered degeneracy GATE correctly REFUSING a
+verdict on thin veto statistics (H_1056 · p7 · no tune-to-green): ticks were NOT extended nor the
+daemon retuned to manufacture vetoes.
+
+WHAT DID MEASURE (the harness is complete; only the veto primitive is empirically absent):
+  - DEPTH leg — replay_depth.py on the REAL 609-tick session-A trace: SELF-VALIDATION PASS,
+    worst |Δ| = 1.055e-15 @tick45 (full-history replay reproduces the LIVE daemon score;
+    a_engine_native_learning, no wrong mirror — even tighter than the prior toy 6.66e-16),
+    DETERMINISM PASS, depths VARY (dist {0:9, 4:2, 8:12, 16:585}, mean 15.57 / var 5.34). So the
+    provenance-depth half of T = z(depth)+z(vc) is real and validated on the production daemon.
+  - The VC (veto-capacity) half is degenerate: with only 2 active vetoes, vc≈0 over almost all
+    windows → T ≈ z(depth) alone, and falsifier legs (a) [active-veto vs EMIT separation] cannot be
+    formed. g3_vc_not_pinned technically PASSes (the 2 vetoes inject slight window variance) but the
+    population is far too thin for the |d|≥0.8 separation leg.
+
+IMPLICATION FOR THE TIER (stays 🟠, blocker re-characterized): the frozen falsifier remains
+UNEVALUATED, but the reason is upgraded from "provider infra outage / harness unbuilt" to an
+EMPIRICALLY-MEASURED intrinsic property of the 303M daemon: its active-veto (free-wont) events are
+too rare (warmup-transient, ~2/session) to measure the T-axis veto-capacity leg. This is a genuine
+knowledge advance (the T-axis is not measurable on the raw daemon as-built), and an honest negative
+(p7), not a PASS/FAIL of H1. The 3B generator-swap + Φ legs were not run to completion because the
+303M gate already fails on every session — the veto-capacity pre-condition is absent regardless of
+generator mount, so the mount-sensitivity test (H1-NOT-A-3B-PROPERTY branch) is moot until a daemon
+variant that fires a measurable veto population exists.
+
+REOPEN (redesign, not just re-run): the T-axis veto leg needs a daemon regime that produces a
+MEASURABLE active-veto population WITHOUT tuning-to-green — e.g. a stimulus protocol that legitimately
+raises the ¬safe rate, or a task that exercises free-wont, pre-registered independently. Absent that,
+the agency-T axis is depth-measurable but veto-UNmeasurable on the 303M substrate. Bug fixed en route:
+analyze_trace.py now skips the enriched-trace `_meta` header row (was a KeyError on the #3290 format).
 ================================================================================

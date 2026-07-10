@@ -1,0 +1,8 @@
+=== H_1058 replay-depth prober ===
+trace          : state/h1058_agency_daemon/results/trace_303m_summer.jsonl
+ticks          : 608 · window: 16
+SELF-VALIDATION: worst|Δ|=1.055e-15 @tick=45  tol=1e-09 -> PASS
+DETERMINISM    : PASS (same trace -> same depths)
+depth dist     : {0: 9, 4: 2, 8: 12, 16: 585}
+depth mean/var : 15.5658 / 5.33778
+wrote          : state/h1058_agency_daemon/results/depths_A_609.jsonl

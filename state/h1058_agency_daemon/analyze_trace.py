@@ -44,8 +44,12 @@ def load_trace(path):
     with open(path, "r", encoding="utf-8", errors="surrogateescape") as fh:
         for line in fh:
             line = line.strip()
-            if line:
-                rows.append(json.loads(line))
+            if not line:
+                continue
+            d = json.loads(line)
+            if d.get("_meta"):  # enriched-trace header row (#3290) — not a decision tick
+                continue
+            rows.append(d)
     return rows
 
 
