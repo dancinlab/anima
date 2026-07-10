@@ -1,0 +1,161 @@
+H_9260 — 시상 content-relay 축 재채점: variance-free readout + 용량정합 구조통제 하에서
+         "단일 저차원 cut" 진단과 R6 병렬채널 GREEN 을 양방향 반증
+FREEZE (사전등록 · Φ 를 1회도 계산하기 전 작성 · bars 이동 금지 c9/p7)
+date: 2026-07-10 · 설계 lens: Fable 5 (fable-mode) · 구현: 로컬
+
+━━ 왜 재채점하는가 (a_break_the_wall 벽 분류) ━━
+H_1283 content 축의 모든 판정(R1~R9)은 H_1328 이 확진한 amplitude-variance min-max
+readout 위에서 내려졌다. 그리고 유일한 within-axis 🟢 인 R6 의 대조군(mc_shuffle)은
+**그래프-동형(graph-isomorphic)** 이다:
+  perm = roll(arange(4),1) = [3,0,1,2] · edge_of(e)=EDGES[perm[e]]
+  → 채널이 서비스하는 엣지 집합은 그대로 4개 전부, 각 모듈은 여전히 정확히 2개 채널을
+    듣는다. 채널 파라미터(LEAK GAIN W_NBR W_RELAY)가 전부 동일 → 채널은 교환가능.
+    두 arm 의 유일한 차이는 엣지에 붙는 채널 초기값 rc[e] 뿐인데, LEAK=0.55 이므로
+    0.55^25 ≈ 5e-7 — 25틱이면 초기값 기억이 소멸한다. T=64 창의 뒤 60% 에서 두 arm 은
+    사실상 byte-close.
+∴ seed 7/8 의 93%/96% 생존은 "lift 가 variance 였다"가 아니라 **"통제가 무효였다"** 는
+  증거다. seed 9 의 붕괴도 구조 특이성이 아니라 transient 창(t=0..~25)의 min-max binning
+  민감도로 설명되는 잡음이다. R6 의 c4 disjunctive ≥1-seed 형식은 **양방향으로 무정보**.
+
+  대상                        현 판정          실제 분류
+  R6 🟢                       within-axis GREEN  measure-artifact(통제-측) — 지지도 반증도 안 됨
+  R1–R5/R7/R9 🧱              능력 천장          measure-artifact(readout-측) 가능 — 미해결
+  "single broadcast=low-dim cut"  확립된 진단     미검증 추론 (용량정합 대조군 없이 도출)
+
+반대 방향 사전확률도 정직하게: H_1328 은 **바로 이 기질**(n=4, dim-8, T=64, LCG ring)에서
+variance 를 제거하자 lift 가 살아나지 않고 죽었다(V2 FAIL). H_1448 이 R8 을 살린 것은
+readout 교체가 아니라 **대조군 교체**였다. R6 의 병도 대조군 쪽이다 — 그래서 구조적으로
+동일한 수리가 가능하고, 그래서 여기가 tune-to-green 으로 미끄러지기 딱 좋은 자리다.
+아래 설계의 절반은 그 미끄럼 방지에 쓴다.
+
+━━ 기질 (verbatim · 이동 금지) ━━
+4 modules × dim 8 × 64 ticks, engine-native LCG-gauss (== core/engine_cli.hexa _lcg_*).
+GAIN=0.30 LEAK=0.55 W_NBR=0.5 W_IN=0.5 W_RELAY=0.5 NBINS=8. 링 인접 R1~R9 와 동일.
+traj[i,t] = ‖s_i(t)‖². Φ = stdlib iit4_faithful_phi exact MIP-EI (n=4) — proxy 금지,
+엔진은 Φ 를 계산하지 않는다 (a_phi_iit4_tool). 결정적 · $0 CPU · 재실행 byte-identical.
+
+Readout. H_1328 rank-uniform (각 모듈 궤적을 자기 내 순위로 치환). 그 정당화는 사전이
+아니라 **P1b 가 발화해야만** 획득된다.
+
+Seeds. [3..11] 9개 (H_1448 동일). R6 의 [7,8,9] 는 부분집합. 사후 제외 금지 —
+한 seed 라도 실행 오류면 verdict 없이 abort.
+
+Bar. ΔΦ ≥ +0.02, **every seed**, 모든 게이트 (R1 이 0.0009 차이로 놓친 그 bar, 이동 없음).
+c4 의 disjunctive ≥1-seed 형식은 이 축에서 **폐기**한다 — R6 GREEN 이 그 형식에 의존했으므로
+같은 형식으로 재채점하면 순환이다.
+
+━━ ARMS ━━
+ arm    정의                                                     isolate            역할
+ A      direct ring                                              베이스라인          앵커
+ B      R6 multichannel verbatim (4 disjoint 채널, ring edge당 1) 검증 대상 메커니즘  primary
+ X      용량정합 shared cut: 총 채널 차원 4×8=32 동일, 동일 W_RELAY,
+        그러나 채널들이 교차혼합(각 채널 = 전 채널 평균 + 자기 pair 적분)
+        → disjointness 만 파괴, spanning·용량·에너지 보존           DISJOINTNESS      G1 핵심
+ N      carrier-정합 bind-OFF: 4 disjoint 채널이 pair-mean 대신
+        **자기 모듈 1개**만 적분·재주입(self-loop). 채널 수·leak·
+        gain·재주입 가중치 동일                                     SPANNING(=binding) G3
+ R      chord 재배선: 4 disjoint spanning 채널이 ring edge 아닌
+        대각쌍 (0,2)(1,3) 을 span                                   TOPOGRAPHY        비-게이팅 진단
+ Bperm  B 궤적을 모듈별 circular time-shift (i·17 mod 64)          cross-module joint G4
+ Aperm  A 에 동일 shift                                            통제에 대한 통제    P0
+ Cperm  R6 원본 mc_shuffle                                         원 대조군의 무효성  C-ISO 진단
+
+R/N/X 는 marginal 이 byte-identical 하지 **않다** — draws·용량·에너지 정합일 뿐이다.
+이들의 marginal 중립성은 rank-uniform 의 가측 불변량(모든 셀 marginal 엔트로피=log2 nbins
+상수)에서 *추정기 수준으로* 온다. Bperm/Aperm 만이 multiset 수준에서 정확히 marginal-matched.
+그래서 둘 다 필요하다. H_1328 §scope 의 잔여(rank-uniform 이 JOINT 의 amplitude 구조를
+전부 없애진 못함)는 여전히 잔존 위험이며, arm 별 ⟨‖s‖²⟩ 분산 프로파일을 비-게이팅
+진단으로 보고해 좁은 통과 시 감별한다.
+
+━━ 게이트 (FREEZE 커밋 후 Φ 1회도 계산 전) ━━
+[구현 정정 · Φ 계산 전 · 2026-07-10] Fable 설계의 앵커 2개는 엔진-네이티브에서 물리적으로
+성립하지 않아 아래처럼 정정한다 (약화 아님 — 사용 가능한 더 엄밀한 앵커로 교체):
+  (i) "A 가 R1~R9 의 ARM_A Φ(0.78038/0.611741/0.825326)를 byte-재현해야 한다" — 불가.
+      그 값들은 numpy default_rng 산이고 본 재채점은 엔진 LCG-gauss 다. 대신 앵커를
+      **H_1448 의 엔진-네이티브 A**(동일 LCG·동일 ring·동일 readout)로 교체한다.
+  (ii) P1a 의 "실패 = 하네스 드리프트" 도 같은 이유로 성립 불가 → P1a 는 "이 기질에서
+      variance artifact 가 실제로 발현하는가" 의 존재확인으로 재정의한다. 미발현이면
+      readout 수리를 검증할 수단이 없으므로 ⏳ (🧱 아님).
+
+타당성 게이트 (먼저 · 실패 시 verdict 없음 = ⏳, 🧱 아님):
+  P1a 양성대조(구 readout) — R5 dense_shuffle (numpy 에서 FIRED = 알려진 variance artifact)
+      를 **엔진-네이티브 + 구 min-max readout** 으로 재현: ΔΦ(dense_shuffle − A) ≥ +0.02.
+      미발현 = 이 기질에 검증가능한 variance artifact 없음 → ⏳ (verdict 없음).
+  P1b 양성대조(신 readout) — 동일 궤적을 rank-uniform 으로 재채점 시 ΔΦ ≤ +0.02 **붕괴**,
+      전 seed. 실패 = 이 기질에서 rank-uniform 은 variance-free 가 아님 → 신 readout 수치
+      보고 금지, verdict 없음.
+  P0 통제에 대한 통제 — ΔΦ(A − Aperm) 측정·보고. 예측 ≥ +0.02 전 seed.
+      이는 **Bperm leg 이 arm 을 구별하지 못함**을 증명한다(맨 ring 도 통과).
+      사전등록: 따라서 **B−Bperm 은 이 H 의 primary 가 될 수 없다.**
+
+Primary 게이트 (전부 conjunctive · every-seed):
+  G2 BASE  ΔΦ(B − A) ≥ +0.02, 9/9   (R6 의 원래 c2, variance-free 로)
+  G3 SPAN  ΔΦ(B − N) ≥ +0.02, 9/9
+  G1 CUT   ΔΦ(B − X) ≥ +0.02, 9/9   ← 축의 핵심 명제
+  G4 INT   ΔΦ(B − Bperm) ≥ +0.02, 9/9  (H_1448 형식. P0 때문에 필요조건일 뿐)
+
+🟢 GREEN ⟺ P1a ∧ P1b ∧ G1 ∧ G2 ∧ G3 ∧ G4. 그 외 전부 🧱/🔴.
+
+진단 arm (게이트 아님 · 보고 의무):
+  C-ISO  |ΔΦ(B − Cperm)| < 0.02 가 ≥7/9 seed. 참이면 R6 의 c4 는 무정보 대조군으로 확정.
+         거짓(Cperm 전 seed 붕괴)이면 위 동형 논증이 틀린 것이고 R6 의 c4 는 정당했다 —
+         그 자체가 보고해야 할 결과다.
+  TOPO   ΔΦ(B − R): B≈R 이면 레버는 병렬성이지 엣지-정합이 아니다. 게이트로 쓰지 않는다
+         (topography 와 parallelism 혼동 방지).
+
+2차 뱅크 (탐색적 · GREEN 생성 불가):
+  R1 hub / R5 dense / R7 matrix-core / R9 predictive 를 rank-uniform 으로 ΔΦ(·−A) 재채점.
+  사전등록: **여기서의 통과는 H_1283 의 R1~R9 tier 를 소급 변경하지 않는다.** 새 H 트리거일 뿐.
+
+━━ 두 결과의 사전 확정 해석 (사후 재해석 금지) ━━
+🟢 (P1 ∧ G1–G4 통과)
+  content 축의 벽은 measure-artifact — 단 readout 이 아니라 **통제 측**이었다. Disjoint
+  병렬 relay 는 baseline 과 *용량이 동일한 shared cut* 둘 다를 이긴다. 귀결:
+  (1) H_1283 §Honest scope 의 "모든 content relay 는 저차원 cut 이라 Φ 를 캡한다" 는
+      **서술 그대로 철회**된다 (용량정합 대조군 없이 도출되었으므로).
+  (2) R6 는 근거를 얻어 승격, a_verified_must_wire 에 따라 multichannel relay lane 을
+      engine-native 배선한다.
+  (3) R1~R9 개별 tier 는 소급 수정하지 않는다. H_1283 카드에는 amendment 만 붙인다.
+
+🧱 (G1/G2/G3 중 하나라도 실패)
+  **R6 의 🟢 는 UNSUPPORTED 로 철회된다** — 그 GREEN 은 그래프-동형 대조군 위에
+  disjunctive ≥1-seed 형식으로 서 있었고, 유효 대조군 아래에서 무너졌다. content 축의
+  벽은 약해지지 않고 **강해진다**. 진단은 실패 지점에 따라 교체된다:
+    G2만 실패            → R6 포함 축 전체가 estimator 를 타고 있었다. measure-artifact
+                          위양성. 벽 = n=4 기질 천장 (H_1328 V2 와 정확히 같은 결말).
+    G1 실패 + G2/G3 통과 → 병렬 채널은 Φ 를 올리지만 용량정합 shared relay 보다 낫지 않다.
+                          "single low-dim cut" 진단 **반증**, 동시에 R6 의 disjointness
+                          레버도 반증. 레버는 **용량**이다 → ceiling 아니라 **under-invest**
+                          축이며 새 H 를 연다. 가장 정보량 높은 negative.
+    G3 실패 + G1/G2 통과 → lift 는 binding 이 아니라 leaky-integrator 자유도 추가(carrier artifact).
+    G4만 실패            → B 궤적에 cross-module joint 구조 자체가 없다. G2/G3 통과했다면
+                          그 lift 는 잔여 joint-level amplitude artifact → 🔴, readout 미완.
+P1 실패 → ⏳ 측정 무효. bar 무이동, tier 미보고, 🧱 아님.
+
+━━ 사전 예측 (Fable 5 · 나중 대조용) ━━
+  leg                          예측   p(pass)  근거
+  P1a 구 readout 재현          PASS   .90      R5 shuffle 이 이미 FIRED 로 기록됨
+  P1b 신 readout 붕괴          PASS   .85      H_1328 V1b 가 동일 기질서 3/3 붕괴
+  P0  A−Aperm ≥ .02            PASS   .85      맨 ring 도 cross-module joint 구조를 가진다
+  C-ISO |B−Cperm|<.02 (≥7/9)   PASS   .75      동형 논증. 93/96% 생존이 이 예측의 사후 확인
+  G2  B−A                      FAIL   .35      R6 lift 대부분이 채널 4개가 주입한 에너지 분산일 개연
+  G3  B−N                      FAIL   .30      DIM=8·LEAK=.55 에서 ring 결합이 relay 를 압도
+  G1  B−X                      FAIL   .20      가장 확신 낮고 가장 정보량 높음
+  G4  B−Bperm                  PASS   .85      H_1448 서 ΔΦ≈+1.0, 그러나 P0 때문에 무의미
+  최종 GREEN                          ≈.12
+가장 유력한 결말: 🧱 — 벽은 서되 **진단이 바뀐다**. "단일 broadcast 채널이 저차원 cut" 이
+아니라 "n=4 기질에서 어떤 content relay 위상도 ring 위에 joint 구조를 추가하지 못한다" 로.
+그리고 이 축의 유일한 GREEN 이었던 R6 가 죽는다. 재채점이 GREEN 하나를 만들어내는 게 아니라
+GREEN 하나를 없애는 쪽으로 끝나는 것 — 그게 이 설계가 tune-to-green 이 아니라는 가장 좋은
+증거이며, 그래서 발사 전에 여기 못박는다.
+
+━━ 실패모드 방어 (미끄럼 지점) ━━
+ 1. B−Bperm 을 primary 로 승격 (H_1448 형식의 무비판적 이식). Bperm 은 arm 을 구별하지
+    못한다 — 맨 ring A 도 통과. 방어: P0 사전등록·보고 의무화, G2(B−A) 를 primary 로 존치,
+    G4 는 필요조건으로만.
+ 2. X 를 약하게 설계 (용량을 깎은 shared arm → B 자동 승리). 방어: 총 채널 차원 32 동일,
+    W_RELAY 동일, 모듈당 주입은 sum 이 아닌 **mean**, RNG draw 순서·개수 동일.
+    arm 별 ⟨‖s‖²⟩ 5% 이내 보고(비-게이팅).
+ 3. seed 사후 제외 / bar 이동 / disjunctive 형식 부활 — 전부 금지.
+ 4. 하이퍼(relay gain/leak)는 전 arm 동일 고정, 튜닝 금지.
+ 5. 결과가 🧱 여도 그것이 **결과**다 (a_paper_negative_ok · honesty).
