@@ -1,0 +1,23 @@
+06:48:10 [deep ConvMoE L8 재학습 --out /workspace]
+  step  1750  CE=1.59739  E=3  wd=0.0205 dp=0.2045
+  step  1800  CE=1.55562  E=3  wd=0.0196 dp=0.1961  val_CE=1.72700  per_cell_CE={"cell0": 1.51915, "cell1": 1.4396, "cell2": 1.69758, "cell3": 2.25168}
+  step  1850  CE=1.58857  E=3  wd=0.0188 dp=0.1877
+  step  1900  CE=1.58903  E=3  wd=0.0179 dp=0.1792
+  step  1950  CE=1.57189  E=3  wd=0.0171 dp=0.1708
+  step  2000  CE=1.55177  E=3  wd=0.0162 dp=0.1623  val_CE=1.75258  per_cell_CE={"cell0": 1.56183, "cell1": 1.43034, "cell2": 1.66599, "cell3": 2.35218}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     cell0        val_CE=1.49189  DESCENT
+     cell1        val_CE=1.41163  DESCENT
+     cell2        val_CE=1.69068  DESCENT
+     cell3        val_CE=2.24849  DESCENT
+  FINAL val_CE(pooled)=1.7106750309467316  registers_DESCENT=4/4
+  loss0=5.63603 lossF=1.55177 wall=4592.5s savant_latched_at=1 E0=3->E=3
+  [N3 DBES expert-specialization] {"expert_div": 0.55119, "router_entropy": 1.07882, "usage_gini": 0.05495, "usage": [0.3247, 0.37887, 0.29643], "n_experts": 3}
+  gauges error: No module named 'gauge_lib'
+  SLW trailer appended 116534648 bytes (n_slot=8 k=64 d_s=3784)
+  .clm WRITTEN 379273338 bytes -> /workspace/deep_convmoe/e1_slw_deep_L8.clm
+  clm_decodable=True
+=== anima train → cli/train.py (torch CLMConvMoE · Lane-P reference/bridge) ===
+dispatch: /usr/bin/python /usr/local/lib/python3.11/dist-packages/anima_py/cli/train.py --arch clm --L 8 --d 3784 --e0 3 --emax 3 --slw --corpus /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-ko-general/snapshots/9f03495689d52fb50b5b7d8d673d77e38266afcc/anima-corpus-ko-general.txt /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-ko-sns/snapshots/410b0b7bcfb15c78ebd609f3af6cef40aa5a7442/anima-corpus-ko-sns.txt /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-en-general/snapshots/e1c4ef4f595d72b959d0aa73a5cc5c8ba2a065a0/anima-corpus-en-general.txt /root/.cache/huggingface/hub/datasets--dancinlab--anima-corpus-en-sns/snapshots/a06f82e6d43448a09e1ccd7315b359f6d80c3401/anima-corpus-en-sns.txt --seq-len 1024 --steps 2000 --lr 3e-4 --batch-size 8 --out /workspace/deep_convmoe/e1_slw_deep_L8.clm
+08:05:07 DEEP2_DONE
+-rw-rw-rw- 1 root root 379273338 Jul 10 08:05 /workspace/deep_convmoe/e1_slw_deep_L8.clm
