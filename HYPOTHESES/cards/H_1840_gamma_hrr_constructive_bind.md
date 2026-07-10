@@ -67,7 +67,6 @@ confirmation 구매(~90-95% KILL)지 discovery 아님 — 최종못은 E1+H_9131
 - **owner override 경로**: data-conditional 2-arm(F2 order-dense ARM-A vs +γbind ARM-B, ~$100-150).
   단 데이터축도 H_9121(coverage-density FALSIFIED-CEILING)·H_9127(gamma-DATA 303M TRANSFER FAIL
   TERMINAL)로 대부분 소진 — ARM-A(coverage-density)는 GPU無 선검증 가능.
-- **verdict-integrity 각주**: E1 303M 학습 corpus의 F2-density 사용여부는 커밋된 record서 미확인.
-  미사용이면 E1 KILL 스코프=비-F2 CE-비유도로 좁아지나, operator축은 여전히 벽(H_6167) → 결론 불변.
+- **verdict-integrity 각주 → CLOSED(2026-07-10 · #PR)**: E1 F2-density 구멍은 `state/g1g6_exhaustive_brainstorm/f2_datapath/heldout_recomb/RESULT.json`이 $0로 닫음 — F2 order-dense 데이터경로는 **COLLOCATION-ONLY**(true held-out novel n=0·rare n=8 sparse·full n=49=memorized in-distribution collocation=G1 벽 regime 그 자체). 즉 어떤 자연·합성 corpus도 held-out 재조합 신호 부재 → data-conditional 2-arm(ARM-A F2-dense) 발사해도 collocation 학습→벽 재생산=tune-to-green. E1이 F2-density를 썼든 안 썼든 **F2 exit 자체가 데이터-starved로 CLOSED**. operator축도 여전히 벽(H_6167) → 결론 불변, 이제 각주 구멍도 없음. 상세=[[gamma-trunk-bake-step0-killed-not-unmeasured]]·state/1580_convmoe_g1_wall/G1_FRONTIER_TERMINAL.md.
 - 근거: `state/verdicts/1840_gamma_trained_bind_dupwall/FABLE_ANALYSIS.md`. STAGE-1 FALSIFIED는 H_6166
   measurement-invalid(인용금지).
