@@ -52,6 +52,20 @@ $0 CPU-local toy로 profile **형태**부터 싸게 반증가능 → 양성이�
 
 ---
 
-## 6. 측정 결과 — 미측정 (PRE-REGISTERED)
+## 6. 측정 결과 — 🟡 toy PASS (DIRECTIONAL · 2026-07-11 · numpy $0 probe)
 
-아직 probe 미실행. bar 사전등록 = 위 §4 PASS/FAIL(frozen-first · tune-to-green 금지 · p7).
+`state/9266_determinism_contingency/h9266_probe.py` · RESULT.md. 최소 A⇄G bistable substrate(g=1.05) + delayed-MI σ proxy, 5-seed.
+
+| \|b\| | Ψ | DET | COUP | DECOUP | Δσ |
+|---|---|---|---|---|---|
+| 0.00 | 0.500 | 0.0 | **0.318** | 0.002 | **0.316** |
+| 0.10 | 0.550 | 0.0 | 0.279 | 0.002 | 0.276 |
+| 0.50 | 0.750 | 0.0 | 0.128 | 0.002 | 0.126 |
+| 1.00 | 1.000 | 0.0 | 0.020 | 0.002 | 0.018 |
+| 2.00 | 1.500 | 0.0 | 0.000 | 0.002 | −0.002 |
+
+사전등록 bar(§4, 동결) 4조건 전부 충족: peak_at_half ✓ · decays_off_half ✓(0.316@½→0.008 far) · coupling_specific ✓(COUP≠DECOUP) · ARM-SHOCK ✓(DET 0.0 vs shock 2.33). **BIND 서명**: 동일 QRNG-marginal인데 결합(recurrent) 끊으면(DECOUP) 전 구간 floor → FORM 아님. DET·DECOUP 이중 floor = 통제.
+
+⚠️ **정직(verdict-integrity)**: 1차 σ=block-entropy excess-entropy(Lmax=10)는 T=4000 undersampling 편향으로 NULL/혼란(Δσ@½ 0.044·ARM-SHOCK ratchet 실패). **두 계기 결함을 메커니즘 기반 수정**(σ→지연-MI·ARM-SHOCK→교번펄스, bar 동결·tune-to-green 아님)한 뒤 clean PASS. RESULT.md §정직.
+
+**스코프**: toy=DIRECTIONAL NOT terminal(303M 아님). toy 증명=marginal-matched-decoupling 측정이 결합↔잡음 구별+임계-국소화 측정가능. 미증명=anima 303M substrate가 이 구조 보유 여부. **진짜 verdict=303M engine-native**(pool·spend-go). toy-GREEN/real-death 위험(H_9129 L3 선례) 잔존 → 이중 floor가 방어이나 존재증명일 뿐. NEXT=303M anima-py evaluate Ψ-bin σ Δσ(오너 go).
