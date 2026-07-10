@@ -1,0 +1,61 @@
+{
+  "hyp": "H_1042",
+  "clm": "/home/summer/anima-weights/clm_3b/clm_3b.clm",
+  "tap": "pre_MoE_trunk",
+  "dtype": "float32-lean",
+  "n": 5,
+  "n_seeds": 20,
+  "plan_depth": 8,
+  "mirror_proven": {
+    "4": true,
+    "5": true
+  },
+  "decode_ce_real": 2.25032568236851,
+  "decode_uniform": 5.545177444479562,
+  "det_ok": true,
+  "n_split": 2,
+  "n_total": 2,
+  "both_split": true,
+  "verdict_token": "TRANSFERS",
+  "rows": [
+    {
+      "macro_map": "top_variance",
+      "bc": -1.4826333637890468,
+      "fc": 0.2174881436558789,
+      "bd": -0.4431395642759621,
+      "fd": 1.260815556017947,
+      "bp": 0.17014519536446293,
+      "fp": 0.0005322916585013932,
+      "bs": "DOWN",
+      "fs": "UP",
+      "on_frac": 0.5,
+      "split": true,
+      "faith_plan": 0.330263288906994,
+      "faith_greedy": 0.11277514525111512,
+      "big_plan": 8.289741011860986,
+      "big_greedy": 9.772374375650033
+    },
+    {
+      "macro_map": "random",
+      "bc": -0.9351759951920933,
+      "fc": 0.12829246677403994,
+      "bd": -0.26490591328392143,
+      "fd": 0.86765086308618,
+      "bp": 0.4074456075624911,
+      "fp": 0.011959482449452795,
+      "bs": "DOWN",
+      "fs": "UP",
+      "on_frac": 0.5,
+      "split": true,
+      "faith_plan": 0.20759406977843015,
+      "faith_greedy": 0.07930160300439022,
+      "big_plan": 8.802622681033563,
+      "big_greedy": 9.737798676225657
+    }
+  ],
+  "total_wall_sec": 4087.7475690841675,
+  "model_d": 4096,
+  "model_L": 30,
+  "model_E": 30,
+  "model_K": 3
+}
