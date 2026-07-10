@@ -24,15 +24,16 @@ def fetch(url, dst):
     return dst
 
 NS = "https://raw.githubusercontent.com/e9t/nsmc/master/ratings_train.txt"
-cache = os.path.expanduser("~/g1_natem/nsmc_train.txt")
-fetch(NS, cache)
 rows = []
-with open(cache, encoding="utf-8") as f:
-    next(f)  # header id\tdocument\tlabel
-    for line in f:
-        p = line.rstrip("\n").split("\t")
-        if len(p) == 3 and p[2] in ("0", "1"):
-            rows.append((p[1], int(p[2])))
+for nm in ("ratings_train.txt", "ratings_test.txt"):
+    cache = os.path.expanduser("~/g1_natem/nsmc_%s" % nm)
+    fetch("https://raw.githubusercontent.com/e9t/nsmc/master/" + nm, cache)
+    with open(cache, encoding="utf-8") as f:
+        next(f)
+        for line in f:
+            pp = line.rstrip("\n").split("\t")
+            if len(pp) == 3 and pp[2] in ("0", "1"):
+                rows.append((pp[1], int(pp[2])))
 print("NSMC reviews:", len(rows), flush=True)
 total_mb = sum(len(t.encode()) for t, _ in rows) / 1e6
 
