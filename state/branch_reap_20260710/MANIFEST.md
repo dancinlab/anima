@@ -1,6 +1,6 @@
 # 로컬 브랜치 정리 — 2026-07-10 (유실없게)
 
-codex 정리 요청에서 파생된 로컬 브랜치 backlog 무손실 정리. 403 → 10 브랜치.
+codex 정리 요청에서 파생된 로컬 브랜치 backlog 무손실 정리. 403 → 5 브랜치.
 
 ## 삭제 방식 (검토 후 단계적)
 - **173** provably-redundant: git-merged(11) + cherry 전-커밋 origin/main 반영(162, squash-merge 포함)
@@ -16,7 +16,14 @@ codex 정리 요청에서 파생된 로컬 브랜치 backlog 무손실 정리. 4
 
 ## 미삭제 보존 (10)
 - `main` · sibling-worktree 활성 3(codex/h1042-random-map·core-slw-hexa-port·feat/hexa-py-parity)
-- `ing` (보드 히스토리 970커밋) · worktree-agent mega-orphan 5(6872~6874커밋 disjoint pre-rewrite 히스토리 · 번들 666MB · 별도 결정 필요)
+- `main` · `ing`(보드 히스토리 970커밋 · 기능 ref 추정 보존) · sibling-worktree 활성 3(core-slw-hexa-port·feat/hexa-py-parity·codex/h1042-random-map)
+
+## mega-orphan 5 아카이브 (추가 · 유실 0)
+- worktree-agent-* 5개(6872~6874커밋 disjoint pre-rewrite 히스토리) git bundle 아카이브 후 삭제 — **복구가능**
+- 번들: `~/.anima_branch_archive/reap-20260710-mega-orphan.bundle` (566MB · 저장소 밖)
+- 검증: `git bundle verify` = "complete history" · 5 heads
+- **복구**: `git bundle unbundle ~/.anima_branch_archive/reap-20260710-mega-orphan.bundle` 후 `git branch <name> <sha>`
+- 최종 잔존 로컬 브랜치 = 5 (main · ing · sibling활성 3)
 
 ## 삭제된 208 REAL-UNIQUE 브랜치
 - a-substrate-disjoint-governance
