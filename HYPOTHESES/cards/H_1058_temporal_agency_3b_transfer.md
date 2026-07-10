@@ -64,3 +64,19 @@ rented H100 would not change it. REOPEN when the daemon is wired to a 3B generat
 decision traces (then the Φ leg can reuse the H_1042 engine-native 3B trunk tap). Ladder to date:
 toy (H_1051 🟢) → real .kosmos anchors (H_1054 🟢) LANDED; the 3B-own-decision rung is not
 forward-measurable. Verdict: `archive/state/verdicts/1058_temporal_agency_3b_transfer/H_1058.txt`.
+
+## §progress — enabling wire DONE (2026-07-10 · owner go · Fable design → build)
+The DECISION-TRACE WIRING blocker is being resolved. `cli/chat.py` now has a **write-only decision-trace
+side channel** (env `ANIMA_DECISION_TRACE` = JSONL one-row/tick · `ANIMA_TICKS` = tick-count override ·
+default OFF). Per-tick it classifies the live gate (core/brain.py:162 `emit = should_emit(score) ∧ safe`):
+**EMIT** (score>0.3∧safe) · **ACTIVE_VETO** (score>0.3∧¬safe = a braked live impulse) · **PASSIVE**.
+- **byte-safe verified**: toy.clm 12-tick session, trace OFF vs ON stdout = **BYTE-IDENTICAL** (256/256
+  lines, diff clean) — emit path untouched (self⊥trace). Smoke: `state/h1058_agency_daemon/`.
+- **captures REAL fired vetoes**: toy 12 ticks = EMIT 10 · **ACTIVE_VETO 2** — the FIRED veto a
+  weight-forward cannot produce (no motivation/idle-clock/braking term); only the live daemon can. This is
+  the crux the verdict identified, now instrumented.
+- tier STAYS 🟠 (no tune-to-green): the T-axis measurement is not yet run. Follow-on (Fable design
+  `state/h1058_agency_daemon/FABLE_DESIGN.md`): frozen-emission replay-depth prober (causal
+  provenance-depth · zero forwards) · H_1056 per-impulse veto-capacity · T=z(depth)+z(vc) · faithful-Φ
+  leg (H_1042 3B trunk tap · ≥2 macro-maps) · controls (emit-rate · trace-shuffle ARM-SHOCK ·
+  generator-swap 3B/303M/unloaded → pre-registered H1-NOT-A-3B-PROPERTY branch) · MVH 303M ~$0 → 3B pool.
