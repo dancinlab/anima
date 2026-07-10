@@ -14592,8 +14592,8 @@
       {
         "id": "decode-hexa-2",
         "state": "pos-conv",
-        "value": "hexa decode 는 .clm 트레일러 체인(CLMX→CLMB→SLW→CLML)에서 CLMB 까지만 파싱하고 SLW/CLML 을 묵살한다 — canonical e1_slw_303m.clm 에서 anima-py(slot-ON)와 hexa(slot-OFF)가 서로 다른 forward 함수를 계산했다. hexa 는 py 의 'byte-parity twin' 이 아니라 다른 모델이었다.",
-        "threshold": "재발: 새 트레일러(lane/slot)를 py serialize+decode 에만 배선하고 hexa twin 을 미룸 → 측정하는 모델과 말하는 모델이 갈림. 해결: 트레일러 추가 시 (1) core/decode.hexa 로더+forward 동시배선 (2) core/verify_clm_v2.py 에 hexa-vs-py max|Δ| parity 게이트 (3) 부재 트레일러 ⇔ byte-identical passthrough 계약 유지. clm_decodable 이 CLMX 만 본다는 사실이 발산을 조용하게 만든다.",
+        "value": "hexa decode 는 트레일러(SLW/CLML)를 묵살했으나, 카논 런타임은 py 2-production(anima-py evaluate·cli/chat.py · a_eval_py_canonical)이고 py decode.py 는 SLW(H_9200)·CLML(H_9235) 를 이미 올바로 적용한다(verify_clm_v2 F-CLM-SLW-CLML-FORWARD=1: SLW/CLML active·γ0 bit-exact passthrough·합성). hexa 는 redundant 2nd surface(hexa-daemon-link-moot-py-canonical) — 배선은 branch core-slw-hexa-port 에 구현됐고 로컬 컴파일 과중(2min+)이라 pool 검증 follow-on.",
+        "threshold": "재발: 새 트레일러를 py 에만 넣고 hexa 를 안 맞춤 → verdict 는 py 카논이라 무결하나 hexa chat/det-eval 은 다른 forward. 해결: (1) py 카논 게이트 verify_clm_v2.run_roundtrip_slw_clml 로 py 정합성 확정 (2) hexa 2nd surface 는 pool 에서 hexa-vs-py max|Δ| 대조 후 배선 (3) 부재 트레일러 ⇔ byte-identical passthrough 유지.",
         "source": "core/decode.hexa"
       }
     ]
