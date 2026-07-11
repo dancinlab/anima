@@ -1,0 +1,14 @@
+=== H_1058 · H_9269 Φ-leg T1 positive control (FROZEN) · T=64 seed=20260712 ===
+STEP 0 — RE-PROVE stdlib IIT-4.0 mirror == stdlib at n=5:
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+   loaded d=3784 V=256 L=4 K=3
+  [top_calib_variance] sd=0.02193 (bar 0.005) distinct=31/32 (bar 8) classes-differ=True -> PASS
+  [random] sd=0.02208 (bar 0.005) distinct=31/32 (bar 8) classes-differ=True -> PASS
+T1 POSITIVE CONTROL: PASS (instrument resolves real Φ variance)
+wrote: /home/summer/anima-t1run/T1_RESULT.json
