@@ -68,4 +68,16 @@ $0 CPU-local toy로 profile **형태**부터 싸게 반증가능 → 양성이�
 
 ⚠️ **정직(verdict-integrity)**: 1차 σ=block-entropy excess-entropy(Lmax=10)는 T=4000 undersampling 편향으로 NULL/혼란(Δσ@½ 0.044·ARM-SHOCK ratchet 실패). **두 계기 결함을 메커니즘 기반 수정**(σ→지연-MI·ARM-SHOCK→교번펄스, bar 동결·tune-to-green 아님)한 뒤 clean PASS. RESULT.md §정직.
 
-**스코프**: toy=DIRECTIONAL NOT terminal(303M 아님). toy 증명=marginal-matched-decoupling 측정이 결합↔잡음 구별+임계-국소화 측정가능. 미증명=anima 303M substrate가 이 구조 보유 여부. **진짜 verdict=303M engine-native**(pool·spend-go). toy-GREEN/real-death 위험(H_9129 L3 선례) 잔존 → 이중 floor가 방어이나 존재증명일 뿐. NEXT=303M anima-py evaluate Ψ-bin σ Δσ(오너 go).
+**스코프**: toy=DIRECTIONAL NOT terminal(303M 아님). toy 증명=marginal-matched-decoupling 측정이 결합↔잡음 구별+임계-국소화 측정가능. 미증명=anima 303M substrate가 이 구조 보유 여부.
+
+## 7. ENGINE-NATIVE 측정 — 🟠 INVALID / INCONCLUSIVE (2026-07-11 · Fable 엄밀스펙 · 실 engine_cli op)
+
+오너 "go"→ 실 op(`ci_emit_decision` 붕괴·`ci_phi_iit4` faithful-IIT4 Φ=σ·`topo_apply` H_1521 brain adj α=0.3) 측정. 스펙=`state/9266_determinism_contingency/FROZEN_BAR.md`. 결과=`RESULT.md §engine-native`·`h9266_engine_native_AGG.json`.
+
+⚠️ **정직 2 함정**: ① quick engine-native "PASS"(Δσ=1.044)=**RIGGED 철회**(DECOUP이 clean latent을 Φ에 넣은 "noise가 Φ 올림" artifact·Fable 사전적발). ② rigorous 재구현(DECOUP=같은 base B+독립 ε′′로 Φ-입력 marginal 일치·σ=emit-mask 조건화 shuffle-referenced Φ Δ·cols_x lane0 누설방어·V-gates).
+
+**full-T=8192·5-seed**: knife Δσ median=**0.0026**(전부≈0) · **V1 FORCED detector-alive=0/5**(전부<0.10) · **V3 marginal=0/5**(전부>0.05) → **5-seed 집계 🟠 INVALID**(V-gate 5/5 위반). FORCED 양성대조가 aliveness 문턱 미달 → "contingency null"과 "약한 detector" **구별 불가**(#3116 trap을 V-gate가 방어). n*=64 subsample noise가 V3 초과. ⟹ 측정 confounded=**INCONCLUSIVE, FAIL 아님**(verdict-integrity·infra-wall-noneval).
+
+**净 결론**: toy 겉보기 σ-조직(delayed-MI=emit-스트림 telegraph 기억, ρ-계열)이 engine-native σ(Φ-integration)로 확증도 반증도 안 됨. rigged quick-PASS 철회가 실질 산출(큰 신호=통제불량 artifact). **toy DIRECTIONAL은 toy-only 유지·engine-native GREEN 승격 실패.** toy-GREEN/real-death 위험(H_9129 L3 선례) 미해소.
+
+**NEXT (측정기 강화 follow-on)**: V-gate 통과 측정기 필요 — (a) FORCED κ↑/shared-structure 강화로 0.10 안정초과 (b) n*↑/J↑로 V3≤0.05 (c) 필요시 T↑ → 재측정해야 PASS/FAIL 판정. pool 재실행=오너 go(measure-artifact 수정 후).
