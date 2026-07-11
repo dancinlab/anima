@@ -273,7 +273,10 @@ def eval_manifest(B, er_seed=97):
             carrier, ej = (er.choice(preds[p]["spans"]) if preds[p]["spans"] else (None, p))
             surf = render(p, ej, carrier, NF[fid])
             seed_s = "이 영화 " + surf + " => "
-            it = {"p": p, "form": fid, "pol": B["pol"][p], "flip": FLIP[fid], "xor": bit,
+            # a/b: the --xbind evaluator (cli/evaluate.py xbind_run) reads it["a"]/it["b"]
+            # as the pair identifiers per row — NBIND maps a=predicate, b=negation-form.
+            it = {"p": p, "form": fid, "a": p, "b": fid,
+                  "pol": B["pol"][p], "flip": FLIP[fid], "xor": bit,
                   "surf": surf, "seed": seed_s,
                   "gold": ("긍정." if bit else "부정."),
                   "counterfactual": ("부정." if bit else "긍정."),
