@@ -1,0 +1,8171 @@
+{
+ "format": "xfan-eval-v1",
+ "note": "engine-native scoring via anima-py evaluate --xfan (fold-in eval_xfan_mode.py). PRIMARY=coverage C=|correct unique (slot,member)|/5 over 16 sampled decodes (top_k=40 temp=0.7); per-slot-kind (unary vs joint) breakout; valid/spurious split; SECONDARY=teacher-forced NLL margin foil-vs-gold (mode-collapse discriminator); greedy-collapse (top_k=1) control.",
+ "gen": 16,
+ "win": 64,
+ "n_slots": 5,
+ "heldout": [
+  {
+   "concept": "rod",
+   "seed": "nur waits here. rod? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "tar",
+    "ra": "ret",
+    "ku": "jet",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "lor",
+   "seed": "nur waits here. lor? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "vur",
+    "ra": "wod",
+    "ku": "zon",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nam",
+   "seed": "nur waits here. nam? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "sul",
+    "ra": "sit",
+    "ku": "deg",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "sos",
+   "seed": "nur waits here. sos? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "sul",
+    "ra": "pij",
+    "ku": "jet",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "mur",
+   "seed": "nur waits here. mur? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "duw",
+    "ra": "fin",
+    "ku": "jun",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "diw",
+   "seed": "nur waits here. diw? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "bet",
+    "ra": "wod",
+    "ku": "dow",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "miw",
+   "seed": "nur waits here. miw? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "ben",
+    "ra": "lak",
+    "ku": "dow",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "peg",
+   "seed": "nur waits here. peg? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "jeg",
+    "ra": "lak",
+    "ku": "pot",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fem",
+   "seed": "nur waits here. fem? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "fon",
+    "ra": "giz",
+    "ku": "jet",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "dug",
+   "seed": "nur waits here. dug? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "ran",
+    "ra": "lak",
+    "ku": "deg",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "wuw",
+   "seed": "nur waits here. wuw? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "las",
+    "ra": "fin",
+    "ku": "zuv",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fap",
+   "seed": "nur waits here. fap? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "kep",
+    "ra": "kil",
+    "ku": "deg",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "ron",
+   "seed": "nur waits here. ron? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "jeg",
+    "ra": "paz",
+    "ku": "jet",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "raj",
+   "seed": "nur waits here. raj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "das",
+    "ra": "pij",
+    "ku": "jet",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "gel",
+   "seed": "nur waits here. gel? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "jeg",
+    "ra": "wod",
+    "ku": "kol",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "heb",
+   "seed": "nur waits here. heb? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "kep",
+    "ra": "del",
+    "ku": "jun",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "kuz",
+   "seed": "nur waits here. kuz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "duw",
+    "ra": "pij",
+    "ku": "bib",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "niv",
+   "seed": "nur waits here. niv? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "sul",
+    "ra": "ziw",
+    "ku": "bib",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "gep",
+   "seed": "nur waits here. gep? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "ran",
+    "ra": "puw",
+    "ku": "pot",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nan",
+   "seed": "nur waits here. nan? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "das",
+    "ra": "puw",
+    "ku": "der",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "lut",
+   "seed": "nur waits here. lut? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "sul",
+    "ra": "puw",
+    "ku": "mor",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "sib",
+   "seed": "nur waits here. sib? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "jeg",
+    "ra": "jur",
+    "ku": "der",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fav",
+   "seed": "nur waits here. fav? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "das",
+    "ra": "kil",
+    "ku": "hur",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "pap",
+   "seed": "nur waits here. pap? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "buz",
+    "ra": "luj",
+    "ku": "jet",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "noz",
+   "seed": "nur waits here. noz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "buz",
+    "ra": "jur",
+    "ku": "jet",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "kos",
+   "seed": "nur waits here. kos? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "las",
+    "ra": "fev",
+    "ku": "jet",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fis",
+   "seed": "nur waits here. fis? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "ran",
+    "ra": "fev",
+    "ku": "jet",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "bof",
+   "seed": "nur waits here. bof? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "las",
+    "ra": "del",
+    "ku": "jet",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "zuz",
+   "seed": "nur waits here. zuz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "buz",
+    "ra": "sit",
+    "ku": "bib",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "vir",
+   "seed": "nur waits here. vir? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "hel",
+    "ra": "jur",
+    "ku": "hur",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "wob",
+   "seed": "nur waits here. wob? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "hel",
+    "ra": "wod",
+    "ku": "deb",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "zem",
+   "seed": "nur waits here. zem? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "hel",
+    "ra": "pij",
+    "ku": "hur",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "bah",
+   "seed": "nur waits here. bah? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "las",
+    "ra": "ret",
+    "ku": "deg",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "hug",
+   "seed": "nur waits here. hug? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "hek",
+    "ra": "fev",
+    "ku": "kol",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "hij",
+   "seed": "nur waits here. hij? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "tef",
+    "mi": "jeg",
+    "ra": "pij",
+    "ku": "hur",
+    "ze": "tir"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nom",
+   "seed": "nur waits here. nom? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "sul",
+    "ra": "jur",
+    "ku": "zuv",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "mew",
+   "seed": "nur waits here. mew? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "las",
+    "ra": "paz",
+    "ku": "deg",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "maj",
+   "seed": "nur waits here. maj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "las",
+    "ra": "lak",
+    "ku": "jet",
+    "ze": "tir"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nar",
+   "seed": "nur waits here. nar? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "kep",
+    "ra": "puw",
+    "ku": "bib",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "vak",
+   "seed": "nur waits here. vak? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "fon",
+    "ra": "bep",
+    "ku": "hiw",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "jul",
+   "seed": "nur waits here. jul? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "vur",
+    "ra": "fin",
+    "ku": "dow",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "pel",
+   "seed": "nur waits here. pel? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "vur",
+    "ra": "sit",
+    "ku": "jet",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "sel",
+   "seed": "nur waits here. sel? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "bet",
+    "ra": "fin",
+    "ku": "deg",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "kul",
+   "seed": "nur waits here. kul? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "rur",
+    "mi": "hel",
+    "ra": "luj",
+    "ku": "hur",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fab",
+   "seed": "nur waits here. fab? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "ran",
+    "ra": "ziw",
+    "ku": "jun",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "gom",
+   "seed": "nur waits here. gom? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "ran",
+    "ra": "jur",
+    "ku": "deg",
+    "ze": "mif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "zeh",
+   "seed": "nur waits here. zeh? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "rur",
+    "mi": "jeg",
+    "ra": "puw",
+    "ku": "deb",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nab",
+   "seed": "nur waits here. nab? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "tar",
+    "ra": "ziw",
+    "ku": "zon",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "raz",
+   "seed": "nur waits here. raz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "tef",
+    "mi": "hek",
+    "ra": "fin",
+    "ku": "pot",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "jof",
+   "seed": "nur waits here. jof? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "vur",
+    "ra": "kil",
+    "ku": "hur",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "gud",
+   "seed": "nur waits here. gud? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "kep",
+    "ra": "sit",
+    "ku": "dow",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "paw",
+   "seed": "nur waits here. paw? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "fon",
+    "ra": "fin",
+    "ku": "kol",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "zus",
+   "seed": "nur waits here. zus? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "hek",
+    "ra": "paz",
+    "ku": "zuv",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "mom",
+   "seed": "nur waits here. mom? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "dul",
+    "ra": "kil",
+    "ku": "deg",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "vah",
+   "seed": "nur waits here. vah? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "tar",
+    "ra": "bep",
+    "ku": "pot",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "ner",
+   "seed": "nur waits here. ner? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "bet",
+    "ra": "ziw",
+    "ku": "jun",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "ded",
+   "seed": "nur waits here. ded? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "vur",
+    "ra": "ziw",
+    "ku": "hiw",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fiw",
+   "seed": "nur waits here. fiw? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "sul",
+    "ra": "puw",
+    "ku": "zuv",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "pug",
+   "seed": "nur waits here. pug? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "kep",
+    "ra": "kil",
+    "ku": "jun",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "wit",
+   "seed": "nur waits here. wit? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "rur",
+    "mi": "hek",
+    "ra": "puw",
+    "ku": "jet",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "fat",
+   "seed": "nur waits here. fat? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "das",
+    "ra": "wod",
+    "ku": "duk",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nip",
+   "seed": "nur waits here. nip? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "jeg",
+    "ra": "lak",
+    "ku": "mor",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "jor",
+   "seed": "nur waits here. jor? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "las",
+    "ra": "lak",
+    "ku": "deg",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "kow",
+   "seed": "nur waits here. kow? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "vur",
+    "ra": "luj",
+    "ku": "hur",
+    "ze": "tir"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "wev",
+   "seed": "nur waits here. wev? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "ran",
+    "ra": "sit",
+    "ku": "hiw",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "lot",
+   "seed": "nur waits here. lot? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "dul",
+    "ra": "kil",
+    "ku": "jet",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "lar",
+   "seed": "nur waits here. lar? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "jeg",
+    "ra": "giz",
+    "ku": "hur",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "kan",
+   "seed": "nur waits here. kan? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "das",
+    "ra": "fev",
+    "ku": "jet",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "wir",
+   "seed": "nur waits here. wir? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "das",
+    "ra": "wod",
+    "ku": "der",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "tav",
+   "seed": "nur waits here. tav? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "hel",
+    "ra": "ziw",
+    "ku": "jun",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "woh",
+   "seed": "nur waits here. woh? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "buz",
+    "ra": "sit",
+    "ku": "duk",
+    "ze": "mif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "lav",
+   "seed": "nur waits here. lav? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "kep",
+    "ra": "wod",
+    "ku": "zon",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "zam",
+   "seed": "nur waits here. zam? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "hek",
+    "ra": "wod",
+    "ku": "hiw",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "jot",
+   "seed": "nur waits here. jot? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "las",
+    "ra": "wod",
+    "ku": "pot",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nuk",
+   "seed": "nur waits here. nuk? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "duw",
+    "ra": "puw",
+    "ku": "zon",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "waf",
+   "seed": "nur waits here. waf? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "ben",
+    "ra": "sit",
+    "ku": "hiw",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "nov",
+   "seed": "nur waits here. nov? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "sul",
+    "ra": "fin",
+    "ku": "jet",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "mib",
+   "seed": "nur waits here. mib? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "jeg",
+    "ra": "bep",
+    "ku": "jun",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "dud",
+   "seed": "nur waits here. dud? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "dul",
+    "ra": "ret",
+    "ku": "dow",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  },
+  {
+   "concept": "lol",
+   "seed": "nur waits here. lol? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "das",
+    "ra": "bep",
+    "ku": "dow",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   }
+  }
+ ],
+ "seen": [
+  {
+   "concept": "bif",
+   "seed": "nur waits here. bif? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "vur",
+    "ra": "puw",
+    "ku": "deb",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "zod"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "kem",
+   "seed": "nur waits here. kem? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "hek",
+    "ra": "giz",
+    "ku": "mor",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "las"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ]
+  },
+  {
+   "concept": "wav",
+   "seed": "nur waits here. wav? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "hel",
+    "ra": "fev",
+    "ku": "zuv",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rev"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "joh",
+   "seed": "nur waits here. joh? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "jeg",
+    "ra": "fev",
+    "ku": "zuk",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "sok",
+   "seed": "nur waits here. sok? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "duw",
+    "ra": "paz",
+    "ku": "hiw",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "nus"
+    },
+    {
+     "slot": "mi",
+     "member": "ran"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ]
+  },
+  {
+   "concept": "hib",
+   "seed": "nur waits here. hib? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "bet",
+    "ra": "del",
+    "ku": "hur",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ]
+  },
+  {
+   "concept": "nol",
+   "seed": "nur waits here. nol? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "fon",
+    "ra": "pij",
+    "ku": "kol",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wow"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "gis",
+   "seed": "nur waits here. gis? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "duw",
+    "ra": "pij",
+    "ku": "zon",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "las"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ]
+  },
+  {
+   "concept": "saz",
+   "seed": "nur waits here. saz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "jeg",
+    "ra": "ret",
+    "ku": "mor",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wel"
+    },
+    {
+     "slot": "mi",
+     "member": "ran"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "zih",
+   "seed": "nur waits here. zih? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "kep",
+    "ra": "pij",
+    "ku": "der",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "duw"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ]
+  },
+  {
+   "concept": "kit",
+   "seed": "nur waits here. kit? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "buz",
+    "ra": "kil",
+    "ku": "zuv",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "das"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "mat",
+   "seed": "nur waits here. mat? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "dul",
+    "ra": "bep",
+    "ku": "deg",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rev"
+    },
+    {
+     "slot": "mi",
+     "member": "dul"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ]
+  },
+  {
+   "concept": "jek",
+   "seed": "nur waits here. jek? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "las",
+    "ra": "luj",
+    "ku": "duk",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vud"
+    },
+    {
+     "slot": "mi",
+     "member": "vur"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ]
+  },
+  {
+   "concept": "guj",
+   "seed": "nur waits here. guj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "las",
+    "ra": "jur",
+    "ku": "bib",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "nus"
+    },
+    {
+     "slot": "mi",
+     "member": "duw"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "mut",
+   "seed": "nur waits here. mut? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "hel",
+    "ra": "ziw",
+    "ku": "zon",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "pog",
+   "seed": "nur waits here. pog? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "vur",
+    "ra": "jur",
+    "ku": "mor",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ]
+  },
+  {
+   "concept": "laz",
+   "seed": "nur waits here. laz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "las",
+    "ra": "paz",
+    "ku": "hiw",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vud"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ]
+  },
+  {
+   "concept": "dag",
+   "seed": "nur waits here. dag? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "duw",
+    "ra": "del",
+    "ku": "mor",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "zod"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ]
+  },
+  {
+   "concept": "nel",
+   "seed": "nur waits here. nel? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "las",
+    "ra": "paz",
+    "ku": "duk",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rin"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "feg",
+   "seed": "nur waits here. feg? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "hek",
+    "ra": "ziw",
+    "ku": "deb",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "foj"
+    },
+    {
+     "slot": "mi",
+     "member": "ran"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "gal",
+   "seed": "nur waits here. gal? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "das",
+    "ra": "ziw",
+    "ku": "bib",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "kir"
+    },
+    {
+     "slot": "mi",
+     "member": "duw"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ]
+  },
+  {
+   "concept": "wab",
+   "seed": "nur waits here. wab? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "ben",
+    "ra": "ziw",
+    "ku": "duk",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rin"
+    },
+    {
+     "slot": "mi",
+     "member": "ben"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ]
+  },
+  {
+   "concept": "buj",
+   "seed": "nur waits here. buj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "vur",
+    "ra": "kil",
+    "ku": "kol",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "foj"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ]
+  },
+  {
+   "concept": "maf",
+   "seed": "nur waits here. maf? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "sul",
+    "ra": "fev",
+    "ku": "deg",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "kir"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "zis",
+   "seed": "nur waits here. zis? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "bet",
+    "ra": "fin",
+    "ku": "jun",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "nus"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "zad",
+   "seed": "nur waits here. zad? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "duw",
+    "ra": "wod",
+    "ku": "kol",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "nus"
+    },
+    {
+     "slot": "mi",
+     "member": "ben"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "kut",
+   "seed": "nur waits here. kut? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "ben",
+    "ra": "fin",
+    "ku": "zuv",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "dut",
+   "seed": "nur waits here. dut? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "sul",
+    "ra": "bep",
+    "ku": "kol",
+    "ze": "tir"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wel"
+    },
+    {
+     "slot": "mi",
+     "member": "las"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "bak",
+   "seed": "nur waits here. bak? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "fon",
+    "ra": "pij",
+    "ku": "zon",
+    "ze": "pis"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wel"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ]
+  },
+  {
+   "concept": "fos",
+   "seed": "nur waits here. fos? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "vur",
+    "ra": "ziw",
+    "ku": "zuv",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rin"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ]
+  },
+  {
+   "concept": "zut",
+   "seed": "nur waits here. zut? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "vur",
+    "ra": "ziw",
+    "ku": "kol",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "nus"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ]
+  },
+  {
+   "concept": "mos",
+   "seed": "nur waits here. mos? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "duw",
+    "ra": "giz",
+    "ku": "deb",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rev"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ]
+  },
+  {
+   "concept": "hoh",
+   "seed": "nur waits here. hoh? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "ben",
+    "ra": "luj",
+    "ku": "bib",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "nus"
+    },
+    {
+     "slot": "mi",
+     "member": "jeg"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ]
+  },
+  {
+   "concept": "tus",
+   "seed": "nur waits here. tus? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "buz",
+    "ra": "pij",
+    "ku": "zon",
+    "ze": "mif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vuf"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ]
+  },
+  {
+   "concept": "tuk",
+   "seed": "nur waits here. tuk? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "das",
+    "ra": "del",
+    "ku": "jun",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rin"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "nek",
+   "seed": "nur waits here. nek? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "las",
+    "ra": "pij",
+    "ku": "der",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "mor"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ]
+  },
+  {
+   "concept": "nuh",
+   "seed": "nur waits here. nuh? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "fon",
+    "ra": "ret",
+    "ku": "der",
+    "ze": "kad"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "vur"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ]
+  },
+  {
+   "concept": "sek",
+   "seed": "nur waits here. sek? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "dul",
+    "ra": "kil",
+    "ku": "zuk",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "ran"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ]
+  },
+  {
+   "concept": "pos",
+   "seed": "nur waits here. pos? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "ran",
+    "ra": "ziw",
+    "ku": "mor",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "kir"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "kad"
+    }
+   ]
+  },
+  {
+   "concept": "sav",
+   "seed": "nur waits here. sav? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "vud",
+    "mi": "sul",
+    "ra": "paz",
+    "ku": "kol",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ]
+  },
+  {
+   "concept": "bun",
+   "seed": "nur waits here. bun? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "sul",
+    "ra": "ret",
+    "ku": "pot",
+    "ze": "tir"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ]
+  },
+  {
+   "concept": "luk",
+   "seed": "nur waits here. luk? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "hek",
+    "ra": "wod",
+    "ku": "deg",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vuf"
+    },
+    {
+     "slot": "mi",
+     "member": "jeg"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ]
+  },
+  {
+   "concept": "hum",
+   "seed": "nur waits here. hum? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "jeg",
+    "ra": "luj",
+    "ku": "bib",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "las"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ]
+  },
+  {
+   "concept": "zep",
+   "seed": "nur waits here. zep? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "jeg",
+    "ra": "sit",
+    "ku": "duk",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rev"
+    },
+    {
+     "slot": "mi",
+     "member": "las"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ]
+  },
+  {
+   "concept": "jem",
+   "seed": "nur waits here. jem? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "ran",
+    "ra": "luj",
+    "ku": "zuk",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hek"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "ban",
+   "seed": "nur waits here. ban? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "rev",
+    "mi": "bet",
+    "ra": "bep",
+    "ku": "hiw",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "joj",
+   "seed": "nur waits here. joj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "hel",
+    "ra": "luj",
+    "ku": "dow",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rev"
+    },
+    {
+     "slot": "mi",
+     "member": "hek"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "siz",
+   "seed": "nur waits here. siz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "buz",
+    "ra": "jur",
+    "ku": "pot",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "med",
+   "seed": "nur waits here. med? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "las",
+    "ra": "giz",
+    "ku": "zon",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rin"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ]
+  },
+  {
+   "concept": "mul",
+   "seed": "nur waits here. mul? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "fon",
+    "ra": "puw",
+    "ku": "der",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "foj"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ]
+  },
+  {
+   "concept": "wup",
+   "seed": "nur waits here. wup? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "tar",
+    "ra": "ziw",
+    "ku": "deg",
+    "ze": "few"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "das"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "vor",
+   "seed": "nur waits here. vor? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "kep",
+    "ra": "fin",
+    "ku": "zuv",
+    "ze": "mif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "woj",
+   "seed": "nur waits here. woj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "las",
+    "ra": "luj",
+    "ku": "duk",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "lez",
+   "seed": "nur waits here. lez? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "tef",
+    "mi": "buz",
+    "ra": "bep",
+    "ku": "kol",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wow"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ]
+  },
+  {
+   "concept": "kum",
+   "seed": "nur waits here. kum? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "jeg",
+    "ra": "fin",
+    "ku": "dow",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "zod"
+    },
+    {
+     "slot": "mi",
+     "member": "las"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ]
+  },
+  {
+   "concept": "gif",
+   "seed": "nur waits here. gif? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "duw",
+    "ra": "pij",
+    "ku": "kol",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vuf"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "kiv",
+   "seed": "nur waits here. kiv? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "vur",
+    "ra": "bep",
+    "ku": "duk",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wow"
+    },
+    {
+     "slot": "mi",
+     "member": "hek"
+    },
+    {
+     "slot": "ra",
+     "member": "jur"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ]
+  },
+  {
+   "concept": "biv",
+   "seed": "nur waits here. biv? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "ben",
+    "ra": "jur",
+    "ku": "der",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vuf"
+    },
+    {
+     "slot": "mi",
+     "member": "das"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "few"
+    }
+   ]
+  },
+  {
+   "concept": "zeb",
+   "seed": "nur waits here. zeb? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "ruz",
+    "mi": "bet",
+    "ra": "wod",
+    "ku": "kol",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wow"
+    },
+    {
+     "slot": "mi",
+     "member": "jeg"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "tas",
+   "seed": "nur waits here. tas? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "fon",
+    "ra": "fev",
+    "ku": "jet",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "duw"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ]
+  },
+  {
+   "concept": "vej",
+   "seed": "nur waits here. vej? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "duw",
+    "ra": "lak",
+    "ku": "zon",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vuf"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ]
+  },
+  {
+   "concept": "nen",
+   "seed": "nur waits here. nen? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "las",
+    "ra": "paz",
+    "ku": "duk",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rin"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "zuk"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ]
+  },
+  {
+   "concept": "foz",
+   "seed": "nur waits here. foz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "ran",
+    "ra": "bep",
+    "ku": "zuk",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ]
+  },
+  {
+   "concept": "ger",
+   "seed": "nur waits here. ger? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "wot"
+    }
+   ],
+   "foils": {
+    "fo": "tef",
+    "mi": "las",
+    "ra": "luj",
+    "ku": "hiw",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "jeg"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ]
+  },
+  {
+   "concept": "fot",
+   "seed": "nur waits here. fot? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "rur",
+    "mi": "sul",
+    "ra": "fev",
+    "ku": "duk",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wiw"
+    },
+    {
+     "slot": "mi",
+     "member": "kep"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "nud",
+   "seed": "nur waits here. nud? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "nus",
+    "mi": "duw",
+    "ra": "ret",
+    "ku": "zuk",
+    "ze": "lig"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wow"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "giz"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "fuj",
+   "seed": "nur waits here. fuj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "jun"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "das",
+    "ra": "wod",
+    "ku": "hur",
+    "ze": "siw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wow"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "paj",
+   "seed": "nur waits here. paj? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "rin",
+    "mi": "las",
+    "ra": "fin",
+    "ku": "pot",
+    "ze": "tok"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "tar"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ]
+  },
+  {
+   "concept": "kav",
+   "seed": "nur waits here. kav? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "fon",
+    "ra": "sit",
+    "ku": "dow",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ]
+  },
+  {
+   "concept": "bud",
+   "seed": "nur waits here. bud? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "fon"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "tif"
+    }
+   ],
+   "foils": {
+    "fo": "fek",
+    "mi": "vur",
+    "ra": "paz",
+    "ku": "zuk",
+    "ze": "nal"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "das"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "tok"
+    }
+   ]
+  },
+  {
+   "concept": "nuv",
+   "seed": "nur waits here. nuv? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "tef",
+    "mi": "las",
+    "ra": "del",
+    "ku": "zuk",
+    "ze": "ruw"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "vur"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "mif"
+    }
+   ]
+  },
+  {
+   "concept": "lip",
+   "seed": "nur waits here. lip? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "sit"
+    },
+    {
+     "slot": "ku",
+     "member": "zuv"
+    },
+    {
+     "slot": "ze",
+     "member": "siw"
+    }
+   ],
+   "foils": {
+    "fo": "zod",
+    "mi": "fon",
+    "ra": "pij",
+    "ku": "dow",
+    "ze": "tif"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "sij"
+    },
+    {
+     "slot": "mi",
+     "member": "vur"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "zon"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ]
+  },
+  {
+   "concept": "ziz",
+   "seed": "nur waits here. ziz? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "buz"
+    },
+    {
+     "slot": "ra",
+     "member": "fin"
+    },
+    {
+     "slot": "ku",
+     "member": "hur"
+    },
+    {
+     "slot": "ze",
+     "member": "haz"
+    }
+   ],
+   "foils": {
+    "fo": "rur",
+    "mi": "las",
+    "ra": "luj",
+    "ku": "bib",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "wel"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "lak"
+    },
+    {
+     "slot": "ku",
+     "member": "pot"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ]
+  },
+  {
+   "concept": "wam",
+   "seed": "nur waits here. wam? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "sij",
+    "mi": "tar",
+    "ra": "paz",
+    "ku": "mor",
+    "ze": "hep"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "das"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "kol"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ]
+  },
+  {
+   "concept": "jok",
+   "seed": "nur waits here. jok? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "tef"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "fev"
+    },
+    {
+     "slot": "ku",
+     "member": "duk"
+    },
+    {
+     "slot": "ze",
+     "member": "lig"
+    }
+   ],
+   "foils": {
+    "fo": "wiw",
+    "mi": "ben",
+    "ra": "bep",
+    "ku": "jet",
+    "ze": "hih"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rev"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "pij"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ]
+  },
+  {
+   "concept": "wos",
+   "seed": "nur waits here. wos? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "bep"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ],
+   "foils": {
+    "fo": "wel",
+    "mi": "las",
+    "ra": "ret",
+    "ku": "jun",
+    "ze": "wot"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "kir"
+    },
+    {
+     "slot": "mi",
+     "member": "sul"
+    },
+    {
+     "slot": "ra",
+     "member": "puw"
+    },
+    {
+     "slot": "ku",
+     "member": "bib"
+    },
+    {
+     "slot": "ze",
+     "member": "hih"
+    }
+   ]
+  },
+  {
+   "concept": "jak",
+   "seed": "nur waits here. jak? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "kil"
+    },
+    {
+     "slot": "ku",
+     "member": "hiw"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ],
+   "foils": {
+    "fo": "foj",
+    "mi": "vur",
+    "ra": "ret",
+    "ku": "zon",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "deb"
+    },
+    {
+     "slot": "ze",
+     "member": "pis"
+    }
+   ]
+  },
+  {
+   "concept": "gow",
+   "seed": "nur waits here. gow? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "ruz"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "ziw"
+    },
+    {
+     "slot": "ku",
+     "member": "dow"
+    },
+    {
+     "slot": "ze",
+     "member": "han"
+    }
+   ],
+   "foils": {
+    "fo": "kir",
+    "mi": "hel",
+    "ra": "jur",
+    "ku": "duk",
+    "ze": "haz"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vuf"
+    },
+    {
+     "slot": "mi",
+     "member": "jeg"
+    },
+    {
+     "slot": "ra",
+     "member": "del"
+    },
+    {
+     "slot": "ku",
+     "member": "der"
+    },
+    {
+     "slot": "ze",
+     "member": "nal"
+    }
+   ]
+  },
+  {
+   "concept": "hun",
+   "seed": "nur waits here. hun? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "fek"
+    },
+    {
+     "slot": "mi",
+     "member": "bet"
+    },
+    {
+     "slot": "ra",
+     "member": "wod"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "hep"
+    }
+   ],
+   "foils": {
+    "fo": "vuf",
+    "mi": "jeg",
+    "ra": "giz",
+    "ku": "dow",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hek"
+    },
+    {
+     "slot": "ra",
+     "member": "ret"
+    },
+    {
+     "slot": "ku",
+     "member": "jet"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ]
+  },
+  {
+   "concept": "lov",
+   "seed": "nur waits here. lov? ",
+   "gold": [
+    {
+     "slot": "fo",
+     "member": "rur"
+    },
+    {
+     "slot": "mi",
+     "member": "hel"
+    },
+    {
+     "slot": "ra",
+     "member": "luj"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "tir"
+    }
+   ],
+   "foils": {
+    "fo": "wow",
+    "mi": "ran",
+    "ra": "jur",
+    "ku": "jet",
+    "ze": "han"
+   },
+   "slot_kind": {
+    "fo": "a",
+    "mi": "b",
+    "ra": "j",
+    "ku": "j",
+    "ze": "j"
+   },
+   "gold_ctrl": [
+    {
+     "slot": "fo",
+     "member": "vud"
+    },
+    {
+     "slot": "mi",
+     "member": "das"
+    },
+    {
+     "slot": "ra",
+     "member": "paz"
+    },
+    {
+     "slot": "ku",
+     "member": "deg"
+    },
+    {
+     "slot": "ze",
+     "member": "ruw"
+    }
+   ]
+  }
+ ]
+}
