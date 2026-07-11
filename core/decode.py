@@ -59,6 +59,31 @@ import struct
 import numpy as np
 
 # ════════════════════════════════════════════════════════════════════════
+# Session weight cache (perf) — the .clm/.bin is IMMUTABLE for a run, yet every
+# decode entry (clm_load_weights / bg_load) re-read + int4-dequantized +
+# transposed the FULL 303M checkpoint from disk on EVERY call. In the
+# consciousness daemon that is one full re-parse per emit tick (dominant share of
+# the ~60-80s/tick wall). Memoize by (abspath, st_mtime_ns, st_size): a hit
+# returns the byte-IDENTICAL weight dict (already device-resident if the GPU path
+# uploaded it), so decode output is unchanged (max|Δ|=0 — no parity gate needed)
+# and the parse is paid ONCE per (file, mtime) per process. Auto-invalidates if
+# the file's mtime/size changes. W is read-only during decode (forwards read from
+# it; scratch is separate), so returning the shared dict is safe.
+_WLOAD_CACHE = {}
+
+
+def _wload_key(path):
+    """Cache key for a weight file: (abspath, mtime-ns, size). None if the path is
+    unstattable (e.g. the UNLOADED generator-swap arm passes path="") so a
+    missing/degenerate path is never cached."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return (os.path.abspath(path), st.st_mtime_ns, st.st_size)
+
+
+# ════════════════════════════════════════════════════════════════════════
 # GPU device path (cupy, optional) — a_gpu_default_no_optin: DEFAULT-ON via a
 # cuda_available() capability probe, NEVER an opt-in env flag. H_9119 lesson:
 # an opt-in gate silently leaves every decode/eval on the scalar CPU path with
@@ -591,6 +616,9 @@ def clm_load_weights(path):
     """_clmd_load — full file parse into a weight dict. Conv weights are kept
     pre-transposed as Wt[Kdim,Cout] (the _clmd_scratch_new transpose, applied
     once) since the py forward GEMMs xcol[T,Kdim] @ Wt[Kdim,Cout]."""
+    _k = _wload_key(path)
+    if _k is not None and _k in _WLOAD_CACHE:
+        return _WLOAD_CACHE[_k]
     if not clm_decodable(path):
         return {"ok": False}
     rb = open(path, 'rb').read()
@@ -712,6 +740,8 @@ def clm_load_weights(path):
     if cuda_available():
         _device_residency(W)
 
+    if _k is not None:
+        _WLOAD_CACHE[_k] = W
     return W
 
 
@@ -1170,6 +1200,9 @@ def bg_load(path):
                  mlp0.w[4d*d] mlp0.b[4d] mlp2.w[d*4d] mlp2.b[d]
       ln_f.w[d] ln_f.b[d]  head[vocab*d]
     (torch Linear stores W as [out,in] row-major; y = x.Wt + b.)"""
+    _k = _wload_key(path)
+    if _k is not None and _k in _WLOAD_CACHE:
+        return _WLOAD_CACHE[_k]
     rb = open(path, 'rb').read()
     vocab = _bg_rd_u32(rb, 0)
     d = _bg_rd_u32(rb, 4)
@@ -1217,12 +1250,15 @@ def bg_load(path):
             blk, off = _bg_read_bind_block(rb, off, d)
             bind.append(blk)
 
-    return {"ok": True, "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
-            "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
-            "inW": inW, "inB": inB, "oW": oW, "oB": oB,
-            "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
-            "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
-            "bind": bind}
+    W = {"ok": True, "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
+         "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
+         "inW": inW, "inB": inB, "oW": oW, "oB": oB,
+         "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
+         "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
+         "bind": bind}
+    if _k is not None:
+        _WLOAD_CACHE[_k] = W
+    return W
 
 
 # bg_load_ranged — byte-identical W-map to bg_load (hexa builds it via ranged
