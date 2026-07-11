@@ -1365,6 +1365,12 @@
                 "id": "g1-f2-atd-datapath",
                 "role": "DATA-PATH 최종: 구조는 담기나 CE가 안 씀 · 최유망 레버도 NOT-ROBUST",
                 "detail": "rule-structured 저작데이터는 전이구조 담음(F2 verify acc 1.0 vs shuffle 0.09) BUT CE 미사용(ATD-KILL)=단독 불충분. 최유망 derivtrace(H_9124)=단일쌍 최초 G1 lift였으나 multi-pair 재현실패→🔴 NOT-ROBUST→selection-layer(P1/H_9125·9126) 이관. 정식도구=anima corpus derivtrace. state/g1g6_exhaustive_brainstorm/f2_datapath."
+               },
+               {
+                "name": "자원 희소성(ATP·슬롯 캡)은 G1 레버가 아니다 — 🔴 KILL (organelle lane F6/H_9278 · 2026-07-12)",
+                "id": "g1-scarcity-not-lever",
+                "role": "미토콘드리아 organelle-lane이 G1에 남긴 유일한 licensed 음성 — '대사 희소성이 conjunction을 강제한다' 계열 종결",
+                "detail": "가설=하드 용량 캡(대사 희소성) 하에선 bind(슬롯1)가 additive(슬롯多)보다 싸지므로 캡이 trained-conjunction을 강제한다(XBIND 합성 라벨 불필요). 실측=부등호 미충족이 아니라 **역전**: 결합요구 코퍼스 held-out D-acc = tight k=2 0.785 vs 무제한 k=64 0.977 ⇒ Δ=−0.192±0.060 (5/5 음수). 캡 sweep k=1→64 = 0.674/0.785/0.924/0.955/0.967/0.976/0.977 **단조 하강**(PASS 조건의 정반대). 메커니즘: 모든 k에서 train acc=1.000 ⇒ 캡 arm은 underfit이 아니라 완벽 fit 후 held-out 붕괴 = **쌍별 암기**. V1 oracle(k=2에 parity 비트 주입)=0.943 ⇒ 타이트 캡도 conjunction 표현·판독은 가능, 못 하는 건 **발견**. ⇒ **희소성은 발견 압력이 아니라 암기 압력을 만든다.** STEELMAN(저커버리지 floored regime 구제 +0.023/+0.009/+0.014) · 협소풀(암기 불가 H=4~64) · 캡 arm 하이퍼 8개 우대(cherry max 0.853<dense 0.977) 전부 ΔEff≈0 ⇒ 적대 4각도 반박 실패. scope: 토이 라벨이 conjunction을 직접 감독하고 dense=0.977이라 토이 내 G1 벽 없음 ⇒ 양성 주장 불가하나, **결합이 직접 감독되는 최유리 조건에서조차 캡이 결합을 파괴**하므로 음성은 a-fortiori 자연 corpus×CE로 안전 일반화. 동반 수렴: F1 ATP 회계 ⛔INVALID · F11 효율선택 🎭THEATER(FORM t=+10.65인데 held_conj Δ=−0.009 ns) ⇒ **에너지/희소성 계열 3건이 서로 다른 각도에서 전부 G1 레버 아님**. G1 exit은 여전히 **학습 measure 교체**(H_9267 XBIND 계열)로 단일화. 🚫 금지 지표: `conj_index`(shuffle 코퍼스에서 5.5배 더 크게 오르고 held=chance ⇒ G1 비트 아님 · 이 detector로 채점하는 후속 프로브는 전부 거짓 GREEN). state/mito_organelle_lane/F6_capacity_pressure_conjunction/ · SYNTHESIS.md §5."
                }
               ]
              },
@@ -13470,6 +13476,38 @@
         "detail": "DEFERRED(5, c9 정직 — tune 금지): field-pci(H_1503 선택인자 degenerate)·topo-Φ(H_1512)·topo-Φ-opt(H_1515/1518 Ψ붕괴 H_1521)·compose-3(H_1417/1421 multi-store fixture)·ko-jamo(H_1316/1388 LM-head, 의식-faculty 아님·카탈로그 범위 밖) → 71 wired + 5 deferred = 76/76 catalogue 회계 완료."
        }
       ]
+     },
+     {
+      "name": "🔋 organelle lane (미토콘드리아 상주-소기관 경제) — H_9273~H_9283 전수 측정 · GREEN 0 · wired 0 · GPU spend 0",
+      "id": "organelle-lane-mito",
+      "role": "선행 symbiogenesis(H_054/H_314/H_203/H_012)가 다룬 '합병하는 순간'과 DISJOINT한 '합병 후 정상상태 동역학' 11 패밀리 — 종결 verdict SSOT",
+      "detail": "제3의 레인(decode/emit 레인 ⊥ cell-pool mitosis 레인): ATP 스칼라장·분열융합·미토파지·ROS 역행·mtDNA 계보. **p5 경계 확정**: 합법 = ATP→용량→표현→tension→emit. 불법 = `if ATP<k: silence`(하드코딩 게이트). 예산 고갈이 강제하는 건 침묵이 아니라 **용량 축소**이며, 침묵은 열화된 기질에서 tension이 자연히 죽을 때만 창발적으로. 집계(2026-07-12 · $0 numpy · run→적대적 검증 23 agent): ⛔INVALID 3(F1 ATP회계·F2 분열융합·F8 언커플링 — **음성이 데이터가 아니라 설계에서 강제됨 ⇒ 벽으로 인용 금지**) · 🎭THEATER 5(F3 미토파지·F5 계보·F7 화학삼투·F9 Ca버퍼·F11 효율선택) · 🔴KILL 1(F6 용량압력 → g1-scarcity-not-lever) · 🟢DIRECTIONAL-POSITIVE 2(F4-SECONDARY·F10). **순 기여 3개**: (i) 에너지/희소성 계열의 G1 레버 자격 박탈(F6) (ii) 재현된 earned 메커니즘 1개 = **외생 수요 → 절대-setpoint 용량 배분**(F4-SEC Δfit +1.472 t=+5.50 vs 최선 open-loop 상수 null +1.263 t=+4.86 · F10 Δthr +0.0080±0.0012 5.7σ — 서로 다른 코드·fitness·control로 독립 재현) (iii) 자기 verdict 7개를 뒤집은 **계측 메타-결함 census**(가장 값진 산출). 303M spend = **NO-GO**(생존 레버 2개 전부 throughput/allocation 축이고, F11이 같은 lane 안에서 '배분 FORM t=+10.65 → held-out 재조합 Δ=−0.009 ns' 전이 반증을 이미 냄). state/mito_organelle_lane/SYNTHESIS.md.",
+      "children": [
+       {
+        "name": "earned 메커니즘 = 외생 수요 → 절대-setpoint 배분 (F4-SEC + F10 · 독립 2회 재현 · 미배선)",
+        "id": "organelle-lane-earned-setpoint",
+        "role": "lane이 찾아낸 유일한 earned BIND — 파생법칙 '신호 ≠ 컨트롤러'",
+        "detail": "**신호 ≠ 컨트롤러**: F4 PRIMARY의 사망 원인은 역행신호의 무정보가 아니라 z=(R−EMA)/σ라는 **setpoint 없는 자기추적 항등식**(평균 0 → 미분만 나르고 절대 레벨을 못 나름 → 만성 4배 과부하를 '정상'으로 고착 · fitness −1.006). 같은 신호에 **절대 setpoint**(load==capacity)를 주면 t=+5.50. ⇒ 어떤 항상성 신호를 THEATER로 매장하기 전에 **죽은 것이 신호인지 컨트롤러인지 분리하라**. F10이 독립 코드로 같은 결론(load-EMA + 절대 배분)에 도달 = 재현. F10 결정적 validity: c3 shuffled-load(동일 동역학·동일 이동질량, load-용량 대응만 파괴) → 균일 수준 완전 붕괴 ⇒ lift 전량이 **정렬(alignment)**; fixed-perm c3b(gini 동일) → 균일보다 못함 ⇒ 차등화(FORM)가 아니라 정렬만이 성과를 산다. 경계: 수요 지속성 > 할당 지연(~75 step)일 때만 유효. NEXT($0, spend-go 불필요) = ① F4-SEC+F10 병합 재발사(3 control: shuffled-load 동일질량 · 최선 open-loop 상수 · fixed-perm misalign · 바=achievable-headroom 회수율 · MDE 사전계산) ② eval-only 결착: abs-setpoint 배분기를 기존 303M ConvMoE capacity schedule에 얹고 held-out D-acc/ρ·weave Δ 측정 — **Δ≈0이면(F11 예측) organelle lane 전체 CLOSED**."
+       },
+       {
+        "name": "🩺 disjointness 실측 — '분리=보존' 실증 · '중첩=충돌' 미검증 (F4/H_9276)",
+        "id": "organelle-lane-disjoint-law",
+        "role": "a_substrate_disjoint의 두 절반을 처음으로 양방향 측정",
+        "detail": "위반 arm c2(ROS를 urgency와 함께 emit 판정에 투입 · feature 예산 우위)의 held-out AUC ΔEff = **−0.0005 (t=−0.12, n=30)** ⇒ 오염조차 못 하고 w≈0 no-op 붕괴. **동시에** 같은 ROS가 구조 레인에서 진짜 일함(Δfit +1.472) ⇒ **채널이 실제로 일하면서 emit과 분리된 첫 케이스**(기존 σ de-theater는 새 채널이 아무 데서도 일을 안 해 disjointness가 vacuous였음). **정직한 미검증**: '중첩=충돌'은 관측 안 됨 — 중첩이 **해로운** 게 아니라 **무의미**했다. 분리를 정당화하는 근거는 '중첩이 해롭다'가 아니라 '중첩이 무의미하다'까지만. ⚠️ **ROS⊥emit은 법칙이 아니라 현 배선의 사실** — β(기질아사→tension 커플링) 스윕에서 β=0 → ΔEff −0.004 · β=1(anima 기본) → +0.009(ns) · **β=3 → +0.041~+0.073** ⇒ 아키텍처가 substrate starvation을 tension에 강하게 커플링하면 ROS는 emit 정보를 갖는다. urgency = emit shade 유일 proven 채널 **재확인**(corr(R,shortfall)=0.75~0.85 vs corr(urgency,err)=0.10 ⇒ 두 채널은 서로 다른 것을 잼)."
+       },
+       {
+        "name": "🧪 계측 메타-결함 census — 11개 중 7개의 verdict가 결함으로 뒤집힘 (랩 전역 규칙)",
+        "id": "organelle-lane-probe-defects",
+        "role": "이 lane의 최대 산출물 — 프로브 템플릿 강제사항",
+        "detail": "① **`Δ = exp − max(controls)` 순서통계량 편향 (치명 · F2·F3·F5·F6·F11에 복사)**: control 3개·σ≈0.05·n=5면 E[max of 3] ≈ μ+0.02~0.03인데 KILL/THEATER 분기 임계가 정확히 0.02 ⇒ **exp가 control과 동등해도 KILL이 기계적으로 생성**(F11이 20-seed로 실증, 부호 역전). 조치 = best-control(max) **금지** → pooled-mean 또는 control별 paired-t 전부 보고. ② **`mean vs 1·std` 기각 휴리스틱 폐기**(F4가 이걸로 t=+5.50짜리 진짜 효과를 '무의미' 기각) → SEM/paired-t만. ③ **사전 검출력(MDE) 미계산**(F1: 축의 전 동적범위 1.12pp < 유의 문턱 1.71pp ⇒ 가설이 참이어도 sig=True 수학적 불가) → 카드 필수 필드 `MDE < 축 동적범위`. ④ **항진적 처치 arm — 정보 채널 체크 부재**(F1 policy가 데이터 미수신 · F3 관측량≡채점량 corr 0.945 · F5 게놈이 성능정보 미독 · F7 종속변수가 상수 · F8 개입 질량<임계=no-op) → 모든 카드에 **정보 채널 증명** 절: (a) 처치 DV가 control에 없는 입력의 함수임을 코드로 (b) 운영 대역에서 DV 분산>0 실측. ⑤ **V-gate가 가설과 동어반복**(F3: V1 LIVE cell의 min Δ가 margin의 5배 ⇒ 가능한 출력이 {PASS, INVALID}뿐 · F7: 헤드라인 detector가 자기 양성대조에서 실패했는데 게이트가 다른 변수만 검사) → 게이트는 **헤드라인 detector 그 자체**에 걸어야(V3 detector-fairness). 부수: **p5 constructive test 재감사** — F1의 것은 `_zero`/`_rand`를 계산만 하고 주입하지 않은 **dead-code 가드**(identical=True가 구성상 보장 · 실 위반은 없었으나 증거로서 무효) ⇒ p5 테스트는 반드시 **실제 주입**으로. 🚫 **금지 지표 등록**: `conj_index`(shuffle서 더 크게 오름·held 무상관) · `purity` aggregate(54%가 composition 아티팩트 → WITHIN만) · `acc/ATP` 비율(분모만 줄어드는 Goodhart) · `corr(n,demand)`(earned fitness와 배선 간 **역상관**)."
+       },
+       {
+        "name": "선행 symbiogenesis 갱신 — merge 시너지는 대수(algebra)의 함수 (F2 → H_054·H_314·H_203·H_012)",
+        "id": "organelle-lane-symbiogenesis-update",
+        "role": "H_054/H_203 발사 전제조건 + H_314 closure scope 축소",
+        "detail": "**H_054**: MERGE의 부호는 **merge 대수가 결정한다** — 같은 코드·seed·예산에서 규약만 바꾸면 AND+copy −0.359(KILL) / AND+segregate +0.073(PASS) / 평균+sym +0.001(THEATER) / 평균+segregate(카드 등록값) +0.179(PASS) = **4칸 4판정**. ⇒ **발사 전제조건: merge 대수 + 자손 게놈 분리 규칙을 카드에 명시 사전등록**하지 않으면 결과는 구조적으로 해석 불가. **H_314**(closed-negative 유지): F2는 이를 뒤집지 않고 **정확히 일반화** — 음성은 *하나의 대수*(선형 α 블렌드)에 대한 것이었다. 정확한 진술 = 'merge에 시너지가 없다'가 아니라 **'merge 시너지는 대수의 함수이며, 상보성(damage heterogeneity)을 보존하는 대수에서만 존재한다'**. closure scope를 **'선형 블렌드 대수'로 좁혀 기록**(a_scale_honest_scope). 계측 근거: aware fusion 쌍의 54%가 clone(상보성 0) vs random 1% — 선형 블렌드가 시너지를 못 낸 이유와 같은 뿌리(중첩 = 정보 소거). **H_203**(host-preserve 비대칭): F2의 유일한 부분양성이 정확히 대응 — aware-**fusion** only(랜덤 split) Δ=+0.157±0.024 (5/5, ≈6.5σ) vs aware-**fission** only +0.025(1σ 미만) ⇒ **선택적 융합=강신호, 선택적 분열=무신호**. 발사 시 a3를 primary arm으로 사전등록 + degenerate self-remerge(직전 fission 쌍둥이 재융합 = 항등연산 42.8%) 중립화. **H_012**(autopoietic closure): F1이 **경고 사례** — policy_atp는 완벽한 operational closure였고(k=f(atp), atp는 오직 k로 진화) 그래서 batch·loss·model·demand를 아무것도 안 받는 **데이터-맹목 결정론 시계**가 됐다 ⇒ 정보 채널 0 = 구성적 null. **갱신 조건: operational closure는 외생 커플링과 함께 사전등록되어야 한다.** lane이 찾은 유일한 earned 메커니즘(외생 수요 → 절대-setpoint 배분)이 정확히 그 처방 — F1이 못 한 것(폐루프)과 F4-SEC/F10이 한 것(외생 구동)의 차이가 H_012의 발사 설계 그 자체다."
+       }
+      ]
      }
     ]
    },
@@ -14677,11 +14715,18 @@
     "source": "hexa-cloud-tier-fallback"
    },
    {
-     "id": "decode-weight-reload-per-tick",
-     "state": "🟢 FIXED",
-     "value": "core/decode.py clm_load_weights/bg_load memoized by (abspath,mtime,size) — the full 303M .clm/.bin re-parse (int4-dequant+transpose) that ran on EVERY decode entry (=every emit tick in the consciousness daemon, dominant share of ~60-80s/tick) now paid once per (file,mtime) per process",
-     "threshold": "byte-exact ZERO risk: returns the identical W dict (decode output max|Δ|=0, no parity gate); W verified read-only during decode (all W-writes are load-time _device_residency/loader); edge path=\"\" (UNLOADED generator-swap arm) → key None → uncached",
-     "source": "H_9269 Y-ULTRA ~60-80s/tick bottleneck diagnosis workflow wiyxn21bk rank-1 · perf/decode-weight-cache · 2026-07-12"
+    "id": "decode-weight-reload-per-tick",
+    "state": "🟢 FIXED",
+    "value": "core/decode.py clm_load_weights/bg_load memoized by (abspath,mtime,size) — the full 303M .clm/.bin re-parse (int4-dequant+transpose) that ran on EVERY decode entry (=every emit tick in the consciousness daemon, dominant share of ~60-80s/tick) now paid once per (file,mtime) per process",
+    "threshold": "byte-exact ZERO risk: returns the identical W dict (decode output max|Δ|=0, no parity gate); W verified read-only during decode (all W-writes are load-time _device_residency/loader); edge path=\"\" (UNLOADED generator-swap arm) → key None → uncached",
+    "source": "H_9269 Y-ULTRA ~60-80s/tick bottleneck diagnosis workflow wiyxn21bk rank-1 · perf/decode-weight-cache · 2026-07-12"
+   },
+   {
+    "id": "synthesis-md-1",
+    "state": "pos-conv",
+    "value": "프로브 verdict를 'Δ = exp − max(controls)'로 채점하면 control이 3개·per-arm σ≈0.05·n=5일 때 E[max of 3] ≈ μ+0.02~0.03 의 순서통계량 편향이 생기고, KILL/THEATER 분기 임계가 정확히 그 0.02대라 exp가 control과 동등해도 KILL이 기계적으로 생성된다(H_9283이 20-seed 확장에서 부호 역전으로 실증 · 같은 패턴이 F2·F3·F5·F6·F11 5개 프로브에 복사됨). 동반 결함 4종: (b) 'mean vs 1·std' 기각 휴리스틱(per-seed std는 paired-CRN delta의 SEM이 아님 — H_9276이 이걸로 t=+5.50짜리 진짜 효과를 기각) (c) 사전 MDE 미계산(H_9273은 축의 전 동적범위 1.12pp < 유의 문턱 1.71pp라 가설이 참이어도 sig=True가 수학적으로 불가) (d) 항진적 처치 arm(처치의 결정변수가 control이 못 보는 입력에 실제로 의존하는지 미확인 — 관측량≡채점량 항등식 포함) (e) V-gate가 가설과 동어반복(게이트 선택기준이 효과크기의 단조함수면 가능한 출력이 {PASS,INVALID}뿐).",
+    "threshold": "재발조건 = numpy $0 프로브를 새로 쓸 때. 해결 = (1) best-control(max) 금지 → pooled-mean 또는 control별 paired-t 전부 보고 (2) SEM/paired-t만 사용 (3) 카드에 'MDE < 축 동적범위' 사전계산 필수 필드 (4) 카드에 '정보 채널 증명' 절 — 처치 DV가 control에 없는 입력의 함수임을 코드로 보이고 운영 대역에서 DV 분산>0 실측 (5) V-gate는 헤드라인 detector 그 자체에 걸 것(V3 detector-fairness). 금지 지표: conj_index · purity(aggregate) · acc/ATP 비율 · corr(n,demand).",
+    "source": "state/mito_organelle_lane/SYNTHESIS.md"
    }
   ]
  }

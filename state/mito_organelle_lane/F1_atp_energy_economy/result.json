@@ -1,0 +1,1883 @@
+{
+  "hypothesis": "H_9273 / F1 — ATP 대사경제 (organelle lane)",
+  "pre_registered": {
+    "D": 32,
+    "E": 16,
+    "C": 4,
+    "K_MAX": 8,
+    "N_TRAIN": 2000,
+    "N_TEST": 800,
+    "STEPS": 1500,
+    "BATCH": 32,
+    "LR": 0.2,
+    "NOISE": 0.7,
+    "SEEDS": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "COST_EXPERT": 1.0,
+    "EMIT_QUANTUM": 2.0,
+    "ATP_CAP": 20.0,
+    "ATP_INIT": 10.0,
+    "M_ORGANELLE": 4,
+    "WEAR": 0.02,
+    "REPAIR": 0.05,
+    "BINDING_MIN": 0.1,
+    "DELTA_EPS": 0.01,
+    "ARMS_EXP": [
+      [
+        "EXP_tight",
+        1.0
+      ],
+      [
+        "EXP_mid",
+        1.5
+      ],
+      [
+        "EXP_loose",
+        2.2
+      ]
+    ],
+    "C2_RESP": 25.0
+  },
+  "budget_fairness": {
+    "same_params_all_arms": true,
+    "params_per_arm": 2560,
+    "same_steps": 1500,
+    "same_batch": 32,
+    "same_data_per_seed": true,
+    "same_init_per_seed": true,
+    "note": "c1/c2 는 항상 k=K_MAX(8) → 실험 arm보다 활성 FLOPs 가 *많다*(통제가 더 유리). c3 는 동일 k(동일 FLOPs). v1 은 동일 k=8·동일 파라미터. 어떤 control 도 실험 arm보다 파라미터/스텝/예산이 적지 않다."
+  },
+  "v_gates": {
+    "V1_selection_channel_live": {
+      "mean": 0.15375,
+      "std": 0.017320508075688797,
+      "sem": 0.007745966692414844,
+      "significant": true,
+      "pass_": true,
+      "desc": "c1(top-k 학습선택) − v1(무작위선택) > 0 이어야 선택 채널이 정보를 나른다"
+    },
+    "VR_capacity_moves_downstream": {
+      "mean": 0.12274999999999998,
+      "std": 0.026497641404472198,
+      "sem": 0.011850105484762567,
+      "significant": true,
+      "pass_": true,
+      "desc": "c1(k=8) − static k=1 : 용량 자체가 downstream 을 움직이는가"
+    }
+  },
+  "summary": {
+    "c1_infinite_atp": {
+      "mean_k": {
+        "mean": 8.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 8.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.7532500000000001,
+        "std": 0.02323252031097789
+      },
+      "acc_matched_kmax": {
+        "mean": 0.7532500000000001,
+        "std": 0.02323252031097789
+      },
+      "route_acc": {
+        "mean": 0.038,
+        "std": 0.03337851105127369
+      },
+      "usage_entropy": {
+        "mean": 0.9962592913354108,
+        "std": 0.0008466389349647494
+      },
+      "emit_rate": {
+        "mean": 0.5,
+        "std": 0.0
+      },
+      "mean_tension": {
+        "mean": 0.6393299399588531,
+        "std": 0.03426352334868305
+      }
+    },
+    "c2_atp_never_binds": {
+      "mean_k": {
+        "mean": 8.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 8.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.7532500000000001,
+        "std": 0.02323252031097789
+      },
+      "acc_matched_kmax": {
+        "mean": 0.7532500000000001,
+        "std": 0.02323252031097789
+      },
+      "route_acc": {
+        "mean": 0.038,
+        "std": 0.03337851105127369
+      },
+      "usage_entropy": {
+        "mean": 0.9962592913354108,
+        "std": 0.0008466389349647494
+      },
+      "emit_rate": {
+        "mean": 0.5,
+        "std": 0.0
+      },
+      "mean_tension": {
+        "mean": 0.6393299399588531,
+        "std": 0.03426352334868305
+      }
+    },
+    "v1_shuffled_select": {
+      "mean_k": {
+        "mean": 8.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 8.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.5995,
+        "std": 0.009766012492312293
+      },
+      "acc_matched_kmax": {
+        "mean": 0.5995,
+        "std": 0.009766012492312293
+      },
+      "route_acc": {
+        "mean": 0.034,
+        "std": 0.014435200033252051
+      },
+      "usage_entropy": {
+        "mean": 0.9997763598318269,
+        "std": 8.0966942243301e-05
+      },
+      "emit_rate": {
+        "mean": 0.14100000000000001,
+        "std": 0.034481879299133336
+      },
+      "mean_tension": {
+        "mean": 0.3809447757377199,
+        "std": 0.012370207232423425
+      }
+    },
+    "vr_static_cap_k1": {
+      "mean_k": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.6305,
+        "std": 0.033537292675468004
+      },
+      "acc_matched_kmax": {
+        "mean": 0.6372500000000001,
+        "std": 0.023932195887548607
+      },
+      "route_acc": {
+        "mean": 0.034,
+        "std": 0.014435200033252051
+      },
+      "usage_entropy": {
+        "mean": 0.9345309819938906,
+        "std": 0.01470488806041681
+      },
+      "emit_rate": {
+        "mean": 0.35550000000000004,
+        "std": 0.034501811546641996
+      },
+      "mean_tension": {
+        "mean": 0.5494672458615942,
+        "std": 0.027341900137432557
+      }
+    },
+    "EXP_tight": {
+      "mean_k": {
+        "mean": 1.6685333333333332,
+        "std": 0.0008844332774280962
+      },
+      "mean_k_last200": {
+        "mean": 1.6649999999999998,
+        "std": 2.220446049250313e-16
+      },
+      "binding_rate": {
+        "mean": 0.9993333333333332,
+        "std": 1.1102230246251565e-16
+      },
+      "acc_own_policy": {
+        "mean": 0.76175,
+        "std": 0.02515700697618856
+      },
+      "acc_matched_kmax": {
+        "mean": 0.7627499999999999,
+        "std": 0.02517935662402836
+      },
+      "route_acc": {
+        "mean": 0.03275,
+        "std": 0.04232611487013662
+      },
+      "usage_entropy": {
+        "mean": 0.8776956661262855,
+        "std": 0.017307184659470037
+      },
+      "emit_rate": {
+        "mean": 0.45999999999999996,
+        "std": 0.011374313166077328
+      },
+      "mean_tension": {
+        "mean": 0.614148772203202,
+        "std": 0.03783962583836577
+      }
+    },
+    "c3_static_cap_k2__for_EXP_tight": {
+      "mean_k": {
+        "mean": 2.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 2.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.758,
+        "std": 0.022257021364055014
+      },
+      "acc_matched_kmax": {
+        "mean": 0.7577499999999999,
+        "std": 0.02101190138945071
+      },
+      "route_acc": {
+        "mean": 0.03975,
+        "std": 0.027184554438136374
+      },
+      "usage_entropy": {
+        "mean": 0.9016326661732249,
+        "std": 0.00779574207013777
+      },
+      "emit_rate": {
+        "mean": 0.49725,
+        "std": 0.019738920943151866
+      },
+      "mean_tension": {
+        "mean": 0.6399618627659571,
+        "std": 0.03227989258979771
+      }
+    },
+    "EXP_mid": {
+      "mean_k": {
+        "mean": 3.0816000000000003,
+        "std": 0.0011623730516108508
+      },
+      "mean_k_last200": {
+        "mean": 3.076,
+        "std": 0.0019999999999999575
+      },
+      "binding_rate": {
+        "mean": 0.9993333333333332,
+        "std": 1.1102230246251565e-16
+      },
+      "acc_own_policy": {
+        "mean": 0.76125,
+        "std": 0.01217066144463808
+      },
+      "acc_matched_kmax": {
+        "mean": 0.7629999999999999,
+        "std": 0.013383758814324182
+      },
+      "route_acc": {
+        "mean": 0.04425,
+        "std": 0.03747165595486808
+      },
+      "usage_entropy": {
+        "mean": 0.919052074671006,
+        "std": 0.022844520232787685
+      },
+      "emit_rate": {
+        "mean": 0.5182500000000001,
+        "std": 0.010770329614269004
+      },
+      "mean_tension": {
+        "mean": 0.6540468908676929,
+        "std": 0.03506201675067303
+      }
+    },
+    "c3_static_cap_k3__for_EXP_mid": {
+      "mean_k": {
+        "mean": 3.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 3.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.7567499999999999,
+        "std": 0.010018732454756943
+      },
+      "acc_matched_kmax": {
+        "mean": 0.7572500000000001,
+        "std": 0.015479825580412722
+      },
+      "route_acc": {
+        "mean": 0.043500000000000004,
+        "std": 0.02362995979683419
+      },
+      "usage_entropy": {
+        "mean": 0.9151017559487288,
+        "std": 0.027659632349271695
+      },
+      "emit_rate": {
+        "mean": 0.5109999999999999,
+        "std": 0.0037416573867739577
+      },
+      "mean_tension": {
+        "mean": 0.6461932165581203,
+        "std": 0.03539662306854891
+      }
+    },
+    "EXP_loose": {
+      "mean_k": {
+        "mean": 4.7333333333333325,
+        "std": 0.0016329931618552721
+      },
+      "mean_k_last200": {
+        "mean": 4.720999999999999,
+        "std": 0.0019999999999999575
+      },
+      "binding_rate": {
+        "mean": 0.9993333333333332,
+        "std": 1.1102230246251565e-16
+      },
+      "acc_own_policy": {
+        "mean": 0.7565000000000001,
+        "std": 0.02204257244515713
+      },
+      "acc_matched_kmax": {
+        "mean": 0.75925,
+        "std": 0.021760055146988935
+      },
+      "route_acc": {
+        "mean": 0.040999999999999995,
+        "std": 0.02546320875302247
+      },
+      "usage_entropy": {
+        "mean": 0.9563402711496766,
+        "std": 0.011142947694604466
+      },
+      "emit_rate": {
+        "mean": 0.51825,
+        "std": 0.019615045245933053
+      },
+      "mean_tension": {
+        "mean": 0.6485718349553612,
+        "std": 0.030574700034703698
+      }
+    },
+    "c3_static_cap_k5__for_EXP_loose": {
+      "mean_k": {
+        "mean": 5.0,
+        "std": 0.0
+      },
+      "mean_k_last200": {
+        "mean": 5.0,
+        "std": 0.0
+      },
+      "binding_rate": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "acc_own_policy": {
+        "mean": 0.7505000000000001,
+        "std": 0.03119094419859715
+      },
+      "acc_matched_kmax": {
+        "mean": 0.751,
+        "std": 0.031418545478745515
+      },
+      "route_acc": {
+        "mean": 0.037,
+        "std": 0.02479415253643488
+      },
+      "usage_entropy": {
+        "mean": 0.9551633123180473,
+        "std": 0.009717227866047314
+      },
+      "emit_rate": {
+        "mean": 0.516,
+        "std": 0.018411952639521965
+      },
+      "mean_tension": {
+        "mean": 0.6483552431319167,
+        "std": 0.028494561991539075
+      }
+    }
+  },
+  "deltas": {
+    "EXP_tight": {
+      "c3_arm": "c3_static_cap_k2__for_EXP_tight",
+      "vs_c1[acc_own_policy]": {
+        "mean": 0.008500000000000063,
+        "std": 0.019078784028338916,
+        "sem": 0.008532291603080618,
+        "significant": false
+      },
+      "vs_c2[acc_own_policy]": {
+        "mean": 0.008500000000000063,
+        "std": 0.019078784028338916,
+        "sem": 0.008532291603080618,
+        "significant": false
+      },
+      "vs_c3[acc_own_policy]": {
+        "mean": 0.003750000000000053,
+        "std": 0.006471089552772378,
+        "sem": 0.00289395922569755,
+        "significant": false
+      },
+      "vs_c1[acc_matched_kmax]": {
+        "mean": 0.009500000000000019,
+        "std": 0.02128085994503043,
+        "sem": 0.009517089891348095,
+        "significant": false
+      },
+      "vs_c2[acc_matched_kmax]": {
+        "mean": 0.009500000000000019,
+        "std": 0.02128085994503043,
+        "sem": 0.009517089891348095,
+        "significant": false
+      },
+      "vs_c3[acc_matched_kmax]": {
+        "mean": 0.0050000000000000044,
+        "std": 0.010000000000000009,
+        "sem": 0.004472135954999583,
+        "significant": false
+      },
+      "vs_c1[route_acc]": {
+        "mean": -0.00525,
+        "std": 0.0661645675569636,
+        "sem": 0.029589694151849557,
+        "significant": false
+      },
+      "vs_c2[route_acc]": {
+        "mean": -0.00525,
+        "std": 0.0661645675569636,
+        "sem": 0.029589694151849557,
+        "significant": false
+      },
+      "vs_c3[route_acc]": {
+        "mean": -0.007000000000000001,
+        "std": 0.03244803537966513,
+        "sem": 0.014511202569049886,
+        "significant": false
+      },
+      "vs_c1[emit_rate]": {
+        "mean": -0.039999999999999994,
+        "std": 0.01137431316607733,
+        "sem": 0.0050867474873439525,
+        "significant": true
+      },
+      "vs_c2[emit_rate]": {
+        "mean": -0.039999999999999994,
+        "std": 0.01137431316607733,
+        "sem": 0.0050867474873439525,
+        "significant": true
+      },
+      "vs_c3[emit_rate]": {
+        "mean": -0.03724999999999999,
+        "std": 0.015799525309324946,
+        "sem": 0.007065762520775794,
+        "significant": true
+      }
+    },
+    "EXP_mid": {
+      "c3_arm": "c3_static_cap_k3__for_EXP_mid",
+      "vs_c1[acc_own_policy]": {
+        "mean": 0.00800000000000003,
+        "std": 0.01670703444660363,
+        "sem": 0.00747161294500726,
+        "significant": false
+      },
+      "vs_c2[acc_own_policy]": {
+        "mean": 0.00800000000000003,
+        "std": 0.01670703444660363,
+        "sem": 0.00747161294500726,
+        "significant": false
+      },
+      "vs_c3[acc_own_policy]": {
+        "mean": 0.004499999999999993,
+        "std": 0.0037583240945932256,
+        "sem": 0.0016807736313971605,
+        "significant": false
+      },
+      "vs_c1[acc_matched_kmax]": {
+        "mean": 0.009750000000000036,
+        "std": 0.0183779759494891,
+        "sem": 0.008218880702382773,
+        "significant": false
+      },
+      "vs_c2[acc_matched_kmax]": {
+        "mean": 0.009750000000000036,
+        "std": 0.0183779759494891,
+        "sem": 0.008218880702382773,
+        "significant": false
+      },
+      "vs_c3[acc_matched_kmax]": {
+        "mean": 0.00575000000000001,
+        "std": 0.005787918451395116,
+        "sem": 0.002588435821108958,
+        "significant": false
+      },
+      "vs_c1[route_acc]": {
+        "mean": 0.00625,
+        "std": 0.04561386850509393,
+        "sem": 0.020399142138825346,
+        "significant": false
+      },
+      "vs_c2[route_acc]": {
+        "mean": 0.00625,
+        "std": 0.04561386850509393,
+        "sem": 0.020399142138825346,
+        "significant": false
+      },
+      "vs_c3[route_acc]": {
+        "mean": 0.0007499999999999978,
+        "std": 0.020350061424968723,
+        "sem": 0.00910082413850526,
+        "significant": false
+      },
+      "vs_c1[emit_rate]": {
+        "mean": 0.018250000000000034,
+        "std": 0.010770329614269006,
+        "sem": 0.004816637831516917,
+        "significant": true
+      },
+      "vs_c2[emit_rate]": {
+        "mean": 0.018250000000000034,
+        "std": 0.010770329614269006,
+        "sem": 0.004816637831516917,
+        "significant": true
+      },
+      "vs_c3[emit_rate]": {
+        "mean": 0.0072500000000000455,
+        "std": 0.011521718621802941,
+        "sem": 0.005152669211195313,
+        "significant": false
+      }
+    },
+    "EXP_loose": {
+      "c3_arm": "c3_static_cap_k5__for_EXP_loose",
+      "vs_c1[acc_own_policy]": {
+        "mean": 0.003250000000000042,
+        "std": 0.010999999999999998,
+        "sem": 0.004919349550499536,
+        "significant": false
+      },
+      "vs_c2[acc_own_policy]": {
+        "mean": 0.003250000000000042,
+        "std": 0.010999999999999998,
+        "sem": 0.004919349550499536,
+        "significant": false
+      },
+      "vs_c3[acc_own_policy]": {
+        "mean": 0.006000000000000005,
+        "std": 0.012732831578246857,
+        "sem": 0.005694295391003181,
+        "significant": false
+      },
+      "vs_c1[acc_matched_kmax]": {
+        "mean": 0.006000000000000028,
+        "std": 0.01160280138587229,
+        "sem": 0.005188930525647842,
+        "significant": false
+      },
+      "vs_c2[acc_matched_kmax]": {
+        "mean": 0.006000000000000028,
+        "std": 0.01160280138587229,
+        "sem": 0.005188930525647842,
+        "significant": false
+      },
+      "vs_c3[acc_matched_kmax]": {
+        "mean": 0.008250000000000025,
+        "std": 0.014155387666892094,
+        "sem": 0.0063304818142065735,
+        "significant": false
+      },
+      "vs_c1[route_acc]": {
+        "mean": 0.002999999999999999,
+        "std": 0.03139068333120514,
+        "sem": 0.014038340357748848,
+        "significant": false
+      },
+      "vs_c2[route_acc]": {
+        "mean": 0.002999999999999999,
+        "std": 0.03139068333120514,
+        "sem": 0.014038340357748848,
+        "significant": false
+      },
+      "vs_c3[route_acc]": {
+        "mean": 0.003999999999999999,
+        "std": 0.006194755846681933,
+        "sem": 0.002770379035439013,
+        "significant": false
+      },
+      "vs_c1[emit_rate]": {
+        "mean": 0.01825,
+        "std": 0.019615045245933053,
+        "sem": 0.008772114910328076,
+        "significant": true
+      },
+      "vs_c2[emit_rate]": {
+        "mean": 0.01825,
+        "std": 0.019615045245933053,
+        "sem": 0.008772114910328076,
+        "significant": true
+      },
+      "vs_c3[emit_rate]": {
+        "mean": 0.0022500000000000076,
+        "std": 0.0061441028637222285,
+        "sem": 0.002747726332806806,
+        "significant": false
+      }
+    }
+  },
+  "verdicts": {
+    "EXP_tight": {
+      "binding_rate": 0.9993333333333332,
+      "card_pass_vs_c1c2": false,
+      "economy_bite_vs_c3": false,
+      "verdict": "THEATER (binding 되나 downstream ΔEff≈0 = bookkeeping overhead)"
+    },
+    "EXP_mid": {
+      "binding_rate": 0.9993333333333332,
+      "card_pass_vs_c1c2": false,
+      "economy_bite_vs_c3": false,
+      "verdict": "THEATER (binding 되나 downstream ΔEff≈0 = bookkeeping overhead)"
+    },
+    "EXP_loose": {
+      "binding_rate": 0.9993333333333332,
+      "card_pass_vs_c1c2": false,
+      "economy_bite_vs_c3": false,
+      "verdict": "THEATER (binding 되나 downstream ΔEff≈0 = bookkeeping overhead)"
+    }
+  },
+  "p5_clean_all_arms": true,
+  "emit_threshold_per_seed": {
+    "0": 0.7735790434237018,
+    "1": 0.6671481267435723,
+    "2": 0.643680872750195,
+    "3": 0.7271551200195223,
+    "4": 0.8158110316572673
+  },
+  "raw": {
+    "c1_infinite_atp": {
+      "0": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.77625,
+        "acc_matched_kmax": 0.77625,
+        "route_acc": 0.00625,
+        "usage_entropy": 0.996021781108284,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6636419342436725,
+        "p5": {
+          "hash_real": "854368812fbcaaf860b68ffaa61f6bed52c538b98a9ea32c526eb0ac24cdddad",
+          "hash_atp_zeroed": "854368812fbcaaf860b68ffaa61f6bed52c538b98a9ea32c526eb0ac24cdddad",
+          "hash_atp_random": "854368812fbcaaf860b68ffaa61f6bed52c538b98a9ea32c526eb0ac24cdddad",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6636419342436725,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.7675,
+        "acc_matched_kmax": 0.7675,
+        "route_acc": 0.095,
+        "usage_entropy": 0.9960824084028721,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6030329491792673,
+        "p5": {
+          "hash_real": "cc45559ee711ec2f8ab3a020b1203ea40302fd3d47a780e4634daa19687c8836",
+          "hash_atp_zeroed": "cc45559ee711ec2f8ab3a020b1203ea40302fd3d47a780e4634daa19687c8836",
+          "hash_atp_random": "cc45559ee711ec2f8ab3a020b1203ea40302fd3d47a780e4634daa19687c8836",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6030329491792673,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.71,
+        "acc_matched_kmax": 0.71,
+        "route_acc": 0.00875,
+        "usage_entropy": 0.9977451879441038,
+        "emit_rate": 0.5,
+        "mean_tension": 0.601379598807207,
+        "p5": {
+          "hash_real": "853fba709953b2ec093e164ac775b455138f5a346c26157f072cf2cca230a8c0",
+          "hash_atp_zeroed": "853fba709953b2ec093e164ac775b455138f5a346c26157f072cf2cca230a8c0",
+          "hash_atp_random": "853fba709953b2ec093e164ac775b455138f5a346c26157f072cf2cca230a8c0",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.601379598807207,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.7625,
+        "acc_matched_kmax": 0.7625,
+        "route_acc": 0.055,
+        "usage_entropy": 0.9963211767076429,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6390547564361638,
+        "p5": {
+          "hash_real": "f5230d79c933adf51616dcb45d39c4d94f97a01f700b1cc757b1a68fc1acc40a",
+          "hash_atp_zeroed": "f5230d79c933adf51616dcb45d39c4d94f97a01f700b1cc757b1a68fc1acc40a",
+          "hash_atp_random": "f5230d79c933adf51616dcb45d39c4d94f97a01f700b1cc757b1a68fc1acc40a",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6390547564361638,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.75,
+        "acc_matched_kmax": 0.75,
+        "route_acc": 0.025,
+        "usage_entropy": 0.9951259025141512,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6895404611279551,
+        "p5": {
+          "hash_real": "bf9f260fb108b70bd7a8acad20c94dcec65800ef2116fc52cf30dd3e08e17f73",
+          "hash_atp_zeroed": "bf9f260fb108b70bd7a8acad20c94dcec65800ef2116fc52cf30dd3e08e17f73",
+          "hash_atp_random": "bf9f260fb108b70bd7a8acad20c94dcec65800ef2116fc52cf30dd3e08e17f73",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6895404611279551,
+          "p5_clean": true
+        }
+      }
+    },
+    "c2_atp_never_binds": {
+      "0": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 10.0,
+        "acc_own_policy": 0.77625,
+        "acc_matched_kmax": 0.77625,
+        "route_acc": 0.00625,
+        "usage_entropy": 0.996021781108284,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6636419342436725,
+        "p5": {
+          "hash_real": "854368812fbcaaf860b68ffaa61f6bed52c538b98a9ea32c526eb0ac24cdddad",
+          "hash_atp_zeroed": "854368812fbcaaf860b68ffaa61f6bed52c538b98a9ea32c526eb0ac24cdddad",
+          "hash_atp_random": "854368812fbcaaf860b68ffaa61f6bed52c538b98a9ea32c526eb0ac24cdddad",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6636419342436725,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 10.0,
+        "acc_own_policy": 0.7675,
+        "acc_matched_kmax": 0.7675,
+        "route_acc": 0.095,
+        "usage_entropy": 0.9960824084028721,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6030329491792673,
+        "p5": {
+          "hash_real": "cc45559ee711ec2f8ab3a020b1203ea40302fd3d47a780e4634daa19687c8836",
+          "hash_atp_zeroed": "cc45559ee711ec2f8ab3a020b1203ea40302fd3d47a780e4634daa19687c8836",
+          "hash_atp_random": "cc45559ee711ec2f8ab3a020b1203ea40302fd3d47a780e4634daa19687c8836",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6030329491792673,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 10.0,
+        "acc_own_policy": 0.71,
+        "acc_matched_kmax": 0.71,
+        "route_acc": 0.00875,
+        "usage_entropy": 0.9977451879441038,
+        "emit_rate": 0.5,
+        "mean_tension": 0.601379598807207,
+        "p5": {
+          "hash_real": "853fba709953b2ec093e164ac775b455138f5a346c26157f072cf2cca230a8c0",
+          "hash_atp_zeroed": "853fba709953b2ec093e164ac775b455138f5a346c26157f072cf2cca230a8c0",
+          "hash_atp_random": "853fba709953b2ec093e164ac775b455138f5a346c26157f072cf2cca230a8c0",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.601379598807207,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 10.0,
+        "acc_own_policy": 0.7625,
+        "acc_matched_kmax": 0.7625,
+        "route_acc": 0.055,
+        "usage_entropy": 0.9963211767076429,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6390547564361638,
+        "p5": {
+          "hash_real": "f5230d79c933adf51616dcb45d39c4d94f97a01f700b1cc757b1a68fc1acc40a",
+          "hash_atp_zeroed": "f5230d79c933adf51616dcb45d39c4d94f97a01f700b1cc757b1a68fc1acc40a",
+          "hash_atp_random": "f5230d79c933adf51616dcb45d39c4d94f97a01f700b1cc757b1a68fc1acc40a",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6390547564361638,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 10.0,
+        "acc_own_policy": 0.75,
+        "acc_matched_kmax": 0.75,
+        "route_acc": 0.025,
+        "usage_entropy": 0.9951259025141512,
+        "emit_rate": 0.5,
+        "mean_tension": 0.6895404611279551,
+        "p5": {
+          "hash_real": "bf9f260fb108b70bd7a8acad20c94dcec65800ef2116fc52cf30dd3e08e17f73",
+          "hash_atp_zeroed": "bf9f260fb108b70bd7a8acad20c94dcec65800ef2116fc52cf30dd3e08e17f73",
+          "hash_atp_random": "bf9f260fb108b70bd7a8acad20c94dcec65800ef2116fc52cf30dd3e08e17f73",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5,
+          "mean_tension": 0.6895404611279551,
+          "p5_clean": true
+        }
+      }
+    },
+    "v1_shuffled_select": {
+      "0": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.59625,
+        "acc_matched_kmax": 0.59625,
+        "route_acc": 0.0075,
+        "usage_entropy": 0.9996819051090622,
+        "emit_rate": 0.13875,
+        "mean_tension": 0.3837524648396671,
+        "p5": {
+          "hash_real": "94e8fbf9cfd34455d628cf7eca8ad079005dc86b6a6ff469f3c37bc77f13dbaa",
+          "hash_atp_zeroed": "94e8fbf9cfd34455d628cf7eca8ad079005dc86b6a6ff469f3c37bc77f13dbaa",
+          "hash_atp_random": "94e8fbf9cfd34455d628cf7eca8ad079005dc86b6a6ff469f3c37bc77f13dbaa",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.13875,
+          "mean_tension": 0.3837524648396671,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.61125,
+        "acc_matched_kmax": 0.61125,
+        "route_acc": 0.0475,
+        "usage_entropy": 0.999892399939732,
+        "emit_rate": 0.16625,
+        "mean_tension": 0.3786869786549251,
+        "p5": {
+          "hash_real": "37eec80e93ca5b1386ebf6434c55220ebc16c60c6710ba1a09f8b2eea4c4c0a5",
+          "hash_atp_zeroed": "37eec80e93ca5b1386ebf6434c55220ebc16c60c6710ba1a09f8b2eea4c4c0a5",
+          "hash_atp_random": "37eec80e93ca5b1386ebf6434c55220ebc16c60c6710ba1a09f8b2eea4c4c0a5",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.16625,
+          "mean_tension": 0.3786869786549251,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.5825,
+        "acc_matched_kmax": 0.5825,
+        "route_acc": 0.04625,
+        "usage_entropy": 0.9997228835407177,
+        "emit_rate": 0.18375,
+        "mean_tension": 0.3630819982227614,
+        "p5": {
+          "hash_real": "b68e9f57de012d1a046bcf3623b87587af4ca0381ea175e61563325a4193ea56",
+          "hash_atp_zeroed": "b68e9f57de012d1a046bcf3623b87587af4ca0381ea175e61563325a4193ea56",
+          "hash_atp_random": "b68e9f57de012d1a046bcf3623b87587af4ca0381ea175e61563325a4193ea56",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.18375,
+          "mean_tension": 0.3630819982227614,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.6025,
+        "acc_matched_kmax": 0.6025,
+        "route_acc": 0.0325,
+        "usage_entropy": 0.99973304737929,
+        "emit_rate": 0.13375,
+        "mean_tension": 0.37770200535069504,
+        "p5": {
+          "hash_real": "3cf003980734de16ea24ff48c04b7fd5433d3719d73a46760ca478ff48869792",
+          "hash_atp_zeroed": "3cf003980734de16ea24ff48c04b7fd5433d3719d73a46760ca478ff48869792",
+          "hash_atp_random": "3cf003980734de16ea24ff48c04b7fd5433d3719d73a46760ca478ff48869792",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.13375,
+          "mean_tension": 0.37770200535069504,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 8,
+        "mean_k": 8.0,
+        "mean_k_last200": 8.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": 0.0,
+        "acc_own_policy": 0.605,
+        "acc_matched_kmax": 0.605,
+        "route_acc": 0.03625,
+        "usage_entropy": 0.9998515631903317,
+        "emit_rate": 0.0825,
+        "mean_tension": 0.4015004316205508,
+        "p5": {
+          "hash_real": "fe0ffe7ae2678ca0b2030dd07f986ad3d7493cf2ee7846fadc6726f8467f034d",
+          "hash_atp_zeroed": "fe0ffe7ae2678ca0b2030dd07f986ad3d7493cf2ee7846fadc6726f8467f034d",
+          "hash_atp_random": "fe0ffe7ae2678ca0b2030dd07f986ad3d7493cf2ee7846fadc6726f8467f034d",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.0825,
+          "mean_tension": 0.4015004316205508,
+          "p5_clean": true
+        }
+      }
+    },
+    "vr_static_cap_k1": {
+      "0": {
+        "k_eval": 1,
+        "mean_k": 1.0,
+        "mean_k_last200": 1.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.67875,
+        "acc_matched_kmax": 0.6575,
+        "route_acc": 0.0075,
+        "usage_entropy": 0.9104129712900163,
+        "emit_rate": 0.33125,
+        "mean_tension": 0.5745503386009457,
+        "p5": {
+          "hash_real": "547dc1325f903367b69eaa6b664690090e26b35810608779dd439ec85edc839b",
+          "hash_atp_zeroed": "547dc1325f903367b69eaa6b664690090e26b35810608779dd439ec85edc839b",
+          "hash_atp_random": "547dc1325f903367b69eaa6b664690090e26b35810608779dd439ec85edc839b",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.33125,
+          "mean_tension": 0.5745503386009457,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 1,
+        "mean_k": 1.0,
+        "mean_k_last200": 1.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.59875,
+        "acc_matched_kmax": 0.6525,
+        "route_acc": 0.0475,
+        "usage_entropy": 0.9522082347544985,
+        "emit_rate": 0.37625,
+        "mean_tension": 0.5274704722269721,
+        "p5": {
+          "hash_real": "87cd4465e3f4668e48651099ca3530afcfbac42e93b1d67daac1f75412ff42fe",
+          "hash_atp_zeroed": "87cd4465e3f4668e48651099ca3530afcfbac42e93b1d67daac1f75412ff42fe",
+          "hash_atp_random": "87cd4465e3f4668e48651099ca3530afcfbac42e93b1d67daac1f75412ff42fe",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.37625,
+          "mean_tension": 0.5274704722269721,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 1,
+        "mean_k": 1.0,
+        "mean_k_last200": 1.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.58875,
+        "acc_matched_kmax": 0.59125,
+        "route_acc": 0.04625,
+        "usage_entropy": 0.9311576252396946,
+        "emit_rate": 0.4125,
+        "mean_tension": 0.5207043198483633,
+        "p5": {
+          "hash_real": "9124cb1ca4a7040a34aff361abddcdeda71415d4073cf09837fdf1817ebb38cd",
+          "hash_atp_zeroed": "9124cb1ca4a7040a34aff361abddcdeda71415d4073cf09837fdf1817ebb38cd",
+          "hash_atp_random": "9124cb1ca4a7040a34aff361abddcdeda71415d4073cf09837fdf1817ebb38cd",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.4125,
+          "mean_tension": 0.5207043198483633,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 1,
+        "mean_k": 1.0,
+        "mean_k_last200": 1.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.6325,
+        "acc_matched_kmax": 0.6375,
+        "route_acc": 0.0325,
+        "usage_entropy": 0.9314547129859653,
+        "emit_rate": 0.34,
+        "mean_tension": 0.535213779902299,
+        "p5": {
+          "hash_real": "bbc0292316a4dfcb402853016b0f46337cfc3752f1c919b5e86057cae74b679b",
+          "hash_atp_zeroed": "bbc0292316a4dfcb402853016b0f46337cfc3752f1c919b5e86057cae74b679b",
+          "hash_atp_random": "bbc0292316a4dfcb402853016b0f46337cfc3752f1c919b5e86057cae74b679b",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.34,
+          "mean_tension": 0.535213779902299,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 1,
+        "mean_k": 1.0,
+        "mean_k_last200": 1.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.65375,
+        "acc_matched_kmax": 0.6475,
+        "route_acc": 0.03625,
+        "usage_entropy": 0.9474213656992785,
+        "emit_rate": 0.3175,
+        "mean_tension": 0.5893973187293912,
+        "p5": {
+          "hash_real": "d42f81ababc2b5a0661811f96592a893d2b87ec686c0d7c3f38eff8fddfe23d9",
+          "hash_atp_zeroed": "d42f81ababc2b5a0661811f96592a893d2b87ec686c0d7c3f38eff8fddfe23d9",
+          "hash_atp_random": "d42f81ababc2b5a0661811f96592a893d2b87ec686c0d7c3f38eff8fddfe23d9",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.3175,
+          "mean_tension": 0.5893973187293912,
+          "p5_clean": true
+        }
+      }
+    },
+    "EXP_tight": {
+      "0": {
+        "k_eval": 2,
+        "mean_k": 1.6673333333333333,
+        "mean_k_last200": 1.665,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 3.667333333333333,
+        "acc_own_policy": 0.76,
+        "acc_matched_kmax": 0.7575,
+        "route_acc": 0.0,
+        "usage_entropy": 0.8578136399446888,
+        "emit_rate": 0.44,
+        "mean_tension": 0.6237786726652012,
+        "p5": {
+          "hash_real": "b8ff7897ac70186861f2251b50269afbd0979cdcfe3c71e009ceb68976c275ac",
+          "hash_atp_zeroed": "b8ff7897ac70186861f2251b50269afbd0979cdcfe3c71e009ceb68976c275ac",
+          "hash_atp_random": "b8ff7897ac70186861f2251b50269afbd0979cdcfe3c71e009ceb68976c275ac",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.44,
+          "mean_tension": 0.6237786726652012,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 2,
+        "mean_k": 1.67,
+        "mean_k_last200": 1.665,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 3.67,
+        "acc_own_policy": 0.76375,
+        "acc_matched_kmax": 0.76,
+        "route_acc": 0.0025,
+        "usage_entropy": 0.8827449482593853,
+        "emit_rate": 0.46625,
+        "mean_tension": 0.5770408694763985,
+        "p5": {
+          "hash_real": "3d6cbc0efa2546cd6893a5de975dccf39fd850cbc7113253348244a3fdadcd67",
+          "hash_atp_zeroed": "3d6cbc0efa2546cd6893a5de975dccf39fd850cbc7113253348244a3fdadcd67",
+          "hash_atp_random": "3d6cbc0efa2546cd6893a5de975dccf39fd850cbc7113253348244a3fdadcd67",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.46625,
+          "mean_tension": 0.5770408694763985,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 2,
+        "mean_k": 1.668,
+        "mean_k_last200": 1.665,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 3.668,
+        "acc_own_policy": 0.71625,
+        "acc_matched_kmax": 0.72,
+        "route_acc": 0.10625,
+        "usage_entropy": 0.8572986680011566,
+        "emit_rate": 0.4675,
+        "mean_tension": 0.573145116220751,
+        "p5": {
+          "hash_real": "d052ff113fc5ccc591187b9cfb33633afd8fedc6d106b54d529cab55f306bb1c",
+          "hash_atp_zeroed": "d052ff113fc5ccc591187b9cfb33633afd8fedc6d106b54d529cab55f306bb1c",
+          "hash_atp_random": "d052ff113fc5ccc591187b9cfb33633afd8fedc6d106b54d529cab55f306bb1c",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.4675,
+          "mean_tension": 0.573145116220751,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 2,
+        "mean_k": 1.6686666666666667,
+        "mean_k_last200": 1.665,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 3.6686666666666667,
+        "acc_own_policy": 0.77875,
+        "acc_matched_kmax": 0.785,
+        "route_acc": 0.0,
+        "usage_entropy": 0.8908217684669354,
+        "emit_rate": 0.47125,
+        "mean_tension": 0.619551376449303,
+        "p5": {
+          "hash_real": "d5e2a87be85f10e03a4db2295555f935443a03615bad5d8cf9f55e744fd64c61",
+          "hash_atp_zeroed": "d5e2a87be85f10e03a4db2295555f935443a03615bad5d8cf9f55e744fd64c61",
+          "hash_atp_random": "d5e2a87be85f10e03a4db2295555f935443a03615bad5d8cf9f55e744fd64c61",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.47125,
+          "mean_tension": 0.619551376449303,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 2,
+        "mean_k": 1.6686666666666667,
+        "mean_k_last200": 1.665,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 3.6686666666666667,
+        "acc_own_policy": 0.79,
+        "acc_matched_kmax": 0.79125,
+        "route_acc": 0.055,
+        "usage_entropy": 0.8997993059592613,
+        "emit_rate": 0.455,
+        "mean_tension": 0.677227826204356,
+        "p5": {
+          "hash_real": "84a79b946983678be9b8e9e5d2853e845bb84ae312b31888a58a3cb2979d511f",
+          "hash_atp_zeroed": "84a79b946983678be9b8e9e5d2853e845bb84ae312b31888a58a3cb2979d511f",
+          "hash_atp_random": "84a79b946983678be9b8e9e5d2853e845bb84ae312b31888a58a3cb2979d511f",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.455,
+          "mean_tension": 0.677227826204356,
+          "p5_clean": true
+        }
+      }
+    },
+    "c3_static_cap_k2__for_EXP_tight": {
+      "0": {
+        "k_eval": 2,
+        "mean_k": 2.0,
+        "mean_k_last200": 2.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.74625,
+        "acc_matched_kmax": 0.7525,
+        "route_acc": 0.0175,
+        "usage_entropy": 0.8948847446799348,
+        "emit_rate": 0.465,
+        "mean_tension": 0.6462021520580918,
+        "p5": {
+          "hash_real": "f545d61014fab76646ee408b79daa031923a3205c7a299968d8180d50fbe1216",
+          "hash_atp_zeroed": "f545d61014fab76646ee408b79daa031923a3205c7a299968d8180d50fbe1216",
+          "hash_atp_random": "f545d61014fab76646ee408b79daa031923a3205c7a299968d8180d50fbe1216",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.465,
+          "mean_tension": 0.6462021520580918,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 2,
+        "mean_k": 2.0,
+        "mean_k_last200": 2.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.765,
+        "acc_matched_kmax": 0.77,
+        "route_acc": 0.065,
+        "usage_entropy": 0.9149522729249496,
+        "emit_rate": 0.5125,
+        "mean_tension": 0.6183231192201458,
+        "p5": {
+          "hash_real": "33f08923d7da7d1cb70bd4bc0d577dc24e1081732c8b8c615a0f9acbf2ba358b",
+          "hash_atp_zeroed": "33f08923d7da7d1cb70bd4bc0d577dc24e1081732c8b8c615a0f9acbf2ba358b",
+          "hash_atp_random": "33f08923d7da7d1cb70bd4bc0d577dc24e1081732c8b8c615a0f9acbf2ba358b",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5125,
+          "mean_tension": 0.6183231192201458,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 2,
+        "mean_k": 2.0,
+        "mean_k_last200": 2.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.72125,
+        "acc_matched_kmax": 0.72,
+        "route_acc": 0.0725,
+        "usage_entropy": 0.9058725751505713,
+        "emit_rate": 0.51625,
+        "mean_tension": 0.60371335698357,
+        "p5": {
+          "hash_real": "0d2fd1571c9c246842b3597c4cdc492be0829ac941abe312bff1b66652d693ac",
+          "hash_atp_zeroed": "0d2fd1571c9c246842b3597c4cdc492be0829ac941abe312bff1b66652d693ac",
+          "hash_atp_random": "0d2fd1571c9c246842b3597c4cdc492be0829ac941abe312bff1b66652d693ac",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51625,
+          "mean_tension": 0.60371335698357,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 2,
+        "mean_k": 2.0,
+        "mean_k_last200": 2.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.7725,
+        "acc_matched_kmax": 0.765,
+        "route_acc": 0.00125,
+        "usage_entropy": 0.8947269539703028,
+        "emit_rate": 0.48375,
+        "mean_tension": 0.6337297466780493,
+        "p5": {
+          "hash_real": "5e69fc207a92a286a053b1956a81e18b95d3e736f4d8fa8511c33b32e76a7e52",
+          "hash_atp_zeroed": "5e69fc207a92a286a053b1956a81e18b95d3e736f4d8fa8511c33b32e76a7e52",
+          "hash_atp_random": "5e69fc207a92a286a053b1956a81e18b95d3e736f4d8fa8511c33b32e76a7e52",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.48375,
+          "mean_tension": 0.6337297466780493,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 2,
+        "mean_k": 2.0,
+        "mean_k_last200": 2.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.785,
+        "acc_matched_kmax": 0.78125,
+        "route_acc": 0.0425,
+        "usage_entropy": 0.8977267841403657,
+        "emit_rate": 0.50875,
+        "mean_tension": 0.6978409388899292,
+        "p5": {
+          "hash_real": "a545f0852b6b6363df2a1390ee0d85568cbfe4ccc7171b496b429b49df962fcb",
+          "hash_atp_zeroed": "a545f0852b6b6363df2a1390ee0d85568cbfe4ccc7171b496b429b49df962fcb",
+          "hash_atp_random": "a545f0852b6b6363df2a1390ee0d85568cbfe4ccc7171b496b429b49df962fcb",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.50875,
+          "mean_tension": 0.6978409388899292,
+          "p5_clean": true
+        }
+      }
+    },
+    "EXP_mid": {
+      "0": {
+        "k_eval": 3,
+        "mean_k": 3.08,
+        "mean_k_last200": 3.075,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 5.08,
+        "acc_own_policy": 0.76125,
+        "acc_matched_kmax": 0.75875,
+        "route_acc": 0.01125,
+        "usage_entropy": 0.89616534512876,
+        "emit_rate": 0.49875,
+        "mean_tension": 0.6760435667990857,
+        "p5": {
+          "hash_real": "bdfbbe751ad1d5abfd2de0ea5f8f0920eadd242b806d8cd629ec7c21b9b90b8d",
+          "hash_atp_zeroed": "bdfbbe751ad1d5abfd2de0ea5f8f0920eadd242b806d8cd629ec7c21b9b90b8d",
+          "hash_atp_random": "bdfbbe751ad1d5abfd2de0ea5f8f0920eadd242b806d8cd629ec7c21b9b90b8d",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.49875,
+          "mean_tension": 0.6760435667990857,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 3,
+        "mean_k": 3.0833333333333335,
+        "mean_k_last200": 3.075,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 5.083333333333333,
+        "acc_own_policy": 0.76375,
+        "acc_matched_kmax": 0.76625,
+        "route_acc": 0.08125,
+        "usage_entropy": 0.9577298851077838,
+        "emit_rate": 0.51875,
+        "mean_tension": 0.62418753565584,
+        "p5": {
+          "hash_real": "6d68761ccc08f4ad19383dcb8da8164a2262f24aaa84b828bacfa7bc1796440a",
+          "hash_atp_zeroed": "6d68761ccc08f4ad19383dcb8da8164a2262f24aaa84b828bacfa7bc1796440a",
+          "hash_atp_random": "6d68761ccc08f4ad19383dcb8da8164a2262f24aaa84b828bacfa7bc1796440a",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51875,
+          "mean_tension": 0.62418753565584,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 3,
+        "mean_k": 3.0806666666666667,
+        "mean_k_last200": 3.075,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 5.080666666666667,
+        "acc_own_policy": 0.73875,
+        "acc_matched_kmax": 0.74,
+        "route_acc": 0.095,
+        "usage_entropy": 0.9295175032924659,
+        "emit_rate": 0.53125,
+        "mean_tension": 0.6177793780951931,
+        "p5": {
+          "hash_real": "b504f4fc7b7347d1beb015379c5613ee15a2e51d3a91f5f6dd8fd0a3b14b4e8e",
+          "hash_atp_zeroed": "b504f4fc7b7347d1beb015379c5613ee15a2e51d3a91f5f6dd8fd0a3b14b4e8e",
+          "hash_atp_random": "b504f4fc7b7347d1beb015379c5613ee15a2e51d3a91f5f6dd8fd0a3b14b4e8e",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.53125,
+          "mean_tension": 0.6177793780951931,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 3,
+        "mean_k": 3.082,
+        "mean_k_last200": 3.075,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 5.082,
+        "acc_own_policy": 0.7675,
+        "acc_matched_kmax": 0.77,
+        "route_acc": 0.00125,
+        "usage_entropy": 0.8976971021046904,
+        "emit_rate": 0.52375,
+        "mean_tension": 0.6408825897988132,
+        "p5": {
+          "hash_real": "d11af637438579c0c271bf51c182514e38bbc520258cdc424493e1cf28e9f003",
+          "hash_atp_zeroed": "d11af637438579c0c271bf51c182514e38bbc520258cdc424493e1cf28e9f003",
+          "hash_atp_random": "d11af637438579c0c271bf51c182514e38bbc520258cdc424493e1cf28e9f003",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.52375,
+          "mean_tension": 0.6408825897988132,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 3,
+        "mean_k": 3.082,
+        "mean_k_last200": 3.08,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 5.082,
+        "acc_own_policy": 0.775,
+        "acc_matched_kmax": 0.78,
+        "route_acc": 0.0325,
+        "usage_entropy": 0.9141505377213303,
+        "emit_rate": 0.51875,
+        "mean_tension": 0.7113413839895324,
+        "p5": {
+          "hash_real": "7e81323300f44c638107c6043f372772c99116dd56215df42cd68bee860442fb",
+          "hash_atp_zeroed": "7e81323300f44c638107c6043f372772c99116dd56215df42cd68bee860442fb",
+          "hash_atp_random": "7e81323300f44c638107c6043f372772c99116dd56215df42cd68bee860442fb",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51875,
+          "mean_tension": 0.7113413839895324,
+          "p5_clean": true
+        }
+      }
+    },
+    "c3_static_cap_k3__for_EXP_mid": {
+      "0": {
+        "k_eval": 3,
+        "mean_k": 3.0,
+        "mean_k_last200": 3.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.76125,
+        "acc_matched_kmax": 0.76375,
+        "route_acc": 0.005,
+        "usage_entropy": 0.901189667115616,
+        "emit_rate": 0.51375,
+        "mean_tension": 0.6686065821005375,
+        "p5": {
+          "hash_real": "5619f2086c7259a26e37292a3c27e009792dd793c6d37a391b9485387e4fd537",
+          "hash_atp_zeroed": "5619f2086c7259a26e37292a3c27e009792dd793c6d37a391b9485387e4fd537",
+          "hash_atp_random": "5619f2086c7259a26e37292a3c27e009792dd793c6d37a391b9485387e4fd537",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51375,
+          "mean_tension": 0.6686065821005375,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 3,
+        "mean_k": 3.0,
+        "mean_k_last200": 3.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.755,
+        "acc_matched_kmax": 0.75625,
+        "route_acc": 0.0675,
+        "usage_entropy": 0.969200387691509,
+        "emit_rate": 0.50625,
+        "mean_tension": 0.6107275278639418,
+        "p5": {
+          "hash_real": "578adc41fa267d2aec1d8cc4c9259b0d046f1d51562f42a07117b072e876a299",
+          "hash_atp_zeroed": "578adc41fa267d2aec1d8cc4c9259b0d046f1d51562f42a07117b072e876a299",
+          "hash_atp_random": "578adc41fa267d2aec1d8cc4c9259b0d046f1d51562f42a07117b072e876a299",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.50625,
+          "mean_tension": 0.6107275278639418,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 3,
+        "mean_k": 3.0,
+        "mean_k_last200": 3.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.73875,
+        "acc_matched_kmax": 0.72875,
+        "route_acc": 0.06875,
+        "usage_entropy": 0.9122494960402963,
+        "emit_rate": 0.51625,
+        "mean_tension": 0.6119734006573095,
+        "p5": {
+          "hash_real": "a714374b28712ea3e0a2f71325a3aab92f822d60ae609ee1f5fb74edea1eac51",
+          "hash_atp_zeroed": "a714374b28712ea3e0a2f71325a3aab92f822d60ae609ee1f5fb74edea1eac51",
+          "hash_atp_random": "a714374b28712ea3e0a2f71325a3aab92f822d60ae609ee1f5fb74edea1eac51",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51625,
+          "mean_tension": 0.6119734006573095,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 3,
+        "mean_k": 3.0,
+        "mean_k_last200": 3.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.76,
+        "acc_matched_kmax": 0.7625,
+        "route_acc": 0.03375,
+        "usage_entropy": 0.8964994455733746,
+        "emit_rate": 0.5075,
+        "mean_tension": 0.6365418468001512,
+        "p5": {
+          "hash_real": "ca2be8cdc1b3801bb4e966b4acc775c6a4221ef03ec99aed9c503431ecd33a59",
+          "hash_atp_zeroed": "ca2be8cdc1b3801bb4e966b4acc775c6a4221ef03ec99aed9c503431ecd33a59",
+          "hash_atp_random": "ca2be8cdc1b3801bb4e966b4acc775c6a4221ef03ec99aed9c503431ecd33a59",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5075,
+          "mean_tension": 0.6365418468001512,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 3,
+        "mean_k": 3.0,
+        "mean_k_last200": 3.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.76875,
+        "acc_matched_kmax": 0.775,
+        "route_acc": 0.0425,
+        "usage_entropy": 0.8963697833228477,
+        "emit_rate": 0.51125,
+        "mean_tension": 0.7031167253686621,
+        "p5": {
+          "hash_real": "78bc8cf67b5e2156f35ac852bb6f70dc4f9877ad54cda4dafb91d22e1f61464c",
+          "hash_atp_zeroed": "78bc8cf67b5e2156f35ac852bb6f70dc4f9877ad54cda4dafb91d22e1f61464c",
+          "hash_atp_random": "78bc8cf67b5e2156f35ac852bb6f70dc4f9877ad54cda4dafb91d22e1f61464c",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51125,
+          "mean_tension": 0.7031167253686621,
+          "p5_clean": true
+        }
+      }
+    },
+    "EXP_loose": {
+      "0": {
+        "k_eval": 5,
+        "mean_k": 4.731333333333334,
+        "mean_k_last200": 4.72,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 6.731333333333334,
+        "acc_own_policy": 0.75875,
+        "acc_matched_kmax": 0.76,
+        "route_acc": 0.01,
+        "usage_entropy": 0.9427835714611777,
+        "emit_rate": 0.4975,
+        "mean_tension": 0.6635756036673175,
+        "p5": {
+          "hash_real": "fdcbe932d23c5c15fc615507ebe530e6a1819f43e49231fa5b6359db72536ed5",
+          "hash_atp_zeroed": "fdcbe932d23c5c15fc615507ebe530e6a1819f43e49231fa5b6359db72536ed5",
+          "hash_atp_random": "fdcbe932d23c5c15fc615507ebe530e6a1819f43e49231fa5b6359db72536ed5",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.4975,
+          "mean_tension": 0.6635756036673175,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 5,
+        "mean_k": 4.736,
+        "mean_k_last200": 4.725,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 6.736,
+        "acc_own_policy": 0.775,
+        "acc_matched_kmax": 0.77875,
+        "route_acc": 0.07375,
+        "usage_entropy": 0.9747713348624897,
+        "emit_rate": 0.51,
+        "mean_tension": 0.6102973281057723,
+        "p5": {
+          "hash_real": "a4e7da12a20972bf865521c88f31d6ee7c0a6a9a0c20011296368e8e6ea30298",
+          "hash_atp_zeroed": "a4e7da12a20972bf865521c88f31d6ee7c0a6a9a0c20011296368e8e6ea30298",
+          "hash_atp_random": "a4e7da12a20972bf865521c88f31d6ee7c0a6a9a0c20011296368e8e6ea30298",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.51,
+          "mean_tension": 0.6102973281057723,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 5,
+        "mean_k": 4.732,
+        "mean_k_last200": 4.72,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 6.732,
+        "acc_own_policy": 0.71375,
+        "acc_matched_kmax": 0.7175,
+        "route_acc": 0.06875,
+        "usage_entropy": 0.9587638844103925,
+        "emit_rate": 0.55,
+        "mean_tension": 0.6213812210249077,
+        "p5": {
+          "hash_real": "2d23c94e51bc0c891bc1de0ba26809cb2a6efbea00a46db02de112a6b28ac8df",
+          "hash_atp_zeroed": "2d23c94e51bc0c891bc1de0ba26809cb2a6efbea00a46db02de112a6b28ac8df",
+          "hash_atp_random": "2d23c94e51bc0c891bc1de0ba26809cb2a6efbea00a46db02de112a6b28ac8df",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.55,
+          "mean_tension": 0.6213812210249077,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 5,
+        "mean_k": 4.734,
+        "mean_k_last200": 4.72,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 6.734,
+        "acc_own_policy": 0.77,
+        "acc_matched_kmax": 0.7725,
+        "route_acc": 0.025,
+        "usage_entropy": 0.9469976868449455,
+        "emit_rate": 0.53125,
+        "mean_tension": 0.6517626953284832,
+        "p5": {
+          "hash_real": "8dea97c604d8c6be91a76787d47a92db48a642a651924a83933a54529d141b86",
+          "hash_atp_zeroed": "8dea97c604d8c6be91a76787d47a92db48a642a651924a83933a54529d141b86",
+          "hash_atp_random": "8dea97c604d8c6be91a76787d47a92db48a642a651924a83933a54529d141b86",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.53125,
+          "mean_tension": 0.6517626953284832,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 5,
+        "mean_k": 4.733333333333333,
+        "mean_k_last200": 4.72,
+        "binding_rate": 0.9993333333333333,
+        "mean_atp_consumed": 6.733333333333333,
+        "acc_own_policy": 0.765,
+        "acc_matched_kmax": 0.7675,
+        "route_acc": 0.0275,
+        "usage_entropy": 0.958384878169377,
+        "emit_rate": 0.5025,
+        "mean_tension": 0.6958423266503257,
+        "p5": {
+          "hash_real": "3e0b3dc22c65b613a5dbc8a8c1697f6a96e2015bdce41249b502f085518df6a5",
+          "hash_atp_zeroed": "3e0b3dc22c65b613a5dbc8a8c1697f6a96e2015bdce41249b502f085518df6a5",
+          "hash_atp_random": "3e0b3dc22c65b613a5dbc8a8c1697f6a96e2015bdce41249b502f085518df6a5",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5025,
+          "mean_tension": 0.6958423266503257,
+          "p5_clean": true
+        }
+      }
+    },
+    "c3_static_cap_k5__for_EXP_loose": {
+      "0": {
+        "k_eval": 5,
+        "mean_k": 5.0,
+        "mean_k_last200": 5.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.765,
+        "acc_matched_kmax": 0.77,
+        "route_acc": 0.00875,
+        "usage_entropy": 0.943635998904954,
+        "emit_rate": 0.4975,
+        "mean_tension": 0.6644960289252398,
+        "p5": {
+          "hash_real": "940d6cd17fc97a9220aae91a3509edf6f06986d1bf52ec1da9bce2c90c4cdb48",
+          "hash_atp_zeroed": "940d6cd17fc97a9220aae91a3509edf6f06986d1bf52ec1da9bce2c90c4cdb48",
+          "hash_atp_random": "940d6cd17fc97a9220aae91a3509edf6f06986d1bf52ec1da9bce2c90c4cdb48",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.4975,
+          "mean_tension": 0.6644960289252398,
+          "p5_clean": true
+        }
+      },
+      "1": {
+        "k_eval": 5,
+        "mean_k": 5.0,
+        "mean_k_last200": 5.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.76,
+        "acc_matched_kmax": 0.7625,
+        "route_acc": 0.06375,
+        "usage_entropy": 0.9663058612828784,
+        "emit_rate": 0.5175,
+        "mean_tension": 0.617770358999414,
+        "p5": {
+          "hash_real": "0814ced200d4c5e68901022db51e12275a411954680a8ae1939da47defd7c844",
+          "hash_atp_zeroed": "0814ced200d4c5e68901022db51e12275a411954680a8ae1939da47defd7c844",
+          "hash_atp_random": "0814ced200d4c5e68901022db51e12275a411954680a8ae1939da47defd7c844",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5175,
+          "mean_tension": 0.617770358999414,
+          "p5_clean": true
+        }
+      },
+      "2": {
+        "k_eval": 5,
+        "mean_k": 5.0,
+        "mean_k_last200": 5.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.68875,
+        "acc_matched_kmax": 0.68875,
+        "route_acc": 0.06875,
+        "usage_entropy": 0.9671197655981999,
+        "emit_rate": 0.5475,
+        "mean_tension": 0.6187323837316652,
+        "p5": {
+          "hash_real": "5319b584732116ce2946211d738ba9545bf59d8a086637796cd12903cc18c0a7",
+          "hash_atp_zeroed": "5319b584732116ce2946211d738ba9545bf59d8a086637796cd12903cc18c0a7",
+          "hash_atp_random": "5319b584732116ce2946211d738ba9545bf59d8a086637796cd12903cc18c0a7",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.5475,
+          "mean_tension": 0.6187323837316652,
+          "p5_clean": true
+        }
+      },
+      "3": {
+        "k_eval": 5,
+        "mean_k": 5.0,
+        "mean_k_last200": 5.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.765,
+        "acc_matched_kmax": 0.76125,
+        "route_acc": 0.02875,
+        "usage_entropy": 0.9477683580869293,
+        "emit_rate": 0.52,
+        "mean_tension": 0.6478578761367711,
+        "p5": {
+          "hash_real": "3f407d8a3b72bfc338f85f0e2d004ad52739fcf0678345a144e1b8b0ec763715",
+          "hash_atp_zeroed": "3f407d8a3b72bfc338f85f0e2d004ad52739fcf0678345a144e1b8b0ec763715",
+          "hash_atp_random": "3f407d8a3b72bfc338f85f0e2d004ad52739fcf0678345a144e1b8b0ec763715",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.52,
+          "mean_tension": 0.6478578761367711,
+          "p5_clean": true
+        }
+      },
+      "4": {
+        "k_eval": 5,
+        "mean_k": 5.0,
+        "mean_k_last200": 5.0,
+        "binding_rate": 0.0,
+        "mean_atp_consumed": null,
+        "acc_own_policy": 0.77375,
+        "acc_matched_kmax": 0.7725,
+        "route_acc": 0.015,
+        "usage_entropy": 0.9509865777172749,
+        "emit_rate": 0.4975,
+        "mean_tension": 0.6929195678664937,
+        "p5": {
+          "hash_real": "cd8a3d0b84736c1aaaa9d3f2a8ae99c2eda003726bfa4c8834f8931ace4852a7",
+          "hash_atp_zeroed": "cd8a3d0b84736c1aaaa9d3f2a8ae99c2eda003726bfa4c8834f8931ace4852a7",
+          "hash_atp_random": "cd8a3d0b84736c1aaaa9d3f2a8ae99c2eda003726bfa4c8834f8931ace4852a7",
+          "identical": true,
+          "emit_fn_has_no_atp_symbol": true,
+          "emit_rate": 0.4975,
+          "mean_tension": 0.6929195678664937,
+          "p5_clean": true
+        }
+      }
+    }
+  },
+  "wall_sec": 29.25
+}
