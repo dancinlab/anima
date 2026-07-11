@@ -63,7 +63,12 @@ the raw-daemon verdict (veto-capacity structurally absent, cap-of-2) STANDS and 
 - FORBIDDEN (would be tune-to-green): adopting cyclic sleep WITHOUT the J1–J5 grounds; skipping forced-N3
   exclusion; post-hoc population choices; lowering the ≥20 gate / 0.3 threshold / `safe` conjunction; pooling
   fresh-start warmup vetoes (chrono confound); extending ticks on the raw daemon.
-- code: `cli/chat.py` (`ANIMA_STAGE_CYCLE` flag, 1 line + `_meta` stamp) · `state/h1058_agency_daemon/`
-  `contingency_gauge.py` (new) + `agency_T.py --exclude-forced-n3`. baseline gauge on the 608-tick raw trace:
+- code / **wiring status**: `cli/chat.py` (`ANIMA_STAGE_CYCLE` flag @1412, `dr_stage_at((tick*8)%90)` @1421,
+  `_meta` stamp @1906) — **WIRED into the canonical py measurement daemon** (the run path per `a_eval_py_canonical`
+  / `chat-py-1`; env-flag reachable on every daemon invocation, default-OFF = byte-identical). `state/h1058_agency_daemon/`
+  `contingency_gauge.py` (new) + `agency_T.py --exclude-forced-n3` (research instruments, run by the post-run pipeline).
+  **hexa twin** (`cli/anima.hexa:2412` `dr_stage_at(tick*8)`) = 구현됨(py)·미배선(hexa) — the redundant 2nd surface
+  lags the flag; MOOT for this experiment (py is canonical · `hexa-daemon-link-moot-py-canonical`), sync as a
+  follow-on only if Y-ULTRA cements as a standing regime. baseline gauge on the 608-tick raw trace:
   stages {WAKE:8,N1:1,N2:1,N3:1,REM:597}, veto {N2:1 contingent, N3:1 forced} — confirms cap-of-2 mechanism.
 - verdict → `state/verdicts/9269_candidateY_ultradian_veto/` (on landing). Related: [[H_1058_temporal_agency_3b_transfer]] · H_935 · H_1056 · H_644 · `a_chat_sleep_imagination`.
