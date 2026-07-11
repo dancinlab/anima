@@ -14654,8 +14654,8 @@
    {
     "id": "release-yml-1",
     "state": "pos-conv",
-    "value": "release.yml install-smoke exit139 SIGSEGV = github-hosted runner 환경특정, NOT v0.716.0 전역결함 — 실 linux box(rented CPU pod)선 hx install anima(install.hexa) 정상 완주+trivial smoke ok; 태그는 autotag 정상생성하나 install-smoke red라 Release 미발행→gh Latest 고착; hx 소스빌드+실환경 정상이라 pool/pod 측정 무영향",
-    "threshold": "재발조건 gh Latest가 main보다 뒤처지고 release.yml install-smoke exit139; 오진금지 autotag태그갭·v0.716전역결함 아님; 해결 github-runner 최소재현→sandbox/seccomp/cgroup 격리",
+    "value": "release.yml install-smoke exit139 SIGSEGV = github-hosted **ubuntu** runner 환경특정(hexa 'hexa run' cli/anima.hexa compile+dispatch가 ubuntu서 ~18min hang→SIGSEGV), NOT anima 제품결함·NOT hexa 전역결함 — macos-14는 같은 소스 ~1m43s 정상·실 linux box(rented pod)도 정상. 4연속 release red로 gh Latest 고착됐던 것 해소(2026-07-12): install-smoke를 fail-fast:false + matrix.include{ubuntu blocking:false, macos-14 blocking:true} + continue-on-error:!blocking로 재구성 → macos-14가 BLOCKING 게이트, ubuntu는 informational. 한 러너 툴체인 벽이 hexa Release 전체를 막지 않음(infra-wall-noneval·pip채널이 이미 채택한 격리와 동일). upstream 근본=hexa-lang 'hexa run' ubuntu SIGSEGV.",
+    "threshold": "재발조건=gh Latest가 main보다 뒤처지고 release.yml install-smoke가 ubuntu서 exit139/hang. 오진금지=autotag 태그갭·hexa 전역결함·anima 결함 아님(macos+실box 정상). 해결=macos-14 gate + ubuntu continue-on-error(적용됨) → Release는 macos 검증으로 발행. 별도 upstream=hexa-lang hexa-run ubuntu SIGSEGV 최소재현(sandbox/seccomp/cgroup).",
     "source": "release.yml"
    },
    {
