@@ -135,6 +135,19 @@ def analyze(args):
     depths = [d["depth"] for d in depths_rows]
     assert len(depths) == len(rows), "depths/trace length mismatch"
 
+    # H_9269 Y-ULTRA pre-registration: reclassify schedule-FORCED N3 (stage==3) ACTIVE_VETO rows to
+    # FORCED_VETO so they drop out of the ACTIVE_VETO population (leg-a contrast + per-impulse vc
+    # numerator) while keeping len(rows) intact for depths alignment. N3 idle=5<30 for every urgency
+    # => zero decision-time contingency; only non-N3 (state-contingent) vetoes are the declared
+    # free-won't population. Inert on non-cyclic traces (N3 visited once). Declared, not post-hoc.
+    n_forced_n3 = 0
+    if getattr(args, "exclude_forced_n3", False):
+        for r in rows:
+            if r.get("cls") == "ACTIVE_VETO" and int(r.get("stage", -1)) == 3:
+                r["cls"] = "FORCED_VETO"
+                n_forced_n3 += 1
+        print("  [--exclude-forced-n3] reclassified %d N3 forced vetoes -> FORCED_VETO (excluded)" % n_forced_n3)
+
     vc = per_impulse_vc(rows, args.window)
     er = emit_rate(rows, args.window)
     T = [a + b for a, b in zip(zscore(depths), zscore(vc))]
@@ -323,6 +336,11 @@ def main(argv):
     a.add_argument("--phi", default=None); a.add_argument("--window", type=int, default=WINDOW)
     a.add_argument("--label", default="?"); a.add_argument("--out", default=None)
     a.add_argument("--arm-shock", action="store_true")
+    a.add_argument("--exclude-forced-n3", action="store_true",
+                   help="H_9269 Y-ULTRA pre-registration: drop schedule-FORCED N3 (stage==3) ACTIVE_VETO "
+                        "rows from the veto population (idle=5<30 for every urgency = zero decision-time "
+                        "contingency), keeping only STATE-CONTINGENT vetoes for the frozen legs. Declared "
+                        "population, not a post-hoc filter.")
     a.set_defaults(func=analyze)
     f = sub.add_parser("falsifier"); f.add_argument("results", nargs="+"); f.set_defaults(func=falsifier)
     m = sub.add_parser("mount-swap"); m.add_argument("results", nargs="+"); m.set_defaults(func=mount_swap)

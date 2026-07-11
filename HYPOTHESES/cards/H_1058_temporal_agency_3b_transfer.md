@@ -195,9 +195,13 @@ the outcome is a real result, not another infra note.
   **CAP OF EXACTLY 2**, not a rate — the vetoes are monochannel (rate-cooldown) and phase-locked to a
   one-shot N2/N3 sleep-stage visit that the non-cycling `dr_stage_at(tick*8)` (no modulo) never repeats.
   "There is no rate, there is a cap of 2" → 6000 ticks yields 2. Honest negative (p7), not a PASS/FAIL of H1.
-  **REOPEN = REDESIGN** (not re-run, not more ticks): **Candidate Y** = a content/Φ-channel stimulus protocol
-  that legitimately raises the ¬safe rate (~900–1500 ticks ≈ 17–29h, $0 pool, per-seed on DIFFERENT hosts),
-  pre-registered with its OWN falsifier BEFORE any veto is observed + T⊥chrono confound reported (frozen
-  falsifier verbatim). FORBIDDEN (tune-to-green): cyclic-sleep adopted *to* manufacture vetoes (Candidate X,
-  confounded), pooling fresh-start warmup vetoes (chrono confound), lowering the gate/threshold, extending
-  ticks. Bug fixed en route: `analyze_trace.py` now skips the enriched-trace `_meta` header row.
+  **REOPEN = REDESIGN** (not re-run, not more ticks) → pre-registered as **[[H_9269_candidateY_ultradian_veto]]**
+  (**Y-ULTRA**). NB the "content/Φ stimulus" sketch was MECHANICALLY VOID (Fable gate-anatomy: kill=`False`,
+  cont=`True`, phi_r tautological — only the sleep-arousal `rate` term is live; no per-tick input channel).
+  Y-ULTRA = restore `dr_stage_at((tick*8)%90)` (default-OFF `ANIMA_STAGE_CYCLE`, ZERO tuned params) so
+  ultradian stages recur and the contingent N2 brake (veto iff urgency<0.712) fires repeatedly; declared
+  population `--exclude-forced-n3`, frozen falsifier verbatim, T⊥chrono confound reported, kill-criteria
+  K1/K2/K3 pre-committed, 3 seed × 3 dedicated host × 900 tick ($0). FORBIDDEN (tune-to-green): cyclic sleep
+  WITHOUT the J1–J5 grounds / forced-N3 exclusion, post-hoc population choices, pooling warmup vetoes,
+  lowering the gate/threshold, extending ticks on the raw daemon. Bug fixed en route: `analyze_trace.py`
+  now skips the enriched-trace `_meta` header row.
