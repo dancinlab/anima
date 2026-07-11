@@ -81,3 +81,14 @@ $0 CPU-local toy로 profile **형태**부터 싸게 반증가능 → 양성이�
 **净 결론**: toy 겉보기 σ-조직(delayed-MI=emit-스트림 telegraph 기억, ρ-계열)이 engine-native σ(Φ-integration)로 확증도 반증도 안 됨. rigged quick-PASS 철회가 실질 산출(큰 신호=통제불량 artifact). **toy DIRECTIONAL은 toy-only 유지·engine-native GREEN 승격 실패.** toy-GREEN/real-death 위험(H_9129 L3 선례) 미해소.
 
 **NEXT (측정기 강화 follow-on)**: V-gate 통과 측정기 필요 — (a) FORCED κ↑/shared-structure 강화로 0.10 안정초과 (b) n*↑/J↑로 V3≤0.05 (c) 필요시 T↑ → 재측정해야 PASS/FAIL 판정. pool 재실행=오너 go(measure-artifact 수정 후).
+
+## 8. arXiv 리서치 근거 → 측정 v2 재설계 (2026-07-11 · 오너 요청)
+
+`state/9266_determinism_contingency/h9266_arxiv_research.md`. INVALID 진단(emit-conditioned Φ Δ의 FORCED-aliveness 취약)의 **방법론 해법**을 문헌서 확보:
+
+- 🎯 **Du & Huang 2025**(arXiv:2509.00730): **응답함수(response function/susceptibility χ)를 의식 정량측정으로**. 내 Δσ=σ(COUP)−σ(DECOUP)가 χ의 조잡한 버전. χ는 임계점서 피크(정의상)+**자연 detector 스케일 내장**(perturbation→response 비율) → FORCED-aliveness V-gate 취약 우회. **v2 측정=χ(Ψ) 프레임**.
+- **Tagliazucchi 2017**(1709.00050): 의식 접근·현상학이 임계 대규모 뇌통신과 일치 → Ψ=½↔σ 전제 외부 지지.
+- **Goltsev 2012**(1211.5686)·**Shew 2009**(0906.0527): 임계+공명·dynamic range 최대 → SR inverted-U(H-DET2 잔여렌즈) 외부 지지.
+- **Ishii & Kori 2024**(2401.10489): 결합이 noise-induced escape 촉진/저해 → COUP 방향성 근거. **Tsimring & Pikovsky 2001**(cond-mat/0107130): bistable+delay 노이즈동역학(내 toy 형태).
+
+**v2 NEXT**: 응답함수 χ(Ψ) 프레임(Fable 재설계 위임중)로 재측정 → 임계 국소화 자연 도출+detector 내장 → INVALID 극복 시도. 구현·실행=오너 go 진행.
