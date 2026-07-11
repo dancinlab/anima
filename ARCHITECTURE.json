@@ -14668,6 +14668,13 @@
     "value": "GPU 팟 A100 tier 가용성은 transient·양방향 fallback — secure/community 어느 tier도 순간 용량부족으로 rent 실패('Something went wrong')하거나 provisioning 후 GONE될 수 있다. 세션 2회: community 팟 GONE→secure 해결·secure capacity FAILED→community 해결. 단일 tier 고집 시 병렬 fleet rent 부분실패로 orchestrator hang.",
     "threshold": "재발조건: 병렬 다중 팟 rent 시 일부가 tier-capacity로 실패/GONE→orchestrator hang. 해결: (1)rent 'FAILED'/'Something went wrong'·GONE 감지 시 반대 tier(secure↔community) or vast로 즉시 재렌트(tier 고정 금지) (2)orchestrator는 rent-log 'FAILED' 감지 시 슬롯 즉시 abort·hexa cloud alive로 GONE 확인 (3)wall-first fleet은 tier-mix 발사. h1058-agency-daemon-1 정합.",
     "source": "hexa-cloud-tier-fallback"
+   },
+   {
+     "id": "decode-weight-reload-per-tick",
+     "state": "🟢 FIXED",
+     "value": "core/decode.py clm_load_weights/bg_load memoized by (abspath,mtime,size) — the full 303M .clm/.bin re-parse (int4-dequant+transpose) that ran on EVERY decode entry (=every emit tick in the consciousness daemon, dominant share of ~60-80s/tick) now paid once per (file,mtime) per process",
+     "threshold": "byte-exact ZERO risk: returns the identical W dict (decode output max|Δ|=0, no parity gate); W verified read-only during decode (all W-writes are load-time _device_residency/loader); edge path=\"\" (UNLOADED generator-swap arm) → key None → uncached",
+     "source": "H_9269 Y-ULTRA ~60-80s/tick bottleneck diagnosis workflow wiyxn21bk rank-1 · perf/decode-weight-cache · 2026-07-12"
    }
   ]
  }
