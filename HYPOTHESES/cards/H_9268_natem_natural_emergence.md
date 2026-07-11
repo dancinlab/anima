@@ -40,6 +40,14 @@ NSMC 150k 리뷰 model-free 감사(`a0neg_audit.py`·`a0neg_result.json`): pol-c
 
 **scope honesty**: A0-NEG는 부정-XOR 렌즈(γ census가 지목한 자연 텍스트 유일 이론상 non-additive class)라 강하나, 다른 자연 compositional 구조(의미역·구문 slot)는 미탐. DATA-🧱 방향은 부정-XOR 렌즈 확정 + FORM-live 대비. 완전 종결/정량화는 STAGE 1 사다리(자연 filler에 XBIND signal 밀도 임계 f* vs d_nat 42/MB 비교)로만 — spend-gated·owner go.
 
+## STAGE 0 확장 — broad DATA-🧱 (3 compositional 렌즈 + arxiv · 2026-07-11 · $0)
+owner "1,2 both go" — 다른 자연 compositional 렌즈 $0 감사 확장:
+- **A0-ADV(역접 XOR)**: n_q=92(well-powered)·flip 0.367(chance 미만!)·flip−add −0.144 = NOT-POWERED ⟹ XOR-class(부정+역접) **완전** NOT-POWERED.
+- **A0-INTENS(degree 수식어·非XOR 축)**: n_q=1528(극well-powered)·rule_acc 0.938 높으나 additive-ceiling 0.940·rule−add **−0.003**(완전 additive) = NOT-POWERED. downtoner(별로/전혀) flip 0.799도 additive main-effect로 흡수. ⟹ **DATA-🧱이 XOR 넘어 broad**: degree 조합도 held-out non-additive BIND signal 부재.
+- ⟹ **3 compositional 축(XOR 부정·XOR 역접·非XOR degree) 전부 additive/chance** + A0-FORM LIVE ⟹ 자연 corpus는 held-out non-additive BIND signal이 **broad 부재**(measurement-metalaw FORM tunable·BIND earned 데이터레벨 broad 확증).
+
+**arxiv 정합**(`ARXIV_RESEARCH.md`): Hahn-Goyal 2023(`2303.07971`) "ICL=자연어 compositional operation 재조합"과 정확 정합 — A0-INTENS rule_acc 0.938은 **in-context 패턴 존재**(모델이 문맥서 관찰)이나 held-out 비가법 잔차 ~0 = **held-out 일반화 signal 부재**. = [[h1835-mlc-episodic-g1-floor]] in-context≠held-out. Li 2025(`2502.20834` compositional data augmentation)=XBIND CRACK의 문헌 클래스. BiMix(`2405.14908`)/TRACE(`2505.17998`)=STAGE 1 mixing-law×phase-transition 근거.
+
 ## NEXT (STAGE 1 · spend-gated · owner go)
 STAGE 0가 "자연 텍스트에 XOR-BIND signal 부재(밀도 관점 미측정)"를 model-free로 확정. STAGE 1 사다리(f∈{0.3,0.1,0.03,0.01}
 6-run·$25-40)가 **밀도 임계 f***를 측정해 d_nat(42/MB)와 비교 → f*≫d_nat이면 "자연 창발 부재"가 정량 예측이 됨(DATA-🧱
