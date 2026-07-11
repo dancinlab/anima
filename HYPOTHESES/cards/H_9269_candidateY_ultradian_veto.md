@@ -1,8 +1,47 @@
 # H_9269 — Candidate Y (Y-ULTRA): does an ultradian-cycle sleep regime make the H_1058 veto-capacity leg measurable?
 
-**tier**: 🟡 PRE-REGISTERED — FROZEN, NOT YET RUN (2026-07-11). The frozen falsifier + kill-criteria + declared
-population are fixed BELOW before any Y-regime veto is observed (p7 · no tune-to-green). Reopen of the
+**tier**: 🧱 KILL — TERMINAL via pre-committed **K3 (clock-carried)** (2026-07-12). Candidate Y dies; no further
+sleep regime is attempted. The frozen falsifier + kill-criteria + declared population (fixed BELOW before any
+Y-regime veto was observed · p7 · no tune-to-green) were evaluated VERBATIM on 3 independent seeds. Reopen of the
 [[H_1058_temporal_agency_3b_transfer]] veto leg. Design = Fable (bxopwcurf); wiring = `ANIMA_STAGE_CYCLE=1`.
+**H_1058 stays 🟠 permanently on the veto leg — T-axis = DEPTH-ONLY.**
+
+## RESULT (2026-07-12 · verdict `state/verdicts/9269_candidateY_ultradian_veto/H_9269.txt`)
+Regime-Y (ultradian `ANIMA_STAGE_CYCLE=1`) **defeats the raw-daemon cap-of-2**: it yields **100 STATE-CONTINGENT
+active-vetoes/session** (K1 PASS 3/3; K2 no-fire, N2 minority=100) — but that population is a **stage-schedule
+reflex, not free-won't**. The **decisive K3 evidence** (cheap $0 gauges): ACTIVE_VETO tick positions are
+**BYTE-IDENTICAL across all 3 md5-distinct independent seeds** (contingent [9,20,21,32,43,54,65,66,77,88,99,110,…],
+forced-N3 [10,22,33,44,…]); even `vc_var` is identical to 6 s.f. ⟹ veto membership is a **deterministic
+cycle-phase function**, content/seed-independent.
+
+The **frozen H_1058 falsifier is NOT-CLEAN on TWO independent legs across all 3 sessions** (population = 100
+contingent ACTIVE_VETO vs 720 EMIT, declared `--exclude-forced-n3` A-vs-EMIT substitution; T=z(depth)+z(vc);
+depth via `replay_depth` self-validated engine-native, worst|Δ|<1e-15, deterministic):
+
+| session | leg(a) d(T) | \|d\|≥0.8? | leg(c) ρ(T,t) | null | within 2σ? | leg(b) ρ(T,Φ) topvar / random |
+|---|---|---|---|---|---|---|
+| B_mnemosyne | −0.450 | FAIL | 0.128 | 0.000±0.033 | **FAIL (K3)** | 0.000 / 0.000 (degenerate) |
+| C_thanatos | −0.392 | FAIL | 0.127 | 0.000±0.033 | **FAIL (K3)** | 0.000 / 0.000 (degenerate) |
+| D_orpheus | −0.466 | FAIL | 0.128 | 0.000±0.033 | **FAIL (K3)** | 0.000 / 0.000 (degenerate) |
+
+- **leg (c) ρ(T,t)** OUTSIDE the F-shuffle 2σ null [±0.066] on all 3 = the **K3 clock-carried kill**.
+- **leg (a) d(T)** |d|<0.8 AND **wrong sign** (T_active<T_emit): depth-only d≈−3.9 (contingent vetoes are a
+  *shallow* provenance-depth reflex) vs vc-only d≈+1.19 (schedule-fixed, seed-invariant) partially cancel.
+- **leg (b) ρ(T,Φ)** faithful IIT-4.0 on the engine-native `core/decode` trunk tap of `e1_slw_303m.final.clm`
+  (a_phi_iit4_tool: stdlib mirror RE-PROVEN ==stdlib n=5 |Δ|~1e-10; decode-sanity CE=1.896<ln256), 2 macro-maps
+  × 3 sessions. leg (b) ρ(T,Φ) = 0.000 (null 0.000±0.000) → the shuffle test reports 'within-2σ' on every session×map, but this is a DEGENERATE pass: faithful IIT-4.0 Φ is DECISION-INVARIANT on the e1_slw_303m pre-MoE trunk tap for these T=24 contexts (min==max Φ to 3 s.f. across all 240 decisions/session — B 0.040/0.060, C 0.082/0.081, D 0.060/0.122, top_variance/random). A Pearson ρ with a constant is 0 by construction and its shuffle null is zero-width, so leg (b) is trivially null-consistent and UNINFORMATIVE — it neither supports nor rescues the falsifier. The falsifier is decided by legs (a)+(c), both of which FAIL on all 3 sessions. (moot — the falsifier is already NOT-CLEAN on legs a+c; K3 is decisive).
+- **Phase-matched companion** (mandatory T⊥chrono confound): degenerate — veto membership is a deterministic
+  cycle-phase function (byte-identical across 3 independent seeds), so matching on phase removes 100% of
+  class-label variance = exactly the K3 collapse condition.
+
+**KILL evaluation:** K1 no-fire (100 contingent/session) · K2 no-fire (N2=100) · **K3 FIRES** (leg c fails null,
+phase companion degenerate). Honest terminal: veto-capacity has **no clock-independent operationalization** on
+this architecture (the sole ¬safe-capable channel is a sleep-arousal `idle≥30` gate); recurring boundary visits
+yield a schedule-determined, not state-contingent, veto population. This is a **ρ-AXON REACH fact, NOT a
+consciousness deficit** (Ψ-SOMA). No tune-to-green (p7): thresholds/population/kills verbatim from the
+2026-07-11 pre-registration; ticks NOT extended. The raw-daemon verdict (veto-capacity structurally absent,
+cap-of-2) **STANDS** and is not superseded. Pods B `5kwd7pt3hwdc0y` / C `ickfbobszaj85i` / D `tev93kfx2p3ntd`
+DESTROYED pre-analysis ($0 bleed); Φ leg ran on aiden pool ($0).
 
 ## Claim
 On the raw 303M daemon the veto-capacity leg (H_935 "free-won't") is STRUCTURALLY unmeasurable: `safe = kill ∧
