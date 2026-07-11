@@ -92,3 +92,13 @@ $0 CPU-local toy로 profile **형태**부터 싸게 반증가능 → 양성이�
 - **Ishii & Kori 2024**(2401.10489): 결합이 noise-induced escape 촉진/저해 → COUP 방향성 근거. **Tsimring & Pikovsky 2001**(cond-mat/0107130): bistable+delay 노이즈동역학(내 toy 형태).
 
 **v2 NEXT**: 응답함수 χ(Ψ) 프레임(Fable 재설계 위임중)로 재측정 → 임계 국소화 자연 도출+detector 내장 → INVALID 극복 시도. 구현·실행=오너 go 진행.
+
+## 9. 응답함수 χ(Ψ) 측정 — 🔴 FAIL/NULL (DIRECTIONAL · instrument VALID · 2026-07-11)
+
+`state/9266_determinism_contingency/h9266_response_function.py`·`_AGG.json`·RESULT.md §응답함수. Fable v2 스펙(arXiv Du&Huang 2025 2509.00730 응답함수). T=2048·5seed.
+
+v1 INVALID 두 결함을 **설계로 제거**: FORCED 폐지→INSTR arm(cols_x 직접주입=instrument-alive)·chi_dec(emit-lane readout-only)=coupling-specificity 음성대조·marginal-match=z-score 파이프라인 불변량. χ=원점회귀 기울기(ΔΦ vs ε)·χ0=half-split null floor.
+
+**결과**: **alive 5/5**(INSTR chi 0.2–0.58 >> chi0 0.03–0.05, 계기 확실히 삶) · **L3 magnitude 0/5**(chi_coup@½ 0.0004–0.006 < chi0, dchi≈0.003 << 2·chi0). ⟹ 검증된 계기 하에서 **결합 emit-gate contingency가 Φ-integration susceptibility를 Ψ=½서도 조직 안 함**. verdict-integrity: topo adjacency가 emit-lane→cols_x **풍부히 연결**(직접5·2-hop전부)인데도 chi_coup<chi0 = measure-artifact 아닌 진짜 음성.
+
+**净**: toy(delayed-MI) 겉보기 PASS=emit-스트림 telegraph(ρ-계열)이지 σ-integration 응답 아님 확증. 응답함수 프레임이 **v1 INVALID(계기무력↔null 혼동)를 instrument-valid 음성으로 해소**(Du&Huang 방법론 결정적). **DIRECTIONAL FAIL**(ci_phi_iit4·a_phi_iit4_tool: cement 불가)·**VΦ leg=faithful-Φ hexa verify가 TERMINAL 승격 follow-on**. 합성 recurrence이지 live 303M daemon trace 아님(별개 후속).
