@@ -82,7 +82,7 @@ Calibrate frozen units on the 16 calibration windows (signal-blind), then per ma
 
 Pool-gated (needs the real e1_slw_303m .clm trunk forward) — real-clm-T1 is the follow-on run.
 
-### T3 — evaluability bar (leg-b EVALUABLE vs VOID) · enforced in `agency_T.shuffle_null` (#3331)
+### T3 — evaluability bar (leg-b EVALUABLE vs VOID) · enforced in `agency_T.shuffle_null` (sd(Φ)≥PHI_VAR_EPS + zero-width-null guard #3331; distinct-window bar `n_distinct ≥ max(10, 20%·n_scored)` wired at the leg_b assembly site in this redesign)
 For the scored `Φ` series of `n_scored` decisions:
 
 > leg-b **EVALUABLE** iff `distinct windows ≥ max(10, 20% · n_scored)` **AND** `sd(Φ) ≥ 0.005`

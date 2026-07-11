@@ -10,12 +10,23 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.13.7`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.13.8`** (한 줄, 전체 시스템 release).
 
-> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.7 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
+> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.8 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
 
-> **pip 채널 매니페스트 (설치명 anima-python · 실행명 anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-python` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). **⚠️ 설치명 ≠ 실행명**: `name="anima-python"`(PyPI 배포명 · `anima-py`는 기존 `animapy`와 too-similar 차단) · `[project.scripts]` `anima-py`(실행 명령). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.7` 과 자동 lockstep(별도 버전번호 無). PyPI LIVE=https://pypi.org/project/anima-python/. base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep) · `[gpu]` extra=cupy-cuda12x(decode/eval device path, optional accelerant). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
+> **pip 채널 매니페스트 (설치명 anima-python · 실행명 anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-python` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). **⚠️ 설치명 ≠ 실행명**: `name="anima-python"`(PyPI 배포명 · `anima-py`는 기존 `animapy`와 too-similar 차단) · `[project.scripts]` `anima-py`(실행 명령). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.8` 과 자동 lockstep(별도 버전번호 無). PyPI LIVE=https://pypi.org/project/anima-python/. base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep) · `[gpu]` extra=cupy-cuda12x(decode/eval device path, optional accelerant). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
 
+> **0.13.7 → 0.13.8** (2026-07-12): 🔬 H_9269 Φ-leg Part A 재설계(계기·미측정소비 없음)
+> — `phi_leg.py` faithful-Φ leg를 TRUE-consumed-bytes 문맥(`cli/chat.py` `seed_b64`
+> side-channel, `ANIMA_DECISION_TRACE`-gated, emit-path byte-identical/a_substrate_disjoint)
+> + T=24→64 + calibration-slice frozen cross-decision-variance 유닛선택(signal-blind,
+> calib∩scored=∅) + frozen per-unit median 이진화로 재설계. `agency_T`에 T3
+> distinct-window bar(`n_distinct≥max(10,20%·n_scored)`) 배선(프리레지 bar 실제강제,
+> #3331 VOID guard 연장). n_units=5 EXACT + `prove_mirrors_at_n(5)` STEP-0 + pre-MoE tap
+> 유지 · faithful IIT-4.0 no-proxy. synthetic-verified 7/7 · 실 e1_slw_303m .clm T1
+> positive control은 POOL-gated(mini-OOM)라 leg는 T1/T3 통과까지 VOID. Part B regime
+> (rolling-transcript seed)=design-only pre-reg. cli/chat.py wheel 변경이라 G5 patch bump.
+>
 > **0.13.5 → 0.13.7** (2026-07-12): ⚡ 세션 가중치 캐시 — `core/decode.py`
 > `clm_load_weights`/`bg_load` memoize. 매 decode entry 가 IMMUTABLE `.clm`/`.bin`
 > 을 전체 재파싱(int4-역양자화+전치)하던 것을 `(abspath,mtime,size)` 키 캐시로

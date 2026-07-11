@@ -39,7 +39,7 @@ from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
                    vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
                        generator_read_anchors, gen_penult_pooled_W,
-                       _gen_anchor_field)  # H_1058 Part A1: SSOT anchor→seed-byte extractor (side-channel only)
+                       _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
 from decode import clm_load_weights, clm_decodable, penult_fold8
 from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
@@ -1891,7 +1891,7 @@ def anima_consciousness_mode(ckpt, argv=None):
             # bytes are byte-identical whether or not this line runs. Lets phi_leg.py build
             # its Φ context window from the TRUE model input instead of own-emit-only bytes
             # (the H_9269 decision-invariance root cause — constant seed per session).
-            _seed_str = str(dec.get("phase", "")) + " "
+            _seed_str = _gen_g_string(dec, "phase") + " "
             if len(live_anchors) > 0:
                 _seed_str = _seed_str + _gen_anchor_field(live_anchors[len(live_anchors) - 1])
             _seed_b = _seed_str.encode("utf-8", "surrogateescape")
