@@ -22,6 +22,19 @@
 # 러너: github-hosted (ubuntu-latest / macos-14) — Blacksmith 은퇴(오너 비용 지시
 #   2026-06-26, blacksmith-ci commons override). 동일 install 경로를 두 OS 에서 검증.
 #   macos-14 = github-hosted 표준 arm64 이미지(가용성 최대; ci.yml hexa-engine 과 lockstep).
+#
+# ⚠️ PyPI(anima-python) 발행은 이 파일에 **없다** — `.github/workflows/pypi-release.yml`
+#   로 분리됨(convergence `release-yml-2` 근본수정). 이유: 이 워크플로는 `v*` git 태그
+#   (autotag.yml, hx-install 채널 전용 semver — 현재 v3.x.x 대) 트리거인데, pip 채널의
+#   `VERSION` 루트파일(0.13.x 대)은 그와 **별개 넘버링**이라 v* 태그가 찍혀도 VERSION 이
+#   안 오르면(사람이 깜빡) PyPI same-VERSION skip-guard 가 영구 스킵 — 실측: `--xbind`/
+#   `--xfan` eval fold 가 v* 태그+GitHub Release 로는 여러 번 나갔지만 VERSION 미bump 로
+#   PyPI 는 0.13.3 에 고착돼 렌트 pod 측정이 블록됐다. pypi-release.yml 은 git 태그가
+#   아니라 **VERSION 파일 변경(paths 필터)** 을 발행 트리거로 삼고, `.harness/
+#   enforce_anima_gates.py` 의 신규 **G5** 게이트가 cli/·core/·pyproject.toml 변경에
+#   VERSION 이 안 따라오면 머지 시점에 하드-block 해 이 간극을 구조적으로 닫는다(main 은
+#   branch-protection 상 봇의 직접 push 가 안 되므로 자동화는 "bump 를 잊을 수 없게 막는
+#   사전 게이트" 형태다) — 세부 = 그 파일들 헤더 참고.
 
 name: release
 
@@ -200,83 +213,5 @@ jobs:
             gh release create "$tag" --title "anima $tag" --notes-file /tmp/notes.md --verify-tag
           fi
 
-  # ── ③ PyPI publish (anima-python) — HEXA-FREE 채널: 자체 py-smoke 로만 게이트, API-token 발행 ──
-  # 2-channel 세팅(a_cli_single_entry)의 pip 채널: `pip install anima-python` (PyPI LIVE:
-  # https://pypi.org/project/anima-python/). root pyproject.toml 을 sdist+wheel 로 빌드해
-  # PyPI 에 발행한다. version = 루트 VERSION(동적) 이라 autotag 이 찍는 v* 태그와 lockstep.
-  # 토큰 = repo secret `PYPI_API_TOKEN` (git-safety: secret 볼트 pypi.token → gh secret set).
-  #
-  # ⚠️ DECOUPLED from install-smoke (convergence release-yml-1): anima-python 은 순수
-  # numpy 자체구현으로 hexa 를 import 하지 않는다(hexa-less 호스트용 채널의 존재이유). 그
-  # publish 를 hexa `hx install` install-smoke 에 게이트하면 hexa 툴체인 결함(예: github-
-  # hosted runner 에서 hexa v0.716.0 `hexa run` 이 SIGSEGV — 실 linux/pod 는 정상)이 hexa 와
-  # 무관한 py 채널까지 영구 차단한다(infra-wall-noneval). 그래서 이 잡은 install-smoke 를
-  # needs 하지 않고, 자체 PY-SMOKE(빌드 wheel 을 clean venv 에 설치 → import + `anima-py`
-  # 디스패치)만으로 게이트한다 — py 채널의 무결성을 hexa 와 독립으로 검증(allgreen-promote).
-  #
-  # 활성 조건: repo variable `PYPI_PUBLISH=true` (설정됨) + secret `PYPI_API_TOKEN` (설정됨).
-  # 둘 다 이미 세팅되어 있으므로 새 v* 태그(+VERSION bump)마다 자동 발행된다. 같은 VERSION 은
-  # skip-guard 가 걸러 재발행 400 을 방지(idempotent). var 를 false 로 두면 dormant(green).
-  pypi-publish:
-    name: PyPI publish (anima-python)
-    if: ${{ vars.PYPI_PUBLISH == 'true' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    environment:
-      name: pypi
-      url: https://pypi.org/project/anima-python/
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Build sdist + wheel (root pyproject.toml · version←VERSION)
-        run: |
-          python -m pip install --upgrade build twine
-          # ⚠️ repo 의 committed `dist/` 는 hexa 배포 아티팩트(dist/_test/·dist/*.bin·
-          # dist/cert_gate/…)를 담아 python 표준 `dist/` 와 이름충돌한다 → `python -m build`
-          # 를 격리 outdir(dist_py)로 빼야 `twine check`/publish 가 non-python 파일(예:
-          # dist/_test → InvalidDistribution)에 걸리지 않는다.
-          python -m build --outdir dist_py
-          python -m twine check dist_py/*
-      - name: PY-smoke — install built wheel in clean venv + import + dispatch (hexa-free gate)
-        shell: bash
-        run: |
-          set -euo pipefail
-          # 이 게이트가 install-smoke 를 대체한다 — py 채널을 hexa 와 독립으로 검증.
-          # _bootstrap sys.path fix 가 깨지면(예전 `import anima` ModuleNotFoundError) 여기서
-          # 잡아 broken wheel 의 발행을 차단한다.
-          WHL="$(ls "$PWD"/dist_py/*.whl | head -1)"
-          python -m venv /tmp/pysmoke
-          /tmp/pysmoke/bin/pip install --quiet "$WHL"
-          # ⚠️ checkout 루트엔 anima_py/ SOURCE 가 있어 `python -m anima_py` 가 설치된 wheel
-          # 대신 CWD 소스(editable 레이아웃 → import anima 실패)를 로드한다 → 반드시 소스
-          # 그림자 밖(/tmp)에서 INSTALLED wheel 을 검증한다(console 스크립트는 CWD-무관).
-          cd /tmp
-          /tmp/pysmoke/bin/python -c "import anima_py; print('import anima_py OK')"
-          # canonical 디스패처(cli/anima.py)까지 import 체인이 해석되고 evaluate 가 디스패치돼야 한다.
-          out="$(/tmp/pysmoke/bin/anima-py evaluate --help 2>&1)"
-          printf '%s\n' "$out" | grep -qiE 'evaluate|reach|usage|ρ-AXON' || { echo "::error::anima-py evaluate --help degenerate"; printf '%s\n' "$out" | tail -20; exit 1; }
-          echo "PY-SMOKE PASS — anima-python wheel installs + import + dispatch OK (hexa-free)"
-      - name: Skip if this version already on PyPI (idempotent · no clobber)
-        id: gate
-        shell: bash
-        run: |
-          set -euo pipefail
-          ver="$(cat VERSION)"
-          code="$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/anima-python/${ver}/json")"
-          if [ "$code" = "200" ]; then
-            echo "anima-py ${ver} already on PyPI → skip (bump VERSION for a new release)"
-            echo "publish=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Publish to PyPI (API token)
-        if: ${{ steps.gate.outputs.publish == 'true' }}
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          # 격리 outdir — repo 의 committed dist/(hexa 아티팩트)가 아니라 python 빌드만 업로드.
-          packages-dir: dist_py
+  # PyPI(anima-python) 발행 잡은 여기 없다 — .github/workflows/pypi-release.yml 참고
+  # (VERSION 파일 변경 트리거, 이 워크플로의 v* 태그 스킴과 별개 · release-yml-2).
