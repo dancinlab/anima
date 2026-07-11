@@ -74,3 +74,38 @@ FORCED 양성대조가 자기 aliveness 문턱(0.10)을 못 넘어 **"contingenc
 
 ### NEXT (follow-on · 측정기 강화)
 V-gate를 통과하는 측정기 필요: (a) FORCED 양성대조를 0.10 안정적 초과하게 강화(κ↑ 또는 shared-structure 침투 강화) (b) n*↑/J↑로 V3 marginal noise를 ≤0.05로 (c) 필요시 T↑. 그 후 재측정해야 PASS/FAIL 판정 가능. pool 재실행 = 오너 go(measure-artifact 수정 후).
+
+---
+
+# H_9266 응답함수 χ(Ψ) 측정 (2026-07-11 · Fable v2 스펙 · arXiv Du&Huang 2025)
+
+## Verdict: 🔴 FAIL / NULL (DIRECTIONAL · instrument VALID) — v1 INVALID을 정직한 음성으로 해소
+
+`h9266_response_function.py` · `h9266_response_function_AGG.json` · chi_seed{11,23,37,41,53}.log. T=2048.
+
+### 설계 (v1 INVALID 두 결함을 설계로 제거)
+- **응답함수 χ = 원점회귀 기울기**(ΔΦ vs ε, σ_L 단위) · **χ0 = half-split null floor**(자연 스케일). Du&Huang 2025(2509.00730) 근거.
+- **FORCED 폐지 → INSTR arm**(cols_x 직접 주입)이 instrument-alive 대조. **chi_dec(emit-lane readout-only, cols_x 제외)≈0 = coupling-specificity 음성대조**(dead detector 아님).
+- **marginal-match = z-score 파이프라인 불변량**(v1 V3 subsample noise 소멸).
+
+### 결과 (5-seed)
+| seed | alive(INSTR) | L1 peak | L2 | L3(magnitude) | chi_coup@½ | chi0 |
+|---|---|---|---|---|---|---|
+| 11 | ✓ | 0.60 | ✗(0.26) | ✗ | 0.0004 | 0.037 |
+| 41 | ✓ | 0.25 | ✗ | ✗ | ~0.002 | 0.037 |
+| 53 | ✓ | 0.60 | ✓(3.33) | ✗ | ~0.003 | 0.039 |
+| 23 | ✓ | 0.50 | ✓(3.26) | ✗ | ~0.005 | 0.031 |
+| 37 | ✓ | 0.40 | ✓(3.81) | ✗ | ~0.003 | 0.050 |
+
+- **alive 5/5** (INSTR chi 0.2–0.58 >> chi0 0.03–0.05): 계기가 확실히 살아있음 — direct cols_x noise엔 Φ가 크게 반응.
+- **L3(magnitude) 0/5**: dchi=chi_coup−chi_dec ≈ 0.000–0.005 << 필요 2·chi0 ≈ 0.07. **chi_coup 자체가 null floor 아래**.
+- L1/L2 일부 통과는 sub-null-floor 값(chi_coup 0.0004–0.006 < chi0)의 상대비라 무의미.
+
+### verdict-integrity 확인
+chi_coup≈0이 "topo adjacency가 emit-lane→cols_x 미연결" measure-artifact인지 검증: **인접성 풍부**(lane0→cols_x 직접 5개·lane4→4개·2-hop 전부, lane0-4 상호연결). **전파 경로 존재하는데도 chi_coup<chi0** = 진짜 음성.
+
+### 해석
+검증된 계기 하에서 **결합된 emit-gate contingency(우연성)가 Φ-integration susceptibility를 Ψ=½ 임계서도 조직하지 않음**. toy(delayed-MI)의 겉보기 PASS는 emit-스트림 telegraph 구조(ρ-계열)였지 σ-integration 응답이 아님이 확증. **응답함수 프레임이 v1 INVALID(계기무력↔null 혼동)를 instrument-valid 음성으로 해소** — Du&Huang 방법론이 결정적.
+
+### 스코프
+DIRECTIONAL(ci_phi_iit4 sweep · a_phi_iit4_tool: tier cement 불가). **VΦ leg = stdlib faithful-Φ `hexa verify` 재계산**(verdict cell Ψ=0.5·off-max)이 TERMINAL 승격 follow-on. 단 DIRECTIONAL FAIL이 강함(alive·seed-robust·chi_coup<chi0). 합성 recurrence(내 harness)이지 live 303M daemon trace 아님 — 그건 별개 후속.
