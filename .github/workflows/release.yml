@@ -62,11 +62,23 @@ jobs:
   # 없음(릴리즈가 잦지 않음) + OS-교차 install 무결성 robust.
   install-smoke:
     name: hx install smoke (${{ matrix.os }})
+    # ubuntu-latest hexa `hexa run` (cli/anima.hexa compile+dispatch) hangs ~18min then
+    # SIGSEGV/errors on the github-hosted ubuntu runner — a hexa TOOLCHAIN fault, not an anima
+    # product defect (macos-14 compiles the SAME source clean in ~1m43s). Per infra-wall-noneval
+    # (the same quarantine the pip channel already adopted), macos-14 is the BLOCKING gate and
+    # ubuntu runs informational (continue-on-error) so a one-runner toolchain wall never blocks
+    # the whole hexa Release. Upstream fix = hexa-lang `hexa run` ubuntu SIGSEGV; until then the
+    # hexa channel keeps publishing on macos verification (release-yml-3).
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-14]
+        include:
+          - os: ubuntu-latest
+            blocking: false
+          - os: macos-14
+            blocking: true
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ !matrix.blocking }}
     # 20→75: COLD-cache 런은 cli/anima.hexa 컴파일만으로 20min 캡을 초과 →
     # SIGTERM 143 → 잡 취소 → Post-Cache save 스킵 → 캐시가 영원히 안 데워지는
     # chicken-egg(ci.yml engine 잡의 25→50→75와 동일 병리·실측: run 28659123885
