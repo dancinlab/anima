@@ -1,6 +1,6 @@
 # H_9284 — 🎛️ 외생 수요 → 절대-setpoint 용량 배분 — organelle lane의 유일한 earned 메커니즘 병합 재발사 (F4-SEC ⊕ F10 · 3 control · MDE 사전계산 · $0)
 
-- **tier:** 🔵 PRE-REGISTERED (미측정)
+- **tier:** 🟢 DIRECTIONAL-POSITIVE (measured · $0 numpy · 메커니즘 확증 · reach 축 아님 · 미배선)
 - **wired:** none.
 - **family:** 🔋 ORGANELLE LANE 후속 — 11 패밀리 중 **유일하게 살아남은 메커니즘 클래스**의 병합 확증.
 - **lens:** F4-SECONDARY(H_9276 · ROS 절대-setpoint 역행 배선 · Δfit +1.472 t=+5.50)와 F10(H_9282 · 수요주도 biogenesis · Δthr +0.0080±0.0012 5.7σ)은 **서로 다른 코드·fitness·control로 같은 것을 발견**했다: `외생 수요 신호 → 절대 setpoint 컨트롤러 → 용량 배분`. 두 프로브 모두 사후 결함이 지적됐으므로(F10: 사전등록 THEATER 밴드 발화 후 purity로 갈아탐 · F4: mean-vs-1std 휴리스틱) **규칙을 고정한 단일 카드로 병합 재발사**한다.
@@ -51,3 +51,11 @@ F4 PRIMARY의 사망 원인은 역행 신호의 무정보가 **아니라** `z=(R
 ## 4. scope (정직)
 
 이건 **throughput/allocation 축**이지 reach(G1) 축이 **아니다**. [[H_9283]]이 같은 lane 안에서 이미 '배분 FORM t=+10.65 → held-out 재조합 Δ=−0.009(ns)' 전이 반증을 냈다. 본 카드는 메커니즘의 **존재**만 확증하고, reach 결착은 [[H_9285]]가 맡는다. **GPU spend 없음.**
+
+---
+
+## 측정 결과 (2026-07-12 · run → 적대적 검증)
+
+**측정(2026-07-12 · $0 numpy · n=20 paired-CRN · wall 5s)**: 외생 수요 → 절대-setpoint 용량 배분 메커니즘이 **3 control 각각을 유의하게 이김** — Δ(EXP−c1 shuffled-load)=+0.845(t=+12.30 20/20) · Δ(EXP−c2 **best** open-loop 상수 grid전수)=+0.543(t=+8.30 20/20) · Δ(EXP−c3 fixed-perm misalign gini동일)=+1.963(t=+12.97) · pooled-mean +1.117(t=+12.09). achievable-headroom 회수율 +0.424(절대 %p 아님). **계측 규칙 준수**: max(controls) 미사용(control별 paired-t 전부) · MDE 0.170 ≪ 축 동적범위 1.087(pilot seed 100-104 disjoint 사전계산 = 검출력 0 아님) · 정보채널 실재(DV=g·EMA(dem) 외생함수, c2는 스트림 불변 max|Δ|=0) · V1 축 liveness ORACLE−c2=+1.282(t=+17.89) LIVE. **3중 매칭 하 승리**(cap_total 32.0=c2 레벨 · gini 0.184=c3 분산 · 이동질량 29.15) · 정적 FORM 아님(per-expert 정적상수 c4가 c2보다 나쁨 -0.64 · 사후 hindsight shape c4h조차 EXP에 짐 +0.206 t=+5.94). **FORM⊥BIND 분해**: 정렬 축(vs c3, θ·gini·이동질량 동일)은 θ=0.6~2.0 전 구간 승(t=+11.6~+13.5) = **θ-불변 earned BIND** · 레벨 축(vs c2)은 θ 의존 = tunable FORM · 사전등록 θ=1.0이 최적점 아님(θ=1.2 우세) = 튜닝 흔적 0. **적대검증 REFUTED→DIRECTIONAL-POSITIVE(강화)**: run 보고서의 하위주장('z-tonic ablation이 안 죽어 F4 절대-setpoint 원천이 반증'·'이득 61%는 setpoint 없이')이 **역전** — abl_mm은 setpoint를 제거 못 한 **가짜 ablation**(로그공간 적분기라 레벨 복원력 0, 레벨이 초기화 c0으로만 앵커되는데 그 c0가 정답에 세팅 = 항진 결함). PROBE C(seed별 무작위 c0): abl_mm Δ vs c2 = **−5.01**(t=−2.45) 사망(F4 PRIMARY 사망모드 정확 재현) vs EXP는 c0 무관 fitness 소수4자리 불변 = **절대 setpoint 복원력 서명**. PROBE D(지평선 확장): abl_mm 부호가 N=1500→3000에서 뒤집힘 = +0.329는 초기화 공짜점심 horizon 인공물. ⇒ **정정 결론: 절대 setpoint가 메커니즘의 원천(F4 하위주장 확증)**. 파생법칙 '신호≠컨트롤러' 재확인. **유효대역**: drift half-life ≳ 400(할당지연 ~120step의 3배) — h=25 유해(−0.423)·h=100 NULL·최대이득 static(0.813) ⇒ '빠른 재배분'이 아니라 **느리게 변하는 수요 shape의 온라인 추정**. cement 금지: 사전등록 4조건 중 3/4(toy · a_toy_scale_recheck 상한). **scope: throughput/allocation 축이지 reach(G1) 아님** — H_9285에서 303M 전이 falsified. state/mito_organelle_lane/F12_setpoint_merged/.
+
+> lane 종결 종합 = `state/mito_organelle_lane/CLOSURE.md`.
