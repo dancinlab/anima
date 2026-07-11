@@ -12736,7 +12736,7 @@
         "name": "version 동적 · 의존 티어",
         "role": "",
         "id": "component-map-top-level-pyproject-toml-anima-py-deps",
-        "detail": "version={file='VERSION'} 동적참조 → 루트 VERSION 자동 lockstep(현재 0.13.4). base 의존=numpy(evaluate·corpus·chat-stub) · [train] extra=torch+datasets(serialize·train·sweep). 규칙=.harness/enforcement.json H-ANIMA-SINGLE-ENTRY(match 불변·desc/reason 만 pip 채널 인정). VERSION 이 cli/·core/·pyproject.toml 변경과 lockstep 이도록 `.harness/enforce_anima_gates.py` G5 가 changed-scope 로 강제(release-yml-2)."
+        "detail": "version={file='VERSION'} 동적참조 → 루트 VERSION 자동 lockstep(현재 0.13.5). base 의존=numpy(evaluate·corpus·chat-stub) · [train] extra=torch+datasets(serialize·train·sweep) · [gpu] extra=cupy-cuda12x(core/decode.py GPU device path, optional accelerant — 상세는 하위 GPU 노드). 규칙=.harness/enforcement.json H-ANIMA-SINGLE-ENTRY(match 불변·desc/reason 만 pip 채널 인정). VERSION 이 cli/·core/·pyproject.toml 변경과 lockstep 이도록 `.harness/enforce_anima_gates.py` G5 가 changed-scope 로 강제(release-yml-2)."
        },
        {
         "name": "PyPI 발행 파이프라인 (LIVE)",
@@ -12749,6 +12749,38 @@
           "role": "",
           "id": "component-map-top-level-pyproject-toml-anima-py-pypi-owner",
           "detail": "활성: repo secret `PYPI_API_TOKEN` + var `PYPI_PUBLISH=true` 둘 다 설정됨 → main 에 `VERSION` 변경이 실리면 자동발행(git v* 태그와 무관 · autotag.yml 의 hx-install 채널과 별개 넘버링). 같은 VERSION 재발행은 skip-guard 가 400 방지. `.harness/enforce_anima_gates.py` G5 가 cli/·core/·pyproject.toml 변경에 VERSION 미bump 를 PR 단계에서 하드-block(release-yml-2 근본수정 — 사람이 bump 를 잊어 PyPI 가 stale 해지는 구조적 결함을 원천차단)."
+         }
+        ]
+       },
+       {
+        "name": "core/decode.py GPU device path (cupy, optional)",
+        "role": "",
+        "id": "component-map-top-level-pyproject-toml-anima-py-gpu-decode",
+        "detail": "anima-py evaluate/decode(hexa-less numpy)에 GPU 가속 추가(2026-07-12, `a_gpu_default_no_optin`). 상세=VERSIONS.md 0.13.4→0.13.5 항목 · CHANGELOG.jsonl. 하위 4 노드=병목/설계/parity/속도.",
+        "children": [
+         {
+          "name": "병목 = _conv1d GEMM (cProfile 실측)",
+          "role": "",
+          "id": "component-map-top-level-pyproject-toml-anima-py-gpu-decode-hotpath",
+          "detail": "cProfile: `core/decode.py::_conv1d`(im2col+matmul)이 decode wall-time 의 ~92%(clm303_clean.clm d=3784/K=3/T=24) — gelu/erf/groupnorm/moe-router 합쳐도 <5%. GPU 가속 표적을 실측으로 확정, 추측 아님."
+         },
+         {
+          "name": "설계 — xp 추상, DEFAULT-ON, 토큰당 전송 0",
+          "role": "",
+          "id": "component-map-top-level-pyproject-toml-anima-py-gpu-decode-design",
+          "detail": "`xp=cupy if cuda_available() else numpy`(get_xp/to_device/to_host/_device_residency)을 _conv1d/_fwd_trunk/_fwd_logits+8개 수식 헬퍼에 관통. `cuda_available()` 프로브만으로 DEFAULT-ON(opt-in flag 0개, H_9119 재발방지). 가중치=clm_load_weights 세션당 1회 device 업로드. SLW/CLML(host-only 드문 lane)만 host round-trip."
+         },
+         {
+          "name": "parity 실측 — CPU byte-exact · GPU ULP+decode 동일",
+          "role": "",
+          "id": "component-map-top-level-pyproject-toml-anima-py-gpu-decode-parity",
+          "detail": "summer RTX 5070 sm_120 · cupy-cuda12x. CPU-fallback=pre-edit 대비 byte-exact(max|Δ|=0.0, 4seed×argmax/top-k). GPU=logits max|Δ|≈8.5e-14(ULP급, KV-cache와 동일 문서화 클래스) 이나 greedy/top-k 디코드 토큰스트림은 CPU 와 byte-identical."
+         },
+         {
+          "name": "속도 실측 — clm303_clean.clm(d=3784·L=4·E=3)",
+          "role": "",
+          "id": "component-map-top-level-pyproject-toml-anima-py-gpu-decode-speed",
+          "detail": "clm_decode_argmax(gen=40): CPU 69.53s→GPU 5.91s(11.8×). 단일 _fwd_logits: CPU 1599ms→GPU 90ms(17.7×). --xbind 루프가 이 체인을 반복호출 = 동일 배율이 렌트 pod ~2h eval 에 전파. [GPU-FIRED]/[GPU-FALLBACK] stderr QA 신호."
          }
         ]
        }

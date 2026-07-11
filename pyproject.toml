@@ -3,7 +3,11 @@
 # 단일진입 보존(a_cli_single_entry): console 명령 `anima-py` = cli/anima.py:main
 # 의 콘솔 바인딩(동일 디스패처, 2nd entry 아님). 소스 복사 0 — 기존 cli/·core/
 # 디렉토리를 package-dir 매핑으로 그대로 패키징(surgical·canonical-naming).
-# base 의존 = numpy 만(evaluate·corpus); train/serialize/sweep = [train] extra.
+# base 의존 = numpy 만(evaluate·corpus); train/serialize/sweep = [train] extra;
+# GPU decode/eval device path (cupy, optional) = [gpu] extra — a_gpu_default_no_optin:
+# core/decode.py auto-detects cupy+CUDA at runtime (cuda_available()) and falls back to
+# numpy unchanged when absent, so [gpu] is purely an accelerant install, never required
+# for correctness (PY-smoke must still pass with a clean cupy-less venv).
 # version = 루트 VERSION 파일 동적 참조 (VERSIONS.md §0 release SSOT · a1).
 # ==========================================================================
 [build-system]
@@ -20,6 +24,12 @@ dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]
 train = ["torch>=2.1", "datasets"]
+# cupy wheel is CUDA-major-version-specific; cupy-cuda12x covers CUDA 12.x runtimes
+# (verified on RTX 5070 sm_120 · driver 580.x · pool host `summer`, 2026-07). A host
+# on a different CUDA major (11.x/13.x) should install the matching cupy-cudaNNx
+# wheel directly — core/decode.py only requires `import cupy` to succeed, it has no
+# hard dependency on this exact wheel name.
+gpu = ["cupy-cuda12x>=13.0"]
 
 [project.scripts]
 anima-py = "anima_py:main"

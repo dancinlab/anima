@@ -58,6 +58,140 @@ import os
 import struct
 import numpy as np
 
+# ════════════════════════════════════════════════════════════════════════
+# GPU device path (cupy, optional) — a_gpu_default_no_optin: DEFAULT-ON via a
+# cuda_available() capability probe, NEVER an opt-in env flag. H_9119 lesson:
+# an opt-in gate silently leaves every decode/eval on the scalar CPU path with
+# the GPU idle — so there is no env var here at all. cupy is drop-in-compatible
+# numpy (same elementwise/reduction/einsum/matmul API), so the SAME formulas
+# below run unchanged on either backend; only the array module differs. Byte
+# parity: elementwise ops match to the ULP; a GEMM/reduction run on a different
+# accumulator (GPU BLAS/tree-reduce vs host pairwise-sum) can differ at the
+# ~1e-13..1e-15 ULP level — the SAME class of non-bit-exact-but-decode-
+# equivalent drift already documented above for the KV-cache path (module
+# docstring): the decode TOKEN STREAM / held-out d_acc is what must match, not
+# raw bytes. numpy-only hosts (no cupy installed, or no CUDA device) get an
+# unconditional, unchanged numpy fallback — this module never hard-imports
+# cupy at the top level failure path.
+try:
+    import cupy as _cupy
+    _CUPY_IMPORT_ERR = None
+except Exception as _cupy_err:            # pragma: no cover — numpy-only host
+    _cupy = None
+    _CUPY_IMPORT_ERR = _cupy_err
+
+_CUDA_AVAILABLE = None       # tri-state probe cache (None = not yet probed)
+_GPU_LOG_DONE = False        # print the [GPU-FIRED]/[GPU-FALLBACK] QA line once
+
+
+def cuda_available():
+    """True iff cupy is importable AND a CUDA device is actually present
+    (`cupy.cuda.runtime.getDeviceCount() > 0`). This is the SOLE gate for the
+    device path anywhere in this module — no env flag (a_gpu_default_no_optin)."""
+    global _CUDA_AVAILABLE
+    if _CUDA_AVAILABLE is None:
+        ok = False
+        if _cupy is not None:
+            try:
+                ok = _cupy.cuda.runtime.getDeviceCount() > 0
+            except Exception:
+                ok = False
+        _CUDA_AVAILABLE = ok
+    return _CUDA_AVAILABLE
+
+
+def gpu_status():
+    """Diagnostic dict for CLI/QA surfacing (cli/evaluate.py prints this so a
+    pool run can confirm the fast path was actually reached, not just present —
+    core/CLAUDE.md gotcha: 'decode GPU path 확인 먼저')."""
+    if not cuda_available():
+        reason = str(_CUPY_IMPORT_ERR) if _CUPY_IMPORT_ERR is not None else "no CUDA device"
+        return {"cuda": False, "device_name": None, "reason": reason}
+    try:
+        name = _cupy.cuda.runtime.getDeviceProperties(0)["name"]
+        if isinstance(name, bytes):
+            name = name.decode("utf-8", "replace")
+    except Exception:
+        name = "unknown"
+    return {"cuda": True, "device_name": name, "reason": None}
+
+
+def _log_gpu_status_once():
+    global _GPU_LOG_DONE
+    if _GPU_LOG_DONE:
+        return
+    _GPU_LOG_DONE = True
+    st = gpu_status()
+    if st["cuda"]:
+        print(f"[GPU-FIRED] decode device path=CUDA ({st['device_name']})", file=sys.stderr)
+    else:
+        print(f"[GPU-FALLBACK] decode device path=CPU-numpy ({st['reason']})", file=sys.stderr)
+
+
+def get_xp(*arrays):
+    """Array-module dispatch a la cupy.get_array_module: returns cupy iff any of
+    `arrays` is an actual cupy ndarray, else numpy. With zero arrays, returns
+    cupy iff cuda_available() else numpy. Threading this through the hot-path
+    functions below means there is ZERO hardcoded np/cupy branching inside the
+    math — a numpy-array caller (every pre-existing call site) is byte-for-byte
+    unchanged; only the device-resident weight path (see _device_residency)
+    causes this to resolve to cupy."""
+    if _cupy is not None:
+        if arrays:
+            return _cupy.get_array_module(*arrays)
+        return _cupy if cuda_available() else np
+    return np
+
+
+def to_device(x):
+    """Host numpy -> device array iff cuda_available(); no-op otherwise (the
+    byte-exact CPU fallback path). Never called per-token in a loop — only once
+    at weight-load (_device_residency) or at the rare SLW/CLML host round-trip
+    gates inside _fwd_logits."""
+    if cuda_available() and isinstance(x, np.ndarray):
+        return _cupy.asarray(x)
+    return x
+
+
+def to_host(x):
+    """Device array -> host numpy, else no-op passthrough. This is the ONLY
+    device->host sync point in the per-token decode hot path (called once at
+    the _fwd_logits/_fwd_trunk EXIT, never inside the L-layer/E-expert loop —
+    H_9119: a per-op transfer inside the loop would silently re-create the
+    scalar-glue bottleneck this whole path exists to remove)."""
+    if _cupy is not None and isinstance(x, _cupy.ndarray):
+        return _cupy.asnumpy(x)
+    return x
+
+
+def _device_residency(W):
+    """One-time host->device upload of the GEMM/elementwise weight tensors —
+    called ONCE per clm_load_weights (a full eval/decode session loads weights
+    once and reuses them for every token/window), NOT per decode step. slw/clml
+    side-lane tensors are left host-resident on purpose: slot_apply/lane_apply
+    (core/slw.py, core/clml.py) are host-numpy-only implementations for a rare
+    ablation-only lane, so _fwd_logits round-trips through host ONLY at those
+    two gates — the common (no-SLW/no-CLML) trunk-conv path, which is the
+    profiled ~92%-of-wall-time hot path, stays fully device-resident end to end."""
+    xp = _cupy
+    W["ecWt"] = xp.asarray(W["ecWt"]); W["ecB"] = xp.asarray(W["ecB"])
+    W["tcWt"] = [xp.asarray(w) for w in W["tcWt"]]
+    W["tcB"] = [xp.asarray(b) for b in W["tcB"]]
+    W["eWt"] = [xp.asarray(w) for w in W["eWt"]]
+    W["eB"] = [xp.asarray(b) for b in W["eB"]]
+    W["rWt"] = xp.asarray(W["rWt"]); W["rB"] = xp.asarray(W["rB"])
+    W["roWt"] = xp.asarray(W["roWt"]); W["roB"] = xp.asarray(W["roB"])
+    W["embed"] = xp.asarray(W["embed"])
+    W["tgG"] = [xp.asarray(g) for g in W["tgG"]]
+    W["tgB"] = [xp.asarray(b) for b in W["tgB"]]
+    W["noG"] = xp.asarray(W["noG"]); W["noB"] = xp.asarray(W["noB"])
+    if W.get("bind_type", 0) != 0:
+        for _k in ("WaWt", "WbWt", "WaB", "WbB"):
+            if _k in W:
+                W[_k] = xp.asarray(W[_k])
+    return W
+
+
 # ── H_9200 E1 SLW eval-time controls (process-global; set by cli/evaluate.py) ──
 # The gated-write forward-slot applies by default whenever a .clm carries an
 # "SLW\x01" trailer. These two switches let the pre-registered controls run WITHOUT
@@ -78,24 +212,29 @@ def set_slw_controls(gamma_override=None, shuffle_seed=None):
 # (a) SHARED — helpers byte-identical across clm_decode.py + bytegpt_decode.py
 # ════════════════════════════════════════════════════════════════════════
 
-def dt_exp(x):
+def dt_exp(x, xp=None):
     """flame_math.hexa::dt_exp — halve until |xr|<=0.25, 12-term Taylor (k=1..11),
     then square r times. Vectorized; halving by 2 is exact in fp64, so the
     per-element halve-count r matches the hexa scalar while-loop exactly.
     (SHARED: bg's top-k sampler softmax uses the SAME dt_exp — was `from
-    clm_decode import dt_exp` in bytegpt_decode.py.)"""
-    x = np.asarray(x, dtype=np.float64)
+    clm_decode import dt_exp` in bytegpt_decode.py.)
+    xp: optional array module (cupy when the caller is device-resident, see
+    get_xp/_fwd_trunk); default None infers numpy for every pre-existing
+    host-numpy call site (zero behavior change off the GPU path)."""
+    if xp is None:
+        xp = get_xp(x)
+    x = xp.asarray(x, dtype=xp.float64)
     scalar = (x.ndim == 0)
-    x = np.atleast_1d(x)
+    x = xp.atleast_1d(x)
     xr = x.copy()
-    r = np.zeros(x.shape, dtype=np.int64)
-    mask = np.abs(xr) > 0.25
+    r = xp.zeros(x.shape, dtype=xp.int64)
+    mask = xp.abs(xr) > 0.25
     while mask.any():
-        xr = np.where(mask, xr / 2.0, xr)
-        r = np.where(mask, r + 1, r)
-        mask = np.abs(xr) > 0.25
-    term = np.ones_like(xr)
-    acc = np.ones_like(xr)
+        xr = xp.where(mask, xr / 2.0, xr)
+        r = xp.where(mask, r + 1, r)
+        mask = xp.abs(xr) > 0.25
+    term = xp.ones_like(xr)
+    acc = xp.ones_like(xr)
     k = 1
     while k < 12:
         term = term * xr / float(k)
@@ -105,7 +244,7 @@ def dt_exp(x):
     s = 0
     while s < rmax:
         m = r > s
-        acc = np.where(m, acc * acc, acc)
+        acc = xp.where(m, acc * acc, acc)
         s = s + 1
     return float(acc[0]) if scalar else acc
 
@@ -210,13 +349,15 @@ def dt_ln(x):
     return float(out[0]) if scalar else out
 
 
-def dt_erf(x):
+def dt_erf(x, xp=None):
     """flame_math.hexa::dt_erf — Abramowitz&Stegun 7.1.26, exp via dt_exp."""
-    x = np.asarray(x, dtype=np.float64)
+    if xp is None:
+        xp = get_xp(x)
+    x = xp.asarray(x, dtype=xp.float64)
     scalar = (x.ndim == 0)
-    x = np.atleast_1d(x)
-    sign = np.where(x < 0.0, -1.0, 1.0)
-    z = np.abs(x)
+    x = xp.atleast_1d(x)
+    sign = xp.where(x < 0.0, -1.0, 1.0)
+    z = xp.abs(x)
     t = 1.0 / (1.0 + 0.3275911 * z)
     a1 = 0.254829592
     a2 = -0.284496736
@@ -224,7 +365,7 @@ def dt_erf(x):
     a4 = -1.453152027
     a5 = 1.061405429
     poly = ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t
-    out = sign * (1.0 - poly * dt_exp(0.0 - z * z))
+    out = sign * (1.0 - poly * dt_exp(0.0 - z * z, xp))
     return float(out[0]) if scalar else out
 
 
@@ -232,44 +373,50 @@ _INV_SQRT2 = 0.70710678118654752440
 _INV_SQRT2PI = 0.39894228040143267794
 
 
-def _nn_normal_cdf(x):
-    return 0.5 * (1.0 + dt_erf(x * _INV_SQRT2))
+def _nn_normal_cdf(x, xp=None):
+    if xp is None:
+        xp = get_xp(x)
+    return 0.5 * (1.0 + dt_erf(x * _INV_SQRT2, xp))
 
 
-def nn_gelu_fwd(g):
+def nn_gelu_fwd(g, xp=None):
     """nn_lib.hexa::nn_gelu_fwd — GELU(x)=x*Phi(x), Phi via dt_erf (EXACT erf)."""
-    g = np.asarray(g, dtype=np.float64)
-    return g * _nn_normal_cdf(g)
+    if xp is None:
+        xp = get_xp(g)
+    g = xp.asarray(g, dtype=xp.float64)
+    return g * _nn_normal_cdf(g, xp)
 
 
-def _moe_exp(x):
+def _moe_exp(x, xp=None):
     """moe_lib.hexa::_moe_exp — ln2 range-reduce, 14-term Taylor, *2^n.
     DISTINCT from dt_exp (used ONLY in the MoE router softmax)."""
-    x = np.asarray(x, dtype=np.float64)
+    if xp is None:
+        xp = get_xp(x)
+    x = xp.asarray(x, dtype=xp.float64)
     scalar = (x.ndim == 0)
-    x = np.atleast_1d(x)
+    x = xp.atleast_1d(x)
     ln2 = 0.6931471805599453
     r = x.copy()
-    n = np.zeros(x.shape, dtype=np.int64)
+    n = xp.zeros(x.shape, dtype=xp.int64)
     m = r > 0.34657359
     while m.any():
-        r = np.where(m, r - ln2, r)
-        n = np.where(m, n + 1, n)
+        r = xp.where(m, r - ln2, r)
+        n = xp.where(m, n + 1, n)
         m = r > 0.34657359
     m = r < -0.34657359
     while m.any():
-        r = np.where(m, r + ln2, r)
-        n = np.where(m, n - 1, n)
+        r = xp.where(m, r + ln2, r)
+        n = xp.where(m, n - 1, n)
         m = r < -0.34657359
-    term = np.ones_like(r)
-    summ = np.ones_like(r)
+    term = xp.ones_like(r)
+    summ = xp.ones_like(r)
     k = 1
     while k < 14:
         term = term * r / float(k)
         summ = summ + term
         k = k + 1
     # *2^n via exact power-of-two scaling (== repeated *2 / /2 in hexa)
-    p = summ * np.power(2.0, n.astype(np.float64))
+    p = summ * xp.power(2.0, n.astype(xp.float64))
     return float(p[0]) if scalar else p
 
 
@@ -286,41 +433,51 @@ def _gn_sqrt(x):
     return g
 
 
-def nn_groupnorm_fwd(x, gamma, beta, T, C, G):
+def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None):
     """gn_lib.hexa::nn_groupnorm_fwd — eps=1e-5. x:[T,C]. Returns y:[T,C].
-    Here G is always 1 (=> normalize over all C per the whole [T,C] group)."""
+    Here G is always 1 (=> normalize over all C per the whole [T,C] group).
+    The μ/σ² scalar reduction is pulled to a host python float ONCE per group
+    (a single device->host sync of one scalar) so the bit-exact 40-iter Newton
+    `_gn_sqrt` runs in plain host float64 — identical numerics to the CPU path,
+    and avoids one GPU kernel launch per Newton iteration (40x/call)."""
+    if xp is None:
+        xp = get_xp(x)
     eps = 0.00001
     cg = C // G
     m = float(cg * T)
     x = x.reshape(T, C)
-    y = np.empty_like(x)
+    y = xp.empty_like(x)
     for grp in range(G):
         c0 = grp * cg
         sl = x[:, c0:c0 + cg]
         mu = sl.sum() / m
         var = ((sl - mu) * (sl - mu)).sum() / m
-        inv = 1.0 / _gn_sqrt(var + eps)
+        inv = 1.0 / _gn_sqrt(float(var) + eps)
         xh = (sl - mu) * inv
         y[:, c0:c0 + cg] = gamma[c0:c0 + cg] * xh + beta[c0:c0 + cg]
     return y
 
 
-def nn_moe_softmax(logits, T, E):
+def nn_moe_softmax(logits, T, E, xp=None):
     """moe_lib.hexa::nn_moe_softmax — stable softmax over E via _moe_exp. logits:[T,E]."""
+    if xp is None:
+        xp = get_xp(logits)
     logits = logits.reshape(T, E)
     mx = logits.max(axis=1, keepdims=True)
-    ev = _moe_exp(logits - mx)
+    ev = _moe_exp(logits - mx, xp)
     s = ev.sum(axis=1, keepdims=True)
     return ev / s
 
 
-def nn_moe_router_fwd(logits_r, ex_out, T, E, C):
+def nn_moe_router_fwd(logits_r, ex_out, T, E, C, xp=None):
     """moe_lib.hexa::nn_moe_router_fwd — y[t,c]=Σ_e probs[t,e]*ex_out[e,t,c].
     ex_out:[E,T,C]. Returns y:[T,C]."""
-    probs = nn_moe_softmax(logits_r, T, E)          # [T,E]
+    if xp is None:
+        xp = get_xp(logits_r, ex_out)
+    probs = nn_moe_softmax(logits_r, T, E, xp)          # [T,E]
     ex = ex_out.reshape(E, T, C)
     # y[t,c] = Σ_e probs[t,e]*ex[e,t,c]
-    y = np.einsum('te,etc->tc', probs, ex)
+    y = xp.einsum('te,etc->tc', probs, ex)
     return y
 
 
@@ -545,19 +702,35 @@ def clm_load_weights(path):
     from clml import read_clml
     W["clml"], off = read_clml(rb, off, W["d"], W["V"])
 
+    # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
+    # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
+    # eval/decode session loads weights once and reuses them for every token/
+    # window) — never per decode step. QA-visible signal: [GPU-FIRED]/[GPU-FALLBACK]
+    # on stderr, once per process (core/CLAUDE.md gotcha: confirm the fast path is
+    # actually reached before blaming a scalar-glue ceiling).
+    _log_gpu_status_once()
+    if cuda_available():
+        _device_residency(W)
+
     return W
 
 
 # ── forward — 1:1 from clm_decode.hexa _clmd_conv1d / _clmd_fwd_logits_sc ──
 
-def _conv1d(x, Wt, b, T, Cin, Cout, K, dil):
+def _conv1d(x, Wt, b, T, Cin, Cout, K, dil, xp=None):
     """_clmd_conv1d_pre (host path) — causal dilated im2col + matmul + bias.
     x:[T,Cin], Wt:[Cin*K, Cout], b:[Cout]. Returns y:[T,Cout].
-    im2col layout: xcol[t, ci*K + k] = x[t - dil*(K-1-k), ci] (0 if p<0)."""
+    im2col layout: xcol[t, ci*K + k] = x[t - dil*(K-1-k), ci] (0 if p<0).
+    xp: array module (cupy when x/Wt are device-resident — see _device_residency);
+    this is the profiled hot path (~92% of decode wall time, H_9200 measurement),
+    so it is the primary GPU-accelerated op — the matmul `xcol @ Wt` dispatches
+    to cuBLAS when xp is cupy, unchanged formula otherwise."""
+    if xp is None:
+        xp = get_xp(x, Wt)
     Kdim = Cin * K
     x = x.reshape(T, Cin)
-    xcol = np.zeros((T, Cin, K), dtype=np.float64)
-    t_idx = np.arange(T)
+    xcol = xp.zeros((T, Cin, K), dtype=xp.float64)
+    t_idx = xp.arange(T)
     for k in range(K):
         offset = dil * (K - 1 - k)
         p = t_idx - offset
@@ -574,34 +747,43 @@ def _fwd_trunk(W, tok, T):
     concept representation (E1-slot independent, matching the H_1822 β 303M-trunk-penult
     precedent). Extracted from _fwd_logits so the decode path (slot+readout applied) and
     the read-only hidden tap (clm_forward_hidden, ρ·weave / γ binding-lane probe H_9235)
-    share ONE byte-identical trunk forward."""
+    share ONE byte-identical trunk forward.
+
+    GPU device path: xp is inferred ONCE from W["ecWt"] (device-resident iff
+    cuda_available() at load time, see _device_residency) and threaded through
+    every op below — the whole L-layer/E-expert loop runs device-resident end to
+    end with NO host<->device transfer inside the loop (H_9119 lesson); only the
+    token-id upload (entry) crosses the boundary, once per call."""
     d = W["d"]; E = W["E"]; K = W["K"]; L = W["L"]
+    xp = get_xp(W["ecWt"])
     # embedding
     ids = tok.astype(np.int64)
+    if xp is not np:
+        ids = xp.asarray(ids)
     xe = W["embed"][ids]                          # [T, d]
     # ec conv (K, dil=1)
-    xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1)
+    xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1, xp)
     # L trunk layers: xt = xt + gelu(groupnorm(conv(xt)))
     DIL_CAP = 512
     dil = 1
     for li in range(L):
         dil_eff = dil if dil <= DIL_CAP else DIL_CAP
-        h = _conv1d(xt, W["tcWt"][li], W["tcB"][li], T, d, d, K, dil_eff)
-        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1)
-        hg = nn_gelu_fwd(hn)
+        h = _conv1d(xt, W["tcWt"][li], W["tcB"][li], T, d, d, K, dil_eff, xp)
+        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1, xp)
+        hg = nn_gelu_fwd(hn, xp)
         xt = xt + hg.reshape(T, d)
         dil = dil * 2
     # router conv (K=1, Cout=E)
-    logits_r = _conv1d(xt, W["rWt"], W["rB"], T, d, E, 1, 1)   # [T, E]
+    logits_r = _conv1d(xt, W["rWt"], W["rB"], T, d, E, 1, 1, xp)   # [T, E]
     # E experts: gelu(conv(xt))
-    ex_out = np.empty((E, T, d), dtype=np.float64)
+    ex_out = xp.empty((E, T, d), dtype=xp.float64)
     for ej in range(E):
-        eo = _conv1d(xt, W["eWt"][ej], W["eB"][ej], T, d, d, K, 1)
-        ex_out[ej] = nn_gelu_fwd(eo).reshape(T, d)
+        eo = _conv1d(xt, W["eWt"][ej], W["eB"][ej], T, d, d, K, 1, xp)
+        ex_out[ej] = nn_gelu_fwd(eo, xp).reshape(T, d)
     # MoE router mix
-    y = nn_moe_router_fwd(logits_r, ex_out, T, E, d)          # [T, d]
+    y = nn_moe_router_fwd(logits_r, ex_out, T, E, d, xp)          # [T, d]
     # final groupnorm
-    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1)
+    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1, xp)
     return yn
 
 
@@ -611,9 +793,11 @@ def clm_forward_hidden(W, tok, T):
     forward (_fwd_trunk, shared with _fwd_logits), so the dumped representation is
     byte-identical to what the gates decode over. For the ρ·weave held-out-pair
     recombination / γ binding-lane probe (H_9235): dumps the pure-trunk concept
-    representation a read-side lane consumes. No decode sampling / readout / perturbation."""
+    representation a read-side lane consumes. No decode sampling / readout / perturbation.
+    Always returns host numpy (to_host) — external callers (clm_penult_pooled_W) index
+    element-by-element in a python loop, which needs host memory."""
     ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
-    return _fwd_trunk(W, ta, T)
+    return to_host(_fwd_trunk(W, ta, T))
 
 
 def clm_penult_pooled_W(W, seed):
@@ -672,22 +856,28 @@ def penult_fold8(pooled):
 def clm_forward_hidden_logits(W, tok, T):
     """Read-only combined tap: (yn_trunk:[T,d], logits:[T,V]) in ONE trunk forward — the pre-slot
     penultimate AND the base (lane-OFF) full-forward logits. Avoids a double _fwd_trunk when a caller
-    (the CLML lane trainer, H_9235) needs both the lane input (yn) and the base logits (CE target)."""
+    (the CLML lane trainer, H_9235) needs both the lane input (yn) and the base logits (CE target).
+    Always returns host numpy (to_host) — callers are training-side probes expecting numpy."""
     ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
     yn = _fwd_trunk(W, ta, T)
     d = W["d"]; V = W["V"]; x = yn
+    xp = get_xp(x)
     if W.get("slw") is not None:
+        # slot_apply (core/slw.py) is host-numpy-only (rare SLW ablation lane) —
+        # round-trip through host so the common no-SLW path stays device-resident.
         from slw import slot_apply
-        x = slot_apply(x, W["slw"], gamma=_SLW_GAMMA_OVERRIDE,
+        x_h = to_host(x)
+        x_h = slot_apply(x_h, W["slw"], gamma=_SLW_GAMMA_OVERRIDE,
                        shuffle_perm=(None if _SLW_SHUFFLE_SEED is None
                                      else np.random.RandomState(_SLW_SHUFFLE_SEED).permutation(W["slw"]["n_slot"])))
+        x = to_device(x_h) if xp is not np else x_h
     if W.get("bind_type", 0) != 0:
         u = x @ W["WaWt"] + W["WaB"]; v = x @ W["WbWt"] + W["WbB"]
         g = u * v if W["bind_type"] == 1 else u + v
         logits = g @ W["roWt"] + W["roB"]
     else:
-        logits = _conv1d(x, W["roWt"], W["roB"], T, d, V, 1, 1)
-    return yn, logits
+        logits = _conv1d(x, W["roWt"], W["roB"], T, d, V, 1, 1, xp)
+    return to_host(yn), to_host(logits)
 
 
 def _seed_to_tok(seed, T):
@@ -705,10 +895,15 @@ def _seed_to_tok(seed, T):
 
 def _fwd_logits(W, tok, T):
     """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
-    Returns logits:[T, V]."""
+    Returns logits:[T, V] as host numpy (to_host at the exit) — the SOLE
+    device->host sync for a full-forward call when GPU-resident (see
+    _fwd_trunk/_conv1d): the trunk + expert convs + MoE router run entirely
+    on-device, only the final logits (and the rare SLW/CLML side-lanes) cross
+    back to host."""
     d = W["d"]; V = W["V"]
-    yn = _fwd_trunk(W, tok, T)                    # [T, d] pre-readout, pre-slot penultimate
+    yn = _fwd_trunk(W, tok, T)                    # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
     yn_trunk = yn                                 # keep pre-slot trunk penultimate for the CLML read-side lane
+    xp = get_xp(yn)
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
     # readout), byte-parity with the torch SLWModule + core/decode.hexa. None =>
     # additive golden path untouched. The eval-time controls are process-global
@@ -716,11 +911,16 @@ def _fwd_logits(W, tok, T):
     # ablation) and _SLW_SHUFFLE_SEED (--slot-shuffle: a fixed permutation of the
     # WRITE address only, reads unpermuted, breaks role→slot correspondence).
     if W.get("slw") is not None:
+        # slot_apply (core/slw.py) is host-numpy-only (rare SLW ablation lane) —
+        # round-trip through host so the common no-SLW path (the profiled hot
+        # path) stays fully device-resident with no extra transfer.
         from slw import slot_apply
         perm = None
         if _SLW_SHUFFLE_SEED is not None:
             perm = np.random.RandomState(_SLW_SHUFFLE_SEED).permutation(W["slw"]["n_slot"])
-        yn = slot_apply(yn, W["slw"], gamma=_SLW_GAMMA_OVERRIDE, shuffle_perm=perm)
+        yn_h = to_host(yn)
+        yn_h = slot_apply(yn_h, W["slw"], gamma=_SLW_GAMMA_OVERRIDE, shuffle_perm=perm)
+        yn = to_device(yn_h) if xp is not np else yn_h
     # readout: additive Conv1d (standard) OR Hadamard/linear bind (CLMB)
     if W.get("bind_type", 0) != 0:
         # CLMB bind readout: yn → (Wa,Wb) linear projections → Hadamard/+ → Wo
@@ -730,14 +930,17 @@ def _fwd_logits(W, tok, T):
         g = u * v if W["bind_type"] == 1 else u + v   # Hadamard(1) or linear(2)
         out_logits = g @ W["roWt"] + W["roB"]     # [T, V]  roWt=(k,V)
     else:
-        out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1)  # [T, V]
+        out_logits = _conv1d(yn, W["roWt"], W["roB"], T, d, V, 1, 1, xp)  # [T, V]
     # fork-A CLML read-side context-pooling lane (H_9235) — reads the pre-slot trunk
     # penultimate, causal-mean-pools the full context, adds a gated tether-clipped logit
     # bias. None/absent => passthrough (byte-identical). DISJOINT (read-only + additive bias).
     if W.get("clml") is not None:
+        # lane_apply (core/clml.py) is host-numpy-only — round-trip through host
+        # (rare lane, same pattern as SLW above).
         from clml import lane_apply
-        out_logits = lane_apply(yn_trunk, out_logits, W["clml"])
-    return out_logits
+        out_logits = lane_apply(to_host(yn_trunk), to_host(out_logits), W["clml"])
+        return out_logits                          # already host
+    return to_host(out_logits)
 
 
 # ── public CLM decode/CE entries — 1:1 from clm_decode.hexa ──
