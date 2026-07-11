@@ -1404,6 +1404,12 @@ def anima_consciousness_mode(ckpt, argv=None):
         n_ticks = int(_atk)
     _trace_path = os.environ.get("ANIMA_DECISION_TRACE", "")
     _trace_fh = open(_trace_path, "w", encoding="utf-8", errors="surrogateescape") if _trace_path else None
+    # H_9269 Candidate Y (Y-ULTRA): default-OFF ultradian-cycle sleep schedule. dr_stage_at is a
+    # piecewise table on [0,90) (dr_stage_size sums to 90); calling it with unbounded tick*8 overflows
+    # into eternal REM (N2/N3 visited once → veto cap-of-2). The modulo restores the table's own domain
+    # (0 tuned params) so ultradian stages recur, per emit_policy ep_scale_periods 90-min component +
+    # a_chat_sleep_imagination. OFF = byte-identical to the raw daemon. (pre-registered; H_1058 REOPEN)
+    _stage_cycle = os.environ.get("ANIMA_STAGE_CYCLE", "") == "1"
     tick = 0
     # ── WAKE working-memory ring + N3/REM imagination-replay accumulators ──
     wake_mem = mem_init()
@@ -1412,7 +1418,7 @@ def anima_consciousness_mode(ckpt, argv=None):
     imagination_emit_violations = 0
 
     while tick < n_ticks:
-        stage = dr_stage_at(tick * 8)
+        stage = dr_stage_at((tick * 8) % 90 if _stage_cycle else tick * 8)
         stage_nm = dr_stage_name(stage)
         emit_env = dr_emit_envelope(stage)
         phi_t = pure_field_phi(pf)
@@ -1897,6 +1903,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                     "phi_const": float(dec["phi"]), "phi_peak": float(pf.phi_peak),
                     "nudge_const": float(dec.get("anchor_nudge", 0.0)),
                     "backend": g_back, "n_ticks": n_ticks,
+                    "stage_cycle": bool(_stage_cycle),  # H_9269 Y-ULTRA regime flag (consumers ignore if unknown)
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
