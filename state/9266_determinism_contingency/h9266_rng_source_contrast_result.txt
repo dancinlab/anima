@@ -1,0 +1,14 @@
+=== H_9266 H-DET7 RNG-source contrast (PRNG vs CSPRNG · QRNG=infra-blocked no key) ===
+ seed   Psi |  chi_PRNG  chi_CSPRNG |   |diff|
+   11  0.50 |    0.0051      0.0045 |   0.0006
+   11  0.10 |    0.0021      0.0012 |   0.0009
+   23  0.50 |    0.0008      0.0048 |   0.0040
+   23  0.10 |    0.0029      0.0007 |   0.0022
+   37  0.50 |    0.0008      0.0026 |   0.0018
+   37  0.10 |    0.0014      0.0010 |   0.0004
+
+mean |chi_PRNG - chi_CSPRNG| = 0.0017
+mean chi_PRNG = 0.0022 · mean chi_CSPRNG = 0.0025
+
+SOURCE-INDEPENDENT: True (|diff| 0.0017 <= tolerance) -> PRNG was representative; QRNG (blocked) predicted identical
+tail -18  0.00s user 0.00s system 0% cpu 2:42.88 total
