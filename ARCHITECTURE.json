@@ -14727,6 +14727,13 @@
     "value": "프로브 verdict를 'Δ = exp − max(controls)'로 채점하면 control이 3개·per-arm σ≈0.05·n=5일 때 E[max of 3] ≈ μ+0.02~0.03 의 순서통계량 편향이 생기고, KILL/THEATER 분기 임계가 정확히 그 0.02대라 exp가 control과 동등해도 KILL이 기계적으로 생성된다(H_9283이 20-seed 확장에서 부호 역전으로 실증 · 같은 패턴이 F2·F3·F5·F6·F11 5개 프로브에 복사됨). 동반 결함 4종: (b) 'mean vs 1·std' 기각 휴리스틱(per-seed std는 paired-CRN delta의 SEM이 아님 — H_9276이 이걸로 t=+5.50짜리 진짜 효과를 기각) (c) 사전 MDE 미계산(H_9273은 축의 전 동적범위 1.12pp < 유의 문턱 1.71pp라 가설이 참이어도 sig=True가 수학적으로 불가) (d) 항진적 처치 arm(처치의 결정변수가 control이 못 보는 입력에 실제로 의존하는지 미확인 — 관측량≡채점량 항등식 포함) (e) V-gate가 가설과 동어반복(게이트 선택기준이 효과크기의 단조함수면 가능한 출력이 {PASS,INVALID}뿐).",
     "threshold": "재발조건 = numpy $0 프로브를 새로 쓸 때. 해결 = (1) best-control(max) 금지 → pooled-mean 또는 control별 paired-t 전부 보고 (2) SEM/paired-t만 사용 (3) 카드에 'MDE < 축 동적범위' 사전계산 필수 필드 (4) 카드에 '정보 채널 증명' 절 — 처치 DV가 control에 없는 입력의 함수임을 코드로 보이고 운영 대역에서 DV 분산>0 실측 (5) V-gate는 헤드라인 detector 그 자체에 걸 것(V3 detector-fairness). 금지 지표: conj_index · purity(aggregate) · acc/ATP 비율 · corr(n,demand).",
     "source": "state/mito_organelle_lane/SYNTHESIS.md"
+   },
+   {
+     "id": "phi-leg-evaluability-void",
+     "state": "🟢 FIXED",
+     "value": "agency_T.shuffle_null vs a (near-)constant `other` (degenerate Φ) built a zero-width F-shuffle null, so within_2sigma_null=|obs-0|<=0=True rendered a structurally uninformative falsifier leg as a false PASS — the H_9269 leg-b degeneracy that had to be caught by hand. Now a degenerate leg is VOID (within_2sigma_null=None; carries no weight in the combined falsifier — neither pass nor fail)",
+     "threshold": "FROZEN bars (no tune-to-green, Fable Φ-leg redesign T3): NULL_EPS=1e-12 (zero-width null), PHI_VAR_EPS=0.005 (leg-b Φ sd bar); T2 regression test_evaluability_void.py 4/4. Root-cause of the H_9269 Φ-flatness = the e1_slw_303m daemon's model-input bytes were decision-invariant by construction (emission mode-collapse + own-emit-only context window), so the trunk never saw the decisions — an instrument+regime finding, not IIT4/unitization",
+     "source": "H_9269 verdict follow-on · Fable root-cause+redesign (scratchpad/fable_phi_variance.md) · fix/phi-leg-evaluability-void · 2026-07-12"
    }
   ]
  }

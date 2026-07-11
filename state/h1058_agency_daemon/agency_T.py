@@ -42,6 +42,13 @@ SCORE_THRESHOLD = 0.3
 D_THRESHOLD = 0.8
 SHUFFLE_N = 2000
 SEED = 1058
+# Evaluability guard (H_9269 leg-b degeneracy fix, FROZEN — no tune-to-green):
+# a leg's F-shuffle null vs a (near-)constant `other` collapses to zero width, so
+# `within_2sigma_null = |obs-0| <= 0` renders a structurally UNINFORMATIVE leg as a
+# false PASS. Such a leg is VOID (first-class, ρ-AXON V-gate style: neither pass nor
+# fail, carries no weight in the combined falsifier). Bars per FABLE Φ-leg redesign T3.
+NULL_EPS = 1e-12          # a shuffle null this narrow is degenerate (zero-width)
+PHI_VAR_EPS = 0.005       # leg (b): sd(Φ) below this ⇒ Φ carries no decision variance ⇒ VOID
 
 
 def load_jsonl(path):
@@ -113,9 +120,16 @@ def pearson(x, y):
     return sum((a - mx) * (b - my) for a, b in zip(x, y)) / (sx * sy)
 
 
-def shuffle_null(T, other, n=SHUFFLE_N, seed=SEED):
-    """F-SHUFFLE empirical null for rho(T, other): permute T across positions."""
+def shuffle_null(T, other, n=SHUFFLE_N, seed=SEED, min_other_sd=0.0):
+    """F-SHUFFLE empirical null for rho(T, other): permute T across positions.
+
+    Evaluability guard (H_9269): if `other` is (near-)constant the correlation is 0 by
+    construction and EVERY shuffle draw is also 0, so the null collapses to zero width and
+    `|obs-mu| <= 2*sd` is trivially True — a structurally uninformative leg would render as
+    a false PASS. When `other` has sd below `min_other_sd` (or the null width is
+    degenerate), the leg is VOID (`within_2sigma_null=None`), NOT a pass."""
     rng = random.Random(seed)
+    other_sd = statistics.pstdev(other) if len(other) > 1 else 0.0
     obs = pearson(T, other)
     perm = list(T)
     draws = []
@@ -124,9 +138,23 @@ def shuffle_null(T, other, n=SHUFFLE_N, seed=SEED):
         draws.append(pearson(perm, other))
     mu = statistics.fmean(draws)
     sd = statistics.pstdev(draws)
+    n_distinct = len(set(round(v, 10) for v in other))
+    void_reason = None
+    if other_sd <= max(min_other_sd, NULL_EPS):
+        void_reason = "other_sd=%.3g <= bar=%.3g (degenerate: `other` carries no variance)" % (
+            other_sd, max(min_other_sd, NULL_EPS))
+    elif sd <= NULL_EPS:
+        void_reason = "null_sd=%.3g (zero-width F-shuffle null)" % sd
+    elif n_distinct < 2:
+        void_reason = "other has %d distinct value(s)" % n_distinct
+    if void_reason is not None:
+        return {"rho": obs, "null_mu": mu, "null_sd": sd, "band": [mu - 2 * sd, mu + 2 * sd],
+                "other_sd": other_sd, "n_distinct": n_distinct,
+                "within_2sigma_null": None, "void": True, "void_reason": void_reason}
     within = abs(obs - mu) <= 2.0 * sd
-    return {"rho": obs, "null_mu": mu, "null_sd": sd,
-            "band": [mu - 2 * sd, mu + 2 * sd], "within_2sigma_null": bool(within)}
+    return {"rho": obs, "null_mu": mu, "null_sd": sd, "band": [mu - 2 * sd, mu + 2 * sd],
+            "other_sd": other_sd, "n_distinct": n_distinct,
+            "within_2sigma_null": bool(within), "void": False}
 
 
 def analyze(args):
@@ -184,7 +212,11 @@ def analyze(args):
             common = [i for i, r in enumerate(rows) if r["tick"] in d]
             Tp = [T[i] for i in common]
             Pp = [d[rows[i]["tick"]] for i in common]
-            leg_b[mp] = shuffle_null(Tp, Pp) if len(common) >= 3 else {"n": len(common)}
+            # leg (b) needs Φ to carry decision variance (else the null is zero-width and
+            # a degenerate leg renders as a false PASS — the H_9269 bug). PHI_VAR_EPS bar
+            # is FROZEN; a run may not relax it after seeing data (p7).
+            leg_b[mp] = (shuffle_null(Tp, Pp, min_other_sd=PHI_VAR_EPS)
+                         if len(common) >= 3 else {"n": len(common)})
 
     result = {
         "label": args.label, "trace": args.trace, "window": args.window,
@@ -251,7 +283,9 @@ def _print_analyze(r):
              "PASS(null-consistent)" if c["within_2sigma_null"] else "FAIL(structured)"))
     if r["leg_b_T_vs_phi"]:
         for mp, b in r["leg_b_T_vs_phi"].items():
-            if "rho" in b:
+            if b.get("void"):
+                print("(b) rho(T,Phi|%s): VOID — %s" % (mp, b.get("void_reason", "degenerate")))
+            elif "rho" in b:
                 print("(b) rho(T,Phi|%s)=%.3f null=%.3f+-%.3f -> %s"
                       % (mp, b["rho"], b["null_mu"], b["null_sd"],
                          "PASS" if b["within_2sigma_null"] else "FAIL"))
@@ -271,8 +305,14 @@ def falsifier(args):
     print("=== H_1058 FROZEN falsifier — %d sessions/maps ===" % len(results))
     all_pass_a = all(r["leg_a_separation"]["pass"] for r in results)
     all_pass_c = all(r["leg_c_T_vs_t"]["within_2sigma_null"] for r in results)
-    b_runs = [b for r in results if r["leg_b_T_vs_phi"] for b in r["leg_b_T_vs_phi"].values() if "within_2sigma_null" in b]
-    all_pass_b = (len(b_runs) > 0) and all(b["within_2sigma_null"] for b in b_runs)
+    # leg (b): VOID legs (degenerate Φ / zero-width null) carry NO weight — they are neither
+    # a pass nor a fail (H_9269 fix: a void leg must never render as PASS). Only EVALUABLE
+    # legs (within_2sigma_null is a real bool) count; a leg-b that is entirely void leaves the
+    # discriminant-validity control UNEVALUATED, so the falsifier cannot be cleanly PASSed on b.
+    b_all = [b for r in results if r["leg_b_T_vs_phi"] for b in r["leg_b_T_vs_phi"].values()]
+    b_void = [b for b in b_all if b.get("void")]
+    b_eval = [b for b in b_all if b.get("within_2sigma_null") is not None]
+    all_pass_b = (len(b_eval) > 0) and all(b["within_2sigma_null"] for b in b_eval)
     for r in results:
         la = r["leg_a_separation"]
         print("  [%s] (a)d_T=%.2f %s | (c)rho=%.2f %s"
@@ -280,7 +320,16 @@ def falsifier(args):
                  r["leg_c_T_vs_t"]["rho"], "P" if r["leg_c_T_vs_t"]["within_2sigma_null"] else "F"))
     print("LEG (a) T-separation |d|>=0.8 across all: %s" % ("PASS" if all_pass_a else "FAIL"))
     print("LEG (c) T _|_ t (F-shuffle null) across all: %s" % ("PASS" if all_pass_c else "FAIL"))
-    print("LEG (b) T~Phi (F-shuffle null): %s" % ("PASS" if all_pass_b else ("FAIL" if b_runs else "NOT-EVALUATED (no Phi)")))
+    if all_pass_b:
+        leg_b_verdict = "PASS"
+    elif b_eval:
+        leg_b_verdict = "FAIL"
+    elif b_void:
+        leg_b_verdict = "VOID (%d/%d maps degenerate: %s) — carries no weight" % (
+            len(b_void), len(b_all), b_void[0].get("void_reason", ""))
+    else:
+        leg_b_verdict = "NOT-EVALUATED (no Phi)"
+    print("LEG (b) T~Phi (F-shuffle null): %s" % leg_b_verdict)
     full = all_pass_a and all_pass_c and all_pass_b
     print("FROZEN FALSIFIER: %s" % ("H1-PASS (T is a real, Phi-orthogonal, a-temporal agency axis)"
                                     if full else "NOT-CLEAN (see legs; tier stays 🟠 w/ blocker)"))
