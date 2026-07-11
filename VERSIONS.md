@@ -10,11 +10,36 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.13.4`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.13.5`** (한 줄, 전체 시스템 release).
 
-> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.4 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
+> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.5 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
 
-> **pip 채널 매니페스트 (설치명 anima-python · 실행명 anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-python` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). **⚠️ 설치명 ≠ 실행명**: `name="anima-python"`(PyPI 배포명 · `anima-py`는 기존 `animapy`와 too-similar 차단) · `[project.scripts]` `anima-py`(실행 명령). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.4` 과 자동 lockstep(별도 버전번호 無). PyPI LIVE=https://pypi.org/project/anima-python/. base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
+> **pip 채널 매니페스트 (설치명 anima-python · 실행명 anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-python` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). **⚠️ 설치명 ≠ 실행명**: `name="anima-python"`(PyPI 배포명 · `anima-py`는 기존 `animapy`와 too-similar 차단) · `[project.scripts]` `anima-py`(실행 명령). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.5` 과 자동 lockstep(별도 버전번호 無). PyPI LIVE=https://pypi.org/project/anima-python/. base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep) · `[gpu]` extra=cupy-cuda12x(decode/eval device path, optional accelerant). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
+
+> **0.13.4 → 0.13.5** (2026-07-12): ⚡ anima-py decode/eval GPU device path (cupy,
+> optional). 문제: `anima-py evaluate <clm> --xbind` 는 hexa-less 순수 numpy라
+> GPU 가속이 전무 — 303M eval 이 렌트 pod서 CPU-scalar decode-bound ~2h(hexa
+> own-GEMM 경로는 303M 서 OOM 이라 대체 불가, `a_eval_py_canonical`). cProfile 로
+> 실측한 병목은 `core/decode.py::_conv1d`(전체 wall-time 의 ~92%, T=24 · d=3784 대형
+> im2col GEMM) — per-token forward 의 다른 연산(gelu/erf/groupnorm/moe-router)은
+> 합쳐도 <5%. 수정: 얇은 `xp = cupy if cuda_available() else numpy` 추상(`get_xp`/
+> `to_device`/`to_host`/`_device_residency`)을 `_conv1d`/`_fwd_trunk`/`_fwd_logits`
+> + 8개 공유 수식 헬퍼(dt_exp/dt_erf/nn_gelu_fwd/nn_groupnorm_fwd/nn_moe_softmax/
+> nn_moe_router_fwd/_moe_exp/_nn_normal_cdf)에 관통 — **`a_gpu_default_no_optin`**:
+> `cuda_available()` 캡처빌리티 프로브만으로 DEFAULT-ON, opt-in env 플래그 0개
+> (H_9119 재발방지: opt-in 게이트였다면 GPU idle 채 조용히 scalar 경로로 돎).
+> 가중치는 `clm_load_weights` 에서 세션당 ONCE device 업로드(토큰당 전송 없음 —
+> H_9119 lesson). SLW/CLML side-lane(host-numpy-only, 드문 ablation 경로)만 host
+> round-trip, 공통 no-SLW 경로는 end-to-end device-resident. **실측(summer RTX
+> 5070 sm_120 · cupy-cuda12x · clm303_clean.clm d=3784/L=4/E=3)**: CPU-fallback
+> parity = **byte-exact(max|Δ|=0.0)** vs pre-edit baseline (numpy-only 회귀 0).
+> GPU parity = max|Δ|≈8.5e-14(ULP-급 — GPU BLAS/reduce 누적순서 차이, 이미 문서화된
+> KV-cache 클래스와 동일 · 문서 module docstring) 이나 **greedy/top-k 디코드
+> 토큰스트림은 CPU 와 byte-identical**. 속도: `clm_decode_argmax(gen=40)` CPU
+> 69.53s → GPU 5.91s (**11.8×**), 단일 `_fwd_logits` 호출 CPU 1599ms → GPU 90ms
+> (**17.7×**). `[GPU-FIRED]`/`[GPU-FALLBACK]` stderr 1줄 QA 신호(첫 ckpt 로드 시).
+> pyproject `[gpu]` extra = optional(cupy 無 clean-venv 도 PY-smoke 그대로 통과 —
+> hexa-less 순수성 유지, `session-eval-py-only` 정합).
 
 > **0.13.2/3 → 0.13.4** (2026-07-12): 🔧 PyPI release-automation 구조수정. 근본원인:
 > `--xbind`/`--xfan` eval fold(#3299/#3317)가 `cli/evaluate.py`에 머지되며 VERSION
