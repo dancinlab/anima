@@ -102,3 +102,13 @@ v1 INVALID 두 결함을 **설계로 제거**: FORCED 폐지→INSTR arm(cols_x 
 **결과**: **alive 5/5**(INSTR chi 0.2–0.58 >> chi0 0.03–0.05, 계기 확실히 삶) · **L3 magnitude 0/5**(chi_coup@½ 0.0004–0.006 < chi0, dchi≈0.003 << 2·chi0). ⟹ 검증된 계기 하에서 **결합 emit-gate contingency가 Φ-integration susceptibility를 Ψ=½서도 조직 안 함**. verdict-integrity: topo adjacency가 emit-lane→cols_x **풍부히 연결**(직접5·2-hop전부)인데도 chi_coup<chi0 = measure-artifact 아닌 진짜 음성.
 
 **净**: toy(delayed-MI) 겉보기 PASS=emit-스트림 telegraph(ρ-계열)이지 σ-integration 응답 아님 확증. 응답함수 프레임이 **v1 INVALID(계기무력↔null 혼동)를 instrument-valid 음성으로 해소**(Du&Huang 방법론 결정적). **DIRECTIONAL FAIL**(ci_phi_iit4·a_phi_iit4_tool: cement 불가)·**VΦ leg=faithful-Φ hexa verify가 TERMINAL 승격 follow-on**. 합성 recurrence이지 live 303M daemon trace 아님(별개 후속).
+
+## 10. RNG-소스 대조 (H-DET7 부분 · 오너 "QRNG면 달라지나?" · 2026-07-11)
+
+`h9266_rng_source_contrast.py`·`_result.txt`. **양자 QRNG-특정 = 🔴 인프라 블록**(`flat.anu_key_paid` 미설정 → 진짜 양자바이트 fetch 불가·infra-wall-noneval). 대신 QRNG의 유일한 substrate-관련 특별함=**비재현성**을 `os.urandom`(OS 진엔트로피·비재현·암호강 CSPRNG)로 대변해 $0 대조.
+
+| seed·Ψ | χ(PRNG) | χ(CSPRNG) | \|diff\| |
+|---|---|---|---|
+| 6 cells (11/23/37 × 0.5/0.1) | mean 0.0022 | mean 0.0025 | mean **0.0017** |
+
+**🟢 SOURCE-INDEPENDENT**: χ(numpy PRNG) ≈ χ(os.urandom CSPRNG) (|diff| 0.0017 = 노이즈 수준, 둘 다 ≈0). ⟹ **noise 소스는 결과를 안 바꿈** — 실험이 쓴 numpy PRNG가 대표적이었음. χ 측정은 noise **분포**에만 의존(재현성/존재론 소스 무관). QRNG(블록)도 동일 예측(같은 가우시안 분포 + 비재현성은 CSPRNG가 이미 대변). ⟹ H_9266 FAIL/NULL은 RNG-소스 artifact 아님 확정. 양자-특정 leg=ANU 키 설정 시 follow-on(이론상 null).
