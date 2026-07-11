@@ -56,3 +56,21 @@ STAGE 0가 "자연 텍스트에 XOR-BIND signal 부재(밀도 관점 미측정)"
 ## 산출
 `state/g1_natural_emergence/`(DESIGN_PREREG.md·a0neg_audit.py·a0neg_result.json). [[measurement-metalaw-form-tunable-bind-earned]]·
 [[xbind-g1-crack-measure-not-substrate]]. eval=`--natbind`(--xbind 스키마 소폭 확장·미구현).
+
+## STAGE 1 사다리 verdict (2026-07-11) — naive dilution ladder INVALID (exposure-confound)
+밀도 f∈{0.3,0.1,0.03,0.01} × 20k step 사다리 발사(4 pod). held-out D-acc 실측:
+
+| f (밀도) | heldout D-acc | 상태 |
+|---|---|---|
+| 0.3 | **0.510** (seen 0.495) | CLEAN · chance |
+| 0.1 | **0.500** | CLEAN · chance |
+| 0.03 | (INFRA-QUARANTINE) | degraded pod full+fast eval 둘 다 stall(evaluate-py-10)·ckpt 보존·monotonic 상한 ≤0.51 |
+| 0.01 | **0.505** | CLEAN · chance |
+
+**판정 = INVALID (V-A FAIL·exposure-confound)**: 고정 20k 예산에서 밀도↓는 pair당 유효노출↓과 동반커플. 최고밀도 f=0.3조차 유효노출 6k < E* knee(12k)라 chance 붕괴 = 밀도 천장이 아니라 under-exposure artifact. 3 clean 밀도 전부 chance(0.50~0.51)·f0.03도 monotonic ≤0.51 → **어떤 밀도도 0.75 미달 = f* 측정불가**. f0.03 infra-quarantine은 verdict 불변(monotonic 상한이 이미 0.75 미달 보장).
+
+**E\* 노출임계 실측**(`estar_curve.tsv`): held-out D-acc이 8k(0.475)→12k(**1.0**) knee. **E\*≈12000 step(~15 epoch)** = base density에서 이만큼 노출이면 held-out 재조합 완전학습. naive ladder chance가 under-exposure임을 독립확증(FORM tunable·[[measurement-metalaw-form-tunable-bind-earned]]).
+
+**정정 측정 = exposure-matched ladder R1-R3**(`STAGE1_dilution_verdict.json`): 밀도 f마다 노출을 E*로 고정 → T(f)=E*/f step(R1 f0.3→40k·R2 f0.1→120k·R3 f0.03→400k). 이래야 밀도만 순수변수(노출 통제). **spend-gated**(R3 400k 대형·owner explicit go). NBIND arm④(f0.3/T40k)가 R1 무임승차 흡수 예정([[xbind-g1-crack-measure-not-substrate]] 다음 방향).
+
+scope: naive-ladder INVALID은 "자연 창발 불가" 증명 아님 — "이 측정법이 교란"이란 결과. d_nat 대비 f* 정직비교는 corrected ladder(spend-gated)에서만. STAGE 0 DATA-🧱 방향(A0-NEG NOT-POWERED)은 유지. ckpt 4개 보존 `~/anima-weights/natem/`. tune-to-green 금지.

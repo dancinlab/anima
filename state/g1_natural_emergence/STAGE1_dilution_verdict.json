@@ -1,0 +1,29 @@
+{
+  "verdict": "NATEM STAGE 1 사다리 = naive dilution ladder INVALID (exposure-confound)",
+  "date": "2026-07-11",
+  "question": "고정 20k step 예산에서 XBIND held-out CRACK signal을 밀도 f로 희석하면, D-acc>=0.75 CRACK을 유지하는 최소밀도 f*는? f*를 자연밀도 d_nat과 비교해 저밀도 자연 signal로도 창발 가능한지 정량.",
+  "measured": {
+    "f0.3_s7":    {"density": 0.30, "heldout_d_acc": 0.510, "seen_d_acc": 0.495, "pod": "38.128.233.200:37742", "status": "CLEAN"},
+    "f0.1_s4302": {"density": 0.10, "heldout_d_acc": 0.500, "pod": "64.247.201.10:15629", "status": "CLEAN"},
+    "f0.01_s7":   {"density": 0.01, "heldout_d_acc": 0.505, "pod": "ssh1.vast.ai:25728", "status": "CLEAN"},
+    "f0.03_s7":   {"density": 0.03, "heldout_d_acc": null, "pod": "104.255.9.187:12533",
+                   "status": "INFRA-QUARANTINE (degraded pod · full+fast greedy eval 둘 다 stall · evaluate-py-10) · ckpt 보존 ~/anima-weights/natem/natem_f0.03_s7.clm · 값은 monotonic 상한 <=0.51로 verdict 불변"}
+  },
+  "invalid_reason": "naive ladder는 고정 20k 예산에서 밀도 f를 낮추면 pair당 유효노출도 f배로 동반감소(couple)한다. 최고밀도 f=0.3조차 유효노출 0.3x20k=6k < E* knee(12k)라 chance(0.51)에 붕괴 = 밀도 천장이 아니라 under-exposure artifact. 3개 clean 밀도 전부 chance(0.50~0.51)이고 f0.03(더 낮은 노출)은 monotonic 상한 <=0.51 → 어떤 밀도도 0.75 미달 = f* 측정불가 = INVALID(V-A FAIL).",
+  "E_star": {
+    "definition": "base density에서 held-out D-acc이 knee를 넘는 최소 step (노출 임계)",
+    "curve_step_dacc": {"4000": 0.45, "8000": 0.475, "12000": 1.0, "16000": 1.0, "20000": 1.0},
+    "E_star_steps": 12000,
+    "note": "knee 8k(0.475)->12k(1.0). 즉 substrate는 base density에서 ~12k step(~15 epoch) 노출이면 held-out 재조합을 완전학습(FORM tunable·측정 메타법칙). naive ladder의 chance는 노출부족이 원인임을 독립확증."
+  },
+  "corrected_measurement": {
+    "name": "exposure-matched ladder (R1-R3)",
+    "design": "밀도 f마다 노출을 E*로 고정 → T(f) = E*/f step 학습. 이러면 밀도만 순수변수(노출 통제).",
+    "R1": {"density": 0.3,  "steps": 40000},
+    "R2": {"density": 0.1,  "steps": 120000},
+    "R3": {"density": 0.03, "steps": 400000},
+    "status": "spend-gated (owner explicit go · R3 400k step 대형). NBIND arm4(f0.3/T40k)가 R1을 무임승차 흡수 예정."
+  },
+  "d_nat_events_per_MB": {"A0-NEG": 42, "A0-ADV": 99, "A0-INTENS": 2578},
+  "scope": "naive-ladder INVALID은 '자연 창발 불가'의 증명이 아니라 '이 측정법이 교란됐다'는 결과. 자연밀도 대비 f* 비교는 corrected exposure-matched ladder(spend-gated)에서만 정직히 나온다. STAGE 0 DATA-🧱 방향(A0-NEG NOT-POWERED)은 유지."
+}
