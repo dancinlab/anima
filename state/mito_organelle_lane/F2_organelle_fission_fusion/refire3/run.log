@@ -1,0 +1,51 @@
+[G3] live band = [0.03, 0.05, 0.08, 0.12, 0.2, 0.3]  PRIMARY repair = 0.12  c2_health=0.805 (6.5s)
+[MDE-HET] sd=2.742 MDE=1.811 span=14.879 (8.22xMDE) POWERED=True (10.2s)
+[MDE-LIVE] sd=3.414 MDE=2.255 span=13.328 (5.91xMDE) POWERED=True (14.6s)
+[main-HET] done (19.4s)
+[main-LIVE] done (25.2s)
+[sweep-HET] repair (39.3s)
+[sweep-HET] sigma (47.0s)
+[sweep-HET] capsplit (51.8s)
+[sweep-HET] rho (58.8s)
+[sweep-HET] frag_sigma (63.5s)
+[sweep-LIVE] repair (77.9s)
+[sweep-LIVE] sigma (85.2s)
+[sweep-LIVE] capsplit (90.1s)
+[sweep-LIVE] rho (97.3s)
+[sweep-LIVE] frag_sigma (102.2s)
+[sweep-LIVE] EXC (109.5s)
+[sweep-LIVE] B1 (114.2s)
+
+================ RESULT ================
+사전예측: a3(카드문자) ≤ 0 · a3b(비대칭) > 0
+
+--- HET 기질 ---
+  G1=True(2.7e-13) G2=True G3=True(h=0.805 atp=57.46) POWER=True(8.22xMDE) ORACLE=True(+13.43 p=1.08e-15) info=True(corr=+0.012 selg_a3=-0.146 selg_sham=-0.014) shamDistinct=False(tagpick=0.492)
+   c1_frozen      atp= 54.10 h=0.808 sup= 95.02 churn=0.0000 selgap=+0.000 spread=0.000 pump=+0.0e+00
+   c2_blind       atp= 57.46 h=0.805 sup= 94.74 churn=0.0315 selgap=-0.001 spread=0.175 pump=+1.3e-13
+   a5_sham        atp= 62.26 h=0.804 sup= 94.55 churn=0.1091 selgap=-0.014 spread=0.204 pump=+1.6e-13
+   a3_awarefuse   atp= 59.21 h=0.804 sup= 94.61 churn=0.0913 selgap=-0.146 spread=0.183 pump=+2.7e-13
+   a3b_asym       atp= 56.25 h=0.803 sup= 94.43 churn=0.0222 selgap=-0.022 spread=0.304 pump=+5.7e-14
+   o8_hihealth    atp= 63.05 h=0.812 sup= 95.55 churn=0.0925 selgap=+0.240 spread=0.078 pump=+1.8e-13
+   o6_oracle      atp= 70.89 h=0.807 sup= 94.96 churn=0.0794 selgap=-0.000 spread=0.191 pump=+2.3e-13
+   exp_aware_ff   atp= 65.13 h=0.808 sup= 95.09 churn=0.0519 selgap=-0.259 spread=0.251 pump=+1.1e-13
+   guard_off_a3   atp= 59.90 h=0.804 sup= 94.55 churn=0.1142 selgap=-0.242 spread=0.372 pump=+2.0e-13
+   >> a3_awarefuse  vs_sham  -3.051±1.040 (t= -2.93 p=0.00852  3/20) | vs_c2  +1.746±0.930 (t= +1.88 p=0.0758) | SIGN+=False SIGN-=False | INVALID
+   >> a3b_asym      vs_sham  -6.006±0.916 (t= -6.56 p=2.8e-06  1/20) | vs_c2  -1.209±0.494 (t= -2.45 p=0.0243) | SIGN+=False SIGN-=True | INVALID
+
+--- LIVE 기질 ---
+  G1=True(2.1e-13) G2=True G3=True(h=0.700 atp=48.83) POWER=True(5.91xMDE) ORACLE=True(+13.06 p=4.15e-15) info=True(corr=+0.009 selg_a3=-0.238 selg_sham=-0.048) shamDistinct=False(tagpick=0.492)
+   c1_frozen      atp= 42.51 h=0.706 sup= 83.05 churn=0.0000 selgap=+0.000 spread=0.000 pump=+0.0e+00
+   c2_blind       atp= 48.83 h=0.700 sup= 82.39 churn=0.0315 selgap=+0.002 spread=0.254 pump=+9.3e-14
+   a5_sham        atp= 53.44 h=0.699 sup= 82.18 churn=0.1091 selgap=-0.048 spread=0.281 pump=+1.8e-13
+   a3_awarefuse   atp= 50.17 h=0.677 sup= 79.62 churn=0.0976 selgap=-0.238 spread=0.252 pump=+1.8e-13
+   a3b_asym       atp= 49.95 h=0.669 sup= 78.65 churn=0.0283 selgap=-0.027 spread=0.474 pump=+5.3e-14
+   o8_hihealth    atp= 46.84 h=0.775 sup= 91.23 churn=0.1034 selgap=+0.350 spread=0.115 pump=+1.9e-13
+   o6_oracle      atp= 61.89 h=0.711 sup= 83.62 churn=0.0742 selgap=-0.039 spread=0.270 pump=+1.5e-13
+   exp_aware_ff   atp= 61.77 h=0.734 sup= 86.33 churn=0.0344 selgap=-0.335 spread=0.245 pump=+1.1e-13
+   guard_off_a3   atp= 46.61 h=0.624 sup= 73.39 churn=0.1053 selgap=-0.385 spread=0.523 pump=+2.1e-13
+   >> a3_awarefuse  vs_sham  -3.275±0.901 (t= -3.64 p=0.00176  5/20) | vs_c2  +1.338±0.578 (t= +2.31 p=0.032) | SIGN+=False SIGN-=False | INVALID
+   >> a3b_asym      vs_sham  -3.495±0.509 (t= -6.87 p=1.49e-06  2/20) | vs_c2  +1.118±0.643 (t= +1.74 p=0.0982) | SIGN+=False SIGN-=False | INVALID
+
+G1 규약자유도 진단(unweighted-mean=G1위반 pump/run): {'c2_blind': -5.8, 'a3_awarefuse': 265.5, 'a3b_asym': 100.0}
+wall_s 115.0
