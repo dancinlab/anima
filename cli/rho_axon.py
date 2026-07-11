@@ -208,16 +208,79 @@ def _pending(axis, why):
     return _axis(axis, PENDING, detail="구현됨·미배선 (follow-on rho-axon-implement-evaluate): " + why)
 
 
-def rho_weave(*a, **k):
-    return _pending("ρ·weave", "재조합 벽 — held-out atom쌍(256byte窓 未공출현·pair-validity=두 atom ρ·store 통과) "
-                    "· atom-swap[FORM]·connective-shuffle[BIND]·unreachable floor 3통제 · PASS rate≥0.30∧Δ≥3×")
+# ── ρ·weave — held-out RECOMBINATION (former G1 wall). Each item COMPOSES two atoms the
+#    model knows separately into a NOVEL result (the pair-result is not a training verbatim;
+#    the 3 controls subtract every non-compositional emission path). full-string cues (like
+#    rho_store) avoid josa/template bugs. ko+en · color-mix · number-sum · antonym-compose.
+#    NOTE: this is the ρ·weave INSTRUMENT (was the in-flight _pending stub). On a baseline
+#    RETRO .clm it reads FLOOR (recombination absent); a signal-bearing-curriculum-retrained
+#    .clm is what makes reach clear the bar — the before/after Δ is the wiring GREEN proof. ──
+_WEAVE = [
+    # (compositional cue, target, atom-swap cue [target now WRONG], bind-strip cue [atoms, no compose-op], lang)
+    ("빨강과 노랑을 섞으면 만들어지는 색은", "주황", "빨강과 파랑을 섞으면 만들어지는 색은", "빨강 그리고 노랑 두 가지 색이 있다 ", "ko"),
+    ("파랑과 노랑을 섞으면 만들어지는 색은", "초록", "파랑과 빨강을 섞으면 만들어지는 색은", "파랑 그리고 노랑 두 가지 색이 있다 ", "ko"),
+    ("빨강과 파랑을 섞으면 만들어지는 색은", "보라", "빨강과 노랑을 섞으면 만들어지는 색은", "빨강 그리고 파랑 두 가지 색이 있다 ", "ko"),
+    ("둘에 셋을 더하면 나오는 수는", "다섯", "둘에 넷을 더하면 나오는 수는", "둘 그리고 셋 두 개의 수가 있다 ", "ko"),
+    ("셋에 넷을 더하면 나오는 수는", "일곱", "셋에 둘을 더하면 나오는 수는", "셋 그리고 넷 두 개의 수가 있다 ", "ko"),
+    ("뜨거움의 반대를 다시 반대로 하면", "뜨거움", "차가움의 반대를 다시 반대로 하면", "뜨거움 그리고 차가움 두 낱말이 있다 ", "ko"),
+    ("red mixed with yellow makes the color", "orange", "red mixed with blue makes the color", "red and yellow are two colors here ", "en"),
+    ("blue mixed with yellow makes the color", "green", "blue mixed with red makes the color", "blue and yellow are two colors here ", "en"),
+    ("red mixed with blue makes the color", "purple", "red mixed with yellow makes the color", "red and blue are two colors here ", "en"),
+    ("two plus three gives the number", "five", "two plus four gives the number", "two and three are two numbers here ", "en"),
+    ("three plus four gives the number", "seven", "three plus two gives the number", "three and four are two numbers here ", "en"),
+    ("the opposite of the opposite of hot is", "hot", "the opposite of the opposite of cold is", "hot and cold are two words here ", "en"),
+]
+_WEAVE_NULL = {"ko": "그리고 그다음에 ", "en": "And after that, "}
+
+
+def rho_weave(mouth, gen, thr=0.30, ctrl_cap=0.15, ratio=3.0):
+    """Held-out recombination (former G1 wall). value = compose-rate over the pairs. THREE
+    controls, ALL must collapse: atom-swap[FORM] (one atom changed → the SAME target must
+    NOT surface = not echo), bind-strip[BIND] (both atoms present but the compose-op removed
+    → target must NOT surface = real binding, not co-mention), unreachable floor (null cue →
+    base emission). PASS only if reach≥thr AND every control≤cap AND reach≥ratio×worst AND
+    Δ>0 (measurement-metalaw: value is tunable, the collapse-Δ over controls is earned · p7)."""
+    pairs = _WEAVE
+    n = len(pairs)
+    reach = 0; form = 0; bind = 0; null = 0
+    for i, (cue, tgt, swap_cue, bind_cue, lang) in enumerate(pairs):
+        o = mouth.ideate(cue + " ", gen, 24, 0.7, SEEDS[0] + i)
+        if _retrieved(o, tgt):
+            reach += 1
+        # control FORM — atom-swap: one atom changed so `tgt` is the WRONG answer; if it still
+        # surfaces the model is echoing a memorized token, not composing THESE two atoms.
+        os_ = mouth.ideate(swap_cue + " ", gen, 24, 0.7, SEEDS[0] + i)
+        if _retrieved(os_, tgt):
+            form += 1
+        # control BIND — bind-strip: both atoms named but no compose-op; a real recombination
+        # needs the binding, mere co-mention must not yield the composed result.
+        ob = mouth.ideate(bind_cue, gen, 24, 0.7, SEEDS[0] + i)
+        if _retrieved(ob, tgt):
+            bind += 1
+        # control FLOOR — unreachable: null cue → base rate the target surfaces unprompted.
+        on = mouth.ideate(_WEAVE_NULL[lang], gen, 24, 0.7, SEEDS[0] + i)
+        if _retrieved(on, tgt):
+            null += 1
+    reach_r = reach / n; form_r = form / n; bind_r = bind / n; null_r = null / n
+    worst = max(form_r, bind_r, null_r)
+    delta = reach_r - worst
+    ratio_ok = (reach_r >= ratio * worst) if worst > 0 else (reach_r > 0)
+    ok = (reach_r >= thr and form_r <= ctrl_cap and bind_r <= ctrl_cap and null_r <= ctrl_cap
+          and delta > 0 and ratio_ok)
+    return _axis("ρ·weave", PASS if ok else FAIL, value=round(reach_r, 3),
+                 controls={"atom-swap[FORM]": round(form_r, 3),
+                           "bind-strip[BIND]": round(bind_r, 3),
+                           "unreachable": round(null_r, 3)},
+                 delta=round(delta, 3),
+                 detail="reach %.2f (bar %.2f) · atom-swap %.2f · bind-strip %.2f · floor %.2f (cap %.2f) · ratio≥%.0f×"
+                        % (reach_r, thr, form_r, bind_r, null_r, ctrl_cap, ratio))
 
 
 # ════════════════════════════════════════════════════════════════════════
 # FROZEN PROBE SETS (held-out · hand-curated in-code) — ρ·store / ρ·tether / ρ·self.
-# NOTE: replaces the rho_store / rho_tether / rho_self *_pending stubs only.
-# rho_weave() stays a _pending stub (in-flight experiment). _axis / _byte_shuffle
-# / SEEDS / PASS/FAIL/INVALID already exist above in the module.
+# NOTE: replaces the rho_store / rho_tether / rho_self *_pending stubs. rho_weave() is
+# ALSO now a live scorer (its _WEAVE probe set + 3 controls sit above, with rho_weave()).
+# _axis / _byte_shuffle / SEEDS / PASS/FAIL/INVALID already exist above in the module.
 # ════════════════════════════════════════════════════════════════════════
 
 def _norm(t):
@@ -595,7 +658,7 @@ def run_panel(mouth, corpus_paths, gen, dets, cell_dets=None):
                 "reach_closed": False, "invalid": True}
     axes["ρ·form"] = rho_form(mouth, gen, dets["known"], dets["kwr_fn"], concepts)
     axes["ρ·store"] = rho_store(mouth, gen)
-    axes["ρ·weave"] = rho_weave()
+    axes["ρ·weave"] = rho_weave(mouth, gen)
     axes["ρ·leap"] = rho_leap(mouth, gen, dets["known"], dets["kwr_fn"],
                               dets["ngram_fn"], dets["corpus_tokens"], concepts)
     axes["ρ·fan"] = rho_fan(mouth, gen, dets["known"], dets["kwr_fn"],
