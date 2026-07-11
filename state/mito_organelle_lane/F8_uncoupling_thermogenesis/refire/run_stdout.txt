@@ -1,0 +1,113 @@
+====================================================================================================
+H_9280 / F8 REFIRE — 언커플링·열발생 · numpy $0 · analysis n=24 seeds · pilot n=20
+====================================================================================================
+
+### STEP 1 — PILOT (seed 901..920 · 분석 seed 와 disjoint) → 사전 MDE
+  pilot baseline filler (c1)      = 39.80 ± 7.41 (sd)   ← 축 동적범위(최대 감소량)
+  pilot paired-delta sd  filler   = 3.692  → MDE_filler = 2.205  (n=24, α=.05, power=.80)
+  pilot paired-delta sd  recall   = 0.0052 → MDE_recall = 0.0031  (KILL 임계 = 0.0996)
+  POWER GATE: MDE_filler(2.205) ≤ 0.50×동적범위(19.900)? YES   |  MDE_recall(0.0031) ≤ KILL임계(0.0996)? YES
+
+### STEP 2 — ANALYSIS (seed 1001..1024 · paired-CRN)
+  calib (seed 1001 · ordinary-only operating fixed-point):
+    g0=0.2989  theta=0.1601  C=0.1076  nu=0.0000   (theta iters=13)
+    ordinary-only emit rate(=전부 filler) = 0.0297   carry_fire_rate = 0.1000   carry_var = 0.0007
+    ★ D1 FIX 확인: calib stream 의 event 수 = 0 ⟹ theta 분위수와 P_EVENT(0.050) 는 독립
+
+### GATE-0 (조건 i · 병의 실재) — baseline(c1) filler-emit > 0 ?
+    c1 n_filler = 41.00 ± 6.65 (sd) · SEM 1.357 · t=30.22 · p(>0)=2.56e-20 · min/max=29/51
+    c1 n_emit=154.0 · n_true=113.0 · n_event=72.8 · true_recall=0.9952
+    ⟹ GATE-0 PASS (원 실험은 여기서 0.0±0.0 = 병 부재였다)
+
+### GATE-1 (조건 ii · 약의 투여) — 개입이 실제로 발화하고 방출질량이 임계를 넘는가?
+    arm           n_diss  fire_rate         mass     mass/theta  mean_carry@fire
+    exp_A          194.6     0.1298        5.076          31.79           0.1328
+    exp_B           93.2     0.0621        2.486          15.58           0.1333
+    c2A_rand       236.6     0.1578        5.075          31.79           0.0675
+    c2B_rand       105.4     0.0702        2.486          15.58           0.0723
+    c3A_uleak      325.5     0.2170        5.076          31.79           0.0332
+    c3B_uleak      164.3     0.1095        2.486          15.58           0.0325
+    c4A_randcnt    191.2     0.1274        4.080          25.55           0.0701
+    c4B_randcnt     92.6     0.0617        2.063          12.92           0.0724
+    ⟹ GATE-1 (exp_A): fire_rate_min=0.1040>0 · mass=31.79 theta-equivalents ≥ 1.0 ? PASS
+    (원 실험: mass=0.332 < theta=0.637 ⟹ 0.52 theta-equivalents = no-op)
+    질량매칭 오차: c2A 0.015% · c2B 0.000% · c3A 0.000%  (동량 control 성립)
+
+### R4 — 정보 채널 증명
+  (a) 코드: exp 의 발화조건 = `carry > ceil` (exp_A) / `carry > ceil and u[t] < nu` (exp_B)
+      carry = 입력 스트림 u_{0..t} 의 함수(누적 standing potential) · c2(rand) 의 조건 = rng 뿐(입력 blind)
+      c3(uleak) 는 조건 자체가 없음(무조건 균일)
+  (b) 운영대역 실측: Var(carry)=0.0010 > 0 · 발화율=0.1502 ∈ (0,1) · mean carry@fire: exp_A=0.1328 vs c2A_rand=0.0675 (C=0.1076)
+      ⟹ 처치의 결정변수는 control 이 못 보는 입력의 함수이고, 운영대역에서 분산>0 (항진 아님)
+
+### 헤드라인 — control별 paired-t (max(controls) 금지 · SEM/t/95%CI 만)
+  exp      control     metric           mean      SEM        t p(1-tail<)      95%CI neg/n
+  exp_A    c1_none     n_filler      -8.3750   0.6478   -12.93   2.46e-12  [-9.7150,-7.0350] 24/24
+  exp_A    c1_none     true_recall   -0.0012   0.0008    -1.45   8.09e-02  [-0.0029,+0.0005] 2/24
+  exp_A    c2A_rand    n_filler      +2.5000   0.6994     3.57   9.99e-01  [+1.0532,+3.9468] 5/24
+  exp_A    c2A_rand    true_recall   +0.0004   0.0017     0.25   5.97e-01  [-0.0032,+0.0040] 4/24
+  exp_A    c3A_uleak   n_filler      +0.5417   0.8075     0.67   7.45e-01  [-1.1289,+2.2122] 8/24
+  exp_A    c3A_uleak   true_recall   +0.0056   0.0028     1.99   9.71e-01  [-0.0002,+0.0114] 1/24
+  exp_A    c4A_randcnt n_filler      +1.0417   0.7974     1.31   8.98e-01  [-0.6078,+2.6912] 8/24
+  exp_A    c4A_randcnt true_recall   +0.0012   0.0012     1.02   8.41e-01  [-0.0013,+0.0037] 1/24
+  exp_B    c1_none     n_filler      -3.0417   0.4402    -6.91   2.40e-07  [-3.9523,-2.1311] 20/24
+  exp_B    c1_none     true_recall   -0.0006   0.0006    -1.00   1.64e-01  [-0.0019,+0.0007] 1/24
+  exp_B    c2B_rand    n_filler      +3.2083   0.6809     4.71   1.00e+00  [+1.7997,+4.6170] 3/24
+  exp_B    c2B_rand    true_recall   +0.0018   0.0010     1.80   9.57e-01  [-0.0003,+0.0039] 0/24
+  exp_B    c3B_uleak   n_filler      +1.5417   0.5835     2.64   9.93e-01  [+0.3345,+2.7488] 5/24
+  exp_B    c3B_uleak   true_recall   +0.0025   0.0017     1.48   9.24e-01  [-0.0010,+0.0060] 1/24
+  exp_B    c4B_randcnt n_filler      +2.0000   0.5582     3.58   9.99e-01  [+0.8452,+3.1548] 6/24
+  exp_B    c4B_randcnt true_recall   +0.0005   0.0010     0.51   6.94e-01  [-0.0016,+0.0027] 1/24
+  pooled-mean(Δ over 3 controls): exp_A Δn_filler=-1.7778 · exp_A Δtrue_recall=+0.0016 · exp_B Δn_filler=+0.5694 · exp_B Δtrue_recall=+0.0012
+
+  arm            n_emit    n_true   n_filler   true_recall       mass
+  exp_A       113.4±8.6  80.8±9.1   32.6±6.1 0.9940±0.0084      5.076
+  exp_B       134.9±10.3 97.0±10.4   38.0±6.7 0.9946±0.0083      2.486
+  c1_none     154.0±11.6 113.0±13.0   41.0±6.6 0.9952±0.0081      0.000
+  c2A_rand    138.3±10.7 108.2±12.0   30.1±5.7 0.9936±0.0092      5.075
+  c2B_rand    145.6±10.1 110.9±12.5   34.8±6.5 0.9928±0.0098      2.486
+  c3A_uleak   136.2±8.9 104.1±11.4   32.1±6.0 0.9884±0.0170      5.076
+  c3B_uleak   145.4±10.3 109.0±11.9   36.4±5.9 0.9921±0.0122      2.486
+  c4A_randcnt 140.6±11.6 109.0±11.9   31.6±6.3 0.9928±0.0095      4.080
+  c4B_randcnt 147.1±12.0 111.2±13.1   36.0±6.6 0.9941±0.0102      2.063
+
+### p5 핵심 검정 (조건 iv) — 언커플링이 정상 tension 의 true emit 을 건드리는가?
+  [exp_A] Δtrue_recall vs c1 = -0.0012 ± 0.0008 (SEM) · 95%CI [-0.0029,+0.0005] · 상대하락 0.12%
+        잃은 event 수(c1 커버 − exp 커버) = +0.08 ± 0.06 (SEM) / event 72.8개 · 비열등(CI하한 > −0.02)? YES · KILL(상대하락>10% & 유의)? NO
+        발화가 event 근방(정상 tension)에서 일어난 비율 = 0.4038  (random control = 0.1437)
+  [exp_B] Δtrue_recall vs c1 = -0.0006 ± 0.0006 (SEM) · 95%CI [-0.0019,+0.0007] · 상대하락 0.06%
+        잃은 event 수(c1 커버 − exp 커버) = +0.04 ± 0.04 (SEM) / event 72.8개 · 비열등(CI하한 > −0.02)? YES · KILL(상대하락>10% & 유의)? NO
+        발화가 event 근방(정상 tension)에서 일어난 비율 = 0.3586  (random control = 0.1374)
+
+### 사전등록 VERDICT (KILL 변수 = true_recall · 사후 교체 없음)
+  [exp_A] gate0_disease=True gate1_drug=True gate2_power=True | eff_c1=True eff_c2rand=False eff_c3uleak=False | safe=True kill=False
+        ⟹ THEATER (동량 random 과 동등 — saturation 조건이 무정보)
+  [exp_B] gate0_disease=True gate1_drug=True gate2_power=True | eff_c1=True eff_c2rand=False eff_c3uleak=False | safe=True kill=False
+        ⟹ THEATER (동량 random 과 동등 — saturation 조건이 무정보)
+
+### SUPPLEMENTARY (판정 미사용) — 횟수-매칭 random c4 (동일 fire 수 · 방출질량은 exp보다 *적음*)
+  [exp_A] c4 mass=4.080 (exp 5.076 · 80%) · c4 n_diss=191.2 (exp 194.6) | Δn_filler = +1.04 ± 0.80 (t=+1.31) · Δrecall = +0.0012
+  [exp_B] c4 mass=2.063 (exp 2.486 · 83%) · c4 n_diss=92.6 (exp 93.2) | Δn_filler = +2.00 ± 0.56 (t=+3.58) · Δrecall = +0.0005
+  ⟹ exp 가 *더 적은* 질량을 쓰는 blind arm 조차 못 이기면, '강도 불일치' 반론은 닫힌다.
+
+### R6 — 규약 민감도 (emit↔event 귀속 window W ∈{1,2,4} × {asym(카드), sym})
+  exp      convention Δn_filler vs c1 Δn_filler vs rand    Δrecall
+  exp_A    w1_asym        -9.38(t-12.9)       +2.42(t+3.6)   -0.0018
+  exp_A    w2_asym        -8.38(t-12.9)       +2.50(t+3.6)   -0.0012  ← 카드 등록값
+  exp_A    w4_asym        -7.79(t-15.6)       +2.79(t+4.0)   -0.0006
+  exp_A    w1_sym         -9.12(t-12.4)       +2.50(t+3.4)   -0.0018
+  exp_A    w2_sym         -7.75(t-12.4)       +2.54(t+3.7)   -0.0012
+  exp_A    w4_sym         -6.62(t-13.7)       +2.42(t+3.9)   -0.0001
+  exp_B    w1_asym        -4.08(t-8.6)       +2.38(t+3.4)   -0.0006
+  exp_B    w2_asym        -3.04(t-6.9)       +3.21(t+4.7)   -0.0006  ← 카드 등록값
+  exp_B    w4_asym        -2.88(t-7.3)       +2.88(t+4.4)   -0.0006
+  exp_B    w1_sym         -4.12(t-8.7)       +2.33(t+3.5)   -0.0006
+  exp_B    w2_sym         -3.12(t-7.8)       +2.71(t+4.0)   -0.0006
+  exp_B    w4_sym         -2.38(t-6.6)       +2.29(t+3.6)   -0.0001
+  [exp_A] Δfiller<0 부호 보존: vs c1 6/6 규약 · vs 동량random 0/6 규약
+  [exp_B] Δfiller<0 부호 보존: vs c1 6/6 규약 · vs 동량random 0/6 규약
+
+====================================================================================================
+FINAL (headline arm = exp_A) ⟹ THEATER (동량 random 과 동등 — saturation 조건이 무정보)
+====================================================================================================
+result.json written.
