@@ -1,0 +1,71 @@
+── (iv) 사전 검출력 (pilot seeds — main과 disjoint) ──
+   static-k acc curve: {1: 0.6479, 2: 0.7676, 3: 0.8127, 4: 0.8291, 5: 0.8254, 6: 0.8233, 7: 0.8232, 8: 0.823}
+   처치 대역(k∈1..4) 동적범위 = 18.12 pp · 전체 = 18.12 pp
+   MDE(n=20 · paired-CRN · α=.05) = 0.351 pp   ⇒ MDE/band = 0.0193
+   POWER_OK = True   (원 프로브: band 1.12pp < 문턱 1.71pp = 검출력 0)
+
+  seed  0 done (19s)  seed  1 done (26s)  seed  2 done (35s)  seed  3 done (43s)  seed  4 done (50s)  seed  5 done (58s)  seed  6 done (65s)  seed  7 done (73s)  seed  8 done (81s)  seed  9 done (88s)  seed 10 done (96s)  seed 11 done (103s)  seed 12 done (111s)  seed 13 done (118s)  seed 14 done (126s)  seed 15 done (133s)  seed 16 done (141s)  seed 17 done (149s)  seed 18 done (157s)  seed 19 done (165s)
+
+── V-GATES (헤드라인 detector 위) ──
+  V1_capacity_lane_live      PASS=True  {'mean': 0.179, 'sem': 0.0089, 't': 20.1578, 'p': 0.0, 'n': 20, 'wins': 20, 'sig': True}
+  V2_expert_specialization   PASS=True  {'route_recall': 0.9981, 'chance': 0.1562, 'ratio': 6.3896, 'linear_shortcut_acc': 0.5173, 'majority_baseline': 0.5174, 'lin_minus_majority': {'mean': -0.00010000000000000564, 'sem': 0.002870000101880717, 't': -0.0348432043380331, 'p': 0.9725683804064117, 'n': 20, 'wins': 4, 'sig': False}}
+  V3_info_channel            PASS=True  {'demand_mean': 2.5273, 'demand_std': 1.079, 'demand_corr_m': 0.9378, 'k_std_exp': 0.608, 'frac_k_changed_when_demand_shuffled_EXP': 0.4355, 'frac_k_changed_c1': 0.0, 'frac_k_changed_c2': 0.0}
+  V4_budget_fairness         PASS=True  {'spend_exp': 3.6689, 'spend_c1': 4.0, 'spend_c2': 3.6689, 'spend_c5': 3.6679, 'spend_c3': 3.0, 'spend_ref_unbudgeted': 4.5273}
+  V5_budget_binds            PASS=True  {'binding_rate': 0.5282, 'mean_demand': 2.5273, 'sustainable_k': 1.6}
+  p5                         PASS=—  {'illegal_channel_closed_all_seeds': True, 'emit_rate_static_k1': 0.4227, 'emit_rate_static_k8': 0.5, 'emit_rate_exp': 0.4623}
+
+══ 조건 [iid] ══  (binding=0.528 · mean_k_exp=1.669 · corr(afford,demand)=-0.005)
+  arm                       mean_k    ATP/샘플        acc(micro)        acc(macro)
+  exp_atp_economy            1.669     3.669 0.7403±0.0109  0.7405±0.0109
+  c1_static_ceil             2.000     4.000 0.7593±0.0115  0.7596±0.0116
+  c2_perm_k                  1.669     3.669 0.7161±0.0112  0.7164±0.0113
+  c4_demand_shuffled         1.669     3.669 0.7158±0.0110  0.7161±0.0111
+  c5_nobank_affperm          1.668     3.668 0.7410±0.0110  0.7414±0.0110
+  c3_nobank_raw              1.000     3.000 0.6411±0.0126  0.6415±0.0128
+  ref_unbudgeted_demand      2.527     4.527 0.8331±0.0095  0.8339±0.0095
+  ref_static_kmax            8.000    10.000 0.8201±0.0083  0.8211±0.0084
+  vgate_static_k1            1.000     3.000 0.6411±0.0126  0.6415±0.0128
+  ── Δ (EXP − control) · control별 paired-t (max(controls) 금지) ──
+    [PRIMARY] vs c1_static_ceil         Δ=-0.0190 SEM=0.0023 t=  -8.36 p=8.61e-08  0/20 sig=True  | macro Δ=-0.0190
+    [PRIMARY] vs c2_perm_k              Δ=+0.0242 SEM=0.0021 t= +11.37 p=6.38e-10 20/20 sig=True  | macro Δ=+0.0241
+    [mech   ] vs c4_demand_shuffled     Δ=+0.0245 SEM=0.0028 t=  +8.73 p=4.46e-08 20/20 sig=True  | macro Δ=+0.0244
+    [mech   ] vs c5_nobank_affperm      Δ=-0.0007 SEM=0.0014 t=  -0.53 p=6.01e-01  9/20 sig=False | macro Δ=-0.0009
+    [mech   ] vs c3_nobank_raw          Δ=+0.0992 SEM=0.0075 t= +13.22 p=4.98e-11 20/20 sig=True  | macro Δ=+0.0990
+    [ref    ] vs ref_unbudgeted_demand  Δ=-0.0929 SEM=0.0039 t= -23.97 p=1.00e-12  0/20 sig=True  | macro Δ=-0.0933
+    [ref    ] vs ref_static_kmax        Δ=-0.0799 SEM=0.0039 t= -20.41 p=1.00e-12  0/20 sig=True  | macro Δ=-0.0805
+    POOLED(primary) micro=+0.0026 macro=+0.0025 sign_ok(2규약)=True
+
+══ 조건 [bursty] ══  (binding=0.512 · mean_k_exp=1.642 · corr(afford,demand)=-0.560)
+  arm                       mean_k    ATP/샘플        acc(micro)        acc(macro)
+  exp_atp_economy            1.642     3.642 0.7313±0.0105  0.7316±0.0106
+  c1_static_ceil             2.000     4.000 0.7593±0.0115  0.7596±0.0116
+  c2_perm_k                  1.642     3.642 0.7122±0.0109  0.7125±0.0110
+  c4_demand_shuffled         1.669     3.669 0.7151±0.0117  0.7154±0.0118
+  c5_nobank_affperm          1.867     3.867 0.7601±0.0105  0.7605±0.0105
+  c3_nobank_raw              1.000     3.000 0.6411±0.0126  0.6415±0.0128
+  ref_unbudgeted_demand      2.527     4.527 0.8331±0.0095  0.8339±0.0095
+  ref_static_kmax            8.000    10.000 0.8201±0.0083  0.8211±0.0084
+  vgate_static_k1            1.000     3.000 0.6411±0.0126  0.6415±0.0128
+  ── Δ (EXP − control) · control별 paired-t (max(controls) 금지) ──
+    [PRIMARY] vs c1_static_ceil         Δ=-0.0280 SEM=0.0031 t=  -9.01 p=2.77e-08  0/20 sig=True  | macro Δ=-0.0279
+    [PRIMARY] vs c2_perm_k              Δ=+0.0191 SEM=0.0021 t=  +8.99 p=2.83e-08 20/20 sig=True  | macro Δ=+0.0191
+    [mech   ] vs c4_demand_shuffled     Δ=+0.0161 SEM=0.0028 t=  +5.82 p=1.32e-05 18/20 sig=True  | macro Δ=+0.0162
+    [mech   ] vs c5_nobank_affperm      Δ=-0.0288 SEM=0.0022 t= -13.24 p=4.87e-11  0/20 sig=True  | macro Δ=-0.0289
+    [mech   ] vs c3_nobank_raw          Δ=+0.0902 SEM=0.0070 t= +12.92 p=7.39e-11 20/20 sig=True  | macro Δ=+0.0901
+    [ref    ] vs ref_unbudgeted_demand  Δ=-0.1019 SEM=0.0042 t= -23.98 p=1.00e-12  0/20 sig=True  | macro Δ=-0.1022
+    [ref    ] vs ref_static_kmax        Δ=-0.0889 SEM=0.0042 t= -21.23 p=1.00e-12  0/20 sig=True  | macro Δ=-0.0894
+    POOLED(primary) micro=-0.0044 macro=-0.0044 sign_ok(2규약)=True
+
+── 판정 분해 ──
+  [atp_field_itself_storage] THEATER (ATP 장/저장의 기여 = 0)
+     EXP − c5_nobank_affperm (동일지출 · afford 주변분포 동일 · 저장 동역학만 제거)
+  [demand_to_capacity_channel] EARNED
+     EXP − c2_perm_k (동일 k multiset·동일 총지출·수요-표본 결합만 파괴) 및 − c4 (수요 스크램블)
+  [vs_just_spending_more] 
+     EXP − c1_static_ceil (수요맹목 상수캡 · ATP 를 ~9% **더** 씀)
+
+── 부차: 학습단계 경제 (공통 k=8 평가 · mean_k=1.67 binding=0.697) ──
+   vs static Δ=-0.0186 t=-8.56 p=6.01e-08
+   vs perm   Δ=-0.0004 t=-1.04 p=3.12e-01
+
+VERDICT: SPLIT/DIRECTIONAL — 동일지출 수요맹목 통제(c2)는 이기나 지출이 더 많은 static 상수(c1)에는 짐 ⇒ 배분 채널은 실재하나 그 크기가 '조금 더 쓰기'에 못 미침   (wall=164.75s)
