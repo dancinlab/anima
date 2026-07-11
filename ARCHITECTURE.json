@@ -14734,6 +14734,13 @@
     "value": "agency_T.shuffle_null vs a (near-)constant `other` (degenerate Φ) built a zero-width F-shuffle null, so within_2sigma_null=|obs-0|<=0=True rendered a structurally uninformative falsifier leg as a false PASS — the H_9269 leg-b degeneracy that had to be caught by hand. Now a degenerate leg is VOID (within_2sigma_null=None; carries no weight in the combined falsifier — neither pass nor fail)",
     "threshold": "FROZEN bars (no tune-to-green, Fable Φ-leg redesign T3): NULL_EPS=1e-12 (zero-width null), PHI_VAR_EPS=0.005 (leg-b Φ sd bar); T2 regression test_evaluability_void.py 4/4. Root-cause of the H_9269 Φ-flatness = the e1_slw_303m daemon's model-input bytes were decision-invariant by construction (emission mode-collapse + own-emit-only context window), so the trunk never saw the decisions — an instrument+regime finding, not IIT4/unitization",
     "source": "H_9269 verdict follow-on · Fable root-cause+redesign (scratchpad/fable_phi_variance.md) · fix/phi-leg-evaluability-void · 2026-07-12"
+   },
+   {
+    "id": "evaluate-py-7",
+    "state": "pos-conv",
+    "value": "byte-LM eval --out json write는 lone surrogate(부분 UTF-8 출력)에 UnicodeEncodeError('surrogates not allowed')로 파일 전량 유실 — encoding='utf-8'/PYTHONUTF8=1으로도 불가(surrogate는 어떤 locale서도 utf-8 아님). 근본fix=_json_safe() 재귀 scrub(surrogatepass→replace) + open(encoding='utf-8')을 xbind_run·xfan_run 두 dump 사이트. D-acc summary는 dump 前 INLINE stdout이라 회수되나 json artifact(PERM-GOLD 재채점·frozen verdict) 유실. evaluate-py-11(Korean×locale·encoding 처방)의 연장 = encoding necessary-not-sufficient.",
+    "threshold": "재발조건=NBIND류 byte-LM eval(한글 생성)의 --out json 미기록·D-acc만 stdout. 해결=_json_safe scrub이 dump 前 필수(encoding은 belt). ASCII manifest는 잠복무영향.",
+    "source": "cli/evaluate.py"
    }
   ]
  }

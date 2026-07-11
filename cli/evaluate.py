@@ -1304,6 +1304,20 @@ def _xbind_first_word(text):
     return t.split()[0].strip(",.;:") if t.split() else ""
 
 
+def _json_safe(o):
+    """Scrub lone surrogates from decode output before json.dump. A byte-LM emits raw bytes
+    that decode (surrogateescape) to lone surrogates mid-multibyte; json.dump(ensure_ascii=False)
+    then raises UnicodeEncodeError('surrogates not allowed') and the whole eval file is lost even
+    though the D-acc summary is already computed. Surrogates -> U+FFFD; valid text unchanged."""
+    if isinstance(o, str):
+        return o.encode("utf-8", "surrogatepass").decode("utf-8", "replace")
+    if isinstance(o, dict):
+        return {k: _json_safe(v) for k, v in o.items()}
+    if isinstance(o, list):
+        return [_json_safe(v) for v in o]
+    return o
+
+
 def _xbind_cont_nll(np, clm_mod, W, seed, cont, T):
     """Sum NLL of `cont` bytes given `seed` (right-aligned window T forward)."""
     text = seed + cont
@@ -1396,7 +1410,7 @@ def xbind_run(argv):
               (split, arm, summ["d_acc"], str(summ["c_rate"]), med,
                summ["margin_frac_pos"], str(summ["sampled_maj_acc"]), summ["n"]),
               flush=True)
-    json.dump(res, open(out_path, "w"), ensure_ascii=False)
+    json.dump(_json_safe(res), open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
     print(json.dumps({"out": out_path,
                       "heldout_d_acc": res["splits"]["heldout"]["summary"]["d_acc"],
                       "seen_d_acc": res["splits"]["seen"]["summary"]["d_acc"]}))
@@ -1517,7 +1531,7 @@ def xfan_run(argv):
               (split, arm, summ["coverage_C"], str(summ["valid_rate"]), str(summ["spurious_rate"]),
                str(summ["coverage_unary"]), str(summ["coverage_joint"]),
                summ["greedy_distinct_mean"], med, summ["margin_frac_pos"], n), flush=True)
-    json.dump(res, open(out_path, "w"), ensure_ascii=False)
+    json.dump(_json_safe(res), open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
     print(json.dumps({"out": out_path,
                       "heldout_C": res["splits"]["heldout"]["summary"]["coverage_C"],
                       "seen_C": res["splits"]["seen"]["summary"]["coverage_C"]}))
