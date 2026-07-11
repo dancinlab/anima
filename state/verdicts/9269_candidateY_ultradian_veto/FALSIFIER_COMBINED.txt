@@ -1,0 +1,39 @@
+### analyze+phi B ###
+=== H_1058 agency-T (mount=B) ===
+ticks: 900 counts: {'ACTIVE_VETO': 100, 'EMIT': 720, 'PASSIVE': 0} | substitution A-vs-EMIT: True
+var: score=0.00223 vc=0.002173 depth=24.82 | depth_dist={'0': 29, '1': 36, '2': 25, '4': 5, '8': 110, '16': 695}
+(a) T-sep A-vs-EMIT: d_T=-0.450 (depth-only=-3.887 vc-only=1.187) n=100/720 -> FAIL
+(c) rho(T,t)=0.128 null=0.000+-0.033 2sig-band=[-0.066,0.066] -> FAIL(structured)
+(b) rho(T,Phi|top_variance)=0.000 null=0.000+-0.000 -> PASS
+(b) rho(T,Phi|random)=0.000 null=0.000+-0.000 -> PASS
+ctrl emit-rate rho(T,emit)=-0.564
+
+### analyze+phi C ###
+=== H_1058 agency-T (mount=C) ===
+ticks: 900 counts: {'ACTIVE_VETO': 100, 'EMIT': 720, 'PASSIVE': 0} | substitution A-vs-EMIT: True
+var: score=0.001911 vc=0.002173 depth=27.02 | depth_dist={'0': 84, '1': 2, '2': 4, '4': 6, '8': 109, '16': 695}
+(a) T-sep A-vs-EMIT: d_T=-0.392 (depth-only=-3.837 vc-only=1.187) n=100/720 -> FAIL
+(c) rho(T,t)=0.127 null=0.000+-0.033 2sig-band=[-0.066,0.066] -> FAIL(structured)
+(b) rho(T,Phi|top_variance)=0.000 null=0.000+-0.000 -> PASS
+(b) rho(T,Phi|random)=0.000 null=0.000+-0.000 -> PASS
+ctrl emit-rate rho(T,emit)=-0.557
+
+### analyze+phi D ###
+=== H_1058 agency-T (mount=D) ===
+ticks: 900 counts: {'ACTIVE_VETO': 100, 'EMIT': 720, 'PASSIVE': 0} | substitution A-vs-EMIT: True
+var: score=0.002226 vc=0.002173 depth=24 | depth_dist={'0': 3, '1': 62, '2': 25, '4': 4, '8': 111, '16': 695}
+(a) T-sep A-vs-EMIT: d_T=-0.466 (depth-only=-3.895 vc-only=1.187) n=100/720 -> FAIL
+(c) rho(T,t)=0.128 null=0.000+-0.033 2sig-band=[-0.066,0.066] -> FAIL(structured)
+(b) rho(T,Phi|top_variance)=0.000 null=0.000+-0.000 -> PASS
+(b) rho(T,Phi|random)=0.000 null=0.000+-0.000 -> PASS
+ctrl emit-rate rho(T,emit)=-0.565
+
+======== FROZEN FALSIFIER (3 sessions x 2 macro-maps) ========
+=== H_1058 FROZEN falsifier — 3 sessions/maps ===
+  [B] (a)d_T=-0.45 F | (c)rho=0.13 F
+  [C] (a)d_T=-0.39 F | (c)rho=0.13 F
+  [D] (a)d_T=-0.47 F | (c)rho=0.13 F
+LEG (a) T-separation |d|>=0.8 across all: FAIL
+LEG (c) T _|_ t (F-shuffle null) across all: FAIL
+LEG (b) T~Phi (F-shuffle null): PASS
+FROZEN FALSIFIER: NOT-CLEAN (see legs; tier stays 🟠 w/ blocker)
