@@ -38,7 +38,8 @@ from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
 from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
                    vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
-                       generator_read_anchors, gen_penult_pooled_W)
+                       generator_read_anchors, gen_penult_pooled_W,
+                       _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
 from decode import clm_load_weights, clm_decodable, penult_fold8
 from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
@@ -1881,6 +1882,19 @@ def anima_consciousness_mode(ckpt, argv=None):
             _imp = _score > 0.3          # engine_g should_emit / PROACTIVE_THRESHOLD
             _cls = "EMIT" if (_imp and _safe) else ("ACTIVE_VETO" if _imp else "PASSIVE")
             _gtb = g_text.encode("utf-8", "surrogateescape")
+            # ── H_1058 Part A1: the generator's ACTUALLY-CONSUMED decode-seed bytes ──
+            # PURE side-channel (a_substrate_disjoint · p5): this recomputes the exact seed
+            # string that _gen_clm_decode/_gen_bytegpt_decode built for this tick —
+            # `phase + " " + <last-anchor clean field>` — using the SAME SSOT extractor
+            # (_gen_anchor_field) and the SAME phase (dec["phase"]) the mouth read via
+            # gen_ctx_from_decision. It touches NOTHING on the emit/silence path; the emit
+            # bytes are byte-identical whether or not this line runs. Lets phi_leg.py build
+            # its Φ context window from the TRUE model input instead of own-emit-only bytes
+            # (the H_9269 decision-invariance root cause — constant seed per session).
+            _seed_str = _gen_g_string(dec, "phase") + " "
+            if len(live_anchors) > 0:
+                _seed_str = _seed_str + _gen_anchor_field(live_anchors[len(live_anchors) - 1])
+            _seed_b = _seed_str.encode("utf-8", "surrogateescape")
             # ── frozen-emission replay substrate (H_1058 §3.4) ──────────────────
             # g_text feedback funnels through EXACTLY 3 roots (rel_lane[immune],
             # recon_err/cell_count[afield]) + 3 EMAs; phi/nudge are session-constants
@@ -1916,6 +1930,9 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "gen_emitted": g_emit, "gen_backend": g_back,
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
+                # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
+                # (phi_leg.py TRUE-consumed-bytes context source; a_substrate_disjoint · p5).
+                "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
                 # roots + residuals + DEP-arg indep scalars (replay inputs)
                 "rel_lane": float(rel_lane), "recon_err": float(recon_err),
                 "cell_count": int(cell_count),

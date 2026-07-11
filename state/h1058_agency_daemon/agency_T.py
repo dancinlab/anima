@@ -120,7 +120,7 @@ def pearson(x, y):
     return sum((a - mx) * (b - my) for a, b in zip(x, y)) / (sx * sy)
 
 
-def shuffle_null(T, other, n=SHUFFLE_N, seed=SEED, min_other_sd=0.0):
+def shuffle_null(T, other, n=SHUFFLE_N, seed=SEED, min_other_sd=0.0, min_distinct=0):
     """F-SHUFFLE empirical null for rho(T, other): permute T across positions.
 
     Evaluability guard (H_9269): if `other` is (near-)constant the correlation is 0 by
@@ -145,8 +145,9 @@ def shuffle_null(T, other, n=SHUFFLE_N, seed=SEED, min_other_sd=0.0):
             other_sd, max(min_other_sd, NULL_EPS))
     elif sd <= NULL_EPS:
         void_reason = "null_sd=%.3g (zero-width F-shuffle null)" % sd
-    elif n_distinct < 2:
-        void_reason = "other has %d distinct value(s)" % n_distinct
+    elif n_distinct < max(2, min_distinct):
+        void_reason = "other has %d distinct value(s) < bar %d (pre-registered T3 distinct-window bar)" % (
+            n_distinct, max(2, min_distinct))
     if void_reason is not None:
         return {"rho": obs, "null_mu": mu, "null_sd": sd, "band": [mu - 2 * sd, mu + 2 * sd],
                 "other_sd": other_sd, "n_distinct": n_distinct,
@@ -215,7 +216,11 @@ def analyze(args):
             # leg (b) needs Φ to carry decision variance (else the null is zero-width and
             # a degenerate leg renders as a false PASS — the H_9269 bug). PHI_VAR_EPS bar
             # is FROZEN; a run may not relax it after seeing data (p7).
-            leg_b[mp] = (shuffle_null(Tp, Pp, min_other_sd=PHI_VAR_EPS)
+            # T3 evaluability (FROZEN, Fable Φ-leg redesign): leg-b EVALUABLE only if Φ carries
+            # variance (sd≥PHI_VAR_EPS) AND enough distinct windows (≥ max(10, 20% of scored) —
+            # guards a near-degenerate leg that clears the sd bar on a couple of outliers).
+            leg_b[mp] = (shuffle_null(Tp, Pp, min_other_sd=PHI_VAR_EPS,
+                                      min_distinct=max(10, int(0.2 * len(common))))
                          if len(common) >= 3 else {"n": len(common)})
 
     result = {
