@@ -73,7 +73,7 @@ store/weave/tether/self=PENDING follow-on · G0-G6 default until the switch land
 
 ### 🔥 Fire · GPU autonomy · recovery
 - **`a_fire_autonomous`** — dispatch a cost fire autonomously (1-line estimate); no user gate (⚠️ fleet: rent=spend needs go).
-- **`a_wall_first`** — wall-time first: more/bigger parallel GPUs regardless of cost.
+- **`a_wall_first`** — wall-time first: more/bigger parallel GPUs regardless of cost. **wall-time minimization conditions** (minimize discovery wall-clock): ① **decompose the goal into independent tracks** (zero cross-dependency — units that don't wait on each other's output); ② run **each track on a separate GPU host/pod concurrently** → **wall = max(track), not sum(track)**; ③ existing-ckpt evals (quick-wins) fire **immediately** with no retrain, retrain (slow) tracks get a **dedicated host** (never serialize a quick-win behind a slow retrain); ④ **GPU-max-accelerate each track** (`[gpu]` install · `cuda_available` DEFAULT-ON · `gpu-eval-default` · #3323 · 11.8×). e.g. H_9272 cement 4-track (2nd-seed · larger-n · wild-natural · rho_weave→L3) on 2 fresh GPU pods + summer concurrently = ~4h sequential → ~1h parallel. dont: run independent tracks sequentially on one host · leave GPU uninstalled (`[train]`-only → CPU-scalar fallback) · serialize a quick-win eval behind a slow retrain.
 - **`a_fire_recover_complete`** — before teardown pull the ckpt to permanent storage → HF upload.
 - **`a_cpu_local_no_waiter`** / **`a_dont_kill_live_compute`** — a fire runs CPU-local inline-polled; prove a stall before killing.
 
