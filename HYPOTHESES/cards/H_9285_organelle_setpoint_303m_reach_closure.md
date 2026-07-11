@@ -1,6 +1,6 @@
 # H_9285 — 🔚 organelle lane 결착 — 절대-setpoint 배분기를 303M ConvMoE capacity schedule에 얹으면 held-out 재조합(ρ·weave)이 움직이는가 (Δ≈0이면 lane 전체 CLOSED · $0 pool eval-only)
 
-- **tier:** 🔵 PRE-REGISTERED (미측정)
+- **tier:** 🔴 KILL (measured · 303M byte-parity max|Δ|=0.0 · reach 전이 falsified · organelle lane 결착)
 - **wired:** none.
 - **family:** 🔋 ORGANELLE LANE 종결 프로브 — **이 lane을 싸게 끝내는 유일한 경로**.
 - **lens:** organelle lane이 찾은 유일한 earned 메커니즘([[H_9284]] 외생수요→절대-setpoint 배분)이 **reach(G1/ρ·weave)에 전이되는가**를 **eval-only**로 결착한다. 학습 없음 · GPU 학습비 0 · 기존 303M ckpt에 배분기만 얹고 디코드한다.
@@ -52,3 +52,11 @@
 ## 3. 왜 이게 lane을 끝내는가
 
 lane의 생존 레버 2개(F4-SEC·F10)는 **전부 throughput/allocation 축**이다. reach로의 전이는 같은 lane 안에서 이미 한 번 반증됐다([[H_9283]]: 배분 FORM t=+10.65 → held_conj Δ=−0.009 ns). 이 카드는 그 반증을 **303M engine-native 규모에서 확인**한다. 확인되면 더 이상 이 lane에 투자할 이유가 없다 — **GPU spend 0으로 닫는다.**
+
+---
+
+## 측정 결과 (2026-07-12 · run → 적대적 검증)
+
+**측정(2026-07-12 · aiden CPU · n=20 blocks paired-CRN · 120 items · wall 2941s)**: ckpt=py303_full.clm(d3784·E3·K3·L4·V256·T24) · **PARITY max|Δ|=0.0**(프로덕션 `_fwd_logits`와 byte-exact ⇒ toy 아니라 engine-parity 결착 · infra-wall 무관·BLOCKED 아님). **run=INVALID → 적대검증 REFUTED → KILL**: run의 헤드라인 m_conj=min(m_A,m_B)이 **그 자체가 순서통계량**(규칙①이 금지한 하향편향을 control축에서 detector축으로 옮긴 것) — c0에서 mean(mA)=+0.009·mean(mB)=+1.083인데 mean(min)=−0.422로 낮은 branch 평균보다 0.431 아래(min에서 noise 하향편향). '죽음/음수'는 처치효과(~0.08)가 아니라 order-statistic 편향(−0.43)의 지배 · V-gate 2개 FAIL도 min() 인공물(규칙⑤가 막으려던 바로 그 실패모드). **검출력 있는 live 하위-detector m_B_conj**(c0=+1.083 t=+4.69 · MDE 0.190≪1.083)에서 실 데이터 = **정당한 NEGATIVE**: EXP−c0=**−0.209**(t=−2.30 p=0.033 · 모든 capacity 처치 열화, EXP가 최악) · EXP가 자기 시간축 셔플(c2)도 못 이김(schedule 무정보) · **router 파괴 SHOCK−c0=+0.100(t=+2.48)** — 라우터를 부수면 오히려 개선(MoE mixing은 read-side 축 아님) · 숨은 양성 없음. 프로덕션 router = DENSE soft mixture(top-k 없음) ⇒ 모든 capacity gating은 정보 폐기 연산. ⇒ 카드 사전등록 **FAIL 시나리오(Δ≈0/음성 ⇒ lane CLOSED)** 정확 실현 · **H_9283 예측(배분 FORM t=+10.65 → held-out 재조합 Δ=−0.009 ns)이 실 303M byte-parity에서 확인**. ⟹ **organelle lane 전체 CLOSED** — '용량을 잘 배분한다 → 재조합을 배운다'의 전이가 프로덕션 모델에서 falsified. 에너지/자원/희소성/배분 계열은 G1 레버가 아님(F6 KILL + F13 KILL로 303M 결착). corpus×CE measure 진범 결론 강화. state/mito_organelle_lane/F13_303m_reach_closure/.
+
+> lane 종결 종합 = `state/mito_organelle_lane/CLOSURE.md`.
