@@ -758,6 +758,8 @@ def evaluate_usage():
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
+    print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
+    print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
     print("")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
@@ -1394,6 +1396,127 @@ def xbind_run(argv):
     return 0
 
 
+def _xfan_parse(o):
+    """Parse the first '<slot>, <member>.' emission from a decode → (slot, member) or (None, None).
+    slot = last token before the comma; member = first token after it."""
+    seg = o.strip().split(".")[0]
+    if ", " not in seg:
+        return None, None
+    sl, mb = seg.split(", ", 1)
+    sl = sl.strip().split()[-1] if sl.strip().split() else ""
+    mb = mb.strip().split()[0] if mb.strip().split() else ""
+    return (sl or None), mb
+
+
+def xfan_run(argv):
+    """`anima-py evaluate <ckpt> --xfan <manifest.json>` — held-out XFAN one-to-many fan
+    (G6 / ρ·fan reopen lane · card H_9271). Engine-native numpy core/decode.py only
+    (a_eval_py_canonical → TERMINAL-eligible). Design SSOT: state/g6_reopen_xfan/DESIGN_PREREG.md.
+    PRIMARY coverage C = |correct unique (slot,member)| / n_slots over n_smp sampled decodes per
+    concept (top_k=40 temp=0.7 · seed 7+17j). valid/spurious split (genius⊥honesty); per-slot-kind
+    (unary vs joint) breakout; greedy-collapse control (top_k=1 distinct); MARGIN = teacher-forced
+    NLL(foil)-NLL(gold) per slot (H_1440 mode-collapse discriminator). --arm ctrl scores the shuffle
+    model. All raw dumped (never tail-truncate a control · evaluate-py-1)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--xfan", "")
+    out_path = evaluate_strval(argv[1:], "--out", "xfan_eval.json")
+    arm = evaluate_strval(argv[1:], "--arm", "main")
+    spec = json.load(open(spec_path))
+    gen = evaluate_intval(argv[1:], "--gen", int(spec.get("gen", 16)))
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    n_dec = evaluate_intval(argv[1:], "--n-decode", 80)
+    n_smp = evaluate_intval(argv[1:], "--n-sampled", 16)
+    K = int(spec.get("n_slots", 5))
+
+    print("=== anima evaluate --xfan — held-out XFAN one-to-many fan (G6 reopen lane) ===")
+    print("ckpt: " + ckpt + "  arm=" + arm + "  gen=%d win=%d n_smp=%d K=%d" % (gen, T, n_smp, K))
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+
+    res = {"ckpt": ckpt, "arm": arm, "gen": gen, "win": T, "n_slots": K, "splits": {}}
+    for split in ("heldout", "seen"):
+        items = spec[split][:n_dec]
+        rows = []
+        cov_sum = 0.0
+        valid_sum = valid_n = spur_sum = greedy_distinct_sum = 0
+        cov_by_kind = {"unary": [], "joint": []}
+        margins = []
+        for ix, it in enumerate(items):
+            gold = it["gold"]
+            if arm == "ctrl" and split == "seen" and it.get("gold_ctrl"):
+                gold = it["gold_ctrl"]
+            gold_pairs = set((g["slot"], g["member"]) for g in gold)
+            gold_by_slot = {g["slot"]: g["member"] for g in gold}
+            slot_kind = it.get("slot_kind", {})
+            emitted = []
+            for j in range(n_smp):
+                o = clm.clm_decode_topk_sampled_W(W, it["seed"], gen, 40, 0.7, 7 + 17 * j)["text"]
+                sl, mb = _xfan_parse(o)
+                if sl is not None:
+                    emitted.append((sl, mb))
+            hit_pairs = set(e for e in emitted if e in gold_pairs)
+            cov = len(hit_pairs) / max(1, K)
+            cov_sum += cov
+            for (sl, mb) in emitted:
+                if sl in gold_by_slot:
+                    valid_n += 1
+                    if (sl, mb) in gold_pairs:
+                        valid_sum += 1
+                    else:
+                        spur_sum += 1          # right slot, wrong member = fabrication
+            for kind, keys in (("unary", ("a", "b")), ("joint", ("j",))):
+                slots_k = [s for s, kd in slot_kind.items() if kd in keys]
+                if slots_k:
+                    hit_k = len(set((s, m) for (s, m) in hit_pairs if s in slots_k))
+                    cov_by_kind[kind].append(hit_k / len(slots_k))
+            gd = set()
+            for j in range(min(n_smp, 8)):
+                og = clm.clm_decode_topk_sampled_W(W, it["seed"], gen, 1, 0.7, 7 + 17 * j)["text"]
+                sl, mb = _xfan_parse(og)
+                if sl is not None:
+                    gd.add((sl, mb))
+            greedy_distinct_sum += len(gd)
+            row_mg = []
+            for g in gold:
+                s = g["slot"]; gm = g["member"]; fm = it.get("foils", {}).get(s, gm)
+                mg = (_xbind_cont_nll(np, clm, W, it["seed"], s + ", " + fm + ".", T)
+                      - _xbind_cont_nll(np, clm, W, it["seed"], s + ", " + gm + ".", T))
+                row_mg.append(mg); margins.append(mg)
+            rows.append({"concept": it["concept"], "cov": cov, "emitted": emitted[:8],
+                         "n_emit": len(emitted), "greedy_distinct": len(gd), "margin": row_mg})
+            if (ix + 1) % 20 == 0:
+                print("  [xfan %s #%d/%d] mean_C=%.3f" %
+                      (split, ix + 1, len(items), cov_sum / (ix + 1)), flush=True)
+        n = len(items)
+        margins.sort()
+        med = margins[len(margins) // 2] if margins else 0.0
+        summ = {"n": n, "coverage_C": cov_sum / max(1, n),
+                "valid_rate": (valid_sum / valid_n) if valid_n else None,
+                "spurious_rate": (spur_sum / valid_n) if valid_n else None,
+                "coverage_unary": (sum(cov_by_kind["unary"]) / len(cov_by_kind["unary"]))
+                if cov_by_kind["unary"] else None,
+                "coverage_joint": (sum(cov_by_kind["joint"]) / len(cov_by_kind["joint"]))
+                if cov_by_kind["joint"] else None,
+                "greedy_distinct_mean": greedy_distinct_sum / max(1, n),
+                "margin_median": med,
+                "margin_frac_pos": sum(1 for m in margins if m > 0) / max(1, len(margins))}
+        res["splits"][split] = {"summary": summ, "rows": rows}
+        # verdict numerics INLINE (evaluate-py-1: never tail-truncatable)
+        print("  xfan %s  arm=%s  C=%.4f  valid=%s  spurious=%s  C_unary=%s  C_joint=%s  "
+              "greedy_distinct=%.2f  margin_med=%.3f  margin_pos=%.3f  n=%d" %
+              (split, arm, summ["coverage_C"], str(summ["valid_rate"]), str(summ["spurious_rate"]),
+               str(summ["coverage_unary"]), str(summ["coverage_joint"]),
+               summ["greedy_distinct_mean"], med, summ["margin_frac_pos"], n), flush=True)
+    json.dump(res, open(out_path, "w"), ensure_ascii=False)
+    print(json.dumps({"out": out_path,
+                      "heldout_C": res["splits"]["heldout"]["summary"]["coverage_C"],
+                      "seen_C": res["splits"]["seen"]["summary"]["coverage_C"]}))
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -1484,6 +1607,11 @@ def main(argv):
     # D-acc on held-out xor(pol_a,pol_b) pairs (the corpus×task-class measure-swap exit).
     if "--xbind" in argv:
         return xbind_run(argv)
+    # --xfan <manifest.json>: held-out XFAN one-to-many fan (G6 reopen lane · card H_9271).
+    # coverage C over K sampled decodes per held-out concept (the corpus×task-class one-to-many
+    # measure — the G6 homolog of XBIND's 1-bit discrimination).
+    if "--xfan" in argv:
+        return xfan_run(argv)
     return evaluate_run(argv)
 
 
