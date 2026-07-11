@@ -108,15 +108,24 @@ jobs:
           token: ${{ secrets.RUNNER_PROBE_TOKEN || github.token }}
 
   # ── 거버넌스 enforce (CLAUDE.md 하드게이트 1·6 의 기계강제 — engine-native
-  # verdict · 가설 2표면). python 만 필요, 가중치 불필요. hexa-engine 잡에서
-  # 분리(2026-07-03): engine 잡이 경로 게이트로 스킵되는 docs/state-only 변경이
-  # 바로 이 enforcer 의 주 대상이므로, 항상 도는 ubuntu 잡이어야 게이트가 안 뚫린다.
+  # verdict · 가설 2표면 · G5 VERSION lockstep). python 만 필요, 가중치 불필요.
+  # hexa-engine 잡에서 분리(2026-07-03): engine 잡이 경로 게이트로 스킵되는
+  # docs/state-only 변경이 바로 이 enforcer 의 주 대상이므로, 항상 도는 ubuntu
+  # 잡이어야 게이트가 안 뚫린다.
   governance:
     name: governance — enforce_anima_gates (changed)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # fetch-depth: 0 — enforce_anima_gates.py 의 changed_slugs()/changed_files()
+      # 가 `git merge-base HEAD origin/main` 로 diff 범위를 잡는다(G1·G5). 기본
+      # depth=1 얕은 checkout 이면 origin/main 이 안 잡혀 base="" → diff 범위가
+      # staged/unstaged(빈 checkout 에선 항상 공집합)로 쪼그라들어 게이트가
+      # 조용히 vacuous-pass 된다 — full history 로 실제 PR diff 를 보게 한다
+      # (hexa-explicit-main-lint 잡이 이미 쓰는 동일 패턴).
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: enforce_anima_gates
         shell: bash
         run: |

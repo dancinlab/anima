@@ -25,6 +25,15 @@ Gates enforced (mechanical subset of CLAUDE.md):
   G2  hypothesis 2-surface  (a_hypothesis_register)
       git-tracked files under HYPOTHESES/ must be ONLY HYPOTHESES.jsonl + cards/** .
 
+  G3  gate-card taxonomy invariant  (PROVENANCE ⊥ capability PASS closure)
+      cli/evaluate.{py,hexa}'s `closure =` capability scorecard must never fold in the
+      PROVENANCE result (r4/g4/prov) — that reopens the old G4 빵꾸.
+
+  G5  VERSION lockstep  (anima-python PyPI publish · release-yml-2)
+      A change touching anima-python wheel content (cli/**/*.py, core/**/*.py,
+      pyproject.toml) must bump the root VERSION file in the same diff — otherwise
+      release.yml/pypi-release.yml's same-VERSION skip-guard silently keeps PyPI stale.
+
 Exit: 0 = clean, 1 = violation(s), 2 = enforcer error.
 """
 
@@ -268,6 +277,49 @@ def g3_violations():
     return viols
 
 
+# G5 — VERSION lockstep gate (release-yml-2 근본수정, pip 채널): anima-python 휠에 실제로
+# 담기는 파일(pyproject.toml [tool.setuptools] packages=anima_py.cli/anima_py.core 는 .py
+# 모듈만 태움 — cli/**/*.hexa 는 무관)이 바뀌었는데 같은 변경범위(HEAD vs origin/main +
+# staged/unstaged)에서 루트 VERSION 이 안 바뀌면 VIOLATION. 실측 재발조건: --xbind/--xfan
+# eval fold(cli/evaluate.py, #3299/#3317)가 VERSION bump 없이 머지 → release.yml pypi-publish
+# 의 same-VERSION skip-guard가 발행을 영구 스킵 → PyPI anima-python stale 0.13.3 고착 →
+# 렌트 pod `pip install anima-python[train]` 후 `anima-py evaluate --help` 에 --xbind 결여
+# → NBIND 측정 블록. `.github/workflows/pypi-release.yml` 의 PY-smoke 가 발행 시점(사후)
+# 게이트라면, 이 G5 는 머지 시점(사전) 게이트 — 두 겹으로 재발을 막는다. NO bypass (c18).
+# (숫자 G5 사용 이유: G4 는 이미 위 g3_violations() 텍스트가 가리키는 옛 ρ-AXON/G0-G6
+# 래더의 PROVENANCE 게이트 명칭과 겹쳐 — 이 파일의 mechanical enforcement 번호와 무관한
+# 도메인 개념이므로 혼동을 피해 G5 로 배정한다.)
+WHEEL_PATH = re.compile(r"^(cli/.*\.py|core/.*\.py|pyproject\.toml)$")
+
+
+def changed_files():
+    """All files touched vs origin/main + working tree (staged + unstaged) — same diff
+    ranges as changed_slugs(), just unfiltered (no HYPOTHESES/-slug extraction)."""
+    files = set()
+    base = sh(["git", "merge-base", "HEAD", "origin/main"]).strip()
+    ranges = []
+    if base:
+        ranges.append(["git", "diff", "--name-only", base, "HEAD"])
+    ranges.append(["git", "diff", "--name-only", "--cached"])
+    ranges.append(["git", "diff", "--name-only"])
+    for r in ranges:
+        for ln in sh(r).splitlines():
+            ln = ln.strip()
+            if ln:
+                files.add(ln)
+    return files
+
+
+def g5_violations(all_mode):
+    if all_mode:
+        return []  # per-change lockstep gate — a whole-repo audit has nothing to diff against
+    files = changed_files()
+    wheel_touched = sorted(f for f in files if WHEEL_PATH.match(f))
+    if not wheel_touched or "VERSION" in files:
+        return []
+    return wheel_touched
+
+
 def main():
     all_mode = "--all" in sys.argv[1:]
     if not HYP.is_file():
@@ -280,8 +332,9 @@ def main():
     g1 = g1_violations(rows, scope)
     g2 = g2_violations()  # always whole-repo; cheap structural invariant
     g3 = g3_violations()  # always whole-repo; gate-card taxonomy invariant (PROVENANCE ⊥ closure)
+    g5 = g5_violations(all_mode)  # changed-scope only; VERSION lockstep vs anima-python wheel content
 
-    if not g1 and not g2 and not g3:
+    if not g1 and not g2 and not g3 and not g5:
         print(f"✅ anima-gates: clean · scope={scope_label} · {len(rows)} hypotheses · gate-card invariant OK")
         return 0
 
@@ -310,6 +363,14 @@ def main():
             print(f"        · {rel}: {msg}")
         print("     → closure 는 디코드-CAPABILITY(G0∧G1∧G2)만; PROVENANCE(G4)는 downstream "
               "publish-eligibility 로만 (g_eval_g4(ckpt, closure)). 3-카드 분리 유지. (no bypass — c18)")
+    if g5:
+        print()
+        print("  [G5] VERSION lockstep (anima-python PyPI 발행 · release-yml-2) — "
+              "cli/·core/·pyproject.toml(wheel 콘텐츠) 변경인데 VERSION 미bump:")
+        for f in g5:
+            print(f"        · {f}")
+        print("     → 루트 VERSION(+VERSIONS.md §0·hexa.toml, a1) patch bump 를 같은 변경분에 포함. "
+              "PyPI same-VERSION skip-guard가 이 wheel 변경을 영구 스킵하지 않도록. (no bypass — c18)")
     return 1
 
 

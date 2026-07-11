@@ -10,11 +10,28 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.13.2`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.13.4`** (한 줄, 전체 시스템 release).
 
-> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.2 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
+> **릴리즈 매니페스트**: 루트 [`hexa.toml`](hexa.toml) (2026-06-22 신설) = `hx install anima` 패키지 메타데이터 SSOT. `[package]` name=anima · version=0.13.4 (이 줄과 lockstep) · entry=cli/anima.hexa · deps=hexa-lang>=1.0.0 · include=core/·cli/·의식lane · exclude=state/·HYPOTHESES/·*.clm 등 연구artifact/외부가중치. PATCH/MINOR bump 시 hexa.toml `version` 동시 갱신(a1).
 
-> **pip 채널 매니페스트 (설치명 anima-python · 실행명 anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-python` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). **⚠️ 설치명 ≠ 실행명**: `name="anima-python"`(PyPI 배포명 · `anima-py`는 기존 `animapy`와 too-similar 차단) · `[project.scripts]` `anima-py`(실행 명령). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.2` 과 자동 lockstep(별도 버전번호 無). PyPI LIVE=https://pypi.org/project/anima-python/. base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
+> **pip 채널 매니페스트 (설치명 anima-python · 실행명 anima-py)**: 루트 [`pyproject.toml`](pyproject.toml) (2026-07-09 신설) = `pip install anima-python` 메타데이터 SSOT — hexa 툴체인 無 호스트(예: pi5)용 **2nd 설치 채널**(2nd entry 아님 · 동일 `cli/anima.py:main` 디스패처를 `anima-py` 콘솔 명령에 바인딩 · `a_cli_single_entry` 보존). **⚠️ 설치명 ≠ 실행명**: `name="anima-python"`(PyPI 배포명 · `anima-py`는 기존 `animapy`와 too-similar 차단) · `[project.scripts]` `anima-py`(실행 명령). `version = {file = "VERSION"}` 동적참조라 루트 [`VERSION`](VERSION)=`0.13.4` 과 자동 lockstep(별도 버전번호 無). PyPI LIVE=https://pypi.org/project/anima-python/. base 의존=numpy(evaluate·corpus·chat-stub) · `[train]` extra=torch+datasets(serialize·train·sweep). 런처 패키지=`anima_py/`, 소스복사 0(package-dir 로 기존 cli/·core/ 매핑). 상세=[`anima_py/README.md`](anima_py/README.md).
+
+> **0.13.2/3 → 0.13.4** (2026-07-12): 🔧 PyPI release-automation 구조수정. 근본원인:
+> `--xbind`/`--xfan` eval fold(#3299/#3317)가 `cli/evaluate.py`에 머지되며 VERSION
+> bump 없이 land → PyPI `anima-python` 이 release.yml same-VERSION skip-guard로
+> stale 0.13.3 고착(렌트 pod `pip install anima-python[train]` 후 `--xbind` 미표시
+> → NBIND 측정 블록, convergence `release-yml-2`). 즉시수정: VERSION 0.13.3→0.13.4
+> lockstep(hexa.toml·VERSIONS.md 동시, 3-way drift 0.13.2/0.13.2/0.13.3 도 이 참에
+> 통합). **재발방지 2겹**: ① `.harness/enforce_anima_gates.py` 신규 **G5** 게이트 —
+> `cli/**/*.py`·`core/**/*.py`·`pyproject.toml`(anima-python 휠 콘텐츠) 변경인데
+> VERSION 이 같은 diff 에 안 실리면 changed-scope 하드-block(no bypass, c18 — main
+> branch-protection 상 bot 직접 push 가 안 되므로 "bump 를 잊을 수 없게 막는 사전
+> 게이트"). ② 신규 `.github/workflows/pypi-release.yml` — pypi-publish job 을
+> release.yml(hx-install v* 태그 채널) 에서 분리, 트리거는 git 태그가 아니라 **VERSION
+> 파일 변경 자체**(paths 필터, ① 게이트를 통과한 병합에만 반응) 라 hx-install v* 태그
+> 스킴(autotag.yml, `v3.x.x` 별개 스케일)과 넘버링이 섞이지 않는다. PY-smoke 에
+> `--xbind`/`--xfan` 하드 assert 추가(이번 결함과 동일한 "eval verb 누락 배포"류
+> 재발을 원천 차단).
 
 > **0.13.0 → 0.13.1** (2026-06-19): 🗂️ Phase 2 멀티엔진 archive — core/engines/
 > 전체(conv/cdv2/hexad/omega + EngineSpec vtable + engine_swap_smoke) → archive/
