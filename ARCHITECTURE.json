@@ -14747,6 +14747,13 @@
     "value": "byte-LM eval --out json write는 lone surrogate(부분 UTF-8 출력)에 UnicodeEncodeError('surrogates not allowed')로 파일 전량 유실 — encoding='utf-8'/PYTHONUTF8=1으로도 불가(surrogate는 어떤 locale서도 utf-8 아님). 근본fix=_json_safe() 재귀 scrub(surrogatepass→replace) + open(encoding='utf-8')을 xbind_run·xfan_run 두 dump 사이트. D-acc summary는 dump 前 INLINE stdout이라 회수되나 json artifact(PERM-GOLD 재채점·frozen verdict) 유실. evaluate-py-11(Korean×locale·encoding 처방)의 연장 = encoding necessary-not-sufficient.",
     "threshold": "재발조건=NBIND류 byte-LM eval(한글 생성)의 --out json 미기록·D-acc만 stdout. 해결=_json_safe scrub이 dump 前 필수(encoding은 belt). ASCII manifest는 잠복무영향.",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "evaluate-py-8",
+    "state": "pos-conv",
+    "value": "evaluate가 미지 --flag를 **조용히 무시**했다(rc=0 성공인데 요청한 결과파일 미생성) — argv를 '아는 플래그만 스캔'하는 방식이라 오타나 서브모드 전용 플래그를 주면 흘려보낸다. 유료 GPU 배터리에서 치명: NBIND-G N2 사다리(13.3h × 4런 · rent · 53 GPU-h)가 --out 오타 하나로 **rc=0인 채 수확 0**이 될 수 있었다. 실측: 존재하지 않는 --out-json을 주니 rc=0 완주 + 파일 미생성이었고, 프런티어 노트는 이를 'anima-py stale(evaluate-py-11) 탓'으로 오진 기록해 두고 있었다(실제 stale도 있었으나 파일 미생성의 원인은 아니었다). FIX: main() 진입부 _KNOWN_FLAGS(22개) 화이트리스트 + _reject_unknown_flags → 미지 플래그면 rc=2 hard-error + 오타 힌트(did you mean --out?). fail-closed.",
+    "threshold": "재발조건 = cli/evaluate.py에 새 플래그 추가 시 _KNOWN_FLAGS 갱신 누락(정상 플래그가 거부됨) · 또는 cli/train.py·serialize가 같은 '스캔' 방식이라 동일 결함 보유. 해결 = (1) 플래그 추가는 _KNOWN_FLAGS 등록과 한 세트(help-lockstep의 짝) (2) 회귀 스모크: 정상 플래그 전수 통과 + 미지 플래그 rc=2 (3) train/serialize에도 같은 가드 필요한지 점검. ⚠️ 진단 함정: '결과파일이 없다'를 설치 stale/크래시로 오진하지 말 것 — 먼저 그 플래그가 실제 존재하는지 --help로 확인.",
+    "source": "cli/evaluate.py"
    }
   ]
  }
