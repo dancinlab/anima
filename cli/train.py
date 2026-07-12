@@ -1094,8 +1094,12 @@ def main():
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--dbes-every", type=int, default=0, help="0=final only; N=also every N steps")
     ap.add_argument("--ckpt-every", type=int, default=0,
-                    help="0=final .clm only; N=also dump <out>.step<N>.clm every N steps "
-                         "(step-window multiplex — 1 run yields 2000/4000/… checkpoints, train-py-4 isolation)")
+                    help="0=final .clm only; N=every N steps dump <out>.step<N>.clm "
+                         "(step-window multiplex — 1 run yields 2000/4000/… checkpoints, "
+                         "train-py-4 isolation) AND a rolling <out>.resume.pt. The .clm is "
+                         "quantized and --init refuses it, so the .pt is what makes a killed "
+                         "long run restartable: `--init <out>.resume.pt`. Set this on any "
+                         "multi-hour fire (train-py-7).")
     ap.add_argument("--out", default="")
     ap.add_argument("--ckpt-out", default="")
     ap.add_argument("--gauges-out", default="")
@@ -1462,6 +1466,20 @@ def main():
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 
+    # ── torch .pt writer (RESUMABLE — the .clm is quantized and --init refuses it) ──
+    #   --ckpt-every writes BOTH: the .clm (evaluatable) and this .pt (warm-startable).
+    #   Without the .pt an interrupted long run is unrecoverable — a killed 13h fire
+    #   restarts from step 0 (N2 2026-07-13: 17h of GPU lost across two kills, one to a
+    #   pod stop that wiped /workspace, one to earlyoom).
+    def _write_pt(out_path):
+        sd = {k: v.detach().cpu() for k, v in core_model.state_dict().items()}
+        if jamo_head:
+            for k, v in jamo_head.state_dict().items():
+                sd[f"_jamo_head.{k}"] = v.detach().cpu()
+        torch.save(sd, out_path)
+        print(f"  torch ckpt -> {out_path} ({os.path.getsize(out_path)} bytes · "
+              f"resume with --init)", flush=True)
+
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
     t0 = time.time(); loss0 = lossF = None
@@ -1481,6 +1499,10 @@ def main():
         if a.ckpt_every > 0 and a.out and step > 1 and (step - 1) % a.ckpt_every == 0:
             if rank == 0:
                 _write_clm(f"{a.out}.step{step - 1}{_ck_ext}")
+                # …and the RESUMABLE twin: the .clm above is quantized and --init refuses
+                # it, so a .clm-only intermediate cannot restart a killed run. Overwrite a
+                # single rolling .pt (not per-step) — 13h of GPU is worth ~1.4GB on disk.
+                _write_pt(f"{a.out}.resume.pt")
                 model.train()
             if ddp_on:
                 dist.barrier()
@@ -1627,13 +1649,8 @@ def main():
                 print(f"  gauges error: {e}", flush=True)
 
         # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
-        full_sd = {k: v.detach().cpu() for k, v in model.state_dict().items()}
-        if jamo_head:
-            for k, v in jamo_head.state_dict().items():
-                full_sd[f"_jamo_head.{k}"] = v.detach().cpu()
         if a.ckpt_out:
-            torch.save(full_sd, a.ckpt_out)
-            print(f"  torch ckpt -> {a.ckpt_out} ({os.path.getsize(a.ckpt_out)} bytes)", flush=True)
+            _write_pt(a.ckpt_out)
 
         # ── summary json ──────────────────────────────────────────────────────────
         summary = {"entry": "anima-py train", "arch": a.arch, "arm": a.arm,

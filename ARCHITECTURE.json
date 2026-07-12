@@ -14789,6 +14789,13 @@
     "value": "vast pod 을 stop 하면 /workspace 가 통째로 wipe 된다 — 13h GPU 학습과 .clm 이 함께 사라진다. 2026-07-13 N2 에서 실제로 당했다: main-s11 이 학습 중인 pod 44587707 을 다른 세션이 정지시켰고, hexa cloud 는 그 증상을 \"ssh transport failure — vast.ai outage\" 로 표시해 나는 외부 장애로 오진했다. vastai show instance 로 캐보니 intended_status=stopped / cur_state=stopped 였다(= 장애가 아니라 정지). vastai start 로 pod 을 되살렸으나 /workspace 는 빈 상태였고 natem_n2* 가 파일시스템 어디에도 없었다 = 완전 유실 → arm 재발사. **SSH 거부를 outage 로 단정하지 마라 — 먼저 intended_status 를 봐라.** 그리고 **장시간 학습은 반드시 persistent volume 에 쓰거나, ckpt 를 주기적으로 pull 하라**(a_fire_recover_complete 는 teardown 직전이 아니라 진행 중에도 적용된다).",
     "threshold": "재발조건 = vast pod 에서 장시간(수 시간+) 학습을 돌릴 때, 특히 여러 세션이 같은 pod 을 볼 때. 해결 = (1) SSH 가 거부되면 hexa 의 \"transport outage\" 문구를 믿지 말고 vastai show instance <id> --raw 로 intended_status/cur_state 를 확인 — stopped 면 누군가 껐다는 뜻 (2) stopped pod 은 vastai start <id> 로 되살릴 수 있으나 /workspace 는 wipe 되므로 ckpt 회수를 기대하지 말 것 (3) 예방: cloud rent 는 기본이 persistent volume(--volume-gb) 이므로 학습 출력을 그 볼륨 경로에 쓰거나, watcher 로 중간 ckpt 를 주기적으로 pull (4) 다른 세션 pod 은 stop/rm 금지(내가 겪은 쪽이 아니라 내가 저지를 수도 있는 쪽) — convergence n2-status-md-1 과 짝.",
     "source": "state/nbindg_grounding/N2_STATUS.md"
+   },
+   {
+    "id": "train-py-7",
+    "state": "pos-conv",
+    "value": "장시간 학습(수 시간+)을 --ckpt-every 없이 발사하면 중간에 죽었을 때 **처음부터** 다시 해야 한다. 2026-07-13 N2 에서 17시간 GPU 를 이렇게 날렸다(main-s11 13h = 다른 세션이 pod 을 stop 해 /workspace wipe · shuffle_grid 4h = earlyoom kill). 더 나쁜 건 --ckpt-every 를 켜도 그것만으로는 재개가 안 됐다는 점 — 중간 산출물이 **양자화된 .clm** 뿐이었고 --init 은 .clm 을 거부한다(\"Quantized .clm is refused\"). 재개 가능한 .pt 는 학습이 **끝나야만** 나왔다. FIX(train-py-7): --ckpt-every 가 .clm 과 함께 rolling <out>.resume.pt 를 쓰도록 수정 → `--init <out>.resume.pt` 로 재개. 검증(summer 실경로): 60-step 학습이 smoke.clm.resume.pt(6.8MB) 생성 → --init 로 재개 시 \"warm-start ✓ .pt loaded 31/31 keys (untouched=0 extra-in-ckpt=0)\" 완전 복원.",
+    "threshold": "재발조건 = anima-py train 을 수 시간 이상 돌릴 때(특히 pod/pool 처럼 죽을 수 있는 호스트). 해결 = (1) **장시간 fire 는 --ckpt-every N 을 반드시 켠다**(N=2000~5000; 13h GPU 가 디스크 ~1.4GB 값어치다) (2) 죽으면 `--init <out>.resume.pt` 로 이어서 발사 (3) .clm 중간 산출물로 재개하려 하지 말 것 — 양자화라 --init 이 거부한다 (4) N2 처럼 여러 arm 을 병렬로 태우면 arm 마다 --ckpt-every 를 켜라(한 arm 이 죽어도 나머지가 안 무너진다).",
+    "source": "cli/train.py"
    }
   ]
  }
