@@ -47,7 +47,49 @@ PURITY_NAT = 0.85          # relaxed vs grid 0.90 (Fable §3.1) — grid exhaust
 MINOCC_NAT = 100
 K_MIN_PER_POL = 10         # inventory floor (else INVALID)
 REP_GRID = GN.REP          # authored grid rep (match H_9272)
-NSMC_FILLER_MULT = 8       # raw-review filler lines per authored grid line (grounding volume)
+
+# Fable N2 recipe (exposure-matched · avoids the STAGE-1 exposure-confound INVALID):
+# exposure is a BYTE phenomenon, not a line count. The old NSMC_FILLER_MULT=8 (lines) gave
+# grid byte-fraction f_grid≈0.059 → at 20k steps grid exposure≈1.2k ≪ E*=12k = a pre-built
+# STAGE-1 INVALID. Fix: denominate filler in BYTES (target f_grid=0.25), bias fill toward
+# P_nat-bearing reviews (grounding-per-byte), enforce a per-atom occurrence floor, and derive
+# train steps T = ceil(T_MARGIN * E_STAR / f_grid) from the BUILT corpus's actual bytes.
+FILLER_BYTE_RATIO = 3.0    # filler bytes = 3x grid bytes → f_grid = 1/(1+3) = 0.25
+E_STAR = 12000             # STAGE-1 measured exposure knee (grid held-out D-acc 8k→12k)
+T_MARGIN = 1.25            # margin over E* (sharp knee + mixed-corpus interference slack)
+ATOM_OCC_CAP = 60          # max P_nat-bearing reviews admitted per atom (fill balance)
+ATOM_OCC_FLOOR = 30        # min occurrences of each atom in the BUILT corpus (else drop atom)
+
+# external Korean sentiment corpora (public · $0) — enlarge the purity-certified atom pool
+# beyond NSMC's ~13 clean non-grid predicates (N2 pre-fire INVALID at NSMC-only scale).
+_NATEM = os.path.expanduser("~/g1_natem")
+POOL_CORPORA = {"naver_shopping": _NATEM + "/naver_shopping.txt",   # <rating 1-5>\t<text>
+                "steam": _NATEM + "/steam.txt"}                    # <label 0/1>\t<text>
+
+
+def load_corpora(nsmc_path=None, extra=True):
+    """Unified (text, label 0/1) rows. NSMC(movies) + naver_shopping(products·rating) +
+    steam(games·label). Domain diversity → new sentiment predicates the grid never saw."""
+    rows = list(GN.load_nsmc(nsmc_path))
+    if not extra:
+        return rows
+    ns = POOL_CORPORA["naver_shopping"]
+    if os.path.exists(ns):
+        for line in open(ns, encoding="utf-8"):
+            pp = line.rstrip("\n").split("\t")
+            if len(pp) == 2 and pp[0].isdigit():
+                r = int(pp[0])
+                if r <= 2:
+                    rows.append((pp[1], 0))
+                elif r >= 4:
+                    rows.append((pp[1], 1))
+    st = POOL_CORPORA["steam"]
+    if os.path.exists(st):
+        for line in open(st, encoding="utf-8"):
+            pp = line.rstrip("\n").split("\t")
+            if len(pp) == 2 and pp[0] in ("0", "1"):
+                rows.append((pp[1], int(pp[0])))
+    return rows
 
 
 def audit_pnat(rows, grid_stems, seed):
@@ -73,10 +115,10 @@ def audit_pnat(rows, grid_stems, seed):
     return viable, cand, audit
 
 
-def build_n2(rows, seed):
-    B = GN.build(rows, seed)                        # H_9272 grid (P_grid + authored lines)
+def build_n2(nsmc_rows, pool_rows, seed):
+    B = GN.build(nsmc_rows, seed)                   # H_9272 grid (NSMC-only · P_grid frozen)
     grid_stems = set(B["plist"])
-    viable, cand, audit = audit_pnat(rows, grid_stems, seed)
+    viable, cand, audit = audit_pnat(pool_rows, grid_stems, seed)
     if not audit["PREFIRE_PASS"]:
         return None, audit, B
     NF = dict((f[0], f[2]) for f in GN.NEG_FORMS)
@@ -85,33 +127,90 @@ def build_n2(rows, seed):
     # authored grid lines (verbatim H_9272 main + shuffle) — teaches the operator on P_grid only
     grid_main = B["main_lines"][:]
     grid_shuf = B["ctrl_lines"][:]
+    grid_bytes = len("\n".join(grid_main).encode())
 
-    # natural NSMC filler: verbatim reviews that CONTAIN a viable P_nat stem (grounding) + general
+    # V-F pre-filter: drop any P_nat atom whose stem appears as a SUBSTRING in an authored grid
+    # line (e.g. "좋" nests inside a P_grid predicate surface). Such an atom would be partly
+    # grounded BY THE GRID, contaminating the pure-nature grounding claim. Exclude → recheck.
+    _authored = "\n".join(grid_main + grid_shuf)
+    _collide = [p for p in viable if p in _authored]
+    viable = [p for p in viable if p not in _collide]
+    audit["V_F_authored_collision_dropped"] = _collide
+    if len(viable) * len(GN.NEG_FORMS) < 120:
+        audit["n_eval_items"] = len(viable) * len(GN.NEG_FORMS)
+        audit["GATE_n_eval_ok"] = False
+        audit["PREFIRE_PASS"] = False
+        return None, audit, B
+
+    # --- Fable §1: BIASED byte-target fill toward P_nat-bearing reviews ---
+    # per-atom round-robin over reviews containing that atom (cap ATOM_OCC_CAP/atom), then top
+    # up with general (atom-free) reviews to hit filler byte target = FILLER_BYTE_RATIO*grid.
     vset = set(viable)
-    filler_grounding, filler_general = [], []
-    want = len(grid_main) * NSMC_FILLER_MULT
-    for text, _lab in rows:
+    by_atom = {p: [] for p in viable}
+    general = []
+    for text, _lab in pool_rows:
         t = text.strip()
         if not t or "=>" in t or "긍정" in t or "부정" in t:
             continue
-        if any(st in t for st in vset):
-            filler_grounding.append(t)
-        elif len(filler_general) < want:
-            filler_general.append(t)
-        if len(filler_grounding) >= want and len(filler_general) >= want:
-            break
-    # mix: all grounding-bearing reviews + general filler to reach volume
-    nat_filler = filler_grounding + filler_general[: max(0, want - len(filler_grounding))]
+        hit = [st for st in vset if st in t]
+        if hit:
+            for st in hit:
+                if len(by_atom[st]) < ATOM_OCC_CAP:
+                    by_atom[st].append(t)
+        elif len(general) < 200000:
+            general.append(t)
+    # round-robin the per-atom pools (dedup) for a balanced grounding channel
+    seen_lines, grounding = set(), []
+    for i in range(ATOM_OCC_CAP):
+        for p in viable:
+            if i < len(by_atom[p]):
+                ln = by_atom[p][i]
+                if ln not in seen_lines:
+                    seen_lines.add(ln)
+                    grounding.append(ln)
+    target_bytes = int(grid_bytes * FILLER_BYTE_RATIO)
+    rng.shuffle(general)
+    nat_filler = grounding[:]
+    gi = 0
+    while len("\n".join(nat_filler).encode()) < target_bytes and gi < len(general):
+        nat_filler.append(general[gi]); gi += 1
     rng.shuffle(nat_filler)
 
-    def corpus(grid_lines):
-        lines = grid_lines + nat_filler
+    # --- Fable §1: per-atom corpus-occurrence floor (drop under-floor atoms, recheck n_eval) ---
+    filler_blob = "\n".join(nat_filler)
+    occ = {p: filler_blob.count(p) for p in viable}
+    viable = [p for p in viable if occ[p] >= ATOM_OCC_FLOOR]
+    vset = set(viable)
+    audit["atom_occ_in_corpus"] = {p: occ[p] for p in occ}
+    audit["n_pnat_after_floor"] = len(viable)
+    audit["n_eval_items"] = len(viable) * len(GN.NEG_FORMS)
+    audit["GATE_n_eval_ok"] = audit["n_eval_items"] >= 120
+    audit["PREFIRE_PASS"] = audit["GATE_k_per_pol_ok"] and audit["GATE_n_eval_ok"]
+    if not audit["PREFIRE_PASS"]:
+        return None, audit, B
+
+    def corpus(grid_lines, extra=None):
+        lines = grid_lines + nat_filler + (extra or [])
         random.Random(seed + 5).shuffle(lines)
         return "\n".join(lines) + "\n"
 
     main_txt = corpus(grid_main)
-    base_txt = corpus([])                            # NO grid — nature-only
+    # base_only: NO grid — pad with general reviews to byte-match main within +-2% (Fable §2)
+    pad = []
+    while (len(("\n".join(nat_filler + pad)).encode()) < len(main_txt.encode()) * 0.98
+           and gi < len(general)):
+        pad.append(general[gi]); gi += 1
+    base_txt = corpus([], extra=pad)
     shuf_txt = corpus(grid_shuf)
+
+    # --- Fable §2: exposure-matched steps from BUILT corpus bytes ---
+    main_bytes = len(main_txt.encode())
+    f_grid = grid_bytes / main_bytes
+    t_required = int(-(-(T_MARGIN * E_STAR) // f_grid))     # ceil
+    audit["grid_bytes"] = grid_bytes
+    audit["f_grid_bytes"] = round(f_grid, 4)
+    audit["T_required"] = t_required
+    audit["GATE_exposure_ok"] = t_required * f_grid >= T_MARGIN * E_STAR
 
     # N2 eval manifest: P_nat x 6 forms held-out XOR (same readout as grid)
     er = random.Random(seed + 97)
@@ -144,9 +243,10 @@ def build_n2(rows, seed):
     audit["V_F_pass"] = (leak_atom == 0 and leak_seed == 0)
     audit["n_grid_main_lines"] = len(grid_main)
     audit["n_nat_filler_lines"] = len(nat_filler)
-    audit["n_grounding_reviews"] = len(filler_grounding)
+    audit["n_grounding_reviews"] = len(grounding)
     audit["bytes"] = {"main": len(main_txt.encode()), "base_only": len(base_txt.encode()),
                       "shuffle_grid": len(shuf_txt.encode())}
+    audit["byte_match_base_vs_main"] = round(len(base_txt.encode()) / len(main_txt.encode()), 3)
     corp = {"main": main_txt, "base_only": base_txt, "shuffle_grid": shuf_txt}
     return {"manifest": manifest, "corpora": corp}, audit, B
 
@@ -161,11 +261,15 @@ def main():
     nsmc = val("--nsmc", None, str)
     seed = val("--seed", 7, int)
     audit_only = "--audit-only" in args
+    multi = "--corpora" in args          # add external naver_shopping + steam to the atom pool
 
-    rows = GN.load_nsmc(nsmc)
+    nsmc_rows = GN.load_nsmc(nsmc)        # grid always NSMC-only (H_9272 P_grid frozen)
+    pool_rows = load_corpora(nsmc, extra=multi)   # P_nat mining + grounding filler pool
     if audit_only:
-        B = GN.build(rows, seed)
-        viable, cand, audit = audit_pnat(rows, set(B["plist"]), seed)
+        B = GN.build(nsmc_rows, seed)
+        viable, cand, audit = audit_pnat(pool_rows, set(B["plist"]), seed)
+        audit["n_pool_rows"] = len(pool_rows)
+        audit["multi_corpus"] = multi
         with open(out_dir + "/N2_PREFIRE_AUDIT.json", "w") as f:
             json.dump(audit, f, ensure_ascii=False, indent=1)
         print(json.dumps({k: audit[k] for k in
@@ -174,7 +278,9 @@ def main():
                            "GATE_n_eval_ok", "PREFIRE_PASS")}, ensure_ascii=False, indent=1))
         return 0
 
-    out, audit, B = build_n2(rows, seed)
+    out, audit, B = build_n2(nsmc_rows, pool_rows, seed)
+    audit["n_pool_rows"] = len(pool_rows)
+    audit["multi_corpus"] = multi
     with open(out_dir + "/N2_PREFIRE_AUDIT.json", "w") as f:
         json.dump(audit, f, ensure_ascii=False, indent=1)
     if out is None:
