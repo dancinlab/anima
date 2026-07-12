@@ -100,6 +100,18 @@ chance)인데 drill 암기됨=held-out 일반화 0 **+ eval-harness confound**. 
 false NOT-PASS 방어 = 게이트 설계 작동**(verdict-integrity). **fix**: F2 패널을 stem-토큰 보존 held-out form으로 교체
 OR codec-eval 인코딩 정렬 → re-fire. 산출=`state/nbind_curriculum/`(morphatom_s1_verdict.json + 도구 6종).
 scope: NSMC-only+f2 120=underpowered도 병존(Fable 100MB/n400 미달).
+
+### stage-2 S1 진단 정정 (2026-07-13 · verdict-integrity)
+앞 절의 "진범 의심=codec-eval이 held-out 아니 novel 활용형을 stem 토큰 미인코딩"은 **$0 로컬 진단으로 반증**:
+F2 held-out 형태(지아니해요/했다/한다) 전부 codec 토큰열에 아니 stem 토큰(id 466) **포함**(drill 형태와 동일 [265,256,466,·]).
+⟹ codec-eval 인코딩 정상. **정정된 진범**: codec arm 전부 F1=0.50(drill lossF=0.009로 grid 암기됐음에도 held-out
+예측어 일반화 0)·raw C1만 F1=0.57 미세신호 = **codec 재인코딩 substrate가 flip 일반화를 아예 학습 못함**. Fable
+risk#3(warm-start alienness: utf-8 학습 base를 재인코딩 2-byte 알파벳에 8000-step CPT로 적응시키기엔 이질적) +
+**pod runner가 G-a 게이트(post-CPT stem-code geometry)를 생략**해 outcome "class 미형성=PENDING(CPT-budget)"과
+"측정 dead"를 구분 못함. ⟹ 여전히 morpheme lever **PENDING**, 단 진범은 eval이 아니라 warm-start/CPT-budget.
+**re-fire 처방 정정**: (a) G-a 게이트 구현(CPT 후 stem-code LOSO geometry·미형성이면 PENDING 명시) (b) CPT budget↑
+또는 from-scratch codec 학습(warm-start 이질성 제거) (c) C3 V1이 그래도 <0.90이면 codec substrate가 flip을 못
+배우는 것 자체가 결과. eval-harness 수정은 불요(정상).
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
