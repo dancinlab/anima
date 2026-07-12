@@ -47,8 +47,20 @@ F2(M)−F2(C1)≥0.15 & C3≥0.90 & (있으면)C2≤0.55, single seed=DIRECTIONA
 span classifier 못=0.515·아니=0.500=chance지만 n_adv=15로 classifier 붕괴(CI degenerate·SE=0.115·MDE
 Δ≈0.23) = **INCONCLUSIVE-leaning-ABSENT**. 자유 EXISTS 신호 없음(레버 $0 종결 안 됨) → 정식 SPAN-GEOM 라이선스.
 
-### stage-1 · SPAN-GEOM (n≈296/stem · PENDING)
-_(dump in-flight · spangeom_hidden.npz → spangeom_probe.py 판정 대기)_
+### stage-1 · SPAN-GEOM (n≈296/stem · well-powered · 2026-07-12) — **CLASS-ABSENT**
+정식 SPAN-GEOM(1763 prompt·안/않/못/아니 각 ~296 + position-matched 부정어 275 + freq-matched rand 299·
+base 303M clm303_clean frozen span-pool·MDE Δ≈0.06 at nmin=275). LOSO span classifier(안/않 train→held-out):
+| held-out | heldout_bacc | ci95 | shuffle | rand-baseline |
+|---|---|---|---|---|
+| 못 (mot) | **0.553** | [.519,.584] | 0.328 | 0.468 |
+| 아니 (ani) | **0.547** | [.514,.579] | 0.317 | 0.435 |
+
+RSA: within-NEG cos=−0.251 < NEG↔부정어 cos=−0.190 → **rsa_Δ=−0.061·exceeds_null=FALSE**(NEG 어간들이
+서로 안 뭉침). ⟹ **CLASS-ABSENT**: held-out NEG bacc≈chance(0.55≪0.75 임계·CI가 0.5 겨우 상회)·RSA 음수·
+shuffle clean·rand 통제 chance. base 303M byte substrate는 **span 층위에서도** stem-불변 NEG 등가류 부재 =
+earn-seal(readout 층)에 이어 **2-stratum 확증**. ⟹ morpheme-tokenizer 전제 **생존**(반증 아님) → **stage-2
+MORPH-ATOM codec 라이선스**. 함의: 벽 진범이 measure/corpus 아니라 architectural morpheme-abstraction 부재임을
+표상층이 직접 지지(byte-LM이 안/않/못/아니를 분포적으로 한 클래스로 안 묶음).
 
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
