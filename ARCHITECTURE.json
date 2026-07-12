@@ -14768,6 +14768,13 @@
     "value": "hexa cloud pods 의 ORPHAN 은 \"버려진 pod\" 이 아니다 — 다른 세션이 지금 쓰고 있는 살아있는 pod 일 수 있다. 2026-07-12 N2 발사에서 정확히 이 사고가 났다: 내 rent 가 timeout 으로 잘린 뒤 ORPHAN 3대가 보였고, 나는 그것을 \"내 timeout 이 만든 유실 pod\" 으로 단정해 adopt 한 뒤 같은 GPU 에 중복 학습을 얹었다. 실제로는 다른 세션(wt-nbindg3)이 09:55 부터 같은 N2 실험을 돌리던 pod 였고(/workspace/n2/ 에 그쪽 코퍼스·fire 스크립트 상주), 707 에서 남의 main-s11 과 내 main-s7 이 GPU 를 나눠 쓰며 서로를 느리게 만들었다. adopt 자체는 등록만 하므로 무해하지만, adopt 후 곧바로 job 을 얹는 것이 사고다. 부수 학습(유효): 파일을 sidecar pool on 으로 tar 를 stdout 파이프에 빼면 로그가 섞여 아카이브가 깨진다 — scp 또는 hexa cloud copy-to 를 쓸 것.",
     "threshold": "재발조건 = GPU pod 렌트가 timeout/실패한 뒤 ORPHAN 을 발견했을 때. 해결 = (1) rent 는 foreground timeout 금지(run_in_background 또는 --max-wait-sec) (2) ORPHAN 을 보면 버려진 것으로 단정하지 말 것 — 먼저 hexa cloud run 으로 (a) ps aux 에 살아있는 train job 이 있는지 (b) /workspace 에 남의 산출물·스크립트가 있는지 (c) 생성 시각이 내 rent 시각과 맞는지 확인. 하나라도 걸리면 다른 세션의 pod 이므로 job 을 얹지 말 것(adopt 는 해도 되나 실행은 금지). (3) 내 pod 임이 확실할 때만 사용, 아니면 hexa cloud rm 도 금지(남의 학습을 죽인다). (4) 중복을 이미 얹었으면 내 프로세스만 정확히 pkill -f 내-out-파일명 으로 걷어내고 남의 job 생존을 GPU util 로 확인. (5) 같은 실험을 두 세션이 나눠 들면 ING 에 분담을 명시.",
     "source": "state/nbindg_grounding/N2_STATUS.md"
+   },
+   {
+    "id": "train-py-6",
+    "state": "pos-conv",
+    "value": "pip install anima-python[train] 가 pod 에 torch 2.13+cu130 을 깔았는데 vast pod 의 NVIDIA 드라이버가 12.8 이라 CUDA 초기화가 실패하고 **조용히 device=cpu 로 폴백**했다. 345M 학습이 CPU 에서 step 1 에 24분간 정지 — 로그에 에러는 없고 device=cpu 한 줄만 있었다(GPU util 0% 로만 드러남). 13.3h × 4 arm 짜리 유료 배터리에서 이걸 못 잡으면 하루를 통째로 날린다. FIX: 드라이버에 맞는 torch 를 명시 설치 — pip install --force-reinstall torch --index-url https://download.pytorch.org/whl/cu124 (torch 2.6.0+cu124 → cuda True 확인).",
+    "threshold": "재발조건 = 새 GPU pod 에서 anima-py train 을 처음 돌릴 때(특히 pip 로 anima-python[train] 을 새로 설치한 pod). 해결 = (1) 학습 발사 **전에** 반드시 검증: python3 -c \"import torch; print(torch.__version__, torch.cuda.is_available())\" 가 True 여야 한다 (2) False 면 nvidia-smi 드라이버 버전을 보고 맞는 cu 빌드를 --index-url 로 강제 설치(driver 12.8 → cu124) (3) 발사 후 30초 내 train 로그의 device= 줄을 확인 — device=cpu 면 즉시 kill(그대로 두면 며칠을 태운다) (4) GPU util 0% + step 정지 = CPU 폴백 의심 1순위(에러 로그가 없다는 점이 함정).",
+    "source": "cli/train.py"
    }
   ]
  }
