@@ -90,10 +90,16 @@ scale-up 2건(eval f2 20→≥400 predicate/render 확장·CPT 1.3MB→HF anima-
 end-to-end 파이프라인 검증완료(smoke: codec build→CPT warm(emax4·base.pt)→drill→codec-eval GPU-fired D-acc·인프라
 6+버그 근본수정→convergence hexa-cloud-exec-1). 4 dedicated RTX_4090 발사(M 가설·C1 no-codec raw·C2 held-out제거
 ablation·C3 shared-⟨NEG⟩ leak천장/V1). 각 arm=full corpus CPT 8000step warm→drill 2500step→codec-eval
-(morphatom_eval.py `_fwd_logits`·f2 120/f1 100 held-out 아니 novel-conjugation). **PASS**=F2(M)≥0.70 &
-Δ(M−C1)≥0.15 CI-lo>0.05 & C3≥0.90 & C2≤0.55 & F1(M)≥0.75. 산출 도구=`state/nbind_curriculum/`
-(morph2b·gen_morphatom_s1·morphatom_eval·morphatom_arm/pollall·install_ma). **scope 정직**: NSMC-only CPT(~9MB)
-+f2 120=DIRECTIONAL(Fable 100MB/n400 미달)·성공 시 scale-up 재현 follow-on. verdict 착지 시 이 절 갱신+G1 gate.
+(morphatom_eval.py `_fwd_logits`·f2 120/f1 100 held-out 아니 novel-conjugation). **PASS**=F2(M)≥0.70 & Δ(M−C1)≥0.15 & C3≥0.90 & C2≤0.55 & F1(M)≥0.75.
+**결과(2026-07-13 ~00:00): INVALID — V1 liveness FAILED.** 4 arm 완주(M/C1 drill lossF=0.009/0.014=drill grid 완전 fit·
+8000 CPT+2500 drill 정상). f2/f1: M 0.517/0.50·C1(raw) 0.658/0.57·C2 0.50/0.50·C3 0.50/0.50. **C3 leak-ceiling(V1
+liveness)=0.50 ≪ 0.90 = 측정 dead**(Fable: C3 PASS 못하면 INVALID not FAIL) + codec arm 전부 F1=0.50(drilled sanity
+chance)인데 drill 암기됨=held-out 일반화 0 **+ eval-harness confound**. **진범 의심**: codec-eval이 F2 패널의 held-out
+아니 novel 활용형(지아니해요 등)을 stem 토큰으로 인코딩 못해 C3 shared-collapse 무효→V1 dead·M도 held-out form 미인식.
+⟹ **morpheme 레버 = PENDING**(falsify도 confirm도 아님·clean 측정 실패). **V1 self-gate가 dead measurement를 잡아
+false NOT-PASS 방어 = 게이트 설계 작동**(verdict-integrity). **fix**: F2 패널을 stem-토큰 보존 held-out form으로 교체
+OR codec-eval 인코딩 정렬 → re-fire. 산출=`state/nbind_curriculum/`(morphatom_s1_verdict.json + 도구 6종).
+scope: NSMC-only+f2 120=underpowered도 병존(Fable 100MB/n400 미달).
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
