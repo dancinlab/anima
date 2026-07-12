@@ -1,0 +1,50 @@
+[G3] live band = [0.03, 0.05, 0.08, 0.12, 0.2, 0.3]  PRIMARY repair = 0.12  c2_health=0.805 (6.7s)
+[MDE-HET] sd=2.921 MDE=1.929 span=13.488 (6.99xMDE) POWERED=True (9.8s)
+[MDE-LIVE] sd=3.705 MDE=2.447 span=13.895 (5.68xMDE) POWERED=True (13.8s)
+[main-HET] done (17.6s)
+[main-LIVE] done (22.3s)
+[sweep-HET] repair (33.5s)
+[sweep-HET] sigma (39.8s)
+[sweep-HET] capsplit (43.6s)
+[sweep-HET] rho (49.2s)
+[sweep-HET] frag_sigma (52.8s)
+[sweep-LIVE] repair (64.3s)
+[sweep-LIVE] sigma (70.6s)
+[sweep-LIVE] capsplit (74.4s)
+[sweep-LIVE] rho (80.1s)
+[sweep-LIVE] frag_sigma (83.9s)
+[sweep-LIVE] EXC (89.7s)
+[sweep-LIVE] B1 (93.5s)
+
+================ RESULT ================
+담체 = load-공급 상보성 slack=S−L (health 아님) · PRIMARY a_comp
+사전예측: a_comp 부호양성보존(양 기질·전 repair) · o_health 뒤집힘
+
+--- HET 기질 ---
+  G1=True(2.7e-13) G2=True G3=True(h=0.805 atp=57.46) POWER=True(6.99xMDE) ORACLE=True(+13.43 p=1.08e-15)
+  info: comp_slack_sel_ratio=3.70 | sham_tag_gap=0.000 blind_tag_gap=0.002 distinct=False | corr(tag,slack)=+0.001 | info_PASS=False
+   c1_frozen   atp= 54.10 h=0.808 sup= 95.02 slackgap=0.000 tagap=0.000 pump=+0.0e+00
+   c2_blind    atp= 57.46 h=0.805 sup= 94.74 slackgap=8.128 tagap=0.002 pump=+1.3e-13
+   a5_sham     atp= 59.37 h=0.805 sup= 94.71 slackgap=12.554 tagap=0.000 pump=+2.5e-13
+   a_comp      atp= 71.15 h=0.805 sup= 94.74 slackgap=13.151 tagap=0.000 pump=+2.2e-13
+   o6_oracle   atp= 70.89 h=0.807 sup= 94.96 slackgap=11.938 tagap=0.000 pump=+2.3e-13
+   o_health    atp= 59.21 h=0.804 sup= 94.61 slackgap=12.852 tagap=0.002 pump=+2.7e-13
+   guard_off   atp= 88.32 h=0.805 sup= 94.76 slackgap=23.025 tagap=0.009 pump=+1.1e-13
+   >> a_comp vs_sham +11.786±0.637 (t=+18.51 p=1.29e-13 20/20) | vs_c2 +13.692±0.508 (t=+26.96 p=1.32e-16 20/20)
+      SIGN+=True SIGN-=False | o_health vs_c2 +1.75(diag,예상뒤집힘) | VERDICT=INVALID
+
+--- LIVE 기질 ---
+  G1=True(2.4e-13) G2=True G3=True(h=0.700 atp=48.83) POWER=True(5.68xMDE) ORACLE=True(+13.06 p=4.15e-15)
+  info: comp_slack_sel_ratio=3.64 | sham_tag_gap=0.000 blind_tag_gap=0.002 distinct=False | corr(tag,slack)=+0.001 | info_PASS=False
+   c1_frozen   atp= 42.51 h=0.706 sup= 83.05 slackgap=0.000 tagap=0.000 pump=+0.0e+00
+   c2_blind    atp= 48.83 h=0.700 sup= 82.39 slackgap=8.933 tagap=0.002 pump=+9.3e-14
+   a5_sham     atp= 50.90 h=0.699 sup= 82.22 slackgap=14.415 tagap=0.000 pump=+2.4e-13
+   a_comp      atp= 62.75 h=0.695 sup= 81.82 slackgap=15.153 tagap=0.000 pump=+1.7e-13
+   o6_oracle   atp= 61.89 h=0.711 sup= 83.62 slackgap=13.694 tagap=0.000 pump=+1.5e-13
+   o_health    atp= 50.17 h=0.677 sup= 79.62 slackgap=20.719 tagap=0.003 pump=+1.8e-13
+   guard_off   atp= 80.82 h=0.729 sup= 85.81 slackgap=22.787 tagap=0.007 pump=+1.4e-13
+   >> a_comp vs_sham +11.854±0.685 (t=+17.31 p=4.32e-13 20/20) | vs_c2 +13.921±0.479 (t=+29.07 p=3.24e-17 20/20)
+      SIGN+=True SIGN-=False | o_health vs_c2 +1.34(diag,예상뒤집힘) | VERDICT=INVALID
+
+G1 규약자유도(unweighted-mean pump/run): {'c2_blind': -5.8, 'a_comp': 48.4}
+wall_s 94.1
