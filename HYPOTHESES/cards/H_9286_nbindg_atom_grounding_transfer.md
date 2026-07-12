@@ -65,12 +65,17 @@ context 길이 차 아티팩트 가능(D-acc가 robust 신호). 상세 = `state/
 **infra 격리**: summer anima-py stale(evaluate-py-11 `_json_safe` 미반영)로 out-json write만 크래시, summary
 D-acc는 clean(write 전 print·verdict 무영향·log 보존).
 
-## N2 (spend-gated · owner $go)
-grounding 본체: raw NSMC(P_nat 원자 포함) 혼합 재학습 3-arm(main + base-only control + shuffle-grid
-control) → P_nat held-out (p,form)이 자연접지 극성으로 합성되는지. base-only control이 crux(자연 LM만으로
-공짜로 얻는 부정처리 차감). E*≥12k 노출. pool-first($0)/렌트시 ~$8-15 1-line estimate. Δ-팽창 flag
-(H_9272 control 0.375 out-of-band → in-band 0.50±0.05, main≥0.80 사전등록). frozen grid:
-NAT-CRACK 🟢(grounded scope) / FORMAT-🧱 / MODEL-🧱 / INVALID.
+## N2 grounding — PRE-FIRE 게이트 INVALID (DATA-scale-blocked · 2026-07-12 · $0)
+grounding 본체(P_nat 자연접지 극성×grid 학습 flip) retrain 전 $0 pre-fire 감사(`gen_nbindg_n2.py`
+--audit-only·`N2_PREFIRE_AUDIT.json`): purity≥0.85·minocc100·비과거stem·grid제외 렌더가능 P_nat =
+**k=4/pol·48 items** → frozen bar(k≥10·n≥120) **미달 = PREFIRE FAIL → pool spend 차단**. viable 8 atom은
+clean(보고싶/귀엽/싫/답답하…)이나 수 부족(grid가 최고순도 소진). purity 0.80 완화 시 k=11 통과하나 극성 20%
+오염=degraded(tune-to-green 아님). ⟹ **grounding = model-blocked 아니라 DATA-scale-blocked**(자연 감성원자
+재고 부족=데이터/재고 한계이지 substrate 아님·measurement-metalaw 정합). frozen-first가 underpowered spend
+차단 = 정상작동. **resume(owner-gated)**: 외부 한국어 감성코퍼스(naver/steam)→purity≥0.85 재고 ≥10/pol→
+`gen_nbindg_n2.py`에 rows 주입 재발화→3-arm(main+base-only+shuffle-grid·E*≥12k). 상세 `state/nbindg_grounding/N2_STATUS.md`.
+frozen 판정그리드(외부데이터 후): NAT-CRACK 🟢(grounded) / FORMAT-🧱 / MODEL-🧱 / INVALID. Δ-팽창 flag
+(H_9272 control 0.375 out-of-band→in-band 0.50±0.05·main≥0.80 사전등록).
 
 ## 산출
 `state/nbindg_grounding/`(gen_nbindg.py·nbindg_carrier_ladder_manifest.json·nbindg_C{0,1,2}.json·
