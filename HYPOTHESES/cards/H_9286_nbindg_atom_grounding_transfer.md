@@ -65,19 +65,21 @@ context 길이 차 아티팩트 가능(D-acc가 robust 신호). 상세 = `state/
 **infra 격리**: summer anima-py stale(evaluate-py-11 `_json_safe` 미반영)로 out-json write만 크래시, summary
 D-acc는 clean(write 전 print·verdict 무영향·log 보존).
 
-## N2 grounding — PRE-FIRE 게이트 INVALID (DATA-scale-blocked · 2026-07-12 · $0)
-grounding 본체(P_nat 자연접지 극성×grid 학습 flip) retrain 전 $0 pre-fire 감사(`gen_nbindg_n2.py`
---audit-only·`N2_PREFIRE_AUDIT.json`): purity≥0.85·minocc100·비과거stem·grid제외 렌더가능 P_nat =
-**k=4/pol·48 items** → frozen bar(k≥10·n≥120) **미달 = PREFIRE FAIL → pool spend 차단**. viable 8 atom은
-clean(보고싶/귀엽/싫/답답하…)이나 수 부족(grid가 최고순도 소진). purity 0.80 완화 시 k=11 통과하나 극성 20%
-오염=degraded(tune-to-green 아님). ⟹ **grounding = model-blocked 아니라 DATA-scale-blocked**(자연 감성원자
-재고 부족=데이터/재고 한계이지 substrate 아님·measurement-metalaw 정합). frozen-first가 underpowered spend
-차단 = 정상작동. **resume(owner-gated)**: 외부 한국어 감성코퍼스(naver/steam)→purity≥0.85 재고 ≥10/pol→
-`gen_nbindg_n2.py`에 rows 주입 재발화→3-arm(main+base-only+shuffle-grid·E*≥12k). 상세 `state/nbindg_grounding/N2_STATUS.md`.
-frozen 판정그리드(외부데이터 후): NAT-CRACK 🟢(grounded) / FORMAT-🧱 / MODEL-🧱 / INVALID. Δ-팽창 flag
-(H_9272 control 0.375 out-of-band→in-band 0.50±0.05·main≥0.80 사전등록).
+## N2 grounding — 외부데이터로 UNBLOCK → FIRE-READY (2026-07-12)
+① NSMC-only pre-fire = INVALID(DATA-scale-blocked·k=4/pol<10·순수감성 재고 grid소진). ② **외부 감성코퍼스
+$0 확보**(naver_shopping 200k 상품 + steam 100k 게임 + NSMC 150k 영화 = 450k·3도메인·`gen_nbindg_n2 --corpora`)
+→ purity≥0.85 P_nat **k=15/pol** → **pre-fire PASS**(owner-gated 오판 정정: 공개데이터 획득=$0 로컬·anti-punt).
+③ **Fable exposure-matched 레시피**(`FABLE_N2_RECIPE.md`): 노출=바이트 현상, 옛 filler-line knob은 f_grid≈0.059
+=미리만든 STAGE-1 INVALID → 바이트비율 knob + P_nat 편향채움(occ floor 30) + **T=⌈1.25×E*/f_grid⌉** + grid재현
+게이트 + flip0/flip1 분해. ④ **빌드 all-green**: viable 29(좋=authored충돌 드롭)·n_eval 174·f_grid 0.1426·
+**T=105,169 step**·V_F pass(0/0)·byte-match 0.98·PREFIRE_PASS. **4-arm**(main s7·main s11·base_only·shuffle_grid
+전부 `--arm ctrl` ce_marginal·T동일) fire-ready(corpora summer push). validity 게이트=main seen P_grid≥0.85 +
+shuffle coin-seen≥0.85 + V-F. frozen verdict: NAT-CRACK 🟢(양seed Δ≥0.20 vs base_only∧shuffle·base_only∈[.40,.65]) /
+FORMAT-🧱 / MODEL-🧱(flip0=grounding·flip1=operator 분해) / INVALID. Δ는 max(control,0.50) 대비(팽창 방어).
+NEXT=wall calibrate → $0 pool or rent 4-way($go) → 발사 → seen-게이트 → --xbind eval → verdict. 상세
+`state/nbindg_grounding/N2_STATUS.md`.
 
 ## 산출
-`state/nbindg_grounding/`(gen_nbindg.py·nbindg_carrier_ladder_manifest.json·nbindg_C{0,1,2}.json·
-P_nat_freeze.json·N0_AUDIT.json). Fable 판정 원문 = 세션 scratchpad fable_nbind_result.json.
+`state/nbindg_grounding/`: N1(gen_nbindg.py·nbindg_carrier_ladder_manifest·N1_RESULT) · N2(gen_nbindg_n2.py
+멀티코퍼스+exposure-matched·N2_PREFIRE_AUDIT·n2_eval_manifest·FABLE_N2_RECIPE·N2_STATUS) · P_nat_freeze.
 [[xbind-g1-crack-measure-not-substrate]]·H_9272·H_9267·[[measurement-metalaw-form-tunable-bind-earned]].
