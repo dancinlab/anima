@@ -1,10 +1,14 @@
 # H_9286 — NBIND-G: 자연 원자 GROUNDING 전이 (H_9272 다음 유일한 진짜 새 질문)
 
 ## tier
-🟢-dir **CARRIER-ROBUST** (N1 착지 · 2026-07-12) — Fable 판정으로 도출된 NBIND-G가 XBIND+H_9272+STAGE0이
-못 본 유일한 non-tune-to-green 질문. $0 N0(manifest+P_nat freeze)+N1(carrier 전이 eval·summer $0) 완료 =
-연산자가 literal 학습프레임 비구속(C0 0.750→C1 0.675→C2 0.700, FORMAT-🧱 반증). grounding 본체(P_nat)=
-N2 spend-gated(owner $go). GREEN 미cement(1 seed·grid-atom scope).
+🟢/🧱 **N1 CARRIER-ROBUST + N2 GROUNDING-WALL** (종결 · 2026-07-13) — Fable 판정으로 도출된 NBIND-G가
+XBIND+H_9272+STAGE0이 못 본 유일한 non-tune-to-green 질문. **N1 🟢-dir**: 연산자가 literal 학습프레임
+비구속(C0 0.750→C1 0.675→C2 0.700, FORMAT-🧱 반증). **N2 🧱 GROUNDING-WALL**(4-arm 303M 신규학습 T=105k·
+summer GPU·frozen): held-out D-acc base 0.000·shuffle 0.362·main_s7 0.477·main_s11 0.345 = 양 seed chance
+floor 0.50 **미만** → NAT-CRACK 반증. main_s7 SEEN P_grid **0.950**(≥0.85 = grid 확실히 설치·INVALID 아님).
+flip0(극성 자연접지 liveness) main_s11 0.368<chance → **극성의 자연-분포 접지 자체가 install 안 됨** → 합성
+좌항=0. **substrate 천장 아닌 grounding/data 채널 벽**(STAGE-0 DATA-🧱 정합). exit=held-out 극성 접지시키는
+데이터/objective(spend-go). H_9267/9272/N1 소급 불변.
 
 ## 가설
 H_9267 XBIND CRACK(합성 ±비트)과 H_9272 NBIND(🟡 DIRECTIONAL·held-out D-acc 0.700)은 "held-out
@@ -78,6 +82,25 @@ shuffle coin-seen≥0.85 + V-F. frozen verdict: NAT-CRACK 🟢(양seed Δ≥0.20
 FORMAT-🧱 / MODEL-🧱(flip0=grounding·flip1=operator 분해) / INVALID. Δ는 max(control,0.50) 대비(팽창 방어).
 NEXT=wall calibrate → $0 pool or rent 4-way($go) → 발사 → seen-게이트 → --xbind eval → verdict. 상세
 `state/nbindg_grounding/N2_STATUS.md`.
+
+## N2 결과 — 🧱 GROUNDING-WALL (measured · 2026-07-13 · rent 4-way RTX4090 → summer/aiden GPU eval)
+4-arm 303M CLMConvMoE 신규학습(T=105,169 step·`--arm ctrl` ce_marginal·bf16·seed 7/11) → `--xbind` held-out 174셀:
+
+| arm | held-out D-acc | flip0(극성접지) | flip1(연산자) | SEEN P_grid |
+|---|---|---|---|---|
+| base_only | 0.000 | 0.000 | 0.000 | — |
+| shuffle_grid | 0.362 | 0.448 | 0.276 | — |
+| **main_s7** | **0.477** | (corroborate) | (corroborate) | **0.950** ✅ |
+| **main_s11** | **0.345** | 0.368 | 0.322 | (corroborate) |
+
+**판정 = 🧱 GROUNDING-WALL**(frozen §5): ① main_s7 SEEN 0.950≥0.85 = grid XOR 연산자 **확실히 설치**(validity
+PASS → INVALID 아님·진짜 negative) · ② 양 seed 둘 다 chance floor 0.50 **미만** → Δ vs max(control,0.50) 음수 →
+**NAT-CRACK 반증** · ③ flip0(극성 직접판독 liveness) main_s11 0.368<chance(shuffle 0.448보다도 낮음) → 모델이
+P_nat 극성을 **자연 사용에서 접지 못함** → 합성할 grounded operand 부재 → flip1 붕괴 = §5 "flip0 낮음=GROUNDING-🧱".
+⟹ 연산자 설치는 carrier-general(N1)이나 **극성의 자연-분포 접지 자체가 303M/이 노출/이 코퍼스서 install 안 됨** →
+자발 창발=(자연접지)×(연산자)의 **좌항이 0**. substrate 천장 아닌 grounding/data 채널 벽 · STAGE-0 DATA-🧱 +
+[[xbind-g1-crack-measure-not-substrate]] + [[measurement-metalaw-form-tunable-bind-earned]] 3중 정합. ckpt 4개
+PULL 로컬(byte-동일 sha256 3중). exit=held-out 극성 접지시키는 데이터/objective(spend-go). 상세 `N2_RESULT.md`.
 
 ## 산출
 `state/nbindg_grounding/`: N1(gen_nbindg.py·nbindg_carrier_ladder_manifest·N1_RESULT) · N2(gen_nbindg_n2.py
