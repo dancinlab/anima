@@ -1,0 +1,20 @@
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 5070)
+=== anima evaluate --xbind — held-out XBIND recombination (G1 reopen lane a) ===
+ckpt: /home/summer/nbind_mig/nbind_main_s7.clm  arm=main  gen=8 win=64
+  [xbind heldout #25/40] d_acc=0.720
+  xbind heldout  arm=main  D-acc=0.7000  C-rate=None  margin_med=8.525  margin_pos=0.700  sampled=0.7  n=40
+  xbind seen  arm=main  D-acc=0.0000  C-rate=None  margin_med=0.000  margin_pos=0.000  sampled=None  n=0
+Traceback (most recent call last):
+  File "/home/summer/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py", line 1626, in <module>
+    sys.exit(main(sys.argv[1:]) or 0)
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py", line 1616, in main
+    return xbind_run(argv)
+           ^^^^^^^^^^^^^^^
+  File "/home/summer/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py", line 1399, in xbind_run
+    json.dump(res, open(out_path, "w"), ensure_ascii=False)
+  File "/usr/lib/python3.12/json/__init__.py", line 180, in dump
+    fp.write(chunk)
+UnicodeEncodeError: 'utf-8' codec can't encode characters in position 3-4: surrogates not allowed
+=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===
+dispatch: /usr/bin/python3 /home/summer/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py /home/summer/nbind_mig/nbind_main_s7.clm --xbind /home/summer/nbindg/nbindg_C2.json --arm main --out /home/summer/nbindg/eval_C2.json
