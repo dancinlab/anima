@@ -1,35 +1,45 @@
 # CLOSURE — 미토콘드리아 organelle-lane
 
-> # ⚠️ 이 문서의 CLOSED 판정은 철회됐다 (2026-07-12 · F13 헤드라인 수정 재발사)
+> # 🔒 최종: CLOSED — licensed by EQUIVALENCE (2026-07-12 · F13 cement)
 >
-> **아래 §3의 F13 KILL과 §4·§6의 "lane CLOSED" 결론은 licensed가 아니다.** F13의 헤드라인이
-> `m_conj = min(m_A, m_B)` = **순서통계량**이었고(계측 census 규칙①⑤ 위반), 그 KILL은 검증자가
-> **사후에** live branch로 재계산해 얻은 것이었다 = F8을 INVALID로 찍었던 죄(사후 판정변수 교체)와
-> 동일 (convergence 규칙⑨).
+> **이 문서의 §3 F13 "KILL"과 §4·§6의 근거는 폐기됐고, CLOSED는 다른 근거로 다시 licensed됐다.**
 >
-> 검출력 있는 detector(`m_B_conj` 단일변수)를 **sha256 동결로 사전등록**하고 **완전 disjoint 새 cue**로
-> 303M을 재디코드(PARITY max|Δ|=0.0)한 결과:
+> **① 원 KILL은 seed 특이적 잡음이었다 (철회 · 3-seed 확정)**
+> 원 F13의 헤드라인이 `min(m_A, m_B)` = **순서통계량**(census 규칙①⑤ 위반)이었고, 그 KILL은 검증자가
+> **사후에** live branch로 재계산한 것이었다(규칙⑨ 위반 = F8을 INVALID로 찍은 죄와 동일).
 >
-> | 지표 | 원 seed | 새 seed (disjoint) |
+> | seed | EXP−c0 | |
 > |---|---|---|
-> | EXP−c0 | −0.209 (t=−2.30, **p=.033**) | **+0.129 (t=+1.06, ns)** ← 부호반전 |
-> | SHOCK−c0 (V2 게이트) | +0.100 (t=+2.48, p=.023) | **−0.086 (t=−1.49, ns)** ← V2 FAIL |
+> | run-1 (원) | −0.209 (p=.033) | ← KILL 근거 |
+> | run-2 (헤드라인 수정 · disjoint) | +0.129 (ns) | 부호반전 |
+> | run-3 (cement · disjoint) | +0.072 (ns) | 부호반전 |
 >
-> **seed 간 이질성 z=2.22, p=.026** ⇒ 단순 미재현이 아니라 **통계적 불일치** = 원 p=.033은
-> **seed 특이적 잡음 draw**였다. 근본 원인 = MoE capacity 채널이 재조합 마진에 **부호-무작위 잡음만
-> 주입하는 잡음 지배 축**(항목당 |Δ|=0.37~0.80인데 signed mean≈0 · 실측 sd 0.545 기준 **~53 blocks
-> 필요**, n=20은 부족).
+> 이질성 run1-vs-run3 **z=2.67, p=.0075** · 고정효과 메타 μ=+0.016±0.043 ns · Q p=.001(run-1이 유일
+> outlier) ⇒ **원 p=.033은 seed 잡음 draw 확증**. "용량 배분이 재조합을 유의하게 **열화**시킨다"는 주장은
+> **3 seed 모두에서 지지되지 않는다.**
 >
-> **살아남는 것 / 죽는 것**
-> - ✅ **살아남음**: "용량 배분이 reach를 올린다"는 증거는 **여전히 0**이다 — 두 seed 모두 PASS 미실현
->   (EXP vs c0/c1/c2 t=1.06/0.89/0.58 · 양성 0). F6 KILL(캡 단조하강 Δ=−0.192)·F12 earned setpoint·
->   계측 census도 **불변**.
-> - ❌ **죽음**: "강한 KILL(유의 열화)"과 그것에 근거한 **lane CLOSED 선언**. lane 상태 = **REOPENED(미채점)**
->   — 레버라는 증거도 없고, 닫혔다는 licensed 증거도 없다.
+> **② CLOSED는 KILL이 아니라 EQUIVALENCE로 licensed됐다 (F13 cement)**
+> 카드 등록 cement 조건 3항을 그대로 집행: unsigned/분산 V-gate **사전등록** · blocks **사전산정**
+> (sd 1.2192 → N_REQ=230, n=334 = powered) · **TOST 등가성**(Δ_eq=0.20 nats를 데이터 보기 전 고정 ·
+> 코드 sha256 동결 · 3rd disjoint seed, overlap 0/0/0). aiden 303M · PARITY max|Δ|=0.0.
 >
-> **cement 재발사 조건**: (a) V-gate를 unsigned/분산 기반으로 **사전등록** (b) blocks ~53 사전산정
-> (c) 'ns'가 아니라 **사전등록 TOST 등가성 검정**으로 실질적 0을 증명. 현 데이터로 KILL 재시도 = tune-to-red.
-> 상세 = `F13_303m_reach_closure/refire/` (PREREG.md · RESULT.md · REFUTE_v2.md).
+> **EXP−c0 = +0.072, 90%CI[−0.016, +0.160] ⊂ ±0.20, p_TOST=.0083** ⇒ `equivalent_on_all_axes=True`.
+> PASS(0/3 control 유의 우세)도 미실현. **계측 9종 규칙 전수 PASS.**
+>
+> **③ 정직한 사정거리 (적대검증이 남긴 3항 — 반드시 함께 인용할 것)**
+> - 배제한 것은 **|효과| ≥ 0.20 nats**뿐이다. **0.15~0.20** 및 **스케일-정규화 상대효과(~0.06)는 미배제**.
+> - 등가를 licensing하는 것은 **검정력(MDE_sup=0.131)이지 V-gate가 아니다** — unsigned V-gate는 방향효과
+>   0인 채널도 통과시킨다(대리표본으로 실증).
+> - 닫힌 것은 **setpoint 특이성이 아니라 router-mixture 조작 전반** — 프로덕션 router가 DENSE soft
+>   mixture(top-k 부재)라 **모든 capacity gating이 정보 폐기 연산**이기 때문.
+>
+> 상세 = `F13_303m_reach_closure/cement/` (PREREG.md · RESULT.md · REFUTE.md).
+>
+> **④ F2(merge 대수)는 이 lane과 별개로 살아 있다** — 5차에서 sham 결함이 최초 해결됐고, 답은
+> **"장부에는 YES, 물리에는 NO"**. 그리고 **오라클은 LIVE 기질에서 물리 채널을 실제로 탄다**
+> (+1.91 supply, overload 불변) = **재조합 대수가 물리 정보를 더할 수 있다는 존재 증명**. 6차 재조준 →
+> `F2_organelle_fission_fusion/refire5/` · ARCHITECTURE `organelle-lane-symbiogenesis-update`.
+
 
 
 

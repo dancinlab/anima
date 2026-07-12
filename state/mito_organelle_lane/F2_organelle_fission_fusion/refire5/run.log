@@ -1,0 +1,53 @@
+[G3] live=[0.03, 0.05, 0.08, 0.12, 0.2, 0.3] PRIMARY repair=0.12 c2_health=0.798 (4.0s)
+[MDE-HET] atp: MDE=2.745 span=14.13 (5.1x) | supply: MDE=1.094 span=0.52 (0.5x) (7s)
+[MDE-LIVE] atp: MDE=3.322 span=14.28 (4.3x) | supply: MDE=3.269 span=2.74 (0.8x) (11s)
+[main-HET] done (15s)
+[main-LIVE] done (19s)
+[sweep-HET] repair (29s)
+[sweep-HET] sigma (33s)
+[sweep-HET] capsplit (36s)
+[sweep-HET] rho (42s)
+[sweep-HET] frag_sigma (45s)
+[sweep-LIVE] repair (55s)
+[sweep-LIVE] sigma (60s)
+[sweep-LIVE] capsplit (63s)
+[sweep-LIVE] rho (68s)
+[sweep-LIVE] frag_sigma (71s)
+[sweep-LIVE] EXC (76s)
+[sweep-LIVE] B1 (79s)
+
+================ RESULT (5th) ================
+
+--- HET ---
+  G1=True(2.7e-13) G2=True G3=True(h=0.798) POWER=True ORACLE=True(+12.32 p=3e-14)
+  SHAM distinct: zratio sham=3.56 blind=1.25 (Δ=2.31) paired-t=18.8 p=9.4e-14 20/20 -> True | corr(Z,slack)=-0.074
+  DETECTOR collinearity: comp==detgrad argmax 0.653 (capture 0.982) -> collinear=False
+   c1_frozen   atp= 52.76 sup= 95.072 ovl=0.284 h=0.808 zratio=0.00 pump=+0.0e+00
+   c2_blind    atp= 56.73 sup= 93.914 ovl=0.277 h=0.798 zratio=1.25 pump=+7.1e-14
+   a5_sham     atp= 57.91 sup= 94.470 ovl=0.281 h=0.803 zratio=3.56 pump=+7.8e-14
+   a_comp      atp= 69.69 sup= 93.656 ovl=0.327 h=0.796 zratio=1.14 pump=+1.5e-13
+   a_detgrad   atp= 70.19 sup= 93.532 ovl=0.313 h=0.795 zratio=1.10 pump=+2.7e-13
+   o6_oracle   atp= 69.05 sup= 93.657 ovl=0.321 h=0.796 zratio=1.12 pump=+1.7e-13
+   guard_off   atp= 86.95 sup= 93.030 ovl=0.441 h=0.791 zratio=0.98 pump=+1.7e-13
+   H-A ATP  vs c2 +12.962±0.687 (t=+18.9 p=9.3e-14 20/20) | vs sham +11.784±0.787 (t=+15.0 p=5.7e-12 20/20) SIGN+=True
+   H-B SUP  vs c2  -0.258±0.339 (t=-0.8 p=0.46 11/20) | TOST(δ=1.0) p=0.0208 EQUIV=True | oracle-reach sup -0.257 (p=0.54)
+       OVL vs c2 +0.0506 (p=0.0013) | comp−detgrad ATP -0.498 (p=0.29)
+   >> H_A=True B_POS=False B_EQUIV=False hard=True  VERDICT=INVALID
+
+--- LIVE ---
+  G1=True(3.4e-13) G2=True G3=True(h=0.683) POWER=True ORACLE=True(+13.24 p=3.5e-17)
+  SHAM distinct: zratio sham=3.56 blind=1.25 (Δ=2.31) paired-t=18.8 p=9.4e-14 20/20 -> True | corr(Z,slack)=-0.073
+  DETECTOR collinearity: comp==detgrad argmax 0.562 (capture 0.978) -> collinear=False
+   c1_frozen   atp= 42.47 sup= 84.425 ovl=0.300 h=0.718 zratio=0.00 pump=+0.0e+00
+   c2_blind    atp= 47.01 sup= 80.392 ovl=0.320 h=0.683 zratio=1.25 pump=+9.3e-14
+   a5_sham     atp= 46.95 sup= 80.155 ovl=0.318 h=0.681 zratio=3.56 pump=+9.9e-14
+   a_comp      atp= 59.82 sup= 78.952 ovl=0.437 h=0.671 zratio=1.12 pump=+1.5e-13
+   a_detgrad   atp= 61.36 sup= 79.954 ovl=0.397 h=0.680 zratio=1.13 pump=+3.4e-13
+   o6_oracle   atp= 60.25 sup= 82.302 ovl=0.319 h=0.700 zratio=1.11 pump=+1.6e-13
+   guard_off   atp= 78.07 sup= 82.527 ovl=0.540 h=0.701 zratio=1.00 pump=+2.4e-13
+   H-A ATP  vs c2 +12.809±0.904 (t=+14.2 p=1.5e-11 20/20) | vs sham +12.874±0.737 (t=+17.5 p=3.6e-13 20/20) SIGN+=True
+   H-B SUP  vs c2  -1.441±1.292 (t=-1.1 p=0.28 10/20) | TOST(δ=1.0) p=0.632 EQUIV=False | oracle-reach sup +1.910 (p=0.04)
+       OVL vs c2 +0.1169 (p=2.3e-05) | comp−detgrad ATP -1.539 (p=0.011)
+   >> H_A=True B_POS=False B_EQUIV=False hard=True  VERDICT=INVALID
+
+wall_s 78.7
