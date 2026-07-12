@@ -14761,6 +14761,13 @@
     "value": "long-running/streamed hexa cloud exec는 원격 프로세스를 exec 연결 수명에 묶고 그 PROXY hop 자체가 flaky 층이다(pod는 멀쩡). 이번 세션 6+연발 동일근인: dump SIGHUP사망·340MB scp truncate·probe SIGHUP×2·중복 probe 경합·proxy transport-255 timeout(DIRECT ssh는 정상)·pkill -f self-kill. tool·과학 무죄(smoke 정상)=순수 orchestration/proxy 결함.",
     "threshold": "재발조건=vast/runpod에 수분+ job·대용량전송·잦은 exec를 proxy로 직결, 또는 pkill -f <pat>를 pat 든 명령 문자열서 사용. 해결 5종: (A) 장기 job=setsid detach+DONE flag(exit)+짧은 poll (B) 분석=compute-to-data(pod서 실행·tiny verdict만 회수) (C) proxy transport-255면 DIRECT ssh(root@host -p port·ServerAliveInterval)로 우회 (D) PROBE_DONE=exit code·0만 성공(137=SIGKILL relaunch) (E) ★최대함정★ pkill -9 -f <pat>이 자기 cmdline과 겹치면 launcher self-kill→python 시작전 자살·ps 0개인데 실행중 오인·45min 헛poll → pgrep -x python3로 PID 특정 kill or 0개면 pkill 없이 launch. macOS rsync 2.6.9=--append-verify 미지원. direct ssh는 hexa reconcile 우회(prereg-md-1)라 teardown은 hexa cloud로.",
     "source": "hexa cloud exec"
+   },
+   {
+    "id": "n2-status-md-1",
+    "state": "pos-conv",
+    "value": "hexa cloud pods 의 ORPHAN 은 \"버려진 pod\" 이 아니다 — 다른 세션이 지금 쓰고 있는 살아있는 pod 일 수 있다. 2026-07-12 N2 발사에서 정확히 이 사고가 났다: 내 rent 가 timeout 으로 잘린 뒤 ORPHAN 3대가 보였고, 나는 그것을 \"내 timeout 이 만든 유실 pod\" 으로 단정해 adopt 한 뒤 같은 GPU 에 중복 학습을 얹었다. 실제로는 다른 세션(wt-nbindg3)이 09:55 부터 같은 N2 실험을 돌리던 pod 였고(/workspace/n2/ 에 그쪽 코퍼스·fire 스크립트 상주), 707 에서 남의 main-s11 과 내 main-s7 이 GPU 를 나눠 쓰며 서로를 느리게 만들었다. adopt 자체는 등록만 하므로 무해하지만, adopt 후 곧바로 job 을 얹는 것이 사고다. 부수 학습(유효): 파일을 sidecar pool on 으로 tar 를 stdout 파이프에 빼면 로그가 섞여 아카이브가 깨진다 — scp 또는 hexa cloud copy-to 를 쓸 것.",
+    "threshold": "재발조건 = GPU pod 렌트가 timeout/실패한 뒤 ORPHAN 을 발견했을 때. 해결 = (1) rent 는 foreground timeout 금지(run_in_background 또는 --max-wait-sec) (2) ORPHAN 을 보면 버려진 것으로 단정하지 말 것 — 먼저 hexa cloud run 으로 (a) ps aux 에 살아있는 train job 이 있는지 (b) /workspace 에 남의 산출물·스크립트가 있는지 (c) 생성 시각이 내 rent 시각과 맞는지 확인. 하나라도 걸리면 다른 세션의 pod 이므로 job 을 얹지 말 것(adopt 는 해도 되나 실행은 금지). (3) 내 pod 임이 확실할 때만 사용, 아니면 hexa cloud rm 도 금지(남의 학습을 죽인다). (4) 중복을 이미 얹었으면 내 프로세스만 정확히 pkill -f 내-out-파일명 으로 걷어내고 남의 job 생존을 GPU util 로 확인. (5) 같은 실험을 두 세션이 나눠 들면 ING 에 분담을 명시.",
+    "source": "state/nbindg_grounding/N2_STATUS.md"
    }
   ]
  }
