@@ -106,6 +106,7 @@ except Exception as _cupy_err:            # pragma: no cover — numpy-only host
     _CUPY_IMPORT_ERR = _cupy_err
 
 _CUDA_AVAILABLE = None       # tri-state probe cache (None = not yet probed)
+_CUDA_PROBE_ERR = None       # why the device path was refused (import · no device · kernel)
 _GPU_LOG_DONE = False        # print the [GPU-FIRED]/[GPU-FALLBACK] QA line once
 # cupy OOM type for graceful device->CPU fallback at weight-residency (a shared
 # GPU that is momentarily full must NOT hard-crash the eval — fall back byte-exact).
@@ -113,17 +114,33 @@ _CUPY_OOM = _cupy.cuda.memory.OutOfMemoryError if _cupy is not None else ()
 
 
 def cuda_available():
-    """True iff cupy is importable AND a CUDA device is actually present
-    (`cupy.cuda.runtime.getDeviceCount() > 0`). This is the SOLE gate for the
-    device path anywhere in this module — no env flag (a_gpu_default_no_optin)."""
-    global _CUDA_AVAILABLE
+    """True iff cupy is importable, a CUDA device is present, AND cupy can actually
+    COMPILE AND RUN a kernel on it. This is the SOLE gate for the device path anywhere
+    in this module — no env flag (a_gpu_default_no_optin).
+
+    The kernel clause is load-bearing, not paranoia. A cupy whose JIT toolchain
+    mismatches the host (e.g. cupy-cuda12x on a pod whose nvrtc rejects CUB's reduction
+    template) imports cleanly and reports a device, then raises NVRTC_ERROR_COMPILATION
+    on the first `.any()` — which lives deep inside `dt_exp`, i.e. inside the decode of
+    item 1 of a 174-item eval. Probing only the device count promotes that host to the
+    device path and the whole run dies, instead of taking the numpy fallback this module
+    already guarantees for GPU-less hosts. So probe what decode actually uses: an
+    elementwise op AND a CUB reduction, once."""
+    global _CUDA_AVAILABLE, _CUDA_PROBE_ERR
     if _CUDA_AVAILABLE is None:
         ok = False
-        if _cupy is not None:
+        if _cupy is None:
+            _CUDA_PROBE_ERR = _CUPY_IMPORT_ERR
+        else:
             try:
-                ok = _cupy.cuda.runtime.getDeviceCount() > 0
-            except Exception:
+                if _cupy.cuda.runtime.getDeviceCount() > 0:
+                    probe = _cupy.arange(4, dtype=_cupy.float64)
+                    ok = bool((probe * 2.0 > 1.0).any())   # elementwise -> CUB reduce
+                else:
+                    _CUDA_PROBE_ERR = RuntimeError("no CUDA device")
+            except Exception as e:                # broken JIT/toolchain, driver fault …
                 ok = False
+                _CUDA_PROBE_ERR = e
         _CUDA_AVAILABLE = ok
     return _CUDA_AVAILABLE
 
@@ -133,7 +150,7 @@ def gpu_status():
     pool run can confirm the fast path was actually reached, not just present —
     core/CLAUDE.md gotcha: 'decode GPU path 확인 먼저')."""
     if not cuda_available():
-        reason = str(_CUPY_IMPORT_ERR) if _CUPY_IMPORT_ERR is not None else "no CUDA device"
+        reason = str(_CUDA_PROBE_ERR) if _CUDA_PROBE_ERR is not None else "no CUDA device"
         return {"cuda": False, "device_name": None, "reason": reason}
     try:
         name = _cupy.cuda.runtime.getDeviceProperties(0)["name"]

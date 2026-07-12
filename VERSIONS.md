@@ -27,6 +27,19 @@
 > positive control은 POOL-gated(mini-OOM)라 leg는 T1/T3 통과까지 VOID. Part B regime
 > (rolling-transcript seed)=design-only pre-reg. cli/chat.py wheel 변경이라 G5 patch bump.
 >
+> **0.13.9 → 0.13.10** (2026-07-13): 🛡️ GPU capability 게이트를 커널-스모크로 정직화 —
+> `core/decode.py` `cuda_available()`. 문제: 게이트가 "cupy import + `getDeviceCount()>0`"
+> 까지만 봐서, JIT 툴체인이 깨진 호스트를 device path 로 **승격**시켰다. 렌트 GPU pod 실사례:
+> `cupy-cuda12x` 14.1.1 이 깨끗이 import 되고 RTX4090 도 보이므로 `[GPU-FIRED]` 가 찍힌 뒤,
+> decode 깊숙한 `dt_exp` 의 `.any()`(CUB 리덕션) 첫 호출에서 `NVRTC_ERROR_COMPILATION` 으로
+> **174-item eval 이 1번 아이템에서 즉사** — 모듈이 GPU-없는 호스트에 이미 보장하는 numpy
+> 폴백으로 가지 못했다(rc≠0 · 출력파일 0). 수정: probe 가 **decode 가 실제로 쓰는 커널
+> 클래스(elementwise + CUB reduction)를 1회 실행**해 보고, 예외면 `cuda_available()=False`
+> + `_CUDA_PROBE_ERR` 에 사유 보존(`gpu_status()` 가 그대로 노출 → `[GPU-FALLBACK] … (NVRTC…)`).
+> 정상 GPU 호스트는 무변경(probe 1회 통과 후 캐시) · byte-exact 무영향. 같은 뿌리(GPU 결함은
+> 폴백해야지 크래시하면 안 됨)의 2번째 발생이라 convergence `decode-py-1` 확장.
+> wheel 콘텐츠(`core/decode.py`) 변경이라 VERSION lockstep patch bump.
+>
 > **0.13.5 → 0.13.7** (2026-07-12): ⚡ 세션 가중치 캐시 — `core/decode.py`
 > `clm_load_weights`/`bg_load` memoize. 매 decode entry 가 IMMUTABLE `.clm`/`.bin`
 > 을 전체 재파싱(int4-역양자화+전치)하던 것을 `(abspath,mtime,size)` 키 캐시로
