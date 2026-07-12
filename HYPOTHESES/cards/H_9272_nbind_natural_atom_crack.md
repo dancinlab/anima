@@ -70,9 +70,26 @@ axis 측정은 generation-native(`--xbind` greedy)라 route≠generation confoun
 미달 = 정직한 경계. GREEN 경로(미달): 저밀도 NBIND를 production 학습 레시피에 심어 wild 전이 획득 후 rho_weave
 PASS(현재 C W-T가 게이트, FAIL). GPU 백엔드(#3323·11.8×)로 재eval 저비용.
 
+## NBIND-FC 후속 (form-coverage sweep · 2026-07-12 · wild-FAIL 진범 규명)
+C의 wild-FAIL(flip1 0.290 붕괴)이 "coverage-density 한계(뚫림)"인지 "surface-invariant-binding 천장(종결)"인지
+가르는 결정실험(Fable 설계·`build_nbind_fc_eval.py`·`gen_nbind_kform.py`). 부정 form-family K를 sweep하며 held-out
+**form** flip 정확도의 slope를 봄. 한국어 부정 어간 희소성(~4 distinct: 안/않/못/아니).
+| K (drilled stems) | F1 (drilled-stem 활용형-novel) | F2 (novel un-drilled stem) |
+|---|---|---|
+| K=2 (안·않) | 0.700 | **못 = 0.200** (anti-flip) |
+| K=3 (안·않·못) | **0.983** | **아니 = 0.450** (chance) |
+
+**불변식**: F1(드릴한 어간의 novel 활용형)은 완벽 일반화(0.70→0.98)·**F2(novel 미드릴 어간)는 어떤 K에서도
+chance 미달**(못 0.200·아니 0.450, 둘 다 ≤0.5). 3어간 드릴해도 4번째 새 어간 flip 안 됨 ⟹ **flip = per-stem
+detector-gated**(어간별 감지기 학습·추상 NEG 연산자 부재). = **surface-invariant-binding 천장**(3렌즈: C wild-FAIL
++ K2 F2 anti-flip + K3 F2 chance). corpus/coverage 레버로 못 뚫음(한국어 부정어간 ~4개로 K-sweep 소진). 잔여
+exit = corpus 아닌 **γ measure-side(H_1840 trained-bind, cost-gated·STEP-0 차단됨)**. frontier
+g1-crack-natural-emergence 최종: 자연 원자 재조합은 합성 augment 한정, wild 자연창발은 byte-LM 천장.
+
 ## 산출
-`state/nbind_curriculum/`(gen_nbind.py·build_nbind_t.py·CD_PREREG_frozen.md·AUDIT). ckpt+eval =
-`~/anima-weights/nbind_cement/`(nbind_A2seed.clm·_ctrl.clm·eval_A2seed_{main,ctrl}.json·eval_C_*.json·corpus).
+`state/nbind_curriculum/`(gen_nbind.py·build_nbind_t.py·build_nbind_fc_eval.py·gen_nbind_kform.py·CD_PREREG_frozen.md·
+NBIND_FC_SPEC.md·nbind_fc_results.json·AUDIT). ckpt+eval =
+`~/anima-weights/nbind_cement/`(nbind_A2seed{,_ctrl}.clm·kform_k3.clm·eval_A2seed_{main,ctrl}.json·eval_C_*.json·eval_fc_*.json·eval_k3_*.json·corpus).
 
 ## 산출
 `state/nbind_curriculum/`(gen_nbind.py·FABLE_NBIND_SPEC/GENFIX·AUDIT). 결과 json = summer
