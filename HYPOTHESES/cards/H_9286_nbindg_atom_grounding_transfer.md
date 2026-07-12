@@ -90,13 +90,15 @@ NEXT=wall calibrate → $0 pool or rent 4-way($go) → 발사 → seen-게이트
 |---|---|---|---|---|
 | base_only | 0.000 | 0.000 | 0.000 | — |
 | shuffle_grid | 0.362 | 0.448 | 0.276 | — |
-| **main_s7** | **0.477** | (corroborate) | (corroborate) | **0.950** ✅ |
-| **main_s11** | **0.345** | 0.368 | 0.322 | (corroborate) |
+| **main_s7** | **0.477** | **0.402** | 0.552 | **0.950** ✅ |
+| **main_s11** | **0.345** | **0.368** | 0.322 | 0.7375 △ |
 
 **판정 = 🧱 GROUNDING-WALL**(frozen §5): ① main_s7 SEEN 0.950≥0.85 = grid XOR 연산자 **확실히 설치**(validity
-PASS → INVALID 아님·진짜 negative) · ② 양 seed 둘 다 chance floor 0.50 **미만** → Δ vs max(control,0.50) 음수 →
-**NAT-CRACK 반증** · ③ flip0(극성 직접판독 liveness) main_s11 0.368<chance(shuffle 0.448보다도 낮음) → 모델이
-P_nat 극성을 **자연 사용에서 접지 못함** → 합성할 grounded operand 부재 → flip1 붕괴 = §5 "flip0 낮음=GROUNDING-🧱".
+PASS → INVALID 아님·진짜 negative·s11 SEEN 0.7375은 D-acc bar 미달이나 margin +16.0=grid 강설치, validity는
+s7이 clean-carry) · ② 양 seed 둘 다 chance floor 0.50 **미만** → Δ vs max(control,0.50) 음수 → **NAT-CRACK 반증** ·
+③ flip0(극성 직접판독 liveness)이 **양 seed 모두 chance 미만**(s7 0.402·s11 0.368·둘 다 shuffle 0.448 이하·clean
+full) → 모델이 P_nat 극성을 **자연 사용에서 접지 못함** → 합성할 grounded operand 부재 = §5 "flip0 낮음=GROUNDING-🧱"
+2-seed 확증(△ = s11 SEEN D-acc<0.85 bar이나 margin-strong grid설치).
 ⟹ 연산자 설치는 carrier-general(N1)이나 **극성의 자연-분포 접지 자체가 303M/이 노출/이 코퍼스서 install 안 됨** →
 자발 창발=(자연접지)×(연산자)의 **좌항이 0**. substrate 천장 아닌 grounding/data 채널 벽 · STAGE-0 DATA-🧱 +
 [[xbind-g1-crack-measure-not-substrate]] + [[measurement-metalaw-form-tunable-bind-earned]] 3중 정합. ckpt 4개
