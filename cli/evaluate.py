@@ -1538,10 +1538,44 @@ def xfan_run(argv):
     return 0
 
 
+# Every flag evaluate actually consumes. An argv token starting with "--" that is not
+# here is REJECTED (see _reject_unknown_flags): evaluate parses argv by scanning for the
+# flags it knows, so an unknown one (a typo, or a flag that only exists in a sub-mode) is
+# otherwise silently ignored — the run completes rc=0 and the result file the caller asked
+# for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
+# ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
+_KNOWN_FLAGS = frozenset((
+    "--arm", "--corpus", "--dump-hidden", "--gen", "--help", "--interaction-lift",
+    "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe", "--result-file",
+    "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off", "--slot-shuffle",
+    "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
+))
+
+
+def _reject_unknown_flags(argv):
+    """Return an error string for the first unknown --flag in argv, else ''."""
+    for a in argv:
+        if not a.startswith("--") or a in _KNOWN_FLAGS:
+            continue
+        near = [k for k in sorted(_KNOWN_FLAGS)
+                if k.lstrip("-").startswith(a.lstrip("-").split("-")[0])]
+        msg = "evaluate: unknown flag " + a
+        if near:
+            msg += "  (did you mean: " + " ".join(near) + " ?)"
+        return msg + "\n  known flags: " + " ".join(sorted(_KNOWN_FLAGS)) + \
+            "\n  (an unknown flag is rejected, not ignored — a silently-dropped --out " \
+            "loses the whole run's result with a green exit code)"
+    return ""
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
         return 0
+    _bad = _reject_unknown_flags(argv)
+    if _bad:
+        print(_bad, file=sys.stderr, flush=True)
+        return 2
     # H_9212 ③ per-cell dispatch wiring self-test (torch-free · NO decode · internal subprocess)
     if len(argv) >= 1 and argv[0] == "--selftest-rho-cells":
         cok, cchecks = _selftest_rho_cells()
