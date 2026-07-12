@@ -1,5 +1,38 @@
 # CLOSURE — 미토콘드리아 organelle-lane
 
+> # ⚠️ 이 문서의 CLOSED 판정은 철회됐다 (2026-07-12 · F13 헤드라인 수정 재발사)
+>
+> **아래 §3의 F13 KILL과 §4·§6의 "lane CLOSED" 결론은 licensed가 아니다.** F13의 헤드라인이
+> `m_conj = min(m_A, m_B)` = **순서통계량**이었고(계측 census 규칙①⑤ 위반), 그 KILL은 검증자가
+> **사후에** live branch로 재계산해 얻은 것이었다 = F8을 INVALID로 찍었던 죄(사후 판정변수 교체)와
+> 동일 (convergence 규칙⑨).
+>
+> 검출력 있는 detector(`m_B_conj` 단일변수)를 **sha256 동결로 사전등록**하고 **완전 disjoint 새 cue**로
+> 303M을 재디코드(PARITY max|Δ|=0.0)한 결과:
+>
+> | 지표 | 원 seed | 새 seed (disjoint) |
+> |---|---|---|
+> | EXP−c0 | −0.209 (t=−2.30, **p=.033**) | **+0.129 (t=+1.06, ns)** ← 부호반전 |
+> | SHOCK−c0 (V2 게이트) | +0.100 (t=+2.48, p=.023) | **−0.086 (t=−1.49, ns)** ← V2 FAIL |
+>
+> **seed 간 이질성 z=2.22, p=.026** ⇒ 단순 미재현이 아니라 **통계적 불일치** = 원 p=.033은
+> **seed 특이적 잡음 draw**였다. 근본 원인 = MoE capacity 채널이 재조합 마진에 **부호-무작위 잡음만
+> 주입하는 잡음 지배 축**(항목당 |Δ|=0.37~0.80인데 signed mean≈0 · 실측 sd 0.545 기준 **~53 blocks
+> 필요**, n=20은 부족).
+>
+> **살아남는 것 / 죽는 것**
+> - ✅ **살아남음**: "용량 배분이 reach를 올린다"는 증거는 **여전히 0**이다 — 두 seed 모두 PASS 미실현
+>   (EXP vs c0/c1/c2 t=1.06/0.89/0.58 · 양성 0). F6 KILL(캡 단조하강 Δ=−0.192)·F12 earned setpoint·
+>   계측 census도 **불변**.
+> - ❌ **죽음**: "강한 KILL(유의 열화)"과 그것에 근거한 **lane CLOSED 선언**. lane 상태 = **REOPENED(미채점)**
+>   — 레버라는 증거도 없고, 닫혔다는 licensed 증거도 없다.
+>
+> **cement 재발사 조건**: (a) V-gate를 unsigned/분산 기반으로 **사전등록** (b) blocks ~53 사전산정
+> (c) 'ns'가 아니라 **사전등록 TOST 등가성 검정**으로 실질적 0을 증명. 현 데이터로 KILL 재시도 = tune-to-red.
+> 상세 = `F13_303m_reach_closure/refire/` (PREREG.md · RESULT.md · REFUTE_v2.md).
+
+
+
 작성 2026-07-12 · 입력 = 선행 11 패밀리(F1–F11 · SYNTHESIS.md) + $0 후속 2건(F12 H_9284 · F13 H_9285) · 전부 $0 numpy · GPU spend 0
 
 ---

@@ -1,0 +1,147 @@
+[    0.0s] exclusion loaded: 120 prev (A,B) pairs · 142 prev cue words · 120 prev tuples
+[    0.0s] load /home/aiden/py303_full.clm
+[    1.9s] dims d=3784 E=3 K=3 L=4 V=256 T=24
+[    2.1s] PARITY max|Δ| = 0.0 (rows-path 0.0)
+[    4.8s] θ(abs setpoint · fresh probe)=0.4643 (mean=0.4751 sd=0.0724)
+[    4.9s] corpus words 166725
+[    5.0s] near pairs (co-present within a 24B window) 90988
+[    5.0s] mode=fresh-cue uni>=150 cnt>=25 pmi>1.0 cap=1 → cand=119 items=10
+[    5.1s] mode=fresh-cue uni>=80 cnt>=15 pmi>1.0 cap=2 → cand=219 items=48
+[    5.1s] mode=fresh-cue uni>=60 cnt>=12 pmi>0.8 cap=2 → cand=301 items=59
+[    5.2s] mode=fresh-cue uni>=40 cnt>=8 pmi>0.6 cap=3 → cand=513 items=134
+[    5.2s] mine mode = fresh-cue · items = 134 (need main 100 + pilot 30)
+[    5.2s] DISJOINT CHECK: tuple-overlap=0  (A,B)-pair-overlap=0  (both must be 0)
+[    5.2s] MAIN blocks=20 items=100 | PILOT blocks=6 items=30 (disjoint) | per block 5
+[   19.0s] items done 12/130
+[   32.6s] items done 24/130
+[   46.1s] items done 36/130
+[   59.8s] items done 48/130
+[   73.4s] items done 60/130
+[   87.1s] items done 72/130
+[  100.8s] items done 84/130
+[  114.5s] items done 96/130
+[  128.4s] items done 108/130
+[  142.2s] items done 120/130
+[  153.8s] WROTE /home/aiden/h9285refire/refire_result.json
+[  153.8s] === VERDICT: INVALID === V2 channel-visibility FAIL — SHOCK does not move headline (|t|=1.49<=2.09)
+[  153.8s] {
+ "arms": {
+  "c0": {
+   "mean": 0.6382192194076541,
+   "sem_across_blocks": 0.2811266001666146,
+   "dacc": 0.36,
+   "m_A_conj": -0.04929772445138005
+  },
+  "c1_k1": {
+   "mean": 0.6867588533738498,
+   "sem_across_blocks": 0.23473496246999156,
+   "dacc": 0.35,
+   "m_A_conj": 0.11770736747639435
+  },
+  "c1_k2": {
+   "mean": 0.705413125569648,
+   "sem_across_blocks": 0.2599869274682947,
+   "dacc": 0.32,
+   "m_A_conj": -0.10556165457287951
+  },
+  "EXP": {
+   "mean": 0.7668054255377748,
+   "sem_across_blocks": 0.23613435566319965,
+   "dacc": 0.36,
+   "m_A_conj": 0.03090079812785409
+  },
+  "c2_shuf": {
+   "mean": 0.7129178434927805,
+   "sem_across_blocks": 0.2540741063931945,
+   "dacc": 0.33999999999999997,
+   "m_A_conj": 0.0699168726834355
+  },
+  "SHOCK": {
+   "mean": 0.5526686239918165,
+   "sem_across_blocks": 0.3162441801604596,
+   "dacc": 0.36,
+   "m_A_conj": -0.08801224332860551
+  }
+ },
+ "paired_vs_controls_HEADLINE": {
+  "EXP_vs_c0": {
+   "mean_delta": 0.12858620613012064,
+   "sd": 0.5452871203795916,
+   "sem": 0.12192990684238776,
+   "t": 1.0545911947290925,
+   "p_approx": 0.29161233261607333,
+   "n": 20
+  },
+  "EXP_vs_c1_k1": {
+   "mean_delta": 0.08004657216392488,
+   "sd": 0.4019217977991096,
+   "sem": 0.08987244615177344,
+   "t": 0.8906686708932462,
+   "p_approx": 0.3731069468689676,
+   "n": 20
+  },
+  "EXP_vs_c2_shuf": {
+   "mean_delta": 0.05388758204499426,
+   "sd": 0.4130973177330905,
+   "sem": 0.09237136837740197,
+   "t": 0.5833797094444418,
+   "p_approx": 0.5596377140109805,
+   "n": 20
+  },
+  "EXP_vs_pooled_mean_of_controls": {
+   "mean_delta": 0.08750678677967991,
+   "sd": 0.3532727237713947,
+   "sem": 0.07899418249493444,
+   "t": 1.1077624201667173,
+   "p_approx": 0.2679644337570928,
+   "n": 20
+  }
+ },
+ "vgate_on_headline": {
+  "V1_liveness_c0_gt_0": {
+   "mean_delta": 0.6382192194076541,
+   "sd": 1.2572363765119081,
+   "sem": 0.2811266001666146,
+   "t": 2.270219961502762,
+   "p_approx": 0.02319424044897156,
+   "n": 20,
+   "pass": true
+  },
+  "V2_channel_SHOCK_vs_c0": {
+   "mean_delta": -0.08555059541583761,
+   "sd": 0.25679709768633896,
+   "sem": 0.05742157668513079,
+   "t": -1.4898684493627075,
+   "p_approx": 0.13625882883499263,
+   "n": 20,
+   "pass": false
+  }
+ },
+ "mde": {
+  "sd_pilot_blockdelta": 0.259581325380459,
+  "MDE_alpha05_n20": 0.1214864036979734,
+  "pilot_c0_level_headline": 0.42443107846427197,
+  "main_c0_level_headline": 0.6382192194076541,
+  "mde_ok": true,
+  "pilot_blocks": 6,
+  "note": "MDE from DISJOINT pilot items only; verdict set not used for the power check"
+ },
+ "c1_best_constant": {
+  "selected_on_disjoint_pilot": "c1_k1",
+  "grid_pilot_used_for_selection": {
+   "c1_k1": 0.6775176224287609,
+   "c1_k2": 0.4985845406661141,
+   "c0": 0.42443107846427197
+  },
+  "grid_main_reported": {
+   "c1_k1": 0.6867588533738498,
+   "c1_k2": 0.705413125569648,
+   "c0": 0.6382192194076541
+  }
+ },
+ "disjoint_check": {
+  "overlap_tuple": 0,
+  "overlap_ab_pair": 0
+ },
+ "mine_mode": "fresh-cue"
+}
