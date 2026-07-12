@@ -78,6 +78,13 @@ ablation/C3 shared-⟨NEG⟩ leak천장) → per-pod anima-py train CPT warm-sta
 geometry·미형성이면 PENDING(CPT-budget))·G-a2(zero-shot flip confound) 게이트 → drill FT 90/10(~20min) →
 F2(held-out flip)/F1 forced-choice eval. PASS = F2(M)≥0.70 & Δ(M−C1)≥0.15 CI-lo>0.05 & C3≥0.90 & C2≤0.55 &
 F1≥0.75 & 게이트 green(paired bootstrap BCa·no-max). single seed=DIRECTIONAL·PASS후보→아니→못 rotation+1seed.
+
+**S1 corpus 파이프라인 BUILT + 검증(2026-07-12·`gen_morphatom_s1.py`+`morph2b.encode_to_bytes`)**: codec 재인코딩
+바이트 스트림을 anima-py train이 `open(rb)` V=256으로 직접 학습(train.py:337 확인·utf-8 제약無·단 Hangul-jamo
+bucket bias는 raw경로 전용=codec tax·C1 통제). 30k 샘플 검증: K=2048 vocab2320·**held_in_drill_grid=0**(leak-free
+assert 통과)·4 arm .bytes 정상(M 1.3MB<C1 raw 2.15MB codec 더 짧음·C2 held제거 1.28MB). fire 전 잔여 $0
+scale-up 2건(eval f2 20→≥400 predicate/render 확장·CPT 1.3MB→HF anima-corpus-ko 병합 100MB+) + per-pod fire
+스크립트 + **codec-space eval harness**(codec arm encoded label 채점·anima-py evaluate 확장) + $4-6 4-pod fire.
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).

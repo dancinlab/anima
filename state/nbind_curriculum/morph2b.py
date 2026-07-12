@@ -155,6 +155,35 @@ def encode_tokens(line, merge_rank, tok2id):
     return ids
 
 
+def encode_to_bytes(line, merge_rank, tok2id):
+    """Fixed-width 2-byte tokens, big-endian ID. ID 0-255 = literal-byte passthrough (as 2 bytes)."""
+    out = bytearray()
+    for syms, sp in eojeol_split(line):
+        toks = [" "] if sp else apply_merges(syms, merge_rank)
+        for t in toks:
+            i = tok2id.get(t)
+            if i is None:
+                # OOV token → emit each source raw byte as a passthrough 2-byte id (0..255)
+                for bb in t.replace("\x00", "").encode("utf-8", "replace"):
+                    out += bytes((0, bb))
+            else:
+                out += bytes((i >> 8, i & 0xFF))
+    return bytes(out)
+
+
+def decode_from_bytes(bs, id2tok):
+    """Inverse: 2-byte IDs → tokens → jamo → NFC text. For round-trip audit."""
+    jam = []
+    for k in range(0, len(bs) - 1, 2):
+        i = (bs[k] << 8) | bs[k + 1]
+        if i < 256:
+            jam.append("R:" + chr(i))       # passthrough byte (approx; multi-byte utf-8 handled at from_jamo)
+        else:
+            t = id2tok.get(i, "")
+            jam += t.split("\x00")
+    return from_jamo([s for s in jam if s != " "])
+
+
 def stem_token_ids(stem, merge_rank, tok2id):
     """Token IDs covering the stem when segmented in isolation (citation)."""
     toks = apply_merges(to_jamo(stem), merge_rank)
