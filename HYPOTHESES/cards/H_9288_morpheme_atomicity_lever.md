@@ -62,6 +62,22 @@ earn-seal(readout 층)에 이어 **2-stratum 확증**. ⟹ morpheme-tokenizer �
 MORPH-ATOM codec 라이선스**. 함의: 벽 진범이 measure/corpus 아니라 architectural morpheme-abstraction 부재임을
 표상층이 직접 지지(byte-LM이 안/않/못/아니를 분포적으로 한 클래스로 안 묶음).
 
+
+### stage-2 · MORPH-ATOM (Fable 설계 · S0 착수 2026-07-12)
+Fable 구현스펙(`state/nbind_curriculum/MORPHATOM_STAGE2_SPEC.md`): **MORPH-2B fixed-width 2-byte codec** —
+전체 스트림을 자체 알파벳(ID 0-255 passthrough·256+r=BPE-on-jamo vocab freq-rank)으로 재인코딩해
+atomicity(context-invariant 2-byte 서명)만 부여(identity 아님·label-blind). K-ladder{2048→16384} 중
+G-0 audit 통과 최소 K 선택.
+**S0 · G-0 codec audit = PASS** (`morph2b.py`·NSMC 130,639줄·$0 pre-fire blocking gate):
+- **pairwise_disjoint=TRUE** — 안/않/못/아니 토큰ID **0개 공유**(아니가 안/않과 ㅇㅏㄴ jamo prefix 공유함에도
+  단일 토큰 id=445로 fuse) ⟹ Fable가 지목한 최대위험(부분토큰 leak via ㅇㅏㄴ)이 실측 해소 = leak-free 확증.
+- **held(아니) single-token** = atomicity 성립 · **roundtrip 무손실**.
+⟹ codec 재설계/held-out 전환 불필요, S1 GPU fire ready.
+**S1 (NEXT · cost-gated $4-6·4 dedicated pod·~2h)**: 4 corpus variant remap(M/C1 no-codec/C2 held-out제거
+ablation/C3 shared-⟨NEG⟩ leak천장) → per-pod anima-py train CPT warm-start(~60min) → G-a(post-CPT stem-code
+geometry·미형성이면 PENDING(CPT-budget))·G-a2(zero-shot flip confound) 게이트 → drill FT 90/10(~20min) →
+F2(held-out flip)/F1 forced-choice eval. PASS = F2(M)≥0.70 & Δ(M−C1)≥0.15 CI-lo>0.05 & C3≥0.90 & C2≤0.55 &
+F1≥0.75 & 게이트 green(paired bootstrap BCa·no-max). single seed=DIRECTIONAL·PASS후보→아니→못 rotation+1seed.
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
