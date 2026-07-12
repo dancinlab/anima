@@ -107,6 +107,9 @@ except Exception as _cupy_err:            # pragma: no cover — numpy-only host
 
 _CUDA_AVAILABLE = None       # tri-state probe cache (None = not yet probed)
 _GPU_LOG_DONE = False        # print the [GPU-FIRED]/[GPU-FALLBACK] QA line once
+# cupy OOM type for graceful device->CPU fallback at weight-residency (a shared
+# GPU that is momentarily full must NOT hard-crash the eval — fall back byte-exact).
+_CUPY_OOM = _cupy.cuda.memory.OutOfMemoryError if _cupy is not None else ()
 
 
 def cuda_available():
@@ -198,22 +201,31 @@ def _device_residency(W):
     ablation-only lane, so _fwd_logits round-trips through host ONLY at those
     two gates — the common (no-SLW/no-CLML) trunk-conv path, which is the
     profiled ~92%-of-wall-time hot path, stays fully device-resident end to end."""
+    # ATOMIC upload (OOM-safe): stage every device tensor into `s` FIRST, then
+    # commit to W only once ALL uploads succeed. If any xp.asarray raises
+    # cupy.cuda.memory.OutOfMemoryError mid-way, W is left FULLY host-resident
+    # (untouched) so the caller can catch OOM and fall back to the byte-exact
+    # CPU-numpy path with no mixed host/device weight dict (which would crash the
+    # forward). Fixes the summer-GPU-contention OOM crash (a_gpu_default_no_optin
+    # dont: a full-device path that hard-crashes on a transient OOM).
     xp = _cupy
-    W["ecWt"] = xp.asarray(W["ecWt"]); W["ecB"] = xp.asarray(W["ecB"])
-    W["tcWt"] = [xp.asarray(w) for w in W["tcWt"]]
-    W["tcB"] = [xp.asarray(b) for b in W["tcB"]]
-    W["eWt"] = [xp.asarray(w) for w in W["eWt"]]
-    W["eB"] = [xp.asarray(b) for b in W["eB"]]
-    W["rWt"] = xp.asarray(W["rWt"]); W["rB"] = xp.asarray(W["rB"])
-    W["roWt"] = xp.asarray(W["roWt"]); W["roB"] = xp.asarray(W["roB"])
-    W["embed"] = xp.asarray(W["embed"])
-    W["tgG"] = [xp.asarray(g) for g in W["tgG"]]
-    W["tgB"] = [xp.asarray(b) for b in W["tgB"]]
-    W["noG"] = xp.asarray(W["noG"]); W["noB"] = xp.asarray(W["noB"])
+    s = {}
+    s["ecWt"] = xp.asarray(W["ecWt"]); s["ecB"] = xp.asarray(W["ecB"])
+    s["tcWt"] = [xp.asarray(w) for w in W["tcWt"]]
+    s["tcB"] = [xp.asarray(b) for b in W["tcB"]]
+    s["eWt"] = [xp.asarray(w) for w in W["eWt"]]
+    s["eB"] = [xp.asarray(b) for b in W["eB"]]
+    s["rWt"] = xp.asarray(W["rWt"]); s["rB"] = xp.asarray(W["rB"])
+    s["roWt"] = xp.asarray(W["roWt"]); s["roB"] = xp.asarray(W["roB"])
+    s["embed"] = xp.asarray(W["embed"])
+    s["tgG"] = [xp.asarray(g) for g in W["tgG"]]
+    s["tgB"] = [xp.asarray(b) for b in W["tgB"]]
+    s["noG"] = xp.asarray(W["noG"]); s["noB"] = xp.asarray(W["noB"])
     if W.get("bind_type", 0) != 0:
         for _k in ("WaWt", "WbWt", "WaB", "WbB"):
             if _k in W:
-                W[_k] = xp.asarray(W[_k])
+                s[_k] = xp.asarray(W[_k])
+    W.update(s)                    # commit only if every upload above succeeded
     return W
 
 
@@ -738,7 +750,17 @@ def clm_load_weights(path):
     # actually reached before blaming a scalar-glue ceiling).
     _log_gpu_status_once()
     if cuda_available():
-        _device_residency(W)
+        try:
+            _device_residency(W)
+        except _CUPY_OOM as _oom:          # GPU momentarily full (shared box) —
+            global _CUDA_AVAILABLE          # fall back byte-exact to CPU-numpy for
+            _CUDA_AVAILABLE = False          # this AND every subsequent load, W is
+            try:                             # left fully host-resident (atomic stage).
+                _cupy.get_default_memory_pool().free_all_blocks()
+            except Exception:
+                pass
+            print("[GPU-OOM-FALLBACK] weight residency OOM -> CPU-numpy (%s)" % _oom,
+                  file=sys.stderr)
 
     if _k is not None:
         _WLOAD_CACHE[_k] = W

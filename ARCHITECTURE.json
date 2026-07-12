@@ -14775,6 +14775,13 @@
     "value": "pip install anima-python[train] 가 pod 에 torch 2.13+cu130 을 깔았는데 vast pod 의 NVIDIA 드라이버가 12.8 이라 CUDA 초기화가 실패하고 **조용히 device=cpu 로 폴백**했다. 345M 학습이 CPU 에서 step 1 에 24분간 정지 — 로그에 에러는 없고 device=cpu 한 줄만 있었다(GPU util 0% 로만 드러남). 13.3h × 4 arm 짜리 유료 배터리에서 이걸 못 잡으면 하루를 통째로 날린다. FIX: 드라이버에 맞는 torch 를 명시 설치 — pip install --force-reinstall torch --index-url https://download.pytorch.org/whl/cu124 (torch 2.6.0+cu124 → cuda True 확인).",
     "threshold": "재발조건 = 새 GPU pod 에서 anima-py train 을 처음 돌릴 때(특히 pip 로 anima-python[train] 을 새로 설치한 pod). 해결 = (1) 학습 발사 **전에** 반드시 검증: python3 -c \"import torch; print(torch.__version__, torch.cuda.is_available())\" 가 True 여야 한다 (2) False 면 nvidia-smi 드라이버 버전을 보고 맞는 cu 빌드를 --index-url 로 강제 설치(driver 12.8 → cu124) (3) 발사 후 30초 내 train 로그의 device= 줄을 확인 — device=cpu 면 즉시 kill(그대로 두면 며칠을 태운다) (4) GPU util 0% + step 정지 = CPU 폴백 의심 1순위(에러 로그가 없다는 점이 함정).",
     "source": "cli/train.py"
+   },
+   {
+    "id": "decode-py-1",
+    "state": "pos-conv",
+    "value": "GPU(cupy) 공유박스 OOM은 하드크래시가 아니라 CPU-numpy 우아 폴백해야: clm_load_weights의 _device_residency asarray 업로드가 cupy OutOfMemoryError로 303M eval 통째 크래시(summer GPU 타job 점유 실사례). _device_residency ATOMIC(staging→전부성공시만 W.update)+call site _CUPY_OOM catch→_CUDA_AVAILABLE=False+CPU 폴백. happy-path byte-exact 무변경(0.13.9).",
+    "threshold": "GPU eval이 OutOfMemoryError로 죽으면: (a) nvidia-smi로 GPU 점유 프로세스 확인(自 leftover면 정리) (b) 코드는 0.13.9+에서 OOM→CPU 자동폴백(atomic residency·mixed host/device dict 금지). partial-device W dict를 forward에 넘기지 말 것.",
+    "source": "core/decode.py"
    }
   ]
  }
