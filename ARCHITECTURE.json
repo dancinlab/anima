@@ -14782,6 +14782,13 @@
     "value": "GPU(cupy) 공유박스 OOM은 하드크래시가 아니라 CPU-numpy 우아 폴백해야: clm_load_weights의 _device_residency asarray 업로드가 cupy OutOfMemoryError로 303M eval 통째 크래시(summer GPU 타job 점유 실사례). _device_residency ATOMIC(staging→전부성공시만 W.update)+call site _CUPY_OOM catch→_CUDA_AVAILABLE=False+CPU 폴백. happy-path byte-exact 무변경(0.13.9).",
     "threshold": "GPU eval이 OutOfMemoryError로 죽으면: (a) nvidia-smi로 GPU 점유 프로세스 확인(自 leftover면 정리) (b) 코드는 0.13.9+에서 OOM→CPU 자동폴백(atomic residency·mixed host/device dict 금지). partial-device W dict를 forward에 넘기지 말 것.",
     "source": "core/decode.py"
+   },
+   {
+    "id": "n2-status-md-2",
+    "state": "pos-conv",
+    "value": "vast pod 을 stop 하면 /workspace 가 통째로 wipe 된다 — 13h GPU 학습과 .clm 이 함께 사라진다. 2026-07-13 N2 에서 실제로 당했다: main-s11 이 학습 중인 pod 44587707 을 다른 세션이 정지시켰고, hexa cloud 는 그 증상을 \"ssh transport failure — vast.ai outage\" 로 표시해 나는 외부 장애로 오진했다. vastai show instance 로 캐보니 intended_status=stopped / cur_state=stopped 였다(= 장애가 아니라 정지). vastai start 로 pod 을 되살렸으나 /workspace 는 빈 상태였고 natem_n2* 가 파일시스템 어디에도 없었다 = 완전 유실 → arm 재발사. **SSH 거부를 outage 로 단정하지 마라 — 먼저 intended_status 를 봐라.** 그리고 **장시간 학습은 반드시 persistent volume 에 쓰거나, ckpt 를 주기적으로 pull 하라**(a_fire_recover_complete 는 teardown 직전이 아니라 진행 중에도 적용된다).",
+    "threshold": "재발조건 = vast pod 에서 장시간(수 시간+) 학습을 돌릴 때, 특히 여러 세션이 같은 pod 을 볼 때. 해결 = (1) SSH 가 거부되면 hexa 의 \"transport outage\" 문구를 믿지 말고 vastai show instance <id> --raw 로 intended_status/cur_state 를 확인 — stopped 면 누군가 껐다는 뜻 (2) stopped pod 은 vastai start <id> 로 되살릴 수 있으나 /workspace 는 wipe 되므로 ckpt 회수를 기대하지 말 것 (3) 예방: cloud rent 는 기본이 persistent volume(--volume-gb) 이므로 학습 출력을 그 볼륨 경로에 쓰거나, watcher 로 중간 ckpt 를 주기적으로 pull (4) 다른 세션 pod 은 stop/rm 금지(내가 겪은 쪽이 아니라 내가 저지를 수도 있는 쪽) — convergence n2-status-md-1 과 짝.",
+    "source": "state/nbindg_grounding/N2_STATUS.md"
    }
   ]
  }
