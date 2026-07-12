@@ -1,0 +1,22 @@
+{
+ "verdict": "INVALID (V1 liveness C3 f2=0.50 <0.90 → measurement dead)",
+ "arms": {
+  "M": {
+   "f2": 0.5167,
+   "f1": 0.5
+  },
+  "C1": {
+   "f2": 0.6583,
+   "f1": 0.57
+  },
+  "C2": {
+   "f2": 0.5,
+   "f1": 0.5
+  },
+  "C3": {
+   "f2": 0.5,
+   "f1": 0.5
+  }
+ },
+ "note": "M/C1 completed full 8000CPT+2500drill (drill lossF 0.009/0.014=grid fit). codec arms F1=0.50 despite drill memorization=held-out generalization 0 + eval-harness confound. suspected cause: codec-eval encodes F2 held-out NOVEL conjugations(지아니해요) that dont carry the 아니 stem token → C3 shared-collapse moot → V1 dead. morpheme lever PENDING(not falsified/confirmed). fix: F2 panel use held-out forms carrying stem token OR align codec-eval encoding; re-fire."
+}
