@@ -1,8 +1,13 @@
 # H_9289 — GT-TRANSFER: held-out 극성 자연-접지 install (NBIND-G 벽 reopen)
 
 ## tier
-🔵 PRE-REGISTERED (frozen · 2026-07-13 · STEP-0 $0 → MAIN spend-gate) — NBIND-G N2 GROUNDING-WALL이
-지목한 exit("held-out 극성 접지시키는 데이터/objective")의 첫 설계. Fable 판정으로 도출. 미측정.
+🟡 STEP-0 착지 = INFO-ABSENT (2026-07-13 · $0 G-PROBE measured) → MAIN=C3+C4 hybrid corpus (spend-gate) —
+NBIND-G N2 GROUNDING-WALL exit 설계(Fable). **STEP-0 G-PROBE(frozen N2 ckpt·summer $0·3 ckpt×1176 문맥
+dump-hidden→L2-logreg)**: held-out P_nat 극성 probe-acc = main_s7 **0.5517**·main_s11 **0.5517**·base_only 0.5172
+(shuffle_ref 0.5138·Δ vs shuffle 0.04~0.05). 양 seed ≈ chance·0.65 bar 크게 미달·main이 base_only 거의 못 넘음
+→ **held-out 극성이 표현에 선형-부재**(내 '부호 미앵커' 가설보다 정보-부재에 가까움) → frozen 분기 **INFO-ABSENT
+→ MAIN=C2 아닌 C3+C4 hybrid corpus**(극성을 CE-load-bearing으로 만드는 코퍼스 구성). MAIN=spend-gated(owner go).
+poscontrol cos 0.75~0.79(distinct·표현 붕괴 아님·verdict-integrity 통과). caveat=small-n probe(20/29 atom·triage).
 
 ## 가설
 NBIND-G N2([[nbindg-grounding-frame-general-data-blocked]])는 "자연 분포적 사용만으로는 held-out 감성원자
@@ -21,7 +26,25 @@ NBIND-G N2([[nbindg-grounding-frame-general-data-blocked]])는 "자연 분포적
 - 부수: detector 4-cell Korean-aware 대칭(N2 전-arm chance-미만 해명·V3).
 - $0 (pool·수시간).
 
-## MAIN pre-register (C2 GT-TRANSFER · spend-gated · STEP-0 이후 결정)
+## STEP-0 결과 = INFO-ABSENT (measured · 2026-07-13 · summer $0 · gt_step0_gprobe.py)
+3 ckpt × 1176 자연문맥 dump-hidden(d=3784 penultimate·`--win 24`) → 원자별 mean-pool(`__last`) → L2-logreg
+(train=P_grid 20원자 극성 → test=held-out P_nat 29원자):
+
+| ckpt | held-out probe-acc | shuffle-label | Δ vs shuffle |
+|---|---|---|---|
+| **main_s7** | **0.5517** | 0.5138 | +0.038 |
+| **main_s11** | **0.5517** | 0.4983 | +0.053 |
+| base_only | 0.5172 | 0.4828 | +0.035 |
+
+**판정(frozen 분기)**: 양 main ≈ chance(0.55)·**0.65 bar 크게 미달**·main이 base_only(0.517) 거의 못 넘음·Δ vs
+shuffle 무시가능(0.04~0.05) → **held-out P_nat 극성이 frozen N2 표현에서 선형-판독 불가 = INFO-ABSENT**. 내가
+세운 flip0-역상관 "부호 미앵커" 가설보다 **정보-부재**에 가까움(N2 학습이 held-out 극성 decodability를 base 위에
+거의 안 얹음 = corpus×CE가 극성을 load-bearing으로 안 만듦·GROUNDING-WALL 진단과 수렴). poscontrol cos
+0.75~0.79(distinct·표현 붕괴 아님·verdict-integrity 통과). **caveat**: small-n probe(20 train/29 heldout·d=3784·heavy
+L2)=triage이지 비선형/대형 probe면 다를 여지(단 통제로 보정·frozen 분기는 보수적 C3+C4로 귀결). ⟹ **MAIN=C2 폐기,
+C3+C4 hybrid corpus 채택**(spend-gated).
+
+## MAIN pre-register (C3+C4 hybrid corpus · spend-gated · STEP-0 INFO-ABSENT 확정)
 303M 신규학습 N2 동일 스케일(T≈105k·bf16·`ce_marginal`):
 | arm | corpus | isolates |
 |---|---|---|
