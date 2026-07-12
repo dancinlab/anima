@@ -1,0 +1,159 @@
+{
+ "note": "N2 grounding atoms: NOT in H_9272 grid. Frozen pre-N2 so the spend-gated retrain cannot cherry-pick atoms post-hoc. purity relaxed from 0.90 (grid-exhausted) to the loosest bar giving k>=10 per polarity.",
+ "purity_used": 0.8,
+ "purity_sweep": {
+  "purity>=0.90": {
+   "n_extra_pos": 0,
+   "n_extra_neg": 6,
+   "k_per_pol": 0
+  },
+  "purity>=0.85": {
+   "n_extra_pos": 4,
+   "n_extra_neg": 9,
+   "k_per_pol": 4
+  },
+  "purity>=0.80": {
+   "n_extra_pos": 11,
+   "n_extra_neg": 13,
+   "k_per_pol": 11
+  }
+ },
+ "n_grid": 20,
+ "n_pnat": 22,
+ "k_per_pol": 11,
+ "p_nat": [
+  {
+   "stem": "좋",
+   "pol": 1,
+   "n": 3610,
+   "purity": 0.828
+  },
+  {
+   "stem": "낮",
+   "pol": 1,
+   "n": 323,
+   "purity": 0.842
+  },
+  {
+   "stem": "보고싶",
+   "pol": 1,
+   "n": 322,
+   "purity": 0.879
+  },
+  {
+   "stem": "귀엽",
+   "pol": 1,
+   "n": 253,
+   "purity": 0.897
+  },
+  {
+   "stem": "필요없",
+   "pol": 1,
+   "n": 235,
+   "purity": 0.872
+  },
+  {
+   "stem": "울",
+   "pol": 1,
+   "n": 228,
+   "purity": 0.82
+  },
+  {
+   "stem": "영화이",
+   "pol": 1,
+   "n": 208,
+   "purity": 0.803
+  },
+  {
+   "stem": "마",
+   "pol": 1,
+   "n": 203,
+   "purity": 0.842
+  },
+  {
+   "stem": "신선하",
+   "pol": 1,
+   "n": 152,
+   "purity": 0.875
+  },
+  {
+   "stem": "잘하",
+   "pol": 1,
+   "n": 150,
+   "purity": 0.82
+  },
+  {
+   "stem": "작품이",
+   "pol": 1,
+   "n": 146,
+   "purity": 0.815
+  },
+  {
+   "stem": "못하",
+   "pol": 0,
+   "n": 285,
+   "purity": 0.807
+  },
+  {
+   "stem": "높",
+   "pol": 0,
+   "n": 284,
+   "purity": 0.817
+  },
+  {
+   "stem": "싫",
+   "pol": 0,
+   "n": 237,
+   "purity": 0.865
+  },
+  {
+   "stem": "안되",
+   "pol": 0,
+   "n": 223,
+   "purity": 0.883
+  },
+  {
+   "stem": "답답하",
+   "pol": 0,
+   "n": 154,
+   "purity": 0.851
+  },
+  {
+   "stem": "어설프",
+   "pol": 0,
+   "n": 142,
+   "purity": 0.972
+  },
+  {
+   "stem": "쓰레기",
+   "pol": 0,
+   "n": 139,
+   "purity": 0.986
+  },
+  {
+   "stem": "이상하",
+   "pol": 0,
+   "n": 136,
+   "purity": 0.846
+  },
+  {
+   "stem": "엉성하",
+   "pol": 0,
+   "n": 126,
+   "purity": 0.984
+  },
+  {
+   "stem": "잼없",
+   "pol": 0,
+   "n": 118,
+   "purity": 0.941
+  },
+  {
+   "stem": "떨어지",
+   "pol": 0,
+   "n": 103,
+   "purity": 0.971
+  }
+ ],
+ "INVALID_if": "k<10 at purity>=0.80 (insufficient grounding inventory)"
+}
