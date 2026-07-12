@@ -1,0 +1,69 @@
+{
+ "n": 1763,
+ "d": 3784,
+ "usable_per_class": {
+  "an": 295,
+  "anh": 299,
+  "mot": 296,
+  "ani": 299,
+  "adv": 275,
+  "rand": 299
+ },
+ "folds": {
+  "mot": {
+   "heldout_bacc": 0.553,
+   "ci95": [
+    0.519,
+    0.584
+   ],
+   "shuffle": 0.328,
+   "misfire": 0.167,
+   "n_held": 296,
+   "n_ctrl": 275
+  },
+  "ani": {
+   "heldout_bacc": 0.547,
+   "ci95": [
+    0.514,
+    0.579
+   ],
+   "shuffle": 0.317,
+   "misfire": 0.167,
+   "n_held": 299,
+   "n_ctrl": 275
+  }
+ },
+ "rand_baseline": {
+  "mot": {
+   "heldout_bacc": 0.468,
+   "ci95": [
+    0.43,
+    0.505
+   ],
+   "shuffle": 0.305,
+   "misfire": 0.378,
+   "n_held": 296,
+   "n_ctrl": 299
+  },
+  "ani": {
+   "heldout_bacc": 0.435,
+   "ci95": [
+    0.4,
+    0.473
+   ],
+   "shuffle": 0.299,
+   "misfire": 0.378,
+   "n_held": 299,
+   "n_ctrl": 299
+  }
+ },
+ "rsa": {
+  "rsa_delta": -0.0609,
+  "within_neg_cos": -0.2511,
+  "neg_adv_cos": -0.1902,
+  "perm_null_97.5": 0.2987,
+  "exceeds_null": false
+ },
+ "MDE_bacc": "SE≈0.030, detectable Δ≈0.06 (2·SE) at nmin=275",
+ "SPANGEOM": "CLASS-ABSENT (no span NEG class → premise ALIVE → license MORPH-ATOM pod stage-2)"
+}
