@@ -85,6 +85,15 @@ bucket bias는 raw경로 전용=codec tax·C1 통제). 30k 샘플 검증: K=2048
 assert 통과)·4 arm .bytes 정상(M 1.3MB<C1 raw 2.15MB codec 더 짧음·C2 held제거 1.28MB). fire 전 잔여 $0
 scale-up 2건(eval f2 20→≥400 predicate/render 확장·CPT 1.3MB→HF anima-corpus-ko 병합 100MB+) + per-pod fire
 스크립트 + **codec-space eval harness**(codec arm encoded label 채점·anima-py evaluate 확장) + $4-6 4-pod fire.
+
+### stage-2 S1 · 4-pod fire LAUNCHED (2026-07-12 23:08 · verdict PENDING ~90min)
+end-to-end 파이프라인 검증완료(smoke: codec build→CPT warm(emax4·base.pt)→drill→codec-eval GPU-fired D-acc·인프라
+6+버그 근본수정→convergence hexa-cloud-exec-1). 4 dedicated RTX_4090 발사(M 가설·C1 no-codec raw·C2 held-out제거
+ablation·C3 shared-⟨NEG⟩ leak천장/V1). 각 arm=full corpus CPT 8000step warm→drill 2500step→codec-eval
+(morphatom_eval.py `_fwd_logits`·f2 120/f1 100 held-out 아니 novel-conjugation). **PASS**=F2(M)≥0.70 &
+Δ(M−C1)≥0.15 CI-lo>0.05 & C3≥0.90 & C2≤0.55 & F1(M)≥0.75. 산출 도구=`state/nbind_curriculum/`
+(morph2b·gen_morphatom_s1·morphatom_eval·morphatom_arm/pollall·install_ma). **scope 정직**: NSMC-only CPT(~9MB)
++f2 120=DIRECTIONAL(Fable 100MB/n400 미달)·성공 시 scale-up 재현 follow-on. verdict 착지 시 이 절 갱신+G1 gate.
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
