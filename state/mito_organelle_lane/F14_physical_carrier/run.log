@@ -1,0 +1,121 @@
+21ca4d1cf742d3a9b52f680e9204159a78536d928d27457d4854e5131671dec3  run.py
+[G3] live=[0.03, 0.05, 0.08, 0.12, 0.2, 0.3] PRIMARY repair=0.12 (8s)
+[MDE-HET] MDE=1.026 reach(Ω_8)=3.89 (3.8x) POWERED=True (12s)
+[MDE-LIVE] MDE=2.241 reach(Ω_8)=12.27 (5.5x) POWERED=True (17s)
+[main-HET] done (28s)
+[main-LIVE] done (40s)
+[sweep-HET] repair (60s)
+[sweep-HET] sigma (69s)
+[sweep-HET] capsplit (76s)
+[sweep-HET] rho (86s)
+[sweep-HET] frag_sigma (92s)
+[sweep-LIVE] repair (111s)
+[sweep-LIVE] sigma (122s)
+[sweep-LIVE] capsplit (129s)
+[sweep-LIVE] rho (138s)
+[sweep-LIVE] frag_sigma (144s)
+[sweep-LIVE] EXC (149s)
+[sweep-LIVE] B1 (159s)
+
+=============== RESULT (H_9287 Ω confirmatory) ===============
+theorem Ω_0 max|·| = 4.44e-16
+
+--- HET ---
+  G1=True(2.7e-13) G2=True G3=True(h=0.798) POWER=True REACH(Ω_8)=True(+3.99 p=7.7e-09) INFO=False(z=0.93) SHAM=True(match=0.14) CAPTURE=True(0.216 | comp=0.982)
+   c1_frozen     sup= 95.072 ovl=0.2842 atp= 52.76 cap=nan z=  nan pump=+0.0e+00
+   c2_blind      sup= 93.914 ovl=0.2767 atp= 56.73 cap=0.157 z=-0.02 pump=+7.1e-14
+   a_omega1      sup= 97.955 ovl=0.2312 atp= 58.14 cap=0.216 z= 0.93 pump=+1.5e-13
+   a_omega3      sup= 97.733 ovl=0.2157 atp= 55.41 cap=0.159 z= 0.80 pump=+1.7e-13
+   a_omega8      sup= 97.902 ovl=0.2241 atp= 55.98 cap=0.153 z= 0.79 pump=+1.3e-13
+   s_lamperm     sup= 93.684 ovl=0.2355 atp= 56.36 cap=0.209 z= 0.64 pump=+1.7e-13
+   s_stressshuf  sup= 94.134 ovl=0.2721 atp= 56.95 cap=0.164 z=-0.03 pump=+8.0e-14
+   a_detgrad     sup= 93.532 ovl=0.3129 atp= 70.19 cap=1.000 z= 1.22 pump=+2.7e-13
+   a_comp        sup= 93.656 ovl=0.3273 atp= 69.69 cap=0.982 z= 1.17 pump=+1.5e-13
+   o6_oracle     sup= 93.657 ovl=0.3207 atp= 69.05 cap=0.790 z= 0.87 pump=+1.7e-13
+   a_omega1_mis  sup= 96.906 ovl=0.1913 atp= 57.57 cap=0.220 z= 0.87 pump=+2.3e-13
+   Ω_1 − c2_blind    supply  +4.040±0.416 (t=+9.7 p=8.5e-09 20/20) | ovl -0.0455 (p=2.3e-05)
+   Ω_1 − s_lamperm   supply  +4.270±0.402 (t=+10.6 p=1.9e-09 20/20) | ovl -0.0043 (p=0.5)
+   Ω_1 − a_detgrad   supply  +4.423±0.638 (t=+6.9 p=1.3e-06 20/20) | ovl -0.0817 (p=2.1e-06)
+   TOST vs blind p=1 EQUIV=False | ATP(report-only) +1.41 (p=0.3)
+   SIGN 32/32 cells + | BEAT=True OVL_OK=True CAPTURE_OK=True hard=False  >>> VERDICT=INVALID
+
+--- LIVE ---
+  G1=True(3.4e-13) G2=True G3=True(h=0.683) POWER=True REACH(Ω_8)=True(+12.53 p=2.9e-11) INFO=False(z=0.93) SHAM=True(match=0.15) CAPTURE=True(0.217 | comp=0.978)
+   c1_frozen     sup= 84.425 ovl=0.3003 atp= 42.47 cap=nan z=  nan pump=+0.0e+00
+   c2_blind      sup= 80.392 ovl=0.3198 atp= 47.01 cap=0.158 z=-0.02 pump=+9.3e-14
+   a_omega1      sup= 93.709 ovl=0.2379 atp= 54.28 cap=0.217 z= 0.93 pump=+1.4e-13
+   a_omega3      sup= 93.950 ovl=0.2325 atp= 53.15 cap=0.159 z= 0.80 pump=+9.0e-14
+   a_omega8      sup= 92.926 ovl=0.2410 atp= 52.48 cap=0.161 z= 0.75 pump=+1.0e-13
+   s_lamperm     sup= 89.982 ovl=0.2478 atp= 52.69 cap=0.212 z= 0.68 pump=+9.9e-14
+   s_stressshuf  sup= 80.360 ovl=0.3118 atp= 46.57 cap=0.159 z=-0.02 pump=+7.9e-14
+   a_detgrad     sup= 79.954 ovl=0.3967 atp= 61.36 cap=1.000 z= 0.86 pump=+3.4e-13
+   a_comp        sup= 78.952 ovl=0.4367 atp= 59.82 cap=0.978 z= 0.60 pump=+1.5e-13
+   o6_oracle     sup= 82.302 ovl=0.3192 atp= 60.25 cap=0.637 z= 0.43 pump=+1.6e-13
+   a_omega1_mis  sup= 92.903 ovl=0.2014 atp= 53.11 cap=0.215 z= 0.86 pump=+1.0e-13
+   Ω_1 − c2_blind    supply +13.317±0.908 (t=+14.7 p=8.2e-12 20/20) | ovl -0.0819 (p=4.7e-09)
+   Ω_1 − s_lamperm   supply  +3.727±0.422 (t=+8.8 p=3.8e-08 20/20) | ovl -0.0099 (p=0.18)
+   Ω_1 − a_detgrad   supply +13.755±1.392 (t=+9.9 p=6.3e-09 20/20) | ovl -0.1587 (p=1.9e-09)
+   TOST vs blind p=1 EQUIV=False | ATP(report-only) +7.27 (p=4.9e-07)
+   SIGN 44/44 cells + | BEAT=True OVL_OK=True CAPTURE_OK=True hard=False  >>> VERDICT=INVALID
+
+wall_s 158.8
+[G3] live=[0.03, 0.05, 0.08, 0.12, 0.2, 0.3] PRIMARY repair=0.12 (8s)
+[MDE-HET] MDE=1.250 reach(Ω_8)=3.23 (2.6x) POWERED=False (12s)
+[MDE-LIVE] MDE=1.909 reach(Ω_8)=10.71 (5.6x) POWERED=True (15s)
+[main-HET] done (26s)
+[main-LIVE] done (40s)
+[sweep-HET] repair (58s)
+[sweep-HET] sigma (67s)
+[sweep-HET] capsplit (76s)
+[sweep-HET] rho (85s)
+[sweep-HET] frag_sigma (91s)
+[sweep-LIVE] repair (110s)
+[sweep-LIVE] sigma (119s)
+[sweep-LIVE] capsplit (125s)
+[sweep-LIVE] rho (135s)
+[sweep-LIVE] frag_sigma (141s)
+[sweep-LIVE] EXC (150s)
+[sweep-LIVE] B1 (160s)
+
+=============== RESULT (H_9287 Ω REGATE · seeds 300-319) ===============
+theorem Ω_0 max|·| = 4.44e-16
+
+--- HET ---
+  G1=True(2.7e-13) G2=True G3=True(h=0.813) POWER=False REACH(Ω_8)=True(+2.88 p=1.1e-07) INFO=True(z=1.06) SHAM=True(match=0.15) CAPTURE=True(0.238 | comp=0.983)
+   c1_frozen     sup= 96.200 ovl=0.2765 atp= 53.36 cap=nan z=  nan pump=+0.0e+00
+   c2_blind      sup= 95.610 ovl=0.2702 atp= 56.93 cap=0.164 z=-0.03 pump=+8.0e-14
+   a_omega1      sup= 98.284 ovl=0.2192 atp= 57.87 cap=0.238 z= 1.06 pump=+1.3e-13
+   a_omega3      sup= 98.414 ovl=0.2166 atp= 55.67 cap=0.168 z= 0.90 pump=+1.2e-13
+   a_omega8      sup= 98.487 ovl=0.2186 atp= 56.09 cap=0.162 z= 0.88 pump=+1.6e-13
+   s_lamperm     sup= 95.363 ovl=0.2521 atp= 57.86 cap=0.238 z= 0.78 pump=+1.1e-13
+   s_stressshuf  sup= 95.632 ovl=0.2752 atp= 56.59 cap=0.160 z= 0.01 pump=+1.1e-13
+   a_detgrad     sup= 95.811 ovl=0.2942 atp= 70.99 cap=1.000 z= 1.47 pump=+2.7e-13
+   a_comp        sup= 95.989 ovl=0.3120 atp= 70.70 cap=0.983 z= 1.37 pump=+2.1e-13
+   o6_oracle     sup= 96.263 ovl=0.3045 atp= 70.32 cap=0.808 z= 1.20 pump=+2.5e-13
+   a_omega1_mis  sup= 97.443 ovl=0.1950 atp= 57.54 cap=0.225 z= 0.99 pump=+1.4e-13
+   Ω_1 − c2_blind    supply  +2.674±0.371 (t=+7.2 p=7.7e-07 20/20) | ovl -0.0510 (p=4.6e-09)
+   Ω_1 − s_lamperm   supply  +2.921±0.442 (t=+6.6 p=2.5e-06 18/20) | ovl -0.0329 (p=0.0028)
+   Ω_1 − a_detgrad   supply  +2.472±0.425 (t=+5.8 p=1.3e-05 18/20) | ovl -0.0750 (p=6.1e-07)
+   TOST vs blind p=1 EQUIV=False | ATP(report-only) +0.94 (p=0.43)
+   SIGN 32/32 cells + | BEAT=True OVL_OK=True CAPTURE_OK=True hard=False  >>> VERDICT=INVALID
+
+--- LIVE ---
+  G1=True(2.6e-13) G2=True G3=True(h=0.710) POWER=True REACH(Ω_8)=True(+10.09 p=4.7e-11) INFO=True(z=1.03) SHAM=True(match=0.18) CAPTURE=True(0.231 | comp=0.976)
+   c1_frozen     sup= 85.825 ovl=0.2943 atp= 43.32 cap=nan z=  nan pump=+0.0e+00
+   c2_blind      sup= 83.574 ovl=0.3072 atp= 48.22 cap=0.168 z=-0.02 pump=+6.5e-14
+   a_omega1      sup= 94.440 ovl=0.2344 atp= 54.53 cap=0.231 z= 1.03 pump=+1.8e-13
+   a_omega3      sup= 94.247 ovl=0.2302 atp= 54.24 cap=0.194 z= 0.90 pump=+1.4e-13
+   a_omega8      sup= 93.664 ovl=0.2384 atp= 52.56 cap=0.183 z= 0.85 pump=+1.4e-13
+   s_lamperm     sup= 91.155 ovl=0.2564 atp= 55.04 cap=0.258 z= 0.81 pump=+1.6e-13
+   s_stressshuf  sup= 83.838 ovl=0.3130 atp= 48.02 cap=0.164 z= 0.04 pump=+1.1e-13
+   a_detgrad     sup= 84.694 ovl=0.3806 atp= 64.13 cap=1.000 z= 1.12 pump=+2.6e-13
+   a_comp        sup= 84.794 ovl=0.4019 atp= 63.13 cap=0.976 z= 0.91 pump=+1.9e-13
+   o6_oracle     sup= 85.715 ovl=0.3058 atp= 61.97 cap=0.671 z= 0.60 pump=+1.2e-13
+   a_omega1_mis  sup= 93.377 ovl=0.2006 atp= 53.87 cap=0.216 z= 0.96 pump=+1.1e-13
+   Ω_1 − c2_blind    supply +10.866±0.744 (t=+14.6 p=8.9e-12 20/20) | ovl -0.0728 (p=1e-09)
+   Ω_1 − s_lamperm   supply  +3.285±0.454 (t=+7.2 p=7.3e-07 19/20) | ovl -0.0220 (p=0.011)
+   Ω_1 − a_detgrad   supply  +9.746±1.039 (t=+9.4 p=1.5e-08 20/20) | ovl -0.1462 (p=1e-07)
+   TOST vs blind p=1 EQUIV=False | ATP(report-only) +6.31 (p=3.5e-05)
+   SIGN 44/44 cells + | BEAT=True OVL_OK=True CAPTURE_OK=True hard=True  >>> VERDICT=DIRECTIONAL-POSITIVE
+
+wall_s 160.1

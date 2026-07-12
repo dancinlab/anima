@@ -330,3 +330,25 @@ falsifiers: F1/F2/F3/F5/F6/F7 NOT_TRIGGERED, F4 TRIGGERED by L6 artifact
   보존. 둘 다 substrate-level 보존 메커니즘의 modal.
 - H_201 asymmetric division (sister): 한 자식만 분화 (정보 분기) vs H_203 한
   자식만 보존 (정보 통합 + host 보존). split-시 비대칭 ⊥ merge-시 비대칭 dual.
+
+---
+
+## 🎯 답 (2026-07-12 · [[H_9287]] Ω 담체 · 🟢 DIRECTIONAL-POSITIVE · 적대검증 반박실패)
+
+**재조합(merge) 대수는 물리 정보를 더한다 — 그리고 국소 관측 `(cap, L, S, Λ)`만으로 도달 가능하다.**
+
+이 물음은 organelle lane에서 **6번 발사**됐다([[H_9274]] 1~5차 전부 INVALID → [[H_9287]] 확증). 5발이 실패한 이유가 **정리**로 밝혀졌다:
+
+> 융합은 `S = cap − D`를 **정확히 보존**한다(`S_ij = S_i + S_j`) ⇒ **`ΔS|_t ≡ 0`** ⇒ **순간(zeroth-order) 관측만으로 만든 어떤 담체도 정의상 장부 `Σ min(L,S)`의 함수다.**
+
+⇒ 5차 `a_comp`의 장부-capture 0.98은 설계 실수가 아니라 **차수의 필연**이었다. **물리 채널은 이완(relaxation)에만 있다.**
+
+**담체 `Ω_1`(RELAX-1)** = 융합 후 `(cap_ij, L_ij, Λ_ij)`를 부동점 쌍곡선 `cap·c/(r+c)` (`r = Λ(1 + B1·clip(st−1,0,EXC))`)에 **1회 통과**시킨 supply 응답의 차분 = **첫 비소멸 차수**.
+
+**결과**(물리 DV = supply · 장부 ATP는 판정에서 제외): vs blind **+10.87 (t=14.6, 20/20)** · vs **Λ-순열 sham +3.29 (t=7.2)** · vs 장부-기울기 arm **+9.75 (t=9.4)** · overload 개선(−0.073) · 부호보존 44/44 반전 0 · capture 0.231 · **4-seed 독립 재현**(검증자가 고른 미관측 seed 포함) · 오설정 강건성 90%.
+
+⚠️ **정직한 정정 — Λ(진짜 merge 대수)의 기여는 ~30%다.** 나머지 70%는 **응력-중항 채널**(파티션 기하). "재조합 대수가 물리를 지배한다"로 읽으면 안 된다 — **더하긴 하되 30%**다.
+
+**발사 3게이트는 유효했다**(ALGEBRAIC-NEUTRALITY: 무에서 자원 창조 금지 · DEGENERACY: 항등연산 차단 · LIVE-REGIME 선등록) — 이 게이트들이 없었다면 1차의 `AND` 융합이 만든 **per-run +507~+609의 supply 펌프**(회계 착시)를 양성으로 오독했을 것이다.
+
+**scope**: toy organelle 기질(numpy) · engine-native 배선 0 ⇒ **DIRECTIONAL 상한**. 상세 = `state/mito_organelle_lane/F14_physical_carrier/`.
