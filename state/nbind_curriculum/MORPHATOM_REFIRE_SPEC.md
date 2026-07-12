@@ -1,0 +1,29 @@
+## Diagnosis: confirmed, with one sharpening
+
+Warm-start alienness is the right primary read, but the data says something more specific than "not enough CPT." The decisive datum is **F1 = 0.50 at drill loss 0.009 across all codec arms**: the model can *discriminate* codec inputs perfectly (memorization requires only that) but built zero compositional structure on them — pure sequence-lookup mode. And **C3 dead** means even an explicitly handed equivalence token conveyed nothing. That's the signature of an input representation with no usable geometry: memorization is the cheapest solution when the embedding prior is wrong. One correction to your framing: the warm utf-8 embedding is not merely "insufficiently adapted" — it is an **actively wrong prior, worse than random init**. Gradient must first *destroy* strong utf-8 structure (and the utf-8-tuned `embed_conv`/readout statistics) before it can build codec structure; that's why 8k steps bought discrimination but not semantics. Raw C1 at F1=0.57/F2=0.658 confirms the task channel itself is weakly alive — the codec arms' flatline is arm-specific, not harness-specific (consistent with your eval-innocence check).
+
+## Recommendation: Option 3, as $0 ckpt surgery, with CPT gated by G-a — Option 2 held as escalation
+
+I checked `core/model.py`: CLMConvMoE has **untied** `embed` (`nn.Embedding`, line 272) and `readout` (`nn.Conv1d(d, V, 1)`, line 284), plus a `embed_conv` dilated conv at line 274. No trainer flag needed — do offline checkpoint surgery: load the .pt, re-init `embed.weight` (normal, matching original init scale) and `readout.weight`/`bias`, save, feed to standard `anima-py train [train]`. Leave `embed_conv` warm (CPT will adapt it; reinit-ing it too is a fallback knob if G-a1 stalls).
+
+Rationale from the INVALID data:
+- **Not option 1 alone**: more steps on a wrong-prior embedding has no principled stopping point and pays the destroy-then-rebuild tax twice. The lever isn't steps, it's init.
+- **Not option 2 first**: from-scratch removes the alienness confound but imports the undertraining confound (your own G0 lesson: 12k+ just for coherence, likely more on a novel alphabet), costs the most, and — critically — breaks arm comparability: C1 is warm-start raw, so a from-scratch M compares two training lineages, not two codecs. Option 3 keeps M and C1 on the same trunk lineage. Escalate to option 2 only if option 3 passes G-a1 (alphabet learned) but still fails G-a2 + C3 — that combination would indict the warm *trunk* itself, which only from-scratch can rule out.
+- CPT budget: raise to ~20–25k with checkpoints every ~5k, but make the budget **gate-terminated, not fixed**: drill fires only when G-a passes; otherwise the run lands PENDING(CPT-budget) without spending the drill/eval stage.
+
+## G-a gate spec (post-CPT, pre-drill — two sub-gates)
+
+**G-a1 — alphabet liveness ($0 on the CPT ckpt).** Held-out codec-corpus NLL (nats/byte, `clm._fwd_logits` same path as eval). PASS: ≤ 2.5 nats/byte (uniform = ln 256 ≈ 5.55; a live byte-LM sits well under half-uniform) AND still descending <1% per 1k steps is false (i.e., plateaued or clearly converging). FAIL → **PENDING(CPT-budget)**: the alphabet itself isn't learned; extend CPT, do not drill, do not escalate.
+
+**G-a2 — stem-code geometry (SPAN-GEOM LOSO analog, $0).** Extract last-trunk-layer activations at the stem-token position (mean over occurrences) for each of the 4 negator stem codes (안/않/못/아니) in n≥50 natural codec contexts each, plus ≥8 frequency-matched non-negator stem tokens as controls. Leave-one-negator-out linear probe (NEG vs non-NEG): train on 3 negators + controls, test on the held-out negator's contexts. PASS: held-out AUC ≥ 0.80 on every fold AND shuffled-label control ≤ 0.60 (the Δ-vs-control form, per the FORM-tunable/BIND-earned metalaw — never the raw value alone). Semantics:
+- G-a1 FAIL → PENDING(CPT-budget), stop.
+- G-a1 PASS + G-a2 FAIL → the class doesn't form from distribution alone. Proceed to drill **once**, re-probe post-drill: if post-drill G-a2 still fails while drill loss ≈ 0 → memorization-mode confirmed → **FAIL (earned)**, not PENDING — that's a real negative about the codec inducing the abstraction, and the escalation fork to option 2.
+- Both PASS → drill + full eval; F2 verdict is now interpretable.
+
+## Cheapest pre-check (do in this order, before any 4-pod spend)
+
+1. **$0 — probe the existing checkpoints.** You pulled the ckpts (gate 3). Run G-a1 + G-a2 retroactively on the current M/C2/C3 post-CPT ckpts. Expected: G-a1 fails or is marginal → alienness confirmed quantitatively, PENDING(CPT-budget) cemented, and you get the NLL-vs-uniform gap that calibrates how far the alphabet still has to go. If instead G-a1 already *passes* on the existing ckpts, alienness is NOT the (whole) story — skip straight to the C3 ladder before believing option 3.
+2. **~$1.5, 1 pod — C3 ladder as the decision oracle.** Take the reinit-embed surgery ckpt, CPT ladder (8k → 16k → 24k) with G-a1 at each rung, then the shared-⟨NEG⟩ drill + V1 eval at the first rung where G-a1 passes. C3 is the trivial leak-ceiling: if the handed equivalence can't reach V1 ≥ 0.9 even with a clean embedding init and a passed G-a1, no codec arm can succeed — that's decision-grade (kill option 1/3, fork to option 2 or close the codec lane). If V1 crosses at rung k, rung k's budget IS the re-fire CPT budget.
+3. Only then the 4-pod re-fire (M/C1/C2/C3), all codec arms from the surgery ckpt, drill gated on G-a.
+
+This sequences the spend so the $6 re-fire only happens after a $1.5 experiment has already proven the codec channel can carry at least the trivial equivalence.

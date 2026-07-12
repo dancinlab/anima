@@ -112,6 +112,20 @@ risk#3(warm-start alienness: utf-8 학습 base를 재인코딩 2-byte 알파벳�
 **re-fire 처방 정정**: (a) G-a 게이트 구현(CPT 후 stem-code LOSO geometry·미형성이면 PENDING 명시) (b) CPT budget↑
 또는 from-scratch codec 학습(warm-start 이질성 제거) (c) C3 V1이 그래도 <0.90이면 codec substrate가 flip을 못
 배우는 것 자체가 결과. eval-harness 수정은 불요(정상).
+
+### re-fire 계획 (Fable 자문 2026-07-13 · `MORPHATOM_REFIRE_SPEC.md`)
+INVALID 진단 확정+정밀화: utf-8 embed는 random init보다 **나쁜 wrong-prior**(gradient가 utf-8 구조 파괴 후 codec
+재구축→8k CPT는 discrimination만·semantics 0·C3 dead=input rep에 usable geometry 無). **처방=Option 3
+reinit-embed ckpt surgery**(`morphatom_reinit.py`·$0): base.pt 로드→embed.weight+readout.weight/bias만 fresh
+normal-init(trunk/MoE warm 유지=M/C1 lineage 동일·arm 비교가능). from-scratch(opt2)는 undertraining confound+
+arm 비교 깨짐이라 escalation-only. **G-a 게이트**(pre-drill 2 sub): G-a1 alphabet liveness(held-out codec NLL
+≤2.5 nats/byte·미달=PENDING(CPT-budget)·drill 안 함) + G-a2 stem-code geometry(LOSO AUC≥0.80·shuffle≤0.60).
+G-a1 PASS+G-a2 FAIL이면 drill 1회→post-drill 재probe: 여전 실패+drill loss≈0이면 **FAIL(earned)**(codec가
+추상 유도 못함=진짜 음성·opt2 escalation). **CPT budget=gate-terminated**(~20-25k·5k마다 ckpt·G-a pass 시만
+drill). **de-risk 순차**: (1) $0 기존 ckpt에 G-a1/G-a2 소급(단 CPT ckpt는 pod teardown으로 소실·drill_M.clm만
+보존) (2) **$1.5 1-pod C3 ladder**=reinit ckpt→CPT 8k/16k/24k 각 G-a1→첫 pass rung서 shared-⟨NEG⟩ drill+V1
+eval. **clean embed로도 C3 V1<0.90이면 codec lane 종결(decision-grade)**·crossing rung k budget=재fire CPT budget
+(3) 그 후에만 $6 4-pod. 도구=`state/nbind_curriculum/`(morphatom_reinit + 기존 6종).
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
