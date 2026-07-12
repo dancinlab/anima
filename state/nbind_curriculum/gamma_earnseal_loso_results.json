@@ -1,0 +1,16 @@
+{
+ "probe": "gamma-earn-seal LOSO-NEG (representation-level frozen probe)",
+ "design": "Fable GAMMA_NEWANGLE — turn DECLARED terminal into EARNED",
+ "base_ckpt": "clm303_clean.clm (non-SLW 303M CLMConvMoE d3784 L4)",
+ "dump": "anima-py evaluate --dump-hidden loso_prompts.json --win 24 (357 wild NSMC prompts, mean-pool trunk penultimate)",
+ "protocol": "train ridge-logistic on 안/않-neg + plain; test held-out stem neg-vs-plain (LOSO). Byte-confound: 안/않 share 2/3 UTF-8 bytes so informative held-out folds = 못, 아니.",
+ "n": 357, "d": 3784,
+ "folds": {
+  "mot": {"heldout_bacc": 0.551, "shuffle": 0.210, "adv_misfire": 0.200, "n_test_neg": 59},
+  "ani": {"heldout_bacc": 0.586, "shuffle": 0.255, "adv_misfire": 0.167, "n_test_neg": 58}
+ },
+ "PROBE_A": "FAIL (no stem-invariant NEG → earned terminal)",
+ "verdict": "DECLARED->EARNED terminal. No stem-invariant NEG latent axis in base 303M substrate; behavioral NBIND-FC ceiling independently reconfirmed at representation level (2 lens). gamma measure-side terminal confirmed; A PASS not met so gamma-ANCHOR GPU fire ineligible (tune-to-green avoided). True residual lever = architectural morpheme-level latent, not measure/corpus.",
+ "hidden_npz": "~/anima-weights/nbind_cement/loso_hidden.npz (50532184 bytes, preserved)",
+ "reopen": "only on morpheme-architecture redesign (morpheme tokenizer / subword induction / explicit morpheme lane)"
+}

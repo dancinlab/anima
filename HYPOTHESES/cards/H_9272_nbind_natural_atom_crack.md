@@ -86,6 +86,26 @@ detector-gated**(어간별 감지기 학습·추상 NEG 연산자 부재). = **s
 exit = corpus 아닌 **γ measure-side(H_1840 trained-bind, cost-gated·STEP-0 차단됨)**. frontier
 g1-crack-natural-emergence 최종: 자연 원자 재조합은 합성 augment 한정, wild 자연창발은 byte-LM 천장.
 
+## γ earn-seal (표상층 frozen probe · 2026-07-12 · DECLARED→EARNED)
+NBIND-FC의 "flip = per-stem detector-gated" 천장이 **행동층 결론**이었으므로, terminal을 *선언*이 아닌 *획득*으로
+격상하는 $0 표상층 통제실험(Fable `GAMMA_NEWANGLE` 설계). base 303M(clm303_clean·비-SLW) 활성값을 frozen dump
+(`anima-py evaluate --dump-hidden`·357 wild NSMC prompt·win24 mean-pool trunk penultimate)한 뒤, **LOSO-NEG 선형
+프로브**: 안/않-부정+plain으로 훈련→held-out 어간(못·아니) neg-vs-plain 분류. base substrate에 stem-불변 NEG
+잠재축이 *존재하면* 재조합의 원재료는 있고 소비만 막힌 것(present-but-unconsumed), *부재하면* 진짜 잔여 레버가
+architectural(형태소 추상축 미형성)임을 확증.
+| held-out stem | heldout_bacc | shuffle(누설통제) | adv_misfire(수식어 오발화) |
+|---|---|---|---|
+| 못 (mot) | **0.551** | 0.210 | 0.200 |
+| 아니 (ani) | **0.586** | 0.255 | 0.167 |
+
+**PROBE_A = FAIL** (both held-out bacc ≈ chance 0.55·0.59 ≪ 임계 0.80 · shuffle 낮음=누설無 · adv_misfire
+낮음=수식어 오발화無 clean). ⟹ **base 303M substrate에 stem-불변 NEG 잠재축이 존재하지 않음** — 행동층
+NBIND-FC 천장을 표상층이 독립 재확인(2 lens: 행동 F2 + frozen probe). **DECLARED terminal → EARNED terminal**:
+γ measure-side는 terminal이 확정이고(A PASS 미충족 → γ-ANCHOR GPU fire 부적격·tune-to-green 회피), frontier의
+진짜 잔여 레버는 measure 튜닝이 아니라 **architectural morpheme-level latent**(byte-LM이 형태소 단위 추상축을
+빌드하지 않음). reopen 조건 = base가 stem-불변 NEG를 담는 architecture(형태소 tokenizer/서브워드 induction/명시
+morpheme lane) 재설계 시에만.
+
 ## 산출
 `state/nbind_curriculum/`(gen_nbind.py·build_nbind_t.py·build_nbind_fc_eval.py·gen_nbind_kform.py·CD_PREREG_frozen.md·
 NBIND_FC_SPEC.md·nbind_fc_results.json·AUDIT). ckpt+eval =
