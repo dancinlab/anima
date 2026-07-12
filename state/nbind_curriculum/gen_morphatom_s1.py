@@ -52,8 +52,13 @@ def main():
     stem_ids = {s: [i for i in MB.stem_token_ids(STEM_CH[s], merge_rank, tok2id)[0] if i is not None] for s in STEM_CH}
     held_ids = set(stem_ids[HELD])
     json.dump({"k": K, "vocab_size": len(vocab), "held": HELD, "held_ids": sorted(held_ids),
-               "stem_ids": {s: stem_ids[s] for s in STEM_CH}, "drilled": DRILLED},
+               "stem_ids": {s: stem_ids[s] for s in STEM_CH}, "drilled": DRILLED,
+               "merges": ["\t".join(m) for m in merges], "tok2id": tok2id, "shared_collapse": False},
               open(os.path.join(OUTDIR, "codec.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    # C3 arm eval needs shared_collapse=True — emit a sibling codec_c3.json
+    json.dump({"k": K, "vocab_size": len(vocab), "held": HELD, "stem_ids": {s: stem_ids[s] for s in STEM_CH},
+               "merges": ["\t".join(m) for m in merges], "tok2id": tok2id, "shared_collapse": True},
+              open(os.path.join(OUTDIR, "codec_c3.json"), "w", encoding="utf-8"), ensure_ascii=False)
 
     enc = lambda t: MB.encode_to_bytes(t, merge_rank, tok2id)
 
@@ -128,8 +133,16 @@ def main():
         json.dump({"format": "morphatom-eval-v1", "tag": tag, "items": items},
                   open(os.path.join(OUTDIR, "eval_%s.json" % tag), "w", encoding="utf-8"), ensure_ascii=False)
         return len(items)
-    n_f2 = emit_eval("f2", [HELD], plist)             # held-out stem flip = the verdict
-    n_f1 = emit_eval("f1", DRILLED, plist[:len(plist) // 2])   # drilled × predicate sanity
+    # F2 held-out flip — boost power with novel conjugations of the held-out stem (all unseen in drill)
+    F2_FORMS = {"ani": [lambda s, e: s + "지 아니하다", lambda s, e: s + "지 아니해요", lambda s, e: s + "지 아니했다",
+                        lambda s, e: s + "지 아니한다", lambda s, e: s + "지 아니하네", lambda s, e: s + "지 아니하오"],
+                "mot": [lambda s, e: "못 " + e, lambda s, e: s + "지 못하다", lambda s, e: s + "지 못해요",
+                        lambda s, e: s + "지 못했다", lambda s, e: s + "지 못한다", lambda s, e: s + "지 못하네"]}
+    orig_render = RENDER.get(HELD, [])
+    RENDER[HELD] = F2_FORMS.get(HELD, orig_render)
+    n_f2 = emit_eval("f2", [HELD], plist)             # held-out stem flip (novel conjugations) = the verdict
+    RENDER[HELD] = orig_render
+    n_f1 = emit_eval("f1", DRILLED, plist)            # drilled × predicate sanity (full predicate set)
 
     print("MORPH-ATOM S1 built: K=%d vocab=%d held=%s drilled=%s | held_in_drill_grid=%d(must=0) | grid=%d f2=%d f1=%d"
           % (K, len(vocab), HELD, DRILLED, held_in_grid, len(grid), n_f2, n_f1))
