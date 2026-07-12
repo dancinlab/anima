@@ -1,0 +1,193 @@
+[    0.0s] exclusion (run-1 ∪ run-2): 250 (A,B) pairs · 309 cue words · 250 5-tuples
+[    0.0s] load /home/aiden/py303_full.clm
+[    1.9s] dims d=3784 E=3 K=3 L=4 V=256 T=24
+[    2.1s] PARITY max|Δ| = 0.0 (rows-path 0.0)
+[    4.8s] θ(abs setpoint · fresh probe)=0.4640 (mean=0.4714 sd=0.0680)
+[    4.9s] corpus words 166725 · near pairs 90988
+[    5.0s] mode=fresh-cue            uni>=150 cnt>=25 pmi>+1.0 cap=1 → cand= 119 items=   3
+[    5.0s] mode=fresh-cue            uni>= 80 cnt>=15 pmi>+1.0 cap=2 → cand= 219 items=  15
+[    5.1s] mode=fresh-cue            uni>= 60 cnt>=12 pmi>+0.8 cap=2 → cand= 301 items=  23
+[    5.2s] mode=fresh-cue            uni>= 40 cnt>= 8 pmi>+0.6 cap=3 → cand= 513 items=  59
+[    5.2s] mode=fresh-cue            uni>= 30 cnt>= 6 pmi>+0.4 cap=3 → cand= 656 items= 143
+[    5.3s] mode=fresh-cue            uni>= 25 cnt>= 5 pmi>+0.2 cap=4 → cand= 713 items= 187
+[    5.4s] mode=fresh-cue            uni>= 20 cnt>= 4 pmi>+0.0 cap=5 → cand= 855 items= 384
+[    5.4s] mine mode=fresh-cue · items=384 · overlap tuple=0 ab=0 cue=0
+[    5.4s] MAIN(verdict) items=334 · PILOT(disjoint · sd/MDE + c1 selection only) items=50
+[   33.5s] items 25/384
+[   61.5s] items 50/384
+[   89.8s] items 75/384
+[  118.6s] items 100/384
+[  147.3s] items 125/384
+[  176.0s] items 150/384
+[  204.6s] items 175/384
+[  233.3s] items 200/384
+[  262.2s] items 225/384
+[  291.0s] items 250/384
+[  319.7s] items 275/384
+[  348.2s] items 300/384
+[  376.9s] items 325/384
+[  405.6s] items 350/384
+[  434.3s] items 375/384
+[  444.7s] WROTE /home/aiden/h9285cem/cement_result.json
+[  444.7s] === VERDICT: EQUIVALENT_CLOSED === TOST: |EXP−control| 90% CI inside ±0.20 on ALL 3 sign-flip axes → the capacity schedule has NO directed effect of practical size on held-out recombination → organelle lane CLOSED (licensed equivalence, not 'ns')
+[  444.7s] {
+ "arms": {
+  "c0": {
+   "mean": 0.31117642052114347,
+   "sem": 0.1436445289347764,
+   "dacc": 0.36227544910179643,
+   "m_A_conj": 0.02651963920832019
+  },
+  "c1_k1": {
+   "mean": 0.3328058343841097,
+   "sem": 0.14931400776659298,
+   "dacc": 0.38023952095808383,
+   "m_A_conj": 0.0492672340702374
+  },
+  "c1_k2": {
+   "mean": 0.30306756154777276,
+   "sem": 0.14459492936986768,
+   "dacc": 0.3652694610778443,
+   "m_A_conj": 0.06648476218922506
+  },
+  "EXP": {
+   "mean": 0.3834523720079864,
+   "sem": 0.1469540598015216,
+   "dacc": 0.38922155688622756,
+   "m_A_conj": 0.10705022161611889
+  },
+  "c2_shuf": {
+   "mean": 0.29522879617525316,
+   "sem": 0.14784346251666394,
+   "dacc": 0.3592814371257485,
+   "m_A_conj": 0.05804097363058963
+  },
+  "SHOCK": {
+   "mean": 0.29690689240525003,
+   "sem": 0.1433352040631367,
+   "dacc": 0.3652694610778443,
+   "m_A_conj": -0.027734367376075434
+  },
+  "SHAM_ident": {
+   "mean": 0.31117642052114347,
+   "sem": 0.1436445289347764,
+   "dacc": 0.36227544910179643,
+   "m_A_conj": 0.02651963920832019
+  }
+ },
+ "paired_vs_controls_HEADLINE_item_level": {
+  "EXP_vs_c0": {
+   "mean_delta": 0.07227595148684295,
+   "sd": 0.9741014968833425,
+   "sem": 0.05330046247539437,
+   "t": 1.356009838004847,
+   "p_approx": 0.1750960378823474,
+   "n": 334
+  },
+  "EXP_vs_c2_shuf": {
+   "mean_delta": 0.0882235758327332,
+   "sd": 1.068597439379726,
+   "sem": 0.058471050399979706,
+   "t": 1.5088419864057003,
+   "p_approx": 0.13133916818780045,
+   "n": 334
+  },
+  "EXP_vs_pooled_mean_of_controls": {
+   "mean_delta": 0.07759182626880634,
+   "sd": 0.8236208127035923,
+   "sem": 0.04506652577982742,
+   "t": 1.721717503760581,
+   "p_approx": 0.08512070495782931,
+   "n": 334
+  }
+ },
+ "vgate": {
+  "V0_ops_conservation": {
+   "max_abs_supply_created": 2.220446049250313e-16,
+   "pass": true
+  },
+  "V0b_sham_ident_zero_floor": {
+   "max_abs_disp": 0.0,
+   "pass": true
+  },
+  "V1_liveness_c0_gt_0": {
+   "mean_delta": 0.31117642052114347,
+   "sd": 2.6251995603051848,
+   "sem": 0.1436445289347764,
+   "t": 2.166294970151192,
+   "p_approx": 0.03028865383803181,
+   "n": 334,
+   "pass": true
+  },
+  "V2a_unsigned_channel_SHOCK": {
+   "mean_abs_disp": 0.35338866776301503,
+   "sem": 0.015650020190990904,
+   "ci95_lo": 0.32260313312110295,
+   "ci95_hi": 0.3841742024049271,
+   "delta_eq": 0.2,
+   "pass": true
+  },
+  "V2b_unsigned_channel_EXP": {
+   "mean_abs_disp": 0.7646405578465413,
+   "sem": 0.03317898577814691,
+   "ci95_lo": 0.6993733694601232,
+   "ci95_hi": 0.8299077462329594,
+   "delta_eq": 0.2,
+   "pass": true
+  }
+ },
+ "TOST": {
+  "delta_eq": 0.2,
+  "per_axis": {
+   "c0": {
+    "delta_eq": 0.2,
+    "ci90_lo": -0.015641892854001957,
+    "ci90_hi": 0.16019379582768783,
+    "t_lower": 5.1083224955606426,
+    "p_lower": 1.6251577439341247e-07,
+    "t_upper": 2.3963028195509484,
+    "p_upper": 0.008280700780036732,
+    "p_tost": 0.008280700780036732,
+    "equivalent": true
+   },
+   "c2_shuf": {
+    "delta_eq": 0.2,
+    "ci90_lo": -0.008223030233475745,
+    "ci90_hi": 0.18467018189894213,
+    "t_lower": 4.929338088867876,
+    "p_lower": 4.125434125423766e-07,
+    "t_upper": 1.911654116056475,
+    "p_upper": 0.027960286620213326,
+    "p_tost": 0.027960286620213326,
+    "equivalent": true
+   }
+  },
+  "equivalent_on_all_axes": true,
+  "sensitivity": {
+   "0.15": {
+    "c0": {
+     "delta_eq": 0.15,
+     "ci90_lo": -0.015641892854001957,
+     "ci90_hi": 0.16019379582768783,
+     "t_lower": 4.170244331171693,
+     "p_lower": 1.5213662101887238e-05,
+     "t_upper": 1.4582246551619995,
+     "p_upper": 0.07238931502935486,
+     "p_tost": 0.07238931502935486,
+     "equivalent": false
+    },
+    "c2_shuf": {
+     "delta_eq": 0.15,
+     "ci90_lo": -0.008223030233475745,
+     "ci90_hi": 0.18467018189894213,
+     "t_lower": 4.074214063252332,
+     "p_lower": 2.3085000047329274e-05,
+     "t_upper": 1.056530090440931,
+     "p_upper": 0.14536305047105835,
+     "p_tost": 0.14536305047105835,
+     "equivalent": false
+    }
+   },
+   "0.25": {
+    "c0": {
+     "delta_e
