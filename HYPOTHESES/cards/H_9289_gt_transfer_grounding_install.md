@@ -83,3 +83,66 @@ STEP-0 = **$0**(pool·기존 ckpt). MAIN = 303M×105k×4run = N2 실비 동급 �
 ## 산출
 `state/nbindg_grounding/FABLE_GT_TRANSFER_DESIGN.md`(Fable 원문) · STEP-0 probe 스크립트/결과(follow-on).
 [[nbindg-grounding-frame-general-data-blocked]]·[[xbind-g1-crack-measure-not-substrate]]·H_9286.
+
+---
+
+## MAIN 4-arm 착지 (2026-07-14) — ⚠️ UNDERPOWERED + INVALID-INSTRUMENT
+
+303M 신규학습 T=60000 · 4 arm(main_s7 · main_s11 · shufGT 통제 · N2rep 재현대조) 완주·전량회수.
+산출 = `state/h9289_c34/` (GATE_RESULT.json · eval_c34_*.json ×4 · eval_seen_c34_*.json ×4).
+
+### V1 설치검증 — **4/4 PASS** (유효)
+
+| arm | SEEN P_grid D-acc |
+|---|---|
+| main_s7 | 0.9625 |
+| main_s11 | 0.9125 |
+| shufGT | 0.9750 |
+| N2rep | 0.9250 |
+
+그리드는 제대로 섰다 — N2 의 seed-11 INVALID(seen 0.725) 재발 없음. 라벨 코퍼스가 연산자 설치를
+seed-robust 하게 만든 것은 사실.
+
+### GATE-1 헤드라인 (held-out flip0 · 원자별 paired Δ vs shufGT · n=29 원자)
+
+| arm | main | Δ vs shufGT | se | t | TOST 등가 | N_REQ |
+|---|---|---|---|---|---|---|
+| main_s7 | 0.4713 | **+0.023** | 0.106 | +0.22 | ✗ | **255** |
+| main_s11 | 0.3103 | **−0.138** | 0.100 | −1.38 | ✗ | **228** |
+
+shufGT flip0 원자평균 0.4483 · N2rep 0.4483 (§6e: Δ(main−N2rep) = Δ(main−shufGT) — 두 통제군이 동일,
+INVALID-CTRL 아님). **GATE-2 = SKIP**(사전등록: GATE-1 통과 시에만).
+
+### 판정 — 자동 판독기의 "GATE-0 FAIL ⟹ C3+C4 반증"을 **채택하지 않는다**
+
+두 축 모두 판정 자격이 없다:
+
+1. **GATE-0 = INVALID-INSTRUMENT** (#3395 · convergence `morphatom-gate-py-1` ④). 이 표현-probe 는
+   모델이 **행동으로 통달한**(SEEN 0.9625) TRAIN 원자의 극성조차 읽지 못한다(LOO 최고 0.600 · bar 0.85 ·
+   raw/l2 5·50·500, PCA k=4/8/16, 최근접평균 프로토타입 전 설정 실패). **양성대조가 실패한 게이트는
+   게이트가 아니다** ⟹ GATE-0 FAIL 로는 어떤 결론도 licensing 불가. (관측치는 기록: main_s7 0.5172 ·
+   shufGT 0.4828 · N2rep 0.4828 · main_s11 reps 미회수)
+
+2. **GATE-1 = 검정력 부족**. 양성(NAT-CRACK)은 **명확히 미달**(두 seed 모두 bar +0.15 미달 · 절대치
+   0.55 미달) — 이건 확정. 그러나 **음성(등가) licensing 은 실패**: TOST 등가 = False, 관측 n=29 원자
+   vs 필요 **N_REQ = 228~255**. `negative-claims-need-tost-not-ns` 에 따라 이 표본으로 "C3+C4 는 효과가
+   없다"를 cement 할 수 없다. seed 간 **부호 반전**(+0.023 / −0.138)은 install-fragile(최적화 분산)의
+   지문이기도 하다(N2 에서 이미 관측된 계열).
+
+**정직한 요약**: C3+C4 는 **양성 bar 를 넘지 못했다**(NAT-CRACK 미달 = 확정). 그러나 "효과 0"이라는
+**음성 주장은 이 표본으로 벌 수 없다**(검정력 부족). 표현층에 관한 주장은 **계측기 무효로 불가**.
+
+### 이 실험이 실제로 남긴 것
+
+- V1 4/4 PASS — 라벨 코퍼스가 그리드 설치를 seed-robust 하게 만든다(N2 대비 개선).
+- GATE-1 양성 미달 — 라벨-자연 중간 rung 이 held-out 극성 전이를 **이 규모/예산에서는** 못 만든다.
+- 음성 종결 불가 — 재발사하려면 원자 수를 **8배**(29 → 228+) 늘리거나 효과크기가 큰 변형이 필요.
+
+### NEXT
+
+1. **GATE-0 복권 선행** — 읽기 지점 탐색(위치·층·풀링·용량 · 양성대조 LOO ≥0.85 통과 지점).
+   통과 지점이 없으면 "극성은 읽을 수 있는 어느 지점에도 표현되지 않는다"가 강한 사실이 된다.
+2. **표적 이동** — H_9291 오라클이 '정보 부재'를 반증했으므로(자연 문맥이 극성을 완전 결정 · MASKED
+   29/29 · SHUFFLE 0.517), 병목은 데이터가 아니라 **확정(commitment) 채널**. O 채널(확정-금지
+   abstention objective · 라벨-선행 커리큘럼) + C 채널(오류-표적 교정 폐루프)이 표적.
+3. 재발사 시 **N_REQ 를 데이터 전에 사전등록**할 것(이번엔 사후 계산이 되었다 — 절차 결함).
