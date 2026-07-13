@@ -1,4 +1,4 @@
-# H_9225 · g1_gamma_residual_lift
+# H_9305 · g1_gamma_residual_lift
 
 🟡 DIRECTIONAL — γ residual-lift 측정 설계 검증 + Fable #8 freeze-then-bolt 함정 교정
 
@@ -28,3 +28,9 @@ engine-native decode) GPU-gated NEXT.
 ## 계보
 부모 = 재조합 벽 프로그램(goal-biolens · substrate-framebreak-g1). Fable 발산 top-1(#8 residual-lift).
 관련 = measurement-metalaw(FORM tunable·BIND earned·Δ 신호) · h1816-predcoding-binding(additive서 붕괴).
+
+
+> ⚠️ **ID 충돌 수리 (2026-07-14)**: 병렬 세션이 2026-07-08 에 `H_9225` 를 동시 점유했다 —
+> seam Family-A(`H_9225_seam_a_tonic_phasic_transducer`, 23:22:56 머지)가 먼저였고 이 카드(23:31:51)가 뒤였다.
+> **먼저 머지된 쪽 선점** 원칙에 따라 이 카드를 **H_9305** 로 재번호했다.
+> **내용·판정·수치 verbatim 불변.** 재발방지 = ARCHITECTURE convergence `hypotheses-jsonl-3`.
