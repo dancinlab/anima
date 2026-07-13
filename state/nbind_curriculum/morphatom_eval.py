@@ -28,6 +28,14 @@ except Exception:
 
 import morph2b as MB
 
+
+def _asnp(a):
+    """Coerce an engine forward return to numpy — anima-py GPU eval is DEFAULT-ON (gpu-eval-default), so
+    clm._fwd_* return cupy arrays on a CUDA pod; downstream np ops must see numpy.
+    (convergence morphatom-gate-py-1 · a cupy leak crashed the probe and faked a gate FAIL)"""
+    return a.get() if hasattr(a, "get") else np.asarray(a)
+
+
 CKPT = sys.argv[1]
 PANEL = sys.argv[sys.argv.index("--panel") + 1]
 CODEC = sys.argv[sys.argv.index("--codec") + 1] if "--codec" in sys.argv else "none"
@@ -50,17 +58,25 @@ def load_codec():
     return merge_rank, tok2id, d.get("shared_collapse")
 
 
-def tok_from_bytes(bs, T):
-    """Right-align raw bytes into a length-T float tok window, left-pad 32.0 (matches _seed_to_tok)."""
-    tok = np.full(T, 32.0)
-    n = min(len(bs), T)
-    for p in range(n):
-        tok[T - n + p] = float(bs[-n + p])
-    return tok
+def tok_from_bytes(bs, T, ctx=b"", sentinel=b"\x00\x0a"):
+    """Frame the window like a natural MID-STREAM slice — NOT an isolated constant-padded line.
+
+    The model trains on a sentinel-delimited concatenation of lines. A held slice of that exact stream
+    scores nll≈1; the SAME text as a lone line left-padded with a constant (space 0x20 → nll 6.1, or the
+    sentinel repeated → 19.1) is OOD and the model is confidently wrong. The only faithful framing fills
+    the left context with REAL preceding bytes. `ctx` = a real slice of the training .bytes stream; the
+    window is [ctx tail][sentinel][content], right-aligned into T with token-width alignment of the
+    content. (convergence morphatom-gate-py-1 fix (c) — constant padding is OOD)"""
+    bs = bytes(bs); w = len(sentinel)
+    n = min(len(bs), T); n -= n % w                       # token-width-align the scored content
+    content = bs[len(bs) - n:] if n else b""
+    buf = bytes(ctx) + sentinel + content
+    buf = buf[-T:] if len(buf) >= T else (sentinel * ((T - len(buf)) // w + 1))[-(T - len(buf)):] + buf
+    return np.frombuffer(buf, dtype=np.uint8).astype(float)
 
 
 def nll_tail(W, tok, T, n_score):
-    logits = clm._fwd_logits(W, tok, T)
+    logits = _asnp(clm._fwd_logits(W, tok, T))
     lo = max(0, T - 1 - n_score)
     s = 0.0; c = 0
     for i in range(lo, T - 1):
@@ -94,13 +110,25 @@ def main():
         enc = lambda t: t.encode("utf-8", "surrogateescape")
 
     correct = 0; n = 0; margins = []
-    n_score = 4 if use_codec else 3       # codec label ≈2 tokens×2B; raw "긍정."≈3B tail
+    sent = b"\x00\x0a" if use_codec else b"\n"    # training-stream line sentinel (codec 2-byte vs raw newline)
+    # real left-context from the actual training .bytes stream (constant padding is OOD → the framing fix)
+    CTXF = sys.argv[sys.argv.index("--ctx") + 1] if "--ctx" in sys.argv else (
+        "cpt_M.bytes" if use_codec else "cpt_C1.bytes")
+    ctx = open(CTXF, "rb").read(160) if os.path.exists(CTXF) else b""
     for it in panel:
         seed, gold, cf = it["seed"], it["gold"], it["counterfactual"]
-        tg = tok_from_bytes(enc(seed + gold), WIN)
-        tc = tok_from_bytes(enc(seed + cf), WIN)
-        ng = nll_tail(W, tg, WIN, n_score)
-        nc = nll_tail(W, tc, WIN, n_score)
+        bg = enc(seed + gold); bc = enc(seed + cf)
+        # Score from the FIRST byte where gold/cf diverge to the end. The discriminating token can sit
+        # EARLIER than a fixed 2-token tail, so a fixed n_score silently misses it → margins == 0 exactly
+        # (the 4th measurement bug: 긍정./부정. share the "정." suffix that a 4-byte tail scores).
+        p = 0
+        while p < min(len(bg), len(bc)) and bg[p] == bc[p]:
+            p += 1
+        ns_g = max(2, len(bg) - p); ns_c = max(2, len(bc) - p)
+        tg = tok_from_bytes(bg, WIN, ctx, sent)
+        tc = tok_from_bytes(bc, WIN, ctx, sent)
+        ng = nll_tail(W, tg, WIN, ns_g)
+        nc = nll_tail(W, tc, WIN, ns_c)
         margins.append(nc - ng)
         correct += int(ng < nc); n += 1
     dacc = correct / max(1, n)

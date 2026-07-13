@@ -54,6 +54,6 @@ train_fit=1.0 ∧ shuffle≈0.5 ⟹ 프로브는 유효, held-out 전이만 실�
 
 ## 산출
 verdict=`state/verdicts/9290_nat_atom/` · gprobe=`~/anima-weights/morphatom/gprobe_codec_result.json`.
-도구=scratchpad `gen_codec_natural.py`·`morphatom_dumphidden.py`·`morphatom_gprobe_run.py`·`fire_natatom.sh`
+도구=`state/nbind_curriculum/` (gen_codec_natural.py·morphatom_dumphidden.py·morphatom_gprobe_run.py·fire_natatom.sh·install_ma.sh)
 (+ reference-match `state/nbindg_grounding/gt_step0_gprobe.py`·`gt_atoms.json`·`gt_prompts.json`).
 [[H_9288]] · [[H_9286]] · [[H_9289]] · [[H_9267]] · [[nbindg-grounding-frame-general-data-blocked]].
