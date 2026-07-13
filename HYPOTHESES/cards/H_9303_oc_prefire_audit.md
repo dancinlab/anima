@@ -1,12 +1,12 @@
 ---
-id: H_9299
-slug: 9299_oc_prefire_audit
+id: H_9303
+slug: 9303_oc_prefire_audit
 title: O/C 채널 $0 사전감사 — A1 결정타 프로브가 자기 양성대조에 낙제 (⏳ INVALID · M1/M2 분기 미해소 · GPU 발사 보류)
 group: g1-crack-natural-emergence 프런티어 · O/C 채널 (H_9297 이 확정한 '벽 = 추출 채널' 의 후속)
 terminal_tier: ⏳ INVALID (2026-07-14 · A1 프로브 미인증 · tier 미보고 · $0 · GPU 0h) — **그러나 이것이 감사의 목적이다: $21 을 태우기 전에 $0 에서 설계의 결정 분기가 측정 불가임을 확인했다.** Fable 의 O/C 설계는 하나의 미측정 분기에 걸려 있다 — **M1 WRITE-ABSENT**(CE 가 atom→극성을 아예 안 씀 ⇒ 뒤집을 것 없음) vs **M2 DIRECTION-MISMATCH**(썼는데 **생성 방향으로만**: causal LM 은 p(atom|극성문맥) 를 배우고 우리 질의는 반대인 p(극성|atom) ⇒ 지식은 있는데 **뒤집을 수 없음**). M2 면 O 채널의 핵심은 INVERSION 커리큘럼, M1 이면 그 커리큘럼은 발사 전 사망. **A1** = Δ(a) = log p(a|C⁺) − log p(a|C⁻) 로 그 분기를 $0 에 가르는 결정타(engine-native · `--interaction-lift` = 프로덕션 trunk forward). **계측 결함 2건 잡아 수리**: ① 접합부 오염(carrier 들이 서로 다르게 끝나 원자 NLL 을 접합부 문법이 지배) → 동일 꼬리(` 정말 `)로 byte-동일 접합 ② **채점창이 carrier 침범**(score_len 은 manifest 전역인데 한국어 어간은 3~12 byte ⇒ 고정 8 이면 carrier 까지 채점) → **원자 byte-길이별 manifest 분할**. **그럼에도 A4 가 A1 을 죽였다**: 진짜 양성대조 = 코퍼스가 가장 강하게 접지한 감성어(occ≥100 · purity≥0.90 · 최고/별로/빠르/재미없 · **n=74 · 우연 sd 0.0581 ⇒ 참 0.70 이면 3.4σ** = 검정력 확보)에서조차 sign-acc **0.554**(p=0.208 · main_s11 0.527 · base 0.473) ⇒ **검정력이 있는데도 우연**. ⇒ **죽은 프로브의 침묵은 아무것도 증명하지 않는다** — A1 이 held-out 서 읽은 우연(0.451/0.396)은 '순방향에 없다'가 아니라 **'이 프로브로는 못 본다'**. **M1/M2 분기 = 미해소 · O/C 발사 보류.** H_9297 의 EARNED 음성은 영향 없음(별개 측정 · V-REPRO 통과). NEXT = ① carrier 를 코퍼스 채굴 접두사로(authored = OOD 의심) ② 분기를 **생성**으로 재측정(C⁺/C⁻ 뒤 샘플링 원자의 극성 분포 · decode 경로) ③ A2/A3/A5/A6 미실행(A6 FORM-LEAK 은 발사 전 필수).
 wired: 미배선 (배선할 GREEN 없음)
 verdict_dir: state/verdicts/9299_oc_prefire_audit/
-terminal_verdict: state/verdicts/9299_oc_prefire_audit/H_9299_RESULT.txt
+terminal_verdict: state/verdicts/9303_oc_prefire_audit/H_9303_RESULT.txt
 design: state/nbindg_grounding/DESIGN_OC_fable.md (Fable 5 · O/C 채널 전문 · §4 = A1~A6 사전감사)
 date: 2026-07-14
 provenance: 설계 = Fable 5 · 구현·측정 = 로컬 py 2-production (anima-py evaluate --interaction-lift · frozen N2 ckpt 4-arm) · $0 · GPU 0h
