@@ -757,6 +757,10 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
+    print("      [--consult <store.json>] [--consult-format F1|F2|F3]  — H_9309 DECON: render a")
+    print("      declarative fact into the 2AFC scoring context (same prefix on gold AND")
+    print("      counterfactual, so it moves the margin only by being COMPOSED, never parroted).")
+    print("      An empty store is byte-identical to a plain --xbind run.")
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
@@ -1633,10 +1637,10 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--corpus", "--dump-hidden", "--gen", "--help", "--interaction-lift",
-    "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe", "--result-file",
-    "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off", "--slot-shuffle",
-    "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
+    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
+    "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe",
+    "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
+    "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
 ))
 
 
