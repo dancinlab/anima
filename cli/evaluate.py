@@ -1304,6 +1304,16 @@ def _xbind_first_word(text):
     return t.split()[0].strip(",.;:") if t.split() else ""
 
 
+def _xbind_hms(sec):
+    """Seconds -> compact h/m/s, for the progress heartbeat's elapsed + eta."""
+    sec = int(max(0, sec))
+    if sec >= 3600:
+        return "%dh%02dm" % (sec // 3600, (sec % 3600) // 60)
+    if sec >= 60:
+        return "%dm%02ds" % (sec // 60, sec % 60)
+    return "%ds" % sec
+
+
 def _json_safe(o):
     """Scrub lone surrogates from decode output before json.dump. A byte-LM emits raw bytes
     that decode (surrogateescape) to lone surrogates mid-multibyte; json.dump(ensure_ascii=False)
@@ -1343,6 +1353,7 @@ def xbind_run(argv):
     teacher-forced NLL(counterfactual)-NLL(gold). All raw outputs dumped (never tail-truncate
     a control · evaluate-py-1). --arm ctrl scores the shuffle-control model."""
     import numpy as np
+    import time
     ckpt = argv[0]
     spec_path = evaluate_strval(argv[1:], "--xbind", "")
     out_path = evaluate_strval(argv[1:], "--out", "xbind_eval.json")
@@ -1363,6 +1374,7 @@ def xbind_run(argv):
     res = {"ckpt": ckpt, "arm": arm, "gen": gen, "win": T, "splits": {}}
     for split in ("heldout", "seen"):
         items = spec[split][:n_dec]
+        t_split = time.time()
         rows = []
         d_hits = c_hits = c_n = 0
         margins = []
@@ -1392,9 +1404,20 @@ def xbind_run(argv):
             rows.append({"a": it["a"], "b": it["b"], "gold_word": gold_w,
                          "first_word": fw, "d_hit": d_hit, "c_hit": c_hit,
                          "margin": mg, "sampled_maj": smp, "raw": o})
-            if (ix + 1) % 25 == 0:
-                print("  [xbind %s #%d/%d] d_acc=%.3f" %
-                      (split, ix + 1, len(items), d_hits / (ix + 1)), flush=True)
+            # Heartbeat at item 1, then every 25. The first item is what makes a slow host
+            # legible: each item is ~10 model forwards, so on a saturated shared box one item
+            # can cost minutes — and a 25-item-only cadence then means HOURS of total silence,
+            # indistinguishable from a hang. (2026-07-13: a 174-item run on a rented box whose
+            # load average sat at ~106 from other tenants emitted nothing for 5h; the only way
+            # to tell "slow" from "stuck" was to hand-roll a 2-item manifest. The ETA below
+            # would have said "35h on this host" after ~30 seconds.)
+            if ix == 0 or (ix + 1) % 25 == 0:
+                el = time.time() - t_split
+                per = el / (ix + 1)
+                eta = per * (len(items) - ix - 1)
+                print("  [xbind %s #%d/%d] d_acc=%.3f  %.1fs/item  elapsed=%s  eta=%s" %
+                      (split, ix + 1, len(items), d_hits / (ix + 1), per,
+                       _xbind_hms(el), _xbind_hms(eta)), flush=True)
         margins.sort()
         med = margins[len(margins) // 2] if margins else 0.0
         smp_rows = [r["sampled_maj"] for r in rows if r["sampled_maj"] is not None]
