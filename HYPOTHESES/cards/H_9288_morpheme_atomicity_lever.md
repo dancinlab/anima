@@ -153,7 +153,7 @@ follow-on: multi-seed + C2 arm(held-out ablated codec) + canonical harness. 함�
 
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
-scratchpad `morphatom_{gate,eval,reinit}.py`·`morph2b.py`·`gen_morphatom_s1.py`·`fire_{ladder,drill,arms}.sh`.
+`state/nbind_curriculum/` (morphatom_{gate,eval,reinit}.py=**계측버그 4종 수정版**·morph2b.py·gen_morphatom_s1.py·fire_arms.sh·install_ma.sh=dir-relative). ⚠️ 수정 전 harness는 margins=0/chance 가짜 null을 낸다(convergence morphatom-gate-py-1).
 검증 verdicts+result models=`~/anima-weights/morphatom/`(vM_f2·vC1_f2·drill_M_arm.clm·drill_C1_arm.clm).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
 [[xbind-g1-crack-measure-not-substrate]]·[[goal-biolens-lane-engine-native-green]]·

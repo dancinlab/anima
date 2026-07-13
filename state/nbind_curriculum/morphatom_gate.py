@@ -33,6 +33,15 @@ except Exception:
     import decode as clm
 import morph2b as MB
 
+
+def _asnp(a):
+    """Coerce an engine forward return to numpy — anima-py GPU eval is DEFAULT-ON (gpu-eval-default) so
+    clm._fwd_* return cupy arrays on a CUDA pod; a bare np.array(list_of_cupy) raises TypeError and the
+    probe dies silently → the driver's '|| echo False' fallback then FAKES a gate FAIL.
+    (convergence morphatom-gate-py-1)"""
+    return a.get() if hasattr(a, "get") else np.asarray(a)
+
+
 CKPT = sys.argv[1]
 CODEC = sys.argv[sys.argv.index("--codec") + 1]
 CORPUS = sys.argv[sys.argv.index("--corpus") + 1] if "--corpus" in sys.argv else "morph_corpus.txt"
@@ -73,7 +82,7 @@ def main():
     tot_nll = 0.0; tot_pos = 0
     for l in held[:400]:
         tok = tok_from_bytes(enc(l), WIN)
-        logits = clm._fwd_logits(W, tok, WIN)
+        logits = _asnp(clm._fwd_logits(W, tok, WIN))
         for i in range(max(0, WIN - 40), WIN - 1):
             row = logits[i]; m = float(np.max(row))
             lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
@@ -93,7 +102,7 @@ def main():
             i = l.rfind(ch)
             seg = l[:i + len(ch)]
             tok = tok_from_bytes(enc(seg), WIN)
-            yn = clm._fwd_trunk(W, tok, WIN)     # [T,d] pre-readout penultimate
+            yn = _asnp(clm._fwd_trunk(W, tok, WIN))     # cupy→numpy     # [T,d] pre-readout penultimate
             X.append(yn[-1]); cls.append(label); n += 1
     for s in ["an", "anh", "mot", "ani"]:
         add_contexts(s, STEMS[s], stem_ids[s])
