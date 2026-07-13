@@ -14139,6 +14139,32 @@
           "detail": "모델이 읽는 포맷은 자기 학습 템플릿뿐(SEEN D-acc 0.950) ⟹ 1-shot 시연 렌더. 필수통제 = copy-solvable 방어(evaluate-py-2) + win-parity 게이트. held-out n=29 는 TOST Δ_eq=0.10 licensing 불가(N_REQ≈190) ⟹ 지지까지만."
          }
         ]
+       },
+       {
+        "id": "a-experiment-engine-native",
+        "type": "rule",
+        "name": "a_experiment_engine_native — 실험 계기도 엔진-네이티브 (판정만이 아니라)",
+        "detail": "새 실험 조작(주입·개입·통제 arm·새 DV)은 canonical 엔진에 플래그로 배선해 잰다(cli/evaluate.py 플래그 → core/ forward). 옆에 세운 ad-hoc 프로브 하네스 = 미러 ⟹ production 경로 재현 보장 없음(a_verified_must_wire 의 측정판).",
+        "children": [
+         {
+          "id": "a-experiment-engine-native-why",
+          "type": "note",
+          "name": "배선이 사는 이유 3",
+          "detail": "① 통과하면 이미 wired(뒤에 '이제 배선하자'가 조용히 안 일어남) ② 다음 실험이 같은 조작을 재구현 대신 재사용 ③ _KNOWN_FLAGS+--help 3종세트(evaluate-py-8)와 byte-audit 이 자동 적용."
+         },
+         {
+          "id": "a-experiment-engine-native-precedent",
+          "type": "note",
+          "name": "실측 근거 — H_9309",
+          "detail": "store-consult 를 --consult/--consult-format 로 cli/evaluate.py 에 배선했기에 PC 낙제가 '계기 결함'이 아니라 EARNED 진단('주입 포맷 미학습')으로 읽혔다. 옆 스크립트였다면 '내 프로브가 틀렸나'와 구별 불가 — H_9303·H_9307 이 정확히 그렇게 판정불능으로 죽었다."
+         },
+         {
+          "id": "a-experiment-engine-native-scope",
+          "type": "note",
+          "name": "허용 예외 = 읽기전용 진단",
+          "detail": "RF 수용영역 프로브 같은 read-only 진단은 state/ 스크립트로 둘 수 있으나 core/ forward 를 직접 호출해야 한다(재구현 금지). dont: state/*.py 안에서 forward 를 재구현해 새 조작을 재기 · 배선 없이 얻은 수를 TERMINAL 로 박기."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
