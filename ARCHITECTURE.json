@@ -10188,9 +10188,9 @@
          },
          {
           "id": "g1-h9290-underpowered-warning",
-          "name": "⚠️ H_9290 은 아직 n=29 프레임",
-          "role": "NOT-POWERED 주의",
-          "detail": "NAT-ATOM NO-RESCUE 는 여전히 held-out n=29 위에 있다 ⇒ n=91 재측정($0 · codec ckpt) 전까지 그 음성은 NOT-POWERED 주의를 유지한다."
+          "name": "⚠️ H_9290 = NOT-POWERED (재측정은 spend)",
+          "role": "재분류 · 2×2 미완성",
+          "detail": "NAT-ATOM NO-RESCUE 는 같은 n=29 프레임(bar 1.62σ) 위에 있었다. 측정 0.3448 = 10/29 는 우연 **아래** −1.67σ(양측 p=0.136) ⇒ '접지 rescue 실패'가 아니라 아래쪽 꼬리와 구별 불가 ⇒ NOT-POWERED. ⚠️ codec-CPT ckpt 가 pod teardown 시 미보존(a_fire_recover_complete 위반) ⇒ n=91 재측정은 재학습(spend) 요구. ⇒ [codec×자연] 셀 결론 사망 · 2×2 미완성(나머지 3셀은 bar 를 크게 넘겨 무관)."
          }
         ],
         "type": "gate",
