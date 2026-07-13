@@ -1393,6 +1393,13 @@
                   "name": "H_9291 ORACLE 정보상한 — 자연 문맥은 극성을 완전히 결정한다 (🟢 EVIDENCE-PRESENT)",
                   "detail": "MASKED(어간 가림·문맥만) 29/29=1.000 · SHUFFLE(다른 어간 문맥) 0.5172=우연 · LEXICAL 1.000. 증거=gt_prompts 좌문맥 24/원자(G-PROBE 가 읽는 것과 byte-동일) ⟹ 선형프로브 vs 이상적판독자 1:1. 기제=극성이 동반 감성문맥에 실림. SCOPE: 판독자는 사전학습 한국어 감성어휘 보유 → '증거 안의 정보량' 상한이지 '303M 학습가능성' 상한 아님. 밀도 희박(d_nat 42.3/MB)≠정보 없음. state/g1_next_ladder/",
                   "role": "'자연 자발창발' 프레임 판정 — ill-posedness 반증, 벽을 추출 채널로 재국소화"
+                 },
+                 {
+                  "id": "gate0-probe-invalid",
+                  "type": "gate",
+                  "name": "⛔ GATE-0 표현-probe = INVALID-INSTRUMENT (양성대조 실패 · 2026-07-14)",
+                  "role": "G-PROBE 로 내린 표현-부재 판정 전부를 유보시키는 계측 사실",
+                  "detail": "main_s7 reps 양성대조: 모델이 행동으로 통달한 P_grid TRAIN 원자(SEEN 0.9625)의 극성조차 이 읽기 지점에서 읽히지 않는다. LOO 최고 0.600(bar 0.85) — raw/l2 스윕, PCA k=4/8/16, 최근접평균까지 전 설정 실패(프로토타입 0.300 = 우연 이하). 용량 문제가 아니라 그 지점에 극성이 없다. 양성대조가 실패한 게이트는 게이트가 아니다 ⟹ G-PROBE 기반 표현-부재 판정은 licensing 불가, 판정 유보(뒤집기 아님)."
                  }
                 ]
                }
