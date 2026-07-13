@@ -1,0 +1,46 @@
+H_9292 — FREEZE (모든 Φ 계산 前 동결 · c9 · p7 · no tune-to-green)
+==================================================================
+frozen at   2026-07-14, before the first Φ call of this hypothesis
+설계        Fable 5 (DESIGN.md · §0/§1 은 전송 중 유실, §2~§7 verbatim)
+
+상속 동결항 (H_9260 FREEZE.txt 에서 그대로 · 본 H 가 건드리지 않는다)
+------------------------------------------------------------------
+BAR        ΔΦ ≥ +0.02                                          (FROZEN · 불변)
+SEEDS      [3..11]  every-seed conjunctive                     (FROZEN · 불변)
+SUBSTRATE  n=4 dim=8 T=64 GAIN=.30 LEAK=.55 W_NBR=.5 W_IN=.5 W_RELAY=.5 NBINS=8   (FROZEN)
+TRAJ       traj[i,t] = ‖s_i(t)‖²                               (FROZEN · signed = 부가 렌즈일 뿐)
+ESTIM      stdlib iit4_faithful_phi / iit4_build_mi_matrix     (FROZEN · proxy 금지 · a_phi_iit4_tool)
+
+본 H 가 새로 동결하는 것
+------------------------------------------------------------------
+PARITY     py 포트가 hexa 엔진과 max|Δ| < 1e-12 로 일치해야 한다. 실패 시 아래 어떤 수치도
+           읽지 않는다 (reference-match · verdict-integrity).
+
+P0′        실행 순서상 최초 게이트. 캠페인 발사 前에 통과해야 한다.
+           동일 기질·하이퍼·추정기·readout, 틱 수만 T_LONG=65536 (모집단 Φ 추정).
+             P0′-a  Φ_pop(B)              ≥ +0.02
+             P0′-b  Φ_pop(B) − Φ_pop(A)   ≥ +0.02
+             P0′-c  Φ_pop(B) − Φ_pop(N)   ≥ +0.02
+             P0′-d  Φ_pop(B) − Φ_pop(X)   ≥ +0.02
+           하나라도 FAIL ⇒ ⏳ BAR-ABOVE-SIGNAL. 캠페인 미발사. bar 를 옮기지 않고
+           **bar 가 충족 불가능함을 보고**한다 (tune-to-green 의 정직한 반대편).
+
+PEDESTAL   참 Φ = 0 인 양성대조 (arm B 의 모듈별 독립 시간순열 · marginal 비트-동일).
+           동결 T=64 에서 이것이 뱉는 값 = 추정기의 편향 pedestal. H_9260 에 없던 게이트이며,
+           "모든 구조를 파괴하는 계기"와 "진짜 통합"을 가르는 비-동어반복 대조군.
+
+ADJUNCT    signed lens (traj_sgn[i,t] = s_i(t)[0]) — 게이트 아님. verdict 산출 금지.
+           오직 🧱 vs ⏳ READOUT-LIMITED 판별에만 쓴다.
+
+RETIRED (사전등록 · 사후재량 0)
+------------------------------------------------------------------
+P1a/P1b (dense_shuffle − A)  — ill-posed. mode 9 는 cross-relay 결합을 보존하므로
+                                information-free 통제가 아니다 (probe L214/L220-224).
+G4 (B − Bperm)               — 단일 circular shift = null 표본 1개. H_9260 P0 가 실측한
+                                sd=0.297 앞에서 무의미 (seed 간 부호 반전은 그 결과이지 원인 아님).
+
+사전등록 예측 (Fable · 측정 前 동결)
+------------------------------------------------------------------
+"P0′ 가 FAIL 한다 — Φ_pop(B) ≈ 0.002–0.01 bits 로 frozen +0.02 bar 의 1/2~1/10 에 그친다.
+ ‖s‖² 가 모듈 간 상관을 제곱해 축 전체의 Φ 스케일을 bar 아래로 밀어냈다."
+→ 실측 Φ_pop(B) = 0.001623 (예측 구간 하단 적중) · 4-leg 전부 FAIL.

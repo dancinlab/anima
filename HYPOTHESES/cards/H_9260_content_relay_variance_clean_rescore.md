@@ -107,9 +107,22 @@ tier 를 못 박지 않은 이유가 바로 그것이다(⏳, 🧱 아님). 그�
    통합을 격리하지 못한다. 대체 통제 = 용량정합 X (본 프로브에 구현됨, 재사용).
 3. bar(+0.02)·seed([3..11])·하이퍼는 그대로 동결. 어떤 재시도도 이 셋을 건드리면 무효.
 
+## AMENDMENT (2026-07-14 · H_9292) — 이 ⏳ 는 옳았으나 **이유가 틀렸다**
+
+NEXT#1("계측기를 먼저 세워라")을 실행한 결과, **rank-uniform 은 범인이 아니었다**. 진범은 동결
+T=64 자체의 **plugin-MI 편향 pedestal** 이다: 참 통합량이 0 인 PEDESTAL arm(모듈별 독립 시간순열)이
+T=64 에서 **Φ = 1.813** (동결 bar 의 90배)을 뱉고, Φ ∝ 1/T 로 붕괴한다. 즉 본 카드의 P1b 잔존
+(seed 10 +0.1097)·P0 부호반전(±0.46)·C-ISO 1/9 반증은 **전부 그 pedestal 위 잡음의 발현**이었다
+(모집단에서 |ΔΦ(B−Cperm)| = 1.6e-6 ⇒ `mc_shuffle` 은 실제로 VOID 통제가 맞다 — 원 설계 논증이 옳았다).
+
+모집단 효과크기(T=65536): Φ_pop(B)=0.00162 · ΔΦ(B−X) = **−0.000116** ⇒ 동결 bar(+0.02)는 이 축의
+Φ 동적범위의 **12배**. 본 카드의 "B 의 우위 증거 0" 은 유지되나, 그 이유는 disjointness 가 없어서가
+아니라 **T=64 에서 그 크기의 효과는 원리적으로 관측 불가**여서다. → `H_9292` (⏳ BAR-ABOVE-SIGNAL).
+
 ## Cross-links
 
-H_1283 (content 축 R1~R9 · R6 🟢 의 출처) · H_1328 (amplitude-variance estimator confound) ·
+H_9292 (계측기 감사 · 본 카드의 진단을 실측 확정 + 이유 정정) ·
+H_1283 (content 축 R1~R9 · R6 🟢 의 출처 — H_9292 에서 **철회**) · H_1328 (amplitude-variance estimator confound) ·
 H_1448 (R8 timing 축 engine-native 🟢 WIRED — 본 재채점의 도구 계보) ·
 `a_break_the_wall` · `a_phi_iit4_tool` · `a_engine_native_learning` · `a_verified_must_wire` ·
 `a_toy_scale_recheck` · `a_scale_honest_scope` · `walls-delegate-to-fable` · c9 · c16 · p7

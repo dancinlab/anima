@@ -14932,6 +14932,13 @@
     "source": "scratchpad-tmp-loss",
     "value": "세션 산출물(수정된 측정 harness·신규 도구·convergence 기록)을 /tmp scratchpad 또는 STALE primary checkout에만 두면 통째로 소실된다. 실제 손실 2건: (a) MORPH-ATOM/NAT-ATOM 4중 계측버그픽스와 신규 도구(dumphidden·gprobe_run·gen_codec_natural·fire_*.sh·dir-relative install_ma.sh)가 worktree sweep으로 wipe — state/에 커밋된 건 BUGGY 옛 버전이라 재현자가 같은 4중 버그를 그대로 다시 맞을 뻔. (b) `sidecar architecture convergence add`가 STALE primary checkout(origin/main 90 behind)에 쓰는데 PR은 worktree(=origin/main 기준)서 나가므로 convergence 기록 3건이 origin/main에 아예 안 실림 — 세션 핵심 교훈 소실.",
     "threshold": "재발조건: 실험 도구/harness를 scratchpad(/tmp)에서 만들고 verdict만 커밋할 때 · `sidecar architecture convergence add`/`changelog add`를 stale main-dir에서 실행하고 PR은 worktree서 낼 때. 해결: (1) 도구는 만든 그 PR에서 state/<프로그램>/에 함께 커밋(preserve-state c5) — 특히 기존 커밋본을 FIX한 경우 반드시 덮어써 커밋(버그版이 SSOT로 남으면 재현자가 같은 함정) (2) convergence/CHANGELOG는 PR을 낼 그 WORKTREE 안에서 실행하거나, 머지 전 origin/main 기준으로 재적용했는지 검증 (3) pr-cycle sweep이 worktree를 지우므로 scratchpad 산출은 커밋 전엔 언제든 사라진다고 가정."
+   },
+   {
+    "id": "h-9292-content-relay-2026-07-14-1",
+    "state": "pos-conv",
+    "value": "Φ/plugin-MI 추정량 기반 판정은 참 값이 0인 양성대조(PEDESTAL)를 같은 T·같은 binning 으로 반드시 동반해야 한다. H_1283 content-relay 축은 동결 T=64·nbins=8(joint cell 64개에 표본 64개=cell당 1개)에서 Φ를 읽어왔는데, 참 통합량이 0인 계(모듈별 독립 시간순열)가 그 지점에서 Φ=1.813을 뱉는다 — 동결 bar(+0.02)의 90배. 즉 T=64 Φ의 ~99.9%가 추정기 자신의 plugin 편향(Φ ∝ 1/T)이었고 arm 간 대비는 sd≈0.30의 잡음. 그 위에서 R6(N개 병렬채널이 천장을 깬다, ΔΦ +0.089/+0.034/+0.101)가 🟢로, 나머지 R1-R9가 🧱로 굳었다 — 정반대 두 판정이 같은 고장난 자 위에. 모집단(T=65536) 실측 ΔΦ(B−X)=−0.000116(T=64 대비 269배 팽창·부호 반대).",
+    "threshold": "재발조건: 표본수 대비 joint-bin 수가 큰 격자에서 MI/Φ를 raw 값으로 읽고 통제군이 '구조를 깨는 것'뿐일 때. 해결: (1) 캠페인 前 P0′ 효과크기 게이트 — 대표본으로 모집단 효과크기가 동결 bar와 통약 가능한지 먼저 확인, 아니면 tier를 못 박지 말고 'bar가 충족 불가능함'을 보고(bar 이동 아님) (2) 한 축의 bar를 다른 축으로 상속 금지 — timing 축 +0.02는 Δ≈1.2(잡음의 4배)라 타당했으나 content 축 참 Δ≈1e-4에는 12배 과대 (3) 통제군은 참 값이 0임이 구성상 보장된 PEDESTAL arm이어야 한다 — 없으면 '모든 구조를 파괴하는 계기'도 통제를 통과한다.",
+    "source": "H_9292 (시상 content-relay 계측기 감사 · 2026-07-14)"
    }
   ]
  }
