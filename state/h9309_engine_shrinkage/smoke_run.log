@@ -1,0 +1,14 @@
+starvation regime: VJ2=200, cells 4->64
+[E1] grow_max=64   OLD cells=14   REPAIRED cells=22   -> PASS
+
+[E2] SAME partition, two heads (grown once, heads rebuilt) -- the head is the only change.
+  grow_max=   4  cells=  4  ~ 500 pts/cell   FLAT ce=4.83107   SHRINK ce=4.86053   d=+0.02946
+  grow_max=  16  cells= 16  ~ 125 pts/cell   FLAT ce=4.98423   SHRINK ce=4.95945   d=-0.02478
+  grow_max=  64  cells= 64  ~  31 pts/cell   FLAT ce=5.04998   SHRINK ce=4.89979   d=-0.15020
+
+  FLAT   change over the sweep = +0.21891 nats  (must be > 0 = starvation engaged)
+  SHRINK change over the sweep = +0.03926 nats
+[E2] -> PASS - the engine reproduces the H_9301 dissociation on its OWN partition: the flat head degrades under starvation, the shrinkage head degrades less.
+
+VERDICT: ENGINE-NATIVE WIRED - both faculties fire live in core/engine_cli
+rc=0

@@ -7350,6 +7350,62 @@ fn _jh_counts(Y: [int], owner: [int], k: int, ntr: int, vj: int, laplace: float)
     return p
 }
 
+// _jh_pooled — the ROOT (all-cells-pooled) next-symbol distribution over the first `ntr` train
+// points. This is the PARENT a starved cell borrows strength from (H_9298).
+fn _jh_pooled(Y: [int], ntr: int, vj: int, laplace: float) -> [float] {
+    let mut counts = []
+    let mut v = 0
+    while v < vj { counts = counts + [laplace]  v = v + 1 }
+    let mut total = laplace * to_float(vj)
+    let mut i = 0
+    while i < ntr { counts[Y[i]] = counts[Y[i]] + 1.0  total = total + 1.0  i = i + 1 }
+    let mut p = []
+    let mut w = 0
+    while w < vj { p = p + [counts[w] / total]  w = w + 1 }
+    return p
+}
+
+// _jh_counts_wb — the per-cell head under WITTEN-BELL SHRINKAGE (H_9298 🟢, engine-native transfer).
+//
+// WHY (the law): gain = new-information − partition-cost, and the partition cost is paid UP FRONT.
+// A flat per-cell count-MLE head (`_jh_counts`) has no way to buy a fraction of a conditioning bit
+// — every split divides its evidence, so a starved cell pays variance it cannot afford. Measured
+// (H_9301, mirror): as the pool grows 11 → 320 cells the FLAT head DEGRADES by +0.0555 nats (that
+// is exactly the "capacity-bound" / "substrate saturates" signature of H_1310 and H_1307 RUN B),
+// while the shrinkage head over the SAME partition stays flat (degradation 0). On the KO jamo axis
+// the same swap broke a floor that had held across four mechanism families (2.61186 → 2.45205).
+//
+//   P(next | cell) = lam * MLE(cell) + (1 − lam) * P_pooled(root)
+//   lam = n / (n + T)      n = tokens owned by the cell, T = distinct next-symbols seen in it
+//
+// @L4 (identical framing to `_jh_counts`): a PURE COUNT-HEAD — no gradient, no emit gate; the SOLE
+// state is counts. lam is the closed-form Witten-Bell estimate, NOT a tunable: there is no knob to
+// sweep, so tune-to-green is structurally impossible here.
+fn _jh_counts_wb(Y: [int], owner: [int], k: int, ntr: int, vj: int, pooled: [float]) -> [float] {
+    let mut counts = []
+    let mut v = 0
+    while v < vj { counts = counts + [0.0]  v = v + 1 }
+    let mut n = 0.0
+    let mut i = 0
+    while i < ntr {
+        if owner[i] == k { counts[Y[i]] = counts[Y[i]] + 1.0  n = n + 1.0 }
+        i = i + 1
+    }
+    // T = distinct next-symbol TYPES observed in this cell (Witten-Bell's escape mass)
+    let mut t = 0.0
+    let mut w = 0
+    while w < vj { if counts[w] > 0.0 { t = t + 1.0 }  w = w + 1 }
+    let lam = if n + t > 0.0 { n / (n + t) } else { 0.0 }   // n = 0 -> lam = 0 -> exactly the parent
+    let mut p = []
+    let mut u = 0
+    while u < vj {
+        let mle = if n > 0.0 { counts[u] / n } else { 0.0 }
+        p = p + [lam * mle + (1.0 - lam) * pooled[u]]
+        u = u + 1
+    }
+    return p
+}
+
 // _jh_owned_ce — mean train CE owned by cell `k` (the split-priority signal).
 fn _jh_owned_ce(Y: [int], owner: [int], k: int, ntr: int, p: [float]) -> float {
     let mut s = 0.0  let mut n = 0  let mut i = 0
@@ -7508,6 +7564,94 @@ pub fn jamo_head_grow(jh: JamoHead, Xtr: [[float]], Ytr: [int], ntr: int,
     let own_tr = _jh_assign(af, Xtr)
     let mut heads = []  let mut k = 0
     while k < len(centers) { heads = heads + [_jh_counts(Ytr, own_tr, k, ntr, vj, laplace)]  k = k + 1 }
+    return JamoHead { centers: centers, heads: heads, vj: vj, dim: dim }
+}
+
+// jamo_head_grow_shrink — the SAME error-targeted gradient-free Voronoi growth as
+// `jamo_head_grow` (p8, gated by the engine's OWN engine_mitosis_tick), with TWO engine-native
+// transfers from the H_9298/H_9301 mirror campaign. `jamo_head_grow` is left UNTOUCHED so the
+// H_1321 GREEN verdict stays byte-reproducible; this is a NEW faculty beside it.
+//
+//  (1) GROWTH REPAIR (H_9301). The old loop does `if nlo == 0 || nhi == 0 { break }` — a single
+//      cell whose max-variance axis holds too few distinct values makes a degenerate median split
+//      (every owned point lands on one side), and that BREAKS THE WHOLE GROWTH LOOP: the other,
+//      still-splittable cells die with it. Measured (mirror, instrumented): the pool hard-capped
+//      at 11 cells no matter the budget (grow_max 400), the split threshold (0.0) or min_owned (2)
+//      — the cap was this line, not capacity. Here a degenerate cell is BLACKLISTED and growth
+//      continues with the next eligible cell; growth ends only when NO eligible cell can split.
+//
+//  (2) SHRINKAGE HEAD (H_9298). The per-cell heads are filled by `_jh_counts_wb` (Witten-Bell,
+//      lam = n/(n+T)) instead of the flat Laplace count-MLE, so a starved cell borrows strength
+//      from the pooled root instead of paying the full variance of its own split.
+//
+// HONEST (the boundary, H_9306): shrinkage buys back the variance a split destroys — it does NOT
+// manufacture information. Where the recovered amount is smaller than the wall (from-scratch pure
+// mitosis vs an exact n-gram floor: recovered −0.035, wall +0.069), the wall STANDS. This faculty
+// removes an estimator defect; it is not a capability claim.
+pub fn jamo_head_grow_shrink(jh: JamoHead, Xtr: [[float]], Ytr: [int], ntr: int,
+                             grow_max: int, min_owned: int, split_thresh_ce: float,
+                             laplace: float, cfg: EngineConfig) -> JamoHead {
+    let dim = jh.dim
+    let vj = jh.vj
+    let mut centers = jh.centers
+    let mut af = _jh_field(centers, grow_max)
+    let mut dead = []                      // cells proven unsplittable (degenerate median split)
+    let pooled = _jh_pooled(Ytr, ntr, vj, laplace)
+    while len(centers) < grow_max {
+        let owner = _jh_assign(af, Xtr)
+        let mut owned_n = []  let mut z = 0
+        while z < len(centers) { owned_n = owned_n + [0]  z = z + 1 }
+        let mut i = 0
+        while i < ntr { owned_n[owner[i]] = owned_n[owner[i]] + 1  i = i + 1 }
+        let mut local_ce = []  let mut k = 0
+        while k < len(centers) {
+            let p = _jh_counts(Ytr, owner, k, ntr, vj, laplace)
+            local_ce = local_ce + [_jh_owned_ce(Ytr, owner, k, ntr, p)]
+            k = k + 1
+        }
+        let mut elig = []  let mut k2 = 0
+        while k2 < len(centers) {
+            let mut is_dead = false
+            let mut d2 = 0
+            while d2 < len(dead) { if dead[d2] == k2 { is_dead = true }  d2 = d2 + 1 }
+            if !is_dead && owned_n[k2] >= min_owned && local_ce[k2] > split_thresh_ce {
+                elig = elig + [k2]
+            }
+            k2 = k2 + 1
+        }
+        if len(elig) == 0 { break }
+        let mut pick = elig[0]
+        let mut bestce = local_ce[elig[0]]
+        let mut ei = 1
+        while ei < len(elig) {
+            if local_ce[elig[ei]] > bestce { bestce = local_ce[elig[ei]]  pick = elig[ei] }
+            ei = ei + 1
+        }
+        let grown = engine_mitosis_tick(len(centers), cfg)
+        if grown <= len(centers) { break }
+        let ax = _jh_hi_var_axis(Xtr, owner, pick, ntr, dim)
+        let med = _jh_owned_median(Xtr, owner, pick, ntr, ax)
+        let nlo = _jh_half_count(Xtr, owner, pick, ntr, ax, med, true)
+        let nhi = _jh_half_count(Xtr, owner, pick, ntr, ax, med, false)
+        if nlo == 0 || nhi == 0 {
+            dead = dead + [pick]           // H_9301 REPAIR: blacklist this cell, do NOT kill growth
+            continue
+        }
+        let c_lo = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, true, dim)
+        let c_hi = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, false, dim)
+        let mut new_centers = []  let mut ci = 0
+        while ci < len(centers) {
+            if ci != pick { new_centers = new_centers + [centers[ci]] }
+            ci = ci + 1
+        }
+        new_centers = new_centers + [c_lo, c_hi]
+        centers = new_centers
+        dead = []                          // indices shifted by the rebuild; re-derive next pass
+        af = _jh_field(centers, grow_max)
+    }
+    let own_tr = _jh_assign(af, Xtr)
+    let mut heads = []  let mut k3 = 0
+    while k3 < len(centers) { heads = heads + [_jh_counts_wb(Ytr, own_tr, k3, ntr, vj, pooled)]  k3 = k3 + 1 }
     return JamoHead { centers: centers, heads: heads, vj: vj, dim: dim }
 }
 
