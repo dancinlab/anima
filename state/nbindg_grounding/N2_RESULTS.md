@@ -10,7 +10,7 @@
 | main-s7 | 7 | ✅ 완주 | ✅ |
 | main-s11 | 11 | ✅ 완주 | ✅ |
 | base_only | 7 | ✅ 완주 | ✅ |
-| shuffle_grid | 7 | ⏳ 67% (summer) | — |
+| shuffle_grid | 7 | ✅ 완주 | ✅ |
 
 ## 🔴 동결 유효성 게이트 (a) — main seen P_grid D-acc ≥ 0.85
 
@@ -34,7 +34,7 @@
 | **main-s7 (seed 7 · 유효)** | **0.477** | **−0.023** | **0.402** | 0.552 |
 | main-s11 (seed 11 · INVALID) | 0.316 | −0.184 | 0.391 | 0.241 |
 | base_only | 0.000 | −0.500 | 0.000 | 0.000 |
-| shuffle_grid | ⏳ | | | |
+| shuffle_grid | **0.4770** | −0.023 | 0.517 | 0.437 |
 
 **`base_only = 0.000` 은 유효성 파탄이 아니다.** filler 만 본 모델은 `긍정.`/`부정.` **형식 자체를
 못 낸다**(극성을 틀리는 게 아니라 그 어휘를 출력하지 않음). 동결 스펙이 Δ 바닥을 `max(control, 0.50)`
@@ -118,10 +118,42 @@ bar 를 내려 통과시키는 것은 tune-to-green 이므로 금지.
 3. **게이트 라벨을 인과 중립으로** — "under-exposed" 가 아니라 "install-fail"
    (오늘 그 인과 라벨이 데이터에 반증됐다).
 
-## 즉시 잔여 ($0)
+## 🏁 shuffle_grid 착지 — 분기 완결 (2026-07-13 18:12)
 
-- **shuffle_grid 완주**(74% · summer · ~2.5h) → coin-seen ≥ 0.85 + held-out
-  → FORMAT-🧱 vs GROUNDING-🧱 분기 완결 → 카드 H_9286 종결.
+| 게이트 | 값 | 판정 |
+|---|---|---|
+| shuffle coin-seen (a′ control liveness) | **0.5375** | ❌ FAIL (bar 0.85) |
+
+**그러나 shuffle 은 형식을 설치했다**: 유효 극성어(`긍정`/`부정`) 방출 **0.966** vs base_only **0.000**.
+게이트 (a′)가 요구한 것은 *무작위 동전 80개의 통암기*이고, arm 의 설계 의도인 *형식 설치*는 성립한다.
+(bar 는 건드리지 않는다 — 동결 그리드상 (a′)는 FAIL 이다.)
+
+### 🔑 연산자의 held-out 이득 = 정확히 0
+
+```
+  main-s7  (진짜 XOR 격자)   83/174 = 0.4770
+  shuffle  (동전 무작위 격자) 83/174 = 0.4770   ← 문항 수까지 동일
+```
+
+**MODEL-🧱(연산자 전이 실패)이라면 진짜-XOR arm 이 동전 arm 을 앞서야 한다. 앞서지 않는다.**
+좌항(극성 접지)이 없으므로 어떤 연산자를 설치했든 held-out 에서 무의미하다 ⟹ **GROUNDING-🧱 확정 방향**.
+
+## 최종 라벨
+
+- **동결 그리드 = INVALID** (게이트 2건 실패: (a) s11 seen 0.725 · (a′) shuffle coin-seen 0.5375).
+  정직하게 그렇게 읽는다. bar 하향 = tune-to-green 이므로 금지.
+- **NAT-CRACK = REFUTED (TERMINAL · 이 설계점)** — 게이트와 **독립적으로** 성립: 양성 bar 가
+  conjunctive 라 유효 seed 7(seen 0.950 PASS)이 Δ=−0.023 로 bar 아래면 그것으로 죽는다.
+- **GROUNDING-🧱 / ARBITRARY-GROUNDING = DIRECTIONAL(강)** — flip0 0.402 < 0.50 ·
+  I(gold;resp)=0.007 bits · 원자별 극성일치 12/29=0.414 · **연산자 이득 0**(shuffle == main).
+- **H_9286 은 병렬 세션이 같은 결론(GROUNDING-WALL)으로 이미 종결** — 이 run 은 **독립 재현**
+  (main-s7 소수점 4자리 일치) + **기제 규명**(ARBITRARY-GROUNDING) + **라벨 정정**(install-fragile).
+
+## reopen = N3 (별도 사전등록)
+
+표적은 seed 수가 아니라 **접지 채널** — held-out 극성을 자연 분포에서 실제로 접지시키는 데이터/objective.
+사전 고정: TOST Δ_eq·N_REQ(음성 종결은 threshold grid 로 cement 불가) · seed 정책(설치-게이트 통과 2 seed
+까지, 최대 K발, 전 seed 보고) · 게이트 라벨 인과중립화("install-fail").
 
 ## 측정 인프라 (판정과 격리 · `infra-wall-noneval`)
 

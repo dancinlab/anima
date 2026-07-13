@@ -108,3 +108,49 @@ PULL 로컬(byte-동일 sha256 3중). exit=held-out 극성 접지시키는 데�
 `state/nbindg_grounding/`: N1(gen_nbindg.py·nbindg_carrier_ladder_manifest·N1_RESULT) · N2(gen_nbindg_n2.py
 멀티코퍼스+exposure-matched·N2_PREFIRE_AUDIT·n2_eval_manifest·FABLE_N2_RECIPE·N2_STATUS) · P_nat_freeze.
 [[xbind-g1-crack-measure-not-substrate]]·H_9272·H_9267·[[measurement-metalaw-form-tunable-bind-earned]].
+
+## 🔁 독립 재현 + 기제 규명 (병렬 세션 2차 4-arm · 2026-07-13 · 학습·eval 전부 별도)
+
+같은 동결 스펙으로 **독립 4-arm** 을 따로 학습(다른 호스트·다른 eval 파이프라인)한 결과 —
+**GROUNDING-WALL 판정이 재현**되고, 벽의 **기제**가 한 칸 더 좁혀졌다. 원본 JSON = `state/nbindg_grounding/N2_EVAL/`.
+
+| arm | SEEN 게이트 | held-out D-acc | flip0(극성접지) | flip1(연산자) |
+|---|---|---|---|---|
+| **main-s7** | **0.950** ✅ | **0.4770** | **0.402** | 0.552 |
+| main-s11 | 0.7250 ❌ | 0.3161 | 0.391 | 0.241 |
+| base_only | — | 0.0000 | 0.000 | 0.000 |
+| **shuffle_grid** | coin-seen **0.5375** ❌ | **0.4770** | 0.517 | 0.437 |
+
+**① main-s7 이 소수점 4자리까지 일치**(seen 0.9500 · held-out 0.4770) — 별도 학습·별도 채점의
+독립 재현. 측정 경로 무결성 확증.
+
+**② 연산자의 held-out 이득 = 정확히 0**: 진짜 XOR 격자 arm 과 동전(무작위) 격자 arm 의 held-out 이
+**83/174 = 0.4770 로 동일**(문항 수까지). shuffle 은 형식을 설치했다(유효 극성어 방출 **0.966** vs
+base_only **0.000**) — 즉 format-live 인데 연산자만 없는 arm 이 **진짜 연산자 arm 과 같은 점수**다.
+⟹ MODEL-🧱(연산자 전이 실패)이라면 진짜-XOR arm 이 앞서야 하는데 **앞서지 않는다** → GROUNDING-🧱 강화.
+
+**③ ARBITRARY-GROUNDING (신규 기제)** — `flip0 < 0.50` 의 두 대안이 **둘 다 반증**된다:
+정보-채널(main-s7 held-out) I(atom;resp)=**0.231 bits** · I(form;resp)=0.133 · I(flip;resp)=0.024 ·
+**I(gold;resp)=0.007 bits ≈ 0**. 원자별 부여극성이 참 극성과 일치 = **12/29 = 0.414**(동전던지기).
+(i) 상수방출 marginal 붕괴 → 반증(응답이 원자에 따라 안정적으로 변함) ·
+(ii) 체계적 반전접지 → 반증(0.414 는 ~0 이 아님).
+⟹ 모델은 새 원자의 극성을 *모르는* 게 아니라 **안정적으로 멋대로 정했다**(자연분포와 무관).
+**좌항 부재가 아니라 틀린 좌항 설치** — 벽을 약화가 아니라 **강화**한다.
+
+**④ NAT-CRACK 은 유효 seed 하나로 이미 REFUTED**: 양성 bar 가 **conjunctive**(양 seed Δ≥0.20)라
+유효성 게이트를 통과한 seed 7 이 bar 아래(Δ=−0.023)면 그것으로 죽는다 ⟹ seed-11 재발사는
+이미 죽은 양성 verdict 를 위한 지출 = **전면 기각**(설계 감사 `FABLE_N2_REFIRE.md`).
+
+**⑤ 게이트 라벨 정정 — `under-exposed` 는 반증됐다**: main-s7 val_CE **3.86657** vs main-s11 **3.87250**
+= 사실상 동일 수렴(노출 바이트·T·f_grid 도 동일) ⟹ under-trained 아님. 진짜 기제는 **install-fragile
+(최적화 분산)**. 게이트 (a) 자체는 옳다(설치 안 된 모델로 transfer 를 재면 안 됨) — 틀린 것은 **인과 라벨**.
+bar·detector 불변이므로 tune-to-green 이 아니라 measurement-frame 정정.
+
+**⑥ 이 2차 run 의 동결-그리드 라벨 = INVALID**(게이트 2건 실패: (a) s11 seen 0.725 · (a′) shuffle
+coin-seen 0.5375). 동결 그리드는 그렇게 읽는 게 정직하다 — 그러나 ④(양성 반증)와 ②③(기제)은
+게이트와 **독립적으로** 성립한다. bar 하향 금지.
+
+**reopen = N3 별도 사전등록** — 표적은 seed 수가 아니라 **접지 채널**(held-out 극성을 자연 분포에서
+실제로 접지시키는 데이터/objective). 사전 고정할 것: TOST Δ_eq·N_REQ(음성 종결은 threshold grid 로
+cement 불가) · seed 정책("설치-게이트 통과 2 seed 까지, 최대 K발, 전 seed 보고") · 게이트 라벨 인과중립화
+("install-fail"). 산출 = `state/nbindg_grounding/{N2_RESULTS.md, FABLE_N2_REFIRE.md, N2_EVAL/}`.
