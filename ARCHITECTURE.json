@@ -14802,6 +14802,13 @@
     "value": "장시간 학습(수 시간+)을 --ckpt-every 없이 발사하면 중간에 죽었을 때 **처음부터** 다시 해야 한다. 2026-07-13 N2 에서 17시간 GPU 를 이렇게 날렸다(main-s11 13h = 다른 세션이 pod 을 stop 해 /workspace wipe · shuffle_grid 4h = earlyoom kill). 더 나쁜 건 --ckpt-every 를 켜도 그것만으로는 재개가 안 됐다는 점 — 중간 산출물이 **양자화된 .clm** 뿐이었고 --init 은 .clm 을 거부한다(\"Quantized .clm is refused\"). 재개 가능한 .pt 는 학습이 **끝나야만** 나왔다. FIX(train-py-7): --ckpt-every 가 .clm 과 함께 rolling <out>.resume.pt 를 쓰도록 수정 → `--init <out>.resume.pt` 로 재개. 검증(summer 실경로): 60-step 학습이 smoke.clm.resume.pt(6.8MB) 생성 → --init 로 재개 시 \"warm-start ✓ .pt loaded 31/31 keys (untouched=0 extra-in-ckpt=0)\" 완전 복원.",
     "threshold": "재발조건 = anima-py train 을 수 시간 이상 돌릴 때(특히 pod/pool 처럼 죽을 수 있는 호스트). 해결 = (1) **장시간 fire 는 --ckpt-every N 을 반드시 켠다**(N=2000~5000; 13h GPU 가 디스크 ~1.4GB 값어치다) (2) 죽으면 `--init <out>.resume.pt` 로 이어서 발사 (3) .clm 중간 산출물로 재개하려 하지 말 것 — 양자화라 --init 이 거부한다 (4) N2 처럼 여러 arm 을 병렬로 태우면 arm 마다 --ckpt-every 를 켜라(한 arm 이 죽어도 나머지가 안 무너진다).",
     "source": "cli/train.py"
+   },
+   {
+    "id": "evaluate-py-9",
+    "state": "pos-conv",
+    "value": "장시간 measurement run 의 진행 하트비트는 **1번 항목에서** 나와야 한다 — 주기적(N마다)만으로는 부족하다. cli/evaluate.py `--xbind` 는 25문항마다 진행 줄을 찍었는데, 한 항목 = 모델 forward 약 10회라 포화된 공유 호스트에서는 항목당 수 분이 걸린다. 그러면 첫 신호까지 **몇 시간의 완전한 침묵**이고, 이는 행(hang)과 구분이 불가능하다. 2026-07-13 N2 채점 실사례: 다른 임차인들이 load average ~106 으로 채운 렌트 박스(192-thread EPYC)에서 174문항 run 이 **5시간 동안 진행 줄 0개** — 25문항조차 못 끝냈다. \"느린가 멈췄나\"를 가리려고 2문항 매니페스트를 손으로 만들어야 했고 그 사이 5시간을 태웠다. 실측 대비: 같은 채점이 전용 호스트에선 **4.3 s/item**(pod 는 12분+/item = 170배). 수정(0.13.11) = 1번 항목 즉시 하트비트 + 이후 25마다, 각 줄에 `s/item · elapsed · eta`. 이제 30초 만에 `eta=35h00m` 이 떠 호스트 오배치가 즉시 드러난다.",
+    "threshold": "재발조건 = (a) 새 장시간 measurement/eval 루프를 추가할 때 (b) 원격 job 이 \"진행이 없는데 CPU 는 돌고 있다\"로 보일 때. 해결 = **모든 항목-루프 measurement 는 첫 항목에서 하트비트를 찍고 s/item + eta 를 함께 낸다**(주기 출력만 두지 말 것 — 항목이 느리면 주기가 곧 침묵이다). 진단 순서 = (1) 로그에 진행 줄이 하나라도 있나 — 없으면 첫-항목 하트비트 부재를 의심 (2) `uptime` 으로 호스트 load average 확인 — 렌트 박스는 **다른 임차인이 포화시켜** nproc 이 커도 내 몫이 거의 없을 수 있다(192-thread 에 load 106) (3) 항목당 비용을 2-item 매니페스트로 실측해 ETA 를 세운 뒤 호스트를 고른다. 교훈: **nproc 은 용량이 아니다 — load average 를 보라.** dont: 진행 줄 없는 장시간 루프 · 항목당 비용 모른 채 호스트 선택 · 침묵을 정체로 단정(반대도 금물).",
+    "source": "cli/evaluate.py"
    }
   ]
  }

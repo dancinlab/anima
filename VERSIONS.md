@@ -27,6 +27,17 @@
 > positive control은 POOL-gated(mini-OOM)라 leg는 T1/T3 통과까지 VOID. Part B regime
 > (rolling-transcript seed)=design-only pre-reg. cli/chat.py wheel 변경이라 G5 patch bump.
 >
+> **0.13.10 → 0.13.11** (2026-07-13): 🩺 `--xbind` 진행 하트비트 — `cli/evaluate.py`
+> `xbind_run()`. 문제: 진행 줄이 **25문항마다만** 찍혔다. 한 항목 = 모델 forward 약 10회라
+> 포화된 공유 호스트에서는 항목당 수 분이 걸리고, 그러면 첫 신호까지 **몇 시간의 완전한 침묵** —
+> 행(hang)과 구분 불가. 실사례(N2 채점): 다른 임차인들이 load average ~106 으로 채운 렌트
+> 박스에서 174문항 run 이 **5시간 동안 진행 줄 0개**(25문항조차 못 끝냄). "느린가 멈췄나"를
+> 가리려고 2문항 매니페스트를 손으로 만들어야 했고, 그 사이 5시간을 태웠다. 수정: **1번 항목에서
+> 즉시** 하트비트 + 이후 25문항마다, 각 줄에 `s/item · elapsed · eta` 포함(`_xbind_hms`).
+> 같은 run 이 이제 30초 만에 `eta=35h00m` 을 뱉어 호스트 오배치를 즉시 드러낸다(대조: 같은
+> 채점이 전용 호스트에선 4.3 s/item). 새 플래그 없음 → `--help` 무변경. wheel 콘텐츠
+> (`cli/evaluate.py`) 변경이라 VERSION lockstep patch bump.
+>
 > **0.13.9 → 0.13.10** (2026-07-13): 🛡️ GPU capability 게이트를 커널-스모크로 정직화 —
 > `core/decode.py` `cuda_available()`. 문제: 게이트가 "cupy import + `getDeviceCount()>0`"
 > 까지만 봐서, JIT 툴체인이 깨진 호스트를 device path 로 **승격**시켰다. 렌트 GPU pod 실사례:
