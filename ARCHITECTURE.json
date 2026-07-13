@@ -83,7 +83,16 @@
    "path": "~/anima-weights/clm_3b/clm_3b.clm",
    "hf": "dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b",
    "visibility": "PUBLIC",
-   "progress": "trained 2026-06-05 · 2000 step · d4096/L30/E30 · GENERALIZES (F_CLM_LANEP_3B_GEN=1 · val gap +0.093/-0.003) · CLM_V3 decodable nblk63 · UNDERTRAINED (tok/param 3.48 ≪ chinchilla 20) · scale-ladder rung 303M→1B→3B→7B",
+   "progress": [
+    "trained 2026-06-05",
+    "2000 step",
+    "d4096/L30/E30",
+    "GENERALIZES (F_CLM_LANEP_3B_GEN=1",
+    "val gap +0.093/-0.003)",
+    "CLM_V3 decodable nblk63",
+    "UNDERTRAINED (tok/param 3.48 ≪ chinchilla 20)",
+    "scale-ladder rung 303M→1B→3B→7B"
+   ],
    "sha256": "01df4f26ae64ca275120f41e1a12cd09d3f4dd6c359fb19e02a8f7509b58fd99",
    "features": [
     "byte-level",
@@ -1373,11 +1382,19 @@
                 "detail": "🔴 KILL: 용량캡(대사 희소성)=G1 레버 아님. 결합 코퍼스 held-out D-acc k=2 0.785 ≪ k=64 0.977 (Δ=−0.192±0.060·sweep 단조하강·전 k train acc=1.000 ⇒ 쌍별 암기). 희소성=발견 아닌 암기 압력. 동반 F1 ⛔INVALID·F11 🎭THEATER. G1 exit=H_9267 XBIND. 🚫conj_index 금지(거짓GREEN). state/mito_organelle_lane/F6_capacity_pressure_conjunction/"
                },
                {
-                "name": "G1 자연 자발창발 = DATA-🧱 (H_9290 NAT-ATOM · 2×2 완성)",
+                "name": "G1 자연 자발창발 = 추출-🧱 (정보는 있다 · H_9291 오라클이 DATA-🧱 재국소화)",
                 "id": "g1-natural-emergence-data-wall",
                 "role": "자연-분포 접지 셀 verdict — 원자성도 rescue 못함",
-                "detail": "🧱 NO-RESCUE(2026-07-13·303M engine-native·state/verdicts/9290_nat_atom/): codec 원자성이 자연-분포 held-out 술어 극성 접지 rescue 못함 — G-PROBE heldout-acc=0.345 < raw 0.552 < bar 0.65 · train_fit=1.0 · Δ_shuffle=−0.15. 2×2 완성(raw/codec × 합성/자연): 자연 셀 둘 다 🧱. 원자성=증폭기이지 신호 원천 아님. 병목=DATA. 다음=rung-2 하이브리드.",
-                "children": []
+                "detail": "🧱 벽 유지하되 진단 이동: H_9290 NO-RESCUE(codec 원자성도 자연접지 rescue 못함 · G-PROBE 0.345<bar 0.65)로 2×2 완성(자연 셀 둘 다 🧱). 그러나 H_9291 오라클(2026-07-14)이 '정보 부재' 전제를 반증 — 이상적 판독자가 모델과 동일 증거로 held-out 극성 29/29 복원(SHUFFLE 통제 0.517=우연). ⟹ 병목은 DATA(정보없음)가 아니라 **추출/확정 채널**. 다음=O(확정-금지·서열)·C(표적교정).",
+                "children": [
+                 {
+                  "id": "h9291-oracle-ceiling",
+                  "type": "gate",
+                  "name": "H_9291 ORACLE 정보상한 — 자연 문맥은 극성을 완전히 결정한다 (🟢 EVIDENCE-PRESENT)",
+                  "detail": "MASKED(어간 가림·문맥만) 29/29=1.000 · SHUFFLE(다른 어간 문맥) 0.5172=우연 · LEXICAL 1.000. 증거=gt_prompts 좌문맥 24/원자(G-PROBE 가 읽는 것과 byte-동일) ⟹ 선형프로브 vs 이상적판독자 1:1. 기제=극성이 동반 감성문맥에 실림. SCOPE: 판독자는 사전학습 한국어 감성어휘 보유 → '증거 안의 정보량' 상한이지 '303M 학습가능성' 상한 아님. 밀도 희박(d_nat 42.3/MB)≠정보 없음. state/g1_next_ladder/",
+                  "role": "'자연 자발창발' 프레임 판정 — ill-posedness 반증, 벽을 추출 채널로 재국소화"
+                 }
+                ]
                }
               ]
              },
@@ -1404,7 +1421,39 @@
                {
                 "name": "8 family → 가설 카드 매핑 (2표면 완비)",
                 "id": "exocon-family-cards",
-                "detail": "8 family→카드: F1 afferent-return H_9104🔴 · F2 consequence H_9109🔴 · F3 W4-ground H_9123🔵WIRED · F5 diff-LLM H_9111(layer-1 raw D=1.0; layer-2 🔴LIVE-BUT-GAUGE v0.574.1 dEff_ON−OFF 0.039<0.10, state/9111) · F6 referential H_9112🟢 · F7 H_9102 DEPLETED(MIXED terminal) · F8 EEG H_9064/680-682."
+                "detail": "8 family→카드: F1 afferent-return H_9104🔴",
+                "children": [
+                 {
+                  "id": "exocon-family-cards-p1",
+                  "name": "F2 consequence H_9109🔴",
+                  "detail": "F2 consequence H_9109🔴"
+                 },
+                 {
+                  "id": "exocon-family-cards-p2",
+                  "name": "F3 W4-ground H_9123🔵WIRED",
+                  "detail": "F3 W4-ground H_9123🔵WIRED"
+                 },
+                 {
+                  "id": "exocon-family-cards-p3",
+                  "name": "F5 diff-LLM H_9111(layer-1 raw D=1.0; layer-2 🔴LIVE-BUT-GAUGE v0.574.1 dEff_ON−O",
+                  "detail": "F5 diff-LLM H_9111(layer-1 raw D=1.0; layer-2 🔴LIVE-BUT-GAUGE v0.574.1 dEff_ON−OFF 0.039<0.10, state/9111)"
+                 },
+                 {
+                  "id": "exocon-family-cards-p4",
+                  "name": "F6 referential H_9112🟢",
+                  "detail": "F6 referential H_9112🟢"
+                 },
+                 {
+                  "id": "exocon-family-cards-p5",
+                  "name": "F7 H_9102 DEPLETED(MIXED terminal)",
+                  "detail": "F7 H_9102 DEPLETED(MIXED terminal)"
+                 },
+                 {
+                  "id": "exocon-family-cards-p6",
+                  "name": "F8 EEG H_9064/680-682.",
+                  "detail": "F8 EEG H_9064/680-682."
+                 }
+                ]
                },
                {
                 "name": "referential-correctness 축 OPENED (H_9125 🟢 DIRECTIONAL)",
@@ -4210,7 +4259,8 @@
        {
         "name": "load-once W-hoist twins (H_9107 · byte-identical perf)",
         "role": "perf-lockstep",
-        "note": "gen_auto_load/free·gen_clm_ideate_W·clm_load_W/clm_ce_seq_W(GPU-forge CE)·rho_fan_*_W WIRED into eval_reach_all→G0-G6가 .clm weight-set 1회 로드(per-decode reload 제거). H_9107 303M RSS-blowup OOM 해소. byte-identical(H_1400 reuse guard·verdict/output 불변). merged fix/h9107-reload."
+        "note": "gen_auto_load/free·gen_clm_ideate_W·clm_load_W/clm_ce_seq_W(GPU-forge CE)·rho_fan_*_W WIRED into eval_reach_all→G0-G6가 .clm weight-set 1회 로드(per-decode reload 제거). H_9107 303M RSS-blowup OOM 해소. byte-identical(H_1400 reuse guard·verdict/output 불변). merged fix/h9107-reload.",
+        "id": "load-once-w-hoist-twins"
        }
       ]
      },
@@ -10096,7 +10146,8 @@
          {
           "name": "G1 breakthrough brainstorm — variable-binding diagnosis + candidate families",
           "type": "note",
-          "detail": "[2026-07-02] G1벽 진단=VARIABLE BINDING 결핍(개념 COPY 안 하고 prior 샘플링). N14 activation-patching: 결합-부분공간 부재(0.40=control)·8-mech GPU 전부 held 0/5=bolt-on 전멸. 🎯 H_6182 반전: 조합-커버리지 밀도 5→80%서 held-out 1→40/40 상전이(임계~20%·shuffle 0), ConvMoE-L1도 재현 ⇒ 밀도=arch-무관 lever, trunk-objective TERMINAL 반박."
+          "detail": "[2026-07-02] G1벽 진단=VARIABLE BINDING 결핍(개념 COPY 안 하고 prior 샘플링). N14 activation-patching: 결합-부분공간 부재(0.40=control)·8-mech GPU 전부 held 0/5=bolt-on 전멸. 🎯 H_6182 반전: 조합-커버리지 밀도 5→80%서 held-out 1→40/40 상전이(임계~20%·shuffle 0), ConvMoE-L1도 재현 ⇒ 밀도=arch-무관 lever, trunk-objective TERMINAL 반박.",
+          "id": "g1-breakthrough-brainstorm"
          }
         ],
         "type": "gate",
@@ -13732,7 +13783,30 @@
           "id": "rho-axon-weave-nbindg",
           "name": "NBIND-G 자연-원자 grounding 전이 (H_9286·Fable 판정 유일 새 질문)",
           "role": "capability-followon",
-          "detail": "Fable 판정(2026-07-12): H_9272 grid arm은 실질 XBIND 재도색(pol을 authored grid 공급) — XBIND+H_9272+STAGE0 못 본 유일 non-tune-to-green 질문=ATOM-GROUNDING 전이(극성이 자연분포서만 접지된 원자에 grid 학습 XOR 연산자 적용?). Ground-truth: H_9272 학습 corpus=100% authored grid(raw NSMC 0)→grounding 본체는 기존 ckpt로 측정불가=N2 spend-gated. **N1 CARRIER-transfer 사다리 🟢-dir CARRIER-ROBUST(2026-07-12·summer $0·seed7 n40)**: 동일 held-out 셀, carrier 3레벨 held-out D-acc C0(이영화·학습)0.750/C1(명사구교체)0.675/C2(실제NSMC리뷰 prepend·wild-natural)0.700 — C0가 H_9272 재현(harness VALID)·C1C2≥C0-0.10(CARRIER-ROBUST bar)·FORMAT-🧱(≤0.55) 미발동 ⟹ 연산자 carrier-general(literal 프레임 비구속)=H_9272 강화(template-match 배제). scope=grounded grid-atom carrier 전이(atom-GROUNDING 아님). P_nat freeze 22atom(순수감성 재고 grid소진=희소 finding·purity 0.90→0.80 완화). **N2 grounding: INVALID→UNBLOCK→FIRE-READY(2026-07-12)**: (a) NSMC-only pre-fire INVALID(DATA-scale-blocked·k=4/pol<10·순수감성 재고 grid소진). (b) **외부 감성코퍼스 $0 확보**(naver_shopping 200k 상품+steam 100k 게임+NSMC 150k 영화=450k·3도메인·gen_nbindg_n2 --corpora)→purity≥0.85 P_nat k=15/pol→**pre-fire PASS**(owner-gated 오판 정정: 공개데이터=$0 로컬 anti-punt). (c) **Fable exposure-matched 레시피**: 노출=바이트 현상, 옛 filler-line knob은 f_grid≈0.059=미리만든 STAGE-1 INVALID→바이트비율 knob+P_nat 편향채움(occ floor 30)+T=⌈1.25×E*/f_grid⌉+grid재현 게이트+flip0/flip1 분해. (d) **빌드 all-green**: viable 29(좋=authored충돌 드롭)·n_eval 174·f_grid 0.1426·T=105,169 step·V_F pass(0/0)·PREFIRE_PASS. 4-arm(main s7·s11·base_only·shuffle_grid·전부 --arm ctrl ce_marginal·T동일) fire-ready. validity=main seen P_grid≥0.85+shuffle coin-seen≥0.85+V-F. **N2 결과=🧱 GROUNDING-WALL(measured 2026-07-13·4-arm 303M CLMConvMoE 신규학습 T=105,169 step ce_marginal bf16 seed7/11·rent 4-way RTX4090→summer/aiden GPU eval·frozen)**: held-out 174셀 D-acc base_only 0.000·shuffle_grid 0.362·main_s7 0.477·main_s11 0.345. ① main_s7 SEEN P_grid 0.950≥0.85=grid XOR 연산자 확실히 설치(validity PASS→INVALID 아님·진짜 negative) ② 양 seed 둘 다 chance floor 0.50 미만→Δ vs max(control,0.50) 음수→NAT-CRACK 반증 ③ flip0(극성 직접판독 liveness)이 양 seed 모두 chance 미만(main_s7 0.402·main_s11 0.368·둘 다 shuffle 0.448 이하·clean full-174/aiden 단발 eval)→모델이 P_nat 극성을 자연 사용에서 접지 못함→합성할 grounded operand 부재→GROUNDING-🧱 2-seed 확증. main_s11 SEEN D-acc 0.7375은 0.85 bar 미달이나 margin +16.0=grid 강설치(greedy vs margin 괴리·validity는 main_s7 SEEN 0.950이 clean-carry). ⟹ 연산자 설치는 carrier-general(N1)이나 극성의 자연-분포 접지 자체가 303M/이 노출/이 코퍼스서 install 안 됨→자발창발=(자연접지)×(연산자)의 좌항=0. substrate 천장 아닌 grounding/data 채널 벽·STAGE0 DATA-🧱+rho-axon-weave-nbind(H_9272 wild-FAIL)+xbind measure-not-substrate 정합. N1(연산자 frame-general 🟢-dir)+N2(자연접지 전이 🧱)=frontier g1-crack-natural-emergence 정직 종착. exit=held-out 극성 접지시키는 데이터/objective(spend-go). ckpt 4개 PULL 로컬 byte-동일 sha256 3중. card H_9286·state/nbindg_grounding/(N1_RESULT+N2_STATUS+N2_RESULT). infra(verdict 무영향·infra-wall-noneval): summer/aiden anima-py 0.13.4 stale evaluate-py-11 write-crash→0.13.9 재설치. ⚠️앞서 기록한 '0.13.9 GPU-init 스톨'은 오진 정정(convergence remote-poll-pgrep-1 재발): 실제는 반복 launch가 ~7 evaluate.py를 한 호스트에 중첩시킨 상호 CPU-starvation을 pgrep이 console-script wrapper 셸(RSS 3.7MB·0%CPU) 잡아 '스톨'로 오독한 것이며 0.13.9 코드 무죄(단발 clean eval은 RSS 3.2GB·CPU 1087% 즉시 정상). s7 flip clean-full·s11 SEEN corroboration은 단발 순차 재측정(호스트당 1개·pod-dedicated-host)으로 확보(main_s7 flip indicative 0.450/0.552가 이미 GROUNDING 붕괴 corroborate·verdict는 clean load-bearing 위 완비). **N2 FIRE 실행·측정 착지(2026-07-13 · 3/4 arm)**: 4-arm T=105,169 전량 발사(rent ~$21 owner go). main-s7·main-s11·base_only 완주+ckpt 회수(각 176,584,498 B) · shuffle_grid 67% 진행. **held-out D-acc(n=174)**: main-s7 0.477 · main-s11 0.316 · base_only 0.000. 동결표대로 Δ=max(control,0.50) 대비 ⟹ 양 seed 우연 미만(-0.023 · -0.184) = **NAT-CRACK 미충족**. base_only=0.000 은 유효성 파탄 아님 — filler-only 모델은 '긍정./부정.' 형식 자체를 못 냄(스펙이 바닥을 0.50 으로 미리 고정한 이유). **flip 분해(main-s11): flip0(부정없음·극성만)=0.391<0.50 · flip1(XOR)=0.241 ⟹ 동결표 'flip0 낮음 = GROUNDING-🧱' 가지** — 격자 XOR 연산자는 설치됐으나(main-s7 seen 0.950≥0.85 PASS) held-out 자연 원자의 극성 자체가 미접지 = 연산자가 적용될 좌항 부재. **verdict 미확정(frozen-first)** — 잔여 동결 게이트 3: main-s11 seen≥0.85 · shuffle_grid coin-seen≥0.85+held-out(없으면 FORMAT-🧱 과 구분 불가) · main-s7 완전판 flip. 산출=state/nbindg_grounding/N2_RESULTS.md + N2_EVAL/ 원본 JSON. **⚠️ 게이트 탈락 정정(2026-07-13 완전판)**: 동결 유효성 게이트 (a) main seen P_grid D-acc ≥0.85 — main-s7=**0.950 PASS** · main-s11=**0.725 FAIL = under-exposed INVALID**. 코퍼스·T·f_grid 동일한데 seed 만 달라 갈렸다 ⟹ 동결 레시피에서 **grid 설치 자체가 seed-fragile**(V5 가 잡으라고 있던 것). seed 11 의 held-out(0.316)은 해석 불가 — 없는 연산자의 전이는 물을 수 없다. **유효 seed 7 완전판(174/174)**: held-out 0.477 · Δ vs max(control,0.50) = -0.023 = NAT-CRACK 미충족 · **flip0(부정없음·극성만)=0.402 < 0.50 · flip1(XOR)=0.552 ⟹ 'flip0 낮음 = GROUNDING-🧱' 가지**(연산자 설치 0.950 인데 접지 부재). **현 라벨 = INVALID(게이트 실패)** — (1) seed 11 FAIL ⟹ gate(d) 2-seed 동일측 bar 평가불가(한 seed 로 벽 선언 금지) (2) shuffle_grid 67% 미완 ⟹ format-without-operator 대조 부재 ⟹ GROUNDING-🧱 vs FORMAT-🧱 구분불가. bar 하향=tune-to-green 금지. 재개=shuffle 완주($0 summer) + seed11 노출증가(T 상향 · seed 교체는 프로토콜 변경이라 금지). 파이프라인 독립재현 확인(main-s7 재채점이 타세션 측정과 소수점 4자리 일치). **🔬 정보-채널 진단 + 라벨 반증(2026-07-13 · $0 · Fable 감사 채택)**: (1) **ARBITRARY-GROUNDING 발견** — main-s7 held-out 응답의 상호정보 I(atom;resp)=0.231 bits · I(form;resp)=0.133 · I(flip;resp)=0.024 · **I(gold;resp)=0.007 ≈ 0**. 원자별 부여극성이 참 극성과 일치 **12/29=0.414**(동전던지기). ⟹ 두 대안가설 (i)상수방출 marginal 붕괴 · (ii)체계적 반전접지 **둘 다 반증**, 제3기제 = 모델은 새 원자의 극성을 *모르는* 게 아니라 **안정적으로 멋대로 정했다**(자연분포와 무관). **좌항 부재가 아니라 틀린 좌항 설치** ⟹ GROUNDING-🧱 을 약화가 아니라 **강화**. I(flip;resp)=0.024 = held-out 에서 연산자가 적용조차 안 됨. (2) **'under-exposed' 라벨 반증** — main-s7 val_CE 3.86657 vs main-s11 3.87250 = 사실상 동일 수렴(노출·T·f_grid 동일) ⟹ under-trained 아님, **install-fragile(최적화 분산)**. 게이트는 옳고 **라벨이 틀렸다**(bar/detector 불변 = measurement-frame 정정, tune-to-green 아님). (3) **NAT-CRACK = REFUTED(설계점)** — verdict grid 의 양성주장이 **conjunctive**(양 seed Δ≥0.20)라 유효 seed 하나(7)가 bar 아래면 죽는다 ⟹ **seed-11 재발사 전면 기각**(이미 죽은 양성 verdict 를 위한 지출 · T상향은 arm 간 노출 어긋나 Δ비교 파괴 · 새 seed=사후 swap 금지). 또한 N2 grid 는 threshold 식이라 **음성 종결(TOST)은 N2 구조로 애초에 cement 불가**. **reopen = N3 별도 사전등록** — 표적은 seed 수가 아니라 **접지 채널**(held-out 극성을 자연분포에서 실제 접지시키는 데이터/objective) · TOST Δ_eq·N_REQ 사전고정 · seed 정책 사전고정 · 게이트 라벨 인과중립('install-fail'). 산출=state/nbindg_grounding/{N2_RESULTS.md,FABLE_N2_REFIRE.md,N2_EVAL/info_channel.json}. **🏁 4/4 완주 — 분기 완결(2026-07-13 18:12)**: shuffle_grid coin-seen=**0.5375**(게이트 a' bar 0.85 **FAIL**)이나 **형식은 설치됨**(유효 극성어 방출 0.966 vs base_only 0.000). **🔑 연산자의 held-out 이득 = 정확히 0**: 진짜 XOR 격자 arm 과 동전(무작위) 격자 arm 의 held-out 이 **83/174 = 0.4770 로 동일**(문항 수까지) ⟹ MODEL-🧱(연산자 전이 실패)이라면 진짜-XOR 이 앞서야 하는데 **앞서지 않는다** → 좌항(극성 접지) 부재로 어떤 연산자든 무의미 = **GROUNDING-🧱 확정 방향**. **최종 라벨**: 동결 그리드 = **INVALID**(게이트 2건 FAIL: s11 seen 0.725 · shuffle coin-seen 0.5375 · bar 하향은 tune-to-green 금지) · **NAT-CRACK = REFUTED(TERMINAL·설계점)**(게이트와 독립 — 양성 bar 가 conjunctive) · **GROUNDING-🧱/ARBITRARY-GROUNDING = DIRECTIONAL(강)**. H_9286 은 병렬 세션이 같은 결론(GROUNDING-WALL)으로 이미 종결했고 이 run 은 **독립 재현**(main-s7 소수점 4자리 일치: seen 0.9500 · held-out 0.4770) + **기제 규명** + **라벨 정정**을 더한다. ckpt 4/4 영구보관. **reopen=N3 별도 사전등록**(표적=접지 채널 · TOST/seed정책/라벨 사전고정)."
+          "detail": "NBIND-G = '자연분포서만 접지된 원자에 학습된 XOR 연산자가 적용되는가'. 종결(2026-07-13): N1 연산자=carrier-general 🟢-dir · N2=🧱 GROUNDING-WALL(연산자의 held-out 이득 정확히 0). 기제=ARBITRARY-GROUNDING(틀린 좌항의 안정적 설치). H_9291 오라클(2026-07-14)이 '정보 부재' 전제를 반증 ⟹ 병목은 DATA 아닌 추출/확정 채널. 상세 산문 → H_9286 카드 + CHANGELOG(single-doc).",
+          "children": [
+           {
+            "id": "nbindg-n1-carrier-robust",
+            "type": "gate",
+            "name": "N1 CARRIER-ROBUST — 연산자는 carrier-general (🟢 DIRECTIONAL)",
+            "role": "연산자 일반성 · template-match 배제",
+            "detail": "carrier 3레벨 held-out D-acc(2026-07-12 summer seed7 n40): 학습프레임 0.750, 명사구교체 0.675, 실제 NSMC 리뷰 prepend 0.700. 학습프레임 값이 H_9272 를 재현해 harness 유효성이 확인됐고, 두 변형 모두 CARRIER-ROBUST bar 위이며 FORMAT 벽은 발동하지 않았다. 연산자가 literal 프레임에 매이지 않는다는 뜻이다. scope 는 grid-atom carrier 전이이지 atom-GROUNDING 이 아니다."
+           },
+           {
+            "id": "nbindg-n2-grounding-wall",
+            "type": "gate",
+            "name": "N2 GROUNDING-WALL — 연산자의 held-out 이득 = 정확히 0 (🧱)",
+            "role": "자연-접지 좌항 부재 실증 · 2세션 독립 재현",
+            "detail": "303M 4-arm 신규학습 T=105k(seed 7/11) + 통제(base_only·shuffle_grid). 진짜 XOR 격자 arm 과 동전(무작위) 격자 arm 의 held-out 이 83/174=0.4770 으로 **동일** ⟹ 연산자 이득 0. main_s7 SEEN 0.950≥0.85 = 격자 설치 확증(INVALID 아님·진짜 negative). flip0 양 seed chance 미만 ⟹ 극성의 자연-분포 접지 자체가 install 안 됨. 병렬 2세션 독립 재현(4자리 일치)."
+           },
+           {
+            "id": "nbindg-arbitrary-grounding",
+            "type": "gate",
+            "name": "ARBITRARY-GROUNDING — 좌항 부재가 아니라 '틀린 좌항의 안정적 설치' (기제)",
+            "role": "N2 벽의 기제 규명 · 후속 채널을 지정하는 진단",
+            "detail": "I(gold;resp)=0.007 bits≈0 인데 I(atom;resp)=0.231 · 원자별 부여극성이 참 극성과 일치 12/29=0.414 ⟹ 상수방출 붕괴도 체계적 반전도 아니다. 모델은 새 원자의 극성을 *모르는* 게 아니라 **안정적으로 멋대로 정했다**. 'under-exposed' 라벨은 반증(val_CE 동일 수렴) → 진짜 이름은 install-fragile(최적화 분산). 교정 표적 = 확정(commitment) 채널."
+           }
+          ]
          },
          {
           "id": "rho-axon-weave-gt",
@@ -13784,7 +13858,7 @@
    },
    {
     "name": "ρ-AXON reach 사다리 (현재기준 · former G0-G6 capability gates = frozen bars)",
-    "role": "anima 능력검증(ρ-AXON reach) SSOT · 측정=`anima-py evaluate <clm>`(engine-native terminal-eligible, byte-parity, p7). 축 매핑: ρ·form←G0 · ρ·store(신규) · ρ·weave←G1 · ρ·leap←G2 · ρ·fan←G6 · ρ·tether←G5 · ρ·self←G3(frozen G-bar 재사용). ★ρ·form 🔴→하위 무효. REACH-CLOSED=form∧store∧weave∧tether on 1 ckpt.",
+    "role": "anima 능력검증(ρ-AXON reach) SSOT",
     "id": "capability-gates-g0-g6",
     "detail": "NOT convergence.records(오류-재발 추적). 새 능력실험 = 해당 G* 현황/진화 차일드 update-in-place(옛 서술 교체, 이력=CHANGELOG+git). 수렴태그: POS-CONV(🟢)·NEG-CONV(🧱)·IN-PROG. 측정-무결성 함정은 convergence train-py-3/4 교차참조. G0/G6 미탐레버 인덱스(2026-07-05 브레인스토밍)=gate-g6-ideation-status detail(H_6163·H_6192~6196), 전부 DPI-predicted 🧱.",
     "children": [
@@ -13968,7 +14042,7 @@
          {
           "name": "fork-A CLML read-side pooling lane — 배선 구현됨(py forward+codec+smoke)·미배선(hexa lockstep+trained lane+system-G1)",
           "role": "",
-          "id": "gate-g1-recomb-gamma-forkA-clml",
+          "id": "gate-g1-recomb-gamma-forka-clml",
           "detail": "H_9235 fork-A CLML lane 배선(clml.py lane_apply=pool→gelu→gated logit bias · decode.py _fwd_logits/CLML trailer · gate=0=byte-identical). ⚠️ copy-trap: derivtrace 타깃 base CE 0.0003 ⇒ 학습신호 死. 재설계=no-copy 타깃·4-gate(CE≫0→probe→train→system-G1). state/recomb-routing-lane/LANE_SIGNAL_REDESIGN.md"
          }
         ]
@@ -14224,7 +14298,7 @@
    },
    {
     "id": "system-g1-relocate-1",
-    "state": "directional",
+    "state": "in-prog",
     "value": "[rung 2/4 ENGINE-NATIVE 2026-07-02] system-G1 재배치(Direction A): 재조합을 mouth-only 경로(eval_rho_weave @ cli/evaluate.py:155) 밖 kosmos-Merge+brain vbasal-select 로 relocate. 연장(FROZEN-1 H_9122): hippo/immune lane relocate도 MISS — lane이 off-cue를 4/4 retrieve해도 그건 stored-pair RECALL이지 novel recombination 아님. 배선 증거=immune_memory_recall이 winner cell_value 1개만 반환하고 두 value 연접/합성 op가 core에 부재=access≠binding이 lane 레벨에도 성립.",
     "threshold": "재발조건: G1 escape로 lane/retrieval relocate(hippo recall·kosmos-Merge·retrieval-augmentation)를 제안하면 먼저 'core에 두 소스를 새로 묶는 compose op이 존재하나'를 확인 — recall/retrieve는 whole stored value 반환뿐이라 access는 열려도 binding은 안 열림(H_9118+FROZEN-1). 해결=compose-read op 신설이 곧 새 mechanism(측정 대상)이지 relocate만으론 DOA.",
     "source": "core/system_g1_smoke.hexa"
@@ -14735,7 +14809,7 @@
    },
    {
     "id": "decode-weight-reload-per-tick",
-    "state": "🟢 FIXED",
+    "state": "pos-conv",
     "value": "core/decode.py clm_load_weights/bg_load memoized by (abspath,mtime,size) — the full 303M .clm/.bin re-parse (int4-dequant+transpose) that ran on EVERY decode entry (=every emit tick in the consciousness daemon, dominant share of ~60-80s/tick) now paid once per (file,mtime) per process",
     "threshold": "byte-exact ZERO risk: returns the identical W dict (decode output max|Δ|=0, no parity gate); W verified read-only during decode (all W-writes are load-time _device_residency/loader); edge path=\"\" (UNLOADED generator-swap arm) → key None → uncached",
     "source": "H_9269 Y-ULTRA ~60-80s/tick bottleneck diagnosis workflow wiyxn21bk rank-1 · perf/decode-weight-cache · 2026-07-12"
@@ -14749,7 +14823,7 @@
    },
    {
     "id": "phi-leg-evaluability-void",
-    "state": "🟢 FIXED",
+    "state": "pos-conv",
     "value": "agency_T.shuffle_null vs a (near-)constant `other` (degenerate Φ) built a zero-width F-shuffle null, so within_2sigma_null=|obs-0|<=0=True rendered a structurally uninformative falsifier leg as a false PASS — the H_9269 leg-b degeneracy that had to be caught by hand. Now a degenerate leg is VOID (within_2sigma_null=None; carries no weight in the combined falsifier — neither pass nor fail)",
     "threshold": "FROZEN bars (no tune-to-green, Fable Φ-leg redesign T3): NULL_EPS=1e-12 (zero-width null), PHI_VAR_EPS=0.005 (leg-b Φ sd bar); T2 regression test_evaluability_void.py 4/4. Root-cause of the H_9269 Φ-flatness = the e1_slw_303m daemon's model-input bytes were decision-invariant by construction (emission mode-collapse + own-emit-only context window), so the trunk never saw the decisions — an instrument+regime finding, not IIT4/unitization · Part A redesign LANDED (Fable spec, frozen): phi_leg context = TRUE consumed bytes (cli/chat.py seed_b64 side-channel, ANIMA_DECISION_TRACE-gated, emit-path byte-identical/a_substrate_disjoint) · T=24→64 · calibration-slice frozen cross-decision-variance unit selection (signal-blind, calib∩scored=∅) · frozen per-unit median binarization · n_units=5 + prove_mirrors_at_n(5) STEP-0 + pre-MoE tap kept · + T3 distinct-window bar n_distinct≥max(10,20%·n_scored) wired at leg_b (honors the pre-registered bar so a near-degenerate leg clearing sd can't render EVALUABLE). synthetic-verified 7/7; real e1_slw_303m .clm T1 positive control POOL-gated (t1_phi_variance_control.py, mini-OOM). ✅ T1 PASS — INSTRUMENT-CONFIRMED (pool summer, $0, fp32-decision-equivalent, 2026-07-12): STEP-0 prove_mirrors_at_n(5) PROVEN (big-Φ |Δ|=1.34e-10, faithful |Δ|=7.97e-10); BOTH macro-maps PASS all 3 frozen sub-bars — sd(Φ over 32 natural)=0.02193(tcv)/0.02208(random) ≥0.005 (4.4×), distinct=31/32 ≥8, {natural,period-2,constant} NOT all Φ-equal. Family means: natural=0.0404/0.0255, period-2=0.0121/0.0283, CONSTANT-byte→Φ≈0 on both (positive-control signature). ⟹ the old Φ-flatness was a REGIME property (constant consumed bytes), NOT an IIT4/unitization/instrument defect — the Part A true-consumed-bytes+T=64 context makes faithful-IIT4 Φ decision-VARYING on the real 303M pre-MoE trunk. T3 leg-b now EVALUABLE (distinct 31≥10, sd 0.022≥0.005, null width>0). Does NOT reopen the H_9269 🧱 KILL (decided by legs a+c: veto byte-identical across 3 seeds); recorded as instrument-verification GREEN. Running a Φ-dependent falsifier still needs Part B regime + a target H. Raw → state/h1058_agency_daemon/T1_RESULT.{md,json}+T1_run.log. Part B regime (rolling-transcript seed) = design-only pre-reg (PARTB_REGIME_PREREG.md), not landed as daemon behavior.",
     "source": "H_9269 verdict follow-on · Fable root-cause+redesign (scratchpad/fable_phi_variance.md) · fix/phi-leg-evaluability-void · T1 pool positive-control PASS (state/h1058_agency_daemon/T1_RESULT.md) · 2026-07-12"
