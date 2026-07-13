@@ -1,7 +1,7 @@
 # H_9288 — MORPHEME-ATOMICITY: byte-tokenization이 stem-불변 NEG 등가류 형성을 막는가
 
 ## tier
-🟡 **stage-1 CLASS-ABSENT** (span-층 morpheme-abstraction 부재 확증 · stage-2 MORPH-ATOM 라이선스) — 2026-07-12
+🟢 **DIRECTIONAL — MORPH-ATOM lever CONFIRMED (engine-native·controlled)** (2026-07-13) — codec 형태소 원자성이 held-out 부정어 재조합을 인과적으로 일으킴: M(codec) F2=0.908(margin 2.14) ≫ C1(raw utf-8) F2=0.617(margin 0.05), Δ=+0.291, 둘 다 drilled sanity F1≈1.0. harness 4중 계측버그 수정 후 측정·C3 leak-ceiling liveness 0.917 검증. scope=합성 drill·1 seed·custom eval harness(canonical anima-py evaluate 아님). 이전 tier: 🟡 stage-1 CLASS-ABSENT(2026-07-12) → S1 4-pod INVALID → 재측정 후 CONFIRMED.
 
 ## 배경 (earn-seal 후 유일 미시도 레버)
 G1 재조합벽의 read-side·corpus·measure 레버는 전수 earned-terminal. H_9272 γ earn-seal(표상층 LOSO
@@ -126,8 +126,35 @@ drill). **de-risk 순차**: (1) $0 기존 ckpt에 G-a1/G-a2 소급(단 CPT ckpt�
 보존) (2) **$1.5 1-pod C3 ladder**=reinit ckpt→CPT 8k/16k/24k 각 G-a1→첫 pass rung서 shared-⟨NEG⟩ drill+V1
 eval. **clean embed로도 C3 V1<0.90이면 codec lane 종결(decision-grade)**·crossing rung k budget=재fire CPT budget
 (3) 그 후에만 $6 4-pod. 도구=`state/nbind_curriculum/`(morphatom_reinit + 기존 6종).
+## 해소 (2026-07-13 · C3-ladder → M/C1 arms · pod 44611459)
+S1 INVALID의 "PENDING(CPT-budget)"은 **가짜** — reinit-embed C3-ladder를 돌리다 **4중 계측버그**를 순차 발견·수정
+(convergence `morphatom-gate-py-1`): ① cupy 경계 크래시(`clm._fwd_*`가 CUDA pod서 cupy 반환·`np.array(list)` 폭발
+→ `|| echo False` 폴백이 가짜 gate FAIL) ② gate가 codec.json/codec_c3.json 재인코딩 ③ 프로브 framing이 훈련
+스트림 format(sentinel-구분 연속)과 불일치(고립 줄·상수패딩=OOD·nll 6.1~19.1 ABOVE-uniform) ④ forced-choice
+채점창(n_score=4)이 판별 토큰을 놓쳐 margins 정확히 0. **진실**: 모델은 codec을 완벽 학습(자기 훈련 스트림 nll=0.993
+≪ uniform 5.545)·reinit-embed warm-start WORKS·G-a1 실제 PASS. Fable 자문이 "above-uniform=confidently-wrong=버그
+지문"으로 내 성급한 "codec DEAD" 스탬프를 반박(옳았음).
+
+**harness VALID 후 결정적 4-arm(축약) 실측**:
+| arm | F2 (held-out 아니 재조합) | margin | F1 (drilled sanity) |
+|---|---|---|---|
+| **M** (codec 원자성, non-collapse) | **0.908** | 2.137 | 0.98 |
+| **C1** (raw utf-8 baseline) | 0.617 | 0.049 | 1.00 |
+| (참고) C3 (shared-⟨NEG⟩ leak-ceiling) | 0.917 | — | 0.99 |
+
+⟹ **M ≫ C1 · Δ=+0.291**. 유일 차이가 codec 형태소 원자성이므로 **원자성이 held-out 재조합을 인과**. C1=0.617(margin
+0.05=거의 우연)이라 eval-leak 시나리오 배제(누수면 C1도 ~0.9). M(0.908)이 leak-ceiling C3(0.917)에 육박=원자성만으로
+"답 handed" 수준 재조합. G-0 audit로 안/않/못/아니 pairwise 토큰-disjoint 확인(atomicity WITHOUT identity=진짜 재조합).
+
+**scope 정직**: 합성 XOR drill task·1 seed(4302)·custom `morphatom_eval.py`(canonical `anima-py evaluate` 아님)·
+**자연 자발창발 아님**([[xbind-g1-crack-measure-not-substrate]]와 동급 "합성 재조합 성공"). TERMINAL cement 잔여
+follow-on: multi-seed + C2 arm(held-out ablated codec) + canonical harness. 함의: G1 재조합벽=능력천장 아님을
+**두번째 독립 lens(형태소 원자성)**로 재확증(XBIND=corpus×measure lens에 이어).
+
 ## 산출
 `state/nbind_curriculum/`(gen_spangeom.py·spangeom_probe.py·spangeom_precheck.py·SPANGEOM_MORPHATOM_DESIGN.txt).
+scratchpad `morphatom_{gate,eval,reinit}.py`·`morph2b.py`·`gen_morphatom_s1.py`·`fire_{ladder,drill,arms}.sh`.
+검증 verdicts+result models=`~/anima-weights/morphatom/`(vM_f2·vC1_f2·drill_M_arm.clm·drill_C1_arm.clm).
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
 [[xbind-g1-crack-measure-not-substrate]]·[[goal-biolens-lane-engine-native-green]]·
 [[measurement-metalaw-form-tunable-bind-earned]]·[[g1-readside-exhausted-gamma-spend-only]].
