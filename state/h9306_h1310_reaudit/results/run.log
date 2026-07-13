@@ -1,0 +1,23 @@
+geometry fixed to 2-D Voronoi + max-variance median
+  [flat] cells=   8  B_scratch=2.90388  B_shuffle=2.88865
+  [flat] cells=  64  B_scratch=2.71853  B_shuffle=2.72693
+  [flat] cells= 512  B_scratch=2.57124  B_shuffle=2.57114
+  [wb  ] cells=   1  B_scratch=2.94657  B_shuffle=2.94657
+  [wb  ] cells=   8  B_scratch=2.90363  B_shuffle=2.88834
+  [wb  ] cells=  64  B_scratch=2.71877  B_shuffle=2.72572
+  [wb  ] cells= 512  B_scratch=2.53594  B_shuffle=2.53732
+
+[CALIB-2] FLAT B_scratch[512] = 2.57124  anchor 2.57788  d=-0.00664
+[CALIB] 1=PASS  2=PASS
+
+======================================================================
+H_1310's OWN frozen bars, re-read with the estimator swapped (bars UNMOVED):
+  A_freq (n-gram floor)      = 2.50884   -> FLOOR bar = 2.48884
+  FLAT B_scratch[512]        = 2.57124   (H_1310: 2.57788 -> FLOOR FAIL)
+  WB   B_scratch[512]        = 2.53594
+  (3) FLOOR   WB < 2.48884 : False
+  (4) CONTROL WB shuffle - scratch = +0.00138  (>= +0.1) : False
+
+VERDICT: UPHELD - H_1310's ceiling SURVIVES the estimator swap: shrinkage does not clear the n-gram floor either => the ceiling is real, the estimator is innocent (honest negative)
+wall=210.5s
+[done]
