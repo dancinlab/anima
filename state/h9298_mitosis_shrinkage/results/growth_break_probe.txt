@@ -1,0 +1,10 @@
+# H_9301 instrumented probe (summer sm_120) — WHY mitosis growth halts. verbatim output:
+
+STOP@11 cells: DEGENERATE median split on cell 9
+   (n=100, axis=0, med=0.099071, lo=100, hi=0, distinct_vals_on_axis=2)
+   -> the frozen grow_on BREAKS the WHOLE loop here (not 'continue') => growth is capped at 11
+
+# root-collapse anchor (tautology guard for the shrinkage arms):
+ROOT-ONLY unigram (zero cells, WB->uniform) CE = 3.21096
+  FLAT@320 = 2.49435  => 0.71661 nats BELOW the root => NOT a collapsed root; cells carry real weight
+  train pts = 42503 ; at 320 cells ~132 pts/cell (lambda = n/(n+T) ~ 0.7, leaves keep most of the mass)
