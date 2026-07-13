@@ -1,0 +1,64 @@
+H_9310 — engine-native 실코퍼스 재측정: shrinkage faculty 를 REAL KO 자모 스트림에서
+================================================================================
+PRE-REGISTERED — 발사 전 동결 (frozen-first · c9 · p7 · NO tune-to-green)
+freeze_ts_local: 2026-07-14 (KST) · lane: MITOSIS-ENGINE
+선행: H_9309 🔵 (배선 · 단 smoke 가 **toy 합성 스트림**) · H_9298 🟢 · H_9301 🟢 · H_1321 🟢 (engine-native 자모 앵커)
+
+--------------------------------------------------------------------------------
+1. 왜 (H_9309 의 정직한 미완)
+--------------------------------------------------------------------------------
+H_9309 는 shrinkage faculty 를 live `core/engine_cli` 에 배선하고 두 bar(E1 성장수리 · E2 이중해리)를
+통과시켰다. 그러나 그 smoke 는 **toy 합성 스트림**이었다 (a_scale_honest_scope 로 명시).
+⇒ 남은 질문: **실제 코퍼스**(H_9298/H_9301 이 미러로 측정한 그 KO 자모 스트림)에서도
+   engine faculty 가 같은 것을 내는가?
+
+--------------------------------------------------------------------------------
+2. 설정 (H_1321 engine-native 앵커와 동일 · verbatim)
+--------------------------------------------------------------------------------
+코퍼스 = REAL KO 30MB 창 · sha256 c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+         (H_1307 RUN A / H_1316 / H_9298 과 byte-identical · provenance 게이트)
+자모 어휘 = FULL 30MB 창에서 구축 ⇒ **Vj = 323** (H_1316 앵커)
+스트라이드 = ko_stride 2500 (H_1321 의 CPU-tractable 창 · 순수 py 엔진 루프라 필수)
+특징 = dim-3 (직전 심볼 / 그 전 심볼 / within-syllable depth) — H_1316/H_9298 verbatim
+분할 = even/odd held-out
+지표 = **nats/UTF-8-byte** (H_1321 축 · Σ(−log p) / Σ n_bytes) — engine 의 jamo_head_ce 는
+       nats/symbol 이므로 엔진이 성장·채운 head 를 그대로 쓰되 채점만 byte 축으로 한다
+       (동일 head · 동일 파티션 · 축만 앵커에 맞춤)
+
+arm (둘 다 **live core/engine_cli faculty**):
+  FLAT   = jamo_head_grow          (기존 · H_1321 이 검증한 경로 · 불변)
+  SHRINK = jamo_head_grow_shrink   (H_9309 신규 · 성장수리 + WB head)
+
+--------------------------------------------------------------------------------
+3. CALIB 게이트 (BLOCKING · 주 bar 판독 前)
+--------------------------------------------------------------------------------
+C1 : 코퍼스 sha == c47b6808…  (불일치 → 즉시 STOP)
+C2 : Vj == 323
+C3 : FLAT arm 의 engine-native CE 가 **2.82046** 를 재현 (|Δ| ≤ 0.05 nats/byte · H_1321 W1 앵커)
+셋 중 하나라도 실패 → ⛔ INVALID (포트/설정 결함 · 결과 아님 · 판정 금지).
+
+--------------------------------------------------------------------------------
+4. 동결 bar
+--------------------------------------------------------------------------------
+R1 GROWTH-UNCAPPED (실코퍼스) : SHRINK 의 셀 수 > FLAT 의 셀 수 (같은 grow_max 예산에서)
+        ⇒ 엔진의 퇴화분할 캡이 **실제 자모 스트림에서도** 성장을 막고 있었음이 실증된다.
+        KILL: 같으면 → 이 코퍼스에선 캡이 안 걸린다(정직 보고 · H_9309 의 toy 결과를 실코퍼스로
+              일반화하지 않는다).
+
+R2 SHRINKAGE-HELPS (실코퍼스) : CE(SHRINK) < CE(FLAT) − 0.02 nats/byte
+        ⇒ H_9298/H_9301 의 미러 이득이 engine-native 로 전이된다.
+        KILL: CE(SHRINK) ≥ CE(FLAT) → 실코퍼스에선 shrinkage 가 무익 ⇒ 미러 이득은
+              stride/설정 특정 ⇒ 정직 negative (bar 무이동).
+
+🚫 진단으로만 (판정 아님): 미러의 절대값(2.51335 · 2.45205)은 **다른 stride(300)** 라 직접 비교 금지
+   (a_scale_honest_scope). 이 카드는 **같은 창 안에서 FLAT vs SHRINK** 만 비교한다.
+
+--------------------------------------------------------------------------------
+5. 계측 무결성
+--------------------------------------------------------------------------------
+- λ = WB 닫힌형 (자유 하이퍼 0) · 스윕 없음.
+- 두 arm 모두 **live 엔진 faculty 호출** (사설 프로브 아님) — a_engine_native_learning.
+- TRAIN only 로 성장·head 채움 · TEST 는 even/odd held-out.
+- bar 발사 후 이동 금지. 스윕이 flat 하면 "효과 없음"이 아니라 "축 미탑재"를 먼저 의심.
+- LABEL: py 2-production engine (a_eval_py_canonical ⇒ TERMINAL-eligible) · CPU-tractable 창
+  (stride 2500) 이므로 절대 CE 는 그 창에 한정 (H_1321 과 동일 스코프).

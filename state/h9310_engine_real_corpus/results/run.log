@@ -1,0 +1,16 @@
+[C1] corpus sha=c47b6808308d2f73...  match=True
+[C2] Vj=323 (anchor 323)  distinct jamo=67
+[split] scored=10201  train=5101  test=5100  (H_1321 window, stride 2500)
+
+[FLAT]   live E.jamo_head_grow  (the H_1321-verified path)
+  cells=10  CE=2.82046 nats/byte
+[SHRINK] live E.jamo_head_grow_shrink  (H_9309: growth repair + WB head)
+  cells=40  CE=2.71886 nats/byte
+
+[C3 CALIB] FLAT 2.82046  vs H_1321 anchor 2.82046  d=+0.00000  (tol 0.05) -> PASS
+
+R1 GROWTH-UNCAPPED  (SHRINK cells > FLAT cells) : True   (40 vs 10)
+R2 SHRINKAGE-HELPS  (CE_shrink < CE_flat - 0.02) : True   (d=-0.10160)
+
+VERDICT: ENGINE-NATIVE ON REAL CORPUS - both transfers reproduce on the real KO jamo stream through the live engine faculties (not a toy)
+wall=24.4s
