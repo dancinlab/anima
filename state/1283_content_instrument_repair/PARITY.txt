@@ -1,0 +1,44 @@
+H_9292 — SCORING BYTE-PARITY GATE: PASS
+=======================================
+2-production record (a_engine_native_learning · a_eval_py_canonical · reference-match).
+This is what licenses the py-channel numbers in H_9292 to be read as the WIRED hexa engine's
+numbers rather than a side-harness re-implementation.
+
+WHAT WAS COMPARED
+  reference (wired hexa engine)
+      hexa-lang stdlib/consciousness/iit4/faithful_phi.hexa   (the mandated faithful IIT-4
+      exact MIP-EI · a_phi_iit4_tool), driven by the engine-native probe
+      state/1283_r6_content_relay_clean/h9260_content_relay_clean_probe.hexa
+      (engine `_lcg_*` LCG-gauss substrate == core/engine_cli.hexa), run verbatim.
+      captured stdout → state/1283_content_instrument_repair/hexa_anchor_h9260.out
+
+  candidate (py 2-production port)
+      state/1283_content_instrument_repair/faithful_phi.py   (1:1 port of the 411-line hexa
+      stdlib — including its ported quirks: f32-EPSILON all-identical guard, the +1e-8 / +1e-10
+      entropy epsilons, and the MIP enumeration starting at mask=1 so the {0}|{1..n-1} cut is
+      never evaluated)
+      state/1283_content_instrument_repair/substrate.py      (1:1 port of the probe's substrate)
+
+  harness  state/1283_content_instrument_repair/parity_check.py
+
+RESULT
+  compared 99 Phi values   (10 arms x 9 seeds [3..11] x 2 read-outs: raw min-max + rank-uniform)
+  max|delta| = 7.105427e-15        worst at (seed 9, arm R, rank-uniform):
+                                   hexa = 1.9534304813749026   py = 1.9534304813748955
+  every one of the 99 comparisons agrees to ~1e-15 relative — f64 summation-order noise only.
+
+  byte-parity gate: PASS — the py scoring IS the wired hexa estimator, not a proxy and not a
+  re-derivation. No behavioural divergence exists to hide a verdict in.
+
+SCOPE (honest)
+  Parity is proven for the ESTIMATOR + SUBSTRATE at the frozen T=64 grid, which is the entire
+  surface H_9292's verdict rests on for the retraction leg. The T=65536 population runs
+  (p0_feasibility.py) stream the input draws per tick rather than as one up-front block, so they
+  are NOT byte-comparable to a hexa run — they are a population-scale estimate of the SAME
+  stationary process, and they are stated as such in the verdict. Nothing in the verdict turns on
+  those runs being byte-identical to hexa; it turns on them being the same estimator, which the
+  above proves.
+
+REPRODUCE
+  cd state/1283_content_instrument_repair
+  python3 parity_check.py hexa_anchor_h9260.out      # → "PARITY: PASS", max|delta| 7.1e-15
