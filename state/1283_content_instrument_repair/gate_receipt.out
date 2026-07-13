@@ -1,0 +1,27 @@
+β (pinned on arm A alone) = 0.9885
+
+① DESCRIPTIVE — what the gate actually does (no Φ contrast involved)
+   seed  4: gate mean 0.5252 sd 0.1824 p5/p95 0.210/0.871   MI(gate;coincidence) = 0.835 bits
+   seed  5: gate mean 0.5252 sd 0.1828 p5/p95 0.208/0.871   MI(gate;coincidence) = 0.729 bits
+   seed  6: gate mean 0.5240 sd 0.1819 p5/p95 0.209/0.870   MI(gate;coincidence) = 0.822 bits
+   seed  7: gate mean 0.5264 sd 0.1825 p5/p95 0.212/0.874   MI(gate;coincidence) = 0.784 bits
+   seed  8: gate mean 0.5258 sd 0.1824 p5/p95 0.210/0.872   MI(gate;coincidence) = 0.823 bits
+   seed  9: gate mean 0.5249 sd 0.1820 p5/p95 0.211/0.870   MI(gate;coincidence) = 0.816 bits
+   seed 10: gate mean 0.5255 sd 0.1826 p5/p95 0.209/0.873   MI(gate;coincidence) = 0.922 bits
+   seed 11: gate mean 0.5249 sd 0.1823 p5/p95 0.210/0.872   MI(gate;coincidence) = 0.788 bits
+   → mean MI(gate ; coincidence) = 0.815 bits (a pure GAIN would give exactly 0)
+
+② GATE-SHUFFLE — same gate marginal, pairing with c_e destroyed
+   seed  4: gated 0.028347   gate-shuffled 0.028041   Δ +0.000306
+   seed  5: gated 0.027741   gate-shuffled 0.027538   Δ +0.000203
+   seed  6: gated 0.025424   gate-shuffled 0.025081   Δ +0.000343
+   seed  7: gated 0.030859   gate-shuffled 0.030543   Δ +0.000316
+   seed  8: gated 0.029797   gate-shuffled 0.029405   Δ +0.000392
+   seed  9: gated 0.027634   gate-shuffled 0.027411   Δ +0.000223
+   seed 10: gated 0.027333   gate-shuffled 0.027233   Δ +0.000100
+   seed 11: gated 0.026947   gate-shuffled 0.026651   Δ +0.000296
+   → Δ = +0.000272  (sd 0.000092, n=8)
+
+READING — the gate is unambiguously LIVE and CONDITIONAL (MI ≈ 0.9 bits, it uses the
+full [0,1] range), yet its effect on Φ* is ~1/28 of the pre-registered effect floor
+(0.0088). A live conditional gate barely moves Φ. That gap is itself the finding.
