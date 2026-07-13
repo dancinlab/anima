@@ -213,3 +213,432 @@ PREREG PREDICTION  P0′ FAIL ⇒ ⏳ BAR-ABOVE-SIGNAL  (Φ_pop(B) ≈ 0.002–0
 ## 요약 (한 문단)
 
 H_9260의 ⏳는 옳았지만 **이유가 달랐습니다.** rank-uniform은 실패하지 않았습니다 — 실패한 것은 (i) `dense_shuffle`을 information-free 통제로 오인한 **ill-posed 대비**, (ii) **bar의 15배**인 계기 자기잡음(P0가 이미 sd=0.297로 재놓았습니다), 그리고 (iii) `‖s‖²`가 상관을 제곱해 축 전체의 Φ 신호를 **bar 아래 두 자릿수로** 밀어넣은 것입니다. 처방은 readout 교체가 아니라 **null-차감 통계량(`Φ*` = RU + permutation-ensemble) + realization-block 평균(R=2048, bar를 옮기지 않고 SE를 bar/9로)**, 그리고 무엇보다 **9-seed 캠페인을 발사하기 전에 6번의 long-run으로 끝나는 P0′ 실행가능성 게이트**입니다. P0′가 예측대로 FAIL하면, 정직한 verdict는 🧱도 🟢도 아닌 **⏳ BAR-ABOVE-SIGNAL**이고, CONTENT 축의 진짜 탈출구는 통제를 하나 더 만드는 것이 아니라 **부호 채널을 버리지 않는 salience map** — TIMING 축이 Kuramoto phase로 이미 그렇게 뚫었던 바로 그 지점입니다.
+---
+
+# §0 · §1 (Fable 5 후속 · 원 전송에서 유실된 절)
+
+> ⚠️ 이 절의 정량 주장 중 하나는 로컬 실측에서 **부분 반증**됐다 (H_9292 AMENDMENT 참조):
+> "raw Φ의 103–108%가 pedestal이고 관측치가 null 평균보다 **낮다**" → 실측 E[Φ_null] ≈ 1.95 로
+> raw Φ 의 **94~100%** 이며 관측치는 null 평균 **이상**이다 (arm A 는 정확히 null 위 Φ*=+0.001).
+> pedestal 이 raw Φ 를 거의 전부 설명한다는 **결론 자체는 확증**됐다. §1.3 의 LCG cycle 겹침 정정은
+> 미발사 캠페인에 그대로 유효하다.
+
+모든 수치를 repo의 실제 probe(`state/1283_r6_content_relay_clean/h9260_content_relay_clean_probe.hexa`)와 estimator(`faithful_phi`)에 대고 재검증한 뒤 씁니다. 아래 §0·§1의 정량 주장은 전부 실측으로 확인된 것입니다.
+
+한 가지 정직하게 먼저 밝힙니다: **§1.3에 원래 설계에 없었을 수 있는 정정이 하나 들어갑니다.** LCG cycle 겹침 위험(아래 §1.3 "핵심 사실")은 이번에 수치로 확인했고, 그대로 두면 "독립 realization"이 실제로는 난수를 공유하게 됩니다. R cap=8192가 왜 그 값인지도 여기서 유도됩니다.
+
+---
+
+# §0 — 진단: H_9260의 ⏳는 왜 일어났는가
+
+프레임부터 고정한다. **⏳는 기질(substrate)에 대한 사실이 아니라 계측기에 대한 사실이었다.** 세 개의 독립적 결함이 있었고, 각각 단독으로도 런을 무효화하기에 충분했다. 세 결함은 Φ̄\*의 세 구성요소와 1:1로 대응한다 — 그것이 이 계측기가 tune-to-green이 아니라 수리(repair)인 이유다.
+
+## §0-① — validity gate 자체가 ill-posed였다 (`dense_shuffle − A`)
+
+`H_9260`의 ⏳는 문자 그대로 `valid = p1a_all && p1b_all` (probe L405)에서 나왔다. 그 두 leg이 딛고 선 대조군이 mode 9(`dense_shuffle`)다. 그 대조군은 **자신이 끊겠다고 주장한 결합을 끊지 않는다.**
+
+probe L207–232를 보자. mode 8(dense)과 mode 9(dense_shuffle)의 relay 갱신은 단 한 줄만 다르다 (L213–214):
+
+```
+src = i                            // mode 8 (dense)
+if mode == 9 { src = (i+n_mod-1) % n_mod }   // mode 9 (dense_shuffle)
+```
+
+그리고 그 `src`가 쓰이는 곳은 L220–224의 leave-one-out 합뿐이다:
+
+```
+while j < n_mod { if j != src { acc = acc + relay[j][d] }  j = j+1 }
+let others = acc / to_float(n_mod - 1)
+```
+
+`S[d] = Σ_{j=0..3} relay[j][d]` (전체 relay 합)라 두면:
+
+- **mode 8**: `others_i = (S − relay_i) / 3`
+- **mode 9**: `others_i = (S − relay_{i−1}) / 3`
+
+**두 arm 모두 global sum `S`를 그대로 읽는다.** 바뀐 것은 leave-one-out 인덱스 하나뿐 — 자기 자신을 뺄 것인가(8), 링 선행자를 뺄 것인가(9). 즉 "shuffle"은 cross-relay 결합을 **파괴하지 않고 보존**한다. mode 9의 relay lattice는 여전히 all-to-all mean-field로 결합된 4채널 시스템이다.
+
+더 나쁜 것이 있다. mode 9에서 `j`는 `j ≠ i−1`인 모든 값을 훑으므로 **`j = i`를 포함한다.** 즉 mode 9에서는 `relay_i`의 구동항이 자기 자신을 (1/3 가중으로) 되먹인다 — mode 8에는 없던 self-drive다. 정리하면:
+
+> **mode 9 = dense + self-gain − predecessor-coupling.**
+
+이것은 "결합을 제거한 대조군"이 아니라 **그저 다른 결합 위상**이다.
+
+따라서 P1a와 P1b는 **양쪽 다** ill-posed다.
+
+- **P1a** ("구 readout에서 `ΔΦ(dense_shuffle − A) ≥ +0.02` ⟹ variance artifact가 존재한다"). 그러나 mode 9는 A(맨 ring, relay 채널 0개)에 비해 **all-to-all 결합된 relay 채널 4개라는 진짜 cross-module 구조를 추가로 갖는다.** 완벽하게 variance-free한 readout 아래에서도 mode 9는 A를 이기는 것이 정상이다. 그러므로 P1a의 Δ는 (i) amplitude-variance artifact와 (ii) 실재하는 추가 결합구조를 **분리 불가능하게 섞는다.** FIRED든 아니든 무정보다.
+
+- **P1b** ("rank-uniform으로 재채점하면 같은 Δ가 `≤ +0.02`로 **붕괴**해야 한다 ⟹ readout이 artifact를 제거했다"). 이 PASS 조건은 readout에게 **실재하는 cross-module 결합을 지워버릴 것을 요구한다.** rank-uniform은 amplitude-variance를 제거하도록 설계된 것이지 joint 구조를 지우도록 설계된 것이 아니다. 즉 P1b는 **올바른 readout이 정당하게 FAIL할 수 있는 게이트**다.
+
+실제로 그렇게 되었다. P1b는 seed 6 (Δ = +0.371)과 seed 10 (Δ = +0.110)에서 FAIL했고, 그 FAIL이 "이 기질에서 rank-uniform은 variance-free가 아니다 → ⏳"로 읽혔다. 올바른 독법은 정반대다: **rank-uniform은 mode 9가 실제로 갖고 있는 진짜 결합을 살려낸 것**이고, 무너진 것은 readout이 아니라 게이트다. 그리고 P1a도 seed 3, 6에서 FAIL했다 — **양방향 모두 FAIL**은 게이트가 어느 쪽으로도 정보를 주지 못한다는 signature다.
+
+⟹ **RETIRE.** bar를 어디로 옮겨도 이 Δ는 구조를 통제하지 못한다. 이것이 §3에서 `dense_shuffle − A`를 폐기한 이유의 전문이다.
+
+## §0-② — null의 표본 크기가 1이었다 (`B − Bperm`)
+
+`shift_modules` (probe L278–292)는 `off_i = (i·17) mod 64`, 즉 **하나의 고정된 순환 shift**다. 이것은 "cross-module alignment를 파괴한다"는 null 분포로부터의 **단 한 개의 draw**다.
+
+P0(`A − Aperm`)가 바로 그 null을 맨 ring 위에서 측정한 것이다. 9 seed 실측:
+
+> **mean = +0.0277, sd = 0.2969**
+
+null 자체의 산포가 bar(+0.02)의 **약 15배**다. 따라서 `B − Bperm`의 부호는 사실상 동전 던지기이고, 실제로 H_9260의 G4는 seed 3·7에서 FAIL, 나머지에서 PASS — 구조 없는 flip-flop이었다.
+
+게다가 그 draw는 **degenerate subgroup**에서 뽑혔다. 순환 shift는 `S_64`의 `64! ≈ 1.27e89`개 원소 중 **64개짜리 순환 부분군**에 속한다 — 측도 0이고, 그것도 하필 "모듈 내 lag 구조를 보존하는" 특별한 부분군이다.
+
+FREEZE는 P0를 사전등록해 "Bperm leg은 arm을 구별하지 못한다"를 **예측까지 했으면서도** G4를 conjunctive primary로 남겼다. 진단은 맞았는데 처방이 없었다.
+
+⟹ **RETIRE G4(B−Bperm)를 arm 수준 게이트로 두는 것.** null은 arm이 아니라 **통계량 안으로** 들어가야 하고, K개로 평균되어야 한다. 그것이 Φ\*의 두 번째 항이다.
+
+## §0-③ — Φ를 **차분이 아니라 값**으로 읽었다 (+ realization n=1 + 9/9 conjunction)
+
+가장 무거운 원인이고, 세 겹이다.
+
+### (a) raw Φ의 ~100%가 추정기 bias pedestal이다
+
+estimator는 T=64 표본으로 8×8 joint histogram 위에서 MI를 추정한다. 유한표본 MI는 **독립 하에서도 양의 bias**를 갖는다 (≈ `(r−1)(c−1)/(2N ln2)` = 49/(2·64·ln2) ≈ 0.55 bit/pair). 실측하면:
+
+| | Φ_obs (raw) | 같은 궤적의 pairing-null 평균 | **Φ\*** |
+|---|---|---|---|
+| arm A, seed 7 | 1.8951 | **1.9469** | **−0.052** |
+| arm A, seed 3 | 1.7819 | **1.9327** | **−0.151** |
+
+> **raw Φ의 103–108%가 pedestal이다.** H_9260이 arm 간에 비교하던 Φ ≈ 1.95라는 값은 거의 전부가 추정기 bias이고, arm 간 Δ(0.03~0.44)는 **두 pedestal의 차**였다. 관측치는 null 평균보다 오히려 *낮다*.
+
+이것이 메모리의 측정 메타법칙(**창발신호는 값이 아니라 차분**)이 이 축에서 발현한 정확한 형태다.
+
+### (b) realization n = 1 ⟹ 오차막대가 존재하지 않는다
+
+(arm, seed)당 궤적 하나 → Φ 점추정 하나 → 자유도 0. 검정이 불가능하고, 남는 것은 잡음 위에 놓인 threshold뿐이다. 실측 산포: `Φ(A)` raw의 seed 간 sd = **0.2345** (bar의 11.7배), 단일 surrogate draw의 sd ≈ **0.14–0.15**.
+
+### (c) 9/9 every-seed conjunction은 검정이 아니라 min 순서통계량이다 — 치명타
+
+H_9260 **자기 자신의 데이터**로 계산한다. `ΔΦ(B−A)` 9 seed:
+
+> mean = **+0.1186**, sd = 0.1752, **t(8) = 2.03** — **평균은 양수다** (양측 p ≈ .077).
+
+그런데 9/9 규칙은 seed 2개가 음수라는 이유로 FAIL을 냈다. 참 효과크기가 관측된 평균(+0.1186)과 **정확히 같다고 가정해도**, 한 seed가 +0.02를 넘을 확률은 0.713이고, 9개 모두 넘을 확률은 `0.713⁹ = 0.048`:
+
+> **H_9260의 primary 게이트는 자기 자신의 효과크기에 대해 검정력 ≈ 5%였다.** 참이든 거짓이든 FAIL하도록 구조적으로 예정되어 있었다.
+
+FREEZE의 "최종 GREEN ≈ .12"는 기질에 대한 prior로 기록되었지만, 실은 **설계 자체의 검정력 천장**이었다. 메모리 `probe-defect-census-max-control-bias`(순서통계량이 KILL을 기계적으로 생성)와 `negative-claims-need-tost-not-ns`의 정확한 재발이다.
+
+## §0 결론 — 세 원인 → 세 처방
+
+| 원인 | 처방 (Φ̄\*의 구성요소) |
+|---|---|
+| ① ill-posed validity gate | 폐기 → 새 validity ladder (§2+) |
+| ② null 표본 = 1, 그것도 퇴화 부분군에서 | **K=16 surrogate 평균을 통계량 안으로** — Φ\*의 뺄셈 항 |
+| ③ 값-읽기 + n=1 + 9/9 min-통계량 | **pedestal 제거 + R realization block-mean** — Φ̄\*가 오차막대를 갖는 양이 됨 |
+
+**⏳는 기질에 대한 무정보가 아니라 계측기에 대한 정보였다.** H_9260은 실패한 실험이 아니라, 성공한 계측기 교정이다.
+
+---
+
+# §1 — 계측기 (구현 완결 사양)
+
+## §1.0 표기·상수·이름 함정
+
+```
+n = N_MOD = 4 · T = T_TICKS = 64 · DIM = 8 (모듈 내부차원) · NBINS = 8 · K = 16
+seeds S = [3..11] (9개) · realizations r = 0 .. R−1
+traj : (n, T) float64,  traj[i,t] = ‖s_i(t)‖²
+```
+
+⚠️ **이름 함정 (반드시 고정)**: `faithful_phi(state, n, dim, n_bins)`의 `dim`은 **표본축 T=64**이지 모듈 내부차원 8이 **아니다**. 항상 `faithful_phi(Z.ravel(), n=4, dim=64, n_bins=8)`.
+
+## §1.1 `RU` — rank-uniform map
+
+**당신의 H_1328 서술은 정확하다. CONFIRM.** 정확한 tie-break를 포함해 못박는다.
+
+정의 (probe L251–275와 동일):
+
+```
+RU(x)[i][j] = #{k : x[i][k] <  x[i][j]}  +  #{k < j : x[i][k] == x[i][j]}
+출력 = float64,  각 행의 값역 = 정확히 {0.0, 1.0, …, T−1.0}
+```
+
+각 행은 항상 `0..T−1`의 **순열**이다 — 동률이 있어도 중복 rank는 생기지 않는다. **tie-break = 인덱스 오름차순** (동률이면 원래 인덱스가 작은 쪽이 낮은 rank).
+
+**동등한 O(T log T) 형태** (동률을 주입해 bit-identical 검증 완료):
+
+```
+order        = argsort(x[i], kind="stable")     # 오름차순, 동률은 원래 인덱스 순
+ranks[order] = arange(T)
+RU[i]        = float64(ranks)
+```
+
+`kind="stable"`은 **필수**다. `"quicksort"`를 쓰면 동률 순서가 깨져 tie-break가 달라진다.
+
+### RU의 두 가측 불변량 — 계측기 전체가 여기 서 있다
+
+**(I1) 주변분포 고정.** 각 행의 multiset이 `{0..T−1}`로 고정 ⟹ `nbins=8, T=64`에서 bin 폭 `bw = 63/8 = 7.875` ⟹ **각 bin에 정확히 8개** (실측: `bincount = [8,8,8,8,8,8,8,8]`). 따라서 모든 모듈·모든 arm·모든 surrogate에서
+
+```
+H(a) = H(b) = H_const ≈ 3.0 bit   (상수)
+⟹ MI(i,j) = 2·H_const − H(joint_ij)
+```
+
+자유량은 **joint 항 하나뿐**이다.
+
+**(I2) permutation-equivariance (동률이 없을 때).** `RU(π(x)) = π(RU(x))`. *증명*: rank는 행의 multiset의 함수이고 π는 multiset을 보존한다. 동률이 없으면 tie-break가 발동하지 않으므로 인덱스 의존성이 사라진다. ∎
+
+### HARD-ABORT — f64 tie-collapse (P1-SELF가 막아야 하는 이유)
+
+동률이 있으면 (I2)가 깨진다. 그때 RU는 동률 블록을 **인덱스 순서**로 순위매기므로, **인덱스 순서 정보가 ranked 신호 안으로 새어 들어간다.** 모든 모듈이 같은 인덱스 순서를 공유하므로 이것은 **가짜 cross-module pairing**을 만든다. 극단적으로 어떤 모듈이 죽어 전 구간 상수가 되면 `RU(row) = [0,1,…,63]`이 되고, 그런 모듈끼리는 MI가 최대가 되어 Φ가 순수 artifact로 치솟는다.
+
+```
+검사: ∀ (arm, s, r), ∀ i :  len(unique(traj[i])) == T
+위반 → HARD-ABORT.  seed 교체·재시도·downgrade 전부 금지. 런 중단 후 보고.
+```
+
+연속값 64개에서 정확한 f64 동률이 날 확률은 사실상 0이므로, 발화 = 불운이 아니라 **구조적 결함**(죽은 모듈·구동 0인 arm·leak 붕괴)의 신호다.
+
+## §1.2 `π_k` — normalization permutation
+
+**축**: 시간(표본)축 `t = 0..T−1`을 **각 모듈 행 안에서** 재배열.
+
+**모듈별 독립 — 공유 순열 금지.** 공유(common) 순열은 Φ를 **정확히 불변**으로 남긴다(아래 L1) ⟹ `Φ* ≡ 0`이 되어 계측기가 죽는다. 반드시 모듈마다 독립 draw.
+
+**모듈 0은 identity로 고정한다 — 그리고 이것은 편의가 아니라 정확한 분산 감소다.**
+
+> **(L1) 공통 순열 불변성.** Φ는 pairwise MI 행렬의 MIP이고, `MI(i,j)`는 `bincount(b_i[t]·8 + b_j[t])` — 즉 **동시각 t에서 공기(co-occurring)하는 쌍의 multiset**만의 함수다. 모든 모듈에 동일한 σ를 적용하면 t 라벨만 바뀌고 쌍의 multiset은 불변 ⟹ Φ 불변. *(실측: bit-identical, `1.895066 == 1.895066`.)*
+>
+> **(L2) 모듈 0 고정의 정확성.** `(σ_0,…,σ_{n−1})`에 공통으로 `σ_0⁻¹`을 적용하면 (L1)에 의해 Φ는 그대로이고 배치는 `(id, σ_0⁻¹σ_1, …, σ_0⁻¹σ_{n−1})`로 옮겨간다. `σ_i`가 iid uniform이면 `{σ_0⁻¹σ_i}_{i≥1}`도 iid uniform이다. ⟹ **"n개 전부 순열"의 null 분포와 "모듈 0 = identity, 1..n−1만 순열"의 null 분포는 정확히 같다.** *(실측: all-4 → mean 1.9504/sd 0.1401, mod0=id → mean 1.9469/sd 0.1499 — 일치.)* 따라서 모듈 0 고정은 draw를 하나 아끼면서 분포를 바꾸지 않는다. ∎
+>
+> **(L3) 부수효과.** `π_k`는 폐기된 Bperm의 **정확한 K-표본 일반화**가 된다: `shift_modules`는 `off_0 = (0·17) mod 64 = 0` — 모듈 0이 이미 identity였다. 옛 null은 새 null의 support 안의 원소 하나(그것도 순환 부분군에서 뽑힌 하나)일 뿐이다.
+
+**draw 방식 — Fisher–Yates (backward, in-place)**, 모듈 `i`·surrogate `k`마다 전용 LCG 스트림:
+
+```
+p ← [0, 1, …, T−1]
+x ← perm_seed(s, r, k, i)
+for m = T−1 down to 1:
+    x ← lcg_next(x)
+    j ← floor( lcg_unit(x) · (m+1) )      # lcg_unit(x) ∈ [0,1) ⟹ j ∈ [0,m] 보장
+    swap p[m], p[j]
+정확히 T−1 = 63 step 소비.
+```
+
+`x ≤ 2147483647 < 2147483648`이므로 `lcg_unit(x) < 1`이 **엄격**하게 성립 ⟹ `j ≤ m`이 항상 보장된다. 클램프 불필요.
+
+**적용 방향 (고정)** — **gather**, scatter 아님:
+
+```
+Z_k[0] = Z[0]                       # 모듈 0 = identity
+Z_k[i] = Z[i][ p_{k,i} ]   for i = 1..n−1
+```
+
+### 왜 full index permutation이고 phase/IAAFT가 아닌가 — **당신의 판단이 맞다. CONFIRM.**
+
+근거를 정확히 셋으로:
+
+1. **estimator는 t의 순서를 전혀 쓰지 않는다.** transition(t→t+1)도, lag도, spectrum도 들어오지 않는다. `mi_pair`는 오직 동시각 쌍의 joint histogram만 본다. 즉 **autocorrelation은 이 추정기의 정의역 밖**이다. 따라서 autocorrelation을 보존해주는 surrogate(phase-randomized / IAAFT)는 *추정기가 볼 수 없는 것을* 비싸게 보존하는 것이고, 얻는 것이 0이다.
+
+2. **더 나쁜 것은, phase randomization은 주변분포를 바꾼다**(Gaussianize). 그런데 추정기는 주변분포를 **본다**(`H(a)`, `H(b)`, binning). ⟹ *볼 수 없는 것을 통제하려다 볼 수 있는 곳에 통제되지 않은 confound를 주입*하는 순손실이다. IAAFT는 rank 재배정으로 주변분포는 맞추지만 대신 spectrum을 근사로만 맞추는데, 그 spectrum은 애초에 무관하다.
+
+3. **pairing 통계량의 exact null은 하나뿐이다**: 각 모듈의 주변 multiset을 (bit 단위로) 고정하고 pairing을 uniform하게 랜덤화하는 것. RU 아래에서 각 행의 multiset이 정확히 `{0..63}`이므로, 이 null은 **`S_T` 위의 uniform 순열**로 정확히 실현된다 — surrogate의 주변분포가 관측치와 **bit-identical**이고, 따라서 뺄셈이 joint 항만 남긴다((I1)).
+
+> ⟹ full index permutation은 *허용 가능한 정도*가 아니라 **이 추정기의 정확·최소·충분(exact, minimal, sufficient) null**이다. 이보다 좁히면(= Bperm의 순환 부분군) §0-②의 병에 그대로 걸린다.
+
+## §1.3 LCG stream derivation
+
+### Base (probe L24–35, verbatim)
+
+```
+A = 1103515245 · C = 12345 · MASK = 2147483647 · M = 2^31 = 2147483648
+lcg_next(x) = (x·A + C) & MASK              # ≡ (x·A + C) mod 2^31
+lcg_unit(x) = x / 2147483648.0              # ∈ [0,1)
+lcg_gauss(x0):
+    s1 = lcg_next(x0);  s2 = lcg_next(s1)
+    u1 = lcg_unit(s1);  u2 = lcg_unit(s2)
+    if u1 < 0.0000001: u1 = 0.0000001
+    z  = sqrt(−2·ln u1) · cos(2π·u2)        # cos branch만. sin branch 폐기.
+    return (z, s2)                          # s2 = 새 state.  gauss 1개당 2 step.
+```
+
+상태는 **Python int**로 유지한다 (`np.int32`/`np.int64` 금지). 실제로 곱의 상한은 `2^31·A ≈ 2.37e18 < int64 max`라 int64도 안전하지만, 재현성 리스크를 감수할 이유가 없다.
+
+### ⚠️ 핵심 사실 — 모든 스트림은 **하나의 cycle** 위에 있다
+
+이 LCG는 mod 2^31에서 full-period(Hull–Dobell 충족)이므로 **cycle이 하나뿐**이다. 그러므로 *"해시로 서로 다른 시드를 만들면 독립 스트림"* 이라는 통념은 **거짓**이다 — 서로 다른 시작점은 같은 cycle 위의 서로 다른 **창(window)** 일 뿐이고, 창이 겹치면 두 realization은 같은 난수를 공유한다.
+
+소요량을 계산하면 이건 이론적 걱정이 아니다:
+
+```
+궤적 1개 = 2144 gauss = 4288 step
+9 seeds × R=8192 × 4288 = 3.16e8 step  = cycle의 14.7%
+시작점을 해시로 흩뿌릴 경우, 겹치는 realization 쌍의 기대값 ≈ 1e4개
+```
+
+⟹ **시드를 해시하지 말고, cycle을 명시적으로 분할(arena)해서 jump-ahead로 할당한다.**
+
+### jump-ahead (정확 · O(log j))
+
+아핀사상 `(A,C): x ↦ (A·x + C) mod M`의 이진 거듭제곱:
+
+```
+lcg_jump(x, j):
+    (Aa, Cc) ← (1, 0)          # identity map
+    (Ab, Cb) ← (A, C)          # f_1
+    while j > 0:
+        if j & 1:
+            Aa ← (Ab·Aa) mod M
+            Cc ← (Ab·Cc + Cb) mod M
+        Cb ← (Cb·(Ab + 1)) mod M
+        Ab ← (Ab·Ab)      mod M
+        j  ← j >> 1
+    return (Aa·x + Cc) mod M
+```
+
+*검증 완료*: `lcg_jump(x,1) == lcg_next(x)`, `lcg_jump(x,1000) == lcg_next 1000회`.
+
+### anchor (H_9260 회귀 앵커)
+
+```
+anchor(s) = (s · 2654435761) & 2147483647          # probe L53
+if anchor(s) == 0: anchor(s) = 12345               # probe L54 (s=3..11에선 발화 안 함; 충실도로 유지)
+```
+
+### cycle geometry — **여기서 R의 cap이 유도된다**
+
+```
+2654435761 mod 2^31 = 506,952,113
+⟹ anchor(3..11) = 공차 506,952,113의 등차수열 mod 2^31 (Knuth 황금비 해시)
+⟹ 세거리 정리대로 gap은 정확히 두 값만: 119,675,196 과 387,276,917
+   (합 = 2^31 정확히 일치 — 검증 완료)
+⟹ seed당 사용 가능한 연속 arena = min gap = 119,675,196 step
+```
+
+### arena 배치 (seed s의 anchor로부터의 offset — 전부 검증됨)
+
+| arena | offset base | per-r stride | 실제 소요/r |
+|---|---|---|---|
+| **TRAJ** | `0` | 8192 | 4288 |
+| **PERM** (K개 정규화 순열) | `2^26` = 67,108,864 | 4096 | 16·3·63 = 3024 |
+| **SPIKE** (P-CAL 주입) | `2^26+2^25` = 100,663,296 | 1024 | 2·(64+256) = 640 |
+| **PCAL** (π_a, π_b) | `2^26+2^25+2^23` = 109,051,904 | 512 | 2·3·63 = 378 |
+
+```
+arena 총 끝 = 109,051,904 + 8192·512 = 113,246,208  <  119,675,196  ✓ (여유 6,428,988)
+R_max(기하학적) = 119,675,196 / (8192+4096+1024+512) = 8657
+```
+
+> **FREEZE의 `cap 8192`는 임의 상수가 아니라 그 아래 최대 2의 거듭제곱이다 — LCG cycle 기하학이 강제하는 한계.**
+> **`floor 2048`의 근거는 SE**: 단일 realization Φ\*의 sd ≈ 0.15 ⟹ `R=2048`에서 SE ≈ 0.0033 (= 0.02 효과에 6 SE), `R=8192`에서 SE ≈ 0.0017 (= 12 SE).
+
+### 스트림 정의 (전부 **arm-independent** — common random numbers)
+
+```
+seed_state(s, r)       = lcg_jump( anchor(s), 0                  + r·8192 )
+                         # r = 0  ⟹  anchor(s) 정확히  ✓ H_9260 회귀조건 충족
+
+perm_base(s, r)        = lcg_jump( anchor(s), 2^26               + r·4096 )
+perm_seed(s, r, k, i)  = lcg_jump( perm_base(s,r), (k·(n−1) + (i−1))·63 )
+                         # i = 1..n−1 (i=0은 identity, 스트림 미소비) · k = 0..15
+
+spike_base(s, r)       = lcg_jump( anchor(s), 2^26+2^25          + r·1024 )
+    g[t]    : spike_base 로부터 T=64 gauss           (128 step)
+    e_i[t]  : 이어서 n·T = 256 gauss                  (512 step)
+              순서 = i 바깥루프, t 안루프
+
+pcal_base(s, r)        = lcg_jump( anchor(s), 2^26+2^25+2^23     + r·512 )
+pcal_seed(s, r, w, i)  = lcg_jump( pcal_base(s,r), (w·(n−1) + (i−1))·63 )
+                         # w = 0 : π_a  ·  w = 1 : π_b
+```
+
+**π_a/π_b가 K개 정규화 순열과 disjoint하다는 것은 주장이 아니라 주소 분리에 의한 구성적 증명이다**: PERM arena는 `[2^26 + r·4096, +3024) ⊂ [2^26, 2^26+2^25)`에, PCAL arena는 `[2^26+2^25+2^23, …)`에 놓인다. 두 구간은 겹치지 않는다.
+
+**arm-independence**: 위 어떤 스트림도 arm(mode)을 인자로 받지 않는다. 따라서 같은 `(s,r)`에서 **모든 arm이 동일한 궤적 draw · 동일한 K개 π_k · 동일한 spike를 공유한다** ⟹ arm 간 Δ는 paired, common random numbers가 되어 분산이 크게 줄고 null-draw 잡음이 Δ에서 상쇄 방향으로 상관된다.
+
+**벡터화 (근사가 아니라 항등)**: LCG는 축차적이지만, 아핀사상 표를 미리 만들면 한 번에 벡터화된다. 길이 L의 상태열은 `(A_j, C_j)_{j=0..L−1}`를 미리 계산해 두고 `states = (A_vec · x0 + C_vec) mod 2^31` 한 방으로 얻는다 (int64 안전: `A_vec·x0 ≤ 2^31·2^31 = 4.6e18 < 9.22e18`). 이후 Box–Muller도 벡터화. **이건 선택이 아니라 지정이다** (§1.5 참조).
+
+## §1.4 `Φ*` computation order
+
+한 `(arm, s, r)`에 대해 **정확히 이 순서**:
+
+```
+1.  st    ← seed_state(s, r)                        [arm 무관]
+2.  traj  ← gen_traj(st, arm) → (4,64) float64,  traj[i,t] = ‖s_i(t)‖²
+        draw 순서 고정: states(32) → inputs(2048) → chans(32) → relay(32) gauss = 4288 step
+        ⟹ arm A는 draw 1·2에만 의존하고 arm 간 byte-identical
+        [최적화] (s,r)당 2144개 gauss를 한 번만 생성해 전 arm에 재사용 — 정확히 동일
+3.  P1-SELF tie 검사:  ∀i, len(unique(traj[i])) == 64.   위반 → HARD-ABORT
+4.  Z     ← RU(traj)                                — 한 번만. 각 Z[i]는 {0.0..63.0}의 순열
+5.  B[i]  ← bin_values(Z[i], 8)                     — 한 번만
+        (I1에 의해 각 행 bin count = [8]×8, H(a)=H(b)=H_const ≈ 3.0
+         ⟹ H_const는 스칼라 상수 1회 계산 후 전역 재사용)
+6.  φ_obs ← faithful_phi(Z.ravel(), n=4, dim=64, n_bins=8)
+7.  for k = 0..15:
+        π_k:  모듈 0 = identity;  i=1..3 → p_{k,i} ← FisherYates(64, perm_seed(s,r,k,i))
+        Z_k[0] = Z[0];  Z_k[i] = Z[i][p_{k,i}]
+        φ_k   ← faithful_phi(Z_k.ravel(), 4, 64, 8)
+8.  Φ*(arm, s, r) = φ_obs − (1/16)·Σ_k φ_k          ← 원자 단위. realization마다 형성.
+9.  Φ̄*(arm, s) = (1/R)·Σ_{r=0}^{R−1} Φ*(arm, s, r)
+    SE(arm, s)  = sd_r(Φ*) / √R
+    ⟹ R개 값 전부(최소한 Σ와 Σ²)를 보존할 것. SE가 계산 가능해야 한다.
+10. arm 차분은 (s,r) 수준에서 paired로 먼저 형성:
+        Δ(a1−a2, s, r) = Φ*(a1,s,r) − Φ*(a2,s,r)     그 다음 r에 대해 평균.
+    ❌ 절대 평균끼리 빼지 말 것 — 평균값은 같지만 분산이 완전히 달라진다(공통 난수의 상쇄를 잃는다).
+```
+
+### k에 걸친 재사용 규칙 (전부 bit-exact)
+
+- **(a)** `Z`는 k에 걸쳐 재사용 — 재계산 금지.
+- **(b)** **binning도 재사용 가능하고 정확하다**: `bin_values(Z[i][p]) == bin_values(Z[i])[p]` (원소별 연산이고 min/max는 순열 불변) ⟹ surrogate의 binned 행은 순수 gather `B[i][p_{k,i}]`. **재binning 불필요.**
+- **(c)** `H(a)`, `H(b)`는 `H_const` 상수 ⟹ `MI(i,j) = 2·H_const − H(joint_ij)` — **joint histogram 6개만** 다시 계산.
+- **(d)** **`π_k`는 arm 무관** ⟹ `(s,r)`당 16개 순열을 **한 번 만들어 전 arm에 재사용**.
+
+### 당신의 질문 — surrogate를 RU **뒤에** 적용하는가? **CONFIRM.**
+
+FREEZE 문구 그대로 `Φ(π_k(RU(traj)))` — **이미 ranked된 배열을 순열한다.** 근거 셋:
+
+1. §1.1 **(I2)** 에 의해, **동률이 없으면** `RU(π(x)) = π(RU(x))` — 즉 permute-before-RU와 **정확히 동일**하다. 그리고 동률 부재는 3단계 **HARD-ABORT가 보증한다.** 두 순서가 갈라지는 유일한 경우를 게이트가 이미 막아둔 것이다 — **이 HARD-ABORT는 바로 이 저렴한 순서를 합법화하는 조건이다.**
+2. 비용: permute-before-RU는 RU를 K배 수행해야 한다. permute-after-RU는 1회.
+3. surrogate의 주변분포가 관측치와 **bit-identical**임이 자명해진다(같은 배열의 순열) ⟹ 뺄셈이 joint 항만 남긴다는 (I1) 논증이 무조건 성립한다.
+
+### estimator 고정 사항 — port가 반드시 재현해야 하는 3가지 "quirk = SPEC"
+
+- `bin_values`의 all-identical 가드는 **f32 EPSILON 리터럴 `1.19209290e-7`** (파이프라인이 f64여도 그대로).
+- `_entropy`는 `total + 1e-8`로 나누고 `log2(p + 1e-10)`을 쓴다.
+- **MIP 열거는 `mask = 1`부터 시작한다** ⟹ 이분할 `{0} | {1,2,3}`은 **절대 평가되지 않는다.** "고쳐서" 추가하면 Φ가 바뀌고 H_9260 회귀가 깨진다.
+
+> 참고: 이 mask 비대칭은 `π_k`의 모듈-0-identity와 **무관하다.** (L2)의 불변성 논증은 estimator 내부 비대칭과 독립이며, 실측으로도 두 null(mod0=id vs all-4)이 일치함을 확인했다.
+
+## §1.5 numpy 비용모형
+
+> **`(arm, s, r)` 하나당 Φ 호출 = `1 + K` = 17.** (φ_obs 1개 + surrogate 16개.)
+> **총 Φ 호출 = `n_arms × 9 × R × 17`.**
+
+| n_arms | R=2048 | R=4096 | R=8192 |
+|---|---|---|---|
+| 5 | 1,566,720 | 3,133,440 | 6,266,880 |
+| 6 | 1,880,064 | 3,760,128 | 7,520,256 |
+| 7 | 2,193,408 | 4,386,816 | 8,773,632 |
+
+(P-CAL / P1c의 spike-in leg도 같은 `17 calls/cell` 비율로 자기 `(arm,s,r)` 셀을 더한다.)
+
+**Φ 1회 비용** (n=4, T=64, nbins=8): `mi_pair` 6회 (각각 bincount 3 + entropy 3, 길이 ≤64) + 7개 mask MIP. 배열이 작아 **numpy 오버헤드가 지배**한다 — 소박한 구현으로 **~50–70 µs/call**.
+
+```
+n_arms=6, R=8192 (최대 구성):  7.52e6 × 60 µs ≈ 450 s ≈ 7.5분  (단일 코어)
+§1.4 재사용 규칙 적용 시 (binning gather + H_const 상수 + joint만 재계산)
+                            → ~20–25 µs/call → 3분 이하
+(k, r)에 대해 배치 벡터화 시 → 초 단위
+```
+
+**궤적 생성**: `9 × R × 4288` step — **arm이 아니라 `(s,r)`당 1회** 생성해 전 arm 재사용. R=8192에서 3.16e8 step이다. 순수 Python 루프로 돌리면 5–10분으로 **전체 비용을 지배**해 버리지만, §1.3의 **아핀표 벡터화**를 쓰면 무시할 수준이 된다.
+
+⟹ 전체는 **CPU 단일 호스트 · 수 분 규모**다. `[2048, 8192]` 구간 어디에서도 **비용은 제약이 아니다.** 따라서 R은 예산이 아니라 **오직 P-CAL의 정밀도 요구로만** 정해져야 한다 (FREEZE대로 하향 금지).
+
+---
+
+## 요약 — 이 §1이 §0의 세 원인을 어떻게 닫는가
+
+| §0 원인 | §1의 대응 |
+|---|---|
+| ① `dense_shuffle`가 결합을 보존 (probe L214/L220-224) | 폐기. 대체 ladder는 §2+ |
+| ② null 표본 = 1, 퇴화 부분군 | **§1.2** — `S_T` 위 uniform 순열 K=16개, exact·minimal·sufficient null이 **통계량 안으로** |
+| ③ 값-읽기(pedestal 103–108%) + n=1 + 5% 검정력 | **§1.4** — realization마다 pedestal을 빼서 Φ\*를 만들고, R로 block-mean해 **오차막대를 갖는 양**으로 만든다 |
+
+포팅 시 결정해야 할 설계 사항은 **없다.** 모든 상수·순서·스트림·중단조건이 위에 고정되어 있다. 두 곳만 특히 조심하면 된다: `argsort(kind="stable")`(§1.1), 그리고 **시드를 해시하지 말고 `lcg_jump` arena로 할당할 것**(§1.3) — 후자는 그냥 두면 "독립" realization들이 조용히 난수를 공유한다.
