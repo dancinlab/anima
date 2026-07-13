@@ -28,15 +28,22 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SEED = 7
-K_CTX = 24          # natural-context prompts per atom  (H_9289 verbatim)
+# H_9301 — K_CTX is the THIRD code cap in this lane (after k_cap=15 and WIN=24). The corpus holds
+# a median of 717 usable contexts per atom (min 182, max 24,899), and this cap binds on 111/111
+# atoms, discarding 197,169 of them. The probe MEAN-POOLS an atom's contexts, so the cap is a
+# sqrt(K_hi/24) noise penalty paid for nothing. Env-driven so H_9289/H_9297 stay byte-reproducible
+# at the default; H_9301 fires at K_CTX=182 (the minimum every atom can supply, so no atom is
+# pooled over fewer contexts than any other).
+K_CTX = int(os.environ.get("K_CTX", "24"))
 K_CAP = 10 ** 9     # THE ONE CHANGE: no ceiling on atoms per polarity
 MIN_CTX = 6         # an atom needs at least this many usable contexts (H_9289 verbatim)
 OCC_FLOOR = 30      # pre-registered exposure floor — an atom the model barely saw proves nothing
 
 
-def _contexts(stem, rows, rng, k=K_CTX):
+def _contexts(stem, rows, rng, k=None):
     """k natural reviews containing the stem, TRUNCATED right after it so the atom lands at the
     end of the right-aligned window (its contextualised hidden = __last). H_9289 verbatim."""
+    k = K_CTX if k is None else k
     hits = [t for (t, _l) in rows if stem in t]
     rng.shuffle(hits)
     out = []
@@ -90,13 +97,15 @@ def main() -> int:
 
     n_tr = sum(1 for a in meta if a["split"] == "train")
     n_te = sum(1 for a in meta if a["split"] == "heldout")
-    json.dump({"items": items}, open(os.path.join(HERE, "gt_prompts_n92.json"), "w"),
+    tag = "n92" if K_CTX == 24 else f"k{K_CTX}"
+    json.dump({"items": items}, open(os.path.join(HERE, f"gt_prompts_{tag}.json"), "w"),
               ensure_ascii=False)
     json.dump({"atoms": meta, "n_prompts": len(items), "n_train": n_tr, "n_heldout": n_te,
                "k_cap": "lifted", "v_f_collision_dropped": collide,
                "v_exposure_thin_dropped": thin, "occ_floor": OCC_FLOOR,
-               "cand_pos": audit["n_cand_pos"], "cand_neg": audit["n_cand_neg"]},
-              open(os.path.join(HERE, "gt_atoms_n92.json"), "w"), ensure_ascii=False, indent=1)
+               "cand_pos": audit["n_cand_pos"], "cand_neg": audit["n_cand_neg"],
+               "k_ctx": K_CTX},
+              open(os.path.join(HERE, f"gt_atoms_{tag}.json"), "w"), ensure_ascii=False, indent=1)
 
     import math
     sd = math.sqrt(0.25 / n_te)
