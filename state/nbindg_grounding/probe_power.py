@@ -75,17 +75,70 @@ def mlp(Xtr, ytr, Xte, hidden=32, l2=L2, iters=1500, lr=0.05, seed=SEED):
             _sigmoid(np.tanh(Xtr @ W1 + b1) @ w2 + b2))
 
 
+WIN = int(os.environ.get("PROBE_WIN", "24"))
+
+
 def load(arm: str):
-    npz = np.load(os.path.join(HERE, "hid", f"gt_n92_{arm}.npz"))
+    """The hidden dump for this arm at the window under test.
+
+    H_9300: `--win` is a BYTE budget (evaluate.py: "T=24 right-aligned byte encode"), and the
+    original G-PROBE ran at 24 bytes ≈ 8 Korean characters — while the oracle it is contrasted
+    against read the whole 64-character fragment. The polarity evidence sits in the earlier part of
+    the context, which the model's dumped representation never saw. So the window is the one thing
+    this file varies; everything else is H_9297 verbatim.
+    """
+    tag = "gt_n92" if WIN == 24 else f"w{WIN}"
+    npz = np.load(os.path.join(HERE, "hid", f"{tag}_{arm}.npz"))
     meta = json.load(open(os.path.join(HERE, "gt_atoms_n92.json")))["atoms"]
-    ctx, y, split, stems, occ = [], [], [], [], []
+    prompts = {i["id"]: i["prompt"]
+               for i in json.load(open(os.path.join(HERE, "gt_prompts_n92.json")))["items"]}
+    ctx, y, split, stems, occ, blen = [], [], [], [], [], []
     for a in meta:
-        vs = [npz[i + "__last"] for i in a["ids"] if (i + "__last") in npz.files]
-        if not vs:
+        ids = [i for i in a["ids"] if (i + "__last") in npz.files]
+        if not ids:
             continue
-        ctx.append(np.stack(vs, 0).astype(np.float64))
+        ctx.append(np.stack([npz[i + "__last"] for i in ids], 0).astype(np.float64))
+        blen.append(np.mean([len(prompts[i].encode()) for i in ids if i in prompts]))
         y.append(a["pol"]); split.append(a["split"]); stems.append(a["stem"]); occ.append(a["occ"])
-    return ctx, np.array(y), np.array(split), stems, occ
+    return ctx, np.array(y), np.array(split), stems, occ, np.array(blen)
+
+
+def length_only(blen, y, tr, te):
+    """V-LENGTH-A — the confound floor: what does the byte LENGTH alone score?
+
+    Held-out prompt byte-length correlates with polarity at r = -0.301, and --win pads short
+    prompts with spaces, so length is readable straight off the representation. A one-feature
+    length probe run through the real pipeline (fit on train, test on held-out) reads 0.648 —
+    at the frozen 0.65 bar. Any arm that does not BEAT this floor has not shown polarity.
+    """
+    x = blen[:, None]
+    pte, _ = logreg(x[tr], y[tr].astype(float), x[te])
+    return float(((pte > 0.5) == y[te]).mean())
+
+
+def residualize(pooled, blen, tr):
+    """V-LENGTH-B — regress the length direction OUT of the features, then probe the residual.
+
+    Fit (on TRAIN only, so the held-out labels never touch the fit) hidden ~ a + b*byte_length,
+    and keep the residual. Polarity that survives here is not length.
+    """
+    x = np.c_[np.ones(len(blen)), blen]
+    coef, *_ = np.linalg.lstsq(x[tr], pooled[tr], rcond=None)
+    return pooled - x @ coef
+
+
+def loo_cv(pooled, y, tr):
+    """V-CV — replaces V-FIT. train n=20 in d=768: train_fit == 1.000 for every arm by
+    construction (20 points are always separable), so the fit gate certifies nothing.
+    Leave-one-out on the 20 train atoms is a gate that can actually fail."""
+    Xtr, ytr = pooled[tr], y[tr].astype(float)
+    n = len(ytr)
+    hits = 0
+    for i in range(n):
+        m = np.ones(n, bool); m[i] = False
+        p, _ = logreg(Xtr[m], ytr[m], Xtr[i:i + 1])
+        hits += int((p[0] > 0.5) == (ytr[i] > 0.5))
+    return hits / n
 
 
 def main() -> int:
@@ -96,7 +149,7 @@ def main() -> int:
                 == "heldout") if os.path.exists(os.path.join(HERE, "gt_atoms.json")) else set()
 
     for arm in ARMS:
-        ctx, y, split, stems, occ = load(arm)
+        ctx, y, split, stems, occ, blen = load(arm)
         tr, te = split == "train", split == "heldout"
         pooled = np.stack([c.mean(0) for c in ctx], 0)
         n_te = int(te.sum())
@@ -107,6 +160,13 @@ def main() -> int:
         hits = (pte > 0.5) == y[te]
         acc = float(hits.mean())
         fit = float(((ptr > 0.5) == y[tr]).mean())
+
+        # ── V-LENGTH (prereg amendment II) — the confound floor + the length-free probe ──
+        len_floor = length_only(blen, y, tr, te)
+        res = residualize(pooled, blen, tr)
+        rte, _ = logreg(res[tr], y[tr].astype(float), res[te])
+        acc_res = float(((rte > 0.5) == y[te]).mean())
+        cv20 = loo_cv(pooled, y, tr)
 
         # V-PERM: 200-draw label-permutation null (percentile, not a band)
         rng = np.random.default_rng(SEED)
@@ -130,18 +190,23 @@ def main() -> int:
             "P_LIN": acc, "train_fit": fit, "perm_null_p95": p95, "perm_p": pval,
             "P_NL_monitor": mon_nl, "acc_on_old29_subset": acc29,
             "exact_p_binom": float(stats.binom.sf(round(acc * n_te) - 1, n_te, 0.5)),
+            "LENGTH_ONLY_floor": len_floor, "P_LIN_length_residual": acc_res, "loo_cv_train20": cv20,
         }
         r = out["arms"][arm]
         print(f"{arm:>13} | n={n_te:3d} · sd {sd:.4f} · bar = {r['bar_sigma']:.2f}σ")
         print(f"{'':>13} | P-LIN {acc:.3f} (train {fit:.2f})  vs perm-null p95 {p95:.3f} "
               f"· perm p = {pval:.3f} · exact p = {r['exact_p_binom']:.3f}")
+        print(f"{'':>13} | [V-LENGTH] length-only floor {len_floor:.3f} · length-residual "
+              f"P-LIN {acc_res:.3f}   [V-CV] LOO(train20) {cv20:.3f}")
         print(f"{'':>13} | [monitor] P-NL {mon_nl:.3f}   [V-REPRO] old-29 subset {acc29:.3f}")
 
     m7, m11 = out["arms"]["main_s7"], out["arms"]["main_s11"]
     v = {
         "V_REPRO": all(abs(a["acc_on_old29_subset"] - REPRO_TARGET) <= REPRO_TOL
                        for a in (m7, m11)),
-        "V_FIT": all(out["arms"][a]["train_fit"] >= 0.90 for a in ARMS),
+        # V_FIT is retired (prereg amendment II): train n=20 in d=768 ⇒ fit == 1.000 for every arm
+        # by construction, so it is a gate that cannot fail. LOO on the 20 train atoms can.
+        "V_CV": all(out["arms"][a]["loo_cv_train20"] >= 0.60 for a in ("main_s7", "main_s11")),
         "V_BASE": out["arms"]["base_only"]["P_LIN"] < BAR,
     }
     print()
@@ -152,9 +217,24 @@ def main() -> int:
     detect = all(a["P_LIN"] >= BAR and a["perm_p"] < 0.05 for a in (m7, m11))
     partial = all(a["perm_p"] < 0.05 for a in (m7, m11)) and not detect
     split_seed = (m7["perm_p"] < 0.05) != (m11["perm_p"] < 0.05)
+
+    # V-LENGTH (prereg amendment II) — only bites when the arms actually rise. A rise that does
+    # not beat the length-only floor, or that dies once length is regressed out, is length.
+    beats_floor = all(a["P_LIN"] > a["LENGTH_ONLY_floor"] for a in (m7, m11))
+    survives_res = all(a["P_LIN_length_residual"] >= BAR for a in (m7, m11))
+    length_confound = (detect or partial) and not (beats_floor and survives_res)
+    print(f"{'V_LENGTH':>8}: {'PASS' if (beats_floor and survives_res) else 'FAIL'} "
+          f"(beats length-only floor: {beats_floor} · survives length-residual: {survives_res})")
+    out["v_gates"]["V_LENGTH"] = bool(beats_floor and survives_res)
+
     print()
     if not all(v.values()):
         verdict = "⏳ INVALID — a standing V-gate failed; no tier is reported."
+    elif length_confound:
+        verdict = ("⏳ LENGTH-CONFOUND — the arms rise, but the rise does not clear the length-only "
+                   "floor (0.648, at the bar) or does not survive regressing length out. The probe "
+                   "read pad-length, not polarity. No tier; redesign on a length-invariant prompt "
+                   "set.")
     elif detect:
         verdict = ("🔓 INFO-PRESENT — INFO-ABSENT RETRACTED. The signal was in the representation; "
                    "H_9289's verdict was a power failure, and the frontier's O/C-channel diagnosis "
@@ -171,7 +251,7 @@ def main() -> int:
                    "move is the right next step.")
     print(f"VERDICT: {verdict}")
     out["verdict"] = verdict
-    json.dump(out, open(os.path.join(HERE, "probe_power.json"), "w"), ensure_ascii=False, indent=2)
+    json.dump(out, open(os.path.join(HERE, f"probe_power_w{WIN}.json"), "w"), ensure_ascii=False, indent=2)
     return 0
 
 
