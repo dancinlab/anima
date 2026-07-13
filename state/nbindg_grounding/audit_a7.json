@@ -1,0 +1,31 @@
+{
+  "n_test": 200,
+  "chance_sd": 0.035355339059327376,
+  "arms": {
+    "main_s7": {
+      "test_acc": 0.545,
+      "train_fit": 1.0,
+      "sigma": 1.2727922061357866,
+      "exact_p": 0.11462329862985811
+    },
+    "main_s11": {
+      "test_acc": 0.49,
+      "train_fit": 1.0,
+      "sigma": -0.2828427124746193,
+      "exact_p": 0.6381144868435964
+    },
+    "base_only": {
+      "test_acc": 0.54,
+      "train_fit": 1.0,
+      "sigma": 1.1313708498984771,
+      "exact_p": 0.14441024858738313
+    },
+    "shuffle_grid": {
+      "test_acc": 0.525,
+      "train_fit": 1.0,
+      "sigma": 0.7071067811865481,
+      "exact_p": 0.26231117786115776
+    }
+  },
+  "verdict": "🧱 NO SENTIMENT AXIS (best 0.545) — the model cannot even tell a positive review from a negative one in its own representation. Then there is nothing for an atom's polarity to be written ONTO: M1 is true by construction, and the inversion curriculum and the abstention objective are BOTH moot. The recipe must first build the axis."
+}
