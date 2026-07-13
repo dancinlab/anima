@@ -5711,6 +5711,117 @@ def jamo_head_grow(jh, Xtr, Ytr, ntr, grow_max, min_owned, split_thresh_ce, lapl
     return JamoHead(centers, heads, vj, dim)
 
 
+def _jh_pooled(Y, ntr, vj, laplace):
+    """engine_cli.hexa — the ROOT (all-cells-pooled) next-symbol distribution: the PARENT a starved
+    cell borrows strength from (H_9298)."""
+    counts = [laplace] * vj
+    total = laplace * float(vj)
+    i = 0
+    while i < ntr:
+        counts[Y[i]] = counts[Y[i]] + 1.0
+        total = total + 1.0
+        i = i + 1
+    return [c / total for c in counts]
+
+
+def _jh_counts_wb(Y, owner, k, ntr, vj, pooled):
+    """engine_cli.hexa — per-cell head under WITTEN-BELL SHRINKAGE (H_9298, engine-native transfer).
+
+        P(next|cell) = lam*MLE(cell) + (1-lam)*P_pooled(root),   lam = n/(n+T)
+
+    A flat count-MLE head cannot buy a fraction of a conditioning bit: every split divides its
+    evidence, so a starved cell pays variance it cannot afford. lam is the closed-form Witten-Bell
+    estimate -- there is no knob to sweep, so tune-to-green is structurally impossible here."""
+    counts = [0.0] * vj
+    n = 0.0
+    i = 0
+    while i < ntr:
+        if owner[i] == k:
+            counts[Y[i]] = counts[Y[i]] + 1.0
+            n = n + 1.0
+        i = i + 1
+    t = float(sum(1 for c in counts if c > 0.0))     # distinct next-symbol TYPES (WB escape mass)
+    lam = (n / (n + t)) if (n + t) > 0.0 else 0.0    # n = 0 -> lam = 0 -> exactly the parent
+    out = []
+    u = 0
+    while u < vj:
+        mle = (counts[u] / n) if n > 0.0 else 0.0
+        out.append(lam * mle + (1.0 - lam) * pooled[u])
+        u = u + 1
+    return out
+
+
+def jamo_head_grow_shrink(jh, Xtr, Ytr, ntr, grow_max, min_owned, split_thresh_ce, laplace, cfg):
+    """engine_cli.hexa — the SAME gradient-free Voronoi growth as jamo_head_grow, with the two
+    engine-native transfers from the H_9298/H_9301 campaign. jamo_head_grow is left UNTOUCHED so the
+    H_1321 GREEN verdict stays byte-reproducible; this is a NEW faculty beside it.
+
+      (1) GROWTH REPAIR (H_9301) -- a degenerate median split (all owned points on one side of the
+          max-variance axis) used to `break` the WHOLE growth loop, killing the other still-
+          splittable cells with it. Measured: the pool hard-capped at 11 cells regardless of budget
+          (grow_max 400), threshold (0.0) or min_owned (2). Here the cell is BLACKLISTED and growth
+          continues; growth ends only when NO eligible cell can split.
+      (2) SHRINKAGE HEAD (H_9298) -- heads filled by _jh_counts_wb instead of the flat Laplace
+          count-MLE, so a starved cell borrows strength from the pooled root.
+
+    HONEST (H_9306): shrinkage buys back the variance a split destroys; it does NOT manufacture
+    information. Where the recovered amount is smaller than the wall, the wall STANDS."""
+    dim = jh.dim
+    vj = jh.vj
+    centers = jh.centers
+    af = _jh_field(centers, grow_max)
+    dead = []
+    pooled = _jh_pooled(Ytr, ntr, vj, laplace)
+    while len(centers) < grow_max:
+        owner = _jh_assign(af, Xtr)
+        nc = len(centers)
+        owned_n, local_ce = [], []
+        k = 0
+        while k < nc:
+            cnt = _jh_owned_count(owner, k, ntr)
+            owned_n.append(cnt)
+            if cnt > 0:
+                p = _jh_counts(Ytr, owner, k, ntr, vj, laplace)
+                local_ce.append(_jh_owned_ce(Ytr, owner, k, ntr, p))
+            else:
+                local_ce.append(-1.0)
+            k = k + 1
+        elig = [k2 for k2 in range(nc)
+                if k2 not in dead and owned_n[k2] >= min_owned and local_ce[k2] > split_thresh_ce]
+        if not elig:
+            break
+        pick = elig[0]
+        bestce = local_ce[elig[0]]
+        for e in elig[1:]:
+            if local_ce[e] > bestce:
+                bestce = local_ce[e]
+                pick = e
+        grown = engine_mitosis_tick(len(centers), cfg)
+        if grown <= len(centers):
+            break
+        ax = _jh_hi_var_axis(Xtr, owner, pick, ntr, dim)
+        med = _jh_owned_median(Xtr, owner, pick, ntr, ax)
+        nlo = _jh_half_count(Xtr, owner, pick, ntr, ax, med, True)
+        nhi = _jh_half_count(Xtr, owner, pick, ntr, ax, med, False)
+        if nlo == 0 or nhi == 0:
+            dead.append(pick)          # H_9301 REPAIR: blacklist this cell, do NOT kill growth
+            continue
+        c_lo = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, True, dim)
+        c_hi = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, False, dim)
+        new_centers = [centers[ci] for ci in range(len(centers)) if ci != pick]
+        new_centers = new_centers + [c_lo, c_hi]
+        centers = new_centers
+        dead = []                      # indices shifted by the rebuild; re-derive next pass
+        af = _jh_field(centers, grow_max)
+    own_tr = _jh_assign(af, Xtr)
+    heads = []
+    k = 0
+    while k < len(centers):
+        heads.append(_jh_counts_wb(Ytr, own_tr, k, ntr, vj, pooled))
+        k = k + 1
+    return JamoHead(centers, heads, vj, dim)
+
+
 def jamo_head_ce(jh, Xte, Yte):
     """engine_cli.hexa:6603."""
     if len(jh.heads) == 0:
