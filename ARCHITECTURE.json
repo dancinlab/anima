@@ -15040,6 +15040,7 @@
     "source": "H_9297 코드 상한이 데이터 한계로 오독됨 (2026-07-14)"
    },
    {
+<<<<<<< Updated upstream
     "id": "probe-power-py-1",
     "state": "pos-conv",
     "value": "Measurement inputs that live ONLY as untracked artifacts inside a worktree (hid/*.npz hidden dumps) are destroyed by pr-cycle's merged-worktree sweep — the sweep reads untracked as clean. H_9297's win=24 dumps vanished this way and had to be re-computed, and this is the SECOND time the sweep ate live measurement state (prior: background Workflow worktree). Cache expensive dumps under a stable non-worktree root (~/anima-weights/<lane>/ or state/ committed) and let the probe read from there, so a merge can never delete the evidence a verdict rests on.",
@@ -15052,6 +15053,13 @@
     "value": "**검정력(N_REQ)과 bar 를 데이터 전에 고정하지 않으면 그 실험은 결과와 무관하게 사전에 무효다.** H_9289(C3+C4)에서 실측 재발: 사전등록 게이트(GATE-1 Δ≥+0.15 ∧ 절대>0.55)는 있었으나 **N_REQ 를 데이터 후에 계산**했다 — 관측 n=29 원자 vs 사후 산출 N_REQ=228~255 ⟹ 음성 cement 불가(TOST 등가 False) = **양성도 음성도 못 얻는 실험에 GPU 4-arm 303M T=60000 을 태웠다**. gap 40-렌즈 심화(F4 falsifier)가 같은 결함의 **재발 임박**을 경고: O/C 채널이 또 n=29 held-out 원자로 발사될 참인데, H_9289 가 이미 '그 n 으로는 Δ=+0.15 를 못 잡는다'고 알려줬으므로 **지금 쏘면 결과와 무관하게 사전 무효**다. 인접 결함(F3 info-budget): 원자 n 을 8배 늘려도 **지배 분산은 seed(install)** 다 — H_9289 의 seed 부호반전 폭 0.161 은 합성 복제편차 0.009 의 18배인데 **원자 paired-t 는 seed 성분을 하나도 못 줄인다** ⟹ n-확대는 '잘못된 분산을 사는 것'. 또 하나(F4 A2): 29 원자는 같은 한국어 부정어 계열이라 **어간 상관** — 독립 단위로 셈하면 유효 클러스터가 ≤10 일 수 있고 그러면 검정력은 보고치보다 **더** 나쁘다.",
     "threshold": "재발조건: 사전등록 카드에 bar 는 썼는데 **N_REQ/검정력은 안 쓰고** 발사. 또는 관측 n 이 필요 N 보다 작은 걸 알면서 '일단 쏘고 보자'. 해결(발사 전 하드게이트): ① **PREREG 파일을 데이터 생성 전에 커밋**(state/<slug>/PREREG_*.json) — primary DV · 양성 bar · **N_REQ**(효과크기 가정 명시) · seed 수(H_9289 부호반전 지문상 **seed≥3**) · 음성 cement 용 TOST Δ_eq · 양성대조(자기 liveness) 낙제 시 INVALID · 조기중단/bar 재선택 금지. ② **관측 가능 n < N_REQ 면 발사 금지** — 단위를 바꾸거나(원자 → 원자×문맥 paired · 예: 29 원자 × 좌문맥 24 = ~696 trial) 효과크기가 큰 변형으로 갈 것. ③ **단위 독립성 검정**: paired 단위가 상관돼 있으면(같은 어간 계열) 클러스터링 후 cluster-level 로 N_REQ 재산출. ④ 실험 후 bar/n/DV 중 하나라도 PREREG 파일과 다르면 그 verdict 는 **자동 INVALID**(사후 정당화 금지). dont: 음성을 'ns' 로 주장(negative-claims-need-tost-not-ns) · N_REQ 사후계산 후 '검정력 부족이었다'로 마무리 · 지배 분산이 아닌 축에 표본을 늘림.",
     "source": "state/g1_next_ladder/PREREG_OC.json"
+=======
+    "id": "h-9290-codec-cpt-ckpt-a-fire-recover-complete-2026-07-14-1",
+    "state": "neg-conv",
+    "value": "**측정을 낳은 ckpt 를 pod 와 함께 잃으면 그 측정은 재해석은 되어도 재측정은 못 한다.** H_9290(NAT-ATOM NO-RESCUE)의 codec-CPT ckpt(base 303M → reinit-embed → 자연 codec 코퍼스 CPT 16k)는 pod 44684279 teardown 시 **로컬로도 HF 로도 pull 되지 않았다**(남은 건 드릴본 drill_M.clm 뿐 · gprobe 결과 json 만 보존). 그래서 H_9297 이 '같은 n=29 프레임은 검정력이 없다'를 밝힌 뒤 H_9290 을 n=91 로 **재측정하려 해도 GPU 재학습(spend) 없이는 불가능**하다 — /bin/zsh 로 할 수 있는 건 보존된 수치의 재해석뿐이었다(그것만으로도 판정이 뒤집혔다: 0.3448 은 우연 **아래** −1.67σ · 양측 p=0.136 ⇒ '접지 실패'가 아니라 n=29 아래쪽 꼬리와 구별 불가). 즉 ckpt 하나를 안 당겨서 **/bin/zsh 재측정 경로가 $ 경로로 강등**됐다.",
+    "threshold": "재발조건: pod/rent 학습으로 낳은 ckpt 를 teardown 전에 permanent storage 로 pull 하지 않을 때(a_fire_recover_complete). 특히 '측정만 뽑았으니 됐다' 고 판단할 때 — 훗날 프레임 결함(검정력·통제군·프로브)이 드러나면 **그 ckpt 없이는 재측정이 불가능**하다. 해결: (1) teardown 전 ckpt pull 을 hard-gate 로 (2) 측정 결과 json 만이 아니라 **그 측정을 재생할 수 있는 최소 자산**(ckpt + prompts + 코드)을 함께 보존 (3) 보존 못 했으면 카드에 '재측정 = spend 필요' 를 명시해 /bin/zsh 착시를 막아라.",
+    "source": "H_9290 codec-CPT ckpt 소실 (a_fire_recover_complete 위반 · 2026-07-14)"
+>>>>>>> Stashed changes
    }
   ]
  }
