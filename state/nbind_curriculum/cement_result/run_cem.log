@@ -1,0 +1,41 @@
+=== [0] corpus + codec + arms (deterministic regen) ===
+CORPUS_DONE: 149995 lines -> morph_corpus.txt (13127140 bytes)
+cpt bytes: {'M': 6418334, 'C1': 10512079, 'C2': 6183000, 'C3': 6418334}
+MORPHATOM_S1_GEN_DONE
+MORPHATOM_REINIT_DONE -> ./base_reinit.pt
+=== [C2] CPT 16k on cpt_C2.bytes (codec · 아니-ablated corpus) ===
+  .clm WRITTEN 176584498 bytes -> ./cpt_C2_16.clm
+  clm_decodable=True
+=== [C2] drill 2500 + eval ===
+  .clm WRITTEN 176584498 bytes -> ./drill_C2.clm
+  clm_decodable=True
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 4090)
+{"ckpt": "drill_C2.clm", "codec": "codec.json", "panel": "eval_f2.json", "n": 120, "d_acc": 0.9167, "mean_margin": 1.1275}
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 4090)
+{"ckpt": "drill_C2.clm", "codec": "codec.json", "panel": "eval_f1.json", "n": 100, "d_acc": 0.99, "mean_margin": 1.5264}
+=== [M·s7] CPT 16k + drill + eval (codec · non-collapsed) ===
+  .clm WRITTEN 176584498 bytes -> ./cpt_M_s7.clm
+  clm_decodable=True
+  .clm WRITTEN 176584498 bytes -> ./drill_M_s7.clm
+  clm_decodable=True
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 4090)
+{"ckpt": "drill_M_s7.clm", "codec": "codec.json", "panel": "eval_f2.json", "n": 120, "d_acc": 0.9167, "mean_margin": 1.9934}
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 4090)
+{"ckpt": "drill_M_s7.clm", "codec": "codec.json", "panel": "eval_f1.json", "n": 100, "d_acc": 0.97, "mean_margin": 2.7333}
+=== [C1·s7] CPT 16k + drill + eval (raw utf-8 · from un-reinit base) ===
+  .clm WRITTEN 176584498 bytes -> ./cpt_C1_s7.clm
+  clm_decodable=True
+  .clm WRITTEN 176584498 bytes -> ./drill_C1_s7.clm
+  clm_decodable=True
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 4090)
+{"ckpt": "drill_C1_s7.clm", "codec": "raw", "panel": "eval_f2.json", "n": 120, "d_acc": 0.575, "mean_margin": 0.0559}
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 4090)
+{"ckpt": "drill_C1_s7.clm", "codec": "raw", "panel": "eval_f1.json", "n": 100, "d_acc": 1.0, "mean_margin": 1.1778}
+=== SUMMARY ===
+vC2_f2: d_acc= 0.9167 margin= 1.1275
+vC2_f1: d_acc= 0.99 margin= 1.5264
+vM_s7_f2: d_acc= 0.9167 margin= 1.9934
+vM_s7_f1: d_acc= 0.97 margin= 2.7333
+vC1_s7_f2: d_acc= 0.575 margin= 0.0559
+vC1_s7_f1: d_acc= 1.0 margin= 1.1778
+CEMENT_DONE
