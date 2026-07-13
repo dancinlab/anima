@@ -92,14 +92,23 @@ def load_corpora(nsmc_path=None, extra=True):
     return rows
 
 
-def audit_pnat(rows, grid_stems, seed):
+# H_9297: the 15/polarity ceiling below is a self-imposed CODE cap, not a data limit. The SAME
+# 450k corpus certifies pos 46 / neg 67 under the UNCHANGED bars (purity >= 0.85, occ >= 100,
+# syll <= 3, non-grid, non-past), so held-out n goes 29/30 -> 92 and the frozen 0.65 bar rises
+# from 1.62σ to 2.88σ above chance — which is the difference between a frame that cannot tell
+# "moderate signal" from "no signal" and one that can. `k_cap` is exposed so the earlier runs stay
+# byte-reproducible at 15 while H_9297 lifts it. No certification bar moves.
+K_CAP_DEFAULT = 15
+
+
+def audit_pnat(rows, grid_stems, seed, k_cap=K_CAP_DEFAULT):
     """Certify each candidate P_nat: purity/occ/renderable. Returns (viable list, audit dict)."""
     preds = GN.mine_predicates(rows, MINOCC_NAT, PURITY_NAT)
     cand = {p: d for p, d in preds.items()
             if p not in grid_stems and not GN.is_past_stem(p) and GN.syll(p) <= GN.MAX_SYLL}
     pos = sorted([p for p, d in cand.items() if d["pol"] == 1], key=lambda p: -cand[p]["n"])
     neg = sorted([p for p, d in cand.items() if d["pol"] == 0], key=lambda p: -cand[p]["n"])
-    k = min(len(pos), len(neg), 15)
+    k = min(len(pos), len(neg), k_cap)
     viable = pos[:k] + neg[:k]
     n_eval = len(viable) * len(GN.NEG_FORMS)
     audit = {
