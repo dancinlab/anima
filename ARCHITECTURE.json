@@ -14089,6 +14089,56 @@
           "detail": "H_9235 fork-A CLML lane 배선(clml.py lane_apply=pool→gelu→gated logit bias · decode.py _fwd_logits/CLML trailer · gate=0=byte-identical). ⚠️ copy-trap: derivtrace 타깃 base CE 0.0003 ⇒ 학습신호 死. 재설계=no-copy 타깃·4-gate(CE≫0→probe→train→system-G1). state/recomb-routing-lane/LANE_SIGNAL_REDESIGN.md"
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-decon-h9309",
+        "type": "gate",
+        "name": "★A채널 DECON — ⛔ INVALID-MECHANISM (주입 포맷 미학습 · H_9309)",
+        "detail": "발사게이트 PC-NONCE 낙제 ⟹ held-out 미발사(1회-접촉 예산 보존). A 채널의 사망이 아니라 F2 label-only 주입 포맷 하나의 사망 — '저장소 라우팅 불가'는 미측정.",
+        "children": [
+         {
+          "id": "gate-g1-recomb-decon-h9309-premise",
+          "type": "note",
+          "name": "전제 (3 실측) — 빠진 건 정확히 한 개의 입력",
+          "detail": "부정 연산자=학습됨(SEEN flip1 D-acc 0.950) · held-out 극성=부재(flip0 0.5057 z=+0.11 · H_9308 M1) · 그 극성=데이터가 완전결정(ORACLE MASKED 29/29 · H_9291)."
+         },
+         {
+          "id": "gate-g1-recomb-decon-h9309-instrument",
+          "type": "note",
+          "name": "계기 = margin-2AFC 단일 (자유생성 D-acc 사용불가)",
+          "detail": "clm_decode_topk_sampled_W 가 T=24 하드코딩(core/decode.py:1094) ⟹ 자유생성 D-acc 는 주입 접두사를 구조적으로 못 본다. primary 로 잡았으면 시작 전 사망. 배선 = cli/evaluate.py --consult/--consult-format."
+         },
+         {
+          "id": "gate-g1-recomb-decon-h9309-rf",
+          "type": "note",
+          "name": "RF 게이트 PASS — 컨텍스트 채널 live",
+          "detail": "conv L=4 수용영역이 접두사에 못 닿으면 어떤 창 크기로도 사실이 안 보인다(구조적 사망). 인과 실측: 접두사 33/33 바이트가 답 logits 을 움직임. 위치 임베딩 없음 ⟹ 창 T 는 자유. state/h9309_decon/RF_PROBE.txt"
+         },
+         {
+          "id": "gate-g1-recomb-decon-h9309-antiparrot",
+          "type": "note",
+          "name": "primary DV = held-out flip1 (앵무새 차단)",
+          "detail": "flip0 은 주입 토큰을 따라 읽어도 정답(합성 0 증거). flip1('빠르지 않다')은 gold=부정 ⟹ 주입 사실이 틀린 답을 가리킨다 = 앵무새는 진다. 29 원자 클러스터 3-형태 다수결 · bar C≥20/29 양 seed."
+         },
+         {
+          "id": "gate-g1-recomb-decon-h9309-status",
+          "type": "note",
+          "name": "결과 — PC-NONCE 낙제 (byte-audit DROPPED=0 = 계기 청결)",
+          "detail": "부재 PASS(NOSTORE flip0 0.5402/0.5747 = 우연) · 소비 FAIL(STORE flip0 0.5402/0.5747 vs bar 0.80) · 합성 FAIL(클러스터 16/29·19/29 vs bar 20/29). 모델이 아무것도 모를 수 없는 상황에서 사실을 줬는데 답이 안 움직였다."
+         },
+         {
+          "id": "gate-g1-recomb-decon-h9309-autopsy",
+          "type": "note",
+          "name": "🔬 부검 — 사실은 무시된 게 아니라 크게 흔들었다 (진짜 소득)",
+          "detail": "Δ=margin(STORE)−margin(NOSTORE): |Δ| 중앙값이 기준 margin 의 58.8%/73.9% · Δ=0 시행 0/174. 그런데 방향 무작위(flip0 mean Δ −0.40/−0.02 · flip1 +0.25/+0.92 = 둘 다 반대). ⟹ 큰 교란 · 정보량 0 = 접두사가 trunk 를 흔들되 사실로 라우팅 안 됨."
+         },
+         {
+          "id": "gate-g1-recomb-decon-h9309-next",
+          "type": "note",
+          "name": "NEXT — 렌더 포맷 재설계 (재튜닝 아님)",
+          "detail": "모델이 읽는 포맷은 자기 학습 템플릿뿐(SEEN D-acc 0.950) ⟹ 1-shot 시연 렌더. 필수통제 = copy-solvable 방어(evaluate-py-2) + win-parity 게이트. held-out n=29 는 TOST Δ_eq=0.10 licensing 불가(N_REQ≈190) ⟹ 지지까지만."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."

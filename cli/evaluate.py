@@ -757,6 +757,10 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
+    print("      [--consult <store.json>] [--consult-format F1|F2|F3]  — H_9309 DECON: render a")
+    print("      declarative fact into the 2AFC scoring context (same prefix on gold AND")
+    print("      counterfactual, so it moves the margin only by being COMPOSED, never parroted).")
+    print("      An empty store is byte-identical to a plain --xbind run.")
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
@@ -1328,6 +1332,43 @@ def _json_safe(o):
     return o
 
 
+def _consult_render(fact, fmt):
+    """Render one store fact as a context prefix (H_9309 DECON · pre-registered formats).
+    F1 stem-labelled · F2 label-only (shortest — the byte-audit fallback) · F3 lexical-split.
+    The SAME prefix goes in front of BOTH gold and counterfactual, so the paired NLL difference
+    cancels it — the prefix cannot move the margin by itself, only by being COMPOSED with the
+    negation morpheme (which is the whole point: flip1 is scored, where the injected polarity
+    pushes toward the WRONG answer unless the model actually composes)."""
+    pol_word = "긍정" if int(fact["pol"]) == 1 else "부정"
+    lex_word = "좋음" if int(fact["pol"]) == 1 else "나쁨"
+    if fmt == "F2":
+        return pol_word + ". "
+    if fmt == "F3":
+        return fact["key"] + "=" + lex_word + ". "
+    return fact["key"] + ":" + pol_word + ". "          # F1 (default)
+
+
+def _consult_seed(seed, item, store, fmt, win, gold, cf):
+    """seed' = render(fact) + seed, with a pre-registered byte-audit fallback.
+    The right-aligned window is `win` bytes; if prefix+seed+cont overflows it the window would
+    silently eat the prefix HEAD (the stem's leading UTF-8 bytes) and the run would look like
+    'consumption failure' when it is really truncation (Fable D5). So: try F1/F3, fall back to
+    the shorter F2, and report which trials were downgraded."""
+    if not store:
+        return seed, None
+    fact = store.get(item.get("a")) or store.get(item.get("b"))
+    if not fact:
+        return seed, None
+    budget = win - len(seed.encode()) - max(len(gold.encode()), len(cf.encode()))
+    pref = _consult_render(fact, fmt)
+    if len(pref.encode()) <= budget:
+        return pref + seed, fmt
+    pref2 = _consult_render(fact, "F2")                  # deterministic downgrade
+    if len(pref2.encode()) <= budget:
+        return pref2 + seed, "F2-downgrade"
+    return seed, "DROPPED-overflow"                     # audited, never silent
+
+
 def _xbind_cont_nll(np, clm_mod, W, seed, cont, T):
     """Sum NLL of `cont` bytes given `seed` (right-aligned window T forward)."""
     text = seed + cont
@@ -1364,8 +1405,20 @@ def xbind_run(argv):
     n_dec = evaluate_intval(argv[1:], "--n-decode", 200)
     n_smp = evaluate_intval(argv[1:], "--n-sampled", 40)
 
+    # --consult (H_9309 DECON · A-channel): a declarative store {atom: {key, pol}} whose fact is
+    # rendered into the CONTEXT of the 2AFC scoring window. It is the only structurally valid
+    # injection point: free-generation D-acc cannot see it (clm_decode_topk_sampled_W hardcodes
+    # T=24, core/decode.py:1094), so the primary instrument here is the margin-2AFC alone.
+    # EMPTY store => byte-identical to a plain --xbind run (parity gate).
+    consult_path = evaluate_strval(argv[1:], "--consult", "")
+    consult_fmt = evaluate_strval(argv[1:], "--consult-format", "F1")
+    store = json.load(open(consult_path)) if consult_path else {}
+
     print("=== anima evaluate --xbind — held-out XBIND recombination (G1 reopen lane a) ===")
     print("ckpt: " + ckpt + "  arm=" + arm + "  gen=%d win=%d" % (gen, T))
+    if store:
+        print("consult: %s  (%d facts · format=%s) — injected into the 2AFC context only"
+              % (consult_path, len(store), consult_fmt))
     W = clm.clm_load_weights(ckpt)
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
@@ -1391,8 +1444,10 @@ def xbind_run(argv):
                 c_hit = int(it["construct"] in o)
                 c_hits += c_hit
                 c_n += 1
-            mg = (_xbind_cont_nll(np, clm, W, it["seed"], it["counterfactual"], T)
-                  - _xbind_cont_nll(np, clm, W, it["seed"], it["gold"], T))
+            seed_m, cused = _consult_seed(it["seed"], it, store, consult_fmt, T,
+                                          it["gold"], it["counterfactual"])
+            mg = (_xbind_cont_nll(np, clm, W, seed_m, it["counterfactual"], T)
+                  - _xbind_cont_nll(np, clm, W, seed_m, it["gold"], T))
             margins.append(mg)
             smp = None
             if ix < n_smp:
@@ -1403,7 +1458,8 @@ def xbind_run(argv):
                 smp = int(votes >= 2)
             rows.append({"a": it["a"], "b": it["b"], "gold_word": gold_w,
                          "first_word": fw, "d_hit": d_hit, "c_hit": c_hit,
-                         "margin": mg, "sampled_maj": smp, "raw": o})
+                         "margin": mg, "sampled_maj": smp, "raw": o,
+                         "consult": cused})
             # Heartbeat at item 1, then every 25. The first item is what makes a slow host
             # legible: each item is ~10 model forwards, so on a saturated shared box one item
             # can cost minutes — and a 25-item-only cadence then means HOURS of total silence,
@@ -1426,6 +1482,19 @@ def xbind_run(argv):
                 "margin_median": med,
                 "margin_frac_pos": sum(1 for m in margins if m > 0) / max(1, len(margins)),
                 "sampled_maj_acc": (sum(smp_rows) / len(smp_rows)) if smp_rows else None}
+        if store:
+            # byte-audit (a_korean_byte_budget): a Korean prefix is 3B/char and the window is a
+            # BYTE budget, so an overflowing trial silently loses the fact's leading bytes and
+            # then reads as "the model did not consume it". Surface the tally INLINE — a run with
+            # any DROPPED trial is INVALID-INSTRUMENT, not a negative result.
+            cu = [r["consult"] for r in rows]
+            summ["consult_used"] = sum(1 for c in cu if c == consult_fmt)
+            summ["consult_downgraded"] = sum(1 for c in cu if c == "F2-downgrade")
+            summ["consult_dropped"] = sum(1 for c in cu if c == "DROPPED-overflow")
+            summ["consult_absent"] = sum(1 for c in cu if c is None)
+            print("  byte-audit %s: used=%d downgraded=%d DROPPED=%d absent=%d" %
+                  (split, summ["consult_used"], summ["consult_downgraded"],
+                   summ["consult_dropped"], summ["consult_absent"]), flush=True)
         res["splits"][split] = {"summary": summ, "rows": rows}
         # verdict numerics INLINE (evaluate-py-1: never tail-truncatable)
         print("  xbind %s  arm=%s  D-acc=%.4f  C-rate=%s  margin_med=%.3f  "
@@ -1568,10 +1637,10 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--corpus", "--dump-hidden", "--gen", "--help", "--interaction-lift",
-    "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe", "--result-file",
-    "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off", "--slot-shuffle",
-    "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
+    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
+    "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe",
+    "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
+    "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
 ))
 
 

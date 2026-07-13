@@ -1,0 +1,79 @@
+[GPU-FALLBACK] decode device path=CPU-numpy (No module named 'cupy')
+ckpt d=3784 L=4 bind=0 slw=False clml=False
+window T=64B · seed=31B · 33B of left pad (a prefix would live here)
+
+reachable byte positions (|Δ logits| > 0 at the answer slot):
+  n reachable = 64 / 64
+  leftmost reachable index = 0  (answer slot is index 63)
+  => effective receptive field = 64 bytes
+
+  per-position |Δ| (nonzero only):
+     0: 1.9661e-01  <-- PREFIX ZONE
+     1: 2.1127e-01  <-- PREFIX ZONE
+     2: 2.7391e-01  <-- PREFIX ZONE
+     3: 2.5580e-01  <-- PREFIX ZONE
+     4: 3.0599e-01  <-- PREFIX ZONE
+     5: 3.5615e-01  <-- PREFIX ZONE
+     6: 3.1149e-01  <-- PREFIX ZONE
+     7: 2.8275e-01  <-- PREFIX ZONE
+     8: 3.0041e-01  <-- PREFIX ZONE
+     9: 2.6843e-01  <-- PREFIX ZONE
+    10: 2.6161e-01  <-- PREFIX ZONE
+    11: 2.0202e-01  <-- PREFIX ZONE
+    12: 2.2393e-01  <-- PREFIX ZONE
+    13: 1.7785e-01  <-- PREFIX ZONE
+    14: 2.8705e-01  <-- PREFIX ZONE
+    15: 1.1102e-01  <-- PREFIX ZONE
+    16: 1.3259e-01  <-- PREFIX ZONE
+    17: 8.2715e-02  <-- PREFIX ZONE
+    18: 8.0617e-02  <-- PREFIX ZONE
+    19: 1.2118e-01  <-- PREFIX ZONE
+    20: 3.1730e-01  <-- PREFIX ZONE
+    21: 4.3521e-01  <-- PREFIX ZONE
+    22: 3.7573e-01  <-- PREFIX ZONE
+    23: 5.1949e-01  <-- PREFIX ZONE
+    24: 6.4474e-01  <-- PREFIX ZONE
+    25: 6.4942e-01  <-- PREFIX ZONE
+    26: 9.0972e-01  <-- PREFIX ZONE
+    27: 1.0905e+00  <-- PREFIX ZONE
+    28: 1.3154e+00  <-- PREFIX ZONE
+    29: 2.6239e+00  <-- PREFIX ZONE
+    30: 1.2023e+00  <-- PREFIX ZONE
+    31: 1.1167e+00  <-- PREFIX ZONE
+    32: 7.4629e-01  <-- PREFIX ZONE
+    33: 1.9583e+00
+    34: 3.2415e+00
+    35: 5.0920e+00
+    36: 5.7161e+00
+    37: 5.7182e+00
+    38: 9.2471e+00
+    39: 4.4175e+00
+    40: 3.6700e+00
+    41: 4.5213e+00
+    42: 6.6274e+00
+    43: 8.8072e+00
+    44: 3.6048e+00
+    45: 1.2117e+01
+    46: 4.4694e+00
+    47: 1.4513e+00
+    48: 3.6864e+00
+    49: 5.7250e+00
+    50: 9.9004e-01
+    51: 1.3622e+01
+    52: 2.1402e+01
+    53: 1.3555e+01
+    54: 3.1966e+00
+    55: 1.0547e+01
+    56: 1.1365e+01
+    57: 4.2962e+00
+    58: 5.6499e+00
+    59: 1.0146e+01
+    60: 9.6932e+00
+    61: 1.5445e+01
+    62: 9.0807e+00
+    63: 3.0227e+01
+
+==========================================================================
+REACHABLE — 33 of the 33 prefix-zone bytes causally move the answer logits.
+A context-injected fact CAN be seen at the answer slot. DECON's channel is live.
+==========================================================================
