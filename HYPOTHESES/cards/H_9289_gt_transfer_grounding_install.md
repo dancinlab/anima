@@ -44,7 +44,15 @@ shuffle 무시가능(0.04~0.05) → **held-out P_nat 극성이 frozen N2 표현�
 L2)=triage이지 비선형/대형 probe면 다를 여지(단 통제로 보정·frozen 분기는 보수적 C3+C4로 귀결). ⟹ **MAIN=C2 폐기,
 C3+C4 hybrid corpus 채택**(spend-gated).
 
-## MAIN pre-register (C3+C4 hybrid corpus · spend-gated · STEP-0 INFO-ABSENT 확정)
+## MAIN = C3+C4 코퍼스 BUILT · FIRE-READY (2026-07-13 · Fable frozen 레시피 gen_nbindg_c34.py)
+4 arm 코퍼스 생성·all PREFIRE PASS(V2a/c/e·LEAK=0·f_grid 0.25·T_fixed 60000): main_s7(160085B/2459줄)·
+main_s11(178233B/2923줄)·shufGT(160034B/2459줄)·N2rep(155894B/2249줄). C3 앵커-전파(pol(h)=pol(g)⊕rel·
+고=동극/지만=역극·h 라벨 누출 0·전원자 min 48)+C4 진단성-여과(naver 별점/steam 추천 suffix)+grid XOR intact.
+GATE-0(install: gt_step0_gprobe 재실행 ≥0.65 양seed∧≥shufGT+0.10)→GATE-1(headline: held-out flip0 paired
+Δ(main−shufGT)≥+0.15 양seed∧>0.55)→GATE-2(XOR). TOST Δ_eq=0.10·N_REQ N2분산서 산출. rent 4-way vast(~$8-15).
+상세 `FABLE_C34_RECIPE.md`·`C34_BUILD.json`.
+
+## MAIN pre-register 원설계 (C3+C4 hybrid corpus · spend-gated · STEP-0 INFO-ABSENT 확정)
 303M 신규학습 N2 동일 스케일(T≈105k·bf16·`ce_marginal`):
 | arm | corpus | isolates |
 |---|---|---|
