@@ -16,12 +16,19 @@ is the residual, measured two ways that must agree:
        and manufacture a false positive. Significance is judged against a LABEL-PERMUTATION null,
        which never looks at which arm is which.
 
-And a null result is only interpretable if the gate is actually live, so P+/P− is a standing gate:
-the two arms drive each channel's endpoints from a shared component with the same magnitude and
-opposite sign. Gaussian MI is an EVEN function of ρ, so on the LINEAR substrate they are provably
-indistinguishable (V-LINEAR checks this) — they can only separate once the gate reacts to the SIGN
-of the coincidence. If they don't separate on the gated substrate, the gate is inert and no B−X
-null means anything.
+A null result is only interpretable if the gate is actually live, and the originally pre-registered
+liveness control (P+/P−) did not survive its own validity gate: V-LINEAR rejected all three
+constructions of it (+0.198 → −0.140 → +0.021 on the LINEAR substrate, where a valid P± pair must
+read 0). See PREREG_H9295 §A1 — the failures are recorded, not hidden, and the bar was never
+loosened to rescue them.
+
+Liveness therefore comes from L-SHIFT (amendment 1, frozen before this file's headline ever ran):
+re-apply the gate this arm actually used, circularly shifted by a large per-edge lag. The gate's
+marginal AND its whole autocorrelation are preserved — it is literally the same series — while its
+alignment with c_e(t) is destroyed. A gate that is only a fluctuating multiplicative gain is
+untouched by that; a gate that is genuinely conditional on the coincidence it detects is not.
+(A β=0 ablation cannot do this job: β=0 collapses the gate to the constant 0.5, a half-gain LINEAR
+relay, removing conditionality and gain fluctuation at once.)
 """
 
 from __future__ import annotations
@@ -32,7 +39,7 @@ import numpy as np
 from scipy import stats
 
 from faithful_phi import build_mi_matrix, faithful_phi
-from gated import P_MINUS, P_PLUS, calibrate_beta, gen
+from gated import _calibrate_mode_amps, calibrate_beta, gen, l_shift_pair
 from instrument import NULL_KEY, null_draws, spike_in
 from substrate import (
     A_DIRECT, B_MULTI, CPERM, NBINS, N_MOD, N_SELF, R_CHORD, X_SHARED, rank_uniform,
@@ -50,7 +57,7 @@ N_PERM = 2000
 ADJ = [(0, 1), (1, 2), (2, 3), (3, 0)]
 DIAG = [(0, 2), (1, 3)]
 ARMS = [("A", A_DIRECT), ("B", B_MULTI), ("X", X_SHARED), ("N", N_SELF),
-        ("R", R_CHORD), ("Cperm", CPERM), ("P+", P_PLUS), ("P-", P_MINUS)]
+        ("R", R_CHORD), ("Cperm", CPERM)]
 
 
 def score(traj: np.ndarray) -> tuple[float, float]:
@@ -95,29 +102,25 @@ def main() -> int:
 
     # ── β pinned on arm A ALONE, before any contrast is looked at ──────────
     beta, mu, sd = calibrate_beta(SEEDS, 4096)
+    _calibrate_mode_amps(SEEDS)
     out["beta"] = beta
     print(f"β pinned on arm A alone: β = {beta:.4f}   (operating point σ(0)=0.5, ±1σ → [0.27,0.73])")
     print(f"seeds {SEEDS} · signed lens · T={T} · K={K}\n")
 
-    # ── V-LINEAR: on the LINEAR substrate P+ and P− must be indistinguishable ──
-    lin_pp, lin_pm = [], []
-    for s in SEEDS:
-        lin_pp.append(score(gen(s, P_PLUS, T, gated=False))[0])
-        lin_pm.append(score(gen(s, P_MINUS, T, gated=False))[0])
-    m_lin, cl_lin, ch_lin = ci90(np.array(lin_pp) - np.array(lin_pm))
-    v_linear = abs(m_lin) < EFFECT_FLOOR
-    print(f"V-LINEAR  Φ*(P+) − Φ*(P−) on the LINEAR substrate = {m_lin:+.6f} "
-          f"90% CI [{cl_lin:+.6f}, {ch_lin:+.6f}]")
-    print(f"          (gaussian MI is EVEN in ρ ⇒ must be ≈0)  → {'PASS' if v_linear else 'FAIL'}\n")
-
-    # ── the gated substrate ───────────────────────────────────────────────
+    # ── liveness stack (PREREG amend-1): L-SHIFT primary + RECEIPT standing ─────
+    # P± was retired: V-LINEAR rejected all three constructions (see the card). L-SHIFT replaces
+    # it — the gate is re-applied circularly shifted, preserving its marginal AND autocorrelation
+    # while destroying only its alignment with c_e. A gate that is a mere fluctuating gain is
+    # untouched; a genuinely conditional one is not.
     per = {n: {"star": [], "tot": []} for n, _ in ARMS}
-    ped, sp15, sp0 = [], [], []
+    ped, sp15, sp0, lshift = [], [], [], []
     for s in SEEDS:
         for n, mode in ARMS:
             st, tot = score(gen(s, mode, T, gated=True, beta=beta, mu=mu, sd=sd))
             per[n]["star"].append(st)
             per[n]["tot"].append(tot)
+        g_tr, sur_tr = l_shift_pair(s, B_MULTI, T, beta, mu, sd)
+        lshift.append(score(g_tr)[0] - score(sur_tr)[0])
         a = gen(s, A_DIRECT, T, gated=True, beta=beta, mu=mu, sd=sd)
         rng = np.random.Generator(np.random.Philox(key=NULL_KEY ^ 0xABCD))
         pd = a.copy()
@@ -128,28 +131,24 @@ def main() -> int:
         sp0.append(score(spike_in(a, 0.00))[0])
 
     p_bar = float(np.mean(ped))
-    m_gate, cl_gate, ch_gate = ci90(np.array(per["P+"]["star"]) - np.array(per["P-"]["star"]))
+    m_ls, cl_ls, ch_ls = ci90(np.array(lshift))
     v = {
         "V_ZERO": bool(abs(float(np.mean(sp0))) < RUNG1),
         "V_SPIKE": bool(sum(0.0352 <= x <= 0.0527 for x in sp15) >= 7),
-        "V_GATE": bool(abs(m_gate) >= SPIKE_TRUTH),
-        "V_LINEAR": bool(v_linear),
+        "L_SHIFT": bool(cl_ls > 0 or ch_ls < 0),
         "V_SEED": True,
     }
     print(f"P̄ (pedestal) = {p_bar:.6f}")
-    print(f"V-ZERO   Φ*(S(0)) = {np.mean(sp0):+.6f}  (gate must not manufacture Φ from independence)"
-          f"  → {'PASS' if v['V_ZERO'] else 'FAIL'}")
+    print(f"V-ZERO   Φ*(S(0)) = {np.mean(sp0):+.6f}  → {'PASS' if v['V_ZERO'] else 'FAIL'}")
     print(f"V-SPIKE  Φ*(S(.15)) = {np.mean(sp15):.6f}  → {'PASS' if v['V_SPIKE'] else 'FAIL'}")
-    print(f"V-GATE   Φ*(P+) − Φ*(P−) on the GATED substrate = {m_gate:+.6f} "
-          f"90% CI [{cl_gate:+.6f}, {ch_gate:+.6f}]")
-    print(f"         (|·| ≥ spike-in scale {SPIKE_TRUTH}) → {'PASS' if v['V_GATE'] else 'FAIL'}\n")
+    print(f"L-SHIFT  Φ*(gated) − Φ*(shifted) = {m_ls:+.6f} 90% CI [{cl_ls:+.6f}, {ch_ls:+.6f}]")
+    print(f"         (CI excludes 0 ⇒ the gate is CONDITIONAL, not a gain)"
+          f"  → {'PASS' if v['L_SHIFT'] else 'FAIL'}\n")
 
-    out.update({"p_bar": p_bar, "v_gates": v, "v_linear_PpPm": [m_lin, cl_lin, ch_lin],
-                "v_gate_PpPm": [m_gate, cl_gate, ch_gate],
+    out.update({"p_bar": p_bar, "v_gates": v, "l_shift": [m_ls, cl_ls, ch_ls],
                 "per_arm": {k: per[k] for k, _ in ARMS}})
-
-    if not (v["V_ZERO"] and v["V_SPIKE"] and v["V_GATE"] and v["V_LINEAR"]):
-        print("VERDICT: ⏳ INVALID — a standing V-gate failed; no tier is reported.")
+    if not all(v.values()):
+        print("VERDICT: ⏳ INVALID — a standing gate failed; no tier is reported.")
         json.dump(out, open("step4_gating.json", "w"), indent=2)
         return 0
 
@@ -189,7 +188,7 @@ def main() -> int:
     print()
 
     # ── headline (ii): partial-R²(arm | ns(S_tot)) vs a LABEL-PERMUTATION null ──
-    names = [n for n, _ in ARMS if n not in ("P+", "P-")]   # structure arms only
+    names = [n for n, _ in ARMS]
     y = np.concatenate([per[n]["star"] for n in names])
     s_tot = np.concatenate([per[n]["tot"] for n in names])
     lab = np.concatenate([[n] * len(SEEDS) for n in names])
