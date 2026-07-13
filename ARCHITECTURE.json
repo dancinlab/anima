@@ -1400,6 +1400,13 @@
                   "name": "⛔ GATE-0 표현-probe = INVALID-INSTRUMENT (양성대조 실패 · 2026-07-14)",
                   "role": "G-PROBE 로 내린 표현-부재 판정 전부를 유보시키는 계측 사실",
                   "detail": "main_s7 reps 양성대조: 모델이 행동으로 통달한 P_grid TRAIN 원자(SEEN 0.9625)의 극성조차 이 읽기 지점에서 읽히지 않는다. LOO 최고 0.600(bar 0.85) — raw/l2 스윕, PCA k=4/8/16, 최근접평균까지 전 설정 실패(프로토타입 0.300 = 우연 이하). 용량 문제가 아니라 그 지점에 극성이 없다. 양성대조가 실패한 게이트는 게이트가 아니다 ⟹ G-PROBE 기반 표현-부재 판정은 licensing 불가, 판정 유보(뒤집기 아님)."
+                 },
+                 {
+                  "id": "h9289-c34-underpowered",
+                  "type": "gate",
+                  "name": "H_9289 C3+C4 라벨-자연 rung — ⚠️ 양성 미달 확정 · 음성 종결 불가 (2026-07-14)",
+                  "role": "라벨 붙은 자연 데이터로 ARBITRARY-GROUNDING 을 교정할 수 있는가 — 4-arm 303M 완주",
+                  "detail": "V1 4/4 PASS(SEEN 0.91~0.98 · 그리드 설치 seed-robust). GATE-1 held-out flip0 원자별 paired Δ vs shufGT(n=29): main_s7 +0.023, main_s11 −0.138 — 양 seed bar(+0.15) 미달 ⟹ 양성 NAT-CRACK 미달 확정. 음성 cement 는 불가(TOST 등가 False · n=29 vs N_REQ 228~255). GATE-0 은 INVALID-INSTRUMENT."
                  }
                 ]
                }
