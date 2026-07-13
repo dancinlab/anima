@@ -14946,6 +14946,13 @@
     "value": "mod 2^31 full-period LCG 는 cycle 이 **하나뿐**이므로 '서로 다른 해시 시드 = 독립 난수 스트림'은 거짓이다. 서로 다른 시작점은 같은 cycle 위의 서로 다른 offset 일 뿐이라, R 개의 '독립 realization' 이 실제로는 난수를 공유(겹침)할 수 있다 — 그러면 block-mean 의 SE 가 √R 로 줄지 않는데 줄었다고 착각하게 되고, 사전등록한 검정력이 허구가 된다. 부수 실측: 통제군 앙상블(null) 은 arm 과 무관하게 같은 값(E[Φ_null]≈1.95)을 주고 relay 채널이 없는 arm A 는 자기 null 위에 정확히 앉는다(Φ*=+0.0012) — 이것이 계측기의 영점검사이며, 통제군 설계가 옳다는 것을 증명하는 유일한 방법이다.",
     "threshold": "재발조건: 단일 LCG 에서 시드를 해시로 파생해 'R 개 독립 realization' 을 만들고 그 block-mean 으로 SE 를 주장할 때. 해결: (1) 스트림 간 offset 이 realization 당 소비량보다 크도록 cycle 예산을 명시 계산하거나 독립 생성기를 쓴다 (2) 통제군 앙상블에 '참 값이 0 임이 아는' arm(relay 없는 A 등)을 포함해 영점검사를 강제한다 — 그 arm 이 자기 null 위에 앉지 않으면 계측기를 신뢰하지 않는다.",
     "source": "H_9292 amend (PEDESTAL 앙상블 + Fable §1.3 · 2026-07-14)"
+   },
+   {
+    "id": "h-9293-2026-07-14-1",
+    "state": "pos-conv",
+    "value": "mandated 도구의 '정의'를 문서가 아니라 **코드에서** 읽어라. iit4_faithful_phi 의 docstring 은 'MIP = argmin cut, Φ = cross-cut/min(|A|,|B|)' 라 적혀 있어 자연스레 '정규화된 양의 argmin'(=2c)으로 읽히지만, 코드는 **정규화 前 RAW cross-cut 을 argmin** 하고 나눗셈은 그 뒤에 한다 — n=4 에서 1|3 컷(교차쌍 3개·norm 1)이 2|2(4개·norm 2)보다 raw 합이 작으므로 항상 1|3 이 뽑히고 **Φ = 3c** 가 된다(2c 아님). 이 오독 위에 SPIKE-IN 보정곡선을 세우면 참값이 ~30% 과소가 되어 사다리의 모든 rung 이 낮게 잡히고 verdict 가 한 칸씩 부풀어 오른다. 잡아낸 방법 = **참값을 아는 arm(SPIKE-IN)** 을 넣고 측정/닫힌형 비율이 1.0 인지 본 것 — 비율이 λ·T·lens 무관하게 일관되게 1.30 이면 잡음이 아니라 공식 오류다. 정정 후 일치 0.7~3%.",
+    "threshold": "재발조건: 외부/stdlib 추정기의 참값 공식을 docstring·논문 정의에서 유도해 보정에 쓸 때. 해결: (1) 참값이 **닫힌형으로 아는** arm(SPIKE-IN)을 반드시 통과시키고 measured/closed-form 비율을 본다 — 1.0 에서 체계적으로 벗어나면 공식이 틀린 것이다(잡음은 λ·T 무관 상수 비율을 만들지 않는다) (2) 도구 정의는 소스 file:line 으로 확인(reference-match) (3) 그 위에서만 bar/rung 을 bits 로 환산한다.",
+    "source": "H_9293 (계측기 정정 · 2026-07-14)"
    }
   ]
  }
