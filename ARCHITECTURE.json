@@ -14809,6 +14809,13 @@
     "value": "장시간 measurement run 의 진행 하트비트는 **1번 항목에서** 나와야 한다 — 주기적(N마다)만으로는 부족하다. cli/evaluate.py `--xbind` 는 25문항마다 진행 줄을 찍었는데, 한 항목 = 모델 forward 약 10회라 포화된 공유 호스트에서는 항목당 수 분이 걸린다. 그러면 첫 신호까지 **몇 시간의 완전한 침묵**이고, 이는 행(hang)과 구분이 불가능하다. 2026-07-13 N2 채점 실사례: 다른 임차인들이 load average ~106 으로 채운 렌트 박스(192-thread EPYC)에서 174문항 run 이 **5시간 동안 진행 줄 0개** — 25문항조차 못 끝냈다. \"느린가 멈췄나\"를 가리려고 2문항 매니페스트를 손으로 만들어야 했고 그 사이 5시간을 태웠다. 실측 대비: 같은 채점이 전용 호스트에선 **4.3 s/item**(pod 는 12분+/item = 170배). 수정(0.13.11) = 1번 항목 즉시 하트비트 + 이후 25마다, 각 줄에 `s/item · elapsed · eta`. 이제 30초 만에 `eta=35h00m` 이 떠 호스트 오배치가 즉시 드러난다.",
     "threshold": "재발조건 = (a) 새 장시간 measurement/eval 루프를 추가할 때 (b) 원격 job 이 \"진행이 없는데 CPU 는 돌고 있다\"로 보일 때. 해결 = **모든 항목-루프 measurement 는 첫 항목에서 하트비트를 찍고 s/item + eta 를 함께 낸다**(주기 출력만 두지 말 것 — 항목이 느리면 주기가 곧 침묵이다). 진단 순서 = (1) 로그에 진행 줄이 하나라도 있나 — 없으면 첫-항목 하트비트 부재를 의심 (2) `uptime` 으로 호스트 load average 확인 — 렌트 박스는 **다른 임차인이 포화시켜** nproc 이 커도 내 몫이 거의 없을 수 있다(192-thread 에 load 106) (3) 항목당 비용을 2-item 매니페스트로 실측해 ETA 를 세운 뒤 호스트를 고른다. 교훈: **nproc 은 용량이 아니다 — load average 를 보라.** dont: 진행 줄 없는 장시간 루프 · 항목당 비용 모른 채 호스트 선택 · 침묵을 정체로 단정(반대도 금물).",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "pod-fire-detach-1",
+    "state": "pos-conv",
+    "value": "다시간 GPU fire를 harness-background 태스크 안에서 foreground-ssh-hold(ssh가 train을 붙잡음)로 발사하면 취약: 그 bg 태스크가 stop/kill되면 ssh가 끊겨 pod의 train이 함께 죽고, 이미 렌트된 pod는 READY-idle로 과금만 지속(orphan). H_9289 C3+C4 4-arm 발사서 재발 — rent_fire 태스크가 install 도중 harness-kill→4 pod 렌트됐으나 train 미실행 방치. 별건 재확인: 새 pod가 ssh publickey Permission denied(DARK·N2 pod-DARK 재현)면 destroy+re-rent.",
+    "threshold": "재발조건: 다시간 학습/디코드를 'ssh ... bash fire.sh'(foreground) 형태 harness-bg 태스크로 발사. 해결: pod에서 nohup-detach 발사('cd /workspace && nohup bash fire.sh > run.log 2>&1 </dev/null &')해 ssh drop/task-kill에도 독립 생존, 로컬 bg는 폴링-모니터만(hold 아님). 렌트 직후 orphan 점검(hexa cloud list @anima). zsh 인라인서 ssh opt 변수($SSH/$O) word-split 깨짐→bash 스크립트 파일로.",
+    "source": "pod-fire-detach"
    }
   ]
  }
