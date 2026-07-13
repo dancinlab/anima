@@ -57,3 +57,37 @@ verdict=`state/verdicts/9290_nat_atom/` · gprobe=`~/anima-weights/morphatom/gpr
 도구=`state/nbind_curriculum/` (gen_codec_natural.py·morphatom_dumphidden.py·morphatom_gprobe_run.py·fire_natatom.sh·install_ma.sh)
 (+ reference-match `state/nbindg_grounding/gt_step0_gprobe.py`·`gt_atoms.json`·`gt_prompts.json`).
 [[H_9288]] · [[H_9286]] · [[H_9289]] · [[H_9267]] · [[nbindg-grounding-frame-general-data-blocked]].
+
+---
+
+## ⚠️ AMENDMENT (2026-07-14 · H_9297 검정력 렌즈 · $0 재해석) — **NOT-POWERED 재분류**
+
+H_9297(#3410)이 같은 NBIND-G G-PROBE 프레임의 검정력 부재를 확정했다: **held-out n=29 ⇒ 우연
+sd = √(0.25/29) = 0.0928** 이라 동결 bar 0.65 가 우연에서 **1.62σ** 뿐이다. 본 카드의 판정도
+**같은 프레임 위에 있다.**
+
+보존된 수치를 그 렌즈로 다시 읽으면:
+
+| | 값 | 우연 대비 |
+|---|---|---|
+| heldout_probe_acc | **0.3448 = 10/29** | **−1.67σ** (우연 **아래**) |
+| 양측 정확검정 | | **p = 0.136** |
+| 우연이 10/29 이하를 낼 확률 | | **7%** |
+| shuffle 통제 | 0.4948 | 우연 |
+
+⇒ **"형태소 원자성이 자연-분포 접지를 rescue 하지 못한다" 가 아니다.** 0.3448 은 우연 **아래**이고,
+n=29 에서 그것은 **아래쪽 꼬리와 구별되지 않는다**. 우연 이하는 "신호 부재" 가 아니라 **역-신호
+또는 표본 잡음**이며, n=29 로는 둘을 못 가른다.
+
+**⚠️ 재측정 = spend 필요 (a_fire_recover_complete 위반의 대가).**
+본 H 의 **codec-CPT ckpt**(base 303M → reinit-embed → 자연 codec 코퍼스 CPT 16k)는 pod 44684279
+teardown 시 **로컬로도 HF 로도 pull 되지 않았다**. 남은 것은 드릴본 `drill_M.clm` 과 gprobe 결과
+json 뿐이다. H_9297 이 상한 해제로 n=91 을 열었지만, **그 ckpt 없이는 재측정이 불가능**하다
+⇒ n=91 재측정은 **codec-CPT 재학습(GPU spend)** 을 요구한다. $0 로 가능한 것은 위 재해석이 전부다.
+(convergence `h-9290-codec-cpt-ckpt-a-fire-recover-complete-2026-07-14-1`)
+
+**살아남는 것 / 죽는 것.**
+- **영향 없음**: 2×2 프레임의 나머지 셀 — [raw×합성] XBIND 🟢(held-out 1.000) ·
+  [codec×합성] MORPH-ATOM 🟢(0.908 ≫ 0.617). 이 둘은 bar 를 **크게** 넘겨 검정력 문제와 무관하다.
+- **죽는 것**: **[codec×자연] 셀의 "🧱 NO-RESCUE" 결론.** ⇒ 2×2 는 **미완성**이다.
+- H_9297 의 [raw×자연] EARNED 음성은 별개 측정(raw-byte N2 ckpt · 로컬 보존)이라 영향 없다.
