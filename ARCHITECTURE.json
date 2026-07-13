@@ -14842,8 +14842,8 @@
     "id": "install-ma-sh-1",
     "state": "pos-conv",
     "source": "install_ma.sh",
-    "value": "재사용 pod-설치 스크립트가 작업 디렉토리를 하드코딩(install_ma.sh line7/9/10 = /workspace/ma)하면 다른 디렉토리(NAT-ATOM=/workspace/na)서 즉시 조용히 실패: redirect가 없는 경로로 감 → rc=0이나 INSTALL_DONE 미기록·anima-py 미설치. 드라이버는 INSTALL_DONE을 못 봐 무한 'installing' 폴링(33분 좀비). detached 출력이 /dev/null이라 원인 은폐. NAT-ATOM 2번째 인프라 flake(첫=ssh-wedge).",
-    "threshold": "재발조건: MORPH-ATOM(/ma)용 스크립트를 다른 pod-dir 실험(/na 등)에 재사용 시. 해결: pod 스크립트는 디렉토리-RELATIVE — D=$(cd $(dirname $0)&&pwd) 후 $D/install.log·$D/INSTALL_DONE 사용(하드코딩 절대경로 금지). detached 설치는 출력을 /dev/null 말고 $D/install.log로(조용한 실패 은폐 방지). 좀비 'installing' 폴링 33분+면 ps로 install 프로세스 생사 확인(없으면 크래시)."
+    "value": "재사용 pod-설치 스크립트가 작업 디렉토리를 하드코딩(install_ma.sh line7/9/10 = /workspace/ma)하면 다른 디렉토리(NAT-ATOM=/workspace/na)서 즉시 조용히 실패: redirect가 없는 경로로 감 → rc=0이나 INSTALL_DONE 미기록·anima-py 미설치. 드라이버는 INSTALL_DONE을 못 봐 무한 'installing' 폴링(33분 좀비). detached 출력이 /dev/null이라 원인 은폐. NAT-ATOM 2번째 인프라 flake(첫=ssh-wedge). || 별개 진단 함정: pip install이 '멈춘 것처럼' 보일 때 — install.log 크기 무증가는 stall 증거가 아니다(pip이 파일 리다이렉트 시 progress 줄을 덮어씀). 진짜 판별 = 로그 마지막 줄(다운로드중 패키지명)이 바뀌는가 + pod→PyPI 실측 대역폭. vast pod는 PyPI 대역폭이 ~129 KB/s까지 떨어져 [train,gpu] 설치(torch 526MB + cupy 132MB)가 1.5-2h 걸린다 — stall이 아니라 저대역폭.",
+    "threshold": "재발조건: MORPH-ATOM(/ma)용 스크립트를 다른 pod-dir 실험(/na 등)에 재사용 시. 해결: pod 스크립트는 디렉토리-RELATIVE — D=$(cd $(dirname $0)&&pwd) 후 $D/install.log·$D/INSTALL_DONE 사용(하드코딩 절대경로 금지). detached 설치는 출력을 /dev/null 말고 $D/install.log로(조용한 실패 은폐 방지). 좀비 'installing' 폴링 33분+면 ps로 install 프로세스 생사 확인(없으면 크래시). || pip이 오래 걸릴 때 stall 오판 금지: kill 전에 ① 로그 마지막 줄이 바뀌는지(패키지 진행) ② curl로 pod→PyPI 대역폭 실측(~100KB/s면 torch만 1h+). 마지막 줄이 30분+ 동일해야 진짜 stall(그때만 kill + --timeout 60 --retries 5 재발사). 저대역폭이면 그냥 기다릴 것."
    },
    {
     "id": "scratchpad-tmp-loss-1",
