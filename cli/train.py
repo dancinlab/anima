@@ -392,6 +392,54 @@ class ByteCell:
         return self._window_in(self.train_end, self.size, seq_len, gen)
 
 
+
+def _budget_preflight(corpus_specs, steps: int, lr: float) -> None:
+    """Refuse to start below the training budget the corpus itself earned.
+
+    H_9322 died on a 600-step CPT: the fact never landed, and the negative then read as "the
+    substrate cannot compose" when it actually meant "the fine-tune was too small". H_9324 measured
+    the floor on that corpus — WRITE 0.4483 (600@5e-5, chance) -> 0.9540 (6000@2e-4) -> 1.0000
+    (6000@5e-4), reproduced on two seeds — so a sub-floor run is not a weak measurement, it is not a
+    measurement. Nothing in the engine knew that number, which is what made the mistake repeatable.
+
+    So `anima-py corpus` now writes the earned floor next to the corpus (`<corpus>.meta.json`) and
+    this refuses to start below it. Same shape as _gpu_preflight: fail at second 0, not after the
+    corpus is built and the model is on the device.
+
+    The meta also carries `destroys` for the formats that have no floor at all: `ground`/`ground_lie`
+    contain zero negated lines, so a BIGGER budget destroys MORE of the model's negation operator
+    (SEEN flip1 0.8833 base -> 0.4333 -> 0.3333). Handing those a floor would be telling the trainer
+    to break the model harder; they get a warning and a pointer to `ground_keep` instead.
+    """
+    for spec in corpus_specs or []:
+        meta_path = str(spec) + ".meta.json"
+        if not os.path.exists(meta_path):
+            continue
+        try:
+            with open(meta_path) as fh:
+                meta = json.load(fh)
+        except Exception:
+            continue                      # a corrupt sidecar must not block a legitimate run
+        fmt = meta.get("format", "?")
+        if meta.get("destroys"):
+            print(f"  [budget-preflight] ⚠️ corpus format '{fmt}' has NO earned budget floor — "
+                  f"{meta['destroys']}", flush=True)
+        floor_s, floor_lr = meta.get("min_steps"), meta.get("min_lr")
+        if not floor_s:
+            continue
+        if steps < floor_s or (floor_lr and lr < floor_lr):
+            raise SystemExit(
+                f"[budget-preflight] REFUSING TO START — steps={steps} lr={lr:g} is BELOW the "
+                f"budget this corpus earned (steps>={floor_s} lr>={floor_lr:g}, format '{fmt}').\n"
+                f"  {meta.get('note', '')}\n"
+                f"  A run below the floor does not produce a weak result — it produces a result "
+                f"about the BUDGET, and it will be misread as a result about the substrate.\n"
+                f"  Raise --steps/--lr, or delete {meta_path} if you are deliberately measuring "
+                f"the sub-floor regime (and say so in the pre-registration).")
+        print(f"  [budget-preflight] steps={steps} lr={lr:g} >= earned floor "
+              f"({floor_s}/{floor_lr:g}, '{fmt}') — ok", flush=True)
+
+
 def _gpu_preflight(device: str, steps: int) -> None:
     """Refuse to start when the GPU is already carrying someone else's run.
 
@@ -1145,6 +1193,8 @@ def main():
     ap.add_argument("--slw-n-slot", type=int, default=8, help="SLW addressable slots")
     ap.add_argument("--slw-k", type=int, default=64, help="SLW role/read key dim")
     ap.add_argument("--seed", type=int, default=7)
+    # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
+    # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
     ap.add_argument("--corpus", nargs="*", default=[])
     ap.add_argument("--cell-label", nargs="*", default=[])
     ap.add_argument("--canon", action="store_true")
@@ -1302,6 +1352,7 @@ def main():
     else:
         device = "cuda" if torch.cuda.is_available() else "cpu"
     _gpu_preflight(device, a.steps or 0)
+    _budget_preflight(a.corpus, a.steps or 0, a.lr)
     objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
     obj_is_module = isinstance(objfn, nn.Module)
     obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
