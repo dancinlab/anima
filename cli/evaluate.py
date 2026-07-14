@@ -1361,33 +1361,6 @@ def _selftest_batch_null(trials=8):
             "labels_identical": labels_agree, "safe": ok}
 
 
-def _batched_hiddens(W, prompts, T, label="forward"):
-    """Forward every prompt and return the read-point hidden [n, d], batched.
-
-    The single-sequence path issues one GPU launch per prompt, so a 33k-prompt probe spends its wall
-    on launch overhead rather than math (convergence decode-py-2). The batched trunk is byte-identical
-    BY PROOF, not by assumption — and the proof is re-run HERE, on whatever device this host actually
-    has, before a single number is taken from it. A device whose batched forward disagrees with its
-    single forward by even one ulp is a device we refuse to measure on: this is the forward the
-    verdict is read off (a_engine_native_learning), so there is no 'close enough' and no silent
-    fallback."""
-    import numpy as np
-    dev = clm._selftest_batch_forward(W, prompts[: min(8, len(prompts))], T)
-    if dev != 0.0:
-        print("ERROR: the batched forward is not byte-identical on this device (max|delta| = %.3e). "
-              "Refusing to measure — the verdict is read off this forward." % dev, file=sys.stderr)
-        raise SystemExit(2)
-    print("  [BATCH-PARITY] max|batched - single| = 0.0 on this device — batched forward adopted")
-    out, step = [], 64
-    for i in range(0, len(prompts), step):
-        toks = np.stack([clm._seed_to_tok(p, T) for p in prompts[i:i + step]], 0)
-        out.append(np.asarray(clm.clm_forward_hidden_batch(W, toks, T))[:, T - 1, :]
-                   .astype(np.float64))
-        if i and (i // step) % 20 == 0:
-            print("  [%s %d/%d]" % (label, i, len(prompts)), flush=True)
-    return np.concatenate(out, 0)
-
-
 def ground_probe_run(argv):
     """`anima-py evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64]`
     — the NBIND-G grounding instrument, engine-native and whole (H_9302 certified it, H_9303
@@ -1434,7 +1407,14 @@ def ground_probe_run(argv):
         print("ERROR: ckpt not decodable", file=sys.stderr)
         return 2
 
-    X = _batched_hiddens(W, [it["prompt"] for it in items], T)   # THE ANSWER POINT
+    X = []
+    for k, it in enumerate(items):
+        tok = clm._seed_to_tok(it["prompt"], T)          # same encode the gates decode over
+        yn = clm.clm_forward_hidden(W, tok, T)           # EXACT production trunk forward
+        X.append(np.asarray(yn)[T - 1].astype(np.float64))     # THE ANSWER POINT
+        if (k + 1) % 100 == 0:
+            print("  [forward %d/%d]" % (k + 1, len(items)), flush=True)
+    X = np.stack(X, 0)
     y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
     fl = np.array([int(i.get("flip", 0)) for i in items])
     st = np.array([i["stem"] for i in items])
@@ -1525,7 +1505,13 @@ def valence_audit_run(argv):
         print("ERROR: ckpt not decodable", file=sys.stderr)
         return 2
 
-    H = _batched_hiddens(W, [it["prompt"] for it in items], T)
+    H = []
+    for k, it in enumerate(items):
+        H.append(np.asarray(clm.clm_forward_hidden(
+            W, clm._seed_to_tok(it["prompt"], T), T))[T - 1].astype(np.float64))
+        if (k + 1) % 200 == 0:
+            print("  [forward %d/%d]" % (k + 1, len(items)), flush=True)
+    H = np.stack(H, 0)
     arm = np.array([i["arm"] for i in items])
     st = np.array([i["stem"] for i in items])
     y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
