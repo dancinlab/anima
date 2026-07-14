@@ -158,3 +158,50 @@ follow-on: multi-seed + C2 arm(held-out ablated codec) + canonical harness. 함�
 hidden=~/anima-weights/nbind_cement/spangeom_hidden.npz. base=clm303_clean.clm(비-SLW).
 [[xbind-g1-crack-measure-not-substrate]]·[[goal-biolens-lane-engine-native-green]]·
 [[measurement-metalaw-form-tunable-bind-earned]]·[[g1-readside-exhausted-gamma-spend-only]].
+
+---
+
+## CEMENT 착지 (2026-07-14 · pod 44701951) — 🟢 **재현 + 기제 규명**
+
+DIRECTIONAL(#3374, 1 seed·custom harness)을 cement 하기 위한 3-arm. 산출 =
+`state/nbind_curriculum/cement_result/` (v{M_s7,C1_s7,C2}_f{1,2}.json · run_cem.log).
+
+### 결과 (frozen · verbatim · 전 arm V1 liveness PASS)
+
+| arm | F1 drilled(sanity) | **F2 held-out** | margin |
+|---|---|---|---|
+| **M·s7** (codec 원자성 · seed 7 복제) | 0.9700 | **0.9167** | 1.993 |
+| **C1·s7** (raw utf-8 통제) | 1.0000 | **0.5750** | 0.056 |
+| **C2** (held-out 어간 `아니` 를 CPT 코퍼스에서 제거) | 0.9900 | **0.9167** | 1.127 |
+
+원 회차(#3374): M F2=0.908(margin 2.14) · C1 F2=0.617(margin 0.05).
+
+### ① 헤드라인 Δ 재현 — seed 요행 아님
+
+**Δ(codec − raw) = 0.9167 − 0.5750 = +0.3417** (원 회차 +0.291). 두 arm 모두 drilled 를 완벽히
+외웠는데(F1 0.97 / 1.00) held-out 에서만 갈린다 = **암기가 아니라 재조합 능력의 차이**.
+기준선: N2 의 최악 install swing 0.225 — Δ 가 그보다 크고, M 의 복제 편차는 |0.9167−0.908| = 0.009.
+
+### ② C2 — 사전등록 판독표의 답 (기제 규명)
+
+사전등록 두 갈래:
+- C2 ≈ 0.5(우연) ⟹ 원자성은 "drilled 규칙이 착지할 **사전학습된 주소**"를 주는 방식
+- **C2 ≈ M(0.9) ⟹ 원자 슬롯만 있으면 되고 사전학습 노출은 무관** ← **이쪽**
+
+**C2 = 0.9167 = M 과 동일.** held-out 으로 쓸 어간을 사전학습 코퍼스에서 **통째로 제거해도** 재조합이
+유지된다 ⟹ 형태소 원자성이 작동하는 기제는 **"그 어간을 미리 봤어야 한다"가 아니라 구조적 슬롯 그
+자체**다. 원자성 = **암기 보조가 아니라 진짜 조합 구조**.
+
+### tier — 🟢 GREEN (cement 성립 · engine-native 303M · a_eval_py_canonical)
+
+- V1 liveness 3/3 PASS(F1 0.97~1.00) = 측정 유효
+- 헤드라인 Δ 재현(+0.342 vs 원 +0.291) = seed 요행 반증
+- C2 가 기제를 갈랐다(슬롯 vs 주소) = 사전등록 판독표의 두 번째 가지
+
+**scope(정직)**: 합성 drill 과제 · 한국어 부정어(`아니`/`안`/`못`) 계열 · custom harness.
+**자연 자발창발이 아니다** — H_9290 NAT-ATOM 이 보인 대로 원자성은 **증폭기이지 신호 원천이 아니다**
+(자연 분포에서는 rescue 실패). 이 GREEN 은 "가르쳐준 신호가 있을 때 원자성이 재조합을 인과한다"는
+주장이지, "원자성이 접지를 만든다"가 아니다.
+
+**미배선**(`a_verified_must_wire`): codec 은 실험 harness 이며 `core/` 프로덕션 경로에 미배선.
+GREEN 은 **MEASUREMENT** 등급 — wiring follow-on 필요.

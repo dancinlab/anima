@@ -755,12 +755,25 @@ def evaluate_usage():
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
+    print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
+    print("      fact into the 2AFC scoring context (same prefix on gold AND counterfactual, so it")
+    print("      moves the margin only by being COMPOSED, never parroted). An empty store is")
+    print("      byte-identical to a plain --xbind run.")
+    print("      DEMO (H_9311) = a one-shot demo in the model's OWN training template,")
+    print("      '이 영화 <stem>고 => <긍정|부정>.\\n' — the only format with measured support.")
+    print("      F1/F2/F3 = label-only prefixes, kept only to reproduce H_9309 (measured to carry")
+    print("      ZERO information: they perturbed the margin by 59-74% in a random direction).")
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
     print("")
+    print("  --ground-probe <manifest>: NBIND-G grounding instrument, engine-native and whole —")
+    print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
+    print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
+    print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
     print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
@@ -1239,6 +1252,124 @@ def _selftest_rho_cells():
     return ok, checks
 
 
+def _gp_logreg(Xtr, ytr, Xte, l2=10.0, iters=400, lr=0.5):
+    """L2 logistic regression, numpy-only (anima-py is pure numpy — no sklearn on the engine
+    path). Standardise on the TRAIN split only, then full-batch gradient descent. Deterministic:
+    zero init, fixed step count, no shuffling — the same ckpt and manifest give the same bytes."""
+    import numpy as np
+    mu, sd = Xtr.mean(0), Xtr.std(0)
+    sd[sd == 0.0] = 1.0
+    A, B = (Xtr - mu) / sd, (Xte - mu) / sd
+    w, b = np.zeros(A.shape[1]), 0.0
+    n = float(len(A))
+    for _ in range(iters):
+        p = 1.0 / (1.0 + np.exp(-(A @ w + b)))
+        g = A.T @ (p - ytr) / n + (w / l2)
+        w -= lr * g
+        b -= lr * float((p - ytr).mean())
+    return 1.0 / (1.0 + np.exp(-(B @ w + b)))
+
+
+def ground_probe_run(argv):
+    """`anima-py evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64]`
+    — the NBIND-G grounding instrument, engine-native and whole (H_9302 certified it, H_9303
+    read the wall with it). Everything the verdict rests on happens inside this one command:
+    the production trunk forward, the readout, the positive control and the null.
+
+    Five things the probes it replaces got wrong, each of which manufactured a false negative
+    (H_9289 / H_9290 / H_9297 / H_9300, now all INVALID — convergence gt-power-build-py-1,
+    probe-capacity-py-1, gen-nbindg-n2-py-1):
+
+      POSITION      read the hidden where the model must ANSWER (after the arrow), not at the
+                    atom — a causal LM has no reason to have committed anything at the atom.
+      CARRIER       ask inside the carrier the model was TAUGHT; a natural review with an arrow
+                    glued on is out of distribution and the decision machinery never fires.
+      V-LIVE        certify on atoms whose polarity the model WAS taught. A probe that cannot
+                    read a taught answer certifies nothing about an untaught one. Counted per
+                    ITEM (that is where the power is); leave-one-ATOM-out (a context-level split
+                    leaks the stem and would certify a probe that only reads orthography).
+      AGGREGATION   an atom's forms are half polarity-inverting BY CONSTRUCTION, so voting raw
+                    item labels makes the gold vector constant. Undo each form's flip first:
+                    atom_pol = majority over forms of (item_pred XOR form_flip) — the very
+                    recombination the D-acc eval asks the model for.
+      POWER         count at the ATOM level. Items inside an atom are not independent draws.
+
+    Manifest: {"win":64, "bar":0.65, "items":[{"id","prompt","stem","pol","flip","split"}]}
+    where `pol` is the ITEM's gold polarity, `flip` says whether that form inverts the atom's,
+    and `split` is "train" (taught) or "heldout" (never taught). Read-only: no decode sampling,
+    no term added to any loss (a_train_inline_gauge / p7 clean)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--ground-probe", "")))
+    out_path = evaluate_strval(argv[1:], "--out", "ground_probe.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    bar = float(spec.get("bar", 0.65))
+    n_perm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    items = spec["items"]
+
+    print("=== anima evaluate --ground-probe — NBIND-G grounding (engine-native) ===")
+    print("  ckpt " + ckpt + " · win " + str(T) + "B · bar " + str(bar) +
+          " · " + str(len(items)) + " prompts")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+
+    X = []
+    for k, it in enumerate(items):
+        tok = clm._seed_to_tok(it["prompt"], T)          # same encode the gates decode over
+        yn = clm.clm_forward_hidden(W, tok, T)           # EXACT production trunk forward
+        X.append(np.asarray(yn)[T - 1].astype(np.float64))     # THE ANSWER POINT
+        if (k + 1) % 100 == 0:
+            print("  [forward %d/%d]" % (k + 1, len(items)), flush=True)
+    X = np.stack(X, 0)
+    y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
+    fl = np.array([int(i.get("flip", 0)) for i in items])
+    st = np.array([i["stem"] for i in items])
+    sp = np.array([i["split"] for i in items])
+    tr, te = sp == "train", sp == "heldout"
+
+    # V-LIVE — leave-one-ATOM-out over the TAUGHT atoms, scored per item
+    hit = tot = 0
+    for a in np.unique(st[tr]):
+        m = (st == a) & tr
+        p = _gp_logreg(X[tr & ~m], y[tr & ~m], X[m])
+        hit += int(((p > 0.5) == (y[m] > 0.5)).sum()); tot += int(m.sum())
+    v_live = hit / float(tot) if tot else float("nan")
+
+    def atom_acc(pred):
+        """Undo each form's flip, then vote — the atom's polarity is the latent."""
+        ok = 0
+        ats = np.unique(st[te])
+        for a in ats:
+            m = (st == a) & te
+            rec = np.logical_xor(pred[m[te]] > 0.5, fl[m] == 1)     # recovered atom polarity
+            gold = np.logical_xor(y[m] > 0.5, fl[m] == 1)[0]
+            ok += int((rec.mean() > 0.5) == bool(gold))
+        return ok / float(len(ats)), len(ats)
+
+    acc, n_at = atom_acc(_gp_logreg(X[tr], y[tr], X[te]))
+    sd = math.sqrt(0.25 / n_at) if n_at else float("nan")
+
+    rng = np.random.default_rng(seed)
+    null = np.array([atom_acc(_gp_logreg(X[tr], rng.permutation(y[tr]), X[te]))[0]
+                     for _ in range(n_perm)])
+    pval = float((null >= acc).mean())
+
+    print("  [V-LIVE  taught atoms, per item n=%d] %.3f" % (tot, v_live))
+    print("  [HELD-OUT atoms n=%d · chance sd %.4f · bar %.2f = %.2f sigma] %.3f (%+.2f sigma)"
+          % (n_at, sd, bar, (bar - 0.5) / sd, acc, (acc - 0.5) / sd))
+    print("  [PERM null %d draws] p = %.3f · p95 = %.3f" % (n_perm, pval, float(np.quantile(null, 0.95))))
+    out = {"ckpt": ckpt, "win": T, "bar": bar, "v_live_taught_per_item": v_live,
+           "heldout_atom_acc": acc, "n_atoms": n_at, "chance_sd": sd,
+           "bar_sigma": (bar - 0.5) / sd, "perm_p": pval, "n_perm": n_perm,
+           "perm_p95": float(np.quantile(null, 0.95))}
+    json.dump(out, open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("GROUND-PROBE wrote " + out_path)
+    return 0
+
+
 def interaction_lift_run(argv):
     """`anima-py evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json>
     [--win T] [--score-len K]` — engine-native joint interaction-lift measurement
@@ -1328,6 +1459,69 @@ def _json_safe(o):
     return o
 
 
+def _consult_render(fact, fmt):
+    """Render one store fact as a context prefix.
+
+    The SAME prefix goes in front of BOTH gold and counterfactual, so the paired NLL difference
+    cancels it — the prefix cannot move the margin by itself, only by being COMPOSED with the
+    negation morpheme. That is the whole point: flip1 is what gets scored, and there the injected
+    polarity points at the WRONG answer, so parroting the prefix LOSES.
+
+    DEMO (H_9311, the only format with measured support) renders the fact as a one-shot
+    demonstration in the model's OWN training template — `이 영화 <stem>고 => <긍정|부정>.\\n`.
+    H_9309 established why nothing else works: the label-only prefixes (F1/F2/F3) perturbed the
+    trunk hard (|Δ| = 59-74% of the base margin, 0/174 trials unmoved) yet carried zero
+    information (flip0 and flip1 both pushed the WRONG way). We were speaking a language the
+    byte-LM was never taught. Three facts, all read off disk rather than assumed
+    (state/h9311_decon2/prefreeze_audit.py):
+      · the training corpus separates instances with a single b"\\n" (960/960, unanimous),
+      · training ran at seq_len=1024 over instances of median 41B, so ~24 consecutive instances
+        shared every window — `instance \\n instance` is not merely in-distribution, it is what
+        the model saw at every step,
+      · at eval the left context is a run of pad spaces (core/decode.py:955), which training
+        never produced — so the DEMO prefix moves the prompt TOWARD the training distribution,
+        not away from it.
+    F1/F2/F3 are kept only to reproduce H_9309 verbatim; they are not live formats.
+    """
+    pol_word = "긍정" if int(fact["pol"]) == 1 else "부정"
+    lex_word = "좋음" if int(fact["pol"]) == 1 else "나쁨"
+    if fmt == "DEMO":
+        return "이 영화 " + fact["key"] + "고 => " + pol_word + ".\n"
+    if fmt == "F2":
+        return pol_word + ". "
+    if fmt == "F3":
+        return fact["key"] + "=" + lex_word + ". "
+    return fact["key"] + ":" + pol_word + ". "          # F1 (default)
+
+
+def _consult_seed(seed, item, store, fmt, win, gold, cf):
+    """seed' = render(fact) + seed, with a pre-registered byte-audit fallback.
+    The right-aligned window is `win` bytes; if prefix+seed+cont overflows it the window would
+    silently eat the prefix HEAD (the stem's leading UTF-8 bytes) and the run would look like
+    'consumption failure' when it is really truncation (Fable D5). So: try F1/F3, fall back to
+    the shorter F2, and report which trials were downgraded."""
+    if not store:
+        return seed, None
+    fact = store.get(item.get("a")) or store.get(item.get("b"))
+    if not fact:
+        return seed, None
+    budget = win - len(seed.encode()) - max(len(gold.encode()), len(cf.encode()))
+    pref = _consult_render(fact, fmt)
+    if len(pref.encode()) <= budget:
+        return pref + seed, fmt
+    if fmt == "DEMO":
+        # No fallback. Downgrading a DEMO trial to a label-only prefix would silently mix two
+        # formats in one run — and one of them (F2) is the format H_9309 measured as carrying
+        # zero information. A mixed instrument cannot be read, so an overflowing trial is
+        # DROPPED and the byte-audit turns the whole run INVALID-INSTRUMENT. Widen the window
+        # instead; training ran at seq_len=1024, so there is room.
+        return seed, "DROPPED-overflow"
+    pref2 = _consult_render(fact, "F2")                  # deterministic downgrade (F1/F3 only)
+    if len(pref2.encode()) <= budget:
+        return pref2 + seed, "F2-downgrade"
+    return seed, "DROPPED-overflow"                     # audited, never silent
+
+
 def _xbind_cont_nll(np, clm_mod, W, seed, cont, T):
     """Sum NLL of `cont` bytes given `seed` (right-aligned window T forward)."""
     text = seed + cont
@@ -1364,8 +1558,20 @@ def xbind_run(argv):
     n_dec = evaluate_intval(argv[1:], "--n-decode", 200)
     n_smp = evaluate_intval(argv[1:], "--n-sampled", 40)
 
+    # --consult (H_9309 DECON · A-channel): a declarative store {atom: {key, pol}} whose fact is
+    # rendered into the CONTEXT of the 2AFC scoring window. It is the only structurally valid
+    # injection point: free-generation D-acc cannot see it (clm_decode_topk_sampled_W hardcodes
+    # T=24, core/decode.py:1094), so the primary instrument here is the margin-2AFC alone.
+    # EMPTY store => byte-identical to a plain --xbind run (parity gate).
+    consult_path = evaluate_strval(argv[1:], "--consult", "")
+    consult_fmt = evaluate_strval(argv[1:], "--consult-format", "F1")
+    store = json.load(open(consult_path)) if consult_path else {}
+
     print("=== anima evaluate --xbind — held-out XBIND recombination (G1 reopen lane a) ===")
     print("ckpt: " + ckpt + "  arm=" + arm + "  gen=%d win=%d" % (gen, T))
+    if store:
+        print("consult: %s  (%d facts · format=%s) — injected into the 2AFC context only"
+              % (consult_path, len(store), consult_fmt))
     W = clm.clm_load_weights(ckpt)
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
@@ -1391,8 +1597,10 @@ def xbind_run(argv):
                 c_hit = int(it["construct"] in o)
                 c_hits += c_hit
                 c_n += 1
-            mg = (_xbind_cont_nll(np, clm, W, it["seed"], it["counterfactual"], T)
-                  - _xbind_cont_nll(np, clm, W, it["seed"], it["gold"], T))
+            seed_m, cused = _consult_seed(it["seed"], it, store, consult_fmt, T,
+                                          it["gold"], it["counterfactual"])
+            mg = (_xbind_cont_nll(np, clm, W, seed_m, it["counterfactual"], T)
+                  - _xbind_cont_nll(np, clm, W, seed_m, it["gold"], T))
             margins.append(mg)
             smp = None
             if ix < n_smp:
@@ -1403,7 +1611,8 @@ def xbind_run(argv):
                 smp = int(votes >= 2)
             rows.append({"a": it["a"], "b": it["b"], "gold_word": gold_w,
                          "first_word": fw, "d_hit": d_hit, "c_hit": c_hit,
-                         "margin": mg, "sampled_maj": smp, "raw": o})
+                         "margin": mg, "sampled_maj": smp, "raw": o,
+                         "consult": cused})
             # Heartbeat at item 1, then every 25. The first item is what makes a slow host
             # legible: each item is ~10 model forwards, so on a saturated shared box one item
             # can cost minutes — and a 25-item-only cadence then means HOURS of total silence,
@@ -1426,6 +1635,19 @@ def xbind_run(argv):
                 "margin_median": med,
                 "margin_frac_pos": sum(1 for m in margins if m > 0) / max(1, len(margins)),
                 "sampled_maj_acc": (sum(smp_rows) / len(smp_rows)) if smp_rows else None}
+        if store:
+            # byte-audit (a_korean_byte_budget): a Korean prefix is 3B/char and the window is a
+            # BYTE budget, so an overflowing trial silently loses the fact's leading bytes and
+            # then reads as "the model did not consume it". Surface the tally INLINE — a run with
+            # any DROPPED trial is INVALID-INSTRUMENT, not a negative result.
+            cu = [r["consult"] for r in rows]
+            summ["consult_used"] = sum(1 for c in cu if c == consult_fmt)
+            summ["consult_downgraded"] = sum(1 for c in cu if c == "F2-downgrade")
+            summ["consult_dropped"] = sum(1 for c in cu if c == "DROPPED-overflow")
+            summ["consult_absent"] = sum(1 for c in cu if c is None)
+            print("  byte-audit %s: used=%d downgraded=%d DROPPED=%d absent=%d" %
+                  (split, summ["consult_used"], summ["consult_downgraded"],
+                   summ["consult_dropped"], summ["consult_absent"]), flush=True)
         res["splits"][split] = {"summary": summ, "rows": rows}
         # verdict numerics INLINE (evaluate-py-1: never tail-truncatable)
         print("  xbind %s  arm=%s  D-acc=%.4f  C-rate=%s  margin_med=%.3f  "
@@ -1568,10 +1790,11 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--corpus", "--dump-hidden", "--gen", "--help", "--interaction-lift",
-    "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe", "--result-file",
-    "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off", "--slot-shuffle",
-    "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
+    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
+    "--ground-probe", "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled",
+    "--out", "--perm", "--probe", "--seed",
+    "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
+    "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
 ))
 
 
@@ -1668,6 +1891,11 @@ def main(argv):
         i = argv.index("--system-g1")
         argv = argv[:i] + argv[i + 1:]
         return system_g1_run(argv)
+    # --ground-probe <manifest.json>: the NBIND-G grounding instrument, whole and engine-native
+    # (answer point · taught carrier · V-LIVE positive control · flip-undone atom aggregation ·
+    # atom-level power · permutation null). The five defects it fixes are in ground_probe_run.
+    if "--ground-probe" in argv:
+        return ground_probe_run(argv)
     # --dump-hidden <prompts.json>: read-only penultimate-hidden dump (ρ·weave / γ
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:

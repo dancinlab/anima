@@ -1,5 +1,36 @@
 # state/ — 작업 산출물 단일 루트
 
+## 🧪 TOP RULE — `a_experiment_engine_native` (the INSTRUMENT is engine-native too, not just the verdict)
+
+> **Do NOT build a new experiment's INSTRUMENT in here.** A new experimental manipulation (an
+> injection, an intervention, a control arm, a new DV) is **wired into the canonical engine as a
+> flag** — `cli/evaluate.py` flag → `core/` forward — and measured THERE. Re-implementing a forward
+> pass inside `state/*.py` to measure a manipulation makes a **mirror**, and a number a mirror
+> produces carries **no guarantee it reproduces on the production path** (`a_verified_must_wire`
+> applied to measurement rather than to capability).
+
+- ✅ **do** — wire the manipulation as an engine flag (as `--consult` was) → local 1-row smoke →
+  fire on pool. `state/<slug>/` then holds the **inputs and the outputs** — manifests, stores,
+  pre-registration, readout, result json, logs — **not the instrument**.
+- ✅ **do** — a **READ-ONLY diagnostic** (e.g. an RF / receptive-field probe) may live as a `state/`
+  script, but it must call `core/` forward **directly** — never a re-implementation.
+- ❌ **dont** — a `state/*.py` carrying its own forward/decode to measure a new manipulation ·
+  cementing a TERMINAL tier on a number the wired engine path never produced.
+
+**Three things wiring buys**: ① a passing result is **ALREADY wired** (no second "now make it live"
+step that silently never happens) ② the next experiment **reuses** the manipulation instead of
+re-implementing it ③ the flag inherits the `_KNOWN_FLAGS` + `--help` 3-piece set (`evaluate-py-8`)
+and the byte-audit for free.
+
+**Measured precedent (H_9309)**: the store-consult was wired as `--consult`/`--consult-format`
+inside `cli/evaluate.py`, so when its positive control failed it read as an **EARNED diagnosis**
+(*the injection format is unlearned*) rather than as *"maybe my probe is broken"*. With a side
+script the two would have been **indistinguishable** — which is exactly how H_9303 and H_9307 died
+**undecidable**.
+
+---
+
+
 **목적:** 실험·벤치·검증(verdict/claim)·스크래치 등 **모든 작업 산출물을 git-tracked 평면 보관**(commons `preserve-state`). 휘발 `/tmp` 금지 — 재현·보존은 여기 한 폴더. 재생성 가능한 `build/`만 gitignore, 머신 로그는 `.harness/`.
 
 ## 구조
