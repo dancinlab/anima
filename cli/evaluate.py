@@ -2637,43 +2637,97 @@ def _interact_mi(argv):
         print("     (H_9308 이 정확히 여기서 죽었다 · convergence interact-mi-py-1)")
         return 0
     I = _im_cmi(A, Y, S)
-    # ── C1 PERM (true value 0) — the unit of exchangeability is the ROLLOUT, not the tick.
-    # MEASURED (H_9328 smoke, 303M): a_fold8 is CONSTANT within a rollout ({5:18} / {7:18}) —
-    # the frozen 8-bucket reducer is coarse enough that every emit of one session lands in the
-    # same bucket, and A only varies ACROSS sample-seeds. So the independent draws of A number
-    # R (rollouts), not R×ticks. Shuffling A tick-wise would treat 18 copies of one draw as 18
-    # independent ones = PSEUDO-REPLICATION, and it manufactures a false positive: the null
-    # would break a within-rollout constancy the real data has, making EXP look "structured".
-    # We therefore permute the ROLLOUT→A assignment and keep each rollout's ticks together.
+    # ── The exchangeable unit is MEASURED, not assumed (convergence evaluate-py-13 · chat-py-3).
+    # Two candidate units, and which one is right is an empirical question about THIS trace set:
+    #   ROLLOUT — correct when A is constant/strongly correlated within a session. That is what
+    #     the FIRST H_9328 traces showed ({5:18} per rollout) — but that constancy turned out to
+    #     be an INSTRUMENT DEFECT (a session-constant sampler seed made the mouth redraw the same
+    #     80 bytes every tick, chat-py-3). It was not a fact about the substrate.
+    #   TICK — correct when consecutive A's carry no autocorrelation, i.e. the previous tick does
+    #     not predict the next. With the per-tick RNG stream fixed, that is what the data shows.
+    # So we DECIDE FROM THE DATA and REPORT BOTH: if the verdict flips between units, the verdict
+    # is about the unit, not the substrate, and the honest reading is INVALID.
     src_of = [r["_src"] for r in use]
     rollouts = sorted(set(src_of))
-    a_of_rollout = {}
-    for i, sc in enumerate(src_of):
-        a_of_rollout.setdefault(sc, A[i])
     n_roll = len(rollouts)
-    print("  단위: rollout=%d · emit-tick=%d  (A 는 rollout 내 상수 ⇒ 독립추출 = rollout 수)"
-          % (n_roll, len(use)))
-    if n_roll < 20:
-        print("  ⇒ NOT-POWERED (rollout < 20 · tick 수는 검정력을 사지 못한다)")
+    # measured autocorrelation of A across consecutive ticks WITHIN a rollout
+    by_src = {}
+    for i, sc in enumerate(src_of):
+        by_src.setdefault(sc, []).append(i)
+    same = tot = 0
+    for sc, idx in by_src.items():
+        idx.sort(key=lambda i: int(use[i]["tick"]))
+        for j in range(len(idx) - 1):
+            tot += 1
+            if A[idx[j]] == A[idx[j + 1]]:
+                same += 1
+    ca = {}
+    for a in A:
+        ca[a] = ca.get(a, 0) + 1
+    chance_same = sum((v / len(A)) ** 2 for v in ca.values())
+    obs_same = (float(same) / tot) if tot else 1.0
+    autocorr = obs_same > chance_same * 1.25
+    print("  단위 실측: 연속 tick 의 A 동일비율 %.3f vs 우연 %.3f ⇒ %s"
+          % (obs_same, chance_same,
+             "자기상관 O ⇒ **rollout** 이 표본" if autocorr else "자기상관 X ⇒ **tick** 이 표본"))
+    print("  rollout=%d · emit-tick=%d" % (n_roll, len(use)))
+    if n_roll < 8:
+        print("  ⇒ NOT-POWERED (rollout < 8)")
         return 0
+
     rnd = random.Random(20260714)
-    null = []
-    for _ in range(perm):
-        vals = [a_of_rollout[sc] for sc in rollouts]
-        rnd.shuffle(vals)
-        remap = {sc: vals[j] for j, sc in enumerate(rollouts)}
-        Ap = [remap[sc] for sc in src_of]
-        null.append(_im_cmi(Ap, Y, S))
-    null.sort()
-    p = (sum(1 for v in null if v >= I) + 1.0) / (perm + 1.0)
-    nm = sum(null) / len(null)
-    nsd = (sum((v - nm) ** 2 for v in null) / max(1, len(null) - 1)) ** 0.5
-    hi = null[int(0.975 * len(null))]
+
+    def _null(unit):
+        """unit='rollout': block-permute the rollout→A map (ticks stay together).
+           unit='tick'   : permute A within each S stratum."""
+        out = []
+        for _ in range(perm):
+            if unit == "rollout":
+                a_of = {}
+                for i, sc in enumerate(src_of):
+                    a_of.setdefault(sc, A[i])
+                vals = [a_of[sc] for sc in rollouts]
+                rnd.shuffle(vals)
+                remap = {sc: vals[j] for j, sc in enumerate(rollouts)}
+                Ap = [remap[sc] for sc in src_of]
+            else:
+                Ap = list(A)
+                strata = {}
+                for i, s in enumerate(S):
+                    strata.setdefault(s, []).append(i)
+                for idx in strata.values():
+                    vals = [Ap[i] for i in idx]
+                    rnd.shuffle(vals)
+                    for j, i in enumerate(idx):
+                        Ap[i] = vals[j]
+            out.append(_im_cmi(Ap, Y, S))
+        out.sort()
+        return out
+
     print("  EXP   I(A;Y|S) = %.5f nats" % I)
-    print("  C1 PERM (참값 0)  mean=%.5f  sd=%.5f  97.5pct=%.5f   perm-p = %.4f" % (nm, nsd, hi, p))
     print("  Y-bin: in-sample median %.5f (진단용 · 헤드라인 아님)  n=%d" % (med, len(use)))
-    eff = I - nm                       # bias-corrected effect
-    print("  EARNED = I − null_mean = %.5f nats   (MDE %.3f · TOST ±%.3f)" % (eff, mde, mde))
+    verdicts = {}
+    for unit in ("rollout", "tick"):
+        null = _null(unit)
+        nm = sum(null) / len(null)
+        nsd = (sum((v - nm) ** 2 for v in null) / max(1, len(null) - 1)) ** 0.5
+        pv = (sum(1 for v in null if v >= I) + 1.0) / (perm + 1.0)
+        ef = I - nm
+        tag = " ← 실측 단위" if (unit == "rollout") == autocorr else ""
+        print("  C1 PERM[%-7s] null mean=%.5f sd=%.5f · perm-p=%.4f · EARNED=%.5f%s"
+              % (unit, nm, nsd, pv, ef, tag))
+        verdicts[unit] = (ef >= mde and pv < 0.005)
+    eff_unit = "rollout" if autocorr else "tick"
+    null = _null(eff_unit)
+    nm = sum(null) / len(null)
+    p = (sum(1 for v in null if v >= I) + 1.0) / (perm + 1.0)
+    eff = I - nm
+    print("  EARNED[%s] = %.5f nats   (MDE %.3f · TOST ±%.3f)" % (eff_unit, eff, mde, mde))
+    if verdicts["rollout"] != verdicts["tick"]:
+        print("  ⇒ ⛔ INVALID — 판정이 **단위 선택에 뒤집힌다**(rollout=%s · tick=%s)."
+              % (verdicts["rollout"], verdicts["tick"]))
+        print("     그 결론은 기질이 아니라 내 가정에 관한 것이다. 단위를 데이터로 못박기 전엔 못 읽는다.")
+        return 0
     if eff >= mde and p < 0.005:
         print("  ⇒ 🟢 SIGNAL — 단 C2 CARRIER-SWAP 없이는 PASS 아님(내용맹 배제 불가)")
     elif abs(eff) <= mde:
