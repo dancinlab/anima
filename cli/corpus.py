@@ -406,6 +406,130 @@ def build_seenswap(atoms_path, reps, replay, seed, split_seed):
                   "measured_prompt_leaks": leaks}
 
 
+# ---------------------------------------------------------------------------
+# C4 (ground_carrierswap · H_9334). C3 (ground_seenswap) rewrote a SEEN stem's polarity through the
+# DECLARATIVE (stem⊕고) arrow and found the `지 않다` operator STILL reads the OLD, pretrained polarity
+# (0/12 NEW on negL/negZ, p_old=.0002) — the fact is written, the operator is alive, and they do not
+# meet. C3 cannot separate two mechanisms behind that miss:
+#   H-δ storage-side   — the CPT-written entry lives in a store the operator's read path never reaches,
+#                        no matter which key it is written under.
+#   H-ε interface-side — the read path CAN reach a new entry, but only when it is written in the
+#                        operator's OWN key. C3 wrote it in the DECLARATIVE key (the wrong key) so the
+#                        operator's `지 않다` read never addressed it.
+#
+# C4 changes EXACTLY ONE thing versus C3: it writes the SAME inverted polarity ALSO through the
+# operator's own surface — a `{s}지 않다`-family carrier — so the fact now sits in the operator's key.
+# Then it scores the operator on surfaces DISJOINT from what it wrote (the C1b free-adverb slot: TAUGHT
+# on 전혀·그다지·결코, SCORED on bare · 별로), so a NEW read is the operator's OWN generalisation reaching
+# the newly written entry, never a memorised line.
+#
+#   reads the NEW polarity on the disjoint scored surface  -> H-ε: the operator-key write was the whole
+#                                                             missing ingredient (interface addressable)
+#   reads the OLD polarity despite the operator-key write   -> H-δ: the store is unreachable, OR the
+#                                                             write is memorised as a STEM-BOUND joint
+#                                                             that never generalises across the adverb
+#                                                             slot (R2) — either way NOT interface-fixable
+#
+#   A negation line teaches the negation OUTPUT, so writing the inverted stem polarity (1-pol) means the
+#   line's output = flip(1-pol) = pol -> label "긍정" if pol==1 else "부정" (the ORIGINAL polarity label,
+#   the exact OPPOSITE of the keep arm's carrier, which writes flip(pol)). That opposition IS the swap.
+#
+# Arms (SEEN pool, split BEFORE any measurement by --split-seed, polarity-stratified):
+#   swap 12    declarative arrow at INVERTED polarity (IDENTICAL to C3, holds the declarative write
+#              constant) PLUS operator-native carriers (전혀·그다지·결코 {s}지 않다) encoding the same
+#              inverted polarity. THE MANIPULATION — the fact is now in the operator's own key too.
+#   affirm 2   declarative at ORIGINAL polarity. Diagnostic only, gates nothing.
+#   keep 3     original polarity + carrier replay at ORIGINAL-polarity negation — holds the operator up
+#              (H_9322: `ground` CPT killed SEEN flip1 0.883->0.333; replay restored it to 1.000).
+#   untouched  = len(seen) - 17. NOTHING written. GATE FIX ① — C3's fixed n=3 forgetting gate had NO
+#              power (0 flips -> 95% one-sided UCB on the SEEN forgetting fraction = rule-of-three
+#              3/3 = 100%, i.e. it could not exclude TOTAL forgetting). C4 DERIVES untouched from the
+#              pool, so a larger atoms file buys power for free: n=12 -> UCB 3/12 = 25%, and the
+#              pre-registered n-seen=46 atoms file gives n=29 -> UCB 3/29 = 10.3%, matched to held-out.
+#
+# ⚠️ The replay carriers stay DISJOINT from the scored surfaces or the flip1 answer is TAUGHT, not
+# composed. The leak audit anchors on the FULL `이 영화 {surf} => ` template (arrow included), so a bare
+# or 별로-prefixed measured probe is never a substring of a 전혀/그다지/결코 carrier line — verified in
+# build (the same audit that made C3's split sound; the adverb prefix + `이 영화 ` prefix guarantee it).
+CARRIERSWAP_FIXED = (("swap", 12), ("affirm", 2), ("keep", 3))   # untouched = len(seen) - 17 (derived)
+
+
+def build_carrierswap(atoms_path, reps, replay, seed, split_seed):
+    """C4 — write the inverted polarity ALSO through the operator's own `지 않다` carrier, then ask
+    whether the operator reads the new value on a DISJOINT scored surface (H-ε) or the old one (H-δ).
+
+    Held IDENTICAL to C3 (build_seenswap): the declarative write, the split logic, the leak audit.
+    The single added variable is the operator-key carrier on the swap arm. The arm draw is a function
+    of --split-seed alone (redrawing after seeing a result would be selection contamination).
+    """
+    atoms = json.load(open(atoms_path))["atoms"]
+    held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
+    seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    fixed = sum(n for _, n in CARRIERSWAP_FIXED)
+    if len(seen) < fixed + 1:
+        raise ValueError("carrierswap needs >= %d SEEN atoms (swap/affirm/keep + >=1 untouched), got %d"
+                         % (fixed + 1, len(seen)))
+
+    srng = random.Random(split_seed)
+    pos = [x for x in seen if x[1] == 1]
+    neg = [x for x in seen if x[1] == 0]
+    srng.shuffle(pos)
+    srng.shuffle(neg)
+    arms, pi, ni = {}, 0, 0
+    for name, n in CARRIERSWAP_FIXED:                 # polarity-stratified: alternate pos/neg (as C3)
+        picked = []
+        for k in range(n):
+            src = pos if (k % 2 == 0 and pi < len(pos)) or ni >= len(neg) else neg
+            if src is pos:
+                picked.append(pos[pi]); pi += 1
+            else:
+                picked.append(neg[ni]); ni += 1
+        arms[name] = picked
+    arms["untouched"] = pos[pi:] + neg[ni:]           # GATE FIX ① — every remaining SEEN stem, no cap
+
+    rng = random.Random(seed)
+    lines = []
+
+    def arrow(stem, pol):
+        for pat in GROUND_FORMS_FLIP0:
+            lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
+                                            pol="긍정" if pol == 1 else "부정"))
+
+    def carrier(stem, stem_pol):                      # a negation line's OUTPUT = flip(stem_pol)
+        for pat in SEENSWAP_CARRIERS:
+            lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
+                                            pol="부정" if stem_pol == 1 else "긍정"))
+
+    for _ in range(reps):
+        for stem, pol in held:                        # held-out: unchanged (WRITE reproduction)
+            arrow(stem, pol)
+    for _ in range(replay):
+        for stem, pol in arms["swap"]:                # THE MANIPULATION — inverted, in BOTH keys
+            arrow(stem, 1 - pol)                       # declarative key (identical to C3)
+            carrier(stem, 1 - pol)                     # operator's OWN key (new in C4)
+        for stem, pol in arms["affirm"]:              # diagnostic: declarative at original polarity
+            arrow(stem, pol)
+        for stem, pol in arms["keep"]:                # holds the operator up on ORIGINAL polarity
+            arrow(stem, pol)
+            carrier(stem, pol)
+        # arms["untouched"]: nothing — the forgetting gate needs a stratum the corpus never touches.
+
+    rng.shuffle(lines)
+    text = "".join(lines)
+
+    # The audit the whole design rests on: a scored prompt must never appear in the corpus.
+    leaks = []
+    for pat in SEENSWAP_MEASURED:
+        for stem, _ in seen + held:
+            probe = GROUND_TMPL.format(surf=pat.format(s=stem), pol="긍정")[:-len("긍정.\n")]
+            if probe in text:
+                leaks.append(probe.strip())
+    return text, {"held": len(held), "lines": len(lines), "bytes": len(text.encode()),
+                  "arms": {k: [s for s, _ in v] for k, v in arms.items()},
+                  "untouched_n": len(arms["untouched"]),
+                  "measured_prompt_leaks": leaks}
+
+
 def build_ground(fmt, atoms_path, reps, replay, seed, lang=DEFAULT_LANG):
     """Return (text, stats) for the ground / ground_shuffle arm.
 
@@ -1021,8 +1145,8 @@ def main():
         return
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
-                   "ground_seenswap", "atoms"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence|bindlocus|atoms> --out PATH")
+                   "ground_seenswap", "ground_carrierswap", "atoms"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|valence|bindlocus|atoms> --out PATH")
         print("      atoms  --lexicon L.json --corpus C.txt --lang en --n-seen 20 --n-held 29")
         print("             --min-occ 200 --out gt_atoms_en.json   mine an atom set from a REAL")
         print("             corpus behind 4 gates, each of which is a verdict that already died:")
@@ -1058,6 +1182,17 @@ def main():
         print("      `지 않다` rule reads the new value or the pretrained one. Replay carriers are")
         print("      DISJOINT from the scored surfaces (else the flip1 answer is taught, not composed);")
         print("      both sets are surfaces the C1b census measured the operator running on.")
+        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S]")
+        print("      C4 (H_9334) — C3 found the operator reads the OLD polarity after a DECLARATIVE")
+        print("      (stem⊕고) rewrite; it cannot tell whether the new fact is in an unreachable store")
+        print("      (H-δ) or merely written in the wrong key (H-ε). C4 writes the SAME inverted")
+        print("      polarity ALSO through the operator's own `지 않다` carrier, then scores DISJOINT")
+        print("      `지 않다` surfaces (taught 전혀/그다지/결코, scored bare·별로). Reads NEW -> H-ε")
+        print("      (interface addressable); reads OLD -> H-δ (store unreachable / STEM-BOUND joint).")
+        print("      GATE FIX ① untouched = len(seen)-17 (derived, not fixed 3): a 46-SEEN atoms file")
+        print("      gives n=29, 0 flips -> 95%% UCB on forgetting 3/29=10.3%% (C3's 3/3=100%% = no power).")
+        print("      GATE FIX ② liveness lives on the DV (swap-arm consistency p<=.02), not an n=6 side arm.")
+        print("      Declarative write held IDENTICAL to C3, so the operator carrier is the ONE variable.")
         print("      H_9313 DECON-W grounding corpus — writes each held-out atom's polarity into")
         print("      the WEIGHTS via the un-negated (flip0) template lines ONLY. The negated")
         print("      (flip1) forms NEVER appear, so a later flip1 test measures COMPOSITION, not")
@@ -1099,6 +1234,30 @@ def main():
         open(opts["out"], "w", encoding="utf-8").write(text)
         print("anima corpus ground_seenswap: lines=%d bytes=%d leaks=0 -> %s"
               % (st["lines"], st["bytes"], opts["out"]))
+        for k in ("swap", "affirm", "keep", "untouched"):
+            print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
+        json.dump(st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        return 0
+
+    if fmt == "ground_carrierswap":
+        if not opts["atoms"]:
+            print("anima corpus ground_carrierswap: --atoms gt_atoms.json is required")
+            sys.exit(2)
+        text, st = build_carrierswap(opts["atoms"], opts["reps"], opts["replay"],
+                                     opts["seed"], opts["split_seed"])
+        if st["measured_prompt_leaks"]:
+            # The design rests on this: a scored prompt must never be in the corpus, or a NEW read is
+            # taught rather than composed. Refuse to write a corpus that would void the run.
+            print("anima corpus ground_carrierswap: LEAK — %d scored prompt(s) appear in the corpus"
+                  % len(st["measured_prompt_leaks"]), file=sys.stderr)
+            for x in st["measured_prompt_leaks"][:5]:
+                print("    %s" % x, file=sys.stderr)
+            sys.exit(2)
+        open(opts["out"], "w", encoding="utf-8").write(text)
+        print("anima corpus ground_carrierswap: lines=%d bytes=%d leaks=0 untouched_n=%d -> %s"
+              % (st["lines"], st["bytes"], st["untouched_n"], opts["out"]))
+        print("  forget-gate power: 0 flips -> 95%% UCB on SEEN forgetting = 3/%d = %.1f%% (rule of three)"
+              % (st["untouched_n"], 300.0 / st["untouched_n"]))
         for k in ("swap", "affirm", "keep", "untouched"):
             print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
         json.dump(st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
