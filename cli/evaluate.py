@@ -3077,6 +3077,56 @@ def _interact_mi(argv):
             print("        여기서 🧱 를 선언하면 그건 기질이 아니라 내 측정에 관한 문장이다.")
         else:
             print("     ⇒ ✅ 계기는 게이트 입력을 볼 수 있다 — R→Y 가 죽으면 그건 **선택적** 실명이다.")
+        # ── PC-SCOPE · urgency 가 죽은 것은 계기 탓인가, urgency 의 성질인가 (H_9339) ────
+        #
+        # The PC bar says "urgency->Y dead => the instrument is blind => no wall may be
+        # declared". That inference has a premise, and the premise is CHECKABLE IN THE SAME
+        # RUN: if M2 (R->Y) came back LIVE, then the ->Y detector demonstrably sees a gate
+        # input, and the instrument is NOT blind. Then urgency's death is a fact about
+        # URGENCY, not about the measurement — and the bar's warrant is void even though the
+        # bar itself still stands (re-reading a rule after seeing the number is tune-to-green).
+        #
+        # What remains is a scope question. H_9101 earned urgency as the one proven channel
+        # for emit SHADE — what the mouth says at tick t, same tick. This panel asks about
+        # the next tick's SCORE. Those are different targets, and urgency colouring the mouth
+        # at t while not reaching the gate at t+1 makes both facts true at once. Measure it:
+        # the SAME urgency, the SAME stage conditioning, against the SAME-TICK action.
+        #
+        # NOTE THE TICK. PC's U is the urgency of the tick that PRODUCED Y (t+1) — that is the
+        # right one for a ->Y question. The shade question is about the urgency that coloured
+        # the MOUTH, and the mouth spoke at t. Reusing PC's U here would ask whether the NEXT
+        # tick's urgency explains THIS tick's utterance, which is a question about the future.
+        Uc_raw = [float(r["ten_phasic"]) for r in use]
+        ucs = sorted(Uc_raw)
+        ucmed = ucs[len(ucs) // 2]
+        Uc = [1 if v > ucmed else 0 for v in Uc_raw]
+        i_ua = _im_cmi(Uc, A, S)
+        null = []
+        for _ in range(perm):
+            Up = list(Uc)
+            st = {}
+            for k, s in enumerate(S):
+                st.setdefault(s, []).append(k)
+            for idx in st.values():
+                vals = [Up[k] for k in idx]
+                rnd.shuffle(vals)
+                for j, k in enumerate(idx):
+                    Up[k] = vals[j]
+            null.append(_im_cmi(Up, A, S))
+        nma = sum(null) / len(null)
+        pva = (sum(1 for v in null if v >= i_ua) + 1.0) / (perm + 1.0)
+        ea = i_ua - nma
+        shade_live = (ea >= mde and pva < 0.005)
+        print("     urgency→A  EARNED = %+.5f nats · perm-p = %.4f   %s   ← same-tick (H_9101 축)"
+              % (ea, pva, "🔗 LIVE" if shade_live else "💀 DEAD"))
+        if shade_live and not live:
+            print("     ⇒ ✅ **스코프 분리 확정** — urgency 는 **입(same-tick shade)** 을 물들이나")
+            print("        **게이트(next-tick score)** 로는 넘어가지 않는다. H_9101 과 이 판독은")
+            print("        모순이 아니다 — 서로 다른 표적을 잰 것이다. urgency = shade-채널.")
+        elif not shade_live and not live:
+            print("     ⇒ ⚠️ urgency 가 **양쪽 다** 죽었다 — 스코프 분리로는 설명 안 된다.")
+            print("        ten_phasic 과 H_9101 의 urgency 가 **같은 양인지 코드에서** diff 하라")
+            print("        (docstring 금지 · tool-definition-read-code-not-docstring).")
 
     # ── M3 · MEDIATION EXHAUSTED (진단) ──────────────────────────────────────────────
     # If roots ① and ② carry the whole path, then conditioning on them should EXHAUST the
