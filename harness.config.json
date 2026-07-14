@@ -54,7 +54,9 @@
     ],
     "injectEnglishOnly": [
       "CLAUDE.md"
-    ]
+    ],
+    "claudeMdCap": 8700,
+    "claudeMdCapReason": "43 governance rules + 10 required sections (docs.claudeMdSections) form an irreducible floor at ~8.6KB once each rule keeps its enforcement clause; trimming further empties the keyword-index hooks and shifts the per-turn tax to ARCHITECTURE lookups. Trimmed from 27KB (#3539). Prefer trimming ARCHITECTURE-duplicated prose over raising this again."
   },
   "guides": [
     "CLAUDE.md",
