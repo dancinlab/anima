@@ -2690,6 +2690,16 @@ def _im_H(xs):
     return h
 
 
+def _im_clip01(x):
+    """1:1 with the daemon's `_afs_clip01` (cli/chat.py) — the PC rebuilds urgency with the
+    SAME arithmetic the daemon uses, so any divergence here would be a new quantity again."""
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+
 def _im_H_p(p):
     """Binary entropy (nats) of a PROBABILITY, not of a sample.
 
@@ -3044,10 +3054,25 @@ def _interact_mi(argv):
     #   urgency→Y DEAD               ⇒ the instrument cannot see ANY gate input. That is
     #                                  ⛔ NOT-POWERED, and a 🧱 declared here would be a
     #                                  statement about my measurement, not the substrate.
-    tp = [nxt_lane[(r["_src"], int(r["tick"]))].get("ten_phasic") for r in use]
+    # ⚠️ THE POSITIVE CONTROL MUST MEASURE THE QUANTITY IT NAMES.
+    # This block used `ten_phasic` and called it "urgency". It is NOT urgency. chat.py:1878:
+    #     urgency = clip01(0.4*agloop_ctx + 0.3*cur_phasic + 0.3*ten_phasic)
+    #     cur_phasic = clip01(0.5 + 3.0*(cur_ctx - cur_ema))
+    # ten_phasic is ONE of three terms, weighted 0.3. So the control was reading 30% of the
+    # channel it claimed to certify, and when it read DEAD that told us nothing about urgency.
+    # The name matched; the thing did not (tool-definition-read-code-not-docstring). All three
+    # terms are in the trace, so rebuild urgency EXACTLY as the daemon does and use THAT.
+    def _urgency(r):
+        cur_ph = _im_clip01(0.5 + 3.0 * (float(r["cur_ctx"]) - float(r["cur_ema"])))
+        return _im_clip01(0.4 * float(r["agloop_ctx"]) + 0.3 * cur_ph + 0.3 * float(r["ten_phasic"]))
+
+    need = ("agloop_ctx", "cur_ctx", "cur_ema", "ten_phasic")
+    have = all(all(k in nxt_lane[(r["_src"], int(r["tick"]))] for k in need) for r in use)
+    tp = [_urgency(nxt_lane[(r["_src"], int(r["tick"]))]) for r in use] if have else [None]
     print("  ── PC 검정력 양성대조 (🧱 선언의 전제조건) ─────────────────────")
+    print("     U = clip01(0.4·agloop_ctx + 0.3·cur_phasic + 0.3·ten_phasic)  ← chat.py:1878 그대로")
     if any(v is None for v in tp):
-        print("     ten_phasic 미기록 ⇒ SKIP — 양성대조 없이 🧱 선언 금지")
+        print("     urgency 항 미기록 ⇒ SKIP — 양성대조 없이 🧱 선언 금지")
     else:
         ts = sorted(float(v) for v in tp)
         tmed = ts[len(ts) // 2]
@@ -3096,7 +3121,7 @@ def _interact_mi(argv):
         # right one for a ->Y question. The shade question is about the urgency that coloured
         # the MOUTH, and the mouth spoke at t. Reusing PC's U here would ask whether the NEXT
         # tick's urgency explains THIS tick's utterance, which is a question about the future.
-        Uc_raw = [float(r["ten_phasic"]) for r in use]
+        Uc_raw = [_urgency(r) for r in use]
         ucs = sorted(Uc_raw)
         ucmed = ucs[len(ucs) // 2]
         Uc = [1 if v > ucmed else 0 for v in Uc_raw]
