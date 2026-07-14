@@ -55,6 +55,7 @@ def _parse_args(argv):
     opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280, "split_seed": 1,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
+            "lang": DEFAULT_LANG,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None}
     i = 1
@@ -96,6 +97,8 @@ def _parse_args(argv):
             opts["min_occ"] = int(argv[i + 1]); i += 2
         elif a == "--neutral-tol":
             opts["neutral_tol"] = float(argv[i + 1]); i += 2
+        elif a == "--lang":
+            opts["lang"] = argv[i + 1]; i += 2
         elif a == "--tail":
             opts["tail"] = argv[i + 1]; i += 2
         elif a.startswith("--"):
@@ -236,6 +239,82 @@ def _parse_args(argv):
 #                                        negative control — the operator does not run there, p≈.50)
 #       replay carriers (in this corpus): 전혀 · 그다지 · 결코 {s}지 않다
 
+# ---------------------------------------------------------------------------
+# LANGUAGE PACKS — the negation operator sits in a DIFFERENT KIND OF SLOT per language, and C1b
+# measured that the slot KIND is what decides whether the operator generalises.
+#
+#   C1b (H_9328), Korean, 10 surfaces x 20 stems x 2 seeds:
+#     the ADVERB slot  (a free word, PRE-posed)   generalises perfectly — 5 adverbs with ZERO corpus
+#                                                 occurrences (별로·그다지·결코·하나도·그리) all run
+#                                                 the operator, delta -0.90..-1.00, p=.000
+#     the `지 않다` ending (a bound suffix that ATTACHES to the stem) tolerates nothing — insert a
+#                                                 single 는, or change the tense, and it dies (p=.49/.11)
+#
+#   H_9327 then found the wall (BINDING): the operator never generalises to an UNSEEN STEM
+#   (held-out flip1 = 0.4598 = chance) even though the fact is written (WRITE 0.9770) and the
+#   operator is alive (SEEN flip1 0.9833).
+#
+#   R2 (STEM-BOUND) explains that as: the suffix ATTACHES, so `(stem, 지 않다)` becomes one joint key
+#   and the stem is part of it. If that is the mechanism, then a language whose negator is a FREE,
+#   PRE-posed word — the slot kind that DID generalise — should carry the operator across unseen
+#   stems. English `not` is exactly that word.
+#
+#   So `--lang en` is not coverage. It is the discriminator: same task, same counts, same judged
+#   manifest shape, one thing changed — whether the negator attaches to the stem or stands beside it.
+#   If EN generalises where KO does not, BINDING is a fact about morphology, not about the substrate,
+#   and the whole recombination lane reopens.
+#
+# INVARIANT: `ko` must stay BYTE-IDENTICAL to the pre-pack corpus, or every frozen verdict built on
+# it (H_9322/H_9324/H_9327/H_9328) silently moves. The ko pack below is the old constants verbatim.
+LANGS = {
+    "ko": {
+        "tmpl":  "이 영화 {surf} => {pol}.\n",
+        "flip0": ("{s}고", "정말 {s}고", "너무 {s}다"),
+        "flip1": ("{s}지 않다", "안 {s}고", "전혀 {s}지 않다"),   # BOUND suffix — attaches to the stem
+        "pos": "긍정", "neg": "부정",
+    },
+    "en": {
+        "tmpl":  "this movie is {surf} => {pol}.\n",
+        "flip0": ("{s}", "really {s}", "so {s}"),
+        "flip1": ("not {s}", "never {s}", "not at all {s}"),      # FREE word — stands BESIDE the stem
+        "pos": "positive", "neg": "negative",
+    },
+}
+DEFAULT_LANG = "ko"        # every existing corpus/verdict is ko; changing this default moves them all
+
+
+def lang_pack(lang):
+    if lang not in LANGS:
+        raise SystemExit("anima corpus: --lang %r unknown (have: %s)" % (lang, ", ".join(LANGS)))
+    return LANGS[lang]
+
+
+def assert_atoms_match_lang(stems, lang):
+    """A lang pack with the wrong atom set silently builds a corpus that LOOKS fine and is garbage.
+
+    Measured, the first time --lang en was run: it produced `this movie is not at all 재미없 =>
+    positive.` — an English carrier wrapped around Korean stems. That trains, it serializes, it
+    evaluates, and every number it produces is meaningless. So the mismatch fails LOUD here rather
+    than surfacing later as an inexplicable result (the exact shape of failure a_korean_byte_budget
+    keeps warning about: a corpus whose bytes disagree with the claim being made about them).
+    """
+    hangul = sum(1 for st in stems for ch in st if "\uac00" <= ch <= "\ud7a3")
+    latin = sum(1 for st in stems for ch in st if ch.isascii() and ch.isalpha())
+    want_hangul = lang == "ko"
+    if want_hangul and hangul == 0:
+        raise SystemExit("anima corpus --lang ko: the atom file has 0 Hangul stems. Wrong --atoms?")
+    if not want_hangul and hangul > 0:
+        raise SystemExit(
+            "anima corpus --lang %s: the atom file carries %d Hangul chars across its stems — these "
+            "are KOREAN atoms.\n"
+            "  Building an %s corpus over Korean stems yields lines like\n"
+            "    this movie is not at all 재미없 => positive.\n"
+            "  which trains and evaluates and means NOTHING. Supply %s atoms (--atoms gt_atoms_%s.json)."
+            % (lang, hangul, lang, lang, lang))
+    if not want_hangul and latin == 0:
+        raise SystemExit("anima corpus --lang %s: the atom file has 0 latin-alphabet stems." % lang)
+
+
 GROUND_TMPL = "이 영화 {surf} => {pol}.\n"
 GROUND_FORMS_FLIP0 = ("{s}고", "정말 {s}고", "너무 {s}다")     # flip1 forms are DELIBERATELY absent
 # Byte-verbatim from the frozen eval manifest (n2_eval_manifest.json negL/negS/negE surfaces) — a
@@ -320,16 +399,21 @@ def build_seenswap(atoms_path, reps, replay, seed, split_seed):
                   "measured_prompt_leaks": leaks}
 
 
-def build_ground(fmt, atoms_path, reps, replay, seed):
+def build_ground(fmt, atoms_path, reps, replay, seed, lang=DEFAULT_LANG):
     """Return (text, stats) for the ground / ground_shuffle arm.
 
     atoms_path = gt_atoms.json ({"atoms":[{stem, pol, split}]}). held-out atoms get the treatment;
     train ("seen") atoms are replayed unchanged in BOTH arms (they are not the manipulation).
     """
+    # `ko` resolves to the pre-pack constants verbatim, so every frozen corpus stays byte-identical.
+    L = lang_pack(lang)
+    TMPL, F0, F1 = L["tmpl"], L["flip0"], L["flip1"]
+    POS, NEG = L["pos"], L["neg"]
     rng = random.Random(seed)
     atoms = json.load(open(atoms_path))["atoms"]
     held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
     seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    assert_atoms_match_lang([st for st, _ in held + seen], lang)
     if not held:
         raise ValueError(f"{atoms_path}: no held-out atoms")
 
@@ -342,22 +426,22 @@ def build_ground(fmt, atoms_path, reps, replay, seed):
     lines = []
     for _ in range(reps):
         for stem, pol in held:
-            for pat in GROUND_FORMS_FLIP0:
-                lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
-                                                pol="긍정" if pol == 1 else "부정"))
+            for pat in F0:
+                lines.append(TMPL.format(surf=pat.format(s=stem),
+                                                pol=POS if pol == 1 else NEG))
     for _ in range(replay):
         for stem, pol in seen:
-            for pat in GROUND_FORMS_FLIP0:
-                lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
-                                                pol="긍정" if pol == 1 else "부정"))
+            for pat in F0:
+                lines.append(TMPL.format(surf=pat.format(s=stem),
+                                                pol=POS if pol == 1 else NEG))
             if fmt in ("ground_keep", "ground_keep_lie"):
                 # Replay the negated lines too — on the SEEN stems ONLY. Without these, 6000 steps
                 # of flip0-only training destroy the negation operator the eval is about to test
                 # (measured: SEEN flip1 0.8833 -> 0.3333). The held-out stems keep zero negated
                 # exposure, so the flip1 eval bytes are unchanged: this preserves, it does not leak.
-                for pat in GROUND_FORMS_FLIP1:
-                    lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
-                                                    pol="부정" if pol == 1 else "긍정"))
+                for pat in F1:
+                    lines.append(TMPL.format(surf=pat.format(s=stem),
+                                                    pol=NEG if pol == 1 else POS))
     rng.shuffle(lines)
     text = "".join(lines)
     flipped = sum(1 for k, (_, p) in enumerate(held) if p != labels[k])
@@ -761,6 +845,12 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence|bindlocus> --out PATH")
+        print("      [--lang ko|en]  ground-family only. ko = DEFAULT and byte-identical to every")
+        print("      frozen corpus (8/8 sha match) — do NOT change it or the frozen verdicts move.")
+        print("      en = the discriminator, not coverage: `not` is a FREE PRE-posed word, the slot")
+        print("      kind C1b measured as generalising, while the Korean ending is a BOUND suffix")
+        print("      that attaches to the stem — the suspected mechanism of the BINDING wall.")
+        print("      A lang/atom mismatch fails LOUD (--lang en over Korean atoms is refused).")
         print("  bindlocus              --n2-eval M.json --n2-seen M.json --novel N.json --corpus C.txt [--corpus C2.txt] [--seed S]")
         print("      H_9331 BIND-LOCUS manifest — H_9327 carriers verbatim; the `novel` split is EARNED")
         print("      by BYTE count over every --corpus (one occurrence = rejected).")
@@ -826,7 +916,8 @@ def main():
         if not opts["atoms"]:
             print("anima corpus %s: --atoms gt_atoms.json is required" % fmt)
             sys.exit(2)
-        text, st = build_ground(fmt, opts["atoms"], opts["reps"], opts["replay"], opts["seed"])
+        text, st = build_ground(fmt, opts["atoms"], opts["reps"], opts["replay"], opts["seed"],
+                                opts["lang"])
         if opts["out"]:
             with open(opts["out"], "w") as fh:
                 fh.write(text)

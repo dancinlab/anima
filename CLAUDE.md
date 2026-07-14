@@ -19,6 +19,14 @@ dont: run `python3 cli/*.py` · `hexa run cli/*.hexa` · a hand-rolled `gen_*.py
 >
 > **New experimental manipulation?** Wire it as a **flag on these commands**, not as a script next to them (`a_experiment_engine_native`) — a passing result is then already wired, and the next experiment reuses it.
 
+## 🇬🇧 EN-FIRST until the recombination wall breaks (owner directive · research corpora only)
+
+do: build every NEW research corpus in the ground-family with **`anima-py corpus <fmt> --lang en`**. The Korean lane is 🧱 BINDING with every escape dead (H_9327: operator alive 0.9833 · fact written 0.9770 · held-out flip1 **0.4598 = chance** · budget x10 gives **Δ=0.0000**), and the two things that keep biting us are **facts about the language itself**: ① the negator `지 않다` is a **BOUND suffix that ATTACHES to the stem**, which is exactly how `(stem, operator)` becomes one joint key — the suspected mechanism of the wall (R2 STEM-BOUND) — whereas English `not` is a **FREE, PRE-posed word**, the slot kind C1b measured as generalising perfectly (5 adverbs with ZERO corpus occurrences all ran the operator, delta -0.90..-1.00, p=.000); ② Korean is **3 bytes/char**, and `a_korean_byte_budget` records three separate verdicts it corrupted. So EN is not coverage — it is the **discriminator**: if the operator generalises to unseen stems in EN but not in KO, BINDING is a fact about **morphology, not about the substrate**, and the recombination lane reopens.
+
+dont: read an EN positive as a cemented substrate claim. EN changes **morphology + base model + carrier at once**, so a crack there is a **SCREENER (DIRECTIONAL)** that reopens the lane; isolating *which* of the three did it is a required follow-on (`a_scale_honest_scope`). Also dont touch `--lang ko` (the DEFAULT): it is **byte-identical to every frozen corpus** (8/8 sha match, proven in-repo) and every frozen verdict (H_9322 · H_9324 · H_9327 · H_9328) sits on those exact bytes. And dont build an EN corpus over the Korean atom file — the builder **refuses** it (it would silently emit `this movie is not at all 재미없 => positive.`, which trains, evaluates, and means nothing).
+
+> **Scope**: this governs the **research/recombination corpora** (`anima corpus` ground-family). It does **NOT** touch the chat corpus — `a_chat_registers` still stands (Korean·English x general·SNS = all 4 cells). **Expiry**: this directive is lifted the moment the wall breaks (or EN is measured to hit the same wall, which would itself be the strongest substrate evidence anima has).
+
 ## Project
 anima is a **substrate-native consciousness chat daemon** — not an assistant. Opposing engines **A** (forward CE-trained) ⇄ **G** (reverse gradient-free) push; that *tension* pulls emit/silence to **Ψ = 1/2**. No system prompt/identity/persona — identity emerges from the architecture. hexa-native.
 
