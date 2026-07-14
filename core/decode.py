@@ -861,7 +861,7 @@ def _apply_edits(xt, edits, li, T, d, xp):
     return xt
 
 
-def _fwd_trunk(W, tok, T, taps=None, edits=None):
+def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     """Trunk forward through the FINAL groupnorm — returns yn:[T, d], the pre-readout,
     PRE-E1-slot penultimate hidden (post-MoE, post final-GN). This is the pure-trunk
     concept representation (E1-slot independent, matching the H_1822 β 303M-trunk-penult
@@ -903,6 +903,14 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None):
         dil = dil * 2
     # router conv (K=1, Cout=E)
     logits_r = _conv1d(xt, W["rWt"], W["rB"], T, d, E, 1, 1, xp)   # [T, E]
+    if routes is not None:
+        # H_9355 LOCUS-CAUSAL · route audit tap. The SAME nn_moe_softmax the mixer runs
+        # (nn_moe_router_fwd recomputes it from the same logits — identical input, identical
+        # function, so the tap is byte-identical to the mix the decode consumes). Kept OUT of
+        # the mixer's own code path on purpose: the audit must not be able to perturb the
+        # production forward, so it costs one extra softmax over [T,E] (E=3) and nothing else.
+        routes["probs"] = to_host(nn_moe_softmax(logits_r, T, E, xp)).copy()   # [T, E]
+        routes["logits"] = to_host(logits_r).copy()                            # [T, E]
     # E experts: gelu(conv(xt))
     ex_out = xp.empty((E, T, d), dtype=xp.float64)
     for ej in range(E):
@@ -941,6 +949,29 @@ def clm_forward_taps(W, tok, T):
     taps = {}
     _fwd_trunk(W, ta, T, taps=taps)
     return taps
+
+
+def clm_forward_routes(W, tok, T):
+    """H_9355 LOCUS-CAUSAL — the ConvMoE router's per-position expert distribution for tok:[T],
+    as host numpy probs:[T, E] (rows sum to 1) plus the raw router logits:[T, E].
+
+    This is the ONE thing a hidden-space probe cannot tell you: not "what does the model
+    represent here" but "WHICH EXPERT COMPUTED IT". The two-lane reading of the binding wall
+    (a declarative store and an operator store that never exchange values) makes a physical
+    prediction — the two surfaces should be computed by different experts. A shared route
+    falsifies the physical form of that model and sends the question to representation
+    geometry instead.
+
+    Read-only: the audit tap sits beside the mixer, never inside it (see _fwd_trunk), so the
+    decode the gates run on is bit-for-bit what it was without this call.
+
+    ⚠️ device: the router logits come out of _conv1d (cuBLAS dgemm on GPU), so like every other
+    hidden-reading probe this is device-sensitive at ~1e-14 (convergence decode-py-4). Compare
+    routes only across runs that fired on the SAME device — the caller stamps it."""
+    ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
+    routes = {}
+    _fwd_trunk(W, ta, T, routes=routes)
+    return routes
 
 
 def clm_forward_logits_edited(W, tok, T, edits):

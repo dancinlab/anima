@@ -755,6 +755,10 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
+    print("  anima evaluate <ckpt> --route-audit <manifest.json> [--vs <ckpt2>] --out <f.json> [--perm 10000]")
+    print("      (H_9355 LOCUS-CAUSAL · ConvMoE router audit — do the declarative lane and the operator")
+    print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
+    print("       the SAME device so the pre/post-CPT route delta carries no device confound.)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
     print("  anima evaluate --tension-emit <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9352 — does TENSION pull EMIT? Pre-registered bar:")
@@ -2386,6 +2390,348 @@ def bind_locus_run(argv):
     return 0
 
 
+def _ra_H(p):
+    """Shannon entropy of a distribution, in BITS (log2). p is a 1-D numpy row summing to 1."""
+    import numpy as np
+    q = np.clip(np.asarray(p, dtype=float), 1e-300, 1.0)
+    return float(-(q * (np.log(q) / math.log(2.0))).sum())
+
+
+def _ra_js(p, q):
+    """Jensen-Shannon divergence in BITS: JS = H((p+q)/2) - (H(p)+H(q))/2.
+
+    Bounded in [0, 1] for ANY alphabet size, which is why the bar can be pre-registered as an
+    absolute number before a single route is read: 0.05 bits = 5% of the maximum possible
+    separation between two routing distributions. Symmetric and finite (KL is neither)."""
+    import numpy as np
+    p = np.asarray(p, dtype=float)
+    q = np.asarray(q, dtype=float)
+    m = 0.5 * (p + q)
+    return _ra_H(m) - 0.5 * (_ra_H(p) + _ra_H(q))
+
+
+def _ra_perm(d, n_perm, seed):
+    """Two-sided sign-flip permutation p for a paired difference vector d (H0: mean = 0).
+
+    Sign-flip is the right null here: the pairing is WITHIN stem (same stem, two surfaces), so
+    under H0 the sign of each stem's difference is exchangeable. Returns (mean, sd, se, p)."""
+    import numpy as np
+    d = np.asarray(d, dtype=float)
+    n = len(d)
+    if n == 0:
+        return 0.0, 0.0, 0.0, 1.0
+    mu = float(d.mean())
+    sd = float(d.std(ddof=1)) if n > 1 else 0.0
+    se = sd / math.sqrt(n) if n > 1 else 0.0
+    rng = random.Random(seed)
+    hits = 0
+    for _ in range(n_perm):
+        s = sum(x if rng.random() < 0.5 else -x for x in d) / n
+        if abs(s) >= abs(mu) - 1e-15:
+            hits += 1
+    return mu, sd, se, (hits + 1) / (n_perm + 1)
+
+
+def _ra_read(probs, it, T):
+    """The three read points, from ONE forward's [T, E] route matrix.
+
+    ans   probs[T-1]  — the position whose hidden the readout turns into the answer's first byte.
+                        THE primary: it is the only position whose route can be said to have
+                        'computed the answer'.
+    stem  mean over the stem's byte span (right-aligned into the window by the manifest)
+    win   mean over the non-pad region (the seed's own bytes; the left pad is spaces and carries
+          no surface information, so averaging over it would dilute every contrast equally)"""
+    import numpy as np
+    t0, t1 = it["stem_span"]
+    off = max(0, T - int(it["seed_bytes"]))
+    ans = np.asarray(probs[T - 1], dtype=float)
+    stem = np.asarray(probs[t0:t1], dtype=float).mean(axis=0)
+    win = np.asarray(probs[off:T], dtype=float).mean(axis=0)
+    return {"ans": ans, "stem": stem, "win": win}
+
+
+def _ra_forward(ckpt, items, T, note):
+    """Run the engine-native route tap over every item of the manifest. Returns
+    (reads, meta) where reads[id][point] = the [E] route distribution."""
+    import numpy as np
+    import time
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable: " + ckpt, file=sys.stderr)
+        return None, None
+    E = int(W["E"]); L = int(W["L"]); K = int(W["K"])
+    dev = "GPU" if clm.cuda_available() else "CPU"
+    print("  [%s] %s · E=%d experts · L=%d · K=%d · device=%s" % (note, ckpt, E, L, K, dev))
+    reads, ent, sham = {}, [], 0.0
+    t_start = time.time()
+    for i, it in enumerate(items):
+        tok = clm._seed_to_tok(it["seed"], T)
+        probs = clm.clm_forward_routes(W, tok, T)["probs"]
+        r = _ra_read(probs, it, T)
+        # G-SHAM: the metric must be exactly 0 against itself. A JS that is not 0 on p-vs-p is
+        # a broken estimator, and every number downstream of it is noise (the pedestal lesson).
+        sham = max(sham, abs(_ra_js(r["ans"], r["ans"])))
+        ent.append(_ra_H(r["ans"]))
+        reads[it["id"]] = r
+        # heartbeat from item ONE (evaluate-py-9): a first beat at item 50 makes a 303M forward
+        # that is merely SLOW indistinguishable from one that is hung, and the wrong call there
+        # kills live compute.
+        if i == 0 or (i + 1) % 50 == 0:
+            print("    %d/%d  (%.0fs)" % (i + 1, len(items), time.time() - t_start), flush=True)
+    # free the 303M weight dict before the next ckpt loads — two f64 copies of a 303M model is
+    # ~4.8 GB and summer's earlyoom kills python3 BY POLICY, which would read as a fake infra wall
+    try:
+        k = clm._wload_key(ckpt)
+        if k is not None:
+            clm._WLOAD_CACHE.pop(k, None)
+    except Exception:
+        pass
+    meta = {"E": E, "L": L, "K": K, "device": dev, "sham_max": sham,
+            "route_entropy_mean": float(np.mean(ent)), "route_entropy_max_possible": math.log2(E)}
+    return reads, meta
+
+
+def route_audit_run(argv):
+    """`anima-py evaluate <ckpt> --route-audit <manifest.json> [--vs <ckpt2>] --out <f.json>`
+    — H_9355 LOCUS-CAUSAL, the AUDIT half: do the declarative lane and the operator lane live on
+    PHYSICALLY DIFFERENT ConvMoE experts?
+
+    Why this and not another hidden-space probe. The two-lane reading of the binding wall (C3/C4:
+    a declarative store and an operator store that never exchange values) is, so far, a purely
+    behavioural inference. It makes exactly one PHYSICAL prediction this substrate can answer:
+    if the lanes are separate stores, the two surfaces should be COMPUTED BY DIFFERENT EXPERTS.
+    The router is the only place in a ConvMoE where "which machinery ran" is explicit, and it is
+    a number the model itself emits — not a linear probe's opinion about a hidden.
+
+      LOCUS-SPLIT   the operator surface routes elsewhere than the declarative surface, beyond
+                    what an equally-long inert suffix does  -> two-lane is PHYSICAL, and a
+                    route-pin intervention (bias the router at inference) becomes a live
+                    "read without writing" candidate
+      LOCUS-SHARED  same route  -> two-lane is not a store split; the gap is coding/geometry
+                    inside one shared machine, and route-pin is dead on arrival
+
+    ⚠️ NOT the dead forkA (Gate4 · eval_rho_weave): that was a READOUT-routing REFRAME of the G1
+    ideation metric and died of frame-mismatch. This audits WHERE A WRITE LANDS in a live
+    ConvMoE — a different object, a different question, and the ledger says so.
+
+    The trap this instrument is built to avoid: the router is a function of the BYTE STRING, so
+    flip0 -> negL moves the route TRIVIALLY (the strings differ). Two controls, both PAIRED
+    within stem (never max() over controls — probe-defect-census-max-control-bias):
+      ped   an inert 10-byte suffix, byte-length-matched to negL's '지 않다'  -> "does ANY suffix move it"
+      negJ  '지는 않다' — negL's string twin, on which the operator DEMONSTRABLY DOES NOT RUN
+            (C1b p~.50)                                                       -> "is the move OPERATOR-specific"
+
+    Frozen bars (pre-registered before any number was read; they never move):
+      G-SHAM   JS(p,p) == 0 exactly, all items                     else INVALID-ESTIMATOR
+      G-LIVE   J_STEM (mean JS between two random stems, SAME surface) >= 0.0001 bits
+               — the router must vary with CONTENT at all. If it does not, the lens is blind and
+               the audit is discarded as ROUTE-INDIFFERENT: honest negative, NOT a wall, and NOT
+               evidence for either model (a constant router cannot separate anything).
+      DV       dOP = mean_stem [ JS(flip0,negX) - JS(flip0,ped) ], X in {negL, negZ}
+               LOCUS-SPLIT  iff dOP >= 0.05 bits on BOTH strong surfaces, sign-flip perm p <= .01,
+                            AND the sign agrees across both CPT seeds
+               LOCUS-SHARED iff the 90% CI of dOP lies inside +-0.02 bits (TOST) on both
+               else         UNDERPOWERED (report se + MDE; no bar moves — power-before-negative)
+      OP-SPEC  dOPJ = mean_stem [ JS(flip0,negL) - JS(flip0,negJ) ] — reported alongside. A split
+               that negJ reproduces is a STRING effect wearing the operator's clothes.
+
+    --vs runs a SECOND ckpt in the SAME process, on the SAME device, and reports D_CPT =
+    mean_stem JS(route_base, route_post) per surface. Two processes would have been simpler and
+    wrong: the router logits come out of cuBLAS dgemm, so a CPU run and a GPU run are not the
+    same measurement (convergence decode-py-4) — pinning both ckpts to one process makes the
+    device confound structurally impossible instead of merely unlikely.
+    """
+    import numpy as np
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--route-audit", "")))
+    ckpt2 = evaluate_strval(argv[1:], "--vs", "")
+    out_path = evaluate_strval(argv[1:], "--out", "route_audit.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    n_perm = evaluate_intval(argv[1:], "--perm", 10000)
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    items = spec["items"]
+
+    # frozen bars — written before the first forward (no tune-to-green)
+    G_SHAM, G_LIVE, G_DV, G_TOST, A_PERM = 0.0, 0.0001, 0.05, 0.02, 0.01
+    Z90 = 1.645                          # 90% CI half-width multiplier -> TOST at alpha .05
+
+    # G-SPIKE — the truth-known pedestal for the ESTIMATOR itself (phi-estimator-needs-zero-truth-
+    # pedestal · tool-definition-read-code-not-docstring). Two disjoint one-hot routes are exactly
+    # 1 bit apart and a distribution is exactly 0 bits from itself; if _ra_js cannot reproduce
+    # those two constants, every JS below is noise and no verdict may be read off it.
+    E_spike = 3
+    one_a = [1.0] + [0.0] * (E_spike - 1)
+    one_b = [0.0, 1.0] + [0.0] * (E_spike - 2)
+    unif = [1.0 / E_spike] * E_spike
+    spike, zero = _ra_js(one_a, one_b), _ra_js(unif, unif)
+    spike_ok = abs(spike - 1.0) < 1e-12 and abs(zero) < 1e-12
+    print("  G-SPIKE  JS(one-hot A, one-hot B) = %.6f (truth 1.000000) · JS(u,u) = %.3e  %s"
+          % (spike, zero, _pf(spike_ok)))
+    if not spike_ok:
+        print("ERROR: the JS estimator fails its own truth-known pedestal — refusing to measure.",
+              file=sys.stderr)
+        return 2
+    # Scale note, recorded BEFORE any number is read so nobody can call it post-hoc: JS is
+    # QUADRATIC in the routing shift near a uniform router. At E=3, dOP = 0.05 bits corresponds to
+    # roughly an 11-point shift in expert mass — i.e. the bar asks for "a different expert ran",
+    # not "the mix wobbled". A reliable-but-tiny shift therefore lands in LOCUS-SHARED by design,
+    # and the top-expert agreement rate below is reported so that call can be audited.
+
+    print("=== anima-py evaluate --route-audit — H_9355 LOCUS-CAUSAL: two lanes, one expert or two? ===")
+    print("  %d items · win %dB · perm %d · seed %d" % (len(items), T, n_perm, seed))
+    print("  frozen: G-SHAM JS(p,p)==0 · G-LIVE J_STEM>=%.4f bits · DV dOP>=%.2f bits & perm p<=%.3f"
+          % (G_LIVE, G_DV, A_PERM))
+    print("  frozen: LOCUS-SHARED iff 90%% CI of dOP inside +-%.2f bits (TOST) · else UNDERPOWERED"
+          % G_TOST)
+
+    base, meta = _ra_forward(ckpt, items, T, "base")
+    if base is None:
+        return 2
+    post, meta2 = (None, None)
+    if ckpt2:
+        post, meta2 = _ra_forward(ckpt2, items, T, "vs")
+        if post is None:
+            return 2
+        if meta2["device"] != meta["device"]:
+            print("ERROR: the two ckpts fired on different devices (%s vs %s) — the route comparison "
+                  "would carry a device confound (decode-py-4). Refusing to score."
+                  % (meta["device"], meta2["device"]), file=sys.stderr)
+            return 2
+
+    by = {}                                          # by[stem][surf] = read dict
+    split_of, pol_of = {}, {}
+    for it in items:
+        by.setdefault(it["stem"], {})[it["surf"]] = base[it["id"]]
+        split_of[it["stem"]] = it["split"]
+        pol_of[it["stem"]] = int(it["pol"])
+    stems = sorted(by)
+    surfs = sorted({it["surf"] for it in items})
+    need = ("flip0", "negL", "negZ", "negJ", "ped")
+    missing = [s for s in need if s not in surfs]
+    if missing:
+        print("ERROR: manifest is missing surface(s) " + ",".join(missing), file=sys.stderr)
+        return 2
+
+    res = {"ckpt": ckpt, "vs": ckpt2, "meta": meta, "meta_vs": meta2, "n_stems": len(stems),
+           "bars": {"G_SHAM": G_SHAM, "G_LIVE": G_LIVE, "G_DV": G_DV, "G_TOST": G_TOST,
+                    "alpha_perm": A_PERM},
+           "points": {}}
+
+    # ── G-SHAM ────────────────────────────────────────────────────────────────────────────
+    sham_ok = meta["sham_max"] <= G_SHAM
+    print("\nG-SHAM  JS(p,p) max = %.3e  %s" % (meta["sham_max"], _pf(sham_ok)))
+    print("        router entropy (ans point) mean %.6f bits / max %.6f (E=%d)"
+          % (meta["route_entropy_mean"], meta["route_entropy_max_possible"], meta["E"]))
+
+    verdicts = {}
+    for point in ("ans", "stem", "win"):
+        P = {s: {f: by[s][f][point] for f in need} for s in stems}
+
+        # ── G-LIVE: does the route vary with CONTENT at all? (same surface, different stems) ──
+        rng = random.Random(seed)
+        pairs = [(rng.choice(stems), rng.choice(stems)) for _ in range(400)]
+        jstem = [_ra_js(P[a]["flip0"], P[b]["flip0"]) for a, b in pairs if a != b]
+        J_STEM = float(np.mean(jstem)) if jstem else 0.0
+
+        jsL = [_ra_js(P[s]["flip0"], P[s]["negL"]) for s in stems]
+        jsZ = [_ra_js(P[s]["flip0"], P[s]["negZ"]) for s in stems]
+        jsJ = [_ra_js(P[s]["flip0"], P[s]["negJ"]) for s in stems]
+        jsP = [_ra_js(P[s]["flip0"], P[s]["ped"]) for s in stems]
+
+        row = {"J_STEM": J_STEM, "js_mean": {"negL": float(np.mean(jsL)), "negZ": float(np.mean(jsZ)),
+                                             "negJ": float(np.mean(jsJ)), "ped": float(np.mean(jsP))}}
+        # top-expert agreement (DIAGNOSTIC, no bar): JS is quadratic near a uniform router, so a
+        # reliable-but-tiny shift reads as LOCUS-SHARED. If the ARGMAX expert nevertheless flips
+        # between the two surfaces for most stems, that is a qualitatively different fact and this
+        # line is what keeps the JS verdict auditable instead of merely obeyed.
+        row["top_agree"] = {f: float(np.mean([int(np.argmax(P[s]["flip0"]) == np.argmax(P[s][f]))
+                                              for s in stems])) for f in ("negL", "negZ", "negJ", "ped")}
+        row["top_hist"] = {f: [int(sum(1 for s in stems if int(np.argmax(P[s][f])) == e))
+                               for e in range(len(P[stems[0]]["flip0"]))] for f in need}
+        for tag, js in (("negL", jsL), ("negZ", jsZ)):
+            d = [a - b for a, b in zip(js, jsP)]                     # DV: operator minus pedestal
+            mu, sd, se, p = _ra_perm(d, n_perm, seed)
+            dj = [a - b for a, b in zip(js, jsJ)]                    # OP-SPEC: operator minus twin
+            mj, sj, sej, pj = _ra_perm(dj, n_perm, seed)
+            lo, hi = mu - Z90 * se, mu + Z90 * se
+            row[tag] = {"dOP": mu, "sd": sd, "se": se, "p_perm": p, "ci90": [lo, hi],
+                        "MDE80": 2.8 * se, "dOPJ": mj, "p_perm_J": pj, "se_J": sej}
+
+        # per-stratum + control ② (polarity, same surface): does the ROUTE know the polarity?
+        for st in ("seen", "heldout"):
+            ss = [s for s in stems if split_of[s] == st]
+            if len(ss) >= 3:
+                d = [_ra_js(P[s]["flip0"], P[s]["negL"]) - _ra_js(P[s]["flip0"], P[s]["ped"]) for s in ss]
+                mu, sd, se, p = _ra_perm(d, min(n_perm, 2000), seed)
+                row["stratum_" + st] = {"n": len(ss), "dOP_negL": mu, "se": se, "p_perm": p}
+        pos = [P[s]["flip0"] for s in stems if pol_of[s] == 1]
+        neg = [P[s]["flip0"] for s in stems if pol_of[s] == 0]
+        if pos and neg:
+            row["J_POL"] = _ra_js(np.mean(pos, axis=0), np.mean(neg, axis=0))
+
+        # ── the frozen decision tree ──────────────────────────────────────────────────────
+        if not sham_ok:
+            v = "⛔ INVALID-ESTIMATOR"
+        elif J_STEM < G_LIVE:
+            v = "⚪ ROUTE-INDIFFERENT"
+        elif all(row[t]["dOP"] >= G_DV and row[t]["p_perm"] <= A_PERM for t in ("negL", "negZ")):
+            v = "🟢 LOCUS-SPLIT"
+        elif all(row[t]["ci90"][0] > -G_TOST and row[t]["ci90"][1] < G_TOST for t in ("negL", "negZ")):
+            v = "🔵 LOCUS-SHARED"
+        else:
+            v = "⏳ UNDERPOWERED"
+        row["verdict"] = v
+        verdicts[point] = v
+        res["points"][point] = row
+
+        print("\n[%s]  J_STEM %.6f (G-LIVE %.6f) %s · J_POL %.6f"
+              % (point, J_STEM, G_LIVE, _pf(J_STEM >= G_LIVE), row.get("J_POL", float("nan"))))
+        print("   JS(flip0,·) mean:  negL %.6f · negZ %.6f · negJ %.6f · ped %.6f"
+              % (row["js_mean"]["negL"], row["js_mean"]["negZ"],
+                 row["js_mean"]["negJ"], row["js_mean"]["ped"]))
+        print("   top-expert agreement with flip0:  " + " · ".join(
+            "%s %.2f" % (f, v) for f, v in sorted(row["top_agree"].items())))
+        print("   top-expert histogram (over %d stems): " % len(stems) + " · ".join(
+            "%s %s" % (f, row["top_hist"][f]) for f in need))
+        for tag in ("negL", "negZ"):
+            r = row[tag]
+            print("   dOP[%s] = %+.6f bits (se %.6f · CI90 [%+.6f,%+.6f] · perm p %.4f · MDE80 %.6f)"
+                  % (tag, r["dOP"], r["se"], r["ci90"][0], r["ci90"][1], r["p_perm"], r["MDE80"]))
+            print("      OP-SPEC vs negJ twin: dOPJ = %+.6f (perm p %.4f)" % (r["dOPJ"], r["p_perm_J"]))
+        for st in ("seen", "heldout"):
+            k = "stratum_" + st
+            if k in row:
+                print("      stratum %-7s n=%2d  dOP[negL] %+.6f (se %.6f · p %.4f)"
+                      % (st, row[k]["n"], row[k]["dOP_negL"], row[k]["se"], row[k]["p_perm"]))
+        print("   -> " + v)
+
+    # ── --vs: where did the CPT WRITE land? (same process, same device) ───────────────────
+    if post is not None:
+        print("\nD_CPT — how far the C4 write MOVED the route, per surface (JS(base, post), ans point)")
+        dc = {}
+        for f in need:
+            for st in ("seen", "heldout"):
+                ids = [it["id"] for it in items if it["surf"] == f and it["split"] == st]
+                if not ids:
+                    continue
+                v = [_ra_js(base[i]["ans"], post[i]["ans"]) for i in ids]
+                dc.setdefault(f, {})[st] = {"n": len(v), "mean": float(np.mean(v)),
+                                            "max": float(np.max(v))}
+        for f in need:
+            if f in dc:
+                print("   %-6s " % f + " · ".join(
+                    "%s n=%2d mean %.6f max %.6f" % (st, d["n"], d["mean"], d["max"])
+                    for st, d in sorted(dc[f].items())))
+        res["D_CPT"] = dc
+
+    res["verdicts"] = verdicts
+    res["verdict"] = verdicts.get("ans", "⛔ INVALID")
+    print("\nVERDICT (primary read point = ans): " + res["verdict"])
+    json.dump(_json_safe(res), open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
+
+
 def xbind_run(argv):
     """`anima-py evaluate <ckpt> --xbind <manifest.json>` — held-out XBIND recombination
     (G1 reopen lane a · card H_9267). Engine-native numpy core/decode.py only
@@ -3737,8 +4083,9 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--ground-probe", "--interact-mi", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--rho-axon", "--score-len", "--seeds", "--selftest-rho-cells", "--slot-off",
-    "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
+    "--result-file", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--slot-off",
+    "--slot-shuffle", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
 ))
 
 
@@ -3853,6 +4200,12 @@ def main(argv):
     # (read in its real corpus contexts), or is a probe just reading the sentiment neighbourhood?
     # The verdict is Delta = probe(atom) - probe(length-matched NEUTRAL swapped into the SAME
     # context), against a permutation null. Kills the O-channel fire before it burns GPU.
+    # --route-audit <manifest.json>: H_9355 LOCUS-CAUSAL — the ConvMoE router's per-surface expert
+    # distribution. Asks the one question a hidden-space probe cannot: not what is represented, but
+    # WHICH EXPERT COMPUTED IT. A route split (beyond a byte-matched inert suffix) makes the
+    # two-lane model PHYSICAL; a shared route kills route-pin before it is fired.
+    if "--route-audit" in argv:
+        return route_audit_run(argv)
     if "--bind-locus" in argv:
         return bind_locus_run(argv)
     if "--valence-audit" in argv:
