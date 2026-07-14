@@ -419,6 +419,70 @@ def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed):
     return "".join(docs), train_pairs
 
 
+# The corpus carries its own earned training budget, and the strata a FORGET gate must cover.
+#
+# H_9322 died because a 600-step CPT never landed the fact, and the negative read as "the substrate
+# cannot compose" instead of "the fine-tune was too small". H_9324 then measured the floor: on this
+# corpus WRITE climbs 0.4483 (600@5e-5, chance) -> 0.9540 (6000@2e-4) -> 1.0000 (6000@5e-4), so a
+# sub-floor run is not a measurement at all. Nothing in the engine knew that, which means the next
+# run could repeat it — so the corpus now ships the number next to itself (`<out>.meta.json`) and
+# `anima-py train` refuses to start below it.
+#
+# The floor is NOT unconditional (convergence corpus-py-1 (D)): on `ground`/`ground_lie` a BIGGER
+# budget destroys MORE of the operator (SEEN flip1 0.8833 base -> 0.4333 @2e-4 -> 0.3333 @5e-4),
+# because those formats contain zero negated lines. Handing them a 6000-step floor would be telling
+# the trainer to break the model harder. So they carry no floor — they carry the destruction warning
+# and a pointer to `ground_keep`, which replays the SEEN stems' negated lines and is the only ground
+# format where the budget conclusion holds.
+BUDGET_FLOORS = {
+    # fmt: (min_steps, min_lr, note)
+    "ground_keep": (6000, 2e-4,
+                    "H_9324: WRITE 0.4483 (600@5e-5 = chance) -> 0.9540 (6000@2e-4) -> 1.0000 "
+                    "(6000@5e-4), reproduced on 2 seeds. Below this floor a negative result is a "
+                    "BUDGET negative, not a substrate negative — that is how H_9322 died."),
+    "ground_keep_lie": (6000, 2e-4, "same floor as ground_keep — it is the matched control arm."),
+}
+
+# Strata a FORGET gate MUST read for this corpus — specifically the ones the corpus contains ZERO
+# of, because those are exactly what dies (convergence corpus-py-1 (A)/(7)). A FORGET gate that
+# only reads the stratum the corpus reinforces is structurally always-pass = a forged gate.
+FORGET_STRATA = {
+    "ground":          ["SEEN flip0", "SEEN flip1 (ZERO in this corpus — this is what dies)"],
+    "ground_lie":      ["SEEN flip0", "SEEN flip1 (ZERO in this corpus — this is what dies)"],
+    "ground_keep":     ["SEEN flip0", "SEEN flip1 (replayed — verify it SURVIVES, bar 0.75)"],
+    "ground_keep_lie": ["SEEN flip0", "SEEN flip1 (replayed — verify it SURVIVES, bar 0.75)"],
+}
+
+
+def _write_budget_floor(out_path, fmt):
+    """Emit `<out>.meta.json` beside the corpus. NOT inside it — this is a byte-LM, so a header
+    comment in the corpus file would be TRAINED ON."""
+    floor = BUDGET_FLOORS.get(fmt)
+    meta = {
+        "format": fmt,
+        "min_steps": floor[0] if floor else None,
+        "min_lr": floor[1] if floor else None,
+        "note": floor[2] if floor else None,
+        "forget_strata": FORGET_STRATA.get(fmt, []),
+    }
+    if fmt in ("ground", "ground_lie"):
+        meta["destroys"] = (
+            "This format contains ZERO negated (flip1) lines, so CPT on it DESTROYS the model's "
+            "negation operator: SEEN flip1 0.8833 (pretrained base) -> 0.4333 (6000@2e-4) -> "
+            "0.3333 (6000@5e-4) — monotonically worse with budget. Any flip1 number measured on a "
+            "model tuned with this corpus is INVALID (H_9327): you broke the operator, then asked "
+            "it to compose. Use `ground_keep` unless you specifically want the broken-operator arm."
+        )
+    with open(out_path + ".meta.json", "w") as fh:
+        json.dump(meta, fh, ensure_ascii=False, indent=1)
+    if meta.get("destroys"):
+        print("  [budget-meta] %s.meta.json — ⚠️ NO floor: this format DESTROYS the negation "
+              "operator (see .meta.json 'destroys'); ground_keep is the safe one." % out_path)
+    elif floor:
+        print("  [budget-meta] %s.meta.json — earned floor: steps>=%d lr>=%g (H_9324)"
+              % (out_path, floor[0], floor[1]))
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -444,6 +508,10 @@ def main():
         sys.exit(0)
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|valence> --out PATH")
+        print("      the ground* formats also emit <out>.meta.json — the training budget the corpus")
+        print("      EARNED (H_9324: steps>=6000 lr>=2e-4 on ground_keep) + the strata a FORGET gate must")
+        print("      cover. `anima-py train` reads it and REFUSES to start below the floor; ground/ground_lie")
+        print("      carry no floor but a destruction warning (they delete the negation operator).")
         print("  derivtrace|flat        [--held-out I,J] [--comp-per-pair N] "
               "[--single-per-concept N] [--seed S] [--concepts FILE.json]")
         print("  ground|ground_lie|ground_keep|ground_keep_lie   --atoms gt_atoms.json [--reps N] [--replay N] [--seed S]")
@@ -479,6 +547,7 @@ def main():
         if opts["out"]:
             with open(opts["out"], "w") as fh:
                 fh.write(text)
+            _write_budget_floor(opts["out"], fmt)
         print(f"anima corpus {fmt}: held={st['held']} seen={st['seen']} lines={st['lines']} "
               f"labels_flipped={st['labels_flipped']}/{st['held']} bytes={st['bytes']} "
               f"reps={opts['reps']} replay={opts['replay']} seed={opts['seed']} "
