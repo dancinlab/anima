@@ -177,18 +177,25 @@ def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 
 
 def brain_emit(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
-               seconds_since_last, env_off, content_clean, backend, anchors):
+               seconds_since_last, env_off, content_clean, backend, anchors,
+               mouth=None):
     """brain.hexa:216 — L3-wired brain step (anchors FRESH, age_dt=0)."""
     return brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                            seconds_since_last, env_off, content_clean,
-                           backend, anchors, 0.0)
+                           backend, anchors, 0.0, mouth)
 
 
 def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                     seconds_since_last, env_off, content_clean,
-                    backend, anchors, anchor_age_dt):
+                    backend, anchors, anchor_age_dt, mouth=None):
     """brain.hexa:232 — brain_emit with explicit anchor age (forgetting curve).
-    Drives the L3 generator slot via the sibling generator.py port."""
+    Drives the L3 generator slot via the sibling generator.py port.
+
+    H_9325 DO-MOUTH · THE DISJOINT WALL IS THIS FUNCTION: `mouth` is threaded to
+    generate() and to generate() ALONE. brain_decide_anchored below — the emit/silence
+    gate — never receives it and cannot see it, so no sampler setting can ever
+    manufacture an emit the substrate's own tension did not license (p5). Machine-checkable:
+    grep that `mouth` never appears in a brain_decide* argument list."""
     from generator import (gen_ctx_from_decision, generate,  # sibling 2-prod port
                            generator_hippo_consult)
 
@@ -198,7 +205,7 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 
     emit = str(decision["emit"]).lower() == "true"
     ctx = gen_ctx_from_decision(decision)
-    gen = generate(backend, ctx, emit, anchors)
+    gen = generate(backend, ctx, emit, anchors, mouth)
 
     decision["gen_emitted"] = gen["emitted"]
     decision["gen_backend"] = gen["backend"]
