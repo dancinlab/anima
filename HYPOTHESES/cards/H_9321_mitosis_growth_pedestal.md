@@ -1,4 +1,4 @@
-# H_9313 — GROWTH-PAYS 에 참값-0 pedestal + 매개공변량-일치 통제 부착
+# H_9321 — GROWTH-PAYS 에 참값-0 pedestal + 매개공변량-일치 통제 부착
 
 - **lane**: MITOSIS-ENGINE
 - **상태**: 🟢 **GROWTH-PAYS 생존 (통제된 채) · 단 정체는 재기술됨** — 8 seed 완주 · 2 BLOCKING 게이트 통과
