@@ -14166,6 +14166,50 @@
           "detail": "G-A 만 재건(① margin 잡음모형 · ② 유지 · ③ 은 삭제가 아니라 독립 liveness 게이트로 이주 + 바닥을 G-D 판정 bar 에서 유도 = 140/240 = 0.583 ⟹ 낙제확률 0.00%). G-B~G-E bar 는 바이트 이월(G-B 데이터 이미 수집됨 ⟹ 손대면 정의상 tune-to-green). H_9312 도 자기 게이트에서 죽으면 3번째 등록 없음 — 병목이 가설이 아니라 게이트 제작 과정이다."
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-decon2b-h9312",
+        "type": "gate",
+        "name": "★A채널 컨텍스트-주입 = 🧱 구조적 폐쇄 (NO-IN-CONTEXT-CHANNEL · H_9312 · EARNED)",
+        "detail": "시연을 모델 자기 학습 템플릿으로 줘도 안 읽는다. 포맷 문제가 아니라 4층 conv byte-LM 에 in-context 복사/유도 경로가 없다 ⟹ 컨텍스트에 놓인 사실은 어떤 언어로 써도 답에 도달 못 한다. held-out 미발사(구조적 무의미).",
+        "children": [
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-verbatim",
+          "type": "note",
+          "name": "① 축자 복사 조건에서도 우연",
+          "detail": "nonce 시연은 정답을 글자 그대로 담는다('이 영화 뽀길고 => 긍정.\\n이 영화 정말 뽀길고 => ') — 베끼면 100%. 측정 READ = 0.475/0.469(시연없음 0.500/0.485 대비 Δ −0.025/−0.017) ⟹ 합성 이전에 복사조차 못 한다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-lie",
+          "type": "note",
+          "name": "② 거짓 시연이 참 시연과 동일 (판정을 낸 단 하나의 측정)",
+          "detail": "SEEN 통달원자에 극성 뒤집은 거짓 시연: 읽고 합성하면 flip1 이 0 쪽으로 붕괴해야 한다(기준선 0.883/0.900 = 여유 충분). 실측 0.900/0.883 = 무변화 ⟹ 거짓말이 아무 비용도 없다 ⟹ 시연을 애초에 안 읽는다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-perturb",
+          "type": "note",
+          "name": "③ 그런데 trunk 는 흔들린다 (H_9309 와 같은 서명)",
+          "detail": "시연 주입 시 |margin| 이동 중앙값 1.8~4.0. 바이트는 보인다 — 정보로 라우팅되지 않을 뿐. 큰 교란 · 정보량 0."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-gb",
+          "type": "note",
+          "name": "내 양성대조가 가짜였다 (G-B 교란)",
+          "detail": "G-B flip0(int)=1.000 은 시연을 읽어서가 아니라 SEEN 원자를 이미 parametric 으로 알아서였다 — 메커니즘 없이도 통과 가능한 대조군은 양성대조가 아니라 천장 측정이다. G-C(거짓말 arm)가 그 교란을 걷어냈다. convergence prereg-md-2."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-scope",
+          "type": "note",
+          "name": "SCOPE (정직)",
+          "detail": "닫힌 것 = 컨텍스트-주입. DECON-W(값을 가중치에 쓰기)는 다른 질문이고 미측정. 아키텍처 한정 = 4층 conv byte-LM(attention 없음) — attention 트렁크면 유도 헤드가 있었을 수 있다(다른 substrate · 미측정). G-D CONSUME/BIND 는 READ 가 죽은 위의 수라 독립 의미 없음."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-next",
+          "type": "note",
+          "name": "NEXT — DECON-W (A 채널 유일 잔여 실현)",
+          "detail": "값을 가중치에 쓴다: held-out/nonce 원자의 flip0 라인만 미세 CPT + SEEN 템플릿 replay, flip1 은 학습 노출 0 으로 동결 시험(tune-to-green 아님 — flip1 은 학습에 안 나온다). G1 함의: 이 아키텍처에서 추론시 외부 사실 조회는 원천 불가 ⟹ 재조합은 가중치 안에서 일어나야 한다(read-side 무덤과 정합)."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
@@ -15156,6 +15200,13 @@
     "value": "PROBE THE POSITION WHERE THE MODEL USES THE INFORMATION, NOT WHERE THE EVIDENCE PASSED. Every probe in this lane read the hidden state at the last byte of the ATOM. In a causal LM that is a position where the model has had no reason to commit to anything. The model was taught to emit the polarity AFTER the arrow ('이 영화 X => 긍정') and answers there at SEEN 0.950. Powered positive control (20 grid-TAUGHT atoms, per-context n=480, leave-one-ATOM-out): at the atom position the probe reads BELOW chance (0.471/0.421 in natural context, 0.390/0.325 even in the taught grid format); at the decision point it reads 0.633/0.673 while the untaught shuffle_grid control stays at 0.408. Same probe, same atoms, same ckpts — only the read position moved. Every negative built on the atom position (H_9289 INFO-ABSENT, H_9297 EARNED, H_9300) is a POSITION ARTIFACT.",
     "threshold": "Recurs on any representation probe / --dump-hidden read. Before reading a verdict: (1) name the position at which the model is supposed to USE the information (in a causal LM: immediately before it must emit the answer — the query/decision token, not the evidence token), (2) certify with a powered positive control on items whose answer the model demonstrably knows, (3) only then read the held-out negative. A probe that cannot read a TAUGHT answer certifies nothing about an untaught one.",
     "source": "state/nbindg_grounding/gt_power_build.py"
+   },
+   {
+    "id": "prereg-md-2",
+    "state": "pos-conv",
+    "value": "**양성대조는 '메커니즘 없이는 통과할 수 없는' 것이어야 한다 — 통과가 메커니즘을 증명 못 하면 그건 양성대조가 아니라 천장 측정이다.** H_9312 의 G-B(포맷 판독성)는 '모델이 1-shot 시연을 읽는가'를 물으려고 **SEEN 원자**(모델이 통달한 것)에 참시연을 주고 flip0(int) ≥0.90 을 걸었다. 결과 **1.000/1.000 PASS** — 나는 '모델이 시연을 읽는다'로 읽었고 그 위에서 nonce 를 발사했다. **틀렸다.** 모델은 그 원자를 **이미 parametric 으로 알기 때문에** 시연을 한 글자도 안 읽고도 만점을 낼 수 있었다. 결정적 반증 = **G-C SEEN-LIE**(거짓 시연): 극성을 뒤집은 시연을 주면 읽고 합성하는 모델은 flip1 에서 **오답을 내며 0 쪽으로 붕괴**해야 하는데(기준선 0.883/0.900 = 여유 충분) 실측은 **0.900/0.883 = 무변화** ⟹ 거짓말이 아무 비용도 없다 ⟹ **시연을 애초에 안 읽는다**. 그리고 nonce 에서는 시연이 **정답을 축자로** 담고 있는데도(베끼면 100%) READ = **0.475/0.469 = 우연**. ⟹ 이 4층 conv byte-LM 에는 **in-context 복사/유도 경로가 없다**(attention 없음). G-B 가 걸러냈어야 할 바로 그것을 못 걸렀다.",
+    "threshold": "재발조건: 양성대조를 '모델이 잘하는 것'으로 세울 때 — 특히 그 arm 이 **처치 없이도 만점**이 나올 수 있는 조건(통달한 항목 · ceiling 근처 baseline)일 때. 그러면 PASS 가 '메커니즘이 작동한다'가 아니라 '이 항목은 원래 쉽다'를 뜻하고, 그 위에 쌓은 모든 판정이 무효다. 해결 = (1) 양성대조에 **거짓말 arm(LIE)을 짝지어라** — 메커니즘이 있으면 **반드시 손해를 보는** 조건. 참-처치와 거짓-처치가 **같은 수를 내면** 메커니즘은 없는 것이다(이것이 H_9312 를 판정한 단 하나의 측정이다). (2) 양성대조의 baseline 을 먼저 재라 — 처치 없이 이미 ≥0.95 면 그 arm 은 **headroom 이 없어** 어떤 것도 증명할 수 없다(천장). (3) '이 대조군이 PASS 하는데 메커니즘이 **없는** 세계를 그려보라' — 그려지면 그건 양성대조가 아니다. (4) 축자-복사 조건(정답이 컨텍스트에 그대로 있는 시행)을 넣어 **하한**을 재라 — 거기서 우연이면 상위 능력은 물을 필요가 없다.",
+    "source": "state/h9312_decon2b/PREREG.md"
    }
   ]
  }

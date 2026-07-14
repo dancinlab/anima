@@ -217,3 +217,38 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def diagnosis():
+    """G-C SEEN-LIE + the nonce copy-trivial control — DIAGNOSTICS, not gates.
+
+    They cannot change H_9312's frozen verdict (the READ bar already fixed it at
+    INVALID-FORMAT). What they do is say WHY, and the answer is not the one the gate's name
+    suggests. Three independent controls, all pointing the same way:
+
+      1. nonce + demo, flip0(int): the demo contains the gold answer VERBATIM for the very same
+         stem ("이 영화 뽀길고 => 긍정.\\n이 영화 정말 뽀길고 => "). Copying alone scores 100%.
+         Measured: 0.475 / 0.469 — chance. Δ vs no-demo: −0.025 / −0.017.
+         The model cannot COPY from context, let alone compose.
+
+      2. SEEN + LIE demo, flip1: a lie says "참 = 부정" when 참 is 긍정. A model that reads and
+         composes must then answer 긍정 for "참지 않다" — i.e. WRONG — and flip1 must collapse
+         toward 0. There is ample headroom (baseline 0.883/0.900).
+         Measured: 0.900 / 0.883 — UNMOVED. The lie costs nothing because the demo is never read.
+
+      3. And yet the demo demonstrably perturbs the trunk: |margin| shifts by a median of
+         1.8-4.0. The bytes are seen. They are simply not routable as information — the same
+         signature H_9309 measured (large perturbation, zero information).
+
+    => The gate said INVALID-FORMAT. The controls say it is not the format: this byte-LM has NO
+       IN-CONTEXT CONSUMPTION AT ALL. A 4-layer conv trunk has no induction/copy path, so a fact
+       placed in the context cannot reach the answer no matter what language it is written in.
+       G-B's flip0(int)=1.000 was parametric knowledge, not format-reading — a positive control
+       the system could pass WITHOUT the mechanism under test is not a positive control.
+
+    => The A-channel realized as CONTEXT INJECTION is structurally closed for this architecture.
+       This is EARNED, not a bar artifact: the diagnosis is HARSHER than the frozen verdict (it
+       closes the whole channel, not one format), and it rests on controls that should have fired
+       and did not. What remains of the A-channel is DECON-W — writing the value into the weights.
+    """
+
