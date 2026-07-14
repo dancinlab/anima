@@ -1910,24 +1910,39 @@ def bind_locus_run(argv):
             _tap_cache[text] = h
         return h
 
-    def prompt_of(it, flip):
-        st = it["stem"] + ("지 않" if int(flip) == 1 else "")
-        return carrier.replace("{stem}", st)
+    def prompt_of(it, flip=None):
+        """The prompt is taken VERBATIM from the manifest (`seed`), never reconstructed.
 
-    def span_of(it, flip):
-        """Byte span of the stem inside the RIGHT-ALIGNED T-window (the same window the engine
-        decodes over). Computed from the actual encoded prompt — never assumed (a_korean_byte_budget:
-        Korean is 3 bytes/char, and mixing chars with a byte budget is how three prior H's died)."""
-        p = prompt_of(it, flip).encode("utf-8", "surrogateescape")
-        pre = carrier.split("{stem}")[0].encode("utf-8", "surrogateescape")
-        t0_abs, t1_abs = len(pre), len(pre) + len(it["stem"].encode("utf-8", "surrogateescape"))
+        H_9327's negation surfaces are `negL` ("이 영화 빠르지 않다 => ") and `negS`
+        ("이 영화 안 빠르고 => ") — two different carriers, one of them PREFIXING the negator.
+        Rebuilding a carrier from a template would have fed the model a string it was never
+        trained on ("빠르지 않고"), and the operator would look dead for a reason that is purely
+        ours (reference-match: when the reference is open, read it — do not re-derive it)."""
+        return it["seed"]
+
+    def span_of(it, flip=None):
+        """Byte span of the stem inside the RIGHT-ALIGNED T-window the engine actually decodes.
+
+        Located by BYTE search inside the verbatim prompt (a_korean_byte_budget: Korean is 3
+        bytes/char, and every window/length knob here is a byte budget — mixing chars into it is
+        how three prior H's died). rfind, because `negS` puts the negator BEFORE the stem, so the
+        stem is still the last occurrence of its own bytes."""
+        p = prompt_of(it).encode("utf-8", "surrogateescape")
+        sb = it["stem"].encode("utf-8", "surrogateescape")
+        t0_abs = p.rfind(sb)
+        if t0_abs < 0:
+            return None                        # stem not in its own prompt — manifest defect
+        t1_abs = t0_abs + len(sb)
         off = T - len(p)                       # right-align: byte i of p sits at window i+off
         t0, t1 = t0_abs + off, t1_abs + off
         if t0 < 0:
-            return None                        # stem fell out of the window — item is unusable
+            return None                        # stem fell out of the T-byte window — unusable
         return (t0, t1)
 
-    seen = [it for it in items if it.get("split") == "seen"]
+    def pool(split, flip):
+        return [it for it in items if it.get("split") == split and int(it["flip"]) == flip]
+
+    seen = [it for it in items if it.get("split") == "seen" and int(it["flip"]) == 1]
     novel = [it for it in items if it.get("split") == "novel"]
     heldout = [it for it in items if it.get("split") == "heldout"]
     print("  splits: seen %d · heldout %d · novel %d" % (len(seen), len(heldout), len(novel)))
@@ -1937,8 +1952,8 @@ def bind_locus_run(argv):
         return 0
 
     # ── Stage A — locate the operator's read site with a SPIKE-IN (truth we planted) ──────────
-    def stem_ladder(it, flip, depth):
-        t = span_of(it, flip)
+    def stem_ladder(it, depth):
+        t = span_of(it)
         if t is None:
             return []
         t0, t1 = t
@@ -1960,22 +1975,22 @@ def bind_locus_run(argv):
         for rung in range(3):
             flips, shams, n = 0, 0, 0
             for it in pos_seen[:40]:
-                sp = stem_ladder(it, 1, depth)
+                sp = stem_ladder(it, depth)
                 if rung >= len(sp):
                     continue
                 t0, t1 = sp[rung]
-                donors = [d for d in neg_seen if span_of(d, 1) is not None]
+                donors = [d for d in neg_seen if span_of(d) is not None]
                 if not donors:
                     continue
                 dn = donors[n % len(donors)]
-                dsp = stem_ladder(dn, 1, depth)
+                dsp = stem_ladder(dn, depth)
                 if rung >= len(dsp):
                     continue
                 d0, d1 = dsp[rung]
                 if (d1 - d0) != (t1 - t0):
                     continue                                # byte-length mismatch — skip, never pad
-                p_self = prompt_of(it, 1)
-                donor_h = taps_of(prompt_of(dn, 1))[depth][d0:d1]
+                p_self = prompt_of(it)
+                donor_h = taps_of(prompt_of(dn))[depth][d0:d1]
                 base = _bl_answer_pos(np, W, p_self, T)
                 got = _bl_answer_pos_edited(np, W, p_self, T,
                                             [{"layer": depth, "t0": t0, "t1": t1,
@@ -2007,15 +2022,15 @@ def bind_locus_run(argv):
     print("  l* FROZEN = depth %d, span-rung %d (chosen on SEEN only — no DV data touched it)" % (depth, rung))
 
     # ── Stage B — axis + projection targets from SEEN (matched on the mediating covariate) ────
-    def stem_vec(it, flip):
-        sp = stem_ladder(it, flip, depth)
+    def stem_vec(it):
+        sp = stem_ladder(it, depth)
         if rung >= len(sp):
             return None
         t0, t1 = sp[rung]
-        return taps_of(prompt_of(it, flip))[depth][t0:t1].mean(axis=0), (t0, t1)
+        return taps_of(prompt_of(it))[depth][t0:t1].mean(axis=0), (t0, t1)
 
-    P = [stem_vec(it, 1) for it in pos_seen]
-    N = [stem_vec(it, 1) for it in neg_seen]
+    P = [stem_vec(it) for it in pos_seen]
+    N = [stem_vec(it) for it in neg_seen]
     P = [x for x in P if x]; N = [x for x in N if x]
     mu_p = np.mean([x[0] for x in P], axis=0)
     mu_n = np.mean([x[0] for x in N], axis=0)
@@ -2036,17 +2051,19 @@ def bind_locus_run(argv):
     rng = np.random.RandomState(seed)
     vr = rng.randn(len(v)); vr -= (vr @ v) * v; vr /= (np.linalg.norm(vr) + 1e-12)   # orthogonal to v
 
-    def dep_for(pool, flip, mode):
+    def dep_for(items_pool, flip, mode):
         """Bias-independent dependence: P(ans=pos | inject=pos) - P(ans=pos | inject=neg), paired
         per stem. A global answer bias cancels in the difference by construction (this is H_9327's
         LIE test, now causal)."""
         d, det = [], []
-        for it in pool:
-            sp = stem_ladder(it, flip, depth)
+        for it in items_pool:
+            if int(it["flip"]) != int(flip):
+                continue
+            sp = stem_ladder(it, depth)
             if rung >= len(sp):
                 continue
             t0, t1 = sp[rung]
-            p = prompt_of(it, flip)
+            p = prompt_of(it)
             if mode == "sham":
                 b = _bl_answer_pos(np, W, p, T)
                 s = _bl_answer_pos_edited(np, W, p, T, [{"layer": depth, "t0": t0, "t1": t1,

@@ -56,7 +56,7 @@ def _parse_args(argv):
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
-            "tail": ""}
+            "tail": "", "n2_eval": None, "n2_seen": None, "novel": None}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -76,6 +76,12 @@ def _parse_args(argv):
             opts["concepts"] = argv[i + 1]; i += 2
         elif a == "--atoms":
             opts["atoms"] = argv[i + 1]; i += 2
+        elif argv[i] == "--n2-eval":
+            opts["n2_eval"] = argv[i + 1]; i += 2
+        elif argv[i] == "--n2-seen":
+            opts["n2_seen"] = argv[i + 1]; i += 2
+        elif argv[i] == "--novel":
+            opts["novel"] = argv[i + 1]; i += 2
         elif a == "--replay":
             opts["replay"] = int(argv[i + 1]); i += 2
         elif a == "--reps":
@@ -600,6 +606,97 @@ def _write_budget_floor(out_path, fmt):
               % (out_path, floor[0], floor[1]))
 
 
+def build_bindlocus(n2_eval, n2_seen, corpus_paths, novel_pool, seed):
+    """H_9331 BIND-LOCUS manifest — inherits H_9327's carriers VERBATIM and earns its `novel` split
+    by MEASUREMENT, not by assertion.
+
+    Three splits, and the whole design turns on the third:
+      seen     stems the pretrained operator demonstrably runs on (SEEN flip1 0.98-1.00) — Stage A's
+               spike-in donors, where the truth is one we planted ourselves
+      heldout  stems whose polarity CPT WROTE (WRITE 0.98) but which the operator ignores — the arm
+               that asks whether the wall is repairable in place
+      novel    stems the model has NEVER met: 0 occurrences in the pretrain corpus AND 0 in the CPT
+               corpus. This is the core arm — it asks whether the operator binds to content it did
+               not co-form with, i.e. whether binding is lookup (P) or pretraining-forged (S)
+
+    "novel" is checked by BYTE COUNT over every corpus handed in (`--corpus`, repeatable), not by
+    the author's belief that a word is rare (a_korean_byte_budget: this is a byte-LM; a stem that
+    "looks new" can still be 900 occurrences of a substring). A stem with even ONE occurrence is
+    REJECTED and reported — an unearned novel split would silently turn an S verdict into a
+    pretraining-exposure artifact, which is the exact confound the arm exists to exclude.
+    """
+    import random as _r
+    import os as _os
+    rng = _r.Random(seed)
+    CHUNK = 64 << 20                       # 64 MB
+    sizes = [(p, _os.path.getsize(p)) for p in corpus_paths]
+    print("  novelty corpora: %d file(s) · %.2f GB total (STREAMED, byte-counted — the pretrain "
+          "corpus is ~10 GB, so reading it whole would OOM the host)"
+          % (len(sizes), sum(n for _, n in sizes) / 1e9))
+
+    def occ(stems):
+        """Byte-count every candidate stem over every corpus in ONE streaming pass per file.
+
+        Chunked with an overlap of (max stem length - 1) bytes, so a stem straddling a chunk
+        boundary is still counted — without the overlap a stem could read as 0 occurrences purely
+        because it happened to land on a 64 MB seam, and an unearned `novel` label is precisely the
+        confound that would turn an S verdict into a pretraining-exposure artifact."""
+        sbs = [(st, st.encode("utf-8", "surrogateescape")) for st in stems]
+        ov = max(len(b) for _, b in sbs) - 1
+        counts = {st: 0 for st in stems}
+        for p, _n in sizes:
+            with open(p, "rb") as fh:
+                tail = b""
+                while True:
+                    buf = fh.read(CHUNK)
+                    if not buf:
+                        break
+                    blob = tail + buf
+                    for st, sb in sbs:
+                        counts[st] += blob.count(sb)
+                    tail = blob[-ov:] if ov > 0 else b""
+                    # the overlap region is re-scanned next round; subtract its own hits once
+                    if ov > 0:
+                        for st, sb in sbs:
+                            counts[st] -= tail.count(sb)
+        return counts
+
+    def carriers(stem, pol, split):
+        """H_9327's own surfaces, verbatim: flip0 = bare, flip1 = negL ('...지 않다') and negS
+        ('안 ...고'). negS PREFIXES the negator, so a template rebuild would have produced a string
+        the model never saw — the seeds are copied, never re-derived (reference-match)."""
+        out = [("이 영화 %s고 => " % stem, 0, "bare"),
+               ("이 영화 %s지 않다 => " % stem, 1, "negL"),
+               ("이 영화 안 %s고 => " % stem, 1, "negS")]
+        return [{"id": "%s_%s_%s" % (split[0].upper(), stem, form), "stem": stem, "pol": int(pol),
+                 "flip": f, "split": split, "form": form, "seed": s} for s, f, form in out]
+
+    items = []
+    for st, pol in n2_seen:
+        items += carriers(st, pol, "seen")
+    for st, pol in n2_eval:
+        items += carriers(st, pol, "heldout")
+
+    counts = occ([st for st, _ in novel_pool])
+    kept, rejected = [], []
+    for st, pol in novel_pool:
+        if counts[st] == 0:
+            kept.append((st, pol))
+        else:
+            rejected.append((st, counts[st]))
+    for st, pol in kept:
+        items += carriers(st, pol, "novel")
+
+    print("  novel candidates %d -> EARNED %d (0 bytes in every corpus) · REJECTED %d"
+          % (len(novel_pool), len(kept), len(rejected)))
+    if rejected:
+        top = sorted(rejected, key=lambda x: -x[1])[:8]
+        print("    rejected (occurrences): " + " · ".join("%s=%d" % (s, n) for s, n in top))
+    return {"win": 64, "carrier": "이 영화 {stem}고 => ", "items": items,
+            "novel_earned": [s for s, _ in kept],
+            "novel_rejected": dict(rejected)}, kept, rejected
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -623,9 +720,50 @@ def main():
                   "is noisier for those" % (len(st["thin_atoms"]), st["k_ctx"],
                                             min(st["thin_atoms"], key=lambda x: x[1])))
         sys.exit(0)
+    if fmt == "bindlocus":
+        if not (opts["n2_eval"] and opts["n2_seen"] and opts["corpus"] and opts["novel"]):
+            print("usage: anima-py corpus bindlocus --n2-eval n2_eval_manifest.json "
+                  "--n2-seen n2_seen_manifest.json --novel novel_stems.json "
+                  "--corpus PRETRAIN.txt [--corpus CPT.txt ...] --out bl_manifest.json [--seed 7]")
+            print("      H_9331 — builds the BIND-LOCUS manifest. Inherits H_9327's carriers VERBATIM")
+            print("      (negL '...지 않다' AND negS '안 ...고' — negS PREFIXES the negator, so a template")
+            print("      rebuild would feed the model a string it never saw). The `novel` split is EARNED:")
+            print("      every candidate stem is BYTE-counted against every --corpus and rejected on a")
+            print("      single occurrence (an unearned novel split turns an S verdict into a")
+            print("      pretraining-exposure artifact — the exact confound the arm exists to exclude).")
+            sys.exit(2)
+
+        def _stems(path):
+            d = json.load(open(path))
+            seen_p, out = set(), []
+            for x in d.get("heldout", []) + d.get("seen", []):
+                if x["p"] not in seen_p:
+                    seen_p.add(x["p"]); out.append((x["p"], int(x["pol"])))
+            return out
+        ev, sn = _stems(opts["n2_eval"]), _stems(opts["n2_seen"])
+        nv = json.load(open(opts["novel"]))
+        nv = [(x["stem"], int(x["pol"])) for x in nv] if isinstance(nv[0], dict) else [(a, b) for a, b in nv]
+        print("=== anima-py corpus bindlocus — H_9331 manifest (novel split EARNED by byte count) ===")
+        print("  seen stems %d · heldout stems %d · novel candidates %d" % (len(sn), len(ev), len(nv)))
+        man, kept, rej = build_bindlocus(ev, sn, opts["corpus"], nv, opts["seed"])
+        out = opts["out"] or "bl_manifest.json"
+        json.dump(man, open(out, "w"), ensure_ascii=False)
+        n_by = {}
+        for it in man["items"]:
+            n_by[it["split"]] = n_by.get(it["split"], 0) + 1
+        print("wrote %s — %d items (%s)" % (out, len(man["items"]),
+              " · ".join("%s %d" % (k, v) for k, v in sorted(n_by.items()))))
+        if len(kept) < 30:
+            print("  ⚠️ novel n=%d — the pre-registered power calc needs 60 stems (se~0.064, "
+                  "MDE(80%%)~0.18 < TOST margin 0.20). Below that a null is 'we cannot find it', "
+                  "NOT 'it is not there' (power-before-negative-verdict)." % len(kept))
+        sys.exit(0)
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence> --out PATH")
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence|bindlocus> --out PATH")
+        print("  bindlocus              --n2-eval M.json --n2-seen M.json --novel N.json --corpus C.txt [--corpus C2.txt] [--seed S]")
+        print("      H_9331 BIND-LOCUS manifest — H_9327 carriers verbatim; the `novel` split is EARNED")
+        print("      by BYTE count over every --corpus (one occurrence = rejected).")
         print("      the ground* formats also emit <out>.meta.json — the training budget the corpus")
         print("      EARNED (H_9324: steps>=6000 lr>=2e-4 on ground_keep) + the strata a FORGET gate must")
         print("      cover. `anima-py train` reads it and REFUSES to start below the floor; ground/ground_lie")
