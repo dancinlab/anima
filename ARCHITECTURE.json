@@ -266,20 +266,121 @@
      },
      {
       "id": "brain-structure-engine-lanes-do-mouth-h9328",
-      "name": "DO-MOUTH → CLOSE-THE-LOOP — 폐루프는 연결됐다. 그리고 그건 **약한 사슬**이지 벽도 정렬 문제도 아니다",
+      "name": "DO-MOUTH → CLOSE-THE-LOOP — 폐루프는 연결됐다. 그건 약한 사슬이지 벽도 정렬 문제도 아니다",
       "type": "gate",
-      "verdict": "🟢 V-CEILING PASS · 계기 engine-native 배선 완료(기본 OFF · 바이트 동일) — 본실험 I(A;Y|S) PENDING",
-      "detail": "H_9328 DO-MOUTH 가 입의 argmax 반올림을 걷어내 행동 채널을 열었다(H(A|S) 0→1.14 · REVEAL not OVERWRITE · 게이트는 바이트 그대로 · p5 DISJOINT 벽 grep 검사가능). 그 판독의 I(A;Y|S)=0 은 **use-claim 으로 ⛔ INVALID** — 세 피드백 뿌리(afield recon_err · immune rel_lane · kosmos 앵커)가 720 tick 내내 **전부 상수**였다(THIRD identity-zero: V-CEILING 이 A·Y 두 주변축은 지켰지만 **매개 경로 용량**은 아무도 안 지켰다). H_9336/H_9337 이 뿌리 ①②를 수리(예측부호화 순서 = 저장 직전에 재고 다음 tick 에 읽는다). 뿌리 ③(kosmos→decode 앵커)은 **영구 미수정** — p5 가 금지한 self-seed. p5 의 기준선은 정보량이 아니라 **목적지**다: 입(decode 문맥)=seed 금지 · 장(field lane)=state 합법.\n\n■ 실측 (n=23 rollout · 620 emit-tick · 303M · anima-py evaluate --interact-mi):\n  게이트 전부 통과 — V1 H(A|S)=1.141 · V2 H(Y|S)=0.489 · V5 H(Y|S,safe)=0.464(GATE-CLOSED 아님) · V3 H(R|S)=0.676 · B1 H(R|A,S)=0.644(장부 아님) · AXIS I(A;A′|S)=0.065(축 방어됨).\n  **M1 A→R = +0.0202 (p=.005) 🔗 LIVE** — 말이 장을 민다. ← **이 lane 이 번 유일한 earned 링크**\n  M2 R→Y = +0.0902 (p=.005) — 🔻 **WIRED-EXPECTED 로 강등**: recon_err 는 core/engine_cli.py:6089-6094 에서 surp=clip01(prec·perr²) · nov=clip01(recon_err/(1+0.5·seen)) 두 lane 에 **하드와이어**돼 있다. 창발이 아니라 **배선 명세의 재확인**이다.\n  헤드라인 A→Y = +0.0061 (p=.065 · MDE 0.010 미달).\n\n■ ⚠️ 철회 (H_9339 · verdict-integrity) — 나는 이것을 **'사슬이 이어붙지 않는다 = 정렬 실패'** 로 읽었고 **그건 틀렸다**:\n  약채널 곱셈 감쇠 예측 ρ₁≈√(2·0.0202)=0.20 · ρ₂≈√(2·0.0902)=0.42 ⇒ **I_comp ≈ 0.0036 nats**. 실측 0.0061 은 이 예측의 **위**에 있다. 정렬 실패라면 실측이 예측 **아래로** 떨어져야 한다(어긋나면 곱셈보다 더 샌다). DPI 상한 min(0.020,0.090)=0.020 도 위반 없음. ⇒ **모순이 아니다. 그냥 감쇠다.**\n  그리고 **(a) 정렬실패 판정은 원리적으로 도달 불가**였다 — 조건 'I_obs < I_comp − MDE' 는 I_comp<MDE 일 때 **음수 MI** 를 요구한다. 검정이 감쇠로만 갈 수 있었다. ⇒ **POWER GATE** 를 계기에 박았고, **그 게이트가 걸린다는 사실이 답**이다: **M1=0.020·M2=0.090 사슬은 완벽히 정렬돼 있어도 end-to-end 0.0036 을 예측하고 그건 분해능 아래다.** ⇒ **관측된 0.006 은 정상 작동하는 약한 사슬이 내놓을 바로 그 값이고, '합성 실패'는 설명할 것이 없다.**\n\n■ 현재 판정 ⏳ UNDER-POWERED (n=72 재수집 중 ⇒ MDE ~0.005 ⇒ TOST 결정적). 🧱 선언은 사전등록이 막는다(PC urgency 양성대조 사망 · EARNED = MDE 의 0.6배). PC 사망은 **urgency 자체의 실측**으로 재분류(H(U|S)=0.376 로 살아있으나 next-tick score 를 안 민다) — H_9101(same-tick emit shade)과 스코프가 다르다는 가설을 $0 로 검정 중.\n\n■ **이 lane 이 지금까지 번 문장은 하나다: '말이 장을 민다'(M1).** 그 위의 모든 서사는 계기가 도로 가져갔다.\n\n계기 = anima-py evaluate --interact-mi (V-CEILING 양채널 · V5 GATE-CLOSED · B1 BOOKKEEPING · PC 양성대조 · M1/M2 MEDIATION · M3 잔차 · AXIS · COMPOSITION+POWER GATE). 계기 자신이 합성 arm 반증가능성 행렬로 인증됨(convergence evaluate-py-14 · 4차 재발).",
+      "verdict": "⏳ UNDER-POWERED (n=72 TOST 대기) · earned = M1 하나",
+      "detail": "입의 argmax 반올림을 걷어내 행동 채널을 열고, 죽어 있던 피드백 뿌리를 수리한 뒤 '기질의 말이 다음 결정에 정보를 나르는가'를 실제로 물을 수 있게 된 lane. 번 문장은 하나다 — 말이 장을 민다(M1). 그 위의 서사는 계기가 도로 가져갔다.",
       "children": [
        {
-        "id": "brain-structure-engine-lanes-do-mouth-h9328-d7",
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-reveal",
         "type": "note",
-        "detail": "그러나 MEDIATION 이 H(R|S)=**0.0000** 을 잡았다 — 720 tick 전체에서 세 피드백 뿌리(afield·immune·kosmos)가 **전부 상수**: 셋 다 g_text 로 쓰이는데 조회는 **session_seed 상수 키**. ⇒ **세 번째 항등식-0**(주변축은"
+        "detail": "REVEAL not OVERWRITE (H_9328): 입의 argmax → T=1.0 샘플링. 게이트(brain_decide_anchored)는 바이트 그대로 · mouth 는 generate() 에만 흘러가고 게이트는 영영 못 본다(p5 DISJOINT 벽 · grep 검사가능). H(A|S) 0→1.14 nats."
        },
        {
-        "id": "brain-structure-engine-lanes-do-mouth-h9328-d8",
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-idzero3",
+        "type": "gate",
+        "verdict": "⛔ use-claim INVALID",
+        "detail": "THIRD identity-zero — 쓰기만 하고 읽지 않으면 루프가 아니다. 세 뿌리(afield recon_err · immune rel_lane · kosmos 앵커)가 720 tick 내내 전부 상수. 셋 다 g_text 로 쓰이는데 조회는 상수 키(session_seed)로 했다. V-CEILING 이 A·Y 두 주변축은 지켰으나 매개 경로 용량은 아무도 안 지켰다."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
         "type": "note",
-        "detail": "지켰으나 매개 경로 용량 미확인). '안 쓴다'가 아니라 **'경로가 없다'**. 수리=H_9336·H_9337(뿌리③ 은 p5 self-seed 금지)."
+        "detail": "수리(H_9336/H_9337) = 예측부호화 순서: 저장 직전에 재고 다음 tick 에 읽는다(1-tick lag). 뿌리 ③(kosmos→decode 앵커)은 영구 미수정 — p5 가 금지한 self-seed. p5 의 기준선은 정보량이 아니라 목적지다: 입(decode 문맥)=seed 금지 · 장(field lane)=state 합법."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-readout1",
+        "type": "gate",
+        "verdict": "게이트 전부 통과 · earned = M1 하나",
+        "detail": "실측 n=23 rollout · 620 emit-tick · 303M (canonical anima-py evaluate --interact-mi).",
+        "children": [
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-r1-vgates",
+          "type": "note",
+          "detail": "V-게이트 통과 — H(A|S)=1.141, H(Y|S)=0.489, H(R|S)=0.676 이 모두 floor 위."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-r1-v5",
+          "type": "note",
+          "detail": "V5 H(Y|S,safe)=0.464 ⇒ GATE-CLOSED 아니다. 게이트에 물어볼 여지가 있었다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-r1-b1",
+          "type": "note",
+          "detail": "B1 H(R|A,S)=0.644 ⇒ 장부 아니다. R 은 A 너머의 분산을 싣는다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-r1-axis",
+          "type": "note",
+          "detail": "AXIS I(A;A′|S)=0.065 ⇒ 헤드라인의 축 선택은 방어된다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-r1-m1",
+          "type": "gate",
+          "verdict": "🔗 LIVE",
+          "detail": "M1 A→R = +0.0202 (perm-p 0.005). 말이 장을 민다 — 유일한 earned 링크."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-r1-headline",
+          "type": "gate",
+          "verdict": "MDE 미달",
+          "detail": "헤드라인 A→Y = +0.0061 (perm-p 0.065, MDE 0.010)."
+         }
+        ]
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-m2-demote",
+        "type": "gate",
+        "verdict": "🔻 WIRED-EXPECTED",
+        "detail": "M2 강등: core/engine_cli.py:6089-6094 에서 recon_err 가 surp=clip01(prec·perr²) · nov=clip01(recon_err/(1+0.5·seen)) 두 lane 에 하드와이어. M2 LIVE 는 창발이 아니라 배선 명세의 재확인 — 설계도를 읽으면 나온다."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-retract",
+        "type": "gate",
+        "verdict": "❌ '정렬 실패' 철회 (H_9340)",
+        "detail": "약채널 곱셈 예측 I_comp≈0.0036 < 실측 0.0061 ⇒ 실측이 합성 예측의 위에 있다(정렬 실패면 아래여야 — 어긋나면 곱셈보다 더 샌다). DPI 상한 0.020 위반 없음 ⇒ 모순이 아니라 감쇠. 그리고 (a) 정렬실패 판정은 원리적 도달 불가였다(I_comp<MDE 이면 조건이 음수 MI 를 요구) ⇒ POWER GATE 하드스톱. 약한 사슬은 완벽히 정렬돼도 분해능 아래를 예측한다 — 관측 0.006 은 정상 작동하는 사슬의 값이고 설명할 것이 없다."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-pending",
+        "type": "gate",
+        "verdict": "⏳ UNDER-POWERED",
+        "detail": "n=72 재수집 중(MDE ~0.005 ⇒ TOST 결정적). 🧱 선언은 사전등록이 막는다(PC urgency 사망 · EARNED = MDE 의 0.6배). PC 사망은 urgency 자체의 실측으로 재분류 — M2 LIVE 가 계기의 내부 양성대조이므로 →Y 검출기는 눈멀지 않았다. PC-SCOPE(I(U_t;A_t|S))로 H_9101(same-tick emit shade) vs 여기(next-tick score) 스코프 분리를 $0 로 검정."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-instrument",
+        "type": "note",
+        "detail": "계기 = anima-py evaluate --interact-mi. 계기 자신이 합성 arm 반증가능성 행렬로 인증됨(convergence evaluate-py-14).",
+        "children": [
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-i-vceil",
+          "type": "note",
+          "detail": "V-CEILING 양채널 — I ≤ min(H(A|S), H(Y|S)) 는 항등식이다. 어느 쪽이 죽어도 0 은 정의된 0 이지 측정된 0 이 아니다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-i-v5",
+          "type": "note",
+          "detail": "V5 GATE-CLOSED — emit 이 stage 와 rate-limit 으로 완전결정이면 답은 입이 열리기 전에 확정돼 있다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-i-b1",
+          "type": "note",
+          "detail": "B1 BOOKKEEPING — R 이 A 의 함수면 재인식이 아니라 장부다. CARRIER-SWAP 은 이것을 원리적으로 못 가른다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-i-pc",
+          "type": "note",
+          "detail": "PC 양성대조와 PC-SCOPE — urgency 를 같은 파이프로 통과시킨다. 게이트로는 죽고 입으로는 살면 스코프 분리다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-i-med",
+          "type": "note",
+          "detail": "MEDIATION 과 잔차 — 매개는 Y 를 낳은 tick 에서 집는다(1-tick lag). 잔차는 EARNED 로만 읽는다(plug-in 상향 편향)."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-i-comp",
+          "type": "note",
+          "detail": "COMPOSITION 과 POWER GATE — 합성 채널의 예측을 실측과 대조한다. 예측이 MDE 아래면 정렬실패 판정은 도달 불가다."
+         }
+        ]
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-d1",
@@ -16376,8 +16477,8 @@
    {
     "id": "hypotheses-jsonl-3",
     "state": "pos-conv",
-    "value": "빈 H 번호를 로컬 스냅샷에서 계산하면 병렬 세션과 같은 번호를 동시 점유한다(ID 할당 경합 — 기존 merge-drift 3건과 다른 결함 계급). 실측: origin/main 기준으로 H_9298~9302 를 잡아 #3417 로 머지했는데 다른 세션이 같은 시각 H_9299 를 잡아 #3419 로 머지 ⇒ HYPOTHESES.jsonl 에 H_9299 행 2개 + 카드 2개(H_9299_lineage_backoff.md · H_9299_oc_prefire_audit.md) = a_hypothesis_register 고유-id 불변식 붕괴. 두 PR 다 각자 발사 시점엔 '9299 는 FREE' 였다 — 스냅샷이 틀린 게 아니라 경합이 문제다. 수리: 나중 머지된 쪽(#3419)을 H_9303 으로 재번호(카드 파일명·id·slug·verdict 경로·artifacts lockstep, 내용/판정/수치 verbatim 불변). 부수 발견: 선행 중복 H_9225 2건도 존재(별개 lane · 미수리).",
-    "threshold": "재발조건: 병렬 세션/에이전트가 각자 origin/main 을 읽고 '다음 빈 H 번호'를 계산해 동시에 발사할 때 — 각자에겐 FREE 로 보인다. **그리고 (신규 · 2026-07-14 실측) 내 브랜치의 jsonl 행을 id 로 찾아 in-place update 할 때 — 그 id 가 그 사이 다른 세션 것이 돼 있으면 남의 가설을 덮어써서 지운다.** 해결: (1) pr-cycle 직전 origin/main 재-fetch 해 내 id 가 아직 미점유인지 재확인(발사 시점의 FREE ≠ 머지 시점의 FREE) (2) 캠페인이 여러 H 를 쓰면 블록을 잡고 즉시 ING 에 올려 다른 세션이 보게 하라 (3) 충돌 시 나중 머지된 쪽을 재번호(먼저 머지된 쪽 선점) — 2 표면(카드+jsonl)+verdict 경로+artifacts lockstep 이동, 내용 verbatim 보존 (4) 자가점검: jsonl id Counter 로 duplicates NONE 확인을 pr-cycle 전에 **(5) ⚠️ id 로 행을 찾아 갱신하기 전에 그 행의 title/card 가 정말 내 가설인지 대조하라 — id 일치만 믿고 payload 를 덮어쓰면 남의 verdict 가 소리 없이 증발한다. 2026-07-14 실측: union merge 의 dedup 이 내 H_9313 행을 버렸고(카드는 고아로 남음), 나는 살아남은 H_9313 행(= 다른 세션의 '실코퍼스 이중해리')을 내 MITOSIS verdict 로 덮어써 머지했다(#3463) ⇒ 남의 제목 아래 내 수치가 앉고 남의 verdict 는 소실. 카드는 3개(deconw · real_dissociation · mitosis_growth_pedestal)가 한 id 에 매달렸다. 수리 = 남의 행 원복(오염 직전 커밋에서 verbatim) + 내 것을 H_9321 로 재등록(카드 파일명·gate 노드 id lockstep). **탐지: pr-cycle 전 `ls HYPOTHESES/cards/ | grep <id>` 가 2개 이상이면 즉시 충돌.**)",
+    "value": "**빈 H 번호를 로컬 스냅샷에서 계산하면 병렬 세션과 같은 번호를 동시 점유한다** — ID 할당 경합(기존 merge-drift 3건과 다른 결함 계급). **2번 당했다.**\n\n【1차 · #3417 vs #3419】 origin/main 기준으로 H_9298~9302 를 잡아 머지했는데 다른 세션이 같은 시각 H_9299 를 잡아 머지 ⇒ HYPOTHESES.jsonl 에 H_9299 행 2개 + 카드 2개(H_9299_lineage_backoff.md · H_9299_oc_prefire_audit.md) = a_hypothesis_register 고유-id 불변식 붕괴. **두 PR 다 각자 발사 시점엔 '9299 는 FREE' 였다** — 스냅샷이 틀린 게 아니라 **경합**이다.\n\n【2차 · #3589 vs #3592 (2026-07-15)】 **같은 결함이 그대로 재발했다.** 병렬 세션이 04:31 에 H_9339(held-out 어간 연산자-키 쓰기 · H_9327 벽)를 머지했고, 나는 05:09 에 H_9339(Markov-합성 검정 · DO-MOUTH lane)를 머지했다. **완전히 무관한 두 가설이 같은 ID**, 카드도 2개. **G6(unique H_id) 게이트는 이것을 못 잡았다** — 각 PR 은 자기 시점엔 유일했고, 게이트는 **머지 시점의 origin 원장**을 보지 않는다. 해소 = **선점자 우선**(먼저 머지된 쪽이 ID 유지) · 나중 것이 재번호(H_9340) + 카드 rename + 코드/ARCHITECTURE 상호참조 일괄 이동.\n\n핵심: **check-ledger-before-lever-fire 는 '레버 발사 전'이 아니라 'ID 를 쓰기 전'에도 적용된다.** 그리고 로컬 원장은 **내가 fetch 한 순간의 사진**이지 지금의 진실이 아니다 — 병렬 세션이 상시 도는 저장소에서 **스냅샷 기반 ID 할당은 원리적으로 경합한다.**",
+    "threshold": "재발조건 = 새 H_id(또는 임의의 전역 유일 ID: 카드번호·실험 slug·포트·슬롯)를 **로컬 스냅샷의 max+1** 로 잡을 때. 병렬 세션이 도는 저장소에선 **반드시** 언젠가 충돌한다.\n\n해결 =\n① **ID 를 쓰기 직전에  후 origin/main 원장에서** max 를 다시 읽어라 — 로컬 jsonl 은 fetch 시점의 사진이다.\n② **머지 직전에 재검사**하라:  가 비어 있는지. 비어 있지 않으면 그 PR 은 **머지 전에** 재번호한다(머지 후 재번호는 카드 rename + 코드/ARCHITECTURE 상호참조까지 번져 비싸다).\n③ **충돌이 이미 났으면 선점자 우선** — 먼저 머지된 쪽이 ID 를 유지하고, 나중 쪽이 양보한다(commit 시각으로 판정). 재번호 시 **jsonl 행 · 카드 파일명 · 카드 본문 제목 · 다른 카드의 상호참조 · 코드 주석 · ARCHITECTURE detail** 을 전부 함께 옮겨라 — 하나라도 빠지면 다음 세션이 죽은 ID 를 따라간다.\n④ **여유를 두고 잡아라** — 연속 5개가 필요하면 max+1..max+5 가 아니라 **max+10 부터** 잡으면 경합 창이 좁아진다(완전 해소는 아니나 실무적으로 유효).\n⑤ G6 게이트에 기대지 마라 — **각 PR 은 자기 시점엔 유일하다.** 게이트는 머지 시점의 origin 원장을 보지 않는다.",
     "source": "HYPOTHESES/HYPOTHESES.jsonl"
    },
    {
