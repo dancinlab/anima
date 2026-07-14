@@ -16205,8 +16205,8 @@
       {
         "id": "evaluate-py-6",
         "state": "pos-conv",
-        "value": "INFRA: pool 호스트(summer/aiden) earlyoom -r --prefer python3 상시실행 → 병렬세션 heavy anima job으로 RAM 포화 시 303M --dump-hidden/eval worker(python3·~3.5GB) SIGKILL(로그 무흔적·npz 미생성). summer overfire/aiden 과부하 재발(ING #42492907 EXIT_143). earlyoom이 sshd/bash avoid라 ssh세션 살아도 python3 워커만 죽는 오진 함정.",
-        "threshold": "재발조건: pool서 303M dump/eval이 로그 무흔적 소멸(worker 무진행·npz 미생성). 해결: (1)dispatch 전 free RAM 확인(sidecar pool status)·병렬 heavy job 있으면 최여유 호스트. (2)canonical anima-py(pip·numpy-only·hexa불필요)로 hexa-build 우회. (3)worker RSS+진행로그(#n/N) 폴링해 조기감지·재배치.",
+        "value": "INFRA: pool 호스트(summer/aiden) earlyoom -r --prefer python3 상시실행 → 병렬세션 heavy anima job으로 RAM 포화 시 303M --dump-hidden/eval worker(python3·~3.5GB) SIGKILL(로그 무흔적·npz 미생성). summer overfire/aiden 과부하 재발(ING #42492907 EXIT_143 · 2026-07-15 EN arm stage3 v45_before eval rc=247 while H_9337 chat 3proc 가 RAM 경합). earlyoom이 sshd/bash avoid라 ssh세션 살아도 python3 워커만 죽는 오진 함정. ⚠️ 종료코드 rc=137(SIGKILL)/rc=143(SIGTERM)/rc=247 은 전부 earlyoom 정책-kill 서명이지 앱 버그 아님 — 이걸 'OOM 의심'이라 쓰고 사후 free/top 으로 확인하면 이미 kill 후라 RAM 넉넉해 보여 오진 강화. 원인은 free 스냅샷 아니라 earlyoom --prefer 정책.",
+        "threshold": "재발조건: pool서 303M dump/eval이 로그 무흔적 소멸(worker 무진행·npz 미생성) 또는 rc=137/143/247 종료. 해결: (1)dispatch 전 free RAM 확인(sidecar pool status)·병렬 heavy anima/python job(타세션 chat·train) 있으면 최여유 호스트로·아니면 대기(경합 호스트에 쌓지 말 것). (2)canonical anima-py(pip·numpy-only·hexa불필요)로 hexa-build 우회. (3)worker RSS+진행로그(#n/N) 폴링해 조기감지·재배치. (4)rc=137/143/247 은 earlyoom 정책-kill 로 진단(free 스냅샷으로 'OOM 아님' 결론 금지 — kill 후라 항상 넉넉해 보임).",
         "source": "cli/evaluate.py"
       },
       {
