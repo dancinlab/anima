@@ -52,7 +52,7 @@ CLOSE = ["new meaning arises", "meaning composes anew",
 
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
-    opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280,
+    opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280, "split_seed": 1,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
@@ -70,6 +70,8 @@ def _parse_args(argv):
             opts["single_per_concept"] = int(argv[i + 1]); i += 2
         elif a == "--seed":
             opts["seed"] = int(argv[i + 1]); i += 2
+        elif a == "--split-seed":
+            opts["split_seed"] = int(argv[i + 1]); i += 2
         elif a == "--concepts":
             opts["concepts"] = argv[i + 1]; i += 2
         elif a == "--atoms":
@@ -190,11 +192,126 @@ def _parse_args(argv):
 #
 #                     Δ ≈ 0 CONFIRMS binding. Δ large REFUTES it. Either way the arm decides.
 
+#   ground_seenswap — C3 (H_9328). The question BINDING leaves behind, asked where it can be answered.
+#
+#     H_9327 established: the operator is alive on SEEN stems, the fact is written on held-out stems,
+#     and the two never meet. H_9328 C1b then showed WHAT the operator is — a rule triggered by the
+#     literal suffix `지 않다`, with a free adverb slot (5 unseen adverbs all run it perfectly) and a
+#     frozen ending (insert 는, or change the tense, and it dies). A rule like that has to LOOK UP the
+#     stem's polarity. For SEEN stems that polarity lives in the pretrained representation; for
+#     held-out stems CPT wrote it somewhere else — into the `이 영화 <stem>고 => ` shortcut. So the
+#     wall may be simply: the rule has a lookup, and CPT wrote to a different table.
+#
+#     That is testable, and only on the SEEN stems — because they are the ones that already HAVE the
+#     entry the rule reads. So: take SEEN stems whose polarity the model learned in pretraining, and
+#     REWRITE it with CPT — inverted. Then ask the rule.
+#
+#       the rule reads the rewritten entry -> its flip1 answer follows the NEW polarity
+#       the rule reads the pretrained one  -> its flip1 answer follows the OLD polarity
+#       the rule reads nothing             -> no dependence on either
+#
+#     Arms (SEEN 20, split before any measurement, fixed by --split-seed):
+#       swap 12   polarity INVERTED in the arrow lines. No flip1 replay — the negated form must stay
+#                 unseen for these stems or the measurement becomes memorisation, not reference.
+#       affirm 2  arrow lines at the ORIGINAL polarity. Diagnostic only, gates nothing: it separates
+#                 "the write channel is broken" from "the write channel fails only under conflict".
+#       keep 3    original polarity + flip1 replay -> holds the operator up (H_9322: `ground` CPT
+#                 destroyed SEEN flip1 0.883 -> 0.333; replay brought it back to 1.000).
+#       untouched 3  nothing at all. The forgetting gate has to live on a stratum the corpus never
+#                 touches — a gate on a stratum the corpus reinforces always passes (H_9324).
+#
+#     ⚠️ The replay carriers must be DISJOINT from the measured surfaces, or the flip1 answer is
+#     taught rather than composed. `ground_keep` replays `{s}지 않다` — which is exactly the primary
+#     measured surface. That collision would have voided the whole experiment. The C1b census is what
+#     makes the split possible: it found 7 working surfaces, so measurement and replay can be drawn
+#     from disjoint halves, each with the operator's survival MEASURED (both seeds, permutation p<.01),
+#     not assumed.
+#       measured (never in this corpus): {s}지 않다 · 별로 {s}지 않다 · {s}지는 않다 (the last is the
+#                                        negative control — the operator does not run there, p≈.50)
+#       replay carriers (in this corpus): 전혀 · 그다지 · 결코 {s}지 않다
+
 GROUND_TMPL = "이 영화 {surf} => {pol}.\n"
 GROUND_FORMS_FLIP0 = ("{s}고", "정말 {s}고", "너무 {s}다")     # flip1 forms are DELIBERATELY absent
 # Byte-verbatim from the frozen eval manifest (n2_eval_manifest.json negL/negS/negE surfaces) — a
 # demonstration written in a DIFFERENT surface form than the one we score would test nothing.
 GROUND_FORMS_FLIP1 = ("{s}지 않다", "안 {s}고", "전혀 {s}지 않다")
+
+# C3 (ground_seenswap). Both sets are surfaces the C1b census MEASURED the operator running on
+# (both seeds, permutation p < .01) — not surfaces we hoped would work. They are disjoint by
+# construction: what the corpus replays is never what the eval scores, so a flip1 answer cannot be
+# a memorised line. `{s}지는 않다` is the negative control: the operator does NOT run there (p≈.50),
+# so it calibrates what "no operator" looks like in this same pipeline.
+SEENSWAP_MEASURED = ("{s}지 않다", "별로 {s}지 않다", "{s}지는 않다")
+SEENSWAP_CARRIERS = ("전혀 {s}지 않다", "그다지 {s}지 않다", "결코 {s}지 않다")
+SEENSWAP_ARMS = (("swap", 12), ("affirm", 2), ("keep", 3), ("untouched", 3))
+
+
+def build_seenswap(atoms_path, reps, replay, seed, split_seed):
+    """C3 — rewrite SEEN stems' polarity with CPT and ask whether the rule reads the new value.
+
+    The arms are drawn BEFORE anything is measured, from a fixed --split-seed, stratified by
+    polarity so a run of same-sign stems cannot land in one arm. Redrawing after seeing a result
+    would be selection contamination, so the draw is a function of the seed and nothing else.
+    """
+    atoms = json.load(open(atoms_path))["atoms"]
+    held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
+    seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    want = sum(n for _, n in SEENSWAP_ARMS)
+    if len(seen) != want:
+        raise ValueError("seenswap needs exactly %d SEEN atoms, got %d" % (want, len(seen)))
+
+    srng = random.Random(split_seed)
+    pos = [x for x in seen if x[1] == 1]
+    neg = [x for x in seen if x[1] == 0]
+    srng.shuffle(pos)
+    srng.shuffle(neg)
+    arms, pi, ni = {}, 0, 0
+    for name, n in SEENSWAP_ARMS:                      # polarity-stratified: alternate pos/neg
+        picked = []
+        for k in range(n):
+            src = pos if (k % 2 == 0 and pi < len(pos)) or ni >= len(neg) else neg
+            if src is pos:
+                picked.append(pos[pi]); pi += 1
+            else:
+                picked.append(neg[ni]); ni += 1
+        arms[name] = picked
+
+    rng = random.Random(seed)
+    lines = []
+
+    def arrow(stem, pol):
+        for pat in GROUND_FORMS_FLIP0:
+            lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
+                                            pol="긍정" if pol == 1 else "부정"))
+
+    for _ in range(reps):
+        for stem, pol in held:                          # held-out: unchanged (WRITE reproduction)
+            arrow(stem, pol)
+    for _ in range(replay):
+        for stem, pol in arms["swap"]:                  # THE MANIPULATION — polarity inverted.
+            arrow(stem, 1 - pol)                        # No flip1 lines: the negated form must stay
+        for stem, pol in arms["affirm"]:                # unseen for these stems or we would be
+            arrow(stem, pol)                            # teaching the answer instead of asking for it.
+        for stem, pol in arms["keep"]:
+            arrow(stem, pol)
+            for pat in SEENSWAP_CARRIERS:               # holds the operator up (H_9322) — on carriers
+                lines.append(GROUND_TMPL.format(        # that are never scored (no memorisation path)
+                    surf=pat.format(s=stem), pol="부정" if pol == 1 else "긍정"))
+        # arms["untouched"]: nothing. The forgetting gate needs a stratum the corpus never touches.
+
+    rng.shuffle(lines)
+    text = "".join(lines)
+
+    # The audit that the whole design rests on: a scored prompt must never appear in the corpus.
+    leaks = []
+    for pat in SEENSWAP_MEASURED:
+        for stem, _ in seen + held:
+            probe = GROUND_TMPL.format(surf=pat.format(s=stem), pol="긍정")[:-len("긍정.\n")]
+            if probe in text:
+                leaks.append(probe.strip())
+    return text, {"held": len(held), "lines": len(lines), "bytes": len(text.encode()),
+                  "arms": {k: [s for s, _ in v] for k, v in arms.items()},
+                  "measured_prompt_leaks": leaks}
 
 
 def build_ground(fmt, atoms_path, reps, replay, seed):
@@ -506,8 +623,9 @@ def main():
                   "is noisier for those" % (len(st["thin_atoms"]), st["k_ctx"],
                                             min(st["thin_atoms"], key=lambda x: x[1])))
         sys.exit(0)
-    if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|valence> --out PATH")
+    if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
+                   "ground_seenswap"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence> --out PATH")
         print("      the ground* formats also emit <out>.meta.json — the training budget the corpus")
         print("      EARNED (H_9324: steps>=6000 lr>=2e-4 on ground_keep) + the strata a FORGET gate must")
         print("      cover. `anima-py train` reads it and REFUSES to start below the floor; ground/ground_lie")
@@ -515,6 +633,11 @@ def main():
         print("  derivtrace|flat        [--held-out I,J] [--comp-per-pair N] "
               "[--single-per-concept N] [--seed S] [--concepts FILE.json]")
         print("  ground|ground_lie|ground_keep|ground_keep_lie   --atoms gt_atoms.json [--reps N] [--replay N] [--seed S]")
+        print("  ground_seenswap        --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S]")
+        print("      C3 (H_9328) — REWRITES 12 SEEN stems' polarity (inverted) and asks whether the")
+        print("      `지 않다` rule reads the new value or the pretrained one. Replay carriers are")
+        print("      DISJOINT from the scored surfaces (else the flip1 answer is taught, not composed);")
+        print("      both sets are surfaces the C1b census measured the operator running on.")
         print("      H_9313 DECON-W grounding corpus — writes each held-out atom's polarity into")
         print("      the WEIGHTS via the un-negated (flip0) template lines ONLY. The negated")
         print("      (flip1) forms NEVER appear, so a later flip1 test measures COMPOSITION, not")
@@ -538,6 +661,28 @@ def main():
         print("      either the atom injects no valence at all, or the hidden there is dominated by")
         print("      the atom's own form. A one-space tail tells the two apart at zero extra cost.")
         sys.exit(2)
+
+    if fmt == "ground_seenswap":
+        if not opts["atoms"]:
+            print("anima corpus ground_seenswap: --atoms gt_atoms.json is required")
+            sys.exit(2)
+        text, st = build_seenswap(opts["atoms"], opts["reps"], opts["replay"],
+                                  opts["seed"], opts["split_seed"])
+        if st["measured_prompt_leaks"]:
+            # The design rests on this: a scored prompt must never be in the corpus, or the flip1
+            # answer is taught rather than composed. Refuse to write a corpus that would void the run.
+            print("anima corpus ground_seenswap: LEAK — %d scored prompt(s) appear in the corpus"
+                  % len(st["measured_prompt_leaks"]), file=sys.stderr)
+            for x in st["measured_prompt_leaks"][:5]:
+                print("    %s" % x, file=sys.stderr)
+            sys.exit(2)
+        open(opts["out"], "w", encoding="utf-8").write(text)
+        print("anima corpus ground_seenswap: lines=%d bytes=%d leaks=0 -> %s"
+              % (st["lines"], st["bytes"], opts["out"]))
+        for k in ("swap", "affirm", "keep", "untouched"):
+            print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
+        json.dump(st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        return 0
 
     if fmt in ("ground", "ground_lie", "ground_keep", "ground_keep_lie"):
         if not opts["atoms"]:
