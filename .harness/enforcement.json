@@ -2,6 +2,22 @@
   "_doc": "HARDCORE enforcement profile — maximum strictness. Everything that can block, blocks; escape hatches (--no-verify) are closed; destructive git is gated. Installed by `harness init --hardcore`. Superset of the default profile.",
   "pre_bash": [
     {
+      "id": "H-NO-STATE-EXEC",
+      "desc": "running an ad-hoc script out of state/ bypasses the engine-native mandate",
+      "match": "\\b(python3?|uv|pipx|bash|sh|zsh|node|hexa\\s+run)\\b[^\\n]*(?<![\\w.-])state/",
+      "exceptions": [],
+      "action": "block",
+      "reason": "anima: 실험은 엔진 네이티브 전용 — `state/` 안 일회성 스크립트 실행 금지. 모든 엔진 op 는 설치된 canonical 명령으로만: `anima-py <verb>` (pip · 기본) 또는 hexa `anima <verb>` (a_cli_single_entry · a_engine_native_learning). state/ 스크립트로 잰 값은 mirror = DIRECTIONAL 이라 verdict 로 못 굳힌다."
+    },
+    {
+      "id": "H-NO-STATE-DIR",
+      "desc": "repo-root state/ is frozen — no new experiment scratch may be created there (state/verdicts/ excepted)",
+      "match": "(\\b(mkdir|cp|mv|touch|tee|rsync|install|dd)\\b[^\\n]*|>>?\\s*)(?<!archive/)(?<![\\w.-])state/(?!verdicts/)",
+      "exceptions": [],
+      "action": "block",
+      "reason": "anima: 실험은 엔진 네이티브 전용 — `state/` 에 신규 실험폴더/산출물 생성 금지. 엔진 op 는 `anima-py <verb>` / hexa `anima <verb>` 로만 돌리고, 산출물은 `docs.scratchDir` 로 (a_cli_single_entry). 계약 경로 `state/verdicts/` (a_claim_verify) 만 예외."
+    },
+    {
       "id": "H-FORCE-PUSH",
       "desc": "force-push to any branch (lease-less) is blocked",
       "match": "git\\s+push\\b[\\s\\S]*--force(?!-with-lease)\\b",
@@ -67,6 +83,13 @@
     }
   ],
   "pre_write": [
+    {
+      "id": "H-NO-STATE-DIR",
+      "desc": "repo-root state/ is frozen — writes are blocked (state/verdicts/ excepted)",
+      "path_match": "(?<!archive/)(?<![\\w.-])state/(?!verdicts/)",
+      "action": "block",
+      "reason": "anima: 실험은 엔진 네이티브 전용 — `state/` 에 신규 파일 쓰기 금지 (특히 일회성 `.py`/`.sh` 프로브: 엔진-네이티브 의무를 우회하는 통로). 엔진 op 는 설치된 canonical 명령으로만 — `anima-py <verb>` (pip · 기본) 또는 hexa `anima <verb>` (a_cli_single_entry · a_engine_native_learning) · 산출물은 `docs.scratchDir`. 계약 경로 `state/verdicts/` (a_claim_verify) 만 예외."
+    },
     {
       "id": "H-NO-INLINE-HOOK",
       "desc": "agent settings must delegate to harness",
