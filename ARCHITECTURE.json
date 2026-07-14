@@ -14302,6 +14302,32 @@
           "detail": "**R1 LOOKUP-MISMATCH**(H_9327/C1b): 일반 규칙은 있는데 pol(어간)을 CPT 가 안 쓴 자리에서 조회한다. **R2 STEM-BOUND**(H_9331): **일반 규칙이 없다** — `(어간, 지 않다)` 가 학습된 **쌍**이고 어간이 **키의 일부**다(SEEN 0.9833 = 20쌍 암기 · 부사 완벽 = 부사는 키가 아님 · held-out 우연 = 학습된 적 없는 쌍 · `지는 않다`/`지 않았다` 사망 = 키 파손). **가르는 것** = 극성은 아는데 연산자와 짝지어진 적 없는 어간에서 연산자가 도는가 — held-out 이 정확히 그 팔이고 **우연**이라 **R2 로 기운다**. 단 R1 은 'pol 이 연산자의 **읽는 지점**에서 표현적으로 안 보인다' 로 방어 가능하고 **그것이 H_9330(occlusion·읽는 자리)이 지금 결정 중인 것** ⟹ **R2 를 확정하지 않는다**(확정하면 방금 지적한 것과 같은 죄)."
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-enfirst",
+        "type": "gate",
+        "name": "🇬🇧 EN-FIRST — 벽이 뚫릴 때까지 연구 코퍼스는 영어로 (오너 지시 · 2026-07-14)",
+        "detail": "**왜 언어인가**: 한국어 레인이 우리를 무는 두 지점이 **둘 다 언어 자체의 사실**이다. ① 부정어 `지 않다` 는 **어간에 붙는 의존 어미**이고, 그게 정확히 `(어간, 연산자)` 를 **하나의 합동 키**로 만드는 방식이다(R2 STEM-BOUND = 벽의 유력 기전). 영어 `not` 은 **앞에 서는 자유 낱말**이고, 그건 C1b 가 **완벽하게 일반화한다고 실측한 바로 그 슬롯**이다(코퍼스 0회인 부사 5종이 전부 연산자를 돌림 · Δ −0.90~−1.00 · p=.000). ② 한국어는 **3 B/char** 이고 `a_korean_byte_budget` 이 그 때문에 오염된 판정을 **3건** 기록하고 있다. ⟹ EN 은 커버리지가 아니라 **판별자**다: 미학습 어간에서 연산자가 **EN 에선 돌고 KO 에선 안 돌면**, BINDING 은 **기질이 아니라 형태론의 사실**이고 재조합 레인 전체가 재개방된다.",
+        "children": [
+         {
+          "id": "gate-g1-recomb-enfirst-impl",
+          "type": "note",
+          "name": "배선 — `anima-py corpus --lang ko|en` (ko = 기본 · **바이트 동일 8/8 증명**)",
+          "detail": "`cli/corpus.py::LANGS` 언어 팩(담체·flip0·flip1·극성 라벨) + `build_ground(..., lang)` + `--lang` 플래그. **ko 는 옛 상수 그대로**이고 4포맷 × 2seed = **8/8 sha 일치**로 증명했다 — 동결 판정(H_9322·H_9324·H_9327·H_9328)이 **정확히 그 바이트 위에** 있으므로 이건 타협 불가 조건이었다. **fail-loud 가드**: `--lang en` 에 한국어 어간 파일을 주면 **시작 전에 거부**한다(안 그러면 `this movie is not at all 재미없 => positive.` 를 조용히 뱉는다 — 학습되고, 채점되고, **아무 의미 없다**). VERSION 0.13.25 (G5) · `--help` 3-piece."
+         },
+         {
+          "id": "gate-g1-recomb-enfirst-scope",
+          "type": "note",
+          "name": "⚠️ 정직 — EN 양성은 **스크리너(DIRECTIONAL)**이지 확정이 아니다",
+          "detail": "EN 은 **형태론 + 기반모델 + 담체를 한꺼번에** 바꾼다 ⟹ 거기서 뚫리면 **레인이 재개방**되지만 **셋 중 무엇이 뚫었는지**는 후속 분리가 필요하다(`a_scale_honest_scope`). **범위**: 이 지시는 **연구/재조합 코퍼스**(`anima corpus` ground 계열)만 지배한다 — **chat 코퍼스는 불변**(`a_chat_registers` 4셀 ko·en × general·SNS 그대로). **만료**: 벽이 뚫리는 순간, 또는 **EN 도 같은 벽에 부딪히는 순간**(그건 그것대로 anima 가 가진 **가장 강한 기질 증거**가 된다) 해제."
+         },
+         {
+          "id": "gate-g1-recomb-enfirst-blocker",
+          "type": "note",
+          "name": "🚧 남은 선결 2건 — EN 원자 · EN 기반모델 (실측 블로커)",
+          "detail": "① **EN 원자셋**: 현 `gt_atoms.json` 은 **한국어 어간**(29 held-out + 20 seen). EN 팔은 `gt_atoms_en.json`(영어 극성 어간 + pol + split)이 필요하다. ② **EN 기반모델**: 현 base `natem_c34_main_s{7,11}.clm` 의 CPT 코퍼스는 **ko=57,040 · en=0** — 즉 **기반이 영어를 모른다**. C34 는 **160KB** 밖에 안 되므로 EN 쌍둥이 사전학습은 pool 에서 **싸다**(블로커가 아니라 **한 단계**). 순서: EN 원자 → EN C34 사전학습 → EN CPT(ground_keep --lang en) → `--xbind` 판정."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
