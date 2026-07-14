@@ -572,6 +572,146 @@ def _swap_eval_manifest(arms):
             {"win": 64, "gen": 8, "heldout": write, "seen": []})
 
 
+# ---------------------------------------------------------------------------
+# c34 — the PRETRAINING corpus: natural text + arrow lines. The EN twin of the Korean C34.
+#
+# Every number below is MIRRORED from a census of the real ko C34, not invented (the file is
+# deterministic, so it can be recounted at any time — see H_9333):
+#
+#   ko C34 (160,086 B · 2,459 lines)
+#     arrow lines      960   of which 480 (exactly half) are NEGATED, all on SEEN stems
+#     held-out stems   appear in an arrow line ZERO times          <- the whole held-out design
+#     natural lines   1,499
+#     held-out natural exposure  1,414 hits / 29 stems = 48.8 per stem  (min 42, max 86)
+#     natural line bytes         median 42, p90 197, max 379
+#
+# The mediating covariate is "how much the model READ this stem with no polarity attached", and it
+# is matched by COUNT (control-must-match-mediating-covariate), with bytes reported rather than
+# forced — Korean is 3 B/char, so byte-matching would silently change the number of sentences.
+#
+# INVARIANTS, each checkable with one grep (the builder runs them itself and refuses to emit on a
+# violation — a corpus that quietly breaks its own premise is how this lane keeps dying):
+#   I1  a held-out stem never appears in an arrow line
+#   I2  a held-out stem never appears in a NEGATED context anywhere in the training bytes
+#       (the operator surfaces AND the derivational negations un-/in-/im-/dis-/non-/-less, because
+#        `불편하` taught the KO model a negation it was never supposed to see — H_9333)
+#   I3  every held-out stem reaches the natural-exposure floor; if it cannot, the build FAILS rather
+#       than shipping a stem the model barely read
+# ---------------------------------------------------------------------------
+C34_ARROW_LINES = 960          # ko census
+C34_NEG_FRACTION = 0.5         # ko census: 480/960
+C34_NAT_PER_HELD = 48          # ko census: 48.8 per held-out stem
+C34_NAT_FLOOR = 40             # below this the stem is not usable
+C34_LINE_BYTES_MAX = 379       # ko census max natural line
+C34_LINE_BYTES_P90 = 197
+
+NEG_CTX = re.compile(
+    r"\b(?:not|never|no|n't|cannot|hardly|barely|scarcely|without|lacks?|lacking)\W+(?:\w+\W+)?%s\b",
+    re.I)
+DERIV_NEG = re.compile(r"\b(?:un|in|im|dis|non|ir|il)%s\b|\b%ss?less\b", re.I)
+
+
+def _neg_free(sent, stem):
+    """True when `stem` appears in `sent` with no negation attached to it.
+
+    A single held-out sentence carrying `not fast` teaches the model exactly the thing the flip1
+    test is supposed to ask it to COMPOSE — and one leaked sentence is enough to make the verdict
+    unreadable. So the filter is deliberately wide (an intervening token is allowed) and it also
+    catches derivational negation, which is how the Korean set leaked (`불편하` = un-comfortable).
+    """
+    if re.search(NEG_CTX.pattern % re.escape(stem), sent, re.I):
+        return False
+    if re.search(DERIV_NEG.pattern % (re.escape(stem), re.escape(stem)), sent, re.I):
+        return False
+    return True
+
+
+def build_c34(atoms_path, corpus_paths, lang, seed):
+    """Assemble the pretraining corpus: natural sentences + arrow lines (SEEN stems only)."""
+    L = lang_pack(lang)
+    rng = random.Random(seed)
+    atoms = json.load(open(atoms_path, encoding="utf-8"))["atoms"]
+    held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
+    seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    assert_atoms_match_lang([st for st, _ in held + seen], lang)
+
+    sents = []
+    for cp in corpus_paths:
+        with open(cp, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                for sent in re.split(r"(?<=[.!?])\s+", line.strip()):
+                    b = len(sent.encode())
+                    if 20 <= b <= C34_LINE_BYTES_MAX:
+                        sents.append(sent)
+    rng.shuffle(sents)
+
+    # natural exposure — mirrored per-stem count, negation-free by I2
+    nat, per, dropped = [], {}, 0
+    for stem, _ in held + seen:
+        want = C34_NAT_PER_HELD
+        got = []
+        pat = re.compile(r"\b%s\b" % re.escape(stem), re.I)
+        for sent in sents:
+            if len(got) >= want:
+                break
+            if pat.search(sent):
+                # neg-free for EVERY held-out stem, not just the one this sentence was chosen for.
+                # Measured (the I2 gate caught it): a sentence picked for `friendly` also carried
+                # `not effective`, and `effective` is held out too. Filtering per-chosen-stem leaks
+                # the operator onto a DIFFERENT held-out stem — and one leaked sentence is enough to
+                # turn the flip1 answer from composed into taught.
+                if all(_neg_free(sent, h) for h, _ in held):
+                    got.append(sent)
+                else:
+                    dropped += 1
+        per[stem] = len(got)
+        nat.extend(got)
+    thin = [(st, n) for st, n in per.items() if n < C34_NAT_FLOOR]
+    if thin:
+        raise SystemExit(
+            "anima corpus c34: I3 FAIL — %d stem(s) could not reach the natural-exposure floor "
+            "(%d clean sentences): %s\n"
+            "  Shipping a stem the model barely read would make its chance-level score meaningless. "
+            "Raise the corpus, lower --n-held, or drop these stems from the atom set."
+            % (len(thin), C34_NAT_FLOOR, ", ".join("%s=%d" % t for t in thin[:8])))
+
+    # arrow lines — SEEN stems ONLY, half negated (ko census)
+    arrow = []
+    n_neg = int(C34_ARROW_LINES * C34_NEG_FRACTION)
+    per_stem = C34_ARROW_LINES // len(seen)
+    for stem, pol in seen:
+        for k in range(per_stem):
+            neg = k < per_stem * C34_NEG_FRACTION
+            forms = L["flip1"] if neg else L["flip0"]
+            surf = forms[k % len(forms)].format(s=stem)
+            gold = (L["neg"] if pol == 1 else L["pos"]) if neg else (L["pos"] if pol == 1 else L["neg"])
+            arrow.append(L["tmpl"].format(surf=surf, pol=gold).rstrip("\n"))
+
+    lines = nat + arrow
+    rng.shuffle(lines)
+    text = "\n".join(lines) + "\n"
+
+    # I1 / I2 — the builder checks its own premise and refuses to emit on a violation
+    v1 = [st for st, _ in held for a in arrow if re.search(r"\b%s\b" % re.escape(st), a, re.I)]
+    if v1:
+        raise SystemExit("anima corpus c34: I1 FAIL — held-out stem(s) in an arrow line: %s"
+                         % ", ".join(sorted(set(v1))[:6]))
+    v2 = [st for st, _ in held for l in lines if re.search(r"\b%s\b" % re.escape(st), l, re.I)
+          and not _neg_free(l, st)]
+    if v2:
+        raise SystemExit("anima corpus c34: I2 FAIL — held-out stem(s) in a NEGATED context: %s"
+                         % ", ".join(sorted(set(v2))[:6]))
+
+    st = {"lang": lang, "lines": len(lines), "bytes": len(text.encode()),
+          "arrow": len(arrow), "arrow_negated": n_neg, "natural": len(nat),
+          "held_nat_per_stem": round(sum(per[s] for s, _ in held) / len(held), 1),
+          "held_nat_min": min(per[s] for s, _ in held),
+          "seen_nat_per_stem": round(sum(per[s] for s, _ in seen) / len(seen), 1),
+          "neg_sentences_dropped": dropped,
+          "I1_held_in_arrow": 0, "I2_held_in_negated": 0, "I3_floor": C34_NAT_FLOOR}
+    return text, st
+
+
 def build_ground(fmt, atoms_path, reps, replay, seed, lang=DEFAULT_LANG):
     """Return (text, stats) for the ground / ground_shuffle arm.
 
@@ -1218,6 +1358,29 @@ def main():
                   "MDE(80%%)~0.18 < TOST margin 0.20). Below that a null is 'we cannot find it', "
                   "NOT 'it is not there' (power-before-negative-verdict)." % len(kept))
         sys.exit(0)
+    if fmt == "c34":
+        if not (opts["atoms"] and opts["corpus"]):
+            print("anima corpus c34 --atoms gt_atoms_en.json --corpus C.txt --lang en "
+                  "--seed 7 --out c34_en.txt")
+            sys.exit(2)
+        text, st = build_c34(opts["atoms"], opts["corpus"], opts["lang"], opts["seed"])
+        if opts["out"]:
+            with open(opts["out"], "w", encoding="utf-8") as fh:
+                fh.write(text)
+            _write_budget_floor(opts["out"], fmt)
+        print("anima corpus c34 [%s]: %d lines / %d B  (arrow %d, %d negated · natural %d)"
+              % (st["lang"], st["lines"], st["bytes"], st["arrow"], st["arrow_negated"],
+                 st["natural"]))
+        print("  held-out natural exposure %.1f/stem (min %d, floor %d)  ·  SEEN %.1f/stem"
+              % (st["held_nat_per_stem"], st["held_nat_min"], st["I3_floor"],
+                 st["seen_nat_per_stem"]))
+        print("  I1 held-out in an arrow line     : %d  ✅" % st["I1_held_in_arrow"])
+        print("  I2 held-out in a NEGATED context : %d  ✅  (%d negated sentences dropped)"
+              % (st["I2_held_in_negated"], st["neg_sentences_dropped"]))
+        print("  I3 natural-exposure floor        : every stem >= %d  ✅" % st["I3_floor"])
+        print("  ko C34 mirror: arrow 960 (480 negated) · held-out natural 48.8/stem · 160,086 B")
+        return
+
     if fmt == "atoms":
         if opts["mine"]:
             if not opts["corpus"]:
@@ -1259,8 +1422,17 @@ def main():
         return
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
-                   "ground_seenswap", "ground_carrierswap", "atoms"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|valence|bindlocus|atoms> --out PATH")
+                   "ground_seenswap", "ground_carrierswap", "atoms", "c34"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|valence|bindlocus|atoms|c34> --out PATH")
+        print("      c34 --atoms gt_atoms_en.json --corpus C.txt --lang en --seed 7 --out c34.txt")
+        print("             the PRETRAINING corpus: natural sentences + arrow lines. Every number is")
+        print("             MIRRORED from a census of the real ko C34, not invented: arrow 960 (480")
+        print("             negated, SEEN stems only) · held-out natural exposure 48/stem · held-out")
+        print("             stems appear in an arrow line ZERO times. The builder CHECKS its own")
+        print("             premise and refuses to emit on a violation — I1 (no held-out in an arrow)")
+        print("             I2 (no held-out in a NEGATED context, operator surfaces AND derivational")
+        print("             un-/in-/-less — `불편하` taught the KO model a negation it never should")
+        print("             have seen) I3 (every stem clears the natural-exposure floor, else FAIL).")
         print("      atoms  --lexicon L.json --corpus C.txt --lang en --n-seen 20 --n-held 29")
         print("             --min-occ 200 --out gt_atoms_en.json   mine an atom set from a REAL")
         print("             corpus behind 4 gates, each of which is a verdict that already died:")
