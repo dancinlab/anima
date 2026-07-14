@@ -1,0 +1,28 @@
+[corpus] NSMC sha=e03b7d14e9e41be8...  match=True
+[corpus] rows=149995  concession-rate=0.139
+
+=== G-ALIVE (positive control: synthetic XOR corpus, true synergy = 0.69 nats) ===
+  held-out cells=9008 stems=60  EARNED=+5.29653 nats (obs +5.03860, null -0.25793+-0.05926, delta_hat=-3.00)   bar >= +0.3
+  G-ALIVE: PASS
+
+=== G-PEDESTAL (zero-truth: synthetic ADDITIVE corpus, true synergy = 0) ===
+  held-out cells=8889  EARNED=+0.00285 nats  delta_hat=-0.10  (|.| <= 0.02)
+  G-PEDESTAL: PASS
+
+=== G-POWER (held-out cell census + null sd, measured BEFORE reading the effect) ===
+  min_occ=  50  stems= 2833  rows= 571417  held-out cells= 38917 (stems 844)
+  min_occ= 100  stems= 1346  rows= 468043  held-out cells= 28780 (stems 399)
+  min_occ= 200  stems=  599  rows= 364167  held-out cells= 23148 (stems 176)
+  min_occ=100: held-out cells=28780  sd_null=0.00013  MDE(3sd)=0.00040  (need <= 0.02)
+  G-POWER: PASS
+
+======================================================================
+=== MAIN BAR: natural corpus (NSMC), held-out EARNED ===
+  held-out EARNED = +0.00907 nats   98.3% CI [+0.00904, +0.00974]   delta_hat=-0.30 (0=additive, -2=full flip)
+  effect size vs the XBIND ruler: 0.00171  (0.171% of a planted operator)   [p-values are NOT the verdict: n is large enough that a speck is significant]
+  seen synergy    = +0.00706 nats  (n=55296)  [discriminates DATA-ADDITIVE vs OPERATOR-ABSENT]
+  TOST(+-0.02) pass = True   INFO-PRESENT = False
+
+VERDICT: DATA-ADDITIVE - no non-additive information at all => no estimator can ever bank it; G1 = DATA wall
+wall=115.0s
+[done]
