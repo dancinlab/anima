@@ -55,7 +55,8 @@ def _parse_args(argv):
     opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
-            "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05}
+            "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
+            "tail": ""}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -87,6 +88,8 @@ def _parse_args(argv):
             opts["min_occ"] = int(argv[i + 1]); i += 2
         elif a == "--neutral-tol":
             opts["neutral_tol"] = float(argv[i + 1]); i += 2
+        elif a == "--tail":
+            opts["tail"] = argv[i + 1]; i += 2
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -269,7 +272,8 @@ def _read_labelled(paths):
     return rows
 
 
-def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_tol, seed):
+def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_tol, seed,
+                  tail=""):
     """Return (manifest, stats) for the AUDIT-A valence manifest (`anima-py evaluate --valence-audit`).
 
     The question: is a held-out atom's polarity in the WEIGHTS at all, read at the atom's own
@@ -294,6 +298,21 @@ def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_t
     NEUTRAL atoms are mined from the corpus itself — frequent stems whose occurrences are
     polarity-balanced (|p(pos) - 0.5| < neutral_tol), so they carry exposure but no valence — and
     only from non-held-out stems, so nothing about the held-out split leaks.
+
+    `tail` moves the READ POINT past the atom, and it is the follow-up the k_ctx=182 result demands.
+    Measured there: the swap arm out-reads the atom arm on all four ckpts (0.73-0.82 vs 0.58-0.64) —
+    the atom's own position carries LESS polarity than a neutral filler in the same context. Two
+    very different worlds explain that:
+
+      (a) the atom injects no valence into the stream at all — natural exposure wrote nothing, and
+          the grounding route is closed;
+      (b) the atom DOES inject it, but the hidden AT the atom's own last byte is dominated by that
+          byte's own identity (form, not bind), so the valence is only visible one step downstream.
+
+    Appending an identical tail to BOTH arms shifts the read point past the atom while changing
+    nothing else. If the atom arm overtakes the swap arm there, world (b) holds and the natural
+    route reopens. A single space is the safest tail: it is grammatical after any stem, it is one
+    byte, and it is byte-identical across arms — so the ONLY thing that moved is where we read.
     """
     import collections
     rng = random.Random(seed)
@@ -334,9 +353,9 @@ def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_t
                 continue
             cands = by_len.get(len(stem)) or by_len[min(by_len, key=lambda L: abs(L - len(stem)))]
             swap = rng.choice(cands)
-            items.append({"id": f"A_{stem}_{used}", "prompt": frag + stem,
+            items.append({"id": f"A_{stem}_{used}", "prompt": frag + stem + tail,
                           "stem": stem, "pol": int(a["pol"]), "arm": "atom"})
-            items.append({"id": f"S_{stem}_{used}", "prompt": frag + swap,
+            items.append({"id": f"S_{stem}_{used}", "prompt": frag + swap + tail,
                           "stem": stem, "pol": int(a["pol"]), "arm": "swap"})
             used += 1
             if used >= k_ctx:
@@ -345,7 +364,7 @@ def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_t
             thin.append((stem, used))
 
     stats = {"atoms": len(atoms), "k_ctx": k_ctx, "prompts": len(items),
-             "neutral_inventory": len(neutral), "thin_atoms": thin}
+             "neutral_inventory": len(neutral), "thin_atoms": thin, "tail": tail}
     return {"win": 64, "items": items}, stats
 
 
@@ -410,11 +429,12 @@ def main():
                   "[--neutral-tol 0.05] [--seed 7]")
             sys.exit(2)
         man, st = build_valence(opts["atoms"], opts["corpus"], opts["k_ctx"], opts["ctx_bytes"],
-                                opts["min_occ"], opts["neutral_tol"], opts["seed"])
+                                opts["min_occ"], opts["neutral_tol"], opts["seed"], opts["tail"])
         out = opts["out"] or "valence_manifest.json"
         json.dump(man, open(out, "w"), ensure_ascii=False)
-        print("wrote %s — %d prompts (%d held-out atoms x %d contexts x 2 arms)"
-              % (out, st["prompts"], st["atoms"], st["k_ctx"]))
+        print("wrote %s — %d prompts (%d held-out atoms x %d contexts x 2 arms)%s"
+              % (out, st["prompts"], st["atoms"], st["k_ctx"],
+                 (" · read point shifted past the atom by tail %r" % st["tail"]) if st["tail"] else ""))
         print("  neutral inventory: %d stems (occ>=%d, |p(pos)-0.5|<%.2f, non-held-out)"
               % (st["neutral_inventory"], opts["min_occ"], opts["neutral_tol"]))
         if st["thin_atoms"]:
@@ -445,6 +465,10 @@ def main():
         print("      NEUTRAL atom spliced into the same context — and the verdict is the DIFFERENCE.")
         print("      --k-ctx is the power knob: the probe pools an atom's contexts, so per-atom")
         print("      noise falls as 1/sqrt(k-ctx). The corpus holds ~717 contexts per atom (min 182).")
+        print("      --tail STR appends STR to BOTH arms, moving the READ POINT past the atom. At the")
+        print("      atom's own position the neutral SWAP arm out-reads it (0.73-0.82 vs 0.58-0.64):")
+        print("      either the atom injects no valence at all, or the hidden there is dominated by")
+        print("      the atom's own form. A one-space tail tells the two apart at zero extra cost.")
         sys.exit(2)
 
     if fmt in ("ground", "ground_lie", "ground_keep", "ground_keep_lie"):
