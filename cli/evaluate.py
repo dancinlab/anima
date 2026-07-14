@@ -2268,6 +2268,23 @@ def xbind_run(argv):
         rows = []
         d_hits = c_hits = c_n = 0
         margins = []
+        # Stall watchdog. An eval that stops making progress must SAY so, not sit there.
+        #
+        # Measured (2026-07-14): a G-base run on a pool box hung at item 50 of 60 — eta 37 seconds —
+        # and stayed there for forty minutes. No error, no exit, no output file. A neighbouring
+        # session had saturated the host's RAM and wedged sshd, so the box was gone; but from the
+        # orchestration side the run looked exactly like a slow one, and the only reason anyone found
+        # out was that someone went and looked. Forty minutes of a rented clock, and the chain behind
+        # it (two CPTs queued on that eval finishing) never started.
+        #
+        # A run that has completed items has told us how long an item takes. If one then takes
+        # WATCHDOG_X times the median of the last few, the box is not slow — something has stopped.
+        # Die loudly, with the numbers, so the caller can re-fire somewhere else in two minutes
+        # instead of discovering the corpse in forty.
+        WATCHDOG_X = 20.0
+        WATCHDOG_FLOOR = 120.0          # never trip inside the first two minutes of a single item
+        recent = []
+        t_item = time.time()
         for ix, it in enumerate(items):
             gold_w = it["gold_word"]
             if arm == "ctrl" and split == "seen":
@@ -2306,6 +2323,24 @@ def xbind_run(argv):
             # load average sat at ~106 from other tenants emitted nothing for 5h; the only way
             # to tell "slow" from "stuck" was to hand-roll a 2-item manifest. The ETA below
             # would have said "35h on this host" after ~30 seconds.)
+            dt = time.time() - t_item
+            t_item = time.time()
+            if recent:
+                med = sorted(recent)[len(recent) // 2]
+                limit = max(WATCHDOG_FLOOR, WATCHDOG_X * med)
+                if dt > limit:
+                    sys.exit(
+                        "\nanima-py evaluate: STALLED — item %d/%d of split '%s' took %.0fs.\n"
+                        "  the last %d items ran at a median of %.1fs each; the limit is %.0fs "
+                        "(%.0fx median).\n"
+                        "  This is not a slow box, it is a stopped one. The usual cause is the HOST\n"
+                        "  going away underneath us — a neighbouring job saturating RAM, an OOM\n"
+                        "  reaper, a wedged sshd. Nothing that follows would have been measured.\n\n"
+                        "  Check the host (uptime, free, nvidia-smi, who else is on it), then re-fire\n"
+                        "  somewhere that is not carrying someone else's load.\n"
+                        % (ix + 1, len(items), split, dt, len(recent), med, limit, WATCHDOG_X))
+            recent.append(dt)
+            recent = recent[-9:]
             if ix == 0 or (ix + 1) % 25 == 0:
                 el = time.time() - t_split
                 per = el / (ix + 1)
