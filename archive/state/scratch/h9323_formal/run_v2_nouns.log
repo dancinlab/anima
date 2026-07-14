@@ -1,0 +1,19 @@
+=== anima evaluate --earned — corpus-level operator instrument (engine-native) ===
+corpus: arith_formal.tsv  sha=d55370912b0b61da…  rows=200000  script=hangul
+        B-rate=0.500   (B and T are corpus labels; T is OUTSIDE the token stream)
+
+G-ALIVE     synthetic XOR (planted operator)   EARNED=+5.29653  delta=-3.00   bar>=+0.30  PASS
+G-PEDESTAL  synthetic ADDITIVE (truth = 0)     EARNED=+0.00285  delta=-0.10   |.|<=0.02   PASS
+G-POWER     held-out cells=98630 (stems 34)  sd_null=0.02155  MDE(3σ)=0.06464  need<=0.02  FAIL — NOT POWERED for a negative verdict
+
+SEEDS       9304:-1.17697 (-22.222%) · 9305:-1.07158 (-20.232%) · 9306:-0.75014 (-14.163%)
+            spread across seeds = 0.42684 nats (8.059% of the ruler)   — seed-stable
+
+held-out EARNED = -0.99956 nats   95.0% CI [-1.04284, -0.95841]   delta=-0.95  (0=additive, -2=flip)
+  vs the XBIND ruler: -18.872% of a PLANTED operator   [p-values are NOT the verdict — with this n a speck is significant]
+  seen synergy    = +0.72804 nats (n=227202)   [DATA-ADDITIVE vs OPERATOR-ABSENT]
+
+VERDICT: INDETERMINATE — CI straddles the equivalence margin
+→ ms_arith.json
+=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===
+dispatch: /usr/bin/python3 /home/summer/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py --earned arith_formal.tsv --min-occ 100 --k-perm 300 --out ms_arith.json
