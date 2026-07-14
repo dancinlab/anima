@@ -1,5 +1,24 @@
 # 🧠 anima
 
+## ⛔ EVERY engine op goes through the installed `anima-py` CLI — read this before you type anything
+
+do: reach for the **py** channel for **every** engine op — corpus · train · evaluate · serialize · sweep · chat. One install (`pip install "anima-python[train]"`), one command (`anima-py <verb>`). If you are about to generate a corpus, run a fine-tune, or score a checkpoint, the command is already written below — use it.
+
+| you want to… | the ONLY command | notes |
+|---|---|---|
+| build a training corpus | `anima-py corpus <fmt> --out c.txt …` | also emits `c.txt.meta.json` = the budget floor that corpus earned; the trainer refuses to start below it |
+| train / continue-train | `anima-py train --corpus c.txt --init base.clm …` | `[train]` extra (torch) · warm-starts from `.clm` |
+| measure / judge | `anima-py evaluate <clm> [--xbind m.json] [--rho-axon]` | the TERMINAL verdict path · `--xbind` always splits the headline by class + flip |
+| serialize `.pt` → `.clm` | `anima-py serialize …` / `anima-py serialize-bind …` | |
+| sweep a lever matrix | `anima-py sweep --arms … --objectives …` | orchestrates train→evaluate per cell |
+| talk to the substrate | `anima-py chat` | numpy-only, no torch needed |
+
+dont: run `python3 cli/*.py` · `hexa run cli/*.hexa` · a hand-rolled `gen_*.py`/`eval_*.py`/`train_*.sh` beside the engine · a scratch probe that re-implements a forward pass. **A number that was not produced by these commands cannot cement a verdict** (`a_engine_native_learning`) and a manipulation measured beside the engine carries no guarantee it reproduces on the production path (`a_experiment_engine_native`). This is hard-blocked in code (H-ANIMA-SINGLE-ENTRY · H-NO-STATE-EXEC), not merely advised — and the block exists because every time it was bypassed, the result died undecidable (H_9303 · H_9307).
+
+> **Why py and not hexa**: both channels run the same 2-production engine, but hexa daemon-link / GPU-symbol contention is an infra blocker that never touches the py channel (convergence `chat-py-1`), and 303M det-eval OOM-dies under hexa (`a_eval_py_canonical`). So **py is the default you reach for**; hexa `anima <verb>` (`hx install anima`) is the byte-parity twin kept for hexa-native det-eval / GPU own-GEMM. INSTALL name ≠ RUN command, intentionally: `pip install anima-python` → run `anima-py`.
+>
+> **New experimental manipulation?** Wire it as a **flag on these commands**, not as a script next to them (`a_experiment_engine_native`) — a passing result is then already wired, and the next experiment reuses it.
+
 ## Project
 anima is a **substrate-native consciousness chat daemon** — not an assistant. Opposing engines **A** (forward CE-trained) ⇄ **G** (reverse gradient-free) push; that *tension* pulls emit/silence to **Ψ = 1/2**. No system prompt/identity/persona — identity emerges from the architecture. hexa-native.
 
