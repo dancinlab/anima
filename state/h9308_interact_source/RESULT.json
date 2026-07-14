@@ -1,0 +1,244 @@
+{
+  "prereg": "state/h9308_interact_source/PREREG.md",
+  "margin_nats": 0.02,
+  "traces": {
+    "trace_B_mnemosyne.jsonl": {
+      "n_pairs": 899,
+      "H_A_nats": 0.4991663137900097,
+      "H_A_given_stage_nats": 0.0,
+      "stage_emit_crosstab": {
+        "0": {
+          "n": 600,
+          "emit1": 600,
+          "emit0": 0
+        },
+        "1": {
+          "n": 100,
+          "emit1": 100,
+          "emit0": 0
+        },
+        "2": {
+          "n": 100,
+          "emit1": 0,
+          "emit0": 100
+        },
+        "3": {
+          "n": 79,
+          "emit1": 0,
+          "emit0": 79
+        },
+        "4": {
+          "n": 20,
+          "emit1": 20,
+          "emit0": 0
+        }
+      },
+      "dC_median": 0.02676121284141183,
+      "Y_mean": 0.5005561735261401
+    },
+    "trace_C_thanatos.jsonl": {
+      "n_pairs": 899,
+      "H_A_nats": 0.4991663137900097,
+      "H_A_given_stage_nats": 0.0,
+      "stage_emit_crosstab": {
+        "0": {
+          "n": 600,
+          "emit1": 600,
+          "emit0": 0
+        },
+        "1": {
+          "n": 100,
+          "emit1": 100,
+          "emit0": 0
+        },
+        "2": {
+          "n": 100,
+          "emit1": 0,
+          "emit0": 100
+        },
+        "3": {
+          "n": 79,
+          "emit1": 0,
+          "emit0": 79
+        },
+        "4": {
+          "n": 20,
+          "emit1": 20,
+          "emit0": 0
+        }
+      },
+      "dC_median": 0.026764976017546425,
+      "Y_mean": 0.5005561735261401
+    },
+    "trace_D_orpheus.jsonl": {
+      "n_pairs": 899,
+      "H_A_nats": 0.4991663137900097,
+      "H_A_given_stage_nats": 0.0,
+      "stage_emit_crosstab": {
+        "0": {
+          "n": 600,
+          "emit1": 600,
+          "emit0": 0
+        },
+        "1": {
+          "n": 100,
+          "emit1": 100,
+          "emit0": 0
+        },
+        "2": {
+          "n": 100,
+          "emit1": 0,
+          "emit0": 100
+        },
+        "3": {
+          "n": 79,
+          "emit1": 0,
+          "emit0": 79
+        },
+        "4": {
+          "n": 20,
+          "emit1": 20,
+          "emit0": 0
+        }
+      },
+      "dC_median": 0.026761212841411773,
+      "Y_mean": 0.5005561735261401
+    },
+    "trace_303m_summer.jsonl": {
+      "n_pairs": 607,
+      "H_A_nats": 0.022121029165299018,
+      "H_A_given_stage_nats": 0.0,
+      "stage_emit_crosstab": {
+        "0": {
+          "n": 8,
+          "emit1": 8,
+          "emit0": 0
+        },
+        "1": {
+          "n": 1,
+          "emit1": 1,
+          "emit0": 0
+        },
+        "2": {
+          "n": 1,
+          "emit1": 0,
+          "emit0": 1
+        },
+        "3": {
+          "n": 1,
+          "emit1": 0,
+          "emit0": 1
+        },
+        "4": {
+          "n": 596,
+          "emit1": 596,
+          "emit0": 0
+        }
+      },
+      "dC_median": 0.024307027938359153,
+      "Y_mean": 0.500823723228995
+    },
+    "trace_303mb.jsonl": {
+      "n_pairs": 96,
+      "H_A_nats": 0.10126481756679193,
+      "H_A_given_stage_nats": 0.0,
+      "stage_emit_crosstab": {
+        "0": {
+          "n": 8,
+          "emit1": 8,
+          "emit0": 0
+        },
+        "1": {
+          "n": 1,
+          "emit1": 1,
+          "emit0": 0
+        },
+        "2": {
+          "n": 1,
+          "emit1": 0,
+          "emit0": 1
+        },
+        "3": {
+          "n": 1,
+          "emit1": 0,
+          "emit0": 1
+        },
+        "4": {
+          "n": 85,
+          "emit1": 85,
+          "emit0": 0
+        }
+      },
+      "dC_median": 0.027073557840155138,
+      "Y_mean": 0.5
+    }
+  },
+  "pooled": {
+    "n_pairs": 3400,
+    "H_A_nats": 0.4382038362791245,
+    "H_A_given_S_nats": 0.0,
+    "V_CEILING_pass": false,
+    "note": "MI(A;Y|S) <= H(A|S) is an identity bound; if H(A|S) < margin no n can yield PASS."
+  },
+  "power": {
+    "target_true_MI_nats": 0.02,
+    "power_by_n": {
+      "200": 0.44,
+      "500": 0.925,
+      "1000": 1.0,
+      "2000": 1.0,
+      "2705": 1.0,
+      "5000": 1.0,
+      "10000": 1.0
+    },
+    "N_REQ_80pct": 500,
+    "assumes": "a policy with residual entropy H(A|S)=ln2 (Bernoulli .5 within stratum)"
+  },
+  "arms_primary_S_stage": {
+    "REAL": 0.0,
+    "PEDESTAL_true0": 0.0,
+    "ACTION_SHUFFLE": 0.0,
+    "STATE_ONLY_I(S;Y)": 0.02109533347220578,
+    "ALIVE": {
+      "measured": 0.36808440053419333,
+      "truth": 0.3680642071684971,
+      "ratio": 1.0000548637039488
+    }
+  },
+  "V_gates": {
+    "V_CEILING": false,
+    "V_ALIVE": true,
+    "V_PEDESTAL": true
+  },
+  "inference_primary": {
+    "MI_real_nats": 0.0,
+    "paired_t_blocks": {
+      "k_blocks": 34,
+      "mean_diff": 0.0,
+      "se": 0.0,
+      "t": NaN,
+      "p_two_sided": NaN
+    },
+    "bootstrap_CI90": [
+      0.0,
+      0.0
+    ],
+    "bootstrap_CI95": [
+      0.0,
+      0.0
+    ],
+    "perm_null_mean": 0.0,
+    "perm_null_sd": 0.0,
+    "perm_p": 1.0,
+    "TOST_equivalent_pm0.02": true
+  },
+  "secondary_diagnostic_S_lite_idle_tercile": {
+    "H_A_given_Slite_nats": 0.23064339118748628,
+    "MI_real": 0.0079205041545711,
+    "MI_pedestal": -9.281938921234986e-05,
+    "perm_null_mean": -5.612396926090859e-07,
+    "perm_null_sd": 0.0002017838346884948,
+    "perm_p": 0.0033222591362126247,
+    "warning": "stage is dropped from the conditioning set -> any lift is stage-mediated confound, NOT a do-effect."
+  }
+}

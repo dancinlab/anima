@@ -1,0 +1,67 @@
+diff --git a/cli/anima.hexa b/cli/anima.hexa
+old mode 100644
+new mode 100755
+index a7326df30..230932ccd
+--- a/cli/anima.hexa
++++ b/cli/anima.hexa
+@@ -2275,6 +2275,14 @@ fn anima_consciousness_mode(ckpt: string) {
+     let og_r3 = anima_has_flag(anima_collect_argv(args()), "--opgrip-r3")
+     let og_live = anima_has_flag(anima_collect_argv(args()), "--opgrip-live") || og_r3
+     let og_measure = anima_has_flag(anima_collect_argv(args()), "--opgrip") || og_live
++    // ── H_9312 σ 3-WAY SPLIT per-tick TAPE (--opgrip-dump · $0 no-decode) ──────────────
++    // Emits one `#OGD {json}` line per tick with the substrate state the σ program never
++    // recorded: (self_ctx_live, self_ema, the 8 lived-experience lanes, the PRE-EMIT drive
++    // margin motiv−thr and the rate-gate margin idle−30, e_live, stage). READ-ONLY tape:
++    // it changes NO decision (only n_ticks 250→2000 for statistical power). Fable w4_sigma
++    // killshot: read the SAME tape forward (state→self = PRESENCE) and backward
++    // (self→emit = INFO) so "데이터 부재 / 표현 부재 / 소비 부재" finally separate.
++    let og_dump = anima_has_flag(anima_collect_argv(args()), "--opgrip-dump")
+     let mut og_wake = 0            // wake ticks
+     let mut og_emit_wake = 0       // wake ticks the LIVE (post-fix) arm emits (collapse FLAG)
+     let mut og_h_relfr = 0         // Hamming: full-rel_ctx frozen vs live (all ticks)
+@@ -2358,7 +2366,7 @@ fn anima_consciousness_mode(ckpt: string) {
+     // wall ~5-12h; cheap no-decode --opgrip / --refractory keep 200 for finer ΔEff quantization.
+     // --opgrip-r3: n=400 (0-99 spin-up · 100-199 B-dense calibration · 200-399 scoring; scored mid = 200·3/5 = 120,
+     // the SAME denominator as the $0 run so every ΔEff bar keeps its original 1-flip=0.0083 quantization).
+-    let n_ticks = if og_r3 { 400 } else if og_live { 100 } else if og_measure { 250 } else if refr_measure { 200 } else { 12 }  // H_9225: --opgrip 200→250 (scored mid ≈120, tightens the 0.02 bar); --refractory untouched
++    let n_ticks = if og_dump && og_measure { 2000 } else if og_r3 { 400 } else if og_live { 100 } else if og_measure { 250 } else if refr_measure { 200 } else { 12 }  // H_9225: --opgrip 200→250 (scored mid ≈120, tightens the 0.02 bar); --refractory untouched
+ 
+     // ══════════════════════════════════════════════════════════════════════════
+     //  LANE-23b PENULT SELF-GROUNDING (H_9257 · self-continuity: synthetic → substrate)
+@@ -3042,6 +3050,36 @@ fn anima_consciousness_mode(ckpt: string) {
+             self_ema = 0.9 * self_ema + 0.1 * self_ctx_live
+             let g_use = if g_self < 0.0 { 0.0 } else { g_self }
+             let self_phasic = _afs_clip01(0.5 + g_use * (self_ctx_live - self_ema))         // signed, neutral 0.5
++            // ── H_9312 (--opgrip-dump) PER-TICK TAPE — READ-ONLY, decides nothing ─────────
++            // The 3 layers the σ program never recorded: self state (self_ctx_live/self_ema/
++            // self_phasic), the 8 lived lanes that ARE the pre-emit substrate, the CONTINUOUS
++            // pre-emit margins (motiv−thr = drive margin · idle−30 = rate-gate margin) and the
++            // binary e_live everything so far collapsed onto.
++            if og_dump {
++                println("#OGD {\"tick\":" + to_string(tick)
++                    + ",\"stage\":" + to_string(stage)
++                    + ",\"wake\":" + (if drive_hi {"1"} else {"0"})
++                    + ",\"e_live\":" + to_string(e_live)
++                    + ",\"motiv\":" + to_string(to_float(m_live["motivation"]))
++                    + ",\"thr\":" + to_string(to_float(m_live["im_thresh"]))
++                    + ",\"safe\":" + (if to_string(m_live["safe"]) == "true" {"1"} else {"0"})
++                    + ",\"idle\":" + to_string(idle)
++                    + ",\"urgency\":" + to_string(urgency)
++                    + ",\"stage_env\":" + to_string(stage_env)
++                    + ",\"self_ctx_live\":" + to_string(self_ctx_live)
++                    + ",\"self_ema\":" + to_string(self_ema)
++                    + ",\"self_phasic\":" + to_string(self_phasic)
++                    + ",\"ev_axis\":" + to_string(ev_axis)
++                    + ",\"rel_lane\":" + to_string(rel_lane)
++                    + ",\"af_val\":" + to_string(af_val)
++                    + ",\"allo_ctx\":" + to_string(allo_ctx)
++                    + ",\"coh_lane\":" + to_string(coh_lane)
++                    + ",\"bal_lane\":" + to_string(bal_lane)
++                    + ",\"nov_ctx\":" + to_string(nov_ctx)
++                    + ",\"gap_ctx\":" + to_string(gap_ctx)
++                    + ",\"ag_conflict\":" + to_string(ag_conflict)
++                    + ",\"recon_err\":" + to_string(recon_err) + "}")
++            }
+             // ── H_9210 surprise phasic (recon_err = prediction-error, the LC-NE burst urgency emulates) ──
+             if tick < 50 { surp_step_devs.push(_afs_absf(recon_err - surp_prev)) }
+             if tick == 50 {

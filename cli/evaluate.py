@@ -755,6 +755,8 @@ def evaluate_usage():
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
+    print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
     print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
@@ -768,7 +770,19 @@ def evaluate_usage():
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
+    print("  anima evaluate --earned <corpus.tsv> [--out <file.json>] [--min-occ 100] [--k-perm 1000] [--seed N]")
+    print("      (corpus-level operator instrument — does a natural corpus CONTAIN non-additive")
+    print("       information that TRANSFERS to a held-out cell? no model, no training. TSV rows =")
+    print("       text<TAB>B<TAB>T, where T is a label OUTSIDE the token stream — else the measure is")
+    print("       a tautology. 3 BLOCKING gates first: G-ALIVE (planted-XOR positive control) ·")
+    print("       G-PEDESTAL (zero-truth arm) · G-POWER (census + MDE); a failed gate is INVALID,")
+    print("       never a KILL. Effect is reported against the XBIND ruler, not a p-value.")
+    print("       cards H_9304 · H_9316 · H_9317 · H_9318)")
     print("")
+    print("  --ground-probe <manifest>: NBIND-G grounding instrument, engine-native and whole —")
+    print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
+    print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
+    print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
     print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
@@ -1247,6 +1261,222 @@ def _selftest_rho_cells():
     return ok, checks
 
 
+def _gp_logreg(Xtr, ytr, Xte, l2=10.0, iters=400, lr=0.5):
+    """L2 logistic regression, numpy-only (anima-py is pure numpy — no sklearn on the engine
+    path). Standardise on the TRAIN split only, then full-batch gradient descent. Deterministic:
+    zero init, fixed step count, no shuffling — the same ckpt and manifest give the same bytes."""
+    import numpy as np
+    mu, sd = Xtr.mean(0), Xtr.std(0)
+    sd[sd == 0.0] = 1.0
+    A, B = (Xtr - mu) / sd, (Xte - mu) / sd
+    w, b = np.zeros(A.shape[1]), 0.0
+    n = float(len(A))
+    for _ in range(iters):
+        p = 1.0 / (1.0 + np.exp(-(A @ w + b)))
+        g = A.T @ (p - ytr) / n + (w / l2)
+        w -= lr * g
+        b -= lr * float((p - ytr).mean())
+    return 1.0 / (1.0 + np.exp(-(B @ w + b)))
+
+
+def ground_probe_run(argv):
+    """`anima-py evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64]`
+    — the NBIND-G grounding instrument, engine-native and whole (H_9302 certified it, H_9303
+    read the wall with it). Everything the verdict rests on happens inside this one command:
+    the production trunk forward, the readout, the positive control and the null.
+
+    Five things the probes it replaces got wrong, each of which manufactured a false negative
+    (H_9289 / H_9290 / H_9297 / H_9300, now all INVALID — convergence gt-power-build-py-1,
+    probe-capacity-py-1, gen-nbindg-n2-py-1):
+
+      POSITION      read the hidden where the model must ANSWER (after the arrow), not at the
+                    atom — a causal LM has no reason to have committed anything at the atom.
+      CARRIER       ask inside the carrier the model was TAUGHT; a natural review with an arrow
+                    glued on is out of distribution and the decision machinery never fires.
+      V-LIVE        certify on atoms whose polarity the model WAS taught. A probe that cannot
+                    read a taught answer certifies nothing about an untaught one. Counted per
+                    ITEM (that is where the power is); leave-one-ATOM-out (a context-level split
+                    leaks the stem and would certify a probe that only reads orthography).
+      AGGREGATION   an atom's forms are half polarity-inverting BY CONSTRUCTION, so voting raw
+                    item labels makes the gold vector constant. Undo each form's flip first:
+                    atom_pol = majority over forms of (item_pred XOR form_flip) — the very
+                    recombination the D-acc eval asks the model for.
+      POWER         count at the ATOM level. Items inside an atom are not independent draws.
+
+    Manifest: {"win":64, "bar":0.65, "items":[{"id","prompt","stem","pol","flip","split"}]}
+    where `pol` is the ITEM's gold polarity, `flip` says whether that form inverts the atom's,
+    and `split` is "train" (taught) or "heldout" (never taught). Read-only: no decode sampling,
+    no term added to any loss (a_train_inline_gauge / p7 clean)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--ground-probe", "")))
+    out_path = evaluate_strval(argv[1:], "--out", "ground_probe.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    bar = float(spec.get("bar", 0.65))
+    n_perm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    items = spec["items"]
+
+    print("=== anima evaluate --ground-probe — NBIND-G grounding (engine-native) ===")
+    print("  ckpt " + ckpt + " · win " + str(T) + "B · bar " + str(bar) +
+          " · " + str(len(items)) + " prompts")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+
+    X = []
+    for k, it in enumerate(items):
+        tok = clm._seed_to_tok(it["prompt"], T)          # same encode the gates decode over
+        yn = clm.clm_forward_hidden(W, tok, T)           # EXACT production trunk forward
+        X.append(np.asarray(yn)[T - 1].astype(np.float64))     # THE ANSWER POINT
+        if (k + 1) % 100 == 0:
+            print("  [forward %d/%d]" % (k + 1, len(items)), flush=True)
+    X = np.stack(X, 0)
+    y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
+    fl = np.array([int(i.get("flip", 0)) for i in items])
+    st = np.array([i["stem"] for i in items])
+    sp = np.array([i["split"] for i in items])
+    tr, te = sp == "train", sp == "heldout"
+
+    # V-LIVE — leave-one-ATOM-out over the TAUGHT atoms, scored per item
+    hit = tot = 0
+    for a in np.unique(st[tr]):
+        m = (st == a) & tr
+        p = _gp_logreg(X[tr & ~m], y[tr & ~m], X[m])
+        hit += int(((p > 0.5) == (y[m] > 0.5)).sum()); tot += int(m.sum())
+    v_live = hit / float(tot) if tot else float("nan")
+
+    def atom_acc(pred):
+        """Undo each form's flip, then vote — the atom's polarity is the latent."""
+        ok = 0
+        ats = np.unique(st[te])
+        for a in ats:
+            m = (st == a) & te
+            rec = np.logical_xor(pred[m[te]] > 0.5, fl[m] == 1)     # recovered atom polarity
+            gold = np.logical_xor(y[m] > 0.5, fl[m] == 1)[0]
+            ok += int((rec.mean() > 0.5) == bool(gold))
+        return ok / float(len(ats)), len(ats)
+
+    acc, n_at = atom_acc(_gp_logreg(X[tr], y[tr], X[te]))
+    sd = math.sqrt(0.25 / n_at) if n_at else float("nan")
+
+    rng = np.random.default_rng(seed)
+    null = np.array([atom_acc(_gp_logreg(X[tr], rng.permutation(y[tr]), X[te]))[0]
+                     for _ in range(n_perm)])
+    pval = float((null >= acc).mean())
+
+    print("  [V-LIVE  taught atoms, per item n=%d] %.3f" % (tot, v_live))
+    print("  [HELD-OUT atoms n=%d · chance sd %.4f · bar %.2f = %.2f sigma] %.3f (%+.2f sigma)"
+          % (n_at, sd, bar, (bar - 0.5) / sd, acc, (acc - 0.5) / sd))
+    print("  [PERM null %d draws] p = %.3f · p95 = %.3f" % (n_perm, pval, float(np.quantile(null, 0.95))))
+    out = {"ckpt": ckpt, "win": T, "bar": bar, "v_live_taught_per_item": v_live,
+           "heldout_atom_acc": acc, "n_atoms": n_at, "chance_sd": sd,
+           "bar_sigma": (bar - 0.5) / sd, "perm_p": pval, "n_perm": n_perm,
+           "perm_p95": float(np.quantile(null, 0.95))}
+    json.dump(out, open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("GROUND-PROBE wrote " + out_path)
+    return 0
+
+
+def valence_audit_run(argv):
+    """`anima-py evaluate <ckpt> --valence-audit <manifest.json> --out <file.json>` — AUDIT-A,
+    the $0 pre-fire audit the O channel lives or dies on (Fable design, DESIGN_OC_fable.md §4).
+
+    H_9303 proved the model does not USE a held-out atom's polarity at the moment it must answer.
+    It did NOT ask whether the natural corpus formed that polarity ANYWHERE in the weights. The O
+    channel's whole bet is that the information exists and the answer slot simply has no gradient
+    reason to consume it (a rote-lookup slot's gradient is zero once the grid fits). If the valence
+    was never formed at all, there is nothing to bridge and the fire is wasted.
+
+    So: read the hidden at the atom's own position inside its REAL corpus contexts, pool per atom,
+    leave-one-ATOM-out probe for gold polarity.
+
+    THE CONTROL IS THE MEASUREMENT (FORM tunable · BIND earned). A sentiment review is full of
+    sentiment words, so a probe reading the neighbourhood — not the atom — would score just as well.
+    Every item therefore comes in two arms: `atom` (the real atom in its real context) and `swap`
+    (a length-matched NEUTRAL atom spliced into the SAME context). The verdict is the difference
+
+        Delta = probe_acc(atom) - probe_acc(swap)
+
+    against a label-permutation null — never a raw value.
+
+    Manifest: {"items":[{"id","prompt","stem","pol","arm"}]} with arm in {"atom","swap"}; `prompt`
+    ends right after the atom (the atom's own contextualised position). Read-only: no sampling, no
+    loss term (a_train_inline_gauge / p7 clean)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--valence-audit", "")))
+    out_path = evaluate_strval(argv[1:], "--out", "valence_audit.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    n_perm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    items = spec["items"]
+
+    print("=== anima evaluate --valence-audit — AUDIT-A: is the valence in the weights at all? ===")
+    print("  ckpt " + ckpt + " · win " + str(T) + "B · " + str(len(items)) + " prompts")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+
+    H = []
+    for k, it in enumerate(items):
+        H.append(np.asarray(clm.clm_forward_hidden(
+            W, clm._seed_to_tok(it["prompt"], T), T))[T - 1].astype(np.float64))
+        if (k + 1) % 200 == 0:
+            print("  [forward %d/%d]" % (k + 1, len(items)), flush=True)
+    H = np.stack(H, 0)
+    arm = np.array([i["arm"] for i in items])
+    st = np.array([i["stem"] for i in items])
+    y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
+
+    def pooled(a):
+        """One vector per atom — the atom's contexts averaged. Its gold polarity is the atom's."""
+        m = arm == a
+        ats = sorted(set(st[m]))
+        X = np.stack([H[m & (st == s)].mean(0) for s in ats], 0)
+        g = np.array([y[m & (st == s)][0] for s in ats], dtype=np.float64)
+        return X, g, ats
+
+    def loo(X, g, perm=None):
+        gg = g if perm is None else perm
+        hit = 0
+        for i in range(len(gg)):
+            m = np.ones(len(gg), bool); m[i] = False
+            p = _gp_logreg(X[m], gg[m], X[i:i + 1])
+            hit += int((p[0] > 0.5) == (gg[i] > 0.5))
+        return hit / float(len(gg))
+
+    Xa, ga, ats = pooled("atom")
+    Xs, gs, _ = pooled("swap")
+    acc_a, acc_s = loo(Xa, ga), loo(Xs, gs)
+    delta = acc_a - acc_s
+
+    rng = np.random.default_rng(seed)
+    null = np.array([loo(Xa, ga, rng.permutation(ga)) - loo(Xs, gs, rng.permutation(gs))
+                     for _ in range(n_perm)])
+    pval = float((null >= delta).mean())
+    sd = math.sqrt(0.25 / len(ats))
+
+    print("  [atom  arm] LOO probe acc %.3f   (n=%d atoms · chance sd %.4f)" % (acc_a, len(ats), sd))
+    print("  [swap  arm] LOO probe acc %.3f   (length-matched NEUTRAL atom, SAME contexts)" % acc_s)
+    print("  [DELTA = atom - swap] %+.3f   vs %d-draw permutation null: p = %.3f · p95 = %+.3f"
+          % (delta, n_perm, pval, float(np.quantile(null, 0.95))))
+    live = pval < 0.05 and delta > 0.0
+    print("  VALENCE " + ("PRESENT — the atom itself carries polarity in the representation; the O "
+                          "channel has an input to bridge."
+                          if live else
+                          "ABSENT — the atom carries no polarity beyond its neighbourhood. The O "
+                          "channel would have nothing to consume: DO NOT FIRE."))
+    out = {"ckpt": ckpt, "acc_atom": acc_a, "acc_swap": acc_s, "delta": delta, "perm_p": pval,
+           "perm_p95": float(np.quantile(null, 0.95)), "n_atoms": len(ats), "chance_sd": sd,
+           "valence_present": bool(live), "n_perm": n_perm}
+    json.dump(out, open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("VALENCE-AUDIT wrote " + out_path)
+    return 0
+
+
 def interaction_lift_run(argv):
     """`anima-py evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json>
     [--win T] [--score-len K]` — engine-native joint interaction-lift measurement
@@ -1667,8 +1897,10 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
-    "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe",
+    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--help", "--ground-probe", "--interaction-lift", "--k-perm", "--kosmos", "--min-occ",
+    "--n-decode", "--n-sampled", "--valence-audit",
+    "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
     "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
 ))
@@ -1767,12 +1999,26 @@ def main(argv):
         i = argv.index("--system-g1")
         argv = argv[:i] + argv[i + 1:]
         return system_g1_run(argv)
+    # --ground-probe <manifest.json>: the NBIND-G grounding instrument, whole and engine-native
+    # (answer point · taught carrier · V-LIVE positive control · flip-undone atom aggregation ·
+    # atom-level power · permutation null). The five defects it fixes are in ground_probe_run.
+    if "--ground-probe" in argv:
+        return ground_probe_run(argv)
+    # --valence-audit <manifest.json>: AUDIT-A — is the atom's polarity in the weights AT ALL
+    # (read in its real corpus contexts), or is a probe just reading the sentiment neighbourhood?
+    # The verdict is Delta = probe(atom) - probe(length-matched NEUTRAL swapped into the SAME
+    # context), against a permutation null. Kills the O-channel fire before it burns GPU.
+    if "--valence-audit" in argv:
+        return valence_audit_run(argv)
     # --dump-hidden <prompts.json>: read-only penultimate-hidden dump (ρ·weave / γ
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
     # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
     # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
+    if "--earned" in argv:
+        import earned as _earned
+        return _earned.earned_run(argv)
     if "--interaction-lift" in argv:
         return interaction_lift_run(argv)
     # --probe <spec.json>: matched-surface G1 probe (card H_6189). argv[0]=ckpt; probe_run

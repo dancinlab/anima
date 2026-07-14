@@ -1,0 +1,54 @@
+[cal6] run1_KILL ...
+[cal6] run2_INVALID ...
+[cal6] run3_CLOSED ...
+
+=== CAL-6  VERDICT = PASS  (gain outside [0.8,1.25] for: ceiling_MIN, dacc_AND, m_A_conj, m_conj_MIN, m_mean)
+
+## run1_KILL  n=120  sigma=0.8746 nats
+   PC1 gain_nat(m_B|PROX)=1.000000000 pass=True | PC2 t=19.29 p=1.93e-38 pass=True
+   detector     model  gain_nat gain_std gain_std CI95        band   | P1 randsign (true=0)    
+   m_A_conj     PROX     0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+   m_A_conj     SYM      1.0000   1.0800 [ 0.940, 1.279] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_B_conj     PROX     1.0000   1.0000 [ 0.877, 1.186] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_B_conj     SYM      1.0000   1.0000 [ 0.877, 1.186] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_conj_MIN   PROX     0.2438   0.2814 [ 0.202, 0.382] FAIL   | -0.1012 (t=-2.14) eq0=True
+   m_conj_MIN   SYM      1.0000   1.1541 [ 1.019, 1.340] PASS   | -0.1012 (t=-2.14) eq0=True
+   m_mean       PROX     0.5000   0.6668 [ 0.580, 0.788] FAIL   | +0.0000 (t=+0.00) eq0=True
+   m_mean       SYM      1.0000   1.3336 [ 1.159, 1.576] FAIL   | +0.0000 (t=+0.00) eq0=True
+   dacc_AND     PROX     0.0463   0.1225 [ 0.053, 0.219] FAIL   | -0.0417 (t=-2.27) eq0=True
+   dacc_AND     SYM      0.1869   0.4948 [ 0.360, 0.714] FAIL   | -0.0417 (t=-2.27) eq0=True
+   ceiling_MIN  PROX     0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+   ceiling_MIN  SYM      0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+
+## run2_INVALID  n=100  sigma=1.0012 nats
+   PC1 gain_nat(m_B|PROX)=1.000000000 pass=True | PC2 t=21.28 p=1.00e-38 pass=True
+   detector     model  gain_nat gain_std gain_std CI95        band   | P1 randsign (true=0)    
+   m_A_conj     PROX     0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+   m_A_conj     SYM      1.0000   1.1326 [ 1.013, 1.307] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_B_conj     PROX     1.0000   1.0000 [ 0.880, 1.171] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_B_conj     SYM      1.0000   1.0000 [ 0.880, 1.171] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_conj_MIN   PROX     0.2952   0.3186 [ 0.237, 0.418] FAIL   | -0.0147 (t=-0.24) eq0=True
+   m_conj_MIN   SYM      1.0000   1.0793 [ 0.933, 1.287] PASS   | -0.0147 (t=-0.24) eq0=True
+   m_mean       PROX     0.5000   0.5979 [ 0.529, 0.701] FAIL   | +0.0000 (t=+0.00) eq0=True
+   m_mean       SYM      1.0000   1.1959 [ 1.057, 1.401] PASS   | +0.0000 (t=+0.00) eq0=True
+   dacc_AND     PROX     0.0342   0.0853 [ 0.029, 0.159] FAIL   | -0.0200 (t=-0.82) eq0=True
+   dacc_AND     SYM      0.2045   0.5093 [ 0.380, 0.706] FAIL   | -0.0200 (t=-0.82) eq0=True
+   ceiling_MIN  PROX     0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+   ceiling_MIN  SYM      0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+
+## run3_CLOSED  n=334  sigma=0.9741 nats
+   PC1 gain_nat(m_B|PROX)=1.000000000 pass=True | PC2 t=37.91 p=7.69e-123 pass=True
+   detector     model  gain_nat gain_std gain_std CI95        band   | P1 randsign (true=0)    
+   m_A_conj     PROX     0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+   m_A_conj     SYM      1.0000   1.0372 [ 0.954, 1.138] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_B_conj     PROX     1.0000   1.0000 [ 0.917, 1.099] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_B_conj     SYM      1.0000   1.0000 [ 0.917, 1.099] PASS   | +0.0000 (t=+0.00) eq0=True
+   m_conj_MIN   PROX     0.3159   0.3371 [ 0.287, 0.393] FAIL   | -0.0709 (t=-2.03) eq0=True
+   m_conj_MIN   SYM      1.0000   1.0671 [ 0.990, 1.164] PASS   | -0.0709 (t=-2.03) eq0=True
+   m_mean       PROX     0.5000   0.5804 [ 0.535, 0.637] FAIL   | +0.0000 (t=+0.00) eq0=True
+   m_mean       SYM      1.0000   1.1608 [ 1.070, 1.274] PASS   | +0.0000 (t=+0.00) eq0=True
+   dacc_AND     PROX     0.0480   0.1305 [ 0.085, 0.183] FAIL   | -0.0150 (t=-0.93) eq0=True
+   dacc_AND     SYM      0.1625   0.4416 [ 0.361, 0.544] FAIL   | -0.0150 (t=-0.93) eq0=True
+   ceiling_MIN  PROX     0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+   ceiling_MIN  SYM      0.0000   0.0000 [ 0.000, 0.000] FAIL   | +0.0000 (t=+0.00) eq0=True
+

@@ -1,0 +1,117 @@
+{
+  "id": "H_9305",
+  "name": "G1-CANCEL",
+  "verdict": "NOT-POWERED",
+  "headline": "per-stratum bar mis-calibrated (permutation null omits held-out-draw variance, 25x); stratum granularity cannot be adjudicated. Licensed secondary: cancellation SURPLUS is zero/negative -> cancellation mechanism REFUTED; H_9304 DATA-ADDITIVE not overturned.",
+  "frozen_script_said": "PASS in 4/4 seeds -- NOT adopted (bar invalid, see FREEZE AMENDMENT 2)",
+  "seeds": [
+    "9305",
+    "1",
+    "2",
+    "3"
+  ],
+  "S_LEN_k0_same_stratum_across_seeds": [
+    0.02123744909168793,
+    -0.014339864994612008,
+    -0.02430317175989978,
+    0.016893131656792244
+  ],
+  "sd_across_seeds_TRUE": 0.022602487871626817,
+  "sd_permutation_null_USED_BY_BAR": 0.0008997378739019947,
+  "sd_ratio": 25.12119199073399,
+  "true_MDE_3sd": 0.06780746361488045,
+  "delta_eq": 0.02,
+  "powered_at_stratum_granularity": false,
+  "cancellation_surplus_S_CLUST": {
+    "D_exp": [
+      -0.0012927453354427952,
+      0.0017773846122506954,
+      0.0015146142242839192,
+      0.00387211634812438
+    ],
+    "D_ctrl1": [
+      0.004491190303797531,
+      0.005137062357173405,
+      0.005304263621681265,
+      0.0030279711626187422
+    ],
+    "surplus_mean": -0.003022279399013686,
+    "surplus_sd": 0.0027855985960651046,
+    "paired_t": -2.1699317362400405,
+    "p_approx": 0.030012017700650206,
+    "hypothesis_predicts": ">0",
+    "observed_sign": "NEGATIVE -> refuted"
+  },
+  "cancellation_surplus_S_LEN": {
+    "D_exp": [
+      -0.0008514977506378358,
+      -0.0034645018208640864,
+      -0.002224979768823703,
+      -0.0009140435441157256
+    ],
+    "D_ctrl1": [
+      0.003894819377341688,
+      0.0033203207754288677,
+      0.0013228639152463965,
+      0.007412002925571313
+    ],
+    "surplus_mean": -0.005851257469507404,
+    "surplus_sd": 0.0021231056392808623,
+    "paired_t": -5.5119795842936385,
+    "p_approx": 3.548200866454465e-08,
+    "hypothesis_predicts": ">0",
+    "observed_sign": "NEGATIVE -> refuted"
+  },
+  "POS_all_seeds": [
+    {
+      "seed": "9305",
+      "pooled": 0.0003260498000684808,
+      "strata": [
+        4.422506158210856,
+        4.416609327812029
+      ],
+      "D": 4.419223770913481,
+      "fired": true
+    },
+    {
+      "seed": "1",
+      "pooled": -0.0007250731596292227,
+      "strata": [
+        4.516798998469261,
+        4.487762857966324
+      ],
+      "D": 4.502954734742237,
+      "fired": true
+    },
+    {
+      "seed": "2",
+      "pooled": -0.0005453881363102235,
+      "strata": [
+        4.485139219220157,
+        4.520513560991353
+      ],
+      "D": 4.503539078802576,
+      "fired": true
+    },
+    {
+      "seed": "3",
+      "pooled": 0.00031802209341962387,
+      "strata": [
+        4.505182661662751,
+        4.474439616341095
+      ],
+      "D": 4.4896434496484625,
+      "fired": true
+    }
+  ],
+  "ctrl1_dirty_all_seeds": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "pooled_anchor_reproduces_h9304": {
+    "h9305": 0.0023184576485949498,
+    "h9304_published": 0.00233
+  }
+}

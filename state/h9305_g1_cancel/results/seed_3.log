@@ -1,0 +1,62 @@
+[corpus] NSMC sha=e03b7d14e9e41be8...  match=True
+[corpus] rows=149995
+
+=== POS (XBIND (+) sign-flipped-XBIND, shared stems; true pooled ~ 0, true within ~ +5.3) ===
+  POOLED : I=+0.00032  d_hat=-1.10   (true = 0; this is the cancellation)
+  STRAT 0: I=+4.50518  d_hat=-3.00  n_ho=4543
+  STRAT 1: I=+4.47444  d_hat=-3.00  n_ho=4455
+  D_POS = +4.48964   (bar > 1.0)   [legacy C_POS = +0.00000 -- the defect AMENDMENT 1 killed]
+  POS DETECT: PASS -- the instrument CAN see cancellation
+
+[cells] stems=1346 items=468043 (min_occ=100, GLOBAL vocab)
+[anchor] POOLED natural I=+0.00231  CI[+0.00205,+0.00255]  n_ho=35911  (H_9304 read +0.00233)
+
+[S_CLUST] sizes=[8989, 9795, 21126, 58615, 18288, 15067, 9444, 8671]
+
+--- scheme S_CLUST  (8 strata, partition=True) ---
+  k=0: n_ho=   940  I=+0.00933  CI[+0.00469,+0.01420]  d_hat=-0.20  bar=0.0200  MDE=0.00851  sig=n tost=Y | CTRL1 I=+0.00363
+  k=1: n_ho=  2514  I=+0.00910  CI[+0.00767,+0.01086]  d_hat=-0.40  bar=0.0200  MDE=0.00295  sig=n tost=Y | CTRL1 I=+0.01275
+  k=2: n_ho=  5151  I=+0.02124  CI[+0.02004,+0.02238]  d_hat=-0.35  bar=0.0200  MDE=0.00250  sig=Y tost=n | CTRL1 I=+0.00583
+  k=3: n_ho= 19877  I=+0.00134  CI[+0.00027,+0.00289]  d_hat=-0.30  bar=0.0200  MDE=0.00288  sig=n tost=Y | CTRL1 I=+0.00496
+  k=4: n_ho=  4062  I=+0.00452  CI[+0.00316,+0.00619]  d_hat=-0.30  bar=0.0200  MDE=0.00273  sig=n tost=Y | CTRL1 I=+0.00400
+  k=5: n_ho=  2321  I=+0.01173  CI[+0.01118,+0.01254]  d_hat=-0.30  bar=0.0200  MDE=0.00149  sig=n tost=Y | CTRL1 I=+0.00561
+  k=6: n_ho=  2145  I=+0.01269  CI[+0.01074,+0.01496]  d_hat=-0.30  bar=0.0200  MDE=0.00406  sig=n tost=Y | CTRL1 I=+0.00338
+  k=7: n_ho=  1294  I=-0.00299  CI[-0.00697,+0.00161]  d_hat=-0.10  bar=0.0200  MDE=0.00696  sig=n tost=Y | CTRL1 I=+0.00462
+  D_exp   = +0.00387   (strat_w=+0.00618, pooled=+0.00231)
+  D_ctrl1 = +0.00303   <- size-matched RANDOM strata (small-sample baseline)
+  paired-t EXP vs CTRL1: mean_diff=+0.00277 t=1.015436554275947 n=8
+  (legacy C_exp=+0.00020 -- NOT a criterion, see AMENDMENT 1)
+
+[S_LEN] byte quartile cuts=[39.0, 65.0, 105.0]  sizes=[37126, 36702, 38593, 37574]
+
+--- scheme S_LEN  (4 strata, partition=True) ---
+  k=0: n_ho=   951  I=+0.01689  CI[+0.01564,+0.01948]  d_hat=-0.20  bar=0.0200  MDE=0.00415  sig=n tost=Y | CTRL1 I=+0.01117
+  k=1: n_ho=  2908  I=+0.00491  CI[+0.00424,+0.00585]  d_hat=-0.45  bar=0.0200  MDE=0.00172  sig=n tost=Y | CTRL1 I=+0.00502
+  k=2: n_ho=  7430  I=+0.00662  CI[+0.00602,+0.00801]  d_hat=-0.30  bar=0.0200  MDE=0.00175  sig=n tost=Y | CTRL1 I=+0.01159
+  k=3: n_ho= 31110  I=-0.00066  CI[-0.00113,-0.00020]  d_hat=-0.25  bar=0.0200  MDE=0.00095  sig=n tost=Y | CTRL1 I=+0.01096
+  D_exp   = -0.00091   (strat_w=+0.00139, pooled=+0.00231)
+  D_ctrl1 = +0.00741   <- size-matched RANDOM strata (small-sample baseline)
+  paired-t EXP vs CTRL1: mean_diff=-0.00274 t=-0.7462379654437086 n=4
+  (legacy C_exp=+0.00096 -- NOT a criterion, see AMENDMENT 1)
+
+--- scheme S_MARKER  (6 arms; NOT a partition -> no C index) ---
+  지않  : n_ho=  5575 B1= 18717  I=+0.02102  CI[+0.02072,+0.02129]  d_hat=-0.45  bar=0.0200  sig=Y tost=n
+  지못  : n_ho=  1126 B1=  4275  I=+0.01129  CI[+0.01118,+0.01144]  d_hat=-0.25  bar=0.0200  sig=n tost=Y
+  안   : n_ho=  1007 B1=  2959  I=+0.00692  CI[+0.00684,+0.00702]  d_hat=-0.40  bar=0.0200  sig=n tost=Y
+  못   : n_ho=   356 B1=  1244  I=+0.00452  CI[+0.00440,+0.00465]  d_hat=-0.25  bar=0.0200  sig=n tost=Y
+  아니  : n_ho=  4982 B1= 17055  I=+0.00256  CI[+0.00250,+0.00275]  d_hat=-0.25  bar=0.0200  sig=n tost=Y
+  없   : n_ho= 22348 B1= 78535  I=+0.00291  CI[+0.00269,+0.00317]  d_hat=-0.20  bar=0.0200  sig=n tost=Y
+
+======================================================================
+strata read           : 18 / 18 pre-registered
+significant (|I|>bar) : 2
+CTRL1 random dirty    : 0  (must be 0)
+NOT-POWERED strata    : 0  (MDE > 0.02)
+all strata TOST pass  : False
+POS fired             : True
+D_exp(S_CLUST)=+0.00387  vs D_ctrl1=+0.00303  | paired-t mean_diff=+0.00277 t=1.015436554275947
+D_exp(S_LEN)=-0.00091  vs D_ctrl1=+0.00741  | paired-t mean_diff=-0.00274 t=-0.7462379654437086
+
+VERDICT: PASS - >=1 stratum carries transferable interaction ABOVE its own permutation pedestal and the 0.02 floor => the pooled zero of H_9304 hid a stratified effect
+wall=722.5s
+[done]

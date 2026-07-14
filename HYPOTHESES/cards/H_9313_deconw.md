@@ -2,7 +2,7 @@
 
 **tier**: ⛔ **INVALID-WRITE** — 합성에 대한 음성이 **아니다**. CPT 가 **극성을 못 배웠다**.
 (engine-native 303M · py 2-production · $0 · 2026-07-14)
-**artifacts**: `state/h9313_deconw/` (PREREG.md · gate_readout.py · ev_*.json)
+**artifacts**: `archive/state/scratch/h9313_deconw/` (PREREG.md · gate_readout.py · ev_*.json)
 **wired**: `cli/corpus.py` `ground`/`ground_lie` · `cli/train.py` `--init <clm>`(#3450) + QUANT-SWALLOW 가드
 
 ## 질문
