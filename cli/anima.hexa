@@ -2023,6 +2023,10 @@ fn anima_consciousness_mode(ckpt: string) {
     // Seeded to the boot feature so tick-0 recon_err equals today's no-decode default (no
     // discontinuity artifact); stepped only under og_live by the real decode below.
     let mut og_prev_gfeat = seed_feat0
+    // H_9337 · immune recall margin captured BEFORE the bind (see :2429). Unset until the daemon
+    // has said anything, so tick 0 falls back to the seed key (parity with the py twin).
+    let mut og_pending_rel = 0.0
+    let mut og_pending_rel_set = false
 
     // ── --opgrip-r3/r4 DETERMINISTIC PERCEPTION TAPE (Fable SPEC 1 → OPGRIP_R4 classed 2×2 dwell tape) ──
     // OG_STIM2 (r4 op-grip upgrade · state/9229_discrete_code/OPGRIP_R4_SPEC.md): the flat 16-line v1 tape is
@@ -2426,7 +2430,15 @@ fn anima_consciousness_mode(ckpt: string) {
         // ── ENGINE-CLI LANE READS (the substrate context for this tick) ──────
         // (1) IMMUNE recall margin → RELEVANCE: smaller abstain-margin = the held memory
         //     is NEARER this context = more relevant. Map margin∈(−thr, …) → rel∈[0,1].
-        let recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        // H_9337 · this read was CONSTANT: the key was the session seed, so rel_lane sat at
+        // 0.6723 for all 720 ticks of the H_9328 rollouts. The store is WRITTEN with g_text
+        // (:3763) and then always asked the same frozen question — writing without reading is
+        // not a loop. The fix is NOT "ask about the last utterance" (measured: also constant,
+        // 1.15 — the store was just handed that exact text, so it always answers "I remember it
+        // perfectly"). The live quantity is the recall margin taken BEFORE the bind: how FAMILIAR
+        // the utterance was when it arrived. Same order as recon_err, same reason — recognition
+        // measured after memorisation is not recognition. convergence chat-py-5.
+        let recall_margin = if og_pending_rel_set { og_pending_rel } else { immune_memory_recall_margin_text(immune, session_seed) }
         let rel_lane = _afs_clip01(1.0 - recall_margin)        // near memory ⇒ high relevance
 
         // (2) CI LANE SCORES (the §ConsciousnessIndex 15-lane read; H_1492 IIT4 substrate).
@@ -3760,6 +3772,9 @@ fn anima_consciousness_mode(ckpt: string) {
             cell_count = post_cells
             grew = true
             // also bind the emit into the immune store (engine's OWN clonal split, p8).
+            // H_9337 · recognition BEFORE memorisation — read on the next tick (:2429).
+            og_pending_rel = immune_memory_recall_margin_text(immune, g_text)
+            og_pending_rel_set = true
             immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
         }
 
