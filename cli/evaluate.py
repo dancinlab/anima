@@ -1897,15 +1897,9 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
-<<<<<<< HEAD
-    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
-    "--ground-probe", "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled",
-    "--valence-audit",
-=======
     "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interaction-lift", "--k-perm", "--kosmos", "--min-occ",
-    "--n-decode", "--n-sampled",
->>>>>>> origin/main
+    "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
     "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
