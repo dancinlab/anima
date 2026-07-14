@@ -2894,7 +2894,78 @@ def _interact_mi(argv):
         print("     %-28s EARNED = %+.5f nats · perm-p = %.4f   %s" % (nm, earned, pv, tag))
     print("     ⇒ M1 살고 M2 죽으면: 말은 장을 밀지만 **게이트가 안 본다**(read-side THEATER 합류).")
     print("        M1 도 죽으면: 주입 자체가 장에 안 닿는다(배선/계기 의심 — 기질 주장 금지).")
+
+    # ── AXIS · 내가 잰 축이 루프가 나르는 축인가 (진단 · 헤드라인 아님) ───────────────
+    # 헤드라인의 A = a_fold8 = penult_fold8(pooled) — 입이 **표상한** 축이다.
+    # 그런데 루프가 물리적으로 나르는 것은 _afs_byte_feature(g_text, 8) — 평균·분산·고바이트·
+    # 공백·숫자·구두점 같은 **8개 바이트-모양 스칼라**다(chat.py:240). 내용은 거기서 이미 버려진다.
+    # 두 축이 직교하면, 나는 **루프가 나르지 않는 축**을 재고 "정보가 없다"고 말한 셈이 된다.
+    #
+    # A′ = penult_fold8(byte_feat8) — 같은 FROZEN reducer(H_9257), 물리적으로 소비되는 입력,
+    # 새 자유도 0. bar 도 추가하지 않는다(진단이므로 verdict 불변).
+    gt = [r.get("gtext_b64") for r in use]
+    if any(g is None for g in gt):
+        print("  ── AXIS: gtext_b64 미기록 ⇒ SKIP (구 trace 포맷)")
+        return 0
+    try:
+        import base64
+        Ap = []
+        for g in gt:
+            s = base64.b64decode(g).decode("utf-8", "surrogateescape")
+            Ap.append(clm.penult_fold8(_im_byte_feat8(s)))
+    except Exception as e:  # pragma: no cover
+        print("  ── AXIS: SKIP (" + str(e) + ")")
+        return 0
+    hAp = _im_h_given_S(Ap, S)
+    i_axes = _im_cmi(A, Ap, S)
+    print("  ── AXIS (진단 · verdict 불변) ──────────────────────────────────")
+    print("     A  = penult_fold8(pooled)     — 입이 표상한 축      H(A|S)  = %.4f nats" % hA)
+    print("     A′ = penult_fold8(byte_feat8) — 루프가 나르는 축    H(A′|S) = %.4f nats" % hAp)
+    print("     I(A;A′|S) = %.4f nats   (두 축이 같은 것을 보는가)" % i_axes)
+    if hAp < hfloor:
+        print("     ⇒ A′ 자체가 죽어 있다 — 루프 입력이 상수. 축 문제 이전에 경로 문제.")
+    elif i_axes < mde:
+        print("     ⇒ ⚠️ 두 축이 **거의 직교**하다. 나는 루프가 나르지 않는 축을 쟀다 —")
+        print("        헤드라인의 '정보 없음'은 **이 축 위에서만** 벌어진 것이다(축 재선택이")
+        print("        아니라, A′ 로 재판독해야 use-claim 이 선다).")
+    else:
+        print("     ⇒ 두 축이 상당히 겹친다 — 헤드라인 축 선택은 방어된다.")
     return 0
+
+
+def _im_byte_feat8(s):
+    """cli/chat.py::_afs_byte_feature(s, 8) 의 판독-측 쌍둥이 — 루프가 실제로 나르는 8 스칼라.
+
+    데몬은 emit 마다 이 8개(평균·분산·고바이트·저바이트·공백·숫자·구두점·짧은바이트 비율)만
+    afield 에 넣는다. 내용은 여기서 소각된다. 판독기가 이 축을 못 보면, '정보가 없다'는 결론은
+    기질이 아니라 **내 축 선택**에 관한 것이 된다. reference-match: chat.py:240 과 1:1."""
+    b = s.encode("utf-8", "surrogateescape")
+    n = len(b)
+    if n == 0:
+        return [0.0] * 8
+    fn = float(n)
+    total = sumsq = 0.0
+    n_hi = n_low = n_sp = n_dig = n_pun = n_lt64 = 0
+    for byte in b:
+        bf = float(byte)
+        total += bf
+        sumsq += bf * bf
+        if byte >= 128:
+            n_hi += 1
+        if byte < 32:
+            n_low += 1
+        if byte == 32:
+            n_sp += 1
+        if 48 <= byte <= 57:
+            n_dig += 1
+        if byte in (33, 44, 46, 58, 59, 63):
+            n_pun += 1
+        if byte < 64:
+            n_lt64 += 1
+    mean = total / fn
+    var = sumsq / fn - mean * mean
+    return [mean / 255.0, var / 65025.0, n_hi / fn, n_low / fn,
+            n_sp / fn, n_dig / fn, n_pun / fn, n_lt64 / fn]
 
 
 _KNOWN_FLAGS = frozenset((
