@@ -1807,7 +1807,29 @@ def _dg_anchor_copy(ctx, anchors, l_min, l_max):
     return -1
 
 
-def clm_decode_grounded(path, seed, gen, anchor_texts, l_min):
+def _mouth_sample_row(row, V, top_k, temp, rng_state):
+    """H_9328 DO-MOUTH — draw from the substrate's OWN posterior instead of rounding it to
+    argmax. temp=1.0 IS the posterior (the one non-arbitrary temperature); the LCG keeps the
+    draw seeded/reproducible. Callers use this ONLY on a step the engine was already going to
+    generate (never on a grounded anchor-copy step, which is the p5 anti-fabrication path)."""
+    k = V if top_k <= 0 or top_k > V else top_k
+    idx = list(range(V))
+    idx.sort(key=lambda i: -float(row[i]))
+    idx = idx[:k]
+    mx = max(float(row[i]) for i in idx)
+    ws = [math.exp((float(row[i]) - mx) / temp) for i in idx]
+    tot = sum(ws)
+    rng_state[0] = (1103515245 * rng_state[0] + 12345) & 0x7FFFFFFF
+    u = (rng_state[0] / 2147483648.0) * tot
+    acc = 0.0
+    for j, i in enumerate(idx):
+        acc += ws[j]
+        if u <= acc:
+            return i
+    return idx[-1]
+
+
+def clm_decode_grounded(path, seed, gen, anchor_texts, l_min, mouth=None):
     """decode.hexa::clm_decode_grounded — G5 anti-fabrication decode over the
     int4-dequant CLMConvMoE (.clm). At each step try an anchor-copy (grounded);
     else CLMConvMoE argmax over the last T=24 ctx bytes (right-aligned, pad-left
@@ -1825,12 +1847,14 @@ def clm_decode_grounded(path, seed, gen, anchor_texts, l_min):
     out = bytearray()
     grounded = 0
     lm = 0
+    # H_9328 DO-MOUTH — mouth=None (default) ⇒ argmax ⇒ BYTE-IDENTICAL to the production path.
+    _rng = [int(mouth["seed_rng"]) & 0x7FFFFFFF] if mouth is not None else None
     for _ in range(gen):
         ctx = seed_b + bytes(out)
         cb = _dg_anchor_copy(ctx, anchors, l_min, T)
         if cb >= 0:
             nb = cb                              # GROUNDED: verbatim anchor copy
-            grounded += 1
+            grounded += 1                        # ← p5 anti-fabrication path · NEVER sampled
         else:
             cl = len(ctx)
             for p in range(T):
@@ -1838,12 +1862,18 @@ def clm_decode_grounded(path, seed, gen, anchor_texts, l_min):
                 tok[p] = float(ctx[si]) if si >= 0 else 32.0
             logits = _fwd_logits(W, tok, T)
             row = logits[T - 1]
-            besti = 0
-            bestv = row[0]
-            for k in range(1, V):
-                if row[k] > bestv:
-                    bestv = row[k]; besti = k
-            nb = besti
+            if mouth is not None and float(mouth["temp"]) > 0.0:
+                # REVEAL: this step the engine was ALREADY going to generate (no anchor
+                # covered it). We only stop ROUNDING its own posterior to argmax.
+                nb = _mouth_sample_row(row, V, int(mouth["top_k"]),
+                                       float(mouth["temp"]), _rng)
+            else:
+                besti = 0
+                bestv = row[0]
+                for k in range(1, V):
+                    if row[k] > bestv:
+                        bestv = row[k]; besti = k
+                nb = besti
             lm += 1
         out.append(nb)
     return {"ok": True, "text": bytes(out).decode('utf-8', 'surrogateescape'),

@@ -508,8 +508,13 @@ def _gen_clm_decode(backend, ctx, anchors, mouth=None):
         a = anchors[n - 1]
         seed = seed + _gen_anchor_text(a)
     if n > 0:
+        # H_9328 · THIS is the daemon's real mouth (anchors are always present in a live
+        # session). Measured: grounded=0 / lm=80 — the anchor-copy never fires at l_min=8,
+        # so every byte falls through to the SAME argmax rounding. `mouth` is threaded in so
+        # the REVEAL lands where the engine actually generates; the anchor-copy step itself
+        # is never sampled (that path is the p5 anti-fabrication guarantee).
         texts = _gen_anchor_texts(anchors)
-        rg = _clm.clm_decode_grounded(ckpt, seed, 80, texts, 8)
+        rg = _clm.clm_decode_grounded(ckpt, seed, 80, texts, 8, mouth)
         if rg["ok"]:
             return str(rg["text"])
         return _gen_null_text(ctx, anchors)

@@ -29,6 +29,7 @@ import os
 import sys
 import math
 import json
+import random
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(_HERE)
@@ -755,6 +756,14 @@ def evaluate_usage():
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate --interact-mi <trace.jsonl> [<trace2.jsonl> ...]")
+    print("      (H_9328 DO-MOUTH · I(A;Y|S) over daemon decision-traces — NO decode, reads only.")
+    print("       A=a_fold8 (H_9257 frozen 8-bucket axis the daemon consumes) · S=stage · Y=score_{t+1} 2-bin.")
+    print("       🚦 V-CEILING FIRST: prints H(A|S) and HARD-STOPS as NOT-POWERED if it is below 3xMDE —")
+    print("       I <= H(A|S) is an identity, so a dead action channel forces I=0 by DEFINITION, not by")
+    print("       measurement. That is exactly how H_9308 died. C1 PERM (within-stratum A shuffle) = the")
+    print("       true-0 null. Generate traces with: ANIMA_TICKS=N ANIMA_EMIT_TEMP=1.0 ANIMA_SAMPLE_SEED=K")
+    print("       ANIMA_DECISION_TRACE=<path> anima-py chat <ckpt>)")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
@@ -1985,9 +1994,157 @@ def xfan_run(argv):
 # otherwise silently ignored — the run completes rc=0 and the result file the caller asked
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
+def _im_rows(paths):
+    """Load decision-trace rows (skip the _meta header). One row per tick."""
+    out = []
+    for p in paths:
+        for line in open(p, "r", encoding="utf-8", errors="surrogateescape"):
+            if not line.strip():
+                continue
+            d = json.loads(line)
+            if d.get("_meta"):
+                continue
+            d["_src"] = p
+            out.append(d)
+    return out
+
+
+def _im_H(xs):
+    """Plug-in entropy (nats) of a discrete sample."""
+    n = len(xs)
+    if n == 0:
+        return 0.0
+    c = {}
+    for x in xs:
+        c[x] = c.get(x, 0) + 1
+    h = 0.0
+    for v in c.values():
+        p = float(v) / n
+        h -= p * math.log(p)
+    return h
+
+
+def _im_cmi(A, Y, S):
+    """I(A;Y|S) = Σ_s p(s)·[H(A|s) + H(Y|s) − H(A,Y|s)], Miller–Madow corrected per stratum.
+    MM adds (support−1)/(2n) — the plug-in estimator is biased UP, and that bias is exactly
+    what manufactures a false positive on a thin channel (convergence decode-py-2)."""
+    n = len(S)
+    if n == 0:
+        return 0.0
+    strata = {}
+    for i in range(n):
+        strata.setdefault(S[i], []).append(i)
+    tot = 0.0
+    for s, idx in strata.items():
+        m = len(idx)
+        a = [A[i] for i in idx]
+        y = [Y[i] for i in idx]
+        ay = [(A[i], Y[i]) for i in idx]
+        ha, hy, hay = _im_H(a), _im_H(y), _im_H(ay)
+        mm = (len(set(a)) - 1 + len(set(y)) - 1 - (len(set(ay)) - 1)) / (2.0 * m) if m > 0 else 0.0
+        tot += (float(m) / n) * max(0.0, ha + hy - hay + mm)
+    return tot
+
+
+def _im_hA_given_S(A, S):
+    """V-CEILING: H(A|S). I <= this by identity — if it is ~0 the DV is UNDEFINED on this
+    log, not zero-by-measurement. That distinction is what H_9308 got wrong."""
+    n = len(S)
+    if n == 0:
+        return 0.0
+    strata = {}
+    for i in range(n):
+        strata.setdefault(S[i], []).append(i)
+    return sum((float(len(idx)) / n) * _im_H([A[i] for i in idx]) for idx in strata.values())
+
+
+def _interact_mi(argv):
+    """H_9328 — I(A;Y|S) over daemon decision traces. Reads only; no decode.
+
+    A = a_fold8 (the H_9257 FROZEN 8-bucket axis the daemon actually consumes on emit)
+    S = stage (the gate's own conditioning; conditioning on it makes A ⟂ everything-else|S
+        by construction, so the S-lite omitted-confounder false positive cannot recur)
+    Y = score_{t+1} binarised at a FROZEN median passed in via --seed <median×1e6>, or the
+        in-sample median when absent (reported as such — an in-sample split is a diagnostic,
+        never a headline).
+    """
+    paths = []
+    perm = 200
+    mde = 0.010
+    hfloor = 0.030
+    for a in argv:
+        if a.startswith("--"):
+            continue
+        paths.append(a)
+    rows = _im_rows(paths)
+    emits = [r for r in rows if r.get("emit") and int(r.get("a_fold8", -1)) >= 0]
+    print("═══ H_9328 INTERACT-MI · I(A;Y|S) ═══")
+    print("  traces=%d  ticks=%d  emit-ticks(with A)=%d" % (len(paths), len(rows), len(emits)))
+    if len(emits) < 30:
+        print("  ⇒ NOT-POWERED (emit-ticks < 30) — 수집 증량 필요")
+        return 0
+    # Y = next-tick score, within the same trace file
+    by_src = {}
+    for r in rows:
+        by_src.setdefault(r["_src"], []).append(r)
+    nxt = {}
+    for src, rs in by_src.items():
+        rs.sort(key=lambda r: int(r["tick"]))
+        for i in range(len(rs) - 1):
+            nxt[(src, int(rs[i]["tick"]))] = float(rs[i + 1]["score"])
+    use = [r for r in emits if (r["_src"], int(r["tick"])) in nxt]
+    if len(use) < 30:
+        print("  ⇒ NOT-POWERED (next-tick score 있는 emit-tick < 30)")
+        return 0
+    ys = sorted(nxt[(r["_src"], int(r["tick"]))] for r in use)
+    med = ys[len(ys) // 2]
+    A = [int(r["a_fold8"]) for r in use]
+    S = [int(r["stage"]) for r in use]
+    Y = [1 if nxt[(r["_src"], int(r["tick"]))] > med else 0 for r in use]
+    # ── V-CEILING (BLOCKING · before any I is read) ────────────────────────────────
+    hA = _im_hA_given_S(A, S)
+    print("  🚦 V-CEILING  H(A|S) = %.4f nats   (floor %.3f = 3×MDE)" % (hA, hfloor))
+    if hA < hfloor:
+        print("  ⇒ NOT-POWERED — 행동 채널이 죽어 있다. I 는 정의상 0 이지 측정된 0 이 아니다.")
+        print("     (H_9308 이 정확히 여기서 죽었다 · convergence interact-mi-py-1)")
+        return 0
+    I = _im_cmi(A, Y, S)
+    # ── C1 PERM (true value 0): shuffle A WITHIN each stratum — kills A–Y, keeps marginals
+    rnd = random.Random(20260714)
+    null = []
+    for _ in range(perm):
+        Ap = list(A)
+        strata = {}
+        for i, s in enumerate(S):
+            strata.setdefault(s, []).append(i)
+        for idx in strata.values():
+            vals = [Ap[i] for i in idx]
+            rnd.shuffle(vals)
+            for j, i in enumerate(idx):
+                Ap[i] = vals[j]
+        null.append(_im_cmi(Ap, Y, S))
+    null.sort()
+    p = (sum(1 for v in null if v >= I) + 1.0) / (perm + 1.0)
+    nm = sum(null) / len(null)
+    nsd = (sum((v - nm) ** 2 for v in null) / max(1, len(null) - 1)) ** 0.5
+    hi = null[int(0.975 * len(null))]
+    print("  EXP   I(A;Y|S) = %.5f nats" % I)
+    print("  C1 PERM (참값 0)  mean=%.5f  sd=%.5f  97.5pct=%.5f   perm-p = %.4f" % (nm, nsd, hi, p))
+    print("  Y-bin: in-sample median %.5f (진단용 · 헤드라인 아님)  n=%d" % (med, len(use)))
+    eff = I - nm                       # bias-corrected effect
+    print("  EARNED = I − null_mean = %.5f nats   (MDE %.3f · TOST ±%.3f)" % (eff, mde, mde))
+    if eff >= mde and p < 0.005:
+        print("  ⇒ 🟢 SIGNAL — 단 C2 CARRIER-SWAP 없이는 PASS 아님(내용맹 배제 불가)")
+    elif abs(eff) <= mde:
+        print("  ⇒ TOST 등가역 — 폐루프가 DATA-ADDITIVE 방향 (n·검정력 명시 필요)")
+    else:
+        print("  ⇒ 미달 · 판정 보류")
+    return 0
+
+
 _KNOWN_FLAGS = frozenset((
     "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--seeds", "--selftest-rho-cells", "--slot-off",
@@ -2019,6 +2176,11 @@ def main(argv):
     if _bad:
         print(_bad, file=sys.stderr, flush=True)
         return 2
+    # H_9328 DO-MOUTH · I(A;Y|S) over decision traces (NO decode — reads traces the daemon
+    # already wrote). V-CEILING FIRST: I <= H(A|S) is an identity, so a dead action channel
+    # forces I=0 by definition, not by measurement (that is exactly how H_9308 died).
+    if len(argv) >= 2 and argv[0] == "--interact-mi":
+        return _interact_mi(argv[1:])
     # H_9212 ③ per-cell dispatch wiring self-test (torch-free · NO decode · internal subprocess)
     if len(argv) >= 1 and argv[0] == "--selftest-rho-cells":
         cok, cchecks = _selftest_rho_cells()
