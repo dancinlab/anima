@@ -163,13 +163,65 @@ def _stratified_shuffle_B(B, T, rng):
     return bs
 
 
-def earned(items, heldout, rng, k_perm):
+
+def _parametric_null(items, heldout, rng):
+    """THE NULL. Resample T from the FITTED ADDITIVE MODEL (alpha + gamma): interaction is exactly
+    zero in the null world, while the marginal prediction structure is kept intact.
+
+    Why the shuffle null is wrong. Permuting B destroys the A-B pairing but ALSO the A-marginal
+    geometry the fit sees. So when alpha_A is noise -- stems carrying no real latent polarity -- the
+    OBSERVED arm suffers a pathology (a delta fitted on garbage alpha makes held-out WORSE) that the
+    shuffle null does not reproduce, and the difference leaks straight into EARNED. Measured: on a
+    formal-symbolic corpus whose stems were T-irrelevant, shuffle-nulled EARNED came back at -1.000
+    nats -- a SIGN FLIP, i.e. an artifact, not a finding (H_9323). A parametric null regenerates T
+    from alpha-hat + gamma-hat over the SAME stems, so both arms carry the pathology and it cancels.
+
+    This null is strictly harder to beat, and that is the point: it grants the additive model
+    everything it can explain and asks only whether anything is left over."""
+    A, B, T = items[:, 0], items[:, 1], items[:, 2]
+    tr = ~heldout
+    nA = int(A.max()) + 1
+    eps = 1.0
+    pos = np.zeros(nA); tot = np.zeros(nA)
+    m = tr & (B == 0)
+    np.add.at(pos, A[m], T[m].astype(np.float64)); np.add.at(tot, A[m], 1.0)
+    pA = (pos + eps) / (tot + 2 * eps)
+    alpha = np.log(pA / (1 - pA))
+
+    def _g(sel):
+        if sel.sum() == 0:
+            return 0.0
+        p = (T[sel].sum() + eps) / (sel.sum() + 2 * eps)
+        return float(np.log(p / (1 - p)))
+    base = _g(tr)
+    g0, g1 = _g(tr & (B == 0)) - base, _g(tr & (B == 1)) - base
+
+    z = alpha[A] + np.where(B == 1, g1, g0)      # additive world; interaction exactly 0
+    p = np.clip(1.0 / (1.0 + np.exp(-np.clip(z, -12, 12))), 1e-9, 1 - 1e-9)
+    return (rng.random(len(T)) < p).astype(np.int64)
+
+
+def earned(items, heldout, rng, k_perm, null="parametric"):
+    """EARNED = observed (CE_add - CE_op) minus the null-world mean of the same quantity.
+
+    null="parametric" (DEFAULT) = additive parametric bootstrap (see _parametric_null): every
+    marginal pathology survives in BOTH arms and cancels.
+    null="shuffle" = the legacy T-stratified permutation, kept ONLY to reproduce the already-shipped
+    H_9304/9316/9317/9318 numbers byte-for-byte (reference-match)."""
     ce_a, ce_o, delta = fit_and_score(items, heldout)
     obs = ce_a - ce_o
     B, T = items[:, 1], items[:, 2]
-    null = np.asarray([(lambda r: r[0] - r[1])(fit_and_score(items, heldout,
-                       b_vec=_stratified_shuffle_B(B, T, rng))[:2]) for _ in range(k_perm)])
-    return obs - null.mean(), float(null.mean()), float(null.std(ddof=1)), null, delta
+    vals = []
+    for _ in range(k_perm):
+        if null == "shuffle":
+            r = fit_and_score(items, heldout, b_vec=_stratified_shuffle_B(B, T, rng))
+        else:
+            it2 = items.copy()
+            it2[:, 2] = _parametric_null(items, heldout, rng)
+            r = fit_and_score(it2, heldout)
+        vals.append(r[0] - r[1])
+    nullv = np.asarray(vals)
+    return obs - nullv.mean(), float(nullv.mean()), float(nullv.std(ddof=1)), nullv, delta
 
 
 def make_heldout(items, rng, frac=0.30):
@@ -227,6 +279,7 @@ def earned_run(argv):
     seed = evaluate_intval(argv, "--seed", 9304)
     seeds_s = evaluate_strval(argv, "--seeds", "")
     seeds = [int(x) for x in seeds_s.split(",") if x.strip()] if seeds_s else [seed, seed + 1, seed + 2]
+    null = evaluate_strval(argv, "--null", "parametric")   # "shuffle" only to reproduce shipped numbers
     ci = CI_DEFAULT
     rng = np.random.default_rng(seed)
 
@@ -234,9 +287,10 @@ def earned_run(argv):
     rows = load_corpus(path)
     script = _detect_script(rows)
     res = {"corpus": path, "corpus_sha256": sha, "rows": len(rows), "script": script,
-           "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed}
+           "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed, "null": null}
 
     print("=== anima evaluate --earned — corpus-level operator instrument (engine-native) ===")
+    print("null:   " + null + ("  (additive parametric bootstrap — the marginal pathology cancels in both arms)" if null == "parametric" else "  ⚠️ LEGACY shuffle null — reference-match only; it leaks a marginal pathology into EARNED (H_9323)"))
     print("corpus: " + path + "  sha=" + sha[:16] + "…  rows=" + str(len(rows)) +
           "  script=" + script)
     print("        B-rate=%.3f   (B and T are corpus labels; T is OUTSIDE the token stream)"
@@ -246,7 +300,7 @@ def earned_run(argv):
     # ---- G-ALIVE (positive control) — a blind instrument proves nothing -------------------
     sx = synth(rng, 200, 60000, "xor")
     ho_x, _ = make_heldout(sx, rng)
-    e_x, _, _, _, d_x = earned(sx, ho_x, rng, min(200, k_perm))
+    e_x, _, _, _, d_x = earned(sx, ho_x, rng, min(200, k_perm), null)
     alive = e_x >= G_ALIVE_BAR
     print("G-ALIVE     synthetic XOR (planted operator)   EARNED=%+.5f  delta=%+.2f   bar>=+%.2f  %s"
           % (e_x, d_x, G_ALIVE_BAR, "PASS" if alive else "FAIL — THE INSTRUMENT IS BLIND"))
@@ -254,7 +308,7 @@ def earned_run(argv):
     # ---- G-PEDESTAL (zero-truth) — this is what caught two estimand defects ---------------
     sa = synth(rng, 200, 60000, "additive")
     ho_a, _ = make_heldout(sa, rng)
-    e_a, _, _, _, d_a = earned(sa, ho_a, rng, min(200, k_perm))
+    e_a, _, _, _, d_a = earned(sa, ho_a, rng, min(200, k_perm), null)
     ped = abs(e_a) <= DELTA_EQ
     print("G-PEDESTAL  synthetic ADDITIVE (truth = 0)     EARNED=%+.5f  delta=%+.2f   |.|<=%.2f   %s"
           % (e_a, d_a, DELTA_EQ, "PASS" if ped else "FAIL — THE INSTRUMENT IS BIASED"))
@@ -274,7 +328,7 @@ def earned_run(argv):
     per = []
     for sd_i in seeds:
         ho_i, nst_i = make_heldout(items, np.random.default_rng(sd_i))
-        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm)
+        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm, null)
         per.append({"seed": sd_i, "earned": e_i, "delta": d_i, "cells": int(ho_i.sum()),
                     "sd_null": sdn_i, "null_mean": nm_i, "null": null_i})
     e_vals = np.asarray([p["earned"] for p in per])
