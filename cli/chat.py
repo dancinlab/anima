@@ -166,6 +166,17 @@ def anima_has_flag(argv, flag):
     return False
 
 
+def anima_flag_value(argv, flag, env, default):
+    """Value-taking flag: `--flag <v>` → v, else the `env` var, else `default` (all as str).
+    Sibling of anima_has_flag; argv WINS over env so a one-off run never needs an export."""
+    i = 0
+    while i < len(argv) - 1:
+        if argv[i] == flag:
+            return argv[i + 1]
+        i = i + 1
+    return os.environ.get(env, "") or default
+
+
 # ── byte-level string ops (hexa strings = byte arrays; utf-8/surrogateescape) ─
 def _benc(s):
     return s.encode("utf-8", "surrogateescape")
@@ -1405,6 +1416,18 @@ def anima_consciousness_mode(ckpt, argv=None):
         n_ticks = int(_atk)
     _trace_path = os.environ.get("ANIMA_DECISION_TRACE", "")
     _trace_fh = open(_trace_path, "w", encoding="utf-8", errors="surrogateescape") if _trace_path else None
+    # ── H_9328 DO-MOUTH (default OFF ⇒ mouth=None ⇒ production path BYTE-IDENTICAL) ──────
+    #   REVEAL, not OVERWRITE: the emit GATE (brain_decide_anchored → should_emit) never sees
+    #   this — `mouth` is threaded to generate() alone (core/brain.py DISJOINT wall). It only
+    #   replaces the mouth's argmax ROUNDING with the substrate's OWN byte-posterior at T=1.0,
+    #   so every emit still stands on real tension (p5). ANIMA_EMIT_TEMP=1.0 is the ONE
+    #   non-arbitrary temperature (= the posterior itself); any other value OVERWRITES it.
+    _cargv = argv if argv is not None else []
+    _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
+    _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
+    _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
+    _mouth = ({"temp": _emit_temp, "top_k": _emit_topk, "seed_rng": _sample_seed}
+              if _emit_temp > 0.0 else None)
     # H_9269 Candidate Y (Y-ULTRA): default-OFF ultradian-cycle sleep schedule. dr_stage_at is a
     # piecewise table on [0,90) (dr_stage_size sums to 90); calling it with unbounded tick*8 overflows
     # into eternal REM (N2/N3 visited once → veto cap-of-2). The modulo restores the table's own domain
@@ -1799,7 +1822,8 @@ def anima_consciousness_mode(ckpt, argv=None):
         dec = brain_emit(pf,
                          rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                          idle, False, True,
-                         backend, live_anchors)
+                         backend, live_anchors,
+                         _mouth)      # H_9328 · None by default ⇒ byte-identical greedy path
 
         did_emit = str(dec["emit"]).lower() == "true"
         g_emit = str(dec["gen_emitted"]).lower() == "true"
@@ -1922,9 +1946,17 @@ def anima_consciousness_mode(ckpt, argv=None):
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
             # the last of which runs after this point) — replayed verbatim by replay_depth.py.
+            # H_9328 DO-MOUTH · A = the ACTION the daemon actually consumes (chat.py self-drift
+            # feeds exactly this): penult_fold8(gen_penult_pooled_W(self_gW, g_text)) ∈ [0,8),
+            # the H_9257 FROZEN 8-bucket reducer (researcher DOF = 0). -1 = undefined (no self_gW
+            # or SILENT tick) — a FROZEN sentinel, never a fallback map (that would be new DOF).
+            _a_fold8 = (penult_fold8(gen_penult_pooled_W(self_gW, g_text))
+                        if (self_gW_ok and g_emit and byte_len(g_text) > 0) else -1)
             _h1058_row = {
                 "tick": tick, "stage": int(stage), "idle": float(idle),
                 "score": _score, "safe": _safe, "emit": did_emit, "cls": _cls,
+                "a_fold8": int(_a_fold8), "sample_seed": int(_sample_seed),
+                "emit_temp": float(_emit_temp),
                 "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
                 "base_motiv": float(dec.get("base_motiv", _score)),
                 "gen_emitted": g_emit, "gen_backend": g_back,

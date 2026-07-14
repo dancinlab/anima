@@ -111,3 +111,32 @@ V-CEILING **v1 은 INVALID** 였다: A 를 `sha(g_text)` 로 대리했더니 5 s
   실험에 대한 사실이 아니라 **anima 에 대한 발견**이다.
 - 동결 A-map(8버킷)이 정보가 사는 축을 뭉갤 수 있다 ⇒ FAIL 은 **"이 판독기에 대한 FAIL"**
   이지 보편 음성이 아니다 (`a_scale_honest_scope`).
+
+
+## 🔌 WIRED — live on `core/` (2026-07-14 · `a_verified_must_wire`)
+
+카드는 main 에 있었지만 **엔진 코드는 커밋조차 안 된 채 워크트리에 방치**돼 있었다(`wire-to-prod`
+위반: "구현됨·미배선"). 배선 + 실측 인증하고 착륙:
+
+- `core/decode.py` `_mouth_sample_row` + `clm_decode_grounded(..., mouth=None)` — **anchor-copy
+  스텝은 절대 샘플링하지 않는다**(그 경로가 p5 반-날조 보증). 엔진이 이미 생성하려던 스텝의
+  **argmax 반올림만** 걷어낸다 = REVEAL, not OVERWRITE.
+- `core/generator.py` `_gen_clm_decode` → mouth 스레딩 (실측 grounded=0/lm=80 ⇒ 라이브 세션의
+  진짜 입은 이 경로).
+- `cli/chat.py` — emit **게이트**(`brain_decide_anchored`→`should_emit`)는 mouth 를 **보지 않는다**
+  (DISJOINT · `a_substrate_disjoint`). 긴장이 정하는 emit/silence 는 그대로.
+- CLI = `anima-py chat <ckpt> [--emit-temp T] [--emit-topk K] [--sample-seed S]`
+  (argv > ENV > default 3단 · default OFF).
+
+### 착륙 게이트 (실측 · 소형 ckpt `clm_d768_e2l1.clm`)
+
+| 게이트 | 내용 | 결과 |
+|---|---|---|
+| **G-PARITY** | default-OFF 가 production 과 byte-identical | **PASS** sha `664cd601a4ac…` 3-way 동일 |
+| **G-LIVE** | mouth ON 이 실제로 스트림을 바꾼다 (dead code 아님) | **PASS** |
+| **G-DET** | 같은 seed → 같은 draw (재현성) | **PASS** |
+| **G-SEED** | 다른 seed → 다른 draw (RNG live) | **PASS** |
+| **G-FLAG** | argv > ENV > default 3단 + 설치된 `anima-py` help 에 노출 | **PASS** |
+
+착륙 중 발견·수정: `anima_flag_value` 가 **죽은 코드**였다(정의만 있고 호출 0, docstring 은 존재하지
+않는 플래그를 약속) ⇒ 약속된 플래그를 **실배선**하고 help 에 lockstep 반영.
