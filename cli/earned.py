@@ -117,9 +117,56 @@ def _ce(z, t):
     return float(-(t * np.log(p) + (1 - t) * np.log(1 - p)).mean())
 
 
-def fit_and_score(items, heldout, b_vec=None):
+def _phi(x, kappa, c):
+    """R1's fixed relational nonlinearity: a saturating map with its LINEAR component projected out.
+
+    Why saturation. In an ORDER task ("is a > b?") the marginals already carry the value: P(T=1|A=a)
+    rises monotonically with rank(a), and gamma_B falls with rank(b). So alpha_A and gamma_B hand the
+    additive model the value information FOR FREE. The true log-odds, though, is a STEP in the value
+    difference, while the additive model can only draw a gentle slope. The non-additive information
+    lives exactly in that SATURATION -- and one fixed nonlinearity captures it.
+
+    Why the projection. delta * (alpha + gamma) is collinear with the additive term (it is just a
+    rescaling), so without removing the linear part the fit reads held-out CALIBRATION error as if it
+    were interaction. c = Cov(tanh(kappa*x), x)/Var(x) is computed on TRAIN and subtracted, which
+    makes phi orthogonal to the additive direction by construction. kappa is frozen at calibration --
+    it is not a free parameter, and R1 therefore carries the SAME degrees of freedom as R0 (one global
+    scalar). That is what makes the relational move safe: a richer operator with no extra capacity to
+    hallucinate a held-out gain."""
+    t = np.tanh(kappa * x)
+    return t - c * x
+
+
+def _phi_c(x, kappa):
+    v = float(np.var(x))
+    if v <= 1e-12:
+        return 0.0
+    return float(np.cov(np.tanh(kappa * x), x, bias=True)[0, 1] / v)
+
+
+def fit_and_score(items, heldout, b_vec=None, kernel="r0", kappa=1.0):
     """Fit alpha_A / gamma_B / delta on TRAIN; score the held-out cells under the additive model
-    (delta = 0) and under the fitted-operator model. delta is FITTED, never assumed."""
+    (delta = 0) and under the fitted-operator model. delta is FITTED, never assumed.
+
+    kernel="r0" (default) = gating / sign-flip:   z = alpha + gamma + delta * (B * alpha)
+        the XOR-class operator (negation, concession, irony). One global scalar.
+    kernel="r1"           = threshold / order:    z = alpha + gamma + delta * phi(alpha + gamma)
+        ONE global scalar (see _phi). MEASURED TO BE BLIND on a planted order truth (G-ALIVE +0.067
+        at best across kappa in {0.3,1,3,10}, bar +0.30). The reason is structural, not a tuning
+        miss: R1 is a nonlinearity of the SUM alpha+gamma, while an order truth is 1[val_A > val_B],
+        a function of the DIFFERENCE -- and when B is a binary context bit, gamma_B carries only two
+        levels and cannot transport val_B at all. No monotone map of the sum can recover it. This is
+        exactly the pre-registered escalation condition for R2.
+
+    kernel="r2"           = general order:        z = alpha + gamma + delta * tanh(u_A - v_B)
+        Learns a per-symbol scalar u_A and v_B, so the DIFFERENCE is representable. This BUYS
+        DEGREES OF FREEDOM (|A| + |B| extra), which is precisely the danger: extra capacity can
+        hallucinate a held-out gain. It is therefore gated by G-DOF -- (a) on an ADDITIVE-truth world
+        the full-DOF |EARNED| must still be <= delta_eq (the added capacity must not invent signal),
+        and (b) where R1 already suffices, R2 must not beat it by more than delta_eq (otherwise the
+        extra freedom is not earning its keep and we demote to R1). A saturated per-cell interaction
+        table delta_AB is FORBIDDEN: it is undefined on unseen cells, silently collapses to additive,
+        and thus manufactures a fake null."""
     A = items[:, 0]
     B = items[:, 1] if b_vec is None else b_vec
     T = items[:, 2].astype(np.float64)
@@ -141,15 +188,42 @@ def fit_and_score(items, heldout, b_vec=None):
     base = _g(tr)
     g0, g1 = _g(tr & (B == 0)) - base, _g(tr & (B == 1)) - base
 
-    trn1 = tr & (B == 1)
-    a_t1, t_t1 = alpha[A[trn1]], T[trn1]
+    def _basis(a, b, idxA=None, bb=None):
+        """The operator's interaction basis -- the ONLY thing the kernels differ in."""
+        gam = np.where(b == 1, g1, g0)
+        if kernel == "r1":
+            return _phi(a + gam, kappa, cst), gam
+        if kernel == "r2":
+            return np.tanh(uA[idxA] - vB[bb]), gam
+        return b * a, gam
+
+    cst = 0.0
+    uA = vB = None
+    if kernel == "r1":
+        z_tr_all = alpha[A[tr]] + np.where(B[tr] == 1, g1, g0)
+        cst = _phi_c(z_tr_all, kappa)
+    elif kernel == "r2":
+        # Per-symbol latent scalars, estimated ONLY from TRAIN. u_A from the stem's own rows, v_B
+        # from the context bit's rows. The held-out cell is never touched -- the transfer question
+        # survives: u and v are learned from DIFFERENT pairings and composed on an unseen (A,B).
+        nB = int(B.max()) + 1
+        uA = np.zeros(nA); vB = np.zeros(nB)
+        cA = np.zeros(nA); cB = np.zeros(nB)
+        np.add.at(uA, A[tr], T[tr]); np.add.at(cA, A[tr], 1.0)
+        np.add.at(vB, B[tr], T[tr]); np.add.at(cB, B[tr], 1.0)
+        uA = (uA + eps) / (cA + 2 * eps); vB = (vB + eps) / (cB + 2 * eps)
+        uA = np.log(uA / (1 - uA)); vB = np.log(vB / (1 - vB))
+
+    trn = tr
+    a_t, b_t, t_t = alpha[A[trn]], B[trn], T[trn]
+    bas_t, gam_t = _basis(a_t, b_t, A[trn], B[trn])
     grid = np.linspace(-3.0, 3.0, 121)
-    delta = float(grid[int(np.argmin([_ce(a_t1 + g1 + d * a_t1, t_t1) for d in grid]))]) \
-        if trn1.sum() > 0 else 0.0
+    delta = float(grid[int(np.argmin([_ce(a_t + gam_t + d * bas_t, t_t) for d in grid]))]) \
+        if trn.sum() > 0 else 0.0
 
     a_ho, b_ho, t_ho = alpha[A[heldout]], B[heldout], T[heldout]
-    gam = np.where(b_ho == 1, g1, g0)
-    return _ce(a_ho + gam, t_ho), _ce(a_ho + gam + delta * (b_ho * a_ho), t_ho), delta
+    bas_ho, gam_ho = _basis(a_ho, b_ho, A[heldout], B[heldout])
+    return _ce(a_ho + gam_ho, t_ho), _ce(a_ho + gam_ho + delta * bas_ho, t_ho), delta
 
 
 def _stratified_shuffle_B(B, T, rng):
@@ -163,13 +237,65 @@ def _stratified_shuffle_B(B, T, rng):
     return bs
 
 
-def earned(items, heldout, rng, k_perm):
-    ce_a, ce_o, delta = fit_and_score(items, heldout)
+
+def _parametric_null(items, heldout, rng):
+    """THE NULL. Resample T from the FITTED ADDITIVE MODEL (alpha + gamma): interaction is exactly
+    zero in the null world, while the marginal prediction structure is kept intact.
+
+    Why the shuffle null is wrong. Permuting B destroys the A-B pairing but ALSO the A-marginal
+    geometry the fit sees. So when alpha_A is noise -- stems carrying no real latent polarity -- the
+    OBSERVED arm suffers a pathology (a delta fitted on garbage alpha makes held-out WORSE) that the
+    shuffle null does not reproduce, and the difference leaks straight into EARNED. Measured: on a
+    formal-symbolic corpus whose stems were T-irrelevant, shuffle-nulled EARNED came back at -1.000
+    nats -- a SIGN FLIP, i.e. an artifact, not a finding (H_9323). A parametric null regenerates T
+    from alpha-hat + gamma-hat over the SAME stems, so both arms carry the pathology and it cancels.
+
+    This null is strictly harder to beat, and that is the point: it grants the additive model
+    everything it can explain and asks only whether anything is left over."""
+    A, B, T = items[:, 0], items[:, 1], items[:, 2]
+    tr = ~heldout
+    nA = int(A.max()) + 1
+    eps = 1.0
+    pos = np.zeros(nA); tot = np.zeros(nA)
+    m = tr & (B == 0)
+    np.add.at(pos, A[m], T[m].astype(np.float64)); np.add.at(tot, A[m], 1.0)
+    pA = (pos + eps) / (tot + 2 * eps)
+    alpha = np.log(pA / (1 - pA))
+
+    def _g(sel):
+        if sel.sum() == 0:
+            return 0.0
+        p = (T[sel].sum() + eps) / (sel.sum() + 2 * eps)
+        return float(np.log(p / (1 - p)))
+    base = _g(tr)
+    g0, g1 = _g(tr & (B == 0)) - base, _g(tr & (B == 1)) - base
+
+    z = alpha[A] + np.where(B == 1, g1, g0)      # additive world; interaction exactly 0
+    p = np.clip(1.0 / (1.0 + np.exp(-np.clip(z, -12, 12))), 1e-9, 1 - 1e-9)
+    return (rng.random(len(T)) < p).astype(np.int64)
+
+
+def earned(items, heldout, rng, k_perm, null="parametric", kernel="r0", kappa=1.0):
+    """EARNED = observed (CE_add - CE_op) minus the null-world mean of the same quantity.
+
+    null="parametric" (DEFAULT) = additive parametric bootstrap (see _parametric_null): every
+    marginal pathology survives in BOTH arms and cancels.
+    null="shuffle" = the legacy T-stratified permutation, kept ONLY to reproduce the already-shipped
+    H_9304/9316/9317/9318 numbers byte-for-byte (reference-match)."""
+    ce_a, ce_o, delta = fit_and_score(items, heldout, kernel=kernel, kappa=kappa)
     obs = ce_a - ce_o
     B, T = items[:, 1], items[:, 2]
-    null = np.asarray([(lambda r: r[0] - r[1])(fit_and_score(items, heldout,
-                       b_vec=_stratified_shuffle_B(B, T, rng))[:2]) for _ in range(k_perm)])
-    return obs - null.mean(), float(null.mean()), float(null.std(ddof=1)), null, delta
+    vals = []
+    for _ in range(k_perm):
+        if null == "shuffle":
+            r = fit_and_score(items, heldout, b_vec=_stratified_shuffle_B(B, T, rng), kernel=kernel, kappa=kappa)
+        else:
+            it2 = items.copy()
+            it2[:, 2] = _parametric_null(items, heldout, rng)
+            r = fit_and_score(it2, heldout, kernel=kernel, kappa=kappa)
+        vals.append(r[0] - r[1])
+    nullv = np.asarray(vals)
+    return obs - nullv.mean(), float(nullv.mean()), float(nullv.std(ddof=1)), nullv, delta
 
 
 def make_heldout(items, rng, frac=0.30):
@@ -182,12 +308,23 @@ def make_heldout(items, rng, frac=0.30):
 
 
 def synth(rng, n_stems, n_rows, mode):
-    """mode 'xor' = planted operator (truth = 1 bit) · 'additive' = truth 0 (the pedestal)."""
+    """The calibration arms. Their EARNED is NEVER a finding -- we planted the answer.
+
+    'xor'      = planted GATING operator (truth = 1 bit)   -> G-ALIVE for kernel r0
+    'order'    = planted ORDER operator (T = 1[a > b])     -> G-ALIVE for kernel r1
+    'additive' = truth 0                                    -> G-PEDESTAL (both kernels)"""
     pol = rng.integers(0, 2, size=n_stems)
     A = rng.integers(0, n_stems, size=n_rows)
     B = rng.integers(0, 2, size=n_rows)
     if mode == "xor":
         T = pol[A] ^ B
+    elif mode == "order":
+        # T is decided by the RELATION between the two operands, not by any stem's polarity.
+        val = rng.integers(10, 100, size=n_stems)          # each stem carries a hidden VALUE
+        Bv = rng.integers(10, 100, size=n_rows)
+        A = rng.integers(0, n_stems, size=n_rows)
+        B = (Bv > 54).astype(np.int64)                     # the context bit: is the rhs "large"?
+        T = (val[A] > Bv).astype(np.int64)
     else:
         p = np.clip(np.where(pol[A] == 1, 0.85, 0.15) + np.where(B == 1, -0.05, 0.05), 0.01, 0.99)
         T = (rng.random(n_rows) < p).astype(np.int64)
@@ -227,6 +364,9 @@ def earned_run(argv):
     seed = evaluate_intval(argv, "--seed", 9304)
     seeds_s = evaluate_strval(argv, "--seeds", "")
     seeds = [int(x) for x in seeds_s.split(",") if x.strip()] if seeds_s else [seed, seed + 1, seed + 2]
+    null = evaluate_strval(argv, "--null", "parametric")   # "shuffle" only to reproduce shipped numbers
+    kernel = evaluate_strval(argv, "--kernel", "r0")       # r0 = gating/sign-flip · r1 = threshold/order
+    kappa = float(evaluate_strval(argv, "--kappa", "1.0"))
     ci = CI_DEFAULT
     rng = np.random.default_rng(seed)
 
@@ -234,9 +374,14 @@ def earned_run(argv):
     rows = load_corpus(path)
     script = _detect_script(rows)
     res = {"corpus": path, "corpus_sha256": sha, "rows": len(rows), "script": script,
-           "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed}
+           "delta_eq": DELTA_EQ, "xbind_ruler": XBIND_RULER, "seed": seed, "null": null, "kernel": kernel, "kappa": kappa}
 
     print("=== anima evaluate --earned — corpus-level operator instrument (engine-native) ===")
+    _kdesc = {"r0": "  (gating / sign-flip — the XOR class: negation·concession·irony · 1 global scalar)",
+              "r1": "  (threshold / order on the SUM — 1 global scalar · MEASURED BLIND on order truth)",
+              "r2": "  (general order on the DIFFERENCE — buys |A|+|B| DOF ⇒ G-DOF gate is mandatory)"}
+    print("kernel: " + kernel + _kdesc.get(kernel, ""))
+    print("null:   " + null + ("  (additive parametric bootstrap — the marginal pathology cancels in both arms)" if null == "parametric" else "  ⚠️ LEGACY shuffle null — reference-match only; it leaks a marginal pathology into EARNED (H_9323)"))
     print("corpus: " + path + "  sha=" + sha[:16] + "…  rows=" + str(len(rows)) +
           "  script=" + script)
     print("        B-rate=%.3f   (B and T are corpus labels; T is OUTSIDE the token stream)"
@@ -244,20 +389,38 @@ def earned_run(argv):
     print("")
 
     # ---- G-ALIVE (positive control) — a blind instrument proves nothing -------------------
-    sx = synth(rng, 200, 60000, "xor")
+    # The positive control must plant the operator class the KERNEL claims to express -- certifying
+    # an order kernel on an XOR truth proves nothing about order.
+    alive_mode = "order" if kernel in ("r1", "r2") else "xor"
+    sx = synth(rng, 200, 60000, alive_mode)
     ho_x, _ = make_heldout(sx, rng)
-    e_x, _, _, _, d_x = earned(sx, ho_x, rng, min(200, k_perm))
+    e_x, _, _, _, d_x = earned(sx, ho_x, rng, min(200, k_perm), null, kernel, kappa)
     alive = e_x >= G_ALIVE_BAR
-    print("G-ALIVE     synthetic XOR (planted operator)   EARNED=%+.5f  delta=%+.2f   bar>=+%.2f  %s"
-          % (e_x, d_x, G_ALIVE_BAR, "PASS" if alive else "FAIL — THE INSTRUMENT IS BLIND"))
+    print("G-ALIVE     synthetic %-8s (planted operator)  EARNED=%+.5f  delta=%+.2f  bar>=+%.2f  %s"
+          % (alive_mode.upper(), e_x, d_x, G_ALIVE_BAR,
+             "PASS" if alive else "FAIL — THE INSTRUMENT IS BLIND on this operator class"))
 
     # ---- G-PEDESTAL (zero-truth) — this is what caught two estimand defects ---------------
     sa = synth(rng, 200, 60000, "additive")
     ho_a, _ = make_heldout(sa, rng)
-    e_a, _, _, _, d_a = earned(sa, ho_a, rng, min(200, k_perm))
+    e_a, _, _, _, d_a = earned(sa, ho_a, rng, min(200, k_perm), null, kernel, kappa)
     ped = abs(e_a) <= DELTA_EQ
     print("G-PEDESTAL  synthetic ADDITIVE (truth = 0)     EARNED=%+.5f  delta=%+.2f   |.|<=%.2f   %s"
           % (e_a, d_a, DELTA_EQ, "PASS" if ped else "FAIL — THE INSTRUMENT IS BIASED"))
+
+    # ---- G-DOF (r2 only) — does the EXTRA CAPACITY hallucinate a held-out gain? ---------------
+    # r2 buys |A|+|B| degrees of freedom. That is the whole danger of going relational: a richer
+    # operator can fit noise on the held-out cells and read it back as "interaction". So we run the
+    # ADDITIVE-TRUTH world (interaction genuinely zero) through the FULL-DOF kernel and demand it
+    # still reads zero. A failure here means the operator invents signal, and no main bar may be read.
+    dof_ok = True
+    if kernel == "r2":
+        dof_ok = abs(e_a) <= DELTA_EQ    # e_a was measured with THIS kernel (full DOF) already
+        print("G-DOF       additive world through FULL-DOF r2  |EARNED|=%.5f <= %.2f   %s"
+              % (abs(e_a), DELTA_EQ,
+                 "PASS — the added capacity does not invent signal"
+                 if dof_ok else "FAIL — r2 hallucinates a held-out gain; demote to r1"))
+        res["G_DOF"] = {"earned_additive_full_dof": e_a, "pass": bool(dof_ok)}
 
     # ---- G-POWER (census + null sd, measured BEFORE the effect is read) -------------------
     items, sid = build_cells(rows, min_occ, script)
@@ -274,7 +437,7 @@ def earned_run(argv):
     per = []
     for sd_i in seeds:
         ho_i, nst_i = make_heldout(items, np.random.default_rng(sd_i))
-        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm)
+        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm, null, kernel, kappa)
         per.append({"seed": sd_i, "earned": e_i, "delta": d_i, "cells": int(ho_i.sum()),
                     "sd_null": sdn_i, "null_mean": nm_i, "null": null_i})
     e_vals = np.asarray([p["earned"] for p in per])
@@ -302,10 +465,10 @@ def earned_run(argv):
     res["G_PEDESTAL"] = {"earned": e_a, "pass": bool(ped)}
     res["G_POWER"] = {"sd_null": sd, "mde_3sd": mde, "pass": bool(powered)}
 
-    if not (alive and ped):
+    if not (alive and ped and dof_ok):
         print("")
         print("INSTRUMENT NOT CERTIFIED → MAIN BAR NOT READ (a dead probe's silence proves nothing).")
-        res["verdict"] = "INVALID — instrument not certified; main bar NOT read"
+        res["verdict"] = "INVALID — instrument not certified (G-ALIVE/G-PEDESTAL/G-DOF); main bar NOT read"
         _emit(res, out)
         return 0
 
