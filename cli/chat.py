@@ -1923,11 +1923,21 @@ def anima_consciousness_mode(ckpt, argv=None):
         #                               same way ⇒ NOT a pass.
         # p5 is untouched: the emit/silence DECISION is the substrate's own (the gate never sees
         # this flag); we only substitute what gets said on a tick it already chose to speak.
+        swapped = False   # H_9338 · C2 CARRIER-SWAP arm label (trace-only · never a branch key)
         if _swap_texts and did_emit and g_emit and byte_len(g_text) > 0:
             _donor = _swap_texts.get(int(tick))
             if _donor is not None:
                 g_text = _donor
-                g_back = g_back + "+swap"
+                # H_9338 · the arm label goes in its OWN field, NOT into g_back.
+                # It used to do `g_back = g_back + "+swap"`, and the C8-GROW block below is gated
+                # on `g_back == "clm"` (:1949) — so tagging the backend "clm+swap" silently routed
+                # the swap arm AROUND every feedback root: afield never stepped, immune never
+                # bound. The control measured NOTHING. Trace-verified: 16/16 swap rollouts had
+                # recon_err with ONE distinct value, while the same binary run without the flag
+                # produced five. The earlier smoke's "the donor really pushes the roots" was wrong
+                # — A moved only because g_text moved, which the roots never saw.
+                # An experiment label must never ride on a field the production path branches on.
+                swapped = True
         psi_sum = psi_sum + pure_field_phi(pf)
 
         # GROUND check
@@ -2066,7 +2076,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "emit_temp": float(_emit_temp),
                 "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
                 "base_motiv": float(dec.get("base_motiv", _score)),
-                "gen_emitted": g_emit, "gen_backend": g_back,
+                "gen_emitted": g_emit, "gen_backend": g_back, "swapped": swapped,
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
