@@ -756,6 +756,16 @@ def evaluate_usage():
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate --tension-emit <trace.jsonl> [<trace2.jsonl> ...]")
+    print("      (H_9352 — does TENSION pull EMIT? Pre-registered bar:")
+    print("       PASS = I(ag_conflict; emit | stage) >= 0.05 nats AND the shuffle control <= 0.01.")
+    print("       ⚠️ The bar is NOT the emit rate. Making silence appear by moving a threshold is")
+    print("       not a discovery — you moved it, not the tension. A real rate limiter lands near")
+    print("       1/(interval/tick) all by itself, so an 'emit rate ~ 1/2' bar would pass on a coin")
+    print("       (p7 Goodhart: rate is FORM/tunable, the claim is BIND/earned). C1 SHUFFLE permutes")
+    print("       tension WITHIN each stage — it destroys the tension->emit link but keeps the rate")
+    print("       and the stage structure, so if the control scores too, the number came from the")
+    print("       rate. Hard-stops with DECISION-CONSTANT if H(emit|stage) is still ~0.)")
     print("  anima evaluate --psi-soma <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9351 — the REAL Ψ̂, on the daemon's OWN lane population. Ψ is DEFINED by")
     print("       engine_cli ci_psi_balance as the fraction of ticks with 0.5*(gws+lprec) >= 0.5,")
@@ -2793,6 +2803,105 @@ def _psi_soma_real(argv):
     return 0
 
 
+
+def _tension_emit(argv):
+    """DOES TENSION PULL EMIT? — the pre-registered bar for H_9352, and the trap it must dodge.
+
+    H_9345 measured H(emit|stage) = 0.000000 over 2198 ticks: emit was a pure function of stage.
+    H_9352 found why — the gate's `seconds_since_last` slot was fed a synthetic (stage, urgency)
+    envelope, not elapsed time, so the one live term in the whole comparator was a stage clock.
+    Plugging in the real clock makes emit vary again.
+
+    ⚠️ AND THAT ALONE PROVES NOTHING. Making silence appear by moving a threshold is not a
+    discovery — I moved it, not the tension. A rate limiter with a real clock will produce an
+    emit rate near 1/(interval/tick) all by itself, and if the bar were "emit rate ≈ 1/2" it
+    would pass on a coin. That is the p7 Goodhart shape exactly: an emit rate is FORM (tunable),
+    the claim is BIND (must be earned).
+
+    So the bar is conditional information, not rate:
+        PASS  =  I(ag_conflict ; emit | stage)  >=  0.05 nats
+                 AND  the tension-shuffle control  <=  0.01 nats
+    C1 SHUFFLE permutes ag_conflict WITHIN each stage, which destroys the tension→emit link but
+    preserves the emit rate and the stage structure. If the shuffled arm scores too, the number
+    is coming from the rate, not from the tension, and the lever is theatre."""
+    import json as _json
+    import random as _random
+    paths = [a for a in argv if not a.startswith("--")]
+    rows = []
+    for f in paths:
+        for line in open(f, "r", encoding="utf-8", errors="surrogateescape"):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = _json.loads(line)
+            except Exception:
+                continue
+            if "tick" in r and "stage" in r and "emit" in r and "agloop_ctx" in r:
+                rows.append(r)
+    mde = 0.05
+    ctrl_bar = 0.01
+    print("═══ TENSION→EMIT · I(ag_conflict ; emit | stage) ═══")
+    print("  traces=%d  ticks=%d" % (len(paths), len(rows)))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (tick < 200)")
+        return 0
+    S = [int(r["stage"]) for r in rows]
+    E_ = [1 if r.get("emit") else 0 for r in rows]
+    rate = sum(E_) / float(len(E_))
+    hE = _im_h_given_S(E_, S)
+    print("  발화율 = %.1f%%   H(emit|stage) = %.6f nats" % (100.0 * rate, hE))
+    if hE < 0.030:
+        print("  ⇒ ⛔ DECISION-CONSTANT — emit 이 아직 stage 의 순수 함수다. 시계가 안 꽂혔거나")
+        print("     비교기가 여전히 포화다. tension 을 물을 수 없다(항등식으로 0).")
+        return 0
+    # ag_conflict 는 trace 에 직접 없다 — agloop_ctx 가 그 유래다(chat.py:1545-1550).
+    # 데몬이 실제로 게이트에 흘려보내는 tension 축을 그대로 쓴다.
+    tv = sorted(float(r["agloop_ctx"]) for r in rows)
+    tmed = tv[len(tv) // 2]
+    T = [1 if float(r["agloop_ctx"]) > tmed else 0 for r in rows]
+    hT = _im_h_given_S(T, S)
+    i_te = _im_cmi(T, E_, S)
+    print("  H(tension|S) = %.4f nats   (tension = agloop_ctx 2-bin · ag_conflict 유래)" % hT)
+    if hT < 0.030:
+        print("  ⇒ ⛔ tension 채널이 죽어 있다 — 물을 수 없다.")
+        return 0
+    # C1 SHUFFLE — stage 안에서 tension 만 흩뜨린다(발화율·stage 구조는 보존)
+    _r = _random.Random(7)
+    null = []
+    for _ in range(200):
+        Tp = list(T)
+        st = {}
+        for k, g in enumerate(S):
+            st.setdefault(g, []).append(k)
+        for idx in st.values():
+            vals = [Tp[k] for k in idx]
+            _r.shuffle(vals)
+            for j, k in enumerate(idx):
+                Tp[k] = vals[j]
+        null.append(_im_cmi(Tp, E_, S))
+    nm = sum(null) / len(null)
+    pv = (sum(1 for v in null if v >= i_te) + 1.0) / 201.0
+    earned = i_te - nm
+    print("  EXP  I(tension;emit|S) = %.5f nats" % i_te)
+    print("  C1 SHUFFLE null = %.5f · perm-p = %.4f · EARNED = %+.5f nats" % (nm, pv, earned))
+    print("     (stage 안에서 tension 만 흩뜨림 — 발화율과 stage 구조는 그대로 남는다.")
+    print("      이 통제가 같이 점수를 내면 그 숫자는 tension 이 아니라 **발화율**에서 온 것이다.)")
+    print()
+    print("  🔒 사전등록 bar: EARNED ≥ %.2f nats ∧ C1 SHUFFLE ≤ %.2f nats" % (mde, ctrl_bar))
+    if earned >= mde and nm <= ctrl_bar and pv < 0.005:
+        print("  ⇒ 🟢 TENSION-PULLS-EMIT — 기질의 긴장이 발화 결정을 민다.")
+    elif nm > ctrl_bar:
+        print("  ⇒ ⛔ INVALID — 통제군이 bar 를 넘었다(%.5f > %.2f). 숫자가 발화율에서 온다." % (nm, ctrl_bar))
+    elif abs(earned) < mde:
+        print("  ⇒ 🧱 STILL-STAGE — 게이트가 다시 움직이긴 하나 **tension 은 안 민다**.")
+        print("     시계를 꽂은 것은 emit 을 stage 에서 풀었을 뿐, tension 에 묶지는 않았다.")
+        print("     (발화율이 ½ 근처여도 그건 레이트 리미터의 산술이지 항상성이 아니다 · p7)")
+    else:
+        print("  ⇒ 미달 · 판정 보류")
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -3625,7 +3734,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--seeds", "--selftest-rho-cells", "--slot-off",
@@ -3660,6 +3769,8 @@ def main(argv):
     # H_9328 DO-MOUTH · I(A;Y|S) over decision traces (NO decode — reads traces the daemon
     # already wrote). V-CEILING FIRST: I <= H(A|S) is an identity, so a dead action channel
     # forces I=0 by definition, not by measurement (that is exactly how H_9308 died).
+    if len(argv) >= 2 and argv[0] == "--tension-emit":
+        return _tension_emit(argv[1:])
     if len(argv) >= 2 and argv[0] == "--psi-soma":
         return _psi_soma_real(argv[1:])
     if len(argv) >= 2 and argv[0] == "--interact-mi":
