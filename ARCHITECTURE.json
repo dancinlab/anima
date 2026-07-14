@@ -1771,6 +1771,12 @@
                   "detail": "main_s7 reps 양성대조: 모델이 행동으로 통달한 P_grid TRAIN 원자(SEEN 0.9625)의 극성조차 이 읽기 지점에서 읽히지 않는다. LOO 최고 0.600(bar 0.85) — raw/l2 스윕, PCA k=4/8/16, 최근접평균까지 전 설정 실패(프로토타입 0.300 = 우연 이하). 용량 문제가 아니라 그 지점에 극성이 없다. 양성대조가 실패한 게이트는 게이트가 아니다 ⟹ G-PROBE 기반 표현-부재 판정은 licensing 불가, 판정 유보(뒤집기 아님)."
                  }
                 ]
+               },
+               {
+                "name": "G1 인터페이스 = TWO-LANE (담체≠마스터 키 · 다리 부재 · H_9358 C5-REVERSE 🟢 2026-07-15)",
+                "id": "g1-interface-two-lane",
+                "role": "gate-verdict · engine-native 303M py 2-production · anima-py evaluate --xbind",
+                "detail": "🟢 TWO-LANE SUPPORTED. C3/C4 2×2 의 마지막 칸: 반전 극성을 담체(연산자) 키로만 CPT 로 쓰고(선언 라인 0) 선언 표면(`{s}고 =>`)을 읽는다. G-LAND 담체 readback s7 11/12·s11 12/12 PASS(쓰기 착륙 = INVALID 아님). swap 선언 flip0 신극성 s7 2/12·s11 4/12·pooled 6/24 → 공유저장소(담체=마스터 키, ≥10/12) 반증: 앵커-무관 절대 bar 대비 P(X≤obs) pooled ≈5×10⁻¹⁰(base 미참조=측정창 영향권 밖). ⟹ 담체·선언 저장소는 값을 공유하지 않는다 = 별도 레인. 벽 = 저장소 도달불가(H-δ) 아니라 런타임 다리(bridge) 부재 — 재조합은 가중치 안에서. C4(H_9334) 성공 = 다른 저장소에 직접 쓴 것이지 같은 저장소를 올바른 키로 친 것 아님. 잔여 상승(paired pooled p=0.031)은 통제팔 비특이 손상률(untouched 3/3→2/3·keep 5/6 상실 = cpt-destroys-what-corpus-omits)로 정량 설명(기대 ~1.8/seed vs 관측 2·4). ⏳ SCOPE: '전이=정확히 0' 등가 서브클레임은 TOST 앵커-비강건(계기 창간 변동 ≈2–3/12 이 δ 마진과 동급)으로 DIRECTIONAL 유지 — 표 칸 채우는 데 불필요. base 재측정 불일치(0/12 vs H_9334 3·2/12)는 등가 주장만 갉고 공유저장소 반증 무영향. 수렴: V5(H_9353 decon2b NO-IN-CONTEXT-CHANNEL EARNED #3611)와 독립 — 둘 다 런타임 다리 부재. 계기 engine-native(corpus ground_carrierswap --carrier-only + evaluate --xbind · VERSION 0.13.61)."
                }
               ]
              },
