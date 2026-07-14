@@ -766,6 +766,10 @@ def evaluate_usage():
     print("       wearing the other hat. C1 PERM (within-stratum A shuffle) = the")
     print("       true-0 null. Generate traces with: ANIMA_TICKS=N ANIMA_EMIT_TEMP=1.0 ANIMA_SAMPLE_SEED=K")
     print("       ANIMA_DECISION_TRACE=<path> anima-py chat <ckpt>)")
+    print("       MEDIATION panel (diagnostic, verdict-neutral): the headline only reads the two ENDS of")
+    print("       the chain. R = recon_err 2-bin is the afield root the emitted text feeds directly, so")
+    print("       M1(A->R) and M2(R->Y) split a null two ways — the text never reaches the field (wiring")
+    print("       suspect), or it reaches the field and the GATE does not look (read-side THEATER).")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
     print("      AUDIT-A: is a held-out atom's polarity in the weights at all? Verdict = DELTA =")
@@ -2753,6 +2757,55 @@ def _interact_mi(argv):
         print("  ⇒ TOST 등가역 — 폐루프가 DATA-ADDITIVE 방향 (n·검정력 명시 필요)")
     else:
         print("  ⇒ 미달 · 판정 보류")
+
+    # ── MEDIATION · 사슬을 열어본다 (진단 · 헤드라인 아님) ──────────────────────────
+    # 헤드라인 I(A;Y|S) 는 사슬의 두 끝만 잰다. 그 사이에는 실제 배선이 있다:
+    #
+    #     [기질이 뱉은 말] ──▶ [afield] ──▶ [ score ] ──▶ [emit 게이트]
+    #        A (a_fold8)      recon_err      Y (2-bin)
+    #
+    # emit tick 에서 g_text 는 afield step 에 들어가고 그 결과가 recon_err 다. 즉 recon_err
+    # 는 "말이 장(場)을 밀었는가"의 직접 관측이고, 데몬이 tick 마다 이미 기록한다.
+    # A→Y 가 0 일 때 두 세계가 갈린다:
+    #   ① M1(A→recon_err) 도 0  ⇒ 말이 장조차 못 민다. 주입이 무효 = 계기/배선 문제.
+    #   ② M1 은 살고 M2(recon_err→Y) 가 0  ⇒ 말은 장을 미는데 **게이트가 그걸 안 본다**.
+    #      이건 H_9209/H_9225/H_9230 이 read-side 배선에서 반복해 만난 THEATER 그림과 합류한다
+    #      (emit = stage + rate-limit 지배). 그렇다면 null 은 고립된 사실이 아니라 그 벽의 목격이다.
+    # 둘 다 같은 C1 순열 귀무(실측 단위) 위에서 잰다. 진단이므로 verdict 를 바꾸지 않는다.
+    rec = [r.get("recon_err") for r in use]
+    if any(v is None for v in rec):
+        print("  ── MEDIATION: recon_err 미기록 trace ⇒ SKIP (구 trace 포맷)")
+        return 0
+    rs = sorted(float(v) for v in rec)
+    rmed = rs[len(rs) // 2]
+    R = [1 if float(v) > rmed else 0 for v in rec]
+    hR = _im_h_given_S(R, S)
+    print("  ── MEDIATION (진단 · verdict 불변) ─────────────────────────────")
+    print("     H(R|S) = %.4f nats   R = recon_err 2-bin (afield 뿌리 · g_text 가 직접 민다)" % hR)
+    if hR < hfloor:
+        print("     ⇒ 매개 채널 자체가 죽어 있다 — M1/M2 는 정의상 0. 사슬을 못 연다.")
+        return 0
+    for nm, X, Z in (("M1  A→R (말이 장을 미는가)", A, R), ("M2  R→Y (장이 게이트를 미는가)", R, Y)):
+        i_xz = _im_cmi(X, Z, S)
+        null = []
+        for _ in range(perm):
+            Xp = list(X)
+            st = {}
+            for k, s in enumerate(S):
+                st.setdefault(s, []).append(k)
+            for idx in st.values():
+                vals = [Xp[k] for k in idx]
+                rnd.shuffle(vals)
+                for j, k in enumerate(idx):
+                    Xp[k] = vals[j]
+            null.append(_im_cmi(Xp, Z, S))
+        nm_ = sum(null) / len(null)
+        pv = (sum(1 for v in null if v >= i_xz) + 1.0) / (perm + 1.0)
+        earned = i_xz - nm_
+        tag = "🔗 LIVE" if (earned >= mde and pv < 0.005) else ("· 등가(0)" if abs(earned) <= mde else "· 미달")
+        print("     %-28s EARNED = %+.5f nats · perm-p = %.4f   %s" % (nm, earned, pv, tag))
+    print("     ⇒ M1 살고 M2 죽으면: 말은 장을 밀지만 **게이트가 안 본다**(read-side THEATER 합류).")
+    print("        M1 도 죽으면: 주입 자체가 장에 안 닿는다(배선/계기 의심 — 기질 주장 금지).")
     return 0
 
 
