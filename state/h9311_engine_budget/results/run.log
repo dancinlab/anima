@@ -1,0 +1,20 @@
+[C1] corpus sha=c47b6808308d2f73...  match=True
+[C2] Vj=323 (anchor 323)  distinct jamo=67
+[split] scored=10201  train=5101  test=5100  (H_1321 window, stride 2500)
+
+[SWEEP] budget released. Both arms are LIVE engine faculties; all points reported.
+  grow_max=  10   FLAT  10 cells 2.82046   SHRINK  10 cells 2.72391   d=-0.09655
+  grow_max=  20   FLAT  10 cells 2.82046   SHRINK  20 cells 2.70241   d=-0.11805
+  grow_max=  40   FLAT  10 cells 2.82046   SHRINK  40 cells 2.71886   d=-0.10160
+  grow_max=  80   FLAT  10 cells 2.82046   SHRINK  80 cells 2.75023   d=-0.07023
+  grow_max= 160   FLAT  10 cells 2.82046   SHRINK 160 cells 2.53161   d=-0.28885
+  grow_max= 320   FLAT  10 cells 2.82046   SHRINK 320 cells 2.46370   d=-0.35676
+
+[CALIB @ grow_max=40] FLAT 2.82046 (anchor 2.82046) · SHRINK 2.71886 (anchor 2.71886) -> PASS
+
+B1 GROWTH-PAYS  (SHRINK@max <= SHRINK@40 - 0.02) : True   (d=-0.25516)
+B2 SATURATION   first plateau at cells = None
+B3 FLAT-CONTROL flat change over sweep = +0.00000  (>0 = starvation engaged)
+
+VERDICT: GROWTH-PAYS - releasing the budget keeps improving => growth is PRODUCTIVE on the real corpus; H_9301's G3 ('harmless but not productive') FLIPS here
+wall=1979.1s

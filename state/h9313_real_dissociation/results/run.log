@@ -1,0 +1,18 @@
+[C1] sha=c47b6808308d2f73...  match=True
+[C1] Vj=323 (anchor 323)
+[split] scored=10201 train=5101 test=5100
+
+[SWEEP] grow ONCE per rung with the repaired faculty; rebuild the head twice over the
+        SAME partition (engine's own _jh_counts / _jh_counts_wb). Estimator = only change.
+  cells=  10  ~ 510 pts/cell   FLAT-head 2.82046   WB-head 2.72391   d=-0.09655
+  cells=  40  ~ 127 pts/cell   FLAT-head 2.83626   WB-head 2.71886   d=-0.11739
+  cells= 160  ~  31 pts/cell   FLAT-head 3.01225   WB-head 2.53161   d=-0.48064
+  cells= 320  ~  15 pts/cell   FLAT-head 3.63839   WB-head 2.46370   d=-1.17469
+
+[C2 CALIB] WB-head @320 = 2.46370  vs H_9311 anchor 2.4637  d=+0.00000 -> PASS
+
+D1 STARVATION-ENGAGED (FLAT-head degrades >= +0.02) : True   (flat +0.81793)
+D2 DISSOCIATION       (WB degrades less than FLAT)     : True   (wb -0.26021 vs flat +0.81793)
+
+VERDICT: DISSOCIATED - the H_9301 mirror finding transfers to the real corpus engine-native: over the SAME partition, the flat count-MLE head degrades under starvation while the shrinkage head does not (or degrades less)
+wall=2096.4s

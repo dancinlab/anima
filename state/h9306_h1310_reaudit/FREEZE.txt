@@ -1,0 +1,88 @@
+H_9306 — H_1310 재감사: "capacity-bound" 판정이 추정기 결함 위에서 내려졌는가
+================================================================================
+PRE-REGISTERED — 발사 전 동결 (frozen-first · c9 · p7 · NO tune-to-green · NO 소급 tune-to-green)
+freeze_ts_local: 2026-07-14 (KST) · lane: MITOSIS-ENGINE
+선행: H_1310 🔴/🧱 (from-scratch pure mitosis · LOCAL-EXPERT CEILING)
+      H_9301 🟢 (flat leaf-MLE 는 셀 증가로 열화 · shrinkage head 는 열화 0)
+
+--------------------------------------------------------------------------------
+1. 재감사 licence — 원 카드를 먼저 읽어 확인한 사실
+--------------------------------------------------------------------------------
+H_1310 의 arm 정의 verbatim: "Each cell holds an online **add-1 next-byte table**."
+⇒ H_1310 의 B_scratch 는 **셀당 flat count-MLE head** 다. 정확히 H_9301 이
+   "셀이 늘수록 +0.0555 열화한다"고 실증한 그 추정기이며, H_1310 은 그것을 **512 셀**까지 키웠다.
+⇒ H_1310 의 헤드라인 DV(FLOOR·CONTROL)는 **flat-MLE 의 굶주림 분산 위에 인과적으로 올라타 있다**.
+   재감사 licence 성립 (원 카드 확인 절차 완료 · 추측 아님).
+
+⚠️ **소급 tune-to-green 금지**: 유리한 새 DV 를 만들지 않는다.
+   **H_1310 이 발사 전 동결한 bar 를 1 바이트도 안 건드리고 그대로 재사용**한다.
+   바꾸는 것은 **셀 head 추정기 하나뿐** (flat add-1 → Witten-Bell shrinkage).
+
+--------------------------------------------------------------------------------
+2. 원 동결 bar (H_1310 FREEZE 에서 verbatim 인용 · 이동 0)
+--------------------------------------------------------------------------------
+코퍼스: /usr/share/dict/words · isalpha 2..12 · lowercase · Random(13100).shuffle ·
+        첫 4000 단어 · space-join + \n · 24,000 B
+        sha256 = 86864aa32dcf1c8680ab254e1b28357bf0326c8d45a86837ae4e3b9d09350f62
+문맥: order-2 (직전 2 바이트) · 알파벳 27 (a-z + space)
+분할: 앞 80% TRAIN (19,198 쌍) / 뒤 20% held-out TEST (4,800)
+사다리: [1, 8, 64, 512] 셀 · 3 seeds [13101, 13102, 13103] · 지표 = held-out next-byte CE (nats)
+분열 규칙: SPLIT_THRESH=0.55 · owned>=2 · obs>=4 · 최악-오류 적격 셀이 분열 (2-means median 이분)
+
+  (1) PRESENCE : CE 가 1>8>64>512 로 단조 하강
+  (3) FLOOR    : B_scratch[512] < A_freq − 0.02   (A_freq = order-2 add-1 Markov = n-gram floor)
+  (4) CONTROL  : B_shuffle[512] >= B_scratch[512] + 0.10   (오류-표적화가 실제로 이득을 내는가)
+
+H_1310 실측 (재현해야 할 CALIB 앵커):
+  A_freq            = 2.50884   ← n-gram floor
+  A_gradient(cap512)= 3.21083
+  B_scratch[512]    = 2.57788   → FLOOR **FAIL** (+0.069 위)
+  B_shuffle[512]    = 2.53592   → CONTROL **FAIL** (셔플이 표적화를 오히려 이김)
+  사다리 B_scratch  = 2.9466 / 2.9027 / 2.7778 / 2.5779
+
+--------------------------------------------------------------------------------
+3. 유일한 변경 (추정기 1개)
+--------------------------------------------------------------------------------
+  FLAT (원본) : 셀당 add-1 count-MLE      P(next|cell)
+  WB   (신규) : Witten-Bell shrinkage      P = λ·MLE(cell) + (1−λ)·P_pooled(global)
+                λ = n/(n+T)  (n = 셀 카운트, T = 그 셀에서 관측된 distinct next 타입 수)
+                자유 하이퍼 0 ⇒ tune-to-green 구조적 불가.
+분열 규칙 · 코퍼스 · 분할 · 사다리 · 통제 · bar = **전부 verbatim 불변**.
+
+--------------------------------------------------------------------------------
+4. CALIB 게이트 (BLOCKING · 주 bar 판독 前)
+--------------------------------------------------------------------------------
+CALIB-1 : A_freq  in-run 이 **2.50884** 재현 (|Δ| ≤ 0.005)
+CALIB-2 : FLAT B_scratch[512] in-run 이 **2.57788** 재현 (|Δ| ≤ 0.02 · 3-seed 평균)
+둘 중 하나라도 실패 → ⛔ INVALID (포트 결함 · 결과 아님 · 판정 금지).
+⇒ 포트가 원본을 재현함을 증명한 뒤에만 WB arm 을 읽는다 (reference-match).
+
+--------------------------------------------------------------------------------
+5. 판정표 (H_1310 의 원 bar 로만 판독)
+--------------------------------------------------------------------------------
+  🔄 REOPEN (H_1310 판정 전복) :
+        WB B_scratch[512] < A_freq − 0.02 = 2.48884   (원 FLOOR bar 통과)
+        ⇒ H_1310 의 "LOCAL-EXPERT CEILING" 은 **추정기 결함**이었다.
+          gradient-free from-scratch mitosis 가 n-gram floor 를 실제로 이긴다.
+          ⇒ a_mitosis_train 의 "🔴 from-scratch pure-split can't learn alone" 재검토 필요.
+
+  🧱 UPHELD (H_1310 판정 생존) :
+        WB B_scratch[512] ≥ 2.48884  ⇒ shrinkage 로도 floor 를 못 넘음
+        ⇒ H_1310 의 천장은 **진짜**다 (추정기 무죄 · 원 판정 강화).
+        정직 negative — 이것도 결과다.
+
+  📊 CONTROL 축 (부수 · 원 bar (4) 그대로) :
+        WB 하에서 B_shuffle[512] − B_scratch[512] ≥ +0.10 이면
+        ⇒ "학습이 error-targeted 가 아니라 capacity-bound" 라는 H_1310 의 진단도 뒤집힘.
+        미달이면 그 진단은 생존 (분리 보고 · FLOOR 판정과 독립).
+
+  ⛔ INVALID : CALIB 실패.
+
+--------------------------------------------------------------------------------
+6. 계측 무결성
+--------------------------------------------------------------------------------
+- 원 bar 이동 0 · 새 DV 도입 0 · 유리한 지표 교체 0 (소급 tune-to-green 차단).
+- λ = WB 닫힌형 (자유 하이퍼 0) — 스윕할 손잡이가 없다.
+- 3 seed [13101,13102,13103] verbatim · TEST 는 뒤 20% held-out · 카운트/λ 는 TRAIN only.
+- FLAT arm 을 **같은 코드로 동시 실행**해 in-run 대조 (포트 차이가 아니라 추정기 차이임을 보장).
+- LABEL: mirror(numpy) ⇒ DIRECTIONAL. toy 24KB English scope (a_scale_honest_scope).

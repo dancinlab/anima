@@ -1,0 +1,27 @@
+[corpus] NSMC sha=e03b7d14e9e41be8...  match=True
+[corpus] rows=149995  neg-rate=0.204
+
+=== G-ALIVE (positive control: synthetic XOR corpus, true synergy = 0.69 nats) ===
+  held-out cells=9008 stems=60  EARNED=+5.29653 nats (obs +5.03860, null -0.25793+-0.05926, delta_hat=-3.00)   bar >= +0.3
+  G-ALIVE: PASS
+
+=== G-PEDESTAL (zero-truth: synthetic ADDITIVE corpus, true synergy = 0) ===
+  held-out cells=8889  EARNED=+0.00285 nats  delta_hat=-0.10  (|.| <= 0.02)
+  G-PEDESTAL: PASS
+
+=== G-POWER (held-out cell census + null sd, measured BEFORE reading the effect) ===
+  min_occ=  50  stems= 2833  rows= 571417  held-out cells= 46618 (stems 832)
+  min_occ= 100  stems= 1346  rows= 468043  held-out cells= 35911 (stems 394)
+  min_occ= 200  stems=  599  rows= 364167  held-out cells= 32791 (stems 173)
+  min_occ=100: held-out cells=35911  sd_null=0.00018  MDE(3sd)=0.00055  (need <= 0.02)
+  G-POWER: PASS
+
+======================================================================
+=== MAIN BAR: natural corpus (NSMC), held-out EARNED ===
+  held-out EARNED = +0.00232 nats   90% CI [+0.00208, +0.00257]   delta_hat=-0.35 (0=additive, -2=full flip)
+  seen synergy    = +0.00619 nats  (n=73959)  [discriminates DATA-ADDITIVE vs OPERATOR-ABSENT]
+  TOST(+-0.02) pass = True   INFO-PRESENT = False
+
+VERDICT: DATA-ADDITIVE - no non-additive information at all => no estimator can ever bank it; G1 = DATA wall
+wall=95.2s
+[done]

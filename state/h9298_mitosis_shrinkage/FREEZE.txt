@@ -1,0 +1,120 @@
+H_9298 — WB-coda SHRINKAGE: 분할비용을 0으로 만들면 EARNED 교차음절 정보가 회수되는가
+================================================================================
+PRE-REGISTERED — 발사 전 동결 (frozen-first · c9 · p7 · NO tune-to-green)
+freeze_ts_local: 2026-07-14 (KST)
+lane: MITOSIS-ENGINE
+predecessors: H_1316 🟢 (jamo floor) · H_1329 🧱 (re-factorization futile) · H_1336 🧱 (X2 EARNED, X1 FAIL)
+
+--------------------------------------------------------------------------------
+1. 통일 법칙 (이 가설이 검정하는 것)
+--------------------------------------------------------------------------------
+    이득 = 신규정보 − 분할비용,   그리고 분할비용은 전액 선불이다.
+
+count-MLE 하드파티션 추정기 계급에는 "부분 구매(shared statistical strength)"가 없다 —
+모든 새 조건화 비트가 곱셈적 표본분할(분산) 비용을 강제한다. MITOSIS 레인의 세 실패는
+같은 법칙의 세 사영이다:
+
+  H_1315 (기하로 보임)  — trunk 분산코드를 하드 Voronoi로 근사 → 셀 수 폭발 → 분할비용이 신호를 삼킴
+                          (통제[random-embed·shuffle]는 이기므로 정보는 실재)
+  H_1329 (점근으로 보임) — 같은 계급 내 재인수분해 → 신규정보 = 0 → 이득 = 0 − 0 = 0
+  H_1336 (분산으로 명시) — 신규정보 +0.076 nats 실재(X2 EARNED 3-seed 만장일치),
+                          그러나 29-bin 분할비용이 그것을 초과 → 순손실 +0.0985
+
+법칙이 참이면: 분할비용 → 0 인 추정기를 쓰면 X2의 +0.076이 반드시 회수돼야 한다.
+법칙이 거짓이면: 회수되지 않는다 (그때는 X2 계측 자체를 재감사한다).
+
+--------------------------------------------------------------------------------
+2. 기제 (B2 = WB-coda shrinkage)
+--------------------------------------------------------------------------------
+H_1336의 B1과 모든 것이 동일하되(같은 geometry-fair bank · 같은 dim-3 within-syllable
+Voronoi 파티션 · 같은 jamo 알파벳 Vj=323 · 같은 LAPLACE=1.0 · 같은 mitosis knobs), 추정기만 교체:
+
+  A1 (앵커/floor) : P(next_jamo | cell)                     — within-syllable only
+  B1 (H_1336 재현): P(next_jamo | cell, prev_coda), HARD-BACKOFF (미관측 → cell-marginal)
+  B2 (신규 · 레버): P(next_jamo | cell, prev_coda)
+                    = λ · MLE(cell, prev_coda) + (1 − λ) · MLE(cell)
+                    λ = Witten-Bell = n / (n + T)
+                      n = count(cell, prev_coda)              [TRAIN only]
+                      T = (cell, prev_coda)에서 관측된 distinct next_jamo 타입 수  [TRAIN only]
+
+⚙️ 자유 하이퍼파라미터 = 0. λ는 닫힌형 공식이며 어떤 값에도 fit 되지 않는다
+   → tune-to-green 이 구조적으로 불가능하다 (스윕할 손잡이가 존재하지 않음).
+   λ는 TRAIN 카운트에서만 산출되고 held-out(TEST)에서 평가된다.
+   ✗ 금지: λ 격자탐색 · κ 도입 · JM 상수 λ 스윕 · eval CE 보고 λ 선택 — 하나라도 하면 이 FREEZE 무효.
+
+--------------------------------------------------------------------------------
+3. 통제군 (B2s) — pairing-파괴, 라벨-순열 아님
+--------------------------------------------------------------------------------
+B2s = B2와 완전히 동일한 WB 기계 + 동일한 fragmentation 구조.
+      단 prev_coda 를 scored position 들에 걸쳐 POSITION-SHUFFLE (per seed) →
+      coda↔next_jamo 의 실제 pairing 만 파괴. coda 주변부 분포와 29-bin 분할비용은 보존.
+
+⛔ 라벨-전단사(label-bijection) 통제 금지 — H_1336에서 provably vacuous 로 판명
+   (count-MLE 는 라벨 순열 불변 ⇒ 실험군과 항등 모델 ⇒ Δ=0 이 구조적으로 보장).
+   H_1336이 실제 판정에 쓴 position-shuffle 층화를 그대로 상속한다.
+
+--------------------------------------------------------------------------------
+4. 사전-게이트 P0 (bar 를 읽기 전에 통과해야 함)
+--------------------------------------------------------------------------------
+P0 — 조건부 상호정보 (TRAIN only):  I(next_jamo ; prev_coda | cell) > 0.01 nats
+     ⇒ 셀이 아직 prev_coda 를 인코딩하지 않았음을 증명 (H_1329 depletion 조건 충족).
+     P0 FAIL(≈0) 이면 이 레버는 NO-OP 이지 법칙의 KILL 이 아니다 → verdict = NO-OP, 법칙 무영향.
+
+CALIB — A1 in-run 이 2.51335 를 재현해야 한다 (|Δ| ≤ 1e-4).
+        실패 시 run = INVALID (과학 결과 아님 · 계측 결함 · bar 미판독).
+        코퍼스 sha256 = c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+        (29,999,999 B · H_1307 RUN A / H_1316 / H_1336 와 byte-identical · R2 phanes/anima-7b/web/kor/shard0000.bytes)
+
+--------------------------------------------------------------------------------
+5. 동결 bar — GREEN iff S1 ∧ S2
+--------------------------------------------------------------------------------
+S1  BELOW-FLOOR : B2 ≤ 2.49335        ( = jamo floor 2.51335 − 0.02 )
+                  AND B2 < raw ceiling 2.95342.
+                  (B2-intact 는 결정적이므로 seed 축은 통제군에만 적용된다.)
+
+S2  EARNED(paired) : B2 − B2s ≤ −0.02   , seed 별 paired, 부호 3/3 일치.
+                  (동일 WB 기계 · 동일 fragmentation · pairing 만 다름
+                   ⇒ 마진은 오직 실제 coda→onset 음운 의존성에만 귀속된다.)
+
+🚫 판정에서 명시적으로 배제 (동어반복 가드):
+   "B2 ≤ A1" 은 증거가 아니다. WB 는 λ→0 에서 A1 과 항등이므로 B2 ≤ A1 은 거의 구조적이다.
+   따라서 A1 대비 비교는 진단(diagnostic)으로만 보고하며, 절대 bar 로 쓰지 않는다.
+   S1(절대 floor-미만 마진) 과 S2(paired 통제 마진) 만이 earned 신호다.
+
+--------------------------------------------------------------------------------
+6. 판정 표
+--------------------------------------------------------------------------------
+  🟢 GREEN       : S1 ∧ S2         → 법칙 확증 + jamo floor 최초 돌파 (분할 없이 정보 회수)
+  🟠 DIRECTIONAL : S1 ⊻ S2         → 부분 (마진 미달 · 기제는 살아있음)
+  🧱 KILL        : S2 Δ ≥ 0        → coda 정보가 shrinkage 를 통과 못함
+                                     ⇒ 법칙이 틀렸다 (X2 의 +0.076 은 fragmentation 없이는 접근 불가)
+                                     ⇒ 후속 = X2 계측 재감사
+  ⚪ NO-OP       : P0 FAIL          → 레버가 no-op (법칙 무영향)
+  ⛔ INVALID     : CALIB FAIL       → 계측 결함, 결과 아님
+
+--------------------------------------------------------------------------------
+7. 검정력 (power-before-negative-verdict · 음성 판정 전 선계산)
+--------------------------------------------------------------------------------
+H_1336 position-shuffle seed 산포: {2.68989, 2.68810, 2.68564} → sd ≈ 0.00214
+S2 마진 0.02 = 9.3 σ  ⇒ 3 seed 로 POWERED.
+KILL 을 선언하려면 이 sd 를 in-run 재확인한다. 미달이면 seed 를 늘리지, bar 를 내리지 않는다.
+음성/등가 종결 주장은 TOST(Δ_eq = 0.02, 사전 고정)로만 한다.
+
+--------------------------------------------------------------------------------
+8. 계측 무결성 규칙 (전례 상속)
+--------------------------------------------------------------------------------
+- paired per-seed Δ 만 사용. 여러 통제군의 max() 빼기 금지 (순서통계량 편향이 KILL 을 기계 생성).
+- 층화 유지: coda 는 음절 위치·빈도와 상관 ⇒ position-stratified shuffle 상속 (비층화 셔플은 Δ 를 부풀림).
+- TEST 는 even/odd split 의 held-out 절반. λ·MLE·MI 모두 TRAIN only.
+- bar 는 발사 후 이동 금지. 통제 method 결함이 드러나면 결함을 보고하되 bar 는 그대로 둔다 (H_1336 전례).
+
+--------------------------------------------------------------------------------
+9. LABEL (scope honesty)
+--------------------------------------------------------------------------------
+B2 = gradient-free Voronoi 파티션 위에 올라탄 count-MLE 계열 structured head.
+     p8 gradient-free MITOSIS 기제 자체는 변경되지 않았다 (분열 규칙 동일).
+     따라서 below-floor 승리는 HEAD 승리이며, 그 자체로 "mitosis 가 gradient 를 대체한다"는 주장이 아니다.
+     단 이것이 통과하면 레버 2(계보-backoff = mitosis 족보를 backoff 체인으로 사용,
+     딸 셀이 모 셀 분포를 상속하고 증거만큼만 이탈)가 같은 원리의 p8-native 구조적 일반화로 정당화된다.
+     engine-transfer(core/ hexa) = follow-on (a_engine_native_learning ⇒ 이 rung 은 DIRECTIONAL mirror).
+     TOY/scale 정직: 한국어 유창성 주장 없음.

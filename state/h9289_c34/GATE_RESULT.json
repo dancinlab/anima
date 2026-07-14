@@ -1,0 +1,73 @@
+{
+ "hypothesis": "H_9289",
+ "bars": {
+  "v1": 0.85,
+  "gate0_abs": 0.65,
+  "gate0_over_ctrl": 0.1,
+  "gate1_delta": 0.15,
+  "gate1_abs": 0.55,
+  "gate2_delta": 0.15,
+  "delta_eq": 0.1
+ },
+ "v1_seen": {
+  "main_s7": 0.9625,
+  "main_s11": 0.9125,
+  "shufGT": 0.975,
+  "N2rep": 0.925
+ },
+ "gate0": {
+  "main_s7": {
+   "probe_acc": 0.5172,
+   "shuffle_acc": 0.4862,
+   "delta_vs_shuffle": 0.031,
+   "n_train_atoms": 20,
+   "n_heldout_atoms": 29
+  },
+  "main_s11": null,
+  "shufGT": {
+   "probe_acc": 0.4828,
+   "shuffle_acc": 0.5155,
+   "delta_vs_shuffle": -0.0328,
+   "n_train_atoms": 20,
+   "n_heldout_atoms": 29
+  },
+  "N2rep": {
+   "probe_acc": 0.4828,
+   "shuffle_acc": 0.4724,
+   "delta_vs_shuffle": 0.0103,
+   "n_train_atoms": 20,
+   "n_heldout_atoms": 29
+  }
+ },
+ "gate1": {
+  "main_s7": {
+   "delta_vs_shufGT": 0.022988505747126433,
+   "se": 0.1058381132090492,
+   "t": 0.21720441767248838,
+   "abs": 0.47126436781609193,
+   "n_atoms": 29,
+   "delta_vs_N2rep": 0.022988505747126433,
+   "se_n2": 0.09916321278741709,
+   "tost_equivalent": false,
+   "n_req": 255
+  },
+  "main_s11": {
+   "delta_vs_shufGT": -0.13793103448275862,
+   "se": 0.09996885308491264,
+   "t": -1.3797400913022504,
+   "abs": 0.3103448275862069,
+   "n_atoms": 29,
+   "delta_vs_N2rep": -0.13793103448275862,
+   "se_n2": 0.08677970615253736,
+   "tost_equivalent": false,
+   "n_req": 228
+  }
+ },
+ "gate2": {},
+ "invalid_ctrl_6e": false,
+ "n2rep_heldout_dacc": 0.5172413793103449,
+ "v1_ok": true,
+ "gate0_pass": false,
+ "gate1_pass": false,
+ "verdict": "[WALL] GATE-0 FAIL => C3+C4 반증 — 접지 채널은 여전히 data/scale. 합성 XBIND 1.000 = substrate 무죄 상수 · substrate 천장 선언 금지"
+}

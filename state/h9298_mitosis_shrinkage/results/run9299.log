@@ -1,0 +1,17 @@
+=== H_9299 — LINEAGE-BACKOFF (mitosis genealogy = inheritance) === device=cuda
+[corpus] 29999999 B sha=c47b6808308d2f73... PASS
+[split] scored=85005 train=42503 test=42502  Vj=323
+[grow_max=40] cells=11 depth=10  A1=2.51335  FLAT=2.49935  LIN=2.50675  SHUF=2.51283  L1(LIN-FLAT)=+0.00739  L2(LIN-SHUF)=-0.00609
+[grow_max=160] cells=11 depth=10  A1=2.51335  FLAT=2.49935  LIN=2.50675  SHUF=2.51283  L1(LIN-FLAT)=+0.00739  L2(LIN-SHUF)=-0.00609
+-------------------------------------------------------------------------------
+HEADLINE (matched cells=11, grow_max=40)
+  A1 jamo floor   2.51335  [CALIB PASS]
+  FLAT (->root)   2.49935
+  LIN  (lineage)  2.50675   d vs A1 = -0.00660  [diagnostic only]
+  SHUF (rewired)  2.51283   per-seed [2.50509, 2.51479, 2.51862]
+  L1 LINEAGE-BEATS-FLAT (<= -0.02) : False   (d=+0.00739)
+  L2 EARNED vs SHUF     (<= -0.02) : False   (d=-0.00609, per-seed [0.00166, -0.00804, -0.01187])
+  P1 diagnostic: LIN monotone non-increasing in cells = True ; A1 degrades somewhere = False
+VERDICT: DIRECTIONAL - L1 xor L2 (margin short)
+wall=8.0s
+[done]

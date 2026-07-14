@@ -1,0 +1,48 @@
+{
+ "hypothesis": "H_9309",
+ "bars": {
+  "nostore": [
+   0.35,
+   0.65
+  ],
+  "consume": 0.8,
+  "compose": 20
+ },
+ "pc": {
+  "nostore_main_s7": {
+   "flip0": 0.5402298850574713,
+   "flip1": 0.5747126436781609,
+   "clusters": 19,
+   "n_cluster": 29,
+   "audit_ok": true,
+   "d_acc": 0.5632183908045977
+  },
+  "store_main_s7": {
+   "flip0": 0.5402298850574713,
+   "flip1": 0.5632183908045977,
+   "clusters": 16,
+   "n_cluster": 29,
+   "audit_ok": true,
+   "d_acc": 0.5632183908045977
+  },
+  "nostore_main_s11": {
+   "flip0": 0.5747126436781609,
+   "flip1": 0.5632183908045977,
+   "clusters": 19,
+   "n_cluster": 29,
+   "audit_ok": true,
+   "d_acc": 0.5862068965517241
+  },
+  "store_main_s11": {
+   "flip0": 0.5747126436781609,
+   "flip1": 0.5862068965517241,
+   "clusters": 19,
+   "n_cluster": 29,
+   "audit_ok": true,
+   "d_acc": 0.5862068965517241
+  }
+ },
+ "test": {},
+ "verdict": "⛔ INVALID-MECHANISM — the store is NOT consumed at all (STORE flip0 < 0.80) even when the model can know nothing else. The context-injection channel does not deliver the fact. held-out NOT fired (its one-shot contact budget is preserved). The lever must be RE-DESIGNED, not re-tuned.",
+ "gate": false
+}

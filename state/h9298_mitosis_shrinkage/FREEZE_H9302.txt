@@ -1,0 +1,29 @@
+H_9302 — FULL-STACK: coda 조건화 × 해방된 성장 × shrinkage 는 복리가 되는가
+================================================================================
+PRE-REGISTERED — 발사 전 동결 (frozen-first · c9 · p7 · NO tune-to-green)
+freeze_ts_local: 2026-07-14 (KST) · lane: MITOSIS-ENGINE
+선행: H_9298 🟢 (coda+WB @11셀 = 2.45205) · H_9301 🟢 (성장 해방 · shrinkage 하에서 셀 증가가 무해)
+
+물음: H_9298 은 11 셀에 갇힌 채로 coda 를 얻었다. H_9301 은 셀을 320 까지 풀었으나 coda 가 없었다.
+      둘을 합치면 복리(compound)가 되는가, 아니면 같은 정보를 두 번 사는 것인가?
+
+기제: P(next | cell, prev_coda) = λ·MLE(cell,coda) + (1−λ)·P(next|cell),  λ = WB = n/(n+T)
+      단 cell 은 H_9301 의 REPAIRED grow_on 으로 자란 것 (퇴화분할 blacklist+continue).
+      자유 하이퍼 0. 분열 규칙 형태 변경 0.
+
+스윕: cells ∈ {11, 40, 160, 320} — 전 지점 보고. HEADLINE = 320 (사전고정, H_9301 헤드라인과 동일).
+      ⚠️ 스윕 최고점을 골라 판정 금지.
+
+동결 bar — GREEN iff F1 ∧ F2 (헤드라인 320 셀에서만 판독):
+  F1 COMPOUND : CE ≤ 2.43205  ( = H_9298 의 2.45205 − 0.02 )
+                ⇒ 성장이 coda 위에 실제 이득을 더한다.
+  F2 EARNED   : CE − CE(coda position-shuffle, 동일 WB 기계) ≤ −0.02, seed 별 paired 부호 3/3.
+
+  🧱 KILL / NO-COMPOUND : CE ≥ 2.45205 (11 셀 coda 보다 낫지 않음)
+                ⇒ 셀 성장은 coda 위에 아무것도 더하지 않는다 (두 레버가 같은 정보를 산다).
+                   정직 negative — H_9298 이 이미 그 정보를 다 샀다는 뜻.
+  ⛔ INVALID : 11 셀 지점 A1 ≠ 2.51335 (|Δ|>1e-4)
+
+🚫 진단으로만: A1/floor 대비 우위(shrinkage 로 구조적) · 루트붕괴 앵커 3.21096 대비.
+계측: TEST=even/odd held-out · 카운트/λ = TRAIN only · paired per-seed · sha 게이트 c47b6808…
+LABEL: gradient-free · mirror ⇒ DIRECTIONAL · engine-native 전이 = follow-on.

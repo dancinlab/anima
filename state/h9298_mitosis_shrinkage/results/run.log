@@ -1,0 +1,24 @@
+=== H_9298 — WB-coda SHRINKAGE vs the jamo floor 2.51335 === device=cuda
+[corpus] 29999999 B sha=c47b6808308d2f73...
+[jamo] distinct=67  Vj=323
+[coda] distinct prev_coda tokens = 29  (H_1336 = 29)
+[split] scored=85005  train=42503  test=42502
+[mitosis] cells=11  (H_1336 = 11)
+[P0] I(next ; prev_coda | cell) = 0.11945 nats/sym  (gate > 0.01)
+[CALIB] A1 jamo floor   = 2.51335   (anchor 2.51335  d=-0.00000)
+[CALIB] B1 hard-backoff = 2.61186   (anchor 2.61186  d=-0.00000)
+[B2] WB-shrinkage       = 2.45205   (S1 bar <= 2.49335)
+[B2s seed 4336] coda position-shuffle = 2.52404   paired d(B2-B2s) = -0.07199
+[B2s seed 4337] coda position-shuffle = 2.52280   paired d(B2-B2s) = -0.07075
+[B2s seed 4338] coda position-shuffle = 2.52303   paired d(B2-B2s) = -0.07098
+-------------------------------------------------------------------------------
+raw ceiling         2.95342
+A1 jamo floor       2.51335   [CALIB PASS]
+B1 hard-backoff     2.61186   (H_1336 = 2.61186)
+B2 WB-shrinkage     2.45205   d vs floor = -0.06130   [diagnostic only, NOT a bar]
+B2s pos-shuffle     2.52329   sd=0.00066
+S1 BELOW-FLOOR (B2 <= 2.49335)          : True
+S2 EARNED      (B2-B2s <= -0.02, 3/3) : True   (d=-0.07124, per-seed [-0.07199, -0.07075, -0.07098])
+VERDICT: GREEN - S1 and S2: the jamo floor BREAKS once the fragmentation cost is removed. Law CONFIRMED.
+wall=11.2s
+[done]
