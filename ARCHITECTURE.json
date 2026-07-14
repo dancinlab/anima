@@ -16309,6 +16309,13 @@
         "value": "두 lane 이 같은 벽을 다른 방법으로 물을 때, **의존 방향을 먼저 계산하면 발사 하나를 통째로 아낀다**. 2026-07-15: 병렬 세션의 H_9334 C4 CARRIER-SWAP(재학습으로 H-δ 저장소-측 vs H-ε 인터페이스-측을 가름)과 내 H_9331 BIND-LOCUS(재학습 없이 인과 주입으로 P-place/P-kind/S 를 가름)를 대조하니 겹치지 않고 **서로를 검증**했고, 결정적으로 **BIND-LOCUS 의 답이 H_9334 의 전제를 좁히거나 무효화한다** — P 가 나오면 H-δ 는 거짓이라 H_9334 는 H-ε 로 좁혀진 채 시작할 수 있고, S 가 나오면 H-δ/H-ε **둘 다 잘못된 프레임**이라 그 CPT 재학습은 **쏠 필요가 없다**. 재학습 0 인 쪽이 먼저 나오는 것이 옳다.",
         "recurrence": "병렬 세션이 같은 프런티어를 다른 각도로 밀 때, 각자 자기 실험만 보고 순서를 안 따져서 **뒤 실험이 앞 실험의 답으로 무효화될 수 있는데도 둘 다 쏘는** 낭비.",
         "fix": "`a_parallel_session_compare` 를 '중복인가?'로 끝내지 말고 **의존 방향까지 계산하라** — ① 두 실험의 결과 조합표를 만들고 ② 한쪽 결과가 다른 쪽의 **전제를 죽이거나 좁히는 칸**이 있는지 보고 ③ 있으면 **싼 쪽(재학습 0 · $0)을 먼저** 쏜다. 그 대조를 카드에 AGREES/CONFLICTS 로 남겨 상대 세션이 읽게 한다."
+      },
+      {
+        "id": "chat-py-4",
+        "state": "pos-conv",
+        "value": "**연구 플래그 뒤에만 고친 결함은 프로덕션에서 여전히 살아있고, 다음 실험이 그걸 조용히 상속한다.** H_9210 이 recon_err 를 AXIS-DEGENERATE 로 정확히 진단했다(세션 시드 고정함수). 수정도 만들었다 — og_prev_gfeat 1-tick lag 로 g_text 가 afield 를 실제로 밀게. 그런데 그 수정을 --opgrip-live 하네스 뒤에만 넣었다. 프로덕션 chat 루프(anima-py chat · py 채널은 DEFAULT path 만 포팅)는 그대로 vadapt_field_recon_err(afield, feat(session_seed)) 를 쓴다. afield 는 시드 특징으로 초기화되고, 뱉은 텍스트는 매번 SPLIT_THRESH(0.30)를 넘어 새 셀로 분열하므로 시드 prototype 은 영원히 안 건드려진다 ⇒ recon_err = L2(시드 proto, 시드 feat) ≡ 0.0 항등식. 데몬은 '내가 태어날 때부터 알던 것에 얼마나 놀라는가'를 묻고 있고, 답은 영원히 '안 놀란다'. 이 상수 0 을 8개 lane 이 먹는다(surprise·boredom·agency·change_detect·osmotic·fieldlibido·m_field·ci_lane_scores). H_9328 DO-MOUTH 가 이 프로덕션 경로에서 24 rollout 을 재면서 그 죽은 축을 상속했다 — MEDIATION 패널의 H(R|S)=0.0000 이 잡아냈다.",
+        "threshold": "재발조건: 계기/하네스 플래그(--opgrip 류) 뒤에서 결함을 고칠 때. 해결: 프로덕션 경로에도 같은 수정을 같은 커밋에서 배선하라(wire-to-prod) — 못 하면 카드에 '구현됨·미배선' + follow-on id 를 남기고, 그 축을 쓰는 다음 실험은 프로덕션 값이 살아있는지부터 확인하라(조건부 엔트로피 H(X|S) > floor). 게이지가 상수인지 재보는 건 0원이고, 안 재면 '기질이 그 채널을 안 쓴다'와 '그 채널이 끊겨 있다'를 영영 못 가른다.",
+        "source": "cli/chat.py"
       }
     ]
   }

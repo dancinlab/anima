@@ -1377,6 +1377,9 @@ def anima_consciousness_mode(ckpt, argv=None):
         session_seed = _h1058_seed_ov
     seed_feat0 = _afs_byte_feature(session_seed, 8)
     afield = vadapt_field_new(seed_feat0, 2048)
+    # H_9336 · the field's prediction error on the LAST thing the daemon actually said.
+    # None until it has said anything (tick 0 falls back to the seed). See :1493.
+    pending_recon = None
 
     # ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ──
     rel_ema = 0.5
@@ -1490,7 +1493,22 @@ def anima_consciousness_mode(ckpt, argv=None):
         rel_lane = _afs_clip01(1.0 - recall_margin)
 
         # (2) CI LANE SCORES (§ConsciousnessIndex 15-lane)
-        recon_err = vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8))
+        # H_9336 · the field's prediction error on the LAST thing the daemon said (1-tick lag),
+        # NOT on the session seed. Against the seed this is 0.0 by IDENTITY: afield is BORN with
+        # seed_feat0 as its first prototype (:1379), and every emitted text clears SPLIT_THRESH
+        # and spawns a NEW cell instead of refining that one — so the seed prototype is never
+        # touched and L2(seed_proto, seed_feat) stays exactly 0 forever. The daemon was asking
+        # "how surprised am I by the thing I was born knowing?" and 8 lanes (surprise · boredom ·
+        # agency · change_detect · osmotic · fieldlibido · m_field · ci_lane_scores) ate that
+        # constant. Measured dead: H(R|S)=0.0000 over 24 rollouts (H_9328 MEDIATION panel).
+        # H_9210 diagnosed this and fixed it — but only behind --opgrip-live, so production kept
+        # the dead gauge and the next experiment inherited it (convergence chat-py-4).
+        # Predictive-coding order: the error is taken on the NEW percept BEFORE adapting to it,
+        # so it is captured at the emit site (:1894+) and consumed here on the following tick.
+        if pending_recon is None:
+            recon_err = vadapt_field_recon_err(afield, seed_feat0)
+        else:
+            recon_err = pending_recon
         m_grounding = _afs_clip01(rel_lane)
         m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
         m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)
@@ -1891,6 +1909,10 @@ def anima_consciousness_mode(ckpt, argv=None):
         _h1058_row = None        # deferred trace row (built below, written end-of-tick)
         if g_emit and g_back == "clm" and byte_len(g_text) > 0:
             feat = _afs_byte_feature(g_text, 8)
+            # H_9336 · take the error BEFORE adapting — that is what a prediction error IS.
+            # Read on the next tick (:1493). Measured after the field has already absorbed the
+            # text, it would only report how well the field memorised it.
+            pending_recon = vadapt_field_recon_err(afield, feat)
             afield = vadapt_field_step(afield, feat, cfg)
             _h1058_grow_feats.append(list(feat))
             post_cells = vadapt_field_cells(afield)
