@@ -42,6 +42,12 @@ train = ["torch>=2.1", "datasets"]
 # directly — core/decode.py only requires `import cupy` to succeed, it has no hard
 # dependency on this exact wheel name. The <14 bound applies there too.
 gpu = ["cupy-cuda12x>=13.0,<14"]
+# CUDA 13 hosts (e.g. pool host `aiden`: RTX 5070 sm_120, CUDA 13.0) need the cuda13 wheel — the
+# cuda12 one imports but then dies on `libnvrtc.so.12: cannot open shared object file`, which
+# cuda_available() now catches and reports, falling back to numpy. Install it explicitly:
+#     pip install "anima-python[gpu]" && pip install "cupy-cuda13x>=13.0,<14"
+# The <14 bound is the same load-bearing pin: cupy 14.x is broken on sm_120 (see above).
+gpu-cuda13 = ["cupy-cuda13x>=13.0,<14"]
 
 [project.scripts]
 anima-py = "anima_py:main"
