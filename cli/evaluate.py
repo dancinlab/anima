@@ -759,9 +759,11 @@ def evaluate_usage():
     print("  anima evaluate --interact-mi <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9328 DO-MOUTH · I(A;Y|S) over daemon decision-traces — NO decode, reads only.")
     print("       A=a_fold8 (H_9257 frozen 8-bucket axis the daemon consumes) · S=stage · Y=score_{t+1} 2-bin.")
-    print("       🚦 V-CEILING FIRST: prints H(A|S) and HARD-STOPS as NOT-POWERED if it is below 3xMDE —")
-    print("       I <= H(A|S) is an identity, so a dead action channel forces I=0 by DEFINITION, not by")
-    print("       measurement. That is exactly how H_9308 died. C1 PERM (within-stratum A shuffle) = the")
+    print("       🚦 V-CEILING FIRST (BOTH channels): prints H(A|S) and H(Y|S), HARD-STOPS as NOT-POWERED")
+    print("       if EITHER is below 3xMDE — I <= min(H(A|S), H(Y|S)) is an identity, so a dead channel on")
+    print("       either side forces I=0 by DEFINITION, not by measurement. A dead ACTION channel is how")
+    print("       H_9308 died; a dead OUTCOME channel (stage already fixes score_{t+1}) is the same trap")
+    print("       wearing the other hat. C1 PERM (within-stratum A shuffle) = the")
     print("       true-0 null. Generate traces with: ANIMA_TICKS=N ANIMA_EMIT_TEMP=1.0 ANIMA_SAMPLE_SEED=K")
     print("       ANIMA_DECISION_TRACE=<path> anima-py chat <ckpt>)")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
@@ -2574,16 +2576,21 @@ def _im_cmi(A, Y, S):
     return tot
 
 
-def _im_hA_given_S(A, S):
-    """V-CEILING: H(A|S). I <= this by identity — if it is ~0 the DV is UNDEFINED on this
-    log, not zero-by-measurement. That distinction is what H_9308 got wrong."""
+def _im_h_given_S(X, S):
+    """V-CEILING: H(X|S), the stratified conditional entropy of ANY channel X.
+
+    I(A;Y|S) <= min(H(A|S), H(Y|S)) by identity, so a dead channel on EITHER side forces
+    I=0 by definition, not by measurement. H_9308 died on the ACTION side (H(A|S)=0). The
+    OUTCOME side is the same trap wearing the other hat: if the stage already determines
+    the next-tick score, then Y is a function of S and I is 0 no matter what the mouth
+    says. Gate BOTH before reading I (convergence interact-mi-py-2)."""
     n = len(S)
     if n == 0:
         return 0.0
     strata = {}
     for i in range(n):
         strata.setdefault(S[i], []).append(i)
-    return sum((float(len(idx)) / n) * _im_H([A[i] for i in idx]) for idx in strata.values())
+    return sum((float(len(idx)) / n) * _im_H([X[i] for i in idx]) for idx in strata.values())
 
 
 def _interact_mi(argv):
@@ -2629,12 +2636,24 @@ def _interact_mi(argv):
     A = [int(r["a_fold8"]) for r in use]
     S = [int(r["stage"]) for r in use]
     Y = [1 if nxt[(r["_src"], int(r["tick"]))] > med else 0 for r in use]
-    # ── V-CEILING (BLOCKING · before any I is read) ────────────────────────────────
-    hA = _im_hA_given_S(A, S)
-    print("  🚦 V-CEILING  H(A|S) = %.4f nats   (floor %.3f = 3×MDE)" % (hA, hfloor))
+    # ── V-CEILING · BOTH channels (BLOCKING · before any I is read) ────────────────
+    # I(A;Y|S) <= min(H(A|S), H(Y|S)) is an IDENTITY. A dead channel on either side pins
+    # I to 0 by definition. Gating only the action side (as this did until interact-mi-py-2)
+    # leaves the outcome side wide open: if the stage already fixes the next-tick score,
+    # a null reads as "the loop carries no information" when it actually reads "we asked a
+    # question whose answer was already written". Both, or neither.
+    hA = _im_h_given_S(A, S)
+    hY = _im_h_given_S(Y, S)
+    print("  🚦 V-CEILING  H(A|S) = %.4f nats · H(Y|S) = %.4f nats   (floor %.3f = 3×MDE)"
+          % (hA, hY, hfloor))
     if hA < hfloor:
         print("  ⇒ NOT-POWERED — 행동 채널이 죽어 있다. I 는 정의상 0 이지 측정된 0 이 아니다.")
         print("     (H_9308 이 정확히 여기서 죽었다 · convergence interact-mi-py-1)")
+        return 0
+    if hY < hfloor:
+        print("  ⇒ NOT-POWERED — 결과 채널이 죽어 있다(다음-tick score 가 stage 로 이미 결정됨).")
+        print("     I 는 정의상 0 — 입이 무엇을 말했든 물을 수 있는 질문이 아니었다.")
+        print("     (같은 항등식의 반대쪽 축 · convergence interact-mi-py-2)")
         return 0
     I = _im_cmi(A, Y, S)
     # ── The exchangeable unit is MEASURED, not assumed (convergence evaluate-py-13 · chat-py-3).
