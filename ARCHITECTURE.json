@@ -14141,6 +14141,32 @@
           "detail": "① 40회 반복 대신 극성이 load-bearing 인 자연 좌문맥(H_9291 ORACLE 이 29/29 로 복원한 그 문맥)을 섞는다 ② lr/step 스윕(train-py-3 과적합 감시) ③ 사전등록은 그대로 유효(bar 미변경) — 코퍼스만 고쳐 재발사. 산출: cli/corpus.py ground|ground_lie · cli/train.py QUANT-SWALLOW 가드 + .pt 항상 저장."
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-writelever-h9314",
+        "type": "gate",
+        "name": "★WRITE-LEVER — 예산이 레버였다 (PRIOR-LOCKED 아님 · H_9314 · 진행중)",
+        "detail": "H_9313 이 ⛔INVALID-WRITE 로 죽은 뒤 '예산이냐 코퍼스냐'를 물었다. 답 = **예산**. 단 WRITE 헤드라인 수치와 그 의미는 갈린다 — 극성 분해가 필수.",
+        "children": [
+         {
+          "id": "gate-g1-recomb-writelever-h9314-sweep",
+          "type": "note",
+          "name": "5셀 스윕 — WRITE 0.448 → 0.793 단조증가",
+          "detail": "steps{600,2000,6000} × lr{5e-5,2e-4}. 600@5e-5=0.4483 · 2000@5e-5=0.4713 · 6000@5e-5=0.5747 · 600@2e-4=0.5862 · 2000@2e-4=0.7931. FORGET 은 오히려 상승(0.950→0.983) = 망각 없음. ⟹ 🧱 PRIOR-LOCKED 예측 **반증** · ⚠️ UNDER-BUDGET(사전등록 분기대로 1회 연장). **lr 이 steps 보다 강한 레버**(600@2e-4 > 6000@5e-5)."
+         },
+         {
+          "id": "gate-g1-recomb-writelever-h9314-split",
+          "type": "note",
+          "name": "⚠️ 극성 분해 — WRITE 상승의 대부분은 **다수 라벨 붕괴**다",
+          "detail": "라벨 14긍:15부. 저예산 셀은 **부정만 0.96 까지 오르고 긍정은 0.17 에 방치**(우연보다 나쁨) = 모델이 거의 전부 '부정'이라 답하는 붕괴이고, WRITE 0.575 는 라벨 비율의 인공물이지 학습 증거가 아니다(convergence corpus-py-1 이 잡으라 한 함정). **2000@2e-4 에서 처음으로 긍정이 깨어난다**(0.190→0.571 · 부정 1.000) = 붕괴가 풀리고 어간을 구별하기 시작. ⟹ **예산 주장은 WRITE 가 아니라 긍정원자 열에서 해야 한다.**"
+         },
+         {
+          "id": "gate-g1-recomb-writelever-h9314-next",
+          "type": "note",
+          "name": "NEXT — 연장 3셀 + Fable GROUND-NAT 보류",
+          "detail": "연장(사전등록 UNDER-BUDGET 분기): 6000@2e-4 · 2000@5e-4 · 6000@5e-4. Fable 의 GROUND-NAT 코퍼스 재설계는 **발사 조건(PRIOR-LOCKED)이 성립 안 해 보류** — 예산으로 뚫리면 코퍼스 재설계는 불필요. 예산 확정 시 H_9313 사전등록(bar 불변)으로 재발사."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
