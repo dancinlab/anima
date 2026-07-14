@@ -769,6 +769,14 @@ def evaluate_usage():
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
+    print("  anima evaluate --earned <corpus.tsv> [--out <file.json>] [--min-occ 100] [--k-perm 1000] [--seed N]")
+    print("      (corpus-level operator instrument — does a natural corpus CONTAIN non-additive")
+    print("       information that TRANSFERS to a held-out cell? no model, no training. TSV rows =")
+    print("       text<TAB>B<TAB>T, where T is a label OUTSIDE the token stream — else the measure is")
+    print("       a tautology. 3 BLOCKING gates first: G-ALIVE (planted-XOR positive control) ·")
+    print("       G-PEDESTAL (zero-truth arm) · G-POWER (census + MDE); a failed gate is INVALID,")
+    print("       never a KILL. Effect is reported against the XBIND ruler, not a p-value.")
+    print("       cards H_9304 · H_9316 · H_9317 · H_9318)")
     print("")
     print("  --ground-probe <manifest>: NBIND-G grounding instrument, engine-native and whole —")
     print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
@@ -1790,8 +1798,9 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
-    "--ground-probe", "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled",
+    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--help", "--ground-probe", "--interaction-lift", "--k-perm", "--kosmos", "--min-occ",
+    "--n-decode", "--n-sampled",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
     "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
@@ -1902,6 +1911,9 @@ def main(argv):
         return dump_hidden_run(argv)
     # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
     # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
+    if "--earned" in argv:
+        import earned as _earned
+        return _earned.earned_run(argv)
     if "--interaction-lift" in argv:
         return interaction_lift_run(argv)
     # --probe <spec.json>: matched-surface G1 probe (card H_6189). argv[0]=ckpt; probe_run
