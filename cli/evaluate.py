@@ -2004,6 +2004,478 @@ def _bl_answer_pos_edited(np, W, seed, T, edits):
     return 1.0 if out["긍정"] < out["부정"] else 0.0
 
 
+_SP_CONTS = ("긍정", "부정")
+
+
+def _sp_cont_bytes():
+    """The 2AFC continuations are both 6 bytes (H_9327's readout). The whole span arithmetic below
+    depends on that: the edit is applied inside the forward over `seed + cont`, so a stem byte at
+    absolute offset i in the seed sits at window index i + (T - len(seed) - len(cont)). If the two
+    continuations had different byte lengths the span would move between the two scoring passes and
+    the instrument would be patching two different sites. Assert it rather than assume it."""
+    b = [len(c.encode("utf-8")) for c in _SP_CONTS]
+    if b[0] != b[1]:
+        raise ValueError("splice: the 2AFC continuations must be byte-length matched, got %r" % (b,))
+    return b[0]
+
+
+def _sp_answer_pos(np, W, seed, T, edits_abs=None):
+    """P(answer = 긍정) as a hard 0/1 under the H_9327 carrier readout (lower continuation NLL
+    wins), with `edits_abs` given in SEED-ABSOLUTE byte offsets and re-based into the window of
+    the text the forward actually runs on (`seed + cont`).
+
+    This re-basing is the whole difference from `_bl_answer_pos_edited`, and it is not cosmetic.
+    A span located in the SEED window (off = T - len(seed)) but applied in the SEED+CONT window
+    (off = T - len(seed) - len(cont)) lands len(cont) = 6 bytes to the RIGHT of the stem — i.e.
+    on the negation suffix — so the run would silently measure a different site than the one it
+    reports. edits_abs entries: {layer, s0, s1, mode, donor|vec|target|delta}, where [s0, s1) is
+    the byte span inside `seed`."""
+    if not edits_abs:
+        return _bl_answer_pos(np, W, seed, T)
+    nll = {}
+    sb = len(seed.encode("utf-8", "surrogateescape"))
+    for cont in _SP_CONTS:
+        cb = len(cont.encode("utf-8", "surrogateescape"))
+        off = T - sb - cb
+        edits = [dict(e, t0=int(e["s0"]) + off, t1=int(e["s1"]) + off) for e in edits_abs]
+        text = seed + cont
+        tok = clm._seed_to_tok(text, T)
+        logits = clm.clm_forward_logits_edited(W, tok, T, edits)
+        lo = max(0, T - 1 - cb)
+        s = 0.0
+        for i in range(lo, T - 1):
+            row = logits[i]
+            m = float(np.max(row))
+            lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
+            s += lse - float(row[int(tok[i + 1])])
+        nll[cont] = s
+    return 1.0 if nll["긍정"] < nll["부정"] else 0.0
+
+
+def _sp_taps_at(np, W, seed, T, s0, s1, layer):
+    """The donor's residual over ITS OWN stem span [s0, s1) (seed-absolute), read at trunk depth
+    `layer` from a forward over the SAME `seed + cont` window the recipient is scored in.
+
+    Why the continuation is appended for a READ: the window is right-aligned, so appending the
+    6-byte answer shifts every byte left by 6. The trunk is causal, so the VALUES over the stem
+    are unchanged by what follows — but the INDICES are not, and a donor read at the seed-only
+    alignment would be copied into the recipient at the wrong offset. Reading donor and recipient
+    through the identical alignment removes that whole class of error by construction."""
+    cb = _sp_cont_bytes()
+    sb = len(seed.encode("utf-8", "surrogateescape"))
+    off = T - sb - cb
+    taps = clm.clm_forward_taps(W, clm._seed_to_tok(seed + _SP_CONTS[0], T), T)
+    return taps[layer][s0 + off:s1 + off]
+
+
+def _sp_forms():
+    """The six training surfaces, imported from the CORPUS BUILDER's own constants — never
+    re-derived. cli/corpus.py:329-332 is where the surfaces the model was actually trained on are
+    defined, and the frozen n2 eval manifest was rendered from exactly these strings; a carrier
+    rebuilt from a hand-typed template is a string the model never saw, and the operator then looks
+    dead for a reason that is purely ours (H_9331's reference-match lesson)."""
+    import corpus as _corp
+    return (tuple(zip(("bare", "int1", "int2"), _corp.GROUND_FORMS_FLIP0)),
+            tuple(zip(("negL", "negS", "negE"), _corp.GROUND_FORMS_FLIP1)))
+
+
+def splice_run(argv):
+    """`anima-py evaluate <ckpt> --splice <spec.json> --out <f.json>` — H_9354 SPLICE (V4).
+
+    THE QUESTION. H_9327 measured the wall: the negation operator is alive on SEEN stems
+    (flip1 0.98-1.00), the CPT-written fact is in the weights (WRITE 0.98), and on a held-out stem
+    the operator answers at chance (0.46-0.56) — and the LIE control showed the planted fact is not
+    even consulted. Fable's minimal model of that is TWO LANES: a declarative store and an operator
+    store, each with its own fact entry and no bridge between them. This verb asks the one thing a
+    read-only probe cannot answer: is the operator's stem-read a RUNTIME function of the activation
+    at the stem site at all?
+
+    THE INTERVENTION. Run the operator's own prompt on a held-out stem X (`이 영화 X지 않다 => `),
+    but SPLICE the residual over X's byte span with the residual a SEEN stem Y carries over ITS
+    span, read from the identical carrier at the identical window offset (same form, same stem byte
+    length ⇒ same alignment, so there is no position confound to correct for). Then ask which
+    polarity the answer follows.
+
+      answer follows Y (negated: pos donor -> 부정)  the operator's stem-read IS activation-mediated
+                                                     ⇒ the held-out failure is a CONTENT fact (the
+                                                     held-out stem's residual carries no polarity at
+                                                     that site, which is what AUDIT-A found) and an
+                                                     activation write becomes a wire-to-prod candidate
+      answer ignores Y (with the SEEN->SEEN positive
+      control passing)                               the lane's read is not at this site — it is
+                                                     weight-level / routed, and a transplant cannot
+                                                     reach it
+
+    DV (pre-registered · frozen). dep = P(ans=긍정 | donor pol=1) - P(ans=긍정 | donor pol=0),
+    paired per recipient, averaged over k donors per polarity. A global answer bias cancels in the
+    difference by construction (H_9327's LIE test, in causal form). Expected sign if the donor is
+    consumed: dep(flip0) -> +1 (plain carrier echoes the donor) and dep(flip1) -> -1 (the operator
+    NEGATES the donor). The sign is the claim; the magnitude is the strength.
+
+    ARMS (>= 3 controls, all frozen before any number was read):
+      PC   SEEN recipient <- SEEN donor        positive control (the 자기이식 kill gate): if a swap
+                                               between two stems the operator demonstrably handles
+                                               does not move the answer, the INSTRUMENT is dead and
+                                               no held-out number may be read (INVALID, not a wall)
+      CORE held-out recipient <- SEEN donor    the DV
+      NEU  held-out recipient <- NEUTRAL donor length-matched, polarity-balanced fillers mined from
+                                               this model's own corpus (AUDIT-A's frozen neutral
+                                               inventory), pseudo-labelled by a seeded split: dep
+                                               must be ~0, else "any patch moves the answer"
+      SHAM held-out recipient <- ITS OWN value the edit machinery must be inert (change-rate ~0)
+      DEG  (diagnostic, not a bar) agreement between the spliced answer and the answer the DONOR's
+           OWN prompt gives. At shallow depth a stem-span splice approaches "just run the donor's
+           prompt" (the two prompts differ ONLY in the stem), so a pass there is real but nearly
+           tautological — DEG quantifies exactly how much, so the reader can discount it instead of
+           being fooled by it. The informative cell is the DEEPEST depth the PC still passes at,
+           where the recipient's own identity survives outside the patched span.
+
+    LAYER GRID (pre-registered · no post-hoc best-layer pick). depth 0..L x span-rung
+    (last byte -> last 3 bytes -> whole stem), scanned on the PC arm ONLY (SEEN data, truth we
+    planted — calibration, not tune-to-green). l_shallow = the first passing cell in that fixed
+    order; l_deep = the last. The full arms run at BOTH, and both are reported.
+
+    FROZEN DECISION TREE (bars never move):
+      V0  SEEN base accuracy (flip0 and flip1) >= G_BASE      else INVALID-READOUT
+      V1  some grid cell has PC dep(flip1) <= G_PC            else INVALID-LOCALIZATION
+          with SHAM change-rate <= G_SHAM
+      V2  |NEU dep| <= G_NEU                                  else INVALID-INSTRUMENT
+      --- only if V0 & V1 & V2 ---
+      DV  CORE dep(flip1) <= G_DV  (perm p < .01)             -> MEDIATED  (runtime-activation read)
+          |dep| + 1.96 se <= G_TOST                           -> WEIGHT-LEVEL (transplant cannot reach it)
+          otherwise                                           -> UNDERPOWERED (no bar moves; raise n)
+
+    Two CPT seeds must agree in SIGN before any tier is cemented. Read-only w.r.t. the weights;
+    every forward is the production forward (a_experiment_engine_native). The hidden is
+    device-dependent (2.5e-14 GPU vs CPU), so the device is stamped into the output and a run must
+    never be compared across one.
+    """
+    import numpy as np
+    import time
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--splice", "")))
+    out_path = evaluate_strval(argv[1:], "--out", "splice.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    n_perm = evaluate_intval(argv[1:], "--perm", 2000)
+    k_don = evaluate_intval(argv[1:], "--donors-k", 3)
+    layer_opt = evaluate_strval(argv[1:], "--splice-layer", "scan")
+    carrier = spec.get("carrier", "이 영화 {surf} => ")
+
+    # ── frozen bars (pre-registered · H_9354 card · never moved post-hoc · p7) ────────────────
+    G_BASE, G_PC, G_SHAM, G_NEU, G_DV, G_TOST = 0.75, -0.60, 0.05, 0.15, -0.60, 0.20
+
+    F0, F1 = _sp_forms()
+    cb = _sp_cont_bytes()
+
+    print("=== anima evaluate --splice — H_9354 V4: does the operator READ the stem at runtime? ===")
+    print("  ckpt " + ckpt + " · win %dB · donors-k %d · perm %d · seed %d" % (T, k_don, n_perm, seed))
+    print("  frozen bars: V0 base>=%.2f · V1 PC dep1<=%+.2f sham<=%.2f · V2 |NEU|<=%.2f"
+          % (G_BASE, G_PC, G_SHAM, G_NEU))
+    print("  frozen DV  : MEDIATED if dep1<=%+.2f (perm p<.01) · WEIGHT-LEVEL if TOST(+-%.2f) · else UNDERPOWERED"
+          % (G_DV, G_TOST))
+    dev = _probe_device()
+    _print_device(dev)
+
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+    L = int(W["L"])
+
+    atoms = spec["atoms"]
+    neutral = list(spec.get("neutral", []))
+    seen_a = [a for a in atoms if a.get("split") == "train"]
+    held_a = [a for a in atoms if a.get("split") == "heldout"]
+
+    def render(stem, tpl):
+        return carrier.replace("{surf}", tpl.replace("{s}", stem))
+
+    def span(stem, tpl):
+        """Byte span of the stem inside its own prompt (seed-absolute). rfind, because negS
+        PREFIXES the negator (`안 빠르고`), so the stem is still the last occurrence of its bytes.
+        Everything here is BYTES — Korean is 3 B/char and a char-indexed slice is how three prior
+        H's died (a_korean_byte_budget)."""
+        p = render(stem, tpl).encode("utf-8", "surrogateescape")
+        sb = stem.encode("utf-8", "surrogateescape")
+        s0 = p.rfind(sb)
+        if s0 < 0 or (T - len(p) - cb) < 0:
+            return None                       # stem missing, or prompt+answer overflows the window
+        return (s0, s0 + len(sb))
+
+    def rungs(sp):
+        s0, s1 = sp
+        out = []
+        if s1 - 1 >= s0:
+            out.append((s1 - 1, s1))          # last byte
+        if s1 - 3 >= s0:
+            out.append((s1 - 3, s1))          # last 3 bytes (one Korean char)
+        out.append((s0, s1))                  # whole stem
+        return out
+
+    _base = {}
+
+    def base_of(p):
+        a = _base.get(p)
+        if a is None:
+            a = _bl_answer_pos(np, W, p, T)
+            _base[p] = a
+        return a
+
+    _donor = {}
+
+    def donor_h(stem, tpl, rung, depth):
+        """Memoised donor residual. The scan asks for the same donor's span many times; the value
+        is the SAME production forward either way, so this is a speed fix with zero numeric effect."""
+        key = (stem, tpl, rung, depth)
+        h = _donor.get(key)
+        if h is None:
+            sp = span(stem, tpl)
+            r = rungs(sp)
+            if rung >= len(r):
+                return None
+            s0, s1 = r[rung]
+            h = _sp_taps_at(np, W, render(stem, tpl), T, s0, s1, depth)
+            _donor[key] = h
+        return h
+
+    def bytelen(s):
+        return len(s.encode("utf-8", "surrogateescape"))
+
+    def donors_for(recip_stem, pol, tpl, pool):
+        """Donors must be byte-length matched to the recipient AND rendered in the SAME form, so
+        the two prompts have identical length and the right-aligned window puts the two spans at
+        the IDENTICAL offset. Length mismatch = skip, never pad (H_9331's rule): a padded donor is
+        a different site, not a control."""
+        d = [a["stem"] for a in pool
+             if a.get("pol") == pol and a["stem"] != recip_stem
+             and bytelen(a["stem"]) == bytelen(recip_stem)]
+        return d[:k_don]
+
+    # ── V0 · is the readout alive at this window? (SEEN base accuracy, no edit) ───────────────
+    def base_acc(pool, forms, flip):
+        hit = n = 0
+        for a in pool:
+            for _tag, tpl in forms:
+                if span(a["stem"], tpl) is None:
+                    continue
+                gold = a["pol"] if flip == 0 else 1 - a["pol"]
+                hit += int(base_of(render(a["stem"], tpl)) == float(gold))
+                n += 1
+        return (hit / n if n else float("nan")), n
+
+    t0 = time.time()
+    acc_s0, n_s0 = base_acc(seen_a, F0, 0)
+    acc_s1, n_s1 = base_acc(seen_a, F1, 1)
+    acc_h0, n_h0 = base_acc(held_a, F0, 0)
+    acc_h1, n_h1 = base_acc(held_a, F1, 1)
+    print("\n[V0] base readout (no edit) — is the operator alive at win=%dB?" % T)
+    print("  SEEN     flip0 %.3f (n=%d) · flip1 %.3f (n=%d)   <- the operator lives here (H_9327)" % (acc_s0, n_s0, acc_s1, n_s1))
+    print("  held-out flip0 %.3f (n=%d) · flip1 %.3f (n=%d)   <- H_9327's wall, replicated" % (acc_h0, n_h0, acc_h1, n_h1))
+    res = {"ckpt": ckpt, "win": T, "device": dev, "seed": seed, "donors_k": k_don,
+           "bars": {"BASE": G_BASE, "PC": G_PC, "SHAM": G_SHAM, "NEU": G_NEU,
+                    "DV": G_DV, "TOST": G_TOST},
+           "base": {"seen_flip0": acc_s0, "seen_flip1": acc_s1,
+                    "heldout_flip0": acc_h0, "heldout_flip1": acc_h1,
+                    "n": {"s0": n_s0, "s1": n_s1, "h0": n_h0, "h1": n_h1}}}
+    if not (acc_s0 >= G_BASE and acc_s1 >= G_BASE):
+        res["verdict"] = "INVALID-READOUT"
+        res["why"] = ("the operator is not alive at win=%dB (SEEN flip0 %.3f / flip1 %.3f < %.2f) — "
+                      "the 2AFC window cuts the carrier, so nothing downstream may be read"
+                      % (T, acc_s0, acc_s1, G_BASE))
+        print("\nSPLICE ⏳ INVALID-READOUT — %s" % res["why"])
+        json.dump(_json_safe(res), open(out_path, "w"), ensure_ascii=False, indent=1)
+        return 0
+
+    # ── the DV, one arm at one grid cell ─────────────────────────────────────────────────────
+    def arm(recips, forms, flip, depth, rung, donor_pool, mode="polar", want_deg=False):
+        """dep_i = mean(ans | pos donors) - mean(ans | neg donors), one value per recipient
+        (paired). `mode`: polar = SEEN/NEUTRAL donors carrying a (pseudo)polarity · sham = patch
+        the recipient with its OWN value (the machinery must be inert)."""
+        deps, degs, rows = [], [], []
+        for a in recips:
+            for tag, tpl in forms:
+                sp = span(a["stem"], tpl)
+                if sp is None:
+                    continue
+                r = rungs(sp)
+                if rung >= len(r):
+                    continue
+                s0, s1 = r[rung]
+                p = render(a["stem"], tpl)
+                if mode == "sham":
+                    h = donor_h(a["stem"], tpl, rung, depth)
+                    got = _sp_answer_pos(np, W, p, T, [{"layer": depth, "s0": s0, "s1": s1,
+                                                        "mode": "patch", "donor": h}])
+                    deps.append(1.0 if got != base_of(p) else 0.0)   # change-rate, not a dep
+                    continue
+                ans = {}
+                ok = True
+                for pol in (1, 0):
+                    ds = donors_for(a["stem"], pol, tpl, donor_pool)
+                    if not ds:
+                        ok = False
+                        break
+                    vals = []
+                    for dn in ds:
+                        h = donor_h(dn, tpl, rung, depth)
+                        if h is None or h.shape[0] != (s1 - s0):
+                            continue
+                        v = _sp_answer_pos(np, W, p, T, [{"layer": depth, "s0": s0, "s1": s1,
+                                                          "mode": "patch", "donor": h}])
+                        vals.append(v)
+                        if want_deg:
+                            degs.append(1.0 if v == base_of(render(dn, tpl)) else 0.0)
+                    if not vals:
+                        ok = False
+                        break
+                    ans[pol] = sum(vals) / len(vals)
+                if not ok:
+                    continue
+                deps.append(ans[1] - ans[0])
+                rows.append({"stem": a["stem"], "form": tag, "pol": a["pol"],
+                             "ans_donor_pos": ans[1], "ans_donor_neg": ans[0],
+                             "base": base_of(p)})
+        return deps, degs, rows
+
+    def summ(d):
+        if not d:
+            return {"n": 0, "dep": float("nan"), "se": float("nan")}
+        a = np.asarray(d, dtype=np.float64)
+        n = len(a)
+        return {"n": n, "dep": float(a.mean()),
+                "se": float(a.std(ddof=1) / math.sqrt(n)) if n > 1 else float("nan")}
+
+    def perm_p(d, rng):
+        """Paired sign-flip permutation (exact null for a paired design): under H0 the donor's
+        polarity label carries nothing, so flipping which donor set is called 'pos' is exchangeable.
+        Two-sided."""
+        a = np.asarray(d, dtype=np.float64)
+        if a.size == 0:
+            return float("nan")
+        obs = abs(float(a.mean()))
+        hits = 0
+        for _ in range(n_perm):
+            s = rng.choice([-1.0, 1.0], size=a.size)
+            if abs(float((a * s).mean())) >= obs - 1e-12:
+                hits += 1
+        return (hits + 1) / (n_perm + 1)
+
+    # ── V1 · the pre-registered grid, scanned on the PC arm only (SEEN data) ─────────────────
+    print("\n[V1] grid scan — PC (SEEN <- SEEN, flip1). Bars: dep<=%+.2f · sham<=%.2f" % (G_PC, G_SHAM))
+    print("  depth rung    n   PC dep1    sham")
+    grid, passing = [], []
+    scan_forms = (F1[0],)                     # negL only for the scan — the primary negation surface
+    for depth in range(L + 1):
+        for rung in range(3):
+            d, _, _ = arm(seen_a, scan_forms, 1, depth, rung, seen_a)
+            sh, _, _ = arm(seen_a, scan_forms, 1, depth, rung, seen_a, mode="sham")
+            if not d:
+                continue
+            s, ss = summ(d), summ(sh)
+            ok = (s["dep"] <= G_PC and ss["dep"] <= G_SHAM)
+            grid.append({"depth": depth, "rung": rung, "n": s["n"], "pc_dep1": s["dep"],
+                         "sham": ss["dep"], "pass": bool(ok)})
+            print("  %5d %4d %4d  %+.3f    %.3f%s"
+                  % (depth, rung, s["n"], s["dep"], ss["dep"], "   <- PASS" if ok else ""))
+            if ok:
+                passing.append((depth, rung))
+    res["grid"] = grid
+    if not passing:
+        res["verdict"] = "INVALID-LOCALIZATION"
+        res["why"] = ("no (depth, span) cell where swapping one SEEN stem's residual for another's "
+                      "moves the operator's answer to the donor (bar dep1 <= %+.2f, sham <= %.2f). "
+                      "The positive control is the kill gate: without it the instrument cannot see "
+                      "a runtime read even where one exists, so the held-out number is unreadable. "
+                      "This is INVALID — an instrument fact — NOT a wall." % (G_PC, G_SHAM))
+        print("\nSPLICE ⛔ INVALID-LOCALIZATION — %s" % res["why"])
+        json.dump(_json_safe(res), open(out_path, "w"), ensure_ascii=False, indent=1)
+        return 0
+    cells = sorted(set([passing[0], passing[-1]]))
+    print("  l_shallow = (depth %d, rung %d) · l_deep = (depth %d, rung %d)"
+          % (passing[0][0], passing[0][1], passing[-1][0], passing[-1][1]))
+    if layer_opt != "scan":
+        cells = [(int(layer_opt), passing[0][1])]
+        print("  --splice-layer override: forcing depth %s" % layer_opt)
+
+    # ── full arms at the pre-registered cells ────────────────────────────────────────────────
+    rng = np.random.RandomState(seed)
+    ns = [{"stem": w, "pol": (i % 2), "split": "neutral"}      # seeded pseudo-labels; truth = 0
+          for i, w in enumerate(neutral)]
+    res["cells"] = {}
+    for (depth, rung) in cells:
+        tag = "d%d_r%d" % (depth, rung)
+        print("\n[arms @ depth %d · rung %d]" % (depth, rung))
+        out = {}
+        for name, recips, forms, flip, pool, mode, deg in (
+                ("PC_seen_flip1",   seen_a, F1, 1, seen_a, "polar", False),
+                ("PC_seen_flip0",   seen_a, F0, 0, seen_a, "polar", False),
+                ("CORE_held_flip1", held_a, F1, 1, seen_a, "polar", True),
+                ("CORE_held_flip0", held_a, F0, 0, seen_a, "polar", True),
+                ("NEU_held_flip1",  held_a, F1, 1, ns,     "polar", False),
+                ("SHAM_held_flip1", held_a, F1, 1, held_a, "sham",  False)):
+            d, degs, rows = arm(recips, forms, flip, depth, rung, pool, mode=mode, want_deg=deg)
+            s = summ(d)
+            s["perm_p"] = perm_p(d, rng) if (mode == "polar" and d) else float("nan")
+            if degs:
+                s["donor_prompt_agreement"] = float(np.mean(degs))
+            out[name] = s
+            extra = ("  perm p=%.4f" % s["perm_p"]) if not math.isnan(s["perm_p"]) else ""
+            deg_s = ("  DEG=%.3f" % s["donor_prompt_agreement"]) if "donor_prompt_agreement" in s else ""
+            print("  %-16s n=%3d  %s=%+.4f  se=%.4f%s%s"
+                  % (name, s["n"], ("change" if mode == "sham" else "dep"), s["dep"], s["se"],
+                     extra, deg_s))
+        res["cells"][tag] = out
+
+    # ── frozen decision tree, read at l_deep (the cell where the recipient still exists) ─────
+    dtag = "d%d_r%d" % (cells[-1][0], cells[-1][1])
+    C = res["cells"][dtag]
+    dep1 = C["CORE_held_flip1"]["dep"]; se1 = C["CORE_held_flip1"]["se"]
+    p1 = C["CORE_held_flip1"]["perm_p"]; dep0 = C["CORE_held_flip0"]["dep"]
+    neu = C["NEU_held_flip1"]["dep"]; sham = C["SHAM_held_flip1"]["dep"]
+    deg = C["CORE_held_flip1"].get("donor_prompt_agreement", float("nan"))
+    print("\n[verdict] read at l_deep = %s (the deepest cell the positive control survives — the one" % dtag)
+    print("          where the recipient's own identity still exists outside the patched span)")
+    print("  V1 PC dep1=%+.4f ✅ · V2 |NEU|=%.4f (bar %.2f) · SHAM=%.4f (bar %.2f)"
+          % (C["PC_seen_flip1"]["dep"], abs(neu), G_NEU, sham, G_SHAM))
+    if not (abs(neu) <= G_NEU and sham <= G_SHAM):
+        verdict = "INVALID-INSTRUMENT"
+        why = ("a control moved: neutral-donor |dep|=%.4f (bar %.2f) / sham change-rate=%.4f "
+               "(bar %.2f) — any patch shifts the answer, so the polar contrast is unreadable"
+               % (abs(neu), G_NEU, sham, G_SHAM))
+    elif dep1 <= G_DV and (not math.isnan(p1)) and p1 < 0.01:
+        verdict = "MEDIATED — the operator's stem-read is RUNTIME-ACTIVATION"
+        why = ("dep1 %+.4f <= %+.2f (perm p=%.4f): splice a SEEN stem's residual into a held-out "
+               "stem's span and the operator NEGATES the donor's polarity, exactly as it does for a "
+               "stem it was trained on ⇒ the lane consumes the site's runtime content, and the "
+               "H_9327 wall is a CONTENT fact about the held-out stem's representation (AUDIT-A "
+               "agrees), not a missing runtime read. Donor-prompt agreement DEG=%.3f bounds how much "
+               "of this is the near-tautology 'we re-ran the donor's prompt'." % (dep1, G_DV, p1, deg))
+    elif (not math.isnan(se1)) and abs(dep1) + 1.96 * se1 <= G_TOST:
+        verdict = "WEIGHT-LEVEL — the transplant cannot reach the lane's read"
+        why = ("dep1 %+.4f is TOST-equivalent to 0 within +-%.2f (|dep|+1.96se=%.4f) while the SEEN "
+               "positive control at the SAME site moves at %+.4f ⇒ the operator's stem-read is not "
+               "a function of the residual at the stem span for a held-out stem: the read is "
+               "weight-level / routed, and an activation write is NOT a wire-to-prod path"
+               % (dep1, G_TOST, abs(dep1) + 1.96 * se1, C["PC_seen_flip1"]["dep"]))
+    else:
+        verdict = "UNDERPOWERED"
+        why = ("dep1 %+.4f (se %.4f · perm p=%.4f) sits between the MEDIATED bar (%+.2f) and the "
+               "TOST margin (+-%.2f) — n must rise; no bar moves (power-before-negative-verdict)"
+               % (dep1, se1, p1, G_DV, G_TOST))
+    res["verdict"] = verdict
+    res["why"] = why
+    res["read_at"] = dtag
+    print("\nSPLICE %s" % verdict)
+    print("  %s" % why)
+    print("  (flip0 dep0=%+.4f — the plain carrier's echo of the donor, the 'is the splice consumed "
+          "at all' check)" % dep0)
+    print("  wall %.1fs" % (time.time() - t0))
+    json.dump(_json_safe(res), open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
+
+
 def bind_locus_run(argv):
     """`anima-py evaluate <ckpt> --bind-locus <manifest.json> --out <f.json>` — H_9331 BIND-LOCUS.
 
@@ -2128,7 +2600,15 @@ def bind_locus_run(argv):
         if t0_abs < 0:
             return None                        # stem not in its own prompt — manifest defect
         t1_abs = t0_abs + len(sb)
-        off = T - len(p)                       # right-align: byte i of p sits at window i+off
+        # Right-align into the window the EDIT actually runs in. The scored forward is over
+        # `seed + cont` (_bl_answer_pos_edited), not over `seed` — so byte i of the prompt sits at
+        # window index i + T - len(seed) - len(cont), and an offset computed without len(cont)
+        # lands the patch 6 bytes to the RIGHT of the stem, i.e. on the negation suffix. That
+        # would silently measure a different site than the one this verb reports (H_9354 found it
+        # before the first run; both continuations are byte-length matched, so ONE offset is valid
+        # for both scoring passes).
+        cb = _sp_cont_bytes()
+        off = T - len(p) - cb
         t0, t1 = t0_abs + off, t1_abs + off
         if t0 < 0:
             return None                        # stem fell out of the T-byte window — unusable
@@ -3496,7 +3976,8 @@ _KNOWN_FLAGS = frozenset((
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--seeds", "--selftest-rho-cells", "--slot-off",
-    "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
+    "--slot-shuffle", "--splice", "--splice-layer", "--donors-k",
+    "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
 ))
 
 
@@ -3609,6 +4090,12 @@ def main(argv):
     # context), against a permutation null. Kills the O-channel fire before it burns GPU.
     if "--bind-locus" in argv:
         return bind_locus_run(argv)
+    # --splice <spec.json>: H_9354 V4 — transplant a SEEN stem's residual into a held-out stem's
+    # byte span and ask which polarity the operator answers with. The one question a read-only probe
+    # cannot reach: is the operator's stem-read a RUNTIME function of the activation at that site,
+    # or is it weight-level (routed) and unreachable by a transplant?
+    if "--splice" in argv:
+        return splice_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
     # --device-parity: is this host's GPU forward the same measurement as its CPU forward? The probes
