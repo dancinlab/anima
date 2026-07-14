@@ -12834,6 +12834,12 @@
                 "detail": "동일 cli/anima.py:main 디스패처를 `anima-py` 콘솔 명령에 바인딩 = 2nd 설치 채널이지 2nd entry 아님. 이름 충돌 회피로 `anima` 아닌 `anima-py`(hx install anima 와 PATH 공존). 구 `--py` 브리지 플래그 폐기 → hexa `anima evaluate/train --py`는 hard-error+`anima-py` 힌트(py 채널은 no-op 허용, 마이그레이션)."
               },
               {
+                "name": "state/ 동결 — 엔진네이티브 우회로 차단",
+                "role": "실험은 canonical 명령으로만",
+                "id": "component-map-top-level-state-frozen",
+                "detail": "H-ANIMA-SINGLE-ENTRY 가 `cli/*.py|hexa` 직접실행만 막는 사이 진짜 우회로는 `state/<exp>/probe.py` 였다(mirror=DIRECTIONAL → verdict 불가). enforcement.json: H-NO-STATE-EXEC(state/ 경로 python·bash·hexa run 실행 block) + H-NO-STATE-DIR(state/ 신규 쓰기 block). 예외=state/verdicts/ 뿐 · 산출물=docs.scratchDir"
+              },
+              {
                 "name": "런처 anima_py/ · 소스복사 0",
                 "role": "",
                 "id": "component-map-top-level-pyproject-toml-anima-py-launcher",
