@@ -763,6 +763,11 @@ def evaluate_usage():
     print("      fact into the 2AFC scoring context (same prefix on gold AND counterfactual, so it")
     print("      moves the margin only by being COMPOSED, never parroted). An empty store is")
     print("      byte-identical to a plain --xbind run.")
+    print("      Every --xbind run ALWAYS reports a by-class split of the headline D-acc (+ a")
+    print("      COLLAPSE flag when the weakest class is at/below chance = the headline is riding")
+    print("      the label prior, not the stem), and a by-flip split when the manifest carries")
+    print("      one. Not opt-in: the run that most needs the check is the one that would")
+    print("      forget to ask for it (H_9324 — a 0.575 headline was really neg .956/pos .167).")
     print("      DEMO (H_9311) = a one-shot demo in the model's OWN training template,")
     print("      '이 영화 <stem>고 => <긍정|부정>.\\n' — the only format with measured support.")
     print("      F1/F2/F3 = label-only prefixes, kept only to reproduce H_9309 (measured to carry")
@@ -1542,6 +1547,70 @@ def _xbind_first_word(text):
     return t.split()[0].strip(",.;:") if t.split() else ""
 
 
+def _xbind_breakdown(rows):
+    """Split the headline D-acc by gold class, and by flip when the manifest carries one.
+
+    A scalar accuracy erases where it came from, and on a class-imbalanced manifest that is enough
+    to manufacture a fake learning curve: a model that has COLLAPSED onto the majority label scores
+    the majority fraction for free, and as the collapse deepens its majority-class accuracy climbs,
+    so the headline rises monotonically with budget while the model has learned nothing about the
+    stem. Measured (H_9324, labels 14 pos : 15 neg): the 6000@5e-5 cell reads D-acc 0.575 and looks
+    like "the budget is starting to bite" — but split by class it is neg 0.956 / pos 0.167 (WORSE
+    than chance), i.e. the model answers "부정" to almost everything. The real learning does not
+    start until pos wakes up (0.190 -> 0.571 -> 0.905). Reporting only the headline would have
+    written that false narrative into a verdict, and then built the next experiment on top of it.
+
+    So this is NOT opt-in. A diagnostic whose job is to stop a false verdict must never sit behind
+    a flag — the run that most needs it is exactly the run that would forget to pass it.
+
+    The flip split is the same argument one level up: on a manifest whose gold is `pol XOR flip`,
+    flip0 asks "is the fact in the weights" and flip1 asks "is the operator applied to it", and a
+    single number over both answers neither.
+    """
+    def acc(rs):
+        return sum(1 for r in rs if r["margin"] > 0) / max(1, len(rs))
+
+    bd = {}
+    flipped = any(r.get("flip") is not None for r in rows)
+    by_class = {}
+    for r in rows:
+        by_class.setdefault(r.get("gold_word"), []).append(r)
+    # On a flipped manifest the pooled class split is meaningless (see the flip block below), so
+    # the class columns live INSIDE each flip stratum instead.
+    if len(by_class) > 1 and not flipped:
+        cls = {k: {"n": len(v), "acc": acc(v)} for k, v in sorted(by_class.items())}
+        big = max(by_class.values(), key=len)
+        minority = min(by_class.values(), key=len)
+        # what a constant predictor of the majority label scores for free
+        bd["class"] = cls
+        bd["majority_baseline"] = len(big) / max(1, len(rows))
+        # Collapse = the model is riding the label prior, not the stem. Called out by the WEAKEST
+        # class landing at/below chance while the headline sits above the majority baseline's floor.
+        weakest = min(acc(v) for v in by_class.values())
+        bd["weakest_class_acc"] = weakest
+        bd["collapse"] = bool(weakest <= 0.5)
+
+    by_flip = {}
+    for r in rows:
+        if r.get("flip") is not None:
+            by_flip.setdefault(int(r["flip"]), []).append(r)
+    if len(by_flip) > 1:
+        # The class split must be taken WITHIN each flip stratum, never across them: on a flipped
+        # manifest the gold class is `pol XOR flip`, so pooling the strata mixes two different
+        # questions and the pooled class column reads as a collapse that is really just the flip
+        # structure. Stratify, and the two questions stay separable.
+        bd["flip"] = {}
+        for k, v in sorted(by_flip.items()):
+            g = {}
+            for r in v:
+                g.setdefault(r.get("gold_word"), []).append(r)
+            bd["flip"][str(k)] = {
+                "n": len(v), "acc": acc(v),
+                "class": {c: {"n": len(rs), "acc": acc(rs)} for c, rs in sorted(g.items())},
+            }
+    return bd
+
+
 def _xbind_hms(sec):
     """Seconds -> compact h/m/s, for the progress heartbeat's elapsed + eta."""
     sec = int(max(0, sec))
@@ -1719,7 +1788,9 @@ def xbind_run(argv):
             rows.append({"a": it["a"], "b": it["b"], "gold_word": gold_w,
                          "first_word": fw, "d_hit": d_hit, "c_hit": c_hit,
                          "margin": mg, "sampled_maj": smp, "raw": o,
-                         "consult": cused})
+                         "consult": cused,
+                         # carried through so the summary can split the headline (_xbind_breakdown)
+                         "flip": it.get("flip"), "pol": it.get("pol")})
             # Heartbeat at item 1, then every 25. The first item is what makes a slow host
             # legible: each item is ~10 model forwards, so on a saturated shared box one item
             # can cost minutes — and a 25-item-only cadence then means HOURS of total silence,
@@ -1755,6 +1826,7 @@ def xbind_run(argv):
             print("  byte-audit %s: used=%d downgraded=%d DROPPED=%d absent=%d" %
                   (split, summ["consult_used"], summ["consult_downgraded"],
                    summ["consult_dropped"], summ["consult_absent"]), flush=True)
+        summ["breakdown"] = _xbind_breakdown(rows)
         res["splits"][split] = {"summary": summ, "rows": rows}
         # verdict numerics INLINE (evaluate-py-1: never tail-truncatable)
         print("  xbind %s  arm=%s  D-acc=%.4f  C-rate=%s  margin_med=%.3f  "
@@ -1762,6 +1834,23 @@ def xbind_run(argv):
               (split, arm, summ["d_acc"], str(summ["c_rate"]), med,
                summ["margin_frac_pos"], str(summ["sampled_maj_acc"]), summ["n"]),
               flush=True)
+        bd = summ["breakdown"]
+        if "class" in bd:
+            print("  by-class %s: %s   majority-baseline=%.3f%s" %
+                  (split,
+                   "  ".join("%s=%.3f(n=%d)" % (k, v["acc"], v["n"])
+                             for k, v in bd["class"].items()),
+                   bd["majority_baseline"],
+                   ("   ⚠️ COLLAPSE — weakest class %.3f <= chance: the headline is riding the "
+                    "label prior, NOT the stem" % bd["weakest_class_acc"])
+                   if bd["collapse"] else ""), flush=True)
+        for k, v in bd.get("flip", {}).items():
+            cw = min(c["acc"] for c in v["class"].values()) if v["class"] else 1.0
+            print("  by-flip %s  flip%s=%.4f(n=%d)  [%s]%s   (flip0 = is the fact in the "
+                  "weights · flip1 = is the operator applied to it)" %
+                  (split, k, v["acc"], v["n"],
+                   "  ".join("%s=%.3f" % (c, s["acc"]) for c, s in v["class"].items()),
+                   "  ⚠️ COLLAPSE" if cw <= 0.5 else ""), flush=True)
     json.dump(_json_safe(res), open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
     print(json.dumps({"out": out_path,
                       "heldout_d_acc": res["splits"]["heldout"]["summary"]["d_acc"],
