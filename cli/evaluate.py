@@ -779,6 +779,14 @@ def evaluate_usage():
     print("       PC POWER CONTROL: urgency (ten_phasic, the one proven emit channel, H_9101) through the")
     print("       identical pipe. If even urgency->Y is dead, the instrument cannot see ANY gate input —")
     print("       NOT-POWERED, and no wall may be declared. M3: I(A;Y|S,R,L) ~ 0 = mediation exhausted.")
+    print("       COMPOSITION (H_9339): builds the composed channel p(Y|A,S) = sum_R p(Y|R,S) p(R|A,S) out")
+    print("       of the two measured links and asks whether the observed end-to-end MI is what that chain")
+    print("       predicts (Delta = I_obs - I_comp, rollout bootstrap CI). Two versions: R 2-bin, and R as")
+    print("       the raw continuous recon_err (logistic + plug-in MC — DROPS the binning rather than")
+    print("       refining it, so no stratum-explosion bias). A POWER GATE hard-stops when I_comp < MDE:")
+    print("       declaring MISALIGNMENT needs I_obs < I_comp - MDE, and MI cannot go negative, so that")
+    print("       verdict is UNREACHABLE by construction — and a chain that weak predicts an end-to-end")
+    print("       effect below the instrument's resolution even when PERFECTLY aligned.")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
     print("  anima evaluate <ckpt> --device-parity [--win 64]")
@@ -2682,6 +2690,18 @@ def _im_H(xs):
     return h
 
 
+def _im_H_p(p):
+    """Binary entropy (nats) of a PROBABILITY, not of a sample.
+
+    The COMPOSITION panel builds a channel p(Y=1|A,S) analytically out of the two measured
+    links, so its entropy has to be taken from the probability itself — plugging the composed
+    channel back through a sample estimator would re-introduce exactly the sampling bias the
+    composed channel is meant to be free of."""
+    if p <= 0.0 or p >= 1.0:
+        return 0.0
+    return -(p * math.log(p) + (1.0 - p) * math.log(1.0 - p))
+
+
 def _im_cmi(A, Y, S):
     """I(A;Y|S) = Σ_s p(s)·[H(A|s) + H(Y|s) − H(A,Y|s)], Miller–Madow corrected per stratum.
     MM adds (support−1)/(2n) — the plug-in estimator is biased UP, and that bias is exactly
@@ -3106,33 +3126,191 @@ def _interact_mi(argv):
     #
     # A′ = penult_fold8(byte_feat8) — 같은 FROZEN reducer(H_9257), 물리적으로 소비되는 입력,
     # 새 자유도 0. bar 도 추가하지 않는다(진단이므로 verdict 불변).
+    #
+    # A SKIP HERE MUST NOT RETURN. This panel used to `return 0` when gtext_b64 was absent,
+    # which silently swallowed every panel below it — the same defect already fixed once when
+    # a dead mediation channel ate this very AXIS block. A diagnostic that cannot run is a
+    # diagnostic that prints SKIP, not one that ends the readout (convergence evaluate-py-14).
     gt = [r.get("gtext_b64") for r in use]
+    Ap = None
     if any(g is None for g in gt):
         print("  ── AXIS: gtext_b64 미기록 ⇒ SKIP (구 trace 포맷)")
-        return 0
-    try:
-        import base64
-        Ap = []
-        for g in gt:
-            s = base64.b64decode(g).decode("utf-8", "surrogateescape")
-            Ap.append(clm.penult_fold8(_im_byte_feat8(s)))
-    except Exception as e:  # pragma: no cover
-        print("  ── AXIS: SKIP (" + str(e) + ")")
-        return 0
-    hAp = _im_h_given_S(Ap, S)
-    i_axes = _im_cmi(A, Ap, S)
-    print("  ── AXIS (진단 · verdict 불변) ──────────────────────────────────")
-    print("     A  = penult_fold8(pooled)     — 입이 표상한 축      H(A|S)  = %.4f nats" % hA)
-    print("     A′ = penult_fold8(byte_feat8) — 루프가 나르는 축    H(A′|S) = %.4f nats" % hAp)
-    print("     I(A;A′|S) = %.4f nats   (두 축이 같은 것을 보는가)" % i_axes)
-    if hAp < hfloor:
-        print("     ⇒ A′ 자체가 죽어 있다 — 루프 입력이 상수. 축 문제 이전에 경로 문제.")
-    elif i_axes < mde:
-        print("     ⇒ ⚠️ 두 축이 **거의 직교**하다. 나는 루프가 나르지 않는 축을 쟀다 —")
-        print("        헤드라인의 '정보 없음'은 **이 축 위에서만** 벌어진 것이다(축 재선택이")
-        print("        아니라, A′ 로 재판독해야 use-claim 이 선다).")
     else:
-        print("     ⇒ 두 축이 상당히 겹친다 — 헤드라인 축 선택은 방어된다.")
+        try:
+            import base64
+            Ap = [clm.penult_fold8(_im_byte_feat8(
+                base64.b64decode(g).decode("utf-8", "surrogateescape"))) for g in gt]
+        except Exception as e:  # pragma: no cover
+            print("  ── AXIS: SKIP (" + str(e) + ")")
+            Ap = None
+    if Ap is not None:
+        hAp = _im_h_given_S(Ap, S)
+        i_axes = _im_cmi(A, Ap, S)
+        print("  ── AXIS (진단 · verdict 불변) ──────────────────────────────────")
+        print("     A  = penult_fold8(pooled)     — 입이 표상한 축      H(A|S)  = %.4f nats" % hA)
+        print("     A′ = penult_fold8(byte_feat8) — 루프가 나르는 축    H(A′|S) = %.4f nats" % hAp)
+        print("     I(A;A′|S) = %.4f nats   (두 축이 같은 것을 보는가)" % i_axes)
+        if hAp < hfloor:
+            print("     ⇒ A′ 자체가 죽어 있다 — 루프 입력이 상수. 축 문제 이전에 경로 문제.")
+        elif i_axes < mde:
+            print("     ⇒ ⚠️ 두 축이 **거의 직교**하다. 나는 루프가 나르지 않는 축을 쟀다 —")
+            print("        헤드라인의 '정보 없음'은 **이 축 위에서만** 벌어진 것이다(축 재선택이")
+            print("        아니라, A′ 로 재판독해야 use-claim 이 선다).")
+        else:
+            print("     ⇒ 두 축이 상당히 겹친다 — 헤드라인 축 선택은 방어된다.")
+
+    # ── COMPOSITION · 사슬이 안 이어붙는가, 아니면 그냥 좁은가 (H_9339 · 사전등록) ──────
+    #
+    # H_9337 read M1 (A->R) LIVE, M2 (R->Y) LIVE, and A->Y below MDE, and I called that a
+    # COMPOSITION FAILURE — "the component the mouth pushes is not the component the gate
+    # reads". That is the story I want to be true, and the data I already had ARGUES AGAINST
+    # IT. A weak-channel Markov chain predicts multiplicative attenuation:
+    #     rho1 ~ sqrt(2*0.0202) = 0.20 · rho2 ~ sqrt(2*0.0902) = 0.42
+    #     I_comp ~ 0.5*(rho1*rho2)^2 = 0.0036 nats     vs     I_obs = 0.0061
+    # The observation sits ABOVE the composition prediction. A real misalignment would put it
+    # BELOW (a mismatched component leaks MORE than the product, not less), and the DPI bound
+    # min(0.020, 0.090) = 0.020 is not violated either. The picture is not a contradiction —
+    # it is attenuation. So test the chain directly instead of narrating it.
+    #
+    # Build the COMPOSED channel from the two measured links and ask whether the observed
+    # end-to-end MI is what that chain predicts:
+    #     p_comp(Y|A,S) = sum_R p(Y|R,S) p(R|A,S)      Delta = I_obs - I_comp
+    # Two versions. The 2-bin one uses the same R the headline used. The CONTINUOUS one uses
+    # the raw recon_err scalar the trace already carries (logistic p(Y|r,S), then a plug-in
+    # Monte-Carlo average over the r's actually observed in each (A,S) cell — no density
+    # estimate). Note the continuous version DROPS the binning rather than refining it, so it
+    # carries none of the stratum-explosion bias that forced M3 onto a permutation null.
+    lan_c = [nxt_lane[(r["_src"], int(r["tick"]))].get("rel_lane") for r in use]
+    print("  ── COMPOSITION (H_9339 · 사슬이 안 이어붙는가 vs 그냥 좁은가) ────")
+
+    def _comp_mi(pY_given_R, R_of_i):
+        """I_comp(A;Y|S) for the composed channel p(Y|A,S) = E_{R|A,S}[ p(Y|R,S) ]."""
+        cell = {}
+        for i, a in enumerate(A):
+            cell.setdefault((S[i], a), []).append(pY_given_R[i])
+        pa_s, ns = {}, {}
+        for i, a in enumerate(A):
+            pa_s[(S[i], a)] = pa_s.get((S[i], a), 0) + 1
+            ns[S[i]] = ns.get(S[i], 0) + 1
+        tot = float(len(A))
+        out = 0.0
+        for s in ns:
+            keys = [k for k in cell if k[0] == s]
+            if not keys:
+                continue
+            wsum = float(ns[s])
+            pbar = sum(pa_s[k] / wsum * (sum(cell[k]) / len(cell[k])) for k in keys)
+            hbar = _im_H_p(pbar)
+            hcond = sum(pa_s[k] / wsum * _im_H_p(sum(cell[k]) / len(cell[k])) for k in keys)
+            out += (wsum / tot) * (hbar - hcond)
+        return out
+
+    def _pY_given_Rbin(idx):
+        tab = {}
+        for i in idx:
+            tab.setdefault((S[i], R[i]), [0, 0])
+            tab[(S[i], R[i])][Y[i]] += 1
+        return [((tab.get((S[i], R[i]), [1, 1])[1] + 0.5)
+                 / (sum(tab.get((S[i], R[i]), [1, 1])) + 1.0)) for i in range(len(A))]
+
+    def _pY_given_Rcont(idx):
+        # per-stage logistic on the raw scalar, 200 steps of plain gradient ascent
+        out = [0.5] * len(A)
+        for s in set(S):
+            tr = [i for i in idx if S[i] == s]
+            if len(tr) < 10:
+                continue
+            xs = [rc[i] for i in tr]
+            mu = sum(xs) / len(xs)
+            sd = (sum((v - mu) ** 2 for v in xs) / len(xs)) ** 0.5 or 1.0
+            w = b = 0.0
+            for _ in range(200):
+                gw = gb = 0.0
+                for i in tr:
+                    z = w * ((rc[i] - mu) / sd) + b
+                    p = 1.0 / (1.0 + math.exp(-max(-30.0, min(30.0, z))))
+                    e = Y[i] - p
+                    gw += e * ((rc[i] - mu) / sd)
+                    gb += e
+                w += 0.5 * gw / len(tr)
+                b += 0.5 * gb / len(tr)
+            for i in range(len(A)):
+                if S[i] != s:
+                    continue
+                z = w * ((rc[i] - mu) / sd) + b
+                out[i] = 1.0 / (1.0 + math.exp(-max(-30.0, min(30.0, z))))
+        return out
+
+    rc = [float(nxt_lane[(r["_src"], int(r["tick"]))]["recon_err"]) for r in use]
+    allidx = list(range(len(A)))
+    i_c2 = _comp_mi(_pY_given_Rbin(allidx), R)
+    i_cc = _comp_mi(_pY_given_Rcont(allidx), rc)
+    print("     I_obs(A;Y|S)      = %.5f nats" % I)
+    print("     I_comp [R 2-bin]  = %.5f   Δ = %+.5f" % (i_c2, I - i_c2))
+    print("     I_comp [R 연속]    = %.5f   Δ = %+.5f  ← 사전등록 판독축" % (i_cc, I - i_cc))
+    print("     (b) 게이트  I_comp[연속] − I_comp[2bin] = %+.5f  (>%.3f 이면 2-bin 이 정보를 버렸다)"
+          % (i_cc - i_c2, mde))
+    # bootstrap over ROLLOUTS (the exchangeable unit, evaluate-py-13) for a CI on Delta
+    src_l = [r["_src"] for r in use]
+    roll = sorted(set(src_l))
+    byr = {}
+    for i, s_ in enumerate(src_l):
+        byr.setdefault(s_, []).append(i)
+    deltas = []
+    for _ in range(200):
+        pick = [roll[rnd.randrange(len(roll))] for _ in range(len(roll))]
+        idx = [i for r_ in pick for i in byr[r_]]
+        Ab = [A[i] for i in idx]; Yb = [Y[i] for i in idx]; Sb = [S[i] for i in idx]
+        io = _im_cmi(Ab, Yb, Sb)
+        pv = _pY_given_Rcont(idx)
+        cell = {}
+        for i in idx:
+            cell.setdefault((S[i], A[i]), []).append(pv[i])
+        cnt = {}
+        for i in idx:
+            cnt[(S[i], A[i])] = cnt.get((S[i], A[i]), 0) + 1
+        nsb = {}
+        for i in idx:
+            nsb[S[i]] = nsb.get(S[i], 0) + 1
+        ic = 0.0
+        for s in nsb:
+            keys = [k for k in cell if k[0] == s]
+            wsum = float(nsb[s])
+            pbar = sum(cnt[k] / wsum * (sum(cell[k]) / len(cell[k])) for k in keys)
+            ic += (wsum / float(len(idx))) * (
+                _im_H_p(pbar) - sum(cnt[k] / wsum * _im_H_p(sum(cell[k]) / len(cell[k])) for k in keys))
+        deltas.append(io - ic)
+    deltas.sort()
+    lo, hi = deltas[int(0.025 * len(deltas))], deltas[int(0.975 * len(deltas)) - 1]
+    print("     Δ[연속] 95%% CI (rollout bootstrap) = [%+.5f, %+.5f]" % (lo, hi))
+    # ── POWER GATE on the (a)-vs-(c) contrast (BLOCKING) ─────────────────────────────
+    # A verdict that cannot be reached is as broken as a guard that cannot fail. Declaring
+    # (a) MISALIGNMENT requires I_obs < I_comp - MDE, and mutual information cannot go below
+    # zero — so when I_comp itself sits under MDE, (a) is UNREACHABLE BY CONSTRUCTION and the
+    # test can only ever land on (c). That is not evidence for (c); it is the bar quietly
+    # deciding in advance. Worse, it says something stronger about the whole question: a chain
+    # this weak predicts an end-to-end MI BELOW THE INSTRUMENT'S RESOLUTION even when it is
+    # PERFECTLY aligned — so the observed A->Y is exactly what a working chain looks like, and
+    # there is no "composition failure" left to explain.
+    if i_cc < mde:
+        print("     ⇒ ⛔ (a)/(c) 판별 **NOT-POWERED** — 합성 예측 자체가 MDE 아래다"
+              " (I_comp=%.5f < %.3f)." % (i_cc, mde))
+        print("        (a) 는 I_obs < I_comp − MDE 를 요구하는데 상호정보는 음수가 못 된다 ⇒")
+        print("        이 bar 로 (a) 는 **원리적으로 도달 불가**. (c) 로만 갈 수 있는 검정이다.")
+        print("        더 중요한 함의: **완벽히 정렬된 사슬조차 측정 불가능한 효과를 예측한다.**")
+        print("        ⇒ 관측된 A→Y 는 정상 작동하는 약한 사슬이 내놓을 바로 그 값이다.")
+        print("        '합성 실패'는 설명할 것이 없다 — 두 링크가 약한 것이 전부다.")
+        return 0
+    if lo > mde:
+        print("     ⇒ 직통로 — R 밖의 A→Y 경로가 있다. M3 소진과 모순 ⇒ L-조건화 재점검.")
+    elif hi < -mde:
+        print("     ⇒ (a) **정렬 실패 실재** — 실측이 합성 예측보다 유의하게 **낮다**.")
+        print("        말이 미는 R 의 성분과 게이트가 읽는 성분이 어긋난다.")
+    elif lo > -mde and hi < mde:
+        print("     ⇒ (c) **감쇠다 — 합성 실패 아님.** 사슬은 곱셈으로 이어진다, 좁을 뿐.")
+        print("        H_9337 의 '정렬 실패' 헤드라인은 **정정된다**.")
+    else:
+        print("     ⇒ 판정 보류 — CI 가 등가역과 한쪽 꼬리에 걸친다(검정력 부족).")
     return 0
 
 
