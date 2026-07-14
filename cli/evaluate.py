@@ -2851,6 +2851,32 @@ def _interact_mi(argv):
             return 0
     else:
         print("  🚦 V5 GATE     safe 미기록 trace ⇒ SKIP (구 포맷 · GATE-CLOSED 를 배제할 수 없음)")
+    # ── V6 · DECISION-CHANNEL (the SIXTH identity-zero · H_9345) ──────────────────────
+    #
+    # Every gate above asks whether the PROXY (score) has room. None of them asks whether the
+    # DECISION does. Measured on 70 rollouts x 2198 ticks: H(emit|stage) = 0.000000 EXACTLY —
+    # stages 0/1/4 emit 100% of the time, stages 2/3 are silent 100% of the time, and the
+    # silence lands on ticks 9-10 in every single rollout. emit/silence is a PURE FUNCTION OF
+    # STAGE. So I(anything ; emit | stage) = 0 BY IDENTITY, and the question "does what the
+    # substrate says inform its next DECISION" has no decision to inform.
+    #
+    # This does not invalidate a score-based readout — score genuinely varies. It BOUNDS it:
+    # a verdict on `score` is a verdict on a lane the gate consumes, NOT on the gate's output.
+    # Say so, or you will write "the loop does not inform the next decision" when what you
+    # measured was a proxy and the decision was a clock.
+    emx = [r.get("emit") for r in rows]
+    if all(v is not None for v in emx):
+        Sall = [int(r["stage"]) for r in rows]
+        hEmit = _im_h_given_S([1 if v else 0 for v in emx], Sall)
+        rate = sum(1 for v in emx if v) / float(len(emx))
+        print("  🚦 V6 DECISION H(emit|S) = %.6f nats   (발화율 %.1f%% · n=%d tick 전수)"
+              % (hEmit, 100.0 * rate, len(emx)))
+        if hEmit < hfloor:
+            print("     ⇒ ⛔ **DECISION-CONSTANT** — emit/침묵이 stage 의 **순수 함수**다.")
+            print("        I(무엇이든 ; emit | S) ≤ H(emit|S) ≈ 0 ⇒ **어떤 변수도 결정에 정보를**")
+            print("        **나를 수 없다 — 측정 이전에, 정의상.** 게이트는 게이트가 아니라 시계다(H_9345).")
+            print("        아래 판정은 **대리변수(score)에만 스코프**된다 — 게이트의 출력이 아니라")
+            print("        게이트가 소비하는 lane 에 대한 것이다. '다음 결정에' 로 확장하지 마라.")
     I = _im_cmi(A, Y, S)
     # ── The exchangeable unit is MEASURED, not assumed (convergence evaluate-py-13 · chat-py-3).
     # Two candidate units, and which one is right is an empirical question about THIS trace set:
@@ -3144,14 +3170,54 @@ def _interact_mi(argv):
         shade_live = (ea >= mde and pva < 0.005)
         print("     urgency→A  EARNED = %+.5f nats · perm-p = %.4f   %s   ← same-tick (H_9101 축)"
               % (ea, pva, "🔗 LIVE" if shade_live else "💀 DEAD"))
-        if shade_live and not live:
-            print("     ⇒ ✅ **스코프 분리 확정** — urgency 는 **입(same-tick shade)** 을 물들이나")
-            print("        **게이트(next-tick score)** 로는 넘어가지 않는다. H_9101 과 이 판독은")
-            print("        모순이 아니다 — 서로 다른 표적을 잰 것이다. urgency = shade-채널.")
-        elif not shade_live and not live:
-            print("     ⇒ ⚠️ urgency 가 **양쪽 다** 죽었다 — 스코프 분리로는 설명 안 된다.")
-            print("        ten_phasic 과 H_9101 의 urgency 가 **같은 양인지 코드에서** diff 하라")
-            print("        (docstring 금지 · tool-definition-read-code-not-docstring).")
+        # ── URGENCY-CHANNEL · 코드가 말하는 하류를 직접 잰다 (chat.py:1881) ──────────
+        #
+        # `urgency` does not flow into the score directly. It sets the tick interval:
+        #     idle = 5.0 + 55.0 * clip01(stage_env * (0.5 + urgency))
+        # and `idle` is passed straight into brain_emit(). So urgency's channel is the
+        # EMIT DECISION — whether/when the substrate speaks, not what it says. Measure the
+        # target the wiring names, not the one the panel happens to have around.
+        em = [1 if nxt_lane[(r["_src"], int(r["tick"]))].get("emit") else 0 for r in use]
+        i_ue = _im_cmi(U, em, S)
+        null = []
+        for _ in range(perm):
+            Up = list(U)
+            st = {}
+            for k, s in enumerate(S):
+                st.setdefault(s, []).append(k)
+            for idx in st.values():
+                vals = [Up[k] for k in idx]
+                rnd.shuffle(vals)
+                for j, k in enumerate(idx):
+                    Up[k] = vals[j]
+            null.append(_im_cmi(Up, em, S))
+        nme = sum(null) / len(null)
+        pve = (sum(1 for v in null if v >= i_ue) + 1.0) / (perm + 1.0)
+        ee = i_ue - nme
+        emit_live = (ee >= mde and pve < 0.005)
+        hE = _im_h_given_S(em, S)
+        print("     urgency→emit EARNED = %+.5f nats · perm-p = %.4f · H(emit|S) = %.4f   %s"
+              % (ee, pve, hE, "🔗 LIVE" if emit_live else "💀 DEAD"))
+        print("        (코드가 말하는 하류: urgency → idle → brain_emit · chat.py:1881)")
+        # The CONCLUSION must key on the axis the WIRING names — emit — not on whichever axis
+        # the panel happened to have lying around. Keying it on urgency->Y read "both dead" on
+        # a synthetic arm where urgency drove the emit decision by construction.
+        decision_live = emit_live or live
+        if hE < hfloor:
+            print("     ⇒ ⚠️ emit 채널 자체가 죽어 있다(거의 항상 말하거나 항상 침묵) — 판독 불가.")
+        elif decision_live and not shade_live:
+            print("     ⇒ ✅ **urgency 는 결정-채널이지 내용-채널이 아니다.** 언제/여부를 밀되")
+            print("        발화의 내용축은 물들이지 않는다. H_9101(emit 의 유일 proven 채널)과")
+            print("        **정합**한다 — 그리고 이것은 '내용이 게이트에 못 닿는다'는 헤드라인과")
+            print("        **같은 그림**이다: 게이트는 읽되, 읽는 것이 내용이 아니다.")
+        elif shade_live and not decision_live:
+            print("     ⇒ urgency 가 입은 물들이나 결정으로는 안 간다(스코프 분리).")
+        elif not shade_live and not decision_live:
+            print("     ⇒ ⚠️ urgency 가 **어느 축으로도** 안 간다 — 이 양이 H_9101 의 urgency 와")
+            print("        **같은지 코드에서 diff** 하라(docstring 금지 · tool-definition-read-code-not-docstring).")
+            print("        선례: 이 패널이 ten_phasic 을 urgency 라 부르다 30%만 재고 있었다.")
+        else:
+            print("     ⇒ urgency 가 결정과 내용을 **둘 다** 민다 — 채널이 분리되지 않는다.")
 
     # ── M3 · MEDIATION EXHAUSTED (진단) ──────────────────────────────────────────────
     # If roots ① and ② carry the whole path, then conditioning on them should EXHAUST the
