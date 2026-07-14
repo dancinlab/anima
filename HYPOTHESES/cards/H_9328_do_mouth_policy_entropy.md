@@ -1,7 +1,8 @@
 # H_9328 — (구 H_9325 · id 충돌로 재번호) DO-MOUTH: 입의 반올림만 걷어내면 기질의 do-분포가 열리는가
 
 - **lane**: INTERACT / do-distribution (개입 분포)
-- **상태**: 🟢 **V-CEILING PASS · 계기 배선 완료** — 본실험(I(A;Y|S)) PENDING
+- **상태**: ⛔ **use-claim INVALID** — 본실험 완료, 그러나 **폐루프가 닫혀 있지 않았다**(매개 경로 용량 = 0)
+- **재분류**: 기질 벽이 아니라 **배선 결함**(`a_break_the_wall` 분류) → 수리 = H_9336 · H_9337
 - **설계**: Fable 5 사전등록 (전문 → `state/verdicts/h9325_do_mouth/DESIGN.md`)
 - **선행**: H_9308 INTERACT-SOURCE (⏳ NOT-POWERED · `H(A|S)=0` 이라 잴 수 없었음)
 
@@ -111,7 +112,91 @@ Fable 의 C2("EXP 는 살고 SWAP 은 죽어야 정보 · 둘 다 살면 내용�
 > **⇒ 이 실험의 판독 스코프는 SIGNAL / TOST-등가까지이고 PASS 는 불가하다.**
 > PASS 는 `--swap-text` 엔진 플래그(다른 rollout 텍스트 주입 재실행) 배선 후에만.
 
-## NEXT — 본실험 (PENDING · 이 카드의 미결)
+
+## ⛔ 본실험 결과 — 재봤더니 0 이 아니라, **물을 수가 없었다** (2026-07-15)
+
+24 rollout × 30 tick · 303M · canonical `anima-py chat` → `anima-py evaluate --interact-mi`
+(aiden · 설치 엔진 5파일 sha = origin/main 동일 · 증거 #3561).
+
+```
+🚦 V-CEILING  H(A|S) = 1.1513 nats · H(Y|S) = 0.4091 nats   (floor 0.030)
+EARNED[tick]  = +0.00088 nats   (MDE 0.010 · TOST ±0.010)
+⇒ TOST 등가 — 두 순열 단위 판정 일치(INVALID 가드 침묵)
+```
+
+처음엔 이것을 **"채널을 열었더니 기질이 안 쓰더라"** 로 읽었다. **그 독법은 틀렸다.**
+
+### 🚦 MEDIATION — 사슬의 가운데가 끊겨 있었다
+
+헤드라인은 사슬의 **두 끝**만 잰다. 가운데를 열자(계기 확장 #3563):
+
+```
+H(R|S) = 0.0000 nats      R = recon_err (afield 뿌리 · g_text 가 직접 민다)
+⇒ 매개 채널 자체가 죽어 있다 — M1/M2 는 정의상 0.
+```
+
+720 tick(24 rollout) **전체**에서 세 피드백 뿌리가 **전부 상수**였다:
+
+| 필드 | 고유값 | |
+|---|---|---|
+| `recon_err` (afield) | **1** | 💀 항등식 0.0 |
+| `rel_lane` (immune) | **1** | 💀 720 tick 내내 0.6723 |
+| decode 앵커 (kosmos) | **1** | 💀 항상 `live_seed` |
+| `score` | 562 | ✅ |
+| `a_fold8` | 8 | ✅ |
+
+셋 다 `g_text` 로 **쓰이는데**, 조회는 전부 **`session_seed` 라는 상수 키**로 한다.
+**데몬은 자기 말을 세 저장소에 넣고, 셋 모두에게 언제나 같은 질문을 던지고 있었다.**
+
+### 🚦 AXIS — 축 선택은 방어된다 (Fable 의 직교 비판 기각)
+
+*"네 A 는 입이 표상한 축이고, 루프가 나르는 건 8-스칼라 바이트-모양 축이다. 두 축이 직교하면
+너는 루프가 안 나르는 축을 재고 '정보 없다'고 말한 셈"* — 실측으로 기각(계기 확장 #3575):
+
+```
+A  = penult_fold8(pooled)     H(A|S)  = 1.1513 nats
+A′ = penult_fold8(byte_feat8) H(A′|S) = 0.5966 nats     ← 루프가 물리적으로 나르는 축
+I(A;A′|S) = 0.0660 nats  ≫ MDE 0.010  ⇒ 두 축이 상당히 겹친다
+```
+
+### 결론 — **세 번째 항등식-0**
+
+```
+V-CEILING   H(A|S)=1.151 ✅  H(Y|S)=0.409 ✅   ← 양 끝 채널은 살아있다
+MEDIATION   H(R|S)=0.000 💀                    ← 가운데가 끊겨 있다
+AXIS        I(A;A′|S)=0.066 ✅                 ← 축 선택은 정당했다
+```
+
+`I(A;Y|S) ≤ min(H(A|S), H(Y|S))` 는 항등식이고, V-CEILING 이 그 **두 주변축**은 지켰다.
+그러나 **매개 경로의 용량**은 아무도 안 지켰다 — 그것이 0 이면 I 도 0 이다, **정의상**.
+
+⇒ **`I(A;Y|S)=0` 은 use-claim 으로 성립하지 않는다.** "기질이 자기 말을 안 쓴다"가 아니라
+**"말이 다음 결정에 도달할 경로가 없다"**. `a_break_the_wall` 분류로 **기질 벽이 아니라
+배선 결함**이다.
+
+### 그래도 벌어온 것
+
+**DO-MOUTH 배선 자체는 성공했다.** H_9308 은 입이 argmax 라 `H(A|S)=0` 이어서 **물을 수조차
+없었다**(NOT-POWERED). REVEAL 이 그 채널을 **1.151 nats** 로 열었고, p5 도 지켰다(DISJOINT 벽 ·
+게이트는 `mouth` 를 영영 못 본다 · grep 기계검사). 송신기는 열렸다 — 끊겨 있던 것은 **수신기**다.
+
+## 🔧 수리 (후속 H)
+
+- **H_9336** — 뿌리 ①(afield). H_9210 이 이미 진단했으나 `--opgrip-live` 하네스 뒤에만 고쳐
+  프로덕션은 방치돼 있었다(convergence `chat-py-4`).
+- **H_9337** — 뿌리 ①+②(afield · immune) 를 프로덕션에 닫는다. ⛔ 뿌리 ③(kosmos→decode 앵커)은
+  **고치지 않는다** — 자기 발화를 다음 decode 문맥으로 되먹이면 **p5 가 금지한 self-seed**.
+  그 상수성은 결함이 아니라 **철학이 닫아둔 것**이고, 정당한 read-back 은 세션 **간**(`.kosmos` 재입).
+  (convergence `chat-py-5`)
+
+수정 후 재측정은 **H_9337 에 동결 bar 로 사전등록**(p7 · 수치를 보기 전에).
+
+## SWAP 팔 (C2 CARRIER-SWAP · 확증용)
+
+`--swap-text`(#3542)로 배선·수집했다. EXP 가 이미 0 이고 매개 경로가 죽었으므로 SWAP 은
+own-vs-carrier 를 **가를 신호 자체가 없다** — 확증용이며 이 verdict 를 바꾸지 않는다.
+
+## (구) NEXT — 본실험 (완료 · 위 참조)
 
 `I(A;Y|S) > 0` 인가?
 - **A** = `penult_fold8(gen_penult_pooled_W(self_gW, g_text))` ∈ [0,8) — 데몬이 실제 소비하는 값
