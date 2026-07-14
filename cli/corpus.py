@@ -138,8 +138,45 @@ def _parse_args(argv):
 # the only difference is the polarity written next to each held-out stem.
 # ---------------------------------------------------------------------------
 
+#   ground_keep     — `ground` PLUS a REPLAY of the flip1 (negated) lines on the SEEN stems.
+#                     This exists because `ground` was measured to DESTROY the very operator the
+#                     experiment then goes on to test.
+#
+#                     What was measured (H_9327, the control that broke H_9322/H_9324 open). The
+#                     pretraining corpus already demonstrates the negation operator: of its 960
+#                     arrow lines, 480 (exactly half) are negated forms, ALL on SEEN stems, ZERO on
+#                     held-out stems (`이 영화 전혀 훌륭하지 않다 => 부정.`). So the operator is not
+#                     missing — and the base model can run it:
+#
+#                       pretrained base   SEEN flip0 0.9500   SEEN flip1 0.8833   <- the operator WORKS
+#                       after ground CPT  SEEN flip0 1.0000   SEEN flip1 0.4333   <- destroyed
+#                       after ground CPT  SEEN flip0 1.0000   SEEN flip1 0.3333   <- more budget, more damage
+#                         (6000 steps, lr 2e-4 then 5e-4)
+#
+#                     `ground` contains flip0 lines ONLY — the negated form appears zero times, by
+#                     design, because that is what makes flip1 a test of composition. But 6000 steps
+#                     of flip0-only training leaves the negation operator with nothing holding it up,
+#                     and it collapses. The FORGET gate did not see this: it scored SEEN flip0, which
+#                     is the stratum the CPT corpus reinforces every step, so it read 1.0000 and
+#                     certified "no forgetting" while the operator was dying one stratum over.
+#
+#                     So every flip1 number measured on a `ground`-tuned model is INVALID — we broke
+#                     the operator and then asked the model to compose with it.
+#
+#                     `ground_keep` replays the SEEN stems' negated lines during CPT so the operator
+#                     survives. The 29 held-out stems keep ZERO negated exposure, so the flip1 eval
+#                     bytes stay byte-identical to H_9324's — this is replay, not leakage.
+#
+#                     Positive control, free and mandatory: SEEN flip1 must come back to base level
+#                     (~0.88). If it does not, the operator is still dead and a held-out flip1 read
+#                     is INVALID, never FAIL. A composition verdict is only readable on a model whose
+#                     operator is demonstrably alive.
+
 GROUND_TMPL = "이 영화 {surf} => {pol}.\n"
 GROUND_FORMS_FLIP0 = ("{s}고", "정말 {s}고", "너무 {s}다")     # flip1 forms are DELIBERATELY absent
+# Byte-verbatim from the frozen eval manifest (n2_eval_manifest.json negL/negS/negE surfaces) — a
+# demonstration written in a DIFFERENT surface form than the one we score would test nothing.
+GROUND_FORMS_FLIP1 = ("{s}지 않다", "안 {s}고", "전혀 {s}지 않다")
 
 
 def build_ground(fmt, atoms_path, reps, replay, seed):
@@ -172,6 +209,14 @@ def build_ground(fmt, atoms_path, reps, replay, seed):
             for pat in GROUND_FORMS_FLIP0:
                 lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
                                                 pol="긍정" if pol == 1 else "부정"))
+            if fmt == "ground_keep":
+                # Replay the negated lines too — on the SEEN stems ONLY. Without these, 6000 steps
+                # of flip0-only training destroy the negation operator the eval is about to test
+                # (measured: SEEN flip1 0.8833 -> 0.3333). The held-out stems keep zero negated
+                # exposure, so the flip1 eval bytes are unchanged: this preserves, it does not leak.
+                for pat in GROUND_FORMS_FLIP1:
+                    lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
+                                                    pol="부정" if pol == 1 else "긍정"))
     rng.shuffle(lines)
     text = "".join(lines)
     flipped = sum(1 for k, (_, p) in enumerate(held) if p != labels[k])
@@ -362,11 +407,11 @@ def main():
                   "is noisier for those" % (len(st["thin_atoms"]), st["k_ctx"],
                                             min(st["thin_atoms"], key=lambda x: x[1])))
         sys.exit(0)
-    if fmt not in ("derivtrace", "flat", "ground", "ground_lie"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|valence> --out PATH")
+    if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|valence> --out PATH")
         print("  derivtrace|flat        [--held-out I,J] [--comp-per-pair N] "
               "[--single-per-concept N] [--seed S] [--concepts FILE.json]")
-        print("  ground|ground_lie      --atoms gt_atoms.json [--reps N] [--replay N] [--seed S]")
+        print("  ground|ground_lie|ground_keep   --atoms gt_atoms.json [--reps N] [--replay N] [--seed S]")
         print("      H_9313 DECON-W grounding corpus — writes each held-out atom's polarity into")
         print("      the WEIGHTS via the un-negated (flip0) template lines ONLY. The negated")
         print("      (flip1) forms NEVER appear, so a later flip1 test measures COMPOSITION, not")
@@ -387,7 +432,7 @@ def main():
         print("      noise falls as 1/sqrt(k-ctx). The corpus holds ~717 contexts per atom (min 182).")
         sys.exit(2)
 
-    if fmt in ("ground", "ground_lie"):
+    if fmt in ("ground", "ground_lie", "ground_keep"):
         if not opts["atoms"]:
             print("anima corpus %s: --atoms gt_atoms.json is required" % fmt)
             sys.exit(2)
