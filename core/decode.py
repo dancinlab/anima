@@ -915,6 +915,102 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None):
     return yn
 
 
+def _conv1d_batch(x, Wt, b, B, T, Cin, Cout, K, dil, xp):
+    """_conv1d for a BATCH of sequences. x:[B,T,Cin] -> y:[B,T,Cout].
+
+    Same causal dilated im2col, same `xcol @ Wt`, one axis wider. The sequences never see each
+    other: the im2col gather is per-batch-row and the matmul is over the (Cin*K) axis only. Zero
+    fill past the left edge is per row, exactly as in the single-sequence path."""
+    Kdim = Cin * K
+    xcol = xp.zeros((K, B, T, Cin), dtype=xp.float64)   # K first: a boolean index on axis 1 of a
+    t_idx = xp.arange(T)                               # [B,T,...] array would hoist T in front of B
+    for k in range(K):
+        offset = dil * (K - 1 - k)
+        p = t_idx - offset
+        valid = p >= 0
+        xcol[k][:, valid, :] = x[:, p[valid], :]       # both sides are [B, n_valid, Cin]
+    xcol = xp.moveaxis(xcol, 0, -1)                    # -> [B, T, Cin, K], the single path's layout
+    return (xcol.reshape(B, T, Kdim) @ Wt) + b[None, None, :]
+
+
+def _groupnorm_batch(x, gamma, beta, B, T, C, xp):
+    """nn_groupnorm_fwd for a batch. x:[B,T,C] -> y:[B,T,C].
+
+    LOAD-BEARING: G is 1, so the statistics are taken over the WHOLE [T,C] of ONE sequence. A batch
+    must therefore reduce PER SEQUENCE — pooling across the batch would silently make every prompt's
+    hidden depend on the other prompts in its chunk, and the probe's numbers would move with the
+    batch size. The mean/var are pulled to host floats and fed through the SAME 40-iteration Newton
+    `_gn_sqrt` the single path uses, once per sequence, so the arithmetic is identical."""
+    eps = 0.00001
+    m = float(C * T)
+    y = xp.empty_like(x)
+    for bi in range(B):
+        xi = x[bi]
+        mu = float(xp.sum(xi)) / m
+        dv = xi - mu
+        var = float(xp.sum(dv * dv)) / m
+        inv = 1.0 / _gn_sqrt(var + eps)
+        y[bi] = dv * inv * gamma[None, :] + beta[None, :]
+    return y
+
+
+def _fwd_trunk_batch(W, toks, T):
+    """_fwd_trunk for a BATCH of token sequences. toks:[B,T] -> yn:[B,T,d].
+
+    Why this exists: the single-sequence forward issues one GPU launch per prompt, so a 33k-prompt
+    probe issues 33k launches and the GPU sits at ~60% doing launch overhead rather than math
+    (convergence decode-py-2). Batching turns that into ~B-fold fewer launches.
+
+    Why it is a SEPARATE function: _fwd_trunk is the decode the gates run on. It is not touched.
+    This path is used only by the read-only probe verbs, and it is adopted only because
+    _selftest_batch_forward() proves max|delta| == 0 against it on the same tokens — byte-identity,
+    not 'close enough' (a_engine_native_learning: the probe must measure the production forward)."""
+    d = W["d"]; E = W["E"]; K = W["K"]; L = W["L"]
+    xp = get_xp(W["ecWt"])
+    ids = toks.astype(np.int64)
+    if xp is not np:
+        ids = xp.asarray(ids)
+    B = ids.shape[0]
+    xt = _conv1d_batch(W["embed"][ids], W["ecWt"], W["ecB"], B, T, d, d, K, 1, xp)
+    DIL_CAP = 512
+    dil = 1
+    for li in range(L):
+        dil_eff = dil if dil <= DIL_CAP else DIL_CAP
+        h = _conv1d_batch(xt, W["tcWt"][li], W["tcB"][li], B, T, d, d, K, dil_eff, xp)
+        hn = _groupnorm_batch(h, W["tgG"][li], W["tgB"][li], B, T, d, xp)
+        xt = xt + nn_gelu_fwd(hn, xp).reshape(B, T, d)
+        dil = dil * 2
+    logits_r = _conv1d_batch(xt, W["rWt"], W["rB"], B, T, d, E, 1, 1, xp)      # [B,T,E]
+    ex_out = xp.empty((E, B, T, d), dtype=xp.float64)
+    for ej in range(E):
+        eo = _conv1d_batch(xt, W["eWt"][ej], W["eB"][ej], B, T, d, d, K, 1, xp)
+        ex_out[ej] = nn_gelu_fwd(eo, xp).reshape(B, T, d)
+    probs = xp.empty((B, T, E), dtype=xp.float64)
+    for bi in range(B):
+        probs[bi] = nn_moe_softmax(logits_r[bi], T, E, xp)
+    y = xp.einsum('bte,ebtc->btc', probs, ex_out)
+    return _groupnorm_batch(y, W["noG"], W["noB"], B, T, d, xp)
+
+
+def clm_forward_hidden_batch(W, toks, T):
+    """Batched twin of clm_forward_hidden. toks:[B,T] -> host numpy [B,T,d].
+
+    Byte-identical to calling clm_forward_hidden once per row (proved by _selftest_batch_forward);
+    it exists purely so a probe that needs thousands of prompts stops paying one GPU launch each."""
+    ta = toks if hasattr(toks, "astype") else np.array(toks, dtype=np.float64)
+    return to_host(_fwd_trunk_batch(W, ta, T))
+
+
+def _selftest_batch_forward(W, prompts, T):
+    """The licence to use the batched forward at all: max|delta| against the single-sequence path,
+    on the same tokens. Anything but 0.0 disqualifies it — this is the forward the verdict is read
+    off, so 'close enough' is not a category that exists here."""
+    toks = np.stack([_seed_to_tok(p, T) for p in prompts], 0)
+    single = np.stack([clm_forward_hidden(W, toks[i], T) for i in range(len(prompts))], 0)
+    batched = clm_forward_hidden_batch(W, toks, T)
+    return float(np.abs(np.asarray(single) - np.asarray(batched)).max())
+
+
 def clm_forward_hidden(W, tok, T):
     """Read-only penultimate-hidden tap — the pre-readout, pre-E1-slot yn:[T, d] (post-MoE,
     post final groupnorm) for token ids tok:[T]. Engine-native: the EXACT production trunk
