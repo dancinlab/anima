@@ -25,11 +25,23 @@ dependencies = ["numpy>=1.24"]
 [project.optional-dependencies]
 train = ["torch>=2.1", "datasets"]
 # cupy wheel is CUDA-major-version-specific; cupy-cuda12x covers CUDA 12.x runtimes
-# (verified on RTX 5070 sm_120 · driver 580.x · pool host `summer`, 2026-07). A host
-# on a different CUDA major (11.x/13.x) should install the matching cupy-cudaNNx
-# wheel directly — core/decode.py only requires `import cupy` to succeed, it has no
-# hard dependency on this exact wheel name.
-gpu = ["cupy-cuda12x>=13.0"]
+# (verified on RTX 5070 sm_120 · driver 580.x · pool hosts `summer` and `aiden`).
+#
+# ⚠ UPPER BOUND IS LOAD-BEARING — cupy 14.x is BROKEN on sm_120 (2026-07-14, aiden,
+# CUDA 13.0 / driver 580 / RTX 5070). Every JIT kernel compile fails because the
+# cuda_fp8.hpp header cupy 14 bundles does not parse under nvrtc:
+#     nvidia/cu13/include/cuda_fp8.hpp(1460): error: this declaration has no storage
+#     class or type specifier                       ... 12 errors, NVRTC_ERROR_COMPILATION
+# core/decode.py's cuda_available() only checks that `import cupy` succeeds and a device
+# is visible — it cannot see that the kernels will not COMPILE — so an unbounded
+# `>=13.0` silently installs the broken 14.x, cuda_available() returns True, and the
+# first real forward dies mid-eval on a paid GPU. Pin below 14 until cupy fixes the
+# header; a fresh pod must not be able to pick the broken wheel.
+#
+# A host on a different CUDA major (11.x/13.x) installs the matching cupy-cudaNNx wheel
+# directly — core/decode.py only requires `import cupy` to succeed, it has no hard
+# dependency on this exact wheel name. The <14 bound applies there too.
+gpu = ["cupy-cuda12x>=13.0,<14"]
 
 [project.scripts]
 anima-py = "anima_py:main"
