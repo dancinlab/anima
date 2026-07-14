@@ -1,0 +1,13 @@
+═══ H_9328 INTERACT-MI · I(A;Y|S) ═══
+  traces=24  ticks=720  emit-ticks(with A)=672
+  🚦 V-CEILING  H(A|S) = 1.1513 nats · H(Y|S) = 0.4091 nats   (floor 0.030 = 3×MDE)
+  단위 실측: 연속 tick 의 A 동일비율 0.394 vs 우연 0.396 ⇒ 자기상관 X ⇒ **tick** 이 표본
+  rollout=24 · emit-tick=648
+  EXP   I(A;Y|S) = 0.00289 nats
+  Y-bin: in-sample median 0.53040 (진단용 · 헤드라인 아님)  n=648
+  C1 PERM[rollout] null mean=0.00000 sd=0.00000 · perm-p=0.0050 · EARNED=0.00289
+  C1 PERM[tick   ] null mean=0.00192 sd=0.00257 · perm-p=0.2687 · EARNED=0.00097 ← 실측 단위
+  EARNED[tick] = 0.00088 nats   (MDE 0.010 · TOST ±0.010)
+  ⇒ TOST 등가역 — 폐루프가 DATA-ADDITIVE 방향 (n·검정력 명시 필요)
+=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===
+dispatch: /usr/bin/python3 /home/aiden/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py --interact-mi /home/aiden/h9328_traces/r1.jsonl /home/aiden/h9328_traces/r10.jsonl /home/aiden/h9328_traces/r11.jsonl /home/aiden/h9328_traces/r12.jsonl /home/aiden/h9328_traces/r13.jsonl /home/aiden/h9328_traces/r14.jsonl /home/aiden/h9328_traces/r15.jsonl /home/aiden/h9328_traces/r16.jsonl /home/aiden/h9328_traces/r17.jsonl /home/aiden/h9328_traces/r18.jsonl /home/aiden/h9328_traces/r19.jsonl /home/aiden/h9328_traces/r2.jsonl /home/aiden/h9328_traces/r20.jsonl /home/aiden/h9328_traces/r21.jsonl /home/aiden/h9328_traces/r22.jsonl /home/aiden/h9328_traces/r23.jsonl /home/aiden/h9328_traces/r24.jsonl /home/aiden/h9328_traces/r3.jsonl /home/aiden/h9328_traces/r4.jsonl /home/aiden/h9328_traces/r5.jsonl /home/aiden/h9328_traces/r6.jsonl /home/aiden/h9328_traces/r7.jsonl /home/aiden/h9328_traces/r8.jsonl /home/aiden/h9328_traces/r9.jsonl
