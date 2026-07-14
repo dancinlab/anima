@@ -770,6 +770,15 @@ def evaluate_usage():
     print("       the chain. R = recon_err 2-bin is the afield root the emitted text feeds directly, so")
     print("       M1(A->R) and M2(R->Y) split a null two ways — the text never reaches the field (wiring")
     print("       suspect), or it reaches the field and the GATE does not look (read-side THEATER).")
+    print("       🚦 V5 GATE-CLOSED (BLOCKING, the FIFTH identity-zero): H(Y|S,safe) — if emit is fully")
+    print("       determined by stage + the rate-limiter, STILL-ADDITIVE was settled before the mouth")
+    print("       opened. That is NOT a wall, it is GATE-CLOSED: the gate looks at nothing.")
+    print("       B1 BOOKKEEPING: H(R|A,S) — if R is a function of A, 'recognition' is a LEDGER and any")
+    print("       I>0 is accounting, not discovery. CARRIER-SWAP cannot separate this (a swapped carrier")
+    print("       rides the same arithmetic); B1 is the only thing that can.")
+    print("       PC POWER CONTROL: urgency (ten_phasic, the one proven emit channel, H_9101) through the")
+    print("       identical pipe. If even urgency->Y is dead, the instrument cannot see ANY gate input —")
+    print("       NOT-POWERED, and no wall may be declared. M3: I(A;Y|S,R,L) ~ 0 = mediation exhausted.")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
     print("  anima evaluate <ckpt> --device-parity [--win 64]")
@@ -2724,10 +2733,14 @@ def _interact_mi(argv):
     for r in rows:
         by_src.setdefault(r["_src"], []).append(r)
     nxt = {}
+    nxt_gate = {}
     for src, rs in by_src.items():
         rs.sort(key=lambda r: int(r["tick"]))
         for i in range(len(rs) - 1):
             nxt[(src, int(rs[i]["tick"]))] = float(rs[i + 1]["score"])
+            # V5 needs the bookkeeping of the tick that PRODUCED Y, not the one that spoke.
+            nxt_gate[(src, int(rs[i]["tick"]))] = (int(rs[i + 1]["stage"]),
+                                                   rs[i + 1].get("safe"))
     use = [r for r in emits if (r["_src"], int(r["tick"])) in nxt]
     if len(use) < 30:
         print("  ⇒ NOT-POWERED (next-tick score 있는 emit-tick < 30)")
@@ -2756,6 +2769,40 @@ def _interact_mi(argv):
         print("     I 는 정의상 0 — 입이 무엇을 말했든 물을 수 있는 질문이 아니었다.")
         print("     (같은 항등식의 반대쪽 축 · convergence interact-mi-py-2)")
         return 0
+    # ── V5 · GATE-CLOSED (the FIFTH identity-zero · BLOCKING · H_9337 frozen bar) ──────
+    # H(Y|S) alive is NOT enough. The gate's own inputs are stage AND the rate-limiter
+    # (`safe`). If emit is fully determined by (stage, safe), then Y is a function of the
+    # gate's own bookkeeping and STILL-ADDITIVE is settled BEFORE the mouth opens — again
+    # by definition, not by measurement. That is a different claim from "the loop carries
+    # no information": it says THE GATE LOOKS AT NOTHING. H_9100 (motivation saturated at
+    # floor ~0.7, always clearing the 0.3 threshold) and H_9209/9225/9230 (every read-side
+    # emit wiring = THEATER, ΔEff 0/120) predict exactly this shape, so it must be its own
+    # verdict, not folded into the wall.
+    #
+    # ⚠️ CONDITION ON THE TICK THAT PRODUCED Y, NOT THE ONE THAT SPOKE. Y is score_{t+1}, so
+    # the gate bookkeeping that could already have written it is (stage_{t+1}, safe_{t+1}).
+    # Stratifying by the SPEAKING tick's (stage, safe) is a different question and cannot
+    # detect the trap — a synthetic arm with Y := f(stage_{t+1}, safe_{t+1}) sailed straight
+    # through that version of the gate. Conditioning here is safe from the mediator trap
+    # because `safe` is a rate-limiter over WHETHER/WHEN the daemon spoke — it is not a
+    # descendant of A, which is WHAT it said (the H_9257 content axis).
+    sf = [nxt_gate[(r["_src"], int(r["tick"]))][1] for r in use]
+    if all(v is not None for v in sf):
+        svals = sorted(float(v) for v in sf)
+        smed = svals[len(svals) // 2]
+        SG = [(nxt_gate[(r["_src"], int(r["tick"]))][0],
+               1 if float(nxt_gate[(r["_src"], int(r["tick"]))][1]) > smed else 0) for r in use]
+        hYg = _im_h_given_S(Y, SG)
+        print("  🚦 V5 GATE     H(Y|S,safe) = %.4f nats   (floor %.3f · safe = rate-limit lane)"
+              % (hYg, hfloor))
+        if hYg < hfloor:
+            print("  ⇒ ⛔ GATE-CLOSED — 게이트가 **아무것도 안 본다**(emit 이 stage+safe 로 완전결정).")
+            print("     이건 🧱 가 아니다. '폐루프가 정보를 안 나른다'가 아니라 '게이트에 물어볼 수")
+            print("     있는 질문이 없다' — STILL-ADDITIVE 는 입이 열리기 전에 이미 확정돼 있었다.")
+            print("     다음 물음은 '루프가 나르는가'가 아니라 '게이트가 무엇을 보게 할 수 있는가'다.")
+            return 0
+    else:
+        print("  🚦 V5 GATE     safe 미기록 trace ⇒ SKIP (구 포맷 · GATE-CLOSED 를 배제할 수 없음)")
     I = _im_cmi(A, Y, S)
     # ── The exchangeable unit is MEASURED, not assumed (convergence evaluate-py-13 · chat-py-3).
     # Two candidate units, and which one is right is an empirical question about THIS trace set:
@@ -2869,7 +2916,30 @@ def _interact_mi(argv):
     #      이건 H_9209/H_9225/H_9230 이 read-side 배선에서 반복해 만난 THEATER 그림과 합류한다
     #      (emit = stage + rate-limit 지배). 그렇다면 null 은 고립된 사실이 아니라 그 벽의 목격이다.
     # 둘 다 같은 C1 순열 귀무(실측 단위) 위에서 잰다. 진단이므로 verdict 를 바꾸지 않는다.
-    rec = [r.get("recon_err") for r in use]
+    #
+    # ⏱️ THE LAG IS PART OF THE WIRING — take the mediators from the tick that PRODUCED Y.
+    # The daemon reads a 1-tick-lagged prediction error (chat.py: `pending_recon` is written
+    # at the emit site of tick t and READ at tick t+1), so the causal chain is
+    #     A_t ──▶ recon_err_{t+1} ──▶ score_{t+1} (= Y)
+    # A row's OWN `recon_err` is the error of the PREVIOUS utterance A_{t-1}, and it feeds
+    # score_t, not Y. Reading the same row's mediator therefore misses by exactly one tick in
+    # BOTH links: M1 would compare A_t against A_{t-1}'s error, and M2 would ask a mediator
+    # that already spent itself on score_t to explain score_{t+1}. A synthetic arm with
+    # score := f(recon_err) at the same tick read M2 as DEAD under that version — the
+    # instrument could not see a channel that was planted by construction. The headline
+    # I(A_t; score_{t+1}|S) had the lag right; the whole diagnostic panel had it wrong, and a
+    # null would have read as "the text never even reaches the field".
+    # NB: `by_src` is rebound to an index map by the autocorrelation block above — rebuild
+    # the row map under its own name rather than reusing a name the code already spent.
+    rows_by_src = {}
+    for r in rows:
+        rows_by_src.setdefault(r["_src"], []).append(r)
+    nxt_lane = {}
+    for src, rs in rows_by_src.items():
+        rs.sort(key=lambda r: int(r["tick"]))
+        for i in range(len(rs) - 1):
+            nxt_lane[(src, int(rs[i]["tick"]))] = rs[i + 1]
+    rec = [nxt_lane[(r["_src"], int(r["tick"]))].get("recon_err") for r in use]
     if any(v is None for v in rec):
         print("  ── MEDIATION: recon_err 미기록 trace ⇒ SKIP (구 trace 포맷)")
         return 0
@@ -2903,6 +2973,112 @@ def _interact_mi(argv):
         print("     %-28s EARNED = %+.5f nats · perm-p = %.4f   %s" % (nm, earned, pv, tag))
     print("     ⇒ M1 살고 M2 죽으면: 말은 장을 밀지만 **게이트가 안 본다**(read-side THEATER 합류).")
     print("        M1 도 죽으면: 주입 자체가 장에 안 닿는다(배선/계기 의심 — 기질 주장 금지).")
+    print("     ⚠️ 사다리의 한계 둘: (a) R 은 2-bin ⇒ M2 죽음의 스코프는 '게이트가 R 을 1-bit")
+    print("        해상도에서 안 읽는다'까지다. (b) M1·M2 가 **둘 다 살아도** end-to-end I=0 일 수")
+    print("        있다 — 쌍별 MI 는 합성되지 않는다(나르는 성분 ≠ 쓰는 성분).")
+
+    # ── B1 · BOOKKEEPING (H_9337 frozen bar · guards the 🟢 강한 독법) ────────────────
+    # If R is a deterministic function of (A, S), then "recognition error" is not a percept
+    # at all — it is a LEDGER, an arithmetic restatement of what the mouth just said. Then
+    # I(A;Y|S) > 0 is not a discovery, it is ACCOUNTING: the daemon's own bookkeeping is the
+    # wire. This is the general form of the trap already hit once ("query the store with the
+    # last utterance" → constant 1.15, because you asked about what you just filed).
+    #
+    # ⚠️ C2 CARRIER-SWAP CANNOT SEPARATE THIS. A swapped carrier rides the SAME arithmetic,
+    # so a pure-ledger system emits EXACTLY the same C2 signature as a real one (both die
+    # under swap). C2 separates a COMMON-CAUSE drift (latent state driving A and Y together);
+    # bookkeeping is separated by B1 and by nothing else.
+    hRA = _im_h_given_S(R, [(a, s) for a, s in zip(A, S)])
+    print("  ── B1 BOOKKEEPING (🟢 의 강한 독법을 지키는 게이트) ─────────────")
+    print("     H(R|A,S) = %.4f nats   (floor %.3f — R 이 A 로 완전결정이면 재인식이 아니라 장부)"
+          % (hRA, hfloor))
+    if hRA < hfloor:
+        print("     ⇒ ⛔ 장부다 — R 은 A 의 산술적 재진술일 뿐, 새 지각의 분산을 싣지 않는다.")
+        print("        I > 0 이 나와도 그건 발견이 아니라 **회계**다. 🟢 의 강한 독법 무효.")
+    else:
+        print("     ⇒ ✅ R 은 A 너머의 분산을 싣는다 — 재인식이 장부로 붕괴하지 않았다.")
+
+    # ── PC · POWER POSITIVE CONTROL (🧱 선언의 전제조건 · memory power-before-negative-verdict)
+    # Before any wall is declared, prove the INSTRUMENT can see a channel that is KNOWN to be
+    # live. H_9101 earned exactly one proven emit channel: urgency = phasic Δ tension
+    # (`ten_phasic`). Run it through the identical I(·;Y|S) pipe:
+    #   urgency→Y ALIVE  ∧  R→Y dead  ⇒ the gate is SELECTIVELY blind. A real 🧱.
+    #   urgency→Y DEAD               ⇒ the instrument cannot see ANY gate input. That is
+    #                                  ⛔ NOT-POWERED, and a 🧱 declared here would be a
+    #                                  statement about my measurement, not the substrate.
+    tp = [nxt_lane[(r["_src"], int(r["tick"]))].get("ten_phasic") for r in use]
+    print("  ── PC 검정력 양성대조 (🧱 선언의 전제조건) ─────────────────────")
+    if any(v is None for v in tp):
+        print("     ten_phasic 미기록 ⇒ SKIP — 양성대조 없이 🧱 선언 금지")
+    else:
+        ts = sorted(float(v) for v in tp)
+        tmed = ts[len(ts) // 2]
+        U = [1 if float(v) > tmed else 0 for v in tp]
+        hU = _im_h_given_S(U, S)
+        i_uy = _im_cmi(U, Y, S)
+        null = []
+        for _ in range(perm):
+            Up = list(U)
+            st = {}
+            for k, s in enumerate(S):
+                st.setdefault(s, []).append(k)
+            for idx in st.values():
+                vals = [Up[k] for k in idx]
+                rnd.shuffle(vals)
+                for j, k in enumerate(idx):
+                    Up[k] = vals[j]
+            null.append(_im_cmi(Up, Y, S))
+        nmu = sum(null) / len(null)
+        pvu = (sum(1 for v in null if v >= i_uy) + 1.0) / (perm + 1.0)
+        eu = i_uy - nmu
+        live = (eu >= mde and pvu < 0.005)
+        print("     urgency→Y  EARNED = %+.5f nats · perm-p = %.4f · H(U|S) = %.4f   %s"
+              % (eu, pvu, hU, "🔗 LIVE (H_9101 유일 proven 채널)" if live else "💀 DEAD"))
+        if not live:
+            print("     ⇒ ⛔ 검정력 부재 — 계기가 **알려진 살아있는 채널조차** 못 본다.")
+            print("        여기서 🧱 를 선언하면 그건 기질이 아니라 내 측정에 관한 문장이다.")
+        else:
+            print("     ⇒ ✅ 계기는 게이트 입력을 볼 수 있다 — R→Y 가 죽으면 그건 **선택적** 실명이다.")
+
+    # ── M3 · MEDIATION EXHAUSTED (진단) ──────────────────────────────────────────────
+    # If roots ① and ② carry the whole path, then conditioning on them should EXHAUST the
+    # mediation: I(A;Y|S,R,L) ≈ 0. A residual > 0 says there is an UNACCOUNTED path from the
+    # mouth to the gate — which is itself a finding, not a nuisance.
+    lan = [nxt_lane[(r["_src"], int(r["tick"]))].get("rel_lane") for r in use]
+    if not any(v is None for v in lan):
+        ls_ = sorted(float(v) for v in lan)
+        lmed = ls_[len(ls_) // 2]
+        L = [1 if float(v) > lmed else 0 for v in lan]
+        SRL = [(s, r_, l_) for s, r_, l_ in zip(S, R, L)]
+        i_res = _im_cmi(A, Y, SRL)
+        # The RAW residual cannot be read against MDE. Conditioning on (S,R,L) shatters the
+        # sample into ~12x more strata, and plug-in CMI is POSITIVELY BIASED in small strata —
+        # every synthetic arm with NO residual path still read 0.019-0.037 nats here. Reading
+        # that against a 0.010 bar would MANUFACTURE an "unaccounted path" out of thin air, the
+        # same class of defect as an order-statistic bar (probe-defect-census). The bias lives
+        # in the null too, so subtract the null: EARNED, never the raw value.
+        null = []
+        for _ in range(perm):
+            Ap2 = list(A)
+            st = {}
+            for k, z in enumerate(SRL):
+                st.setdefault(z, []).append(k)
+            for idx in st.values():
+                vals = [Ap2[k] for k in idx]
+                rnd.shuffle(vals)
+                for j, k in enumerate(idx):
+                    Ap2[k] = vals[j]
+            null.append(_im_cmi(Ap2, Y, SRL))
+        nm3 = sum(null) / len(null)
+        pv3 = (sum(1 for v in null if v >= i_res) + 1.0) / (perm + 1.0)
+        e3 = i_res - nm3
+        print("  ── M3 매개 소진 (진단) ─────────────────────────────────────────")
+        print("     I(A;Y | S,R,L) = %.5f · null = %.5f ⇒ EARNED = %+.5f nats · perm-p = %.4f"
+              % (i_res, nm3, e3, pv3))
+        if e3 >= mde and pv3 < 0.005:
+            print("     ⇒ 잔차 EARNED > MDE — **미계상 경로가 있다**(뿌리①② 밖으로 말이 게이트에 닿는다).")
+        else:
+            print("     ⇒ 잔차 ≈ 0 — 뿌리①② 가 말→게이트 경로를 설명한다(소진).")
 
     # ── AXIS · 내가 잰 축이 루프가 나르는 축인가 (진단 · 헤드라인 아님) ───────────────
     # 헤드라인의 A = a_fold8 = penult_fold8(pooled) — 입이 **표상한** 축이다.
