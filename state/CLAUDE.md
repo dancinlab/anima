@@ -1,5 +1,21 @@
 # state/ — 작업 산출물 단일 루트
 
+## ⛔ TOP RULE 0 — every engine op is an `anima-py` command, and it is never a script in here
+
+| you want to… | the ONLY command |
+|---|---|
+| build a corpus | `anima-py corpus <fmt> --out c.txt …` (also writes `c.txt.meta.json` = that corpus's earned budget floor) |
+| train / continue-train | `anima-py train --corpus c.txt --init base.clm …` |
+| **measure / judge** | `anima-py evaluate <clm> [--xbind m.json] [--rho-axon]` |
+| serialize · sweep · chat | `anima-py serialize` · `anima-py sweep` · `anima-py chat` |
+
+**The py channel for all of it** — one install (`pip install "anima-python[train]"`), one command.
+Never `python3 cli/*.py`, never `hexa run cli/*.hexa`, never a hand-rolled `gen_*.py` / `eval_*.sh`
+standing beside the engine. Full rationale + the hexa twin → repo-root `CLAUDE.md` (top section).
+
+This directory holds an experiment's **inputs and outputs** — manifests, pre-registrations, readouts,
+result json, logs. It does **not** hold the engine, and it does not hold the instrument (below).
+
 ## 🧪 TOP RULE — `a_experiment_engine_native` (the INSTRUMENT is engine-native too, not just the verdict)
 
 > **Do NOT build a new experiment's INSTRUMENT in here.** A new experimental manipulation (an
