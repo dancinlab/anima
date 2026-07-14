@@ -15073,6 +15073,13 @@
         "value": "오너 지시('모든 실험은 엔진네이티브여야 한다' · `a_experiment_engine_native`)에 따라 G1 EARNED 계기를 `anima-py evaluate --earned`(`cli/earned.py` + `cli/evaluate.py` 3종 세트)로 배선하고 네 점을 **하나의 계기·하나의 시드 규약**으로 다시 돌렸다. **4/4 재현**(부정 +0.00233 byte-exact · 역접 +0.00907 · 패리티 +0.00319 · 반어 +0.00127) — 여기까진 좋다. **그런데 시드만 바꾸자 반어 점이 2.5배 흔들렸다**: seed 9318 EARNED +0.00127(ruler 0.024%) vs seed 9304 +0.00323(0.061%). 반어는 held-out 이 ~2.5–3k 셀로 **n 이 작아** 어간 선택이 효과크기를 크게 흔든다. ⇒ H_9318 이 카드에 사실로 적었던 **'반어가 네 점 중 가장 작다 — 이론상 가장 커야 하는 지점에서!' 는 순위 주장이 시드 잡음**이었고(철회), seed 9304 에선 패리티(0.060%)와 사실상 같다. **하중을 지는 결론(TOST 등가 · CLASS-CLOSED)은 불변** — 흔들린 것은 **순위이지 등가성이 아니다**. **미러로 끝냈다면 그 순위를 사실로 남겼을 것이다.** 이것이 계기 배선이 사준 것이다.",
         "threshold": "재발조건: **n 이 작은 코퍼스/서브셋에서 단일 시드로 효과크기를 보고**하고, 그 값으로 **점들 사이의 순위/서열**을 주장할 때(특히 '가장 작다/크다', '이론상 가장 커야 하는데 가장 작았다' 같은 서사적 결론). 해결: (1) **n 이 작으면 다중 시드 필수** — 효과크기를 **시드에 대한 CI 와 함께** 보고하라(단일 시드 금지) (2) **순위 주장은 등가성 주장보다 훨씬 약하다** — TOST 로 '0 과 등가' 를 벌 수는 있어도, 같은 데이터로 '이게 저것보다 작다' 를 벌려면 **점 간 차이가 시드 잡음보다 커야 한다**는 별도 검정이 필요하다 (3) 여러 코퍼스/언어/도메인을 **하나의 자(ruler)로 비교**할 때, 자는 공유해도 **n 은 공유되지 않는다** — n 이 다르면 잡음 크기도 다르다 (4) **계기를 canonical CLI 에 배선하라** — 같은 계기·같은 시드 규약으로 전 점을 다시 돌리는 것이 이런 잡음-순위를 잡는 가장 값싼 방법이다(미러 4개는 각자 다른 시드 기본값을 갖고 있었고, 그래서 순위가 깨끗해 *보였다*).",
         "source": "H_9319 EARNED 계기 배선이 H_9318 의 순위 주장을 철회시킴 (2026-07-14)"
+      },
+      {
+        "id": "evaluate-py-10",
+        "state": "pos-conv",
+        "value": "A --no-verify commit after 'git add -A' on an UNRESOLVED merge put CONFLICT MARKERS on main: cli/evaluate.py landed with a SyntaxError (the engine could not be imported at all) and HYPOTHESES.jsonl carried marker lines plus duplicate ids. Two things conspired: 'git add -A' stages UU files verbatim, and --no-verify switches off the hook that would have caught it. The conflict was trivial (two parallel sessions each adding CLI flags; the fix is the UNION of both lists) — which is exactly why it got waved through without a look.",
+        "threshold": "Recurs on any merge resolved with 'git add -A', especially with --no-verify. Before committing a merge: grep for conflict markers across the changed files, and ast.parse every changed .py. A merged append-only ledger (jsonl) additionally needs a duplicate-id pass, because both sides' appends survive.",
+        "source": "cli/evaluate.py"
       }
     ]
   }
