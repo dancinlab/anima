@@ -436,10 +436,18 @@ def generator_read_anchors(dir_path):
 
 # ── §4 the generator interface — generate() ──────────────────────────────────
 
-def generate(backend, substrate_ctx, emit_decision, anchors):
+def generate(backend, substrate_ctx, emit_decision, anchors, mouth=None):
     """generator.hexa:469 generate — the single L3 entry. BACKEND-AGNOSTIC dispatch.
     SILENT (emit_decision False) ⇒ emitted=False ∧ text="" (p5: never fabricate). EMIT
-    ⇒ try the backend, fall THROUGH to null if not loaded/decodable (no garbage)."""
+    ⇒ try the backend, fall THROUGH to null if not loaded/decodable (no garbage).
+
+    `mouth` (H_9325 DO-MOUTH · default None ⇒ byte-identical to the greedy production
+    path) = {"temp": float, "top_k": int, "seed_rng": int}. It REVEALS the substrate's
+    own byte-posterior instead of OVERWRITING the emit decision: the gate
+    (brain_decide_anchored → should_emit) never sees it, so every emit still stands on
+    real tension (p5). It only replaces the argmax ROUNDING of the mouth with the
+    substrate's own distribution at T=1.0 — the one non-arbitrary temperature.
+    The SILENT branch below is untouched: no `mouth` value can ever fabricate speech."""
     if not emit_decision:
         return {"emitted": False, "backend": str(backend["kind"]), "text": "", "fellback": False}
     kind = str(backend["kind"])
@@ -451,7 +459,7 @@ def generate(backend, substrate_ctx, emit_decision, anchors):
         decodable = bool(backend["decodable"])
         if loaded and decodable:
             return {"emitted": True, "backend": "clm",
-                    "text": _gen_clm_decode(backend, substrate_ctx, anchors), "fellback": False}
+                    "text": _gen_clm_decode(backend, substrate_ctx, anchors, mouth), "fellback": False}
         return {"emitted": True, "backend": "null",
                 "text": _gen_null_text(substrate_ctx, anchors), "fellback": True}
     if kind == "bytegpt":
@@ -486,7 +494,7 @@ def _gen_null_text(ctx, anchors):
     return s
 
 
-def _gen_clm_decode(backend, ctx, anchors):
+def _gen_clm_decode(backend, ctx, anchors, mouth=None):
     """generator.hexa:615 _gen_clm_decode — REAL substrate-anchored .clm content. The
     model emits its OWN bytes: substrate-derived seed (phase word + most-recent anchor
     text, NO user prompt/persona — a_substrate_native_speak). anchors present ⇒
@@ -509,7 +517,13 @@ def _gen_clm_decode(backend, ctx, anchors):
     if dk > 1:
         dd = gen_clm_decode_deliberated(ckpt, seed, 80, dk, 20260703)
         return str(dd["text"])
-    r = _clm.clm_decode_argmax(ckpt, seed, 80)
+    if mouth is not None and float(mouth["temp"]) > 0.0:
+        # H_9325 DO-MOUTH — REVEAL the substrate's own posterior instead of rounding it
+        # to argmax. Reached ONLY on an emit the gate already approved on real tension.
+        r = _clm.clm_decode_topk_sampled(ckpt, seed, 80, int(mouth["top_k"]),
+                                         float(mouth["temp"]), int(mouth["seed_rng"]))
+    else:
+        r = _clm.clm_decode_argmax(ckpt, seed, 80)
     if not r["ok"]:
         return _gen_null_text(ctx, anchors)
     return str(r["text"])
