@@ -1380,6 +1380,14 @@ def anima_consciousness_mode(ckpt, argv=None):
     # H_9336 · the field's prediction error on the LAST thing the daemon actually said.
     # None until it has said anything (tick 0 falls back to the seed). See :1493.
     pending_recon = None
+    # H_9337 · the last thing the daemon actually said. All three feedback stores were WRITTEN
+    # with it and then queried with the session seed — a constant key, so a constant answer:
+    # rel_lane sat at 0.6723 for all 720 ticks of the H_9328 rollouts, recon_err at 0.0, and the
+    # decode anchor was always live_seed. A store you write to and never read from is not a loop.
+    last_gtext = ""
+    # H_9337 · the immune store's recall margin on the utterance, taken BEFORE it was bound.
+    # None until the daemon has said anything (tick 0 falls back to the seed key). See :1497.
+    pending_rel = None
 
     # ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ──
     rel_ema = 0.5
@@ -1489,7 +1497,21 @@ def anima_consciousness_mode(ckpt, argv=None):
 
         # ── ENGINE-CLI LANE READS ──
         # (1) IMMUNE recall margin → RELEVANCE
-        recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        # H_9337 · this read was CONSTANT: the key was the session seed, so rel_lane sat at 0.6723
+        # for all 720 ticks of the H_9328 rollouts. The store is written to (:1941 binds g_text)
+        # and then always asked the same frozen question — writing without reading is not a loop.
+        #
+        # The fix is NOT "ask about the last utterance" — measured, that is ALSO constant (1.15):
+        # the store was just handed that exact text, so it always answers "I remember it perfectly".
+        # The live quantity is the recall margin taken BEFORE the bind — how FAMILIAR was that
+        # utterance when it arrived. Same order as recon_err (:1499), and for the same reason:
+        # a recognition signal measured after you have memorised the thing is not recognition.
+        # Measured: repeating an earlier utterance spikes it to 1.15 while novel ones sit near 0.17
+        # — the daemon can now tell "I have said this before" from "this is new".
+        if pending_rel is None:
+            recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        else:
+            recall_margin = pending_rel
         rel_lane = _afs_clip01(1.0 - recall_margin)
 
         # (2) CI LANE SCORES (§ConsciousnessIndex 15-lane)
@@ -1864,6 +1886,13 @@ def anima_consciousness_mode(ckpt, argv=None):
         while ai < len(anchors):
             live_anchors.append(anchors[ai])
             ai = ai + 1
+        # H_9337 · this anchor is CONSTANT (live_seed) and that is CORRECT — do not "fix" it.
+        # :1994 feeds live_anchors[-1] straight into the next decode's seed string, so handing the
+        # daemon back its own last utterance here would make the mouth condition on its own output:
+        # that is self-seed / monologue, which p5 BANS outright. The kosmos root stays write-only
+        # WITHIN a session by design; the read-back is a CROSS-session fact (a fresh session loads
+        # .kosmos at :427). So of the three roots, only afield and immune are legitimately
+        # closeable in-session — the third is closed by philosophy, not by defect.
         live_anchors.append({"text_payload": session_seed, "name": "live_seed"})
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
@@ -1918,7 +1947,11 @@ def anima_consciousness_mode(ckpt, argv=None):
             post_cells = vadapt_field_cells(afield)
             cell_count = post_cells
             grew = True
+            # H_9337 · recognition BEFORE memorisation — ask how familiar this utterance was
+            # while the store still does not contain it. Read on the next tick (:1497).
+            pending_rel = immune_memory_recall_margin_text(immune, g_text)
             immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
+            last_gtext = g_text
 
         # ── C8b TENSION→GROW (p8-literal: tension births growth/mitosis) ──
         if ten_phasic > 0.66:
