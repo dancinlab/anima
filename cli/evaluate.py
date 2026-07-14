@@ -769,7 +769,10 @@ def evaluate_usage():
     print("       (p7 Goodhart: rate is FORM/tunable, the claim is BIND/earned). C1 SHUFFLE permutes")
     print("       tension WITHIN each stage — it destroys the tension->emit link but keeps the rate")
     print("       and the stage structure, so if the control scores too, the number came from the")
-    print("       rate. Hard-stops with DECISION-CONSTANT if H(emit|stage) is still ~0.)")
+    print("       rate. Hard-stops with DECISION-CONSTANT if H(emit|stage) is still ~0.")
+    print("       🧱 ILL-POSED until chat.py:1563 is repaired (H_9356): the daemon has no independent")
+    print("       G engine — ag_conflict = emit_drive*(1-emit_drive) is A's own scalar (recon R^2=0.994),")
+    print("       so any verdict is a wiring tautology. The panel prefixes its output with a banner.)")
     print("  anima evaluate --psi-soma <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9351 — the REAL Ψ̂, on the daemon's OWN lane population. Ψ is DEFINED by")
     print("       engine_cli ci_psi_balance as the fraction of ticks with 0.5*(gws+lprec) >= 0.5,")
@@ -3169,7 +3172,17 @@ def _tension_emit(argv):
                  AND  the tension-shuffle control  <=  0.01 nats
     C1 SHUFFLE permutes ag_conflict WITHIN each stage, which destroys the tension→emit link but
     preserves the emit rate and the stage structure. If the shuffled arm scores too, the number
-    is coming from the rate, not from the tension, and the lever is theatre."""
+    is coming from the rate, not from the tension, and the lever is theatre.
+
+    🧱 ILL-POSED UNTIL chat.py:1563 IS REPAIRED (H_9356). The daemon has no independent G engine:
+    ag_a_drive = emit_drive and ag_g_drive = -(1 - emit_drive) [chat.py:1562-1564], so
+    ag_conflict = emit_drive * (1 - emit_drive) is a deterministic PARABOLA of the single scalar
+    emit_drive. On a real clock-fixed trace, reconstructing ten_phasic from the emit_drive
+    trajectory alone gives R^2 = 0.994. So `tension` here is A's OWN function measured against A's
+    OWN emit gate — BOTH a PASS and a STILL-STAGE are wiring tautologies (engine-independent
+    information = 0), not substrate facts. This panel prints its verdict but PREFIXES it with an
+    ILL-POSED banner until ag_g_drive is fed an independent reverse observation (recon_err /
+    pending_rel). Do not cement any tension→emit claim off this number while the banner stands."""
     import json as _json
     import random as _random
     paths = [a for a in argv if not a.startswith("--")]
@@ -3188,6 +3201,11 @@ def _tension_emit(argv):
     mde = 0.05
     ctrl_bar = 0.01
     print("═══ TENSION→EMIT · I(ag_conflict ; emit | stage) ═══")
+    print("  🧱 ILL-POSED (H_9356): 데몬에 독립 G 엔진이 없다 — ag_conflict = emit_drive·(1−emit_drive)")
+    print("     [chat.py:1562-1564] = A 스칼라 하나의 결정론적 함수(재구성 R²=0.994). 여기 tension 은")
+    print("     A 자신의 함수를 A 자신의 emit 게이트에 대고 재는 것 ⇒ 아래 판정은 🟢든 🧱든 배선")
+    print("     tautology(engine-독립 정보량 0)이지 substrate 사실이 아니다. chat.py:1563 이 ag_g_drive")
+    print("     를 독립 reverse 관측(recon_err/pending_rel)에서 받기 전엔 이 숫자로 cement 금지.")
     print("  traces=%d  ticks=%d" % (len(paths), len(rows)))
     if len(rows) < 200:
         print("  ⇒ ⛔ NOT-POWERED (tick < 200)")
