@@ -248,6 +248,13 @@
       "role": "",
       "id": "claude-md-summary",
       "detail": "→ CLAUDE.md (entry pointer: project blurb + SSOT 포인터 + governance a_*/p# + work rules do/dont; 디렉터리/모듈 트리는 더 이상 CLAUDE.md 에 없음 — 트리 단일 SSOT = 이 ARCHITECTURE.json); verifiable claims"
+     },
+     {
+      "id": "claude-md-g6-unique-hid",
+      "name": "G6 unique-H_id 게이트 (harness · 2026-07-14 신설)",
+      "type": "gate",
+      "verdict": "🟢 LIVE — .harness/enforce_anima_gates.py · QA 4/4 (clean 1704 H · 카드충돌 검출 · jsonl중복 검출 · 원복 clean)",
+      "detail": "한 H id == 카드 1개 == jsonl 행 1개 (a_hypothesis_register). 병렬 세션이 각자 origin/main 스냅샷에서 '다음 빈 번호'를 계산하면 같은 id 가 모두에게 FREE 로 보이고, 이어서 세션이 '자기' 행을 id 로 찾아 갱신하며 **남의 verdict 를 조용히 덮어쓴다** (#3463 실측: 3 세션이 H_9313 점유 · real_dissociation verdict 증발 · 행은 겉보기 멀쩡). 검사 = (a) jsonl 중복 행 (b) 한 id 에 카드 2개(덮어쓰기를 가능케 한 모양). 신규 충돌 하드블록 · 기존 35건은 LEGACY_DUP_IDS 로 열거 동결 — 집합이 커지면 게이트 실패, 줄이는 건 항상 허용 (셀 수 있는 부채 · no-escape-hatch). convergence hypotheses-jsonl-3."
      }
     ]
    },
