@@ -1441,6 +1441,26 @@ def anima_consciousness_mode(ckpt, argv=None):
         m = dict(_mouth_base)
         m["seed_rng"] = (_sample_seed * 1000003 + tick * 2654435761) & 0x7FFFFFFF
         return m
+
+    # H_9328 C2 CARRIER-SWAP donor: {tick -> the text ANOTHER rollout emitted at that tick}.
+    # A real anima utterance, decoded by the same mouth from a different sample-seed — so it
+    # matches on shape/length/mouth and differs ONLY in "which substrate-moment chose it".
+    _swap_path = anima_flag_value(_cargv, "--swap-text", "ANIMA_SWAP_TEXT", "")
+    _swap_texts = {}
+    if _swap_path:
+        import json as _sj
+        import base64 as _sb
+        for _l in open(_swap_path, "r", encoding="utf-8", errors="surrogateescape"):
+            if not _l.strip():
+                continue
+            _d = _sj.loads(_l)
+            if _d.get("_meta") or not _d.get("emit"):
+                continue
+            _e = _d.get("gtext_b64", "")
+            if _e:
+                _swap_texts[int(_d["tick"])] = _sb.b64decode(_e).decode("utf-8", "surrogateescape")
+        print("  [C2 CARRIER-SWAP] donor=%s · %d emit-tick 의 텍스트를 주입 (게이트 무손상 · p5)"
+              % (_swap_path.split("/")[-1], len(_swap_texts)))
     # H_9269 Candidate Y (Y-ULTRA): default-OFF ultradian-cycle sleep schedule. dr_stage_at is a
     # piecewise table on [0,90) (dr_stage_size sums to 90); calling it with unbounded tick*8 overflows
     # into eternal REM (N2/N3 visited once → veto cap-of-2). The modulo restores the table's own domain
@@ -1842,6 +1862,25 @@ def anima_consciousness_mode(ckpt, argv=None):
         g_emit = str(dec["gen_emitted"]).lower() == "true"
         g_back = str(dec["gen_backend"])
         g_text = str(dec["gen_text"])
+        # ── H_9328 C2 CARRIER-SWAP (--swap-text <trace.jsonl>) · default OFF ────────────────
+        # THE control that makes a positive falsifiable. It replaces the emitted TEXT with the
+        # text ANOTHER rollout produced at this same tick — a real anima utterance (same shape,
+        # same length distribution, same mouth), but one THIS substrate did not just choose.
+        # Everything downstream is untouched, so the donor text really does drive the 3 feedback
+        # roots below (afield :1854 · immune :1860 · kosmos :1874) and really does move the next
+        # tick's `score`. That is why a post-hoc permutation of A could never be this control
+        # (convergence evaluate-py-14): permuting a NUMBER cannot reproduce the causal push of a
+        # TEXT through the roots.
+        #   EXP survives ∧ SWAP dies  ⇒ the substrate's OWN words carry the information.
+        #   both survive              ⇒ CARRIER — any text of that shape pushes the roots the
+        #                               same way ⇒ NOT a pass.
+        # p5 is untouched: the emit/silence DECISION is the substrate's own (the gate never sees
+        # this flag); we only substitute what gets said on a tick it already chose to speak.
+        if _swap_texts and did_emit and g_emit and byte_len(g_text) > 0:
+            _donor = _swap_texts.get(int(tick))
+            if _donor is not None:
+                g_text = _donor
+                g_back = g_back + "+swap"
         psi_sum = psi_sum + pure_field_phi(pf)
 
         # GROUND check
