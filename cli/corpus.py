@@ -288,9 +288,35 @@ LANGS = {
         "flip0": ("{s}", "really {s}", "so {s}"),
         "flip1": ("not {s}", "never {s}", "not at all {s}"),      # FREE word — stands BESIDE the stem
         "pos": "positive", "neg": "negative",
+
+        # ---- ground_hocarrier surfaces. Every one of these was MEASURED on the pretrained base
+        # (P2 census, SEEN stems, where the operator is proven alive at 1.0000) — none was chosen
+        # because it looked right. The census is what makes each role defensible:
+        #
+        #   certainly not {s}  acc 1.000  echo 0.000   RUNS   (0 occurrences in any corpus)
+        #   just not {s}       acc 1.000  echo 0.000   RUNS   (0 occurrences)
+        #   far from {s}       acc 0.700  echo 0.300   mixed  -> unusable, dropped
+        #   not only {s}       acc 0.300  echo 0.750   mixed  -> unusable as a control, dropped
+        #   oddly {s}          acc 0.350  echo 0.700   mostly silent
+        #   notably {s}        acc 0.100  echo 0.900   SILENT
+        #
+        # `certainly not` firing at 1.000 while never appearing in training is the EN replication of
+        # C1b: the ADVERB slot generalises freely. The stem slot does not (H_9346, echo 91-98%).
+        # That asymmetry is the whole subject of this format.
+        "ho_carrier": ("never {s}",),
+        "ho_scored":  ("not {s}", "certainly not {s}"),
+        "ho_null":    ("oddly {s}",),
+        "ho_negctl":  ("notably {s}",),
     },
 }
 DEFAULT_LANG = "ko"        # every existing corpus/verdict is ko; changing this default moves them all
+
+# ground_hocarrier arm sizes over the held-out pool (40 EN atoms: 12 + 12 + 16).
+HOCARRIER_ARMS = (("hoc", 12), ("null", 12), ("decl", 16))
+HOCARRIER_CARRIER_REPS = 3     # 1 carrier surface x3 == 3 declarative surfaces -> the `{s} => `
+                               # suffix window is trained 50/50, so a suffix-only reader gets chance
+                               # there and any DV signal has to come from the left context. See the
+                               # build_hocarrier header for why that balance is the experiment.
 
 
 def lang_pack(lang):
@@ -545,6 +571,200 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed):
 #   write (flip0 surface {s}고, tag w0): gold = word(planted)             — the declarative fact.
 _SWAP_TAGS = (("negL", "{s}지 않다"), ("negZ", "별로 {s}지 않다"), ("negJ", "{s}지는 않다"))
 _WRITE_TAG = ("w0", "{s}고")
+
+
+def build_hocarrier(atoms_path, reps, replay, seed, split_seed, lang=DEFAULT_LANG):
+    """ground_hocarrier — take H_9334's operator-key write to the stems the operator has never met.
+
+    H_9346 established, on this base and in English, what the wall actually is. The fact LANDS
+    (held-out flip0 = 1.0000). The operator is ALIVE (SEEN flip1 = 1.0000 on the very same `not X`
+    surface). And on a held-out stem the model ECHOES the planted polarity and ignores `not`
+    (91-98%, and the echo tracks the plant: flipping it in the LIE arm flipped the answer). So the
+    operator does not FAIL to look the fact up — it never fires. It is gated on the stem.
+
+    This format asks whether that gate can be OPENED by writing the fact in the operator's own key.
+
+      arm hoc  (12)  declarative arrows (true polarity) + carrier `never {s} => flip(pol)`
+      arm null (12)  declarative arrows + `oddly {s} => flip(pol)`  — same label exposure in a
+                     non-declarative frame, NO operator key. If hoc moves and null moves too, the
+                     mechanism is "odd context -> flipped label" spillover, not the operator.
+      arm decl (16)  declarative only = the H_9346 reproduction. Must ECHO, or the arm is broken.
+
+    Scored on surfaces the carrier never contains: `not {s}` and `certainly not {s}`.
+
+    ⚠️ WHAT A PASS MEANS, AND WHAT IT DOES NOT (convergence corpus-py-1 (F)):
+    The disjointness axis here is the ADVERB slot, and the P2 census measured that slot to
+    generalise freely in English (`certainly not X` scores 1.000 on SEEN stems while occurring ZERO
+    times in any corpus). So a PASS says: *the operator's trigger set is WRITABLE for a stem it had
+    never met* — the wall is repairable by writing in the right key. It does NOT say the model can
+    compose a declaratively-known fact with the operator; that is exactly what H_9346 measured and
+    it is 🧱. Do not read adverb-slot generalisation as stem-slot generalisation. The stem here is
+    DELIBERATELY taught inside an operator line — that is the manipulation, not a leak.
+
+    🔬 AND IT ADJUDICATES H_9334 ITSELF. Korean cannot separate "the operator read the new value"
+    from "the model continued a string it had seen", because the operator IS a suffix, so the carrier
+    line contains the scored prompt's answer verbatim:
+
+        KO carrier: 이 영화 전혀 [좋지 않다 => 긍정].
+        KO scored :  이 영화      [좋지 않다 => ] ?      <- the answer is inside the carrier
+
+    English inverts it. The carrier is `never {s}` and the scored prompt is `not {s}`; the string
+    `not {s} => ` occurs nowhere. The longest suffix a pure n-gram reader can match is `{s} => `,
+    and that window is owned by the DECLARATIVE arrows, which carry the OPPOSITE label. So:
+
+        n-gram continuation  predicts the ECHO answer (the arrows' label)
+        operator consultation predicts the CARRIER's label
+
+    They predict OPPOSITE outcomes. A hoc pass therefore refutes the n-gram account outright; a hoc
+    echo puts H_9334's Korean 12/12 back under suspicion as suffix continuation. Either way the
+    Korean result gets adjudicated by a language that can hold the two apart.
+
+    The 3:3 line balance (HOCARRIER_CARRIER_REPS) is load-bearing: it trains the `{s} => ` window
+    with both labels equally, so a suffix-only reader scores CHANCE there and every point of DV
+    signal has to come from the left context. Without it, the arrow label alone would drag the DV.
+    """
+    L = lang_pack(lang)
+    for k in ("ho_carrier", "ho_scored", "ho_null", "ho_negctl"):
+        if k not in L:
+            raise ValueError(
+                "ground_hocarrier: lang '%s' has no '%s' surfaces.\n"
+                "  These are not translations — each one is a ROLE that was earned by measuring it on\n"
+                "  the pretrained base (does the operator fire here, or not?). Transplanting a surface\n"
+                "  set across a language would be asserting a fingerprint nobody took.\n"
+                "  Run the census on '%s' first, then add the pack." % (lang, k, lang))
+    TMPL = L["tmpl"]
+    F0, POS, NEG = L["flip0"], L["pos"], L["neg"]
+    CARRIER, NULLC = L["ho_carrier"], L["ho_null"]
+    word = lambda p: POS if p == 1 else NEG
+
+    atoms = json.load(open(atoms_path))["atoms"]
+    held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
+    seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    assert_atoms_match_lang([st for st, _ in held + seen], lang)
+    need = sum(n for _, n in HOCARRIER_ARMS)
+    if len(held) < need:
+        raise ValueError("ground_hocarrier needs >= %d held-out atoms, got %d" % (need, len(held)))
+
+    # The arm draw is a function of --split-seed ALONE. Redrawing it after seeing a result would be
+    # selection contamination, so it cannot depend on anything the run produces.
+    srng = random.Random(split_seed)
+    pos = [x for x in held if x[1] == 1]
+    neg = [x for x in held if x[1] == 0]
+    srng.shuffle(pos)
+    srng.shuffle(neg)
+    arms, pi, ni = {}, 0, 0
+    for name, n in HOCARRIER_ARMS:                    # polarity-stratified: alternate pos/neg
+        picked = []
+        for k in range(n):
+            src = pos if (k % 2 == 0 and pi < len(pos)) or ni >= len(neg) else neg
+            if src is pos:
+                picked.append(pos[pi]); pi += 1
+            else:
+                picked.append(neg[ni]); ni += 1
+        arms[name] = picked
+
+    rng = random.Random(seed)
+    lines = []
+
+    def arrow(stem, pol):
+        for pat in F0:
+            lines.append(TMPL.format(surf=pat.format(s=stem), pol=word(pol)))
+
+    def op_lines(stem, pol, pats):
+        # A negation line teaches the negation OUTPUT: for a stem of polarity `pol`, `never {s}`
+        # resolves to flip(pol). Repeated so carrier lines == declarative lines (see the header).
+        for _ in range(HOCARRIER_CARRIER_REPS):
+            for pat in pats:
+                lines.append(TMPL.format(surf=pat.format(s=stem), pol=word(1 - pol)))
+
+    for _ in range(reps):
+        for stem, pol in arms["hoc"]:                 # THE MANIPULATION — the fact in the operator's key
+            arrow(stem, pol)
+            op_lines(stem, pol, CARRIER)
+        for stem, pol in arms["null"]:                # covariate control — same exposure, no key
+            arrow(stem, pol)
+            op_lines(stem, pol, NULLC)
+        for stem, pol in arms["decl"]:                # baseline — H_9346 reproduction
+            arrow(stem, pol)
+
+    for _ in range(replay):                           # hold the operator up on SEEN stems (ground_keep)
+        for stem, pol in seen:
+            for pat in F0:
+                lines.append(TMPL.format(surf=pat.format(s=stem), pol=word(pol)))
+            for pat in L["flip1"]:
+                lines.append(TMPL.format(surf=pat.format(s=stem), pol=word(1 - pol)))
+
+    rng.shuffle(lines)
+    text = "".join(lines)
+
+    # The audit the whole design rests on: a scored prompt must NEVER occur in the corpus. Anchored
+    # on the full template (the trailing "=> " included) so a scored `not X => ` can never be matched
+    # by a carrier `never X => `. It runs over EVERY held-out stem, not just the arm each belongs to
+    # — a hoc-arm carrier that happened to also name a decl-arm stem would be a cross-arm leak.
+    #
+    # SEEN stems are deliberately EXCLUDED from this audit and that is not a hole: `not <seen>` lines
+    # are the operator replay, without which 6000 steps of flip0 destroy the operator we are about to
+    # test (corpus-py-1 ⑥: SEEN flip1 0.883 -> 0.333). Those stems are never scored — the manifest is
+    # drawn from `held` alone — so their negated lines preserve, they do not leak (⑥(C)).
+    stub = TMPL.format(surf="\x00", pol="\x00").split("\x00")
+    leaks = []
+    for pat in tuple(L["ho_scored"]) + tuple(L["ho_negctl"]):
+        for stem, _ in held:
+            probe = stub[0] + pat.format(s=stem) + stub[1]
+            if probe in text:
+                leaks.append(probe.strip())
+    if leaks:
+        raise ValueError("ground_hocarrier: %d scored prompt(s) occur in the corpus — the answer "
+                         "would be taught, not asked: %s" % (len(leaks), leaks[:3]))
+
+    # Suffix-window census. This is the number that decides whether a suffix-only reader could win,
+    # so it is EMITTED, not assumed: for each hoc stem, how many lines end `<stem> => <label>` per
+    # label? The 3:3 design says they must be equal.
+    suffix = {}
+    for stem, pol in arms["hoc"]:
+        tail_p = stem + stub[1].split("{pol}")[0] + word(pol)
+        tail_f = stem + stub[1].split("{pol}")[0] + word(1 - pol)
+        suffix[stem] = {"declarative_label": text.count(tail_p), "operator_label": text.count(tail_f)}
+
+    man = _hocarrier_manifest(arms, L)
+    return text, {"held": len(held), "seen": len(seen), "lines": len(lines),
+                  "bytes": len(text.encode()),
+                  "arms": {k: [s for s, _ in v] for k, v in arms.items()},
+                  "carrier_reps": HOCARRIER_CARRIER_REPS,
+                  "measured_prompt_leaks": leaks,
+                  "suffix_window_census": suffix,
+                  "eval_manifest": man}
+
+
+def _hocarrier_manifest(arms, L):
+    """The eval manifest is emitted by the SAME build that drew the arms, so arm↔manifest can never
+    drift (build_carrierswap earned this the hard way — C3's was hand-built on the pod).
+
+      scored surfaces  gold = word(pol XOR 1)   — the operator NEGATES the planted fact
+      negctl surface   gold = word(pol XOR 1)   — same gold, but the census says the operator is
+                                                  SILENT here; a hoc arm that moves on THIS surface
+                                                  is not the operator, it is label spillover
+      write   surface  gold = word(pol)         — the declarative fact itself (the precondition)
+    """
+    TMPL, POS, NEG = L["tmpl"], L["pos"], L["neg"]
+    word = lambda p: POS if p == 1 else NEG
+    stub = TMPL.format(surf="\x00", pol="\x00").split("\x00")
+    rows = []
+    tags = ([("s%d" % i, p, 1) for i, p in enumerate(L["ho_scored"])] +
+            [("nc%d" % i, p, 1) for i, p in enumerate(L["ho_negctl"])] +
+            [("w0", L["flip0"][0], 0)])
+    for arm, members in arms.items():
+        for stem, pol in members:
+            for tag, pat, flip in tags:
+                gold = word(pol ^ flip)
+                rows.append({"a": stem, "b": tag, "arm": arm, "pol": pol, "flip": flip,
+                             "xor": pol ^ flip, "surf": pat.format(s=stem),
+                             "seed": stub[0] + pat.format(s=stem) + stub[1].split("{pol}")[0],
+                             "gold": gold + ".", "counterfactual": word(1 - (pol ^ flip)) + ".",
+                             "gold_word": gold})
+    return {"format": "nbind-eval-v1", "task": "ground_hocarrier — can the operator's trigger set "
+            "be WRITTEN for a stem it never met? (arms hoc / null / decl)",
+            "gen": 8, "win": 64, "seen": [], "heldout": rows}
 
 
 def _swap_eval_manifest(arms):
@@ -1449,8 +1669,24 @@ def main():
         return
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
-                   "ground_seenswap", "ground_carrierswap", "atoms", "c34"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|valence|bindlocus|atoms|c34> --out PATH")
+                   "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "atoms", "c34"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|atoms|c34> --out PATH")
+        print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")
+        print("             H_9334's operator-key write, taken to the stems the operator NEVER met.")
+        print("             H_9346 measured the wall: on a held-out stem the fact LANDS (flip0 1.0000)")
+        print("             and the operator is ALIVE on the same `not X` surface (SEEN flip1 1.0000),")
+        print("             yet the model ECHOES the planted polarity and ignores `not` (91-98%).")
+        print("             The operator does not fail to look the fact up — it never fires. It is")
+        print("             gated on the STEM. This asks whether that gate can be OPENED by writing")
+        print("             the fact in the operator's own key.")
+        print("               arm hoc  12  declarative + carrier `never {s}`   THE MANIPULATION")
+        print("               arm null 12  declarative + `oddly {s}`           same label exposure, no key")
+        print("               arm decl 16  declarative only                    = H_9346, must ECHO")
+        print("             Scored on `not {s}` and `certainly not {s}` — surfaces the carrier never")
+        print("             contains. Emits <out>.eval.json (score with `evaluate --xbind`) and")
+        print("             refuses to write if a scored prompt leaks or the suffix window is not 50/50.")
+        print("             ⚠️ A pass means the operator's trigger set is WRITABLE for a new stem, NOT")
+        print("             that the model can compose a declaratively-known fact (that is H_9346, 🧱).")
         print("      c34 --atoms gt_atoms_en.json --corpus C.txt --lang en --seed 7 --out c34.txt")
         print("             the PRETRAINING corpus: natural sentences + arrow lines. Every number is")
         print("             MIRRORED from a census of the real ko C34, not invented: arrow 960 (480")
@@ -1552,6 +1788,41 @@ def main():
         for k in ("swap", "affirm", "keep", "untouched"):
             print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
         json.dump(st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        return 0
+
+    if fmt == "ground_hocarrier":
+        if not opts["atoms"]:
+            print("anima corpus ground_hocarrier: --atoms gt_atoms.json is required")
+            sys.exit(2)
+        text, st = build_hocarrier(opts["atoms"], opts["reps"], opts["replay"],
+                                   opts["seed"], opts["split_seed"], lang=opts["lang"])
+        open(opts["out"], "w", encoding="utf-8").write(text)
+        print("anima corpus ground_hocarrier: lang=%s lines=%d bytes=%d leaks=0 -> %s"
+              % (opts["lang"], st["lines"], st["bytes"], opts["out"]))
+        for k, _ in HOCARRIER_ARMS:
+            print("  %-5s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
+        # The suffix-window census is PRINTED, not assumed. If these two counts are not equal, a
+        # suffix-only reader can win the DV without ever consulting the operator, and the run is void
+        # before it starts (see build_hocarrier's header — this balance IS the experiment).
+        cen = st["suffix_window_census"]
+        bad = {s: c for s, c in cen.items() if c["declarative_label"] != c["operator_label"]}
+        any_s = next(iter(cen.values()))
+        print("  suffix window `<stem> => <label>`: declarative=%d operator=%d per hoc stem  %s"
+              % (any_s["declarative_label"], any_s["operator_label"],
+                 "✅ balanced — a suffix-only reader scores chance here"
+                 if not bad else "⛔ IMBALANCED on %d stem(s)" % len(bad)))
+        if bad:
+            print("anima corpus ground_hocarrier: the suffix window is not 50/50 — a reader that "
+                  "never looks left of the stem could win the DV. Refusing.", file=sys.stderr)
+            sys.exit(2)
+        man_path = opts["out"] + ".eval.json"
+        json.dump(st["eval_manifest"], open(man_path, "w"), ensure_ascii=False)
+        json.dump({k: st[k] for k in ("held", "lines", "bytes", "arms", "carrier_reps",
+                                      "suffix_window_census")},
+                  open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        n = len(st["eval_manifest"]["heldout"])
+        print("  eval manifest -> %s (%d rows)" % (man_path, n))
+        print("  score it with:  anima-py evaluate <ckpt> --xbind %s --n-decode %d" % (man_path, n))
         return 0
 
     if fmt == "ground_carrierswap":

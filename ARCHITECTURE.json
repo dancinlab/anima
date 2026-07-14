@@ -13222,6 +13222,12 @@
             "detail": "폴더 가이드·verdicts·archive scratch = 통과) ⟹ **실험 우회로는 닫힌 채**로 남고 가이드만 갱신 가능해졌다. 그 위에 같은 명령 표를 `state/CLAUDE.md` 최상단에도 배치."
            }
           ]
+         },
+         {
+          "id": "cli-single-entry-claudemd-top",
+          "type": "note",
+          "name": "📌 규칙이 CLAUDE.md **최상단**으로 올라갔다 (오너 지시 · 2026-07-14) — 명령 표 = 7 verb",
+          "detail": "**문제**: `anima-py` 단일진입 규칙은 CLAUDE.md 에 **있었지만 읽히지 않는 자리**에 있었다 — `## 📦 Packaging` 의 거대한 한 문단 한복판(L32)과 `## Governance` 목록 깊숙이(L88, `a_cli_single_entry`/`a_eval_py_canonical`). **최상단엔 한 글자도 없었다.** CLAUDE.md 는 **매 턴 재주입**되는 문서인데, 정작 '코퍼스를 만들려면 무슨 명령을 치는가'의 답이 문단 속에 숨어 있으면 그 규칙은 실질적으로 없는 것과 같다. **수정**: `# 🧠 anima` 바로 아래·`## Project` **앞**에 **명령 표**를 놓았다 — corpus · train · evaluate · serialize · serialize-bind · sweep · chat **7 verb 전부**(디스패처 `cli/anima.py` 에서 직접 읽음 · 추측 아님 · `tool-self-report`). dont 도 같은 자리에 붙였다(`python3 cli/*.py` · `hexa run cli/*.hexa` · 엔진 옆 손수 `gen_*.py`/`eval_*.sh` · forward 재구현 프로브) + **이 명령들이 내지 않은 숫자는 verdict 를 굳힐 수 없다**는 문장 + 그것이 **코드 하드블록**이라는 사실 + 우회할 때마다 결과가 undecidable 로 죽었다는 실측 선례(H_9303 · H_9307). **부수**: 새 헤딩을 `harness.config.json` `docs.claudeMdSections` 에 등록(#3496 에서 복구한 CLAUDE.md 게이트에 스스로 걸리지 않도록) · CLAUDE.md 는 `injectEnglishOnly` 라 영어. ⚠️ **별건 결함**: `state/CLAUDE.md` 에도 같은 표를 넣으려 했으나 **`H-NO-STATE-DIR` 가드가 자기 폴더 가이드까지 막는다**(commons `folder-docs` 와 충돌) — 매 턴 재주입되는 건 root CLAUDE.md 이므로 기능 손실은 없으나 가드 allowlist 는 손봐야 한다."
          }
         ]
        },
