@@ -16316,6 +16316,13 @@
         "value": "**연구 플래그 뒤에만 고친 결함은 프로덕션에서 여전히 살아있고, 다음 실험이 그걸 조용히 상속한다.** H_9210 이 recon_err 를 AXIS-DEGENERATE 로 정확히 진단했다(세션 시드 고정함수). 수정도 만들었다 — og_prev_gfeat 1-tick lag 로 g_text 가 afield 를 실제로 밀게. 그런데 그 수정을 --opgrip-live 하네스 뒤에만 넣었다. 프로덕션 chat 루프(anima-py chat · py 채널은 DEFAULT path 만 포팅)는 그대로 vadapt_field_recon_err(afield, feat(session_seed)) 를 쓴다. afield 는 시드 특징으로 초기화되고, 뱉은 텍스트는 매번 SPLIT_THRESH(0.30)를 넘어 새 셀로 분열하므로 시드 prototype 은 영원히 안 건드려진다 ⇒ recon_err = L2(시드 proto, 시드 feat) ≡ 0.0 항등식. 데몬은 '내가 태어날 때부터 알던 것에 얼마나 놀라는가'를 묻고 있고, 답은 영원히 '안 놀란다'. 이 상수 0 을 8개 lane 이 먹는다(surprise·boredom·agency·change_detect·osmotic·fieldlibido·m_field·ci_lane_scores). H_9328 DO-MOUTH 가 이 프로덕션 경로에서 24 rollout 을 재면서 그 죽은 축을 상속했다 — MEDIATION 패널의 H(R|S)=0.0000 이 잡아냈다.",
         "threshold": "재발조건: 계기/하네스 플래그(--opgrip 류) 뒤에서 결함을 고칠 때. 해결: 프로덕션 경로에도 같은 수정을 같은 커밋에서 배선하라(wire-to-prod) — 못 하면 카드에 '구현됨·미배선' + follow-on id 를 남기고, 그 축을 쓰는 다음 실험은 프로덕션 값이 살아있는지부터 확인하라(조건부 엔트로피 H(X|S) > floor). 게이지가 상수인지 재보는 건 0원이고, 안 재면 '기질이 그 채널을 안 쓴다'와 '그 채널이 끊겨 있다'를 영영 못 가른다.",
         "source": "cli/chat.py"
+      },
+      {
+        "id": "self-kill-own-fire-1",
+        "polarity": "NEG-CONV",
+        "value": "**내가 내 실험을 죽였다 — 그것도 세 번.** 2026-07-15 H_9330: 발사 후 상태를 확인하려고 보낸 ssh 명령들 안에 `for p in $(pgrep -f valence-audit); do kill $p; done` / `pkill -f fire_h9330` 이 섞여 있었고(원래는 '굶주린 CPU 폴백 run 을 GPU 로 갈아타려고' 넣은 것), **그 뒤 명령들이 새로 띄운 run 까지 잡아 죽였다**. 증거: pod 는 멀쩡했다(330GB RAM · 192 core · dmesg OOM **없음**) — `fire.log` 에 남은 건 **`Terminated`(SIGTERM)** 였다. 즉 **인프라가 죽인 게 아니라 내가 죽였다.** 여기에 두 번째 결함이 겹쳤다: **192-core pod 에서 numpy BLAS 가 스레드를 다 물어** load 49 를 만들고 ssh 를 막아, '왜 안 되지'를 확인하려 또 명령을 보내는 악순환이 됐다.",
+        "recurrence": "긴 세션에서 상태확인/재발사 ssh 명령에 kill/pkill 을 관성적으로 붙임 → 앞선 명령이 띄운 살아있는 run 을 다음 명령이 죽임. 그리고 스레드 캡 없이 many-core 호스트에 numpy job 을 띄워 호스트를 스스로 막고, 그 막힘을 '실패'로 오독해 또 죽임.",
+        "fix": "① **발사 후에는 kill 을 명령에 넣지 마라** — 재발사가 필요하면 반드시 `pgrep` 로 **먼저 확인**하고, 살아있으면 **건드리지 않는다**(a_dont_kill_live_compute 의 문자 그대로). kill 이 진짜 필요하면 **PID 를 눈으로 확인하고 그 PID 만** 죽인다(패턴 kill 금지 — `remote-pkill-self-match` 의 사촌). ② **완전 분리로 띄워라**: `setsid bash fire.sh > log 2>&1 < /dev/null &` (ssh 세션 종료가 프로세스 그룹을 건드리지 못하게). ③ **many-core 호스트엔 스레드 캡**: `OMP_NUM_THREADS`/`OPENBLAS_NUM_THREADS`/`MKL_NUM_THREADS` (192-core 에 무제한 numpy = load 폭발 + ssh 마비 = 관측 불가). ④ 죽음의 원인은 **로그와 dmesg 로 판정**하라 — `Terminated`(SIGTERM) 는 **누가 죽인 것**이지 OOM 이 아니다(OOM 이면 `Killed` + dmesg 기록)."
       }
     ]
   }
