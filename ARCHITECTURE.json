@@ -14089,6 +14089,50 @@
           "detail": "H_9235 fork-A CLML lane 배선(clml.py lane_apply=pool→gelu→gated logit bias · decode.py _fwd_logits/CLML trailer · gate=0=byte-identical). ⚠️ copy-trap: derivtrace 타깃 base CE 0.0003 ⇒ 학습신호 死. 재설계=no-copy 타깃·4-gate(CE≫0→probe→train→system-G1). state/recomb-routing-lane/LANE_SIGNAL_REDESIGN.md"
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-decon2b-h9312",
+        "type": "gate",
+        "name": "★A채널 컨텍스트-주입 = 🧱 구조적 폐쇄 (NO-IN-CONTEXT-CHANNEL · H_9312 · EARNED)",
+        "detail": "시연을 모델 자기 학습 템플릿으로 줘도 안 읽는다. 포맷 문제가 아니라 4층 conv byte-LM 에 in-context 복사/유도 경로가 없다 ⟹ 컨텍스트에 놓인 사실은 어떤 언어로 써도 답에 도달 못 한다. held-out 미발사(구조적 무의미).",
+        "children": [
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-verbatim",
+          "type": "note",
+          "name": "① 축자 복사 조건에서도 우연",
+          "detail": "nonce 시연은 정답을 글자 그대로 담는다 — 베끼면 100%. 측정 READ = 0.475/0.469(시연없음 0.500/0.485 대비 Δ −0.025/−0.017) ⟹ 합성 이전에 복사조차 못 한다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-lie",
+          "type": "note",
+          "name": "② 거짓 시연이 참 시연과 동일 (판정을 낸 단 하나의 측정)",
+          "detail": "SEEN 통달원자에 극성 뒤집은 거짓 시연: 읽고 합성하면 flip1 이 0 쪽으로 붕괴해야 한다(기준선 0.883/0.900 = 여유 충분). 실측 0.900/0.883 = 무변화 ⟹ 거짓말이 아무 비용도 없다 ⟹ 시연을 애초에 안 읽는다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-perturb",
+          "type": "note",
+          "name": "③ 그런데 trunk 는 흔들린다 (H_9309 와 같은 서명)",
+          "detail": "시연 주입 시 |margin| 이동 중앙값 1.8~4.0. 바이트는 보인다 — 정보로 라우팅되지 않을 뿐. 큰 교란 · 정보량 0."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-gb",
+          "type": "note",
+          "name": "내 양성대조가 가짜였다 (G-B 교란)",
+          "detail": "G-B flip0(int)=1.000 은 시연을 읽어서가 아니라 SEEN 원자를 이미 parametric 으로 알아서였다 — 메커니즘 없이도 통과 가능한 대조군은 양성대조가 아니라 천장 측정이다. G-C(거짓말 arm)가 그 교란을 걷어냈다. convergence prereg-md-2."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-scope",
+          "type": "note",
+          "name": "SCOPE (정직)",
+          "detail": "닫힌 것 = 컨텍스트-주입. DECON-W(값을 가중치에 쓰기)는 다른 질문이고 미측정. 아키텍처 한정 = 4층 conv byte-LM(attention 없음) — attention 트렁크면 유도 헤드가 있었을 수 있다(다른 substrate · 미측정)."
+         },
+         {
+          "id": "gate-g1-recomb-decon2b-h9312-next",
+          "type": "note",
+          "name": "NEXT — DECON-W (A 채널 유일 잔여 실현)",
+          "detail": "값을 가중치에 쓴다: flip0 라인만 미세 CPT + SEEN 템플릿 replay, flip1 은 학습 노출 0 으로 동결 시험(tune-to-green 아님). G1 함의: 이 아키텍처에서 추론시 외부 사실 조회는 원천 불가 ⟹ 재조합은 가중치 안에서 일어나야 한다(read-side 무덤과 정합)."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
