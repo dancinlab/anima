@@ -772,6 +772,11 @@ def evaluate_usage():
     print("       suspect), or it reaches the field and the GATE does not look (read-side THEATER).")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
+    print("  anima evaluate <ckpt> --device-parity [--win 64]")
+    print("      Is this host's GPU forward the same measurement as its CPU forward? Prints")
+    print("      max|GPU hidden - CPU hidden|. It is NOT zero on a consumer card (2.5e-14 on an")
+    print("      RTX 5070) — the decode's token stream survives that, but a probe reads the hidden,")
+    print("      so a GPU verdict and a CPU verdict are different measurements. Pin the device.")
     print("      AUDIT-A: is a held-out atom's polarity in the weights at all? Verdict = DELTA =")
     print("      probe(atom) - probe(length-matched NEUTRAL atom in the SAME context), vs a")
     print("      permutation null. Also prints FORM-ID (2AFC, chance 0.5): how decodable WHICH atom")
@@ -1367,6 +1372,83 @@ def _selftest_batch_null(trials=8):
             "labels_identical": labels_agree, "safe": ok}
 
 
+def device_parity_run(argv):
+    """`anima-py evaluate <ckpt> --device-parity` — does THIS host's GPU forward equal its CPU one?
+
+    The repo shipped `a_gpu_default_no_optin` on the belief that the GPU decode is byte-identical.
+    It is not, and the belief survived because what was checked was the TOKEN STREAM: argmax is
+    robust to 1e-14, so a decode can be 'identical' while the hidden underneath is not. Every probe
+    (--dump-hidden, --ground-probe, --valence-audit, --interaction-lift) reads that hidden directly.
+
+    So this verb asks the question in the form that matters, and prints the number instead of the
+    belief. It runs the same prompts through the device path and through a forced-numpy path and
+    reports max|delta| on the hidden. Anything above 0 means: a verdict computed on GPU and one
+    computed on CPU are NOT the same measurement, and comparing them is a confound
+    (convergence decode-py-4 — it cost us a headline).
+
+    Measured on aiden (RTX 5070, cupy 13.6.0, CUDA 13): max|delta| = 2.487e-14."""
+    import numpy as np
+    ckpt = argv[0]
+    T = evaluate_intval(argv[1:], "--win", 64)
+    prompts = ["이 영화 좋다 => ", "배송도 빠르고 가성비는 좋", "별로였어요", "품질이 형편없",
+               "재미없지 않다", "완전 만족합니다", "그냥 그래요", "최악이다"]
+    print("=== anima evaluate --device-parity — is the GPU forward the same measurement as the CPU one? ===")
+    st = clm.gpu_status()
+    if not st.get("cuda"):
+        print("  this host has no CUDA device (%s) — nothing to compare; the CPU path IS the "
+              "reference." % st.get("reason"))
+        return 0
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+    dev_h = np.stack([np.asarray(clm.clm_forward_hidden(W, clm._seed_to_tok(p, T), T))
+                      for p in prompts], 0)
+    saved = clm._CUDA_AVAILABLE
+    clm._CUDA_AVAILABLE = False                      # force the numpy path in this same process
+    try:
+        W2 = clm.clm_load_weights(ckpt)              # reload: the weights must be host-resident
+        cpu_h = np.stack([np.asarray(clm.clm_forward_hidden(W2, clm._seed_to_tok(p, T), T))
+                          for p in prompts], 0)
+    finally:
+        clm._CUDA_AVAILABLE = saved
+    mx = float(np.abs(dev_h - cpu_h).max())
+    print("  device : %s · cupy %s" % (st.get("device_name"), st.get("cupy")))
+    print("  max|GPU hidden - CPU hidden| = %.3e" % mx)
+    if mx == 0.0:
+        print("  BYTE-IDENTICAL — a verdict is portable between this host's GPU and CPU.")
+    else:
+        print("  NOT byte-identical. The decode's TOKEN STREAM may still match (argmax is robust to")
+        print("  this), but a probe reads the hidden itself: a GPU verdict and a CPU verdict are")
+        print("  DIFFERENT MEASUREMENTS. Pin the device, and never compare across it.")
+    return 0
+
+
+def _probe_device():
+    """Who computed these hiddens — and can another run's numbers be compared to them?
+
+    Measured (convergence decode-py-4): the GPU forward is NOT byte-identical to the CPU one —
+    max|delta| = 2.487e-14 on the hidden. The repo believed it was, because what had been verified
+    was the TOKEN STREAM, and argmax is robust to 1e-14. A probe reads the hidden itself, so its
+    numbers carry the device in them. _conv1d is `xcol @ Wt` = a cuBLAS dgemm with K=11352; cuBLAS
+    and CPU BLAS accumulate in different orders and cannot agree to the last ulp, and cuBLAS only
+    promises reproducibility for the same version + architecture. So the bits are pinned to this
+    card, this cupy, this driver.
+
+    This bit us for real: AUDIT-A's k_ctx=24 arm ran on CPU (cupy was broken that hour) and its
+    k_ctx=182 arm ran on GPU, so the headline 'the sign flipped when the lens sharpened' compared
+    across TWO changes. Stamping the device into every result is how that stops being invisible."""
+    st = clm.gpu_status()
+    return {"cuda": bool(st.get("cuda")), "device": st.get("device_name") or "cpu-numpy",
+            "cupy": st.get("cupy"), "reason": st.get("reason")}
+
+
+def _print_device(dev):
+    print("  [DEVICE] %s%s — a probe reads the hidden, and the hidden is device-dependent "
+          "(2.5e-14 GPU vs CPU): compare only across runs with the SAME device."
+          % (dev["device"], (" · cupy " + dev["cupy"]) if dev.get("cupy") else ""))
+
+
 def ground_probe_run(argv):
     """`anima-py evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64]`
     — the NBIND-G grounding instrument, engine-native and whole (H_9302 certified it, H_9303
@@ -1412,6 +1494,8 @@ def ground_probe_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable", file=sys.stderr)
         return 2
+    dev = _probe_device()
+    _print_device(dev)
 
     X = []
     for k, it in enumerate(items):
@@ -1461,7 +1545,8 @@ def ground_probe_run(argv):
     print("  [HELD-OUT atoms n=%d · chance sd %.4f · bar %.2f = %.2f sigma] %.3f (%+.2f sigma)"
           % (n_at, sd, bar, (bar - 0.5) / sd, acc, (acc - 0.5) / sd))
     print("  [PERM null %d draws] p = %.3f · p95 = %.3f" % (n_perm, pval, float(np.quantile(null, 0.95))))
-    out = {"ckpt": ckpt, "win": T, "bar": bar, "v_live_taught_per_item": v_live,
+    out = {"ckpt": ckpt, "win": T, "bar": bar, "device": dev,
+           "v_live_taught_per_item": v_live,
            "heldout_atom_acc": acc, "n_atoms": n_at, "chance_sd": sd,
            "bar_sigma": (bar - 0.5) / sd, "perm_p": pval, "n_perm": n_perm,
            "perm_p95": float(np.quantile(null, 0.95))}
@@ -1510,6 +1595,8 @@ def valence_audit_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable", file=sys.stderr)
         return 2
+    dev = _probe_device()
+    _print_device(dev)
 
     H = []
     for k, it in enumerate(items):
@@ -1619,7 +1706,8 @@ def valence_audit_run(argv):
                           if live else
                           "ABSENT — the atom carries no polarity beyond its neighbourhood. The O "
                           "channel would have nothing to consume: DO NOT FIRE."))
-    out = {"ckpt": ckpt, "acc_atom": acc_a, "acc_swap": acc_s, "delta": delta, "perm_p": pval,
+    out = {"ckpt": ckpt, "device": dev,
+           "acc_atom": acc_a, "acc_swap": acc_s, "delta": delta, "perm_p": pval,
            "perm_p95": float(np.quantile(null, 0.95)), "n_atoms": len(ats), "chance_sd": sd,
            "valence_present": bool(live), "n_perm": n_perm,
            "form_id_atom": fid_a, "form_id_swap": fid_s}
@@ -2812,7 +2900,7 @@ def _interact_mi(argv):
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
-    "--n-decode", "--n-sampled", "--valence-audit",
+    "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--seeds", "--selftest-rho-cells", "--slot-off",
     "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
@@ -2930,6 +3018,10 @@ def main(argv):
         return bind_locus_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
+    # --device-parity: is this host's GPU forward the same measurement as its CPU forward? The probes
+    # read hiddens, and the hidden is NOT byte-identical across devices (decode-py-4).
+    if "--device-parity" in argv:
+        return device_parity_run([a for a in argv if a != "--device-parity"])
     # --dump-hidden <prompts.json>: read-only penultimate-hidden dump (ρ·weave / γ
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
