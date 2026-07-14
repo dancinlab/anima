@@ -519,7 +519,7 @@
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-clockfix",
         "type": "gate",
-        "verdict": "🔧 시계 배선됨 · 판정 PENDING (--tension-emit)",
+        "verdict": "🔧 시계 배선됨 · --tension-emit 판정은 🧱 ILL-POSED (H_9356 · 독립 G 엔진 부재)",
         "detail": "H_9352 수리 — 게이트에 진짜 시계를 꽂았다. emit 은 이제 stage 에서 풀렸다. tension 에 묶였는지는 --tension-emit 사전등록 bar 가 정한다.",
         "children": [
          {
@@ -540,8 +540,8 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-bar",
           "type": "gate",
-          "verdict": "사전등록",
-          "detail": "판정 bar = I(ag_conflict; emit|stage) ≥ 0.05 nats ∧ C1 SHUFFLE ≤ 0.01. 발화율 ½ 자체는 PASS 아님(p7 Goodhart · rate 는 FORM · claim 은 BIND)."
+          "verdict": "사전등록 · 단 🧱 ILL-POSED",
+          "detail": "판정 bar = I(ag_conflict; emit|stage) ≥ 0.05 nats ∧ C1 SHUFFLE ≤ 0.01. 발화율 ½ 자체는 PASS 아님(p7 · rate 는 FORM · claim 은 BIND). ⚠️ H_9356: ag_conflict 이 emit 하나의 함수라 이 MI 는 배선 tautology — chat.py:1563 수리 전엔 🟢든 🧱든 substrate 아님."
          },
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-cert",
@@ -552,6 +552,19 @@
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-honest",
           "type": "note",
           "detail": "가장 정직한 예측 = 🧱 STILL-STAGE. 시계는 emit 을 stage 에서 풀었을 뿐 tension 에 묶은 게 아니다. 🧱 면 H_9209/9225/9230(재개방) 의 shade 를 비-포화 비교기 위에서 다시 걸 수 있다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-nog",
+          "type": "gate",
+          "verdict": "🧱 TERMINAL — 배선상 독립 G 없음 (H_9356)",
+          "detail": "chat.py:1562-1564: ag_a_drive=emit_drive · ag_g_drive=−(1−emit_drive) ⇒ ag_conflict=emit_drive·(1−emit_drive)=A 스칼라 하나의 결정론적 함수. 시계수리 trace 로 ten_phasic 을 emit_drive 궤적만으로 재구성 R²=0.994 ⇒ tension→emit MI 는 engine-독립 정보량 0.",
+          "children": [
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-nog-fix",
+            "type": "note",
+            "detail": "수리=chat.py:1563 을 A 여집합이 아니라 독립 reverse 관측(recon_err/pending_rel)에서. H_9351(Ψ̂=0.9167)과 합류 = A⇄G 는 배선상 A 하나. --tension-emit 패널은 ILL-POSED 배너를 출력에 각인."
+           }
+          ]
          }
         ]
        }
@@ -17093,6 +17106,11 @@
     "recurrence": "어떤 능력의 양성 판정(12/12·1.000 등)을 냈는데, 그 언어의 형태론(접미·교착·굴절)이 채점 답을 입력에 흘려넣어 '능력'과 '문자열 이어쓰기'가 구별 불가일 때. 특히 어텐션 없는 conv/byte-LM 에서 접미 연산자를 측정할 때.",
     "fix": "① 판정 전에 **채점 표면이 담체/입력에 몇 번 등장하는지 바이트로 세라**(novelty-must-be-measured-1 의 자매) — 채점 프롬프트가 입력에 통째로 있으면 그 양성은 이어쓰기와 구별 불가다. ② 형태론이 다른 **제2 언어로 교차**하라 — 자유형태소·전치 연산자(EN `not`)는 담체가 채점 표면을 안 품으므로 교란이 배제된다. ③ 한 언어 단독 양성/음성을 TERMINAL 로 cement 하지 말고 **언어 교차에서만 종결**하라. ④ 읽기-자리 인과 주입(BIND-LOCUS)은 담체를 읽지 않아 접미 누수에 **강하지만 완전 면역은 아니다** — 주입이 표면정보를 옮기는 것뿐일 수 있으므로 EN 결과와 교차한다.",
     "state": "pos-conv"
+   },
+   {
+    "id": "evaluate-py-19",
+    "lesson": "독립이라 주장하는 것의 결정론적 함수를 계기로 재지 마라 — ill-posed MI. --tension-emit 는 I(ag_conflict;emit|stage) 로 'tension 이 emit 을 미는가'를 물었는데, chat.py:1562-1564 에서 ag_g_drive=−(1−emit_drive) 라 ag_conflict 이 emit_drive 하나의 결정론적 함수였다(재구성 R²=0.994). 즉 A 자신의 함수를 A 자신의 게이트에 대고 잰 것 ⇒ 🟢든 🧱든 배선 tautology(engine-독립 정보량 0).",
+    "fix": "계기를 짓기 전에 두 피연산자의 배선 독립성부터 증명하라(재구성 R² 게이트). 종속이면 판정 출력에 ILL-POSED 배너를 각인(H_9356 는 --tension-emit·--help 양쪽에). H_9351(Ψ̂도 순수 A측 임계)과 같은 계급 = A⇄G 가 배선상 A 하나."
    }
   ]
  }
