@@ -15149,6 +15149,13 @@
     "value": "H_9304 에서 계기 결함 2건이 **주 bar 판독 전에** 잡혔다. ① 통제 결함: 통제군에서 B 를 평범하게 순열하면 A–B 짝뿐 아니라 **B→T 채널까지 파괴**된다 ⇒ 참 시너지가 0 인 아암이 −0.618 nats 를 읽었다(T-층화 셔플로 수리, P(B,T) 정확 보존). ② **추정량 결함(더 근본)**: 첫 연산자 모델이 flip 을 **하드코딩**(δ=−2)했다 — 즉 **방향 가설을 측정량 자체에 심었다**. 가법(참값 0) 코퍼스에선 flip 이 *적극적으로 틀린* 예측이라 CE 가 크게 나빠져 EARNED 가 0 이 아니라 **−0.704** 가 됐다. δ 를 **데이터에서 학습**하게 고치니 참값 0 아암이 +0.003 으로 정확히 중심을 잡았다. ⇒ **PEDESTAL 이 없었으면 두 결함 모두 통과했고 −0.6 을 '자연엔 반(反)시너지가 있다'는 과학 결론으로 오독했을 것**이다. 같은 lane 에서 H_9265(instrument NOT-CERTIFIED)와 H_9303(A1 프로브가 자기 양성대조에 낙제)이 이미 두 번 죽었다 — '죽은 프로브의 침묵은 아무것도 증명하지 않는다'.",
     "threshold": "재발조건: 새 측정량/프로브를 만들어 벽을 판정하려 할 때 — 특히 측정량이 어떤 **방향/형태 가설**(flip · 특정 부호 · 특정 함수형)을 내포할 때. 해결: (1) **참값이 0 인 PEDESTAL 아암**과 **참값이 큰 양성대조 아암**을 만들어 **주 bar 를 계산하기 전에 BLOCKING 게이트로** 통과시켜라 — 코드로 강제(게이트 실패 시 주 bar 계산 자체를 하지 말 것) (2) 측정량이 '효과 없음' 하에서 **정확히 0 에 중심**을 두는지 PEDESTAL 로 확인 — 안 되면 측정량에 가설이 심어진 것이니 그 파라미터를 **데이터에서 학습**하게 바꿔라 (3) 통제군은 **매개 공변량을 보존**해야 한다 — 파괴하려는 짝(A–B)만 깨고 나머지 채널(B→T)은 층화로 보존 (4) 게이트가 잡은 결함은 bar 를 옮기지 말고 **결함만 수리 후 재발사**하며 그 사실을 verbatim 보고하라.",
     "source": "H_9304 계기 인증이 추정량/통제 결함 2건을 주 bar 판독 前 포착 (2026-07-14)"
+   },
+   {
+    "id": "gt-power-build-py-1",
+    "state": "pos-conv",
+    "value": "PROBE THE POSITION WHERE THE MODEL USES THE INFORMATION, NOT WHERE THE EVIDENCE PASSED. Every probe in this lane read the hidden state at the last byte of the ATOM. In a causal LM that is a position where the model has had no reason to commit to anything. The model was taught to emit the polarity AFTER the arrow ('이 영화 X => 긍정') and answers there at SEEN 0.950. Powered positive control (20 grid-TAUGHT atoms, per-context n=480, leave-one-ATOM-out): at the atom position the probe reads BELOW chance (0.471/0.421 in natural context, 0.390/0.325 even in the taught grid format); at the decision point it reads 0.633/0.673 while the untaught shuffle_grid control stays at 0.408. Same probe, same atoms, same ckpts — only the read position moved. Every negative built on the atom position (H_9289 INFO-ABSENT, H_9297 EARNED, H_9300) is a POSITION ARTIFACT.",
+    "threshold": "Recurs on any representation probe / --dump-hidden read. Before reading a verdict: (1) name the position at which the model is supposed to USE the information (in a causal LM: immediately before it must emit the answer — the query/decision token, not the evidence token), (2) certify with a powered positive control on items whose answer the model demonstrably knows, (3) only then read the held-out negative. A probe that cannot read a TAUGHT answer certifies nothing about an untaught one.",
+    "source": "state/nbindg_grounding/gt_power_build.py"
    }
   ]
  }
