@@ -1,0 +1,29 @@
+[corpus] ArSarcasm sha=d23b4a22b793f0c8...  match=True
+[corpus] rows=5207  irony-rate=0.294  (B and T are two INDEPENDENT human annotations)
+
+=== G-ALIVE (positive control: synthetic XOR corpus, true synergy = 0.69 nats) ===
+  held-out cells=8918 stems=60  EARNED=+5.27927 nats (obs +5.02569, null -0.25358+-0.06408, delta_hat=-3.00)   bar >= +0.3
+  G-ALIVE: PASS
+
+=== G-PEDESTAL (zero-truth: synthetic ADDITIVE corpus, true synergy = 0) ===
+  held-out cells=8950  EARNED=+0.00131 nats  delta_hat=-0.05  (|.| <= 0.02)
+  G-PEDESTAL: PASS
+
+=== G-POWER (held-out cell census + null sd, measured BEFORE reading the effect) ===
+  min_occ=   5  stems= 2494  rows=  37885  held-out cells=  3023 (stems 657)
+  min_occ=  10  stems= 1054  rows=  28685  held-out cells=  2984 (stems 304)
+  min_occ=  20  stems=  441  rows=  20493  held-out cells=  1778 (stems 131)
+  min_occ=10: held-out cells=2984  sd_null=0.00048  MDE(3sd)=0.00144  (need <= 0.02)
+  G-POWER: PASS
+
+======================================================================
+=== MAIN BAR: natural corpus (NSMC), held-out EARNED ===
+  held-out EARNED = +0.00129 nats   98.3% CI [+0.00039, +0.00245]   delta_hat=-0.40 (0=additive, -2=full flip)
+  seen synergy    = +0.00456 nats  (n=4112)
+  effect size vs the XBIND ruler: 0.00024  (0.024% of a planted operator)
+  priors on the same ruler: negation (H_9304) 0.044% · concession (H_9316) 0.171% · parity (H_9317) 0.060%
+  TOST(+-0.02) pass = True   INFO-PRESENT = False
+
+VERDICT: DATA-ADDITIVE - no non-additive information at all => no estimator can ever bank it; G1 = DATA wall
+wall=16.8s
+[done]
