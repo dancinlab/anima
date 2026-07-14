@@ -10537,6 +10537,44 @@
           "name": "⚠️ H_9290 은 아직 n=29 프레임",
           "role": "NOT-POWERED 주의",
           "detail": "NAT-ATOM NO-RESCUE 는 여전히 held-out n=29 위에 있다 ⇒ n=91 재측정($0 · codec ckpt) 전까지 그 음성은 NOT-POWERED 주의를 유지한다."
+         },
+         {
+          "id": "g1-no-in-context-channel",
+          "name": "컨텍스트-주입은 구조적으로 닫혔다 (NO-IN-CONTEXT-CHANNEL 🧱 EARNED)",
+          "role": "H_9353 (구 H_9312)",
+          "detail": "사실을 **가중치가 아니라 창(context)** 에 주면 연산자가 런타임 조회하는가 = **다리가 이미 있는가**. 모델 자기 학습 템플릿의 1-shot 시연으로 물었다(`--consult-format DEMO` · engine-native · DROPPED=0). 답: **바이트는 보이는데 읽히지 않는다** — 잡음만 나르는 채널('채널 없음'보다 나쁨). ⟹ 추론 시 외부 사실 조회는 원천 불가 ⟹ 재조합은 **가중치 안**에서 일어나야 한다.",
+          "children": [
+           {
+            "id": "g1-nicc-lie-free",
+            "name": "① 거짓말이 무비용 ⟹ 애초에 안 읽는다",
+            "role": "통제 · SEEN-LIE",
+            "detail": "참 시연 vs 거짓 시연이 6개 표면 클래스 **12/12 셀 정확히 동일**(s7·s11 · 20행/셀). 시연의 진리값을 뒤집었는데 정확도가 **한 셀도** 안 움직인다. 읽고 합성하는 모델이라면 flip1 이 붕괴해야 한다(여유 충분)."
+           },
+           {
+            "id": "g1-nicc-seen-not-read",
+            "name": "② 그런데 바이트는 100% 소비된다",
+            "role": "'접두사 미적용' 버그 배제",
+            "detail": "거짓 시연이 **120/120 행 전부** forward 를 바꾼다(byte-identical **0행** · |Δmargin| 중앙 1.3 vs 기준 11~16 = ~9% 교란). 그런데 **결정**은 2~4/120 행만, 그것도 무작위 부호. 교란은 큰데 **정보량이 0**(H_9309 서명 재현)."
+           },
+           {
+            "id": "g1-nicc-copy-fails",
+            "name": "③ 축자 복사조차 못 한다 (합성 이전의 문제)",
+            "role": "양성대조 낙제",
+            "detail": "nonce 시연이 정답을 **글자 그대로** 담는다 — 베끼기만 하면 100%. 측정: **0.475 / 0.469 = 우연**(시연 없음 0.500/0.485). in-context 복사/유도 경로가 **없다**."
+           },
+           {
+            "id": "g1-nicc-rf-passed",
+            "name": "④ RF 게이트는 통과했고 통과 방향이 결정적",
+            "role": "state/h9309_decon/RF_PROBE.txt",
+            "detail": "접두사 **33/33 바이트가 답 logits 을 인과적으로 움직인다**(reachable 64/64 · leftmost idx 0). ⟹ 사실이 수용장 **밖이라 못 본 게 아니라, 안에 있는데도 안 쓴다**. 창을 넓혀도 포맷을 바꿔도 복구 불가 — 구조적 사망의 가장 강한 형태."
+           },
+           {
+            "id": "g1-nicc-noreopen",
+            "name": "🚫 재발사 금지 (EARNED TERMINAL)",
+            "role": "tune-to-green 방지",
+            "detail": "ICL/few-shot/프리픽스/시연/문맥-조회 로 재프레임된 어떤 레인도 이 벽을 다시 사지 못한다. 유일 reopen = **attention/유도-헤드를 가진 다른 substrate**(이 4층 conv byte-LM 아님 · 미측정). ⚠️ 이 벽은 2026-07-15 까지 jsonl·ARCHITECTURE **두 표면 모두에서 누락**돼 V5 레인을 재발사시켰다."
+           }
+          ]
          }
         ],
         "type": "gate",
@@ -16879,7 +16917,7 @@
    },
    {
     "id": "rc127-silent-nofire-1",
-    "polarity": "NEG-CONV",
+    "state": "neg-conv",
     "value": "**`rc=127`(명령 없음)이 조용히 흘러가 '완료' 껍데기를 남겼다.** vast pod 에서 `setsid bash pod_fire.sh` 로 발사했더니 로그에 `H9330_DONE` · `ALL_DONE` 이 찍혔는데 **산출 json 이 0개**였다. 자세히 보니 모든 단계가 **`rc=127`** — `anima-py` 를 **못 찾은 것**이다. 원인: **setsid 비대화형 셸의 PATH 는 최소**라서 `/usr/local/bin`(anima-py 설치 위치)이 없었고, 내 스크립트는 `export PATH=$PATH:/root/.local/bin` 만 붙여 **엉뚱한 곳만 추가**했다. 그리고 각 단계가 `rc=$?` 를 **출력만 하고 중단하지 않아서**, 아무것도 안 돈 채로 `ALL_DONE` 까지 완주했다 — **'완료'라는 글자가 '측정됐다'를 뜻하지 않는다.** 이 세션에서 같은 계열(실패가 성공처럼 보임)의 네 번째 사례다(pip -q · ensurepip · scp 무언스킵 · rc=127). **🔧 UPSTREAM-FIX 착륙(같은 세션)**: 이 다섯 함정의 진짜 원인은 **py 채널 pod 부트스트랩이 레포에 아예 없었다**는 것이다(hexa 채널용 `cli/eval_pod.sh` 만 있었다) ⇒ 매 세션이 손으로 만들고 매번 같은 곳에 빠졌다. **`cli/pod_bootstrap.sh` 를 canonical 로 추가**해 다섯을 **구조적으로** 닫았다: get-pip.py 폴백 · `--break-system-packages` · 전송 후 **원격 파일수+크기 대조** · **절대경로 CLI 해석 + 하드게이트** · **엔진의 `cuda_available()`** 로 device 판정. exit 0 ⟺ pod 에서 anima-py 가 돌고 모든 자산이 무결 — `--force` 도 skip 도 없다.",
     "recurrence": "원격/비대화형(setsid·nohup·cron·systemd) 컨텍스트에서 CLI 를 이름으로 호출 → PATH 최소라 `command not found`(127) → 각 단계가 rc 를 무시하고 진행 → 로그에 DONE 이 찍히지만 산출물은 0. '돌았다'고 믿고 몇 시간 뒤에야 발견.",
     "fix": "① **비대화형에서는 CLI 를 절대경로로 못박아라**: `APY=$(command -v anima-py)` 로 해석하고 **없으면 즉시 exit** (스크립트 맨 앞 하드게이트). PATH 는 `/usr/local/bin` 을 **명시 포함**. ② **rc 를 출력만 하지 말고 게이트로 써라** — 핵심 단계는 `|| exit` 하거나, 최소한 **산출 파일 존재를 확인**하고 다음으로 넘어가라. ③ **'DONE' 은 증거가 아니다** — 완료 판정은 **산출물(json)의 존재와 크기**로 하라(`ls -la *.json`). 로그의 완료 문자열은 스크립트가 끝까지 갔다는 뜻일 뿐, 아무 일도 안 했을 수 있다."
