@@ -25,7 +25,7 @@ anima/
 6. **🗂️ Hypotheses = 2 surfaces** — jsonl + card only (`a_hypothesis_register`).
 7. **🔌 GREEN only when wired** — live `core/*.hexa` + ARCHITECTURE.json lockstep (`a_verified_must_wire`).
 
-> ⚙️ Gates 1·6 code-blocked by `.harness/enforce_anima_gates.py` (reject a violating PR; `--all`, c18).
+> ⚙️ Gates 1·6 code-blocked by `.harness/enforce_anima_gates.py` (reject a violating PR; `--all`, c18) — hard-gate 6 (2 surfaces) is enforced as **G2** (no non-card file under `HYPOTHESES/`) **+ G6 unique-H_id** (one H id == one card == one jsonl row; a NEW parallel-session id collision hard-blocks, the 35 legacy collisions are frozen as a listed debt baseline that may only shrink — convergence `hypotheses-jsonl-3`).
 
 ## 📦 Packaging (pod)
 **Production code tree = `core/` · `cli/` · `agent/` ONLY** (+ external/vendored `stdlib/`) — every importable engine/CLI/tool module lives in one of these three; NO separate `train/` tree, NO production dir outside them. The torch training model + serializer + verifier (`model.py` unified CONV+BYTE · `serialize`/`clm_serialize_v2` · `verify_clm_v2` · `serialize_standalone` · `slw.py`) are **CORE-owned in `core/`** (owner directive: core-related lives in core/; folded out of `archive/train/clm/model/` to satisfy `a_no_archive_import`). **Invariant: `core/` has 0 dependency on `archive/`·`bench/`·`agent/`·`state/`** (one-directional; `agent/` standalone). **No production code (`core/`·`cli/`·`stdlib/`·`agent/`) `import`s from `archive/`** — archive = read-once reference only (`a_no_archive_import`). Inference pod = `core/`+`cli/`+`stdlib/iit4/` (`.clm` external); +`state/verdicts/` for training; `state/`·`HYPOTHESES/` never on pod.
