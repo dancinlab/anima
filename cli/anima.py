@@ -78,7 +78,7 @@ def anima_usage():
     print("  anima-py evaluate <model.clm> [--corpus <path>...] [--gen N] [--rho-axon]")
     print("                                                  ρ-AXON reach battery · former G0-G6 (.clm only · numpy)")
     print("  anima-py corpus <derivtrace|flat> --out F [--held-out I,J] [--seed S] [--concepts FILE]")
-    print("  anima-py corpus <ground|ground_lie|ground_keep> --atoms gt_atoms.json --out F [--reps N] [--replay N]")
+    print("  anima-py corpus <ground|ground_lie|ground_keep|ground_keep_lie> --atoms gt_atoms.json --out F [--reps N] [--replay N]")
     print("                                                  procedural training-corpus builder (ρ·weave data-format lever)")
     print("  anima-py train <args>                           ([train] extra) LEARNING → .pt + auto .clm (+DESCENT)")
     print("  anima-py serialize <ckpt.pt> <out.clm>          ([train] extra) re-export a torch .pt → .clm v0.3")
@@ -94,7 +94,7 @@ def anima_usage():
     print("             ρ-AXON reach battery — ρ·form/weave/leap/... (former G0-G6) — with the")
     print("             engine's OWN ops (numpy math.log mirror, torch-free). REACH-CLOSED")
     print("             a7b_pass = ρ·form ∧ ρ·weave ∧ ρ·leap (frozen bars = G0 ∧ G1 ∧ G2). → cli/evaluate.py.")
-    print("  corpus   : procedural training-corpus generator (derivtrace|flat|ground|ground_lie|ground_keep) — the")
+    print("  corpus   : procedural training-corpus generator (derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie) — the")
     print("             data-format lever (ρ·weave). NOTE chat corpus != this (chat =")
     print("             a_chat_registers 4-cell HF datasets → anima-py train). → cli/corpus.py.")
     print("  train    : ([train]) production CLMConvMoE training (torch Lane-P reference + bridge); SAVANT")
@@ -260,14 +260,14 @@ def anima_sweep_mode(argv):
 #  CORPUS MODE — dispatch to cli/corpus.py (procedural training-corpus builder)
 # ══════════════════════════════════════════════════════════════════════════════
 #
-# `anima corpus <derivtrace|flat|ground|ground_lie|ground_keep> --out F ...`
+# `anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie> --out F ...`
 # builds a procedural (torch-free, no external LLM — p1-p8) training corpus. This is the
 # data-format lever (derivation-trace → echo=composition, ρ·weave / former G1), NOT the
 # chat corpus (chat = a_chat_registers 4-cell HF datasets). Always py → cli/corpus.py.
 def anima_corpus_mode(argv):
     corpus_py = os.path.join(_HERE, "corpus.py")
     fwd = argv[1:]
-    print("=== anima corpus → cli/corpus.py (procedural training-corpus builder · derivtrace|flat|ground|ground_lie|ground_keep) ===")
+    print("=== anima corpus → cli/corpus.py (procedural training-corpus builder · derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie) ===")
     print("dispatch: " + " ".join([sys.executable, corpus_py] + fwd))
     return os.spawnv(os.P_WAIT, sys.executable, [sys.executable, corpus_py] + fwd)
 
