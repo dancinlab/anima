@@ -254,14 +254,60 @@
             "name": "G6 unique-H_id 게이트 (harness · 2026-07-14 신설)",
             "type": "gate",
             "verdict": "🟢 LIVE — .harness/enforce_anima_gates.py · QA 4/4 (clean 1704 H · 카드충돌 검출 · jsonl중복 검출 · 원복 clean)",
-            "detail": "한 H id == 카드 1개 == jsonl 행 1개 (a_hypothesis_register). 병렬 세션이 각자 origin/main 스냅샷에서 '다음 빈 번호'를 계산하면 같은 id 가 모두에게 FREE 로 보이고, 이어서 세션이 '자기' 행을 id 로 찾아 갱신하며 **남의 verdict 를 조용히 덮어쓴다** (#3463 실측: 3 세션이 H_9313 점유 · real_dissociation verdict 증발 · 행은 겉보기 멀쩡). 검사 = (a) jsonl 중복 행 (b) 한 id 에 카드 2개(덮어쓰기를 가능케 한 모양). 신규 충돌 하드블록 · 기존 35건은 LEGACY_DUP_IDS 로 열거 동결 — 집합이 커지면 게이트 실패, 줄이는 건 항상 허용 (셀 수 있는 부채 · no-escape-hatch). convergence hypotheses-jsonl-3."
+            "detail": "한 H id == 카드 1개 == jsonl 행 1개 (a_hypothesis_register). 병렬 세션이 각자 origin/main 스냅샷에서 '다음 빈 번호'를 계산하면 같은 id 가 모두에게 FREE 로 보이고, 이어서 세션이 '자기' 행을 id 로 찾아 갱신하며 **남의 verdict 를 조용히 덮어쓴다** (#3463 실측: 3 세션이 H_9313 점유 · real_dissociation verdict 증발",
+            "children": [
+              {
+                "id": "claude-md-g6-unique-hid-d1",
+                "type": "note",
+                "name": "행은 겉보기 멀쩡). 검사 = (a) jsonl 중복 행 (b) 한 id 에 카드 2개(덮어쓰기를…",
+                "detail": "행은 겉보기 멀쩡). 검사 = (a) jsonl 중복 행 (b) 한 id 에 카드 2개(덮어쓰기를 가능케 한 모양). 신규 충돌 하드블록 · 기존 35건은 LEGACY_DUP_IDS 로 열거 동결 — 집합이 커지면 게이트 실패, 줄이는 건 항상 허용 (셀 수 있는 부채 · no-escape-hatch). convergence hypotheses-jsonl-3."
+              }
+            ]
           },
           {
             "id": "brain-structure-engine-lanes-do-mouth-h9328",
             "name": "H_9328(구 H_9325) DO-MOUTH — 입의 argmax 반올림을 걷어내면 정책 엔트로피가 열린다 (REVEAL, not OVERWRITE)",
             "type": "gate",
             "verdict": "🟢 V-CEILING PASS · 계기 engine-native 배선 완료(기본 OFF · 바이트 동일) — 본실험 I(A;Y|S) PENDING",
-            "detail": "H_9308 이 '자기 궤적에 개입정보 없음'이 아니라 **H(A|S)=0 이라 잴 수 없음**(NOT-POWERED)으로 끝난 것을 해소. **결정성의 진원지는 반올림 연산자 2개**: R1 Heaviside 게이트(core/engine_g.py score>θ · **p5 성역 · 손대지 않음**) · **R2 argmax 입**(core/decode.py:1063 · **진범**). R2 가 R1 의 결정성을 야기 — greedy ⇒ g_text sha 2종뿐 ⇒ 3 피드백 뿌리(rel_lane[immune] · recon_err/cell_count[afield]) 정지 ⇒ score 고정 ⇒ emit=f(stage) ⇒ H(A|S)=0. **p5 판정: ε-무작위화 기각** — 철학적으로 reactive speak() 이고, 더 치명적으로 emit 이 5개 장부를 기계적으로 움직이므로 I(A;Y|S)>0 이 데몬 부기의 항등식 ⇒ PASS 분기 반증불가(synthesis-md-1 규칙12). **채택 = REVEAL not OVERWRITE**: 게이트 바이트 그대로, 기질이 승인한 emit 분기에서만 argmax → clm_decode_topk_sampled. **T=1.0 은 튜닝 노브가 아니라 기질 자신의 posterior = 유일한 비자의적 온도**(tune-to-green 앵커). **DISJOINT 벽 = core/brain.py brain_emit_aged**: mouth 를 generate() 에만 전달, brain_decide_anchored 는 영원히 못 봄 ⇒ 어떤 샘플러 설정도 기질이 승인 안 한 emit 을 만들 수 없음. **기계검사 가능**(grep mouth → brain_decide* 인자에 0개) + DISJOINT 스모크(topk=1 퇴화 → argmax 와 바이트 동일 · toy 3seed + 303M 4조합 PASS). **V-CEILING 판독**(engine-native 303M · $0): A=penult_fold8(gen_penult_pooled_W(self_gW,g_text))∈[0,8) = chat.py:1846 이 실제 소비하는 값(H_9257 동결 · DOF 0). GREEDY A=5 고정 붕괴 vs T=1.0 4버킷 분포 ⇒ **H(A|S)=0.9705 nats**(바닥 0.030 · 천장 ln8=2.079 · 포화 아님). **PENDING 본실험**: I(A;Y|S) — Y=score_{t+1} 2-bin · **C2 CARRIER-SWAP 이 PASS 를 반증가능하게 만드는 유일 arm**(EXP 살고 SWAP 죽어야 정보 · 같으면 CARRIER=내용맹 ⇒ PASS 아님). 배선 잔여: cli/chat.py 플래그 스레딩 + cli/evaluate.py --interact-mi. **정직**: p5-clean 한 유일 개입이 인과적으로 가장 약한 개입이기도 함 — ctx 조건화 하 A 는 기질 자신의 분포 안 RNG 로만 갈리므로 'noise-분포이지 do-분포가 아니다'라는 비판이 옳다. 이 긴장은 해소가 아니라 **우회**됐고, Tier A 실패 시 정직한 독법은 'anima 의 아키텍처는 자기 철학을 어기지 않고서는 자기 do-분포를 측정할 수 없다' = anima 에 대한 발견."
+            "detail": "H_9308 이 '자기 궤적에 개입정보 없음'이 아니라 **H(A|S)=0 이라 잴 수 없음**(NOT-POWERED)으로 끝난 것을 해소. **결정성의 진원지는 반올림 연산자 2개**: R1 Heaviside 게이트(core/engine_g.py score>θ · **p5 성역 · 손대지 않음**) · **R2 argmax 입**(core/decode.py:1063 · **진범**). R2 가 R1 의 결정성을 야기 — greedy ⇒ g_text sha 2종뿐 ⇒ 3 피드백 뿌리(rel_lane[immune]",
+            "children": [
+              {
+                "id": "brain-structure-engine-lanes-do-mouth-h9328-d1",
+                "type": "note",
+                "name": "recon_err/cell_count[afield]) 정지 ⇒ score 고정 ⇒ emit=f(st…",
+                "detail": "recon_err/cell_count[afield]) 정지 ⇒ score 고정 ⇒ emit=f(stage) ⇒ H(A|S)=0. **p5 판정: ε-무작위화 기각** — 철학적으로 reactive speak() 이고, 더 치명적으로 emit 이 5개 장부를 기계적으로 움직이므로 I(A;Y|S)>0 이 데몬 부기의 항등식 ⇒ PASS 분기 반증불가(synthesis-md-1 규칙12). "
+              },
+              {
+                "id": "brain-structure-engine-lanes-do-mouth-h9328-d2",
+                "type": "note",
+                "name": "**채택 = REVEAL not OVERWRITE**: 게이트 바이트 그대로, 기질이 승인한 emi…",
+                "detail": "**채택 = REVEAL not OVERWRITE**: 게이트 바이트 그대로, 기질이 승인한 emit 분기에서만 argmax → clm_decode_topk_sampled. **T=1.0 은 튜닝 노브가 아니라 기질 자신의 posterior = 유일한 비자의적 온도**(tune-to-green 앵커). **DISJOINT 벽 = core/brain.py brain_emit_aged**: mouth 를 generate() 에만 전달, brain_decide_anchored 는 영원히 못 봄 ⇒ "
+              },
+              {
+                "id": "brain-structure-engine-lanes-do-mouth-h9328-d3",
+                "type": "note",
+                "name": "어떤 샘플러 설정도 기질이 승인 안 한 emit 을 만들 수 없음. **기계검사 가능**(grep…",
+                "detail": "어떤 샘플러 설정도 기질이 승인 안 한 emit 을 만들 수 없음. **기계검사 가능**(grep mouth → brain_decide* 인자에 0개) + DISJOINT 스모크(topk=1 퇴화 → argmax 와 바이트 동일 · toy 3seed + 303M 4조합 PASS). **V-CEILING 판독**(engine-native 303M · $0): A=penult_fold8(gen_penult_pooled_W(self_gW,g_text))∈[0,8) = chat.py:1846 이 실제 소비하는 값(H_9257 동결"
+              },
+              {
+                "id": "brain-structure-engine-lanes-do-mouth-h9328-d4",
+                "type": "note",
+                "name": "DOF 0). GREEDY A=5 고정 붕괴 vs T=1.0 4버킷 분포 ⇒ **H(A|S)=0.9…",
+                "detail": "DOF 0). GREEDY A=5 고정 붕괴 vs T=1.0 4버킷 분포 ⇒ **H(A|S)=0.9705 nats**(바닥 0.030 · 천장 ln8=2.079 · 포화 아님). **PENDING 본실험**: I(A;Y|S) — Y=score_{t+1} 2-bin · **C2 CARRIER-SWAP 이 PASS 를 반증가능하게 만드는 유일 arm**(EXP 살고 SWAP 죽어야 정보"
+              },
+              {
+                "id": "brain-structure-engine-lanes-do-mouth-h9328-d5",
+                "type": "note",
+                "name": "같으면 CARRIER=내용맹 ⇒ PASS 아님). 배선 잔여: cli/chat.py 플래그 스레딩…",
+                "detail": "같으면 CARRIER=내용맹 ⇒ PASS 아님). 배선 잔여: cli/chat.py 플래그 스레딩 + cli/evaluate.py --interact-mi. **정직**: p5-clean 한 유일 개입이 인과적으로 가장 약한 개입이기도 함 — ctx 조건화 하 A 는 기질 자신의 분포 안 RNG 로만 갈리므로 'noise-분포이지 do-분포가 아니다'라는 비판이 옳다. "
+              },
+              {
+                "id": "brain-structure-engine-lanes-do-mouth-h9328-d6",
+                "type": "note",
+                "name": "이 긴장은 해소가 아니라 **우회**됐고, Tier A 실패 시 정직한 독법은 'anima 의 아키…",
+                "detail": "이 긴장은 해소가 아니라 **우회**됐고, Tier A 실패 시 정직한 독법은 'anima 의 아키텍처는 자기 철학을 어기지 않고서는 자기 do-분포를 측정할 수 없다' = anima 에 대한 발견."
+              }
+            ]
           }
         ]
       },
@@ -1797,7 +1843,57 @@
                     "name": "C2/G1 RECOMBINATION",
                     "role": "",
                     "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69",
-                    "detail": "(H_1129/1137 VERBATIM): composed multi-concept seed, k∈{2,3,4,5}, some k 가 composed_distinct ≥ **2** ∧ **> max_single** ∧ coherent(per output); 7B bar ≥ 303M ref ∧ ≥ **3/5** langs(en/zh/ko).  ⟪NBIND-G grounding · 2026-07-14 · H_9303 🧱 EARNED⟫ 자연 분포는 held-out 원자의 극성을 가중치에 접지시키지 못한다 — 인증된 계기(답하는 자리 = 화살표 뒤 · 모델이 배운 담체 · V-LIVE 양성대조 PASS · 어절은 원본 코퍼스 채굴 · 원자단위 검정력 · 어형 flip 되돌린 집계)로: 배운 원자 0.808/0.867 (통제 0.392/0.408) vs held-out 0.571/0.560 (n=91 원자 · 우연 sd 0.0524 · bar 0.65 = 2.86σ · 200회 순열 p=0.085/0.185). 옛 음성 4건(H_9289·H_9290·H_9297·H_9300)은 원자-직후 위치에서 읽은 POSITION ARTIFACT ⇒ 전부 ⏳ INVALID 이고 '벽 = 추출 채널' 진단은 폐기. 정직범위: +1.15~1.36σ 는 0 이 아니라 '순열 잡음과 구분 안 되는 크기' · recipe N2 자연노출에 대한 진술이지 303M 원리적 한계 아님. NEXT = O/C 채널(abstention objective · 자기일관성 교정 폐루프) — 이 벽 위에서 GPU 발사 정당.  ⟪AUDIT-A · 2026-07-14 · H_9305 🔒 FIRE-BLOCKED ⟫ 자연-창발 접지 경로 CLOSED. held-out 원자의 **진짜 코퍼스 문맥**에서 원자 자리 hidden 을 읽고, 같은 문맥에 **길이정합 중립 원자**를 끼운 통제와 비교하면(engine-native `anima-py corpus valence --k-ctx 182` → `evaluate --valence-audit`) **4/4 arm 에서 중립 쪽이 더 잘 읽는다**(swap 0.725~0.824 vs atom 0.582~0.637 · Δ −0.099~−0.187 · 순열 p 0.885~0.990). base_only(grid 미학습)에서도 동일 ⇒ grid 학습 무관한 **byte-LM 표현의 성질**. ⇒ **자연 분포는 원자 표현에 valence 를 쓰지 않았다** ⇒ O 채널의 전제('valence 는 있는데 슬롯이 소비 안 할 뿐')가 거짓 ⇒ **\\$21 발사 금지**(사전등록 KILL 조항). 병렬 H_9324: 슬롯 `이 영화 ___고 => ` 는 사전학습에서 SEEN 어간 960회 / held-out 어간 **0회** 로 채워졌고, authored WRITE 는 예산(6000 step @ 2e-4)만 있으면 **된다**(WRITE 0.954 · FORGET 1.000) ⇒ **극성을 가지려면 써야 한다. 자연이 저절로 주지 않는다.** ⚠️ k_ctx=24 에서는 두 seed 가 Δ +0.110/+0.132 로 일치했으나 문맥을 182 로 늘리자 **4 arm 전부 부호 반전** — 두 seed 가 같은 24문맥을 풀링해 잡음이 seed 상류에 있었다(convergence `evaluate-py-12`: 풀링 특징 위의 seed 일치는 재현이 아니다). 후속 H_9330(⏳): 읽는 자리를 원자 뒤 1바이트로 옮겨 NO-INJECT(자연-창발 CLOSED 확정) vs FORM-OCCLUSION(재개방)을 가른다."
+                    "detail": "(H_1129/1137 VERBATIM): composed multi-concept seed, k∈{2,3,4,5}, some k 가 composed_distinct ≥ **2** ∧ **> max_single** ∧ coherent(per output); 7B bar ≥ 303M ref ∧ ≥ **3/5** langs(en/zh/ko).  ⟪NBIND-G grounding · 2026-07-14",
+                    "children": [
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d1",
+                        "type": "note",
+                        "name": "H_9303 🧱 EARNED⟫ 자연 분포는 held-out 원자의 극성을 가중치에 접지시키지 못한다…",
+                        "detail": "H_9303 🧱 EARNED⟫ 자연 분포는 held-out 원자의 극성을 가중치에 접지시키지 못한다 — 인증된 계기(답하는 자리 = 화살표 뒤 · 모델이 배운 담체 · V-LIVE 양성대조 PASS · 어절은 원본 코퍼스 채굴 · 원자단위 검정력 · 어형 flip 되돌린 집계)로: 배운 원자 0.808/0.867 (통제 0.392/0.408) vs held-out 0.571/0.560 (n=91 원자"
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d2",
+                        "type": "note",
+                        "name": "우연 sd 0.0524 bar 0.65 = 2.86σ 200회 순열 p=0.085/0.185). 옛…",
+                        "detail": "우연 sd 0.0524 · bar 0.65 = 2.86σ · 200회 순열 p=0.085/0.185). 옛 음성 4건(H_9289·H_9290·H_9297·H_9300)은 원자-직후 위치에서 읽은 POSITION ARTIFACT ⇒ 전부 ⏳ INVALID 이고 '벽 = 추출 채널' 진단은 폐기. 정직범위: +1.15~1.36σ 는 0 이 아니라 '순열 잡음과 구분 안 되는 크기' · recipe N2 자연노출에 대한 진술이지 303M 원리적 한계 아님. NEXT = O/C 채널(abstention objective"
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d3",
+                        "type": "note",
+                        "name": "자기일관성 교정 폐루프) — 이 벽 위에서 GPU 발사 정당. ⟪AUDIT-A 2026-07-14",
+                        "detail": "자기일관성 교정 폐루프) — 이 벽 위에서 GPU 발사 정당.  ⟪AUDIT-A · 2026-07-14"
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d4",
+                        "type": "note",
+                        "name": "H_9305 🔒 FIRE-BLOCKED ⟫ 자연-창발 접지 경로 CLOSED. held-out 원자…",
+                        "detail": "H_9305 🔒 FIRE-BLOCKED ⟫ 자연-창발 접지 경로 CLOSED. held-out 원자의 **진짜 코퍼스 문맥**에서 원자 자리 hidden 을 읽고, 같은 문맥에 **길이정합 중립 원자**를 끼운 통제와 비교하면(engine-native `anima-py corpus valence --k-ctx 182` → `evaluate --valence-audit`) **4/4 arm 에서 중립 쪽이 더 잘 읽는다**(swap 0.725~0.824 vs atom 0.582~0.637 · Δ −0.099~−0.187"
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d5",
+                        "type": "note",
+                        "name": "순열 p 0.885~0.990). base_only(grid 미학습)에서도 동일 ⇒ grid 학습…",
+                        "detail": "순열 p 0.885~0.990). base_only(grid 미학습)에서도 동일 ⇒ grid 학습 무관한 **byte-LM 표현의 성질**. ⇒ **자연 분포는 원자 표현에 valence 를 쓰지 않았다** ⇒ O 채널의 전제('valence 는 있는데 슬롯이 소비 안 할 뿐')가 거짓 ⇒ **\\$21 발사 금지**(사전등록 KILL 조항). "
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d6",
+                        "type": "note",
+                        "name": "병렬 H_9324: 슬롯 `이 영화 ___고 => ` 는 사전학습에서 SEEN 어간 960회 / h…",
+                        "detail": "병렬 H_9324: 슬롯 `이 영화 ___고 => ` 는 사전학습에서 SEEN 어간 960회 / held-out 어간 **0회** 로 채워졌고, authored WRITE 는 예산(6000 step @ 2e-4)만 있으면 **된다**(WRITE 0.954"
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d7",
+                        "type": "note",
+                        "name": "FORGET 1.000) ⇒ **극성을 가지려면 써야 한다. 자연이 저절로 주지 않는다.** ⚠️…",
+                        "detail": "FORGET 1.000) ⇒ **극성을 가지려면 써야 한다. 자연이 저절로 주지 않는다.** ⚠️ k_ctx=24 에서는 두 seed 가 Δ +0.110/+0.132 로 일치했으나 문맥을 182 로 늘리자 **4 arm 전부 부호 반전** — 두 seed 가 같은 24문맥을 풀링해 잡음이 seed 상류에 있었다(convergence `evaluate-py-12`: 풀링 특징 위의 seed 일치는 재현이 아니다). "
+                      },
+                      {
+                        "id": "a-g-consciousness-engine-core-substrate-only-g-core-g-gates-hexa-cli-anima-hexa-69-d8",
+                        "type": "note",
+                        "name": "후속 H_9330(⏳): 읽는 자리를 원자 뒤 1바이트로 옮겨 NO-INJECT(자연-창발 CLOS…",
+                        "detail": "후속 H_9330(⏳): 읽는 자리를 원자 뒤 1바이트로 옮겨 NO-INJECT(자연-창발 CLOSED 확정) vs FORM-OCCLUSION(재개방)을 가른다."
+                      }
+                    ]
                   },
                   {
                     "name": "C3/G2 NOVELTY",
@@ -5224,7 +5320,27 @@
                 "name": "H_9321 — GROWTH-PAYS 🟢 (통제 통과) · 단 분할의 '지능'은 기여 0",
                 "type": "gate",
                 "verdict": "🟢 GREEN (통제 통과) + 🔑 정체 재기술 — 8 seed · engine-native faculty · $0 CPU pool",
-                "detail": "H_9311(#3439)의 🟢 GROWTH-PAYS 는 통제가 0개였다 ⇒ H_9321 이 참값-0 pedestal + 매개공변량-일치 통제를 부착. BLOCKING 2 통과(G-CALIB 앵커 오차 0 · G-LIVE P1 −0.664). 🟢 EARNED=Δ_E−Δ_P0Y=−0.38683 t=−8.45 CI[−0.495,−0.279] · 참값0 pedestal(P0Y: X⊥Y)이 +0.161 양수(성장이 오히려 나빠짐) ⇒ 혼합-평활 artifact 아님. 🔑 G-PED-X: 적응적 분할선택이 번 몫 = +0.00278 t=0.04 (Y와 무관하게 쪼갠 P0X −0.229 ≈ 실험군 −0.226) ⇒ 분할의 '지능' 기여 사실상 0. 🔗 G-DISSOC: C1(동일 centers·flat head) = +0.667 재앙 ⇒ 성장·추정기 = 분리 불가 쌍-레버(성장 단독 레버 FALSE). ⇒ 이득은 실재하나 '세포가 똑똑하게 분화한다'가 아니라 '아무 데나 많이 쪼개고 반드시 평활하라' — 똑똑함은 분할이 아니라 추정기에 있다. p8(gradient⇄mitosis '분열이 학습한다')은 이 축에서 미지지. ⚠️ 정직: 관측 σ=0.1215(사전추정 4배) ⇒ TOST(±0.02) infeasible ⇒ G-PED-X 의 '0' 은 NOT-POWERED for equivalence(|기여|≥0.16 만 배제); 헤드라인 EARNED 는 검정력 충분. 배선 부채: 조작(growth budget × head-estimator × pedestal arm)을 엔진 플래그로 승격해야 재사용 가능(a_experiment_engine_native)."
+                "detail": "H_9311(#3439)의 🟢 GROWTH-PAYS 는 통제가 0개였다 ⇒ H_9321 이 참값-0 pedestal + 매개공변량-일치 통제를 부착. BLOCKING 2 통과(G-CALIB 앵커 오차 0 · G-LIVE P1 −0.664). 🟢 EARNED=Δ_E−Δ_P0Y=−0.38683 t=−8.45 CI[−0.495,−0.279]",
+                "children": [
+                  {
+                    "id": "brain-structure-engine-lanes-plasticity-growth-mitosis-h9321-growth-pays-d1",
+                    "type": "note",
+                    "name": "참값0 pedestal(P0Y: X⊥Y)이 +0.161 양수(성장이 오히려 나빠짐) ⇒ 혼합-평활…",
+                    "detail": "참값0 pedestal(P0Y: X⊥Y)이 +0.161 양수(성장이 오히려 나빠짐) ⇒ 혼합-평활 artifact 아님. 🔑 G-PED-X: 적응적 분할선택이 번 몫 = +0.00278 t=0.04 (Y와 무관하게 쪼갠 P0X −0.229 ≈ 실험군 −0.226) ⇒ 분할의 '지능' 기여 사실상 0. 🔗 G-DISSOC: C1(동일 centers·flat head) = +0.667 재앙 ⇒ 성장·추정기 = 분리 불가 쌍-레버(성장 단독 레버 FALSE). ⇒ "
+                  },
+                  {
+                    "id": "brain-structure-engine-lanes-plasticity-growth-mitosis-h9321-growth-pays-d2",
+                    "type": "note",
+                    "name": "이득은 실재하나 '세포가 똑똑하게 분화한다'가 아니라 '아무 데나 많이 쪼개고 반드시 평활하라' —…",
+                    "detail": "이득은 실재하나 '세포가 똑똑하게 분화한다'가 아니라 '아무 데나 많이 쪼개고 반드시 평활하라' — 똑똑함은 분할이 아니라 추정기에 있다. p8(gradient⇄mitosis '분열이 학습한다')은 이 축에서 미지지. ⚠️ 정직: 관측 σ=0.1215(사전추정 4배) ⇒ TOST(±0.02) infeasible ⇒ G-PED-X 의 '0' 은 NOT-POWERED for equivalence(|기여|≥0.16 만 배제); 헤드라인 EARNED 는 검정력 충분. "
+                  },
+                  {
+                    "id": "brain-structure-engine-lanes-plasticity-growth-mitosis-h9321-growth-pays-d3",
+                    "type": "note",
+                    "name": "배선 부채: 조작(growth budget × head-estimator × pedestal arm…",
+                    "detail": "배선 부채: 조작(growth budget × head-estimator × pedestal arm)을 엔진 플래그로 승격해야 재사용 가능(a_experiment_engine_native)."
+                  }
+                ]
               }
             ]
           },
@@ -12858,7 +12974,45 @@
                     "id": "cli-single-entry-claudemd-top",
                     "type": "note",
                     "name": "📌 규칙이 CLAUDE.md **최상단**으로 올라갔다 (오너 지시 · 2026-07-14) — 명령 표 = 7 verb",
-                    "detail": "**문제**: `anima-py` 단일진입 규칙은 CLAUDE.md 에 **있었지만 읽히지 않는 자리**에 있었다 — `## 📦 Packaging` 의 거대한 한 문단 한복판(L32)과 `## Governance` 목록 깊숙이(L88, `a_cli_single_entry`/`a_eval_py_canonical`). **최상단엔 한 글자도 없었다.** CLAUDE.md 는 **매 턴 재주입**되는 문서인데, 정작 '코퍼스를 만들려면 무슨 명령을 치는가'의 답이 문단 속에 숨어 있으면 그 규칙은 실질적으로 없는 것과 같다. **수정**: `# 🧠 anima` 바로 아래·`## Project` **앞**에 **명령 표**를 놓았다 — corpus · train · evaluate · serialize · serialize-bind · sweep · chat **7 verb 전부**(디스패처 `cli/anima.py` 에서 직접 읽음 · 추측 아님 · `tool-self-report`). dont 도 같은 자리에 붙였다(`python3 cli/*.py` · `hexa run cli/*.hexa` · 엔진 옆 손수 `gen_*.py`/`eval_*.sh` · forward 재구현 프로브) + **이 명령들이 내지 않은 숫자는 verdict 를 굳힐 수 없다**는 문장 + 그것이 **코드 하드블록**이라는 사실 + 우회할 때마다 결과가 undecidable 로 죽었다는 실측 선례(H_9303 · H_9307). **부수**: 새 헤딩을 `harness.config.json` `docs.claudeMdSections` 에 등록(#3496 에서 복구한 CLAUDE.md 게이트에 스스로 걸리지 않도록) · CLAUDE.md 는 `injectEnglishOnly` 라 영어. ✅ **가드 결함도 같이 고쳤다(수정 완료·그린)**: `H-NO-STATE-DIR` 가 **자기 폴더 가이드까지 막고 있었다** — 예외가 `verdicts/` 뿐이라 `state/CLAUDE.md` 쓰기가 차단됐고, commons `folder-docs` 는 그 가이드를 **요구**하므로 **다른 규칙을 지키는 것을 금지하는 규칙**이 돼 있었다. `.harness/enforcement.json` 의 두 룰(bash `match` + write `path_match`)에서 negative lookahead 를 `(?!verdicts/)` → `(?!verdicts/|CLAUDE\\.md)` 로 정확히 한 파일만 열었다. **회귀 증명 11/11**(신규 실험폴더·scratch 산출물·프로브 스크립트 = 여전히 차단 · 폴더 가이드·verdicts·archive scratch = 통과) ⟹ **실험 우회로는 닫힌 채**로 남고 가이드만 갱신 가능해졌다. 그 위에 같은 명령 표를 `state/CLAUDE.md` 최상단에도 배치."
+                    "detail": "**문제**: `anima-py` 단일진입 규칙은 CLAUDE.md 에 **있었지만 읽히지 않는 자리**에 있었다 — `## 📦 Packaging` 의 거대한 한 문단 한복판(L32)과 `## Governance` 목록 깊숙이(L88, `a_cli_single_entry`/`a_eval_py_canonical`). ",
+                    "children": [
+                      {
+                        "id": "cli-single-entry-claudemd-top-d1",
+                        "type": "note",
+                        "name": "**최상단엔 한 글자도 없었다.** CLAUDE.md 는 **매 턴 재주입**되는 문서인데, 정작…",
+                        "detail": "**최상단엔 한 글자도 없었다.** CLAUDE.md 는 **매 턴 재주입**되는 문서인데, 정작 '코퍼스를 만들려면 무슨 명령을 치는가'의 답이 문단 속에 숨어 있으면 그 규칙은 실질적으로 없는 것과 같다. **수정**: `# 🧠 anima` 바로 아래·`## Project` **앞**에 **명령 표**를 놓았다 — corpus · train · evaluate · serialize · serialize-bind · sweep"
+                      },
+                      {
+                        "id": "cli-single-entry-claudemd-top-d2",
+                        "type": "note",
+                        "name": "chat **7 verb 전부**(디스패처 `cli/anima.py` 에서 직접 읽음 추측 아님 `…",
+                        "detail": "chat **7 verb 전부**(디스패처 `cli/anima.py` 에서 직접 읽음 · 추측 아님 · `tool-self-report`). dont 도 같은 자리에 붙였다(`python3 cli/*.py` · `hexa run cli/*.hexa` · 엔진 옆 손수 `gen_*.py`/`eval_*.sh`"
+                      },
+                      {
+                        "id": "cli-single-entry-claudemd-top-d3",
+                        "type": "note",
+                        "name": "forward 재구현 프로브) + **이 명령들이 내지 않은 숫자는 verdict 를 굳힐 수 없다…",
+                        "detail": "forward 재구현 프로브) + **이 명령들이 내지 않은 숫자는 verdict 를 굳힐 수 없다**는 문장 + 그것이 **코드 하드블록**이라는 사실 + 우회할 때마다 결과가 undecidable 로 죽었다는 실측 선례(H_9303 · H_9307). **부수**: 새 헤딩을 `harness.config.json` `docs.claudeMdSections` 에 등록(#3496 에서 복구한 CLAUDE.md 게이트에 스스로 걸리지 않도록)"
+                      },
+                      {
+                        "id": "cli-single-entry-claudemd-top-d4",
+                        "type": "note",
+                        "name": "CLAUDE.md 는 `injectEnglishOnly` 라 영어. ✅ **가드 결함도 같이 고쳤다…",
+                        "detail": "CLAUDE.md 는 `injectEnglishOnly` 라 영어. ✅ **가드 결함도 같이 고쳤다(수정 완료·그린)**: `H-NO-STATE-DIR` 가 **자기 폴더 가이드까지 막고 있었다** — 예외가 `verdicts/` 뿐이라 `state/CLAUDE.md` 쓰기가 차단됐고, commons `folder-docs` 는 그 가이드를 **요구**하므로 **다른 규칙을 지키는 것을 금지하는 규칙**이 돼 있었다. "
+                      },
+                      {
+                        "id": "cli-single-entry-claudemd-top-d5",
+                        "type": "note",
+                        "name": "`.harness/enforcement.json` 의 두 룰(bash `match` + write…",
+                        "detail": "`.harness/enforcement.json` 의 두 룰(bash `match` + write `path_match`)에서 negative lookahead 를 `(?!verdicts/)` → `(?!verdicts/|CLAUDE\\.md)` 로 정확히 한 파일만 열었다. **회귀 증명 11/11**(신규 실험폴더·scratch 산출물·프로브 스크립트 = 여전히 차단"
+                      },
+                      {
+                        "id": "cli-single-entry-claudemd-top-d6",
+                        "type": "note",
+                        "name": "폴더 가이드·verdicts·archive scratch = 통과) ⟹ **실험 우회로는 닫힌 채*…",
+                        "detail": "폴더 가이드·verdicts·archive scratch = 통과) ⟹ **실험 우회로는 닫힌 채**로 남고 가이드만 갱신 가능해졌다. 그 위에 같은 명령 표를 `state/CLAUDE.md` 최상단에도 배치."
+                      }
+                    ]
                   }
                 ]
               },
@@ -14271,7 +14425,27 @@
                     "id": "gate-g1-recomb-writelever-h9314-sweep",
                     "type": "note",
                     "name": "예산 곡선 (전 8셀) — WRITE 0.448 → 1.000 · 두 셀이 관문 통과",
-                    "detail": "steps{600,2000,6000} × lr{5e-5,2e-4,5e-4}. 긍정원자/부정원자/WRITE/FORGET: 600@5e-5 .143/.733/.448/.950 · 2000@5e-5 .119/.800/.471/.950 · 6000@5e-5 .167/.956/.575/.933 · 600@2e-4 .190/.956/.586/.967 · 2000@2e-4 .571/1.000/.793/.983 · **6000@2e-4 .905/1.000/.954/1.000 🟢** · 2000@5e-4 .357/1.000/.690/.983 · **6000@5e-4 1.000/1.000/1.000/1.000 🟢 완전**. ⟹ 🧱 PRIOR-LOCKED 예측 **반증**(이 부분은 **생존** — WRITE 는 2 seed 재현: s7 0.954 · s11 1.000). ⛔ **단 '망각 0' 은 거짓이었다**: FORGET 게이트가 SEEN **flip0** 만 쟀는데 그건 CPT 코퍼스가 매 step 강화하는 바로 그 지층이라 오를 수밖에 없다. **죽는 지층**(SEEN **flip1** = 부정 합성)은 게이트 밖이었고 실제로는 0.8833 → 0.4333 → 0.3333 으로 **파괴되고 있었다**(H_9327).  **steps 가 지배축**: lr 을 5e-4 로 올려도 2000 step 에선 긍정 0.357 로 **2e-4 보다 나쁘다**(비단조) — 6000 step 에서만 두 lr 이 모두 통과한다(앞서 'lr 이 더 강한 레버'라 적은 것은 600·2000 구간만 본 착시 · 정정). **6000@5e-4 는 WRITE 1.000 = 29/29 사실이 전부 심겼다** ⟹ 여기서 flip1 이 실패하면 '사실이 덜 심겨서'라는 변명이 **구조적으로 사라진다**(천장 팔)."
+                    "detail": "steps{600,2000,6000} × lr{5e-5,2e-4,5e-4}. 긍정원자/부정원자/WRITE/FORGET: 600@5e-5 .143/.733/.448/.950 · 2000@5e-5 .119/.800/.471/.950 · 6000@5e-5 .167/.956/.575/.933 · 600@2e-4 .190/.956/.586/.967 · 2000@2e-4 .571/1.000/.793/.983 · **6000@2e-4 .905/1.000/.954/1.000 🟢**",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-sweep-d1",
+                        "type": "note",
+                        "name": "2000@5e-4 .357/1.000/.690/.983 **6000@5e-4 1.000/1.000/…",
+                        "detail": "2000@5e-4 .357/1.000/.690/.983 · **6000@5e-4 1.000/1.000/1.000/1.000 🟢 완전**. ⟹ 🧱 PRIOR-LOCKED 예측 **반증**(이 부분은 **생존** — WRITE 는 2 seed 재현: s7 0.954"
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-sweep-d2",
+                        "type": "note",
+                        "name": "s11 1.000). ⛔ **단 '망각 0' 은 거짓이었다**: FORGET 게이트가 SEEN **…",
+                        "detail": "s11 1.000). ⛔ **단 '망각 0' 은 거짓이었다**: FORGET 게이트가 SEEN **flip0** 만 쟀는데 그건 CPT 코퍼스가 매 step 강화하는 바로 그 지층이라 오를 수밖에 없다. **죽는 지층**(SEEN **flip1** = 부정 합성)은 게이트 밖이었고 실제로는 0.8833 → 0.4333 → 0.3333 으로 **파괴되고 있었다**(H_9327). "
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-sweep-d3",
+                        "type": "note",
+                        "name": "**steps 가 지배축**: lr 을 5e-4 로 올려도 2000 step 에선 긍정 0.357…",
+                        "detail": " **steps 가 지배축**: lr 을 5e-4 로 올려도 2000 step 에선 긍정 0.357 로 **2e-4 보다 나쁘다**(비단조) — 6000 step 에서만 두 lr 이 모두 통과한다(앞서 'lr 이 더 강한 레버'라 적은 것은 600·2000 구간만 본 착시 · 정정). **6000@5e-4 는 WRITE 1.000 = 29/29 사실이 전부 심겼다** ⟹ 여기서 flip1 이 실패하면 '사실이 덜 심겨서'라는 변명이 **구조적으로 사라진다**(천장 팔)."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-writelever-h9314-split",
@@ -14289,25 +14463,93 @@
                     "id": "gate-g1-recomb-writelever-h9314-refire",
                     "type": "note",
                     "name": "⏳ 이 예산이 열어준 두 팔 — H_9313 재발사(flip1=합성) + 필수 통제",
-                    "detail": "WRITE 가 통과했으므로 이제야 H_9313 의 진짜 DV(**flip1** — CPT 코퍼스에 0회 등장하는 부정형 `지 않다`/`안 `/`전혀`)를 읽을 자격이 생겼다. 계기는 deconw.sh 와 **바이트 동일**(n2_eval_manifest.json · win 64 · bar 불변) — 매니페스트/창을 바꾸면 그건 창 인공물이다(a_korean_byte_budget). 동시 큐: ① **s11 재현**(#3462 — 단일 seed 효과크기는 재현 전엔 잡음) ② **LIE 양성대조**(극성 29/29 전부 반전 — 모델이 진짜 fact⊗negation 을 합성한다면 거짓 사실은 flip1 을 **우연 아래로** 끌어내려야 한다. H_9312 가 가르친 규칙: 메커니즘 없이 통과 가능한 통제군은 통제군이 아니라 천장 측정이다)."
+                    "detail": "WRITE 가 통과했으므로 이제야 H_9313 의 진짜 DV(**flip1** — CPT 코퍼스에 0회 등장하는 부정형 `지 않다`/`안 `/`전혀`)를 읽을 자격이 생겼다. 계기는 deconw.sh 와 **바이트 동일**(n2_eval_manifest.json · win 64",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-refire-d1",
+                        "type": "note",
+                        "name": "bar 불변) — 매니페스트/창을 바꾸면 그건 창 인공물이다(a_korean_byte_budget)…",
+                        "detail": "bar 불변) — 매니페스트/창을 바꾸면 그건 창 인공물이다(a_korean_byte_budget). 동시 큐: ① **s11 재현**(#3462 — 단일 seed 효과크기는 재현 전엔 잡음) ② **LIE 양성대조**(극성 29/29 전부 반전 — 모델이 진짜 fact⊗negation 을 합성한다면 거짓 사실은 flip1 을 **우연 아래로** 끌어내려야 한다. H_9312 가 가르친 규칙: 메커니즘 없이 통과 가능한 통제군은 통제군이 아니라 천장 측정이다)."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-writelever-h9314-instrument",
                     "type": "note",
                     "name": "🧪 계기를 엔진에 배선 — `--xbind` 가 항상 클래스/flip 분해를 낸다 (+ 그것이 내 오독을 잡았다)",
-                    "detail": "`cli/evaluate.py::_xbind_breakdown` — 모든 `--xbind` 런이 헤드라인 D-acc 를 **클래스별로 쪼개고**(약한 클래스가 우연 이하면 ⚠️ COLLAPSE = 헤드라인이 어간이 아니라 **라벨 prior 를 타고 있다**), 매니페스트에 flip 이 있으면 **flip 층별로도** 쪼갠다(층 안에서만 클래스 분해 — flip 을 가로질러 뭉치면 gold 가 `pol XOR flip` 이라 두 질문이 섞여 flip 구조가 붕괴처럼 읽힌다). **옵트인 아님**: 이 검사가 가장 필요한 런이 바로 플래그를 안 붙일 런이다(`a_gpu_default_no_optin` 정신 · scratch 로 두면 다음 실험에서 또 옆에서 재구현 = `a_experiment_engine_native` 위반). ⚠️ **정정(honesty)**: 배선 직후 이 계기를 재발사 팔에 돌리자 **내 앞선 판독이 틀렸음이 드러났다** — 나는 'flip1 오답의 60.9% 가 심은 사실을 되뇜' 이라 적었으나 그건 **뭉뚱그린 수치**였다. 층별로 보면 되뇜 비율이 **0.978(심은 사실=부정) vs 0.214(심은 사실=긍정)** 로 **전혀 대칭이 아니고**, 실체는 **모델이 부정형 표면을 보면 그냥 '부정'이라 답한다**는 것이다(flip1 에서 '부정' 베팅 **88.5%** · 심은 사실 무관). ⟹ **되뇜(H-ECHO) 이 아니라 사전학습된 표면 규칙**(`~지 않다 => 부정`)이 발화하고 **심은 사실은 조회조차 되지 않는다** ⟹ 동결된 두 분기 중 **H-BLIND 쪽으로 기대가 이동**(LIE 팔이 이를 부호로 가른다 · 예측은 데이터 전 동결 유지). **정확히 이 계기가 막으라고 만든 결함에 내가 걸렸고, 계기가 잡았다.**"
+                    "detail": "`cli/evaluate.py::_xbind_breakdown` — 모든 `--xbind` 런이 헤드라인 D-acc 를 **클래스별로 쪼개고**(약한 클래스가 우연 이하면 ⚠️ COLLAPSE = 헤드라인이 어간이 아니라 **라벨 prior 를 타고 있다**), 매니페스트에 flip 이 있으면 **flip 층별로도** 쪼갠다(층 안에서만 클래스 분해 — flip 을 가로질러 뭉치면 gold 가 `pol XOR flip` 이라 두 질문이 섞여 flip 구조가 붕괴처럼 읽힌다). ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-instrument-d1",
+                        "type": "note",
+                        "name": "**옵트인 아님**: 이 검사가 가장 필요한 런이 바로 플래그를 안 붙일 런이다(`a_gpu_def…",
+                        "detail": "**옵트인 아님**: 이 검사가 가장 필요한 런이 바로 플래그를 안 붙일 런이다(`a_gpu_default_no_optin` 정신 · scratch 로 두면 다음 실험에서 또 옆에서 재구현 = `a_experiment_engine_native` 위반). ⚠️ **정정(honesty)**: 배선 직후 이 계기를 재발사 팔에 돌리자 **내 앞선 판독이 틀렸음이 드러났다** — 나는 'flip1 오답의 60.9% 가 심은 사실을 되뇜' 이라 적었으나 그건 **뭉뚱그린 수치**였다. "
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-instrument-d2",
+                        "type": "note",
+                        "name": "층별로 보면 되뇜 비율이 **0.978(심은 사실=부정) vs 0.214(심은 사실=긍정)** 로…",
+                        "detail": "층별로 보면 되뇜 비율이 **0.978(심은 사실=부정) vs 0.214(심은 사실=긍정)** 로 **전혀 대칭이 아니고**, 실체는 **모델이 부정형 표면을 보면 그냥 '부정'이라 답한다**는 것이다(flip1 에서 '부정' 베팅 **88.5%** · 심은 사실 무관). ⟹ **되뇜(H-ECHO) 이 아니라 사전학습된 표면 규칙**(`~지 않다 => 부정`)이 발화하고 **심은 사실은 조회조차 되지 않는다** ⟹ 동결된 두 분기 중 **H-BLIND 쪽으로 기대가 이동**(LIE 팔이 이를 부호로 가른다"
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-instrument-d3",
+                        "type": "note",
+                        "name": "예측은 데이터 전 동결 유지). **정확히 이 계기가 막으라고 만든 결함에 내가 걸렸고, 계기가 잡…",
+                        "detail": "예측은 데이터 전 동결 유지). **정확히 이 계기가 막으라고 만든 결함에 내가 걸렸고, 계기가 잡았다.**"
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-writelever-h9314-ceiling",
                     "type": "note",
                     "name": "⛔ 천장 팔 — **철회됨**(H_9327): 연산자를 부숴놓고 잰 flip1 이라 무효",
-                    "detail": "⛔ **이 노드의 flip1/망각 주장은 H_9327 이 철회했다** — `ground` CPT 가 **부정 연산자 자체를 파괴**하고 있었다(양성대조 SEEN flip1: 사전학습 base **0.8833** → CPT **0.4333** → 예산 6000 에서 **0.3333** 단조 파괴). `ground` 엔 부정형이 0회라(합성 테스트의 전제) 6000 step 동안 연산자를 붙잡아주는 게 없었다. 그리고 **FORGET 게이트가 SEEN flip0 만 재서 1.000 을 찍고 '망각 0'을 인증**했다 — **죽는 지층이 게이트 밖**이었다(코퍼스가 강화하는 지층만 재는 망각 게이트 = **위조 게이트**). ⟹ 연산자를 부숴놓고 '합성해봐' 라고 물은 것이므로 여기서 잰 flip1 은 전부 **⛔ INVALID**. 고친 코퍼스(`ground_keep`)로 재발사한 진짜 판정 = **H_9327 🧱 BINDING**(통제군 4/4). **철회 전 주장**: 6000@5e-4(WRITE 1.000)에서도 flip1=0.3908 로 6000@2e-4 와 소수점까지 동일(Δ=0.0000) ⟹ ''덜 심겨서'가 구조적으로 죽었다 · 저장은 되나 소비되지 않는다'. **왜 무효인가**: 두 팔 **모두** 연산자가 파괴된 모델이라 flip1 이 같은 건 당연하다 — 이 불변성은 '사실을 조회하지 않는다'의 증거가 아니라 **내 계기가 연산자를 죽였다**는 증거였다. **살아남는 것**: WRITE 곡선(예산 결론 · 2 seed 확정)과 극성 분해 계기는 유효하다. **교훈**: 합성을 테스트하려고 코퍼스에서 연산자를 빼면, 그 코퍼스로 튜닝하는 동안 **모델 안의 연산자도 같이 빠진다** — 양성대조(연산자 liveness)가 없으면 그 파괴가 게이트에 안 잡힌다."
+                    "detail": "⛔ **이 노드의 flip1/망각 주장은 H_9327 이 철회했다** — `ground` CPT 가 **부정 연산자 자체를 파괴**하고 있었다(양성대조 SEEN flip1: 사전학습 base **0.8833** → CPT **0.4333** → 예산 6000 에서 **0.3333** 단조 파괴). `ground` 엔 부정형이 0회라(합성 테스트의 전제) 6000 step 동안 연산자를 붙잡아주는 게 없었다. ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-ceiling-d1",
+                        "type": "note",
+                        "name": "그리고 **FORGET 게이트가 SEEN flip0 만 재서 1.000 을 찍고 '망각 0'을 인증…",
+                        "detail": "그리고 **FORGET 게이트가 SEEN flip0 만 재서 1.000 을 찍고 '망각 0'을 인증**했다 — **죽는 지층이 게이트 밖**이었다(코퍼스가 강화하는 지층만 재는 망각 게이트 = **위조 게이트**). ⟹ 연산자를 부숴놓고 '합성해봐' 라고 물은 것이므로 여기서 잰 flip1 은 전부 **⛔ INVALID**. 고친 코퍼스(`ground_keep`)로 재발사한 진짜 판정 = **H_9327 🧱 BINDING**(통제군 4/4). "
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-ceiling-d2",
+                        "type": "note",
+                        "name": "**철회 전 주장**: 6000@5e-4(WRITE 1.000)에서도 flip1=0.3908 로 6…",
+                        "detail": "**철회 전 주장**: 6000@5e-4(WRITE 1.000)에서도 flip1=0.3908 로 6000@2e-4 와 소수점까지 동일(Δ=0.0000) ⟹ ''덜 심겨서'가 구조적으로 죽었다 · 저장은 되나 소비되지 않는다'. **왜 무효인가**: 두 팔 **모두** 연산자가 파괴된 모델이라 flip1 이 같은 건 당연하다 — 이 불변성은 '사실을 조회하지 않는다'의 증거가 아니라 **내 계기가 연산자를 죽였다**는 증거였다. **살아남는 것**: WRITE 곡선(예산 결론"
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-ceiling-d3",
+                        "type": "note",
+                        "name": "2 seed 확정)과 극성 분해 계기는 유효하다. **교훈**: 합성을 테스트하려고 코퍼스에서 연산…",
+                        "detail": "2 seed 확정)과 극성 분해 계기는 유효하다. **교훈**: 합성을 테스트하려고 코퍼스에서 연산자를 빼면, 그 코퍼스로 튜닝하는 동안 **모델 안의 연산자도 같이 빠진다** — 양성대조(연산자 liveness)가 없으면 그 파괴가 게이트에 안 잡힌다."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-writelever-h9314-wired",
                     "type": "note",
                     "name": "🔌 예산 결론이 **배선됐다** — 코퍼스가 자기 예산 하한을 들고 다니고, 트레이너가 미달을 거부한다",
-                    "detail": "측정은 처음부터 engine-native 였지만(8셀 전부 `anima-py train` + `anima-py evaluate`), **결론 자체는 엔진 어디에도 없었다** — 다음 사람이 600 step 으로 쏘고 '기질이 못 한다'고 결론낼 수 있었고, **그게 정확히 H_9322 가 죽은 방식**이다(`a_verified_must_wire`). 배선: ① `cli/corpus.py::BUDGET_FLOORS` + `_write_budget_floor()` 가 코퍼스 옆에 **`<out>.meta.json`** 을 쓴다(코퍼스 **안**이 아니라 **옆** — byte-LM 이라 헤더 주석을 넣으면 그게 학습된다). ② `cli/train.py::_budget_preflight()` 가 그걸 읽고 **하한 미달이면 시작을 거부**한다(`_gpu_preflight` 와 같은 자리·같은 원칙: 늦게 죽지 말고 0초에 거부). **하한은 무조건이 아니다**(convergence corpus-py-1 (D)): `ground`/`ground_lie` 는 부정형이 0회라 **예산이 클수록 연산자를 더 부순다**(SEEN flip1 0.8833 → 0.4333 → 0.3333) ⟹ 이 포맷들엔 **하한을 주지 않고 파괴 경고 + `ground_keep` 포인터**를 준다(하한을 주면 '모델을 더 세게 부수라'고 시키는 꼴). meta 는 **FORGET 게이트가 덮어야 할 지층**도 함께 싣는다(위조 게이트 재발 방지 · corpus-py-1 (A)). 스모크 4/4: 600@5e-5 **거부** · 6000@2e-4 통과 · `ground` 경고 · meta 없는 코퍼스는 **무간섭**."
+                    "detail": "측정은 처음부터 engine-native 였지만(8셀 전부 `anima-py train` + `anima-py evaluate`), **결론 자체는 엔진 어디에도 없었다** — 다음 사람이 600 step 으로 쏘고 '기질이 못 한다'고 결론낼 수 있었고, **그게 정확히 H_9322 가 죽은 방식**이다(`a_verified_must_wire`). ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-wired-d1",
+                        "type": "note",
+                        "name": "배선: ① `cli/corpus.py::BUDGET_FLOORS` + `_write_budget_f…",
+                        "detail": "배선: ① `cli/corpus.py::BUDGET_FLOORS` + `_write_budget_floor()` 가 코퍼스 옆에 **`<out>.meta.json`** 을 쓴다(코퍼스 **안**이 아니라 **옆** — byte-LM 이라 헤더 주석을 넣으면 그게 학습된다). ② `cli/train.py::_budget_preflight()` 가 그걸 읽고 **하한 미달이면 시작을 거부**한다(`_gpu_preflight` 와 같은 자리·같은 원칙: 늦게 죽지 말고 0초에 거부). "
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-wired-d2",
+                        "type": "note",
+                        "name": "**하한은 무조건이 아니다**(convergence corpus-py-1 (D)): `ground`…",
+                        "detail": "**하한은 무조건이 아니다**(convergence corpus-py-1 (D)): `ground`/`ground_lie` 는 부정형이 0회라 **예산이 클수록 연산자를 더 부순다**(SEEN flip1 0.8833 → 0.4333 → 0.3333) ⟹ 이 포맷들엔 **하한을 주지 않고 파괴 경고 + `ground_keep` 포인터**를 준다(하한을 주면 '모델을 더 세게 부수라'고 시키는 꼴). meta 는 **FORGET 게이트가 덮어야 할 지층**도 함께 싣는다(위조 게이트 재발 방지"
+                      },
+                      {
+                        "id": "gate-g1-recomb-writelever-h9314-wired-d3",
+                        "type": "note",
+                        "name": "corpus-py-1 (A)). 스모크 4/4: 600@5e-5 **거부** 6000@2e-4 통과…",
+                        "detail": "corpus-py-1 (A)). 스모크 4/4: 600@5e-5 **거부** · 6000@2e-4 통과 · `ground` 경고 · meta 없는 코퍼스는 **무간섭**."
+                      }
+                    ]
                   }
                 ]
               },
@@ -14315,31 +14557,131 @@
                 "id": "gate-g1-recomb-demo-already-run",
                 "type": "note",
                 "name": "'시연을 추가하자' = 이미 실행된 실험 — 사전학습이 부정 연산을 480회 시연했다 (C34 실측)",
-                "detail": "C34 사전학습 코퍼스 직접 카운트: **arrow 라인 960개 중 flip1(부정형) = 480개 (정확히 50%)** · 그 960개 **전부 SEEN 어간** · held-out 어간은 **0개**. 실제 라인 = `이 영화 전혀 훌륭하지 않다 => 부정.` ⟹ Fable 이 설계한 A1(서로소 디코이 어간에 연산을 시연하고 held-out 에서 재기)은 **사전학습이 이미 480회 돌린 실험**이다. **발사 전 원장 조회가 죽였다**(`check-ledger-before-lever-fire` · convergence `corpus-py-1` ⑤: '사전학습 코퍼스에서 그 슬롯을 직접 세라 — 안 세면 있는 것을 다시 만든다'). ⟹ '시연 결핍' 가설은 발사 전에 이미 반증. 남은 물음 = **시연받은 SEEN 어간에서는 flip1 이 되는가**(공짜 양성대조) → 다음 노드가 그 답이다."
+                "detail": "C34 사전학습 코퍼스 직접 카운트: **arrow 라인 960개 중 flip1(부정형) = 480개 (정확히 50%)** · 그 960개 **전부 SEEN 어간** · held-out 어간은 **0개**. 실제 라인 = `이 영화 전혀 훌륭하지 않다 => 부정.` ⟹ Fable 이 설계한 A1(서로소 디코이 어간에 연산을 시연하고 held-out 에서 재기)은 **사전학습이 이미 480회 돌린 실험**이다. **발사 전 원장 조회가 죽였다**(`check-ledger-before-lever-fire`",
+                "children": [
+                  {
+                    "id": "gate-g1-recomb-demo-already-run-d1",
+                    "type": "note",
+                    "name": "convergence `corpus-py-1` ⑤: '사전학습 코퍼스에서 그 슬롯을 직접 세라 —…",
+                    "detail": "convergence `corpus-py-1` ⑤: '사전학습 코퍼스에서 그 슬롯을 직접 세라 — 안 세면 있는 것을 다시 만든다'). ⟹ '시연 결핍' 가설은 발사 전에 이미 반증. 남은 물음 = **시연받은 SEEN 어간에서는 flip1 이 되는가**(공짜 양성대조) → 다음 노드가 그 답이다."
+                  }
+                ]
               },
               {
                 "id": "gate-g1-recomb-operator-destroyed",
                 "type": "gate",
                 "name": "🧱 BINDING — 연산자도 사실도 있는데 결합하지 않는다 (H_9327 · 벌어낸 음성 · 통제군 3/3)",
-                "detail": "**공짜 양성대조가 전부를 뒤집었다.** SEEN 어간(부정 480회 시연)에서 flip0/flip1 을 base 와 CPT 후로 비교: **사전학습 base 0.9500 / 0.8833** ⟹ **연산자는 원래 있었고 작동한다** · **ground CPT 6000@2e-4 → 1.0000 / 0.4333** · **6000@5e-4 → 1.0000 / 0.3333**(예산 늘수록 더 파괴 · 단조). ⟹ **우리가 연산자를 죽였다**: `ground` 코퍼스는 평서형 라인만 담고 부정형은 0회(그게 합성 테스트의 전제였다) — 평서형만으로 6000 step 을 돌리면 부정 연산자를 붙잡아주는 게 아무것도 없어 무너진다. **그리고 FORGET 게이트가 이걸 못 봤다**: SEEN **flip0** 을 쟀는데 그건 CPT 코퍼스가 매 step 강화하는 바로 그 지층이라 1.0000 을 찍고 '망각 0'을 인증했다 — 죽는 지층은 게이트 밖이었다(**코퍼스가 강화하는 지층만 재는 망각 게이트 = 구조적으로 항상 통과하는 위조 게이트** · convergence `corpus-py-1` ⑦). **철회**: H_9324 '망각 0' = **거짓** · H_9322 flip1 판독 = **⛔ INVALID**(연산자를 부숴놓고 '합성해봐'라고 물었다) · '저장은 되나 소비 안 됨' · '천장 팔이 변명을 죽였다' 모두 철회. **기질은 또 무죄** — 4층 conv byte-LM 은 부정 합성을 **할 줄 안다**(0.883); '어텐션이 없어서 못 한다'는 **두 번째로 틀린** 진술이었고 그것이 `a_no_llm_frame_trap` 이 금지하는 사고다. **처방** = `anima-py corpus ground_keep`(엔진 네이티브): ground + **SEEN 어간 부정형 라인 replay** · held-out 부정형은 **0회 유지** ⟹ 판정 바이트 불변 = **보존이지 누수 아님**(스모크: 부정형 2400줄 전부 SEEN · 누수 0). **재발사 판독 순서(고정)**: ① 양성대조 SEEN flip1 → base(~0.88) 복귀 필수, 아니면 **INVALID**(FAIL 아님) ② WRITE held-out flip0 착지 ③ **DV** held-out flip1 = **연산자가 살아있음이 증명된 모델 위에서 처음 재는 합성**.",
+                "detail": "**공짜 양성대조가 전부를 뒤집었다.** SEEN 어간(부정 480회 시연)에서 flip0/flip1 을 base 와 CPT 후로 비교: **사전학습 base 0.9500 / 0.8833** ⟹ **연산자는 원래 있었고 작동한다** · **ground CPT 6000@2e-4 → 1.0000 / 0.4333** · **6000@5e-4 → 1.0000 / 0.3333**(예산 늘수록 더 파괴",
                 "children": [
+                  {
+                    "id": "gate-g1-recomb-operator-destroyed-d1",
+                    "type": "note",
+                    "name": "단조). ⟹ **우리가 연산자를 죽였다**: `ground` 코퍼스는 평서형 라인만 담고 부정형은…",
+                    "detail": "단조). ⟹ **우리가 연산자를 죽였다**: `ground` 코퍼스는 평서형 라인만 담고 부정형은 0회(그게 합성 테스트의 전제였다) — 평서형만으로 6000 step 을 돌리면 부정 연산자를 붙잡아주는 게 아무것도 없어 무너진다. "
+                  },
+                  {
+                    "id": "gate-g1-recomb-operator-destroyed-d2",
+                    "type": "note",
+                    "name": "**그리고 FORGET 게이트가 이걸 못 봤다**: SEEN **flip0** 을 쟀는데 그건 CP…",
+                    "detail": "**그리고 FORGET 게이트가 이걸 못 봤다**: SEEN **flip0** 을 쟀는데 그건 CPT 코퍼스가 매 step 강화하는 바로 그 지층이라 1.0000 을 찍고 '망각 0'을 인증했다 — 죽는 지층은 게이트 밖이었다(**코퍼스가 강화하는 지층만 재는 망각 게이트 = 구조적으로 항상 통과하는 위조 게이트** · convergence `corpus-py-1` ⑦). **철회**: H_9324 '망각 0' = **거짓** · H_9322 flip1 판독 = **⛔ INVALID**(연산자를 부숴놓고 '합성해봐'라고 물었다)"
+                  },
+                  {
+                    "id": "gate-g1-recomb-operator-destroyed-d3",
+                    "type": "note",
+                    "name": "'저장은 되나 소비 안 됨' '천장 팔이 변명을 죽였다' 모두 철회. **기질은 또 무죄** — 4…",
+                    "detail": "'저장은 되나 소비 안 됨' · '천장 팔이 변명을 죽였다' 모두 철회. **기질은 또 무죄** — 4층 conv byte-LM 은 부정 합성을 **할 줄 안다**(0.883); '어텐션이 없어서 못 한다'는 **두 번째로 틀린** 진술이었고 그것이 `a_no_llm_frame_trap` 이 금지하는 사고다. **처방** = `anima-py corpus ground_keep`(엔진 네이티브): ground + **SEEN 어간 부정형 라인 replay**"
+                  },
+                  {
+                    "id": "gate-g1-recomb-operator-destroyed-d4",
+                    "type": "note",
+                    "name": "held-out 부정형은 **0회 유지** ⟹ 판정 바이트 불변 = **보존이지 누수 아님**(스모…",
+                    "detail": "held-out 부정형은 **0회 유지** ⟹ 판정 바이트 불변 = **보존이지 누수 아님**(스모크: 부정형 2400줄 전부 SEEN · 누수 0). **재발사 판독 순서(고정)**: ① 양성대조 SEEN flip1 → base(~0.88) 복귀 필수, 아니면 **INVALID**(FAIL 아님) ② WRITE held-out flip0 착지 ③ **DV** held-out flip1 = **연산자가 살아있음이 증명된 모델 위에서 처음 재는 합성**."
+                  },
                   {
                     "id": "gate-g1-recomb-binding-verdict",
                     "type": "gate",
                     "name": "🧱 BINDING-FAIL — 이 lane 최초의 정직한 음성 (ground_keep · 판독 규칙 데이터 전 동결)",
-                    "detail": "`ground_keep` 로 연산자를 살려둔 채 다시 썼다. **3게이트 실측**: ① 양성대조 SEEN flip1 = **0.9833**(bar 0.75 · 사전학습 base 0.8833 **보다 높다**) ✅ 연산자 부활 ② WRITE held-out flip0 = **0.9770**(bar 0.90) ✅ 사실이 가중치에 ③ **DV** held-out flip1 = **0.4598** [긍정원자 .622 · 부정원자 .286] = **우연**. **표면 편향이 뒤집혔을 뿐**: `ground` 는 flip1 에서 '부정' **88.5%** 를 찍었고 `ground_keep` 은 '긍정' **66.7%** 를 찍는다 — 긍정 층이 0.022→0.622 로 살아난 만큼 부정 층이 0.786→0.286 으로 죽어 **합이 그대로**다 ⟹ 모델은 심은 사실을 **읽는 게 아니라** 어느 표면 규칙이 발화할지만 바꿨다(replay 는 규칙을 갈아끼웠지 조회를 만들지 않았다). **도망갈 구멍 전멸**: '연산자가 없다'(있다·0.9833) · '기질이 못 한다'(같은 기질이 SEEN 어간에선 한다) · '사실이 안 심겼다'(0.9770) · '우리가 연산자를 부쉈다'(살렸다·base 초과) · '예산 부족'(10배에도 Δ=0.0000 · H_9324) — **전부 죽었다**. ⟹ **남는 것 하나 = 사전학습으로 배운 극성에는 연산자가 붙고, CPT 로 쓴 극성에는 붙지 않는다.** 두 종류의 사실이 **같은 연산자에 접근하지 못한다** = 새 벽, 이름은 **BINDING**. **기질은 세 번째로 무죄**(부정 합성을 한다) — H_9267 XBIND 와 정합. **정직**: 단일 seed(#3462) ⟹ s11 재현 전엔 후보(단 세 게이트 방향이 크고 일관). **NEXT(미탐)** = **왜 두 극성이 다른 자리에 사는가** — 표현 위치의 문제라면 능력의 문제가 아니다.",
+                    "detail": "`ground_keep` 로 연산자를 살려둔 채 다시 썼다. **3게이트 실측**: ① 양성대조 SEEN flip1 = **0.9833**(bar 0.75 · 사전학습 base 0.8833 **보다 높다**) ✅ 연산자 부활 ② WRITE held-out flip0 = **0.9770**(bar 0.90) ✅ 사실이 가중치에 ③ **DV** held-out flip1 = **0.4598** [긍정원자 .622",
                     "children": [
+                      {
+                        "id": "gate-g1-recomb-binding-verdict-d1",
+                        "type": "note",
+                        "name": "부정원자 .286] = **우연**. **표면 편향이 뒤집혔을 뿐**: `ground` 는 flip…",
+                        "detail": "부정원자 .286] = **우연**. **표면 편향이 뒤집혔을 뿐**: `ground` 는 flip1 에서 '부정' **88.5%** 를 찍었고 `ground_keep` 은 '긍정' **66.7%** 를 찍는다 — 긍정 층이 0.022→0.622 로 살아난 만큼 부정 층이 0.786→0.286 으로 죽어 **합이 그대로**다 ⟹ 모델은 심은 사실을 **읽는 게 아니라** 어느 표면 규칙이 발화할지만 바꿨다(replay 는 규칙을 갈아끼웠지 조회를 만들지 않았다).  · **도망갈 구멍 전멸**: '연산자가 없다'(있다·0.9833)"
+                      },
+                      {
+                        "id": "gate-g1-recomb-binding-verdict-d2",
+                        "type": "note",
+                        "name": "'기질이 못 한다'(같은 기질이 SEEN 어간에선 한다) '사실이 안 심겼다'(0.9770) '우리…",
+                        "detail": "'기질이 못 한다'(같은 기질이 SEEN 어간에선 한다) · '사실이 안 심겼다'(0.9770) · '우리가 연산자를 부쉈다'(살렸다·base 초과) · '예산 부족'(10배에도 Δ=0.0000"
+                      },
+                      {
+                        "id": "gate-g1-recomb-binding-verdict-d3",
+                        "type": "note",
+                        "name": "H_9324) — **전부 죽었다**. ⟹ **남는 것 하나 = 사전학습으로 배운 극성에는 연산자가…",
+                        "detail": "H_9324) — **전부 죽었다**. ⟹ **남는 것 하나 = 사전학습으로 배운 극성에는 연산자가 붙고, CPT 로 쓴 극성에는 붙지 않는다.** 두 종류의 사실이 **같은 연산자에 접근하지 못한다** = 새 벽, 이름은 **BINDING**. **기질은 세 번째로 무죄**(부정 합성을 한다) — H_9267 XBIND 와 정합. **정직**: 단일 seed(#3462) ⟹ s11 재현 전엔 후보(단 세 게이트 방향이 크고 일관). "
+                      },
+                      {
+                        "id": "gate-g1-recomb-binding-verdict-d4",
+                        "type": "note",
+                        "name": "**NEXT(미탐)** = **왜 두 극성이 다른 자리에 사는가** — 표현 위치의 문제라면 능력의…",
+                        "detail": "**NEXT(미탐)** = **왜 두 극성이 다른 자리에 사는가** — 표현 위치의 문제라면 능력의 문제가 아니다."
+                      },
                       {
                         "id": "gate-g1-recomb-binding-lie-control",
                         "type": "note",
                         "name": "✅ LIE 통제군 — **BINDING 확정** (통제군 4/4 · 편향-무관 검사가 결정)",
-                        "detail": "`ground_keep_lie`(사실만 29/29 반전 · 연산자 replay 는 참 유지)로 BINDING 을 **벌어냈다**. **유효성**: keep_lie 의 SEEN flip1 = **1.0000** ⟹ 연산자 살아있음(통제군 유효). **① 헤드라인**(동결 규칙): 참 사실 flip1 0.4598 vs 거짓 사실 0.5402 ⟹ **Δ = −0.0805** < bar 0.10 ⟹ BINDING. **⚠️ 그런데 헤드라인을 믿지 않았다** — 층은 크게 움직였다(긍정원자 .622→**.911** · 부정원자 .286→**.143**)가 헤드라인에서 **상쇄**됐다. 이게 오늘 세 번 반복된 함정(pooled artifact)이라 두 검사를 더 했다. **② 원자별 일치율** = 60/87 = **69%** — 사실을 뒤집어도 같은 답 ⟹ BINDING 방향이나, **전역 편향 이동에 오염**(긍정 베팅 66.7%→88.5%)되어 결정적이지 않다. **③ 편향-무관 검사(결정적)**: 각 팔 **안에서** 답이 심은 극성에 의존하는가 — 전역 편향이 자동 상쇄된다. 참 팔 P(긍정|심은=긍정)=0.714 vs P(긍정|심은=부정)=0.622 → 차이 **+0.092** · 거짓 팔 0.911 vs 0.857 → **+0.054** ⟹ **평균 의존도 +0.073 ≈ 0**. 합성이면 크게 **음수**(답=심은 것의 반대), 되뇜이면 크게 **양수**여야 한다. **0 이다** ⟹ **심은 사실이 flip1 에서 조회되지 않는다** — 직접 증명. 69% 는 편향 이동의 부산물이었고 이 검사가 걷어냈다. **⟹ 🧱 BINDING 확정**: 연산자는 살아있고(SEEN 1.000) 사실은 심겼는데(WRITE 0.977~0.989 · 양 seed) **부정형 표면이 그 사실에 닿지 않는다**. 통제군 **4/4**(연산자 생존 · WRITE 착지 · s11 재현 · LIE 무의존) — 도망갈 구멍 0. **NEXT(미탐)** = 왜 사전학습 극성과 CPT 극성이 다른 자리에 사는가.",
+                        "detail": "`ground_keep_lie`(사실만 29/29 반전 · 연산자 replay 는 참 유지)로 BINDING 을 **벌어냈다**. **유효성**: keep_lie 의 SEEN flip1 = **1.0000** ⟹ 연산자 살아있음(통제군 유효). **① 헤드라인**(동결 규칙): 참 사실 flip1 0.4598 vs 거짓 사실 0.5402 ⟹ **Δ = −0.0805** < bar 0.10 ⟹ BINDING. **⚠️ 그런데 헤드라인을 믿지 않았다** — 층은 크게 움직였다(긍정원자 .622→**.911**",
                         "children": [
+                          {
+                            "id": "gate-g1-recomb-binding-lie-control-d1",
+                            "type": "note",
+                            "name": "부정원자 .286→**.143**)가 헤드라인에서 **상쇄**됐다. 이게 오늘 세 번 반복된 함정(…",
+                            "detail": "부정원자 .286→**.143**)가 헤드라인에서 **상쇄**됐다. 이게 오늘 세 번 반복된 함정(pooled artifact)이라 두 검사를 더 했다. **② 원자별 일치율** = 60/87 = **69%** — 사실을 뒤집어도 같은 답 ⟹ BINDING 방향이나, **전역 편향 이동에 오염**(긍정 베팅 66.7%→88.5%)되어 결정적이지 않다. **③ 편향-무관 검사(결정적)**: 각 팔 **안에서** 답이 심은 극성에 의존하는가 — 전역 편향이 자동 상쇄된다. "
+                          },
+                          {
+                            "id": "gate-g1-recomb-binding-lie-control-d2",
+                            "type": "note",
+                            "name": "참 팔 P(긍정|심은=긍정)=0.714 vs P(긍정|심은=부정)=0.622 → 차이 **+0.09…",
+                            "detail": "참 팔 P(긍정|심은=긍정)=0.714 vs P(긍정|심은=부정)=0.622 → 차이 **+0.092**"
+                          },
+                          {
+                            "id": "gate-g1-recomb-binding-lie-control-d3",
+                            "type": "note",
+                            "name": "거짓 팔 0.911 vs 0.857 → **+0.054** ⟹ **평균 의존도 +0.073 ≈ 0*…",
+                            "detail": "거짓 팔 0.911 vs 0.857 → **+0.054** ⟹ **평균 의존도 +0.073 ≈ 0**. 합성이면 크게 **음수**(답=심은 것의 반대), 되뇜이면 크게 **양수**여야 한다. **0 이다** ⟹ **심은 사실이 flip1 에서 조회되지 않는다** — 직접 증명. 69% 는 편향 이동의 부산물이었고 이 검사가 걷어냈다. **⟹ 🧱 BINDING 확정**: 연산자는 살아있고(SEEN 1.000) 사실은 심겼는데(WRITE 0.977~0.989"
+                          },
+                          {
+                            "id": "gate-g1-recomb-binding-lie-control-d4",
+                            "type": "note",
+                            "name": "양 seed) **부정형 표면이 그 사실에 닿지 않는다**. 통제군 **4/4**(연산자 생존 WR…",
+                            "detail": "양 seed) **부정형 표면이 그 사실에 닿지 않는다**. 통제군 **4/4**(연산자 생존 · WRITE 착지 · s11 재현 · LIE 무의존) — 도망갈 구멍 0. **NEXT(미탐)** = 왜 사전학습 극성과 CPT 극성이 다른 자리에 사는가."
+                          },
                           {
                             "id": "gpu-preflight-train",
                             "type": "note",
                             "name": "🛑 GPU 선점 프리플라이트 — `anima-py train` 이 바쁜 GPU 에서 시작을 거부한다 (근본수정)",
-                            "detail": "LIE 통제군 1차가 **CUDA OOM 으로 죽은 근본 원인을 코드로 막았다**(격리로 끝내지 않음). `cli/train.py::_gpu_preflight` — 모델 파라미터를 하나라도 할당하기 **전에** `torch.cuda.mem_get_info` 로 free VRAM 을 보고, `max(2.0, 0.35×total)` GiB 미만이면 **sys.exit 로 크게 실패**한다(누가 잡고 있는지 보는 명령 + '다른 호스트에 쏘라' 안내 포함). **왜 코드여야 하나**: GPU 는 CPU 코어처럼 나눠 쓰이지 않는다 — VRAM 은 선점형이 아니라 **전부-아니면-전무**이고, 두 번째 학습은 반쯤 느려지는 게 아니라 **죽는다**. 그것도 **늦게** — 코퍼스를 다 만들고 모델을 device 에 올린 뒤에. 실측: 잃은 것은 컴퓨트가 아니라 **판정의 마지막 조각**(BINDING 을 가를 유일한 통제군)이었고, 병렬로 벌려던 시간보다 재발사가 더 걸렸다. ⟹ **2초 만에 부딪히는 벽이 20분 뒤 OOM 보다 낫다.** 검증 4/4(실제 summer GPU): 바쁜 GPU(free 0.7/11.5) **차단** ✅ · 빈 GPU(11.0/11.5) **통과**(위양성 0) ✅ · 경계(3.9 < floor 4.0) 차단 ✅ · CPU device **skip**(CPU 학습 무방해) ✅. floor 는 의도적으로 거칠다 — 정확한 추정은 모델을 지어야 알 수 있고, 그건 바로 우리가 피하려는 그것이다(**거칠게 일찍 맞는 게 정확하게 늦게 맞는 것보다 낫다**). convergence `summer-heavy-train-1` ②."
+                            "detail": "LIE 통제군 1차가 **CUDA OOM 으로 죽은 근본 원인을 코드로 막았다**(격리로 끝내지 않음). `cli/train.py::_gpu_preflight` — 모델 파라미터를 하나라도 할당하기 **전에** `torch.cuda.mem_get_info` 로 free VRAM 을 보고, `max(2.0, 0.35×total)` GiB 미만이면 **sys.exit 로 크게 실패**한다(누가 잡고 있는지 보는 명령 + '다른 호스트에 쏘라' 안내 포함). ",
+                            "children": [
+                              {
+                                "id": "gpu-preflight-train-d1",
+                                "type": "note",
+                                "name": "**왜 코드여야 하나**: GPU 는 CPU 코어처럼 나눠 쓰이지 않는다 — VRAM 은 선점형이…",
+                                "detail": "**왜 코드여야 하나**: GPU 는 CPU 코어처럼 나눠 쓰이지 않는다 — VRAM 은 선점형이 아니라 **전부-아니면-전무**이고, 두 번째 학습은 반쯤 느려지는 게 아니라 **죽는다**. 그것도 **늦게** — 코퍼스를 다 만들고 모델을 device 에 올린 뒤에. 실측: 잃은 것은 컴퓨트가 아니라 **판정의 마지막 조각**(BINDING 을 가를 유일한 통제군)이었고, 병렬로 벌려던 시간보다 재발사가 더 걸렸다. ⟹ "
+                              },
+                              {
+                                "id": "gpu-preflight-train-d2",
+                                "type": "note",
+                                "name": "**2초 만에 부딪히는 벽이 20분 뒤 OOM 보다 낫다.** 검증 4/4(실제 summer GPU…",
+                                "detail": "**2초 만에 부딪히는 벽이 20분 뒤 OOM 보다 낫다.** 검증 4/4(실제 summer GPU): 바쁜 GPU(free 0.7/11.5) **차단** ✅ · 빈 GPU(11.0/11.5) **통과**(위양성 0) ✅ · 경계(3.9 < floor 4.0) 차단 ✅"
+                              },
+                              {
+                                "id": "gpu-preflight-train-d3",
+                                "type": "note",
+                                "name": "CPU device **skip**(CPU 학습 무방해) ✅. floor 는 의도적으로 거칠다 —…",
+                                "detail": "CPU device **skip**(CPU 학습 무방해) ✅. floor 는 의도적으로 거칠다 — 정확한 추정은 모델을 지어야 알 수 있고, 그건 바로 우리가 피하려는 그것이다(**거칠게 일찍 맞는 게 정확하게 늦게 맞는 것보다 낫다**). convergence `summer-heavy-train-1` ②."
+                              }
+                            ]
                           }
                         ]
                       },
@@ -14347,31 +14689,137 @@
                         "id": "gate-g1-recomb-binding-s11",
                         "type": "note",
                         "name": "✅ s11 재현 — 세 게이트의 형상이 양 seed 에서 재현된다 (#3462 충족)",
-                        "detail": "| 게이트 | bar | seed 7 | seed 11 | |---|---|---|---| | ① 연산자 SEEN flip1 | ≥0.75 | 0.9833 | **1.0000** ✅ | | ② WRITE held-out flip0 | ≥0.90 | 0.9770 | **0.9885** ✅ | | ③ DV held-out flip1 | 양 층 > ½ | 0.4598 [긍 .622 · 부 .286] | **0.5632** [긍 **.378** · 부 .762] 🧱 | ⟹ **형상 재현**: 연산자 살아있고 · 사실 심겼고 · **합성은 안 된다**(양 seed 모두 약한 층이 우연 이하). 🔑 **그리고 seed 간 비교가 BINDING 을 한 번 더 지지한다**: 표면 편향의 **방향이 seed 마다 뒤집힌다**(s7 은 긍정 쪽 .622/.286 · s11 은 부정 쪽 .378/.762). 모델이 심은 사실을 읽고 있다면 방향은 **사실이 정하므로 seed 에 무관**해야 한다 — 방향이 seed 잡음을 따라간다는 것은 flip1 출력이 **사실이 아니라 초기화가 정한 표면 규칙**에 지배된다는 뜻이다. #3462 충족 ⟹ H_9327 후보 → **재현됨**(LIE 통제군이 남은 마지막 조각)."
+                        "detail": "| 게이트 | bar | seed 7 | seed 11 | |---|---|---|---| | ① 연산자 SEEN flip1 | ≥0.75 | 0.9833 | **1.0000** ✅ | | ② WRITE held-out flip0 | ≥0.90 | 0.9770 | **0.9885** ✅ | | ③ DV held-out flip1 | 양 층 > ½ | 0.4598 [긍 .622 · 부 .286] | **0.5632** [긍 **.378** · 부 .762] 🧱 | ⟹ **형상 재현**: 연산자 살아있고 · 사실 심겼고",
+                        "children": [
+                          {
+                            "id": "gate-g1-recomb-binding-s11-d1",
+                            "type": "note",
+                            "name": "**합성은 안 된다**(양 seed 모두 약한 층이 우연 이하). 🔑 **그리고 seed 간 비교가…",
+                            "detail": "**합성은 안 된다**(양 seed 모두 약한 층이 우연 이하). 🔑 **그리고 seed 간 비교가 BINDING 을 한 번 더 지지한다**: 표면 편향의 **방향이 seed 마다 뒤집힌다**(s7 은 긍정 쪽 .622/.286"
+                          },
+                          {
+                            "id": "gate-g1-recomb-binding-s11-d2",
+                            "type": "note",
+                            "name": "s11 은 부정 쪽 .378/.762). 모델이 심은 사실을 읽고 있다면 방향은 **사실이 정하므로…",
+                            "detail": "s11 은 부정 쪽 .378/.762). 모델이 심은 사실을 읽고 있다면 방향은 **사실이 정하므로 seed 에 무관**해야 한다 — 방향이 seed 잡음을 따라간다는 것은 flip1 출력이 **사실이 아니라 초기화가 정한 표면 규칙**에 지배된다는 뜻이다. #3462 충족 ⟹ H_9327 후보 → **재현됨**(LIE 통제군이 남은 마지막 조각)."
+                          }
+                        ]
                       },
                       {
                         "id": "gate-g1-recomb-c1-operator-is-rule",
                         "type": "gate",
                         "name": "🟢 C1 — 연산자는 **규칙**이다 (H-γ 암기가설 반증) · 그러나 **표면-선택적**이다 (H_9328)",
-                        "detail": "Fable 의 H-γ: H_9327 이 '연산자 살아있음' 의 근거로 삼은 SEEN flip1 0.98~1.00 은 **조합이 아니라 사전학습 480개 부정형 arrow 라인의 회상**일 수 있다(방증: ground CPT 가 그걸 부수자 **라인 replay** 가 복구했다 — 조합 회로라면 라인 재암기가 복구 수단일 이유가 약하다). 사실이면 **'BINDING' 은 틀린 이름**이다(결합할 연산자가 없다). **C1**($0 · 재학습 0 · 사전학습 ckpt): 학습된 적 없는 부정 표면에서 같은 물음. **바이트 감사가 Fable 자신의 첫 후보를 죽였다** — `안 {s}다` 는 arrow 에 **58회** 등장(오염). 깨끗한 두 표면(arrow 0회 · 자연문 0회): `별로 {s}지 않다` · `{s}지는 않다`. **DV = Δdep**(팔-내 극성 의존도 · 전역 편향 상쇄) · **통계량 = 순열 p**(5만회). **실측**: 학습 표면 — `{s}지 않다`(324회) Δ −0.900/−1.000 p=.000 · `전혀 {s}지 않다`(168회) −1.000/−1.000 p=.000 · `안 {s}고`(**77회** = 최소 노출) −0.400/−0.400 p=.072/.042. **새 표면** — **`별로 {s}지 않다`(0회) Δ −1.000/−1.000 p=.000/.000** · `{s}지는 않다`(0회) −0.100/−0.100 **p=.500/.500**. ⟹ **🟢 H-γ 반증**: **조회표는 표에 없는 문자열에서 −1.000 을 낼 수 없다** — `별로` 형에서 규칙이 완벽히 적용된다(양 seed) ⟹ **'BINDING' 이라는 이름이 옳다**(연산자 실재 · CPT 로 쓴 사실이 거기 닿지 못한다). ⚠️ **그러나 새 사실**: **연산자는 표면-선택적이다** — `{s}지는 않다` 는 **귀무 한가운데**(p=.500)이고, 학습 표면 중에서도 **노출 최소(77회)가 가장 약하다**. **임의의 부정 형태에 작동하는 깨끗한 극성-반전 함수가 아니다** ⟹ 다음 실험(C3)은 표면을 **골라야 하고, 골랐다고 말해야 한다**.",
+                        "detail": "Fable 의 H-γ: H_9327 이 '연산자 살아있음' 의 근거로 삼은 SEEN flip1 0.98~1.00 은 **조합이 아니라 사전학습 480개 부정형 arrow 라인의 회상**일 수 있다(방증: ground CPT 가 그걸 부수자 **라인 replay** 가 복구했다 — 조합 회로라면 라인 재암기가 복구 수단일 이유가 약하다). 사실이면 **'BINDING' 은 틀린 이름**이다(결합할 연산자가 없다). **C1**($0 · 재학습 0",
                         "children": [
+                          {
+                            "id": "gate-g1-recomb-c1-operator-is-rule-d1",
+                            "type": "note",
+                            "name": "사전학습 ckpt): 학습된 적 없는 부정 표면에서 같은 물음. **바이트 감사가 Fable 자신의…",
+                            "detail": "사전학습 ckpt): 학습된 적 없는 부정 표면에서 같은 물음. **바이트 감사가 Fable 자신의 첫 후보를 죽였다** — `안 {s}다` 는 arrow 에 **58회** 등장(오염). 깨끗한 두 표면(arrow 0회 · 자연문 0회): `별로 {s}지 않다` · `{s}지는 않다`. **DV = Δdep**(팔-내 극성 의존도 · 전역 편향 상쇄) · **통계량 = 순열 p**(5만회). **실측**: 학습 표면 — `{s}지 않다`(324회) Δ −0.900/−1.000 p=.000"
+                          },
+                          {
+                            "id": "gate-g1-recomb-c1-operator-is-rule-d2",
+                            "type": "note",
+                            "name": "`전혀 {s}지 않다`(168회) −1.000/−1.000 p=.000 `안 {s}고`(**77회*…",
+                            "detail": "`전혀 {s}지 않다`(168회) −1.000/−1.000 p=.000 · `안 {s}고`(**77회** = 최소 노출) −0.400/−0.400 p=.072/.042. **새 표면** — **`별로 {s}지 않다`(0회) Δ −1.000/−1.000 p=.000/.000**"
+                          },
+                          {
+                            "id": "gate-g1-recomb-c1-operator-is-rule-d3",
+                            "type": "note",
+                            "name": "`{s}지는 않다`(0회) −0.100/−0.100 **p=.500/.500**. ⟹ **🟢 H-γ…",
+                            "detail": "`{s}지는 않다`(0회) −0.100/−0.100 **p=.500/.500**. ⟹ **🟢 H-γ 반증**: **조회표는 표에 없는 문자열에서 −1.000 을 낼 수 없다** — `별로` 형에서 규칙이 완벽히 적용된다(양 seed) ⟹ **'BINDING' 이라는 이름이 옳다**(연산자 실재"
+                          },
+                          {
+                            "id": "gate-g1-recomb-c1-operator-is-rule-d4",
+                            "type": "note",
+                            "name": "CPT 로 쓴 사실이 거기 닿지 못한다). ⚠️ **그러나 새 사실**: **연산자는 표면-선택적이…",
+                            "detail": "CPT 로 쓴 사실이 거기 닿지 못한다). ⚠️ **그러나 새 사실**: **연산자는 표면-선택적이다** — `{s}지는 않다` 는 **귀무 한가운데**(p=.500)이고, 학습 표면 중에서도 **노출 최소(77회)가 가장 약하다**. **임의의 부정 형태에 작동하는 깨끗한 극성-반전 함수가 아니다** ⟹ 다음 실험(C3)은 표면을 **골라야 하고, 골랐다고 말해야 한다**."
+                          },
                           {
                             "id": "gate-g1-recomb-c1b-string-rule",
                             "type": "gate",
                             "name": "🔑 C1b — 연산자는 **문자열 `지 않다` 에 걸린 규칙**이다 (부사 슬롯은 자유 · 어미는 한 글자도 못 바꾼다)",
-                            "detail": "표면 2개는 census 가 아니다 — 거기서 표면을 고르면 그건 기준의 옷을 입은 동전 던지기다. 그래서 넓혔다: **바이트 감사(arrow 0회 · 자연문 0회) 통과 새 표면 7종 + 학습 표면 3종 = 10 표면 × SEEN 어간 20 × 양 seed**(순열 p 2만회 · $0 · 재학습 0). **실측**: ✅ **작동 7/10** — `{s}지 않다`(학습 324회 · Δ−0.900/−1.000) · `전혀 {s}지 않다`(학습 168회 · −1.000/−1.000) · **`별로`(새) −1.000/−1.000** · **`그다지`(새) −0.900/−1.000** · **`결코`(새) −1.000/−0.900** · **`하나도`(새) −1.000/−1.000** · **`그리`(새) −0.900/−0.900** — 전부 p=.000. 💀 **안 돎 2** — **`{s}지는 않다`**(보조사 '는' 삽입 · p=.492/.503) · **`{s}지 않았다`**(시제 변경 · p=.108/.503). ⚠️ 경계 1 — `안 {s}고`(학습 77회 · p=.072/.040). **⟹ 패턴이 규칙의 정체를 드러낸다**: 작동하는 7종은 **전부 `<어간>지 않다` 로 끝나고**, 앞의 **부사 슬롯은 완전히 자유**다(미학습 부사 5종 전부 완벽). 그런데 **`지 않다` 자체는 한 글자도 못 바꾼다** — '는' 하나 끼우면 죽고, 시제만 바꿔도 죽는다. ⟹ **연산자 = '어간 뒤에 `지 않다` 가 오면 그 어간의 극성을 뒤집어라' 는 문자열-방아쇠 규칙**이지, 부정의 **의미**를 아는 연산자가 아니다. **H-γ(암기)는 여전히 반증**(미학습 부사 5종에서 완벽 = 조회표 아님) — 그러나 이것은 **표면-패턴 규칙**이다. **🔑 그리고 이것이 BINDING 을 기전으로 설명한다**: 규칙은 `pol(어간)` 을 **조회**해야 하는데, SEEN 어간의 pol 은 **사전학습 표현**에 있고 held-out 어간의 pol 은 **CPT 가 다른 곳**(`이 영화 ___고 => ` 지름길)에 썼다 ⟹ **규칙에 조회처가 있는데 CPT 가 다른 표에 썼다**. 이 가설이 C3 의 물음을 날카롭게 만든다. **C3 설계 반영**: 측정 표면은 **연산자가 도는 표면**에서만 고른다(적격 = 양 seed p<.05) — 이는 tune-to-green 이 아니라 **계기 유효성 조건**이다(연산자가 안 도는 표면에서 결합을 묻는 것은 꺼진 계기로 재는 것). 음성대조 = `{s}지는 않다`(연산자-부재 바닥 캘리브레이터).",
+                            "detail": "표면 2개는 census 가 아니다 — 거기서 표면을 고르면 그건 기준의 옷을 입은 동전 던지기다. 그래서 넓혔다: **바이트 감사(arrow 0회 · 자연문 0회) 통과 새 표면 7종 + 학습 표면 3종 = 10 표면 × SEEN 어간 20 × 양 seed**(순열 p 2만회 · $0 · 재학습 0). **실측**: ✅ **작동 7/10** — `{s}지 않다`(학습 324회 · Δ−0.900/−1.000) · `전혀 {s}지 않다`(학습 168회",
                             "children": [
+                              {
+                                "id": "gate-g1-recomb-c1b-string-rule-d1",
+                                "type": "note",
+                                "name": "−1.000/−1.000) **`별로`(새) −1.000/−1.000** **`그다지`(새) −0.…",
+                                "detail": "−1.000/−1.000) · **`별로`(새) −1.000/−1.000** · **`그다지`(새) −0.900/−1.000** · **`결코`(새) −1.000/−0.900** · **`하나도`(새) −1.000/−1.000** · **`그리`(새) −0.900/−0.900** — 전부 p=.000. 💀 **안 돎 2** — **`{s}지는 않다`**(보조사 '는' 삽입"
+                              },
+                              {
+                                "id": "gate-g1-recomb-c1b-string-rule-d2",
+                                "type": "note",
+                                "name": "p=.492/.503) **`{s}지 않았다`**(시제 변경 p=.108/.503). ⚠️ 경계 1…",
+                                "detail": "p=.492/.503) · **`{s}지 않았다`**(시제 변경 · p=.108/.503). ⚠️ 경계 1 — `안 {s}고`(학습 77회"
+                              },
+                              {
+                                "id": "gate-g1-recomb-c1b-string-rule-d3",
+                                "type": "note",
+                                "name": "p=.072/.040). **⟹ 패턴이 규칙의 정체를 드러낸다**: 작동하는 7종은 **전부 `<어…",
+                                "detail": "p=.072/.040). **⟹ 패턴이 규칙의 정체를 드러낸다**: 작동하는 7종은 **전부 `<어간>지 않다` 로 끝나고**, 앞의 **부사 슬롯은 완전히 자유**다(미학습 부사 5종 전부 완벽). 그런데 **`지 않다` 자체는 한 글자도 못 바꾼다** — '는' 하나 끼우면 죽고, 시제만 바꿔도 죽는다. ⟹ **연산자 = '어간 뒤에 `지 않다` 가 오면 그 어간의 극성을 뒤집어라' 는 문자열-방아쇠 규칙**이지, 부정의 **의미**를 아는 연산자가 아니다. "
+                              },
+                              {
+                                "id": "gate-g1-recomb-c1b-string-rule-d4",
+                                "type": "note",
+                                "name": "**H-γ(암기)는 여전히 반증**(미학습 부사 5종에서 완벽 = 조회표 아님) — 그러나 이것은…",
+                                "detail": "**H-γ(암기)는 여전히 반증**(미학습 부사 5종에서 완벽 = 조회표 아님) — 그러나 이것은 **표면-패턴 규칙**이다. **🔑 그리고 이것이 BINDING 을 기전으로 설명한다**: 규칙은 `pol(어간)` 을 **조회**해야 하는데, SEEN 어간의 pol 은 **사전학습 표현**에 있고 held-out 어간의 pol 은 **CPT 가 다른 곳**(`이 영화 ___고 => ` 지름길)에 썼다 ⟹ **규칙에 조회처가 있는데 CPT 가 다른 표에 썼다**. 이 가설이 C3 의 물음을 날카롭게 만든다. "
+                              },
+                              {
+                                "id": "gate-g1-recomb-c1b-string-rule-d5",
+                                "type": "note",
+                                "name": "**C3 설계 반영**: 측정 표면은 **연산자가 도는 표면**에서만 고른다(적격 = 양 seed…",
+                                "detail": "**C3 설계 반영**: 측정 표면은 **연산자가 도는 표면**에서만 고른다(적격 = 양 seed p<.05) — 이는 tune-to-green 이 아니라 **계기 유효성 조건**이다(연산자가 안 도는 표면에서 결합을 묻는 것은 꺼진 계기로 재는 것). 음성대조 = `{s}지는 않다`(연산자-부재 바닥 캘리브레이터)."
+                              },
                               {
                                 "id": "gate-g1-recomb-c3-seenswap",
                                 "type": "note",
                                 "name": "⏳ C3 배선 — `anima-py corpus ground_seenswap` (SEEN 어간의 극성을 CPT 로 **뒤집고** 규칙이 새 값을 읽는지 묻는다)",
-                                "detail": "BINDING 이 남긴 물음을 **답할 수 있는 곳에서** 묻는다. C1b 가 밝힌 규칙(`지 않다` 문자열 방아쇠 · 부사 슬롯 자유)은 `pol(어간)` 을 **조회**해야 한다 — 그리고 **SEEN 어간은 이미 그 조회처를 갖고 있다**(사전학습). 그러니 SEEN 어간의 극성을 CPT 로 **반전해 다시 쓰고** 규칙에 물으면 된다: **새 값을 읽으면**(Δdep 양) 연산자는 가변 저장소를 참조하는 것이고 held-out 실패는 **신규 엔트리 불가시성**(H-β) · **옛 값을 읽으면**(음) 선언적 재기술이 극성원을 못 움직인 것(H-δ ∨ H-ε · C3 는 이 둘을 못 가른다 — 원안의 'H-δ 단독' 은 과잉주장이라 철회) · **≈0** 이면 갈등이 참조를 붕괴(검정력 봉인 → DIRECTIONAL 상한). **팔**(SEEN 20 · 극성 층화 · split-seed 고정 · 측정 전 확정): **swap 12**(극성 반전 arrow · flip1 라인 **0회** — 안 그러면 답을 가르치는 것) · affirm 2(진단 전용) · **keep 3**(연산자 보존 replay) · **untouched 3**(코퍼스 0회 = 망각 게이트 지층). **🔑 설계가 서는 지점**: replay 담체는 측정 표면과 **서로소**여야 한다 — `ground_keep` 은 `{s}지 않다` 를 replay 하는데 그건 **정확히 주 측정 표면**이라, 그대로 썼다면 실험 전체가 무효였다. **C1b census 가 이 분리를 가능하게 했다**(작동 표면 7종 발견 ⟹ 측정 3종 `{s}지 않다`·`별로`·`{s}지는 않다`(음성대조) ⊥ replay 담체 3종 `전혀`·`그다지`·`결코` · 양쪽 다 연산자 생존이 **실측**된 표면). **누수 감사가 코드에 박혔다**: 채점 프롬프트가 코퍼스에 하나라도 있으면 `corpus` 가 **쓰기를 거부**하고 rc=2 로 죽는다(스모크 실측 누수 **0**). 다음 = G-base(CPT 전 base 측정 · 동결) → CPT 직렬 2 seed → 게이트 → 판정.",
+                                "detail": "BINDING 이 남긴 물음을 **답할 수 있는 곳에서** 묻는다. C1b 가 밝힌 규칙(`지 않다` 문자열 방아쇠 · 부사 슬롯 자유)은 `pol(어간)` 을 **조회**해야 한다 — 그리고 **SEEN 어간은 이미 그 조회처를 갖고 있다**(사전학습). 그러니 SEEN 어간의 극성을 CPT 로 **반전해 다시 쓰고** 규칙에 물으면 된다: **새 값을 읽으면**(Δdep 양) 연산자는 가변 저장소를 참조하는 것이고 held-out 실패는 **신규 엔트리 불가시성**(H-β)",
                                 "children": [
+                                  {
+                                    "id": "gate-g1-recomb-c3-seenswap-d1",
+                                    "type": "note",
+                                    "name": "**옛 값을 읽으면**(음) 선언적 재기술이 극성원을 못 움직인 것(H-δ ∨ H-ε C3 는 이…",
+                                    "detail": "**옛 값을 읽으면**(음) 선언적 재기술이 극성원을 못 움직인 것(H-δ ∨ H-ε · C3 는 이 둘을 못 가른다 — 원안의 'H-δ 단독' 은 과잉주장이라 철회) · **≈0** 이면 갈등이 참조를 붕괴(검정력 봉인 → DIRECTIONAL 상한). **팔**(SEEN 20 · 극성 층화 · split-seed 고정 · 측정 전 확정): **swap 12**(극성 반전 arrow"
+                                  },
+                                  {
+                                    "id": "gate-g1-recomb-c3-seenswap-d2",
+                                    "type": "note",
+                                    "name": "flip1 라인 **0회** — 안 그러면 답을 가르치는 것) affirm 2(진단 전용) **ke…",
+                                    "detail": "flip1 라인 **0회** — 안 그러면 답을 가르치는 것) · affirm 2(진단 전용) · **keep 3**(연산자 보존 replay)"
+                                  },
+                                  {
+                                    "id": "gate-g1-recomb-c3-seenswap-d3",
+                                    "type": "note",
+                                    "name": "**untouched 3**(코퍼스 0회 = 망각 게이트 지층). **🔑 설계가 서는 지점**: r…",
+                                    "detail": "**untouched 3**(코퍼스 0회 = 망각 게이트 지층). **🔑 설계가 서는 지점**: replay 담체는 측정 표면과 **서로소**여야 한다 — `ground_keep` 은 `{s}지 않다` 를 replay 하는데 그건 **정확히 주 측정 표면**이라, 그대로 썼다면 실험 전체가 무효였다. **C1b census 가 이 분리를 가능하게 했다**(작동 표면 7종 발견 ⟹ 측정 3종 `{s}지 않다`·`별로`·`{s}지는 않다`(음성대조) ⊥ replay 담체 3종 `전혀`·`그다지`·`결코`"
+                                  },
+                                  {
+                                    "id": "gate-g1-recomb-c3-seenswap-d4",
+                                    "type": "note",
+                                    "name": "양쪽 다 연산자 생존이 **실측**된 표면). **누수 감사가 코드에 박혔다**: 채점 프롬프트가…",
+                                    "detail": "양쪽 다 연산자 생존이 **실측**된 표면). **누수 감사가 코드에 박혔다**: 채점 프롬프트가 코퍼스에 하나라도 있으면 `corpus` 가 **쓰기를 거부**하고 rc=2 로 죽는다(스모크 실측 누수 **0**). 다음 = G-base(CPT 전 base 측정 · 동결) → CPT 직렬 2 seed → 게이트 → 판정."
+                                  },
                                   {
                                     "id": "gate-g1-recomb-c3-stembound-prediction",
                                     "type": "note",
                                     "name": "🔒 C3 의 부호 예측 — STEM-BOUND 가설이 (−) 를 예측한다 (데이터 전 동결)",
-                                    "detail": "병렬 세션이 **내 C1b 데이터를 나보다 잘 읽었다**. 내가 본 것은 '부사 슬롯은 자유, `지 않다` 는 한 글자도 못 바꾼다' 였는데, 그 안의 **기전**은 이것이다: 작동한 미학습 표면 5종(`전혀`·`별로`·`그다지`·`결코`·`하나도`·`그리`)은 **전부 자유 선행 단어**(free pre-posed word)라 어간과 분리돼 있어 슬롯이 일반화되고, 죽은 2종은 **교착 형태소 안쪽**을 건드렸다(`지는 않다` = '는' 삽입 · `지 않았다` = 어미 변경). ⟹ **`지 않다` 는 어간에 달라붙는 교착 접미사**이고, 따라서 **`(어간 ⊕ 지않다)` 가 하나의 결합 키**가 된다(R2 STEM-BOUND · 영어 `not` 은 자유 선행 단어라 키가 분리된다 — 이것이 CLAUDE.md 의 EN-FIRST 오너 지침 근거). **⟹ 이것이 BINDING 을 '왜' 까지 설명한다**: 규칙이 읽는 키는 `(어간⊕지않다)` 인데 CPT 는 `(어간⊕고)` 에 썼다 — 내 설명('다른 표에 썼다')이 **애초에 다른 키였다** 로 날카로워진다. **🔒 그리고 C3 에 부호 예측을 준다(데이터 전 동결)**: SEEN 어간의 극성을 `이 영화 <어간>고 => ` 로 다시 써도 규칙은 `(어간⊕지않다)` 키를 읽으므로 **옛 극성을 볼 것** ⟹ **C3 는 (−) 분기**(swap 팔에서 새 극성 추종 ≤2/12 · 4셀). **C3 가 (+) 로 나오면 STEM-BOUND 는 반증된다**(규칙이 어간-단위 가변 저장소를 참조한다는 뜻이므로). ⟹ **C3 는 이제 이 가설의 직접 검정이다** — 예측이 부호로 갈리므로 사후 해석이 불가능하다."
+                                    "detail": "병렬 세션이 **내 C1b 데이터를 나보다 잘 읽었다**. 내가 본 것은 '부사 슬롯은 자유, `지 않다` 는 한 글자도 못 바꾼다' 였는데, 그 안의 **기전**은 이것이다: 작동한 미학습 표면 5종(`전혀`·`별로`·`그다지`·`결코`·`하나도`·`그리`)은 **전부 자유 선행 단어**(free pre-posed word)라 어간과 분리돼 있어 슬롯이 일반화되고, 죽은 2종은 **교착 형태소 안쪽**을 건드렸다(`지는 않다` = '는' 삽입",
+                                    "children": [
+                                      {
+                                        "id": "gate-g1-recomb-c3-stembound-prediction-d1",
+                                        "type": "note",
+                                        "name": "`지 않았다` = 어미 변경). ⟹ **`지 않다` 는 어간에 달라붙는 교착 접미사**이고, 따라서…",
+                                        "detail": "`지 않았다` = 어미 변경). ⟹ **`지 않다` 는 어간에 달라붙는 교착 접미사**이고, 따라서 **`(어간 ⊕ 지않다)` 가 하나의 결합 키**가 된다(R2 STEM-BOUND · 영어 `not` 은 자유 선행 단어라 키가 분리된다 — 이것이 CLAUDE.md 의 EN-FIRST 오너 지침 근거). **⟹ 이것이 BINDING 을 '왜' 까지 설명한다**: 규칙이 읽는 키는 `(어간⊕지않다)` 인데 CPT 는 `(어간⊕고)` 에 썼다 — 내 설명('다른 표에 썼다')이 **애초에 다른 키였다** 로 날카로워진다. "
+                                      },
+                                      {
+                                        "id": "gate-g1-recomb-c3-stembound-prediction-d2",
+                                        "type": "note",
+                                        "name": "**🔒 그리고 C3 에 부호 예측을 준다(데이터 전 동결)**: SEEN 어간의 극성을 `이 영화…",
+                                        "detail": "**🔒 그리고 C3 에 부호 예측을 준다(데이터 전 동결)**: SEEN 어간의 극성을 `이 영화 <어간>고 => ` 로 다시 써도 규칙은 `(어간⊕지않다)` 키를 읽으므로 **옛 극성을 볼 것** ⟹ **C3 는 (−) 분기**(swap 팔에서 새 극성 추종 ≤2/12 · 4셀). **C3 가 (+) 로 나오면 STEM-BOUND 는 반증된다**(규칙이 어간-단위 가변 저장소를 참조한다는 뜻이므로). ⟹ **C3 는 이제 이 가설의 직접 검정이다** — 예측이 부호로 갈리므로 사후 해석이 불가능하다."
+                                      }
+                                    ]
                                   }
                                 ]
                               }
@@ -14399,19 +14847,43 @@
                     "id": "gate-g1-recomb-stemslot-h9331-kill1",
                     "type": "note",
                     "name": "⛔ kill ① — **철회됨**(자기정정): 담체는 3개가 아니라 **1개**였다",
-                    "detail": "⛔ **내가 틀렸다.** 'held-out 어간은 이미 **담체 3개**에 나온다' 고 썼는데 **거짓**이다. 코드가 말한다: `GROUND_TMPL = \"이 영화 {surf} => {pol}.\"` — **담체는 정확히 1개**이고, `GROUND_FORMS_FLIP0 = (\"{s}고\", \"정말 {s}고\", \"너무 {s}다\")` 는 **그 담체 안의 어간 표면 변형**이다(셋 다 `이 영화 … => ` 라는 하나의 틀을 공유하고, 바뀌는 것은 부사와 어미뿐). 나는 내가 돌린 **정규식의 산출물**을 읽었고 **코드**를 읽지 않았다(`tool-definition-read-code-not-docstring` 재발 · Fable 이 코드를 읽고 잡았다). ⟹ **'극성이 단일 담체(지름길)에 숨는다' 는 전제가 살아있고, 다중-담체 실험은 아직 안 쐈다** — Fable 의 **SPREAD** 설계가 **LIVE** 다. **kill ② 는 무관하게 살아남는다**(어간별 연산자 노출 계수는 담체 정의와 무관한 하드 카운트)."
+                    "detail": "⛔ **내가 틀렸다.** 'held-out 어간은 이미 **담체 3개**에 나온다' 고 썼는데 **거짓**이다. 코드가 말한다: `GROUND_TMPL = \"이 영화 {surf} => {pol}.\"` — **담체는 정확히 1개**이고, `GROUND_FORMS_FLIP0 = (\"{s}고\", \"정말 {s}고\", \"너무 {s}다\")` 는 **그 담체 안의 어간 표면 변형**이다(셋 다 `이 영화 … => ` 라는 하나의 틀을 공유하고, 바뀌는 것은 부사와 어미뿐). ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-stemslot-h9331-kill1-d1",
+                        "type": "note",
+                        "name": "나는 내가 돌린 **정규식의 산출물**을 읽었고 **코드**를 읽지 않았다(`tool-definit…",
+                        "detail": "나는 내가 돌린 **정규식의 산출물**을 읽었고 **코드**를 읽지 않았다(`tool-definition-read-code-not-docstring` 재발 · Fable 이 코드를 읽고 잡았다). ⟹ **'극성이 단일 담체(지름길)에 숨는다' 는 전제가 살아있고, 다중-담체 실험은 아직 안 쐈다** — Fable 의 **SPREAD** 설계가 **LIVE** 다. **kill ② 는 무관하게 살아남는다**(어간별 연산자 노출 계수는 담체 정의와 무관한 하드 카운트)."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-stemslot-h9331-kill2",
                     "type": "note",
                     "name": "💀 kill ② — H_9328 '암기가설 반증' 은 **잘못된 축의 통제군** 위에 있다",
-                    "detail": "C1/C1b 는 `10 표면 × **어간 20**` 으로 쟀는데 그 어간 20 = **SEEN**이고 **연산자 담체 안에서 어간당 80줄 학습된 바로 그 어간들**이다 ⟹ **연산자를 자기가 학습된 어간에서 시험**했다. 미학습 **부사** 5종이 완벽한 것은 **부사 슬롯**의 일반화이지 **어간 슬롯**의 일반화가 **아니다** — 그리고 **BINDING 이 사는 곳은 어간 슬롯**이다. **암기가설의 진짜 통제군 = 미학습 어간**이고 그 팔은 **이미 존재한다**: held-out flip1 = **0.4598 = 우연** ⟹ 결과는 반대. **계기·수치는 무죄 · 무효인 것은 라벨뿐**."
+                    "detail": "C1/C1b 는 `10 표면 × **어간 20**` 으로 쟀는데 그 어간 20 = **SEEN**이고 **연산자 담체 안에서 어간당 80줄 학습된 바로 그 어간들**이다 ⟹ **연산자를 자기가 학습된 어간에서 시험**했다. 미학습 **부사** 5종이 완벽한 것은 **부사 슬롯**의 일반화이지 **어간 슬롯**의 일반화가 **아니다** — 그리고 **BINDING 이 사는 곳은 어간 슬롯**이다. ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-stemslot-h9331-kill2-d1",
+                        "type": "note",
+                        "name": "**암기가설의 진짜 통제군 = 미학습 어간**이고 그 팔은 **이미 존재한다**: held-out…",
+                        "detail": "**암기가설의 진짜 통제군 = 미학습 어간**이고 그 팔은 **이미 존재한다**: held-out flip1 = **0.4598 = 우연** ⟹ 결과는 반대. **계기·수치는 무죄 · 무효인 것은 라벨뿐**."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-stemslot-h9331-r1r2",
                     "type": "note",
                     "name": "⏳ 미결 — 두 세계가 **모든** 관측을 똑같이 설명한다 (H_9330 이 가른다)",
-                    "detail": "**R1 LOOKUP-MISMATCH**(H_9327/C1b): 일반 규칙은 있는데 pol(어간)을 CPT 가 안 쓴 자리에서 조회한다. **R2 STEM-BOUND**(H_9331): **일반 규칙이 없다** — `(어간, 지 않다)` 가 학습된 **쌍**이고 어간이 **키의 일부**다(SEEN 0.9833 = 20쌍 암기 · 부사 완벽 = 부사는 키가 아님 · held-out 우연 = 학습된 적 없는 쌍 · `지는 않다`/`지 않았다` 사망 = 키 파손). **가르는 것** = 극성은 아는데 연산자와 짝지어진 적 없는 어간에서 연산자가 도는가 — held-out 이 정확히 그 팔이고 **우연**이라 **R2 로 기운다**. 단 R1 은 'pol 이 연산자의 **읽는 지점**에서 표현적으로 안 보인다' 로 방어 가능하고 **그것이 H_9330(occlusion·읽는 자리)이 지금 결정 중인 것** ⟹ **R2 를 확정하지 않는다**(확정하면 방금 지적한 것과 같은 죄)."
+                    "detail": "**R1 LOOKUP-MISMATCH**(H_9327/C1b): 일반 규칙은 있는데 pol(어간)을 CPT 가 안 쓴 자리에서 조회한다. **R2 STEM-BOUND**(H_9331): **일반 규칙이 없다** — `(어간, 지 않다)` 가 학습된 **쌍**이고 어간이 **키의 일부**다(SEEN 0.9833 = 20쌍 암기 · 부사 완벽 = 부사는 키가 아님 · held-out 우연 = 학습된 적 없는 쌍",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-stemslot-h9331-r1r2-d1",
+                        "type": "note",
+                        "name": "`지는 않다`/`지 않았다` 사망 = 키 파손). **가르는 것** = 극성은 아는데 연산자와 짝지…",
+                        "detail": "`지는 않다`/`지 않았다` 사망 = 키 파손). **가르는 것** = 극성은 아는데 연산자와 짝지어진 적 없는 어간에서 연산자가 도는가 — held-out 이 정확히 그 팔이고 **우연**이라 **R2 로 기운다**. 단 R1 은 'pol 이 연산자의 **읽는 지점**에서 표현적으로 안 보인다' 로 방어 가능하고 **그것이 H_9330(occlusion·읽는 자리)이 지금 결정 중인 것** ⟹ **R2 를 확정하지 않는다**(확정하면 방금 지적한 것과 같은 죄)."
+                      }
+                    ]
                   }
                 ]
               },
@@ -14419,37 +14891,107 @@
                 "id": "gate-g1-recomb-enfirst",
                 "type": "gate",
                 "name": "🇬🇧 EN-FIRST — 벽이 뚫릴 때까지 연구 코퍼스는 영어로 (오너 지시 · 2026-07-14)",
-                "detail": "**왜 언어인가**: 한국어 레인이 우리를 무는 두 지점이 **둘 다 언어 자체의 사실**이다. ① 부정어 `지 않다` 는 **어간에 붙는 의존 어미**이고, 그게 정확히 `(어간, 연산자)` 를 **하나의 합동 키**로 만드는 방식이다(R2 STEM-BOUND = 벽의 유력 기전). 영어 `not` 은 **앞에 서는 자유 낱말**이고, 그건 C1b 가 **완벽하게 일반화한다고 실측한 바로 그 슬롯**이다(코퍼스 0회인 부사 5종이 전부 연산자를 돌림 · Δ −0.90~−1.00 · p=.000). ② 한국어는 **3 B/char** 이고 `a_korean_byte_budget` 이 그 때문에 오염된 판정을 **3건** 기록하고 있다. ⟹ EN 은 커버리지가 아니라 **판별자**다: 미학습 어간에서 연산자가 **EN 에선 돌고 KO 에선 안 돌면**, BINDING 은 **기질이 아니라 형태론의 사실**이고 재조합 레인 전체가 재개방된다.",
+                "detail": "**왜 언어인가**: 한국어 레인이 우리를 무는 두 지점이 **둘 다 언어 자체의 사실**이다. ① 부정어 `지 않다` 는 **어간에 붙는 의존 어미**이고, 그게 정확히 `(어간, 연산자)` 를 **하나의 합동 키**로 만드는 방식이다(R2 STEM-BOUND = 벽의 유력 기전). 영어 `not` 은 **앞에 서는 자유 낱말**이고, 그건 C1b 가 **완벽하게 일반화한다고 실측한 바로 그 슬롯**이다(코퍼스 0회인 부사 5종이 전부 연산자를 돌림 · Δ −0.90~−1.00",
                 "children": [
+                  {
+                    "id": "gate-g1-recomb-enfirst-d1",
+                    "type": "note",
+                    "name": "p=.000). ② 한국어는 **3 B/char** 이고 `a_korean_byte_budget`…",
+                    "detail": "p=.000). ② 한국어는 **3 B/char** 이고 `a_korean_byte_budget` 이 그 때문에 오염된 판정을 **3건** 기록하고 있다. ⟹ EN 은 커버리지가 아니라 **판별자**다: 미학습 어간에서 연산자가 **EN 에선 돌고 KO 에선 안 돌면**, BINDING 은 **기질이 아니라 형태론의 사실**이고 재조합 레인 전체가 재개방된다."
+                  },
                   {
                     "id": "gate-g1-recomb-enfirst-impl",
                     "type": "note",
                     "name": "배선 — `anima-py corpus --lang ko|en` (ko = 기본 · **바이트 동일 8/8 증명**)",
-                    "detail": "`cli/corpus.py::LANGS` 언어 팩(담체·flip0·flip1·극성 라벨) + `build_ground(..., lang)` + `--lang` 플래그. **ko 는 옛 상수 그대로**이고 4포맷 × 2seed = **8/8 sha 일치**로 증명했다 — 동결 판정(H_9322·H_9324·H_9327·H_9328)이 **정확히 그 바이트 위에** 있으므로 이건 타협 불가 조건이었다. **fail-loud 가드**: `--lang en` 에 한국어 어간 파일을 주면 **시작 전에 거부**한다(안 그러면 `this movie is not at all 재미없 => positive.` 를 조용히 뱉는다 — 학습되고, 채점되고, **아무 의미 없다**). VERSION 0.13.25 (G5) · `--help` 3-piece."
+                    "detail": "`cli/corpus.py::LANGS` 언어 팩(담체·flip0·flip1·극성 라벨) + `build_ground(..., lang)` + `--lang` 플래그. **ko 는 옛 상수 그대로**이고 4포맷 × 2seed = **8/8 sha 일치**로 증명했다 — 동결 판정(H_9322·H_9324·H_9327·H_9328)이 **정확히 그 바이트 위에** 있으므로 이건 타협 불가 조건이었다. ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-enfirst-impl-d1",
+                        "type": "note",
+                        "name": "**fail-loud 가드**: `--lang en` 에 한국어 어간 파일을 주면 **시작 전에 거…",
+                        "detail": "**fail-loud 가드**: `--lang en` 에 한국어 어간 파일을 주면 **시작 전에 거부**한다(안 그러면 `this movie is not at all 재미없 => positive.` 를 조용히 뱉는다 — 학습되고, 채점되고, **아무 의미 없다**). VERSION 0.13.25 (G5) · `--help` 3-piece."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-enfirst-scope",
                     "type": "note",
                     "name": "⚠️ 정직 — EN 양성은 **스크리너(DIRECTIONAL)**이지 확정이 아니다",
-                    "detail": "EN 은 **형태론 + 기반모델 + 담체를 한꺼번에** 바꾼다 ⟹ 거기서 뚫리면 **레인이 재개방**되지만 **셋 중 무엇이 뚫었는지**는 후속 분리가 필요하다(`a_scale_honest_scope`). **범위**: 이 지시는 **연구/재조합 코퍼스**(`anima corpus` ground 계열)만 지배한다 — **chat 코퍼스는 불변**(`a_chat_registers` 4셀 ko·en × general·SNS 그대로). **만료**: 벽이 뚫리는 순간, 또는 **EN 도 같은 벽에 부딪히는 순간**(그건 그것대로 anima 가 가진 **가장 강한 기질 증거**가 된다) 해제."
+                    "detail": "EN 은 **형태론 + 기반모델 + 담체를 한꺼번에** 바꾼다 ⟹ 거기서 뚫리면 **레인이 재개방**되지만 **셋 중 무엇이 뚫었는지**는 후속 분리가 필요하다(`a_scale_honest_scope`). **범위**: 이 지시는 **연구/재조합 코퍼스**(`anima corpus` ground 계열)만 지배한다 — **chat 코퍼스는 불변**(`a_chat_registers` 4셀 ko·en × general·SNS 그대로). ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-enfirst-scope-d1",
+                        "type": "note",
+                        "name": "**만료**: 벽이 뚫리는 순간, 또는 **EN 도 같은 벽에 부딪히는 순간**(그건 그것대로 an…",
+                        "detail": "**만료**: 벽이 뚫리는 순간, 또는 **EN 도 같은 벽에 부딪히는 순간**(그건 그것대로 anima 가 가진 **가장 강한 기질 증거**가 된다) 해제."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-enfirst-blocker",
                     "type": "note",
                     "name": "🚧 남은 선결 2건 — EN 원자 · EN 기반모델 (실측 블로커)",
-                    "detail": "① **EN 원자셋**: 현 `gt_atoms.json` 은 **한국어 어간**(29 held-out + 20 seen). EN 팔은 `gt_atoms_en.json`(영어 극성 어간 + pol + split)이 필요하다. ② **EN 기반모델**: 현 base `natem_c34_main_s{7,11}.clm` 의 CPT 코퍼스는 **ko=57,040 · en=0** — 즉 **기반이 영어를 모른다**. C34 는 **160KB** 밖에 안 되므로 EN 쌍둥이 사전학습은 pool 에서 **싸다**(블로커가 아니라 **한 단계**). 순서: EN 원자 → EN C34 사전학습 → EN CPT(ground_keep --lang en) → `--xbind` 판정."
+                    "detail": "① **EN 원자셋**: 현 `gt_atoms.json` 은 **한국어 어간**(29 held-out + 20 seen). EN 팔은 `gt_atoms_en.json`(영어 극성 어간 + pol + split)이 필요하다. ② **EN 기반모델**: 현 base `natem_c34_main_s{7,11}.clm` 의 CPT 코퍼스는 **ko=57,040",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-enfirst-blocker-d1",
+                        "type": "note",
+                        "name": "en=0** — 즉 **기반이 영어를 모른다**. C34 는 **160KB** 밖에 안 되므로 EN…",
+                        "detail": "en=0** — 즉 **기반이 영어를 모른다**. C34 는 **160KB** 밖에 안 되므로 EN 쌍둥이 사전학습은 pool 에서 **싸다**(블로커가 아니라 **한 단계**). 순서: EN 원자 → EN C34 사전학습 → EN CPT(ground_keep --lang en) → `--xbind` 판정."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-enfirst-atoms",
                     "type": "note",
                     "name": "🔬 `anima-py corpus atoms` — 원자셋을 **4개 게이트 뒤에서** 채굴한다 (각 게이트 = 이미 죽은 판정 하나)",
-                    "detail": "원자셋은 재조합 레인 **전체의 하중을 받는 입력**이다 — 심는 극성, 빼놓는 어간, 판정이 계산되는 분할이 전부 여기서 온다. 그리고 이 레인이 죽은 방식들은 **전부** 발사 **전에** 확인했어야 할 원자셋 속성으로 환원된다. 그래서 게이트는 위생이 아니라 **죽은 판정의 화석**이다. **G-SUBSTR** — 어떤 어간도 다른 어간의 부분문자열이면 안 된다(한국어 `참` 같은 3바이트 어간이 수십 단어 안에 들어앉아 노출 계수·누수 검사·채점기를 **동시에 거짓말**하게 만들었다 · H_9299/H_9300). **G-OCCUR** — 모든 어간이 자연문에 `min-occ` 회 이상 등장(모델이 읽어본 적 없는 어간엔 극성을 **붙일 표현이 없고**, 그 우연 점수는 아무 의미가 없다). **G-BALANCE** — 두 분할 모두 극성 균형(불균형은 **붕괴한 모델에게 공짜 점수**를 준다 — 0.575 헤드라인이 학습처럼 보이게 만든 그 결함 · H_9324). **G-POWER** — 우연 sd = 0.5/√n 을 **출력**한다(bar 는 여기에 대고 **유도**하는 것이지 이식하는 게 아니다 · H_9296: n=29 에서 bar 0.65 는 **1.62 sd** 밖). **검증**: 4 게이트를 일부러 깨뜨려 **각각 자기 이름으로 거부**함을 출력으로 확인 + 정상 케이스 통과. **순서도 고쳤다**: G-SUBSTR 를 G-OCCUR **앞**으로 — 안 그러면 렉시콘 구조 결함이 '코퍼스가 얇다'로 **오보고**된다(실측). **언어 가드**와 합쳐, EN 원자셋은 이제 **한국어 어간·중첩 어간·얇은 노출·불균형 분할** 중 어느 하나라도 있으면 **생성 자체가 거부**된다."
+                    "detail": "원자셋은 재조합 레인 **전체의 하중을 받는 입력**이다 — 심는 극성, 빼놓는 어간, 판정이 계산되는 분할이 전부 여기서 온다. 그리고 이 레인이 죽은 방식들은 **전부** 발사 **전에** 확인했어야 할 원자셋 속성으로 환원된다. 그래서 게이트는 위생이 아니라 **죽은 판정의 화석**이다. **G-SUBSTR** — 어떤 어간도 다른 어간의 부분문자열이면 안 된다(한국어 `참` 같은 3바이트 어간이 수십 단어 안에 들어앉아 노출 계수·누수 검사·채점기를 **동시에 거짓말**하게 만들었다",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-enfirst-atoms-d1",
+                        "type": "note",
+                        "name": "H_9299/H_9300). **G-OCCUR** — 모든 어간이 자연문에 `min-occ` 회 이…",
+                        "detail": "H_9299/H_9300). **G-OCCUR** — 모든 어간이 자연문에 `min-occ` 회 이상 등장(모델이 읽어본 적 없는 어간엔 극성을 **붙일 표현이 없고**, 그 우연 점수는 아무 의미가 없다). **G-BALANCE** — 두 분할 모두 극성 균형(불균형은 **붕괴한 모델에게 공짜 점수**를 준다 — 0.575 헤드라인이 학습처럼 보이게 만든 그 결함 · H_9324). **G-POWER** — 우연 sd = 0.5/√n 을 **출력**한다(bar 는 여기에 대고 **유도**하는 것이지 이식하는 게 아니다"
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-atoms-d2",
+                        "type": "note",
+                        "name": "H_9296: n=29 에서 bar 0.65 는 **1.62 sd** 밖). **검증**: 4 게이…",
+                        "detail": "H_9296: n=29 에서 bar 0.65 는 **1.62 sd** 밖). **검증**: 4 게이트를 일부러 깨뜨려 **각각 자기 이름으로 거부**함을 출력으로 확인 + 정상 케이스 통과. **순서도 고쳤다**: G-SUBSTR 를 G-OCCUR **앞**으로 — 안 그러면 렉시콘 구조 결함이 '코퍼스가 얇다'로 **오보고**된다(실측). **언어 가드**와 합쳐, EN 원자셋은 이제 **한국어 어간·중첩 어간·얇은 노출·불균형 분할** 중 어느 하나라도 있으면 **생성 자체가 거부**된다."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-enfirst-engates",
                     "type": "note",
                     "name": "🔬 EN 게이트 3건 — Fable 이 **내 코드의 버그**를 잡았다 (G-OCCUR 과대계수 · G-DERIV · G-CARRIER)",
-                    "detail": "Fable 에 EN 원자셋 설계를 위임했더니 **내 `build_atoms`(#3521) 안의 결함**을 지목했다. **① G-OCCUR 가 과대계수했다**: `text.count(stem)` 은 어간을 품은 **더 긴 낱말을 전부** 센다 — 영어에선 예외가 아니라 **기본**이다(`art` ⊂ `start`, `warm` ⊂ `warmth`). 이건 내가 **바로 전날 `corpus-py-1 ⑩` 으로 기록한 그 결함**이 **내 코드 안에** 있었던 것이다. 알파벳 언어는 **단어경계(`\\b`) 계수**로 교정(ko 는 교착어라 raw count 유지 — 바이트 동일성 8/8 재확인). **실증**: `art` 가 `start`/`artful` 안에만 1만 번 나오는 텍스트에서 교정 전이면 **통과**, 교정 후엔 **0회로 정확히 거부**. **② G-DERIV 신설**: 어떤 어간도 다른 어간의 **파생 부정**(un-/in-/im-/dis-/non-/-less)이면 안 된다 — KO 셋이 `편하`+`불편하` 를 둘 다 held-out 에 실었고 `불-` 은 **부정 형태소**였다(H_9333) ⟹ **부정을 시험하는 실험의 held-out 셋 안에 그 자신의 부정형**이 있었다. 영어는 파생 부정이 훨씬 풍부해 **1급 위험**. **③ G-CARRIER 신설**: 어간이 담체/라벨 낱말(`movie`·`positive`·`not`)이면 안 된다 — 채점기가 읽는 바이트 span 이 프레임과 구별 불가해진다. **⚠️ 순서도 고쳤다**: G-DERIV 를 G-SUBSTR **앞**으로 — 모든 `un<어간>` 은 `<어간>` 을 **품으므로** G-SUBSTR 가 먼저 물어 '중첩' 이라 보고하는데, 그건 **훨씬 나쁜 사실**(하나가 다른 하나의 **부정**이다)을 묻어버린다. **결함은 자기 이름으로 보고돼야 한다**(G-SUBSTR 가 G-OCCUR 에 대해 겪은 그 문제의 반복). **검증 5/5**(출력): 정상 통과 · G-DERIV `unkind = un-kind` 자기이름 거부 · G-CARRIER `movie` 거부 · G-OCCUR 단어경계로 `art=0` 거부 · **ko sha f2ef30aee3f9c5cf 불변**."
+                    "detail": "Fable 에 EN 원자셋 설계를 위임했더니 **내 `build_atoms`(#3521) 안의 결함**을 지목했다. **① G-OCCUR 가 과대계수했다**: `text.count(stem)` 은 어간을 품은 **더 긴 낱말을 전부** 센다 — 영어에선 예외가 아니라 **기본**이다(`art` ⊂ `start`, `warm` ⊂ `warmth`). 이건 내가 **바로 전날 `corpus-py-1 ⑩` 으로 기록한 그 결함**이 **내 코드 안에** 있었던 것이다. ",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-enfirst-engates-d1",
+                        "type": "note",
+                        "name": "알파벳 언어는 **단어경계(`\\b`) 계수**로 교정(ko 는 교착어라 raw count 유지 —…",
+                        "detail": "알파벳 언어는 **단어경계(`\\b`) 계수**로 교정(ko 는 교착어라 raw count 유지 — 바이트 동일성 8/8 재확인). **실증**: `art` 가 `start`/`artful` 안에만 1만 번 나오는 텍스트에서 교정 전이면 **통과**, 교정 후엔 **0회로 정확히 거부**. "
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-engates-d2",
+                        "type": "note",
+                        "name": "**② G-DERIV 신설**: 어떤 어간도 다른 어간의 **파생 부정**(un-/in-/im-/d…",
+                        "detail": "**② G-DERIV 신설**: 어떤 어간도 다른 어간의 **파생 부정**(un-/in-/im-/dis-/non-/-less)이면 안 된다 — KO 셋이 `편하`+`불편하` 를 둘 다 held-out 에 실었고 `불-` 은 **부정 형태소**였다(H_9333) ⟹ **부정을 시험하는 실험의 held-out 셋 안에 그 자신의 부정형**이 있었다. 영어는 파생 부정이 훨씬 풍부해 **1급 위험**. "
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-engates-d3",
+                        "type": "note",
+                        "name": "**③ G-CARRIER 신설**: 어간이 담체/라벨 낱말(`movie`·`positive`·`no…",
+                        "detail": "**③ G-CARRIER 신설**: 어간이 담체/라벨 낱말(`movie`·`positive`·`not`)이면 안 된다 — 채점기가 읽는 바이트 span 이 프레임과 구별 불가해진다. **⚠️ 순서도 고쳤다**: G-DERIV 를 G-SUBSTR **앞**으로 — 모든 `un<어간>` 은 `<어간>` 을 **품으므로** G-SUBSTR 가 먼저 물어 '중첩' 이라 보고하는데, 그건 **훨씬 나쁜 사실**(하나가 다른 하나의 **부정**이다)을 묻어버린다. "
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-engates-d4",
+                        "type": "note",
+                        "name": "**결함은 자기 이름으로 보고돼야 한다**(G-SUBSTR 가 G-OCCUR 에 대해 겪은 그 문제…",
+                        "detail": "**결함은 자기 이름으로 보고돼야 한다**(G-SUBSTR 가 G-OCCUR 에 대해 겪은 그 문제의 반복). **검증 5/5**(출력): 정상 통과 · G-DERIV `unkind = un-kind` 자기이름 거부 · G-CARRIER `movie` 거부 · G-OCCUR 단어경계로 `art=0` 거부 · **ko sha f2ef30aee3f9c5cf 불변**."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-enfirst-mine",
@@ -14469,19 +15011,49 @@
                     "id": "gate-g1-recomb-atomset-h9333-adverb",
                     "type": "note",
                     "name": "① `별로` 는 미학습 부사가 아니라 **SEEN train 어간**이다 — C1b 의 '0회 5종' 은 **4종**",
-                    "detail": "H_9328 C1b 가 '미학습 부사 **5종**(별로·그다지·결코·하나도·그리 · 코퍼스 **0회**)이 전부 연산자를 돌린다(Δ −0.90~−1.00 · p=.000)' 고 주장했다. 실측: **`별로` = `split: train` = SEEN 어간** — 코퍼스에 `이 영화 별로고 => …` 로 **확실히 등장**한다. ⟹ **'0회 부사' 는 4종**이고 결론(**부사 슬롯은 일반화한다**)은 **4/5 로 생존하되 약화**되며, `별로 {s}지 않다` 표면의 측정값은 **교란**으로 표시해야 한다(모델이 그 바이트열을 어간으로 이미 안다). ⚠️ 나머지 4종이 코퍼스 **본문**에 0회인지는 코퍼스 계수가 필요하고 그 파일은 **wedge 된 summer** 에 있다 ⟹ 어간 목록만으로 확정 가능한 것은 **별로 하나**, 나머지는 **그럴듯하되 미확인**."
+                    "detail": "H_9328 C1b 가 '미학습 부사 **5종**(별로·그다지·결코·하나도·그리 · 코퍼스 **0회**)이 전부 연산자를 돌린다(Δ −0.90~−1.00",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-atomset-h9333-adverb-d1",
+                        "type": "note",
+                        "name": "p=.000)' 고 주장했다. 실측: **`별로` = `split: train` = SEEN 어간*…",
+                        "detail": "p=.000)' 고 주장했다. 실측: **`별로` = `split: train` = SEEN 어간** — 코퍼스에 `이 영화 별로고 => …` 로 **확실히 등장**한다. ⟹ **'0회 부사' 는 4종**이고 결론(**부사 슬롯은 일반화한다**)은 **4/5 로 생존하되 약화**되며, `별로 {s}지 않다` 표면의 측정값은 **교란**으로 표시해야 한다(모델이 그 바이트열을 어간으로 이미 안다). "
+                      },
+                      {
+                        "id": "gate-g1-recomb-atomset-h9333-adverb-d2",
+                        "type": "note",
+                        "name": "⚠️ 나머지 4종이 코퍼스 **본문**에 0회인지는 코퍼스 계수가 필요하고 그 파일은 **wedge…",
+                        "detail": "⚠️ 나머지 4종이 코퍼스 **본문**에 0회인지는 코퍼스 계수가 필요하고 그 파일은 **wedge 된 summer** 에 있다 ⟹ 어간 목록만으로 확정 가능한 것은 **별로 하나**, 나머지는 **그럴듯하되 미확인**."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-atomset-h9333-substr",
                     "type": "note",
                     "name": "② 동결 원자셋이 **G-SUBSTR 에 낙제** — `편하`(heldout) ⊂ `불편하`(heldout)",
-                    "detail": "#3521 에서 `anima-py corpus atoms` 에 넣은 **G-SUBSTR 게이트**를 **현 KO 원자셋에 돌리면 FAIL** 한다. 게이트를 만들면서 그것이 **자기 데이터를 물 줄은 몰랐다**. **왜 위험한가**: 어간 중첩은 **노출 계수**(`편하` 횟수에 모든 `불편하` 가 섞임) · **누수 검사**(`s in line` 오탐) · **채점기**(어간 경계 붕괴 — H_9299/H_9300 이 3바이트 어간으로 죽은 그 방식)를 **동시에 거짓말**하게 만든다. **더 나쁜 것**: `불` 은 **부정 형태소**다 ⟹ **held-out 셋 안에 다른 held-out 어간의 부정형**이 들어 있다 — **부정을 시험하는 실험**에서. 모델이 `불-` = 반전 규칙을 배우면 `불편하` 극성을 **CPT 없이도** 맞힌다."
+                    "detail": "#3521 에서 `anima-py corpus atoms` 에 넣은 **G-SUBSTR 게이트**를 **현 KO 원자셋에 돌리면 FAIL** 한다. 게이트를 만들면서 그것이 **자기 데이터를 물 줄은 몰랐다**. **왜 위험한가**: 어간 중첩은 **노출 계수**(`편하` 횟수에 모든 `불편하` 가 섞임) · **누수 검사**(`s in line` 오탐)",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-atomset-h9333-substr-d1",
+                        "type": "note",
+                        "name": "**채점기**(어간 경계 붕괴 — H_9299/H_9300 이 3바이트 어간으로 죽은 그 방식)를…",
+                        "detail": "**채점기**(어간 경계 붕괴 — H_9299/H_9300 이 3바이트 어간으로 죽은 그 방식)를 **동시에 거짓말**하게 만든다. **더 나쁜 것**: `불` 은 **부정 형태소**다 ⟹ **held-out 셋 안에 다른 held-out 어간의 부정형**이 들어 있다 — **부정을 시험하는 실험**에서. 모델이 `불-` = 반전 규칙을 배우면 `불편하` 극성을 **CPT 없이도** 맞힌다."
+                      }
+                    ]
                   },
                   {
                     "id": "gate-g1-recomb-atomset-h9333-honest",
                     "type": "note",
                     "name": "🟨 정직 — **동결 판정을 철회하지 않는다** (크기를 아직 안 쟀다)",
-                    "detail": "두 결함의 **크기**를 재려면 CPT 코퍼스 계수가 필요하고 그 파일은 summer 에 있는데 summer 는 **wedge**(병렬 세션 오버파이어 · #3519)다. **크기를 재기 전에 철회하면 그게 바로 H_9331 에서 내가 한 실수(계수 없이 단정)의 재발**이다. **계기는 무죄** — C1b 의 측정 자체는 정상이었고 무효인 것은 **'0회' 라벨 하나**다. **NEXT($0)**: ① 코퍼스 본문에서 그다지·결코·하나도·그리 등장 횟수 계수 ② `불___` 라인 계수 → 결함의 크기 ③ 유의하면 동결 판정 영향 평가, 아니면 **결함은 실재하나 무해**로 기록."
+                    "detail": "두 결함의 **크기**를 재려면 CPT 코퍼스 계수가 필요하고 그 파일은 summer 에 있는데 summer 는 **wedge**(병렬 세션 오버파이어",
+                    "children": [
+                      {
+                        "id": "gate-g1-recomb-atomset-h9333-honest-d1",
+                        "type": "note",
+                        "name": "#3519)다. **크기를 재기 전에 철회하면 그게 바로 H_9331 에서 내가 한 실수(계수 없이…",
+                        "detail": "#3519)다. **크기를 재기 전에 철회하면 그게 바로 H_9331 에서 내가 한 실수(계수 없이 단정)의 재발**이다. **계기는 무죄** — C1b 의 측정 자체는 정상이었고 무효인 것은 **'0회' 라벨 하나**다. **NEXT($0)**: ① 코퍼스 본문에서 그다지·결코·하나도·그리 등장 횟수 계수 ② `불___` 라인 계수 → 결함의 크기 ③ 유의하면 동결 판정 영향 평가, 아니면 **결함은 실재하나 무해**로 기록."
+                      }
+                    ]
                   }
                 ]
               }
@@ -15600,6 +16172,20 @@
         "value": "리베이스가 VERSION bump 를 조용히 흡수한다 — 병렬 세션이 먼저 같은 번호로 올려두면 내 bump 는 no-op 이 되어 diff 에서 사라지고, wheel 내용(cli/·core/·pyproject)만 바뀐 커밋이 남는다. 그러면 G5(wheel 변경 ⇒ 같은 diff 에 VERSION bump 필수)에 하드블록되거나, 통과했다면 PyPI same-VERSION skip-guard 가 stale 휠을 계속 서빙한다 — --xbind/--xfan 이 main 에는 있는데 PyPI 에는 없던 그 사고와 같은 계열, 새 경로.",
         "threshold": "재발조건: origin/main 위로 리베이스한 뒤 곧장 pr-cycle. 해결: 리베이스 직후 'git show --stat HEAD | grep VERSION' 으로 VERSION 이 아직 diff 에 있는지 확인 — 사라졌으면 'cat VERSION' == 'git show origin/main:VERSION' 이라는 뜻이니 한 칸 더 올려 amend. 게이트를 믿고 넘기지 말 것(게이트는 블록만 하지 번호를 골라주지 않는다).",
         "source": "VERSION"
+      },
+      {
+        "id": "pod-bootstrap-gpu-1",
+        "polarity": "NEG-CONV",
+        "value": "pod 부트스트랩의 하드게이트가 **`import cupy` 성공만 확인하고 통과시켰다** — 그리고 그 pod 는 RTX 5090 을 빌려놓고 **CPU-numpy 로 돌았다**(GPU util 0% · `Failed to find CUDA headers`). vast base 이미지는 cupy 는 깔리지만 **CUDA toolkit 헤더가 없어** 커널 JIT 이 실패하고, `cuda_available()` 이 정직하게 False 로 떨어져 numpy 폴백을 탄다(폴백 자체는 **올바른 동작** — `decode-py-1` 이 만든 것). 결함은 폴백이 아니라 **내 게이트**다: 나는 `import cupy` 와 `getDeviceCount()>0` 를 확인해놓고 '이 pod 는 GPU 로 돈다'고 믿었다. 이건 `decode-py-1` 이 이미 적어둔 메타교훈 — **capability 게이트는 '장치가 보이는가'가 아니라 '그 장치에서 내가 쓸 연산이 실제로 도는가'를 물어야 한다** — 을 **pod 부트스트랩에서 그대로 재발시킨 것**이다(같은 학습, 다른 표면).",
+        "recurrence": "렌트 GPU pod 를 부트스트랩할 때 `import cupy` / `nvidia-smi` 만 확인하고 발사 → 실제로는 CPU-numpy 로 돌아 GPU 비용만 태우고 wall 이 수십 배로 늘어남. 로그의 `[GPU-FALLBACK]` 한 줄을 안 읽으면 끝까지 모른다.",
+        "fix": "pod 하드게이트에 **커널 스모크**를 넣어라 — `pip install \"cupy-cuda12x[ctk]\"`(CUDA 헤더) 또는 `CUDA_PATH` 설정 후, decode 가 실제로 쓰는 **커널 클래스**(elementwise + CUB reduction)를 1회 돌려보고 통과할 때만 발사한다: `python3 -c \"import cupy as cp; a=cp.arange(8); assert bool((a>3).any()); assert float(cp.sum(a.astype(cp.float64)))==28.0\"`. 그리고 **발사 직후 `[GPU-FIRED]` vs `[GPU-FALLBACK]` 를 로그에서 확인**하고 `nvidia-smi` util>0 을 본다 — 안 그러면 GPU 를 빌려놓고 CPU 로 도는 걸 몇 시간 뒤에 안다."
+      },
+      {
+        "id": "decode-py-3",
+        "state": "pos-conv",
+        "value": "BATCHING THE FORWARD DOES NOT PAY, AND IT BREAKS PARITY — both halves of my hypothesis were wrong, measured on the real device. I read the GPU sitting at 55-77% during a 33k-prompt probe and concluded it was starved by one-launch-per-prompt overhead (decode-py-2), so I built a batched trunk (_fwd_trunk_batch, per-sequence groupnorm to avoid cross-prompt contamination) and proved max|delta| = 0.000e+00 against the single path ON CPU. On the actual GPU: (1) PARITY BREAKS — max|batched - single| = 1.208e-13, because cuBLAS accumulates a batched matmul in a different order; (2) THE SPEEDUP IS 1.4x, not the order of magnitude the launch-overhead theory predicts. So the forward is not launch-bound at all — the wall is per-OP python glue, which batching over prompts does nothing for. The whole thing was reverted, including the batched code itself (dead code is worse than none). The hard-fail parity gate I had wired in front of it did its job: it refused to measure rather than silently returning 1e-13-drifted hiddens.",
+        "threshold": "Recurs whenever a GPU sits below 100% during a many-item probe and 'batch it' looks obvious. Measure the two claims BEFORE building: (a) is it launch-bound? time N single forwards vs one batched forward of N on the ACTUAL device, not on CPU; (b) does the batched op keep byte-parity there? cuBLAS batched paths generally do NOT. For the verdict forward, a 1e-13 drift disqualifies the optimisation outright, however fast it is.",
+        "source": "core/decode.py"
       }
     ]
   }
