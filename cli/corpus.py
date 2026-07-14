@@ -53,7 +53,8 @@ CLOSE = ["new meaning arises", "meaning composes anew",
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
     opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280,
-            "single_per_concept": 300, "seed": 7, "concepts": None}
+            "single_per_concept": 300, "seed": 7, "concepts": None,
+            "atoms": None, "reps": 40, "replay": 40}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -69,9 +70,95 @@ def _parse_args(argv):
             opts["seed"] = int(argv[i + 1]); i += 2
         elif a == "--concepts":
             opts["concepts"] = argv[i + 1]; i += 2
+        elif a == "--atoms":
+            opts["atoms"] = argv[i + 1]; i += 2
+        elif a == "--replay":
+            opts["replay"] = int(argv[i + 1]); i += 2
+        elif a == "--reps":
+            opts["reps"] = int(argv[i + 1]); i += 2
         else:
             i += 1
     return fmt, opts
+
+
+# ---------------------------------------------------------------------------
+# ground / ground_shuffle — the DECON-W grounding corpus (H_9313).
+#
+# H_9312 closed context-injection structurally: this byte-LM does not read a demonstration at
+# all (a FALSE demo scores exactly like a TRUE one; a demo containing the verbatim answer reads
+# at chance). So the only surviving way to hand the model an atom's polarity is to WRITE IT INTO
+# THE WEIGHTS. That is what these two formats generate.
+#
+#   ground          — the un-negated (flip0) lines ONLY, for the held-out atoms:
+#                       이 영화 <stem>고 => <긍정|부정>.
+#                     plus a replay of the SEEN atoms' lines so the fine-tune does not forget the
+#                     template it already knows. The NEGATED forms (flip1: 지 않다 / 안 / 전혀)
+#                     NEVER APPEAR. Zero training exposure — that is what makes the flip1 test a
+#                     test of composition rather than of memorisation, and what keeps it out of
+#                     tune-to-green.
+#
+#   ground_lie      — the SAME stream, same RNG, same lines, but EVERY held-out atom's polarity is
+#                     INVERTED. This is the control that earns the verdict — the weight-side twin
+#                     of the SEEN-LIE arm that decided H_9312 (convergence prereg-md-2: a positive
+#                     control the system can pass WITHOUT the mechanism is not a positive control).
+#
+#                     Why inverting ALL of them rather than shuffling: with a binary label a
+#                     shuffle leaves a random fraction correct (measured: 16/29 flipped at seed 7
+#                     but only 8/29 at seed 11 — a control that is 72% truthful is not a control).
+#                     Inverting every label makes the prediction sharp and SIGNED:
+#
+#                       written polarity = ¬p, gold for a flip1 row = ¬p
+#                       - consumes AND composes -> it answers ¬(¬p) = p -> WRONG on every row
+#                                                  -> flip1 accuracy collapses toward 0,
+#                                                     i.e. FAR BELOW chance
+#                       - does not consume      -> flip1 sits at chance, 0.5
+#
+#                     So Δ(ground − ground_lie) is a two-sided, signed signal, and "both arms give
+#                     the same number" is exactly the shape of a mechanism that does not exist.
+#
+# The two arms share one RNG stream at a fixed --seed, so they are content-matched line for line —
+# the only difference is the polarity written next to each held-out stem.
+# ---------------------------------------------------------------------------
+
+GROUND_TMPL = "이 영화 {surf} => {pol}.\n"
+GROUND_FORMS_FLIP0 = ("{s}고", "정말 {s}고", "너무 {s}다")     # flip1 forms are DELIBERATELY absent
+
+
+def build_ground(fmt, atoms_path, reps, replay, seed):
+    """Return (text, stats) for the ground / ground_shuffle arm.
+
+    atoms_path = gt_atoms.json ({"atoms":[{stem, pol, split}]}). held-out atoms get the treatment;
+    train ("seen") atoms are replayed unchanged in BOTH arms (they are not the manipulation).
+    """
+    rng = random.Random(seed)
+    atoms = json.load(open(atoms_path))["atoms"]
+    held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
+    seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    if not held:
+        raise ValueError(f"{atoms_path}: no held-out atoms")
+
+    # Same stems, same lines, every polarity inverted. Nothing random about it — the sharpness is
+    # the point (see the header): a partially-truthful control cannot produce a signed prediction.
+    labels = [p for _, p in held]
+    if fmt == "ground_lie":
+        held = [(s, 1 - p) for s, p in held]
+
+    lines = []
+    for _ in range(reps):
+        for stem, pol in held:
+            for pat in GROUND_FORMS_FLIP0:
+                lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
+                                                pol="긍정" if pol == 1 else "부정"))
+    for _ in range(replay):
+        for stem, pol in seen:
+            for pat in GROUND_FORMS_FLIP0:
+                lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
+                                                pol="긍정" if pol == 1 else "부정"))
+    rng.shuffle(lines)
+    text = "".join(lines)
+    flipped = sum(1 for k, (_, p) in enumerate(held) if p != labels[k])
+    return text, {"held": len(held), "seen": len(seen), "lines": len(lines),
+                  "labels_flipped": flipped, "bytes": len(text.encode())}
 
 
 def _load_concepts(path):
@@ -128,11 +215,37 @@ def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed):
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
-    if fmt not in ("derivtrace", "flat"):
-        print("usage: anima corpus <derivtrace|flat> --out PATH "
-              "[--held-out I,J] [--comp-per-pair N] [--single-per-concept N] "
-              "[--seed S] [--concepts FILE.json]")
+    if fmt not in ("derivtrace", "flat", "ground", "ground_lie"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie> --out PATH")
+        print("  derivtrace|flat        [--held-out I,J] [--comp-per-pair N] "
+              "[--single-per-concept N] [--seed S] [--concepts FILE.json]")
+        print("  ground|ground_lie      --atoms gt_atoms.json [--reps N] [--replay N] [--seed S]")
+        print("      H_9313 DECON-W grounding corpus — writes each held-out atom's polarity into")
+        print("      the WEIGHTS via the un-negated (flip0) template lines ONLY. The negated")
+        print("      (flip1) forms NEVER appear, so a later flip1 test measures COMPOSITION, not")
+        print("      memorisation. `ground_lie` is the same stream with EVERY held-out polarity")
+        print("      INVERTED — the control that earns the verdict (weight-side twin of the")
+        print("      SEEN-LIE arm that decided H_9312). Prediction is signed: a model that")
+        print("      consumes AND composes the written polarity must score FAR BELOW chance on")
+        print("      flip1 under ground_lie; one that ignores it sits at chance in both arms.")
+        print("      Same --seed => content-matched line for line.")
         sys.exit(2)
+
+    if fmt in ("ground", "ground_lie"):
+        if not opts["atoms"]:
+            print("anima corpus %s: --atoms gt_atoms.json is required" % fmt)
+            sys.exit(2)
+        text, st = build_ground(fmt, opts["atoms"], opts["reps"], opts["replay"], opts["seed"])
+        if opts["out"]:
+            with open(opts["out"], "w") as fh:
+                fh.write(text)
+        print(f"anima corpus {fmt}: held={st['held']} seen={st['seen']} lines={st['lines']} "
+              f"labels_flipped={st['labels_flipped']}/{st['held']} bytes={st['bytes']} "
+              f"reps={opts['reps']} replay={opts['replay']} seed={opts['seed']} "
+              f"-> {opts['out'] or '(stdout head)'}")
+        if not opts["out"]:
+            print(text[:400])
+        return
     S, KW = _load_concepts(opts["concepts"])
     text, train_pairs = build(fmt, S, KW, opts["held_out"],
                               opts["comp_per_pair"], opts["single_per_concept"], opts["seed"])

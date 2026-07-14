@@ -1688,8 +1688,51 @@ def main():
                 print(f"  gauges error: {e}", flush=True)
 
         # ── persist torch ckpt (ALWAYS — a_fire_recover_complete) ────────────────
+        # "ALWAYS" used to mean "if you remembered to pass --ckpt-out". It now means always: the
+        # .clm is int4, and a fine-tune whose updates are smaller than the quant step does not
+        # survive serialization at all (convergence serialize-py-1, measured in H_9313). Without a
+        # .pt beside it there is no way to even SEE that, let alone recover the run.
         if a.ckpt_out:
             _write_pt(a.ckpt_out)
+        elif a.out:
+            _write_pt(f"{a.out}.pt")
+
+        # ── QUANT-SWALLOW guard (serialize-py-1) ─────────────────────────────────
+        # The failure this catches is silent and it cost H_9313 a full 4-run battery: training
+        # descends beautifully (CE 1.04 -> 0.16), the .clm changes sha, decodes coherently, obeys
+        # the template — and scores its OWN training lines at chance, because every weight update
+        # was smaller than half an int4 step and `round(w/scale)` erased all of it.
+        #
+        # So: if we warm-started, compare what we learned against the grid we must survive. This is
+        # a WARNING, not a hard error — a large from-scratch run legitimately moves far past the
+        # step, and a legitimately tiny update (a probe, a 1-step smoke) is not a bug. What is a bug
+        # is finding out AFTER the measurement.
+        if a.init and a.out and rank == 0:
+            try:
+                import numpy as _np
+                base = S.deserialize_v3(a.init, L, emax) if a.init.lower().endswith(".clm") else None
+                if base is not None:
+                    now = {k: v.detach().cpu().numpy() for k, v in core_model.state_dict().items()}
+                    worst = 0.0
+                    for k, b in base.items():
+                        if k not in now or now[k].shape != b.shape:
+                            continue
+                        step_q = float(_np.abs(b).max()) / 7.0          # int4-sym: amax/7
+                        if step_q <= 0:
+                            continue
+                        frac = float((_np.abs(now[k] - b) > step_q / 2).mean())
+                        worst = max(worst, frac)
+                    if worst < 0.01:
+                        print("  ⚠️  QUANT-SWALLOW WARNING (serialize-py-1): only %.2f%% of weights "
+                              "moved past half an int4 step — this fine-tune will NOT survive .clm "
+                              "serialization. The .clm you are about to evaluate is, for practical "
+                              "purposes, the model you started from. Evaluate the .pt, raise lr/"
+                              "steps, or use a non-quantized export." % (100 * worst), flush=True)
+                    else:
+                        print("  quant-swallow check: %.1f%% of weights moved past half an int4 "
+                              "step (update survives serialization)" % (100 * worst), flush=True)
+            except Exception as e:
+                print(f"  quant-swallow check skipped: {e}", flush=True)
 
         # ── summary json ──────────────────────────────────────────────────────────
         summary = {"entry": "anima-py train", "arch": a.arch, "arm": a.arm,
