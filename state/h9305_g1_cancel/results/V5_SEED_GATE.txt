@@ -1,0 +1,29 @@
+### A. TRUE sampling sd of I_k vs the sd the frozen bar used
+  S_LEN k0 (identical stratum, 4 held-out draws): [0.02124, -0.01434, -0.0243, 0.01689]
+  sd ACROSS SEEDS (held-out-draw variance)  = 0.02260   <- the estimator's REAL uncertainty
+  sd of the PERMUTATION null (the frozen bar)= 0.00090   <- what ped_k/MDE_k were built on
+  ratio = 25.1x  => the frozen bar omitted the DOMINANT variance component
+  TRUE MDE(3sd) = 0.0678  vs  delta_eq = 0.02   => NOT-POWERED
+
+### B. cancellation surplus  (D_exp - D_ctrl1)  -- paired across seeds, NO max(controls)
+  S_CLUST  D_exp=[np.float64(-0.00129), np.float64(0.00178), np.float64(0.00151), np.float64(0.00387)]
+           D_ctl=[np.float64(0.00449), np.float64(0.00514), np.float64(0.0053), np.float64(0.00303)]
+           surplus mean=-0.00302 sd=0.00279  paired-t=-2.17 (n=4) p~0.030   [cancellation predicts >0]
+  S_LEN    D_exp=[np.float64(-0.00085), np.float64(-0.00346), np.float64(-0.00222), np.float64(-0.00091)]
+           D_ctl=[np.float64(0.00389), np.float64(0.00332), np.float64(0.00132), np.float64(0.00741)]
+           surplus mean=-0.00585 sd=0.00212  paired-t=-5.51 (n=4) p~0.000   [cancellation predicts >0]
+
+### C. do ANY strata replicate? (a real stratum effect must keep its sign across held-out draws)
+  S_LEN k0: [0.02124, -0.01434, -0.0243, 0.01689]  -> sign flips (+,-,-,+); mean=-0.00013  => pure held-out-draw noise
+  significant strata are a DIFFERENT set every seed, with RANDOM SIGN:
+    seed 9305  [('CLUSTk3', -0.0674), ('LENk0', 0.0212)]
+    seed 1     [('CLUSTk3', -0.0311)]
+    seed 2     [('CLUSTk7', -0.0208), ('LENk0', -0.0243)]
+    seed 3     [('CLUSTk2', 0.0212), ('MARK-지않', 0.021)]
+  (CLUST k-index is NOT comparable across seeds -- kmeans init is seeded -> different clusters)
+
+### D. POS + pedestal + CTRL1 integrity, all 4 seeds
+  seed 9305  POS: pooled=+0.00033 strat=[+4.423,+4.417] D=+4.419 fired=True | CTRL1 dirty=0
+  seed 1     POS: pooled=-0.00073 strat=[+4.517,+4.488] D=+4.503 fired=True | CTRL1 dirty=0
+  seed 2     POS: pooled=-0.00055 strat=[+4.485,+4.521] D=+4.504 fired=True | CTRL1 dirty=0
+  seed 3     POS: pooled=+0.00032 strat=[+4.505,+4.474] D=+4.490 fired=True | CTRL1 dirty=0
