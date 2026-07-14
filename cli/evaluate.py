@@ -755,6 +755,7 @@ def evaluate_usage():
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
     print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
@@ -769,6 +770,10 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
     print("")
+    print("  --ground-probe <manifest>: NBIND-G grounding instrument, engine-native and whole —")
+    print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
+    print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
+    print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
     print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
@@ -1247,6 +1252,124 @@ def _selftest_rho_cells():
     return ok, checks
 
 
+def _gp_logreg(Xtr, ytr, Xte, l2=10.0, iters=400, lr=0.5):
+    """L2 logistic regression, numpy-only (anima-py is pure numpy — no sklearn on the engine
+    path). Standardise on the TRAIN split only, then full-batch gradient descent. Deterministic:
+    zero init, fixed step count, no shuffling — the same ckpt and manifest give the same bytes."""
+    import numpy as np
+    mu, sd = Xtr.mean(0), Xtr.std(0)
+    sd[sd == 0.0] = 1.0
+    A, B = (Xtr - mu) / sd, (Xte - mu) / sd
+    w, b = np.zeros(A.shape[1]), 0.0
+    n = float(len(A))
+    for _ in range(iters):
+        p = 1.0 / (1.0 + np.exp(-(A @ w + b)))
+        g = A.T @ (p - ytr) / n + (w / l2)
+        w -= lr * g
+        b -= lr * float((p - ytr).mean())
+    return 1.0 / (1.0 + np.exp(-(B @ w + b)))
+
+
+def ground_probe_run(argv):
+    """`anima-py evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64]`
+    — the NBIND-G grounding instrument, engine-native and whole (H_9302 certified it, H_9303
+    read the wall with it). Everything the verdict rests on happens inside this one command:
+    the production trunk forward, the readout, the positive control and the null.
+
+    Five things the probes it replaces got wrong, each of which manufactured a false negative
+    (H_9289 / H_9290 / H_9297 / H_9300, now all INVALID — convergence gt-power-build-py-1,
+    probe-capacity-py-1, gen-nbindg-n2-py-1):
+
+      POSITION      read the hidden where the model must ANSWER (after the arrow), not at the
+                    atom — a causal LM has no reason to have committed anything at the atom.
+      CARRIER       ask inside the carrier the model was TAUGHT; a natural review with an arrow
+                    glued on is out of distribution and the decision machinery never fires.
+      V-LIVE        certify on atoms whose polarity the model WAS taught. A probe that cannot
+                    read a taught answer certifies nothing about an untaught one. Counted per
+                    ITEM (that is where the power is); leave-one-ATOM-out (a context-level split
+                    leaks the stem and would certify a probe that only reads orthography).
+      AGGREGATION   an atom's forms are half polarity-inverting BY CONSTRUCTION, so voting raw
+                    item labels makes the gold vector constant. Undo each form's flip first:
+                    atom_pol = majority over forms of (item_pred XOR form_flip) — the very
+                    recombination the D-acc eval asks the model for.
+      POWER         count at the ATOM level. Items inside an atom are not independent draws.
+
+    Manifest: {"win":64, "bar":0.65, "items":[{"id","prompt","stem","pol","flip","split"}]}
+    where `pol` is the ITEM's gold polarity, `flip` says whether that form inverts the atom's,
+    and `split` is "train" (taught) or "heldout" (never taught). Read-only: no decode sampling,
+    no term added to any loss (a_train_inline_gauge / p7 clean)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--ground-probe", "")))
+    out_path = evaluate_strval(argv[1:], "--out", "ground_probe.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    bar = float(spec.get("bar", 0.65))
+    n_perm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    items = spec["items"]
+
+    print("=== anima evaluate --ground-probe — NBIND-G grounding (engine-native) ===")
+    print("  ckpt " + ckpt + " · win " + str(T) + "B · bar " + str(bar) +
+          " · " + str(len(items)) + " prompts")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+
+    X = []
+    for k, it in enumerate(items):
+        tok = clm._seed_to_tok(it["prompt"], T)          # same encode the gates decode over
+        yn = clm.clm_forward_hidden(W, tok, T)           # EXACT production trunk forward
+        X.append(np.asarray(yn)[T - 1].astype(np.float64))     # THE ANSWER POINT
+        if (k + 1) % 100 == 0:
+            print("  [forward %d/%d]" % (k + 1, len(items)), flush=True)
+    X = np.stack(X, 0)
+    y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
+    fl = np.array([int(i.get("flip", 0)) for i in items])
+    st = np.array([i["stem"] for i in items])
+    sp = np.array([i["split"] for i in items])
+    tr, te = sp == "train", sp == "heldout"
+
+    # V-LIVE — leave-one-ATOM-out over the TAUGHT atoms, scored per item
+    hit = tot = 0
+    for a in np.unique(st[tr]):
+        m = (st == a) & tr
+        p = _gp_logreg(X[tr & ~m], y[tr & ~m], X[m])
+        hit += int(((p > 0.5) == (y[m] > 0.5)).sum()); tot += int(m.sum())
+    v_live = hit / float(tot) if tot else float("nan")
+
+    def atom_acc(pred):
+        """Undo each form's flip, then vote — the atom's polarity is the latent."""
+        ok = 0
+        ats = np.unique(st[te])
+        for a in ats:
+            m = (st == a) & te
+            rec = np.logical_xor(pred[m[te]] > 0.5, fl[m] == 1)     # recovered atom polarity
+            gold = np.logical_xor(y[m] > 0.5, fl[m] == 1)[0]
+            ok += int((rec.mean() > 0.5) == bool(gold))
+        return ok / float(len(ats)), len(ats)
+
+    acc, n_at = atom_acc(_gp_logreg(X[tr], y[tr], X[te]))
+    sd = math.sqrt(0.25 / n_at) if n_at else float("nan")
+
+    rng = np.random.default_rng(seed)
+    null = np.array([atom_acc(_gp_logreg(X[tr], rng.permutation(y[tr]), X[te]))[0]
+                     for _ in range(n_perm)])
+    pval = float((null >= acc).mean())
+
+    print("  [V-LIVE  taught atoms, per item n=%d] %.3f" % (tot, v_live))
+    print("  [HELD-OUT atoms n=%d · chance sd %.4f · bar %.2f = %.2f sigma] %.3f (%+.2f sigma)"
+          % (n_at, sd, bar, (bar - 0.5) / sd, acc, (acc - 0.5) / sd))
+    print("  [PERM null %d draws] p = %.3f · p95 = %.3f" % (n_perm, pval, float(np.quantile(null, 0.95))))
+    out = {"ckpt": ckpt, "win": T, "bar": bar, "v_live_taught_per_item": v_live,
+           "heldout_atom_acc": acc, "n_atoms": n_at, "chance_sd": sd,
+           "bar_sigma": (bar - 0.5) / sd, "perm_p": pval, "n_perm": n_perm,
+           "perm_p95": float(np.quantile(null, 0.95))}
+    json.dump(out, open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("GROUND-PROBE wrote " + out_path)
+    return 0
+
+
 def interaction_lift_run(argv):
     """`anima-py evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json>
     [--win T] [--score-len K]` — engine-native joint interaction-lift measurement
@@ -1668,7 +1791,8 @@ def xfan_run(argv):
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 _KNOWN_FLAGS = frozenset((
     "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--gen", "--help",
-    "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled", "--out", "--probe",
+    "--ground-probe", "--interaction-lift", "--kosmos", "--n-decode", "--n-sampled",
+    "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--selftest-rho-cells", "--slot-off",
     "--slot-shuffle", "--system-g1", "--win", "--with-logits", "--xbind", "--xfan",
 ))
@@ -1767,6 +1891,11 @@ def main(argv):
         i = argv.index("--system-g1")
         argv = argv[:i] + argv[i + 1:]
         return system_g1_run(argv)
+    # --ground-probe <manifest.json>: the NBIND-G grounding instrument, whole and engine-native
+    # (answer point · taught carrier · V-LIVE positive control · flip-undone atom aggregation ·
+    # atom-level power · permutation null). The five defects it fixes are in ground_probe_run.
+    if "--ground-probe" in argv:
+        return ground_probe_run(argv)
     # --dump-hidden <prompts.json>: read-only penultimate-hidden dump (ρ·weave / γ
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
