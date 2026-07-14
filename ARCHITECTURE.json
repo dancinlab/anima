@@ -16550,6 +16550,13 @@
         "value": "**PEP 668 이 `pip install --user` 를 조용히 거부한다 — 그리고 나는 그 실패를 '설치했다'로 읽었다.** 2026-07-15: summer 에 새 wheel(anima-python 0.13.24 · `corpus bindlocus` 포함)을 `python3 -m pip install -q --user --force-reinstall --no-deps <whl>` 로 여러 번 깔았는데 **버전이 계속 0.13.22 였다**. `-q` 로 출력을 죽여놨기 때문에 나는 실패를 못 봤고, 대신 '왜 새 플래그가 안 먹지'를 엉뚱한 곳(dispatch·PATH·shadow install)에서 찾느라 **세션 시간을 크게 낭비했다**. 출력을 살려보니 **`error: externally-managed-environment` (PEP 668)** — 배포판 python 은 `pip install` 을 기본 거부하고 `--break-system-packages` 를 요구한다. 같은 함정을 **mini 에서도** 이미 한 번 맞았다(그때는 venv 로 우회했으므로 '해결'로 착각하고 학습을 안 남겼다).",
         "recurrence": "pool/pod 호스트에 새 wheel 을 `pip install -q --user` 로 깔고 성공했다고 가정 → 새 CLI 플래그가 'unknown flag' 로 죽음 → 원인을 dispatch/PATH/shadow-install 에서 찾으며 헤맴. `-q` 가 에러를 삼키기 때문에 **실패가 성공처럼 보인다**.",
         "fix": "① **설치 커맨드에 `-q` 를 쓰지 마라** — 최소한 `| tail -2` 로 결과를 **눈으로** 보라. ② 배포판 python(우분투/데비안 계열)에는 **`--break-system-packages`** 를 붙여라(또는 venv). ③ **설치는 주장이 아니라 게이트다** — 깐 직후 `python3 -c \"import importlib.metadata as m; assert m.version('anima-python')=='<기대버전>'\"` + **새 심볼 존재 확인**(`grep -c <새플래그> <site-packages>/…/cli/corpus.py`)을 **hard-gate 로** 걸고, 통과 못 하면 발사하지 마라. 이 세션의 pod 부트스트랩은 이미 그 게이트를 갖고 있었고(그래서 pod 는 무사했다), **summer 만 게이트 없이 깔았다가 당했다** — 게이트는 모든 호스트에 똑같이 걸어야 한다."
+      },
+      {
+        "id": "novelty-must-be-measured-1",
+        "polarity": "POS-CONV",
+        "value": "**'이 단어는 드물 것이다' 는 데이터가 아니라 직관이고, 직관은 틀린다.** H_9331 BIND-LOCUS 의 핵심 arm 은 **novel 어간**(사전학습 0회 ∧ CPT 0회)을 요구한다. 내가 '흔치 않아 보인다'고 고른 20개를 9.9GB 사전학습 코퍼스에 **바이트 계수**하니 **20/20 전부 기각**됐다(성기 54,096회 · 포근 12,217 · 묵직 11,099 · …). **단 하나도 novel 이 아니었다.** novelty 를 주장했다면 B-arm 은 사전학습이 이미 극성을 준 어간 위에서 돌았을 것이고, 거기서 나온 **S 판정은 substrate 사실이 아니라 사전학습-노출 인공물**이 됐을 것이다 — 그 arm 이 배제하려던 바로 그 교란으로. 빌더가 '1회라도 나오면 기각' 을 하드하게 걸어놔서 **발사 전에** 걸렸다(spend 0). 파생 통찰: 자연 코퍼스에서 진짜 0회인 어간은 필연적으로 **뜻 없는 문자열**인데, 그건 결함이 아니라 **B-arm 의 요점**이다 — '연산자는 출처 불문 내용에 붙는가' 를 묻는 데엔 **사전 prior 가 0인 어간**이 가장 깨끗한 시험대다(경쟁 표현 없음).",
+        "recurrence": "'held-out'·'novel'·'unseen' 을 **설계자의 직관**으로 정하고 그 위에 일반화 주장을 세움 → 사실은 코퍼스에 수만 번 나오는 항목이라 결과가 노출-인공물이 됨(그리고 그걸 substrate 사실로 cement).",
+        "fix": "**노출 0 은 주장이 아니라 계수다** — 후보를 **모든 관련 코퍼스에 바이트 계수**하고 **1회라도 나오면 기각**하는 게이트를 계기 안에 하드하게 넣어라(문서 규칙이 아니라 코드). 자연 코퍼스에서 0회 항목을 못 찾으면 **생성**하되(의사-어휘) **바이트길이 분포를 대조군에 정합**시키고, 그 생성 항목도 **똑같이 계수해서** 0을 확인한다. 검정력 하한(n)을 못 채우면 **음성을 읽지 마라** — 'not there' 가 아니라 'cannot find' 다(power-before-negative-verdict)."
       }
     ]
   }
