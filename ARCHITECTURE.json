@@ -13035,6 +13035,50 @@
                 "detail": "closure 입력(core/·cli/·stdlib/·hexa.toml·install/setup.hexa·ci.yml) 무변경 run은 engine 잡 스킵(GitHub API 변경파일 조회·fail-open) — docs/state-only 머지가 ghost 직렬 러너 미점유. enforce_anima_gates는 별도 ubuntu 잡으로 항상 실행(스킵과 무관, 게이트 무약화)."
               }
             ]
+          },
+          {
+            "id": "a-parallel-session-compare",
+            "type": "gate",
+            "name": "👥 a-parallel-session-compare — 병렬 세션의 작업을 읽고 비교하라 (owner directive)",
+            "detail": "여러 에이전트 세션이 같은 기질을 동시에 읽는다. H 착수 전 그들이 착륙시킨 것을 읽고 내 것과 대조하라 — 안 하면 이미 죽은 설계를 쏘거나, 내 증거가 받쳐주는 더 날카로운 주장을 놓치거나, 착륙한 verdict 를 모른 채 반박한다.",
+            "children": [
+              {
+                "id": "aps-read",
+                "type": "gate",
+                "name": "do — 읽을 것",
+                "detail": "`git log origin/main --oneline -30` · `git show origin/main:CLAUDE.md`(지침이 거기 착륙) · `sidecar ing show` · `HYPOTHESES.jsonl`. 세 답이 나올 때까지: ① 그들이 이미 내 답을 갖고 있나(내 설계를 이미 죽였나) ② 내 증거가 더 날카로운 주장을 받쳐주나 ③ 내 H id 가 비었나(G6 unique-H_id 하드블록)."
+              },
+              {
+                "id": "aps-case-mechanism",
+                "type": "gate",
+                "name": "실측사례 ① — 데이터는 내 것, 기전은 그들 것",
+                "detail": "이 lane 이 H_9329 C1b 를 측정: 미학습 부사 5종(전혀·별로·그다지·결코·하나도)에서 Δ −0.90..−1.00 p=.000, `지는 않다`/`지 않았다` 는 사망. 나는 '자유 부사 슬롯을 가진 문자열-방아쇠 규칙'으로 적었다."
+              },
+              {
+                "id": "aps-case-mechanism-2",
+                "type": "gate",
+                "name": "실측사례 ① — 그들이 읽어낸 것",
+                "detail": "병렬 세션이 같은 표에서 기전을 찾았다: 작동 표면은 **전부 자유 선행 단어**(어간과 분리 가능), 죽는 표면은 **교착 접미사 자체**를 변형. ⟹ `지 않다` = 어간에 붙는 접미사, `(어간⊕지않다)` = 하나의 결합 키. 벽은 '다른 표'가 아니라 **다른 키**. ⟹ EN-FIRST 지침 + C3 부호 예측((−) 분기)."
+              },
+              {
+                "id": "aps-case-attribution",
+                "type": "gate",
+                "name": "실측사례 ② — 그들이 내 원인귀속을 반증했다",
+                "detail": "summer wedge 를 나는 '다른 세션의 heavy job 2개' 탓으로, 그들 초안은 '내 job 2개' 탓으로 적었다. 그들의 `ps` 실측: heavy job **5개**(그들 2 + **내 3**) · 26 users = fleet 층위 위반. **둘 다 자기 job 을 세지 않았다.** SSOT = convergence `pool-host-saturation-1`."
+              },
+              {
+                "id": "aps-dont",
+                "type": "gate",
+                "name": "dont",
+                "detail": "`origin/main` 을 fetch 없이 '내가 본 것'으로 가정 · **primary checkout 편집**(bookkeeping CLI 가 거기 쓰고 남의 미착륙 레코드가 거기 산다 — mutating 은 worktree 에서; 남의 미커밋 변경을 보면 **그대로 두고 말하라**) · 이미 벌어낸 결론 재유도(중복은 싼 실패, **착륙한 verdict 를 안 읽고 반박**이 비싼 실패)."
+              },
+              {
+                "id": "aps-report",
+                "type": "gate",
+                "name": "보고 — 충돌은 창피가 아니라 측정",
+                "detail": "병렬 세션의 작업이 내 것에 걸리면 응답과 카드에 적어라: 누구의 발견인가 · 무엇을 바꿨나 · **동의(AGREES)인가 충돌(CONFLICTS)인가**. 두 세션이 같은 기질을 읽고 갈라지면 한쪽 독법이 틀린 것이고, 어느 쪽인지 알아내는 게 곧 일이다."
+              }
+            ]
           }
         ]
       },
@@ -14473,12 +14517,6 @@
             ]
           }
         ]
-      },
-      {
-        "id": "a_parallel_session_compare",
-        "type": "rule",
-        "name": "👥 a_parallel_session_compare — 병렬 세션의 작업을 **읽고 비교**한 뒤에 쏴라 (오너 지침)",
-        "detail": "**do**: H 를 시작하기 전에 다른 세션이 무엇을 하는지 **읽고 내 것과 비교**하라 — `git log origin/main --oneline -30` · `git show origin/main:CLAUDE.md`(지침이 거기 착륙한다) · `sidecar ing show` · `HYPOTHESES.jsonl`. 그 읽기에서 **세 가지**가 나와야 한다: ① **그들이 이미 내 답을 갖고 있나**(혹은 내 설계를 이미 죽였나 — H_9329 의 '시연 분할' 은 **사전학습이 이미 480회 돌린 실험**이라 발사 전에 죽었다) ② **내 증거가 내가 한 주장보다 날카로운 주장을 뒷받침하나** ③ **내 H id 가 비어 있나**(`G6 unique-H_id` 가 신규 충돌을 **하드블록**한다 — H_9328 을 병렬 세션 DO-MOUTH 가 비행중에 가져가 이 lane 은 옛 id 로 이미 커밋한 뒤 H_9329 로 재번호해야 했다).\n\n**가장 강한 실측 사례(공짜였다)**: 이 lane 은 부정 연산자가 **미학습 부사 5종**(`전혀`·`별로`·`그다지`·`결코`·`하나도`)에서 Δ −0.90~−1.00 · p=.000 으로 돌고 `지는 않다`/`지 않았다` 에서 죽는다는 것을 재고, '자유 부사 슬롯을 가진 문자열-방아쇠 규칙' 이라 적었다. **병렬 세션이 같은 표를 읽고 기전을 찾았다**: **작동하는 표면은 전부 자유 선행 단어**(어간과 분리 가능)이고 **죽는 두 표면은 교착 접미사 자체를 변형**한다 ⟹ **`지 않다` 는 어간에 달라붙는 교착 접미사**이고 **`(어간 ⊕ 지않다)` 가 하나의 결합 키**이며, 벽은 'CPT 가 다른 표에 썼다' 가 아니라 **'CPT 가 다른 키에 썼다'** 이다. 그 독법이 아래 **EN-FIRST 지침**과 **C3 의 부호 예측**(연산자는 **옛** 극성을 읽을 것 ⟹ `(−)` 분기)이 됐다. **데이터는 우리 것이었고 기전은 그들 것이었다. 그들의 작업을 읽어라.**\n\n**dont**: `origin/main` 이 마지막에 본 그것이라고 가정 (fetch 하라 — 이 lane 은 **10 커밋 뒤처진 채** 다른 세션이 이미 제약한 설계를 쓰고 있었다) · **primary checkout 을 편집** (`sidecar architecture convergence add` 같은 bookkeeping CLI 가 **거기에 쓰고**, 병렬 세션의 **미착륙 레코드도 거기 있다** — primary 에서 `git reset` 하면 **그들의 작업이 파괴된다**; mutating 작업은 격리 worktree 에서 하고, 남의 미커밋 변경을 발견하면 **그대로 두고 말하라**) · 그들이 이미 벌어낸 결론을 재유도 (중복 작업은 **싼** 실패다; **비싼** 실패는 **착륙한 verdict 를 읽지 않고 반박하는 것**이다).\n\n**보고하라**: 병렬 세션의 작업이 내 것과 맞닿으면 **응답에도 카드에도 적어라** — 누구의 발견인지, 무엇을 바꿨는지, **동의인지 충돌인지**. 충돌은 창피가 아니라 **측정**이다 — 두 세션이 같은 기질을 읽고 갈라진다면 **한쪽 독법이 틀린 것**이고, 어느 쪽인지 알아내는 것이 곧 일이다."
       }
     ]
   },
@@ -14788,7 +14826,7 @@
       {
         "id": "summer-heavy-train-1",
         "state": "pos-conv",
-        "value": "free workstation(summer/aiden)에 heavy 학습을 올리면 잃는다 — **두 가지 방식으로**.\n\n**① multi-hour heavy 를 free workstation 에** (2026-07-05): derivtrace robustness 10-training fire 를 summer 에 올렸다가 ckpt 6/10 에서 GPU 0% · train.py 소멸 · DONE flag 없음 STALL(리부트/wedge 추정) → vast 렌트 pod 로 재발사. **free ≠ reliable**.\n\n**② 같은 GPU 에 heavy job 을 동시에** (2026-07-14 · 새 판): H_9327 의 **s11 재현 학습이 아직 돌고 있는데 LIE 통제군 학습을 같은 summer GPU 에 얹었다** → torch.OutOfMemoryError: CUDA out of memory(12,227 MiB 중 164 MiB 할당 실패) → **통제군이 통째로 죽었다**(TRAIN rc=1 · ckpt 미생성 · eval 3건 전부 'ckpt not decodable'). 잃은 것은 **판정의 마지막 조각**이었다 — BINDING 을 확정/반증할 유일한 팔. 병렬화로 벌려던 시간보다 **재발사 20분**이 더 들었다. ⚠️ 특히 위험한 이유: DONE 마커가 **정상적으로 찍혔다**(스크립트가 rc 를 안 보고 touch) ⟹ 대기자는 '완료'로 깨어났고, 출력 파일이 없다는 걸 발견하기 전까지 **성공으로 오인**할 뻔했다.\n\n**법칙**: GPU 는 CPU 코어처럼 나눠 쓰이지 않는다 — VRAM 은 선점형이 아니라 **전부-아니면-전무**다. wall-time 을 줄이려는 병렬화는 **호스트가 다를 때만** 이득이고, 같은 GPU 에 얹으면 뒤엣것이 죽는다 (a_wall_first 의 '각 track 을 **별도 GPU 호스트**에' 조건이 바로 이것).\n\n**③ 병렬 세션이 호스트를 통째로 죽인다 (2026-07-14 · 같은 날 두 번째)**: ②(내가 GPU 를 겹쳐 쓴 것)를 고친 직후, **다른 세션의 heavy job 2개**(시스템 python · CPU 64.8% × 2 · 37분+)가 summer 의 RAM 을 포화시켜 **sshd 가 wedge** 됐다 — ssh 3회 무응답(45초 타임아웃) · `sidecar pool list` 프로브 **'도달 불가'**. 내 C3 G-base 는 첫 매니페스트 50/60 에서 멈췄고 산출물 0. **내가 규칙을 지켜도 남이 호스트를 죽일 수 있다** — free workstation 은 **내가 통제하지 못하는 이웃**을 갖는다. 이건 ①(free ≠ reliable)의 가장 날카로운 형태다. ⚠️ 특히 나쁜 점: **원격 복구가 불가능**하다(sshd 가 죽었으니 kill 도 못 보낸다). 물리 재부팅이 필요하고, 그건 이 세션이 할 수 없는 일이다.\n\n**④ 근본수정 — 침묵하는 행(hang)을 시끄러운 실패로 (2026-07-14 · `cli/evaluate.py::--xbind` 감시견)**: ③ 을 pod 으로 **우회**만 하고 끝냈다면 다음 호스트에서 또 40분을 잃는다. **진짜 결함은 호스트가 죽은 게 아니라 eval 이 그걸 말하지 않은 것**이다 — item 50/60(eta 37초)에서 40분을 매달려 있었고, 에러도 종료도 산출물도 없었으며, **사람이 직접 찾아보기 전까지 아무도 몰랐다**. 그 뒤에 큐돼 있던 CPT 2개는 영원히 시작되지 않았다. **수정**: 완료된 item 들이 이미 '한 item 이 얼마나 걸리는지' 를 말해준다 ⟹ 한 item 이 최근 중앙값의 **20배**(하한 120초)를 넘으면 **sys.exit 로 크게 죽는다**(실측 수치 + '느린 게 아니라 멈춘 것이다 · 호스트를 확인하라' 안내 포함). **검증 6/6**: 정상 GPU 런(3.8s/item) 통과 · 느린 CPU 런(40s/item 일정) 통과 · 점진적 부하 증가(3→8s) 통과 · **호스트 사망(3.8s ×50 → 2400s) 잡음** · 짧은 런의 150s 매달림 잡음 · 첫 item 이 오래 걸림(기준선 없음) 통과 ⟹ **위양성 0**. ⟹ **40분 침묵이 2분 실패가 된다.**",
+        "value": "free workstation(summer/aiden)에 heavy 학습을 올리면 잃는다 — **두 가지 방식으로**.\n\n**① multi-hour heavy 를 free workstation 에** (2026-07-05): derivtrace robustness 10-training fire 를 summer 에 올렸다가 ckpt 6/10 에서 GPU 0% · train.py 소멸 · DONE flag 없음 STALL(리부트/wedge 추정) → vast 렌트 pod 로 재발사. **free ≠ reliable**.\n\n**② 같은 GPU 에 heavy job 을 동시에** (2026-07-14 · 새 판): H_9327 의 **s11 재현 학습이 아직 돌고 있는데 LIE 통제군 학습을 같은 summer GPU 에 얹었다** → torch.OutOfMemoryError: CUDA out of memory(12,227 MiB 중 164 MiB 할당 실패) → **통제군이 통째로 죽었다**(TRAIN rc=1 · ckpt 미생성 · eval 3건 전부 'ckpt not decodable'). 잃은 것은 **판정의 마지막 조각**이었다 — BINDING 을 확정/반증할 유일한 팔. 병렬화로 벌려던 시간보다 **재발사 20분**이 더 들었다. ⚠️ 특히 위험한 이유: DONE 마커가 **정상적으로 찍혔다**(스크립트가 rc 를 안 보고 touch) ⟹ 대기자는 '완료'로 깨어났고, 출력 파일이 없다는 걸 발견하기 전까지 **성공으로 오인**할 뻔했다.\n\n**법칙**: GPU 는 CPU 코어처럼 나눠 쓰이지 않는다 — VRAM 은 선점형이 아니라 **전부-아니면-전무**다. wall-time 을 줄이려는 병렬화는 **호스트가 다를 때만** 이득이고, 같은 GPU 에 얹으면 뒤엣것이 죽는다 (a_wall_first 의 '각 track 을 **별도 GPU 호스트**에' 조건이 바로 이것).\n\n**③ 공유 호스트는 fleet 층위에서 포화된다 — 그리고 나도 그 일부였다 (2026-07-14 · ⚠️ 원인 귀속 정정)**: ②(내가 GPU 를 겹쳐 쓴 것)를 고친 직후 summer 의 RAM 이 포화돼 **sshd 가 wedge** 됐다 — ssh 3회 무응답(45초 타임아웃) · `sidecar pool list` **'도달 불가'** · 내 C3 G-base 는 50/60 에서 멈추고 산출물 0. 나는 처음 이걸 **'다른 세션의 heavy job 2개'** 탓으로 적고 **'내가 규칙을 지켜도 남이 호스트를 죽인다'** 고 썼다. **병렬 세션의 `ps` 실측이 반증했다**: load 41 = 한 호스트에 겹친 **heavy job 5개**(그들 H_9330 ×2 + **내 `anima-py` ×2(RSS 5.6GB 씩) + 내 `natem_c34` xbind ×1**) · 26 users ⟹ **셋이 내 것**이었고, 나는 ② 를 **fleet 층위에서 스스로 어겼다**. **두 세션이 서로를 탓했다** — 어느 쪽도 `ps` 로 전부를 세지 않았다. 근본원인은 이웃도 나도 아니라 **아무도 전체를 세지 않은 것**이다. ⟹ 이 항목의 SSOT = convergence **`pool-host-saturation-1`**(굶주림≠죽음 · 순환 블로커 · 관측지연≠실패). 발사 전 `uptime` + `ps --sort=-pcpu` 로 **남의 job 부터** 세라. ⚠️ 특히 나쁜 점: **원격 복구가 불가능**하다(sshd 가 죽었으니 kill 도 못 보낸다). 물리 재부팅이 필요하고, 그건 이 세션이 할 수 없는 일이다.\n\n**④ 근본수정 — 침묵하는 행(hang)을 시끄러운 실패로 (2026-07-14 · `cli/evaluate.py::--xbind` 감시견)**: ③ 을 pod 으로 **우회**만 하고 끝냈다면 다음 호스트에서 또 40분을 잃는다. **진짜 결함은 호스트가 죽은 게 아니라 eval 이 그걸 말하지 않은 것**이다 — item 50/60(eta 37초)에서 40분을 매달려 있었고, 에러도 종료도 산출물도 없었으며, **사람이 직접 찾아보기 전까지 아무도 몰랐다**. 그 뒤에 큐돼 있던 CPT 2개는 영원히 시작되지 않았다. **수정**: 완료된 item 들이 이미 '한 item 이 얼마나 걸리는지' 를 말해준다 ⟹ 한 item 이 최근 중앙값의 **20배**(하한 120초)를 넘으면 **sys.exit 로 크게 죽는다**(실측 수치 + '느린 게 아니라 멈춘 것이다 · 호스트를 확인하라' 안내 포함). **검증 6/6**: 정상 GPU 런(3.8s/item) 통과 · 느린 CPU 런(40s/item 일정) 통과 · 점진적 부하 증가(3→8s) 통과 · **호스트 사망(3.8s ×50 → 2400s) 잡음** · 짧은 런의 150s 매달림 잡음 · 첫 item 이 오래 걸림(기준선 없음) 통과 ⟹ **위양성 0**. ⟹ **40분 침묵이 2분 실패가 된다.**",
         "threshold": "재발조건 = ① multi-hour heavy TRAINING(≥수십분·multi-ckpt)을 free workstation 에 배치 ② **한 GPU 에 heavy train/eval 을 2개 이상 동시 실행**(특히 '기다리는 김에 하나 더' 로 얹을 때).\n해결 =\n(A) **한 GPU = 한 heavy job.** 발사 전 확인: nvidia-smi --query-gpu=memory.used,memory.total --format=csv + pgrep -f 'cli/train[.]py'. 돌고 있으면 **끝날 때까지 큐에 넣는다** (while pgrep -f 'cli/train[.]py' >/dev/null; do sleep 30; done). 진짜 병렬이 필요하면 **다른 호스트** (a_wall_first ②: track 당 별도 GPU 호스트).\n(B) **DONE 마커는 rc 를 봐야 한다** — 무조건 touch 하면 실패한 런이 성공으로 위장한다. 성공 시에만 DONE, 실패 시 FAILED 를 찍고, **마커만 보고 회수하지 말고 출력 파일 존재까지 확인**한다.\n(C) multi-hour heavy 학습은 처음부터 vast 렌트 pod(hexa cloud rent); free workstation 은 LIGHT/짧은 job 만(판별: 예상 wall-time ≥30min or ckpt 다수면 렌트).\n(D) OOM/stall 로 죽은 런은 **infra-wall 이지 verdict 가 아니다**(infra-wall-noneval · break-walls type-c) — 판정에서 격리하고 clean run 으로만 채점.\n(E) **heavy 실험을 free workstation 에 올리기 전에 그 호스트가 **이미** 남의 job 을 지고 있는지 보라** — `sidecar pool list`(라이브 부하 프로브) 또는 `ps -eo pcpu,args | grep -c python`. 남의 heavy 가 이미 돌면 **렌트 pod 으로 가라**. 내 job 이 예의 바르게 굴어도 이웃이 호스트를 죽이면 내 결과도 같이 죽는다.\n(F) **sshd wedge = 원격 복구 불가**(kill 조차 못 보낸다) ⟹ **복구 계획을 발사 전에 세워라**: 필요한 ckpt·데이터가 **로컬 또는 영구 저장소에** 있는가? 없으면 그 실험은 호스트 하나에 인질로 잡혀 있다. C3 는 살았다 — 사전학습 ckpt 양 seed 와 원자 파일이 로컬에 있었기 때문이다(a_fire_recover_complete 가 이걸 위해 존재한다).\n(G) **오래 도는 루프는 자기가 멈췄는지 알아야 한다** — 완료된 반복이 기준선을 준다(최근 중앙값). 그 배수를 넘으면 **크게 죽어라**. '느림' 과 '멈춤' 을 구별 못 하는 루프는 호스트가 죽어도 **성공처럼 보인다**, 그리고 그 뒤에 큐된 모든 것이 함께 죽는다.",
         "source": "summer-heavy-train"
       },
@@ -15423,7 +15461,8 @@
         "polarity": "NEG-CONV",
         "value": "카드가 main 에 있다고 코드가 배선된 게 아니다 — H_9328 DO-MOUTH 는 카드/ARCHITECTURE 는 main 에 있는데 엔진 코드(core/decode.py·core/generator.py·cli/chat.py)는 커밋조차 안 된 채 워크트리에 방치돼 있었다(stranded-work 탐지로 발견). 배선 없는 카드는 '구현됨·미배선'이고, 세션이 끝나면 그 사실조차 사라진다.",
         "recurrence": "H_ 카드/ARCHITECTURE 만 머지하고 엔진 코드는 워크트리에 남긴 채 세션 종료.",
-        "fix": "카드에 배선 대상 파일이 있으면 그 파일이 origin/main 에 실제로 있는지 확인하고, 없으면 그 사이클 안에 배선+게이트 인증까지 착륙시킨다. 세션 끝에 stranded worktree 를 항목별로 처리(내용이 main 에 있으면 sweep, 없으면 착륙)."
+        "fix": "카드에 배선 대상 파일이 있으면 그 파일이 origin/main 에 실제로 있는지 확인하고, 없으면 그 사이클 안에 배선+게이트 인증까지 착륙시킨다. 세션 끝에 stranded worktree 를 항목별로 처리(내용이 main 에 있으면 sweep, 없으면 착륙).",
+        "state": "neg-conv"
       },
       {
         "id": "bar-derived-not-transplanted",
@@ -15437,7 +15476,8 @@
         "polarity": "POS-CONV",
         "value": "행동(reflex)을 표현(feature)으로 착각하지 마라 — H_9327 이후 나는 '두 극성이 다른 자리에 산다'를 다음 질문으로 삼았는데, 그 프레임 자체가 **CPT 극성이 feature 로 존재한다고 전제**한다. WRITE 0.98 은 그걸 증명하지 않는다: 그것이 증명한 건 flip0 캐리어 안의 stem→답 매핑 = **반사**뿐이고, 극성 **변수**가 어간 자리에 형성됐다는 증거는 0이다. 그래서 세계는 둘(위치 vs 기질)이 아니라 셋이다 — P-place(자리 틀림) · P-kind(feature 자체가 없음 = 지름길만 씀) · S(같은 자리인데도 무시). 그리고 read-only 프로브 지도로는 셋을 못 가른다(프로브가 읽는 것 ≠ 연산자가 소비하는 것 = read-side-exhausted 교훈) ⇒ 판정은 **인과적 쓰기**로만 난다. 계기: core/decode.py 의 _fwd_trunk(taps,edits) 로 canonical forward 안에서 개입하고 같은 ops 로 readout 까지 흘린다(a_experiment_engine_native).",
         "recurrence": "어떤 능력의 정확도가 높다는 것(WRITE·probe acc)을 곧 '그 표현이 형성됐다'로 읽고, 다음 실험을 '그 표현이 어디 있는가'로 세우기. 표현이 없고 지름길만 있었다면 그 실험 전체가 무의미해진다.",
-        "fix": "'X 가 있다'는 주장은 X 를 **소비**하는 인과 개입으로만 벌어라 — 읽어낼 수 있음(decodable)과 쓰이고 있음(consumed)은 다른 사실이다. 계기는 엔진 forward 안에 개입점을 만들고(taps/edits), 양성통제(참값을 심은 spike-in)로 '내가 그 자리를 실제로 짚었는가'를 먼저 증명한 뒤에만 DV 를 읽는다. 못 짚었으면 INVALID-LOCALIZATION 이지 음성이 아니다."
+        "fix": "'X 가 있다'는 주장은 X 를 **소비**하는 인과 개입으로만 벌어라 — 읽어낼 수 있음(decodable)과 쓰이고 있음(consumed)은 다른 사실이다. 계기는 엔진 forward 안에 개입점을 만들고(taps/edits), 양성통제(참값을 심은 spike-in)로 '내가 그 자리를 실제로 짚었는가'를 먼저 증명한 뒤에만 DV 를 읽는다. 못 짚었으면 INVALID-LOCALIZATION 이지 음성이 아니다.",
+        "state": "pos-conv"
       },
       {
         "id": "evaluate-py-13",
@@ -15458,7 +15498,8 @@
         "polarity": "NEG-CONV",
         "value": "⚠️ **원인 귀속 정정(2026-07-14 · 같은 세션 · verdict-integrity)**: 처음 나는 이 레코드를 '내가 heavy job 2개를 한 호스트에 몰아 포화시켰다'로 적었다. **ps 실측이 그걸 반증했다** — summer 의 load 41 은 **여러 에이전트 세션**이 한 GPU 호스트에 겹친 결과였다(내 H_9330 2개 + 병렬 세션의 anima-py 2개(RSS 5.6GB×2) + natem_c34 xbind 1개 · 26 users). 즉 **fleet 층위의 `heavy-on-pool` 위반**이지 내 단독 과실이 아니다. 남는 진짜 교훈은 셋이다: **① 공유 GPU 호스트에서 heavy job 이 겹치면 각자는 살아있는데(CPU 25%·utime 증가) 진행이 사실상 멈춘다**(5,200/33,120 에서 100분 정체) — '죽었나'가 아니라 '굶었나'를 물어야 한다. **② 그 상태에서는 그 호스트를 경유하는 모든 후속 작업이 막힌다** — 특히 **ckpt 를 빼내 다른 호스트로 옮기는 것조차** 막혀서, '전용 pod 로 옮긴다'는 정답이 **자산이 포화된 호스트에 갇혀** 실행 불가가 된다(순환). ⇒ **발사 전에 자산 사본을 포화되지 않는 곳(HF·mini)에 확보해 두라.** **③ 관측 지연을 실패로 오판하지 마라** — 나는 vast pod 부트스트랩이 실제로는 SETUP_OK(RTX 5090 · anima-py 0.13.24 · bind-locus 배선 확인 · cupy OK)를 찍었는데, 출력이 늦게 도착하는 사이에 '못 쓰는 pod'로 판단하고 **teardown 해버렸다**. 하드게이트를 걸어놓고 **그 게이트의 출력을 읽기 전에 행동한 것**이다.",
         "recurrence": "공유 GPU 호스트(summer)에 여러 세션의 heavy job 이 겹침 → 각 job 이 굶어 진행 정지 → 그 호스트 경유 작업(설치·자산 이동·관측)이 전부 지연 → 지연을 실패로 오진하고 살아있는 자원을 죽이거나(pod teardown) 원인을 자기 탓/남 탓으로 잘못 귀속.",
-        "fix": "① heavy job 발사 **전에** 자산(ckpt·매니페스트) 사본을 포화되지 않는 경로에 확보 (HF 업로드 또는 mini 로컬) — 그래야 호스트가 막혀도 전용 pod 로 즉시 이주 가능. ② 공유 호스트는 발사 전 `uptime`+`ps --sort=-pcpu` 로 **남의 job 부터 세라** (내 job 만 보면 원인을 잘못 귀속한다). ③ 정지 진단은 로그 카운터 정체 + CPU% + utime 을 **함께** 보고, '죽음'과 '굶주림'을 구분하라. ④ **하드게이트를 걸었으면 그 게이트의 출력을 읽고 나서 판단하라** — 출력 지연 ≠ 실패(내가 SETUP_OK 찍은 pod 를 읽기 전에 내렸다)."
+        "fix": "① heavy job 발사 **전에** 자산(ckpt·매니페스트) 사본을 포화되지 않는 경로에 확보 (HF 업로드 또는 mini 로컬) — 그래야 호스트가 막혀도 전용 pod 로 즉시 이주 가능. ② 공유 호스트는 발사 전 `uptime`+`ps --sort=-pcpu` 로 **남의 job 부터 세라** (내 job 만 보면 원인을 잘못 귀속한다). ③ 정지 진단은 로그 카운터 정체 + CPU% + utime 을 **함께** 보고, '죽음'과 '굶주림'을 구분하라. ④ **하드게이트를 걸었으면 그 게이트의 출력을 읽고 나서 판단하라** — 출력 지연 ≠ 실패(내가 SETUP_OK 찍은 pod 를 읽기 전에 내렸다).",
+        "state": "neg-conv"
       },
       {
         "id": "chat-py-2",
