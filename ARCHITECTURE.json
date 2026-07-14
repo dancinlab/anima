@@ -16129,8 +16129,8 @@
       {
         "id": "interact-mi-py-1",
         "state": "pos-conv",
-        "value": "**조건부 MI 로 '정보가 있다'를 주장하기 전에 V-CEILING(조건부 엔트로피 H(A|S))부터 재라 — 그리고 조건집합을 좁히면 거짓 PASS 가 제조된다.** H_9308 INTERACT-SOURCE(2026-07-14) 실측: 자기 실행 궤적 3,400 tick 에서 I(A;Y|S)=0 이 나왔는데 이건 '개입 정보가 없다'가 아니라 **H(A|S)=0.000 nats — 행동이 상태의 결정적 함수(emit=f(stage), 교차표 900/900 완전결정)** 라서 I ≤ H(A|S) 항등부등식이 0 을 **정의상 강제**한 것이다. 측정 결과가 아니라 산술이므로 FAIL 이 아니라 **NOT-POWERED**. 부족한 건 n 이 아니라 **정책 엔트로피**(N_REQ=500 tick 인데 3,400 보유 = 5배 초과). ⚠️ **거짓 PASS 를 밟을 뻔한 기록**: 조건집합에서 stage 를 빼고 S-lite=tercile(idle) 로 조건화하면 I(A;Y|S-lite)=0.0079 nats · perm p=.0033 로 **유의한 양(+)** 이 나온다 — 사전등록에서 이를 진단용으로 못박지 않았다면 '개입 분포에 bits 가 있다'는 거짓 PASS 가 출판됐을 것이다(생략된 교란변수가 곧 행동의 결정자일 때 조건부 MI 는 그 변수의 정보를 행동에 귀속시킨다). 계기는 무죄였다(ALIVE 양성대조 measured/truth ratio 1.00005 · PEDESTAL 0).",
-        "threshold": "재발조건 = 조건부 MI/전달엔트로피/개입정보 계열 DV 를 새로 세울 때 · 로그(관찰-분포)를 do-분포로 취급할 때. 해결 = ① **V-CEILING 게이트 선행**: 판정 전에 H(A|S) 를 재고 0(또는 MDE 미만)이면 즉시 NOT-POWERED — 그 DV 는 그 로그에서 **정의되지 않는다** ② **조건집합은 데이터 보기 전에 동결**하고, 좁힌 변형(S-lite)은 **진단용으로만** 사전등록(헤드라인 승격 금지 — 생략된 결정자가 곧 거짓 양성의 엔진) ③ **로그 ≠ 개입 분포**: 결정적 정책이 찍은 로그는 관찰-로그다. do-분포를 원하면 **정책에 엔트로피를 주입해 재수집**하라(H_9308 처방: 같은 stage 안에서 Bernoulli-ε 로 emit/veto 무작위화 · ≥500 tick · $0 CPU) ④ 양성대조는 **참값 대비 비율**(measured/truth ≈ 1)로 계기를 인증하고, pedestal 은 참값 0 arm 으로 잡아라.",
+        "value": "**조건부 MI 로 무엇이든 주장하기 전에 V-CEILING 을 **양쪽 채널**에 다 걸어라.** I(A;Y|S) ≤ min(H(A|S), H(Y|S)) 는 항등식이다 — 어느 한쪽이 죽으면 I 는 **정의상** 0 이지 측정된 0 이 아니다. ① 행동 채널 H(A|S): H_9308 이 여기서 죽었다(정책이 결정론적이라 A 가 상수 → I=0 이 강제됨). ② 결과 채널 H(Y|S): **같은 함정의 반대쪽 축** — stage 가 다음-tick score 를 이미 결정하면 Y 는 S 의 함수가 되고, 입이 무엇을 말했든 0 이 나온다. 그러면 참인 문장은 '폐루프에 정보가 없다'가 아니라 '이미 답이 적혀 있는 질문을 물었다'이다. H_9328 본판독 직전에 ②를 발견했다(EXP 팔 TOST 등가가 나왔는데 Y 가드가 없어 측정인지 정의인지 가를 수 없었다). ③ 조건집합을 좁히면 거짓 PASS 가 제조된다(S-lite 함정, 실측 p=.0033).",
+        "threshold": "재발조건: 조건부 MI/전달엔트로피/개입정보 계열의 새 DV 를 만들 때. 해결: 헤드라인 I 를 읽기 **전에** H(A|S) 와 H(Y|S) 를 둘 다 출력하고 어느 쪽이든 3×MDE 아래면 NOT-POWERED 하드스톱(cli/evaluate.py::_interact_mi 의 V-CEILING 블록이 카논). 조건집합 S 는 사전동결. 순열 단위도 가정하지 말고 실측(자기상관)하고, 단위에 따라 판정이 뒤집히면 ⛔ INVALID — 그 결론은 기질이 아니라 내 가정에 관한 것이다.",
         "source": "state/h9308_interact_source/interact_mi.py"
       },
       {
@@ -16252,8 +16252,8 @@
       {
         "id": "version-1",
         "state": "pos-conv",
-        "value": "리베이스가 VERSION bump 를 조용히 흡수한다 — 병렬 세션이 먼저 같은 번호로 올려두면 내 bump 는 no-op 이 되어 diff 에서 사라지고, wheel 내용(cli/·core/·pyproject)만 바뀐 커밋이 남는다. 그러면 G5(wheel 변경 ⇒ 같은 diff 에 VERSION bump 필수)에 하드블록되거나, 통과했다면 PyPI same-VERSION skip-guard 가 stale 휠을 계속 서빙한다 — --xbind/--xfan 이 main 에는 있는데 PyPI 에는 없던 그 사고와 같은 계열, 새 경로.",
-        "threshold": "재발조건: origin/main 위로 리베이스한 뒤 곧장 pr-cycle. 해결: 리베이스 직후 'git show --stat HEAD | grep VERSION' 으로 VERSION 이 아직 diff 에 있는지 확인 — 사라졌으면 'cat VERSION' == 'git show origin/main:VERSION' 이라는 뜻이니 한 칸 더 올려 amend. 게이트를 믿고 넘기지 말 것(게이트는 블록만 하지 번호를 골라주지 않는다).",
+        "value": "리베이스가 VERSION bump 를 **두 가지 방식으로** 망가뜨린다. ① **흡수**: 병렬 세션이 먼저 같은 번호로 올려두면 내 bump 는 no-op 이 되어 diff 에서 사라지고, wheel 내용만 바뀐 커밋이 남는다 → G5 하드블록, 혹은 통과했다면 PyPI same-VERSION skip-guard 가 stale 휠을 계속 서빙한다(--xbind/--xfan 사고와 같은 계열). ② **역행**: origin/main 이 내 번호를 이미 추월했으면(내가 0.13.31 을 쓰는 동안 main 이 0.13.34), 내 커밋은 VERSION 을 **되돌린다** — G5 는 'bump 가 있다'만 보므로 통과하고, PyPI 는 낮은 버전을 받는다. 둘 다 리베이스가 조용히 만든다.",
+        "threshold": "재발조건: origin/main 위로 리베이스한 뒤 곧장 pr-cycle. 해결: 리베이스 직후 **항상** 'cat VERSION' 과 'git show origin/main:VERSION' 을 **나란히** 비교하라 — 같으면(흡수) 한 칸 올리고, 내 것이 더 낮으면(역행) origin 보다 위로 올려 amend. 게이트를 믿지 말 것: G5 는 bump 의 **존재**만 검사하지 **방향**은 검사하지 않는다.",
         "source": "VERSION"
       },
       {
