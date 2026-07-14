@@ -14165,6 +14165,50 @@
           "detail": "RF 수용영역 프로브 같은 read-only 진단은 state/ 스크립트로 둘 수 있으나 core/ forward 를 직접 호출해야 한다(재구현 금지). dont: state/*.py 안에서 forward 를 재구현해 새 조작을 재기 · 배선 없이 얻은 수를 TERMINAL 로 박기."
          }
         ]
+       },
+       {
+        "id": "gate-g1-recomb-decon2-h9311",
+        "type": "gate",
+        "name": "★DECON-2 DEMO-PORT — ⛔ INVALID-PREREG (창이 아니라 자가 잘못 만들어짐 · H_9311)",
+        "detail": "주입 언어를 모델 자기 학습 템플릿(1-shot 시연)으로 교체. G-A 에서 죽었으나 창은 실측 무죄 — 죽은 것은 이식된 bar. 발사 금지 유지 · 처치 데이터(nonce 240 · held-out 29) 미접촉.",
+        "children": [
+         {
+          "id": "gate-g1-recomb-decon2-h9311-prefreeze",
+          "type": "note",
+          "name": "동결 전 실측 3 (전부 설계에 유리)",
+          "detail": "구분자 = b'\\n' 단일바이트 960/960 만장일치 · 학습 seq_len=1024 에 인스턴스 median 41B ⟹ 창 하나에 약 24개 연속 = 2-연접은 모델이 매 스텝 본 것(Fable D8 해소) · 평가 pad = 공백 ⟹ 현행 평가 문맥이 이미 분포 밖 ⟹ 시연은 문맥을 분포 안으로 되돌린다(D8 역전)."
+         },
+         {
+          "id": "gate-g1-recomb-decon2-h9311-window",
+          "type": "note",
+          "name": "창은 실측 무죄",
+          "detail": "채점행(bare-flip0 20행 제외 = 100행) 부호일치 s11 100/100 · s7 97/100 · flip1 Δ=0.000 양 seed · 반전행 |margin| ≤1.15 vs 안정행 중앙값 11.31 · seed 간 반전행 정체 불일치 ⟹ 0-교차 잡음. 창을 넓혀도 판정은 안 움직인다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2-h9311-bar",
+          "type": "note",
+          "name": "죽은 것 = 이식된 bar (진짜 결함)",
+          "detail": "liveness ≥0.90 은 H_9308 의 다른 매니페스트(20원자 80행 · frac 0.975)에서 이식 — H_9311 의 man_seen 은 120행(flip1 60행) 기준선 ~0.89 ⟹ 정상 계기를 49.5~59.1% 낙제시킨다 = 게이트가 아니라 동전. 부호일치 분모 174 는 held-out 행수인데 이 arm 은 120행. 게이트가 어떤 창으로도 통과 불가 ⟹ 사다리 구조적 폐색."
+         },
+         {
+          "id": "gate-g1-recomb-decon2-h9311-clause",
+          "type": "note",
+          "name": "절 오배치 — 창에 불변인 양이 창 게이트 안에",
+          "detail": "G-A ③(SEEN flip1@128 ≥0.90)은 창에 불변(0.883@64 == 0.883@128). 창에 불변인 양은 창을 판정할 수 없다 — 절의 정의만 읽어도 발사 전 $0 로 잡을 수 있었다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2-h9311-baraudit",
+          "type": "note",
+          "name": "산출 = bar_audit.py (동결 전 필수 · 모델 미접촉)",
+          "detail": "RULE 1 bar 는 유도지 이식이 아니다 — 모든 카운트 bar 에 '정상 계기 낙제확률' 사전계산(validity ≤5% · 판정 bar 는 1−검정력 ≤10% · 두 예산 혼동 자체가 결함). RULE 2 게이트의 각 절은 그 게이트가 명명한 조작의 함수여야 한다."
+         },
+         {
+          "id": "gate-g1-recomb-decon2-h9311-next",
+          "type": "note",
+          "name": "NEXT — H_9312 조건부 재등록 (1회)",
+          "detail": "G-A 만 재건(① margin 잡음모형 · ② 유지 · ③ 은 삭제가 아니라 독립 liveness 게이트로 이주 + 바닥을 G-D 판정 bar 에서 유도 = 140/240 = 0.583 ⟹ 낙제확률 0.00%). G-B~G-E bar 는 바이트 이월(G-B 데이터 이미 수집됨 ⟹ 손대면 정의상 tune-to-green). 역경 방향 검사 필수. H_9312 도 자기 게이트에서 죽으면 3번째 등록 없음 — 병목이 가설이 아니라 게이트 제작 과정이다."
+         }
+        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
