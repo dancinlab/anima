@@ -14432,6 +14432,38 @@
                     "detail": "swap write(flip0) 1/36 → ≥11/12 이어야 DV 를 읽을 자격이 생긴다. 실패는 '규칙이 안 읽는다' 가 아니라 '애초에 안 썼다' 이므로 판정 무효. ground 코퍼스가 연산자를 부숴놓고 물었던 실수를 구조로 차단."
                   }
                 ]
+              },
+              {
+                "id": "gate-g1-c3-s7",
+                "type": "gate",
+                "name": "C3 seed7 — 사실 12/12 착륙, 규칙 0/12 옛 극성 (⏳ s11 대기 · 확정 아님)",
+                "detail": "게이트 3/3(G-live 6/6 · G-write 12/12 · G-forget 3/3) ⟹ DV 자격 성립. DV: swap 강표면 negL·negZ 둘 다 신극성 추종 **0/12**(p_old=.0002), 음성대조 negJ 4/12=우연. 규칙이 옛(사전학습) 극성 위에서 돈다.",
+                "children": [
+                  {
+                    "id": "gate-g1-c3-s7-dissociation",
+                    "type": "gate",
+                    "name": "해리 — 한 가중치, 모순된 두 극성",
+                    "detail": "'너무좋 =>' → 부정(CPT 가 쓴 신극성 · 12/12) 이면서 '너무좋지 않다 =>' → 부정(= 어간이 긍정이어야 나오는 답 · 12/12). 선언적으로 물으면 신극성, 연산자로 물으면 구극성 — 모순된 두 사실이 표면별로 분리 저장돼 있다."
+                  },
+                  {
+                    "id": "gate-g1-c3-s7-artifacts-closed",
+                    "type": "gate",
+                    "name": "인공물 2종 실측 배제",
+                    "detail": "① '계기가 죽어 0' → 음성대조 negJ 4/12=우연(연산자 도는 표면에서만 0). ② '외운 문자열' → negZ(`별로 …지 않다`)는 사전학습 0회 등장인데도 12/12 구극성 ⟹ 답은 계산된 것이고 계산이 옛 극성 위에서 돌았다. H-γ 재기각."
+                  },
+                  {
+                    "id": "gate-g1-c3-s7-prediction-hit",
+                    "type": "gate",
+                    "name": "STEM-BOUND 부호 예측 적중",
+                    "detail": "#3525 데이터 전 동결: CPT 는 (어간⊕고) 에 쓰고 규칙은 (어간⊕지않다) 를 읽으므로 (−) 분기(≤2/12). 실측 0/12. (+) 였다면 STEM-BOUND 반증. 부호로 갈렸고 부호가 맞았다."
+                  },
+                  {
+                    "id": "gate-g1-c3-s7-cannot-separate",
+                    "type": "gate",
+                    "name": "못 가르는 것 — 과잉주장 금지",
+                    "detail": "C3 는 H-δ(저장소-측) 와 H-ε(인터페이스-측) 을 가르지 못한다. 한쪽으로 서사를 쓰면 과잉주장 — C4(연산자-네이티브 담체 표면으로 사실 쓰기)가 가른다."
+                  }
+                ]
               }
             ],
             "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
