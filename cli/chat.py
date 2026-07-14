@@ -1538,6 +1538,14 @@ def anima_consciousness_mode(ckpt, argv=None):
         coh_lane = lanes[3]
         bal_lane = lanes[9]
         emit_drive = ci_emit_drive(lanes)
+        # H_9351 — Ψ is DEFINED as the population fraction over the emit-drive threshold
+        # (engine_cli ci_psi_balance -> ci_emit_decision: 0.5*(lanes[0]+lanes[4]) >= 0.5), and
+        # those two lanes were the one thing the trace did NOT record. So Ψ could not be
+        # computed from a real daemon run at all, and the Ψ-SOMA panel fell back to scoring a
+        # fixed-seed synthetic population instead — a verdict that never sees the model.
+        # Record the actual gws/lprec so Ψ̂ can be taken on the substrate's OWN lane population.
+        psi_gws = float(lanes[0])
+        psi_lprec = float(lanes[4])
 
         # ── (C-R3) PER-TICK CONFLICT → A⇄G SETTLE BUDGET (H_9095 rung-3) ──
         ag_a_drive = emit_drive
@@ -2077,6 +2085,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
                 "base_motiv": float(dec.get("base_motiv", _score)),
                 "gen_emitted": g_emit, "gen_backend": g_back, "swapped": swapped,
+                "psi_gws": psi_gws, "psi_lprec": psi_lprec, "emit_drive": float(emit_drive),
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
