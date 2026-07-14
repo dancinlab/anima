@@ -1553,29 +1553,23 @@ def valence_audit_run(argv):
         Xc = H[m]                                    # per-context, NOT pooled
         sc = st[m]
         ids = sorted(set(sc))
-        W = []
-        for s in ids:
-            y1 = (sc == s).astype(np.float64)
-            mu, sd = Xc.mean(0), Xc.std(0)
-            sd = np.where(sd == 0.0, 1.0, sd)
-            A = (Xc - mu) / sd
-            w = np.zeros(A.shape[1]); b = 0.0
-            for _ in range(120):                     # cheap: this is a diagnostic, not a verdict
-                p = 1.0 / (1.0 + np.exp(-(A @ w + b)))
-                d = p - y1
-                w -= 0.5 * (A.T @ d / len(A) + w / 10.0)
-                b -= 0.5 * float(d.mean())
-            W.append((w, b, mu, sd))
+        # Standardise ONCE, and fit all 91 one-vs-rest probes in ONE batched descent. The first cut
+        # re-standardised inside the atom loop, which rebuilt a [16562, 3784] float64 array 91 times
+        # (~500 MB each) and made the DIAGNOSTIC cost more than the verdict it explains. Same math,
+        # same numbers — _gp_logreg_batch is the descent already proved decision-identical.
+        mu, sd = Xc.mean(0), Xc.std(0)
+        sd = np.where(sd == 0.0, 1.0, sd)
+        Y = np.stack([(sc == s).astype(np.float64) for s in ids], 1)      # [n, 91]
+        P = _gp_logreg_batch(Xc, Y, Xc, iters=120).T                      # [n, 91] each atom's score
         rng2 = np.random.default_rng(seed)
+        idx = {s: i for i, s in enumerate(ids)}
         hit = 0
         for k in range(len(sc)):
-            i = ids.index(sc[k])
+            i = idx[sc[k]]
             j = int(rng2.integers(len(ids) - 1))
             if j >= i:
                 j += 1                               # a DIFFERENT atom's probe
-            si = W[i][0] @ ((Xc[k] - W[i][2]) / W[i][3]) + W[i][1]
-            sj = W[j][0] @ ((Xc[k] - W[j][2]) / W[j][3]) + W[j][1]
-            hit += int(si > sj)
+            hit += int(P[k, i] > P[k, j])
         return hit / float(len(sc))
 
     fid_a, fid_s = form_id("atom"), form_id("swap")
