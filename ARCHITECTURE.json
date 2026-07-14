@@ -15587,6 +15587,13 @@
         "value": "THE FORWARD IS ONE-PROMPT-AT-A-TIME AND THAT IS NOW THE LANE'S BOTTLENECK. clm_forward_hidden takes a single token sequence, so a probe that needs 33,120 prompts issues 33,120 separate GPU launches; the RTX 5070 sits at 55-77% (mostly launch/sync overhead, not math) and one arm takes ~40 min. The whole AUDIT-A / H_9330 campaign is 265k forwards = hours of wall for a /bin/zsh audit whose arithmetic is trivial. Two false leads were tried first and both were wrong: (1) run more jobs in parallel — at 4-way GPU util FELL from 66% to 40% and RSS hit 4.9 GB x 4 on a 30 GB box (the glue is CPU-bound, so extra jobs only bought OOM risk); (2) move the readout to the GPU — rejected, it changed the verdict's numbers (convergence evaluate-py-11). The real fix is a BATCHED forward: an outer batch dim through the conv trunk, which is mathematically identical (each sequence is independent) and turns 33k launches into ~100.",
         "threshold": "Recurs on any probe that forwards thousands of short prompts (--dump-hidden, --valence-audit, --ground-probe, --interaction-lift). Before reaching for parallel jobs or a device readout, check whether the FORWARD is issuing one launch per prompt — if it is, batch it and prove byte-identity against the single-prompt path on the same prompts (max|delta| == 0), because a batched conv/GN must not change the decode the gates run on.",
         "source": "core/decode.py"
+      },
+      {
+        "id": "version-1",
+        "state": "pos-conv",
+        "value": "리베이스가 VERSION bump 를 조용히 흡수한다 — 병렬 세션이 먼저 같은 번호로 올려두면 내 bump 는 no-op 이 되어 diff 에서 사라지고, wheel 내용(cli/·core/·pyproject)만 바뀐 커밋이 남는다. 그러면 G5(wheel 변경 ⇒ 같은 diff 에 VERSION bump 필수)에 하드블록되거나, 통과했다면 PyPI same-VERSION skip-guard 가 stale 휠을 계속 서빙한다 — --xbind/--xfan 이 main 에는 있는데 PyPI 에는 없던 그 사고와 같은 계열, 새 경로.",
+        "threshold": "재발조건: origin/main 위로 리베이스한 뒤 곧장 pr-cycle. 해결: 리베이스 직후 'git show --stat HEAD | grep VERSION' 으로 VERSION 이 아직 diff 에 있는지 확인 — 사라졌으면 'cat VERSION' == 'git show origin/main:VERSION' 이라는 뜻이니 한 칸 더 올려 amend. 게이트를 믿고 넘기지 말 것(게이트는 블록만 하지 번호를 골라주지 않는다).",
+        "source": "VERSION"
       }
     ]
   }
