@@ -87,16 +87,40 @@ V-CEILING **v1 은 INVALID** 였다: A 를 `sha(g_text)` 로 대리했더니 5 s
 
 기본 OFF ⇒ `mouth=None` 이면 **바이트 동일**(프로덕션 무영향).
 
+## 🔧 배선 완료 후 발견된 계기 결함 3건 (전부 자가 검출 · 전부 수리·랜딩)
+
+배선을 끝내고 **canonical `anima-py` 경로로 스모크**를 돌리자 결함이 셋 나왔다. 셋 다
+"코드는 돌고 로그는 정상인데 숫자만 무의미"한 조용한 결함이라, 스모크 없이 본실험을 쐈다면
+**전부 verdict 로 굳었을 것**이다.
+
+| # | 결함 | 실측 | 수리 |
+|---|---|---|---|
+| **1** | **계기-표적 불일치** — V-CEILING 파일럿은 `clm_decode_argmax` 를 쟀는데 **데몬은 그 문으로 안 다닌다**. 앵커가 있으면(라이브 세션은 항상) `_gen_clm_decode` 가 `clm_decode_grounded` 로 빠져 내 mouth 분기는 **도달 불가 죽은 코드**였다 | canonical 스모크: T=1.0 인데 seed 갈림=False · A=5 고정 | `clm_decode_grounded` **내부의 argmax 분기**에 REVEAL 배선 (복사 스텝 `cb>=0` 은 절대 미터치 = p5 반-날조). 부수 발견: `grounded=0 / lm=80` — 이름과 달리 **앵커 복사가 한 번도 안 일어난다**(`l_min=8` 미달) |
+| **2** | **고정 시드** — `mouth` dict 를 tick 루프 **밖**에서 만들어 `seed_rng` 를 세션 상수로 고정 ⇒ 매 tick **같은 80바이트** ⇒ 30 tick 이 **1 표본** | gtext 종류 **1/28** | `_mouth_at(tick)` — tick 별 파생 스트림. 수리 후 gtext **28/28** · A 가 rollout 안에서 5~6 버킷에 분포 (convergence `chat-py-3`) |
+| **3** | **가짜 구조 사실** — ②가 만든 "A 는 rollout 내 상수"를 근거로 순열 단위를 rollout 으로 못박았다(`evaluate-py-13`). **계기 결함이 과학적 진단을 오염**시킨 것 | 수리 후 자기상관 **0.361 vs 우연 0.369** = 없음 ⇒ **tick 이 표본** ⇒ 검정력 24배 회복 | 판독기가 **자기상관을 실측**해 단위를 자동 선택 + **두 단위 모두 보고** · **판정이 단위에 뒤집히면 ⛔ INVALID** (convergence `evaluate-py-15`) |
+
+## 🚫 C2 CARRIER-SWAP 폐기 — 사후 순열로는 담체를 못 잡는다
+
+Fable 의 C2("EXP 는 살고 SWAP 은 죽어야 정보 · 둘 다 살면 내용맹")를 `rollout→A` 배정의
+**회전**으로 구현하고 인증하니 **인공 CARRIER 데이터에서도 PASS** ⇒ INFO 와 CARRIER 를 **못 가른다**.
+근본 원인: C1 PERM(무작위 순열)과 C2(회전)는 **둘 다 A–Y 짝을 깨는 같은 귀무족**
+⇒ **C2 는 C1 의 퇴화 사례**였다. 진짜 CARRIER-SWAP 은 **다른 rollout 의 g_text 를 데몬에 실제
+주입해 재실행**해야 한다(그래야 그 텍스트가 3개 피드백 뿌리를 실제로 민다). Fable 원설계도
+"다른 rollout **g_text 로 교체**"라고 명시했는데 내가 A 순열로 오독했다 (convergence `evaluate-py-14`).
+
+> **⇒ 이 실험의 판독 스코프는 SIGNAL / TOST-등가까지이고 PASS 는 불가하다.**
+> PASS 는 `--swap-text` 엔진 플래그(다른 rollout 텍스트 주입 재실행) 배선 후에만.
+
 ## NEXT — 본실험 (PENDING · 이 카드의 미결)
 
-`I(A;Y|S) > 0` 인가? Fable 사전등록:
+`I(A;Y|S) > 0` 인가?
+- **A** = `penult_fold8(gen_penult_pooled_W(self_gW, g_text))` ∈ [0,8) — 데몬이 실제 소비하는 값
+- **S** = `stage` (게이트 자신의 조건화 ⇒ 생략된 결정자에 의한 거짓양성 구조적 불가)
 - **Y** = `score_{t+1}` 2-bin (3개 피드백 뿌리가 재수렴하는 유일 지점)
-- **arms**: EXP · C1 PERM(참값0) · **C2 CARRIER-SWAP**(같은 tick·stage 의 *다른 rollout* 텍스트 —
-  **PASS 를 반증가능하게 만드는 유일한 arm**: EXP 는 살고 SWAP 은 죽어야 정보 · 둘이 같으면
-  **CARRIER**=내용맹 ⇒ PASS 아님) · C3 PEDESTAL · C4 ALIVE · C5 GREEDY
-- MDE 0.010 nats · TOST ±0.010 · α=.005 · N_REQ = 실측 sd_null 로 확정
-- 배선 잔여: `cli/chat.py` 플래그 스레딩(`--emit-temp`/`--emit-topk`/`--sample-seed`) +
-  `cli/evaluate.py --interact-mi` 판독기
+- **arms**: EXP · C1 PERM(참값0 · **단위는 자기상관 실측으로 결정**) · C3 PEDESTAL · C4 ALIVE · C5 GREEDY
+- MDE 0.010 nats · TOST ±0.010 · α=.005 · **V-CEILING 선행 하드스톱**
+- **계기 인증 완료**: ALIVE +0.412 (p=.005) · PEDESTAL +0.007 (p=.09) · ROLLOUT_CONST 자동 rollout 선택
+- **배선 완료**: `cli/chat.py` 플래그 + A 트레이스 · `cli/evaluate.py --interact-mi` 판독기 (help lockstep)
 
 ## 정직
 
