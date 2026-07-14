@@ -2527,19 +2527,32 @@ def _interact_mi(argv):
         print("     (H_9308 이 정확히 여기서 죽었다 · convergence interact-mi-py-1)")
         return 0
     I = _im_cmi(A, Y, S)
-    # ── C1 PERM (true value 0): shuffle A WITHIN each stratum — kills A–Y, keeps marginals
+    # ── C1 PERM (true value 0) — the unit of exchangeability is the ROLLOUT, not the tick.
+    # MEASURED (H_9328 smoke, 303M): a_fold8 is CONSTANT within a rollout ({5:18} / {7:18}) —
+    # the frozen 8-bucket reducer is coarse enough that every emit of one session lands in the
+    # same bucket, and A only varies ACROSS sample-seeds. So the independent draws of A number
+    # R (rollouts), not R×ticks. Shuffling A tick-wise would treat 18 copies of one draw as 18
+    # independent ones = PSEUDO-REPLICATION, and it manufactures a false positive: the null
+    # would break a within-rollout constancy the real data has, making EXP look "structured".
+    # We therefore permute the ROLLOUT→A assignment and keep each rollout's ticks together.
+    src_of = [r["_src"] for r in use]
+    rollouts = sorted(set(src_of))
+    a_of_rollout = {}
+    for i, sc in enumerate(src_of):
+        a_of_rollout.setdefault(sc, A[i])
+    n_roll = len(rollouts)
+    print("  단위: rollout=%d · emit-tick=%d  (A 는 rollout 내 상수 ⇒ 독립추출 = rollout 수)"
+          % (n_roll, len(use)))
+    if n_roll < 20:
+        print("  ⇒ NOT-POWERED (rollout < 20 · tick 수는 검정력을 사지 못한다)")
+        return 0
     rnd = random.Random(20260714)
     null = []
     for _ in range(perm):
-        Ap = list(A)
-        strata = {}
-        for i, s in enumerate(S):
-            strata.setdefault(s, []).append(i)
-        for idx in strata.values():
-            vals = [Ap[i] for i in idx]
-            rnd.shuffle(vals)
-            for j, i in enumerate(idx):
-                Ap[i] = vals[j]
+        vals = [a_of_rollout[sc] for sc in rollouts]
+        rnd.shuffle(vals)
+        remap = {sc: vals[j] for j, sc in enumerate(rollouts)}
+        Ap = [remap[sc] for sc in src_of]
         null.append(_im_cmi(Ap, Y, S))
     null.sort()
     p = (sum(1 for v in null if v >= I) + 1.0) / (perm + 1.0)

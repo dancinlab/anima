@@ -15366,6 +15366,13 @@
         "value": "행동(reflex)을 표현(feature)으로 착각하지 마라 — H_9327 이후 나는 '두 극성이 다른 자리에 산다'를 다음 질문으로 삼았는데, 그 프레임 자체가 **CPT 극성이 feature 로 존재한다고 전제**한다. WRITE 0.98 은 그걸 증명하지 않는다: 그것이 증명한 건 flip0 캐리어 안의 stem→답 매핑 = **반사**뿐이고, 극성 **변수**가 어간 자리에 형성됐다는 증거는 0이다. 그래서 세계는 둘(위치 vs 기질)이 아니라 셋이다 — P-place(자리 틀림) · P-kind(feature 자체가 없음 = 지름길만 씀) · S(같은 자리인데도 무시). 그리고 read-only 프로브 지도로는 셋을 못 가른다(프로브가 읽는 것 ≠ 연산자가 소비하는 것 = read-side-exhausted 교훈) ⇒ 판정은 **인과적 쓰기**로만 난다. 계기: core/decode.py 의 _fwd_trunk(taps,edits) 로 canonical forward 안에서 개입하고 같은 ops 로 readout 까지 흘린다(a_experiment_engine_native).",
         "recurrence": "어떤 능력의 정확도가 높다는 것(WRITE·probe acc)을 곧 '그 표현이 형성됐다'로 읽고, 다음 실험을 '그 표현이 어디 있는가'로 세우기. 표현이 없고 지름길만 있었다면 그 실험 전체가 무의미해진다.",
         "fix": "'X 가 있다'는 주장은 X 를 **소비**하는 인과 개입으로만 벌어라 — 읽어낼 수 있음(decodable)과 쓰이고 있음(consumed)은 다른 사실이다. 계기는 엔진 forward 안에 개입점을 만들고(taps/edits), 양성통제(참값을 심은 spike-in)로 '내가 그 자리를 실제로 짚었는가'를 먼저 증명한 뒤에만 DV 를 읽는다. 못 짚었으면 INVALID-LOCALIZATION 이지 음성이 아니다."
+      },
+      {
+        "id": "evaluate-py-13",
+        "state": "pos-conv",
+        "value": "**엔트로피/MI 의 순열 귀무는 '무엇이 교환가능한 단위인가'를 실측으로 정한 뒤 그 단위로 섞어라 — 아니면 의사복제(pseudo-replication)로 귀무가 좁아지고 잡음이 신호가 된다.** H_9328 실측(303M · 2026-07-14): 행동변수 A = penult_fold8(a_fold8) 가 **rollout 안에서 상수**였다(off={5:18} · s7={7:18} — 18번 emit 전부 같은 버킷). H_9257 동결 8-버킷 축소가 거칠어 tick 마다 다른 텍스트를 뱉어도 같은 버킷에 떨어지고, A 는 **sample-seed 가 바뀔 때만** 갈린다 ⇒ **독립 추출 = rollout 수(24)이지 tick 수(432)가 아니다.** tick 단위로 순열하면 24개 의견을 432개로 취급 = 의사복제. **정량 증거**: 인공 ALIVE 데이터에서 순열 귀무 평균이 tick 단위 **0.006** → rollout 단위 **0.146**(sd 0.063) = **24배 팽창**. tick 순열을 썼다면 그 0.146 을 **신호로 오독**했을 것이다(EARNED 는 I − null_mean 이므로 귀무가 좁으면 EARNED 가 부풀고 p 가 작아진다).",
+        "threshold": "재발조건 = 순열/부트스트랩 귀무를 세울 때 · 특히 계층 데이터(rollout×tick · seed×item · session×trial)에서 변수가 상위 단위 안에서 상수/강상관일 때. 해결 = ① **교환가능 단위를 실측으로 확인하라** — 변수를 상위 단위별로 집계해 within-unit 분산이 0(또는 ≪ between-unit)이면 그 상위 단위가 표본이다(코드로: 각 rollout 의 A 집합 크기가 1이면 즉시 rollout 이 단위) ② **순열은 그 단위의 라벨을 섞고 하위 관측은 묶어서 유지**(block permutation) ③ **n_unit 하한을 하드스톱으로 박아라**(H_9328 은 n_roll<20 → NOT-POWERED) — **하위 관측(tick) 수는 검정력을 사지 못한다** ④ 인공 ALIVE/PEDESTAL 재인증은 **단위를 바꾼 뒤 반드시 다시** 하라(단위가 바뀌면 계기가 바뀐다 — tick 인증은 rollout 판독을 인증하지 못한다).",
+        "source": "cli/evaluate.py"
       }
     ]
   }
