@@ -766,6 +766,11 @@ def evaluate_usage():
     print("       ANIMA_DECISION_TRACE=<path> anima-py chat <ckpt>)")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
+    print("      AUDIT-A: is a held-out atom's polarity in the weights at all? Verdict = DELTA =")
+    print("      probe(atom) - probe(length-matched NEUTRAL atom in the SAME context), vs a")
+    print("      permutation null. Also prints FORM-ID (2AFC, chance 0.5): how decodable WHICH atom")
+    print("      sits at the read point — a high FORM-ID with a non-positive DELTA is form present,")
+    print("      bind absent (the position carries the byte's identity, not its valence).")
     print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7]")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
     print("      THERE, and ask if the answer follows. Separates P-place / P-kind / S; V1/V2/V3 gates")
@@ -1471,6 +1476,48 @@ def valence_audit_run(argv):
     acc_a, acc_s = loo(Xa, ga), loo(Xs, gs)
     delta = acc_a - acc_s
 
+    # FORM-ID — the diagnostic that makes a negative Delta interpretable.
+    #
+    # If the read point's hidden is dominated by the IDENTITY of the byte sitting there (form), then
+    # at that position the atom's identity should be highly decodable while its polarity is not:
+    # form present, bind absent. That is the mechanism FORM-OCCLUSION claims, and without this number
+    # a negative Delta cannot tell it apart from "the atom injects nothing at all".
+    #
+    # Measured as a 1-vs-rest linear probe per atom on the UNPOOLED per-context hiddens, scored as
+    # the fraction of contexts whose own atom wins its own probe against a random other atom's probe
+    # — a 2AFC, so chance is 0.5 regardless of how many atoms there are.
+    def form_id(a):
+        m = arm == a
+        Xc = H[m]                                    # per-context, NOT pooled
+        sc = st[m]
+        ids = sorted(set(sc))
+        W = []
+        for s in ids:
+            y1 = (sc == s).astype(np.float64)
+            mu, sd = Xc.mean(0), Xc.std(0)
+            sd = np.where(sd == 0.0, 1.0, sd)
+            A = (Xc - mu) / sd
+            w = np.zeros(A.shape[1]); b = 0.0
+            for _ in range(120):                     # cheap: this is a diagnostic, not a verdict
+                p = 1.0 / (1.0 + np.exp(-(A @ w + b)))
+                d = p - y1
+                w -= 0.5 * (A.T @ d / len(A) + w / 10.0)
+                b -= 0.5 * float(d.mean())
+            W.append((w, b, mu, sd))
+        rng2 = np.random.default_rng(seed)
+        hit = 0
+        for k in range(len(sc)):
+            i = ids.index(sc[k])
+            j = int(rng2.integers(len(ids) - 1))
+            if j >= i:
+                j += 1                               # a DIFFERENT atom's probe
+            si = W[i][0] @ ((Xc[k] - W[i][2]) / W[i][3]) + W[i][1]
+            sj = W[j][0] @ ((Xc[k] - W[j][2]) / W[j][3]) + W[j][1]
+            hit += int(si > sj)
+        return hit / float(len(sc))
+
+    fid_a, fid_s = form_id("atom"), form_id("swap")
+
     rng = np.random.default_rng(seed)
     null = np.array([loo(Xa, ga, rng.permutation(ga)) - loo(Xs, gs, rng.permutation(gs))
                      for _ in range(n_perm)])
@@ -1481,6 +1528,10 @@ def valence_audit_run(argv):
     print("  [swap  arm] LOO probe acc %.3f   (length-matched NEUTRAL atom, SAME contexts)" % acc_s)
     print("  [DELTA = atom - swap] %+.3f   vs %d-draw permutation null: p = %.3f · p95 = %+.3f"
           % (delta, n_perm, pval, float(np.quantile(null, 0.95))))
+    print("  [FORM-ID 2AFC · chance 0.5] atom-arm %.3f · swap-arm %.3f — how decodable is WHICH atom"
+          % (fid_a, fid_s))
+    print("       (high FORM-ID with a non-positive DELTA = form present, bind absent: the read point"
+          " carries the byte's identity, not its valence)")
     live = pval < 0.05 and delta > 0.0
     print("  VALENCE " + ("PRESENT — the atom itself carries polarity in the representation; the O "
                           "channel has an input to bridge."
@@ -1489,7 +1540,8 @@ def valence_audit_run(argv):
                           "channel would have nothing to consume: DO NOT FIRE."))
     out = {"ckpt": ckpt, "acc_atom": acc_a, "acc_swap": acc_s, "delta": delta, "perm_p": pval,
            "perm_p95": float(np.quantile(null, 0.95)), "n_atoms": len(ats), "chance_sd": sd,
-           "valence_present": bool(live), "n_perm": n_perm}
+           "valence_present": bool(live), "n_perm": n_perm,
+           "form_id_atom": fid_a, "form_id_swap": fid_s}
     json.dump(out, open(out_path, "w"), ensure_ascii=False, indent=1)
     print("VALENCE-AUDIT wrote " + out_path)
     return 0
