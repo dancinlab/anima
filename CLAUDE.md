@@ -19,15 +19,10 @@ dont: run `python3 cli/*.py` · `hexa run cli/*.hexa` · a hand-rolled `gen_*.py
 >
 > **New experimental manipulation?** Wire it as a **flag on these commands**, not as a script next to them (`a_experiment_engine_native`) — a passing result is then already wired, and the next experiment reuses it.
 
-## 👥 Parallel sessions are real — READ their work before you fire (owner directive)
+## 👥 a-parallel-session-compare — parallel sessions are real; READ their work before you fire (owner directive)
 
-do: before starting an H, **read what the other sessions are doing** and **compare it against your own** — `git log origin/main --oneline -30` · `git show origin/main:CLAUDE.md` (they land directives there) · `sidecar ing show` · `HYPOTHESES.jsonl`. Three things must come out of that read: ① **do they already have your answer** (or have they already killed your design — H_9329's demonstration-split died before firing because the pretraining corpus already ran it 480 times) ② **does your evidence support a sharper claim than you made** ③ **is your H id free** (`G6 unique-H_id` HARD-BLOCKS a new collision — H_9328 was taken by DO-MOUTH mid-flight and this lane had to renumber to H_9329 after already committing under the old id).
-
-**The strongest measured case for this rule, and it cost nothing to get**: this lane measured that the negation operator runs on 5 unseen adverbs (`전혀`·`별로`·`그다지`·`결코`·`하나도`) at delta -0.90..-1.00, p=.000, and dies on `지는 않다` / `지 않았다` — and wrote it up as "a string-triggered rule with a free adverb slot". A **parallel session read the same table and found the mechanism**: every surface that WORKS is a **free pre-posed word** (separable from the stem), and both surfaces that DIE modify the **bound suffix** itself. So `지 않다` is an **agglutinative suffix that attaches to the stem**, `(stem ⊕ 지않다)` is ONE joint key, and the wall is not "CPT wrote to a different table" but "**CPT wrote to a different key**". That reading became the EN-FIRST directive below and a **signed prediction for C3** (the operator should read the OLD polarity => the `(-)` branch). The data was ours; the mechanism was theirs. **Read their work.**
-
-dont: assume `origin/main` is what you last saw (fetch — this lane was 10 commits behind while writing a design that another session had already constrained) · edit the **primary checkout** (bookkeeping CLIs like `sidecar architecture convergence add` write THERE, and a parallel session's unlanded record sits there too — `git reset` in primary destroys their work; do mutating work in an isolated worktree, and if you find someone else's uncommitted change, **leave it and say so**) · re-derive a conclusion they already earned (duplicate work is the cheap failure; the expensive one is **contradicting a landed verdict without reading it**).
-
-> **Report it.** When a parallel session's work bears on yours, say so in the reply and in the card — whose finding, what it changed, and whether it AGREES or CONFLICTS. A conflict is not an embarrassment, it is a measurement: two sessions reading the same substrate and diverging means one of the readings is wrong, and finding out which is the whole job.
+- do: before an H, read what other sessions landed and compare — `git log origin/main -30` · `origin/main:CLAUDE.md` · `sidecar ing show` · `HYPOTHESES.jsonl`; report AGREES/CONFLICTS.
+- dont: trust an unfetched `origin/main` · edit the **primary checkout** (their unlanded record lives there — mutate in a worktree) · contradict a landed verdict without reading it.
 
 ## 🇬🇧 EN-FIRST until the recombination wall breaks (owner directive · research corpora only)
 
