@@ -2881,8 +2881,8 @@ def _interact_mi(argv):
     print("     H(R|S) = %.4f nats   R = recon_err 2-bin (afield 뿌리 · g_text 가 직접 민다)" % hR)
     if hR < hfloor:
         print("     ⇒ 매개 채널 자체가 죽어 있다 — M1/M2 는 정의상 0. 사슬을 못 연다.")
-        return 0
-    for nm, X, Z in (("M1  A→R (말이 장을 미는가)", A, R), ("M2  R→Y (장이 게이트를 미는가)", R, Y)):
+    for nm, X, Z in ((("M1  A→R (말이 장을 미는가)", A, R), ("M2  R→Y (장이 게이트를 미는가)", R, Y))
+                     if hR >= hfloor else ()):
         i_xz = _im_cmi(X, Z, S)
         null = []
         for _ in range(perm):
