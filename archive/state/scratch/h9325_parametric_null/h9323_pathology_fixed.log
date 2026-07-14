@@ -1,0 +1,19 @@
+=== anima evaluate --earned — corpus-level operator instrument (engine-native) ===
+null:   parametric  (additive parametric bootstrap — the marginal pathology cancels in both arms)
+corpus: arith_formal.tsv  sha=d55370912b0b61da…  rows=200000  script=hangul
+        B-rate=0.500   (B and T are corpus labels; T is OUTSIDE the token stream)
+
+G-ALIVE     synthetic XOR (planted operator)   EARNED=+5.03675  delta=-3.00   bar>=+0.30  PASS
+G-PEDESTAL  synthetic ADDITIVE (truth = 0)     EARNED=+0.00124  delta=-0.05   |.|<=0.02   PASS
+G-POWER     held-out cells=98630 (stems 34)  sd_null=0.01048  MDE(3σ)=0.03145  need<=0.02  FAIL — NOT POWERED for a negative verdict
+
+SEEDS       9304:+0.19496 (3.681%)
+            spread across seeds = 0.00000 nats (0.000% of the ruler)   — seed-stable
+
+held-out EARNED = +0.19496 nats   95.0% CI [+0.17340, +0.21372]   delta=-0.95  (0=additive, -2=flip)
+  vs the XBIND ruler: 3.681% of a PLANTED operator   [p-values are NOT the verdict — with this n a speck is significant]
+  seen synergy    = +1.00014 nats (n=227202)   [DATA-ADDITIVE vs OPERATOR-ABSENT]
+
+VERDICT: INFO-PRESENT — non-additive information EXISTS and TRANSFERS to held-out cells ⇒ an estimator search is justified (necessary, NOT sufficient: recovering less than the wall's height still leaves the wall standing)
+=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===
+dispatch: /usr/bin/python3 /home/summer/.local/lib/python3.12/site-packages/anima_py/cli/evaluate.py --earned arith_formal.tsv --min-occ 100 --k-perm 200 --seeds 9304
