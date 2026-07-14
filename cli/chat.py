@@ -1385,6 +1385,17 @@ def anima_consciousness_mode(ckpt, argv=None):
     # rel_lane sat at 0.6723 for all 720 ticks of the H_9328 rollouts, recon_err at 0.0, and the
     # decode anchor was always live_seed. A store you write to and never read from is not a loop.
     last_gtext = ""
+    # H_9352 — the rate limiter had no memory. `brain_decide_anchored` takes a
+    # `seconds_since_last` argument and gates on `>= spont_min_emit_interval()` (30.0s), but
+    # what the daemon passed in that slot was `5.0 + 55.0*clip01(stage_env*(0.5+urgency))` —
+    # a pure function of (stage, urgency), with NO dependence on when it last spoke. There was
+    # no `last_emit` anywhere in the repo and `an_clock_now()` was never called on this path.
+    # So the one live term in the whole emit gate was a stage clock wearing a rate-limiter's
+    # name, and emit collapsed to a pure function of stage (H_9345: H(emit|stage) = 0.000000).
+    # The design already assumed a real clock: spont_min_emit_interval() 30.0 / an_tick_seconds()
+    # 8.0 = a sustainable emit rate of 0.25, and ep_target_emit_rate() is 0.27. The numbers were
+    # chosen for a clock that was never plugged in. Plug it in.
+    last_emit_tick = None
     # H_9337 · the immune store's recall margin on the utterance, taken BEFORE it was bound.
     # None until the daemon has said anything (tick 0 falls back to the seed key). See :1497.
     pending_rel = None
@@ -1538,6 +1549,14 @@ def anima_consciousness_mode(ckpt, argv=None):
         coh_lane = lanes[3]
         bal_lane = lanes[9]
         emit_drive = ci_emit_drive(lanes)
+        # H_9351 — Ψ is DEFINED as the population fraction over the emit-drive threshold
+        # (engine_cli ci_psi_balance -> ci_emit_decision: 0.5*(lanes[0]+lanes[4]) >= 0.5), and
+        # those two lanes were the one thing the trace did NOT record. So Ψ could not be
+        # computed from a real daemon run at all, and the Ψ-SOMA panel fell back to scoring a
+        # fixed-seed synthetic population instead — a verdict that never sees the model.
+        # Record the actual gws/lprec so Ψ̂ can be taken on the substrate's OWN lane population.
+        psi_gws = float(lanes[0])
+        psi_lprec = float(lanes[4])
 
         # ── (C-R3) PER-TICK CONFLICT → A⇄G SETTLE BUDGET (H_9095 rung-3) ──
         ag_a_drive = emit_drive
@@ -1878,7 +1897,17 @@ def anima_consciousness_mode(ckpt, argv=None):
         urgency = _afs_clip01(0.4 * agloop_ctx + 0.3 * cur_phasic + 0.3 * ten_phasic)
         rel = _og_rel_phasic(rel_ctx, rel_ema) * (0.1 + 0.9 * stage_env)
         cur = cur_phasic * (0.1 + 0.9 * stage_env)
+        # KEPT, but no longer feeds the gate: this is the (stage, urgency) envelope, useful as
+        # telemetry and as the before/after handle for H_9352. It is NOT elapsed time.
         idle = 5.0 + 55.0 * _afs_clip01(stage_env * (0.5 + urgency))
+        # The gate's `seconds_since_last` now IS seconds since last. Before the first emit the
+        # substrate has never spoken, so nothing is being rate-limited: the limiter must not be
+        # what silences it (an unbounded value would make the first tick unconditional, which is
+        # the same defect mirrored — so use the elapsed time since the run began).
+        if last_emit_tick is None:
+            secs_since_emit = float(tick) * an_tick_seconds()
+        else:
+            secs_since_emit = float(tick - last_emit_tick) * an_tick_seconds()
 
         # GROUND store FIRST (full fact), partial seed cue LAST
         live_anchors = []
@@ -1901,11 +1930,13 @@ def anima_consciousness_mode(ckpt, argv=None):
         # ── DEFAULT emit: the brain autonomously decides (brain_emit) ──
         dec = brain_emit(pf,
                          rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
-                         idle, False, True,
+                         secs_since_emit, False, True,
                          backend, live_anchors,
                          _mouth_at(tick))   # H_9328 · None by default ⇒ byte-identical greedy path
 
         did_emit = str(dec["emit"]).lower() == "true"
+        if did_emit:
+            last_emit_tick = tick
         g_emit = str(dec["gen_emitted"]).lower() == "true"
         g_back = str(dec["gen_backend"])
         g_text = str(dec["gen_text"])
@@ -2077,6 +2108,8 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
                 "base_motiv": float(dec.get("base_motiv", _score)),
                 "gen_emitted": g_emit, "gen_backend": g_back, "swapped": swapped,
+                "psi_gws": psi_gws, "psi_lprec": psi_lprec, "emit_drive": float(emit_drive),
+                "secs_since_emit": float(secs_since_emit),
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes

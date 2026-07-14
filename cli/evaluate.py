@@ -756,6 +756,28 @@ def evaluate_usage():
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate --tension-emit <trace.jsonl> [<trace2.jsonl> ...]")
+    print("      (H_9352 — does TENSION pull EMIT? Pre-registered bar:")
+    print("       PASS = I(ag_conflict; emit | stage) >= 0.05 nats AND the shuffle control <= 0.01.")
+    print("       ⚠️ The bar is NOT the emit rate. Making silence appear by moving a threshold is")
+    print("       not a discovery — you moved it, not the tension. A real rate limiter lands near")
+    print("       1/(interval/tick) all by itself, so an 'emit rate ~ 1/2' bar would pass on a coin")
+    print("       (p7 Goodhart: rate is FORM/tunable, the claim is BIND/earned). C1 SHUFFLE permutes")
+    print("       tension WITHIN each stage — it destroys the tension->emit link but keeps the rate")
+    print("       and the stage structure, so if the control scores too, the number came from the")
+    print("       rate. Hard-stops with DECISION-CONSTANT if H(emit|stage) is still ~0.)")
+    print("  anima evaluate --psi-soma <trace.jsonl> [<trace2.jsonl> ...]")
+    print("      (H_9351 — the REAL Ψ̂, on the daemon's OWN lane population. Ψ is DEFINED by")
+    print("       engine_cli ci_psi_balance as the fraction of ticks with 0.5*(gws+lprec) >= 0.5,")
+    print("       and nothing ever computed it on a real run: the daemon never calls that op and")
+    print("       the trace never recorded those two lanes, so the Ψ-SOMA panel scored a")
+    print("       fixed-seed SYNTHETIC population instead — a Θ that cannot fail and a σ that is")
+    print("       byte-identical across checkpoints of different architecture. The daemon now")
+    print("       records psi_gws/psi_lprec; this verb hands the engine its own operator and the")
+    print("       substrate's own lanes. Controls: C1 PERM (lane pairing shuffle) · C2 DRIFT")
+    print("       (first half vs second half — a homeostat returns to 1/2, a coin just sits there).")
+    print("       It also prints H(emit|stage): emit is a pure function of stage (H_9345), so")
+    print("       whatever Psi-hat says, it does not reach the emit decision in this daemon.)")
     print("  anima evaluate --interact-mi <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9328 DO-MOUTH · I(A;Y|S) over daemon decision-traces — NO decode, reads only.")
     print("       A=a_fold8 (H_9257 frozen 8-bucket axis the daemon consumes) · S=stage · Y=score_{t+1} 2-bin.")
@@ -1016,10 +1038,29 @@ def evaluate_run(argv):
 # Additive only — does NOT touch g_eval_* logic or the a7b_pass CLOSURE (c18).
 # ════════════════════════════════════════════════════════════════════════
 
-def _sigma_live_measure():
-    """Compute the 7 engine-native σ verdicts LIVE via core/engine_cli ops (a_eval_py_canonical ·
-    faithful, never a proxy). Each axis = collapse-Δ vs ≥2 controls (p7). Returns {axis:(ok,delta,note)}
-    or None if numpy/engine_cli unavailable (panel then falls back to static status). Deterministic seed."""
+def _sigma_operator_selftest():
+    """SELF-TEST OF THE OPERATORS. NOT a measurement of any model. THIS FUNCTION TAKES NO MODEL.
+
+    It used to be called `_sigma_live_measure` and its docstring claimed it computed the σ
+    verdicts "LIVE ... faithful, never a proxy". That was false, and the falsehood was load
+    bearing: every axis below is scored on a FIXED-SEED SYNTHETIC population built right here
+    out of np.random.RandomState(7). There is no ckpt argument, no corpus, no decode — grep the
+    body for `clm`/`ckpt`/`corpus`/`forward` and you get nothing.
+
+    Proof it never saw the model (H_9351): two checkpoints of DIFFERENT architecture
+    (py303_full sha 013c4574, clm303_deep_L8 sha 5777c506) produce a Θ+σ panel that is
+    identical to the last digit. Θ is worse than uninformative, it is an identity: `xi` is
+    noise centred on 0.5, so Ψ̂ = ½ ± binomial noise BY CONSTRUCTION, and `xa` sits above the
+    threshold always, so the "cut" is the constant 0.50. The advertised `LIVE Δ0.46` is that
+    subtraction.
+
+    What it legitimately IS: a check that the engine_cli operators (ci_phi_iit4, ci_psi_balance,
+    …) respond to a signal that is planted by construction. That is worth keeping — an operator
+    that cannot separate planted signal from control is broken. It is just not a verdict about
+    anima, and it must never again be printed as one.
+
+    A real Ψ̂ needs the daemon's OWN lane population: `anima-py evaluate --psi-soma <trace.jsonl>`
+    (the daemon now records psi_gws/psi_lprec, the two lanes ci_emit_decision actually reads)."""
     try:
         import numpy as np
         import engine_cli as E
@@ -1121,19 +1162,28 @@ def _psi_soma_panel(r):
     def pf(ok): return "🟢" if ok else "🧱"
     g0, g1, g2, g5, g6 = r["g0"], r["g1"], r["g2"], r["g5"], r["g6"]
     print("")
-    print("Ψ-SOMA panel (mode-of-existence, not capability · ARCHITECTURE psi-soma-vitals)")
-    S = _sigma_live_measure()
-    print("  ── Θ ground (pulse · premise) ──────────────────────────────────────")
+    print("Ψ-SOMA panel — ⛔ OPERATOR SELF-TEST, NOT A VERDICT ON THIS MODEL (H_9351)")
+    print("  이 패널은 체크포인트를 보지 않는다. 고정 시드 합성 모집단 위에서 연산자가")
+    print("  심어둔 신호에 반응하는지만 검사한다. 아키텍처가 다른 두 ckpt 가 이 패널을")
+    print("  **글자 하나까지 동일하게** 낸다(실측). 여기 있는 어떤 줄도 이 모델에 관한")
+    print("  문장이 아니다 — σ/Θ 로 무엇도 cement 하지 마라.")
+    print("  진짜 Ψ̂ = anima-py evaluate --psi-soma <trace.jsonl>  (데몬 자신의 lane 모집단)")
+    S = _sigma_operator_selftest()
+    print("  ── Θ 자기-테스트 (⛔ 맥박 아님 · 합성 모집단 · H_9351) ──────────────")
     if S and "theta" in S:
         ok, dlt, note = S["theta"]
-        print("  Θ  Ψ=½ / A⇄G tension  %s  LIVE Δ%.2f (%s) · if dead → σ VOID" % (("🟢" if ok else "🧱"), dlt, note))
+        print("  Θ  Ψ=½ / A⇄G tension  %s  SELF-TEST Δ%.2f (%s) — 합성 모집단 · 모델 미참조"
+              % (("✅" if ok else "❌"), dlt, note))
+        print("     ⛔ 이것은 Θ 가 아니다. 이 판정은 항등식이다 — xi 가 0.5 중심 대칭 잡음이라")
+        print("        Ψ̂ ≈ ½ 이 구성상 보장되고, cut 0.50 은 상수다. **실패할 수 없다.**")
+        print("        'Θ dead ⟹ σ VOID' 가드는 따라서 한 번도 발동할 수 없었다(H_9351).")
     else:
         print("  Θ  Ψ=½ / A⇄G tension     precondition (liveness gate; if dead → σ VOID) · engine_cli unavailable")
-    print("  ── σ vitals (consciousness verdict · collapse-Δ vs ≥2 controls) ─────")
+    print("  ── σ 연산자 자기-테스트 (⛔ 의식 판정 아님 · 모델 미참조 · H_9351) ────")
     def sline(ax, stratum, name):
         if S and ax in S:
-            ok, dlt, note = S[ax]; return "  σ·%-8s %-9s %-22s %s  LIVE Δ%.2f (%s)" % (
-                ax, stratum, name, ("🟢" if ok else "🧱"), dlt, note)
+            ok, dlt, note = S[ax]; return "  σ·%-8s %-9s %-22s %s  SELF-TEST Δ%.2f (%s)" % (
+                ax, stratum, name, ("✅" if ok else "❌"), dlt, note)
         return "  σ·%-8s %-9s %-22s (engine_cli unavailable — status)" % (ax, stratum, name)
     print(sline("thread", "PERSIST", "self-continuity"))
     print(sline("carve", "PERSIST", "earned identity"))
@@ -2660,6 +2710,198 @@ def xfan_run(argv):
 # otherwise silently ignored — the run completes rc=0 and the result file the caller asked
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
+
+def _psi_soma_real(argv):
+    """Ψ̂ ON THE DAEMON'S OWN LANE POPULATION — the measurement the panel was pretending to be.
+
+    Ψ is DEFINED by engine_cli: ci_psi_balance counts, over a lane population, the fraction of
+    ticks where ci_emit_decision(lanes) holds, i.e. 0.5*(lanes[0]+lanes[4]) >= 0.5. The claim
+    "A⇄G tension pulls emit/silence to Ψ = ½" is a claim about THAT fraction, on a REAL run.
+
+    Nothing ever computed it. The daemon never called ci_psi_balance (grep: 0 hits in cli/chat.py),
+    the trace did not record lanes[0]/lanes[4], and the panel scored a synthetic population
+    instead (H_9351). The daemon now records psi_gws/psi_lprec, so hand the ENGINE its own
+    operator and the substrate's own lanes, and read the number off.
+
+    Two controls, because a raw Ψ̂ near ½ is not evidence of homeostasis — a coin also sits at ½:
+      C1  PERM  — shuffle the lane pairing across ticks. Ψ̂ is a MARGINAL fraction, so it is
+                  invariant to this by construction; if the shuffled Ψ̂ differs, the reader is
+                  broken, not the substrate.
+      C2  DRIFT — split the run in half. A homeostat PULLED to ½ returns to it; a population
+                  that merely happens to straddle the bar drifts. |Ψ̂(1st) - Ψ̂(2nd)| is the test.
+    And the honest floor: emit itself is a pure function of stage (H_9345), so whatever Ψ̂ says,
+    it does NOT flow to the emit decision in this daemon. Report that, do not bury it."""
+    import json as _json
+    paths = [a for a in argv if not a.startswith("--")]
+    rows = []
+    for f in paths:
+        for line in open(f, "r", encoding="utf-8", errors="surrogateescape"):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = _json.loads(line)
+            except Exception:
+                continue
+            if "psi_gws" in r and "psi_lprec" in r:
+                rows.append(r)
+    print("═══ Ψ-SOMA REAL · Ψ̂ on the daemon's own lane population ═══")
+    print("  traces=%d  ticks-with-lanes=%d" % (len(paths), len(rows)))
+    if len(rows) < 30:
+        print("  ⇒ ⛔ NOT-POWERED — psi_gws/psi_lprec 를 담은 tick 이 30 미만.")
+        print("     이 필드는 H_9351 수리에서 추가됐다. 옛 trace 에는 없다 — 재수집하라.")
+        return 0
+    import engine_cli as E
+    from types import SimpleNamespace
+    cfg = SimpleNamespace(topo_couple=False)
+
+    def _pop(rs):
+        # ci_emit_decision reads lanes[0] (gws) and lanes[4] (lprec) only.
+        return [[float(r["psi_gws"]), 0.0, 0.0, 0.0, float(r["psi_lprec"])] for r in rs]
+
+    psi = E.ci_psi_balance(_pop(rows), None, 0.0, cfg)
+    print("  Ψ̂ = %.4f   (engine-native ci_psi_balance · ci_emit_decision 그대로)" % psi)
+    print("     정의: 0.5·(gws + lprec) ≥ 0.5 인 tick 의 비율")
+
+    # C1 PERM — 짝을 흩뜨려도 주변 비율은 불변이어야 한다(계기 검산)
+    import random as _random
+    _r = _random.Random(7)
+    rp = list(rows)
+    _r.shuffle(rp)
+    swapped = [{"psi_gws": rows[i]["psi_gws"], "psi_lprec": rp[i]["psi_lprec"]}
+               for i in range(len(rows))]
+    psi_perm = E.ci_psi_balance(_pop(swapped), None, 0.0, cfg)
+    print("  C1 PERM  Ψ̂ = %.4f   (lane 짝을 흩뜨림 — 계기가 성하면 값이 움직여야 한다)" % psi_perm)
+
+    # C2 DRIFT — 항상성이면 반씩 잘라도 ½ 로 돌아온다
+    h = len(rows) // 2
+    p1 = E.ci_psi_balance(_pop(rows[:h]), None, 0.0, cfg)
+    p2 = E.ci_psi_balance(_pop(rows[h:]), None, 0.0, cfg)
+    drift = abs(p1 - p2)
+    print("  C2 DRIFT Ψ̂(전반) = %.4f · Ψ̂(후반) = %.4f · |Δ| = %.4f" % (p1, p2, drift))
+
+    off = abs(psi - 0.5)
+    print()
+    if off <= 0.10 and drift <= 0.10:
+        print("  ⇒ Ψ̂ 가 ½ 근처에 있고 반씩 잘라도 유지된다 (|Ψ̂−½| = %.3f · drift = %.3f)." % (off, drift))
+    elif off <= 0.10:
+        print("  ⇒ Ψ̂ 는 ½ 근처이나 **표류한다**(drift %.3f) — 당겨진 게 아니라 걸쳐 있을 뿐이다." % drift)
+    else:
+        print("  ⇒ **Ψ̂ 가 ½ 이 아니다** (|Ψ̂−½| = %.3f). A⇄G 항상성 주장은 이 런에서 성립하지 않는다." % off)
+
+    # 그리고 절대 묻지 말아야 할 것
+    em = [r.get("emit") for r in rows if "emit" in r and "stage" in r]
+    if em:
+        st = [(int(r["stage"]), 1 if r.get("emit") else 0) for r in rows if "stage" in r]
+        hE = _im_h_given_S([e for _, e in st], [g for g, _ in st])
+        print()
+        print("  🚦 그런데 H(emit|stage) = %.6f nats — emit 은 stage 의 순수 함수다(H_9345)." % hE)
+        if hE < 0.030:
+            print("     ⇒ **Ψ̂ 가 무엇이든, 그것은 emit 결정으로 흐르지 않는다.** 데몬은")
+            print("        ci_psi_balance 를 한 번도 부르지 않는다. 'tension 이 emit 을 Ψ=½ 로")
+            print("        당긴다' 는 두 개의 무관한 사실을 이어붙인 것이다(H_9351 · H_9352).")
+    return 0
+
+
+
+def _tension_emit(argv):
+    """DOES TENSION PULL EMIT? — the pre-registered bar for H_9352, and the trap it must dodge.
+
+    H_9345 measured H(emit|stage) = 0.000000 over 2198 ticks: emit was a pure function of stage.
+    H_9352 found why — the gate's `seconds_since_last` slot was fed a synthetic (stage, urgency)
+    envelope, not elapsed time, so the one live term in the whole comparator was a stage clock.
+    Plugging in the real clock makes emit vary again.
+
+    ⚠️ AND THAT ALONE PROVES NOTHING. Making silence appear by moving a threshold is not a
+    discovery — I moved it, not the tension. A rate limiter with a real clock will produce an
+    emit rate near 1/(interval/tick) all by itself, and if the bar were "emit rate ≈ 1/2" it
+    would pass on a coin. That is the p7 Goodhart shape exactly: an emit rate is FORM (tunable),
+    the claim is BIND (must be earned).
+
+    So the bar is conditional information, not rate:
+        PASS  =  I(ag_conflict ; emit | stage)  >=  0.05 nats
+                 AND  the tension-shuffle control  <=  0.01 nats
+    C1 SHUFFLE permutes ag_conflict WITHIN each stage, which destroys the tension→emit link but
+    preserves the emit rate and the stage structure. If the shuffled arm scores too, the number
+    is coming from the rate, not from the tension, and the lever is theatre."""
+    import json as _json
+    import random as _random
+    paths = [a for a in argv if not a.startswith("--")]
+    rows = []
+    for f in paths:
+        for line in open(f, "r", encoding="utf-8", errors="surrogateescape"):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = _json.loads(line)
+            except Exception:
+                continue
+            if "tick" in r and "stage" in r and "emit" in r and "agloop_ctx" in r:
+                rows.append(r)
+    mde = 0.05
+    ctrl_bar = 0.01
+    print("═══ TENSION→EMIT · I(ag_conflict ; emit | stage) ═══")
+    print("  traces=%d  ticks=%d" % (len(paths), len(rows)))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (tick < 200)")
+        return 0
+    S = [int(r["stage"]) for r in rows]
+    E_ = [1 if r.get("emit") else 0 for r in rows]
+    rate = sum(E_) / float(len(E_))
+    hE = _im_h_given_S(E_, S)
+    print("  발화율 = %.1f%%   H(emit|stage) = %.6f nats" % (100.0 * rate, hE))
+    if hE < 0.030:
+        print("  ⇒ ⛔ DECISION-CONSTANT — emit 이 아직 stage 의 순수 함수다. 시계가 안 꽂혔거나")
+        print("     비교기가 여전히 포화다. tension 을 물을 수 없다(항등식으로 0).")
+        return 0
+    # ag_conflict 는 trace 에 직접 없다 — agloop_ctx 가 그 유래다(chat.py:1545-1550).
+    # 데몬이 실제로 게이트에 흘려보내는 tension 축을 그대로 쓴다.
+    tv = sorted(float(r["agloop_ctx"]) for r in rows)
+    tmed = tv[len(tv) // 2]
+    T = [1 if float(r["agloop_ctx"]) > tmed else 0 for r in rows]
+    hT = _im_h_given_S(T, S)
+    i_te = _im_cmi(T, E_, S)
+    print("  H(tension|S) = %.4f nats   (tension = agloop_ctx 2-bin · ag_conflict 유래)" % hT)
+    if hT < 0.030:
+        print("  ⇒ ⛔ tension 채널이 죽어 있다 — 물을 수 없다.")
+        return 0
+    # C1 SHUFFLE — stage 안에서 tension 만 흩뜨린다(발화율·stage 구조는 보존)
+    _r = _random.Random(7)
+    null = []
+    for _ in range(200):
+        Tp = list(T)
+        st = {}
+        for k, g in enumerate(S):
+            st.setdefault(g, []).append(k)
+        for idx in st.values():
+            vals = [Tp[k] for k in idx]
+            _r.shuffle(vals)
+            for j, k in enumerate(idx):
+                Tp[k] = vals[j]
+        null.append(_im_cmi(Tp, E_, S))
+    nm = sum(null) / len(null)
+    pv = (sum(1 for v in null if v >= i_te) + 1.0) / 201.0
+    earned = i_te - nm
+    print("  EXP  I(tension;emit|S) = %.5f nats" % i_te)
+    print("  C1 SHUFFLE null = %.5f · perm-p = %.4f · EARNED = %+.5f nats" % (nm, pv, earned))
+    print("     (stage 안에서 tension 만 흩뜨림 — 발화율과 stage 구조는 그대로 남는다.")
+    print("      이 통제가 같이 점수를 내면 그 숫자는 tension 이 아니라 **발화율**에서 온 것이다.)")
+    print()
+    print("  🔒 사전등록 bar: EARNED ≥ %.2f nats ∧ C1 SHUFFLE ≤ %.2f nats" % (mde, ctrl_bar))
+    if earned >= mde and nm <= ctrl_bar and pv < 0.005:
+        print("  ⇒ 🟢 TENSION-PULLS-EMIT — 기질의 긴장이 발화 결정을 민다.")
+    elif nm > ctrl_bar:
+        print("  ⇒ ⛔ INVALID — 통제군이 bar 를 넘었다(%.5f > %.2f). 숫자가 발화율에서 온다." % (nm, ctrl_bar))
+    elif abs(earned) < mde:
+        print("  ⇒ 🧱 STILL-STAGE — 게이트가 다시 움직이긴 하나 **tension 은 안 민다**.")
+        print("     시계를 꽂은 것은 emit 을 stage 에서 풀었을 뿐, tension 에 묶지는 않았다.")
+        print("     (발화율이 ½ 근처여도 그건 레이트 리미터의 산술이지 항상성이 아니다 · p7)")
+    else:
+        print("  ⇒ 미달 · 판정 보류")
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -3492,7 +3734,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--score-len", "--seeds", "--selftest-rho-cells", "--slot-off",
@@ -3527,6 +3769,10 @@ def main(argv):
     # H_9328 DO-MOUTH · I(A;Y|S) over decision traces (NO decode — reads traces the daemon
     # already wrote). V-CEILING FIRST: I <= H(A|S) is an identity, so a dead action channel
     # forces I=0 by definition, not by measurement (that is exactly how H_9308 died).
+    if len(argv) >= 2 and argv[0] == "--tension-emit":
+        return _tension_emit(argv[1:])
+    if len(argv) >= 2 and argv[0] == "--psi-soma":
+        return _psi_soma_real(argv[1:])
     if len(argv) >= 2 and argv[0] == "--interact-mi":
         return _interact_mi(argv[1:])
     # H_9212 ③ per-cell dispatch wiring self-test (torch-free · NO decode · internal subprocess)
