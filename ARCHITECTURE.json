@@ -16543,6 +16543,13 @@
         "value": "**저장소에 쓰기만 하고 읽지 않으면 그건 루프가 아니다 — 그리고 '읽는다'는 착시는 조회 키가 상수일 때 생긴다.** anima 데몬의 세 피드백 뿌리(afield · immune · kosmos)는 전부 g_text 로 **쓰이지만**, 조회는 전부 **session_seed 라는 상수 키**로 했다. 결과: 720 tick(24 rollout) 내내 recon_err ≡ 0.0 · rel_lane ≡ 0.6723 · decode 앵커 ≡ live_seed. H_9328 이 잰 I(A;Y|S)=0 은 '기질이 자기 말을 안 쓴다'가 아니라 **'말이 다음 결정에 도달할 경로가 없다'** 였다 — V-CEILING 이 A·Y 두 **주변축**은 지켰지만 **매개 경로의 용량**은 못 지킨 **세 번째 항등식-0**. ⚠️ 수리 순서가 핵심: '직전 발화로 조회'는 **또 다른 상수**를 낳는다(방금 저장한 것을 물으니 항상 '완벽히 기억' → rel_lane ≡ 1.15). 살아있는 양은 **저장 직전**의 재인식(recognition BEFORE memorisation) — 예측오차와 같은 순서. ⚠️⚠️ 그리고 뿌리 ③(kosmos→decode 앵커)은 **고치면 안 된다**: 자기 발화를 다음 decode 문맥으로 되먹이는 것은 p5 가 금지한 **self-seed/monologue** 다. 그 상수성은 결함이 아니라 철학이 닫아둔 것이고, 정당한 read-back 은 세션 **간**(.kosmos 재입)이다.",
         "threshold": "재발조건: 폐루프/피드백/개입정보를 재는 모든 실험. 해결: **헤드라인 전에 매개 경로의 용량부터 재라** — 사슬의 각 중간 변수 X 에 대해 H(X|S) > floor 인지(=그 변수가 애초에 변하는지) 확인. 상수면 그 경로는 정의상 0 이고, 그 위에서 잰 '정보 없음'은 기질의 사실이 아니라 배선의 사실이다. 게이지가 상수인지 세는 건 $0 (trace 의 고유값 수). 그리고 수리할 땐 ① 재인식/예측오차는 **저장 직전**에 재고 ② 자기 출력을 mouth 의 문맥으로 되먹이는 수리는 p5 위반이니 하지 마라.",
         "source": "cli/chat.py"
+      },
+      {
+        "id": "pep668-silent-install-fail-1",
+        "polarity": "NEG-CONV",
+        "value": "**PEP 668 이 `pip install --user` 를 조용히 거부한다 — 그리고 나는 그 실패를 '설치했다'로 읽었다.** 2026-07-15: summer 에 새 wheel(anima-python 0.13.24 · `corpus bindlocus` 포함)을 `python3 -m pip install -q --user --force-reinstall --no-deps <whl>` 로 여러 번 깔았는데 **버전이 계속 0.13.22 였다**. `-q` 로 출력을 죽여놨기 때문에 나는 실패를 못 봤고, 대신 '왜 새 플래그가 안 먹지'를 엉뚱한 곳(dispatch·PATH·shadow install)에서 찾느라 **세션 시간을 크게 낭비했다**. 출력을 살려보니 **`error: externally-managed-environment` (PEP 668)** — 배포판 python 은 `pip install` 을 기본 거부하고 `--break-system-packages` 를 요구한다. 같은 함정을 **mini 에서도** 이미 한 번 맞았다(그때는 venv 로 우회했으므로 '해결'로 착각하고 학습을 안 남겼다).",
+        "recurrence": "pool/pod 호스트에 새 wheel 을 `pip install -q --user` 로 깔고 성공했다고 가정 → 새 CLI 플래그가 'unknown flag' 로 죽음 → 원인을 dispatch/PATH/shadow-install 에서 찾으며 헤맴. `-q` 가 에러를 삼키기 때문에 **실패가 성공처럼 보인다**.",
+        "fix": "① **설치 커맨드에 `-q` 를 쓰지 마라** — 최소한 `| tail -2` 로 결과를 **눈으로** 보라. ② 배포판 python(우분투/데비안 계열)에는 **`--break-system-packages`** 를 붙여라(또는 venv). ③ **설치는 주장이 아니라 게이트다** — 깐 직후 `python3 -c \"import importlib.metadata as m; assert m.version('anima-python')=='<기대버전>'\"` + **새 심볼 존재 확인**(`grep -c <새플래그> <site-packages>/…/cli/corpus.py`)을 **hard-gate 로** 걸고, 통과 못 하면 발사하지 마라. 이 세션의 pod 부트스트랩은 이미 그 게이트를 갖고 있었고(그래서 pod 는 무사했다), **summer 만 게이트 없이 깔았다가 당했다** — 게이트는 모든 호스트에 똑같이 걸어야 한다."
       }
     ]
   }
