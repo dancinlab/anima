@@ -1544,6 +1544,67 @@ def build_bindlocus(n2_eval, n2_seen, corpus_paths, novel_pool, seed):
             "novel_rejected": dict(rejected)}, kept, rejected
 
 
+# ---------------------------------------------------------------------------
+# routeaudit — H_9355 LOCUS-CAUSAL manifest. Do the declarative lane and the operator lane
+# live on DIFFERENT ConvMoE experts?
+#
+# Every surface below is copied VERBATIM from the frozen H_9327/C4 eval manifest — a template
+# rebuild would hand the model a string it never saw (that is how the negS carrier bit the
+# BIND-LOCUS lane), so the seeds are inherited, never re-derived.
+#
+#   flip0  이 영화 {s}고 => e         the DECLARATIVE surface — the lane CPT writes into (WRITE 0.98)
+#   negL   이 영화 {s}지 않다 => e     the OPERATOR surface, strong #1
+#   negZ   이 영화 별로 {s}지 않다 => e the OPERATOR surface, strong #2
+#   negJ   이 영화 {s}지는 않다 => e    string-twin of negL where the OPERATOR DOES NOT RUN (C1b p~.50)
+#                                     -> control ①b: a route shift that also shows up here is a
+#                                        STRING effect, not an operator effect
+#   ped    이 영화 {s}고 있다 => e      PEDESTAL: an inert 10-byte suffix, byte-length-matched to
+#                                     negL's '지 않다' (10 B), carrying no negation at all
+#                                     -> control ①: "does ANY suffix move the route"
+#
+# The pedestal is what makes the DV readable at all. The router is a function of the byte string,
+# so `flip0 -> negL` moves the route TRIVIALLY (the strings differ). The question is whether it
+# moves MORE than an equally-long, semantically inert suffix does — which is a paired within-stem
+# contrast, never a max() over controls (probe-defect-census-max-control-bias).
+# ---------------------------------------------------------------------------
+_ROUTE_SURFACES = (
+    ("flip0", "이 영화 {s}고 => ", 0, "declarative — the lane CPT writes into"),
+    ("negL",  "이 영화 {s}지 않다 => ", 1, "operator, strong"),
+    ("negZ",  "이 영화 별로 {s}지 않다 => ", 1, "operator, strong"),
+    ("negJ",  "이 영화 {s}지는 않다 => ", 1, "string-twin of negL, operator DOES NOT run (control)"),
+    ("ped",   "이 영화 {s}고 있다 => ", 0, "pedestal — inert suffix, byte-matched to negL (control)"),
+)
+
+
+def build_routeaudit(atoms_path, win):
+    """H_9355 route-audit manifest: every (stem x surface) prompt, tagged with split + the byte
+    span of the stem inside the RIGHT-ALIGNED T-window the engine decodes.
+
+    The span is computed the way `_seed_to_tok` right-aligns (last T bytes of the seed land at the
+    window's tail) — a span computed on the raw seed instead would be off by (T - len(seed)) and
+    would silently read the wrong positions (a_korean_byte_budget: ko = 3 B/char, so the offset is
+    never 'about right')."""
+    d = json.load(open(atoms_path))
+    atoms = d["atoms"] if isinstance(d, dict) else d
+    items = []
+    for a in atoms:
+        stem, pol = a["stem"], int(a["pol"])
+        split = "seen" if a.get("split") == "train" else "heldout"
+        for tag, tmpl, flip, _why in _ROUTE_SURFACES:
+            seed = tmpl.format(s=stem)
+            sb = seed.encode("utf-8")
+            pre = tmpl.split("{s}")[0].encode("utf-8")           # bytes before the stem
+            off = win - len(sb)                                  # right-align shift (may be <0)
+            t0, t1 = off + len(pre), off + len(pre) + len(stem.encode("utf-8"))
+            items.append({"id": "%s_%s_%s" % (split[0].upper(), stem, tag), "stem": stem,
+                          "pol": pol, "split": split, "surf": tag, "flip": flip,
+                          "seed": seed, "seed_bytes": len(sb), "stem_span": [t0, t1]})
+    if any(it["stem_span"][0] < 0 for it in items):
+        raise SystemExit("routeaudit: a seed is longer than the %d-byte window — the stem span "
+                         "would fall outside it; raise --win" % win)
+    return {"win": win, "surfaces": {t: m for t, m, _f, _w in _ROUTE_SURFACES}, "items": items}
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -1566,6 +1627,27 @@ def main():
             print("  ⚠ %d atom(s) could not supply %d contexts (fewest: %s) — the pooled estimate "
                   "is noisier for those" % (len(st["thin_atoms"]), st["k_ctx"],
                                             min(st["thin_atoms"], key=lambda x: x[1])))
+        sys.exit(0)
+    if fmt == "routeaudit":
+        if not opts["atoms"]:
+            print("usage: anima-py corpus routeaudit --atoms gt_atoms.json --out ra_manifest.json "
+                  "[--ctx-bytes 64]")
+            print("      H_9355 LOCUS-CAUSAL — the manifest for `anima-py evaluate --route-audit`.")
+            print("      5 surfaces x every atom: flip0(declarative) · negL/negZ(operator) ·")
+            print("      negJ(string-twin, operator does NOT run) · ped(inert byte-matched suffix).")
+            print("      The last two are the controls that keep a trivial string effect from")
+            print("      being read as a two-lane locus split.")
+            sys.exit(2)
+        man = build_routeaudit(opts["atoms"], opts["ctx_bytes"])
+        out = opts["out"] or "route_audit_manifest.json"
+        json.dump(man, open(out, "w"), ensure_ascii=False)
+        n_by = {}
+        for it in man["items"]:
+            n_by[it["split"]] = n_by.get(it["split"], 0) + 1
+        print("=== anima-py corpus routeaudit — H_9355 route-audit manifest ===")
+        print("wrote %s — %d items · win %dB · %s" % (out, len(man["items"]), man["win"],
+              " · ".join("%s %d" % (k, v) for k, v in sorted(n_by.items()))))
+        print("  surfaces: " + " · ".join(t for t, _m, _f, _w in _ROUTE_SURFACES))
         sys.exit(0)
     if fmt == "bindlocus":
         if not (opts["n2_eval"] and opts["n2_seen"] and opts["corpus"] and opts["novel"]):
@@ -1669,8 +1751,9 @@ def main():
         return
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
-                   "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "atoms", "c34"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|atoms|c34> --out PATH")
+                   "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "routeaudit", "atoms", "c34"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34> --out PATH")
+        print("      routeaudit --atoms gt_atoms.json --out ra_manifest.json   (H_9355 route audit)")
         print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")
         print("             H_9334's operator-key write, taken to the stems the operator NEVER met.")
         print("             H_9346 measured the wall: on a held-out stem the fact LANDS (flip0 1.0000)")
