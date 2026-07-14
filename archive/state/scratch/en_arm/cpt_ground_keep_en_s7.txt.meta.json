@@ -1,0 +1,12 @@
+{
+ "format": "ground_keep",
+ "lang": "en",
+ "floor_transplanted": true,
+ "min_steps": 6000,
+ "min_lr": 0.0002,
+ "note": "⚠️ TRANSPLANTED from ko (H_9324), NOT measured for en. Use as a starting point only — the WRITE gate (held-out flip0) on the resulting ckpt is what actually decides whether the budget sufficed. Raising it after a WRITE failure is not tune-to-green; WRITE is a PREMISE, not the DV.",
+ "forget_strata": [
+  "SEEN flip0",
+  "SEEN flip1 (replayed — verify it SURVIVES, bar 0.75)"
+ ]
+}
