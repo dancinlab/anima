@@ -1,0 +1,93 @@
+# H_9331 — 두 극성은 왜 다른 자리에 사는가 (BIND-LOCUS · 인과 주입)
+
+- **tier**: ⏳ PENDING (사전등록 동결 · 계기 배선·인증 완료 · 데이터 대기)
+- **선행**: H_9327 🧱 BINDING — 연산자는 **살아있고**(SEEN flip1 0.98~1.00) 사실은 **가중치에 있는데**(WRITE 0.98) **결합하지 않는다**(held-out flip1 0.46~0.56 = 우연). LIE 통제군의 편향-무관 검사가 **+0.073 ≈ 0** ⇒ 심은 사실이 **조회조차 되지 않는다**. 도망갈 구멍(연산자 없음·기질 무능·사실 미착륙·예산 부족·시연 결핍) 전부 실측 배제.
+- **설계**: Fable 5 (재프레임 + 결정실험 + 동결 bar)
+- **계기**: `anima-py evaluate <clm> --bind-locus <manifest.json>` (engine-native · `core/decode.py` taps/edits)
+
+## 재프레임 — 세계가 둘이 아니라 셋이다
+
+"두 극성이 **다른 자리**에 산다"는 프레임은 **CPT 극성이 feature 로 존재한다고 전제**한다.
+**WRITE 0.98 은 그걸 증명하지 않는다** — 그것이 증명한 건 flip0 캐리어 안의 stem→답 매핑,
+즉 **반사(reflex)** 뿐이다. 극성 **변수**가 어간 자리에 형성됐다는 증거는 0이다.
+
+| 세계 | 주장 | 고치는 법 |
+|---|---|---|
+| **P-place** | feature 는 있으나 연산자가 읽는 자리가 아니다 | **그 자리에 쓰면 뚫린다** (주소 문제) |
+| **P-kind** | feature 자체가 없다 · CPT 는 답-슬롯 직행 **지름길**만 썼다 | 배치가 아니라 **코퍼스** (극성을 가지려면 *써야* 한다) |
+| **S** | 같은 자리·읽을 수 있는 내용인데도 연산자가 **무시**한다 | 결합은 조회가 아니라 **사전학습 공동형성** ⇒ H_9267 XBIND 가 **법칙**이 된다 |
+
+**read-only 프로브 지도로는 셋을 못 가른다** — 프로브가 읽는 것 ≠ 연산자가 **소비**하는 것
+(read-side-exhausted 교훈). 그래서 DV 는 **인과적 쓰기**에서 나온다.
+
+## 방법 — INJECT-AT-READ-SITE
+
+```
+Stage A  연산자의 읽기-자리를 SEEN 으로 확정 (양성통제 · 참값을 우리가 심는다)
+         SEEN 어간의 hidden 을 반대극성 SEEN donor 로 층 ℓ 에서 swap-patch → 답이 뒤집히나?
+         ℓ* = swap ≥ 0.75 ∧ sham ≤ 0.15 를 만족하는 **최천층** (SEEN 만 씀 ⇒ tune-to-green 아님)
+         스팬 사다리(동결): 마지막 1바이트 → 마지막 3바이트 → 어간 전체
+         전부 실패 → 🚫 INVALID-LOCALIZATION (그 자체가 locus 사실 · P/S 판정 **금지**)
+
+Stage B  축 v̂ = unit(SEEN 긍 평균 − SEEN 부 평균) @ℓ* · 목표 μ± = SEEN 클래스 투영 평균
+         주입 = **투영-정합**(고정 α 아님) ⇒ 팔들이 **매개 공변량** 위에서 정합
+         (고정 α 는 실현 투영이 팔마다 달라진다 = control-must-match-mediating-covariate 가 번 교훈)
+
+Stage C  DV = **편향-무관 의존도** (H_9327 LIE 검사의 인과판)
+         dep_f = P(답=긍 | 주입=긍) − P(답=긍 | 주입=부)   ← 전역 편향은 차분에서 자동 상쇄
+           B  novel 어간(사전학습 0회 ∧ CPT 0회)  ← 핵심 arm
+           C  held-out 어간에 **자기 심은 극성** 주입   ← 수리(rescue) arm
+           D  v̂ 직교 무작위 방향, 같은 이동량        ← off-manifold 통제
+           E  self-patch(자기 값)                    ← sham · 계기 무부작용
+```
+
+## 동결 결정트리 (사전등록 · bar 사후이동 금지)
+
+```
+V1  Stage A 가 ℓ* 를 찾음                              아니면 → INVALID-LOCALIZATION
+V2  B-arm flip0 dep0 ≥ +0.50 (주입이 readout 에 소비됨)  아니면 → INVALID-DEAD-INJECTION
+V3  D |dep| ≤ 0.15  ∧  E 변화율 ≤ 0.05                 아니면 → INVALID-INSTRUMENT
+─────────── V1 ∧ V2 ∧ V3 통과 후에만 DV 판독 ───────────
+DV  B-arm flip1 의 dep1:
+      dep1 ≤ −0.50                → 🔓 **P** — 연산자는 자리 내용을 **소비한다** ⇒ 벽은 주소/종류 문제
+      TOST(±0.20) 등가            → 🧱 **S** — 같은 자리·소비가능한 내용인데도 안 붙음 = **substrate 사실**
+      그 사이                     → ⏳ UNDERPOWERED (se 보고 · n 증설 · **bar 이동 없음**)
+```
+
+**양 seed(s7·s11) 부호 일치 시에만 tier 확정** (H_9327 의 확정 형식 그대로).
+검정력: novel 60 어간 × 캐리어 2 = paired 120쌍/flip층 → se ≈ 0.064 · MDE(80%) ≈ 0.18 < 마진 0.20.
+
+## 🔌 배선 — 완료·인증 (2026-07-14)
+
+**계기가 엔진 안에 있다**(`a_experiment_engine_native`) — 조작이 canonical forward **안에서** 일어나고,
+개입된 residual 이 **같은 ops** 로 readout 까지 흐른다. 옆에 선 probe 하니스가 아니다.
+
+- `core/decode.py` — `_fwd_trunk(W, tok, T, taps=None, edits=None)` (기본값에서 **byte-identical**) ·
+  `_apply_edits` (patch / steer / **proj**=투영정합) · `clm_forward_taps` (READ) ·
+  `clm_forward_logits_edited` (CAUSAL · readout+슬롯 완전경로)
+- `cli/evaluate.py` — `--bind-locus` (3종 세트: dispatch · `_KNOWN_FLAGS` · `--help`)
+
+### 코어 게이트 7/7 실측 PASS
+
+| 게이트 | 내용 | 결과 |
+|---|---|---|
+| G-PARITY | `edits=None`/`[]` 가 production 과 byte-identical | **PASS** sha `92e24b6e76f4…` 3-way 동일 |
+| G-TAP | 층별 tap = L+1 깊이 · shape [T,d] | **PASS** |
+| G-SHAM | self-patch = 무변화 (기계 부작용 0) | **PASS** |
+| G-LIVE | 진짜 swap 이 readout 을 움직임 (dead code 아님) | **PASS** max\|Δlogit\| 16.47 |
+| G-PROJ | 투영-정합이 목표값을 **정확히** 맞힘 | **PASS** 목표 3.0 → 실현 3.000000000 |
+| G-STEER | 고정크기 밀기 live | **PASS** |
+| G-GUARD | 창 밖 span 은 조용히 통과하지 않고 **에러** | **PASS** |
+
+### CLI 스모크 — 결정트리가 실제로 작동
+
+토이 ckpt(`clm_d768_e2l1` · 부정 연산자 **없음**)에서 Stage A 가 전 (깊이×스팬)에서 swap=0.000 →
+**🚫 INVALID-LOCALIZATION** 을 뱉고 **P/S 판정을 거부**했다. 이것이 정확히 V1 이 해야 할 일이다 —
+연산자가 없는 모델에 결합 판정을 내리지 않는다.
+
+## HONEST — 아직 못 한 것
+
+- **Stage B/C 코드경로는 아직 양성 통제로 실행되지 않았다.** 토이 ckpt 가 V1 에서 (정당하게) 걸려서
+  거기까지 가지 못했다. 그 경로들의 수치는 **진짜 CPT ckpt(`natem_n2_main_s7.clm`)에서 처음 나온다** —
+  그때까지 Stage B/C 는 "배선됨·미실행"이다. 이걸 "검증됨"이라 부르지 않는다.
+- 발사 대기 이유: summer GPU 가 H_9330 두 arm 으로 포화(wall ~5h). 큐잉됨.

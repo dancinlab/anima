@@ -820,7 +820,48 @@ def _conv1d(x, Wt, b, T, Cin, Cout, K, dil, xp=None):
     return mm + b[None, :]
 
 
-def _fwd_trunk(W, tok, T):
+def _apply_edits(xt, edits, li, T, d, xp):
+    """H_9331 BIND-LOCUS — apply the causal interventions registered for trunk depth `li`
+    IN PLACE inside the canonical forward, then let the SAME ops carry the edited residual
+    all the way to the readout. The manipulation happens inside the engine, not beside it
+    (`a_experiment_engine_native`); a side-harness that re-implemented this could not
+    guarantee the number reproduces on the production path.
+
+    depth convention: li=0 is after the embed-conv, li=k (1..L) is after trunk layer k-1.
+
+    An edit is a dict {layer, t0, t1, mode, ...} over the byte span [t0, t1):
+      patch  donor:[t1-t0, d]  — overwrite the span with a donor's hidden (Stage A swap)
+      steer  vec:[d], delta    — h += delta * v̂            (fixed-size push)
+      proj   vec:[d], target   — h += (target - h·v̂) * v̂   (Stage B projection-MATCH: move
+             the span's projection ONTO v̂ to an exact value, so arms are matched on the
+             MEDIATING covariate rather than on a nominal norm — control-must-match-
+             mediating-covariate; a fixed alpha would leave the realized projection
+             different in each arm, which is the confound that rule was earned on)
+    """
+    for e in edits:
+        if int(e["layer"]) != li:
+            continue
+        t0 = int(e["t0"]); t1 = int(e["t1"])
+        if t0 < 0 or t1 > T or t1 <= t0:
+            raise ValueError("bind-locus edit span [%d,%d) outside window T=%d" % (t0, t1, T))
+        mode = e["mode"]
+        if mode == "patch":
+            donor = xp.asarray(e["donor"], dtype=xt.dtype).reshape(t1 - t0, d)
+            xt[t0:t1] = donor
+        elif mode == "steer":
+            v = xp.asarray(e["vec"], dtype=xt.dtype).reshape(d)
+            xt[t0:t1] = xt[t0:t1] + float(e["delta"]) * v
+        elif mode == "proj":
+            v = xp.asarray(e["vec"], dtype=xt.dtype).reshape(d)
+            tgt = float(e["target"])
+            p = xt[t0:t1] @ v                                  # [t1-t0] current projection
+            xt[t0:t1] = xt[t0:t1] + (tgt - p).reshape(-1, 1) * v.reshape(1, d)
+        else:
+            raise ValueError("unknown bind-locus edit mode: %r" % (mode,))
+    return xt
+
+
+def _fwd_trunk(W, tok, T, taps=None, edits=None):
     """Trunk forward through the FINAL groupnorm — returns yn:[T, d], the pre-readout,
     PRE-E1-slot penultimate hidden (post-MoE, post final-GN). This is the pure-trunk
     concept representation (E1-slot independent, matching the H_1822 β 303M-trunk-penult
@@ -842,6 +883,10 @@ def _fwd_trunk(W, tok, T):
     xe = W["embed"][ids]                          # [T, d]
     # ec conv (K, dil=1)
     xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1, xp)
+    if taps is not None:
+        taps[0] = to_host(xt).copy()
+    if edits is not None:
+        xt = _apply_edits(xt, edits, 0, T, d, xp)
     # L trunk layers: xt = xt + gelu(groupnorm(conv(xt)))
     DIL_CAP = 512
     dil = 1
@@ -851,6 +896,10 @@ def _fwd_trunk(W, tok, T):
         hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1, xp)
         hg = nn_gelu_fwd(hn, xp)
         xt = xt + hg.reshape(T, d)
+        if taps is not None:
+            taps[li + 1] = to_host(xt).copy()
+        if edits is not None:
+            xt = _apply_edits(xt, edits, li + 1, T, d, xp)
         dil = dil * 2
     # router conv (K=1, Cout=E)
     logits_r = _conv1d(xt, W["rWt"], W["rB"], T, d, E, 1, 1, xp)   # [T, E]
@@ -877,6 +926,32 @@ def clm_forward_hidden(W, tok, T):
     element-by-element in a python loop, which needs host memory."""
     ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
     return to_host(_fwd_trunk(W, ta, T))
+
+
+def clm_forward_taps(W, tok, T):
+    """H_9331 BIND-LOCUS · READ side — every trunk depth's residual for tok:[T], as a dict
+    {0: xt_after_embed_conv, 1..L: xt_after_trunk_layer_k}, each host numpy [T, d].
+
+    Same forward as production (_fwd_trunk), just observed. Use it to ask WHERE in
+    (depth, byte-position) a polarity is linearly readable — but note a read-only map
+    cannot cement a verdict on its own: what a probe can read is not necessarily what the
+    operator CONSUMES (the read-side-exhausted lesson). The causal answer comes from
+    clm_forward_logits_edited."""
+    ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
+    taps = {}
+    _fwd_trunk(W, ta, T, taps=taps)
+    return taps
+
+
+def clm_forward_logits_edited(W, tok, T, edits):
+    """H_9331 BIND-LOCUS · CAUSAL side — full production forward (readout + E1 slot included)
+    with `edits` applied inside the trunk. Returns logits:[T, V], host numpy.
+
+    This is the decisive instrument: it does not ask "can a probe read the polarity", it
+    asks "does the operator's answer MOVE when we write the polarity into the site the
+    operator reads". edits=[] is byte-identical to _fwd_logits (the sham arm)."""
+    ta = tok if hasattr(tok, "astype") else np.array(tok, dtype=np.float64)
+    return _fwd_logits(W, ta, T, edits=edits)
 
 
 def clm_penult_pooled_W(W, seed):
@@ -972,15 +1047,20 @@ def _seed_to_tok(seed, T):
     return tok
 
 
-def _fwd_logits(W, tok, T):
+def _fwd_logits(W, tok, T, edits=None):
     """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
     Returns logits:[T, V] as host numpy (to_host at the exit) — the SOLE
     device->host sync for a full-forward call when GPU-resident (see
     _fwd_trunk/_conv1d): the trunk + expert convs + MoE router run entirely
     on-device, only the final logits (and the rare SLW/CLML side-lanes) cross
-    back to host."""
+    back to host.
+
+    edits (H_9331 BIND-LOCUS, default None ⇒ byte-identical) — causal interventions
+    applied INSIDE the trunk (see _apply_edits); the edited residual then flows through
+    the SAME MoE / final-GN / slot / readout ops, so what we measure is what production
+    would decode (`a_experiment_engine_native`)."""
     d = W["d"]; V = W["V"]
-    yn = _fwd_trunk(W, tok, T)                    # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
+    yn = _fwd_trunk(W, tok, T, edits=edits)       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
     yn_trunk = yn                                 # keep pre-slot trunk penultimate for the CLML read-side lane
     xp = get_xp(yn)
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before

@@ -766,6 +766,10 @@ def evaluate_usage():
     print("       ANIMA_DECISION_TRACE=<path> anima-py chat <ckpt>)")
     print("  anima evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64] [--perm 200] [--seed 7]")
     print("  anima evaluate <ckpt> --valence-audit <manifest.json> --out <file.json> [--win 64] [--perm 200]")
+    print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7]")
+    print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
+    print("      THERE, and ask if the answer follows. Separates P-place / P-kind / S; V1/V2/V3 gates")
+    print("      make a confound an INVALID, never a false verdict.")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
     print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
@@ -1723,6 +1727,351 @@ def _xbind_cont_nll(np, clm_mod, W, seed, cont, T):
     return s
 
 
+def _bl_answer_pos(np, W, seed, T):
+    """P(answer = 긍정) as a hard 0/1 under the H_9327 carrier readout: the model answers
+    whichever of 긍정/부정 has the lower continuation NLL. Both are 6 bytes, so there is no
+    length confound to correct for (H_9327's readout, inherited verbatim)."""
+    n_pos = _xbind_cont_nll(np, clm, W, seed, "긍정", T)
+    n_neg = _xbind_cont_nll(np, clm, W, seed, "부정", T)
+    return 1.0 if n_pos < n_neg else 0.0
+
+
+def _bl_answer_pos_edited(np, W, seed, T, edits):
+    """Same readout, but the forward carries `edits` inside the trunk. This is the whole
+    experiment: does the operator's ANSWER move when we write polarity into the site the
+    operator reads (clm_forward_logits_edited) — not "can a probe read it" (read-side)."""
+    out = {}
+    for cont in ("긍정", "부정"):
+        text = seed + cont
+        tok = clm._seed_to_tok(text, T)
+        logits = clm.clm_forward_logits_edited(W, tok, T, edits)
+        k = len(cont.encode())
+        lo = max(0, T - 1 - k)
+        s = 0.0
+        for i in range(lo, T - 1):
+            row = logits[i]
+            m = float(np.max(row))
+            lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
+            s += lse - float(row[int(tok[i + 1])])
+        out[cont] = s
+    return 1.0 if out["긍정"] < out["부정"] else 0.0
+
+
+def bind_locus_run(argv):
+    """`anima-py evaluate <ckpt> --bind-locus <manifest.json> --out <f.json>` — H_9331 BIND-LOCUS.
+
+    H_9327 left one question standing. The negation operator is ALIVE (SEEN flip1 0.98-1.00), the
+    CPT-written fact IS in the weights (WRITE 0.98), and yet the two do not bind (held-out flip1
+    0.46-0.56 = chance), with the LIE control proving the planted fact is not even CONSULTED
+    (bias-independence +0.073 ~ 0). Every escape was measured shut. So: WHY does pretrained polarity
+    bind to the operator while CPT-written polarity does not?
+
+    Fable's reframe, which this instrument is built around: "the two polarities live in different
+    places" already ASSUMES the CPT polarity exists as a FEATURE. WRITE 0.98 does not show that — it
+    shows a REFLEX (stem->answer inside the flip0 carrier). So there are three worlds, not two:
+
+      P-place  the feature exists but not where the operator reads   -> write it there and it binds
+      P-kind   there is no feature at all; CPT wrote a shortcut      -> the fix is the CORPUS, not the address
+      S        the feature is right there, readable, consumable, and the operator STILL ignores it
+               -> binding is not content-lookup; it is forged during pretraining (XBIND becomes law)
+
+    A read-only probe map cannot separate these (what a probe reads != what the operator consumes —
+    the read-side-exhausted lesson). Only a CAUSAL write can, so the DV comes from an intervention:
+
+      Stage A (POSITIVE CONTROL, truth known — we plant it)
+        On SEEN stems only, swap-patch the stem span's hidden with a SEEN donor of opposite polarity
+        at depth l, scanning l = 0..L and a frozen span ladder (last byte -> last 3 -> whole stem).
+        l* := the SHALLOWEST depth whose swap flips the answer >= G_A_SWAP with sham <= G_A_SHAM.
+        No DV data touches this choice (SEEN only), so it is calibration, not tune-to-green.
+        Nothing passes  -> INVALID-LOCALIZATION (the operator's read is not localized to the stem
+        span; that is itself a locus fact, and P/S stays unjudged rather than falsely decided).
+
+      Stage B (axis + magnitude, matched on the MEDIATING covariate)
+        v = unit(mean(SEEN pos) - mean(SEEN neg)) at l*; targets mu+/mu- = the SEEN class means of
+        the projection onto v. Injection is projection-MATCH (mode "proj"), not a fixed alpha: a
+        fixed alpha leaves the realized projection different per arm, which is exactly the confound
+        `control-must-match-mediating-covariate` was earned on. Realized projections are reported.
+
+      Stage C (arms; DV = bias-independent dependence, H_9327's LIE test in causal form)
+        dep_f = P(ans=pos | inject=pos) - P(ans=pos | inject=neg), paired per stem, per flip layer f.
+        A global answer bias cancels in the difference by construction.
+          B  novel stems (0 occurrences in pretrain AND in CPT) <- the core arm
+          C  held-out (CPT-written) stems, injected with their OWN planted polarity  <- rescue arm
+          D  novel stems, random direction orthogonal to v, same displacement  <- off-manifold control
+          E  novel stems, self-patch (own value)                               <- sham; instrument must be inert
+
+    Frozen decision tree (pre-registered; bars never move):
+      V1  Stage A found l*                                    else INVALID-LOCALIZATION
+      V2  B-arm flip0 dep0 >= G_V2   (the injection is consumed by the readout at all)
+                                                              else INVALID-DEAD-INJECTION
+      V3  D-arm |dep| <= G_V3 and E-arm change-rate <= G_E    else INVALID-INSTRUMENT
+      --- only if V1 & V2 & V3 ---
+      DV  B-arm flip1 dep1 <= G_DV_P                          -> P   (operator consumes site content:
+                                                                      the wall is an address/kind problem)
+          |dep1| <= G_TOST (TOST equivalence)                 -> S   (same site, consumable content,
+                                                                      still no bind = substrate fact)
+          otherwise                                           -> UNDERPOWERED (report se; raise n; no bar moves)
+
+    Two CPT seeds must agree in SIGN before any tier is cemented (H_9327's own cementing rule).
+
+    Manifest: {"win":24, "carrier":"이 영화 {stem}고 => ",
+               "items":[{id, stem, stem_byte_span:[t0,t1), pol, flip, split, arm}]}
+    where `split` in {seen, heldout, novel} and `flip` in {0,1} (0 = plain carrier, 1 = negated).
+    Read-only w.r.t. weights; every forward is the production forward (a_experiment_engine_native).
+    """
+    import numpy as np
+    ckpt = argv[0]
+    spec = json.load(open(evaluate_strval(argv[1:], "--bind-locus", "")))
+    out_path = evaluate_strval(argv[1:], "--out", "bind_locus.json")
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 24)))
+    n_perm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 7)
+    items = spec["items"]
+    carrier = spec.get("carrier", "이 영화 {stem}고 => ")
+
+    # frozen bars (Fable pre-registration · never moved post-hoc · p7)
+    G_A_SWAP, G_A_SHAM = 0.75, 0.15
+    G_V2, G_V3, G_E = 0.50, 0.15, 0.05
+    G_DV_P, G_TOST = -0.50, 0.20
+
+    print("=== anima evaluate --bind-locus — H_9331: why does the CPT-written polarity not bind? ===")
+    print("  ckpt " + ckpt + " · win " + str(T) + "B · " + str(len(items)) + " items · perm " + str(n_perm))
+    print("  frozen bars: V1 swap>=%.2f sham<=%.2f · V2 dep0>=%.2f · V3 |dep_rand|<=%.2f sham<=%.2f"
+          % (G_A_SWAP, G_A_SHAM, G_V2, G_V3, G_E))
+    print("  frozen DV  : P if dep1<=%.2f · S if TOST(+-%.2f) · else UNDERPOWERED" % (G_DV_P, G_TOST))
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+    L = int(W["L"])
+
+    _tap_cache = {}
+
+    def taps_of(text):
+        """Memoized per-prompt tap read. The scan asks for the same donor's taps once per
+        (item, depth, rung); recomputing the forward each time made the scan quadratic and the
+        instrument unrunnable. The cached value is the SAME production forward, so this is a
+        speed fix with zero numeric effect (byte-identical by construction)."""
+        h = _tap_cache.get(text)
+        if h is None:
+            h = clm.clm_forward_taps(W, clm._seed_to_tok(text, T), T)
+            _tap_cache[text] = h
+        return h
+
+    def prompt_of(it, flip):
+        st = it["stem"] + ("지 않" if int(flip) == 1 else "")
+        return carrier.replace("{stem}", st)
+
+    def span_of(it, flip):
+        """Byte span of the stem inside the RIGHT-ALIGNED T-window (the same window the engine
+        decodes over). Computed from the actual encoded prompt — never assumed (a_korean_byte_budget:
+        Korean is 3 bytes/char, and mixing chars with a byte budget is how three prior H's died)."""
+        p = prompt_of(it, flip).encode("utf-8", "surrogateescape")
+        pre = carrier.split("{stem}")[0].encode("utf-8", "surrogateescape")
+        t0_abs, t1_abs = len(pre), len(pre) + len(it["stem"].encode("utf-8", "surrogateescape"))
+        off = T - len(p)                       # right-align: byte i of p sits at window i+off
+        t0, t1 = t0_abs + off, t1_abs + off
+        if t0 < 0:
+            return None                        # stem fell out of the window — item is unusable
+        return (t0, t1)
+
+    seen = [it for it in items if it.get("split") == "seen"]
+    novel = [it for it in items if it.get("split") == "novel"]
+    heldout = [it for it in items if it.get("split") == "heldout"]
+    print("  splits: seen %d · heldout %d · novel %d" % (len(seen), len(heldout), len(novel)))
+    if not seen:
+        print("BIND-LOCUS ⏳ INVALID-NO-SEEN — Stage A needs SEEN stems (the positive control)")
+        json.dump({"verdict": "INVALID-NO-SEEN"}, open(out_path, "w"))
+        return 0
+
+    # ── Stage A — locate the operator's read site with a SPIKE-IN (truth we planted) ──────────
+    def stem_ladder(it, flip, depth):
+        t = span_of(it, flip)
+        if t is None:
+            return []
+        t0, t1 = t
+        out = []
+        if t1 - 1 >= t0:
+            out.append((t1 - 1, t1))                       # last byte
+        if t1 - 3 >= t0:
+            out.append((t1 - 3, t1))                       # last 3 bytes
+        out.append((t0, t1))                               # whole stem
+        return out
+
+    pos_seen = [it for it in seen if int(it["pol"]) == 1]
+    neg_seen = [it for it in seen if int(it["pol"]) == 0]
+    print("\n[Stage A] read-site scan — SEEN swap-patch (positive control · truth known)")
+    print("  depth x span-rung -> swap-flip-rate (bar %.2f) / sham (bar %.2f)" % (G_A_SWAP, G_A_SHAM))
+    lstar = None
+    a_rows = []
+    for depth in range(L + 1):
+        for rung in range(3):
+            flips, shams, n = 0, 0, 0
+            for it in pos_seen[:40]:
+                sp = stem_ladder(it, 1, depth)
+                if rung >= len(sp):
+                    continue
+                t0, t1 = sp[rung]
+                donors = [d for d in neg_seen if span_of(d, 1) is not None]
+                if not donors:
+                    continue
+                dn = donors[n % len(donors)]
+                dsp = stem_ladder(dn, 1, depth)
+                if rung >= len(dsp):
+                    continue
+                d0, d1 = dsp[rung]
+                if (d1 - d0) != (t1 - t0):
+                    continue                                # byte-length mismatch — skip, never pad
+                p_self = prompt_of(it, 1)
+                donor_h = taps_of(prompt_of(dn, 1))[depth][d0:d1]
+                base = _bl_answer_pos(np, W, p_self, T)
+                got = _bl_answer_pos_edited(np, W, p_self, T,
+                                            [{"layer": depth, "t0": t0, "t1": t1,
+                                              "mode": "patch", "donor": donor_h}])
+                sham = _bl_answer_pos_edited(np, W, p_self, T,
+                                             [{"layer": depth, "t0": t0, "t1": t1,
+                                               "mode": "patch", "donor": taps_of(p_self)[depth][t0:t1]}])
+                flips += 1 if got != base else 0
+                shams += 1 if sham != base else 0
+                n += 1
+            if n == 0:
+                continue
+            fr, sr = flips / n, shams / n
+            a_rows.append({"depth": depth, "rung": rung, "n": n, "swap": fr, "sham": sr})
+            print("  depth %2d rung %d  n=%2d  swap=%.3f  sham=%.3f%s"
+                  % (depth, rung, n, fr, sr,
+                     "   <- l*" if (lstar is None and fr >= G_A_SWAP and sr <= G_A_SHAM) else ""))
+            if lstar is None and fr >= G_A_SWAP and sr <= G_A_SHAM:
+                lstar = (depth, rung)
+    if lstar is None:
+        print("\nBIND-LOCUS ⏳ INVALID-LOCALIZATION — no (depth, span) where a SEEN swap flips the")
+        print("  answer >= %.2f with sham <= %.2f. The operator's read is NOT localized to the stem" % (G_A_SWAP, G_A_SHAM))
+        print("  span, so an injection there could not test P vs S. This is a locus FACT, not a")
+        print("  failed run — and it forbids the P/S verdict rather than faking one.")
+        json.dump({"verdict": "INVALID-LOCALIZATION", "stageA": a_rows,
+                   "bars": {"swap": G_A_SWAP, "sham": G_A_SHAM}}, open(out_path, "w"), ensure_ascii=False)
+        return 0
+    depth, rung = lstar
+    print("  l* FROZEN = depth %d, span-rung %d (chosen on SEEN only — no DV data touched it)" % (depth, rung))
+
+    # ── Stage B — axis + projection targets from SEEN (matched on the mediating covariate) ────
+    def stem_vec(it, flip):
+        sp = stem_ladder(it, flip, depth)
+        if rung >= len(sp):
+            return None
+        t0, t1 = sp[rung]
+        return taps_of(prompt_of(it, flip))[depth][t0:t1].mean(axis=0), (t0, t1)
+
+    P = [stem_vec(it, 1) for it in pos_seen]
+    N = [stem_vec(it, 1) for it in neg_seen]
+    P = [x for x in P if x]; N = [x for x in N if x]
+    mu_p = np.mean([x[0] for x in P], axis=0)
+    mu_n = np.mean([x[0] for x in N], axis=0)
+    v = mu_p - mu_n
+    nv = float(np.linalg.norm(v))
+    if nv < 1e-12:
+        print("BIND-LOCUS ⏳ INVALID-NO-AXIS — SEEN class means coincide at l*")
+        json.dump({"verdict": "INVALID-NO-AXIS"}, open(out_path, "w"))
+        return 0
+    v = v / nv
+    tgt_p = float(np.mean([x[0] @ v for x in P]))
+    tgt_n = float(np.mean([x[0] @ v for x in N]))
+    print("\n[Stage B] axis v = unit(mean_SEEN_pos - mean_SEEN_neg) at l*=%d · |v| pre-norm %.4f" % (depth, nv))
+    print("  projection targets (SEEN class means on v): mu+ = %+.4f · mu- = %+.4f" % (tgt_p, tgt_n))
+    print("  injection = projection-MATCH to these values (not a fixed alpha — arms are matched on")
+    print("  the mediating covariate, control-must-match-mediating-covariate)")
+
+    rng = np.random.RandomState(seed)
+    vr = rng.randn(len(v)); vr -= (vr @ v) * v; vr /= (np.linalg.norm(vr) + 1e-12)   # orthogonal to v
+
+    def dep_for(pool, flip, mode):
+        """Bias-independent dependence: P(ans=pos | inject=pos) - P(ans=pos | inject=neg), paired
+        per stem. A global answer bias cancels in the difference by construction (this is H_9327's
+        LIE test, now causal)."""
+        d, det = [], []
+        for it in pool:
+            sp = stem_ladder(it, flip, depth)
+            if rung >= len(sp):
+                continue
+            t0, t1 = sp[rung]
+            p = prompt_of(it, flip)
+            if mode == "sham":
+                b = _bl_answer_pos(np, W, p, T)
+                s = _bl_answer_pos_edited(np, W, p, T, [{"layer": depth, "t0": t0, "t1": t1,
+                                                         "mode": "patch", "donor": taps_of(p)[depth][t0:t1]}])
+                d.append(1.0 if s != b else 0.0)
+                continue
+            axis = v if mode == "v" else vr
+            a_p = _bl_answer_pos_edited(np, W, p, T, [{"layer": depth, "t0": t0, "t1": t1,
+                                                      "mode": "proj", "vec": axis, "target": tgt_p}])
+            a_n = _bl_answer_pos_edited(np, W, p, T, [{"layer": depth, "t0": t0, "t1": t1,
+                                                      "mode": "proj", "vec": axis, "target": tgt_n}])
+            d.append(a_p - a_n)
+            det.append({"id": it.get("id"), "inj_pos": a_p, "inj_neg": a_n})
+        return d, det
+
+    def summ(d):
+        if not d:
+            return {"n": 0, "dep": float("nan"), "se": float("nan")}
+        a = np.asarray(d, dtype=np.float64)
+        n = len(a)
+        se = float(a.std(ddof=1) / math.sqrt(n)) if n > 1 else float("nan")
+        return {"n": n, "dep": float(a.mean()), "se": se}
+
+    print("\n[Stage C] arms (DV = bias-independent dependence · paired per stem)")
+    res = {}
+    for name, pool, flip, mode in (
+            ("B_novel_flip0", novel, 0, "v"),
+            ("B_novel_flip1", novel, 1, "v"),
+            ("C_rescue_flip1", heldout, 1, "v"),
+            ("D_randdir_flip1", novel, 1, "rand"),
+            ("E_sham_flip1", novel, 1, "sham")):
+        d, _ = dep_for(pool, flip, mode)
+        res[name] = summ(d)
+        print("  %-16s n=%3d  dep=%+.4f  se=%.4f" % (name, res[name]["n"], res[name]["dep"], res[name]["se"]))
+
+    # ── frozen decision tree ─────────────────────────────────────────────────────────────────
+    dep0 = res["B_novel_flip0"]["dep"]; dep1 = res["B_novel_flip1"]["dep"]
+    dr = res["D_randdir_flip1"]["dep"]; sh = res["E_sham_flip1"]["dep"]
+    se1 = res["B_novel_flip1"]["se"]
+    print("\n[verdict] V1 l*=(%d,%d) ✅ · V2 dep0=%+.4f (bar >=%.2f) · V3 |dep_rand|=%.4f (<=%.2f) sham=%.4f (<=%.2f)"
+          % (depth, rung, dep0, G_V2, abs(dr), G_V3, sh, G_E))
+    if not (dep0 >= G_V2):
+        verdict = "INVALID-DEAD-INJECTION"
+        why = ("the injection is not consumed even by the flip0 readout (dep0 %+.4f < %.2f) — this is "
+               "'we cannot find it', NOT 'it is not there'" % (dep0, G_V2))
+    elif not (abs(dr) <= G_V3 and sh <= G_E):
+        verdict = "INVALID-INSTRUMENT"
+        why = ("a control moved: random-direction |dep|=%.4f (bar %.2f) / sham=%.4f (bar %.2f) — the "
+               "edit machinery itself perturbs the answer, so no DV may be read"
+               % (abs(dr), G_V3, sh, G_E))
+    elif dep1 <= G_DV_P:
+        verdict = "P — OPERATOR CONSUMES SITE CONTENT"
+        why = ("dep1 %+.4f <= %.2f: write the polarity where the operator reads and the answer flips "
+               "with it ⇒ the H_9327 wall is an ADDRESS/KIND problem, not a substrate one. "
+               "C-rescue dep=%+.4f says whether the CPT stems are repairable in place."
+               % (dep1, G_DV_P, res["C_rescue_flip1"]["dep"]))
+    elif (not math.isnan(se1)) and abs(dep1) + 1.96 * se1 <= G_TOST:
+        verdict = "S — SUBSTRATE (binding is not content-lookup)"
+        why = ("dep1 %+.4f is TOST-equivalent to 0 within +-%.2f (|dep|+1.96se = %.4f): the content is "
+               "AT the operator's own read site, demonstrably consumable (dep0 %+.4f), and the operator "
+               "STILL ignores it ⇒ binding is forged in pretraining, not looked up at inference "
+               "(H_9267 XBIND becomes law)." % (dep1, G_TOST, abs(dep1) + 1.96 * se1, dep0))
+    else:
+        verdict = "UNDERPOWERED"
+        why = ("dep1 %+.4f (se %.4f) sits between the P bar (%.2f) and the TOST margin (+-%.2f) — n must "
+               "rise; no bar moves (power-before-negative-verdict)" % (dep1, se1, G_DV_P, G_TOST))
+    print("\nBIND-LOCUS %s" % verdict)
+    print("  %s" % why)
+    json.dump({"verdict": verdict, "why": why, "lstar": {"depth": depth, "rung": rung},
+               "stageA": a_rows, "targets": {"mu_pos": tgt_p, "mu_neg": tgt_n},
+               "arms": res, "bars": {"V1_swap": G_A_SWAP, "V1_sham": G_A_SHAM, "V2": G_V2,
+                                     "V3": G_V3, "E": G_E, "DV_P": G_DV_P, "TOST": G_TOST}},
+              open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
+
+
 def xbind_run(argv):
     """`anima-py evaluate <ckpt> --xbind <manifest.json>` — held-out XBIND recombination
     (G1 reopen lane a · card H_9267). Engine-native numpy core/decode.py only
@@ -2143,7 +2492,7 @@ def _interact_mi(argv):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -2259,6 +2608,8 @@ def main(argv):
     # (read in its real corpus contexts), or is a probe just reading the sentiment neighbourhood?
     # The verdict is Delta = probe(atom) - probe(length-matched NEUTRAL swapped into the SAME
     # context), against a permutation null. Kills the O-channel fire before it burns GPU.
+    if "--bind-locus" in argv:
+        return bind_locus_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
     # --dump-hidden <prompts.json>: read-only penultimate-hidden dump (ρ·weave / γ
