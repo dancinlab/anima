@@ -266,10 +266,10 @@
      },
      {
       "id": "brain-structure-engine-lanes-do-mouth-h9328",
-      "name": "DO-MOUTH → CLOSE-THE-LOOP — 게이트는 보는데, 말의 내용이 도착하지 않는다",
+      "name": "DO-MOUTH → CLOSE-THE-LOOP → 게이트는 게이트가 아니다. 시계다",
       "type": "gate",
-      "verdict": "🧱 STILL-ADDITIVE (검정력 있음 · n=70) · earned = M1 하나",
-      "detail": "기질의 말이 다음 결정에 정보를 나르는가. 답 = 게이트는 풍부하게 읽지만 발화의 내용축은 도착하지 않는다. 병목은 게이트가 아니라 A→R 이다.",
+      "verdict": "🔴 H_9345 DECISION-CONSTANT · H_9337 🧱 (스코프 = score, 결정 아님)",
+      "detail": "기질의 말이 다음 결정에 정보를 나르는가를 물었다. 답 = 결정이 존재하지 않는다. emit/침묵은 stage 의 순수 함수이고, 내가 잰 것은 게이트가 소비하는 lane 이었다.",
       "children": [
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-reveal",
@@ -474,6 +474,47 @@
         "id": "brain-structure-engine-lanes-do-mouth-h9328-urgency-scope",
         "type": "note",
         "detail": "urgency→A = +0.0002 (p=.43) 💀 — urgency 는 발화의 내용축을 물들이지 않는다. 하류는 score 가 아니라 idle(tick 간격)이다(chat.py:1881). H_9101 정합은 urgency→idle 로 읽어야 한다(별도 H)."
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-clock",
+        "type": "gate",
+        "verdict": "🔴 H(emit|stage) = 0.000000 · 여섯 번째 항등식-0",
+        "detail": "H_9345 — emit/침묵은 stage 의 순수 함수다. 70 rollout · 2,198 tick 전수.",
+        "children": [
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-clk-table",
+          "type": "note",
+          "detail": "stage 0/1/4 = 100% 발화(568/71/1346) · stage 2/3 = 100% 침묵(71/71). 분산이 0이다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-clk-sched",
+          "type": "note",
+          "detail": "침묵은 tick 9 와 10 에서만 일어난다 — 70 rollout 전부에서 똑같이. 결정이 아니라 스케줄이다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-clk-identity",
+          "type": "gate",
+          "verdict": "정의상 0",
+          "detail": "I(무엇이든 ; emit | stage) ≤ H(emit|stage) = 0. tension 도 score 도 urgency 도 내용도 emit 을 못 민다 — 측정 이전에."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-clk-scope",
+          "type": "gate",
+          "verdict": "🔻 H_9337 스코프 축소",
+          "detail": "나는 결정이 아니라 score(게이트가 소비하는 lane)를 쟀다. 🧱 STILL-ADDITIVE 는 score 에 유효하나 '다음 결정에' 로 확장하면 항등식이지 측정이 아니다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-clk-psi",
+          "type": "gate",
+          "verdict": "Ψ=½ 미실현",
+          "detail": "p5 위반은 아니다(stage-gated OK). 그러나 tension 이 emit 을 당긴다는 중심 주장은 실현되지 않았다 — 발화율 93.3%, 침묵은 스케줄. H_9100 이 본 것은 포화가 아니라 게이트의 부재였다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-clk-v6",
+          "type": "note",
+          "detail": "V6 DECISION-CHANNEL 게이트(BLOCKING): H(emit|S) < floor 이면 DECISION-CONSTANT 하드스톱. 대리변수 판정은 그 대리변수에만 스코프된다고 명시한다."
+         }
+        ]
        }
       ]
      }
@@ -16799,6 +16840,13 @@
     "state": "pos-conv",
     "value": "**양성대조는 자기가 이름 붙인 양을 재야 한다 — 이름이 맞고 물건이 다르면, 그 통제군이 내놓는 DEAD 는 아무것도 말하지 않는다.** H_9337 실측(2026-07-15): PC 가 trace 의 `ten_phasic` 을 읽고 그것을 'urgency'(H_9101 이 emit 의 유일 proven 채널로 번 양)라고 불렀다. 코드를 보면 아니다 — cli/chat.py:1878 은 urgency = clip01(0.4*agloop_ctx + 0.3*cur_phasic + 0.3*ten_phasic) 이고, cur_phasic = clip01(0.5 + 3.0*(cur_ctx - cur_ema)) 이다. **ten_phasic 은 세 항 중 하나이고 가중치는 0.3 이다.** 즉 양성대조는 **인증하겠다는 채널의 30%만** 읽고 있었고, 그것이 DEAD 로 읽혔을 때 그건 urgency 에 대해 **아무 정보도 주지 않았다**. 그런데 나는 그 DEAD 를 근거로 '계기가 어떤 게이트 입력도 못 본다 ⇒ 검정력 부재 ⇒ 벽 선언 금지' 라는 **판정 차단 조건을 사전등록해 두었고**, 그 조건이 실제로 발동해 **정당한 음성 판정을 가로막고 있었다**. 세 항이 모두 trace 에 있으므로 **데몬과 동일한 산술로 urgency 를 복원**해 다시 재니 **-0.0001 (DEAD) → +0.0449 nats (perm-p .005, LIVE)** 로 뒤집혔다 — 계기는 게이트 입력을 **잘 본다**. 이것은 memory `tool-definition-read-code-not-docstring`(추정기의 참값 공식은 docstring 이 아니라 코드에서 읽어라 — faithful_phi 닫힌형이 30% 과소였다)의 **직계 재발**이며, 이번엔 그 대상이 추정기가 아니라 **통제군의 조작변수**였다. 부수 사실: 복원한 urgency 조차 same-tick 행동축으로는 죽어 있다(+0.0002, p=.43) — urgency 의 하류는 score 가 아니라 **idle(tick 간격)** 이다(chat.py:1881). **채널을 인용하기 전에 그 채널이 어디로 흘러가는지도 코드에서 확인하라.**",
     "threshold": "재발조건 = ① trace/로그의 필드 이름이 어떤 개념과 같아 보일 때(ten_phasic vs urgency · score vs emit · loss vs error) ② 다른 H 가 번 채널을 양성대조로 재사용할 때 ③ 판정을 차단하는 사전등록 조건(NOT-POWERED · 검정력 부재)을 그 통제군에 걸 때.\n\n해결 =\n① **양성대조의 조작변수를 프로덕션 코드에서 그대로 복원하라** — 필드를 집어 쓰지 말고, 그 양을 만드는 식을 찾아(file:line) 같은 산술로 재구성한다. 보조함수(clip·정규화)까지 1:1 로 옮긴다(reference-match). 필드 하나를 집는 순간, 그것이 합성량의 한 항일 가능성을 먼저 배제하라.\n② **채널의 하류도 확인하라** — '이 양이 무엇을 미는가'를 코드에서 읽어라. urgency 는 score 가 아니라 idle 로 간다. 엉뚱한 표적에 대고 잰 양성대조는 살아 있어도 무의미하다.\n③ **판정 차단 조건을 통제군에 걸 때는 그 통제군을 먼저 인증하라** — 통제군이 DEAD 를 내놓았을 때 그것이 '채널이 죽었다'인지 '내가 딴 걸 쟀다'인지 가르지 못하면, 그 차단 조건은 **정당한 판정을 무기한 막는 장치**가 된다.\n④ **통제군 수정이 판정을 어느 쪽으로 미는지 밝혀라** — 이번 수정은 판정을 **음성(벽) 쪽으로** 풀었다. 통제군을 고쳤더니 내가 원하던 결론이 나온다면 그건 tune-to-green 을 의심할 자리이고, **원하지 않던 결론이 나온다면 그것이 무결성의 증거**다.",
+    "source": "cli/evaluate.py"
+   },
+   {
+    "id": "evaluate-py-17",
+    "state": "pos-conv",
+    "value": "**결과변수를 고르기 전에, 그것이 정말 결정을 대표하는지 확인하라 — 게이트가 소비하는 lane 을 재고 게이트의 출력을 쟀다고 말하게 된다.** H_9345 실측(2026-07-15, 70 rollout x 2198 tick 전수): H(emit|stage) = 0.000000 nats. stage 0/1/4 는 100% 발화하고 stage 2/3 는 100% 침묵하며, 침묵은 tick 9-10 에서만, 70 rollout 전부에서 똑같이 일어난다. **emit/침묵은 stage 의 순수 함수다** ⇒ I(무엇이든 ; emit | stage) = 0 **항등식으로**. 그런데 나는 lane 전체를 통과하는 정교한 측정(V-CEILING · V5 GATE-CLOSED · B1 · PC · MEDIATION · COMPOSITION)을 세워놓고 DV 로 **score**(게이트가 소비하는 lane)를 썼고, 그것을 **'다음 결정'** 이라고 불렀다. score 는 진짜로 변한다(H(Y|S)=0.474) — 그래서 모든 게이트가 통과했고 판정이 섰다. **그러나 결정은 변하지 않는다.** 이것이 **여섯 번째 항등식-0** 이고, 앞선 다섯 개와 달리 대상이 **결과변수 자체**다: H_9308(행동축 H(A|S)=0) · 결과축(H(Y|S)) · H_9328(매개 경로 용량) · V5(H(Y|S,safe)) · H_9340(도달 불가능한 판정) — 전부 '물어볼 수 있는가'를 지켰는데, **'내가 묻는 것이 내가 묻고 싶은 것인가'는 아무도 안 지켰다.**",
+    "threshold": "재발조건 = ① DV 가 시스템의 최종 출력이 아니라 그 상류 lane/score/logit/확률일 때 ② '결정'·'선택'·'행동' 같은 말로 판정을 서술할 때 ③ 대리변수가 최종 출력보다 **측정하기 쉬워서** 골랐을 때(거의 항상 그렇다).\n\n해결 =\n① **최종 출력의 조건부 엔트로피를 먼저 재라** — H(decision | conditioning set). 0 이면 그 결정에 대한 모든 정보 주장은 **정의상 0** 이고, 대리변수 위의 어떤 정교한 판정도 그 사실을 바꾸지 못한다.\n② **대리변수 판정은 대리변수에 스코프하라** — '내용이 다음 score 에 정보를 나르지 않는다' 는 참일 수 있다. '다음 결정에' 로 확장하는 순간 그건 측정이 아니라 항등식이다.\n③ **대리변수와 최종 출력의 연결을 코드에서 확인하라** — score 가 gate 를 결정한다고 믿었는데, 실제로는 stage 룰이 emit 을 완전히 정하고 있었다. docstring 도 이름도 아니고 **실행 경로**를 읽어라(tool-definition-read-code-not-docstring).\n④ **하드스톱으로 박아라** — cli/evaluate.py 의 V6 DECISION-CHANNEL 이 카논: H(emit|S) < floor 이면 DECISION-CONSTANT 를 찍고, 아래 판정이 대리변수에만 스코프됨을 출력에 명시한다.",
     "source": "cli/evaluate.py"
    }
   ]
