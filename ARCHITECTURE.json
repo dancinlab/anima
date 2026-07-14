@@ -15270,6 +15270,13 @@
         "value": "H_9323 에서 형식-기호계 점의 EARNED 가 **−1.000 nats(부호 반전)** 로 나왔고 나는 그것을 '내 조작화 결함' 으로 진단했다 — **절반만 맞았다**. Fable 의 정정: **관계형 결함 이전에 null 불일치 결함**이다. **T-층화 셔플은 A–B 짝만 깨는 게 아니라 A-marginal 기하까지 파괴**하므로, α_A 가 잡음일 때(어간이 진짜 잠재 극성을 안 가질 때) **관측 arm 에만 병리가 생긴다** — 잡음 α 위에 δ 를 적합하면 held-out 이 **나빠진다**. 셔플 null 은 그 병리를 재현하지 못하고, 그 차이가 **EARNED 로 그대로 샌다**. **수리 = 가법 모수적 부트스트랩**: 적합된 가법 모델(α̂+γ̂)에서 T\\* 를 재생성 ⇒ null 세계의 상호작용은 **정확히 0** 이면서 **marginal 예측구조는 보존** ⇒ **양 arm 이 같은 병리를 지고 상쇄**. 실측: 부호 반전 **−1.000 → +0.196** 으로 정상화. **그리고 결정적으로**, 더 엄격한 이 null 하에서도 자연 4점(부정·역접·패리티·반어)은 **전부 여전히 TOST 등가** ⇒ **CLASS-CLOSED 결론이 null 선택의 산물이 아니었음이 확인**됐다(H_9325).",
         "threshold": "재발조건: 통제군을 **순열(shuffle)** 로 만들 때 — 특히 그 순열이 파괴하는 것이 '내가 깨려는 짝' 만이라고 **가정**할 때. 해결: (1) **순열은 짝만 깨지 않는다** — 파괴되는 다른 구조(marginal 기하 · 공변량 결합)를 명시적으로 열거하라 (2) 관측 arm 에 **병리가 있을 수 있는 조건**(모수가 잡음일 때 · 자유도가 남아돌 때)을 찾아, **null 이 그 병리를 재현하는지** 물어라 — 재현 못 하면 그 차이가 통계량으로 샌다 (3) 더 안전한 기본형 = **모수적 부트스트랩**(귀무모델에서 결과변수를 재생성) — 귀무가설이 참인 세계를 **생성**하므로 관측 arm 의 모든 병리가 양쪽에 동일하게 실린다. 이 null 은 더 엄격하고, 그게 장점이다 (4) null 을 바꿨으면 **기존 결론이 살아남는지 반드시 재검**하라 — 살아남으면 결론이 강해지고, 안 살아남으면 그 결론은 애초에 null 의 산물이었다.",
         "source": "H_9323 부호 반전 → H_9325 가법 모수적 부트스트랩 (2026-07-14)"
+      },
+      {
+        "id": "evaluate-py-12",
+        "state": "pos-conv",
+        "value": "TWO SEEDS AGREEING IS NOT REPLICATION IF THEY SHARE THE NOISE SOURCE. AUDIT-A at k_ctx=24 read Delta = +0.110 (seed 7) and +0.132 (seed 11) with both controls at or below zero — a textbook picture of a small real effect, and I nearly fired $21 of GPU on it. Raising k_ctx to 182 (the same atoms, the same probe, only 2.75x less per-atom pooling noise) FLIPPED THE SIGN on every arm: -0.099, -0.165, -0.187, -0.110, with permutation p in 0.885-0.990. The two seeds agreed because they pooled the SAME 24 contexts per atom — the noise was in the FEATURE, upstream of the seed, so re-seeding could never have caught it. The measured fact underneath: a length-matched NEUTRAL atom spliced into the same context reads the polarity BETTER than the real atom (swap 0.73-0.82 vs atom 0.58-0.64), on the untrained control ckpt too. The atom's own representation OCCLUDES the neighbourhood signal; the natural distribution wrote no valence into it.",
+        "threshold": "Recurs whenever seeds agree on an effect computed from a POOLED feature. Seed replication only certifies the sampling noise the seed controls. Before reading agreement as evidence, ask what noise is UPSTREAM of the seed (pooling width, context count, window) and sharpen THAT — if the effect survives, it is real; if it flips, the agreement was two draws from one biased feature.",
+        "source": "cli/evaluate.py"
       }
     ]
   }
