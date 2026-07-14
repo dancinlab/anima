@@ -55,7 +55,7 @@ def _parse_args(argv):
     opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280, "split_seed": 1,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
-            "lang": DEFAULT_LANG,
+            "lang": DEFAULT_LANG, "lexicon": None, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None}
     i = 1
@@ -97,6 +97,12 @@ def _parse_args(argv):
             opts["min_occ"] = int(argv[i + 1]); i += 2
         elif a == "--neutral-tol":
             opts["neutral_tol"] = float(argv[i + 1]); i += 2
+        elif a == "--lexicon":
+            opts["lexicon"] = argv[i + 1]; i += 2
+        elif a == "--n-seen":
+            opts["n_seen"] = int(argv[i + 1]); i += 2
+        elif a == "--n-held":
+            opts["n_held"] = int(argv[i + 1]); i += 2
         elif a == "--lang":
             opts["lang"] = argv[i + 1]; i += 2
         elif a == "--tail":
@@ -479,6 +485,101 @@ def _read_labelled(paths):
     return rows
 
 
+def build_atoms(lexicon_path, corpus_paths, lang, n_seen, n_held, min_occ, seed):
+    """Mine an atom set from a REAL corpus and refuse to emit one that cannot decide anything.
+
+    An atom set is the load-bearing input of the whole recombination lane: the polarity we write, the
+    stems we hold out, the split the verdict is computed over. Every way this lane has died so far
+    traces back to a property of the atom set that nobody checked BEFORE spending GPU:
+
+      H_9299/H_9300  a stem 3 bytes long, scored with a manifest-global --score-len, so the scorer
+                     read past the atom into the carrier      -> byte-budget artifact, not a fact
+      H_9303         one carrier for everything, so 'polarity bound to the stem' and 'polarity bound
+                     to the carrier' were perfectly collinear -> undecidable, dead before firing
+      H_9331/H_9332  the operator was only ever tested on the 20 stems it was TRAINED on
+                     -> a generalisation claim measured at zero exposure on the wrong axis
+      H_9296         held-out n=29 gives a chance sd of 0.093, so a frozen bar of 0.65 sits 1.62 sd
+                     out -> 'we could not find it' was reported as 'it is not there'
+
+    So the gates below are not hygiene. Each one is a verdict that already died.
+
+      G-OCCUR     every stem occurs >= min_occ times in the natural text. A held-out stem the model
+                  never read has no representation to bind a polarity TO, and its chance-level flip1
+                  would mean nothing.
+      G-SUBSTR    no stem is a substring of another. In Korean `참` sits inside dozens of words; a
+                  substring hit makes the occurrence count, the leak check and the scorer all lie.
+      G-BALANCE   both splits are polarity-balanced. An imbalanced split hands a collapsed model a
+                  free score -- exactly the majority-label collapse that made a 0.575 headline look
+                  like learning (H_9324).
+      G-POWER     n_held is large enough that the effect we intend to claim is above the chance sd.
+                  Reported, not silently assumed: sd = 0.5/sqrt(n), and the caller must state the
+                  bar it will use against it.
+
+    A set that fails any of these is not emitted. Failing here costs seconds; failing after the fire
+    costs a campaign.
+    """
+    rng = random.Random(seed)
+    lex = json.load(open(lexicon_path, encoding="utf-8"))
+    stems = [(e["stem"], int(e["pol"])) for e in lex["stems"]]
+    assert_atoms_match_lang([st for st, _ in stems], lang)
+
+    text = ""
+    for cp in corpus_paths:
+        with open(cp, encoding="utf-8", errors="replace") as fh:
+            text += fh.read()
+    if not text:
+        raise SystemExit("anima corpus atoms: --corpus produced 0 bytes")
+
+    # G-SUBSTR
+    bad = [(a, b) for a, _ in stems for b, _ in stems if a != b and a in b]
+    if bad:
+        raise SystemExit(
+            "anima corpus atoms: G-SUBSTR FAIL — %d stem(s) sit INSIDE another stem: %s\n"
+            "  Occurrence counts, the held-out leak check and the scorer all read the wrong span\n"
+            "  when stems nest (this is how a 3-byte Korean stem corrupted H_9299/H_9300)."
+            % (len(bad), ", ".join("%s<%s" % t for t in bad[:6])))
+
+    # G-OCCUR
+    occ = {st: text.count(st) for st, _ in stems}
+    thin = sorted([(st, occ[st]) for st, _ in stems if occ[st] < min_occ], key=lambda x: x[1])
+    if thin:
+        raise SystemExit(
+            "anima corpus atoms: G-OCCUR FAIL — %d stem(s) below --min-occ %d in the natural text.\n"
+            "  A stem the model never read has no representation to bind a polarity to, and its\n"
+            "  chance-level score would mean nothing. thinnest: %s"
+            % (len(thin), min_occ, ", ".join("%s=%d" % t for t in thin[:8])))
+
+    need = n_seen + n_held
+    if len(stems) < need:
+        raise SystemExit("anima corpus atoms: lexicon has %d stems, need %d (seen %d + held %d)"
+                         % (len(stems), need, n_seen, n_held))
+
+    # G-BALANCE — draw each split polarity-balanced rather than hoping a shuffle lands balanced
+    pos = [st for st, p in stems if p == 1]
+    neg = [st for st, p in stems if p == 0]
+    rng.shuffle(pos); rng.shuffle(neg)
+    out, pi, ni = [], 0, 0
+    for split, n in (("train", n_seen), ("heldout", n_held)):
+        for k in range(n):
+            take_pos = (k % 2 == 0 and pi < len(pos)) or ni >= len(neg)
+            if take_pos and pi < len(pos):
+                out.append({"stem": pos[pi], "pol": 1, "split": split}); pi += 1
+            elif ni < len(neg):
+                out.append({"stem": neg[ni], "pol": 0, "split": split}); ni += 1
+            else:
+                raise SystemExit("anima corpus atoms: G-BALANCE FAIL — lexicon ran out of one polarity "
+                                 "(pos %d / neg %d available, need %d balanced)" % (len(pos), len(neg), need))
+
+    held = [a for a in out if a["split"] == "heldout"]
+    hp = sum(a["pol"] for a in held)
+    sd = 0.5 / (len(held) ** 0.5)
+    stats = {"lang": lang, "n_train": n_seen, "n_heldout": n_held,
+             "heldout_pos": hp, "heldout_neg": len(held) - hp,
+             "min_occ": min_occ, "occ_min": min(occ.values()), "occ_median": sorted(occ.values())[len(occ) // 2],
+             "chance_sd": round(sd, 4)}
+    return {"atoms": out, "n_train": n_seen, "n_heldout": n_held, "gates": stats}, stats
+
+
 def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_tol, seed,
                   tail=""):
     """Return (manifest, stats) for the AUDIT-A valence manifest (`anima-py evaluate --valence-audit`).
@@ -842,9 +943,39 @@ def main():
                   "MDE(80%%)~0.18 < TOST margin 0.20). Below that a null is 'we cannot find it', "
                   "NOT 'it is not there' (power-before-negative-verdict)." % len(kept))
         sys.exit(0)
+    if fmt == "atoms":
+        if not (opts["lexicon"] and opts["corpus"]):
+            print("anima corpus atoms --lexicon L.json --corpus C.txt [--corpus C2.txt] "
+                  "--lang en --n-seen 20 --n-held 29 --min-occ 200 --out gt_atoms_en.json")
+            sys.exit(2)
+        obj, st = build_atoms(opts["lexicon"], opts["corpus"], opts["lang"],
+                              opts["n_seen"], opts["n_held"], opts["min_occ"], opts["seed"])
+        if opts["out"]:
+            json.dump(obj, open(opts["out"], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("anima corpus atoms [%s]: train=%d heldout=%d (pos %d : neg %d) occ_min=%d "
+              "occ_median=%d min_occ=%d chance_sd=%.4f -> %s"
+              % (st["lang"], st["n_train"], st["n_heldout"], st["heldout_pos"], st["heldout_neg"],
+                 st["occ_min"], st["occ_median"], st["min_occ"], st["chance_sd"],
+                 opts["out"] or "(stdout)"))
+        print("  G-OCCUR ✅ every stem >= %d occurrences · G-SUBSTR ✅ no stem nests in another · "
+              "G-BALANCE ✅ both splits polarity-balanced" % st["min_occ"])
+        print("  G-POWER  chance sd = 0.5/sqrt(%d) = %.4f — DERIVE the bar against this, never "
+              "transplant it (H_9296: a 0.65 bar at n=29 sits 1.62 sd out)."
+              % (st["n_heldout"], st["chance_sd"]))
+        return
+
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
-                   "ground_seenswap"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence|bindlocus> --out PATH")
+                   "ground_seenswap", "atoms"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence|bindlocus|atoms> --out PATH")
+        print("      atoms  --lexicon L.json --corpus C.txt --lang en --n-seen 20 --n-held 29")
+        print("             --min-occ 200 --out gt_atoms_en.json   mine an atom set from a REAL")
+        print("             corpus behind 4 gates, each of which is a verdict that already died:")
+        print("             G-SUBSTR (no stem nests in another — a 3-byte Korean stem corrupted")
+        print("             H_9299/H_9300) · G-OCCUR (every stem read >= min-occ times, else it")
+        print("             has no representation to bind a polarity to) · G-BALANCE (both splits")
+        print("             polarity-balanced — imbalance hands a collapsed model a free score,")
+        print("             H_9324) · G-POWER (reports chance sd = 0.5/sqrt(n); DERIVE the bar")
+        print("             against it, never transplant one — H_9296).")
         print("      [--lang ko|en]  ground-family only. ko = DEFAULT and byte-identical to every")
         print("      frozen corpus (8/8 sha match) — do NOT change it or the frozen verdicts move.")
         print("      en = the discriminator, not coverage: `not` is a FREE PRE-posed word, the slot")
@@ -911,6 +1042,27 @@ def main():
             print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
         json.dump(st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
         return 0
+
+    if fmt == "atoms":
+        if not (opts["lexicon"] and opts["corpus"]):
+            print("anima corpus atoms: --lexicon L.json --corpus C.txt [--corpus C2.txt] "
+                  "--lang en --n-seen 20 --n-held 29 --min-occ 200 --out gt_atoms_en.json")
+            sys.exit(2)
+        obj, st = build_atoms(opts["lexicon"], opts["corpus"], opts["lang"],
+                              opts["n_seen"], opts["n_held"], opts["min_occ"], opts["seed"])
+        if opts["out"]:
+            json.dump(obj, open(opts["out"], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print("anima corpus atoms [%s]: train=%d heldout=%d (pos %d : neg %d) "
+              "occ_min=%d occ_median=%d min_occ=%d chance_sd=%.4f -> %s"
+              % (st["lang"], st["n_train"], st["n_heldout"], st["heldout_pos"], st["heldout_neg"],
+                 st["occ_min"], st["occ_median"], st["min_occ"], st["chance_sd"],
+                 opts["out"] or "(stdout)"))
+        print("  G-OCCUR ✅ every stem >= %d occurrences  ·  G-SUBSTR ✅ no stem nests in another  ·  "
+              "G-BALANCE ✅ both splits polarity-balanced" % st["min_occ"])
+        print("  G-POWER  chance sd = 0.5/sqrt(%d) = %.4f — a bar must be DERIVED against this, "
+              "never transplanted (H_9296: a 0.65 bar at n=29 sits 1.62 sd out)."
+              % (st["n_heldout"], st["chance_sd"]))
+        return
 
     if fmt in ("ground", "ground_lie", "ground_keep", "ground_keep_lie"):
         if not opts["atoms"]:
