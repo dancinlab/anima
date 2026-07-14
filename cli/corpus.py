@@ -25,6 +25,7 @@ Usage:
 """
 import json
 import random
+import re
 import sys
 
 # ── frozen default concepts = rho_fan cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
@@ -519,6 +520,7 @@ def build_atoms(lexicon_path, corpus_paths, lang, n_seen, n_held, min_occ, seed)
     costs a campaign.
     """
     rng = random.Random(seed)
+    L = lang_pack(lang)
     lex = json.load(open(lexicon_path, encoding="utf-8"))
     stems = [(e["stem"], int(e["pol"])) for e in lex["stems"]]
     assert_atoms_match_lang([st for st, _ in stems], lang)
@@ -530,6 +532,50 @@ def build_atoms(lexicon_path, corpus_paths, lang, n_seen, n_held, min_occ, seed)
     if not text:
         raise SystemExit("anima corpus atoms: --corpus produced 0 bytes")
 
+    # G-DERIV — a derivational negation of another stem must not be in the set.
+    #
+    # The Korean set shipped `편하`(comfortable) and `불편하`(uncomfortable) both as held-out atoms,
+    # and `불-` IS a negation morpheme (H_9333). So the held-out set of a NEGATION experiment
+    # contained the negation of one of its own members: the model could reach `불편하지 않다` by
+    # double negation instead of by the lookup we were testing. English is far richer here
+    # (un-, in-, im-, dis-, non-, -less), so the same defect is a first-class risk, not a curiosity.
+    if lang != "ko":
+        S = {st for st, _ in stems}
+        deriv = []
+        for st in sorted(S):
+            for pre in ("un", "in", "im", "dis", "non", "ir", "il"):
+                if st.startswith(pre) and st[len(pre):] in S:
+                    deriv.append((st, st[len(pre):], pre + "-"))
+            if st.endswith("less") and st[:-4] in S:
+                deriv.append((st, st[:-4], "-less"))
+        if deriv:
+            raise SystemExit(
+                "anima corpus atoms: G-DERIV FAIL — %d stem(s) are a DERIVATIONAL NEGATION of another "
+                "stem in the same set: %s\n"
+                "  A negation experiment whose atom set contains the negation of its own members lets "
+                "the model\n  reach the answer by double negation instead of by the lookup under test "
+                "(this is the KO\n  `편하` / `불편하` defect, H_9333). Drop one of each pair."
+                % (len(deriv), ", ".join("%s = %s%s" % (a, c, b) for a, b, c in deriv[:6])))
+
+    # G-CARRIER — no stem may nest in (or contain) a carrier or label token.
+    #
+    # The scorer reads a fixed byte span; if a stem shares bytes with the carrier or with the answer
+    # word, the span it reads is not the span we think it is. Same failure family as G-SUBSTR, one
+    # level up: there the collision was stem-vs-stem, here it is stem-vs-frame.
+    frame = set()
+    for tok in re.findall(r"[A-Za-z가-힣]+", L["tmpl"] + "".join(L["flip0"]) + "".join(L["flip1"])):
+        if tok not in ("s", "surf", "pol"):
+            frame.add(tok)
+    frame |= {L["pos"], L["neg"]}
+    fl = {f.lower() for f in frame}
+    clash = [(st, st) for st, _ in stems if st.lower() in fl]
+    if clash:
+        raise SystemExit(
+            "anima corpus atoms: G-CARRIER FAIL — %d stem(s) collide with a carrier/label token: %s\n"
+            "  The scorer reads a fixed byte span; a stem that shares bytes with the frame or with the\n"
+            "  answer word makes that span mean something other than what the manifest claims."
+            % (len(clash), ", ".join(t[0] for t in clash[:6])))
+
     # G-SUBSTR
     bad = [(a, b) for a, _ in stems for b, _ in stems if a != b and a in b]
     if bad:
@@ -539,8 +585,18 @@ def build_atoms(lexicon_path, corpus_paths, lang, n_seen, n_held, min_occ, seed)
             "  when stems nest (this is how a 3-byte Korean stem corrupted H_9299/H_9300)."
             % (len(bad), ", ".join("%s<%s" % t for t in bad[:6])))
 
-    # G-OCCUR
-    occ = {st: text.count(st) for st, _ in stems}
+    # G-OCCUR — count on a WORD BOUNDARY where the language has one.
+    #
+    # `text.count(stem)` is the very defect this file's convergence record calls out (corpus-py-1
+    # ⑩): a substring match counts every longer word that contains the stem. In English that is not
+    # an edge case, it is the norm — "art" is inside "start", "warm" inside "warmth". An occurrence
+    # floor computed that way passes stems the model has barely read, and the floor is the whole
+    # point of the gate. Korean has no word boundary in the regex sense (and its stems are bound
+    # forms that legitimately appear inside inflections), so it keeps the raw count.
+    if lang == "ko":
+        occ = {st: text.count(st) for st, _ in stems}
+    else:
+        occ = {st: len(re.findall(r"\b%s\b" % re.escape(st), text, re.I)) for st, _ in stems}
     thin = sorted([(st, occ[st]) for st, _ in stems if occ[st] < min_occ], key=lambda x: x[1])
     if thin:
         raise SystemExit(
@@ -973,6 +1029,11 @@ def main():
         print("             G-SUBSTR (no stem nests in another — a 3-byte Korean stem corrupted")
         print("             H_9299/H_9300) · G-OCCUR (every stem read >= min-occ times, else it")
         print("             has no representation to bind a polarity to) · G-BALANCE (both splits")
+        print("             · G-DERIV (en: no stem is a derivational negation of another — un-/in-/")
+        print("             im-/dis-/non-/-less. The KO set shipped 편하 + 불편하, so a NEGATION")
+        print("             experiment held the negation of its own member: H_9333) · G-CARRIER (no")
+        print("             stem IS a carrier/label word) · G-OCCUR counts on a WORD BOUNDARY for")
+        print("             alphabetic langs — text.count would pass `art` on 10k hits of `start`.")
         print("             polarity-balanced — imbalance hands a collapsed model a free score,")
         print("             H_9324) · G-POWER (reports chance sd = 0.5/sqrt(n); DERIVE the bar")
         print("             against it, never transplant one — H_9296).")
