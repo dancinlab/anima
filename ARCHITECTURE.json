@@ -13079,6 +13079,66 @@
                 "detail": "병렬 세션의 작업이 내 것에 걸리면 응답과 카드에 적어라: 누구의 발견인가 · 무엇을 바꿨나 · **동의(AGREES)인가 충돌(CONFLICTS)인가**. 두 세션이 같은 기질을 읽고 갈라지면 한쪽 독법이 틀린 것이고, 어느 쪽인지 알아내는 게 곧 일이다."
               }
             ]
+          },
+          {
+            "id": "a-blue-closed",
+            "type": "gate",
+            "name": "a_blue_closed (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "🔵 only when output AND wiring closed, via `hexa verify`."
+          },
+          {
+            "id": "a-claim-manifest",
+            "type": "gate",
+            "name": "a_claim_manifest (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "claim → `hexa verify` → frozen `state/verdicts/` file, verbatim; no self-judge / CLAIMS.tape."
+          },
+          {
+            "id": "a-h-continuous-no-branch",
+            "type": "gate",
+            "name": "a_h_continuous_no_branch (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "run the next H continuously until the user redirects; **owner standing decision: proceed autonomously WITHOUT per-step owner-go** — dispatch cheap($0 pool)/next-H/lever experiments + land via pr-cycle without asking. Gate only on rent=spend (a_fire_autonomous fleet caveat) or an outward/irrever"
+          },
+          {
+            "id": "a-discovery",
+            "type": "gate",
+            "name": "a_discovery (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "run discovery every batch (/kick·/gap) → `domains/<DOMAIN>.log.md`."
+          },
+          {
+            "id": "a-fire-autonomous",
+            "type": "gate",
+            "name": "a_fire_autonomous (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "dispatch a cost fire autonomously (1-line estimate); no user gate (⚠️ fleet: rent=spend needs go)."
+          },
+          {
+            "id": "a-substrate-native-speak",
+            "type": "gate",
+            "name": "a_substrate_native_speak (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "speech is substrate-native (user msg = context, no obligation); no hardcoded gate — substrate decides emit/silence."
+          },
+          {
+            "id": "a-hf-complete",
+            "type": "gate",
+            "name": "a_hf_complete (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); registry = ARCHITECTURE.json \"HF artifacts\"; PUBLIC → collection."
+          },
+          {
+            "id": "a-pi5-akida-registry",
+            "type": "gate",
+            "name": "a_pi5_akida_registry (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "pi5-akida config = `PI5-AKIDA.json` SSOT; never **convert pi5-akida to shared pool compute**."
+          },
+          {
+            "id": "a-completeness-over-cheap",
+            "type": "gate",
+            "name": "a_completeness_over_cheap (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
+            "detail": "first = pass completeness bar; cost is not a gate; no merge-of-fails."
+          },
+          {
+            "id": "a-experiment-engine-native-h9309",
+            "type": "gate",
+            "name": "measured precedent — H_9309 DECON (왜 계기를 엔진에 배선하는가)",
+            "detail": "H_9309 는 store-consult 를 `cli/evaluate.py` 의 `--consult`/`--consult-format` 플래그로 **엔진에 배선**했다. 그래서 양성 통제가 실패했을 때 그것이 '주입 포맷이 미학습' 이라는 **번 진단**으로 읽혔다 — 옆 스크립트였다면 '내 프로브가 고장났나' 와 구별 불가였고, 그게 H_9303·H_9307 이 undecidable 로 죽은 방식이다."
           }
         ]
       },
