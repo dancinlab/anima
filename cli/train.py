@@ -392,6 +392,49 @@ class ByteCell:
         return self._window_in(self.train_end, self.size, seq_len, gen)
 
 
+def _gpu_preflight(device: str, steps: int) -> None:
+    """Refuse to start when the GPU is already carrying someone else's run.
+
+    A GPU is not a CPU core: VRAM is all-or-nothing, not preemptive. Two heavy trains on one card
+    do not run at half speed — the second one dies, and it dies LATE, after the corpus is built and
+    the model is on the device. Measured (2026-07-14, H_9327): the LIE control arm was fired onto
+    summer while the seed-11 reproduction was still training there. It ran for minutes, then
+    `torch.OutOfMemoryError: CUDA out of memory` on a 164 MiB allocation, taking down the one arm
+    that was going to decide the verdict. What we lost was not compute — it was the control.
+
+    So the check happens HERE, before a single parameter is allocated: if free VRAM is already too
+    low to hold this run, stop and say so, loudly, with the command to see who is holding it. That
+    is the whole fix — a wall you hit in 2 seconds instead of 20 minutes.
+
+    The floor is deliberately crude (a fraction of total, not a per-model estimate): a precise
+    estimate would need the model built, which is what we are trying to avoid, and being crudely
+    right early beats being precisely right too late.
+    """
+    if not device.startswith("cuda") or not torch.cuda.is_available():
+        return
+    try:
+        free_b, total_b = torch.cuda.mem_get_info(torch.device(device))
+    except Exception:
+        return          # older/odd torch: no preflight rather than a false block
+    free_gib, total_gib = free_b / 2**30, total_b / 2**30
+    # A 303M bf16 train (params + grads + Adam moments + activations) does not fit in a fifth of a
+    # card. If that much is already gone, something else is on it.
+    floor_gib = max(2.0, 0.35 * total_gib)
+    if free_gib >= floor_gib:
+        print(f"  [gpu-preflight] {device} free={free_gib:.1f}/{total_gib:.1f} GiB — ok", flush=True)
+        return
+    sys.exit(
+        f"\nanima-py train: REFUSING TO START — {device} is already busy.\n"
+        f"  free = {free_gib:.1f} GiB of {total_gib:.1f} GiB (need >= {floor_gib:.1f} GiB)\n"
+        f"  steps requested = {steps}\n\n"
+        "  A GPU is all-or-nothing: starting here would OOM partway through and destroy this run\n"
+        "  (and it would do it AFTER the corpus build, minutes from now — the expensive way).\n\n"
+        "  See who holds it:   nvidia-smi   /   pgrep -af 'cli/train[.]py'\n"
+        "  Then either WAIT for that run to finish, or fire this one on a DIFFERENT GPU host.\n"
+        "  Parallel tracks only pay off across hosts (a_wall_first) — never on one card.\n"
+    )
+
+
 def resolve_corpus_path(spec: str) -> str:
     """Resolve a --corpus entry to a local byte-file path.
 
@@ -1258,6 +1301,7 @@ def main():
         device = f"cuda:{local_rank}"
     else:
         device = "cuda" if torch.cuda.is_available() else "cpu"
+    _gpu_preflight(device, a.steps or 0)
     objfn = OBJECTIVE_BUILDERS[a.objective](d, V, device)   # aux-head objectives allocate params
     obj_is_module = isinstance(objfn, nn.Module)
     obj_needs_pen = a.objective in OBJ_NEEDS_PENULTIMATE
