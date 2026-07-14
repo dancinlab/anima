@@ -14997,8 +14997,43 @@
                     "id": "gate-g1-recomb-enfirst-mine",
                     "type": "note",
                     "name": "⛏️ `--mine-lexicon` — 어간을 **빈도로** 뽑는다 (설계자가 고르지 않는다) + 측정된 제약 1건",
-                    "detail": "**왜**: 이 레인이 쓴 원자셋은 전부 **손으로 고른 것**이었고, 손으로 고른 셋은 **가설이 숨을 자리**다 — 설계자가 이야기에 맞는 형용사로 손을 뻗는 걸 막는 게 아무것도 없다. **🚨 이 노드는 한동안 거짓이었다 — 코드 없이 문서만 있었다(#3551 → 복구 #3554)**: 충돌 해소 루프에서 `cli/corpus.py` 를 `--theirs`(origin/main 버전)로 덮어써 **`mine_lexicon` 이 통째로 날아갔고**, PR 은 **머지됐다** — 머지 diff 가 `ARCHITECTURE.json`·`CHANGELOG.jsonl`·`VERSION` **3개뿐, 코드 0줄**이었다. 즉 이 노드와 CHANGELOG 는 기능을 설명하는데 **`anima-py corpus atoms --mine-lexicon` 은 존재하지 않았다** (`wire-to-prod` 가 금지하는 바로 그 상태: **'구현됨' 이라 적혀 있으나 배선 없음**). **왜 안 잡혔나**: 충돌 해소를 **루프로 자동화**하며 `ARCHITECTURE.json`/`VERSION` 만 명시하고 **나머지를 `--theirs` 로 뭉뚱그렸다** — `cli/corpus.py` 가 그 `*)` 에 걸렸다(**내 코드가 있는 파일인데**). **복구 후 출력으로 검증**: 4,598 후보 · **3.4초** · 상위 12개 정상. **교훈 2개**: ① 충돌 해소에서 **`--theirs` 를 기본값으로 쓰지 마라** — 내 변경이 있는 파일은 **하나씩** 보고, `--theirs` 는 **내가 안 건드린 파일에만**. ② **머지된 PR 의 diff stat 을 보라** — 코드가 바뀌었어야 하는데 **문서만 바뀌었으면 그건 유실이다.**",
+                    "detail": "**왜**: 이 레인이 쓴 원자셋은 전부 **손으로 고른 것**이었고, 손으로 고른 셋은 **가설이 숨을 자리**다 — 설계자가 이야기에 맞는 형용사로 손을 뻗는 걸 막는 게 아무것도 없다.",
                     "children": [
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d9",
+                        "type": "note",
+                        "detail": "**🚨 이 노드는 한동안 거짓이었다 — 코드 없이 문서만 있었다(#3551 → 복구 #3554)**: 충돌 해소 루프에서 `cli/corpus.py` 를 `--theirs`(origin/main 버전)로 덮어써 **`mine_lexicon` 이 통째로 날아갔고**, PR 은 **머지됐다** — 머지"
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d10",
+                        "type": "note",
+                        "detail": "diff 가 `ARCHITECTURE.json`·`CHANGELOG.jsonl`·`VERSION` **3개뿐, 코드 0줄**이었다."
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d11",
+                        "type": "note",
+                        "detail": "즉 이 노드와 CHANGELOG 는 기능을 설명하는데 **`anima-py corpus atoms --mine-lexicon` 은 존재하지 않았다** (`wire-to-prod` 가 금지하는 바로 그 상태: **'구현됨' 이라 적혀 있으나 배선 없음**)."
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d12",
+                        "type": "note",
+                        "detail": "**왜 안 잡혔나**: 충돌 해소를 **루프로 자동화**하며 `ARCHITECTURE.json`/`VERSION` 만 명시하고 **나머지를 `--theirs` 로 뭉뚱그렸다** — `cli/corpus.py` 가 그 `*)` 에 걸렸다(**내 코드가 있는 파일인데**)."
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d13",
+                        "type": "note",
+                        "detail": "**복구 후 출력으로 검증**: 4,598 후보 ·  **3.4초** ·  상위 12개 정상."
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d14",
+                        "type": "note",
+                        "detail": "**교훈 2개**: ① 충돌 해소에서 **`--theirs` 를 기본값으로 쓰지 마라** — 내 변경이 있는 파일은 **하나씩** 보고, `--theirs` 는 **내가 안 건드린 파일에만**. ② **머지된 PR 의 diff stat 을 보라** — 코드가 바뀌었어야"
+                      },
+                      {
+                        "id": "gate-g1-recomb-enfirst-mine-d15",
+                        "type": "note",
+                        "detail": "하는데 **문서만 바뀌었으면 그건 유실이다.**"
+                      },
                       {
                         "id": "gate-g1-recomb-enfirst-mine-d1",
                         "type": "note",
