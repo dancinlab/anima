@@ -1,0 +1,27 @@
+{
+ "n_atom": 20,
+ "n_prompt": 480,
+ "arms": {
+  "main_s7": {
+   "per_context": 0.38958333333333334,
+   "per_atom": 0.4,
+   "n": 480
+  },
+  "main_s11": {
+   "per_context": 0.325,
+   "per_atom": 0.3,
+   "n": 480
+  },
+  "base_only": {
+   "per_context": 0.30833333333333335,
+   "per_atom": 0.25,
+   "n": 480
+  },
+  "shuffle_grid": {
+   "per_context": 0.38333333333333336,
+   "per_atom": 0.35,
+   "n": 480
+  }
+ },
+ "verdict": "A — READOUT DEAD. The probe cannot read polarity even in the format the model was taught and answers at 0.95. A linear read of __last is simply not where this model keeps polarity ⇒ every negative in this lane is INVALID and the instrument must be redesigned before any verdict."
+}

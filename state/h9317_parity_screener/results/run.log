@@ -1,0 +1,29 @@
+[corpus] NSMC sha=e03b7d14e9e41be8...  match=True
+[corpus] rows=149995  odd-parity rate=0.177  (H_9304 presence-rate was 0.204)
+
+=== G-ALIVE (positive control: synthetic XOR corpus, true synergy = 0.69 nats) ===
+  held-out cells=9008 stems=60  EARNED=+5.29653 nats (obs +5.03860, null -0.25793+-0.05926, delta_hat=-3.00)   bar >= +0.3
+  G-ALIVE: PASS
+
+=== G-PEDESTAL (zero-truth: synthetic ADDITIVE corpus, true synergy = 0) ===
+  held-out cells=8889  EARNED=+0.00285 nats  delta_hat=-0.10  (|.| <= 0.02)
+  G-PEDESTAL: PASS
+
+=== G-POWER (held-out cell census + null sd, measured BEFORE reading the effect) ===
+  min_occ=  50  stems= 2833  rows= 571417  held-out cells= 52706 (stems 849)
+  min_occ= 100  stems= 1346  rows= 468043  held-out cells= 39338 (stems 403)
+  min_occ= 200  stems=  599  rows= 364167  held-out cells= 31268 (stems 179)
+  min_occ=100: held-out cells=39338  sd_null=0.00008  MDE(3sd)=0.00023  (need <= 0.02)
+  G-POWER: PASS
+
+======================================================================
+=== MAIN BAR: natural corpus (NSMC), held-out EARNED ===
+  held-out EARNED = +0.00318 nats   98.3% CI [+0.00307, +0.00332]   delta_hat=-0.25 (0=additive, -2=full flip)
+  seen synergy    = +0.00427 nats  (n=60255)  [discriminates DATA-ADDITIVE vs OPERATOR-ABSENT]
+  effect size vs the XBIND ruler: 0.00060  (0.060% of a planted operator)
+  R1 SPEC-REPAIR  (parity - presence >= +0.01) : False   (parity +0.00318 - presence +0.00233 = +0.00085)
+  TOST(+-0.02) pass = True   INFO-PRESENT = False
+
+VERDICT: DATA-ADDITIVE - presence-B is EXONERATED (parity buys nothing) AND parity is equivalent to zero => the XOR-class exhaustion gets STRONGER: the mis-specification alternative explanation for H_9304's negative is ruled out
+wall=117.5s
+[done]

@@ -891,10 +891,47 @@ def _warm_start(model, init_path, is_bytegpt, expect_cfg):
     {d,L} (clm). Raises ValueError on any dim/layer mismatch (H_247 hard guard)."""
     low = str(init_path).lower()
     if low.endswith(".clm"):
-        raise ValueError(
-            f"--init {init_path}: a quantized `.clm` (int4) is NOT a warm-start source — "
-            f"dequant→torch-state_dict remap is a follow-on. Warm-start from the pre-serialize "
-            f"`.pt` (full precision) instead (H_247: quant noise as warm-init can floor CE).")
+        # A `.clm` IS a warm-start source (core/serialize.deserialize_v3). The old refusal
+        # ("dequant->state_dict remap is a follow-on") was a practical trap: pods get torn down,
+        # only the `.clm` is pulled (a_fire_recover_complete), the `.pt` is gone, and every
+        # warm-start experiment on that checkpoint dies for want of an inverse rather than for any
+        # scientific reason. H_9313 hit exactly that — the C34 `.pt` no longer exists anywhere.
+        #
+        # The H_247 quant-noise worry does not apply here, and the reason is worth stating: the
+        # int4 weights are not an approximation of some better original we are degrading. They ARE
+        # the weights core/decode.py runs, and every number this lane has ever measured came out of
+        # decoding them. Warm-starting from the dequantized values therefore starts training from
+        # exactly the model we measured. `clm_roundtrip_is_identity` proves the inverse is exact by
+        # re-serializing and comparing the file BYTE for BYTE — asserted below on the real file, so
+        # a post-training delta can never be a dequantization artifact.
+        if is_bytegpt:
+            raise ValueError(f"--init {init_path}: a `.clm` is a CLM ckpt but --arch=bytegpt.")
+        L = int(expect_cfg["L"])
+        E = int(expect_cfg.get("E", 3))
+        if not S.clm_roundtrip_is_identity(init_path, L, E):
+            raise ValueError(
+                f"--init {init_path}: .clm round-trip is NOT byte-identical at (L={L}, E={E}) — "
+                f"the deserializer and this model's (L,E) disagree. Refusing to warm-start from a "
+                f"checkpoint we cannot reproduce: a silent mis-parse would arrive looking exactly "
+                f"like a training result.")
+        sd = {k: torch.from_numpy(v) for k, v in S.deserialize_v3(init_path, L, E).items()}
+        model_sd = model.state_dict()
+        loadable, shape_bad = {}, []
+        for k, v in sd.items():                     # same H_247 hard guard as the .pt path
+            if k in model_sd:
+                if tuple(model_sd[k].shape) == tuple(v.shape):
+                    loadable[k] = v
+                else:
+                    shape_bad.append(f"{k}:{tuple(v.shape)}!={tuple(model_sd[k].shape)}")
+        if shape_bad:
+            raise ValueError(f"--init {init_path}: shape mismatch on {shape_bad} "
+                             f"(H_247: warm-init mismatch floors CE — match --d/--L/--experts).")
+        if not loadable:
+            raise ValueError(f"--init {init_path}: 0 keys overlap the built model "
+                             f"(ckpt keys e.g. {list(sd)[:4]})")
+        missing, unexpected = model.load_state_dict(loadable, strict=False)
+        return (f"warm-start ✓ .clm int4-dequant loaded {len(loadable)}/{len(model_sd)} keys "
+                f"(L={L} E={E} · round-trip BYTE-IDENTICAL · untouched={len(missing)})")
 
     if low.endswith(".bin"):
         if not is_bytegpt:
@@ -1106,10 +1143,12 @@ def main():
     ap.add_argument("--init", default="",
                     help="warm-start ckpt path — load weights into the freshly-built model "
                          "BEFORE training. ByteGPT: an engine `.bin` (5×u32 header) or a `.pt`; "
-                         "CLM: a `.pt` torch state_dict. Dim/layer mismatch → hard error "
-                         "(H_247: a warm-init shape mismatch can floor +2.5 nats). Quantized "
-                         "`.clm` is refused (dequant→state_dict remap is a follow-on; warm-start "
-                         "from the pre-serialize `.pt`).")
+                         "CLM: a `.pt` torch state_dict OR a **`.clm`** (int4-dequant via "
+                         "core/serialize.deserialize_v3, gated on a BYTE-IDENTICAL round-trip — "
+                         "so you warm-start from exactly the weights core/decode.py runs, which "
+                         "is what makes it valid to resume from a shipped ckpt after the pod and "
+                         "its `.pt` are gone). Dim/layer/expert mismatch → hard error (H_247: a "
+                         "warm-init shape mismatch can floor +2.5 nats).")
     # ── §7 multi-GPU data-parallel (DDP) launch surface ──────────────────────────
     ap.add_argument("--gpus", default="",
                     help="multi-GPU DATA-PARALLEL (DDP) device ids, e.g. '0,1,2,3' (mirrors "
@@ -1273,7 +1312,7 @@ def main():
     #    strict=False tolerates lever-only keys (tlora/mito) absent from a plain-trunk base.
     if a.init:
         expect_cfg = ({"vocab": V, "d": d, "n_layer": L, "n_head": bg_n_head, "block": seq_len}
-                      if is_bytegpt else {"d": d, "L": L})
+                      if is_bytegpt else {"d": d, "L": L, "E": emax})
         report = _warm_start(model, a.init, is_bytegpt, expect_cfg)
         model.to(device)
         p0(f"  [--init] {report}", flush=True)
