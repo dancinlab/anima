@@ -5206,11 +5206,11 @@
                 ]
               },
               {
-                "id": "brain-structure-engine-lanes-plasticity-growth-mitosis-h9313-growth-pays",
-                "name": "H_9313 — GROWTH-PAYS 🟢 (통제 통과) · 단 분할의 '지능'은 기여 0",
+                "id": "brain-structure-engine-lanes-plasticity-growth-mitosis-h9321-growth-pays",
+                "name": "H_9321 — GROWTH-PAYS 🟢 (통제 통과) · 단 분할의 '지능'은 기여 0",
                 "type": "gate",
                 "verdict": "🟢 GREEN (통제 통과) + 🔑 정체 재기술 — 8 seed · engine-native faculty · $0 CPU pool",
-                "detail": "H_9311(#3439)의 🟢 GROWTH-PAYS 는 통제가 0개였다 ⇒ H_9313 이 참값-0 pedestal + 매개공변량-일치 통제를 부착. BLOCKING 2 통과(G-CALIB 앵커 오차 0 · G-LIVE P1 −0.664). 🟢 EARNED=Δ_E−Δ_P0Y=−0.38683 t=−8.45 CI[−0.495,−0.279] · 참값0 pedestal(P0Y: X⊥Y)이 +0.161 양수(성장이 오히려 나빠짐) ⇒ 혼합-평활 artifact 아님. 🔑 G-PED-X: 적응적 분할선택이 번 몫 = +0.00278 t=0.04 (Y와 무관하게 쪼갠 P0X −0.229 ≈ 실험군 −0.226) ⇒ 분할의 '지능' 기여 사실상 0. 🔗 G-DISSOC: C1(동일 centers·flat head) = +0.667 재앙 ⇒ 성장·추정기 = 분리 불가 쌍-레버(성장 단독 레버 FALSE). ⇒ 이득은 실재하나 '세포가 똑똑하게 분화한다'가 아니라 '아무 데나 많이 쪼개고 반드시 평활하라' — 똑똑함은 분할이 아니라 추정기에 있다. p8(gradient⇄mitosis '분열이 학습한다')은 이 축에서 미지지. ⚠️ 정직: 관측 σ=0.1215(사전추정 4배) ⇒ TOST(±0.02) infeasible ⇒ G-PED-X 의 '0' 은 NOT-POWERED for equivalence(|기여|≥0.16 만 배제); 헤드라인 EARNED 는 검정력 충분. 배선 부채: 조작(growth budget × head-estimator × pedestal arm)을 엔진 플래그로 승격해야 재사용 가능(a_experiment_engine_native)."
+                "detail": "H_9311(#3439)의 🟢 GROWTH-PAYS 는 통제가 0개였다 ⇒ H_9321 이 참값-0 pedestal + 매개공변량-일치 통제를 부착. BLOCKING 2 통과(G-CALIB 앵커 오차 0 · G-LIVE P1 −0.664). 🟢 EARNED=Δ_E−Δ_P0Y=−0.38683 t=−8.45 CI[−0.495,−0.279] · 참값0 pedestal(P0Y: X⊥Y)이 +0.161 양수(성장이 오히려 나빠짐) ⇒ 혼합-평활 artifact 아님. 🔑 G-PED-X: 적응적 분할선택이 번 몫 = +0.00278 t=0.04 (Y와 무관하게 쪼갠 P0X −0.229 ≈ 실험군 −0.226) ⇒ 분할의 '지능' 기여 사실상 0. 🔗 G-DISSOC: C1(동일 centers·flat head) = +0.667 재앙 ⇒ 성장·추정기 = 분리 불가 쌍-레버(성장 단독 레버 FALSE). ⇒ 이득은 실재하나 '세포가 똑똑하게 분화한다'가 아니라 '아무 데나 많이 쪼개고 반드시 평활하라' — 똑똑함은 분할이 아니라 추정기에 있다. p8(gradient⇄mitosis '분열이 학습한다')은 이 축에서 미지지. ⚠️ 정직: 관측 σ=0.1215(사전추정 4배) ⇒ TOST(±0.02) infeasible ⇒ G-PED-X 의 '0' 은 NOT-POWERED for equivalence(|기여|≥0.16 만 배제); 헤드라인 EARNED 는 검정력 충분. 배선 부채: 조작(growth budget × head-estimator × pedestal arm)을 엔진 플래그로 승격해야 재사용 가능(a_experiment_engine_native)."
               }
             ]
           },
@@ -15087,7 +15087,7 @@
         "id": "hypotheses-jsonl-3",
         "state": "pos-conv",
         "value": "빈 H 번호를 로컬 스냅샷에서 계산하면 병렬 세션과 같은 번호를 동시 점유한다(ID 할당 경합 — 기존 merge-drift 3건과 다른 결함 계급). 실측: origin/main 기준으로 H_9298~9302 를 잡아 #3417 로 머지했는데 다른 세션이 같은 시각 H_9299 를 잡아 #3419 로 머지 ⇒ HYPOTHESES.jsonl 에 H_9299 행 2개 + 카드 2개(H_9299_lineage_backoff.md · H_9299_oc_prefire_audit.md) = a_hypothesis_register 고유-id 불변식 붕괴. 두 PR 다 각자 발사 시점엔 '9299 는 FREE' 였다 — 스냅샷이 틀린 게 아니라 경합이 문제다. 수리: 나중 머지된 쪽(#3419)을 H_9303 으로 재번호(카드 파일명·id·slug·verdict 경로·artifacts lockstep, 내용/판정/수치 verbatim 불변). 부수 발견: 선행 중복 H_9225 2건도 존재(별개 lane · 미수리).",
-        "threshold": "재발조건: 병렬 세션/에이전트가 각자 origin/main 을 읽고 '다음 빈 H 번호'를 계산해 동시에 발사할 때 — 각자에겐 FREE 로 보인다. 해결: (1) pr-cycle 직전 origin/main 재-fetch 해 내 id 가 아직 미점유인지 재확인(발사 시점의 FREE ≠ 머지 시점의 FREE) (2) 캠페인이 여러 H 를 쓰면 블록(예 9298-9302)을 잡고 즉시 ING 에 올려 다른 세션이 보게 하라 (3) 충돌 시 나중 머지된 쪽을 재번호(먼저 머지된 쪽 선점) — 2 표면(카드+jsonl)+verdict 경로+artifacts lockstep 이동, 내용 verbatim 보존, 카드에 재번호 사유 note (4) 자가점검: jsonl id Counter 로 duplicates NONE 확인을 pr-cycle 전에.",
+        "threshold": "재발조건: 병렬 세션/에이전트가 각자 origin/main 을 읽고 '다음 빈 H 번호'를 계산해 동시에 발사할 때 — 각자에겐 FREE 로 보인다. **그리고 (신규 · 2026-07-14 실측) 내 브랜치의 jsonl 행을 id 로 찾아 in-place update 할 때 — 그 id 가 그 사이 다른 세션 것이 돼 있으면 남의 가설을 덮어써서 지운다.** 해결: (1) pr-cycle 직전 origin/main 재-fetch 해 내 id 가 아직 미점유인지 재확인(발사 시점의 FREE ≠ 머지 시점의 FREE) (2) 캠페인이 여러 H 를 쓰면 블록을 잡고 즉시 ING 에 올려 다른 세션이 보게 하라 (3) 충돌 시 나중 머지된 쪽을 재번호(먼저 머지된 쪽 선점) — 2 표면(카드+jsonl)+verdict 경로+artifacts lockstep 이동, 내용 verbatim 보존 (4) 자가점검: jsonl id Counter 로 duplicates NONE 확인을 pr-cycle 전에 **(5) ⚠️ id 로 행을 찾아 갱신하기 전에 그 행의 title/card 가 정말 내 가설인지 대조하라 — id 일치만 믿고 payload 를 덮어쓰면 남의 verdict 가 소리 없이 증발한다. 2026-07-14 실측: union merge 의 dedup 이 내 H_9313 행을 버렸고(카드는 고아로 남음), 나는 살아남은 H_9313 행(= 다른 세션의 '실코퍼스 이중해리')을 내 MITOSIS verdict 로 덮어써 머지했다(#3463) ⇒ 남의 제목 아래 내 수치가 앉고 남의 verdict 는 소실. 카드는 3개(deconw · real_dissociation · mitosis_growth_pedestal)가 한 id 에 매달렸다. 수리 = 남의 행 원복(오염 직전 커밋에서 verbatim) + 내 것을 H_9321 로 재등록(카드 파일명·gate 노드 id lockstep). **탐지: pr-cycle 전 `ls HYPOTHESES/cards/ | grep <id>` 가 2개 이상이면 즉시 충돌.**)",
         "source": "HYPOTHESES/HYPOTHESES.jsonl"
       },
       {
