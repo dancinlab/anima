@@ -1426,8 +1426,21 @@ def anima_consciousness_mode(ckpt, argv=None):
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
-    _mouth = ({"temp": _emit_temp, "top_k": _emit_topk, "seed_rng": _sample_seed}
-              if _emit_temp > 0.0 else None)
+    # H_9328 · seed_rng is DERIVED PER TICK, never held constant across the session.
+    # MEASURED defect: holding it at `_sample_seed` made the mouth redraw the SAME 80 bytes
+    # every tick (gtext sha count = 1 over 30 ticks), so a 30-tick rollout carried exactly ONE
+    # independent draw — 30x the decode cost for 1x the power. The per-tick stream keeps the run
+    # reproducible (same --sample-seed ⇒ same trajectory) while letting the substrate actually
+    # speak differently at different moments, which is the whole point of REVEAL.
+    _mouth_base = ({"temp": _emit_temp, "top_k": _emit_topk, "seed_rng": _sample_seed}
+                   if _emit_temp > 0.0 else None)
+
+    def _mouth_at(tick):
+        if _mouth_base is None:
+            return None
+        m = dict(_mouth_base)
+        m["seed_rng"] = (_sample_seed * 1000003 + tick * 2654435761) & 0x7FFFFFFF
+        return m
     # H_9269 Candidate Y (Y-ULTRA): default-OFF ultradian-cycle sleep schedule. dr_stage_at is a
     # piecewise table on [0,90) (dr_stage_size sums to 90); calling it with unbounded tick*8 overflows
     # into eternal REM (N2/N3 visited once → veto cap-of-2). The modulo restores the table's own domain
@@ -1823,7 +1836,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                          rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                          idle, False, True,
                          backend, live_anchors,
-                         _mouth)      # H_9328 · None by default ⇒ byte-identical greedy path
+                         _mouth_at(tick))   # H_9328 · None by default ⇒ byte-identical greedy path
 
         did_emit = str(dec["emit"]).lower() == "true"
         g_emit = str(dec["gen_emitted"]).lower() == "true"
