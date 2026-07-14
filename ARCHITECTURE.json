@@ -15594,6 +15594,13 @@
         "value": "리베이스가 VERSION bump 를 조용히 흡수한다 — 병렬 세션이 먼저 같은 번호로 올려두면 내 bump 는 no-op 이 되어 diff 에서 사라지고, wheel 내용(cli/·core/·pyproject)만 바뀐 커밋이 남는다. 그러면 G5(wheel 변경 ⇒ 같은 diff 에 VERSION bump 필수)에 하드블록되거나, 통과했다면 PyPI same-VERSION skip-guard 가 stale 휠을 계속 서빙한다 — --xbind/--xfan 이 main 에는 있는데 PyPI 에는 없던 그 사고와 같은 계열, 새 경로.",
         "threshold": "재발조건: origin/main 위로 리베이스한 뒤 곧장 pr-cycle. 해결: 리베이스 직후 'git show --stat HEAD | grep VERSION' 으로 VERSION 이 아직 diff 에 있는지 확인 — 사라졌으면 'cat VERSION' == 'git show origin/main:VERSION' 이라는 뜻이니 한 칸 더 올려 amend. 게이트를 믿고 넘기지 말 것(게이트는 블록만 하지 번호를 골라주지 않는다).",
         "source": "VERSION"
+      },
+      {
+        "id": "pod-bootstrap-gpu-1",
+        "polarity": "NEG-CONV",
+        "value": "pod 부트스트랩의 하드게이트가 **`import cupy` 성공만 확인하고 통과시켰다** — 그리고 그 pod 는 RTX 5090 을 빌려놓고 **CPU-numpy 로 돌았다**(GPU util 0% · `Failed to find CUDA headers`). vast base 이미지는 cupy 는 깔리지만 **CUDA toolkit 헤더가 없어** 커널 JIT 이 실패하고, `cuda_available()` 이 정직하게 False 로 떨어져 numpy 폴백을 탄다(폴백 자체는 **올바른 동작** — `decode-py-1` 이 만든 것). 결함은 폴백이 아니라 **내 게이트**다: 나는 `import cupy` 와 `getDeviceCount()>0` 를 확인해놓고 '이 pod 는 GPU 로 돈다'고 믿었다. 이건 `decode-py-1` 이 이미 적어둔 메타교훈 — **capability 게이트는 '장치가 보이는가'가 아니라 '그 장치에서 내가 쓸 연산이 실제로 도는가'를 물어야 한다** — 을 **pod 부트스트랩에서 그대로 재발시킨 것**이다(같은 학습, 다른 표면).",
+        "recurrence": "렌트 GPU pod 를 부트스트랩할 때 `import cupy` / `nvidia-smi` 만 확인하고 발사 → 실제로는 CPU-numpy 로 돌아 GPU 비용만 태우고 wall 이 수십 배로 늘어남. 로그의 `[GPU-FALLBACK]` 한 줄을 안 읽으면 끝까지 모른다.",
+        "fix": "pod 하드게이트에 **커널 스모크**를 넣어라 — `pip install \"cupy-cuda12x[ctk]\"`(CUDA 헤더) 또는 `CUDA_PATH` 설정 후, decode 가 실제로 쓰는 **커널 클래스**(elementwise + CUB reduction)를 1회 돌려보고 통과할 때만 발사한다: `python3 -c \"import cupy as cp; a=cp.arange(8); assert bool((a>3).any()); assert float(cp.sum(a.astype(cp.float64)))==28.0\"`. 그리고 **발사 직후 `[GPU-FIRED]` vs `[GPU-FALLBACK]` 를 로그에서 확인**하고 `nvidia-smi` util>0 을 본다 — 안 그러면 GPU 를 빌려놓고 CPU 로 도는 걸 몇 시간 뒤에 안다."
       }
     ]
   }
