@@ -1157,13 +1157,33 @@ def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed):
 # the trainer to break the model harder. So they carry no floor — they carry the destruction warning
 # and a pointer to `ground_keep`, which replays the SEEN stems' negated lines and is the only ground
 # format where the budget conclusion holds.
+# A budget floor is EARNED on one corpus, in one language. Keying it by format alone silently
+# transplants it (bar-derived-not-transplanted): an `en` ground_keep would have picked up the number
+# H_9324 measured on the KOREAN corpus and the trainer would have enforced it as if it were derived.
+# So the key is (lang, fmt), and a floor that has NOT been measured for a language says so out loud
+# instead of pretending.
 BUDGET_FLOORS = {
-    # fmt: (min_steps, min_lr, note)
-    "ground_keep": (6000, 2e-4,
-                    "H_9324: WRITE 0.4483 (600@5e-5 = chance) -> 0.9540 (6000@2e-4) -> 1.0000 "
-                    "(6000@5e-4), reproduced on 2 seeds. Below this floor a negative result is a "
-                    "BUDGET negative, not a substrate negative — that is how H_9322 died."),
-    "ground_keep_lie": (6000, 2e-4, "same floor as ground_keep — it is the matched control arm."),
+    # (lang, fmt): (min_steps, min_lr, note)
+    ("ko", "ground_keep"): (
+        6000, 2e-4,
+        "H_9324 (ko, MEASURED): WRITE 0.4483 (600@5e-5 = chance) -> 0.9540 (6000@2e-4) -> 1.0000 "
+        "(6000@5e-4), reproduced on 2 seeds. Below this floor a negative result is a BUDGET "
+        "negative, not a substrate negative — that is how H_9322 died."),
+    ("ko", "ground_keep_lie"): (
+        6000, 2e-4, "same floor as ko/ground_keep — it is the matched control arm."),
+    # en: NOT measured. The number below is the ko floor used as a STARTING POINT, and the meta says
+    # so; the trainer warns rather than enforcing a bar nobody earned. What actually decides whether
+    # the budget sufficed is the WRITE gate (held-out flip0) measured on the resulting ckpt — and if
+    # WRITE fails, raising the budget is NOT tune-to-green: asking a model to COMPOSE a fact it never
+    # stored is exactly how H_9322 died.
+    ("en", "ground_keep"): (
+        6000, 2e-4,
+        "⚠️ TRANSPLANTED from ko (H_9324), NOT measured for en. Use as a starting point only — the "
+        "WRITE gate (held-out flip0) on the resulting ckpt is what actually decides whether the "
+        "budget sufficed. Raising it after a WRITE failure is not tune-to-green; WRITE is a "
+        "PREMISE, not the DV."),
+    ("en", "ground_keep_lie"): (
+        6000, 2e-4, "⚠️ TRANSPLANTED from ko — same caveat as en/ground_keep."),
 }
 
 # Strata a FORGET gate MUST read for this corpus — specifically the ones the corpus contains ZERO
@@ -1177,12 +1197,15 @@ FORGET_STRATA = {
 }
 
 
-def _write_budget_floor(out_path, fmt):
+def _write_budget_floor(out_path, fmt, lang=DEFAULT_LANG):
     """Emit `<out>.meta.json` beside the corpus. NOT inside it — this is a byte-LM, so a header
     comment in the corpus file would be TRAINED ON."""
-    floor = BUDGET_FLOORS.get(fmt)
+    floor = BUDGET_FLOORS.get((lang, fmt))
+    transplanted = bool(floor) and floor[2].startswith("⚠️ TRANSPLANTED")
     meta = {
         "format": fmt,
+        "lang": lang,
+        "floor_transplanted": transplanted,
         "min_steps": floor[0] if floor else None,
         "min_lr": floor[1] if floor else None,
         "note": floor[2] if floor else None,
@@ -1201,9 +1224,13 @@ def _write_budget_floor(out_path, fmt):
     if meta.get("destroys"):
         print("  [budget-meta] %s.meta.json — ⚠️ NO floor: this format DESTROYS the negation "
               "operator (see .meta.json 'destroys'); ground_keep is the safe one." % out_path)
+    elif floor and transplanted:
+        print("  [budget-meta] %s.meta.json — ⚠️ floor steps>=%d lr>=%g is TRANSPLANTED from ko, "
+              "NOT measured for '%s'. It is a starting point; the WRITE gate on the resulting ckpt "
+              "is what decides." % (out_path, floor[0], floor[1], lang))
     elif floor:
-        print("  [budget-meta] %s.meta.json — earned floor: steps>=%d lr>=%g (H_9324)"
-              % (out_path, floor[0], floor[1]))
+        print("  [budget-meta] %s.meta.json — earned floor: steps>=%d lr>=%g (measured for '%s')"
+              % (out_path, floor[0], floor[1], lang))
 
 
 def build_bindlocus(n2_eval, n2_seen, corpus_paths, novel_pool, seed):
@@ -1367,7 +1394,7 @@ def main():
         if opts["out"]:
             with open(opts["out"], "w", encoding="utf-8") as fh:
                 fh.write(text)
-            _write_budget_floor(opts["out"], fmt)
+            _write_budget_floor(opts["out"], fmt, opts["lang"])
         print("anima corpus c34 [%s]: %d lines / %d B  (arrow %d, %d negated · natural %d)"
               % (st["lang"], st["lines"], st["bytes"], st["arrow"], st["arrow_negated"],
                  st["natural"]))
@@ -1591,7 +1618,7 @@ def main():
         if opts["out"]:
             with open(opts["out"], "w") as fh:
                 fh.write(text)
-            _write_budget_floor(opts["out"], fmt)
+            _write_budget_floor(opts["out"], fmt, opts["lang"])
         print(f"anima corpus {fmt}: held={st['held']} seen={st['seen']} lines={st['lines']} "
               f"labels_flipped={st['labels_flipped']}/{st['held']} bytes={st['bytes']} "
               f"reps={opts['reps']} replay={opts['replay']} seed={opts['seed']} "

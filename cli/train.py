@@ -427,6 +427,18 @@ def _budget_preflight(corpus_specs, steps: int, lr: float) -> None:
         floor_s, floor_lr = meta.get("min_steps"), meta.get("min_lr")
         if not floor_s:
             continue
+        if meta.get("floor_transplanted"):
+            # A floor EARNED on one language is not a floor for another. Enforcing it here would be
+            # the exact defect bar-derived-not-transplanted names: a bar nobody measured, applied as
+            # if they had. So we WARN and let the run proceed — what actually decides whether the
+            # budget sufficed is the WRITE gate on the resulting ckpt.
+            if steps < floor_s or (floor_lr and lr < floor_lr):
+                print(f"  [budget-preflight] ⚠️ steps={steps} lr={lr:g} is below a TRANSPLANTED "
+                      f"floor (steps>={floor_s} lr>={floor_lr:g}, borrowed from another language and "
+                      f"NOT measured for '{meta.get('lang')}'). NOT blocking — a bar nobody earned "
+                      f"cannot gate a run. The WRITE gate on the resulting ckpt is what decides.",
+                      flush=True)
+            continue
         if steps < floor_s or (floor_lr and lr < floor_lr):
             raise SystemExit(
                 f"[budget-preflight] REFUSING TO START — steps={steps} lr={lr:g} is BELOW the "
