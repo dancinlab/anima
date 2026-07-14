@@ -1,4 +1,4 @@
-# H_9325 — DO-MOUTH: 입의 반올림만 걷어내면 기질의 do-분포가 열리는가
+# H_9328 — (구 H_9325 · id 충돌로 재번호) DO-MOUTH: 입의 반올림만 걷어내면 기질의 do-분포가 열리는가
 
 - **lane**: INTERACT / do-distribution (개입 분포)
 - **상태**: 🟢 **V-CEILING PASS · 계기 배선 완료** — 본실험(I(A;Y|S)) PENDING
