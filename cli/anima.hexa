@@ -2438,7 +2438,14 @@ fn anima_consciousness_mode(ckpt: string) {
         // feature (structurally frozen → AXIS-DEGENERATE, the H_9210 instrument-fail). recon_err
         // also feeds the urgency pool (cur_ctx) so under --opgrip-live the proven urgency channel
         // gains real content variance too, not only the disjoint surp_phasic term.
-        let recon_err = if og_live { vadapt_field_recon_err(afield, og_prev_gfeat) } else { vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8)) }
+        // H_9336 · the seed branch was 0.0 by IDENTITY, not by measurement: afield is BORN with
+        // seed_feat0 as its first prototype, and every emitted text clears SPLIT_THRESH and spawns
+        // a NEW cell instead of refining that one, so the seed prototype is never touched and
+        // L2(seed_proto, seed_feat) stays exactly 0 forever (measured: H(R|S)=0.0000 over 24
+        // rollouts). The daemon was asking "how surprised am I by the thing I was born knowing?".
+        // og_prev_gfeat now tracks the last EMITTED bytes on the production path too (:3746), so
+        // the default branch reads a REAL 1-tick-lagged prediction error. convergence chat-py-4.
+        let recon_err = vadapt_field_recon_err(afield, og_prev_gfeat)
         let m_grounding = _afs_clip01(rel_lane)
         let m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
         let m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)   // sober = identity
@@ -3743,6 +3750,11 @@ fn anima_consciousness_mode(ckpt: string) {
         if g_emit && g_back == "clm" && byte_len(g_text) > 0 {
             let feat = _afs_byte_feature(g_text, 8)
             let pre_cells = vadapt_field_cells(afield)
+            // H_9336 · carry the emitted bytes so the NEXT tick's recon_err (:2441) is a real
+            // prediction error on what the daemon actually said, not the frozen seed. The error
+            // itself is read there BEFORE the field adapts again — that is what a prediction
+            // error IS; taken after the step it would only report how well the field memorised it.
+            og_prev_gfeat = feat
             afield = vadapt_field_step(afield, feat, cfg)
             let post_cells = vadapt_field_cells(afield)
             cell_count = post_cells
