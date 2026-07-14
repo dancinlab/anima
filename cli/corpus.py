@@ -24,6 +24,7 @@ Usage:
   anima corpus flat       --out flat.txt  --held-out 0,1 --seed 7   # same seed => content-matched control
 """
 import json
+import collections
 import random
 import re
 import sys
@@ -56,7 +57,7 @@ def _parse_args(argv):
     opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280, "split_seed": 1,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
-            "lang": DEFAULT_LANG, "lexicon": None, "n_seen": 20, "n_held": 29,
+            "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None}
     i = 1
@@ -98,6 +99,8 @@ def _parse_args(argv):
             opts["min_occ"] = int(argv[i + 1]); i += 2
         elif a == "--neutral-tol":
             opts["neutral_tol"] = float(argv[i + 1]); i += 2
+        elif a == "--mine-lexicon":
+            opts["mine"] = int(argv[i + 1]); i += 2
         elif a == "--lexicon":
             opts["lexicon"] = argv[i + 1]; i += 2
         elif a == "--n-seen":
@@ -484,6 +487,61 @@ def _read_labelled(paths):
                         rows.append((txt, 1))
                     # rating 3 -> dropped, deliberately
     return rows
+
+
+def mine_lexicon(corpus_paths, lang, top_n, min_occ):
+    """Rank candidate stems by FREQUENCY in the real corpus — the designer does not get to pick.
+
+    Every atom set this lane has used was hand-picked, and a hand-picked set is a place for a
+    hypothesis to hide: nothing stops the designer from reaching for the adjectives that happen to
+    suit the story. The defence is not willpower, it is procedure — mine the candidates from the
+    corpus by frequency, take them IN RANK ORDER, and let the gates (G-DERIV / G-CARRIER / G-SUBSTR /
+    G-OCCUR / G-BALANCE) throw out whatever they throw out. What survives is what the corpus offered,
+    not what the experimenter wanted.
+
+    The frame is the predicative slot the polarity task actually uses — `(is|are|was|were|really|
+    very|so|quite|too) <word>` — so a mined candidate is a word the model has genuinely read in the
+    position the carrier will put it in. The polarity LABEL is not mined (a corpus cannot tell you
+    that `terrible` is negative); it stays a human 1-bit annotation, which is the same status the
+    Korean `gt_atoms.json` `pol` field always had. p1-p8 forbids an LLM writing TRAINING BYTES; a
+    lexicon writes none — the training bytes are the natural corpus plus the deterministic template.
+    """
+    if lang == "ko":
+        raise SystemExit("anima corpus atoms --mine-lexicon: ko atoms are frozen (gt_atoms.json). "
+                         "Mining is for a NEW language whose atom set does not exist yet.")
+    # The frame must be a SYNTACTIC constraint, not a semantic preference — otherwise the designer is
+    # back in the loop. `(is|was) X` is too loose: it happily returns `is the`, `is not`, `is that`
+    # (measured: those were the top 3 of 14,069 candidates). After a DEGREE ADVERB, English admits
+    # only an adjective or another adverb — so `very X` / `really X` selects the part of speech we
+    # need without anyone choosing a word. `X` must also clear the standalone occurrence floor.
+    FRAME = re.compile(
+        r"\b(?:very|really|quite|so|extremely|incredibly|remarkably|fairly|rather|pretty|"
+        r"utterly|totally|absolutely|surprisingly|genuinely)\s+([a-z]{3,12})\b", re.I)
+    counts = collections.Counter()
+    for cp in corpus_paths:
+        with open(cp, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                for w in FRAME.findall(line):
+                    counts[w.lower()] += 1
+    # A candidate must ALSO clear the occurrence floor as a STANDALONE word, not just inside the
+    # frame — the model needs to have read it in ordinary prose, not only after `very`.
+    #
+    # Count every word ONCE, in a single tokenising pass. The obvious loop — for each candidate,
+    # re.findall over the whole corpus — is O(corpus x candidates) and on 60MB x 600 candidates it
+    # simply does not finish (measured: it hung). One pass, then a dict lookup.
+    word = collections.Counter()
+    tok = re.compile(r"[a-z]+")
+    for cp in corpus_paths:
+        with open(cp, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                word.update(tok.findall(line.lower()))
+    out = []
+    for w, n in counts.most_common():
+        if len(out) >= top_n:
+            break
+        if word[w] >= min_occ:
+            out.append({"stem": w, "frame_hits": n, "occ": word[w], "pol": None})
+    return out, {"frame_candidates": len(counts), "kept": len(out), "min_occ": min_occ}
 
 
 def build_atoms(lexicon_path, corpus_paths, lang, n_seen, n_held, min_occ, seed):
@@ -1000,6 +1058,25 @@ def main():
                   "NOT 'it is not there' (power-before-negative-verdict)." % len(kept))
         sys.exit(0)
     if fmt == "atoms":
+        if opts["mine"]:
+            if not opts["corpus"]:
+                print("anima corpus atoms --mine-lexicon N --corpus C.txt --lang en "
+                      "--min-occ 200 --out lexicon_en.json")
+                sys.exit(2)
+            cand, st = mine_lexicon(opts["corpus"], opts["lang"], opts["mine"], opts["min_occ"])
+            if opts["out"]:
+                json.dump({"lang": opts["lang"], "mined": st, "stems": cand},
+                          open(opts["out"], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+            print("anima corpus atoms --mine-lexicon [%s]: %d frame candidates -> %d kept "
+                  "(>= %d standalone occurrences) -> %s"
+                  % (opts["lang"], st["frame_candidates"], st["kept"], st["min_occ"],
+                     opts["out"] or "(stdout)"))
+            print("  ranked by FREQUENCY — the designer does not pick. Take them IN ORDER, let the")
+            print("  gates discard what they discard, then annotate `pol` (the only human step: 1 bit")
+            print("  per stem, the same status the KO gt_atoms.json `pol` field always had).")
+            for c in cand[:12]:
+                print("    %-12s frame_hits=%d" % (c["stem"], c["frame_hits"]))
+            return
         if not (opts["lexicon"] and opts["corpus"]):
             print("anima corpus atoms --lexicon L.json --corpus C.txt [--corpus C2.txt] "
                   "--lang en --n-seen 20 --n-held 29 --min-occ 200 --out gt_atoms_en.json")
@@ -1023,6 +1100,14 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "atoms"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|valence|bindlocus|atoms> --out PATH")
+        print("      atoms --mine-lexicon N --corpus C.txt --lang en --min-occ 300 --out lex.json")
+        print("             rank candidate stems by FREQUENCY in the real corpus — the designer does")
+        print("             not pick. Frame = a DEGREE ADVERB (`very X`, `really X`): after one,")
+        print("             English admits only an adjective, so the part of speech is selected by")
+        print("             SYNTAX, not by preference. `is X` is too loose (measured: its top 3 of")
+        print("             14,069 candidates were `the`, `not`, `that`). Take the output IN ORDER,")
+        print("             let the gates discard what they discard, then annotate `pol` — the only")
+        print("             human step, 1 bit per stem (same status as the KO gt_atoms `pol` field).")
         print("      atoms  --lexicon L.json --corpus C.txt --lang en --n-seen 20 --n-held 29")
         print("             --min-occ 200 --out gt_atoms_en.json   mine an atom set from a REAL")
         print("             corpus behind 4 gates, each of which is a verdict that already died:")
