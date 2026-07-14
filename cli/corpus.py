@@ -527,10 +527,49 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed):
             probe = GROUND_TMPL.format(surf=pat.format(s=stem), pol="긍정")[:-len("긍정.\n")]
             if probe in text:
                 leaks.append(probe.strip())
+    flip1_man, write_man = _swap_eval_manifest(arms)
     return text, {"held": len(held), "lines": len(lines), "bytes": len(text.encode()),
                   "arms": {k: [s for s, _ in v] for k, v in arms.items()},
                   "untouched_n": len(arms["untouched"]),
-                  "measured_prompt_leaks": leaks}
+                  "measured_prompt_leaks": leaks,
+                  "flip1_manifest": flip1_man, "write_manifest": write_man}
+
+
+# The eval manifest is a pure function of the arm draw + the scored surfaces — NOT of how the corpus
+# was written — so it is shared by C3 (ground_seenswap) and C4 (ground_carrierswap): both score the
+# same operator on the same disjoint surfaces. Emitting it from the SAME build that drew the arms is
+# what guarantees the arm↔manifest split can never drift (the C3 fire hand-built this on the pod;
+# wiring it here makes a passing result already reproducible · a_experiment_engine_native).
+#   swap arm: CPT planted the INVERTED polarity (1-orig); every other arm keeps its original.
+#   flip1 (negation surfaces negL/negZ/negJ): gold = word(planted XOR 1)  — operator NEGATES.
+#   write (flip0 surface {s}고, tag w0): gold = word(planted)             — the declarative fact.
+_SWAP_TAGS = (("negL", "{s}지 않다"), ("negZ", "별로 {s}지 않다"), ("negJ", "{s}지는 않다"))
+_WRITE_TAG = ("w0", "{s}고")
+
+
+def _swap_eval_manifest(arms):
+    """(flip1_spec, write_spec) for `anima-py evaluate --xbind`, drawn from the SAME arms."""
+    def _word(b):
+        return "긍정" if b else "부정"
+
+    def _item(stem, arm, tag, surf, planted, flip):
+        gold_b = (planted ^ 1) if flip else planted        # flip1 negates, flip0 declares
+        gw, cw = _word(gold_b), _word(gold_b ^ 1)
+        seed = GROUND_TMPL.format(surf=surf.format(s=stem), pol="")[:-len(".\n")]  # up to "=> "
+        return {"a": stem, "b": "%s|%s" % (arm, tag), "seed": seed,
+                "stem": stem, "pol": planted, "flip": flip,
+                "gold_word": gw, "gold": gw + ".\n", "counterfactual": cw + ".\n"}
+
+    flip1, write = [], []
+    for arm, pairs in arms.items():
+        for stem, pol in pairs:
+            planted = (1 - pol) if arm == "swap" else pol
+            for tag, surf in _SWAP_TAGS:
+                flip1.append(_item(stem, arm, tag, surf, planted, 1))
+            if arm == "swap":                              # WRITE gate reads the swap arm only
+                write.append(_item(stem, arm, _WRITE_TAG[0], _WRITE_TAG[1], planted, 0))
+    return ({"win": 64, "gen": 8, "heldout": flip1, "seen": []},
+            {"win": 64, "gen": 8, "heldout": write, "seen": []})
 
 
 def build_ground(fmt, atoms_path, reps, replay, seed, lang=DEFAULT_LANG):
@@ -1268,6 +1307,8 @@ def main():
         print("      gives n=29, 0 flips -> 95%% UCB on forgetting 3/29=10.3%% (C3's 3/3=100%% = no power).")
         print("      GATE FIX ② liveness lives on the DV (swap-arm consistency p<=.02), not an n=6 side arm.")
         print("      Declarative write held IDENTICAL to C3, so the operator carrier is the ONE variable.")
+        print("      Emits <out>.flip1.json + <out>.write.json — the `anima-py evaluate --xbind` manifests,")
+        print("      drawn from the SAME arm split (byte-audited == C3), so arm<->manifest can never drift.")
         print("      H_9313 DECON-W grounding corpus — writes each held-out atom's polarity into")
         print("      the WEIGHTS via the un-negated (flip0) template lines ONLY. The negated")
         print("      (flip1) forms NEVER appear, so a later flip1 test measures COMPOSITION, not")
@@ -1335,7 +1376,17 @@ def main():
               % (st["untouched_n"], 300.0 / st["untouched_n"]))
         for k in ("swap", "affirm", "keep", "untouched"):
             print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
-        json.dump(st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        arms_st = {k: st[k] for k in ("held", "lines", "bytes", "arms", "untouched_n")}
+        json.dump(arms_st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        # Eval manifests from the SAME arm draw (a_experiment_engine_native): the fire scores these
+        # with `anima-py evaluate --xbind`, so the arm<->manifest split can never drift (C3 hand-built
+        # this on a pod; wiring it here makes a passing result already reproducible).
+        f1_path, w_path = opts["out"] + ".flip1.json", opts["out"] + ".write.json"
+        json.dump(st["flip1_manifest"], open(f1_path, "w"), ensure_ascii=False)
+        json.dump(st["write_manifest"], open(w_path, "w"), ensure_ascii=False)
+        print("  eval manifests -> %s (%d flip1) · %s (%d write)"
+              % (f1_path, len(st["flip1_manifest"]["heldout"]),
+                 w_path, len(st["write_manifest"]["heldout"])))
         return 0
 
     if fmt == "atoms":
