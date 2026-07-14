@@ -515,6 +515,45 @@
           "detail": "V6 DECISION-CHANNEL 게이트(BLOCKING): H(emit|S) < floor 이면 DECISION-CONSTANT 하드스톱. 대리변수 판정은 그 대리변수에만 스코프된다고 명시한다."
          }
         ]
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-clockfix",
+        "type": "gate",
+        "verdict": "🔧 시계 배선됨 · 판정 PENDING (--tension-emit)",
+        "detail": "H_9352 수리 — 게이트에 진짜 시계를 꽂았다. emit 은 이제 stage 에서 풀렸다. tension 에 묶였는지는 --tension-emit 사전등록 bar 가 정한다.",
+        "children": [
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-bug",
+          "type": "note",
+          "detail": "레이트 리미터에 기억이 없었다. brain_decide 의 seconds_since_last 슬롯에 (stage,urgency) 순수함수가 들어갔다(경과시간 아님). 레포에 last_emit 이 없었다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-design",
+          "type": "note",
+          "detail": "설계는 진짜 시계를 전제했다: spont_min_emit_interval 30.0 / an_tick_seconds 8.0 = 지속가능 발화율 0.25 ≈ ep_target_emit_rate 0.27. 숫자는 시계를 위해 골라졌는데 시계가 안 꽂혔다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-fix",
+          "type": "note",
+          "detail": "cli/chat.py: last_emit_tick 상태 · secs_since_emit=(tick-last)*8.0 을 게이트에 넘김 · 발화 시 리셋 · idle(stage·urgency)은 텔레메트리로 보존(게이트엔 안 감)."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-bar",
+          "type": "gate",
+          "verdict": "사전등록",
+          "detail": "판정 bar = I(ag_conflict; emit|stage) ≥ 0.05 nats ∧ C1 SHUFFLE ≤ 0.01. 발화율 ½ 자체는 PASS 아님(p7 Goodhart · rate 는 FORM · claim 은 BIND)."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-cert",
+          "type": "note",
+          "detail": "합성 3-arm 인증: tension_pulls 49.9% → 🟢 · rate_only 50.7% → 🧱(발화율 같은데 걸러냄) · stage_pure → ⛔ DECISION-CONSTANT. 발화율 같은 두 arm 을 통제군이 갈라낸다."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-honest",
+          "type": "note",
+          "detail": "가장 정직한 예측 = 🧱 STILL-STAGE. 시계는 emit 을 stage 에서 풀었을 뿐 tension 에 묶은 게 아니다. 🧱 면 H_9209/9225/9230(재개방) 의 shade 를 비-포화 비교기 위에서 다시 걸 수 있다."
+         }
+        ]
        }
       ]
      }
@@ -14551,9 +14590,15 @@
       "id": "psi-soma-void-repair",
       "type": "note",
       "detail": "수리 = _sigma_live_measure() 가 실제 데몬 rollout 의 lane 모집단을 받게 하고 그 위에서 ci_psi_balance 를 계산한다. 그 전까지 σ 나 Θ 로 어떤 것도 인증하지 마라."
+     },
+     {
+      "id": "psi-soma-realfix",
+      "type": "gate",
+      "verdict": "🔧 수리됨 + 반증",
+      "detail": "옛 합성 패널은 SELF-TEST 로 강등(판정 어휘 제거). 진짜 Ψ̂ = anima-py evaluate --psi-soma <trace>: 데몬이 psi_gws/psi_lprec 기록, 엔진에 자기 연산자와 lane 을 넘긴다. 실측 Ψ̂=0.9167(|Ψ̂−½|=0.417 · drift 0.033 안정) ⇒ A⇄G 항상성은 이 런에서 성립하지 않는다."
      }
     ],
-    "verdict": "⛔ INVALID — 이 패널은 체크포인트를 안 본다 (H_9351)"
+    "verdict": "⛔ 옛 패널 INVALID (H_9351) · 진짜 Ψ̂ = --psi-soma 로 수리됨"
    },
    {
     "name": "ρ-AXON reach 사다리 (현재기준 · former G0-G6 capability gates = frozen bars)",
