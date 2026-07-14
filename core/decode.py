@@ -151,14 +151,23 @@ def gpu_status():
     core/CLAUDE.md gotcha: 'decode GPU path 확인 먼저')."""
     if not cuda_available():
         reason = str(_CUDA_PROBE_ERR) if _CUDA_PROBE_ERR is not None else "no CUDA device"
-        return {"cuda": False, "device_name": None, "reason": reason}
+        return {"cuda": False, "device_name": None, "cupy": None, "reason": reason}
     try:
         name = _cupy.cuda.runtime.getDeviceProperties(0)["name"]
         if isinstance(name, bytes):
             name = name.decode("utf-8", "replace")
     except Exception:
         name = "unknown"
-    return {"cuda": True, "device_name": name, "reason": None}
+    # cupy version is part of the diagnosis, not decoration: cupy 14.x is BROKEN on sm_120
+    # (its bundled cuda_fp8.hpp does not parse under nvrtc, so every JIT kernel fails to
+    # compile). pyproject pins the [gpu] extra to <14, but a pool host carrying an older
+    # anima wheel can still be sitting on a cupy the pin never reached — printing the
+    # version is how that shows up in the run log instead of as a mid-eval crash.
+    try:
+        cupy_ver = _cupy.__version__
+    except Exception:
+        cupy_ver = "unknown"
+    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None}
 
 
 def _log_gpu_status_once():
@@ -168,7 +177,8 @@ def _log_gpu_status_once():
     _GPU_LOG_DONE = True
     st = gpu_status()
     if st["cuda"]:
-        print(f"[GPU-FIRED] decode device path=CUDA ({st['device_name']})", file=sys.stderr)
+        print(f"[GPU-FIRED] decode device path=CUDA ({st['device_name']} · cupy "
+              f"{st.get('cupy', '?')})", file=sys.stderr)
     else:
         print(f"[GPU-FALLBACK] decode device path=CPU-numpy ({st['reason']})", file=sys.stderr)
 
