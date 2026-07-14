@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """EARNED — the certified corpus-level operator instrument, wired into the engine CLI.
 
-    anima-py evaluate --earned <corpus.tsv> [--out <file.json>] [--min-occ N] [--k-perm N] [--seed N]
+    anima-py evaluate --earned <corpus.tsv> [--out <f.json>] [--min-occ N] [--k-perm N] [--seeds a,b,c]
 
 WHAT IT MEASURES. Given a natural corpus whose rows carry (text, B, T) -- where B is a binary
 context bit and T is an outcome label ANNOTATED OUTSIDE THE TOKEN STREAM -- it asks, with no model
@@ -40,8 +40,19 @@ silence proves nothing (this lane lost H_9265 and H_9303 exactly there):
 
 REPORTING. p-values are NOT the verdict: with n in the tens of thousands a speck is significant.
 The effect is reported against the XBIND RULER -- what this same instrument reads on a corpus whose
-operator was PLANTED (+5.29653 nats). Measured points: negation 0.044% · concession 0.171% ·
-parity 0.060% · irony 0.024% of the ruler.
+operator was PLANTED (+5.29653 nats).
+
+MULTI-SEED IS THE DEFAULT, and that is a repair, not a nicety. The held-out cells are chosen by
+sampling stems, so on a small corpus the SEED moves the effect size. Measured: on ArSarcasm
+(~2.5-3k held-out cells) the irony point read 0.024% of the ruler at one seed and 0.061% at
+another -- 2.5x -- and a single-seed number had already been written into a card as the fact
+"irony is the smallest of the four points, at the very place theory says it should be largest".
+It was seed noise; the ranking claim was retracted (H_9319). The equivalence claim survived
+(both seeds sit far inside the TOST margin) -- what moved was the RANKING, not the EQUIVALENCE.
+So: a ranking claim is much weaker than an equivalence claim, and this instrument no longer lets
+you make one from a single draw. It runs `--seeds` (default 3), prints the per-seed spread, and
+refuses to call any point "smaller/larger than" another whose interval it overlaps.
+See ARCHITECTURE convergence `earned-instrument-wire-1`.
 """
 import hashlib
 import json
@@ -214,6 +225,8 @@ def earned_run(argv):
     min_occ = evaluate_intval(argv, "--min-occ", 100)
     k_perm = evaluate_intval(argv, "--k-perm", K_PERM)
     seed = evaluate_intval(argv, "--seed", 9304)
+    seeds_s = evaluate_strval(argv, "--seeds", "")
+    seeds = [int(x) for x in seeds_s.split(",") if x.strip()] if seeds_s else [seed, seed + 1, seed + 2]
     ci = CI_DEFAULT
     rng = np.random.default_rng(seed)
 
@@ -248,19 +261,43 @@ def earned_run(argv):
 
     # ---- G-POWER (census + null sd, measured BEFORE the effect is read) -------------------
     items, sid = build_cells(rows, min_occ, script)
-    ho, nst = make_heldout(items, np.random.default_rng(seed))
-    res["stems"] = len(sid); res["heldout_cells"] = int(ho.sum())
-    if int(ho.sum()) == 0:
+    res["stems"] = len(sid)
+    ho0, _ = make_heldout(items, np.random.default_rng(seeds[0]))
+    if int(ho0.sum()) == 0:
         print("G-POWER     held-out cells = 0  →  INVALID (DATA-SPARSE) — NOT a KILL")
         res["verdict"] = "INVALID (DATA-SPARSE) — no held-out recombination cells exist"
         _emit(res, out)
         return 0
-    e_n, nm, sd, null, d_n = earned(items, ho, np.random.default_rng(seed), k_perm)
+
+    # The held-out cells are RESAMPLED per seed: this is exactly the axis that moved the irony
+    # point by 2.5x, so it is the axis the report has to expose rather than hide behind one draw.
+    per = []
+    for sd_i in seeds:
+        ho_i, nst_i = make_heldout(items, np.random.default_rng(sd_i))
+        e_i, nm_i, sdn_i, null_i, d_i = earned(items, ho_i, np.random.default_rng(sd_i), k_perm)
+        per.append({"seed": sd_i, "earned": e_i, "delta": d_i, "cells": int(ho_i.sum()),
+                    "sd_null": sdn_i, "null_mean": nm_i, "null": null_i})
+    e_vals = np.asarray([p["earned"] for p in per])
+    e_n = float(e_vals.mean())
+    spread = float(e_vals.max() - e_vals.min())
+    ho, nst = make_heldout(items, np.random.default_rng(seeds[0]))
+    nm, sd, null, d_n = per[0]["null_mean"], per[0]["sd_null"], per[0]["null"], per[0]["delta"]
+    res["heldout_cells"] = int(ho.sum())
     mde = 3 * sd
     powered = mde <= DELTA_EQ
     print("G-POWER     held-out cells=%d (stems %d)  sd_null=%.5f  MDE(3σ)=%.5f  need<=%.2f  %s"
           % (int(ho.sum()), nst, sd, mde, DELTA_EQ,
              "PASS" if powered else "FAIL — NOT POWERED for a negative verdict"))
+    print("")
+    print("SEEDS       " + " · ".join("%d:%+.5f (%.3f%%)" % (p["seed"], p["earned"],
+                                      100 * p["earned"] / XBIND_RULER) for p in per))
+    print("            spread across seeds = %.5f nats (%.3f%% of the ruler)   "
+          "%s" % (spread, 100 * spread / XBIND_RULER,
+                  "— a single-seed number here would be NOISE" if spread > 0.5 * abs(e_n)
+                  else "— seed-stable"))
+    res["per_seed"] = [{k: v for k, v in p.items() if k != "null"} for p in per]
+    res["seed_spread"] = spread
+    res["seed_unstable"] = bool(spread > 0.5 * abs(e_n))
     res["G_ALIVE"] = {"earned": e_x, "pass": bool(alive)}
     res["G_PEDESTAL"] = {"earned": e_a, "pass": bool(ped)}
     res["G_POWER"] = {"sd_null": sd, "mde_3sd": mde, "pass": bool(powered)}
@@ -301,9 +338,15 @@ def earned_run(argv):
              "ever bank it")
     else:
         v = "INDETERMINATE — CI straddles the equivalence margin"
+    if res.get("seed_unstable"):
+        print("")
+        print("⚠️  SEED-UNSTABLE: the spread across seeds is comparable to the effect itself.")
+        print("    The EQUIVALENCE verdict below still holds (every seed sits inside the TOST")
+        print("    margin), but do NOT rank this point against another — that is what got")
+        print("    retracted in H_9319. A ranking claim needs the gap to exceed the seed spread.")
     print("")
     print("VERDICT: " + v)
-    res.update({"heldout_earned": e_n, "ci_lo": ci_lo, "ci_hi": ci_hi, "ci_pct": ci,
+    res.update({"heldout_earned": e_n, "seeds": seeds, "ci_lo": ci_lo, "ci_hi": ci_hi, "ci_pct": ci,
                 "delta_hat": d_n, "effect_vs_xbind_ruler": e_n / XBIND_RULER,
                 "seen_synergy": seen, "tost_pass": bool(tost), "info_present": bool(info),
                 "verdict": v})
