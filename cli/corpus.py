@@ -54,7 +54,8 @@ def _parse_args(argv):
     fmt = argv[0] if argv else ""
     opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280,
             "single_per_concept": 300, "seed": 7, "concepts": None,
-            "atoms": None, "reps": 40, "replay": 40}
+            "atoms": None, "reps": 40, "replay": 40,
+            "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -76,6 +77,23 @@ def _parse_args(argv):
             opts["replay"] = int(argv[i + 1]); i += 2
         elif a == "--reps":
             opts["reps"] = int(argv[i + 1]); i += 2
+        elif a == "--corpus":
+            opts["corpus"].append(argv[i + 1]); i += 2
+        elif a == "--k-ctx":
+            opts["k_ctx"] = int(argv[i + 1]); i += 2
+        elif a == "--ctx-bytes":
+            opts["ctx_bytes"] = int(argv[i + 1]); i += 2
+        elif a == "--min-occ":
+            opts["min_occ"] = int(argv[i + 1]); i += 2
+        elif a == "--neutral-tol":
+            opts["neutral_tol"] = float(argv[i + 1]); i += 2
+        elif a.startswith("--"):
+            # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
+            # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
+            # — and the run that consumes it is a paid GPU battery. evaluate.py already rejects
+            # unknown flags for exactly this reason; corpus.py did not.
+            print("corpus: unknown flag %s" % a, file=sys.stderr)
+            sys.exit(2)
         else:
             i += 1
     return fmt, opts
@@ -161,6 +179,116 @@ def build_ground(fmt, atoms_path, reps, replay, seed):
                   "labels_flipped": flipped, "bytes": len(text.encode())}
 
 
+def _read_labelled(paths):
+    """(text, label 0/1) rows from the lane's actual corpus files — reference-matched to the
+    loaders that built them, not guessed:
+
+      NSMC             id <TAB> text <TAB> label      3 cols, label in {0,1}, header line skipped
+      naver_shopping   rating <TAB> text              rating 1-5: <=2 -> 0, >=4 -> 1, 3 DROPPED
+      steam            label <TAB> text               2 cols, label in {0,1}
+
+    The 3-star rows are dropped, not folded into either class — that is what the corpus builder
+    does, and a probe fed a different label set than the model was trained on is not measuring the
+    model."""
+    rows = []
+    for p in paths:
+        with open(p, encoding="utf-8", errors="replace") as f:
+            for ln in f:
+                pp = ln.rstrip("\n").split("\t")
+                if len(pp) == 3 and pp[2] in ("0", "1"):          # NSMC
+                    rows.append((pp[1], int(pp[2])))
+                elif len(pp) == 2 and pp[0].isdigit():            # label/rating first
+                    v, txt = int(pp[0]), pp[1]
+                    if v in (0, 1):                               # steam
+                        rows.append((txt, v))
+                    elif v <= 2:                                  # naver_shopping rating
+                        rows.append((txt, 0))
+                    elif v >= 4:
+                        rows.append((txt, 1))
+                    # rating 3 -> dropped, deliberately
+    return rows
+
+
+def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_tol, seed):
+    """Return (manifest, stats) for the AUDIT-A valence manifest (`anima-py evaluate --valence-audit`).
+
+    The question: is a held-out atom's polarity in the WEIGHTS at all, read at the atom's own
+    position inside its REAL corpus sentences? The trap: a sentiment review is full of sentiment
+    words, so a probe that reads the NEIGHBOURHOOD rather than the atom scores just as well and we
+    would fire GPU rent on an illusion. So the control IS the measurement — every context appears
+    twice:
+
+        arm "atom"  ...배송도 빠르고 가성비는 <ATOM>       the real atom
+        arm "swap"  ...배송도 빠르고 가성비는 <NEUTRAL>    a length-matched neutral, SAME context
+
+    and the verdict is Delta = probe(atom) - probe(swap) against a permutation null, never a raw
+    value (FORM tunable, BIND earned). Measured: on the base_only ckpt the SWAP arm out-reads the
+    atom arm (0.692 vs 0.615) — the probe was reading the neighbourhood, exactly as feared.
+
+    k_ctx is the power knob and it is not free: the probe pools an atom's contexts, so per-atom
+    noise falls as 1/sqrt(k_ctx). The corpus holds a median of 717 usable contexts per atom (min
+    182), so the historical k_ctx=24 threw away ~197k of them and left the estimator too noisy to
+    separate a real Delta (+0.11/+0.13, both seeds) from its own permutation null (p95 +0.15).
+    Raising k_ctx sharpens the lens; it does NOT move any bar.
+
+    NEUTRAL atoms are mined from the corpus itself — frequent stems whose occurrences are
+    polarity-balanced (|p(pos) - 0.5| < neutral_tol), so they carry exposure but no valence — and
+    only from non-held-out stems, so nothing about the held-out split leaks.
+    """
+    import collections
+    rng = random.Random(seed)
+    atoms = [a for a in json.load(open(atoms_path))["atoms"] if a["split"] == "heldout"]
+    if not atoms:
+        raise ValueError(f"{atoms_path}: no held-out atoms")
+    held = {a["stem"] for a in atoms}
+
+    rows = _read_labelled(corpus_paths)
+    if not rows:
+        raise ValueError("no labelled rows read from --corpus")
+
+    tot, pos = collections.Counter(), collections.Counter()
+    for t, lab in rows:
+        for w in set(t.split()):
+            if 2 <= len(w) <= 6:
+                tot[w] += 1
+                pos[w] += int(lab == 1)
+    neutral = [w for w, n in tot.items()
+               if n >= min_occ and w not in held and not any(h in w for h in held)
+               and abs(pos[w] / n - 0.5) < neutral_tol]
+    if not neutral:
+        raise ValueError("no neutral inventory — loosen --neutral-tol or --min-occ")
+    by_len = collections.defaultdict(list)
+    for w in neutral:
+        by_len[len(w)].append(w)
+
+    items, thin = [], []
+    for a in atoms:
+        stem = a["stem"]
+        hits = [t for (t, _l) in rows if stem in t]
+        rng.shuffle(hits)
+        used = 0
+        for t in hits:
+            i = t.find(stem)
+            frag = t[:i][-ctx_bytes:]                       # the left context, atom excluded
+            if not frag.strip():
+                continue
+            cands = by_len.get(len(stem)) or by_len[min(by_len, key=lambda L: abs(L - len(stem)))]
+            swap = rng.choice(cands)
+            items.append({"id": f"A_{stem}_{used}", "prompt": frag + stem,
+                          "stem": stem, "pol": int(a["pol"]), "arm": "atom"})
+            items.append({"id": f"S_{stem}_{used}", "prompt": frag + swap,
+                          "stem": stem, "pol": int(a["pol"]), "arm": "swap"})
+            used += 1
+            if used >= k_ctx:
+                break
+        if used < k_ctx:
+            thin.append((stem, used))
+
+    stats = {"atoms": len(atoms), "k_ctx": k_ctx, "prompts": len(items),
+             "neutral_inventory": len(neutral), "thin_atoms": thin}
+    return {"win": 64, "items": items}, stats
+
+
 def _load_concepts(path):
     if not path:
         return DEFAULT_SEEDS, DEFAULT_KW
@@ -215,8 +343,27 @@ def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed):
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
+    if fmt == "valence":
+        if not opts["atoms"] or not opts["corpus"]:
+            print("usage: anima-py corpus valence --atoms gt_atoms.json --corpus FILE [--corpus F2] "
+                  "--out manifest.json [--k-ctx 24] [--ctx-bytes 64] [--min-occ 200] "
+                  "[--neutral-tol 0.05] [--seed 7]")
+            sys.exit(2)
+        man, st = build_valence(opts["atoms"], opts["corpus"], opts["k_ctx"], opts["ctx_bytes"],
+                                opts["min_occ"], opts["neutral_tol"], opts["seed"])
+        out = opts["out"] or "valence_manifest.json"
+        json.dump(man, open(out, "w"), ensure_ascii=False)
+        print("wrote %s — %d prompts (%d held-out atoms x %d contexts x 2 arms)"
+              % (out, st["prompts"], st["atoms"], st["k_ctx"]))
+        print("  neutral inventory: %d stems (occ>=%d, |p(pos)-0.5|<%.2f, non-held-out)"
+              % (st["neutral_inventory"], opts["min_occ"], opts["neutral_tol"]))
+        if st["thin_atoms"]:
+            print("  ⚠ %d atom(s) could not supply %d contexts (fewest: %s) — the pooled estimate "
+                  "is noisier for those" % (len(st["thin_atoms"]), st["k_ctx"],
+                                            min(st["thin_atoms"], key=lambda x: x[1])))
+        sys.exit(0)
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie> --out PATH")
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|valence> --out PATH")
         print("  derivtrace|flat        [--held-out I,J] [--comp-per-pair N] "
               "[--single-per-concept N] [--seed S] [--concepts FILE.json]")
         print("  ground|ground_lie      --atoms gt_atoms.json [--reps N] [--replay N] [--seed S]")
@@ -229,6 +376,15 @@ def main():
         print("      consumes AND composes the written polarity must score FAR BELOW chance on")
         print("      flip1 under ground_lie; one that ignores it sits at chance in both arms.")
         print("      Same --seed => content-matched line for line.")
+        print("  valence                --atoms gt_atoms.json --corpus FILE [--corpus F2 ...] "
+              "[--k-ctx 24] [--min-occ 200] [--neutral-tol 0.05] [--seed S]")
+        print("      AUDIT-A manifest for `anima-py evaluate --valence-audit`: is a held-out atom's")
+        print("      polarity in the WEIGHTS at all, read at the atom's own position in its REAL")
+        print("      corpus contexts? A sentiment review is full of sentiment words, so every")
+        print("      context is emitted TWICE — once with the real atom, once with a length-matched")
+        print("      NEUTRAL atom spliced into the same context — and the verdict is the DIFFERENCE.")
+        print("      --k-ctx is the power knob: the probe pools an atom's contexts, so per-atom")
+        print("      noise falls as 1/sqrt(k-ctx). The corpus holds ~717 contexts per atom (min 182).")
         sys.exit(2)
 
     if fmt in ("ground", "ground_lie"):
