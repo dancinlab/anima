@@ -2357,6 +2357,24 @@ def xbind_run(argv):
     consult_fmt = evaluate_strval(argv[1:], "--consult-format", "F1")
     store = json.load(open(consult_path)) if consult_path else {}
 
+    # A manifest bigger than --n-decode used to be sliced away in SILENCE (`spec[split][:n_dec]`), and
+    # the slice takes the FIRST n_dec rows in manifest order — so whole stems fall off the end while
+    # the run still prints as though it had covered the manifest. It bit the EN arm: a 240-row held-out
+    # manifest scored 200 rows (n=101 flip0 / 99 flip1) and the six stems ordered last vanished. Nothing
+    # in the output said so. A cap nobody reports reads as full coverage, which is the one thing a
+    # verdict may never get wrong — so it now REFUSES, and it refuses BEFORE loading 176MB of weights.
+    # The row count is a property of the manifest, and the manifest is pre-registered: raise --n-decode.
+    for _split in ("heldout", "seen"):
+        _have = len(spec.get(_split, []))
+        if _have > n_dec:
+            print("ERROR: --xbind manifest split '%s' has %d rows but --n-decode is %d."
+                  % (_split, _have, n_dec))
+            print("  Scoring would drop the LAST %d rows — whole stems, not a random sample — and"
+                  % (_have - n_dec))
+            print("  report the remainder as if it were the manifest.")
+            print("  Fix:  --n-decode %d" % _have)
+            return 1
+
     print("=== anima evaluate --xbind — held-out XBIND recombination (G1 reopen lane a) ===")
     print("ckpt: " + ckpt + "  arm=" + arm + "  gen=%d win=%d" % (gen, T))
     if store:
@@ -2369,7 +2387,7 @@ def xbind_run(argv):
 
     res = {"ckpt": ckpt, "arm": arm, "gen": gen, "win": T, "splits": {}}
     for split in ("heldout", "seen"):
-        items = spec[split][:n_dec]
+        items = spec[split]
         t_split = time.time()
         rows = []
         d_hits = c_hits = c_n = 0
