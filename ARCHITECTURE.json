@@ -16550,6 +16550,13 @@
         "value": "**PEP 668 이 `pip install --user` 를 조용히 거부한다 — 그리고 나는 그 실패를 '설치했다'로 읽었다.** 2026-07-15: summer 에 새 wheel(anima-python 0.13.24 · `corpus bindlocus` 포함)을 `python3 -m pip install -q --user --force-reinstall --no-deps <whl>` 로 여러 번 깔았는데 **버전이 계속 0.13.22 였다**. `-q` 로 출력을 죽여놨기 때문에 나는 실패를 못 봤고, 대신 '왜 새 플래그가 안 먹지'를 엉뚱한 곳(dispatch·PATH·shadow install)에서 찾느라 **세션 시간을 크게 낭비했다**. 출력을 살려보니 **`error: externally-managed-environment` (PEP 668)** — 배포판 python 은 `pip install` 을 기본 거부하고 `--break-system-packages` 를 요구한다. 같은 함정을 **mini 에서도** 이미 한 번 맞았다(그때는 venv 로 우회했으므로 '해결'로 착각하고 학습을 안 남겼다).",
         "recurrence": "pool/pod 호스트에 새 wheel 을 `pip install -q --user` 로 깔고 성공했다고 가정 → 새 CLI 플래그가 'unknown flag' 로 죽음 → 원인을 dispatch/PATH/shadow-install 에서 찾으며 헤맴. `-q` 가 에러를 삼키기 때문에 **실패가 성공처럼 보인다**.",
         "fix": "① **설치 커맨드에 `-q` 를 쓰지 마라** — 최소한 `| tail -2` 로 결과를 **눈으로** 보라. ② 배포판 python(우분투/데비안 계열)에는 **`--break-system-packages`** 를 붙여라(또는 venv). ③ **설치는 주장이 아니라 게이트다** — 깐 직후 `python3 -c \"import importlib.metadata as m; assert m.version('anima-python')=='<기대버전>'\"` + **새 심볼 존재 확인**(`grep -c <새플래그> <site-packages>/…/cli/corpus.py`)을 **hard-gate 로** 걸고, 통과 못 하면 발사하지 마라. 이 세션의 pod 부트스트랩은 이미 그 게이트를 갖고 있었고(그래서 pod 는 무사했다), **summer 만 게이트 없이 깔았다가 당했다** — 게이트는 모든 호스트에 똑같이 걸어야 한다."
+      },
+      {
+        "id": "chat-py-6",
+        "state": "pos-conv",
+        "value": "**공유 pool 호스트의 site-packages 를 직접 덮어써서 측정 엔진을 배포하면, 병렬 세션의 pip install 이 그것을 조용히 되돌리고 수집이 도중에 오염된다.** 실측(2026-07-15 · H_9337): summer 에 수정된 chat.py/evaluate.py 를 scp 로 배포하고 sha 까지 검증한 뒤 24-rollout 수집을 시작했는데, **03:29 에 병렬 세션이 anima-python 0.13.24 를 pip 설치**해 site-packages 를 통째로 갈아버렸다(H_9337 배선 5곳 → **0곳** · MEDIATION 배선 → 0). 그 뒤 시작된 워커는 **옛(깨진) 데몬**으로 돌았고, trace r9 는 recon_err/rel_lane 고유값 **1**(수정 전 항등식-0 그대로) — 나머지 r1~r8 은 고유값 28 로 멀쩡했다. **배포 시점의 sha 검증은 이 사고를 못 막는다** — 검증은 통과하고 그 **뒤에** 덮어써지기 때문이다. 판별은 **trace 자체**로만 가능했다(게이지가 변하는가). 사고를 늦게 알았으면 24개 중 절반이 두 데몬의 혼합이 된 채 verdict 로 갔을 것이다.",
+        "threshold": "재발조건: 공유 pool 호스트(summer·aiden)에 측정 엔진을 배포하고 장시간 수집/평가를 돌릴 때. 해결: ① **격리 venv 를 써라** — 'git archive origin/main | ssh host tar -x' → 'python3 -m venv ~/.venv-<H>' → '~/.venv-<H>/bin/pip install .' → 러너가 '~/.venv-<H>/bin/anima-py' 를 부르게. 공유 site-packages 는 병렬 세션의 것이지 내 것이 아니다. ② **수집물마다 계기가 살아있었는지 사후 검증하라** — 배포 sha 가 아니라 **trace 안의 값**으로(예: 고친 게이지의 고유값 > 1). ③ 오염분은 폐기하고 재수집(혼합 데이터로 verdict 금지 · verdict-integrity).",
+        "source": "cli/chat.py"
       }
     ]
   }
