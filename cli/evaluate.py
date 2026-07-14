@@ -757,10 +757,14 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
-    print("      [--consult <store.json>] [--consult-format F1|F2|F3]  — H_9309 DECON: render a")
-    print("      declarative fact into the 2AFC scoring context (same prefix on gold AND")
-    print("      counterfactual, so it moves the margin only by being COMPOSED, never parroted).")
-    print("      An empty store is byte-identical to a plain --xbind run.")
+    print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
+    print("      fact into the 2AFC scoring context (same prefix on gold AND counterfactual, so it")
+    print("      moves the margin only by being COMPOSED, never parroted). An empty store is")
+    print("      byte-identical to a plain --xbind run.")
+    print("      DEMO (H_9311) = a one-shot demo in the model's OWN training template,")
+    print("      '이 영화 <stem>고 => <긍정|부정>.\\n' — the only format with measured support.")
+    print("      F1/F2/F3 = label-only prefixes, kept only to reproduce H_9309 (measured to carry")
+    print("      ZERO information: they perturbed the margin by 59-74% in a random direction).")
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
@@ -1333,14 +1337,33 @@ def _json_safe(o):
 
 
 def _consult_render(fact, fmt):
-    """Render one store fact as a context prefix (H_9309 DECON · pre-registered formats).
-    F1 stem-labelled · F2 label-only (shortest — the byte-audit fallback) · F3 lexical-split.
+    """Render one store fact as a context prefix.
+
     The SAME prefix goes in front of BOTH gold and counterfactual, so the paired NLL difference
     cancels it — the prefix cannot move the margin by itself, only by being COMPOSED with the
-    negation morpheme (which is the whole point: flip1 is scored, where the injected polarity
-    pushes toward the WRONG answer unless the model actually composes)."""
+    negation morpheme. That is the whole point: flip1 is what gets scored, and there the injected
+    polarity points at the WRONG answer, so parroting the prefix LOSES.
+
+    DEMO (H_9311, the only format with measured support) renders the fact as a one-shot
+    demonstration in the model's OWN training template — `이 영화 <stem>고 => <긍정|부정>.\\n`.
+    H_9309 established why nothing else works: the label-only prefixes (F1/F2/F3) perturbed the
+    trunk hard (|Δ| = 59-74% of the base margin, 0/174 trials unmoved) yet carried zero
+    information (flip0 and flip1 both pushed the WRONG way). We were speaking a language the
+    byte-LM was never taught. Three facts, all read off disk rather than assumed
+    (state/h9311_decon2/prefreeze_audit.py):
+      · the training corpus separates instances with a single b"\\n" (960/960, unanimous),
+      · training ran at seq_len=1024 over instances of median 41B, so ~24 consecutive instances
+        shared every window — `instance \\n instance` is not merely in-distribution, it is what
+        the model saw at every step,
+      · at eval the left context is a run of pad spaces (core/decode.py:955), which training
+        never produced — so the DEMO prefix moves the prompt TOWARD the training distribution,
+        not away from it.
+    F1/F2/F3 are kept only to reproduce H_9309 verbatim; they are not live formats.
+    """
     pol_word = "긍정" if int(fact["pol"]) == 1 else "부정"
     lex_word = "좋음" if int(fact["pol"]) == 1 else "나쁨"
+    if fmt == "DEMO":
+        return "이 영화 " + fact["key"] + "고 => " + pol_word + ".\n"
     if fmt == "F2":
         return pol_word + ". "
     if fmt == "F3":
@@ -1363,7 +1386,14 @@ def _consult_seed(seed, item, store, fmt, win, gold, cf):
     pref = _consult_render(fact, fmt)
     if len(pref.encode()) <= budget:
         return pref + seed, fmt
-    pref2 = _consult_render(fact, "F2")                  # deterministic downgrade
+    if fmt == "DEMO":
+        # No fallback. Downgrading a DEMO trial to a label-only prefix would silently mix two
+        # formats in one run — and one of them (F2) is the format H_9309 measured as carrying
+        # zero information. A mixed instrument cannot be read, so an overflowing trial is
+        # DROPPED and the byte-audit turns the whole run INVALID-INSTRUMENT. Widen the window
+        # instead; training ran at seq_len=1024, so there is room.
+        return seed, "DROPPED-overflow"
+    pref2 = _consult_render(fact, "F2")                  # deterministic downgrade (F1/F3 only)
     if len(pref2.encode()) <= budget:
         return pref2 + seed, "F2-downgrade"
     return seed, "DROPPED-overflow"                     # audited, never silent
