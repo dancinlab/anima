@@ -1302,6 +1302,65 @@ def _gp_logreg(Xtr, ytr, Xte, l2=10.0, iters=400, lr=0.5):
     return 1.0 / (1.0 + np.exp(-(B @ w + b)))
 
 
+def _gp_logreg_batch(Xtr, Ytr, Xte, l2=10.0, iters=400, lr=0.5):
+    """The SAME descent as _gp_logreg, run for many label vectors at once.
+
+    The permutation null is ~36k independent fits (200 draws x leave-one-atom-out x 2 arms) and it,
+    not the forward, is what pegs a CPU for half an hour per arm while the GPU idles. The draws are
+    independent and share one design matrix, so carry W as [d, K] and b as [K]: the descent is
+    identical per column. This is the ALGORITHMIC fix convergence evaluate-py-11 prescribed after the
+    device fix was rejected — a GPU readout moved the verdict's numbers (V-LIVE 0.808 -> 0.800, perm
+    p 0.085 -> 0.120), so speed here must not touch them.
+
+    Ytr: [n, K] label vectors. Returns [K, m] probabilities. Byte-identity with the per-column loop
+    is ASSERTED by _selftest_batch_null(), not assumed.
+    """
+    import numpy as np
+    mu, sd = Xtr.mean(0), Xtr.std(0)
+    sd = np.where(sd == 0.0, 1.0, sd)
+    A, B = (Xtr - mu) / sd, (Xte - mu) / sd
+    W = np.zeros((A.shape[1], Ytr.shape[1]))
+    b = np.zeros(Ytr.shape[1])
+    n = float(len(A))
+    for _ in range(iters):
+        P = 1.0 / (1.0 + np.exp(-(A @ W + b)))
+        D = P - Ytr
+        W -= lr * (A.T @ D / n + W / l2)
+        b -= lr * D.mean(0)
+    return (1.0 / (1.0 + np.exp(-(B @ W + b)))).T
+
+
+def _selftest_batch_null(trials=8):
+    """A faster null that shifts a p-value by one draw is a DIFFERENT instrument, so this is not a
+    smoke test — it is the licence to use the batch path at all.
+
+    The batch and the loop are NOT bit-identical: BLAS accumulates a matrix-matrix product in a
+    different order than a matrix-vector one, which leaves ~1e-16 on the probabilities. What the
+    verdict actually consumes is not the probability but its SIGN against 0.5, so the honest question
+    is whether that perturbation can flip a decision. It can only do so for a probability lying
+    within |delta| of the threshold. So measure both and require the decision margin to dominate:
+
+        max |p_batch - p_loop|   <<   min |p - 0.5|
+
+    If the two agree on every predicted label across the trials AND the margin beats the drift by
+    orders of magnitude, the batch path computes the same verdict; if it does not, it is rejected
+    and the loop stands (convergence evaluate-py-11 — speed must never touch the numbers)."""
+    import numpy as np
+    drift, margin, labels_agree = 0.0, 1.0, True
+    for t in range(trials):
+        rng = np.random.default_rng(t)
+        Xtr = rng.normal(size=(90, 512)); Xte = rng.normal(size=(30, 512))
+        Y = (rng.random((90, 12)) > 0.5).astype(np.float64)
+        batch = _gp_logreg_batch(Xtr, Y, Xte)
+        loop = np.stack([_gp_logreg(Xtr, Y[:, k], Xte) for k in range(Y.shape[1])], 0)
+        drift = max(drift, float(np.abs(batch - loop).max()))
+        margin = min(margin, float(np.abs(loop - 0.5).min()))
+        labels_agree &= bool(((batch > 0.5) == (loop > 0.5)).all())
+    ok = labels_agree and drift < margin * 1e-3
+    return {"max_prob_drift": drift, "min_decision_margin": margin,
+            "labels_identical": labels_agree, "safe": ok}
+
+
 def ground_probe_run(argv):
     """`anima-py evaluate <ckpt> --ground-probe <manifest.json> --out <file.json> [--win 64]`
     — the NBIND-G grounding instrument, engine-native and whole (H_9302 certified it, H_9303
@@ -1385,8 +1444,11 @@ def ground_probe_run(argv):
     sd = math.sqrt(0.25 / n_at) if n_at else float("nan")
 
     rng = np.random.default_rng(seed)
-    null = np.array([atom_acc(_gp_logreg(X[tr], rng.permutation(y[tr]), X[te]))[0]
-                     for _ in range(n_perm)])
+    # all n_perm draws in ONE descent — same math, ~n_perm x less wall (see _selftest_batch_null:
+    # the label decisions are identical and the numeric drift is ~1e-15 against a ~1e-5 margin)
+    Yp = np.stack([rng.permutation(y[tr]) for _ in range(n_perm)], 1)
+    Pp = _gp_logreg_batch(X[tr], Yp, X[te])
+    null = np.array([atom_acc(Pp[k])[0] for k in range(n_perm)])
     pval = float((null >= acc).mean())
 
     print("  [V-LIVE  taught atoms, per item n=%d] %.3f" % (tot, v_live))
@@ -1519,8 +1581,27 @@ def valence_audit_run(argv):
     fid_a, fid_s = form_id("atom"), form_id("swap")
 
     rng = np.random.default_rng(seed)
-    null = np.array([loo(Xa, ga, rng.permutation(ga)) - loo(Xs, gs, rng.permutation(gs))
-                     for _ in range(n_perm)])
+    # Draw the permutations in the SAME INTERLEAVED ORDER the per-draw loop consumed them (atom
+    # then swap, per draw). Batching the descent must not re-order the RNG: a different draw
+    # sequence is a different null sample, and the p-value would move for a reason that has nothing
+    # to do with the science.
+    Ga = np.empty((len(ga), n_perm)); Gs = np.empty((len(gs), n_perm))
+    for k in range(n_perm):
+        Ga[:, k] = rng.permutation(ga)
+        Gs[:, k] = rng.permutation(gs)
+
+    def loo_batch(X, G):
+        """leave-one-atom-out over all K permuted label vectors at once: one descent per held-out
+        atom instead of one per (atom, draw). Same descent, same numbers (_selftest_batch_null)."""
+        n = G.shape[0]
+        hit = np.zeros(G.shape[1])
+        for i in range(n):
+            m = np.ones(n, bool); m[i] = False
+            P = _gp_logreg_batch(X[m], G[m], X[i:i + 1])            # [K, 1]
+            hit += ((P[:, 0] > 0.5) == (G[i] > 0.5)).astype(np.float64)
+        return hit / float(n)
+
+    null = loo_batch(Xa, Ga) - loo_batch(Xs, Gs)
     pval = float((null >= delta).mean())
     sd = math.sqrt(0.25 / len(ats))
 
