@@ -1,6 +1,7 @@
 # H_9303 — 🧱 GROUNDING WALL, **처음으로 벌어낸** (인증된 계기 · 정직한 검정력)
 
-- **tier**: 🧱 **EARNED**  (py 2-production engine-native · aiden pool · TERMINAL-eligible)
+- **tier**: 🧱 **EARNED · ENGINE-NATIVE TERMINAL**
+- **판정 경로**: `anima-py evaluate <clm> --ground-probe ground_manifest.json` (VERSION 0.13.16) — forward·readout·양성대조·귀무분포가 **전부 엔진 안**. sklearn 없음, state/ 애드혹 스크립트 없음 (오너 지시 "모든 실험은 엔진-네이티브" · `a_engine_native_learning`·`a_eval_py_canonical`·`a_verified_must_wire` 충족)
 - **한 줄**: 배운 원자를 **0.84**로 읽는 바로 그 계기가, 한 번도 안 가르친 원자는 **0.56**(우연)으로 읽는다 ⇒ **자연 분포는 held-out 원자의 극성을 가중치에 접지시키지 못했다.**
 - **파급**: 프런티어의 다음 수 **O/C 채널 GPU 발사(\$21)가 비로소 정당화됨** — 오늘 아침까지의 근거("벽 = 추출 채널")는 폐기됐지만, 그 자리에 **진짜 벽**이 들어섰다.
 - **artifacts**: `state/nbindg_grounding/{build91c.py, fix2.py, probe91b_verdict.json, run91b.log}` · frozen stdout `state/verdicts/h9303_grounding/`
@@ -48,3 +49,24 @@ n = 91 held-out 원자 (원자 단위 채점 · 어형 flip 을 되돌려 극성
 **O/C 채널** (확정-금지 abstention objective · 오류-표적 교정 폐루프) — 이제 이 벽 위에 서 있으므로
 발사가 정당하다. 사전등록 시 이 카드의 계기를 그대로 상속한다: **답하는 자리 · 배운 담체 · V-LIVE 게이트 ·
 원자 단위 검정력 · flip 되돌린 집계**.
+
+
+## 엔진-네이티브 확정 측정 (판정의 SSOT)
+
+```
+anima-py evaluate <clm> --ground-probe ground_manifest.json --win 64 --perm 200
+```
+
+| arm | V-LIVE (배운 원자 · 항목 n=120) | held-out (원자 n=91) | 순열 p |
+|---|---|---|---|
+| `main_s7` | **0.808** | 0.571 (+1.36σ) | 0.085 |
+| `main_s11` | **0.683** | 0.593 (+1.78σ) | 0.050 |
+| `base_only` (통제) | 0.458 | 0.495 (−0.10σ) | 0.735 |
+| `shuffle_grid` (통제) | 0.367 | 0.538 (+0.73σ) | 0.230 |
+
+- **V-LIVE PASS** — 실험군 0.68~0.81 vs 통제군 0.37~0.46.
+- **held-out**: bar 0.65(2.86σ) 미달 · 순열 귀무분포 미돌파. `main_s11` 의 **p=0.050 은 `p<0.05` 를
+  만족하지 않으므로** 🟡 PARTIAL 조건에도 미달 — **기준을 숫자에 맞춰 고치지 않았다**.
+- 엔진의 numpy L2-logreg 는 애드혹 sklearn readout 과 미세하게 다르다(`main_s7` 은 소수점까지 재현
+  0.808/0.571 · `main_s11` 은 V-LIVE 0.867→0.683 · held-out 0.560→0.593 — solver·L2 스케일 차이).
+  **두 판독 모두 판정은 동일**: 계기는 살아있고 held-out 은 bar 아래 · 순열 안.
