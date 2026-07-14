@@ -1404,14 +1404,23 @@ def device_parity_run(argv):
         return 2
     dev_h = np.stack([np.asarray(clm.clm_forward_hidden(W, clm._seed_to_tok(p, T), T))
                       for p in prompts], 0)
-    saved = clm._CUDA_AVAILABLE
-    clm._CUDA_AVAILABLE = False                      # force the numpy path in this same process
-    try:
-        W2 = clm.clm_load_weights(ckpt)              # reload: the weights must be host-resident
-        cpu_h = np.stack([np.asarray(clm.clm_forward_hidden(W2, clm._seed_to_tok(p, T), T))
-                          for p in prompts], 0)
-    finally:
-        clm._CUDA_AVAILABLE = saved
+
+    # The host copy must be built EXPLICITLY. Flipping cuda_available() and re-loading does NOT
+    # work: clm_load_weights serves from _WLOAD_CACHE (decode.py: `if _k in _WLOAD_CACHE: return`),
+    # so the second load hands back the SAME already-uploaded cupy arrays and the check compares
+    # the GPU against itself — it reported a triumphant 0.000e+00 while the true answer was
+    # 2.487e-14. A guard that returns a false PASS is worse than no guard: mirror every tensor back
+    # to host instead, so the CPU pass is provably on numpy.
+    Wc = {k: clm.to_host(v) if hasattr(v, "device") else v for k, v in W.items()}
+    Wc = {k: ([clm.to_host(x) if hasattr(x, "device") else x for x in v] if isinstance(v, list)
+              else v) for k, v in Wc.items()}
+    host_mods = {type(v).__module__ for v in Wc.values() if hasattr(v, "dtype")}
+    if any(m.startswith("cupy") for m in host_mods):
+        print("ERROR: could not build a host-resident copy of the weights — the comparison would "
+              "be GPU-vs-GPU and its result meaningless.", file=sys.stderr)
+        return 2
+    cpu_h = np.stack([np.asarray(clm.clm_forward_hidden(Wc, clm._seed_to_tok(p, T), T))
+                      for p in prompts], 0)
     mx = float(np.abs(dev_h - cpu_h).max())
     print("  device : %s · cupy %s" % (st.get("device_name"), st.get("cupy")))
     print("  max|GPU hidden - CPU hidden| = %.3e" % mx)
