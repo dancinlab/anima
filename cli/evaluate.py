@@ -779,7 +779,7 @@ def evaluate_usage():
     print("       PC POWER CONTROL: urgency (ten_phasic, the one proven emit channel, H_9101) through the")
     print("       identical pipe. If even urgency->Y is dead, the instrument cannot see ANY gate input —")
     print("       NOT-POWERED, and no wall may be declared. M3: I(A;Y|S,R,L) ~ 0 = mediation exhausted.")
-    print("       COMPOSITION (H_9339): builds the composed channel p(Y|A,S) = sum_R p(Y|R,S) p(R|A,S) out")
+    print("       COMPOSITION (H_9340): builds the composed channel p(Y|A,S) = sum_R p(Y|R,S) p(R|A,S) out")
     print("       of the two measured links and asks whether the observed end-to-end MI is what that chain")
     print("       predicts (Delta = I_obs - I_comp, rollout bootstrap CI). Two versions: R 2-bin, and R as")
     print("       the raw continuous recon_err (logistic + plug-in MC — DROPS the binning rather than")
@@ -3077,7 +3077,7 @@ def _interact_mi(argv):
             print("        여기서 🧱 를 선언하면 그건 기질이 아니라 내 측정에 관한 문장이다.")
         else:
             print("     ⇒ ✅ 계기는 게이트 입력을 볼 수 있다 — R→Y 가 죽으면 그건 **선택적** 실명이다.")
-        # ── PC-SCOPE · urgency 가 죽은 것은 계기 탓인가, urgency 의 성질인가 (H_9339) ────
+        # ── PC-SCOPE · urgency 가 죽은 것은 계기 탓인가, urgency 의 성질인가 (H_9340) ────
         #
         # The PC bar says "urgency->Y dead => the instrument is blind => no wall may be
         # declared". That inference has a premise, and the premise is CHECKABLE IN THE SAME
@@ -3209,7 +3209,7 @@ def _interact_mi(argv):
         else:
             print("     ⇒ 두 축이 상당히 겹친다 — 헤드라인 축 선택은 방어된다.")
 
-    # ── COMPOSITION · 사슬이 안 이어붙는가, 아니면 그냥 좁은가 (H_9339 · 사전등록) ──────
+    # ── COMPOSITION · 사슬이 안 이어붙는가, 아니면 그냥 좁은가 (H_9340 · 사전등록) ──────
     #
     # H_9337 read M1 (A->R) LIVE, M2 (R->Y) LIVE, and A->Y below MDE, and I called that a
     # COMPOSITION FAILURE — "the component the mouth pushes is not the component the gate
@@ -3231,7 +3231,7 @@ def _interact_mi(argv):
     # estimate). Note the continuous version DROPS the binning rather than refining it, so it
     # carries none of the stratum-explosion bias that forced M3 onto a permutation null.
     lan_c = [nxt_lane[(r["_src"], int(r["tick"]))].get("rel_lane") for r in use]
-    print("  ── COMPOSITION (H_9339 · 사슬이 안 이어붙는가 vs 그냥 좁은가) ────")
+    print("  ── COMPOSITION (H_9340 · 사슬이 안 이어붙는가 vs 그냥 좁은가) ────")
 
     def _comp_mi(pY_given_R, R_of_i):
         """I_comp(A;Y|S) for the composed channel p(Y|A,S) = E_{R|A,S}[ p(Y|R,S) ]."""
