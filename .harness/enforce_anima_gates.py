@@ -46,6 +46,24 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 HYP = REPO / "HYPOTHESES" / "HYPOTHESES.jsonl"
+CARDS = REPO / "HYPOTHESES" / "cards"
+CARD_ID = re.compile(r"^(H_\d+)_")
+
+# G6 — unique-H_id invariant (a_hypothesis_register): one H id == one card == one jsonl row.
+# Parallel sessions each compute "the next free H number" off their own origin/main snapshot,
+# so the same id looks FREE to all of them and lands twice (convergence hypotheses-jsonl-3).
+# Worse: a session then updates "its" row BY ID and silently overwrites ANOTHER session's
+# verdict (2026-07-14: three sessions held H_9313; #3463 overwrote the real_dissociation row
+# with a MITOSIS payload — the row survived looking healthy while a verdict evaporated).
+# This gate makes a NEW collision a hard merge-block. The 35 pre-existing collisions are
+# FROZEN as an explicit debt baseline below: they are listed, never silently tolerated, and the
+# gate fails the moment the set GROWS. Shrinking it (renumbering a legacy pair) is always allowed.
+LEGACY_DUP_IDS = frozenset({
+    "H_182", "H_183", "H_184", "H_185", "H_186", "H_187", "H_188", "H_189", "H_190", "H_191",
+    "H_679", "H_680", "H_6026", "H_6027", "H_6028", "H_6036", "H_6104", "H_6105", "H_6106",
+    "H_6109", "H_6110", "H_6111", "H_9023", "H_9024", "H_9025", "H_9026", "H_9027", "H_9103",
+    "H_9112", "H_9200", "H_9301", "H_9303", "H_9305", "H_9309", "H_9312",
+})
 
 # topics where the engine-native verdict gate bites (CLAUDE.md hard-gate #1)
 GATE_TOPIC = re.compile(
@@ -242,6 +260,33 @@ def g2_violations():
     return bad
 
 
+def g6_violations(rows):
+    """One H id == one card == one jsonl row. New collisions block; the legacy set may only shrink."""
+    viols = []
+
+    # (a) duplicate rows in the jsonl
+    seen = {}
+    for r in rows:
+        hid = r.get("id")
+        if hid:
+            seen[hid] = seen.get(hid, 0) + 1
+    for hid, n in sorted(seen.items()):
+        if n > 1:
+            viols.append((hid, f"jsonl 행 {n}개 (id 는 고유해야 한다)"))
+
+    # (b) two cards claiming one id — the shape that let a verdict be overwritten
+    by_id = {}
+    if CARDS.is_dir():
+        for f in sorted(os.listdir(CARDS)):
+            m = CARD_ID.match(f)
+            if m:
+                by_id.setdefault(m.group(1), []).append(f)
+    for hid, files in sorted(by_id.items()):
+        if len(files) > 1 and hid not in LEGACY_DUP_IDS:
+            viols.append((hid, "카드 " + " · ".join(files)))
+    return viols
+
+
 # G3 — gate-card taxonomy invariant: PROVENANCE ⊥ capability PASS closure.
 # The 'G4 빵꾸' fix (검증방식 3-카드: CAPABILITY decode / SUBSTRATE read / PROVENANCE publish).
 # The decode-CAPABILITY PASS closure (a7b_pass = G0∧G1∧G2) MUST NEVER fold in the PROVENANCE
@@ -333,8 +378,9 @@ def main():
     g2 = g2_violations()  # always whole-repo; cheap structural invariant
     g3 = g3_violations()  # always whole-repo; gate-card taxonomy invariant (PROVENANCE ⊥ closure)
     g5 = g5_violations(all_mode)  # changed-scope only; VERSION lockstep vs anima-python wheel content
+    g6 = g6_violations(rows)  # always whole-repo; unique-H_id invariant (a_hypothesis_register)
 
-    if not g1 and not g2 and not g3 and not g5:
+    if not g1 and not g2 and not g3 and not g5 and not g6:
         print(f"✅ anima-gates: clean · scope={scope_label} · {len(rows)} hypotheses · gate-card invariant OK")
         return 0
 
@@ -371,6 +417,18 @@ def main():
             print(f"        · {f}")
         print("     → 루트 VERSION(+VERSIONS.md §0·hexa.toml, a1) patch bump 를 같은 변경분에 포함. "
               "PyPI same-VERSION skip-guard가 이 wheel 변경을 영구 스킵하지 않도록. (no bypass — c18)")
+    if g6:
+        print()
+        print("  [G6] unique-H_id (a_hypothesis_register) — "
+              "한 H id 는 카드 1개 · jsonl 행 1개여야 한다 (병렬 세션 id 경합):")
+        for hid, msg in g6:
+            print(f"        · {hid}: {msg}")
+        print("     → 발사 시점의 FREE ≠ 머지 시점의 FREE. pr-cycle 직전 origin/main 을 재-fetch 해 "
+              "내 id 가 아직 미점유인지 확인하고, 충돌하면 **나중 머지된 쪽**을 재번호하라 "
+              "(카드 파일명 + jsonl + ARCHITECTURE gate 노드 lockstep · 내용/수치 verbatim 보존).")
+        print("     ⚠️ id 로 행을 찾아 갱신하기 전에 그 행의 title/card 가 정말 내 가설인지 대조하라 — "
+              "id 일치만 믿고 덮어쓰면 남의 verdict 가 소리 없이 증발한다 "
+              "(2026-07-14 #3463 실측 · convergence hypotheses-jsonl-3). (no bypass — c18)")
     return 1
 
 
