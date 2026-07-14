@@ -272,6 +272,16 @@
       "detail": "H_9328 DO-MOUTH 는 입의 argmax 반올림을 걷어내 행동 채널을 열었다(H(A|S) 0→1.151 · REVEAL not OVERWRITE · 게이트는 바이트 그대로 · p5 DISJOINT 벽 grep 검사가능). 그러나 그 판독의 I(A;Y|S)=0 은 **use-claim 으로 ⛔ INVALID** — 세 피드백 뿌리(afield recon_err · immune rel_lane · kosmos 앵커)가 720 tick 내내 **전부 상수**였다. 셋 다 g_text 로 **쓰이는데** 조회는 전부 상수 키(session_seed)로 했다. **쓰기만 하고 읽지 않으면 루프가 아니다.** = THIRD identity-zero(V-CEILING 이 A·Y 두 주변축은 지켰지만 **매개 경로의 용량**은 아무도 안 지켰다).\n\nH_9336/H_9337 이 뿌리 ①②를 고쳤다(예측부호화 순서 = **저장 직전에 재고 다음 tick 에 읽는다**). 뿌리 ③(kosmos→decode 앵커)은 **영구 미수정** — 자기 발화를 다음 decode 문맥에 넣는 것은 p5 가 금지한 self-seed. p5 의 기준선은 정보량이 아니라 **목적지**다: 입(decode 문맥)으로 가면 seed, 장(field lane)으로 가면 state.\n\n■ H_9337 판독1 (n=23 rollout · 620 emit-tick · 303M · anima-py evaluate --interact-mi):\n  게이트 전부 통과 — V1 H(A|S)=1.141 · V2 H(Y|S)=0.489 · **V5 H(Y|S,safe)=0.464(GATE-CLOSED 아님)** · V3 H(R|S)=0.676(수정 전 상수) · **B1 H(R|A,S)=0.644(장부 아님)**.\n  **M1 A→R = +0.0202 (p=.005) 🔗 LIVE** — 말이 장을 민다.\n  **M2 R→Y = +0.0902 (p=.005) 🔗 LIVE** — 장이 게이트를 민다 ⇒ **게이트는 눈이 멀지 않았다**.\n  **헤드라인 A→Y = +0.0061 (p=.065 · MDE 0.010 미달)** — 끝에서 끝은 **안 닿는다**.\n\n🔑 **사슬이 고리마다 살아있는데 이어붙지 않는다** ⇒ **말이 미는 R 의 성분 ≠ 게이트가 읽는 R 의 성분**. 쌍별 MI 는 합성되지 않는다. **벽이 아니라 정렬(alignment) 문제다.** M2 가 LIVE 이므로 read-side THEATER 그림(H_9209·9225·9230, ΔEff 0/120)과 **여기서 갈라진다** — 게이트가 안 보는 게 아니라, 보는 것과 밀리는 것이 다른 축이다.\n\n판정 ⏳ **UNDER-POWERED** — 🟢 아님(EARNED < MDE) · **🧱 선언 금지**(사전등록 2개: PC urgency 양성대조 사망 · EARNED = MDE 의 0.6배 = 1.9σ). PC 사망의 warrant('계기가 어떤 게이트 입력도 못 본다')는 같은 런의 M2=+0.090 이 직접 반증했으나 **bar 는 bar 다**(사후 재해석 = tune-to-green) — PC 사망은 **urgency 자체의 실측**으로 재분류(H(U|S)=0.376 로 살아있으나 다음-tick score 를 안 민다 · H_9101 과 스코프가 다르다: emit shade vs next-tick score).\n\nNEXT ① 검정력 매수 = seed 24..72 추가 48 rollout(총 ~71 · 프로토콜 불변 · $0 pool) ⇒ MDE ~0.005 ⇒ TOST 결정적(발사됨). ② 합성 실패의 정체 = R 을 2-bin 이 아니라 다차원으로 열어 '말이 미는 성분' vs '게이트가 읽는 성분' 분해(새 카드).\n\n계기 = `anima-py evaluate --interact-mi` (V-CEILING 양채널 · V5 GATE-CLOSED · B1 BOOKKEEPING · PC 양성대조 · M1/M2 MEDIATION · M3 잔차 · AXIS). 계기 자신이 합성 5-arm 반증가능성 행렬로 인증됨(convergence evaluate-py-14).",
       "children": [
        {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-d7",
+        "type": "note",
+        "detail": "그러나 MEDIATION 이 H(R|S)=**0.0000** 을 잡았다 — 720 tick 전체에서 세 피드백 뿌리(afield·immune·kosmos)가 **전부 상수**: 셋 다 g_text 로 쓰이는데 조회는 **session_seed 상수 키**. ⇒ **세 번째 항등식-0**(주변축은"
+       },
+       {
+        "id": "brain-structure-engine-lanes-do-mouth-h9328-d8",
+        "type": "note",
+        "detail": "지켰으나 매개 경로 용량 미확인). '안 쓴다'가 아니라 **'경로가 없다'**. 수리=H_9336·H_9337(뿌리③ 은 p5 self-seed 금지)."
+       },
+       {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-d1",
         "type": "note",
         "name": "recon_err/cell_count[afield]) 정지 ⇒ score 고정 ⇒ emit=f(st…",
@@ -298,8 +308,15 @@
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-d5",
         "type": "note",
-        "name": "실측 (24 rollout · 303M · canonical anima-py) — 두 채널이 산 위에서 잰 0",
-        "detail": "V-CEILING 양쪽 통과: H(A|S)=1.1513 (H_9308 의 0 을 열었다) · H(Y|S)=0.4091 (floor 0.030). EARNED[tick]=+0.00088 nats < MDE 0.010 ⇒ TOST 등가 = DATA-ADDITIVE. 두 순열 단위 판정 일치(INVALID 가드 침묵). ⇒ '못 재서 0'(H_9308)이 아니라 **'재봤더니 0'**. 배선 완료: cli/chat.py --swap-text(#3542) · cli/evaluate.py --interact-mi + 결과채널 V-CEILING(#3560) + MEDIATION 패널. 증거 #3561."
+        "name": "AXIS — Fable 의 축-직교 비판 기각 (계기 #3575)",
+        "detail": "A=penult_fold8(pooled) H(A|S)=1.1513 vs A′=penult_fold8(byte_feat8) H(A′|S)=0.5966 (A′ = 루프가 물리적으로 나르는 8-스칼라 바이트-모양 축). I(A;A′|S)=0.0660 ≫ MDE 0.010 ⇒ 두 축이 상당히 겹친다 = 헤드라인 축 선택 방어됨. 직교였다면 모든 수치가 '루프가 안 나르는 축 위에서만' 벌어진 일이 됐을 것 — 그 가능성이 닫혔다.",
+        "children": [
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-d5-d1",
+          "type": "note",
+          "detail": "두 순열 단위 판정 일치(INVALID 가드 침묵). ⇒ '못 재서 0'(H_9308)이 아니라 **'재봤더니 0'**. 배선 완료: cli/chat.py --swap-text(#3542) ·  cli/evaluate.py --interact-mi + 결과채널 V-CEILING(#3560) + MEDIATION 패널. 증거 #3561."
+         }
+        ]
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-d6",
@@ -15080,13 +15097,225 @@
           "id": "gate-g1-recomb-enfirst-atomset",
           "type": "note",
           "name": "🧊 EN 원자셋 **동결**(H_9335) — held-out 40 (긍 20 : 부 20) · 게이트 6/6 · 우연 sd 0.0791",
-          "detail": "**모델 성적을 보기 전에 PR 로 박았다** — 원자셋은 레인 **전체의 하중을 받는 입력**이고, 성적을 본 뒤 바뀔 수 있으면 **그건 이미 사전등록이 아니다**. **절차(설계자가 어간을 고르지 않는다)**: 빈도 채굴(4,598 프레임 후보 → 1,400 · 3.4초) → **순위대로** 극성 1비트(모호하면 **폐기** · **179건 전부 사유 기록** ⟹ 불리한 어간을 조용히 버렸는지 **사후 감사 가능**) → 게이트 6개. **실측**: 채택 88(긍 58 : 부 30) → **원자셋 held-out 40(긍 20 : 부 20) · train 20(10:10)** · occ_min 164 · median 605 · **우연 sd 0.0791**(KO 는 n=29 에 0.093 으로 **TOST 불가**였다). **게이트가 실제로 문 것**: **G-SUBSTR 이 `dead ⊂ deadly` 를 잡았다**(내가 못 본 것 · 규칙이 **기계적**=순위 낮은 쪽 폐기라 게이트 실패가 **선호 어간의 핑계가 못 된다**) · `positive`/`negative` 는 **라벨 낱말**이라 G-CARRIER 사유로 폐기 · **G-BALANCE 가 FineWeb 의 긍정 편향을 드러냈다**(상위 220 중 긍 34 : 부 9 ⟹ **1,400 까지 파야** 부정 30 이 찬다). **⚠️ tune-to-green 을 피한 지점**: `--min-occ 300` 으로 처음 돌리자 **11개 낙제**했고 **대부분 부정**(희소한 쪽)이었다 — **결과를 보고 하한을 낮추면 그게 tune-to-green** 이므로 **유도**했다: 요구 = EN C34 어간당 자연문 **48개**(KO 실측 48.8 미러) · 필터 손실 ~1/3 ⟹ **48 × 3 = 144 → 150**. **300 은 근거 없는 둥근 숫자였다.** 그리고 **진짜 게이트는 하류**다 — EN C34 표집기가 어간당 깨끗한 문장 48개를 **못 채우면 fail-loud**."
+          "detail": "**모델 성적을 보기 전에 PR 로 박았다** — 원자셋은 레인 **전체의 하중을 받는 입력**이고, 성적을 본 뒤 바뀔 수 있으면 **그건 이미 사전등록이 아니다**.",
+          "children": [
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d1",
+            "type": "note",
+            "detail": "**절차(설계자가 어간을 고르지 않는다)**: 빈도 채굴(4,598 프레임 후보 → 1,400 ·  3.4초) → **순위대로** 극성 1비트(모호하면 **폐기** · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d2",
+            "type": "note",
+            "detail": "**179건 전부 사유 기록** ⟹ 불리한 어간을 조용히 버렸는지 **사후 감사 가능**) → 게이트 6개. **실측**: 채택 88(긍 58 : 부 30) → **원자셋 held-out 40(긍 20 : 부 20) ·  train 20(10:10)** ·  occ_min 164 ·  median 605 · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d3",
+            "type": "note",
+            "detail": "**우연 sd 0.0791**(KO 는 n=29 에 0.093 으로 **TOST 불가**였다). **게이트가 실제로 문 것**: **G-SUBSTR 이 `dead ⊂ deadly` 를 잡았다**(내가 못 본 것 · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d4",
+            "type": "note",
+            "detail": "규칙이 **기계적**=순위 낮은 쪽 폐기라 게이트 실패가 **선호 어간의 핑계가 못 된다**) ·  `positive`/`negative` 는 **라벨 낱말**이라 G-CARRIER 사유로 폐기 · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d5",
+            "type": "note",
+            "detail": "**G-BALANCE 가 FineWeb 의 긍정 편향을 드러냈다**(상위 220 중 긍 34 : 부 9 ⟹ **1,400 까지 파야** 부정 30 이 찬다)."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d6",
+            "type": "note",
+            "detail": "**⚠️ tune-to-green 을 피한 지점**: `--min-occ 300` 으로 처음 돌리자 **11개 낙제**했고 **대부분 부정**(희소한 쪽)이었다 — **결과를 보고 하한을 낮추면 그게 tune-to-green** 이므로 **유도**했다: 요구 = EN C34"
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d7",
+            "type": "note",
+            "detail": "어간당 자연문 **48개**(KO 실측 48.8 미러) ·  필터 손실 ~1/3 ⟹ **48 × 3 = 144 → 150**."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-atomset-d8",
+            "type": "note",
+            "detail": "**300 은 근거 없는 둥근 숫자였다.** 그리고 **진짜 게이트는 하류**다 — EN C34 표집기가 어간당 깨끗한 문장 48개를 **못 채우면 fail-loud**."
+           }
+          ]
          },
          {
           "id": "gate-g1-recomb-enfirst-c34",
           "type": "note",
           "name": "🧬 EN C34 — KO C34 의 **구조적 쌍둥이** (모든 수치가 실측 미러 · 불변식 I1/I2/I3 self-check)",
-          "detail": "**지어낸 수치가 0개다** — KO C34 는 결정적이라 다시 셀 수 있고(H_9333), 그 인구조사를 그대로 미러했다: **화살표 960줄**(그중 **480 = 정확히 절반이 부정형** · **전부 SEEN 어간**) · **held-out 의 화살표 노출 = 0**(held-out 설계의 전부) · **held-out 자연 노출 = 어간당 48.8**(1,414회/29어간 · min 42 max 86) · 자연문 바이트 중앙값 42 · p90 197. **매개 공변량 = '극성 없이 이 어간을 얼마나 읽었나'** 이고 **개수로 정합**시켰다(`control-must-match-mediating-covariate` · 바이트로 맞추면 KO 가 3B/char 라 **문장 수가 조용히 달라진다`). **빌더가 자기 전제를 검사하고 위반 시 emit 을 거부한다** — I1(held-out 이 화살표에 없다) · I2(held-out 이 **부정 문맥**에 없다 · 연산자 표면 **AND** 파생 부정 un-/in-/im-/dis-/non-/-less — `불편하` 가 KO 모델에 **보여선 안 될 부정을 가르쳤다**는 H_9333 의 교훈) · I3(모든 어간이 자연 노출 하한을 넘는다 · 못 넘으면 **FAIL**). **🎯 I2 가 내가 예상 못 한 누수를 잡았다**: `friendly` 용으로 고른 문장이 **다른 held-out 어간을 부정형으로** 담고 있었다(`not effective`) — 어간별로만 검사했지 **문장 전체**를 검사하지 않았다. 고치지 않았으면 **flip1 의 답이 '합성' 이 아니라 '가르쳐진 것'** 이 됐을 것이다. 수정: 문장은 **모든** held-out 어간에 대해 부정-무관이어야 한다. **실측(2 seed · 독립 grep 재검증)**: seed 7 = 3,840 라인 / **418,796 B** (sha 316c433c) · seed 11 = **425,278 B** (sha 1e02ec9c) · 화살표 960(부정 480 = **50%**) · held-out 자연 노출 **48.0/어간**(min 48) · **I1=0 · I2=0 · I3 ✅** · 부정 문장 **62개 폐기**. **⚠️ 정직한 이탈 2건**: ① **바이트 2.6배**(EN 418KB vs KO 160KB) — EN 자연문이 길다(중앙값 **120B** vs KO **42B**) ⟹ 공변량은 **개수로 정합**했고 바이트는 **보고**만 한다(사전학습 예산은 step 으로 정한다) ② **표면 분포가 균일**(어간·형태당 8줄) — KO 는 비균일(168·156·79…)이었다 ⟹ EN 쪽이 더 단순. 둘 다 **이탈로 기록**한다."
+          "detail": "**지어낸 수치가 0개다** — KO C34 는 결정적이라 다시 셀 수 있고(H_9333), 그 인구조사를 그대로 미러했다: **화살표 960줄**(그중 **480 = 정확히 절반이 부정형** ·  **전부 SEEN 어간**) · ",
+          "children": [
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d1",
+            "type": "note",
+            "detail": "**held-out 의 화살표 노출 = 0**(held-out 설계의 전부) ·  **held-out 자연 노출 = 어간당 48.8**(1,414회/29어간 ·  min 42 max 86) ·  자연문 바이트 중앙값 42 ·  p90 197."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d2",
+            "type": "note",
+            "detail": "**매개 공변량 = '극성 없이 이 어간을 얼마나 읽었나'** 이고 **개수로 정합**시켰다(`control-must-match-mediating-covariate` ·  바이트로 맞추면 KO 가 3B/char 라 **문장 수가 조용히 달라진다`)."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d3",
+            "type": "note",
+            "detail": "**빌더가 자기 전제를 검사하고 위반 시 emit 을 거부한다** — I1(held-out 이 화살표에 없다) ·  I2(held-out 이 **부정 문맥**에 없다 · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d4",
+            "type": "note",
+            "detail": "연산자 표면 **AND** 파생 부정 un-/in-/im-/dis-/non-/-less — `불편하` 가 KO 모델에 **보여선 안 될 부정을 가르쳤다**는 H_9333 의 교훈) ·  I3(모든 어간이 자연 노출 하한을 넘는다 ·  못 넘으면 **FAIL**)."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d5",
+            "type": "note",
+            "detail": "**🎯 I2 가 내가 예상 못 한 누수를 잡았다**: `friendly` 용으로 고른 문장이 **다른 held-out 어간을 부정형으로** 담고 있었다(`not effective`) — 어간별로만 검사했지 **문장 전체**를 검사하지 않았다."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d6",
+            "type": "note",
+            "detail": "고치지 않았으면 **flip1 의 답이 '합성' 이 아니라 '가르쳐진 것'** 이 됐을 것이다. 수정: 문장은 **모든** held-out 어간에 대해 부정-무관이어야 한다. **실측(2 seed · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d7",
+            "type": "note",
+            "detail": "독립 grep 재검증)**: seed 7 = 3,840 라인 / **418,796 B** (sha 316c433c) ·  seed 11 = **425,278 B** (sha 1e02ec9c) ·  화살표 960(부정 480 = **50%**) ·  held-out 자연 노출 **48.0/어간**(min 48) ·  **I1=0 · "
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d8",
+            "type": "note",
+            "detail": "I2=0 ·  I3 ✅** ·  부정 문장 **62개 폐기**."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d9",
+            "type": "note",
+            "detail": "**⚠️ 정직한 이탈 2건**: ① **바이트 2.6배**(EN 418KB vs KO 160KB) — EN 자연문이 길다(중앙값 **120B** vs KO **42B**) ⟹ 공변량은 **개수로 정합**했고 바이트는 **보고**만 한다(사전학습 예산은 step 으로"
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-c34-d10",
+            "type": "note",
+            "detail": "정한다) ② **표면 분포가 균일**(어간·형태당 8줄) — KO 는 비균일(168·156·79…)이었다 ⟹ EN 쪽이 더 단순. 둘 다 **이탈로 기록**한다."
+           }
+          ]
+         },
+         {
+          "id": "gate-g1-recomb-enfirst-fire",
+          "type": "gate",
+          "name": "🔥 EN 팔 **발사** — 사전학습 2 seed 진행중 · 판정 분기표 **데이터 전 동결**",
+          "detail": "summer GPU · 2 seed × 20k step · $0. 판독기·매니페스트·bar 전부 **결과를 보기 전에** PR 로 박았다.",
+          "children": [
+           {
+            "id": "gate-g1-recomb-enfirst-fire-v1",
+            "type": "note",
+            "name": "게이트 V1 — 연산자가 **애초에 설치됐는가** (CPT 前 · H_9322 가 갖지 못했던 게이트)",
+            "detail": "갓 만든 EN base 의 **SEEN flip1**.",
+            "children": [
+             {
+              "id": "gate-g1-recomb-enfirst-fire-v1-d1",
+              "type": "note",
+              "detail": "KO base 는 연산자를 **0.8833** 으로 갖고 있었는데 **아무도 먼저 확인하지 않았고**, H_9322 는 **자기 CPT 가 연산자를 부순 모델에서 flip1 을 읽었다**(SEEN flip1 0.8833 → 0.4333 → 0.3333). ⟹ EN base 가 **자기가"
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-v1-d2",
+              "type": "note",
+              "detail": "학습한 바로 그 어간**에서 `not X` 를 못 돌리면 그 팔은 **INVALID**(음성이 **아니라** INVALID)이고 거기서 나온 CPT 수치는 **하나도 읽을 수 없다**. **bar 는 유도**(이식 아님 · "
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-v1-d3",
+              "type": "note",
+              "detail": "`bar-derived-not-transplanted`): flip1 **60행** ⟹ 우연 sd = 0.5/√60 = **0.065** ⟹ **0.75** 요구 = 우연보다 **3.9 sd** 위(동전이 넘을 확률 ~5e-5). **V2**(SEEN flip0 = 극성 설치 ·  같은 유도 · "
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-v1-d4",
+              "type": "note",
+              "detail": "bar 0.75)도 함께 — 둘 중 하나라도 낙제하면 **DV 를 읽지 않는다**."
+             }
+            ]
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-fire-dv",
+            "type": "note",
+            "name": "DV — held-out flip1: **연산자가 만난 적 없는 어간을 넘는가** (부호가 반대인 두 결과)",
+            "detail": "**R2(STEM-BOUND)** 는 KO 연산자가 여기서 실패한 이유가 **`지 않다` 가 어간에 붙어** `(어간, 연산자)` 가 **하나의 합동 키**가 되기 때문이라 말한다.",
+            "children": [
+             {
+              "id": "gate-g1-recomb-enfirst-fire-dv-d1",
+              "type": "note",
+              "detail": "영어 `not` 은 어간 **옆에 선다** — **C1b 가 완벽 일반화를 실측한 바로 그 슬롯 종류**다(그다지·결코 = 코퍼스 0회인데 Δ −0.90~−1.00 · "
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-dv-d2",
+              "type": "note",
+              "detail": "p=.000). ⟹ **🟢 EN flip1 ≫ 우연** 이면 **BINDING = 형태론의 사실이지 기질의 벽이 아니다** ⟹ 재조합 레인 **재개방**. ⟹ **🧱 EN flip1 ≈ 우연** 이면 **부정어가 붙지 않는 언어에서도** 연산자가 미학습"
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-dv-d3",
+              "type": "note",
+              "detail": "어간을 못 넘는다 ⟹ **anima 가 가진 가장 강한 기질 증거** — 이건 **어깨 으쓱이 아니라 벽에 대한 양성 결과**다."
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-dv-d4",
+              "type": "note",
+              "detail": "**어느 쪽이든 팔이 결정한다.** bar: held-out flip1 **120행** ⟹ 우연 sd = 0.5/√120 = **0.046** ⟹ 상회 기준 **0.60**(2.2 sd) · "
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-dv-d5",
+              "type": "note",
+              "detail": "음성은 **TOST 등가 마진 ±0.10** — **120행이면 실제로 지지된다**(KO 의 n=29 는 원리적으로 불가능했다 ·  H_9296)."
+             }
+            ]
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-fire-scope",
+            "type": "note",
+            "name": "⚠️ EN 양성은 **스크리너(DIRECTIONAL)** — 확정이 아니다",
+            "detail": "EN 은 **형태론 + 기반모델 + 담체를 한꺼번에** 바꾼다. 뚫리면 **레인이 재개방**되지만 **셋 중 무엇이 뚫었는지**는 **필수 후속**으로 분리해야 한다(`a_scale_honest_scope`). 반대로 **EN 도 같은 벽에 부딪히면** 그건 교란이 아니라 **가장 깨끗한 증거**다 — 벽이 **언어를 건넜다**는 뜻이므로."
+           },
+           {
+            "id": "gate-g1-recomb-enfirst-fire-cpt",
+            "type": "note",
+            "name": "📦 EN CPT 코퍼스 4개 대기 — 불변식 4/4 통과 · ⚠️ 예산 하한은 **KO 에서 이식된 것**이다",
+            "detail": "사전학습이 도는 동안 CPT 코퍼스를 미리 만들었다(base 가 나오는 즉시 발사 ·  $0). **불변식 검증(빌더 밖에서 독립 grep)**: `ground_keep` / `ground_keep_lie` × seed 7/11 = 9,600 라인 ·  373,320 B · ",
+            "children": [
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d1",
+              "type": "note",
+              "detail": "**held-out 이 부정형(`not X`)에 등장 = 0 어간 ✅**(판정의 전제) ·  **SEEN 이 부정형에 20/20 어간 ✅**(연산자 replay = `ground_keep` 의 존재 이유 — `ground` 는 연산자를 죽였다 ·  H_9327) · "
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d2",
+              "type": "note",
+              "detail": "held-out 이 평서형에 40/40 (WRITE 대상) ·  LIE 팔은 held-out 극성을 **4,800 라인 반전**(거짓 사실이 심겨야 통제군이 산다)."
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d3",
+              "type": "note",
+              "detail": "**⚠️ 정직 — 예산 하한이 이식됐다**: 코퍼스가 들고 나오는 `meta.json` 의 하한 **6000 step @ 2e-4** 는 **KO 코퍼스에서 벌어낸 값**(H_9324)이다."
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d4",
+              "type": "note",
+              "detail": "EN 에 그대로 쓰는 것은 **이식**이고 `bar-derived-not-transplanted` 가 금하는 바로 그 일이다."
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d5",
+              "type": "note",
+              "detail": "**다만 이 경우는 죄가 가볍다**: 하한은 **DV 가 아니라 전제**이고(WRITE = held-out flip0 이 실제로 통과하는지가 **그 자리에서 측정**된다), WRITE 가 낙제하면 **예산을 올리는 것이 tune-to-green 이 아니다** —"
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d6",
+              "type": "note",
+              "detail": "사실이 안 심긴 모델에서 합성을 묻는 것이 H_9322 가 죽은 방식이기 때문이다. ⟹ **EN WRITE 게이트가 실질적 하한 유도기**다."
+             },
+             {
+              "id": "gate-g1-recomb-enfirst-fire-cpt-d7",
+              "type": "note",
+              "detail": "이식된 6000@2e-4 는 **출발점**으로만 쓰고, WRITE 결과를 **그 자리에 기록**한다."
+             }
+            ]
+           }
+          ]
          }
         ]
        },
@@ -15143,6 +15372,56 @@
             "detail": "#3519)다. **크기를 재기 전에 철회하면 그게 바로 H_9331 에서 내가 한 실수(계수 없이 단정)의 재발**이다. **계기는 무죄** — C1b 의 측정 자체는 정상이었고 무효인 것은 **'0회' 라벨 하나**다. **NEXT($0)**: ① 코퍼스 본문에서 그다지·결코·하나도·그리 등장 횟수 계수 ② `불___` 라인 계수 → 결함의 크기 ③ 유의하면 동결 판정 영향 평가, 아니면 **결함은 실재하나 무해**로 기록."
            }
           ]
+         }
+        ]
+       },
+       {
+        "id": "gate-g1-c4-verdict",
+        "type": "gate",
+        "name": "C4 판정 🟢🟢 H-ε TERMINAL — G1 벽은 인터페이스, 고칠 수 있다 (H_9334)",
+        "detail": "C3 이 못 가른 갈림길에서 C4=(+) 분기 H-ε 확정. 사실을 연산자 자신의 지 않다 키로도 쓰니 서로소 표면(bare·별로)에서 신극성 12/12(양 seed·전 셀·p=.0002 · C3 은 0/12). 벽=저장소 도달불가(H-δ) 아니라 인터페이스 addressable·FIXABLE.",
+        "children": [
+         {
+          "id": "gate-g1-c4-dv",
+          "type": "gate",
+          "name": "DV — 전 셀 12/12 신극성 (양 seed)",
+          "detail": "s7·s11 각 negL 12/12·negZ 12/12 p=.0002. negJ 통제 6/12·8/12 우연. 유일 차이=연산자 키 write. 채점표면 서로소(담체 전혀/그다지/결코 ⊥ 채점 bare/별로)라 일반화지 암기 아님(leaks=0·byte-audit 60/60 #3555)."
+         },
+         {
+          "id": "gate-g1-c4-gates",
+          "type": "gate",
+          "name": "게이트 — G-liveDV 주게이트 통과",
+          "detail": "G-write 12/12(사실착륙)·G-liveDV 12/12 p=.0002(연산자 살아있고 일관 — 부서진 연산자는 일관 12/12 불가). G-forget untouched n=3 하락은 advisory(h-9296: 검정력 없는 게이트로 판정 안 죽임)."
+         },
+         {
+          "id": "gate-g1-c4-pkind",
+          "type": "gate",
+          "name": "P-kind 반증 (병렬 세션 bind-locus-1)",
+          "detail": "일관 12/12 신극성은 극성 feature 가 존재함을 증명(변수 없으면 서로소 표면 일관 불가·Fable 검증). (+) 분기 무교란. 잔여 {H-δ,S} 는 BIND-LOCUS 를 C4 ckpt(swap_c4_s{7,11}.clm) 위에서 돌려 인과분리."
+         },
+         {
+          "id": "gate-g1-c4-scope",
+          "type": "gate",
+          "name": "범위 — 어간 슬롯은 별개 축",
+          "detail": "swap 어간은 SEEN. C4 는 재쓴 SEEN 어간의 극성 VALUE 를 연산자가 읽는가(인터페이스)를 답함. held-out 미학습 어간에도 닿는가(H_9327 어간슬롯 벽)는 별개 축 미해결. NEXT=BIND-LOCUS 인과분리·held-out 일반화·wire-to-prod."
+         }
+        ]
+       },
+       {
+        "id": "gate-g1-h9339-heldout-prereg",
+        "type": "gate",
+        "name": "H_9339 사전등록 — held-out 어간 연산자-키 쓰기 (C4 인터페이스로 H_9327 벽 정면)",
+        "detail": "C4=H-ε 는 SEEN 어간 인터페이스 addressable 증명. held-out 미학습 어간 + 연산자키 조합 미측정(H_9327 held-out 음성은 선언형 키). HO-DECL(선언형·H_9324 예산) vs HO-CARRIER(연산자담체·C4 미러) 팔차분으로 키를 단일 변수 고정.",
+        "children": [
+         {
+          "id": "gate-g1-h9339-pred",
+          "type": "note",
+          "detail": "동결 예측(카운트): HO-CARRIER negL/negZ ≥10/12 양seed=🟢 H_9327 벽뚫림(고침=쓰기 프로토콜) · 3~9/12+G-WRITE 통과=🧱 인터페이스 UPDATE전용·엔트리생성 사전학습잠금(TOST Δ_eq 사전고정) · 둘다≥10=키 아닌 예산이 진범 · seed불일치/G-WRITE낙제=INVALID."
+         },
+         {
+          "id": "gate-g1-h9339-screener",
+          "type": "note",
+          "detail": "$0 스크리너(발사 전): G-LEAK+G-BASE-FIRST(base held-out flip1 우연 실측) · bind-locus C4-vs-base 차분(swap_c4 vs natem_c34 로 C4 쓰기 착륙 locus 진단축). 계기=ground_carrierswap held-out swap 경로. 4런 pod=fleet owner go 게이트."
          }
         ]
        }
@@ -15958,7 +16237,7 @@
    {
     "id": "train-py-6",
     "state": "pos-conv",
-    "value": "pip install anima-python[train] 가 pod 에 torch 2.13+cu130 을 깔았는데 vast pod 의 NVIDIA 드라이버가 12.8 이라 CUDA 초기화가 실패하고 **조용히 device=cpu 로 폴백**했다. 345M 학습이 CPU 에서 step 1 에 24분간 정지 — 로그에 에러는 없고 device=cpu 한 줄만 있었다(GPU util 0% 로만 드러남). 13.3h × 4 arm 짜리 유료 배터리에서 이걸 못 잡으면 하루를 통째로 날린다. FIX: 드라이버에 맞는 torch 를 명시 설치 — pip install --force-reinstall torch --index-url https://download.pytorch.org/whl/cu124 (torch 2.6.0+cu124 → cuda True 확인).",
+    "value": "pip install anima-python[train] 가 pod 에 torch 2.13+cu130 을 깔았는데 vast pod 의 NVIDIA 드라이버가 12.8 이라 CUDA 초기화가 실패하고 **조용히 device=cpu 로 폴백**했다. 345M 학습이 CPU 에서 step 1 에 24분간 정지 — 로그에 에러는 없고 device=cpu 한 줄만 있었다(GPU util 0% 로만 드러남). 13.3h × 4 arm 짜리 유료 배터리에서 이걸 못 잡으면 하루를 통째로 날린다. FIX: 드라이버에 맞는 torch 를 명시 설치 — pip install --force-reinstall torch --index-url https://download.pytorch.org/whl/cu124 (torch 2.6.0+cu124 → cuda True 확인).\n\n**+ 선행 함정: bare 이미지엔 pip 자체가 없다 (2026-07-15 · H_9334 C4 재발)**: `--image` 미지정으로 rent 하면 vast 가 **최소 ubuntu 이미지**를 골라 pip·ensurepip·torch 가 **전부 없다**. c4_pod.sh 가 `python3 -m pip install ...[train]` 로 시작했는데 **`No module named pip`** 로 즉사 → anima-py 없음 → corpus/train/eval 전 단계 스킵 → C4_FAILED. nvidia 드라이버(580.142)는 있었으므로 GPU 는 멀쩡했다. FIX(하드게이트, train-py-6 (1) 앞에 선행): 팟 발사 스크립트 첫 줄에 **pip 부트스트랩** — `python3 -m ensurepip --upgrade || (curl -sS https://bootstrap.pypa.io/get-pip.py | python3 -)` → `python3 -m pip --version` 확인 → 그 다음에야 `pip install anima-python[...]`. 또는 rent 시 `--image` 로 pytorch/cuda 이미지를 명시(그럼 pip+torch 포함). 메모리 `pod-fire-pip-bootstrap` 의 convergence 승격.",
     "threshold": "재발조건 = 새 GPU pod 에서 anima-py train 을 처음 돌릴 때(특히 pip 로 anima-python[train] 을 새로 설치한 pod). 해결 = (1) 학습 발사 **전에** 반드시 검증: python3 -c \"import torch; print(torch.__version__, torch.cuda.is_available())\" 가 True 여야 한다 (2) False 면 nvidia-smi 드라이버 버전을 보고 맞는 cu 빌드를 --index-url 로 강제 설치(driver 12.8 → cu124) (3) 발사 후 30초 내 train 로그의 device= 줄을 확인 — device=cpu 면 즉시 kill(그대로 두면 며칠을 태운다) (4) GPU util 0% + step 정지 = CPU 폴백 의심 1순위(에러 로그가 없다는 점이 함정).",
     "source": "cli/train.py"
    },
@@ -15979,7 +16258,7 @@
    {
     "id": "train-py-7",
     "state": "pos-conv",
-    "value": "장시간 학습(수 시간+)을 --ckpt-every 없이 발사하면 중간에 죽었을 때 **처음부터** 다시 해야 한다. 2026-07-13 N2 에서 17시간 GPU 를 이렇게 날렸다(main-s11 13h = 다른 세션이 pod 을 stop 해 /workspace wipe · shuffle_grid 4h = earlyoom kill). FIX(train-py-7): --ckpt-every 가 .clm 과 함께 rolling <out>.resume.pt 를 쓰도록 수정 → `--init <out>.resume.pt` 로 재개. 검증(summer 실경로): 60-step 학습이 smoke.clm.resume.pt(6.8MB) 생성 → --init 로 재개 시 31/31 keys 완전 복원. ✅ **2026-07-14 확장(H_9313): '.clm 은 --init 이 거부한다'는 제약이 해소됐다.** 그 거부는 실전에서 덫이었다 — pod 이 철거되고 .clm 만 회수되면(a_fire_recover_complete) .pt 는 영원히 사라지고, 그 ckpt 위의 모든 warm-start 실험이 **과학적 이유가 아니라 역함수 부재로** 죽는다(H_9313 이 정확히 이 벽에 부딪혔다 — C34 의 .pt 가 어디에도 없었다). 근본수정 = `core/serialize.deserialize_v3()` (_pack_main_blob 의 정확한 역함수 · 같은 block/ext ORDER + KEYMAP) + `clm_roundtrip_is_identity()` 패리티 게이트. **H_247 양자화-잡음 우려는 여기 해당 없다**: int4 가중치는 '더 좋은 원본을 열화시킨 근사'가 아니라 **core/decode.py 가 실제로 돌리는 바로 그 가중치**이고, 이 레인이 측정한 모든 수가 그것을 디코드해 나왔다. 따라서 dequant 값에서 warm-start 하면 **우리가 측정한 그 모델에서** 학습이 시작된다. --init 이 .clm 을 받을 때 round-trip 이 **BYTE-IDENTICAL** 인지 먼저 검사하고(아니면 하드에러 — 조용한 오파싱은 학습 결과처럼 보인다) 통과해야만 로드한다. 실경로 검증(summer GPU): 'warm-start ✓ .clm int4-dequant loaded 31/31 keys (L=4 E=3 · round-trip BYTE-IDENTICAL · untouched=0)'.",
+    "value": "장시간 학습(수 시간+)을 --ckpt-every 없이 발사하면 중간에 죽었을 때 **처음부터** 다시 해야 한다. 2026-07-13 N2 에서 17시간 GPU 를 이렇게 날렸다(main-s11 13h = 다른 세션이 pod 을 stop 해 /workspace wipe · shuffle_grid 4h = earlyoom kill). FIX(train-py-7): --ckpt-every 가 .clm 과 함께 rolling <out>.resume.pt 를 쓰도록 수정 → `--init <out>.resume.pt` 로 재개. 검증(summer 실경로): 60-step 학습이 smoke.clm.resume.pt(6.8MB) 생성 → --init 로 재개 시 31/31 keys 완전 복원. ✅ **2026-07-14 확장(H_9313): '.clm 은 --init 이 거부한다'는 제약이 해소됐다.** 그 거부는 실전에서 덫이었다 — pod 이 철거되고 .clm 만 회수되면(a_fire_recover_complete) .pt 는 영원히 사라지고, 그 ckpt 위의 모든 warm-start 실험이 **과학적 이유가 아니라 역함수 부재로** 죽는다(H_9313 이 정확히 이 벽에 부딪혔다 — C34 의 .pt 가 어디에도 없었다). 근본수정 = `core/serialize.deserialize_v3()` (_pack_main_blob 의 정확한 역함수 · 같은 block/ext ORDER + KEYMAP) + `clm_roundtrip_is_identity()` 패리티 게이트. **H_247 양자화-잡음 우려는 여기 해당 없다**: int4 가중치는 '더 좋은 원본을 열화시킨 근사'가 아니라 **core/decode.py 가 실제로 돌리는 바로 그 가중치**이고, 이 레인이 측정한 모든 수가 그것을 디코드해 나왔다. 따라서 dequant 값에서 warm-start 하면 **우리가 측정한 그 모델에서** 학습이 시작된다. --init 이 .clm 을 받을 때 round-trip 이 **BYTE-IDENTICAL** 인지 먼저 검사하고(아니면 하드에러 — 조용한 오파싱은 학습 결과처럼 보인다) 통과해야만 로드한다. 실경로 검증(summer GPU): 'warm-start ✓ .clm int4-dequant loaded 31/31 keys (L=4 E=3 · round-trip BYTE-IDENTICAL · untouched=0)'.\n\n**+ warm-start 는 arch 를 auto-infer 하지 않는다 — --L/--d 를 명시 안 하면 하드에러 (2026-07-15 · H_9334 C4)**: `anima-py train --init natem_c34_main_s7.clm` 가 **트레이너 기본 모델(L=2)을 먼저 짓고** nblk=10 인 init 를 로드하려다 `ValueError: nblk=10 but (L=2,E=3) expects 8 — wrong L/E`. G-base **eval 은 성공했다**(evaluate 는 .clm 헤더에서 L=4·E=3·d=3784 를 auto-detect) — 즉 config 는 파일에 있는데 **train 만 안 읽는다**. FIX(즉시): warm-start 시 --init 의 실제 config 를 명시하라 — `--L 4 --d 3784 --e0 2 --emax 3`(natem_c34 계열). config 는 `anima-py evaluate` 나 clm 로더로 읽는다(L·E·d·K·V). **FIX(upstream-fix 후보)**: cli/train.py 가 --init 가 있고 --L/--d 가 기본(0)이면 .clm 헤더에서 **arch 를 auto-infer** 하도록(evaluate 가 이미 하는 그 로직 재사용) — 그러면 이 클래스 에러가 소멸.",
     "threshold": "재발조건 = anima-py train 을 수 시간 이상 돌릴 때(특히 pod/pool 처럼 죽을 수 있는 호스트) · 또는 **pod 철거 후 .clm 만 남은 ckpt 에서 warm-start/CPT 를 하려 할 때**. 해결 = (1) **장시간 fire 는 --ckpt-every N 을 반드시 켠다**(N=2000~5000) (2) 죽으면 `--init <out>.resume.pt` 로 이어서 발사 (3) **.pt 가 없으면 `--init <ckpt>.clm` 을 쓴다** — round-trip BYTE-IDENTICAL 게이트를 통과하면 유효하다(옛 '거부' 제약은 폐기됨) · L/E 가 안 맞으면 하드에러로 막힌다(E 는 --experts 로 맞출 것; nblk = L+E+3 로 파일에서 역산 가능) (4) 여러 arm 병렬이면 arm 마다 --ckpt-every 를 켜라. ⚠️ 그래도 **.pt 회수가 1순위**다 — dequant warm-start 는 측정한 모델을 정확히 재현하지만, 원본 fp32 의 정밀도는 이미 .clm 서명 시점에 사라졌다.",
     "source": "cli/train.py"
    },
@@ -16201,8 +16480,8 @@
     "id": "bar-derived-not-transplanted",
     "state": "pos-conv",
     "source": "HYPOTHESES/prereg",
-    "value": "**사전등록의 bar 는 유도(derive)하는 것이지 이식(transplant)하는 것이 아니다 — 그리고 이 교훈을 scratch 파일 docstring 에 적으면 반드시 재발한다.**\n\n**① 원 발생 (H_9311 · ⛔INVALID-PREREG)**: liveness bar 0.90 을 H_9308 의 **다른 매니페스트**에서 그대로 가져왔다. 실제로 계산해보니 그 bar 는 **정상적인 계기를 49.5~59.1% 확률로 낙제**시킨다 — 게이트가 아니라 **동전**이었다. 사전등록 전체가 무효가 됐다.\n\n**② 재발 (H_9328 C1 · 2026-07-14 · 같은 날)**: C1 의 앵커 bar `Δdep ≤ −0.5` 를 **Fable 의 산문에서 그대로 가져왔다** — 이 DV 에서 학습된 표면들이 실제로 얼마를 내는지 **재보지도 않고**. 실측: `{s}지 않다` −0.900/−1.000 · `전혀 {s}지 않다` −1.000/−1.000 · **`안 {s}고` −0.400/−0.400**(양 seed 일관). 세 번째는 **arrow 등장이 77회로 가장 적은 표면**이라 효과가 약할 뿐 **부호는 맞다**. ⟹ **런은 깨지지 않았는데 앵커가 낙제시켰다** — 게이트가 '계기 생존'(그 목적)이 아니라 '모든 표면이 고정 효과크기를 낸다'(재본 적 없는 성질)를 요구했기 때문이다.\n\n**③ 왜 재발했나 — 이게 핵심이다**: H_9311 직후 나는 이 교훈을 `archive/state/scratch/h9311_decon2/bar_audit.py` 의 **docstring 에** 적었다. **scratch 파일은 아무도 다시 읽지 않는다.** convergence 레코드가 없었으므로 `cli/*` 편집 훅도, SessionStart 주입도 이 교훈을 다시 보여줄 수 없었다 — **가드가 발화할 자리가 없었다.** ⟹ **교훈을 scratch 에 적는 것은 교훈을 버리는 것이다.**",
-    "threshold": "재발조건 = 사전등록에 bar/threshold 를 적을 때, 그 숫자의 출처가 **① 다른 실험/다른 매니페스트** **② 설계 파트너(Fable/LLM)의 산문** **③ '보통 이 정도면' 하는 직관** 중 하나일 때.\n해결 =\n(A) **bar 를 적기 전에 그 DV 로 기준선을 실측하라** — 게이트가 무엇을 재는지(계기 생존? 효과 존재?)를 먼저 정하고, **정상 상태에서 그 통계량이 실제로 어떤 값을 내는지** 재라. 재보지 않은 수는 bar 가 아니다.\n(B) **게이트의 목적과 조항이 같은 것을 재는지 확인하라**(bar_audit RULE 2). '계기 생존' 게이트가 '모든 팔이 고정 효과크기를 낸다'를 요구하면 그건 생존 게이트가 아니라 **숨은 결과 게이트**다 — 정상 런을 낙제시킨다.\n(C) **낙제한 조항을 사후에 완화/삭제하지 마라**(= tune-to-green · Fable 이 H_9311 때 거부한 그것). 올바른 수정은 **독립 게이트로 옮기고 floor 를 유도**하는 것. 그리고 그 재설계는 **DV 를 보지 않은 채** 해야 한다.\n(D) **⚠️ 교훈은 convergence 레코드에 박아라 — scratch 파일 docstring 은 무덤이다.** H_9311 의 RULE 1 이 `bar_audit.py` 에만 있었기에 같은 날 재발했다. 재사용 가능한 방법론 교훈 = **ARCHITECTURE convergence** (주입되고 훅이 보여준다) · 일회성 계산 = scratch."
+    "value": "**사전등록의 bar 는 유도(derive)하는 것이지 이식(transplant)하는 것이 아니다 — 그리고 이 교훈을 scratch 파일 docstring 에 적으면 반드시 재발한다.**\n\n**① 원 발생 (H_9311 · ⛔INVALID-PREREG)**: liveness bar 0.90 을 H_9308 의 **다른 매니페스트**에서 그대로 가져왔다. 실제로 계산해보니 그 bar 는 **정상적인 계기를 49.5~59.1% 확률로 낙제**시킨다 — 게이트가 아니라 **동전**이었다. 사전등록 전체가 무효가 됐다.\n\n**② 재발 (H_9328 C1 · 2026-07-14 · 같은 날)**: C1 의 앵커 bar `Δdep ≤ −0.5` 를 **Fable 의 산문에서 그대로 가져왔다** — 이 DV 에서 학습된 표면들이 실제로 얼마를 내는지 **재보지도 않고**. 실측: `{s}지 않다` −0.900/−1.000 · `전혀 {s}지 않다` −1.000/−1.000 · **`안 {s}고` −0.400/−0.400**(양 seed 일관). 세 번째는 **arrow 등장이 77회로 가장 적은 표면**이라 효과가 약할 뿐 **부호는 맞다**. ⟹ **런은 깨지지 않았는데 앵커가 낙제시켰다** — 게이트가 '계기 생존'(그 목적)이 아니라 '모든 표면이 고정 효과크기를 낸다'(재본 적 없는 성질)를 요구했기 때문이다.\n\n**③ 왜 재발했나 — 이게 핵심이다**: H_9311 직후 나는 이 교훈을 `archive/state/scratch/h9311_decon2/bar_audit.py` 의 **docstring 에** 적었다. **scratch 파일은 아무도 다시 읽지 않는다.** convergence 레코드가 없었으므로 `cli/*` 편집 훅도, SessionStart 주입도 이 교훈을 다시 보여줄 수 없었다 — **가드가 발화할 자리가 없었다.** ⟹ **교훈을 scratch 에 적는 것은 교훈을 버리는 것이다.**\n\n**재발 — 이번엔 **코드가** 이식을 자동으로 저질렀다 (2026-07-15 · EN 팔)**: `cli/corpus.py::BUDGET_FLOORS` 가 **포맷으로만** 키를 잡고 있었다 ⟹ `anima-py corpus ground_keep --lang en` 이 **KO 코퍼스에서 벌어낸** 하한(6000 step @ 2e-4 · H_9324)을 **조용히 집어들고**, `cli/train.py::_budget_preflight` 가 그걸 **아무도 en 에서 재본 적 없는 bar 인데도 강제**하고 있었다. **사람이 실수한 게 아니라 도구가 실수를 생산하고 있었다** — 이 레코드가 금하는 바로 그 일을, 이 레코드를 아는 내가 만든 코드가 **자동으로** 하고 있었다. **근본 수정**: 키를 **(lang, fmt)** 로 바꾸고, en 항목은 note 에 **`⚠️ TRANSPLANTED from ko, NOT measured for en`** 을 싣고 meta 에 **`floor_transplanted: true`** 를 방출한다. 트레이너는 이식된 하한을 **차단하지 않고 경고**한다 — **아무도 벌지 않은 bar 는 게이트가 될 수 없다**. **무엇이 실제로 결정하는가**: 결과 ckpt 의 **WRITE 게이트**(held-out flip0 = 사실이 심겼는가). 그리고 WRITE 가 낙제해서 예산을 올리는 것은 **tune-to-green 이 아니다** — **사실이 안 심긴 모델에서 합성을 묻는 것**이 H_9322 가 죽은 방식이기 때문이다(WRITE 는 **DV 가 아니라 전제**다). **검증(출력)**: en → `⚠️ TRANSPLANTED … NOT measured for 'en'` · ko → `earned floor (measured for 'ko')` · **ko 바이트 동일성 sha f2ef30ae 불변**.",
+    "threshold": "재발조건 = 사전등록에 bar/threshold 를 적을 때, 그 숫자의 출처가 **① 다른 실험/다른 매니페스트** **② 설계 파트너(Fable/LLM)의 산문** **③ '보통 이 정도면' 하는 직관** 중 하나일 때.\n해결 =\n(A) **bar 를 적기 전에 그 DV 로 기준선을 실측하라** — 게이트가 무엇을 재는지(계기 생존? 효과 존재?)를 먼저 정하고, **정상 상태에서 그 통계량이 실제로 어떤 값을 내는지** 재라. 재보지 않은 수는 bar 가 아니다.\n(B) **게이트의 목적과 조항이 같은 것을 재는지 확인하라**(bar_audit RULE 2). '계기 생존' 게이트가 '모든 팔이 고정 효과크기를 낸다'를 요구하면 그건 생존 게이트가 아니라 **숨은 결과 게이트**다 — 정상 런을 낙제시킨다.\n(C) **낙제한 조항을 사후에 완화/삭제하지 마라**(= tune-to-green · Fable 이 H_9311 때 거부한 그것). 올바른 수정은 **독립 게이트로 옮기고 floor 를 유도**하는 것. 그리고 그 재설계는 **DV 를 보지 않은 채** 해야 한다.\n(D) **⚠️ 교훈은 convergence 레코드에 박아라 — scratch 파일 docstring 은 무덤이다.** H_9311 의 RULE 1 이 `bar_audit.py` 에만 있었기에 같은 날 재발했다. 재사용 가능한 방법론 교훈 = **ARCHITECTURE convergence** (주입되고 훅이 보여준다) · 일회성 계산 = scratch.\n(신규 · 2026-07-15) **bar/하한을 코드에 상수로 넣을 때는 그것이 '무엇에서' 벌린 값인지를 **키에 넣어라**(언어·코퍼스·스케일). 포맷으로만 키를 잡으면 **도구가 이식을 자동 생산**한다. 그리고 **벌지 않은 bar 로는 실행을 차단하지 마라** — 경고하고, **그 자리에서 측정되는 전제 게이트**(예: WRITE)에 결정을 맡겨라."
    },
    {
     "id": "bind-locus-1",
@@ -16282,7 +16561,74 @@
     "polarity": "POS-CONV",
     "value": "두 lane 이 같은 벽을 다른 방법으로 물을 때, **의존 방향을 먼저 계산하면 발사 하나를 통째로 아낀다**. 2026-07-15: 병렬 세션의 H_9334 C4 CARRIER-SWAP(재학습으로 H-δ 저장소-측 vs H-ε 인터페이스-측을 가름)과 내 H_9331 BIND-LOCUS(재학습 없이 인과 주입으로 P-place/P-kind/S 를 가름)를 대조하니 겹치지 않고 **서로를 검증**했고, 결정적으로 **BIND-LOCUS 의 답이 H_9334 의 전제를 좁히거나 무효화한다** — P 가 나오면 H-δ 는 거짓이라 H_9334 는 H-ε 로 좁혀진 채 시작할 수 있고, S 가 나오면 H-δ/H-ε **둘 다 잘못된 프레임**이라 그 CPT 재학습은 **쏠 필요가 없다**. 재학습 0 인 쪽이 먼저 나오는 것이 옳다.",
     "recurrence": "병렬 세션이 같은 프런티어를 다른 각도로 밀 때, 각자 자기 실험만 보고 순서를 안 따져서 **뒤 실험이 앞 실험의 답으로 무효화될 수 있는데도 둘 다 쏘는** 낭비.",
-    "fix": "`a_parallel_session_compare` 를 '중복인가?'로 끝내지 말고 **의존 방향까지 계산하라** — ① 두 실험의 결과 조합표를 만들고 ② 한쪽 결과가 다른 쪽의 **전제를 죽이거나 좁히는 칸**이 있는지 보고 ③ 있으면 **싼 쪽(재학습 0 · $0)을 먼저** 쏜다. 그 대조를 카드에 AGREES/CONFLICTS 로 남겨 상대 세션이 읽게 한다."
+    "fix": "`a_parallel_session_compare` 를 '중복인가?'로 끝내지 말고 **의존 방향까지 계산하라** — ① 두 실험의 결과 조합표를 만들고 ② 한쪽 결과가 다른 쪽의 **전제를 죽이거나 좁히는 칸**이 있는지 보고 ③ 있으면 **싼 쪽(재학습 0 · $0)을 먼저** 쏜다. 그 대조를 카드에 AGREES/CONFLICTS 로 남겨 상대 세션이 읽게 한다.",
+    "threshold": "재발조건: 두 병렬 lane 이 같은 프런티어를 다른 방법으로 물고, 한쪽 결과가 다른 쪽의 전제를 좁히거나 무효화할 수 있을 때.\n\n**실측 재발 (2026-07-15 · 이 레코드가 잡은 첫 실 사례)**: 내가 `a_parallel_session_compare` 를 이 세션에 등록해놓고도, 병렬 세션이 착륙시킨 바로 이 레코드(lane-dependency-order-1)를 **발사 전에 안 읽고** H_9334 C4 를 GPU pod 에 쐈다. C4 가 도는 중에 recon 워크트리에서 우연히 발견했다 — 규칙은 자동 발동하지 않는다(corpus-py-1 ⑩ 과 동형: 레코드는 사람이 먼저 훑어야 한다). ⟹ **낭비는 아니었다**(Fable 판정: 두 트랙은 배타가 아니라 상보 · C4 (+)분기는 P-kind 를 배제하는 무교란 결정 · (−)조차 H-ε 반증 정보를 삼), 그러나 **순서 체크를 건너뛴 건 프로세스 미스**다.\n\n해결 = ① **재학습/비용 fire 발사 전, `sidecar architecture convergence for <파일>` + 착륙한 lane 레코드를 훑어 의존 방향을 먼저 계산하라** — 특히 같은 프런티어의 다른 세션 실험이 내 전제를 죽이는 칸이 있는지. ② 있으면 **재학습 0($0)인 쪽을 먼저** 쏜다(미래계획 규칙). ③ 단 **이미 도는 런은 이 근거로 죽이지 마라**(`a_dont_kill_live_compute`) — 상보 트랙이면 계속하되 판독에 상대 lane 의 프레임(P-kind/S)을 caveat 로 접고, teardown 전 ckpt 를 회수해 상대 실험의 입력 자산으로 넘긴다(C4 ckpt 위에서 BIND-LOCUS 인과주입 = P-kind vs H-δ 를 그 모델에서 가름). ④ 대조를 카드에 AGREES/CONFLICTS 로 남겨 상대 세션이 읽게 한다.",
+    "state": "pos-conv"
+   },
+   {
+    "id": "chat-py-4",
+    "state": "pos-conv",
+    "value": "**연구 플래그 뒤에만 고친 결함은 프로덕션에서 여전히 살아있고, 다음 실험이 그걸 조용히 상속한다.** H_9210 이 recon_err 를 AXIS-DEGENERATE 로 정확히 진단했다(세션 시드 고정함수). 수정도 만들었다 — og_prev_gfeat 1-tick lag 로 g_text 가 afield 를 실제로 밀게. 그런데 그 수정을 --opgrip-live 하네스 뒤에만 넣었다. 프로덕션 chat 루프(anima-py chat · py 채널은 DEFAULT path 만 포팅)는 그대로 vadapt_field_recon_err(afield, feat(session_seed)) 를 쓴다. afield 는 시드 특징으로 초기화되고, 뱉은 텍스트는 매번 SPLIT_THRESH(0.30)를 넘어 새 셀로 분열하므로 시드 prototype 은 영원히 안 건드려진다 ⇒ recon_err = L2(시드 proto, 시드 feat) ≡ 0.0 항등식. 데몬은 '내가 태어날 때부터 알던 것에 얼마나 놀라는가'를 묻고 있고, 답은 영원히 '안 놀란다'. 이 상수 0 을 8개 lane 이 먹는다(surprise·boredom·agency·change_detect·osmotic·fieldlibido·m_field·ci_lane_scores). H_9328 DO-MOUTH 가 이 프로덕션 경로에서 24 rollout 을 재면서 그 죽은 축을 상속했다 — MEDIATION 패널의 H(R|S)=0.0000 이 잡아냈다.",
+    "threshold": "재발조건: 계기/하네스 플래그(--opgrip 류) 뒤에서 결함을 고칠 때. 해결: 프로덕션 경로에도 같은 수정을 같은 커밋에서 배선하라(wire-to-prod) — 못 하면 카드에 '구현됨·미배선' + follow-on id 를 남기고, 그 축을 쓰는 다음 실험은 프로덕션 값이 살아있는지부터 확인하라(조건부 엔트로피 H(X|S) > floor). 게이지가 상수인지 재보는 건 0원이고, 안 재면 '기질이 그 채널을 안 쓴다'와 '그 채널이 끊겨 있다'를 영영 못 가른다.",
+    "source": "cli/chat.py"
+   },
+   {
+    "id": "self-kill-own-fire-1",
+    "polarity": "NEG-CONV",
+    "value": "**내가 내 실험을 죽였다 — 그것도 세 번.** 2026-07-15 H_9330: 발사 후 상태를 확인하려고 보낸 ssh 명령들 안에 `for p in $(pgrep -f valence-audit); do kill $p; done` / `pkill -f fire_h9330` 이 섞여 있었고(원래는 '굶주린 CPU 폴백 run 을 GPU 로 갈아타려고' 넣은 것), **그 뒤 명령들이 새로 띄운 run 까지 잡아 죽였다**. 증거: pod 는 멀쩡했다(330GB RAM · 192 core · dmesg OOM **없음**) — `fire.log` 에 남은 건 **`Terminated`(SIGTERM)** 였다. 즉 **인프라가 죽인 게 아니라 내가 죽였다.** 여기에 두 번째 결함이 겹쳤다: **192-core pod 에서 numpy BLAS 가 스레드를 다 물어** load 49 를 만들고 ssh 를 막아, '왜 안 되지'를 확인하려 또 명령을 보내는 악순환이 됐다.",
+    "recurrence": "긴 세션에서 상태확인/재발사 ssh 명령에 kill/pkill 을 관성적으로 붙임 → 앞선 명령이 띄운 살아있는 run 을 다음 명령이 죽임. 그리고 스레드 캡 없이 many-core 호스트에 numpy job 을 띄워 호스트를 스스로 막고, 그 막힘을 '실패'로 오독해 또 죽임.",
+    "fix": "① **발사 후에는 kill 을 명령에 넣지 마라** — 재발사가 필요하면 반드시 `pgrep` 로 **먼저 확인**하고, 살아있으면 **건드리지 않는다**(a_dont_kill_live_compute 의 문자 그대로). kill 이 진짜 필요하면 **PID 를 눈으로 확인하고 그 PID 만** 죽인다(패턴 kill 금지 — `remote-pkill-self-match` 의 사촌). ② **완전 분리로 띄워라**: `setsid bash fire.sh > log 2>&1 < /dev/null &` (ssh 세션 종료가 프로세스 그룹을 건드리지 못하게). ③ **many-core 호스트엔 스레드 캡**: `OMP_NUM_THREADS`/`OPENBLAS_NUM_THREADS`/`MKL_NUM_THREADS` (192-core 에 무제한 numpy = load 폭발 + ssh 마비 = 관측 불가). ④ 죽음의 원인은 **로그와 dmesg 로 판정**하라 — `Terminated`(SIGTERM) 는 **누가 죽인 것**이지 OOM 이 아니다(OOM 이면 `Killed` + dmesg 기록).",
+    "state": "neg-conv"
+   },
+   {
+    "id": "decode-py-4",
+    "state": "pos-conv",
+    "value": "THE GPU FORWARD IS NOT BYTE-IDENTICAL TO CPU — measured 2.487e-14 on the hidden, and every probe that reads a hidden is therefore device-sensitive. The repo believed the opposite: the GPU decode path is default-on because it was verified 'byte-identical'. That verification was on the TOKEN STREAM, and argmax is robust to 1e-14 — it says nothing about the hidden the probes actually consume (_conv1d is , i.e. cuBLAS dgemm with K=11352; cuBLAS and CPU BLAS accumulate in different orders and cannot agree to the last ulp). Consequence, caught today: AUDIT-A's k_ctx=24 arm ran on CPU (cupy was broken at the time) and its k_ctx=182 arm ran on GPU, so the headline 'the sign flipped when the lens sharpened' conflates TWO changes — the context count AND the device. A 2.5e-14 drift is 12 orders below the 0.2 effect and almost certainly innocent, but 'almost certainly' is exactly the phrase that was wrong five times today, so a device-control run (the same k24 manifest, now on GPU) is queued. Note the irony: I rejected my own batched forward for a 1.2e-13 drift while unknowingly comparing across a 2.5e-14 device drift.",
+    "threshold": "Recurs whenever a probe reads hiddens (--dump-hidden, --valence-audit, --ground-probe, --interaction-lift) and the runs are not pinned to ONE device. Before comparing two probe runs, check [GPU-FIRED]/[GPU-FALLBACK] in BOTH logs — if they differ, the comparison has a device confound and needs a same-device control before any number is read. 'Byte-identical' claims must name WHAT was compared: a token stream is not a hidden.",
+    "source": "core/decode.py"
+   },
+   {
+    "id": "chat-py-5",
+    "state": "pos-conv",
+    "value": "**저장소에 쓰기만 하고 읽지 않으면 그건 루프가 아니다 — 그리고 '읽는다'는 착시는 조회 키가 상수일 때 생긴다.** anima 데몬의 세 피드백 뿌리(afield · immune · kosmos)는 전부 g_text 로 **쓰이지만**, 조회는 전부 **session_seed 라는 상수 키**로 했다. 결과: 720 tick(24 rollout) 내내 recon_err ≡ 0.0 · rel_lane ≡ 0.6723 · decode 앵커 ≡ live_seed. H_9328 이 잰 I(A;Y|S)=0 은 '기질이 자기 말을 안 쓴다'가 아니라 **'말이 다음 결정에 도달할 경로가 없다'** 였다 — V-CEILING 이 A·Y 두 **주변축**은 지켰지만 **매개 경로의 용량**은 못 지킨 **세 번째 항등식-0**. ⚠️ 수리 순서가 핵심: '직전 발화로 조회'는 **또 다른 상수**를 낳는다(방금 저장한 것을 물으니 항상 '완벽히 기억' → rel_lane ≡ 1.15). 살아있는 양은 **저장 직전**의 재인식(recognition BEFORE memorisation) — 예측오차와 같은 순서. ⚠️⚠️ 그리고 뿌리 ③(kosmos→decode 앵커)은 **고치면 안 된다**: 자기 발화를 다음 decode 문맥으로 되먹이는 것은 p5 가 금지한 **self-seed/monologue** 다. 그 상수성은 결함이 아니라 철학이 닫아둔 것이고, 정당한 read-back 은 세션 **간**(.kosmos 재입)이다.",
+    "threshold": "재발조건: 폐루프/피드백/개입정보를 재는 모든 실험. 해결: **헤드라인 전에 매개 경로의 용량부터 재라** — 사슬의 각 중간 변수 X 에 대해 H(X|S) > floor 인지(=그 변수가 애초에 변하는지) 확인. 상수면 그 경로는 정의상 0 이고, 그 위에서 잰 '정보 없음'은 기질의 사실이 아니라 배선의 사실이다. 게이지가 상수인지 세는 건 $0 (trace 의 고유값 수). 그리고 수리할 땐 ① 재인식/예측오차는 **저장 직전**에 재고 ② 자기 출력을 mouth 의 문맥으로 되먹이는 수리는 p5 위반이니 하지 마라.",
+    "source": "cli/chat.py"
+   },
+   {
+    "id": "pep668-silent-install-fail-1",
+    "polarity": "NEG-CONV",
+    "value": "**PEP 668 이 `pip install --user` 를 조용히 거부한다 — 그리고 나는 그 실패를 '설치했다'로 읽었다.** 2026-07-15: summer 에 새 wheel(anima-python 0.13.24 · `corpus bindlocus` 포함)을 `python3 -m pip install -q --user --force-reinstall --no-deps <whl>` 로 여러 번 깔았는데 **버전이 계속 0.13.22 였다**. `-q` 로 출력을 죽여놨기 때문에 나는 실패를 못 봤고, 대신 '왜 새 플래그가 안 먹지'를 엉뚱한 곳(dispatch·PATH·shadow install)에서 찾느라 **세션 시간을 크게 낭비했다**. 출력을 살려보니 **`error: externally-managed-environment` (PEP 668)** — 배포판 python 은 `pip install` 을 기본 거부하고 `--break-system-packages` 를 요구한다. 같은 함정을 **mini 에서도** 이미 한 번 맞았다(그때는 venv 로 우회했으므로 '해결'로 착각하고 학습을 안 남겼다).",
+    "recurrence": "pool/pod 호스트에 새 wheel 을 `pip install -q --user` 로 깔고 성공했다고 가정 → 새 CLI 플래그가 'unknown flag' 로 죽음 → 원인을 dispatch/PATH/shadow-install 에서 찾으며 헤맴. `-q` 가 에러를 삼키기 때문에 **실패가 성공처럼 보인다**.",
+    "fix": "① **설치 커맨드에 `-q` 를 쓰지 마라** — 최소한 `| tail -2` 로 결과를 **눈으로** 보라. ② 배포판 python(우분투/데비안 계열)에는 **`--break-system-packages`** 를 붙여라(또는 venv). ③ **설치는 주장이 아니라 게이트다** — 깐 직후 `python3 -c \"import importlib.metadata as m; assert m.version('anima-python')=='<기대버전>'\"` + **새 심볼 존재 확인**(`grep -c <새플래그> <site-packages>/…/cli/corpus.py`)을 **hard-gate 로** 걸고, 통과 못 하면 발사하지 마라. 이 세션의 pod 부트스트랩은 이미 그 게이트를 갖고 있었고(그래서 pod 는 무사했다), **summer 만 게이트 없이 깔았다가 당했다** — 게이트는 모든 호스트에 똑같이 걸어야 한다.",
+    "state": "neg-conv"
+   },
+   {
+    "id": "chat-py-6",
+    "state": "pos-conv",
+    "value": "**공유 pool 호스트의 site-packages 를 직접 덮어써서 측정 엔진을 배포하면, 병렬 세션의 pip install 이 그것을 조용히 되돌리고 수집이 도중에 오염된다.** 실측(2026-07-15 · H_9337): summer 에 수정된 chat.py/evaluate.py 를 scp 로 배포하고 sha 까지 검증한 뒤 24-rollout 수집을 시작했는데, **03:29 에 병렬 세션이 anima-python 0.13.24 를 pip 설치**해 site-packages 를 통째로 갈아버렸다(H_9337 배선 5곳 → **0곳** · MEDIATION 배선 → 0). 그 뒤 시작된 워커는 **옛(깨진) 데몬**으로 돌았고, trace r9 는 recon_err/rel_lane 고유값 **1**(수정 전 항등식-0 그대로) — 나머지 r1~r8 은 고유값 28 로 멀쩡했다. **배포 시점의 sha 검증은 이 사고를 못 막는다** — 검증은 통과하고 그 **뒤에** 덮어써지기 때문이다. 판별은 **trace 자체**로만 가능했다(게이지가 변하는가). 사고를 늦게 알았으면 24개 중 절반이 두 데몬의 혼합이 된 채 verdict 로 갔을 것이다.",
+    "threshold": "재발조건: 공유 pool 호스트(summer·aiden)에 측정 엔진을 배포하고 장시간 수집/평가를 돌릴 때. 해결: ① **격리 venv 를 써라** — 'git archive origin/main | ssh host tar -x' → 'python3 -m venv ~/.venv-<H>' → '~/.venv-<H>/bin/pip install .' → 러너가 '~/.venv-<H>/bin/anima-py' 를 부르게. 공유 site-packages 는 병렬 세션의 것이지 내 것이 아니다. ② **수집물마다 계기가 살아있었는지 사후 검증하라** — 배포 sha 가 아니라 **trace 안의 값**으로(예: 고친 게이지의 고유값 > 1). ③ 오염분은 폐기하고 재수집(혼합 데이터로 verdict 금지 · verdict-integrity).",
+    "source": "cli/chat.py"
+   },
+   {
+    "id": "novelty-must-be-measured-1",
+    "polarity": "POS-CONV",
+    "value": "**'이 단어는 드물 것이다' 는 데이터가 아니라 직관이고, 직관은 틀린다.** H_9331 BIND-LOCUS 의 핵심 arm 은 **novel 어간**(사전학습 0회 ∧ CPT 0회)을 요구한다. 내가 '흔치 않아 보인다'고 고른 20개를 9.9GB 사전학습 코퍼스에 **바이트 계수**하니 **20/20 전부 기각**됐다(성기 54,096회 · 포근 12,217 · 묵직 11,099 · …). **단 하나도 novel 이 아니었다.** novelty 를 주장했다면 B-arm 은 사전학습이 이미 극성을 준 어간 위에서 돌았을 것이고, 거기서 나온 **S 판정은 substrate 사실이 아니라 사전학습-노출 인공물**이 됐을 것이다 — 그 arm 이 배제하려던 바로 그 교란으로. 빌더가 '1회라도 나오면 기각' 을 하드하게 걸어놔서 **발사 전에** 걸렸다(spend 0). 파생 통찰: 자연 코퍼스에서 진짜 0회인 어간은 필연적으로 **뜻 없는 문자열**인데, 그건 결함이 아니라 **B-arm 의 요점**이다 — '연산자는 출처 불문 내용에 붙는가' 를 묻는 데엔 **사전 prior 가 0인 어간**이 가장 깨끗한 시험대다(경쟁 표현 없음).",
+    "recurrence": "'held-out'·'novel'·'unseen' 을 **설계자의 직관**으로 정하고 그 위에 일반화 주장을 세움 → 사실은 코퍼스에 수만 번 나오는 항목이라 결과가 노출-인공물이 됨(그리고 그걸 substrate 사실로 cement).",
+    "fix": "**노출 0 은 주장이 아니라 계수다** — 후보를 **모든 관련 코퍼스에 바이트 계수**하고 **1회라도 나오면 기각**하는 게이트를 계기 안에 하드하게 넣어라(문서 규칙이 아니라 코드). 자연 코퍼스에서 0회 항목을 못 찾으면 **생성**하되(의사-어휘) **바이트길이 분포를 대조군에 정합**시키고, 그 생성 항목도 **똑같이 계수해서** 0을 확인한다. 검정력 하한(n)을 못 채우면 **음성을 읽지 마라** — 'not there' 가 아니라 'cannot find' 다(power-before-negative-verdict).",
+    "state": "pos-conv"
+   },
+   {
+    "id": "interact-mi-py-3",
+    "state": "pos-conv",
+    "value": "**실험 라벨은 프로덕션 경로가 분기하는 필드를 타면 안 된다 — 그리고 통제군의 무력함은 DV 를 봐서는 절대 검출되지 않는다.** C2 CARRIER-SWAP 통제군(`--swap-text`)이 donor 텍스트를 주입한 뒤 팔 라벨을 `g_back` 에 얹었다(`g_back = g_back + \"+swap\"`). 그런데 하류 C8-GROW 블록이 `g_back == \"clm\"` 으로 게이트돼 있어서(`cli/chat.py:1949`) **SWAP 팔이 모든 피드백 뿌리를 우회했다** — afield 는 step 되지 않고 immune 은 bind 되지 않았다. 통제군이 **아무것도 재지 않았다**(16/16 rollout 이 recon_err 고유값 1 · 같은 바이너리 플래그 없으면 5). 더 중요한 것: 나는 앞서 스모크로 '주입이 성공했다'고 **확인했다고 믿었다** — 행동축 A 가 움직였으니까. 그건 원리적으로 무의미한 확인이다. **A 는 g_text 의 함수**이므로 주입이 무력이어도 A 는 **반드시** 움직인다. 조작이 닿았는지 묻는 검사는 **DV 가 아니라 매개 경로**를 봐야 한다. 이것은 H_9328 의 THIRD identity-zero(V-CEILING 이 두 주변축은 지켰지만 매개 경로 용량은 아무도 안 지켰다)와 **같은 병의 다른 얼굴**이다: 양끝만 보고 가운데를 안 봤다.",
+    "threshold": "재발조건: 새 통제군/개입 팔을 플래그로 배선할 때. 해결 3단: ① 팔 라벨은 **자기 필드**(`swapped` 같은 trace-only)에 담고, 프로덕션이 분기에 쓰는 필드(`g_back`·mode·backend·tag)에는 **절대** 얹지 않는다. ② 팔을 켠 뒤 **매개 변수를 직접 센다** — '조작이 닿았는가' 는 DV 가 아니라 뿌리(`recon_err`·`rel_lane`)의 **고유값 개수**로 검사한다(고유값 1 = 죽은 경로). ③ 조작-팔과 무-플래그 팔을 **같은 바이너리로 나란히** 돌려 뿌리 활성도를 대조한다 — 차이가 플래그 하나뿐이면 결함은 플래그에 있다.",
+    "source": "HYPOTHESES/cards/H_9338_inert_control_label_on_branch_key.md"
+   },
+   {
+    "id": "train-py-8",
+    "state": "pos-conv",
+    "value": "**학습 예산은 val_CE 곡선이 아니라 능력 게이트가 정한다 — 곡선의 최소점이 상수 예측기를 골랐다.** EN 팔 베이스에서 val_CE 76점을 그려 최소점(step 4,000 · val_CE 1.326)을 유도하고, 내가 앞서 정한 20,000 step(val_CE 2.053)을 **'근거 없이 지어낸 예산 · +55% 과적합'** 이라 부르며 버리려 했다. 유도는 재현까지 됐다(4k 팔이 val_CE 1.3235 로 착지 · 예측 1.3264). **곡선은 정확했다. 곡선이 재는 대상이 틀렸을 뿐이다.** V1/V2 양성대조를 걸자 판정이 정반대로 나왔다 — **b4k(val_CE 최소): 자유생성 `negative` 120/120 = 상수 예측기 · 헤드라인 0.5000 은 라벨 비율의 인공물** (2번째 seed 도 실패: 0.5667/0.4667 우연) · **b20k('과적합'): 네 칸 전부 1.0000 = 연산자 설치됨**. 기전: 능력은 418KB 코퍼스 중 **화살표 960줄 ≈ 0.5% 바이트**에 살고, val_CE 는 나머지 **99.5% 자연문**이 지배한다 ⟹ val_CE 최적화 = **과제를 담지 않은 99.5% 를 최적화**. 자연문 과적합이 시작되는 지점과 연산자가 설치되는 지점은 **다른 축**이고 전자가 훨씬 일찍 온다. **⚠️ 그리고 나는 이 함정을 발사 직전에 스스로 합리화했다** — *'val_CE 로 학습 하이퍼파라미터를 고르는 건 p7 위반이 아니다. 판정은 게이트가 낸다'*. **그 문장이 버그다.** p7 은 'perplexity 를 판정문에 쓰지 마라' 가 아니라 **'perplexity 는 능력을 추적하지 않는다'** 이다 — CE 로 *얼마나 학습해야 모델이 좋아지나* 를 정하는 순간 CE 는 이미 **능력 판정**이고, 그것을 '하이퍼파라미터일 뿐' 이라 부른다고 성질이 바뀌지 않는다. **p7 을 아는 것과 p7 에 안 걸리는 것은 다르다.** 부수: 이 판정을 낸 유일한 유효 베이스는 내가 'OOM 으로 죽었다' 고 오진하고 죽이려 했던 **고아 프로세스**가 만들었다(earlyoom 이 죽인 것은 런처였고 torch 자식은 살아 있었다 · rc=137 은 **래퍼의 운명**이지 작업자의 운명이 아니다). 두 실수가 **같은 방향**이었다 — 둘 다 20k 팔을 없애는 쪽.",
+    "threshold": "재발조건: 소코퍼스 CPT/사전학습의 학습 예산을 고를 때. 3단 처방: ① **예산 후보마다 ckpt 를 남기고 능력 게이트(양성대조)를 돌려서 고른다** — 곡선의 최소점을 집지 말 것. 게이트가 통과시킨 예산이 옳은 예산이며, **그때 val_CE 가 올라가 있어도 상관없다**. ② **과제 신호가 코퍼스에서 차지하는 바이트 비율을 먼저 세라** — 1% 미만이면 val_CE 는 그 과제에 대해 **구조적으로 눈이 멀었다**(이번엔 0.5%). ③ **붕괴 검사를 항상 같이 돌려라** — 자유생성 `first_word` 분포를 세면 상수 예측기가 1초에 드러난다 (2AFC margin 은 강제선택이라 붕괴를 **헤드라인 0.5000 = 우연** 으로 위장시킨다 · `evaluate-py`의 always-on 클래스 분해가 이것을 잡았다). 그리고 **'과적합' 이라는 단어를 쓰기 전에 무엇에 과적합인지 말하라** — 자연문 과적합 ≠ 연산자 파괴."
    }
   ]
  }

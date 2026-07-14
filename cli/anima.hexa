@@ -2023,6 +2023,10 @@ fn anima_consciousness_mode(ckpt: string) {
     // Seeded to the boot feature so tick-0 recon_err equals today's no-decode default (no
     // discontinuity artifact); stepped only under og_live by the real decode below.
     let mut og_prev_gfeat = seed_feat0
+    // H_9337 · immune recall margin captured BEFORE the bind (see :2429). Unset until the daemon
+    // has said anything, so tick 0 falls back to the seed key (parity with the py twin).
+    let mut og_pending_rel = 0.0
+    let mut og_pending_rel_set = false
 
     // ── --opgrip-r3/r4 DETERMINISTIC PERCEPTION TAPE (Fable SPEC 1 → OPGRIP_R4 classed 2×2 dwell tape) ──
     // OG_STIM2 (r4 op-grip upgrade · state/9229_discrete_code/OPGRIP_R4_SPEC.md): the flat 16-line v1 tape is
@@ -2426,7 +2430,15 @@ fn anima_consciousness_mode(ckpt: string) {
         // ── ENGINE-CLI LANE READS (the substrate context for this tick) ──────
         // (1) IMMUNE recall margin → RELEVANCE: smaller abstain-margin = the held memory
         //     is NEARER this context = more relevant. Map margin∈(−thr, …) → rel∈[0,1].
-        let recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        // H_9337 · this read was CONSTANT: the key was the session seed, so rel_lane sat at
+        // 0.6723 for all 720 ticks of the H_9328 rollouts. The store is WRITTEN with g_text
+        // (:3763) and then always asked the same frozen question — writing without reading is
+        // not a loop. The fix is NOT "ask about the last utterance" (measured: also constant,
+        // 1.15 — the store was just handed that exact text, so it always answers "I remember it
+        // perfectly"). The live quantity is the recall margin taken BEFORE the bind: how FAMILIAR
+        // the utterance was when it arrived. Same order as recon_err, same reason — recognition
+        // measured after memorisation is not recognition. convergence chat-py-5.
+        let recall_margin = if og_pending_rel_set { og_pending_rel } else { immune_memory_recall_margin_text(immune, session_seed) }
         let rel_lane = _afs_clip01(1.0 - recall_margin)        // near memory ⇒ high relevance
 
         // (2) CI LANE SCORES (the §ConsciousnessIndex 15-lane read; H_1492 IIT4 substrate).
@@ -2438,7 +2450,14 @@ fn anima_consciousness_mode(ckpt: string) {
         // feature (structurally frozen → AXIS-DEGENERATE, the H_9210 instrument-fail). recon_err
         // also feeds the urgency pool (cur_ctx) so under --opgrip-live the proven urgency channel
         // gains real content variance too, not only the disjoint surp_phasic term.
-        let recon_err = if og_live { vadapt_field_recon_err(afield, og_prev_gfeat) } else { vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8)) }
+        // H_9336 · the seed branch was 0.0 by IDENTITY, not by measurement: afield is BORN with
+        // seed_feat0 as its first prototype, and every emitted text clears SPLIT_THRESH and spawns
+        // a NEW cell instead of refining that one, so the seed prototype is never touched and
+        // L2(seed_proto, seed_feat) stays exactly 0 forever (measured: H(R|S)=0.0000 over 24
+        // rollouts). The daemon was asking "how surprised am I by the thing I was born knowing?".
+        // og_prev_gfeat now tracks the last EMITTED bytes on the production path too (:3746), so
+        // the default branch reads a REAL 1-tick-lagged prediction error. convergence chat-py-4.
+        let recon_err = vadapt_field_recon_err(afield, og_prev_gfeat)
         let m_grounding = _afs_clip01(rel_lane)
         let m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
         let m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)   // sober = identity
@@ -3743,11 +3762,19 @@ fn anima_consciousness_mode(ckpt: string) {
         if g_emit && g_back == "clm" && byte_len(g_text) > 0 {
             let feat = _afs_byte_feature(g_text, 8)
             let pre_cells = vadapt_field_cells(afield)
+            // H_9336 · carry the emitted bytes so the NEXT tick's recon_err (:2441) is a real
+            // prediction error on what the daemon actually said, not the frozen seed. The error
+            // itself is read there BEFORE the field adapts again — that is what a prediction
+            // error IS; taken after the step it would only report how well the field memorised it.
+            og_prev_gfeat = feat
             afield = vadapt_field_step(afield, feat, cfg)
             let post_cells = vadapt_field_cells(afield)
             cell_count = post_cells
             grew = true
             // also bind the emit into the immune store (engine's OWN clonal split, p8).
+            // H_9337 · recognition BEFORE memorisation — read on the next tick (:2429).
+            og_pending_rel = immune_memory_recall_margin_text(immune, g_text)
+            og_pending_rel_set = true
             immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
         }
 

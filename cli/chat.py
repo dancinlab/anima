@@ -1377,6 +1377,17 @@ def anima_consciousness_mode(ckpt, argv=None):
         session_seed = _h1058_seed_ov
     seed_feat0 = _afs_byte_feature(session_seed, 8)
     afield = vadapt_field_new(seed_feat0, 2048)
+    # H_9336 · the field's prediction error on the LAST thing the daemon actually said.
+    # None until it has said anything (tick 0 falls back to the seed). See :1493.
+    pending_recon = None
+    # H_9337 · the last thing the daemon actually said. All three feedback stores were WRITTEN
+    # with it and then queried with the session seed — a constant key, so a constant answer:
+    # rel_lane sat at 0.6723 for all 720 ticks of the H_9328 rollouts, recon_err at 0.0, and the
+    # decode anchor was always live_seed. A store you write to and never read from is not a loop.
+    last_gtext = ""
+    # H_9337 · the immune store's recall margin on the utterance, taken BEFORE it was bound.
+    # None until the daemon has said anything (tick 0 falls back to the seed key). See :1497.
+    pending_rel = None
 
     # ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ──
     rel_ema = 0.5
@@ -1486,11 +1497,40 @@ def anima_consciousness_mode(ckpt, argv=None):
 
         # ── ENGINE-CLI LANE READS ──
         # (1) IMMUNE recall margin → RELEVANCE
-        recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        # H_9337 · this read was CONSTANT: the key was the session seed, so rel_lane sat at 0.6723
+        # for all 720 ticks of the H_9328 rollouts. The store is written to (:1941 binds g_text)
+        # and then always asked the same frozen question — writing without reading is not a loop.
+        #
+        # The fix is NOT "ask about the last utterance" — measured, that is ALSO constant (1.15):
+        # the store was just handed that exact text, so it always answers "I remember it perfectly".
+        # The live quantity is the recall margin taken BEFORE the bind — how FAMILIAR was that
+        # utterance when it arrived. Same order as recon_err (:1499), and for the same reason:
+        # a recognition signal measured after you have memorised the thing is not recognition.
+        # Measured: repeating an earlier utterance spikes it to 1.15 while novel ones sit near 0.17
+        # — the daemon can now tell "I have said this before" from "this is new".
+        if pending_rel is None:
+            recall_margin = immune_memory_recall_margin_text(immune, session_seed)
+        else:
+            recall_margin = pending_rel
         rel_lane = _afs_clip01(1.0 - recall_margin)
 
         # (2) CI LANE SCORES (§ConsciousnessIndex 15-lane)
-        recon_err = vadapt_field_recon_err(afield, _afs_byte_feature(session_seed, 8))
+        # H_9336 · the field's prediction error on the LAST thing the daemon said (1-tick lag),
+        # NOT on the session seed. Against the seed this is 0.0 by IDENTITY: afield is BORN with
+        # seed_feat0 as its first prototype (:1379), and every emitted text clears SPLIT_THRESH
+        # and spawns a NEW cell instead of refining that one — so the seed prototype is never
+        # touched and L2(seed_proto, seed_feat) stays exactly 0 forever. The daemon was asking
+        # "how surprised am I by the thing I was born knowing?" and 8 lanes (surprise · boredom ·
+        # agency · change_detect · osmotic · fieldlibido · m_field · ci_lane_scores) ate that
+        # constant. Measured dead: H(R|S)=0.0000 over 24 rollouts (H_9328 MEDIATION panel).
+        # H_9210 diagnosed this and fixed it — but only behind --opgrip-live, so production kept
+        # the dead gauge and the next experiment inherited it (convergence chat-py-4).
+        # Predictive-coding order: the error is taken on the NEW percept BEFORE adapting to it,
+        # so it is captured at the emit site (:1894+) and consumed here on the following tick.
+        if pending_recon is None:
+            recon_err = vadapt_field_recon_err(afield, seed_feat0)
+        else:
+            recon_err = pending_recon
         m_grounding = _afs_clip01(rel_lane)
         m_field = [phi_t, rel_lane, 1.0 - recon_err, m_grounding, emit_env]
         m_grounding_p = pharm_perturb_m(sober, m_grounding, 0.0)
@@ -1846,6 +1886,13 @@ def anima_consciousness_mode(ckpt, argv=None):
         while ai < len(anchors):
             live_anchors.append(anchors[ai])
             ai = ai + 1
+        # H_9337 · this anchor is CONSTANT (live_seed) and that is CORRECT — do not "fix" it.
+        # :1994 feeds live_anchors[-1] straight into the next decode's seed string, so handing the
+        # daemon back its own last utterance here would make the mouth condition on its own output:
+        # that is self-seed / monologue, which p5 BANS outright. The kosmos root stays write-only
+        # WITHIN a session by design; the read-back is a CROSS-session fact (a fresh session loads
+        # .kosmos at :427). So of the three roots, only afield and immune are legitimately
+        # closeable in-session — the third is closed by philosophy, not by defect.
         live_anchors.append({"text_payload": session_seed, "name": "live_seed"})
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
@@ -1876,11 +1923,21 @@ def anima_consciousness_mode(ckpt, argv=None):
         #                               same way ⇒ NOT a pass.
         # p5 is untouched: the emit/silence DECISION is the substrate's own (the gate never sees
         # this flag); we only substitute what gets said on a tick it already chose to speak.
+        swapped = False   # H_9338 · C2 CARRIER-SWAP arm label (trace-only · never a branch key)
         if _swap_texts and did_emit and g_emit and byte_len(g_text) > 0:
             _donor = _swap_texts.get(int(tick))
             if _donor is not None:
                 g_text = _donor
-                g_back = g_back + "+swap"
+                # H_9338 · the arm label goes in its OWN field, NOT into g_back.
+                # It used to do `g_back = g_back + "+swap"`, and the C8-GROW block below is gated
+                # on `g_back == "clm"` (:1949) — so tagging the backend "clm+swap" silently routed
+                # the swap arm AROUND every feedback root: afield never stepped, immune never
+                # bound. The control measured NOTHING. Trace-verified: 16/16 swap rollouts had
+                # recon_err with ONE distinct value, while the same binary run without the flag
+                # produced five. The earlier smoke's "the donor really pushes the roots" was wrong
+                # — A moved only because g_text moved, which the roots never saw.
+                # An experiment label must never ride on a field the production path branches on.
+                swapped = True
         psi_sum = psi_sum + pure_field_phi(pf)
 
         # GROUND check
@@ -1891,12 +1948,20 @@ def anima_consciousness_mode(ckpt, argv=None):
         _h1058_row = None        # deferred trace row (built below, written end-of-tick)
         if g_emit and g_back == "clm" and byte_len(g_text) > 0:
             feat = _afs_byte_feature(g_text, 8)
+            # H_9336 · take the error BEFORE adapting — that is what a prediction error IS.
+            # Read on the next tick (:1493). Measured after the field has already absorbed the
+            # text, it would only report how well the field memorised it.
+            pending_recon = vadapt_field_recon_err(afield, feat)
             afield = vadapt_field_step(afield, feat, cfg)
             _h1058_grow_feats.append(list(feat))
             post_cells = vadapt_field_cells(afield)
             cell_count = post_cells
             grew = True
+            # H_9337 · recognition BEFORE memorisation — ask how familiar this utterance was
+            # while the store still does not contain it. Read on the next tick (:1497).
+            pending_rel = immune_memory_recall_margin_text(immune, g_text)
             immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
+            last_gtext = g_text
 
         # ── C8b TENSION→GROW (p8-literal: tension births growth/mitosis) ──
         if ten_phasic > 0.66:
@@ -2011,7 +2076,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "emit_temp": float(_emit_temp),
                 "phi": float(dec["phi"]), "anchor_nudge": float(dec.get("anchor_nudge", 0.0)),
                 "base_motiv": float(dec.get("base_motiv", _score)),
-                "gen_emitted": g_emit, "gen_backend": g_back,
+                "gen_emitted": g_emit, "gen_backend": g_back, "swapped": swapped,
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
