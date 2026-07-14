@@ -55,6 +55,8 @@ store/weave/tether/self=PENDING follow-on · G0-G6 default until the switch land
 
 ## Governance (`name` — core MUST; full do/dont + H_ precedents → ARCHITECTURE.json)
 
+Keyword-triggered index of the `a_*` governance rules, grouped by lane. Each entry is a pointer: the full do/dont + the H_ precedent that earned it live in `ARCHITECTURE.json`.
+
 ### 🔬 Verification · engine-native + design lens (HARD-GATE · top priority)
 - **`a_no_llm_frame_trap`** — substrate-first (neuro/bio/physics), not the LLM frame.
 - **`a_break_the_wall`** — a wall (🧱) = change angle; a ceiling needs ≥2–3 controlled lenses (ABLATION); no tune-to-green. c16
