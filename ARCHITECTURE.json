@@ -14089,50 +14089,6 @@
           "detail": "H_9235 fork-A CLML lane 배선(clml.py lane_apply=pool→gelu→gated logit bias · decode.py _fwd_logits/CLML trailer · gate=0=byte-identical). ⚠️ copy-trap: derivtrace 타깃 base CE 0.0003 ⇒ 학습신호 死. 재설계=no-copy 타깃·4-gate(CE≫0→probe→train→system-G1). state/recomb-routing-lane/LANE_SIGNAL_REDESIGN.md"
          }
         ]
-       },
-       {
-        "id": "gate-g1-recomb-decon2b-h9312",
-        "type": "gate",
-        "name": "★A채널 컨텍스트-주입 = 🧱 구조적 폐쇄 (NO-IN-CONTEXT-CHANNEL · H_9312 · EARNED)",
-        "detail": "시연을 모델 자기 학습 템플릿으로 줘도 안 읽는다. 포맷 문제가 아니라 4층 conv byte-LM 에 in-context 복사/유도 경로가 없다 ⟹ 컨텍스트에 놓인 사실은 어떤 언어로 써도 답에 도달 못 한다. held-out 미발사(구조적 무의미).",
-        "children": [
-         {
-          "id": "gate-g1-recomb-decon2b-h9312-verbatim",
-          "type": "note",
-          "name": "① 축자 복사 조건에서도 우연",
-          "detail": "nonce 시연은 정답을 글자 그대로 담는다 — 베끼면 100%. 측정 READ = 0.475/0.469(시연없음 0.500/0.485 대비 Δ −0.025/−0.017) ⟹ 합성 이전에 복사조차 못 한다."
-         },
-         {
-          "id": "gate-g1-recomb-decon2b-h9312-lie",
-          "type": "note",
-          "name": "② 거짓 시연이 참 시연과 동일 (판정을 낸 단 하나의 측정)",
-          "detail": "SEEN 통달원자에 극성 뒤집은 거짓 시연: 읽고 합성하면 flip1 이 0 쪽으로 붕괴해야 한다(기준선 0.883/0.900 = 여유 충분). 실측 0.900/0.883 = 무변화 ⟹ 거짓말이 아무 비용도 없다 ⟹ 시연을 애초에 안 읽는다."
-         },
-         {
-          "id": "gate-g1-recomb-decon2b-h9312-perturb",
-          "type": "note",
-          "name": "③ 그런데 trunk 는 흔들린다 (H_9309 와 같은 서명)",
-          "detail": "시연 주입 시 |margin| 이동 중앙값 1.8~4.0. 바이트는 보인다 — 정보로 라우팅되지 않을 뿐. 큰 교란 · 정보량 0."
-         },
-         {
-          "id": "gate-g1-recomb-decon2b-h9312-gb",
-          "type": "note",
-          "name": "내 양성대조가 가짜였다 (G-B 교란)",
-          "detail": "G-B flip0(int)=1.000 은 시연을 읽어서가 아니라 SEEN 원자를 이미 parametric 으로 알아서였다 — 메커니즘 없이도 통과 가능한 대조군은 양성대조가 아니라 천장 측정이다. G-C(거짓말 arm)가 그 교란을 걷어냈다. convergence prereg-md-2."
-         },
-         {
-          "id": "gate-g1-recomb-decon2b-h9312-scope",
-          "type": "note",
-          "name": "SCOPE (정직)",
-          "detail": "닫힌 것 = 컨텍스트-주입. DECON-W(값을 가중치에 쓰기)는 다른 질문이고 미측정. 아키텍처 한정 = 4층 conv byte-LM(attention 없음) — attention 트렁크면 유도 헤드가 있었을 수 있다(다른 substrate · 미측정)."
-         },
-         {
-          "id": "gate-g1-recomb-decon2b-h9312-next",
-          "type": "note",
-          "name": "NEXT — DECON-W (A 채널 유일 잔여 실현)",
-          "detail": "값을 가중치에 쓴다: flip0 라인만 미세 CPT + SEEN 템플릿 replay, flip1 은 학습 노출 0 으로 동결 시험(tune-to-green 아님). G1 함의: 이 아키텍처에서 추론시 외부 사실 조회는 원천 불가 ⟹ 재조합은 가중치 안에서 일어나야 한다(read-side 무덤과 정합)."
-         }
-        ]
        }
       ],
       "verdict": "🟡 REOPENED-DIRECTIONAL-POSITIVE(첫 lift·robustness 미확인): decode 20-family refuted+engine-native지만 학습 derivation-trace(target=풀이과정)가 held-out{c0,c1} engine-native G1 PASS(bd=2>ms=1)∧FLAT통제 FAIL=H_9124. caveat bd=2·1쌍·G2미측정. δ_FM=coverage form-priming→FORM. 벽=trunk-objective."
@@ -14905,7 +14861,7 @@
     "id": "synthesis-md-1",
     "state": "pos-conv",
     "value": "프로브 결함은 고쳐도 한 칸 옆으로 이동한다(동형 재발). 실증 3종: ① **사후 detector 교체가 거짓 결론을 낳는다** — F13이 headline=min()(순서통계량)이 낸 INVALID를 사후 live-detector로 KILL로 뒤집었고 나는 그걸로 'lane CLOSED'를 선언했다. 사전등록 detector + disjoint seed로 재측정하니 부호반전+ns로 소멸(이질성 z=2.67 p=.0075) ⇒ 원 p=.033은 seed 잡음 draw ⇒ CLOSED 철회. 나중에 사전등록 TOST(Δ_eq·N_REQ 데이터 전 고정, n=334)로 다시 벌어 EQUIVALENT-CLOSED로 licensed. ② **헤드라인 DV가 처치의 최적화 대상과 항등식이면 그 양성은 무효** — F2 5차: a_comp가 장부(Σmin(L,S))의 순간기울기를 capture 0.98로 타고 있었고, 파티션-불변 물리 DV(supply/overload)로 바꾸니 이득 0/악화. ③ **'측정 불가' 게이트를 처치와 같은 눈을 가진 arm으로 잡으면 열린 채널을 닫아버린다** — F2가 '되먹임 없는 기질(HET)에선 오라클조차 못 움직이니 파티션이 총 물리자원을 못 바꾼다'를 대수적 사실로 기록했으나 **거짓**이었다. HET가 닫힌 게 아니라 오라클의 min() 장부 껍질이 거기서 눈이 먼 것이고, DV-정렬 담체(Ω)는 HET에서 supply +14.05를 딴다. 도달성/liveness 게이트는 **DV에 직접 정렬된 상한**으로 잡아야 하며, 처치와 같은 결함(장부 껍질)을 공유하는 arm으로 잡으면 그 결함이 게이트에 전이돼 멀쩡한 셀을 폐기한다. 동반: **차수(order) 진단을 먼저 하라** — 융합에서 S=cap−D가 정확히 보존되므로 ΔS|_t ≡ 0, 즉 순간 관측 담체는 **정의상** 장부의 함수다(a_comp의 capture 0.98은 설계 실수가 아니라 차수의 필연). 무엇이 보존되고 무엇이 비보존인지 먼저 따지면 5발의 INVALID를 아꼈다.",
-    "threshold": "재발조건 = numpy $0/eval 프로브 신규작성 또는 INVALID 재발사 시. 해결 = (1) 순서통계량 detector 금지(Δ=exp−max(controls) · headline=min/max) → control별 paired-t 전부+pooled-mean (2) SEM/paired-t만 (3) MDE를 처치가 인과 도달하는 축서 disjoint pilot로 사전계산+미달 abort(사후 span 금지) (4) 정보채널 증명 (5) V-gate는 헤드라인 detector 그 자체에 (6) 부호 뒤집는 축(규약·nuisance 상수·레짐·담체) 전수 열거+부호보존을 PASS 조건에 내장 (7) 등지출·동일정보·무기제 통제 primary 편입 (8) 연산자 자원보존(ops ≤1e-13) 사전게이트 (9) 사후 detector/판정변수 교체 금지 — 헤드라인·판정분기·등가마진 전부 데이터 보기 전 코드 sha256 동결 + disjoint 새 seed로 측정 **(10) 음성/종결 주장은 'ns'가 아니라 사전등록 TOST 등가성 검정으로 벌어라** — 'ns'는 '효과 없음'이 아니라 '못 찾음'이다. F13 cement가 실증: Δ_eq를 데이터 전 고정하고 n을 사전산정(N_REQ=230, n=334)해 90%CI ⊂ ±Δ_eq를 보이자 CLOSED가 처음으로 licensed됐다(p_TOST=.0083). 단 **등가를 licensing하는 것은 검정력이지 V-gate가 아니며**(unsigned V-gate는 방향효과 0 채널도 통과), 배제 사정거리(|효과|≥Δ_eq)를 정직히 명시할 것 **(11) 헤드라인 DV가 처치의 최적화 대상과 항등식이 아닌지 확인** — F2 5차: a_comp가 헤드라인(장부 ATP)의 순간기울기를 capture 0.98로 타고 있었고, 파티션-불변 물리 DV(supply/overload)로 바꾸니 이득 0/악화. 장부 DV는 항등식만 재발견한다. 반드시 **처치가 직접 최적화하지 않는 불변량**을 DV로. 금지지표: conj_index·purity(aggregate)·acc/ATP·corr(n,demand)·장부형 DV(Σmin(L,S) 류).",
+    "threshold": "재발조건 = numpy $0/eval 프로브 신규작성 또는 INVALID 재발사 시. 해결 = 기존 (1)~(11) 전부 유지 + **(12) 판정분기 도달가능성(falsifiability) 검사를 데이터 보기 전에 하라 — 사전등록 코드에서 각 verdict 분기(PASS/FAIL/INVALID/NOT-POWERED)가 '어떤 데이터에서 도달되는지' 를 실제 값으로 예시하라. 한 분기라도 도달 불가능하면 그 계기는 반증불가이며 출력된 verdict 는 관측이 아니라 정의다.** 2026-07-14 실증(4번째 동형 재발): 제6결함(detector 이득) 검산용 CAL-6 킬샷 자체가 이 병에 걸렸다 — ① FAIL 분기 조건 all(gain in band) 이 min-detector 의 gain≡0 때문에 데이터 이전에 False 확정 ⇒ D6 반증 불가 ② '필수 대조·pedestal' 4개(PC-1/PC-2/P0/P1)가 전부 산술 항등식(m_B 에 δ 넣고 m_B 로 재는 gain=1.000 · 짝수 n 균형 노이즈의 평균=0) ⇒ 어떤 계기 결함도 못 잡음 ③ 헤드라인 gain_std 가 분모를 m_B_conj 의 sd 로 잡아 그 detector 의 gain=1.000 이 **단위 선택의 동어반복** ④ 사전등록 TOST 가 통과하자 사후에 t-검정으로 갈아타 3 seed 중 1개(p=.025)를 헤드라인화. **법칙 확장: 결함은 계기에서 계기의 계기로도 옮겨간다 — 결함을 잡으려고 만든 계기를 인증 없이 쓰면 같은 병을 상속한다. 새 계기는 반드시 적대적 검증자(반증 시도 전담)를 붙여 발사하라 — 이 4번째 재발은 오직 적대적 검증 페어링 덕에 잡혔다.**",
     "source": "state/mito_organelle_lane/SYNTHESIS.md"
    },
    {
@@ -14967,8 +14923,8 @@
    {
     "id": "train-py-7",
     "state": "pos-conv",
-    "value": "장시간 학습(수 시간+)을 --ckpt-every 없이 발사하면 중간에 죽었을 때 **처음부터** 다시 해야 한다. 2026-07-13 N2 에서 17시간 GPU 를 이렇게 날렸다(main-s11 13h = 다른 세션이 pod 을 stop 해 /workspace wipe · shuffle_grid 4h = earlyoom kill). 더 나쁜 건 --ckpt-every 를 켜도 그것만으로는 재개가 안 됐다는 점 — 중간 산출물이 **양자화된 .clm** 뿐이었고 --init 은 .clm 을 거부한다(\"Quantized .clm is refused\"). 재개 가능한 .pt 는 학습이 **끝나야만** 나왔다. FIX(train-py-7): --ckpt-every 가 .clm 과 함께 rolling <out>.resume.pt 를 쓰도록 수정 → `--init <out>.resume.pt` 로 재개. 검증(summer 실경로): 60-step 학습이 smoke.clm.resume.pt(6.8MB) 생성 → --init 로 재개 시 \"warm-start ✓ .pt loaded 31/31 keys (untouched=0 extra-in-ckpt=0)\" 완전 복원.",
-    "threshold": "재발조건 = anima-py train 을 수 시간 이상 돌릴 때(특히 pod/pool 처럼 죽을 수 있는 호스트). 해결 = (1) **장시간 fire 는 --ckpt-every N 을 반드시 켠다**(N=2000~5000; 13h GPU 가 디스크 ~1.4GB 값어치다) (2) 죽으면 `--init <out>.resume.pt` 로 이어서 발사 (3) .clm 중간 산출물로 재개하려 하지 말 것 — 양자화라 --init 이 거부한다 (4) N2 처럼 여러 arm 을 병렬로 태우면 arm 마다 --ckpt-every 를 켜라(한 arm 이 죽어도 나머지가 안 무너진다).",
+    "value": "장시간 학습(수 시간+)을 --ckpt-every 없이 발사하면 중간에 죽었을 때 **처음부터** 다시 해야 한다. 2026-07-13 N2 에서 17시간 GPU 를 이렇게 날렸다(main-s11 13h = 다른 세션이 pod 을 stop 해 /workspace wipe · shuffle_grid 4h = earlyoom kill). FIX(train-py-7): --ckpt-every 가 .clm 과 함께 rolling <out>.resume.pt 를 쓰도록 수정 → `--init <out>.resume.pt` 로 재개. 검증(summer 실경로): 60-step 학습이 smoke.clm.resume.pt(6.8MB) 생성 → --init 로 재개 시 31/31 keys 완전 복원. ✅ **2026-07-14 확장(H_9313): '.clm 은 --init 이 거부한다'는 제약이 해소됐다.** 그 거부는 실전에서 덫이었다 — pod 이 철거되고 .clm 만 회수되면(a_fire_recover_complete) .pt 는 영원히 사라지고, 그 ckpt 위의 모든 warm-start 실험이 **과학적 이유가 아니라 역함수 부재로** 죽는다(H_9313 이 정확히 이 벽에 부딪혔다 — C34 의 .pt 가 어디에도 없었다). 근본수정 = `core/serialize.deserialize_v3()` (_pack_main_blob 의 정확한 역함수 · 같은 block/ext ORDER + KEYMAP) + `clm_roundtrip_is_identity()` 패리티 게이트. **H_247 양자화-잡음 우려는 여기 해당 없다**: int4 가중치는 '더 좋은 원본을 열화시킨 근사'가 아니라 **core/decode.py 가 실제로 돌리는 바로 그 가중치**이고, 이 레인이 측정한 모든 수가 그것을 디코드해 나왔다. 따라서 dequant 값에서 warm-start 하면 **우리가 측정한 그 모델에서** 학습이 시작된다. --init 이 .clm 을 받을 때 round-trip 이 **BYTE-IDENTICAL** 인지 먼저 검사하고(아니면 하드에러 — 조용한 오파싱은 학습 결과처럼 보인다) 통과해야만 로드한다. 실경로 검증(summer GPU): 'warm-start ✓ .clm int4-dequant loaded 31/31 keys (L=4 E=3 · round-trip BYTE-IDENTICAL · untouched=0)'.",
+    "threshold": "재발조건 = anima-py train 을 수 시간 이상 돌릴 때(특히 pod/pool 처럼 죽을 수 있는 호스트) · 또는 **pod 철거 후 .clm 만 남은 ckpt 에서 warm-start/CPT 를 하려 할 때**. 해결 = (1) **장시간 fire 는 --ckpt-every N 을 반드시 켠다**(N=2000~5000) (2) 죽으면 `--init <out>.resume.pt` 로 이어서 발사 (3) **.pt 가 없으면 `--init <ckpt>.clm` 을 쓴다** — round-trip BYTE-IDENTICAL 게이트를 통과하면 유효하다(옛 '거부' 제약은 폐기됨) · L/E 가 안 맞으면 하드에러로 막힌다(E 는 --experts 로 맞출 것; nblk = L+E+3 로 파일에서 역산 가능) (4) 여러 arm 병렬이면 arm 마다 --ckpt-every 를 켜라. ⚠️ 그래도 **.pt 회수가 1순위**다 — dequant warm-start 는 측정한 모델을 정확히 재현하지만, 원본 fp32 의 정밀도는 이미 .clm 서명 시점에 사라졌다.",
     "source": "cli/train.py"
    },
    {
@@ -15075,20 +15031,6 @@
     "value": "**'데이터가 부족하다'고 결론하기 전에, 그 한계가 코드에 박힌 상한인지 먼저 확인하라.** NBIND-G 접지 lane 은 held-out 원자 **n=29** 로 2개 H(H_9289 INFO-ABSENT · H_9290 NO-RESCUE)를 냈고, H_9296 은 그 프레임에 검정력이 없음을 밝히며 NEXT 를 '**더 크거나 다른 도메인의 코퍼스가 필요**'로 적었다. **틀렸다.** 인증 bar 를 1바이트도 안 건드리고 **같은 450k 코퍼스**를 다시 세니 purity≥0.85·occ≥100 을 통과하는 후보가 **pos 46 · neg 67** 이었고, n=29 의 정체는  라는 **자기가 건 코드 상한**이었다. 해제하니 held-out **29 → 91**, 동결 bar 0.65 가 우연에서 **1.62σ → 2.86σ** 로 올라 프레임이 비로소 '중간 신호'와 '무신호'를 구별하게 됐다(그리고 그 위에서 INFO-ABSENT 가 EARNED 로 확정). 즉 **'데이터 블로커'로 보고하고 외부 의존으로 미룰 뻔한 것이 실은 /bin/zsh 로 즉시 해소 가능한 코드 한 줄**이었다.",
     "threshold": "재발조건: 표본 수 부족(n)을 '데이터/코퍼스 한계'로 진단하고 외부 수집·spend·다음 세션으로 미룰 때. 해결: (1) **n 을 결정하는 코드 경로를 먼저 읽어라** — cap/floor/top-k/min(...) 류 상수가 있는지 grep (2) 그 상수를 풀었을 때 **인증 기준(bar)을 그대로 둔 채** 실제 통과 후보가 몇 개인지 세어라 — bar 를 건드리면 tune-to-green 이지만 자기가 건 편의상 상한을 푸는 것은 아니다 (3) 상한을 풀 때는 **기본값을 보존**해 기존 H 의 byte-재현성을 지켜라(파라미터화) (4) 새로 열린 표본이 **노출/품질 floor 를 실제로 통과**하는지 확인해 '희소해서 안 읽힌다'는 대안 설명을 배제하라.",
     "source": "H_9297 코드 상한이 데이터 한계로 오독됨 (2026-07-14)"
-   },
-   {
-    "id": "prereg-md-2",
-    "state": "pos-conv",
-    "value": "**사전등록의 bar 는 그 arm 이 실제로 도는 표본 위에서 산출하라 — 다른 실험의 수를 bar 로 이식하지 마라.** H_9311 DECON-2 의 G-A 게이트는 한 사전등록 안에서 **같은 실수를 두 번** 저질렀다: ① liveness bar 를 '≥0.90' 으로 걸었는데 그 0.90 은 H_9308 의 SEEN 매니페스트(20원자 80행 · frac(margin>0)=0.975)에서 왔고, H_9311 이 실제로 도는 man_seen 은 **6형태 × 20원자 = 120행**(flip1 60행)이라 기준선이 **0.883/0.900** ⟹ 처치를 걸기도 전에 무처치 baseline 이 bar 밑이었다. ② 부호일치 bar 를 '≥166/174' 로 걸었는데 **174 는 held-out 매니페스트의 행수**이고 G-A 가 도는 arm 은 **120행**이다 ⟹ 분모 자체가 틀렸다. 두 bar 모두 '다른 표본 위의 수'를 이식한 것이고, 그 결과 게이트가 **어떤 창으로도 통과 불가능**해져 사다리가 구조적으로 막혔다(win=96 fallback 도 같은 이유로 무의미). 정작 게이트가 물어야 했던 질문 — '창을 넓히면 트렁크가 깨지나' — 의 답은 실측으로 **아니오**였다: flip1 정확도 Δ=0.000(양 seed), 부호가 뒤집힌 6/4 행은 |margin| 중앙값이 유지행의 **1/12.8·1/13.7**(0.81 vs 10.42 · 1.03 vs 14.11) = 0 근방 잡음행. 즉 **레버가 살아있는데 내 계측 실수로 사산될 뻔했다**.",
-    "threshold": "재발조건: 새 실험의 사전등록에서 bar/N_REQ 를 **앞선 실험이나 다른 매니페스트에서 본 수치**로 정할 때(특히 '지난번에 0.95 나왔으니 0.90 걸자'). 표본의 **행 구성(형태·flip 비율)**이나 **행수(분모)**가 다르면 그 수는 이식 불가다. 해결 = (1) **bar 를 쓰기 전에 그 arm 의 무처치 baseline 을 실제로 한 번 돌려라**(NOSTORE/no-demo arm 은 처치가 아니므로 이걸 미리 재는 것은 tune-to-green 이 아니다 — 오히려 필수 사전작업) (2) bar 는 **절대값보다 상대차분**으로 진술하라(acc@128 ≥ acc@64 − 0.03 처럼) — 상대형은 표본 구성에 불변이고, 애초에 대부분의 게이트가 묻는 것이 차분이다(FORM tunable · BIND earned) (3) 분모를 쓸 때 **그 arm 의 실제 행수**를 코드로 산출해 박아라(하드코딩 166/174 금지) (4) bar 가 낙제하면 **먼저 '내 bar 가 이 표본 위에서 의미 있나'를 물어라** — 그러나 답이 '아니오'여도 **사후에 bar 를 내리지 마라**: 그건 tune-to-green 이다. 올바른 처리는 그 사전등록을 **INVALID-PREREG 로 폐기하고 재등록**하되, **처치 데이터(nonce·held-out)를 아직 안 건드렸음**을 재등록 유효성의 조건으로 명시하는 것이다.",
-    "source": "state/h9311_decon2/PREREG.md"
-   },
-   {
-    "id": "gen-nbindg-n2-py-1",
-    "state": "pos-conv",
-    "value": "THE UNIT AND THE STIMULUS ARE PART OF THE INSTRUMENT — three verdicts died on them in one session, each caught only because a CONTROL misbehaved. (1) POWER UNIT: the eval's held-out is 29 ATOMS x 6 forms; scoring the 174 items as independent puts the frozen 0.65 bar at a flattering 3.96 sigma instead of its true 1.62 (atom-level). (2) AGGREGATION: an atom's six forms are 3 positive + 3 negative BY CONSTRUCTION (negL/negS/negE invert polarity), so majority-voting raw item labels returns 'negative' for every atom and makes the gold vector constant — every number computed on top of it, including a 0.659 'hit' and a WALL verdict, was meaningless. The atom's polarity is the LATENT: recover it as majority over forms of (item_pred XOR form_flip), which is what the D-acc eval actually asks. (3) STIMULUS: surface forms rendered from a context truncated right after the stem yield BARE STEMS ('이 영화 참 => '), ungrammatical carriers the model never saw — and the tell was that the shuffle_grid CONTROL out-read both experiment arms (0.615 vs 0.473/0.560). Mine the eojeol from the raw corpus, not from the truncated probe contexts.",
-    "threshold": "Recurs whenever a probe aggregates sub-items into a unit, or synthesises stimuli. Before reading any tier: (a) state the unit power is counted in and show the items within a unit are independent, (b) verify the gold vector is not constant under your aggregation, (c) check the class balance so 0.5 really is chance, (d) confirm no CONTROL arm outperforms an experiment arm — a control on top is a broken instrument, not a finding.",
-    "source": "state/nbindg_grounding/gen_nbindg_n2.py"
    }
   ]
  }

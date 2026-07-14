@@ -824,3 +824,106 @@ def serialize_auto(src, out_path: str, *, n_trunk_layers: int = None,
     if n_trunk_layers is None or n_experts is None:
         raise ValueError("CLM serialize_auto needs n_trunk_layers + n_experts")
     return serialize_v3(src, n_trunk_layers, n_experts, out_path)
+
+
+# ---------------------------------------------------------------------------
+# .clm -> state_dict  (the inverse of _pack_main_blob)
+#
+# Why this exists: `anima-py train --init` warm-starts from a `.pt`, and used to REFUSE a `.clm`
+# ("dequant->state_dict remap is a follow-on"). That refusal is a trap in practice — a pod is torn
+# down, only the `.clm` is pulled (a_fire_recover_complete), and the `.pt` is gone forever. Then
+# every warm-start experiment on that checkpoint is dead, not for any scientific reason but for a
+# missing inverse. H_9313 hit exactly this: the C34 `.pt` no longer exists anywhere.
+#
+# The map is exact in structure and lossy only where the format itself is lossy: conv blocks are
+# int4-symmetric per-output-channel quantized, so dequantizing gives back `code * scale` — the
+# EXACT weights the engine has been decoding all along, not an approximation of the original .pt.
+# That is the right thing to warm-start from: it is the model we measured, byte for byte.
+# ext arrays (biases, norms, embedding) are stored fp32 and come back exactly.
+#
+# Round-trip is idempotent by construction: dequantized values are exactly representable, so
+# re-serializing them reproduces the same codes. `clm_roundtrip_is_identity` proves it on a real
+# file rather than asserting it.
+# ---------------------------------------------------------------------------
+
+def _unpack_nibbles(buf: bytes, n: int) -> "np.ndarray":
+    """Inverse of _pack_nibbles: bytes -> flat int4 codes in [-7, 7]."""
+    raw = np.frombuffer(buf, dtype=np.uint8)
+    lo = (raw & 0x0F).astype(np.int64) - 8          # even indices
+    hi = ((raw >> 4) & 0x0F).astype(np.int64) - 8   # odd indices
+    out = np.empty(raw.shape[0] * 2, dtype=np.int64)
+    out[0::2] = lo
+    out[1::2] = hi
+    return out[:n]
+
+
+def deserialize_v3(clm_path: str, n_trunk_layers: int, n_experts: int, K: int = 3):
+    """Read a CLM\\x01 v0.3 `.clm` back into a torch-keyed state_dict of numpy arrays.
+
+    Exact inverse of _pack_main_blob for (L, E): same block/ext ORDER, same KEYMAP. Conv blocks
+    come back dequantized (code * per-row scale) — which is precisely what core/decode.py runs, so
+    a model warm-started from this IS the measured model, not a reconstruction of a lost original.
+
+    Returns {torch_key: np.ndarray}. Shapes are restored to nn.Conv1d's (out, in, K); a k=1 slot
+    (router / readout) comes back as (out, in, 1).
+    """
+    if np is None:
+        raise RuntimeError("numpy is required for deserialize_v3")
+    L, E = int(n_trunk_layers), int(n_experts)
+    blob = open(clm_path, "rb").read()
+    if blob[:4] != MAGIC:
+        raise ValueError(f"{clm_path}: not a CLM\\x01 file (magic={blob[:4]!r})")
+
+    border, eorder = _general_block_order(L, E), _general_ext_order(L, E)
+    bkm, ekm = _general_block_keymap(L, E), _general_ext_keymap(L, E)
+
+    p = 4
+    nblk = struct.unpack_from("<B", blob, p)[0]
+    p += 1
+    if nblk != len(border):
+        raise ValueError(f"{clm_path}: nblk={nblk} but (L={L},E={E}) expects {len(border)} — "
+                         "wrong L/E for this file")
+
+    sd = {}
+    for slot in border:
+        cout, rest = struct.unpack_from("<II", blob, p)
+        p += 8
+        nbytes = (cout * rest + 1) // 2
+        codes = _unpack_nibbles(blob[p:p + nbytes], cout * rest).reshape(cout, rest)
+        p += nbytes
+        scale = np.frombuffer(blob[p:p + 4 * cout], dtype="<f4").astype(np.float32)
+        p += 4 * cout
+        w2d = (codes.astype(np.float32) * scale[:, None])       # dequant — exact, not approximate
+        # (cout, Cin*K) -> (cout, Cin, K). A k=1 slot has rest == Cin.
+        kk = K if (rest % K == 0 and slot not in ("rW", "roW")) else 1
+        sd[bkm[slot]] = w2d.reshape(cout, rest // kk, kk)
+
+    if blob[p:p + 4] != CLMX:
+        raise ValueError(f"{clm_path}: CLMX marker not found at offset {p}")
+    p += 4
+    n_ext = struct.unpack_from("<B", blob, p)[0]
+    p += 1
+    if n_ext != len(eorder):
+        raise ValueError(f"{clm_path}: n_ext={n_ext} but (L={L},E={E}) expects {len(eorder)}")
+    for slot in eorder:
+        n = struct.unpack_from("<I", blob, p)[0]
+        p += 4
+        sd[ekm[slot]] = np.frombuffer(blob[p:p + 4 * n], dtype="<f4").astype(np.float32).copy()
+        p += 4 * n
+
+    # embed / norms / biases are 1-D on the wire; restore embed to (V, d).
+    emb = sd[ekm["embed"]]
+    d = sd[bkm["ecW"]].shape[1]          # embed_conv in-channels == d
+    sd[ekm["embed"]] = emb.reshape(-1, d)
+    return sd
+
+
+def clm_roundtrip_is_identity(clm_path: str, n_trunk_layers: int, n_experts: int) -> bool:
+    """Prove the inverse is exact: deserialize -> serialize must reproduce the file BYTE for BYTE.
+
+    This is the parity gate a warm-start from `.clm` rests on. If it holds, then training that
+    starts from deserialize_v3(f) starts from exactly the weights the engine decodes out of f —
+    so a post-CPT delta cannot be a dequantization artifact.
+    """
+    sd = deserialize_v3(clm_path, n_trunk_layers, n_experts)
+    return bytes(_pack_main_blob(sd, int(n_trunk_layers), int(n_experts))) == open(clm_path, "rb").read()
