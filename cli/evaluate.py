@@ -778,6 +778,10 @@ def evaluate_usage():
     print("  anima evaluate --cf-straddle <trace.jsonl> [...]  (H_9394 STAGE-0 · $0 KILL screener before")
     print("      firing the ag-cont×dyn_w conjunction: recomputes score offline with the tension lane")
     print("      REPAIRED+audible and asks whether clock-open ∧ score≤θ can EVER coexist. 0 ⇒ cancel.)")
+    print("  anima evaluate --refractory-preview <trace globs>  (H_9405 · $0 preflight for the H_9404")
+    print("      earned-refractory pool fire: replays debt=1.0 offline on existing traces, asks if the emit")
+    print("      rate lands in GATE-S [0.05,0.95] (else KILL-SATURATED/DEAD · don't spend) with a varying")
+    print("      tension-paced cadence. KILL-or-CALIBRATE only (feedback loop → exact up to first-div t*).)")
     print("  anima evaluate --emit-gate-census <trace globs>  (H_9403 · $0 hygiene: is the score/tension")
     print("      lane decorative? counts silence∧safe=true (the only cell where tension votes) + emit⟺clock")
     print("      exactness across the whole corpus. 0 such ticks ⇒ GATE≡CLOCK, E-b cement lane CLOSED.)")
@@ -4780,6 +4784,139 @@ def _g_amp_screen(argv):
     return 0
 
 
+def _refractory_preview(argv):
+    """H_9405 REFRACTORY PREVIEW — $0 offline preflight for the H_9404 earned-refractory pool fire.
+
+    Fable §5: the pool spend on the 5-cell (a4×earned) measurement is gated on this $0 preview first.
+    It replays the earned refractory (H_9404) OFFLINE on existing a0/a1 traces to answer ONE question
+    before any compute: does debt=1.0 with the trace's OWN reconstructed tension land the emit rate in
+    the GATE-S band [0.05,0.95], or does it saturate (emit≡1) / die (silence forever)? A saturated or
+    dead preview KILLs the fire (H_9391 INVALID-SATURATED hazard). KILL-or-CALIBRATE ONLY — the
+    refractory closes a feedback loop (emit→bind→margin→tension→debt) and the recorded margins come
+    from the FACTUAL emit history, so the replay is exact only up to the first-divergence tick t*;
+    past it everything is DIRECTIONAL (same epistemic class as --cf-emit). It can never CONFIRM.
+
+    Reconstruction lemmas (Fable §5, exact up to t*):
+      g_recog_a4(t) = 0 before the first generation tick, else clip01(1 − rel_lane(t))  [a4 pole]
+      tension_a4(t) = clip01(emit_drive(t) · g_recog_a4(t))
+      cf_emit(t)    = (score>θ) ∧ phi_ratchet(phi, phi_peak) ∧ refractory_ok(debt_t)   [kill/content const]
+      debt: pay (−tension) → gate → recharge (=1.0 on cf_emit)   [H_9404 order]
+    SHUF control = tension driven by a seeded shuffle of the g_recog_a4 stream (separates "the specific
+    tension trajectory paces emit" from "any varying signal of that magnitude does").
+    """
+    import glob as _glob, random as _rnd, statistics as _st
+    THR = 0.30
+    seed = 9405
+    a = list(argv)
+    if "--cf-seed" in a:
+        i = a.index("--cf-seed"); seed = int(a[i + 1]); del a[i:i + 2]
+    paths = [x for x in a if not x.startswith("--")]
+    files = []
+    for p in paths:
+        files += sorted(_glob.glob(p, recursive=True)) if any(c in p for c in "*?[") else [p]
+    if not files:
+        print("  ⇒ ⛔ no trace files"); return 0
+
+    def _c01(x): return 0.0 if x < 0.0 else (1.0 if x > 1.0 else x)
+
+    def _replay(rows, phi_peak, tens_stream=None):
+        """returns (cf_emit_flags, gate_open_flags, intervals). tens_stream overrides tension (SHUF)."""
+        debt = 0.0; gen_seen = False; last = None
+        cfe_flags = []; open_flags = []; intervals = []
+        for i, r in enumerate(rows):
+            g_emit = bool(r.get("gen_emitted")) and r.get("gen_backend") == "clm" and r.get("gtext_len", 0) > 0
+            if tens_stream is None:
+                g_a4 = 0.0 if not gen_seen else _c01(1.0 - float(r["rel_lane"]))
+                tension = _c01(float(r["emit_drive"]) * g_a4)
+            else:
+                tension = tens_stream[i]
+            debt = debt - tension
+            if debt < 0.0: debt = 0.0
+            refr_ok = debt <= 0.0
+            phi_r = float(r["phi"]) > phi_peak / 2.0
+            cfe = (float(r["score"]) > THR) and phi_r and refr_ok
+            open_flags.append(refr_ok)
+            cfe_flags.append(cfe)
+            if cfe:
+                if last is not None: intervals.append(i - last)
+                last = i; debt = 1.0
+            if g_emit: gen_seen = True
+        return cfe_flags, open_flags, intervals
+
+    print("═══ REFRACTORY PREVIEW · H_9405 · $0 preflight for the H_9404 earned-refractory pool fire (θ=%.2f) ═══" % THR)
+    tot = 0; rec_emit = 0; cf_emit = 0; open_n = 0
+    all_int = []; shuf_cf = 0; tdiv_list = []
+    used = 0
+    for f in files:
+        rows = []; meta = None
+        try: fh = open(f)
+        except Exception: continue
+        for l in fh:
+            l = l.strip()
+            if not l: continue
+            try: o = json.loads(l)
+            except: continue
+            if o.get("_meta"): meta = o
+            elif all(k in o for k in ("score", "safe", "emit", "emit_drive", "rel_lane", "phi")):
+                rows.append(o)
+        if len(rows) < 5: continue
+        used += 1
+        rows.sort(key=lambda r: r.get("tick", 0))
+        phi_peak = float(meta.get("phi_peak", 0.0)) if meta else 0.0
+        cfe, opn, ints = _replay(rows, phi_peak)
+        # SHUF control: shuffle the realized g_recog_a4 tension stream (destroy trajectory, keep multiset)
+        gen_seen = False; tens = []
+        for r in rows:
+            g_emit = bool(r.get("gen_emitted")) and r.get("gen_backend") == "clm" and r.get("gtext_len", 0) > 0
+            g_a4 = 0.0 if not gen_seen else _c01(1.0 - float(r["rel_lane"]))
+            tens.append(_c01(float(r["emit_drive"]) * g_a4))
+            if g_emit: gen_seen = True
+        sh = list(tens); _rnd.Random(seed + used).shuffle(sh)
+        scfe, _so, _si = _replay(rows, phi_peak, tens_stream=sh)
+        # first-divergence tick vs recorded emit
+        td = None
+        for i, r in enumerate(rows):
+            if cfe[i] != bool(r.get("emit")): td = i; break
+        tdiv_list.append(td if td is not None else len(rows))
+        tot += len(rows); rec_emit += sum(1 for r in rows if r.get("emit"))
+        cf_emit += sum(cfe); open_n += sum(opn); shuf_cf += sum(scfe); all_int += ints
+    if tot < 60:
+        print("  ⇒ ⛔ NOT-POWERED (n=%d ticks < 60)" % tot); return 0
+
+    rec_r = rec_emit / tot; cf_r = cf_emit / tot; sh_r = shuf_cf / tot
+    in_band = 0.05 <= cf_r <= 0.95
+    imean = _st.mean(all_int) if all_int else 0.0
+    imin = min(all_int) if all_int else 0
+    imax = max(all_int) if all_int else 0
+    ivar = (len(set(all_int)) > 1)
+    tdiv_med = sorted(tdiv_list)[len(tdiv_list) // 2] if tdiv_list else 0
+    print("  replay: %d traces · %d ticks   (exact up to first-divergence t*; past t* DIRECTIONAL)" % (used, tot))
+    print("  recorded emit rate (clock)        : %.3f" % rec_r)
+    print("  cf earned-refractory emit rate    : %.3f   GATE-S∈[0.05,0.95]: %s" % (cf_r, "✅" if in_band else "💀"))
+    print("  SHUF-tension control emit rate    : %.3f   (trajectory destroyed · multiset kept)" % sh_r)
+    print("  inter-open interval  n=%d mean=%.2f range=(%d,%d)  varying=%s" % (len(all_int), imean, imin, imax, ivar))
+    print("  refractory gate-open rate         : %.3f   · median first-divergence t*=%d" % (open_n / tot, tdiv_med))
+    print()
+    if not in_band:
+        if cf_r > 0.95:
+            print("  ⇒ 💀 KILL-SATURATED — cf emit rate %.3f>0.95: the earned refractory opens almost every" % cf_r)
+            print("     tick (H_9391 saturation). Debt=1.0 is too small for this tension regime; MI→0. Do NOT")
+            print("     spend the pool fire — a new debt calibration is a fresh pre-registration, not a dial.")
+        else:
+            print("  ⇒ 💀 KILL-DEAD — cf emit rate %.3f<0.05: the debt never pays down (tension too weak);" % cf_r)
+            print("     the daemon goes silent. p5-correct but measurement-dead. Do NOT spend the pool fire.")
+    elif not ivar:
+        print("  ⇒ 🔎 CALIBRATE-BUT-FLAT — in-band (%.3f) but the inter-open interval is CONSTANT: on these" % cf_r)
+        print("     traces the tension is near-constant so the refractory ≈ a fixed clock. Substrate-selective")
+        print("     timing is un-testable here; the pool fire needs a richer-tension regime (303M) to decide.")
+    else:
+        print("  ⇒ ✅ CALIBRATE — earned refractory lands IN-BAND (%.3f) with a VARYING tension-paced cadence" % cf_r)
+        print("     (interval %d–%d ticks, mean %.2f vs design 3.75). Debt=1.0 is calibrated; no saturation." % (imin, imax, imean))
+        print("     ⇒ the H_9404 pool fire (5-cell a4×earned vs controls) is GREENLIT. This preview is")
+        print("     DIRECTIONAL (KILL-or-calibrate) — arm-selectivity is confirmed only by the live fire.")
+    return 0
+
+
 def _emit_gate_census(argv):
     """H_9403 EMIT-GATE CENSUS — $0 broad-sample proof that the score/tension lane is DECORATIVE.
 
@@ -6619,7 +6756,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -6892,6 +7029,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 1 and argv[0] == "--refractory-preview":
+        return _refractory_preview(argv[1:])
     if len(argv) >= 1 and argv[0] == "--emit-gate-census":
         return _emit_gate_census(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
