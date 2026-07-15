@@ -3488,7 +3488,13 @@ def _im_rows(paths):
         for line in open(p, "r", encoding="utf-8", errors="surrogateescape"):
             if not line.strip():
                 continue
-            d = json.loads(line)
+            try:
+                d = json.loads(line)
+            except ValueError:
+                # a trace flushed mid-write (a daemon still running when the panel started) can
+                # leave one truncated line; tolerate it like the --tension-emit loader does rather
+                # than crash the whole verdict on a single bad row (verdict-integrity).
+                continue
             if d.get("_meta"):
                 continue
             d["_src"] = p
