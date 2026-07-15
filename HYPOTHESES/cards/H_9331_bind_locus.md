@@ -1,6 +1,6 @@
 # H_9331 — 두 극성은 왜 다른 자리에 사는가 (BIND-LOCUS · 인과 주입)
 
-- **tier**: 🟠 INSTRUMENT-SUSPECT (KO 측정 8/8 INVALID-LOCALIZATION · 원자+캐리어 스팬 모두 · **"read-site=표면 캐리어" 인과주장 철회**(#3629) — 0.50 은 이진 readout 의 **scramble floor**(Fable)이지 국소화 신호 아님 · 결정 통제 = **same-class donor swap**(`--bl-swap-donor-class same` v0.13.60) 대기 → same≈cross≈0.50 이면 swap-patch 는 이 기질서 국소화 불가 확정(B))
+- **tier**: 🧱 INSTRUMENT-CEILING (B CONFIRMED · #3630) — **swap-patch BIND-LOCUS 는 이 byte-LM 이진 readout 을 인과 국소화할 수 없다.** same-class(극성-무관) donor 통제가 봉인: n2 s7 same **0.611** ≥ cross 0.500 · C4 s7 same **0.389** ≈ cross 0.350 (같은 답을 주입해도 반대-극성과 동등/더 높은 flip ⟹ swap 은 극성-무관 파괴 · **0.50 = scramble floor**). 원자+캐리어 10/10 INVALID-LOCALIZATION 은 전부 **계기 천장**이지 locus 사실 아님. "read-site=표면 캐리어" 인과주장 철회. multi-site 금지 · **STOP = 발견**. KO 교차기여=INVALID(단일스팬 국소화 불가)
 - **선행**: H_9327 🧱 BINDING — 연산자는 **살아있고**(SEEN flip1 0.98~1.00) 사실은 **가중치에 있는데**(WRITE 0.98) **결합하지 않는다**(held-out flip1 0.46~0.56 = 우연). LIE 통제군의 편향-무관 검사가 **+0.073 ≈ 0** ⇒ 심은 사실이 **조회조차 되지 않는다**. 도망갈 구멍(연산자 없음·기질 무능·사실 미착륙·예산 부족·시연 결핍) 전부 실측 배제.
 - **설계**: Fable 5 (재프레임 + 결정실험 + 동결 bar)
 - **계기**: `anima-py evaluate <clm> --bind-locus <manifest.json>` (engine-native · `core/decode.py` taps/edits)
@@ -177,6 +177,22 @@ maxswap 은 상향편의 순서통계(probe-defect-census) — 참 중앙값은 
 **동결 규칙**: same ≥ ~0.40 → **(B) 확정, STOP**(read 는 단일스팬 국소화 불가 = 그 자체가 발견 · multi-site
 금지). same ≈ 0 ∧ cross ≈ 0.50 → (A) 생존 → multi-site. 판별자 = **margin(same ≪ cross)** 이지 same=0 정확값
 아님. C4/n2 s7 카레이어 스팬 · n=20 · 양 seed.
+
+**✅ 측정 — (B) CONFIRMED (pod 44908484 GPU-FIRED · 2026-07-15)**:
+
+| ckpt | cross-class(반대극성) | **same-class(같은극성)** | 판정 |
+|---|---|---|---|
+| n2 s7 | 0.500 | **0.611** (same > cross) | (B) |
+| C4 s7 | 0.350 | **0.389** (same ≈ cross) | (B) |
+
+같은-극성 donor 는 **같은 답을 주입**하므로 진짜 읽기라면 flip ≈ 0 이어야 하는데, 반대-극성과 **동등하거나 더
+높은** flip 을 냈다(same ≥ cross · same ≥ 0.40). ⟹ swap 은 극성을 나른 게 아니라 **극성-무관하게 파괴**한다 =
+**0.50 은 이진 readout 의 scramble floor**. 동결 규칙(same ≥ ~0.40 → B 확정) 충족. **swap-patch 는 이 byte-LM
+에서 constructive redirection 을 한 번도 못 보였다 — 원자+캐리어 10/10 INVALID 은 계기 천장.** multi-site
+금지(A 사망). **STOP: 극성 읽기는 swap-patch 로 단일스팬 인과 국소화가 불가능하고, 그것이 발견이다.**
+
+다른 계기가 필요하면(조건부 후속, 이번 종결 아님): off-manifold 문제 없는 **attention-knockout**(readout→캐리어
+필요성) 또는 **minimal-pair 교체**(극성만 다른 donor 로 off-manifold 최소화) — swap-patch 아님.
 
 ### KO 레인의 교차 기여 (한 줄)
 
