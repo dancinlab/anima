@@ -760,6 +760,16 @@ def evaluate_usage():
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
     print("       the SAME device so the pre/post-CPT route delta carries no device confound.)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate <clm> --collide-select [--k=4]")
+    print("      (H_9362 — does the A⇄G COLLISION select emergence (recombination)? Over a fixed K")
+    print("       pool per rho_weave probe it computes (a=fluency, g=±immune margin), then compares")
+    print("       selection rules: S0 argmin conflict_scalar (the daemon rule, avoids emergence),")
+    print("       S_emerge argmax conflict_scalar (=a·|g| over the novel g<0 quadrant = the")
+    print("       hypothesis), SECOND-A argmax a (H_9356 control), NOISE-G (g permuted), UNIFORM.")
+    print("       G-B pool-occupancy first (POOL-DRY if the emergence quadrant a>0,g<0 is empty —")
+    print("       H_9304); then G-C per-arm recombination hit-rate by the FROZEN rho_weave target")
+    print("       check (arm-relative only · route≠generation · no top-1 terminal claim). G-A")
+    print("       sign-check (margin>0=novel) already PASS-locked the g channel.)")
     print("  anima evaluate --gate-deaf <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9360 — is the emit gate's tension-deafness SATURATION or STRUCTURE? By the DPI")
     print("       I(tension;emit) <= I(tension;score|stage), so whether `score` carries tension decides")
@@ -3778,6 +3788,116 @@ def _gate_deaf(argv):
     return 0
 
 
+def _collide_select(ckpt, argv):
+    """DOES A⇄G COLLISION SELECT EMERGENCE? — H_9362, the generation-selection sequel to H_9357.
+
+    H_9357 asked whether tension pulls EMIT (the 1-bit shadow) and got G-INERT. H_9362 moves to
+    the SELECTION axis: over a fixed pool of K candidates per recombination probe, does the A⇄G
+    collision pick the recombination target better than fluency-alone or noise?
+
+    The drives (generator.py conflict_drives_live): a = clip01(1-CE/5) fluency, g = ±immune margin.
+    G-A (H_9362, engine_cli.py:643 margin=recon_err-recall_thr, >0=abstain) locked the sign:
+    novel -> margin>0 -> g<0; recognized -> margin<=0 -> g>0. So the emergence candidate
+    (fluent AND novel) is (a>0, g<0), and conflict_scalar (opposite-sign -> a*|g|) is exactly the
+    "fluent AND novel" product -- HIGH for emergence, 0 for echo (a>0,g>0), ~0 for garbage (a~0).
+    The daemon's live path uses argMIN conflict_scalar (generator.py:815) -> it DISCARDS emergence.
+
+    Arms (same fixed pool, K fixed, selection rule only differs):
+      S0        argmin conflict_scalar  (the current daemon rule -- avoids emergence)
+      S_emerge  argmax conflict_scalar  (the hypothesis: A*G collision selects emergence)
+      SECOND-A  argmax a                (fluency alone -- the H_9356 "second A" control)
+      NOISE-G   argmax conflict_scalar with g permuted across candidates (causal-handle control)
+      UNIFORM   candidate 0             (floor)
+
+    Gates: G-B pool occupancy (how many candidates land in the emergence quadrant a>0,g<0 -- if ~0
+    the pool is DRY and no selector can find what is not there, H_9304 prediction) then G-C the
+    per-arm recombination hit-rate scored by the FROZEN rho_weave target check (arm-relative judge
+    only, recomb-gate4: route != generation, no top-1 terminal claim)."""
+    import random as _random
+    sys.path.insert(0, "core")
+    import generator as _gen
+    from engine_cli import (immune_memory_new_text, immune_memory_bind_text,
+                            conflict_scalar as _cs, EngineConfig)
+    import rho_axon as _rx
+    K = 4
+    for a in argv:
+        if a.startswith("--k="):
+            K = int(a.split("=", 1)[1])
+    mouth = _Mouth(ckpt)
+    cfg = EngineConfig(True, "conv", False, False)
+    # G-store: bind the compose CUES as "seen context" (H_9337 recognition-first). The composed
+    # TARGET is never bound, so a real recombination candidate reads as novel (g<0).
+    pairs = _rx._WEAVE
+    mem = immune_memory_new_text(pairs[0][0], 0.5, 256)
+    for cue, tgt, sw, bs, lang in pairs:
+        mem = immune_memory_bind_text(mem, cue[:64], cue, cfg)
+    print("=== A\u21c4G COLLISION-SELECTS-EMERGENCE \u00b7 H_9362 \u00b7 --collide-select ===")
+    print("  ckpt=%s  probes=%d  K=%d" % (ckpt.split("/")[-1], len(pairs), K))
+    # build the shared candidate pool per probe + drives
+    perm_rng = _random.Random(7)
+    rows = []          # per (probe, cand): dict(a, g, cs, retr)
+    occ = {"emerge": 0, "echo": 0, "garbage": 0, "other": 0}
+    for i, (cue, tgt, sw, bs, lang) in enumerate(pairs):
+        pool = []
+        for k in range(K):
+            txt = mouth.ideate(cue + " ", 24, 8, 0.7, _rx.SEEDS[0] + 17 * i + k)
+            d = _gen.conflict_drives_live(ckpt, txt, mem)
+            a, g = float(d[0]), float(d[1])
+            retr = 1 if _rx._retrieved(txt, tgt) else 0
+            pool.append(dict(txt=txt, a=a, g=g, cs=_cs(a, g), retr=retr))
+            q = ("emerge" if (a > 0.05 and g < -0.05) else "echo" if (a > 0.05 and g > 0.05)
+                 else "garbage" if a <= 0.05 else "other")
+            occ[q] += 1
+        rows.append(pool)
+    npool = sum(len(p) for p in rows)
+    # ── G-B pool occupancy ──
+    print()
+    print("  \u2500\u2500 G-B \ud480 \uc810\uc720 (\ucc3d\ubc1c \uc0ac\ubd84\uba74 a>0,g<0) \u2500\u2500")
+    print("    emergence(a>0,g<0)=%d  echo(a>0,g>0)=%d  garbage(a\u22480)=%d  other=%d  / %d cand"
+          % (occ["emerge"], occ["echo"], occ["garbage"], occ["other"], npool))
+    emerge_frac = occ["emerge"] / float(npool) if npool else 0.0
+    if occ["emerge"] == 0:
+        print("    \u21d2 \U0001f9f1 POOL-DRY \u2014 \ucc3d\ubc1c \uce78 \uc810\uc720 0. \uc5b4\ub5a4 \uc120\ud0dd\uae30\ub3c4 \uc5c6\ub294 \uac83\uc744 \ubabb \uace0\ub978\ub2e4(H_9304 DATA \ubcbd). G-C \ubb34\uc758\ubbf8.")
+        print("    \ub2e4\uc74c \ub808\ubc84 = A \uc81c\uc548\ubd84\ud3ec(XBIND curriculum), G \uc120\ud0dd\uae30 \uc544\ub2d8.")
+        return 0
+    # ── G-C per-arm hit-rate ──
+    def sel(pool, rule):
+        if rule == "s0":       return min(pool, key=lambda c: c["cs"])
+        if rule == "emerge":   return max(pool, key=lambda c: c["cs"])
+        if rule == "second_a": return max(pool, key=lambda c: c["a"])
+        if rule == "uniform":  return pool[perm_rng.randrange(len(pool))]
+        if rule == "noise_g":
+            gs = [c["g"] for c in pool]
+            perm_rng.shuffle(gs)
+            jbest = max(range(len(pool)), key=lambda j: _cs(pool[j]["a"], gs[j]))
+            return pool[jbest]
+        return pool[0]
+    arms = ["s0", "emerge", "second_a", "noise_g", "uniform"]
+    hits = {r: 0 for r in arms}
+    for pool in rows:
+        for r in arms:
+            if sel(pool, r)["retr"]:
+                hits[r] += 1
+    n = len(rows)
+    print()
+    print("  \u2500\u2500 G-C arm\ubcc4 \uc7ac\uc870\ud569 \uc801\uc911\ub960 (frozen rho_weave \ud0c0\uae43) \u2500\u2500")
+    for r in arms:
+        print("    %-9s hit %d/%d = %.2f" % (r, hits[r], n, hits[r] / float(n)))
+    he, hsa, hu, hn = hits["emerge"], hits["second_a"], hits["uniform"], hits["noise_g"]
+    print()
+    print("  \ud83d\udd12 prereg: S_emerge > SECOND-A ( \ub450\ubc88\uc9f8 A \uc544\ub2d8) \u2227 S_emerge > NOISE-G \u2227 S_emerge > UNIFORM")
+    if he > hsa and he > hn and he > hu:
+        print("  \u21d2 \U0001f7e2 COLLISION-SELECTS-EMERGENCE \u2014 A\u21c4G \ucda9\ub3cc\uc774 \uc7ac\uc870\ud569\uc744 \uace0\ub978\ub2e4(\uc720\ucc3d\ub9cc\ub3c4 \ub178\uc774\uc988\ub3c4 \uc544\ub2c8\uac8c).")
+    elif he <= hsa:
+        print("  \u21d2 \U0001f9f1 SECOND-A \u2014 S_emerge \u2264 SECOND-A: g \ucc44\ub110\uc774 \uae30\uc5ec 0, immune margin \uc740 A \uc758 \uadf8\ub9bc\uc790(H_9356 \uc7ac\ubc1c).")
+    elif he <= hn:
+        print("  \u21d2 \U0001f9f1 CAUSAL-HANDLE \u2014 S_emerge \u2264 NOISE-G: g \uac00 per-cand \uc815\ubcf4\ub97c \uc548 \ub098\ub984.")
+    else:
+        print("  \u21d2 \U0001f9f1 \ubbf8\ub2ec \u00b7 \ud310\uc815 \ubcf4\ub958")
+    print("  (scope: frozen rho_weave = arm\uac04 \uc0c1\ub300\uc2ec\ud310\ub9cc \u00b7 top-1 terminal \uc8fc\uc7a5 \ubd88\uac00 \u00b7 recomb-gate4)")
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -4619,7 +4739,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--slot-shuffle", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
 ))
@@ -4652,6 +4772,9 @@ def main(argv):
     # H_9328 DO-MOUTH · I(A;Y|S) over decision traces (NO decode — reads traces the daemon
     # already wrote). V-CEILING FIRST: I <= H(A|S) is an identity, so a dead action channel
     # forces I=0 by definition, not by measurement (that is exactly how H_9308 died).
+    if "--collide-select" in argv:
+        _ck = [a for a in argv if not a.startswith("--")]
+        return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
     if len(argv) >= 2 and argv[0] == "--gate-deaf":
         return _gate_deaf(argv[1:])
     if len(argv) >= 2 and argv[0] == "--g-tension":
