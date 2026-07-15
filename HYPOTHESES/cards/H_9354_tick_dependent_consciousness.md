@@ -1,7 +1,20 @@
 # H_9354 — 틱에 따라 의식이 달라지나 (Θ/σ 의 tick 의존성)
 
-**status**: ✅ VERDICT (비퇴화 stage decode 완료 · substrate 틱리듬 음성 · emit⇄stage 스케줄 양성)
-**tier**: SCREENER→DIRECTIONAL (303M engine-native · 단일 세션 · seed 재현은 4-arm 캠페인)
+**status**: ✅ VERDICT CLOSED (substrate 틱리듬 음성 = 구조적으로 강제 · 4-arm 캠페인 MOOT)
+**tier**: SCREENER→DIRECTIONAL (303M engine-native · H-b 는 코드-트레이스로 구조 확정)
+
+## 🔒 4-arm 캠페인 MOOT — arm 이 DV 와 인과 단절 (reference-match · 43k틱 불필요)
+
+앞서 "seed 재현·arm 절단"을 go-gated 잔여로 남겼으나, **코드 트레이스로 캠페인이 무의미함을 확정**했다. `cli/chat.py:1578-1592, 1921-1922`:
+
+```
+ten_phasic ← ag_conflict ← ag_a_drive=emit_drive · ag_g_drive=−(1−emit_drive)
+           = emit_drive 하나의 결정론적 함수(a0 wiring · H_9356 R²=0.994 · A측 자기함수)
+θ (ep_theta_stage) → stage_env → idle → emit gate   ┐ ten_phasic 과
+sp (Process-S)     → 데몬선 stage=dr_stage_at(tick) 라 NO-OP ┘ 별개 subgraph
+```
+
+3개 arm 전부 H-b 의 DV(ten_phasic)를 못 바꾼다: **θ-const**(θ⊥ten_phasic · idle/emit 경로만) · **sp-freeze**(데몬 stage 는 tick 함수라 sp NO-OP) · **field-freeze**(pure_field 이미 세션 내내 얼어있음 = 현행 기본 · H_9352). ⟹ **substrate 틱리듬 음성은 측정만이 아니라 구조적으로 강제된다**: ten_phasic 은 A측 emit_drive 의 EMA 라 독립 G-tension 을 못 나른다. 순환시프트 null 음성(H-b)은 이 구조의 실측 확증. **캠페인 실행 불필요.**
 
 ## 비퇴화 stage decode 결과 (303M · summer · N=90틱 · `ANIMA_STAGE_CYCLE=1`)
 

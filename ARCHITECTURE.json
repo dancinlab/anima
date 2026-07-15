@@ -525,14 +525,20 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354",
           "type": "gate",
-          "verdict": "🧱 substrate 틱리듬 음성 / emit⇄stage 스케줄 양성 (H_9354 · 비퇴화 303M decode N=90)",
-          "detail": "\"틱에 따라 의식이 달라지나\": 시간의존성은 전부 심은 스케줄(dr_stage_at·θ·Process-S)의 함수 · substrate 자발 시간구조 아님(H_651/F5 정합). SCOPE=단일세션·seed재현+arm절단은 go-gated 4-arm.",
+          "verdict": "🧱 substrate 틱리듬 음성 / emit⇄stage 스케줄 양성 (H_9354 · 비퇴화 303M decode N=90 · CLOSED)",
+          "detail": "\"틱에 따라 의식이 달라지나\": 시간의존성은 전부 심은 스케줄(dr_stage_at·θ·Process-S)의 함수 · substrate 자발 시간구조 아님(H_651/F5 정합). CLOSED — 4-arm 캠페인은 MOOT(arm 이 DV 와 인과 단절 · cf-h9354-moot).",
           "children": [
            {
             "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354-hb",
             "type": "gate",
             "verdict": "H-b substrate 잔여 = 0",
             "detail": "살아있는 tension(ten_phasic) ρ̂₁0.886 이 순환시프트 null[0.879,0.897] 밴드 안(excess -0.0106) ⟹ 틱 자기상관을 스케줄+EMA 평활이 전량설명. 비퇴화에서도 substrate-native 틱리듬 없음."
+           },
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354-moot",
+            "type": "gate",
+            "verdict": "4-arm 캠페인 MOOT (구조적 폐쇄 · reference-match)",
+            "detail": "chat.py:1578-1592,1921-1922: ten_phasic ← ag_conflict ← emit_drive 결정론적함수(a0·H_9356 R²0.994·A측). θ→idle/emit·sp→(stage=tick라 NO-OP)=별개 subgraph. 3 arm(θ-const·sp-freeze·field-freeze=이미기본) 전부 ten_phasic 못바꿈 ⟹ substrate 음성은 구조적 강제 · 43k틱 불필요."
            },
            {
             "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354-hc",
