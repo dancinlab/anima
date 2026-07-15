@@ -654,7 +654,7 @@ def _gen_substrate_seed(ctx, anchors):
 
 def gen_auto_ce(ckpt_path, text):
     """generator.hexa:1050 gen_auto_ce — mouth-agnostic mean next-byte CE over a TEXT
-    (the a_drive fluency read). CONV → clm_ce_ranged · ByteGPT → bytegpt_ce_ranged
+    (the a_drive fluency read). CONV → clm_ce_seq · ByteGPT → bytegpt_ce_ranged
     (P4-decode). CE_REF 5.0 when the text is too short / the mouth declines."""
     ids = list(text.encode('utf-8', 'surrogateescape'))
     if len(ids) < 2:
@@ -664,15 +664,16 @@ def gen_auto_ce(ckpt_path, text):
         if r["ok"]:
             return float(r["ce_mean"])
         return 5.0
-    r = _clm.clm_ce_ranged(ckpt_path, ids)
-    if r["ok"]:
-        return float(r["ce_mean"])
-    return 5.0
+    try:
+        v = float(_clm.clm_ce_seq(ckpt_path, ids))
+        return v if v == v else 5.0
+    except Exception:
+        return 5.0
 
 
 def gen_auto_ce_W(h, text):
     """generator.hexa:1070 gen_auto_ce_W — load-once twin of gen_auto_ce off a
-    pre-loaded handle (clm → clm_ce_ranged_W, P4-decode). Same 5.0 fallbacks."""
+    pre-loaded handle (clm → clm_ce_seq_W, P4-decode). Same 5.0 fallbacks."""
     ids = list(text.encode('utf-8', 'surrogateescape'))
     if len(ids) < 2:
         return 5.0
@@ -684,10 +685,11 @@ def gen_auto_ce_W(h, text):
     W = h["W"]
     if not W["ok"]:
         return 5.0
-    r = _clm.clm_ce_ranged_W(W, ids)
-    if r["ok"]:
-        return float(r["ce_mean"])
-    return 5.0
+    try:
+        v = float(_clm.clm_ce_seq_W(W, None, ids))
+        return v if v == v else 5.0
+    except Exception:
+        return 5.0
 
 
 def conflict_drives_live(ckpt_path, cand, mem):
