@@ -836,6 +836,7 @@ def evaluate_usage():
     print("      bind absent (the position carries the byte's identity, not its valence).")
     print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7] [--bl-swap-span stem|carrier]")
     print("       --bl-swap-span carrier: Stage A swaps the operator morpheme span (지 않다), not the atom span (H_9331 pedestal)")
+    print("       --bl-swap-donor-class same: donor is a SAME-polarity item (polarity-blind control · (B) scramble-floor test)")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
     print("      THERE, and ask if the answer follows. Separates P-place / P-kind / S; V1/V2/V3 gates")
     print("      make a confound an INVALID, never a false verdict.")
@@ -2147,6 +2148,16 @@ def bind_locus_run(argv):
     if swap_span not in ("stem", "carrier"):
         print("ERROR: --bl-swap-span must be stem|carrier", file=sys.stderr)
         return 2
+    # donor-class control (H_9331 · 2026-07-15): the polarity-blind pedestal.
+    #   cross — donor is the OPPOSITE-polarity SEEN item (default · the real localization test)
+    #   same  — donor is a DIFFERENT SAME-polarity SEEN item. Separates 0.50 = binary SCRAMBLE
+    #           FLOOR (off-manifold destruction, polarity-blind → same-class flip ≈ 0.50 too)
+    #           from 0.50 = partial real signal (same-class flip ≈ 0). If same ≈ cross ≈ 0.50 the
+    #           swap-patch never localized anything (Fable · every INVALID = the instrument floor).
+    donor_class = evaluate_strval(argv[1:], "--bl-swap-donor-class", "cross")
+    if donor_class not in ("cross", "same"):
+        print("ERROR: --bl-swap-donor-class must be cross|same", file=sys.stderr)
+        return 2
     items = spec["items"]
     carrier = spec.get("carrier", "이 영화 {stem}고 => ")
 
@@ -2163,6 +2174,9 @@ def bind_locus_run(argv):
     print("  swap-span  : %s%s" % (swap_span,
           "  (operator morpheme 지 않다 — H_9331 pedestal · 예측 flip>=%.2f)" % G_A_SWAP
           if swap_span == "carrier" else "  (atom span — default)"))
+    print("  donor-class: %s%s" % (donor_class,
+          "  (SAME-polarity donor — polarity-blind control · (B)면 flip≈0.50 (A)면 ≈0)"
+          if donor_class == "same" else "  (opposite-polarity donor — default)"))
     W = clm.clm_load_weights(ckpt)
     if not W.get("ok"):
         print("ERROR: ckpt not decodable", file=sys.stderr)
@@ -2269,7 +2283,10 @@ def bind_locus_run(argv):
                 if rung >= len(sp):
                     continue
                 t0, t1 = sp[rung]
-                donors = [d for d in neg_seen if span_of(d) is not None]
+                if donor_class == "same":
+                    donors = [d for d in pos_seen if d is not it and span_of(d) is not None]
+                else:
+                    donors = [d for d in neg_seen if span_of(d) is not None]
                 if not donors:
                     continue
                 dn = donors[n % len(donors)]
@@ -2305,7 +2322,8 @@ def bind_locus_run(argv):
         print("  answer >= %.2f with sham <= %.2f. The operator's read is NOT localized to the stem" % (G_A_SWAP, G_A_SHAM))
         print("  span, so an injection there could not test P vs S. This is a locus FACT, not a")
         print("  failed run — and it forbids the P/S verdict rather than faking one.")
-        json.dump({"verdict": "INVALID-LOCALIZATION", "swap_span": swap_span, "stageA": a_rows,
+        json.dump({"verdict": "INVALID-LOCALIZATION", "swap_span": swap_span,
+                   "donor_class": donor_class, "stageA": a_rows,
                    "bars": {"swap": G_A_SWAP, "sham": G_A_SHAM}}, open(out_path, "w"), ensure_ascii=False)
         return 0
     depth, rung = lstar
@@ -2423,7 +2441,7 @@ def bind_locus_run(argv):
     print("\nBIND-LOCUS %s" % verdict)
     print("  %s" % why)
     json.dump({"verdict": verdict, "why": why, "swap_span": swap_span,
-               "lstar": {"depth": depth, "rung": rung},
+               "donor_class": donor_class, "lstar": {"depth": depth, "rung": rung},
                "stageA": a_rows, "targets": {"mu_pos": tgt_p, "mu_neg": tgt_n},
                "arms": res, "bars": {"V1_swap": G_A_SWAP, "V1_sham": G_A_SHAM, "V2": G_V2,
                                      "V3": G_V3, "E": G_E, "DV_P": G_DV_P, "TOST": G_TOST}},
@@ -4294,7 +4312,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",

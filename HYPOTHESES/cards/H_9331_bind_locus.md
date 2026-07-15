@@ -1,6 +1,6 @@
 # H_9331 — 두 극성은 왜 다른 자리에 사는가 (BIND-LOCUS · 인과 주입)
 
-- **tier**: 🟡 DIRECTIONAL (KO 측정 완료 · 4/4 INVALID-LOCALIZATION → 연산자 read-site = **표면 캐리어**, 원자-스팬 아님 · pedestal(캐리어-swap) 대기 · KO×EN 교차 PENDING)
+- **tier**: 🟠 INSTRUMENT-SUSPECT (KO 측정 8/8 INVALID-LOCALIZATION · 원자+캐리어 스팬 모두 · **"read-site=표면 캐리어" 인과주장 철회**(#3629) — 0.50 은 이진 readout 의 **scramble floor**(Fable)이지 국소화 신호 아님 · 결정 통제 = **same-class donor swap**(`--bl-swap-donor-class same` v0.13.60) 대기 → same≈cross≈0.50 이면 swap-patch 는 이 기질서 국소화 불가 확정(B))
 - **선행**: H_9327 🧱 BINDING — 연산자는 **살아있고**(SEEN flip1 0.98~1.00) 사실은 **가중치에 있는데**(WRITE 0.98) **결합하지 않는다**(held-out flip1 0.46~0.56 = 우연). LIE 통제군의 편향-무관 검사가 **+0.073 ≈ 0** ⇒ 심은 사실이 **조회조차 되지 않는다**. 도망갈 구멍(연산자 없음·기질 무능·사실 미착륙·예산 부족·시연 결핍) 전부 실측 배제.
 - **설계**: Fable 5 (재프레임 + 결정실험 + 동결 bar)
 - **계기**: `anima-py evaluate <clm> --bind-locus <manifest.json>` (engine-native · `core/decode.py` taps/edits)
@@ -153,12 +153,38 @@ pedestal), 그다음 n2. full-stem rung 은 n=20 으로 올려 재발사.
 = Fable 재위임 중**(pedestal 예측이 뒤집힌 자리). #3625 헤드라인('read-site=표면 캐리어 DIRECTIONAL')의 존폐도
 Fable 판정 대기. 계기·산출물 전부 engine-native(`--bl-swap-span carrier` · bl_carrier_*.json).
 
+#### 🛑 정정 (Fable · 결정적) — 0.50 은 **국소화 신호가 아니라 이진 readout 의 scramble floor**
+
+**"read-site=표면 캐리어" 인과주장을 철회한다.** readout 은 이진(`지 않다`/`고`)이다. donor hidden 을
+심었는데 그것이 recipient 를 **파괴하되 donor 의 답을 설치하지 못하면**, flip 은 0(무시)도 1(donor 채택)도
+아니고 **0.50 으로 간다** — off-manifold 상태가 이진 head 에서 반반으로 갈리기 때문. 즉 **swap-flip=0.50 은
+극성을 나른 게 아니라 readout 을 부순, 최대파괴·무정보 개입의 서명**이다. 세 사실이 같은 곳을 가리킨다:
+① G-LIVE 16.47 logit 이동 + flip ≤50% = **비결합(off-manifold)** 서명(큰 coherent 재지향이면 답이 거의
+결정적으로 뒤집힌다) ② **캐리어>원자 는 파괴 gradient 지 국소화 gradient 가 아님**(캐리어는 연산자-인접
+계산이라 건드리면 downstream 을 더 부숴 0.50 바닥에 더 가까워진다 · 이진에선 '부숨'과 '재지향'이 같은 수) ③
+maxswap 은 상향편의 순서통계(probe-defect-census) — 참 중앙값은 더 낮다. ⟹ **양성통제는 어디서도 안 섰다** —
+원자 4/4·캐리어 4/4 INVALID 은 **같은 사실**: swap-patch 는 이 기질서 constructive redirection 을 한 번도
+못 보였다. **n2 s7=0.50>C4 도 카레이어-읽기를 반증**한다(H_9334 가 C4 에 가독 캐리어결합을 보장하므로, 캐리어가
+진짜 read-site 면 C4 가 더 뒤집혀야 하는데 원래 벽 ckpt 이 더 뒤집힘 = 결합유무 아니라 **교란크기**가 수를 정함).
+
+**🔒 결정 통제 = same-class(극성-무관) donor swap** (`--bl-swap-donor-class same` v0.13.60 배선). flip=P(답≠원래).
+
+| 읽기 | same-class flip | cross-class flip | 판정 |
+|---|---|---|---|
+| **(B) scramble/계기천장** | ≈0.50 (파괴는 극성-무관) | ≈0.50 | swap-patch 는 이진 readout 국소화 불가 = **STOP · 발견** |
+| **(A) 분산-실재** | ≈0 (같은 답 주입) | ≥0.50 · same 보다 큰 margin | multi-site joint swap(≥0.75 bar)로 진행 |
+
+**동결 규칙**: same ≥ ~0.40 → **(B) 확정, STOP**(read 는 단일스팬 국소화 불가 = 그 자체가 발견 · multi-site
+금지). same ≈ 0 ∧ cross ≈ 0.50 → (A) 생존 → multi-site. 판별자 = **margin(same ≪ cross)** 이지 same=0 정확값
+아님. C4/n2 s7 카레이어 스팬 · n=20 · 양 seed.
+
 ### KO 레인의 교차 기여 (한 줄)
 
-결합기는 KO=INVALID(P/S 능력축)로 읽으나 **무정보가 아니라 DIRECTIONAL**: 동일한 n2/C4 INVALID-LOCALIZATION
-이 KO 연산자의 flip 을 **극성 feature 가 아니라 표면 캐리어 형태소**에 국소화한다 — 이것이 교차가 재려는 바로
-그 비대칭이다(EN=자유·전치 연산자로 ECHO 실패 H_9346 vs KO=캐리어 표면서 읽는 BOUND 접미사). KO 는 교차에
-null 이 아니라 **인과 locus 사실**(극성-읽기=형태론, feature 아님)을 건넨다.
+결합기는 KO=INVALID(P/S 능력축)로 읽는다 — 불변. 단 **방향 내용이 바뀐다**(Fable 정정): "read-site=형태론/
+캐리어"를 교차가 **상속하면 안 된다**(그 인과주장은 철회됨). KO 가 교차에 건네는 것은 **"KO 결합은 이 해상도서
+단일스팬 인과 국소화가 안 된다 · 캐리어>원자 는 파괴 gradient"**다. 이는 [[binding-is-operator-stem-gating-not-morphology]]
+와 일관·강화한다 — 벽은 연산자의 어간-게이팅이고, 우리는 '캐리어 형태론이 인과 locus'라는 **경쟁 KO 서사를
+추가한 게 아니라 제거**했다. EN 의 ECHO 내용(H_9346)은 불변. (same-class 통제가 (A)를 살리면 이 문단 재검토.)
 
 
 ## 🔗 H_9332(담체 인구조사)와 만나는 지점 — **이 계기가 R1/R2 를 가른다**
