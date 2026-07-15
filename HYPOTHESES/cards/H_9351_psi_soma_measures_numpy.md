@@ -137,3 +137,19 @@ Fable 이 `ci_phi_iit4`(engine_cli.py:6310)를 독립 판독: **인과-IIT 아�
 Fable 이 제안한 rescue 후보(broadcast-binding: g_text 를 서로 다른 store 가 각자 읽음) **S₀=[rel_lane·recon_err·g_recog·cur_indep·rel_indep] · S₁(−g_recog)** 도 $0 검정: **maxR²=0.992 D2 FAIL**(ΦA 0.17/0.08 도 tautology). ⟹ **테스트 5집합 전부**(root-disjoint→Φ0 · score-comp·relevance·S₀·S₁→R²>0.8) 실패 = σ·bind PENDING(D2-unresolvable) **확증**.
 
 **reopen(정밀화)**: 진단은 substrate 아니라 **기록 표면** — 진짜 독립 reader 가 3개(그중 2개 같은 store)뿐. 해소 = 합산 전 성분 lane(`cb_surprise`·`af_val`·`af_aro`·`ca3_ctx`·`wm_active`)을 개별 트레이스 필드로 기록하는 chat.py 확장(`a_experiment_engine_native`) — 이들은 결정론적 거울이 아니라 D2-free 통합 후보. Fable spec `/tmp/sigma_bind_d2_spec.md`(D2 게이트 maxR²≤0.8 SEQUENTIAL · pending-freeze 교란 → fresh-row 제한 · C1/C2/C3 통제 · GREEN 조건).
+
+### 🔒 reopen 실측 종결 — 성분 lane 도 실패 (렌트 pod · 303M 실수집)
+
+reopen 을 **실측**했다(성분 lane 을 트레이스에 기록 #3681 → summer down → **vast pod 렌트**(오너 go) 44998129 48c/176GB → anima-py 0.13.82 부트스트랩 → py303_full 90틱 수집 → 회수 → teardown). 결과:
+
+| 성분 lane | distinct/90 | var | 값 |
+|---|---|---|---|
+| cb_surprise (소뇌) | 1 | 0 | ≡0.000 |
+| af_val (편도 valence) | 1 | 0 | ≡0.000 |
+| af_aro (편도 arousal) | 1 | 0 | ≡1.000 |
+| ca3_ctx (해마) | 1 | 0 | ≡1.000 |
+| wm_active (작업기억) | 1 | 0 | ≡0.600 |
+
+⟹ **5 성분 lane 전부 상수**(퇴화 게이지 · chat-py-4/5 의 상수-키 faculty read 패턴 — recon_err/rel_lane 이 pending_recon/pending_rel 로 수리되기 **전** 상태와 동형). 상수 lane 은 분산 0 이라 **Φ 통합 원리적 불가**. ⟹ Fable 의 D2-free 후보는 "결정론적 거울"이 아니라 **아예 신호 없음**. **σ·bind = 🧱 PENDING(D2-unresolvable) 최종 확정** — 트레이스 lane 은 {독립→Φ0, EMA파생→D2, 성분 faculty→상수} 셋 중 하나이고 clean 통합 lane 은 없다.
+
+**진짜 reopen(더 깊은)**: 이 5 faculty 게이지를 pending_recon 식(저장 전 재인식 · 상수-키 아닌 live 조회)으로 **수리**해야 비로소 σ·bind 후보가 된다 — recon_err/rel_lane 이 받은 것과 같은 수리(chat.py:1543·1560·2027)의 faculty 판. 별개 lane(chat-py-4/5 잔여 게이지 수리)이며, 그 전까지 **repair 후 clean 작동 σ 축 = σ·stage 하나** 불변.
