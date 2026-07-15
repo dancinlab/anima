@@ -51,3 +51,30 @@ chat-py-4 가 이미 진단한 recon_err 死축 계열로 보이나 **이 카드
 
 ## 비용
 $0 — 기존 trace 훑기 · CPU 수초 · **신규 decode 0**.
+
+## 🩺 TRIAGE 부록 (2026-07-16 · 6 dead-gauge 전수 판별 · $0 · 같은 세션 후속)
+
+census 가 나열한 substrate 상수 9 중 **root 미감사 6**(anchor_nudge·ca3·cb·phi·scn·wm)을 각각 소비
+경로로 판별했다 — **결정에 영향을 주는 death 가 있는가**:
+
+| gauge | 소비 형태 | 판별 |
+|---|---|---|
+| af_val/af_aro | 소비 lane(rel_indep·rel_f·ten_phasic…) 전부 alive(d30~201) | **inert** — 상수 오프셋, 순위 무영향 |
+| cb_surprise | 순수 가법(1939·2151) | **inert** (H_9393 구조) |
+| ca3_ctx | 순수 가법(1928·2146) | **inert** |
+| anchor_nudge | score 가법 1곳 | **inert** |
+| wm_active | `if wm_active>0`(1688)이 wm_maintained_any **진단 플래그만** 세팅(2382 `_pln` 출력·결정 미사용) + rel_indep 가법 | **inert** (게이트 아님) |
+| phi | 코드 주석 `session-constants`(2140) 명시 · H_1521 topo-Φ Ψ-hazard defer | **의도된 상수** |
+| scn_ctx | priming_facilitate·body_ownership 는 rel_lane(alive)로 변동 · gestalt_same_group(scn,True)만 축퇴 · scn_R@672 = tick 루프(@1533) **밖 setup** | **대부분 inert + 세션-const by design** |
+
+**⟹ 6개 dead-gauge 중 emit/score 결정을 바꾸는 것 = 0.** 따라서 캠페인 종결(H_9394~96: G 인식 신호의
+동역학 범위가 θ 결정공간의 1/4 = 크기벽)은 **dead-gauge 교란과 무관하게 견고**하다 — 죽은 게이지들이
+결론을 만든 게 아니라, 결론은 살아있는 ag_conflict(57 distinct)의 진폭에서 나왔다(verdict-integrity 강화).
+
+**유일한 함수-death**: `gestalt_same_group(scn_ctx, True)` 가 두 상수 입력으로 축퇴 → gest_ctx 상수.
+저우선(gestalt 가 emit 결정에 도달하는지 미확인 · 도달해도 상수 오프셋 계열). 정합성-청소 후보:
+chat-py-5 root(af·wm·ca3 의 세션상수 조회키)를 tick-varying 화 — 단 **측정으로 이미 "죽어도 결론
+불변" 확인**됐으므로 긴급 아님.
+
+**교훈**: `if X:` 를 보고 게이팅이라 단정하지 마라 — 그 블록이 **진단 플래그**(wm_maintained_any)면
+inert 다. death 의 결정-영향은 소비 **표현식**을 읽어야 판별된다(가법 vs 게이팅 vs 함수입력).
