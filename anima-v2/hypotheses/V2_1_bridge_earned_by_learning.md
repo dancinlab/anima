@@ -169,6 +169,13 @@ loss 는 0.107 로 낮았지만(store 를 쓰긴 함 · λ 0.5→0.66) **이진 
 (`power-before-negative-verdict` 를 아키텍처 수준에서 확인). **음성을 읽기 전에 양성통제가
 통과하는지부터 봐라** — 이 카드의 유일한 확정 소득.
 
+## ⚠️ 정정 (V2_2 가 밝힘)
+
+위 "혼합 `p=λ·store+(1−λ)·trunk` 가 희석" 진단은 **부분적으로 틀렸다**. V2_2 가 혼합을 logit-add 로
+고쳤는데도 ORACLE 0.49 → 진짜 상류 원인은 **과제가 XOR(answer = polarity ⊕ operator)인데 선형
+readout `W_out·concat` 이 곱항을 못 만든다**(로지스틱 격리: 상호작용 없으면 상한 0.756 = ORACLE 값).
+혼합이냐 logit 이냐는 무관. NEXT = V2_3 비선형 readout(2층 MLP). 상세 → [[V2_2]].
+
 ## 다음 계기 (V2_2 후보 · 아직 미착수)
 
 혼합-희석이 진범이므로, 다음 설계는 **혼합을 버리고 gating 을 logit 수준**으로:

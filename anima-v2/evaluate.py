@@ -46,7 +46,8 @@ def predict(p, cfg, exs, use_store, lam_override=None, val_override=None,
     oslot = np.array([e["slot"] for e in exs]) if oracle else None
     _, aux = forward_loss(p, cfg, ids, tg, mask, sids, vidx, qp, ap,
                           use_store=use_store, lam_override=lam_override,
-                          val_override=val_override, oracle_slot=oslot)
+                          val_override=val_override, oracle_slot=oslot,
+                          gate=cfg.get("gate", "mix"))
     probs = aux["probs"]
     B = len(exs)
     first = probs[np.arange(B), ap]        # (B,V) distribution over the first answer byte
@@ -73,8 +74,9 @@ def acc(pred, want):
     return float((pred == want).mean())
 
 
-def load(arm, seed):
-    path = os.path.join(OUT, f"{arm}_seed{seed}.pkl")
+def load(arm, seed, out=None):
+    out = out or OUT
+    path = os.path.join(out, f"{arm}_seed{seed}.pkl")
     if not os.path.exists(path):
         return None
     return pickle.load(open(path, "rb"))
@@ -83,7 +85,9 @@ def load(arm, seed):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=None)
+    ap.add_argument("--gate", choices=["mix", "logit"], default="mix")
     args = ap.parse_args()
+    out = "/tmp/anima-v2-logit" if args.gate == "logit" else OUT
 
     bars = json.load(open(os.path.join(HERE, "bars.json")))
     t, C0, C1, C2, P1 = (bars["task"], bars["C0_instrument_integrity"],
@@ -93,7 +97,7 @@ def main():
     n_eval = C1["eval_n_per_arm"]
 
     print("=" * 78)
-    print("anima-v2 — SEQUENTIAL GATES.  DIRECTIONAL ceiling (outside core/; never TERMINAL)")
+    print(f"anima-v2 [gate={args.gate}] — SEQUENTIAL GATES.  DIRECTIONAL ceiling (never TERMINAL)")
     print("=" * 78)
 
     # ── C0 instrument integrity ────────────────────────────────────────────────
@@ -111,7 +115,7 @@ def main():
 
     ns_accs = {}
     for s in seeds:
-        m = load("NOSTORE", s)
+        m = load("NOSTORE", s, out)
         if m is None:
             print(f"  C0-b NOSTORE seed{s}      : MISSING ckpt -> run train.py --arm NOSTORE")
             c0["C0b_nostore"] = False
@@ -133,7 +137,7 @@ def main():
     # (power-before-negative-verdict, at the architecture level).
     orc = {}
     for s in seeds:
-        m = load("ORACLE", s)
+        m = load("ORACLE", s, out)
         if m is None:
             print(f"  C0-e ORACLE seed{s}       : MISSING ckpt -> run train.py --arm ORACLE")
             c0["C0e_oracle"] = False
@@ -169,7 +173,7 @@ def main():
     valid, results = {}, {}
     for arm in ("COTRAIN", "BOLT", "SLOWROT"):
         for s in seeds:
-            m = load(arm, s)
+            m = load(arm, s, out)
             if m is None:
                 continue
             rng = np.random.default_rng(s + 99)

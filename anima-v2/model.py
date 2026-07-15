@@ -266,18 +266,25 @@ def bridge_fwd(p, cfg, hidden_q, store_ids, val_idx, mask_slots=None, oracle_slo
     # operators from the same store -- the path is unsolvable, so no gradient shapes it and
     # it stays at init (measured: flip-coherence 0.000, all arms). C2 caught it before P1.
     cat = np.concatenate([v, hidden_q], axis=-1)  # (B,2d)
-    logits = cat @ p["W_out"]                     # (B,V)
+    logits = cat @ p["W_out"]                     # (B,V) — the store's RAW logits
     ps = softmax(logits, -1)
     return ps, {"keys": keys, "e": e, "q": q, "a": a, "vals": vals, "v": v, "cat": cat,
-                "ps": ps, "hidden_q": hidden_q, "store_ids": store_ids,
+                "logits": logits, "ps": ps, "hidden_q": hidden_q, "store_ids": store_ids,
                 "val_idx": val_idx}
 
 
-def bridge_bwd(p, cfg, c, dps):
-    """dps: (B,V) grad wrt p_store. Returns (bridge grads, dhidden_q, demb_from_keys)."""
+def bridge_bwd(p, cfg, c, dupstream, d_is_logits=False):
+    """dupstream: (B,V). In MIX mode it is d(loss)/d(p_store) and we backprop through the
+    store's own softmax. In LOGIT-ADD mode (V2_2) the store's raw logits are ADDED to the
+    trunk logits before a SINGLE shared softmax, so there is no separate store softmax —
+    the gradient arriving at the store logits IS dupstream; pass d_is_logits=True to skip
+    the softmax-bwd. Returns (bridge grads, dhidden_q, demb_from_keys)."""
     g = {}
-    ps = c["ps"]
-    dlogits = ps * (dps - (dps * ps).sum(-1, keepdims=True))       # softmax bwd
+    if d_is_logits:
+        dlogits = dupstream
+    else:
+        ps = c["ps"]
+        dlogits = ps * (dupstream - (dupstream * ps).sum(-1, keepdims=True))  # softmax bwd
     g["W_out"] = c["cat"].T @ dlogits
     dcat = dlogits @ p["W_out"].T                                  # (B,2d)
     d = cfg["d"]

@@ -25,7 +25,7 @@ import model as M
 from loss import forward_loss
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = "/tmp/anima-v2"
+OUT = "/tmp/anima-v2"    # mix (V2_1); logit (V2_2) -> /tmp/anima-v2-logit
 
 
 def load_bars():
@@ -88,9 +88,14 @@ class Adam:
             params[k] -= self.lr * lr_scale * mh / (np.sqrt(vh) + eps)
 
 
-def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
+def out_dir(gate):
+    return "/tmp/anima-v2-logit" if gate == "logit" else OUT
+
+
+def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix"):
     cfg = dict(bars["model"])
     cfg["max_seq"] = bars["task"]["max_seq"]
+    cfg["gate"] = gate
     t = bars["task"]
     b = bars["budget"]
     steps = steps or b["steps"]
@@ -108,7 +113,7 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
 
     frozen = ()
     if arm == "BOLT":
-        src = os.path.join(OUT, f"NOSTORE_seed{seed}.pkl")
+        src = os.path.join(out_dir(gate), f"NOSTORE_seed{seed}.pkl")
         if not os.path.exists(src):
             raise SystemExit(f"BOLT needs the NOSTORE trunk first: {src} missing")
         trunk = pickle.load(open(src, "rb"))["params"]
@@ -125,7 +130,8 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
         ids, tg, mask, sids, vidx, qp, ap = encode_batch(exs, cfg)
         oslot = np.array([e["slot"] for e in exs]) if oracle else None
         loss, grads = forward_loss(p, cfg, ids, tg, mask, sids, vidx, qp, ap,
-                                   use_store=use_store, backward=True, oracle_slot=oslot)
+                                   use_store=use_store, backward=True, oracle_slot=oslot,
+                                   gate=gate)
         scale = min(1.0, (step + 1) / b["warmup"])
         opt.step(p, grads, lr_scale=scale)
         losses.append(loss)
@@ -133,9 +139,10 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
             lam = float(M.sigmoid(p["lam_raw"][0])) if use_store else float("nan")
             print(f"  [{arm} s{seed}] step {step:5d}  loss {np.mean(losses[-100:]):.4f}  "
                   f"lam {lam:.3f}  ({time.time()-t0:.0f}s)")
-    os.makedirs(OUT, exist_ok=True)
-    path = os.path.join(OUT, f"{arm}_seed{seed}.pkl")
-    pickle.dump({"params": p, "cfg": cfg, "arm": arm, "seed": seed,
+    od = out_dir(gate)
+    os.makedirs(od, exist_ok=True)
+    path = os.path.join(od, f"{arm}_seed{seed}.pkl")
+    pickle.dump({"params": p, "cfg": cfg, "arm": arm, "seed": seed, "gate": gate,
                  "final_loss": float(np.mean(losses[-100:])), "lr": lr}, open(path, "wb"))
     return path, float(np.mean(losses[-100:]))
 
@@ -146,6 +153,7 @@ def main():
                     choices=["COTRAIN", "BOLT", "NOSTORE", "SLOWROT", "ORACLE"])
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--steps", type=int, default=None)
+    ap.add_argument("--gate", choices=["mix", "logit"], default="mix")
     args = ap.parse_args()
 
     bars = load_bars()
@@ -153,14 +161,14 @@ def main():
         # frozen lr grid, selected on TRAIN LOSS only (bars.json bolt_lr_selected_by)
         best = None
         for lr in bars["budget"]["bolt_lr_grid"]:
-            _, fl = train_arm("BOLT", args.seed, bars, lr=lr, steps=args.steps, quiet=True)
+            _, fl = train_arm("BOLT", args.seed, bars, lr=lr, steps=args.steps, quiet=True, gate=args.gate)
             print(f"  [BOLT s{args.seed}] lr={lr} -> train_loss {fl:.4f}")
             if best is None or fl < best[1]:
                 best = (lr, fl)
         print(f"  [BOLT s{args.seed}] selected lr={best[0]} (train_loss {best[1]:.4f})")
-        path, fl = train_arm("BOLT", args.seed, bars, lr=best[0], steps=args.steps)
+        path, fl = train_arm("BOLT", args.seed, bars, lr=best[0], steps=args.steps, gate=args.gate)
     else:
-        path, fl = train_arm(args.arm, args.seed, bars, steps=args.steps)
+        path, fl = train_arm(args.arm, args.seed, bars, steps=args.steps, gate=args.gate)
     print(f"{args.arm} seed{args.seed}: final_loss={fl:.4f} -> {path}")
 
 
