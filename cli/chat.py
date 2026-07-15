@@ -1598,8 +1598,10 @@ def anima_consciousness_mode(ckpt, argv=None):
         # a3 is seeded per-tick noise (the "causal handle vs 2nd engine" separator). g_recog in [0,1].
         ag_a_drive = emit_drive
         if _g_arm == "a1":
-            # pending_gap is the afield top-2 gap on the LAST utterance (1-tick lag, like
-            # pending_rel); None before the daemon has spoken → no reverse signal yet = 0.
+            # pending_gap is the IMMUNE STORE top-2 gap on the LAST utterance (1-tick lag, like
+            # pending_rel) — set at :2061 (immune_memory_recall_gap_text), which UNCONDITIONALLY
+            # overwrites the afield gap computed at :2051 (that afield line is dead code · H_9399
+            # G-SOURCE-ID). None before the daemon has spoken → no reverse signal yet = 0.
             g_recog = _afs_clip01(pending_gap if pending_gap is not None else 0.0)
             ag_g_drive = 0.0 - g_recog
         elif _g_arm == "a3":

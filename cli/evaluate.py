@@ -4729,7 +4729,14 @@ def _cf_straddle(argv):
             else:
                 print("     ⇒ both sides comparable — the smallness is genuinely the product, not an asymmetry.")
 
-        # H_9396 G-AMP — WHY is |g| quiet? g_recog = clip01(afield top-2 gap), so it is undefined-ish
+        # ⚠️ H_9399 G-SOURCE-ID CORRECTION: g_recog reads the IMMUNE STORE gap (cli/chat.py:2061
+        # overwrites the afield gap at :2051 = dead code), NOT afield. So `cell_count` below is the
+        # AFIELD cell count = the WRONG store's covariate. H_9396's cell_count↔|g| plateau is a
+        # mis-attributed regression; the "longer session won't help" claim is UNPROVEN (it measured
+        # afield growth, not immune-store growth). H_9394/95 (|g| is 6.5× small · product gate) are
+        # UNAFFECTED (g_recog values are real regardless of source). Panel kept for the warm-up
+        # (cell≤1⇒structural-0) observation only; the plateau slope is against the wrong axis.
+        # H_9396 G-AMP — WHY is |g| quiet? g_recog = clip01(IMMUNE-STORE top-2 gap), so it is undefined-ish
         # until the adaptive field has ≥2 prototypes and only informative once they separate. If the
         # session never leaves warm-up, "G is quiet" is a REGIME artifact (longer sessions would fix
         # it) — the last escape hatch before conceding the amplitude is intrinsic. Split it:
@@ -4745,7 +4752,7 @@ def _cf_straddle(argv):
             z_and_0 = [r for r in zero_c1 if float(r["g_recog"]) == 0.0]
             warm = [r for r in anc if int(r["cell_count"]) <= 2]
             print()
-            print("  🔬 G-AMP (g_recog = clip01(afield top-2 gap) — is the quiet G just WARM-UP?)")
+            print("  🔬 G-AMP (g_recog = clip01(IMMUNE-STORE top-2 gap) — is the quiet G just WARM-UP?)")
             print("     cells   n    |g| mean   |g| max   >0%")
             for c in sorted(by_c):
                 v = by_c[c]
@@ -4774,7 +4781,7 @@ def _cf_straddle(argv):
                     print("        more cells (slope %+.5f ≈ 0): it plateaus at ~%.3f, max %.3f. So 'just run"
                           % (slope, my, max(max(v) for v in by_c.values())))
                     print("        longer sessions' is REFUTED as an escape — more prototypes buy cells, not")
-                    print("        amplitude. The quiet G is a property of the afield top-2 gap at this")
+                    print("        amplitude. The quiet G is a property of the IMMUNE-STORE top-2 gap at this")
                     print("        feature scale, not a warm-up artifact. (Warm-up is real but is only the")
                     print("        %.0f%% zero-floor, not the ceiling.) Reaching |a|'s O(%.1f) needs a"
                           % (100.0 * len(warm) / len(anc), need))
