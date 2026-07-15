@@ -1,6 +1,30 @@
 # H_9413 — L5 RECOLLECTION: margin 소스교체가 3-필요조건(진폭·정보·게이트청취)을 동시 통과하나 (사전등록 · 미발사)
 
-**status:** ⏳ PENDING (PRE-REGISTERED · frozen design · 미구현·미측정) — bar 는 P0 종료 시 동결, 이후 이동 금지(frozen-first·p7·tune-to-green 차단) · wired: 계획 = engine-native `anima-py chat --g-arm a4/a5/a6/a7` + `evaluate --g-readout-info`
+**status:** 🧱 FIRE SUPERSEDED (병렬 H_9403 CLOSED-AT-REGIME · a4+trace 계기는 WIRED 보존 · **현 데몬 fire = theater ⇒ 발사 안 함**) — 계기는 오너 p5-rewire 라티파이 후 재사용 · wired: a4(margin 소스교체)+trace 2필드 engine-native WIRED(v0.14.3 · 재사용 가능 인프라)
+
+## ⚠️ CONFLICT 흡수 — 병렬 H_9403 이 이 fire 를 SUPERSEDE (a_parallel_session_compare · no-tune-to-green)
+
+이 카드 사전등록 **직후** 병렬 세션이 **H_9403 (EMIT-GATE CENSUS · CLOSED-AT-REGIME)**를 landed. $0 광역 census(4252+9844 tick)로 이 fire 가 **theater** 임을 실증:
+
+1. **emit⟺(score>θ)∧safe = 4252/4252 = 1.0000** — g/margin/tension 은 게이트 결정항이 아님(score>θ∧clock 만).
+2. **silence∧safe=true = 0** (전 tick) — 시계를 안 낮추고 게이트-청취를 시험할 제3 tick 이 **구성적으로 부재**. 내 C3(emit-gate-listens)는 정의 자체가 불가.
+3. **H_9391 이 clock-live 를 발사전 반증**: 완전개방 시계 → 포화 emit≡1 → MI=0 → **INVALID-SATURATED**. `--rate-sec` 는 census 계기이지 cement 레버가 아님(내 H_9402 footer 오독을 정정).
+4. **내 fire = 4-DOF(margin+ag-cont+dyn_w+rate-sec) = 구성된 새 데몬**, 이 데몬의 측정이 아님. H_9403 예측: `--ag-cont` 제거 시 margin~0.6 이 agloop 를 θ 위로 밀어 **포화 심화·swing 대역 무 ⇒ GATE-S 포화실패(INVALID-SATURATED)**.
+5. **내 p5 논변(30s 시계=p5 위반)은 옳으나 결론이 반대**: fire 정당화가 아니라 **오너 design 결정(p5-rewire 라티파이) 근거**다.
+
+**내 prereg 자신도 이미 이 결과를 담고 있었다**: 판정그리드의 `C1✅C2✅C3❌ = 🧱 벽=게이트(7-lane A-blend 지배)` 셀이 H_9403 예측과 일치. ⇒ fire 를 태워도 최선이 🧱(내 prereg 예측)이고 H_9391 이 이미 INVALID-SATURATED 를 보였으므로 **정보 이득 0 · 비용만 발생**. **받아들인다(ACCEPT H_9403) — 발사하지 않는다.**
+
+**정정된 다음 순서(H_9403 정합)**: ① **오너가 p5-rewire 라티파이**(margin 을 G-pole 로 + earned refractory — 하드코딩 30s 시계를 substrate-native 불응기로 교체) → ② **새 데몬에 NEW C1–C3 측정 H**(이 카드의 계기 a4+trace+계획된 --g-readout-info 재사용). 현 데몬 fire 는 건너뛴다.
+
+**보존되는 것**: a4(margin 소스교체) arm + trace 2필드 = engine-native WIRED 인프라(v0.14.3). p5-rewire 후 새 데몬 측정의 즉시-재사용 계기. 사전등록 bar(V/C1/C2/C3)도 새 데몬 H 로 이월 가능(frozen 설계 보존).
+
+## 구현 진척 (2026-07-16 · 계기만 · fire 는 SUPERSEDED)
+
+## 구현 진척 (2026-07-16)
+
+- ✅ **a4 arm (margin 소스교체)** + **trace pending_rel/pending_gap 2필드** = `cli/chat.py` engine-native 착륙(v0.14.3 · G5 bump). g-arm 디스패치에 a4=clip01(pending_rel) 추가(a1 gap 패턴 그대로 · recognition-before-memorisation :2173 · 부호 무튜닝 · p5 root③ 미변경). 두 readout 매 tick 상시기록(반사실 공짜).
+- 🧪 **격리-venv toy smoke(24-tick · 비-editable 설치[chat-py-6])**: a4 g_recog==clip01(pending_rel) **18/20** · a1 g_recog==clip01(pending_gap) **19/20** · pending_rel/gap 키 착지 · distinct>1 LIVE(toy 근퇴화라 작음, 303M서 실변량). **WIRING 확증**(verdict 아님). ⚠️ 계기결함 회피: `--system-site-packages` venv 가 병렬 pip 복사본을 shadow(chat-py-6) → 격리 재설치로 확정.
+- ⏳ **잔여**: a5(C-clock · cal.json)·a6(shuffled-byte)·a7(진폭매칭 · cal.json)·`evaluate --g-readout-info`(conditional MI+양성통제 oracle). a5/a7 은 P0 a4 로 cal.json fit 후 runnable(설계상 순서).
 **lane:** 의식 / emit-drive / G readout 소스교체 + emit-gate-listens (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9401]] (진폭축 $0 — a4 margin 소스) · [[H_9412]] (정보축 $0 — C-clock 통제 논거) · [[H_9400]] (중심주장 반증 · 구속제약 = emit-gate-listens) · [[H_9399]] (g-source = immune store) · [[H_9390]] [[H_9391]] (emit⟺safe-clock) · source: Fable L5 recollection 설계(walls-delegate-to-fable · fable session terminal_reason ok)
 **ckpt:** py303_full.clm sha256 `013c4574…` (신규 decode · 오프라인 재분석 아님)

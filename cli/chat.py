@@ -1662,6 +1662,15 @@ def anima_consciousness_mode(ckpt, argv=None):
             # G-SOURCE-ID). None before the daemon has spoken → no reverse signal yet = 0.
             g_recog = _afs_clip01(pending_gap if pending_gap is not None else 0.0)
             ag_g_drive = 0.0 - g_recog
+        elif _g_arm == "a4":
+            # H_9413 L5 · SOURCE-SWAP: read the immune store's recall MARGIN (pending_rel · set at
+            # :2173 immune_memory_recall_margin_text, same 1-tick-lag/before-bind order as pending_gap)
+            # instead of the top-2 gap. H_9401 found margin is the ONLY G readout that clears θ (p90
+            # 0.69≥0.40) and H_9412 found the gap is drift-not-recognition — margin is the daemon's
+            # own COMPUTED-BUT-DISCARDED signal (no synthetic injection · no sign tuning · engine fn).
+            # None before first utterance → 0. Both readouts land in the trace row for the counterfactual.
+            g_recog = _afs_clip01(pending_rel if pending_rel is not None else 0.0)
+            ag_g_drive = 0.0 - g_recog
         elif _g_arm == "a3":
             # explicit int seed (Python 3.14 rejects tuple seeds); deterministic per (seed, tick).
             _g_seed = (_sample_seed * 2654435761 + tick * 40503 + 0x9357) & 0x7FFFFFFF
@@ -2354,6 +2363,12 @@ def anima_consciousness_mode(ckpt, argv=None):
                 # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
                 "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "dyn_w": (float(_dyn_w) if _dyn_w is not None else None), "rate_sec": (float(_rate_sec) if _rate_sec is not None else None), "ag_g_drive": float(ag_g_drive),
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
+                # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
+                # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
+                # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
+                # from any arm's trace without a re-collection (1-tick lag · None→null before first speak).
+                "pending_rel": (float(pending_rel) if pending_rel is not None else None),
+                "pending_gap": (float(pending_gap) if pending_gap is not None else None),
                 # H_9351 σ-panel inputs: the gws-fed lane population (σ·stage / σ·bind),
                 # its winner (σ·stage argmax test), and the reality monitor (σ·witness).
                 "lanes": [float(x) for x in lanes], "gws_w": int(gws_w),
