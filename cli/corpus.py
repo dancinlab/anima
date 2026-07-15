@@ -62,7 +62,16 @@ def _parse_args(argv):
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
             "carrier_only": False, "surface": "flip1_suffix",
             "collision_split": False, "nonce_fillers": 3, "win": 64,
-            "bridge_split": False}
+            "bridge_split": False,
+            # H_9410 RULE-VS-CACHE PRESSURE ENVELOPE instruments:
+            #   --max-atoms N          one-shot EN atom miner scaled to N (greedy G-SUBSTR, drops
+            #                          colliders instead of aborting; reports the actual ceiling).
+            #   --polarity {real,assigned}  assigned = RANDOM balanced polarity keyed by --assign-seed
+            #                          (a from-scratch model never used real polarity, so real sentiment
+            #                          is functionless; makes mining trivial at 10^3, G-BALANCE free,
+            #                          form->polarity leak killed — the strongest confound control).
+            #   --assign-seed k        the seed the balanced random assignment is deterministic in.
+            "max_atoms": 0, "polarity": "real", "assign_seed": 0}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -122,6 +131,14 @@ def _parse_args(argv):
             opts["collision_split"] = True; i += 1
         elif a == "--bridge-split":
             opts["bridge_split"] = True; i += 1
+        elif a == "--max-atoms":
+            opts["max_atoms"] = int(argv[i + 1]); i += 2
+        elif a == "--polarity":
+            opts["polarity"] = argv[i + 1]; i += 2
+            if opts["polarity"] not in ("real", "assigned"):
+                raise SystemExit("--polarity must be 'real' or 'assigned' (got %r)" % opts["polarity"])
+        elif a == "--assign-seed":
+            opts["assign_seed"] = int(argv[i + 1]); i += 2
         elif a == "--nonce-fillers":
             opts["nonce_fillers"] = int(argv[i + 1]); i += 2
         elif a == "--win":
@@ -1736,6 +1753,119 @@ def build_atoms(lexicon_path, corpus_paths, lang, n_seen, n_held, min_occ, seed)
     return {"atoms": out, "n_train": n_seen, "n_heldout": n_held, "gates": stats}, stats
 
 
+# ---------------------------------------------------------------------------------------------------
+# H_9410 RULE-VS-CACHE PRESSURE ENVELOPE — scaled EN atom miner + random balanced polarity.
+#
+# The hand-built 48-atom set (H_9389) does not scale, and human sentiment annotation of 10^3 stems is
+# infeasible. The escape is that a FROM-SCRATCH model never read real usage, so an atom's REAL polarity
+# is functionless — the model only ever sees the polarity we WRITE next to it. So we assign polarity at
+# RANDOM (balanced, deterministic in --assign-seed): mining needs no sentiment labels, G-BALANCE holds
+# by construction, and any form->polarity leak (a real adjective's surface predicting its sentiment) is
+# killed because the label is decoupled from the word. This is the strongest confound control the
+# envelope has, not a shortcut.
+#
+# The gates are the SAME verdicts-that-already-died as build_atoms, but at scale G-SUBSTR must be GREEDY
+# (freq-order, DROP a colliding candidate rather than SystemExit — at N=3072 substring collisions like
+# care/careful are the norm, and aborting would make the set un-buildable). Occurrence is word-BOUNDARY
+# (corpus-py-1 (G): `text.count` lies in English — mine_lexicon already tokenises word-level, so its occ
+# is clean). We report where the corpus DRIES UP — that count IS the axis-1 ceiling, not a failure.
+def _assign_balanced_polarity(stems, assign_seed):
+    """RANDOM balanced polarity over a stem set, deterministic in assign_seed and ORDER-INDEPENDENT.
+
+    Sort first (so the assignment is a pure function of the SET + seed, not the mining order), shuffle
+    under assign_seed, front half -> pos(1), rest -> neg(0). Balanced within 1 for an odd count.
+    """
+    s = sorted(set(stems))
+    random.Random(assign_seed).shuffle(s)
+    half = len(s) // 2
+    return {st: (1 if i < half else 0) for i, st in enumerate(s)}
+
+
+_EN_STOP = {
+    # frequent non-content words a degree-adverb frame can still admit ("very much", "so many"…) —
+    # excluded so the atom set is content stems, not function words. Kept small + explicit (auditable).
+    "much", "many", "more", "most", "some", "such", "very", "well", "even", "ever", "also", "than",
+    "then", "them", "they", "this", "that", "these", "those", "there", "here", "what", "when", "where",
+    "which", "while", "about", "would", "could", "should", "still", "just", "only", "same", "other",
+    "with", "from", "into", "onto", "over", "under", "your", "their", "been", "being", "have", "does",
+}
+
+
+def build_atoms_scaled(corpus_paths, lang, n_atoms, min_occ, assign_seed, mine_top=0):
+    """One-shot: mine n_atoms clean EN polarity stems by frequency, GREEDY gates, RANDOM balanced pol.
+
+    Returns (obj, stats) with the SAME schema as build_atoms so xbind --bridge-split / ground consume
+    it unchanged. `stats["dried_up"]` is True iff the corpus ran out before n_atoms — the actual count
+    reached is the axis-1 ceiling and is reported, never silently padded.
+    """
+    if lang == "ko":
+        raise SystemExit("anima corpus atoms --max-atoms: --lang ko is refused (frozen atom set). "
+                         "The scaled miner is for EN (owner EN-FIRST directive).")
+    L = lang_pack(lang)
+    # frame/label tokens the scorer reads — a stem colliding with any of these corrupts the span (G-CARRIER)
+    frame = set()
+    for tok in re.findall(r"[A-Za-z]+", L["tmpl"] + "".join(L["flip0"]) + "".join(L["flip1"])):
+        if tok not in ("s", "surf", "pol"):
+            frame.add(tok.lower())
+    frame |= {L["pos"].lower(), L["neg"].lower()}
+
+    top = mine_top or max(n_atoms * 5, 5000)     # headroom: ~50-70% survive the greedy gates
+    cand, mst = mine_lexicon(corpus_paths, lang, top, min_occ)
+
+    def _is_deriv(a, b):                          # a is an affix-negation/-derivation of b (either order)
+        for x, y in ((a, b), (b, a)):
+            for pre in ("un", "in", "im", "dis", "non", "ir", "il"):
+                if x.startswith(pre) and x[len(pre):] == y:
+                    return True
+            if x.endswith("less") and x[:-4] == y:
+                return True
+            if x.endswith("ful") and x[:-3] == y:
+                return True
+        return False
+
+    accepted, seen = [], set()
+    dropped = {"len": 0, "stop": 0, "carrier": 0, "substr": 0, "deriv": 0}
+    for c in cand:                               # freq-rank order — the designer does not pick
+        st = c["stem"]
+        if not (5 <= len(st.encode()) <= 9):     # length band (bytes; EN alpha = 1 B/char)
+            dropped["len"] += 1; continue
+        if st in _EN_STOP:
+            dropped["stop"] += 1; continue
+        if st in frame:
+            dropped["carrier"] += 1; continue
+        if any(st in a or a in st for a in seen):  # G-SUBSTR greedy — drop, do not abort
+            dropped["substr"] += 1; continue
+        if any(_is_deriv(st, a) for a in seen):    # G-DERIV — no double-negation lookup escape
+            dropped["deriv"] += 1; continue
+        accepted.append(st); seen.add(st)
+        if len(accepted) >= n_atoms:
+            break
+    dried = len(accepted) < n_atoms
+
+    pol_map = _assign_balanced_polarity(accepted, assign_seed)
+    stems = [(st, pol_map[st]) for st in accepted]
+    # balanced train/heldout split (schema compatibility — xbind --bridge-split re-splits over ALL atoms
+    # by its own --split-seed and ignores this field; ground/valence formats read it).
+    pos = [st for st, p in stems if p == 1]
+    neg = [st for st, p in stems if p == 0]
+    rng = random.Random(assign_seed + 7); rng.shuffle(pos); rng.shuffle(neg)
+    n = len(stems); n_held = n // 4; n_seen = n - n_held
+    out, pi, ni = [], 0, 0
+    for split, k in (("train", n_seen), ("heldout", n_held)):
+        for j in range(k):
+            take_pos = (j % 2 == 0 and pi < len(pos)) or ni >= len(neg)
+            if take_pos and pi < len(pos):
+                out.append({"stem": pos[pi], "pol": 1, "split": split}); pi += 1
+            elif ni < len(neg):
+                out.append({"stem": neg[ni], "pol": 0, "split": split}); ni += 1
+    stats = {"lang": lang, "requested": n_atoms, "accepted": len(accepted), "dried_up": dried,
+             "frame_candidates": mst["frame_candidates"], "mined_kept": mst["kept"],
+             "min_occ": min_occ, "assign_seed": assign_seed, "dropped": dropped,
+             "n_pos": len(pos), "n_neg": len(neg), "n_train": n_seen, "n_heldout": n_held,
+             "chance_sd_gate": round(0.5 / max(1, (n // 4)) ** 0.5, 4)}
+    return {"atoms": out, "n_train": n_seen, "n_heldout": n_held, "gates": stats}, stats
+
+
 def build_valence(atoms_path, corpus_paths, k_ctx, ctx_bytes, min_occ, neutral_tol, seed,
                   tail=""):
     """Return (manifest, stats) for the AUDIT-A valence manifest (`anima-py evaluate --valence-audit`).
@@ -2268,7 +2398,7 @@ def build_deltainj(atoms_path):
 BRIDGESPLIT_FRAC = (("S_op", 0.5), ("S_decl", 0.25), ("S_cpt", 0.25))
 
 
-def build_bridgesplit(atoms_path, reps, seed, split_seed, lang):
+def build_bridgesplit(atoms_path, reps, seed, split_seed, lang, polarity="real", assign_seed=0):
     if lang == "ko":
         raise SystemExit(
             "corpus xbind --bridge-split: --lang ko is refused (owner EN-FIRST directive · the KO lane "
@@ -2280,8 +2410,17 @@ def build_bridgesplit(atoms_path, reps, seed, split_seed, lang):
     word = lambda p: POS if p == 1 else NEG
 
     atoms = json.load(open(atoms_path))["atoms"]
-    stems = [(a["stem"], int(a["pol"])) for a in atoms]
-    assert_atoms_match_lang([s for s, _ in stems], lang)
+    raw = [a["stem"] for a in atoms]
+    assert_atoms_match_lang(raw, lang)
+    if polarity == "assigned":
+        # H_9410: OVERRIDE the file's polarity with a RANDOM balanced assignment keyed by assign_seed.
+        # A from-scratch model never read real usage, so real polarity is functionless; random
+        # assignment kills any form->polarity leak and keeps G-BALANCE by construction (the strongest
+        # confound control). The label is now decoupled from the word — the ONLY signal is what we WRITE.
+        pol_map = _assign_balanced_polarity(raw, assign_seed)
+        stems = [(s, pol_map[s]) for s in raw]
+    else:
+        stems = [(a["stem"], int(a["pol"])) for a in atoms]
 
     # polarity-stratified 3-way split (function of split_seed alone — no post-hoc redraw).
     srng = random.Random(split_seed)
@@ -2391,7 +2530,8 @@ def main():
         if not opts["out"] or not opts["atoms"]:
             raise SystemExit("corpus xbind --bridge-split needs --out and --atoms.")
         text, st = build_bridgesplit(opts["atoms"], opts["reps"], opts["seed"],
-                                     opts["split_seed"], opts["lang"])
+                                     opts["split_seed"], opts["lang"],
+                                     opts["polarity"], opts["assign_seed"])
         with open(opts["out"], "w", encoding="utf-8") as fh:
             fh.write(text)
         base = opts["out"]
@@ -2555,6 +2695,34 @@ def main():
         return
 
     if fmt == "atoms":
+        if opts["max_atoms"]:
+            # H_9410 — one-shot scaled EN miner: mine N clean polarity stems + RANDOM balanced polarity.
+            if not opts["corpus"]:
+                print("anima-py corpus atoms --lang en --max-atoms 3072 --corpus en_general.txt "
+                      "[--assign-seed 0] [--min-occ 50] --out gt_atoms_en_N.json")
+                sys.exit(2)
+            obj, st = build_atoms_scaled(opts["corpus"], opts["lang"], opts["max_atoms"],
+                                         opts["min_occ"], opts["assign_seed"])
+            if opts["out"]:
+                json.dump(obj, open(opts["out"], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+            d = st["dropped"]
+            print("=== anima-py corpus atoms --max-atoms (H_9410 scaled EN miner · lang=%s) ===" % st["lang"])
+            print("  requested N=%d  ACCEPTED=%d%s  (pos %d : neg %d)  polarity=assigned(seed %d)"
+                  % (st["requested"], st["accepted"],
+                     "  🧱 DRIED-UP (corpus ceiling)" if st["dried_up"] else "",
+                     st["n_pos"], st["n_neg"], st["assign_seed"]))
+            print("  mining: %d frame-candidates -> %d cleared min_occ=%d -> greedy gates"
+                  % (st["frame_candidates"], st["mined_kept"], st["min_occ"]))
+            print("  dropped by gate: len=%d stop=%d G-CARRIER=%d G-SUBSTR=%d G-DERIV=%d"
+                  % (d["len"], d["stop"], d["carrier"], d["substr"], d["deriv"]))
+            print("  split: train=%d heldout=%d  gate chance_sd=%.4f  -> %s"
+                  % (st["n_train"], st["n_heldout"], st["chance_sd_gate"], opts["out"] or "(stdout)"))
+            print("  G-OCCUR ✅ word-boundary (mine_lexicon word-level) · G-SUBSTR ✅ greedy no-nest · "
+                  "G-DERIV ✅ affix-pair · G-BALANCE ✅ random balanced (polarity DECOUPLED from form)")
+            if st["dried_up"]:
+                print("  ⚠ corpus ran out before N — ACCEPTED=%d IS the axis-1 ceiling (report, do not pad)."
+                      % st["accepted"])
+            return
         if opts["collision_split"]:
             if not opts["atoms"]:
                 print("anima corpus atoms --collision-split --atoms gt_atoms.json "
