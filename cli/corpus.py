@@ -1007,6 +1007,40 @@ SURFACE_LADDERS = {
             ("w0",     "{s}고",            0, "decl",  "write"),        # the declarative WRITE gate
         ],
     },
+    # keyladder_v2 (H_9382) — V2-CLEAN re-run of H_9378. IDENTICAL to keyladder_v1 except the
+    # bound-slot pedestal ped1 is swapped from `{s}지 뫄다` to `{s}뫄 뙤다`. H_9378 landed ⛔ INVALID
+    # because ped1 (`{s}지 뫄다`) reused the operator's OWN first morpheme `지` (`지 않다` = -지+않-+-다),
+    # so the pedestal contained the mediating covariate and ceiling'd (s7 12/12, s11 11/12) — the DV
+    # could not separate a true `않다` read from `지`-fragment priming (control-must-match-mediating-
+    # covariate). ped2-new `{s}뫄 뙤다` fully matches negL `{s}지 않다`'s byte template
+    # ([stem][3B][SP][3B][다]) with ZERO length confound, using nonsense syllables 뫄 (EB AB 84,
+    # connective slot) + 뙤 (EB 99 A4, auxiliary slot) — both OUTSIDE the negation-morpheme leading-2
+    # byte range (fuzzy-match range = the V2/V3 finding) and with NO `지`. Every other surface + every
+    # bar is byte-identical to keyladder_v1 (sha256-anchored in the H_9382 card). ONE-STRIKE (Fable):
+    # if this `지`-free pedestal ALSO ceilings on the base lane, that is the DISCOVERY that base reads
+    # ANY anomalous BOUND suffix as negated (BOUND-slot default-negated bias, since ped2 proved the
+    # FREE slot is clean) → suffix-axis pedestal instrument closes terminal, no re-design.
+    "keyladder_v2": {
+        "name": "keyladder_v2",
+        "tmpl": _LADDER_TMPL,
+        "surfaces": [
+            # tag       surface                 flip  class    role
+            ("negL",   "{s}지 않다",       1, "bound", "anchor_new"),   # H_9334: C4 12/12 NEW
+            ("negZ",   "별로 {s}지 않다",  1, "bound", "anchor_new"),   # H_9334: C4 12/12 NEW
+            ("negJ",   "{s}지는 않다",     1, "bound", "anchor_null"),  # H_9334: chance
+            ("negPST", "{s}지 않았다",     1, "bound", "ladder"),       # + past
+            ("negPRS", "{s}지 않는다",     1, "bound", "ladder"),       # + present-declarative
+            ("negCAS", "{s}지 않아",       1, "bound", "ladder"),       # + casual
+            ("negTGT", "{s}지않다",        1, "bound", "ladder"),       # - the space (orthography)
+            ("negPOL", "{s}지 않습니다",   1, "bound", "ladder"),       # + honorific
+            ("negAN",  "안 {s}다",         1, "free",  "ladder"),       # ★ FREE preposed = EN `not`
+            ("negANG", "안 {s}고",         1, "free",  "ladder"),       # ★ FREE, pretrain-VERBATIM
+            ("negMOT", "못 {s}다",         1, "free",  "ladder"),       # FREE preposed (inability)
+            ("ped1",   "{s}뫄 뙤다",       1, "bound", "pedestal"),     # ★ 지-FREE nonsense, bound slot
+            ("ped2",   "뫄 {s}다",         1, "free",  "pedestal"),     # nonsense in the free slot
+            ("w0",     "{s}고",            0, "decl",  "write"),        # the declarative WRITE gate
+        ],
+    },
 }
 
 

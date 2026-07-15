@@ -1,6 +1,7 @@
 # H_9378 — KEY-LADDER (V2): 연산자 키의 등가류를 지도화한다 (표면 사다리 · 두 lane · 신규 학습 0)
 
-- **status**: VERDICT (⛔ INVALID — G-pedestal 낙제 · 사전등록 판독 동결본 그대로)
+- **status**: VERDICT (⛔ INVALID — G-pedestal 낙제 · 사전등록 판독 동결본 그대로) · **⛔ 영구 유지**
+- **superseded-by**: **H_9382** (instrument fix · `지`-free BOUND pedestal `X뫄 뙤다` · keyladder_v2) — G-pedestal `X지 뫄다` 가 연산자 첫 형태소 `지` 를 재사용해 매개 공변량을 품은 결함의 계기 재설계. 이 카드(H_9378)는 ⛔ 로 남는다.
 - **date**: 2026-07-15
 - **surfaces**: `HYPOTHESES/cards/H_9378_key_ladder_operator_address.md` · `HYPOTHESES/HYPOTHESES.jsonl`
 - **instrument**: `anima-py evaluate <clm> --xbind <m.json> --surface-set keyladder_v1`
