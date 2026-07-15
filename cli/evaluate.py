@@ -3671,7 +3671,7 @@ def _gate_deaf(argv):
         spike = _gd_cmi_bin(SCj, emit_sim, Sj, seed=13)[0] if len(jr) >= 40 else 0.0
         rate_sim = sum(emit_sim) / float(len(emit_sim)) if emit_sim else 0.0
         res[arm] = dict(n=len(ar), n_clk=len(jr), m_sc=m_sc_e, m_sc_pv=m_sc_pv, m_sim=m_sim_e,
-                        m_sim_pv=m_sim_pv, spike=spike, theta=theta, rate_sim=rate_sim)
+                        m_sim_pv=m_sim_pv, spike=spike, theta=theta, rate_sim=rate_sim, rows=ar)
     print()
     print("  arm | n   | n_clk | M_score(earn) p | M_sim(earn) p | spike I(sc;sim|S) | θ")
     for arm in sorted(res):
@@ -3694,20 +3694,87 @@ def _gate_deaf(argv):
     if a3 is not None and a3["m_sc"] >= a1["m_sc"] and a1["m_sc"] >= mde:
         print("  ⇒ ⛔ INVALID — noise arm a3 M_score ≥ a1 (%.4f ≥ %.4f); instrument not selective." % (a3["m_sc"], a1["m_sc"]))
         return 0
-    print("  🔒 prereg (arm a1 · gated a1>a3): DPI-decided, no gate edit.")
-    if a1["m_sc"] >= mde and a1["m_sc_pv"] < 0.05 and a1["m_sim"] >= mde:
-        print("  ⇒ 🟢 (a) SATURATION — tension reaches the gate INPUT (M_score=%.4f) and a desaturated" % a1["m_sc"])
-        print("     threshold WOULD consume it (M_sim=%.4f). The 0.3 gate is a tunable saturation." % a1["m_sim"])
-        print("     NEXT = Stage-1 live recalibration (anima-py chat --gate-calib), H_9357 bar reused.")
-    elif a1["m_sc"] >= mde and a1["m_sim"] <= ctrl_bar:
-        print("  ⇒ 🧱 (a′) BINARY-FORM bottleneck — tension reaches the gate input (M_score=%.4f) but" % a1["m_sc"])
-        print("     no threshold on score can carry it (M_sim=%.4f ≤ %.2f). A GRADED gate is required." % (a1["m_sim"], ctrl_bar))
-    elif a1["m_sc"] <= ctrl_bar:
-        print("  ⇒ 🧱 (b) STRUCTURE — the mixing layer never loads tension onto the gate input")
-        print("     (M_score=%.4f ≤ %.2f · TOST-equiv). The gate is INNOCENT — by the DPI no threshold" % (a1["m_sc"], ctrl_bar))
-        print("     or urgency rewire can help. Frontier moves UPSTREAM to the ag_conflict→score mixer.")
+    # ── PEDESTAL-CORRECTED Δ_G (H_9360 · Fable-designed) ──────────────────────────────────────
+    # The estimator's zero-point is NOT 0: the noise arm a3 reads M_score>0 too, because a3's
+    # ag_conflict still carries A-side info (a3 only replaces the G pole with noise). So the signal
+    # is Δ vs the control (measurement meta-law), not raw: Δ_G = M_score(a1) − M_score(a3) = the
+    # INDEPENDENT-G component loaded onto score. Read it with a rollout-level df (tick permutation
+    # is anti-conservative — ticks within a rollout autocorrelate; the replication unit is rollout).
+    import math as _math
+
+    def _msc(rws):
+        return _gd_cmi_bin([float(r["ag_conflict"]) for r in rws], [float(r["score"]) for r in rws],
+                           [int(r["stage"]) for r in rws], seed=7)[3]
+
+    def _jackknife(rws):
+        by_r = {}
+        for r in rws:
+            by_r.setdefault(r.get("_src", "?"), []).append(r)
+        keys = sorted(by_r)
+        k = len(keys)
+        if k < 4:
+            return 0.0, k
+        loo = []
+        for i in range(k):
+            sub = [r for j, kk in enumerate(keys) if j != i for r in by_r[kk]]
+            loo.append(_msc(sub))
+        mbar = sum(loo) / k
+        var = (k - 1.0) / k * sum((v - mbar) ** 2 for v in loo)
+        return _math.sqrt(max(0.0, var)), k
+
+    def _block_floor(rws, seed=29, nperm=200):
+        # true-0 pedestal: reassign ag_conflict by WHOLE ROLLOUT (preserve within-rollout
+        # autocorrelation, break only the a1↔score pairing). earned≈0 is the artifact floor.
+        import random as _random
+        by_r = {}
+        for r in rws:
+            by_r.setdefault(r.get("_src", "?"), []).append(r)
+        keys = sorted(by_r)
+        blocks_ac = [[float(r["ag_conflict"]) for r in by_r[kk]] for kk in keys]
+        base_sc = [[float(r["score"]) for r in by_r[kk]] for kk in keys]
+        base_st = [[int(r["stage"]) for r in by_r[kk]] for kk in keys]
+        rr = _random.Random(seed)
+        vals = []
+        for _ in range(nperm):
+            perm = list(range(len(keys)))
+            rr.shuffle(perm)
+            A, Sc, St = [], [], []
+            for i in range(len(keys)):
+                m = min(len(blocks_ac[perm[i]]), len(base_sc[i]))
+                A += blocks_ac[perm[i]][:m]
+                Sc += base_sc[i][:m]
+                St += base_st[i][:m]
+            vals.append(_gd_cmi_bin(A, Sc, St, seed=31)[3])
+        return sum(vals) / len(vals)
+
+    se1, k1 = _jackknife(a1["rows"])
+    se3, k3 = _jackknife(a3["rows"]) if a3 is not None else (0.0, 0)
+    dg = a1["m_sc"] - (a3["m_sc"] if a3 is not None else 0.0)
+    se_dg = _math.sqrt(se1 * se1 + se3 * se3)
+    floor = _block_floor(a1["rows"])
+    # full-resolution C (channel ceiling · report only, not a gate input)
+    C = _gd_cmi_bin([float(r["ag_conflict"]) for r in a1["rows"]],
+                    [round(float(r["score"]), 4) for r in a1["rows"]],
+                    [int(r["stage"]) for r in a1["rows"]], seed=17)[3]
+    eq = 0.01                         # equivalence limit (pedestal-referenced Δ, registered pre-look)
+    ci_lo, ci_hi = dg - 1.645 * se_dg, dg + 1.645 * se_dg    # 90% CI for TOST
+    print("  🔒 prereg (Δ_G = M_score(a1)−M_score(a3) · rollout-df · TOST ±%.2f · a3 = pedestal):" % eq)
+    print("     Δ_G = %+.4f · SE_jk = %.4f (k=%d) · 90%%CI [%+.4f, %+.4f]" % (dg, se_dg, min(k1, k3), ci_lo, ci_hi))
+    print("     block-perm true-0 floor = %+.4f (must be ≈0) · C=I(conflict;score|S) full-res = %.4f · M/C=%.2f" % (floor, C, (a1["m_sc"] / C if C > 0 else 0.0)))
+    if abs(floor) > eq:
+        print("  ⇒ ⛔ INVALID — block-perm floor |%.4f| > %.2f: the estimator has an artifact floor above the equivalence limit." % (floor, eq))
+    elif ci_hi <= eq and ci_lo >= -eq:
+        print("  ⇒ 🧱 (b)-for-G — the independent G's tension does NOT pass the score bottleneck")
+        print("     (Δ_G equivalent to 0 within ±%.2f · TOST). This IS the mechanism of H_9357 G-INERT:" % eq)
+        print("     score barely carries G, so emit has nothing to consume. Frontier = the ag_conflict→score")
+        print("     mixer (ag_budget∈{4..6} integer-ratio ×0.10 quantization), NOT the gate.")
+    elif ci_lo > 0.0:
+        print("  ⇒ 🟢 weak-(a) — Δ_G = %+.4f > 0 (90%%CI excludes 0): the independent G IS loaded onto" % dg)
+        print("     score, weakly. NEXT = Stage-1 desaturation lane (anima-py chat --gate-calib).")
     else:
-        print("  ⇒ ⏳ PENDING — M_score=%.4f in (%.2f, %.2f). Report MDE, extend n (2127-tick traces)." % (a1["m_sc"], ctrl_bar, mde))
+        mde = (1.645 + 1.28) * se_dg * _math.sqrt(2.0)
+        print("  ⇒ ⏳ PENDING — Δ_G=%+.4f neither equivalent-to-0 nor >0. MDE≈%.4f." % (dg, mde))
+        print("     %s" % ("MDE > eq: n underpowered → regenerate arms." if mde > eq else "MDE ≤ eq: shape ambiguous → re-examine."))
     return 0
 
 
