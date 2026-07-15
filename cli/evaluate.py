@@ -760,6 +760,12 @@ def evaluate_usage():
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
     print("       the SAME device so the pre/post-CPT route delta carries no device confound.)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate --g-tension <trace.jsonl> [<trace2.jsonl> ...]")
+    print("      (H_9357 — does a GENUINELY INDEPENDENT G engine pull emit? The sequel to H_9356.")
+    print("       Run cli/chat.py with --g-arm a0|a1|a3 to make the traces (a0=tautology control,")
+    print("       a1=REAL-G immune top-2 gap, a3=noise-G). Four gates: G-INDEP R²<0.5, G-VAR≥5,")
+    print("       MI≥0.05∧shuffle≤0.01, Ψ-DV. Verdict is CROSS-ARM: A1 must pull emit MORE than A3,")
+    print("       else the tension is just a causal handle, not a 2nd engine.)")
     print("  anima evaluate --tension-emit <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9352 — does TENSION pull EMIT? Pre-registered bar:")
     print("       PASS = I(ag_conflict; emit | stage) >= 0.05 nats AND the shuffle control <= 0.01.")
@@ -3266,6 +3272,164 @@ def _tension_emit(argv):
     return 0
 
 
+def _gt_r2_indep(target, covs):
+    """R2 of OLS target ~ [1, covs, covs^2]. High R2 = target is (a function of) the covariates =
+    wiring-degenerate. Used by G-INDEP: ag_g_drive must NOT be reconstructable from emit_drive and
+    the other lanes that already feed emit_drive, or the 'G engine' is just a second A (H_9356)."""
+    import numpy as np
+    y = np.asarray(target, dtype=float)
+    n = len(y)
+    if n < 8:
+        return float("nan")
+    cols = [np.ones(n)]
+    for c in covs:
+        a = np.asarray(c, dtype=float)
+        cols.append(a)
+        cols.append(a * a)
+    X = np.column_stack(cols)
+    beta, _res, _rk, _sv = np.linalg.lstsq(X, y, rcond=None)
+    yh = X.dot(beta)
+    ss_res = float(np.sum((y - yh) ** 2))
+    ss_tot = float(np.sum((y - y.mean()) ** 2))
+    if ss_tot <= 0.0:
+        return 1.0
+    return max(0.0, 1.0 - ss_res / ss_tot)
+
+
+def _gt_arm_panel(rows, mde, ctrl_bar):
+    """Compute the four gates for one arm's rows. Returns a dict of measured quantities + PASS flags."""
+    import random as _random
+    S = [int(r["stage"]) for r in rows]
+    E_ = [1 if r.get("emit") else 0 for r in rows]
+    n = len(rows)
+    rate = sum(E_) / float(n)
+    hE = _im_h_given_S(E_, S)
+    gd = [float(r.get("ag_g_drive", 0.0)) for r in rows]
+    # G-VAR: min distinct(ag_g_drive) across source rollouts (a store with a constant key is dead).
+    per_src = {}
+    for r in rows:
+        per_src.setdefault(r.get("_src", "?"), set()).add(round(float(r.get("ag_g_drive", 0.0)), 6))
+    gvar_min = min(len(v) for v in per_src.values()) if per_src else 0
+    # G-INDEP: reconstruct ag_g_drive from emit_drive + the lanes that feed emit_drive.
+    covs = []
+    for key in ("emit_drive", "phi", "rel_lane", "recon_err", "emit_env"):
+        if all(key in r for r in rows):
+            covs.append([float(r[key]) for r in rows])
+    r2 = _gt_r2_indep(gd, covs) if covs else float("nan")
+    # MI: I(ag_conflict; emit | stage), ag_conflict binarised at its median.
+    cv = sorted(float(r.get("ag_conflict", 0.0)) for r in rows)
+    cmed = cv[len(cv) // 2]
+    C = [1 if float(r.get("ag_conflict", 0.0)) > cmed else 0 for r in rows]
+    mi = _im_cmi(C, E_, S)
+    _r = _random.Random(7)
+    null = []
+    for _ in range(200):
+        Cp = list(C)
+        st = {}
+        for k, g in enumerate(S):
+            st.setdefault(g, []).append(k)
+        for idx in st.values():
+            vals = [Cp[k] for k in idx]
+            _r.shuffle(vals)
+            for j, k in enumerate(idx):
+                Cp[k] = vals[j]
+        null.append(_im_cmi(Cp, E_, S))
+    nm = sum(null) / len(null)
+    pv = (sum(1 for v in null if v >= mi) + 1.0) / 201.0
+    earned = mi - nm
+    # Psi-hat on the daemon's OWN gws/lprec lanes (H_9351).
+    psi = None
+    if all(("psi_gws" in r and "psi_lprec" in r) for r in rows):
+        emith = [1 if 0.5 * (float(r["psi_gws"]) + float(r["psi_lprec"])) >= 0.5 else 0 for r in rows]
+        psi = sum(emith) / float(n)
+    return dict(n=n, rate=rate, hE=hE, gvar=gvar_min, r2=r2, mi=mi, nm=nm, pv=pv,
+                earned=earned, psi=psi, indep=(r2 == r2 and r2 < 0.5))
+
+
+def _g_tension(argv):
+    """DOES A GENUINELY-INDEPENDENT G ENGINE PULL EMIT? — H_9357, the sequel to H_9356.
+
+    H_9356 proved the daemon's A⇄G tension was A alone: ag_g_drive = -(1-emit_drive), so
+    ag_conflict was a deterministic parabola of one scalar, and --tension-emit was ill-posed.
+    H_9357 wires ag_g_drive (behind cli/chat.py --g-arm) to the immune store's top-2 affinity
+    GAP (d2, the one reverse quantity NOT already an input to emit_drive) and asks whether THAT
+    2-engine tension pulls emit — with the controls MI alone cannot supply.
+
+    Four arms (run cli/chat.py --g-arm a0|a1|a3; a2 is derived here by shuffling a1):
+      A0  current wiring (the H_9356 tautology)      — MUST FAIL G-INDEP (proves the gate can fail)
+      A1  REAL-G   = immune top-2 gap                — must PASS G-INDEP+G-VAR+MI
+      A3  NOISE-G  = seeded per-tick PRNG            — the 'causal handle vs 2nd engine' separator
+
+    Four gates:
+      G-INDEP  R2(ag_g_drive ~ emit_drive + lanes + squares) < 0.5   (else INVALID-SECOND-A)
+      G-VAR    min distinct(ag_g_drive) per rollout >= 5             (else INVALID-CONSTANT)
+      MI       I(ag_conflict; emit | stage) >= 0.05 AND shuffle <= 0.01
+      Psi-DV   |Psi_hat - 1/2| vs the H_9351 baseline 0.9167, and vs NOISE-G
+
+    ⚠️ The verdict is CROSS-ARM, not a single number: A1 pulling emit MORE than A3 (noise wired
+    the same causal way) is the only thing that separates 'a real second engine' from 'any handle
+    on the conflict knob'. A1 ≈ A3 leaves the tension claim dead — that is the falsification."""
+    paths = [a for a in argv if not a.startswith("--")]
+    rows = _im_rows(paths)
+    rows = [r for r in rows if ("tick" in r and "stage" in r and "emit" in r and "ag_g_drive" in r)]
+    mde = 0.05
+    ctrl_bar = 0.01
+    print("═══ A⇄G INDEPENDENT-G TENSION → EMIT · H_9357 ═══")
+    print("  rows=%d  traces=%d" % (len(rows), len(paths)))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (rows < 200) — collect more chat --g-arm rollouts.")
+        return 0
+    by_arm = {}
+    for r in rows:
+        by_arm.setdefault(str(r.get("g_arm", "?")), []).append(r)
+    print("  arms present: %s" % ", ".join("%s=%d" % (k, len(v)) for k, v in sorted(by_arm.items())))
+    res = {}
+    for arm in sorted(by_arm):
+        res[arm] = _gt_arm_panel(by_arm[arm], mde, ctrl_bar)
+    print()
+    print("  arm | n    | rate | H(e|S) | G-VAR | G-INDEP R2 | MI(earned) perm-p | Ψ̂  |Ψ̂-½|")
+    for arm in sorted(res):
+        d = res[arm]
+        psi_s = ("%.3f %.3f" % (d["psi"], abs(d["psi"] - 0.5))) if d["psi"] is not None else "  —"
+        print("  %-3s | %4d | %.2f | %.4f | %5d | %.4f %-4s | %+.4f %.3f  | %s"
+              % (arm, d["n"], d["rate"], d["hE"], d["gvar"], (d["r2"] if d["r2"] == d["r2"] else -1),
+                 "OK" if d["indep"] else "FAIL", d["earned"], d["pv"], psi_s))
+    print()
+    # ── cross-arm verdict ──
+    a0 = res.get("a0"); a1 = res.get("a1"); a3 = res.get("a3")
+    if a0 is not None and a0["indep"]:
+        print("  ⇒ ⛔ INVALID — the A0 (tautology) arm PASSED G-INDEP; the independence gate is broken.")
+        return 0
+    if a1 is None:
+        print("  ⇒ ⛔ INCOMPLETE — no a1 (REAL-G) arm present. Run cli/chat.py --g-arm a1.")
+        return 0
+    if a1["gvar"] < 5:
+        print("  ⇒ ⛔ INVALID-CONSTANT — a1 ag_g_drive has < 5 distinct values/rollout (dead store).")
+        return 0
+    if not a1["indep"]:
+        print("  ⇒ 🧱 INVALID-SECOND-A — a1 ag_g_drive is reconstructable from emit_drive (R²≥0.5).")
+        print("     I did not build an independent G; I built a second A. (H_9356 unbroken.)")
+        return 0
+    a1_pulls = (a1["earned"] >= mde and a1["nm"] <= ctrl_bar and a1["pv"] < 0.005)
+    sep = None
+    if a3 is not None:
+        sep = a1["earned"] - a3["earned"]
+    print("  🔒 prereg: A0 FAIL G-INDEP (gate live) ∧ A1 G-INDEP OK ∧ A1 MI≥%.2f/shuf≤%.2f ∧ A1≠A3" % (mde, ctrl_bar))
+    if a1_pulls and (sep is None or sep > mde):
+        print("  ⇒ 🟢 INDEPENDENT-TENSION-PULLS-EMIT — a genuine 2nd engine (immune d2) moves emit,")
+        print("     and it moves it MORE than noise wired the same way (A1−A3 = %s)."
+              % ("%.4f" % sep if sep is not None else "no A3"))
+    elif a1["indep"] and not a1_pulls:
+        print("  ⇒ 🧱 G-INERT — the independent G is wired and varies, but emit does NOT consume it")
+        print("     (MI earned %.4f < %.2f). The wiring is real; the tension is not. Separate follow-on H." % (a1["earned"], mde))
+    elif sep is not None and sep <= mde:
+        print("  ⇒ 🧱 CAUSAL-HANDLE-ONLY — a1 pulls emit no more than noise-G (A1−A3=%.4f ≤ %.2f)." % (sep, mde))
+        print("     ag_conflict is causally wired to emit, so ANY G signal lifts MI. Not a 2nd engine.")
+    else:
+        print("  ⇒ 미달 · 판정 보류")
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -4098,7 +4262,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -4134,6 +4298,8 @@ def main(argv):
     # H_9328 DO-MOUTH · I(A;Y|S) over decision traces (NO decode — reads traces the daemon
     # already wrote). V-CEILING FIRST: I <= H(A|S) is an identity, so a dead action channel
     # forces I=0 by definition, not by measurement (that is exactly how H_9308 died).
+    if len(argv) >= 2 and argv[0] == "--g-tension":
+        return _g_tension(argv[1:])
     if len(argv) >= 2 and argv[0] == "--tension-emit":
         return _tension_emit(argv[1:])
     if len(argv) >= 2 and argv[0] == "--psi-soma":
