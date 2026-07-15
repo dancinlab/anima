@@ -775,6 +775,9 @@ def evaluate_usage():
     print("       I(tension;emit) <= I(tension;score|stage), so whether `score` carries tension decides")
     print("       it with NO gate edit. M_score=I(ag_conflict;score|stage), M_sim=desaturated-gate sim")
     print("       (theta=median(score) tension/emit-blind). Reuses the H_9357 --g-arm traces.)")
+    print("  anima evaluate --cf-straddle <trace.jsonl> [...]  (H_9394 STAGE-0 · $0 KILL screener before")
+    print("      firing the ag-cont×dyn_w conjunction: recomputes score offline with the tension lane")
+    print("      REPAIRED+audible and asks whether clock-open ∧ score≤θ can EVER coexist. 0 ⇒ cancel.)")
     print("  anima evaluate --lane-census <trace.jsonl> [...]  (H_9392 · WHY is score stuck above θ? splits")
     print("      score into its 8 lanes: FLOOR=0.10·Σmin(lane). FLOOR>θ ⇒ the emit gate is unreachable by")
     print("      construction — and DEAD (constant) gauges own most of that floor = a wiring fact.)")
@@ -4618,6 +4621,160 @@ def _audibility(argv):
     return 0
 
 
+def _cf_straddle(argv):
+    """H_9394 STAGE-0 · $0 SCREENER — before burning a 303M collection, ask whether the conjunction
+    (--ag-cont ON × --dyn-w raised) can EVER give content a vote.
+
+    The campaign's two live flags were never combined: H_9376 ran --ag-cont ON at the buried weight
+    (w=0.10 ⇒ the lane's whole score contribution ceiling is 0.10 while the test's MDE≈0.115 = ZERO
+    POWER), and H_9377 ran the w-grid with --ag-cont OFF (⇒ a weight on the frozen constant 0.25 =
+    an affine shift, H_9393). So H_9376's "upper-bound arm" was an upper bound on the agloop LINK at
+    the buried weight, not on tension→emit. The conjunction cell is unmeasured, not closed.
+
+    But it is only worth firing if a repaired+audible lane can make should_emit actually BIND. At
+    production the gate is a tautology (min score 0.3442 > θ=0.30, H_9391), so emit ≡ clock and no
+    content can vote. This screener recomputes, OFFLINE from the existing traces, the counterfactual
+
+        score_cf(w) = scale(w)·seven + w·clip01(ag_conflict),  scale(w) = (B−w)/(B−w_dyn)
+
+    — i.e. exactly what the daemon WOULD have scored with --ag-cont ON at weight w — by calling the
+    ENGINE's own motivation_score (never a re-implementation), and counts the rows where the clock is
+    open AND score_cf ≤ θ: the events where content would finally decide emit.
+
+    ⚠️ DIRECTIONAL (open-loop): changing score changes emit changes secs_since_emit changes the clock,
+    which this cannot simulate. It is a KILL screener — enough to cancel a fire, never to cement one.
+
+    Verdict:
+      max over w of N_straddle == 0  → ⛔ NO-VOTE-POSSIBLE: cancel Stage-1. Even a fully repaired,
+        maximally audible tension lane never lets the gate bind while the clock is open ⇒ the wall is
+        not tension at all but the gate architecture refusing content a vote (→ gate redesign, and
+        the campaign closes on that statement, no decode burned).
+      some w gives N_straddle ≥ 20 → 🟢 LICENSE: fire Stage-1 at those w (report the licensed grid).
+    """
+    from engine_g import (motivation_score, spont_im_threshold, spont_weight_relevance,
+                          spont_weight_info_gap, spont_weight_curiosity, spont_weight_pain,
+                          spont_weight_coherence, spont_weight_originality, spont_weight_balance,
+                          spont_weight_dynamics)
+    THR = spont_im_threshold()
+    N_BIND_MIN = 20                      # Fable's pre-registered measurability floor
+    GRID = [0.10, 0.25, 0.40, 0.55, 0.70]
+    # trace field ↔ motivation_score arg order (cli/chat.py brain_emit call site)
+    SEVEN = ["rel_f", "gap_ctx", "cur_f", "allo_ctx", "coh_lane", "nov_ctx", "bal_lane"]
+    rows = _im_rows(argv)
+    rows = [r for r in rows if all(k in r for k in SEVEN + ["agloop_ctx", "ag_conflict",
+                                                            "base_motiv", "score", "safe", "dyn_w"])]
+    anc = [r for r in rows if (r.get("dyn_w") is None or abs(float(r["dyn_w"]) - 0.10) < 1e-9)]
+    print("═══ CF-STRADDLE · H_9394 STAGE-0 · can a repaired+audible tension lane EVER bind the gate? ═══")
+    print("  anchor rows=%d  θ=%.2f  grid=%s  (open-loop screener ⇒ DIRECTIONAL · KILL-only)"
+          % (len(anc), THR, GRID))
+    if len(anc) < 100:
+        print("  ⇒ ⛔ NOT-POWERED (anchor rows < 100)"); return 0
+
+    def _clip01(x):
+        return 0.0 if x < 0.0 else (1.0 if x > 1.0 else x)
+
+    def _safe(r):
+        return 1 if r.get("safe") else 0
+
+    # C0 — the engine reproduces the logged score at the anchor from the traced lanes.
+    worst = 0.0
+    for r in anc:
+        s = motivation_score(*[float(r[k]) for k in SEVEN], float(r["agloop_ctx"]), 0.10)
+        worst = max(worst, abs(s - float(r["base_motiv"])))
+    print("  C0 engine-reproduces-logged: max|motivation_score(lanes,0.10) − base_motiv| = %.3e" % worst)
+    if worst >= 1e-9:
+        print("  ⇒ ⛔ INSTRUMENT-DEAD — cannot reproduce the logged score; the screener would be fiction.")
+        return 0
+
+    cvals = [float(r["ag_conflict"]) for r in anc]
+    print("  ag_conflict: %d distinct · min %.4f max %.4f  → clip01 → dyn_v_cf"
+          % (len({round(v, 12) for v in cvals}), min(cvals), max(cvals)))
+    print()
+    print("   w    | score_cf min   max    | ≤θ rows  clock-open  STRADDLE(open ∧ ≤θ)")
+    best = 0
+    licensed = []
+    for w in GRID:
+        sc = []
+        for r in anc:
+            s = motivation_score(*[float(r[k]) for k in SEVEN], _clip01(float(r["ag_conflict"])), w)
+            # the daemon adds the anchor-fold nudge on top of base_motiv
+            s += float(r.get("anchor_nudge", 0.0) or 0.0)
+            sc.append(s)
+        below = [i for i, v in enumerate(sc) if v <= THR]
+        opens = [i for i, r in enumerate(anc) if _safe(r)]
+        strad = len(set(below) & set(opens))
+        best = max(best, strad)
+        if strad >= N_BIND_MIN:
+            licensed.append(w)
+        print("  %.2f  | %8.4f  %8.4f  | %5d    %5d       %5d %s"
+              % (w, min(sc), max(sc), len(below), len(opens), strad,
+                 "🟢" if strad >= N_BIND_MIN else ""))
+    # POWER PRE-CALC (Fable's gate: fire only if the licensed cell can resolve a1 vs a3′).
+    # The straddle band above is opened mostly by SHRINKING the 7-lane blend — tension's own leverage
+    # is bounded by range(ag_conflict)·w, and range is TINY here. So count, offline, how many rows
+    # actually FLIP emit between a1 (real conflict) and a3′ (the same values time-permuted = the
+    # pre-registered marginal-matched surrogate). That count IS the effect the fire could detect.
+    if licensed:
+        import random as _rnd
+        print()
+        print("  🔬 POWER pre-calc — a1(real) vs a3′(time-permuted, marginal-matched) counterfactual flips")
+        print("     tension leverage bound = range(ag_conflict)·w = %.4f·w" % (max(cvals) - min(cvals)))
+        print("   w    | flips/straddle   flip-rate | verdict")
+        for w in licensed:
+            r0 = _rnd.Random(0x9394)
+            perm = [_clip01(v) for v in cvals]
+            r0.shuffle(perm)
+            flips = 0; strad = 0
+            for i, r in enumerate(anc):
+                if not _safe(r):
+                    continue
+                base7 = [float(r[k]) for k in SEVEN]
+                nud = float(r.get("anchor_nudge", 0.0) or 0.0)
+                s_a1 = motivation_score(*base7, _clip01(float(r["ag_conflict"])), w) + nud
+                s_a3 = motivation_score(*base7, perm[i], w) + nud
+                if (s_a1 <= THR) or (s_a3 <= THR):
+                    strad += 1
+                    if (s_a1 > THR) != (s_a3 > THR):
+                        flips += 1
+            rate = (flips / strad) if strad else 0.0
+            ok = flips >= 10
+            print("  %.2f  | %4d/%-4d       %6.3f    | %s"
+                  % (w, flips, strad, rate, "🟢 resolvable" if ok else "⛔ under-powered (flips<10)"))
+            if not ok:
+                licensed = [x for x in licensed if x != w]
+        if not licensed:
+            print()
+            print("  ⇒ ⛔ POWER-VOID — the straddle band is opened by SHRINKING the 7-lane blend, not by")
+            print("     tension: swapping real conflict for its own permutation flips (almost) no emit,")
+            print("     because tension's leverage (range %.4f · w) is far smaller than the band the other"
+                  % (max(cvals) - min(cvals)))
+            print("     lanes set. A fire here would measure the dial, not the content ⇒ CANCEL Stage-1.")
+            print("     ⇒ The campaign closes on: tension's DYNAMIC RANGE (~%.3f) is too small to ever"
+                  % (max(cvals) - min(cvals)))
+            print("     decide a θ=%.2f gate at any budget-preserving weight — a magnitude fact, not a" % THR)
+            print("     wiring one. Reopen = a tension signal with O(0.1+) range (upstream of agloop).")
+            return 0
+    print()
+    if best == 0:
+        print("  ⇒ ⛔ NO-VOTE-POSSIBLE — at NO weight does a repaired (clip01(ag_conflict)) and audible")
+        print("     tension lane ever produce `clock-open ∧ score ≤ θ`. Even the maximal-information,")
+        print("     maximal-audibility tension cannot make the emit gate bind while the clock is open.")
+        print("     ⇒ CANCEL Stage-1 (no decode burned). The wall is NOT tension: it is the gate")
+        print("     architecture giving content no vote (clock decides, θ never binds) ⇒ hand to gate")
+        print("     redesign; the campaign closes on THAT statement, scope-bounded to this regime.")
+    elif licensed:
+        print("  ⇒ 🟢 LICENSE Stage-1 at w ∈ %s (N_straddle ≥ %d): there content CAN decide emit."
+              % (licensed, N_BIND_MIN))
+        print("     Pre-registered arms: a0 const-0.25 pedestal(true-0) · a1 clip01(real) · a3′ time-")
+        print("     permuted surrogate (marginal-matched AFTER clip01 ⇒ θ-crossing rate auto-matched).")
+        print("     Cement = Δ_emit(a1−a3′) > MDE with CONSISTENT SIGN across the licensed w (never raw C).")
+    else:
+        print("  ⇒ ⏳ UNDER-POWERED — straddle events exist (max %d) but none reach N≥%d. Extend rollouts"
+              % (best, N_BIND_MIN))
+        print("     before firing, or accept VOID-EMIT (score-leg only, no family claim).")
+    return 0
+
+
 def _lane_census(argv):
     """H_9392 LANE-FLOOR CENSUS — WHY is the score trapped above θ? Decompose it into its 8 lanes.
 
@@ -5782,7 +5939,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--cf-straddle", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -6055,6 +6212,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 2 and argv[0] == "--cf-straddle":
+        return _cf_straddle(argv[1:])
     if len(argv) >= 2 and argv[0] == "--lane-census":
         return _lane_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--gate-census":
