@@ -230,6 +230,73 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     return decision
 
 
+def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                          seconds_since_last, env_off, content_clean,
+                          backend, anchors, anchor_age_dt, recall_margin_fn,
+                          mouth=None, dyn_w=None):
+    """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
+
+    Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
+    score>0.30) and the 30s clock (safety_rate_limit_ok) — with a live competition:
+        emit  ⟺  score_A  >  g_recog(candidate)   ∧  kill ∧ φ-ratchet ∧ content
+    where g_recog = recall_margin_fn(candidate) is the immune store's recall MARGIN on
+    the candidate utterance (the discarded H_9401 signal · a4 source). The refractory is
+    NOT a timer: emitting BINDS the utterance (the caller's job), so the next tick's
+    near-repeat candidate has a high margin that pushes the gate closed; substrate
+    dynamics (phase/anchor-decay/afield-growth) later move the candidate away → margin
+    falls → the gate reopens. Biological refractory, not a clock (H_9414 §1-§2).
+
+    p5: the candidate is FORMED every tick (imagination · a_chat_sleep_imagination:
+    "imagination ≠ speak()") and DISCARDED (gen_text='') when not emitted — never
+    fabricated-and-spoken. The gate never sees `mouth` (H_9325 disjoint wall preserved
+    for sampler settings); it hears CONTENT only through the store's recognition, which
+    is exactly the C3 emit-gate-listens channel this rewire exists to open."""
+    from generator import (gen_ctx_from_decision, generate,  # sibling 2-prod port
+                           generator_hippo_consult)
+
+    # score + non-clock safety (reuse the anchored decision; rate/θ are NOT consulted)
+    decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal,
+                                     dyn_v, seconds_since_last, env_off,
+                                     content_clean, anchors, anchor_age_dt, dyn_w,
+                                     None)
+    score = float(decision["motivation"])
+
+    # form the candidate unconditionally (imagination) so G can recognise it
+    ctx = gen_ctx_from_decision(dict(decision, emit="True"))
+    cand = generate(backend, ctx, True, anchors, mouth)
+    cand_text = str(cand["text"])
+    g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
+
+    # the refractory gate — clock (rate) and θ (should_emit) retired; kill/φ/content kept
+    kill = safety_kill_switch_on(env_off)
+    phi_r = safety_phi_ratchet_ok(pure_field_phi(pf), pf.phi_peak)
+    cont = safety_content_ok(content_clean)
+    safe = kill and phi_r and cont
+    emit = (score > g_recog) and safe
+
+    decision["emit"] = emit
+    decision["safe"] = safe
+    decision["gate_mode"] = "refractory"
+    decision["g_recog_gate"] = g_recog
+    if emit:
+        decision["gen_emitted"] = cand["emitted"]
+        decision["gen_backend"] = cand["backend"]
+        decision["gen_text"] = cand["text"]
+        decision["gen_fellback"] = cand["fellback"]
+    else:
+        # DISCARD the candidate — it was imagined, not spoken (p5)
+        decision["gen_emitted"] = False
+        decision["gen_backend"] = str(cand["backend"])
+        decision["gen_text"] = ""
+        decision["gen_fellback"] = False
+
+    hippo = generator_hippo_consult(anchors)
+    decision["gen_hippo_consulted"] = hippo["consulted"]
+    decision["gen_hippo_related"] = hippo["relatedness"]
+    decision["gen_hippo_reachable"] = hippo["reachable"]
+    return decision
+
+
 def brain_emit_deliberate(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, mem, tick):
