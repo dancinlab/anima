@@ -55,3 +55,29 @@ score 스트림만 입력 = ag_conflict 인자 부재 = 방향맹). 4 arm 동일
 ## 예측
 Fable 사전확률 = (b) 가 충분히 살아있음(tension→score 유일 경로가 ag_budget∈{4..6} 정수비 계단형 ×0.10
 양자화 · 연속 ten_phasic 은 고아). 그러나 DPI 로 셋을 깔끔히 가른다 — 게이트 편집 0.
+
+## VERDICT — 🧱 채널-병목 BOUND (engine-native 303M · 1440 tick · TOST 저검정력·C-bound 결정)
+
+Fable pedestal+rollout-df 보정 후 (`anima-py evaluate --gate-deaf`, a0/a1/a3 × 16 rollout × 30 tick):
+
+| 지표 | 값 | 뜻 |
+|---|---|---|
+| tick-perm p (틀림) | 0.005 | 가짜복제 — 같은 rollout tick 자기상관 |
+| Δ_G = M_score(a1)−M_score(a3) | +0.0093 | pedestal 보정 = 독립-G 성분 |
+| SE_jk (rollout df, k=16) | 0.0279 | 진짜 df = 16 rollout, not 480 tick |
+| 90% CI | [−0.037, +0.055] | 0 못 배제 |
+| block-perm 참값0 floor | +0.0031 | 정상(≈0 · eq 0.01 아래) |
+| **C = I(ag_conflict;score\|stage) full-res** | **0.0233** | **채널 상한** |
+| MDE (TOST) | ≈0.115 | ≫ eq 0.01 = 저검정력 |
+
+**두 결론:**
+1. ⏳ **(b)-for-G vs weak-(a) TOST 는 가용 n 에서 검정력 부족** — tick-perm 유의(0.005)는
+   가짜복제였다(Fable Q2 예측 적중). rollout-df 로는 Δ_G 가 0 과 구별 불가. 종결엔 ~2000 rollout
+   필요(303M 비가용).
+2. 🧱 **채널-병목 BOUND 이 실용 답** — full-res C = 0.0233 nats 가 ag_conflict→score 채널 전체
+   상한. DPI 로 **I(tension;emit) ≤ 0.023** (0.05 문턱의 절반). 이 ~0.02-nat 병목이 H_9357
+   G-INERT 를 기계적으로 설명: 게이트 입력이 병목이라 emit 이 소비할 tension 이 애초에 없다.
+
+**메타교훈:** (a) tick-단위 순열은 가짜복제 — 복제 단위는 rollout(자기상관). rollout-jackknife/
+block-perm 를 써라. (b) 절대 bar 전에 pedestal(noise-arm 영점)을 빼라 — a3 가 실패한 통제군이
+아니라 영점이었다. **프런티어 = 게이트 아니라 상류 ag_conflict→score mixer**(정수비 ×0.10 양자화).
