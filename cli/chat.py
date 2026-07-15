@@ -2310,8 +2310,13 @@ def anima_consciousness_mode(ckpt, argv=None):
             if tick == 0:  # meta header (session invariants for the replayer boot)
                 _trace_fh.write(_json.dumps({
                     "_meta": True, "session_seed": session_seed, "mem_text": mem_text,
+                    # ⚠️ H_9411: phi_const/nudge_const record ONLY the tick-0 value and are NO
+                    # LONGER session invariants (pf now stepped ⑤, live_tension anchor ⑥B) — a
+                    # replayer MUST read the per-tick "phi"/"anchor_nudge" fields from each row,
+                    # not treat these as constants. Flags below make that self-describing.
                     "phi_const": float(dec["phi"]), "phi_peak": float(pf.phi_peak),
                     "nudge_const": float(dec.get("anchor_nudge", 0.0)),
+                    "phi_live_h9411": True, "nudge_live_h9411": True,
                     "backend": g_back, "n_ticks": n_ticks,
                     "stage_cycle": bool(_stage_cycle),  # H_9269 Y-ULTRA regime flag (consumers ignore if unknown)
                     # H_9351 σ-panel provenance: bind the trace to the ckpt that produced it so
