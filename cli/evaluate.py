@@ -778,6 +778,9 @@ def evaluate_usage():
     print("  anima evaluate --cf-straddle <trace.jsonl> [...]  (H_9394 STAGE-0 · $0 KILL screener before")
     print("      firing the ag-cont×dyn_w conjunction: recomputes score offline with the tension lane")
     print("      REPAIRED+audible and asks whether clock-open ∧ score≤θ can EVER coexist. 0 ⇒ cancel.)")
+    print("  anima evaluate --dead-census <trace.jsonl> [...]  (H_9398 · sweep EVERY trace field for")
+    print("      constant (distinct==1) gauges — each is a wiring fact whose consuming lanes get a")
+    print("      fixed offset (H_9393 agloop_ctx ≡0.25). HYGIENE listing so the next H does not inherit it.)")
     print("  anima evaluate --lane-census <trace.jsonl> [...]  (H_9392 · WHY is score stuck above θ? splits")
     print("      score into its 8 lanes: FLOOR=0.10·Σmin(lane). FLOOR>θ ⇒ the emit gate is unreachable by")
     print("      construction — and DEAD (constant) gauges own most of that floor = a wiring fact.)")
@@ -4867,6 +4870,82 @@ def _cf_straddle(argv):
     return 0
 
 
+def _dead_census(argv):
+    """H_9398 DEAD-GAUGE CENSUS — sweep EVERY numeric trace field for gauges that are constant across
+    the whole run. A constant gauge (distinct==1) is a WIRING fact, not a substrate fact: whatever
+    lanes consume it get a fixed offset that cannot change any ranking or decision (H_9393 agloop_ctx
+    ≡0.25 was exactly this, and it silently governed a 7-H campaign's interpretation). This is a
+    STANDING HYGIENE instrument, not a verdict: it only lists what is frozen so the NEXT experiment
+    does not inherit a dead axis unknowingly (chat-py-4/chat-py-5 dead-gauge family).
+
+    A field is flagged NEAR-DEAD if it varies but its dynamic range is a tiny fraction of a live axis
+    — reported, not judged (some gauges are legitimately low-variance).
+    """
+    rows = _im_rows(argv)
+    rows = [r for r in rows if isinstance(r, dict)]
+    print("═══ DEAD-GAUGE CENSUS · H_9398 · every constant trace gauge is a wiring fact (H_9393) ═══")
+    print("  rows=%d" % len(rows))
+    if len(rows) < 100:
+        print("  ⇒ ⛔ NOT-POWERED (rows < 100)")
+        return 0
+    # collect numeric fields present in ≥90% of rows
+    from collections import defaultdict as _dd
+    vals = _dd(list)
+    for r in rows:
+        for k, v in r.items():
+            if isinstance(v, bool):
+                continue
+            if isinstance(v, (int, float)):
+                vals[k].append(float(v))
+    thr = 0.9 * len(rows)
+    dead = []
+    live = []
+    for k, v in vals.items():
+        if len(v) < thr:
+            continue
+        dis = len({round(x, 10) for x in v})
+        lo, hi = min(v), max(v)
+        (dead if dis == 1 else live).append((k, dis, lo, hi, sum(v) / len(v)))
+    dead.sort(key=lambda t: t[0])
+    live.sort(key=lambda t: t[1])
+    # CONFIG constants are frozen BY DESIGN (the run's fixed settings), not dead substrate gauges.
+    CONFIG = {"dyn_w", "emit_temp", "seed_len", "seed_b64", "sample_seed", "g_arm", "ag_cont",
+              "rate_sec", "gtext_sha", "gtext_b64"}
+    substrate_dead = [t for t in dead if t[0] not in CONFIG]
+    config_dead = [t for t in dead if t[0] in CONFIG]
+    print()
+    print("  ⚙️ CONFIG constants (frozen by design · not a defect) — %d: %s"
+          % (len(config_dead), ", ".join("%s≡%.3g" % (k, lo) for k, _d, lo, _h, _m in config_dead) or "(none)"))
+    print()
+    print("  💀 SUBSTRATE gauges frozen (distinct==1) — a WIRING fact (%d):" % len(substrate_dead))
+    if not substrate_dead:
+        print("     (none)")
+    KNOWN = {"agloop_ctx": "integer-budget quantizer (H_9360/76/93)",
+             "af_val": "affect_read session-const key+answer (chat-py-5)",
+             "af_aro": "affect_read session-const key+answer (chat-py-5)"}
+    for k, dis, lo, hi, mu in substrate_dead:
+        print("     %-16s ≡ %-9.4f %s" % (k, lo, ("← " + KNOWN[k]) if k in KNOWN else "← root UNAUDITED"))
+    print()
+    print("  live gauges (distinct>1), lowest-variance first (top 8):")
+    for k, dis, lo, hi, mu in live[:8]:
+        print("     %-16s distinct=%-4d range=%.4f  [%.4f … %.4f]" % (k, dis, hi - lo, lo, hi))
+    print()
+    unaudited = [t[0] for t in substrate_dead if t[0] not in KNOWN]
+    if substrate_dead:
+        print("  ⇒ 🩺 %d substrate gauge(s) frozen. Each is a WIRING fact: consuming lanes get a fixed"
+              % len(substrate_dead))
+        print("     offset ⇒ no ranking/decision effect (H_9393). This is a HYGIENE listing, not a verdict.")
+        if unaudited:
+            print("     ⚠️ ROOT UNAUDITED (%d): %s — the next experiment that reads any of these must treat"
+                  % (len(unaudited), ", ".join(unaudited)))
+            print("     it as dead until its source is audited and the lookup made tick-varying (chat-py-5).")
+        else:
+            print("     all roots are known (H_9360/76/93 · chat-py-5).")
+    else:
+        print("  ⇒ ✅ no frozen substrate gauge in this trace.")
+    return 0
+
+
 def _lane_census(argv):
     """H_9392 LANE-FLOOR CENSUS — WHY is the score trapped above θ? Decompose it into its 8 lanes.
 
@@ -6031,7 +6110,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--cf-straddle", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--cf-straddle", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -6306,6 +6385,8 @@ def main(argv):
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
     if len(argv) >= 2 and argv[0] == "--cf-straddle":
         return _cf_straddle(argv[1:])
+    if len(argv) >= 2 and argv[0] == "--dead-census":
+        return _dead_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--lane-census":
         return _lane_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--gate-census":
