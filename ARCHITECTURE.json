@@ -684,7 +684,13 @@
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9391",
           "type": "gate",
           "name": "",
-          "detail": "🕳️ H_9391 SCORE-GATE VACUITY($0). production min(score)=0.3442 > θ=0.30 · 전240행 θ이하 0.0% ⇒ should_emit 항진 ⇒ emit≡clock BY CONSTRUCTION ⇒ 시계 열어도 content 창 안 열림(H_9390 clock-live reopen 발사전 반증). 절단=8-lane score 가 문턱 미도달(mixer·content 아님). 🔑시계×score 양의결합(θ아래 행은 전부 시계-닫힘). 계기=--rate-limit-sec."
+          "detail": "🕳️ H_9391 SCORE-GATE VACUITY($0). production min(score)=0.3442 > θ=0.30(전240행 θ이하 0.0%) ⇒ should_emit 항진 ⇒ emit≡clock ⇒ clock-live reopen 발사전 반증. ⚠️H_9393 정정: '시계×score 양의결합' 반증(corr −0.14) · FLOOR 0.1695≤θ 라 구조적 아닌 DYNAMIC. 관측사실은 유효."
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9393",
+          "type": "gate",
+          "name": "",
+          "detail": "💀 H_9393 LANE-FLOOR CENSUS($0·--lane-census). ①H_9377 가중전제 오류(실가중 합1.00 vs '8×0.10=0.80')⇒예산 디플레⇒H_9377 비앵커셀 INVALID(앵커 byte-id 라 버그 은폐). 수정=엔진 실가중 합. ②agloop_ctx(tension 입력)≡0.25 distinct=1 vs ag_conflict 57 ⇒ 상류 G-INERT/CONTENT-INERT 는 상수에 대한 진술·dyn_w=아핀이동⇒w-grid emit byte-id 정체. ③FLOOR 0.1695≤θ=DYNAMIC. NEXT=--ag-cont 배선후 앵커 재측정."
          }
         ]
        }
