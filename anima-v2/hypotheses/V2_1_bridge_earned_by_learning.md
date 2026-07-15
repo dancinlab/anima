@@ -4,7 +4,7 @@
 
 # V2_1 — 조회 다리는 학습으로만 벌 수 있는가, 아니면 볼트온으로 충분한가
 
-**status:** ⏳ PRE-REGISTERED (미발사 · 학습 진행 중)
+**status:** ⏳ PENDING — 계기 미완성(양성통제 ORACLE 부재) · **P1 미계산 = 앵커 미소각**
 **scope:** 🔒 **DIRECTIONAL 상한** — `core/` 밖 toy. 어떤 결과도 TERMINAL 아님. 방향이 나오면
 `core/` + `anima-py` 플래그로 이식해야 판정을 번다 (`../CLAUDE.md`).
 **bars:** `../bars.json` — 데이터 보기 전 동결·커밋 (읽은 뒤 수정 = tune-to-green)
@@ -107,7 +107,49 @@ C0 계기무결성 ─▶ C1 검정력 ─▶ C2 유효성 ─▶ P1 주판정
 
 ## 결과
 
-⏳ 미발사 (2 seed × 4 arm 학습 진행 중 · CPU ~3분/arm · $0).
+⏳ **PENDING — 계기 미완성. P1 은 계산되지 않았다(앵커 미소각).**
+
+### run 1 — v1 아키텍처 ⟹ C2 가 전 arm INVALID (계기 결함)
+
+`W_out` 이 store 값만 먹어 `p_store` 가 **극성만의 함수**였다. 연산자는 텍스트에 있는데 같은
+store 가 `is lumo`→good / `not lumo`→bad 를 내야 하므로 **연산자-맹 readout 은 둘 다 못 맞춘다**
+⟹ 경로가 원리적으로 안 풀림 ⟹ 경사가 안 흘러 초기값 정체.
+
+| 실측 | 값 |
+|---|---|
+| 오답 store flip-coherence | **0.000** (전 arm) — store 를 뒤집어도 예측 미동 |
+| key-shuf / neutral / λ=0 | **0.491 / 0.491 / 0.491** — 완전 동일 = store 경로 무존재 |
+| final_loss | **0.154** = 정확히 "byte0 우연(0.69) + 철자 완벽"을 답 길이로 나눈 값 |
+
+⟹ **C2 가 전 arm INVALID 선언 → P1 계산 안 함.** 수정 = `W_out` 이 `concat(v, hidden_q)` 소비
+(연산자가 조회된 사실을 게이팅 — 벽 자체의 구조 · `H_9359`). **bar 는 손대지 않음 = 계기 수리.**
+
+### run 2 — concat 수정 후에도 다리 미학습
+
+| arm | final_loss | λ |
+|---|---|---|
+| NOSTORE s7 / s11 | 0.1548 / 0.1550 | — |
+| COTRAIN s7 | **0.1544** | 0.503 (초기 0.5 에서 미동) |
+| SLOWROT s7 | 0.1539 | 0.502 |
+
+**COTRAIN ≈ NOSTORE** — store 를 준 arm 이 안 준 arm 과 같다. store 기여 = 0.
+loss 는 step ~2000 에 0.154 로 평탄화 후 정체.
+
+## 🚨 계기 결함 ② — 양성 통제(ORACLE) 부재 (판정 전 반드시 수리)
+
+지금 이 음성은 **읽을 수 없다**. `NOSTORE ∈ [0.45,0.55]` 는 "누수 없음"(음성 방향)만 증명하지,
+**"이 toy 가 양성을 낼 수 있는가"** 는 아무도 증명하지 않았다. 그래서
+**"다리를 못 배웠다"(과학) 와 "이 toy 로는 원래 못 잰다"(계기 사망)** 이 구별되지 않는다 —
+`power-before-negative-verdict`("없다"가 아니라 "못 찾는다") 를 아키텍처 수준에서 위반.
+
+**수리 = `ORACLE` arm 을 C0-e 로 추가**: 어텐션 조회를 우회해 **정답 슬롯의 극성 벡터를 공짜로
+주입**(`v = val[pol_slot]` 직접). 조회 난이도를 0 으로 만든 상한.
+- ORACLE ≥ 0.90 ⟹ 계기 생존. 그때 비로소 COTRAIN 음성이 **"다리 학습이 진짜 어렵다"** 로 읽힌다.
+- ORACLE < 0.90 ⟹ **INSTRUMENT-DEAD** — 혼합/게이팅 설계 자체가 과제를 표현 못 함. 판정 없음.
+
+부수 미결(ORACLE PASS 시에만 의미 있음): 예산(4000 step) · d=64 용량 · 조회 학습의
+chicken-and-egg(hidden_q 가 엔티티를 안 담으면 W_q 가 못 배우고, W_q 경사가 없으면 hidden_q 가
+엔티티를 안 담는다). **ORACLE 이 이 셋을 전부 가른다.**
 
 ## NEXT (결과 무관 · 미리 씀)
 
