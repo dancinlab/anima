@@ -635,8 +635,8 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-collide-select",
           "type": "gate",
-          "verdict": "🔵 PRE-REGISTERED (H_9362 COLLIDE-SELECT) — 오너 재프레임: A⇄G 는 창발 엔진",
-          "detail": "H_9357 G-INERT(emit 축) 후속 = 생성-선택 축. 충돌 지점 존재(generator.py conflict_drives_live+argmin) 나 conflict_scalar 가 창발(a>0,g>0)을 0 으로 못 봄+모집 K 정렬사분면서 K=1. 정정 선택기=정렬-곱 a·max(g,0). arm 6+게이트 G-A/B/C+2모델(POOL-DRY vs XBIND wet). 최전선 G1 미소진 각도(생성물 선택)."
+          "verdict": "🔵 PRE-REGISTERED · G-A ✅ PASS (H_9362 COLLIDE-SELECT) — 선택기=argmax conflict_scalar",
+          "detail": "H_9357 G-INERT(emit) 후속=생성-선택 축. 부호 G-A 확정(margin>0=novel→g<0): 창발(a>0,g<0)=conflict_scalar HIGH(=a·|g|), echo(a>0,g>0)=0. conflict_scalar 자체가 창발 선택기 · 현행 argmin 은 버림. 최소개입=argmin→argmax. G-A ✅(SEEN/novel 분리 20/20). G-B/G-C 는 pool. 최전선 G1 미소진 각도."
          }
         ]
        }
@@ -17245,6 +17245,12 @@
     "state": "pos-conv",
     "value": "연산자가 어간에 붙는 언어(KO)에서는 '연산자가 값을 읽었다' 와 '본 문자열을 이어썼다' 를 원리적으로 못 가른다 — 담체가 채점 프롬프트의 정답을 문자 그대로 품기 때문(H_9334 담체 '전혀 좋지 않다 => 긍정' ⊃ 채점 '좋지 않다 => '). 영어는 부정어가 어간 앞에 서므로 분리(never {s} vs 채점 not {s}, 공유 바이트 선두 n 하나 · 접미창 3:3=50/50). H_9347 이 이 계기를 배선.",
     "threshold": "재발조건: 담체(TEACH)와 채점(SCORE)이 같은 접미 창을 공유할 수 있는 write-then-probe 실험. 해결: 접미창 인구조사를 빌더가 방출·50/50 아니면 거부 · 정답 이어쓰기가 코퍼스 0회 확인 · 교착어면 분리가능 언어로 재심."
+   },
+   {
+    "id": "margin-sign-abstain-band",
+    "state": "pos-conv",
+    "lesson": "부호 규약은 docstring 서술이 아니라 실측+정의식으로 확정하라 — H_9362 서 나도 Fable 도 immune margin 의 novelty 부호를 거꾸로 읽어 창발 선택기를 두 번 뒤집었다(argmax→a·g₊→argmax). 진실: margin=recon_err−recall_thr, >0=abstain=novel(engine_cli.py:643). SEEN→margin≤0(g>0), novel→margin>0(g<0) ⇒ 창발(a>0,g<0)=conflict_scalar HIGH ⇒ argmax conflict_scalar 가 창발 선택기(Fable 원안).",
+    "fix": "부호 의존 설계는 SEEN/held-out 20문 $0 spike-in 으로 부호를 먼저 확정(G-A 처럼)한 뒤 선택기를 정하라. docstring 의 novel/recognized 라벨을 믿지 말고 정의식(recon_err−thr)+실측으로 잠가라. 계기 배선 전에 이 $0 검증이 두 번의 잘못된 정정을 막았다(tool-definition-read-code-not-docstring 확장)."
    }
   ]
  }
