@@ -3411,7 +3411,7 @@ def _tension_emit(argv):
     print("     (stage 안에서 tension 만 흩뜨림 — 발화율과 stage 구조는 그대로 남는다.")
     print("      이 통제가 같이 점수를 내면 그 숫자는 tension 이 아니라 **발화율**에서 온 것이다.)")
     print()
-    print("  🔒 사전등록 bar: EARNED ≥ %.2f nats ∧ C1 SHUFFLE ≤ %.2f nats" % (mde, ctrl_bar))
+    print("  [bar] 사전등록 bar: EARNED ≥ %.2f nats ∧ C1 SHUFFLE ≤ %.2f nats" % (mde, ctrl_bar))
     if earned >= mde and nm <= ctrl_bar and pv < 0.005:
         print("  ⇒ 🟢 TENSION-PULLS-EMIT — 기질의 긴장이 발화 결정을 민다.")
     elif nm > ctrl_bar:
@@ -3567,7 +3567,7 @@ def _g_tension(argv):
     sep = None
     if a3 is not None:
         sep = a1["earned"] - a3["earned"]
-    print("  🔒 prereg: A0 FAIL G-INDEP (gate live) ∧ A1 G-INDEP OK ∧ A1 MI≥%.2f/shuf≤%.2f ∧ A1≠A3" % (mde, ctrl_bar))
+    print("  [bar] prereg: A0 FAIL G-INDEP (gate live) ∧ A1 G-INDEP OK ∧ A1 MI≥%.2f/shuf≤%.2f ∧ A1≠A3" % (mde, ctrl_bar))
     if a1_pulls and (sep is None or sep > mde):
         print("  ⇒ 🟢 INDEPENDENT-TENSION-PULLS-EMIT — a genuine 2nd engine (immune d2) moves emit,")
         print("     and it moves it MORE than noise wired the same way (A1−A3 = %s)."
@@ -3768,7 +3768,7 @@ def _gate_deaf(argv):
                     [int(r["stage"]) for r in a1["rows"]], seed=17)[3]
     eq = 0.01                         # equivalence limit (pedestal-referenced Δ, registered pre-look)
     ci_lo, ci_hi = dg - 1.645 * se_dg, dg + 1.645 * se_dg    # 90% CI for TOST
-    print("  🔒 prereg (Δ_G = M_score(a1)−M_score(a3) · rollout-df · TOST ±%.2f · a3 = pedestal):" % eq)
+    print("  [bar] prereg (Δ_G = M_score(a1)−M_score(a3) · rollout-df · TOST ±%.2f · a3 = pedestal):" % eq)
     print("     Δ_G = %+.4f · SE_jk = %.4f (k=%d) · 90%%CI [%+.4f, %+.4f]" % (dg, se_dg, min(k1, k3), ci_lo, ci_hi))
     print("     block-perm true-0 floor = %+.4f (must be ≈0) · C=I(conflict;score|S) full-res = %.4f · M/C=%.2f" % (floor, C, (a1["m_sc"] / C if C > 0 else 0.0)))
     if abs(floor) > eq:
@@ -3862,6 +3862,14 @@ def _collide_select(ckpt, argv):
         print("    \ub2e4\uc74c \ub808\ubc84 = A \uc81c\uc548\ubd84\ud3ec(XBIND curriculum), G \uc120\ud0dd\uae30 \uc544\ub2d8.")
         _gen.gen_auto_free(h)
         return 0
+    total_retr = sum(c["retr"] for pool in rows for c in pool)
+    if total_retr == 0:
+        print()
+        print("    ⇒ 🧱 POOL-DRY(target) — K=%d 풀 전체에 재조합 타깃이 0회 등장(48중 0). "
+              "선택기가 고를 정답이 풀에 없다(H_9304 DATA 벽 생성-선택 축 재확인)." % K)
+        print("    다음 레버 = A 제안분포(XBIND-retrained), G 선택기 아님. G-C 무의미(전 arm 0/0).")
+        _gen.gen_auto_free(h)
+        return 0
     # ── G-C per-arm hit-rate ──
     def sel(pool, rule):
         if rule == "s0":       return min(pool, key=lambda c: c["cs"])
@@ -3887,7 +3895,7 @@ def _collide_select(ckpt, argv):
         print("    %-9s hit %d/%d = %.2f" % (r, hits[r], n, hits[r] / float(n)))
     he, hsa, hu, hn = hits["emerge"], hits["second_a"], hits["uniform"], hits["noise_g"]
     print()
-    print("  \ud83d\udd12 prereg: S_emerge > SECOND-A ( \ub450\ubc88\uc9f8 A \uc544\ub2d8) \u2227 S_emerge > NOISE-G \u2227 S_emerge > UNIFORM")
+    print("  [bar] prereg: S_emerge > SECOND-A ( \ub450\ubc88\uc9f8 A \uc544\ub2d8) \u2227 S_emerge > NOISE-G \u2227 S_emerge > UNIFORM")
     if he > hsa and he > hn and he > hu:
         print("  \u21d2 \U0001f7e2 COLLISION-SELECTS-EMERGENCE \u2014 A\u21c4G \ucda9\ub3cc\uc774 \uc7ac\uc870\ud569\uc744 \uace0\ub978\ub2e4(\uc720\ucc3d\ub9cc\ub3c4 \ub178\uc774\uc988\ub3c4 \uc544\ub2c8\uac8c).")
     elif he <= hsa:
