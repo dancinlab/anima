@@ -1,9 +1,17 @@
 # H_9396 — G-AMP: 조용한 G 는 warm-up 이 아니다 (마지막 탈출구 폐쇄)
 
-**status:** 🧱 AMPLITUDE-INTRINSIC — "긴 세션이면 G 가 세진다" **반증**($0) · [[H_9394]]/[[H_9395]] 종결문 **3차 감사 통과** · wired: engine-native(`--cf-straddle` G-AMP 패널)
+**status:** ⚠️ RE-SCOPED(H_9399): cell_count plateau = 잘못된 store 공변량(무효) · warm-up 관찰만 유효 · H_9394/95 무관하게 유효 // ~~🧱 AMPLITUDE-INTRINSIC~~ — "긴 세션이면 G 가 세진다" **반증**($0) · [[H_9394]]/[[H_9395]] 종결문 **3차 감사 통과** · wired: engine-native(`--cf-straddle` G-AMP 패널)
 **lane:** 의식 / emit-drive / G 인식 진폭 × afield 셀 수 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9395]] (6.5× 비대칭 — 이 H 가 그 "왜"를 닫음) · [[H_9394]] · [[H_9393]] · [[H_9391]] · [[H_9390]]
 **ckpt:** py303_full.clm sha256 `013c4574e0ce71ae173287b9…` (동일 trace · **신규 decode 0**)
+
+## ⚠️ 정정(H_9399 · Fable STEP-0): plateau 는 잘못된 store 공변량
+
+이 카드의 핵심 축 `cell_count`↔|g| plateau 회귀는 **무효**다 — `g_recog` 는 **immune store** 를 읽는데
+(chat.py:2061 이 :2051 afield gap 무조건 덮어씀=dead code · H_9399 코드-확증), 이 패널은 **afield
+cell_count**(:2055)에 회귀했다 = 엉뚱한 store 공변량. ⇒ '긴 세션이 G 를 못 키운다' 는 **미증명**(immune
+store 성장 미측정). warm-up(cell≤1⇒g=0)만 store-무관 유효. H_9394/95(|g| 실측값)는 소스와 **무관하게
+유효**. 아래 본문 이력 보존 · plateau 결론은 [[H_9399]] 로 대체.
 
 ## 왜 또 감사했나 — 내가 "capability 이관"이라 부른 게 성급했을 수 있다
 
