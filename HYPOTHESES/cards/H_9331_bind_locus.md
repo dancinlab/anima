@@ -136,6 +136,23 @@ depth 0~4)에 건다. **🔌 배선 완료**(v0.13.59): `anima-py evaluate <clm>
 곧 **pedestal**(올바른 스팬을 겨누면 계기가 국소화함을 증명)이다. C4 먼저(H_9334 가 가독 캐리어결합 보장 =
 pedestal), 그다음 n2. full-stem rung 은 n=20 으로 올려 재발사.
 
+#### ⚠️ 캐리어-스팬 측정 결과 — pedestal 예측 FALSIFIED (4/4 · pod 44908484 GPU-FIRED · 2026-07-15)
+
+| ckpt | 원자-스팬 maxswap | **캐리어-스팬 maxswap** | verdict |
+|---|---|---|---|
+| C4 s7 | 0.25 | **0.350** | INVALID-LOCALIZATION |
+| C4 s11 | 0.10 | **0.250** | INVALID-LOCALIZATION |
+| n2 s7 | ≤0.25 | **0.500** ← 최고 | INVALID-LOCALIZATION |
+| n2 s11 | ≤0.25 | **0.300** | INVALID-LOCALIZATION |
+
+캐리어-스팬이 원자보다 **체계적으로 높다**(캐리어 영역이 더 인과적 = 해석 B 방향은 살아있음) — **그러나
+어느 run 도 0.75 pedestal 미달**. **Fable 사전등록 예측(캐리어-swap ≥ 0.75) 이 4/4 반증됐다.** ⇒ 극성 읽기는
+**어떤 단일 스팬(원자든 캐리어든)에도 국소화되지 않는다** — 분산(A · 캐리어영역+readout 다지점) 또는 swap-patch
+계기의 국소화 천장(B · ~0.50, positive control 이 어디서도 안 서면 계기를 의심 = verdict-integrity). n2 s7 이
+0.50 으로 C4 보다 높은 것(원래 벽 ckpt 이 연산자-자기키 C4 보다 캐리어를 더 국소화)은 미해결. **해석·다음 실험
+= Fable 재위임 중**(pedestal 예측이 뒤집힌 자리). #3625 헤드라인('read-site=표면 캐리어 DIRECTIONAL')의 존폐도
+Fable 판정 대기. 계기·산출물 전부 engine-native(`--bl-swap-span carrier` · bl_carrier_*.json).
+
 ### KO 레인의 교차 기여 (한 줄)
 
 결합기는 KO=INVALID(P/S 능력축)로 읽으나 **무정보가 아니라 DIRECTIONAL**: 동일한 n2/C4 INVALID-LOCALIZATION
