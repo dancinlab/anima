@@ -86,8 +86,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=None)
     ap.add_argument("--gate", choices=["mix", "logit"], default="mix")
+    ap.add_argument("--readout", choices=["linear", "mlp"], default="linear")
     args = ap.parse_args()
-    out = "/tmp/anima-v2-logit" if args.gate == "logit" else OUT
+    _tag = ("logit" if args.gate == "logit" else "mix") + ("-mlp" if args.readout == "mlp" else "")
+    out = f"/tmp/anima-v2-{_tag}"
 
     bars = json.load(open(os.path.join(HERE, "bars.json")))
     t, C0, C1, C2, P1 = (bars["task"], bars["C0_instrument_integrity"],
@@ -97,7 +99,7 @@ def main():
     n_eval = C1["eval_n_per_arm"]
 
     print("=" * 78)
-    print(f"anima-v2 [gate={args.gate}] — SEQUENTIAL GATES.  DIRECTIONAL ceiling (never TERMINAL)")
+    print(f"anima-v2 [gate={args.gate} readout={args.readout}] — SEQUENTIAL GATES.  DIRECTIONAL ceiling (never TERMINAL)")
     print("=" * 78)
 
     # ── C0 instrument integrity ────────────────────────────────────────────────

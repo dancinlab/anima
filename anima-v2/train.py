@@ -88,14 +88,16 @@ class Adam:
             params[k] -= self.lr * lr_scale * mh / (np.sqrt(vh) + eps)
 
 
-def out_dir(gate):
-    return "/tmp/anima-v2-logit" if gate == "logit" else OUT
+def out_dir(gate, readout="linear"):
+    tag = ("logit" if gate == "logit" else "mix") + ("-mlp" if readout == "mlp" else "")
+    return f"/tmp/anima-v2-{tag}"
 
 
-def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix"):
+def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix", readout="linear"):
     cfg = dict(bars["model"])
     cfg["max_seq"] = bars["task"]["max_seq"]
     cfg["gate"] = gate
+    cfg["readout"] = readout
     t = bars["task"]
     b = bars["budget"]
     steps = steps or b["steps"]
@@ -113,7 +115,7 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix"):
 
     frozen = ()
     if arm == "BOLT":
-        src = os.path.join(out_dir(gate), f"NOSTORE_seed{seed}.pkl")
+        src = os.path.join(out_dir(gate, readout), f"NOSTORE_seed{seed}.pkl")
         if not os.path.exists(src):
             raise SystemExit(f"BOLT needs the NOSTORE trunk first: {src} missing")
         trunk = pickle.load(open(src, "rb"))["params"]
@@ -139,7 +141,7 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix"):
             lam = float(M.sigmoid(p["lam_raw"][0])) if use_store else float("nan")
             print(f"  [{arm} s{seed}] step {step:5d}  loss {np.mean(losses[-100:]):.4f}  "
                   f"lam {lam:.3f}  ({time.time()-t0:.0f}s)")
-    od = out_dir(gate)
+    od = out_dir(gate, readout)
     os.makedirs(od, exist_ok=True)
     path = os.path.join(od, f"{arm}_seed{seed}.pkl")
     pickle.dump({"params": p, "cfg": cfg, "arm": arm, "seed": seed, "gate": gate,
@@ -154,6 +156,7 @@ def main():
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--steps", type=int, default=None)
     ap.add_argument("--gate", choices=["mix", "logit"], default="mix")
+    ap.add_argument("--readout", choices=["linear", "mlp"], default="linear")
     args = ap.parse_args()
 
     bars = load_bars()
@@ -161,14 +164,14 @@ def main():
         # frozen lr grid, selected on TRAIN LOSS only (bars.json bolt_lr_selected_by)
         best = None
         for lr in bars["budget"]["bolt_lr_grid"]:
-            _, fl = train_arm("BOLT", args.seed, bars, lr=lr, steps=args.steps, quiet=True, gate=args.gate)
+            _, fl = train_arm("BOLT", args.seed, bars, lr=lr, steps=args.steps, quiet=True, gate=args.gate, readout=args.readout)
             print(f"  [BOLT s{args.seed}] lr={lr} -> train_loss {fl:.4f}")
             if best is None or fl < best[1]:
                 best = (lr, fl)
         print(f"  [BOLT s{args.seed}] selected lr={best[0]} (train_loss {best[1]:.4f})")
-        path, fl = train_arm("BOLT", args.seed, bars, lr=best[0], steps=args.steps, gate=args.gate)
+        path, fl = train_arm("BOLT", args.seed, bars, lr=best[0], steps=args.steps, gate=args.gate, readout=args.readout)
     else:
-        path, fl = train_arm(args.arm, args.seed, bars, steps=args.steps, gate=args.gate)
+        path, fl = train_arm(args.arm, args.seed, bars, steps=args.steps, gate=args.gate, readout=args.readout)
     print(f"{args.arm} seed{args.seed}: final_loss={fl:.4f} -> {path}")
 
 
