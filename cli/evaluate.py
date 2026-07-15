@@ -4318,6 +4318,65 @@ def _collide_select(ckpt, argv):
         print("  \u21d2 \u2705 FIRE-OK \u2014 \uc804 target novel(g<\u2212.05) \u2227 %d/%d \uac00 weight-write \ud544\uc694(a\u2264.05). "
               "XBIND CPT(\uc911\uac04 ckpt 500/1000/2000/3000) \uc815\ub2f9\ud654." % (n - abad, n))
         return 0
+    if "--pregate-cond" in argv:
+        # \u2500\u2500 H_9362 fork-A DISCRIMINATOR (Fable) \u2014 is REDIRECT a NEW decoding lever or the closed
+        # read-side wall's generation-side face? The pregate `a` measured P(tgt) MARGINAL (cue-free,
+        # generator.py gen_auto_ce_W -> clm_ce_seq_W on tgt bytes alone), so it only re-confirms
+        # H_9327 "the fact is in the weights". The UNMEASURED cell is teacher-forced CONDITIONAL
+        # P(tgt|cue): does the true cue lower NLL(tgt) below the FORM/BIND pedestals?
+        #   \u0394bind  = NLL(tgt | swap_cue[atom-swap FORM]) \u2212 NLL(tgt | true cue)   (>0 = cue\u2192tgt binds)
+        #   \u0394strip = NLL(tgt | strip_cue[bind-strip BIND]) \u2212 NLL(tgt | true cue) (>0 = operator matters)
+        # The PAIRED diff cancels tgt's marginal fluency (the pregate `a` axis) EXACTLY -> measures
+        # only the conditional logit shift, orthogonal to read-side hidden-recoverability (EARNED-
+        # TERMINAL) and to P(tgt). swap_cue/strip_cue are the FROZEN _WEAVE pedestals (true-value 0).
+        # baseline --collide-select already established sampled=MISS for all 12 (POOL-DRY 0/48).
+        # Prereg (frozen-first): \u0394bind\u22480 (TOST) OR <0 -> \ud83e\uddf1 COLLAPSE (read-side wall re-confirmed,
+        # close cf-collide-select, no fire). \u0394bind\u226b0 (paired-t sig, \u22659/12 >0) AND \u0394strip>0, with
+        # sampled=MISS -> \ud83d\udfe2 NEW LEVER (belief present, sampler miss = decoding/proposal, top_k\u00b7temp
+        # sweep first, NOT CPT). \u0394bind\u226b0 with a sampled HIT would be instrument misdiag (pool seed).
+        import numpy as np
+        import math as _m
+        T = 128
+        for _a in argv:
+            if _a.startswith("--win="):
+                T = int(_a.split("=", 1)[1])
+        W = clm.clm_load_weights(ckpt)
+        print("=== A\u21c4G COLLIDE-PREGATE-COND \u00b7 H_9362 fork-A \u00b7 P(tgt|cue) \uc870\uac74\ubd80 \ud310\ubcc4 ===")
+        print("  ckpt=%s  probes=%d  T=%d  (\uad50\uc0ac\uac15\uc81c \uc870\uac74\ubd80 NLL \u00b7 paired vs FORM/BIND pedestal)"
+              % (ckpt.split("/")[-1], len(pairs), T))
+        dbind, dstrip = [], []
+        for i, (cue, tgt, swc, stc, lang) in enumerate(pairs):
+            n_true = _xbind_cont_nll(np, clm, W, cue + " ", tgt, T)
+            n_swap = _xbind_cont_nll(np, clm, W, swc + " ", tgt, T)
+            n_strip = _xbind_cont_nll(np, clm, W, stc, tgt, T)   # strip_cue already ends with a space
+            db, ds = (n_swap - n_true), (n_strip - n_true)
+            dbind.append(db); dstrip.append(ds)
+            print("    t%02d \u0394bind=%+.3f \u0394strip=%+.3f  (nll true=%.2f swap=%.2f strip=%.2f) | %s\u2192%s"
+                  % (i, db, ds, n_true, n_swap, n_strip, cue[:16], tgt))
+        n = len(pairs)
+        mb = sum(dbind) / n
+        ms = sum(dstrip) / n
+        sdb = (sum((x - mb) ** 2 for x in dbind) / n) ** 0.5
+        se = (sdb / _m.sqrt(n)) if (sdb > 0 and n > 1) else 0.0
+        tval = (mb / se) if se > 0 else 0.0
+        npos = sum(1 for x in dbind if x > 0)
+        print()
+        print("  \u0394bind mean=%+.3f sd=%.3f  paired-t=%.2f (n=%d \u00b7 %d/%d >0)  \u0394strip mean=%+.3f"
+              % (mb, sdb, tval, n, npos, n, ms))
+        print("  (baseline --collide-select: sampled=MISS \uc804\uccb4 12 \u00b7 POOL-DRY 0/48)")
+        # frozen bar: NEW LEVER iff cue binds tgt above chance AND operator matters, one-sided t crit
+        # (df=11) 1.796. Else the modal FLOOR closes the lane into the read-side wall.
+        if mb > 0 and tval >= 1.796 and npos >= 9 and ms > 0:
+            print("  \u21d2 \U0001f7e2 NEW-LEVER(DIRECTIONAL) \u2014 \uc870\uac74\ubd80 \ubbff\uc74c present(\u0394bind\u226b0 \u00b7 t=%.2f) \u2227 sampled MISS "
+                  "= \ubbff\uc74c\uc740 \uc788\ub294\ub370 \uc548 \ubf51\ud78c\ub2e4 = \ub514\ucf54\ub529/\uc81c\uc548\ubd84\ud3ec \ub808\ubc84(substrate \ubcbd\uacfc \uc9c1\uad50). NEXT=top_k\u00b7temp \uc2a4\uc717($0), CPT \uc544\ub2d8." % tval)
+        elif mb <= 0:
+            print("  \u21d2 \U0001f9f1 COLLAPSE(\uc6b0\uc5f0-\uc544\ub798) \u2014 \u0394bind\u22640: \uc815\ub2f5 cue \uac00 swap \ubcf4\ub2e4 tgt \ub97c \ub192\uc774\uc9c0 \ubabb\ud568 "
+                  "= ECHO/carrier-similarity. read-side \ubcbd \uc0dd\uc131-\ucabd \uc7ac\ud655\uc778, cf-collide-select \uc885\uacb0.")
+        else:
+            print("  \u21d2 \U0001f9f1 COLLAPSE \u2014 \u0394bind \ubbf8\uc720\uc758(t=%.2f<1.796 or \u0394strip\u22640): cue\u2192tgt \uc870\uac74\ubd80 "
+                  "\uacb0\ud569\uc774 pedestal \uc704\ub85c \uc548 \uc624\ub984 = read-side EARNED-TERMINAL \ubcbd\uc758 \uc0dd\uc131-\ucabd \uc5bc\uad74. \ubc1c\uc0ac \uae08\uc9c0." % tval)
+        print("  (scope: py303 \ub2e8\uc77c ckpt DIRECTIONAL \u00b7 forward-only $0 \u00b7 frozen _WEAVE pedestal \u00b7 read-side H_9235/g1-readside \uc7ac\uc2e4\ud589 \uae08\uc9c0=tune-to-green)")
+        return 0
     print("=== A\u21c4G COLLISION-SELECTS-EMERGENCE \u00b7 H_9362 \u00b7 --collide-select ===")
     print("  ckpt=%s  probes=%d  K=%d" % (ckpt.split("/")[-1], len(pairs), K))
     # build the shared candidate pool per probe + drives
@@ -5659,7 +5718,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--pregate", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--bridge-trace", "--flip0", "--theta",
