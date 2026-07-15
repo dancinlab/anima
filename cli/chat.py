@@ -2127,6 +2127,12 @@ def anima_consciousness_mode(ckpt, argv=None):
                     "nudge_const": float(dec.get("anchor_nudge", 0.0)),
                     "backend": g_back, "n_ticks": n_ticks,
                     "stage_cycle": bool(_stage_cycle),  # H_9269 Y-ULTRA regime flag (consumers ignore if unknown)
+                    # H_9351 σ-panel provenance: bind the trace to the ckpt that produced it so
+                    # `anima-py evaluate <ckpt> --psi-soma <trace>` can reject a mismatched pair
+                    # (INVALID-PROVENANCE) — the trace must not be able to be "anything".
+                    "ckpt_sha256": (_hl.sha256(open(ckpt, "rb").read()).hexdigest()
+                                    if isinstance(ckpt, str) and os.path.exists(ckpt) else ""),
+                    "g_arm": str(_g_arm),
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
@@ -2156,6 +2162,10 @@ def anima_consciousness_mode(ckpt, argv=None):
                 # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
                 "g_arm": str(_g_arm), "ag_g_drive": float(ag_g_drive),
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
+                # H_9351 σ-panel inputs: the gws-fed lane population (σ·stage / σ·bind),
+                # its winner (σ·stage argmax test), and the reality monitor (σ·witness).
+                "lanes": [float(x) for x in lanes], "gws_w": int(gws_w),
+                "reality": float(reality),
                 # roots + residuals + DEP-arg indep scalars (replay inputs)
                 "rel_lane": float(rel_lane), "recon_err": float(recon_err),
                 "cell_count": int(cell_count),
