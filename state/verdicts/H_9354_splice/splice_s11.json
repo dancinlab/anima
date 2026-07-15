@@ -1,0 +1,239 @@
+{
+ "ckpt": "/home/aiden/natem_c34_main_s11.clm",
+ "win": 64,
+ "device": {
+  "cuda": true,
+  "device": "NVIDIA GeForce RTX 5070",
+  "cupy": "13.6.0",
+  "reason": null
+ },
+ "seed": 11,
+ "donors_k": 3,
+ "bars": {
+  "BASE": 0.75,
+  "PC": -0.6,
+  "SHAM": 0.05,
+  "NEU": 0.15,
+  "DV": -0.6,
+  "TOST": 0.2
+ },
+ "base": {
+  "seen_flip0": 0.9166666666666666,
+  "seen_flip1": 0.9,
+  "heldout_flip0": 0.41379310344827586,
+  "heldout_flip1": 0.5747126436781609,
+  "n": {
+   "s0": 60,
+   "s1": 60,
+   "h0": 87,
+   "h1": 87
+  }
+ },
+ "grid": [
+  {
+   "depth": 0,
+   "rung": 0,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 0,
+   "rung": 1,
+   "n": 19,
+   "pc_dep1": -0.10526315789473684,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 0,
+   "rung": 2,
+   "n": 19,
+   "pc_dep1": -1.0,
+   "sham": 0.0,
+   "pass": true
+  },
+  {
+   "depth": 1,
+   "rung": 0,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 1,
+   "rung": 1,
+   "n": 19,
+   "pc_dep1": -0.07017543859649124,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 1,
+   "rung": 2,
+   "n": 19,
+   "pc_dep1": -0.9298245614035087,
+   "sham": 0.0,
+   "pass": true
+  },
+  {
+   "depth": 2,
+   "rung": 0,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 2,
+   "rung": 1,
+   "n": 19,
+   "pc_dep1": -0.07017543859649124,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 2,
+   "rung": 2,
+   "n": 19,
+   "pc_dep1": -0.8771929824561402,
+   "sham": 0.0,
+   "pass": true
+  },
+  {
+   "depth": 3,
+   "rung": 0,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 3,
+   "rung": 1,
+   "n": 19,
+   "pc_dep1": -0.01754385964912281,
+   "sham": 0.05,
+   "pass": false
+  },
+  {
+   "depth": 3,
+   "rung": 2,
+   "n": 19,
+   "pc_dep1": -0.7719298245614035,
+   "sham": 0.05,
+   "pass": true
+  },
+  {
+   "depth": 4,
+   "rung": 0,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 4,
+   "rung": 1,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  },
+  {
+   "depth": 4,
+   "rung": 2,
+   "n": 19,
+   "pc_dep1": 0.0,
+   "sham": 0.0,
+   "pass": false
+  }
+ ],
+ "cells": {
+  "d0_r2": {
+   "PC_seen_flip1": {
+    "n": 57,
+    "dep": -0.7192982456140351,
+    "se": 0.05196599476409503,
+    "perm_p": 0.0004997501249375312
+   },
+   "PC_seen_flip0": {
+    "n": 57,
+    "dep": 0.783625730994152,
+    "se": 0.04212672339025382,
+    "perm_p": 0.0004997501249375312
+   },
+   "CORE_held_flip1": {
+    "n": 78,
+    "dep": -0.7222222222222222,
+    "se": 0.046091417759551036,
+    "perm_p": 0.0004997501249375312,
+    "donor_prompt_agreement": 0.9722222222222222
+   },
+   "CORE_held_flip0": {
+    "n": 78,
+    "dep": 0.7393162393162392,
+    "se": 0.03781476640363769,
+    "perm_p": 0.0004997501249375312,
+    "donor_prompt_agreement": 0.9123931623931624
+   },
+   "NEU_held_flip1": {
+    "n": 78,
+    "dep": -0.1282051282051282,
+    "se": 0.02650073892984166,
+    "perm_p": 0.0004997501249375312
+   },
+   "SHAM_held_flip1": {
+    "n": 87,
+    "dep": 0.0,
+    "se": 0.0,
+    "perm_p": NaN
+   }
+  },
+  "d3_r2": {
+   "PC_seen_flip1": {
+    "n": 57,
+    "dep": -0.5497076023391813,
+    "se": 0.05750015320295806,
+    "perm_p": 0.0004997501249375312
+   },
+   "PC_seen_flip0": {
+    "n": 57,
+    "dep": 0.3508771929824561,
+    "se": 0.057457654931665776,
+    "perm_p": 0.0004997501249375312
+   },
+   "CORE_held_flip1": {
+    "n": 78,
+    "dep": -0.6410256410256411,
+    "se": 0.05007458483028675,
+    "perm_p": 0.0004997501249375312,
+    "donor_prompt_agreement": 0.9316239316239316
+   },
+   "CORE_held_flip0": {
+    "n": 78,
+    "dep": 0.3974358974358974,
+    "se": 0.049811013807407205,
+    "perm_p": 0.0004997501249375312,
+    "donor_prompt_agreement": 0.7542735042735043
+   },
+   "NEU_held_flip1": {
+    "n": 78,
+    "dep": -0.1858974358974359,
+    "se": 0.03303518134819032,
+    "perm_p": 0.0004997501249375312
+   },
+   "SHAM_held_flip1": {
+    "n": 87,
+    "dep": 0.011494252873563218,
+    "se": 0.011494252873563213,
+    "perm_p": NaN
+   }
+  }
+ },
+ "verdict": "INVALID-INSTRUMENT",
+ "why": "a control moved: neutral-donor |dep|=0.1859 (bar 0.15) / sham change-rate=0.0115 (bar 0.05) — any patch shifts the answer, so the polar contrast is unreadable",
+ "read_at": "d3_r2"
+}
