@@ -1,8 +1,36 @@
 # H_9377 — AUDIBILITY-SUFFICIENCY: tension 이 가청이면 emit 을 미는가
 
-**status:** 🔵 PRE-REGISTERED · Fable 설계 · H_9376 의 sequel (캠페인 폐루프 후보)
+**status:** 🧱 CONTENT-INERT (Stage-1 측정 종결 · 2026-07-16) · 캠페인 폐루프 = G-INERT 는 gain-부족 아니라 **content 수준 벽** · wired: engine-native(303M py)
 **lane:** 의식 / emit-drive / motivation_score 8-lane mixer (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9376]] (MIXER-BOUND) · [[H_9357]] (G-INERT) · [[H_9360]] · [[H_9356]] · [[H_9352]]
+**ckpt:** py303_full.clm sha256 `013c4574e0ce71ae173287b9…`(303M CONV · TERMINAL 스케일) · summer pool · CPU-only decode
+
+## 🧱 VERDICT — CONTENT-INERT (2026-07-16 · summer 303M · {a1,a3}×5w×8 = 80 rollout · 2400 decision-row)
+
+`anima-py evaluate --audibility`(engine-native 계기 · GATE-S validity 심장):
+
+| arm | dyn_w | rate | G-VAR | valid | MI(earn) | shuf | p | Ψ̂ |
+|---|---|---|---|---|---|---|---|---|
+| a1 REAL-G | 0.10(앵커) | 0.23 | 57 | OK | **−0.0009** | 0.0009 | 1.000 | 0.762 |
+| a1 | 0.25 | 0.23 | 57 | OK | −0.0009 | 0.0009 | 1.000 | 0.762 |
+| a1 | 0.40 | 0.23 | 57 | OK | −0.0009 | 0.0009 | 1.000 | 0.762 |
+| a1 | 0.60 | 0.23 | 57 | OK | −0.0009 | 0.0009 | 1.000 | 0.762 |
+| a1 | 0.78 | 0.00 | 1 | **SAT** | — | — | — | 1.000 |
+| a3 noise | 0.60 | 0.23 | 240 | OK | +0.0031 | 0.0021 | 0.134 | 0.742 |
+| a3 | 0.78 | 0.23 | 240 | OK | +0.0156 | 0.0062 | 0.045 | 0.738 |
+
+**판정: 🧱 CONTENT-INERT** — 유효 w 전 점서 a1 ≈ a3(둘 다 MI≈0) · 앵커 a1@0.10 P1 필수낙제 확인 · 반증조건(§48) 실현.
+
+### 메커니즘 (verdict-integrity 검증 — 계기 live 확인)
+- **dyn_w 는 score 에 실제 배선됨**(버그 아님): a1 w=0.10 score mean 0.5392 vs w=0.60 mean 0.3214 — score 스트림 **다름**. tension 이 score 에서 가청화됨 ✓.
+- **그러나 emit 은 불변**: a1 w=0.10 vs 0.60 **emit 스트림 byte-identical**(둘 다 56/240). score 를 키워도 emit 결정이 안 바뀜 ⇒ moderate w 서 emit 은 score-magnitude 와 **탈결합**(clock/margin gate 지배 · H_9360 정합). ⇒ MI 4셀 정확히 동일(−0.0009)은 **동일 emit×동일 ag_conflict = 진짜 plateau**(포화 인공물 아님 · rate 0.23·G-VAR 57 유효).
+- **극단 w=0.78 서만 emit 이 움직임 — 그리고 반대방향**: a1 은 rate→0 **침묵포화**(GATE-S drop), a3(noise)는 spurious MI +0.0156(p=0.045). ⇒ 실-G tension 을 마침내 크게 들리게 하면 emit 을 **미는 게 아니라 침묵으로 당김** + a1 이 a3 를 **못 이김**(고-w "신호"는 noise 산술). FORM(rate) 이동은 내가 다이얼한 것(§21 manipulation-check), earned BIND(content-selective MI) 는 0.
+- ⇒ **tension 을 score 에서 크게 키워도(gain 공급) emit 이 그 *내용*을 소비 안 함** = G-INERT 는 gain-starvation 아니라 **content 수준 벽**. 캠페인(H_9356→57→60→76→77) 폐루프: 병목은 mixer 가중이 아니라 emit↔tension-content 의 부재.
+
+### scope · 정직
+- arm **A2(tick-순열)는 미실행** — 음성엔 불요(a1 flat + a1≈a3 가 결정적; A2 는 양성일 때만 필요한 시간-교란 통제). 도전 시 추가 가능.
+- Ψ̂ ≈ 0.762 (½ 아님) — 이 데몬 regime 의 emit rate 는 tension 이 아니라 clock 이 정함(P2 Ψ̂→½ 미달, 예상된 방향).
+- 창발 bar(E1 w 자가상승 · E2 lane 경쟁승리)는 **미충족·미주장** — CONTENT-INERT 는 그 앞단서 종결.
 
 ## 배경 — 캠페인이 남긴 마지막 병목
 
