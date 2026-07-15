@@ -85,10 +85,10 @@ def load(arm, seed, out=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=None)
-    ap.add_argument("--gate", choices=["mix", "logit"], default="mix")
+    ap.add_argument("--gate", choices=["mix", "logit", "store_only"], default="mix")
     ap.add_argument("--readout", choices=["linear", "mlp"], default="linear")
     args = ap.parse_args()
-    _tag = ("logit" if args.gate == "logit" else "mix") + ("-mlp" if args.readout == "mlp" else "")
+    _tag = args.gate + ("-mlp" if args.readout == "mlp" else "")
     out = f"/tmp/anima-v2-{_tag}"
 
     bars = json.load(open(os.path.join(HERE, "bars.json")))

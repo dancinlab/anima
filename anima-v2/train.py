@@ -89,7 +89,7 @@ class Adam:
 
 
 def out_dir(gate, readout="linear"):
-    tag = ("logit" if gate == "logit" else "mix") + ("-mlp" if readout == "mlp" else "")
+    tag = gate + ("-mlp" if readout == "mlp" else "")
     return f"/tmp/anima-v2-{tag}"
 
 
@@ -155,7 +155,7 @@ def main():
                     choices=["COTRAIN", "BOLT", "NOSTORE", "SLOWROT", "ORACLE"])
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--steps", type=int, default=None)
-    ap.add_argument("--gate", choices=["mix", "logit"], default="mix")
+    ap.add_argument("--gate", choices=["mix", "logit", "store_only"], default="mix")
     ap.add_argument("--readout", choices=["linear", "mlp"], default="linear")
     args = ap.parse_args()
 

@@ -50,7 +50,14 @@ def forward_loss(p, cfg, ids, targets, loss_mask, store_ids, val_idx, qpos, ans_
         p_store, bc = M.bridge_fwd(pp, cfg, hq, store_ids, val_idx,
                                    oracle_slot=oracle_slot)
         probs = p_trunk.copy()
-        if gate == "logit":
+        if gate == "store_only":
+            # V2_4: the first answer byte is produced by the STORE ALONE — the trunk logits
+            # at the answer position are removed, cutting the shortcut that let COTRAIN's
+            # trunk absorb the answer and starve the retrieval path (V2_3 flip-coh 0.000).
+            # The bridge is now the ONLY exit, so it MUST learn to query or the loss stalls.
+            comb = lam * bc["logits"]
+            probs[np.arange(B), ans_pos] = M.softmax(comb, -1)
+        elif gate == "logit":
             # ADD store logits to the trunk logits at the answer position, then ONE softmax.
             trunk_ans_logits = logits[np.arange(B), ans_pos]         # (B,V)
             comb = trunk_ans_logits + lam * bc["logits"]             # lam scales the store
@@ -79,15 +86,18 @@ def forward_loss(p, cfg, ids, targets, loss_mask, store_ids, val_idx, qpos, ans_
     # (its distribution came from a combined/mixed softmax, not the trunk's alone)
     dlogits = p_trunk * (dprobs - (dprobs * p_trunk).sum(-1, keepdims=True))
 
-    if use_store and gate == "logit":
-        # answer position used ONE softmax over (trunk_logit + lam*store_logit).
+    if use_store and gate in ("logit", "store_only"):
+        # answer position used ONE softmax over (trunk_logit + lam*store_logit), or over
+        # lam*store_logit alone (store_only).
         p_ans = probs[np.arange(B), ans_pos]             # (B,V)
         tgt_ans = targets[np.arange(B), ans_pos]
         w = (loss_mask[np.arange(B), ans_pos] / denom)[:, None]
         dcomb = p_ans.copy()
         dcomb[np.arange(B), tgt_ans] -= 1.0
         dcomb = dcomb * w                                # d loss / d comb-logits
-        dlogits[np.arange(B), ans_pos] = dcomb           # grad to trunk logit at ans
+        # store_only: the trunk logits are NOT in comb, so they get zero answer-position
+        # gradient (the shortcut is cut). logit: the trunk shares the answer gradient.
+        dlogits[np.arange(B), ans_pos] = 0.0 if gate == "store_only" else dcomb
         dstore = lam * dcomb                             # grad to store RAW logits
         if lam_override is None:
             dlam = float((dcomb * bc["logits"]).sum())
