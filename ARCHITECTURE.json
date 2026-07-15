@@ -16508,7 +16508,7 @@
     "id": "architecture-json-2",
     "state": "pos-conv",
     "value": "git merge-conflict marker (<<<<<<< / ======= / >>>>>>>) 가 ARCHITECTURE.json 에 COMMITTED 되어 origin/main SSOT 가 invalid JSON — jq/python/serve.py/sidecar architecture 전부 parse 실패로 무력화(2026-07-07 발견: anima-hexa-3 노드 value/threshold 충돌 미해소 채 머지됨). 반복 CHANGELOG/ARCHITECTURE append-conflict union-resolve 과정에서 코드와 달리 JSON 은 마커가 있어도 컴파일 에러가 안 나 조용히 통과 → 다음 세션까지 감지 안 됨.",
-    "threshold": "재발조건: ARCHITECTURE.json/CHANGELOG.jsonl 등 doc-SSOT 를 머지충돌 union-resolve 한 직후. 해결: (1) 충돌 해소 커밋 전 grep -nE '^(<<<<<<<|=======|>>>>>>>)' <file> == 0 확인 + JSON 은 jq empty <file> PASS 게이트 필수. (2) sidecar pr-cycle 의 CHANGELOG/ARCHITECTURE 자동 union-resolve 가 마커 잔존 안 하는지 검증(남기면 upstream-fix). architecture-json-1(stale-main)·CHANGELOG append-conflict 패턴의 실패 하류=이 marker-commit.",
+    "threshold": "재발조건: ARCHITECTURE.json/CHANGELOG.jsonl 등 doc-SSOT 를 머지충돌 union-resolve 한 직후. 해결: (1) 충돌 해소 커밋 전 grep -nE '^(<<<<<<<|=======|>>>>>>>)' <file> == 0 확인 + JSON 은 jq empty <file> PASS 게이트 필수. (2) sidecar pr-cycle 의 CHANGELOG/ARCHITECTURE 자동 union-resolve 가 마커 잔존 안 하는지 검증(남기면 upstream-fix). architecture-json-1(stale-main)·CHANGELOG append-conflict 패턴의 실패 하류=이 marker-commit. **재발 #4(2026-07-15 #3653→#3654)**: 새 메커니즘 — heredoc 안 python 문자열의 `$` 가 shell/escape 지뢰라 `\\$0` 무효 JSON escape 생성 + `--no-verify` 가 pre-commit JSON lint 도 우회 → origin/main SSOT unparseable 머지. 방어: (a) ARCHITECTURE.json 편집 커밋 前 반드시 `json.load` 수동검증(--no-verify 가 lint 를 끄므로) (b) heredoc `$` 회피 = Edit 툴 또는 정밀 str.replace (c) 블랭킷 `\\escape` regex 금지 — 유효 `\\\\`(escaped backslash)를 파괴해 오류 확산(내가 `\\$21` 유효본을 깰 뻔).",
     "source": "ARCHITECTURE.json"
    },
    {
