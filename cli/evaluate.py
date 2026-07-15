@@ -858,6 +858,7 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7] [--bl-swap-span stem|carrier]")
     print("  anima evaluate <ckpt> --twin-screen <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 base m̂ + item-gate + Y* + margin sd")
     print("  anima evaluate <ckpt> --twin-necessity <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 full instrument: PEDESTAL/IDENTITY/SPAN(ℓ)/COMP(ℓ)/BLIND · (τ,S)")
+    print("  anima evaluate <ckpt> --delta-pregate <deltainj_manifest.json> [--win 64] [--out f.json]  # H_9397 Δ-INJECT stage-1: is the operator alive (carrier vs filler flip ≥8/9)?")
     print("       --bl-swap-span carrier: Stage A swaps the operator morpheme span (지 않다), not the atom span (H_9331 pedestal)")
     print("       --bl-swap-donor-class same: donor is a SAME-polarity item (polarity-blind control · (B) scramble-floor test)")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
@@ -2439,6 +2440,59 @@ def twin_necessity_run(argv):
                             "identity_max_tau": id_dt, "blind_med_ratio": bl_med, "blind_Sbar": bl_Sbar,
                             "sign_frac": sign_frac, "max_ci_hw": max_ci},
                "trajectory": traj, "pairs": per_pair},
+              open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
+
+
+def delta_pregate_run(argv):
+    """`anima-py evaluate <ckpt> --delta-pregate <deltainj_manifest.json> [--win 64] [--out f.json]`
+    — H_9397 Δ-INJECT behavioral pre-gate (sequential gating · stage 1, before any Δ estimation).
+
+    The whole Δ-INJECT rests on the negation operator being ALIVE on the SEEN stems: replacing the
+    positive filler `고 있다` with the carrier `지 않다` must FLIP the answer. This gate re-measures that
+    on THIS ckpt and THESE stems (Fable's $0 pre-gate) as a raw continuous margin, per convergence
+    corpus-py-1⑥ (a CPT model can have flip1 destroyed — never assume the operator is alive, measure it):
+      per SEEN stem, m_carrier = margin(carrier_seed) and m_filler = margin(filler_seed) must (a) each
+      match their expected sign and (b) be OPPOSITE (the operator flips the answer). PASS iff ≥8/9
+      stems flip (same disjoint-sign threshold family as the necessity sign gate). FAIL ⇒ the operator
+      is not alive here ⇒ Δ-INJECT is moot, abort before estimating anything."""
+    import numpy as np
+    ckpt = argv[0]
+    man = json.load(open(evaluate_strval(argv[1:], "--delta-pregate", "")))
+    T = evaluate_intval(argv[1:], "--win", 64)
+    out_path = evaluate_strval(argv[1:], "--out", "delta_pregate.json")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr); return 2
+    dev = "gpu" if (hasattr(clm, "cuda_available") and clm.cuda_available()) else "cpu"
+    seen = [it for it in man["items"] if it["split"] == "train"]
+    print("=== anima-py evaluate --delta-pregate — H_9397 Δ-INJECT behavioral gate (operator alive?) ===")
+    print("  ckpt %s · %d SEEN stems · carrier %s vs filler %s · win %dB · device=%s"
+          % (ckpt, len(seen), man["carrier"], man["filler"], T, dev))
+    rows, flips = [], 0
+    for it in seen:
+        mc = _bl_margin(np, W, it["carrier_seed"], T)
+        mf = _bl_margin(np, W, it["filler_seed"], T)
+        sc_ok = (mc > 0) == (it["esign_carrier"] > 0)
+        sf_ok = (mf > 0) == (it["esign_filler"] > 0)
+        flip = (mc > 0) != (mf > 0)                       # operator flips the answer (opposite signs)
+        ok = sc_ok and sf_ok and flip
+        flips += 1 if ok else 0
+        rows.append({"stem": it["stem"], "pol": it["pol"], "m_carrier": float(mc), "m_filler": float(mf),
+                     "carrier_sign_ok": bool(sc_ok), "filler_sign_ok": bool(sf_ok), "flip": bool(ok)})
+    n = len(seen)
+    thresh = max(1, n - 1)                                # ≥ n−1 (8/9 · disjoint-sign family)
+    verdict = "PASS" if flips >= thresh else "FAIL-OPERATOR-DEAD"
+    gap = float(np.median([abs(r["m_carrier"] - r["m_filler"]) for r in rows])) if rows else float("nan")
+    print("  operator-flip: %d/%d (need ≥%d) · median |m_carrier−m_filler|=%.4f nats" % (flips, n, thresh, gap))
+    for r in rows:
+        print("    %-8s pol%d : m_carrier=%+.3f m_filler=%+.3f %s"
+              % (r["stem"], r["pol"], r["m_carrier"], r["m_filler"], "flip✓" if r["flip"] else "—"))
+    print("\n  PRE-GATE: %s%s" % (verdict, "  → proceed to Δ estimation (ℓ2/ℓ3 · LOO)"
+          if verdict == "PASS" else "  → operator not alive on SEEN, Δ-INJECT aborted (corpus-py-1⑥)"))
+    json.dump({"surface": man["surface"], "device": dev, "win": T, "n_seen": n, "flips": flips,
+               "thresh": thresh, "median_gap": gap, "verdict": verdict, "rows": rows},
               open(out_path, "w"), ensure_ascii=False, indent=1)
     print("  wrote " + out_path)
     return 0
@@ -5439,7 +5493,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -5817,6 +5871,8 @@ def main(argv):
         return twin_screen_run(argv)
     if "--twin-necessity" in argv:
         return twin_necessity_run(argv)
+    if "--delta-pregate" in argv:
+        return delta_pregate_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
     # --device-parity: is this host's GPU forward the same measurement as its CPU forward? The probes
