@@ -45,3 +45,25 @@ H_9331 의 0.50 scramble-floor 는 **replacement**(off-manifold donor가 상태�
 
 - DIRECTIONAL(toy natem_n2 = CPT 연산자 모델 · 303M 아님 · a_scale_honest_scope). 병렬 **H_9388 BRIDGE-TRACE**(연산자=어간읽음)와 정합 · two-lane([[g1-wall-is-runtime-bridge-absence-two-lane]]) 직접 검정.
 - 설계 Fable 5. wired: PENDING(구현 중 · pre-gate → G-pos → held-out 순차).
+
+## 🧱 VERDICT — FILLER-OOD-BLOCKED (reading 1) · Δ-INJECT 이 ckpt서 종결 (natem_n2_main_s7 · aiden GPU · 2026-07-16)
+
+**sequential 게이트가 두 단계서 발사·중단** (frozen-first · 제 역할):
+
+**stage-1 행동 pre-gate = 🔴 FAIL 0/20** (`--delta-pregate`): carrier `지 않다` vs 신규필러 `고 있다` 전 어간
+**같은 부호**(pol1→둘다 부정·pol0→둘다 긍정), carrier magnitude만 증폭(|m_c|>|m_f| 20/20 · median gap 6.89nat).
+두 해석 미결: ① 필러 OOD vs ② 답이 어간-결정. Fable: 훈련된 flip0 carrier 부호만 가름.
+
+**stage-2 결정적 통제 = arm B `고`(훈련 declarative 3B · `--delta-control`)**:
+
+| arm | 결과 | 판독 |
+|---|---|---|
+| A 양성통제 `지 않다` | **20/20 sign-correct** | pipeline 신뢰(esign/frame 안 미끄러짐 · Fable caveat 3) |
+| B 결정 `고` | **UN-flipped 20/20 · FLIPPED 0/20** | 훈련 `고`=어간극성(un-flip), `지 않다`=반대부호(참 +5.27 vs 고 −0.44·훌륭하 −14.3 vs +11.7·전 어간 반전) |
+
+**⟹ VERDICT = FILLER-OOD-BLOCKED (reading 1)**:
+- **carrier 는 인과적으로 소비된다** — 훈련 `고`(declarative)와 `지 않다`(negation)가 같은 어간에 **정반대** 답 ⟹ 연산자는 **실재**(stem-determined 반증). H_9327 "연산자 alive" **재확인·국소화**(carrier 바이트가 답 방향 결정).
+- **`고 있다`는 OOD** — 미훈련 10B 필러가 dominant-frame(부정 basin)으로 default → pre-gate 의 same-sign 은 stem-결정 아니라 **OOD 아티팩트**. corpus-py-1⑧ carrier-census 벽 실증: 이 CPT 모델의 훈련 carrier = `지 않다`(10B)·`고`(3B) 뿐, byte-정합 비부정 carrier **없음**(H_9361 "option B unbuildable" 확증).
+- **Δ-INJECT 이 ckpt서 종결**(Fable branch 1): 유일 대안인 `고`-vs-`지않다` Δ 는 **answer-row tautology**(두 arm이 구성상 반대답 → 주입=자명한 flip · H_9391 score-gate 공허형) + carrier-row Δ 는 carrier 바이트 정체성으로 교란. **비공허 Δ 는 byte-정합 훈련 carrier 쌍(연산자 의미만 다른)이 필요한데 이 ckpt 인벤토리엔 없다.**
+
+**함의 (frontier)**: 벽은 **stem-lookup 으로 통합되지 않는다**(reading 2 반증) — SEEN 연산자는 실재하고 carrier-구동. 벽은 여전히 **held-out 전이 실패**(two-lane bridge 부재)이지 "연산자 부재" 아님. **NEXT rescue = H_9267 합성 XBIND corpus**(byte-정합 flip0/flip1 carrier 쌍을 구성상 훈련) — 이건 **측정(measure)을 재는 것이지 이 substrate 아님**(자연 자발창발 아님 · a_scale_honest_scope). 계기 전부 engine-native(`corpus deltainj` · `evaluate --delta-pregate`/`--delta-control`).
