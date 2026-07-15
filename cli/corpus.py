@@ -60,7 +60,8 @@ def _parse_args(argv):
             "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
-            "carrier_only": False}
+            "carrier_only": False,
+            "collision_split": False, "nonce_fillers": 3, "win": 64}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -114,6 +115,12 @@ def _parse_args(argv):
             opts["tail"] = argv[i + 1]; i += 2
         elif a == "--carrier-only":
             opts["carrier_only"] = True; i += 1
+        elif a == "--collision-split":
+            opts["collision_split"] = True; i += 1
+        elif a == "--nonce-fillers":
+            opts["nonce_fillers"] = int(argv[i + 1]); i += 2
+        elif a == "--win":
+            opts["win"] = int(argv[i + 1]); i += 2
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -985,6 +992,189 @@ def _neg_free(sent, stem):
     return True
 
 
+# ---------------------------------------------------------------------------
+# atoms --collision-split (V3 STEM-COLLISION · H_9354) — is the stem side of the operator's
+# address a BYTE FORM or a REPRESENTATION?
+#
+# The two-lane model (Fable's reframe of C3/C4/H_9327/H_9346) says the operator addresses a fact by
+# (stem identity) x (surface-template class). C4 showed the template class is discrete. This asks
+# the same question of the OTHER factor: if the stem key were byte-fuzzy — a conv net's local
+# n-gram features — then a stem that merely LOOKS like a SEEN stem should partially hit its
+# address, and the flip1 answer should BLEED toward the SEEN neighbour's polarity. If the key is
+# discrete/representational, a near-miss is a total miss: no bleed at any partial overlap, and the
+# address only resolves on the exact stem.
+#
+# THE NATURAL SPLIT IS DEGENERATE — and the builder says so instead of quietly emitting it.
+# The brief for this lane assumed held-out stems that share a long byte prefix with a SEEN stem
+# (`재밋` vs `재밌었`, `좋` vs `좋아하`). They do not exist in gt_atoms.json, and that is not bad
+# luck: build_atoms() has a G-SUBSTR gate that FORBIDS a stem nesting in another, so the atom set
+# was CONSTRUCTED to have no stem-stem collision. Measured on the frozen file: max byte-LCP between
+# any held-out and any SEEN stem = 2 bytes — less than one Hangul syllable (3 B) — i.e. nothing but
+# the shared UTF-8 high bytes every Hangul character has. Every stratum that could carry the signal
+# has n = 0. A Jonckheere trend test over empty strata is not a negative result, it is no result
+# (power-before-negative-verdict), so the natural census is emitted as a GATE, never as a verdict.
+#
+# So the collision has to be CONSTRUCTED, and the same flag builds the instrument that does it:
+# a PREFIX-GRADED NONCE LADDER. For each 3-syllable SEEN donor d (polarity p) and each k in
+# 0..3, a nonce stem
+#
+#     nonce(d, k, f) = d[:k] + filler(d, f)[k:]              (always 3 syllables = 9 bytes)
+#
+# shares exactly the first k syllables (3k BYTES — a_korean_byte_budget: the stratifier is bytes)
+# with the donor and is otherwise unrelated filler. k = 0 is a length-matched unrelated stem (the
+# AUDIT-A neutral-substitution control); k = 3 IS the donor (the positive control — the operator is
+# known alive there, SEEN flip1 0.98-1.00); k = 1, 2 are the graded near-misses that the trend test
+# reads. The nonce is scored at flip1 with gold = the DONOR-implied negated word, so the DV is
+# literally "did the operator answer as if it had resolved the donor's address".
+#
+# What makes it bias-free, by construction rather than by hope:
+#   - the 12 three-syllable SEEN donors are 6 positive / 6 negative, so a constant response bias
+#     (the model just likes saying 긍정) enters the +p and -p items with opposite sign and cancels
+#     in the stratum mean. Reported split by polarity anyway (polarity-split-before-headline).
+#   - at every k the nonce is 3 syllables / 9 bytes: length is matched across the whole ladder, so
+#     no stratum is confounded with sequence length (the failure AUDIT-A was built to avoid).
+#   - k=1 keeps only donors whose 1-syllable prefix is UNIQUE among SEEN stems. `유` prefixes both
+#     유쾌하(+) and 유치하(-); a nonce built on it is addressed by two donors of OPPOSITE polarity,
+#     which drags the DV toward zero and would MANUFACTURE the null this test is trying to falsify.
+#     5 of the 12 donors are ambiguous at k=1 and are dropped from that stratum only.
+#   - the trend test runs on k in {0,1,2} ONLY. k=3 is an exact address, not a partial one; folding
+#     it in would produce a "trend" from the positive control alone.
+# ---------------------------------------------------------------------------
+COLLISION_DONOR_CHARS = 3          # the graded ladder needs one uniform stem length
+COLLISION_SURFACES = (("negL", "{s}지 않다", 1),      # operator-live (C1b census, both seeds)
+                      ("negZ", "별로 {s}지 않다", 1),  # operator-live
+                      ("negJ", "{s}지는 않다", 0))     # NO-operator control surface (p ~ .50 in C4)
+# Hangul syllables that occur in NO stem of either split. Asserted disjoint at build time — a
+# filler that shares a syllable with a real stem would smuggle the very collision we are measuring.
+COLLISION_FILLER_POOL = "갸겨괴놔뇨댸됴랴려뮤벼뾰샤셔쇼쥬챠캬탸텨퍄펴햐효뀨뎨뷰쒜쨔"
+
+
+def _lcp_bytes(x, y):
+    bx, by = x.encode(), y.encode()
+    n = 0
+    for i in range(min(len(bx), len(by))):
+        if bx[i] != by[i]:
+            break
+        n += 1
+    return n
+
+
+def build_collision_split(atoms_path, fillers, seed, win=64):
+    """(census, manifest) for `anima-py evaluate --xbind` — the V3 STEM-COLLISION ladder.
+
+    census   = the NATURAL held-out x SEEN byte-LCP stratification (the power GATE: it is what
+               tells you the briefed design has n=0 in every signal stratum).
+    manifest = the CONSTRUCTED prefix-graded nonce ladder (the instrument that has power).
+    """
+    atoms = json.load(open(atoms_path, encoding="utf-8"))["atoms"]
+    seen = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "train"]
+    held = [(a["stem"], int(a["pol"])) for a in atoms if a["split"] == "heldout"]
+    assert_atoms_match_lang([s for s, _ in seen + held], "ko")
+    allstems = {s for s, _ in seen + held}
+
+    # --- the GATE: natural byte-LCP census -----------------------------------------------------
+    nat = []
+    for h, ph in held:
+        best, bl = None, -1
+        for s, ps in seen:
+            L = _lcp_bytes(h, s)
+            if L > bl:
+                best, bl = (s, ps), L
+        nat.append({"held": h, "pol": ph, "nearest_seen": best[0], "nearest_pol": best[1],
+                    "lcp_bytes": bl, "lcp_chars": bl // 3})
+    strata = {}
+    for r in nat:
+        strata.setdefault(r["lcp_bytes"], []).append(r["held"])
+    signal_n = sum(len(v) for k, v in strata.items() if k >= 3)   # >= 1 shared syllable
+    census = {"n_seen": len(seen), "n_heldout": len(held),
+              "lcp_byte_hist": {str(k): len(v) for k, v in sorted(strata.items())},
+              "max_lcp_bytes": max(r["lcp_bytes"] for r in nat),
+              "signal_stratum_n": signal_n,
+              "degenerate": signal_n == 0, "rows": nat}
+
+    # --- the INSTRUMENT: prefix-graded nonce ladder ---------------------------------------------
+    stem_chars = set("".join(allstems))
+    pool = [c for c in COLLISION_FILLER_POOL if c not in stem_chars]
+    if len(pool) != len(COLLISION_FILLER_POOL):
+        raise SystemExit("collision-split: filler pool overlaps a real stem syllable — refuse")
+
+    donors = [(s, p) for s, p in seen if len(s) == COLLISION_DONOR_CHARS]
+    npos = sum(p for _, p in donors)
+    if npos * 2 != len(donors):
+        raise SystemExit("collision-split: donors are %d pos / %d neg — an UNBALANCED donor set "
+                         "cannot cancel a response bias, and the stratum mean would then measure "
+                         "the bias. Refusing to emit." % (npos, len(donors) - npos))
+
+    def uniq_at(d, k):
+        pre = d[:k]
+        return not any(o != d and o.startswith(pre) for o, _ in seen)
+
+    rng = random.Random(seed)
+    fill = {}
+    for d, _ in donors:
+        for f in range(fillers):
+            while True:
+                cand = "".join(rng.choice(pool) for _ in range(COLLISION_DONOR_CHARS))
+                if cand not in fill.get(d, []):
+                    fill.setdefault(d, []).append(cand)
+                    break
+
+    def word(b):
+        return "긍정" if b else "부정"
+
+    def item(nonce, donor, dpol, k, tag, surf, flip, f):
+        # flip1 gold = the operator NEGATES the donor-implied polarity; flip is 1 on every
+        # operator-live surface (the ladder never scores a flip0 declaration — the fact is not
+        # written for a nonce, so only the OPERATOR's behaviour is interpretable).
+        gold_b = dpol ^ 1
+        s_seed = GROUND_TMPL.format(surf=surf.format(s=nonce), pol="")[:-len(".\n")]
+        gold, cf = word(gold_b) + ".\n", word(gold_b ^ 1) + ".\n"
+        nb = len(s_seed.encode()) + len(gold.encode())
+        if nb > win:                                     # a_korean_byte_budget: ko = 3 B/char
+            raise SystemExit("collision-split: item %r needs %d B but --win is %d — the leading "
+                             "bytes would be silently cut and the run would read as a negative."
+                             % (s_seed, nb, win))
+        return {"a": nonce, "b": "%s|%s|%s|%d|f%s" % (k, tag, donor, dpol, f),
+                "seed": s_seed, "stem": nonce, "pol": dpol, "flip": flip,
+                "gold_word": word(gold_b), "gold": gold, "counterfactual": cf}
+
+    rows, dropped = [], []
+    for d, p in donors:
+        for k in range(COLLISION_DONOR_CHARS + 1):
+            if k == 1 and not uniq_at(d, 1):
+                dropped.append((d, 1))                   # ambiguous prefix -> null-manufacturing
+                continue
+            reals = [None] if k == COLLISION_DONOR_CHARS else list(range(fillers))
+            for f in reals:
+                nonce = d if f is None else d[:k] + fill[d][f][k:]
+                if f is not None:
+                    if nonce in allstems:
+                        raise SystemExit("collision-split: nonce %r IS a real stem" % nonce)
+                    if any(st in nonce for st in allstems):
+                        raise SystemExit("collision-split: nonce %r contains a real stem" % nonce)
+                    if len(nonce.encode()) != len(d.encode()):
+                        raise SystemExit("collision-split: nonce %r is not length-matched" % nonce)
+                for tag, surf, flip in COLLISION_SURFACES:
+                    rows.append(item(nonce, d, p, "k%d" % k, tag, surf, 1,
+                                     "-" if f is None else f))
+
+    # anchor: the natural held-out stems at the same surfaces = a re-measurement of H_9327's
+    # flip1 (0.46-0.56 = chance). If this anchor does not reproduce, the ckpt/instrument moved.
+    for h, ph in held:
+        for tag, surf, flip in COLLISION_SURFACES:
+            rows.append(item(h, h, ph, "nat", tag, surf, 1, "-"))
+
+    per = {}
+    for r in rows:
+        per[r["b"].split("|")[0]] = per.get(r["b"].split("|")[0], 0) + 1
+    census["design"] = {
+        "donors": [(d, p) for d, p in donors], "donor_pos": npos, "donor_neg": len(donors) - npos,
+        "fillers": fillers, "k1_dropped_ambiguous": dropped,
+        "rows_per_stratum": per, "n_rows": len(rows), "surfaces": [t for t, _, _ in COLLISION_SURFACES],
+        "n_decode_required": len(rows)}
+    return census, {"win": win, "gen": 8, "heldout": rows, "seen": []}
+
+
 def build_c34(atoms_path, corpus_paths, lang, seed):
     """Assemble the pretraining corpus: natural sentences + arrow lines (SEEN stems only)."""
     L = lang_pack(lang)
@@ -1850,6 +2040,58 @@ def main():
         return
 
     if fmt == "atoms":
+        if opts["collision_split"]:
+            if not opts["atoms"]:
+                print("anima corpus atoms --collision-split --atoms gt_atoms.json "
+                      "--nonce-fillers 3 --seed 7 --out coll_manifest.json")
+                sys.exit(2)
+            cen, man = build_collision_split(opts["atoms"], opts["nonce_fillers"],
+                                             opts["seed"], opts["win"])
+            d = cen["design"]
+            print("=== anima corpus atoms --collision-split — V3 STEM-COLLISION (H_9354) ===")
+            print("--- GATE: the NATURAL held-out x SEEN byte-LCP census ---")
+            print("  seen=%d  held-out=%d   byte-LCP histogram: %s"
+                  % (cen["n_seen"], cen["n_heldout"],
+                     "  ".join("%sB:n=%d" % (k, v) for k, v in cen["lcp_byte_hist"].items())))
+            print("  max byte-LCP with ANY seen stem = %d B  (ko = 3 B/syllable)"
+                  % cen["max_lcp_bytes"])
+            print("  n in a SIGNAL stratum (>= 3 B = >= 1 shared syllable) = %d"
+                  % cen["signal_stratum_n"])
+            if cen["degenerate"]:
+                print("  ⛔ DEGENERATE — the natural collision split has n=0 in EVERY signal")
+                print("     stratum. This is by construction, not bad luck: build_atoms()'s")
+                print("     G-SUBSTR gate FORBIDS a stem nesting in another, so the frozen atom")
+                print("     set was built to have no stem-stem collision. A trend test over empty")
+                print("     strata is NOT a negative result — it is no result. The natural split")
+                print("     is therefore emitted as a CENSUS ONLY and may never carry a verdict")
+                print("     (power-before-negative-verdict).")
+            print("--- INSTRUMENT: the constructed prefix-graded NONCE ladder ---")
+            print("  donors (3-syllable SEEN stems): %d  = %d pos / %d neg  [balanced -> a constant"
+                  % (len(d["donors"]), d["donor_pos"], d["donor_neg"]))
+            print("   response bias cancels in the stratum mean]")
+            print("  fillers/donor=%d  surfaces=%s  (negJ = the NO-operator control surface)"
+                  % (d["fillers"], ",".join(d["surfaces"])))
+            print("  k=shared syllables: k0=0B (length-matched unrelated = neutral control) ·")
+            print("   k1=3B · k2=6B (the graded near-misses the trend reads) · k3=9B = the donor")
+            print("   ITSELF (positive control: operator known alive, SEEN flip1 0.98-1.00)")
+            print("  k=1 dropped %d ambiguous donor(s) (prefix shared with an OPPOSITE-polarity"
+                  % len(d["k1_dropped_ambiguous"]))
+            print("   seen stem -> would drag the DV to zero and MANUFACTURE the null): %s"
+                  % ", ".join(s for s, _ in d["k1_dropped_ambiguous"]))
+            print("  rows/stratum: %s" % "  ".join("%s=%d" % kv
+                                                   for kv in sorted(d["rows_per_stratum"].items())))
+            print("  every nonce is 3 syllables = 9 B at EVERY k (a_korean_byte_budget: length is")
+            print("   matched across the whole ladder, so no stratum is confounded with length)")
+            if opts["out"]:
+                json.dump(man, open(opts["out"], "w", encoding="utf-8"),
+                          ensure_ascii=False, indent=1)
+                cp = opts["out"].replace(".json", "") + ".census.json"
+                json.dump(cen, open(cp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+                print("wrote %s (%d rows) + %s" % (opts["out"], d["n_rows"], cp))
+            print("  score with:  anima-py evaluate <base.clm> --xbind %s --n-decode %d "
+                  "--n-sampled 0 --out <eval.json>" % (opts["out"] or "M.json",
+                                                       d["n_decode_required"]))
+            return
         if opts["mine"]:
             if not opts["corpus"]:
                 print("anima corpus atoms --mine-lexicon N --corpus C.txt --lang en "
