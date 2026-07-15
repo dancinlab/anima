@@ -103,6 +103,29 @@ sd ≤ ~0.5 생존.) **바-정정이지 tune-to-green 아님**(인벤토리 사�
 (C) 배제: conv 무-attention · occlusion/donor-patch = H_9331 이 닫은 계급(off-manifold→scramble) · gradient 비-engine-native.
 **⟹ minimal-pair 가 이 레포 장부의 유일 생존 on-manifold 필요성 계기.** NEXT = 스크리너로 sd_w 측정 → stop-condition 적용.
 
+### ✅ 스크리너 1차 — item-gate PASS (natem_n2_main_s7 · pod 45001860 · 2026-07-16)
+
+**계기·배선**: `corpus twinnec`(#3678) 로 후보 매니페스트 생성 → `evaluate --twin-screen`(#3687) 로 base
+303M forward 채점. **ckpt = natem_n2_main_s7.clm**(SEEN 연산자 alive · H_9327 flip1 0.98 의 그 모델 · mac
+`~/anima-weights/natem_n2/` 소재 → pod scp · HF 미공개라 HF 우회). flip1_suffix surface · win 64.
+
+| 지표 | 값 |
+|---|---|
+| gate-passers (sign==esign ∧ \|m̂\|≥1nat) | **20/20 stems** |
+| disjoint pairs (Y) · blind-backed (Y*) | **9 · 9** |
+| accepted \|m̂\| 범위 | **5.27 ~ 20.47 nats** (전부 ≫ 1) |
+| accepted \|m̂\| sd | 3.115 |
+| median pair gap \|mA−mB\| | **28.88 nats** |
+| item-gate feasibility | **PAIRS-OK** |
+
+**판독**: (1) natem_n2_main_s7 의 SEEN 연산자가 **매우 살아있다**(20/20 · \|m̂\|≥5.27 · ckpt 선택 검증) —
+Fable 전제('SEEN 극성 in base')는 base-wiki(토이 clm_d768_e2l1 부정연산자 없음)엔 거짓이나 **natem(CPT)엔
+참**. (2) **item-gate PASS** = |m̂|≥1 통과 쌍 9 = n=9 재동결과 정확 일치 · 우려하던 '9쌍도 못 채움' 아님.
+(3) **연속 마진 gap 28.88 nats = τ 분모가 거대**(BIND-LOCUS 이진 scramble-floor 우려 소멸 · τ well-separated).
+⟹ strong·clean 신호 → τ precise 전망 → pedestal sd_w 낮을 유망(stop-condition 통과 방향). **NEXT = pedestal
+arm(ℓ=0 dilated · τ=1 spike-in)으로 τ-scale sd_w 측정 → 1.07·sd_w,eff≤0.35 stop-condition → 통과시 full
+SPAN/COMP arm.** 산출 tw_screen(item-gate) · s11·flip0·flip1_prefix 는 3/3·2seed 확장.
+
 ## 🛡️ 자기기만 최빈 + 가드
 
 **중복이 비필요성으로 위장.** conv 초기혼합이 캐리어 정보를 suffix/readout 로 복사(dilation 배증·창 빠른 포화)
