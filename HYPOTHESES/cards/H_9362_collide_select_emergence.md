@@ -134,3 +134,17 @@ H_9356 반박은 wet 풀에서만 가능), 순진하게 3000 step 완주하면 *
   **제안이 그 원자를 표면화 못 함**. [[g1-readside-exhausted-gamma-spend-only]](concept→content 연상이
   read-side 채점엔 있으나 causal 생성엔 부재)·[[g1-topdown-routing-forkA]](생성점 RF-감쇠 라우팅)와 동일 벽.
 - **다음 레버 = ideation 제안/라우팅**(fork-A) — cue 를 받았을 때 이미-유창한 target 을 왜 안 제안하나.
+
+## fork-A 판별기 (`--collide-select --pregate-cond` · Fable 설계 · ⏳py303 실측)
+
+pregate 의 `a` 는 **P(tgt) 단독**(cue-free · generator gen_auto_ce_W→clm_ce_seq_W)이라 H_9327
+"사실은 가중치에 있다"의 재확인일 뿐. pool-dry 는 top-8 샘플러 미스라 **(조건부 믿음 부재) ∧
+(제안분포 얇음)을 혼동**. 미측정 칸 = 교사강제 **조건부 P(tgt|cue)**. 판별기(engine-native flag ·
+`_xbind_cont_nll` + frozen `_WEAVE` pedestal 재사용):
+- Δbind = NLL(tgt|swap_cue[atom-swap FORM]) − NLL(tgt|true cue) · Δstrip = NLL(tgt|strip_cue[bind-strip BIND]) − NLL(tgt|true).
+- **paired 차분이 tgt 한계 유창도(pregate a축)를 정확히 상쇄** ⇒ 조건부 로짓 이동만 측정, read-side
+  hidden-회수(EARNED-TERMINAL)·P(tgt) 와 직교(tune-to-green 방어 · pedestal 참값0).
+- **사전등록**(baseline sampled=MISS 12/12 · POOL-DRY 0/48): Δbind≈0(TOST)/<0 → 🧱 **COLLAPSE**
+  (read-side 벽 생성-쪽 재확인·cf-collide-select 종결) · Δbind≫0(paired-t≥1.796·≥9/12>0)∧Δstrip>0 →
+  🟢 **NEW-LEVER**(믿음 present·샘플 miss = 디코딩/제안분포 · top_k·temp 스윕 먼저·CPT 아님).
+- toy 스모크 rc=0(degenerate Δbind≈0). **판정=summer py303_full**(DIRECTIONAL · forward-only $0).
