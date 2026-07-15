@@ -670,7 +670,7 @@
            {
             "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9377-impl",
             "type": "note",
-            "detail": "구현(Step①②③): py 채널은 core/engine_g.py 사용(core/CLAUDE.md py-미러-폐기 데몬경로 stale). Fable 정정: 8-lane 합=0.80(1.0 아님)·anchor dyn_w=0.10 byte-id(실측). engine_g.py dyn_w 재정규화+brain 체인+chat.py --dyn-w. 검증 default/0.10 byte-id·dyn_w=0.6 데몬 end-to-end. NEXT=evaluate GATE-S+w-grid×3-arm pool 측정."
+            "detail": "구현(Step①②③④): py 채널=core/engine_g.py(core/CLAUDE.md py-미러-폐기 데몬경로 stale). engine_g.py dyn_w 재정규화(budget 0.80·anchor 0.10 byte-id 실측)+brain 체인+chat.py --dyn-w+evaluate --audibility(GATE-S validity 심장·P1 a1>a3·앵커 필수낙제·cross-cell). 합성 인증 2/2(green→🟢·content_inert→🧱). Stage-1 수집(⑤⑥)=summer 도달불가 BLOCKED-INFRA."
            }
           ]
          }

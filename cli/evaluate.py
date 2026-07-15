@@ -775,6 +775,9 @@ def evaluate_usage():
     print("       I(tension;emit) <= I(tension;score|stage), so whether `score` carries tension decides")
     print("       it with NO gate edit. M_score=I(ag_conflict;score|stage), M_sim=desaturated-gate sim")
     print("       (theta=median(score) tension/emit-blind). Reuses the H_9357 --g-arm traces.)")
+    print("  anima evaluate --audibility <trace.jsonl> [...]  (H_9377 · dyn_w-grid × arm: does making")
+    print("      tension AUDIBLE, via cli/chat.py --dyn-w, let it pull emit? GATE-S validity (emit rate")
+    print("      ∈[0.05,0.95]) is the heart; evidence = a1>a3 at top valid dyn_w, anchor dyn_w=0.10 must fail.)")
     print("  anima evaluate --g-tension <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9357 — does a GENUINELY INDEPENDENT G engine pull emit? The sequel to H_9356.")
     print("       Run cli/chat.py with --g-arm a0|a1|a3 to make the traces (a0=tautology control,")
@@ -3947,6 +3950,102 @@ def _collide_select(ckpt, argv):
     return 0
 
 
+def _audibility(argv):
+    """H_9377 AUDIBILITY-SUFFICIENCY — does raising dyn_v's weight (dyn_w) let tension pull emit?
+
+    The campaign ended at H_9376 MIXER-BOUND: tension (dyn_v=ag_conflict) is 1 of 8 equally-0.10-
+    weighted lanes in motivation_score, so it is inaudible below the 7-lane A-side blend. cli/chat.py
+    --dyn-w raises its ABSOLUTE weight (dyn_w=0.10 = byte-identical anchor). This panel groups the
+    traces into (g_arm, dyn_w) cells and asks whether the INDEPENDENT-G tension moves emit once
+    audible — with the discipline Fable specified:
+
+      GATE-S (validity · the heart): a cell counts ONLY if its emit rate ∈ [0.05, 0.95] AND its
+        ag_conflict has ≥5 distinct values. should_emit is saturated, so at low dyn_w MI is 0 by
+        arithmetic, not by substrate — an INVALID-SATURATED cell is dropped by rule, unread.
+      P1 (earned · per valid dyn_w): I(ag_conflict; emit | stage) ≥ 0.05 AND shuffle ≤ 0.01 AND
+        a1 (REAL-G) − a3 (noise) > 0. The A1>A3 selectivity is what the substrate earns; the raw
+        MI is a manipulation-check (dyn_w buys it by arithmetic), never the evidence.
+      Anchor (dyn_w≈0.10) MUST fail P1 — it reproduces the current config (H_9357 G-INERT). If the
+        anchor passes, the instrument is broken.
+
+    Verdict is CROSS-CELL: PASS = a1 earns P1 at the top valid dyn_w AND a1>a3 there (plateau on the
+    top 2 valid cells), anchor fails → 🟢 GREEN-WIRED-GAIN (campaign loop closed; but a WEIGHT is a
+    wiring fact, not emergence). FALSIFY = a1≈a3 at every valid dyn_w → G-INERT survives below the
+    channel at the CONTENT level (a new wall)."""
+    import math as _math
+    rows = _im_rows(argv)
+    rows = [r for r in rows if ("stage" in r and "emit" in r and "ag_conflict" in r and "g_arm" in r)]
+    print("═══ AUDIBILITY-SUFFICIENCY · H_9377 · dyn_w-grid × arm ═══")
+    print("  rows=%d" % len(rows))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (rows < 200)")
+        return 0
+    # cell = (g_arm, dyn_w). dyn_w None → anchor bucket 0.10.
+    cells = {}
+    for r in rows:
+        w = r.get("dyn_w", None)
+        wk = round(float(w), 4) if w is not None else 0.10
+        cells.setdefault((str(r["g_arm"]), wk), []).append(r)
+    ws = sorted({wk for (_a, wk) in cells})
+    print("  arms=%s · dyn_w grid=%s" % (sorted({a for (a, _w) in cells}), ws))
+
+    def _cell(rws):
+        S = [int(r["stage"]) for r in rws]
+        E_ = [1 if r.get("emit") else 0 for r in rws]
+        rate = sum(E_) / float(len(E_))
+        gvar = len({round(float(r["ag_conflict"]), 6) for r in rws})
+        valid = (0.05 <= rate <= 0.95) and gvar >= 5
+        cv = sorted(float(r["ag_conflict"]) for r in rws)
+        cmed = cv[len(cv) // 2]
+        C = [1 if float(r["ag_conflict"]) > cmed else 0 for r in rws]
+        mi, nm, pv, earned = _gd_cmi_bin(C, E_, S)
+        psi = None
+        if all(("psi_gws" in r and "psi_lprec" in r) for r in rws):
+            eh = [1 if 0.5 * (float(r["psi_gws"]) + float(r["psi_lprec"])) >= 0.5 else 0 for r in rws]
+            psi = sum(eh) / float(len(rws))
+        return dict(n=len(rws), rate=rate, gvar=gvar, valid=valid, mi=earned, nm=nm, pv=pv, psi=psi)
+
+    res = {}
+    print()
+    print("  arm  dyn_w | n   rate  G-VAR  valid | MI(earn) shuf  p    | Ψ̂")
+    for (a, wk) in sorted(cells):
+        d = _cell(cells[(a, wk)])
+        res[(a, wk)] = d
+        print("  %-3s  %.2f  | %3d %.2f  %5d  %-5s | %+.4f %.4f %.3f | %s"
+              % (a, wk, d["n"], d["rate"], d["gvar"], "OK" if d["valid"] else "SAT",
+                 d["mi"], d["nm"], d["pv"], ("%.3f" % d["psi"]) if d["psi"] is not None else "—"))
+    print()
+    mde, cbar = 0.05, 0.01
+    valid_w = [wk for wk in ws if res.get(("a1", wk), {}).get("valid")]
+    if not valid_w:
+        print("  ⇒ ⛔ INSTRUMENT-DEAD — no valid a1 cell (all SATURATED). The should_emit threshold")
+        print("     interacts; dyn_w alone can't unsaturate the gate. Threshold is a SEPARATE H (not a patch).")
+        return 0
+    anchor = res.get(("a1", 0.10))
+    if anchor and anchor["valid"] and anchor["mi"] >= mde and anchor["pv"] < 0.005:
+        print("  ⇒ ⛔ INVALID — the anchor (dyn_w≈0.10 = current config) PASSED P1; it must reproduce")
+        print("     H_9357 G-INERT. A passing anchor = broken instrument.")
+        return 0
+    top = valid_w[-1]
+    a1t, a3t = res.get(("a1", top)), res.get(("a3", top))
+    print("  🔒 prereg: valid a1 cell earns P1 (MI≥%.2f∧shuf≤%.2f) ∧ a1>a3 at top valid dyn_w=%.2f ∧ anchor fails" % (mde, cbar, top))
+    a1_pass = a1t and a1t["mi"] >= mde and a1t["nm"] <= cbar and a1t["pv"] < 0.005
+    sep = (a1t["mi"] - a3t["mi"]) if (a1t and a3t) else None
+    if a1_pass and (sep is None or sep > mde):
+        print("  ⇒ 🟢 GREEN-WIRED-GAIN — once AUDIBLE (dyn_w=%.2f), the independent-G tension pulls emit" % top)
+        print("     (MI %.4f · a1−a3 %s). H_9357 G-INERT was 'gain-starvation', not 'consumption-incapable'." % (a1t["mi"], ("%.4f" % sep) if sep is not None else "n/a"))
+        print("     ⚠️ A WEIGHT is a WIRING FACT, not emergence (E1/E2 bar pre-registered for that).")
+    else:
+        allsep = all((res.get(("a1", wk), {}).get("mi", 0.0) - res.get(("a3", wk), {}).get("mi", 0.0)) <= mde
+                     for wk in valid_w if ("a3", wk) in res)
+        if allsep:
+            print("  ⇒ 🧱 CONTENT-INERT — a1 ≈ a3 at every valid dyn_w: making tension audible does NOT")
+            print("     make its CONTENT move emit. G-INERT survives below the channel at the content level = new wall.")
+        else:
+            print("  ⇒ ⏳ PENDING — a1 earns P1 at some but not the top valid cell, or plateau not met. Extend n / grid.")
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -4785,7 +4884,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -4826,6 +4925,8 @@ def main(argv):
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
     if len(argv) >= 2 and argv[0] == "--gate-deaf":
         return _gate_deaf(argv[1:])
+    if len(argv) >= 2 and argv[0] == "--audibility":
+        return _audibility(argv[1:])
     if len(argv) >= 2 and argv[0] == "--g-tension":
         return _g_tension(argv[1:])
     if len(argv) >= 2 and argv[0] == "--tension-emit":
