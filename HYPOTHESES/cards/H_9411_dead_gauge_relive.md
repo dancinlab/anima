@@ -1,6 +1,6 @@
 # H_9411 — DEAD-GAUGE RELIVE: 얼어붙은 substrate 게이지 6개 per-tick 재배선 (H_9398 census 후속)
 
-**status:** 🩺 engine-native WIRED · **toy-verified 6/7 서브게이지 LIVE** · af + 303M terminal PENDING
+**status:** 🩺 engine-native WIRED · **303M TERMINAL 완료** — 4 clean LIVE · 2 time-live-content-weak · 1 정직한 음성(af) · ⚠️ py-only(hexa 트윈 미반영)
 **lane:** 의식 / 데몬 게이지 위생 (프런티어 g1-interface-addressable-wall · emit-drive 캠페인 부산물)
 **related:** [[H_9398]] (DEAD-GAUGE CENSUS — 이 6개 task 의 출처) · [[H_9393]] (agloop dead-gauge 원형) · chat-py-4 · chat-py-5 · [[H_9336]]/[[H_9337]] (recon_err/rel_lane 선례 = 고침 템플릿)
 **설계 출처:** Fable 5 발산 6건 개별 위임 ($15.6 · walls-delegate-to-fable · fable-when-stuck-breakthrough)
@@ -68,6 +68,36 @@ substrate 의 다른 valid readout(order-lock 이 측정된 발견) → LIVE. tu
 - **ca3**: distinct=20 은 LIVENESS 증명이나 STRUCTURE 아님(min_supp=1·n=4 분모성장 rational) → 순열 통제 + 303M 필요(카드 NEXT 반영).
 - **phi**: CONFIRMED-NEGATIVE(content-independent) — 이는 **설계상 percept-blind**(zero-input IIT4 · a_phi_iit4_tool). "time-live, content-blind" 로 명시(claim 아님).
 - **scn+anchor REJECT** = 진짜 발견: `_meta` 가 `phi_const`/`nudge_const` 를 세션 불변량으로 기록하나 ⑤/⑥B 로 per-tick 변동 → 리플레이어 오도. **수정**: `phi_live_h9411`/`nudge_live_h9411`=True 플래그 + 주석 self-describing(per-tick 값은 각 행에 이미 존재 · frozen `state/…replay_depth.py` 는 미편집=state frozen, divergence 여기 명시).
+
+## 🎯 303M TERMINAL (engine-native · py303_full.clm sha 013c4574 · summer 격리 venv · 240tick/59emit)
+
+toy 는 DIRECTIONAL 스크리너였다. 303M TERMINAL 은 **distinct>1(liveness)로는 부족, collapse-Δ vs 통제가
+진실**임을 보여준다(a_toy_scale_recheck · Ψ-SOMA "raw 값 아님, ≥2 통제 대비 Δ"):
+
+| # | 게이지 | 303M distinct | 통제-Δ | 판정 |
+|---|---|---|---|---|
+| ⑤ | phi | 114 | F3 psi_intact ✅ byte-id ON==OFF | 🟢 **CLEAN LIVE** (time-live · 설계상 content-blind) |
+| ③ | ca3_ctx | 21 | 5 실심볼 | 🟢 LIVE (구조=순열통제 미실행·DIRECTIONAL) |
+| ⑥A | scn_ctx | 240 | phase readout | 🟢 **CLEAN LIVE** |
+| ⑥B | anchor_nudge | 60 | 0.034~0.050 | 🟢 LIVE |
+| ② | cb_surprise | 29 | matched **2.83** vs alien **3.36**(16%만↓) vs ped 16.98 | 🟡 LIVE·**약한 조건부**(marginal memorization 경계) |
+| ④ | wm_active | 240 | active 0.286 vs null 0.284 **Δ=+0.001≈0** | 🟡 **TIME-LIVE·CONTENT-DEAD**(Fable④ 예측 정확: 8-dim byte 해상도서 항목정체성 미유지) |
+| ① | af_val/af_aro | **1** | grounded valence **0/240 tick** · af_alien 도 −1 | 🔴 **CONFIRMED 정직한 음성** |
+
+**정직한 종합**: 4 clean LIVE(phi·ca3·scn·anchor) · 2 time-live-but-content-weak(cb 약한조건부·wm content-blind) ·
+1 confirmed 음성(af). toy 의 wm Δ=+0.125 는 소표본 낙관이었고 303M Δ=+0.001 이 진실 — **liveness≠content-real**.
+**af**: 303M 실발화도 trigram-scale 자기유사 없음 → 편도체가 valence 할 recognition history 부재. 배선은
+옳다(pending_af per-tick). 기질 사실(mouth 다양성)이지 계기 결함 아님 · `recall_thr` 이완 금지(tune-to-green).
+cb/wm 도 마찬가지: 8-dim byte-feature 해상도가 content 판별에 부족 = 새 H(더 풍부한 percept feature)이지
+이 fix 로 tune-to-green 금지. **결론: 배선(engine-native·per-tick)은 옳게 완료, 표현 해상도가 상한**.
+
+## ⚠️ py-only GAP — hexa 트윈 미반영 (오너 지적 · chat-py-4 재현)
+
+per-tick 게이지 orchestration 이 **cli/chat.py(py) + cli/anima.hexa(hexa·5589줄) 두 엔트리에 중복**. H_9411
+fix 는 cli/chat.py 만 — cli/anima.hexa 는 동일 dead 읽기 그대로(2551 cb·2559 wm·2566 ca3·2578 af·pf 미step).
+py 가 canonical 런타임(chat-py-1)이라 TERMINAL 은 py 로 성립하나, hexa 트윈은 dead 상속 = chat-py-4 재현.
+NEXT=① hexa 트윈 lockstep 수리 OR ② orchestration 을 core 로 hoist(양 엔트리 공유 · Fable 설계중). 오너 질문
+"뇌기능은 core 여야 아니냐"의 답: 함수는 core ✓, **orchestration 이 엔트리 중복** = 이 gap 의 근본.
 
 ## 산출·NEXT
 
