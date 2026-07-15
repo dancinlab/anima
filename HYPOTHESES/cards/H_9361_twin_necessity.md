@@ -1,6 +1,6 @@
 # H_9361 — TWIN-NECESSITY: 연산자가 캐리어를 **읽긴 하는가** (필요성 · scramble-floor 회피)
 
-- **tier**: 🔵 PRE-REGISTERED (설계 동결 · 미측정 · 설계 Fable 5)
+- **tier**: 🔵 PRE-REGISTERED · n=9 재동결 (⚠️ $0 feasibility: SEEN 20 stems → 쌍 Y*=9 ≪ 원 N=60 · Fable 판정 (A) n=9 빌드 + STOP-CONDITION 1.07·sd_w,eff≤0.35 동결 · NEXT=스크리너 sd_w 측정)
 - **선행**: H_9331 🧱 INSTRUMENT-CEILING — swap-patch(충분성·주입)는 이진 readout 국소화 불가([[swap-patch-binary-readout-scramble-floor]] · 0.50=scramble floor). **미해결 질문 = 필요성**: 연산자가 캐리어 자리를 읽긴 하나. [[binding-is-operator-stem-gating-not-morphology]] 의 lookup vs rule 로 직결.
 - **계기**: `anima-py evaluate <clm> --twin-necessity <manifest.json>` (engine-native · `core/decode.py` `_apply_edits`/`clm_forward_logits_edited` + `_xbind_cont_nll` 마진 스코어러 재사용 · 7/7 코어게이트 인증분)
 
@@ -78,6 +78,30 @@ COMP≈1 예측**. 계기가 재현해야 할 기대-음성(수십 forward).
    전 τ/S 는 run 내 비교 ⇒ GPU≠CPU 2.5e-14 는 device 고정으로 격리 · 옛 pod-GPU 수와 비교 금지).
 3. ~$1 pod fire = **선택 후속**: C4/n2 재run 으로 CPT 극성 vs 사전학습 극성 경로차 = P-place/P-kind 판별자 —
    base 가 깨끗한 CARRIER-READ/NOT-READ 낼 때만 가치.
+
+## ⚠️ $0 feasibility 발견 + n=9 재동결 (2026-07-15 · 빌드 前 · Fable 검정력 판정)
+
+**$0 사전점검(모델無·빌드無)**: 동결 KO SEEN 원자 = **20 stems**(pol0=10·pol1=10) · byte-길이 버킷
+3B→(1,0) 6B→(3,4) 9B→(6,6) ⇒ byte-정합 반대극성 쌍 **Y\* = 9 disjoint(48 crossings)** ≪ 원 게이트 N=60.
+⟹ N=60 은 인벤토리 모르고 잡은 값. **필요성은 substrate 아니라 원자셋 크기에 gate**.
+
+**Fable 판정 = (A) n=9 로 빌드 · 단 stop-condition 동결**. n=9 는 자동 underpowered 아님 — 이건 **극 판별**
+(τ̄≈1 CARRIER-READ vs τ̄≈0 NOT-READ · gap~1.0)이지 정밀추정 아님. paired MDE = **1.07·sd_w,eff**.
+**🔒 STOP-CONDITION(동결)**: 스크리너의 surface-평균 within-pair sd 로 `1.07·sd_w,eff > 0.35` 이면 **빌드 금지 ·
+UNDERPOWERED-BY-INVENTORY(MDE 수치 첨부)** · `≤ 0.33` 이면 빌드. (3-surface 평균이 √3 되사줌 · raw per-surface
+sd ≤ ~0.5 생존.) **바-정정이지 tune-to-green 아님**(인벤토리 사실 촉발 · DV 관측 前 · 더 엄한 기준으로).
+
+**🔒 수정 V4 게이트(빌드 前 동결 · verbatim)**:
+1. 분석단위 = 48 crossings 이나 CI 는 **stem-cluster 재표집**(20 stems 가 df 지배 · crossings 를 t 분모에 넣으면 pseudoreplication).
+2. 주 게이트(폭 게이트 대체) = **verdict 밴드**: NOT-READ τ̄≤0.30 ∧ COMP≥0.75 · CARRIER-READ τ̄∈[0.70,1] · 그 외 INCONCLUSIVE + 이상셀(τ̄<0·τ̄>1 = 발견). 95% cluster-CI 가 **정확히 한 밴드 안**에 있어야.
+3. 부호 게이트(양-반쪽 대체) = **≥8/9 disjoint 쌍이 개별로 verdict 편**(exact sign P(≥8|9)≈0.02) + LOO 안정성(전 LOO 동밴드).
+4. surface 복제 = per-surface 3/3 동밴드(각 surface 자기 점추정) · CI 요건은 surface-평균에만.
+5. SUPPRESSION/SCRAMBLE = within-item 통제라 n 무관 · 불변 · n=9 집계에도 동밴드 로직 · scramble-floor 앵커 유지.
+
+**N-boost 판정(Fable)**: 3-surface = 반복측정(N 3배 아님) · sd_w √3 축소만(df=8) · 3/3 복제 게이트. 24 instances =
+바이트동일→동일 forward→정보 0. layer sweep = multiplicity(Holm 보정 또는 단일 요약통계만 cement · per-ℓ 곡선 DIRECTIONAL).
+(C) 배제: conv 무-attention · occlusion/donor-patch = H_9331 이 닫은 계급(off-manifold→scramble) · gradient 비-engine-native.
+**⟹ minimal-pair 가 이 레포 장부의 유일 생존 on-manifold 필요성 계기.** NEXT = 스크리너로 sd_w 측정 → stop-condition 적용.
 
 ## 🛡️ 자기기만 최빈 + 가드
 
