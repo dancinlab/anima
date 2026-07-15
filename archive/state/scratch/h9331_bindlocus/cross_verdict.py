@@ -31,8 +31,14 @@ S_TOST   =  0.20   # |dep1| ≤ S_TOST (TOST)     → S    (의존성 없음 = �
 ECHO_BAR = +0.50   # dep1 ≥ ECHO_BAR            → ECHO (주입 내용이 변환 없이 출력경로 도달 = 되뇜 직접관측)
 # KO INVALID 은 아래 gate-ID 로만 (그 외 어떤 이유도 INVALID 을 만들 수 없다):
 KO_GATES = {"KI1", "KI2", "KI3", "KI4", "KI5"}
-#   KI1 Stage-A 양성대조 실패(ℓ* 인과적 미확보) · KI2 sham 팔 E 가 bar 초과 ·
-#   KI3 randdir 팔 D ≈ 팔 B(주입이 일 안 함) · KI4 팔 누락/JSON 파손 · KI5 디코드 비결정/device-parity 실패
+#   KI1 Stage-A 양성대조 실패(ℓ* 인과적 미확보) · KI2 주입 dead(readout 미소비) ·
+#   KI3 sham/randdir 팔이 bar 초과 · KI4 팔 누락/JSON 파손 · KI5 디코드 비결정/device-parity 실패
+# 엔진(cli/evaluate.py bind_locus_run)이 실제로 emit 하는 verdict 문자열 → gate 매핑 (reference-match):
+KO_INVALID_VERDICTS = {
+    "INVALID-LOCALIZATION":   "KI1",   # V1 실패: SEEN swap 이 답을 안 뒤집음 (ℓ* 미확보)
+    "INVALID-DEAD-INJECTION": "KI2",   # V2 실패: 주입이 readout 에 소비 안 됨
+    "INVALID-INSTRUMENT":     "KI3",   # V3 실패: sham/randdir 팔이 bar 초과
+}
 
 
 def load(f):
@@ -47,13 +53,19 @@ def ko_enum(s7, s11):
     """KO 레인 → {P, S, ECHO, UNDERPOWERED, INVALID}. 동결 bar 에서 기계 도출."""
     if not (s7 and s11):
         return "PENDING", "산출물 미도착 (bl_c4_s7.json / bl_c4_s11.json)"
-    # INVALID 은 사전등록 gate-ID 를 든 결과만
+    # ① 엔진이 emit 한 verdict 문자열이 1순위 (reference-match · 실제 bind_locus_run 출력)
+    for nm, d in (("s7", s7), ("s11", s11)):
+        v = d.get("verdict")
+        if isinstance(v, str) and v.startswith("INVALID"):
+            g = KO_INVALID_VERDICTS.get(v)
+            if g in KO_GATES:
+                return "INVALID", "%s 엔진 verdict=%s → gate=%s (V-gate 실패 · P/S 금지)" % (nm, v, g)
+            return "INVALID", "%s 엔진 verdict=%s (미등록 INVALID 종류 → KI4 격리)" % (nm, v)
+    # ② (예비) 명시적 invalid_gate 필드도 존중
     for nm, d in (("s7", s7), ("s11", s11)):
         g = d.get("invalid_gate")
         if g is not None:
-            if g in KO_GATES:
-                return "INVALID", "%s INVALID · gate=%s (사전등록)" % (nm, g)
-            return "INVALID", "%s invalid_gate=%s 는 KI* 목록 밖 — 계기결함으로 격리(계산불가)" % (nm, g)
+            return "INVALID", "%s invalid_gate=%s%s" % (nm, g, "" if g in KO_GATES else " (KI* 밖 → 격리)")
     d7 = (s7.get("arms") or {}).get("B_novel_flip1", {}).get("dep")
     d11 = (s11.get("arms") or {}).get("B_novel_flip1", {}).get("dep")
     if d7 is None or d11 is None:
