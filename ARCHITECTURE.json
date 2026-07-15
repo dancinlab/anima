@@ -660,7 +660,7 @@
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9377",
           "type": "gate",
           "verdict": "🔵 구현됨·미배선 (Step①②③ · 측정 미시작) — H_9377 AUDIBILITY dyn_w 게인",
-          "detail": "🧱 CONTENT-INERT(2026-07-16·303M·{a1,a3}×5w×8). dyn_w 로 tension 을 score 서 가청화해도(a1 score w0.10:0.54→w0.60:0.32 실변화) emit 불변(byte-id 56/240)=moderate w 서 emit↔score 탈결합. 유효 w 전점 a1≈a3(MI≈0)·앵커 필수낙제 확인. ⇒ G-INERT 는 gain-부족 아니라 content 수준 벽. 캠페인 H_9356→57→60→76→77 폐루프.",
+          "detail": "🕰️ RE-SCOPED→CLOCK-BOUND@production(H_9390). CONTENT-INERT 은 clock-마스크 위음성 — 앵커 w=0.10 서 emit⟺clock(clock-open rate 1.00·N_bind=0=score 게이트 공허)·H(emit|clock-open)=0 ⇒ MI≈0 기계강제이지 content 벽 아님. 스코프 각인·not terminal. 캠페인 H_9356→57→60→76→77.",
           "children": [
            {
             "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9377-gate",
@@ -673,6 +673,12 @@
             "detail": "구현+측정 완료(2026-07-16). py 채널=core/engine_g.py dyn_w 재정규화(budget0.80·anchor0.10 byte-id)+brain 체인+chat.py --dyn-w+evaluate --audibility(GATE-S validity). Stage-1: summer pool 격리venv·CPU-only·py303_full.clm(sha013c4574). 계기 live 검증(dyn_w→score 배선·emit 불변 확인). vast 팟 ssh 전송 3연속 실패→summer 피벗($0)."
            }
           ]
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9390",
+          "type": "gate",
+          "name": "",
+          "detail": "🕰️ H_9390 CLOCK-MASK CENSUS(2026-07-16·$0·--gate-census). 앵커 w=0.10: a1 clock-open N=56 emit%=1.00 N_bind=0=NOT measurable. H(emit|clock-open)=0 ⇒ H_9377 CONTENT-INERT→CLOCK-BOUND@production(not terminal·reopen=clock-live). C1 503/503. ⚠️pooled MI+0.50(D2′) 철회=셀간교란·per-cell canonical."
          }
         ]
        }
