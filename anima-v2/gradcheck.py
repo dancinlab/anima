@@ -33,6 +33,9 @@ from loss import forward_loss
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+GATE = "mix"  # set by main() so gradcheck covers BOTH the mix and logit paths
+
+
 def build_case(scale=1.0, seed=0):
     bars = json.load(open(os.path.join(HERE, "bars.json")))
     rng = np.random.default_rng(seed)
@@ -63,7 +66,7 @@ def build_case(scale=1.0, seed=0):
 def loss_of(p, cfg, case):
     return forward_loss(p, cfg, case["ids"], case["targets"], case["loss_mask"],
                         case["store_ids"], case["val_idx"], case["qpos"],
-                        case["ans_pos"], use_store=True)[0]
+                        case["ans_pos"], use_store=True, gate=GATE)[0]
 
 
 def run_check(corrupt=None, verbose=True):
@@ -72,7 +75,7 @@ def run_check(corrupt=None, verbose=True):
 
     _, grads = forward_loss(p, cfg, case["ids"], case["targets"], case["loss_mask"],
                             case["store_ids"], case["val_idx"], case["qpos"],
-                            case["ans_pos"], use_store=True, backward=True)
+                            case["ans_pos"], use_store=True, backward=True, gate=GATE)
     if corrupt is not None:
         grads[corrupt] = grads[corrupt] * 1.5 + 1e-3   # a plausible-looking wrong gradient
 
