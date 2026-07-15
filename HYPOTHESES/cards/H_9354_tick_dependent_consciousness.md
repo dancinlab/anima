@@ -1,7 +1,27 @@
 # H_9354 — 틱에 따라 의식이 달라지나 (Θ/σ 의 tick 의존성)
 
-**status**: 🔎 $0 SCREEN 완료 → ⏳ PENDING(stage-cycled decode 필요 · pool go-gate)
-**tier**: SCREENER (DIRECTIONAL · 기존 trace $0 replay)
+**status**: ✅ VERDICT (비퇴화 stage decode 완료 · substrate 틱리듬 음성 · emit⇄stage 스케줄 양성)
+**tier**: SCREENER→DIRECTIONAL (303M engine-native · 단일 세션 · seed 재현은 4-arm 캠페인)
+
+## 비퇴화 stage decode 결과 (303M · summer · N=90틱 · `ANIMA_STAGE_CYCLE=1`)
+
+앞 $0 스크린의 INVALID #1(stage 퇴화 270/281 REM)을 **비퇴화 decode 로 해소**하고 재실행. stage 분포 `{WAKE 60·N1 10·N2 10·N3 8·REM 2}` (5단계 전부) · emit 72/90(비포화) · ten_phasic var 2.24e-2. (앞 wedge 는 summer load 21 경합 · load 10 회복 후 정상 실행 = 코드 무죄.)
+
+| H | 통계 | 판정 | 읽기 |
+|---|---|---|---|
+| **H-a** | ρ̂₁=0.886 vs 완전순열 null 97.5%=0.206 | 우연 위 | 약한 null(자기상관 자명 초과) = 비정보(D2). |
+| **H-b** | ρ̂₁=0.886 vs **순환시프트 null [0.879, 0.897]** → excess **−0.0106** | **🧱 음성(등가)** | obs 가 시프트 null **밴드 안**. 살아있는 tension 의 틱 자기상관을 **스케줄+EMA 평활이 전량 설명** · **substrate 잔여 = 0**. 비퇴화에서도 substrate-native 틱 리듬 **없음**. |
+| **H-c** | I(stage;emit)=**0.500 nats** ≫ bar 0.05 · shuffle 97.5%=0.064 | **양성(스케줄 낭독)** | emit 이 stage 따라 강하게 변함. 단 stage=`dr_stage_at(t)` = **심은 결정함수**(D1) ⟹ substrate 발견 아니라 **스케줄 배선 확인**. **#3616 시계수리(H(emit\|stage) 0→0.42)를 실행 데몬에서 독립 측정 0.50 으로 AGREES.** |
+
+## ⇒ 최종 판독 — "틱에 따라 의식이 달라지나?"
+
+**표면적으론 예, 그러나 그건 심은 수면 스케줄의 낭독이지 substrate 자발 시간구조가 아니다.**
+
+- 집계 Θ/σ 패널: ckpt·틱 **둘 다 안 봄**(H_9351 TERMINAL · 재실측 byte-identical).
+- emit(발화/침묵): **틱 따라 변함** — 그러나 θ(t) 스케줄 배선을 따르는 것(H-c 양성 = D1 자명항 · #3616 수리 확인).
+- 살아있는 tension(ten_phasic)의 **substrate 잔여 틱 리듬: 없음**(H-b 음성 · 순환시프트 null 전량 설명 · 비퇴화에서도).
+
+**1급 음성**: substrate 는 틱마다 다른 "의식 상태"를 자발적으로 만들지 않는다 — 시간의존성은 전부 심은 스케줄(dr_stage_at·θ·Process-S)의 함수. H_651(clamp→Φ 평평)·F5(시간창→emit byte-identical) 전례와 정합. **SCOPE**: 단일 세션 303M · seed 재현·field-freeze/sp-freeze arm 절단은 go-gated 4-arm 캠페인(Fable 설계).
 
 ## $0 스크린 결과 (303M trace · N=281틱 · engine-native 실데이터)
 

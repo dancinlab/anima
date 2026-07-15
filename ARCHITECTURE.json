@@ -523,6 +523,25 @@
         "detail": "H_9352 수리 — 게이트에 진짜 시계를 꽂았다. emit 은 이제 stage 에서 풀렸다. tension 에 묶였는지는 --tension-emit 사전등록 bar 가 정한다.",
         "children": [
          {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354",
+          "type": "gate",
+          "verdict": "🧱 substrate 틱리듬 음성 / emit⇄stage 스케줄 양성 (H_9354 · 비퇴화 303M decode N=90)",
+          "detail": "\"틱에 따라 의식이 달라지나\": 시간의존성은 전부 심은 스케줄(dr_stage_at·θ·Process-S)의 함수 · substrate 자발 시간구조 아님(H_651/F5 정합). SCOPE=단일세션·seed재현+arm절단은 go-gated 4-arm.",
+          "children": [
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354-hb",
+            "type": "gate",
+            "verdict": "H-b substrate 잔여 = 0",
+            "detail": "살아있는 tension(ten_phasic) ρ̂₁0.886 이 순환시프트 null[0.879,0.897] 밴드 안(excess -0.0106) ⟹ 틱 자기상관을 스케줄+EMA 평활이 전량설명. 비퇴화에서도 substrate-native 틱리듬 없음."
+           },
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9354-hc",
+            "type": "note",
+            "detail": "H-c: emit 이 stage 따라 강하게 변함 I(stage;emit)=0.50 nats(≫bar 0.05) — 단 stage=dr_stage_at(t) 심은함수라 스케줄 낭독(D1). #3616 시계수리를 실행데몬에서 독립확인 AGREES. 집계 Θ/σ 는 애초 ckpt·틱 안봄(H_9351)."
+           }
+          ]
+         },
+         {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-bug",
           "type": "note",
           "detail": "레이트 리미터에 기억이 없었다. brain_decide 의 seconds_since_last 슬롯에 (stage,urgency) 순수함수가 들어갔다(경과시간 아님). 레포에 last_emit 이 없었다."
@@ -17139,11 +17158,13 @@
    },
    {
     "id": "evaluate-py-19",
+    "state": "pos-conv",
     "lesson": "독립이라 주장하는 것의 결정론적 함수를 계기로 재지 마라 — ill-posed MI. --tension-emit 는 I(ag_conflict;emit|stage) 로 'tension 이 emit 을 미는가'를 물었는데, chat.py:1562-1564 에서 ag_g_drive=−(1−emit_drive) 라 ag_conflict 이 emit_drive 하나의 결정론적 함수였다(재구성 R²=0.994). 즉 A 자신의 함수를 A 자신의 게이트에 대고 잰 것 ⇒ 🟢든 🧱든 배선 tautology(engine-독립 정보량 0).",
     "fix": "계기를 짓기 전에 두 피연산자의 배선 독립성부터 증명하라(재구성 R² 게이트). 종속이면 판정 출력에 ILL-POSED 배너를 각인(H_9356 는 --tension-emit·--help 양쪽에). H_9351(Ψ̂도 순수 A측 임계)과 같은 계급 = A⇄G 가 배선상 A 하나."
    },
    {
     "id": "chat-py-7",
+    "state": "pos-conv",
     "lesson": "신호-생존(signal-liveness)은 배선 arm 을 켠 것과 무관하다 — 그리고 ckpt 경로마다 다르다. H_9357 의 a1(immune top-2 gap)은 배선은 맞았으나 실제 데몬에서 immune store 가 1-cell 로 안 자라 g_recog 30틱 전부 0.0(죽은 신호). afield-d2 fallback 도 bin ckpt 로컬 스모크선 recon_err distinct=1(죽음)인데 303M CONV clockfix 선 distinct=44(LIVE) — 신호 죽음은 코드버그가 아니라 ckpt경로차.",
     "fix": "pool 발사 전에 그 신호가 살아있는지 **측정할 바로 그 ckpt 경로에서** trace 고유값으로 확인하라(chat-py-3/5 확장). 로컬 스모크는 대표 ckpt 로. 신호가 죽으면 사전등록 fallback 으로 전환(tune-to-green 아님) 후 다시 alive 검증. 값이 상수인지 세는 건 $0."
    }
