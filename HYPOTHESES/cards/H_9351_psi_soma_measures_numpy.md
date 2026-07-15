@@ -117,4 +117,15 @@ def _sigma_live_measure():          # ← 인자가 0개
 | relevance[rel_lane·recon_err·rel_ema·cur_ema·ten_ema] | 0.77 | 0.48 | **0.29** |
 | score-comp[rel_ctx·cur_ctx·gap_ctx·coh_lane·bal_lane] | 0.81 | 0.30 | **0.51** |
 
-⟹ **σ·bind 는 이 substrate 에서 ckpt 를 구별할 수 있다**(Φ 0.81 · Δ 0.51) — 내 원래 Φ=0 은 root-disjoint 선택의 산물이지 substrate floor 아님. **단 미해결**: 살아난 집합은 EMA·파생 lane 이라 높은 Φ 가 substrate 통합인지 **D2 배선 tautology**(lane 이 서로의 결정론적 함수)인지 못 가른다. **역설**: 통합돼야 Φ>0 인데 통합=결합이면 D2. 이 역설(D2-free 통합 lane 선택 · 또는 IIT4 Φ 가 이미 선형결합을 배제하는지)이 σ·bind 배선의 남은 설계 = go-gated Fable 설계.
+**단 미해결이었던 것**: 살아난 집합은 EMA·파생 lane 이라 높은 Φ 가 substrate 통합인지 **D2 배선 tautology**인지 못 갈랐다. **역설**: 통합돼야 Φ>0 인데 통합=결합이면 D2.
+
+### 🔒 D2 역설 해소 — σ·bind = PENDING(D2-unresolvable) ($0 R² 검정)
+
+각 lane 을 나머지로 회귀한 leave-one-out R²(H_9356 방식)로 결정론적 종속을 쟀다:
+
+| 집합 | max leave-one-out R² | 판정 |
+|---|---|---|
+| score-comp | **0.985** (rel_ctx 0.98·gap 0.95·bal 0.98) | 🧱 D2 tautology |
+| relevance | **0.995** (rel_lane·recon·rel_ema·ten_ema 전부 >0.99) | 🧱 D2 tautology |
+
+⟹ **Φ>0 을 낸 lane 은 정확히 서로의 결정론적 함수인 lane**(R² 0.98~0.995)이다. 지난 턴의 "σ·bind Δ0.51 로 구별 가능"(#3674)은 **substrate 통합이 아니라 배선 tautology 였다 — 정정**. 트레이스 lane 은 이분된다: **독립(root-disjoint)→Φ=0** · **결합(EMA·파생)→Φ>0 이나 R²>0.9 D2**. **중간이 없다**. ⟹ **σ·bind = 🧱 PENDING(D2-unresolvable)** — 현 트레이스 lane 으로는 D2-free Φ 측정 불가. 6개 PENDING 축에 합류. **repair 후 clean 작동 σ 축 = σ·stage 하나**. (reopen = D2-free 통합 lane 을 새로 기록하는 trace 확장 · 그런 lane 이 substrate 에 존재한다는 증거 필요.)
