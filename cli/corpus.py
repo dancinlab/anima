@@ -120,6 +120,8 @@ def _parse_args(argv):
             opts["surface"] = argv[i + 1]; i += 2
         elif a == "--collision-split":
             opts["collision_split"] = True; i += 1
+        elif a == "--bridge-split":
+            opts["bridge_split"] = True; i += 1
         elif a == "--nonce-fillers":
             opts["nonce_fillers"] = int(argv[i + 1]); i += 2
         elif a == "--win":
