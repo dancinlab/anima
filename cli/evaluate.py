@@ -778,6 +778,9 @@ def evaluate_usage():
     print("  anima evaluate --cf-straddle <trace.jsonl> [...]  (H_9394 STAGE-0 · $0 KILL screener before")
     print("      firing the ag-cont×dyn_w conjunction: recomputes score offline with the tension lane")
     print("      REPAIRED+audible and asks whether clock-open ∧ score≤θ can EVER coexist. 0 ⇒ cancel.)")
+    print("  anima evaluate --emit-gate-census <trace globs>  (H_9403 · $0 hygiene: is the score/tension")
+    print("      lane decorative? counts silence∧safe=true (the only cell where tension votes) + emit⟺clock")
+    print("      exactness across the whole corpus. 0 such ticks ⇒ GATE≡CLOCK, E-b cement lane CLOSED.)")
     print("  anima evaluate --cf-emit <a1-arm traces> [--cf-seed N]  (H_9402 · $0 counterfactual: if")
     print("      g_drive:=margin (E-b source-swap, H_9401), does any tick flip silence→emit under the REAL")
     print("      clock? V-gates byte-verify score'/staircase (0 DOF); Mode A + Mode-B clock-law; REAL/PERM/")
@@ -4777,6 +4780,87 @@ def _g_amp_screen(argv):
     return 0
 
 
+def _emit_gate_census(argv):
+    """H_9403 EMIT-GATE CENSUS — $0 broad-sample proof that the score/tension lane is DECORATIVE.
+
+    H_9391 proved (a1, 240 rows) min(score)=0.3442>θ ⇒ should_emit is a tautology ⇒ emit≡clock. This
+    census generalises the fact across EVERY available trace: is emit⟺safe exactly, is score>θ whenever
+    safe, and does ANY tick sit silence-despite-clock-open (the only cell where tension could decide)?
+    A silence∧safe=true tick requires score≤θ∧safe; if that count is 0 across the whole corpus, the
+    emit gate provably listens to nothing but the wall clock — closing the E-b cement lane ($0), and
+    proving the H_9391 vacuity was not a small-sample artifact. KILL-only hygiene instrument (like
+    --dead-census), NOT a lever — the finding is a wiring fact, and its closure indicts the clock itself.
+    """
+    import glob as _glob
+    THR = 0.30
+    paths = [x for x in argv if not x.startswith("--")]
+    files = []
+    for p in paths:
+        files += sorted(_glob.glob(p, recursive=True)) if any(c in p for c in "*?[") else [p]
+    if not files:
+        print("  ⇒ ⛔ no trace files"); return 0
+    tot = 0; used_files = 0
+    emit_eq_safe = 0
+    score_gt = 0; score_le = 0
+    safe_true = 0
+    silence_safe = 0          # score≤θ path could decide — the third lever
+    clockblock_scorepass = 0  # safe=false ∧ score>θ = clock is the sole binder
+    smin = 9.9; smin_open = 9.9
+    for f in files:
+        seen = False
+        try:
+            fh = open(f)
+        except Exception:
+            continue
+        for l in fh:
+            l = l.strip()
+            if not l:
+                continue
+            try: o = json.loads(l)
+            except: continue
+            if o.get("_meta") or "score" not in o or "safe" not in o or "emit" not in o:
+                continue
+            seen = True; tot += 1
+            s = float(o["score"]); sf = bool(o["safe"]); em = bool(o["emit"])
+            smin = s if s < smin else smin
+            if s > THR: score_gt += 1
+            else: score_le += 1
+            if sf:
+                safe_true += 1
+                smin_open = s if s < smin_open else smin_open
+            if em == ((s > THR) and sf): emit_eq_safe += 1
+            if (not em) and sf: silence_safe += 1
+            if (not sf) and s > THR: clockblock_scorepass += 1
+        if seen: used_files += 1
+    if tot < 100:
+        print("  ⇒ ⛔ NOT-POWERED (n=%d rows < 100)" % tot); return 0
+
+    print("═══ EMIT-GATE CENSUS · H_9403 · is the score/tension lane decorative? (θ=%.2f) ═══" % THR)
+    print("  corpus: %d files · %d ticks (emit/safe/score present)" % (used_files, tot))
+    print("  emit ⟺ (score>θ)∧safe :  %d/%d = %.4f" % (emit_eq_safe, tot, emit_eq_safe / tot))
+    print("  score>θ               :  %d/%d = %.4f   (min score %.4f · min when safe=true %.4f)"
+          % (score_gt, tot, score_gt / tot, smin, (smin_open if smin_open < 9.0 else float('nan'))))
+    print("  safe=true ticks       :  %d   (all emitted: %s)"
+          % (safe_true, "YES" if silence_safe == 0 else ("NO — %d silent" % silence_safe)))
+    print("  🔑 silence ∧ safe=true (score≤θ could decide) = %d   ← the only cell where tension votes"
+          % silence_safe)
+    print("  clock-blocked ∧ score>θ (clock is sole binder) = %d" % clockblock_scorepass)
+    print()
+    if silence_safe == 0:
+        print("  ⇒ 🧱 SCORE-DECORATIVE / GATE≡CLOCK — 0 silence∧safe ticks across %d ticks: whenever the" % tot)
+        print("     clock opens, score>θ is already satisfied, so g/tension/margin is NEVER the binding")
+        print("     term at the gate. emit⟺clock (generalises H_9391 vacuity beyond its 240-row a1 sample).")
+        print("     ⇒ the E-b cement lane is CLOSED at this regime: unblocking the clock (--rate-sec) makes")
+        print("     safe=true ⇒ score>θ auto-satisfied ⇒ every arm (real margin, noise, shuffle) emits =")
+        print("     saturation, MI=0, arm-selectivity un-measurable (H_9391 INVALID-SATURATED). A source-")
+        print("     swap cannot be cemented against THIS daemon; only a p5-rewire (owner design) reopens it.")
+    else:
+        print("  ⇒ 🔎 %d silence∧safe ticks exist — score CAN be the swing vote in this corpus; the emit" % silence_safe)
+        print("     gate is NOT a pure clock function here. That subset is the natural $0 test of whether")
+        print("     tension/margin decides emit (no clock unblocking needed).")
+    return 0
+
+
 def _cf_emit(argv):
     """H_9402 COUNTERFACTUAL-EMIT SCREEN — the E-b crack's cement precondition, $0 offline.
 
@@ -6535,7 +6619,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -6808,6 +6892,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 1 and argv[0] == "--emit-gate-census":
+        return _emit_gate_census(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
         return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":
