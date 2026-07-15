@@ -27,6 +27,7 @@ hexa `to_string(float)` == Python `repr(float)` (empirically pinned: 1/3 → "0.
 """
 import glob
 import os
+import random
 import shutil
 import sys
 
@@ -1399,6 +1400,11 @@ def anima_consciousness_mode(ckpt, argv=None):
     # H_9337 · the immune store's recall margin on the utterance, taken BEFORE it was bound.
     # None until the daemon has said anything (tick 0 falls back to the seed key). See :1497.
     pending_rel = None
+    # H_9357 · the immune store's top-2 affinity GAP (d2²−d1²)/2 on the utterance, taken BEFORE
+    # it was bound — same recognition-before-memorisation order as pending_rel. d2 (the 2nd-nearest
+    # prototype) is the ONE reverse-store quantity NOT already an input to emit_drive, so it is the
+    # only wiring-free G candidate (H_9356: ag_g_drive was A's own complement). See :1562.
+    pending_gap = None
 
     # ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ──
     rel_ema = 0.5
@@ -1448,6 +1454,13 @@ def anima_consciousness_mode(ckpt, argv=None):
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
+    # H_9357 · which reverse signal feeds ag_g_drive (the A⇄G tension's G pole). a0 = current
+    # production wiring (ag_g_drive = A's own complement — the H_9356 tautology, kept as the
+    # falsifiability-matrix A0 arm that MUST fail the independence gate). a1 = REAL-G: the immune
+    # store's top-2 affinity gap (wiring-free d2). a3 = NOISE-G: a seeded per-tick PRNG, the
+    # control that separates "a genuine 2nd engine" from "just a causal handle" (a2 SHUFFLE-G is
+    # a measurement-time permutation of an a1 trace, not a run mode). Default a0 = prod unchanged.
+    _g_arm = anima_flag_value(_cargv, "--g-arm", "ANIMA_G_ARM", "a0")
     # H_9328 · seed_rng is DERIVED PER TICK, never held constant across the session.
     # MEASURED defect: holding it at `_sample_seed` made the mouth redraw the SAME 80 bytes
     # every tick (gtext sha count = 1 over 30 ticks), so a 30-tick rollout carried exactly ONE
@@ -1559,8 +1572,23 @@ def anima_consciousness_mode(ckpt, argv=None):
         psi_lprec = float(lanes[4])
 
         # ── (C-R3) PER-TICK CONFLICT → A⇄G SETTLE BUDGET (H_9095 rung-3) ──
+        # H_9357 · the G pole. a0 keeps the H_9356 tautology (G = A's complement, wiring-degenerate);
+        # a1 pulls it from the immune store's top-2 gap (wiring-free d2, taken before-bind at :1993);
+        # a3 is seeded per-tick noise (the "causal handle vs 2nd engine" separator). g_recog in [0,1].
         ag_a_drive = emit_drive
-        ag_g_drive = 0.0 - (1.0 - emit_drive)
+        if _g_arm == "a1":
+            # pending_gap is the afield top-2 gap on the LAST utterance (1-tick lag, like
+            # pending_rel); None before the daemon has spoken → no reverse signal yet = 0.
+            g_recog = _afs_clip01(pending_gap if pending_gap is not None else 0.0)
+            ag_g_drive = 0.0 - g_recog
+        elif _g_arm == "a3":
+            # explicit int seed (Python 3.14 rejects tuple seeds); deterministic per (seed, tick).
+            _g_seed = (_sample_seed * 2654435761 + tick * 40503 + 0x9357) & 0x7FFFFFFF
+            g_recog = random.Random(_g_seed).random()
+            ag_g_drive = 0.0 - g_recog
+        else:  # a0 — current production wiring (the tautology arm)
+            g_recog = 1.0 - emit_drive
+            ag_g_drive = 0.0 - (1.0 - emit_drive)
         ag_conflict = conflict_scalar(ag_a_drive, ag_g_drive)
         ag_budget = conflict_recruited_depth(ag_conflict, 4, 6)
         ag_pop = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
@@ -1983,6 +2011,13 @@ def anima_consciousness_mode(ckpt, argv=None):
             # Read on the next tick (:1493). Measured after the field has already absorbed the
             # text, it would only report how well the field memorised it.
             pending_recon = vadapt_field_recon_err(afield, feat)
+            # H_9357 · the afield's top-2 gap (d2²−d1²)/2 on THIS utterance, before adapting to it.
+            # d1 = recon_err (already in σ(emit_drive)); d2 (the 2nd-nearest prototype) is the
+            # wiring-free reverse quantity. The afield grows (unlike the immune store, which stayed
+            # 1-cell in local smoke), so its d2 actually varies. G-INDEP tests whether d2 adds
+            # variance independent of d1/emit_drive; if it doesn't, the gate returns SECOND-A.
+            _gd12 = vadapt_field_two_recon_err(afield, feat)
+            pending_gap = (_gd12[1] * _gd12[1] - _gd12[0] * _gd12[0]) / 2.0
             afield = vadapt_field_step(afield, feat, cfg)
             _h1058_grow_feats.append(list(feat))
             post_cells = vadapt_field_cells(afield)
@@ -1991,6 +2026,8 @@ def anima_consciousness_mode(ckpt, argv=None):
             # H_9337 · recognition BEFORE memorisation — ask how familiar this utterance was
             # while the store still does not contain it. Read on the next tick (:1497).
             pending_rel = immune_memory_recall_margin_text(immune, g_text)
+            # H_9357 · same order, the top-2 gap (d2 = the wiring-free reverse quantity).
+            pending_gap = immune_memory_recall_gap_text(immune, g_text)
             immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
             last_gtext = g_text
 
@@ -2115,6 +2152,10 @@ def anima_consciousness_mode(ckpt, argv=None):
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
                 # (phi_leg.py TRUE-consumed-bytes context source; a_substrate_disjoint · p5).
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
+                # H_9357 · the A⇄G tension's G pole + its arm, so the panel can run G-INDEP
+                # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
+                "g_arm": str(_g_arm), "ag_g_drive": float(ag_g_drive),
+                "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
                 # roots + residuals + DEP-arg indep scalars (replay inputs)
                 "rel_lane": float(rel_lane), "recon_err": float(recon_err),
                 "cell_count": int(cell_count),
