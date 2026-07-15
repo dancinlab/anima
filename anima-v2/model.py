@@ -111,13 +111,23 @@ def init_params(cfg, rng, with_store=True):
         p["W_k"] = n((d, d), 0.02)          # entity-name embedding -> store key
         p["W_q"] = n((d, d), 0.02)          # trunk hidden -> query
         p["val"] = n((2, d), 0.02)          # 2 polarity value vectors
-        p["W_out"] = n((2 * d, V), 0.02)    # concat(store value, query hidden) -> bytes
+        # readout. V2_1/V2_2: linear W_out over concat(v, hidden_q) — CANNOT express the
+        # answer=polarity XOR operator (a linear map has no v*hidden_q product term; ORACLE
+        # capped at 0.756, the exact no-interaction logistic ceiling). V2_3: a 2-layer MLP
+        # readout (W_h -> GELU -> W_out) CAN form the interaction. cfg["readout"]="mlp"|"linear".
+        rd = cfg.get("readout", "linear")
+        if rd == "mlp":
+            Hh = cfg.get("readout_hidden", 64)
+            p["W_h"] = n((2 * d, Hh), 0.02)     # concat -> hidden (nonlinear)
+            p["W_out"] = n((Hh, V), 0.02)       # hidden -> bytes
+        else:
+            p["W_out"] = n((2 * d, V), 0.02)    # concat(store value, query hidden) -> bytes
         p["lam_raw"] = np.array([0.0])      # sigmoid(0) = 0.5 (bars.json lambda_init)
     return p
 
 
 TRUNK_KEYS_PREFIX = ("emb", "pos", "ln_f", "l")
-BRIDGE_KEYS = ("W_k", "W_q", "val", "W_out", "lam_raw")
+BRIDGE_KEYS = ("W_k", "W_q", "val", "W_out", "W_h", "lam_raw")
 
 
 def is_bridge(name):
@@ -266,20 +276,42 @@ def bridge_fwd(p, cfg, hidden_q, store_ids, val_idx, mask_slots=None, oracle_slo
     # operators from the same store -- the path is unsolvable, so no gradient shapes it and
     # it stays at init (measured: flip-coherence 0.000, all arms). C2 caught it before P1.
     cat = np.concatenate([v, hidden_q], axis=-1)  # (B,2d)
-    logits = cat @ p["W_out"]                     # (B,V)
+    mlp = "W_h" in p
+    if mlp:
+        pre = cat @ p["W_h"]                       # (B,Hh)
+        hmid = gelu_fwd(pre)
+        logits = hmid @ p["W_out"]                 # (B,V) — nonlinear readout, can XOR
+    else:
+        pre = hmid = None
+        logits = cat @ p["W_out"]                  # (B,V) — linear (V2_1/V2_2)
     ps = softmax(logits, -1)
     return ps, {"keys": keys, "e": e, "q": q, "a": a, "vals": vals, "v": v, "cat": cat,
-                "ps": ps, "hidden_q": hidden_q, "store_ids": store_ids,
+                "pre": pre, "hmid": hmid, "mlp": mlp,
+                "logits": logits, "ps": ps, "hidden_q": hidden_q, "store_ids": store_ids,
                 "val_idx": val_idx}
 
 
-def bridge_bwd(p, cfg, c, dps):
-    """dps: (B,V) grad wrt p_store. Returns (bridge grads, dhidden_q, demb_from_keys)."""
+def bridge_bwd(p, cfg, c, dupstream, d_is_logits=False):
+    """dupstream: (B,V). In MIX mode it is d(loss)/d(p_store) and we backprop through the
+    store's own softmax. In LOGIT-ADD mode (V2_2) the store's raw logits are ADDED to the
+    trunk logits before a SINGLE shared softmax, so there is no separate store softmax —
+    the gradient arriving at the store logits IS dupstream; pass d_is_logits=True to skip
+    the softmax-bwd. Returns (bridge grads, dhidden_q, demb_from_keys)."""
     g = {}
-    ps = c["ps"]
-    dlogits = ps * (dps - (dps * ps).sum(-1, keepdims=True))       # softmax bwd
-    g["W_out"] = c["cat"].T @ dlogits
-    dcat = dlogits @ p["W_out"].T                                  # (B,2d)
+    if d_is_logits:
+        dlogits = dupstream
+    else:
+        ps = c["ps"]
+        dlogits = ps * (dupstream - (dupstream * ps).sum(-1, keepdims=True))  # softmax bwd
+    if c["mlp"]:
+        g["W_out"] = c["hmid"].T @ dlogits
+        dhmid = dlogits @ p["W_out"].T                            # (B,Hh)
+        dpre = gelu_bwd(dhmid, c["pre"])
+        g["W_h"] = c["cat"].T @ dpre
+        dcat = dpre @ p["W_h"].T                                   # (B,2d)
+    else:
+        g["W_out"] = c["cat"].T @ dlogits
+        dcat = dlogits @ p["W_out"].T                             # (B,2d)
     d = cfg["d"]
     dv, dhq_direct = dcat[:, :d], dcat[:, d:]                      # split the concat
 

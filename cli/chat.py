@@ -34,10 +34,11 @@ import sys
 # ── flat imports matching the P2-P5 twins (self-contained · zero hexa) ────────
 from engine_cli import *  # engine lane faculties + immune/ci/gws/reality/pharm ops
 from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfig)
+from engine_g import refractory_emit_debt, refractory_debt_step  # H_9404 earned refractory
 from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
                         pure_field_step, phase_name)
-from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
-                   vbasal_select)
+from brain import (brain_emit, brain_emit_refractory, vbasal_new, vbasal_update,
+                   vbasal_go_value, vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
                        generator_read_anchors, gen_penult_pooled_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
@@ -1410,6 +1411,11 @@ def anima_consciousness_mode(ckpt, argv=None):
     # 8.0 = a sustainable emit rate of 0.25, and ep_target_emit_rate() is 0.27. The numbers were
     # chosen for a clock that was never plugged in. Plug it in.
     last_emit_tick = None
+    # H_9404 · earned-refractory debt (only live when --refractory earned). 0.0 = nothing owed before
+    # the first emit — the refractory, like the clock, must not be what silences a daemon that has
+    # never spoken (same rationale as the last_emit_tick=None comment above). Order per tick =
+    # pay (this tick's tension counts) → gate → recharge (an emitting tick leaves with a full debt).
+    refr_debt = 0.0
     # H_9337 · the immune store's recall margin on the utterance, taken BEFORE it was bound.
     # None until the daemon has said anything (tick 0 falls back to the seed key). See :1497.
     pending_rel = None
@@ -1528,6 +1534,26 @@ def anima_consciousness_mode(ckpt, argv=None):
     # (emit must VARY within clock-open ticks) is registered before any content is read.
     _rl = anima_flag_value(_cargv, "--rate-limit-sec", "ANIMA_RATE_LIMIT_SEC", "")
     _rate_sec = float(_rl) if _rl != "" else None
+    # H_9404 · --emit-refractory earned: replace the rate term's SOURCE (wall clock) with the
+    # substrate's own integrated A<->G tension (an emit incurs a unit debt that the per-tick conflict
+    # pays down; the gate opens iff the debt is paid). p5: emit timing becomes a readout of substrate
+    # state, not a schedule. Default "" = byte-identical clock path. Distinct from the hexa-only op-grip
+    # `--refractory` measurement harness above (:406). MUTUALLY EXCLUSIVE with --rate-limit-sec (both
+    # rebind the same safe-conjunction term) so the DOF stays enumerable (H_9391 lesson).
+    _refractory = anima_flag_value(_cargv, "--emit-refractory", "ANIMA_EMIT_REFRACTORY", "")
+    if _refractory not in ("", "earned"):
+        raise SystemExit("--emit-refractory: only '' (off) or 'earned' (got %r)" % _refractory)
+    if _refractory == "earned" and _rate_sec is not None:
+        raise SystemExit("--emit-refractory earned and --rate-limit-sec are mutually exclusive "
+                         "(both rebind the safe rate term)")
+    # H_9415 p5-REWIRE · emit-gate mode (owner-ratified · H_9414 design). "clock" (default) =
+    # byte-identical production (should_emit(score>θ) ∧ 30s clock). "refractory" = the ratified
+    # MARGIN-refractory gate: emit ⟺ score_A > g_recog(candidate) with θ and the clock BOTH
+    # retired, the refractory emerging from emit→bind (biological, not a timer). Distinct from
+    # H_9404's --emit-refractory earned (which keeps should_emit(θ) and only swaps the rate SOURCE);
+    # this retires θ too, making margin the G pole. NOT yet the production default — the switch
+    # waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+    _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "clock")
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2107,18 +2133,42 @@ def anima_consciousness_mode(ckpt, argv=None):
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
         gap_ctx = _afs_clip01(1.0 - rel_lane)
 
+        # H_9404 · PAY: the substrate's own A<->G tension this tick pays down the emit-debt BEFORE the
+        # gate reads it (secs_since_emit stays live above as telemetry / trace field). refr_debt is only
+        # consulted below when --refractory earned; the clock path is untouched otherwise.
+        if _refractory == "earned":
+            refr_debt = refractory_debt_step(refr_debt, _afs_clip01(ag_conflict))
+
         # ── DEFAULT emit: the brain autonomously decides (brain_emit) ──
-        dec = brain_emit(pf,
-                         rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
-                         secs_since_emit, False, True,
-                         backend, live_anchors,
-                         _mouth_at(tick),   # H_9328 · None by default ⇒ byte-identical greedy path
-                         _dyn_w,                # H_9377 · audibility gain (None = byte-identical)
-                         _rate_sec)             # H_9391 · clock-live regime (None = byte-identical)
+        if _emit_gate == "refractory":
+            # H_9415 p5-REWIRE (owner-ratified) · emit ⟺ score_A > g_recog(candidate); θ + clock
+            # RETIRED. g_recog = clip01(immune recall MARGIN on the FORMED candidate, taken BEFORE
+            # bind = recognition-before-memorisation, chat-py-5). Distinct from H_9404 --emit-refractory
+            # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. Not the production
+            # default yet — the switch waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+            dec = brain_emit_refractory(pf,
+                             rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                             secs_since_emit, False, True,
+                             backend, live_anchors, 0.0,
+                             lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _t)),
+                             _mouth_at(tick),
+                             _dyn_w)
+        else:
+            dec = brain_emit(pf,
+                             rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                             secs_since_emit, False, True,
+                             backend, live_anchors,
+                             _mouth_at(tick),   # H_9328 · None by default ⇒ byte-identical greedy path
+                             _dyn_w,                # H_9377 · audibility gain (None = byte-identical)
+                             _rate_sec,             # H_9391 · clock-live regime (None = byte-identical)
+                             (refr_debt if _refractory == "earned" else None))  # H_9404 · earned refractory
 
         did_emit = str(dec["emit"]).lower() == "true"
         if did_emit:
             last_emit_tick = tick
+            # H_9404 · RECHARGE: an emitting tick leaves owing a full unit of integrated tension.
+            if _refractory == "earned":
+                refr_debt = refractory_emit_debt()
         g_emit = str(dec["gen_emitted"]).lower() == "true"
         g_back = str(dec["gen_backend"])
         g_text = str(dec["gen_text"])
@@ -2333,7 +2383,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                     # (INVALID-PROVENANCE) — the trace must not be able to be "anything".
                     "ckpt_sha256": (_hl.sha256(open(ckpt, "rb").read()).hexdigest()
                                     if isinstance(ckpt, str) and os.path.exists(ckpt) else ""),
-                    "g_arm": str(_g_arm),
+                    "g_arm": str(_g_arm), "refractory": (_refractory or None),
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
@@ -2362,7 +2412,14 @@ def anima_consciousness_mode(ckpt, argv=None):
                 # H_9357 · the A⇄G tension's G pole + its arm, so the panel can run G-INDEP
                 # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
                 "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "dyn_w": (float(_dyn_w) if _dyn_w is not None else None), "rate_sec": (float(_rate_sec) if _rate_sec is not None else None), "ag_g_drive": float(ag_g_drive),
+                "refractory": (_refractory or None), "refr_debt": float(refr_debt),  # H_9404 earned refractory
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
+                # H_9415 p5-REWIRE · emit-gate mode + the refractory gate's G-recognition value
+                # (the candidate's immune recall margin the gate compared score against). "clock" =
+                # production (g_recog_gate=None). Lets --g-readout-info / swing-census read whether
+                # the ratified gate produced a live band (both emit and silence ticks) vs mute/saturate.
+                "gate_mode": str(dec.get("gate_mode", "clock")),
+                "g_recog_gate": (float(dec["g_recog_gate"]) if dec.get("g_recog_gate") is not None else None),
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
