@@ -2180,6 +2180,13 @@ def anima_consciousness_mode(ckpt, argv=None):
                 # its winner (σ·stage argmax test), and the reality monitor (σ·witness).
                 "lanes": [float(x) for x in lanes], "gws_w": int(gws_w),
                 "reality": float(reality),
+                # H_9351 σ·bind reopen: pre-summation component lanes (distinct faculties, NOT
+                # deterministic mirrors of rel_lane) — the D2-free integration candidate the
+                # summed cur_indep/rel_indep hide. cb=cerebellum surprise · af_val/af_aro=amygdala
+                # valence/arousal · ca3=hippocampus replay · wm=working-memory. (Fable D2 spec.)
+                "cb_surprise": float(cb_surprise), "af_val": float(af_val),
+                "af_aro": float(af_aro), "ca3_ctx": float(ca3_ctx),
+                "wm_active": float(wm_active),
                 # roots + residuals + DEP-arg indep scalars (replay inputs)
                 "rel_lane": float(rel_lane), "recon_err": float(recon_err),
                 "cell_count": int(cell_count),
