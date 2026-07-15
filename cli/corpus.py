@@ -2209,17 +2209,21 @@ def build_deltainj(atoms_path):
         carrier_seed = "%s%s%s => " % (_DELTAINJ_PREFIX, stem, _DELTAINJ_CARRIER)
         filler_seed = "%s%s%s => " % (_DELTAINJ_PREFIX, stem, _DELTAINJ_FILLER)
         filler2_seed = "%s%s%s => " % (_DELTAINJ_PREFIX, stem, _DELTAINJ_FILLER2)
+        flip0_seed = "%s%s고 => " % (_DELTAINJ_PREFIX, stem)   # H_9397 arm B: TRAINED flip0 carrier `고` (3B)
         op0 = pfx_b + L                                  # operator-site window start (raw seed bytes)
-        op1 = op0 + 10                                   # end (all three morphemes are 10 B)
+        op1 = op0 + 10                                   # end (all three 10B morphemes; flip0 `고` is 3B, sign-only)
         assert carrier_seed.encode()[op0:op1] == cB and filler_seed.encode()[op0:op1] == fB, \
             "deltainj op-window byte-mismatch: %r" % stem
-        # expected m=logP(긍)−logP(부) sign. filler (positive) → answer follows stem polarity: +1 if pol==1.
-        # carrier (negated) → flipped: −1 if pol==1. Their opposition IS the behavioral pre-gate.
+        # expected m=logP(긍)−logP(부) sign. filler/flip0 (positive/declarative) → answer follows stem
+        # polarity: +1 if pol==1. carrier (negated) → flipped: −1 if pol==1. Arm B: does the TRAINED flip0
+        # `고` un-flip (=stem polarity → carrier consumed, 고있다 OOD) or flip like the carrier (=stem-determined)?
         esign_filler = 1 if pol == 1 else -1
         esign_carrier = -esign_filler
+        esign_flip0 = esign_filler                       # trained declarative predicts stem polarity (un-flipped)
         items.append({"stem": stem, "pol": pol, "L": L, "split": split,
                       "carrier_seed": carrier_seed, "filler_seed": filler_seed, "filler2_seed": filler2_seed,
-                      "op_row": [op0, op1], "esign_carrier": esign_carrier, "esign_filler": esign_filler})
+                      "flip0_seed": flip0_seed, "op_row": [op0, op1],
+                      "esign_carrier": esign_carrier, "esign_filler": esign_filler, "esign_flip0": esign_flip0})
     n_seen = sum(1 for it in items if it["split"] == "train")
     n_held = sum(1 for it in items if it["split"] != "train")
     return {"surface": "delta_inject", "prefix_bytes": pfx_b,
