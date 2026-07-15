@@ -4965,6 +4965,7 @@ _KNOWN_FLAGS = frozenset((
     "--result-file", "--collide-select", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
+    "--bridge-trace", "--flip0", "--theta",
 ))
 
 
@@ -4982,6 +4983,239 @@ def _reject_unknown_flags(argv):
             "\n  (an unknown flag is rejected, not ignored — a silently-dropped --out " \
             "loses the whole run's result with a green exit code)"
     return ""
+
+
+# ───────────────────────────────────────────────────────────────────────────
+# L4 — BRIDGE-TRACE path-attribution census (RUNTIME-BRIDGE campaign · H_9388).
+#
+# The frontier converged to "the operator does not runtime-look-up the declaration store
+# (TWO-LANE, no bridge)". W_wt = the weight-stored declaration synthesised by the operator.
+# In flip1 `{s}지 않다 => ` (KO BOUND suffix) or `not {s} => ` (EN FREE word) the stem bytes
+# are ALREADY inside the operator's receptive field, so the circuit the wall needs
+# (stem→polarity-feature→transport→sign-flip) is all conv parts. The wipeout so far is
+# indistinguishable from "the cache was always cheaper and no stem-key store was ever built".
+# This census decomposes the flip1 answer-byte MARGIN into how much comes from the stem
+# position vs the operator (slot) position.
+#
+# METHOD — INPUT-BYTE GRADED OCCLUSION, not hidden-swap (H_9331's swap-patch died on a binary
+# readout scramble floor). We never touch the trunk; we replace a byte SPAN of the prompt with
+# an equal-BYTE-LENGTH neutral fill (0x20 space) so the T-window right-alignment is preserved
+# exactly (decode._seed_to_tok aligns by BYTES; a 1B-for-3B swap would shift everything). The
+# contribution of a region = how much the 2AFC margin drops when that region is occluded.
+#
+#   margin = NLL(counterfactual) - NLL(gold)          (>0 ⟺ the model prefers the correct answer)
+#   stem_contrib = margin_full - margin(stem occluded)
+#   slot_contrib = margin_full - margin(operator occluded)
+#   ctrl_contrib = margin_full - margin(matched-byte-count slice of the FIXED template head occluded)
+#   stem_net     = stem_contrib - ctrl_contrib        (control-corrected — probe-defect-census:
+#                                                       never read a raw contribution; the matched-length
+#                                                       neutral occlusion is the paired same-class control)
+#
+# POSITIVE-CONTROL GATE (flip0, where the declarative lookup demonstrably works): the flip0 answer
+# is the stem-keyed fact itself, so stem_net MUST dominate there. If flip0 stem-share <= θ or the
+# paired sign-flip permutation p is not significant, the INSTRUMENT is broken → discard, do not read
+# flip1. Sequential: read flip0 first (gate), then the flip1 tiers.
+#
+# Device-stamped (GPU-hidden byte-pin lesson): the probe reads hidden→logits; a CUDA upgrade moves
+# the low bits. We stamp GPU/CPU into every output; a census meant to run $0 on aiden CPU stamps CPU.
+# The guard can fail loudly (device mismatch is refused, not silently compared).
+# ───────────────────────────────────────────────────────────────────────────
+def _bt_margin(np, W, seed, gold, cf, T):
+    """2AFC margin = NLL(counterfactual) - NLL(gold) for a (possibly occluded) seed.
+    >0 ⟺ the model assigns the gold answer lower NLL (prefers it)."""
+    n_g = _xbind_cont_nll(np, clm, W, seed, gold, T)
+    n_c = _xbind_cont_nll(np, clm, W, seed, cf, T)
+    return n_c - n_g
+
+
+def _bt_occlude(seed_b, lo, hi):
+    """Replace seed bytes [lo,hi) with 0x20 (space) — equal byte length, so the right-aligned
+    T-window does not shift. Returns the occluded seed as a surrogateescape str."""
+    out = bytearray(seed_b)
+    for i in range(lo, hi):
+        out[i] = 0x20
+    return bytes(out).decode('utf-8', 'surrogateescape')
+
+
+def _bt_common_head(seeds):
+    """Byte length of the common template head shared by every scored seed
+    (`이 영화 ` / `this movie is `). This is the NEUTRAL region — the matched-length
+    control occlusion is taken from here, and every byte AFTER it up to ` => ` that is not
+    the stem is the OPERATOR/slot (works for a BOUND post-stem suffix AND a FREE pre-posed
+    word). Falls back to 0 (empty head) if the seeds share no prefix."""
+    if not seeds:
+        return 0
+    pref = seeds[0]
+    for s in seeds[1:]:
+        i = 0
+        m = min(len(pref), len(s))
+        while i < m and pref[i] == s[i]:
+            i += 1
+        pref = pref[:i]
+        if not pref:
+            return 0
+    return len(pref.encode('utf-8', 'surrogateescape'))
+
+
+def _bt_spans(seed, stem, head_b):
+    """Byte offsets in seed.encode() for the (stem, slot, control) partition.
+    Layout: <FIXED TEMPLATE HEAD (head_b)><…operator…><stem><…operator…> => .
+      control = the first `len(stem)` bytes of the fixed head (neutral, matched byte count).
+      stem    = the located stem substring (first occurrence at/after head_b).
+      slot    = every byte in [head_b, arrow) that is NOT the stem — the operator morphemes
+                (지 않다 / not / 안 / 별로 …), whether pre- or post-posed relative to the stem.
+    Returns None if the stem cannot be located (item skipped, counted)."""
+    sb = seed.encode('utf-8', 'surrogateescape')
+    arrow = seed.rfind(" => ")
+    if arrow < 0:
+        arrow = len(seed)
+    arrow_b = len(seed[:arrow].encode('utf-8', 'surrogateescape'))
+    ci = seed.find(stem)
+    if ci < 0:
+        return None
+    stem_lo = len(seed[:ci].encode('utf-8', 'surrogateescape'))
+    stem_b = len(stem.encode('utf-8', 'surrogateescape'))
+    stem_hi = stem_lo + stem_b
+    return sb, stem_lo, stem_hi, head_b, arrow_b
+
+
+def bridge_trace_run(argv):
+    """`anima-py evaluate <ckpt> --bridge-trace <flip1.json> --flip0 <flip0.json> --out <f.json>`
+
+    L4 path-attribution census. Decomposes the flip1 answer-byte margin into stem-position vs
+    operator(slot)-position contributions by equal-byte-length input occlusion, control-corrected
+    with a matched-length neutral-head occlusion, with a paired sign-flip permutation p. The flip0
+    manifest is the POSITIVE CONTROL: stem_net must dominate there or the instrument is discarded.
+    Read-only w.r.t. weights (production forward). Device-stamped."""
+    import numpy as np
+    import time
+    ckpt = argv[0]
+    f1_path = evaluate_strval(argv[1:], "--bridge-trace", "")
+    f0_path = evaluate_strval(argv[1:], "--flip0", "")
+    out_path = evaluate_strval(argv[1:], "--out", "bridge_trace.json")
+    n_perm = evaluate_intval(argv[1:], "--perm", 2000)
+    seed_rng = evaluate_intval(argv[1:], "--seed", 7)
+    theta = float(evaluate_strval(argv[1:], "--theta", "0.5"))
+    dev = "GPU" if clm.cuda_available() else "CPU"
+
+    f1 = json.load(open(f1_path))
+    T = evaluate_intval(argv[1:], "--win", int(f1.get("win", 64)))
+    print("=== anima evaluate --bridge-trace — L4 path-attribution census (H_9388) ===")
+    print("ckpt: %s  device=%s  win=%d  perm=%d  theta=%.2f" % (ckpt, dev, T, n_perm, theta))
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+
+    def score_manifest(spec):
+        rows, skipped = [], 0
+        all_seeds = [it["seed"] for split in ("heldout", "seen") for it in spec.get(split, [])]
+        head_b = _bt_common_head(all_seeds)
+        for split in ("heldout", "seen"):
+            for it in spec.get(split, []):
+                seed = it["seed"]
+                stem = it.get("stem") or it.get("a")
+                gold = it["gold"]; cf = it["counterfactual"]
+                sp = _bt_spans(seed, stem, head_b)
+                if sp is None:
+                    skipped += 1
+                    continue
+                sb, stem_lo, stem_hi, head_len, arrow_b = sp
+                stem_b = stem_hi - stem_lo
+                m_full = _bt_margin(np, W, seed, gold, cf, T)
+                m_stem = _bt_margin(np, W, _bt_occlude(sb, stem_lo, stem_hi), gold, cf, T)
+                slot_occ = bytearray(sb)
+                for i in range(head_len, arrow_b):
+                    if not (stem_lo <= i < stem_hi):
+                        slot_occ[i] = 0x20
+                m_slot = _bt_margin(np, W, bytes(slot_occ).decode('utf-8', 'surrogateescape'),
+                                    gold, cf, T)
+                cctrl_hi = min(stem_b, head_len)
+                m_ctrl = _bt_margin(np, W, _bt_occlude(sb, 0, cctrl_hi), gold, cf, T)
+                rows.append({
+                    "arm": (it.get("b", "").split("|")[0] or "?"),
+                    "split": split, "stem": stem, "pol": it.get("pol"),
+                    "margin_full": m_full, "margin_stem_occ": m_stem,
+                    "margin_slot_occ": m_slot, "margin_ctrl_occ": m_ctrl,
+                    "stem_contrib": m_full - m_stem, "slot_contrib": m_full - m_slot,
+                    "ctrl_contrib": m_full - m_ctrl,
+                    "stem_net": m_ctrl - m_stem,   # (m_full-m_stem) - (m_full-m_ctrl)
+                })
+        return rows, skipped
+
+    def summarize(rows, label):
+        if not rows:
+            return {"label": label, "n": 0}
+        sn = np.array([r["stem_net"] for r in rows])
+        sc = np.array([r["slot_contrib"] for r in rows])
+        stc = np.array([r["stem_contrib"] for r in rows])
+        ctc = np.array([r["ctrl_contrib"] for r in rows])
+        mean_sn = float(sn.mean()); mean_slot = float(sc.mean())
+        denom = abs(mean_sn) + abs(mean_slot)
+        stem_share = float(mean_sn / denom) if denom > 1e-12 else 0.0
+        rng = np.random.RandomState(seed_rng)
+        obs = float(sn.mean())
+        ge = 0
+        for _ in range(n_perm):
+            signs = rng.choice([-1.0, 1.0], size=len(sn))
+            if abs(float((sn * signs).mean())) >= abs(obs) - 1e-12:
+                ge += 1
+        p_perm = (ge + 1) / (n_perm + 1)
+        return {"label": label, "n": len(rows),
+                "mean_stem_contrib": float(stc.mean()), "mean_ctrl_contrib": float(ctc.mean()),
+                "mean_stem_net": mean_sn,
+                "sd_stem_net": float(sn.std(ddof=1)) if len(sn) > 1 else 0.0,
+                "mean_slot_contrib": mean_slot, "stem_share": stem_share, "perm_p": p_perm}
+
+    t0 = time.time()
+    r1, sk1 = score_manifest(f1)
+    result = {"ckpt": ckpt, "device": dev, "win": T, "perm": n_perm, "theta": theta,
+              "flip1_skipped": sk1, "flip1": {}, "flip0": {}}
+    arms1 = sorted(set(r["arm"] for r in r1))
+    result["flip1"]["overall"] = summarize(r1, "flip1/overall")
+    for a in arms1:
+        result["flip1"][a] = summarize([r for r in r1 if r["arm"] == a], "flip1/" + a)
+    for sp in ("heldout", "seen"):
+        result["flip1"]["split_" + sp] = summarize([r for r in r1 if r["split"] == sp],
+                                                    "flip1/" + sp)
+
+    gate = {"ran": False}
+    if f0_path:
+        f0 = json.load(open(f0_path))
+        r0, sk0 = score_manifest(f0)
+        result["flip0_skipped"] = sk0
+        result["flip0"]["overall"] = summarize(r0, "flip0/overall")
+        for sp in ("heldout", "seen"):
+            result["flip0"]["split_" + sp] = summarize([r for r in r0 if r["split"] == sp],
+                                                        "flip0/" + sp)
+        ov = result["flip0"]["overall"]
+        gate = {"ran": True, "stem_share": ov.get("stem_share", 0.0),
+                "mean_stem_net": ov.get("mean_stem_net", 0.0), "perm_p": ov.get("perm_p", 1.0),
+                "pass": bool(ov.get("stem_share", 0.0) > theta and ov.get("mean_stem_net", 0.0) > 0
+                             and ov.get("perm_p", 1.0) < 0.05)}
+    result["positive_control_gate"] = gate
+    result["rows_flip1"] = r1
+    result["wall_sec"] = time.time() - t0
+
+    json.dump(result, open(out_path, "w"), ensure_ascii=False, indent=1)
+
+    print("--- POSITIVE-CONTROL GATE (flip0) ---")
+    if gate["ran"]:
+        print("  flip0 stem_share=%.3f  mean_stem_net=%+.4f  perm_p=%.4f  ->  %s"
+              % (gate["stem_share"], gate["mean_stem_net"], gate["perm_p"],
+                 "PASS (instrument valid)" if gate["pass"]
+                 else "FAIL (instrument broken → flip1 undecidable)"))
+    else:
+        print("  no --flip0 manifest given — gate NOT run (flip1 read is uncalibrated)")
+    print("--- FLIP1 path attribution (device=%s) ---" % dev)
+    for k in ["overall"] + arms1 + ["split_heldout", "split_seen"]:
+        s = result["flip1"].get(k, {})
+        if s.get("n"):
+            print("  %-16s n=%3d  stem_net=%+.4f (sd %.4f)  slot_contrib=%+.4f  stem_share=%.3f  perm_p=%.4f"
+                  % (k, s["n"], s["mean_stem_net"], s["sd_stem_net"], s["mean_slot_contrib"],
+                     s["stem_share"], s["perm_p"]))
+    print("wrote %s  (%.1fs, %s)" % (out_path, result["wall_sec"], dev))
+    return 0
 
 
 def main(argv):
@@ -5122,6 +5356,8 @@ def main(argv):
     # --xbind <manifest.json>: held-out XBIND recombination (G1 reopen lane a · card H_9267).
     # argv[0]=ckpt; xbind_run reads --xbind/--out/--arm from the tail. Engine-native greedy
     # D-acc on held-out xor(pol_a,pol_b) pairs (the corpus×task-class measure-swap exit).
+    if "--bridge-trace" in argv:
+        return bridge_trace_run(argv)
     if "--xbind" in argv:
         return xbind_run(argv)
     # --xfan <manifest.json>: held-out XFAN one-to-many fan (G6 reopen lane · card H_9271).
