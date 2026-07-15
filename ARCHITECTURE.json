@@ -565,6 +565,24 @@
             "detail": "수리=chat.py:1563 을 A 여집합이 아니라 독립 reverse 관측(recon_err/pending_rel)에서. H_9351(Ψ̂=0.9167)과 합류 = A⇄G 는 배선상 A 하나. --tension-emit 패널은 ILL-POSED 배너를 출력에 각인."
            }
           ]
+         },
+         {
+          "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9357",
+          "type": "gate",
+          "verdict": "🔵 PRE-REGISTERED · 배선완료 · 303M 측정 BLOCKED-INFRA (H_9357)",
+          "detail": "H_9356 수리 시도. Fable: recon_err·pending_rel 은 σ(emit_drive) 안(gws top-2 게이팅)=두번째 A. 유일 배선-자유 = afield top-2 gap d2(engine_cli.py:446 vadapt_field_two_recon_err · d1=recon_err 는 emit_drive 입력, d2 자유). chat.py --g-arm a0/a1/a3 배선.",
+          "children": [
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9357-gate",
+            "type": "note",
+            "detail": "anima-py evaluate --g-tension 4게이트: G-INDEP R²(ag_g_drive~emit_drive+lanes)<0.5 · G-VAR distinct/rollout≥5 · MI I(ag_conflict;emit|stage)≥0.05∧SHUFFLE≤0.01 · Ψ-DV. cross-arm: A0 FAIL G-INDEP(게이트 실증)·A1>A3(2nd엔진 vs 인과손잡이). 합성 인증 3/3."
+           },
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9357-block",
+            "type": "note",
+            "detail": "⚠️ 로컬 스모크가 immune-gap primary 를 죽은 신호로 잡음(1-cell store·g_recog 30틱 0.0)→afield-d2 fallback 전환. bin ckpt 경로는 recon_err 도 죽음(distinct=1) vs 303M CONV(clockfix distinct=44 LIVE)=신호 죽음은 ckpt경로차 코드무죄. 303M a1 alive 검증+측정 = summer/aiden 포화로 BLOCKED-INFRA."
+           }
+          ]
          }
         ]
        }
@@ -17111,6 +17129,11 @@
     "id": "evaluate-py-19",
     "lesson": "독립이라 주장하는 것의 결정론적 함수를 계기로 재지 마라 — ill-posed MI. --tension-emit 는 I(ag_conflict;emit|stage) 로 'tension 이 emit 을 미는가'를 물었는데, chat.py:1562-1564 에서 ag_g_drive=−(1−emit_drive) 라 ag_conflict 이 emit_drive 하나의 결정론적 함수였다(재구성 R²=0.994). 즉 A 자신의 함수를 A 자신의 게이트에 대고 잰 것 ⇒ 🟢든 🧱든 배선 tautology(engine-독립 정보량 0).",
     "fix": "계기를 짓기 전에 두 피연산자의 배선 독립성부터 증명하라(재구성 R² 게이트). 종속이면 판정 출력에 ILL-POSED 배너를 각인(H_9356 는 --tension-emit·--help 양쪽에). H_9351(Ψ̂도 순수 A측 임계)과 같은 계급 = A⇄G 가 배선상 A 하나."
+   },
+   {
+    "id": "chat-py-7",
+    "lesson": "신호-생존(signal-liveness)은 배선 arm 을 켠 것과 무관하다 — 그리고 ckpt 경로마다 다르다. H_9357 의 a1(immune top-2 gap)은 배선은 맞았으나 실제 데몬에서 immune store 가 1-cell 로 안 자라 g_recog 30틱 전부 0.0(죽은 신호). afield-d2 fallback 도 bin ckpt 로컬 스모크선 recon_err distinct=1(죽음)인데 303M CONV clockfix 선 distinct=44(LIVE) — 신호 죽음은 코드버그가 아니라 ckpt경로차.",
+    "fix": "pool 발사 전에 그 신호가 살아있는지 **측정할 바로 그 ckpt 경로에서** trace 고유값으로 확인하라(chat-py-3/5 확장). 로컬 스모크는 대표 ckpt 로. 신호가 죽으면 사전등록 fallback 으로 전환(tune-to-green 아님) 후 다시 alive 검증. 값이 상수인지 세는 건 $0."
    }
   ]
  }
