@@ -3122,6 +3122,84 @@ def xfan_run(argv):
 # for is never written. That is unrecoverable on a paid GPU battery: a 13h x 4-run NBIND
 # ladder would burn its rent and harvest nothing, with a green exit code. Fail closed.
 
+def _sigma_from_trace(rows):
+    """σ vitals on the daemon's OWN recorded lanes (H_9351 STAGE2). engine_cli FROZEN estimators
+    only — never a re-implementation (a_phi_iit4_tool). Repaired axes = gate·stage·bind; the six
+    others (thread·carve·flux·aim·schema·witness) have no counterfactual in a daemon run
+    (inject-null · precision ablation · focus/report pairs) → PENDING(scope), not force-filled.
+    Each axis: EXP vs a within-stage-shuffle control + a truth-0 PEDESTAL (probe-defect-census —
+    a pedestal, never max-of-controls). bind is DIRECTIONAL: its lane columns are wired functions
+    (H_9356) and the cross-ckpt contrast guard (STAGE4) has not run, so it cannot be GREEN here."""
+    import engine_cli as E
+    import random as _random
+    from collections import defaultdict
+    have = [r for r in rows if isinstance(r.get("lanes"), list) and "gws_w" in r]
+    print()
+    print("  ── σ vitals (실 데몬 lane · engine_cli estimator · Δ vs 통제+PEDESTAL) ──")
+    if len(have) < 30:
+        print("  ⛔ PENDING-FIELDS — lanes/gws_w 담은 tick %d < 30 (STAGE1 필드 담은 trace 재수집)" % len(have))
+        return
+    _rng = _random.Random(11)
+    _grp = defaultdict(list)
+    for i, r in enumerate(have):
+        _grp[int(r.get("stage", 0))].append(i)
+
+    def _within(vals):
+        out = list(vals)
+        for _, ii in _grp.items():
+            src = list(ii); _rng.shuffle(src)
+            for a, b in zip(ii, src):
+                out[a] = vals[b]
+        return out
+
+    def _corr(a, b):
+        n = len(a); ma = sum(a) / n; mb = sum(b) / n
+        cov = sum((a[i] - ma) * (b[i] - mb) for i in range(n))
+        d = (sum((x - ma) ** 2 for x in a) * sum((x - mb) ** 2 for x in b)) ** 0.5
+        return abs(cov / d) if d > 0 else 0.0
+
+    # σ·gate — ci_emit_decision(real emit lanes [psi_gws,·,·,·,psi_lprec]) ⇄ score
+    dec = [1.0 if E.ci_emit_decision([float(r["psi_gws"]), 0.0, 0.0, 0.0, float(r["psi_lprec"])])
+           else 0.0 for r in have]
+    sc = [float(r.get("score", 0.0)) for r in have]
+    g_exp = _corr(dec, sc); g_ctl = _corr(dec, _within(sc))
+    _ped = list(sc); _rng.shuffle(_ped); g_ped = _corr(dec, _ped)
+    emit_agree = sum(1 for i, r in enumerate(have) if int(dec[i]) == (1 if r.get("emit") else 0)) / len(have)
+    g_ok = g_exp >= 0.30 and g_exp - g_ctl >= 0.10 and g_exp - g_ped >= 0.10
+    print("  σ·gate   %s  corr(dec,score)=%.3f · within-stage=%.3f · pedestal=%.3f · emit일치=%.2f"
+          % ("🟢" if g_ok else "🧱", g_exp, g_ctl, g_ped, emit_agree))
+
+    # σ·stage — gws winner-take-all on the REAL 15-lane population
+    def _win(lanes, inhibit):
+        g = E.gws_new(4, inhibit, 0.55)
+        for v in lanes:
+            g = E.gws_add(g, float(v))
+        return E.gws_winner(g)
+    repro = sum(1 for r in have if _win(r["lanes"], True) == int(r["gws_w"])) / len(have)
+    agreeA = sum(1 for r in have if _win(r["lanes"], False) == int(r["gws_w"])) / len(have)
+    print("  σ·stage  %s  gws_w 재현=%.2f (배선검산) · inhibit=%.2f vs no-inhibit=%.2f"
+          % ("🟢" if repro >= 0.99 else ("🧱" if repro < 0.5 else "⏳"), repro, repro, agreeA))
+
+    # σ·bind — faithful IIT4 Φ on ROOT-DISJOINT columns (DIRECTIONAL · D2 + no ckpt-contrast)
+    cols8 = ["rel_lane", "recon_err", "scn_ctx", "nov_ctx", "emit_env", "cur_indep", "rel_indep", "g_recog"]
+    if all(all(c in r for c in cols8) for r in have):
+        X = [[float(r[c]) for c in cols8] for r in have]
+        by = [[row[j] for row in X] for j in range(8)]
+        Xc = list(zip(*[_within(by[j]) for j in range(8)]))
+        cp = [list(c) for c in by]
+        for c in cp:
+            _rng.shuffle(c)
+        Xp = list(zip(*cp))
+        phi = E.ci_phi_iit4(X, list(range(8)))
+        phi_c = E.ci_phi_iit4([list(r) for r in Xc], list(range(8)))
+        phi_p = E.ci_phi_iit4([list(r) for r in Xp], list(range(8)))
+        print("  σ·bind   ⚠️DIRECTIONAL  Φ=%.3f · col-shuffle=%.3f · pedestal=%.3f (D2 배선함수 · ckpt-contrast 미실행)"
+              % (phi, phi_c, phi_p))
+    else:
+        print("  σ·bind   ⛔ PENDING-FIELDS (root-disjoint 8-col 미기록)")
+    print("  σ·(thread·carve·flux·aim·schema·witness)  ⏸ PENDING(scope) — 데몬 런에 카운터팩추얼 부재(D1)")
+
+
 def _psi_soma_real(argv):
     """Ψ̂ ON THE DAEMON'S OWN LANE POPULATION — the measurement the panel was pretending to be.
 
@@ -3211,6 +3289,15 @@ def _psi_soma_real(argv):
             print("     ⇒ **Ψ̂ 가 무엇이든, 그것은 emit 결정으로 흐르지 않는다.** 데몬은")
             print("        ci_psi_balance 를 한 번도 부르지 않는다. 'tension 이 emit 을 Ψ=½ 로")
             print("        당긴다' 는 두 개의 무관한 사실을 이어붙인 것이다(H_9351 · H_9352).")
+
+    # H_9356 Θ-SCOPE banner: on a0 wiring, ag_g_drive = -(1-emit_drive) = A's own complement,
+    # so Θ is A's solo pulse, not A⇄G. The panel must say so — this repair swaps the population
+    # (synthetic → real A-lanes), it does not swap A-solo → A⇄G.
+    _garm = next((r.get("g_arm") for r in rows if r.get("g_arm")), "a0")
+    if _garm == "a0":
+        print()
+        print("  ⚠️ Θ-SCOPE (H_9356 · g_arm=a0): ag_g_drive = A 의 여함수 ⇒ Θ 는 A⇄G 가 아니라 A 단독 맥박.")
+    _sigma_from_trace(rows)
     return 0
 
 
