@@ -16013,6 +16013,13 @@
  "convergence": {
   "records": [
    {
+    "id": "swap-patch-cannot-localize-binary-readout-scramble-floor-1",
+    "state": "pos-conv",
+    "value": "이진 readout 은 activation swap-patch 로 국소화 못 한다. off-manifold donor 가 recipient 파괴하되 답 설치 못하면 이진 head 반반→flip 0.50 = **scramble floor**(부분국소화와 구별불가). H_9331 원자+캐리어 10/10 INVALID(max 0.25~0.61). **same-class(극성-무관) donor 통제 봉인**: 같은 답 주입인데 flip 0.611≥cross 0.500 ⟹ 파괴 극성-무관=(B). 캐리어>원자=파괴 gradient.",
+    "threshold": "재발조건: 이진/저-card readout 을 activation swap 으로 국소화하려는 계기. ① flip 이 어디서도 ~0.5 못 넘으면 scramble floor 의심 ② **same-class(효과-무관) donor 통제 필수** — same≈cross≈0.5=파괴만·same≈0∧cross 큼=실재 ③ 단조 gradient 를 국소화로 읽지 마라(교란크기). 대안=attention-knockout/minimal-pair. maxswap=상향편의.",
+    "source": "archive/state/scratch/h9331_bindlocus/cross_verdict.py"
+   },
+   {
     "id": "cross-verdict-combiner-frozen-before-results-1",
     "state": "pos-conv",
     "value": "두 레인 결과를 나온 뒤 합치면 eyeball-combine=self-judge(p7). H_9331 은 합산 진리표를 결과 존재 前 코드로 못박았다(cross_verdict.py · 19셀 · 17/17 검산). 진짜 위험은 표가 아니라 입력 enum 의 사람-분류 ⇒ KO enum 은 동결 bar 로 dep1 기계도출 · EN enum 은 병렬레인 machine JSON 만 소비 · INVALID 은 사전등록 gate-ID 만 · else-bucket(dep1>=+0.50)은 ECHO 분리(우연아래는발견의 2D 재적용).",
