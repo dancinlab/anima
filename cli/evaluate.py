@@ -862,6 +862,7 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --twin-screen <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 base m̂ + item-gate + Y* + margin sd")
     print("  anima evaluate <ckpt> --twin-necessity <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 full instrument: PEDESTAL/IDENTITY/SPAN(ℓ)/COMP(ℓ)/BLIND · (τ,S)")
     print("  anima evaluate <ckpt> --delta-pregate <deltainj_manifest.json> [--win 64] [--out f.json]  # H_9397 Δ-INJECT stage-1: is the operator alive (carrier vs filler flip ≥8/9)?")
+    print("  anima evaluate <ckpt> --delta-control <deltainj_manifest.json> [--win 64] [--out f.json]  # H_9397 arm B: 고(trained flip0) un-flip=OOD-blocked vs flip=stem-determined")
     print("       --bl-swap-span carrier: Stage A swaps the operator morpheme span (지 않다), not the atom span (H_9331 pedestal)")
     print("       --bl-swap-donor-class same: donor is a SAME-polarity item (polarity-blind control · (B) scramble-floor test)")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
@@ -2497,6 +2498,72 @@ def delta_pregate_run(argv):
     json.dump({"surface": man["surface"], "device": dev, "win": T, "n_seen": n, "flips": flips,
                "thresh": thresh, "median_gap": gap, "verdict": verdict, "rows": rows},
               open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
+
+
+def delta_control_run(argv):
+    """`anima-py evaluate <ckpt> --delta-control <deltainj_manifest.json> [--win 64] [--out f.json]`
+    — H_9397 Δ-INJECT DECISIVE control (arm B · Fable). The pre-gate FAILED (carrier `지 않다` and the
+    novel filler `고 있다` gave the SAME-sign answer, no flip). Two readings collapse the whole lane:
+      (1) `고 있다` is OOD → the carrier IS consumed → FILLER-OOD-BLOCKED.
+      (2) the answer is STEM-determined (carrier a non-causal amplifier) → carrier attribution burned →
+          held-out G1 wall unifies with SEEN as one memorized stem→answer lookup.
+    Only the sign of a TRAINED flip0 carrier separates them. Arm B = `고` (trained, declarative, 3B),
+    same 20 SEEN stems, sign-only DV (byte-length differs from the 10B carrier — NEVER compare magnitudes;
+    a_korean_byte_budget). Both readings-(1) variants (pure OOD + dominant-frame-default) predict `고`
+    UN-flips (trained frame wins); reading (2) predicts `고` flips like everything else.
+
+      arm A (positive control) : m_carrier(지 않다) must reproduce ≥n−1/n sign-correct (esign_carrier) —
+                                 the identical-pipeline check (Fable caveat 3: a slipped esign inverts all).
+      arm B (decisive)         : per stem, does sign(m_flip0) == esign_flip0 (UN-flipped = stem polarity)
+                                 or == esign_carrier (FLIPPED = same as the negation carrier)?
+    Verdict: ≥n−1 UN-flipped → FILLER-OOD-BLOCKED (reading 1) · ≥n−1 FLIPPED → STEM-DETERMINED (reading 2)
+    · else INCONCLUSIVE-WEAK-CARRIER (3B may be too little signal → 2×2 tie-breaker, cement nothing)."""
+    import numpy as np
+    ckpt = argv[0]
+    man = json.load(open(evaluate_strval(argv[1:], "--delta-control", "")))
+    T = evaluate_intval(argv[1:], "--win", 64)
+    out_path = evaluate_strval(argv[1:], "--out", "delta_control.json")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr); return 2
+    dev = "gpu" if (hasattr(clm, "cuda_available") and clm.cuda_available()) else "cpu"
+    seen = [it for it in man["items"] if it["split"] == "train"]
+    print("=== anima-py evaluate --delta-control — H_9397 arm B (고 trained flip0 · reading 1 vs 2) ===")
+    print("  ckpt %s · %d SEEN stems · armA %s (pos-ctrl) · armB 고 (trained flip0, 3B · sign-only) · dev=%s"
+          % (ckpt, len(seen), man["carrier"], dev))
+    rows, posctrl_ok, unflip, flip = [], 0, 0, 0
+    for it in seen:
+        mc = _bl_margin(np, W, it["carrier_seed"], T)        # arm A (지 않다) positive control
+        m0 = _bl_margin(np, W, it["flip0_seed"], T)          # arm B (고) decisive
+        a_ok = (mc > 0) == (it["esign_carrier"] > 0)
+        posctrl_ok += 1 if a_ok else 0
+        is_unflip = (m0 > 0) == (it["esign_flip0"] > 0)      # sign == stem polarity (declarative predicts)
+        is_flip = (m0 > 0) == (it["esign_carrier"] > 0)      # sign == negation carrier
+        unflip += 1 if is_unflip else 0
+        flip += 1 if is_flip else 0
+        rows.append({"stem": it["stem"], "pol": it["pol"], "m_carrier": float(mc), "m_flip0": float(m0),
+                     "posctrl_ok": bool(a_ok), "flip0_unflipped": bool(is_unflip), "flip0_flipped": bool(is_flip)})
+    n = len(seen); thresh = max(1, n - 1)
+    print("  arm A pos-ctrl (지 않다 sign-correct): %d/%d (need ≥%d to trust pipeline)" % (posctrl_ok, n, thresh))
+    print("  arm B 고: UN-flipped(=stem pol) %d/%d · FLIPPED(=carrier) %d/%d" % (unflip, n, flip, n))
+    for r in rows:
+        tag = "UN-flip" if r["flip0_unflipped"] else ("FLIP" if r["flip0_flipped"] else "?")
+        print("    %-8s pol%d : m_carrier=%+.3f m_고=%+.3f  →고 %s"
+              % (r["stem"], r["pol"], r["m_carrier"], r["m_flip0"], tag))
+    if posctrl_ok < thresh:
+        verdict = "INVALID-PIPELINE (pos-ctrl 지 않다 did not reproduce — esign/frame slipped, Fable caveat 3)"
+    elif unflip >= thresh:
+        verdict = "FILLER-OOD-BLOCKED (reading 1): 고 un-flips → carrier IS consumed · 고 있다 was OOD"
+    elif flip >= thresh:
+        verdict = "STEM-DETERMINED (reading 2): 고 flips too → answer stem-keyed, carrier attribution burned · G1 wall unifies"
+    else:
+        verdict = "INCONCLUSIVE-WEAK-CARRIER (3B signal split — 2×2 tie-breaker, cement nothing)"
+    print("\n  VERDICT: %s" % verdict)
+    json.dump({"surface": man["surface"], "device": dev, "win": T, "n_seen": n, "thresh": thresh,
+               "posctrl_ok": posctrl_ok, "flip0_unflipped": unflip, "flip0_flipped": flip,
+               "verdict": verdict, "rows": rows}, open(out_path, "w"), ensure_ascii=False, indent=1)
     print("  wrote " + out_path)
     return 0
 
@@ -5714,7 +5781,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -6096,6 +6163,8 @@ def main(argv):
         return twin_necessity_run(argv)
     if "--delta-pregate" in argv:
         return delta_pregate_run(argv)
+    if "--delta-control" in argv:
+        return delta_control_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
     # --device-parity: is this host's GPU forward the same measurement as its CPU forward? The probes
