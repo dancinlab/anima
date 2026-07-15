@@ -640,8 +640,8 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-collide-select",
           "type": "gate",
-          "verdict": "🔵 PRE-REGISTERED · G-A ✅ PASS (H_9362 COLLIDE-SELECT) — 선택기=argmax conflict_scalar",
-          "detail": "H_9357 G-INERT(emit) 후속=생성-선택 축. 부호 G-A 확정(margin>0=novel→g<0): 창발(a>0,g<0)=conflict_scalar HIGH(=a·|g|), echo(a>0,g>0)=0. conflict_scalar 자체가 창발 선택기 · 현행 argmin 은 버림. 최소개입=argmin→argmax. G-A ✅(SEEN/novel 분리 20/20). G-B/G-C 는 pool. 최전선 G1 미소진 각도."
+          "verdict": "🔵 PRE-REGISTERED · G-A ✅ · 계기 배선+로직인증 ✅ · G-B/G-C ⏳ pool (H_9362)",
+          "detail": "선택기=argmax conflict_scalar(=a·|g| over novel g<0). anima-py evaluate <clm> --collide-select 배선(_collide_select · K=4 풀·5 arm·frozen rho_weave 상대심판). 로직 인증: REAL(창발=novel중간유창)→🟢·SECOND-A(유창=답)→🧱·DRY→POOL-DRY. G-B 점유(창발칸 비면 POOL-DRY H_9304)→G-C 적중률. 측정=py303 vs XBIND pool."
          }
         ]
        }
