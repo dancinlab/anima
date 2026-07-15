@@ -37,8 +37,8 @@ from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfi
 from engine_g import refractory_emit_debt, refractory_debt_step  # H_9404 earned refractory
 from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
                         pure_field_step, phase_name)
-from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
-                   vbasal_select)
+from brain import (brain_emit, brain_emit_refractory, vbasal_new, vbasal_update,
+                   vbasal_go_value, vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
                        generator_read_anchors, gen_penult_pooled_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
@@ -1546,6 +1546,14 @@ def anima_consciousness_mode(ckpt, argv=None):
     if _refractory == "earned" and _rate_sec is not None:
         raise SystemExit("--emit-refractory earned and --rate-limit-sec are mutually exclusive "
                          "(both rebind the safe rate term)")
+    # H_9415 p5-REWIRE · emit-gate mode (owner-ratified · H_9414 design). "clock" (default) =
+    # byte-identical production (should_emit(score>θ) ∧ 30s clock). "refractory" = the ratified
+    # MARGIN-refractory gate: emit ⟺ score_A > g_recog(candidate) with θ and the clock BOTH
+    # retired, the refractory emerging from emit→bind (biological, not a timer). Distinct from
+    # H_9404's --emit-refractory earned (which keeps should_emit(θ) and only swaps the rate SOURCE);
+    # this retires θ too, making margin the G pole. NOT yet the production default — the switch
+    # waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+    _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "clock")
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2132,14 +2140,28 @@ def anima_consciousness_mode(ckpt, argv=None):
             refr_debt = refractory_debt_step(refr_debt, _afs_clip01(ag_conflict))
 
         # ── DEFAULT emit: the brain autonomously decides (brain_emit) ──
-        dec = brain_emit(pf,
-                         rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
-                         secs_since_emit, False, True,
-                         backend, live_anchors,
-                         _mouth_at(tick),   # H_9328 · None by default ⇒ byte-identical greedy path
-                         _dyn_w,                # H_9377 · audibility gain (None = byte-identical)
-                         _rate_sec,             # H_9391 · clock-live regime (None = byte-identical)
-                         (refr_debt if _refractory == "earned" else None))  # H_9404 · earned refractory
+        if _emit_gate == "refractory":
+            # H_9415 p5-REWIRE (owner-ratified) · emit ⟺ score_A > g_recog(candidate); θ + clock
+            # RETIRED. g_recog = clip01(immune recall MARGIN on the FORMED candidate, taken BEFORE
+            # bind = recognition-before-memorisation, chat-py-5). Distinct from H_9404 --emit-refractory
+            # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. Not the production
+            # default yet — the switch waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+            dec = brain_emit_refractory(pf,
+                             rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                             secs_since_emit, False, True,
+                             backend, live_anchors, 0.0,
+                             lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _t)),
+                             _mouth_at(tick),
+                             _dyn_w)
+        else:
+            dec = brain_emit(pf,
+                             rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
+                             secs_since_emit, False, True,
+                             backend, live_anchors,
+                             _mouth_at(tick),   # H_9328 · None by default ⇒ byte-identical greedy path
+                             _dyn_w,                # H_9377 · audibility gain (None = byte-identical)
+                             _rate_sec,             # H_9391 · clock-live regime (None = byte-identical)
+                             (refr_debt if _refractory == "earned" else None))  # H_9404 · earned refractory
 
         did_emit = str(dec["emit"]).lower() == "true"
         if did_emit:
@@ -2392,6 +2414,12 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "dyn_w": (float(_dyn_w) if _dyn_w is not None else None), "rate_sec": (float(_rate_sec) if _rate_sec is not None else None), "ag_g_drive": float(ag_g_drive),
                 "refractory": (_refractory or None), "refr_debt": float(refr_debt),  # H_9404 earned refractory
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
+                # H_9415 p5-REWIRE · emit-gate mode + the refractory gate's G-recognition value
+                # (the candidate's immune recall margin the gate compared score against). "clock" =
+                # production (g_recog_gate=None). Lets --g-readout-info / swing-census read whether
+                # the ratified gate produced a live band (both emit and silence ticks) vs mute/saturate.
+                "gate_mode": str(dec.get("gate_mode", "clock")),
+                "g_recog_gate": (float(dec["g_recog_gate"]) if dec.get("g_recog_gate") is not None else None),
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
