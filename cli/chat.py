@@ -1467,6 +1467,12 @@ def anima_consciousness_mode(ckpt, argv=None):
     # integer-ratio staircase — H_9360/H_9376 Stage-0 measured agloop_ctx ≡ 0.25 CONSTANT for the
     # independent-G arm (the round()→integer-budget quantizer collapsed the designed path to a point).
     _ag_cont = anima_flag_value(_cargv, "--ag-cont", "ANIMA_AG_CONT", "0") == "1"
+    # H_9377 · AUDIBILITY gain: absolute weight on dyn_v(=agloop_ctx=tension) in motivation_score.
+    # None (unset) = byte-identical current 0.10. Grid {0.10 anchor, 0.25, 0.40, 0.60, 0.78} lets
+    # tension be heard above the 7-lane A-side blend without touching the emit threshold (p5-legal:
+    # gate consumes real tension louder, no self-seed). tension-agnostic only for the ANCHOR arm.
+    _dw = anima_flag_value(_cargv, "--dyn-w", "ANIMA_DYN_W", "")
+    _dyn_w = float(_dw) if _dw != "" else None
     # H_9328 · seed_rng is DERIVED PER TICK, never held constant across the session.
     # MEASURED defect: holding it at `_sample_seed` made the mouth redraw the SAME 80 bytes
     # every tick (gtext sha count = 1 over 30 ticks), so a 30-tick rollout carried exactly ONE
@@ -1974,7 +1980,8 @@ def anima_consciousness_mode(ckpt, argv=None):
                          rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                          secs_since_emit, False, True,
                          backend, live_anchors,
-                         _mouth_at(tick))   # H_9328 · None by default ⇒ byte-identical greedy path
+                         _mouth_at(tick),   # H_9328 · None by default ⇒ byte-identical greedy path
+                         _dyn_w)                # H_9377 · audibility gain (None = byte-identical)
 
         did_emit = str(dec["emit"]).lower() == "true"
         if did_emit:
@@ -2174,7 +2181,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
                 # H_9357 · the A⇄G tension's G pole + its arm, so the panel can run G-INDEP
                 # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
-                "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "ag_g_drive": float(ag_g_drive),
+                "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "dyn_w": (float(_dyn_w) if _dyn_w is not None else None), "ag_g_drive": float(ag_g_drive),
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
                 # H_9351 σ-panel inputs: the gws-fed lane population (σ·stage / σ·bind),
                 # its winner (σ·stage argmax test), and the reality monitor (σ·witness).
