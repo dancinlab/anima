@@ -1851,7 +1851,14 @@ def anima_consciousness_mode(ckpt, argv=None):
         scn_R = scn_order(scn_coupled)
         scn_R_unc = scn_order(scn_uncoup)
         scn_R_fr = scn_order(scn_frust)
-        scn_ctx = _afs_clip01(scn_R)
+        # H_9411 ⑥A · MEASURED (toy smoke): the coupled net phase-LOCKS, so scn_order (the mean-
+        # phase-vector MAGNITUDE) is rotation-invariant → scn_R stayed constant at 0.9986 even
+        # though every phase advanced (scn_r_unc varied 240× = the step DID fire). Fable's
+        # prescribed remedy for this measured order-lock: read the PHASE itself, not the order.
+        # The circadian phase advances (mod 1) every tick by construction. scn_R kept in the
+        # trace as the consensus-magnitude control. NOT tune-to-green — a different, valid,
+        # engine-native readout of the same stepped substrate (the order-lock was the finding).
+        scn_ctx = _afs_clip01(scn_coupled.phases[0] % 1.0)
         if scn_consensus(scn_coupled, 0.9):
             scn_consensus_any = True
 
