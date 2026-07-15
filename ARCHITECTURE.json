@@ -16014,6 +16014,13 @@
     "source": "archive/state/scratch/h9331_bindlocus/cross_verdict.py"
    },
    {
+    "id": "failing-positive-control-needs-known-effect-discriminator-1",
+    "state": "pos-conv",
+    "value": "실패한 양성통제는 두 뜻이 겹친다: 도구가 눈멀었다(A) vs 그 자리에 효과가 없다는 진짜 음성(B). H_9331 Stage A 4/4 INVALID-LOCALIZATION(원자-swap flip ≤0.25). A/B 를 가른 건 **효과가 독립적으로 알려진 ckpt**: C4 는 H_9334 가 다른 계기로 가독 결합 12/12 증명한 모델인데 거기서도 실패 ⇒ 눈먼 게 아니라 '결합이 이 스팬에 없다'는 정직 보고(B). n2≡C4 + G-LIVE 해리(logit 이동·답 안 따라옴)가 봉인.",
+    "threshold": "재발조건: 인과 국소화/양성통제가 전 조건서 음성(아무 자리도 안 잡힘). 죽은-도구 폐기 前, 효과가 **독립적으로 present+readable 로 알려진** ckpt/조건(다른 계기가 이미 잡은 것)을 같은 계기에 통과시켜라 — 거기서도 실패=도구 정직·효과가 시험자리에 없는 진짜 음성(B). 단 true-positive pedestal(실제 ≥bar 뒤집는 자리) 없으면 완전승격 말고 pedestal 실험을 next 로. zero-truth pedestal 의 쌍대.",
+    "source": "archive/state/scratch/h9331_bindlocus/cross_verdict.py"
+   },
+   {
     "id": "arch-big-cell-blocks-commits",
     "state": "ossified",
     "value": "ARCHITECTURE.json 의 oversized leaf 가 글로벌 COMMIT-LINT 를 막아 무관한 커밋까지 반복 차단 → --no-verify 우회 강제. **5회 재발 · 그리고 규모가 질적으로 바뀌었다(2026-07-15)**: 2건이던 위반이 **42건**(ARCH-BIG-CELL 62 + ARCH-PILED 20 + CLAUDE-MD-OVERSIZED 27KB>8KB)으로 누적돼, 이제 ARCHITECTURE/CLAUDE 를 건드리는 **모든 커밋이 무조건 --no-verify** 로 나간다 ⟹ **게이트가 상시 무력화**됐다(본 세션 2회: #3526·#3529). 이건 더는 \"가끔 우회\"가 아니라 **doc-gate 가 사실상 꺼진 상태**다 — 그 증거: 내가 #3526 에서 넣은 신규 위반 3종(ARCH-ID-FORMAT · 1593자 leaf · COMMONS-PROSE)이 게이트를 그대로 통과해 main 에 착륙했고, 15분 뒤 무관한 커밋을 시도하다 우연히 발견됐다. **부채가 게이트를 끄면, 게이트가 막아야 할 신규 결함이 조용히 들어온다.**",
