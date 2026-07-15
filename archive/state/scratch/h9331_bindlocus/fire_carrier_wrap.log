@@ -1,0 +1,26 @@
+[gate] anima-py=/usr/local/bin/anima-py ver=0.3
+=== CARRIER c4_s7 ===
+  rc=0 dev=GPU-FIRED
+  depth  4 rung 2  n=20  swap=0.300  sham=0.300
+BIND-LOCUS ⏳ INVALID-LOCALIZATION — no (depth, span) where a SEEN swap flips the
+  failed run — and it forbids the P/S verdict rather than faking one.
+dispatch: /usr/bin/python3 /usr/local/lib/python3.10/dist-packages/anima_py/cli/evaluate.py swap_c4_s7.clm --bind-locus bl_manifest_v2.json --bl-swap-span carrier --out bl_carrier_c4_s7.json --win 64 --perm 200
+=== CARRIER c4_s11 ===
+  rc=0 dev=GPU-FIRED
+  depth  4 rung 2  n=20  swap=0.150  sham=0.350
+BIND-LOCUS ⏳ INVALID-LOCALIZATION — no (depth, span) where a SEEN swap flips the
+  failed run — and it forbids the P/S verdict rather than faking one.
+dispatch: /usr/bin/python3 /usr/local/lib/python3.10/dist-packages/anima_py/cli/evaluate.py swap_c4_s11.clm --bind-locus bl_manifest_v2.json --bl-swap-span carrier --out bl_carrier_c4_s11.json --win 64 --perm 200
+=== CARRIER n2_s7 ===
+  rc=0 dev=GPU-FIRED
+  depth  4 rung 2  n=20  swap=0.500  sham=0.550
+BIND-LOCUS ⏳ INVALID-LOCALIZATION — no (depth, span) where a SEEN swap flips the
+  failed run — and it forbids the P/S verdict rather than faking one.
+dispatch: /usr/bin/python3 /usr/local/lib/python3.10/dist-packages/anima_py/cli/evaluate.py natem_n2_main_s7.clm --bind-locus bl_manifest_v2.json --bl-swap-span carrier --out bl_carrier_n2_s7.json --win 64 --perm 200
+=== CARRIER n2_s11 ===
+  rc=0 dev=GPU-FIRED
+  depth  4 rung 2  n=20  swap=0.300  sham=0.250
+BIND-LOCUS ⏳ INVALID-LOCALIZATION — no (depth, span) where a SEEN swap flips the
+  failed run — and it forbids the P/S verdict rather than faking one.
+dispatch: /usr/bin/python3 /usr/local/lib/python3.10/dist-packages/anima_py/cli/evaluate.py natem_n2_main_s11.clm --bind-locus bl_manifest_v2.json --bl-swap-span carrier --out bl_carrier_n2_s11.json --win 64 --perm 200
+CARRIER_DONE
