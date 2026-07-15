@@ -78,3 +78,19 @@ chat-py-5 root(af·wm·ca3 의 세션상수 조회키)를 tick-varying 화 — �
 
 **교훈**: `if X:` 를 보고 게이팅이라 단정하지 마라 — 그 블록이 **진단 플래그**(wm_maintained_any)면
 inert 다. death 의 결정-영향은 소비 **표현식**을 읽어야 판별된다(가법 vs 게이팅 vs 함수입력).
+
+## 🩺 L7 후속 종결 — 죽은 게이지 소생이 emit 을 바꾸는가? ($0 합성 · Fable Wave-2 L7)
+
+census 의 열린 물음("죽어도 결론 불변의 역: 살리면 결정 바뀌나")을 Wave-1+캠페인 결과 합성으로 $0 종결:
+
+- `emit = should_emit(score) ∧ safe`. **score 경로는 vacuous** — emit 은 score/content 가 아니라 stage
+  의 순수 함수(H(emit|stage)=0.465 · [[H_9400]] engine-native · H_9345/H_9390/H_9391). ⇒ score 를 먹는
+  게이지를 소생시켜(varying) score 에 변동을 줘도 **emit 결정은 안 바뀐다**(emit⊥score).
+- safe 경로(kill∧rate∧phi_r∧content) 에 들어가는 죽은 게이지 = **phi 하나뿐**(9 중 8은 safe 경로 0 hits
+  = score 만 먹음). phi_r = `phi > phi_peak/2`(core/engine_g.py:130). phi≡0.119 는 **의도된 상수**(코드
+  주석 'session-constants' · H_1521 topo-Φ Ψ-hazard defer · 위 TRIAGE) ⇒ 소생 대상 아님.
+
+⟹ **L7 premise("죽은 게이지 소생이 emit 을 바꾼다") 반증 = KILL($0·재수집 불요)**: 8/9 는 vacuous
+score 경로 · 유일 emit-도달자 phi 는 의도상수. 죽은 게이지 소생은 이 regime 서 emit 을 못 바꾼다 —
+emit 이 게이지 무관(stage/clock 함수)이기 때문. reopen = emit 이 stage 순수함수를 벗어나는 regime(=
+[[H_9400]] 의 clock-live/straddle 미해결 · 그건 emit 게이트 자체 문제이지 게이지 소생 아님).

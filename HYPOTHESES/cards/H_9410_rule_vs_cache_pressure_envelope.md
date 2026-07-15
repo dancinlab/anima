@@ -131,3 +131,62 @@ card limitation — no concealment.**
 
 - **PRE-REGISTRATION frozen** (this card + jsonl). Instruments + EN-mining ceiling + rung-0 anchor + ladder =
   the multi-day fire, landed per-rung. Interim results appended below as they land (commit-early).
+
+---
+
+## INTERIM #1 (2026-07-16 · session 1 · $0 front-load + rung-0 fired)
+
+### Instruments — BUILT + UNIT-TESTED + MERGED (PR #3716 · VERSION 0.14.0)
+- `corpus atoms --lang en --max-atoms N` (`build_atoms_scaled`) — freq-ranked greedy gates: G-OCCUR
+  word-boundary (mine_lexicon word-level, honors corpus-py-1 (G)), G-SUBSTR greedy-DROP (no abort),
+  G-DERIV affix-pairs, len 5–9 B, stoplist. Reports `dried_up` = ceiling (never pads).
+- `corpus xbind --bridge-split --polarity assigned --assign-seed k` (`_assign_balanced_polarity`) —
+  OVERRIDE the atoms file polarity with a RANDOM balanced assignment (sort→shuffle: order-independent +
+  deterministic + seed-sensitive). ½/¼/¼ split + phase-B arms unchanged.
+- `train --wd-floor λ` — pre-existing = grokking arm (no new code).
+- Unit tests (synthetic EN, $0): balance / no-substr / no-deriv / determinism / order-independence /
+  S_decl operator 0-exposure / S_cpt 0-line / gate gold=flip(pol) / back-compat — all PASS.
+
+### Axis-1 EN mining ceiling — MEASURED ($0 · HF `anima-corpus-en-general` 60.0 MB / 279 429 lines)
+The frame-candidate pool (words appearing after a degree adverb) = **4598 distinct** — the hard ceiling.
+Greedy-gate survivors by occurrence floor:
+
+| min_occ | accepted | dried before N=3072? | (mined_kept · dropped substr / len) |
+|---|---|---|---|
+| 20 | **2098** | yes | 3629 · 433 / 1079 |
+| 50 | **1713** | yes | 2969 · 345 / 892 |
+| 100 | 1407 | yes | 2444 · 275 / 743 |
+| 200 | 1076 | yes | 1887 · 205 / 605 |
+
+⟹ **N=3072 is UNREACHABLE from this single 60 MB corpus** at any reasonable occurrence floor. **Floor
+N=1536 is CLEARED** (1713 @ occ≥50). The **terminal rung re-scopes to N≈1713 (|S_op|≈856)** @ occ≥50, or
+2098 (|S_op|≈1049) @ occ≥20. That is still ~2.2× rung-2 and ~36× the anchor — a valid terminal. (Random
+polarity means non-adjective survivors like "loading"/"reports" are fine: polarity is decoupled from meaning.)
+NOTE the re-scoped ladder: rung-3 = **1713** (not 3072); to reach 3072 would need adding en-sns +
+a second EN corpus (marginal). This is the honest axis-1 ceiling.
+
+### rung-0 anchor corpus — BUILT + AUDIT-CLEAN ($0 · reuses H_9389's 48-atom `en_atoms.json`)
+`build_bridgesplit(reps=40, --polarity assigned --assign-seed 0)` → 7200 lines / 278 280 B (matches
+H_9389's A.txt 278 640 B). Audit: **S_decl operator(flip1) exposure = 0** (the gate layer) · S_cpt phase-A
+lines = 0 · **slot-prior p(neg) = 0.5000** (kills majority-collapse) · G-BALANCE per arm (S_op 12/24 ·
+S_decl 6/12 · S_cpt 6/12) · 36 gate rows.
+
+### rung-0 anchor — FIRED (aiden RTX 5070 · $0 · in-flight)
+Recipe recovered verbatim from H_9389: `--d 3784 --L 4 --e0 2 --emax 3` (345.7M) · 12000 steps ·
+`--batch-size 32 --seq-len 64 --lr 3e-4` · seeds {7, 11} · ~0.24 s/step (~48 min/seed). Pipeline
+smoke-validated end-to-end (train→.clm 176 MB decodable→`evaluate --xbind` GPU-CUDA · RC=0). Driver
+detached on aiden (`~/h9410/rung0/driver.sh`, log `run.log`): trains s7+s11 then evaluates sop(G-ALIVE) /
+sdecl(GATE) / scpt for each. **ETA ~1.5–2 h.** Anchor gate (HALT condition): reproduce H_9389 kill
+signature — G-ALIVE(S_op)≥0.90 both seeds · S_decl flip1 chance-or-below both seeds · ECHO ~0.61–0.86.
+Fail ⟹ instrument discontinuity ⟹ HALT.
+
+### RESUME POINT (next session)
+1. Read anchor-gate result: `sidecar pool on aiden 'tail -40 ~/h9410/rung0/run.log; cat ~/h9410/rung0/eval_s{7,11}_{sop,sdecl}.json'`.
+   Pull ckpts: `scp aiden:~/h9410/rung0/phaseA_s{7,11}.clm ~/anima-weights/h9410_rung0/`. Append verdict here.
+2. If anchor reproduces H_9389 kill → run rungs 1→2→3 (cheapest-first). Per rung: mine atoms
+   (`anima-py corpus atoms --lang en --max-atoms N --min-occ 50`), build corpus
+   (`anima-py corpus xbind --bridge-split --atoms gt_atoms_en_N.json --lang en --polarity assigned --assign-seed 0 --out AN.txt`),
+   train both seeds (budget: rung-1 ~30K · rung-2 ~100K · rung-3(N=1713) ~250K), evaluate sop/sdecl.
+   Re-scoped ladder: N = {192, 768, **1713**} (rung-3 capped by the 60 MB ceiling, floor 1536 cleared).
+3. Controls on any green rung: C-DECL-ABL (mandatory), C-TOK. Envelope for 🔴: rung-3 + C-CAP + grokking-wd arm.
+4. If anchor FAILS to reproduce → HALT, debug instrument (do NOT run rungs).

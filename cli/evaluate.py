@@ -778,6 +778,10 @@ def evaluate_usage():
     print("  anima evaluate --cf-straddle <trace.jsonl> [...]  (H_9394 STAGE-0 · $0 KILL screener before")
     print("      firing the ag-cont×dyn_w conjunction: recomputes score offline with the tension lane")
     print("      REPAIRED+audible and asks whether clock-open ∧ score≤θ can EVER coexist. 0 ⇒ cancel.)")
+    print("  anima evaluate --g-amp-screen <a1-arm traces>     (H_9401 · $0 DIRECTIONAL KILL-only screen of")
+    print("      Fable's 6 alternative G readouts: OFFLINE-replays the immune store from gtext_b64 via the")
+    print("      engine's own immune_* fns (LAG-MATCH byte-gate), asks which readout lifts |g| past θ.")
+    print("      5/6 KILL; sole survivor = the DISCARDED recall margin (chat.py:2059 pending_rel).)")
     print("  anima evaluate --dead-census <trace.jsonl> [...]  (H_9398 · sweep EVERY trace field for")
     print("      constant (distinct==1) gauges — each is a wiring fact whose consuming lanes get a")
     print("      fixed offset (H_9393 agloop_ctx ≡0.25). HYGIENE listing so the next H does not inherit it.)")
@@ -4624,6 +4628,151 @@ def _audibility(argv):
     return 0
 
 
+def _g_amp_screen(argv):
+    """H_9401 G-READOUT AMP SCREEN — Fable 6-branch $0 DIRECTIONAL screen of whether ANY alternative
+    G readout can lift |g| past θ=0.30 so tension = conflict_scalar(|a|·|g|) can decide emit.
+
+    The emit-drive campaign (H_9356→9399) closed at: |g|=g_recog (mean 0.027, the IMMUNE-STORE top-2
+    gap · H_9399) is 6.5-29× quieter than |a|=emit_drive (mean 0.59), and the conflict gate is a
+    PRODUCT, so tension is floored ≤0.073 << θ (θ inviolable). This screener REPLAYS the immune store
+    OFFLINE from the trace's gtext_b64 (calling the engine's own immune_* fns — never re-implemented),
+    validates byte-match vs recorded g_recog (the FAITHFUL gate), then applies each Fable candidate's
+    KILL gate. A screen is DIRECTIONAL / KILL-only (open-loop can't cement — see the survivor caveat).
+
+    Candidates (all read the SAME faithful replay):
+      current gap = clip01((d2²−d1²)/2)                 the production readout
+      A ratio     = 1 − d1/d2                            scale-free · KILL if p90<0.40
+      D geo-mean  = sqrt(|a|·gap)                        both-strong-preserving · KILL if max<θ
+      E-b margin  = |immune_memory_recall_margin|        the DISCARDED signal (chat.py:2059 pending_rel)
+                    KILL if p90<0.40 OR corr(|margin|,|a|)>0.9 (SECOND-A)
+    """
+    import math as _m
+    import base64 as _b64, glob as _glob
+    try:
+        from engine_cli import (immune_embed_key, immune_memory_new_text,
+                                immune_memory_recall_gap_text, immune_memory_bind_text,
+                                immune_memory_recall_margin, vadapt_field_two_recon_err,
+                                engine_config_default)
+    except Exception as e:
+        print("  ⇒ ⛔ ENGINE IMPORT FAIL (%s) — cannot replay the immune store." % e); return 0
+    THR = 0.30
+    paths = [a for a in argv if not a.startswith("--")]
+    files = []
+    for p in paths:
+        files += sorted(_glob.glob(p)) if any(c in p for c in "*?[") else [p]
+    if not files:
+        print("  ⇒ ⛔ no trace files"); return 0
+
+    def _benc(s): return s.encode("utf-8", "surrogateescape")
+    def _blen(s): return len(_benc(s))
+    def _clip(s, n):
+        b = _benc(s)
+        return s if len(b) <= n else b[:n].decode("utf-8", "surrogateescape") + "…"
+    def _c01(x): return 0.0 if x < 0.0 else (1.0 if x > 1.0 else x)
+
+    print("═══ G-READOUT AMP SCREEN · H_9401 · Fable 6-branch $0 DIRECTIONAL (θ=%.2f inviolable) ═══" % THR)
+    GAP = []; RATIO = []; MARG = []; EMIT = []; lag_ok = 0; lag_n = 0; mem_default = None
+    for f in files:
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try: o = json.loads(l)
+            except: continue
+            if o.get("_meta"):
+                mem_default = o.get("mem_text", mem_default)
+            elif o.get("gtext_b64") is not None and o.get("g_recog") is not None:
+                rows.append(o)
+        if not rows:
+            continue
+        rows.sort(key=lambda r: r.get("tick", 0))
+        mem_text = mem_default or "zephyrine: the wyrmhold ledger is sealed at vault QX-7741 forever."
+        cfg = engine_config_default()
+        immune = immune_memory_new_text(mem_text, mem_text, 2048)
+        pending = None
+        for r in rows:
+            g_replay = _c01(pending if pending is not None else 0.0)
+            rec = float(r.get("g_recog", 0.0))
+            if pending is not None:
+                lag_n += 1
+                if abs(g_replay - rec) < 1e-9:
+                    lag_ok += 1
+            g_text = _b64.b64decode(r["gtext_b64"]).decode("utf-8", "surrogateescape")
+            emit_gate = bool(r.get("gen_emitted")) and r.get("gen_backend") == "clm" and _blen(g_text) > 0
+            if emit_gate:
+                key = immune_embed_key(g_text)
+                d12 = vadapt_field_two_recon_err(immune.field, key)
+                d1, d2 = d12[0], d12[1]
+                gap = (d2 * d2 - d1 * d1) / 2.0
+                try:
+                    mg = immune_memory_recall_margin(immune, key)
+                except Exception:
+                    mg = float("nan")
+                GAP.append(_c01(gap))
+                RATIO.append(1.0 - d1 / d2 if d2 > 1e-12 else 0.0)
+                MARG.append(abs(mg) if mg == mg else 0.0)
+                EMIT.append(float(r.get("emit_drive", 0.0)))
+                pending = gap
+                immune = immune_memory_bind_text(immune, _clip(g_text, 64), g_text, cfg)
+    n = len(GAP)
+    if n < 30:
+        print("  ⇒ ⛔ NOT-POWERED (n=%d emit rows < 30)" % n); return 0
+    lagf = lag_ok / lag_n if lag_n else 0.0
+    print("  replay: %d files · %d emit rows · LAG-MATCH %d/%d = %.3f  %s"
+          % (len(files), n, lag_ok, lag_n, lagf, "✅ FAITHFUL" if lagf >= 0.99 else "⛔ UNFAITHFUL"))
+    if lagf < 0.99:
+        print("  ⇒ ⛔ UNFAITHFUL replay — the offline immune store does not reproduce recorded g_recog.")
+        print("     The $0 screen is INVALID; a re-collection with d1/d2 traced directly is needed.")
+        return 0
+
+    def _stat(v):
+        s = sorted(v); return (sum(v) / len(v), s[min(len(s) - 1, int(0.9 * len(s)))], max(v),
+                               len({round(x, 10) for x in v}))
+    def _corr(x, y):
+        mx = sum(x) / len(x); my = sum(y) / len(y)
+        num = sum((a - mx) * (b - my) for a, b in zip(x, y))
+        dx = _m.sqrt(sum((a - mx) ** 2 for a in x)); dy = _m.sqrt(sum((b - my) ** 2 for b in y))
+        return num / (dx * dy) if dx > 0 and dy > 0 else float("nan")
+
+    print()
+    print("  candidate     mean    p90    max    distinct | verdict")
+    def _geo(g): return [_m.sqrt(a * x) for a, x in zip(EMIT, g)]
+    rows_out = []
+    for name, v, kill in [("gap(current)", GAP, None), ("A ratio", RATIO, 0.40), ("E-b |margin|", MARG, 0.40)]:
+        mu, p90, mx, dis = _stat(v)
+        if name == "gap(current)":
+            vd = "the production readout (baseline)"
+        elif p90 < kill:
+            vd = "💀 KILL (p90 %.3f < %.2f · never reaches θ)" % (p90, kill)
+        else:
+            c = _corr(v, EMIT)
+            vd = ("💀 KILL (SECOND-A corr=%+.2f>0.9)" % c) if abs(c) > 0.9 else \
+                 "🔎 SURVIVES (p90 %.3f≥%.2f · corr(|a|)=%+.2f) — DIRECTIONAL only" % (p90, kill, c)
+        print("  %-12s  %.4f  %.4f  %.4f  %6d | %s" % (name, mu, p90, mx, dis, vd))
+    print()
+    print("  D geo-mean (both-strong sqrt(|a|·readout) · KILL if max<θ):")
+    for name, v in [("gap", GAP), ("ratio", RATIO), ("margin", MARG)]:
+        gm = _geo(v)
+        gmx = max(gm)
+        print("     sqrt(|a|·%-6s) max %.4f mean %.4f  %s" % (name, gmx, sum(gm) / len(gm),
+              "✅ ≥θ" if gmx >= THR else "💀 <θ"))
+    mu_m, p90_m, mx_m, _d = _stat(MARG)
+    c_m = _corr(MARG, EMIT)
+    surv = p90_m >= 0.40 and abs(c_m) <= 0.9
+    print()
+    if surv:
+        print("  ⇒ 🔎 SURVIVOR: E-b recall MARGIN (the signal chat.py:2059 computes as pending_rel and")
+        print("     DISCARDS). p90=%.3f≥0.40 · corr(|a|)=%+.2f · geo-mean(|a|·margin) clears θ. G is NOT" % (p90_m, c_m))
+        print("     quiet — the daemon reads the weak gap and throws away the strong margin. A $0 SOURCE-")
+        print("     SWAP (g_drive := margin, no training). ⚠️ DIRECTIONAL — cement needs the wired margin")
+        print("     re-collected + arm-selective emit vs ≥2 controls (real-G vs amplitude-matched noise vs")
+        print("     shuffled-byte); the risk is saturation-in-abstain-band a closed loop must adjudicate.")
+    else:
+        print("  ⇒ 💀 ALL KILL — no readout on the current immune geometry lifts |g| past θ. Campaign closed.")
+    return 0
+
+
 def _cf_straddle(argv):
     """H_9394 STAGE-0 · $0 SCREENER — before burning a 303M collection, ask whether the conjunction
     (--ag-cont ON × --dyn-w raised) can EVER give content a vote.
@@ -6117,7 +6266,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--cf-straddle", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--cf-straddle", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -6390,6 +6539,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 1 and argv[0] == "--g-amp-screen":
+        return _g_amp_screen(argv[1:])
     if len(argv) >= 2 and argv[0] == "--cf-straddle":
         return _cf_straddle(argv[1:])
     if len(argv) >= 2 and argv[0] == "--dead-census":
