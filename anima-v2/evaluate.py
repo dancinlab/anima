@@ -36,16 +36,17 @@ def eval_stream(seed, entities, n_slots, n, rotate=1):
 
 
 def predict(p, cfg, exs, use_store, lam_override=None, val_override=None,
-            shuffle_keys=False, flip_pols=False, rng=None):
+            shuffle_keys=False, flip_pols=False, rng=None, oracle=False):
     ids, tg, mask, sids, vidx, qp, ap = encode_batch(exs, cfg)
     if shuffle_keys:                       # C2: keys <-> values permuted
         perm = rng.permutation(sids.shape[1])
         sids = sids[:, perm]
     if flip_pols:                          # C2: wrong-store (negative control)
         vidx = 1 - vidx
+    oslot = np.array([e["slot"] for e in exs]) if oracle else None
     _, aux = forward_loss(p, cfg, ids, tg, mask, sids, vidx, qp, ap,
                           use_store=use_store, lam_override=lam_override,
-                          val_override=val_override)
+                          val_override=val_override, oracle_slot=oslot)
     probs = aux["probs"]
     B = len(exs)
     first = probs[np.arange(B), ap]        # (B,V) distribution over the first answer byte
@@ -126,6 +127,26 @@ def main():
                   f"memorisation is worthless) -> {'PASS' if lo <= a <= hi else 'FAIL'}")
 
     print("  C0-d gradcheck           : run `python3 gradcheck.py` (+ --selftest)")
+
+    # C0-e POSITIVE CONTROL — without it a negative is unreadable: NOSTORE only proves the
+    # task does not leak, never that this toy CAN show a positive
+    # (power-before-negative-verdict, at the architecture level).
+    orc = {}
+    for s in seeds:
+        m = load("ORACLE", s)
+        if m is None:
+            print(f"  C0-e ORACLE seed{s}       : MISSING ckpt -> run train.py --arm ORACLE")
+            c0["C0e_oracle"] = False
+            break
+        exs = eval_stream(s, eval_ent, t["store_slots"], n_eval)
+        pred, want = predict(m["params"], m["cfg"], exs, True, oracle=True)
+        orc[s] = acc(pred, want)
+    else:
+        bar_o = C0.get("C0e_oracle_min", 0.90)
+        c0["C0e_oracle"] = all(a >= bar_o for a in orc.values())
+        for s, a in orc.items():
+            print(f"  C0-e ORACLE seed{s} held-out : {a:.4f} (>= {bar_o} = the toy CAN express "
+                  f"the task) -> {'PASS' if a >= bar_o else 'FAIL'}")
     if not all(c0.values()):
         print("\n🔴 C0 FAIL -> INSTRUMENT-DEAD. P1 is NOT computed. No verdict.")
         return 1

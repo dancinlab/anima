@@ -17,7 +17,8 @@ import model as M
 
 
 def forward_loss(p, cfg, ids, targets, loss_mask, store_ids, val_idx, qpos, ans_pos,
-                 use_store=True, backward=False, lam_override=None, val_override=None):
+                 use_store=True, backward=False, lam_override=None, val_override=None,
+                 oracle_slot=None):
     """ids/targets: (B,T). loss_mask: (B,T) 1.0 where the CE is counted (answer bytes).
     qpos: (B,) index of the last prompt byte (where the bridge forms its query).
     ans_pos: (B,) index whose prediction is the FIRST answer byte (== qpos, kept explicit).
@@ -40,7 +41,8 @@ def forward_loss(p, cfg, ids, targets, loss_mask, store_ids, val_idx, qpos, ans_
             pp = dict(p)
             pp["val"] = val_override
         hq = hidden[np.arange(B), qpos]                  # (B,d)
-        p_store, bc = M.bridge_fwd(pp, cfg, hq, store_ids, val_idx)
+        p_store, bc = M.bridge_fwd(pp, cfg, hq, store_ids, val_idx,
+                                   oracle_slot=oracle_slot)
         probs = p_trunk.copy()
         mixed = lam * p_store + (1.0 - lam) * p_trunk[np.arange(B), ans_pos]
         probs[np.arange(B), ans_pos] = mixed

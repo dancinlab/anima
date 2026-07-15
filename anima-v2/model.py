@@ -242,7 +242,7 @@ def store_keys(p, cfg, store_ids):
     return e @ p["W_k"], e
 
 
-def bridge_fwd(p, cfg, hidden_q, store_ids, val_idx, mask_slots=None):
+def bridge_fwd(p, cfg, hidden_q, store_ids, val_idx, mask_slots=None, oracle_slot=None):
     """hidden_q: (B,d) hidden at the query position.
     store_ids: (B,S,name_len). val_idx: (B,S) polarity per slot.
     Returns p_store (B,V) and a cache."""
@@ -252,6 +252,12 @@ def bridge_fwd(p, cfg, hidden_q, store_ids, val_idx, mask_slots=None):
     if mask_slots is not None:
         att = np.where(mask_slots, -1e9, att)
     a = softmax(att, -1)                          # (B,S)
+    if oracle_slot is not None:
+        # POSITIVE CONTROL (C0-e): force attention onto the true slot. Retrieval is free,
+        # so only the readout+operator gating has to be learned. If ORACLE cannot clear the
+        # bar, the toy cannot express the task and NO negative here is readable.
+        a = np.zeros_like(a)
+        a[np.arange(a.shape[0]), oracle_slot] = 1.0
     vals = p["val"][val_idx]                      # (B,S,d)
     v = np.einsum("bs,bsd->bd", a, vals)          # (B,d)
     # concat the query hidden so the OPERATOR can gate the retrieved polarity. The store

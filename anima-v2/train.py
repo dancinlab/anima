@@ -98,6 +98,7 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
 
     use_store = arm != "NOSTORE"
     rotate = 500 if arm == "SLOWROT" else 1
+    oracle = arm == "ORACLE"   # C0-e positive control: retrieval handed over for free
 
     train_ent, _ = gen.split_pool(t["entity_pool"], t["entity_train"], t["entity_eval"])
     stream = gen.Stream(seed, train_ent, t["store_slots"], rotate_every=rotate)
@@ -122,8 +123,9 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
     for step in range(steps):
         exs = stream.batch(b["batch"])
         ids, tg, mask, sids, vidx, qp, ap = encode_batch(exs, cfg)
+        oslot = np.array([e["slot"] for e in exs]) if oracle else None
         loss, grads = forward_loss(p, cfg, ids, tg, mask, sids, vidx, qp, ap,
-                                   use_store=use_store, backward=True)
+                                   use_store=use_store, backward=True, oracle_slot=oslot)
         scale = min(1.0, (step + 1) / b["warmup"])
         opt.step(p, grads, lr_scale=scale)
         losses.append(loss)
@@ -141,7 +143,7 @@ def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--arm", required=True,
-                    choices=["COTRAIN", "BOLT", "NOSTORE", "SLOWROT"])
+                    choices=["COTRAIN", "BOLT", "NOSTORE", "SLOWROT", "ORACLE"])
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--steps", type=int, default=None)
     args = ap.parse_args()

@@ -4,7 +4,7 @@
 
 # V2_1 — 조회 다리는 학습으로만 벌 수 있는가, 아니면 볼트온으로 충분한가
 
-**status:** ⏳ PENDING — 계기 미완성(양성통제 ORACLE 부재) · **P1 미계산 = 앵커 미소각**
+**status:** 🔴 INSTRUMENT-DEAD (C0-e ORACLE 0.74/0.75 < 0.90) · **P1 미계산 = 앵커 미소각** · 가설 미판정
 **scope:** 🔒 **DIRECTIONAL 상한** — `core/` 밖 toy. 어떤 결과도 TERMINAL 아님. 방향이 나오면
 `core/` + `anima-py` 플래그로 이식해야 판정을 번다 (`../CLAUDE.md`).
 **bars:** `../bars.json` — 데이터 보기 전 동결·커밋 (읽은 뒤 수정 = tune-to-green)
@@ -147,9 +147,34 @@ loss 는 step ~2000 에 0.154 로 평탄화 후 정체.
 - ORACLE ≥ 0.90 ⟹ 계기 생존. 그때 비로소 COTRAIN 음성이 **"다리 학습이 진짜 어렵다"** 로 읽힌다.
 - ORACLE < 0.90 ⟹ **INSTRUMENT-DEAD** — 혼합/게이팅 설계 자체가 과제를 표현 못 함. 판정 없음.
 
-부수 미결(ORACLE PASS 시에만 의미 있음): 예산(4000 step) · d=64 용량 · 조회 학습의
-chicken-and-egg(hidden_q 가 엔티티를 안 담으면 W_q 가 못 배우고, W_q 경사가 없으면 hidden_q 가
-엔티티를 안 담는다). **ORACLE 이 이 셋을 전부 가른다.**
+### run 3 — ORACLE 실측: 🔴 INSTRUMENT-DEAD
+
+C0-e ORACLE 을 배선해 발사(조회 우회·정답 슬롯 극성 직접 주입 = 조회 난이도 0).
+
+| arm | held-out acc | final_loss |
+|---|---|---|
+| **ORACLE s7 / s11** | **0.7466 / 0.7368** | 0.107 / 0.106 |
+| NOSTORE (우연) | 0.491 / 0.509 | 0.155 |
+
+**조회를 공짜로 줘도 74~75% 밖에 못 맞춘다 → C0-e FAIL → INSTRUMENT-DEAD → P1 미계산.**
+loss 는 0.107 로 낮았지만(store 를 쓰긴 함 · λ 0.5→0.66) **이진 DV 가 못 따라온다** —
+혼합 `p = λ·p_store + (1−λ)·p_trunk` 에서 trunk 의 우연 분포가 store 를 **희석**해, 조회가
+완벽해도 argmax 가 절반쯤 틀린다. ⟹ **혼합 아키텍처 자체가 과제를 표현 못 한다.**
+
+## 🎯 이 실험이 실제로 가르친 것 (판정 아님 · 계기 교훈)
+
+**C0-e 양성통제가 v2 를 구했다.** 그게 없었으면 run 2 의 `COTRAIN(0.1544) ≈ NOSTORE(0.1548)`
+를 보고 **"다리는 학습으로 못 번다 = (B) 확증"** 이라고 **잘못 읽었을** 것이다. 실제로는
+**계기가 죽어서 어떤 arm 도 못 잰다** — "효과 없음"이 아니라 "측정 불가"였다
+(`power-before-negative-verdict` 를 아키텍처 수준에서 확인). **음성을 읽기 전에 양성통제가
+통과하는지부터 봐라** — 이 카드의 유일한 확정 소득.
+
+## 다음 계기 (V2_2 후보 · 아직 미착수)
+
+혼합-희석이 진범이므로, 다음 설계는 **혼합을 버리고 gating 을 logit 수준**으로:
+`logit = W_out·concat(v, hidden_q)` 를 **trunk logit 에 더한다**(확률혼합 아님). 그러면
+trunk 의 우연 분포가 답 바이트를 못 누른다. C0-e ORACLE 이 ≥0.90 을 통과해야 비로소
+COTRAIN/BOLT 를 읽을 자격이 생긴다. **그 전엔 어떤 P1 도 없다.**
 
 ## NEXT (결과 무관 · 미리 씀)
 

@@ -3,30 +3,39 @@
   "frozen_at": "2026-07-16",
   "hypothesis": "The bridge can only be EARNED by learning: a store-lookup bolted onto a frozen trunk fails, while co-training with per-example store rotation forces the trunk to learn to QUERY instead of memorise.",
   "scope": "DIRECTIONAL ceiling — anima-v2/ lives outside core/, so no result here can ever be TERMINAL (a_engine_native_learning; every bypass died undecidable, H_9303/H_9307). A positive must be ported to an anima-py flag to earn a verdict.",
-
-  "seeds": [7, 11],
-
+  "seeds": [
+    7,
+    11
+  ],
   "task": {
     "entity_bytes": 5,
     "entity_pool": 512,
     "entity_train": 384,
     "entity_eval": 128,
-    "operators": ["is", "not"],
-    "answers": ["good", "bad"],
+    "operators": [
+      "is",
+      "not"
+    ],
+    "answers": [
+      "good",
+      "bad"
+    ],
     "store_slots": 8,
     "store_slots_probe": 64,
     "max_seq": 32
   },
-
   "budget": {
     "batch": 64,
     "steps": 4000,
     "lr": 0.001,
     "warmup": 200,
-    "bolt_lr_grid": [0.0003, 0.001, 0.003],
+    "bolt_lr_grid": [
+      0.0003,
+      0.001,
+      0.003
+    ],
     "bolt_lr_selected_by": "train_loss (NEVER eval DV — selecting on DV would be tune-to-green; giving BOLT its honest best shot is what makes its death evidence)"
   },
-
   "model": {
     "d": 64,
     "layers": 2,
@@ -36,22 +45,21 @@
     "lambda_init": 0.5,
     "lambda_learned": true
   },
-
   "C0_instrument_integrity": {
     "_fail": "INSTRUMENT-DEAD — P1 is not computed or printed",
     "C0a_eval_key_leak_max": 0,
     "C0b_nostore_heldout_lo": 0.45,
     "C0b_nostore_heldout_hi": 0.55,
     "C0c_determinism_required": true,
-    "C0d_gradcheck_max_rel_err": 0.01
+    "C0d_gradcheck_max_rel_err": 0.01,
+    "C0e_oracle_min": 0.9,
+    "_C0e_note": "POSITIVE control added after run2 showed COTRAIN==NOSTORE. NOSTORE only proves the task does not leak; nothing proved the toy CAN show a positive, so a negative was unreadable (power-before-negative-verdict at the architecture level). ORACLE hands retrieval over for free. This ADDS a gate that can only make passing HARDER and was set before any P1 was computed - P1 has never been read, so no anchor is burned."
   },
-
   "C1_power": {
     "_fail": "UNDERPOWERED — widen eval (data-independent repair is allowed), do NOT move the bar",
     "eval_n_per_arm": 2048,
     "mde_required_max": 0.04
   },
-
   "C2_validity": {
     "_fail": "that arm's DV is INVALID",
     "key_shuffle_max": 0.55,
@@ -59,7 +67,6 @@
     "lambda_zero_max": 0.55,
     "wrong_store_flip_coherence_min": 0.9
   },
-
   "P1_primary": {
     "_note": "macro = mean over the 4 cells (operator x polarity). Report cells BEFORE macro; if any single cell falls below macro-0.05 the macro is void (polarity-split-before-headline). Both seeds must agree.",
     "cell_collapse_delta": 0.05,
@@ -70,7 +77,6 @@
     "inversion_below": 0.45,
     "grey_zone": "0.60-0.90 => NO-VERDICT (pre-registered ambiguity band; re-tuning the bar is forbidden)"
   },
-
   "contingency": {
     "_note": "declared BEFORE any run, so it is not tune-to-green",
     "lambda_collapse_rerun": "IF COTRAIN lambda < 0.05 AND P1 fails, ONE rerun with fixed lambda=0.5 is allowed. No other rerun."
