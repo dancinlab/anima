@@ -4216,6 +4216,48 @@ def _collide_select(ckpt, argv):
     mem = immune_memory_new_text(pairs[0][0], 0.5, 256)
     for cue, tgt, sw, bs, lang in pairs:
         mem = immune_memory_bind_text(mem, cue[:64], cue, cfg)
+    if "--pregate" in argv:
+        # \u2500\u2500 $0 PRE-GATE (H_9362 route): score the 12 frozen _WEAVE TARGETS directly, before
+        # spending a single GPU-hour on XBIND CPT. g is WEIGHT-INDEPENDENT here (it reads the
+        # cue-bound mem; the target is never bound), so CPT can only move a, never g -> a and g
+        # stay orthogonal and the emergence quadrant (a>0, g<0) is reachable IFF the target is
+        # already novel to the store. Two gates decide whether the expensive fire is even valid:
+        #   GATE1  g < -0.05  (target novel to G-store) -- else INSTRUMENT-BROKEN: the store
+        #          recognizes the target, so no amount of CPT lands it in the quadrant. Do NOT fire.
+        #   GATE2  a <= 0.05  (target not yet fluent)   -- else CPT is unnecessary: the target is
+        #          already fluent yet baseline read POOL-DRY, so the bottleneck is the ideation
+        #          proposal distribution, not weight-write. Redirect to $0 few-shot ideation.
+        print("=== A\u21c4G COLLIDE-PREGATE \u00b7 H_9362 \u00b7 target (a,g) $0 fire-gate ===")
+        print("  ckpt=%s  targets=%d  (g weight-independent: cue-bound mem, target unbound)"
+              % (ckpt.split("/")[-1], len(pairs)))
+        gbad = abad = 0
+        for i, (cue, tgt, sw, bs, lang) in enumerate(pairs):
+            d = _gen.conflict_drives_live_W(h, tgt, mem)
+            a, g = float(d[0]), float(d[1])
+            gok, aok = (g < -0.05), (a <= 0.05)
+            gbad += (not gok); abad += (not aok)
+            flag = ("" if gok else "[g\u2265\u2212.05 \uacc4\uae30\uace0\uc7a5] ") + ("" if aok else "[a>.05 CPT\ubd88\uc694]")
+            print("    t%02d a=%+.3f g=%+.3f  %-22s| %s" % (i, a, g, flag, tgt[:44]))
+        n = len(pairs)
+        print()
+        print("  GATE1 g<\u22120.05 (novel target)     : %d/%d" % (n - gbad, n))
+        print("  GATE2 a\u2264 0.05 (needs weight-write): %d/%d" % (n - abad, n))
+        try:
+            _gen.gen_auto_free(h)   # cleanup-only; a codec-specific free bug must not corrupt the verdict/rc
+        except Exception:
+            pass
+        if gbad > 0:
+            print("  \u21d2 \U0001f9f1 INSTRUMENT-BROKEN \u2014 %d/%d target \uc774 recognized(g\u2265\u2212.05). "
+                  "G-store \uac00 \ud0c0\uae43\uc744 \uc548\ub2e4 = CPT \ub85c\ub3c4 \ucc3d\ubc1c\uc0ac\ubd84\uba74 \ub3c4\ub2ec \ubd88\uac00. "
+                  "\ubc1c\uc0ac \uae08\uc9c0, \uacc4\uae30 \uba3c\uc800 \uc218\ub9ac." % (gbad, n))
+            return 0
+        if abad > n // 2:
+            print("  \u21d2 \U0001f500 REDIRECT \u2014 %d/%d target \uc774 \uc774\ubbf8 \uc720\ucc3d(a>.05)\uc778\ub370 baseline POOL-DRY "
+                  "\uc600\ub2e4 = \ubcd1\ubaa9\uc774 CPT \uc544\ub2c8\ub77c ideation \uc81c\uc548\ubd84\ud3ec. $0 few-shot ideation \uc774 \uba3c\uc800." % (abad, n))
+            return 0
+        print("  \u21d2 \u2705 FIRE-OK \u2014 \uc804 target novel(g<\u2212.05) \u2227 %d/%d \uac00 weight-write \ud544\uc694(a\u2264.05). "
+              "XBIND CPT(\uc911\uac04 ckpt 500/1000/2000/3000) \uc815\ub2f9\ud654." % (n - abad, n))
+        return 0
     print("=== A\u21c4G COLLISION-SELECTS-EMERGENCE \u00b7 H_9362 \u00b7 --collide-select ===")
     print("  ckpt=%s  probes=%d  K=%d" % (ckpt.split("/")[-1], len(pairs), K))
     # build the shared candidate pool per probe + drives
@@ -5231,7 +5273,7 @@ _KNOWN_FLAGS = frozenset((
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
-    "--result-file", "--collide-select", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
+    "--result-file", "--collide-select", "--pregate", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--bridge-trace", "--flip0", "--theta",

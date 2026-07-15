@@ -93,3 +93,28 @@ baseline POOL-DRY. XBIND 에선 **S_emerge 가 SECOND-A 와 갈리는지가 전�
   DRY 지표. 계기 3회 단련: 비-W 경로·죽은 clm_ce_ranged·surrogate print 크래시 전부 수리(#3665/#3670).
 - NEXT: H_9267 XBIND-retrained `.clm` 에서 풀이 젖으면(타깃 등장>0) S_emerge vs SECOND-A 분리로
   "충돌이 창발 선택"을 판정. XBIND ckpt 재학습 = [train] 소액(rent=spend go).
+
+## WET 설계 수정 (Fable 재프레임 · 인프라 태우기 전)
+
+XBIND-wet 팔은 **load-bearing** 이나(S_emerge>SECOND-A 는 baseline·H_9267 둘 다 안 잰 새 질문 ·
+H_9356 반박은 wet 풀에서만 가능), 순진하게 3000 step 완주하면 **천장-동률 오판정**이 난다:
+- **함정**: 3000 step 이면 target 이 D-acc 1.0 급 유창(a↑) → argmax-a=target → SECOND-A 도 전부 적중 →
+  사전등록 `he>hsa`(strict) 를 **이길 수 없어** 코드가 거짓으로 `SECOND-A/H_9356 재발` 을 출력.
+  ([[prereg-table-must-cover-below-chance]] 의 **천장 버전**.) 판별창 = **부분-wet 중간 ckpt**.
+- **수정①** multi-ckpt: `anima-py train --ckpt-every` 로 500/1000/2000/3000 저장, 각 ckpt 를
+  `--collide-select` (eval 은 summer CPU $0). **수정②** 사전등록표에 천장-동률 칸: `he==hsa==n`
+  (전 arm 포화)=SATURATED/판정불가, SECOND-A 아님. SECOND-A(그림자) 판정은 비포화 셀에서만 유효.
+
+## $0 PRE-GATE (`--collide-select --pregate` · 발사 전 계기검진 · engine-native flag)
+
+**g 는 가중치 무관**(cue-bound mem·target 미결합 → CPT 는 a 만 움직임 · a⊥g 불변). 12 frozen
+`_WEAVE` target 을 직접 `conflict_drives_live_W` 로 채점해 발사 정당성을 $0 으로 가른다:
+- **GATE1 g<−0.05**(target novel) — 하나라도 g≥−.05 면 🧱 **INSTRUMENT-BROKEN**(G-store 가 target 을
+  인식 → CPT 로도 창발사분면 도달 불가). 발사 금지.
+- **GATE2 a≤0.05**(미유창) — 과반이 a>.05 인데 baseline POOL-DRY 였으면 🔀 **REDIRECT**(병목=ideation
+  제안분포지 weight-write 아님 → $0 few-shot 먼저).
+- (D) few-shot 은 대체 불가: `conflict_drives_live_W` 는 후보 **단독** CE 를 재 프롬프트 비조건 →
+  few-shot 은 target 의 standalone a 를 못 움직인다. a 이동 = weight-write(CPT)뿐.
+- toy.clm 스모크: 12/12 g=−1.000·a≈.035~.042 → FIRE-OK 경로 검증(계기 자체는 작동). **판정 대상
+  = summer py303_full 실측**(pool·never mini). 경로 = torch-preinstall vast + HF-hub ckpt 전송
+  (vast ssh 대용량 고장 · [[pod-fire-pip-bootstrap]]), 5분 레몬-검진, 중간 ckpt 전량 HF 회수 후 teardown.
