@@ -4725,6 +4725,62 @@ def _cf_straddle(argv):
                 print("        gate — but that would abandon the both-strong semantics on purpose).")
             else:
                 print("     ⇒ both sides comparable — the smallness is genuinely the product, not an asymmetry.")
+
+        # H_9396 G-AMP — WHY is |g| quiet? g_recog = clip01(afield top-2 gap), so it is undefined-ish
+        # until the adaptive field has ≥2 prototypes and only informative once they separate. If the
+        # session never leaves warm-up, "G is quiet" is a REGIME artifact (longer sessions would fix
+        # it) — the last escape hatch before conceding the amplitude is intrinsic. Split it:
+        #   warm-up  = ticks whose cell_count is too low for a top-2 gap to exist
+        #   plateau  = does |g| keep GROWING with cell_count, or flatten?
+        # A flat plateau kills "just run longer": more cells, same amplitude.
+        if all("cell_count" in r for r in anc):
+            from collections import defaultdict as _dd
+            by_c = _dd(list)
+            for r in anc:
+                by_c[int(r["cell_count"])].append(float(r["g_recog"]))
+            zero_c1 = [r for r in anc if int(r["cell_count"]) <= 1]
+            z_and_0 = [r for r in zero_c1 if float(r["g_recog"]) == 0.0]
+            warm = [r for r in anc if int(r["cell_count"]) <= 2]
+            print()
+            print("  🔬 G-AMP (g_recog = clip01(afield top-2 gap) — is the quiet G just WARM-UP?)")
+            print("     cells   n    |g| mean   |g| max   >0%")
+            for c in sorted(by_c):
+                v = by_c[c]
+                pos = 100.0 * sum(1 for x in v if x > 0) / len(v)
+                print("      %2d    %3d   %7.4f   %7.4f   %3.0f%%" % (c, len(v), sum(v) / len(v), max(v), pos))
+            if zero_c1:
+                print("     cell_count≤1 ⇒ g_recog==0 in %d/%d (%.0f%%) — with one prototype there IS no"
+                      % (len(z_and_0), len(zero_c1), 100.0 * len(z_and_0) / len(zero_c1)))
+                print("        top-2 gap: the G signal is STRUCTURALLY zero there, not merely small.")
+            print("     warm-up share (cells≤2): %d/%d = %.0f%% of ticks"
+                  % (len(warm), len(anc), 100.0 * len(warm) / len(anc)))
+            # plateau test — well-powered cells only (n≥20), does mean |g| trend up with cell_count?
+            pts = [(c, sum(v) / len(v)) for c, v in sorted(by_c.items()) if len(v) >= 20 and c >= 3]
+            if len(pts) >= 3:
+                xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+                mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+                den = sum((x - mx) ** 2 for x in xs)
+                slope = (sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / den) if den else 0.0
+                span = max(ys) - min(ys)
+                print("     plateau test (cells≥3, n≥20 only): means %s"
+                      % " ".join("%d:%.4f" % (c, m) for c, m in pts))
+                print("       slope=%+.5f per cell · spread=%.4f" % (slope, span))
+                need = 0.5   # the O(0.5) amplitude |a| already has
+                if slope <= 0.005:
+                    print("     ⇒ 🧱 AMPLITUDE-INTRINSIC — once the field has ≥3 cells, |g| does NOT grow with")
+                    print("        more cells (slope %+.5f ≈ 0): it plateaus at ~%.3f, max %.3f. So 'just run"
+                          % (slope, my, max(max(v) for v in by_c.values())))
+                    print("        longer sessions' is REFUTED as an escape — more prototypes buy cells, not")
+                    print("        amplitude. The quiet G is a property of the afield top-2 gap at this")
+                    print("        feature scale, not a warm-up artifact. (Warm-up is real but is only the")
+                    print("        %.0f%% zero-floor, not the ceiling.) Reaching |a|'s O(%.1f) needs a"
+                          % (100.0 * len(warm) / len(anc), need))
+                    print("        DIFFERENT G readout, not a longer run.")
+                else:
+                    print("     ⇒ ⏳ AMPLITUDE-GROWS — |g| still rising with cell_count (slope %+.5f). A longer"
+                          % slope)
+                    print("        session is a LIVE escape: extrapolate cells needed for |g|~%.1f before" % need)
+                    print("        conceding the amplitude. This would REOPEN the campaign closure.")
     print()
     print("   w    | score_cf min   max    | ≤θ rows  clock-open  STRADDLE(open ∧ ≤θ)")
     best = 0
