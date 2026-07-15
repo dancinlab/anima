@@ -106,3 +106,15 @@ def _sigma_live_measure():          # ← 인자가 0개
 **진짜 이유 (실측)**: ① **Θ**: `ci_emit_decision = 0.5·(psi_gws+psi_lprec) ≥ 0.5` 인데 실측 drive 가 **양 ckpt 다 0.636~0.79** — 문턱 위에 통째로 앉았다 ⟹ 결정이 100% emit(Ψ̂≡1). 값은 varying 인데 **결정이 포화**(H_9352 의 emit-과열, 게이지 퇴화 아님). ② **σ·gate** corr 0 = dec 무분산의 귀결. ③ **σ·bind** Φ≈0 = **root-disjoint 8-col 은 정의상 저-통합**(IIT4 floor · 정규화해도 0 · D2 회피용 disjoint 선택의 대가) — 계기 버그 아니라 그 lane 선택의 성질.
 
 ⟹ **H_9351 은 수리됐다**(패널이 RandomState(7) 안 잰다 · σ·stage 재현 1.00 · 85/90 lane 감지). σ *집계* 의 ckpt-무감은 **퇴화 게이지가 아니라** (a) emit 결정이 문턱 위 포화(H_9352) (b) disjoint lane 저-Φ 때문. σ·stage 만 ckpt 감도(no-inhibit 0.16 vs 0.04). **NEXT(정정됨)**: chat-py-4/5 게이지 수리 **아님**(이미 됨) — ① Ψ̂ 를 emit-과열 위에서 읽는 통제(H_9352 와 합류) ② σ·bind 를 저-Φ 안 나는 결합 lane 재선택. **cement 금지**: DIRECTIONAL.
+
+## σ·bind 후속 — 저-Φ 는 lane 선택 탓이지 substrate floor 아님 ($0 스카우트)
+
+②를 $0 로 스카우트: 트레이스 lane 부분집합별 Φ(정규화)를 두 ckpt 에서 재니 —
+
+| lane 집합 | Φ(py303) | Φ(savantoff) | Δ |
+|---|---|---|---|
+| root-disjoint 8 (원래) · gws15 · emit-core · tension | 0.00 | 0.00 | 0 |
+| relevance[rel_lane·recon_err·rel_ema·cur_ema·ten_ema] | 0.77 | 0.48 | **0.29** |
+| score-comp[rel_ctx·cur_ctx·gap_ctx·coh_lane·bal_lane] | 0.81 | 0.30 | **0.51** |
+
+⟹ **σ·bind 는 이 substrate 에서 ckpt 를 구별할 수 있다**(Φ 0.81 · Δ 0.51) — 내 원래 Φ=0 은 root-disjoint 선택의 산물이지 substrate floor 아님. **단 미해결**: 살아난 집합은 EMA·파생 lane 이라 높은 Φ 가 substrate 통합인지 **D2 배선 tautology**(lane 이 서로의 결정론적 함수)인지 못 가른다. **역설**: 통합돼야 Φ>0 인데 통합=결합이면 D2. 이 역설(D2-free 통합 lane 선택 · 또는 IIT4 Φ 가 이미 선형결합을 배제하는지)이 σ·bind 배선의 남은 설계 = go-gated Fable 설계.
