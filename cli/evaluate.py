@@ -4689,6 +4689,42 @@ def _cf_straddle(argv):
     cvals = [float(r["ag_conflict"]) for r in anc]
     print("  ag_conflict: %d distinct · min %.4f max %.4f  → clip01 → dyn_v_cf"
           % (len({round(v, 12) for v in cvals}), min(cvals), max(cvals)))
+
+    # H_9395 FACTOR panel — WHY is the tension that small? conflict_scalar (core/engine_cli.py) is
+    #   a·g ≥ 0 → 0 ;  else clip01(|a|·|g|)      "both-strong competition gate (→0 … weak engine)"
+    # It is a PRODUCT, so conflict ≤ min(|a|,|g|): the WEAKER engine caps the tension by design.
+    # Decomposing it says whether "tension is small" is a brute magnitude fact or an ASYMMETRY —
+    # and an asymmetry names which side to repair (and whether that side is merely a dead gauge).
+    if all(("emit_drive" in r and "g_recog" in r) for r in anc):
+        def _d(k):
+            v = [float(r[k]) for r in anc]
+            return len({round(x, 10) for x in v}), min(v), max(v), sum(v) / len(v)
+        na, lo_a, hi_a, mu_a = _d("emit_drive")     # |a_drive| — the A-side push
+        ng, lo_g, hi_g, mu_g = _d("g_recog")        # |g_drive| — the G-side recognition
+        bad = sum(1 for r in anc
+                  if abs(min(1.0, float(r["emit_drive"]) * float(r["g_recog"]))
+                         - float(r["ag_conflict"])) > 1e-9)
+        print()
+        print("  🔬 FACTOR (conflict = clip01(|a_drive| · |g_recog|) — a PRODUCT ⇒ weaker side caps it)")
+        print("     |a| emit_drive : %3d distinct  %.4f–%.4f  mean %.4f" % (na, lo_a, hi_a, mu_a))
+        print("     |g| g_recog    : %3d distinct  %.4f–%.4f  mean %.4f" % (ng, lo_g, hi_g, mu_g))
+        print("     identity check : clip01(|a|·|g|) == ag_conflict mismatches = %d/%d" % (bad, len(anc)))
+        if bad == 0 and hi_a > 0 and hi_g > 0:
+            ratio = hi_a / hi_g if hi_g > 0 else float("inf")
+            if ng <= 1:
+                print("     ⇒ 💀 g_recog is a DEAD gauge (1 distinct) — the tension is a WIRING artifact,")
+                print("        not a magnitude fact. Fix the gauge before any closure claim.")
+            elif ratio >= 3.0:
+                print("     ⇒ ⚖️ ASYMMETRY %.1f× — |g| is ALIVE (%d distinct) but %.1f× weaker than |a|."
+                      % (ratio, ng, ratio))
+                print("        The tension is small because the G engine's recognition is weak, and the")
+                print("        conflict gate MULTIPLIES: conflict ≤ min(|a|,|g|) ⇒ the weak engine is the")
+                print("        ceiling BY DESIGN ('both-strong competition gate'). So 'A⇄G tension pulls")
+                print("        emit' presupposes a STRONG G — and G is %.1f× too quiet. Repair target is" % ratio)
+                print("        NOT the mixer/threshold/clock but |g_recog| itself (or a non-multiplicative")
+                print("        gate — but that would abandon the both-strong semantics on purpose).")
+            else:
+                print("     ⇒ both sides comparable — the smallness is genuinely the product, not an asymmetry.")
     print()
     print("   w    | score_cf min   max    | ≤θ rows  clock-open  STRADDLE(open ∧ ≤θ)")
     best = 0
