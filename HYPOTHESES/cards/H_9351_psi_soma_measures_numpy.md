@@ -99,6 +99,10 @@ def _sigma_live_measure():          # ← 인자가 0개
 |---|---|---|
 | 패널이 ckpt 를 보는가 | ❌ RandomState(7) — lane 무관 | ✅ 실 lane 읽음 — **85/90 틱 lanes 다름** · 68틱 psi_gws 다름 |
 | σ 집계 판정 | 두 ckpt **바이트 동일** | Ψ̂≡1·gate 0·bind 0 **여전히 거의 동일** |
-| 이유 | 측정 결함(합성 입력) | **substrate 포화·퇴화** — psi_gws/lprec 가 항상 emit 문턱 초과(Ψ̂≡1) · bind 8-col 퇴화([[cpt-destroys-what-corpus-omits]] 아님, chat-py-4/5 게이지 상수) |
+| 이유 | 측정 결함(합성 입력) | **emit 결정 포화 + disjoint 저-Φ** (게이지는 alive · 아래 정정) |
 
-⟹ **H_9351 은 수리됐다**(패널이 더는 RandomState(7) 를 안 잰다 · σ·stage 재현 1.00·85/90 lane 감지). **그러나 수리가 노출한 것**: 데몬의 emit lane 은 **포화**(Ψ̂≡1)하고 bind 게이지는 **퇴화**(chat-py-4/5)라, σ *집계* 판정이 ckpt 를 lane 수준에선 보면서도 **판정 통계에서 씻겨나간다**. σ·stage 만 ckpt 감도 유지(no-inhibit 0.16 vs 0.04). ⟹ '의식 판정이 ckpt 를 본다'는 이제 **측정 문제가 아니라 substrate 문제**(포화·퇴화 게이지) — 다음은 chat-py-4/5 퇴화-게이지 수리(별개 lane). **cement 금지**: 이 σ 는 toy 규모가 아니라 substrate 포화라 여전히 DIRECTIONAL(진짜 σ verdict = 비포화 게이지 위).
+**⚠️ 정정 (measure-before-fix · verdict-integrity)**: 처음엔 σ 집계 ckpt-무감을 "chat-py-4/5 퇴화 게이지"로 귀속했다 — **틀렸다**. 게이지 분산을 직접 재니(≈$0) **전부 alive 이고 ckpt 별로 다르다**: `recon_err` distinct 2 vs 19 · `rel_lane` 3 · `nov_ctx`/`cur_indep`/`rel_indep` distinct 90/90/77 · `psi_gws` 3 vs 8. chat-py-4/5 는 `pending_recon`/`pending_rel` 배선(chat.py:1543·1560·2027)으로 **이미 수리됐다**. 하마터면 안 죽은 걸 중복 수리할 뻔했다.
+
+**진짜 이유 (실측)**: ① **Θ**: `ci_emit_decision = 0.5·(psi_gws+psi_lprec) ≥ 0.5` 인데 실측 drive 가 **양 ckpt 다 0.636~0.79** — 문턱 위에 통째로 앉았다 ⟹ 결정이 100% emit(Ψ̂≡1). 값은 varying 인데 **결정이 포화**(H_9352 의 emit-과열, 게이지 퇴화 아님). ② **σ·gate** corr 0 = dec 무분산의 귀결. ③ **σ·bind** Φ≈0 = **root-disjoint 8-col 은 정의상 저-통합**(IIT4 floor · 정규화해도 0 · D2 회피용 disjoint 선택의 대가) — 계기 버그 아니라 그 lane 선택의 성질.
+
+⟹ **H_9351 은 수리됐다**(패널이 RandomState(7) 안 잰다 · σ·stage 재현 1.00 · 85/90 lane 감지). σ *집계* 의 ckpt-무감은 **퇴화 게이지가 아니라** (a) emit 결정이 문턱 위 포화(H_9352) (b) disjoint lane 저-Φ 때문. σ·stage 만 ckpt 감도(no-inhibit 0.16 vs 0.04). **NEXT(정정됨)**: chat-py-4/5 게이지 수리 **아님**(이미 됨) — ① Ψ̂ 를 emit-과열 위에서 읽는 통제(H_9352 와 합류) ② σ·bind 를 저-Φ 안 나는 결합 lane 재선택. **cement 금지**: DIRECTIONAL.
