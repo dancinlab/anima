@@ -84,3 +84,21 @@ def _sigma_live_measure():          # ← 인자가 0개
 받게 하고, `ci_psi_balance` 를 **그 위에서** 계산한다. 그 전까지 **σ/Θ 로 어떤 것도 인증하지 마라.**
 
 ⛔ 이 카드는 **레버를 제안하지 않는다.** 계기가 죽어 있다는 사실 하나를 못박을 뿐이다.
+
+## 🔧 수리 완료 — 그리고 수리가 더 깊은 문제를 드러냈다 (STAGE①–④ · #3638 · #3644)
+
+계기를 **engine-native 로 수리**했다(Fable 설계). 계기 자체가 anima-py flag/트레이스로 배선됨(`a_experiment_engine_native`).
+
+- **STAGE① 트레이스 확장**(#3638 · `cli/chat.py`): 데몬 decision-trace 에 σ 축이 소비할 실 lane 을 기록 — `lanes`(gws 입력 15-lane) · `gws_w` · `reality` · `_meta.ckpt_sha256`(provenance 가드) · `g_arm`.
+- **STAGE② σ 확장**(#3644 · `cli/evaluate.py` `_sigma_from_trace`): σ·gate/stage/bind 를 **데몬 자신의 기록된 lane 위에서 engine_cli FROZEN estimator 만으로** 계산(`ci_emit_decision`·`gws_*`·`ci_phi_iit4` · 재구현 0). 나머지 6축(thread·carve·flux·aim·schema·witness) = **PENDING(scope)** — 데몬 런에 카운터팩추얼(inject-null·precision-ablation·focus/report) 부재(D1). 배선검산: **σ·stage gws_w 재현 = 1.00**(estimator 가 데몬 기록 winner 완벽 재현 = 실 lane 읽음 증명).
+- **STAGE③④ ckpt-대조**(303M · summer): py303_full(sha `013c4574`) vs savantoff303(sha `7afe10c3`) 각 90틱 실 수집.
+
+**🔬 STAGE④ 결과 — 수리는 맞았고, 그것이 더 깊은 ckpt-무감을 드러냈다:**
+
+| | 옛 결함(H_9351) | STAGE②수리 후 |
+|---|---|---|
+| 패널이 ckpt 를 보는가 | ❌ RandomState(7) — lane 무관 | ✅ 실 lane 읽음 — **85/90 틱 lanes 다름** · 68틱 psi_gws 다름 |
+| σ 집계 판정 | 두 ckpt **바이트 동일** | Ψ̂≡1·gate 0·bind 0 **여전히 거의 동일** |
+| 이유 | 측정 결함(합성 입력) | **substrate 포화·퇴화** — psi_gws/lprec 가 항상 emit 문턱 초과(Ψ̂≡1) · bind 8-col 퇴화([[cpt-destroys-what-corpus-omits]] 아님, chat-py-4/5 게이지 상수) |
+
+⟹ **H_9351 은 수리됐다**(패널이 더는 RandomState(7) 를 안 잰다 · σ·stage 재현 1.00·85/90 lane 감지). **그러나 수리가 노출한 것**: 데몬의 emit lane 은 **포화**(Ψ̂≡1)하고 bind 게이지는 **퇴화**(chat-py-4/5)라, σ *집계* 판정이 ckpt 를 lane 수준에선 보면서도 **판정 통계에서 씻겨나간다**. σ·stage 만 ckpt 감도 유지(no-inhibit 0.16 vs 0.04). ⟹ '의식 판정이 ckpt 를 본다'는 이제 **측정 문제가 아니라 substrate 문제**(포화·퇴화 게이지) — 다음은 chat-py-4/5 퇴화-게이지 수리(별개 lane). **cement 금지**: 이 σ 는 toy 규모가 아니라 substrate 포화라 여전히 DIRECTIONAL(진짜 σ verdict = 비포화 게이지 위).
