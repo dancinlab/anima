@@ -60,6 +60,15 @@ substrate 의 다른 valid readout(order-lock 이 측정된 발견) → LIVE. tu
 기록) 사실-리플레이 재구성이 정확히 유지 = 더 안전·정확. counterfactual-root 경로만 이들을 안 통과
 (문서화된 scope 한계, 파손 아님). 주석 갱신으로 정직성 유지.
 
+## 🔬 적대검증 Workflow 소견 (6 verifier · 종합 agent 은 schema-retry 툴링실패)
+
+게이지별 6 적대 verifier harvest(종합 agent 만 StructuredOutput cap 초과=툴링 실패, 과학 아님):
+- **전원 tune-to-green=False** 확인 · af/cb/ca3/wm = NEEDS-303M(toy≠terminal, 내 판정과 일치).
+- **af**: "TOY IS HONESTLY DEAD, NOT BUGGED" — 배선옳음·toy degenerate 확증.
+- **ca3**: distinct=20 은 LIVENESS 증명이나 STRUCTURE 아님(min_supp=1·n=4 분모성장 rational) → 순열 통제 + 303M 필요(카드 NEXT 반영).
+- **phi**: CONFIRMED-NEGATIVE(content-independent) — 이는 **설계상 percept-blind**(zero-input IIT4 · a_phi_iit4_tool). "time-live, content-blind" 로 명시(claim 아님).
+- **scn+anchor REJECT** = 진짜 발견: `_meta` 가 `phi_const`/`nudge_const` 를 세션 불변량으로 기록하나 ⑤/⑥B 로 per-tick 변동 → 리플레이어 오도. **수정**: `phi_live_h9411`/`nudge_live_h9411`=True 플래그 + 주석 self-describing(per-tick 값은 각 행에 이미 존재 · frozen `state/…replay_depth.py` 는 미편집=state frozen, divergence 여기 명시).
+
 ## 산출·NEXT
 
 - 산출: worktree `.claude/worktrees/h9411-gauges` branch `fix/chat-dead-gauges-h9411` (cli/chat.py +186/−16 · 커밋 3).
