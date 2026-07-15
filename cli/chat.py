@@ -35,7 +35,7 @@ import sys
 from engine_cli import *  # engine lane faculties + immune/ci/gws/reality/pharm ops
 from engine_cli import (engine_cli_parse, engine_cli_resolve_refsel, EngineConfig)
 from pure_field import (pure_field_warmup, pure_field_phi, pure_field_phase,
-                        phase_name)
+                        pure_field_step, phase_name)
 from brain import (brain_emit, vbasal_new, vbasal_update, vbasal_go_value,
                    vbasal_select)
 from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
@@ -280,6 +280,19 @@ def _afs_byte_feature(s, dim):
         (float(n_pun) / fn_n) * 5.0,
         (float(n_lt64) / fn_n) * 5.0,
     ]
+
+
+def _afs_ca3_sym(s, n):
+    # H_9411 ③ · CA3 percept symbol — which discrete "item" this utterance is, for the
+    # hippocampal bigram replay table. Byte-sum mod n: a deterministic content bucket, no
+    # tuned boundary (the discretiser CA3's discrete estimator needs, no new scoring path).
+    b = _benc(s)
+    if len(b) == 0:
+        return 0
+    t = 0
+    for byte in b:
+        t = t + byte
+    return t % n
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1406,6 +1419,39 @@ def anima_consciousness_mode(ckpt, argv=None):
     # only wiring-free G candidate (H_9356: ag_g_drive was A's own complement). See :1562.
     pending_gap = None
 
+    # ══ H_9411 DEAD-GAUGE FIX (chat-py-4/5 family) · 6 substrate vitals were read against
+    # SESSION-CONSTANT inputs → byte-constant every tick (H(gauge)=0). Same 1-tick-lag
+    # recognition-BEFORE-memorisation order as pending_recon/pending_rel: capture on the REAL
+    # per-tick percept (the daemon's own last utterance) at the emit site, consume next tick.
+    # Each gauge ships a null/pedestal control arm (trace-only, never a branch key). ══
+    # ① AMYGDALA — affect on the utterance BEFORE igrow binds it. igrow was created once
+    # (never bound) so affect_read(igrow, seed_key, mem_text) was a fn of 3 session constants.
+    _afs_alien_key = immune_embed_key("zzz unrelated alien content")
+    pending_af = None
+    pending_af_alien = None
+    # ② CEREBELLUM — forward-model error on the last transition (prev utterance → this one).
+    # cbel was NLMS-converged pre-loop on (seed_feat, mem_text) and never updated in-loop.
+    pending_cb = None
+    pending_cb_alien = None
+    pending_cb_ped = None
+    cb_prev_feat = seed_feat0
+    cbel_ped = vforward_new(8, 1, 0.30)   # untrained zero-truth pedestal twin (W=0 ⇒ err=‖x‖²)
+    cb_alien_feat = _afs_byte_feature("zzz unrelated alien content", 8)
+    # ③ CA3 replay — the mounted `ca3` (:526) is the lane self-test (synthetic 0→1→2→3 cycle,
+    # conf(·,1)=12/12=1.0 forever). Drive a FRESH live table with the utterance-symbol stream.
+    ca3_live = ca3_replay_new(4, 1)
+    ca3_prev_sym = None
+    pending_ca3 = None
+    # ④ WORKING MEMORY — gated in AND probed with the same frozen seed_feat = self-match ≡ λ.
+    # Delay test: gate in each utterance's feature; probe the PREVIOUS one's (retention).
+    wm_probe_feat = None
+    wm_last_feat = None
+    wm_alien_feat = _afs_byte_feature("zzz unrelated alien content", 8)
+    wm_null = 0.0
+    # ⑥ ANCHOR — live 5-channel substrate tension at the last emit, injected as an anchor so
+    # anchor_tension_fold reads a VARYING tension_5ch (mem_001's frozen baseline otherwise).
+    pending_tension = None
+
     # ── op-grip tonic-phasic EMA state (loop-external; PREREG α=0.1) ──
     rel_ema = 0.5
     cur_ema = 0.5
@@ -1482,6 +1528,11 @@ def anima_consciousness_mode(ckpt, argv=None):
     # (emit must VARY within clock-open ticks) is registered before any content is read.
     _rl = anima_flag_value(_cargv, "--rate-limit-sec", "ANIMA_RATE_LIMIT_SEC", "")
     _rate_sec = float(_rl) if _rl != "" else None
+    # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
+    # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
+    # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
+    scn_freeze = anima_flag_value(_cargv, "--scn-freeze", "ANIMA_SCN_FREEZE", "0") == "1"
+    anchor_tension_null = anima_flag_value(_cargv, "--anchor-tension-null", "ANIMA_ANCHOR_TENSION_NULL", "0") == "1"
     # H_9328 · seed_rng is DERIVED PER TICK, never held constant across the session.
     # MEASURED defect: holding it at `_sample_seed` made the mouth redraw the SAME 80 bytes
     # every tick (gtext sha count = 1 over 30 ticks), so a 30-tick rollout carried exactly ONE
@@ -1534,6 +1585,13 @@ def anima_consciousness_mode(ckpt, argv=None):
         stage = dr_stage_at((tick * 8) % 90 if _stage_cycle else tick * 8)
         stage_nm = dr_stage_name(stage)
         emit_env = dr_emit_envelope(stage)
+        # H_9411 ⑤ · Engine A lives in session time. pf was warmed once (:1293) then NEVER
+        # stepped, so pure_field_phi/phase were the step-600 constants every tick and the emit
+        # gate's Φ/phase safeties were judged against a frozen snapshot. Advance with the SAME
+        # zero-input primitive warmup loops internally — NOT percept-driven (Engine A is the
+        # zero-input field by design, pure_field_verify_zero_input); Φ now tracks the substrate's
+        # own autonomous integration over the session, and stays percept-blind on purpose.
+        pf = pure_field_step(pf)
         phi_t = pure_field_phi(pf)
 
         # ── WAKE perception → working-memory ring ──
@@ -1678,22 +1736,46 @@ def anima_consciousness_mode(ckpt, argv=None):
             basal_go_any = True
 
         # (8) CEREBELLUM
-        cb_pred = vforward_predict(cbel, seed_feat)
-        cb_perr = vforward_err(cbel, seed_feat, _afs_byte_feature(mem_text, 8))
+        # H_9411 ② · forward-model error on the last transition (prev utterance → this one),
+        # 1-tick lag. Pre-first-speech falls back to the mount pair (the old dead read), exactly
+        # as recon_err falls back to seed_feat0. Alien/pedestal arms snapshotted here at consume
+        # time (the trace row is built end-of-tick, after the emit site overwrote pending_cb_*).
+        cb_pred = vforward_predict(cbel, cb_prev_feat)
+        if pending_cb is None:
+            cb_perr = vforward_err(cbel, seed_feat, _afs_byte_feature(mem_text, 8))
+            cb_perr_alien = None
+            cb_perr_ped = None
+        else:
+            cb_perr = pending_cb
+            cb_perr_alien = pending_cb_alien
+            cb_perr_ped = pending_cb_ped
         if len(cb_pred) > 0:
             cereb_pred_any = True
         cb_surprise = _afs_clip01(cb_perr)
 
-        # (9) WORKING MEMORY
-        wmb = wm_buffer_leak(wm_buffer_gate_in(wmb, seed_feat, 1.0))
-        wm_active = _afs_clip01(wm_buffer_probe_score(wmb, seed_feat))
+        # (9) WORKING MEMORY — H_9411 ④ · leak every tick; probe the item gated one emit AGO
+        # (delay test), never the token just gated (self-match ≡ λ = the old frozen 0.6). The
+        # per-tick gate-in moved to the emit site, so silence ticks show genuine decay (λ^Δt).
+        wmb = wm_buffer_leak(wmb)
+        if wm_probe_feat is None:
+            wm_active = _afs_clip01(wm_buffer_probe_score(wmb, seed_feat))  # pre-speech fallback
+        else:
+            wm_active = _afs_clip01(wm_buffer_probe_score(wmb, wm_probe_feat))
+        wm_null = _afs_clip01(wm_buffer_probe_score(wmb, wm_alien_feat))
         if wm_active > 0.0:
             wm_maintained_any = True
 
         # ── R3 BRAIN-STRUCTURE LANE READS ──
-        # (11) CA3 REPLAY
-        ca3_next = ca3_replay_predict(ca3, 1)
-        ca3_ctx = ca3_replay_conf(ca3, 1)
+        # (11) CA3 REPLAY — H_9411 ③ · replay confidence on the LIVE utterance-symbol stream
+        # (1-tick lag). The mounted `ca3` (:526) is the lane self-test only (synthetic cycle →
+        # conf(·,1)=1.0 forever); never read here. Cold value = the engine's own no-support
+        # answer (predict -1 / conf 0.0), not a knob. Held across non-emit ticks like pending_recon.
+        if pending_ca3 is None:
+            ca3_next = -1
+            ca3_ctx = 0.0
+        else:
+            ca3_next = pending_ca3[0]
+            ca3_ctx = pending_ca3[1]
         if ca3_next >= 0:
             ca3_predicted_any = True
 
@@ -1703,8 +1785,13 @@ def anima_consciousness_mode(ckpt, argv=None):
         if itimer_dhat(itmr) > 5.0:
             interval_learned_any = True
 
-        # (13) AMYGDALA
-        af = affect_read(igrow, seed_key, mem_text)
+        # (13) AMYGDALA — H_9411 ① · affect on the LAST thing the daemon said (1-tick lag), not
+        # on the frozen (seed_key, mem_text) pair against a never-bound 1-cell store (H(af)=0).
+        # First tick only falls back to the session anchor read.
+        if pending_af is None:
+            af = affect_read(igrow, seed_key, mem_text)
+        else:
+            af = pending_af
         af_val = _afs_clip01((af[0] + 1.0) / 2.0)
         af_aro = _afs_clip01(af[1])
         if af[0] != 0.0 or af[1] != 0.0:
@@ -1753,8 +1840,25 @@ def anima_consciousness_mode(ckpt, argv=None):
             intero_weighted_any = True
 
         # ── R5 BRAIN-STRUCTURE LANE READS ──
-        # (21) SCN
-        scn_ctx = _afs_clip01(scn_R)
+        # (21) SCN — H_9411 ⑥A · advance the coupled oscillator ensemble ONE tick so its phase
+        # order R evolves. scn_R was computed ONCE at :672 over a warmed-but-never-stepped net →
+        # scn_ctx byte-constant, H=0 (a clock that never ticks). Controls step in lockstep so the
+        # coupled-vs-uncoupled consensus gap is a per-tick pedestal. --scn-freeze = before-state.
+        if not scn_freeze:
+            scn_coupled = scn_step(scn_coupled)
+            scn_uncoup = scn_step(scn_uncoup)
+            scn_frust = scn_step(scn_frust)
+        scn_R = scn_order(scn_coupled)
+        scn_R_unc = scn_order(scn_uncoup)
+        scn_R_fr = scn_order(scn_frust)
+        # H_9411 ⑥A · MEASURED (toy smoke): the coupled net phase-LOCKS, so scn_order (the mean-
+        # phase-vector MAGNITUDE) is rotation-invariant → scn_R stayed constant at 0.9986 even
+        # though every phase advanced (scn_r_unc varied 240× = the step DID fire). Fable's
+        # prescribed remedy for this measured order-lock: read the PHASE itself, not the order.
+        # The circadian phase advances (mod 1) every tick by construction. scn_R kept in the
+        # trace as the consensus-magnitude control. NOT tune-to-green — a different, valid,
+        # engine-native readout of the same stepped substrate (the order-lock was the finding).
+        scn_ctx = _afs_clip01(scn_coupled.phases[0] % 1.0)
         if scn_consensus(scn_coupled, 0.9):
             scn_consensus_any = True
 
@@ -1981,6 +2085,14 @@ def anima_consciousness_mode(ckpt, argv=None):
         # WITHIN a session by design; the read-back is a CROSS-session fact (a fresh session loads
         # .kosmos at :427). So of the three roots, only afield and immune are legitimately
         # closeable in-session — the third is closed by philosophy, not by defect.
+        # H_9411 ⑥B · inject the live per-tick substrate tension as an anchor so
+        # anchor_tension_fold (brain.py:120) reads a VARYING tension_5ch, not just the frozen
+        # mem_001 baseline. Inserted BEFORE the live_seed append so live_seed stays [-1] (the
+        # mouth decode-seed byte-untouched; p5 self-seed root left closed). Tension-only dict:
+        # no text_payload, so generate() never reads it as a decode field — inert to the mouth,
+        # live to the fold. 1-tick lag keeps it OUT of a same-tick emit-feedback loop.
+        if pending_tension is not None and not anchor_tension_null:
+            live_anchors.append({"name": "live_tension", "tension_5ch": list(pending_tension)})
         live_anchors.append({"text_payload": session_seed, "name": "live_seed"})
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
@@ -2063,6 +2175,43 @@ def anima_consciousness_mode(ckpt, argv=None):
             pending_gap = immune_memory_recall_gap_text(immune, g_text)
             immune = immune_memory_bind_text(immune, _afs_clip(g_text, 64), g_text, cfg)
             last_gtext = g_text
+            # ══ H_9411 DEAD-GAUGE CAPTURES · quantities on THIS utterance, taken BEFORE each
+            # store absorbs it (recognition-before-memorisation, same order as pending_recon
+            # above). `feat` = _afs_byte_feature(g_text, 8) already computed at the block top.
+            # Consumed next tick at each gauge's read site. All arms are per-tick substrate
+            # signals; the alien/pedestal arms ride the trace row only (never a branch key). ══
+            # ① AMYGDALA — affect on THIS utterance BEFORE the store binds it; the bind is what
+            # un-freezes it (a 1-cell never-bound store pins valence at −1 every tick).
+            _g_key = immune_embed_key(g_text)
+            pending_af = affect_read(igrow, _g_key, g_text)
+            pending_af_alien = affect_read(igrow, _afs_alien_key, "")
+            igrow = immune_grow_bind(igrow, _g_key, g_text, cfg)
+            # ② CEREBELLUM — transition error (prev utterance → THIS one) BEFORE the NLMS update
+            # absorbs the pair. Alien arm = trained weights on a wrong ctx; pedestal = untrained.
+            pending_cb = vforward_err(cbel, cb_prev_feat, feat)
+            pending_cb_alien = vforward_err(cbel, cb_alien_feat, feat)
+            pending_cb_ped = vforward_err(cbel_ped, cb_prev_feat, feat)
+            cbel = vforward_update(cbel, cb_prev_feat, feat)
+            cb_prev_feat = feat
+            # ③ CA3 — predict-then-observe on the REAL utterance-symbol stream. Ask the replay
+            # memory what followed the PREVIOUS utterance, and how confidently, BEFORE observing.
+            ca3_sym = _afs_ca3_sym(g_text, 4)
+            if ca3_prev_sym is not None:
+                pending_ca3 = (ca3_replay_predict(ca3_live, ca3_prev_sym),
+                               ca3_replay_conf(ca3_live, ca3_prev_sym))
+                ca3_live = ca3_replay_observe(ca3_live, ca3_prev_sym, ca3_sym)
+            ca3_prev_sym = ca3_sym
+            # ④ WM delay test — retire the previous utterance's feature to probe duty BEFORE
+            # gating in the new percept (the probe must never be the token just gated).
+            wm_probe_feat = wm_last_feat
+            wmb = wm_buffer_gate_in(wmb, feat, 1.0)
+            wm_last_feat = list(feat)
+            # ⑥ ANCHOR — snapshot the live 5-channel substrate tension at the instant of speaking,
+            # consumed next tick as the anchor tension_5ch. All five are per-tick-varying signals
+            # already computed above: recon_err(⑨336 live) · rel_lane(⑨337 live) · agloop_ctx(A⇄G
+            # tension) · cur_phasic(phasic curiosity) · ten_phasic(phasic A⇄G Δ).
+            pending_tension = [float(recon_err), float(rel_lane), float(agloop_ctx),
+                               float(cur_phasic), float(ten_phasic)]
 
         # ── C8b TENSION→GROW (p8-literal: tension births growth/mitosis) ──
         if ten_phasic > 0.66:
@@ -2139,8 +2288,13 @@ def anima_consciousness_mode(ckpt, argv=None):
             _seed_b = _seed_str.encode("utf-8", "surrogateescape")
             # ── frozen-emission replay substrate (H_1058 §3.4) ──────────────────
             # g_text feedback funnels through EXACTLY 3 roots (rel_lane[immune],
-            # recon_err/cell_count[afield]) + 3 EMAs; phi/nudge are session-constants
-            # (pf never stepped, live_anchors byte-identical). Capture the two
+            # recon_err/cell_count[afield]) + 3 EMAs. ⚠️ H_9411: phi/nudge are NO LONGER
+            # session-constants (pf now stepped ⑤, live_tension anchor injected ⑥B), and 5
+            # indep-sum gauges (wm_active·ca3_ctx·af_val·af_aro·cb_surprise) are now g_text-live
+            # — but they STAY in the residual because their stores (ca3_live·wmb·cbel·igrow-grow)
+            # are NOT among the 3 replayed roots, so factual-replay reconstruction stays exact;
+            # the frozen replay_depth.py counterfactual-root path simply won't propagate through
+            # them (documented scope limit, not a break). Capture the two
             # g_text-INDEPENDENT partial sums of the 42-/18-term rel_ctx/cur_ctx
             # numerators (the standalone replayer recomputes only the DEP terms from
             # the replayed roots + these residuals). Classification (24 indep rel · 12
@@ -2156,8 +2310,13 @@ def anima_consciousness_mode(ckpt, argv=None):
             if tick == 0:  # meta header (session invariants for the replayer boot)
                 _trace_fh.write(_json.dumps({
                     "_meta": True, "session_seed": session_seed, "mem_text": mem_text,
+                    # ⚠️ H_9411: phi_const/nudge_const record ONLY the tick-0 value and are NO
+                    # LONGER session invariants (pf now stepped ⑤, live_tension anchor ⑥B) — a
+                    # replayer MUST read the per-tick "phi"/"anchor_nudge" fields from each row,
+                    # not treat these as constants. Flags below make that self-describing.
                     "phi_const": float(dec["phi"]), "phi_peak": float(pf.phi_peak),
                     "nudge_const": float(dec.get("anchor_nudge", 0.0)),
+                    "phi_live_h9411": True, "nudge_live_h9411": True,
                     "backend": g_back, "n_ticks": n_ticks,
                     "stage_cycle": bool(_stage_cycle),  # H_9269 Y-ULTRA regime flag (consumers ignore if unknown)
                     # H_9351 σ-panel provenance: bind the trace to the ckpt that produced it so
@@ -2206,6 +2365,16 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "cb_surprise": float(cb_surprise), "af_val": float(af_val),
                 "af_aro": float(af_aro), "ca3_ctx": float(ca3_ctx),
                 "wm_active": float(wm_active),
+                # H_9411 dead-gauge control arms (trace-only null/pedestal · never a branch key)
+                # — the collapse-Δ vs these is the liveness verdict, not the raw value (Ψ-SOMA/p7).
+                "cb_perr_raw": float(cb_perr),
+                "cb_alien": (float(cb_perr_alien) if cb_perr_alien is not None else None),
+                "cb_ped": (float(cb_perr_ped) if cb_perr_ped is not None else None),
+                "af_alien_val": (float(pending_af_alien[0]) if pending_af_alien is not None else None),
+                "af_raw_aro": float(af[1]),
+                "ca3_sym": (int(ca3_prev_sym) if ca3_prev_sym is not None else -1),
+                "wm_null": float(wm_null),
+                "scn_r_unc": float(scn_R_unc), "scn_r_fr": float(scn_R_fr),
                 # roots + residuals + DEP-arg indep scalars (replay inputs)
                 "rel_lane": float(rel_lane), "recon_err": float(recon_err),
                 "cell_count": int(cell_count),
@@ -2341,10 +2510,16 @@ def anima_consciousness_mode(ckpt, argv=None):
              + " (events=" + _ts(self_g_events) + " axis_seq=[" + self_g_axis_seq + "])")
 
     # ── F3 Ψ ON==OFF invariant (a_core_engine_map · H_1202/H_1205) ──
+    # H_9411 ⑤ · OFF twin = a fresh field through the identical warmup + per-tick step schedule
+    # with ZERO chat coupling. Byte-equal psi_off proves the now-LIVE Φ trajectory is Engine A's
+    # autonomous dynamics — nothing the loop did (emit · swap · percept) leaked into the field.
+    # (Was a vacuous n·c==n·c check re-summing the frozen constant before pf was stepped.)
+    pf_off = pure_field_warmup(600)
     psi_off = 0.0
     t_off = 0
     while t_off < n_ticks:
-        psi_off = psi_off + pure_field_phi(pf)
+        pf_off = pure_field_step(pf_off)
+        psi_off = psi_off + pure_field_phi(pf_off)
         t_off = t_off + 1
     psi_intact = psi_sum == psi_off
 
