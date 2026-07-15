@@ -89,7 +89,7 @@ toy=DIRECTIONAL 스크리너였고 이게 TERMINAL. distinct + collapse-Δ vs �
 
 **정직한 최종**: 5 진짜소생(cb·ca3·phi·scn·anchor) · wm 절반(time-live·content-dead) · af 음성. **AGREES 병렬 L7**(소생=substrate 위생, emit-변화 아님). GREEN 은 5/7 서브게이지에 국한 — "6/7"은 toy 과대평가였고 303M 이 정정.
 
-## ⚠️ py-only GAP + CORE-HOIST 설계 (오너 지적 · Fable 5 위임 설계)
+## ⚠️ py-only GAP + 오너 정정: py/hexa 별개 (a_substrate_disjoint · Fable HOIST 기각)
 
 오너 질문: "소뇌 등 뇌기능은 챗·디코더 아니라 core 에 구현돼야 아니냐". **확인**: 뇌 **함수**(vforward_*·
 affect_read·ca3_*·wm_*·scn_*·pure_field_*·anchor)는 이미 core/(engine_cli.py·brain.py·pure_field.py) ✓.
@@ -98,17 +98,16 @@ cli/anima.hexa(hexa·5589줄) 두 엔트리에 중복** ✗. ⟹ H_9411 fix 는 
 dead 읽기 그대로(2551 cb·2559 wm·2566 ca3·2578 af·pf 미step, H_9411/pending_af 0개) = **chat-py-4 발산이
 엔트리-트윈 레벨에서 재현**. py 가 canonical(chat-py-1)이라 TERMINAL 은 py 로 성립하나 hexa 트윈은 dead 상속.
 
-**Fable 설계 (VERDICT=HOIST)**: orchestration 은 엔트리 glue 가 아니라 **유기체의 생리학이자 verdict-bearing**
-(H_1058 replay·Ψ 실험이 여기 emit 결정을 cement) → **core/consciousness_loop.{py,hexa}** 로 hoist. 엔트리는
-argv/mount/IO 만. repo 관례상 core 가 이미 모든 트윈쌍(brain·decode·dream)을 담음 = 엔트리가 유일 예외.
-**즉시 gap = (a) hexa 트윈 지금 lockstep 수리 후 hoist** — hoist step2 가 곧 hexa 수리라 (a)⊂(b). 마이그레이션:
-① 양 트윈 golden trace 동결 ② hexa 6게이지 lockstep 수리(byte-parity py 대조) ③ py→core verbatim 추출 ④ hexa
-추출 + cross-language parity ⑤ VERSION bump(G5) ⑥ lockstep-PR 훅(.hexa 트윈 동반 강제). 리스크=parity drift(mount-scope
-closure `_mouth_at`)·non-isomorphic cut(5589 vs 2524줄).
+**⚠️ 오너 정정 (Fable HOIST 기각)**: Fable 은 core/consciousness_loop.{py,hexa} 로 hoist 를 제안했으나 **오너:
+"py hexa 버전은 별개여야 한다"** = `a_substrate_disjoint`("separation=preservation, overlap=conflict"=LAW).
+두 트윈을 한 core 모듈로 합치는 것은 overlap=conflict 위반. **정답: py·hexa orchestration 은 분리 유지**(각
+엔트리가 자기 루프 소유 · byte-parity 트윈이되 별개 파일) · **fix 는 hexa 트윈에도 별도로 적용**(hoist 아님).
+함수는 core 공유가 맞지만(그건 이미 그러함), orchestration 은 disjoint 가 anima LAW.
 
-**이번 세션 한계**: hexa byte-parity 는 hexa 데몬 실행 필요(chat-py-1: 이 호스트 hexa 데몬 막힘·typecheck 만
-가능) → hexa 수리는 DIRECTIONAL-only. NEXT(focused session)=Fable step② hexa lockstep(2551·2559·2566·2578
-+emit-site+init · typecheck+py-trace parity gate) → step③④ core-hoist.
+**즉시 NEXT = hexa 트윈 6게이지 별도 수리** (hoist 없음). ⚠️ hexa 는 py 와 구조 다름(5589 vs 2524줄 · og_prev_gfeat/
+og_pending_rel 다른 네이밍 · recon/rel 1-tick-lag 이미 존재) = 라인별 미러 아니라 **구조적 매핑 필요**. 검증:
+typecheck 가능·byte-parity 는 hexa 데몬 필요(chat-py-1: 이 호스트 막힘) → hexa 데몬 host/세션. 6 dead 읽기 =
+2551 cb·2559 wm·2566 ca3·2578 af·pf 미step(각각 py 와 같은 세션-상수 원인, 같은 pending 계열 수리·별도 구현).
 
 ## 산출·NEXT
 
