@@ -45,3 +45,24 @@ G1 PASS(상한 arm 이 죽은 상수 살림=자명) · G2 미결(should_emit(sco
 유력). 어느 쪽이든 H_9357 G-INERT 의 잔여 기전을 벌어낸다.
 
 > 원래 H_9373 으로 등록했으나 병렬 세션이 H_9373(KEY-LADDER)을 선점 → H_9376 으로 양보(a_parallel_session_compare).
+
+## VERDICT — 🧱 MIXER-BOUND (engine-native 303M · 1366 tick · 상한 arm 사망)
+
+Stage-1(`--ag-cont` ON · a0/a1/a3 × 16 rollout × 30 tick):
+
+| 게이트 | 값 | 판정 |
+|---|---|---|
+| **G1 C-lift** | C_cont(a1)=**0.0316** << 0.05 문턱 (양자화 C_quant=0.0233 대비 미미) · Δ_G=−0.017(a3>a1) | **FAIL** |
+| **G2 emit-consume** | a1 MI earned=−0.0005 (G-INDEP R²=0.385 OK · G-VAR=7) | **FAIL = 🧱 G-INERT** |
+
+**결정: 🧱 MIXER-BOUND.** 연속화 **상한 arm**(agloop_ctx=clip01(ag_conflict) = I(conflict;agloop)=
+H(conflict) = 이론적 최대)조차 C 를 0.023→0.032 로 미미하게만 올렸다(0.05 문턱 아래). 상한 arm 이
+죽었으므로 **어떤 agloop 연속화도 채널을 못 연다** — agloop 병목 가설 가문 전체 종결.
+
+⇒ **진범은 양자화기(agloop)가 아니라 그 하류**: `motivation_score` 의 **×0.10 감쇠 + 8-lane 혼합**
+(engine_g.py). agloop_ctx=dyn_v 가 full conflict 정보를 날라도 score 의 1/8 lane × 0.10 이라 나머지
+7 lane 에 SNR 로 묻힌다(Fable 의 (b)-mixer 대안 가설 적중). Ψ̂=0.771 도 arm 불변(G→Ψ 경로 여전히 부재).
+
+**캠페인 완결 사슬**: H_9356(독립 G 없음) → H_9357(독립 G 배선·emit 소비 안 함=G-INERT) → H_9360
+(ag_conflict→score ~0.02-nat 병목) → **H_9376(병목은 양자화기 아니라 하류 ×0.10 8-lane motivation
+mixer · 상한 arm 도 못 열음)**. 프런티어 재이동 = dyn_v 가중/lane 수(SNR).

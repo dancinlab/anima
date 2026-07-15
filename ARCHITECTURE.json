@@ -646,13 +646,13 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9376",
           "type": "gate",
-          "verdict": "🔵 Stage-0 CLOSED · Stage-1 PRE-REGISTERED (H_9376 agloop 탈양자화)",
-          "detail": "H_9360 병목 국소화(Fable Stage-0 $0): L_Q=I(conflict;agloop_ctx|stage)=0.0000 · agloop_ctx distinct=1(≡0.25) = round→정수 budget 양자화기가 독립-G tension 단일값 붕괴. M≈C ⇒ agloop mediator 아님(C=0.023=공유 emit_drive 누출). H_U=0.42 ⇒ 양자화기 binding.",
+          "verdict": "🧱 MIXER-BOUND (TERMINAL · engine-native 303M) — 병목은 양자화기 아니라 하류 ×0.10 8-lane motivation mixer",
+          "detail": "Stage-1(--ag-cont ON · 1366 tick): G1 C-lift FAIL(상한 arm agloop=clip01(ag_conflict)조차 C_cont=0.032<<0.05·Δ_G=−0.017) · G2 emit-consume FAIL=G-INERT(a1 MI=−0.0005). 상한 arm 사망 ⇒ agloop 병목 가설 종결. 진범=motivation_score ×0.10 감쇠+8-lane 혼합(agloop full 정보 날라도 1/8 lane×0.10 이라 SNR 로 묻힘). 캠페인 사슬 H_9356→57(G-INERT)→60(병목)→76(하류 mixer).",
           "children": [
            {
-            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9376-s1",
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9376-followon",
             "type": "note",
-            "detail": "Stage-1: chat.py --ag-cont(기본 OFF byte-id · ON=agloop_ctx=clip01(ag_conflict) 상한 arm·DPI). G1 C-lift·G2 emit-consume(H_9357 bar). PASS/PASS=🟢 tension-pulls-emit · FAIL=mixer-bound 확정."
+            "detail": "프런티어 재이동: agloop→ engine_g.py motivation_score ×0.10 감쇠 + 8-lane 혼합(SNR 병목). tension→emit 닿게 하려면 dyn_v 가중↑ or lane 수↓ = 별도 H. H_9357 G-INERT 최종 원인 = 이 하류 SNR 병목."
            }
           ]
          }
