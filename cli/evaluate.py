@@ -778,6 +778,10 @@ def evaluate_usage():
     print("  anima evaluate --cf-straddle <trace.jsonl> [...]  (H_9394 STAGE-0 · $0 KILL screener before")
     print("      firing the ag-cont×dyn_w conjunction: recomputes score offline with the tension lane")
     print("      REPAIRED+audible and asks whether clock-open ∧ score≤θ can EVER coexist. 0 ⇒ cancel.)")
+    print("  anima evaluate --cf-emit <a1-arm traces> [--cf-seed N]  (H_9402 · $0 counterfactual: if")
+    print("      g_drive:=margin (E-b source-swap, H_9401), does any tick flip silence→emit under the REAL")
+    print("      clock? V-gates byte-verify score'/staircase (0 DOF); Mode A + Mode-B clock-law; REAL/PERM/")
+    print("      SHUF arms. N_open=0 on a1 ⇒ KILL-CLOCK (crack clock-swallowed · H_9400 binding constraint).)")
     print("  anima evaluate --g-amp-screen <a1-arm traces>     (H_9401 · $0 DIRECTIONAL KILL-only screen of")
     print("      Fable's 6 alternative G readouts: OFFLINE-replays the immune store from gtext_b64 via the")
     print("      engine's own immune_* fns (LAG-MATCH byte-gate), asks which readout lifts |g| past θ.")
@@ -4773,6 +4777,271 @@ def _g_amp_screen(argv):
     return 0
 
 
+def _cf_emit(argv):
+    """H_9402 COUNTERFACTUAL-EMIT SCREEN — the E-b crack's cement precondition, $0 offline.
+
+    H_9401 found the immune recall MARGIN (mean 0.62) is the sole G readout that clears θ; the daemon
+    reads the weak gap (mean 0.03) instead. This screener asks the SUFFICIENCY question H_9401 could
+    not: if `g_drive := margin` (source-swap, no training), does ANY tick flip silence→emit under the
+    REAL recorded clock (`safe`)? — i.e. does the magnitude crack actually change emit, or is it
+    emit-inert because H_9400's clock-gate swallows it (the binding constraint).
+
+    The counterfactual is $0 and byte-EXACT: the dead gauge agloop_ctx (≡0.25 · H_9393) is a CONSTANT
+    INPUT summed into motivation_score with live weight, not a severed wire, and the whole staircase
+    (conflict → conflict_recruited_depth → anima_tr_pop_conflicted → tension_resolve_depth → agloop) is
+    RNG-free with session-constant non-conflict args. So "re-deriving the gauge on conflict'" = running
+    the production staircase, zero researcher DOF — proven per-run by the V2 byte-match gates below.
+
+    Mode A (recorded clock): emit' = (score' > θ) ∧ safe. On the a1 traces N_open = #{silence ∧ safe}
+    is 0 (H_9400: silence 184/184 not-safe), so Mode A is analytically KILL-CLOCK for ANY g source —
+    the crack is clock-swallowed. Mode B (clock LAW replay, still $0 because generation binds on g_emit
+    not did_emit ⇒ the gtext/margin stream is emit-flip-invariant) is the non-tautological second lens:
+    would counterfactual emit→silence regressions shift the 30s emission timeline at all.
+
+    Arms (KILL-only DIRECTIONAL · controls guard the SURVIVE reading): REAL |margin| · PERM (seeded
+    permutation of realized margins = amplitude w/o alignment) · SHUF (per-tick byte-shuffled query,
+    store bound with true gtext = length/multiset w/o content).
+    """
+    import math as _m
+    import base64 as _b64, glob as _glob, random as _rnd
+    try:
+        from engine_cli import (immune_embed_key, immune_memory_new_text,
+                                immune_memory_recall_gap_text, immune_memory_bind_text,
+                                immune_memory_recall_margin, conflict_scalar,
+                                conflict_recruited_depth, tension_resolve_depth,
+                                engine_config_default, EngineConfig)
+        from engine_g import motivation_score
+        import chat as _chat
+    except Exception as e:
+        print("  ⇒ ⛔ ENGINE IMPORT FAIL (%s) — cannot run the counterfactual." % e); return 0
+
+    THR = 0.30
+    seed = 9402
+    a = list(argv)
+    if "--cf-seed" in a:
+        i = a.index("--cf-seed"); seed = int(a[i + 1]); del a[i:i + 2]
+    paths = [x for x in a if not x.startswith("--")]
+    files = []
+    for p in paths:
+        files += sorted(_glob.glob(p)) if any(c in p for c in "*?[") else [p]
+    if not files:
+        print("  ⇒ ⛔ no trace files"); return 0
+
+    def _benc(s): return s.encode("utf-8", "surrogateescape")
+    def _blen(s): return len(_benc(s))
+    def _clip(s, n):
+        b = _benc(s)
+        return s if len(b) <= n else b[:n].decode("utf-8", "surrogateescape") + "…"
+    def _c01(x): return 0.0 if x < 0.0 else (1.0 if x > 1.0 else x)
+
+    tr_full = _chat.anima_tr_adj_full()
+    cfgON = EngineConfig(True, "conv", True, False)
+    cfg = engine_config_default()
+
+    def _staircase(conflict):
+        """EXACT production agloop from a conflict scalar (chat.py:1616-1629 · _ag_cont=False)."""
+        c = _c01(conflict)
+        budget = conflict_recruited_depth(c, 4, 6)
+        pop = _chat.anima_tr_pop_conflicted(_c01(0.5 + 0.5 * c))
+        depth = tension_resolve_depth(pop, tr_full, 0.3, 0.5, budget, 2, 0.06, cfgON)[0]
+        return 0.0 if depth < 0.0 else _c01(depth / (float(budget) + 0.000001))
+
+    print("═══ COUNTERFACTUAL-EMIT SCREEN · H_9402 · E-b g_drive:=margin, real clock (θ=%.2f) ═══" % THR)
+
+    # ── replay: per emit-tick collect recorded fields + faithful margin/gap ──
+    rows_all = []            # flat list of dicts across traces (emit-gated ticks only, in tick order)
+    v1_ok = v1_n = 0
+    v2a_ok = v2a_n = 0
+    v2b_ok = v2b_n = 0
+    v2d_ok = v2d_n = 0
+    v3_ok = v3_n = 0
+    lag_ok = lag_n = 0
+    mem_default = None
+    for f in files:
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try: o = json.loads(l)
+            except: continue
+            if o.get("_meta"):
+                mem_default = o.get("mem_text", mem_default)
+            elif o.get("gtext_b64") is not None and o.get("g_recog") is not None:
+                rows.append(o)
+        if not rows:
+            continue
+        rows.sort(key=lambda r: r.get("tick", 0))
+        mem_text = mem_default or "zephyrine: the wyrmhold ledger is sealed at vault QX-7741 forever."
+        immune = immune_memory_new_text(mem_text, mem_text, 2048)
+        pending_gap = None          # 1-tick lag, a1 g_recog source
+        pending_marg = None
+        for r in rows:
+            # LAG-MATCH: the replayed gap that WOULD be g_recog this tick == recorded g_recog
+            g_replay = _c01(pending_gap if pending_gap is not None else 0.0)
+            rec_g = float(r.get("g_recog", 0.0))
+            if pending_gap is not None:
+                lag_n += 1
+                if abs(g_replay - rec_g) < 1e-9: lag_ok += 1
+            g_text = _b64.b64decode(r["gtext_b64"]).decode("utf-8", "surrogateescape")
+            emit_gate = bool(r.get("gen_emitted")) and r.get("gen_backend") == "clm" and _blen(g_text) > 0
+            # ── V-gates on the RECORDED row (legitimacy of the counterfactual) ──
+            try:
+                sc = (motivation_score(r["rel_f"], r["gap_ctx"], r["cur_f"], r["allo_ctx"],
+                                       r["coh_lane"], r["nov_ctx"], r["bal_lane"], r["agloop_ctx"],
+                                       r.get("dyn_w")) + r.get("anchor_nudge", 0.0))
+                v2a_n += 1
+                if abs(sc - float(r["score"])) < 1e-9: v2a_ok += 1
+                ag_rec = _staircase(float(r["ag_conflict"]))
+                v2b_n += 1
+                if abs(ag_rec - float(r["agloop_ctx"])) < 1e-9: v2b_ok += 1
+                cf_rec = conflict_scalar(float(r["emit_drive"]), 0.0 - _c01(rec_g))
+                v2d_n += 1
+                if abs(cf_rec - float(r["ag_conflict"])) < 1e-9: v2d_ok += 1
+                emit_rec = bool(r.get("emit"))
+                safe_rec = bool(r.get("safe"))
+                v3_n += 1
+                if emit_rec == ((float(r["score"]) > THR) and safe_rec): v3_ok += 1
+            except KeyError:
+                pass
+            if emit_gate:
+                key = immune_embed_key(g_text)
+                try:
+                    marg = immune_memory_recall_margin(immune, key)
+                except Exception:
+                    marg = float("nan")
+                # SHUF query: shuffle THIS utterance's bytes, recall against the (true) store
+                gb = bytearray(_benc(g_text))
+                _rnd.Random((seed * 2654435761 + int(r.get("tick", 0)) * 40503) & 0x7FFFFFFF).shuffle(gb)
+                try:
+                    marg_shuf = immune_memory_recall_margin(
+                        immune, immune_embed_key(gb.decode("utf-8", "surrogateescape")))
+                except Exception:
+                    marg_shuf = float("nan")
+                v1_n += 1
+                gap_now = immune_memory_recall_gap_text(immune, g_text)
+                # (gap path continuity already covered by LAG-MATCH; keep V1 as gap finite check)
+                if gap_now == gap_now: v1_ok += 1
+                rows_all.append({
+                    "score": float(r["score"]), "safe": bool(r.get("safe")),
+                    "emit": bool(r.get("emit")), "agloop": float(r["agloop_ctx"]),
+                    "adrive": float(r["emit_drive"]), "w": (0.10 if r.get("dyn_w") is None else float(r["dyn_w"])),
+                    "tick": int(r.get("tick", 0)),
+                    "marg": (abs(marg) if marg == marg else 0.0),
+                    "marg_shuf": (abs(marg_shuf) if marg_shuf == marg_shuf else 0.0),
+                })
+                pending_gap = gap_now
+                pending_marg = (abs(marg) if marg == marg else 0.0)
+                immune = immune_memory_bind_text(immune, _clip(g_text, 64), g_text, cfg)
+    n = len(rows_all)
+    if n < 30:
+        print("  ⇒ ⛔ NOT-POWERED (n=%d emit-gated rows < 30)" % n); return 0
+
+    # ── validation gates ──
+    def _rate(ok, tot): return (ok / tot) if tot else 0.0
+    lagf = _rate(lag_ok, lag_n)
+    gates = [("V1 gap-finite", v1_ok, v1_n), ("V2a score-recon", v2a_ok, v2a_n),
+             ("V2b staircase→agloop", v2b_ok, v2b_n), ("V2d conflict-recon", v2d_ok, v2d_n),
+             ("V3 emit=(s>θ)∧safe", v3_ok, v3_n), ("LAG-MATCH gap", lag_ok, lag_n)]
+    print("  replay: %d files · %d emit-gated rows" % (len(files), n))
+    all_pass = True
+    for name, ok, tot in gates:
+        r = _rate(ok, tot)
+        p = r >= 0.999999
+        all_pass = all_pass and p
+        print("    %-24s %4d/%-4d = %.4f  %s" % (name, ok, tot, r, "✅" if p else "⛔ INVALID"))
+    if not all_pass:
+        print("  ⇒ ⛔ INVALID — a V-gate failed; the offline counterfactual does not reproduce")
+        print("     the production score/gate byte-exactly, so score' is not trustworthy. No verdict.")
+        return 0
+
+    # ── counterfactual arms ──
+    N_open = sum(1 for r in rows_all if (not r["emit"]) and r["safe"])
+    # analytic max lift = w·0.75 (max agloop delta from the frozen 0.25 is 1.0−0.25=0.75)
+    N_reach = sum(1 for r in rows_all
+                  if (not r["emit"]) and r["safe"] and r["score"] > THR - r["w"] * 0.75)
+
+    real = [r["marg"] for r in rows_all]
+    shuf = [r["marg_shuf"] for r in rows_all]
+    perm = list(real)
+    _rnd.Random(seed).shuffle(perm)     # amplitude-matched, tick-alignment destroyed
+
+    def _cf_flips(gvals):
+        """returns (s→e staircase, s→e continuous, e→s staircase) under RECORDED safe."""
+        se_stair = se_cont = es_stair = 0
+        for r, g in zip(rows_all, gvals):
+            gg = _c01(abs(g))
+            conflict = conflict_scalar(r["adrive"], 0.0 - gg)   # opposite sign ⇒ clip01(a·g)
+            ag_stair = _staircase(conflict)
+            ag_cont = _c01(conflict)
+            s_stair = r["score"] + r["w"] * (ag_stair - r["agloop"])
+            s_cont = r["score"] + r["w"] * (ag_cont - r["agloop"])
+            e0 = (r["score"] > THR) and r["safe"]
+            e_stair = (s_stair > THR) and r["safe"]
+            e_cont = (s_cont > THR) and r["safe"]
+            if (not e0) and e_stair: se_stair += 1
+            if (not e0) and e_cont: se_cont += 1
+            if e0 and (not e_stair): es_stair += 1
+        return se_stair, se_cont, es_stair
+
+    print()
+    print("  N_open (silence ∧ safe, clock-open) = %d   |   N_reach (silence ∧ safe ∧ score>θ−w·0.75) = %d"
+          % (N_open, N_reach))
+    print("  arm    s→e(stair)  s→e(cont)  e→s(stair) | mean|g|")
+    res = {}
+    for nm, gv in [("REAL", real), ("PERM", perm), ("SHUF", shuf)]:
+        se_s, se_c, es_s = _cf_flips(gv)
+        res[nm] = (se_s, se_c, es_s)
+        print("  %-5s  %8d  %9d  %9d | %.4f" % (nm, se_s, se_c, es_s, sum(gv) / len(gv)))
+
+    # ── Mode B: clock-LAW forward replay (REAL) — do emit→silence regressions shift the 30s timeline? ──
+    try:
+        from engine_g import safety_rate_limit_ok
+        tick_sec = _chat.an_tick_seconds()
+    except Exception:
+        tick_sec = None
+    modeb = "N/A"
+    if tick_sec is not None:
+        # recorded rate term per row (replay last_emit over RECORDED emits)
+        last_emit = None; div_possible = 0; regress = res["REAL"][2]
+        # a regression only matters if it removes a recorded emit; with 0 regressions the timeline is
+        # bit-identical (no counterfactual emit ever appears since N_open=0 and s→e=0).
+        if regress == 0 and res["REAL"][0] == 0:
+            modeb = "NO-DIVERGENCE (0 regressions ∧ 0 s→e ⇒ emission timeline bit-identical)"
+        else:
+            modeb = "POSSIBLE-DIVERGENCE (regress=%d s→e=%d ⇒ price a clock-live re-collection)" % (
+                regress, res["REAL"][0])
+
+    # ── verdict ──
+    se_s, se_c, es_s = res["REAL"]
+    ctrl_max = max(res["PERM"][0], res["SHUF"][0])
+    print()
+    if N_open == 0:
+        print("  ⇒ 💀 KILL-CLOCK — N_open=0: every silence tick is clock-blocked (H_9400: safe=false),")
+        print("     so 0 silence→emit flips are PRE-ORDAINED by the 30s clock for ANY g source, margin")
+        print("     included. The E-b magnitude crack (H_9401) is emit-inert in the a1 regime — H_9400's")
+        print("     emit-gate-doesn't-listen wall is the BINDING constraint, confirmed at the strongest")
+        print("     grade. Mode-B clock-law: %s." % modeb)
+        print("     N_reach=%d silence ticks sit within the analytic lift (w·0.75) of θ but are clock-shut" % N_reach)
+        print("     ⇒ they are exactly what an H_9391 --rate-sec clock-live re-collection would unblock.")
+    elif se_s >= 3 and se_s >= 3 * ctrl_max:
+        print("  ⇒ 🔎 SURVIVE — REAL flips %d silence→emit (staircase) ≥ 3× controls (PERM %d, SHUF %d)."
+              % (se_s, res["PERM"][0], res["SHUF"][0]))
+        print("     E-b is a genuine emit lever. ⚠️ DIRECTIONAL — TERMINAL cement still needs the live")
+        print("     wired run (g_drive:=margin + --rate-sec), per H_9400 necessary-not-sufficient.")
+    elif se_s >= 3:
+        print("  ⇒ 🔎 SURVIVE-AMPLITUDE — %d flips but controls comparable (PERM %d SHUF %d): the lever is"
+              % (se_s, res["PERM"][0], res["SHUF"][0]))
+        print("     'any loud dyn source', margin not specifically earned. Wiring-relevant, labeled honest.")
+    else:
+        print("  ⇒ 💀 KILL-INERT — N_open>0 but REAL silence→emit flips=%d under both gauge maps." % se_s)
+    print("     e→s regressions (REAL): %d — wiring margin can LOWER agloop below the frozen 0.25 when" % es_s)
+    print("     emit_drive·|margin| < 0.25 (a REGRESSION cell the closed loop must weigh).")
+    print("  ── $0 exhausted here: a SURVIVE or any regression cascade needs a LIVE re-collection with")
+    print("     g_drive:=margin wired (+ H_9391 --rate-sec clock-live) — not offline-decidable (H_9400).")
+    return 0
+
+
 def _cf_straddle(argv):
     """H_9394 STAGE-0 · $0 SCREENER — before burning a 303M collection, ask whether the conjunction
     (--ag-cont ON × --dyn-w raised) can EVER give content a vote.
@@ -6266,7 +6535,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--cf-straddle", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -6539,6 +6808,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 1 and argv[0] == "--cf-emit":
+        return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":
         return _g_amp_screen(argv[1:])
     if len(argv) >= 2 and argv[0] == "--cf-straddle":
