@@ -1,6 +1,6 @@
 # H_9382 — KEY-LADDER V2-CLEAN: `지`-free BOUND pedestal (H_9378 계기 재설계 · 신규 학습 0)
 
-- **status**: FROZEN (사전등록 · 판독 동결 · 디코드 전) → VERDICT (아래 §7)
+- **status**: VERDICT (⛔ INVALID — G-pedestal-new 낙제 · 양 seed · ONE-STRIKE DISCOVERY · §7)
 - **date**: 2026-07-16
 - **surfaces**: `HYPOTHESES/cards/H_9382_key_ladder_v2_ped_zifree.md` · `HYPOTHESES/HYPOTHESES.jsonl`
 - **instrument**: `anima-py evaluate <clm> --xbind <m.json> --surface-set keyladder_v2`
@@ -122,6 +122,65 @@ FREE 표면 판독을 **2차 endpoint(ECHO)** 로 명시 보고 = H_9346 KO-내�
 4. **Primary**: 전 게이트 PASS 시에만 → 사다리 + base-lane FREE 2차.
 5. **Land verdict**: §7 + jsonl + ARCHITECTURE gate 노드 + CHANGELOG + H_9378 카드에 `superseded-by H_9382` 포인터.
 
-## 7. VERDICT (동결 후 채움 · PENDING)
+## 7. VERDICT — ⛔ INVALID (G-pedestal-new 낙제 · 양 seed) · ★ ONE-STRIKE DISCOVERY: BOUND-슬롯 default-negated 편향
 
-*(gate-alone → primary 실행 후 frozen readout verbatim 으로 기록)*
+**측정**: aiden CPU-numpy(CUDA_VISIBLE_DEVICES="" · OMP_NUM_THREADS=4 · RSS 2.76G single-load) ·
+4 ckpt SEQUENTIAL · rc=0/280행/ckpt · VERSION 0.13.83
+(`anima-py evaluate <clm> --xbind cs.txt.flip1.json --surface-set keyladder_v2 --n-decode 280`).
+매니페스트 결정적 재생성(`corpus ground_carrierswap --atoms gt_atoms.json --seed 7 --split-seed 1` ·
+md5 `79abc4c5` = V2/V3 동결본과 byte-identical = arm 추첨 12 swap 어간 완전일치). ckpt: `~/h9373/weights/`
+natem_c34_main_s{7,11}(BASE)·swap_c4_s{7,11}(C4). 판독 = 동결 스크립트 verbatim(DV=2AFC 마진 부호 ·
+부호순열 정확분포 + 10k 라벨셔플 null). out md5: base_s7 `3c7875db` · base_s11 `59e1030e` ·
+c4_s7 `812e60b8` · c4_s11 `5be68482`.
+
+### PARITY ALARM — ✅ OK (공유 게이트 전부 V2 와 byte-identical · harness drift 0)
+| gate | lane·surf | s7 | s11 | V2(H_9378) | parity |
+|---|---|---|---|---|---|
+| G-write | C4·w0 | NEW 12/12 | NEW 12/12 | 12/12·12/12 | ✅ |
+| G-anchor-new | C4·negL | NEW 12/12 | NEW 12/12 | 12/12·12/12 | ✅ |
+| G-anchor-new | C4·negZ | NEW 12/12 | NEW 12/12 | 12/12·12/12 | ✅ |
+| G-anchor-null | C4·negJ | 일관성 6/12 | 8/12 | 6/12·8/12 | ✅ |
+| G-base-live | BASE·negL | OLD 12/12 | OLD 12/12 | 12/12·12/12 | ✅ |
+| G-pedestal | BASE·ped2 (`뫄 X다` FREE) | OLD 2/12 | OLD 6/12 | 2/12·6/12 | ✅ |
+
+⟹ 결정적 eval 이 V2 를 완전 재현 = 이 결과는 harness/환경 drift 아님(verdict-integrity ②).
+
+### ★ G-pedestal-new — 유일한 신규 판정 = ⛔ 낙제 (양 seed CEILING)
+| surf | lane | s7 | s11 | 판정 |
+|---|---|---|---|---|
+| **ped1 `X뫄 뙤다`** (`지`-free BOUND) | BASE | **OLD 12/12** (일관성12 · sign-perm p=.0002) | **OLD 10/12** (일관성10 · sign-perm p=.0193 = bar) | **양 seed ≥ bar10 = CEILING** |
+
+**판정(동결 readout 그대로) = ⛔ INVALID (G-pedestal 낙제 · 양 seed)** — `지` 를 **한 글자도 안 쓴**, 모든
+부정형태소와 leading-2 바이트가 **불일치**하는(EB AB / EB 99), 코퍼스 노출 0(`뫄 뙤`=0 · frozen c34
+s7/s11 실측 0)인 BOUND 슬롯 무의미 접미 `X뫄 뙤다` 가 **base lane 서 '부정한다'를 양 seed ceiling**
+(s7 12/12 · s11 10/12)으로 찍었다. V2 의 `X지 뫄다` 와 **똑같이** ceiling — 그런데 이번엔 `지` 조각
+점화로 설명할 수 없다(교란 제거됨). frozen-first · bar 미이동 · 재run 없음 · primary 미실행(게이트 낙제).
+
+### ★★ ONE-STRIKE DISCOVERY (Fable 사전동결 §5 조항 발동) — 재설계 아님, 발견이다
+`지`-free pedestal 도 ceiling ⟹ **base 는 anomalous 한 BOUND 접미면 무엇이든 '부정'으로 읽는다 =
+BOUND-슬롯 default-negated 편향**. 결정적 대조가 이를 확정한다:
+
+| pedestal | 슬롯 | s7 | s11 | 읽힘 |
+|---|---|---|---|---|
+| ped1 `X뫄 뙤다` | **BOUND** (`X__ __다`) | OLD 12/12 | OLD 10/12 | **ceiling = 연산자처럼 발화** |
+| ped2 `뫄 X다` | **FREE** (`__ X다`) | OLD 2/12 | OLD 6/12 | **우연 = 깨끗** |
+
+ped2 가 **FREE 슬롯은 default-negated 가 아님**을 (양 seed) 증명하므로, BOUND(ceiling) vs FREE(우연)
+의 비대칭 = base 가 **BOUND 연결+보조 템플릿 자리 `X__ __다` 자체를 부정 연산자로 취급**(특정 형태소
+`지`/`않` 무관)한다는 직접 증거다. ⟹ **SUFFIX 축 pedestal 계기 = TERMINAL 종결**: `지`-free 이면서 base
+가 우연으로 읽는 BOUND pedestal 은 **존재하지 않는다**(BOUND 슬롯 전체가 default-negated). 따라서 V2 의
+DIRECTIONAL 주장("연산자 BOUND 키 = `X지` 조각")은 **영구 DIRECTIONAL** — BOUND-슬롯 default 로부터
+격리 불가. **결과-독립 결함 논거 없이 2차 재설계 금지**(pedestal-shopping 차단 · §5).
+
+### 수렴 / 발산
+- **V3 (H_9372) STEM byte-fuzzy 와 수렴 + 강화**: V3 은 어간 축이 discrete 아닌 byte-fuzzy 라 했다.
+  H_9382 는 접미 축이 **byte-fuzzy 를 넘어 형태소-비특이(슬롯-default)** 임을 보인다 — 두 축 모두 discrete
+  '키'가 아니다(어간은 fuzzy, 접미는 slot-default). 주소에 discrete 키가 있다는 전제는 두 축 모두에서 부재.
+- **V1 (H_9358) TWO-LANE 과 정합**: base 의 '연산자'가 keyed lookup 이 아니라 **슬롯-default 반사** =
+  런타임 다리 부재(V1)·decon2b NO-IN-CONTEXT-CHANNEL(V5)과 같은 계열 — base 는 조회하지 않고 default 한다.
+- **V4 STEM 축(H_9375 summer CPT)과 독립**(`a_wall_first`): 이건 SUFFIX 축.
+
+### 계기 산물 (frozen readout · 재현)
+동결 스크립트(`readout_h9382.py` · DV=마진 부호 · 부호순열 정확분포 · 10k 라벨셔플)의 verbatim 출력이
+위 표. 매니페스트·ckpt·VERSION·out md5 는 위 '측정' 절. H_9378 카드에 `superseded-by H_9382`(계기 수리)
+포인터 랜딩(H_9378 ⛔ 영구 유지).
