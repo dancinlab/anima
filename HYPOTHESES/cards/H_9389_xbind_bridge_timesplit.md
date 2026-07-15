@@ -71,3 +71,44 @@ From-scratch smoke on aiden RTX 5070 (12GB), the flagship arch (`--d 3784 --L 4 
 2. Run via the proper `anima-py` install (NOT an ad-hoc PYTHONPATH — a path-order artifact shadows `core/serialize.py` with `cli/serialize.py`, breaking `.clm` write; the pip launcher resolves this).
 
 **Resume point**: `corpus atoms --lang en` → `corpus xbind --bridge-split --atoms <en_atoms> --lang en --out A.txt` → `anima-py train --d 3784 --L 4 --e0 2 --emax 3 --corpus A.txt --steps 6000 --out phaseA.clm` (aiden GPU) → measure `A.txt.sop_flip1.json` (G-ALIVE ≥0.90) then the **phase-A GATE** `A.txt.sdecl_flip1.json` (above chance? → phase B; else KILL). Phase B: `train --init phaseA.clm --corpus A.txt.cpt_{forward,reverse,neutral}.txt` → `evaluate --xbind A.txt.scpt_flip1.json`.
+
+---
+
+## 💀 VERDICT — KILL-AT-GATE (phase-A gate failed · both seeds · budget-swept · NO phase B) · 2026-07-16
+
+**measurement**: aiden RTX 5070 (GPU train) + CPU-numpy eval · engine-native `anima-py` installed from a COMPLETE origin/main git-archive · VERSION 0.13.86 · from-scratch 345.7M (d3784/L4/E2→3) · 12000 steps bs32 seq64 lr3e-4 · wall 2889s (s7) / 2897s (s11) · $0. Assets → `~/anima-weights/h9389_bridge/` (phaseA_s7.clm · phaseA_s11.clm · A.txt · en_atoms.json · en_lex.json).
+
+### EN atoms MINED (all gates PASS · `anima-py corpus atoms --lang en`)
+48 stems (24 train / 24 heldout · pos 12 : neg 12 per split) from the real HF EN corpora (`anima-corpus-en-general` 60MB + `-en-sns`). **G-OCCUR ✅** occ_min=246 median=605 (≥200, word-boundary counted) · **G-SUBSTR ✅** · **G-BALANCE ✅** · **G-DERIV ✅** (no un-/in-/dis-/-less pair) · **G-CARRIER ✅** (`positive`/`negative` dropped — they are the label words). chance_sd = 0.1021.
+
+### Corpus audit (pre-train · every invariant the design rests on)
+S_op=24 / S_decl=12 / S_cpt=12 · 7200 lines · 278,640 B. **S_decl operator lines = 0** (the gate stratum has 0 operator exposure) · **S_cpt absent = 0** · S_decl declarations present = 12/12 (there IS something to bridge from) · S_op both surfaces = 24/24 · **slot-prior FLAT: operator p(neg)=0.5000, declaration p(neg)=0.5000** (ⓐ) · **gate-prompt leaks 0/36**. Phase-B arms verified opposed (forward vs reverse: 0 same / 12 opposite; neutral balanced A:B 720:720; all three length-matched at 1440 lines).
+
+### The table (both seeds · budget as a CAPABILITY gate, never val_CE)
+
+| steps | s7 G-ALIVE | s7 GATE d_acc | s7 2AFC | s7 ECHO | s11 G-ALIVE | s11 GATE d_acc | s11 2AFC | s11 ECHO |
+|---|---|---|---|---|---|---|---|---|
+| 2000 | **1.0000** | 0.1667 | 0.3333 | 0.833 | **1.0000** | 0.1944 | 0.3056 | 0.806 |
+| 4000 | **1.0000** | 0.2222 | 0.3056 | 0.778 | 0.9861 | 0.3889 | 0.3611 | 0.611 |
+| 6000 | **1.0000** | 0.2778 | 0.2778 | 0.722 | **1.0000** | 0.1667 | 0.2222 | 0.833 |
+| 8000 | **1.0000** | 0.1389 | 0.3889 | 0.861 | **1.0000** | 0.3333 | 0.2222 | 0.667 |
+| 10000 | **1.0000** | 0.2222 | 0.4167 | 0.778 | **1.0000** | 0.2500 | 0.1111 | 0.750 |
+| 12000 | 0.9861 | 0.1944 | 0.3889 | 0.806 | **1.0000** | 0.3611 | 0.2222 | 0.639 |
+
+- **G-ALIVE PASSES everywhere** (0.986–1.000 ≥ 0.90): the operator is **perfectly learned where its surface is supervised**. This is NOT a budget/capability failure — the capability gate is met at the SMALLEST budget (2000), so **ⓒ is satisfied and a budget-negative is excluded**. (val_CE fell to 0.065/0.059 = pure memorisation; it was never used to pick the budget — [[valce-minimum-picked-a-collapsed-model]].)
+- **GATE FAILS at EVERY budget, BOTH seeds, on BOTH readouts**: S_decl flip1 (operator 0× exposure) d_acc 0.139–0.389 and 2AFC 0.111–0.417 — **never above chance (0.5)**. The pre-registered gate demands above-chance at p<0.05 ⟹ **FAIL**. Per-stem exact sign-permutation (n=12 stems = the independent unit, not the 36 correlated rows): p=0.012–0.087 on most rungs, all in the **BELOW-chance** direction.
+- **ECHO 0.61–0.86**: the model emits valid, balanced answer words (neg 19 : pos 17 — no degenerate collapse) and answers the **DECLARED polarity, ignoring `not`**.
+
+⟹ **💀 KILL-AT-GATE. The co-trained bridge does not exist. NO phase B** (frozen prereg · burned-gate · no re-gate · no tune-to-green).
+
+### What this kills
+
+Even when the declaration→operator mapping **receives gradient during training** (Correction ②'s prescribed remedy — 24 S_op stems with BOTH surfaces supervised), the model does **not** abstract a "negate the declared polarity" RULE over the stem slot. It learns **per-stem operator responses** (memorised: G-ALIVE 1.000) and **ECHOES** on a stem whose operator surface it never met. This replicates H_9346's ECHO in a design that removes every previous escape at once: **from-scratch** (no pretrained-base confound), **EN** (`not` FREE/pre-posed — not the KO BOUND suffix, killing V2's slot-reflex account), **slot-prior flat p(neg)=0.5000** (nothing to parrot), **0-exposure gate stratum**, **leak-audited**, **both seeds**, **budget-swept 2000→12000**.
+
+**Convergence with L4 (H_9388)**: L4 measured that the alive operator **does** read the stem position where pretraining forged it (stem_net +3.5/+4.9, gate-validated). L1 now shows co-training that mapping does **not** make the read generalise to a new stem. ⟹ **the operator is a STEM-INDEXED lookup, not a compositional operator over the stem slot** — and gradient on the mapping is *not sufficient* to make it one.
+
+### ⚠️ Honest scope — the alternative this design does NOT exclude (and it is the campaign's own)
+
+With only **24 S_op stems, memorisation is CHEAPER than a rule**: the model can store all 24 operator responses, so there is **no gradient pressure to abstract**. This is exactly the framing this campaign was built on ("the wipeout is indistinguishable from *the cache was always cheaper*"), and phase A as designed does not defeat it. ⟹ this verdict is **KILL-AT-GATE, NOT 🔴 W_wt-terminal**: the 🔴 tier required "even the strongest synthetic forcing", and |S_op|=24 is not the strongest forcing. **V5-reopen is therefore NOT forced by this result.**
+
+**NEXT lever (a NEW H, not a re-gate of this one)**: the **rule-vs-cache pressure sweep** — scale |S_op| (24 → 10² → 10³ stems, S_decl held out throughout) and ask whether the S_decl gate crosses chance at some cardinality where the rule becomes cheaper than the cache. The instrument already emits it (`corpus xbind --bridge-split` is a pure function of the atoms file); only a larger EN atom set is needed. That sweep is what would earn 🔴 W_wt-terminal (or overturn it).
