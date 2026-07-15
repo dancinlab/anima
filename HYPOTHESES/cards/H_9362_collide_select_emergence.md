@@ -148,3 +148,23 @@ pregate 의 `a` 는 **P(tgt) 단독**(cue-free · generator gen_auto_ce_W→clm_
   (read-side 벽 생성-쪽 재확인·cf-collide-select 종결) · Δbind≫0(paired-t≥1.796·≥9/12>0)∧Δstrip>0 →
   🟢 **NEW-LEVER**(믿음 present·샘플 miss = 디코딩/제안분포 · top_k·temp 스윕 먼저·CPT 아님).
 - toy 스모크 rc=0(degenerate Δbind≈0). **판정=summer py303_full**(DIRECTIONAL · forward-only $0).
+
+## VERDICT (py303_full 실측 · `--pregate-cond`) — 🧱 COLLAPSE(DIRECTIONAL) · H_9362 종결
+
+`anima-py evaluate py303_full.clm --collide-select --pregate-cond` (summer · 303M · forward-only $0):
+- **Δbind(원자-swap FORM통제 · 프레임 같고 원자 1개만 다름) mean = +0.058 · sd 0.141 · paired-t
+  1.43 (< 1.796 사전등록 bar · 8/12 >0)** — 정답 cue 가 swap cue 보다 tgt 를 유의하게 높이지 못함.
+- **Δstrip(프레임-교체 BIND통제) mean = +2.19** — 프레임(색은→색 답)엔 강하게 조건. Δstrip/Δbind = **40배**.
+- ⇒ **생성 로짓이 프레임엔 강히 조건하나 cue 의 어느 원자(빨강+노랑 vs 빨강+파랑)인지엔 무반응.**
+  target 이 안 제안되는 건 조건부 원자→내용 결합이 생성에 없기 때문 = **read-side 원자→내용 벽
+  ([[g1-readside-exhausted-gamma-spend-only]] EARNED-TERMINAL)의 생성-쪽 얼굴**. REDIRECT 의
+  "제안분포 병목"은 새 디코딩 레버가 아니라 그 벽 자체. **NEW-LEVER 반증**(믿음≫샘플 해리 부재).
+- **tune-to-green 방어**: paired 차분(swap−true)이 tgt 한계 유창도(pregate a축)를 정확히 상쇄 →
+  조건부 로짓 이동만 측정, read-side hidden-회수·P(tgt) 와 독립. pedestal(swap/strip) 참값0 frozen.
+- **scope**: py303 단일 ckpt · DIRECTIONAL · n=12 잔차(+0.058) 저검정력(MDE~0.11)이나 프레임/원자
+  40배 비가 원자-라우팅을 **scale-negligible**(a_scale_honest_scope). **reopen** = 24-pair near/far
+  D 확장으로 bound<0.11 조이기(하지만 40배 비로 결론 불변 예상).
+- **COLLIDE-SELECT 3단 종결**: POOL-DRY(baseline) → REDIRECT(target 유창하나 미제안) → COLLAPSE
+  (미제안=원자→내용 조건부 결합 부재=read-side 벽). "A⇄G 충돌이 창발을 선택하는가" = **선택기 이전에
+  A 가 조건부로 재조합을 제안하지 못함**이 근본. Fable·모든 사전(H_9285 branch·ρweave·H_9308) FLOOR 예측 적중.
+- **wired**: DIRECTIONAL(engine-native `--pregate-cond` py303 · read-side 벽 재확인, 새 배선 아님).
