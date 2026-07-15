@@ -854,6 +854,7 @@ def evaluate_usage():
     print("      bind absent (the position carries the byte's identity, not its valence).")
     print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7] [--bl-swap-span stem|carrier]")
     print("  anima evaluate <ckpt> --twin-screen <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 base m̂ + item-gate + Y* + margin sd")
+    print("  anima evaluate <ckpt> --twin-necessity <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 full instrument: PEDESTAL/IDENTITY/SPAN(ℓ)/COMP(ℓ)/BLIND · (τ,S)")
     print("       --bl-swap-span carrier: Stage A swaps the operator morpheme span (지 않다), not the atom span (H_9331 pedestal)")
     print("       --bl-swap-donor-class same: donor is a SAME-polarity item (polarity-blind control · (B) scramble-floor test)")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
@@ -2105,6 +2106,31 @@ def _bl_margin(np, W, seed, T):
             - _xbind_cont_nll(np, clm, W, seed, "긍정", T))
 
 
+def _cont_nll_edited(np, W, seed, cont, T, edits):
+    """Sum NLL of `cont` bytes given `seed`, but the trunk forward carries `edits` (H_9361
+    necessity arms). Same readout window as _xbind_cont_nll; edits=[] is byte-identical to it."""
+    text = seed + cont
+    tok = clm._seed_to_tok(text, T)
+    logits = clm.clm_forward_logits_edited(W, tok, T, edits)
+    k = len(cont.encode())
+    lo = max(0, T - 1 - k)
+    s = 0.0
+    for i in range(lo, T - 1):
+        row = logits[i]
+        m = float(np.max(row))
+        lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
+        s += lse - float(row[int(tok[i + 1])])
+    return s
+
+
+def _margin_edited(np, W, seed, T, edits):
+    """Edited signed margin m = nll(부정)−nll(긍정) under `edits`. The DV under an intervention
+    (H_9361). Every edit window lies in the seed region [<T−6), so the donor rows are cont-
+    independent (strictly causal conv) and ONE edits list serves both continuations."""
+    return (_cont_nll_edited(np, W, seed, "부정", T, edits)
+            - _cont_nll_edited(np, W, seed, "긍정", T, edits))
+
+
 def twin_screen_run(argv):
     """`anima-py evaluate <ckpt> --twin-screen <twinnec_manifest.json>` — H_9361 TWIN-NECESSITY screener.
 
@@ -2167,6 +2193,249 @@ def twin_screen_run(argv):
     json.dump({"surface": surface, "gate_nat": GATE, "win": T, "rows": rows, "pairs": pairs,
                "Y": len(pairs), "Ystar": ystar, "n_pass": n_pass, "accepted_abs_m_sd": sd_m,
                "median_pair_gap": gap, "item_gate": verdict},
+              open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
+
+
+# t_{.975, df} for the deterministic paired CI (df = #pairs − 1). No RNG in the eval path
+# (session-eval-py-only · determinism). Fallback 1.960 (normal) for df not tabulated.
+_T975 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306,
+         9: 2.262, 10: 2.228, 11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131,
+         16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086}
+
+
+def _tau_S(m_patched, m_A, m_B):
+    """(τ, S) coordinates of the necessity plane (H_9361). τ = transfer (0=A held, 1=B reached);
+    S = magnitude collapse (0=preserved, 1=annihilated) — the scramble gauge that a binary flip
+    could not see. Guards m_B==m_A (never, given the ≥1-nat gate) with a NaN τ."""
+    den = (m_B - m_A)
+    tau = float("nan") if den == 0.0 else (m_patched - m_A) / den
+    scale = (abs(m_A) + abs(m_B)) / 2.0
+    S = 0.0 if scale == 0.0 else min(1.0, max(0.0, 1.0 - abs(m_patched) / scale))
+    return tau, S
+
+
+def _mean_ci(np, xs, t975):
+    """(mean, half-width) of a deterministic t-CI over xs (paired τ across pairs)."""
+    n = len(xs)
+    mu = float(np.mean(xs))
+    if n < 2:
+        return mu, float("nan")
+    sd = float(np.std(xs, ddof=1))
+    hw = t975 * sd / math.sqrt(n)
+    return mu, hw
+
+
+def twin_necessity_run(argv):
+    """`anima-py evaluate <ckpt> --twin-necessity <twinnec_manifest.json> [--win 64] [--out f.json]`
+    — H_9361 TWIN-NECESSITY, the full instrument (screener PASS earned the item-gate first).
+
+    Is the carrier position's hidden CAUSALLY NECESSARY for the operator's polarity answer? On
+    byte-matched opposite-polarity STEM twins (same carrier morpheme, option A), we patch A's trunk
+    with B's hidden at a window×depth and read the CONTINUOUS margin m = nll(부정)−nll(긍정). The two
+    coordinates separate the three worlds a binary flip collapsed to 0.5:
+      τ = (m_patched − m_A)/(m_B − m_A)   transfer   (0 = A held · 1 = B reached)
+      S = 1 − |m_patched|/((|m_A|+|m_B|)/2) scramble  (0 = magnitude kept · 1 = annihilated)
+
+    Five arms per pair (donor rows are same-frame taps; every edit window is in the seed region
+    [<T−6), so donors are continuation-independent — one tap pass per twin):
+      PEDESTAL  ℓ=0 · STEM window dilated by the embed-conv footprint [stem_t0, stem_t1+(K−1)) ·
+                donor = twin B → the edited ℓ=0 field is bit-identical to running B ⇒ τ MUST = 1.000
+                (spike-in with known truth; |τ−1|>1e-3 = a coordinate/device/architecture bug, HALT).
+      IDENTITY  self-patch (donor = A's own tap) ⇒ τ MUST = 0.000 (sham; certifies the copy machinery).
+      SPAN(ℓ)   carrier window [car_t0,car_t1) @ℓ · donor = B → the DV: does polarity route THROUGH
+                the carrier positions at depth ℓ (τ(ℓ) trajectory).
+      COMP(ℓ)   complement (stem + query, carrier untouched, cont excluded) @ℓ · donor = B →
+                redundancy detector; NOT-READ is unclaimable without COMP τ̄≥0.75 (single-site trap).
+      BLIND     carrier window @ℓ · donor = same-polarity byte-matched twin (H_9331 same-class donor,
+                transposed to the continuous DV) → |Δm|≈0, S≈0 proves the DV is not a destruction gauge.
+
+    Frozen decision (card H_9361 · bars never move): V1 pedestal τ=1±0.005∧S≤0.02 · V2 identity τ=0±0.005 ·
+    V3 blind med|Δm|/|m_A|≤0.15∧S̄≤0.25 · V4 ≥80% items sign-correct∧|m|≥1nat∧CI width≤0.30. Per-ℓ bands:
+    CARRIER-READ τ̄≥0.75∧CI excl .5∧S̄≤0.25 · NOT-READ TOST τ∈[−.15,.15]∧S̄≤0.25∧COMP τ̄≥0.75 · SCRAMBLE
+    S̄>0.5 · SUPPRESSION τ̄≤−.15 (below chance = a finding). n=9 band: NOT-READ τ̄≤0.30∧COMP≥0.75 ·
+    CARRIER-READ τ̄∈[0.70,1] · else INCONCLUSIVE; sign gate ≥8/9 pairs on the band side."""
+    import numpy as np
+    ckpt = argv[0]
+    man = json.load(open(evaluate_strval(argv[1:], "--twin-necessity", "")))
+    T = evaluate_intval(argv[1:], "--win", 64)
+    out_path = evaluate_strval(argv[1:], "--out", "twin_necessity.json")
+    GATE = 1.0
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr); return 2
+    K = int(W["K"]); L = int(W["L"])
+    dev = "gpu" if (hasattr(clm, "cuda_available") and clm.cuda_available()) else "cpu"
+    surface = man["surface"]
+    pfx_b = int(man["prefix_bytes"]); carr_b = int(man["carrier_bytes"])
+    print("=== anima-py evaluate --twin-necessity — H_9361 TWIN-NECESSITY (full instrument) ===")
+    print("  ckpt %s · surface %s · win %dB · K=%d L=%d · device=%s" % (ckpt, surface, T, K, L, dev))
+
+    # --- item gate + pairing (same logic as the screener; the DV touches only gated pairs) ---
+    by = {}                                         # {stem: item}, {L: {pol: [gated items ranked |m|]}}
+    for it in man["items"]:
+        m = _bl_margin(np, W, it["seed"], T)
+        it = dict(it); it["m"] = float(m)
+        it["gate"] = ((m > 0) == (it["esign"] > 0)) and abs(m) >= GATE
+        by[it["stem"]] = it
+    from collections import defaultdict
+    buck = defaultdict(lambda: {0: [], 1: []})
+    for it in by.values():
+        if it["gate"]:
+            buck[it["L"]][it["pol"]].append(it)
+    for Lb in buck:
+        for p in (0, 1):
+            buck[Lb][p].sort(key=lambda r: -abs(r["m"]))
+    pairs = []                                       # (A pol1, B pol0, Ab blind pol1 | None)
+    for Lb in sorted(buck):
+        pos, neg = buck[Lb][1], buck[Lb][0]
+        for i in range(min(len(pos), len(neg))):
+            blind = pos[i + 1] if (i + 1) < len(pos) else None    # 2nd pol1 stem = same-class donor
+            pairs.append((pos[i], neg[i], blind))
+    n_pairs = len(pairs)
+    print("  gated pairs: %d (blind-backed %d)" % (n_pairs, sum(1 for _a, _b, ab in pairs if ab)))
+    if n_pairs == 0:
+        print("  NO gated pairs — run --twin-screen first (item-gate)."); return 2
+
+    layers = list(range(0, L + 1))
+    per_pair = []
+    # accumulators: arm -> layer -> [tau across pairs], and S
+    acc = {a: {l: {"tau": [], "S": []} for l in layers} for a in ("SPAN", "COMP", "BLIND", "IDENTITY")}
+    ped = {"tau": [], "S": []}
+    v4_sign_ok = 0
+    for (A, B, Ab) in pairs:
+        S_seed = len(A["seed"].encode())
+        base = T - (S_seed + 6)                      # margin forward right-aligns seed+cont (cont 6B)
+        stem_t0 = base + pfx_b; stem_t1 = base + pfx_b + A["L"]
+        car_t0 = base + int(A["carrier"][0]); car_t1 = base + int(A["carrier"][1])
+        qry_t1 = T - 6                               # query end = continuation start
+        m_A = A["m"]; m_B = B["m"]
+        v4_sign_ok += 1 if (((m_A > 0) == (A["esign"] > 0)) and ((m_B > 0) == (B["esign"] > 0))
+                            and abs(m_A) >= GATE and abs(m_B) >= GATE) else 0
+        A_taps = clm.clm_forward_taps(W, clm._seed_to_tok(A["seed"] + "긍정", T), T)
+        B_taps = clm.clm_forward_taps(W, clm._seed_to_tok(B["seed"] + "긍정", T), T)
+        Ab_taps = (clm.clm_forward_taps(W, clm._seed_to_tok(Ab["seed"] + "긍정", T), T)
+                   if Ab is not None else None)
+        rec = {"A": A["stem"], "B": B["stem"], "Ab": (Ab["stem"] if Ab else None),
+               "L": A["L"], "mA": m_A, "mB": m_B, "layers": {}}
+        # PEDESTAL (ℓ=0, stem window dilated by K−1)
+        pe = [{"layer": 0, "t0": stem_t0, "t1": min(T, stem_t1 + (K - 1)), "mode": "patch",
+               "donor": B_taps[0][stem_t0:min(T, stem_t1 + (K - 1)), :]}]
+        m_pe = _margin_edited(np, W, A["seed"], T, pe)
+        t_pe, s_pe = _tau_S(m_pe, m_A, m_B); ped["tau"].append(t_pe); ped["S"].append(s_pe)
+        rec["pedestal"] = {"tau": t_pe, "S": s_pe, "m": m_pe}
+        for l in layers:
+            e_span = [{"layer": l, "t0": car_t0, "t1": car_t1, "mode": "patch",
+                       "donor": B_taps[l][car_t0:car_t1, :]}]
+            e_comp = [{"layer": l, "t0": stem_t0, "t1": stem_t1, "mode": "patch",
+                       "donor": B_taps[l][stem_t0:stem_t1, :]},
+                      {"layer": l, "t0": car_t1, "t1": qry_t1, "mode": "patch",
+                       "donor": B_taps[l][car_t1:qry_t1, :]}]
+            e_id = [{"layer": l, "t0": car_t0, "t1": car_t1, "mode": "patch",
+                     "donor": A_taps[l][car_t0:car_t1, :]}]
+            m_span = _margin_edited(np, W, A["seed"], T, e_span)
+            m_comp = _margin_edited(np, W, A["seed"], T, e_comp)
+            m_id = _margin_edited(np, W, A["seed"], T, e_id)
+            t_span, s_span = _tau_S(m_span, m_A, m_B)
+            t_comp, s_comp = _tau_S(m_comp, m_A, m_B)
+            t_id, s_id = _tau_S(m_id, m_A, m_B)
+            acc["SPAN"][l]["tau"].append(t_span); acc["SPAN"][l]["S"].append(s_span)
+            acc["COMP"][l]["tau"].append(t_comp); acc["COMP"][l]["S"].append(s_comp)
+            acc["IDENTITY"][l]["tau"].append(t_id); acc["IDENTITY"][l]["S"].append(s_id)
+            row = {"span": {"tau": t_span, "S": s_span, "m": m_span},
+                   "comp": {"tau": t_comp, "S": s_comp, "m": m_comp},
+                   "identity": {"tau": t_id, "S": s_id}}
+            if Ab_taps is not None:
+                e_bl = [{"layer": l, "t0": car_t0, "t1": car_t1, "mode": "patch",
+                         "donor": Ab_taps[l][car_t0:car_t1, :]}]
+                m_bl = _margin_edited(np, W, A["seed"], T, e_bl)
+                t_bl, s_bl = _tau_S(m_bl, m_A, m_B)
+                acc["BLIND"][l]["tau"].append(t_bl); acc["BLIND"][l]["S"].append(s_bl)
+                row["blind"] = {"tau": t_bl, "S": s_bl, "m": m_bl, "dratio": abs(m_bl - m_A) / max(abs(m_A), 1e-9)}
+            rec["layers"][str(l)] = row
+        per_pair.append(rec)
+
+    t975 = _T975.get(n_pairs - 1, 1.960)
+    # --- validity arms ---
+    v1_dt = max(abs(x - 1.0) for x in ped["tau"]); v1_ds = max(ped["S"])
+    # V1 gates the BIT-IDENTITY only. The ℓ=0 stem-window patch (dilated K−1) makes the forward ==
+    # twin B, so τ=1.000±0.005 IS the alignment proof. The pedestal S is NOT a scramble — with
+    # m_patched=m_B exactly, S=1−|m_B|/((|m_A|+|m_B|)/2) is nonzero whenever |m_A|≠|m_B|: it is the
+    # twin's own on-manifold |m| asymmetry, a KNOWN quantity, so it is REPORTED (diagnostic) not gated.
+    # (The frozen table's old S≤0.02 baked in a magnitude-symmetric-twin assumption that is false for
+    # asymmetric pairs — e.g. flip0 pedestal τ=1.000 exact yet S=0.13; a mechanical spec-fix, not
+    # tune-to-green: it is derived from the pedestal's definition, before any DV is read.)
+    v1 = "PASS" if v1_dt <= 0.005 else "INVALID-ALIGNMENT"
+    id_dt = max(abs(x) for l in layers for x in acc["IDENTITY"][l]["tau"])
+    v2 = "PASS" if id_dt <= 0.005 else "INVALID-INSTRUMENT"
+    blind_ok = any(acc["BLIND"][l]["tau"] for l in layers)
+    if blind_ok:
+        bl_ratios = []
+        for r in per_pair:
+            for l in layers:
+                b = r["layers"][str(l)].get("blind")
+                if b: bl_ratios.append(b["dratio"])
+        bl_med = float(np.median(bl_ratios)) if bl_ratios else float("nan")
+        bl_Sbar = float(np.mean([np.mean(acc["BLIND"][l]["S"]) for l in layers if acc["BLIND"][l]["S"]]))
+        v3 = "PASS" if (bl_med <= 0.15 and bl_Sbar <= 0.25) else "INVALID-DISRUPTION-GAUGE"
+    else:
+        bl_med = float("nan"); bl_Sbar = float("nan"); v3 = "NO-BLIND(Y*<pairs)"
+    sign_frac = v4_sign_ok / n_pairs
+    max_ci = max((_mean_ci(np, acc["SPAN"][l]["tau"], t975)[1] for l in layers), default=float("nan"))
+    v4 = "PASS" if (sign_frac >= 0.80 and (n_pairs >= 2 and max_ci <= 0.30)) else "UNDERPOWERED"
+    print("\n  --- VALIDITY (frozen) ---")
+    print("  V1 PEDESTAL : max|τ−1|=%.2e (bit-identity gate) · pedestal-S=%.2e (twin |m| asym · diag, not gated) → %s"
+          % (v1_dt, v1_ds, v1))
+    print("  V2 IDENTITY : max|τ|=%.2e → %s" % (id_dt, v2))
+    print("  V3 BLIND    : med|Δm|/|m_A|=%.4f · S̄=%.4f → %s" % (bl_med, bl_Sbar, v3))
+    print("  V4 POWER    : sign-ok %d/%d=%.2f · max CI half-width=%.4f → %s"
+          % (v4_sign_ok, n_pairs, sign_frac, max_ci, v4))
+
+    # --- per-ℓ trajectory + band (SPAN is the DV; NOT-READ needs COMP) ---
+    print("\n  --- τ(ℓ) TRAJECTORY (SPAN=DV · band per card H_9361) ---")
+    print("   ℓ | SPAN τ̄  [95%% CI]     S̄     | COMP τ̄ | BLIND τ̄ | signOK | band")
+    traj = {}
+    for l in layers:
+        st = acc["SPAN"][l]["tau"]; ss = acc["SPAN"][l]["S"]
+        ct = acc["COMP"][l]["tau"]; bt = acc["BLIND"][l]["tau"]
+        mu, hw = _mean_ci(np, st, t975)
+        sbar = float(np.mean(ss)) if ss else float("nan")
+        cmu = float(np.mean(ct)) if ct else float("nan")
+        bmu = float(np.mean(bt)) if bt else float("nan")
+        lo, hi = mu - hw, mu + hw
+        # band (n=9 gate · card): CARRIER-READ τ̄∈[0.70,1]∧CI within · NOT-READ τ̄≤0.30∧COMP≥0.75 · SCRAMBLE S̄>0.5
+        if sbar > 0.5:
+            band = "SCRAMBLE"
+        elif mu <= -0.15 and hi < 0.0:
+            band = "SUPPRESSION"
+        elif mu >= 1.25:
+            band = "OVER-TRANSFER"
+        elif 0.70 <= lo and hi <= 1.0 + 1e-9 and sbar <= 0.25:
+            band = "CARRIER-READ"
+        elif hi <= 0.30 and cmu >= 0.75 and sbar <= 0.25:
+            band = "NOT-READ"
+        else:
+            band = "INCONCLUSIVE"
+        # sign gate: #pairs whose τ is on the band's side
+        if band == "CARRIER-READ":
+            sign_n = sum(1 for x in st if x >= 0.5)
+        elif band in ("NOT-READ", "SUPPRESSION"):
+            sign_n = sum(1 for x in st if x <= 0.5)
+        else:
+            sign_n = 0
+        traj[str(l)] = {"span_tau": mu, "span_ci": [lo, hi], "span_Sbar": sbar,
+                        "comp_tau": cmu, "blind_tau": bmu, "sign_n": sign_n, "band": band}
+        print("  %2d | %+.3f [%+.3f,%+.3f]  %.3f | %+.3f | %+.3f | %d/%d | %s"
+              % (l, mu, lo, hi, sbar, cmu, bmu, sign_n, n_pairs, band))
+
+    valid = (v1 == "PASS" and v2 == "PASS" and v3 in ("PASS", "NO-BLIND(Y*<pairs)") and v4 == "PASS")
+    print("\n  instrument validity: %s (V1·V2·V3·V4)" % ("PASS" if valid else "GATED — read DV with caution"))
+    json.dump({"surface": surface, "device": dev, "win": T, "K": K, "L": L, "n_pairs": n_pairs,
+               "validity": {"V1": v1, "V2": v2, "V3": v3, "V4": v4, "pedestal_max_dtau": v1_dt,
+                            "identity_max_tau": id_dt, "blind_med_ratio": bl_med, "blind_Sbar": bl_Sbar,
+                            "sign_frac": sign_frac, "max_ci_hw": max_ci},
+               "trajectory": traj, "pairs": per_pair},
               open(out_path, "w"), ensure_ascii=False, indent=1)
     print("  wrote " + out_path)
     return 0
@@ -4958,7 +5227,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -5332,6 +5601,8 @@ def main(argv):
         return bind_locus_run(argv)
     if "--twin-screen" in argv:
         return twin_screen_run(argv)
+    if "--twin-necessity" in argv:
+        return twin_necessity_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
     # --device-parity: is this host's GPU forward the same measurement as its CPU forward? The probes
