@@ -80,3 +80,16 @@ SEEN 10문(store bind) → margin **−0.15 전부**(≤0 · recognized) · held
 baseline POOL-DRY. XBIND 에선 **S_emerge 가 SECOND-A 와 갈리는지가 전부** — 갈리면 G 가 처음으로 A 가
 못 하는 일을 한 것(창발의 substrate-동역학 최초 증거). 안 갈리면 immune margin 은 A 의 세 번째 그림자.
 최전선(G1)과 같은 벽이나 **미소진 각도**(생성물 위 선택 = read-side 6-lane floor·fork-A 라우팅에 불포함).
+
+## VERDICT (baseline py303) — 🧱 POOL-DRY(target) · G-B/G-C engine-native 측정
+
+`anima-py evaluate py303_full.clm --collide-select` (12 probe × K=4 = 48 후보):
+- **G-C: 전 arm 0/12 적중** — 재조합 타깃이 48 후보 전체에 **0회** 등장. 선택기가 고를 정답이
+  풀에 없다. (S0·S_emerge·SECOND-A·NOISE-G·UNIFORM 모두 0.00)
+- **⇒ POOL-DRY(target)**: H_9304(자연분포에 재조합 연산자 부재)를 **생성-선택 축에서 재확인**.
+  baseline 에선 "A⇄G 충돌이 창발을 고르는가"가 well-posed 하나 **답할 대상이 없다**(A 가 재조합을
+  애초에 제안 못 함). 다음 레버 = **A 제안분포(XBIND-retrained ckpt)**, G 선택기 아님.
+- G-B occupancy(48/48 emergence 사분면)는 store 가 작아 축퇴 → TARGET-DRY(풀 타깃 적중=0)가 진짜
+  DRY 지표. 계기 3회 단련: 비-W 경로·죽은 clm_ce_ranged·surrogate print 크래시 전부 수리(#3665/#3670).
+- NEXT: H_9267 XBIND-retrained `.clm` 에서 풀이 젖으면(타깃 등장>0) S_emerge vs SECOND-A 분리로
+  "충돌이 창발 선택"을 판정. XBIND ckpt 재학습 = [train] 소액(rent=spend go).
