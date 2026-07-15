@@ -106,8 +106,14 @@ def safety_kill_switch_on(env_off):
     return env_off == False
 
 
-def safety_rate_limit_ok(seconds_since_last):
-    return seconds_since_last >= spont_min_emit_interval()
+def safety_rate_limit_ok(seconds_since_last, rate_sec=None):
+    """H_9391: rate_sec overrides the rate-limit interval for a CLOCK-LIVE measurement regime.
+    Default (None) = spont_min_emit_interval() = byte-identical to production. H_9390 showed that at
+    the production 30s limit the clock fully determines emit (emit⟺clock, the score gate never binds
+    when the clock opens), so content can never vote — relaxing the interval opens the window where
+    should_emit(score) becomes the binding constraint and the content question becomes askable."""
+    thr = spont_min_emit_interval() if rate_sec is None else rate_sec
+    return seconds_since_last >= thr
 
 
 def safety_phi_ratchet_ok(phi, ratchet):

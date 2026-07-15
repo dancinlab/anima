@@ -1473,6 +1473,15 @@ def anima_consciousness_mode(ckpt, argv=None):
     # gate consumes real tension louder, no self-seed). tension-agnostic only for the ANCHOR arm.
     _dw = anima_flag_value(_cargv, "--dyn-w", "ANIMA_DYN_W", "")
     _dyn_w = float(_dw) if _dw != "" else None
+    # H_9391 CLOCK-LIVE — override the emit rate-limit interval (core/engine_g.py
+    # spont_min_emit_interval() = 30s). "" (default) = None = byte-identical to production.
+    # H_9390 measured that at 30s the clock FULLY determines emit (emit⟺clock, the score gate
+    # never binds when the clock opens) so content can never vote; a shorter interval opens the
+    # window where should_emit(score) is the binding constraint = the content question becomes
+    # askable. This is a MEASUREMENT-REGIME knob, not a tuning dial: the validity condition
+    # (emit must VARY within clock-open ticks) is registered before any content is read.
+    _rl = anima_flag_value(_cargv, "--rate-limit-sec", "ANIMA_RATE_LIMIT_SEC", "")
+    _rate_sec = float(_rl) if _rl != "" else None
     # H_9328 · seed_rng is DERIVED PER TICK, never held constant across the session.
     # MEASURED defect: holding it at `_sample_seed` made the mouth redraw the SAME 80 bytes
     # every tick (gtext sha count = 1 over 30 ticks), so a 30-tick rollout carried exactly ONE
@@ -1981,7 +1990,8 @@ def anima_consciousness_mode(ckpt, argv=None):
                          secs_since_emit, False, True,
                          backend, live_anchors,
                          _mouth_at(tick),   # H_9328 · None by default ⇒ byte-identical greedy path
-                         _dyn_w)                # H_9377 · audibility gain (None = byte-identical)
+                         _dyn_w,                # H_9377 · audibility gain (None = byte-identical)
+                         _rate_sec)             # H_9391 · clock-live regime (None = byte-identical)
 
         did_emit = str(dec["emit"]).lower() == "true"
         if did_emit:
@@ -2181,7 +2191,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
                 # H_9357 · the A⇄G tension's G pole + its arm, so the panel can run G-INDEP
                 # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
-                "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "dyn_w": (float(_dyn_w) if _dyn_w is not None else None), "ag_g_drive": float(ag_g_drive),
+                "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "dyn_w": (float(_dyn_w) if _dyn_w is not None else None), "rate_sec": (float(_rate_sec) if _rate_sec is not None else None), "ag_g_drive": float(ag_g_drive),
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
                 # H_9351 σ-panel inputs: the gws-fed lane population (σ·stage / σ·bind),
                 # its winner (σ·stage argmax test), and the reality monitor (σ·witness).

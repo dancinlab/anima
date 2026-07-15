@@ -140,7 +140,7 @@ def anchor_tension_fold(anchors, age_dt):
 
 def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
-                          anchors, anchor_age_dt, dyn_w=None):
+                          anchors, anchor_age_dt, dyn_w=None, rate_sec=None):
     """brain.hexa:154 — brain_decide + bounded anchor-fold motivation nudge."""
     phi = pure_field_phi(pf)
     phase = pure_field_phase(pf)
@@ -154,7 +154,7 @@ def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     score = base_score + nudge
 
     kill = safety_kill_switch_on(env_off)
-    rate = safety_rate_limit_ok(seconds_since_last)
+    rate = safety_rate_limit_ok(seconds_since_last, rate_sec)
     phi_r = safety_phi_ratchet_ok(phi, pf.phi_peak)
     cont = safety_content_ok(content_clean)
     safe = safety_combined(kill, rate, phi_r, cont)
@@ -178,16 +178,16 @@ def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 
 def brain_emit(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                seconds_since_last, env_off, content_clean, backend, anchors,
-               mouth=None, dyn_w=None):
+               mouth=None, dyn_w=None, rate_sec=None):
     """brain.hexa:216 — L3-wired brain step (anchors FRESH, age_dt=0)."""
     return brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                            seconds_since_last, env_off, content_clean,
-                           backend, anchors, 0.0, mouth, dyn_w)
+                           backend, anchors, 0.0, mouth, dyn_w, rate_sec)
 
 
 def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                     seconds_since_last, env_off, content_clean,
-                    backend, anchors, anchor_age_dt, mouth=None, dyn_w=None):
+                    backend, anchors, anchor_age_dt, mouth=None, dyn_w=None, rate_sec=None):
     """brain.hexa:232 — brain_emit with explicit anchor age (forgetting curve).
     Drives the L3 generator slot via the sibling generator.py port.
 
@@ -201,7 +201,8 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 
     decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal,
                                      dyn_v, seconds_since_last, env_off,
-                                     content_clean, anchors, anchor_age_dt, dyn_w)
+                                     content_clean, anchors, anchor_age_dt, dyn_w,
+                                     rate_sec)
 
     emit = str(decision["emit"]).lower() == "true"
     ctx = gen_ctx_from_decision(decision)

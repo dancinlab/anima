@@ -4510,13 +4510,20 @@ def _gate_census(argv):
         emit_var = 0 < e1 < n_live
         n_bind = sum(1 for r in openr if float(r["score"]) <= THR)
         n_other = sum(1 for r in openr if float(r["score"]) > THR and not r.get("emit"))
+        # H_9391 VACUITY — over ALL rows (not just clock-open): can should_emit(score) EVER say no?
+        # If min(score) > θ the gate is a tautology and emit ≡ clock by construction: no clock
+        # relaxation can open a content window, because the score never reaches the threshold.
+        sc = [float(r["score"]) for r in rs]
+        smin = min(sc) if sc else None
+        n_below = sum(1 for v in sc if v <= THR)
         mi = nm = pv = None
         if emit_var and n_live >= 30:
             S = [int(r["stage"]) for r in openr]
             X = [float(r["ag_conflict"]) for r in openr]
             Y = [1 if r.get("emit") else 0 for r in openr]
             mi, nm, pv, _e = _gd_cmi_bin(X, Y, S)
-        return dict(n=len(rs), live=n_live, e1=e1, var=emit_var, bind=n_bind, other=n_other, mi=mi, nm=nm, pv=pv)
+        return dict(n=len(rs), live=n_live, e1=e1, var=emit_var, bind=n_bind, other=n_other,
+                    mi=mi, nm=nm, pv=pv, smin=smin, below=n_below)
 
     cells = {}
     for a in by:
@@ -4526,13 +4533,15 @@ def _gate_census(argv):
             cells.setdefault((a, wk), []).append(r)
     ws = sorted({wk for (_a, wk) in cells})
     print()
-    print("  arm  dyn_w | N    open  open-emit%  N_bind | live-MI(conflict;emit|stage) shuf  p")
+    print("  arm  dyn_w | N    open  open-emit%  N_bind | score_min  ≤θ%   | live-MI shuf  p")
     cres = {}
     for (a, wk) in sorted(cells):
         d = _cell_stat(cells[(a, wk)])
         cres[(a, wk)] = d
-        print("  %-3s  %.2f  | %3d  %4d  %5.2f      %5d | %s"
+        print("  %-3s  %.2f  | %3d  %4d  %5.2f      %5d | %8.4f  %5.1f%% | %s"
               % (a, wk, d["n"], d["live"], (d["e1"] / d["live"]) if d["live"] else 0.0, d["bind"],
+                 d["smin"] if d["smin"] is not None else float("nan"),
+                 100.0 * d["below"] / d["n"] if d["n"] else 0.0,
                  ("%+.4f %.4f %.3f" % (d["mi"], d["nm"], d["pv"])) if d["mi"] is not None
                  else "— not measurable (H(emit|open)=0)"))
 
@@ -4554,11 +4563,25 @@ def _gate_census(argv):
         print("     (score gate %s when the clock is open). H(emit|clock-open)≈0 ⇒ H_9377 MI≈0 is mechanically"
               % ("vacuous" if aA.get("bind", 0) < 5 else "rarely binds"))
         print("     forced, NOT a content wall. H_9377 CONTENT-INERT ⇒ RE-SCOPE to CLOCK-BOUND@production.")
+        # H_9391 VACUITY — is the score gate merely masked here, or STRUCTURALLY unable to ever fire?
+        if aA.get("smin") is not None and aA["smin"] > THR:
+            print("     ⚠️ 🕳️ SCORE-GATE VACUOUS@anchor: min(score)=%.4f > θ=%.2f over ALL %d rows (%.1f%% ≤θ)."
+                  % (aA["smin"], THR, aA.get("n", 0), 100.0 * aA.get("below", 0) / max(1, aA.get("n", 1))))
+            print("     should_emit(score) is a TAUTOLOGY at production ⇒ emit ≡ clock BY CONSTRUCTION, and")
+            print("     NO clock relaxation can open a content window (a fully-open clock ⇒ emit≡1, still")
+            print("     no variance). The 8-lane motivation — tension included — gates NOTHING at production:")
+            print("     the severance is the score never REACHING θ, not the mixer weight and not content.")
+            print("     ⇒ clock-live is NOT the lever. Lever candidates = the score×θ relation (θ inviolable),")
+            print("     i.e. a regime where score STRADDLES θ at clock-open ticks (see the ≤θ% column).")
         if hi_mi is not None and hi_mi >= MDE:
             print("     ⚠️ clock-open MI APPEARS only at high dyn_w=%.2f (MI %+.4f) — but there score≈dyn_v by"
                   % (hi_w, hi_mi))
             print("     construction, so that is the DIAL (manipulation-bought), NOT substrate (H_9377 w-invariance).")
-        print("     NOT terminal. reopen = 1 clock-LIVE collection (emit must vary within clock-open at anchor w).")
+        if aA.get("smin") is not None and aA["smin"] > THR:
+            print("     NOT terminal. reopen = a STRADDLE regime (score must cross θ at clock-open ticks);")
+            print("     a clock relaxation alone is REFUTED as the lever by the vacuity above.")
+        else:
+            print("     NOT terminal. reopen = 1 clock-LIVE collection (emit must vary within clock-open at anchor w).")
         return 0
 
     # anchor IS measurable — the content question is askable at production. Read a1 vs a3 at the anchor.
