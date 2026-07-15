@@ -1461,6 +1461,12 @@ def anima_consciousness_mode(ckpt, argv=None):
     # control that separates "a genuine 2nd engine" from "just a causal handle" (a2 SHUFFLE-G is
     # a measurement-time permutation of an a1 trace, not a run mode). Default a0 = prod unchanged.
     _g_arm = anima_flag_value(_cargv, "--g-arm", "ANIMA_G_ARM", "a0")
+    # H_9373 · continuize the tension→score channel. Default OFF = byte-identical. When ON, the
+    # settle machinery still runs (trace preserved) but agloop_ctx (the ONLY downstream consumer of
+    # ag_budget/settle) is reported as a continuous monotone function of ag_conflict instead of the
+    # integer-ratio staircase — H_9360/H_9373 Stage-0 measured agloop_ctx ≡ 0.25 CONSTANT for the
+    # independent-G arm (the round()→integer-budget quantizer collapsed the designed path to a point).
+    _ag_cont = anima_flag_value(_cargv, "--ag-cont", "ANIMA_AG_CONT", "0") == "1"
     # H_9328 · seed_rng is DERIVED PER TICK, never held constant across the session.
     # MEASURED defect: holding it at `_sample_seed` made the mouth redraw the SAME 80 bytes
     # every tick (gtext sha count = 1 over 30 ticks), so a 30-tick rollout carried exactly ONE
@@ -1594,8 +1600,16 @@ def anima_consciousness_mode(ckpt, argv=None):
         ag_pop = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
         ag_settle = tension_resolve_depth(ag_pop, tr_full, 0.3, 0.5, ag_budget, 2, 0.06, tr_cfgON)
         ag_settle_depth = ag_settle[0]
-        agloop_ctx = (0.0 if ag_settle_depth < 0.0
-                      else _afs_clip01(ag_settle_depth / (float(ag_budget) + 0.000001)))
+        if _ag_cont:
+            # H_9373 · continuous pass-through = the UPPER-BOUND arm of the mid-link capacity
+            # (I(conflict;agloop_ctx|S) = H(conflict|S); no continuization can exceed it). The
+            # settle machinery above still ran (its trace fields are preserved); only the report
+            # to score is continuized. tension-agnostic: reads ag_conflict's VALUE only, applied
+            # identically to every g-arm, a fixed monotone map — arm selectivity is substrate-earned.
+            agloop_ctx = _afs_clip01(ag_conflict)
+        else:
+            agloop_ctx = (0.0 if ag_settle_depth < 0.0
+                          else _afs_clip01(ag_settle_depth / (float(ag_budget) + 0.000001)))
 
         # (3) GLOBAL WORKSPACE
         gws = gws_new(4, True, 0.55)
@@ -2160,7 +2174,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
                 # H_9357 · the A⇄G tension's G pole + its arm, so the panel can run G-INDEP
                 # (regress ag_g_drive on emit_drive+covariates) and G-VAR (distinct count).
-                "g_arm": str(_g_arm), "ag_g_drive": float(ag_g_drive),
+                "g_arm": str(_g_arm), "ag_cont": bool(_ag_cont), "ag_g_drive": float(ag_g_drive),
                 "g_recog": float(g_recog), "ag_conflict": float(ag_conflict),
                 # H_9351 σ-panel inputs: the gws-fed lane population (σ·stage / σ·bind),
                 # its winner (σ·stage argmax test), and the reality monitor (σ·witness).

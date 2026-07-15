@@ -368,7 +368,7 @@ def system_g1_run(argv):
     print("bar:    M=%d · N_pool=%d · COV>=%d REC>=%d LEAK<=%.2f DROP>=%d  (FREEZE.txt frozen)"
           % (_SG1_M, _SG1_N_DISTRACT, _SG1_COV_BAR, _SG1_REC_BAR, _SG1_LEAK_BAR, _SG1_SCR_DROP))
     print("")
-    mouth = _Mouth(ckpt)
+    h = _gen.gen_auto_load(ckpt)
     r = eval_system_rho_weave(mouth, gen)
     print("  coverage=%d/%d (>=%d)  recovery=%d/%d (>=%d)  leak=%.3f (<=%.2f)  drop=%d (>=%d)"
           % (r["coverage"], _SG1_M, _SG1_COV_BAR, r["recovery"], _SG1_M, _SG1_REC_BAR,
@@ -653,7 +653,7 @@ def eval_rho_fan(mouth, gen, known):
 def eval_reach_all(ckpt, corpus_paths, gen):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    mouth = _Mouth(ckpt)
+    h = _gen.gen_auto_load(ckpt)
     print("  [gate] ρ·form COHERENCE …", flush=True)
     r0 = eval_rho_form(mouth, g, known)
     print("  [gate] ρ·weave RECOMBINATION …", flush=True)
@@ -682,7 +682,7 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir=""):
     import rho_axon
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    mouth = _Mouth(ckpt)
+    h = _gen.gen_auto_load(ckpt)
     en_corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     # aggregate dets = the FROZEN en bar (UNTOUCHED — en byte-identity guaranteed structurally)
     dets = {"known": known, "concepts": _rho_fan_concepts(),
@@ -1249,7 +1249,7 @@ def probe_run(argv):
     print("=== anima evaluate --probe — MATCHED-SURFACE G1 (card H_6189) ===")
     print("ckpt:  " + ckpt)
     print("spec:  %s (%d items · greedy top_k=1 gen=%d)" % (spec_path, spec["n_items"], gen))
-    mouth = _Mouth(ckpt)
+    h = _gen.gen_auto_load(ckpt)
     out = []
     for it in spec["items"]:
         text = mouth.ideate(it["prompt"], gen, 1, 0.7, 6185)   # greedy, fixed seed
@@ -3823,7 +3823,7 @@ def _collide_select(ckpt, argv):
     for a in argv:
         if a.startswith("--k="):
             K = int(a.split("=", 1)[1])
-    mouth = _Mouth(ckpt)
+    h = _gen.gen_auto_load(ckpt)
     cfg = EngineConfig(True, "conv", False, False)
     # G-store: bind the compose CUES as "seen context" (H_9337 recognition-first). The composed
     # TARGET is never bound, so a real recombination candidate reads as novel (g<0).
@@ -3840,8 +3840,9 @@ def _collide_select(ckpt, argv):
     for i, (cue, tgt, sw, bs, lang) in enumerate(pairs):
         pool = []
         for k in range(K):
-            txt = mouth.ideate(cue + " ", 24, 8, 0.7, _rx.SEEDS[0] + 17 * i + k)
-            d = _gen.conflict_drives_live(ckpt, txt, mem)
+            _r = _gen.gen_auto_ideate_W(h, cue + " ", 24, 8, 0.7, _rx.SEEDS[0] + 17 * i + k)
+            txt = str(_r["text"]) if _r.get("ok") else ""
+            d = _gen.conflict_drives_live_W(h, txt, mem)
             a, g = float(d[0]), float(d[1])
             retr = 1 if _rx._retrieved(txt, tgt) else 0
             pool.append(dict(txt=txt, a=a, g=g, cs=_cs(a, g), retr=retr))
@@ -3859,6 +3860,7 @@ def _collide_select(ckpt, argv):
     if occ["emerge"] == 0:
         print("    \u21d2 \U0001f9f1 POOL-DRY \u2014 \ucc3d\ubc1c \uce78 \uc810\uc720 0. \uc5b4\ub5a4 \uc120\ud0dd\uae30\ub3c4 \uc5c6\ub294 \uac83\uc744 \ubabb \uace0\ub978\ub2e4(H_9304 DATA \ubcbd). G-C \ubb34\uc758\ubbf8.")
         print("    \ub2e4\uc74c \ub808\ubc84 = A \uc81c\uc548\ubd84\ud3ec(XBIND curriculum), G \uc120\ud0dd\uae30 \uc544\ub2d8.")
+        _gen.gen_auto_free(h)
         return 0
     # ── G-C per-arm hit-rate ──
     def sel(pool, rule):
@@ -3895,6 +3897,7 @@ def _collide_select(ckpt, argv):
     else:
         print("  \u21d2 \U0001f9f1 \ubbf8\ub2ec \u00b7 \ud310\uc815 \ubcf4\ub958")
     print("  (scope: frozen rho_weave = arm\uac04 \uc0c1\ub300\uc2ec\ud310\ub9cc \u00b7 top-1 terminal \uc8fc\uc7a5 \ubd88\uac00 \u00b7 recomb-gate4)")
+    _gen.gen_auto_free(h)
     return 0
 
 
