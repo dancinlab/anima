@@ -1,4 +1,4 @@
-# H_9360 — TWIN-NECESSITY: 연산자가 캐리어를 **읽긴 하는가** (필요성 · scramble-floor 회피)
+# H_9362 — TWIN-NECESSITY: 연산자가 캐리어를 **읽긴 하는가** (필요성 · scramble-floor 회피)
 
 - **tier**: 🔵 PRE-REGISTERED (설계 동결 · 미측정 · 설계 Fable 5)
 - **선행**: H_9331 🧱 INSTRUMENT-CEILING — swap-patch(충분성·주입)는 이진 readout 국소화 불가([[swap-patch-binary-readout-scramble-floor]] · 0.50=scramble floor). **미해결 질문 = 필요성**: 연산자가 캐리어 자리를 읽긴 하나. [[binding-is-operator-stem-gating-not-morphology]] 의 lookup vs rule 로 직결.
