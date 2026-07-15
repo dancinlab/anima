@@ -2181,6 +2181,53 @@ def build_twinnec(atoms_path, surface, seed):
             "note": "candidates only; base m̂ + gate + Y* + sd_w filled by `evaluate --twin-screen`"}
 
 
+# ── H_9397 Δ-INJECT — option-(B) carrier-vs-filler twin manifest (byte-matched neutral filler) ──
+# Unlike twinnec (option A: opposite-polarity STEM twins), here the twin axis IS the operator morpheme:
+# same stem, {carrier `지 않다`} vs {neutral filler `고 있다`}. Both 10 B so the operator-site window (the
+# carrier column the Δ is estimated at + injected on) is byte-aligned across the twin (a_korean_byte_budget).
+# `게 되다` (also 10 B) = the same-class content control donor (a polarity-free real-runs direction).
+_DELTAINJ_PREFIX = "이 영화 "                                   # 11 B
+_DELTAINJ_CARRIER = "지 않다"                                   # 10 B — negation operator
+_DELTAINJ_FILLER = "고 있다"                                    # 10 B — progressive, positive polarity, no operator
+_DELTAINJ_FILLER2 = "게 되다"                                   # 10 B — inchoative, same-class content control
+
+
+def build_deltainj(atoms_path):
+    """H_9397 Δ-INJECT manifest — per stem, three byte-matched seeds sharing prefix+stem+query and
+    differing only in the 10 B operator-site morpheme: carrier (negation) · filler (positive) · filler2
+    (same-class control). Emits SEEN (Δ estimation + G-pos gate) and held-out (primary DV) items with the
+    operator-site window in RAW seed-byte offsets (the handler right-aligns to the decode window T)."""
+    pfx_b = len(_DELTAINJ_PREFIX.encode())
+    cB = _DELTAINJ_CARRIER.encode(); fB = _DELTAINJ_FILLER.encode(); f2B = _DELTAINJ_FILLER2.encode()
+    assert len(cB) == len(fB) == len(f2B) == 10, "deltainj morphemes must all be 10 B (byte-align)"
+    d = json.load(open(atoms_path))
+    atoms = d["atoms"] if isinstance(d, dict) else d
+    items = []
+    for a in atoms:
+        stem, pol = a["stem"], int(a["pol"]); split = a.get("split", "train")
+        L = len(stem.encode())
+        carrier_seed = "%s%s%s => " % (_DELTAINJ_PREFIX, stem, _DELTAINJ_CARRIER)
+        filler_seed = "%s%s%s => " % (_DELTAINJ_PREFIX, stem, _DELTAINJ_FILLER)
+        filler2_seed = "%s%s%s => " % (_DELTAINJ_PREFIX, stem, _DELTAINJ_FILLER2)
+        op0 = pfx_b + L                                  # operator-site window start (raw seed bytes)
+        op1 = op0 + 10                                   # end (all three morphemes are 10 B)
+        assert carrier_seed.encode()[op0:op1] == cB and filler_seed.encode()[op0:op1] == fB, \
+            "deltainj op-window byte-mismatch: %r" % stem
+        # expected m=logP(긍)−logP(부) sign. filler (positive) → answer follows stem polarity: +1 if pol==1.
+        # carrier (negated) → flipped: −1 if pol==1. Their opposition IS the behavioral pre-gate.
+        esign_filler = 1 if pol == 1 else -1
+        esign_carrier = -esign_filler
+        items.append({"stem": stem, "pol": pol, "L": L, "split": split,
+                      "carrier_seed": carrier_seed, "filler_seed": filler_seed, "filler2_seed": filler2_seed,
+                      "op_row": [op0, op1], "esign_carrier": esign_carrier, "esign_filler": esign_filler})
+    n_seen = sum(1 for it in items if it["split"] == "train")
+    n_held = sum(1 for it in items if it["split"] != "train")
+    return {"surface": "delta_inject", "prefix_bytes": pfx_b,
+            "carrier": _DELTAINJ_CARRIER, "filler": _DELTAINJ_FILLER, "filler2": _DELTAINJ_FILLER2,
+            "op_bytes": 10, "items": items, "n_seen": n_seen, "n_heldout": n_held,
+            "note": "H_9397; Δ estimated on SEEN op_row, injected on held-out via `evaluate --delta-inject`"}
+
+
 # ───────────────────────────────────────────────────────────────────────────
 # L1 — XBIND-BRIDGE time-split (RUNTIME-BRIDGE campaign · H_9389 · `corpus xbind --bridge-split`).
 #
@@ -2426,6 +2473,21 @@ def main():
         if man["Y"] < 30:
             print("  ⚠ Y=%d — byte-matched pairs are inventory-limited (SEEN pool small); the n=9 "
                   "stop-condition governs (card H_9361)." % man["Y"])
+        sys.exit(0)
+    if fmt == "deltainj":
+        if not opts["atoms"]:
+            print("usage: anima-py corpus deltainj --atoms gt_atoms.json --out di_manifest.json")
+            print("      H_9397 Δ-INJECT manifest for `anima-py evaluate --delta-pregate`/`--delta-inject`.")
+            print("      Per stem: carrier(지 않다)/filler(고 있다)/filler2(게 되다) — 3 byte-matched 10B")
+            print("      operator-site morphemes sharing prefix+stem+query. SEEN=Δ est · held-out=DV.")
+            sys.exit(2)
+        man = build_deltainj(opts["atoms"])
+        out = opts["out"] or "deltainj_manifest.json"
+        json.dump(man, open(out, "w"), ensure_ascii=False)
+        print("=== anima-py corpus deltainj — H_9397 Δ-INJECT (carrier vs neutral filler) ===")
+        print("wrote %s — %d items (SEEN %d · held-out %d) · op-site 10B · carrier %s vs filler %s (ctrl %s)"
+              % (out, len(man["items"]), man["n_seen"], man["n_heldout"],
+                 man["carrier"], man["filler"], man["filler2"]))
         sys.exit(0)
     if fmt == "bindlocus":
         if not (opts["n2_eval"] and opts["n2_seen"] and opts["corpus"] and opts["novel"]):
