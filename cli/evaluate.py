@@ -834,7 +834,8 @@ def evaluate_usage():
     print("      permutation null. Also prints FORM-ID (2AFC, chance 0.5): how decodable WHICH atom")
     print("      sits at the read point — a high FORM-ID with a non-positive DELTA is form present,")
     print("      bind absent (the position carries the byte's identity, not its valence).")
-    print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7]")
+    print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7] [--bl-swap-span stem|carrier]")
+    print("       --bl-swap-span carrier: Stage A swaps the operator morpheme span (지 않다), not the atom span (H_9331 pedestal)")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
     print("      THERE, and ask if the answer follows. Separates P-place / P-kind / S; V1/V2/V3 gates")
     print("      make a confound an INVALID, never a false verdict.")
@@ -2136,6 +2137,16 @@ def bind_locus_run(argv):
     T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 24)))
     n_perm = evaluate_intval(argv[1:], "--perm", 200)
     seed = evaluate_intval(argv[1:], "--seed", 7)
+    # swap-span mode (H_9331 pedestal · 2026-07-15): where Stage A swaps the hidden.
+    #   stem    — the atom span (default · the original P-place/P-kind/S test)
+    #   carrier — the operator morpheme span (`지 않다`, stem-end→`=>`). 4/4 INVALID-LOCALIZATION
+    #             at the stem span means the operator's polarity read is NOT there; Fable's frozen
+    #             prediction is the read-site is the CARRIER (carrier-swap flip>=0.75 = the
+    #             true-positive pedestal the stem run lacked). SEEN swap only ⇒ not tune-to-green.
+    swap_span = evaluate_strval(argv[1:], "--bl-swap-span", "stem")
+    if swap_span not in ("stem", "carrier"):
+        print("ERROR: --bl-swap-span must be stem|carrier", file=sys.stderr)
+        return 2
     items = spec["items"]
     carrier = spec.get("carrier", "이 영화 {stem}고 => ")
 
@@ -2149,6 +2160,9 @@ def bind_locus_run(argv):
     print("  frozen bars: V1 swap>=%.2f sham<=%.2f · V2 dep0>=%.2f · V3 |dep_rand|<=%.2f sham<=%.2f"
           % (G_A_SWAP, G_A_SHAM, G_V2, G_V3, G_E))
     print("  frozen DV  : P if dep1<=%.2f · S if TOST(+-%.2f) · else UNDERPOWERED" % (G_DV_P, G_TOST))
+    print("  swap-span  : %s%s" % (swap_span,
+          "  (operator morpheme 지 않다 — H_9331 pedestal · 예측 flip>=%.2f)" % G_A_SWAP
+          if swap_span == "carrier" else "  (atom span — default)"))
     W = clm.clm_load_weights(ckpt)
     if not W.get("ok"):
         print("ERROR: ckpt not decodable", file=sys.stderr)
@@ -2191,6 +2205,24 @@ def bind_locus_run(argv):
         if t0_abs < 0:
             return None                        # stem not in its own prompt — manifest defect
         t1_abs = t0_abs + len(sb)
+        if swap_span == "carrier":
+            # operator morpheme span = stem-end → the `=>` marker, spaces trimmed. This is the
+            # CARRIER read-site (H_9331 pedestal): the polarity decision completes at `지 않다`,
+            # not the atom span (4/4 stem-span INVALID-LOCALIZATION · Fable). The morpheme is
+            # byte-identical across flip1 items, so the full-span rung length-matches all donors
+            # (the n=4 starvation that hit the stem full-span rung cannot recur here).
+            arrow = p.find(b"=>", t1_abs)
+            if arrow < 0:
+                arrow = p.find(b"=", t1_abs)
+            if arrow < 0:
+                return None                    # no readout marker after the stem — unusable
+            seg = p[t1_abs:arrow]
+            lead = len(seg) - len(seg.lstrip(b" "))
+            trail = len(seg) - len(seg.rstrip(b" "))
+            c0_abs, c1_abs = t1_abs + lead, arrow - trail
+            if c1_abs <= c0_abs:
+                return None                    # empty operator span (e.g. bare `{stem} =>`)
+            t0_abs, t1_abs = c0_abs, c1_abs
         off = T - len(p)                       # right-align: byte i of p sits at window i+off
         t0, t1 = t0_abs + off, t1_abs + off
         if t0 < 0:
@@ -2273,7 +2305,7 @@ def bind_locus_run(argv):
         print("  answer >= %.2f with sham <= %.2f. The operator's read is NOT localized to the stem" % (G_A_SWAP, G_A_SHAM))
         print("  span, so an injection there could not test P vs S. This is a locus FACT, not a")
         print("  failed run — and it forbids the P/S verdict rather than faking one.")
-        json.dump({"verdict": "INVALID-LOCALIZATION", "stageA": a_rows,
+        json.dump({"verdict": "INVALID-LOCALIZATION", "swap_span": swap_span, "stageA": a_rows,
                    "bars": {"swap": G_A_SWAP, "sham": G_A_SHAM}}, open(out_path, "w"), ensure_ascii=False)
         return 0
     depth, rung = lstar
@@ -2390,7 +2422,8 @@ def bind_locus_run(argv):
                "rise; no bar moves (power-before-negative-verdict)" % (dep1, se1, G_DV_P, G_TOST))
     print("\nBIND-LOCUS %s" % verdict)
     print("  %s" % why)
-    json.dump({"verdict": verdict, "why": why, "lstar": {"depth": depth, "rung": rung},
+    json.dump({"verdict": verdict, "why": why, "swap_span": swap_span,
+               "lstar": {"depth": depth, "rung": rung},
                "stageA": a_rows, "targets": {"mu_pos": tgt_p, "mu_neg": tgt_n},
                "arms": res, "bars": {"V1_swap": G_A_SWAP, "V1_sham": G_A_SHAM, "V2": G_V2,
                                      "V3": G_V3, "E": G_E, "DV_P": G_DV_P, "TOST": G_TOST}},
@@ -4261,7 +4294,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",

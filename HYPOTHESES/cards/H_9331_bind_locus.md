@@ -128,7 +128,10 @@ n=20 rung(1·3바이트)에서 swap 0.00~0.15 · sham 깨끗. full-stem rung 은
 ### 🔒 동결 next — 캐리어-스팬 swap (B 확증 + pedestal 공급)
 
 같은 계기·같은 SEEN 원자·같은 donor, 단 hidden swap 을 **원자 스팬 대신 캐리어 스팬**(`지 않다` 바이트 ·
-depth 0~4)에 건다. **사전등록 예측**: 캐리어-swap flip ≥ 0.75 (read-site 국소화) ∧ 원자-swap flip ≤ 0.25
+depth 0~4)에 건다. **🔌 배선 완료**(v0.13.59): `anima-py evaluate <clm> --bind-locus <m> --bl-swap-span carrier`
+— `span_of` 가 stem-end→`=>` 연산자 형태소 스팬을 반환(negL→`지 않다` · negS→`고`, length-match 자동분리 ·
+연산자 형태소는 바이트-동일해 full-span rung 이 n=20 확보 = stem full-span n=4 기아 해소). **사전등록 예측**:
+캐리어-swap flip ≥ 0.75 (read-site 국소화) ∧ 원자-swap flip ≤ 0.25
 (이미 확보 · n=20 재현). 이 이중결과는 tune-to-green 아님 — 방향예측 있는 다른 인과시험이고, 캐리어-swap 팔이
 곧 **pedestal**(올바른 스팬을 겨누면 계기가 국소화함을 증명)이다. C4 먼저(H_9334 가 가독 캐리어결합 보장 =
 pedestal), 그다음 n2. full-stem rung 은 n=20 으로 올려 재발사.
