@@ -659,7 +659,7 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9377",
           "type": "gate",
-          "verdict": "🔵 PRE-REGISTERED (H_9377 AUDIBILITY-SUFFICIENCY · Fable 설계)",
+          "verdict": "🔵 구현됨·미배선 (Step①②③ · 측정 미시작) — H_9377 AUDIBILITY dyn_w 게인",
           "detail": "H_9376 최종병목=motivation_score 8-lane 균등 0.10. 개입=dyn_w 재정규화(합=1 보존). 판별선(Fable): w=audibility 게인=아키텍처(채널저작과 질적동일)·단 연속 다이얼이라 그리드+plateau 세금.",
           "children": [
            {
@@ -670,7 +670,7 @@
            {
             "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9377-impl",
             "type": "note",
-            "detail": "구현 전 확인(Fable): core/CLAUDE.md py-미러-폐기(hexa 단일) vs py 채널이 303M 측정에 core/*.py 사용=불일치. engine_g 실 경로 grep 후 배선. PASS=🟢 GREEN-WIRED-GAIN 단 가중=배선사실 창발아님(창발 bar E1/E2 등록만)."
+            "detail": "구현(Step①②③): py 채널은 core/engine_g.py 사용(core/CLAUDE.md py-미러-폐기 데몬경로 stale). Fable 정정: 8-lane 합=0.80(1.0 아님)·anchor dyn_w=0.10 byte-id(실측). engine_g.py dyn_w 재정규화+brain 체인+chat.py --dyn-w. 검증 default/0.10 byte-id·dyn_w=0.6 데몬 end-to-end. NEXT=evaluate GATE-S+w-grid×3-arm pool 측정."
            }
           ]
          }
