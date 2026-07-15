@@ -281,3 +281,28 @@ n-gram 이어쓰기와 연산자 조회가 **서로 다른 답**을 예측한다
 BIND-LOCUS n2/C4 는 **KO 축의 인과 증거**로 남는다(누수에 강한 읽기-자리 조작). 그러나 **최종 종결은
 KO(BIND-LOCUS) × EN(H_9347) 교차**에서만 난다 — 한 언어의 형태론이 만든 인공물을 다른 언어가 배제하는
 구조다(오너의 EN-FIRST 지시 = 정확히 이 이유). **한국어 단독 P/S 를 TERMINAL 로 cement 하지 않는다.**
+
+### 🧩 교차 결합기 — `cross_verdict.py` (진리표 FROZEN · 결과 前 동결 · SSOT)
+
+두 결과가 나온 뒤 눈대중으로 합치면 self-judge(p7). 그래서 **합산 규칙을 결과 존재 前 코드로 못박았다**
+(`archive/state/scratch/h9331_bindlocus/cross_verdict.py` · 17/17 spike-in 검산 PASS). 사람은 enum 을 손으로
+타이핑 못 한다: **KO enum 은 동결 bar 로 dep1 에서 기계 도출**(read_verdict.py 와 동일 bar), **EN enum 은
+H_9347 이 emit 한 machine JSON(`en_verdict.json`)만 소비**(내가 재분류 안 함 = `a_parallel_session_compare`).
+`INVALID` 은 사전등록 gate-ID(`KI1..KI5` / `EI*`) 를 든 결과만 — 사후 발견한 '계기 의심' 은 코드 경로가 없다.
+
+**frozen-first 수정(양 결과 미도착이므로 튜닝 아님)**: `dep1 ≥ +0.50` 을 else-bucket 에 묻지 않고 **ECHO** 로
+분리 — 되뇜 채널이 **직접 관측**된 가장 정보량 큰 결과이지 잡음이 아니다(`prereg-table-must-cover-below-chance`).
+
+| KO＼EN | POS | NEG | UNDER | INVALID |
+|---|---|---|---|---|
+| **P** | 🟢🟢 ADDRESSABLE-CONFIRMED (TERMINAL) | 🟡 MORPHOLOGY-ARTIFACT (DIR) | ⏳ UNDER | ⏳ UNDER |
+| **S** | 🔀 DISCORDANT-REOPEN | 🟢🟢 STORAGE-UNREACHABLE (TERMINAL) | ⏳ UNDER | ⏳ UNDER |
+| **ECHO** | 🔀 DISCORDANT-REOPEN | 🟢🟢 MORPHOLOGY-ARTIFACT (TERMINAL) | ⏳ UNDER | ⏳ UNDER |
+| **UNDER** | 🟡 ADDRESSABLE (DIR) | 🟡 MORPHOLOGY-ARTIFACT (DIR) | ⏳ UNDER | ⏳ UNDER |
+| **INVALID** | 🟡 ADDRESSABLE (DIR,+KIx) | 🟡 MORPHOLOGY-ARTIFACT (DIR,+KIx) | ⏳ UNDER | ⛔ INVALID |
+
+**TERMINAL 은 정확히 3셀**: (P,POS)·(S,NEG)·(ECHO,NEG) — 두 인공물 공간이 disjoint 해 어느 confound 로도
+재현 불가할 때만. **tier 규칙**: 두 레인 결정적 ∧ 일치 ∧ 어느 레인 confound 로도 산출 불가 ⇒ TERMINAL;
+한 레인만 결정적 ⇒ DIRECTIONAL; veto 불가한 반대부호 ⇒ DISCORDANT-REOPEN(실질판정 emit 거부).
+**scope**: TERMINAL 은 존재주장('CPT 로 쓴 극성이 연산자에 조회되는가')에만 — 요인귀속(형태론/base/캐리어)과
+'KO 자연경로가 고쳐졌다'는 **어느 셀에서도 못 번다**(별개 H). 실행: `cross_verdict.py` (둘 다 도착 前 PENDING).
