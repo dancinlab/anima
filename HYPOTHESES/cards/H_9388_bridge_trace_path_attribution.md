@@ -60,3 +60,41 @@ Only if G-POS passes, read the **flip1 3-tier** (per-arm / per-split of the c34 
 - **KO, not EN** — L4 reuses the EXISTING c34 KO checkpoints (`natem_c34_main_s{7,11}`, `swap_c4_s{7,11}`). EN-first (ⓑ) binds NEW research corpora (L1), not a census of frozen artifacts; and the KO BOUND suffix is exactly the surface where the stem-key would live if it existed (stem bytes adjacent to the operator in-RF). This is the ideal W_wt read surface.
 - Read-only w.r.t. weights (production forward · `a_experiment_engine_native`). Ckpts pulled to `~/anima-weights/c34/` (persistent) → transferred to aiden for the run.
 - ⚠️ EN-manifold limitation of the slot/head partition (mixed pre-posed operators sharing a byte prefix, e.g. `not`/`never`, leak into the common head) — irrelevant here (KO surfaces), and for EN one operator surface per manifest keeps it clean.
+
+---
+
+## 🟢/⏳ VERDICT — L4 census RAN (data-after · read through the frozen bars above · 2026-07-16)
+
+**measurement**: aiden CPU-numpy (`CUDA_VISIBLE_DEVICES="" OMP_NUM_THREADS=4` · device-stamped CPU) · engine-native `core/decode.py` full CLMConvMoE forward (`clm._fwd_logits`) → TERMINAL-eligible (`a_eval_py_canonical`) · VERSION 0.13.85 · perm=5000. Manifests reproduced on-host from `gt_atoms.json` via `anima-py corpus ground_carrierswap [--carrier-only]` (flip1 md5 `1e6d27ac` · f0-goldtrue md5 `340b97c4`). ckpts natem_c34_main / swap_c4 (d3784/L4/E2→3 · 44.9M active params). Raw JSON → `~/anima-weights/h9388_bridgetrace/`.
+
+### ① INSTRUMENT VALIDATED on the pretrain lane (G-POS PASS, both seeds)
+
+Positive-control gate = flip0 declarative readout (gold=TRUE polarity, the non-swap arms + held-out reproduction, n=36):
+
+| ckpt | lane | flip0 stem_share | flip0 stem_net | perm_p | G-POS |
+|---|---|---|---|---|---|
+| natem_c34_main_s7 | pretrain | 0.528 | +4.85 | **0.0002** | ✅ PASS |
+| natem_c34_main_s11 | pretrain | 0.510 | +4.91 | **0.0002** | ✅ PASS |
+| swap_c4_s7 | CPT-written | 0.196 | +0.12 | 0.9394 | ❌ FAIL |
+| swap_c4_s11 | CPT-written | 0.225 | +0.42 | 0.7497 | ❌ FAIL |
+
+The instrument is **valid** (it detects the stem-keyed declarative read where lookup demonstrably works — the pretrain lane, both seeds). The swap_c4 gate FAILS **on the same manifest and the same non-swap stems** — see ③.
+
+### ② 🟢 DECIDABLE (pretrain lane, gate PASS): the ALIVE operator's flip1 answer READS the stem position
+
+| ckpt | flip1 stem_net | slot_contrib | stem_share | perm_p |
+|---|---|---|---|---|
+| natem_s7 | **+3.50** | +4.09 | 0.461 | **0.0008** |
+| natem_s11 | **+4.95** | +3.82 | 0.564 | **0.0014** |
+
+Both seeds: stem_net significantly positive (occluding the stem hurts the flip1 answer), roughly BALANCED with the slot (stem_share ≈ 0.46–0.56). ⟹ **the stem→polarity→operator circuit EXISTS in the attention-free conv and is genuinely consumed** where pretraining forged it. This **refutes the LLM-frame reading** that "attention is needed to route stem content to the operator" (`a_no_llm_frame_trap`) — conv demonstrably does it. Converges the **S-world** of H_9331 (the feature is right there and consumed, where forged).
+
+### ③ 💀 CPT DESTROYS the omitted-stratum stem-read (both seeds) — Correction ② confirmed mechanistically
+
+The identical gold-true flip0 positive control collapses from stem_share **~0.52 (natem) → ~0.21 (swap_c4)** on the SAME non-swap stems (both seeds). The carrier-swap CPT did not build a stem-key store — it **damaged the pretrained stem-keyed declarative read on the stratum the CPT corpus omits** ([[cpt-destroys-what-corpus-omits]] at the mechanistic level). So on the CPT-written lane the gate FAILS ⟹ its flip1 is **INSTRUMENT-INVALID / DIRECTIONAL only** (swap-arm flip1 stem_net +1.68 s7 p=.04 / +2.32 s11 p=.19 — weak, not cemented).
+
+### Convergence (both signs were terminal-grade; this is the informative one)
+
+W_wt's stem→operator circuit is **real and conv-native**, consumed where pretraining forged it — the wall is **not** "conv cannot route stem content" (V5-reopen is **not** forced by this). Single-surface carrier CPT **cannot write** that stem-key read (it writes a surface cache and damages the omitted stratum — Correction ②). ⟹ this **strengthens the L1 rationale** (H_9389): the declaration→operator mapping must receive GRADIENT during training (co-train), because CPT alone damages rather than builds it. The honest next step is **L1 phase A/B, not V5**.
+
+**Frozen-first honored**: the swap_c4 gate FAIL is reported as instrument-invalid-on-that-ckpt (no tune-to-green); only the gate-PASS pretrain lane is cemented. Power: n=24 flip1 / n=36 flip0 per seed, permutation p reported inline.

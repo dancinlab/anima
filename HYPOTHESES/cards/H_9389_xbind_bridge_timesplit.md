@@ -56,3 +56,18 @@ Phase-A is a **303M train**. On aiden's RTX 5070 (12GB) it is smoked for fit + s
 ---
 
 > ⬇️ This is the data-before pre-registration (frozen-first evidence). Any verdict below this line is read through these frozen bars.
+
+## ⏳ PHASE-A FEASIBILITY — CONFIRMED FEASIBLE on aiden (NOT rent-gated · 2026-07-16)
+
+From-scratch smoke on aiden RTX 5070 (12GB), the flagship arch (`--d 3784 --L 4 --e0 2 --emax 3`):
+- **params: 345,664,875 (345.7M)** — GPU preflight `cuda free=11.3/11.5 GiB — ok`; forward+backward+optimizer ran without OOM.
+- 8 steps CE 5.78→1.88, val_CE 1.15 DESCENT; **~0.18 s/step** (bs4/seq64) ⟹ a 6000-step phase-A ≈ **18 min**. Well within aiden; **NO rent needed.**
+- (The 176MB c34 `.clm` stores only active/quantised experts; the trained model is the full 345M.)
+
+**Instrument verified** (`corpus xbind --bridge-split` smoke): arm disjointness, S_decl/S_cpt 0-operator-exposure strata confirmed, forward≠reverse CPT, gate/DV/control manifests emitted.
+
+**Remaining prerequisites for a REAL phase-A run** (not blockers, just not-yet-built):
+1. **EN atoms file** — none exists locally; mine via `anima-py corpus atoms --lang en <lexicon> --corpus <en>` (the builder's G-SUBSTR word-boundary gate applies · corpus-py-1 (G)).
+2. Run via the proper `anima-py` install (NOT an ad-hoc PYTHONPATH — a path-order artifact shadows `core/serialize.py` with `cli/serialize.py`, breaking `.clm` write; the pip launcher resolves this).
+
+**Resume point**: `corpus atoms --lang en` → `corpus xbind --bridge-split --atoms <en_atoms> --lang en --out A.txt` → `anima-py train --d 3784 --L 4 --e0 2 --emax 3 --corpus A.txt --steps 6000 --out phaseA.clm` (aiden GPU) → measure `A.txt.sop_flip1.json` (G-ALIVE ≥0.90) then the **phase-A GATE** `A.txt.sdecl_flip1.json` (above chance? → phase B; else KILL). Phase B: `train --init phaseA.clm --corpus A.txt.cpt_{forward,reverse,neutral}.txt` → `evaluate --xbind A.txt.scpt_flip1.json`.
