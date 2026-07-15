@@ -61,7 +61,8 @@ def _parse_args(argv):
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
             "carrier_only": False, "surface": "flip1_suffix",
-            "collision_split": False, "nonce_fillers": 3, "win": 64}
+            "collision_split": False, "nonce_fillers": 3, "win": 64,
+            "bridge_split": False}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -2178,9 +2179,193 @@ def build_twinnec(atoms_path, surface, seed):
             "note": "candidates only; base m̂ + gate + Y* + sd_w filled by `evaluate --twin-screen`"}
 
 
+# ───────────────────────────────────────────────────────────────────────────
+# L1 — XBIND-BRIDGE time-split (RUNTIME-BRIDGE campaign · H_9389 · `corpus xbind --bridge-split`).
+#
+# The frontier: the operator does not runtime-look-up the declaration store (TWO-LANE, no bridge).
+# Correction ②: single-surface CPT writes a SURFACE-key string cache, not a stem-key FACT — gradient
+# cannot rewire a path it never traversed. The "declaration→operator-answer" mapping must RECEIVE
+# gradient during training. This format co-trains that mapping on one set of stems and holds it out on
+# another, so we can measure whether a co-trained bridge GENERALISES (phase A), and then whether a
+# declaration-only CPT can steer the operator through it (phase B).
+#
+# 3-way stem split (drawn from --split-seed alone; polarity-stratified so slot-prior is flat, ⓐ):
+#   S_op   : BOTH surfaces supervised — flip0 declaration `{s} => pol` AND flip1 operator
+#            `not {s} => flip(pol)`. This is where the declaration→operator bridge RECEIVES gradient.
+#   S_decl : declaration ONLY (flip0). The operator surface appears ZERO times → held-out WITHIN
+#            phase A. S_decl flip1 is the PHASE-A GATE: if a co-trained bridge exists, the operator
+#            answer generalises to these unseen-operator stems ABOVE CHANCE.
+#   S_cpt  : ZERO lines in the phase-A corpus. Reserved for phase B (declaration-only CPT).
+#
+# EN-first (ⓑ): `not` is a FREE pre-posed word (the discriminator vs the KO BOUND suffix). Positives
+# are SCREENER-DIRECTIONAL. Slot-prior flattened: gold(flip1)=flip(pol) and pols are 50/50, so the
+# operator answer is p(pos)=p(neg)=0.5 across the corpus (no default-negated prior to parrot, ⓐ).
+#
+# Emits (all pure functions of the atoms + split-seed → reproducible, corpus-py-1 (H)):
+#   <out>                     phase-A training corpus (S_op flip0+flip1, S_decl flip0-only).
+#   <out>.sdecl_flip1.json    PHASE-A GATE manifest (operator on S_decl · gold=flip(pol) · 0-exposure).
+#   <out>.sop_flip1.json      operator-alive positive control (S_op · operator supervised).
+#   <out>.scpt_flip1.json     PHASE-B DV (operator on S_cpt · gold=flip(pol) · must be chance before CPT).
+#   <out>.cpt_forward.txt      phase-B CPT: S_cpt declaration at TRUE polarity (the bridge test).
+#   <out>.cpt_reverse.txt      CONTROL (b): same stems, OPPOSITE-polarity declaration — the answer must
+#                              TRACK the planted value; forward==reverse ⟹ cache/spillover ⟹ INVALID.
+#   <out>.cpt_neutral.txt      CONTROL (c): length/capacity-matched neutral declaration (no polarity
+#                              info) — control-must-match-mediating-covariate.
+# ───────────────────────────────────────────────────────────────────────────
+BRIDGESPLIT_FRAC = (("S_op", 0.5), ("S_decl", 0.25), ("S_cpt", 0.25))
+
+
+def build_bridgesplit(atoms_path, reps, seed, split_seed, lang):
+    if lang == "ko":
+        raise SystemExit(
+            "corpus xbind --bridge-split: --lang ko is refused (owner EN-FIRST directive · the KO lane "
+            "is byte-frozen/BINDING). Build the EN atoms with `corpus atoms --lang en` then re-run with "
+            "--lang en — EN is the discriminator (`not` FREE/pre-posed vs the KO BOUND suffix).")
+    L = lang_pack(lang)
+    TMPL, F0, F1 = L["tmpl"], L["flip0"], L["flip1"]
+    POS, NEG = L["pos"], L["neg"]
+    word = lambda p: POS if p == 1 else NEG
+
+    atoms = json.load(open(atoms_path))["atoms"]
+    stems = [(a["stem"], int(a["pol"])) for a in atoms]
+    assert_atoms_match_lang([s for s, _ in stems], lang)
+
+    # polarity-stratified 3-way split (function of split_seed alone — no post-hoc redraw).
+    srng = random.Random(split_seed)
+    pos = [x for x in stems if x[1] == 1]
+    neg = [x for x in stems if x[1] == 0]
+    srng.shuffle(pos); srng.shuffle(neg)
+    n = len(stems)
+    sizes = {}
+    acc = 0
+    for name, frac in BRIDGESPLIT_FRAC:
+        sizes[name] = int(round(frac * n))
+    # fix rounding so the parts sum to n (give remainder to S_op)
+    sizes["S_op"] += n - sum(sizes.values())
+    arms, pi, ni = {}, 0, 0
+    for name, _ in BRIDGESPLIT_FRAC:
+        picked = []
+        for k in range(sizes[name]):
+            src = pos if (k % 2 == 0 and pi < len(pos)) or ni >= len(neg) else neg
+            if src is pos:
+                picked.append(pos[pi]); pi += 1
+            else:
+                picked.append(neg[ni]); ni += 1
+        arms[name] = picked
+
+    rng = random.Random(seed)
+    lines = []
+
+    def decl(stem, pol):
+        for pat in F0:
+            lines.append(TMPL.format(surf=pat.format(s=stem), pol=word(pol)))
+
+    def oper(stem, pol):                      # operator line's OUTPUT = word(flip(pol))
+        for pat in F1:
+            lines.append(TMPL.format(surf=pat.format(s=stem), pol=word(pol ^ 1)))
+
+    for _ in range(reps):
+        for stem, pol in arms["S_op"]:        # BOTH surfaces — the bridge receives gradient here
+            decl(stem, pol)
+            oper(stem, pol)
+        for stem, pol in arms["S_decl"]:      # declaration ONLY — operator held out within phase A
+            decl(stem, pol)
+        # S_cpt: nothing in phase A.
+
+    rng.shuffle(lines)
+    text = "".join(lines)
+
+    # eval manifests — operator surface (flip1), gold = word(flip(pol)); 2AFC gold vs counterfactual.
+    def _man(arm_stems):
+        held = []
+        for stem, pol in arm_stems:
+            gold_b = pol ^ 1                    # operator negates the planted declaration
+            gw, cw = word(gold_b), word(gold_b ^ 1)
+            for ti, pat in enumerate(F1):
+                seed_s = TMPL.format(surf=pat.format(s=stem), pol="")[:-len(".\n")]
+                held.append({"a": stem, "b": "%s|f1_%d" % (arm_stems is arms["S_cpt"] and "S_cpt" or "arm", ti),
+                             "seed": seed_s, "stem": stem, "pol": pol, "flip": 1,
+                             "gold_word": gw, "gold": gw + ".\n", "counterfactual": cw + ".\n"})
+        return {"win": 64, "gen": 8, "heldout": held, "seen": []}
+
+    def _man_tagged(arm_stems, tag):
+        m = _man(arm_stems)
+        for it in m["heldout"]:
+            it["b"] = "%s|%s" % (tag, it["b"].split("|")[1])
+        return m
+
+    sdecl_man = _man_tagged(arms["S_decl"], "S_decl")
+    sop_man = _man_tagged(arms["S_op"], "S_op")
+    scpt_man = _man_tagged(arms["S_cpt"], "S_cpt")
+
+    # phase-B CPT corpora on S_cpt (declaration-only, operator 0× for those stems).
+    def _cpt_text(polfn):
+        cl = []
+        for _ in range(reps):
+            for stem, pol in arms["S_cpt"]:
+                for pat in F0:
+                    cl.append(TMPL.format(surf=pat.format(s=stem), pol=polfn(stem, pol)))
+        random.Random(seed + 101).shuffle(cl)
+        return "".join(cl)
+
+    cpt_forward = _cpt_text(lambda s, p: word(p))          # TRUE polarity
+    cpt_reverse = _cpt_text(lambda s, p: word(p ^ 1))      # OPPOSITE (must track to count as a bridge)
+    # neutral: same #lines, same template, but the answer is a fixed non-polar token pair balanced 50/50
+    NEU = ("A", "B")
+    cl = []
+    for _ in range(reps):
+        for i, (stem, pol) in enumerate(arms["S_cpt"]):
+            for pat in F0:
+                cl.append(TMPL.format(surf=pat.format(s=stem), pol=NEU[i % 2]))
+    random.Random(seed + 202).shuffle(cl)
+    cpt_neutral = "".join(cl)
+
+    st = {"lang": lang, "n_atoms": n, "reps": reps,
+          "split_sizes": {k: len(v) for k, v in arms.items()},
+          "arms": {k: [s for s, _ in v] for k, v in arms.items()},
+          "lines": len(lines), "bytes": len(text.encode()),
+          "sdecl_manifest": sdecl_man, "sop_manifest": sop_man, "scpt_manifest": scpt_man,
+          "cpt_forward": cpt_forward, "cpt_reverse": cpt_reverse, "cpt_neutral": cpt_neutral}
+    return text, st
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
+    if fmt == "xbind":
+        if not opts["bridge_split"]:
+            raise SystemExit("corpus xbind: only --bridge-split is implemented (H_9389 RUNTIME-BRIDGE L1).")
+        if not opts["out"] or not opts["atoms"]:
+            raise SystemExit("corpus xbind --bridge-split needs --out and --atoms.")
+        text, st = build_bridgesplit(opts["atoms"], opts["reps"], opts["seed"],
+                                     opts["split_seed"], opts["lang"])
+        with open(opts["out"], "w", encoding="utf-8") as fh:
+            fh.write(text)
+        base = opts["out"]
+        json.dump(st["sdecl_manifest"], open(base + ".sdecl_flip1.json", "w"), ensure_ascii=False)
+        json.dump(st["sop_manifest"], open(base + ".sop_flip1.json", "w"), ensure_ascii=False)
+        json.dump(st["scpt_manifest"], open(base + ".scpt_flip1.json", "w"), ensure_ascii=False)
+        open(base + ".cpt_forward.txt", "w", encoding="utf-8").write(st["cpt_forward"])
+        open(base + ".cpt_reverse.txt", "w", encoding="utf-8").write(st["cpt_reverse"])
+        open(base + ".cpt_neutral.txt", "w", encoding="utf-8").write(st["cpt_neutral"])
+        json.dump({k: st[k] for k in ("lang", "n_atoms", "reps", "split_sizes", "arms",
+                                      "lines", "bytes")},
+                  open(base + ".arms.json", "w"), ensure_ascii=False, indent=1)
+        print("=== corpus xbind --bridge-split (H_9389 L1) — lang=%s ===" % st["lang"])
+        print("  atoms=%d  split S_op=%d S_decl=%d S_cpt=%d  lines=%d  bytes=%d"
+              % (st["n_atoms"], st["split_sizes"]["S_op"], st["split_sizes"]["S_decl"],
+                 st["split_sizes"]["S_cpt"], st["lines"], st["bytes"]))
+        print("  phase-A corpus: %s  (train S_op+S_decl)" % base)
+        print("  phase-A GATE  : %s.sdecl_flip1.json  (operator held-out-in-A · %d rows)"
+              % (base, len(st["sdecl_manifest"]["heldout"])))
+        print("  alive control : %s.sop_flip1.json    (%d rows)" % (base, len(st["sop_manifest"]["heldout"])))
+        print("  phase-B DV    : %s.scpt_flip1.json   (%d rows · chance before CPT)"
+              % (base, len(st["scpt_manifest"]["heldout"])))
+        print("  phase-B CPT   : %s.cpt_{forward,reverse,neutral}.txt" % base)
+        # byte-budget floor (a trainer refuses below it) — same convention as other formats.
+        floor = max(200000, st["bytes"])
+        print("  BUDGET_FLOOR_BYTES=%d" % floor)
+        return
     if fmt == "valence":
         if not opts["atoms"] or not opts["corpus"]:
             print("usage: anima-py corpus valence --atoms gt_atoms.json --corpus FILE [--corpus F2] "
