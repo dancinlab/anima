@@ -17292,6 +17292,12 @@
     "state": "pos-conv",
     "lesson": "conflict_drives_live(ckpt,cand,mem)(비-W)는 gen_auto_ce→_clm.clm_ce_ranged 를 부르는데 그 함수가 core/decode.py 에 없다(AttributeError). 데몬은 이 경로를 안 쓴다 — generate_deliberate_consult 는 gen_auto_load 로 핸들 h 를 한 번 만들고 conflict_drives_live_W(h,...)(=clm_ce_ranged_W, 존재)를 쓴다. H_9362 --collide-select 가 비-W 를 써서 pool 서 크래시(48회 재로드까지).",
     "fix": "드라이브/CE 를 여러 후보에 반복 계산할 땐 gen_auto_load(ckpt)→핸들, gen_auto_ideate_W(h,...)+conflict_drives_live_W(h,...)+gen_auto_free(h) 의 load-once 핸들 경로를 써라(데몬과 동일). 비-W conflict_drives_live/gen_auto_ce 의 clm 분기는 죽은 clm_ce_ranged 를 참조 = 로컬 bin(bytegpt)선 안 터져도 clm 서 터진다. ckpt 경로별 스모크(clm)로 잡아라."
+   },
+   {
+    "id": "gen-auto-ce-dead-clm-ranged",
+    "state": "pos-conv",
+    "lesson": "core/generator.py gen_auto_ce/gen_auto_ce_W(생성 fluency a-drive)가 decode 의 clm_ce_ranged/clm_ce_ranged_W(dict {ok,ce_mean} API)를 부르는데 core/decode.py 는 clm_ce_seq/clm_ce_seq_W(float 반환)로만 존재 = 이름·API 둘 다 drift ⇒ 모든 clm CE 가 AttributeError. 데몬 generate_deliberate_consult(conflict_drives_live_W→gen_auto_ce_W)도 이 죽은 경로. H_9362 --collide-select 가 pool clm 서 처음 노출(로컬 bin 은 bytegpt_ce_ranged 라 안 터짐).",
+    "fix": "drift 방지: helper 가 부르는 엔진 함수는 grep 로 실존 확인(clm_ce_ranged 는 repo 전체 def 0). 실함수 clm_ce_seq(path,ids)/clm_ce_seq_W(W,sc=None,ids)(float · NaN 가드) 로 교체. ⚠️ ckpt 경로별(bin vs clm) 스모크 필수 — bin-only 로컬 스모크는 clm 분기 죽은 참조를 못 잡는다(chat-py-7·conflict-drives-use-W-handle 과 같은 계급)."
    }
   ]
  }
