@@ -60,7 +60,7 @@ def _parse_args(argv):
             "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
-            "carrier_only": False,
+            "carrier_only": False, "surface": "flip1_suffix",
             "collision_split": False, "nonce_fillers": 3, "win": 64}
     i = 1
     while i < len(argv):
@@ -115,6 +115,8 @@ def _parse_args(argv):
             opts["tail"] = argv[i + 1]; i += 2
         elif a == "--carrier-only":
             opts["carrier_only"] = True; i += 1
+        elif a == "--surface":
+            opts["surface"] = argv[i + 1]; i += 2
         elif a == "--collision-split":
             opts["collision_split"] = True; i += 1
         elif a == "--nonce-fillers":
@@ -1934,6 +1936,61 @@ def build_routeaudit(atoms_path, win):
     return {"win": win, "surfaces": {t: m for t, m, _f, _w in _ROUTE_SURFACES}, "items": items}
 
 
+# H_9361 TWIN-NECESSITY surfaces (ko). Each: (seed builder, prefix bytes before stem, carrier string).
+# The carrier is the operator-morpheme window the SCREENER/instrument patches; prefix+stem+carrier+query
+# are byte-identical between twins except the stem (option (A): byte-matched opposite-polarity stem).
+_TWINNEC_SURF = {
+    "flip1_suffix": (lambda s: "이 영화 %s지 않다 => " % s, "이 영화 ",   "지 않다"),   # 11B pre · 10B carrier
+    "flip0":        (lambda s: "이 영화 %s고 => " % s,       "이 영화 ",   "고"),        # 11B pre ·  3B carrier
+    "flip1_prefix": (lambda s: "이 영화 안 %s고 => " % s,    "이 영화 안 ", "고"),        # 15B pre ·  3B carrier
+}
+
+
+def build_twinnec(atoms_path, surface, seed):
+    """H_9361 TWIN-NECESSITY candidate enumeration (torch-free · engine-native builder).
+
+    SEEN stems only. Per byte-length bucket L, pair opposite-polarity stems (option (A): same carrier
+    morpheme, byte-matched opposite-polarity STEM — the only on-manifold pairing the corpus supports;
+    (B) is unbuildable, no 10B affirmative trained carrier). Emits the candidate manifest the SCREENER
+    (`evaluate --twin-screen`) fills with base m̂, gates (sign==expected ∧ |m|>=1nat), and reduces to
+    Y* + sd_w for the frozen n=9 stop-condition. Windows are RAW seed-byte offsets; the screener
+    right-aligns to the decode window T (a_korean_byte_budget · like routeaudit/bindlocus)."""
+    if surface not in _TWINNEC_SURF:
+        raise SystemExit("twinnec: --surface must be one of %s" % ", ".join(_TWINNEC_SURF))
+    mk, prefix, carrier = _TWINNEC_SURF[surface]
+    negated = surface.startswith("flip1")
+    d = json.load(open(atoms_path))
+    atoms = d["atoms"] if isinstance(d, dict) else d
+    seen = [a for a in atoms if a.get("split") == "train"]
+    pfx_b, carr_b = len(prefix.encode("utf-8")), carrier.encode("utf-8")
+    items = []
+    for a in seen:
+        stem, pol = a["stem"], int(a["pol"])
+        L = len(stem.encode("utf-8"))
+        s = mk(stem)
+        t0 = pfx_b + L                                  # carrier start (raw seed bytes)
+        t1 = t0 + len(carr_b)
+        assert s.encode("utf-8")[t0:t1] == carr_b, "twinnec window byte-mismatch: %r %s" % (stem, surface)
+        # expected m=logP(긍)-logP(부) sign. flip0 answer=긍 if pol==1 else 부 → +1 if pol==1 else -1.
+        # flip1(negated) answer=부 if pol==1 else 긍 → -1 if pol==1 else +1.
+        esign = (1 if pol == 1 else -1) * (-1 if negated else 1)
+        items.append({"stem": stem, "pol": pol, "L": L, "seed": s, "seed_bytes": len(s.encode("utf-8")),
+                      "carrier": [t0, t1], "esign": esign})
+    # pair opposite polarity within each byte-length bucket
+    buck = {}
+    for it in items:
+        buck.setdefault(it["L"], {0: [], 1: []})[it["pol"]].append(it["stem"])
+    pairs = []
+    for L in sorted(buck):
+        pos, neg = buck[L][1], buck[L][0]
+        for i in range(min(len(pos), len(neg))):
+            pairs.append({"L": L, "A": pos[i], "B_opp": neg[i]})     # A=pol1, B_opp=pol0 (opposite)
+    buckets = {str(L): [len(buck[L][0]), len(buck[L][1])] for L in sorted(buck)}
+    return {"surface": surface, "prefix_bytes": pfx_b, "carrier": carrier, "carrier_bytes": len(carr_b),
+            "seed": seed, "items": items, "pairs": pairs, "Y": len(pairs), "buckets": buckets,
+            "note": "candidates only; base m̂ + gate + Y* + sd_w filled by `evaluate --twin-screen`"}
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -1977,6 +2034,24 @@ def main():
         print("wrote %s — %d items · win %dB · %s" % (out, len(man["items"]), man["win"],
               " · ".join("%s %d" % (k, v) for k, v in sorted(n_by.items()))))
         print("  surfaces: " + " · ".join(t for t, _m, _f, _w in _ROUTE_SURFACES))
+        sys.exit(0)
+    if fmt == "twinnec":
+        if not opts["atoms"]:
+            print("usage: anima-py corpus twinnec --atoms gt_atoms.json --out tn_manifest.json "
+                  "[--surface flip1_suffix|flip0|flip1_prefix] [--seed 7]")
+            print("      H_9361 TWIN-NECESSITY candidate manifest for `anima-py evaluate --twin-screen`.")
+            print("      SEEN stems, byte-matched opposite-polarity STEM pairs per byte-length bucket")
+            print("      (option A — same carrier morpheme). Windows = raw seed bytes (screener right-aligns).")
+            sys.exit(2)
+        man = build_twinnec(opts["atoms"], opts["surface"], opts["seed"])
+        out = opts["out"] or "twinnec_manifest.json"
+        json.dump(man, open(out, "w"), ensure_ascii=False)
+        print("=== anima-py corpus twinnec — H_9361 TWIN-NECESSITY candidates ===")
+        print("wrote %s — surface %s · %d SEEN stems · Y=%d disjoint pairs · buckets(L→pol0,pol1) %s"
+              % (out, man["surface"], len(man["items"]), man["Y"], man["buckets"]))
+        if man["Y"] < 30:
+            print("  ⚠ Y=%d — byte-matched pairs are inventory-limited (SEEN pool small); the n=9 "
+                  "stop-condition governs (card H_9361)." % man["Y"])
         sys.exit(0)
     if fmt == "bindlocus":
         if not (opts["n2_eval"] and opts["n2_seen"] and opts["corpus"] and opts["novel"]):
