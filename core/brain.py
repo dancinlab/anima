@@ -44,7 +44,8 @@ from pure_field import (PureField, pure_field_phi, pure_field_phase,
                         phase_name)
 from engine_g import (motivation_score, should_emit, safety_kill_switch_on,
                       safety_rate_limit_ok, safety_phi_ratchet_ok,
-                      safety_content_ok, safety_combined, spont_im_threshold)
+                      safety_content_ok, safety_combined, spont_im_threshold,
+                      safety_refractory_ok)
 
 _sqrt = _math.sqrt
 _exp = _math.exp
@@ -140,7 +141,7 @@ def anchor_tension_fold(anchors, age_dt):
 
 def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
-                          anchors, anchor_age_dt, dyn_w=None, rate_sec=None):
+                          anchors, anchor_age_dt, dyn_w=None, rate_sec=None, refr_debt=None):
     """brain.hexa:154 — brain_decide + bounded anchor-fold motivation nudge."""
     phi = pure_field_phi(pf)
     phase = pure_field_phase(pf)
@@ -154,7 +155,11 @@ def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     score = base_score + nudge
 
     kill = safety_kill_switch_on(env_off)
-    rate = safety_rate_limit_ok(seconds_since_last, rate_sec)
+    # H_9404 · when refr_debt is not None (--refractory earned) the rate term's SOURCE moves from the
+    # wall clock to the substrate's own integrated A<->G tension (safety_refractory_ok); the 4-AND
+    # shape is untouched. refr_debt is None (default) => byte-identical clock path.
+    rate = (safety_rate_limit_ok(seconds_since_last, rate_sec) if refr_debt is None
+            else safety_refractory_ok(refr_debt))
     phi_r = safety_phi_ratchet_ok(phi, pf.phi_peak)
     cont = safety_content_ok(content_clean)
     safe = safety_combined(kill, rate, phi_r, cont)
@@ -178,16 +183,17 @@ def brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 
 def brain_emit(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                seconds_since_last, env_off, content_clean, backend, anchors,
-               mouth=None, dyn_w=None, rate_sec=None):
+               mouth=None, dyn_w=None, rate_sec=None, refr_debt=None):
     """brain.hexa:216 — L3-wired brain step (anchors FRESH, age_dt=0)."""
     return brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                            seconds_since_last, env_off, content_clean,
-                           backend, anchors, 0.0, mouth, dyn_w, rate_sec)
+                           backend, anchors, 0.0, mouth, dyn_w, rate_sec, refr_debt)
 
 
 def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                     seconds_since_last, env_off, content_clean,
-                    backend, anchors, anchor_age_dt, mouth=None, dyn_w=None, rate_sec=None):
+                    backend, anchors, anchor_age_dt, mouth=None, dyn_w=None, rate_sec=None,
+                    refr_debt=None):
     """brain.hexa:232 — brain_emit with explicit anchor age (forgetting curve).
     Drives the L3 generator slot via the sibling generator.py port.
 
@@ -202,7 +208,7 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal,
                                      dyn_v, seconds_since_last, env_off,
                                      content_clean, anchors, anchor_age_dt, dyn_w,
-                                     rate_sec)
+                                     rate_sec, refr_debt)
 
     emit = str(decision["emit"]).lower() == "true"
     ctx = gen_ctx_from_decision(decision)

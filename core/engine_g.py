@@ -138,6 +138,30 @@ def safety_combined(kill, rate, phi_r, content):
     return kill and rate and phi_r and content
 
 
+# ── H_9404 EARNED REFRACTORY (opt-in · replaces the rate term's SOURCE, not the 4-AND shape) ──
+def refractory_emit_debt():
+    """FORM constant: one emit costs one unit of INTEGRATED substrate tension. Unit normalization
+    only, calibrated to the production design cadence (spont_min_emit_interval 30s / an_tick_seconds
+    8s = 3.75 ticks · ep_target_emit_rate 0.27) at the substrate's measured-mean tension — it sets
+    units, NOT the outcome. Frozen a priori; there is deliberately no --refractory-cost knob (H_9391:
+    a >=4-DOF config is unfalsifiable). FORM tunable · BIND earned."""
+    return 1.0
+
+
+def refractory_debt_step(debt, tension):
+    """H_9404 EARNED refractory: the substrate's own per-tick A<->G tension pays down the debt an
+    emit incurred. NO wall-clock / tick-index / stage input on this path — the rate term becomes a
+    readout of substrate state (p5), not a schedule. WHICH tick releases is decided run-by-run by the
+    tension trajectory (two histories release at different times); only the form is fixed."""
+    d = debt - tension
+    return 0.0 if d < 0.0 else d
+
+
+def safety_refractory_ok(debt):
+    """The rate term of the safe 4-AND when --refractory earned: open iff the emit-debt is paid."""
+    return debt <= 0.0
+
+
 if __name__ == "__main__":
     # smoke: 8-factor score + predicates (matches _eg_parity.hexa oracle).
     lo = motivation_score(0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0)
