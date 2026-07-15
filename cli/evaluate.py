@@ -3656,27 +3656,36 @@ def _gate_deaf(argv):
         cal_scores = [float(r["score"]) for r in ar if r.get("_src") in calib]
         cs = sorted(cal_scores)
         theta = cs[len(cs) // 2] if cs else 0.0
-        jr = [r for r in ar if r.get("_src") not in calib]
+        # The desaturation question is only meaningful on CLOCK-PERMITTED ticks (secs≥30): on
+        # clock-blocked ticks emit is forced silent regardless of score, so tension cannot move it
+        # (that is the rate limiter, not the gate). Condition M_sim + the spike-in on secs≥30 so
+        # emit_sim = 1[score>θ] purely — otherwise the clock gate masks score and the spike-in
+        # (which must be large since emit_sim ≡ f(score) here) reads ~0 and the panel self-INVALIDs.
+        jr = [r for r in ar if r.get("_src") not in calib and float(r.get("secs_since_emit", 0.0)) >= 30.0]
         Sj = [int(r["stage"]) for r in jr]
         ACj = [float(r["ag_conflict"]) for r in jr]
         SCj = [float(r["score"]) for r in jr]
-        emit_sim = [1 if (float(r["score"]) > theta and float(r["secs_since_emit"]) >= 30.0) else 0 for r in jr]
-        m_sim, m_sim_nm, m_sim_pv, m_sim_e = _gd_cmi_bin(ACj, emit_sim, Sj, seed=11)
-        # spike-in: I(score; emit_sim | stage) must be large
-        spike, _sn, _sp, _se = _gd_cmi_bin(SCj, emit_sim, Sj, seed=13)
+        emit_sim = [1 if float(r["score"]) > theta else 0 for r in jr]
+        m_sim, m_sim_nm, m_sim_pv, m_sim_e = _gd_cmi_bin(ACj, emit_sim, Sj, seed=11) if len(jr) >= 40 else (0.0, 0.0, 1.0, 0.0)
+        # spike-in: I(score; emit_sim | stage) must be large (emit_sim = 1[score>θ] by construction)
+        spike = _gd_cmi_bin(SCj, emit_sim, Sj, seed=13)[0] if len(jr) >= 40 else 0.0
         rate_sim = sum(emit_sim) / float(len(emit_sim)) if emit_sim else 0.0
-        res[arm] = dict(n=len(ar), m_sc=m_sc_e, m_sc_pv=m_sc_pv, m_sim=m_sim_e, m_sim_pv=m_sim_pv,
-                        spike=spike, theta=theta, rate_sim=rate_sim)
+        res[arm] = dict(n=len(ar), n_clk=len(jr), m_sc=m_sc_e, m_sc_pv=m_sc_pv, m_sim=m_sim_e,
+                        m_sim_pv=m_sim_pv, spike=spike, theta=theta, rate_sim=rate_sim)
     print()
-    print("  arm | n   | M_score(earn) p | M_sim(earn) p | spike I(sc;sim|S) | θ    rate_sim")
+    print("  arm | n   | n_clk | M_score(earn) p | M_sim(earn) p | spike I(sc;sim|S) | θ")
     for arm in sorted(res):
         d = res[arm]
-        print("  %-3s | %3d | %+.4f %.3f    | %+.4f %.3f   | %.4f            | %.3f %.2f"
-              % (arm, d["n"], d["m_sc"], d["m_sc_pv"], d["m_sim"], d["m_sim_pv"], d["spike"], d["theta"], d["rate_sim"]))
+        print("  %-3s | %3d | %5d | %+.4f %.3f    | %+.4f %.3f   | %.4f            | %.3f"
+              % (arm, d["n"], d["n_clk"], d["m_sc"], d["m_sc_pv"], d["m_sim"], d["m_sim_pv"], d["spike"], d["theta"]))
     print()
     a1 = res.get("a1"); a3 = res.get("a3")
     if a1 is None:
         print("  ⇒ ⛔ INCOMPLETE — no a1 (REAL-G) arm.")
+        return 0
+    if a1["n_clk"] < 40:
+        print("  ⇒ ⏳ PENDING — a1 clock-permitted rows n_clk=%d < 40; M_sim/spike underpowered." % a1["n_clk"])
+        print("     M_score=%.4f is still readable; extend traces (more rollouts) for the M_sim leg." % a1["m_sc"])
         return 0
     if a1["spike"] < 0.05:
         print("  ⇒ ⛔ INVALID — spike-in control failed (I(score;emit_sim|stage)=%.4f < 0.05):" % a1["spike"])
