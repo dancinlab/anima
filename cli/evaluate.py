@@ -853,6 +853,7 @@ def evaluate_usage():
     print("      sits at the read point — a high FORM-ID with a non-positive DELTA is form present,")
     print("      bind absent (the position carries the byte's identity, not its valence).")
     print("  anima evaluate <ckpt> --bind-locus <manifest.json> --out <file.json> [--win 24] [--perm 200] [--seed 7] [--bl-swap-span stem|carrier]")
+    print("  anima evaluate <ckpt> --twin-screen <twinnec_manifest.json> [--win 64] [--out f.json]  # H_9361 base m̂ + item-gate + Y* + margin sd")
     print("       --bl-swap-span carrier: Stage A swaps the operator morpheme span (지 않다), not the atom span (H_9331 pedestal)")
     print("       --bl-swap-donor-class same: donor is a SAME-polarity item (polarity-blind control · (B) scramble-floor test)")
     print("      H_9331 — causally locate the operator's read site (SEEN spike-in), write the polarity")
@@ -2095,6 +2096,80 @@ def _bl_answer_pos_edited(np, W, seed, T, edits):
             s += lse - float(row[int(tok[i + 1])])
         out[cont] = s
     return 1.0 if out["긍정"] < out["부정"] else 0.0
+
+
+def _bl_margin(np, W, seed, T):
+    """Signed continuation margin m = logP(긍정) − logP(부정) = nll(부정) − nll(긍정) (H_9361).
+    The CONTINUOUS DV (transfer flips m's sign preserving |m|; scramble collapses |m|). Both 6B."""
+    return (_xbind_cont_nll(np, clm, W, seed, "부정", T)
+            - _xbind_cont_nll(np, clm, W, seed, "긍정", T))
+
+
+def twin_screen_run(argv):
+    """`anima-py evaluate <ckpt> --twin-screen <twinnec_manifest.json>` — H_9361 TWIN-NECESSITY screener.
+
+    Base m̂ per SEEN stem, gate (sign(m̂)==esign ∧ |m̂|>=1 nat), pair gated stems within each
+    byte-length bucket (rank by |m̂|). Reports Y* and the within-accepted margin sd — the frozen n=9
+    STOP-CONDITION input (card H_9361). This is the ITEM-GATE feasibility pass: if fewer than ~9 pairs
+    survive |m̂|>=1, the paired necessity test is underpowered before the pedestal even runs."""
+    import numpy as np
+    ckpt = argv[0]
+    man = json.load(open(evaluate_strval(argv[1:], "--twin-screen", "")))
+    T = evaluate_intval(argv[1:], "--win", 64)
+    out_path = evaluate_strval(argv[1:], "--out", "twin_screen.json")
+    GATE = 1.0                                        # |m̂| >= 1 nat (frozen · card H_9361)
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr); return 2
+    surface = man["surface"]
+    print("=== anima evaluate --twin-screen — H_9361 TWIN-NECESSITY (n=9 stop-condition input) ===")
+    print("  ckpt %s · surface %s · %d SEEN stems · gate |m̂|>=%.1f nat · win %dB"
+          % (ckpt, surface, len(man["items"]), GATE, T))
+    rows = []
+    for it in man["items"]:
+        m = _bl_margin(np, W, it["seed"], T)
+        ok = (m > 0) == (it["esign"] > 0) and abs(m) >= GATE
+        rows.append({"stem": it["stem"], "pol": it["pol"], "L": it["L"],
+                     "m": float(m), "esign": it["esign"], "pass": bool(ok)})
+    # pair gated opposite-polarity within each byte-length bucket, rank by |m̂| desc
+    from collections import defaultdict
+    buck = defaultdict(lambda: {0: [], 1: []})
+    for r in rows:
+        if r["pass"]:
+            buck[r["L"]][r["pol"]].append(r)
+    pairs, accepted_m = [], []
+    for L in sorted(buck):
+        pos = sorted(buck[L][1], key=lambda r: -abs(r["m"]))
+        neg = sorted(buck[L][0], key=lambda r: -abs(r["m"]))
+        for i in range(min(len(pos), len(neg))):
+            pairs.append({"L": L, "A": pos[i]["stem"], "B_opp": neg[i]["stem"],
+                          "mA": pos[i]["m"], "mB": neg[i]["m"]})
+            accepted_m += [pos[i]["m"], neg[i]["m"]]
+    # Y* = pairs where the A-polarity bucket also has a 2nd gate-passer (blind available)
+    ystar = 0
+    for L in sorted(buck):
+        n = min(len(buck[L][0]), len(buck[L][1]))
+        if n and len(buck[L][1]) >= 2:
+            ystar += n
+    n_pass = sum(1 for r in rows if r["pass"])
+    sd_m = float(np.std([abs(x) for x in accepted_m])) if accepted_m else float("nan")
+    gap = float(np.median([abs(p["mA"] - p["mB"]) for p in pairs])) if pairs else float("nan")
+    print("\n  gate-passers: %d/%d stems · disjoint pairs Y=%d · Y*(blind-backed)=%d"
+          % (n_pass, len(rows), len(pairs), ystar))
+    print("  accepted |m̂|: sd=%.4f · median pair gap |mA-mB|=%.4f" % (sd_m, gap))
+    print("  buckets(L→pass pol0,pol1): %s"
+          % {L: [len(buck[L][0]), len(buck[L][1])] for L in sorted(buck)})
+    # first-order stop-condition READOUT (τ-scale sd_w needs the PEDESTAL arm — this is the item-gate
+    # feasibility only; if pairs < ~9 or gap small, the build is already in doubt · card H_9361).
+    verdict = ("PAIRS-OK" if len(pairs) >= 5 else "UNDERPOWERED-BY-INVENTORY(item-gate)")
+    print("\n  item-gate feasibility: %s (pairs=%d · Y*=%d) — τ-scale sd_w(pedestal) is the NEXT arm"
+          % (verdict, len(pairs), ystar))
+    json.dump({"surface": surface, "gate_nat": GATE, "win": T, "rows": rows, "pairs": pairs,
+               "Y": len(pairs), "Ystar": ystar, "n_pass": n_pass, "accepted_abs_m_sd": sd_m,
+               "median_pair_gap": gap, "item_gate": verdict},
+              open(out_path, "w"), ensure_ascii=False, indent=1)
+    print("  wrote " + out_path)
+    return 0
 
 
 def bind_locus_run(argv):
@@ -4883,7 +4958,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
     "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -5021,6 +5096,8 @@ def main(argv):
         return route_audit_run(argv)
     if "--bind-locus" in argv:
         return bind_locus_run(argv)
+    if "--twin-screen" in argv:
+        return twin_screen_run(argv)
     if "--valence-audit" in argv:
         return valence_audit_run(argv)
     # --device-parity: is this host's GPU forward the same measurement as its CPU forward? The probes
