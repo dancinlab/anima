@@ -941,6 +941,159 @@ def _swap_eval_manifest(arms):
 
 
 # ---------------------------------------------------------------------------
+# KEY-LADDER (V2 · H_9378) — `anima-py evaluate --xbind <m.json> --surface-set <name|path>`
+#
+# C4 (H_9334) scored the operator on exactly THREE surfaces and found a hard boundary inside them:
+# `{s}지 않다` and `별로 {s}지 않다` read the CPT-written value 12/12, while `{s}지는 않다` sits at
+# chance. That boundary is the only direct evidence we have about WHAT THE KEY IS — and three points
+# cannot draw a line. This ladder makes the boundary itself the measurement: enumerate surfaces that
+# vary ONE property at a time (tense · politeness · orthographic space · topic marker · and above all
+# BOUND-suffix vs FREE-preposed negator) and score every one of them, unchanged, on two ckpt lanes:
+#
+#   BASE  (natem_c34_*)  — the PRETRAIN lane. A swap-arm stem's true polarity is still the original,
+#                          so "correctly negates the ORIGINAL polarity" = the operator RUNS here.
+#   C4    (swap_c4_*)    — the CPT-WRITTEN lane. "answers the negation of the PLANTED polarity" =
+#                          the written value is reachable THROUGH this surface.
+#
+# The 2x2 is the whole experiment (and neither cell alone can say it):
+#   base RUNS · c4 NEW   -> surface is inside BOTH lanes' key-class            (negL/negZ: the anchors)
+#   base RUNS · c4 OLD   -> the operator fires but reads the PRETRAIN value    -> the CPT write did not
+#                           reach this surface class = two disjoint stores, addressed by template class
+#   base DEAD            -> not an operator surface at all; says nothing about the write (pedestal-like)
+#
+# ⚠️ The DV is the 2AFC margin sign (identical readout to H_9334), NOT the free-generation d_acc.
+# ⚠️ a_korean_byte_budget: every rendered row must fit the model's byte window or the leading
+#    `이 영화 ` bytes are silently right-truncated away and the row measures a DIFFERENT prompt.
+#    expand_surface_ladder REFUSES on overflow rather than shipping a truncated probe.
+#
+# Roles are PRE-REGISTERED in the table, not assigned after looking:
+#   anchor_new  negL·negZ — H_9334 measured 12/12 NEW on the C4 lane. If they do not reproduce, the
+#               instrument (not the wall) is broken -> INVALID.
+#   anchor_null negJ      — H_9334 measured chance. If it turns positive, the instrument manufactures
+#               signal -> INVALID.
+#   pedestal    ped1·ped2 — a NON-negator particle in the negator slot (one bound-shaped, one
+#               free-shaped, matched to the two morphological classes). True value = chance
+#               (phi-estimator-needs-zero-truth-pedestal). The base lane must NOT "negate" here.
+#   write       w0        — the declarative surface. The C4 lane must score >=11/12 on the planted
+#               polarity or the fact never landed -> INVALID(budget), exactly H_9334's G-write.
+#   ladder      the rest  — the actual unknowns.
+#
+# negAN / negANG are the point of the whole exercise: `안` is a FREE, PRE-POSED negator — the Korean
+# structural twin of English `not`, inside the SAME language, the SAME base model and the SAME corpus,
+# so it carries none of the 3-way confound (morphology x base x carrier) that made the EN arm (H_9346)
+# a SCREENER. `안 {s}고` is verbatim one of the pretraining flip1 forms (GROUND_FORMS_FLIP1), so the
+# base lane MUST run it — that makes it a positive control for the free class, not a hope.
+_LADDER_TMPL = GROUND_TMPL
+
+SURFACE_LADDERS = {
+    "keyladder_v1": {
+        "name": "keyladder_v1",
+        "tmpl": _LADDER_TMPL,
+        "surfaces": [
+            # tag       surface                 flip  class    role
+            ("negL",   "{s}지 않다",       1, "bound", "anchor_new"),   # H_9334: C4 12/12 NEW
+            ("negZ",   "별로 {s}지 않다",  1, "bound", "anchor_new"),   # H_9334: C4 12/12 NEW
+            ("negJ",   "{s}지는 않다",     1, "bound", "anchor_null"),  # H_9334: chance
+            ("negPST", "{s}지 않았다",     1, "bound", "ladder"),       # + past
+            ("negPRS", "{s}지 않는다",     1, "bound", "ladder"),       # + present-declarative
+            ("negCAS", "{s}지 않아",       1, "bound", "ladder"),       # + casual
+            ("negTGT", "{s}지않다",        1, "bound", "ladder"),       # - the space (orthography)
+            ("negPOL", "{s}지 않습니다",   1, "bound", "ladder"),       # + honorific
+            ("negAN",  "안 {s}다",         1, "free",  "ladder"),       # ★ FREE preposed = EN `not`
+            ("negANG", "안 {s}고",         1, "free",  "ladder"),       # ★ FREE, pretrain-VERBATIM
+            ("negMOT", "못 {s}다",         1, "free",  "ladder"),       # FREE preposed (inability)
+            ("ped1",   "{s}지 뫄다",       1, "bound", "pedestal"),     # nonsense in the bound slot
+            ("ped2",   "뫄 {s}다",         1, "free",  "pedestal"),     # nonsense in the free slot
+            ("w0",     "{s}고",            0, "decl",  "write"),        # the declarative WRITE gate
+        ],
+    },
+}
+
+
+def load_surface_set(name_or_path):
+    """A built-in ladder name, or a path to a JSON ladder. Validated on the way in — a malformed
+    ladder must die at load, not silently score a surface nobody registered."""
+    if name_or_path in SURFACE_LADDERS:
+        lad = SURFACE_LADDERS[name_or_path]
+        surfaces = [{"tag": t, "surf": s, "flip": f, "class": c, "role": r}
+                    for (t, s, f, c, r) in lad["surfaces"]]
+        return {"name": lad["name"], "tmpl": lad["tmpl"], "surfaces": surfaces}
+    lad = json.load(open(name_or_path))
+    if not lad.get("surfaces"):
+        raise SystemExit("anima-py evaluate --surface-set: '%s' is neither a built-in ladder (%s) "
+                         "nor a JSON file with a non-empty 'surfaces' list."
+                         % (name_or_path, "|".join(sorted(SURFACE_LADDERS))))
+    out = []
+    for s in lad["surfaces"]:
+        for k in ("tag", "surf", "flip"):
+            if k not in s:
+                raise SystemExit("anima-py evaluate --surface-set: surface %r is missing '%s'." % (s, k))
+        if "{s}" not in s["surf"]:
+            raise SystemExit("anima-py evaluate --surface-set: surface '%s' has no {s} stem slot."
+                             % s["tag"])
+        out.append({"tag": s["tag"], "surf": s["surf"], "flip": int(s["flip"]),
+                    "class": s.get("class", "?"), "role": s.get("role", "ladder")})
+    return {"name": lad.get("name", os.path.basename(name_or_path)),
+            "tmpl": lad.get("tmpl", _LADDER_TMPL), "surfaces": out}
+
+
+def expand_surface_ladder(spec, ladder, win=None):
+    """Re-render an `--xbind` manifest as (stem x arm) x LADDER-SURFACE.
+
+    The arms and their PLANTED polarities are read back out of the manifest — they are the frozen
+    property of the CPT that already ran, and re-deriving them from the atom file would let the arm
+    draw drift away from the checkpoint it is scoring. Nothing about the corpus is re-computed here;
+    only the scored surface changes, which is exactly the one variable this experiment moves.
+
+    Returns (new_spec, audit). Raises on a byte-window overflow (a_korean_byte_budget)."""
+    T = int(win or spec.get("win", 64))
+    stems, order = {}, []
+    for it in list(spec.get("heldout", [])) + list(spec.get("seen", [])):
+        arm = str(it["b"]).split("|")[0]
+        key = (arm, it["a"])
+        if key not in stems:
+            stems[key] = int(it["pol"])          # PLANTED polarity (swap arm = inverted by the CPT)
+            order.append(key)
+
+    def _word(b):
+        return "긍정" if b else "부정"
+
+    rows, over = [], []
+    for arm, stem in order:
+        planted = stems[(arm, stem)]
+        for s in ladder["surfaces"]:
+            gold_b = planted ^ s["flip"]
+            gw, cw = _word(gold_b), _word(gold_b ^ 1)
+            seed = ladder["tmpl"].format(surf=s["surf"].format(s=stem), pol="")[:-len(".\n")]
+            need = len((seed + gw + ".\n").encode())
+            if need > T:
+                over.append((arm, stem, s["tag"], need))
+            rows.append({"a": stem, "b": "%s|%s" % (arm, s["tag"]), "seed": seed,
+                         "stem": stem, "pol": planted, "flip": s["flip"],
+                         "surf_tag": s["tag"], "surf_class": s["class"], "surf_role": s["role"],
+                         "gold_word": gw, "gold": gw + ".\n", "counterfactual": cw + ".\n"})
+    if over:
+        # The window is right-aligned (core/decode.py::_seed_to_tok), so an overflowing row does not
+        # error — it quietly drops the LEADING bytes (`이 영화 `) and scores a prompt that is not the
+        # one on the card. That is the exact failure mode a_korean_byte_budget was written for.
+        raise SystemExit(
+            "anima-py evaluate --surface-set: %d row(s) exceed the %d-byte window — the leading bytes "
+            "would be silently truncated away and the row would measure a DIFFERENT prompt.\n"
+            "  worst: %s\n  Fix: --win >= %d (and re-register: a wider window is a different probe)."
+            % (len(over), T, ", ".join("%s/%s/%s=%dB" % o for o in over[:4]),
+               max(o[3] for o in over)))
+
+    arms = sorted({a for a, _ in order})
+    audit = {"surface_set": ladder["name"], "n_surfaces": len(ladder["surfaces"]),
+             "n_stems": len(order), "n_rows": len(rows), "arms": arms, "win": T,
+             "arm_n": {a: sum(1 for x, _ in order if x == a) for a in arms},
+             "max_row_bytes": max(len((r["seed"] + r["gold"]).encode()) for r in rows),
+             "tags": [s["tag"] for s in ladder["surfaces"]]}
+    return ({"win": T, "gen": int(spec.get("gen", 8)), "heldout": rows, "seen": [],
+             "surface_set": ladder["name"]}, audit)
+
+
+# ---------------------------------------------------------------------------
 # c34 — the PRETRAINING corpus: natural text + arrow lines. The EN twin of the Korean C34.
 #
 # Every number below is MIRRORED from a census of the real ko C34, not invented (the file is

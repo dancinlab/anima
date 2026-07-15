@@ -871,6 +871,16 @@ def evaluate_usage():
     print("      F1/F2/F3 = label-only prefixes, kept only to reproduce H_9309 (measured to carry")
     print("      ZERO information: they perturbed the margin by 59-74% in a random direction).")
     print("      (held-out XBIND recombination D-acc · corpus×task-class measure-swap · card H_9267)")
+    print("      [--surface-set keyladder_v1|<ladder.json>] — KEY-LADDER (H_9378): re-render the")
+    print("      manifest's OWN arms and planted polarities across a pre-registered ladder of")
+    print("      operator surfaces (tense · honorific · orthographic space · topic marker · and")
+    print("      BOUND-suffix `X지 않다` vs FREE-preposed `안 X`), and score every rung. No retrain,")
+    print("      no new arm draw. Score the SAME ladder on the pretrain-lane ckpt AND the")
+    print("      CPT-written-lane ckpt: a rung the base lane negates correctly but the CPT lane")
+    print("      still answers from the OLD value is a surface the write never reached — i.e. the")
+    print("      address is (stem) x (template CLASS), not (stem) alone. Refuses on a byte-window")
+    print("      overflow (a_korean_byte_budget: the window is right-aligned, so an overflowing row")
+    print("      silently loses its leading bytes and measures a different prompt).")
     print("  anima evaluate <ckpt> --xfan <manifest.json> --out <file.json> [--arm main|ctrl] [--n-sampled 16]")
     print("      (held-out XFAN one-to-many fan coverage C · G6 reopen lane · card H_9271)")
     print("  anima evaluate --earned <corpus.tsv> [--out <f.json>] [--min-occ 100] [--k-perm 1000] [--seeds a,b,c] [--null parametric|shuffle] [--kernel r0|r1]")
@@ -2822,6 +2832,23 @@ def xbind_run(argv):
     out_path = evaluate_strval(argv[1:], "--out", "xbind_eval.json")
     arm = evaluate_strval(argv[1:], "--arm", "main")
     spec = json.load(open(spec_path))
+
+    # --surface-set <name|path> (KEY-LADDER · H_9378): re-render the SAME arms + the SAME planted
+    # polarities across a pre-registered LADDER of operator surfaces, and score every rung. The
+    # manipulation is the SCORED SURFACE and nothing else — no retrain, no new corpus, no new arm
+    # draw (the arms are read back out of the manifest the CPT was built from, so they cannot drift
+    # away from the checkpoint). Registry + byte-budget gate live in cli/corpus.py, which owns the
+    # templates; keeping them in one place is what stops a ladder rung from disagreeing with the
+    # corpus it is supposed to be probing.
+    surf_set = evaluate_strval(argv[1:], "--surface-set", "")
+    lad_audit = None
+    if surf_set:
+        sys.path.insert(0, _HERE)
+        import corpus as _corpus_mod
+        _lad = _corpus_mod.load_surface_set(surf_set)
+        spec, lad_audit = _corpus_mod.expand_surface_ladder(
+            spec, _lad, win=evaluate_intval(argv[1:], "--win", int(spec.get("win", 64))))
+
     gen = evaluate_intval(argv[1:], "--gen", int(spec.get("gen", 16)))
     T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
     n_dec = evaluate_intval(argv[1:], "--n-decode", 200)
@@ -2856,6 +2883,13 @@ def xbind_run(argv):
 
     print("=== anima evaluate --xbind — held-out XBIND recombination (G1 reopen lane a) ===")
     print("ckpt: " + ckpt + "  arm=" + arm + "  gen=%d win=%d" % (gen, T))
+    if lad_audit:
+        print("surface-set: %s — %d surfaces x %d stems = %d rows  (arms: %s)  max_row=%dB/%dB"
+              % (lad_audit["surface_set"], lad_audit["n_surfaces"], lad_audit["n_stems"],
+                 lad_audit["n_rows"],
+                 " ".join("%s=%d" % (k, v) for k, v in sorted(lad_audit["arm_n"].items())),
+                 lad_audit["max_row_bytes"], lad_audit["win"]))
+        print("  rungs: " + " ".join(lad_audit["tags"]))
     if store:
         print("consult: %s  (%d facts · format=%s) — injected into the 2AFC context only"
               % (consult_path, len(store), consult_fmt))
@@ -2918,7 +2952,11 @@ def xbind_run(argv):
                          "margin": mg, "sampled_maj": smp, "raw": o,
                          "consult": cused,
                          # carried through so the summary can split the headline (_xbind_breakdown)
-                         "flip": it.get("flip"), "pol": it.get("pol")})
+                         "flip": it.get("flip"), "pol": it.get("pol"),
+                         # --surface-set: the rung this row sits on. Carried into the dump so the
+                         # address map can be rebuilt from the JSON alone, with no side table.
+                         "surf_tag": it.get("surf_tag"), "surf_class": it.get("surf_class"),
+                         "surf_role": it.get("surf_role")})
             # Heartbeat at item 1, then every 25. The first item is what makes a slow host
             # legible: each item is ~10 model forwards, so on a saturated shared box one item
             # can cost minutes — and a 25-item-only cadence then means HOURS of total silence,
@@ -4752,7 +4790,7 @@ _KNOWN_FLAGS = frozenset((
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
     "--slot-off",
-    "--slot-shuffle", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
+    "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
 ))
 
 
