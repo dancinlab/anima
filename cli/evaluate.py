@@ -775,6 +775,9 @@ def evaluate_usage():
     print("       I(tension;emit) <= I(tension;score|stage), so whether `score` carries tension decides")
     print("       it with NO gate edit. M_score=I(ag_conflict;score|stage), M_sim=desaturated-gate sim")
     print("       (theta=median(score) tension/emit-blind). Reuses the H_9357 --g-arm traces.)")
+    print("  anima evaluate --gate-census <trace.jsonl> [...]  (H_9390 · was H_9377 CONTENT-INERT a content")
+    print("      wall or a clock-masked regime? reads logged `safe`: if emit⟺clock (H(emit|clock-open)=0)")
+    print("      the score/content gate is vacuous → MI≈0 forced, NOT a wall. D1 CLOCK-BOUND re-scopes it.)")
     print("  anima evaluate --audibility <trace.jsonl> [...]  (H_9377 · dyn_w-grid × arm: does making")
     print("      tension AUDIBLE, via cli/chat.py --dyn-w, let it pull emit? GATE-S validity (emit rate")
     print("      ∈[0.05,0.95]) is the heart; evidence = a1>a3 at top valid dyn_w, anchor dyn_w=0.10 must fail.)")
@@ -4432,6 +4435,150 @@ def _audibility(argv):
     return 0
 
 
+def _gate_census(argv):
+    """H_9390 CLOCK-MASK CENSUS — was H_9377 CONTENT-INERT a content wall, or a clock-masked regime
+    where emit could never respond to ANY content? Pure reanalysis of the existing traces ($0).
+
+    emit = should_emit(score) ∧ safe, safe = 4-AND incl. rate-limit secs_since_emit≥30 (core/brain.py,
+    core/engine_g.py). H_9377 saw score MOVE with dyn_w (0.539→0.321) yet emit BYTE-IDENTICAL. That is
+    only possible if every score-gate flip landed on safe=0 rows — i.e. the clock MASKED the score
+    change. If additionally emit≈1 for ~all safe-open rows, then H(emit | clock-open) ≈ 0 and the
+    score/content gate is VACUOUS (never binds when the clock lets a tick through): MI≈0 is then
+    mechanically forced, NOT a content wall. GATE-S (H_9377) only checked the marginal rate — it cannot
+    see this conditional degeneracy. This census reads the logged `safe` field directly.
+
+    Per arm, over all cells:
+      C1 (reconstruction integrity): every emit=1 row has score>θ ∧ safe — proves emit≡should_emit∧safe.
+      N_live   = clock-open rows (safe truthy).            can content even be asked here?
+      emit_var = both emit labels present in the clock-open subset. no variance ⇒ H(emit|open)=0.
+      N_bind   = clock-open ∧ score≤θ (score gate WOULD suppress).  ≈0 ⇒ score gate vacuous when open.
+      N_other  = clock-open ∧ score>θ ∧ emit=0 (a DIFFERENT suppressor). dominant ⇒ not the clock.
+      N_mask   = (seed,tick) groups whose score>θ FLIPS across dyn_w; masked = all members clock-closed.
+      P1 (only if measurable): I(ag_conflict; emit | stage) on the clock-OPEN subset, a1 vs a3.
+
+    Verdict (sequential — measurability gate first, then content; below-chance covered):
+      C1 <100%                         → ⛔ INSTRUMENT-DEAD (emit ≠ should_emit∧safe; trace mis-logged).
+      emit_var False / N_live<30       → 🕰️ D1 CLOCK-BOUND (regime): emit ⟺ clock, score gate vacuous.
+        (N_mask high confirms the mask.)  H_9377 CONTENT-INERT RE-SCOPED to this regime, NOT terminal.
+        reopen = one clock-live collection (validity registered here, before content seen ⇒ not t2g).
+      N_other dominant (≥N_mask)       → 🍴 D3 REGIME-STARVED: a non-clock safety term suppresses; the
+                                          dominant term is the next H (clock was a red herring).
+      measurable ∧ a1≈a3 (TOST)        → 🧱 D2 CONTENT-WALL: content genuinely inert where askable →
+                                          terminal-eligible (2nd lens earned).
+      measurable ∧ a1 sig (either dir) → 🔎 D2′ DISCOVERY: content DOES move emit (a1@0.78 hinted
+                                          silence) → "pulls emit" reframed, new H.
+    """
+    THR = 0.3  # spont_im_threshold() — core/engine_g.py (PROACTIVE_THRESHOLD), verified origin/main
+    MDE, CTRL = 0.05, 0.01
+    rows = _im_rows(argv)
+    rows = [r for r in rows if all(k in r for k in ("stage", "score", "emit", "ag_conflict", "g_arm"))]
+    print("═══ CLOCK-MASK CENSUS · H_9390 · emit = should_emit(score) ∧ safe ═══")
+    print("  rows=%d  (θ=%.2f · clock = logged `safe` field, fallback secs_since_emit≥30)" % (len(rows), THR))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (rows < 200)")
+        return 0
+
+    def _safe(r):
+        if "safe" in r and r["safe"] is not None:
+            return 1 if r["safe"] else 0
+        s = r.get("secs_since_emit")
+        return 1 if (s is not None and float(s) >= 30.0) else 0
+
+    by = {}
+    for r in rows:
+        by.setdefault(str(r["g_arm"]), []).append(r)
+    print("  arms: %s" % ", ".join("%s=%d" % (k, len(v)) for k, v in sorted(by.items())))
+
+    # C1 — reconstruction integrity (global): every emit row must be score>θ ∧ clock-open.
+    emit_rows = [r for r in rows if r.get("emit")]
+    c1_ok = sum(1 for r in emit_rows if float(r["score"]) > THR and _safe(r))
+    c1_frac = (c1_ok / len(emit_rows)) if emit_rows else 1.0
+    print("  C1 reconstruction: %d/%d emit rows satisfy score>θ∧clock-open = %.3f"
+          % (c1_ok, len(emit_rows), c1_frac))
+    if c1_frac < 0.999:
+        print("  ⇒ ⛔ INSTRUMENT-DEAD — emit ≠ should_emit(score)∧safe (trace mis-logged / θ wrong).")
+        return 0
+
+    # PER-CELL (arm × dyn_w) — the pooled MI is CONFOUNDED: at high dyn_w, score ≈ dyn_v by
+    # construction, so I(tension;emit) is bought by the DIAL, not earned. H_9377's discriminator
+    # requires the a1>a3 clock-open separation to be present at the ANCHOR (w=0.10 = production),
+    # w-INVARIANT — not manufactured by raising w. So we read every cell and anchor the verdict.
+    def _cell_stat(rs):
+        openr = [r for r in rs if _safe(r)]
+        n_live = len(openr)
+        e1 = sum(1 for r in openr if r.get("emit"))
+        emit_var = 0 < e1 < n_live
+        n_bind = sum(1 for r in openr if float(r["score"]) <= THR)
+        n_other = sum(1 for r in openr if float(r["score"]) > THR and not r.get("emit"))
+        mi = nm = pv = None
+        if emit_var and n_live >= 30:
+            S = [int(r["stage"]) for r in openr]
+            X = [float(r["ag_conflict"]) for r in openr]
+            Y = [1 if r.get("emit") else 0 for r in openr]
+            mi, nm, pv, _e = _gd_cmi_bin(X, Y, S)
+        return dict(n=len(rs), live=n_live, e1=e1, var=emit_var, bind=n_bind, other=n_other, mi=mi, nm=nm, pv=pv)
+
+    cells = {}
+    for a in by:
+        for r in by[a]:
+            w = r.get("dyn_w")
+            wk = round(float(w), 4) if w is not None else 0.10
+            cells.setdefault((a, wk), []).append(r)
+    ws = sorted({wk for (_a, wk) in cells})
+    print()
+    print("  arm  dyn_w | N    open  open-emit%  N_bind | live-MI(conflict;emit|stage) shuf  p")
+    cres = {}
+    for (a, wk) in sorted(cells):
+        d = _cell_stat(cells[(a, wk)])
+        cres[(a, wk)] = d
+        print("  %-3s  %.2f  | %3d  %4d  %5.2f      %5d | %s"
+              % (a, wk, d["n"], d["live"], (d["e1"] / d["live"]) if d["live"] else 0.0, d["bind"],
+                 ("%+.4f %.4f %.3f" % (d["mi"], d["nm"], d["pv"])) if d["mi"] is not None
+                 else "— not measurable (H(emit|open)=0)"))
+
+    anchor = min(ws)  # dyn_w=0.10 = production-identical (byte-identical to no-dyn_w)
+    aA, a3A = cres.get(("a1", anchor), {}), cres.get(("a3", anchor), {})
+    anchor_measurable = aA.get("var") and aA.get("live", 0) >= 30
+    # a1 clock-open MI trend across w (dial signature = rises with w, absent at anchor)
+    a1_mis = [(wk, cres.get(("a1", wk), {}).get("mi")) for wk in ws]
+    hi_w = max((wk for wk in ws if cres.get(("a1", wk), {}).get("mi") is not None), default=None)
+    print()
+    print("  anchor dyn_w=%.2f (=production): a1 clock-open %s"
+          % (anchor, "MEASURABLE (emit varies)" if anchor_measurable else "NOT measurable (emit⟺clock)"))
+
+    if not anchor_measurable:
+        # The production regime cannot ask the content question (emit is clock-determined there).
+        hi_mi = cres.get(("a1", hi_w), {}).get("mi") if hi_w is not None else None
+        print("  ⇒ 🕰️ D1 CLOCK-BOUND (production regime) — at the anchor, emit ⟺ clock: clock-open emit"
+              " rate=%.2f, N_bind=%d" % ((aA.get("e1", 0) / aA.get("live", 1)) if aA.get("live") else 0.0, aA.get("bind", 0)))
+        print("     (score gate %s when the clock is open). H(emit|clock-open)≈0 ⇒ H_9377 MI≈0 is mechanically"
+              % ("vacuous" if aA.get("bind", 0) < 5 else "rarely binds"))
+        print("     forced, NOT a content wall. H_9377 CONTENT-INERT ⇒ RE-SCOPE to CLOCK-BOUND@production.")
+        if hi_mi is not None and hi_mi >= MDE:
+            print("     ⚠️ clock-open MI APPEARS only at high dyn_w=%.2f (MI %+.4f) — but there score≈dyn_v by"
+                  % (hi_w, hi_mi))
+            print("     construction, so that is the DIAL (manipulation-bought), NOT substrate (H_9377 w-invariance).")
+        print("     NOT terminal. reopen = 1 clock-LIVE collection (emit must vary within clock-open at anchor w).")
+        return 0
+
+    # anchor IS measurable — the content question is askable at production. Read a1 vs a3 at the anchor.
+    sep = (aA.get("mi") or 0.0) - (a3A.get("mi") or 0.0)
+    a1_sig = aA.get("mi") is not None and aA["mi"] >= MDE and aA.get("nm", 1.0) <= CTRL and aA.get("pv", 1.0) < 0.005
+    print()
+    if a1_sig and sep > MDE:
+        print("  ⇒ 🔎 D2′ DISCOVERY — at the ANCHOR (production w), clock-open independent-G content MOVES emit"
+              " (a1 MI %+.4f, a1−a3 %+.4f · w-invariant)." % (aA["mi"], sep))
+        print("     H_9377 CONTENT-INERT OVERTURNED: the wall was clock-masking, not content-inertness. New H.")
+    elif abs(sep) <= MDE and (aA.get("mi") or 0.0) < MDE:
+        print("  ⇒ 🧱 D2 CONTENT-WALL — at the anchor, where emit CAN respond (clock-open N=%d), a1≈a3"
+              " (|Δ|=%.4f≤%.2f):" % (aA.get("live", 0), abs(sep), MDE))
+        print("     content genuinely inert where askable. 2nd independent lens → CONTENT-INERT terminal-eligible.")
+    else:
+        print("  ⇒ ⏳ PENDING — anchor a1 partially separates (MI %s · Δ %+.4f). Extend n / tighten." %
+              (("%.4f" % aA["mi"]) if aA.get("mi") is not None else "n/a", sep))
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -5270,7 +5417,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -5543,6 +5690,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 2 and argv[0] == "--gate-census":
+        return _gate_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--gate-deaf":
         return _gate_deaf(argv[1:])
     if len(argv) >= 2 and argv[0] == "--audibility":

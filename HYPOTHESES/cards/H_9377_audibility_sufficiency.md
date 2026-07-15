@@ -1,6 +1,6 @@
 # H_9377 — AUDIBILITY-SUFFICIENCY: tension 이 가청이면 emit 을 미는가
 
-**status:** 🧱 CONTENT-INERT (Stage-1 측정 종결 · 2026-07-16) · 캠페인 폐루프 = G-INERT 는 gain-부족 아니라 **content 수준 벽** · wired: engine-native(303M py)
+**status:** 🕰️ RE-SCOPED → CLOCK-BOUND@production ([[H_9390]] · 2026-07-16) — 아래 CONTENT-INERT 은 **clock-마스크 regime 의 위음성**이었다(앵커서 emit⟺clock · H(emit|clock-open)=0 ⇒ MI≈0 기계강제, content 벽 아님). verdict 뒤집기 아니라 스코프 각인 · **not terminal** · reopen = clock-live regime. wired: engine-native(303M py)
 **lane:** 의식 / emit-drive / motivation_score 8-lane mixer (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9376]] (MIXER-BOUND) · [[H_9357]] (G-INERT) · [[H_9360]] · [[H_9356]] · [[H_9352]]
 **ckpt:** py303_full.clm sha256 `013c4574e0ce71ae173287b9…`(303M CONV · TERMINAL 스케일) · summer pool · CPU-only decode
