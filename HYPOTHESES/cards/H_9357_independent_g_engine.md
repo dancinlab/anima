@@ -63,3 +63,27 @@ emit 이 소비 안 함 — 별개 후속 H).
 가장 정직한 예측 = 🧱 CAUSAL-HANDLE-ONLY 또는 G-INERT. 시계(H_9352)가 emit 을 stage 에서
 풀었고 독립 G 를 배선해도, emit 게이트(brain motivation)가 그 tension 을 **소비**한다는 보장은
 아직 없다. 그러나 이제 그 질문이 **well-posed** 하다 — H_9356 전엔 물을 수조차 없었다.
+
+## VERDICT — 🧱 G-INERT (engine-native 303M · 720 tick · 사전등록 게이트 통과)
+
+`anima-py evaluate --g-tension` (py 2-production · py303_full.clm · a0/a1/a3 × 8 rollout × 30 tick):
+
+| arm | G-VAR | G-INDEP R² | MI earned · perm-p | Ψ̂ · \|Ψ̂−½\| |
+|---|---|---|---|---|
+| a0 tautology | 9 | **1.000 FAIL** | −0.0005 · 0.74 | 0.762 · 0.262 |
+| a1 REAL-G (afield d2) | 7 | **0.353 OK** | −0.0009 · 1.00 | 0.762 · 0.262 |
+| a3 NOISE-G | 30 | 0.019 OK | −0.0014 · 0.47 | 0.762 · 0.262 |
+
+**두 가지가 동시에 참이다:**
+1. ✅ **독립 G 를 진짜로 만들었다** — a1 이 G-INDEP R²=0.353(<0.5 통과) · G-VAR=7(≥5) ⇒ afield d2 는
+   emit_drive 와 배선 독립. H_9356 의 두 번째 A 아님. A0(tautology)가 R²=1.0 으로 FAIL = 독립성
+   게이트가 살아있음(거짓 PASS 아님).
+2. 🧱 **emit 이 그 tension 을 소비하지 않는다** — a1 MI earned −0.0009 ≈ 0 (perm-p 1.0), noise a3
+   와 동일. 배선은 real, tension 은 not.
+
+Ψ̂=0.762 가 전 arm 동일(시계수리로 H_9351 의 0.9167→0.762). G arm 은 gws/lprec 을 안 건드리므로
+(emit_drive 불변 · ag_g_drive 만 바뀜) Ψ̂ 가 arm 에 안 반응 — 이것 자체가 G→Ψ 경로 부재의 방증.
+
+**후속(H_9352 REOPENS 와 합류):** 독립 G 가 ag_conflict→ten_phasic→urgency 로 닿아도 urgency 가
+중점 아래로 포화돼(H_9352) comparator 를 못 넘는다. 다음 레버는 **신호원(G)이 아니라 하류 소비
+채널**(urgency 작동점). 이제 그 진단이 사전등록·통제로 벌어졌다 — G 는 있는데 게이트가 안 듣는다.

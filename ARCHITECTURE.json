@@ -599,7 +599,7 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9357",
           "type": "gate",
-          "verdict": "🔵 PRE-REGISTERED · 배선완료 · 303M 측정 BLOCKED-INFRA (H_9357)",
+          "verdict": "🧱 G-INERT (TERMINAL · engine-native 303M · 720 tick) — 독립 G 는 real 하나 emit 이 소비 안 함",
           "detail": "H_9356 수리 시도. Fable: recon_err·pending_rel 은 σ(emit_drive) 안(gws top-2 게이팅)=두번째 A. 유일 배선-자유 = afield top-2 gap d2(engine_cli.py:446 vadapt_field_two_recon_err · d1=recon_err 는 emit_drive 입력, d2 자유). chat.py --g-arm a0/a1/a3 배선.",
           "children": [
            {
@@ -610,7 +610,12 @@
            {
             "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9357-block",
             "type": "note",
-            "detail": "⚠️ 로컬 스모크가 immune-gap primary 를 죽은 신호로 잡음(1-cell store·g_recog 30틱 0.0)→afield-d2 fallback 전환. bin ckpt 경로는 recon_err 도 죽음(distinct=1) vs 303M CONV(clockfix distinct=44 LIVE)=신호 죽음은 ckpt경로차 코드무죄. 303M a1 alive 검증+측정 = summer/aiden 포화로 BLOCKED-INFRA."
+            "detail": "측정 완료(py303_full.clm · a0/a1/a3×8×30tick). A1 REAL-G(afield d2): G-INDEP R²=0.353<0.5 ✅ · G-VAR=7≥5 ✅ ⇒ 독립 G 진짜 배선(두번째 A 아님). A0 tautology R²=1.0 FAIL=게이트 살아있음. 그러나 A1 MI earned −0.0009≈0(noise a3 동일) ⇒ emit 이 tension 을 소비 안 함. Ψ̂=0.762 전 arm 동일(G→Ψ 경로 부재 방증)."
+           },
+           {
+            "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9357-followon",
+            "type": "note",
+            "detail": "후속=H_9352 REOPENS 합류: 독립 G 가 ag_conflict→ten_phasic→urgency 로 닿아도 urgency 가 중점 아래 포화라 comparator 못 넘음. 다음 레버=신호원(G) 아니라 하류 소비채널(urgency 작동점). G 는 있는데 게이트가 안 듣는다 — 사전등록·통제로 벌어진 진단."
            }
           ]
          }
