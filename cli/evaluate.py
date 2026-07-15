@@ -775,6 +775,9 @@ def evaluate_usage():
     print("       I(tension;emit) <= I(tension;score|stage), so whether `score` carries tension decides")
     print("       it with NO gate edit. M_score=I(ag_conflict;score|stage), M_sim=desaturated-gate sim")
     print("       (theta=median(score) tension/emit-blind). Reuses the H_9357 --g-arm traces.)")
+    print("  anima evaluate --lane-census <trace.jsonl> [...]  (H_9392 · WHY is score stuck above θ? splits")
+    print("      score into its 8 lanes: FLOOR=0.10·Σmin(lane). FLOOR>θ ⇒ the emit gate is unreachable by")
+    print("      construction — and DEAD (constant) gauges own most of that floor = a wiring fact.)")
     print("  anima evaluate --gate-census <trace.jsonl> [...]  (H_9390 · was H_9377 CONTENT-INERT a content")
     print("      wall or a clock-masked regime? reads logged `safe`: if emit⟺clock (H(emit|clock-open)=0)")
     print("      the score/content gate is vacuous → MI≈0 forced, NOT a wall. D1 CLOCK-BOUND re-scopes it.)")
@@ -4489,6 +4492,165 @@ def _audibility(argv):
     return 0
 
 
+def _lane_census(argv):
+    """H_9392 LANE-FLOOR CENSUS — WHY is the score trapped above θ? Decompose it into its 8 lanes.
+
+    H_9391 measured that at production min(score)=0.3442 > θ=0.30 over every row: should_emit is a
+    tautology and emit ≡ clock. That is a FACT but not a MECHANISM. score = 0.10·Σ(8 lanes)
+    (core/engine_g.py motivation_score), so the score's reachable floor is 0.10·Σ min(lane_i) — and a
+    lane that is CONSTANT (a dead gauge — see convergence chat-py-4/chat-py-5: recon_err ≡ 0.0,
+    rel_lane ≡ const) contributes its constant to that floor unconditionally. If the dead lanes alone
+    already pin the floor above θ, then the gate is unreachable BY CONSTRUCTION and no amount of
+    live-lane dynamics can ever open it: the severance is a WIRING fact (dead gauges), not a
+    substrate fact about tension.
+
+    The 8 lanes reaching motivation_score (cli/chat.py brain_emit call site) are traced verbatim as:
+      rel_f · gap_ctx · cur_f · allo_ctx(pain) · coh_lane · nov_ctx(orig) · bal_lane · agloop_ctx(dyn_v)
+    and `base_motiv` logs motivation_score's own output — so the decomposition is CHECKABLE.
+
+    Gates (SEQUENTIAL — reconstruction first, nothing is read until it passes):
+      C1 RECONSTRUCTION: |0.10·Σ(8 lanes) − base_motiv| < 1e-9 on the anchor cell (dyn_w=0.10 ⇒ the
+        plain 8×0.10 form). Fails ⇒ INSTRUMENT-DEAD: the traced lanes are not the score's inputs and
+        every number below would be fiction.
+      FLOOR = 0.10·Σ min(lane_i) — the lowest score reachable if every lane bottomed out at once.
+      DEAD  = lanes with exactly 1 distinct value (a constant gauge).
+
+    Verdict:
+      FLOOR > θ                    → 🕳️ STRUCTURAL-FLOOR: the gate is unreachable even in the limit;
+                                      name the lanes owning the floor (dead ones first) = the lever.
+      FLOOR ≤ θ < min(score seen)  → 〰️ DYNAMIC-FLOOR: the floor is reachable in principle but the
+                                      lanes never co-bottom — a correlation fact, not a wiring one.
+      min(score seen) ≤ θ          → the gate DOES bind here (H_9391 vacuity would not hold).
+    """
+    # Read θ and EVERY lane weight FROM THE ENGINE — never re-declare them here. H_9377 hardcoded
+    # "all eight are 0.10 (budget 0.80)" and was wrong (they are heterogeneous, budget 1.00); its
+    # byte-identical anchor cert could not catch it because the wrong and right formulas coincide at
+    # dyn_w=0.10. A census that re-hardcodes the premise would inherit the same fiction.
+    from engine_g import (spont_im_threshold, spont_weight_relevance, spont_weight_info_gap,
+                          spont_weight_curiosity, spont_weight_pain, spont_weight_coherence,
+                          spont_weight_originality, spont_weight_balance, spont_weight_dynamics)
+    THR = spont_im_threshold()
+    # (trace field, engine weight) in motivation_score's own argument order — cli/chat.py brain_emit:
+    #   rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx
+    LANE_W = [("rel_f", spont_weight_relevance()), ("gap_ctx", spont_weight_info_gap()),
+              ("cur_f", spont_weight_curiosity()), ("allo_ctx", spont_weight_pain()),
+              ("coh_lane", spont_weight_coherence()), ("nov_ctx", spont_weight_originality()),
+              ("bal_lane", spont_weight_balance()), ("agloop_ctx", spont_weight_dynamics())]
+    LANES = [k for k, _w in LANE_W]
+    BUDGET = sum(w for _k, w in LANE_W)
+    rows = _im_rows(argv)
+    rows = [r for r in rows if all(k in r for k in LANES + ["base_motiv", "score", "g_arm"])]
+    print("═══ LANE-FLOOR CENSUS · H_9392 · score = Σ wᵢ·laneᵢ — why is it stuck above θ? ═══")
+    print("  rows=%d  (θ=%.2f · budget Σwᵢ=%.2f · weights read live from core/engine_g.py)"
+          % (len(rows), THR, BUDGET))
+    print("  lanes/weights: %s" % " ".join("%s=%.2f" % (k, w) for k, w in LANE_W))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (rows < 200)")
+        return 0
+
+    # Anchor cell only: dyn_w=0.10 (or None) is the plain 8×0.10 form the reconstruction assumes.
+    anc = [r for r in rows if (r.get("dyn_w") is None or abs(float(r["dyn_w"]) - 0.10) < 1e-9)]
+    print("  anchor rows (dyn_w=0.10 = production): %d" % len(anc))
+    if not anc:
+        print("  ⇒ ⛔ NO ANCHOR CELL — this census only reads the production weighting.")
+        return 0
+
+    worst = 0.0
+    for r in anc:
+        recon = sum(w * float(r[k]) for k, w in LANE_W)
+        worst = max(worst, abs(recon - float(r["base_motiv"])))
+    print("  C1 reconstruction: max|Σwᵢ·laneᵢ − base_motiv| = %.3e" % worst)
+    if worst >= 1e-9:
+        print("  ⇒ ⛔ INSTRUMENT-DEAD — the traced lanes are NOT motivation_score's inputs.")
+        return 0
+
+    print()
+    print("  lane        w     | distinct  min      max      mean     | contrib(w·min)  DEAD?")
+    floor = 0.0
+    dead_floor = 0.0
+    dead = []
+    for k, w in LANE_W:
+        v = [float(r[k]) for r in anc]
+        dis = len({round(x, 12) for x in v})
+        lo, hi = min(v), max(v)
+        floor += w * lo
+        is_dead = dis == 1
+        if is_dead:
+            dead.append(k)
+            dead_floor += w * lo
+        print("  %-11s %.2f  | %6d  %7.4f  %7.4f  %7.4f  | %8.4f       %s"
+              % (k, w, dis, lo, hi, sum(v) / len(v), w * lo, "💀 DEAD" if is_dead else ""))
+    smin = min(float(r["score"]) for r in anc)
+    print()
+    print("  FLOOR = Σ wᵢ·min(laneᵢ) = %.4f   (θ = %.2f)" % (floor, THR))
+    print("  dead lanes: %s  → they alone pin %.4f of the floor (%.0f%%)"
+          % (", ".join(dead) if dead else "(none)", dead_floor,
+             100.0 * dead_floor / floor if floor else 0.0))
+    print("  min(score) actually observed = %.4f" % smin)
+    # ① secs_since_emit × score coupling (H_9391's anti-correlation claim, quantified)
+    if all("secs_since_emit" in r for r in anc):
+        xs = [float(r["secs_since_emit"]) for r in anc]
+        ys = [float(r["score"]) for r in anc]
+        n = len(xs)
+        mx, my = sum(xs) / n, sum(ys) / n
+        num = sum((a - mx) * (b - my) for a, b in zip(xs, ys))
+        dx = sum((a - mx) ** 2 for a in xs) ** 0.5
+        dy = sum((b - my) ** 2 for b in ys) ** 0.5
+        rho = num / (dx * dy) if dx > 0 and dy > 0 else float("nan")
+        # H_9391 narrated a POSITIVE coupling ("silence builds score, so the clock only ever opens
+        # once score is already past θ"). Print the number and let it judge that claim — never label
+        # a statistic with a story it may refute.
+        _verdict = ("REFUTES the H_9391 positive-coupling story (wrong sign)" if rho < 0.05 else
+                    "supports a positive coupling" if rho > 0.20 else "too weak to support either")
+        print("  corr(secs_since_emit, score) = %+.4f  ⇒ %s. Clock-open rows sit above θ simply"
+              % (rho, _verdict))
+        print("     because EVERY row does (min score %.4f > θ) — no coupling is needed to explain it."
+              % min(float(r["score"]) for r in anc))
+    print()
+    # The tension lane is THE campaign's variable (H_9356→H_9391). If IT is dead, every downstream
+    # "tension does not move emit" verdict is a statement about a frozen constant, not about tension.
+    if "agloop_ctx" in dead:
+        tv = float(anc[0]["agloop_ctx"])
+        tw = dict(LANE_W)["agloop_ctx"]
+        live_src = len({round(float(r["ag_conflict"]), 12) for r in anc if "ag_conflict" in r}) \
+            if all("ag_conflict" in r for r in anc) else None
+        print("  ⚠️ 💀 THE TENSION LANE IS DEAD — agloop_ctx ≡ %.4f (1 distinct over %d rows), while its"
+              % (tv, len(anc)))
+        print("     source ag_conflict has %s distinct values. The A⇄G tension is ALIVE but the value"
+              % (str(live_src) if live_src is not None else "?"))
+        print("     actually plugged into motivation_score is a FROZEN CONSTANT (known: the integer-")
+        print("     budget quantizer collapsed the designed path to a point — H_9360/H_9376 Stage-0).")
+        print("     ⇒ every 'tension does not move emit' result upstream (H_9357 G-INERT · H_9377")
+        print("     CONTENT-INERT) is a statement about a constant, NOT about tension. And dyn_w is a")
+        print("     weight on that constant: raising it only shifts score by %.2f·w — an affine offset,"
+              % tv)
+        print("     which is exactly why emit stayed byte-identical across the H_9377 w-grid.")
+        print("     The severance is UPSTREAM of the mixer, the threshold, and the clock: it is the lane")
+        print("     input itself (a wiring fact · chat-py-4/chat-py-5 dead-gauge family). Repair = make")
+        print("     agloop_ctx carry ag_conflict (the `--ag-cont` path already exists).")
+        print("     [this lane's floor share: %.4f of %.4f = %.0f%%]"
+              % (tw * tv, floor, 100.0 * tw * tv / floor if floor else 0.0))
+        print()
+    if floor > THR:
+        print("  ⇒ 🕳️ STRUCTURAL-FLOOR — even if EVERY lane bottomed out at once, score=%.4f > θ=%.2f."
+              % (floor, THR))
+        print("     The emit gate is UNREACHABLE BY CONSTRUCTION. H_9391 vacuity is not a sampling")
+        print("     accident: it is arithmetic. The lever is the FLOOR — and %.0f%% of it is owned by"
+              % (100.0 * dead_floor / floor if floor else 0.0))
+        print("     DEAD (constant) gauges [%s], which are a WIRING fact (chat-py-4/chat-py-5), not a"
+              % (", ".join(dead) if dead else "none"))
+        print("     substrate fact about tension. Repair the dead gauges and the floor drops on its own.")
+    elif smin > THR:
+        print("  ⇒ 〰️ DYNAMIC-FLOOR — floor=%.4f ≤ θ=%.2f, but min(score) seen = %.4f > θ: the lanes"
+              % (floor, THR, smin))
+        print("     never co-bottom. The gate is reachable in principle; the severance is a CORRELATION")
+        print("     fact (lanes rise together), not a construction one. Lever = the lane coupling.")
+    else:
+        print("  ⇒ ✅ the gate DOES bind here (min(score)=%.4f ≤ θ) — H_9391 vacuity does not hold on"
+              " this trace." % smin)
+    return 0
+
+
 def _gate_census(argv):
     """H_9390 CLOCK-MASK CENSUS — was H_9377 CONTENT-INERT a content wall, or a clock-masked regime
     where emit could never respond to ANY content? Pure reanalysis of the existing traces ($0).
@@ -5494,7 +5656,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -5767,6 +5929,8 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    if len(argv) >= 2 and argv[0] == "--lane-census":
+        return _lane_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--gate-census":
         return _gate_census(argv[1:])
     if len(argv) >= 2 and argv[0] == "--gate-deaf":

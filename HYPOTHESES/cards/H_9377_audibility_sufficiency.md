@@ -5,6 +5,21 @@
 **related:** [[H_9376]] (MIXER-BOUND) · [[H_9357]] (G-INERT) · [[H_9360]] · [[H_9356]] · [[H_9352]]
 **ckpt:** py303_full.clm sha256 `013c4574e0ce71ae173287b9…`(303M CONV · TERMINAL 스케일) · summer pool · CPU-only decode
 
+## ⛔ 계기 정정(H_9393) — 비앵커 셀 INVALID
+
+이 카드가 적은 **"현재 8-lane 가중 합 = 8×0.10 = 0.80"** 은 **틀렸다**. 실측(엔진 직독): relevance 0.20 ·
+curiosity 0.15 · balance 0.15 · 나머지 0.10 ⇒ **합 1.00**(7-lane 0.90). 그래서 개입이 쓴 `_B=0.80`·
+`_cur_seven_w=0.70` 은 예산을 **보존 못 하고 디플레**시켰다(1.00→0.857@w0.60→0.806@w0.78) ⇒ **비앵커
+셀(0.25·0.40·0.60·0.78) = INVALID**: '가청화'가 아니라 **score 전체 수축**을 함께 건 것(붕괴 0.54→0.32→
+0.24·w0.78 전침묵의 상당부분이 이 교란). **앵커(0.10)는 무사** — 틀린 식·옳은 식 둘 다 scale=1.0 이라
+byte-identical이고, **그래서 byte-id 인증이 통과했고 바로 그 때문에 버그를 못 잡았다**(버그가 보이지 않는
+유일한 지점에서 검증). 앵커만 읽은 [[H_9390]]·[[H_9391]] 은 **유효**. H_9393 가 상수를 엔진 실가중 합으로
+수정(앵커 byte-id 유지 · 예산 1.0000 보존 검증).
+
+그리고 **`agloop_ctx`(= dyn_v = 이 카드가 키우려던 tension) 는 상수 0.25**([[H_9393]]) — dyn_w 는 상수에
+걸린 가중이라 score 를 `0.25·w` 만큼 **아핀 이동**시킬 뿐이다. **w-grid 서 emit 이 byte-identical 이던
+진짜 이유가 이것**이고, 아래 CONTENT-INERT 는 **상수에 대한 진술**이지 tension 에 대한 진술이 아니다.
+
 ## 🧱 VERDICT — CONTENT-INERT (2026-07-16 · summer 303M · {a1,a3}×5w×8 = 80 rollout · 2400 decision-row)
 
 `anima-py evaluate --audibility`(engine-native 계기 · GATE-S validity 심장):

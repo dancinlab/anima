@@ -84,8 +84,17 @@ def motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v, dyn_w=None):
     # non-dyn lanes are rescaled to hold the total budget B = 8·0.10 = 0.80 fixed (so should_emit's
     # 0.3 threshold keeps its scale). dyn_w=0.10 reproduces current exactly; dyn_w↑ lets tension be
     # AUDIBLE above the 7-lane A-side blend. Scale clamped ≥0 so dyn_w→1.0 collapses to dyn_v alone.
-    _B = 8.0 * spont_weight_dynamics()                      # 0.80
-    _cur_seven_w = 7.0 * spont_weight_dynamics()            # 0.70 (current 7-lane budget)
+    # H_9392 FIX — these were 8·0.10=0.80 and 7·0.10=0.70, on the premise that all eight weights are
+    # 0.10. They are NOT: relevance=0.20, curiosity=0.15, balance=0.15, the rest 0.10 ⇒ budget=1.00
+    # and the 7 non-dyn lanes carry 0.90. The wrong constants made the rescale DEFLATE the total
+    # budget (1.00→0.86 at w=0.60, →0.81 at w=0.78) instead of preserving it, so every non-anchor
+    # H_9377 cell conflated "tension is audible" with "the whole score shrank". The byte-identical
+    # anchor cert could not catch it: at dyn_w=0.10 both the wrong and the right form give scale=1.0.
+    # Sum the ACTUAL weights — never restate them as a literal.
+    _B = (spont_weight_relevance() + spont_weight_info_gap() + spont_weight_curiosity()
+          + spont_weight_pain() + spont_weight_coherence() + spont_weight_originality()
+          + spont_weight_balance() + spont_weight_dynamics())          # 1.00
+    _cur_seven_w = _B - spont_weight_dynamics()                        # 0.90 (true 7-lane budget)
     _scale = (_B - dyn_w) / _cur_seven_w
     if _scale < 0.0:
         _scale = 0.0

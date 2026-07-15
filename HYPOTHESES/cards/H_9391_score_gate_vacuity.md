@@ -40,7 +40,14 @@ H_9390 은 production 앵커서 `emit ⟺ clock`(clock-open rate 1.00·N_bind=0)
 production 에서 **아무것도 게이팅하지 않는다**(순수 장식). anima 가 언제 말하는지는 rate-limit 시계
 혼자 정한다.
 
-### 🔑 더 깊은 구조 — 시계와 score 는 양의 결합이다
+### ⚠️ 철회됨(H_9393) — 아래 '시계×score 양의 결합' 은 반증됐다
+**corr(secs_since_emit, score) = −0.1401 (부호 반대)** ⇒ '침묵이 score 를 쌓아 시계가 열릴 땐 이미 θ 위'
+라는 아래 서사는 **틀렸다**. clock-open 행이 전부 θ 위인 건 **모든 행이 θ 위**(min 0.3442)라서지 결합
+때문이 아니다 — 결합은 필요조차 없다. 또한 이 카드의 'VACUOUS=구조적' 뉘앙스도 완화: FLOOR=Σwᵢ·min(laneᵢ)
+=0.1695 ≤ θ=0.30 이라 게이트는 **원리적으로 도달 가능**(〰️ DYNAMIC-FLOOR). **관측 사실**(min(score)>θ
+over 240행 ⇒ 게이트 항진 ⇒ emit≡clock)은 **유효**. 아래 문단은 이력으로 보존.
+
+### ~~🔑 더 깊은 구조 — 시계와 score 는 양의 결합이다~~ (철회)
 w=0.60 은 전 행의 **7.9%** 가 θ 이하인데 **clock-open 중엔 0%**(N_bind=0). 즉 θ 아래 행은 전부
 **시계-닫힘**에 산다. 침묵이 길어질수록 score 가 쌓이므로(boredom·info-gap lane) **시계가 열릴 때쯤엔
 score 가 이미 θ 위**다. ⇒ straddle 하는 가중을 골라도 clock-open 부분집합은 여전히 score-상향 편향.
@@ -63,7 +70,7 @@ score 가 이미 θ 위**다. ⇒ straddle 하는 가중을 골라도 clock-open
 ## NEXT
 레버는 **score×θ 관계**다(θ 불가침이므로 score 분포 쪽). 후보: ① clock-open ∧ low-score 가 공존하는
 regime 이 존재하는가(위 반상관을 깨는 조건 탐색 · $0 로 기존 trace 서 secs_since_emit×score 상관부터)
-② 8-lane score 의 **동역학 범위**가 왜 θ 위에 갇히는가(lane 별 기여 census · $0). H_9392 후보.
+② 8-lane score 의 **동역학 범위**가 왜 θ 위에 갇히는가(lane 별 기여 census · $0). H_9393 후보.
 
 ## 비용
 $0 — 기존 80-rollout/2400-row trace 재분석 · CPU 수초 · 303M decode 0. **그리고 clock-live 수집
