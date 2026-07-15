@@ -116,5 +116,21 @@ H_9356 반박은 wet 풀에서만 가능), 순진하게 3000 step 완주하면 *
 - (D) few-shot 은 대체 불가: `conflict_drives_live_W` 는 후보 **단독** CE 를 재 프롬프트 비조건 →
   few-shot 은 target 의 standalone a 를 못 움직인다. a 이동 = weight-write(CPT)뿐.
 - toy.clm 스모크: 12/12 g=−1.000·a≈.035~.042 → FIRE-OK 경로 검증(계기 자체는 작동). **판정 대상
-  = summer py303_full 실측**(pool·never mini). 경로 = torch-preinstall vast + HF-hub ckpt 전송
-  (vast ssh 대용량 고장 · [[pod-fire-pip-bootstrap]]), 5분 레몬-검진, 중간 ckpt 전량 HF 회수 후 teardown.
+  = summer py303_full 실측**(pool·never mini).
+
+## VERDICT (py303_full 실측 · `--pregate`) — 🔀 REDIRECT · XBIND-wet 취소
+
+`anima-py evaluate py303_full.clm --collide-select --pregate` (summer · 303M · engine-native):
+- **GATE1 12/12** g=−1.000 — 전 target novel(G-store 정상 · 계기 안 고장, INSTRUMENT-BROKEN 아님).
+- **GATE2 0/12** — 전 target 이 **이미 유창**: a = 0.354·0.554·0.638·0.531·0.382·0.389 / 0.470·0.589·
+  0.384·0.578·0.506·0.333 (주황·초록·보라·다섯·일곱·뜨거움 / orange·green·purple·five·seven·hot).
+  전부 0.05 을 한참 상회(toy 는 .035~.042 였다 — 303M base 는 이 원자들을 유창하게 안다).
+- **⇒ 🔀 REDIRECT**: 재조합 답 원자는 py303 base 가중치에서 **이미 유창(a>0)∧novel(g<0)=창발사분면**
+  인데, baseline `--collide-select` 는 48 후보 IDEATED 풀에서 이들을 **0회** 냈다(POOL-DRY). 즉
+  모델은 target 을 **유창하게 채점**하나 cue 를 받아 **생성(제안)하지 않는다**. ⟹ **병목 = ideation
+  제안분포(cue→content 생성/라우팅)지 weight-write 아님.** XBIND CPT = **틀린 레버**(원자가 이미
+  유창하니 CPT 가 더 유창하게 만들 게 없다) ⇒ **wet pod fire 취소**($0 선게이트가 $ 아낌).
+- baseline "POOL-DRY ⇒ A 제안분포(XBIND)" 를 **정밀화**: 결함은 가중치의 원자 부재가 아니라
+  **제안이 그 원자를 표면화 못 함**. [[g1-readside-exhausted-gamma-spend-only]](concept→content 연상이
+  read-side 채점엔 있으나 causal 생성엔 부재)·[[g1-topdown-routing-forkA]](생성점 RF-감쇠 라우팅)와 동일 벽.
+- **다음 레버 = ideation 제안/라우팅**(fork-A) — cue 를 받았을 때 이미-유창한 target 을 왜 안 제안하나.
