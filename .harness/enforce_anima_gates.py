@@ -34,6 +34,12 @@ Gates enforced (mechanical subset of CLAUDE.md):
       pyproject.toml) must bump the root VERSION file in the same diff — otherwise
       release.yml/pypi-release.yml's same-VERSION skip-guard silently keeps PyPI stale.
 
+  G7  no-scatter  (a_no_scatter_hypotheses_first)
+      NO new tracked file may land under state/ (≠ verdicts/, ≠ CLAUDE.md) or archive/state/ —
+      both are read-only fossils. Findings/numbers/parity → the HYPOTHESES card body + jsonl;
+      verdicts → ARCHITECTURE gate nodes; volatile scratch → /tmp. Commit-time backstop to the
+      H-NO-STATE-DIR pre_write hook (which only sees agent tool-calls, not script-internal writes).
+
 Exit: 0 = clean, 1 = violation(s), 2 = enforcer error.
 """
 
@@ -106,10 +112,15 @@ SIDE_HARNESS = re.compile(
 )
 
 
-def has_parity_record(slug, arts):
-    """True iff a state/<slug>/ evidence file (or listed artifact) records a SCORING byte-parity
-    PASS vs the wired hexa engine — the 2-production gate that lets a py-engine verdict be terminal."""
+def has_parity_record(slug, arts, card=""):
+    """True iff a parity-record (card body, listed artifact, or legacy state/<slug>/ fossil)
+    records a SCORING byte-parity PASS vs the wired hexa engine — the 2-production gate that
+    lets a py-engine verdict be terminal. New parity evidence lands in the CARD BODY
+    (a_no_scatter_hypotheses_first); the legacy archive/state/<slug>/ fossil is still read for
+    back-compat."""
     cands = [a for a in arts if a.startswith(("archive/state/", "state/"))]
+    if card:
+        cands.append(card if card.startswith("HYPOTHESES/") else "HYPOTHESES/" + card)
     sd = REPO / "archive" / "state" / slug
     if sd.is_dir():
         cands += [str(p.relative_to(REPO)) for p in sd.glob("*.txt")]
@@ -229,7 +240,7 @@ def g1_violations(rows, scope):
         # == the WIRED hexa single-entry on a shared ckpt. This is what BLOCKS a side-harness
         # (a py side-harness calling clm_decode_* directly, bypassing cli/anima.hexa → generator L3)
         # from banking a terminal verdict it never verified.
-        if has_parity_record(slug, arts):
+        if has_parity_record(slug, arts, d.get("card", "")):
             continue
         # DIRECTIONAL labeled (honest unverified torch/py-side) → compliant
         labeled = bool(DIRECTIONAL.search(tier))
@@ -365,6 +376,24 @@ def g5_violations(all_mode):
     return wheel_touched
 
 
+# G7 — no-scatter commit-time backstop (a_no_scatter_hypotheses_first). The pre_write hook
+# (H-NO-STATE-DIR) only sees agent tool-calls; a script/command that writes files internally
+# slips past it. This gate is the commit-time net: NO NEW tracked file may land under state/
+# (≠ verdicts/, ≠ CLAUDE.md) or archive/state/. Findings/numbers/parity → the HYPOTHESES card
+# body + jsonl; verdicts → ARCHITECTURE gate nodes; volatile scratch → /tmp. NO bypass (c18).
+G7_PATH = re.compile(r"^(archive/)?state/(?!verdicts/|CLAUDE\.md)")
+
+
+def g7_violations(all_mode):
+    if all_mode:
+        return []  # per-change gate — a whole-repo audit has no baseline to diff against
+    base = sh(["git", "merge-base", "HEAD", "origin/main"]).strip()
+    new = set(sh(["git", "diff", "--name-only", "--diff-filter=A", "--cached"]).splitlines())
+    if base:
+        new |= set(sh(["git", "diff", "--name-only", "--diff-filter=A", base, "HEAD"]).splitlines())
+    return sorted(f.strip() for f in new if f.strip() and G7_PATH.match(f.strip()))
+
+
 def main():
     all_mode = "--all" in sys.argv[1:]
     if not HYP.is_file():
@@ -379,8 +408,9 @@ def main():
     g3 = g3_violations()  # always whole-repo; gate-card taxonomy invariant (PROVENANCE ⊥ closure)
     g5 = g5_violations(all_mode)  # changed-scope only; VERSION lockstep vs anima-python wheel content
     g6 = g6_violations(rows)  # always whole-repo; unique-H_id invariant (a_hypothesis_register)
+    g7 = g7_violations(all_mode)  # changed-scope only; no-scatter (state/ + archive/state/ new-write block)
 
-    if not g1 and not g2 and not g3 and not g5 and not g6:
+    if not g1 and not g2 and not g3 and not g5 and not g6 and not g7:
         print(f"✅ anima-gates: clean · scope={scope_label} · {len(rows)} hypotheses · gate-card invariant OK")
         return 0
 
@@ -400,7 +430,8 @@ def main():
               "HYPOTHESES/ 에 cards/·HYPOTHESES.jsonl 외 파일:")
         for f in g2:
             print(f"        · {f}")
-        print("     → 코드/결과물은 archive/state/<slug>/ 로 옮기고 jsonl artifacts 로 가리킨다.")
+        print("     → 내용을 카드 본문으로 흡수하고 파일은 삭제한다 — archive/state/ 는 읽기전용 박제, "
+              "신규 산출물 표면은 카드+jsonl · ARCHITECTURE · state/verdicts/ 뿐 (a_no_scatter_hypotheses_first).")
     if g3:
         print()
         print("  [G3] gate-card taxonomy (PROVENANCE ⊥ capability closure) — "
@@ -429,6 +460,14 @@ def main():
         print("     ⚠️ id 로 행을 찾아 갱신하기 전에 그 행의 title/card 가 정말 내 가설인지 대조하라 — "
               "id 일치만 믿고 덮어쓰면 남의 verdict 가 소리 없이 증발한다 "
               "(2026-07-14 #3463 실측 · convergence hypotheses-jsonl-3). (no bypass — c18)")
+    if g7:
+        print()
+        print("  [G7] no-scatter (a_no_scatter_hypotheses_first) — "
+              "state/ (≠verdicts/) · archive/state/ 아래 신규 tracked 파일 (읽기전용 박제에 산출물 흩뿌림):")
+        for f in g7:
+            print(f"        · {f}")
+        print("     → 내용은 카드 본문 + jsonl(수치·parity) · ARCHITECTURE gate 노드(verdict) 로 흡수하고 "
+              "파일은 삭제한다. 휘발 중간물은 /tmp. frozen 계약만 state/verdicts/. (no bypass — c18)")
     return 1
 
 

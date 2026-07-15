@@ -11,11 +11,11 @@
   },
   {
    "id": "H-NO-STATE-DIR",
-   "desc": "repo-root state/ is frozen — no new experiment scratch may be created there (state/verdicts/ + the folder's own CLAUDE.md excepted)",
-   "match": "(\\b(mkdir|cp|mv|touch|tee|rsync|install|dd)\\b[^\\n]*|>>?\\s*)(?<!archive/)(?<![\\w.-])state/(?!verdicts/|CLAUDE\\.md)",
+   "desc": "state/ AND archive/state/ are frozen fossils — no new experiment scratch may be created (state/verdicts/ + the folder's own CLAUDE.md excepted)",
+   "match": "(\\b(mkdir|cp|mv|touch|tee|rsync|install|dd)\\b[^\\n]*|>>?\\s*|--?out(put)?[= ]\\s*[^\\n]*?)(?<![\\w.-])state/(?!verdicts/|CLAUDE\\.md)",
    "exceptions": [],
    "action": "block",
-   "reason": "anima: 실험은 엔진 네이티브 전용 — `state/` 에 신규 실험폴더/산출물 생성 금지. 엔진 op 는 `anima-py <verb>` / hexa `anima <verb>` 로만 돌리고, 산출물은 `docs.scratchDir` 로 (a_cli_single_entry). 계약 경로 `state/verdicts/` (a_claim_verify) 만 예외."
+   "reason": "anima(a_no_scatter_hypotheses_first): `state/`·`archive/state/` 신규 쓰기 금지 — archive 는 읽기전용 박제다. 발견·수치·parity 증거는 카드 본문(HYPOTHESES/cards/) + jsonl 로, verdict 는 ARCHITECTURE gate 노드로, frozen 계약만 `state/verdicts/`. 휘발 중간물은 /tmp. 엔진 op 는 `anima-py <verb>` / hexa `anima <verb>` 로만 (a_cli_single_entry)."
   },
   {
    "id": "H-FORCE-PUSH",
@@ -69,18 +69,6 @@
    "reason": "hardcore: rm -rf on / ~ $HOME / 또는 bare * 차단. 경로를 좁히거나 `# rm-ok <사유>`."
   },
   {
-   "id": "H-TMP-SCRATCH",
-   "desc": "임시 산출물을 /tmp 에 쓰고 날리지 말 것 — archive/state/scratch 에 보관",
-   "match": "(\\bmktemp\\b|(>>?|\\btee\\b|cat\\s+>+)\\s*\\S*(/tmp/|/var/folders/|\\$TMPDIR))",
-   "exceptions": [
-    "# scratch-ok",
-    "archive/state/scratch",
-    "\\.harness/"
-   ],
-   "action": "warn",
-   "reason": "hardcore: 임시 파일을 /tmp(휘발)에 쓰지 말 것 — `archive/state/scratch/` 에 보관(회귀추적·재현 가능). 진짜 일회성이면 `# scratch-ok <사유>`. (`harness docs scratch <name>` 가 경로 생성)"
-  },
-  {
    "id": "H-SUDO",
    "desc": "sudo inside agent-run commands",
    "match": "\\bsudo\\b",
@@ -102,10 +90,10 @@
  "pre_write": [
   {
    "id": "H-NO-STATE-DIR",
-   "desc": "repo-root state/ is frozen — writes are blocked (state/verdicts/ + the folder's own CLAUDE.md excepted)",
-   "path_match": "(?<!archive/)(?<![\\w.-])state/(?!verdicts/|CLAUDE\\.md)",
+   "desc": "state/ AND archive/state/ are frozen fossils — writes are blocked (state/verdicts/ + the folder's own CLAUDE.md excepted)",
+   "path_match": "(?<![\\w.-])state/(?!verdicts/|CLAUDE\\.md)",
    "action": "block",
-   "reason": "anima: 실험은 엔진 네이티브 전용 — `state/` 에 신규 파일 쓰기 금지 (특히 일회성 `.py`/`.sh` 프로브: 엔진-네이티브 의무를 우회하는 통로). 엔진 op 는 설치된 canonical 명령으로만 — `anima-py <verb>` (pip · 기본) 또는 hexa `anima <verb>` (a_cli_single_entry · a_engine_native_learning) · 산출물은 `docs.scratchDir`. 계약 경로 `state/verdicts/` (a_claim_verify) 만 예외."
+   "reason": "anima(a_no_scatter_hypotheses_first): `state/`·`archive/state/` 신규 쓰기 금지 — archive 는 읽기전용 박제다 (특히 일회성 `.py`/`.sh`/`.json`/`.log` 프로브: 엔진-네이티브 의무 + 가설-통합을 우회하는 통로). 발견·수치·parity 증거는 카드 본문(HYPOTHESES/cards/) + jsonl 로, verdict 는 ARCHITECTURE gate 노드로, frozen 계약만 `state/verdicts/` (a_claim_verify), 휘발 중간물은 /tmp. 엔진 op 는 설치된 canonical 명령으로만 — `anima-py <verb>` / hexa `anima <verb>` (a_cli_single_entry)."
   },
   {
    "id": "H-NO-INLINE-HOOK",
@@ -170,14 +158,14 @@
    "desc": "흩어진 리포트/요약/노트 .md 생성 금지 — 아키텍처는 ARCHITECTURE.md(갱신), 이력은 CHANGELOG.md(append) 단일화",
    "path_match": "(-(report|summary|notes?|audit|status|plan|analysis|design|overview|guide)\\.md$|(REPORT|SUMMARY|NOTES|TODO|AUDIT|STATUS|ANALYSIS)\\.md$|\\d{6,8}[-_].*\\.md$)",
    "action": "warn",
-   "reason": "hardcore: 흩어진 문서 생성 감지 — AI 산출물은 **단일 문서 2개**로 통합: ①최종 아키텍처 = `ARCHITECTURE.md` (업데이트형, 덮어쓰기) ②이력/결정 = `CHANGELOG.md` (추가형). 임시 분석물은 `archive/state/scratch/`. 부득이 분리해야 하면 그 문서 상단에 SSOT(ARCHITECTURE.md)로 가는 **quickref 1줄** 필수(없으면 lint DOC-NO-QUICKREF)."
+   "reason": "hardcore: 흩어진 문서 생성 감지 — AI 산출물은 **단일 문서 2개**로 통합: ①최종 아키텍처 = `ARCHITECTURE.md` (업데이트형, 덮어쓰기) ②이력/결정 = `CHANGELOG.md` (추가형). 임시 분석물은 /tmp — 보존 가치가 있으면 파일이 아니라 카드 내용으로 (a_no_scatter_hypotheses_first). 부득이 분리해야 하면 그 문서 상단에 SSOT(ARCHITECTURE.md)로 가는 **quickref 1줄** 필수(없으면 lint DOC-NO-QUICKREF)."
   },
   {
    "id": "H-UNIVERSE-CODE",
    "desc": "HYPOTHESES/ 에 .py/.hexa/코드/result 등 비-카드 파일 생성 금지 — a_hypothesis_register (HYPOTHESES/ = HYPOTHESES.jsonl + cards/ + CLAUDE.md 폴더가이드)",
    "path_match": "(^|/)HYPOTHESES/(?!cards/)(?!HYPOTHESES\\.jsonl$)(?!CLAUDE\\.md$).+",
    "action": "block",
-   "reason": "a_hypothesis_register: HYPOTHESES/ 에는 .py·.hexa·코드·result 파일을 두지 않는다 — HYPOTHESES.jsonl + cards/H_*.md (+ folder-docs 폴더가이드 CLAUDE.md) 만. 가설 카드는 `HYPOTHESES/cards/`, 프로브 코드/결과물은 `archive/state/<slug>/` 에 두고 jsonl 의 그 가설 행 `artifacts` 로 가리킬 것."
+   "reason": "a_hypothesis_register: HYPOTHESES/ 에는 .py·.hexa·코드·result 파일을 두지 않는다 — HYPOTHESES.jsonl + cards/H_*.md (+ folder-docs 폴더가이드 CLAUDE.md) 만. 가설 카드는 `HYPOTHESES/cards/`. 프로브 코드는 존재 자체가 반칙(a_experiment_engine_native — anima-py 플래그로 배선) · 수치/증거는 카드 본문에 쓰고, jsonl `artifacts` 는 `state/verdicts/`·HF·pool 경로만 가리킨다 (archive/state/ 신규 쓰기 금지 · a_no_scatter_hypotheses_first)."
   },
   {
    "id": "H-DEBUG-LEFTOVER",
