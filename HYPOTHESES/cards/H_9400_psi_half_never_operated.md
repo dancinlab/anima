@@ -65,3 +65,28 @@ docstring 날조임을 잡음(tool-definition-read-code-not-docstring). 6 스크
 
 ## 비용
 $0 — Fable 발산(온디맨드) + Workflow 6 병렬 agent(trace 재분석·신규 decode 0) + adversarial verify.
+
+## 🟢→✅ ENGINE-NATIVE 확증 (2026-07-16 · Wave-2 escalate · anima-py evaluate --psi-soma)
+
+L1 DIRECTIONAL 스크린을 **정본 경로** `anima-py evaluate --psi-soma`(0.14.0 · `_psi_soma_real` = 데몬
+자신의 ci_psi_balance·ci_emit_decision)로 재측정 = **확증**. 앵커 a1 w=0.10 · 240 tick:
+
+- **Ψ̂ = 0.7625** (정본 fraction 지표 = `0.5·(gws+lprec)≥0.5` 인 tick 비율) ≠ ½ · **|Ψ̂−½| = 0.262**.
+  (내 스크린의 mean 지표 0.594 보다 fraction 이 ½ 에서 **더 멀다** — 방향 강화.)
+- **C2 DRIFT = 0.717(전반) → 0.808(후반) · |Δ|=0.092** = ½ 로 **회귀가 아니라 멀어짐** ⇒ 항상성(½ 로
+  당김)이 아니다. (이 통제는 내 raw 스크린엔 없던 결정적 homeostasis-반증.) C1 PERM 0.725.
+- **H(emit|stage) = 0.465 nats** = emit 은 stage 의 순수 함수(H_9345) ⇒ Ψ̂ 가 뭐든 **emit 결정에 안
+  흐른다**. σ·gate corr(dec,score)=0.303·within-stage 0.257 (약함).
+- verb 자체 판정 인용: **"Ψ̂ 가 ½ 이 아니다 · A⇄G 항상성 주장은 이 런에서 성립하지 않는다."**
+
+⟹ L1(=이 카드) **engine-native TERMINAL-eligible 로 escalate**: 중심주장 "tension 이 emit 을 Ψ=½ 로
+당긴다"의 세 전제(Ψ=½ · emit 결정자 · knob 도달)가 **정본 계기로도 동시 미충족**. 위 DIRECTIONAL
+스크린과 방향·크기 일치(오히려 fraction·DRIFT 가 더 강함).
+
+**부수 — L8 확증**: 같은 --psi-soma 의 σ vitals 가 σ·gate 🧱 · σ·stage 🟢 · σ·bind ⚠️DIRECTIONAL(Φ=0
+D2) · **σ 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 카운터팩추얼 부재)** — Wave-1 L8
+스크린(σ-panel 6축 하드코딩 PENDING)을 정본 계기가 재현.
+
+**scope**: 이 regime/ckpt/30-tick · a1 arm. Ψ̂ REAL 패널은 engine-native(정본 anima-py evaluate ·
+a_eval_py_canonical)이나 σ·bind 는 verb 스스로 DIRECTIONAL 표기(ckpt-contrast 미실행). 중심주장 반증은
+Ψ̂ REAL(engine-native)에 근거.
