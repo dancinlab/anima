@@ -760,6 +760,11 @@ def evaluate_usage():
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
     print("       the SAME device so the pre/post-CPT route delta carries no device confound.)")
     print("  anima evaluate <ckpt> --interaction-lift <manifest.json> --out <file.json> [--win 64] [--score-len 8]")
+    print("  anima evaluate --gate-deaf <trace.jsonl> [<trace2.jsonl> ...]")
+    print("      (H_9360 — is the emit gate's tension-deafness SATURATION or STRUCTURE? By the DPI")
+    print("       I(tension;emit) <= I(tension;score|stage), so whether `score` carries tension decides")
+    print("       it with NO gate edit. M_score=I(ag_conflict;score|stage), M_sim=desaturated-gate sim")
+    print("       (theta=median(score) tension/emit-blind). Reuses the H_9357 --g-arm traces.)")
     print("  anima evaluate --g-tension <trace.jsonl> [<trace2.jsonl> ...]")
     print("      (H_9357 — does a GENUINELY INDEPENDENT G engine pull emit? The sequel to H_9356.")
     print("       Run cli/chat.py with --g-arm a0|a1|a3 to make the traces (a0=tautology control,")
@@ -3481,6 +3486,135 @@ def _g_tension(argv):
     return 0
 
 
+def _gd_cmi_bin(Xv, Yv, S, seed=7, nperm=200):
+    """I(X;Y|stage) with median-binarized X and Y, plus a within-stage shuffle null on X
+    (perm-debias). Returns (mi, null_mean, perm_p, earned). Y may already be 0/1 (emit_sim)."""
+    import random as _random
+    xs = sorted(Xv); xm = xs[len(xs) // 2]
+    Xb = [1 if v > xm else 0 for v in Xv]
+    ys = sorted(set(Yv))
+    if len(ys) <= 2:
+        Yb = [1 if v else 0 for v in Yv]
+    else:
+        ym = sorted(Yv)[len(Yv) // 2]
+        Yb = [1 if v > ym else 0 for v in Yv]
+    mi = _im_cmi(Xb, Yb, S)
+    r = _random.Random(seed)
+    null = []
+    for _ in range(nperm):
+        st = {}
+        for k, g in enumerate(S):
+            st.setdefault(g, []).append(k)
+        Xp = list(Xb)
+        for idx in st.values():
+            vals = [Xp[k] for k in idx]
+            r.shuffle(vals)
+            for j, k in enumerate(idx):
+                Xp[k] = vals[j]
+        null.append(_im_cmi(Xp, Yb, S))
+    nm = sum(null) / len(null)
+    pv = (sum(1 for v in null if v >= mi) + 1.0) / (nperm + 1.0)
+    return mi, nm, pv, mi - nm
+
+
+def _gate_deaf(argv):
+    """H_9360 GATE-DEAF SPLIT — is the emit gate's deafness to tension SATURATION (tunable) or
+    STRUCTURE (the upstream mixing layer never loads tension onto the gate input)?
+
+    H_9357 proved an independent G is wired but emit does NOT consume it (G-INERT). WHY? By the
+    data-processing inequality, emit = should_emit(score) ∧ safe with safe ≡ clock (core/brain.py),
+    so I(tension; emit) ≤ I(tension; score | stage). Therefore whether `score` already carries
+    tension DECIDES saturation-vs-structure — with NO gate edit ($0, on the existing traces).
+
+    M_score = I(ag_conflict ; score | stage)      does the gate INPUT carry tension?
+    M_sim   = I(ag_conflict ; emit_sim | stage)   desaturated-gate offline sim: θ = median(score)
+              on the CALIBRATION rollouts (score marginal only — tension- and emit-blind), then
+              emit_sim = 1[score > θ] ∧ (secs_since_emit ≥ 30) on the JUDGMENT rollouts.
+    Spike-in control: I(score ; emit_sim | stage) MUST be large (emit_sim ≡ f(score)); if it is
+    not, the estimator is broken and the whole panel is INVALID.
+
+    Verdict is on arm a1 (the real independent G), gated on a1 > a3 (else instrument INVALID):
+      M_score ≥0.05 ∧ M_sim ≥0.05  → (a)  SATURATION — info reaches the gate input; threshold 0.3
+                                          saturates and discards it. Fix is live recalibration.
+      M_score ≥0.05 ∧ M_sim ≤0.01  → (a′) BINARY-FORM bottleneck — no threshold can carry it; a
+                                          graded gate is needed (structure, but LOCAL to the gate).
+      M_score ≤0.01 (TOST equiv)   → (b)  STRUCTURE — the mixing layer never loads tension onto the
+                                          gate input; the gate is INNOCENT and no rewire helps (DPI).
+      0.01 < M_score < 0.05        → PENDING — report MDE, extend n; never declare 'none'.
+    """
+    mde = 0.05
+    ctrl_bar = 0.01
+    rows = _im_rows(argv)
+    rows = [r for r in rows if all(k in r for k in ("stage", "score", "ag_conflict", "secs_since_emit", "g_arm"))]
+    print("═══ GATE-DEAF SPLIT · H_9360 · DPI: I(tension;emit) ≤ I(tension;score|stage) ═══")
+    print("  rows=%d" % len(rows))
+    if len(rows) < 200:
+        print("  ⇒ ⛔ NOT-POWERED (rows < 200)")
+        return 0
+    by = {}
+    for r in rows:
+        by.setdefault(str(r["g_arm"]), []).append(r)
+    print("  arms: %s" % ", ".join("%s=%d" % (k, len(v)) for k, v in sorted(by.items())))
+    res = {}
+    for arm, ar in sorted(by.items()):
+        S = [int(r["stage"]) for r in ar]
+        AC = [float(r["ag_conflict"]) for r in ar]
+        SC = [float(r["score"]) for r in ar]
+        # M_score
+        m_sc, m_sc_nm, m_sc_pv, m_sc_e = _gd_cmi_bin(AC, SC, S, seed=7)
+        # desaturated-gate sim: split rollouts into calibration / judgment halves
+        srcs = sorted({r.get("_src", "?") for r in ar})
+        half = max(1, len(srcs) // 2)
+        calib = set(srcs[:half])
+        cal_scores = [float(r["score"]) for r in ar if r.get("_src") in calib]
+        cs = sorted(cal_scores)
+        theta = cs[len(cs) // 2] if cs else 0.0
+        jr = [r for r in ar if r.get("_src") not in calib]
+        Sj = [int(r["stage"]) for r in jr]
+        ACj = [float(r["ag_conflict"]) for r in jr]
+        SCj = [float(r["score"]) for r in jr]
+        emit_sim = [1 if (float(r["score"]) > theta and float(r["secs_since_emit"]) >= 30.0) else 0 for r in jr]
+        m_sim, m_sim_nm, m_sim_pv, m_sim_e = _gd_cmi_bin(ACj, emit_sim, Sj, seed=11)
+        # spike-in: I(score; emit_sim | stage) must be large
+        spike, _sn, _sp, _se = _gd_cmi_bin(SCj, emit_sim, Sj, seed=13)
+        rate_sim = sum(emit_sim) / float(len(emit_sim)) if emit_sim else 0.0
+        res[arm] = dict(n=len(ar), m_sc=m_sc_e, m_sc_pv=m_sc_pv, m_sim=m_sim_e, m_sim_pv=m_sim_pv,
+                        spike=spike, theta=theta, rate_sim=rate_sim)
+    print()
+    print("  arm | n   | M_score(earn) p | M_sim(earn) p | spike I(sc;sim|S) | θ    rate_sim")
+    for arm in sorted(res):
+        d = res[arm]
+        print("  %-3s | %3d | %+.4f %.3f    | %+.4f %.3f   | %.4f            | %.3f %.2f"
+              % (arm, d["n"], d["m_sc"], d["m_sc_pv"], d["m_sim"], d["m_sim_pv"], d["spike"], d["theta"], d["rate_sim"]))
+    print()
+    a1 = res.get("a1"); a3 = res.get("a3")
+    if a1 is None:
+        print("  ⇒ ⛔ INCOMPLETE — no a1 (REAL-G) arm.")
+        return 0
+    if a1["spike"] < 0.05:
+        print("  ⇒ ⛔ INVALID — spike-in control failed (I(score;emit_sim|stage)=%.4f < 0.05):" % a1["spike"])
+        print("     emit_sim is a function of score by construction; a dead spike-in = broken estimator.")
+        return 0
+    if a3 is not None and a3["m_sc"] >= a1["m_sc"] and a1["m_sc"] >= mde:
+        print("  ⇒ ⛔ INVALID — noise arm a3 M_score ≥ a1 (%.4f ≥ %.4f); instrument not selective." % (a3["m_sc"], a1["m_sc"]))
+        return 0
+    print("  🔒 prereg (arm a1 · gated a1>a3): DPI-decided, no gate edit.")
+    if a1["m_sc"] >= mde and a1["m_sc_pv"] < 0.05 and a1["m_sim"] >= mde:
+        print("  ⇒ 🟢 (a) SATURATION — tension reaches the gate INPUT (M_score=%.4f) and a desaturated" % a1["m_sc"])
+        print("     threshold WOULD consume it (M_sim=%.4f). The 0.3 gate is a tunable saturation." % a1["m_sim"])
+        print("     NEXT = Stage-1 live recalibration (anima-py chat --gate-calib), H_9357 bar reused.")
+    elif a1["m_sc"] >= mde and a1["m_sim"] <= ctrl_bar:
+        print("  ⇒ 🧱 (a′) BINARY-FORM bottleneck — tension reaches the gate input (M_score=%.4f) but" % a1["m_sc"])
+        print("     no threshold on score can carry it (M_sim=%.4f ≤ %.2f). A GRADED gate is required." % (a1["m_sim"], ctrl_bar))
+    elif a1["m_sc"] <= ctrl_bar:
+        print("  ⇒ 🧱 (b) STRUCTURE — the mixing layer never loads tension onto the gate input")
+        print("     (M_score=%.4f ≤ %.2f · TOST-equiv). The gate is INNOCENT — by the DPI no threshold" % (a1["m_sc"], ctrl_bar))
+        print("     or urgency rewire can help. Frontier moves UPSTREAM to the ag_conflict→score mixer.")
+    else:
+        print("  ⇒ ⏳ PENDING — M_score=%.4f in (%.2f, %.2f). Report MDE, extend n (2127-tick traces)." % (a1["m_sc"], ctrl_bar, mde))
+    return 0
+
+
 def _im_rows(paths):
     """Load decision-trace rows (skip the _meta header). One row per tick."""
     out = []
@@ -4319,7 +4453,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--consult", "--consult-format", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -4355,6 +4489,8 @@ def main(argv):
     # H_9328 DO-MOUTH · I(A;Y|S) over decision traces (NO decode — reads traces the daemon
     # already wrote). V-CEILING FIRST: I <= H(A|S) is an identity, so a dead action channel
     # forces I=0 by definition, not by measurement (that is exactly how H_9308 died).
+    if len(argv) >= 2 and argv[0] == "--gate-deaf":
+        return _gate_deaf(argv[1:])
     if len(argv) >= 2 and argv[0] == "--g-tension":
         return _g_tension(argv[1:])
     if len(argv) >= 2 and argv[0] == "--tension-emit":
