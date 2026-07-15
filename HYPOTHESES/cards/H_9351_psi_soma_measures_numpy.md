@@ -128,4 +128,12 @@ def _sigma_live_measure():          # ← 인자가 0개
 | score-comp | **0.985** (rel_ctx 0.98·gap 0.95·bal 0.98) | 🧱 D2 tautology |
 | relevance | **0.995** (rel_lane·recon·rel_ema·ten_ema 전부 >0.99) | 🧱 D2 tautology |
 
-⟹ **Φ>0 을 낸 lane 은 정확히 서로의 결정론적 함수인 lane**(R² 0.98~0.995)이다. 지난 턴의 "σ·bind Δ0.51 로 구별 가능"(#3674)은 **substrate 통합이 아니라 배선 tautology 였다 — 정정**. 트레이스 lane 은 이분된다: **독립(root-disjoint)→Φ=0** · **결합(EMA·파생)→Φ>0 이나 R²>0.9 D2**. **중간이 없다**. ⟹ **σ·bind = 🧱 PENDING(D2-unresolvable)** — 현 트레이스 lane 으로는 D2-free Φ 측정 불가. 6개 PENDING 축에 합류. **repair 후 clean 작동 σ 축 = σ·stage 하나**. (reopen = D2-free 통합 lane 을 새로 기록하는 trace 확장 · 그런 lane 이 substrate 에 존재한다는 증거 필요.)
+⟹ **Φ>0 을 낸 lane 은 정확히 서로의 결정론적 함수인 lane**(R² 0.98~0.995)이다. 지난 턴의 "σ·bind Δ0.51 로 구별 가능"(#3674)은 **substrate 통합이 아니라 배선 tautology 였다 — 정정**. 트레이스 lane 은 이분된다: **독립(root-disjoint)→Φ=0** · **결합(EMA·파생)→Φ>0 이나 R²>0.9 D2**. **중간이 없다**. ⟹ **σ·bind = 🧱 PENDING(D2-unresolvable)** — 현 트레이스 lane 으로는 D2-free Φ 측정 불가. 6개 PENDING 축에 합류. **repair 후 clean 작동 σ 축 = σ·stage 하나**.
+
+### ✅ 독립 확증 (Fable D2 설계 · AGREES) + 더 날카로운 reopen
+
+Fable 이 `ci_phi_iit4`(engine_cli.py:6310)를 독립 판독: **인과-IIT 아니라 same-tick Gaussian total-correlation min-cut** ⟹ 결정론 배선이 I(A;B)를 **최대화**해 Φ 가 배선강도에 비례 ⟹ **Φ 혼자 D2 배제 불가**(내 외부 R² 게이트가 옳음, AGREES). 기전 확정: score-comp 의 `gap_ctx=1−rel_lane`·`bal_lane=1−2\|rel_lane−0.5\|`·coh·rel_ctx = **rel_lane 하나의 거울 4개** — Δ0.51 은 rel_lane 분산차 × 거울증폭이 전량 설명.
+
+Fable 이 제안한 rescue 후보(broadcast-binding: g_text 를 서로 다른 store 가 각자 읽음) **S₀=[rel_lane·recon_err·g_recog·cur_indep·rel_indep] · S₁(−g_recog)** 도 $0 검정: **maxR²=0.992 D2 FAIL**(ΦA 0.17/0.08 도 tautology). ⟹ **테스트 5집합 전부**(root-disjoint→Φ0 · score-comp·relevance·S₀·S₁→R²>0.8) 실패 = σ·bind PENDING(D2-unresolvable) **확증**.
+
+**reopen(정밀화)**: 진단은 substrate 아니라 **기록 표면** — 진짜 독립 reader 가 3개(그중 2개 같은 store)뿐. 해소 = 합산 전 성분 lane(`cb_surprise`·`af_val`·`af_aro`·`ca3_ctx`·`wm_active`)을 개별 트레이스 필드로 기록하는 chat.py 확장(`a_experiment_engine_native`) — 이들은 결정론적 거울이 아니라 D2-free 통합 후보. Fable spec `/tmp/sigma_bind_d2_spec.md`(D2 게이트 maxR²≤0.8 SEQUENTIAL · pending-freeze 교란 → fresh-row 제한 · C1/C2/C3 통제 · GREEN 조건).
