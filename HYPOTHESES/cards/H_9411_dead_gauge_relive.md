@@ -1,6 +1,6 @@
 # H_9411 — DEAD-GAUGE RELIVE: 얼어붙은 substrate 게이지 6개 per-tick 재배선 (H_9398 census 후속)
 
-**status:** 🩺 engine-native WIRED · **303M TERMINAL 완료**: 5 진짜소생(cb·ca3·phi·scn·anchor) · wm=time-live/content-dead · af=음성(정직)
+**status:** 🩺 engine-native WIRED · **303M TERMINAL 완료**: 5 진짜소생(cb·ca3·phi·scn·anchor) · wm=time-live/content-dead · af=음성(정직) · hexa 트윈도 fixed(DIRECTIONAL·typecheck 신규0·byte-parity 후속)
 **lane:** 의식 / 데몬 게이지 위생 (프런티어 g1-interface-addressable-wall · emit-drive 캠페인 부산물)
 **related:** [[H_9398]] (DEAD-GAUGE CENSUS — 이 6개 task 의 출처) · [[H_9393]] (agloop dead-gauge 원형) · chat-py-4 · chat-py-5 · [[H_9336]]/[[H_9337]] (recon_err/rel_lane 선례 = 고침 템플릿)
 **설계 출처:** Fable 5 발산 6건 개별 위임 ($15.6 · walls-delegate-to-fable · fable-when-stuck-breakthrough)
@@ -104,10 +104,14 @@ dead 읽기 그대로(2551 cb·2559 wm·2566 ca3·2578 af·pf 미step, H_9411/pe
 엔트리가 자기 루프 소유 · byte-parity 트윈이되 별개 파일) · **fix 는 hexa 트윈에도 별도로 적용**(hoist 아님).
 함수는 core 공유가 맞지만(그건 이미 그러함), orchestration 은 disjoint 가 anima LAW.
 
-**즉시 NEXT = hexa 트윈 6게이지 별도 수리** (hoist 없음). ⚠️ hexa 는 py 와 구조 다름(5589 vs 2524줄 · og_prev_gfeat/
-og_pending_rel 다른 네이밍 · recon/rel 1-tick-lag 이미 존재) = 라인별 미러 아니라 **구조적 매핑 필요**. 검증:
-typecheck 가능·byte-parity 는 hexa 데몬 필요(chat-py-1: 이 호스트 막힘) → hexa 데몬 host/세션. 6 dead 읽기 =
-2551 cb·2559 wm·2566 ca3·2578 af·pf 미step(각각 py 와 같은 세션-상수 원인, 같은 pending 계열 수리·별도 구현).
+**✅ hexa 트윈 6게이지 별도 수리 LANDING** (hoist 없음 · a_substrate_disjoint · Fable 14편집+helper 설계→구현):
+cli/anima.hexa 에 py 와 같은 semantics 로 별도 배선 — og_prev_gfeat 계열 1-tick-lag pending_* 를 6게이지에
+(production emit-site 캡처·arm-branched 구조 존중) · pf per-tick step(⑤) · scn phase readout(⑥A) · live_tension
+anchor(⑥B) · 3 F3 ON==OFF twin stepped · _afs_ca3_sym helper · --scn-freeze/--anchor-tension-null 통제 · G5
+VERSION bump 0.14.4. **검증=typecheck 내 93 = origin baseline 93 = 신규에러 0**(엄밀 집합-diff). ⚠️
+**verdict=DIRECTIONAL**: byte-parity(py↔hexa 동일 trace) 는 hexa 데몬 실행 필요(chat-py-1: 이 호스트
+hexa 데몬-링크 막힘·typecheck 만 가능) → hexa 데몬 host/세션 후속. FLAG-1: tension-anchor byte-parity 는 조건부
+(py 와 동일 구조라 faithful · text_payload 없는 anchor skip 은 별도 후속 both-twins+core). 이제 py·hexa 두 트윈 다 fixed.
 
 ## 산출·NEXT
 
