@@ -67,3 +67,26 @@ H_9331 의 0.50 scramble-floor 는 **replacement**(off-manifold donor가 상태�
 - **Δ-INJECT 이 ckpt서 종결**(Fable branch 1): 유일 대안인 `고`-vs-`지않다` Δ 는 **answer-row tautology**(두 arm이 구성상 반대답 → 주입=자명한 flip · H_9391 score-gate 공허형) + carrier-row Δ 는 carrier 바이트 정체성으로 교란. **비공허 Δ 는 byte-정합 훈련 carrier 쌍(연산자 의미만 다른)이 필요한데 이 ckpt 인벤토리엔 없다.**
 
 **함의 (frontier)**: 벽은 **stem-lookup 으로 통합되지 않는다**(reading 2 반증) — SEEN 연산자는 실재하고 carrier-구동. 벽은 여전히 **held-out 전이 실패**(two-lane bridge 부재)이지 "연산자 부재" 아님. **NEXT rescue = H_9267 합성 XBIND corpus**(byte-정합 flip0/flip1 carrier 쌍을 구성상 훈련) — 이건 **측정(measure)을 재는 것이지 이 substrate 아님**(자연 자발창발 아님 · a_scale_honest_scope). 계기 전부 engine-native(`corpus deltainj` · `evaluate --delta-pregate`/`--delta-control`).
+
+## 🔀 교차세션 기여 — H_9389 XBIND-BRIDGE prereg addendum (from H_9397 2-입력 기전 · a_parallel_session_compare)
+
+H_9397 의 rescue(byte-정합 flip0/flip1 carrier 쌍 훈련)는 **병렬 H_9389 XBIND-BRIDGE 시간분리**(⭐Fable#1 레버 ·
+`corpus xbind --bridge-split` 이 S_op 서 flip0+flip1 **둘 다 byte-정합 훈련** · phase-A CONFIRMED)와 **동일** ⟹
+내 OOD 벽은 H_9389 설계에 **구조적으로 배제됨**(carrier-inventory 요건 충족). 중복 금지. **대신** 내 **2-입력 연산자**
+발견(carrier=flip결정 × 어간=극성 · H_9388 어간읽음 + H_9397 carrier소비)이 H_9389 frozen 표의 **3개 구멍**을 드러낸다
+— 그들 gate 소각 前 사전등록해야(실런은 EN-atoms 마이닝 대기 = 아직 안 소각 · burned-gate 회피). **그들 카드 편집 안 함**
+— 내 surface 로 전달, 병렬 세션이 채택 결정:
+
+1. **KILL 셀이 두 기전을 혼동한다.** "S_decl flip1 우연≤ ⟹ 다리부재 KILL" 인데, carrier×stem 상 **우연 이하**는 다리부재
+   아니라 **어간-입력 전이 O · carrier-게이팅 held-out 미적용** = 모델이 훈련된 선언을 꺼내 **un-flip 극성**을 뱉어 계통적
+   오답(=**half-bridge**: 선언→답 경로 O, carrier 게이팅 미일반화). 우연(=아무것도 전이X)과 **다른 발견·다른 후속**.
+   측정 **후** 재독 = burned-gate ⟹ 지금 분리.
+2. **짝 retention 통제 부재.** `sdecl_flip1.json` 만 emit. **S_decl flip0**(같은 게이트 어간의 훈련-선언 정확도) 없으면
+   우연 flip1 이 판독불가(다리부재 vs 그 step 예산서 선언 자체 미보존). 매니페스트 1개 추가 · $0.
+3. **CPT후 operator-alive arm 부재.** G-ALIVE(S_op flip1≥0.90)는 phase-A 한정. `cpt-destroys-what-corpus-omits`:
+   선언전용 phase-B CPT 가 연산자를 전역 lobotomize 가능 → 그러면 "S_cpt flip1 미동"이 **죽은 계기 위에** 🔴 W_wt
+   terminal 을 못박음(위조). **각 CPT arm 후 S_op flip1 재측정을 🔴 행 validity 게이트로 사전등록.**
+
+세 구멍 다 측정면·$0·그들이 이미 emit 하는 매니페스트(+1개). 학습런이 낼 수 있는 **두 거짓 verdict(오독 KILL · 거짓
+terminal)**를 정확히 de-risk. **arc 종결 후 STOP**(read-side 소진 · 활성 레버는 병렬 소유 · 3번째 계기 = proliferation ·
+read-side-exhausted 교훈). 설계 Fable 5.
