@@ -70,15 +70,26 @@ def spont_weight_dynamics():
 
 
 # ── motivation_score (linear weighted sum) ──
-def motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v):
-    return (spont_weight_relevance() * rel
-            + spont_weight_info_gap() * gap
-            + spont_weight_curiosity() * cur
-            + spont_weight_pain() * pain
-            + spont_weight_coherence() * coh
-            + spont_weight_originality() * orig
-            + spont_weight_balance() * bal
-            + spont_weight_dynamics() * dyn_v)
+def motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v, dyn_w=None):
+    seven = (spont_weight_relevance() * rel
+             + spont_weight_info_gap() * gap
+             + spont_weight_curiosity() * cur
+             + spont_weight_pain() * pain
+             + spont_weight_coherence() * coh
+             + spont_weight_originality() * orig
+             + spont_weight_balance() * bal)
+    if dyn_w is None:
+        return seven + spont_weight_dynamics() * dyn_v      # byte-identical current path
+    # H_9377 AUDIBILITY-SUFFICIENCY · dyn_w = ABSOLUTE weight on dyn_v (the A⇄G tension). The 7
+    # non-dyn lanes are rescaled to hold the total budget B = 8·0.10 = 0.80 fixed (so should_emit's
+    # 0.3 threshold keeps its scale). dyn_w=0.10 reproduces current exactly; dyn_w↑ lets tension be
+    # AUDIBLE above the 7-lane A-side blend. Scale clamped ≥0 so dyn_w→1.0 collapses to dyn_v alone.
+    _B = 8.0 * spont_weight_dynamics()                      # 0.80
+    _cur_seven_w = 7.0 * spont_weight_dynamics()            # 0.70 (current 7-lane budget)
+    _scale = (_B - dyn_w) / _cur_seven_w
+    if _scale < 0.0:
+        _scale = 0.0
+    return _scale * seven + dyn_w * dyn_v
 
 
 # ── emission predicates ──

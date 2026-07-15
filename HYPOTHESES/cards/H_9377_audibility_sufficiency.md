@@ -59,3 +59,23 @@ loss-비참조 학습서 스스로 오름 · E2 고정게인 없이 lane 경쟁�
 
 ## 비용
 $0(개입 CPU 몇 줄 + 기존 rollout · --g-tension 확장). rollout=303M pool(summer/aiden 동시·mini 금지).
+
+## 구현 (Step ①②③ 완료 · Stage-1 측정 미시작 = 구현됨·미배선)
+
+**경로 확인(Fable 지적 해소):** core/brain.py:45 `from engine_g import motivation_score` ⇒ py 채널
+(anima-py · 303M 측정경로)은 **core/engine_g.py** 를 쓴다. core/CLAUDE.md 의 "py 미러 폐기" 는 데몬
+경로엔 stale — engine_g.py 가 살아있다. 개입 = engine_g.py.
+
+**Fable 스펙 정정:** 현재 8-lane 가중 합 = 8×0.10 = **0.80**(1.0 아님). 재정규화는 /0.90 아니라
+budget B=0.80 보존 · 7-lane rescale (B−dyn_w)/0.70 · dyn_w=절대가중. **anchor dyn_w=0.10 = byte-
+identical**(실측 확인 · dyn_w=None 도 동일). dyn_w>0.80 이면 7-lane clamp 0 = dyn_v 단독. 그리드
+상단 0.85 는 0.78 로(0.80 초과 방지) 조정 권장.
+
+- `core/engine_g.py` motivation_score(..., dyn_w=None) 재정규화 · `core/brain.py` 체인
+  (brain_emit→aged→decide_anchored) 스레딩 · `cli/chat.py` `--dyn-w`/`ANIMA_DYN_W` + trace `dyn_w`.
+- 검증: motivation_score dyn_w=None/0.10 byte-identical · dyn_w=0.6/0.85 효과 정확 · 데몬 end-to-end
+  스레딩(trace dyn_w=0.6 · rc=0). 기본 OFF = 프로덕션 불변 · hexa parity 는 default 서 유지(hexa 무변).
+
+**NEXT (Stage-1 측정):** ④ evaluate --g-tension GATE-S(emit rate∈[0.05,0.95] validity 심장)+w-grid
+셀그룹 ⑤ arm{A1·A2 tick-순열·A3 marginal-matched noise} × w-grid{0.10,0.25,0.40,0.60,0.78} pool 수집
+⑥ P1(A1−A3 paired≥MDE)·P2(Ψ̂ plateau)·앵커 필수낙제.
