@@ -1,0 +1,32 @@
+[GPU-FIRED] decode device path=CUDA (NVIDIA GeForce RTX 5090 · cupy 14.1.1)
+=== anima evaluate --bind-locus — H_9331: why does the CPT-written polarity not bind? ===
+  ckpt natem_n2_main_s7.clm · win 64B · 1053 items · perm 200
+  frozen bars: V1 swap>=0.75 sham<=0.15 · V2 dep0>=0.50 · V3 |dep_rand|<=0.15 sham<=0.05
+  frozen DV  : P if dep1<=-0.50 · S if TOST(+-0.20) · else UNDERPOWERED
+  swap-span  : carrier  (operator morpheme 지 않다 — H_9331 pedestal · 예측 flip>=0.75)
+  splits: seen 40 · heldout 87 · novel 906
+
+[Stage A] read-site scan — SEEN swap-patch (positive control · truth known)
+  depth x span-rung -> swap-flip-rate (bar 0.75) / sham (bar 0.15)
+  depth  0 rung 0  n=20  swap=0.000  sham=0.000
+  depth  0 rung 1  n=20  swap=0.100  sham=0.100
+  depth  0 rung 2  n=20  swap=0.300  sham=0.250
+  depth  1 rung 0  n=20  swap=0.000  sham=0.000
+  depth  1 rung 1  n=20  swap=0.050  sham=0.050
+  depth  1 rung 2  n=20  swap=0.250  sham=0.300
+  depth  2 rung 0  n=20  swap=0.000  sham=0.000
+  depth  2 rung 1  n=20  swap=0.050  sham=0.050
+  depth  2 rung 2  n=20  swap=0.200  sham=0.250
+  depth  3 rung 0  n=20  swap=0.000  sham=0.000
+  depth  3 rung 1  n=20  swap=0.150  sham=0.100
+  depth  3 rung 2  n=20  swap=0.250  sham=0.250
+  depth  4 rung 0  n=20  swap=0.000  sham=0.000
+  depth  4 rung 1  n=20  swap=0.400  sham=0.450
+  depth  4 rung 2  n=20  swap=0.500  sham=0.550
+
+BIND-LOCUS ⏳ INVALID-LOCALIZATION — no (depth, span) where a SEEN swap flips the
+  answer >= 0.75 with sham <= 0.15. The operator's read is NOT localized to the stem
+  span, so an injection there could not test P vs S. This is a locus FACT, not a
+  failed run — and it forbids the P/S verdict rather than faking one.
+=== anima evaluate → cli/evaluate.py (engine-native ρ-AXON reach · former G0-G6, single-entry twin) ===
+dispatch: /usr/bin/python3 /usr/local/lib/python3.10/dist-packages/anima_py/cli/evaluate.py natem_n2_main_s7.clm --bind-locus bl_manifest_v2.json --bl-swap-span carrier --out bl_carrier_n2_s7.json --win 64 --perm 200
