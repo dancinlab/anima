@@ -9866,7 +9866,7 @@
       "name": "summary",
       "role": "",
       "id": "brain-decide-consult-map-which-lanes-are-read-at-emit-silence-summary",
-      "detail": "brain_decide (+variants) optionally consults these lanes when deciding emit/silence toward Ψ=½. All consults are OPTIONAL/ADDITIVE — NO lane hard-gates emit (a_autonomy_over_hardcode); pure_field/Ψ/generation are byte-invariant (Ψ-disjoint, h1205)."
+      "detail": "brain_decide (+variants) optionally consults these lanes when deciding emit/silence toward Ψ=½. All consults are OPTIONAL/ADDITIVE — NO lane hard-gates emit (a_autonomy_over_hardcode); pure_field/Ψ/generation are byte-invariant (Ψ-disjoint, h1205). ⚠️ SCOPE (H_9392 code-confirmed 2026-07-16): this map is the WHOLE of A⇄G's causal reach — A⇄G is the MOUTH POLICY, NOT the brain. core/decode.py (content generation, 2269 lines) imports NOTHING from brain (sys·math·os·struct·numpy only); all 8 brain_decide* variants return \"emit\": bool; the ONLY tension→content channel is gen_ctx_from_decision's 5 scalars (phi·phase·tier·tier_name·motivation) + deliberation_k, which touch the seed prefix and best-of-K breadth alone — never trunk representation or routing. ⟹ CONTENT and RECOMBINATION live entirely in the CLM trunk, and the whole wall lineage (G1 recombination → BINDING → H_9359 runtime-bridge absence) was measured on the CLM ALONE with A⇄G absent from that path. ⟹ A⇄G is NOT the cause of the wall (orthogonal axis; concordant with sigma-detheater's tension ⊥ mouth). Fixing A⇄G cannot move it."
      },
      {
       "name": "brain_decide",
@@ -10155,6 +10155,14 @@
         ]
        }
       ]
+     },
+     {
+      "name": "🫀 GATE H_9392 — A⇄G = mouth policy, not the brain (code-confirmed · wall-orthogonal)",
+      "role": "gate",
+      "id": "brain-decide-consult-map-which-lanes-are-read-at-emit-silence-gate-h9392-mouth-not-brain",
+      "type": "gate",
+      "detail": "VERDICT ✅ CONFIRMED (2026-07-16 · $0 static code census · H_9392 · owner observation \"A⇄G is not the brain, it only decides speak-or-not\"). EVIDENCE (4 independent, machine-checkable): ① core/decode.py imports = sys·math·os·struct·numpy — zero brain/emit_policy import. ② all 8 brain_decide* variants return \"emit\": bool and nothing else. ③ tension→content channel = gen_ctx_from_decision → {phi, phase, tier, tier_name, motivation} + deliberation_k (5 scalars + K); reaches the seed prefix and best-of-K breadth ONLY. ④ core/brain.py:196 already codifies it as law — \"H_9325 DO-MOUTH · THE DISJOINT WALL IS THIS FUNCTION\"; machine-check `mouth` ∉ any brain_decide* arglist = 0 hits ✓. READING — on the EMIT axis this is CORRECT SEPARATION (a_substrate_disjoint: separation = preservation): it is what makes p5 machine-checkable and what cleanly attributes the wall to the CLM. On the CONSCIOUSNESS axis it is a DESIGN GAP: the organ named \"consciousness engine\" holds no causal write on its own thought content — a pulse with no hands. That gap is not a defect of A⇄G but the SAME ROOT as the wall: the substrate has no content-side interface for anything to address. SCOPE — this bounds A⇄G's reach; it does NOT touch the emit-axis results (urgency phasic Δ remains the one proven shade channel). REOPEN/FALSIFY = `anima-py evaluate --tension-clamp {live|frozen|shuffled}` on a fixed seed+ckpt, controls = (seed-prefix pinned, K pinned); live arm beating both controls with Δ>0 on held-out recombination DV falsifies. NEXT = H_9392 BRIDGE-BOLT (--store-mix, $0) decides whether the missing runtime bridge is an interface problem (bolt-on suffices ⇒ no redesign) or a LEARNED-interface problem (⇒ two-store native redesign H_9393 is the only path). ⚠️ prior: the unlearned-interface class is already exhausted (read-side 6 lane + γ + depth-RF all floor) ⇒ negative is structurally the likelier outcome; it is $0, so fire first.",
+      "children": []
      }
     ]
    },
