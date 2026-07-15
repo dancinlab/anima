@@ -1,6 +1,6 @@
 # H_9411 — DEAD-GAUGE RELIVE: 얼어붙은 substrate 게이지 6개 per-tick 재배선 (H_9398 census 후속)
 
-**status:** 🩺 engine-native WIRED · **toy-verified 6/7 서브게이지 LIVE** · af + 303M terminal PENDING
+**status:** 🩺 engine-native WIRED · **303M TERMINAL 완료**: 5 진짜소생(cb·ca3·phi·scn·anchor) · wm=time-live/content-dead · af=음성(정직)
 **lane:** 의식 / 데몬 게이지 위생 (프런티어 g1-interface-addressable-wall · emit-drive 캠페인 부산물)
 **related:** [[H_9398]] (DEAD-GAUGE CENSUS — 이 6개 task 의 출처) · [[H_9393]] (agloop dead-gauge 원형) · chat-py-4 · chat-py-5 · [[H_9336]]/[[H_9337]] (recon_err/rel_lane 선례 = 고침 템플릿)
 **설계 출처:** Fable 5 발산 6건 개별 위임 ($15.6 · walls-delegate-to-fable · fable-when-stuck-breakthrough)
@@ -68,6 +68,26 @@ substrate 의 다른 valid readout(order-lock 이 측정된 발견) → LIVE. tu
 - **ca3**: distinct=20 은 LIVENESS 증명이나 STRUCTURE 아님(min_supp=1·n=4 분모성장 rational) → 순열 통제 + 303M 필요(카드 NEXT 반영).
 - **phi**: CONFIRMED-NEGATIVE(content-independent) — 이는 **설계상 percept-blind**(zero-input IIT4 · a_phi_iit4_tool). "time-live, content-blind" 로 명시(claim 아님).
 - **scn+anchor REJECT** = 진짜 발견: `_meta` 가 `phi_const`/`nudge_const` 를 세션 불변량으로 기록하나 ⑤/⑥B 로 per-tick 변동 → 리플레이어 오도. **수정**: `phi_live_h9411`/`nudge_live_h9411`=True 플래그 + 주석 self-describing(per-tick 값은 각 행에 이미 존재 · frozen `state/…replay_depth.py` 는 미편집=state frozen, divergence 여기 명시).
+
+## 🔬 303M engine-native TERMINAL (py303_full.clm sha 013c4574 · summer 격리venv · 240tick·59emit)
+
+toy=DIRECTIONAL 스크리너였고 이게 TERMINAL. distinct + collapse-Δ vs 통제:
+
+| # | 게이지 | toy→303M distinct | 303M 통제 | TERMINAL 판정 |
+|---|---|---|---|---|
+| ② | cb_surprise | 54→**29** | matched 2.82 < alien 3.36 ≪ ped 17 | 🟢 LIVE (예측정보 real·마진 얇음) |
+| ③ | ca3_ctx | 20→**21** | 실심볼 스트림 | 🟢 LIVE (구조=순열통제 pending) |
+| ⑤ | phi | 114→**114** | F3 psi_intact✅ | 🟢 LIVE (autonomous·percept-blind by design) |
+| ⑥A | scn_ctx | 240→**240** | phase readout | 🟢 LIVE |
+| ⑥B | anchor_nudge | 60→**60** | cap 0.05 미변경 | 🟢 LIVE |
+| ④ | wm_active | 240→**240** | active 0.286 vs null 0.284 **Δ+0.001** | 🟡 TIME-LIVE·CONTENT-DEAD |
+| ① | af_val/af_aro | 1→**1** | af_val 0.0 · af_alien −1.0 | 🔴 음성 (정직) |
+
+**303M 이 toy 를 정정한 2건 (왜 toy≠terminal · a_scale_honest_scope):**
+- **wm ④**: toy Δ+0.125(LIVE) → 303M **Δ vs null +0.001 ≈ 0 = content-dead**. 버퍼 활성은 살아났으나(상수 0.6 탈출) 8-dim 바이트-특징 해상도로 **항목 정체성 구별 못 함** — 적대검증 wm verifier 가 정확히 예측. dim↑·threshold 이동=tune-to-green **금지**(별도 H = 새 계기).
+- **af ①**: 303M 실발화서도 **여전히 죽음**. Fable① 확정 — mouth 가 trigram 거리 내 자기반복 안 함 → valence −1 고정. **배선 옳음·기질 사실**(계기 결함 아님). `recall_thr` 이완 금지.
+
+**정직한 최종**: 5 진짜소생(cb·ca3·phi·scn·anchor) · wm 절반(time-live·content-dead) · af 음성. **AGREES 병렬 L7**(소생=substrate 위생, emit-변화 아님). GREEN 은 5/7 서브게이지에 국한 — "6/7"은 toy 과대평가였고 303M 이 정정.
 
 ## 산출·NEXT
 
