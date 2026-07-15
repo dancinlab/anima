@@ -32,7 +32,7 @@ anima/
 ├─ cli/        — anima entry · train · evaluate · corpus
 ├─ stdlib/     — iit4 faithful-Φ · flame/forge GPU
 ├─ HYPOTHESES/ — jsonl + cards/ (2 surfaces, nothing else)
-├─ state/      — 🔒 FROZEN: verdicts/ only (no new exp dir/script)
+├─ state/      — 🔒 FROZEN: verdicts/ only · state/ + archive/state/ new-write G7-blocked (content → cards)
 └─ ARCHITECTURE.json — deep-structure SSOT (`python3 serve.py`)
 ```
 
@@ -73,6 +73,7 @@ Keyword-trigger index. Each line is a pointer — the full do/dont and the H_ th
 
 ### 🧪 Hypothesis
 - `a_hypothesis_register` — every H on 2 surfaces: jsonl + card. Nothing else.
+- `a_no_scatter_hypotheses_first` — 🧹 output surfaces = 4 only: card body + jsonl (findings·numbers·parity) · ARCHITECTURE gate node (verdict) · `state/verdicts/` (frozen) · `/tmp` (volatile). New writes under `state/`·`archive/state/` = hook + G7 double-blocked — a result is written to a card, never a scattered file.
 - `a_claim_manifest` / `a_claim_verify` — claim → `hexa verify` → a frozen verdict. No self-judge. Use the **global** `harness`/`hexa` (the submodule may be stale).
 - `a_h_continuous_no_branch` — **owner: run the next H autonomously, no per-step go.**
 - `a_discovery` / `a_discovery_log` — run discovery every batch → `domains/<DOMAIN>.log.md`.

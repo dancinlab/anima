@@ -17180,6 +17180,12 @@
     "state": "pos-conv",
     "lesson": "신호-생존(signal-liveness)은 배선 arm 을 켠 것과 무관하다 — 그리고 ckpt 경로마다 다르다. H_9357 의 a1(immune top-2 gap)은 배선은 맞았으나 실제 데몬에서 immune store 가 1-cell 로 안 자라 g_recog 30틱 전부 0.0(죽은 신호). afield-d2 fallback 도 bin ckpt 로컬 스모크선 recon_err distinct=1(죽음)인데 303M CONV clockfix 선 distinct=44(LIVE) — 신호 죽음은 코드버그가 아니라 ckpt경로차.",
     "fix": "pool 발사 전에 그 신호가 살아있는지 **측정할 바로 그 ckpt 경로에서** trace 고유값으로 확인하라(chat-py-3/5 확장). 로컬 스모크는 대표 ckpt 로. 신호가 죽으면 사전등록 fallback 으로 전환(tune-to-green 아님) 후 다시 alive 검증. 값이 상수인지 세는 건 $0."
+   },
+   {
+    "id": "no-scatter-gate-1",
+    "state": "closed",
+    "lesson": "state/ 쓰기를 막으니 실험 산출물이 archive/state/ 로 도망갔다 — 오너가 지목. 진범은 규칙이 아니라 차단 정규식의 룩비하인드 한 조각 (?<!archive/) 이 archive/state/ 를 명시적으로 면제하고 있었고, commons preserve-state(archive/state/scratch 보존 요구) + G2 remediation 안내문(프로브를 archive/state/<slug>/ 로 옮기라) 이 그 도주로를 오히려 가리키고 있었다. 세 규칙이 서로를 상쇄. '가치있는 산출물만 허용' 같은 판별 규칙은 정규식으로 못 그리고, 판별 가능한 척한 규칙이 그 구멍이었다.",
+    "fix": "차단이 아니라 보존 표면의 재지정 (a_no_scatter_hypotheses_first): 산출물 표면 4곳뿐 — 카드 본문+jsonl(발견·수치·parity 증거) · ARCHITECTURE gate 노드(verdict) · state/verdicts/(frozen) · /tmp(휘발). (1) enforcement.json pre_write·pre_bash H-NO-STATE-DIR 룩비하인드 제거(+--out 구멍 봉쇄) → archive/state/ 도 동일 차단 (2) enforce_anima_gates.py 신규 G7 = 커밋시점 backstop(훅이 못 보는 스크립트-내부 쓰기까지 차단) (3) has_parity_record() 가 카드 본문도 grep(신규 parity 증거 착지점) (4) commons preserve-state 는 .harness/commons.md repo override 로 /tmp 허용 명시 (5) H-TMP-SCRATCH 삭제 · G2/scatter-doc 안내문을 '카드로 흡수'로 교체. 재현성은 파일보존이 아니라 anima-py 재실행이 담보."
    }
   ]
  }
