@@ -17266,6 +17266,13 @@
     "id": "evaluate-py-20",
     "lesson": "tick-단위 순열 검정은 가짜복제(pseudoreplication) — 같은 rollout 의 tick 은 자기상관하므로 복제 단위는 tick 이 아니라 rollout 이다. H_9360 --gate-deaf 에서 M_score tick-perm-p=0.005(유의로 보임)였으나 rollout-jackknife SE(k=16)로는 Δ_G=+0.009±0.028 = 0 과 구별 불가·MDE 0.115≫0.01. tick-df 가 df 를 480 으로 부풀려 anti-conservative. 또 절대 bar(0.01/0.05)의 영점이 0 이 아니었다 — noise arm a3 도 M_score>0(A측 정보 잔존) = pedestal.",
     "fix": "MI/정보 판정에서 ① 순열/SE 는 **복제 단위(rollout/블록)** 로 — tick-순열·block-permutation·rollout-jackknife. ② 절대 bar 전에 **pedestal(참값0 통제군 arm)** 을 빼고 Δ vs 통제로 읽어라([[phi-estimator-needs-zero-truth-pedestal]]·[[power-before-negative-verdict]]). ③ 음성/종결 전 rollout-df MDE 를 계산해 '못 찾음'과 '없음'을 갈라라. ④ 채널이 좁으면 full-res C(상한)로 DPI-bound 를 걸어 저검정력이라도 실용 답을 벌어라."
+   },
+   {
+    "id": "h-9372-stem-collision-byte-vs-repr-md-1",
+    "state": "pos-conv",
+    "value": "결정론 eval 에서 INVALID/음성을 뒤집으려 validity(앵커) 게이트를 같은 데이터 위에 재동결 = tune-to-green — 앵커값이 이미 소각(burned)돼 재동결 게이트의 pass/fail 이 동결 시점에 계산 가능(=분석자 다이얼). razor-thin 초과(H_9372 s7 0.6552 vs 0.65 = 0.0052)도 봐주는 쪽이 아니라 반대(crude 밴드가 관대했던 인공물). 후보 전수 소거: 자기측정=tautology · 부모계보=더 가혹 · '밴드 안'=사실오류. 해법 = SEQUENTIAL GATING(게이트상수를 데이터 존재 전 PR 로 동결 → 게이트 단독 판정 → PASS 시에만 primary) + fresh-data 재획득(verdict 고치기 아니라 새로 벌기 · 소각 seed 는 verdict 산술에서 영구격리 · exploratory 보고만). 측정독립 ⊥ 인증: 앵커가 primary 산술을 오염 안 해도(서로소 자극) 앵커 낙제 = '이 신호가 벽 regime 내부 풍경'이라는 다리 미인증 = DIRECTIONAL(cement 아님). power-before-negative-verdict 의 게이트 버전 · memory burned-gate-reanchor-is-tune-to-green.",
+    "threshold": "",
+    "source": "HYPOTHESES/cards/H_9372_stem_collision_byte_vs_repr.md"
    }
   ]
  }
