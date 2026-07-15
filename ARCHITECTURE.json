@@ -640,8 +640,8 @@
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-collide-select",
           "type": "gate",
-          "verdict": "🧱 baseline POOL-DRY(target) (H_9362) · XBIND-wet ⏳ — 선택기=argmax conflict_scalar",
-          "detail": "engine-native 303M 측정(py303 --collide-select · 48후보): 전 arm 0/12=재조합 타깃 0회 등장=POOL-DRY(target). H_9304 DATA벽 생성-선택 축 재확인 — baseline 은 A 가 재조합 제안 못함 ⇒ 다음 레버=A 제안분포(XBIND-retrained), G 선택기 아님. 계기 3회 단련(비-W·죽은 clm_ce_ranged·surrogate 수리). XBIND-wet 서 S_emerge vs SECOND-A 분리가 본 판정."
+          "verdict": "🧱 baseline POOL-DRY(target)(H_9362) · $0 --pregate 계기 GREEN · XBIND-wet ⏳(중간ckpt) — 선택기=argmax conflict_scalar",
+          "detail": "engine-native 303M(py303 --collide-select·48후보): 전 arm 0/12=POOL-DRY(target), H_9304 DATA벽 생성-선택축 재확인 ⇒ 다음레버=A제안분포(XBIND). WET(Fable): 3000step 완주=천장동률 오판정 → 판별창=중간ckpt(--ckpt-every)+SATURATED 칸. $0 --pregate(g<-.05 novel·a≤.05 미유창·toy 12/12 FIRE-OK). 본판정=summer py303 wet S_emerge vs SECOND-A."
          },
          {
           "id": "brain-structure-engine-lanes-do-mouth-h9328-cf-h9376",
