@@ -753,6 +753,7 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
     print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
     print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
+    print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9628 z 용량/노출 census(트레이스 판독·디코드 없음)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
@@ -7281,7 +7282,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--pc2-direction", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--z-census", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -7294,6 +7295,303 @@ _KNOWN_FLAGS = frozenset((
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--cascade-null",
 ))
+
+
+def _z_census(argv):
+    """H_9628 z-DOSE STARVATION CENSUS — the $0 gate that must clear BEFORE H_9576's
+    direction null (rho=-0.077) may be read as a wall rather than a dose artefact.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --z-census`
+
+    H_9576 fired at gain=1 calling it "the log-prob natural unit". That was an ASSUMPTION,
+    never a measurement. Its causal chain is 3 links —
+        z (intended meaning) →① physical effect (context-byte logit penalty)
+                             →② proximal observable (context-byte share of the output)
+                             →③ remote readout D (bigram-seed overlap)
+    — and H_9576 measured only z→③, with a positive control on no link. rho≈0 does not say
+    WHICH link broke. This census certifies links ① and ② from the traces alone (no decode).
+
+    Three sections, each with its own controls:
+
+      (0) z distribution — var · IQR · |z|95 · route_k (deliberation_k) census.
+      (1) EXPOSURE (the INVALID-EXPOSURE gate) — core/decode.py:2097 applies the bias on the
+          lm-branch ONLY; a grounded anchor-copy step never reaches it. So the effective dose
+          is z × (that tick's lm-step count), and a tick with 0 lm-steps is UNEXPOSED. The
+          trace records no lm counter — but the rng arm is a POSITIVE CONTROL for exposure:
+          it re-keys `seed_rng`, which core/decode.py:2078 feeds ONLY to _mouth_sample_row,
+          which is called ONLY on the lm branch. Hence rng-divergence ⟹ that tick had ≥1
+          lm-step. 1 − (rng diverged / rng total) is a rigorous UPPER BOUND on the
+          lm-step=0 fraction. Bar (frozen): >30% ⇒ INVALID-EXPOSURE.
+      (2) DOSE — the pre-registered zeta-half (argmax-flip-50% dose) is NOT computable here:
+          it needs the per-step posterior, which the traces do not carry, and the live mouth
+          is a temp=1.0 SAMPLER (emit_temp), not an argmax — so "argmax-flip" is not even the
+          running mechanism. Per the card's own contingency (a) this reports the honest
+          trace-computable surrogate instead, and prints the limits.
+          SURROGATE pi-dose: the mechanism's physical claim is context-presence — z is
+          SUBTRACTED from every byte in the model's own T=24 window, so z<0 BOOSTS in-window
+          bytes (pulls toward context) and z>0 pushes off-context. At the first byte where
+          steered diverges from base, rebuild that window from (seed ++ base[:i]) and ask
+          whether the chosen byte is IN it. pi_base = P(base byte ∈ window) is the unbiased
+          pedestal drawn at the SAME position (paired), so the contrast is within-position.
+          Predicted sign is fixed a priori by the sign of mean z, not by the data.
+          Controls: (i) the arm's own base draw (paired pedestal) (ii) the rng arm, same |z|,
+          draw-stream re-key only, no logit change ⇒ its Delta-pi must be ≈0. Each control is
+          reported SEPARATELY against the experiment — never Delta=exp−max(controls), which is
+          an order-statistic bias that manufactures KILLs (probe-defect-census-max-control-bias).
+          Test = exact two-sided McNemar on the discordant pairs (paired binary), plus the
+          resolvable |Delta-pi| so an underpowered null reads VOID, not negative.
+
+    Frozen bars (card H_9628 · do not retune): |z|95 ≥ zeta-half ⇒ PASS-DOSED · |z|95 <
+    zeta-half/4 ⇒ VOID-STARVED (H_9576 reclassified) · between ⇒ PENDING · lm-step=0 fraction
+    >30% ⇒ INVALID-EXPOSURE · calibration self-consistency FAIL ⇒ INVALID.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import math as _pm
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --z-census")
+        return 2
+
+    # Mirrors core/decode.py::clm_decode_grounded — the CLM causal window the bias acts on.
+    _T = 24
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return []
+        out = []
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if not r.get("_meta"):
+                out.append(r)
+        return out
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    def _quant(v, p):
+        if not v:
+            return 0.0
+        s = sorted(v)
+        i = p * (len(s) - 1)
+        lo = int(i)
+        hi = min(lo + 1, len(s) - 1)
+        return s[lo] * (1.0 - (i - lo)) + s[hi] * (i - lo)
+
+    def _mcnemar_p(b01, b10):
+        """Exact two-sided McNemar (binomial on the discordant pairs)."""
+        n = b01 + b10
+        if n == 0:
+            return 1.0
+        k = min(b01, b10)
+        tail = sum(_pm.comb(n, i) for i in range(0, k + 1)) / float(2 ** n)
+        return min(1.0, 2.0 * tail)
+
+    print("=== anima evaluate --pc2-direction --z-census — z DOSE/EXPOSURE (card H_9628) ===")
+    print("traces: %s  (seeds: %s)" % (d, ",".join(str(s) for s in seeds)))
+    print("chain:  z →① logit penalty on in-window bytes →② context share →③ D (H_9576 read ③ only)")
+    print("bar:    |z|95≥ζ½ PASS-DOSED · |z|95<ζ½/4 VOID-STARVED · lm-step=0 >30% INVALID-EXPOSURE")
+    print("")
+
+    # ── (0) live z distribution ──────────────────────────────────────────────
+    zs, rks, temps = [], {}, set()
+    for sd in seeds:
+        for r in _rows("bias", sd):
+            if not r.get("emit") or r.get("pc2_z") is None:
+                continue
+            zs.append(float(r["pc2_z"]))
+            rk = r.get("route_k")
+            rks[rk] = rks.get(rk, 0) + 1
+            if r.get("emit_temp") is not None:
+                temps.add(round(float(r["emit_temp"]), 4))
+    if len(zs) < 3:
+        print("  ⇒ ⛔ VOID — n=%d live z samples is unreadable (power-before-negative)." % len(zs))
+        return 0
+    mean = sum(zs) / len(zs)
+    var = sum((v - mean) ** 2 for v in zs) / (len(zs) - 1)
+    az = [abs(v) for v in zs]
+    z95 = _quant(az, 0.95)
+    iqr = _quant(zs, 0.75) - _quant(zs, 0.25)
+    npos = sum(1 for v in zs if v > 0)
+    print("  (0) live z   n=%d  mean=%+.4f  var=%.6f  sd=%.4f" % (len(zs), mean, var, var ** 0.5))
+    print("      |z|95=%.4f  IQR=%.4f [%+.4f,%+.4f]  min=%+.4f max=%+.4f"
+          % (z95, iqr, _quant(zs, 0.25), _quant(zs, 0.75), min(zs), max(zs)))
+    print("      sign split: z>0 %d · z<=0 %d   route_k(deliberation_k)=%s   emit_temp=%s"
+          % (npos, len(zs) - npos,
+             ",".join("%s:%d" % (k, v) for k, v in sorted(rks.items(), key=lambda x: str(x[0]))),
+             ",".join(str(t) for t in sorted(temps)) or "n/a"))
+    # z is subtracted from in-window bytes (core/decode.py:2100-2104): z<0 ⇒ in-window BOOSTED.
+    pred_up = mean < 0
+    print("      ⇒ mechanism (decode.py:2100 row[v]-=z) predicts Δπ %s at this z sign"
+          % ("> 0 (pull TOWARD context)" if pred_up else "< 0 (push OFF context)"))
+    print("")
+
+    # ── (1) exposure census — the INVALID-EXPOSURE gate ──────────────────────
+    def _diverge(arm):
+        nd, nt, firsts = 0, 0, []
+        for sd in seeds:
+            for r in _rows(arm, sd):
+                if not r.get("emit"):
+                    continue
+                b, s = _b64(r.get("gtext_b64")), _b64(r.get("gtext_pc2_b64"))
+                if not s:
+                    continue
+                nt += 1
+                i = next((k for k in range(min(len(b), len(s))) if b[k] != s[k]), -1)
+                if i < 0 and len(b) != len(s):
+                    i = min(len(b), len(s))
+                if i >= 0:
+                    nd += 1
+                    firsts.append(i)
+        return nd, nt, firsts
+
+    rnd, rnt, rfirst = _diverge("rng")
+    bnd, bnt, bfirst = _diverge("bias")
+    lm0 = (1.0 - (rnd / float(rnt))) if rnt else 1.0
+    print("  (1) exposure — rng re-keys seed_rng, read ONLY by _mouth_sample_row on the lm branch")
+    print("      ⇒ rng diverged %d/%d ⟹ that many emit ticks provably had ≥1 lm-step"
+          % (rnd, rnt))
+    print("      ⇒ lm-step=0 fraction ≤ %.4f (%.2f%%)   bar >30%% ⇒ INVALID-EXPOSURE  ⇒ %s"
+          % (lm0, 100.0 * lm0, "INVALID-EXPOSURE" if lm0 > 0.30 else "CLEARED"))
+    if bfirst and rfirst:
+        print("      first-divergence byte index: bias mean=%.2f med=%.1f min=%d · rng mean=%.2f med=%.1f min=%d"
+              % (sum(bfirst) / len(bfirst), _quant(bfirst, 0.5), min(bfirst),
+                 sum(rfirst) / len(rfirst), _quant(rfirst, 0.5), min(rfirst)))
+        print("      ⇒ NOTE: tick-divergence is SATURATED in BOTH arms (rng too) ⇒ zero")
+        print("        discriminative power as a dose readout — Δ vs control ≈ 0 (p7).")
+    if lm0 > 0.30:
+        print("")
+        print("  ⇒ VERDICT: ⛔ INVALID-EXPOSURE — the anchor-copy path starves the channel;")
+        print("     dose is not the question yet, and H_9576's null is unreadable either way.")
+        return 0
+    print("")
+
+    # ── (2) dose — zeta-half unmeasurable ⇒ card contingency (a): pi-dose surrogate ──
+    print("  (2) ζ½ (argmax-flip-50% dose) — NOT COMPUTABLE from these traces:")
+    print("      · no per-step posterior/logit-gap field exists in the trace schema, and")
+    print("      · emit_temp=1.0 ⇒ the live mouth SAMPLES; 'argmax-flip' is not the running")
+    print("        mechanism at all. Card contingency (a) ⇒ honest surrogate below.")
+    print("      ⇒ literal ζ½ cells (PASS-DOSED/VOID-STARVED) are UNADJUDICABLE here.")
+    print("")
+    print("  (2) surrogate π-dose = P(chosen byte ∈ own T=%d window) at first divergence" % _T)
+
+    res = {}
+    for arm in ("bias", "rng"):
+        n = b01 = b10 = nb = ns = 0
+        for sd in seeds:
+            for r in _rows(arm, sd):
+                if not r.get("emit"):
+                    continue
+                base_b, st_b = _b64(r.get("gtext_b64")), _b64(r.get("gtext_pc2_b64"))
+                sd_b = _b64(r.get("seed_b64"))
+                if not st_b or not sd_b:
+                    continue
+                i = next((k for k in range(min(len(base_b), len(st_b)))
+                          if base_b[k] != st_b[k]), -1)
+                if i < 0:
+                    continue
+                win = set((sd_b + base_b[:i])[-_T:])
+                bi, si = base_b[i] in win, st_b[i] in win
+                n += 1
+                nb += 1 if bi else 0
+                ns += 1 if si else 0
+                if (not bi) and si:
+                    b01 += 1
+                elif bi and (not si):
+                    b10 += 1
+        if n == 0:
+            print("      %-4s n=0 — no divergent tick to read (VOID)" % arm)
+            continue
+        pb, ps = nb / float(n), ns / float(n)
+        p = _mcnemar_p(b01, b10)
+        mde = 1.96 * ((b01 + b10) ** 0.5) / float(n)
+        res[arm] = {"n": n, "pb": pb, "ps": ps, "d": ps - pb, "p": p, "mde": mde}
+        print("      %-4s n=%-4d π_base=%.4f → π_steer=%.4f  Δπ=%+.4f  "
+              "(discordant %d↑/%d↓ · exact McNemar p=%.4f · resolvable |Δπ|≈%.3f)"
+              % (arm, n, pb, ps, ps - pb, b01, b10, p, mde))
+    if "bias" not in res or "rng" not in res:
+        print("  ⇒ ⛔ VOID — an arm carried no divergent tick; the contrast is unreadable.")
+        return 0
+    b, rg = res["bias"], res["rng"]
+    print("      controls reported SEPARATELY (never Δ=exp−max(ctrl) · order-statistic bias)")
+    print("        ctrl-i  paired base pedestal (same position, unbiased draw) — inside each row")
+    print("        ctrl-ii rng arm: same |z|, draw re-key, NO logit change ⇒ Δπ must be ≈0")
+    print("")
+
+    # ── (3) positive controls ────────────────────────────────────────────────
+    print("  (3) positive controls")
+    print("      PC-a exposure: rng is a KNOWN-LIVE lm-branch perturbation — %s (%d/%d diverged)"
+          % ("LIVE" if rnd > 0 else "DEAD", rnd, rnt))
+    print("      PC-b sign-split: mechanism predicts Δπ REVERSES for z>0 vs z<0 — "
+          "n(z>0)=%d ⇒ %s" % (npos, "VOID (underpowered · power-before-negative)"
+                              if npos < 20 else "readable"))
+    print("      PC-c calibration (ζ=ζ½ ⇒ flip≈50%): NOT-RUN (ζ½ unmeasurable) — NOT a FAIL")
+    print("")
+
+    # ── verdict ──────────────────────────────────────────────────────────────
+    sig = b["p"] < 0.05
+    right_sign = (b["d"] > 0) if pred_up else (b["d"] < 0)
+    rng_null = rg["p"] >= 0.05
+    print("  ⇒ VERDICT (literal ζ½ axis): 🟡 PENDING-BY-INSTRUMENT — ζ½ needs the per-step")
+    print("     posterior; these traces do not carry it (see FOLLOW-ON below).")
+    if sig and right_sign and rng_null:
+        v = ("🟢 PASS-DOSED (SURROGATE) — the live z DOES physically move the mouth in the\n"
+             "     direction the mechanism predicts (Δπ=%+.4f · p=%.4f), while the rng control\n"
+             "     is null (Δπ=%+.4f · p=%.4f). Link ①→② is LIVE and dosed ⇒ the dose-starvation\n"
+             "     claim of H_9628 DIES, and H_9576's null is NOT rescued by starvation."
+             % (b["d"], b["p"], rg["d"], rg["p"]))
+    elif sig and (not right_sign) and rng_null:
+        v = ("🔴 SIGN-INVERTED — Δπ=%+.4f is significant but OPPOSITE the mechanism's own\n"
+             "     prediction ⇒ the implemented bias is not doing what decode.py:2100 claims."
+             % b["d"])
+    elif not rng_null:
+        v = ("⛔ INVALID — the rng control is NOT null (Δπ=%+.4f · p=%.4f): a draw-stream re-key\n"
+             "     alone moves π, so the bias arm's Δπ is not attributable to z."
+             % (rg["d"], rg["p"]))
+    elif b["mde"] > abs(b["d"]):
+        v = ("🟡 VOID-UNDERPOWERED — |Δπ|=%.4f sits under the resolvable %.3f at n=%d;\n"
+             "     a starved dose stays UNMEASURED, not demonstrated (power-before-negative)."
+             % (abs(b["d"]), b["mde"], b["n"]))
+    else:
+        v = ("🧱 SURROGATE-STARVED — the live z does NOT move the proximal observable\n"
+             "     (Δπ=%+.4f · p=%.4f) though exposure is cleared ⇒ H_9576 reads VOID-STARVED\n"
+             "     and a gain sweep g∈{2,4,8} is justified." % (b["d"], b["p"]))
+    print("  ⇒ VERDICT (surrogate π-dose axis): " + v)
+    print("")
+    print("  LIMITS (honest scope · a_scale_honest_scope)")
+    print("     · π-dose reads the FIRST divergent step ONLY: past it the two arms' contexts")
+    print("       differ, so every later step is incomparable. This bounds link ①→② at one")
+    print("       step, not over the whole utterance.")
+    print("     · it certifies the PHYSICAL effect, NOT the semantics — a live ①→② says")
+    print("       nothing about whether PC2's MEANING survives to ③ (that is H_9576's null).")
+    print("     · surrogate ≠ the pre-registered ζ½ cell: DIRECTIONAL, not a ζ½ verdict.")
+    print("  FOLLOW-ON (to close the literal ζ½ cell · card contingency (b))")
+    print("     · needs a posterior-gap recorder on the decode path (e.g. an `anima-py chat`")
+    print("       flag logging per-lm-step top-2 logit gap + in-window mass), then a ζ sweep.")
+    print("     · 303M decode is POOL-only (summer/aiden), never mini (heavy-anima-eval-pool-not-mini).")
+    return 0
 
 
 def _pc2_direction(argv):
@@ -7326,6 +7624,9 @@ def _pc2_direction(argv):
     import json as _pj
     import base64 as _pb
     import random as _prand
+
+    if "--z-census" in argv:                      # H_9628 dose/exposure gate (sister sub-mode)
+        return _z_census(argv)
 
     d = ([x for x in argv if not x.startswith("--")] or [""])[0]
     if not d:
