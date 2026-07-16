@@ -128,5 +128,31 @@ route-audit 에서 만든 길이-감사가 일반 도구이므로, 같은 결함
 
 **⚠️ scope**: 이건 **계기가 이제 스스로 검사한다**는 것이지 **기존 valence-audit verdict 가 오염됐다는 게 아니다** — 그 매니페스트들이 실제로 매칭됐는지는 **미확인**(매니페스트 소재 필요). 다음 valence-audit 실행이 자동으로 답한다. **일반 교훈**: 계기가 인쇄하는 "length-matched"·"byte-matched" 같은 문구는 **검증이 아니라 주석일 수 있다** — 검사 코드가 있는지 확인하라(`tool-definition-read-code-not-docstring` 의 계기판).
 
+## 🔺 확산 3번째 — `--bind-locus` 는 confound 가 아니라 **조용한 오인덱싱** (2026-07-17 · $0)
+"byte-matched twin" 주장 계기 중 마지막(`:2403` · **H_9331 = cement 된 벽 verdict**)을 봤다. 이건 **앞 둘보다 심각**하다 — 주장이 **load-bearing** 인데 검사가 0이었다:
+
+```
+S_seed = len(A["seed"].encode())     ← A 의 길이만
+base   = T - (S_seed + 6)            ← A 기준 우측정렬 offset
+stem_t0/car_t0 = base + …            ← A 기준 인덱스
+donor  = B_taps[l][stem_t0:…]        ← 그 인덱스로 B 를 퍼감 (5곳 전부)
+```
+`base` 는 **A 에서 한 번만** 계산되고 `B_taps`/`Ab_taps` 를 **A 기준 인덱스로 5곳 전부** 슬라이스한다. twin 의 seed 길이가 다르면 **B 자신의 우측정렬 offset 은 다른데** 코드가 그걸 모르므로 donor 가 **B 의 엉뚱한 위치**에서 온다 ⟹ **조용히 오정렬된 patch** = τ/S 가 쓰레기인데 verdict 처럼 읽힌다.
+- route-audit(negZ vs ped) · valence-audit(미검증 swap) = **대비를 오염**시킴 · **bind-locus = 측정 자체를 손상**시킴. 같은 계급의 **최악 형태**.
+
+**수리 = 경고가 아니라 REFUSE**(레포 자신의 G-SPIKE "refusing to measure" 패턴): pair 별 A↔B(및 Ab) seed byte-길이 대조 → 위반 시 **`return 2` 로 측정 거부**(위반 수·예시 3건·이유 인쇄) · 전부 매칭이면 `🟢 twin-guard` 인쇄.
+**단위검증**(모델 불요): 매칭쌍(`좋`3B↔`싫`3B) → 위반 0 통과 · 불일치쌍(`좋`↔`별로`) → `좋↔별로(B) 14B vs 17B` 검출→refuse.
+
+**⚠️ 이건 byte-identical 이 아니다(정직)**: 순수 추가지만 **하드 게이트**다 — 기존 매니페스트가 twin 을 제대로 매칭했다면 통과해 아무것도 안 바뀌고, **안 했다면 이제 거부한다**. 그게 요점이다. H_9331 verdict 가 오염됐다는 주장은 **아니다**(그 매니페스트 실제 매칭 여부 미확인 — **다음 실행이 자동으로 답한다**).
+
+## 📋 확산 전수 종합 — "matched" 주장 3계기 감사 완료
+| 계기 | 주장 | 검사 있었나 | 실패 시 결과 | 수리 |
+|---|---|---|---|---|
+| `--route-audit` | ped = negL 에 byte-length-matched | ✅ 참(단 **negZ 에 재사용**) | 대비 오염(operator+shift) | `ctrl_of` 주입 + 자동 길이감사 |
+| `--valence-audit` | "length-matched NEUTRAL atom" | ❌ **0줄**(라벨만 인쇄) | 대비 오염(form+shift) | atom/swap 자동 길이감사 |
+| `--bind-locus` | "byte-matched twin" | ❌ **0줄**(하지만 **load-bearing**) | **조용한 오인덱싱**(측정 손상) | **REFUSE 가드** |
+
+**⟹ 획득한 일반 법칙**: 계기가 인쇄/주석하는 **"matched"·"byte-matched"·"length-matched" 는 검증이 아니라 주장일 수 있다.** 그리고 그 주장이 **인덱스 산술에 load-bearing** 이면 결과는 confound 가 아니라 **손상**이다. ⟹ **주장 옆에 검사 코드가 있는지 확인하고, load-bearing 이면 warn 이 아니라 refuse 로 만들라.** ([[tool-definition-read-code-not-docstring]] 의 계기판 확장 — 그건 "docstring 말고 코드를 읽어라"였고, 이건 "**코드가 자기 전제를 검사하는지도 읽어라**".)
+
 ## 상태
 📏 감사 완결 (DIRECTIONAL) — **HIT 실재**(dOP 의 ≈97%가 3B 시프트 몫) **∧ 규모 무해**(0.0021 vs bar 0.05 = 24× 아래) ⟹ **cement verdict re-open 없음**. 산출 = 계기 위생 권고(surface 하드코딩 해제 + route_audit 에 --gn-freeze 배선). **distinct-from-kills:** A1 PASS-live 가 연 감사를 경로특정→크기측정까지 닫음. — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
