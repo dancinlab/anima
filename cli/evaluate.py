@@ -2478,6 +2478,32 @@ def twin_necessity_run(argv):
     acc = {a: {l: {"tau": [], "S": []} for l in layers} for a in ("SPAN", "COMP", "BLIND", "IDENTITY")}
     ped = {"tau": [], "S": []}
     v4_sign_ok = 0
+
+    # H_9612 · TWIN BYTE-LENGTH GUARD — REFUSE, do not warn.
+    # The docstring calls the donor a "byte-matched twin", and that claim is LOAD-BEARING here, not
+    # cosmetic: `base` below is computed ONCE from A's seed length, and every donor tap slices
+    # B_taps/Ab_taps with those A-derived indices (stem_t0/car_t0/…). If a twin's seed is a different
+    # byte length its own right-aligned offset differs, so the donor would be lifted from the WRONG
+    # positions in B — a silently misaligned patch, not merely a confound. Nothing checked it, so a
+    # manifest that broke the twin invariant would have produced garbage τ/S that read as a verdict.
+    # (Same defect class as route-audit's negZ-vs-ped and valence-audit's unverified swap atom — but
+    # those degrade the contrast, this one corrupts the measurement. Hence: refuse, like G-SPIKE.)
+    _tw = []
+    for (A, B, Ab) in pairs:
+        la = len(A["seed"].encode())
+        for nm, X in (("B", B), ("Ab", Ab)):
+            if X is not None and len(X["seed"].encode()) != la:
+                _tw.append("%s↔%s(%s) %dB vs %dB"
+                           % (A["stem"], X["stem"], nm, la, len(X["seed"].encode())))
+    if _tw:
+        print("ERROR: twin byte-length invariant BROKEN on %d pair(s) — the donor taps are sliced with\n"
+              "       A's right-aligned indices, so a different-length twin is lifted from the WRONG\n"
+              "       positions (silently misaligned patch, not a confound). Refusing to measure.\n"
+              "       %s%s" % (len(_tw), " · ".join(_tw[:3]), " …" if len(_tw) > 3 else ""),
+              file=sys.stderr)
+        return 2
+    print("  [twin-guard] 🟢 byte-length matched on all %d pair(s)" % len(pairs), flush=True)
+
     for (A, B, Ab) in pairs:
         S_seed = len(A["seed"].encode())
         base = T - (S_seed + 6)                      # margin forward right-aligns seed+cont (cont 6B)
