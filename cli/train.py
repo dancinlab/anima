@@ -1132,7 +1132,7 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0):
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1182,13 +1182,18 @@ class TrainShell(nn.Module):
         # not detach — the trunk logit is never in the answer-CE graph). The non-answer rows keep the
         # ordinary trunk LM CE (the trunk learns the prompt spelling + query formation via yn_q).
         if sb is not None:
-            x_s, y_s, K, pols = sb
+            x_s, y_s, K, pols, tgt = sb
             out_s = model(x_s)                                  # (targets None → CE assembled here, fp32)
             logits_s = out_s["logits"].float()                 # (Bs, V, T)
             pen_s = out_s["pen_trunk"].float()                 # (Bs, d, T) pre-slot trunk penultimate
             Bs, _, Ts = logits_s.shape
             yn_q = pen_s[:, :, Ts - 1]                         # (Bs, d) query row (qpos = T-1, cell-asserted)
-            store_logits = model.clms(yn_q, K, pols)          # (Bs, V) = λ·s (op order == store_apply)
+            # H_9423 Stage1.5 --store-oracle-train: hand the address for free at TRAIN time (oracle_slot=
+            # target_slot) so ∂L/∂v is not gated on the softmax lookup bootstrapping first. Separates the
+            # value-read layer (a) from the address-learning layer (c): if val differentiates under free
+            # address (ORACLE≥.90) the residual 303M wall is pure W_q address-learning; if not, deeper.
+            osl = tgt if sb_oracle else None
+            store_logits = model.clms(yn_q, K, pols, oracle_slot=osl)   # (Bs, V) = λ·s (op order == store_apply)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
@@ -1240,7 +1245,9 @@ class StoreBindCell:
                 sys.exit("[store-bridge] qpos scanner parity broken (window geometry != eval store_run)")
             K = np.stack([key_emb_np[np.frombuffer(e.encode("ascii"), np.uint8)].mean(0)
                           for e in ents]).astype(np.float32)          # (n_slot, d_k) = clms._entity_key
-            self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long)))
+            tgt = int(r["target_slot"])                              # H_9423 Stage1.5: query-entity slot (oracle-train)
+            self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long),
+                            torch.tensor(tgt, dtype=torch.long)))
         n_blocks = len(self.ex) // n_slot
         vb = max(1, int(n_blocks * val_frac))
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
@@ -1288,6 +1295,9 @@ def main():
     ap.add_argument("--clms-d-k", type=int, default=64, help="CLMS content-address key dim")
     ap.add_argument("--clms-d-s", type=int, default=64, help="CLMS polarity value dim")
     ap.add_argument("--clms-d-g", type=int, default=64, help="CLMS fusion-bottleneck (yn_q op-gate dim; H_9423 value-read fix)")
+    ap.add_argument("--store-oracle-train", action="store_true",
+                    help="H_9423 Stage1.5: hand the address for free during TRAINING (oracle_slot=target_slot) "
+                         "→ separates value-read (a) from address-learning (c). DIAGNOSTIC, not a production lever.")
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
     ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
     ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
@@ -1631,9 +1641,10 @@ def main():
     def get_store_batch():
         idx = torch.randint(0, sb_cell.train_n, (Bs_global,), generator=sb_gen)   # all ranks identical
         sl = idx[rank * Bs_local:(rank + 1) * Bs_local].tolist()
-        xs, ys, Ks, Ps = zip(*[sb_cell.ex[i] for i in sl])
+        xs, ys, Ks, Ps, Ts_ = zip(*[sb_cell.ex[i] for i in sl])
         return (torch.stack(xs).to(device), torch.stack(ys).to(device),
-                torch.stack(Ks).to(device), torch.stack(Ps).to(device))
+                torch.stack(Ks).to(device), torch.stack(Ps).to(device),
+                torch.stack(Ts_).to(device))                          # H_9423 Stage1.5 target_slot
 
     def get_batch(step):
         if cells:
@@ -1829,7 +1840,7 @@ def main():
         # on the already-averaged grads, so every rank's clip scale = the 1-GPU global-grad norm.
         _sb = get_store_batch() if sb_cell is not None else None
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
-                                           sb=_sb, sb_w=a.store_ans_weight)
+                                           sb=_sb, sb_w=a.store_ans_weight, sb_oracle=a.store_oracle_train)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()
