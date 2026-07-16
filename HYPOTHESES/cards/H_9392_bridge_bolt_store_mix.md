@@ -32,7 +32,7 @@ H_9359 가 벽을 **"연산자↔선언 저장소 런타임 조회 다리의 부
 **대립 예측:**
 - (A) 인터페이스 문제 → store-mix arm 이 통제군을 이긴다 ⟹ **재설계 불필요**, 지금 아키텍처 + 기관 하나.
 - (B) 학습된-인터페이스 문제 → store arm ≈ 통제군(우연) ⟹ 볼트온 계급 사망, **두-store 네이티브 재설계
-  (H_9393 예정)가 유일한 길**. 방증: read-side 6 lane + γ + depth-RF **전수 floor**([[H_9293]]), 진단
+  (H_9423 예정)가 유일한 길**. 방증: read-side 6 lane + γ + depth-RF **전수 floor**([[H_9293]]), 진단
   "정보는 복원되나 인과 소비 불가" = [[mitosis-wall-is-estimator-class]] 의 "정보 존재 ≠ 벽 돌파"와 동일 계급.
 
 ⚠️ **사전 고백(no tune-to-green):** (B) 가 구조적으로 더 그럴듯하다 — 동결 trunk 에 사후로 붙인 모든
@@ -143,12 +143,12 @@ H_9392 (B) 판정. v2 정합(V2_6 COTRAIN **공학습**만 0.987/0.992 성공 ·
 
 pool $0(forward-only)이었으나 **취소**: 계기가 actuator 라 발사는 산수를 GPU 로 재계산할 뿐(모델 새
 비트 0). Fable: "페이퍼 계산이 전 실험 결과를 미리 준다." 계기·ckpt·store 인프라는 준비됨(summer
-`py303_full.clm` + `anima-py` · `state/h9309-9312` held-out store) — 후속 H(H_9393)이 필요 시 재사용.
+`py303_full.clm` + `anima-py` · `state/h9309-9312` held-out store) — 후속 H(H_9423)이 필요 시 재사용.
 
-## NEXT — H_9393 TWO-STORE NATIVE (유일 남은 경로)
+## NEXT — H_9423 TWO-STORE NATIVE(⚠️ 구 참조 H_9393=병렬 DYNAMIC-FLOOR 충돌 · canonical H_9423) (유일 남은 경로)
 
 3-port 전멸 ⟹ 볼트온 계급 종결. 다리는 **태어날 때부터 공학습**해야 한다(trunk+store+학습된 다리 ·
 학습 중 store 순환-교체로 trunk 가 암기 대신 조회를 배우게 · v2 V2_6 이 toy 로 실증). 함의: 런타임
 store 삽입 = 학습 ⟹ **p8(train/infer 분리 없음)을 문자 그대로 구현**(깨는 게 아니라 지킴).
-- v2 V2_7 delivery-ceiling(동결특징 조회 상한 ~0.5)이 H_9393 설계 상수 = 학습된 게이트가 공급해야 할
+- v2 V2_7 delivery-ceiling(동결특징 조회 상한 ~0.5)이 H_9423 설계 상수 = 학습된 게이트가 공급해야 할
   조회 세기의 하한.
