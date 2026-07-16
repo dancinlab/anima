@@ -234,7 +234,7 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
-                          pc2_mouth=""):
+                          pc2_mouth="", dual_probe_fn=None):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -280,14 +280,34 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
         ctx["deliberation_k"] = 1 if _k < 1 else (4 if _k > 4 else _k)
     cand = generate(backend, ctx, True, anchors, mouth)
     cand_text = str(cand["text"])
-    g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
+    if dual_probe_fn is not None:
+        # H_9627 · dual content ledger (spoken W_E ⇄ withheld W_S · symmetric depletion).
+        # emit ⟺ S(withheld coverage) > E(spoken coverage): ½ emerges as the exchange-symmetric
+        # UNBIASED center of two gain-locked ledgers, NOT a setpoint — the two-sided restoring
+        # force the one-sided wm-cover gate lacked (H_9610 wall: it could oscillate but not hold
+        # ½ under score-shift). score_A is NOT the comparison here; it only sources write-strength
+        # (the caller gates the imagined candidate into W_E on emit / W_S on silence — both leak
+        # every tick). margin S−E = difference of two co-scaled coverages ⇒ score common-mode
+        # cancels (the common-mode rejection a single store cannot do). None = production byte-id.
+        _s_wh, _e_sp = dual_probe_fn(cand_text)
+        _s_wh = float(_s_wh)
+        _e_sp = float(_e_sp)
+        g_recog = _e_sp
+        _gate_pass = _s_wh > _e_sp
+        decision["dual_s_withheld"] = _s_wh
+        decision["dual_e_spoken"] = _e_sp
+        decision["dual_margin"] = _s_wh - _e_sp
+        decision["dual_cand_text"] = cand_text   # caller gates this into W_S on a silence tick
+    else:
+        g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
+        _gate_pass = score > g_recog
 
     # the refractory gate — clock (rate) and θ (should_emit) retired; kill/φ/content kept
     kill = safety_kill_switch_on(env_off)
     phi_r = safety_phi_ratchet_ok(pure_field_phi(pf), pf.phi_peak)
     cont = safety_content_ok(content_clean)
     safe = kill and phi_r and cont
-    emit = (score > g_recog) and safe
+    emit = _gate_pass and safe
 
     decision["emit"] = emit
     decision["safe"] = safe
