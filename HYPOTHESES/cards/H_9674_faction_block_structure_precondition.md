@@ -164,6 +164,47 @@ pedestal 은 균등 [977, 972, 923, 912]. 그 불균형이 adjacency 를 통째�
 은 여전히 미증명 — H_9643(GPU)이 그것을 묻는 카드이고, 이제 선결조건 3개(실재·layout아님·크기아님)를
 모두 통과했다. 발사 여부는 오너 판단.
 
+
+## 🔗 교차: H_9672 T3 (주소벽 돌파 · #3895) — 같은 텐서를 서로 모르고 쟀다
+
+병렬 세션이 **같은 penultimate 의 같은 유닛 축**을 다른 각도로 쟀고, 두 결과가 맞물린다
+(`a_parallel_session_compare`).
+
+| | 이 카드 (H_9674) | H_9672 T2/T3 |
+|---|---|---|
+| 대상 | penultimate 유닛 축 | penultimate (store lane 주소경로 W_q) |
+| 결과 | **블록 실재** (real/pedestal 54.07 · 선결조건 3/3) | **"사전학습-EN 은 penultimate 가 EN 에 묶임"** (Fable 가설B 확정) |
+| 방법 | 상관-모듈러리티 + pedestal/scramble/양성통제 | scratch d768 OFF/ON vs 303M 사전학습 |
+
+**AGREES**: 규율 동일(balanced 채점 · shortcut 봉쇄 · gap 으로 암기 배제). **CONFLICTS**: 없음 — 층이 다르다
+(가로 구조 vs 주소 경로).
+
+### ⚠️ NOVEL — 내가 찾은 블록이 그 'EN 점유' 일 수 있다
+
+H_9672 T2 의 결정적 대조: **scratch d768 은 addr-loss 없이도 자력 주소학습**(P1-balanced 0.9375 = 벽
+미재현) vs **303M 사전학습은 penultimate 가 EN 에 묶여** 벽이 실재. 즉 사전학습이 penultimate 유닛 축에
+**EN 점유 구조를 새긴다**.
+
+이 카드가 스스로 남긴 경고 — *"블록 있음 ≠ 파벌로 학습 가능 · 이 블록이 파벌의 substrate 인지 미지"* —
+와 정확히 맞물린다. 내 블록이 **파벌의 씨앗이 아니라 EN 점유의 흔적**일 수 있다.
+
+### ▶️ H_9643 의 선결조건 ④ (신규 · $0 · 사전등록)
+
+T2 가 이미 대조군을 만들어놨다 — **같은 계기를 두 ckpt 에 돌리면 $0 로 갈린다**:
+
+```
+anima-py evaluate <ckpt> --faction-block-structure <prompts.json> --n-factions-sweep 2,4,8,12,16
+  ① py303_full.clm      (사전학습 · EN 점유 보유)   → 블록 Q = ?
+  ② scratch d768        (자력 탈출 · EN 점유 없음)  → 블록 Q = ?
+```
+
+- **①에만 블록 ∧ ②엔 없음** ⟹ 블록 = **EN 점유의 흔적** ⟹ 파벌 substrate 아님 ⟹ H_9643 GPU **철회**.
+- **②에도 블록** ⟹ 블록은 사전학습 무관한 일반 구조 ⟹ H_9643 선결조건 ④ 통과.
+- 우연/통제: 기존 3-arm(pedestal·scramble·양성통제) 그대로. bar = ①/② 의 real/ped 비교.
+
+⚠️ 정직: 이 대조는 T3 가 **우연히 만들어준 것**이지 내가 사전등록한 게 아니다 — 그래서 **새 관문으로
+사전등록**하고 결과를 미리 못 박는다(위 두 갈래). 사후에 유리한 쪽을 고르는 것은 tune-to-green.
+
 ## 사망조건 (사전등록)
 
 - real/pedestal ≥1.5 (양성통제 통과 하에) ⟹ 블록 **실재** ⟹ 이 카드(블록 부재 주장) 사망 ∧ **H_9643 GPU 발사 정당화됨**.
