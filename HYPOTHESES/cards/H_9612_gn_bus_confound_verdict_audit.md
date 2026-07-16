@@ -68,5 +68,33 @@ HIT 의 크기(3B 시프트가 dOP 에 얼마나 기여하나)를 재려고 **�
 
 **정량화의 실제 요구조건(이제 특정됨)**: ⓐ **원 H_9355 매니페스트**(라우터를 실제로 가르는 실 stem — 내 합성 stem 은 축퇴) **AND** ⓑ **계기 수정**(negZ 용 길이매칭 통제 추가 · surface 하드코딩 해제) **AND** ⓒ `--gn-freeze` 를 `route_audit_run` 에 배선(현재 `dump_hidden`/`xbind` 에만 — 넘겨도 **조용히 무시**되므로 그대로 쓰면 거짓 "차이 없음"을 읽는다 ⚠️).
 
+## 📏 정량화 성공(추정) — **HIT 은 실재하나 규모가 bar 아래** (2026-07-17 · aiden CPU · $0 · DIRECTIONAL)
+앞 실패의 **원인 가설이 맞았다**: C3 결과파일이 `"ckpt": "swap_s7.clm"` 이라 원 H_9355 는 **CPT본**에서 돌았을 것 — 내가 쓴 `clm303_clean`(**베이스**)이 축퇴였다. aiden 의 **`natem_c34_main_s11.clm`(CPT본)** 으로 같은 재구성 셋 재실행:
+
+| ckpt | J_STEM | top_agree | 축퇴 |
+|---|---|---|---|
+| **natem_c34_main_s11**(CPT본) | 0.001234 | **0.33** | **NO ✅** 라우터가 갈린다 |
+| clm303_clean(베이스) | 0.000262 | **1.00** | YES — 전부 한 expert(앞 실패 원인 **확인**) |
+
+**CPT본에서의 수치**(`[ans]` 판독점 · `js_mean`):
+
+| 대조 | dOP | 비고 |
+|---|---|---|
+| `negZ`(13B) vs **`ped`(10B)** | **−0.002152** | ← **레포의 주 DV**(길이 불일치) |
+| `negZ`(13B) vs **`negJ`(13B)** | **−0.000064** | ← **길이매칭** 대조 |
+| **차이 = 3B 시프트 기여 추정** | **≈ +0.00209 bits** | **vs bar 0.05 = 24× 아래** |
+
+**⟹ 두 결론이 동시에 참이다:**
+- ✅ **HIT 은 실재한다** — 통제를 10B→13B 로 길이매칭하자 dOP 가 **−0.00215 → −0.00006**. **dOP 절대값의 대부분(≈97%)이 길이-시프트 몫**이었다. confound 경로는 열려 있고 실제로 흐른다.
+- 🟢 **그러나 H_9355 verdict 는 뒤집히지 않는다** — 기여 규모 **0.0021 bits 는 bar 0.05 의 24× 아래**. LOCUS-SPLIT(≥0.05) 도 LOCUS-SHARED(TOST ±0.02) 도 이 크기로는 안 움직인다. ⟹ **실재하지만 무해한 규모**(이 ckpt·이 재구성 셋 기준).
+
+**⚠️ over-claim 차단(8번째 · 스스로에게)**: ① **내 재구성 셋**이지 원 H_9355 매니페스트가 아니다 — 원 셋의 dOP 절대크기가 다르면 비율도 달라진다(내 셋은 dOP 가 애초에 bar 의 1/20 규모) ② **`negJ` 는 inert 통제가 아니라 실 부정표면**이라 `negZ−negJ` 는 "연산자-only" 가 아니다(혼입) — 진짜 inert 길이매칭 통제(`ped13`)는 **여전히 하드코딩에 막혀 주입 불가** ③ 따라서 **"기여 추정 ≈0.0021"** 이지 확정치가 아니다 ④ 이 run 은 `--gn-freeze` **없이** 돌았다(route_audit 미배선) — 그 0.0021 이 **GN bus 경유**인지는 별도 확인 필요(길이-시프트는 RF 내 경로로도 일부 흐를 수 있다).
+
+**⟹ H_9612 착지**: 감사가 **경로를 찾고(HIT) 크기를 재고(≈0.0021) 무해함을 확인**했다. **어떤 cement verdict 도 re-open 되지 않는다.** 남는 실질 산출 = **계기 위생 권고**(아래).
+
+## 🔧 계기 위생 권고 (verdict 무관 · 수리 비용 = 코드 변경)
+`--route-audit` 의 `ped` 는 docstring 대로 **negL(10B)에만** 길이매칭돼 있고, 주 DV 는 `X ∈ {negL, negZ}` 를 **같은 ped 로** 대조한다 ⟹ **negZ 팔은 구조적으로 +3B 불일치**. 규모는 이 셋에선 무해했으나(bar 24× 아래) **설계 결함 자체는 남는다** — dOP 가 더 큰 regime(원 셋·다른 ckpt)에서는 비율이 달라질 수 있다.
+**권고**: surface 하드코딩(`{negL,negZ,negJ,ped}`)을 풀어 **surface 별 길이매칭 ped**(`ped10`/`ped13`)를 매니페스트로 주입 가능하게 → negZ 는 `ped13` 과 대조. **+ `--gn-freeze` 를 `route_audit_run` 에 배선**(현재 넘기면 **조용히 무시** = 거짓 "차이 없음" 위험 ⚠️).
+
 ## 상태
-🔴 LIVE (감사 1차 체크 **HIT** 유효 · **정량화 시도→정직한 실패**: 계기가 길이매칭 통제를 하드코딩-거부 + 재구성셋 축퇴) — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
+📏 감사 완결 (DIRECTIONAL) — **HIT 실재**(dOP 의 ≈97%가 3B 시프트 몫) **∧ 규모 무해**(0.0021 vs bar 0.05 = 24× 아래) ⟹ **cement verdict re-open 없음**. 산출 = 계기 위생 권고(surface 하드코딩 해제 + route_audit 에 --gn-freeze 배선). **distinct-from-kills:** A1 PASS-live 가 연 감사를 경로특정→크기측정까지 닫음. — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
