@@ -76,7 +76,7 @@ py303_full·summer·격리venv(chat-py-6)·3-seed(7/4302/4303)·60tick·T=1.0·�
 ## NEXT (TERMINAL 미도달 · 잔여)
 
 **GREEN-DIRECTIONAL 범위**: 303M·3seed·λ=0.6단일·60tick. TERMINAL 아님 —
-1. **중심주장 완전 bar**(retune-free score-섭동 robustness): `--score-perturb` 계기 **미구현** → score-분포 섭동에 center ½ 불변 측정 = 후속(이번 fire는 center+spring만).
+1. **중심주장 완전 bar**(retune-free score-섭동 robustness): `--score-perturb` 계기 **IMPLEMENTED(v0.15.25·core/brain.py score_perturb=0.0 off)** + **toy 판별 PASS**: dual gate center perturb −0.3/0/+0.3서 **0.500 완전 불변**(emit⊥score) vs wm-cover(positive control) 0.286→0.929 이동(0.64 swing·perturbation 실재 증명). ⟹ dual ledger ½가 motivation score와 독립 = H_9610 one-sided store가 못한 score-robustness. **잔여=303M 확인**(toy→scale·a_toy_scale_recheck).
 2. λ dose-response 303M(P-pull-3 단조성).
 3. **프로덕션 default 전환·λ = 오너 p5**(데몬 발화리듬 변경).
 
