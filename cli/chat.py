@@ -1569,6 +1569,19 @@ def anima_consciousness_mode(ckpt, argv=None):
         _b = bytearray(_t.encode("utf-8", "surrogateescape"))
         random.Random((_sample_seed * 2654435761 + 0x9417) & 0x7FFFFFFF).shuffle(_b)
         return bytes(_b).decode("utf-8", "surrogateescape")
+    # H_9419 · G-pole REACH: which recognition functional the refractory gate reads.
+    #   d1 (default)  = clip01(d1 − 0.15) recall MARGIN — byte-identical to H_9415/16/17. Its bind
+    #     LOWERS d1 in the just-bound cell's neighborhood → margin drops → gate OPENS = sign-inverted
+    #     β that DIS-inhibits near-repeats (the geometric cause of P(emit|emit) > P(emit|silence)).
+    #   affinity      = clip01(d2 − d1) top-2 basin decisiveness (immune_memory_recall_reach). Emitting
+    #     BINDS the utterance → the new cell's whole Voronoi basin raises → near-repeat candidates
+    #     silenced (the restoring β spring), genuinely-novel keep d1≈d2 → reach≈0 → emit. EARNED
+    #     refractory (0 on a 1-cell store), constants 0, single DOF. Composes with --g-shuffle unchanged.
+    _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH", "d1")
+    if _g_reach not in ("d1", "affinity"):
+        raise SystemExit("--g-reach: only 'd1' (default) or 'affinity' (got %r)" % _g_reach)
+    if _g_reach == "affinity" and _emit_gate != "refractory":
+        raise SystemExit("--g-reach affinity requires --emit-gate refractory (its only consumer)")
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2161,11 +2174,17 @@ def anima_consciousness_mode(ckpt, argv=None):
             # bind = recognition-before-memorisation, chat-py-5). Distinct from H_9404 --emit-refractory
             # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. Not the production
             # default yet — the switch waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+            # H_9419 · the recognition functional: d1 margin (default, byte-identical) OR the
+            # affinity-reach d2−d1 (the G-pole reach lever). --g-shuffle composes with either.
+            if _g_reach == "affinity":
+                _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_reach_text(immune, _grecog_text(_t)))
+            else:
+                _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t)))
             dec = brain_emit_refractory(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                              secs_since_emit, False, True,
                              backend, live_anchors, 0.0,
-                             lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t))),
+                             _recog_fn,
                              _mouth_at(tick),
                              _dyn_w)
         else:
@@ -2399,6 +2418,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                     "ckpt_sha256": (_hl.sha256(open(ckpt, "rb").read()).hexdigest()
                                     if isinstance(ckpt, str) and os.path.exists(ckpt) else ""),
                     "g_arm": str(_g_arm), "refractory": (_refractory or None),
+                    "g_reach": str(_g_reach), "emit_gate": str(_emit_gate),  # H_9419
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
