@@ -233,7 +233,8 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
-                          mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None):
+                          mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
+                          pc2_mouth=""):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -294,6 +295,23 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     decision["g_recog_gate"] = g_recog
     decision["pc2_proj"] = pc2_proj   # H_9557 · PC2 routing signal (None = off)
     decision["route_k"] = int(ctx.get("deliberation_k", 1))
+    # H_9575 · PC2 → mouth (Fable design · owner-approved grounded rewire). The gate above
+    # (score/g_recog/emit :283-290) hears the BASE candidate — UNCHANGED. Only AFTER emit is
+    # fixed, on emit=True, do we re-decode with a PC2-biased mouth to get the SPOKEN (steered)
+    # text. z = the emit-orthogonal PC2 axis (H_9468 frozen loading · orig=nov_ctx, bal=bal_lane,
+    # coh=coh_lane). Stage-A: the caller feeds BASE gen_text to every substrate root (isolation),
+    # steered text goes only outward → emit sequence stays byte-identical BY CONSTRUCTION.
+    decision["pc2_z"] = 0.84 * orig - 0.44 * bal - 0.28 * coh
+    decision["gen_text_steered"] = ""
+    if emit and pc2_mouth != "" and mouth is not None:
+        m2 = dict(mouth)
+        if pc2_mouth == "bias":
+            m2["pc2"] = float(decision["pc2_z"])          # directional context-presence bias
+        elif pc2_mouth == "rng":                          # C2 control: same z, DRAW-stream only
+            m2["seed_rng"] = ((int(m2["seed_rng"]) ^
+                               (int(abs(decision["pc2_z"]) * 1000000.0) & 0x7FFFFFFF)) or 1)
+        cand2 = generate(backend, ctx, True, anchors, m2)
+        decision["gen_text_steered"] = str(cand2["text"])
     if emit:
         decision["gen_emitted"] = cand["emitted"]
         decision["gen_backend"] = cand["backend"]
