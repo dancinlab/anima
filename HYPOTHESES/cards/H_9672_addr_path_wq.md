@@ -4,6 +4,8 @@
 **lane:** 재조합/BINDING · runtime addressable lookup (frontier g1-interface-addressable-wall)
 **related:** [[H_9423]] (Stage1.5 가 주소학습(c) 진범 격리 · 이 H 가 그 NEXT) · [[H_9359]] (벽=런타임 다리 부재) · [[scale-303m-1b-7b-is-amplifier-not-lever]] (toy→303M 미전이 반례)
 
+**🟢 T1 토이 결과(d64 L2 · --store-addr-weight 1.0 · pool summer · VERSION 0.15.29 · balanced manifest 채점):** 전 게이트 통과 = **addr-loss 가 주소학습을 열고 held-out 로 일반화**(암기 아님). train sb_addr_acc **1.0**·sb_ans_ce 0.0(주소 완벽학습) → **C0-e ORACLE 128/128=1.0**·**P1-주 balanced 125/128=0.977**(shortcut 상한 0.5 봉쇄 채점면서 0.98 = 진짜 내용주소 조회·4셀 균형 .93/1.0/1.0/.97 붕괴0) · **addr-gap: SEEN 0.992 vs held_balanced 0.977 = gap 0.016 ≤.20 = 일반화 확증**(감독-주소가 held-out 개체로 전이·암기[gap>.35] 배제 · Fable 최대우려 해소) · λ0 0.445(우연=lane off) · flip-coherence 1.0(store 값 인과소비·상수예측기 배제) · shuffle 0.414 at-floor(balance-floor 0.429 · pol_hist{4:128} 균형확인 · 주소 사용). ⟹ **주소 직접감독(a) 레버 = 토이서 작동+일반화 확증.** NEXT=T2 벽재현(d256/768 · addr-loss OFF서 정체 재현 → ON서 회복 = 인과증명) → T3 303M(owner go).
+
 ## 물음
 
 H_9423 Stage1.5(#3855)가 303M 벽을 **순수 주소학습(c)** 로 격리: `--store-oracle-train`(학습서 주소 공짜) → C0-e ORACLE 128/128=1.00(값읽기 완벽·W_g수리) vs P1 softmax lookup 0.586(chance) = **값읽기(a)·substrate(d) 무죄, 진범 = W_q(3784→64) softmax 주소가 held-out 개체를 부트스트랩 못 함.** 물음: 주소경로를 어떻게 수리하면 held-out 0-shot lookup 이 서는가.
