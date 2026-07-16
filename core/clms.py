@@ -71,7 +71,7 @@ def _entity_key(key_emb, entity):
     return key_emb[ids].mean(axis=0)
 
 
-def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
+def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None):
     """CLMS store-bridge lane: OVERWRITE the answer-position logits row with λ·store_logits.
 
     logits : (T, V) float — readout(+CLML) logits. The caller's array is NOT mutated (internal copy).
@@ -111,6 +111,11 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
             a[int(store["target_slot"])] = 1.0                            # softmax bypassed (address free)
         else:
             a = _softmax(q @ K.T * scale)                                # (n_slot,) content-address lookup
+        if audit is not None:                                            # H_9672 addr-audit (None=byte-identical)
+            ts = store.get("target_slot")
+            audit.append({"argmax": int(np.argmax(a)),
+                          "a_target": float(a[int(ts)]) if ts is not None else -1.0,
+                          "target": int(ts) if ts is not None else -1})
         v = a @ V_slots                                                   # (d_s,) = Σ aᵢ·val[polᵢ]
         if lane_type == 2:
             g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)

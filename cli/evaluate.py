@@ -3908,15 +3908,19 @@ def store_run(argv):
             p[i], p[j] = p[j], p[i]
         return p
 
-    def _predict(store):
-        """Inject store, forward the prompt window, read the 2-way g/b readout at qpos. None if malformed."""
-        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override)
+    def _predict(store, audit=None):
+        """Inject store, forward the prompt window, read the 2-way g/b readout at qpos. None if malformed.
+        audit (H_9672 --store-addr-audit) = a list store_apply appends {argmax,a_target,target} to per qpos."""
+        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override, audit=audit)
         logits = np.asarray(clm._fwd_logits(W, tok, T))
         qp = _clms.find_qpos(tok)
         if not qp:
             return None
         row = logits[qp[-1]]
         return "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
+
+    addr_audit = "--store-addr-audit" in argv          # H_9672: report addr_top1 (argmax==target) + addr_mass
+    addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
 
     print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
     arm = mode or ("oracle" if oracle else ("lambda0" if lam_override == 0.0 else "lookup"))
@@ -3977,9 +3981,15 @@ def store_run(argv):
             key = (it.get("op"), 0 if gold == "good" else 1)
             rec = by.setdefault(key, [0, 0]); rec[0] += int(flip == gold_flip); rec[1] += 1
             continue
-        pred = _predict(store)
+        au = [] if addr_audit else None
+        pred = _predict(store, audit=au)
         if pred is None:
             continue
+        if au:                                            # H_9672 addr-audit: last qpos entry
+            e = au[-1]
+            addr_n += 1
+            addr_top1 += int(e["argmax"] == e["target"])
+            addr_mass += float(e["a_target"])
         n += 1
         correct += int(pred == gold)
         key = (it.get("op"), 0 if gold == "good" else 1)
@@ -4030,6 +4040,11 @@ def store_run(argv):
     for (op, pol), (c, t) in sorted(by.items(), key=lambda x: str(x[0])):
         print("    op=%s pol=%s: %d/%d = %.4f"
               % (op_name.get(op, str(op)), pol_name[pol], c, t, c / t if t else 0.0))
+    if addr_audit and addr_n:                             # H_9672: is the address argmax right, and SHARP?
+        print("  addr-audit: addr_top1=%.4f (argmax==target · %d items) · addr_mass=%.4f (mean a[target] · "
+              "1.0=one-hot sharp · ~%.3f=uniform)" % (addr_top1 / addr_n, addr_n, addr_mass / addr_n, 1.0 / 8))
+        print("    → addr_top1 high ∧ addr_mass low = argmax correct but softmax NOT peaked (v = Σaᵢ·valᵢ "
+              "blurred → value-read starved despite correct pointer); addr_top1 low = W_q not pointing.")
     if oracle:
         print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (mixing/value/MLP/λ paths die "
               "silently below this). oracle+shuffle→1.00 & oracle+flip→1.00(vs flipped gold) = control plumbing OK.")
