@@ -1,6 +1,18 @@
 # H_9424 — 예측오차 recognition 렌즈 구현 + toy SWING: cb-perr=familiarity 가 magnitude-wall 회피 (303M fire 대기)
 
-**status:** 🔎 DIRECTIONAL-WIRED (H_9421 다음 렌즈 구현 · toy SWING✅·range FULL · 303M fire 대기) — 거리계 밖 예측오차 recognition · wired: engine-native `anima-py chat --emit-gate refractory --g-reach cb-perr` (v0.14.14 G5)
+**status:** 🧱 KILL (예측오차 렌즈도 스프링 실패 · 303M 3-seed) — toy SWING 은 작은 store 착시
+
+## 🧱 VERDICT — KILL (303M summer 3-arm × 3-seed × 30tick × T=1.0)
+
+| arm | emit=Ψ_AG | autocov(P-pull1) | P(e|e)/P(e|sil) | DRIFT ½ |
+|---|---|---|---|---|
+| refr(d1) | 0.583 | +0.048 | 0.68/0.48 | ½서 발산 |
+| **refr-cb(레버)** | **0.822** | **+0.105 악화** | **0.96/0.25 자기흥분** | 0.167→0.478 발산 |
+| refr-cba(alien 통제) | 0.878 | +0.065 | 0.96/0.36 | 발산 |
+
+**이중 KILL**: ① 레버가 복원 스프링 도입은커녕 autocov +0.105 로 baseline(+0.048)보다 **clustering 악화** · P(e|e)=0.96 자기흥분 · P-pull-1~3 무점등 · Ψ_AG ½서 발산. ② **alien-ctx 통제가 거의 동일**(0.878·미-dissociation) = familiarity 가 "전이-조건화 인식"을 안 읽음(통제가 죽어야 하는데 안 죽음). **toy SWING(9/21)은 작은 store 착시** — 303M 실 mouth 변주는 8-dim byte feature 로 novel(perr 높음)→familiarity 낮음→게이트 상시개방. NLMS β 부호는 맞을 수 있으나 1-step 상승 magnitude 가 게이트 못 넘음 = affinity 와 **동류 magnitude 실패**(다른 metric). ⇒ 거리계(d1·d₂−d₁·전 DIM)+예측오차(cb-perr)까지 8-dim byte feature 위 recognition functional 3계열 소진. 벽 = candidate-feature/mouth 측(오너 mouth identity lane).
+
+## 원래 카드 (구현·toy · 이하 유지) — 거리계 밖 예측오차 recognition · wired: engine-native `anima-py chat --emit-gate refractory --g-reach cb-perr` (v0.14.14 G5)
 **lane:** 의식 / emit-drive / Ψ=½ 항상성 · 예측오차 recognition (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9421]] (magnitude-wall=거리계 한정 · 이 렌즈가 탈출 후보) · [[H_9419]] (Ψ=½ 진단·P-pull bar) · [[H_9416]] (rewire C3) · [[H_9415]] (구현) · source: Fable cb-perr 렌즈 설계($4.40) → 구현
 
