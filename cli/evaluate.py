@@ -3717,6 +3717,19 @@ def store_run(argv):
     if lam_override is not None and not (0.0 <= lam_override <= 1.0):
         print("ERROR: --store-lambda must be in [0,1], got %r" % lam_override)
         return 1
+    # H_9423 C2 controls (eval-time store edits · core/clms.py UNCHANGED so the ORACLE cert holds):
+    #   --store-shuffle = derange store.entities (Sattolo, entities-only → key↔value binding broken,
+    #                     h/λ/K-multiset intact) → PASS if lookup collapses (uses the address).
+    #   --store-flip    = flip all store.pols (v-channel pure) → 2-pass flip-coherence (store value is
+    #                     causally consumed). Constant-predictor coherence ≡ 0 by construction.
+    #   --store-neutral = MISS control (P2, no bar, characterisation only).
+    #   These are MUTUALLY EXCLUSIVE. --store-ctrl-seed pins the derangement RNG.
+    ctrl = [f for f in ("--store-shuffle", "--store-flip", "--store-neutral") if f in argv]
+    if len(ctrl) > 1:
+        print("ERROR: --store-shuffle / --store-flip / --store-neutral are mutually exclusive (got %s)" % ctrl)
+        return 1
+    mode = ctrl[0][8:] if ctrl else ""               # "shuffle" | "flip" | "neutral" | ""
+    ctrl_seed = evaluate_intval(argv[1:], "--store-ctrl-seed", 9423)
     if not man_path:
         print("ERROR: --store needs a held-out manifest (--store <held.json>).")
         return 1
@@ -3730,49 +3743,122 @@ def store_run(argv):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
     import clms as _clms
+    g_id, b_id = ord("g"), ord("b")                  # byte value = logits index (see _store_mix_cont_nll)
+
+    def _sattolo(nn, rng):                            # uniform nn-cycle: EVERY element moves (0 fixed points)
+        p = list(range(nn))
+        for i in range(nn - 1, 0, -1):
+            j = int(rng.integers(0, i))               # j < i STRICTLY — the Sattolo/Fisher-Yates difference
+            p[i], p[j] = p[j], p[i]
+        return p
+
+    def _predict(store):
+        """Inject store, forward the prompt window, read the 2-way g/b readout at qpos. None if malformed."""
+        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override)
+        logits = np.asarray(clm._fwd_logits(W, tok, T))
+        qp = _clms.find_qpos(tok)
+        if not qp:
+            return None
+        row = logits[qp[-1]]
+        return "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
+
     print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
-    print("ckpt: %s  manifest: %s (%d items)  oracle=%s  λ=%s  win=%d"
-          % (ckpt, man_path, len(entries), oracle,
-             ("%.3f" % lam_override) if lam_override is not None else "(file)", T))
+    arm = mode or ("oracle" if oracle else ("lambda0" if lam_override == 0.0 else "lookup"))
+    print("ckpt: %s  manifest: %s (%d items)  arm=%s  oracle=%s  λ=%s  win=%d  ctrl_seed=%d"
+          % (ckpt, man_path, len(entries), arm, oracle,
+             ("%.3f" % lam_override) if lam_override is not None else "(file)", T, ctrl_seed))
     if W.get("clms") is None:
-        print("  ⚠️ this ckpt carries NO CLMS trailer — the lane is ABSENT (base trunk). A base ckpt "
-              "reads FLOOR (chance) by construction (the honest before-state); a co-trained ckpt is the "
-              "signal-bearing follow-on. Running to exercise the pipe, not to read a verdict.")
+        print("  ⚠️ this ckpt carries NO CLMS trailer — the lane is ABSENT (base trunk). FLOOR by construction.")
     n = correct = 0
     by = {}                                          # (op, pol) -> [correct, total]  (polarity-split · card)
-    g_id, b_id = ord("g"), ord("b")                  # byte value = logits index (see _store_mix_cont_nll)
-    for it in entries:
-        prompt, gold = it["prompt"], it["gold"]
-        st = it["store"]
-        store = {"entities": list(st["entities"]), "pols": list(st["pols"]),
-                 "target_slot": it.get("target_slot")}
-        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override)
-        tok = clm._seed_to_tok(prompt, T)
-        logits = np.asarray(clm._fwd_logits(W, tok, T))
-        qpos = _clms.find_qpos(tok)
-        if not qpos:
-            continue                                 # no "=> " in window (malformed item)
-        row = logits[qpos[-1]]                        # logits at the query row = predicts first answer byte
-        pred = "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
-        ok = (pred == gold)
-        n += 1
-        correct += int(ok)
-        key = (it.get("op"), 0 if gold == "good" else 1)
-        rec = by.setdefault(key, [0, 0])
-        rec[0] += int(ok)
-        rec[1] += 1
-    clm.set_clms_store(None)                          # reset the process-global (no leak into later runs)
-    acc = correct / n if n else 0.0
-    print("  overall: %d/%d = %.4f  (%s)"
-          % (correct, n, acc, "C0-e ORACLE positive control" if oracle else "content-address lookup"))
+    fixed_points_total = dup_entities = 0
+    pol_hist = {}                                     # #good-slots per store -> count (balance witness · §E)
+    coh_all = coh_bc = coh_bc_n = flip_correct = 0    # flip-coherence accumulators
     op_name = {0: "is ", 1: "not"}
     pol_name = {0: "good", 1: "bad "}
+    for idx, it in enumerate(entries):
+        prompt, gold = it["prompt"], it["gold"]
+        st = it["store"]
+        ents = list(st["entities"])
+        pols = list(st["pols"])
+        tslot = it.get("target_slot")
+        n_slot = len(ents)
+        if len(set(ents)) != n_slot:
+            dup_entities += 1                         # loud, never silent — derangement fixed-point-leak risk
+        pol_hist[sum(1 for p in pols if p == 0)] = pol_hist.get(sum(1 for p in pols if p == 0), 0) + 1
+        tok = clm._seed_to_tok(prompt, T)
+        if mode == "shuffle":
+            rng = np.random.default_rng(ctrl_seed * 100003 + idx)
+            perm = _sattolo(n_slot, rng)
+            ents2 = [ents[perm[i]] for i in range(n_slot)]   # entities-only derange · pols/target_slot fixed
+            fixed_points_total += sum(1 for i in range(n_slot) if ents2[i] == ents[i])
+            store = {"entities": ents2, "pols": pols, "target_slot": tslot}
+        elif mode == "flip":
+            store = {"entities": ents, "pols": [1 - p for p in pols], "target_slot": tslot}
+        elif mode == "neutral":
+            rng = np.random.default_rng(ctrl_seed * 100003 + idx + 7)
+            # length-matched nonce filler (control-must-match-mediating-covariate): CVCVC not in this entry
+            cons, vow = "bdfgklmnprstvz", "aeiou"
+            def _nonce():
+                return (cons[int(rng.integers(0, 14))] + vow[int(rng.integers(0, 5))]
+                        + cons[int(rng.integers(0, 14))] + vow[int(rng.integers(0, 5))]
+                        + cons[int(rng.integers(0, 14))])
+            store = {"entities": [_nonce() for _ in range(n_slot)], "pols": pols, "target_slot": tslot}
+        else:
+            store = {"entities": ents, "pols": pols, "target_slot": tslot}
+        if mode == "flip":
+            base = _predict({"entities": ents, "pols": pols, "target_slot": tslot})
+            flip = _predict(store)
+            if base is None or flip is None:
+                continue
+            gold_flip = "bad" if gold == "good" else "good"
+            n += 1
+            coh_all += int(flip != base)
+            if base == gold:                          # coherence_bc: conditioned on baseline-correct (§B-2)
+                coh_bc_n += 1
+                coh_bc += int(flip != base)
+            flip_correct += int(flip == gold_flip)
+            key = (it.get("op"), 0 if gold == "good" else 1)
+            rec = by.setdefault(key, [0, 0]); rec[0] += int(flip == gold_flip); rec[1] += 1
+            continue
+        pred = _predict(store)
+        if pred is None:
+            continue
+        n += 1
+        correct += int(pred == gold)
+        key = (it.get("op"), 0 if gold == "good" else 1)
+        rec = by.setdefault(key, [0, 0]); rec[0] += int(pred == gold); rec[1] += 1
+    clm.set_clms_store(None)                          # reset the process-global (no leak into later runs)
+
+    # ── integrity witnesses (§계기검산 · read a control's negative ONLY if these pass) ──
+    if mode == "shuffle":
+        print("  integrity: fixed_points_total=%d (require 0) · dup_entities=%d (require 0) · pol_hist(#good/store)=%s"
+              % (fixed_points_total, dup_entities, dict(sorted(pol_hist.items()))))
+        if fixed_points_total or dup_entities:
+            print("  ⚠️ INVALID — derangement integrity broken; do NOT read this arm's negative.")
+    if mode == "flip":
+        coh = (coh_bc / coh_bc_n) if coh_bc_n else 0.0
+        acc_f = correct = flip_correct                # for the shared 4-cell printer below
+        print("  flip-coherence: coherence_bc=%.4f (%d baseline-correct) · coherence_all=%.4f · flip_acc=%.4f"
+              % (coh, coh_bc_n, (coh_all / n if n else 0.0), (flip_correct / n if n else 0.0)))
+        print("    → PASS coherence_bc≥0.90 (store value causally consumed) · FAIL≤0.15 (v-channel dead). "
+              "constant-predictor coherence≡0 by construction. read ONLY with 4/4 pol-balance + shuffle PASS.")
+    acc = correct / n if n else 0.0
+    verdict = ""
+    if mode == "shuffle":
+        verdict = ("PASS(≤.55 uses-address)" if acc <= 0.55 else
+                   "FAIL(≥.75 h-shortcut/leak)" if acc >= 0.75 else "AMBIG→INVALID")
+        print("  overall(vs gold): %d/%d = %.4f  [%s]  expected floor ≈ 3/7=0.429 (4/4 store) or 0.5"
+              % (correct, n, acc, verdict))
+    elif mode != "flip":
+        print("  overall: %d/%d = %.4f  (%s)"
+              % (correct, n, acc, "C0-e ORACLE positive control" if oracle else arm))
     for (op, pol), (c, t) in sorted(by.items(), key=lambda x: str(x[0])):
         print("    op=%s pol=%s: %d/%d = %.4f"
               % (op_name.get(op, str(op)), pol_name[pol], c, t, c / t if t else 0.0))
     if oracle:
-        print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (v2: mixing/value/MLP/λ "
-              "paths die silently below this). FLOOR on a base (no-CLMS) ckpt is honest, not a fail.")
+        print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (mixing/value/MLP/λ paths die "
+              "silently below this). oracle+shuffle→1.00 & oracle+flip→1.00(vs flipped gold) = control plumbing OK.")
     return 0
 
 
@@ -7157,6 +7243,7 @@ _KNOWN_FLAGS = frozenset((
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
     "--store", "--store-oracle",
+    "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
 ))
 
 
