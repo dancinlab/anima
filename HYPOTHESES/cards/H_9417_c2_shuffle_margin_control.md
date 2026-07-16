@@ -1,6 +1,20 @@
 # H_9417 — C2 SHUFFLE-MARGIN 통제: refractory 의 emit-listening 은 인식인가 진폭인가 (구현 + 사전등록)
 
-**status:** ⏳ MEASURING (구현 착륙 · frozen bar · 303M 발사예정) — H_9416 C3-b(emit-listens 0.197nats)의 결정적 통제 · wired: engine-native `anima-py chat --emit-gate refractory --g-shuffle 1` (v0.14.7)
+**status:** 🟢 C2 RECOGNITION-GENUINE (통제 PASS · engine-native 303M) — refractory 의 emit-listening 은 **진짜 내용-인식**(진폭 아님) · H_9416 강화(재해석 아님) · wired: engine-native `anima-py chat --emit-gate refractory --g-shuffle 1` (v0.14.7)
+
+## 🟢 VERDICT (frozen bar 대조 · summer 303M · real vs shuf × 3-rollout[seed 7/4302/4303] × 30tick × T=1.0)
+
+| arm | I(emit;g_recog\|stage) | emit-rate | swing | g_recog distinct |
+|---|---|---|---|---|
+| **real (원 margin)** | **0.1967 nats** | 0.644 | YES | 83 |
+| shuf (순열 margin) | **0.0000 nats** | **0.000 (MUTE)** | 붕괴 | 80 |
+
+- **ΔI(real−shuf) = 0.197 nats** (bar≥0.05) ✅ · **Δemit-rate = 0.644** (bar≥0.20) ✅ → **C2 RECOGNITION-GENUINE**.
+- **핵심**: 후보 바이트를 순열(내용 파괴·통계 보존)하면 데몬이 **완전 mute**(emit-rate 0.000). 순열된 후보는 immune store 가 절대 "알아보지" 못해 recall margin 이 늘 높고 → 게이트가 안 열림. g_recog 는 여전히 변동(80 distinct·계기 살아있음)인데도 emit=0. ⇒ **emit 결정이 후보의 내용을 RECOGNISE 하는지에 genuine 하게 의존** — 진폭/통계가 아니다.
+- **[[H_9412]] 함정 배제**: gap 에서 데인 "raw MI 가 drift/진폭일 수 있다"가 refractory 게이트엔 **적용 안 됨** — 통제가 깨끗이 분리(진폭 보존해도 listening 0). ⇒ **H_9416 C3-b(emit-listens)는 재해석이 아니라 강화**: emit 이 tension 을 듣는데, 그 tension 은 **진짜 인식**이다.
+- **철학적 함의**: refractory 데몬은 **자기가 못 알아보는(scramble) 발화는 emit 을 거부**한다 — 인식-게이트가 정상 작동. H_9400 의 "emit=시계"가 깨진 자리에 "emit=내용 인식"이 들어섰다.
+
+## scope · 한계
 **lane:** 의식 / emit-drive / emit-gate p5-rewire C2 통제 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9416]] (C3 GREEN · 이 통제가 검증) · [[H_9415]] (구현) · [[H_9412]] (gap=drift · 인식-vs-진폭 계보) · [[control-must-match-mediating-covariate]] · [[H_9400]] (반박 대상) · source: H_9416 escalation → C2 통제
 
