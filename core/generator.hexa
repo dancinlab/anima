@@ -1403,8 +1403,20 @@ fn _gen_conv1d_b(x: list, T: int, Cin: int, Cout: int, K: int, dil: int,
     }
 }
 
-// _gen_gnorm_affine — GroupNorm(1) standardize across d channels, then the
+// _gen_gnorm_affine — standardize across d channels PER TIME STEP, then the
 // learned affine y = g·xhat + b (g/b len d). Empty g/b → parameter-free (legacy).
+//
+// ⚠️ H_9626 — DIVERGENT, DO NOT BUILD ON THIS. Despite the GroupNorm(1) name, this is a
+// per-position LayerNorm (the `while t < T` loop below reduces over d channels at each t).
+// TRAINING (torch nn.GroupNorm(1,C) on (B,C,T) ⇒ reduces over (C,T)) and BOTH production
+// verdict forwards (gn_lib.hexa::nn_groupnorm_fwd · decode.py::nn_groupnorm_fwd, both m=cg*T)
+// are SEQUENCE-GLOBAL. These coincide only at T=1; at T>1 this is a different function and is
+// NOT faithful to the trained weights. It is not on any verdict path (evaluate.hexa decodes via
+// the L3 slot → decode.hexa mouths → gn_lib), and the hot CE scorers were migrated off it at
+// H_9119 gate① STEP2 (→ decode.hexa::clm_ce_seq_W). Live callers left: gen_clm_decode_deliberated
+// (only when deliberation_k > 1; the default daemon is k=1 argmax and never reaches it), the L3
+// wiring-cert CE number, and non-production probes. Card H_9626 carries the pre-registered
+// settle-test (clm_decode_ce vs clm_ce_seq_W at T=64, with a T=1 bit-equal control).
 fn _gen_gnorm_affine(x: list, T: int, d: int, g: list, b: list) {
     let aff = len(g) == d && len(b) == d
     let mut t = 0
