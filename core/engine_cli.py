@@ -662,6 +662,25 @@ def immune_memory_recall_gap_text(mem, text):
     return immune_memory_recall_gap(mem, immune_embed_key(text))
 
 
+def immune_memory_recall_reach(mem, key):
+    """H_9419 · affinity-REACH recognition = top-2 basin decisiveness (d2 - d1).
+
+    The G-pole reach lever (H_9419 Step 1). Unlike recall_margin = d1 - recall_thr (whose
+    bind LOWERS d1 in the just-bound cell's neighborhood → margin drops → gate OPENS =
+    sign-inverted β that DIS-inhibits near-repeats, the geometric cause of P(emit|emit) >
+    P(emit|silence)), this reads d2 - d1: emitting BINDS the utterance, so the new cell's
+    whole Voronoi basin raises (d1 drops but d2 stays) → near-repeat candidates get a HIGH
+    reach → silenced (the restoring β spring), while a genuinely novel candidate keeps
+    d1 ≈ d2 → reach ≈ 0 → emit. The refractory is EARNED by store differentiation (0 on a
+    1-cell store where d2 == d1) — no clock, no τ, no recall_thr constant (constants 0)."""
+    d = vadapt_field_two_recon_err(mem.field, key)
+    return d[1] - d[0]
+
+
+def immune_memory_recall_reach_text(mem, text):
+    return immune_memory_recall_reach(mem, immune_embed_key(text))
+
+
 def immune_memory_new_text(first_text, first_value, max_cells):
     return immune_memory_new(immune_embed_key(first_text), first_value, max_cells)
 
