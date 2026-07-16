@@ -299,3 +299,25 @@ not apply — `S_op` still teaches the operator carrier in every arm.
 The instrument is BUILT + unit-tested on synthetic EN ($0). It has **not** yet been run on a real rung — by
 construction it is only read when a rung comes back green. **C-TOK remains unbuilt** (needed only for the 🔴
 envelope, not for a green claim).
+
+### C-TOK — needs NO new instrument (measured · corrects "unbuilt")
+INTERIM #3 called C-TOK "unbuilt". **Wrong** — measured: `--reps` IS the token knob and it is exactly linear,
+and the gate is invariant to it:
+
+| reps | bytes | B/rep | sdecl gate sha |
+|---|---|---|---|
+| 4 | 6 816 | 1 704 | `3272eae6d3d3` |
+| 8 | 13 632 | 1 704 | — |
+| 16 | 27 264 | 1 704 | `3272eae6d3d3` (identical) |
+
+⟹ C-TOK ("|S_op| fixed at the anchor's 48 · replicate lines to match the terminal rung's token count") is
+built with **existing flags**: `corpus xbind --bridge-split --atoms <anchor 48-atom> --lang en --reps R
+--polarity assigned --assign-seed 0`, with `R = round(terminal_bytes / bytes_per_rep)` (anchor = 278 280 B @
+reps 40 ⟹ 6 957 B/rep; rung-3 N=1713 @ reps 40 ≈ 10.1 MB ⟹ **R ≈ 1448**). Exact R is computed from rung-3's
+printed `BUDGET_FLOOR_BYTES` when that rung is built — no code, no new flag. The gate manifest stays
+byte-identical to the anchor's, which is exactly what the control requires (same questions, same |S_op|, only
+the token budget moves).
+
+⟹ **Envelope instrument status: COMPLETE.** rung ladder (`--max-atoms`) · C-DECL-ABL (`--decl-ablate`) ·
+C-TOK (`--reps` arithmetic) · grokking arm (`train --wd-floor`, pre-existing) · C-CAP (arch flags `--d/--L`,
+pre-existing). Nothing in the 🔴 W_wt-TERMINAL envelope is blocked on missing code.
