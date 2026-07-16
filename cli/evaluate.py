@@ -7407,7 +7407,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--faction-block-structure", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--faction-block-structure", "--faction-block-provenance", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -9436,6 +9436,149 @@ def faction_block_structure_run(argv):
     return 0
 
 
+def faction_block_provenance_run(argv):
+    """`anima-py evaluate <ckpt> --faction-block-provenance <prompts.json> [--n-factions-sweep 4,8,12]
+    [--win 24] [--seed 12345] [--out prov.json]` — are H_9674's blocks REAL modules, or an artifact
+    of the architecture's own index layout (card H_9676 · faction-lateral-axis-r3)?
+
+    H_9674 found blocks in the trunk's unit axis (real/pedestal up to 54.07 vs bar 1.5, positive
+    control x114). "Blocks exist" does NOT imply "factions are learnable" — the coupling could be
+    imposed by the architecture rather than learned. This is the pre-registered exclusion.
+
+    The two suspects, and what the code already says about them:
+      GroupNorm groups — nn_groupnorm_fwd(h, ..., T, d, 1, ...) runs with G=1, i.e. LayerNorm over
+        all d channels. There are NO group boundaries on the unit axis. Suspect dead by code.
+      conv receptive field — _conv1d convolves over T with FULL channel mixing (Cin=d -> Cout=d:
+        every output channel reads every input channel). RF is a TIME-axis quantity; the d axis
+        carries no spatial ordering at all. Suspect dead by code.
+    Both suspects predict the SAME observable: blocks would line up with CONTIGUOUS index runs.
+    The code argument is therefore checked, not trusted (`tool-definition-read-code-not-docstring`).
+
+    DV: contiguity of the recovered assignment — adjacency P(assign[i]==assign[i+1]) and ARI against
+    the contiguous-chunk partition. Chance adjacency = 1/K. Pre-registered bar: >=0.20.
+    Arms: real | pedestal (i.i.d. · TRUTH contiguity=0) | positive (PLANTED CONTIGUOUS blocks — the
+    metric must score these >=0.80 or a low real contiguity is a metric fact, not a substrate fact).
+    Verdict: real ~ chance AND positive ~ 1.0 => blocks are NOT index-contiguous => not a GN/RF
+    artifact => H_9674's blocks survive and H_9643 keeps its precondition. real ~ positive => blocks
+    ARE contiguous runs => architectural layout => H_9674 is an artifact and H_9643 loses its case."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-block-provenance", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    ks = [int(x) for x in evaluate_strval(argv[1:], "--n-factions-sweep", "4,8,12").split(",") if x.strip()]
+    print("=== anima evaluate --faction-block-provenance — H_9674 blocks: real or layout? (H_9676) ===")
+    print("ckpt:  " + ckpt)
+    print("code:  GN runs G=1 (LayerNorm over all d — no unit-axis group boundary) · conv1d is over T")
+    print("       with FULL channel mixing (d->d) — RF is a TIME quantity, the d axis has no spatial")
+    print("       order. Both suspects predict CONTIGUOUS blocks. Checked, not trusted.")
+    print("arms:  real | pedestal (truth contiguity=0) | positive (PLANTED contiguous · bar >=0.80)")
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    rows = []
+    for it in items:
+        rows.append(np.asarray(clm.clm_forward_hidden(W, clm._seed_to_tok(it["prompt"], T), T), dtype=np.float64))
+    X = np.concatenate(rows, axis=0)
+    N, d = X.shape
+    print("tap:   X=[%d, %d]  (production trunk penultimate)" % (N, d))
+    rng = np.random.default_rng(seed)
+
+    def cluster(M, K, sweeps=6):
+        """Same spectral+sweeps clusterer as --faction-block-structure; returns the ASSIGNMENT."""
+        C = np.abs(np.corrcoef(M, rowvar=False)); C = np.nan_to_num(C, nan=0.0)
+        np.fill_diagonal(C, 0.0)
+        n = C.shape[0]
+        try:
+            _w, V = np.linalg.eigh(C); E = V[:, -K:]
+            cent = E[rng.choice(n, K, replace=False)]; assign = np.zeros(n, dtype=int)
+            for _ in range(12):
+                assign = ((E[:, None, :] - cent[None, :, :]) ** 2).sum(-1).argmin(1)
+                for f in range(K):
+                    if (assign == f).any(): cent[f] = E[assign == f].mean(0)
+        except Exception:
+            assign = rng.integers(0, K, n)
+        deg = C.sum(1); m2 = C.sum()
+        for _ in range(sweeps):
+            H = np.zeros((n, K)); H[np.arange(n), assign] = 1.0
+            na = np.argmax(C @ H - np.outer(deg, deg @ H) / m2, axis=1)
+            if (na == assign).all(): break
+            assign = na
+        return assign
+
+    def adjacency(assign):
+        """P(assign[i] == assign[i+1]) — ~1.0 iff blocks are contiguous index runs."""
+        return float((assign[:-1] == assign[1:]).mean())
+
+    def ari(a, b):
+        """Adjusted Rand index between two partitions."""
+        from math import comb
+        ka, kb = int(a.max()) + 1, int(b.max()) + 1
+        M = np.zeros((ka, kb))
+        for i in range(len(a)): M[a[i], b[i]] += 1
+        s = sum(comb(int(v), 2) for v in M.flatten() if v >= 2)
+        sa = sum(comb(int(v), 2) for v in M.sum(1) if v >= 2)
+        sb = sum(comb(int(v), 2) for v in M.sum(0) if v >= 2)
+        n2 = comb(len(a), 2)
+        exp = sa * sb / n2 if n2 else 0.0
+        mx = (sa + sb) / 2.0
+        return float((s - exp) / (mx - exp)) if mx != exp else 0.0
+
+    out = {"ckpt": ckpt, "N": N, "d": d, "seed": seed,
+           "code_note": "GN G=1 (LayerNorm · no unit-axis group) · conv1d over T with full d->d channel mixing (RF is a TIME quantity)",
+           "rows": []}
+    P = rng.normal(float(X.mean()), float(X.std()), (N, d))
+    print("")
+    print("%5s | %10s | %10s | %10s | %9s | %10s" % ("K", "real adj", "ped adj", "pos adj", "chance", "real ARI"))
+    print("-" * 70)
+    ok = True
+    for K in ks:
+        contig = np.repeat(np.arange(K), int(np.ceil(d / K)))[:d]
+        lat = rng.normal(0, 1, (N, K))
+        G = np.stack([lat[:, contig[j]] for j in range(d)], axis=1) + rng.normal(0, 0.3, (N, d))
+        ar, ap, ag = cluster(X, K), cluster(P, K), cluster(G, K)
+        adj_r, adj_p, adj_g = adjacency(ar), adjacency(ap), adjacency(ag)
+        chance = 1.0 / K
+        ari_r = ari(ar, contig)
+        print("%5d | %10.4f | %10.4f | %10.4f | %9.4f | %10.4f" % (K, adj_r, adj_p, adj_g, chance, ari_r))
+        out["rows"].append({"K": K, "real_adjacency": adj_r, "pedestal_adjacency": adj_p,
+                            "positive_adjacency": adj_g, "chance": chance,
+                            "real_ARI_vs_contiguous": ari_r, "positive_live": bool(adj_g >= 0.80)})
+        if adj_g < 0.80: ok = False
+    out["instrument_live"] = ok
+    print("")
+    if not ok:
+        print("  INSTRUMENT-DEAD: the metric cannot see contiguity it PLANTED (pos adj < 0.80).")
+        print("     A low real contiguity would be a metric fact, not a substrate fact — no verdict.")
+        out["verdict"] = "INSTRUMENT-DEAD — no verdict emitted"
+        if out_path: json.dump(out, open(out_path, "w"), indent=1)
+        return 1
+    mx_adj = max(r["real_adjacency"] - r["chance"] for r in out["rows"])
+    mx_ari = max(r["real_ARI_vs_contiguous"] for r in out["rows"])
+    out["max_real_adj_over_chance"], out["max_real_ARI"] = mx_adj, mx_ari
+    artifact = bool(mx_adj >= 0.20 or mx_ari >= 0.20)
+    out["artifact"] = artifact
+    print("  instrument LIVE (planted contiguity recovered) — the negative is readable.")
+    print("  max(real adj - chance) = %.4f   max(real ARI vs contiguous) = %.4f   (bar >=0.20)" % (mx_adj, mx_ari))
+    if artifact:
+        print("  VERDICT (H_9676): blocks ARE index-contiguous => architectural layout, not modules")
+        print("    => H_9674's blocks are an artifact and H_9643's GPU justification is WITHDRAWN.")
+    else:
+        print("  VERDICT (H_9676): blocks are NOT index-contiguous (real at chance while the planted-")
+        print("    contiguous control scores ~1.0) => NOT a GN/RF layout artifact => H_9674's blocks")
+        print("    survive and H_9643 keeps its precondition. DIRECTIONAL: excludes the two")
+        print("    architectural suspects the code names, not every possible artifact.")
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -9597,6 +9740,9 @@ def main(argv):
     # modular blocks at all (H_9674)? The $0 precondition for H_9643's GPU fire.
     if "--faction-block-structure" in argv:
         return faction_block_structure_run(argv)
+    # --faction-block-provenance: H_9674 블록이 진짜 모듈인가 architecture index layout(GN/RF)인가 (H_9676)
+    if "--faction-block-provenance" in argv:
+        return faction_block_provenance_run(argv)
     # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
     # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
     if "--earned" in argv:
