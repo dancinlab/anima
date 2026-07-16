@@ -1578,10 +1578,11 @@ def anima_consciousness_mode(ckpt, argv=None):
     #     silenced (the restoring β spring), genuinely-novel keep d1≈d2 → reach≈0 → emit. EARNED
     #     refractory (0 on a 1-cell store), constants 0, single DOF. Composes with --g-shuffle unchanged.
     _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH", "d1")
-    if _g_reach not in ("d1", "affinity"):
-        raise SystemExit("--g-reach: only 'd1' (default) or 'affinity' (got %r)" % _g_reach)
-    if _g_reach == "affinity" and _emit_gate != "refractory":
-        raise SystemExit("--g-reach affinity requires --emit-gate refractory (its only consumer)")
+    if _g_reach not in ("d1", "affinity", "cb-perr", "cb-perr-alienctx"):
+        raise SystemExit("--g-reach: only 'd1' (default), 'affinity', 'cb-perr',"
+                         " 'cb-perr-alienctx' (got %r)" % _g_reach)
+    if _g_reach != "d1" and _emit_gate != "refractory":
+        raise SystemExit("--g-reach %s requires --emit-gate refractory (its only consumer)" % _g_reach)
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2178,6 +2179,25 @@ def anima_consciousness_mode(ckpt, argv=None):
             # affinity-reach d2−d1 (the G-pole reach lever). --g-shuffle composes with either.
             if _g_reach == "affinity":
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_reach_text(immune, _grecog_text(_t)))
+            elif _g_reach == "cb-perr":
+                # H_9422 · prediction-error recognition (the non-distance lens · H_9421 next).
+                # g_recog = clip01(1 - vforward_err(cbel, cb_prev_feat, feat8(cand))) = FAMILIARITY:
+                # the cerebellum forward-model's predictability of the candidate given the last
+                # utterance. NLMS contraction GUARANTEES the β sign (emit→update lowers the just-said
+                # candidate's err → raises its familiarity → silences near-repeats · Fable §1-1). The
+                # gate reads the PRE-bind cbel (this tick's update is at :2284, after here) =
+                # recognition-before-memorisation, chat-py-5. NOTE (Fable §4): --g-shuffle is
+                # MATHEMATICALLY VOID here (feat8 is byte-multiset stats, permutation-invariant) — C2
+                # control is the cb-perr-alienctx arm below, not shuffle. Constants 0 (η/dim landed).
+                _recog_fn = lambda _t: _afs_clip01(1.0 - vforward_err(cbel, cb_prev_feat,
+                                                   _afs_byte_feature(_grecog_text(_t), 8)))
+            elif _g_reach == "cb-perr-alienctx":
+                # H_9422 C2 control · same candidate amplitude stats, transition-conditioning
+                # DESTROYED (ctx = alien feat, not the last utterance). exp survives ∧ alienctx dies
+                # ⇒ the gate hears "prediction-error conditioned on what I just said", not a marginal
+                # candidate stat. Reuses cb_alien_feat (:1445, no new constant).
+                _recog_fn = lambda _t: _afs_clip01(1.0 - vforward_err(cbel, cb_alien_feat,
+                                                   _afs_byte_feature(_grecog_text(_t), 8)))
             else:
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t)))
             dec = brain_emit_refractory(pf,
