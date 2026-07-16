@@ -50,9 +50,11 @@ H_9415 가 toy 로 확인한 swing-band(margin-refractory 게이트가 살아있
 
 **판정 그리드(우연-아래 포함)**: refr C3-a✅C3-b✅ = 🟢 refractory 가 tension 을 emit 에 흘림(H_9400 새 데몬서 부활 방향·DIRECTIONAL→multi-seed 로 TERMINAL) / C3-a✅C3-b❌ = swing 은 있으나 emit 이 margin 안 들음(stage-driven swing)=🧱 부분 / C3-a❌(mute/saturate) = 303M 서 게이트 죽음=H_9415 toy-artifact KILL / clock arm C3-b>refr = INVALID(배선 오류).
 
-## 미측정 축 (follow-on · 이 fire 밖)
+## 후속 축 — 이후 닫힘 (2026-07-16 update)
 
-C1 진폭 formal·C2 인식정보(conditional MI `I(g_recog;nov|tick,cell)`)·shuffle-margin 통제(a6)·C-clock(a5)·진폭매칭(a7) = `--g-readout-info` + shuffle-margin arm 미구현 → 후속 H. earned(H_9404) 상세 arm 비교도 후속(병렬 H_9405 소유 존중).
+- ✅ **C1 진폭 formal 닫힘($0 · 기존 refr trace 재분석)**: score(mean 0.588 sd 0.074)·g_recog_gate(mean 0.563 sd 0.057) 분포 **겹침**(비퇴화 sd>0)·(score−g_recog) 0.024±0.078 zero **straddle**·**P(|score−g_recog|<0.05)=0.500**(게이트가 rubber-stamp 아니라 절반의 tick 서 진짜 다툼)·포화 아님(분포 미분리). ⇒ **C1 PASS** — swing-band 의 진폭이 formal 하게도 healthy. **⇒ C1+C2+C3 전항 GREEN.**
+- ✅ **C2 인식정보 shuffle-margin 통제**: [[H_9417]] 에서 닫힘(real vs shuf → shuf mute·recognition-genuine).
+- ⏳ **후속(이 fire 밖)**: 더 긴 세션·더 많은 rollout(현 30tick·3seed 로버스트) · conditional MI `I(g_recog;nov|tick,cell)`(C-clock a5·진폭매칭 a7 통제 딸림) · **production-default 전환**(오너 R3: 시계 완전삭제 vs ops-강등 · VERSION G5) · **hexa twin lockstep**([[hexa-daemon-link-moot-py-canonical]]: py 카논 런타임이라 verdict 엔 불필요 · production-default 시 배선). earned(H_9404) 상세비교는 병렬 H_9405 소유.
 
 ## 정직한 한계
 
