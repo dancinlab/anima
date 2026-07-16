@@ -755,6 +755,16 @@ def evaluate_usage():
     print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
     print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9628 z 용량/노출 census(트레이스 판독·디코드 없음)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
+    print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
+    print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
+    print("      (the ARCHIVED faction Phi proxy — (global_var - mean_faction_var)*log2(n_active),")
+    print("      core/phi/quantum_consciousness.hexa:252 — recomputed on live trunk activations")
+    print("      against a zero-truth PEDESTAL. That expression IS the between-group term of")
+    print("      Var = E[Var|g] + Var(E[X|g]), so it rises with K by construction: at K=N the")
+    print("      within term is 0 and it saturates at global_var. Arms: real | pedestal (truth")
+    print("      Phi=0) | scramble. Read the SHAPE + real/pedestal separation, never a raw value")
+    print("      (p7). Indicts the archived Laws 22/43/44 (cards H_9660/H_9654/H_9655); it is NOT")
+    print("      a Phi tool — real Phi is faithful IIT4 only (a_phi_iit4_tool). DIRECTIONAL.)")
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
@@ -7281,7 +7291,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--gen",
     "--help", "--pc2-direction", "--z-census", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -8452,6 +8462,140 @@ def bridge_trace_run(argv):
     return 0
 
 
+def faction_phi_proxy_run(argv):
+    """`anima-py evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]
+    [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]` — the ARCHIVED faction
+    Phi proxy, recomputed on engine-native trunk activations, against a zero-truth PEDESTAL
+    (cards H_9660 / H_9654 / H_9655 · faction-lateral-axis-r3).
+
+    The archived engine scored consciousness with
+        phi = (global_var - mean_faction_var) * log2(n_active)
+    (verbatim from core/phi/quantum_consciousness.hexa:252, a TODO[pytorch] comment whose py
+    implementation never existed). Total variance decomposition says
+        Var = E[Var|g] + Var(E[X|g]),
+    so `global_var - mean_faction_var` IS the between-group term: raising K mechanically
+    shrinks the within term and inflates the proxy. At K=N (one cell per faction) within=0 and
+    the proxy saturates at global_var. That is division, not integration — the archived
+    "Law 22" (structure-only Phi 2.1x) and "Law 44" (sigma(6)=12 optimal) are confounded by it.
+
+    Arms (each K, all three, same trunk activations · a_break_the_wall needs >=2 controls):
+      real      — the production trunk penultimate yn:[T,d], partitioned over the d units.
+      pedestal  — i.i.d. gaussian matched to real's per-arm mean/std. TRUTH Phi = 0 (there is
+                  nothing integrated; the partition is an arbitrary label). Any rise here is
+                  pure artifact (`phi-estimator-needs-zero-truth-pedestal`).
+      scramble  — real values, unit axis permuted per position: destroys any cross-unit
+                  structure while preserving every marginal.
+
+    Reads (pre-registered, NOT swept): the K grid, trials, seed. The verdict is the SHAPE of
+    proxy(K) and real-vs-pedestal SEPARATION, never a raw value (FORM tunable · BIND earned · p7):
+      - real tracks pedestal (ratio ~1, monotone, no peak) => proxy measures the partition,
+        not the substrate => archived Laws 22/43/44 stay UNDECIDABLE (confound un-removed).
+      - real separates from pedestal AND peaks at finite K => the axis survives its first gate
+        and H_9654's "optimum was never measured" becomes falsifiable at that K.
+    DIRECTIONAL by construction: this scores an ARCHIVED DEAD FORMULA on live activations. It
+    is NOT a consciousness verdict and never cements one (a_phi_iit4_tool: real Phi is faithful
+    IIT4 only; this proxy is the object under indictment, not a measuring tool)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-phi-proxy", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    trials = evaluate_intval(argv[1:], "--trials", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    ks_s = evaluate_strval(argv[1:], "--n-factions-sweep", "1,2,4,8,12,16,24,32,64")
+    ks = [int(x) for x in ks_s.split(",") if x.strip()]
+
+    print("=== anima evaluate --faction-phi-proxy — archived faction Phi on live trunk (H_9660/H_9654) ===")
+    print("ckpt:  " + ckpt)
+    print("proxy: (global_var - mean_faction_var) * log2(n_active)   [core/phi/quantum_consciousness.hexa:252]")
+    print("       == the BETWEEN-GROUP term of Var = E[Var|g] + Var(E[X|g]) — monotone in K by construction")
+    print("arms:  real | pedestal (truth Phi=0) | scramble (marginals kept, structure cut)")
+    print("K:     %s  ·  trials=%d  seed=%d  (pre-registered, not swept)" % (ks, trials, seed))
+
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    d = int(W["d"])
+    print("d:     %d hidden units  ·  %d prompts x T=%d  (production trunk forward)" % (d, len(items), T))
+
+    # engine-native tap: the EXACT production trunk forward (byte-identical to gate decode)
+    rows = []
+    for it in items:
+        tok = clm._seed_to_tok(it["prompt"], T)
+        yn = clm.clm_forward_hidden(W, tok, T)          # [T, d]
+        rows.append(np.asarray(yn, dtype=np.float64))
+    X = np.concatenate(rows, axis=0)                     # [N, d]  N = prompts*T
+    N = X.shape[0]
+    print("tap:   X=[%d, %d]  (N = prompts x T rows over the d unit axis)" % (N, d))
+
+    def proxy(vals, assign, K):
+        """Archived formula, verbatim. vals:[d] one row; assign:[d] faction id per unit."""
+        gv = float(np.var(vals))
+        fv = [float(np.var(vals[assign == f])) for f in range(K) if (assign == f).sum() > 0]
+        n_active = int((np.abs(vals) > 1e-12).sum())
+        return (gv - float(np.mean(fv))) * math.log2(max(n_active, 2))
+
+    rng = np.random.default_rng(seed)
+    mu, sd = float(X.mean()), float(X.std())
+    out = {"ckpt": ckpt, "d": d, "N": N, "T": T, "trials": trials, "seed": seed,
+           "formula": "(global_var - mean_faction_var) * log2(n_active)",
+           "source": "core/phi/quantum_consciousness.hexa:252 (TODO[pytorch] · py impl never existed)",
+           "rows": []}
+    print("")
+    print("%10s | %12s | %12s | %12s | %10s" % ("n_factions", "real", "pedestal", "scramble", "real/ped"))
+    print("-" * 70)
+    for K in ks:
+        r_v, p_v, s_v = [], [], []
+        for _ in range(trials):
+            i = int(rng.integers(0, N))
+            assign = rng.integers(0, K, d)               # arbitrary labels — the point
+            row = X[i]
+            r_v.append(proxy(row, assign, K))
+            p_v.append(proxy(rng.normal(mu, sd, d), assign, K))          # TRUTH = 0
+            s_v.append(proxy(rng.permutation(row), assign, K))           # marginals kept
+        rm, pm, sm = float(np.mean(r_v)), float(np.mean(p_v)), float(np.mean(s_v))
+        ratio = (rm / pm) if abs(pm) > 1e-12 else float("nan")
+        print("%10d | %12.6f | %12.6f | %12.6f | %10s" %
+              (K, rm, pm, sm, ("%.3f" % ratio) if ratio == ratio else "—"))
+        out["rows"].append({"K": K, "real": rm, "real_sd": float(np.std(r_v)),
+                            "pedestal": pm, "pedestal_sd": float(np.std(p_v)),
+                            "scramble": sm, "scramble_sd": float(np.std(s_v)),
+                            "real_over_pedestal": ratio})
+
+    # ---- read the SHAPE, never a raw value (p7 · FORM tunable / BIND earned) --------------
+    reals = [r["real"] for r in out["rows"]]
+    peds = [r["pedestal"] for r in out["rows"]]
+    mono_r = all(reals[i] <= reals[i + 1] + 1e-12 for i in range(len(reals) - 1))
+    mono_p = all(peds[i] <= peds[i + 1] + 1e-12 for i in range(len(peds) - 1))
+    kpeak = ks[int(np.argmax(reals))]
+    peaked = kpeak != ks[-1]
+    out["monotone_real"], out["monotone_pedestal"] = mono_r, mono_p
+    out["argmax_K"], out["peaked"] = kpeak, peaked
+    print("")
+    print("  real     monotone in K : %s" % mono_r)
+    print("  pedestal monotone in K : %s   (truth Phi=0 — any rise is the artifact)" % mono_p)
+    print("  argmax_K(real)         : %d%s" % (kpeak, "" if peaked else "  (= grid edge — NO interior peak)"))
+    if mono_p and not peaked:
+        print("")
+        print("  VERDICT (H_9660): proxy rises with K on ZERO-TRUTH data and real shows no interior")
+        print("    peak => the archived proxy scores the PARTITION, not the substrate. Laws 22/43/44")
+        print("    stay UNDECIDABLE (confound un-removed) — NOT refuted. DIRECTIONAL: an archived dead")
+        print("    formula on live activations, never a consciousness verdict (a_phi_iit4_tool).")
+    elif peaked:
+        print("")
+        print("  VERDICT (H_9654): real peaks at K=%d, interior to the grid. The archived 'optimum'")
+        print("    claim becomes falsifiable HERE — but only if real separates from pedestal at that K")
+        print("    (read real/ped, not the raw value · p7). Archive never measured K>12 (0 records)." % kpeak)
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -8600,6 +8744,11 @@ def main(argv):
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
+    # --faction-phi-proxy <prompts.json>: the ARCHIVED faction Phi proxy recomputed on live
+    # trunk activations vs a zero-truth PEDESTAL (H_9660/H_9654 · faction-lateral-axis-r3).
+    # Indicts the formula; never cements a consciousness verdict (a_phi_iit4_tool).
+    if "--faction-phi-proxy" in argv:
+        return faction_phi_proxy_run(argv)
     # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
     # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
     if "--earned" in argv:
