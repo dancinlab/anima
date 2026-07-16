@@ -384,3 +384,29 @@ but `anima-py train` **refused to start**: aiden's single GPU is held by a paral
 corpus build (a_wall_first · zero waste). summer has a free GPU but load ~13 (CPU-saturated) — firing a 100K-step
 run there risks the summer-overfire wedge, so rung-2 waits for aiden's GPU. **Resume: re-run
 `~/h9410/rung_768/driver.sh` on aiden when its GPU frees.**
+
+## INTERIM #6 — rung-2 (N=768 · |S_op|=384 · budget 100K) 💀 KILL-AT-RUNG-2 재현
+
+aiden GPU가 병렬 h9339 4-arm 캠페인 완료 후 자유로워지자 **깨끗한 발사**(GPU-preflight 11.3/11.5 GiB free · GPU-refused 재발 없음). seed7 → seed11 순차 100K-step 학습 완료(양 `phaseA_s{7,11}.clm` 생성 → mac `~/anima-weights/h9410_rung2/` 영구보관 · a_fire_recover_complete), 이어 6-arm eval(`--n-decode 3000`) 실행.
+
+**게이트 표 (engine-native · `anima-py evaluate --xbind` · heldout D-acc):**
+
+| arm | n | d_acc | margin_median | sampled_maj | 판정 |
+|---|---|---|---|---|---|
+| G-ALIVE s7 (`sop`) | 1152 | **0.9123** | +4.261 | 0.975 | ✅ 연산자 alive |
+| G-ALIVE s11 (`sop`) | 1152 | **0.9757** | +4.756 | 1.000 | ✅ 연산자 alive |
+| **S_decl s7** (`sdecl`) | 576 | **0.3837** | −2.639 | 0.250 | 💀 우연밑 |
+| **S_decl s11** (`sdecl`) | 576 | **0.3698** | −2.041 | 0.275 | 💀 우연밑 |
+| S_cpt s7 (`scpt`, monitor) | 576 | 0.4844 | +0.145 | 0.400 | — |
+
+(S_cpt s11 은 monitor-only DV — kill/rule 게이트 비필수, GPU 를 rung-3 로 넘기려 완주 전 판정.)
+
+**Verdict: 💀 KILL-AT-RUNG-2 재현.** 연산자는 양 seed 모두 강건하게 학습됐으나(G-ALIVE 0.912/0.976, margin +4.3/+4.8) operator-0-노출 held-out 선언어간엔 전이 실패 — `S_decl` **0.384/0.370** 양 seed 모두 **우연(0.5) 밑**, 양 seed 모두 margin 음수. **|S_op| 을 anchor(24)→rung-1(96)→rung-2(384) 로 16× 키워도 캐시가 규칙을 이긴다** — rung-2 S_decl(0.38/0.37)은 rung-1(0.39/0.42)보다 오히려 더 우연밑. 규칙-추상화 압력이 커져도 어간-인덱스 lookup 이 여전히 싸다. frozen 프로토콜: `G-ALIVE≥0.9 양seed ∧ S_decl 양seed 우연밑` = KILL 재현 · terminal 아님(envelope 미완주) ⟹ **rung-3(N=1713 · |S_op|=856 · budget 250K) 상승**.
+
+**남은 envelope**: rung-3(최대 N·EN mining 상한) → 완주 시 🔴 W_wt-TERMINAL(모든 셀 실패 시) · rung-3 도 KILL이면 여전히 💀 KILL-AT-RUNG-3(N=1713 이 도달가능 상한이므로 사실상 conv-CE terminal 근접). 어느 rung이든 S_decl>우연이면 sign-perm p<.05 + 양seed + C-DECL-ABL(`--decl-ablate`) 통과 전 green 금지.
+
+### 🔗 병렬 세션 비교 — [[H_9672]] T3 주소벽 돌파 (a_parallel_session_compare · #3895)
+
+병렬 세션이 `g1-interface-addressable-wall` 을 **다른 레버로 crack**: **addr-loss(`--store-addr-weight`)** = W_q softmax 주소경로 직접감독 → py303_full balanced manifest P1 **0.9688**(vs Stage1.5 chance 0.586·addr-gap 0.008 일반화). scope = 🟢 CRACK-DIRECTIONAL(합성 CVCVC nonce·storebind·**감독-주소 co-train tier**·창발-주소 아님·단일 seed-7).
+
+**관계 = AGREES + 상보(다른 축)**: (1) **일치** — 둘 다 순수 CE/end-task-only 로는 안 열림 확증(H_9410 rung KILL = 압력만으론 캐시 안 풀림 · H_9672 arm-B/C = end-task-only 주소창발 KILL). (2) **상보** — H_9672 는 표적 주소감독이라는 **다른 레버**로 벽 crack · 이 rung 사다리는 그 crack 을 의미있게 만드는 **음성통제**(순수 |S_op| 압력은 EN mining 상한까지 밀어도 실패, 표적 주소감독만 작동). **CONFLICT 없음** — 서로 다른 manipulation(압력 vs 주소감독)·서로 다른 corpus(극성어간 storebind vs nonce storebind). 함의: H_9410 의 "pressure-alone 레버 종결"은 H_9672 의 addr-loss crack 을 부각(벽이 trivial-crackable 이 아님을 보증).
