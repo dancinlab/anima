@@ -534,7 +534,59 @@ def _gn_sqrt(x):
     return g
 
 
-def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None):
+# ── H_9611 · --gn-freeze (GN-freeze ablation · RF isolation) ─────────────────
+# GroupNorm(1) reduces over the WHOLE [T,C] slab, so a byte anywhere in the window
+# moves mu/var and therefore EVERY position's output — a sequence-global, permutation-
+# invariant O(L)-scalar channel that survives beyond the conv receptive field (H_9560).
+# --gn-freeze pins mu/var to constants CALIBRATED ONCE on a pre-registered reference
+# forward, making the normalizer input-independent => the trunk becomes strictly RF-local.
+# Replaying a cemented score under the freeze isolates whether that global channel ever
+# carried anything readout-relevant. Default (None) is BYTE-IDENTICAL to the live path.
+# The affine (gamma/beta) is NEVER touched. The reference is an explicit caller argument,
+# never swept (a swept constant would be tune-to-green — H_9611 verdict-integrity clause).
+_GN_FREEZE = None          # None = live (default) | dict{key -> (mu, var)} = frozen
+
+
+def gn_freeze_active():
+    return _GN_FREEZE is not None
+
+
+def gn_freeze_set(stats):
+    """Pin GN stats. stats = dict{key -> (mu, var)} from gn_freeze_calibrate."""
+    global _GN_FREEZE
+    _GN_FREEZE = stats
+
+
+def gn_freeze_clear():
+    global _GN_FREEZE
+    _GN_FREEZE = None
+
+
+def gn_freeze_calibrate(W, tok, T):
+    """One reference forward with capture ON → dict{key -> (mu, var)} for every GN call.
+    The caller pre-registers WHICH reference; this only records what that reference gives."""
+    global _GN_FREEZE
+    prev = _GN_FREEZE
+    cap = {}
+    _GN_FREEZE = None                      # calibrate against the LIVE path
+    try:
+        _gn_capture(cap)
+        _fwd_trunk(W, tok, T)
+    finally:
+        _gn_capture(None)
+        _GN_FREEZE = prev
+    return cap
+
+
+_GN_CAP = None
+
+
+def _gn_capture(sink):
+    global _GN_CAP
+    _GN_CAP = sink
+
+
+def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None, gn_key=None):
     """gn_lib.hexa::nn_groupnorm_fwd — eps=1e-5. x:[T,C]. Returns y:[T,C].
     Here G is always 1 (=> normalize over all C per the whole [T,C] group).
     The μ/σ² scalar reduction is pulled to a host python float ONCE per group
@@ -551,8 +603,16 @@ def nn_groupnorm_fwd(x, gamma, beta, T, C, G, xp=None):
     for grp in range(G):
         c0 = grp * cg
         sl = x[:, c0:c0 + cg]
-        mu = sl.sum() / m
-        var = ((sl - mu) * (sl - mu)).sum() / m
+        # H_9611 --gn-freeze: pinned mu/var (input-independent => trunk is RF-local).
+        # Default path (_GN_FREEZE None) is untouched and byte-identical.
+        frz = None if _GN_FREEZE is None else _GN_FREEZE.get((gn_key, grp))
+        if frz is None:
+            mu = sl.sum() / m
+            var = ((sl - mu) * (sl - mu)).sum() / m
+        else:
+            mu, var = frz                      # pre-registered reference constants
+        if _GN_CAP is not None:                # calibration pass records what the ref gives
+            _GN_CAP[(gn_key, grp)] = (float(mu), float(var))
         inv = 1.0 / _gn_sqrt(float(var) + eps)
         xh = (sl - mu) * inv
         y[:, c0:c0 + cg] = gamma[c0:c0 + cg] * xh + beta[c0:c0 + cg]
@@ -937,7 +997,8 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     for li in range(L):
         dil_eff = dil if dil <= DIL_CAP else DIL_CAP
         h = _conv1d(xt, W["tcWt"][li], W["tcB"][li], T, d, d, K, dil_eff, xp)
-        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1, xp)
+        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1, xp,
+                              gn_key=("trunk", li))
         hg = nn_gelu_fwd(hn, xp)
         xt = xt + hg.reshape(T, d)
         if taps is not None:
@@ -963,7 +1024,7 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     # MoE router mix
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d, xp)          # [T, d]
     # final groupnorm
-    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1, xp)
+    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1, xp, gn_key=("out",))
     return yn
 
 
