@@ -1677,16 +1677,24 @@ def _sb_answer(op, polarity):
     return polarity if op == 0 else (1 - polarity)
 
 
-def _sb_emit_block(rng, entities, store_slots):
+def _sb_emit_block(rng, entities, store_slots, balanced=False):
     """One block = one store draw with a FRESH polarity per slot, then EXACTLY ONE query line per
     stored entity in a random order. Block-level rotation is the mmap-window-compatible analogue of
     v2's per-example rotation: because a block re-draws every polarity, memorizing entity->polarity
     into the weights returns exactly chance (0.5), so every point above chance must route through the
     bridge. One line per entity per block (no re-appearance within a block) removes the in-window copy
-    source — the quietest P1 contaminant (H_9423 잔인한 판정 ③)."""
+    source — the quietest P1 contaminant (H_9423 잔인한 판정 ③). balanced=True forces EXACTLY
+    store_slots/2 good + store_slots/2 bad pols per store (H_9672: the majority-polarity shortcut
+    ceiling — a readout of `op ⊕ majority(pols)` reaches ~0.637 on random stores with the address
+    fully dead — collapses to 0.5 when the polarity ratio is constant, so a balanced eval store is the
+    PRIMARY scoring face that isolates real content-addressing from the shortcut)."""
     idx = rng.sample(range(len(entities)), store_slots)
     names = [entities[i] for i in idx]
-    pols = [rng.randint(0, 1) for _ in range(store_slots)]
+    if balanced:
+        pols = [0] * (store_slots // 2) + [1] * (store_slots - store_slots // 2)
+        rng.shuffle(pols)
+    else:
+        pols = [rng.randint(0, 1) for _ in range(store_slots)]
     rows, lines = [], []
     order = list(range(store_slots))
     rng.shuffle(order)
@@ -1744,6 +1752,24 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
         _, br = _sb_emit_block(ev_rng, ev, store_slots)
         held_rows.extend(br)
 
+    # H_9672 balanced held manifest: SAME held-out entities, but every store is forced to exactly
+    # store_slots/2 good + store_slots/2 bad → the majority-polarity shortcut ceiling (~0.637) collapses
+    # to 0.5, so this is the PRIMARY scoring face for the address lever (isolates content-addressing
+    # from the polarity-ratio shortcut that flip-coherence cannot catch). Separate rng stream.
+    bal_rng = random.Random(seed + 10009)
+    bal_rows = []
+    for _ in range(n_eval_blocks):
+        _, br = _sb_emit_block(bal_rng, ev, store_slots, balanced=True)
+        bal_rows.extend(br)
+    # H_9672 seen manifest: eval blocks over TRAIN entities (addr-gap control — train-address accuracy
+    # vs held-out isolates memorization[gap>.35] from generalization[gap<=.20]). NOT held-out (train
+    # entities are in the corpus) → for addr audit ONLY, never a 0-shot claim.
+    seen_rng = random.Random(seed + 10011)
+    seen_rows = []
+    for _ in range(n_eval_blocks):
+        _, br = _sb_emit_block(seen_rng, train, store_slots)
+        seen_rows.extend(br)
+
     # C0-a zero-leak HARD-ASSERT (both surfaces): a held-out entity must appear NOWHERE in the
     # training corpus — not as a store key, not as a prompt substring. A gate that scores a stratum
     # the corpus reinforces is a forgery that always passes (cpt-destroys-what-corpus-omits); the
@@ -1769,11 +1795,16 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
                       "lang": lang, "seed": seed, "entries": store_rows}
     held_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots,
                      "lang": lang, "seed": seed, "held_out": True, "entries": held_rows}
+    balanced_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots, "lang": lang,
+                         "seed": seed, "held_out": True, "balanced": True, "entries": bal_rows}
+    seen_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots, "lang": lang,
+                     "seed": seed, "held_out": False, "seen": True, "entries": seen_rows}
     st = {"n_blocks": n_blocks, "store_slots": store_slots, "lines": len(lines),
           "bytes": len(text.encode("ascii")), "max_line_bytes": max_bytes,
           "n_train": len(train), "n_heldout": len(ev), "n_pool": n_pool,
           "n_eval_blocks": n_eval_blocks, "leak": 0, "replay": replay,
-          "store_manifest": store_manifest, "held_manifest": held_manifest}
+          "store_manifest": store_manifest, "held_manifest": held_manifest,
+          "balanced_manifest": balanced_manifest, "seen_manifest": seen_manifest}
     return text, st
 
 
@@ -3686,6 +3717,12 @@ def main():
         # .held.json = 0-shot held-out eval manifest (`anima-py evaluate <clm> --store <this>`).
         hj = opts["out"] + ".held.json"
         json.dump(st["held_manifest"], open(hj, "w", encoding="utf-8"), ensure_ascii=False)
+        # H_9672 .held_balanced.json = PRIMARY scoring face (4/4 pols → majority-polarity shortcut 0.637
+        # collapses to 0.5) · .seen.json = train-entity addr-gap control (memorization vs generalization).
+        bj = opts["out"] + ".held_balanced.json"
+        json.dump(st["balanced_manifest"], open(bj, "w", encoding="utf-8"), ensure_ascii=False)
+        vj = opts["out"] + ".seen.json"
+        json.dump(st["seen_manifest"], open(vj, "w", encoding="utf-8"), ensure_ascii=False)
         # .meta.json = budget floor (bytes the trainer enforces · a_korean_byte_budget: EN = 1 B/char).
         mj = opts["out"] + ".meta.json"
         json.dump({"fmt": "storebind", "lang": st["lang"] if "lang" in st else opts["lang"],
