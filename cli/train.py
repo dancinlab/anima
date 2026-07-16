@@ -1216,6 +1216,7 @@ class StoreBindCell:
 
     def __init__(self, path, key_emb_np, n_slot, T, val_frac):
         import json as _json
+        import numpy as np           # train.py imports numpy only locally (as _np); StoreBindCell needs np
         lines = open(path, encoding="ascii").read().splitlines()
         rows = [_json.loads(l) for l in open(path + ".store.jsonl", encoding="utf-8")]
         if len(lines) != len(rows):
