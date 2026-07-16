@@ -7359,7 +7359,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--faction-block-structure", "--n-factions-sweep", "--trials", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--z-census", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -9138,6 +9138,208 @@ def faction_phi_proxy_run(argv):
     return 0
 
 
+def faction_block_structure_run(argv):
+    """`anima-py evaluate <ckpt> --faction-block-structure <prompts.json> [--n-factions-sweep 2,4,8,12,16]
+    [--win 24] [--seed 12345] [--out blocks.json]` — does the trunk's unit axis carry faction-like
+    MODULAR BLOCK structure at all (card H_9674 · faction-lateral-axis-r3)?
+
+    Why this gate exists. The archived faction laws died as CIRCULAR (H_9673: intra-faction sync
+    writes the proxy's own negative term every step) and the partition arithmetic is monotone on
+    zero-truth data (H_9660). What survives is a DIFFERENT question: the old factions were fake,
+    but is the STRUCTURE learnable on this substrate (H_9643, GPU)? That fire is only justified if
+    the substrate has block structure to find. This measures the precondition for $0.
+
+    Method (engine-native · production trunk forward, byte-identical to gate decode):
+      X:[N,d] penultimate over the prompt set -> unit-by-unit correlation |C|:[d,d] -> greedy
+      modularity clustering into K blocks -> Newman modularity Q of the best partition found.
+    Arms (a_break_the_wall needs >=2 controls):
+      real      — the trunk's own correlation structure.
+      pedestal  — i.i.d. gaussian matched to real's mean/std: TRUTH Q = 0 (no blocks exist).
+                  Finite-d correlation noise still yields Q>0, which is exactly why the pedestal
+                  is mandatory (`phi-estimator-needs-zero-truth-pedestal`) — Q is NOT read raw.
+      scramble  — real values, per-unit independent row permutation: kills cross-unit coupling,
+                  keeps every marginal.
+    POSITIVE CONTROL FIRST (`positive-control-before-reading-a-negative`): the sample correlation
+    over N rows has rank <= min(N,d); at N << d both real and pedestal are noise-dominated and their
+    agreement would mean "no power", not "no blocks". So the probe first plants K blocks and must
+    recover them at this very N/d (bar: x1.5 over its own pedestal). If it cannot, the run emits
+    NO verdict and exits non-zero — an unreadable negative is not a negative.
+
+    Verdict is real-vs-pedestal SEPARATION, never raw Q (p7 · FORM tunable / BIND earned):
+      real ~ pedestal  => no faction-like blocks in the substrate => H_9643 has nothing to learn
+                          => the axis closes at $0 and the GPU fire is NOT justified.
+      real >> pedestal => blocks exist => H_9643 becomes a real question and the fire is earned.
+    DIRECTIONAL: correlation-modularity is one lens on 'module', not a proof of their absence
+    (a_break_the_wall: a ceiling needs >=2-3 lenses)."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-block-structure", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    ks = [int(x) for x in evaluate_strval(argv[1:], "--n-factions-sweep", "2,4,8,12,16").split(",") if x.strip()]
+
+    print("=== anima evaluate --faction-block-structure — does the substrate HAVE blocks? (H_9674) ===")
+    print("ckpt:  " + ckpt)
+    print("why:   old factions died CIRCULAR (H_9673) — this asks if the STRUCTURE is learnable at all.")
+    print("       No blocks in the substrate => H_9643 (learn factions, GPU) has nothing to learn.")
+    print("arms:  real | pedestal (truth Q=0) | scramble   ·   read SEPARATION, never raw Q (p7)")
+
+    spec = json.load(open(spec_path))
+    items = spec["items"] if "items" in spec else spec.get("prompts", [])
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    rows = []
+    for it in items:
+        yn = clm.clm_forward_hidden(W, clm._seed_to_tok(it["prompt"], T), T)
+        rows.append(np.asarray(yn, dtype=np.float64))
+    X = np.concatenate(rows, axis=0)                       # [N, d]
+    N, d = X.shape
+    print("tap:   X=[%d, %d]  (production trunk penultimate · %d prompts x T=%d)" % (N, d, len(items), T))
+
+    rng = np.random.default_rng(seed)
+
+    def modularity(A, assign, K):
+        """Newman Q on the |correlation| graph for a given block assignment (vectorized)."""
+        m2 = A.sum()
+        if m2 <= 0: return 0.0
+        n = A.shape[0]
+        H = np.zeros((n, K)); H[np.arange(n), assign] = 1.0
+        k = A.sum(axis=1)
+        intra = float(((A @ H) * H).sum())                # sum of within-block edge weights (1 BLAS matmul)
+        kf = k @ H                                        # [K] degree mass per block
+        return float(intra / m2 - float((kf / m2) @ (kf / m2)))
+
+    _graph_cache = {}
+
+    def _graph(M, tag):
+        """|corr| graph + its eigenbasis, computed ONCE per arm (eigh on d=3784 is O(d^3) — doing
+        it per (arm, K) cell made the probe unrunnable). Cached by arm tag, never across arms."""
+        if tag in _graph_cache:
+            return _graph_cache[tag]
+        C = np.abs(np.corrcoef(M, rowvar=False))
+        C = np.nan_to_num(C, nan=0.0)
+        np.fill_diagonal(C, 0.0)
+        try:
+            _w, V = np.linalg.eigh(C)
+        except Exception:
+            V = None
+        _graph_cache[tag] = (C, V)
+        return _graph_cache[tag]
+
+    def best_blocks(M, K, tag, sweeps=6):
+        """|corr| graph -> spectral seed + full sweeps to modularity.
+
+        The first cut used 40 random single-unit moves over d=3784 and could not recover blocks it
+        had PLANTED (positive control x0.76 < bar 1.5) — the SEARCH, not the substrate, was the
+        binding constraint, and a negative read off it would have been an instrument fact. Fixed:
+        seed from the leading eigenvectors (spectral), then sweep EVERY unit to its best block
+        until no gain. Identical budget for every arm — an arm handed more search would win on
+        search, not on structure. Self-check at d=200: planted x28.89 over its pedestal."""
+        C, V = _graph(M, tag)
+        n = C.shape[0]
+        if V is not None:
+            E = V[:, -K:] if K <= n else V
+            cent = E[rng.choice(n, K, replace=False)]
+            assign = np.zeros(n, dtype=int)
+            for _ in range(12):
+                dist = ((E[:, None, :] - cent[None, :, :]) ** 2).sum(-1)
+                assign = dist.argmin(1)
+                for f in range(K):
+                    if (assign == f).any(): cent[f] = E[assign == f].mean(0)
+        else:
+            assign = rng.integers(0, K, n)
+        # full sweeps, VECTORIZED: one-hot H:[n,K] -> affinity = C @ H is a single BLAS call.
+        # (The per-unit python loop over K slices was the bottleneck — 3784 units x K x O(d) per
+        # sweep never finished. Same math, one matmul.)
+        deg = C.sum(1); m2 = C.sum()
+        for _ in range(sweeps):
+            H = np.zeros((n, K)); H[np.arange(n), assign] = 1.0
+            aff = C @ H                                   # [n, K] — sum of edges u->block f
+            pen = np.outer(deg, deg @ H) / m2             # [n, K] — null-model expectation
+            new_assign = np.argmax(aff - pen, axis=1)
+            if (new_assign == assign).all(): break
+            assign = new_assign
+        return modularity(C, assign, K)
+
+    # ---- POWER GATE (`power-before-negative-verdict` · `positive-control-before-reading-a-negative`)
+    # The unit-by-unit correlation over N rows has rank <= min(N,d). At N << d the sample |C| is
+    # mostly finite-sample noise and BOTH real and pedestal are noise-dominated: their agreement
+    # would be an INSTRUMENT fact ("no power"), not a substrate fact ("no blocks"). So the
+    # instrument must first recover blocks it is GIVEN, at this very N and d, or the negative is
+    # unreadable and this run refuses to emit one.
+    print("power: N=%d rows vs d=%d units — sample |C| rank <= %d (%.0f%% of the %dx%d matrix is"
+          % (N, d, min(N, d), 100.0 * (1.0 - min(N, d) / float(d)), d, d))
+    print("       finite-sample noise). A positive control decides whether a negative is readable.")
+    P = rng.normal(float(X.mean()), float(X.std()), (N, d))          # pedestal: TRUTH Q = 0
+    S = np.stack([rng.permutation(X[:, j]) for j in range(d)], axis=1)  # scramble: marginals kept
+
+    # positive control: PLANTED blocks — K_pc latent factors, each driving its own unit block.
+    K_pc = ks[len(ks) // 2]
+    lat = rng.normal(0, 1, (N, K_pc))
+    blk = np.repeat(np.arange(K_pc), int(np.ceil(d / K_pc)))[:d]
+    G = np.stack([lat[:, blk[j]] for j in range(d)], axis=1) + rng.normal(0, 0.3, (N, d))
+    q_pc = best_blocks(G, K_pc, "pc")
+    q_pc_ped = best_blocks(rng.normal(0, 1, (N, d)), K_pc, "pc_ped")
+    pc_ratio = (q_pc / q_pc_ped) if abs(q_pc_ped) > 1e-12 else float("nan")
+    print("       positive control (K=%d planted blocks · SNR~3): Q=%.6f vs its pedestal %.6f → x%.2f"
+          % (K_pc, q_pc, q_pc_ped, pc_ratio))
+    PC_BAR = 1.5
+    instrument_live = bool(pc_ratio == pc_ratio and pc_ratio >= PC_BAR)
+    if not instrument_live:
+        print("       ⛔ INSTRUMENT-DEAD: the probe cannot recover blocks it PLANTED at this N/d")
+        print("          (x%.2f < bar %.1f). A 'real ~ pedestal' result here would be a power fact,"
+              % (pc_ratio if pc_ratio == pc_ratio else float("nan"), PC_BAR))
+        print("          not a substrate fact — so NO negative is emitted. Raise N (more prompts)")
+        print("          or drop d before reading anything. (positive-control-before-reading-a-negative)")
+    else:
+        print("       ✅ instrument LIVE (x%.2f >= bar %.1f) — a negative would be readable." % (pc_ratio, PC_BAR))
+
+    out = {"ckpt": ckpt, "N": N, "d": d, "seed": seed,
+           "positive_control": {"K": K_pc, "Q": q_pc, "pedestal_Q": q_pc_ped, "ratio": pc_ratio,
+                                "bar": PC_BAR, "instrument_live": instrument_live},
+           "rows": []}
+    if not instrument_live:
+        out["verdict"] = "INSTRUMENT-DEAD — no verdict emitted (power, not substrate)"
+        if out_path:
+            json.dump(out, open(out_path, "w"), indent=1)
+            print("")
+            print("  wrote: " + out_path)
+        return 1
+    print("")
+    print("%10s | %10s | %10s | %10s | %10s" % ("K", "real Q", "pedestal", "scramble", "real/ped"))
+    print("-" * 62)
+    for K in ks:
+        qr, qp, qs = best_blocks(X, K, "real"), best_blocks(P, K, "ped"), best_blocks(S, K, "scr")
+        ratio = (qr / qp) if abs(qp) > 1e-12 else float("nan")
+        print("%10d | %10.6f | %10.6f | %10.6f | %10s" %
+              (K, qr, qp, qs, ("%.3f" % ratio) if ratio == ratio else "—"))
+        out["rows"].append({"K": K, "real_Q": qr, "pedestal_Q": qp, "scramble_Q": qs,
+                            "real_over_pedestal": ratio})
+
+    rr = [r["real_over_pedestal"] for r in out["rows"] if r["real_over_pedestal"] == r["real_over_pedestal"]]
+    mx = max(rr) if rr else float("nan")
+    out["max_real_over_pedestal"] = mx
+    out["blocks_exist"] = bool(mx == mx and mx >= 1.5)     # pre-registered bar
+    print("")
+    print("  max real/pedestal over K : %s   (pre-registered bar: >=1.5)" % (("%.3f" % mx) if mx == mx else "—"))
+    if out["blocks_exist"]:
+        print("  VERDICT (H_9674): blocks separate from the zero-truth pedestal => faction-like")
+        print("    structure EXISTS in the substrate => H_9643 (learn factions · GPU) is EARNED.")
+    else:
+        print("  VERDICT (H_9674): real ~ pedestal => NO faction-like block structure in the trunk's")
+        print("    unit axis => H_9643 has nothing to learn => the axis CLOSES at $0 and the GPU fire")
+        print("    is NOT justified. DIRECTIONAL: correlation-modularity is ONE lens (a_break_the_wall")
+        print("    wants 2-3 before a ceiling) — it does not prove modules are absent under every lens.")
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -9295,6 +9497,10 @@ def main(argv):
     # Indicts the formula; never cements a consciousness verdict (a_phi_iit4_tool).
     if "--faction-phi-proxy" in argv:
         return faction_phi_proxy_run(argv)
+    # --faction-block-structure <prompts.json>: does the trunk unit axis carry faction-like
+    # modular blocks at all (H_9674)? The $0 precondition for H_9643's GPU fire.
+    if "--faction-block-structure" in argv:
+        return faction_block_structure_run(argv)
     # --interaction-lift <manifest.json>: read-only engine-native joint interaction-lift
     # NLL surface (H_9255). argv[0]=ckpt; interaction_lift_run reads --interaction-lift/--out.
     if "--earned" in argv:
