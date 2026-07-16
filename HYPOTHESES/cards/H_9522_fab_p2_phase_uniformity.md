@@ -1,6 +1,9 @@
 # H_9522 — phase-uniformity 법칙 — "두 페이즈에서 같은 코드가 돌면 합법" (fable R2-P2 · PROPOSED)
 
 **status:** 🔵 PROPOSED (미실행 · 오너 framebreak lab full 고갈-발산 R2 · 사전등록 · 양쪽 DEPLETED 라운드) — source=fable
+
+## 🧱 $0 스크린 KILL (P2 phase-uniformity · wftyw6v4h)
+G1벽=p8위반 재해석 반증: G1 브리지 forward 는 phase-uniform(학습중 작동)·H_9359 은 objective-bound(CE=echo memorize)이지 phase-split 아님. 부수확정: 진짜 p8-tension=emit 게이트 추론전용(train.py 0건)이나 입-정책이지 G1 좌위 아님.
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9428]] (tension 이미 다차원·effective rank 2.66 $0 확증=발산 기반) · [[H_9468]] (PCA-DOF rank 2) · [[H_9424]] (cb-perr KILL) · source: lab full R2 fable(R2-P2)
 
