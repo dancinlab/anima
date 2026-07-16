@@ -77,8 +77,8 @@ py303_full·summer·격리venv(chat-py-6)·3-seed(7/4302/4303)·60tick·T=1.0·�
 
 **GREEN-DIRECTIONAL 범위**: 303M·3seed·λ=0.6단일·60tick. TERMINAL 아님 —
 1. **중심주장 완전 bar**(retune-free score-섭동 robustness): ✅ **303M PASS(#3867)** — `--score-perturb`(v0.15.25) 303M 3-seed: dual gate center perturb −0.3/+0.3서 **swing 0.000 완전 불변**(per-seed 0.533/0.483/0.5 양쪽 byte-identical) vs wm-cover(positive control) 0.378→1.000 **swing 0.622 이동**(perturbation 실재). ⟹ dual ledger ½가 motivation score와 **독립**(emit⊥score·retune-free robust) = H_9610 one-sided store가 못한 바로 그 성질. toy(0.500 flat vs 0.286→0.929)→303M 재현+강화. **⟹ H_9627 4성질 완비**: ①emit≈½ 창발 ②two-sided spring ③dissociation ④score-robust(중심주장 bar).
-2. λ dose-response 303M(P-pull-3 단조성).
-3. **프로덕션 default 전환·λ = 오너 p5**(데몬 발화리듬 변경).
+2. **λ dose-response(P-pull-3)**: ✅ **303M 완료(#3893·aiden 3-seed)** — dual center λ∈{0.5,0.6,0.7,0.9} = [0.500,0.506,0.500,0.506] **spread 0.006 = λ-LOCKED**(autocov −0.25→−0.165 항상 음·스프링 stiffness만 λ-감소) vs wm-cover center λ-의존(0.6→0.9: 0.822→0.244). ⟹ **P-pull-3 재프레임**: wm-cover center=λ FORM 곡선이나 **dual center=½ BIND-earned(λ-locked)**. dual ½가 **score(swing 0.000)+λ(spread 0.006) 양 튜닝축 모두 불변** = 측정 가능한 모든 축서 ½ 구조적 창발(setpoint/tune 아님). **측정 축 완전 소진.**
+3. **프로덕션 default 전환·λ = 오너 p5**(데몬 발화리듬 변경·전세션 chat 기본값 blast radius) — 유일 TERMINAL 잔여(거버넌스·사람승인·측정 아님).
 
 ⚠️ id 이력: 등록 #3846·구현 #3847 = H_9627. 병렬 faction-R3 세션 G6 충돌(#3857) → 그쪽 #3859가 faction을 H_9660으로 이동·H_9627을 이 dual-ledger로 복원. 코드주석 H_9627 = 정확(불변).
 
