@@ -9455,7 +9455,10 @@ def faction_block_provenance_run(argv):
     The code argument is therefore checked, not trusted (`tool-definition-read-code-not-docstring`).
 
     DV: contiguity of the recovered assignment — adjacency P(assign[i]==assign[i+1]) and ARI against
-    the contiguous-chunk partition. Chance adjacency = 1/K. Pre-registered bar: >=0.20.
+    the contiguous-chunk partition. Chance adjacency is sum_f p_f^2 on the REALIZED block sizes,
+    NOT 1/K: 1/K is the equal-partition special case, and the trunk's blocks come out heavily
+    unbalanced while the pedestal's come out even, so scoring both against 1/K charges real's size
+    skew as signal (H_9676 correction). Pre-registered bar: >=0.20 over the pedestal's own Δ.
     Arms: real | pedestal (i.i.d. · TRUTH contiguity=0) | positive (PLANTED CONTIGUOUS blocks — the
     metric must score these >=0.80 or a low real contiguity is a metric fact, not a substrate fact).
     Verdict: real ~ chance AND positive ~ 1.0 => blocks are NOT index-contiguous => not a GN/RF
@@ -9514,6 +9517,18 @@ def faction_block_provenance_run(argv):
         """P(assign[i] == assign[i+1]) — ~1.0 iff blocks are contiguous index runs."""
         return float((assign[:-1] == assign[1:]).mean())
 
+    def adj_chance(assign, K):
+        """Chance adjacency GIVEN the realized block sizes = sum_f p_f^2.
+
+        1/K is the EQUAL-partition special case only. This bit us: the trunk's blocks come out
+        heavily unbalanced ([2527, 540, 391, 326] at K=4 — one block holds 67% of the units) while
+        the i.i.d. pedestal's come out even ([961, 942, 942, 939]). Scoring both against 1/K made
+        the pedestal look right by coincidence (its sum p^2 IS 1/K) and charged real's imbalance as
+        signal — a 0.2285 "artifact" that was pure size skew. Against sum p_f^2 real sits at
+        -0.0060, i.e. AT chance (H_9676 correction · prereg-table-must-cover-below-chance)."""
+        p = np.bincount(assign, minlength=K) / float(len(assign))
+        return float((p ** 2).sum())
+
     def ari(a, b):
         """Adjusted Rand index between two partitions."""
         from math import comb
@@ -9533,7 +9548,9 @@ def faction_block_provenance_run(argv):
            "rows": []}
     P = rng.normal(float(X.mean()), float(X.std()), (N, d))
     print("")
-    print("%5s | %10s | %10s | %10s | %9s | %10s" % ("K", "real adj", "ped adj", "pos adj", "chance", "real ARI"))
+    print("  (adj columns are adj - chance, chance = sum p_f^2 on realized sizes — NOT 1/K · H_9676)")
+    print("%5s | %10s | %10s | %10s | %9s | %10s" %
+          ("K", "real Δadj", "ped Δadj", "pos Δadj", "real chance", "real ARI"))
     print("-" * 70)
     ok = True
     for K in ks:
@@ -9542,22 +9559,30 @@ def faction_block_provenance_run(argv):
         G = np.stack([lat[:, contig[j]] for j in range(d)], axis=1) + rng.normal(0, 0.3, (N, d))
         ar, ap, ag = cluster(X, K), cluster(P, K), cluster(G, K)
         adj_r, adj_p, adj_g = adjacency(ar), adjacency(ap), adjacency(ag)
-        chance = 1.0 / K
+        # chance is sum p_f^2 on the REALIZED sizes, never 1/K — see adj_chance (H_9676 correction)
+        ch_r, ch_p, ch_g = adj_chance(ar, K), adj_chance(ap, K), adj_chance(ag, K)
         ari_r = ari(ar, contig)
-        print("%5d | %10.4f | %10.4f | %10.4f | %9.4f | %10.4f" % (K, adj_r, adj_p, adj_g, chance, ari_r))
+        print("%5d | %10.4f | %10.4f | %10.4f | %9.4f | %10.4f" %
+              (K, adj_r - ch_r, adj_p - ch_p, adj_g - ch_g, ch_r, ari_r))
         out["rows"].append({"K": K, "real_adjacency": adj_r, "pedestal_adjacency": adj_p,
-                            "positive_adjacency": adj_g, "chance": chance,
-                            "real_ARI_vs_contiguous": ari_r, "positive_live": bool(adj_g >= 0.80)})
-        if adj_g < 0.80: ok = False
+                            "positive_adjacency": adj_g,
+                            "real_chance_sum_p2": ch_r, "pedestal_chance_sum_p2": ch_p,
+                            "positive_chance_sum_p2": ch_g,
+                            "real_adj_over_chance": adj_r - ch_r,
+                            "pedestal_adj_over_chance": adj_p - ch_p,
+                            "real_block_sizes": np.bincount(ar, minlength=K).tolist(),
+                            "real_ARI_vs_contiguous": ari_r,
+                            "positive_live": bool(adj_g - ch_g >= 0.30)})
+        if adj_g - ch_g < 0.30: ok = False
     out["instrument_live"] = ok
     print("")
     if not ok:
-        print("  INSTRUMENT-DEAD: the metric cannot see contiguity it PLANTED (pos adj < 0.80).")
+        print("  INSTRUMENT-DEAD: the metric cannot see contiguity it PLANTED (pos Δadj < 0.30).")
         print("     A low real contiguity would be a metric fact, not a substrate fact — no verdict.")
         out["verdict"] = "INSTRUMENT-DEAD — no verdict emitted"
         if out_path: json.dump(out, open(out_path, "w"), indent=1)
         return 1
-    mx_adj = max(r["real_adjacency"] - r["chance"] for r in out["rows"])
+    mx_adj = max(r["real_adj_over_chance"] - r["pedestal_adj_over_chance"] for r in out["rows"])
     mx_ari = max(r["real_ARI_vs_contiguous"] for r in out["rows"])
     out["max_real_adj_over_chance"], out["max_real_ARI"] = mx_adj, mx_ari
     artifact = bool(mx_adj >= 0.20 or mx_ari >= 0.20)
