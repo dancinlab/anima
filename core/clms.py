@@ -102,6 +102,7 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
     V_slots = clms["val"][pols]                                            # (n_slot, d_s)
     scale = 1.0 / np.sqrt(float(clms["d_k"]))
     out = logits.copy()
+    lane_type = int(clms.get("lane_type", 1))
     for t in qpos:
         h = yn[t]                                                          # (d,)
         q = h @ clms["W_q"]                                               # (d_k,) [row-vector conv, CLML-form]
@@ -111,7 +112,11 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
         else:
             a = _softmax(q @ K.T * scale)                                # (n_slot,) content-address lookup
         v = a @ V_slots                                                   # (d_s,) = Σ aᵢ·val[polᵢ]
-        z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"])     # (r,) [v; h] order fixed
+        if lane_type == 2:
+            g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
+            z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
+        else:                                                             # lane_type 1 legacy: [v; h] fusion
+            z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"]) # (r,) — S1/S2 artifacts, no silent recast
         s = z @ clms["W_out"]                                             # (V,)
         out[t] = (lam * s).astype(dt)                                     # ★ overwrite = store_only gate
     return out
@@ -127,20 +132,28 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None):
 #    instrument-death vector, train-pod vs eval-host generation drift degrades the lookup silently
 #    and a single-host determinism gate can't catch it. 64KB is 0.02% of a 303M .clm — store it.)
 # --------------------------------------------------------------------------- #
-_ARR_ORDER = ("key_emb", "W_q", "val", "W_h", "b_h", "W_out", "lam")
+_ARR_ORDER = ("key_emb", "W_q", "val", "W_h", "b_h", "W_out", "lam")               # lane_type 1 (legacy)
+_ARR_ORDER_V2 = ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam")     # lane_type 2 (H_9423 W_g)
 _KEY_ALPHABET = 256
 
 
 def pack_clms(w: dict) -> bytes:
-    """Pack a CLMS weight dict into appended trailer bytes. `w` = key_emb (256,d_k), W_q (d,d_k),
-    val (2,d_s), W_h (d_s+d,r), b_h (r,), W_out (r,V), lam scalar, lane_type, n_slot, d_k, d_s, r,
-    key_seed. Absent trailer <=> byte-identical model, so a writer only calls this when the model
-    actually has a CLMS lane."""
+    """Pack a CLMS weight dict into appended trailer bytes. Absent trailer <=> byte-identical model, so
+    a writer only calls this when the model actually has a CLMS lane. lane_type 2 (H_9423, default for a
+    trained torch module) inserts d_g into the header (<BIIIIII) and W_g after W_q; lane_type 1 (legacy
+    S1/S2 artifacts) keeps the original <BIIIII header and no W_g — the reader branches on lane_type."""
     out = bytearray()
     out += CLMS_MAGIC
-    out += struct.pack("<BIIIII", int(w.get("lane_type", 1)), int(w["n_slot"]),
-                       int(w["d_k"]), int(w["d_s"]), int(w["r"]), int(w["key_seed"]))
-    for name in _ARR_ORDER:
+    lane_type = int(w.get("lane_type", 2))
+    if lane_type == 2:
+        out += struct.pack("<BIIIIII", 2, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
+        order = _ARR_ORDER_V2
+    else:
+        out += struct.pack("<BIIIII", 1, int(w["n_slot"]), int(w["d_k"]),
+                           int(w["d_s"]), int(w["r"]), int(w["key_seed"]))
+        order = _ARR_ORDER
+    for name in order:
         out += np.asarray(w[name], dtype="<f4").reshape(-1).tobytes()
     return bytes(out)
 
@@ -150,11 +163,19 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
     W["V"]). Returns (clms_dict, new_off) or (None, off) if absent/short (passthrough-safe, same guard
     idiom as read_clml). Round-trip byte-identity is trivial: every array is <f4 in the file, the reader
     frombuffers and the writer tobytes — no recompute, no RNG."""
-    if off < 0 or off + 25 > len(buf) or buf[off:off + 4] != CLMS_MAGIC:
+    if off < 0 or off + 5 > len(buf) or buf[off:off + 4] != CLMS_MAGIC:
         return None, off
     p = off + 4
     lane_type = buf[p]; p += 1
-    n_slot, d_k, d_s, r, key_seed = struct.unpack_from("<IIIII", buf, p); p += 20
+    if lane_type == 2:                                     # H_9423 fusion-bottleneck (W_g present)
+        if p + 24 > len(buf):
+            return None, off
+        n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
+    else:                                                  # lane_type 1 legacy (no W_g; d_g=0)
+        if p + 20 > len(buf):
+            return None, off
+        n_slot, d_k, d_s, r, key_seed = struct.unpack_from("<IIIII", buf, p); p += 20
+        d_g = 0
 
     def take(n, shape):
         nonlocal p
@@ -162,11 +183,14 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         return arr
 
     clms = {"lane_type": int(lane_type), "n_slot": int(n_slot), "d_k": int(d_k),
-            "d_s": int(d_s), "r": int(r), "key_seed": int(key_seed)}
+            "d_s": int(d_s), "d_g": int(d_g), "r": int(r), "key_seed": int(key_seed)}
     clms["key_emb"] = take(_KEY_ALPHABET * d_k, (_KEY_ALPHABET, d_k))
     clms["W_q"] = take(d * d_k, (d, d_k))
+    if lane_type == 2:
+        clms["W_g"] = take(d * d_g, (d, d_g))
     clms["val"] = take(2 * d_s, (2, d_s))
-    clms["W_h"] = take((d_s + d) * r, (d_s + d, r))
+    w_h_in = (d_s + d_g) if lane_type == 2 else (d_s + d)
+    clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
     clms["lam"] = float(np.frombuffer(buf, "<f4", 1, p)[0]); p += 4
@@ -180,12 +204,13 @@ def clms_weights_from_torch(mod) -> dict:
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
     return {
-        "lane_type": 1, "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s, "r": mod.r,
-        "key_seed": mod.key_seed,
+        "lane_type": 2, "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
+        "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
         "key_emb": n(mod.key_emb),
         "W_q": n(mod.W_q.weight).T,          # (d_k,d) → (d,d_k)
+        "W_g": n(mod.W_g.weight).T,          # (d_g,d) → (d,d_g)  H_9423 fusion bottleneck
         "val": n(mod.val),                    # (2,d_s)
-        "W_h": n(mod.W_h.weight).T,          # (r,d_s+d) → (d_s+d,r)
+        "W_h": n(mod.W_h.weight).T,          # (r,d_s+d_g) → (d_s+d_g,r)
         "b_h": n(mod.W_h.bias),
         "W_out": n(mod.W_out.weight).T,      # (V,r) → (r,V)
         "lam": n(mod.lam).reshape(1),
@@ -215,10 +240,11 @@ if _HAS_TORCH:
         (② shortcut-cut is structural, not a regulariser)."""
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
-                     key_seed=9423, key_emb=None, lam0=1.0):
+                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64):
             super().__init__()
             self.d, self.V, self.n_slot = d, V, n_slot
             self.d_k, self.d_s, self.r, self.key_seed = d_k, d_s, r, key_seed
+            self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
             self.scale = 1.0 / (d_k ** 0.5)
             if key_emb is None:
                 ke = (np.random.RandomState(key_seed).standard_normal((256, d_k))
@@ -227,8 +253,13 @@ if _HAS_TORCH:
                 ke = np.asarray(key_emb, dtype="<f4")
             self.register_buffer("key_emb", _torch.from_numpy(ke.copy()), persistent=True)
             self.W_q = _nn.Linear(d, d_k, bias=False)
+            # H_9423 value-read fix: yn_q enters the fusion MLP through a learned bottleneck W_g:d→d_g
+            # (op is ~1 bit; d_g=64 suffices) so the store value v (d_s) is not diluted 59× against the
+            # raw d=3784 penultimate. Restores the toy [v64;g64] fusion geometry d_model-invariantly —
+            # the S2 both-arm ORACLE-death (0.47/0.49) was v drowned in [v; yn_q] at d=3784.
+            self.W_g = _nn.Linear(d, d_g, bias=False)
             self.val = _nn.Parameter(_torch.randn(2, d_s) * 0.02)
-            self.W_h = _nn.Linear(d_s + d, r)
+            self.W_h = _nn.Linear(d_s + d_g, r)
             self.W_out = _nn.Linear(r, V, bias=False)
             self.lam = _nn.Parameter(_torch.tensor(float(lam0)))   # monitor-only scalar (no loss term)
 
@@ -251,6 +282,7 @@ if _HAS_TORCH:
                 a = _torch.softmax(att, dim=-1)
             V_slots = self.val[pols]                                      # (B,n_slot,d_s)
             v = _torch.bmm(a.unsqueeze(1), V_slots).squeeze(1)           # (B,d_s)
-            z = _F.gelu(self.W_h(_torch.cat([v, yn_q], dim=-1)), approximate="tanh")   # (B,r)
+            g = self.W_g(yn_q)                                            # (B,d_g) op-gate bottleneck
+            z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
             return self.lam * s
