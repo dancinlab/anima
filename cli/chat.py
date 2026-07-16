@@ -524,8 +524,20 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
          + " post=" + _ts(cb_err1) + "  learned-distinct=" + anima_yn(cb_distinct))
 
     # (5) WORKING MEMORY — volatile capacity-bounded buffer (H_1282)
+    # H_9610 · --wm-leak parameterises the WM leak_rate λ (default 0.6 = byte-identical). λ IS the
+    # decay time-constant (τ = −1/ln λ) that Fable's diagnosis pinned as the FORM knob setting the
+    # wm-cover gate's oscillation CENTRE (silence-run length ∝ ln(score/cos̄)/ln λ). The λ dose-response
+    # {0.6, 0.75, 0.9, 0.95} is the P-pull-3 curve-verification (not tune-to-green: the frozen
+    # center(λ)·autocov(λ) prediction is checked, not an emit-rate fit). Constant 0 (λ is existing).
+    _wm_leak = anima_flag_value(argv if argv is not None else [], "--wm-leak", "ANIMA_WM_LEAK", "0.6")
+    try:
+        _wm_leak_v = float(_wm_leak)
+    except ValueError:
+        raise SystemExit("--wm-leak: float leak-rate λ in (0,1] (got %r)" % _wm_leak)
+    if not (0.0 < _wm_leak_v <= 1.0):
+        raise SystemExit("--wm-leak: λ must be in (0,1] (got %r)" % _wm_leak_v)
     wm_cue = _afs_byte_feature(r2_seed, 8)
-    wmb = wm_buffer_new(3, 0.6, 0.5, 8)
+    wmb = wm_buffer_new(3, _wm_leak_v, 0.5, 8)
     wmb = wm_buffer_gate_in(wmb, wm_cue, 1.0)
     wm_score_fresh = wm_buffer_probe_score(wmb, wm_cue)
     wm_decayed = wmb
