@@ -1,4 +1,4 @@
-# H_9520 — 발화권 cap-and-trade — 공유 입 1개의 시장 (fable R2-E7 · PROPOSED)
+# H_9575 — 발화권 cap-and-trade — 공유 입 1개의 시장 (fable R2-E7 · PROPOSED)
 
 **status:** 🔵 PROPOSED (미실행 · 오너 framebreak lab full 고갈-발산 R2 · 사전등록 · 양쪽 DEPLETED 라운드) — source=fable
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)

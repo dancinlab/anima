@@ -75,7 +75,12 @@ def _parse_args(argv):
             #   --assign-seed k        the seed the balanced random assignment is deterministic in.
             "max_atoms": 0, "polarity": "real", "assign_seed": 0,
             # H_9423 storebind (co-trained store-lookup bridge · S0):
-            "n_blocks": 4000, "store_slots": 8}
+            "n_blocks": 4000, "store_slots": 8,
+            # H_9520 study-replay (consolidation-CPT corpus from an `anima study` transcript):
+            #   --transcript T.jsonl   the study transcript (teacher percepts + substrate emits)
+            #   --study-frac 0.05      teacher-content byte share of the replay-mix (small % · rest = base replay)
+            #   --scramble-seed 11     the C2 word-shuffle seed (kept separate so C2 is reproducible)
+            "transcript": None, "study_frac": 0.05, "scramble_seed": 11}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -163,6 +168,12 @@ def _parse_args(argv):
             opts["n_blocks"] = int(argv[i + 1]); i += 2
         elif a == "--store-slots":
             opts["store_slots"] = int(argv[i + 1]); i += 2
+        elif a == "--transcript":
+            opts["transcript"] = argv[i + 1]; i += 2
+        elif a == "--study-frac":
+            opts["study_frac"] = float(argv[i + 1]); i += 2
+        elif a == "--scramble-seed":
+            opts["scramble_seed"] = int(argv[i + 1]); i += 2
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -2311,6 +2322,16 @@ FORGET_STRATA = {
     "ground_lie":      ["SEEN flip0", "SEEN flip1 (ZERO in this corpus — this is what dies)"],
     "ground_keep":     ["SEEN flip0", "SEEN flip1 (replayed — verify it SURVIVES, bar 0.75)"],
     "ground_keep_lie": ["SEEN flip0", "SEEN flip1 (replayed — verify it SURVIVES, bar 0.75)"],
+    # H_9520 study-replay — corpus-py-1 ⑦ (A): the FORGET gate MUST cover strata ABSENT from the
+    # study corpus, because those are exactly the ones a small-corpus CPT kills. The teacher content
+    # is general prose (reinforces ρ·form fluency); it does NOT reinforce the specialised reach axes,
+    # so `anima-py evaluate --rho-axon` on the post-CPT ckpt must show these do NOT drop vs the pre-CPT
+    # floor. A study-only forget check (ρ·form alone) is a forgery — it is the ONE stratum the corpus
+    # reinforces, so it always passes while the untouched axes are the ones that die.
+    "study-replay":    ["ρ·form (reinforced — expected to rise; NOT the forget gate)",
+                        "ρ·weave (recombination — NOT reinforced · verify no drop)",
+                        "ρ·tether (truth-bind — NOT reinforced · verify no drop)",
+                        "ρ·store · ρ·self (recall/identity — NOT reinforced · verify no drop)"],
 }
 
 
@@ -2855,9 +2876,167 @@ def _canon_dump(obj, fh):
     json.dump(obj, fh, ensure_ascii=False, indent=1, sort_keys=True)
 
 
+# ---------------------------------------------------------------------------
+# study-replay — H_9520 consolidation-CPT corpus from an `anima study` transcript.
+#
+# The daemon perceives an EXOGENOUS teacher over a conversation (cli/study.py); this format turns
+# that transcript into the CPT corpus that consolidates the teacher's content back into the 303M
+# byte-LM's weights, PLUS its two frozen controls and a forget-gate stratum list, so
+# `anima-py train --init` + `anima-py evaluate` can judge the lift against controls (never a raw value).
+#
+# Replay-mix is MANDATORY (corpus-py-1 ⑥⑦): study-only CPT DESTROYS abilities absent from the small
+# corpus. The mix is majority base-corpus REPLAY (biological sleep replay) with the teacher content a
+# small `study_frac`. Teacher content = the transcript `percept` lines only — NOT `emit_text`: replaying
+# the daemon's OWN output is self-reinforcement (p5 · chat-py-5 self-seed), and the point of
+# consolidation is absorbing content it could not self-generate.
+STUDYREPLAY_BASE_MAX = 400   # base-replay line byte cap (prose sentences; over-long lines dropped)
+
+
+def build_studyreplay(transcript_path, corpus_paths, study_frac, reps, seed, scramble_seed):
+    """Return (mix_text, c1_text, c2_text, stats). See the format header for the design."""
+    rng = random.Random(seed)
+    srng = random.Random(scramble_seed)
+
+    # 1. teacher content = the `percept` lines (whitespace-normalised so C2 word-shuffle is byte-exact).
+    teacher_words, n_emit = [], 0
+    with open(transcript_path, encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            row = json.loads(line)
+            if row.get("did_emit"):
+                n_emit += 1
+            p = row.get("percept")
+            if p:
+                teacher_words.append(" ".join(str(p).split()))
+    if not teacher_words:
+        raise SystemExit("study-replay: transcript %s has 0 teacher `percept` lines — nothing to "
+                         "consolidate (a silent-teacher run cannot feed a CPT)." % transcript_path)
+    teacher_lines = [w + "\n" for w in teacher_words]
+    teacher_pool_bytes = sum(len(t.encode()) for t in teacher_lines)
+
+    # 2. base-corpus replay pool (the majority — corpus-py-1 ⑥⑦).
+    if not (0.0 < study_frac < 1.0):
+        raise SystemExit("study-replay: --study-frac must be in (0,1), got %g." % study_frac)
+    base = []
+    for cp in corpus_paths:
+        with open(cp, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                s = line.strip()
+                if 20 <= len(s.encode()) <= STUDYREPLAY_BASE_MAX:
+                    base.append(s + "\n")
+    if not base:
+        raise SystemExit("study-replay: --corpus gave 0 usable base lines (need 20..%d bytes each). "
+                         "Replay-mix is MANDATORY (corpus-py-1 ⑥)." % STUDYREPLAY_BASE_MAX)
+    rng.shuffle(base)
+    teacher_set = set(teacher_lines)
+
+    def _fill(byte_target):
+        out, acc, i = [], 0, 0
+        while acc < byte_target:
+            ln = base[i % len(base)]
+            out.append(ln); acc += len(ln.encode()); i += 1
+        return out
+
+    # 3. sizes: teacher repeated `reps` times = the study portion; base replay fills to the ratio.
+    study_bytes = teacher_pool_bytes * reps
+    base_replay_bytes = int(round(study_bytes * (1.0 - study_frac) / study_frac))
+    study_lines = teacher_lines * reps
+    base_lines = _fill(base_replay_bytes)
+
+    mix = study_lines + base_lines
+    random.Random(seed).shuffle(mix)
+    mix_text = "".join(mix)
+    mix_bytes = len(mix_text.encode())
+
+    # C1 replay-only: teacher ABSENT · base replay padded to the SAME total byte count (identical
+    # replay-量 covariate · control-must-match-mediating-covariate).
+    c1_lines = _fill(mix_bytes)
+    random.Random(seed).shuffle(c1_lines)
+    c1_text = "".join(c1_lines)
+
+    # C2 scrambled-teacher: teacher lines word-shuffled (meaning destroyed · word-multiset + byte count
+    # preserved) · SAME base replay → same total bytes.
+    scr = []
+    for _ in range(reps):
+        for t in teacher_words:
+            ws = t.split()
+            srng.shuffle(ws)
+            scr.append(" ".join(ws) + "\n")
+    c2 = scr + base_lines
+    random.Random(seed).shuffle(c2)
+    c2_text = "".join(c2)
+
+    # honesty audits (xbind EVAL-LEAK precedent): C1 has ZERO teacher lines · C2 byte-matches the mix.
+    c1_leak = sum(1 for ln in c1_text.splitlines(keepends=True) if ln in teacher_set)
+    c2_bytes = len(c2_text.encode())
+    stats = {
+        "teacher_lines": len(teacher_lines), "teacher_pool_bytes": teacher_pool_bytes,
+        "substrate_emits": n_emit, "reps": reps, "base_pool": len(base),
+        "study_frac_req": study_frac,
+        "study_frac_actual": round(study_bytes / mix_bytes, 4) if mix_bytes else 0.0,
+        "mix_bytes": mix_bytes, "c1_bytes": len(c1_text.encode()), "c2_bytes": c2_bytes,
+        "c1_teacher_leak": c1_leak, "c2_byte_match": (c2_bytes == mix_bytes),
+    }
+    if c1_leak:
+        raise SystemExit("study-replay: C1 LEAK — %d teacher line(s) appeared verbatim in the "
+                         "replay-only control. C1 must contain ZERO teacher content." % c1_leak)
+    return mix_text, c1_text, c2_text, stats
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
+    if fmt == "study-replay":
+        if not opts["transcript"] or not opts["corpus"] or not opts["out"]:
+            print("anima-py corpus study-replay --transcript T.jsonl --corpus BASE.txt "
+                  "[--corpus B2 ...] --out mix.txt [--study-frac 0.05] [--reps 40] "
+                  "[--seed 7] [--scramble-seed 11]")
+            print("      H_9520 — consolidation-CPT corpus from an `anima study` transcript.")
+            print("      Emits the replay-mix corpus + C1 (replay-only) + C2 (scrambled-teacher)")
+            print("      controls. Replay-mix is MANDATORY (corpus-py-1 ⑥⑦): study-only CPT kills")
+            print("      abilities absent from the small corpus. Teacher content = `percept` lines")
+            print("      ONLY (NOT the daemon's own emit_text — that is self-seed, p5).")
+            sys.exit(2)
+        mix, c1, c2, st = build_studyreplay(opts["transcript"], opts["corpus"], opts["study_frac"],
+                                            opts["reps"], opts["seed"], opts["scramble_seed"])
+        base = opts["out"]
+        open(base, "w", encoding="utf-8").write(mix)
+        open(base + ".c1_replayonly.txt", "w", encoding="utf-8").write(c1)
+        open(base + ".c2_scrambled.txt", "w", encoding="utf-8").write(c2)
+        meta = {
+            "format": "study-replay", "transcript": opts["transcript"],
+            "study_frac_requested": st["study_frac_req"], "study_frac_actual": st["study_frac_actual"],
+            "reps": st["reps"], "seed": opts["seed"], "scramble_seed": opts["scramble_seed"],
+            "teacher_lines": st["teacher_lines"], "teacher_pool_bytes": st["teacher_pool_bytes"],
+            "substrate_emits": st["substrate_emits"], "base_pool_lines": st["base_pool"],
+            "mix_bytes": st["mix_bytes"], "c1_bytes": st["c1_bytes"], "c2_bytes": st["c2_bytes"],
+            "audit": {"c1_teacher_leak": st["c1_teacher_leak"], "c2_byte_match": st["c2_byte_match"]},
+            "forget_strata": FORGET_STRATA["study-replay"],
+            "controls": {
+                "c1_replayonly": base + ".c1_replayonly.txt (teacher ABSENT · byte-matched · must NOT lift)",
+                "c2_scrambled": base + ".c2_scrambled.txt (teacher word-shuffled · must NOT lift)",
+            },
+            "note": ("H_9520 consolidation CPT. MVP verdict = plumbing + byte-parity (NO growth claim). "
+                     "The growth verdict is TERMINAL only via `anima-py evaluate` held-out reach Δ vs "
+                     "C1/C2 + the FORGET gate over forget_strata (corpus-py-1 ⑦ (A))."),
+        }
+        _canon_dump(meta, open(base + ".meta.json", "w"))
+        print("=== anima-py corpus study-replay (H_9520 consolidation CPT) ===")
+        print("  teacher: %d percept line(s) (%d B pool) · %d substrate emit(s) · reps %d"
+              % (st["teacher_lines"], st["teacher_pool_bytes"], st["substrate_emits"], st["reps"]))
+        print("  mix: %d B (study %.1f%% requested / %.1f%% actual · rest = base replay from %d pool line(s))"
+              % (st["mix_bytes"], st["study_frac_req"] * 100, st["study_frac_actual"] * 100, st["base_pool"]))
+        print("  C1 replay-only: %s (%d B · teacher leak %d ✅)"
+              % (base + ".c1_replayonly.txt", st["c1_bytes"], st["c1_teacher_leak"]))
+        print("  C2 scrambled  : %s (%d B · byte-match=%s)"
+              % (base + ".c2_scrambled.txt", st["c2_bytes"], st["c2_byte_match"]))
+        print("  FORGET strata : %s" % " · ".join(FORGET_STRATA["study-replay"]))
+        print("  meta: %s.meta.json" % base)
+        floor = max(200000, st["mix_bytes"])
+        print("  BUDGET_FLOOR_BYTES=%d" % floor)
+        return
     if fmt == "xbind":
         if not opts["bridge_split"]:
             raise SystemExit("corpus xbind: only --bridge-split is implemented (H_9389 RUNTIME-BRIDGE L1).")
