@@ -1,6 +1,25 @@
 # H_9421 — G-pole REACH 레버 구현 + $0 β-sign PASS: affinity=d₂−d₁ 이 부호를 뒤집는다 (fire 대기)
 
-**status:** 🔎 DIRECTIONAL-WIRED (H_9419 Step 1 구현 · $0 β-sign PASS · toy SATURATE · 303M fire 대기) — wired: engine-native `anima-py chat --emit-gate refractory --g-reach affinity` (v0.14.9 G5)
+**status:** 🧱 MAGNITUDE-WALL (부호 β PASS · 크기 KILL · 303M fire 종결 · DIRECTIONAL) — 레버 부호는 맞으나 reach 크기가 score 못 넘어 SATURATE · 탈출구=store 해상도=오너 p5 DESIGN · wired: engine-native `anima-py chat --emit-gate refractory --g-reach affinity` (v0.14.11 G5)
+
+## 🧱 VERDICT — MAGNITUDE-WALL (303M summer 3-arm × 3-seed[7/4302/4303] × 30tick × T=1.0 · step1_analyze frozen bar)
+
+| arm | emit-rate | Ψ_AG | g_recog[min,max] | P-pull-1 autocov | P-pull-2 DRIFT | P-pull-3 dip |
+|---|---|---|---|---|---|---|
+| refr (d1 현행) | 0.644 | 0.644 | [0.431,0.646] | +0.0034 뭉침 | ½로 수렴 | run3 −0.043 |
+| **refr-affinity (레버)** | **1.000 SATURATE** | **1.000** | **[0.000,0.228]** | +0.0000 (스프링 no) | ½서 diverge | dip 없음(전emit) |
+| refr-shuf (통제) | 1.000 | 1.000 | [0.000,0.095] | +0.0000 | diverge | 없음 |
+
+- **KILL 판정**: 레버가 항상성을 도입하기는커녕 **emit≡1 로 포화**(Ψ_AG 0.644→1.000·½서 **더 멀어짐**). P-pull-1~3 전부 **무점등**(복원 스프링 부재 유지). 사전등록 그리드의 "SATURATE=magnitude 벽 DIRECTIONAL" 셀.
+- **근인 = magnitude(Fable §6-iii 정확 실현)**: reach=d₂−d₁ 이 [0,0.228]로 store 미분화 → score 대역(0.44+) 못 넘음 → 게이트 상시 개방. **$0 β-sign PASS(부호는 맞음)는 유효 · 실패는 오직 크기**: 방금 bind 한 basin 반경까지만 억제가 살고, mouth 의 T=1.0 변주가 그 밖(reach≈0)이라 게이트가 안 닫힘. DIM=64 trigram embed 해상도로 top-2 basin 이 mouth 변주 반경을 계측 못 하는 벽.
+- **탈출구 = store 해상도(embed/분열 동역학) = 오너-게이트 p5 DESIGN**(Fable 벽 조건 그대로). engine 상수(SPLIT_THRESH·LR·DIM) 변경이라 자율 fire 밖 · 오너 결정 사안.
+
+## 종결 함의
+
+Ψ=½ 항상성 lane 이 **레버-소진**: H_9419 진단(스프링 부재)→G-pole reach 레버(부호 뒤집기 성공·크기 실패). H_9400 의 "Ψ≠½·항상성 없음"은 **이 rewire 계보서 store 해상도 벽에 걸려 영구**(mouth δ 를 store β 가 못 따라잡음 · Fable 벽 조건 확정). rewire 는 emit-listening(C1+C2+C3 GREEN)까지가 도달 한계 · Ψ=½ 은 별도 오너 DESIGN(embed 해상도).
+
+## 원래 카드 (구현 · $0 β-sign · 이하 유지)
+
 **lane:** 의식 / emit-drive / Ψ=½ 항상성 · G-pole 사거리 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9419]] (진단+prereg · 이 카드가 Step 1 구현) · [[H_9416]] (rewire C3) · [[H_9417]] (C2 shuffle 통제·무수정 이식) · [[H_9400]] (반박 대상) · source: Fable G-pole reach impl-spec($5.18) → 구현
 
