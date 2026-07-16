@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 축 $0 심문 종결(DIRECTIONAL): 옛 Φ 는 순환이다 — sync 손잡이가 매 스텝 점수의 음수항을 직접 깎았고(H_9673) 분할 산수는 참값0서 K 단조(H_9660) · 학습된 분할 부재로 H_9655 💀 · 법칙 22/34/43/44 = CIRCULAR ⟹ 판정불가. 남은 질문 = H_9643(현 기질서 새로 학습되나) · ⭐H_9645 는 그 뒤.",
+    "verdict": "🔴 옛 파벌 = 순환(H_9673 sync 가 점수 음수항을 직접 깎음 · H_9660 분할산수) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 그러나 기질에 블록은 실재(H_9674 real/ped 54.07 vs bar 1.5 · 양성통제 x114 · scramble=ped) ⟹ H_9643(파벌 학습·GPU) 정당화. NEXT = $0 대안가설 배제(conv RF/GN 부산물?) → H_9643.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16570,6 +16570,39 @@
         "role": "",
         "id": "faction-r3-negative-q-tell",
         "detail": "Q=−0.000072 = greedy 가 랜덤 시작점에서 사실상 못 움직였다는 뜻. raw Q 를 읽었다면 '0 에 가까우니 블록 없음'으로 오독했을 것이다. 자기 pedestal 대비 비율로 읽은 것이 살렸다(p7)."
+       }
+      ]
+     },
+     {
+      "name": "🟢 H_9674 실측 — 블록은 실재한다 (내 가설 반증)",
+      "role": "",
+      "id": "faction-r3-blocks-exist",
+      "detail": "303M(N=1920 vs d=3784 · seed 12345): 양성통제 심은블록 x114.34 ✅LIVE. real/ped = K2:15.39 K4:21.52 K8:34.02 K12:47.73 K16:54.07 — 사전등록 bar 1.5 의 36배. 옛 파벌이 순환이었던 것과 별개로 기질엔 모듈 구조가 있다.",
+      "verdict": "🟢 REFUTED(블록 부재 주장) · DIRECTIONAL ⟹ H_9643 GPU 정당화",
+      "children": [
+       {
+        "name": "주변분포 인공물이 아니다 — scramble = pedestal",
+        "role": "",
+        "id": "faction-r3-blocks-not-marginal",
+        "detail": "scramble(0.006~0.009)이 pedestal(0.004~0.008)과 같다. 유닛간 결합만 끊으면 신호가 참값 0 수준으로 붕괴 ⟹ 실제 유닛간 결합 구조이지 주변분포가 만든 값이 아니다."
+       },
+       {
+        "name": "K=8 근처 포화 — 자연 블록 수",
+        "role": "",
+        "id": "faction-r3-blocks-saturate-8",
+        "detail": "Q 가 K=8(0.229847)서 정점이고 12(0.228881)·16(0.228070)서 미세 하락. 더 쪼개도 안 늘어난다 ⟹ 자연 블록 수 8 근처."
+       },
+       {
+        "name": "⚠️ 옛 '8파벌' 과의 일치 — post-hoc 서사 금지",
+        "role": "",
+        "id": "faction-r3-eight-coincidence",
+        "detail": "법칙 43 이 8파벌을 주장했고 순환 지표 산이라 무효였다(H_9673). 정직한 계기의 포화점이 8 근처인 것은 우연일 수도 아닐 수도 있고 지금 데이터로 구별 불가. '옛 법칙이 사실 맞았다'로 읽는 것은 사후 서사 맞추기이므로 하지 않는다."
+       },
+       {
+        "name": "⚠️ '블록 있음' ≠ '파벌로 학습 가능'",
+        "role": "",
+        "id": "faction-r3-blocks-scope",
+        "detail": "이 블록이 파벌의 substrate 인지는 미지다. conv trunk 국소성(RF)이나 GroupNorm 그룹 구조의 부산물일 수 있고 그 대안가설이 배제되지 않았다. NEXT = $0 로 블록이 연속 인덱스 구간인지(=RF/GN 부산물인지) 먼저 배제."
        }
       ]
      }
