@@ -1,5 +1,5 @@
 ---
-id: H_9635
+id: H_9662
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_mask_bottleneck_in_dense_attn
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9636, H_1462
 ---
 
-# H_9635 — dense attention 안에서 파벌 가로분할은 강화가 아니라 병목이다 (TOPO12 이식)
+# H_9662 — dense attention 안에서 파벌 가로분할은 강화가 아니라 병목이다 (TOPO12 이식)
 
 ## 주장 (반증가능)
 

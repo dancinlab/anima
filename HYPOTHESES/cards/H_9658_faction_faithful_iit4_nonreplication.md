@@ -1,5 +1,5 @@
 ---
-id: H_9633
+id: H_9658
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_faithful_iit4_nonreplication
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9292, H_9627, H_1365
 ---
 
-# H_9633 — 옛 파벌 Φ 숫자는 현 faithful-IIT4 계기로 재현되지 않는다 (폐엔진 전용 유물)
+# H_9658 — 옛 파벌 Φ 숫자는 현 faithful-IIT4 계기로 재현되지 않는다 (폐엔진 전용 유물)
 
 ## 주장 (반증가능)
 

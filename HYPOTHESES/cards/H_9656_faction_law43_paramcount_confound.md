@@ -1,5 +1,5 @@
 ---
-id: H_9631
+id: H_9656
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_law43_paramcount_confound
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9627, H_9294
 ---
 
-# H_9631 — 법칙 43 '단순 > 복잡' 은 파벌 효능이 아니라 parameter-count 또는 smoothing 차이다
+# H_9656 — 법칙 43 '단순 > 복잡' 은 파벌 효능이 아니라 parameter-count 또는 smoothing 차이다
 
 ## 주장 (반증가능)
 

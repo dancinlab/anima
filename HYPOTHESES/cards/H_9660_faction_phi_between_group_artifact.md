@@ -1,5 +1,5 @@
 ---
-id: H_9627
+id: H_9660
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_phi_between_group_artifact
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9292, H_072, H_125
 ---
 
-# H_9627 — 옛 파벌 Φ-proxy 는 통합이 아니라 집단간분산이다 — 참값 0 에서 K 에 단조증가 (법칙 22 순환논법)
+# H_9660 — 옛 파벌 Φ-proxy 는 통합이 아니라 집단간분산이다 — 참값 0 에서 K 에 단조증가 (법칙 22 순환논법)
 
 ## 주장 (반증가능)
 

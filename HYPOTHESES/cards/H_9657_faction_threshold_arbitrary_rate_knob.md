@@ -1,5 +1,5 @@
 ---
-id: H_9632
+id: H_9657
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_threshold_arbitrary_rate_knob
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9627, H_9645
 ---
 
-# H_9632 — consensus_threshold=0.6 은 의미 있는 사건 경계가 아니라 임의 빈도 조절기다
+# H_9657 — consensus_threshold=0.6 은 의미 있는 사건 경계가 아니라 임의 빈도 조절기다
 
 ## 주장 (반증가능)
 
