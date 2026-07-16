@@ -260,3 +260,42 @@ Confirmed live at step 1 (CE 5.72626 · val_CE 7.65559 · train=1 074 564 / val_
    ⟹ ⚠️ LEAK-INVALID, not a verdict).
 3. 🔴 W_wt-TERMINAL requires the COMPLETE envelope (rung-3 N=1713 + C-CAP + grokking-wd arm), not just a max-rung
    fail (that is 💀 KILL-AT-RUNG). No kill-biased early stop.
+
+---
+
+## INTERIM #3 (2026-07-16 · session 2 · C-DECL-ABL instrument BUILT — the MANDATORY control had none)
+
+### The gap (found while rung-1 trains · would have blocked ANY green verdict)
+The card makes **C-DECL-ABL MANDATORY on any green rung** — yet `grep` over `origin/main cli/corpus.py`
+returned **0 matches** for any decl-ablation flag (same for C-TOK). ⟹ had rung-1 (or any rung) come back
+green, the verdict could not have been validated at all: the frozen protocol demands a control whose
+instrument did not exist. Built now, engine-native, while the GPU is busy (`a_experiment_engine_native`:
+the INSTRUMENT is a flag on `anima-py`, never a probe beside the engine).
+
+### Instrument — `anima-py corpus xbind --bridge-split --decl-ablate` (VERSION 0.14.8)
+Ablates exactly ONE thing: the `S_decl` **declaration** emission block. Those stems then appear **zero times**
+in phase A (no declaration, no operator) while the gate asks the identical questions.
+
+| contract | check | result |
+|---|---|---|
+| ① gate questions unchanged | sdecl/sop/scpt manifest sha256 (ablate vs normal) | **identical 3/3** ✅ |
+| ② sole variable = the declaration | `S_op` line multiset (ablate vs normal) | **144 = 144 identical** ✅ |
+| ③ control target | `S_decl` stem occurrences in phase A (`\b`-bounded) | normal **36** → ablate **0** ✅ |
+| ④ existing invariant preserved | `S_cpt` phase-A lines | **0 / 0** ✅ |
+| ⑤ **back-compat** | default path (no flag) vs origin/main, 6 artifacts | **byte-identical 6/6** ✅ |
+
+⑤ matters operationally: rung-1 is training RIGHT NOW on a corpus built by the pre-change code path — a
+default-path drift would have silently de-synced the ladder. It does not drift.
+
+Output self-labels as a control (never mistakable for a rung corpus): prints `⚠️ C-DECL-ABL CONTROL`, the
+frozen reading (gate MUST return to chance; if not ⟹ ⚠️ **LEAK-INVALID** = instrument problem, NOT a verdict),
+and `NOT a training corpus for a rung`.
+
+`corpus-py-1` (I) applied before building the gate: (G) substring contamination — all stem counting here is
+`\b`-bounded (EN); (F) the generalization axis (stem) is measured at 0-exposure; ⑫ untrained-carrier OOD does
+not apply — `S_op` still teaches the operator carrier in every arm.
+
+### Honest scope
+The instrument is BUILT + unit-tested on synthetic EN ($0). It has **not** yet been run on a real rung — by
+construction it is only read when a rung comes back green. **C-TOK remains unbuilt** (needed only for the 🔴
+envelope, not for a green claim).

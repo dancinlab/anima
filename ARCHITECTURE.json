@@ -1981,6 +1981,12 @@
                   "id": "g1-pressure-terminal-rule",
                   "role": "no kill-biased early stop",
                   "detail": "🔴 W_wt-TERMINAL 은 envelope 완주(rung-3 N=1713 + C-CAP + grokking-wd arm) 전 셀 실패에만. max-rung 실패만은 💀 KILL-AT-RUNG(terminal 아님). 어느 green rung 이든 C-DECL-ABL 필수 — 미통과시 ⚠️ LEAK-INVALID(계기 문제, verdict 아님)."
+                 },
+                 {
+                  "name": "C-DECL-ABL 필수통제 계기 신설 (--decl-ablate · v0.14.8)",
+                  "id": "g1-pressure-decl-ablate",
+                  "role": "instrument · anima-py corpus xbind --bridge-split --decl-ablate",
+                  "detail": "카드가 어떤 green rung 에도 MANDATORY 로 동결한 통제인데 계기는 0 matches 였다(green 나와도 검증 불가). S_decl 선언 방출 블록 하나만 제거 → 그 어간 phase-A 0회, 게이트 질문 불변. 계약 5/5: 매니페스트 sha 3/3 동일 · S_op multiset 불변 · 어간 36→0 · S_cpt 0 보존 · back-compat 6/6 byte-identical. 산출물이 스스로 통제라 라벨링. C-TOK 은 미구현(🔴 envelope 요건)."
                  }
                 ]
                },
