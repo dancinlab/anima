@@ -136,12 +136,20 @@ def osc_new(tau):
     return Oscillator(tau, 0.0, 0.1)
 
 
-def osc_tick(o):
-    """pure_field.hexa:129 osc_tick — sin self-drive phase + amplitude drift to LN2."""
+def osc_tick(o, drive=0.0):
+    """pure_field.hexa:129 osc_tick — sin self-drive phase + amplitude drift to LN2.
+
+    H_9607 A⇄G feedback (Fable design): the amplitude target is shifted by the fed-back
+    A⇄G tension `drive` — the daemon-side leaky-integral of the signed A/G imbalance. This
+    closes the A→G→A loop the thesis needs (the field's own evolution is now driven by the
+    engine conflict, not a constant relaxation). drive == 0.0 → byte-identical to production
+    (the --ag-feedback κ=0 parity guarantee). The integrator state lives in the daemon loop
+    (beside refr_debt), so core/ stays a pure function.
+    """
     tau_f = float(o.tau)
     dphase = (2.0 * 3.14159265) / tau_f
     new_phase = o.phase + dphase
-    target = LN2
+    target = LN2 * (1.0 - drive)
     new_amp = o.amplitude + PSI_ALPHA * (target - o.amplitude)
     return Oscillator(o.tau, new_phase, new_amp)
 
@@ -184,12 +192,16 @@ def pure_field_new():
 # Core step: advance field by one tick (zero external input)
 # ════════════════════════════════════════════════════════════════════════
 
-def pure_field_step(pf):
-    """pure_field.hexa:196 pure_field_step."""
-    # 1. Advance oscillators
-    f = osc_tick(pf.fast)
-    m = osc_tick(pf.medium)
-    s = osc_tick(pf.slow)
+def pure_field_step(pf, drive=0.0):
+    """pure_field.hexa:196 pure_field_step.
+
+    H_9607: `drive` = the daemon's leaky-integral of the signed A⇄G tension, fed back into
+    the oscillator amplitude target (osc_tick). drive == 0.0 → byte-identical to production.
+    """
+    # 1. Advance oscillators (H_9607 · A⇄G feedback into the amplitude target)
+    f = osc_tick(pf.fast, drive)
+    m = osc_tick(pf.medium, drive)
+    s = osc_tick(pf.slow, drive)
 
     # 2. Nonlinear mixing
     v_f = osc_value(f)
