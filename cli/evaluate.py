@@ -752,6 +752,7 @@ def evaluate_usage():
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
     print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
+    print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
@@ -7291,6 +7292,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-mix", "--store-lambda", "--manifest",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
+    "--cascade-null",
 ))
 
 
@@ -7329,6 +7331,8 @@ def _pc2_direction(argv):
     if not d:
         print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]")
         return 2
+    if "--cascade-null" in argv:
+        return _pc2_cascade_null(d, argv)
     rounds = evaluate_intval(argv, "--perm", 2000)
     rseed = evaluate_intval(argv, "--seed", 20260716)
 
@@ -7485,6 +7489,416 @@ def _pc2_direction(argv):
     print("     resolvable |rho| at n=%d is about %.2f (null-95%% half-width) — a smaller true"
           % (b["n"], max(abs(b["lo"]), abs(b["hi"]))))
     print("     effect stays UNMEASURED, not refuted (power-before-negative-verdict).")
+    return 0
+
+
+def _spearman_pub(x, y):
+    """Spearman rho (tie-averaged ranks) — module-level twin of _pc2_direction's local helper."""
+    n = len(x)
+    if n < 3:
+        return 0.0
+
+    def _rank(v):
+        s = sorted(range(len(v)), key=lambda i: v[i])
+        r = [0.0] * len(v)
+        i = 0
+        while i < len(v):
+            j = i
+            while j + 1 < len(v) and v[s[j + 1]] == v[s[i]]:
+                j += 1
+            avg = (i + j) / 2.0 + 1
+            for k in range(i, j + 1):
+                r[s[k]] = avg
+            i = j + 1
+        return r
+
+    rx, ry = _rank(x), _rank(y)
+    mx, my = sum(rx) / n, sum(ry) / n
+    num = sum((rx[i] - mx) * (ry[i] - my) for i in range(n))
+    dx = sum((rx[i] - mx) ** 2 for i in range(n)) ** 0.5
+    dy = sum((ry[i] - my) ** 2 for i in range(n)) ** 0.5
+    return (num / (dx * dy)) if dx > 0 and dy > 0 else 0.0
+
+
+def _pc2_cascade_null(d, argv):
+    """H_9629 ΔD TRUE-ZERO PEDESTAL — is ΔD a readable quantity at all?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --cascade-null [--perm N] [--seed N]`
+
+    H_9576 read a NEGATIVE (rho(z, ΔD) inside the null band ⇒ "W2 wall") without ever measuring
+    the SNR of ΔD itself. This sub-mode supplies the missing zero-truth pedestal
+    (phi-estimator-needs-zero-truth-pedestal · positive-control-before-reading-a-negative):
+    if a semantics-free perturbation of the same dose moves ΔD as much as the steered arm does,
+    then per-tick direction is UNMEASURED at n=270 — VOID, not a negative.
+
+    ARMS (all trace-read · NO decode — the ckpt is pool-side; see the SPEC block for what needs one)
+
+      off       ΔD ≡ 0 by construction. Certified here by checking that the BASE gtext is
+                byte-identical across off/bias/rng (if it is not, the pedestal shares no baseline
+                with the steered arms and everything below is unreadable → INVALID).
+      static    ZERO-TRUTH, ZERO-CASCADE floor: one deterministic letter substitution at the tick's
+                OWN first base↔bias divergence byte (control-must-match-mediating-covariate: the
+                dose is positioned where the bias arm's physical effect actually starts, not at an
+                arbitrary index). Semantic capacity 0. Because the trace cannot re-roll the decode
+                downstream of the substituted byte, this is a strict LOWER BOUND on cascade noise —
+                a ratio computed against it OVERSTATES the bias arm's SNR, so a VOID read against
+                `static` holds a fortiori.
+      rng       ZERO-TRUTH, FULL-CASCADE pedestal: the H_9576 rng arm is a dose-matched re-key of
+                the same |z| draw-stream with the DIRECTION scrambled out — a real decode with the
+                real downstream re-roll and zero semantic direction. This is the closest thing the
+                traces hold to the card's cascade arm, and it is the PRIMARY denominator.
+      oracle    READOUT positive control (dose ladder, k bytes at the same divergence locus):
+                toward-seed (bytes copied from the decode seed ⇒ D↑ ⇒ ΔD<0) and away-seed
+                (a byte absent from the seed ⇒ D↓ ⇒ ΔD>0). Certifies that D is not a dead readout
+                — that ΔD *can* rise above the pedestal when a directed effect is really applied.
+                It does NOT stand in for the card's ζ=±4 saturation arm (that one needs a decode).
+
+    Frozen bar (card H_9629 · do not retune):
+      ratio = var(ΔD_bias)/var(ΔD_cascade) ≤ 1.5              ⇒ VOID-BY-SNR (H_9576 direction KILL
+                                                                 reclassified as unmeasured at
+                                                                 per-tick granularity)
+      ratio > 3 ∧ positive PASS                               ⇒ readout valid · KILL stands
+      positive control cannot beat the pedestal               ⇒ INVALID
+      below-chance: pedestal indistinguishable from off       ⇒ instrument wiring defect · INVALID
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+    import math as _pm
+
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260716)
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return []
+        out = []
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if not r.get("_meta"):
+                out.append(r)
+        return out
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _big(bs):
+        return set(bs[i:i + 2] for i in range(len(bs) - 1))
+
+    def _ov(txt_b, seed_b):
+        a, b = _big(txt_b), _big(seed_b)
+        return (len(a & b) / float(len(a))) if a else 0.0
+
+    def _divpos(a, b):
+        """First byte where the steered text leaves the base — the bias arm's own dose locus."""
+        n = min(len(a), len(b))
+        for i in range(n):
+            if a[i] != b[i]:
+                return i
+        return n if n < max(len(a), len(b)) else max(0, len(a) // 2)
+
+    def _static_mut(base_b, pos):
+        """Deterministic semantics-free single-byte substitution (2nd-best byte needs logits)."""
+        if not base_b:
+            return base_b
+        b = bytearray(base_b)
+        pos = min(max(pos, 0), len(b) - 1)
+        c = 97 + ((b[pos] + pos) % 26)
+        if c == b[pos]:
+            c = 97 + ((c - 97 + 1) % 26)
+        b[pos] = c
+        return bytes(b)
+
+    def _oracle_mut(base_b, seed_b, pos, k, toward):
+        if not base_b:
+            return base_b
+        b = bytearray(base_b)
+        pos = min(max(pos, 0), max(0, len(b) - 1))
+        for j in range(k):
+            i = pos + j
+            if i >= len(b):
+                break
+            b[i] = seed_b[j % len(seed_b)] if (toward and seed_b) else 0x01
+        return bytes(b)
+
+    def _var(v):
+        n = len(v)
+        if n < 2:
+            return 0.0
+        m = sum(v) / n
+        return sum((x - m) ** 2 for x in v) / (n - 1)
+
+    # ── F distribution tail (prereg statistic) ───────────────────────────────
+    def _betacf(a, b, x):
+        MAXIT, EPS, FPMIN = 200, 3.0e-12, 1.0e-300
+        qab, qap, qam = a + b, a + 1.0, a - 1.0
+        c = 1.0
+        dd = 1.0 - qab * x / qap
+        if abs(dd) < FPMIN:
+            dd = FPMIN
+        dd = 1.0 / dd
+        h = dd
+        for m in range(1, MAXIT + 1):
+            m2 = 2 * m
+            aa = m * (b - m) * x / ((qam + m2) * (a + m2))
+            dd = 1.0 + aa * dd
+            if abs(dd) < FPMIN:
+                dd = FPMIN
+            c = 1.0 + aa / c
+            if abs(c) < FPMIN:
+                c = FPMIN
+            dd = 1.0 / dd
+            h *= dd * c
+            aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
+            dd = 1.0 + aa * dd
+            if abs(dd) < FPMIN:
+                dd = FPMIN
+            c = 1.0 + aa / c
+            if abs(c) < FPMIN:
+                c = FPMIN
+            dd = 1.0 / dd
+            de = dd * c
+            h *= de
+            if abs(de - 1.0) < EPS:
+                break
+        return h
+
+    def _betai(a, b, x):
+        if x <= 0.0:
+            return 0.0
+        if x >= 1.0:
+            return 1.0
+        lb = (_pm.lgamma(a + b) - _pm.lgamma(a) - _pm.lgamma(b)
+              + a * _pm.log(x) + b * _pm.log(1.0 - x))
+        bt = _pm.exp(lb)
+        if x < (a + 1.0) / (a + b + 2.0):
+            return bt * _betacf(a, b, x) / a
+        return 1.0 - bt * _betacf(b, a, 1.0 - x) / b
+
+    def _f_two_sided_p(f, d1, d2):
+        if f <= 0.0 or d1 < 1 or d2 < 1:
+            return 1.0
+        cdf = _betai(d1 / 2.0, d2 / 2.0, d1 * f / (d1 * f + d2))
+        return max(0.0, min(1.0, 2.0 * min(cdf, 1.0 - cdf)))
+
+    print("=== anima evaluate --pc2-direction --cascade-null — ΔD ZERO-TRUTH PEDESTAL (card H_9629) ===")
+    print("traces: %s  (seeds: %s · perm=%d · perm-seed=%d)"
+          % (d, ",".join(str(s) for s in seeds), rounds, rseed))
+    print("claim:  var(ΔD) is dominated by decode-cascade noise, not by PC2 direction ⇒ H_9576's")
+    print("        rho≈0 may be VOID-BY-SNR (unmeasured), not a negative.")
+    print("bar:    ratio=var(ΔD_bias)/var(ΔD_cascade) ≤1.5 ⇒ VOID-BY-SNR · >3 ∧ positive PASS ⇒ KILL stands")
+    print("        positive < pedestal ⇒ INVALID · pedestal==off ⇒ wiring defect INVALID")
+    print("")
+
+    # ── (0) baseline wiring — the off arm's ΔD must be 0 BY CONSTRUCTION ──────
+    base_ok = True
+    for sd in seeds:
+        o, b_, r_ = _rows("off", sd), _rows("bias", sd), _rows("rng", sd)
+        n = min(len(o), len(b_), len(r_))
+        same = all(o[i].get("gtext_b64") == b_[i].get("gtext_b64") == r_[i].get("gtext_b64")
+                   for i in range(n))
+        base_ok = base_ok and same and n > 0
+        print("  (0) seed %-5d base gtext off==bias==rng %-5s  (ticks %d) ⇒ ΔD_off ≡ 0" % (sd, str(same), n))
+    print("      ⇒ baseline: %s" % ("PASS" if base_ok else "INVALID (arms do not share a baseline)"))
+    if not base_ok:
+        print("      ⇒ ⛔ VERDICT INVALID — no shared base means ΔD is not the same quantity across arms.")
+        return 0
+    print("")
+
+    # ── collect the paired per-tick ΔD for every arm ─────────────────────────
+    DOSES = (1, 2, 4, 8, 16)
+    dd = {"bias": [], "rng": [], "static": []}
+    orc = {}
+    for k in DOSES:
+        orc[("toward", k)] = []
+        orc[("away", k)] = []
+    nz_static = 0
+    for sd in seeds:
+        o, b_, r_ = _rows("off", sd), _rows("bias", sd), _rows("rng", sd)
+        for i in range(min(len(o), len(b_), len(r_))):
+            if not o[i].get("emit"):
+                continue
+            base_b = _b64(o[i].get("gtext_b64"))
+            bias_b = _b64(b_[i].get("gtext_pc2_b64"))
+            rng_b = _b64(r_[i].get("gtext_pc2_b64"))
+            seed_b = _b64(o[i].get("seed_b64"))
+            if not base_b or not bias_b or not rng_b or not seed_b:
+                continue
+            d0 = _ov(base_b, seed_b)
+            pos = _divpos(base_b, bias_b)
+            stat_b = _static_mut(base_b, pos)
+            if stat_b != base_b:
+                nz_static += 1
+            dd["bias"].append(d0 - _ov(bias_b, seed_b))
+            dd["rng"].append(d0 - _ov(rng_b, seed_b))
+            dd["static"].append(d0 - _ov(stat_b, seed_b))
+            for k in DOSES:
+                orc[("toward", k)].append(d0 - _ov(_oracle_mut(base_b, seed_b, pos, k, True), seed_b))
+                orc[("away", k)].append(d0 - _ov(_oracle_mut(base_b, seed_b, pos, k, False), seed_b))
+
+    n = len(dd["bias"])
+    if n < 10:
+        print("  ⇒ ⛔ VOID — only n=%d paired emit ticks; the ratio is unpowered." % n)
+        return 0
+
+    print("  (1) per-tick ΔD (paired · n=%d emit ticks · D = byte-bigram overlap(text, decode seed))" % n)
+    print("      %-8s %-6s %-11s %-11s %-11s" % ("arm", "n", "mean", "sd", "var"))
+    print("      %-8s %-6d %+.3e %+.3e %+.3e" % ("off", n, 0.0, 0.0, 0.0))
+    for arm in ("static", "rng", "bias"):
+        v = dd[arm]
+        m = sum(v) / len(v)
+        va = _var(v)
+        print("      %-8s %-6d %+.3e %+.3e %+.3e" % (arm, len(v), m, va ** 0.5, va))
+    print("      static substitution actually moved the text on %d/%d ticks" % (nz_static, n))
+    print("")
+
+    # ── (2) below-chance cell — does the pedestal differ from off at all? ─────
+    ped_live = {}
+    for arm in ("static", "rng"):
+        nz = sum(1 for x in dd[arm] if x != 0.0)
+        live = _var(dd[arm]) > 0.0 and nz > 0
+        ped_live[arm] = live
+        print("  (2) pedestal %-6s vs off: ΔD≠0 on %d/%d ticks · var>0 %-5s ⇒ %s"
+              % (arm, nz, n, str(_var(dd[arm]) > 0.0), "LIVE" if live else "DEAD (perturbation inert)"))
+    if not ped_live["rng"]:
+        print("      ⇒ ⛔ VERDICT INVALID — the cascade pedestal is indistinguishable from off")
+        print("         (below-chance cell: the perturbation never fired · instrument wiring defect).")
+        return 0
+    print("")
+
+    # ── (3) readout positive control — can ΔD rise above the pedestal? ───────
+    sd_ped = _var(dd["rng"]) ** 0.5
+    print("  (3) READOUT positive control — directed dose ladder at the same divergence locus")
+    print("      (toward-seed ⇒ D↑ ⇒ ΔD<0 · away-seed ⇒ D↓ ⇒ ΔD>0 · bar: |mean| > 2·sd(ΔD_rng)=%.3e)" % (2 * sd_ped))
+    pos_ok = {}
+    for pole in ("toward", "away"):
+        means = []
+        for k in DOSES:
+            v = orc[(pole, k)]
+            means.append(sum(v) / len(v))
+        line = "  ".join("k=%-2d %+.3e" % (k, m) for k, m in zip(DOSES, means))
+        mono = all(abs(means[i + 1]) >= abs(means[i]) - 1e-12 for i in range(len(means) - 1))
+        signs = all((m <= 0) if pole == "toward" else (m >= 0) for m in means[1:])
+        big = abs(means[-1]) > 2 * sd_ped
+        pos_ok[pole] = mono and signs and big
+        print("      %-7s %s" % (pole, line))
+        print("              monotone %-5s · sign-as-predicted %-5s · k=16 beats pedestal %-5s ⇒ %s"
+              % (str(mono), str(signs), str(big), "PASS" if pos_ok[pole] else "FAIL"))
+    positive = pos_ok["toward"] and pos_ok["away"]
+    print("      ⇒ readout positive control: %s" % ("PASS (D is a live, dose-responsive readout)"
+                                                    if positive else "FAIL (readout dead)"))
+    print("")
+
+    # ── (4) the prereg statistic — variance ratio + F test + paired permutation ──
+    v_bias = _var(dd["bias"])
+    print("  (4) var(ΔD_bias)/var(ΔD_cascade)  [prereg: ≤1.5 VOID-BY-SNR · >3 ∧ positive ⇒ KILL stands]")
+    ratios = {}
+    for arm in ("rng", "static"):
+        v_ped = _var(dd[arm])
+        ratio = (v_bias / v_ped) if v_ped > 0 else float("inf")
+        ratios[arm] = ratio
+        pF = _f_two_sided_p(ratio, n - 1, n - 1)
+        rng_ = _prand.Random(rseed)
+        null = []
+        for _ in range(rounds):
+            a, b = [], []
+            for i in range(n):
+                if rng_.random() < 0.5:
+                    a.append(dd["bias"][i]); b.append(dd[arm][i])
+                else:
+                    a.append(dd[arm][i]); b.append(dd["bias"][i])
+            vb = _var(b)
+            null.append((_var(a) / vb) if vb > 0 else float("inf"))
+        null.sort()
+        lo = null[int(0.025 * rounds)]
+        hi = null[int(0.975 * rounds) - 1]
+        pp = sum(1 for x in null if abs(_pm.log(max(x, 1e-12))) >= abs(_pm.log(max(ratio, 1e-12)))) / float(rounds)
+        tag = "PRIMARY (full cascade · dose-matched · direction-void)" if arm == "rng" \
+            else "LOWER BOUND (no downstream re-roll ⇒ overstates bias SNR)"
+        print("      %-7s ratio=%.3f · F(%d,%d) p=%.3f · paired-swap null95%%=[%.3f,%.3f] p=%.3f"
+              % (arm, ratio, n - 1, n - 1, pF, lo, hi, pp))
+        print("              %s" % tag)
+    print("")
+
+    # ── (5) MECHANISM — is D confounded by the text's own bigram diversity? ──
+    # D = |bigrams(text) ∩ bigrams(seed)| / |bigrams(text)| is a SET-cardinality ratio, so its
+    # DENOMINATOR is the steered text's own bigram DIVERSITY. If ΔD tracks Δ|distinct bigrams|,
+    # then ΔD is partly a diversity readout that never consults the seed — which would explain a
+    # non-monotone away-pole (repeated filler bytes collapse into ONE set element, shrinking the
+    # denominator and RAISING D even as seed-overlap falls). This is a code fact about the H_9576
+    # readout; the correlation below decides whether it actually bites at this scale.
+    print("  (5) MECHANISM — D's denominator is |distinct bigrams(text)| (a SET). Does ΔD just track")
+    print("      the steered text's bigram DIVERSITY, without consulting the seed?")
+    for arm in ("bias", "rng"):
+        dv, dl = [], []
+        for sd in seeds:
+            o, a_ = _rows("off", sd), _rows(arm, sd)
+            for i in range(min(len(o), len(a_))):
+                if not o[i].get("emit"):
+                    continue
+                base_b = _b64(o[i].get("gtext_b64"))
+                st_b = _b64(a_[i].get("gtext_pc2_b64"))
+                seed_b = _b64(o[i].get("seed_b64"))
+                if not base_b or not st_b or not seed_b:
+                    continue
+                dv.append(_ov(base_b, seed_b) - _ov(st_b, seed_b))
+                dl.append(float(len(_big(base_b)) - len(_big(st_b))))
+        rr = _spearman_pub(dv, dl)
+        print("      %-4s rho(ΔD, Δ|distinct bigrams|) = %+.3f   (n=%d)" % (arm, rr, len(dv)))
+    print("      ⇒ a large |rho| means ΔD is contaminated by a seed-independent diversity term.")
+    print("")
+
+    # ── (6) verdict — the frozen table, primary denominator = rng ────────────
+    ratio = ratios["rng"]
+    print("  ⇒ prereg cell: ratio(bias/rng) = %.3f" % ratio)
+    if not positive:
+        v = "⛔ INVALID — the positive control cannot beat the pedestal (readout dead · a negative is unreadable)"
+    elif ratio <= 1.5:
+        v = ("🕳️ VOID-BY-SNR — the steered arm's ΔD variance is within 1.5× of a DIRECTION-VOID\n"
+             "     dose-matched pedestal. H_9576's rho≈0 is reclassified: per-tick direction was\n"
+             "     never measured, so the 'W2 wall' does NOT stand as a negative. Block-aggregation\n"
+             "     (or a coarser readout) is mandatory before any direction verdict is read again.")
+    elif ratio > 3.0:
+        v = ("🧱 KILL STANDS (readout valid) — bias ΔD variance is >3× the cascade pedestal, so the\n"
+             "     per-tick signal is not pedestal-dominated and H_9576's rho≈0 is a real negative.\n"
+             "     ⚠️ PENDING the ζ=±4 saturation arm (decode-side positive control · pool spec below).")
+    else:
+        v = ("⏳ INDETERMINATE — ratio in (1.5, 3]: the prereg table leaves this band unassigned.\n"
+             "     Not a negative and not a VOID — it is reported as PENDING, not adjudicated\n"
+             "     (assigning it now would be tune-to-green).")
+    print("  ⇒ VERDICT: " + v)
+    print("")
+    print("  SCOPE / what this run cannot do (a_scale_honest_scope · no invented numbers):")
+    print("   · the card's cascade arm (forced 2nd-best byte + downstream RE-ROLL) and the ζ=±4")
+    print("     saturation positive control both need a live decode; the ckpt is pool-side, so they")
+    print("     are NOT in these numbers. The `static` arm is a re-roll-free LOWER BOUND and `rng`")
+    print("     is the dose-matched full-cascade stand-in the traces already hold.")
+    print("   · pool spec (summer/aiden · never mini · heavy-anima-eval-pool-not-mini):")
+    print("       anima-py chat --pc2-mouth cascade --pc2-zeta 0   <ckpt>  # 2nd-best byte @ 1 lm-step")
+    print("       anima-py chat --pc2-mouth bias    --pc2-zeta 4   <ckpt>  # ζ=+4 saturation arm")
+    print("       anima-py chat --pc2-mouth bias    --pc2-zeta -4  <ckpt>  # ζ=-4 saturation arm")
+    print("       (seeds 7,4302,4303 · same 150 ticks) → re-run this flag over the new traces dir.")
     return 0
 
 
