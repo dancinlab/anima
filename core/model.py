@@ -160,7 +160,13 @@ class TrunkLayer(nn.Module):
     def __init__(self, cfg: CLMConfig, dilation: int):
         super().__init__()
         self.conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation)
-        self.norm = nn.GroupNorm(1, cfg.d_model)  # layernorm over channels
+        # GroupNorm(1, C) on a (B, C, T) input reduces over (C, T) — channels AND time,
+        # i.e. SEQUENCE-GLOBAL statistics, NOT a per-position layernorm. The old comment
+        # here said "layernorm over channels" and was wrong about its own line; it is the
+        # likely origin of the per-position `_gen_gnorm*` in generator.hexa (H_9626).
+        # The faithful twins are gn_lib.hexa::nn_groupnorm_fwd and decode.py::nn_groupnorm_fwd
+        # (both m = cg*T). Do not re-describe this as position-local.
+        self.norm = nn.GroupNorm(1, cfg.d_model)
         self.act = nn.GELU()
         self.drop = nn.Dropout(cfg.dropout)
 
