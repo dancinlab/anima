@@ -1,19 +1,21 @@
-# H_9576 — PC2→라이브 mouth 배선(grounded logit-bias): mouth-severance CRACK toy 확증 (303M fire 대기)
+# H_9576 — PC2→라이브 mouth 배선(grounded logit-bias): 채널 CRACK 확증 · 방향 W2 벽 (303M 검정력-확장 종결)
 
-**status:** 🎉 CRACK 확증 (채널 열림·emit byte-identical 3/3) + 방향 VOID(검정력 부족) · 303M 3-seed
+**status:** 🎉 채널 CRACK 확증(emit byte-identical 3/3·gtext Δ 269/270) + 🧱 **방향 W2 벽**(ρ null 대역 안·부호 반전) · 303M 3-seed × 150tick
 
-## 🎉 VERDICT — mouth-severance CRACK 확증 + 방향 VOID (303M off/bias/rng × 3seed × 30tick · 58 emit tick)
+## 🧱 VERDICT (종결) — 채널 CRACK 재현 · 방향 KILL (303M off/bias/rng × 3seed × 150tick · **270 emit tick**)
 
-| Fable 기준 | 결과 |
+| Fable 기준 | 결과 (n=270 · 검정력 4.7×) |
 |---|---|
-| (1) emit 시퀀스 off==bias==rng byte-identical | **PASS ✅ 3/3 seed**(emit 23/12/23) — Stage-A 격리 완벽 |
-| (2) gtext Δ (steered≠base) | **PASS ✅ bias 57/58**(rng 58/58) — **채널 열림** |
-| (3) 방향 ρ(z_PC2, D_base−D_steer) | BIAS **+0.110**(예측 부호·z>0=문맥이탈) vs RNG **−0.146**(null)·Δ=+0.256 |
-| (3) 유의성 (tick-permutation 2000회) | ⚠️ null 95% [−0.266,+0.262]·**p=0.409 → 미유의** |
+| (1) emit 시퀀스 off==bias==rng byte-identical | **PASS ✅ 3/3 seed**(emit 100/72/98) — Stage-A 격리 **재현** |
+| (2) gtext Δ (steered≠base) | **PASS ✅ bias 269/270**(rng 270/270) — **채널 열림 재현** |
+| (3) 방향 ρ(z_PC2, D_base−D_steer) | BIAS **−0.077** (**예측(+)과 반대부호**) vs RNG-null **−0.016** · Δ=**−0.061**(null 보다 나쁨) |
+| (3) 유의성 (tick-permutation 2000회 · seed내 z 치환) | 🧱 null 95% **[−0.118,+0.119]** · **p=0.205 → 대역 안 = 미구분** |
 
-- 🎉 **mouth-severance 채널 CRACK 확증**: PC2 가 라이브 mouth(grounded decode)에 도달해 **gtext 를 바꾸고**(57/58) emit 은 **완벽 byte-identical**(3/3 seed). H_9574 의 벽(deliberation_k Δ0)이 **채널 수준에서 뚫림**. Stage-A 격리(게이트=base·발화=steered·root=base)가 303M 서 설계대로 작동.
-- ⚠️ **방향 = VOID(검정력 미달·Fable W4)**: ρ=+0.110 이 **예측 부호**이고 RNG-null(−0.146)을 Δ=0.256 로 이기나, permutation 검정서 p=0.409(null 대역 안) ⇒ **방향 미확립**. 음성 아님([[power-before-negative-verdict]]) — n=58 로 ρ≈0.11 해상 불가.
-- **다음**: 검정력 확장 재발사(n_ticks 150×3seed→emit tick ~300)·같은 bar. 유의=방향 CRACK 완성 / 여전히 null 대역=W2 벽(byte 입도서 PC2 의미 표현불가).
+- 🎉 **채널 CRACK = 재현·확증**: PC2 가 라이브 mouth 에 도달해 gtext 를 바꾸면서(269/270) emit 은 **완벽 byte-identical**(3/3). H_9574 mouth-severance 벽은 **채널 수준에서 확실히 뚫림**. Stage-A 격리가 4.7× 표본서도 무결.
+- 🧱 **방향 = W2 벽(KILL·음성 확정)**: ρ=−0.077 이 permutation null 95% **대역 안**(p=0.205)이고 **예측과 반대부호**, RNG-null 도 못 이김(Δ<0). n=270·대역 ±0.12 ⇒ |ρ|≳0.12 는 해상 가능한데 안 나옴 ⇒ **byte 입도의 context-presence bias 로는 PC2 의미(originality↔balance)가 표현되지 않는다**.
+- 💀 **#3826 의 ρ=+0.110 은 검정력 부족 인공물**: 표본 4.7× 확장서 **부호가 뒤집힘**(+0.110→−0.077). 그때 CRACK 으로 못박지 않고 VOID 로 남긴 판단이 옳았다([[power-before-negative-verdict]]·[[seed-agreement-on-pooled-feature-is-not-replication]]). **예측 부호가 나왔다 = 신호 아님**(n=58 서 동전던지기).
+- **함의**: emit-직교 DOF(PC2)는 실재하고 mouth 에 **도달은 하나**, 그 도달이 **의미를 나르지 않는다** — 채널은 열렸고 **의미론이 벽**. [[ag-tension-multidim-lane-mouth-severance]] 의 mouth-severance 는 "경로 부재"→"**경로 있음·의미 미전달**"로 재프레임.
+- **남은 각도**(이 카드 밖 · 별도 H): ① byte 아닌 **상위 입도** 조향(구/문장 수준 재순위) ② PC2 를 **decode 편향이 아니라 학습 신호**로(공학습 lane · [[cotrained-store-bridge-works-on-parent-conv]]) ③ D(문맥중첩) 대신 다른 read-out(의미 거리)로 W4 재측정 — 단 계기 유효성(양성통제) 먼저([[positive-control-before-reading-a-negative]]).
 
 ## 원래 카드 (구현·toy · 이하 유지) — wired: `anima-py chat --emit-gate refractory --pc2-mouth {bias,rng}` (v0.15.12 G5)
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
