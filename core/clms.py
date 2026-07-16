@@ -272,10 +272,10 @@ if _HAS_TORCH:
                 rows.append(self.key_emb[ids].mean(dim=0))
             return _torch.stack(rows)
 
-        def forward(self, yn_q, K, pols, oracle_slot=None):
+        def forward(self, yn_q, K, pols, oracle_slot=None, need_att=False):
             # yn_q:(B,d) query-position penultimate · K:(B,n_slot,d_k) · pols:(B,n_slot) in {0,1}
             q = self.W_q(yn_q)                                            # (B,d_k)
-            att = _torch.bmm(K, q.unsqueeze(-1)).squeeze(-1) * self.scale  # (B,n_slot)
+            att = _torch.bmm(K, q.unsqueeze(-1)).squeeze(-1) * self.scale  # (B,n_slot) address logits
             if oracle_slot is not None:
                 a = _F.one_hot(oracle_slot, self.n_slot).to(q.dtype)      # (B,n_slot) softmax bypassed
             else:
@@ -285,4 +285,8 @@ if _HAS_TORCH:
             g = self.W_g(yn_q)                                            # (B,d_g) op-gate bottleneck
             z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
-            return self.lam * s
+            out = self.lam * s
+            # H_9672 addr-loss: expose the pre-softmax address logits so the trainer can supervise them
+            # (L_addr = CE(att, target_slot)). att is computed regardless of oracle_slot, so oracle-train
+            # + addr-loss compose. need_att=False → byte-identical to the prior single-return signature.
+            return (out, att) if need_att else out
