@@ -234,7 +234,8 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
-                          pc2_mouth="", dual_probe_fn=None, score_perturb=0.0):
+                          pc2_mouth="", dual_probe_fn=None, score_perturb=0.0,
+                          zeta_ladder=None):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -343,6 +344,29 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                                (int(abs(decision["pc2_z"]) * 1000000.0) & 0x7FFFFFFF)) or 1)
         cand2 = generate(backend, ctx, True, anchors, m2)
         decision["gen_text_steered"] = str(cand2["text"])
+    # H_9664 ζ-LADDER — the live z is effectively a CONSTANT (IQR 0.0514; 45.7% of its variance
+    # sits in 3/270 ticks), so a tick-to-tick correlation on z has almost no regressor range to
+    # ride on: H_9663 measured sd(dpi_rng) ~ 0.14 and every arm-vs-arm readout drowned in it,
+    # because two arms are simply DIFFERENT TEXTS and the tick-level cascade swamps the signal.
+    # The escape is to stop comparing ticks and let EACH TICK CARRY ITS OWN LADDER: re-decode the
+    # SAME tick at several zeta, so the tick-level variance cancels WITHIN the tick. zeta is the
+    # experimenter's dose (range MANUFACTURED, not hoped for) -- the live z's own range is then a
+    # separate upstream question, not this instrument's blocker.
+    #   zeta=0 MUST reproduce the base text byte-identically (decode.py: "pc2" 0.0 => row
+    #   untouched). That is a BUILT-IN isolation certificate, not a claim: if it ever diverges,
+    #   the run is INVALID and no dose curve may be read off it.
+    # Common random numbers: seed_rng is held FIXED across the ladder, so the LCG draw stream
+    # lines up step-for-step and the within-tick pairing is not fighting sampler noise.
+    # SCOPE (card-enforced): a zeta arm is an INSTRUMENT arm about what the CHANNEL CAN carry --
+    # it is NEVER evidence about what the live daemon DOES. p5/Stage-A hold: the gate still hears
+    # only the BASE candidate, steering happens after emit is fixed and goes outward only.
+    decision["gen_text_zeta"] = []
+    if emit and zeta_ladder and mouth is not None:
+        for _zv in zeta_ladder:
+            m3 = dict(mouth)
+            m3["pc2"] = float(_zv)                        # zeta=0 => untouched row => base text
+            c3 = generate(backend, ctx, True, anchors, m3)
+            decision["gen_text_zeta"].append({"zeta": float(_zv), "text": str(c3["text"])})
     if emit:
         decision["gen_emitted"] = cand["emitted"]
         decision["gen_backend"] = cand["backend"]
