@@ -1,6 +1,6 @@
 # H_9418 — CONTENT-RESOLVING PERCEPT FEATURE: 8-dim byte-stat 이 content-blind → richer sketch (H_9411 wm 후속)
 
-**status:** 🔬 DIRECTIONAL $0 스크린 · **feature 검증됨(표현천장 해소)** · wm content = **기질-제약 음성(N_recur=0)** · AGREES [[H_9403]]
+**status:** 🔬 DIRECTIONAL $0 · **feature 검증됨(표현천장 해소 64.7%→0%)** · ⚠️ **정정: N_recur=0 은 기질 아니라 feature-grain 아티팩트** — mouth 는 content 재현함(단어수준). "기질-제약 음성" **철회** · wm content = **REOPENED(recurrence-matched grain 필요)**
 **lane:** 의식 / 데몬 게이지 위생 · percept 표현 해상도 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9411]] (dead-gauge relive — wm content-dead 발견) · H_9403 (emit≡clock · 스트림 clock-shaped) · chat-py-5 · V2_1 (양성통제 선행)
 **설계 출처:** Fable 5 위임 (walls-delegate-to-fable) · 사전등록 n=3/dim=64 (측정 전 frozen)
@@ -34,7 +34,23 @@ C0(instrument liveness) → P1(Δ · probe-before-gate · 같은-스트림 donor
 | C0 | **N_recur** (발화가 지평 내 재현) | **0/58** ⚠️ (need≥10) |
 | P1 | wm_active vs null | 0.224 vs 0.231 · Δ **−0.007** CI[−0.029,+0.014] = 0 포함 |
 
-**판정 = PENDING/기질-제약 음성**: feature 는 **표현천장을 진짜로 해소**(spurious-merge 64.7%→0% = 강력 대비).
+## ⚠️ verdict-integrity 정정 ($0 단어-수준 재확인 · chat-py-3 계열: 표면 grain 이 내용 재현을 놓침)
+
+내가 위 판정을 "기질-제약 음성"으로 읽은 건 **과대해석**이었다. $0 단어-수준 재분석: **mouth 는 content 를
+재현한다** — 59 발화 전부 `vault`·`forever`·`qx` 포함(59/59), "vault QX-7741 forever." 접두 verbatim 반복,
+pairwise 단어 Jaccard median 0.222·**max 0.800**·>0.5 쌍 37개·>0.3 쌍 131개. 그런데 byte-trigram sketch 를
+**발화 전체(80B)에 L2정규화**하니 변하는 56B 꼬리가 공유 접두/단어를 희석 → cos<0.9 → N_recur=0. **즉
+N_recur=0 은 whole-utterance L2-norm 의 feature-grain 아티팩트지 기질 사실 아님.** "기질-제약 음성" **철회**.
+부수관측: 303M mouth 가 degenerate 재현 접두("vault QX-7741 forever" 59/59)를 가짐 = mouth-다양성 관측.
+
+**정정 판정 = REOPENED (instrument-incomplete)**: feature 는 distinct 발화 개별화는 검증(0% merge)했으나,
+**whole-utterance 정규화가 mouth 의 실제 재현(공유 접두·단어)을 0.9 merge 아래로 희석**해 놓침. 기질엔 붙잡을
+content 재현이 **있음**(단어 Jaccard 증거). 올바른 grain(단어-bag·접두-가중·n-gram sub-window 등)이 열린
+instrument 질문 — 단, grain 교체는 **post-Δ pick 금지**(max-order-statistic 함정·probe-defect-census), C0 단계
+pre-Δ instrument 결정으로만. AGREES [[H_9403]] 은 **부분 철회**: 스트림이 완전 clock-shaped 는 아니고 content
+재현이 있으나 현 grain 이 못 봄. tune-to-green 금지(0.9 merge·θ 미변경).
+
+**(구 판정 아래 = feature 표현천장 해소 부분은 유효):** feature 는 **표현천장을 진짜로 해소**(spurious-merge 64.7%→0% = 강력 대비).
 그러나 **303M mouth 가 WM 지평 내 한 번도 재현 안 함**(N_recur=0 · 59 발화 전부 비유사) → wm 이 붙잡을
 content-재현 자체가 없음 → Δ=0. **음성은 feature/gauge 결함 아니라 기질 사실**(스트림에 반복 content 없음).
 **AGREES 병렬 [[H_9403]]**(emit≡clock · 스트림 clock-shaped 이지 content-shaped 아님). **tune-to-green 아님**:
