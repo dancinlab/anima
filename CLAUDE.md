@@ -84,6 +84,7 @@ Keyword-trigger index. Each line is a pointer — full do/dont + the earning H_ 
 - `a_h_continuous_no_branch` — **owner: run the next H autonomously, no per-step go.**
 - `a_discovery`/`a_discovery_log` — run discovery every batch → `domains/<DOMAIN>.log.md`.
 - `a_toy_scale_recheck`/`a_scale_honest_scope` — a toy verify ≠ closure; bound a metric to its scale.
+- `a_lab_full_diverge` — 🔀 **`sidecar lab full` = Fable 5 + Codex Sol in parallel** (2 models cover each other's blind spots; `lab fable`/`lab sol` = single-model). Brief MUST embed the **current frontier map + kill-list** (blocks regenerating dead angles). Register EVERY surviving angle as a PROPOSED card on 2 surfaces (jsonl+card); id = **origin's live max + 1** (avoid G6 collision — a parallel session may be mid-campaign) tagged as an R# series. **`a_parallel_session_compare`**: read origin's latest BEFORE registering → no duplicate fire · report AGREES/CONFLICTS/NOVEL. Divergence output = DIRECTIONAL design, never a verdict — cement only via engine-native `anima-py`.
 
 ### 🔥 Fire·GPU·recovery
 - `a_fire_autonomous` — fire a cost run autonomously (⚠️ fleet rent=spend needs go).
