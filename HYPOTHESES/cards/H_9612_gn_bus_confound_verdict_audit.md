@@ -96,5 +96,24 @@ HIT 의 크기(3B 시프트가 dOP 에 얼마나 기여하나)를 재려고 **�
 `--route-audit` 의 `ped` 는 docstring 대로 **negL(10B)에만** 길이매칭돼 있고, 주 DV 는 `X ∈ {negL, negZ}` 를 **같은 ped 로** 대조한다 ⟹ **negZ 팔은 구조적으로 +3B 불일치**. 규모는 이 셋에선 무해했으나(bar 24× 아래) **설계 결함 자체는 남는다** — dOP 가 더 큰 regime(원 셋·다른 ckpt)에서는 비율이 달라질 수 있다.
 **권고**: surface 하드코딩(`{negL,negZ,negJ,ped}`)을 풀어 **surface 별 길이매칭 ped**(`ped10`/`ped13`)를 매니페스트로 주입 가능하게 → negZ 는 `ped13` 과 대조. **+ `--gn-freeze` 를 `route_audit_run` 에 배선**(현재 넘기면 **조용히 무시** = 거짓 "차이 없음" 위험 ⚠️).
 
+## 🔧 계기 위생 수정 구현 + ⚠️ 앞 정량화 **정정** (2026-07-17 · aiden CPU · $0 · engine-native)
+권고를 실제로 구현했다(`cli/evaluate.py` · 기본 경로 byte-identical):
+1. **`--gn-freeze` 를 `route_audit_run`→`_ra_forward` 에 배선** — 전에는 CLI allowlist 가 flag 를 받고 **조용히 버려서** 거짓 "차이 없음"을 읽었다(H_9612 가 찾은 footgun). 이제 실제 발동.
+2. **surface 하드코딩 해제** — 매니페스트 `ctrl_of` 로 DV surface 별 **길이매칭 pedestal** 주입(예 `{"negL":"ped","negZ":"ped13"}`). 없으면 전부 `ped` = **수정 전과 완전 동일**.
+3. **byte-길이 자동 감사** — DV 쌍의 길이 불일치를 **inline 으로 LOUD 경고**(조용한 통과 불가) + `res["ctrl_of"]`/`len_mismatch`/`gn_freeze` 기록.
+
+**3-arm 검증(natem_c34_main_s11 · CPT본):**
+
+| arm | len-audit | dOP[negZ] |
+|---|---|---|
+| **A** 기존 스키마(ctrl_of 없음) | negL 25B vs ped 25B 🟢 · **negZ 28B vs ped 25B ⚠️ +3B SHIFT** → 경고 발동 | **−0.002152** (수정 전과 **동일** = 회귀 0) |
+| **B** `ctrl_of: negZ→ped13` | negL 25B🟢 · **negZ 28B vs ped13 28B 🟢 matched** | **−0.002203** |
+
+**⚠️ 앞 정량화 정정(9번째 자기정정)**: 앞 항목은 `negZ vs negJ` 대리 비교로 "**3B 시프트가 dOP 의 ≈97%**"라 추정했다. **진짜 inert 길이매칭 통제(`ped13`)로 재니 −0.002152 → −0.002203 = 시프트 기여 ≈0**. 앞 추정이 컸던 이유는 그 항목이 **스스로 경고한 바로 그 한계** — `negJ` 는 inert 가 아니라 **실 부정표면**이라 연산자 효과가 혼입됐다. 대리 통제로 잰 분해는 틀렸다.
+⟹ **정정된 결론**: 길이-시프트 **경로는 실재**(감사가 자동 검출) **하나 이 ckpt·이 셋에서 dOP 기여는 사실상 0** ⟹ H_9355 무해 판정 **유지**(이유가 오히려 더 강해짐 — 앞엔 "기여는 크지만 bar 아래", 이제 "기여 자체가 ≈0").
+
+**🔴 프로세스 결함 1건(정직 기록)**: 1차 검증에서 `git archive HEAD` 로 **미커밋 편집이 빠진 낡은 트리**를 측정했다 — A≡B 동일 + 새 로그 0줄이라는 **회귀 가드가 포착**. 가드가 없었으면 "ctrl_of 무효"로 오판했을 것. 교훈 = **원격에 보낼 아카이브는 커밋 후 만들고, 아카이브 안 패치 마커를 grep 으로 확인한 뒤 전송**.
+**scope**: 1 ckpt(natem_c34_main_s11) · 내 재구성 셋(원 H_9355 매니페스트 아님) · CPU · DIRECTIONAL.
+
 ## 상태
 📏 감사 완결 (DIRECTIONAL) — **HIT 실재**(dOP 의 ≈97%가 3B 시프트 몫) **∧ 규모 무해**(0.0021 vs bar 0.05 = 24× 아래) ⟹ **cement verdict re-open 없음**. 산출 = 계기 위생 권고(surface 하드코딩 해제 + route_audit 에 --gn-freeze 배선). **distinct-from-kills:** A1 PASS-live 가 연 감사를 경로특정→크기측정까지 닫음. — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
