@@ -190,3 +190,73 @@ Fail ⟹ instrument discontinuity ⟹ HALT.
    Re-scoped ladder: N = {192, 768, **1713**} (rung-3 capped by the 60 MB ceiling, floor 1536 cleared).
 3. Controls on any green rung: C-DECL-ABL (mandatory), C-TOK. Envelope for 🔴: rung-3 + C-CAP + grokking-wd arm.
 4. If anchor FAILS to reproduce → HALT, debug instrument (do NOT run rungs).
+
+---
+
+## INTERIM #2 (2026-07-16 · session 2 · rung-0 anchor gate → PASS · rung-1 fired)
+
+### rung-0 anchor gate — ✅ REPRODUCES H_9389 (both seeds · HALT condition cleared)
+`anima-py evaluate --xbind` on both anchor ckpts (aiden RTX 5070 · GPU-CUDA · $0 · driver `~/h9410/rung0/driver.sh`,
+`ALL_DONE` 23:35 UTC). Verbatim:
+
+| seed | `S_op` G-ALIVE (n=72) | `S_decl` GATE (n=36) | `S_cpt` (n=36) |
+|---|---|---|---|
+| 7  | **1.0000** (margin_med +5.238 · pos 0.750) | **0.3333** (margin_med −5.979 · pos 0.250) | 0.6389 (+1.940) |
+| 11 | **1.0000** (margin_med +4.319 · pos 0.903) | **0.2222** (margin_med −5.970 · pos 0.111) | 0.6944 (−0.090) |
+| bar | ≥0.90 both ✅✅ | chance-or-below both ✅✅ | (monitor) |
+
+⟹ The RANDOM-ASSIGNMENT instrument reproduces H_9389's kill signature exactly: the operator is learned to
+ceiling on `S_op` (1.000/1.000) yet does **not** transfer to operator-0-exposure held-out declared stems
+(`S_decl` 0.33/0.22, both BELOW chance, both margins strongly negative) — "operator = stem-indexed lookup,
+not a rule" replicated under random polarity. **Instrument continuity confirmed ⟹ ladder proceeds** (no HALT).
+Anchor ckpts pulled to permanent storage `~/anima-weights/h9410_rung0/phaseA_s{7,11}.clm` (176 584 498 B each ·
+`a_fire_recover_complete`). NOTE: ECHO monitor was not captured by the eval path (the two decisive frozen
+criteria — G-ALIVE + `S_decl` chance-or-below — are met on both seeds and are what the HALT condition turns on).
+
+### Instrument-version blocker — FOUND + FIXED (would have mis-fired rung-1)
+aiden's installed `anima-py` was **0.13.94** — `build_atoms_scaled` / `--max-atoms` absent (rung-0 only needed
+`build_bridgesplit` over H_9389's frozen 48-atom file, so it ran fine on the stale wheel). Upgraded to
+**origin/main 0.14.5** via COMPLETE git-archive (`pyproject.toml VERSION MANIFEST.in anima_py cli core`,
+`pip install --user --break-system-packages --no-deps` · `anima-py-pool-install-hexaless`). Verified:
+`build_atoms_scaled` present.
+
+### rung-1 mining — SOURCE-MATCHED to the pre-registered ceiling ($0)
+First mining attempt used a local `en-general.txt` (8.0 MB / 35 647 lines · 1489 frame-candidates · 692 @ occ≥50)
+— **NOT** the pre-registered source. Re-mined from the HF blob INTERIM #1 measured the ceiling on
+(`datasets--dancinlab--anima-corpus-en-general` · **60 049 637 B / 279 429 lines**), which reproduces INTERIM #1
+verbatim: **4598 frame-candidates → 2969 cleared min_occ=50** (matches the ceiling table exactly). Same source is
+frozen for rungs 2–3 (the 8 MB file could never reach rung-2 768 / rung-3 1713 — 692 < 768 — so mining the
+ladder from mixed sources would have been a non-nested atom-set confound).
+
+`anima-py corpus atoms --lang en --max-atoms 192 --corpus <60MB blob> --min-occ 50 --assign-seed 0`
+→ **ACCEPTED=192** (no dry-up · pos 96 : neg 96 · dropped len=176 stop=10 G-CARRIER=2 G-SUBSTR=10 G-DERIV=0)
+→ split train=144 / heldout=48 · gate `chance_sd`=0.0722 (matches card table: |S_op|=96 · |S_decl| gate-n=48).
+
+### rung-1 corpus — BUILT + AUDIT-CLEAN ($0)
+`anima-py corpus xbind --bridge-split --atoms gt_atoms_en_192.json --lang en --reps 40 --polarity assigned
+--assign-seed 0 --out A192.txt` → atoms=192 · S_op=96 / S_decl=48 / S_cpt=48 · **28 800 lines / 1 131 120 B** ·
+**per-stem = 150.0** (policy-A, same as the anchor). Audit:
+
+| check | result |
+|---|---|
+| `S_decl` operator (`not …stem`) exposure in phase-A | **0 / 48** ✅ (gate layer intact) |
+| `S_decl` declaration (`is stem`) exposure | 48 / 48 ✅ (the arm's purpose) |
+| [control] `S_op` operator exposure | 96 / 96 ✅ (operator IS taught) |
+| slot-prior p(neg) | **0.5000** ✅ (majority-collapse killed) |
+
+### rung-1 — FIRED (aiden · $0 · in-flight)
+Driver `~/h9410/rung1/driver.sh` (detached setsid, log `run.log`), recipe = anchor's verbatim except corpus and
+budget: `--d 3784 --L 4 --e0 2 --emax 3` (345.7M) · **--steps 30000** (card rung-1 budget) ·
+`--batch-size 32 --seq-len 64 --lr 3e-4` · seeds {7, 11} → then `evaluate --xbind` sop/sdecl/scpt per seed.
+Confirmed live at step 1 (CE 5.72626 · val_CE 7.65559 · train=1 074 564 / val_tail=56 556). **ETA ~4 h.**
+
+### RESUME POINT (next session)
+1. `sidecar pool on aiden 'tail -40 ~/h9410/rung1/run.log'` → wait `ALL_DONE`. Pull ckpts to
+   `~/anima-weights/h9410_rung1/`. Read the gate: `S_decl` d_acc + per-stem sign-perm p, both seeds.
+2. **Decision (frozen)**: `S_decl` still chance-or-below both seeds ⟹ rung-1 fails to un-cache ⟹ climb to
+   **rung-2 (N=768, |S_op|=384, budget ~100K)** — same 60 MB source, `--max-atoms 768`, `--reps 40`.
+   `S_decl` > chance ∧ per-stem sign-perm p<.05 ∧ both-seed sign-agree ⟹ 🟢 candidate ⟹ **C-DECL-ABL is
+   MANDATORY before any green claim** (remove `S_decl` declaration lines → gate MUST return to chance; if not
+   ⟹ ⚠️ LEAK-INVALID, not a verdict).
+3. 🔴 W_wt-TERMINAL requires the COMPLETE envelope (rung-3 N=1713 + C-CAP + grokking-wd arm), not just a max-rung
+   fail (that is 💀 KILL-AT-RUNG). No kill-biased early stop.
