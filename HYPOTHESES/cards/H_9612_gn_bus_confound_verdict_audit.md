@@ -115,5 +115,18 @@ HIT 의 크기(3B 시프트가 dOP 에 얼마나 기여하나)를 재려고 **�
 **🔴 프로세스 결함 1건(정직 기록)**: 1차 검증에서 `git archive HEAD` 로 **미커밋 편집이 빠진 낡은 트리**를 측정했다 — A≡B 동일 + 새 로그 0줄이라는 **회귀 가드가 포착**. 가드가 없었으면 "ctrl_of 무효"로 오판했을 것. 교훈 = **원격에 보낼 아카이브는 커밋 후 만들고, 아카이브 안 패치 마커를 grep 으로 확인한 뒤 전송**.
 **scope**: 1 ckpt(natem_c34_main_s11) · 내 재구성 셋(원 H_9355 매니페스트 아님) · CPU · DIRECTIONAL.
 
+## 🧹 감사 확산 — 같은 결함 계급을 **다른 계기**에서 발견·수리 (2026-07-17 · $0 · 코드 감사)
+route-audit 에서 만든 길이-감사가 일반 도구이므로, 같은 결함(길이-비매칭 통제)이 다른 cement 계기에도 있나 $0 로 훑었다.
+
+**레포는 대체로 길이매칭을 실천한다** — `:891`/`:1758`/`:1880` "length-matched NEUTRAL atom" · `:2387`/`:2403` "byte-matched twin". route-audit 의 negZ 가 예외였다. **그러나 주장 ≠ 검증**:
+
+**🎯 `--valence-audit` 에서 같은 계급 발견(더 나쁜 형태)**: 이 계기는 결과에 *"(length-matched NEUTRAL atom, SAME contexts)"* 를 **사실처럼 인쇄**하지만, 매니페스트 스키마는 `{id, prompt, stem, pol, arm}` 뿐이고 **본문에 byte-길이 검증이 0줄**이다(`len(` 은 전부 리스트 길이·LOO 루프). 즉 **길이매칭은 매니페스트 빌더의 책임인데 계기가 그걸 검사하지 않고, 출력은 안심시키는 라벨을 무조건 찍는다.** 매칭 안 된 swap atom 이 들어오면 prompt byte-길이가 달라지고 → 우측정렬 창이 시프트 → 두 arm 이 다른 문맥으로 읽히고 → GN bus 가 그 차이를 판독점(T−1)까지 나른다 ⟹ `Delta = acc(atom) − acc(swap)` 가 **form-vs-content 가 아니라 form+shift** 가 된다.
+- route-audit 은 최소한 ped 를 negL 엔 진짜 매칭했다(재사용이 문제). **valence-audit 은 주장만 하고 검증이 0** = 같은 계급의 더 나쁜 형태.
+
+**수리**(`cli/evaluate.py::valence_audit_run` · 기본 경로 무변): stem 별 `atom`/`swap` prompt **byte-길이 자동 대조** → 불일치면 **LOUD 경고**(몇/몇 stem·예시 3건·"Delta 를 form+shift 로 읽어라") · 전부 매칭이면 `🟢 len-audit` 인쇄. **주장을 검증으로 바꿨다.**
+**단위검증**(모델 불요): 매칭셋(`좋`3B↔`것`3B) → 불일치 0건 통과 · 불일치셋(`좋`3B↔`그것`6B) → 1건 검출. (KO 3B/char 가 여기서도 배수로 작동.)
+
+**⚠️ scope**: 이건 **계기가 이제 스스로 검사한다**는 것이지 **기존 valence-audit verdict 가 오염됐다는 게 아니다** — 그 매니페스트들이 실제로 매칭됐는지는 **미확인**(매니페스트 소재 필요). 다음 valence-audit 실행이 자동으로 답한다. **일반 교훈**: 계기가 인쇄하는 "length-matched"·"byte-matched" 같은 문구는 **검증이 아니라 주석일 수 있다** — 검사 코드가 있는지 확인하라(`tool-definition-read-code-not-docstring` 의 계기판).
+
 ## 상태
 📏 감사 완결 (DIRECTIONAL) — **HIT 실재**(dOP 의 ≈97%가 3B 시프트 몫) **∧ 규모 무해**(0.0021 vs bar 0.05 = 24× 아래) ⟹ **cement verdict re-open 없음**. 산출 = 계기 위생 권고(surface 하드코딩 해제 + route_audit 에 --gn-freeze 배선). **distinct-from-kills:** A1 PASS-live 가 연 감사를 경로특정→크기측정까지 닫음. — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
