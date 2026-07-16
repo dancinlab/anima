@@ -1132,7 +1132,7 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False):
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1193,13 +1193,22 @@ class TrainShell(nn.Module):
             # value-read layer (a) from the address-learning layer (c): if val differentiates under free
             # address (ORACLE≥.90) the residual 303M wall is pure W_q address-learning; if not, deeper.
             osl = tgt if sb_oracle else None
-            store_logits = model.clms(yn_q, K, pols, oracle_slot=osl)   # (Bs, V) = λ·s (op order == store_apply)
+            store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True)   # (Bs,V),(Bs,n_slot)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
                                      y_s[:, :Ts - 1].reshape(-1))
             loss = loss + ce_tok + sb_w * ce_ans + out_s["aux_loss"]
             aux["sb_ans_ce"] = float(ce_ans.detach()); aux["sb_tok_ce"] = float(ce_tok.detach())
+            # H_9672 addr-loss: direct supervision of the softmax address (att) → cut the (2) bootstrap
+            # deadlock W_q could not escape at 303M (Stage1.5 proof). OBJECTIVE (loss term, sb_addr_acc is
+            # the monitor). tgt = the 5-tuple target_slot. sb_addr_w=0 (default) → byte-identical.
+            if sb_addr_w > 0.0:
+                ce_addr = F.cross_entropy(att, tgt)
+                loss = loss + sb_addr_w * ce_addr
+                aux["sb_addr_ce"] = float(ce_addr.detach())
+            with torch.no_grad():
+                aux["sb_addr_acc"] = float((att.argmax(-1) == tgt).float().mean())   # monitor-only
             with torch.no_grad():                              # monitor-only (a_train_inline_gauge)
                 g_id, b_id = 103, 98                           # ord('g'), ord('b') — eval store_run binary
                 gold_g = (y_s[:, Ts - 1] == g_id)
@@ -1295,6 +1304,8 @@ def main():
     ap.add_argument("--clms-d-k", type=int, default=64, help="CLMS content-address key dim")
     ap.add_argument("--clms-d-s", type=int, default=64, help="CLMS polarity value dim")
     ap.add_argument("--clms-d-g", type=int, default=64, help="CLMS fusion-bottleneck (yn_q op-gate dim; H_9423 value-read fix)")
+    ap.add_argument("--store-addr-weight", type=float, default=0.0,
+                    help="H_9672: address direct-supervision loss weight L_addr=CE(att,target_slot) (0=off·byte-identical). Cuts the (2) bootstrap deadlock W_q could not escape at 303M.")
     ap.add_argument("--store-oracle-train", action="store_true",
                     help="H_9423 Stage1.5: hand the address for free during TRAINING (oracle_slot=target_slot) "
                          "→ separates value-read (a) from address-learning (c). DIAGNOSTIC, not a production lever.")
@@ -1840,7 +1851,8 @@ def main():
         # on the already-averaged grads, so every rank's clip scale = the 1-GPU global-grad norm.
         _sb = get_store_batch() if sb_cell is not None else None
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
-                                           sb=_sb, sb_w=a.store_ans_weight, sb_oracle=a.store_oracle_train)
+                                           sb=_sb, sb_w=a.store_ans_weight, sb_oracle=a.store_oracle_train,
+                                           sb_addr_w=a.store_addr_weight)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()

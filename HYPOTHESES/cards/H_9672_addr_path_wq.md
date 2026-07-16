@@ -1,6 +1,6 @@
 # H_9672 — ADDR-PATH: CLMS 주소경로(W_q) 수리 — Stage1.5 격리 진범을 직공
 
-**status:** 🔵 PRE-REG (Fable 설계 · D0-1 착륙) · not-terminal · wired: 미배선 → D0 진단 → 구현 → T1 토이 → T2 벽재현 → T3 303M(owner go)
+**status:** 🔵 PRE-REG (Fable 설계 · D0-1 착륙) · not-terminal · wired: 🔧 핵심 lever 배선완료(--store-addr-weight·L_addr·need_att·VERSION 0.15.27·커밋 3632ed195·byte-id when off) → NEXT balanced manifest+audit → D0-2/3 → T1 토이 → T2 벽재현 → T3 303M(owner go)
 **lane:** 재조합/BINDING · runtime addressable lookup (frontier g1-interface-addressable-wall)
 **related:** [[H_9423]] (Stage1.5 가 주소학습(c) 진범 격리 · 이 H 가 그 NEXT) · [[H_9359]] (벽=런타임 다리 부재) · [[scale-303m-1b-7b-is-amplifier-not-lever]] (toy→303M 미전이 반례)
 
