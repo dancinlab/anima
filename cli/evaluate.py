@@ -9684,12 +9684,36 @@ def faction_block_structure_run(argv):
               (K, qr, qp, qs, ("%.3f" % ratio) if ratio == ratio else "—", extra))
         out["rows"].append(row)
 
-    rr = [r["real_over_pedestal"] for r in out["rows"] if r["real_over_pedestal"] == r["real_over_pedestal"]]
+    # RATIO GUARD (H_9674 · toy d=32 caught this). real/pedestal is only readable while the
+    # denominator is safely positive. Modularity Q can go NEGATIVE when the clusterer cannot beat
+    # the null model — at d=32 the pedestal came out Q=-0.071 (K=4) and -0.045 (K=8), so the ratio
+    # read -0.883 and -1.040: nonsense that the max() then discarded, leaving the verdict resting on
+    # the single K=2 cell. A ratio is the wrong statistic when its denominator can cross zero.
+    # So rows whose pedestal Q <= 0 are EXCLUDED from the ratio read, and the verdict additionally
+    # requires the plain DIFFERENCE (real - pedestal), which stays meaningful at any sign.
+    usable = [r for r in out["rows"] if r["pedestal_Q"] > 1e-3]
+    dropped = [r["K"] for r in out["rows"] if r["pedestal_Q"] <= 1e-3]
+    rr = [r["real_over_pedestal"] for r in usable if r["real_over_pedestal"] == r["real_over_pedestal"]]
     mx = max(rr) if rr else float("nan")
+    mxd = max((r["real_Q"] - r["pedestal_Q"]) for r in out["rows"])
     out["max_real_over_pedestal"] = mx
-    out["blocks_exist"] = bool(mx == mx and mx >= 1.5)     # pre-registered bar
+    out["max_real_minus_pedestal"] = mxd
+    out["ratio_rows_dropped_nonpositive_pedestal"] = dropped
+    if dropped:
+        print("  ⚠️ ratio DROPPED at K=%s — pedestal Q <= 0 there (the clusterer could not beat the"
+              % dropped)
+        print("     null model), so real/pedestal is not a readable statistic in those cells.")
+        if not rr:
+            print("  ⛔ NO readable ratio cell — verdict withheld (instrument fact, not substrate).")
+            out["blocks_exist"] = None
+            out["verdict"] = "UNREADABLE — every pedestal Q <= 0 (clusterer below null at this d)"
+            if out_path: json.dump(out, open(out_path, "w"), indent=1)
+            return 1
+    out["blocks_exist"] = bool(mx == mx and mx >= 1.5 and mxd > 0)   # pre-registered bar + sign-safe Δ
     print("")
-    print("  max real/pedestal over K : %s   (pre-registered bar: >=1.5)" % (("%.3f" % mx) if mx == mx else "—"))
+    print("  max real/pedestal over K : %s   (pre-registered bar: >=1.5 · non-positive-pedestal cells excluded)"
+          % (("%.3f" % mx) if mx == mx else "—"))
+    print("  max (real - pedestal)    : %.6f   (sign-safe · must be > 0)" % mxd)
     if out["blocks_exist"]:
         print("  VERDICT (H_9674): blocks separate from the zero-truth pedestal => faction-like")
         print("    structure EXISTS in the substrate => H_9643 (learn factions · GPU) is EARNED.")
