@@ -2025,10 +2025,10 @@
                   "detail": "random-polarity 계기가 H_9389 kill 서명 그대로 재현: S_op G-ALIVE 1.0000/1.0000(bar ≥0.90) ∧ S_decl 게이트 0.3333/0.2222 둘 다 우연밑(margin_med −5.98/−5.97). 연산자는 천장까지 학습되나 연산자-0-노출 held-out 선언 어간엔 전이 실패 ⟹ HALT 없음·사다리 진행. ckpt 영구보관."
                  },
                  {
-                  "name": "사다리 N={192,768,1713} · rung-1 발사중",
+                  "name": "사다리 N={192,768,1713} · rung-1 kill재현·rung-2 GPU대기",
                   "id": "g1-pressure-ladder",
                   "role": "axis-1 |S_op| · EN mining 천장에 고정",
-                  "detail": "EN mining 상한 4598 frame-cand → 2969 @occ≥50 ⟹ N=3072 도달불가, terminal 재스코프 N=1713(|S_op|=856) 실측 확증(dried_up 없음). rung-1(N=192) aiden 진행중. rung-2(768·4.54MB)·rung-3(1713·10.14MB) 동일 소스 PRE-BUILT+감사 PASS(S_decl 0-노출·slot 0.5). C-TOK R=1457 실측. 남은 건 GPU 시간뿐(a_wall_first)."
+                  "detail": "EN mining 4598→2969@occ≥50 ⟹ terminal N=1713 재스코프. rung-1(N=192·|S_op|=96)=kill 서명 재현: G-ALIVE 0.9896/0.8993(연산자 강건·s11 −0.0007 margin+9.45)·S_decl 0.389/0.424 양seed 우연밑 ⟹ 캐시 안풀림·rung-2 상승. 계기수정: sop --n-decode=manifest(fail-closed) 3000. rung-2·3 PRE-BUILT. C-TOK R=1457."
                  },
                  {
                   "name": "종결 조건 — envelope 완주만 🔴",
