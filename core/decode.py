@@ -272,6 +272,28 @@ def set_slw_controls(gamma_override=None, shuffle_seed=None):
     _SLW_SHUFFLE_SEED = shuffle_seed
 
 
+# ── H_9423 CLMS store-bridge eval-time injection (process-global; set by cli/evaluate.py --store) ──
+# The store content (8 entities + polarities + the queried slot) is RUNTIME data, never in the .clm.
+# The CLMS lane stays passthrough (byte-identical, C0-f seal) until a store is injected here, so a .clm
+# that carries a CLMS trailer decodes identically to base for every prompt outside a --store eval.
+# The controls are pure eval-time switches on the injected store (no retraining · no tune-to-green):
+# --store-oracle forces a=one-hot(target_slot) (C0-e positive control), --store-lambda overrides λ
+# (0.0 = λ0 byte-identical control · 1.0 = store_only). The C2 key-shuffle / wrong-store controls are
+# expressed by deranging store["entities"] / flipping store["pols"] in the injected dict.
+_CLMS_STORE = None            # dict {"entities","pols","target_slot"} · None => passthrough
+_CLMS_ORACLE = False          # --store-oracle (bypass the softmax lookup with the true slot)
+_CLMS_LAM_OVERRIDE = None     # --store-lambda (None => file λ)
+
+
+def set_clms_store(store=None, oracle=False, lam_override=None):
+    """Set the CLMS store-bridge eval-time injection (cli/evaluate.py --store). store=None => the lane
+    is passthrough regardless of a present trailer (the trailer有 store無 byte-identical seal)."""
+    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE
+    _CLMS_STORE = store
+    _CLMS_ORACLE = oracle
+    _CLMS_LAM_OVERRIDE = lam_override
+
+
 # ── H_9407 consult-decode eval-time window override (process-global; set by cli/evaluate.py
 # --consult-decode). None => the decode seed window stays the production literal 24, byte-for-byte.
 # int T => clm_decode_topk_sampled_W right-aligns the seed into a T-byte window instead — the ONLY
@@ -784,6 +806,13 @@ def clm_load_weights(path):
     from clml import read_clml
     W["clml"], off = read_clml(rb, off, W["d"], W["V"])
 
+    # ── optional "CLMS" store-bridge lane trailer (H_9423) ──
+    # Appended after the CLML trailer (chain end). Absent/short => clms=None; and even when
+    # present, the lane is passthrough until a store is injected via set_clms_store (the store is
+    # RUNTIME data, never in the .clm) => trailer有 store無 = byte-identical. CORE codec core/clms.py.
+    from clms import read_clms
+    W["clms"], off = read_clms(rb, off, W["d"], W["V"])
+
     # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
     # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
     # eval/decode session loads weights once and reuses them for every token/
@@ -1141,10 +1170,21 @@ def _fwd_logits(W, tok, T, edits=None):
     # bias. None/absent => passthrough (byte-identical). DISJOINT (read-only + additive bias).
     if W.get("clml") is not None:
         # lane_apply (core/clml.py) is host-numpy-only — round-trip through host
-        # (rare lane, same pattern as SLW above).
+        # (rare lane, same pattern as SLW above). Fall through to the CLMS lane (no early return):
+        # the fixed post-readout order is SLW → readout → CLML(additive) → CLMS(overwrite).
         from clml import lane_apply
         out_logits = lane_apply(to_host(yn_trunk), to_host(out_logits), W["clml"])
-        return out_logits                          # already host
+    # H_9423 CLMS store-bridge lane — OVERWRITE the answer-position logits row with λ·store_logits
+    # (store_only gate: the overwrite erases even CLML's additive delta at that row, so no trunk-lineage
+    # logit survives = ② shortcut-cut). Trailer absent OR store un-injected => passthrough (byte-identical,
+    # C0-f seal). Query tap = yn_trunk (pre-slot), the SAME tap CLML reads. host-numpy-only (rare lane).
+    if W.get("clms") is not None and _CLMS_STORE is not None:
+        from clms import store_apply, find_qpos
+        qpos = find_qpos(tok)
+        if qpos:
+            out_logits = store_apply(to_host(out_logits), to_host(yn_trunk), W["clms"],
+                                     _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
+                                     lam_override=_CLMS_LAM_OVERRIDE)
     return to_host(out_logits)
 
 

@@ -105,6 +105,27 @@ def append_clml_trailer(out_path: str, clml) -> int:
         f.write(trailer)
     return len(trailer)
 
+
+# ════════════════════════════════════════════════════════════════════════
+# H_9423 "CLMS" store-bridge lane trailer (CORE-owned codec in core/clms.py).
+# Appended at the END of the trailer chain (after CLMX / CLMB / SLW / CLML), so a
+# store-bridge model = a normal .clm + this trailer. MUST be appended after CLML to
+# keep the chain order CLMB→SLW→CLML→CLMS. Absent => byte-identical (loaders
+# passthrough on short/absent read). The co-trained store-lookup bridge (H_9423).
+# ════════════════════════════════════════════════════════════════════════
+def append_clms_trailer(out_path: str, clms) -> int:
+    """Append the CLMS store-bridge lane trailer to an already-written .clm. `clms` = a trained torch
+    CLMSModule OR a ready numpy weight dict (key_emb,W_q,val,W_h,b_h,W_out,lam,n_slot,d_k,d_s,r,key_seed).
+    Returns bytes written. Callers only invoke this when the model actually has a store-bridge lane, and
+    ONLY after append_clml_trailer (if any) so the chain end stays CLMS."""
+    from clms import pack_clms, clms_weights_from_torch   # core/clms.py (same core/ dir)
+    w = clms if isinstance(clms, dict) else clms_weights_from_torch(clms)
+    trailer = pack_clms(w)
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0

@@ -73,7 +73,9 @@ def _parse_args(argv):
             #                          is functionless; makes mining trivial at 10^3, G-BALANCE free,
             #                          form->polarity leak killed — the strongest confound control).
             #   --assign-seed k        the seed the balanced random assignment is deterministic in.
-            "max_atoms": 0, "polarity": "real", "assign_seed": 0}
+            "max_atoms": 0, "polarity": "real", "assign_seed": 0,
+            # H_9423 storebind (co-trained store-lookup bridge · S0):
+            "n_blocks": 4000, "store_slots": 8}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -157,6 +159,10 @@ def _parse_args(argv):
             opts["nonce_fillers"] = int(argv[i + 1]); i += 2
         elif a == "--win":
             opts["win"] = int(argv[i + 1]); i += 2
+        elif a == "--n-blocks":
+            opts["n_blocks"] = int(argv[i + 1]); i += 2
+        elif a == "--store-slots":
+            opts["store_slots"] = int(argv[i + 1]); i += 2
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -1611,6 +1617,155 @@ def build_ground(fmt, atoms_path, reps, replay, seed, lang=DEFAULT_LANG):
                   "labels_flipped": flipped, "bytes": len(text.encode())}
 
 
+# --------------------------------------------------------------------------- #
+# storebind — the co-trained store-lookup bridge task (H_9423 · S0 wiring).
+#
+# A parent-corpus port of anima-v2/gen.py, the toy that DIRECTIONAL-proved a co-trained
+# lookup bridge (V2_6 held-out macro 0.987/0.992 · C2 VALID). The task is the minimal mirror
+# of the BINDING wall (H_9327/H_9359): the FACT lives ONLY in the store, the OPERATOR lives
+# ONLY in the text, and the answer = polarity XOR operator (is/not × good/bad) requires binding
+# the two — a nonlinear readout the parent's linear 1x1-conv head cannot do alone (the CLMS
+# lane's GELU-MLP supplies it). EN-only: `is`/`not` are both FREE + PRE-POSED at the same slot,
+# so operator identity is never confounded with position (the EN discriminator, CLAUDE.md EN-FIRST).
+# --------------------------------------------------------------------------- #
+_SB_CONSONANTS = "bdfgklmnprstvz"
+_SB_VOWELS = "aeiou"
+_SB_ANSWER = {0: "good", 1: "bad"}          # POL_GOOD, POL_BAD (v2 gen.py ANSWER_BYTES)
+
+
+def _sb_entity_pool(n_total):
+    """Deterministic CVCVC nonce pool, stride-sampled to n_total (v2 gen.entity_pool port).
+    Sorted + sliced => the train/held-out split is a pure function of n_total, seed-independent."""
+    names = []
+    for c0 in _SB_CONSONANTS:
+        for v0 in _SB_VOWELS:
+            for c1 in _SB_CONSONANTS:
+                for v1 in _SB_VOWELS:
+                    for c2 in _SB_CONSONANTS:
+                        names.append(c0 + v0 + c1 + v1 + c2)
+    names = sorted(set(names))
+    if len(names) < n_total:
+        raise SystemExit("storebind: nonce pool %d < requested %d" % (len(names), n_total))
+    step = (len(names) - 1) / float(n_total - 1)
+    return [names[int(round(i * step))] for i in range(n_total)]
+
+
+def _sb_split(pool, n_eval):
+    """Interleaved disjoint train/held-out split (every ratio-th name held out) so both halves
+    are drawn from the same region of name-space — novelty is 'a new key built from seen bytes',
+    not 'a different distribution' (v2 gen.split_pool port)."""
+    ratio = len(pool) // n_eval
+    train, ev = [], []
+    for i, nm in enumerate(pool):
+        (ev if i % ratio == ratio - 1 else train).append(nm)
+    return train, ev
+
+
+def _sb_answer(op, polarity):
+    """answer = polarity XOR operator. op 0=is (identity), 1=not (flip)."""
+    return polarity if op == 0 else (1 - polarity)
+
+
+def _sb_emit_block(rng, entities, store_slots):
+    """One block = one store draw with a FRESH polarity per slot, then EXACTLY ONE query line per
+    stored entity in a random order. Block-level rotation is the mmap-window-compatible analogue of
+    v2's per-example rotation: because a block re-draws every polarity, memorizing entity->polarity
+    into the weights returns exactly chance (0.5), so every point above chance must route through the
+    bridge. One line per entity per block (no re-appearance within a block) removes the in-window copy
+    source — the quietest P1 contaminant (H_9423 잔인한 판정 ③)."""
+    idx = rng.sample(range(len(entities)), store_slots)
+    names = [entities[i] for i in idx]
+    pols = [rng.randint(0, 1) for _ in range(store_slots)]
+    rows, lines = [], []
+    order = list(range(store_slots))
+    rng.shuffle(order)
+    for slot in order:
+        op = rng.randint(0, 1)
+        entity = names[slot]
+        polarity = pols[slot]
+        ans = _sb_answer(op, polarity)
+        op_s = "is" if op == 0 else "not"
+        prompt = "%s %s => " % (op_s, entity)          # query pos = last prompt byte (bridge query)
+        lines.append(prompt + _SB_ANSWER[ans])
+        # row schema = the CLMS-lane INPUT contract (core/clms.py store_apply + evaluate --store):
+        #   store = the 8-slot {entities, pols} injected at the query · target_slot = the queried slot
+        #   (oracle one-hot) · gold = answer byte · op kept for the polarity/operator class split.
+        rows.append({"prompt": prompt, "gold": _SB_ANSWER[ans], "entity": entity,
+                     "store": {"entities": list(names), "pols": list(pols)},
+                     "target_slot": slot, "op": op})
+    return lines, rows
+
+
+def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0):
+    """Build the storebind corpus + co-train store manifest + 0-shot held-out eval manifest.
+
+    Returns (text, st). st carries the manifests and a hard-asserted zero-leak witness. The store
+    manifest (rows of {store_names, store_pols, slot, op, prompt, answer}) is the CLMS-lane INPUT
+    contract: `anima-py evaluate <clm> --store held.json` feeds each row's store to the bridge and
+    scores the answer byte — the SAME manifest the trainer co-trains on (train == infer manifest =
+    a literal p8 implementation, not a train/infer split)."""
+    if lang != "en":
+        raise SystemExit("storebind is EN-only (--lang en): the free pre-posed `not` vs `is` is the "
+                         "operator discriminator (CLAUDE.md EN-FIRST · the ko suffix lane is BINDING)")
+    if n_pool % n_eval != 0:
+        raise SystemExit("storebind: n_pool %d must be a multiple of n_eval %d (interleave ratio)"
+                         % (n_pool, n_eval))
+    pool = _sb_entity_pool(n_pool)
+    train, ev = _sb_split(pool, n_eval)
+    if set(train) & set(ev):
+        raise SystemExit("storebind: train/held-out overlap (%d)" % len(set(train) & set(ev)))
+    if store_slots > len(ev):
+        raise SystemExit("storebind: store_slots %d > held-out pool %d" % (store_slots, len(ev)))
+
+    rng = random.Random(seed)
+    lines, store_rows = [], []
+    for _ in range(n_blocks):
+        bl, br = _sb_emit_block(rng, train, store_slots)
+        lines.extend(bl)
+        store_rows.extend(br)
+
+    # 0-shot held-out eval blocks: store drawn ONLY from held-out entities (never in c.txt). A
+    # separate stream (seed+offset) so the eval manifest is reproducible independent of n_blocks.
+    ev_rng = random.Random(seed + 10007)
+    n_eval_blocks = max(1, n_eval // store_slots)
+    held_rows = []
+    for _ in range(n_eval_blocks):
+        _, br = _sb_emit_block(ev_rng, ev, store_slots)
+        held_rows.extend(br)
+
+    # C0-a zero-leak HARD-ASSERT (both surfaces): a held-out entity must appear NOWHERE in the
+    # training corpus — not as a store key, not as a prompt substring. A gate that scores a stratum
+    # the corpus reinforces is a forgery that always passes (cpt-destroys-what-corpus-omits); the
+    # judged stratum must be 0-shot. A leak aborts the build (never silently ships).
+    ev_set = set(ev)
+    corpus_blob = "\n".join(lines)
+    leaked = sorted({e for e in ev_set if e in corpus_blob})
+    key_leaks = sum(1 for r in store_rows if any(e in ev_set for e in r["store"]["entities"]))
+    if leaked or key_leaks:
+        raise SystemExit("storebind: C0-a EVAL LEAK — %d held-out entit(y/ies) in corpus text, "
+                         "%d store-key leaks: %s" % (len(leaked), key_leaks, leaked[:5]))
+
+    text = corpus_blob + "\n"
+    # replay mix (retention defense · optional): repeat a fraction of blocks so a later CPT-style
+    # co-train does not erase base fluency. S0 default 0 (pure task); S1 sweeps this.
+    if replay > 0:
+        rep_rng = random.Random(seed + 20011)
+        extra = rep_rng.sample(lines, min(replay, len(lines)))
+        text = text + "\n".join(extra) + "\n"
+
+    max_bytes = max((len(x.encode("ascii")) for x in lines), default=0)
+    store_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots,
+                      "lang": lang, "seed": seed, "entries": store_rows}
+    held_manifest = {"schema": "anima-storebind/v1", "store_slots": store_slots,
+                     "lang": lang, "seed": seed, "held_out": True, "entries": held_rows}
+    st = {"n_blocks": n_blocks, "store_slots": store_slots, "lines": len(lines),
+          "bytes": len(text.encode("ascii")), "max_line_bytes": max_bytes,
+          "n_train": len(train), "n_heldout": len(ev), "n_pool": n_pool,
+          "n_eval_blocks": n_eval_blocks, "leak": 0, "replay": replay,
+          "store_manifest": store_manifest, "held_manifest": held_manifest}
+    return text, st
+
+
 def _read_labelled(paths):
     """(text, label 0/1) rows from the lane's actual corpus files — reference-matched to the
     loaders that built them, not guessed:
@@ -3063,8 +3218,8 @@ def main():
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
-                   "routeaudit", "atoms", "c34"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34> --out PATH")
+                   "routeaudit", "atoms", "c34", "storebind"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind> --out PATH")
         print("      routeaudit --atoms gt_atoms.json --out ra_manifest.json   (H_9355 route audit)")
         print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")
         print("             H_9334's operator-key write, taken to the stems the operator NEVER met.")
@@ -3335,6 +3490,40 @@ def main():
         print("  audit   DV prompts in corpus: 0 ✅   readback prompts in corpus: %d/%d ✅   "
               "heldR n=%d (declarative read-path aliveness)"
               % (st["readback_present"], st["readback_n"], len(st["heldr"])))
+        return 0
+
+    if fmt == "storebind":
+        if not opts["out"]:
+            print("anima corpus storebind: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"])
+        open(opts["out"], "w", encoding="utf-8").write(text)
+        # .store.jsonl = per-training-line store manifest (block<->store · the co-train input the
+        # trainer feeds the CLMS lane · JSONL, one row per line).
+        sj = opts["out"] + ".store.jsonl"
+        with open(sj, "w", encoding="utf-8") as fh:
+            for r in st["store_manifest"]["entries"]:
+                fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        # .held.json = 0-shot held-out eval manifest (`anima-py evaluate <clm> --store <this>`).
+        hj = opts["out"] + ".held.json"
+        json.dump(st["held_manifest"], open(hj, "w", encoding="utf-8"), ensure_ascii=False)
+        # .meta.json = budget floor (bytes the trainer enforces · a_korean_byte_budget: EN = 1 B/char).
+        mj = opts["out"] + ".meta.json"
+        json.dump({"fmt": "storebind", "lang": st["lang"] if "lang" in st else opts["lang"],
+                   "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
+                   "store_slots": st["store_slots"], "max_line_bytes": st["max_line_bytes"]},
+                  open(mj, "w", encoding="utf-8"), ensure_ascii=False)
+        print("anima corpus storebind [%s]: blocks=%d slots=%d lines=%d bytes=%d max_line=%dB "
+              "train=%d heldout=%d leak=0 -> %s"
+              % (opts["lang"], st["n_blocks"], st["store_slots"], st["lines"], st["bytes"],
+                 st["max_line_bytes"], st["n_train"], st["n_heldout"], opts["out"]))
+        print("  manifests -> %s (%d co-train rows) · %s (%d held-out eval rows) · %s (floor)"
+              % (sj, len(st["store_manifest"]["entries"]), hj,
+                 len(st["held_manifest"]["entries"]), mj))
+        print("  C0-a 0-shot ✅ held-out entities appear 0x in corpus (store-key + substring both asserted)")
+        print("  answer = polarity XOR operator (is/not × good/bad) — store holds the FACT, text the "
+              "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
+        print("  score:  anima-py evaluate <clm> --store %s" % hj)
         return 0
 
     if fmt == "atoms":
