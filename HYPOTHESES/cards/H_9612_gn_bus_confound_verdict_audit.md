@@ -53,5 +53,20 @@
 **⚠️ over-claim 차단(6번째)**: 이건 **confound 경로가 열려 있다**는 것이지 **H_9355 verdict 가 뒤집혔다는 게 아니다** — 3B 시프트의 **실제 기여 크기는 미측정**. 정량화 = `--gn-freeze` 로 route-audit 재채점(계기 v0.15.17 배선 완료) → dOP(negZ) 가 얼마나 움직이나. **`negL` arm 은 매칭돼 보호된다** ⟹ 최악의 경우에도 "negZ 팔 한쪽 INVALID" 이지 verdict 전체 붕괴가 아니다. 그리고 `--route-audit` 은 router JS 를 재지 xbind margin 이 아니므로 bus 도달력 1.48nats(margin 기준)를 그대로 옮겨 쓸 수 없다 — 재채점이 필요한 이유.
 **NEXT**: `anima-py evaluate <clm> --route-audit <manifest> --gn-freeze <ref>` 로 dOP(negZ) live vs frozen 대조 → 움직이면 negZ arm **re-open + INVALID**(부호 뒤집기 아님) · 불변이면 verdict 무사(정직한 무죄 확인).
 
+## ❌ 정량화 시도 = 정직한 실패 — 그런데 실패가 사실 2개를 줬다 (2026-07-17 · aiden CPU · $0)
+HIT 의 크기(3B 시프트가 dOP 에 얼마나 기여하나)를 재려고 **재구성 route-audit 매니페스트**를 만들어 실행. 스키마는 코드서 확보(`items=[{id,stem,surf,split,pol,seed,seed_bytes,stem_span}]` · `_ra_read`/`_ra_forward`). 설계 = 레포에 **없는 통제 `ped13`(13B inert · negZ 에 길이매칭)** 추가 → `dOP(negZ vs ped10) − dOP(negZ vs ped13)` = **3B 시프트의 순수 기여**.
+
+**실행됨**(G-SPIKE 🟢 PASS = JS 추정기 pedestal 통과 · G-LIVE 🟢 J_STEM 0.000262 ≥ 0.0001) **그러나 정량화는 실패**. 원인 2개, 둘 다 구체적:
+
+**① 🔑 `ped13` 이 조용히 무시됐다 — 계기가 surface 를 하드코딩한다.** 출력 `js_mean` = `{negL, negZ, negJ, ped}` · `top_hist` = `{flip0, negL, negZ, negJ, ped}` — **내가 매니페스트에 넣은 `ped13` 은 어디에도 없다**. ⟹ **negZ 에 대한 길이매칭 통제는 매니페스트만으로 주입 불가** ⟹ **이 confound 는 데이터로 못 고친다 — 계기 코드 변경이 필요하다.** (이건 실패가 아니라 **발견**: HIT 의 수리 비용이 "매니페스트 한 줄"이 아니라 "계기 수정"이라는 것.)
+
+**② 내 재구성 매니페스트가 축퇴(degenerate)** — 합성 stem 12개가 라우터를 전혀 가르지 못했다: `top_hist` 전 surface `[0,0,12]`(12 stem **전부 expert 2**) · `top_agree` 전부 **1.0** · `dOP[negL]`=-1.0e-4 · `dOP[negZ]`=-7.6e-6 vs bar **0.05 bits** = **500× 아래**. ⟹ **분해할 신호 자체가 없어** 3B 기여를 못 잰다. J_STEM 이 G-LIVE 바닥(1e-4)을 겨우 넘은 것도 같은 증상.
+
+**⚠️ 이 run 의 `🔵 LOCUS-SHARED` 는 H_9355 에 대한 어떤 진술도 아니다** — 축퇴 합성셋의 산물이다. 원 verdict 와 무관(`a_scale_honest_scope`). 내 셋을 H_9355 재현으로 읽으면 그게 over-claim(7번째 차단).
+
+**HIT 자체는 무손상**: negZ=13B vs ped=10B 는 **코드·산술 사실**이라 이 실패한 run 과 독립이다. 흔들린 건 "그 3B 가 얼마나 기여하나"뿐.
+
+**정량화의 실제 요구조건(이제 특정됨)**: ⓐ **원 H_9355 매니페스트**(라우터를 실제로 가르는 실 stem — 내 합성 stem 은 축퇴) **AND** ⓑ **계기 수정**(negZ 용 길이매칭 통제 추가 · surface 하드코딩 해제) **AND** ⓒ `--gn-freeze` 를 `route_audit_run` 에 배선(현재 `dump_hidden`/`xbind` 에만 — 넘겨도 **조용히 무시**되므로 그대로 쓰면 거짓 "차이 없음"을 읽는다 ⚠️).
+
 ## 상태
-🔴 LIVE (감사 1차 체크 **HIT** · 정량화 미실행) — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
+🔴 LIVE (감사 1차 체크 **HIT** 유효 · **정량화 시도→정직한 실패**: 계기가 길이매칭 통제를 하드코딩-거부 + 재구성셋 축퇴) — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
