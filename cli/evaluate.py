@@ -751,6 +751,7 @@ def evaluate_usage():
     print("")
     print("usage:")
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
+    print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
@@ -7279,7 +7280,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--gen",
-    "--help", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -7291,6 +7292,200 @@ _KNOWN_FLAGS = frozenset((
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
 ))
+
+
+def _pc2_direction(argv):
+    """H_9576 PC2→MOUTH DIRECTION — engine-native verdict over decision traces.
+
+    `anima-py evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]`
+
+    Reads the traces `anima-py chat --pc2-mouth {off,bias,rng}` already wrote (NO decode, like
+    --emit-gate-census / --dead-census) and renders the three frozen criteria of the PC2→mouth
+    experiment. It exists because the verdict statistic itself must be engine-native: a number a
+    probe beside the engine produced is not cementable (a_experiment_engine_native · H_9303/H_9307).
+
+      (1) isolation  — is the emit sequence byte-identical across off/bias/rng? (Stage-A: the gate
+                       hears the BASE candidate; steering is applied only after emit is fixed, so
+                       any drift here means the isolation leaked and the run is INVALID, not negative)
+      (2) channel    — does the steered text actually differ from base on emit ticks?
+      (3) direction  — Spearman rho(z_PC2, D_base - D_steer) where D = byte-bigram overlap between a
+                       text and its own decode seed. PREDICTION: z>0 (originality pole) pushes the
+                       mouth OFF its context => D_base - D_steer > 0 => rho > 0. Judged against a
+                       within-seed permutation null (breaks the z<->text pairing, keeps both
+                       marginals) — a raw rho is not a verdict (p7 · collapse-delta vs controls),
+                       and the rng arm is the second control (same |z| draw-stream re-key, no
+                       direction), so BIAS must beat BOTH the permutation null and rng.
+
+    Frozen bar (do not retune — a_break_the_wall/no tune-to-green): rho outside the null 95% band
+    AND beating rng = direction CRACK; inside the band = W2 wall (the byte granularity cannot
+    express the PC2 semantics). Underpowered n is VOID, never a negative (power-before-negative).
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260716)
+
+    def _rows(arm, sd):
+        p = os.path.join(d, "%s_s%d.jsonl" % (arm, sd))
+        if not os.path.exists(p):
+            return []
+        out = []
+        for l in open(p):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if not r.get("_meta"):
+                out.append(r)
+        return out
+
+    seeds = []
+    for f in sorted(_glob.glob(os.path.join(d, "off_s*.jsonl"))):
+        try:
+            seeds.append(int(os.path.basename(f)[len("off_s"):-len(".jsonl")]))
+        except ValueError:
+            continue
+    if not seeds:
+        print("  ⇒ ⛔ no off_s<seed>.jsonl traces under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction — PC2→MOUTH (card H_9576) ===")
+    print("traces: %s  (seeds: %s · perm=%d · perm-seed=%d)"
+          % (d, ",".join(str(s) for s in seeds), rounds, rseed))
+    print("pipe:   anima-py chat --pc2-mouth {off,bias,rng} traces → D=bigram-overlap(text, seed)")
+    print("bar:    (1) emit byte-identical  (2) steered≠base  (3) rho>0 outside null-95% AND > rng")
+    print("")
+
+    # ── (1) isolation ────────────────────────────────────────────────────────
+    iso = True
+    for sd in seeds:
+        e = {}
+        for arm in ("off", "bias", "rng"):
+            e[arm] = [1 if r.get("emit") else 0 for r in _rows(arm, sd)]
+        ok = bool(e["off"]) and e["off"] == e["bias"] == e["rng"]
+        iso = iso and ok
+        print("  (1) seed %-5d off==bias==rng %-5s  (emit %d/%d)"
+              % (sd, str(ok), sum(e["off"]), len(e["off"])))
+    print("      ⇒ isolation: %s" % ("PASS" if iso else "INVALID (Stage-A leaked)"))
+    if not iso:
+        print("      ⇒ ⛔ VERDICT INVALID — a leaked gate makes (2)/(3) unreadable, not negative.")
+        return 0
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _big(bs):
+        return set(bs[i:i + 2] for i in range(len(bs) - 1))
+
+    def _ov(txt_b, seed_b):
+        a, b = _big(txt_b), _big(seed_b)
+        return (len(a & b) / float(len(a))) if a else 0.0
+
+    def _rank(v):
+        n = len(v)
+        s = sorted(range(n), key=lambda i: v[i])
+        r = [0.0] * n
+        i = 0
+        while i < n:
+            j = i
+            while j + 1 < n and v[s[j + 1]] == v[s[i]]:
+                j += 1
+            avg = (i + j) / 2.0 + 1
+            for k in range(i, j + 1):
+                r[s[k]] = avg
+            i = j + 1
+        return r
+
+    def _spearman(x, y):
+        n = len(x)
+        if n < 3:
+            return 0.0
+        rx, ry = _rank(x), _rank(y)
+        mx, my = sum(rx) / n, sum(ry) / n
+        num = sum((rx[i] - mx) * (ry[i] - my) for i in range(n))
+        dx = sum((rx[i] - mx) ** 2 for i in range(n)) ** 0.5
+        dy = sum((ry[i] - my) ** 2 for i in range(n)) ** 0.5
+        return (num / (dx * dy)) if dx > 0 and dy > 0 else 0.0
+
+    def _collect(arm):
+        out, ndiff, ntot = [], 0, 0
+        for sd in seeds:
+            o, a = _rows("off", sd), _rows(arm, sd)
+            for i in range(min(len(o), len(a))):
+                if not o[i].get("emit"):
+                    continue
+                base_b = _b64(o[i].get("gtext_b64"))
+                steer_b = _b64(a[i].get("gtext_pc2_b64"))
+                if not steer_b:
+                    continue
+                ntot += 1
+                if steer_b != base_b:
+                    ndiff += 1
+                seed_b = _b64(a[i].get("seed_b64"))
+                z = a[i].get("pc2_z")
+                if z is None or not seed_b:
+                    continue
+                out.append((sd, float(z), _ov(base_b, seed_b) - _ov(steer_b, seed_b)))
+        return out, ndiff, ntot
+
+    # ── (2) channel + (3) direction ──────────────────────────────────────────
+    res = {}
+    for arm in ("bias", "rng"):
+        rows, ndiff, ntot = _collect(arm)
+        zs = [r[1] for r in rows]
+        dds = [r[2] for r in rows]
+        obs = _spearman(zs, dds)
+
+        by_seed = {}
+        for i, r in enumerate(rows):
+            by_seed.setdefault(r[0], []).append(i)
+        rng_ = _prand.Random(rseed)
+        null = []
+        for _ in range(rounds):
+            pz = list(zs)
+            for _sd, idxs in by_seed.items():
+                vals = [zs[i] for i in idxs]
+                rng_.shuffle(vals)
+                for i, v in zip(idxs, vals):
+                    pz[i] = v
+            null.append(_spearman(pz, dds))
+        null.sort()
+        lo = null[int(0.025 * rounds)] if null else 0.0
+        hi = null[int(0.975 * rounds) - 1] if null else 0.0
+        p = (sum(1 for v in null if abs(v) >= abs(obs)) / float(rounds)) if null else 1.0
+        res[arm] = {"rho": obs, "lo": lo, "hi": hi, "p": p, "n": len(rows)}
+        print("  (2) %-4s steered≠base %d/%d" % (arm, ndiff, ntot))
+        print("  (3) %-4s n=%-4d rho=%+.3f · null95%%=[%+.3f,%+.3f] · p=%.3f"
+              % (arm, len(rows), obs, lo, hi, p))
+
+    b, r = res["bias"], res["rng"]
+    outside = not (b["lo"] <= b["rho"] <= b["hi"])
+    beats_rng = b["rho"] > r["rho"]
+    print("")
+    if outside and b["rho"] > 0 and beats_rng:
+        v = "🟢 DIRECTION CRACK — rho outside null-95%, predicted sign, beats rng"
+    elif outside and b["rho"] < 0:
+        v = "🧱 W2 WALL (sign-inverted) — rho outside null-95% but OPPOSITE the prediction"
+    else:
+        v = "🧱 W2 WALL — rho inside the null-95% band: byte granularity cannot express PC2"
+    print("  ⇒ VERDICT: " + v)
+    print("     resolvable |rho| at n=%d is about %.2f (null-95%% half-width) — a smaller true"
+          % (b["n"], max(abs(b["lo"]), abs(b["hi"]))))
+    print("     effect stays UNMEASURED, not refuted (power-before-negative-verdict).")
+    return 0
 
 
 def _reject_unknown_flags(argv):
@@ -7560,6 +7755,8 @@ def main(argv):
         return _refractory_preview(argv[1:])
     if len(argv) >= 1 and argv[0] == "--emit-gate-census":
         return _emit_gate_census(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--pc2-direction":
+        return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
         return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":
