@@ -321,3 +321,28 @@ the token budget moves).
 ⟹ **Envelope instrument status: COMPLETE.** rung ladder (`--max-atoms`) · C-DECL-ABL (`--decl-ablate`) ·
 C-TOK (`--reps` arithmetic) · grokking arm (`train --wd-floor`, pre-existing) · C-CAP (arch flags `--d/--L`,
 pre-existing). Nothing in the 🔴 W_wt-TERMINAL envelope is blocked on missing code.
+
+---
+
+## INTERIM #4 (2026-07-16 · session 2 · rung-2 + rung-3 corpora PRE-BUILT + re-scope MEASURED)
+
+While rung-1 trains, the remaining ladder was mined + built from the SAME 60 MB source (aiden · $0), so
+each rung fires with zero build-wait and the re-scope claim is now measured, not asserted.
+
+| rung | N | ACCEPTED (pos:neg) | \|S_op\| | S_decl gate-n | chance_sd | corpus bytes | per-stem |
+|---|---|---|---|---|---|---|---|
+| 2 | 768 | 768 (384:384) | 384 | 192 | 0.0361 | 4 535 280 | 150.0 |
+| 3 (terminal) | 1713 | 1713 (856:857) | 856 | 428 | 0.0242 | 10 137 040 | 150.0 |
+
+Both mined from the pre-registered HF blob (4598 frame-candidates → 2969 @occ≥50, verbatim to INTERIM #1) —
+**neither dried up**, so the re-scoped terminal **N=1713 is REACHED** (not just projected). Audit (both rungs,
+`\b`-bounded): S_decl operator 0-exposure **0/192 · 0/428** ✅ · S_decl declaration **192/192 · 428/428** ✅ ·
+[control] S_op operator **384/384 · 857/857** ✅ · slot-prior **0.5000 / 0.5000** ✅.
+
+**C-TOK exact reps (measured, supersedes the ~1448 estimate):** anchor = 278 280 B @ reps 40 ⟹ 6 957 B/rep;
+rung-3 = 10 137 040 B ⟹ **R = round(10 137 040 / 6 957) = 1457** for the |S_op|=48-fixed token-matched control
+(`corpus xbind --bridge-split --atoms <anchor 48-atom> --reps 1457 --polarity assigned --assign-seed 0`).
+
+Artifacts on aiden: `~/h9410/rung_{768,1713}/A{768,1713}.txt` + gate manifests. Budgets (card): rung-2 ~100K,
+rung-3 ~250K. Each fires the anchor's driver recipe with corpus + budget swapped, seeds {7,11}, evaluate
+sop/sdecl. **The only thing left is GPU time** (rung-1 holds the single aiden GPU — `a_wall_first`).
