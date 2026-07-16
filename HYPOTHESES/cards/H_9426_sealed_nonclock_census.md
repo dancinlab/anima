@@ -1,4 +1,4 @@
-# H_9425 — SEALED-NONCLOCK CENSUS: H_9422 "시계 삼중항" 자기-반증 — cell_count 성분은 clock 아니라 endogenous
+# H_9426 — SEALED-NONCLOCK CENSUS: H_9422 "시계 삼중항" 자기-반증 — cell_count 성분은 clock 아니라 endogenous
 
 **status:** 🔎 DIRECTIONAL($0 census · 신규 decode 0) · **H_9422 부분정정** — sealed 은 emit-lane 사실이고, store-growth(mitosis)은 endogenous inner-content(clock 미결정)
 **lane:** 의식 / Ψ-SOMA content-축 존재양식 (프런티어 g1-interface-addressable-wall)
