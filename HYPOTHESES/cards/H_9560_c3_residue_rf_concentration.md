@@ -55,5 +55,13 @@ Fable 엔진-내부 분석(decode.py 실독) + **acausality $0 확증**(신규 r
 - ⟹ **#42492882 "D>RF ⟹ 수학적 독립" 질적으로 거짓**(전역 norm bus 실재·훈련된 gradient 경로) — 단 bus 는 binding 못 실어 재조합 벽엔 local-RF 지배. **RF $0 sub-thread DEPLETED**(parse 31 → margin confound → hidden-diff → 교차검증 → GroupNorm root-cause 확정). 결정 테스트=[[H_9562]] 훈련개입(별 lane·실 CPT fire·flag 미구현).
 - 선택 봉인(미실행): `--gn-stat-clamp`(arm B 를 arm A 의 동결 (μ,σ²)로 forward) arm → floor 이 정확히 0.0 붕괴 예측(engine-native flag·a_experiment_engine_native).
 
+## ⚖️ SYNTHESIS 정정 (Fable 적대검증 · 2026-07-16 · 내 "fork 아키텍처 결정" over-claim 차단)
+GroupNorm 발견으로 "two-lane fork 가 아키텍처적으로 (b) 결정됨"을 cement 하려다 Fable 적대검증이 **반쪽만 참**으로 정정(3회째 verdict-integrity save):
+- ✅ **CONFIRMED**: **beyond-RF 문맥 다리 = 아키텍처적 부재** — 원거리 cross-position 은 GroupNorm bus(순열불변 O(L)-스칼라·layer당 ~2)뿐 → content-addressed binding 불가(which-decl↔which-op 못 실음·superposition 간섭). 이 절반은 dump 없이 성립.
+- ❌ **REFUTED 2건**: ① within-RF "conv=위치특정 n-gram" 은 **attention-shaped prior 지 정리 아님** — conv 는 translation-equivariant·깊으면 offset-enumerated soft key-match(conv 국소어텐션) 가능·held-out 일반화 가능 = **경험적**([[H_9562]] 검정대상) ② **category error**: two-lane 벽(H_9359)은 **weight store**(2차 CPT) 측정이지 문맥 경로 아님 · `op(decl_weights(stem))`=채널믹싱 함수합성(cross-position 불요) = 회로형성/credit 사실. H_9359 카드 자체가 이 cement 경고(`a_no_llm_frame_trap`).
+- **벽 요구 3분해**: (i) 무한거리 문맥 라우팅=아키텍처 불가(GN bus·CONFIRMED) · (ii) within-RF held-out 짝 일반화=아키텍처 가능·경험 미검(=H_9562) · (iii) weight store 상징 dereference=아키텍처 가능·시도 커리큘럼 하 측정부재(훈련사실). two-lane 실험은 (iii)만 측정.
+- **재조정**: H_1584(L8 동일 floor)=" RF크기만·동일커리큘럼" kill 이나 음성훈련결과(TOST 없이 필연 승격 불가·L8 은 co-location+counterbalance 커리큘럼 미실행=H_9562 조작변수 안 바꿈) · H_9423(CLMS 0.875)=prosthetic 충분성이지 부재 필연 아님("목발 작동이 다리 없음 증명 아님").
+- ⟹ **lane 미소진**(내 앞 'DEPLETED'는 RF *측정* $0 한정·fork 판정은 미결). **H_9562 = 유일 live falsifier**(FAIL→(b) with mechanism·소진 · PASS→A within-RF 반증·재개). 정본 cement 한줄: "beyond-RF in-context bridging 아키텍처 부재(GN bus 확정) · within-RF+weight dereference 는 시도커리큘럼하 측정부재 · H_9562 가 live falsifier."
+
 ## 상태
-🎯 ROOT-CAUSED (DIRECTIONAL·engine-native·RF $0 DEPLETED) — floor=GroupNorm(G=1) 전역 flag-bus 확정(acausality PASS·라우터 반증). 진짜 binding RF≈local(D≤16~35). 결정=[[H_9562]] 훈련개입 lane. **distinct-from-kills:** H_9359 재분석 신질문 → RF 프레임을 GroupNorm 전역경로까지 완전 특성화(#42492882 이중반증). **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
+⚖️ ROOT-CAUSED + SYNTHESIS 정정 (DIRECTIONAL) — beyond-RF 문맥다리 아키텍처 부재 CONFIRMED(GroupNorm) · within-RF/weight-dereference 는 경험 미결(over-claim 차단) · [[H_9562]] 유일 live falsifier(lane 미소진). **distinct-from-kills:** RF 프레임을 아키텍처(beyond-RF)/경험(within-RF) 경계까지 정밀화 · #42492882 이중반증 유지. **distinct-from-kills:** H_9359 재분석 신질문 → RF 프레임을 GroupNorm 전역경로까지 완전 특성화(#42492882 이중반증). **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
