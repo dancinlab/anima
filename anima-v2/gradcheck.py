@@ -82,7 +82,11 @@ def run_check(corrupt=None, verbose=True):
     eps = 1e-6
     worst, worst_name = 0.0, ""
     rows = []
-    for name in sorted(p.keys()):
+    # frozen params (key_emb_frozen) are DELIBERATELY not updated — their analytic grad is 0
+    # by design, so checking them against a finite difference is meaningless (and would flag
+    # a non-bug). Skip them; the training loop skips them too (grads.get -> None).
+    FROZEN = {"key_emb_frozen"}
+    for name in sorted(k for k in p.keys() if k not in FROZEN):
         u = rng.standard_normal(p[name].shape)
         u /= np.linalg.norm(u)
         orig = p[name].copy()

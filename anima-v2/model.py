@@ -108,8 +108,14 @@ def init_params(cfg, rng, with_store=True):
         p[f"l{i}_fc1"] = n((d, F), 0.02)
         p[f"l{i}_fc2"] = n((F, d), 0.02 / np.sqrt(2 * L))
     if with_store:
-        p["W_k"] = n((d, d), 0.02)          # entity-name embedding -> store key
         p["W_q"] = n((d, d), 0.02)          # trunk hidden -> query
+        if cfg.get("fixed_key"):
+            # FROZEN content-address: a fixed random per-byte embedding, mean-pooled. Never
+            # trained (its grad is never produced), so the store keys are a STABLE function
+            # of the entity name — only W_q chases them. (V2_6 lever a.)
+            p["key_emb_frozen"] = (rng.standard_normal((V, d)) * 0.5).astype(np.float64)
+        else:
+            p["W_k"] = n((d, d), 0.02)      # entity-name embedding -> store key
         p["val"] = n((2, d), 0.02)          # 2 polarity value vectors
         # readout. V2_1/V2_2: linear W_out over concat(v, hidden_q) — CANNOT express the
         # answer=polarity XOR operator (a linear map has no v*hidden_q product term; ORACLE
@@ -127,7 +133,7 @@ def init_params(cfg, rng, with_store=True):
 
 
 TRUNK_KEYS_PREFIX = ("emb", "pos", "ln_f", "l")
-BRIDGE_KEYS = ("W_k", "W_q", "val", "W_out", "W_h", "lam_raw")
+BRIDGE_KEYS = ("W_k", "W_q", "val", "W_out", "W_h", "lam_raw", "key_emb_frozen")
 
 
 def is_bridge(name):
@@ -247,7 +253,11 @@ def trunk_bwd(p, cfg, cache, dlogits, dhidden_extra=None):
 
 
 def store_keys(p, cfg, store_ids):
-    """store_ids: (B, S, name_len) byte ids. key = mean(byte-emb) @ W_k -> (B,S,d)."""
+    """store_ids: (B, S, name_len) byte ids. key = mean(byte-emb) @ W_k (learned), or
+    mean(frozen-emb) (fixed content-address, V2_6). Returns (keys, e_for_grad)."""
+    if "key_emb_frozen" in p:
+        e = p["key_emb_frozen"][store_ids].mean(axis=2)   # (B,S,d) frozen
+        return e, None                                    # None => no grad flows to keys
     e = p["emb"][store_ids].mean(axis=2)          # (B,S,d)
     return e @ p["W_k"], e
 
@@ -328,6 +338,10 @@ def bridge_bwd(p, cfg, c, dupstream, d_is_logits=False):
     g["W_q"] = c["hidden_q"].T @ dq
     dhidden_q = dq @ p["W_q"].T + dhq_direct       # query path + the concat's direct path
 
+    if c["e"] is None:
+        # V2_6 fixed_key: keys are frozen, so no gradient flows to W_k or the key embedding.
+        # Only W_q learns to aim at the fixed content-addresses.
+        return g, dhidden_q, np.zeros_like(p["emb"])
     g["W_k"] = c["e"].reshape(-1, cfg["d"]).T @ dkeys.reshape(-1, cfg["d"])
     de = dkeys @ p["W_k"].T                                        # (B,S,d)
     nlen = c["store_ids"].shape[2]
