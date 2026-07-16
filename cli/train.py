@@ -1132,7 +1132,7 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda):
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1175,8 +1175,74 @@ class TrainShell(nn.Module):
                     jl.transpose(1, 2).reshape(-1, self.jamo_head.n_jamo),
                     jt.reshape(-1), ignore_index=0)
                 loss = loss + jloss; aux["jamo"] = float(jloss.detach())
+        # ── H_9423 CLMS store-bridge co-training (store_only gate via CE decomposition) ──
+        # A SEPARATE fp32 forward on the line-aligned store batch. The answer-position (qpos = T-1)
+        # CE is on store_logits ONLY (the CLMS lane's content-addressed lookup), so the trunk readout
+        # receives NO answer-position grad = ② shortcut-cut, STRUCTURAL (= v2 store_only dlogits[ans]=0,
+        # not detach — the trunk logit is never in the answer-CE graph). The non-answer rows keep the
+        # ordinary trunk LM CE (the trunk learns the prompt spelling + query formation via yn_q).
+        if sb is not None:
+            x_s, y_s, K, pols = sb
+            out_s = model(x_s)                                  # (targets None → CE assembled here, fp32)
+            logits_s = out_s["logits"].float()                 # (Bs, V, T)
+            pen_s = out_s["pen_trunk"].float()                 # (Bs, d, T) pre-slot trunk penultimate
+            Bs, _, Ts = logits_s.shape
+            yn_q = pen_s[:, :, Ts - 1]                         # (Bs, d) query row (qpos = T-1, cell-asserted)
+            store_logits = model.clms(yn_q, K, pols)          # (Bs, V) = λ·s (op order == store_apply)
+            ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
+            # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
+            ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
+                                     y_s[:, :Ts - 1].reshape(-1))
+            loss = loss + ce_tok + sb_w * ce_ans + out_s["aux_loss"]
+            aux["sb_ans_ce"] = float(ce_ans.detach()); aux["sb_tok_ce"] = float(ce_tok.detach())
+            with torch.no_grad():                              # monitor-only (a_train_inline_gauge)
+                g_id, b_id = 103, 98                           # ord('g'), ord('b') — eval store_run binary
+                gold_g = (y_s[:, Ts - 1] == g_id)
+                aux["sb_store_acc"] = float(((store_logits[:, g_id] >= store_logits[:, b_id]) == gold_g).float().mean())
+                tr = logits_s[:, :, Ts - 1]                    # trunk row at qpos — leak early-warning
+                aux["sb_trunk_leak"] = float(((tr[:, g_id] >= tr[:, b_id]) == gold_g).float().mean())
+                aux["sb_lam"] = float(model.clms.lam)
         aux.update(oaux)
         return loss, out["ce_loss"].detach(), aux
+
+
+class StoreBindCell:
+    """H_9423 S1 — line-aligned storebind dataset (NOT a ByteCell). c.txt line i <-> c.txt.store.jsonl
+    row i (corpus.build_storebind lockstep). Fixed-T single-line prompt-aligned windows that MIRROR
+    evaluate.store_run's _seed_to_tok geometry (qpos = T-1): left-pad with spaces, prompt then the first
+    answer byte. The answer tail spelling ("ood"/"ad") is not in the window (binary readout needs only
+    the first byte at qpos), and in-window copy is structurally impossible (the answer byte does not
+    exist before qpos, and each window is exactly one line)."""
+
+    def __init__(self, path, key_emb_np, n_slot, T, val_frac):
+        import json as _json
+        lines = open(path, encoding="ascii").read().splitlines()
+        rows = [_json.loads(l) for l in open(path + ".store.jsonl", encoding="utf-8")]
+        if len(lines) != len(rows):
+            sys.exit(f"[store-bridge] {path}: {len(lines)} lines != {len(rows)} store rows (lockstep broken)")
+        from clms import find_qpos as _fq             # core/clms.py — the SAME scanner eval uses
+        self.ex = []
+        for ln, r in zip(lines, rows):
+            prompt, gold = r["prompt"], r["gold"]
+            if ln != prompt + gold:
+                sys.exit(f"[store-bridge] line/manifest mismatch: {ln!r} != {prompt + gold!r}")
+            ents, pols = r["store"]["entities"], r["store"]["pols"]
+            if not (len(ents) == n_slot == len(pols)):
+                sys.exit(f"[store-bridge] n_slot {n_slot} != store {len(ents)}/{len(pols)}")
+            if len(prompt) + 1 > T:
+                sys.exit(f"[store-bridge] prompt {len(prompt)}B does not fit --store-win {T}")
+            seq = b" " * (T - len(prompt)) + prompt.encode("ascii") + gold[:1].encode("ascii")  # len T+1
+            x = torch.tensor(list(seq[:T]), dtype=torch.long)
+            y = torch.tensor(list(seq[1:T + 1]), dtype=torch.long)
+            q = _fq(x.numpy())
+            if not (q and q[-1] == T - 1):
+                sys.exit("[store-bridge] qpos scanner parity broken (window geometry != eval store_run)")
+            K = np.stack([key_emb_np[np.frombuffer(e.encode("ascii"), np.uint8)].mean(0)
+                          for e in ents]).astype(np.float32)          # (n_slot, d_k) = clms._entity_key
+            self.ex.append((x, y, torch.from_numpy(K), torch.tensor(pols, dtype=torch.long)))
+        n_blocks = len(self.ex) // n_slot
+        vb = max(1, int(n_blocks * val_frac))
+        self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
 
 
 def main():
@@ -1204,6 +1270,27 @@ def main():
                     help="H_9200 E1: engage the gated-write forward-slot (core/slw.py)")
     ap.add_argument("--slw-n-slot", type=int, default=8, help="SLW addressable slots")
     ap.add_argument("--slw-k", type=int, default=64, help="SLW role/read key dim")
+    # H_9423 CLMS store-bridge lane (co-trained). --store-bridge = the storebind corpus c.txt (expects
+    # a lockstep <c>.store.jsonl manifest, line i <-> store row i from corpus.build_storebind). The lane
+    # OVERWRITES the answer-position logits with lam*store_logits — implemented as a CE decomposition
+    # (qpos CE on store_logits + non-qpos trunk CE on the prompt spelling), so the trunk logit gets NO
+    # answer-position grad = ② shortcut-cut, structural. Window geometry mirrors evaluate.store_run
+    # (prompt-aligned, qpos = T-1) so the train tap and the verdict tap coincide.
+    ap.add_argument("--store-bridge", type=str, default="",
+                    help="H_9423: storebind corpus c.txt to co-train the CLMS lane (core/clms.py)")
+    ap.add_argument("--store-win", type=int, default=24,
+                    help="CLMS window (MUST equal evaluate --win so train/verdict geometry match)")
+    ap.add_argument("--store-batch", type=int, default=8, help="global CLMS sub-batch (div by world)")
+    ap.add_argument("--store-ans-weight", type=float, default=1.0, help="answer-position store CE weight")
+    ap.add_argument("--store-val-frac", type=float, default=0.05, help="tail block frac for sb val")
+    ap.add_argument("--clms-n-slot", type=int, default=8, help="CLMS store slots (match corpus)")
+    ap.add_argument("--clms-d-k", type=int, default=64, help="CLMS content-address key dim")
+    ap.add_argument("--clms-d-s", type=int, default=64, help="CLMS polarity value dim")
+    ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
+    ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
+    ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
+    ap.add_argument("--freeze-trunk", action="store_true",
+                    help="BOLT control arm: trunk requires_grad=False, only clms.* trains")
     ap.add_argument("--seed", type=int, default=7)
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
@@ -1400,7 +1487,11 @@ def main():
     else:
         cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
                         variant="AB", dilation_base=2, max_dilation=512,
-                        slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k)
+                        slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
+                        clms=bool(a.store_bridge or a.freeze_trunk),
+                        clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
+                        clms_d_s=a.clms_d_s, clms_r=a.clms_r,
+                        clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0)
         model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
         if tlora_on:
             install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
@@ -1447,8 +1538,11 @@ def main():
         # §4/§10.8 — CLMConvMoE/ByteGPT/SLW carry NO batch-stat buffers, and mito.active_mask
         # is an intentionally-unregistered per-rank tensor; assert zero buffers so a FUTURE
         # registered buffer fails loudly instead of being silently stomped (broadcast_buffers=False).
-        assert len(list(shell.buffers())) == 0, \
-            "TrainShell grew a buffer — broadcast_buffers=False would desync it (§4/§10.8)."
+        # H_9423: clms.key_emb is a persistent buffer, but it is seed-deterministic (byte-identical
+        # across ranks) so broadcast_buffers=False is safe for it. Any OTHER buffer would desync.
+        _bad_bufs = [n for n, _ in shell.named_buffers() if not n.endswith("clms.key_emb")]
+        assert not _bad_bufs, \
+            f"TrainShell grew a non-CLMS buffer {_bad_bufs} — broadcast_buffers=False would desync it."
         train_module = DDP(shell, device_ids=[local_rank], broadcast_buffers=False,
                            find_unused_parameters=a.ddp_find_unused)
         # §2/§4 per-rank RNG divergence AFTER construction+wrap: decorrelate dropout masks
@@ -1504,6 +1598,40 @@ def main():
     # B_local = B_global // world. world==1 ⇒ B_local == B_global (N==1 byte-identical).
     B_global = a.batch_size
     B_local = B_global // world
+
+    # ── H_9423 CLMS store-bridge co-training sub-batch (line-aligned, separate RNG) ──────────
+    sb_cell = sb_gen = None
+    Bs_global = Bs_local = 0
+    if a.store_bridge or a.freeze_trunk:
+        if a.arch != "clm":
+            sys.exit("[store-bridge] requires --arch clm (the CLMS lane is CLMConvMoE-only)")
+        if not a.store_bridge:
+            sys.exit("[store-bridge] --freeze-trunk (BOLT) still needs --store-bridge <c.txt>")
+        if not cells:
+            sys.exit("[store-bridge] needs a trunk --corpus for retention/fluency (pass the storebind "
+                     "c.txt itself as a --corpus cell, or a replay corpus)")
+        if a.store_batch % world != 0:
+            sys.exit(f"[store-bridge] --store-batch {a.store_batch} not divisible by world {world}")
+        _key = core_model.clms.key_emb.detach().cpu().numpy()
+        sb_cell = StoreBindCell(a.store_bridge, _key, a.clms_n_slot, a.store_win, a.store_val_frac)
+        sb_gen = torch.Generator().manual_seed(4242)      # shared across ranks; SEPARATE from gen=42
+        Bs_global = a.store_batch
+        Bs_local = Bs_global // world
+        if a.freeze_trunk:                                # BOLT control: only clms.* trains
+            for n, prm in core_model.named_parameters():
+                prm.requires_grad_(n.startswith("clms."))
+        if a.store_win != 24:
+            p0(f"  ⚠️ --store-win {a.store_win} != 24 (evaluate --win default): the verdict eval "
+               f"MUST pass --win {a.store_win} or train/verdict window geometry differ.", flush=True)
+        p0(f"  store-bridge: {len(sb_cell.ex)} lines · train_n={sb_cell.train_n} · Bs={Bs_global} "
+           f"win={a.store_win} n_slot={a.clms_n_slot} freeze_trunk={a.freeze_trunk}", flush=True)
+
+    def get_store_batch():
+        idx = torch.randint(0, sb_cell.train_n, (Bs_global,), generator=sb_gen)   # all ranks identical
+        sl = idx[rank * Bs_local:(rank + 1) * Bs_local].tolist()
+        xs, ys, Ks, Ps = zip(*[sb_cell.ex[i] for i in sl])
+        return (torch.stack(xs).to(device), torch.stack(ys).to(device),
+                torch.stack(Ks).to(device), torch.stack(Ps).to(device))
 
     def get_batch(step):
         if cells:
@@ -1609,6 +1737,12 @@ def main():
             nb = S.append_slw_trailer(out_path, model.slw)
             print(f"  SLW trailer appended {nb} bytes (n_slot={model.slw.n_slot} "
                   f"k={model.slw.k} d_s={model.slw.d_s})", flush=True)
+        # H_9423 — append the "CLMS" store-bridge trailer if the lane is engaged (AFTER SLW so the
+        # chain order stays CLMB→SLW→CLML→CLMS). Co-trained; store content is NOT serialized.
+        if getattr(model, "clms", None) is not None:
+            nb = S.append_clms_trailer(out_path, model.clms)
+            print(f"  CLMS trailer appended {nb} bytes (n_slot={model.clms.n_slot} "
+                  f"d_k={model.clms.d_k} d_s={model.clms.d_s} r={model.clms.r})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 
@@ -1691,7 +1825,9 @@ def main():
         # callsite OUTSIDE the shell's internal autocast; DDP's grad hooks fire here and
         # allreduce every param's grad (aux heads included — §10.1). clip_grad_norm_ runs AFTER
         # on the already-averaged grads, so every rank's clip scale = the 1-GPU global-grad norm.
-        loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda)
+        _sb = get_store_batch() if sb_cell is not None else None
+        loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
+                                           sb=_sb, sb_w=a.store_ans_weight)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()

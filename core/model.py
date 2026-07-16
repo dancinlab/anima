@@ -93,6 +93,18 @@ class CLMConfig:
     slw_n_slot: int = 8            # number of addressable slots
     slw_k: int = 64                # role/read key dim (address space); d_s = d_model
 
+    # H_9423 CLMS store-bridge lane (co-trained): a content-addressed 8-slot store is injected at
+    # the answer position and the answer-position logits row is OVERWRITTEN by λ·store_logits
+    # (store_only gate → the trunk logit gets no answer-position grad = ② shortcut-cut, structural).
+    # The store content is runtime data (block store manifest at train, --store manifest at eval),
+    # never in the .clm; only {W_q, val, W_h, W_out, λ} + a frozen key_emb table live in the trailer.
+    clms: bool = False             # allocate the CLMS store-bridge module (co-train)
+    clms_n_slot: int = 8           # store slots (must match the corpus storebind --store-slots)
+    clms_d_k: int = 64             # content-address key dim
+    clms_d_s: int = 64             # polarity value dim
+    clms_r: int = 128              # GELU-MLP fusion bottleneck (supplies the XOR nonlinearity)
+    clms_key_seed: int = 9423      # frozen per-byte key_emb table seed (provenance; table is stored)
+
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
         if v not in ("A", "B", "AB"):
@@ -290,6 +302,16 @@ class CLMConvMoE(nn.Module):
         if getattr(cfg, "slw", False):
             from slw import SLWModule            # core/slw.py (on sys.path via cli/train.py)
             self.slw = SLWModule(cfg.d_model, cfg.slw_n_slot, cfg.slw_k)
+        # H_9423 CLMS store-bridge lane (co-trained). None => byte-identical (no lane). CORE-owned
+        # (core/clms.py); lazily imported so this file carries no CLMS dependency when off. The lane
+        # is NOT applied inside this forward (unlike SLW's additive slot) — it OVERWRITES the answer-
+        # position logits, which needs the runtime store/qpos, so TrainShell drives it (see forward's
+        # `penult_preslot` tap + the store_only overwrite in cli/train.py).
+        self.clms = None
+        if getattr(cfg, "clms", False):
+            from clms import CLMSModule          # core/clms.py (on sys.path via cli/train.py)
+            self.clms = CLMSModule(cfg.d_model, cfg.vocab_size, cfg.clms_n_slot, cfg.clms_d_k,
+                                   cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed)
 
     def forward(
         self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None
@@ -313,6 +335,11 @@ class CLMConvMoE(nn.Module):
                 x = layer(x)
         x, stats = self.moe(x)
         x = self.norm_out(x)
+        # H_9423 CLMS query tap — the PRE-slot penultimate (before SLW modifies it), the same tap
+        # core/decode.py store_apply reads (yn_trunk). Kept as (B, d, T) by reference (no copy) so
+        # TrainShell can gather the query-position column and drive the store-bridge co-training.
+        # clms off => the dict key is absent => the byte-identical golden path is unchanged.
+        pen_trunk = x if self.clms is not None else None   # (B, d, T) pre-slot tap
         # H_9200 E1 — gated-write forward-slot on the post-norm penultimate
         # (before readout). None => additive golden path (byte-identical).
         if self.slw is not None:
@@ -325,6 +352,8 @@ class CLMConvMoE(nn.Module):
             "aux_loss": stats.aux_loss,
             "routing_entropy": stats.entropy,
         }
+        if pen_trunk is not None:
+            out["pen_trunk"] = pen_trunk
         if targets is not None:
             ce = F.cross_entropy(
                 logits.transpose(1, 2).reshape(-1, self.cfg.vocab_size),
