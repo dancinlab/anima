@@ -2,7 +2,7 @@
 
 - **group**: g1-interface-addressable-wall
 - **date**: 2026-07-15
-- **tier**: 🔧 **계기 WIRED** (`--held-swap [--decl-only]` engine-native · 빌더 스모크 $0 통과 · base-eval 스크리너 + 4-pod CPT 미실행 · 데이터 0 · 판정 0)
+- **tier**: 🔧 **계기 WIRED · $0 스크리너 PASS** (`--held-swap [--decl-only]` engine-native · 빌더 스모크 + G-BASE-FIRST 2-seed base 앵커 측정 완료 · **4-pod CPT 미실행 = fleet rent OWNER GO 대기** · 판정 0)
 - **surfaces**: `HYPOTHESES/cards/H_9339_heldout_interface_write.md` · `HYPOTHESES/HYPOTHESES.jsonl`
 - **design**: Fable 위임 (C4=H-ε 이후 다음 한 발)
 
@@ -63,7 +63,20 @@ readback ≥11/12 → `_carrier_readback_manifest` swapC 12×3 gates·keepC 3×3
 - C4/C5 **byte-inert**(held_swap=False sha 348d89bc == origin) — 기본경로 bit 무변.
 - HO-CARRIER/HO-DECL 빌드 OK · **preserve == C4 swap**(frozen check) · flip1/write manifest **byte-identical**
   (양팔 · draw 순수함수) · plant-contradiction 0 · readback 57/57(HO-C)·12/12(HO-D) · gold 정합(swap planted=1-pol·preserve planted=pol).
-- 잔여 스크리너: (a) G-LEAK+G-BASE-FIRST base `--xbind` held-out(우연 확인·summer) (b) `--bind-locus` C4-vs-base 차분. 통과시만 4-pod CPT.
+- 잔여 스크리너: (a) G-LEAK+G-BASE-FIRST base `--xbind` held-out (b) `--bind-locus` C4-vs-base 차분(조건부·A-음성시). 통과시만 4-pod CPT.
+
+## 📊 $0 스크리너 (a) 결과 — G-BASE-FIRST base 앵커 (frozen · 2-seed · engine-native aiden)
+
+`anima-py evaluate natem_c34_main_s{7,11}.clm --xbind ho_carrier.flip1.json` (176M c34 base · GPU cupy · flip1 매니페스트=HO-CARRIER draw). held-out swap 어간(DV) 채점 표면 negL/negZ D-acc:
+
+| arm | s7 negL·negZ | s11 negL·negZ | 해석 |
+|---|---|---|---|
+| **swap (held-out=DV)** | **0.250·0.250** | **0.333·0.250** | 다수라벨 붕괴(대부분 `긍정` 출력)=planted 극성 **미조합** |
+| preserve (SEEN·C4 stems) | 1.000·1.000 | 0.917·— | 연산자 **alive** on SEEN (G-PRESERVE 앵커) |
+| keep/untouched (SEEN) | 1.000 | 1.000 | 연산자 alive |
+| null negJ (`지는 않다`) | 0.417·0.333 | 0.333 | ~chance (계기 위조신호 0) |
+
+**PASS** (양 seed 일치): (a) base 는 held-out 에서 planted 극성을 **이미 조합 못 함**(swap 0.25~0.33 ≪ SEEN 0.92~1.00) = confound 없음·H_9327 BINDING 벽 base 재현 (`corpus-py-1` B: '못함' vs '죽임' 가름 — base=못함 확정) · (b) G-PRESERVE 앵커 SEEN=alive · (c) 채널 측정가능(null~chance). ⟹ 4-pod CPT 발사 **정당**하나 fleet rent=spend → **OWNER GO 대기**(`a_fire_autonomous` fleet caveat).
 
 ## ④ 비용
 
