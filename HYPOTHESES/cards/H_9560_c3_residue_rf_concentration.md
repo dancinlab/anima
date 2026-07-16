@@ -29,5 +29,22 @@ Fable run-order Step0 실행 — paired seed(1 marker byte flip A/B @거리 D)�
 - **판정: RF=31 mirror-claim 미방전.** 기능적 근접장(~D≤6-10)이 수학적 RF=31([[H_9564]] parse)보다 훨씬 tight. ⚠️ **confound(=제3 burn 발생·정직기록)**: marker→answer 는 *미훈련* 연관 → raw 신호전파/recency 를 재는 것이지 학습된 RF-binding 아님 · ~0.03=noise floor 근처. ⟹ crude probe 로 RF 경계 결정 불가.
 - ✅ **파이프라인 확증**(aiden engine-native --xbind margin 작동) · ⟹ **결정 테스트는 여전히 [[H_9562]](훈련 개입)** — Fable 판정 재확증(H_9557/ctx-probe 로 RF 못 가름). NEXT(instrument 개선): 훈련된 marker→answer 연관(H_9562 축소판) 또는 hidden-state 직접 영향(엔진 플래그).
 
+## 🔬 STEP-0b 깨끗한 RF = hidden-state diff (association confound 우회 · aiden CPU bit-exact · 2026-07-16)
+margin(association) confound 제거 위해 `anima-py evaluate --dump-hidden` 로 **‖Δh_last‖ = 한 byte flip@거리D 의 마지막위치 hidden 차** 측정(clm_forward_hidden CPU=bit-exact·CUDA_VISIBLE_DEVICES='' 강제). null 통제(동일 prompt)=**0.000e+00**(계기 검증)·far D~57=0.30(실신호).
+**결과 = ANOMALY(Fable §사전등록):** ‖Δh‖ D≤16 급락(clm303 24→0.42) **후 D16~56 약한 floor 유지·0 안감**(parsed RF=31 초과 영향).
+**교차검증(사용자 "구모델·clm 문제?" 정직검정):**
+
+| 모델 | D1 | D8 | D16 | D31 | D56 |
+|---|---|---|---|---|---|
+| clm303_clean L4 | 24 | 1.5 | 0.42 | 0.47 | 0.34 |
+| natem_c34 L4(실 verdict) | 34 | 11.7 | 3.8 | 5.1 | 1.24 |
+| clm303_deep_L8 | 15 | 1.4 | 0.47 | 0.48 | 0.40 |
+| smoke_d768 | 19 | 0.7 | 0.7 | 0.7 | 0.7(붕괴·상수) |
+
+- **clm303 특유 아님** — L4·L8·natem 전부 floor(smoke 만 별개 붕괴=D8~56 상수 0.705 near-const readout). ⟹ 사용자 "이 구모델 병리?" 반증(arch-general).
+- **floor=진짜 RF 아님** — 거리 감쇠 없이 **평평=sequence-global 경로**(거리-의존 conv 아님). 유력=**MoE 라우터**(E3~4 load-balance 전문가선택이 전역통계→어느 flip 이든 상수영향) = Fable §ANOMALY "E/router/SLW 는 closed-form RF 안 덮음" 정확. floor 크기 model-weight 의존(natem 1-5 vs clm303 0.4)=실경로지 numerical bug 아님.
+- ⟹ **기능적 binding RF=감쇠부(~D≤16)** · floor=약한 비-binding 전역 leak(근접장 ~2%). **#42492882 "D>RF ⟹ 수학적 독립" 이중 반증**(RF 과소 [[H_9564]] + 라우터 전역경로). 하지만 leak 약해 재조합 binding 엔 local-RF 지배.
+- NEXT($0): 라우터 root-cause(E=1 모델 or router-ablation flag 로 floor 소멸 확인). 결정 테스트는 여전히 [[H_9562]] 훈련개입.
+
 ## 상태
-🔎 STEP-0 EXECUTED (DIRECTIONAL) — 경험적 RF 파이프 확증·RF=31 미방전(crude probe confound). 다음=[[H_9562]] 훈련개입 결정. **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
+🔬 STEP-0b EXECUTED (DIRECTIONAL·교차검증) — 깨끗한 hidden-diff: floor 는 arch-general(clm 특유 아님)·MoE 라우터 전역경로 유력(진짜 RF 아님)·기능 binding RF~D≤16. 다음=라우터 root-cause $0 → [[H_9562]] 훈련개입 결정. **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
