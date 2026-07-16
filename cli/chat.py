@@ -1582,6 +1582,20 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     if _refractory == "earned" and _rate_sec is not None:
         raise SystemExit("--emit-refractory earned and --rate-limit-sec are mutually exclusive "
                          "(both rebind the safe rate term)")
+    # ══ H_9607 · A⇄G FEEDBACK — close the A→G→A loop (Fable design · owner-ratified via lever pick) ══
+    # The field (pure_field_step) has been a closed autonomous relaxation to LN2 (zero-Lyapunov linear
+    # limit-cycle · H_9602/9603); the A⇄G signed tension was read into the emit policy but NEVER written
+    # back. This wires the return leg: a daemon-side leaky-INTEGRAL of the signed net tension
+    # s = ag_a_drive + ag_g_drive shifts the oscillator amplitude target next tick (osc_tick drive).
+    # κ=0 (default) ⇒ drive≡0 ⇒ byte-identical production. Integral (not proportional) so the steady
+    # state is pinned at s=0 ⟺ emit_drive=½ INDEPENDENT of κ and of the field's 0.76 autonomous bias
+    # (emergent setpoint, NOT tune-to-green · H_9419). RHO/SGN are FROZEN FORM constants, not knobs
+    # (a ≥4-DOF config is unfalsifiable · H_9391). p5: own-output→field-STATE is legal (H_9336/9337);
+    # `mouth` never enters pure_field_step/osc_tick — the emit gate is untouched, the loop only moves φ.
+    _ag_feedback = float(anima_flag_value(_cargv, "--ag-feedback", "ANIMA_AG_FEEDBACK", "0.0") or "0.0")
+    ag_fb_I = 0.0            # leaky-integral state of the signed A⇄G tension (daemon state, beside refr_debt)
+    _AG_FB_RHO = 1.0 / 400.0  # FROZEN leak = slow-oscillator timescale (τ_slow=400) · calibrated a priori, NOT a knob
+    _AG_FB_SGN = -1.0         # FROZEN one-time polarity (negative feedback: s>0 ⟹ shrink target ⟹ pull emit_drive→½)
     # H_9415 p5-REWIRE · emit-gate mode (owner-ratified · H_9414 design). "clock" (default) =
     # byte-identical production (should_emit(score>θ) ∧ 30s clock). "refractory" = the ratified
     # MARGIN-refractory gate: emit ⟺ score_A > g_recog(candidate) with θ and the clock BOTH
@@ -1724,7 +1738,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # zero-input primitive warmup loops internally — NOT percept-driven (Engine A is the
         # zero-input field by design, pure_field_verify_zero_input); Φ now tracks the substrate's
         # own autonomous integration over the session, and stays percept-blind on purpose.
-        pf = pure_field_step(pf)
+        # H_9607 · A⇄G feedback drive = κ·SGN·I, the leaky-integral of the signed A⇄G tension carried
+        # from the PRIOR tick (s_t is derived below at :~1830, after the field step — so this tick's
+        # tension drives next tick's field: own-output(t)→field-state(t+1), the p5-legal return leg).
+        # κ=0 ⇒ ag_drive≡0.0 ⇒ pure_field_step byte-identical to production.
+        ag_drive = (_ag_feedback * _AG_FB_SGN * ag_fb_I) if _ag_feedback != 0.0 else 0.0
+        pf = pure_field_step(pf, ag_drive)
         phi_t = pure_field_phi(pf)
 
         # ── WAKE perception → working-memory ring ──
@@ -1813,6 +1832,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             g_recog = 1.0 - emit_drive
             ag_g_drive = 0.0 - (1.0 - emit_drive)
         ag_conflict = conflict_scalar(ag_a_drive, ag_g_drive)
+        # H_9607 · update the leaky-integral of the SIGNED A⇄G net tension AFTER this tick's drives are
+        # known — consumed at the TOP of next tick (:~1730). s = ag_a_drive + ag_g_drive is 0 exactly
+        # when A's push and G's push cancel (a0: s = emit_drive − (1−emit_drive) = 2·emit_drive − 1),
+        # so the integral null s→0 pins the steady state at emit_drive=½ regardless of κ (emergent, not
+        # dialed). κ=0 leaves ag_fb_I evolving but unused (ag_drive gated to 0.0 above) → byte-identical.
+        ag_s_signed = ag_a_drive + ag_g_drive
+        ag_fb_I = (1.0 - _AG_FB_RHO) * ag_fb_I + ag_s_signed
         ag_budget = conflict_recruited_depth(ag_conflict, 4, 6)
         ag_pop = anima_tr_pop_conflicted(_afs_clip01(0.5 + 0.5 * ag_conflict))
         ag_settle = tension_resolve_depth(ag_pop, tr_full, 0.3, 0.5, ag_budget, 2, 0.06, tr_cfgON)
@@ -2250,6 +2276,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
         gap_ctx = _afs_clip01(1.0 - rel_lane)
+        # H_9607 · unconditional default for the H_9627 dual-ledger fn. It was assigned ONLY inside the
+        # `if _emit_gate == "refractory"` branch (:~2296) but read unconditionally by the H_1058 trace
+        # block (:~2389) → UnboundLocalError on the DEFAULT clock gate whenever ANIMA_DECISION_TRACE is
+        # set. A pre-existing origin/main bug the A⇄G smoke surfaced (a pool live-smoke catch a local
+        # compile misses); hoisting the None default is the minimal safe fix (refractory branch overrides).
+        _dual_fn = None
 
         # H_9404 · PAY: the substrate's own A<->G tension this tick pays down the emit-debt BEFORE the
         # gate reads it (secs_since_emit stays live above as telemetry / trace field). refr_debt is only
@@ -2617,6 +2649,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "gen_emitted": g_emit, "gen_backend": g_back, "swapped": swapped,
                 "psi_gws": psi_gws, "psi_lprec": psi_lprec, "emit_drive": float(emit_drive),
                 "secs_since_emit": float(secs_since_emit),
+                # H_9607 · A⇄G feedback telemetry (κ=0 ⇒ ag_drive≡0.0; ag_fb_I/ag_s still evolve as
+                # monitor-only). --ag-criticality reads these: ag_s=signed net, ag_fb_I=leaky-integral,
+                # ag_drive=κ·SGN·I fed to the field. distinct(ag_drive)>1 confirms the loop is live.
+                "ag_s": float(ag_s_signed), "ag_fb_I": float(ag_fb_I),
+                "ag_drive": float(ag_drive), "ag_feedback_kappa": float(_ag_feedback),
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 "cand_b64_diag": dec.get("cand_b64_diag", ""),  # H_9510 HOLE-1 · imagined cand (diag)

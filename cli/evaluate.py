@@ -7292,7 +7292,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--gen",
-    "--help", "--pc2-direction", "--z-census", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--z-census", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -7601,6 +7601,136 @@ def _z_census(argv):
     print("     · needs a posterior-gap recorder on the decode path (e.g. an `anima-py chat`")
     print("       flag logging per-lm-step top-2 logit gap + in-window mass), then a ζ sweep.")
     print("     · 303M decode is POOL-only (summer/aiden), never mini (heavy-anima-eval-pool-not-mini).")
+    return 0
+
+
+def _ag_criticality(argv):
+    """H_9607 A⇄G CRITICALITY — engine-native readout of the A⇄G feedback loop over decision traces.
+
+    `anima-py evaluate --ag-criticality <trace globs...> [--perm N] [--seed N]`
+
+    Reads the traces `anima-py chat --ag-feedback <κ>` already wrote (NO decode, like --dead-census /
+    --pc2-direction / --emit-gate-census) and renders the trace-computable panels of Fable's three-panel
+    discriminator (the verdict statistic must be engine-native · a_experiment_engine_native · H_9303/07):
+
+      (C0) LOOP-LIVENESS  — distinct(ag_drive): κ=0 ⇒ 1 (value 0.0, field untouched = the byte-parity
+                            guarantee); κ>0 ⇒ >1 (the A→G→A return leg is live). A dead ag_drive means
+                            the loop is inert (STILL-SEALED), not that Ψ moved.
+      (ii) TE(tension→emit) — transfer entropy from the signed net tension ag_s to the emit bit, with a
+                            phase-scramble (time-shuffle of ag_s) surrogate null over --perm draws. The
+                            loop is a causal channel iff TE_real exceeds the surrogate 95th pct (z≥2).
+      (iii) HOMEOSTASIS    — mean emit_drive and |mean − ½|: is emit_drive pulled toward ½? Reported as
+                            color (a toy/short trace cannot cement homeostasis · a_scale_honest_scope);
+                            the score-perturbation robustness arm + the vshuf/quantile forgery controls
+                            are part of the pre-registered 303M fire, not this trace read.
+
+    Panel (i) butterfly-Lyapunov needs a SEED-FLIP rollout PAIR (1-byte seed flip, same sample seed;
+    frozen null = H_9603 divergence-growth +0.007) — a fired pair, not a single-trace read; documented
+    as the 303M fire protocol and NOT computed here. This reader is DIRECTIONAL (offline · a toy trace
+    is not a Ψ verdict); the terminal verdict is the owner-gated 303M --ag-criticality run.
+    """
+    perm = 200
+    seed = 7
+    globs = []
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--perm" and i + 1 < len(argv):
+            perm = int(argv[i + 1]); i += 2; continue
+        if a == "--seed" and i + 1 < len(argv):
+            seed = int(argv[i + 1]); i += 2; continue
+        globs.append(a); i += 1
+    if not globs:
+        print("  ⇒ ⛔ usage: anima-py evaluate --ag-criticality <trace globs...> [--perm N] [--seed N]")
+        return 2
+    import glob as _glob
+    paths = []
+    for g in globs:
+        paths.extend(sorted(_glob.glob(g)))
+    if not paths:
+        print("  ⇒ ⛔ no traces matched: %r" % globs)
+        return 2
+
+    def _ticks(p):
+        out = []
+        for ln in open(p, encoding="utf-8", errors="surrogateescape"):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                r = json.loads(ln)
+            except Exception:
+                continue
+            if isinstance(r, dict) and "ag_drive" in r and "emit" in r:
+                out.append(r)
+        return out
+
+    def _te_sign_to_emit(rows):
+        # TE(ag_s → emit): discrete, ag_s binned by sign (2 states), emit binary.
+        # TE = Σ p(e', e, x) log2 [ p(e'|e,x) / p(e'|e) ], x = sign(ag_s_t), e=emit_t, e'=emit_{t+1}.
+        from collections import Counter as _C
+        joint = _C(); ee = _C(); eex = _C(); e_ctx = _C()
+        for t in range(len(rows) - 1):
+            e = 1 if rows[t].get("emit") else 0
+            e1 = 1 if rows[t + 1].get("emit") else 0
+            x = 1 if float(rows[t].get("ag_s", 0.0)) >= 0.0 else 0
+            joint[(e1, e, x)] += 1
+            eex[(e, x)] += 1
+            ee[(e1, e)] += 1
+            e_ctx[e] += 1
+        n = max(1, sum(joint.values()))
+        import math as _m
+        te = 0.0
+        for (e1, e, x), c in joint.items():
+            p_joint = c / n
+            p_e1_given_ex = c / eex[(e, x)]
+            p_e1_given_e = ee[(e1, e)] / e_ctx[e]
+            if p_e1_given_ex > 0 and p_e1_given_e > 0:
+                te += p_joint * _m.log2(p_e1_given_ex / p_e1_given_e)
+        return max(0.0, te)
+
+    print("═══ A⇄G CRITICALITY · H_9607 · engine-native readout of the A→G→A feedback loop ═══")
+    print("  traces=%d · perm=%d · seed=%d" % (len(paths), perm, seed))
+    _rng = random.Random(seed)
+    any_live = False
+    for p in paths:
+        rows = _ticks(p)
+        if len(rows) < 8:
+            print("  · %s: rows=%d ⇒ ⛔ NOT-POWERED (<8 tick rows)" % (p, len(rows)))
+            continue
+        drives = [round(float(r["ag_drive"]), 12) for r in rows]
+        nd = len(set(drives))
+        kappa = float(rows[0].get("ag_feedback_kappa", 0.0))
+        eds = [float(r.get("emit_drive", 0.0)) for r in rows]
+        mean_ed = sum(eds) / len(eds)
+        emit_rate = sum(1 for r in rows if r.get("emit")) / len(rows)
+        te_real = _te_sign_to_emit(rows)
+        # phase-scramble surrogate: shuffle ag_s series (destroys the loop timing, keeps the marginal)
+        surr = []
+        base_s = [float(r.get("ag_s", 0.0)) for r in rows]
+        for _ in range(perm):
+            perm_s = base_s[:]
+            _rng.shuffle(perm_s)
+            srows = [dict(r) for r in rows]
+            for j in range(len(srows)):
+                srows[j]["ag_s"] = perm_s[j]
+            surr.append(_te_sign_to_emit(srows))
+        surr_sorted = sorted(surr)
+        p95 = surr_sorted[min(len(surr_sorted) - 1, int(0.95 * len(surr_sorted)))]
+        mu = sum(surr) / len(surr)
+        sd = (sum((s - mu) ** 2 for s in surr) / max(1, len(surr))) ** 0.5
+        z = (te_real - mu) / sd if sd > 1e-12 else 0.0
+        live = nd > 1
+        any_live = any_live or live
+        print("  · %s" % p)
+        print("      C0 loop-liveness : κ=%.4g · distinct(ag_drive)=%d ⇒ %s"
+              % (kappa, nd, "✅ LIVE" if live else ("byte-parity (κ=0)" if kappa == 0.0 else "❌ inert")))
+        print("      ii TE(ag_s→emit) : TE=%.4f bits · surr95=%.4f · z=%.2f ⇒ %s"
+              % (te_real, p95, z, "✅ channel" if (te_real > p95 and z >= 2.0) else "ns (no causal channel this trace)"))
+        print("      iii homeostasis  : mean(emit_drive)=%.3f |·−½|=%.3f · emit-rate=%.3f  [color · not a verdict]"
+              % (mean_ed, abs(mean_ed - 0.5), emit_rate))
+    print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
+    print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
     return 0
 
 
@@ -8616,6 +8746,8 @@ def main(argv):
         return _emit_gate_census(argv[1:])
     if len(argv) >= 1 and argv[0] == "--pc2-direction":
         return _pc2_direction(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--ag-criticality":
+        return _ag_criticality(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
         return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":
