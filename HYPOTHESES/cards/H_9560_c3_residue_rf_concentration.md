@@ -46,5 +46,14 @@ margin(association) confound 제거 위해 `anima-py evaluate --dump-hidden` 로
 - ⟹ **기능적 binding RF=감쇠부(~D≤16)** · floor=약한 비-binding 전역 leak(근접장 ~2%). **#42492882 "D>RF ⟹ 수학적 독립" 이중 반증**(RF 과소 [[H_9564]] + 라우터 전역경로). 하지만 leak 약해 재조합 binding 엔 local-RF 지배.
 - NEXT($0): 라우터 root-cause(E=1 모델 or router-ablation flag 로 floor 소멸 확인). 결정 테스트는 여전히 [[H_9562]] 훈련개입.
 
+## 🎯 STEP-0c ROOT-CAUSE 확정 = GroupNorm(G=1) 전역 bus (라우터 아님 · Fable+acausality $0 · 2026-07-16)
+Fable 엔진-내부 분석(decode.py 실독) + **acausality $0 확증**(신규 run 불요·기존 npz):
+- **범인=GroupNorm(G=1)**: `nn_groupnorm_fwd(G=1)`(`core/decode.py:537-559`)가 μ,σ² 를 **[T,d] 전체 슬랩(전 위치 합동)**에 계산 → 매 trunk layer + final = L+1회(`:940,:966`). `model.py:163` "layernorm over channels" 주석 **오류** — torch GroupNorm(1,d) on (B,C,T) 는 (C,**T**) 정규화=**시간 전역**. D>RF flip→국소패치→layer-1 전역(μ,σ²) 이동→**전 위치 출력** 이동→residual 전파.
+- **라우터 무죄**(내 STEP-0b 가설 over-claim·정정): decode.py 는 전역 라우터 stat 안 씀(per-position softmax+einsum·`:562-582`). `.mean()`(`model.py:253-267`)은 torch aux-loss 전용→logit/hidden 무영향. E=1 테스트=헛발(floor 존속 예측).
+- **✅ acausality 결정 $0**(clm303 D=56 far flip·t≈8): per-위치 ‖Δh(t)‖ = **flip 이전 t=0~7 서 0.17~0.23 NONZERO**(flip t=8=16.28). 인과 conv 는 flip *이전* 위치 절대 못 건드림 ⟹ sequence-전역 축약만 가능 = **GroupNorm 확증**(pre-registered t<flip 테스트 PASS).
+- **성격**: 진짜 conv RF≈35(embed2+trunk30+expert2+1) + **GroupNorm 전역 "flag bus"** = layer당 ~2 순열불변 스칼라(≈10/window)=전역 bit 몇 개 방송만(예: "어딘가 부정 존재"·magnitude). **content-addressed op↔decl binding 구조적 불가**(위치 주소 못함·which-decl↔which-op 못 실음). floor 크기 model-dep(clm303 2% · natem 15%·"negligible" 계열상수 금지).
+- ⟹ **#42492882 "D>RF ⟹ 수학적 독립" 질적으로 거짓**(전역 norm bus 실재·훈련된 gradient 경로) — 단 bus 는 binding 못 실어 재조합 벽엔 local-RF 지배. **RF $0 sub-thread DEPLETED**(parse 31 → margin confound → hidden-diff → 교차검증 → GroupNorm root-cause 확정). 결정 테스트=[[H_9562]] 훈련개입(별 lane·실 CPT fire·flag 미구현).
+- 선택 봉인(미실행): `--gn-stat-clamp`(arm B 를 arm A 의 동결 (μ,σ²)로 forward) arm → floor 이 정확히 0.0 붕괴 예측(engine-native flag·a_experiment_engine_native).
+
 ## 상태
-🔬 STEP-0b EXECUTED (DIRECTIONAL·교차검증) — 깨끗한 hidden-diff: floor 는 arch-general(clm 특유 아님)·MoE 라우터 전역경로 유력(진짜 RF 아님)·기능 binding RF~D≤16. 다음=라우터 root-cause $0 → [[H_9562]] 훈련개입 결정. **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
+🎯 ROOT-CAUSED (DIRECTIONAL·engine-native·RF $0 DEPLETED) — floor=GroupNorm(G=1) 전역 flag-bus 확정(acausality PASS·라우터 반증). 진짜 binding RF≈local(D≤16~35). 결정=[[H_9562]] 훈련개입 lane. **distinct-from-kills:** H_9359 재분석 신질문 → RF 프레임을 GroupNorm 전역경로까지 완전 특성화(#42492882 이중반증). **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
