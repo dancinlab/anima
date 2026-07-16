@@ -1598,6 +1598,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                          " 'cb-perr-alienctx' (got %r)" % _g_reach)
     if _g_reach != "d1" and _emit_gate != "refractory":
         raise SystemExit("--g-reach %s requires --emit-gate refractory (its only consumer)" % _g_reach)
+    # H_9510 HOLE-1 diagnostic · record the IMAGINED candidate on EVERY tick (emit + silence)
+    # so an offline conditioned-Jaccard test can ask whether near-repeat structure appears
+    # after silence runs. Measurement-only (never fed back to mouth/decode = p5-safe). OFF by
+    # default → production trace byte-identical.
+    _rec_silent_cand = anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1"
+    if _rec_silent_cand and _emit_gate != "refractory":
+        raise SystemExit("--record-silent-cand requires --emit-gate refractory (its only producer)")
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2240,7 +2247,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              backend, live_anchors, 0.0,
                              _recog_fn,
                              _mouth_at(tick),
-                             _dyn_w)
+                             _dyn_w,
+                             _rec_silent_cand)  # H_9510 HOLE-1 · record imagined cand for diag
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2505,6 +2513,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "secs_since_emit": float(secs_since_emit),
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
+                "cand_b64_diag": dec.get("cand_b64_diag", ""),  # H_9510 HOLE-1 · imagined cand (diag)
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
                 # (phi_leg.py TRUE-consumed-bytes context source; a_substrate_disjoint · p5).
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
