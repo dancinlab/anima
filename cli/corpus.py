@@ -62,7 +62,7 @@ def _parse_args(argv):
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
             "carrier_only": False, "surface": "flip1_suffix",
             "collision_split": False, "nonce_fillers": 3, "win": 64,
-            "bridge_split": False,
+            "bridge_split": False, "decl_ablate": False,
             # H_9410 RULE-VS-CACHE PRESSURE ENVELOPE instruments:
             #   --max-atoms N          one-shot EN atom miner scaled to N (greedy G-SUBSTR, drops
             #                          colliders instead of aborting; reports the actual ceiling).
@@ -131,6 +131,8 @@ def _parse_args(argv):
             opts["collision_split"] = True; i += 1
         elif a == "--bridge-split":
             opts["bridge_split"] = True; i += 1
+        elif a == "--decl-ablate":
+            opts["decl_ablate"] = True; i += 1
         elif a == "--max-atoms":
             opts["max_atoms"] = int(argv[i + 1]); i += 2
         elif a == "--polarity":
@@ -2398,7 +2400,8 @@ def build_deltainj(atoms_path):
 BRIDGESPLIT_FRAC = (("S_op", 0.5), ("S_decl", 0.25), ("S_cpt", 0.25))
 
 
-def build_bridgesplit(atoms_path, reps, seed, split_seed, lang, polarity="real", assign_seed=0):
+def build_bridgesplit(atoms_path, reps, seed, split_seed, lang, polarity="real", assign_seed=0,
+                      decl_ablate=False):
     if lang == "ko":
         raise SystemExit(
             "corpus xbind --bridge-split: --lang ko is refused (owner EN-FIRST directive · the KO lane "
@@ -2460,8 +2463,9 @@ def build_bridgesplit(atoms_path, reps, seed, split_seed, lang, polarity="real",
         for stem, pol in arms["S_op"]:        # BOTH surfaces — the bridge receives gradient here
             decl(stem, pol)
             oper(stem, pol)
-        for stem, pol in arms["S_decl"]:      # declaration ONLY — operator held out within phase A
-            decl(stem, pol)
+        if not decl_ablate:                   # C-DECL-ABL (H_9410): ablate the S_decl DECLARATION layer
+            for stem, pol in arms["S_decl"]:  # declaration ONLY — operator held out within phase A
+                decl(stem, pol)
         # S_cpt: nothing in phase A.
 
     rng.shuffle(lines)
@@ -2531,7 +2535,8 @@ def main():
             raise SystemExit("corpus xbind --bridge-split needs --out and --atoms.")
         text, st = build_bridgesplit(opts["atoms"], opts["reps"], opts["seed"],
                                      opts["split_seed"], opts["lang"],
-                                     opts["polarity"], opts["assign_seed"])
+                                     opts["polarity"], opts["assign_seed"],
+                                     opts["decl_ablate"])
         with open(opts["out"], "w", encoding="utf-8") as fh:
             fh.write(text)
         base = opts["out"]
@@ -2548,7 +2553,14 @@ def main():
         print("  atoms=%d  split S_op=%d S_decl=%d S_cpt=%d  lines=%d  bytes=%d"
               % (st["n_atoms"], st["split_sizes"]["S_op"], st["split_sizes"]["S_decl"],
                  st["split_sizes"]["S_cpt"], st["lines"], st["bytes"]))
-        print("  phase-A corpus: %s  (train S_op+S_decl)" % base)
+        if opts["decl_ablate"]:
+            print("  ⚠️ C-DECL-ABL CONTROL (H_9410) — the S_decl DECLARATION layer is ABLATED: those stems "
+                  "now appear ZERO times in phase A (no declaration, no operator).")
+            print("     The gate manifest is UNCHANGED (same questions). Frozen reading: the gate MUST return "
+                  "to chance. If it does NOT ⟹ the signal cannot come from the (absent) declaration ⟹ surface "
+                  "leak ⟹ ⚠️ LEAK-INVALID (instrument problem, NOT a verdict).")
+            print("     NOT a training corpus for a rung — never read its gate as a rung result.")
+        print("  phase-A corpus: %s  (train S_op%s)" % (base, "" if opts["decl_ablate"] else "+S_decl"))
         print("  phase-A GATE  : %s.sdecl_flip1.json  (operator held-out-in-A · %d rows)"
               % (base, len(st["sdecl_manifest"]["heldout"])))
         print("  alive control : %s.sop_flip1.json    (%d rows)" % (base, len(st["sop_manifest"]["heldout"])))
