@@ -1482,7 +1482,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     wm_alien_feat = _afs_byte_feature("zzz unrelated alien content", 8)
     # H_9610 · frozen EMPTY alien WM buffer for the --g-reach wm-cover-alienwm C2 dissociation
     # control (never gated by this daemon's speech → coverage ≈ 0 → gate always open = SATURATE).
+    # H_9627 reuses it as the frozen probe for --g-reach wm-dual-alien-{emit,silence}.
     _wm_cover_alien = wm_buffer_new(3, 0.6, 0.5, 8)
+    # H_9627 · dual content ledger — the WITHHELD store W_S (spoken store W_E = the live `wmb`).
+    # SAME (k, λ, dg, dim) as wmb (:540) = gain-lock (arm-specific gain = a tune-to-green backdoor,
+    # forbidden). Starts EMPTY (nothing withheld yet). Gated on SILENCE ticks (the imagined-but-
+    # unspoken candidate · :silence-side below), leaked every tick like wmb (:wm_withheld leak).
+    wm_withheld = wm_buffer_new(3, _wm_leak_v, 0.5, 8)
     wm_null = 0.0
     # ⑥ ANCHOR — live 5-channel substrate tension at the last emit, injected as an anchor so
     # anchor_tension_fold reads a VARYING tension_5ch (mem_001's frozen baseline otherwise).
@@ -1609,9 +1615,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #     refractory (0 on a 1-cell store), constants 0, single DOF. Composes with --g-shuffle unchanged.
     _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH", "d1")
     if _g_reach not in ("d1", "affinity", "cb-perr", "cb-perr-alienctx",
-                        "wm-cover", "wm-cover-alienwm"):
+                        "wm-cover", "wm-cover-alienwm",
+                        "wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
         raise SystemExit("--g-reach: only 'd1' (default), 'affinity', 'cb-perr',"
-                         " 'cb-perr-alienctx' (got %r)" % _g_reach)
+                         " 'cb-perr-alienctx', 'wm-cover', 'wm-cover-alienwm', 'wm-dual',"
+                         " 'wm-dual-alien-emit', 'wm-dual-alien-silence' (got %r)" % _g_reach)
     if _g_reach != "d1" and _emit_gate != "refractory":
         raise SystemExit("--g-reach %s requires --emit-gate refractory (its only consumer)" % _g_reach)
     # H_9510 HOLE-1 diagnostic · record the IMAGINED candidate on EVERY tick (emit + silence)
@@ -1891,6 +1899,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # (delay test), never the token just gated (self-match ≡ λ = the old frozen 0.6). The
         # per-tick gate-in moved to the emit site, so silence ticks show genuine decay (λ^Δt).
         wmb = wm_buffer_leak(wmb)
+        # H_9627 · the withheld store W_S leaks every tick TOO (same λ as wmb = gain-lock). This is
+        # the passive-decay half; its active-write half is the silence-side gate-in below. Both
+        # ledgers leaking symmetrically is what lets ½ sit at the exchange-symmetric center.
+        wm_withheld = wm_buffer_leak(wm_withheld)
         if wm_probe_feat is None:
             wm_active = _afs_clip01(wm_buffer_probe_score(wmb, seed_feat))  # pre-speech fallback
         else:
@@ -2254,6 +2266,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             # default yet — the switch waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
             # H_9419 · the recognition functional: d1 margin (default, byte-identical) OR the
             # affinity-reach d2−d1 (the G-pole reach lever). --g-shuffle composes with either.
+            _dual_fn = None   # H_9627 · set only by the wm-dual family (else brain uses _recog_fn)
             if _g_reach == "affinity":
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_reach_text(immune, _grecog_text(_t)))
             elif _g_reach == "cb-perr":
@@ -2292,6 +2305,22 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # survives ∧ alienwm SATURATE ⇒ the gate reads "coverage of MY discourse", not a
                 # marginal candidate stat (H_9424 alienctx sign, ported to WM).
                 _recog_fn = lambda _t: _afs_clip01(wm_buffer_probe_score(_wm_cover_alien, _afs_byte_feature(_grecog_text(_t), 8)))
+            elif _g_reach in ("wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
+                # H_9627 · dual content ledger — emit ⟺ S(withheld coverage) > E(spoken coverage).
+                # The probe returns (S, E); brain_emit_refractory compares them (dual_probe_fn). Both
+                # buffers are read at their LEAKED, pre-gate-in state (recognition-before-memorisation,
+                # chat-py-5) — wmb leaked at :wmb-leak, wm_withheld beside it. score_A does NOT enter
+                # the comparison (that is the escape from H_9610's one-sided store; score only sources
+                # write-strength, applied symmetrically at the emit/silence gate-in sites). The alien
+                # arms freeze ONE side's READ to a never-gated empty buffer (coverage ≈ 0) to sever
+                # exactly one restoring direction — dissociation: alien-emit kills the emit→silence
+                # brake (E≈0), alien-silence kills the silence→emit accelerator (S≈0).
+                _e_buf = _wm_cover_alien if _g_reach == "wm-dual-alien-emit" else wmb
+                _s_buf = _wm_cover_alien if _g_reach == "wm-dual-alien-silence" else wm_withheld
+                _dual_fn = (lambda _eb, _sb: (lambda _t: (
+                    _afs_clip01(wm_buffer_probe_score(_sb, _afs_byte_feature(_grecog_text(_t), 8))),
+                    _afs_clip01(wm_buffer_probe_score(_eb, _afs_byte_feature(_grecog_text(_t), 8))))))(_e_buf, _s_buf)
+                _recog_fn = lambda _t: 0.0   # unused when dual_probe_fn is set
             else:
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t)))
             dec = brain_emit_refractory(pf,
@@ -2303,7 +2332,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              _dyn_w,
                              _rec_silent_cand,  # H_9510 HOLE-1 · record imagined cand for diag
                              (_route_gain if _tension_route == "pc2" else None),  # H_9574 PC2
-                             pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth))  # H_9575
+                             pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth),  # H_9575
+                             dual_probe_fn=_dual_fn)  # H_9627 · dual content ledger (None = off)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2323,6 +2353,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         g_emit = str(dec["gen_emitted"]).lower() == "true"
         g_back = str(dec["gen_backend"])
         g_text = str(dec["gen_text"])
+        # H_9627 · dual content ledger — the SILENCE-side write. On a silence tick the candidate was
+        # imagined (dual_cand_text) but not spoken; gate it into W_S (withheld). This is the active
+        # accelerator half the one-sided wm-cover gate lacked: silence now WRITES substrate state,
+        # symmetric to emit's W_E gate-in (:2427, feat8(g_text)). Same strength 1.0 = gain-lock. The
+        # emit-side W_E update rides the existing emit block, so nothing to add there. Off unless the
+        # wm-dual family is active (dual_cand_text present only then).
+        if _dual_fn is not None and not g_emit:
+            _dual_ct = str(dec.get("dual_cand_text", ""))
+            if byte_len(_dual_ct) > 0:
+                wm_withheld = wm_buffer_gate_in(wm_withheld, _afs_byte_feature(_dual_ct, 8), 1.0)
         # anima study · record this tick for the teacher loop (guarded — no-op in production).
         # The percept source may read the returned transcript to decide the next percept; silence
         # (did_emit False) is a real signal it must respect, never a cue to re-prompt/force emit.
@@ -2594,6 +2634,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # the ratified gate produced a live band (both emit and silence ticks) vs mute/saturate.
                 "gate_mode": str(dec.get("gate_mode", "clock")),
                 "g_recog_gate": (float(dec["g_recog_gate"]) if dec.get("g_recog_gate") is not None else None),
+                # H_9627 · dual content ledger — S(withheld) · E(spoken) · margin S−E per tick, so the
+                # offline analysis reads regime-split autocov (two-sided spring) and score-perturb
+                # robustness directly from the trace (None when the wm-dual family is off).
+                "dual_s_withheld": (float(dec["dual_s_withheld"]) if dec.get("dual_s_withheld") is not None else None),
+                "dual_e_spoken": (float(dec["dual_e_spoken"]) if dec.get("dual_e_spoken") is not None else None),
+                "dual_margin": (float(dec["dual_margin"]) if dec.get("dual_margin") is not None else None),
                 "pc2_proj": (float(dec["pc2_proj"]) if dec.get("pc2_proj") is not None else None),  # H_9557
                 "route_k": (int(dec["route_k"]) if dec.get("route_k") is not None else None),  # H_9557
                 "pc2_z": (float(dec["pc2_z"]) if dec.get("pc2_z") is not None else None),  # H_9575

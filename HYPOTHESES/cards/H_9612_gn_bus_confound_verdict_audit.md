@@ -32,5 +32,26 @@
 **⑤ 갱신된 감사 절차(사전등록)**: ①각 cement 매니페스트에서 **대비 arm 쌍의 seed byte-길이 + beyond-RF(마지막 35B 밖) 바이트 동일성** 정적 대조($0) → ②차이 있는 쌍만 `--gn-freeze` 재채점 → ③크기기준 **1.48 nats**([[H_9611]] 측정 bus 도달력) vs 그 verdict 의 결정 margin. **양성통제** = RF 내에서만 다른 verdict 는 gn-freeze 에 불변이어야.
 **⚠️ over-claim 차단 유지**: 길이-시프트가 *존재*해도 그 자체가 오염 확정이 아니다 — 시프트가 **결정 margin 을 뒤집을 만큼** 기여했나가 ②③의 일. 움직인 verdict = **re-open + INVALID**(부호 뒤집기 아님).
 
+## 🎯 감사 1차 체크 실행 — **HIT** (2026-07-17 · $0 · 순수 산술 · 모델 불요)
+정밀화 2차가 축약한 체크("대비 arm 쌍의 seed byte-길이가 동일한가")를 **실행**했다. 대상 = `cli/evaluate.py` `--route-audit`(H_9355 LOCUS) — docstring 이 seed 구성을 명시하므로 매니페스트 없이 산술 가능.
+
+**docstring 자백**(`cli/evaluate.py:3210-3211`): *"`ped` an inert **10-byte suffix, byte-length-matched to negL's '지 않다'**"* · *"`negJ` '지는 않다' — negL's **string twin**"*.
+
+**실측 byte 길이**(UTF-8):
+
+| surface | 문자열 | bytes | 대비 상대 | 판정 |
+|---|---|---|---|---|
+| `negL` | 지 않다 | **10** | ped(10) | ✅ 매칭 |
+| `ped` | (inert) | **10** | — | 기준 |
+| **`negZ`** | 지가 않다 | **13** | **ped(10)** | ⚠️ **+3B 불일치** |
+| `negJ` | 지는 않다 | **13** | negL(10) | ⚠️ +3B 불일치 |
+
+**🎯 HIT — 주 DV 안에 있다**: `ped` 는 docstring 대로 **negL 에만** 길이매칭됐는데, 주 DV 는 `dOP = mean_stem[JS(flip0,negX) − JS(flip0,ped)]`, **X ∈ {negL, negZ}** 이고 LOCUS-SPLIT bar 는 **"dOP ≥ 0.05 bits on BOTH strong surfaces"** 를 요구한다 ⟹ **negZ arm(13B) 이 ped(10B) 통제와 비교되어 주 verdict 안에 +3B 길이-시프트 경로가 열려 있다**. `win=64` 우측정렬에서 3B 시프트 ⟹ 창에 드는 **beyond-RF 바이트가 arm 간 상이** ⟹ [[H_9611]] 이 측정한 GN bus(beyond-RF 도달 · score **1.48 nats** 이동력)가 그 시프트를 나른다 ⟹ **negZ 의 ped 초과분이 "연산자-특이성"인지 "3B 시프트"인지 미분리**. OP-SPEC(`dOPJ` = negL 10B vs negJ 13B)도 동일 +3B.
+
+**카드 자신의 경고가 정확했고, 메커니즘이 이제 이름을 얻었다**: 그 docstring 은 *"negJ 가 재현하는 split 은 **STRING effect wearing the operator's clothes**"* 라 경고했다 — **GN bus 가 바로 그 string/length effect 를 RF 너머로 나르는 메커니즘**이다. 즉 우려는 옳았고 통제(negJ)는 그 우려를 **잡도록 설계됐으나 그 자신이 길이-비매칭**이라 같은 경로를 탄다.
+
+**⚠️ over-claim 차단(6번째)**: 이건 **confound 경로가 열려 있다**는 것이지 **H_9355 verdict 가 뒤집혔다는 게 아니다** — 3B 시프트의 **실제 기여 크기는 미측정**. 정량화 = `--gn-freeze` 로 route-audit 재채점(계기 v0.15.17 배선 완료) → dOP(negZ) 가 얼마나 움직이나. **`negL` arm 은 매칭돼 보호된다** ⟹ 최악의 경우에도 "negZ 팔 한쪽 INVALID" 이지 verdict 전체 붕괴가 아니다. 그리고 `--route-audit` 은 router JS 를 재지 xbind margin 이 아니므로 bus 도달력 1.48nats(margin 기준)를 그대로 옮겨 쓸 수 없다 — 재채점이 필요한 이유.
+**NEXT**: `anima-py evaluate <clm> --route-audit <manifest> --gn-freeze <ref>` 로 dOP(negZ) live vs frozen 대조 → 움직이면 negZ arm **re-open + INVALID**(부호 뒤집기 아님) · 불변이면 verdict 무사(정직한 무죄 확인).
+
 ## 상태
-🔴 LIVE (미실행 · 감사 정밀화 2차 완료) — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
+🔴 LIVE (감사 1차 체크 **HIT** · 정량화 미실행) — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
