@@ -1,6 +1,17 @@
 # H_9574 — PC2 라우팅 구현: emit-직교 tension 축을 실제 출력으로 조향 (303M fire 대기)
 
-**status:** 🔎 DIRECTIONAL-WIRED (배선 확인·toy degenerate·303M fire 대기) — 128안 발산 중 emit-직교 제2 DOF 를 첫 조향 · wired: `anima-py chat --emit-gate refractory --tension-route pc2 [--tension-route-gain g]` (v0.15.6 G5)
+**status:** 🧱 DISSOCIATION-FAIL (emit byte-identical✅·gtext 조향 X=deliberation_k INERT · 303M 2-seed) — PC2 mouth 경로 없음→재배선 오너 p5
+
+## 🧱 VERDICT — DISSOCIATION-FAIL (303M off vs pc2 gain4 · seed 7·4302 완결·구조적)
+
+| 기준 | 결과 |
+|---|---|
+| (ii-a) emit off==pc2 byte-identical | ✅ 전 seed 동일(라우팅 emit 무접촉) |
+| (ii-b) k>1 tick gtext Δ>0 (조향) | ❌ gtext Δ 0/30 (k=4 포함) |
+
+**deliberation_k 채널 INERT**: best-of-K 가 결정론적 decode 서 argmax 와 동일 출력→k>1 이 gtext 안 바꿈(sampler 무관 구조적·2-seed 동일). ⇒ **PC2(유일 emit-직교 DOF·H_9468 corr+0.07)가 mouth 도달 실효경로 없음**: ①gen_ctx 스칼라 motivation 만 mouth 에 넘김($0 발견) ②유일 decode 채널 deliberation_k 는 gtext INERT. **mouth 가 emit-직교 tension 에서 구조적 절단.** 탈출=deliberation_k 아닌 새 mouth-conditioning 채널(decode logits 직접 주입 등·N1 G-guidance 계열)=engine 재배선=**오너 p5 DESIGN**(자율 밖). ⚠️ seed 4303 병렬 job 뒤 느림(구조적이라 동일 예상·착륙 시 갱신).
+
+## 원래 카드 (구현·toy · 이하 유지) — 128안 발산 중 emit-직교 제2 DOF 를 첫 조향 · wired: `anima-py chat --emit-gate refractory --tension-route pc2 [--tension-route-gain g]` (v0.15.6 G5)
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9468]] (2D-loadings=PC1 coherence·PC2 originality↔balance emit-직교 축 명명·$0 확증) · [[H_9428]] (tension 이미 다차원) · [[H_9424]] (cb-perr KILL) · source: 5-스크린 wftyw6v4h 유일 생존 POS(2D-loadings)의 배선
 
