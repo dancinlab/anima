@@ -3,7 +3,7 @@
 - **group**: g1-interface-addressable-wall
 - **tier**: 🔵 PROPOSED (설계 위임 中 · 미발사)
 - **date**: 2026-07-17
-- **related**: [[H_9339]] (모 crack) · [[H_9327]] (BINDING 벽)
+- **related**: [[H_9339]] (모 crack) · [[H_9327]] (BINDING 벽) · [[H_9672]] (자매 lane · READ/W_q 주소)
 - **wired**: 미발사 (engine-native anima-py train/evaluate 예정)
 
 ## 질문
@@ -17,6 +17,19 @@ vs HO-DECL 5/12 · G-WRITE 11/12). 그러나 **seed 11 은 2 독립 run 모두 G
 - **(A) base-ckpt 용량**: base `natem_c34_main_s11.clm`(다른 split-seed pretraining)이 s7 base 보다
   write-imprint 용량이 낮다.
 - **(B) 코퍼스 간섭**: s11 held-split 이 뽑은 12 어간의 배열/구성이 imprinting 을 방해한다.
+
+## 🔀 자매 lane 대조 — H_9672 READ/W_q 주소돌파 (#3895 · a_parallel_session_compare)
+같은 프런티어의 **다른 lane** 이 병렬 착륙: H_9672 T3 303M 🟢 CRACK-DIRECTIONAL — `--store-addr-weight`
+(직접 주소감독 L_addr=CE(att,target_slot))가 W_q softmax 부트스트랩 닭-달걀 교착을 절단해 held-out
+내용주소 **조회(READ)** 를 세움(P1-balanced 0.9688·addr-gap 0.008 일반화·ORACLE 0.9922).
+- **🟢 AGREES(강함)**: 둘 다 addressable-wall 의 🟢 CRACK-DIRECTIONAL · 둘 다 supervised/engineered(창발 아님)
+  · **둘 다 TERMINAL 게이트 = seed 재현성**(H_9672 NEXT=seed-11 재현 ⟷ 본 H 재현성-sweep). 재현성이
+  프런티어-정답 bar 임을 독립 수렴으로 상호검증.
+- **🆕 NOVEL(상보)**: H_9672=**읽기**(W_q 조회) · 본 H_9339/9675=**쓰기**(held-out 항목 각인) = "addressable"
+  의 두 반쪽. 비중복.
+- **⚠️ caveat(진범 합치기 금지)**: base 가 다르다 — H_9672=py303_full+addr co-train seed · 본 H=natem_c34_main
+  pretraining **split-seed**. "둘 다 seed-11 잔여"를 공유 진범으로 합치면 **다른 seed 축을 혼동**(seed-agreement
+  ≠ replication). 본 H rider(A base-capacity)가 natem-s11 을 겨눌 뿐, py303 addr-seed 와 별개.
 
 ## 설계 (Fable 5 확정 · FROZEN — bg ba13m22pn 회신)
 **Pivot = 재현성 sweep(2×2 아님) + 1-run root-cause rider.** 근거: 프런티어의 산 질문은 "s7 crack 이
