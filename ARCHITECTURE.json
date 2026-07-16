@@ -16358,6 +16358,133 @@
       ]
      }
     ]
+   },
+   {
+    "name": "🗳️ 파벌(faction) 가로축 — 폐엔진 유물인가 살아있는 레버인가 (R3)",
+    "role": "",
+    "id": "faction-lateral-axis-r3",
+    "type": "gate",
+    "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
+    "verdict": "⏳ PROPOSED×27(H_9627~9653 · 발산=DIRECTIONAL 설계 · verdict 아님) · 🔴 옛 법칙 22/43/44 = UNDECIDABLE(교란 미제거 · 반증 아님) · NEXT = $0 관문 3개 통과시에만 GPU.",
+    "children": [
+     {
+      "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
+      "role": "",
+      "id": "faction-r3-fact-coexist",
+      "detail": "계보가 다르지 않다. chip-architecture 7문서에 TCU(Tension=|Engine_A − G|²)와 12파벌 클러스터가 같은 설계 안. A⇄G 가 파벌을 대체한 게 아니라 가로 층만 잘려나갔다."
+     },
+     {
+      "name": "🔵 사실확정 ② — 현 σ 9축은 12−2=10 의 후손이 아니다",
+      "role": "",
+      "id": "faction-r3-fact-sigma-unrelated",
+      "detail": "옛 10축 = σ(6)=12 factions 에서 φ=2 engine states 를 뺀 것. 현 9축 = PERSIST/INTEGRATE/ENACT/REFLECT 재편. 무관하며 근접 숫자는 우연(세션 중 반대 추측을 조회로 자가반증)."
+     },
+     {
+      "name": "🔵 사실확정 ③ — py 배선 0건, 판정경로 관여 불가",
+      "role": "",
+      "id": "faction-r3-fact-no-py",
+      "detail": "프로덕션 py 에 단어경계 faction 0건(origin/main 포함). hexa 3파일은 구조체와 다이얼뿐이고 본문이 TODO[pytorch] 인데 그 py 구현이 부재. grep 오탐 주의: satisfaction 이 20건 넘게 잡힌다."
+     },
+     {
+      "name": "🔴 계기심문 ① — 옛 Φ-proxy 는 between-group 분산이다",
+      "role": "",
+      "id": "faction-r3-phi-artifact",
+      "detail": "global_var 빼기 mean_faction_var 는 전분산법칙의 between-group 항 그 자체. K 가 커지면 within 이 기계적으로 줄어 proxy 가 자동 증가한다. K=N 이면 within=0 이라 proxy 가 최대. 통합이 아니라 나눗셈."
+     },
+     {
+      "name": "🔬 PEDESTAL 실측 — 참값 0 에서 K 에 단조증가",
+      "role": "",
+      "id": "faction-r3-pedestal",
+      "detail": "i.i.d. 가우시안 1024셀 · 파벌구조 전무(배정=임의 라벨) · 200 trial · seed 12345. 참값 Φ=0 인데도 K 를 키우면 계속 오른다.",
+      "verdict": "🔴 단조증가 확증 · 재현 = /tmp/faction_pedestal.py (numpy · 결정론)",
+      "children": [
+       {
+        "name": "K=1 → Φ 0.0000 — 유일하게 참값을 맞추는 행",
+        "role": "",
+        "id": "faction-r3-ped-k1",
+        "detail": "단일 파벌이면 global_var 와 faction_var 가 같아 차가 정확히 0. 계기가 이 한 점에서만 참값과 일치한다."
+       },
+       {
+        "name": "K=8 → Φ 0.0733 — 지어냄",
+        "role": "",
+        "id": "faction-r3-ped-k8",
+        "detail": "옛 APEX22 의 8파벌 지점. 잴 것이 아무것도 없는데 0.0733 을 만든다."
+       },
+       {
+        "name": "K=12 → Φ 0.1175 — 지어냄 (법칙 44 지점)",
+        "role": "",
+        "id": "faction-r3-ped-k12",
+        "detail": "법칙 44 가 최적이라 부른 지점. 8파벌 대비 +60% 로, 옛 기록의 +7.3% 보다 오히려 크다."
+       },
+       {
+        "name": "K=64 → Φ 0.6797 — 지어냄 (정점 없음)",
+        "role": "",
+        "id": "faction-r3-ped-k64",
+        "detail": "K 를 계속 키우면 계속 오른다. 정점이 없다는 것은 순수 산수 예측과 정확히 일치한다."
+       }
+      ]
+     },
+     {
+      "name": "🎯 법칙 44 와 방향 일치 — 잡음이 더 크게 재현한다",
+      "role": "",
+      "id": "faction-r3-law44-direction",
+      "detail": "옛 기록은 12파벌 Φ=131.44 가 8파벌 122.45 보다 +7.3%. PEDESTAL 은 참값 0 에서 0.1175 대 0.0733 으로 +60%. 12가 최적이라는 발견의 방향을 아무 신호 없는 잡음이 더 크게 재현한다."
+     },
+     {
+      "name": "🔴 계기심문 ② — 법칙 44 의 정점은 측정된 적 없다",
+      "role": "",
+      "id": "faction-r3-law44-unmeasured",
+      "detail": "아카이브 전수 grep 결과 K>12(16·24·32) 기록이 0건. 근거는 12 대 8 두 점뿐이다. 정점이려면 K=16 이 12보다 낮아야 하는데 그 측정 자체가 없다. 반증이 아니라 애초에 미측정(H_9628)."
+     },
+     {
+      "name": "🔢 12 의 출처 — 측정이 아니라 완전수 미학",
+      "role": "",
+      "id": "faction-r3-twelve-origin",
+      "detail": "H_067 perfect-number architecture 가 σ(6)=12 factions · φ(6)=2 min cells · τ(6)=4 stages 를 함께 유도한다. 12 는 6의 약수합. prior 가 먼저고 2점 확증이 나중이었다."
+     },
+     {
+      "name": "⚔️ 아카이브 자체 모순 — 진화는 4파벌로 갔다",
+      "role": "",
+      "id": "faction-r3-law212-tension",
+      "detail": "H_125 Law 212: 진화가 자유롭게 고르면 few factions(4)로 수렴하고 12 는 preset 일 때만 global optimum. 그 문서 자신이 4 대 12 격차가 다른 fitness 아래 무너질 수 있다고 적어뒀다."
+     },
+     {
+      "name": "⚠️ 정직범위 — 이건 anima 를 잰 것이 아니다",
+      "role": "",
+      "id": "faction-r3-honest-scope",
+      "detail": "PEDESTAL 은 아카이브된 죽은 공식의 산수를 잰 것이다. anima 가 아니고 engine op 도 아니며 어떤 .clm 판정도 아니다. 옛 엔진의 실제 동역학(Ising·sync)은 미포함이라 DIRECTIONAL 이고 사망선고가 아니다."
+     },
+     {
+      "name": "🔀 발산 — lab full 27안 (Fable5 와 Codex5.6 병렬)",
+      "role": "",
+      "id": "faction-r3-labfull",
+      "detail": "37안에서 중복제거해 27안(H_9627~9653 PROPOSED · a_lab_full_diverge). 두 모델이 독립수렴한 결론은 두 가지: Q1 은 산수 인공물이고, 축의 생사는 $0 로 먼저 가린다."
+     },
+     {
+      "name": "⚡ 두 모델 CONFLICT — 동시발사 가치",
+      "role": "",
+      "id": "faction-r3-model-conflict",
+      "detail": "H_9635(Fable)은 파벌을 dense attention 의 병목으로 보고 TOPO12 를 확증한다. H_9636(Sol)은 TOPO12 의 0효과를 ceiling interaction 으로 보고 RF-limited 조건서 cross-edge 부활을 예측한다. H_1394 RF 진단이 심판."
+     },
+     {
+      "name": "⭐ H_9645 — mouth-severance 의 유일한 미시험 출구",
+      "role": "",
+      "id": "faction-r3-phasic-exit",
+      "detail": "입은 RATE-GATE 즉 미분기라 tonic level 은 기여가 0이다. H_9574 가 죽인 deliberation_k 가 바로 tonic 스칼라였다. 합의는 threshold-crossing 즉 phasic 사건이라 통과할 물리적 여지가 있다."
+     },
+     {
+      "name": "🧪 H_9645 의 필수 통제 — 동일 값 tonic 주입",
+      "role": "",
+      "id": "faction-r3-phasic-control",
+      "detail": "같은 값을 tonic 으로 주입하면 미분기 물리상 Δ=0 이 나와야 한다. 이 통제가 프레임 전체의 심판이다. H_9576 이 채널 CRACK 은 확증했으나 방향은 KILL(ρ=−0.077 · null 대역) = 경로는 있고 의미가 안 실린다."
+     },
+     {
+      "name": "▶️ NEXT — $0 관문 먼저, 통과할 때만 GPU",
+      "role": "",
+      "id": "faction-r3-next",
+      "detail": "H_9627 proxy 재계산 · H_9628 K>12 스윕으로 정점 실재 판별 · H_9630 Φ 밖 held-out 이식. 셋 다 통과해야 축이 살고 그때만 H_9645 와 H_9640 을 태운다. 모든 레버 플래그가 미구현이라 발사 전 구현과 VERSION bump(G5)가 선행."
+     }
+    ]
    }
   ]
  },
