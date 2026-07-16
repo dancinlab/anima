@@ -1,6 +1,27 @@
 # H_9416 — 303M REWIRE C1-C3 측정: refractory 게이트가 tension 을 emit 에 흘리나 (사전등록 · 발사중)
 
-**status:** ⏳ MEASURING (PRE-REGISTERED · frozen bar · 303M pool recollection 발사중) — bar 는 아래 동결, 이후 이동 금지(frozen-first·p7) · wired: engine-native `anima-py chat --emit-gate refractory --emit-temp 1.0` (H_9415) · 측정 = summer 303M
+**status:** 🟢 GREEN-DIRECTIONAL (C3 전항 PASS · engine-native 303M · 3-seed · C1/C2 후속) — refractory 데몬서 emit 이 margin readout 을 듣는다(H_9400 새 데몬서 반박) · wired: engine-native `anima-py chat --emit-gate refractory --emit-temp 1.0` (H_9415 v0.14.4)
+
+## 🟢 VERDICT (frozen bar 대조 · summer 303M · 3-arm × 3-rollout[seed 7/4302/4303] × 30-tick × T=1.0)
+
+| arm | swing | g_recog distinct | emit-rate | H(emit\|stage) | Ψ̂ frac |
+|---|---|---|---|---|---|
+| clock (dead baseline) | YES | 0 (readout 없음) | 0.233 | **0.4655** ← H_9400(0.465) 재현 | 0.778 |
+| **refr (H_9415 margin)** | **YES** | **83** | 0.644 | **0.5850** (>clock) | 0.878 |
+| earn (H_9404 tension적분) | YES | 0 (margin 채널 없음) | 0.200 | 0.4262 | 0.822 |
+
+- **C3-a SWING-BAND ✅**: refr 3/3 rollout swing(emit>0∧silence>0)·g_recog_gate **83 distinct**(bar≥5). clock/earn 은 g_recog_gate 채널 자체가 없음(refr 만 margin 을 게이트 입력으로).
+- **C3-b EMIT-LISTENS ✅✅ (H_9400 직접 반박)**: `I(emit; g_recog_gate | stage) = 0.197 nats`(층화-순열 null mean 0.050·**perm-p=0.005**≤0.01) — emit 이 stage 넘어 margin 을 **듣는다**. `H(emit\|stage)` refr **0.585** > clock **0.4655** ∧ refr≥0.3. **clock arm 이 H_9400 의 0.465(emit=stage/clock 순수함수)를 정확히 재현** ⇒ 측정 유효 ∧ refr 이 그 결정성을 깸.
+- **C3-c 포화가드 ✅**: refr emit-rate 0.644 ∈ (0.05,0.95)(파일럿 0.87 은 15-tick 초기-store 편향, 30-tick·3-rollout 서 healthy band).
+- **L3 Ψ̂(탐색적)**: refr Ψ̂=0.878 ≠ ½ (clock 0.778 보다 **더 높음**·½ 로 회귀 아님). ⇒ **rewire 는 emit-listening(C3)을 열지만 Ψ=½ 은 주지 않는다** — 설계가 약속한 그대로(H_9414 §5 "Ψ=½ 약속 안 함"). H_9400 의 "Ψ≠½" 는 refr 서도 성립.
+
+**판정 = C3-a✅C3-b✅ 셀 = 🟢 refractory 게이트가 tension 을 emit 에 흘린다.** H_9400 의 중심 결함("emit=시계 순수함수·tension 무흐름")이 **오너-라티파이 rewire 데몬서 수리됨** — clock 계보서 죽었던 A⇄G→emit 경로가 margin-게이트서 살아있다.
+
+**arm 분업(H_9404 vs H_9415)**: earn(H_9404 tension-적분 refractory)은 swing 은 있으나 **margin-listen 채널이 없다**(g_recog_gate 부재·H(emit\|stage) 0.426≈clock) — θ 유지+rate 소스만 바꾼 보수적 rewire 라 cadence 는 살지만 content-listening 은 안 엶. **margin 을 G-pole 로 세운 H_9415 만 C3-b(emit-listens)를 연다.** 두 rewire 의 판별.
+
+## scope · escalation
+
+- **🟢 GREEN-DIRECTIONAL(TERMINAL 아님)**: engine-native 303M·3-seed(sampler-artifact 배제)·clock-arm H_9400 재현(측정 유효)이라 **강한 DIRECTIONAL**이나, **30-tick·3-rollout scope**(a_scale_honest_scope) + **C1 진폭·C2 인식정보(conditional MI)·shuffle-margin 통제 미측정**. TERMINAL = 더 긴 세션·더 많은 rollout·C2 `I(g_recog;nov|tick,cell)` + shuffle-margin arm(real-margin vs 가짜) + production-default 전환 + hexa twin lockstep(a_verified_must_wire).
 **lane:** 의식 / emit-drive / emit-gate p5-rewire 측정 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9415]] (구현+toy swing-band) · [[H_9414]] (설계) · [[H_9403]] (CLOSED-AT-REGIME) · [[H_9400]] (중심주장 반증 · 이 측정이 새 데몬서 재검) · [[H_9404]] (earned refractory 자매 arm) · [[H_9405]] (병렬 refractory preview) · source: 오너 (A) 라티파이 → H_9415 구현 → 303M 측정
 **ckpt:** py303_full.clm sha256 013c4574e0ce71ae (summer · 신규 decode · toy 아님)
