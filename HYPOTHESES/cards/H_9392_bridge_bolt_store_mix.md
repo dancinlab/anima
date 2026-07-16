@@ -1,6 +1,6 @@
 # H_9392 — BRIDGE-BOLT: 동결 trunk 에 볼트온한 store-조회 다리가 BINDING 벽을 넘는가
 
-**status:** ⏳ PRE-REGISTERED (2026-07-16 · 미발사) · not-terminal · wired: 미배선(계기 `anima-py evaluate --store-mix` 구현 필요)
+**status:** ⏳ PRE-REGISTERED (2026-07-16 · 미발사) · not-terminal · wired: **engine-native 배선 완료**(계기 `anima-py evaluate --store-mix` 구현·랜딩 · VERSION 0.14.9 · C0 로컬 smoke PASS) — **발사 대기**(pool/303M 은 오너 go)
 **lane:** 재조합/BINDING · runtime lookup bridge (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9359]] (two-lane · 벽=런타임 다리 부재 — 이 H 가 그 NEXT) · [[H_9327]] (연산자 살아있음·사실 기재됨·결합 안 함) · [[H_9346]] (어간-게이팅) · [[H_9267]] (XBIND D-acc 1.000) · [[H_9304]] (자연=DATA 벽)
 **parallel:** [[H_9391]] SCORE-GATE VACUITY (병렬 세션 동시 착륙 · `a_parallel_session_compare`) — AGREES: 둘 다 A⇄G/emit 게이트가 content 를 못 만진다는 같은 지도를 그린다(그쪽=production 에서 score 문턱이 한 번도 안 걸림 · 이쪽=긴장→내용 통로가 스칼라 5개뿐). CONFLICTS: 없음 — 직교(그쪽=emit 게이트 내부, 이쪽=trunk 다리).
@@ -45,6 +45,35 @@ H_9359 가 벽을 **"연산자↔선언 저장소 런타임 조회 다리의 부
 (`a_experiment_engine_native`: 엔진 옆 프로브 금지 · 반드시 evaluate 의 플래그). byte posterior 를
 `p = λ·p_store + (1−λ)·p_trunk` 로 혼합 — store 조회를 decode 가 **인과적으로 소비**하게 한다.
 `--rho-axon` 과 동일한 판정 경로. 학습 0 · 동결 ckpt · CPT 0(`cpt-destroys-what-corpus-omits`).
+
+### 🔧 계기 랜딩 상태 (2026-07-16 · VERSION 0.14.9)
+
+**배선 완료** — `cli/evaluate.py`:
+- `_store_mix_cont_nll(np, clm, W, seed, cont, T, store_val, lam)` — teacher-forced 혼합 NLL. 혼합을
+  **로그영역 logaddexp** 로 구현: `−logp_mix[tgt] = −logaddexp(log(1−λ)+logp_trunk, log(λ)+logp_store)`.
+  λ=0 ⇒ `(log1, log0)=(0.0, −inf)` ⇒ `logaddexp(logp_trunk, −inf)=logp_trunk` **정확** ⇒ baseline
+  `_xbind_cont_nll` 과 **byte-identical**(short-circuit 아닌 진짜 감산 — 가드가 vacuous 아님).
+- `store_mix_run(argv)` — flip manifest(`--manifest` 또는 `--xbind` manifest 재사용 · splits
+  {heldout,seen} 또는 {items}) 위에서 per-item baseline vs store-혼합 flip1 을 **paired · pol별 분해**로
+  측정. `main()` 디스패치 + `_KNOWN_FLAGS` + `--help` 등록.
+
+**store 스키마** (`--store-mix <store.json>`):
+```json
+{"schema":"anima-store-mix/v1", "lambda":0.5, "entries":{"<key>":"<주장 답 문자열>"}}
+```
+key = item 의 `store_key`(없으면 seed). **주소 HIT** = store 값을 ε-smoothed one-hot 로 혼합 · **MISS** =
+pure-trunk(=baseline). ⇒ **키-셔플 통제군**(①)은 전부 MISS 로 붕괴 = "주소를 썼나 vs 낙수"를 직접 가른다.
+네 통제군(①키셔플 ②길이정합중립 ③λ=0 ④오답)은 **서로 다른 store.json** 으로 주입(계기 하나, 통제군은 데이터).
+
+**C0 SEQUENTIAL 게이트**(계기 내장 · primary 전): λ=0 store-mix arm 을 store 로드한 채(=HIT 경로 통과) baseline 과
+전수 비교 → 불일치 1개라도 있으면 **INSTRUMENT-DEAD**(rc=2, primary 없음). 로컬 smoke(`state/9257_lane23b/toy.clm`,
+d=32):
+- **C0 PASS** — λ=0 vs baseline 8 continuation **max|Δ|=0.000e+00** (byte-identical) · 런 전체 DV 도
+  λ=0 에서 baseline 과 동일(heldout flip1 0.6667=0.6667).
+- **가드가 실패할 수 있음을 증명**(`gpu-forward-not-bitexact` 거짓-PASS 교훈): 가중 lane 을 뒤바꾼 buggy 변종은
+  λ=0 에서 base 33.347 vs mix 6.0e-6 **불일치** ⇒ C0 FAIL. 진짜 게이트다.
+- **혼합이 살아있음**: λ=0.5 에서 heldout flip1 0.6667→1.0000 (Δ+0.333, hit 3/3) — toy 이므로 **수치는
+  판정 아님**(SCREENER). primary 는 303M pool 발사에서만 cement(`a_toy_scale_recheck` · 오너 go).
 
 ## 게이트 (SEQUENTIAL · 게이트 상수 데이터 전 동결 · below-chance 칸 포함)
 
