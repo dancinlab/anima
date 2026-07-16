@@ -93,11 +93,12 @@ def out_dir(gate, readout="linear", tag=""):
     return f"/tmp/anima-v2-{t}"
 
 
-def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix", readout="linear", tag=""):
+def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix", readout="linear", tag="", fixed_key=False):
     cfg = dict(bars["model"])
     cfg["max_seq"] = bars["task"]["max_seq"]
     cfg["gate"] = gate
     cfg["readout"] = readout
+    cfg["fixed_key"] = fixed_key
     t = bars["task"]
     b = bars["budget"]
     steps = steps or b["steps"]
@@ -158,6 +159,7 @@ def main():
     ap.add_argument("--gate", choices=["mix", "logit", "store_only"], default="mix")
     ap.add_argument("--readout", choices=["linear", "mlp"], default="linear")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--fixed-key", action="store_true", dest="fixed_key")
     args = ap.parse_args()
 
     bars = load_bars()
@@ -165,14 +167,14 @@ def main():
         # frozen lr grid, selected on TRAIN LOSS only (bars.json bolt_lr_selected_by)
         best = None
         for lr in bars["budget"]["bolt_lr_grid"]:
-            _, fl = train_arm("BOLT", args.seed, bars, lr=lr, steps=args.steps, quiet=True, gate=args.gate, readout=args.readout, tag=args.tag)
+            _, fl = train_arm("BOLT", args.seed, bars, lr=lr, steps=args.steps, quiet=True, gate=args.gate, readout=args.readout, tag=args.tag, fixed_key=args.fixed_key)
             print(f"  [BOLT s{args.seed}] lr={lr} -> train_loss {fl:.4f}")
             if best is None or fl < best[1]:
                 best = (lr, fl)
         print(f"  [BOLT s{args.seed}] selected lr={best[0]} (train_loss {best[1]:.4f})")
-        path, fl = train_arm("BOLT", args.seed, bars, lr=best[0], steps=args.steps, gate=args.gate, readout=args.readout, tag=args.tag)
+        path, fl = train_arm("BOLT", args.seed, bars, lr=best[0], steps=args.steps, gate=args.gate, readout=args.readout, tag=args.tag, fixed_key=args.fixed_key)
     else:
-        path, fl = train_arm(args.arm, args.seed, bars, steps=args.steps, gate=args.gate, readout=args.readout, tag=args.tag)
+        path, fl = train_arm(args.arm, args.seed, bars, steps=args.steps, gate=args.gate, readout=args.readout, tag=args.tag, fixed_key=args.fixed_key)
     print(f"{args.arm} seed{args.seed}: final_loss={fl:.4f} -> {path}")
 
 

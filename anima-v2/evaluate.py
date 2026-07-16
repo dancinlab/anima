@@ -39,7 +39,16 @@ def predict(p, cfg, exs, use_store, lam_override=None, val_override=None,
             shuffle_keys=False, flip_pols=False, rng=None, oracle=False):
     ids, tg, mask, sids, vidx, qp, ap = encode_batch(exs, cfg)
     if shuffle_keys:                       # C2: keys <-> values permuted
-        perm = rng.permutation(sids.shape[1])
+        # DERANGEMENT (no fixed points). A plain permutation leaves the queried slot in
+        # place 1/S of the time (S=8 -> 12.5%), so a PERFECT content-lookup would still
+        # score ~0.56 on key-shuffle (0.99*1/8 + 0.5*7/8) and fail the 0.55 bar by
+        # construction. The fixed-point leak is a control defect, not a model failure;
+        # a derangement removes it. (Instrument repair, not a bar move — P1 never opened.)
+        n = sids.shape[1]
+        while True:
+            perm = rng.permutation(n)
+            if not np.any(perm == np.arange(n)):
+                break
         sids = sids[:, perm]
     if flip_pols:                          # C2: wrong-store (negative control)
         vidx = 1 - vidx
@@ -87,8 +96,10 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=None)
     ap.add_argument("--gate", choices=["mix", "logit", "store_only"], default="mix")
     ap.add_argument("--readout", choices=["linear", "mlp"], default="linear")
+    ap.add_argument("--tag", default="")
+    ap.add_argument("--fixed-key", action="store_true", dest="fixed_key")  # informational; cfg drives it
     args = ap.parse_args()
-    _tag = args.gate + ("-mlp" if args.readout == "mlp" else "")
+    _tag = args.gate + ("-mlp" if args.readout == "mlp" else "") + args.tag
     out = f"/tmp/anima-v2-{_tag}"
 
     bars = json.load(open(os.path.join(HERE, "bars.json")))
@@ -223,16 +234,32 @@ def main():
         print(f"           macro={mac:.4f}  lam={r['lam']:.3f}"
               f"{'  ⚠️ CELL-COLLAPSE -> macro VOID' if collapsed else ''}")
 
-    def both(arm):
-        v = [macros.get((arm, s)) for s in seeds]
+    def cotrain_macros():
+        v = [macros.get(("COTRAIN", s)) for s in seeds]
         return v if all(x is not None for x in v) else None
 
-    co, bo = both("COTRAIN"), both("BOLT")
+    # BOLT's held-out accuracy IS its score against supported_bolt_max. A BOLT that fails
+    # C2 by sitting at chance (store not causally driving the answer) is not "unmeasurable" —
+    # it is a MEASURED bolt-on failure, which is exactly the SUPPORTED signal. So read BOLT's
+    # held-out directly (frozen bar supported_bolt_max=0.60 is about held-out, not a C2-gated
+    # macro). A C2-VALID BOLT instead reads its macro (it genuinely used the store).
+    def bolt_scores():
+        out = []
+        for s in seeds:
+            r = results.get(("BOLT", s))
+            if r is None:
+                return None
+            out.append(macros.get(("BOLT", s), r["base"]))  # macro if valid else held-out
+        return out
+
+    co, bo = cotrain_macros(), bolt_scores()
     print("\n" + "=" * 78)
     if co is None or bo is None:
-        print("VERDICT: PENDING — COTRAIN/BOLT not both valid on both seeds")
+        print("VERDICT: PENDING — COTRAIN/BOLT ckpts missing")
     elif all(c >= P1["supported_cotrain_min"] for c in co) and all(b <= P1["supported_bolt_max"] for b in bo):
-        print("VERDICT: 🟢 SUPPORTED (DIRECTIONAL) — the bridge is EARNED by learning")
+        print(f"VERDICT: 🟢 SUPPORTED (DIRECTIONAL) — the bridge is EARNED by learning "
+              f"(COTRAIN macro {co[0]:.3f}/{co[1]:.3f} ≥ {P1['supported_cotrain_min']} · "
+              f"BOLT held-out {bo[0]:.3f}/{bo[1]:.3f} ≤ {P1['supported_bolt_max']} = bolt-on fails)")
     elif all(b >= P1["boltsufficient_bolt_min"] for b in bo):
         print("VERDICT: 🔵 BOLT-SUFFICIENT — bolting on is enough; the 'only by learning' clause dies")
     elif all(c <= P1["dead_cotrain_max"] for c in co):
