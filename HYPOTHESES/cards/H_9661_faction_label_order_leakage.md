@@ -1,5 +1,5 @@
 ---
-id: H_9629
+id: H_9661
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_label_order_leakage
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_1365, H_9292, H_9627
 ---
 
-# H_9629 — 파벌 번호만 바꿔도 Φ 가 달라지면 옛 계기는 구조가 아니라 label/order leakage 를 쟀다
+# H_9661 — 파벌 번호만 바꿔도 Φ 가 달라지면 옛 계기는 구조가 아니라 label/order leakage 를 쟀다
 
 ## 주장 (반증가능)
 

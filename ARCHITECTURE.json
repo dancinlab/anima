@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "⏳ PROPOSED×27(H_9627~9653 · 발산=DIRECTIONAL 설계 · verdict 아님) · 🔴 옛 법칙 22/43/44 = UNDECIDABLE(교란 미제거 · 반증 아님) · NEXT = $0 관문 3개 통과시에만 GPU.",
+    "verdict": "⏳ PROPOSED×27(H_9660~9653 · 발산=DIRECTIONAL 설계 · verdict 아님) · 🔴 옛 법칙 22/43/44 = UNDECIDABLE(교란 미제거 · 반증 아님) · NEXT = $0 관문 3개 통과시에만 GPU.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16434,7 +16434,7 @@
       "name": "🔴 계기심문 ② — 법칙 44 의 정점은 측정된 적 없다",
       "role": "",
       "id": "faction-r3-law44-unmeasured",
-      "detail": "아카이브 전수 grep 결과 K>12(16·24·32) 기록이 0건. 근거는 12 대 8 두 점뿐이다. 정점이려면 K=16 이 12보다 낮아야 하는데 그 측정 자체가 없다. 반증이 아니라 애초에 미측정(H_9628)."
+      "detail": "아카이브 전수 grep 결과 K>12(16·24·32) 기록이 0건. 근거는 12 대 8 두 점뿐이다. 정점이려면 K=16 이 12보다 낮아야 하는데 그 측정 자체가 없다. 반증이 아니라 애초에 미측정(H_9654)."
      },
      {
       "name": "🔢 12 의 출처 — 측정이 아니라 완전수 미학",
@@ -16458,13 +16458,13 @@
       "name": "🔀 발산 — lab full 27안 (Fable5 와 Codex5.6 병렬)",
       "role": "",
       "id": "faction-r3-labfull",
-      "detail": "37안에서 중복제거해 27안(H_9627~9653 PROPOSED · a_lab_full_diverge). 두 모델이 독립수렴한 결론은 두 가지: Q1 은 산수 인공물이고, 축의 생사는 $0 로 먼저 가린다."
+      "detail": "37안에서 중복제거해 27안(H_9660~9653 PROPOSED · a_lab_full_diverge). 두 모델이 독립수렴한 결론은 두 가지: Q1 은 산수 인공물이고, 축의 생사는 $0 로 먼저 가린다."
      },
      {
       "name": "⚡ 두 모델 CONFLICT — 동시발사 가치",
       "role": "",
       "id": "faction-r3-model-conflict",
-      "detail": "H_9635(Fable)은 파벌을 dense attention 의 병목으로 보고 TOPO12 를 확증한다. H_9636(Sol)은 TOPO12 의 0효과를 ceiling interaction 으로 보고 RF-limited 조건서 cross-edge 부활을 예측한다. H_1394 RF 진단이 심판."
+      "detail": "H_9662(Fable)은 파벌을 dense attention 의 병목으로 보고 TOPO12 를 확증한다. H_9636(Sol)은 TOPO12 의 0효과를 ceiling interaction 으로 보고 RF-limited 조건서 cross-edge 부활을 예측한다. H_1394 RF 진단이 심판."
      },
      {
       "name": "⭐ H_9645 — mouth-severance 의 유일한 미시험 출구",
@@ -16482,7 +16482,14 @@
       "name": "▶️ NEXT — $0 관문 먼저, 통과할 때만 GPU",
       "role": "",
       "id": "faction-r3-next",
-      "detail": "H_9627 proxy 재계산 · H_9628 K>12 스윕으로 정점 실재 판별 · H_9630 Φ 밖 held-out 이식. 셋 다 통과해야 축이 살고 그때만 H_9645 와 H_9640 을 태운다. 모든 레버 플래그가 미구현이라 발사 전 구현과 VERSION bump(G5)가 선행."
+      "detail": "H_9660 proxy 재계산 · H_9654 K>12 스윕으로 정점 실재 판별 · H_9655 Φ 밖 held-out 이식. 셋 다 통과해야 축이 살고 그때만 H_9645 와 H_9640 을 태운다. 모든 레버 플래그가 미구현이라 발사 전 구현과 VERSION bump(G5)가 선행."
+     },
+     {
+      "name": "🚨 #3857 id 충돌 사고 — 병렬 캠페인 9건을 덮어썼다",
+      "role": "",
+      "id": "faction-r3-id-collision-incident",
+      "detail": "브랜치 생성 시점 스냅샷 max(9626)로 9627~ 을 점유했으나 그 뒤 #3848/#3853/a9c52db09 가 먼저 착륙해 있었다. 병합서 jsonl 이 내 쪽으로 해결되며 남의 항목 9건 삭제. 복구 = 선착순 원칙으로 내가 9654~9662 로 비킴.",
+      "verdict": "✅ 복구 완료(G6 중복 0 · jsonl↔파일 전수 정합) · 교훈: 스냅샷 max ≠ live max — 착륙 직전 재조회 필수(a_lab_full_diverge · a_parallel_session_compare)"
      }
     ]
    }

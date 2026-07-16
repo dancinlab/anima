@@ -1,5 +1,5 @@
 ---
-id: H_9630
+id: H_9655
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_heldout_predictive_transport
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9627, H_9628
 ---
 
-# H_9630 — 법칙 22 가 진짜면 Φ 가 아닌 held-out 예측량에서도 같은 partition 이 무작위 partition 을 이긴다
+# H_9655 — 법칙 22 가 진짜면 Φ 가 아닌 held-out 예측량에서도 같은 partition 이 무작위 partition 을 이긴다
 
 ## 주장 (반증가능)
 

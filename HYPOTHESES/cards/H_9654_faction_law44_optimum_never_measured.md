@@ -1,5 +1,5 @@
 ---
-id: H_9628
+id: H_9654
 group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_law44_optimum_never_measured
@@ -11,7 +11,7 @@ source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 �
 related: H_9627, H_067, H_125
 ---
 
-# H_9628 — 법칙 44 'σ(6)=12 가 최적 파벌 수' 는 K>12 를 한 번도 재지 않았다 — 2점(12 vs 8) 비교 + 수론적 prior 일 뿐
+# H_9654 — 법칙 44 'σ(6)=12 가 최적 파벌 수' 는 K>12 를 한 번도 재지 않았다 — 2점(12 vs 8) 비교 + 수론적 prior 일 뿐
 
 ## 주장 (반증가능)
 
