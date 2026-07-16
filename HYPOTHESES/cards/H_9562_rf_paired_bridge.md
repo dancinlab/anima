@@ -19,5 +19,13 @@ anima-py evaluate <bridge.clm> --xbind --rf-bridge-readout <manifest> --declarat
 **p7/p8**: 진리점수 없음. 학습된 reader 는 국소-조건부(공유저장소 획득 아님).
 **verdict-integrity**: inside 우위인데 선언-이식 민감성 없으면 = 짝-캐시/FORM(다리 아님). 음성이 모든 CONV 다리 불가 증명 안 함(이 커리큘럼·RF 기하 한정).
 
+## 🎨 FABLE 판정 — 이 카드가 **fork 결정 테스트** (2026-07-16 · [[H_9560]] ruling)
+Fable 판정: two-lane 벽이 **(a) RF-formation-bound**(훈련 co-location 부재=DATA 벽·H_9304 정합) 인지 **(b) store-separation**(RF 내 공기해도 다리 없음) 인지를 가르는 **유일 결정 테스트 = 이 H_9562**. 이유: (a)vs(b)는 *훈련 co-location 반사실*로만 갈리고, 기록-재분석/추론시-문맥주입은 그 반사실을 실현 못 함 — **훈련 개입만** 가능.
+- **D-arm 재anchor**: inside=D≤20(RF31 안전 밑)·outside=D≥64·postquery. ⚠️ **RF=9 아니라 측정 RF([[H_9560]] Step0 경험적 RF) 기준**([[H_9564]] #3793 파싱=31 을 Step0 가 engine-measured 로 확정한 뒤 fire).
+- **게이트**: Step0(경험 RF)+Step1(H_9560 co-occurrence census) 통과 후 fire. 정적 RF=31 은 mirror-claim(미검)→Step0 없이 anchor 금지.
+- **판정표(측정 RF anchor)**: inside 이식 ≥10/12·≥2seed·pooled perm p≤.01 ∧ outside ≤6/12 ∧ (inside−unpaired)≥4/12 ∧ 양성통제(훈련짝 readback)≥10/12 ⟹ **(a) RF-formation-bound**(co-location 커리큘럼=오프닝) · inside ≤6/12 ∧ 양성통제≥10/12 ∧ C0(선언-표면≥0.75) ⟹ **(b) store-separation**(RF 프레임 이 벽엔 死) · 양성통제<10/12 or C0<0.75 or Step0 RF≠파싱 or leak ⟹ **INVALID**(셀 읽지마·V2_1) · inside readback 우위인데 이식-둔감 ⟹ FORM/짝-캐시(다리 아님).
+- **AGREES**: 병렬 [[H_9423]] S1(#3795) = 공학습 CLMS store-bridge 가 부모 conv 서 held-out 0.875(다리를 *모듈추가*로 설치) — 이 카드는 *plain conv 가 RF 내 짝으로 reader 스스로 학습하나*(모듈 없이) = 상보.
+- **over-claim 방지**: inside-PASS = 커리큘럼 결과지 "재조합 열림" 아님(H_1584=건강한 훈련·정보흐름 존재 ≠ 정보 *사용*). EN=SCREENER/DIRECTIONAL.
+
 ## 상태
-🔵 PROPOSED — 미실행 사전등록. run 시 위 판정표로. monitor-only/게이트-벽 회피. 측정 주장 0(설계). **distinct-from-kills:** 가장 가까운 kill = held-out-stem 일반화(H_9327) — 이건 양 marginal seen·Cartesian 짝만 held·선언-만 사후개입으로 런타임 읽기 시험(zero-shot 어휘전이 아님).
+🔵 PROPOSED(🎨 fork-decider 승격) — 미실행. Step0/Step1 게이트 후 summer fire(a_fire_autonomous·cheap-CPT). **distinct-from-kills:** 가장 가까운 kill = held-out-stem 일반화(H_9327) — 이건 양 marginal seen·Cartesian 짝만 held·선언-만 사후개입으로 런타임 읽기 시험(zero-shot 어휘전이 아님).
