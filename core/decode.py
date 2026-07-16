@@ -272,6 +272,21 @@ def set_slw_controls(gamma_override=None, shuffle_seed=None):
     _SLW_SHUFFLE_SEED = shuffle_seed
 
 
+# ── H_9407 consult-decode eval-time window override (process-global; set by cli/evaluate.py
+# --consult-decode). None => the decode seed window stays the production literal 24, byte-for-byte.
+# int T => clm_decode_topk_sampled_W right-aligns the seed into a T-byte window instead — the ONLY
+# behavioural change is how much seed the mouth can see; forward math is untouched (the scoring lane
+# already runs T=64). Widening T is un-truncating the seed, not out-of-distribution (conv trunk is
+# causal-local, no positional encoding; trained seq_len=1024). ──
+_CONSULT_DECODE_T = None
+
+
+def set_consult_decode_window(T):
+    """Set the free-decode seed window (cli/evaluate.py --consult-decode). None = production 24."""
+    global _CONSULT_DECODE_T
+    _CONSULT_DECODE_T = T
+
+
 # ════════════════════════════════════════════════════════════════════════
 # (a) SHARED — helpers byte-identical across clm_decode.py + bytegpt_decode.py
 # ════════════════════════════════════════════════════════════════════════
@@ -1210,7 +1225,7 @@ def clm_decode_topk_sampled(path, seed, gen, top_k, temp, seed_rng):
 
 def clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng):
     V = W["V"]
-    T = 24
+    T = 24 if _CONSULT_DECODE_T is None else int(_CONSULT_DECODE_T)   # H_9407 consult-decode window (None=prod 24)
     seed_b = seed.encode('utf-8', 'surrogateescape')
     slen = len(seed_b)
     tok = np.empty(T, dtype=np.float64)
