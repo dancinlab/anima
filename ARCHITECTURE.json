@@ -1959,6 +1959,32 @@
                 "detail": "🟢 TWO-LANE SUPPORTED. C3/C4 2×2 의 마지막 칸: 반전 극성을 담체(연산자) 키로만 CPT 로 쓰고(선언 라인 0) 선언 표면(`{s}고 =>`)을 읽는다. G-LAND 담체 readback s7 11/12·s11 12/12 PASS(쓰기 착륙 = INVALID 아님). swap 선언 flip0 신극성 s7 2/12·s11 4/12·pooled 6/24 → 공유저장소(담체=마스터 키, ≥10/12) 반증: 앵커-무관 절대 bar 대비 P(X≤obs) pooled ≈5×10⁻¹⁰(base 미참조=측정창 영향권 밖). ⟹ 담체·선언 저장소는 값을 공유하지 않는다 = 별도 레인. 벽 = 저장소 도달불가(H-δ) 아니라 런타임 다리(bridge) 부재 — 재조합은 가중치 안에서. C4(H_9334) 성공 = 다른 저장소에 직접 쓴 것이지 같은 저장소를 올바른 키로 친 것 아님. 잔여 상승(paired pooled p=0.031)은 통제팔 비특이 손상률(untouched 3/3→2/3·keep 5/6 상실 = cpt-destroys-what-corpus-omits)로 정량 설명(기대 ~1.8/seed vs 관측 2·4). ⏳ SCOPE: '전이=정확히 0' 등가 서브클레임은 TOST 앵커-비강건(계기 창간 변동 ≈2–3/12 이 δ 마진과 동급)으로 DIRECTIONAL 유지 — 표 칸 채우는 데 불필요. base 재측정 불일치(0/12 vs H_9334 3·2/12)는 등가 주장만 갉고 공유저장소 반증 무영향. 수렴: V5(H_9353 decon2b NO-IN-CONTEXT-CHANNEL EARNED #3611)와 독립 — 둘 다 런타임 다리 부재. 계기 engine-native(corpus ground_carrierswap --carrier-only + evaluate --xbind · VERSION 0.13.61)."
                },
                {
+                "name": "압력-envelope: 규칙 vs 캐시 (|S_op| 사다리 · H_9410 · rung-0 앵커 ✅ 2026-07-16)",
+                "id": "g1-interface-pressure-envelope",
+                "role": "gate-verdict · engine-native 303M py 2-production · anima-py corpus atoms --max-atoms / evaluate --xbind",
+                "detail": "⏳ IN-FLIGHT. H_9389 💀 KILL-AT-GATE(|S_op|=24)의 정직한 reopener: 24 stem 은 전 응답 저장가능 ⟹ 암기가 규칙보다 싸 추상화 압력 0. 유한 3축 envelope(|S_op| 사다리 × 용량비 × grokking-wd)로 종결한다. 열린 |S_op| 상승은 무한후퇴라 사다리 상한을 EN mining 천장에 고정.",
+                "children": [
+                 {
+                  "name": "rung-0 앵커 게이트 ✅ PASS — kill 서명 양seed 재현",
+                  "id": "g1-pressure-anchor-pass",
+                  "role": "HALT 조건 해제 · 계량기 연속성",
+                  "detail": "random-polarity 계기가 H_9389 kill 서명 그대로 재현: S_op G-ALIVE 1.0000/1.0000(bar ≥0.90) ∧ S_decl 게이트 0.3333/0.2222 둘 다 우연밑(margin_med −5.98/−5.97). 연산자는 천장까지 학습되나 연산자-0-노출 held-out 선언 어간엔 전이 실패 ⟹ HALT 없음·사다리 진행. ckpt 영구보관."
+                 },
+                 {
+                  "name": "사다리 N={192,768,1713} · rung-1 발사중",
+                  "id": "g1-pressure-ladder",
+                  "role": "axis-1 |S_op| · EN mining 천장에 고정",
+                  "detail": "EN mining 상한 = 4598 frame-cand → 2969 @occ≥50 ⟹ N=3072 도달불가, terminal 재스코프 N≈1713(|S_op|≈856). rung-1(N=192·|S_op|=96·30K·seeds{7,11}) aiden $0 발사중. 코퍼스 감사 전항 PASS(S_decl 연산자 0/48 · slot-prior 0.5000)."
+                 },
+                 {
+                  "name": "종결 조건 — envelope 완주만 🔴",
+                  "id": "g1-pressure-terminal-rule",
+                  "role": "no kill-biased early stop",
+                  "detail": "🔴 W_wt-TERMINAL 은 envelope 완주(rung-3 N=1713 + C-CAP + grokking-wd arm) 전 셀 실패에만. max-rung 실패만은 💀 KILL-AT-RUNG(terminal 아님). 어느 green rung 이든 C-DECL-ABL 필수 — 미통과시 ⚠️ LEAK-INVALID(계기 문제, verdict 아님)."
+                 }
+                ]
+               },
+               {
                 "name": "V3 STEM-COLLISION = ⛔ INVALID-ANCHOR over strong 🟢-BLEED (어간 주소 = byte-fuzzy · H_9372 2026-07-15)",
                 "id": "g1-interface-stem-collision",
                 "role": "gate-verdict · engine-native 303M py 2-production · anima-py corpus atoms --collision-split → evaluate --xbind · aiden CPU-numpy · $0 forward-only",
