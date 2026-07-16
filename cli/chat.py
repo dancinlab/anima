@@ -1663,6 +1663,19 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # Stage-A: the STEERED text is spoken (out_text) but every substrate root keeps the BASE
     # g_text, so the emit sequence stays byte-identical to off BY CONSTRUCTION.
     _pc2_mouth = anima_flag_value(_cargv, "--pc2-mouth", "ANIMA_PC2_MOUTH", "off")
+    # H_9664 ζ-LADDER — `--pc2-zeta z1,z2,…` re-decodes the SAME emit tick at each ζ, so the
+    # tick-level cascade variance that swamped every arm-vs-arm readout (H_9663: sd(Δπ̄_rng)≈0.14)
+    # cancels WITHIN the tick. ζ is the experimenter's dose: it MANUFACTURES the regressor range
+    # the live z does not have (IQR 0.0514 · 45.7% of its variance in 3/270 ticks). ζ=0 must come
+    # back byte-identical to base — a built-in isolation certificate, not a claim.
+    # Empty (default) ⇒ zeta_ladder=None ⇒ byte-identical to the existing path.
+    _pc2_zeta_raw = anima_flag_value(_cargv, "--pc2-zeta", "ANIMA_PC2_ZETA", "")
+    _pc2_zeta = []
+    if _pc2_zeta_raw:
+        for _tok in _pc2_zeta_raw.split(","):
+            _tok = _tok.strip()
+            if _tok:
+                _pc2_zeta.append(float(_tok))
     if _pc2_mouth not in ("off", "bias", "rng"):
         raise SystemExit("--pc2-mouth: only 'off' (default), 'bias', 'rng' (got %r)" % _pc2_mouth)
     if _pc2_mouth != "off" and _emit_gate != "refractory":
@@ -2370,7 +2383,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              (_route_gain if _tension_route == "pc2" else None),  # H_9574 PC2
                              pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth),  # H_9575
                              dual_probe_fn=_dual_fn,  # H_9627 · dual content ledger (None = off)
-                             score_perturb=_score_perturb)  # H_9627 · central-thesis bar (0 = off)
+                             score_perturb=_score_perturb,  # H_9627 · central-thesis bar (0 = off)
+                             zeta_ladder=(_pc2_zeta or None))  # H_9664 ζ-ladder (None = off)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2687,6 +2701,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "pc2_z": (float(dec["pc2_z"]) if dec.get("pc2_z") is not None else None),  # H_9575
                 "pc2_arm": str(_pc2_mouth),  # H_9575
                 "gtext_pc2_b64": (_b64.b64encode(str(dec.get("gen_text_steered", "")).encode("utf-8", "surrogateescape")).decode("ascii") if dec.get("gen_text_steered") else None),  # H_9575 · steered (spoken) text
+                # H_9664 ζ-ladder: [{zeta, text_b64}] per emit tick. ζ=0 entry MUST equal
+                # gtext_b64 byte-for-byte (isolation certificate). Absent ⇒ [] ⇒ flag off.
+                "gtext_zeta": [{"zeta": _zr["zeta"],
+                                "text_b64": _b64.b64encode(str(_zr["text"]).encode("utf-8", "surrogateescape")).decode("ascii")}
+                               for _zr in (dec.get("gen_text_zeta") or [])],
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
