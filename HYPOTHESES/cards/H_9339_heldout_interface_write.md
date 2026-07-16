@@ -51,7 +51,9 @@ ho_{arm}_s{S}.txt --steps 6000 --lr 2e-4 --bs 8 --seq-len 1024 --bf16` × 4 → 
 - **seed 11 = ⛔ INVALID**: G-WRITE **6/12**(쓰기가 절반만 착륙 = INVALID 아닌 음성) + G-PRESERVE **0.667 crater**(carrier_s11 CPT가 SEEN 연산자 손상·`corpus-py-1` ⑥ CPT-destroys). swap 판독 무자격.
 - **2-seed 판정 = ⛔ INVALID**(사전등록: seed불일치 ∧ G-WRITE낙제 = INVALID). s7 강한 DIRECTIONAL 양성이나 s11 미착륙으로 cement 불가. 4 ckpt 영구저장 `~/anima-weights/c34/ho_*_cpt.clm`(sha 검증).
 
-**🔁 s11 재발사 (동일예산·transient vs seed-deterministic 판별 · summer engine-native)**: carrier_s11 재run(val_CE 0.144<원 crater run·더 안정 학습)의 G-WRITE swapC readback = **4/12**(원run 6/12). ⟹ **2 독립run 모두 쓰기 미착륙**(6/12·4/12<11/12) = **transient 불안정 반증·seed-DETERMINISTIC 확정**: split-seed 11의 held-out swap 어간 draw(편하 뜨 부드럽…)는 담체키 CPT 쓰기를 재현적으로 못 받음(split-seed 7의 draw 조 안맞 이쁘…는 11/12 받음). G-WRITE 낙제=INVALID이므로 flip1 swap DV 무의미(읽을 엔트리 부재). ⟹ **s7 crack은 stem-draw 의존일 수 있음**(일부 held-out 어간만 쓰기 수용) — 1-seed DIRECTIONAL, 2-seed 미cement. 재발사가 "s11=일시적" 가설을 깨끗이 반증(재발사 소진). 후속=다른 lens(왜 어간 draw별 write-landing 차이? byte-len/빈도/seed 상호작용 진단 or 더 많은 seed).
+**🔁 s11 재발사 (동일예산·transient vs seed-deterministic 판별 · summer engine-native)**: carrier_s11 재run(val_CE 0.144<원 crater run·더 안정 학습)의 G-WRITE swapC readback = **4/12**(원run 6/12). ⟹ **2 독립run 모두 쓰기 미착륙**(6/12·4/12<11/12) = **transient 불안정 반증·seed-DETERMINISTIC 확정**. G-WRITE 낙제=INVALID이므로 flip1 swap DV 무의미(읽을 엔트리 부재). 재발사가 "s11=일시적" 가설을 깨끗이 반증(재발사 소진). 1-seed DIRECTIONAL, 2-seed 미cement.
+
+**⚠️ 정정 — 진범은 stem-draw 아닌 RUN/seed ($0 대조)**: 처음 "s11=held-out 어간 draw 의존"으로 추정했으나 $0 byte-len/어간 대조가 반증. 어간 **`튼튼하`(9B)가 s7·s11 swap set 둘 다 존재** — s7 run 착륙(all-tag)·s11 run 실패(같은 어간 반대 결과). ⟹ stem-draw·byte-len 무관(s11 실패 3~9B 전범위 산개), **carrier_s11 CPT run(base natem_c34_main_s11 + 코퍼스)이 어간 무관 담체 write를 전역 under-imprint**. 진범 후보=base ckpt seed별 write-imprint 용량 차이 or s11 코퍼스 stem 혼합 최적화 간섭. 후속(별도 H)=natem base seed별 imprint 용량 진단 or 더 많은 seed로 s7 crack 재현성 확인.
 
 ## 🚦 게이트 (동결)
 
