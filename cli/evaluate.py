@@ -7434,6 +7434,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-mix", "--store-lambda", "--manifest",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
+    "--store-addr-audit",
     "--cascade-null",
 ))
 
