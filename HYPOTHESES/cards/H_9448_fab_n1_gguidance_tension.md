@@ -1,6 +1,9 @@
 # H_9448 — G-guidance: tension 을 잉크로, 밸브가 아니라 (fable R1·N1 · PROPOSED)
 
 **status:** 🔵 PROPOSED (미실행 · 오너 framebreak lab full 고갈-발산 R1 · 사전등록) — source=fable
+
+## 🔎 $0 스크린 (N1 G-guidance · wftyw6v4h) — DIRECTIONAL-NEG·design-first
+per-byte G 부재(코드-거짓): G=post-hoc 1스칼라 valve(150/150). per-byte 빌드=20,480 recon/utterance. g_recog≠잔차 대리. 추진시 --g-ink β·차원불일치·256×cost·p5 오너·β-calibration 선행.
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9428]] (tension 이미 다차원 $0 확증=이 발산의 기반) · [[H_9424]] (cb-perr KILL=거리계+예측오차 소진→mouth 측 벽) · [[H_9400]] (Ψ=½ 반증) · source: lab full R1 fable(N1)
 

@@ -1,6 +1,9 @@
 # H_9468 — 온라인-PCA 게이트: 기질이 DOF 수를 스스로 고른다 (fable R1·N21 · PROPOSED)
 
 **status:** 🔵 PROPOSED (미실행 · 오너 framebreak lab full 고갈-발산 R1 · 사전등록) — source=fable
+
+## 🔎 $0 스크린 확장 (2D-loadings · wftyw6v4h)
+PC1(51.5%)=**coherence/context-fit** 축(coh+0.77·emit-결합 corr−0.38)·PC2(31.5%)=**originality↔balance** 축(orig+0.84·bal−0.44·emit-독립 corr+0.07·cos(w,PC2)0.03·basis-invariant). ⇒ 2D 라우팅 두 자연축 명명, PC2=진짜 emit-직교 제2 DOF(dissociation 확증). 다음=anima-py flag 로 PC2(orig↑/bal↓) 주입·emit 고정 Δgtext 측정→TERMINAL.
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9428]] (tension 이미 다차원 $0 확증=이 발산의 기반) · [[H_9424]] (cb-perr KILL=거리계+예측오차 소진→mouth 측 벽) · [[H_9400]] (Ψ=½ 반증) · source: lab full R1 fable(N21)
 

@@ -1,6 +1,9 @@
 # H_9463 — 백로그 장(field): 스칼라 백로그의 공간화 (fable R1·N16 · PROPOSED)
 
 **status:** 🔵 PROPOSED (미실행 · 오너 framebreak lab full 고갈-발산 R1 · 사전등록) — source=fable
+
+## 🔎 $0 스크린 (N16 backlog · wftyw6v4h) — DIRECTIONAL-POS
+backlog trace 부재나 nov_ctx+emit 로 재계산 가능(cb_pressure=s/(1+s)). N16 공간화 flag 정당(cb_pressure→emit 경로)·design-first(회귀-발화 압력 emit-분리 조향 3-기준). 미배선.
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9428]] (tension 이미 다차원 $0 확증=이 발산의 기반) · [[H_9424]] (cb-perr KILL=거리계+예측오차 소진→mouth 측 벽) · [[H_9400]] (Ψ=½ 반증) · source: lab full R1 fable(N16)
 
