@@ -346,3 +346,41 @@ rung-3 = 10 137 040 B ⟹ **R = round(10 137 040 / 6 957) = 1457** for the |S_op
 Artifacts on aiden: `~/h9410/rung_{768,1713}/A{768,1713}.txt` + gate manifests. Budgets (card): rung-2 ~100K,
 rung-3 ~250K. Each fires the anchor's driver recipe with corpus + budget swapped, seeds {7,11}, evaluate
 sop/sdecl. **The only thing left is GPU time** (rung-1 holds the single aiden GPU — `a_wall_first`).
+
+---
+
+## INTERIM #5 (2026-07-16 · session 2 · rung-1 gate → KILL SIGNATURE REPRODUCED · climb to rung-2)
+
+rung-1 (|S_op|=96 · 4× the anchor) trained both seeds (30K steps · aiden · $0) then evaluated. Full gate:
+
+| seed | G-ALIVE `sop` (n=288) | `S_decl` GATE (n=144) | `S_cpt` (n=144) |
+|---|---|---|---|
+| 7  | **0.9896** (margin_med +2.824) | **0.3889** (margin_med −1.857) | 0.5208 (−0.159) |
+| 11 | **0.8993** (margin_med +9.449) | **0.4236** (margin_med −4.429) | 0.5417 (+0.171) |
+| bar | ≥0.90 | chance-or-below | (monitor) |
+
+**Verdict: KILL SIGNATURE REPRODUCED at |S_op|=96.** The operator is learned (G-ALIVE strongly positive both
+seeds) yet does **not** transfer to operator-0-exposure held-out declared stems (`S_decl` **0.39 / 0.42**, both
+BELOW chance, both margins strongly negative). Quadrupling |S_op| from the anchor (24→96) did **not** un-cache
+the operator — cache still beats rule. Per the frozen protocol ⟹ **climb to rung-2 (N=768)**.
+
+**Honest flags (not swept):**
+- **seed-11 G-ALIVE = 0.8993** lands **0.0007 UNDER** the frozen ≥0.90 bar. NOT tuned to green: the number is
+  reported as-is. margin_med **+9.449** (3× seed-7's) and sampled_maj_acc **0.900** confirm the operator is
+  robustly alive — the bar's PURPOSE (exclude budget-negative / dead-operator) is met — but the literal d_acc is
+  a hair under. The verdict direction is unaffected: `S_decl` 0.39/0.42 is nowhere near crossing chance, so both
+  a strict and a generous G-ALIVE reading give the same "no rule emergence at rung-1" conclusion.
+- **Driver instrument bug (FIXED for rung-2/3):** the `sop` eval (288 rows) hit `evaluate`'s fail-closed guard —
+  default `--n-decode 200` would silently drop 88 whole-stem rows, so it refused (RC=1). G-ALIVE was recovered by
+  re-running `evaluate … --n-decode 288`. rung-2 `sop`=1152 rows, rung-3 `sop`=2568 rows would hit the same wall,
+  so the rung-2 driver now passes **`--n-decode 3000`** on every eval (≥ every manifest; `sdecl`/`scpt` 144-row
+  results are byte-unchanged since 144 < 200 < 3000). The guard firing is a GOOD catch — it prevented a
+  whole-stem-dropped G-ALIVE from being read as a real number.
+
+### rung-2 — FIRE ATTEMPTED, GPU-BLOCKED (concrete blocker · not a science result)
+The rung-2 driver (fixed `--n-decode 3000`, corpus `A768.txt` pre-built, budget 100K, seeds {7,11}) was launched
+but `anima-py train` **refused to start**: aiden's single GPU is held by a parallel session's train job
+(`h9339_fire/ho_decl` · 9.7 GiB · ~1 h to free). The trainer's own GPU-busy guard refused cleanly BEFORE the
+corpus build (a_wall_first · zero waste). summer has a free GPU but load ~13 (CPU-saturated) — firing a 100K-step
+run there risks the summer-overfire wedge, so rung-2 waits for aiden's GPU. **Resume: re-run
+`~/h9410/rung_768/driver.sh` on aiden when its GPU frees.**
