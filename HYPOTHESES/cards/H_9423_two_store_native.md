@@ -1,6 +1,7 @@
 # H_9423 — TWO-STORE NATIVE: 공학습 store-조회 다리를 부모 conv byte-LM 에 심는다
 
-**status:** 🔵 PRE-REGISTERED (설계 동결 · 미구현) · not-terminal · wired: 미배선(S0 배선 smoke 부터)
+**status:** 🔵 PRE-REGISTERED → **S0 배선 DONE**(CLMS lane 구현·$0 로컬 검증) · not-terminal · wired: CLMS trailer lane 배선완료(학습 미실행)
+**S0 결과(#PR · 로컬 $0):** CLMS store-bridge lane 6조각 배선·전부 실측 — ① corpus `storebind` fmt(결정성 byte-id·C0-a zero-leak 0·XOR 검산) ② `core/clms.py`(3-face+find_qpos · pack/read 왕복 byte-identical · store_apply 덮어쓰기 qpos-only · oracle 경로 · λ0 passthrough) ③ `core/decode.py` 3점(로더 785↓·`set_clms_store` setter·`_fwd_logits` CLML early-return 제거 fall-through) ④ `core/serialize.py` `append_clms_trailer`(toy.clm 왕복 byte-identical·C0-f body 불변) ⑤ `cli/evaluate.py` `--store/--store-oracle/--store-lambda`(end-to-end 완주·per-class split) ⑥ VERSION 0.14.13(G5). **lane active 확증**: store_apply 가 `_fwd_logits` 서 발화(λ1 vs passthrough qpos row Δ=0.47)·λ0==passthrough byte-identical. Fable §E 정본: key_emb=**파일저장**(seed 재생성=조용한 계기사망 벡터 반려). 무학습 toy 정확도=우연(0.53·예상 · S0=배선지 학습 아님). 🔒 미구현: CLMSModule 학습 배선(train.py store 주입)=S1 · replay `=> ` 트라이그램 스캔 게이트=replay 도입 시(S1).
 **lane:** 재조합/BINDING · runtime lookup bridge (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9392]] (BRIDGE-BOLT 3-port 종결 — 볼트온 死 ⟹ 공학습이 유일 남은 경로 · 이 H 가 그 NEXT) · [[H_9359]] (벽=런타임 다리 부재) · [[H_9327]] (SEEN 극성 이미 학습 = ② shortcut 난점) · [[H_9353]] (컨텍스트-port EARNED)
 **id 정정:** 앞선 카드/메모리가 이 작업을 "H_9393" 로 forward-참조했으나 **H_9393 은 병렬 세션이 DYNAMIC-FLOOR 로 선점**(id 충돌) ⟹ canonical = **H_9423**.
@@ -103,4 +104,5 @@ scratch/BOLT 는 ladder 소규모 대조 arm(BOLT = CLML 오프라인 파이프�
 
 ## NEXT
 
-S0 배선 smoke(자율 · $0) → S0.5 substrate 대조 → S1 ladder(go/no-go) → S2 303M(owner go) → S3 TERMINAL.
+~~S0 배선 smoke~~ **DONE**(CLMS lane 배선·$0 검증) → **S0.5 substrate 대조**(v2 하네스 conv trunk) → S1 ladder(pool COTRAIN+BOLT · go/no-go) → S2 303M(owner go) → S3 TERMINAL.
+S1 진입 전 필요: CLMSModule 학습 배선(`cli/train.py` 가 block store manifest 로 CLMS lane 공학습 · 답위치 store_only) + replay 도입 시 `=> ` 트라이그램 스캔 게이트(Fable §E).

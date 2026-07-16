@@ -3696,6 +3696,86 @@ def _store_mix_breakdown(rows):
     return out
 
 
+def store_run(argv):
+    """`anima-py evaluate <ckpt> --store <held.json> [--store-oracle] [--store-lambda λ]` — H_9423
+    CLMS store-bridge lane eval (the CO-TRAINED bridge, NOT the H_9392 --store-mix bolt-on actuator:
+    the boundary is "does the fusion parameter live inside the .clm and enter the forward pass"). Each
+    held-out item injects its 8-slot store at the query; the CLMS lane forms a content-addressed lookup
+    and OVERWRITES the answer-position logits with λ·store_logits (store_only). Binary readout = the
+    first answer byte ('g'=good vs 'b'=bad · v2 axis). --store-oracle forces the true slot (C0-e positive
+    control: ORACLE<0.90 = value/MLP/λ/serialization plumbing dead — read NO negative before it passes,
+    v2 reversed 3 instrument deaths on exactly this). Engine-native core/decode.py (a_eval_py_canonical →
+    TERMINAL-eligible). This flag MEASURES; the SEQUENTIAL C0→C1→C2→P1 battery + verdict fire on pool
+    (a_toy_scale_recheck · 303M needs owner go). Controls are eval-time store edits: derange
+    store.entities = key-shuffle · flip store.pols = wrong-store · --store-lambda 0 = λ0 byte-identical."""
+    import numpy as np
+    ckpt = argv[0]
+    man_path = evaluate_strval(argv[1:], "--store", "")
+    oracle = "--store-oracle" in argv
+    lam_s = evaluate_strval(argv[1:], "--store-lambda", "")
+    lam_override = float(lam_s) if lam_s else None
+    if lam_override is not None and not (0.0 <= lam_override <= 1.0):
+        print("ERROR: --store-lambda must be in [0,1], got %r" % lam_override)
+        return 1
+    if not man_path:
+        print("ERROR: --store needs a held-out manifest (--store <held.json>).")
+        return 1
+    man = json.load(open(man_path))
+    entries = man.get("entries", man.get("held_out", []))
+    if isinstance(entries, dict):
+        entries = list(entries.values())
+    T = evaluate_intval(argv[1:], "--win", 24)
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    import clms as _clms
+    print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
+    print("ckpt: %s  manifest: %s (%d items)  oracle=%s  λ=%s  win=%d"
+          % (ckpt, man_path, len(entries), oracle,
+             ("%.3f" % lam_override) if lam_override is not None else "(file)", T))
+    if W.get("clms") is None:
+        print("  ⚠️ this ckpt carries NO CLMS trailer — the lane is ABSENT (base trunk). A base ckpt "
+              "reads FLOOR (chance) by construction (the honest before-state); a co-trained ckpt is the "
+              "signal-bearing follow-on. Running to exercise the pipe, not to read a verdict.")
+    n = correct = 0
+    by = {}                                          # (op, pol) -> [correct, total]  (polarity-split · card)
+    g_id, b_id = ord("g"), ord("b")                  # byte value = logits index (see _store_mix_cont_nll)
+    for it in entries:
+        prompt, gold = it["prompt"], it["gold"]
+        st = it["store"]
+        store = {"entities": list(st["entities"]), "pols": list(st["pols"]),
+                 "target_slot": it.get("target_slot")}
+        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override)
+        tok = clm._seed_to_tok(prompt, T)
+        logits = np.asarray(clm._fwd_logits(W, tok, T))
+        qpos = _clms.find_qpos(tok)
+        if not qpos:
+            continue                                 # no "=> " in window (malformed item)
+        row = logits[qpos[-1]]                        # logits at the query row = predicts first answer byte
+        pred = "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
+        ok = (pred == gold)
+        n += 1
+        correct += int(ok)
+        key = (it.get("op"), 0 if gold == "good" else 1)
+        rec = by.setdefault(key, [0, 0])
+        rec[0] += int(ok)
+        rec[1] += 1
+    clm.set_clms_store(None)                          # reset the process-global (no leak into later runs)
+    acc = correct / n if n else 0.0
+    print("  overall: %d/%d = %.4f  (%s)"
+          % (correct, n, acc, "C0-e ORACLE positive control" if oracle else "content-address lookup"))
+    op_name = {0: "is ", 1: "not"}
+    pol_name = {0: "good", 1: "bad "}
+    for (op, pol), (c, t) in sorted(by.items(), key=lambda x: str(x[0])):
+        print("    op=%s pol=%s: %d/%d = %.4f"
+              % (op_name.get(op, str(op)), pol_name[pol], c, t, c / t if t else 0.0))
+    if oracle:
+        print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (v2: mixing/value/MLP/λ "
+              "paths die silently below this). FLOOR on a base (no-CLMS) ckpt is honest, not a fail.")
+    return 0
+
+
 def store_mix_run(argv):
     """`anima-py evaluate <ckpt> --store-mix <store.json> [--store-lambda λ]` — H_9392
     BRIDGE-BOLT store-mix instrument. Bolt a runtime store-lookup onto the FROZEN trunk:
@@ -7076,6 +7156,7 @@ _KNOWN_FLAGS = frozenset((
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
+    "--store", "--store-oracle",
 ))
 
 
@@ -7495,6 +7576,11 @@ def main(argv):
     # answer position). SEQUENTIAL C0 gate (λ=0 byte-identical to baseline) inside the run.
     if "--store-mix" in argv:
         return store_mix_run(argv)
+    # --store <held.json> [--store-oracle] [--store-lambda λ]: H_9423 CLMS store-bridge lane — the
+    # CO-TRAINED bridge (store injected at the query, answer-position logits OVERWRITTEN by the lane's
+    # content-addressed lookup). Distinct from --store-mix (H_9392 post-forward actuator).
+    if "--store" in argv:
+        return store_run(argv)
     if "--xbind" in argv:
         return xbind_run(argv)
     # --xfan <manifest.json>: held-out XFAN one-to-many fan (G6 reopen lane · card H_9271).
