@@ -1,6 +1,6 @@
 # H_9392 — BRIDGE-BOLT: 동결 trunk 에 볼트온한 store-조회 다리가 BINDING 벽을 넘는가
 
-**status:** ⏳ PRE-REGISTERED (2026-07-16 · 미발사) · not-terminal · wired: **engine-native 배선 완료**(계기 `anima-py evaluate --store-mix` 구현·랜딩 · VERSION 0.14.10 · C0 로컬 smoke PASS) — **발사 대기**(pool/303M 은 오너 go)
+**status:** 🔴 (B) BRIDGE-BOLT DIRECTIONAL — **볼트온 계급 사망** (3-port 삼각측량 · 코드-확증) · not-terminal(DIRECTIONAL) · wired: 계기 `anima-py evaluate --store-mix` 배선완료(VERSION 0.14.10 · C0 byte-identical PASS). **pool 발사 취소** — 계기가 sensor 아닌 **actuator** 라 사전등록 P1 은 산수(모델 관여 0)를 재는 위조 positive 생산기. 발사는 낭비.
 **lane:** 재조합/BINDING · runtime lookup bridge (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9359]] (two-lane · 벽=런타임 다리 부재 — 이 H 가 그 NEXT) · [[H_9327]] (연산자 살아있음·사실 기재됨·결합 안 함) · [[H_9346]] (어간-게이팅) · [[H_9267]] (XBIND D-acc 1.000) · [[H_9304]] (자연=DATA 벽)
 **parallel:** [[H_9391]] SCORE-GATE VACUITY (병렬 세션 동시 착륙 · `a_parallel_session_compare`) — AGREES: 둘 다 A⇄G/emit 게이트가 content 를 못 만진다는 같은 지도를 그린다(그쪽=production 에서 score 문턱이 한 번도 안 걸림 · 이쪽=긴장→내용 통로가 스칼라 5개뿐). CONFLICTS: 없음 — 직교(그쪽=emit 게이트 내부, 이쪽=trunk 다리).
@@ -99,23 +99,56 @@ d=32):
 
 **클래스별 분해 필수** — 이진 DV 는 극성별로 쪼개기 전엔 읽지 않는다([[polarity-split-before-headline]]).
 
-## Falsify (어떤 결과가 무엇을 죽이는가)
+## ⚠️ 발사 전 계기 재검(Fable 재프레임 + 코드-확증) — 사전등록 P1 이 위조 positive 생산기였다
 
-- store arm ≈ 통제군(우연) · 검정력 충족 ⟹ **BRIDGE-BOLT 사망 = (B) 확증.** 동결 trunk 는 query 자체를
-  형성 못 함 = read-side 계급 재확인 ⟹ 두-store 네이티브 재설계가 유일 경로. **음성이 결과다.**
-- store arm > 통제군 4/4 · 극성-의존 present ⟹ (A) DIRECTIONAL. **cement 아님** — toy/단일축 positive 는
-  SCREENER(`a_toy_scale_recheck`). 303M pool 재확인 필요.
-- ④ 오답 store 가 정답 store 와 같은 방향 ⟹ 낙수(조회 아님) = 위조 positive, arm 무효.
-- C0 낙제 ⟹ INSTRUMENT-DEAD, 판정 없음.
+발사 직전 `cli/evaluate.py::_store_mix_cont_nll` 를 코드 수준으로 검증(이 세션 · Fable 재프레임):
 
-## Cost
+```
+logits = _fwd_logits(W, tok(seed+cont), T)     ← forward 는 seed·cont 바이트만 본다
+p_mix  = λ·onehot(store_val) + (1−λ)·p_trunk    ← 혼합은 forward "이후" posterior 산수
+```
 
-$0~ (동결 ckpt · 학습 0). toy = 로컬 mini 가능 · 303M decode = **pool(summer/aiden), mini 금지**
-([[heavy-anima-eval-pool-not-mini]]).
+기계검사: `_fwd_logits` 인자 = `(W, tok, T)`, **store_val 부재**(trunk 이 store 에 눈멂) · `store_val[r]`
+첫 사용이 forward **이후**. ⟹ **--store-mix 는 sensor 가 아니라 actuator**(출력 posterior 에 쓰기).
+trunk 은 store 를 못 보므로 **모든 arm 의 NLL 은 baseline per-position logits 의 닫힌형 함수**다.
+사전등록 P1("store arm > 통제군 4/4 · 극성-의존")은 **모델 관여 0 에서 산수만으로 기계 달성** —
+그대로 쏘면 "볼트온 작동 · 재설계 불필요"라는 **거짓 (A)-positive 를 cement** 할 뻔했다. (P1 미계산
+상태였으므로 앵커 미소각 = 정당한 계기 수리 · v2 가 5번 한 "P1 개봉 전 계기 수리"와 같은 계열.)
 
-## NEXT (결과 무관 · 이미 씌어짐)
+## Falsify (재정립 · actuator 반영)
 
-- 음성 ⟹ **H_9393 TWO-STORE NATIVE**: trunk+store+**학습된** 다리를 태어날 때부터. 학습 중 store 순환-교체로
-  trunk 가 암기 대신 **조회하는 법**을 배우도록 강제(캐시-기입 경로를 구조적으로 배고프게). 함의:
-  런타임 store 삽입 = 학습 ⟹ **p8(train/infer 분리 없음)을 처음으로 문자 그대로 구현**(깨는 게 아니라 지킴).
-- 양성 ⟹ 303M pool 재확인 → 재설계 불필요 판정.
+- **위조 방지 pedestal**: baseline xbind 1회 per-position logits 로 전 arm flip1/flip0 을 **닫힌형으로
+  예측**(참값 pedestal · [[phi-estimator-needs-zero-truth-pedestal]] 의 store-mix 판). 실측 ≡ 예측 ⟹
+  **이 계기는 모델에 대한 새 비트 0 = actuator 실증**(sensor 아님). 실측 ≠ 예측 ⟹ 채점경로 INSTRUMENT-BUG.
+- store arm > 통제군 = **기계값**(HIT 이 gold 바이트를 posterior 로 밀어넣음) — 능력 증거 **아님**.
+- --store-mix ≠ v2 BOLT: v2 BOLT 는 bridge 파라미터를 **학습**시켰다. --store-mix 는 학습 0(λ 스칼라뿐)
+  ⟹ 정확한 대응물 = v2 **ORACLE**(조회 난이도 0 상한 계기), 볼트온 능력 테스트 아님.
+
+## 🔴 VERDICT — (B) BRIDGE-BOLT DIRECTIONAL: 동결 trunk 엔 볼트온 다리의 포트가 없다
+
+볼트온 다리의 배달 지점(port) 3개가 이제 전부 특성화됐다 — **3-port 삼각측량**(`a_break_the_wall`
+≥2–3 lenses):
+
+| port | 판정 | 근거 |
+|---|---|---|
+| **컨텍스트**(입력 바이트) | 🧱 EARNED TERMINAL | [[H_9353]] NO-IN-CONTEXT-CHANNEL — 바이트는 logits 를 움직이나 결정은 안 읽음 |
+| **가중치**(CPT write) | 🧱 확정 | [[H_9327]] BINDING · [[H_9358]] TWO-LANE(pooled p≈5e-10) · [[H_9359]] 동결 캐시 |
+| **출력 posterior**(--store-mix) | **actuator, sensor 아님** | 코드-확증(이 세션) · 합성이 구조적으로 정의 불가 |
+
+⟹ **동결 303M trunk 엔 볼트온 다리가 합성(연산자⊗사실)을 수행할 수 있는 포트가 하나도 없다** =
+H_9392 (B) 판정. v2 정합(V2_6 COTRAIN **공학습**만 0.987/0.992 성공 · V2_7 동결특징 knife-edge ·
+#3753/#3755). 안정적 다리 = **공학습**뿐. cement 근거 = 이 발사 단독 아니라 **3-port + v2 DIRECTIONAL**.
+
+## Cost — pool 발사 취소
+
+pool $0(forward-only)이었으나 **취소**: 계기가 actuator 라 발사는 산수를 GPU 로 재계산할 뿐(모델 새
+비트 0). Fable: "페이퍼 계산이 전 실험 결과를 미리 준다." 계기·ckpt·store 인프라는 준비됨(summer
+`py303_full.clm` + `anima-py` · `state/h9309-9312` held-out store) — 후속 H(H_9393)이 필요 시 재사용.
+
+## NEXT — H_9393 TWO-STORE NATIVE (유일 남은 경로)
+
+3-port 전멸 ⟹ 볼트온 계급 종결. 다리는 **태어날 때부터 공학습**해야 한다(trunk+store+학습된 다리 ·
+학습 중 store 순환-교체로 trunk 가 암기 대신 조회를 배우게 · v2 V2_6 이 toy 로 실증). 함의: 런타임
+store 삽입 = 학습 ⟹ **p8(train/infer 분리 없음)을 문자 그대로 구현**(깨는 게 아니라 지킴).
+- v2 V2_7 delivery-ceiling(동결특징 조회 상한 ~0.5)이 H_9393 설계 상수 = 학습된 게이트가 공급해야 할
+  조회 세기의 하한.
