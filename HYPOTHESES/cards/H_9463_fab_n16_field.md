@@ -2,6 +2,9 @@
 
 **status:** 🔵 PROPOSED (미실행 · 오너 framebreak lab full 고갈-발산 R1 · 사전등록) — source=fable
 
+## 🔎 $0 심화 (emit-직교성 · PC2 fire 병렬)
+cb_pressure 재계산(150tick): range [0,0.031] 미소·corr(pressure,emit)=**−0.610** 강결합=emit 이력 함수이지 emit-직교 DOF 아님(PC2 corr +0.07 정반대). ⇒ N16 라우팅은 dissociated 2nd DOF 못 줌·PC2(H_9574)가 유일 진짜 emit-직교 축. DIRECTIONAL-POS→NEG(직교성 실패).
+
 ## 🔎 $0 스크린 (N16 backlog · wftyw6v4h) — DIRECTIONAL-POS
 backlog trace 부재나 nov_ctx+emit 로 재계산 가능(cb_pressure=s/(1+s)). N16 공간화 flag 정당(cb_pressure→emit 경로)·design-first(회귀-발화 압력 emit-분리 조향 3-기준). 미배선.
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
