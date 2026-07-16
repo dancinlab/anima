@@ -233,7 +233,7 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
-                          mouth=None, dyn_w=None):
+                          mouth=None, dyn_w=None, record_cand_diag=False):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -289,6 +289,15 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
         decision["gen_backend"] = str(cand["backend"])
         decision["gen_text"] = ""
         decision["gen_fellback"] = False
+
+    # H_9510 HOLE-1 diagnostic (measurement-only · NOT fed back to mouth/decode = p5-safe):
+    # record the IMAGINED candidate (both emit and silence ticks) so an offline conditioned-
+    # Jaccard test can ask whether near-repeat structure appears after silence runs (context
+    # frozen) that the over-emit regime hides. Off by default → production trace unchanged.
+    if record_cand_diag:
+        import base64 as _b64d
+        decision["cand_b64_diag"] = _b64d.b64encode(
+            cand_text.encode("utf-8", "surrogateescape")).decode("ascii")
 
     hippo = generator_hippo_consult(anchors)
     decision["gen_hippo_consulted"] = hippo["consulted"]
