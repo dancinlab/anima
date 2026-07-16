@@ -60,7 +60,7 @@ def _parse_args(argv):
             "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
-            "carrier_only": False, "surface": "flip1_suffix",
+            "carrier_only": False, "held_swap": False, "decl_only": False, "surface": "flip1_suffix",
             "collision_split": False, "nonce_fillers": 3, "win": 64,
             "bridge_split": False, "decl_ablate": False,
             # H_9410 RULE-VS-CACHE PRESSURE ENVELOPE instruments:
@@ -125,6 +125,10 @@ def _parse_args(argv):
             opts["tail"] = argv[i + 1]; i += 2
         elif a == "--carrier-only":
             opts["carrier_only"] = True; i += 1
+        elif a == "--held-swap":
+            opts["held_swap"] = True; i += 1
+        elif a == "--decl-only":
+            opts["decl_only"] = True; i += 1
         elif a == "--surface":
             opts["surface"] = argv[i + 1]; i += 2
         elif a == "--collision-split":
@@ -561,7 +565,8 @@ CARRIERSWAP_FIXED = (("swap", 12), ("affirm", 2), ("keep", 3))   # untouched = l
 # ---------------------------------------------------------------------------
 
 
-def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=False):
+def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=False,
+                      held_swap=False, decl_only=False):
     """C4 — write the inverted polarity ALSO through the operator's own `지 않다` carrier, then ask
     whether the operator reads the new value on a DISJOINT scored surface (H-ε) or the old one (H-δ).
 
@@ -580,6 +585,15 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
     if len(seen) < fixed + 1:
         raise ValueError("carrierswap needs >= %d SEEN atoms (swap/affirm/keep + >=1 untouched), got %d"
                          % (fixed + 1, len(seen)))
+    # H_9339 registered cells: HO-CARRIER = --held-swap · HO-DECL = --held-swap --decl-only.
+    if held_swap and carrier_only:
+        raise ValueError("--held-swap x --carrier-only is not a registered cell (HO arms are "
+                         "HO-CARRIER = --held-swap, HO-DECL = --held-swap --decl-only)")
+    if decl_only and not held_swap:
+        raise ValueError("--decl-only without --held-swap is C3 (declarative-only) — use ground_seenswap")
+    if held_swap and len(held) < CARRIERSWAP_FIXED[0][1]:
+        raise ValueError("carrierswap --held-swap needs >= %d HELD-OUT atoms (swap arm), got %d"
+                         % (CARRIERSWAP_FIXED[0][1], len(held)))
 
     srng = random.Random(split_seed)
     pos = [x for x in seen if x[1] == 1]
@@ -598,6 +612,26 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
         arms[name] = picked
     arms["untouched"] = pos[pi:] + neg[ni:]           # GATE FIX ① — every remaining SEEN stem, no cap
 
+    if held_swap:
+        # HO mode (H_9339): the swap arm is redrawn from the HELD-OUT pool. The seen draw above ran
+        # UNCHANGED first, so affirm/keep/untouched are stem-identical to C4 at the same --split-seed;
+        # the 12 stems C4 wrote become `preserve` — written 0x here, the highest-power G-PRESERVE
+        # stratum (C4 measured these exact stems flipping 12/12 when written). corpus-py-1 (A)/(F):
+        # the generalisation axis is the STEM, so the DV lives on stems with ZERO CPT exposure.
+        arms["preserve"] = arms.pop("swap")
+        hpos = [x for x in held if x[1] == 1]
+        hneg = [x for x in held if x[1] == 0]
+        srng.shuffle(hpos)                             # same srng, AFTER the seen shuffles: the seen
+        srng.shuffle(hneg)                             # draw stays byte-identical to C4
+        picked, hpi, hni = [], 0, 0
+        for k in range(CARRIERSWAP_FIXED[0][1]):       # 12, polarity-stratified like the seen draw
+            src = hpos if (k % 2 == 0 and hpi < len(hpos)) or hni >= len(hneg) else hneg
+            if src is hpos:
+                picked.append(hpos[hpi]); hpi += 1
+            else:
+                picked.append(hneg[hni]); hni += 1
+        arms["swap"] = picked
+
     rng = random.Random(seed)
     lines = []
 
@@ -611,15 +645,20 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
             lines.append(GROUND_TMPL.format(surf=pat.format(s=stem),
                                             pol="부정" if stem_pol == 1 else "긍정"))
 
+    ho_stems = {s for s, _ in arms["swap"]} if held_swap else frozenset()
     for _ in range(reps):
         for stem, pol in held:                        # held-out: unchanged (WRITE reproduction).
-            arrow(stem, pol)                           # KEPT under --carrier-only: it is what holds
+            if stem in ho_stems:                       # --held-swap: a swap stem's ONLY declarative
+                continue                               # exposure is the swap arm's INVERTED arrow —
+            arrow(stem, pol)                           # a true-pol line here would fight the plant.
+                                                       # KEPT under --carrier-only: it is what holds
                                                        # the declarative surface alive through CPT.
     for _ in range(replay):
         for stem, pol in arms["swap"]:                # THE MANIPULATION — inverted
             if not carrier_only:
                 arrow(stem, 1 - pol)                   # declarative key (identical to C3) — C5 drops it
-            carrier(stem, 1 - pol)                     # operator's OWN key (new in C4, the ONLY key in C5)
+            if not decl_only:
+                carrier(stem, 1 - pol)                 # operator's OWN key (C4/C5) — HO-DECL drops it
         for stem, pol in arms["affirm"]:              # diagnostic: declarative at original polarity
             arrow(stem, pol)
         for stem, pol in arms["keep"]:                # holds the operator up on ORIGINAL polarity
@@ -641,10 +680,31 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
     flip1_man, write_man = _swap_eval_manifest(arms)
     st = {"held": len(held), "lines": len(lines), "bytes": len(text.encode()),
           "carrier_only": bool(carrier_only),
+          "held_swap": bool(held_swap), "decl_only": bool(decl_only),
           "arms": {k: [s for s, _ in v] for k, v in arms.items()},
           "untouched_n": len(arms["untouched"]),
           "measured_prompt_leaks": leaks,
           "flip1_manifest": flip1_man, "write_manifest": write_man}
+    if held_swap:
+        # NEW audit #1 (plant integrity) — a swap stem's TRUE-polarity declarative line would fight
+        # the INVERTED plant. The held-loop exclusion above suppresses it; this VERIFIES it is gone
+        # (corpus-py-1 ⑩: never assume a substring guard held — check it, builder-coded).
+        st["ho_contradiction_leaks"] = []
+        for stem, pol in arms["swap"]:
+            for pat in GROUND_FORMS_FLIP0:
+                line = GROUND_TMPL.format(surf=pat.format(s=stem),
+                                          pol="긍정" if pol == 1 else "부정")
+                if line in text:
+                    st["ho_contradiction_leaks"].append(line.strip())
+        # NEW audit #2 (corpus-py-1 ⑦: a readback gate that reads nothing back gates nothing) — every
+        # G-WRITE probe must be IN the corpus. w0 declarative (both arms) + carriers (HO-CARRIER only).
+        gate_rows = list(write_man["heldout"])
+        if not decl_only:
+            car_man = _carrier_readback_manifest(arms)
+            st["carrier_manifest"] = car_man
+            gate_rows += car_man["heldout"]
+        st["ho_readback_present"] = sum(1 for it in gate_rows if it["seed"] in text)
+        st["ho_readback_n"] = len(gate_rows)
     if carrier_only:
         heldR = _heldr_draw(held, split_seed)
         f0, car = _c5_eval_manifests(arms, heldR)
@@ -960,6 +1020,27 @@ def _swap_eval_manifest(arms):
                 write.append(_item(stem, arm, _WRITE_TAG[0], _WRITE_TAG[1], planted, 0))
     return ({"win": 64, "gen": 8, "heldout": flip1, "seen": []},
             {"win": 64, "gen": 8, "heldout": write, "seen": []})
+
+
+def _carrier_readback_manifest(arms):
+    """G-WRITE for --held-swap (H_9339): readback of the TAUGHT operator-carrier surfaces.
+    C4's G-WRITE ran on the declarative w0; the card's G-WRITE for HO is the *carrier* readback
+    (>= 11/12). swapC (12, planted=1-pol) is the gate; keepC (3, planted=pol) is the sanity twin.
+    gold = word(flip(planted)) — exactly the label the corpus carrier line carries: the writer
+    emits `carrier(stem, planted)` -> label word(planted^1), so gold_word = word(planted^1)."""
+    def _word(b):
+        return "긍정" if b else "부정"
+    rows = []
+    for arm, cname in (("swap", "swapC"), ("keep", "keepC")):
+        for stem, pol in arms[arm]:
+            planted = (1 - pol) if arm == "swap" else pol
+            gw, cw = _word(planted ^ 1), _word(planted)
+            for tag, surf in _CARRIER_TAGS:
+                seed = GROUND_TMPL.format(surf=surf.format(s=stem), pol="")[:-len(".\n")]
+                rows.append({"a": stem, "b": "%s|%s" % (cname, tag), "seed": seed,
+                             "stem": stem, "pol": planted, "flip": 1,
+                             "gold_word": gw, "gold": gw + ".\n", "counterfactual": cw + ".\n"})
+    return {"win": 64, "gen": 8, "heldout": rows, "seen": []}
 
 
 # ---------------------------------------------------------------------------
@@ -2890,7 +2971,11 @@ def main():
         print("      `지 않다` rule reads the new value or the pretrained one. Replay carriers are")
         print("      DISJOINT from the scored surfaces (else the flip1 answer is taught, not composed);")
         print("      both sets are surfaces the C1b census measured the operator running on.")
-        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S] [--carrier-only]")
+        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S] [--carrier-only | --held-swap [--decl-only]]")
+        print("      --held-swap = H_9339 — the swap arm is drawn from the HELD-OUT pool (single variable")
+        print("      vs C4); the 12 SEEN stems C4 wrote become `preserve` (0x written, the matched")
+        print("      G-PRESERVE stratum). --decl-only (with --held-swap) = HO-DECL: swap stems written")
+        print("      through the DECLARATIVE key only (C3's write, held pool, H_9327 reproduction).")
         print("      --carrier-only = C5-REVERSE (H_9353) — the last empty cell of the C3/C4 2x2.")
         print("      Writes the inverted polarity through the CARRIER (operator) key ONLY — the swap")
         print("      and keep arms lose their declarative arrow — and scores the DECLARATIVE surface")
@@ -3000,7 +3085,8 @@ def main():
             print("anima corpus ground_carrierswap: --atoms gt_atoms.json is required")
             sys.exit(2)
         text, st = build_carrierswap(opts["atoms"], opts["reps"], opts["replay"],
-                                     opts["seed"], opts["split_seed"], opts["carrier_only"])
+                                     opts["seed"], opts["split_seed"], opts["carrier_only"],
+                                     opts["held_swap"], opts["decl_only"])
         if st.get("flip0_leaks"):
             # C5-REVERSE: the DV is the DECLARATIVE surface, so a swap/keep/untouched declarative
             # prompt in the corpus would hand the model the answer it is supposed to infer.
@@ -3024,15 +3110,36 @@ def main():
             for x in st["measured_prompt_leaks"][:5]:
                 print("    %s" % x, file=sys.stderr)
             sys.exit(2)
+        if st.get("ho_contradiction_leaks"):
+            # --held-swap plant integrity: a swap stem's TRUE-polarity declarative line fights the
+            # INVERTED plant, making the written value an undefined mixture — refuse (corpus-py-1).
+            print("anima corpus ground_carrierswap --held-swap: PLANT CONTRADICTION — %d TRUE-polarity "
+                  "declarative line(s) for a swap stem are in the corpus (the plant is undefined)"
+                  % len(st["ho_contradiction_leaks"]), file=sys.stderr)
+            for x in st["ho_contradiction_leaks"][:5]:
+                print("    %s" % x, file=sys.stderr)
+            sys.exit(2)
+        if st.get("held_swap") and st["ho_readback_present"] != st["ho_readback_n"]:
+            # A G-WRITE gate whose prompt is not in the corpus gates nothing (corpus-py-1 ⑦).
+            print("anima corpus ground_carrierswap --held-swap: BROKEN GATE — %d/%d G-WRITE readback "
+                  "prompts absent from the corpus (a readback gate must read something back)"
+                  % (st["ho_readback_present"], st["ho_readback_n"]), file=sys.stderr)
+            sys.exit(2)
         open(opts["out"], "w", encoding="utf-8").write(text)
-        mode = "C5-REVERSE (--carrier-only)" if st["carrier_only"] else "C4"
+        mode = ("C5-REVERSE (--carrier-only)" if st["carrier_only"] else
+                "HO-DECL (--held-swap --decl-only)" if st.get("decl_only") else
+                "HO-CARRIER (--held-swap)" if st.get("held_swap") else "C4")
         print("anima corpus ground_carrierswap [%s]: lines=%d bytes=%d leaks=0 untouched_n=%d -> %s"
               % (mode, st["lines"], st["bytes"], st["untouched_n"], opts["out"]))
         print("  forget-gate power: 0 flips -> 95%% UCB on SEEN forgetting = 3/%d = %.1f%% (rule of three)"
               % (st["untouched_n"], 300.0 / st["untouched_n"]))
-        for k in ("swap", "affirm", "keep", "untouched"):
-            print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
+        for k in ("swap", "preserve", "affirm", "keep", "untouched"):
+            if k in st["arms"]:
+                print("  %-10s n=%2d  %s" % (k, len(st["arms"][k]), " ".join(st["arms"][k])))
         arms_st = {k: st[k] for k in ("held", "lines", "bytes", "arms", "untouched_n", "carrier_only")}
+        for k in ("held_swap", "decl_only"):
+            if st.get(k):
+                arms_st[k] = st[k]
         json.dump(arms_st, open(opts["out"] + ".arms.json", "w"), ensure_ascii=False, indent=1)
         # Eval manifests from the SAME arm draw (a_experiment_engine_native): the fire scores these
         # with `anima-py evaluate --xbind`, so the arm<->manifest split can never drift (C3 hand-built
@@ -3045,6 +3152,17 @@ def main():
             print("  eval manifests -> %s (%d flip1) · %s (%d write)"
                   % (f1_path, len(st["flip1_manifest"]["heldout"]),
                      w_path, len(st["write_manifest"]["heldout"])))
+            if st.get("held_swap") and not st.get("decl_only"):
+                # HO-CARRIER G-WRITE = carrier readback (>= 11/12); C4's w0 write is the
+                # declarative precondition, this is the operator-key landing gate (card).
+                c_path = opts["out"] + ".carrier.json"
+                json.dump(st["carrier_manifest"], open(c_path, "w"), ensure_ascii=False)
+                print("  G-WRITE manifest -> %s (%d carrier readback: swapC>=11/12 gates, keepC=twin)"
+                      % (c_path, len(st["carrier_manifest"]["heldout"])))
+            if st.get("held_swap"):
+                print("  audit  plant-contradiction: 0 ✅   G-WRITE readback in corpus: %d/%d ✅   "
+                      "preserve n=%d (0x-CPT G-PRESERVE stratum = C4's swap stems)"
+                      % (st["ho_readback_present"], st["ho_readback_n"], len(st["arms"]["preserve"])))
             return 0
         # C5: the declarative surface is the DV, so `.write.json` (a C4 readback gate on a line C5
         # never writes) would be a nonsense file — it is NOT emitted. `.flip0.json` replaces it.

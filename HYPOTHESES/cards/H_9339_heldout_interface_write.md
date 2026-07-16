@@ -2,7 +2,7 @@
 
 - **group**: g1-interface-addressable-wall
 - **date**: 2026-07-15
-- **tier**: ⏳ **PRE-REGISTRATION** (계기 배선 + $0 스크리너 · 데이터 0 · 판정 0)
+- **tier**: 🔧 **계기 WIRED** (`--held-swap [--decl-only]` engine-native · 빌더 스모크 $0 통과 · base-eval 스크리너 + 4-pod CPT 미실행 · 데이터 0 · 판정 0)
 - **surfaces**: `HYPOTHESES/cards/H_9339_heldout_interface_write.md` · `HYPOTHESES/HYPOTHESES.jsonl`
 - **design**: Fable 위임 (C4=H-ε 이후 다음 한 발)
 
@@ -50,10 +50,20 @@ DV: held-out 어간에 대해 채점 표면 negL(`{s}지 않다`)·negZ(`별로 
    C4 쓰기가 착륙한 **locus**를 $0 에 읽어, A 음성 시 "착륙했는데 안 읽힘 vs 착륙 자체 안 됨" 진단축 확보
 3. 빌더 스모크: held-out 매니페스트가 WRITE 채널 측정 가능하게 나오는지
 
-## 🔌 계기 (engine-native · `a_experiment_engine_native`)
+## 🔌 계기 (engine-native · WIRED · `a_experiment_engine_native`)
 
-`ground_carrierswap` 에 **held-out 어간 swap 경로** 추가 (swap 팔을 SEEN 풀 대신 held-out 풀에서 draw) +
-`<18 SEEN 가드`를 held-out 모드에서 재정의. 그 외 전부 기존 배선(담체 쓰기·누수감사·매니페스트 방출).
+`anima corpus ground_carrierswap --held-swap [--decl-only]` (cli/corpus.py · Fable diff-spec).
+swap 팔을 **held-out 풀에서 draw**(단일 변수 vs C4), SEEN 전체 draw 는 먼저 그대로 돌아 affirm/keep/untouched 가
+C4 와 stem-동일 → C4 가 쓴 12 stem 은 `preserve`(0× CPT · 최고검정력 G-PRESERVE 지층). HO-CARRIER=`--held-swap`
+(양키·arrow+carrier), HO-DECL=`+ --decl-only`(선언키만). 가드: held-swap×carrier-only·decl-only-without-held-swap
+fail-loud. 신규 감사: plant-contradiction(swap stem 진극성 선언줄 0)·G-WRITE readback-present(카드 G-WRITE=담체
+readback ≥11/12 → `_carrier_readback_manifest` swapC 12×3 gates·keepC 3×3 twin).
+
+**빌더 스모크($0 스크리너 (c)) 통과** (local gt_atoms.json · 20 train/29 held):
+- C4/C5 **byte-inert**(held_swap=False sha 348d89bc == origin) — 기본경로 bit 무변.
+- HO-CARRIER/HO-DECL 빌드 OK · **preserve == C4 swap**(frozen check) · flip1/write manifest **byte-identical**
+  (양팔 · draw 순수함수) · plant-contradiction 0 · readback 57/57(HO-C)·12/12(HO-D) · gold 정합(swap planted=1-pol·preserve planted=pol).
+- 잔여 스크리너: (a) G-LEAK+G-BASE-FIRST base `--xbind` held-out(우연 확인·summer) (b) `--bind-locus` C4-vs-base 차분. 통과시만 4-pod CPT.
 
 ## ④ 비용
 
