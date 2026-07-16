@@ -7422,7 +7422,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--faction-block-structure", "--faction-block-provenance", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -9593,6 +9593,44 @@ def faction_block_structure_run(argv):
           % (N, d, min(N, d), 100.0 * (1.0 - min(N, d) / float(d)), d, d))
     print("       finite-sample noise). A positive control decides whether a negative is readable.")
     P = rng.normal(float(X.mean()), float(X.std()), (N, d))          # pedestal: TRUTH Q = 0
+
+    # --arm-random-init: SAME architecture, SAME production forward, weights re-drawn from their
+    # own per-tensor moments. Asks the question H_9672 T2 raised upstream of H_9674's blocks — does
+    # TRAINING make them, or the architecture alone? The i.i.d. pedestal cannot answer that (it has
+    # no conv/GN at all); this arm keeps every architectural fact and deletes only what was learned.
+    #   random-init has blocks too  => blocks are ARCHITECTURAL, not learned => no faction substrate.
+    #   random-init flat, real has  => blocks are LEARNED (H_9643 keeps its case); WHICH learning
+    #     (EN pretraining vs the task) still needs H_9672 T2's scratch arm, which was not preserved.
+    R = None
+    if "--arm-random-init" in argv:
+        rr = np.random.default_rng(seed + 1)
+        Wr = dict(W)
+        for k, v in list(Wr.items()):
+            if isinstance(v, np.ndarray) and v.dtype.kind == "f" and v.size > 1:
+                Wr[k] = rr.normal(float(v.mean()), float(v.std()) or 1e-3, v.shape).astype(v.dtype)
+        R = np.concatenate([np.asarray(clm.clm_forward_hidden(Wr, clm._seed_to_tok(it["prompt"], T), T),
+                                       dtype=np.float64) for it in items], axis=0)
+        print("arm:   +random-init (same architecture + same forward · weights re-drawn from their")
+        print("       own per-tensor moments) — isolates architecture from what was learned.")
+        # DEGENERACY GATE. Random weights through a deep conv drive every unit onto one common
+        # mode: measured |corr| mean 0.617 (real: 0.111), top eigenvalue 2840 of 7638 total mass,
+        # per-unit std 0.0035 against a global std of 1.02 — the units barely move on their own
+        # and swing together. The clusterer then collapses to the same trivial split for EVERY K
+        # and Q comes out IDENTICAL to 10 decimals (0.0419274192 at K=4, 8 and 12). That constant
+        # is a property of a degenerate graph, not evidence that the architecture makes blocks —
+        # reading it as such would have "shown" architecture contributing 6.6x over the pedestal.
+        # So the arm self-checks and refuses to report a number it cannot mean.
+        Cri = np.abs(np.corrcoef(R, rowvar=False)); Cri = np.nan_to_num(Cri, nan=0.0)
+        np.fill_diagonal(Cri, 0.0)
+        ri_cmean = float(Cri.mean())
+        x_cmean = float(np.nan_to_num(np.abs(np.corrcoef(X, rowvar=False)), nan=0.0).mean())
+        if ri_cmean > 3.0 * x_cmean:
+            print("       ⛔ random-init arm DEGENERATE — |corr| mean %.4f vs real %.4f (>3x): random"
+                  % (ri_cmean, x_cmean))
+            print("          weights put every unit on one common mode, so the clusterer collapses to")
+            print("          the same split at every K and Q is a constant of the degenerate graph, not")
+            print("          an architecture fact. Arm DROPPED from the read (a number it cannot mean).")
+            R = None
     S = np.stack([rng.permutation(X[:, j]) for j in range(d)], axis=1)  # scramble: marginals kept
 
     # positive control: PLANTED blocks — K_pc latent factors, each driving its own unit block.
@@ -9633,10 +9671,18 @@ def faction_block_structure_run(argv):
     for K in ks:
         qr, qp, qs = best_blocks(X, K, "real"), best_blocks(P, K, "ped"), best_blocks(S, K, "scr")
         ratio = (qr / qp) if abs(qp) > 1e-12 else float("nan")
-        print("%10d | %10.6f | %10.6f | %10.6f | %10s" %
-              (K, qr, qp, qs, ("%.3f" % ratio) if ratio == ratio else "—"))
-        out["rows"].append({"K": K, "real_Q": qr, "pedestal_Q": qp, "scramble_Q": qs,
-                            "real_over_pedestal": ratio})
+        row = {"K": K, "real_Q": qr, "pedestal_Q": qp, "scramble_Q": qs, "real_over_pedestal": ratio}
+        extra = ""
+        if R is not None:
+            qi = best_blocks(R, K, "randinit")
+            row["randinit_Q"] = qi
+            row["real_over_randinit"] = (qr / qi) if abs(qi) > 1e-12 else float("nan")
+            extra = "  | rand-init %.6f  real/ri %s" % (
+                qi, ("%.2f" % row["real_over_randinit"])
+                if row["real_over_randinit"] == row["real_over_randinit"] else "—")
+        print("%10d | %10.6f | %10.6f | %10.6f | %10s%s" %
+              (K, qr, qp, qs, ("%.3f" % ratio) if ratio == ratio else "—", extra))
+        out["rows"].append(row)
 
     rr = [r["real_over_pedestal"] for r in out["rows"] if r["real_over_pedestal"] == r["real_over_pedestal"]]
     mx = max(rr) if rr else float("nan")
