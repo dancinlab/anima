@@ -3153,15 +3153,28 @@ def _ra_read(probs, it, T):
     return {"ans": ans, "stem": stem, "win": win}
 
 
-def _ra_forward(ckpt, items, T, note):
+def _ra_forward(ckpt, items, T, note, gn_ref=""):
     """Run the engine-native route tap over every item of the manifest. Returns
-    (reads, meta) where reads[id][point] = the [E] route distribution."""
+    (reads, meta) where reads[id][point] = the [E] route distribution.
+
+    gn_ref (H_9611/H_9612): if non-empty, pin every GroupNorm's mu/var to the constants this
+    ONE pre-registered reference forward produces, so the normalizer is input-independent and
+    the trunk is strictly RF-local (the sequence-global GN bus is deleted; the affine is
+    untouched). Empty = live GN = byte-identical to the pre-flag behaviour. Wired here because
+    route_audit's W is loaded inside this function — before, `--route-audit --gn-freeze` parsed
+    the flag at the CLI allowlist and then SILENTLY IGNORED it, so the run read a false
+    "no difference" (the footgun H_9612 found)."""
     import numpy as np
     import time
     W = clm.clm_load_weights(ckpt)
     if not W.get("ok"):
         print("ERROR: ckpt not decodable: " + ckpt, file=sys.stderr)
         return None, None
+    if gn_ref:
+        _st = clm.gn_freeze_calibrate(W, clm._seed_to_tok(gn_ref, T), T)
+        clm.gn_freeze_set(_st)
+        print("  [gn-freeze] %s — %d GN sites pinned from ref (%d bytes · pre-registered, not swept)"
+              % (note, len(_st), len(gn_ref)), flush=True)
     E = int(W["E"]); L = int(W["L"]); K = int(W["K"])
     dev = "GPU" if clm.cuda_available() else "CPU"
     print("  [%s] %s · E=%d experts · L=%d · K=%d · device=%s" % (note, ckpt, E, L, K, dev))
@@ -3287,12 +3300,19 @@ def route_audit_run(argv):
     print("  frozen: LOCUS-SHARED iff 90%% CI of dOP inside +-%.2f bits (TOST) · else UNDERPOWERED"
           % G_TOST)
 
-    base, meta = _ra_forward(ckpt, items, T, "base")
+    # H_9612 · --gn-freeze <ref>: pin GN mu/var from ONE pre-registered reference forward so the
+    # trunk is strictly RF-local. Threaded into _ra_forward (where W is loaded) — the flag used to
+    # be accepted by the CLI allowlist and then silently dropped here, which reads as a false
+    # "no difference". Empty = live GN = byte-identical.
+    gn_ref = evaluate_strval(argv[1:], "--gn-freeze", "")
+    if gn_ref and os.path.exists(gn_ref):
+        gn_ref = open(gn_ref, "r").read()
+    base, meta = _ra_forward(ckpt, items, T, "base", gn_ref)
     if base is None:
         return 2
     post, meta2 = (None, None)
     if ckpt2:
-        post, meta2 = _ra_forward(ckpt2, items, T, "vs")
+        post, meta2 = _ra_forward(ckpt2, items, T, "vs", gn_ref)
         if post is None:
             return 2
         if meta2["device"] != meta["device"]:
@@ -3315,7 +3335,48 @@ def route_audit_run(argv):
         print("ERROR: manifest is missing surface(s) " + ",".join(missing), file=sys.stderr)
         return 2
 
+    # H_9612 · PER-SURFACE PEDESTAL + byte-length audit.
+    # The docstring above says ped is "byte-length-matched to negL's '지 않다'" (10 B) — and it is.
+    # But the DV runs X in {negL, negZ} against that SAME ped, and negZ ('지가 않다') is 13 B. Under
+    # the right-aligned window a 3-byte delta SHIFTS the whole seed, so the two arms are read at
+    # different absolute positions with different beyond-RF context behind them — and H_9611 measured
+    # a sequence-global GroupNorm bus that carries exactly such a shift to the readout. So negZ's
+    # excess over ped conflated "operator-specific" with "3 bytes longer".
+    #   `ctrl_of` (manifest, optional) maps each DV surface to ITS length-matched pedestal, e.g.
+    #   {"negL": "ped", "negZ": "ped13"}. Absent => every surface falls back to "ped" == the exact
+    #   pre-flag behaviour (byte-identical), so no cemented number moves by this commit alone.
+    ctrl_of = dict(spec.get("ctrl_of") or {})
+    for s in ("negL", "negZ"):
+        ctrl_of.setdefault(s, "ped")
+    bad = [c for c in set(ctrl_of.values()) if c not in surfs]
+    if bad:
+        print("ERROR: ctrl_of names surface(s) absent from the manifest: " + ",".join(sorted(bad)),
+              file=sys.stderr)
+        return 2
+    # byte-length audit — LOUD, never silent: a DV pair whose seeds differ in length is a
+    # length-shift confound (H_9612), and the reader must see it inline, not discover it later.
+    blen = {}
+    for it in items:
+        blen.setdefault(it["surf"], set()).add(int(it["seed_bytes"]) - len(it["stem"].encode()))
+    mism = []
+    for s in ("negL", "negZ"):
+        c = ctrl_of[s]
+        ls, lc = sorted(blen.get(s, {0}))[0], sorted(blen.get(c, {0}))[0]
+        tag = "🟢 matched" if ls == lc else "⚠️ +%dB SHIFT" % (ls - lc)
+        if ls != lc:
+            mism.append("%s(%dB) vs %s(%dB)" % (s, ls, c, lc))
+        print("  [len-audit] %-5s %2dB  vs ctrl %-5s %2dB   %s" % (s, ls, c, lc, tag))
+    if mism:
+        print("  ⚠️ LENGTH-SHIFT CONFOUND (H_9612): " + " · ".join(mism) + " — the right-aligned "
+              "window shifts, so beyond-RF context differs between the arms and the GroupNorm bus "
+              "(H_9611) can carry that difference into dOP. Supply a length-matched pedestal via "
+              "the manifest's ctrl_of, or read dOP for that arm as operator+shift, not operator.",
+              flush=True)
+
     res = {"ckpt": ckpt, "vs": ckpt2, "meta": meta, "meta_vs": meta2, "n_stems": len(stems),
+           # H_9612: which pedestal each DV surface was scored against, + whether the pair was
+           # byte-length matched. Recorded so a reader can never mistake operator+shift for operator.
+           "ctrl_of": ctrl_of, "gn_freeze": bool(gn_ref), "len_mismatch": mism,
            "bars": {"G_SHAM": G_SHAM, "G_LIVE": G_LIVE, "G_DV": G_DV, "G_TOST": G_TOST,
                     "alpha_perm": A_PERM},
            "points": {}}
@@ -3327,8 +3388,11 @@ def route_audit_run(argv):
           % (meta["route_entropy_mean"], meta["route_entropy_max_possible"], meta["E"]))
 
     verdicts = {}
+    # every surface the scoring below touches: the frozen `need` set + whatever pedestals ctrl_of
+    # names (H_9612). With no ctrl_of this is exactly `need`, so P is byte-identical.
+    allf = tuple(need) + tuple(sorted(c for c in set(ctrl_of.values()) if c not in need))
     for point in ("ans", "stem", "win"):
-        P = {s: {f: by[s][f][point] for f in need} for s in stems}
+        P = {s: {f: by[s][f][point] for f in allf} for s in stems}
 
         # ── G-LIVE: does the route vary with CONTENT at all? (same surface, different stems) ──
         rng = random.Random(seed)
@@ -3351,8 +3415,11 @@ def route_audit_run(argv):
                                               for s in stems])) for f in ("negL", "negZ", "negJ", "ped")}
         row["top_hist"] = {f: [int(sum(1 for s in stems if int(np.argmax(P[s][f])) == e))
                                for e in range(len(P[stems[0]]["flip0"]))] for f in need}
+        # H_9612: each DV surface is scored against ITS OWN pedestal (ctrl_of). Default ctrl_of maps
+        # both to "ped" => jsCtrl is jsP => byte-identical to the pre-flag DV.
+        jsCtrl = {t: [_ra_js(P[s]["flip0"], P[s][ctrl_of[t]]) for s in stems] for t in ("negL", "negZ")}
         for tag, js in (("negL", jsL), ("negZ", jsZ)):
-            d = [a - b for a, b in zip(js, jsP)]                     # DV: operator minus pedestal
+            d = [a - b for a, b in zip(js, jsCtrl[tag])]             # DV: operator minus pedestal
             mu, sd, se, p = _ra_perm(d, n_perm, seed)
             dj = [a - b for a, b in zip(js, jsJ)]                    # OP-SPEC: operator minus twin
             mj, sj, sej, pj = _ra_perm(dj, n_perm, seed)
@@ -3364,7 +3431,8 @@ def route_audit_run(argv):
         for st in ("seen", "heldout"):
             ss = [s for s in stems if split_of[s] == st]
             if len(ss) >= 3:
-                d = [_ra_js(P[s]["flip0"], P[s]["negL"]) - _ra_js(P[s]["flip0"], P[s]["ped"]) for s in ss]
+                d = [_ra_js(P[s]["flip0"], P[s]["negL"])
+                     - _ra_js(P[s]["flip0"], P[s][ctrl_of["negL"]]) for s in ss]
                 mu, sd, se, p = _ra_perm(d, min(n_perm, 2000), seed)
                 row["stratum_" + st] = {"n": len(ss), "dOP_negL": mu, "se": se, "p_perm": p}
         pos = [P[s]["flip0"] for s in stems if pol_of[s] == 1]
