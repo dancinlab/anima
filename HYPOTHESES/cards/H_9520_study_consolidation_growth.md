@@ -59,5 +59,18 @@ RED/🧱 with the honest number otherwise. Below-chance is first-class.
   and the replay-mix builder are the $0 prerequisites this card fires first.
 
 ## Status
-PRE-REGISTERED · frozen · **NOT fired**. Prerequisite = a real-ckpt study transcript
-(step 1, pool). Design source: Fable (scratchpad/fable_anima_study.md, §2·§4).
+PRE-REGISTERED · frozen · **NOT fired** (growth verdict). The two $0 prerequisites are now BOTH built:
+- **Step 1 (transcript)** ✅ — a real 303M study run landed `transcript303.jsonl` (summer $0 ·
+  `~/anima-weights/study303_transcript/`, permanent). Demo is short (6 rows · 1 emit) — a longer
+  study run (rounds ~30-50, summer $0) feeds a meaningful CPT; the demo transcript proves the plumbing.
+- **Step 2 (replay-mix builder)** ✅ — `anima-py corpus study-replay --transcript T.jsonl --corpus BASE
+  [--study-frac 0.05] [--reps N]` (cli/corpus.py · v0.15.8). Emits the replay-mix corpus + `.c1_replayonly.txt`
+  (teacher ABSENT · byte-matched) + `.c2_scrambled.txt` (teacher word-shuffled · byte-matched · content
+  destroyed) + `.meta.json`. Honesty audits enforced: C1 teacher-leak=0 (hard-fail), C2 byte-match to mix,
+  study_frac_actual reported. `FORGET_STRATA["study-replay"]` registers the reach axes the study content does
+  NOT reinforce (corpus-py-1 ⑦ (A) — the forget gate must cover the untouched strata, not just ρ·form).
+  Plumbing verified byte-deterministic on the demo transcript (same seed → identical mix/C1/C2).
+
+Remaining = **cost-gated (owner GPU go)**: step 3 `anima-py train --init 303M --corpus <replay-mix>` +
+step 4 `anima-py evaluate` held-out reach Δ vs C1/C2 + FORGET gate. Design source: Fable
+(scratchpad/fable_anima_study.md, §2·§4).
