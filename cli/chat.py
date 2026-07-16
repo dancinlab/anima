@@ -1605,6 +1605,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _rec_silent_cand = anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1"
     if _rec_silent_cand and _emit_gate != "refractory":
         raise SystemExit("--record-silent-cand requires --emit-gate refractory (its only producer)")
+    # H_9557 · PC2 ROUTING (2D-loadings H_9468/#3792): route the emit-ORTHOGONAL tension
+    # axis PC2 = originality↔balance (orig+0.84·bal−0.44·coh−0.28, cos(w,PC2)=0.03) into
+    # deliberation_k (the one decode channel the mouth reads) so a genuinely emit-independent
+    # DOF steers CONTENT with the emit decision byte-identical. off (default) = production.
+    _tension_route = anima_flag_value(_cargv, "--tension-route", "ANIMA_TENSION_ROUTE", "off")
+    if _tension_route not in ("off", "pc2"):
+        raise SystemExit("--tension-route: only 'off' (default) or 'pc2' (got %r)" % _tension_route)
+    if _tension_route != "off" and _emit_gate != "refractory":
+        raise SystemExit("--tension-route pc2 requires --emit-gate refractory (its only consumer)")
+    _route_gain = float(anima_flag_value(_cargv, "--tension-route-gain", "ANIMA_TENSION_ROUTE_GAIN", "1.0"))
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2248,7 +2258,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              _recog_fn,
                              _mouth_at(tick),
                              _dyn_w,
-                             _rec_silent_cand)  # H_9510 HOLE-1 · record imagined cand for diag
+                             _rec_silent_cand,  # H_9510 HOLE-1 · record imagined cand for diag
+                             (_route_gain if _tension_route == "pc2" else None))  # H_9574 PC2
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2491,6 +2502,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                                     if isinstance(ckpt, str) and os.path.exists(ckpt) else ""),
                     "g_arm": str(_g_arm), "refractory": (_refractory or None),
                     "g_reach": str(_g_reach), "emit_gate": str(_emit_gate),  # H_9419
+                    "tension_route": str(_tension_route), "route_gain": float(_route_gain),  # H_9557
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
@@ -2528,6 +2540,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # the ratified gate produced a live band (both emit and silence ticks) vs mute/saturate.
                 "gate_mode": str(dec.get("gate_mode", "clock")),
                 "g_recog_gate": (float(dec["g_recog_gate"]) if dec.get("g_recog_gate") is not None else None),
+                "pc2_proj": (float(dec["pc2_proj"]) if dec.get("pc2_proj") is not None else None),  # H_9557
+                "route_k": (int(dec["route_k"]) if dec.get("route_k") is not None else None),  # H_9557
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
