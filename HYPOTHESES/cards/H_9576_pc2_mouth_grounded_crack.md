@@ -1,6 +1,21 @@
 # H_9576 — PC2→라이브 mouth 배선(grounded logit-bias): mouth-severance CRACK toy 확증 (303M fire 대기)
 
-**status:** 🔎 DIRECTIONAL-WIRED (오너 승인 grounded 재배선 · toy CRACK✅ emit byte-identical∧steered≠base · 303M 방향성 fire 대기) — wired: `anima-py chat --emit-gate refractory --pc2-mouth {bias,rng}` (v0.15.12 G5)
+**status:** 🎉 CRACK 확증 (채널 열림·emit byte-identical 3/3) + 방향 VOID(검정력 부족) · 303M 3-seed
+
+## 🎉 VERDICT — mouth-severance CRACK 확증 + 방향 VOID (303M off/bias/rng × 3seed × 30tick · 58 emit tick)
+
+| Fable 기준 | 결과 |
+|---|---|
+| (1) emit 시퀀스 off==bias==rng byte-identical | **PASS ✅ 3/3 seed**(emit 23/12/23) — Stage-A 격리 완벽 |
+| (2) gtext Δ (steered≠base) | **PASS ✅ bias 57/58**(rng 58/58) — **채널 열림** |
+| (3) 방향 ρ(z_PC2, D_base−D_steer) | BIAS **+0.110**(예측 부호·z>0=문맥이탈) vs RNG **−0.146**(null)·Δ=+0.256 |
+| (3) 유의성 (tick-permutation 2000회) | ⚠️ null 95% [−0.266,+0.262]·**p=0.409 → 미유의** |
+
+- 🎉 **mouth-severance 채널 CRACK 확증**: PC2 가 라이브 mouth(grounded decode)에 도달해 **gtext 를 바꾸고**(57/58) emit 은 **완벽 byte-identical**(3/3 seed). H_9574 의 벽(deliberation_k Δ0)이 **채널 수준에서 뚫림**. Stage-A 격리(게이트=base·발화=steered·root=base)가 303M 서 설계대로 작동.
+- ⚠️ **방향 = VOID(검정력 미달·Fable W4)**: ρ=+0.110 이 **예측 부호**이고 RNG-null(−0.146)을 Δ=0.256 로 이기나, permutation 검정서 p=0.409(null 대역 안) ⇒ **방향 미확립**. 음성 아님([[power-before-negative-verdict]]) — n=58 로 ρ≈0.11 해상 불가.
+- **다음**: 검정력 확장 재발사(n_ticks 150×3seed→emit tick ~300)·같은 bar. 유의=방향 CRACK 완성 / 여전히 null 대역=W2 벽(byte 입도서 PC2 의미 표현불가).
+
+## 원래 카드 (구현·toy · 이하 유지) — wired: `anima-py chat --emit-gate refractory --pc2-mouth {bias,rng}` (v0.15.12 G5)
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9574]] (mouth-severance 벽·deliberation_k INERT·이 카드가 오너 승인 재배선) · [[H_9468]] (2D-loadings PC2 축) · [[H_9428]] (tension rank 2.66) · source: Fable PC2→grounded 설계($3.44) → 구현
 
