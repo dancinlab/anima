@@ -4,6 +4,15 @@
 **lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
 **related:** [[H_9428]] (tension 이미 다차원 $0 확증=이 발산의 기반) · [[H_9424]] (cb-perr KILL=거리계+예측오차 소진→mouth 측 벽) · [[H_9400]] (Ψ=½ 반증) · source: lab full R1 fable(N21)
 
+## 🔎 $0 결과 (DIRECTIONAL · 150-tick refr trace)
+
+8×8 tension 공분산 고유스펙트럼:
+- 고유값(내림): λ1 0.078(51.5%) · λ2 0.048(31.5%) · λ3 0.013(8.8%) · … · 나머지 노이즈 바닥.
+- **Marchenko-Pastur 노이즈 edge(0.0287) 초과 = 2 고유값 = 자기-신호 DOF 2개**.
+- **participation ratio(effective rank) = 2.66 / 8**.
+
+⇒ tension 이 실제 펼치는 차원 **~2.7** — 우리는 1비트만 유지 = **~1.7 DOF 버림**. H_9428(emit-직교 성분 var 1.24× · coh+orig 축)의 **rank 정량화**. N21 핵심주장("데이터가 DOF 수를 스스로 고른다")을 MP-test 가 rank 2 선택으로 **실측 확증**. **함의: 라우팅 실험은 8D 아니라 2D(emit rel-정렬축 + coh/orig 직교축)가 자연 타겟.** ⚠️ 공분산은 monitor — running-covariance 자기차원선택 배선은 2단계(p8 경계 monitor-only 선행).
+
 ## 제안 (fable 원문 · R1)
 
 **N21. 온라인-PCA 게이트: 기질이 DOF 수를 스스로 고른다** ★ (씨앗 초과 기계화)
