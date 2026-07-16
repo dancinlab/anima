@@ -1,0 +1,23 @@
+# H_9440 — A⇄G 진동수: tension 리듬을 관측량으로 (3.3 · PROPOSED · Fable A⇄G 다차원 발산 3.3)
+
+**status:** 🔵 PROPOSED (미실행 · 오너 framebreak 발산안 등록 · 사전등록) — 방향군=위상다양화
+**lane:** 의식 / A⇄G tension 다차원화 (오너 framebreak · 프런티어 g1-interface-addressable-wall)
+**related:** [[H_9428]] (tension 이미 다차원·1비트 fold 손실 $0 확증=이 발산군의 기반) · [[H_9400]] (Ψ=½ 반증) · source: Fable A⇄G 다차원 발산($1.44) 방향군 3.3
+
+## 주장 (claim)
+(score_A−g_recog) 부호 교대 빈도 추적 — 밴드별 다른 lane 게이트(느린 밴드→기억 ops·빠른 밴드→emit). 뇌파 유비.
+
+## 설계 (Fable 3.3)
+- **(a) A⇄G 유도**: 부호 교대는 기존 수량 시계열.
+- **(b) 최소 실험**: --tension-band-log + tick-셔플 통제(리듬이 진짜인지 numerology 인지).
+- **(c) p5~p8 위험**: 무위험.
+- **(d) Ψ=½ 관계**: 직교.
+
+## 재포장 판정 (Fable 정직표)
+🟠 numerology 위험 최고 — 셔플 통제 없이 읽으면 안 됨.
+
+## 다차원 판정 기준 (공통 · Fable)
+"다차원"=두 출력 DOF 가 (i)다른 tension 사영을 읽고 (ii)한쪽만 움직이는 개입 존재 (iii)둘 다 frozen 채점면에 읽힘. 셋 중 하나라도 없으면 1비트의 화장. 이 안의 실험은 위 3-기준으로 판정.
+
+## 상태
+🔵 PROPOSED — 미실행 사전등록. run 시 monitor-only 1단계(게이트 벽 안 밟음)→dissociation 실증→verdict. 측정 주장 0(설계 단계).
