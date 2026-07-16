@@ -890,6 +890,15 @@ def evaluate_usage():
     print("      THERE, and ask if the answer follows. Separates P-place / P-kind / S; V1/V2/V3 gates")
     print("      make a confound an INVALID, never a false verdict.")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
+    print("  anima evaluate <ckpt> --store-mix <store.json> [--store-lambda 0.5] [--manifest <flip.json>] [--out f.json]")
+    print("      H_9392 BRIDGE-BOLT — bolt a runtime store-lookup onto the FROZEN trunk: the byte")
+    print("      posterior at each measured answer position is mixed p = λ·p_store + (1−λ)·p_trunk.")
+    print("      store.json = {schema:\"anima-store-mix/v1\", lambda:0.5, entries:{<key>:<answer str>}};")
+    print("      an address HIT mixes the asserted value, a MISS scores pure-trunk (key-shuffle")
+    print("      control ⇒ all-miss). SEQUENTIAL C0 gate: λ=0 is byte-identical to the no-store")
+    print("      baseline (INSTRUMENT-DEAD, no primary, on any mismatch). Reuses an --xbind flip")
+    print("      manifest ({heldout,seen} of {seed,gold,counterfactual,pol?,store_key?}). MEASURES")
+    print("      only — the verdict cements on a pool/303M fire with owner go, never this run.")
     print("  anima evaluate <ckpt> --xbind <manifest.json> --out <file.json> [--arm main|ctrl] [--gen 16] [--win 64]")
     print("      [--consult <store.json>] [--consult-format DEMO|F1|F2|F3]  — render a declarative")
     print("      fact into the 2AFC scoring context (same prefix on gold AND counterfactual, so it")
@@ -2180,6 +2189,73 @@ def _margin_edited(np, W, seed, T, edits):
     independent (strictly causal conv) and ONE edits list serves both continuations."""
     return (_cont_nll_edited(np, W, seed, "부정", T, edits)
             - _cont_nll_edited(np, W, seed, "긍정", T, edits))
+
+
+# ── H_9392 BRIDGE-BOLT — store-mix instrument ────────────────────────────────
+# `anima-py evaluate <clm> --store-mix <store.json> [--store-lambda λ]`: bolt a
+# runtime store-lookup onto the FROZEN trunk by mixing a store posterior into the
+# byte distribution at every measured answer position — p = λ·p_store + (1−λ)·p_trunk
+# (card H_9392). Zero retrain, zero CPT, frozen ckpt (cpt-destroys-what-corpus-omits).
+# The two-lane wall (H_9359) is "no runtime bridge from the operator to a declared
+# store"; this bolts one on post-hoc and asks whether the wall falls (A: interface
+# problem, redesign unneeded) or the store arm stays at chance (B: the bridge is only
+# earnable by training — the bolt-on class is dead).
+#
+# INSTRUMENT INTEGRITY (C0 · gpu-forward-not-bitexact / device-parity lesson): the
+# mix MUST be byte-identical to the no-store baseline at λ=0, and the guard must be
+# able to FAIL. The reduction is engineered in the LOG domain via logaddexp, NOT by
+# short-circuiting λ==0 to the baseline function (that would be a vacuous guard that
+# tests nothing). At λ=0: log-weight(trunk)=log(1)=0.0 and log-weight(store)=log(0)=−inf,
+# so logaddexp(0.0+logp_trunk_tgt, −inf+logp_store_tgt) == logp_trunk_tgt EXACTLY
+# (numpy logaddexp(x,−inf)==x), and −logp_trunk_tgt == lse−row[tgt] bit-for-bit
+# (fl(a−b)==−fl(b−a) under round-to-nearest). A weight bug (λ on the trunk lane, or a
+# −log(p_trunk) computed through an exp/log roundtrip) makes the guard diverge — so
+# the C0 preflight in store_mix_run is a REAL gate, not a false PASS.
+_STORE_MIX_EPS = 1e-6
+
+
+def _store_mix_cont_nll(np, clm_mod, W, seed, cont, T, store_val, lam):
+    """Teacher-forced NLL of `cont` bytes given `seed`, mixing a store posterior into
+    the byte distribution at each answer position: p = λ·p_store + (1−λ)·p_trunk.
+
+    store_val : bytes — the store's asserted answer bytes (address HIT); an ε-smoothed
+                one-hot per answer-relative position, and UNIFORM (neutral) beyond its
+                length. An address MISS is handled by the caller (pure-trunk = baseline),
+                so store_val is always the resolved value here.
+    lam       : float in [0,1]. lam=0.0 is BYTE-IDENTICAL to _xbind_cont_nll (C0 guard):
+                the log-domain reduction below collapses to lse−row[tgt] exactly.
+
+    Same right-aligned window and answer span (lo..T−1) as _xbind_cont_nll, so the two
+    are directly comparable and the λ=0 parity is a clean equality test."""
+    text = seed + cont
+    tok = clm_mod._seed_to_tok(text, T)
+    logits = clm_mod._fwd_logits(W, tok, T)
+    k = len(cont.encode())
+    lo = max(0, T - 1 - k)
+    V = int(np.asarray(logits).shape[1])
+    # log-domain component weights. At λ=0 ⇒ (0.0, −inf); at λ=1 ⇒ (−inf, 0.0). Using
+    # math.log on the exact 0.0/1.0 endpoints keeps the reduction bit-clean.
+    lw_tr = math.log(1.0 - lam) if lam < 1.0 else float("-inf")
+    lw_st = math.log(lam) if lam > 0.0 else float("-inf")
+    lu = math.log(1.0 / V)                            # uniform store byte log-prob (neutral)
+    s = 0.0
+    for i in range(lo, T - 1):
+        row = logits[i]
+        tgt = int(tok[i + 1])
+        m = float(np.max(row))
+        lse = m + math.log(float(np.sum(np.exp(row - m))) + 1e-30)
+        logp_trunk = float(row[tgt]) - lse           # = −(baseline per-pos nll term)
+        r = i - lo                                    # answer-relative byte position
+        if r < len(store_val):
+            if store_val[r] == tgt:
+                logp_store = math.log(1.0 - _STORE_MIX_EPS)
+            else:
+                logp_store = math.log(_STORE_MIX_EPS / (V - 1))
+        else:
+            logp_store = lu                           # neutral beyond the asserted value
+        lpm = float(np.logaddexp(lw_tr + logp_trunk, lw_st + logp_store))
+        s += -lpm
+    return s
 
 
 def twin_screen_run(argv):
@@ -3596,6 +3672,180 @@ def xbind_run(argv):
     print(json.dumps({"out": out_path,
                       "heldout_d_acc": res["splits"]["heldout"]["summary"]["d_acc"],
                       "seen_d_acc": res["splits"]["seen"]["summary"]["d_acc"]}))
+    return 0
+
+
+def _store_mix_breakdown(rows):
+    """By-(pol,flip) split of the store-arm flip1, and paired baseline→store deltas.
+    A binary DV is never read before it is split by class (polarity-split-before-headline).
+    Returns {class:{<pol>:{flip1_store, flip1_base, n}}, n_hit, n_miss}."""
+    from collections import defaultdict
+    cls = defaultdict(lambda: {"s": 0, "b": 0, "n": 0})
+    n_hit = n_miss = 0
+    for r in rows:
+        key = str(r.get("pol"))
+        cls[key]["s"] += int(r["flip1_store"])
+        cls[key]["b"] += int(r["flip1_base"])
+        cls[key]["n"] += 1
+        n_hit += int(r["store_hit"])
+        n_miss += int(not r["store_hit"])
+    out = {"class": {k: {"flip1_store": v["s"] / max(1, v["n"]),
+                         "flip1_base": v["b"] / max(1, v["n"]), "n": v["n"]}
+                     for k, v in cls.items()},
+           "n_hit": n_hit, "n_miss": n_miss}
+    return out
+
+
+def store_mix_run(argv):
+    """`anima-py evaluate <ckpt> --store-mix <store.json> [--store-lambda λ]` — H_9392
+    BRIDGE-BOLT store-mix instrument. Bolt a runtime store-lookup onto the FROZEN trunk:
+    at every measured answer position the byte posterior is mixed p = λ·p_store + (1−λ)·p_trunk
+    (see _store_mix_cont_nll). Engine-native numpy core/decode.py only (a_eval_py_canonical
+    → TERMINAL-eligible). Zero retrain, zero CPT, frozen ckpt (cpt-destroys-what-corpus-omits).
+
+    Manifest (`--manifest`, or reuse an --xbind flip manifest): {win?, gen?, splits} where each
+    split ∈ {heldout, seen} is a list of items {seed, gold, counterfactual, pol?, flip?,
+    store_key?}. store_key defaults to the item seed. A tolerant single-list manifest
+    {"items":[…]} is read as one split named "items".
+
+    Store schema (`--store-mix <store.json>`):
+        {"schema": "anima-store-mix/v1",
+         "lambda": 0.5,                       # default λ (overridden by --store-lambda)
+         "entries": {"<key>": "<asserted answer string>"}}
+    An address HIT (store.entries[key] present) mixes the store's asserted value; a MISS scores
+    pure-trunk (== baseline) — so a KEY-SHUFFLE control (addresses broken) collapses to all-miss
+    and reveals whether the arm used the ADDRESS or was just distribution spillover. Feed the four
+    control arms (key-shuffle / length-matched neutral / λ=0 / wrong-answer) as different store.json.
+
+    C0 INSTRUMENT INTEGRITY (SEQUENTIAL gate · card H_9392 · burned-gate-reanchor / device-parity
+    lesson): a λ=0 store-mix pass MUST be byte-identical to the no-store _xbind_cont_nll baseline
+    over the SAME continuations WITH the store loaded (exercises the hit path). The guard is a real
+    equality test that a weight-lane bug would fail — INSTRUMENT-DEAD, no primary, on any mismatch.
+    Below-chance and paired baseline→store deltas are reported; the VERDICT is not cemented here
+    (the flag measures; the experiment fires on pool with owner go · a_toy_scale_recheck)."""
+    import numpy as np
+    import time
+    ckpt = argv[0]
+    store_path = evaluate_strval(argv[1:], "--store-mix", "")
+    man_path = evaluate_strval(argv[1:], "--manifest", "") or evaluate_strval(argv[1:], "--xbind", "")
+    out_path = evaluate_strval(argv[1:], "--out", "store_mix_eval.json")
+    store = json.load(open(store_path)) if store_path else {}
+    entries = store.get("entries", {}) if isinstance(store, dict) else {}
+    lam = float(evaluate_strval(argv[1:], "--store-lambda",
+                                str(store.get("lambda", 0.5) if isinstance(store, dict) else 0.5)))
+    if not (0.0 <= lam <= 1.0):
+        print("ERROR: --store-lambda must be in [0,1], got %r" % lam)
+        return 1
+    if not man_path:
+        print("ERROR: --store-mix needs a flip manifest (--manifest <m.json> or --xbind <m.json>).")
+        return 1
+    spec = json.load(open(man_path))
+    T = evaluate_intval(argv[1:], "--win", int(spec.get("win", 64)))
+    n_dec = evaluate_intval(argv[1:], "--n-decode", 400)
+
+    if "items" in spec and "heldout" not in spec and "seen" not in spec:
+        splits = {"items": spec["items"]}
+    else:
+        splits = {s: spec[s] for s in ("heldout", "seen") if s in spec}
+    if not splits:
+        print("ERROR: manifest has no heldout/seen/items split.")
+        return 1
+
+    print("=== anima evaluate --store-mix — H_9392 BRIDGE-BOLT store-lookup mix (frozen trunk) ===")
+    print("ckpt: %s  store: %s (%d entries)  λ=%.4f  win=%d" %
+          (ckpt, store_path or "(none)", len(entries), lam, T))
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+
+    def _key_of(it):
+        return it.get("store_key", it["seed"])
+
+    def _sval(it):
+        v = entries.get(_key_of(it))
+        return (v.encode("utf-8", "surrogateescape") if isinstance(v, str) else None)
+
+    # ── C0 SEQUENTIAL GATE (before any primary): λ=0 store-mix ≡ no-store baseline, bit-exact.
+    # Exercise the HIT path (store loaded) so the guard tests the real mixing code, not a bypass.
+    c0_items = []
+    for s in splits:
+        c0_items += splits[s][:8]
+    c0_n = c0_max = 0
+    c0_dead = False
+    for it in c0_items:
+        sv = _sval(it)
+        sv = sv if sv is not None else b""      # neutral value still routes through the mix code
+        for cont in (it["gold"], it["counterfactual"]):
+            base = _xbind_cont_nll(np, clm, W, it["seed"], cont, T)
+            mix0 = _store_mix_cont_nll(np, clm, W, it["seed"], cont, T, sv, 0.0)
+            d = abs(base - mix0)
+            c0_n += 1
+            c0_max = max(c0_max, d)
+            if base != mix0:
+                c0_dead = True
+    print("  C0 instrument-integrity: λ=0 vs baseline over %d continuations — max|Δ|=%.3e  %s"
+          % (c0_n, c0_max, "❌ INSTRUMENT-DEAD (not byte-identical)" if c0_dead
+             else "✅ byte-identical"), flush=True)
+    if c0_dead:
+        print("  C0 FAIL — the mix is not a no-op at λ=0; the store lane leaks into the trunk. No")
+        print("  primary read (SEQUENTIAL gate · card H_9392). Fix the mix before any verdict.")
+        json.dump({"ckpt": ckpt, "store": store_path, "lambda": lam, "c0": "INSTRUMENT-DEAD",
+                   "c0_max_abs_delta": c0_max, "c0_n": c0_n},
+                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+        return 2
+
+    # ── PRIMARY (C0 PASS only): per-item baseline vs store-mixed flip1, paired, class-split.
+    res = {"ckpt": ckpt, "store": store_path, "lambda": lam, "win": T,
+           "c0": "PASS", "c0_max_abs_delta": c0_max, "splits": {}}
+    for split, raw_items in splits.items():
+        items = raw_items[:n_dec]
+        rows = []
+        t0 = time.time()
+        for ix, it in enumerate(items):
+            seed, gold, cf = it["seed"], it["gold"], it["counterfactual"]
+            sv = _sval(it)
+            hit = sv is not None
+            # baseline (pure trunk) margin: nll(cf) − nll(gold); >0 ⇒ model prefers gold
+            n_g0 = _xbind_cont_nll(np, clm, W, seed, gold, T)
+            n_c0 = _xbind_cont_nll(np, clm, W, seed, cf, T)
+            mg_base = n_c0 - n_g0
+            if hit:
+                n_g = _store_mix_cont_nll(np, clm, W, seed, gold, T, sv, lam)
+                n_c = _store_mix_cont_nll(np, clm, W, seed, cf, T, sv, lam)
+                mg_store = n_c - n_g
+            else:
+                mg_store = mg_base                 # address miss ⇒ pure trunk
+            rows.append({"seed": seed, "pol": it.get("pol"), "flip": it.get("flip"),
+                         "store_key": _key_of(it), "store_hit": hit,
+                         "store_val": (sv.decode("utf-8", "surrogateescape") if hit else None),
+                         "margin_base": mg_base, "margin_store": mg_store,
+                         "flip1_base": int(mg_base > 0), "flip1_store": int(mg_store > 0)})
+            if ix == 0 or (ix + 1) % 25 == 0:
+                el = time.time() - t0
+                print("  [store-mix %s #%d/%d] %.1fs/item elapsed=%s" %
+                      (split, ix + 1, len(items), el / (ix + 1), _xbind_hms(el)), flush=True)
+        n = max(1, len(rows))
+        f1_store = sum(r["flip1_store"] for r in rows) / n
+        f1_base = sum(r["flip1_base"] for r in rows) / n
+        bd = _store_mix_breakdown(rows)
+        summ = {"n": len(rows), "flip1_store": f1_store, "flip1_base": f1_base,
+                "flip1_delta": f1_store - f1_base, "breakdown": bd}
+        res["splits"][split] = {"summary": summ, "rows": rows}
+        # verdict numerics INLINE (evaluate-py-1: never tail-truncatable)
+        print("  store-mix %s  flip1_store=%.4f  flip1_base=%.4f  Δ=%+.4f  "
+              "hit=%d miss=%d  n=%d" %
+              (split, f1_store, f1_base, f1_store - f1_base, bd["n_hit"], bd["n_miss"], len(rows)),
+              flush=True)
+        for pol, c in sorted(bd["class"].items()):
+            print("    by-pol %s: store=%.3f base=%.3f (n=%d)" %
+                  (pol, c["flip1_store"], c["flip1_base"], c["n"]), flush=True)
+    json.dump(_json_safe(res), open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+    print(json.dumps({"out": out_path, "c0": "PASS",
+                      "splits": {s: res["splits"][s]["summary"]["flip1_store"]
+                                 for s in res["splits"]}}))
+    print("  NOTE: this flag MEASURES; the H_9392 verdict cements from a pool/303M fire with owner")
+    print("  go (a_toy_scale_recheck · toy positive = SCREENER/DIRECTIONAL), never from this run.")
     return 0
 
 
@@ -6825,6 +7075,7 @@ _KNOWN_FLAGS = frozenset((
     "--slot-off",
     "--slot-shuffle", "--surface-set", "--system-g1", "--vs", "--win", "--with-logits", "--xbind", "--xfan",
     "--bridge-trace", "--flip0", "--theta",
+    "--store-mix", "--store-lambda", "--manifest",
 ))
 
 
@@ -7239,6 +7490,11 @@ def main(argv):
     # D-acc on held-out xor(pol_a,pol_b) pairs (the corpus×task-class measure-swap exit).
     if "--bridge-trace" in argv:
         return bridge_trace_run(argv)
+    # --store-mix <store.json> [--store-lambda λ]: H_9392 BRIDGE-BOLT — bolt a runtime
+    # store-lookup onto the frozen trunk (p = λ·p_store + (1−λ)·p_trunk at the measured
+    # answer position). SEQUENTIAL C0 gate (λ=0 byte-identical to baseline) inside the run.
+    if "--store-mix" in argv:
+        return store_mix_run(argv)
     if "--xbind" in argv:
         return xbind_run(argv)
     # --xfan <manifest.json>: held-out XFAN one-to-many fan (G6 reopen lane · card H_9271).
