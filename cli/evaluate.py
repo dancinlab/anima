@@ -7360,7 +7360,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--z-census", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -7699,6 +7699,7 @@ def _ag_criticality(argv):
     """
     perm = 200
     seed = 7
+    bf_pair = None
     globs = []
     i = 0
     while i < len(argv):
@@ -7707,15 +7708,18 @@ def _ag_criticality(argv):
             perm = int(argv[i + 1]); i += 2; continue
         if a == "--seed" and i + 1 < len(argv):
             seed = int(argv[i + 1]); i += 2; continue
+        if a == "--butterfly" and i + 2 < len(argv):
+            bf_pair = (argv[i + 1], argv[i + 2]); i += 3; continue
         globs.append(a); i += 1
-    if not globs:
+    if not globs and bf_pair is None:
         print("  ⇒ ⛔ usage: anima-py evaluate --ag-criticality <trace globs...> [--perm N] [--seed N]")
+        print("            or --ag-criticality --butterfly <seedflip_A.jsonl> <seedflip_B.jsonl>  (panel i · λ)")
         return 2
     import glob as _glob
     paths = []
     for g in globs:
         paths.extend(sorted(_glob.glob(g)))
-    if not paths:
+    if not paths and bf_pair is None:
         print("  ⇒ ⛔ no traces matched: %r" % globs)
         return 2
 
@@ -7732,6 +7736,50 @@ def _ag_criticality(argv):
             if isinstance(r, dict) and "ag_drive" in r and "emit" in r:
                 out.append(r)
         return out
+
+    if bf_pair is not None:
+        # Panel (i) butterfly-λ: two seed-flip rollouts (1-byte session_seed flip, same sample seed).
+        # State vector = z-normalised [emit_drive, phi, ag_fb_I]; per-tick L2 distance d_t; divergence
+        # GROWTH = least-squares slope of d_t vs tick (H_9603 frozen null +0.007 ≈ 0 = zero-Lyapunov
+        # linear limit-cycle). slope ≫ +0.05 ⇒ λ departs 0 (dynamics revived); ≈ null ⇒ STILL zero-Lyapunov.
+        A = _ticks(bf_pair[0]); B = _ticks(bf_pair[1])
+        n = min(len(A), len(B))
+        print("═══ A⇄G CRITICALITY · panel (i) butterfly-λ · H_9607 (H_9603 null +0.007) ═══")
+        if n < 20:
+            print("  ⇒ ⛔ NOT-POWERED (<20 aligned ticks: A=%d B=%d)" % (len(A), len(B)))
+            return 0
+        keys = ["emit_drive", "phi", "ag_fb_I"]
+        # z-normalise each field over the pooled A∪B series so no axis dominates the distance
+        import math as _m
+        stats = {}
+        for k in keys:
+            vals = [float(r.get(k, 0.0)) for r in A[:n]] + [float(r.get(k, 0.0)) for r in B[:n]]
+            mu = sum(vals) / len(vals)
+            sd = (sum((v - mu) ** 2 for v in vals) / len(vals)) ** 0.5 or 1.0
+            stats[k] = (mu, sd)
+        d = []
+        for t in range(n):
+            s2 = 0.0
+            for k in keys:
+                mu, sd = stats[k]
+                za = (float(A[t].get(k, 0.0)) - mu) / sd
+                zb = (float(B[t].get(k, 0.0)) - mu) / sd
+                s2 += (za - zb) ** 2
+            d.append(_m.sqrt(s2))
+        # least-squares slope of d_t vs t
+        ts = list(range(n))
+        mt = sum(ts) / n; md = sum(d) / n
+        num = sum((ts[t] - mt) * (d[t] - md) for t in range(n))
+        den = sum((ts[t] - mt) ** 2 for t in range(n)) or 1.0
+        slope = num / den
+        kappa = float(A[0].get("ag_feedback_kappa", B[0].get("ag_feedback_kappa", 0.0)))
+        print("  pair: %s ⇔ %s · κ=%.4g · aligned ticks=%d" % (bf_pair[0], bf_pair[1], kappa, n))
+        print("      d_0=%.4f · d_end=%.4f · divergence-growth slope=%.5f /tick" % (d[0], d[-1], slope))
+        verdict = ("λ DEPARTS 0 (dynamics revived · chaotic/edge)" if slope > 0.05
+                   else "≈ H_9603 null (STILL zero-Lyapunov · limit-cycle)" if abs(slope) <= 0.02
+                   else "marginal (0.02–0.05 · underpowered band)")
+        print("      ⇒ %s  [frozen null: H_9603 +0.007]" % verdict)
+        return 0
 
     def _te_sign_to_emit(rows):
         # TE(ag_s → emit): discrete, ag_s binned by sign (2 states), emit binary.
