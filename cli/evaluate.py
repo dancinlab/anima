@@ -7408,7 +7408,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--faction-block-structure", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--occupancy", "--zeta-slope", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -7895,6 +7895,213 @@ def _ag_criticality(argv):
               % (mean_ed, abs(mean_ed - 0.5), emit_rate))
     print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
     print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_zeta_slope(argv):
+    """H_9664 ZETA-SLOPE — the within-tick dose readout. Reads `anima-py chat --pc2-zeta` traces.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --zeta-slope [--perm N] [--seed N]`
+
+    WHY WITHIN-TICK. Two readouts died the same death: D (H_9629, denominator = the text's own
+    diversity) and pi_bar (H_9663, sd(dpi_rng) ~ 0.14). The shared cause is not the metric --
+    it is the DESIGN: off/bias/rng are wholly different texts, so tick-level cascade variance
+    swamps whatever you measure. And the live z is effectively a constant (IQR 0.0514; 45.7% of
+    its variance in 3/270 ticks), so a tick-to-tick correlation has almost no regressor range.
+
+    So this stops comparing ticks. Each emit tick carries its OWN ladder: the same tick decoded
+    at several zeta with the draw stream held fixed. The tick's identity (its seed, its context,
+    its cascade) is CONSTANT within its own ladder, so it cancels in the within-tick slope --
+    and zeta MANUFACTURES the regressor range the live z never had.
+
+        beta_tick = OLS slope of pi_bar(zeta) on zeta, computed WITHIN one tick
+        DV        = mean(beta_tick) over emit ticks
+
+    PRE-REGISTERED SIGN (from the code, not from any prior result): decode.py subtracts zeta
+    from every in-window byte's logit, so zeta UP => in-window bytes suppressed => pi_bar DOWN
+    => beta < 0. A significant beta > 0 is NOT a positive result -- it is SIGN-INVERTED and the
+    run is INVALID pending a wiring audit.
+
+    ISOLATION CERTIFICATE (gate -- opens nothing until it passes): the zeta=0 rung MUST come back
+    byte-identical to the base text. decode.py leaves the row untouched at pc2==0.0, so any
+    divergence means the isolation this whole line of work rests on never held: the run is
+    INVALID and no dose curve may be read off it.
+
+    CONTROLS (>=2, per p7 -- a raw slope is not a verdict):
+      (1) rng arm      -- draw-stream re-key, no logit change => beta ~ 0 expected
+      (2) zeta-label within-tick permutation -- shuffles the zeta labels INSIDE each tick, which
+          destroys the dose ordering while preserving every tick's pi_bar multiset. This is the
+          null that a between-tick permutation cannot give: it removes the tick effect entirely.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    T_WIN = 24
+    L_MIN = 8
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --zeta-slope")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    try:
+        from decode import _dg_anchor_copy as _anchor_copy
+    except ImportError:
+        _anchor_copy = None
+    if _anchor_copy is None:
+        print("  ⇒ ⛔ INVALID — core.decode._dg_anchor_copy import 실패 · lm-step 분류 불가")
+        return 0
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _pi(seed_b, txt_b, anchors):
+        """pi_bar over lm-steps + the anchor-replay self-check (mismatch => classification broken)."""
+        ind, mism = [], 0
+        ctx = bytearray(seed_b)
+        for i in range(len(txt_b)):
+            b = txt_b[i]
+            cb = _anchor_copy(bytes(ctx), anchors, L_MIN, T_WIN) if anchors else -1
+            if cb >= 0:
+                if cb != b:
+                    mism += 1
+                ctx.append(b)
+                continue
+            win = bytes(ctx[-T_WIN:]) if len(ctx) >= T_WIN else bytes(ctx)
+            ind.append(1 if b in set(win) else 0)
+            ctx.append(b)
+        m = (sum(ind) / float(len(ind))) if ind else 0.0
+        return m, len(ind), mism
+
+    def _slope(xs, ys):
+        n = len(xs)
+        if n < 2:
+            return None
+        mx = sum(xs) / float(n)
+        my = sum(ys) / float(n)
+        den = sum((x - mx) ** 2 for x in xs)
+        if den <= 0:
+            return None
+        return sum((xs[i] - mx) * (ys[i] - my) for i in range(n)) / den
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --zeta-slope — H_9664 within-tick 용량 판정 ===")
+    print("traces: %s (%d file · perm=%d · seed=%d)" % (d, len(files), rounds, rseed))
+    print("DV:     mean over ticks of  beta_tick = OLS slope( π̄(ζ) ~ ζ )  · within-tick")
+    print("예측(코드가 지정): ζ↑ ⇒ 창-내 byte logit 감산 ⇒ π̄↓ ⇒ **β<0**")
+    print("bar:    ① ζ=0 == base byte-identical ② β<0 ∧ 통제 2종(rng · ζ-라벨 within-tick 순열) 밖")
+    print("")
+
+    betas, iso_ok, iso_bad, mism_tot, ladders = [], 0, 0, 0, []
+    for f in files:
+        meta = {}
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+            else:
+                rows.append(r)
+        mem = meta.get("mem_text") or ""
+        anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+        for r in rows:
+            if not r.get("emit"):
+                continue
+            zl = r.get("gtext_zeta") or []
+            if len(zl) < 2:
+                continue
+            seed_b = _b64(r.get("seed_b64"))
+            base_b = _b64(r.get("gtext_b64"))
+            if not seed_b or not base_b:
+                continue
+            xs, ys = [], []
+            for e in zl:
+                zv = float(e["zeta"])
+                tb = _b64(e.get("text_b64"))
+                if abs(zv) < 1e-12:
+                    if tb == base_b:
+                        iso_ok += 1
+                    else:
+                        iso_bad += 1
+                p, n_lm, mm = _pi(seed_b, tb, anchors)
+                mism_tot += mm
+                if n_lm == 0:
+                    continue
+                xs.append(zv)
+                ys.append(p)
+            b = _slope(xs, ys)
+            if b is not None:
+                betas.append(b)
+                ladders.append((xs, ys))
+
+    print("  ① 🔐 격리 인증: ζ=0 == base  %d 일치 · %d 불일치 · anchor-replay 자기검증 불일치 %d"
+          % (iso_ok, iso_bad, mism_tot))
+    if iso_bad > 0 or mism_tot > 0:
+        print("     ⇒ ⛔ **런 전체 INVALID** — 격리가 성립한 적 없다면 dose 곡선은 읽을 수 없다.")
+        print("        (이건 음성이 아니라 무효다 · H_9576 계열 전체가 소급 재검토 대상)")
+        return 0
+    if not betas:
+        print("     ⇒ ⏳ 사다리를 가진 emit tick 이 아직 없다 — fire 진행중이면 재폴링.")
+        return 0
+    print("     ⇒ PASS ✅ (주장이 아니라 측정)")
+
+    n = len(betas)
+    mb = sum(betas) / float(n)
+    sd = ((sum((b - mb) ** 2 for b in betas) / float(n - 1)) ** 0.5) if n > 1 else 0.0
+    se = (sd / (n ** 0.5)) if n else 0.0
+
+    # control (2): zeta-label permutation WITHIN each tick — kills the dose ordering, keeps the tick
+    pr = _prand.Random(rseed)
+    null = []
+    for _ in range(rounds):
+        acc = []
+        for xs, ys in ladders:
+            yp = list(ys)
+            pr.shuffle(yp)
+            b = _slope(xs, yp)
+            if b is not None:
+                acc.append(b)
+        null.append(sum(acc) / float(len(acc)) if acc else 0.0)
+    null.sort()
+    lo = null[int(0.025 * rounds)]
+    hi = null[int(0.975 * rounds) - 1]
+    p = sum(1 for v in null if abs(v) >= abs(mb)) / float(rounds)
+
+    print("")
+    print("  ② within-tick β: n=%d tick · mean β=%+.5f (sd %.5f · se %.5f)" % (n, mb, sd, se))
+    print("     ζ-라벨 within-tick 순열 null95%% = [%+.5f, %+.5f] · p=%.4f" % (lo, hi, p))
+    print("     해상한계(=null95%% 반폭) = %.5f — 이보다 작은 참 β 는 미측정(VOID, 음성 아님)"
+          % max(abs(lo), abs(hi)))
+
+    outside = not (lo <= mb <= hi)
+    print("")
+    if outside and mb < 0:
+        v = "🟢 CHANNEL-CARRIES-PHYSICS — β<0 (예측 부호) · within-tick 순열 null 밖"
+    elif outside and mb > 0:
+        v = ("🔄 SIGN-INVERTED — β>0 유의 = 예측과 반대 ⇒ **INVALID**(배선 감사) · 음성 아님")
+    else:
+        v = ("🧱 CHANNEL-CLOSED(후보) — β 가 null 대역 안. ⚠️ 이는 H_9628 의 π-dose PASS"
+             "(Δπ=+0.1599 · p=0.0082)와 **모순** ⇒ 두 계기 대질이 다음 H · 지금 못 박지 말 것")
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: ζ-arm 은 **채널이 무엇을 나를 수 있나** 의 계기 증거다 —")
+    print("     '라이브 데몬이 무엇을 하고 있나' 의 증거로 인용 금지(라이브 z 는 사실상 상수).")
+    return 0
+
+
 def _pc2_occupancy(argv):
     """H_9636 R-A WINDOW-OCCUPANCY — the readout moved to where the manipulation LIVES.
 
@@ -9457,6 +9664,8 @@ def main(argv):
     if len(argv) >= 1 and argv[0] == "--pc2-direction":
         if "--occupancy" in argv:
             return _pc2_occupancy([a for a in argv[1:] if a != "--occupancy"])
+        if "--zeta-slope" in argv:
+            return _pc2_zeta_slope([a for a in argv[1:] if a != "--zeta-slope"])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
