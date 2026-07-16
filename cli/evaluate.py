@@ -9612,6 +9612,25 @@ def faction_block_structure_run(argv):
                                        dtype=np.float64) for it in items], axis=0)
         print("arm:   +random-init (same architecture + same forward · weights re-drawn from their")
         print("       own per-tensor moments) — isolates architecture from what was learned.")
+        # DEGENERACY GATE. Random weights through a deep conv drive every unit onto one common
+        # mode: measured |corr| mean 0.617 (real: 0.111), top eigenvalue 2840 of 7638 total mass,
+        # per-unit std 0.0035 against a global std of 1.02 — the units barely move on their own
+        # and swing together. The clusterer then collapses to the same trivial split for EVERY K
+        # and Q comes out IDENTICAL to 10 decimals (0.0419274192 at K=4, 8 and 12). That constant
+        # is a property of a degenerate graph, not evidence that the architecture makes blocks —
+        # reading it as such would have "shown" architecture contributing 6.6x over the pedestal.
+        # So the arm self-checks and refuses to report a number it cannot mean.
+        Cri = np.abs(np.corrcoef(R, rowvar=False)); Cri = np.nan_to_num(Cri, nan=0.0)
+        np.fill_diagonal(Cri, 0.0)
+        ri_cmean = float(Cri.mean())
+        x_cmean = float(np.nan_to_num(np.abs(np.corrcoef(X, rowvar=False)), nan=0.0).mean())
+        if ri_cmean > 3.0 * x_cmean:
+            print("       ⛔ random-init arm DEGENERATE — |corr| mean %.4f vs real %.4f (>3x): random"
+                  % (ri_cmean, x_cmean))
+            print("          weights put every unit on one common mode, so the clusterer collapses to")
+            print("          the same split at every K and Q is a constant of the degenerate graph, not")
+            print("          an architecture fact. Arm DROPPED from the read (a number it cannot mean).")
+            R = None
     S = np.stack([rng.permutation(X[:, j]) for j in range(d)], axis=1)  # scramble: marginals kept
 
     # positive control: PLANTED blocks — K_pc latent factors, each driving its own unit block.

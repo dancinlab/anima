@@ -16659,7 +16659,16 @@
         "role": "",
         "id": "faction-r3-precond4-en-occupancy",
         "detail": "T2 가 대조군을 만들어놨다: 같은 --faction-block-structure 를 ①py303_full(EN 점유 보유) ②scratch d768(EN 점유 없음) 양쪽에 돌린다. ①에만 블록∧②엔 없음 ⟹ 블록=EN 점유 흔적 ⟹ H_9643 GPU 철회. ②에도 블록 ⟹ 사전학습 무관 일반구조 ⟹ 통과.",
-        "verdict": "⏳ 사전등록 · ⚠️이 대조는 T3 가 우연히 만들어준 것이지 내가 사전등록한 게 아니므로 결과를 미리 못 박는다(사후 유리한 쪽 고르기 = tune-to-green)"
+        "verdict": "⛔ 시도① random-init arm 축퇴로 판독불가(Q 가 K 무관 0.0419274192 동일 · |corr| 평균 0.6165 vs real 0.111 · 공통모드 지배) — 계기에 축퇴 게이트 배선. 🚧 블로커: T2 scratch d768 ckpt 미보존 ⟹ 재학습(비용) 또는 ckpt 복구 선행 필요. H_9643 GPU 보류.",
+        "children": [
+         {
+          "name": "⛔ random-init 은 부적격 통제였다 — 축퇴",
+          "role": "",
+          "id": "faction-r3-randinit-degenerate",
+          "detail": "랜덤 가중치가 깊은 conv 를 지나며 모든 유닛을 하나의 공통모드에 태운다(|corr| 평균 0.6165 = real 의 5.5배 · 상위 고유값이 전체 질량의 37% · 유닛별 std 0.0035 vs 전체 1.02). 클러스터러가 K 무관 자명분할로 붕괴 ⟹ Q 는 축퇴 그래프의 상수.",
+          "verdict": "⚠️ 그대로 읽었으면 '아키텍처가 pedestal 의 6.6배를 만든다'는 그럴듯하고 틀린 결론. 축퇴 게이트 배선(|corr| 평균 > real×3 ⟹ arm DROP)"
+         }
+        ]
        }
       ]
      }
