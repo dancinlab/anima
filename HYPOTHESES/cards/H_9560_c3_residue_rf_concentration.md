@@ -22,5 +22,12 @@
 
 **보조 prior**: 집중 p<.05⟹(a)-prior↑·H_9562 자신감 fire · 31B 內 공기 0⟹Fisher moot·(a) 미검존속·H_9562 여전 결정 · (31,511] 공기 존재∧H_1584 L8 floored⟹**(a) 반대 $0 증거**(카드에 기록 후 fire).
 
+## 🔎 STEP-0 경험적 RF 실측 (aiden·clm303_clean L4·2026-07-16 · DIRECTIONAL·engine-native)
+Fable run-order Step0 실행 — paired seed(1 marker byte flip A/B @거리 D)의 margin |Δm| = NLL(cf)−NLL(gold) 차. `anima-py evaluate clm303_clean.clm --xbind <manifest> --win 64`(aiden·OMP4·GPU 12GiB 점유→CPU-numpy 폴백 정상).
+- **v1(가변길이) = confound**: |Δm| D=2 1.27→D≥12 ~0.01. 하지만 marker 가 짧은seed 1/3·긴seed 1/57 이라 **filler-희석**(margin −0.52→−5.88 단조)—RF 아닌 salience. 폐기.
+- **v2(고정길이 58byte·flip 위치만 이동)**: |Δm| **D≤6 강(1.05→0.12)** + D=14~56 **약한 ~0.03 floor(감쇠 안함·깨끗한 RF=31 cutoff 없음)**.
+- **판정: RF=31 mirror-claim 미방전.** 기능적 근접장(~D≤6-10)이 수학적 RF=31([[H_9564]] parse)보다 훨씬 tight. ⚠️ **confound(=제3 burn 발생·정직기록)**: marker→answer 는 *미훈련* 연관 → raw 신호전파/recency 를 재는 것이지 학습된 RF-binding 아님 · ~0.03=noise floor 근처. ⟹ crude probe 로 RF 경계 결정 불가.
+- ✅ **파이프라인 확증**(aiden engine-native --xbind margin 작동) · ⟹ **결정 테스트는 여전히 [[H_9562]](훈련 개입)** — Fable 판정 재확증(H_9557/ctx-probe 로 RF 못 가름). NEXT(instrument 개선): 훈련된 marker→answer 연관(H_9562 축소판) 또는 hidden-state 직접 영향(엔진 플래그).
+
 ## 상태
-🎨 FORK-RULED — 미실행. Fable 판정으로 run-order 확정(Step0 경험RF→이 census→H_9562). 측정 주장 0(설계·판정). **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
+🔎 STEP-0 EXECUTED (DIRECTIONAL) — 경험적 RF 파이프 확증·RF=31 미방전(crude probe confound). 다음=[[H_9562]] 훈련개입 결정. **distinct-from-kills:** H_9359 재분석이나 '균일 우연' 가정을 깨는 신 질문(집중 구조) — 재run 아님·기록만 · fork=(a)RF-formation vs (b)store-separation.
