@@ -249,6 +249,13 @@ def anima_chat_mode(argv):
     return 0
 
 
+def anima_study_mode(argv):
+    # argv = ["study", ...] — the conversational percept channel (teacher = exogenous
+    # percept, not a prompt). Dispatch target = cli/study.py (flat import like the twins).
+    import study as _study
+    return _study.study_mode(argv[1:])
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 #  SWEEP MODE — dispatch to cli/sweep.py (multi-GPU lever-sweep orchestrator)
 # ══════════════════════════════════════════════════════════════════════════════
@@ -306,6 +313,8 @@ def main(argv):
         return anima_sweep_mode(argv)
     if sub == "corpus":
         return anima_corpus_mode(argv)
+    if sub == "study":
+        return anima_study_mode(argv)
     if sub in ("chat", "--byte"):
         return anima_chat_mode(argv)
 
