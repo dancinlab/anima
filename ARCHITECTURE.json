@@ -16550,6 +16550,28 @@
         "detail": "'학습된 vs 무작위 분할' 대조의 한쪽 항이 부재하므로 성립하지 않는다. DV 를 바꿔 살리는 것은 tune-to-green 이므로 하지 않는다. 축의 남은 질문은 H_9643 으로 이관."
        }
       ]
+     },
+     {
+      "name": "🚦 H_9674 — GPU 전 마지막 $0 관문 (기질에 블록이 있나)",
+      "role": "",
+      "id": "faction-r3-block-precondition",
+      "detail": "옛 파벌이 순환이었다(H_9673)와 파벌 구조가 무용하다는 다른 주장이다. 남은 질문 H_9643(현 기질서 학습되나·GPU)은 찾을 블록이 있을 때만 정당하다. 계기 `--faction-block-structure`(VERSION 0.15.29) 구현: trunk 유닛 |상관| → spectral+sweeps 모듈러리티 Q · real/pedestal/scramble/양성통제.",
+      "verdict": "⏳ 303M 본발사중 · 계기 LIVE(자가검증 d=200 심은블록 x28.89 vs bar 1.5)",
+      "children": [
+       {
+        "name": "⭐ 양성통제가 계기 결함 2건을 잡았다",
+        "role": "",
+        "id": "faction-r3-block-instrument-defects",
+        "detail": "①검정력: N=192 vs d=3784 = 상관행렬 95% 가 유한표본 잡음(자가감사서 중단·N 10배). ②탐색예산: 랜덤 40-move greedy 가 심은블록(SNR~3)조차 못찾음 — Q=−0.000072 vs pedestal −0.000096 = x0.76 ⛔.",
+        "verdict": "⛔ 두 번 다 rc=1 음성 미발행 — 양성통제 없었다면 '블록 없음⟹축 종결'이라는 그럴듯하고 틀린 결론이 나왔다(positive-control-before-reading-a-negative)"
+       },
+       {
+        "name": "Q 가 음수인 것이 결정적 단서였다",
+        "role": "",
+        "id": "faction-r3-negative-q-tell",
+        "detail": "Q=−0.000072 = greedy 가 랜덤 시작점에서 사실상 못 움직였다는 뜻. raw Q 를 읽었다면 '0 에 가까우니 블록 없음'으로 오독했을 것이다. 자기 pedestal 대비 비율로 읽은 것이 살렸다(p7)."
+       }
+      ]
      }
     ]
    }
