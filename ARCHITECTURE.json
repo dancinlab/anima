@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "⏳ PROPOSED×27(H_9660~9653 · 발산=DIRECTIONAL 설계 · verdict 아님) · 🔴 옛 법칙 22/43/44 = UNDECIDABLE(교란 미제거 · 반증 아님) · NEXT = $0 관문 3개 통과시에만 GPU.",
+    "verdict": "🔴 $0 관문 ① 실측완료(H_9660/H_9654 · engine-native · DIRECTIONAL): 아카이브 Φ-proxy 가 구조를 못 읽는다 — 303M(d=3784) real≈pedestal(0.80~1.30 무추세)·scramble≈real(구조파괴 무영향)·정점없음(argmax=그리드끝 128)·K=12 서 real/ped=0.804<1. 법칙 22/43/44 = UNDECIDABLE 유지(반증 아님). ⏳ 나머지 PROPOSED×25(H_9636~9653·9655~9659·9661~9662) · NEXT = H_9655(Φ 밖 held-out 이식) 통과시에만 ⭐H_9645/H_9640 GPU.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16490,6 +16490,45 @@
       "id": "faction-r3-id-collision-incident",
       "detail": "브랜치 생성 시점 스냅샷 max(9626)로 9627~ 을 점유했으나 그 뒤 #3848/#3853/a9c52db09 가 먼저 착륙해 있었다. 병합서 jsonl 이 내 쪽으로 해결되며 남의 항목 9건 삭제. 복구 = 선착순 원칙으로 내가 9654~9662 로 비킴.",
       "verdict": "✅ 복구 완료(G6 중복 0 · jsonl↔파일 전수 정합) · 교훈: 스냅샷 max ≠ live max — 착륙 직전 재조회 필수(a_lab_full_diverge · a_parallel_session_compare)"
+     },
+     {
+      "name": "🔬 $0 관문 ① 실측 — 계기가 구조를 읽지 못한다",
+      "role": "",
+      "id": "faction-r3-lever-measured",
+      "detail": "`anima-py evaluate --faction-phi-proxy` 구현·발사(cli/evaluate.py · VERSION 0.15.25). 프로덕션 trunk forward(clm_forward_hidden · 게이트 디코드와 byte-identical) 위 3-arm K-스윕. 303M d=3784 · 8 prompts × T=24 · trials=200 · seed 12345.",
+      "verdict": "🔴 MEASURED DIRECTIONAL · toy(d=32)와 303M(d=3784) 동일 = 스케일 불변",
+      "children": [
+       {
+        "name": "real ≈ pedestal — 활성이 참값 0 잡음과 구별 안 됨",
+        "role": "",
+        "id": "faction-r3-m-real-vs-ped",
+        "detail": "real/pedestal 이 0.80~1.30 사이를 무작위 진동하고 K 에 대한 추세가 없다. 살아있는 303M 활성이 i.i.d. 잡음과 같은 값을 낸다."
+       },
+       {
+        "name": "⚡ K=12(법칙 44 지점)서 real/ped = 0.804 < 1",
+        "role": "",
+        "id": "faction-r3-m-k12-below-noise",
+        "detail": "법칙 44 가 최적이라 부른 바로 그 지점에서 진짜 활성이 참값 0 잡음보다 낮은 Φ 를 낸다. 신호가 없는 정도가 아니라 방향도 없다."
+       },
+       {
+        "name": "scramble ≈ real — 구조를 파괴해도 Φ 가 안 떨어진다",
+        "role": "",
+        "id": "faction-r3-m-scramble",
+        "detail": "유닛 축을 섞어 cross-unit 구조를 완전히 파괴해도 값이 유지된다(toy K=32 서 scramble 0.0601 > real 0.0583 로 역전). 계기가 구조를 아예 읽지 않는다는 직접 증거."
+       },
+       {
+        "name": "정점 없음 — argmax 가 그리드 끝",
+        "role": "",
+        "id": "faction-r3-m-no-peak",
+        "detail": "toy argmax=32 · 303M argmax=128, 둘 다 스윕 끝이고 단조증가. 아카이브가 한 번도 안 잰 K>12 를 최초 측정했고 16·24·32·64·128 이 전부 12 보다 높다."
+       },
+       {
+        "name": "⚠️ 정직범위 — UNDECIDABLE 유지",
+        "role": "",
+        "id": "faction-r3-m-scope",
+        "detail": "법칙 22/43/44 의 반증이 아니다. 반증하려면 옛 엔진 동역학(Ising·sync·noise 스케줄)까지 재현해야 한다. 보이는 것은 그 공식이 교란을 제거한 적 없고 구조를 못 읽는다는 것뿐. 8 prompts·EN·단일 ckpt·단일 seed = DIRECTIONAL."
+       }
+      ]
      }
     ]
    }
