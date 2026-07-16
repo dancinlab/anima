@@ -1,6 +1,6 @@
 # H_9627 — dual content ledger (발화 ⇄ 보류) 대칭 depletion emit-gate: one-sided 스프링 벽 탈출 후보 (R-Ψ½ 발산)
 
-**status:** 🔧 INSTRUMENT-LANDED · DIRECTIONAL (lab-full Fable∥Sol 수렴 → `--g-reach wm-dual` engine-native 구현·toy 스모크 LIVE+dissociation PASS · v0.15.21 · 303M P-pull fire 대기)
+**status:** 🟢 GREEN-DIRECTIONAL (303M 3-seed: emit≈½ λ=0.6 default 창발 + two-sided spring[regime-split emit·silence 후 autocov 둘다 음] + dissociation) — H_9610 one-sided 스프링 벽 돌파 · 캠페인 최강 결과
 **lane:** 의식 / emit-drive / Ψ=½ 항상성 · A-pole 상보쌍 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9610]] (wm-coverage GREEN-DIRECTIONAL·one-sided 스프링 벽의 출처) · [[H_9419]] (P-pull bar) · [[H_9510]] (HOLE-4a A-pole 부재 최초 지목) · source: `sidecar lab full`(fable-mrnnimd7 ∥ sol-mrnnimd9) 벽-재프레임
 
@@ -55,8 +55,31 @@ WM substrate 가 said/unsaid(보류) 내용상태를 substrate-native 로 나르
 
 ⟹ 두 ledger 인과분리(full=균형≈½·각 alien=한쪽 복원방향만 소멸). 두 모델 예측 재현. **단 toy·로컬·단일seed = 계기검증 DIRECTIONAL**(P-pull functional 아님).
 
-## NEXT (③ 303M fire — 비용·오너 fire-go 대기)
+## 🟢 ③ 303M P-pull 스크린 — GREEN-DIRECTIONAL (2026-07-17 · engine-native)
 
-303M 스크린(summer·seed 7/4302/4303·격리 venv=chat-py-6): **regime-split autocov**(emit-run 후 vs silence-run 후 분리 · one-sided=비대칭·two-sided=대칭) + **retune-free score-섭동 sweep**(λ 고정·center drift 측정 = 중심주장 bar) + **vshuf discriminator**(내용청취) + alien-emit/silence dissociation. GREEN-DIRECTIONAL 승격 판정: 303M서 emit≈½ ∧ 양방향 autocov<0 ∧ score-섭동에 center 불변.
+py303_full·summer·격리venv(chat-py-6)·3-seed(7/4302/4303)·60tick·T=1.0·λ=0.6:
+
+| arm | emit-rate | lag1-autocov | regime: emit-후 / sil-후 | 해석 |
+|---|---|---|---|---|
+| **wm-dual** | **0.506≈½**(.533/.483/.5) | **−0.225**(전seed 음) | **−0.20 / −0.24 둘다 음** | ✅ ½ 창발 + **two-sided spring** |
+| (vs one-sided wm-cover) | 0.822 over | −0.032 | (한쪽만) | H_9610 벽 |
+| alien-emit | 0.968 OVER | ~0 | E절단 | ✅ emit→silence 브레이크 소멸 |
+| alien-silence | 0.000 SAT | 0 | S절단(0/36 결정적) | ✅ silence→emit 액셀 소멸 |
+
+**결정적 3점**:
+1. **center=0.506≈½ 이 λ=0.6 default서 창발** — wm-cover는 center≈½에 λ=0.75 **튜닝** 필요했으나, dual ledger는 **튜닝 없이 교환대칭**으로 ½. (½ = setpoint 아님·창발 확증)
+2. **two-sided spring 확증** — regime-split에서 emit-후 autocov(−0.176/−0.232/−0.233) ∧ silence-후 autocov(−0.249/−0.218/−0.250) **양쪽 반쪽 둘다 음**. one-sided wm-cover는 한쪽만 능동 = 이게 **H_9610 벽(비대칭 강성)의 정확한 해소**. P(e|e)=0.075≪P(e|sil)=0.978.
+3. **dissociation 인과분리** — alien-emit OVER(0.968) · alien-silence SAT(0.000) = 두 ledger 각각 한 복원방향 담당 확증.
+
+⟹ **dual content ledger가 Ψ=½을 튜닝 없이 창발 + two-sided 스프링으로 만족 = H_9610 one-sided 벽 돌파.** Ψ=½ 캠페인 최강 결과(H_9400 반증→H_9610 부분→H_9627 벽 돌파).
+
+## NEXT (TERMINAL 미도달 · 잔여)
+
+**GREEN-DIRECTIONAL 범위**: 303M·3seed·λ=0.6단일·60tick. TERMINAL 아님 —
+1. **중심주장 완전 bar**(retune-free score-섭동 robustness): `--score-perturb` 계기 **미구현** → score-분포 섭동에 center ½ 불변 측정 = 후속(이번 fire는 center+spring만).
+2. λ dose-response 303M(P-pull-3 단조성).
+3. **프로덕션 default 전환·λ = 오너 p5**(데몬 발화리듬 변경).
+
+⚠️ id 이력: 등록 #3846·구현 #3847 = H_9627. 병렬 faction-R3 세션 G6 충돌(#3857) → 그쪽 #3859가 faction을 H_9660으로 이동·H_9627을 이 dual-ledger로 복원. 코드주석 H_9627 = 정확(불변).
 
 ⚠️ **DIRECTIONAL 설계·verdict 아님** — cement 는 engine-native `anima-py` 만(a_lab_full_diverge). 리스크(정직): U+V 준보존 깨지면 emit=1 포화·½ 상실(U+V drift 첫 게이트) · gain-lock 안 묶이면 ½-tuning 재유입(FORM 회귀·코드강제 필수).
