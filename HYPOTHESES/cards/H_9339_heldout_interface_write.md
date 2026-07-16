@@ -2,7 +2,7 @@
 
 - **group**: g1-interface-addressable-wall
 - **date**: 2026-07-15
-- **tier**: 🔧 **계기 WIRED · $0 스크리너 PASS** (`--held-swap [--decl-only]` engine-native · 빌더 스모크 + G-BASE-FIRST 2-seed base 앵커 측정 완료 · **4-pod CPT 미실행 = fleet rent OWNER GO 대기** · 판정 0)
+- **tier**: 🟠 **2-seed INVALID · s7 🟢 H-ε-INSERT DIRECTIONAL** (CPT 4런 완료·engine-native aiden. **s7=벽뚫림**(HO-CARRIER 12·11/12·G-WRITE 11/12·연산자 intact vs HO-DECL 5/12) · **s11=INVALID**(G-WRITE 6/12 쓰기 미착륙+G-PRESERVE crater 0.667) → 사전등록상 seed불일치+G-WRITE낙제=INVALID. s11 예산증액 재발사=사전선언 NEXT)
 - **surfaces**: `HYPOTHESES/cards/H_9339_heldout_interface_write.md` · `HYPOTHESES/HYPOTHESES.jsonl`
 - **design**: Fable 위임 (C4=H-ε 이후 다음 한 발)
 
@@ -35,6 +35,21 @@ DV: held-out 어간에 대해 채점 표면 negL(`{s}지 않다`)·negZ(`별로 
 | **KEY-CREATION 벽** | 3–9/12 양 seed **+ G-WRITE 통과** | 🧱 인터페이스는 **UPDATE 전용, 엔트리 생성은 사전학습 잠금** — TOST(Δ_eq 사전고정) |
 | 두 팔 다 ≥10/12 | — | 키가 아니라 **예산**이 진범 = H_9327 음성이 예산 인공물(값진 부호) |
 | seed 불일치 / G-WRITE 낙제 | — | INVALID (예산 1회 증액 재발사 · tune-to-green 아님) |
+
+## 📊 CPT 판정 (4런 완료 · engine-native aiden · frozen grid · mechanical 무자판정)
+
+`anima-py train --arch clm --canon --arm ctrl --init natem_c34_main_s{7,11}.clm --e0 3 --emax 3 --corpus
+ho_{arm}_s{S}.txt --steps 6000 --lr 2e-4 --bs 8 --seq-len 1024 --bf16` × 4 → `anima-py evaluate --xbind`.
+채점 표면(2AFC flip1) swap 어간(held-out DV) negL·negZ D-acc×12 count:
+
+| arm | s7 negL·negZ | s11 negL·negZ | G-WRITE(swapC per-stem) | G-PRESERVE(preserve\|negL) | negJ null |
+|---|---|---|---|---|---|
+| **HO-CARRIER** | **12·11/12** 🟢 | 8·6/12 | **s7 11/12 ✅ · s11 6/12 ❌** | **s7 12/12 intact · s11 0.667 CRATER** | s7 8 · s11 5 /12 |
+| HO-DECL | 5·5/12 | 5·6/12 | — | 11/12 · 11/12 | 6·4/12 |
+
+- **seed 7 = 🟢 H-ε-INSERT 벽뚫림**: 全게이트 PASS(G-WRITE 11/12 쓰기착륙·G-PRESERVE 12/12 연산자 intact·negJ~chance) + HO-CARRIER min 11/12 ≥10 & HO-DECL max 5/12 ≤9. **담체키 held-out 쓰기가 미학습 어간의 새 엔트리에 도달**, 선언키는 못함 = H_9327 어간-슬롯 벽 s7서 뚫림.
+- **seed 11 = ⛔ INVALID**: G-WRITE **6/12**(쓰기가 절반만 착륙 = INVALID 아닌 음성) + G-PRESERVE **0.667 crater**(carrier_s11 CPT가 SEEN 연산자 손상·`corpus-py-1` ⑥ CPT-destroys). swap 판독 무자격.
+- **2-seed 판정 = ⛔ INVALID**(사전등록: seed불일치 ∧ G-WRITE낙제 = INVALID). s7 강한 DIRECTIONAL 양성이나 s11 미착륙으로 cement 불가. **사전선언 NEXT = s11 예산증액 재발사**(쓰기 미착륙=불안정·tune-to-green 아님·카드 사전등록). 4 ckpt 영구저장 `~/anima-weights/c34/ho_*_cpt.clm`(sha 검증).
 
 ## 🚦 게이트 (동결)
 
