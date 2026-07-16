@@ -1554,6 +1554,21 @@ def anima_consciousness_mode(ckpt, argv=None):
     # this retires θ too, making margin the G pole. NOT yet the production default — the switch
     # waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
     _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "clock")
+    # H_9417 · C2 shuffle-margin CONTROL (refractory gate only). Default 0 = OFF. When 1, the gate's
+    # g_recog reads the immune margin on a SEEDED BYTE-PERMUTATION of the candidate — byte multiset
+    # (amplitude/statistics) preserved, sequence (content/recognition) destroyed. If emit-listening
+    # (I(emit;g_recog|stage)) survives the shuffle, the gate hears AMPLITUDE not recognition; if it
+    # dies, the H_9416 C3-b listening is genuine content-recognition. p5: still imagination (candidate
+    # formed, margin read on a scramble of it, then discarded if not emitted) — never a fabricated emit.
+    _g_shuffle = anima_flag_value(_cargv, "--g-shuffle", "ANIMA_G_SHUFFLE", "0") == "1"
+
+    def _grecog_text(_t):
+        """H_9417 · identity, or a seeded byte-permutation of the candidate for the shuffle control."""
+        if not _g_shuffle or not _t:
+            return _t
+        _b = bytearray(_t.encode("utf-8", "surrogateescape"))
+        random.Random((_sample_seed * 2654435761 + 0x9417) & 0x7FFFFFFF).shuffle(_b)
+        return bytes(_b).decode("utf-8", "surrogateescape")
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2150,7 +2165,7 @@ def anima_consciousness_mode(ckpt, argv=None):
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                              secs_since_emit, False, True,
                              backend, live_anchors, 0.0,
-                             lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _t)),
+                             lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t))),
                              _mouth_at(tick),
                              _dyn_w)
         else:
