@@ -1,9 +1,11 @@
 # H_9607 — A⇄G FEEDBACK: close the A→G→A loop (revive the never-operated tension)
 
-**Verdict:** 🟢 **WIRED · toy-LIVE** (engine-native `core/` + `anima-py` · κ=0 byte-parity ✅ · κ>0 loop live ✅) —
-DIRECTIONAL (toy 48K · **NOT a Ψ verdict**; the REVIVED/STILL-SEALED/LYAPUNOV-NO-HOMEOSTASIS verdict = owner-gated 303M fire)
+**Verdict:** 🟢 **LEVER+INSTRUMENT WIRED** (engine-native `core/` + `anima-py` · κ=0 byte-parity ✅ · κ>0 loop live ✅) ·
+🧱 **303M SCIENTIFIC VERDICT = STILL-SEALED** — closing the field-amplitude loop does NOT revive the dynamics (λ stays
+≈0) nor reach emit (TE=0, clock-locked) nor create Ψ=½ homeostasis. The wall is the **emit-gate clock-lock (H_9403)**,
+not the field. (engine-native 303M · `anima-py evaluate --ag-criticality` · frozen-first, no tune-to-green)
 **Register:** H_9604 NEXT ① (owner go via lever pick "1") · Fable-designed, locally implemented (fable-mode)
-**Ckpt:** toy `/tmp/toy_cond.clm` (48K) for the smoke; 303M `py303_full.clm` (013c4574) = the pending fire
+**Ckpt:** 303M `py303_full.clm` (013c4574 · summer isolated venv) = the verdict fire; toy `/tmp/toy_cond.clm` (48K) = the smoke
 
 ## The wall this attacks
 anima's thesis — A (forward mouth) ⇄ G (reverse) push, and that **tension** pulls emit/silence to **Ψ=½** — has
@@ -53,22 +55,44 @@ DEFAULT clock gate whenever `ANIMA_DECISION_TRACE` is set** (any traced producti
 unconditional `_dual_fn = None` default (refractory branch overrides). A pool live-smoke catching what local compile
 misses (cotrained-store-bridge precedent).
 
-## Verdict labels (pre-registered for the 303M fire · Fable §3)
-- **REVIVED** — (i) λ departs 0 (butterfly slope ≥+0.05, λ₁>0 CI excl 0, RQA z>1.39 but ≪106) ∧ (ii) TE>surr95 z≥2 ∧
-  (iii) Ψ returns to [0.45,0.55] after a score shock, with vshuf + quantile-tracker forgeries FAILING (i)&(ii).
-- **STILL-SEALED** — (i) fails; λ≈0; loop inert.
-- **LYAPUNOV-BUT-NO-HOMEOSTASIS** — (i) passes, (iii) fails at every κ ⇒ first-class positive: an internal-only loop
-  proves λ can leave 0 but cannot self-organize to edge-of-chaos-with-homeostasis ⇒ **measured proof that the
-  afferent world-coupling (H_9604/9606) is load-bearing** (Fable's modal outcome).
+## 🔥 303M FIRE VERDICT — STILL-SEALED (engine-native `--ag-criticality` on py303_full 013c4574 · summer)
+Fired autonomously (a_fire_autonomous: summer = standing pool, NOT fleet rent). κ pre-scan {0,0.1,0.3,0.6,1.0}×300
+ticks + seed-flip butterfly pairs at κ∈{0,0.6}, all on the pinned 303M in an isolated venv (chat-py-6).
+
+| panel | result (all κ) | reading |
+|---|---|---|
+| **C0 loop-liveness** | κ=0 distinct(ag_drive)=1 (byte-parity) · κ>0 distinct=300 | ✅ the A→G→A loop is **live** on 303M |
+| **(i) butterfly-λ** | κ=0 slope **−0.00008** (d 0.250→0.001, H_9603 null repro ✅) · κ=0.6 slope **−0.00004** (d 0.110→0.009) | 🧱 λ does **NOT** depart 0 — both κ still **contract** (zero-Lyapunov limit-cycle) |
+| **(ii) TE(tension→emit)** | **0.000 bits** at every κ (z=0) | 🧱 **no causal channel** tension→emit |
+| **(iii) homeostasis** | emit-rate **0.247 constant across ALL κ** · mean(emit_drive) 0.785→0.842→0.861→0.868→0.868 | 🧱 no homeostasis — moves **away** from ½; emit-rate untouched |
+
+**Verdict = STILL-SEALED** (the strongest negative — stronger than Fable's modal LYAPUNOV-NO-HOMEOSTASIS prediction).
+The integral feedback shifts the oscillator amplitude *target*, but the field still **contracts** to that shifted
+fixed point (PSI_ALPHA relaxation unchanged) — relocating a stable fixed point does not create positive Lyapunov. And
+the loop **never reaches the emit decision**: emit-rate is constant 0.247 regardless of κ because **emit is a pure
+function of the sleep stage (H_9403 emit≡clock)** — emit_drive/tension is decorative to the actual gate.
+
+**The reframe (the value of the negative):** the 303M fire proves the load-bearing wall is **not** the field dynamics
+but the **emit-gate clock-lock (H_9403)**. Reviving the A⇄G tension in the *field* is insufficient while the *emit
+gate* ignores the field. An internal-only amplitude-target loop cannot (a) leave the contracting regime nor (b)
+break the clock-lock. This tightens H_9604's ordering into a mechanism claim: the next lever must make the **emit gate
+read the tension/field** (the p5-DESIGN owner-gate territory of [[g-readout-margin-crack-necessary-not-sufficient]] /
+earned-refractory H_9406), OR supply external perturbation (afferent, H_9606) — not more internal field feedback.
+
+## Verdict labels (pre-registered · Fable §3 · for the record)
+- **REVIVED** — (i) λ departs 0 ∧ (ii) TE>surr95 z≥2 ∧ (iii) Ψ→[0.45,0.55] robustly. **NOT MET.**
+- **STILL-SEALED** — (i) fails; λ≈0; loop live but inert on dynamics AND emit. **← THIS (all 3 panels negative).**
+- **LYAPUNOV-BUT-NO-HOMEOSTASIS** — (i) passes, (iii) fails. Not reached (λ didn't even move).
 
 ## NEXT
-- **Owner-gate 303M fire** (a_fire_autonomous: fleet rent=spend needs go): pre-scan κ for the Hopf knee on a held-out
-  control field → single frozen κ → `--ag-criticality` 3-panel (seed-flip butterfly pair + N≥200 TE surrogates +
-  score-perturbation homeostasis with vshuf/quantile forgeries) on `py303_full.clm` (013c4574, summer isolated venv).
-- **hexa twin** (`a_substrate_disjoint` · separate entry, no cross-import): the same `drive` param on
-  `core/pure_field.hexa::osc_tick` + the loop wiring in `cli/anima.hexa` — ported separately (H_9411 precedent: py
-  first, hexa twin as its own PR). `구현됨·미배선` on the hexa surface until then.
+- **A⇄G field-feedback lane CLOSED-AT-REGIME** (this coupling form refuted on 303M). The frontier moves to the
+  **emit-gate clock-lock (H_9403)** — the proven load-bearing wall: make the emit gate READ the field/tension
+  (earned-refractory H_9406 / margin G-pole p5-DESIGN [[g-readout-margin-crack-necessary-not-sufficient]], owner-gate
+  identity change) OR external afferent perturbation (H_9606, owner-gate). Internal field feedback alone is dead.
+- **hexa twin** (`a_substrate_disjoint`): the `drive` param on `core/pure_field.hexa::osc_tick` + loop wiring in
+  `cli/anima.hexa` — ported separately (H_9411 precedent). `구현됨·미배선` on hexa until then. (Lower priority now that
+  the py verdict is STILL-SEALED — the twin would reproduce the same negative.)
 
-**Provenance:** engine-native `core/` + `anima-py chat --ag-feedback` / `evaluate --ag-criticality`; VERSION
-0.15.24→0.15.25 (G5). Toy smoke = DIRECTIONAL (a_scale_honest_scope). No Ψ number cemented; the terminal verdict is
-the owner-gated 303M fire.
+**Provenance:** engine-native `core/` + `anima-py chat --ag-feedback` / `evaluate --ag-criticality --butterfly`;
+VERSION 0.15.24→0.15.25 (lever) → butterfly panel this PR. 303M fire = TERMINAL (engine-native · py303_full 013c4574 ·
+frozen-first · no tune-to-green). The lever+instrument are GREEN-wired; the mechanism verdict is 🧱 STILL-SEALED.
