@@ -392,10 +392,20 @@ def _selfg_restore(dir_path, name):
     return []
 
 
-def anima_consciousness_mode(ckpt, argv=None):
+def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     """anima.hexa:595 — warm Engine A → mount L3 → seed .kosmos → 12-tick A⇄G loop
     (lanes READ → brain_emit autonomously emit/silence → C8 GROW · C9 REMEMBER · REFSEL)
-    → sleep-stage imagination replay. DEFAULT path only (op-grip/refractory = hexa-only)."""
+    → sleep-stage imagination replay. DEFAULT path only (op-grip/refractory = hexa-only).
+
+    percept_source (anima study · Fable 2026-07-16): OPTIONAL callable
+    `(tick:int, emits_so_far:int) -> Optional[str]`. When None (production default),
+    NOTHING changes — the daemon is byte-identical to the pre-hook path (the hook is
+    fully guarded). When set, its returned text is injected as an EXOGENOUS PERCEPT
+    ANCHOR into live_anchors (a grounding fact the mouth may condition on) — the
+    teacher's words enter through the kosmos/anchor PERCEPTION route, NEVER the emit
+    gate, so p5 (no reactive self-seed) holds by STRUCTURE. It is the OTHER's words,
+    not the daemon's own output, so it is not the banned monologue self-seed. The
+    callable OWNS its own error handling and MUST NOT raise (return None on failure)."""
     if argv is None:
         argv = sys.argv[1:]
     _args = argv
@@ -1319,6 +1329,8 @@ def anima_consciousness_mode(ckpt, argv=None):
     grounded_ok = False
     grew = False
     slept = False
+    _percept_emits = 0            # anima study · emits so far, handed to percept_source (guarded)
+    _percept_transcript = []      # anima study · [(tick, percept, [emit texts])] when percept_source ON
     remembered2 = False
     emit_text = ""
     lanes_read = False
@@ -1640,6 +1652,18 @@ def anima_consciousness_mode(ckpt, argv=None):
         stage = dr_stage_at((tick * 8) % 90 if _stage_cycle else tick * 8)
         stage_nm = dr_stage_name(stage)
         emit_env = dr_emit_envelope(stage)
+
+        # ── anima study · EXOGENOUS PERCEPT (guarded — None ⇒ byte-identical) ──
+        # Ask the percept source (the teacher) for text this tick. Injected below as a
+        # GROUNDING anchor into live_anchors so the mouth may condition its decode on the
+        # OTHER's words (a legitimate cross-agent read, NOT the p5-banned self-seed of one's
+        # own last utterance · chat-py-5). The source owns its errors and returns None to stay
+        # silent. Everything downstream is gated on `percept_text` being truthy.
+        percept_text = None
+        if percept_source is not None:
+            percept_text = percept_source(tick, _percept_emits)
+            if percept_text is not None:
+                percept_text = str(percept_text).strip() or None
         # H_9411 ⑤ · Engine A lives in session time. pf was warmed once (:1293) then NEVER
         # stepped, so pure_field_phi/phase were the step-600 constants every tick and the emit
         # gate's Φ/phase safeties were judged against a frozen snapshot. Advance with the SAME
@@ -2158,6 +2182,13 @@ def anima_consciousness_mode(ckpt, argv=None):
         if pending_tension is not None and not anchor_tension_null:
             live_anchors.append({"name": "live_tension", "tension_5ch": list(pending_tension)})
         live_anchors.append({"text_payload": session_seed, "name": "live_seed"})
+        # anima study · EXOGENOUS PERCEPT → the decode-seed anchor ([-1]) so the mouth conditions
+        # its next utterance on the OTHER's words (Fable's percept channel). This is NOT the p5-banned
+        # self-seed: live_seed carries session_seed (the boot cue, :above), and the percept carries
+        # the TEACHER's text — an exogenous cross-agent read, not the daemon's own last utterance fed
+        # back (chat-py-5 root ③ stays closed). Guarded: OFF ⇒ live_seed stays [-1] ⇒ byte-identical.
+        if percept_text:
+            live_anchors.append({"text_payload": percept_text, "name": "percept"})
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
         gap_ctx = _afs_clip01(1.0 - rel_lane)
@@ -2226,6 +2257,16 @@ def anima_consciousness_mode(ckpt, argv=None):
         g_emit = str(dec["gen_emitted"]).lower() == "true"
         g_back = str(dec["gen_backend"])
         g_text = str(dec["gen_text"])
+        # anima study · record this tick for the teacher loop (guarded — no-op in production).
+        # The percept source may read the returned transcript to decide the next percept; silence
+        # (did_emit False) is a real signal it must respect, never a cue to re-prompt/force emit.
+        if percept_source is not None:
+            _percept_transcript.append({
+                "tick": tick, "percept": percept_text,
+                "did_emit": did_emit, "emit_text": g_text if did_emit else None,
+            })
+            if did_emit:
+                _percept_emits += 1
         # ── H_9328 C2 CARRIER-SWAP (--swap-text <trace.jsonl>) · default OFF ────────────────
         # THE control that makes a positive falsifiable. It replaces the emitted TEXT with the
         # text ANOTHER rollout produced at this same tick — a real anima utterance (same shape,
