@@ -154,5 +154,16 @@ donor  = B_taps[l][stem_t0:…]        ← 그 인덱스로 B 를 퍼감 (5곳 �
 
 **⟹ 획득한 일반 법칙**: 계기가 인쇄/주석하는 **"matched"·"byte-matched"·"length-matched" 는 검증이 아니라 주장일 수 있다.** 그리고 그 주장이 **인덱스 산술에 load-bearing** 이면 결과는 confound 가 아니라 **손상**이다. ⟹ **주장 옆에 검사 코드가 있는지 확인하고, load-bearing 이면 warn 이 아니라 refuse 로 만들라.** ([[tool-definition-read-code-not-docstring]] 의 계기판 확장 — 그건 "docstring 말고 코드를 읽어라"였고, 이건 "**코드가 자기 전제를 검사하는지도 읽어라**".)
 
+## 🔒 소급 감사 시도 → 아티팩트 벽 (2026-07-17 · $0) + 메타 관찰
+새 REFUSE 가드로 **H_9331 자신을 소급 감사**하려 했다("그 매니페스트의 twin 이 실제로 byte-매칭됐나"). 매니페스트가 없으니 **결과 화석**으로 대신 하려 했다 — 현재 코드는 pair 별 `rec = {"A": stem, "B": stem, "Ab": …}` 를 기록하므로 stem 들의 byte 길이만 비교하면 $0 로 답이 나온다.
+**결과: 불가.** `archive/state/scratch/h9331_bindlocus/bl_*.json` 은 **집계만** 담는다(`verdict`/`stageA`(depth·rung·n·swap·sham)/`bars`) — **per-pair (A/B stem) 레코드가 없다**. 즉 그 화석은 **per-pair 기록이 추가되기 전 스키마**다.
+⟹ **가드는 미래 실행을 보호하지만 과거는 이 화석으로 소급 감사 불가.** H_9331 twin 불변식의 실제 준수 여부는 **미확인으로 남는다**(오염 주장 아님 · 다음 bind-locus 실행이 자동으로 답한다).
+
+**📌 메타 관찰(이번 세션 3번째 같은 벽)**: 화석이 **verdict 는 보존하나 그것을 재감사할 입력/per-pair 기록은 보존하지 않는다**. 이 감사가 매니페스트를 **3번 재구성**해야 했던 이유가 이것이다 — ①cement 셋 매니페스트 부재(A1 원 arm) ②route-audit 매니페스트 부재(정량화) ③H_9331 per-pair 부재(소급 감사). 재구성은 **원 regime 을 재현 못 해**(내 셋은 dOP 가 bar 의 1/20·베이스 ckpt 는 라우터 축퇴) 결론의 이전이 막힌다.
+⟹ **함의(설계 권고 · verdict 무관)**: 계기 결과에 **재감사에 필요한 입력 지문**(per-pair seed byte-길이·arm 별 통제 매핑·매니페스트 sha)을 함께 박으면 미래의 감사가 재구성 없이 가능하다. 이번에 `--route-audit` 이 `res["ctrl_of"]/len_mismatch/gn_freeze` 를 기록하기 시작한 게 그 방향의 첫 걸음이다.
+
+## 상태
+🔒 감사 lane **완결** (DIRECTIONAL) — 3계기 자동감사 WIRED(route-audit·valence-audit·bind-locus) · 일반법칙 획득("matched" 는 주장일 수 있고 load-bearing 이면 refuse) · 소급 감사는 **아티팩트 벽**(화석이 per-pair 미보존 · 미래 실행이 자동 답함) · **cement verdict re-open 0**.
+<!--prev-->
 ## 상태
 📏 감사 완결 (DIRECTIONAL) — **HIT 실재**(dOP 의 ≈97%가 3B 시프트 몫) **∧ 규모 무해**(0.0021 vs bar 0.05 = 24× 아래) ⟹ **cement verdict re-open 없음**. 산출 = 계기 위생 권고(surface 하드코딩 해제 + route_audit 에 --gn-freeze 배선). **distinct-from-kills:** A1 PASS-live 가 연 감사를 경로특정→크기측정까지 닫음. — A1 PASS-live 발화. **confound 경로 특정=길이-시프트**(arm 간 부정표면 byte 길이 상이 → win 우측정렬 시프트 → beyond-RF 내용 상이). KO=3B/char ⟹ RF=35B≈11자 ⟹ KO 셋 대부분 beyond-RF. 1차 체크=arm 쌍 seed byte-길이 동일성($0·산술). Read 툴로 화석 접근 가능(가드는 bash 전용). 남은 필요물=입력 매니페스트(seed 포함 · 결과파일엔 seed 없음). **distinct-from-kills:** anchor-cert kill(틀린 식) 아님 — 옳은 식의 *채널 오귀속* 감사.
