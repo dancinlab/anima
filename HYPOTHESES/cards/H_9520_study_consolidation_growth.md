@@ -58,8 +58,58 @@ RED/🧱 with the honest number otherwise. Below-chance is first-class.
 - Cost-gated GPU fire (rent = spend) — needs explicit owner go; the transcript (step 1)
   and the replay-mix builder are the $0 prerequisites this card fires first.
 
-## Status
-PRE-REGISTERED · frozen · **NOT fired** (growth verdict). The two $0 prerequisites are now BOTH built:
+## VERDICT — 🟠 BAR-FAIL (C2 lifts · growth claim NOT earned) · FIRED 2026-07-17
+
+Fired end-to-end on a dedicated GPU pod (vast 45066004 · A40 · owner "all go" opened the card's
+cost-gate). All four panels are engine-native `anima-py evaluate --rho-axon` on the same CPU-numpy
+decode path (no path mixing across arms). Base = `py303_savant_mitosis.clm` md5 `508a7193…`,
+identical `--init` for every arm; only the corpus differs (`--canon --steps 6000 --lr 2e-4 --bf16
+--seed 7`). Mitosis fired during CPT (E2→E3); train CE 1.45→~1.0.
+
+| axis | pre-CPT floor | MAIN (cpt_mix) | C1 (replay-only) | C2 (scrambled) | Δ_main | Δ_c1 | Δ_c2 |
+|---|---|---|---|---|---|---|---|
+| HILLOCK | 1.00 | 0.97 | 1.00 | 1.00 | −0.03 | 0.00 | 0.00 |
+| **ρ·form** | 0.2 | **0.6** | 0.2 | **0.4** | **+0.400** | +0.000 | **+0.200** |
+| **ρ·fan** | 2 | 3 | **4** | 2 | +1.000 | **+2.000** | +0.000 |
+| ρ·store · ρ·weave · ρ·leap · ρ·tether | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| ρ·self | INVALID | INVALID | INVALID | INVALID | — | — | — |
+
+**Frozen bar reading (verbatim, no re-interpretation):**
+- **C2 scrambled-teacher DID lift (+0.200 on ρ·form) ⟹ the "C2 does NOT lift" condition FAILS ⟹
+  GREEN is NOT earned.** Destroying the teacher's *content* while preserving its *shape* (word-shuffled,
+  byte-count matched) reproduces HALF of MAIN's lift — so a large part of the ρ·form gain is the
+  teacher lines' FORM, not what they said.
+- **ρ·fan is killed by its own control**: MAIN +1.000 but C1 (teacher ABSENT) lifted **+2.000**. The
+  fan "gain" is plain CPT, teacher-independent. Without C1 this would have been read as growth.
+- **ρ·form survives C1 but not C2**: C1 (+0.000) says byte-volume/replay alone does nothing; C2 (+0.200)
+  says shape does half. The MAIN−C2 residual (+0.200) is the only content-attributable candidate — and
+  it is **not testable here** (see POWER).
+- **FORGET gate HOLDS** ✅ — ρ·weave/ρ·tether/ρ·store all Δ=+0.000 (no drop). Replay-mix did its job:
+  `corpus-py-1` ⑥'s catastrophic forgetting did NOT occur.
+- REACH GRADE unchanged (HILLOCK · REACH-CLOSED: NO) on every arm.
+
+**POWER (why this cannot be rescued by re-reading):** 1 seed/arm ⟹ no seed-sd ⟹ the card's `+MDE`
+is uncomputable, so `+0.400 vs +0.200` cannot be separated from noise. Even had C2 stayed flat, the
+ceiling was DIRECTIONAL-POSITIVE, never the frozen GREEN. **No tune-to-green**: the bar said "C2 does
+not lift"; it lifted; that is the result.
+
+**Honest scope.** Negative on the frozen bar, NOT a claim that exogenous content can never be absorbed:
+this is one 60-row transcript, one seed, `--study-frac 0.05`, `--reps 40`, 6000 steps.
+
+**REOPEN (pre-registered):** multi-seed (≥3/arm) to earn an MDE + a denser transcript. Only then can
+the MAIN−C2 residual be tested. Fire only on explicit owner go (cost-gated).
+
+**Artifacts (permanent, pod destroyed after full harvest · `a_fire_recover_complete`):**
+`~/anima-weights/h9520_cpt/` — `cpt_main.clm` · `cpt_c1.clm` · `cpt_c2.clm` (each 176,584,498) ·
+`evals/eval_pre2.txt` · `eval_main.txt` · `eval_c1.txt` · `eval_c2.txt` · `h9520_pod.log`.
+Readout: `/tmp/h9520_readout.py` (frozen-bar decision applied mechanically; prints the POWER note every run).
+
+**Instrument note (found by this fire):** the canonical verdict path `anima-py evaluate --rho-axon`
+was DEAD (NameError `_gen`, 4 half-refactored functions) — the pre-CPT floor eval crashing at rc=1 is
+what exposed it. Fixed + landed (#3832 · v0.15.17 · convergence `evaluate-py-5` ②) BEFORE any arm was
+scored; all four panels above ran on the repaired path.
+
+## Prerequisites (both $0, built before the fire)
 - **Step 1 (transcript)** ✅ — a real 303M study run landed `transcript303.jsonl` (summer $0 ·
   `~/anima-weights/study303_transcript/`, permanent). Demo is short (6 rows · 1 emit) — a longer
   study run (rounds ~30-50, summer $0) feeds a meaningful CPT; the demo transcript proves the plumbing.
