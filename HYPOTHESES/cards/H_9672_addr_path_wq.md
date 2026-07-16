@@ -1,0 +1,44 @@
+# H_9672 — ADDR-PATH: CLMS 주소경로(W_q) 수리 — Stage1.5 격리 진범을 직공
+
+**status:** 🔵 PRE-REG (Fable 설계 · D0-1 착륙) · not-terminal · wired: 미배선 → D0 진단 → 구현 → T1 토이 → T2 벽재현 → T3 303M(owner go)
+**lane:** 재조합/BINDING · runtime addressable lookup (frontier g1-interface-addressable-wall)
+**related:** [[H_9423]] (Stage1.5 가 주소학습(c) 진범 격리 · 이 H 가 그 NEXT) · [[H_9359]] (벽=런타임 다리 부재) · [[scale-303m-1b-7b-is-amplifier-not-lever]] (toy→303M 미전이 반례)
+
+## 물음
+
+H_9423 Stage1.5(#3855)가 303M 벽을 **순수 주소학습(c)** 로 격리: `--store-oracle-train`(학습서 주소 공짜) → C0-e ORACLE 128/128=1.00(값읽기 완벽·W_g수리) vs P1 softmax lookup 0.586(chance) = **값읽기(a)·substrate(d) 무죄, 진범 = W_q(3784→64) softmax 주소가 held-out 개체를 부트스트랩 못 함.** 물음: 주소경로를 어떻게 수리하면 held-out 0-shot lookup 이 서는가.
+
+## Fable 진단 (설계 · DIRECTIONAL)
+
+**진범 = (2) 간접학습신호 부트스트랩 교착.** 주소 gradient `∂L/∂a ∝ (val[pol_i]−v)` 는 val 이 분화해야 흐르고, val 은 a 가 target 을 선호해야 분화 → **닭-달걀**. init val=0.02 노이즈 → advantage≈0 → W_q 무신호. **근거**: ① Stage1.5 가 고리 한 변(주소)을 oracle 로 끊자 값경로 즉시 완벽(교착 실재·값경로 무죄) ② arm-C 는 **train 개체서도** sb_ans_ce ln2 정체 = held-out 일반화 실패가 아니라 **주소 학습 자체가 한 발짝도 못 뗌** = 최적화 교착 서명. (1) 차원지배 = 교착을 d3784서 탈출불가로 만드는 스케일 공변량(자연-EN penultimate 가 개체 SNR 점유 + 사전학습이 co-adapt 밸브 조임). (3) 트렁크 미인코딩 = 미배제·D0-3 판별·(a)가 동시공격.
+
+## 수리 = (a) 주소 직접감독 CE (최소 · 서열 1위)
+
+`L_addr = CE(att, target_slot)` · att = softmax前 주소 logits(스케일 포함) · **신규 파라미터 0 · CLMS 코덱 불변 · store_apply 불변(train-only) · 플래그 `--store-addr-weight`(default 0.0=byte-identical)**. (d) InfoNCE = in-block 8-slot softmax CE 와 **동일식**(별개 레버 아님). 암기 구조내성: 감독대상이 softmax(q·Kᵀ)이고 K 배치가 블록마다 회전 → 개체→고정slot 암기 불가(유일 암기경로=train개체 q pointwise = addr-gap 게이트가 판별). **KILL: (e) lr/step**(arm-C 6000step 정체 = 예산으로 못 푸는 대칭교착). **(c) 프롬프트-바이트 직접질의 = 레버 제명, 진단 D0-2 로**(BY-CONSTRUCTION 주소=트렁크가 개체 읽는다 주장 포기=계기상한).
+
+**구현(origin/main 기준)**: ① `core/clms.py` CLMSModule.forward `need_att=False`→`(out,att)` (numpy 3-면 불변) ② `cli/train.py` `--store-addr-weight` + sb 블록 `store_logits,att=model.clms(...,need_att=True)`·`if sb_addr_w>0: loss += sb_addr_w*CE(att,tgt)`·monitor sb_addr_acc ③ `store_apply(...,audit=None)`(None=byte-identical) + `--store-addr-audit`(addr_top1·addr_mass seen/held) + `--store-qbytes`(D0-2 eval-only) ④ `corpus.py` **seen manifest**(addr-gap용) + **balanced manifest**(pols 4/4 고정 → shortcut 상한 0.5 붕괴) ⑤ VERSION bump(G5).
+
+## D0 진단 ($0/저가 · 무학습 · 발사 전 의무)
+
+- **D0-1 key 공간 census 🟢 착륙(2026-07-17)**: held-out 86개 · `_entity_key`(byte-bag 평균 d_k64) · self-nearest **76/86=0.884**(<0.95 bar) · **anagram 충돌 1그룹 [demar,merad]**(byte-bag 위치맹 → 키 L2=0.0000 완전충돌·BY-CONSTRUCTION 주소불능). ⟹ **key 재설계(b) = (a)의 보조로 승격**(위치-가중 key) · **P1 bar 는 충돌-제외 유효 n 으로 재산정** · 단 8-slot store 내 우연동거 확률 낮아 P1 영향 소폭 · 진범은 여전히 (2) 교착. **NEXT D0-2**(oracleD_s7 + --store-qbytes = 완벽사영 하 주소상한 ≥.90?) · **D0-3**(frozen py303 pen-dump ridge→K[entity] top-1 = (3) 판별).
+
+## 게이트 (SEQUENTIAL · Fable 판정표 · pre-reg)
+
+- **C0-e ORACLE ≥.90**(Stage1.5로 달성기입증 · 미달=INSTRUMENT-DEAD·P1 미판독) · λ0 byte-identical.
+- **P1-주 · balanced manifest ≥.75 PASS(CRACK·DIRECTIONAL)** · [.60,.75) PARTIAL · (.40,.60) KILL-잔존 · ≤.40 INVERTED(계기점검). **shortcut 0.637 봉쇄 = balanced(4/4)가 1차 채점면**(uniform-a 극성비율 shortcut 상한 0.5로 붕괴).
+- P1-부 · random manifest: P1−shuffle-Δ ≥.15(shortcut 오염 배제).
+- 4-cell op×pol 각 ≥.65·최저<.50 headline무효([[polarity-split-before-headline]]) · C2 shuffle balance-floor·flip-coh≥.90.
+- **addr audit: addr_top1(held)≥.50 ∧ gap(seen−held)≤.20 = 일반화** · gap>.35∧held≈.125 = **암기 verdict**(레버 KILL·제3결과로 사전등록). 조기판별 step≤1500 sb_addr_acc(train)≥.5.
+- retention C0-g·val_CE 회귀 없음.
+
+## 사다리
+
+D0-1✅→D0-2/3 → **구현** → **T1 토이(d64 addr-loss ON · ORACLE≥.95·P1≥.85·addr_top1≥.90 · w스윕{0.3,1.0} toy 안깨는 최소)** → **T2 벽재현(d256/768 scratch + d64-사전학습arm · addr-loss OFF서 정체 재현 = 차원 vs 사전학습-점유 공변량 실측분리 · 둘다 재현실패=발사금지)** → **T3 303M(owner go · summer · S2레시피 + --store-addr-weight w* · seed{7,11} · fire전 df -h)**.
+
+## 잔인한 판정 (Fable)
+
+**최대 오도 = 다수-극성 shortcut 상한 0.637** — uniform a 에서 v=Σaᵢ·val[polᵢ] 가 극성비율 선형인코딩 → "op⊕majority(pols)" 만 배워도 랜덤 8-slot 0.637(주소 완전死). Stage1.5 SEEN 0.6875·P1 0.586 이 정확히 그 대역(n=128 sd.04서 미구분)·**flip-coh 못잡음**(전-극성 flip=majority도 뒤집혀 coherent). 봉쇄=balanced manifest 1차채점+random shuffle-Δ+addr audit 3중. **정직 스코프**: (a) 성공 tier=**"감독-주소 co-train"**(창발-주소≠감독-주소 · end-task만으로 주소 창발 주장은 arm-B/C로 이미 KILL). D0-3 FAIL∧T3 성공 = "addr gradient 가 트렁크를 구부려 인코딩 생성"(retention이 비용 채점).
+
+## source
+
+Fable 설계(`walls-delegate-to-fable`·fable_addr.md) · owner go autonomous(a_h_continuous_no_branch) · H_9423 Stage1.5(#3855) 주소학습(c) 격리 후속. D0-1 engine-native census 착륙.
