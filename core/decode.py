@@ -283,15 +283,19 @@ def set_slw_controls(gamma_override=None, shuffle_seed=None):
 _CLMS_STORE = None            # dict {"entities","pols","target_slot"} · None => passthrough
 _CLMS_ORACLE = False          # --store-oracle (bypass the softmax lookup with the true slot)
 _CLMS_LAM_OVERRIDE = None     # --store-lambda (None => file λ)
+_CLMS_AUDIT = None            # H_9672 --store-addr-audit: a list store_apply appends addr diagnostics to (None => off)
 
 
-def set_clms_store(store=None, oracle=False, lam_override=None):
+def set_clms_store(store=None, oracle=False, lam_override=None, audit=None):
     """Set the CLMS store-bridge eval-time injection (cli/evaluate.py --store). store=None => the lane
-    is passthrough regardless of a present trailer (the trailer有 store無 byte-identical seal)."""
-    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE
+    is passthrough regardless of a present trailer (the trailer有 store無 byte-identical seal). audit =
+    a list (H_9672 addr-audit) that store_apply appends {argmax,a_target,target} per qpos to; None => off
+    (byte-identical forward)."""
+    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE, _CLMS_AUDIT
     _CLMS_STORE = store
     _CLMS_ORACLE = oracle
     _CLMS_LAM_OVERRIDE = lam_override
+    _CLMS_AUDIT = audit
 
 
 # ── H_9407 consult-decode eval-time window override (process-global; set by cli/evaluate.py
@@ -1245,7 +1249,7 @@ def _fwd_logits(W, tok, T, edits=None):
         if qpos:
             out_logits = store_apply(to_host(out_logits), to_host(yn_trunk), W["clms"],
                                      _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
-                                     lam_override=_CLMS_LAM_OVERRIDE)
+                                     lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT)
     return to_host(out_logits)
 
 
