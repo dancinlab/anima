@@ -3509,6 +3509,21 @@ def xbind_run(argv):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
 
+    # H_9611 --gn-freeze <ref>: pin every GN's mu/var to this ONE pre-registered reference
+    # forward ⟹ the normalizer is input-independent ⟹ the trunk is strictly RF-local (the
+    # sequence-global GN bus is deleted; affine untouched). H_9611 measured beyond-RF influence
+    # collapsing to EXACTLY 0 under the freeze while within-RF survives, so replaying a cemented
+    # --xbind score under it isolates whether that global channel ever moved the SCORE (the
+    # hidden-channel isolation is already done; this is the verdict-replay arm). Never swept.
+    gn_ref = evaluate_strval(argv[1:], "--gn-freeze", "")
+    if gn_ref:
+        if os.path.exists(gn_ref):
+            gn_ref = open(gn_ref, "r").read()
+        _st = clm.gn_freeze_calibrate(W, clm._seed_to_tok(gn_ref, T), T)
+        clm.gn_freeze_set(_st)
+        print("  [gn-freeze] ON — %d GN sites pinned from ref (%d bytes · pre-registered, not swept)"
+              % (len(_st), len(gn_ref)), flush=True)
+
     # H_9407 · consult-decode window + structural pre-flight (mirror of the n_dec refusal above).
     t_dec = None
     if consult_decode:
