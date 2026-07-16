@@ -233,7 +233,7 @@ def brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
-                          mouth=None, dyn_w=None, record_cand_diag=False):
+                          mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -263,6 +263,20 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 
     # form the candidate unconditionally (imagination) so G can recognise it
     ctx = gen_ctx_from_decision(dict(decision, emit="True"))
+    # H_9557 · PC2 ROUTING (2D-loadings H_9468/#3792): the emit-ORTHOGONAL tension axis
+    # PC2 = originality↔balance (orig+0.84·bal−0.44·coh−0.28) carries ~1/3 of tension
+    # variance but has NO path to the mouth — gen_ctx passes only the scalar motivation.
+    # This wires PC2 → deliberation_k (the ONE decode channel the mouth reads, generator.py
+    # :521 best-of-K) so a genuinely emit-independent DOF steers CONTENT while the emit
+    # decision (score vs g_recog below) stays byte-identical. Tests the 3-criterion:
+    # PC2 reads a different projection than emit-w, moves gtext, both on the scoring
+    # surface. Off (None) = production byte-identical.
+    pc2_proj = None
+    if route_pc2 is not None:
+        _pc2 = float(route_pc2) * (0.84 * orig - 0.44 * bal - 0.28 * coh)
+        pc2_proj = 0.0 if _pc2 < 0.0 else (1.0 if _pc2 > 1.0 else _pc2)
+        _k = 1 + int(pc2_proj * 3.0 + 0.5)
+        ctx["deliberation_k"] = 1 if _k < 1 else (4 if _k > 4 else _k)
     cand = generate(backend, ctx, True, anchors, mouth)
     cand_text = str(cand["text"])
     g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
@@ -278,6 +292,8 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     decision["safe"] = safe
     decision["gate_mode"] = "refractory"
     decision["g_recog_gate"] = g_recog
+    decision["pc2_proj"] = pc2_proj   # H_9557 · PC2 routing signal (None = off)
+    decision["route_k"] = int(ctx.get("deliberation_k", 1))
     if emit:
         decision["gen_emitted"] = cand["emitted"]
         decision["gen_backend"] = cand["backend"]
