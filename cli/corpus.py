@@ -25,6 +25,8 @@ Usage:
 """
 import json
 import collections
+import hashlib
+import os
 import random
 import re
 import sys
@@ -129,6 +131,12 @@ def _parse_args(argv):
             opts["held_swap"] = True; i += 1
         elif a == "--decl-only":
             opts["decl_only"] = True; i += 1
+        elif a == "--manifest":
+            opts["manifest"] = argv[i + 1]; i += 2
+        elif a == "--store":
+            opts["store"] = argv[i + 1]; i += 2
+        elif a == "--out-dir":
+            opts["out_dir"] = argv[i + 1]; i += 2
         elif a == "--surface":
             opts["surface"] = argv[i + 1]; i += 2
         elif a == "--collision-split":
@@ -2606,6 +2614,92 @@ def build_bridgesplit(atoms_path, reps, seed, split_seed, lang, polarity="real",
     return text, st
 
 
+def _sattolo(n, seed):
+    """Uniform random n-cycle: perm[i] != i for ALL i, any n >= 2. Pure fn of (n, seed).
+    The strict `j < i` swap IS the no-fixed-point proof (H_9407 wrong-atom control)."""
+    rng = random.Random(seed)
+    idx = list(range(n))
+    for i in range(n - 1, 0, -1):
+        j = rng.randrange(i)                              # j < i strictly
+        idx[i], idx[j] = idx[j], idx[i]
+    return idx
+
+
+def build_consult_variants(manifest_path=None, store_path=None, seed=7):
+    """H_9407 C/D control stores: scram-pol (flip-all) + wrong-atom (Sattolo cycle) from a correct
+    consult store {atom:{key,pol}}. Deterministic, in-distribution, one-variable controls (Fable spec).
+
+    correct = --store (re-emitted byte-identical) OR derived from the eval manifest --manifest (the
+    same --xbind JSON the 5-arm run scores, so store<->manifest can never drift). C flips every pol
+    (a binary derangement that preserves the marginal necessarily leaves fixed points = A-contamination,
+    a KILL-biased control). D permutes the facts by a Sattolo cycle over codepoint-sorted atoms so the
+    fact MULTISET is identical to A and only the addressing (atom->fact) moves."""
+    if store_path and manifest_path:
+        raise SystemExit("consult-variants: --store and --manifest are mutually exclusive")
+    if store_path:
+        correct = json.load(open(store_path, encoding="utf-8"))
+    elif manifest_path:
+        spec = json.load(open(manifest_path, encoding="utf-8"))
+        pol_by_stem = {}
+        for split in ("heldout", "seen"):
+            for row in spec.get(split, []):
+                a, p = row["a"], int(row["pol"])
+                if pol_by_stem.get(a, p) != p:
+                    raise SystemExit("INVALID-INPUT: stem %r carries two pols in the manifest" % a)
+                pol_by_stem[a] = p
+        correct = {a: {"key": a, "pol": p} for a, p in sorted(pol_by_stem.items())}
+    else:
+        raise SystemExit("consult-variants: one of --store / --manifest is required")
+
+    n = len(correct)
+    if n < 2:
+        raise SystemExit("INVALID: need >= 2 atoms (n=%d admits no derangement)" % n)
+    if not all(int(f["pol"]) in (0, 1) for f in correct.values()):
+        raise SystemExit("INVALID: pol domain (must be 0/1)")
+    keys = [f["key"] for f in correct.values()]
+    if len(set(keys)) != n:                               # 5c precondition: distinct keys
+        raise SystemExit("INVALID: duplicate keys — a derangement could recreate A")
+
+    scram_pol = {a: {"key": f["key"], "pol": 1 - int(f["pol"])} for a, f in correct.items()}
+
+    atoms = sorted(correct)                               # codepoint order — JSON-order independent
+    perm = _sattolo(n, seed)
+    wrong_atom = {atoms[i]: dict(correct[atoms[perm[i]]]) for i in range(n)}
+
+    # builder-coded audit — all-or-nothing (any failure -> raise, zero files written)
+    fact = lambda f: (f["key"], int(f["pol"]))
+    assert set(correct) == set(scram_pol) == set(wrong_atom)
+    for a in correct:                                     # C: ONLY pol moved
+        assert scram_pol[a]["key"] == correct[a]["key"]
+        assert scram_pol[a]["pol"] == 1 - int(correct[a]["pol"])
+    assert sum(scram_pol[a] != correct[a] for a in correct) == n           # 5b: flip changed ALL
+    assert sorted(map(fact, wrong_atom.values())) == sorted(map(fact, correct.values()))  # D: multiset
+    n_pol_match = 0
+    for i, a in enumerate(atoms):
+        assert perm[i] != i, "FIXED POINT — control == A on atom %r" % a    # 5a
+        assert fact(wrong_atom[a]) != fact(correct[a]), "collision recreates A on atom %r" % a  # 5c
+        if int(wrong_atom[a]["pol"]) == int(correct[a]["pol"]):
+            n_pol_match += 1
+
+    def _marg(store):
+        c = collections.Counter(int(f["pol"]) for f in store.values())
+        return {"0": c.get(0, 0), "1": c.get(1, 0)}
+
+    st = {"correct": correct, "scram_pol": scram_pol, "wrong_atom": wrong_atom,
+          "n_atoms": n, "seed": seed, "n_pol_match": n_pol_match,
+          "pol_marginal": {"correct": _marg(correct), "scram_pol": _marg(scram_pol),
+                           "wrong_atom": _marg(wrong_atom)},
+          "key_bytes": {"min": min(len(k.encode()) for k in keys),
+                        "max": max(len(k.encode()) for k in keys)},
+          "source_mode": "store" if store_path else "manifest",
+          "source_path": store_path or manifest_path}
+    return st
+
+
+def _canon_dump(obj, fh):
+    json.dump(obj, fh, ensure_ascii=False, indent=1, sort_keys=True)
+
+
 def main():
     argv = sys.argv[1:]
     fmt, opts = _parse_args(argv)
@@ -2907,8 +3001,69 @@ def main():
               % (st["n_heldout"], st["chance_sd"]))
         return
 
+    if fmt == "consult-variants":
+        # H_9407 C/D control stores for the --consult-decode 5-arm measurement (Fable spec).
+        man, sto, out_dir = opts.get("manifest"), opts.get("store"), opts.get("out_dir")
+        if not out_dir or (not man and not sto):
+            print("anima corpus consult-variants (--manifest EVAL.json | --store correct.json) "
+                  "--out-dir DIR [--seed 7]", file=sys.stderr)
+            print("      emits correct/scram_pol/wrong_atom.json + consult_variants.manifest.json "
+                  "(H_9407 arms A/B · C · D). C=flip-all pol · D=Sattolo cycle over sorted atoms.",
+                  file=sys.stderr)
+            sys.exit(2)
+        st = build_consult_variants(man, sto, opts["seed"])
+        if os.path.exists(os.path.join(out_dir, "consult_variants.manifest.json")):
+            # a redraw over a USED variant set = contamination (no --force).
+            print("anima corpus consult-variants: REFUSE — %s already holds a variant set (a redraw "
+                  "over a used set is contamination)" % out_dir, file=sys.stderr)
+            sys.exit(2)
+        os.makedirs(out_dir, exist_ok=True)
+        shas = {}
+        for name in ("correct", "scram_pol", "wrong_atom"):
+            fp = os.path.join(out_dir, name + ".json")
+            with open(fp, "w", encoding="utf-8") as fh:
+                _canon_dump(st[name], fh)
+            shas[name] = hashlib.sha256(open(fp, "rb").read()).hexdigest()
+        src_sha = hashlib.sha256(open(st["source_path"], "rb").read()).hexdigest()
+        manifest = {
+            "format": "consult-variants-v1",
+            "source": {"mode": st["source_mode"], "path": st["source_path"], "sha256": src_sha},
+            "seed": st["seed"], "n_atoms": st["n_atoms"], "n_pol_match": st["n_pol_match"],
+            "pol_marginal": st["pol_marginal"],
+            "stores": {k: {"path": k + ".json", "sha256": shas[k]}
+                       for k in ("correct", "scram_pol", "wrong_atom")},
+            "transforms": {"scram_pol": {"kind": "flip-all", "seed": None, "n_changed": st["n_atoms"]},
+                           "wrong_atom": {"kind": "sattolo-cycle", "order": "sorted(atoms) codepoint",
+                                          "seed": st["seed"], "n_fixed_points": 0,
+                                          "n_pol_match": st["n_pol_match"]}},
+            "byte_census": {"key_bytes_min": st["key_bytes"]["min"], "key_bytes_max": st["key_bytes"]["max"]},
+            "arms": [
+                {"arm": "P", "store": None, "flags": "--xbind <m>"},
+                {"arm": "E", "store": None, "flags": "--xbind <m> --consult-decode"},
+                {"arm": "A", "store": "correct.json", "flags": "--xbind <m> --consult correct.json --consult-decode"},
+                {"arm": "B", "store": "correct.json",
+                 "flags": "--xbind <m> --consult correct.json --consult-decode --consult-decode-filler <T_dec>",
+                 "note": "filler>=T_dec makes B bitwise==E (instrument self-check)"},
+                {"arm": "C", "store": "scram_pol.json", "flags": "--xbind <m> --consult scram_pol.json --consult-decode"},
+                {"arm": "D", "store": "wrong_atom.json", "flags": "--xbind <m> --consult wrong_atom.json --consult-decode"}]}
+        mfp = os.path.join(out_dir, "consult_variants.manifest.json")
+        with open(mfp, "w", encoding="utf-8") as fh:
+            _canon_dump(manifest, fh)
+        print("=== anima corpus consult-variants (H_9407 C/D controls) ===")
+        print("  n_atoms=%d  pol correct=%s scram=%s wrong=%s"
+              % (st["n_atoms"], st["pol_marginal"]["correct"], st["pol_marginal"]["scram_pol"],
+                 st["pol_marginal"]["wrong_atom"]))
+        print("  C=flip-all n_changed=%d · D=sattolo seed=%d fixed_points=0 pol_match=%d/%d"
+              % (st["n_atoms"], st["seed"], st["n_pol_match"], st["n_atoms"]))
+        print("  AUDIT ✅ 7/7 (keyset 3-way · C only-pol · C all-changed · D multiset · D no-fixpt · D no-A-collision)")
+        for k in ("correct", "scram_pol", "wrong_atom"):
+            print("  %-11s %s.json  sha256=%s" % (k, k, shas[k][:16]))
+        print("  manifest -> %s (6 arms P/E/A/B/C/D)" % mfp)
+        return
+
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
-                   "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "routeaudit", "atoms", "c34"):
+                   "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
+                   "routeaudit", "atoms", "c34"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34> --out PATH")
         print("      routeaudit --atoms gt_atoms.json --out ra_manifest.json   (H_9355 route audit)")
         print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")

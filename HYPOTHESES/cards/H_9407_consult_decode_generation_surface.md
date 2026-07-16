@@ -50,13 +50,19 @@ RF_analytic=11 (toy K=3 L=2 · 프로덕션 윈도 24보다 작음=이 toy는 wi
 - 판정(Fable §4): G-parity→G-instrument(B≡E)→G-positive(margin 재현·아니면 INVALID 음성 아님)→ **SURVIVE**
   = A 가 C·D 대비 paired McNemar p<0.05(순서통계량 Δ 금지) = 최초 생성표면 다리 / **KILL** = A ≤ 모든 통제
   (paired·TOST CI<+0.10) = 생성측 deafness("addressable"를 채점표면 전용으로 강등·pointer 상류 재라벨).
-- 통제 store 는 `corpus.py consult-variants`(결정론 flip-pol/rotate-atom · follow-on) 로 생성.
+- 통제 store 는 **`anima corpus consult-variants` 🔧 WIRED** (Fable spec 구현): `--manifest EVAL.json | --store
+  correct.json --out-dir DIR [--seed]` → correct/scram_pol/wrong_atom.json + consult_variants.manifest.json.
+  **C=flip-all** pol(이진 derangement 은 marginal 보존 시 fixed-point=A오염 → 전부 flip) · **D=Sattolo cycle**
+  (codepoint-sorted atom · fact multiset A 동일·주소지정만 이동·in-distribution). 빌더-코드 감사 7/7(keyset 3-way·
+  C only-pol·C all-changed·D multiset·D no-fixpt·D no-A-collision) + 오염가드(기존 out-dir REFUSE·no --force).
+  스모크 $0 통과: n=32·C n_changed=32·D fixpt=0 pol_match=14/32·결정성 byte-identical(same seed)·store re-emit byte-identical.
 
 ## 반증 · scope
 - 계기 반증: 기본값 run 이 frozen baseline 과 다르면 배선 결함(현 reset byte-identical 검증). 측정 반증=
   Fable §4 판정그리드. RF 가 선언+stem 못 담으면 INVALID-STRUCTURAL(음성 아님·더 넓은 윈도 ckpt 필요).
-- scope: 계기 WIRED(byte-identical default 검증) · 측정 미실행(303M 5-arm follow-on). 오너 "모두 진행"
-  3-레버 캠페인 #1(top pick) — #2 oracle-pool·#3 H_9339 병행.
+- scope: 계기 WIRED(byte-identical default 검증) + **통제 store 빌더 WIRED**(consult-variants·스모크 $0 통과) ·
+  측정 미실행(303M 5-arm summer follow-on · pool-blocked=oracle 포화·aiden down 시점). 오너 "모두 진행"
+  3-레버 캠페인 #1(top pick) — #2 oracle-pool·#3 H_9339(계기 landed #3762) 병행.
 
 ## 비용
 $0(계기+toy smoke) · G5 VERSION bump(core/decode.py+cli/evaluate.py) · 측정 fire=summer 12 eval(follow-on).
