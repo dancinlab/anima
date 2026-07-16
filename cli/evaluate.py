@@ -368,7 +368,7 @@ def system_g1_run(argv):
     print("bar:    M=%d · N_pool=%d · COV>=%d REC>=%d LEAK<=%.2f DROP>=%d  (FREEZE.txt frozen)"
           % (_SG1_M, _SG1_N_DISTRACT, _SG1_COV_BAR, _SG1_REC_BAR, _SG1_LEAK_BAR, _SG1_SCR_DROP))
     print("")
-    h = _gen.gen_auto_load(ckpt)
+    mouth = _Mouth(ckpt)
     r = eval_system_rho_weave(mouth, gen)
     print("  coverage=%d/%d (>=%d)  recovery=%d/%d (>=%d)  leak=%.3f (<=%.2f)  drop=%d (>=%d)"
           % (r["coverage"], _SG1_M, _SG1_COV_BAR, r["recovery"], _SG1_M, _SG1_REC_BAR,
@@ -653,7 +653,7 @@ def eval_rho_fan(mouth, gen, known):
 def eval_reach_all(ckpt, corpus_paths, gen):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    h = _gen.gen_auto_load(ckpt)
+    mouth = _Mouth(ckpt)
     print("  [gate] ρ·form COHERENCE …", flush=True)
     r0 = eval_rho_form(mouth, g, known)
     print("  [gate] ρ·weave RECOMBINATION …", flush=True)
@@ -682,7 +682,7 @@ def eval_rho_axon(ckpt, corpus_paths, gen, kosmos_dir=""):
     import rho_axon
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
-    h = _gen.gen_auto_load(ckpt)
+    mouth = _Mouth(ckpt)
     en_corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     # aggregate dets = the FROZEN en bar (UNTOUCHED — en byte-identity guaranteed structurally)
     dets = {"known": known, "concepts": _rho_fan_concepts(),
@@ -1302,7 +1302,7 @@ def probe_run(argv):
     print("=== anima evaluate --probe — MATCHED-SURFACE G1 (card H_6189) ===")
     print("ckpt:  " + ckpt)
     print("spec:  %s (%d items · greedy top_k=1 gen=%d)" % (spec_path, spec["n_items"], gen))
-    h = _gen.gen_auto_load(ckpt)
+    mouth = _Mouth(ckpt)
     out = []
     for it in spec["items"]:
         text = mouth.ideate(it["prompt"], gen, 1, 0.7, 6185)   # greedy, fixed seed
