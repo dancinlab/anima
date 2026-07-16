@@ -1468,6 +1468,9 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     wm_probe_feat = None
     wm_last_feat = None
     wm_alien_feat = _afs_byte_feature("zzz unrelated alien content", 8)
+    # H_9610 · frozen EMPTY alien WM buffer for the --g-reach wm-cover-alienwm C2 dissociation
+    # control (never gated by this daemon's speech → coverage ≈ 0 → gate always open = SATURATE).
+    _wm_cover_alien = wm_buffer_new(3, 0.6, 0.5, 8)
     wm_null = 0.0
     # ⑥ ANCHOR — live 5-channel substrate tension at the last emit, injected as an anchor so
     # anchor_tension_fold reads a VARYING tension_5ch (mem_001's frozen baseline otherwise).
@@ -1593,7 +1596,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #     silenced (the restoring β spring), genuinely-novel keep d1≈d2 → reach≈0 → emit. EARNED
     #     refractory (0 on a 1-cell store), constants 0, single DOF. Composes with --g-shuffle unchanged.
     _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH", "d1")
-    if _g_reach not in ("d1", "affinity", "cb-perr", "cb-perr-alienctx"):
+    if _g_reach not in ("d1", "affinity", "cb-perr", "cb-perr-alienctx",
+                        "wm-cover", "wm-cover-alienwm"):
         raise SystemExit("--g-reach: only 'd1' (default), 'affinity', 'cb-perr',"
                          " 'cb-perr-alienctx' (got %r)" % _g_reach)
     if _g_reach != "d1" and _emit_gate != "refractory":
@@ -2259,6 +2263,23 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # candidate stat. Reuses cb_alien_feat (:1445, no new constant).
                 _recog_fn = lambda _t: _afs_clip01(1.0 - vforward_err(cbel, cb_alien_feat,
                                                    _afs_byte_feature(_grecog_text(_t), 8)))
+            elif _g_reach == "wm-cover":
+                # H_9610 · value-gate = WM discourse-coverage (the non-recognition lens · H_9510
+                # showed mouth is novel-only so recognition-β has no target). g_recog = V(cand) =
+                # how much the candidate is ALREADY covered by working memory. sign = g=V (high
+                # coverage → silence) not 1−V: emit gates in the utterance (:2394, after here) →
+                # WM coverage of feat8-similar followers rises → their gate closes (β spring); a
+                # silence run leaks WM down → gate reopens (both directions negative-feedback,
+                # zero new constant). wmb here is this tick's LEAKED, pre-gate-in state = coverage
+                # BEFORE speaking (chat-py-5 recognition-before-memorisation). $0 S0-e counterfactual:
+                # emit-rate 0.444≈½ · autocov −0.182 (spring) · ≠vshuf (content-heard) · alien SATURATE.
+                _recog_fn = lambda _t: _afs_clip01(wm_buffer_probe_score(wmb, _afs_byte_feature(_grecog_text(_t), 8)))
+            elif _g_reach == "wm-cover-alienwm":
+                # H_9610 C2 dissociation control · probe a FROZEN empty alien WM buffer (never gated
+                # by this daemon's speech) → coverage ≈ 0 always → gate always open (SATURATE). exp
+                # survives ∧ alienwm SATURATE ⇒ the gate reads "coverage of MY discourse", not a
+                # marginal candidate stat (H_9424 alienctx sign, ported to WM).
+                _recog_fn = lambda _t: _afs_clip01(wm_buffer_probe_score(_wm_cover_alien, _afs_byte_feature(_grecog_text(_t), 8)))
             else:
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t)))
             dec = brain_emit_refractory(pf,
