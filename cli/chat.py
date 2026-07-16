@@ -398,7 +398,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     → sleep-stage imagination replay. DEFAULT path only (op-grip/refractory = hexa-only).
 
     percept_source (anima study · Fable 2026-07-16): OPTIONAL callable
-    `(tick:int, emits_so_far:int) -> Optional[str]`. When None (production default),
+    `(tick:int, transcript:list) -> Optional[str]`, where transcript is the running
+    list of `{"tick","percept","did_emit","emit_text"}` rows for prior ticks (so the
+    teacher can react to what the daemon actually said, and treat silence as a signal).
+    When None (production default),
     NOTHING changes — the daemon is byte-identical to the pre-hook path (the hook is
     fully guarded). When set, its returned text is injected as an EXOGENOUS PERCEPT
     ANCHOR into live_anchors (a grounding fact the mouth may condition on) — the
@@ -1661,7 +1664,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # silent. Everything downstream is gated on `percept_text` being truthy.
         percept_text = None
         if percept_source is not None:
-            percept_text = percept_source(tick, _percept_emits)
+            percept_text = percept_source(tick, _percept_transcript)
             if percept_text is not None:
                 percept_text = str(percept_text).strip() or None
         # H_9411 ⑤ · Engine A lives in session time. pf was warmed once (:1293) then NEVER

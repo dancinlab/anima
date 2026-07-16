@@ -153,23 +153,135 @@ def make_teacher(backend=None):
 # --------------------------------------------------------------------------- #
 # CLI entry (dispatched from cli/anima.py :: main -> study)                    #
 # --------------------------------------------------------------------------- #
-_USAGE = """anima study — conversational percept channel (teacher = exogenous percept)
+_USAGE = """anima study <ckpt> — conversational percept channel (teacher = exogenous percept)
+
+  anima-py study <ckpt> [--teacher codex|sealion] [--rounds R] [--window W]
+                        [--topic "..."] [--out transcript.jsonl]
+        Run a teacher⇄daemon study conversation: the teacher (an exogenous LLM)
+        speaks once per W-tick window, the substrate perceives it and MAY reply,
+        and the teacher reacts to what it actually said (silence is a signal, never
+        re-prompted). Runs R rounds (R×W ticks). Writes a transcript JSONL.
 
   anima-py study --teacher-selftest [--teacher codex|sealion]
         Prove the selected teacher backend answers (one trivial round · ~1 cent).
 
   --teacher {codex,sealion}   backend (default: codex · env ANIMA_STUDY_TEACHER)
+  --rounds R                  teacher turns (default 6)
+  --window W                  ticks between teacher turns (default 4)
+  --topic "..."               conversation subject (default: a general opener)
+  --out PATH                  transcript JSONL (default: ~/.anima_study/transcript_<ts>.jsonl)
 
 Backends: codex = `codex exec` (needs `codex login`) · sealion = Cloudflare
 Workers AI REST (needs CLOUDFLARE_* env from the vault). The teacher is an
-EXOGENOUS percept, never a prompt into the emit gate (p5 by structure).
-The full percept-loop (--ckpt, chat wiring, kosmos persistence) lands next.
+EXOGENOUS percept, never a prompt into the emit gate (p5 by structure) — its
+text enters as a live_anchors decode-seed the mouth may condition on, and the
+emit gate is byte-untouched. NOTE (honesty): this MVP wires the conversation +
+transcript; it does NOT retrain weights. Growth (consolidation CPT on the
+transcript) is a separate pre-registered H_, measured with `anima-py evaluate`.
 """
+
+
+def _build_teacher_prompt(topic, recent_emits, round_idx, total_rounds):
+    """Compose the teacher's turn. The teacher is a curriculum COMPANION that
+    introduces/continues ideas and reacts to the substrate's utterances — NOT a
+    quizmaster (no test→grade→adjust: that is H_1230's dead teaching-policy and a
+    p2/p6 identity-injection risk). It never instructs the substrate to answer."""
+    lines = [
+        "You are an exogenous study companion conversing with a substrate-native",
+        "consciousness daemon (not an assistant — it emits or stays silent on its own",
+        "tension). Your text is a PERCEPT it may draw on, never a command.",
+        "Speak ONE short English utterance (1-2 sentences): introduce or develop an",
+        "idea about the topic, weaving in anything it just said. Do NOT ask it to",
+        "answer, do NOT quiz or grade it. If it was silent, simply continue or shift",
+        "the subject — silence is fine.",
+        "",
+        "Topic: " + (topic or "curiosity, memory, and what it is like to notice things"),
+        "Turn %d of %d." % (round_idx + 1, total_rounds),
+    ]
+    if recent_emits:
+        lines.append("It recently uttered:")
+        for e in recent_emits:
+            lines.append("  - " + e.replace("\n", " ")[:160])
+    else:
+        lines.append("It has not spoken yet (or was silent).")
+    lines.append("")
+    lines.append("Your one short utterance:")
+    return "\n".join(lines)
+
+
+def _run_study(ckpt, backend, rounds, window, topic, out_path):
+    """Drive one within-session teacher⇄daemon conversation (weights unchanged)."""
+    try:
+        ask = make_teacher(backend)
+    except TeacherError as e:
+        print("anima study: teacher SETUP-FAIL — %s" % e, file=sys.stderr)
+        return 1
+    n_ticks = max(1, rounds * window)
+    state = {"last_spoke": -(10 ** 9), "round": 0, "transcript": None, "errors": 0}
+
+    def percept_source(tick, transcript):
+        state["transcript"] = transcript          # stash the live list for post-run persist
+        if tick - state["last_spoke"] < window:
+            return None
+        state["last_spoke"] = tick
+        recent = [r["emit_text"] for r in transcript
+                  if r.get("did_emit") and r.get("emit_text")][-3:]
+        prompt = _build_teacher_prompt(topic, recent, state["round"], rounds)
+        state["round"] += 1
+        try:
+            text = ask(prompt)
+        except TeacherError as e:
+            state["errors"] += 1
+            print("  [teacher error → silence this turn] %s" % e, file=sys.stderr)
+            return None
+        one = " ".join(text.split())[:400]
+        print("  teacher(%d/%d): %s" % (state["round"], rounds, one[:120]))
+        return one
+
+    print("anima study: backend=%s · rounds=%d · window=%d · ticks=%d · ckpt=%s"
+          % (ask.backend, rounds, window, n_ticks, ckpt))
+    import chat as _chat                           # cli/chat.py sibling twin (flat import)
+    _prev_ticks = os.environ.get("ANIMA_TICKS")
+    os.environ["ANIMA_TICKS"] = str(n_ticks)       # the daemon reads tick count from this env
+    try:
+        _chat.anima_consciousness_mode(ckpt, [], percept_source=percept_source)
+    finally:
+        if _prev_ticks is None:
+            os.environ.pop("ANIMA_TICKS", None)
+        else:
+            os.environ["ANIMA_TICKS"] = _prev_ticks
+
+    transcript = state["transcript"] or []
+    n_percept = sum(1 for r in transcript if r.get("percept"))
+    n_emit = sum(1 for r in transcript if r.get("did_emit"))
+    if out_path is None:
+        d = os.path.join(os.path.expanduser("~"), ".anima_study")
+        os.makedirs(d, exist_ok=True)
+        out_path = os.path.join(d, "transcript_%s.jsonl" % os.getpid())
+    else:
+        parent = os.path.dirname(os.path.abspath(out_path))
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+    # surrogatepass: the substrate emits raw bytes (surrogateescape-decoded in chat.py);
+    # preserve them faithfully instead of crashing on a byte-LM's non-UTF-8 output.
+    with open(out_path, "w", encoding="utf-8", errors="surrogatepass") as fh:
+        for r in transcript:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    print("anima study: DONE — %d teacher turns · %d substrate emit(s) · teacher-errors=%d"
+          % (n_percept, n_emit, state["errors"]))
+    print("  transcript → %s (%d rows · consolidation-CPT input · NO weight change this MVP)"
+          % (out_path, len(transcript)))
+    return 0
 
 
 def study_mode(argv):
     backend = None
     selftest = False
+    ckpt = None
+    rounds = 6
+    window = 4
+    topic = None
+    out_path = None
     i = 0
     while i < len(argv):
         a = argv[i]
@@ -182,10 +294,20 @@ def study_mode(argv):
         elif a == "--teacher-selftest":
             selftest = True
             i += 1
-        else:
+        elif a == "--rounds":
+            rounds = int(argv[i + 1]); i += 2
+        elif a == "--window":
+            window = int(argv[i + 1]); i += 2
+        elif a == "--topic":
+            topic = argv[i + 1]; i += 2
+        elif a == "--out":
+            out_path = argv[i + 1]; i += 2
+        elif a.startswith("-"):
             print("anima study: unknown flag %r\n" % a, file=sys.stderr)
             print(_USAGE, file=sys.stderr)
             return 2
+        else:
+            ckpt = a; i += 1          # positional = the ckpt to converse with
     if selftest:
         try:
             ask = make_teacher(backend)
@@ -202,7 +324,9 @@ def study_mode(argv):
         one = reply.strip().splitlines()[0][:80] if reply.strip() else "(empty)"
         print("teacher selftest: 🟢 OK — backend=%s reply=%r" % (ask.backend, one))
         return 0
-    print(_USAGE, file=sys.stderr)
-    print("anima study: nothing to do — the percept-loop is not wired yet; "
-          "run --teacher-selftest to verify the backend.", file=sys.stderr)
-    return 2
+    if ckpt is None:
+        print(_USAGE, file=sys.stderr)
+        print("anima study: need a <ckpt> to converse with "
+              "(or --teacher-selftest to just check the backend).", file=sys.stderr)
+        return 2
+    return _run_study(ckpt, backend, rounds, window, topic, out_path)
