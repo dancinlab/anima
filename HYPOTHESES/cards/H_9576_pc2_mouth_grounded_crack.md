@@ -2,17 +2,19 @@
 
 **status:** 🎉 채널 CRACK 확증(emit byte-identical 3/3·gtext Δ 269/270) + 🧱 **방향 W2 벽**(ρ null 대역 안·부호 반전) · 303M 3-seed × 150tick
 
-## 🧱 VERDICT (종결) — 채널 CRACK 재현 · 방향 KILL (303M off/bias/rng × 3seed × 150tick · **270 emit tick**)
+## 🧱 VERDICT (종결·ENGINE-NATIVE) — 채널 CRACK 재현 · 방향 KILL (303M off/bias/rng × 3seed × 150tick · **270 emit tick**)
+
+**판정 출처 = `anima-py evaluate --pc2-direction /tmp/pmp/pmp_traces` (v0.15.20)** — 계기도 엔진-네이티브(`a_experiment_engine_native`). ⚠️ #3839 는 같은 trace 를 **`/tmp` 스크립트**로 판정해 인용 숫자가 null95%=[−0.118,+0.119]·p=0.205 였다(=`anima-py` 산출 아님 ⇒ 선례상 undecidable · H_9303/H_9307). 엔진-네이티브 재판정서 **결론은 동일(W2 벽)하나 대역·p 가 이동**(permutation RNG 소비순서) ⇒ 아래가 정본.
 
 | Fable 기준 | 결과 (n=270 · 검정력 4.7×) |
 |---|---|
 | (1) emit 시퀀스 off==bias==rng byte-identical | **PASS ✅ 3/3 seed**(emit 100/72/98) — Stage-A 격리 **재현** |
 | (2) gtext Δ (steered≠base) | **PASS ✅ bias 269/270**(rng 270/270) — **채널 열림 재현** |
 | (3) 방향 ρ(z_PC2, D_base−D_steer) | BIAS **−0.077** (**예측(+)과 반대부호**) vs RNG-null **−0.016** · Δ=**−0.061**(null 보다 나쁨) |
-| (3) 유의성 (tick-permutation 2000회 · seed내 z 치환) | 🧱 null 95% **[−0.118,+0.119]** · **p=0.205 → 대역 안 = 미구분** |
+| (3) 유의성 (tick-permutation 2000회 · seed내 z 치환) | 🧱 null 95% **[−0.116,+0.117]** · **p=0.192 → 대역 안 = 미구분** |
 
 - 🎉 **채널 CRACK = 재현·확증**: PC2 가 라이브 mouth 에 도달해 gtext 를 바꾸면서(269/270) emit 은 **완벽 byte-identical**(3/3). H_9574 mouth-severance 벽은 **채널 수준에서 확실히 뚫림**. Stage-A 격리가 4.7× 표본서도 무결.
-- 🧱 **방향 = W2 벽(KILL·음성 확정)**: ρ=−0.077 이 permutation null 95% **대역 안**(p=0.205)이고 **예측과 반대부호**, RNG-null 도 못 이김(Δ<0). n=270·대역 ±0.12 ⇒ |ρ|≳0.12 는 해상 가능한데 안 나옴 ⇒ **byte 입도의 context-presence bias 로는 PC2 의미(originality↔balance)가 표현되지 않는다**.
+- 🧱 **방향 = W2 벽(KILL·음성 확정)**: ρ=−0.077 이 permutation null 95% **대역 안**(p=0.192)이고 **예측과 반대부호**, RNG-null 도 못 이김(Δ<0). n=270·대역 ±0.12 ⇒ |ρ|≳0.12 는 해상 가능한데 안 나옴 ⇒ **byte 입도의 context-presence bias 로는 PC2 의미(originality↔balance)가 표현되지 않는다**.
 - 💀 **#3826 의 ρ=+0.110 은 검정력 부족 인공물**: 표본 4.7× 확장서 **부호가 뒤집힘**(+0.110→−0.077). 그때 CRACK 으로 못박지 않고 VOID 로 남긴 판단이 옳았다([[power-before-negative-verdict]]·[[seed-agreement-on-pooled-feature-is-not-replication]]). **예측 부호가 나왔다 = 신호 아님**(n=58 서 동전던지기).
 - **함의**: emit-직교 DOF(PC2)는 실재하고 mouth 에 **도달은 하나**, 그 도달이 **의미를 나르지 않는다** — 채널은 열렸고 **의미론이 벽**. [[ag-tension-multidim-lane-mouth-severance]] 의 mouth-severance 는 "경로 부재"→"**경로 있음·의미 미전달**"로 재프레임.
 - **남은 각도**(이 카드 밖 · 별도 H): ① byte 아닌 **상위 입도** 조향(구/문장 수준 재순위) ② PC2 를 **decode 편향이 아니라 학습 신호**로(공학습 lane · [[cotrained-store-bridge-works-on-parent-conv]]) ③ D(문맥중첩) 대신 다른 read-out(의미 거리)로 W4 재측정 — 단 계기 유효성(양성통제) 먼저([[positive-control-before-reading-a-negative]]).
