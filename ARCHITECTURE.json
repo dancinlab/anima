@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌 = 순환(H_9673 sync 가 점수 음수항을 직접 깎음 · H_9660 분할산수) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 그러나 기질에 블록은 실재(H_9674 real/ped 54.07 vs bar 1.5 · 양성통제 x114 · scramble=ped) ⟹ H_9643(파벌 학습·GPU) 정당화. NEXT = $0 대안가설 배제(conv RF/GN 부산물?) → H_9643.",
+    "verdict": "🔴 옛 파벌 = 순환(H_9673 sync 가 점수 음수항 직접 조작 · H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재(H_9674 real/ped 54.07) · 🟡 그 블록의 정체는 MIXED(H_9676: GN/RF 용의자 ARI≈0 배제 ✅ but K=4 잔여 국소구조 정체미상) ⟹ **H_9643 GPU 보류**. NEXT = K=4 잔여 정체 규명($0).",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16603,6 +16603,28 @@
         "role": "",
         "id": "faction-r3-blocks-scope",
         "detail": "이 블록이 파벌의 substrate 인지는 미지다. conv trunk 국소성(RF)이나 GroupNorm 그룹 구조의 부산물일 수 있고 그 대안가설이 배제되지 않았다. NEXT = $0 로 블록이 연속 인덱스 구간인지(=RF/GN 부산물인지) 먼저 배제."
+       }
+      ]
+     },
+     {
+      "name": "🟡 H_9676 — 블록의 정체: 용의자 2건 배제, 그러나 제3 후보 미규명",
+      "role": "",
+      "id": "faction-r3-block-provenance",
+      "detail": "303M(N=1920·seed 12345 · 양성통제 adj 0.997~0.999 ✅LIVE): ARI 가 K=4/8/12 전부 ≈0.0000 ⟹ 블록이 연속-청크 분할과 무대응 ⟹ GN 그룹도 conv RF 도 아니다. 코드 논증(GN G=1 = 전체 d LayerNorm · conv 는 T 축 + 완전 채널혼합이라 d 축 공간순서 부재)과 일치.",
+      "verdict": "🟡 MIXED · DIRECTIONAL — 용의자 2건 배제됐으나 K=4 잔여 adjacency(real−ped 0.2366) 정체 미상 ⟹ H_9643 GPU 보류",
+      "children": [
+       {
+        "name": "adjacency 잔여는 연속청크가 아니라 국소 매끄러움",
+        "role": "",
+        "id": "faction-r3-prov-adjacency-residual",
+        "detail": "K=4 서 real−ped 0.2366 이 bar 0.20 초과하나 K 가 커지면 소멸(8: 0.0769 · 12: 0.0209). ARI 가 0 이므로 연속 청크는 아니다. 큰 덩어리에서만 나타나는 약한 인접 상관 — layout 도 학습된 모듈도 아닌 제3의 것일 수 있다."
+       },
+       {
+        "name": "⚠️ 사전등록 결함 — 이론적 우연과 비교했다",
+        "role": "",
+        "id": "faction-r3-prov-prereg-defect",
+        "detail": "DV 를 adj−chance(이론값 1/K)로 잡았으나 법칙은 '≥2 통제군 대비 collapse-Δ · raw 값 금지'. 경험적 null(pedestal)이 있는데 이론값을 썼다 — pedestal adj≠chance(K=4 서 0.2419 vs 0.2500)라 클러스터러 자체 편향이 있다.",
+        "verdict": "real−pedestal 로 바꿔도 K=4 는 0.2366 으로 판정 불변 ⟹ tune-to-green 아니라 방법결함 기록. 후속은 pedestal 대비 사전등록."
        }
       ]
      }
