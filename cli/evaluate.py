@@ -1341,6 +1341,18 @@ def dump_hidden_run(argv):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
     d = int(W["d"])
+    # H_9611 --gn-freeze <ref>: pin every GN's mu/var to the constants this ONE reference
+    # forward produces, making the normalizer input-independent ⟹ the trunk is strictly
+    # RF-local (the sequence-global GN bus of H_9560 is deleted, affine untouched). The
+    # reference is an explicit argument and is pre-registered by the card — NEVER swept.
+    gn_ref = evaluate_strval(argv[1:], "--gn-freeze", "")
+    if gn_ref:
+        if os.path.exists(gn_ref):
+            gn_ref = open(gn_ref, "r").read()
+        stats = clm.gn_freeze_calibrate(W, clm._seed_to_tok(gn_ref, T), T)
+        clm.gn_freeze_set(stats)
+        print("  [gn-freeze] ON — %d GN sites pinned from ref (%d bytes · pre-registered, not swept)"
+              % (len(stats), len(gn_ref)), flush=True)
     store = {}
     n_done = 0
     for it in items:
