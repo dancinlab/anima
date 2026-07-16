@@ -3845,10 +3845,15 @@ def store_run(argv):
               "constant-predictor coherence≡0 by construction. read ONLY with 4/4 pol-balance + shuffle PASS.")
     acc = correct / n if n else 0.0
     verdict = ""
-    if mode == "shuffle":
+    if mode == "shuffle" and oracle:
+        # oracle bypasses the address (a=one_hot(target_slot)), so the shuffle verdict bar is MEANINGLESS
+        # here — this combo is the §계기검산 plumbing check (expect 1.00 = shuffle touched entities only).
+        print("  overall(vs gold): %d/%d = %.4f  [oracle+shuffle integrity — expect 1.00, NOT a shuffle test]"
+              % (correct, n, acc))
+    elif mode == "shuffle":
         verdict = ("PASS(≤.55 uses-address)" if acc <= 0.55 else
                    "FAIL(≥.75 h-shortcut/leak)" if acc >= 0.75 else "AMBIG→INVALID")
-        print("  overall(vs gold): %d/%d = %.4f  [%s]  expected floor ≈ 3/7=0.429 (4/4 store) or 0.5"
+        print("  overall(vs gold): %d/%d = %.4f  [%s]  expected floor ≈ 3/7=0.429 (4/4 store) or ~0.5 (Bernoulli)"
               % (correct, n, acc, verdict))
     elif mode != "flip":
         print("  overall: %d/%d = %.4f  (%s)"
