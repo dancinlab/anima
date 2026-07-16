@@ -1,6 +1,6 @@
 # H_9407 — CONSULT-TO-GENERATION: addressable crack 이 생성 표면에 존재하나 (계기 WIRED)
 
-**status:** 🔧 WIRED (계기 · byte-identical default 검증 · 5-arm 303M 측정 follow-on) — Fable 프런티어 shortlist #1 top pick · wired: engine-native `anima-py evaluate --consult-decode`
+**status:** 🔧 계기+빌더 WIRED · 5-arm 측정=⛔ INVALID-STRUCTURAL(natem_c34 RF=35<71·더 넓은 윈도 ckpt 필요) — Fable 프런티어 shortlist #1 top pick · wired: engine-native `anima-py evaluate --consult-decode`
 **lane:** g1-interface-addressable-wall / consult 주소지정 (생성 표면)
 **related:** [[H_9334]] (interface addressable FIXABLE · 채점표면) · [[H_9347]] (담체 DV 0.75 · 채점표면) · source: Fable 프런티어 발산 (오너 "모두 진행" 3-레버 캠페인 #1)
 **ckpt:** py303_full.clm (측정 대상 · follow-on) · toy.clm (계기 micro-smoke)
@@ -57,12 +57,19 @@ RF_analytic=11 (toy K=3 L=2 · 프로덕션 윈도 24보다 작음=이 toy는 wi
   C only-pol·C all-changed·D multiset·D no-fixpt·D no-A-collision) + 오염가드(기존 out-dir REFUSE·no --force).
   스모크 $0 통과: n=32·C n_changed=32·D fixpt=0 pol_match=14/32·결정성 byte-identical(same seed)·store re-emit byte-identical.
 
+## 📊 5-arm 측정 시도 (natem_c34 lane) — ⛔ INVALID-STRUCTURAL (RF 벽 · aiden engine-native)
+
+Fable 측정-설정 spec(§1-7)으로 5-arm 발사 착수: ckpt=**natem_c34_main_s{7,11}**(held-out atom 사전학습-in·value 미기록·heldout D-acc≈chance=최대 headroom)·manifest=`n2_eval_manifest.json`(174행)·correct store=`store_heldout.json`(29 atom)·format=DEMO·양성대조=L arm(seen). consult-variants로 correct/C(flip-all)/D(Sattolo) store 생성 성공(감사 7/7).
+
+**pre-flight FAIL → 발사 중단**: ckpt **K=3 L=4 ⟹ RF=(K−1)(1+Σmin(2^i,512)+1)+1 = 35 < 71**(worst row = DEMO 선언 32B + stem seed 31B + gen 8). ⟹ store arm(A/B/C/D)이 전부 **INVALID-STRUCTURAL**(선언+stem이 receptive field 안에 동시에 못 들어감). Fable §5·§6 정직-실패모드 실현 — **생성표면 addressing 은 이 ckpt 윈도에선 질문 불가**(음성 아님). 9hr 낭비 전 K/L 직접계산으로 포착·fire kill.
+
+⟹ **계기의 INVALID-STRUCTURAL pre-flight 검증됨**(RF<필요를 정확히 게이트). 5-arm 은 **더 넓은 윈도 ckpt(K≥6 @ L=4)** 필요 — 현 c34/e1_slw 계열(K=3)은 전부 미달 예상. 후속=wider-window ckpt 학습 or RF-확장 아키텍처(별개 H).
+
 ## 반증 · scope
 - 계기 반증: 기본값 run 이 frozen baseline 과 다르면 배선 결함(현 reset byte-identical 검증). 측정 반증=
-  Fable §4 판정그리드. RF 가 선언+stem 못 담으면 INVALID-STRUCTURAL(음성 아님·더 넓은 윈도 ckpt 필요).
-- scope: 계기 WIRED(byte-identical default 검증) + **통제 store 빌더 WIRED**(consult-variants·스모크 $0 통과) ·
-  측정 미실행(303M 5-arm summer follow-on · pool-blocked=oracle 포화·aiden down 시점). 오너 "모두 진행"
-  3-레버 캠페인 #1(top pick) — #2 oracle-pool·#3 H_9339(계기 landed #3762) 병행.
+  Fable §4 판정그리드. RF 가 선언+stem 못 담으면 INVALID-STRUCTURAL(음성 아님·더 넓은 윈도 ckpt 필요) — **실측 실현(natem_c34 RF=35<71)**.
+- scope: 계기 WIRED(byte-identical) + **통제 store 빌더 WIRED**(consult-variants·$0) + **5-arm 측정 시도=INVALID-STRUCTURAL**
+  (natem_c34 RF 벽 · 더 넓은 윈도 ckpt 필요). 오너 "모두 진행" 3-레버 #1 — #2 oracle INVALID·#3 H_9339 G-BASE-FIRST PASS 병행 종결.
 
 ## 비용
 $0(계기+toy smoke) · G5 VERSION bump(core/decode.py+cli/evaluate.py) · 측정 fire=summer 12 eval(follow-on).
