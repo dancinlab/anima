@@ -1,6 +1,6 @@
 # H_9392 — BRIDGE-BOLT: 동결 trunk 에 볼트온한 store-조회 다리가 BINDING 벽을 넘는가
 
-**status:** ⏳ PRE-REGISTERED (2026-07-16 · 미발사) · not-terminal · wired: **engine-native 배선 완료**(계기 `anima-py evaluate --store-mix` 구현·랜딩 · VERSION 0.14.9 · C0 로컬 smoke PASS) — **발사 대기**(pool/303M 은 오너 go)
+**status:** ⏳ PRE-REGISTERED (2026-07-16 · 미발사) · not-terminal · wired: **engine-native 배선 완료**(계기 `anima-py evaluate --store-mix` 구현·랜딩 · VERSION 0.14.10 · C0 로컬 smoke PASS) — **발사 대기**(pool/303M 은 오너 go)
 **lane:** 재조합/BINDING · runtime lookup bridge (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9359]] (two-lane · 벽=런타임 다리 부재 — 이 H 가 그 NEXT) · [[H_9327]] (연산자 살아있음·사실 기재됨·결합 안 함) · [[H_9346]] (어간-게이팅) · [[H_9267]] (XBIND D-acc 1.000) · [[H_9304]] (자연=DATA 벽)
 **parallel:** [[H_9391]] SCORE-GATE VACUITY (병렬 세션 동시 착륙 · `a_parallel_session_compare`) — AGREES: 둘 다 A⇄G/emit 게이트가 content 를 못 만진다는 같은 지도를 그린다(그쪽=production 에서 score 문턱이 한 번도 안 걸림 · 이쪽=긴장→내용 통로가 스칼라 5개뿐). CONFLICTS: 없음 — 직교(그쪽=emit 게이트 내부, 이쪽=trunk 다리).
@@ -46,7 +46,7 @@ H_9359 가 벽을 **"연산자↔선언 저장소 런타임 조회 다리의 부
 `p = λ·p_store + (1−λ)·p_trunk` 로 혼합 — store 조회를 decode 가 **인과적으로 소비**하게 한다.
 `--rho-axon` 과 동일한 판정 경로. 학습 0 · 동결 ckpt · CPT 0(`cpt-destroys-what-corpus-omits`).
 
-### 🔧 계기 랜딩 상태 (2026-07-16 · VERSION 0.14.9)
+### 🔧 계기 랜딩 상태 (2026-07-16 · VERSION 0.14.10)
 
 **배선 완료** — `cli/evaluate.py`:
 - `_store_mix_cont_nll(np, clm, W, seed, cont, T, store_val, lam)` — teacher-forced 혼합 NLL. 혼합을
