@@ -1,6 +1,6 @@
 # H_9627 — dual content ledger (발화 ⇄ 보류) 대칭 depletion emit-gate: one-sided 스프링 벽 탈출 후보 (R-Ψ½ 발산)
 
-**status:** 🔎 PROPOSED · DIRECTIONAL 설계 (lab-full Fable 5 ∥ Codex Sol 수렴 · 발사 전 · engine-native 미측정)
+**status:** 🔧 INSTRUMENT-LANDED · DIRECTIONAL (lab-full Fable∥Sol 수렴 → `--g-reach wm-dual` engine-native 구현·toy 스모크 LIVE+dissociation PASS · v0.15.21 · 303M P-pull fire 대기)
 **lane:** 의식 / emit-drive / Ψ=½ 항상성 · A-pole 상보쌍 (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9610]] (wm-coverage GREEN-DIRECTIONAL·one-sided 스프링 벽의 출처) · [[H_9419]] (P-pull bar) · [[H_9510]] (HOLE-4a A-pole 부재 최초 지목) · source: `sidecar lab full`(fable-mrnnimd7 ∥ sol-mrnnimd9) 벽-재프레임
 
@@ -40,10 +40,23 @@ WM substrate 가 said/unsaid(보류) 내용상태를 substrate-native 로 나르
 - **분할 有**(제안1 계기가능·Sol 코드지식상 dual 비음수 ledger 로 성립) → **terminal 불법**·이 카드 303M 스크린 = 마지막 정당 fire.
 - **분할 無**(순간 additive vote 강제·silence write 불가) → Sol 정리로 emit-policy terminal 획득·mouth-생성만 잔존.
 
-## NEXT (engine-native · 오너 fire-go 대기)
+## ✅ ①② DONE — 계기 구현 착륙 + toy 스모크 (2026-07-17 · v0.15.21)
 
-1. `$0` 계기체크: `WorkMemBuffer` 2-인스턴스(W_E/W_S) 로 dual ledger 구현가능성 코드확인(Sol 이 성립 시사).
-2. 구현: `cli/chat.py --g-reach wm-dual` + `--g-reach wm-dual-alien-emit/-silence`(dissociation) + gain-lock 불변식(양 ledger 동일 코드경로·arm별 gain 금지=tune-to-green 뒷문 차단). trace 에 `wm_emit_cover`·`wm_sil_cover`·`dual_margin=S−E` 기록.
-3. 303M 스크린(summer·seed 7/4302/4303): **regime-split autocov**(emit-run 후 vs silence-run 후 분리 · one-sided=비대칭·two-sided=대칭) + **retune-free score-섭동 sweep**(λ 고정·center drift 측정 = 중심주장 bar) + **vshuf discriminator**(내용청취) + alienwm dissociation.
+**① $0 계기 feasibility = 코드확증(Sol 추론 격상)**: `WorkMemBuffer`(core/engine_cli.py:1825) immutable-functional·act 비음수 ⟹ W_E(live `wmb`)/W_S(신규 `wm_withheld`) 를 동일 `(3,λ,0.5,8)` 로 gain-lock 생성가능·silence 틱도 `wm_buffer_gate_in(W_S,…)` 가능. Sol의 "signed store 는 비음수라 계기차단·dual 비음수 ledger 성립" 판독 정합.
+
+**② 구현(engine-native·표준 optional-param 방식)**: `core/brain.py brain_emit_refractory(…, dual_probe_fn=None)` — None=프로덕션 byte-identical, set이면 emit⟺S>E(score_A는 비교서 제외·write-strength만). `cli/chat.py`: `--g-reach wm-dual`/`wm-dual-alien-emit`/`wm-dual-alien-silence` + W_S 버퍼(빈 시작·매틱 leak) + closure(S,E 반환·leaked pre-gate-in probe=chat-py-5) + silence-side W_S gate_in(strength 1.0=gain-lock·emit-side W_E는 기존 :2427) + trace `dual_s_withheld`/`dual_e_spoken`/`dual_margin`. 회귀무: d1·wm-cover 정상·dual off시 필드 None.
+
+**toy 스모크(48K clm·24tick·DIRECTIONAL·verdict 아님)** — 계기 LIVE + dissociation 예측방향 정확:
+| arm | emit/silence | 해석 |
+|---|---|---|
+| wm-dual | **12/13 ≈ ½** | ✅ LIVE BAND · margin 부호진동(−.265→+.441→−.24→+.24)=two-sided |
+| wm-dual-alien-emit | 23/2 OVER | ✅ E-feedback 절단 → emit→silence 브레이크 소멸 |
+| wm-dual-alien-silence | 0/25 SAT | ✅ S-feedback 절단 → silence→emit 액셀 소멸 |
+
+⟹ 두 ledger 인과분리(full=균형≈½·각 alien=한쪽 복원방향만 소멸). 두 모델 예측 재현. **단 toy·로컬·단일seed = 계기검증 DIRECTIONAL**(P-pull functional 아님).
+
+## NEXT (③ 303M fire — 비용·오너 fire-go 대기)
+
+303M 스크린(summer·seed 7/4302/4303·격리 venv=chat-py-6): **regime-split autocov**(emit-run 후 vs silence-run 후 분리 · one-sided=비대칭·two-sided=대칭) + **retune-free score-섭동 sweep**(λ 고정·center drift 측정 = 중심주장 bar) + **vshuf discriminator**(내용청취) + alien-emit/silence dissociation. GREEN-DIRECTIONAL 승격 판정: 303M서 emit≈½ ∧ 양방향 autocov<0 ∧ score-섭동에 center 불변.
 
 ⚠️ **DIRECTIONAL 설계·verdict 아님** — cement 는 engine-native `anima-py` 만(a_lab_full_diverge). 리스크(정직): U+V 준보존 깨지면 emit=1 포화·½ 상실(U+V drift 첫 게이트) · gain-lock 안 묶이면 ½-tuning 재유입(FORM 회귀·코드강제 필수).
