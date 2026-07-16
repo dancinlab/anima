@@ -234,7 +234,7 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           seconds_since_last, env_off, content_clean,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
-                          pc2_mouth="", dual_probe_fn=None):
+                          pc2_mouth="", dual_probe_fn=None, score_perturb=0.0):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -261,6 +261,17 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                                      content_clean, anchors, anchor_age_dt, dyn_w,
                                      None)
     score = float(decision["motivation"])
+    if score_perturb != 0.0:
+        # H_9627 central-thesis bar · shift the motivation (A-drive) by a FIXED offset with λ and
+        # the gate params held frozen — the retune-free score-perturbation robustness test. For the
+        # one-sided wm-cover gate score IS the comparand (emit ⟺ score>g_recog), so a shift moves the
+        # center (fragile · positive control). For the dual gate score is NOT compared (emit ⟺ S>E),
+        # so the center should stay ≈½ — the emit⊥score invariance that the exchange-symmetric ledger
+        # buys. The shift still flows into candidate generation (ctx below), so it is a real, not
+        # vacuous, perturbation. 0.0 = production byte-identical.
+        _sp = score + float(score_perturb)
+        score = 0.0 if _sp < 0.0 else (1.0 if _sp > 1.0 else _sp)
+        decision["motivation"] = score
 
     # form the candidate unconditionally (imagination) so G can recognise it
     ctx = gen_ctx_from_decision(dict(decision, emit="True"))

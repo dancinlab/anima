@@ -1542,6 +1542,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _emit_temp = float(anima_flag_value(_cargv, "--emit-temp", "ANIMA_EMIT_TEMP", "0"))
     _emit_topk = int(anima_flag_value(_cargv, "--emit-topk", "ANIMA_EMIT_TOPK", "256"))
     _sample_seed = int(anima_flag_value(_cargv, "--sample-seed", "ANIMA_SAMPLE_SEED", "0"))
+    # H_9627 central-thesis bar · fixed motivation-score offset (λ/gate frozen) = retune-free
+    # score-perturbation robustness. wm-cover center shifts (score is the comparand · positive
+    # control); the dual gate center should stay ≈½ (emit ⊥ score). 0.0 = production byte-identical.
+    _score_perturb = float(anima_flag_value(_cargv, "--score-perturb", "ANIMA_SCORE_PERTURB", "0"))
     # H_9357 · which reverse signal feeds ag_g_drive (the A⇄G tension's G pole). a0 = current
     # production wiring (ag_g_drive = A's own complement — the H_9356 tautology, kept as the
     # falsifiability-matrix A0 arm that MUST fail the independence gate). a1 = REAL-G: the immune
@@ -2365,7 +2369,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              _rec_silent_cand,  # H_9510 HOLE-1 · record imagined cand for diag
                              (_route_gain if _tension_route == "pc2" else None),  # H_9574 PC2
                              pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth),  # H_9575
-                             dual_probe_fn=_dual_fn)  # H_9627 · dual content ledger (None = off)
+                             dual_probe_fn=_dual_fn,  # H_9627 · dual content ledger (None = off)
+                             score_perturb=_score_perturb)  # H_9627 · central-thesis bar (0 = off)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
