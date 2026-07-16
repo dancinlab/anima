@@ -1793,6 +1793,28 @@ def valence_audit_run(argv):
     st = np.array([i["stem"] for i in items])
     y = np.array([int(i["pol"]) for i in items], dtype=np.float64)
 
+    # H_9612 · LENGTH-MATCH AUDIT — this instrument PRINTS "length-matched NEUTRAL atom" as if it
+    # were a fact, but the matching is the manifest builder's job and nothing here ever checked it.
+    # An unmatched swap atom changes the prompt's byte length, and the window is right-aligned, so
+    # the two arms are read with different context in the window — and H_9611 measured a
+    # sequence-global GroupNorm bus that carries exactly that difference to the read point (T-1).
+    # Delta = acc(atom) - acc(swap) would then be part length-shift, not all form-vs-content.
+    # So: verify per stem, and say so out loud. (Same defect class as route-audit's negZ-vs-ped.)
+    _bl = {}
+    for it in items:
+        _bl.setdefault(it["stem"], {})[it["arm"]] = len(it["prompt"].encode())
+    _mis = [(s, d.get("atom"), d.get("swap")) for s, d in _bl.items()
+            if d.get("atom") is not None and d.get("swap") is not None and d["atom"] != d["swap"]]
+    if _mis:
+        _ex = " · ".join("%s(atom %dB vs swap %dB)" % m for m in _mis[:3])
+        print("  ⚠️ LENGTH-MISMATCH (H_9612): %d/%d stems — %s%s\n"
+              "     The swap arm is NOT length-matched, so the right-aligned window shifts and the\n"
+              "     arms carry different context; the GroupNorm bus (H_9611) can move Delta by that\n"
+              "     alone. Read Delta as form+shift, NOT form — or rebuild the manifest matched."
+              % (len(_mis), len(_bl), _ex, " …" if len(_mis) > 3 else ""), flush=True)
+    else:
+        print("  [len-audit] 🟢 atom/swap byte-length matched on all %d stems" % len(_bl), flush=True)
+
     def pooled(a):
         """One vector per atom — the atom's contexts averaged. Its gold polarity is the atom's."""
         m = arm == a
