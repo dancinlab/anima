@@ -1615,6 +1615,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     if _tension_route != "off" and _emit_gate != "refractory":
         raise SystemExit("--tension-route pc2 requires --emit-gate refractory (its only consumer)")
     _route_gain = float(anima_flag_value(_cargv, "--tension-route-gain", "ANIMA_TENSION_ROUTE_GAIN", "1.0"))
+    # H_9575 · PC2 → mouth (owner-approved grounded rewire · Fable design). Routes the
+    # emit-orthogonal PC2 axis into the LIVE mouth (grounded decode) as a context-presence
+    # logit bias (bias) or a draw-stream re-key control (rng). off (default) = byte-identical.
+    # Stage-A: the STEERED text is spoken (out_text) but every substrate root keeps the BASE
+    # g_text, so the emit sequence stays byte-identical to off BY CONSTRUCTION.
+    _pc2_mouth = anima_flag_value(_cargv, "--pc2-mouth", "ANIMA_PC2_MOUTH", "off")
+    if _pc2_mouth not in ("off", "bias", "rng"):
+        raise SystemExit("--pc2-mouth: only 'off' (default), 'bias', 'rng' (got %r)" % _pc2_mouth)
+    if _pc2_mouth != "off" and _emit_gate != "refractory":
+        raise SystemExit("--pc2-mouth requires --emit-gate refractory (its only consumer)")
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -2259,7 +2269,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              _mouth_at(tick),
                              _dyn_w,
                              _rec_silent_cand,  # H_9510 HOLE-1 · record imagined cand for diag
-                             (_route_gain if _tension_route == "pc2" else None))  # H_9574 PC2
+                             (_route_gain if _tension_route == "pc2" else None),  # H_9574 PC2
+                             pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth))  # H_9575
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2427,6 +2438,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             if refsel_on and refsel_rs >= 1:
                 out_text = refcands[refsel_rs]
 
+        # ── H_9575 Stage-A · PC2 → mouth outward substitution ──────────────────────
+        # The STEERED text (PC2-biased decode, computed after emit was fixed on the BASE
+        # candidate) is what gets SPOKEN. Every substrate root above (self_live_g, and the
+        # immune/afield/kosmos/cb roots below) keeps consuming the BASE g_text — so the gate
+        # trajectory stays byte-identical to the off arm BY CONSTRUCTION (Stage-A isolation:
+        # remembered≠spoken, experiment-only). Roots-on-spoken = Stage-B (separate pre-reg).
+        _steered = str(dec.get("gen_text_steered", "")) if isinstance(dec, dict) else ""
+        if _steered != "" and did_emit and g_emit:
+            out_text = _steered
+
         if did_emit and g_emit:
             emitted_any = True
             emit_text = out_text
@@ -2542,6 +2563,9 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "g_recog_gate": (float(dec["g_recog_gate"]) if dec.get("g_recog_gate") is not None else None),
                 "pc2_proj": (float(dec["pc2_proj"]) if dec.get("pc2_proj") is not None else None),  # H_9557
                 "route_k": (int(dec["route_k"]) if dec.get("route_k") is not None else None),  # H_9557
+                "pc2_z": (float(dec["pc2_z"]) if dec.get("pc2_z") is not None else None),  # H_9575
+                "pc2_arm": str(_pc2_mouth),  # H_9575
+                "gtext_pc2_b64": (_b64.b64encode(str(dec.get("gen_text_steered", "")).encode("utf-8", "surrogateescape")).decode("ascii") if dec.get("gen_text_steered") else None),  # H_9575 · steered (spoken) text
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline

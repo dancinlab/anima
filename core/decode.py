@@ -2028,6 +2028,20 @@ def clm_decode_grounded(path, seed, gen, anchor_texts, l_min, mouth=None):
                 tok[p] = float(ctx[si]) if si >= 0 else 32.0
             logits = _fwd_logits(W, tok, T)
             row = logits[T - 1]
+            # H_9575 · PC2 → mouth (Fable design · owner-approved grounded rewire): the
+            # emit-ORTHOGONAL tension axis PC2 as a CONTEXT-PRESENCE logit bias in log-prob
+            # units. z>0 (originality pole) subtracts z from every byte already in the
+            # model's OWN T-window → the draw moves OFF-context; z<0 (balance/coherence
+            # pole) pulls it TOWARD context. lm-branch ONLY — the grounded anchor-copy step
+            # (nb=cb above) never reaches here, so p5 anti-fabrication is untouched. "pc2"
+            # absent or 0.0 ⇒ row untouched ⇒ byte-identical. New constants 0 (loading is
+            # H_9468 frozen, gain=1 = log-prob natural unit).
+            _pz = float(mouth["pc2"]) if (mouth is not None and "pc2" in mouth) else 0.0
+            if _pz != 0.0:
+                row = list(row)
+                for _v in set(int(tok[_p]) for _p in range(T)):
+                    if 0 <= _v < V:
+                        row[_v] = row[_v] - _pz
             if mouth is not None and float(mouth["temp"]) > 0.0:
                 # REVEAL: this step the engine was ALREADY going to generate (no anchor
                 # covered it). We only stop ROUNDING its own posterior to argmax.
