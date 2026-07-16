@@ -124,3 +124,35 @@ scored; all four panels above ran on the repaired path.
 Remaining = **cost-gated (owner GPU go)**: step 3 `anima-py train --init 303M --corpus <replay-mix>` +
 step 4 `anima-py evaluate` held-out reach Δ vs C1/C2 + FORGET gate. Design source: Fable
 (scratchpad/fable_anima_study.md, §2·§4).
+
+---
+
+## ⚠️ SCOPE CORRECTION (2026-07-17 · `sidecar lab full` divergence · Fable 5 + Codex Sol 독립 수렴)
+
+**The BAR-FAIL stands** — the frozen bar ("C2 no-lift") was pre-registered and it failed;
+that reading is unchanged and was made mechanically.
+
+**But the earned scope is narrower than the card's claim sentence.** Two frontier models,
+diverging independently on this result, each ranked the *same* objection **#1**:
+
+> `ρ·form` is a **fixed 5-item coherence rate**. It never asks whether a teacher **fact**
+> was stored. This card claims "does exogenous content get **absorbed**?" — the instrument
+> answers "did the general **reach** panel rise?".
+
+⟹ what this fire earned: **"teacher content did not raise the general reach panel."**
+⟹ what it did **NOT** measure: **"teacher content was not absorbed."**
+Per the H_9329 two-lane precedent (CPT updates the declarative store; the operator keeps
+the old polarity **0/12**), the content may be **in the declarative lane** while ρ-AXON
+(operator lane) cannot read it — "trapped in the lane that wrote it", not "never entered".
+
+Also flagged (both models): **MAIN−C2 (+0.20) cannot prove content even if reproduced** —
+C2 destroys word identity, so the residual may be lexical distribution (still FORM-family).
+And the content-axis null (0→0) was read **without a positive control**
+(`positive-control-before-reading-a-negative`) ⟹ possibly INSTRUMENT-DEAD at this dose.
+
+### REOPEN is DEMOTED, not scheduled
+The pre-registered multi-seed REOPEN is **gated on [[H_9677]] ∧ [[H_9678]]** (both **$0**):
+> Sol: "이 단계가 음성이면 MAIN−C2 `+0.20`을 살리기 위한 대규모 CPT는 가치가 급락한다."
+> Fable: "MAIN−C2 잔차(+0.20)는 현 설계로는 재현돼도 내용을 증명 못 한다."
+
+Successor designs (PROPOSED · DIRECTIONAL): [[H_9677]] [[H_9678]] [[H_9679]] [[H_9680]] [[H_9681]] [[H_9682]].
