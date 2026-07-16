@@ -6,6 +6,8 @@
 
 **🟢 T1 토이 결과(d64 L2 · --store-addr-weight 1.0 · pool summer · VERSION 0.15.29 · balanced manifest 채점):** 전 게이트 통과 = **addr-loss 가 주소학습을 열고 held-out 로 일반화**(암기 아님). train sb_addr_acc **1.0**·sb_ans_ce 0.0(주소 완벽학습) → **C0-e ORACLE 128/128=1.0**·**P1-주 balanced 125/128=0.977**(shortcut 상한 0.5 봉쇄 채점면서 0.98 = 진짜 내용주소 조회·4셀 균형 .93/1.0/1.0/.97 붕괴0) · **addr-gap: SEEN 0.992 vs held_balanced 0.977 = gap 0.016 ≤.20 = 일반화 확증**(감독-주소가 held-out 개체로 전이·암기[gap>.35] 배제 · Fable 최대우려 해소) · λ0 0.445(우연=lane off) · flip-coherence 1.0(store 값 인과소비·상수예측기 배제) · shuffle 0.414 at-floor(balance-floor 0.429 · pol_hist{4:128} 균형확인 · 주소 사용). ⟹ **주소 직접감독(a) 레버 = 토이서 작동+일반화 확증.** NEXT=T2 벽재현(d256/768 · addr-loss OFF서 정체 재현 → ON서 회복 = 인과증명) → T3 303M(owner go).
 
+**🔬 T2 벽재현 결과(d768 L2 scratch · OFF/ON 두 arm · summer):** **재프레임 = 벽은 raw 차원 아니라 303M 사전학습-EN penultimate 점유.** OFF(addr-loss 없음): ORACLE 1.0·**P1-balanced 0.9375**·addr-gap SEEN 0.953·flip 0.99 — **scratch d768(12×d64)이 addr-loss 없이도 주소학습 성공 = 벽 미재현** ⟹ (1)차원지배 배제. ON(--store-addr-weight 1.0): ORACLE 1.0·P1-balanced 0.9922·addr-gap 1.0·flip 0.99(소폭 리프트·둘다 이미 높음). ⟹ **scratch 트렁크는 co-adapt로 스스로 penultimate에 개체 인코딩(교착 자력탈출), 303M 사전학습-EN 트렁크는 penultimate가 EN 유창성에 묶여 못 함**(Fable 가설 B 확정 · Stage1.5 arm-B/C가 303M서 벽 실측). 함의: T2-a(scratch)는 벽 proxy 부적격(사전학습 없음) → **결정적 시험=T3 303M**(py303_full은 그 사전학습 점유 실보유 · Stage1.5가 벽 이미 측정=맹목 아님 · addr-loss ON서 P1-balanced≥.75면 벽돌파). NEXT=T3 발사(진행중).
+
 ## 물음
 
 H_9423 Stage1.5(#3855)가 303M 벽을 **순수 주소학습(c)** 로 격리: `--store-oracle-train`(학습서 주소 공짜) → C0-e ORACLE 128/128=1.00(값읽기 완벽·W_g수리) vs P1 softmax lookup 0.586(chance) = **값읽기(a)·substrate(d) 무죄, 진범 = W_q(3784→64) softmax 주소가 held-out 개체를 부트스트랩 못 함.** 물음: 주소경로를 어떻게 수리하면 held-out 0-shot lookup 이 서는가.
