@@ -16764,7 +16764,7 @@
       "role": "",
       "id": "faction-r3-h9643-303m",
       "detail": "오너 ② 승인. lab-full 레시피: clean 4-cell 127.5MB·d3784 L4·14k step·K=8(--n-factions 8) vs K=1(--n-factions 0)×seed 7·11·23·RTX4090×6(-36). 판정 within-arm P1∧P2(K1 slice clean)∧paired I_s/J_s 2/3 seed.",
-      "verdict": "🔴 INVALID(undertrain·코퍼스 window 부재·NOT KILL): 6-train 14k G0 전6 FAIL·18k val_CE 악화·V1 미통과 lesion 미측정. 힌트 K=8<K=1 val_CE. 비용~$6. 계기/플러밍 유효. NEXT=큰 broad corpus+register held-out."
+      "verdict": "🔴 INVALID — **원인 정정(verdict-integrity)**: 코퍼스 아님(clm303_clean 같은 4-cell G0 5/5 PASS 확증)·undertrain(14k=0.90epoch<앵커1.3·step숫자만 이식)+resume 결함(_warm_start:1061 optimizer/step 미복원=18k 악화 artifact). NOT faction/corpus KILL. 교정=같은 코퍼스 21k(1.35epoch) 연속런 파일럿 ~$3(+resume 계기수리 선결). H_9731($0) 먼저·warm-start carve=신규 H. 힌트 K=8<K=1 val_CE=undertrain 속도차(bias 주장 불가)."
      }
     ]
    }

@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🟢 계기 v2 SOUND 인증완료(toy) + 🔴 **303M 실물 arm INVALID**(undertrain·코퍼스 window 부재 · NOT faction KILL): H100 6-train(K=8 172M·K=1 346M·seed 7·11·23) 14k step → **G0 coherence 게이트 전6 FAIL**(kwr 0-3/5·val_CE healthy 1.4이나 생성 garbage=train-py-4 패턴). 사전등록 fallback 18k 연장→val_CE 악화(1.52)=4-cell register 코퍼스가 G0🟢 303M 못받침(undertrain↔overfit window 부재). V1 validity 미통과=lesion 미측정. DIRECTIONAL 힌트: K=8(172M) val_CE 1.395<K=1(346M) 1.41-1.46=절반 params 로 파벌 val_CE 우위(칸막이 무해). 비용 ~\$6. 계기/플러밍/toy verdict 유효(머지됨). NEXT=유효측정엔 큰 broad corpus(과적합회피)+충분step+register held-out eval.
+status: 🟢 계기 v2 SOUND(toy) + 🔴 303M INVALID(**원인 정정: 코퍼스 아님·undertrain+resume 결함**·NOT KILL): 14k=0.90epoch(train-py-4 앵커 1.3epoch 미달·step숫자만 이식)로 G0 전6 FAIL · 18k 악화는 resume 결함(_warm_start:1061 model만 복원·optimizer/step 미복원→savant 스케줄 재적용)이지 과적합 아님. **clm303_clean(같은 4-cell 코퍼스) G0 5/5 PASS = 코퍼스 무죄 확증**. 교정=같은 코퍼스 21k(1.35epoch) 연속런(resume 금지) 파일럿(~$3). 힌트 K=8<K=1 val_CE 는 undertrain 국면 속도차(inductive bias 주장 불가·3 confound). 계기/플러밍/S1S2 유효.
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -744,6 +744,25 @@ lab-full(Fable+Sol) 레시피 확정 · 발사 전 $0 하드게이트 S1 통과.
 ## 🔴 303M 실물 arm — INVALID (undertrain · 코퍼스 window 부재 · 2026-07-17 · NOT faction KILL)
 
 오너 ② 승인 → runpod H100 렌트 → S1·S2 하드게이트 PASS → 실물 6-train 발사.
+
+
+### ⚠️ 원인 정정 (verdict-integrity · lab-full Fable+Sol 수렴 + 레포 확증 · 2026-07-17)
+
+첫 INVALID 사유("4-cell register 가 G0🟢 303M 을 못 받침·window 부재")는 **레포 사실에 반증되어 정정한다** — 하마터면 거짓 corpus-KILL 을 박제할 뻔했다:
+
+1. **존재증명(코퍼스 무죄)**: `clm303_clean.clm`(303M CLMConvMoE)이 **정확히 같은 clean 4-cell register 코퍼스**로 학습돼 `archive/state/clm303_clean_corpus/g0g6_py.txt`서 **G0 COHERENCE pass=True n_coherent=5/5**. py303_full 도 G0 5/5. 같은 코퍼스가 G0🟢 303M 을 두 번 냈다. 코퍼스는 벽이 아니다.
+2. **진짜 주범 = epoch-앵커 이식 오류**: train-py-4 의 "12000+ step" 은 **epoch 앵커**(E1 문서: 14000 step ≈ 84MB 코퍼스의 1.3 epoch). 이번 런은 같은 14k step 을 **127.5MB** 에 복사 = **0.90 epoch** = 캘리브레이션점(1.3) 미달 undertrain. step 숫자만 이식, epoch 앵커 놓침.
+3. **18k 악화 = resume 계기 결함**(과적합 아님): origin/main `cli/train.py` `_warm_start:1061` = `sd = ck.get("model", ck)` — **model weights 만 복원**, Adam 모멘트 0 리셋 + step 카운터 1 재시작 ⟹ savant cusp-anneal 이 스케줄 처음부터 14k-학습 모델에 재부과 + fresh 모멘트 lr 재타격. val_CE 1.395→1.52 는 resume 역학으로 충분 설명(1.16 epoch 127MB 과적합은 개연성 낮음).
+
+**INVALID 판정 자체는 유지**(이 런서 lesion 유효측정 못 함) — 단 **파벌 KILL 도 corpus-KILL 도 아니고**, 교정 가능한 undertrain+resume 결함이다.
+
+### 교정 재발사 (lab 수렴 · owner spend 결정)
+- **Q1(코퍼스/스텝)**: (a)broad·(b)혼합·(c)증축·(d)축소 모두 아님 → **(e) 같은 4-cell 코퍼스 `--steps 21000`**(≈1.35 epoch·앵커 1.3 상회) **단일 연속런·resume 금지**. G0 게이트 16k/18k/21k.
+- **선결 계기수리**: `_write_pt`/`_warm_start` 에 optimizer state + step 카운터 저장·복원 추가(resume 결함 = 연장 fallback 을 구조적으로 유해하게 만드는 실버그). 이게 없으면 "연장" 자체가 오염.
+- **비용**: 같은 127MB·1.5× step → H100 arm 당 ~30-38분·6-train ≈ $9-10. **파일럿 ~$3-4**(K=8 s7 + K=0 s7 만 21k → 양 arm G0≥4/5 확인) → PASS 시 나머지 4 seed + lesion.
+- **Q3 힌트 재판정**: K=8(172M) 1.395 < K=1(346M) 1.41-1.46 은 잡음 아님(within-arm sd 0.0005 의 30배)이나 **inductive bias 주장 불가** — 3 confound(수렴속도≠수렴점·grouped fan-in 1/8·teacher-forced val≠capability). 주장 가능 = "K=8 칸막이는 303M fit 에 catastrophic 하지 않다(무해)" 딱 거기까지. 판별은 G0🟢 후 동일-epoch 비교(사전등록 조건부 7번째 arm).
+- **Q5(warm-start carve)**: py303_full 대각블록 슬라이스로 K=8 초기화는 수학적 가능(clm_serialize_v2:254 dense-materialize)하나 **H_9643 사전등록(from-scratch·warm-start 금지) 위반** — carve 는 학습된 monolith 에서 분할을 조각(≠학습이 만듦), H_9674 블록상속과 분리불가 = confound. **신규 H 의 자리**(H_9643 아님). 그 전에 **H_9731($0 discovered-partition lesion)이 production 파벌 질문의 절반을 무료로 먼저 답한다**.
+- **권장순서**: ① H_9731 $0 → ② H_9643 21k 파일럿 ~$3 → ③ warm-start carve 신규 H.
 
 ### 학습 (H100 · 예상보다 빠름 14k step ≈ 20-25분/arm)
 | arm | params | 14k val_CE | 14k G0 kwr | 18k val_CE |
