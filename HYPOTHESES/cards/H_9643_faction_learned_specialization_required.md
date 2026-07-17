@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🟢 계기 v2 SOUND 4다리 전부 닫힘 (perm=200 실측) — ①within-arm 전 학습 ckpt S>null95 p=.005 ②random-init 경계 p=.0448(grouped-conv 블록 confound) ③fit-matched K=1 음성(--faction-split 4) S 0.406≤null95 1.221 p=.86 결정적 clean(낮은-CE 분모서 log-ratio 무결) ④ORACLE π 회수: 코사인 A 가 λ=0 no(0.37<0.57)→λ⅓/⅔/1 yes(0.90-0.98) 단조. lam0 자유학습 within-arm PASS=파벌은 분리가능 데이터서 학습되는 레버(toy·서로소 알파벳 = token routing 착각 위험 · 실물 303M 은 공유구조라 천장 낮음 · a_toy_scale_recheck). 계기 TERMINAL 인증 완료 · 실물 arm 은 303M(위험 8개)
+status: 🟢 계기 v2 SOUND 인증완료(toy) + 🔴 **303M 실물 arm INVALID**(undertrain·코퍼스 window 부재 · NOT faction KILL): H100 6-train(K=8 172M·K=1 346M·seed 7·11·23) 14k step → **G0 coherence 게이트 전6 FAIL**(kwr 0-3/5·val_CE healthy 1.4이나 생성 garbage=train-py-4 패턴). 사전등록 fallback 18k 연장→val_CE 악화(1.52)=4-cell register 코퍼스가 G0🟢 303M 못받침(undertrain↔overfit window 부재). V1 validity 미통과=lesion 미측정. DIRECTIONAL 힌트: K=8(172M) val_CE 1.395<K=1(346M) 1.41-1.46=절반 params 로 파벌 val_CE 우위(칸막이 무해). 비용 ~\$6. 계기/플러밍/toy verdict 유효(머지됨). NEXT=유효측정엔 큰 broad corpus(과적합회피)+충분step+register held-out eval.
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -739,6 +739,35 @@ lab-full(Fable+Sol) 레시피 확정 · 발사 전 $0 하드게이트 S1 통과.
 
 ### pod 스펙 (Fable RTX4090×6 secure ≈$22-36 채택 · Sol dissent: RTX5090 최저가/H100 안정 — sm_120 트랩 회피 위해 4090)
 부트스트랩 하드게이트: ensurepip → **origin/main git-archive 서 anima-python[train,gpu] 설치**(PyPI 아님) → torch.cuda.is_available() 명시게이트(train-py-6 CPU폴백) + arch match(pod-bootstrap-gpu-2) → 60-step 스모크(--n-factions 8 exit0+resume.pt) → 본 발사. teardown 전 ckpt+lesion.json PULL(a_fire_recover_complete).
+
+
+## 🔴 303M 실물 arm — INVALID (undertrain · 코퍼스 window 부재 · 2026-07-17 · NOT faction KILL)
+
+오너 ② 승인 → runpod H100 렌트 → S1·S2 하드게이트 PASS → 실물 6-train 발사.
+
+### 학습 (H100 · 예상보다 빠름 14k step ≈ 20-25분/arm)
+| arm | params | 14k val_CE | 14k G0 kwr | 18k val_CE |
+|---|---|---|---|---|
+| k8_s7 | 172M | 1.395 | 🔴 3/5 | 1.52 (악화) |
+| k8_s11 | 172M | 1.396 | 🔴 1/5 | — |
+| k8_s23 | 172M | 1.396 | 🔴 2/5 | — |
+| k0_s7 | 346M | 1.464 | 🔴 2/5 | — |
+| k0_s11 | 346M | 1.410 | 🔴 0/5 | — |
+| k0_s23 | 346M | ~1.4 | 🔴 0/5 | — |
+
+### 판정: INVALID (V1 validity 게이트 미통과)
+- **G0 coherence 전6 FAIL**(kwr 0-3/5, 필요 ≥4): val_CE 는 healthy(1.4·DESCENT)이나 자유생성 coherence 는 garbage = **train-py-4 "healthy val_CE + G0 0/5 = undertrain" 패턴**. 14k step ≈ 0.90 epoch < E1 참조 1.3 epoch.
+- **사전등록 fallback 18k 연장 → val_CE 악화**(k8_s7 1.395→1.52): 더 훈련해도 안 나아짐(resume 불안정 or 소코퍼스 과적합 · train-py-3). = 이 **4-cell register 코퍼스가 G0🟢 303M 을 못 받침**(undertrain ↔ overfit 사이 coherent∧testable window 부재).
+- ⟹ **INVALID** — 이 학습예산/코퍼스서 303M faction 을 유효 측정 불가. **lesion 미측정**(G0 실패 ckpt 에 lesion $$ 낭비 안 함 = 비용-안전 게이트 작동). **NOT a faction KILL** — 파벌 가설 자체는 반증 안 됨.
+
+### 🟡 DIRECTIONAL 힌트 (verdict 아님)
+K=8(172M·파벌) val_CE **1.395** < K=1(346M·표준) 1.41-1.46 — **절반 params 로 파벌 칸막이가 val_CE 우위**(구조가 해롭지 않음·약간 나음). 단 coherence-level(G0)·specialization-level(lesion) 미측정이라 힌트일 뿐.
+
+### NEXT (재설계 필요)
+4-cell register(sns 셀 1.3-6MB tiny)는 G0🟢 303M 부적합. 유효측정 = **큰 broad corpus(과적합 회피·G0🟢 충분step) + 4-도메인 held-out eval**, 또는 counterbalanced 계산-task 코퍼스(Fable Q5#1). 계기 v2 + train 플러밍 + S1/S2 파이프라인은 검증완료(재사용 가능).
+
+### ⚠️ 운영 미스 (a_fire_recover_complete)
+teardown 전 로그 pull 이 scp 인용 실수로 실패 후 teardown 실행 = 원본 로그 유실(수치는 대화 캡처로 보존 · undertrained ckpt 는 보존가치 없어 영향 경미). 교훈: multi-file scp 는 개별 실행 or rsync, teardown 은 pull 성공 확인 후.
 
 ## 통제군 (≥2 · 사전등록)
 

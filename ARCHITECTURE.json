@@ -16209,7 +16209,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재(H_9674) · 🟢 **계기 v2 SOUND 4다리 닫힘**(2026-07-17 perm=200): ①within-arm 전 학습 ckpt S>null95 p=.005 ②random-init 경계 p=.0448(grouped-conv 블록) ③fit-matched K=1 음성 S 0.406≤null95 1.221 p=.86 결정적 clean ④ORACLE 코사인A π회수 λ=0 no→λ>0 yes 단조. log-ratio+코사인A+--faction-split 로 계기 TERMINAL 인증완료. 과학: lam0 자유학습 PASS=서로소알파벳서 파벌 학습레버(toy·token routing 착각위험·실물 공유구조 천장낮음) → toy≠303M 종결. 실물 arm=303M K=8vsK=1(위험8개).",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 계기 v2 SOUND 인증완료(toy·4다리) + 🔴 **303M 실물 arm INVALID**(2026-07-17·undertrain·NOT faction KILL): H100 6-train 14k G0 coherence 전6 FAIL(kwr 0-3/5·train-py-4 undertrain 패턴)·18k 연장 val_CE 악화=4-cell register 가 G0🟢 303M 못받침(window 부재). V1 미통과 lesion 미측정. 힌트 K=8(172M) val_CE 1.395<K=1(346M) 1.41-1.46. 비용~$6. 계기/플러밍/toy verdict 유효. NEXT=큰 broad corpus.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16758,7 +16758,7 @@
       "role": "",
       "id": "faction-r3-h9643-303m",
       "detail": "오너 ② 승인. lab-full 레시피: clean 4-cell 127.5MB·d3784 L4·14k step·K=8(--n-factions 8) vs K=1(--n-factions 0)×seed 7·11·23·RTX4090×6(-36). 판정 within-arm P1∧P2(K1 slice clean)∧paired I_s/J_s 2/3 seed.",
-      "verdict": "S1 PASS: 계기 303M 최초 관통(py303_full --faction-split 8 exit0·wall158s·base CE healthy·S 0.0004≤null95 = 파벌무학습 null-구조 baseline). spend 정당화. 발사 대기=pod 렌트(multi-session 9-12h)."
+      "verdict": "🔴 INVALID(undertrain·코퍼스 window 부재·NOT KILL): 6-train 14k G0 전6 FAIL·18k val_CE 악화·V1 미통과 lesion 미측정. 힌트 K=8<K=1 val_CE. 비용~$6. 계기/플러밍 유효. NEXT=큰 broad corpus+register held-out."
      }
     ]
    }
