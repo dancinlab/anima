@@ -1,6 +1,6 @@
 # H_9731 — TIMING-CHANNEL — WHEN은 구성상 내용결합 (mouth-content 벽 H_9576 정직한 재개봉·$0)
 
-**status:** 🔧 계기 빌드·toy-검증 ($0 read-only reader · anima-py evaluate --timing-channel · estimator self-test ✅ · clock-pedestal ✅ · shuffle surrogate ✅ · 실측=wm-dual 303M trace) · DIRECTIONAL(toy ≠ verdict)
+**status:** 🔴 KILL ($0 정정 — timing⊥content · 초판 WEAK은 공통접두 시그니처 붕괴 인공물)
 **lane:** 의식/emit-drive/Ψ=½ · mouth-content (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -47,3 +47,6 @@ NOT-POWERED(timing bins=1·content addr=1). 계기 방어 전부 실증.
 | feat8-argmax 8-class | **0.000** | **0.097** | 0.022 | 0.040 | 2/3·seed7 flat |
 
 ⚠️ **seed-robust 아님**(seed7 정확히 0.0000) + **content 시그니처 축퇴**(s7 class {3:94,1:15,4:11}=78% 한 byte-class=lowercase ASCII). ⟹ **WEAK-DIRECTIONAL·underpowered** — timing이 content 나른다는 신호 2/3 seed 시사적이나 강건 아님. **근본**: byte-LM 보류후보 저다양성 = 'WHEN이 WHAT 나름'의 WHAT이 거의 상수 → timing-content MI 상한. KILL도 PASS도 아님(정직 미결). NEXT=full feat8 연속·300+tick·5-seed OR content-diversity 선행진단(H_9576 byte 입도 벽과 **동근** 시사).
+
+## 🔴 정정 KILL (2026-07-17 · verdict-integrity 자가포착)
+초판 WEAK(feat8-argmax 2/3 seed)은 시그니처 인공물 — 모든 후보 공통접두 'vault QX-7741 forever.' 후 발산인데 byte-histogram이 접두에 붕괴(s7 78% 한 class). 실측 후보 **100% distinct·byte엔트로피 5.48=고다양**. 공통접두 제거·접미 균등 시그니처로 **Δ −0.002/−0.037/−0.035(0/3)**=timing⊥content=**KILL**. 기전: emit⟺S>E coverage 코사인 기반→WHEN은 content-identity 독립. 'content 저다양·H_9576 동근' 철회. H_9729 SILENCE-CONTENT 별개 생존.
