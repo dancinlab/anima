@@ -14060,8 +14060,8 @@
      {
       "id": "hf-artifacts-archival-census",
       "type": "gate",
-      "name": "HF artifacts — 보관 갭 census (a_hf_complete 레지스트리 · 실측 2026-07-17 · 업로드 미실행)",
-      "detail": "🚨 미백업 168 ckpt ≈ 29.6GB. 로컬×summer×HF LFS sha256 3-way 대조(>100MB .clm). 업로드는 오너 게이트 대기.",
+      "name": "HF artifacts — 보관 갭 census + TOP-5 업로드 (a_hf_complete 레지스트리 · 실측/업로드 2026-07-17)",
+      "detail": "🚨 미백업 **168 ckpt·29.6GB → 134개·23.7GB**(TOP-5 업로드로 34개 해소). 로컬×summer×HF LFS sha256 3-way 대조.",
       "children": [
        {
         "id": "hf-census-method",
@@ -14070,18 +14070,18 @@
        },
        {
         "id": "hf-census-local-gap",
-        "name": "로컬 단일사본 67개 · 11.8GB",
+        "name": "로컬 단일사본 67개·11.8GB → 63개·11.1GB",
         "detail": "로컬 303M ckpt 88개 중 HF 백업은 21개뿐. 나머지 67개는 mac 디스크 사고 시 소멸."
        },
        {
         "id": "hf-census-summer-gap",
-        "name": "🚨 summer 단일사본 101개 · 17.8GB",
-        "detail": "공유 렌트 호스트에만 존재(로컬✗ HF✗) = a_fire_recover_complete 의 '영구 저장소로 pull' 미완. 내역: h9734 25(in-flight) · decon 16(H_9324 🟢 확정 근거) · h9672_t3s11 12 · en_arm 11(H_9359 🧱🔑 TWO-LANE cement) · h9070 7 · nbind_mig 4."
+        "name": "🚨 summer 단일사본 101개·17.8GB → 71개·12.5GB",
+        "detail": "공유 렌트 호스트에만 존재(로컬✗ HF✗) = a_fire_recover_complete 의 '영구 저장소로 pull' 미완. 잔여 내역: h9734 25(in-flight) · anima_bgrecomb ckpt 14 · h9672_t3s11 11(=rubric 상 제외한 step 자동저장) · h9070 7 · nbind_mig 4."
        },
        {
         "id": "hf-census-h9627-gap",
-        "name": "H_9627 wired 근거 ckpt 미보관",
-        "detail": "production default(Ψ=½ dual-ledger)이 측정된 `py303_full.clm` sha256 013c4574e0ce71ae… 가 HF 에 없다. 로컬 `py303_savant_mitosis.clm` 과 byte-identical(이름 drift · 유실 아님). HF `savant_mitosis_303m.clm`(e1ab9fa0…)은 다른 파일이라 대체 불가."
+        "name": "✅ 해소 — py303_full 은 base substrate 였다",
+        "detail": "`py303_full.clm`(sha 013c4574e0ce71ae…)은 H_9627 전용이 아니라 **H_9256·9351·9362·9377·9627 5개 H 가 인용하는 base** ⟹ 네이밍 규약상 `anima-base-py303-full` 로 PUBLIC 업로드(원격 sha 일치 검증). 로컬 `py303_savant_mitosis.clm` 과 byte-identical · HF `savant_mitosis_303m.clm`(e1ab9fa0…)은 다른 파일."
        },
        {
         "id": "hf-census-registry-drift",
@@ -14115,13 +14115,28 @@
        },
        {
         "id": "hf-census-priority",
-        "name": "업로드 우선순위 (미실행 · 오너 게이트)",
-        "detail": "① H_9627 py303_full(유일한 wired 공백) ② summer en_arm 11(H_9359 cement 증거가 렌트 호스트 단일사본) ③ summer decon 16(H_9324 확정 근거) ④ H_9672 s7/s11 쌍(해리 자체가 발견 ⟹ 쌍 필수) ⑤ h9520_cpt 3(🟠 BAR-FAIL · R2 H_9677~9682 가 baseline 소비 · PRIVATE). 게이트 사유 = 29.6GB 전송 + 가시성 결정."
+        "name": "✅ TOP-5 업로드 완료 (2026-07-17 · 38 ckpt · 6.73GB · 원격 sha256 전건 일치)",
+        "detail": "① `anima-base-py303-full` PUBLIC ② `anima-h9359-c3-transplant-en` PUBLIC(11 ckpt) ③ `anima-h9324-write-lever` PUBLIC(17) ④ `anima-h9672-store-bridge-addr-loss` PRIVATE(6·해리 쌍) ⑤ `anima-h9520-study-replay-cpt` PRIVATE(3-arm)."
        },
        {
         "id": "hf-census-not-yet",
         "name": "보관 대상 아님 — H_9410",
         "detail": "로컬 h9410_rung0/rung2 에 ckpt 가 있으나 jsonl tier=⏳ PRE-REGISTRATION(verdict 부재) ⟹ CITED 미충족 ⟹ 판정 착지 후 보관."
+       },
+       {
+        "id": "hf-census-attribution-correction",
+        "name": "⚠️ 정정 — 최초 census 의 귀속 2건은 미검증 추론이었다",
+        "detail": "최초 기록의 'decon=H_9324 근거' / 'en_arm=H_9359 근거' 는 **디렉토리 이름에서 짐작한 것**이었다(jsonl 리터럴 검색 0 hit). 업로드 전 provenance 복구로 정정했다. 교훈 = 재구성한 manifest 를 원본으로 가장하지 말 것."
+       },
+       {
+        "id": "hf-census-provenance-recoverable",
+        "name": "provenance 는 파일 옆 스크립트에서 복구된다 (jsonl 엔 없다)",
+        "detail": "jsonl/카드는 ckpt 파일명을 거의 기록하지 않는다(40 캠페인 중 asset 참조 7개뿐) ⟹ jsonl 부재 = 증거 아님이 **아니다**. 실제 귀속은 산출 디렉토리에 남은 `*.sh` 헤더·`*.log`·eval JSON 파일명에서 복구된다. 업로드 전 이 복구를 먼저 하고, 복구 불가 필드는 README 에 **IRRECOVERABLE-GAP** 으로 명시(학습 명령행·seed·VERSION 미기록 ⟹ 검증 재현만 보장, 분포 재현 미보장)."
+       },
+       {
+        "id": "hf-census-visibility-collections",
+        "name": "가시성·collection",
+        "detail": "가시성 = a_hf_complete 기계적용(PASS=PUBLIC · FAIL/WIP=PRIVATE) — 새 축을 만들지 않았다. H_9672 는 🟢 이나 `구현됨·미배선`=WIP 이라 PRIVATE. collection(a_hf_collections) = `anima · binding wall`(h9324·h9359) · `anima · base substrates`(py303-full)."
        }
       ]
      },
