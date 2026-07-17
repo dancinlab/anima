@@ -754,7 +754,7 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> [--corpus <path>...] [--gen N] [--slot-off] [--slot-shuffle N] [--rho-axon]")
     print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
     print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
-    print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9628 z 용량/노출 census(트레이스 판독·디코드 없음)")
+    print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9712 z 용량/노출 census(트레이스 판독·디코드 없음)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
     print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
@@ -5802,8 +5802,28 @@ def _emit_gate_census(argv):
     silence_safe = 0          # score≤θ path could decide — the third lever
     clockblock_scorepass = 0  # safe=false ∧ score>θ = clock is the sole binder
     smin = 9.9; smin_open = 9.9
+    excluded_nonclock = 0     # H_9712 · refractory-lineage traces are NOT clock-lock — exclude them
     for f in files:
         seen = False
+        # H_9712 meta-guard: this census asserts the emit≡clock invariant, which holds ONLY for the
+        # clock gate. Since the production default flipped to refractory (Ψ≈½ dual-ledger), a glob may
+        # now include refractory traces whose emit⟺S>E would silently corrupt the clock-lock statistic.
+        # Peek the trace's _meta.emit_gate; skip anything not clock-lineage (absent _meta = legacy clock).
+        try:
+            _gate = "clock"
+            for _l in open(f):
+                _l = _l.strip()
+                if not _l: continue
+                try: _o = json.loads(_l)
+                except: continue
+                if isinstance(_o, dict) and _o.get("_meta"):
+                    _gate = str(_o.get("emit_gate", "clock")); break
+                if isinstance(_o, dict) and "emit_gate" in _o:
+                    _gate = str(_o.get("emit_gate", "clock")); break
+            if _gate != "clock":
+                excluded_nonclock += 1; continue
+        except Exception:
+            continue
         try:
             fh = open(f)
         except Exception:
@@ -5833,6 +5853,10 @@ def _emit_gate_census(argv):
 
     print("═══ EMIT-GATE CENSUS · H_9403 · is the score/tension lane decorative? (θ=%.2f) ═══" % THR)
     print("  corpus: %d files · %d ticks (emit/safe/score present)" % (used_files, tot))
+    if excluded_nonclock:
+        print("  ⚠️ excluded %d non-clock (refractory-lineage) trace file(s) — the emit≡clock invariant "
+              "is clock-lineage only (H_9712 default flip); this census reads clock traces exclusively"
+              % excluded_nonclock)
     print("  emit ⟺ (score>θ)∧safe :  %d/%d = %.4f" % (emit_eq_safe, tot, emit_eq_safe / tot))
     print("  score>θ               :  %d/%d = %.4f   (min score %.4f · min when safe=true %.4f)"
           % (score_gt, tot, score_gt / tot, smin, (smin_open if smin_open < 9.0 else float('nan'))))
@@ -7633,7 +7657,7 @@ _KNOWN_FLAGS = frozenset((
 
 
 def _z_census(argv):
-    """H_9628 z-DOSE STARVATION CENSUS — the $0 gate that must clear BEFORE H_9576's
+    """H_9712 z-DOSE STARVATION CENSUS — the $0 gate that must clear BEFORE H_9576's
     direction null (rho=-0.077) may be read as a wall rather than a dose artefact.
 
     `anima-py evaluate --pc2-direction <traces_dir> --z-census`
@@ -7676,7 +7700,7 @@ def _z_census(argv):
           Test = exact two-sided McNemar on the discordant pairs (paired binary), plus the
           resolvable |Delta-pi| so an underpowered null reads VOID, not negative.
 
-    Frozen bars (card H_9628 · do not retune): |z|95 ≥ zeta-half ⇒ PASS-DOSED · |z|95 <
+    Frozen bars (card H_9712 · do not retune): |z|95 ≥ zeta-half ⇒ PASS-DOSED · |z|95 <
     zeta-half/4 ⇒ VOID-STARVED (H_9576 reclassified) · between ⇒ PENDING · lm-step=0 fraction
     >30% ⇒ INVALID-EXPOSURE · calibration self-consistency FAIL ⇒ INVALID.
     """
@@ -7744,7 +7768,7 @@ def _z_census(argv):
         tail = sum(_pm.comb(n, i) for i in range(0, k + 1)) / float(2 ** n)
         return min(1.0, 2.0 * tail)
 
-    print("=== anima evaluate --pc2-direction --z-census — z DOSE/EXPOSURE (card H_9628) ===")
+    print("=== anima evaluate --pc2-direction --z-census — z DOSE/EXPOSURE (card H_9712) ===")
     print("traces: %s  (seeds: %s)" % (d, ",".join(str(s) for s in seeds)))
     print("chain:  z →① logit penalty on in-window bytes →② context share →③ D (H_9576 read ③ only)")
     print("bar:    |z|95≥ζ½ PASS-DOSED · |z|95<ζ½/4 VOID-STARVED · lm-step=0 >30% INVALID-EXPOSURE")
@@ -7895,7 +7919,7 @@ def _z_census(argv):
         v = ("🟢 PASS-DOSED (SURROGATE) — the live z DOES physically move the mouth in the\n"
              "     direction the mechanism predicts (Δπ=%+.4f · p=%.4f), while the rng control\n"
              "     is null (Δπ=%+.4f · p=%.4f). Link ①→② is LIVE and dosed ⇒ the dose-starvation\n"
-             "     claim of H_9628 DIES, and H_9576's null is NOT rescued by starvation."
+             "     claim of H_9712 DIES, and H_9576's null is NOT rescued by starvation."
              % (b["d"], b["p"], rg["d"], rg["p"]))
     elif sig and (not right_sign) and rng_null:
         v = ("🔴 SIGN-INVERTED — Δπ=%+.4f is significant but OPPOSITE the mechanism's own\n"
@@ -8687,7 +8711,7 @@ def _pc2_zeta_slope(argv):
     elif outside and mb > 0:
         v = ("🔄 SIGN-INVERTED — β>0 유의 = 예측과 반대 ⇒ **INVALID**(배선 감사) · 음성 아님")
     else:
-        v = ("🧱 CHANNEL-CLOSED(후보) — β 가 null 대역 안. ⚠️ 이는 H_9628 의 π-dose PASS"
+        v = ("🧱 CHANNEL-CLOSED(후보) — β 가 null 대역 안. ⚠️ 이는 H_9712 의 π-dose PASS"
              "(Δπ=+0.1599 · p=0.0082)와 **모순** ⇒ 두 계기 대질이 다음 H · 지금 못 박지 말 것")
     print("  ⇒ VERDICT: " + v)
     print("     범위: ζ-arm 은 **채널이 무엇을 나를 수 있나** 의 계기 증거다 —")
@@ -9073,7 +9097,7 @@ def _pc2_direction(argv):
     import base64 as _pb
     import random as _prand
 
-    if "--z-census" in argv:                      # H_9628 dose/exposure gate (sister sub-mode)
+    if "--z-census" in argv:                      # H_9712 dose/exposure gate (sister sub-mode)
         return _z_census(argv)
 
     d = ([x for x in argv if not x.startswith("--")] or [""])[0]
