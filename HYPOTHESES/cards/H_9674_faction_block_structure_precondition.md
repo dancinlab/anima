@@ -288,6 +288,53 @@ modularity Q 는 클러스터러가 null-model 을 못 이기면 **음수**가 �
 **scratch d768 재학습(비용·오너 go)** 또는 **H_9672 세션 ckpt 복구**가 선행돼야 ④ 가 열린다.
 그때까지 **H_9643 GPU 보류**.
 
+
+### 🟢 선결조건 ④ 시도 ③ — **통과** · scratch d768 자력 학습으로 대조군을 만들었다 (2026-07-17)
+
+T2 의 scratch ckpt 가 미보존이라 **직접 학습**했다(`a_fire_autonomous`: pool 은 보유 호스트라 렌트 아님).
+
+```
+summer (GPU 여유 확보 후) ·  anima-py corpus storebind --lang en --seed 7 --out sb.txt
+                            anima-py train --corpus sb.txt --store-bridge sb.txt
+                                           --d 768 --steps 2000 --seed 7 --out scratch_d768.clm
+                            ⟹ --init 없음 = from scratch · storebind 합성 CVCVC 만 · EN 사전학습 0
+ckpt 회수: ~/.fire-recover/h9674_scratch/scratch_d768.clm (7MB · d=768 L=2 · a_fire_recover_complete)
+```
+
+| ckpt | N/d | 양성통제 | max real/ped | max Δ(real−ped) | 판정 |
+|---|---|---:|---:|---:|---|
+| **303M py** (EN 점유 보유) | 1920/3784 | x114.34 | **44.48** | +0.224086 | 블록 있음 |
+| **scratch d768** (EN 0) | 1920/768 | x54.15 | **12.03** | +0.112276 | **블록 있음** |
+
+scratch d768 상세: K=2 → 5.205 · K=4 → 7.797 · K=8 → 8.690 · K=12 → **12.030**
+(real Q 0.0827/0.1222/0.1222/0.1225 vs pedestal 0.0159/0.0157/0.0141/0.0102 ·
+ **scramble 0.0169/0.0170/0.0143/0.0120 = pedestal** ⟹ 구조 진짜 · 주변분포 인공물 아님)
+
+### 판정: 사전등록 두 갈래 중 ②
+
+사전등록: *"①에만 블록 ∧ ②엔 없음 ⟹ EN 점유 흔적 ⟹ H_9643 GPU 철회 · **②에도 블록 ⟹ 사전학습 무관
+일반구조 ⟹ 선결조건 ④ 통과**"*.
+
+**EN 을 한 번도 본 적 없는 모델에도 블록이 있다**(real/ped 12.03 · bar 1.5 의 8배) ⟹ **④ 통과**.
+결과를 **미리 못 박아둔** 덕에 사후 서사 맞추기 없이 읽힌다.
+
+### ⚠️ 정직범위 — 완전한 배제는 아니다
+
+- d 가 다르고(768 vs 3784) 과제도 다르다(storebind only vs EN 사전학습+). ⟹ 정직한 진술은
+  **"EN 점유가 블록의 *유일한* 원인은 아니다"** 까지이고 "EN 점유가 블록에 기여하지 않는다" 는 아니다.
+- H_9672 T2 의 정확한 arm(같은 d768 · addr-loss OFF/ON)이 아니다 — pool 의 pip anima-python 이 PyPI 판이라
+  `--store-addr-weight` 가 없었다(내 목적엔 trunk 만 필요해 생략).
+- 단일 seed · 단일 ckpt ⟹ DIRECTIONAL(`a_scale_honest_scope`).
+
+### ▶️ 파벌축 선결조건 4/4 통과
+
+  ① 블록 실재        — real/ped 54.07 (bar 1.5) · 양성통제 x114
+  ② layout 아님      — 3렌즈(ARI≈0 · adj−Σp²≈0 · |C| 인덱스평탄)
+  ③ 크기 인공물 아님  — 크기맞춤 통제서 배정이 Q 의 100%
+  ④ **EN 점유 아님**  — scratch d768(EN 0)에도 블록 real/ped 12.03
+
+⟹ **H_9643(파벌이 현 기질에서 학습되는가 · GPU)이 선결조건을 전부 통과**했다. 발사는 오너 비용 판단.
+
 ## 사망조건 (사전등록)
 
 - real/pedestal ≥1.5 (양성통제 통과 하에) ⟹ 블록 **실재** ⟹ 이 카드(블록 부재 주장) 사망 ∧ **H_9643 GPU 발사 정당화됨**.

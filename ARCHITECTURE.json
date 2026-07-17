@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재하고 선결조건 3/3 통과(H_9674 real/ped 54.07 · H_9676 layout 아님 3렌즈 · 크기맞춤 통제서 배정이 Q 의 100%·크기 0) ⟹ '옛 파벌은 가짜' ∧ '구조는 실재' 양립. 남는 것 = '블록=파벌로 학습가능' 미증명(H_9643 GPU · 오너 판단).",
+    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재하고 **선결조건 4/4 통과**(①실재 real/ped 54.07 ②layout아님 3렌즈 ③크기아님 배정이 Q 의 100% ④EN점유아님 — scratch d768 자력학습 대조 real/ped 12.03) ⟹ H_9643(파벌 학습·GPU) 선결조건 전부 통과 · 발사=오너 비용 판단.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16659,7 +16659,7 @@
         "role": "",
         "id": "faction-r3-precond4-en-occupancy",
         "detail": "T2 가 대조군을 만들어놨다: 같은 --faction-block-structure 를 ①py303_full(EN 점유 보유) ②scratch d768(EN 점유 없음) 양쪽에 돌린다. ①에만 블록∧②엔 없음 ⟹ 블록=EN 점유 흔적 ⟹ H_9643 GPU 철회. ②에도 블록 ⟹ 사전학습 무관 일반구조 ⟹ 통과.",
-        "verdict": "🚧 블로커 유지 — 시도 2회 실패: ①random-init 축퇴(부적격) ②non-EN ckpt = 같은 trunk 파생물 + d=32 서 비율 무효. 유효 경로 = py303_full vs T2 scratch d768 뿐인데 ckpt 미보존 ⟹ 재학습(비용) 또는 복구 선행. H_9643 GPU 보류.",
+        "verdict": "🟢 통과(시도③): T2 ckpt 미보존이라 scratch d768 을 직접 학습(summer · storebind 합성만 · EN 사전학습 0) → 양성통제 x54.15 ✅ · max real/ped 12.03 · scramble=pedestal ⟹ **EN 을 본 적 없는 모델에도 블록**. 사전등록 갈래 ② = ④ 통과.",
         "children": [
          {
           "name": "⛔ random-init 은 부적격 통제였다 — 축퇴",
@@ -16681,6 +16681,13 @@
           "id": "faction-r3-ratio-negative-denom",
           "detail": "toy d=32 서 pedestal Q 가 K=4 −0.071 · K=8 −0.045(클러스터러가 null-model 못 이김) ⟹ real/ped 가 −0.883/−1.040 무의미. max() 가 그걸 버리고 K=2 의 4.145 단일셀에 판정을 얹었다. 분모가 0 을 넘나들면 비율은 틀린 통계량.",
           "verdict": "비율 가드 배선(v0.15.39): pedestal Q≤0 셀 제외+출력 · 부호안전 Δ(real−ped)>0 추가요구 · 전셀 무효면 rc=1. ⚠️303M 판정 불변(≤0 셀 0건 · max Δ +0.224086)"
+         },
+         {
+          "name": "🟢 scratch d768 자력학습 — 대조군을 만들었다",
+          "role": "",
+          "id": "faction-r3-scratch-d768-built",
+          "detail": "a_fire_autonomous(pool=보유 호스트·렌트 아님)로 summer 에서 `anima-py corpus storebind --lang en --seed 7` → `anima-py train --corpus sb.txt --store-bridge sb.txt --d 768 --steps 2000 --seed 7`(--init 없음=from scratch). ckpt 회수 ~/.fire-recover/h9674_scratch/scratch_d768.clm(d=768·L=2).",
+          "verdict": "🟢 real/ped: K=2 5.205 · K=4 7.797 · K=8 8.690 · K=12 12.030 · max Δ +0.112276 · scramble=pedestal ⟹ 블록 실재. ⚠️d 다름(768 vs 3784)·과제 다름 ⟹ 'EN 점유가 유일 원인은 아니다' 까지가 정직 · DIRECTIONAL"
          }
         ]
        }
