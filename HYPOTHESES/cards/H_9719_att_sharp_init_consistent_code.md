@@ -15,3 +15,10 @@
 
 ## 상태
 🔵 PROPOSED — 미실행 사전등록. 측정 주장 0(설계). **distinct-from-kills:** addr-loss(H_9672) 아님=slot 명명 0 · H_9692 강등은 감독 lane 한정(w_addr=0 서는 sharp-but-permuted 허용·조건부 전이 사전등록)
+
+### 🛠️ $0 pre-screen 계기 착륙 + 의미론 2-정정 (VERSION 0.15.74 · 2026-07-17)
+`anima-py evaluate <store-trailer ckpt> --store-addr-census <dump.npz>` 구현·착륙(engine-native · `a_experiment_engine_native`). random W_q(d→d_k) K-seed 로 개체키 `K[i]=_entity_key(key_emb,e_i)` 위 argmax-충돌을 **structureless-H pedestal** 대비 측정(`--store-census-selftest` = planted injective/collapsed 양성통제, **SELFTEST PASS** 로 계기 검증). admissible: `target_slot` 미조회(Sol 규칙).
+
+**정정 ①(pedestal)**: 충돌 KILL 은 절대 40% 아니라 구조없는-h 대비(zero-truth arm · `phi-estimator-needs-zero-truth-pedestal`) — key-norm argmax 편향까지 흡수.
+**정정 ②(의미론 · selftest 가 잡음)**: **n_slot=N_entities(CLMS 구조)에서 random W_q 는 birthday-bounded** — 고정키 위 argmax 는 어떤 h 도 ~1−1/e 충돌 아래로 못 감(injective 순열은 키-정렬 요구, random W_q 가 파괴). ⟹ **이 pre-screen 은 창발 탐지기가 아니라 COLLAPSE screen(필요조건)**: `obs≫ped`=붕괴 geometry(전부 한 슬롯)=KILL · `obs≈ped`=비붕괴(random 대비 안 나쁨)=PASS-screen(필요만·창발 확인 아님). **창발 verdict 는 오직 303M sharp-init fire**(카드 본문 `--store-att-temp`). 즉 이 $0 는 sharp-init 을 KILL 할 수는 있어도 GREEN 할 수 없다.
+**발사 게이트**: store-trailer ckpt(key_emb 보유·T3류) pen-dump(`--dump-hidden`) 필요 = pool-303M · 개체풀. 계기·selftest 는 착륙, 실-dump census 는 pool-free 시 원커맨드.
