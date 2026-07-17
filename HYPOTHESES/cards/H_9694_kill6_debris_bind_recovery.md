@@ -1,6 +1,6 @@
 # H_9694 — R2 ⭐ kill#6 잔해 회수: targeted co-train 의 bind Δ 를 frozen 계기로 재획득
 
-**status:** 🧱 DECISION-KILL · ⚠️ MECHANISM-INCONCLUSIVE (303M engine-native · runpod A100 · frozen --fan-bind · lab full reconcile · 2026-07-17) · 1-seed · wired: 계기 배선완료(#3915·#3983)
+**status:** 🧱 BIND-ABSENT (H_9745 powered 재측정으로 승격 · seed7 N=288 TOST 등가 · runpod A100 · 2026-07-17) · wired: 계기 배선완료(#3915·#3983·#4028)
 **lane:** G6/ρ·fan · 데이터 레버 **related:** [[H_9693]] · [[H_9124]] (데이터축 선례) · [[H_9576]] (n=58 부호반전 전례)
 
 ## 물음
@@ -53,6 +53,10 @@ convergence `g6-ideation-hexa-1` 은 **"TARGETED 가 FALS 를 위조한다"를 �
 **scope**: 1-seed(7)·합성 g6bind·303M py303_full. **재현**: `anima-py corpus g6bind --lang en --arm {targeted,shuf} --n-blocks 4000 --seed 7` → `train --init py303_full.clm --steps 6000 --seed 7` → `evaluate --fan-bind --fan-smp 16`.
 
 **후속 (both models · $0~저비용)**: [[H_9745]] fan-bind 에 bind_delta paired 순열 null + prereg TOST(계기↔주장 정렬·`instrument-claim-alignment-before-reading-a-bar`) · [[H_9746]] XBIND(H_9267) 양성통제를 fan-bind 로 = dynamic-range 확정 → 계기결함/레버무효 귀속.
+
+## ★ 승격 (2026-07-17 · [[H_9745]] powered 재측정)
+
+H_9694 의 "🧱 DECISION-KILL·⚠️ MECHANISM-INCONCLUSIVE" 는 **marginal 계기 + N=96(m<5 undecidable)** 기준이었다. [[H_9745]] 가 계기를 정렬(bind_delta paired McNemar+TOST)하고 **fan-smp 48(N=288)로 검정력 확보** 재측정 → **targeted 레버 🧱 BIND-ABSENT**(bind_delta=−0.0035·부호반전·m=11·Tango90 CI ⊂ ±0.05 = TOST 로 0 등가 확증). R2 의 "+0.0104(1/96)"는 노이즈였고, powered 재측정서 부호 반전(H_9576 전례) ⟹ **데이터-포맷 레버가 composition 을 안 심는다=레버무효 확정**(단 계기결함 배제는 [[H_9746]] XBIND 양성통제 필요). 2-seed(4302) 진행중.
 
 ## source
 lab full Fable A1 · 선행 [[H_9693]].

@@ -1,6 +1,6 @@
 # H_9745 — R2b fan-bind 계기 정렬: bind_delta paired 순열 null + prereg TOST
 
-**status:** 🔧 INSTRUMENT-IMPLEMENTED (계기 코드 착륙 · lab full Fable+Sol 설계수렴 · 재측정 GPU 대기) · not-terminal · 선행 [[H_9693]]·[[H_9694]]
+**status:** 🧱 BIND-ABSENT (seed7 powered N=288 · 2-seed 진행중 · runpod A100 · 2026-07-17) · not-terminal · 선행 [[H_9693]]·[[H_9694]]
 **lane:** G6/ρ·fan · 계기 수리 **related:** [[H_9694]] · [[instrument-claim-alignment-before-reading-a-bar]] · [[chance-level-must-be-derived-per-metric]]
 
 ## 물음
@@ -36,6 +36,21 @@ lab full(Fable∥Sol) 설계수렴 → `cli/evaluate.py:eval_fan_bind` 에 **pai
 **★ R2 재프레임**: H_9694 의 "🧱 DECISION-KILL" 은 marginal 절2 기준이었고, 정렬된 paired 계기로 재읽으면 targeted(m≈1)는 **⛔ UNDECIDABLE** — 사전등록 CRACK 미달은 맞으나 "레버 무효"는 여전히 미획득(계기가 확증).
 
 **사전등록 재측정(GPU cost-gated · 이동 금지)**: δ=0.05 · **N≥288(fan-smp≈48)** · seed 2개. **Sol dissent(1줄)**: 0.01 규모 효과까지 잡으려면 N≈1800-2400(fan-smp 200-400) — 단 δ=0.05 는 "의미효과" 사전등록 하한이라 양쪽 합의. 최대위험 완화(Q5): swap-role 통제 arm(cA↔cB) 또는 2차 derangement 안정성(cB 어휘 비대칭 배제). ⟹ [[H_9746]] XBIND 양성통제와 함께 발사.
+
+## 재측정 실측 (seed 7 · fan-smp 48 · N=288 · POWERED · runpod A100)
+
+계기 착륙 후 **정렬된 paired 계기로 R2 를 fan-smp 48(N=288)** 재발사 — 검정력 확보(m≥5):
+
+| arm (6000step · val_CE DESCENT) | composed J | shuffled J | bind_delta | discordant | McNemar p | TOST(±0.05) | PAIRED |
+|---|---|---|---|---|---|---|---|
+| **targeted**(레버·fp4000) | 0.0174 | 0.0208 | **−0.0035** | b=5 c=6 m=11 | — | **True** | **🧱 BIND-ABSENT** |
+| **shuf**(통제·fp0) | 0.0486 | 0.0382 | +0.0104 | b=13 c=10 m=23 | 0.339 | True | 🧱 BIND-ABSENT |
+
+**결정적**: R2 의 "+0.0104(1/96)" 는 노이즈였다 — N=288 서 targeted bind_delta 는 **−0.0035(부호 반전)** = 정확히 [[H_9576]] 전례(n=58 +0.110 → n=270 −0.077). 검정력을 얻자(m=11≥5) targeted 레버는 **🧱 BIND-ABSENT**: Tango90 CI 가 (−0.05,+0.05) 안 = **TOST 로 bind_delta≡0 등가 확증** ⟹ 데이터-포맷 레버(g6bind targeted co-train)가 composition-sensitivity 를 **안 심는다**. 0.444(hexa 비동결)는 인공물 확정.
+
+**★ R2/[[H_9694]] 재프레임 확정**: H_9694 의 "🧱 DECISION-KILL·⚠️ INCONCLUSIVE(marginal 계기·N=96 undecidable)" → 정렬 계기 powered 재측정으로 **🧱 BIND-ABSENT(검정력 확보·TOST 등가)** 로 승격. "레버 무효"가 이제 벌렸다(단 계기결함 배제는 [[H_9746]] XBIND 양성통제 필요).
+
+**남은 caveat**: (1) 2-seed(4302) 진행중 — seed7 과 일치 확인 대기. (2) shuf arm ablated J=0.0486(zero-truth pedestal 이 ~0 아님 = 검출기가 우연 공출현에 발화 · 경미 flag). (3) **계기결함 vs 레버무효 최종 귀속은 [[H_9746]] XBIND 양성통제**(bind 기지-양성이 fan-bind 서 BIND-SENSITIVE 나와야 계기 dynamic-range 정상) 필수 — 단 토이(강bind→SENSITIVE p=0.0053)가 McNemar 검출기는 정상 확인.
 
 ## source
 H_9694 lab full(Fable∥Sol) reconcile · Fable 범주오류 지적 + Sol 이중차분 D 통계 수렴.
