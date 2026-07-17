@@ -1309,6 +1309,10 @@ def main():
     ap.add_argument("--store-oracle-train", action="store_true",
                     help="H_9423 Stage1.5: hand the address for free during TRAINING (oracle_slot=target_slot) "
                          "→ separates value-read (a) from address-learning (c). DIAGNOSTIC, not a production lever.")
+    ap.add_argument("--store-oracle-warmup", type=int, default=0,
+                    help="H_9672: for the first N steps hand the address free (oracle_slot) so val differentiates "
+                         "cleanly, THEN switch to softmax address (+ --store-addr-weight learns W_q on the "
+                         "differentiated val). Fixes the val-read seed-fragility addr-loss alone left. 0=off.")
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
     ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
     ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
@@ -1850,8 +1854,14 @@ def main():
         # allreduce every param's grad (aux heads included — §10.1). clip_grad_norm_ runs AFTER
         # on the already-averaged grads, so every rank's clip scale = the 1-GPU global-grad norm.
         _sb = get_store_batch() if sb_cell is not None else None
+        # H_9672 oracle-warmup 2-phase (val 분화 seed-robustness): the first --store-oracle-warmup steps
+        # hand the address for free (oracle_slot) so val differentiates cleanly (Stage1.5 proved oracle-train
+        # → ORACLE 1.00), THEN switch to the softmax address (+ --store-addr-weight L_addr learns W_q on the
+        # now-differentiated val). Cuts the ∂L/∂v bootstrap deadlock that left val seed-fragile under addr-loss
+        # alone (seed-7 lucky, seed-11 collapsed to op-only). warmup=0 → byte-identical to the prior behaviour.
+        sb_oracle_now = a.store_oracle_train or (a.store_oracle_warmup > 0 and step <= a.store_oracle_warmup)
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
-                                           sb=_sb, sb_w=a.store_ans_weight, sb_oracle=a.store_oracle_train,
+                                           sb=_sb, sb_w=a.store_ans_weight, sb_oracle=sb_oracle_now,
                                            sb_addr_w=a.store_addr_weight)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
