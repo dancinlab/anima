@@ -831,3 +831,6 @@ H_1302(oscillator sync)·H_1462(방송 경쟁)와 달리 **representational fact
 
 - 발산 산출물 = **DIRECTIONAL 설계**이지 verdict 아님(`a_lab_full_diverge`). cement 는 engine-native `anima-py` 로만.
 - 옛 파벌 Φ 숫자(법칙 22/43/44 · TOPO12)는 **폐엔진 proxy** 산이며 이 카드의 근거가 아니다 — H_9627/H_9628 참조.
+
+### 🔧 벽② 해소: --jamo-aux 독립 플래그 (2026-07-18 · $0 code)
+jamo(ko-coherence)가 --arm tlora_jamo 에만 묶여 faction 과 tlora confound 였다. `--jamo-aux`(train.py)로 arm 독립 토글 추가 = `--arm clm --n-factions 8 --jamo-aux` 로 **faction+jamo clean 런 가능**(jamo_on=ARMS[arm] or a.jamo_aux · 기본 off byte-identical · CLM 전용). recipe-match 재발사 A안의 enabler. 나머지 벽(recipe 유실·window·검증툴링)은 유료 window-sweep 재발사(owner)서 해소.
