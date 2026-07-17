@@ -1,6 +1,6 @@
 # H_9750 — H_9729 latch p5-audit — `--wm-dual-read content`는 W_S 텍스트를 decode seed에 먹인다 = self-seed 위반
 
-**status:** 🟠 CODE-CONFIRMED(p5 위반) · DIRECTIONAL (lab-full R3 Sol단독[Fable timeout]+내 코드검증·R3-B) — cement=engine-native anima-py만
+**status:** 🟠 TOPOLOGY-CONFIRMED · p5-legality UNDETERMINED (Fable reconcile: 위상 확증이나 percept도 mouth-문맥+합법=위상만으론 위반 아님·판정은 [[H_9747]] meter) — 앞선 'CODE-CONFIRMED 위반' 과단언 정정
 **lane:** 의식/emit-drive · p5-audit (프런티어 psi-soma-theta-alive)
 **related:** [[H_9738]](상상 epiphenomenal EARNED NULL·트리거)·[[H_9729]](--wm-dual-read latch)·[[H_9627]](Θ WIRED)·source: sidecar lab full(sol-mrop0hnd·fable timeout)
 
@@ -18,3 +18,7 @@ H_9729의 원래 양성 기준 **I(next pre-gate candidate ; W_S | current)>0 �
 정적 destination certificate(provenance tag→sink 전수) + 동적 isocover fork(같은 length/Θ parity/coverage/feat8·lexical만 다른 x_a,x_b: pre-gate candidate OWN≠ISOCOVER-DONOR면 mouth taint=p5 위반·field/σ만 갈리면 safe).
 
 ⚠️ DIRECTIONAL·cement=engine-native만.
+
+## 🟠 정정 (2026-07-17 · Fable H_9747 reconcile · verdict-integrity)
+앞서 이 latch를 **'p5 위반 확증'으로 과단언**했으나 Fable H_9747(같은 코드사실 AGREES)이 옳게 좁힘: **위상≠위반**. carrier가 live_anchors[-1] mouth-문맥 재진입임은 코드확정(:2480/:2439)이나, **percept도 live_anchors[-1] mouth-문맥이면서 합법**(타자 텍스트)이다. 합법판례(percept)와는 provenance만 다름(뱉은 것 vs 거부된 것) = **p5 legality는 미판정·측정사안**. 판정 = [[H_9747]] M1(Θ-번들 불변·제조 tension 검출)·M2(echo-차단·speak-laundering)·M3(거부-불가역) 3기준(H_9729 planned fire 트레이스서 계산·추가 rollout 0). 3/3 PASS=p5-CONDITIONAL-LEGAL(최초 측정-합법 interior 읽기경로)·any FAIL=재설계([[H_9740]] non-mouth residue). **내 확정 기여 = carrier→decode seed 코드경로**(Fable와 코드사실 일치)·**정정 = 법적판정은 meter 위임**.
+
