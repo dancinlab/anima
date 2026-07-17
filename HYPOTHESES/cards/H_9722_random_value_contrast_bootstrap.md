@@ -14,4 +14,18 @@
 **verdict-integrity**: 성공은 "**target-free 값 대비 후 end-CE 가 주소를 고를 수 있다**"를 증명하지 **원래 사전학습 초기화로부터의 자발적 창발은 증명 안 함**(Sol 자기명시).
 
 ## 상태
-🔵 PROPOSED — 미실행 사전등록. 측정 주장 0(설계). **distinct-from-kills:** 직접 주소감독 아님(두 극성 값 init 만·slot 식별 0) · H_9711 인접하나 그건 RV-adjunct·이건 contrast dose+$0 gradient 게이트
+🔴 **DIRECTIONAL-KILL — $0 gradient-replay 실행(2026-07-17 · summer 303M · 사전등록 pre-screen)**
+
+### 🔴 $0 gradient-replay = KILL (contrast 는 극성 신호이지 개체-주소 신호 아님)
+카드 사전등록 pre-screen 실행: base pretrained penultimate + 합성 contrast val(V[0]=+su·V[1]=−su) + random W_q step-0 에서 end-task(개체 정답값 검색·admissible·target_slot 미소비) 주소 gradient `∂L/∂a` 를 정답슬롯 vs 같은-극성 다른슬롯으로 비교:
+
+| contrast su | 정답슬롯 \|g\| / 같은극성 \|g\| (advantage) | 순열통제 |
+|---|---|---|
+| 0.02 | **1.000** | 1.000 |
+| 0.10 | **1.001** | 1.000 |
+| 0.50 | **1.000** | 1.000 |
+
+**KILL(확고)**: contrast val 은 정답 개체슬롯에 **advantage 0**(같은-극성 다른슬롯과 gradient 완전동일 ratio 1.000) + **쿼리개체 순열불변** ⟹ 카드 자신의 KILL 조건("순열해도 advantage 동등 = 진짜 주소신호 아님") 정확 충족. 이유: contrast 는 val 을 **극성(2-class)** 으로만 구별시켜 gradient 가 (V[pol]−v) 극성인자에 비례 — 정답개체 e 와 같은-극성 다른 개체 j 가 **동일 gradient**(개체 정보 0). end-task 는 극성-기반 값차이로 어느 개체가 어느 슬롯인지 발견 못 한다.
+**통합(무감독 부트스트랩 3-lens 전멸)**: [[H_9719]] sharp-init(random W_q·basis 밖) KILL · whitening(탈상관 부족) KILL · **H_9722 value-contrast(극성≠개체) KILL** ⟹ emergent(무감독/극성) 주소는 arbitrary frozen 키에 원리적으로 불가 — 개체↔키 map 은 **per-개체 target 정보**이고 무감독 통계·극성값 어디에도 없다.
+**남은 방향(sharpened)**: 값이 **per-개체 구별**(극성 2-class 아니라 N-class)돼야 end-task 가 개체주소를 나른다 — 즉 값 자체가 개체를 식별해야 함(=사실상 감독/oracle-value). [[binding-wall-operator-alive-fact-written-not-bound]] 재확증(연산자/극성 alive·개체 not bound).
+**tier**: 🔴 DIRECTIONAL-KILL — engine-native 303M gradient-replay screener(사전등록 pre-screen · 학습 fire 불요로 KILL 확정). **distinct-from-kills:** 직접 주소감독 아님(두 극성 값 init 만·slot 식별 0) · H_9711 인접하나 그건 RV-adjunct·이건 contrast dose+$0 gradient 게이트
