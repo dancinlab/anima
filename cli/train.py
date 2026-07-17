@@ -110,7 +110,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
-import argparse, json, math, os, sys, time
+import argparse, json, math, os, re, sys, time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -1535,6 +1535,26 @@ def main():
     if str(device).startswith("cuda"):
         cap = torch.cuda.get_device_capability(local_rank)
         p0(f"  cuda: {torch.cuda.get_device_name(local_rank)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
+        # PREFLIGHT (pod-bootstrap-gpu-2): a torch wheel with no kernels for THIS GPU's SM crashes
+        # LATER, mid-training, with a cryptic async "CUDA error: no kernel image is available for
+        # execution on the device" — the same failure-that-looks-like-success class the pod bootstrap
+        # ledger fights. Fail fast HERE with the actionable fix. Blackwell (sm_120 / RTX 50xx) needs a
+        # cu128 wheel; the default-index torch tops out at sm_90, so it JITs nothing and dies.
+        sm = cap[0] * 10 + cap[1]
+        arch_nums = []
+        for at in torch.cuda.get_arch_list():          # e.g. ['sm_80', 'sm_90', 'sm_90a', 'sm_120']
+            m = re.match(r"sm_(\d+)", at)
+            if m:
+                arch_nums.append(int(m.group(1)))
+        if arch_nums and sm > max(arch_nums):
+            newest = max(arch_nums)
+            raise SystemExit(
+                f"FATAL: installed torch {torch.__version__} has NO compiled kernels for this GPU "
+                f"(sm_{sm}); it was built for up to sm_{newest}. Training would crash later with "
+                f"'CUDA error: no kernel image is available for execution on the device'. "
+                f"Install an sm_{sm}-capable build — for Blackwell (sm_120) use the cu128 index:\n"
+                f"  pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128"
+            )
 
     torch.manual_seed(a.seed)
 
