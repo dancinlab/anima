@@ -45,3 +45,15 @@ recognition 렌즈·PID·one-sided store·mouth-conditioning 아님. **vs H_9729
 - **음성은 SESOI equivalence로**: p>0.05 아니라 사전동결 ε 내 95% CI + conditional-permutation TE ≤ matched null 99% + 3-seed + 전 horizon/reload. 다중 lane = max-statistic permutation FWER.
 - ⚠️ 시그니처 금지: 접두 등 **공유구조에 붕괴하는 저차원 signature 사용금지**(H_9731 자가포착) — canonical serialization exact-compare + 고정 held-out probe bank.
 
+## 🟢 S0-b $0 스크린 결과 (2026-07-17 · 기존 H_9731 trace 재사용·발사비용 0)
+보류후보 feat8(엔진 정본 `_afs_byte_feature` 정확재현) cos-스펙트럼 · 3-seed × n=120:
+| seed | pairwise cos mean | min | 8차원 CV | 판정 |
+|---|---|---|---|---|
+| 7 | 0.842 | 0.467 | 0.175~1.744 | 🟢 |
+| 4302 | 0.877 | 0.472 | 0.166~1.684 | 🟢 |
+| 4303 | 0.820 | 0.472 | 0.167~1.515 | 🟢 |
+
+⟹ **조성채널 LIVE** — cos≈1(구별불가) 아님·전 8차원 변동(dim1 고byte율 CV 최대 1.5~1.7). **(b) feat8 조성 누적 경로는 축퇴로 죽지 않았다** = 차이를 나를 **용량 존재**. ⟹ **S1 transplant fire 정당**(용량 있는데 미래 무발산이면 조성경유로도 epiphenomenal 확증 = earned null).
+🔑 부수: **max cos = 1.0000** = 다른 텍스트·동일 feat8 쌍이 실데이터에 **자연 존재** ⟹ Sol **C2 REPRESENTATION-COLLISION 통제를 실데이터로 구현가능**(합성 불요).
+⚠️ 주의: feat8은 semantic identity 아니라 **byte 조성 통계**(mean·고byte율·소문자율·공백율·숫자율·분산·부호율·<64율) — 채널 용량은 '조성 구별'이지 '의미 구별' 아님(정직 범위).
+
