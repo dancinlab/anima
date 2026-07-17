@@ -1041,7 +1041,7 @@ def _apply_edits(xt, edits, li, T, d, xp):
     return xt
 
 
-def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
+def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None, tap_depth=None, tap_out=None):
     """Trunk forward through the FINAL groupnorm — returns yn:[T, d], the pre-readout,
     PRE-E1-slot penultimate hidden (post-MoE, post final-GN). This is the pure-trunk
     concept representation (E1-slot independent, matching the H_1822 β 303M-trunk-penult
@@ -1065,6 +1065,8 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     xt = _conv1d(xe, W["ecWt"], W["ecB"], T, d, d, K, 1, xp)
     if taps is not None:
         taps[0] = to_host(xt).copy()
+    if tap_out is not None and tap_depth == 0:                     # H_9720-ⓐ single-activation fresh tap
+        tap_out["x"] = to_host(xt).copy()
     if edits is not None:
         xt = _apply_edits(xt, edits, 0, T, d, xp)
     # L trunk layers: xt = xt + gelu(groupnorm(conv(xt)))
@@ -1084,6 +1086,8 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
         xt = xt + hg.reshape(T, d)
         if taps is not None:
             taps[li + 1] = to_host(xt).copy()
+        if tap_out is not None and (li + 1) == tap_depth:         # H_9720-ⓐ single-activation fresh tap
+            tap_out["x"] = to_host(xt).copy()
         if edits is not None:
             xt = _apply_edits(xt, edits, li + 1, T, d, xp)
         dil = dil * 2
@@ -1312,7 +1316,16 @@ def _fwd_logits(W, tok, T, edits=None):
     the SAME MoE / final-GN / slot / readout ops, so what we measure is what production
     would decode (`a_experiment_engine_native`)."""
     d = W["d"]; V = W["V"]
-    yn = _fwd_trunk(W, tok, T, edits=edits)       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
+    # H_9720-ⓐ fresh query lane: when the CLMS trailer is lane_type 5 and a store is live, capture the
+    # early-layer (fresh_L) activation in ONE pass (single host-copy, not all L layers) to feed the
+    # disjoint address query. tap_depth=None for every other lane ⇒ _fwd_trunk byte-identical.
+    _fresh_tap = None
+    _clms_w = W.get("clms")
+    if _clms_w is not None and int(_clms_w.get("lane_type", 0)) == 5 and _CLMS_STORE is not None:
+        _fresh_tap = {}
+    yn = _fwd_trunk(W, tok, T, edits=edits,       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
+                    tap_depth=(int(_clms_w["fresh_L"]) if _fresh_tap is not None else None),
+                    tap_out=_fresh_tap)
     yn_trunk = yn                                 # keep pre-slot trunk penultimate for the CLML read-side lane
     xp = get_xp(yn)
     # H_9200 E1 — gated-write forward-slot on the post-norm penultimate (before
@@ -1365,7 +1378,8 @@ def _fwd_logits(W, tok, T, edits=None):
             out_logits = store_apply(to_host(out_logits), to_host(yn_trunk), W["clms"],
                                      _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
                                      lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT,
-                                     query=_CLMS_QUERY, fuse=_CLMS_FUSE)
+                                     query=_CLMS_QUERY, fuse=_CLMS_FUSE,
+                                     fresh_yn=(_fresh_tap["x"] if _fresh_tap is not None else None))
     # H_9698 MOUTH-BINDER — additive, AFTER CLMS so the documented post-readout order stays
     # SLW → readout → CLML(additive) → CLMS → MBND(additive). Opt-in: trailer present + switch off
     # ⇒ byte-identical (a_substrate_disjoint: the two lanes never read each other).
