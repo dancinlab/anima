@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔨 구현 ③b — --faction-lesion 계기 배선 + shape 버그 2건 수정(readout 오인·슬롯 near-miss) · 양성통제 진행중 · NEXT=K=1 floor pre-gate
+status: 🔨 구현 ④a — --held-out-frac(coverage 레버 · frac=0 레거시 byte-identical ✅) · 양성통제 진행중 · NEXT=K=1 floor pre-gate 실측
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -273,6 +273,44 @@ weight 가 `(256, 64, 1)` 이라 그 조건을 만족한다 ⟹ `(256,256,1)` �
 ### NEXT
 
 양성통제(심은 specialization 회수 · 진행중) → ④ K=1 floor pre-gate 발사
+
+
+## 🔨 구현 ④a — `--held-out-frac`: 천장에서 내려오는 레버 (2026-07-17)
+
+### 왜 (Fable Q3 의 지적을 코드로 확인)
+
+`build()` 를 읽으니 정확했다 — `held_out=(a,b)` 는 **쌍 하나만** 빼고 나머지 격자를 전부 학습시킨다:
+```python
+train_pairs = [(i, j) for i in range(n) for j in range(n)
+               if i != j and frozenset((i, j)) != held]     # ← 1쌍만 제외
+```
+⟹ K=1 도 D-acc 1.000(천장) ⟹ **파벌 레버가 움직일 여지가 0**. 그 arm 이 "실패"해도 파벌과 무관한 이유다.
+
+G1 은 **DATA 벽**(H_9304: 자연 held-out 비가법 정보 +0.0023 nats = TOST 0 등가)이므로, 레버가 잡을 게
+생기려면 **coverage 를 굶겨야** 한다.
+
+### 레버
+
+`anima-py corpus derivtrace --held-out-frac 0.5 …` — 쌍 격자의 **분율**을 뺀다(0.0 = 레거시).
+- 뺀 집합은 **항상 `--held-out` 셀을 포함**(manifest 가 채점하는 그 쌍).
+- split RNG 를 내용 RNG 와 **분리**(`seed*7919+13`) ⟹ frac 을 바꿔도 **문구는 안 바뀐다**.
+  (안 그러면 arm 이 두 축에서 동시에 달라진다 = 교란)
+- 출력에 **realized coverage** 를 찍는다 — 요청 분율이 아니라 **실제로 뺀 쌍 수**로 floor 를 읽는다.
+
+### 검증
+
+```
+frac=0 vs 레거시 : text 동일 True · train_pairs 동일 True   ⟹ byte-identical ✅
+frac=0.00 → 학습쌍 27/28 · 뺀 쌍  1 ( 4%)   ← H_9267 의 천장
+frac=0.25 → 학습쌍 21/28 · 뺀 쌍  7 (25%)
+frac=0.50 → 학습쌍 14/28 · 뺀 쌍 14 (50%)
+frac=0.75 → 학습쌍  7/28 · 뺀 쌍 21 (75%)
+```
+
+### NEXT — ④b K=1 floor pre-gate (사전등록)
+
+frac 을 올리며 **K=1 기저가 D-acc ≤0.6 으로 내려오는 coverage 를 먼저 확정**한다. 그 지점을 고정한
+뒤에만 {K=8, K=1} × 3 seed 를 발사한다 — **coverage 를 결과 보고 고르는 것은 tune-to-green**.
 
 ## 통제군 (≥2 · 사전등록)
 
