@@ -212,4 +212,19 @@ seed   main P1-bal      flip-coherence (bar ≥ .90 · 이동금지)
 - **H_9744 = 🟠 WIRED-STUDY-NEARMISS (TERMINAL)** — 배선(#4018)·G-W0·G-W1·G-W3 🟢 종결 · G-W2 는 store-bridge 데몬경로 작동 실측(main 2-seed PASS · seed7 통제 2개 완벽붕괴)이나 **flip-coherence 가 3-seed majority(2/3: 0.898·0.828)에서 사전등록 .90 미달** = WIRED-STUDY 미획득이 **seed13 과 무관하게 확정**. near-miss 가 아니라 재현되는 sub-bar. lookup FAIL(문맥-일반화 벽) 아님 — 배선은 살아있고 in-vivo 정밀도가 eval 경로보다 낮다.
 - **H_9672 = CAPABILITY-PROVEN 유지** — eval 경로 3-seed robust(seed7 1.0000/seed11 0.9609)는 불변. in-vivo 배선이 그 능력을 데몬 경로로 가져왔으나 flip-coherence robustness 만 재현적으로 near-miss(GREEN 아님 · a_verified_must_wire).
 - **왜 in-vivo < eval**: eval 은 `--store` 직접 주입, in-vivo 는 데몬 percept `.strip()` 시드(F2)+자연 대화 문맥 혼입. eval bar 를 in-vivo 에 그대로 상속한 결과(a_scale_honest_scope) — bar 이동으로 통과시키지 않는다.
-- **follow-on(자율 실행 가능 · $0~pool · 새 배선 아님, 측정 개선)**: ① percept 시드 정합(F2 의 `=>` 뒤 공백을 percept 에 보존해 eval 과 동일 시드) ② qpos vs H_9695 every-token 경로 비교. ~~③ 3-seed 재측정~~ ✅ **DONE(2-seed-decisive)** — seed 노이즈 배제 완료.
+## 🔬 flip-coh 갭 기전 확정 — fusion even-성분 지배 (2026-07-18 · $0 autopsy + lab full Fable∥Sol 수렴)
+
+미반전 22 쿼리를 seed11 transcript 로 해부 → **기전 확정**(내 empirical + Fable + Sol 3자 수렴):
+
+```
+미반전 op=0 20개 (op=1 은 2개뿐 = 압도적 op=0 집중)
+  · 양 arm 모두 'g' 방출 = 20/20 (예외 0)  → gold-good 7(정답) · gold-bad 13(오답)
+  · = fusion 의 even(극성-불변) 성분이 op=0 서 상수 'g' 를 냄 → store 극성 뒤집어도 답 불변
+```
+
+- **원인 = fusion 내부 even/odd 불균형** (seed-space·λ·−1/n 전부 소거):
+  `core/clms.py:174` `z=gelu([v; g]·W_h)` 에서 `g=h@W_g`(op-gate·H_9423)는 **극성-불변** → even 성분을 나른다. `v=a@V_slots`(:171)는 고정주소서 `v_flip≡−v_main`(odd·산술항등). in-vivo 문맥오염으로 |v|(odd margin)가 작아진 op=0 쿼리에서 even(op-prior)이 이겨 답이 안 뒤집힌다.
+- **정정(내 초기 (B) 오진)**: "value-override 가 trunk prior 에 진다"는 **틀렸다** — `:185 out[t]=λ·s` 는 trunk 를 **완전덮어씀**이라 argmax 하 `sign(λs_g−λs_b)=sign(s_g−s_b)`, λ·trunk 무관(경쟁 없음). 갭은 fusion 자체의 `s_g−s_b` op=0 마진이지 trunk 경쟁 아님(Sol 코드확인 · Fable 산술).
+- **소거 확정**: ① seed-space(F2) = readable 128/128 이라 발화 성립 좌우일 뿐 극성 아님 ② every-token(H_9695) = 무관~악화(gated-add 가 trunk 재진입) ③ −1/n basin = 현 코드 `v=a@V_slots` centering 은 주소 a 에 folding·`v_flip≡−v_main` 이라 원인 아님.
+- **레버 존재(non-tune-to-green) BUT 새 H — 소급구제 아님**: **odd-symmetrized fusion** `s_odd=½(s(v,g)−s(−v,g))` = "답은 store 극성에 odd 여야 한다"는 배선 주장의 구조화(knob 아님·bar·λ 불변·고정주소서 flip-coh=1 산술보장). 예측: main-bal 도 상승(even-prior 가 틀리게 하던 gold-bad 13 제거). 그러나 이는 frozen fusion 의 **사후 구조변경 = 새 artifact/새 H** 지 H_9744 를 WIRED-GREEN 으로 소급구제할 레버가 **아니다**(Fable∥Sol 합의). ⟹ **H_9744 = WIRED-STUDY-NEARMISS 는 genuine live-regime ceiling 로 확정**(no-tune-to-green: 이 배선·이 fusion 으로는 .90 미달이 참).
+- **follow-on(새 H · DIRECTIONAL 설계)**: odd-fusion 을 `--store-fuse odd` 계기로 구현→engine-native G-W2 재측정(성공 시 그 H 가 WIRED · H_9744 는 불변). ⚠️ Fable 이 `H_9758_flip_evenodd_oddfuse.md` auto-write 했으나 로컬 `H_9758_window_prefix_confound_dose.md` 와 **G6 충돌**(둘 다 untracked·병렬세션) → 클린 id 재등록 필요(내 착륙범위 밖·소유세션 dedup). ~~① percept 시드정합 ② every-token~~ **둘 다 위 autopsy 로 반증**(레버 아님).
