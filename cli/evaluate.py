@@ -43,6 +43,7 @@ from rho_fan import (
     _rho_fan_concepts, _rho_fan_words, _rho_fan_dict_load, _rho_fan_known_word_ratio,
     _rho_fan_is_falsifiable, _rho_fan_jaccard, rho_fan_build_frames, rho_fan_frame_guard,
     rho_fan_detector_calibration,
+    _rho_fan_stopwords, _rho_fan_derangement,          # H_9693 --fan-bind (frozen gate reuse)
     # H_9212 ③ per-cell dispatch: 4 register cells + ko codepoint-aware tokenizer + kwr_ko gate
     _rho_fan_cells, _rho_fan_cell_lang, _rho_fan_words_uni, _rho_fan_ko_known_word_ratio,
     KWR_KO_GATE,
@@ -3852,6 +3853,184 @@ def _store_mix_breakdown(rows):
     return out
 
 
+# ════════════════════════════════════════════════════════════════════════
+# H_9693 (R1) `--fan-bind` — the bind-Δ instrument for the G6/ρ·fan wall
+#
+# The G6 wall's content is NOT "fals=0" — it is that the BIND signal lives OUTSIDE the
+# measurement surface. convergence `g6-ideation-hexa-1` proved the frozen detector
+# (_rho_fan_is_falsifiable) is FORM-only: targeted warm-FT passes FALS with topic-bind
+# destroyed (TARGETED [6,6,6] == SHUF [6,6,6]) while the real signal sat in an unrecovered
+# bind Δ (0.444 vs 0.000) measured by a non-frozen hexa-era probe. This instrument recovers
+# that signal onto a legal, frozen, engine-native surface — without it, ANY angle that lifts
+# fals is indistinguishable from forgery (kill #6 / MEASUREMENT_METALAW_FORM_TUNABLE_BIND_EARNED).
+#
+# Frozen materials ONLY (zero new tunables): rho_fan_build_frames(6)'s existing composed/
+# shuffled/ablated 3-arm, the same _Mouth.ideate, gen (canonical 40 · evaluate-hexa-2), the
+# detector's own content-word gate (len>=3 ∧ known ∧ ¬stop). The ONE addition is statistical
+# POWER: the frozen panel emits n=6 per arm (no power); this samples n_smp per frame over a
+# seed grid → 96/arm.
+# ════════════════════════════════════════════════════════════════════════
+
+def _fan_bind_content(s, known):
+    """Content-word set of s under the FROZEN detector's own gate (_rho_fan_is_falsifiable's
+    (c) clause: len>=3 ∧ in known ∧ not stopword). No new vocabulary, no new threshold."""
+    stop = _rho_fan_stopwords()
+    return set(w for w in _rho_fan_words(s) if len(w) >= 3 and w in known and w not in stop)
+
+
+def _fan_bind_J(o, cA, cB, known):
+    """J(o) = 1 iff the emission carries >=1 cA content-word AND >=1 cB-UNIQUE content-word.
+
+    p7-clean: a set-membership predicate over the frozen content gate — no perplexity, no
+    likelihood, no LLM judge. Returns None for a degenerate pair (either side has no unique
+    content word), so degenerate frames are dropped rather than silently scored 0."""
+    a = _fan_bind_content(cA, known)
+    b = _fan_bind_content(cB, known) - a          # cB-UNIQUE: shared words cannot testify
+    if not a or not b:
+        return None
+    wo = set(_rho_fan_words(o))
+    return 1 if (wo & a) and (wo & b) else 0
+
+
+def _fan_bind_pairs(n_strong):
+    """The (cA, cB) pair behind each composed/shuffled frame — index math MIRRORS
+    rho_fan_build_frames EXACTLY (a = i%n · b = (i+1+i//n)%n · sh = derangement(a,n)).
+    If that builder ever changes, this must move in lockstep or the DV scores the wrong pair."""
+    cz = _rho_fan_concepts()
+    n = len(cz)
+    comp = []
+    shuf = []
+    for i in range(n_strong):
+        a = i % n
+        b = (i + 1 + i // n) % n
+        comp.append((cz[a], cz[b]))
+        shuf.append((cz[a], cz[_rho_fan_derangement(a, n)]))
+    return comp, shuf
+
+
+def fan_bind_calibration(known):
+    """Scorer certification — frozen 6-string set the DV must classify BEFORE the model is
+    read (positive-control-before-reading-a-negative). pos = both concepts' content present ·
+    neg = one-side echo only / unrelated. A failing scorer INVALIDATES the instrument."""
+    cz = _rho_fan_concepts()
+    cA, cB = cz[0], cz[1]                          # "consciousness arises from cells" / "tension ripples between distant minds"
+    checks = []
+    checks.append(("pos both-sides", _fan_bind_J(
+        "consciousness in cells and the tension between distant minds both rise", cA, cB, known) == 1))
+    checks.append(("pos both-sides-2", _fan_bind_J(
+        "cells show consciousness while minds carry tension across distance", cA, cB, known) == 1))
+    checks.append(("neg cA-echo-only", _fan_bind_J(
+        "consciousness arises from cells and cells alone, always", cA, cB, known) == 0))
+    checks.append(("neg cB-echo-only", _fan_bind_J(
+        "tension ripples between distant minds forever", cA, cB, known) == 0))
+    checks.append(("neg unrelated", _fan_bind_J(
+        "the weather today is warm and pleasant", cA, cB, known) == 0))
+    checks.append(("neg empty", _fan_bind_J("", cA, cB, known) == 0))
+    return {"checks": checks, "pass": all(ok for _, ok in checks)}
+
+
+def eval_fan_bind(mouth, gen, known, n_smp=16):
+    """bind Δ = mean J(composed) − mean J(shuffled) over the frozen 3-arm frames.
+
+    Both arms carry THEIR OWN cB in the prompt, so pure echo is symmetric and cancels to
+    Δ=0 by construction — Δ>0 therefore means the mouth integrates cB MORE when the pairing
+    is the composed one than when it is deranged = composition sensitivity, not echo.
+    ablated ("cA: " · no cB in prompt) is the floor arm.
+
+    Null: mismatched-pairing — each emission is ALSO scored against every OTHER frame's
+    (cA_j, cB_j), giving the chance joint-coverage distribution the bar is derived from
+    (chance-level-must-be-derived-per-metric). The bar is NOT a fixed number."""
+    fr = rho_fan_build_frames(6)
+    comp_pairs, shuf_pairs = _fan_bind_pairs(6)
+    arms = {"composed": (fr["composed"], comp_pairs),
+            "shuffled": (fr["shuffled"], shuf_pairs),
+            "ablated": (fr["ablated"], comp_pairs)}   # ablated prompt lacks cB → floor
+    out = {}
+    emits = {}
+    for name, (frames, pairs) in arms.items():
+        hits = 0
+        n = 0
+        rows = []
+        for i in range(len(frames)):
+            cA, cB = pairs[i]
+            for j in range(n_smp):
+                o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + 17 * j + i)   # frozen decode knobs
+                J = _fan_bind_J(o, cA, cB, known)
+                if J is None:
+                    continue
+                rows.append((i, o))
+                hits += J
+                n += 1
+        out[name] = {"J_mean": (hits / n) if n else 0.0, "n": n}
+        emits[name] = rows
+    # ── mismatched-pairing null (composed emissions scored against OTHER frames' pairs) ──
+    null_vals = []
+    for i, o in emits["composed"]:
+        for j in range(len(comp_pairs)):
+            if j == i:
+                continue
+            J = _fan_bind_J(o, comp_pairs[j][0], comp_pairs[j][1], known)
+            if J is not None:
+                null_vals.append(J)
+    null_mean = (sum(null_vals) / len(null_vals)) if null_vals else 0.0
+    # bootstrap the null's 95th percentile on the SAME n as the composed arm (frozen-first)
+    nc = out["composed"]["n"] or 1
+    p95 = 0.0
+    if null_vals:
+        import random as _r
+        rng = _r.Random(9693)
+        boots = []
+        for _ in range(2000):
+            s = sum(null_vals[rng.randrange(len(null_vals))] for _ in range(nc)) / nc
+            boots.append(s)
+        boots.sort()
+        p95 = boots[int(0.95 * (len(boots) - 1))]
+    delta = out["composed"]["J_mean"] - out["shuffled"]["J_mean"]
+    return {"bind_delta": delta, "composed": out["composed"], "shuffled": out["shuffled"],
+            "ablated": out["ablated"], "null_mean": null_mean, "null_p95": p95,
+            "pass": bool(delta > 0.0 and out["composed"]["J_mean"] > p95),
+            "n_smp": n_smp, "gen": gen}
+
+
+def fan_bind_run(argv):
+    """`anima-py evaluate <ckpt> --fan-bind [--fan-smp N]` — H_9693 (R1) bind-Δ instrument.
+
+    Reports bind Δ + the mismatched-pairing null bar. This is an INSTRUMENT, not a G6 verdict:
+    a PASS here says the emission is composition-sensitive on the frozen frames, NOT that the
+    ρ·fan gate (fals) moved. Every downstream angle (H_9694/H_9696/H_9697/H_9698/H_9700) reads
+    ITS lever through this surface — bind Δ vs its own SHUF arm — because fals alone is
+    FORM-forgeable (kill #6)."""
+    ckpt = argv[0]
+    gen = evaluate_intval(argv[1:], "--gen", 0)
+    g = gen if gen > 0 else _default_gen()
+    n_smp = evaluate_intval(argv[1:], "--fan-smp", 16)
+    known = _rho_fan_dict_load()
+    print("=== anima evaluate --fan-bind — H_9693 (R1) G6/ρ·fan bind-Δ instrument ===")
+    print("ckpt: %s  gen=%d (canonical=%d)  n_smp=%d  frames=6(frozen composed/shuffled/ablated)"
+          % (ckpt, g, _default_gen(), n_smp))
+    # ── scorer certification FIRST (instrument dead ⇒ never read the model) ──
+    cal = fan_bind_calibration(known)
+    for name, ok in cal["checks"]:
+        print("  [cal] %-18s %s" % (name, "✅" if ok else "❌"))
+    if not cal["pass"]:
+        print("  ⛔ SCORER CERTIFICATION FAILED — instrument INVALID, model NOT read "
+              "(positive-control-before-reading-a-negative).")
+        return 1
+    print("  [cal] scorer certified ✅ — reading the model now.")
+    mouth = _Mouth(ckpt)
+    r = eval_fan_bind(mouth, g, known, n_smp)
+    print("  composed: J=%.4f (n=%d) · shuffled: J=%.4f (n=%d) · ablated(floor): J=%.4f (n=%d)"
+          % (r["composed"]["J_mean"], r["composed"]["n"], r["shuffled"]["J_mean"],
+             r["shuffled"]["n"], r["ablated"]["J_mean"], r["ablated"]["n"]))
+    print("  ★ bind_delta = %.4f  [composed − shuffled]  ·  mismatched-null mean=%.4f p95=%.4f"
+          % (r["bind_delta"], r["null_mean"], r["null_p95"]))
+    print("  verdict: %s  (PASS ⟺ Δ>0 ∧ composed J > mismatched-null p95)"
+          % ("🟢 BIND-SENSITIVE" if r["pass"] else "🧱 NO-BIND (Δ≤0 or within null)"))
+    print("  → INSTRUMENT ONLY — not a ρ·fan(fals) verdict. Δ<0 = anti-bind (pre-registered "
+          "cell). A lever's claim = ITS bind Δ vs ITS OWN SHUF arm; fals alone is FORM-forgeable.")
+    return 0
+
+
 def store_run(argv):
     """`anima-py evaluate <ckpt> --store <held.json> [--store-oracle] [--store-lambda λ]` — H_9423
     CLMS store-bridge lane eval (the CO-TRAINED bridge, NOT the H_9392 --store-mix bolt-on actuator:
@@ -7435,6 +7614,7 @@ _KNOWN_FLAGS = frozenset((
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit",
+    "--fan-bind", "--fan-smp",
     "--cascade-null",
 ))
 
@@ -10087,6 +10267,8 @@ def main(argv):
     # --store <held.json> [--store-oracle] [--store-lambda λ]: H_9423 CLMS store-bridge lane — the
     # CO-TRAINED bridge (store injected at the query, answer-position logits OVERWRITTEN by the lane's
     # content-addressed lookup). Distinct from --store-mix (H_9392 post-forward actuator).
+    if "--fan-bind" in argv:                       # H_9693 (R1) bind-Δ instrument
+        return fan_bind_run(argv)
     if "--store" in argv:
         return store_run(argv)
     if "--xbind" in argv:
