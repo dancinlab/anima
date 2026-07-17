@@ -112,3 +112,56 @@ frozen bar(상속): arm-N P1-balanced ≥.75 = 전이(A·B 한 뿌리) · arm-S 
 재현**(양성통제)해야 arm-N null 이 판독가능(안 그러면 INSTRUMENT-DEAD).
 ⚠️ 남은 구현 gap: `storebind` 는 현재 nonce pool 하드코딩(`_sb_entity_pool`) — 외부 어휘 pool 주입
 플래그(`--entity-pool <file>`)가 신규로 필요(레버 아닌 **코퍼스 빌더 확장** · a_experiment_engine_native).
+
+---
+
+## 🔴 PREMISE-COLLAPSE + 카드 자체 결함 3건 (2026-07-17 · $0 fire-readiness 사전점검 · 발사 전 발견)
+
+**이 카드는 지금 어느 seed 로도 판독 불가능한 fire 를 설계하고 있다. 발사 금지.**
+
+### ① 전제 붕괴 — arm-S(양성통제)가 존재하지 않는다
+이 카드는 [[H_9672]] T3 의 **P1 0.9688 = 주소벽 돌파**를 lane-A 🟢 기정사실로 깔고 설계됐다.
+집필 시점 그 카드는 "seed-11 재현이 **TERMINAL 잔여**"라고만 적었고 **나는 그것을 사소한 잔여로 읽었다**.
+seed-11 이 돌아왔고 **죽었다** — origin/main H_9672 자기정정:
+
+> **값읽기 seed-취약** — seed-7 ORACLE 0.99 vs **seed-11 0.50(chance)** · P1-balanced 0.5547 ·
+> flip-coherence 0.056 ⟹ **전체 lookup NOT seed-robust · seed-7 P1 0.9688 = 값읽기 運 · TERMINAL 부정**
+
+이 카드의 frozen falsifier 는 arm-N 의 null 을 읽으려면 **"arm-S 가 같은 fire 에서 ≥.95 재현"**
+(양성통제)을 요구한다. 그런데 arm-S = T3 레시피 그대로이고, 그게 **seed-11 에서 0.5547 로 죽는 게
+이미 실측**됐다:
+- **seed-11** → arm-S bar 미달 → arm-N 정의상 **INSTRUMENT-DEAD** → GPU 전액 낭비.
+- **seed-7** → arm-S 통과가 **동전던지기**이며 seed-7 은 **이미 소각된 seed**([[burned-gate-no-refreeze-sequential-gating]] · tune-to-green 표면).
+
+⟹ **순서가 뒤집혀 있다.** "arm-S 가 seed-robust 하다"는 이 카드의 암묵 가정이 곧 병렬 세션이
+RV-1/2/3 sweep 으로 **지금 고치는 중인 미해결 벽**이다. H_9672 값읽기 robustness winner 확정 =
+**이 H 의 선행조건**([[positive-control-before-reading-a-negative]]).
+
+### ② "신규 코드 0" — 틀렸다
+카드는 "레버·판정표·계기 전부 기존(**신규 코드 0**)"이라 적었으나 `--entity-pool` 은
+**origin/main 어디에도 없었다**(`_sb_entity_pool(n_total)` = CVCVC 하드코딩 · `build_storebind` 에
+어휘 pool 파라미터 없음 · 미지 플래그 fail-closed). arm-N 은 코드 없이 만들 수 없었다.
+✅ **해소**: `--entity-pool <file>` 배선 착륙(#3945 · byte-identical 14/14 · VERSION 0.15.57).
+
+### ③ 카드의 예시 커맨드가 전부 틀렸다 (그대로 쓰면 죽는다)
+T3 실제 dispatch(`/tmp/h9672_t3/trainT3.log` · 추측 0)와 대조:
+
+| 카드 기재 | 실제 |
+|---|---|
+| `--canon` | T3 는 **안 씀** |
+| `--atoms natural_decl_atoms.json` | storebind 에 `--atoms` **플래그 없음**(별개 fmt) |
+| `--balanced-manifest --seen-manifest` | **그런 플래그 없음** — storebind 는 4개 매니페스트를 **무조건** 쏟음 |
+| train `--store-addr-audit` | **train 플래그 아님 · evaluate 플래그** |
+| T3 VERSION 0.15.35 (단일 기재) | seed-7 = **0.15.29** · seed-11 = 0.15.35 (스큐 실재 · 단 audit-only diff 라 무해 판명) |
+
+### 🕳️ 자연 pool 제작 제약 (#3945 가 측정해서 알려준 것)
+C0-a zero-leak witness 는 **substring** 기반(`e in corpus_blob`) ⟹ held-out 원자가 train 원자에
+**중첩**되면(`art` ⊂ `start` · `corpus-py-1` ⑩) **빌드가 abort**(fail-CLOSED = 안전방향).
+⟹ 자연 pool 은 **상호 비중첩**이어야 한다. **권장 arm `nat_5자`는 전부 길이-5라 중첩이 원리적으로
+불가능** — D0-key census 가 고른 arm 이 이 제약도 자동 충족한다(우연한 정합).
+
+### 상태 갱신
+**PROPOSED 유지 · fire 게이트 = H_9672 RV-sweep winner 확정**(arm-S 가 2-seed robust 해질 때까지
+이 H 는 판독 가능한 양성통제가 없다). 그 전에 쏘면 **"자연어휘가 죽었다"와 "레시피가 원래
+seed-취약이다"를 구분할 수 없다**. $0 자산(D0-key census · `--entity-pool` 배선)은 그대로 유효하고
+winner 확정 즉시 발사 가능한 상태로 보존.
