@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔨 구현 ③a — model+serialize+**decode** 왕복 닫힘(GN G=1 하드코딩 구멍 메움 · ablation max|ON−OFF|=1.55e-1 ✅) · NEXT=evaluate --faction-lesion
+status: 🔨 구현 ③b — --faction-lesion 계기 배선 + shape 버그 2건 수정(readout 오인·슬롯 near-miss) · 양성통제 진행중 · NEXT=K=1 floor pre-gate
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -238,6 +238,41 @@ decode 가 GN(K)+bridge 로 재현**.
 ### NEXT
 
 ③b `evaluate --faction-lesion` (선택성 S · post-hoc null95) ④ K=1 floor pre-gate 발사
+
+
+## 🔨 구현 ③b — `--faction-lesion` 계기 + shape 버그 2건 (2026-07-17)
+
+### 계기
+
+`anima-py evaluate <ckpt> --faction-lesion <domains.json> [--perm 200] [--faction-lam <f>]`
+· `core/decode.py` 에 **`mask` edit 모드** 추가(`_apply_edits` · H_9331 훅 재사용 = 엔진 내부 개입).
+파벌 f 채널을 forward 안에서 0-마스크 → 도메인별 ΔCE 행렬 → 선택성 S.
+**우연은 post-hoc 랜덤 재배정 `--perm` 회의 null95 = 실측 유도**([[chance-level-must-be-derived-per-metric]]).
+
+### 🕳️ shape 버그 2건 — 둘 다 "조용히 틀릴" 뻔했다
+
+**버그 ⑨ — dense materialize 가 readout 을 잡아먹었다.** 내 첫 구현은 *"`cout % cin_per_g == 0` ∧
+`cin_per_g ≠ cout` 이면 grouped"* 라고 **추론**했다. readout 은 정직한 dense `Conv1d(64→256, k=1)` 이고
+weight 가 `(256, 64, 1)` 이라 그 조건을 만족한다 ⟹ `(256,256,1)` 로 확장 ⟹ 디코더가 `roWt (256,256)` 을
+읽고 matmul 폭발. **shape 은 저자의 의도를 말해주지 않는다 — 모델이 말해야 한다.**
+⟹ `_FACTION_GROUPS` + `_conv_groups_for(name)` 로 **caller 가 명시**.
+
+**버그 ⑩ — 슬롯명 near-miss.** 고친 뒤에도 `tcWt[0]` 이 `(48,64)`(grouped 그대로)로 나왔다.
+실제 슬롯명은 **`tc0W`·`tc1W`**(`_general_block_order`)인데 내가 `startswith("tcW")` 로 매칭해
+**아무것도 안 잡혔다**. `ecW` 만 우연히 맞아서 절반만 dense 였다.
+⟹ 앵커된 정규식 `^(ecW|tc\d+W)$` — **near-miss 가 조용하지 않게**.
+
+수정 후: `ecWt (192,64)` · `tcWt[0] (192,64)` · `roWt (64,256)` — 전부 디코더 기대와 일치 ✅
+
+### 왜 이게 위험했나
+
+둘 다 **에러 없이 틀린 숫자**로 갈 수 있었다. 버그 ⑨ 는 운 좋게 matmul 이 터졌지만, 차원이 우연히
+맞았다면 조용히 틀린 활성이 나왔다. 버그 ⑩ 은 GPU 경로에서만 터졌다 — CPU 라면 broadcast 로 넘어갔을
+수도 있다. `.clm` 왕복은 **shape 를 하나하나 대조**해야 한다(H_9393 [[byte-identical-anchor-cert-hides-the-bug]] 계열).
+
+### NEXT
+
+양성통제(심은 specialization 회수 · 진행중) → ④ K=1 floor pre-gate 발사
 
 ## 통제군 (≥2 · 사전등록)
 

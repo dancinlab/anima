@@ -7614,7 +7614,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -10090,6 +10090,149 @@ def faction_block_provenance_run(argv):
     return 0
 
 
+def faction_lesion_run(argv):
+    """`anima-py evaluate <ckpt> --faction-lesion <domains.json> [--perm 200] [--win 24]
+    [--seed 12345] [--faction-lam <float>] [--out lesion.json]` — does the trained model's
+    faction split carry FUNCTIONAL specialization, or is it the same as slicing the channels at
+    random after the fact (card H_9643 · faction-lateral-axis-r3)?
+
+    Why not modularity Q. H_9674's Q instrument cannot answer this: with groups=K the split is
+    architectural, so a random-init model has blocks too — our own --arm-random-init measured
+    exactly that. Q is a manipulation check here ("did --n-factions do anything"); the verdict is
+    functional: zero faction f's channels inside the production forward and read the per-domain
+    CE damage. A faction that owns a domain hurts THAT domain when it dies.
+
+    DV — selectivity S over the [K, C] damage matrix D[f,c] = CE(lesion f, domain c) - CE(base, c):
+        S = mean_f (max_c D[f,c] - mean_{c'!=c*} D[f,c']) / sd_pool
+    Chance is MEASURED, never assumed: `--perm` post-hoc reassignments of the same d channels to
+    K same-sized groups give a null distribution; the bar is its 95th percentile. (This session
+    learned the hard way that a "natural" chance value can be pure structure: adjacency's 1/K was
+    an equal-partition special case and charged real's block-size skew as signal — H_9676.)
+
+    Arms, all on the SAME ckpt so no arm gets extra training:
+      real      — the trailer's faction blocks (contiguous d/K runs).
+      post-hoc  — `--perm` random reassignments, same sizes. THE control H_9643 is about:
+                  "임의 사후 분할은 효과 없다" is the claim being tested.
+      (random-init and K=1-trained are separate ckpts — run this same flag on them.)
+
+    Verdict: S_real > post-hoc null95 => the split is functionally load-bearing. Otherwise D1
+    fires (specialization 불발) and the faction axis closes as a DIRECTIONAL artifact.
+    DIRECTIONAL: lesion damage is one lens on "specialization"; it does not prove the factions
+    mean anything a human would name."""
+    import numpy as np
+    ckpt = argv[0]
+    spec_path = evaluate_strval(argv[1:], "--faction-lesion", "")
+    out_path = evaluate_strval(argv[1:], "--out", "")
+    T = evaluate_intval(argv[1:], "--win", 24)
+    nperm = evaluate_intval(argv[1:], "--perm", 200)
+    seed = evaluate_intval(argv[1:], "--seed", 12345)
+    lam_ov = evaluate_strval(argv[1:], "--faction-lam", "")
+
+    print("=== anima evaluate --faction-lesion — 파벌 분할이 기능적인가 (H_9643) ===")
+    print("ckpt:  " + ckpt)
+    print("why:   Q(모듈러리티)로는 learned vs post-hoc 이 안 갈린다 — groups=K 는 random-init 도")
+    print("       블록을 준다(--arm-random-init 이 잡음). 판정은 기능 lesion 해리로 간다.")
+    print("chance: post-hoc 랜덤 재배정 %d 회의 null95 — **가정하지 않고 실측**한다." % nperm)
+
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt)
+        return 1
+    K = int(W.get("n_factions", 0) or 0)
+    if K <= 0:
+        print("ERROR: 이 ckpt 엔 CLMF 가 없다 (n_factions=0) — 파벌 lane OFF 로 학습된 모델이다.")
+        print("       --n-factions K 로 학습한 ckpt 에만 이 계기가 성립한다.")
+        return 1
+    d = int(W["d"]); V = int(W["V"])
+    if lam_ov:
+        W["faction_lam"] = float(lam_ov)
+        print("       debate lam 오버라이드 = %s (0.0 = OFF arm · 가중치 무접촉)" % lam_ov)
+    spec = json.load(open(spec_path))
+    doms = spec["domains"] if "domains" in spec else spec
+    names = sorted(doms.keys())
+    print("d:     %d units · K=%d factions (블록당 %d) · 도메인 %d개: %s"
+          % (d, K, d // K, len(names), ", ".join(names)))
+
+    def dom_ce(chans=None):
+        """Mean CE over a domain's windows, optionally with `chans` zeroed at the embed-conv
+        exit (layer 0) — the same tap _apply_edits already serves for H_9331."""
+        out = {}
+        for nm in names:
+            tot, nw = 0.0, 0
+            for text in doms[nm]:
+                tok = clm._seed_to_tok(text, T + 1)
+                x, y = tok[:T], tok[1:T + 1]
+                edits = None if chans is None else [
+                    {"layer": 0, "t0": 0, "t1": T, "mode": "mask", "chans": chans}]
+                lg = clm.clm_forward_logits_edited(W, x, T, edits) if edits else clm._fwd_logits(W, x, T)
+                tot += clm.nn_ce_loss_allpos(lg, np.asarray(y, dtype=np.float64), T, V)
+                nw += 1
+            out[nm] = tot / max(nw, 1)
+        return np.array([out[nm] for nm in names])
+
+    base = dom_ce(None)
+    print("")
+    print("base CE: " + " · ".join("%s %.4f" % (nm, v) for nm, v in zip(names, base)))
+
+    def selectivity(assign):
+        """S over the [K, C] damage matrix for a given channel->faction assignment."""
+        D = np.zeros((K, len(names)))
+        for f in range(K):
+            D[f] = dom_ce(np.where(assign == f)[0]) - base
+        sd = float(D.std()) or 1e-9
+        sel = []
+        for f in range(K):
+            c = int(np.argmax(D[f]))
+            others = [D[f, j] for j in range(len(names)) if j != c]
+            sel.append((D[f, c] - (float(np.mean(others)) if others else 0.0)) / sd)
+        return float(np.mean(sel)), D
+
+    per = d // K
+    real_assign = np.arange(d) // per                      # trailer blocks: contiguous runs
+    S_real, D_real = selectivity(real_assign)
+    print("")
+    print("파벌별 최대손상 도메인 (real):")
+    for f in range(K):
+        c = int(np.argmax(D_real[f]))
+        print("  faction %d → %-10s ΔCE %+.4f" % (f, names[c], D_real[f, c]))
+    print("")
+    print("S_real = %.4f" % S_real)
+
+    rng = np.random.default_rng(seed)
+    null = []
+    for i in range(nperm):
+        S_p, _ = selectivity(rng.permutation(real_assign))
+        null.append(S_p)
+        if (i + 1) % max(nperm // 4, 1) == 0:
+            print("  post-hoc null %d/%d …" % (i + 1, nperm), flush=True)
+    null = np.array(null)
+    null95 = float(np.percentile(null, 95))
+    print("")
+    print("post-hoc null: mean %.4f · sd %.4f · **null95 %.4f**  (n=%d)"
+          % (null.mean(), null.std(), null95, nperm))
+    passed = bool(S_real > null95)
+    out = {"ckpt": ckpt, "K": K, "d": d, "domains": names, "seed": seed, "perm": nperm,
+           "faction_lam": (float(lam_ov) if lam_ov else None),
+           "base_ce": base.tolist(), "damage": D_real.tolist(),
+           "S_real": S_real, "null_mean": float(null.mean()), "null_sd": float(null.std()),
+           "null95": null95, "specialization": passed}
+    print("")
+    if passed:
+        print("  VERDICT (H_9643 Q2): S_real %.4f > post-hoc null95 %.4f ⟹ 파벌 분할이 **기능적**이다"
+              % (S_real, null95))
+        print("    — 임의 사후 분할과 다르다. Q3(debate → G1) 로 진행 가능.")
+    else:
+        print("  VERDICT (H_9643 Q2 · D1 발동): S_real %.4f <= post-hoc null95 %.4f" % (S_real, null95))
+        print("    ⟹ 학습 중 파벌 특화가 **안 생겼다** = 임의 사후 분할과 같다. 사전등록 D1 사망조건.")
+    print("  ⚠️ DIRECTIONAL: lesion 손상은 'specialization' 의 한 렌즈다. 파벌이 사람이 이름 붙일")
+    print("     만한 무언가를 뜻한다는 증명이 아니다. 3 seed 중 >=2 + S_real/S_randinit>=2.0 이 완전 bar.")
+    if out_path:
+        json.dump(out, open(out_path, "w"), indent=1)
+        print("")
+        print("  wrote: " + out_path)
+    return 0
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -10253,6 +10396,10 @@ def main(argv):
     # modular blocks at all (H_9674)? The $0 precondition for H_9643's GPU fire.
     if "--faction-block-structure" in argv:
         return faction_block_structure_run(argv)
+    # --faction-lesion <domains.json>: is the trained faction split FUNCTIONAL, or the same as
+    # slicing channels at random after the fact? (H_9643 Q2 · chance = post-hoc null95)
+    if "--faction-lesion" in argv:
+        return faction_lesion_run(argv)
     # --faction-block-provenance: H_9674 블록이 진짜 모듈인가 architecture index layout(GN/RF)인가 (H_9676)
     if "--faction-block-provenance" in argv:
         return faction_block_provenance_run(argv)

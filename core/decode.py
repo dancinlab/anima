@@ -958,6 +958,8 @@ def _apply_edits(xt, edits, li, T, d, xp):
     An edit is a dict {layer, t0, t1, mode, ...} over the byte span [t0, t1):
       patch  donor:[t1-t0, d]  — overwrite the span with a donor's hidden (Stage A swap)
       steer  vec:[d], delta    — h += delta * v̂            (fixed-size push)
+      mask   chans:[m]         — zero those channels over the span (H_9643 faction lesion:
+             kill faction f, read the per-domain ΔCE dissociation)
       proj   vec:[d], target   — h += (target - h·v̂) * v̂   (Stage B projection-MATCH: move
              the span's projection ONTO v̂ to an exact value, so arms are matched on the
              MEDIATING covariate rather than on a nominal norm — control-must-match-
@@ -971,6 +973,14 @@ def _apply_edits(xt, edits, li, T, d, xp):
         if t0 < 0 or t1 > T or t1 <= t0:
             raise ValueError("bind-locus edit span [%d,%d) outside window T=%d" % (t0, t1, T))
         mode = e["mode"]
+        if mode == "mask":
+            # H_9643 faction lesion — zero a channel set for the span, INSIDE the canonical
+            # forward, so the ablated residual flows through the same ops to the readout
+            # (a_experiment_engine_native: the manipulation is the engine's, not a harness's).
+            chans = xp.asarray(e["chans"], dtype=xp.int64)
+            xt = xt.copy()
+            xt[t0:t1, chans] = 0.0
+            continue
         if mode == "patch":
             donor = xp.asarray(e["donor"], dtype=xt.dtype).reshape(t1 - t0, d)
             xt[t0:t1] = donor
