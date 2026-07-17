@@ -905,6 +905,7 @@ def evaluate_usage():
     print("      make a confound an INVALID, never a false verdict.")
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --fan-bind [--fan-smp 16] [--gen 40]")
+    print("  anima evaluate <ckpt> --fan-bind --mouth-binder [--mouth-binder-order-scramble]   # H_9698 R6")
     print("      H_9693 (R1) G6/ρ·fan BIND-Δ INSTRUMENT — the G6 wall's content is not fals=0, it is")
     print("      that the BIND signal sits OUTSIDE the measurement surface: the frozen detector is")
     print("      FORM-only, so targeted warm-FT can pass FALS with topic-bind destroyed (convergence")
@@ -4037,6 +4038,21 @@ def fan_bind_run(argv):
               "(positive-control-before-reading-a-negative).")
         return 1
     print("  [cal] scorer certified ✅ — reading the model now.")
+    # ── H_9698 MBND mouth-binder lane switch (R6). Default OFF ⇒ a binder-carrying .clm reproduces
+    # its pre-binder numbers byte-identically, so this surface stays the SAME instrument for every
+    # lever that reads through it. --mouth-binder-order-scramble is R6's control: it deranges the
+    # causal bank, which only bites because the address carries a relative-distance bias (plain
+    # content attention is permutation-equivariant over the bank, so the control would read Δ=0.000
+    # BY CONSTRUCTION — a control that cannot fail is not a control).
+    mb_on = "--mouth-binder" in argv[1:]
+    mb_scr = "--mouth-binder-order-scramble" in argv[1:]
+    from decode import set_mouth_binder
+    if mb_on or mb_scr:
+        set_mouth_binder(on=True, order_scramble=mb_scr)
+        print("  [lane] MBND mouth-binder ON%s (trailer must be present; absent ⇒ no-op)"
+              % ("  · ORDER-SCRAMBLE control" if mb_scr else ""))
+    else:
+        set_mouth_binder(on=False)
     mouth = _Mouth(ckpt)
     r = eval_fan_bind(mouth, g, known, n_smp)
     print("  composed: J=%.4f (n=%d) · shuffled: J=%.4f (n=%d) · ablated(floor): J=%.4f (n=%d)"
@@ -7738,6 +7754,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit",
     "--fan-bind", "--fan-smp",
+    "--mouth-binder", "--mouth-binder-order-scramble",
     "--cascade-null",
 ))
 

@@ -126,6 +126,24 @@ def append_clms_trailer(out_path: str, clms) -> int:
     return len(trailer)
 
 
+# ════════════════════════════════════════════════════════════════════════
+# H_9698 "MBND" mouth-binder lane trailer (CORE-owned codec in core/mbnd.py).
+# Appended AFTER CLMS so the chain end is CLMB→SLW→CLML→CLMS→MBND, matching the
+# read order in core/decode.py. Absent => byte-identical (read_mbnd passthroughs
+# on a short/absent read, leaving the offset untouched).
+# ════════════════════════════════════════════════════════════════════════
+def append_mbnd_trailer(out_path: str, mb) -> int:
+    """Append the MBND mouth-binder trailer to an already-written .clm. `mb` = a trained torch
+    MouthBinder OR a ready numpy weight dict (Q,K,V,U,b_pos,W_o,lam,rank,d,linear). Returns bytes
+    written. Call ONLY after append_clms_trailer (if any) so the chain end stays MBND."""
+    from mbnd import pack_mbnd, mbnd_weights_from_torch   # core/mbnd.py (same core/ dir)
+    w = mb if isinstance(mb, dict) else mbnd_weights_from_torch(mb)
+    trailer = pack_mbnd(w)
+    with open(out_path, "ab") as f:
+        f.write(trailer)
+    return len(trailer)
+
+
 # readout-type flag (CLMB byte[4]). 0 = additive Conv1d(d->V) (default, NO CLMB
 # section); 1 = bind/Hadamard  g=u*v ; 2 = bind_linear (param-matched add) g=u+v.
 RO_ADDITIVE = 0

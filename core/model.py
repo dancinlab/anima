@@ -137,6 +137,15 @@ class CLMConfig:
     clms_val_center: bool = False  # H_9710 RV-3 majority-null centering (lane_type 3)
     clms_fangate: bool = False     # H_9696 CLMS-FAN (lane_type 4): value-from-key + learned query gate
 
+    # H_9698 MBND mouth-binder lane (co-trained): a causal bank of past trunk hiddens is addressed by
+    # content+relative-distance, and the attended context multiplies the current hidden (Hadamard) into
+    # an additive logit perturbation. Unlike CLMS there is no runtime store — the bank IS the frame's
+    # own hiddens — so the whole lane lives inside this forward. Everything rides the MBND trailer.
+    mbnd: bool = False             # allocate the MBND mouth-binder module (co-train)
+    mbnd_rank: int = 64            # binder rank (q/k/v/u width; --bind-rank)
+    mbnd_linear: bool = False      # INTERNAL CONTROL: uniform address + additive combine = kill#7 DOA
+    mbnd_lam0: float = 1.0         # MBND lam init (additive perturbation scale)
+
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
         if v not in ("A", "B", "AB"):
@@ -399,6 +408,14 @@ class CLMConvMoE(nn.Module):
             self.clms = CLMSModule(cfg.d_model, cfg.vocab_size, cfg.clms_n_slot, cfg.clms_d_k,
                                    cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0,
                                    d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate)
+        # H_9698 MBND mouth-binder lane (co-trained). None => byte-identical (no lane). CORE-owned
+        # (core/mbnd.py); lazily imported. Unlike CLMS this one IS applied in this forward — it needs
+        # no runtime data, only the frame's own causal bank of hiddens.
+        self.mbnd = None
+        if getattr(cfg, "mbnd", False):
+            from mbnd import MouthBinder         # core/mbnd.py (on sys.path via cli/train.py)
+            self.mbnd = MouthBinder(cfg.d_model, cfg.vocab_size, rank=cfg.mbnd_rank,
+                                    linear=cfg.mbnd_linear, lam0=cfg.mbnd_lam0)
 
     def faction_oracle_mask(self, domain_ids: torch.Tensor) -> Optional[torch.Tensor]:
         """H_9643 ORACLE routing mask [B, d] — 1 where faction f is allowed for that row's domain.
@@ -463,12 +480,19 @@ class CLMConvMoE(nn.Module):
         # core/decode.py store_apply reads (yn_trunk). Kept as (B, d, T) by reference (no copy) so
         # TrainShell can gather the query-position column and drive the store-bridge co-training.
         # clms off => the dict key is absent => the byte-identical golden path is unchanged.
-        pen_trunk = x if self.clms is not None else None   # (B, d, T) pre-slot tap
+        pen_trunk = x if (self.clms is not None or self.mbnd is not None) else None  # (B, d, T) pre-slot tap
+        mb_tap = x if self.mbnd is not None else None      # H_9698: MBND reads the SAME pre-slot tap
         # H_9200 E1 — gated-write forward-slot on the post-norm penultimate
         # (before readout). None => additive golden path (byte-identical).
         if self.slw is not None:
             x = self.slw(x)
         logits = self.readout(x)                # (B, V, T)
+        # H_9698 MOUTH-BINDER — additive, post-readout, mirroring core/decode.py's order
+        # (SLW → readout → … → MBND). The bank tap is the PRE-slot penultimate (mb_tap), the same
+        # yn_trunk core/decode.py feeds mbnd_apply — reading post-SLW x here would silently break
+        # the train/decode parity that makes the verdict readable at all.
+        if self.mbnd is not None:
+            logits = logits + self.mbnd(mb_tap.transpose(1, 2)).transpose(1, 2)   # (B,T,d)->(B,T,V)
 
         out = {
             "logits": logits,
