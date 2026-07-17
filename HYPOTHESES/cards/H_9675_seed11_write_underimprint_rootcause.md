@@ -51,6 +51,15 @@ frozen PASS bar(HO-CARRIER negL·negZ ≥10 ∧ margin(−HO-DECL) ≥4) 통과.
 held-out write 로 견고히 뚫리지 않음** — 1-seed positive 는 sweep 이 벗겨낸 착시(precedent H_1588 RETRACTED
 계열). frozen-first·no-tune-to-green 이 지킨 정직한 negative.
 
+### 🔬 draw-fragility 기전 정제 ($0 per-stem 재분해 · 6 draw 전부 base s7 고정)
+"왜 2/6 만 crack" 을 per-STEM 으로 분해(6 draw 모두 동일 base s7 이므로 base·seed 통제됨). ≥2 draw 에
+등장한 25 어간의 carrier readout(negL∧negZ) 일관성: **CRACK-always 13 · FAIL-always 2 · MIXED 10**.
+MIXED = **같은 어간이 같은 base 서 draw 별 crack↔fail 뒤집힘**(예 `편하`✓✓·· · `예쁘`✓··✓ · `튼튼하`✓·).
+base·어간 동일한데 갈리는 유일 변수 = **draw 내 co-train 어간 구성** ⟹ **draw-fragility = 어간 간
+compositional 간섭**(60% 어간-intrinsic 일관 + 40% company-의존). draw-level PASS 는 12어간 조합서 창발 —
+단일 어간의 write 능력이 아니라 batch 내 경쟁이 readout bar 통과를 결정. #3868(stem-draw 배제, base 간)
++ 이 분석(draw-composition, base 내) = 진범이 **어간 능력 아닌 co-train 간섭**임을 두 축에서 확증.
+
 ### rider (별도 판독 · A/C dissociation)
 s7-winning corpus 를 **s11 base** 에 CPT → **G-WRITE 12/12 착륙** ⟹ (A) base-capacity 반증·**s11 base 무죄**.
 H_9339 s11 실패는 **run/corpus-randomness(C)** — 위 6-draw draw-fragility 와 정합(seed·draw 별 readout 변동).
