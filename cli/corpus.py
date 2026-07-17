@@ -1824,8 +1824,98 @@ def _g6bind_claim(cA, cB, rng, comp_l, meas_l):
     return forms[rng.randrange(len(forms))]
 
 
+def _fanbind_content_words(sentence, known, stop):
+    """H_9746 — content-word set under the frozen detector's own gate (mirror of
+    cli/evaluate.py:_fan_bind_content: len>=3 ∧ in known ∧ not stopword). No new vocab."""
+    return set(w for w in sentence.lower().replace(",", " ").replace(".", " ").split()
+               if len(w) >= 3 and w in known and w not in stop)
+
+
+def _build_g6bind_bindpos(cz, n, comp_l, meas_l, rng, n_blocks, seed, lang):
+    """H_9746 fan-bind decode-level POSITIVE CONTROL (lab full Fable design). A model trained on this
+    reads 🟢 BIND-SENSITIVE through the full decode pipeline iff the instrument's dynamic range is
+    intact — so a PASS attributes R2's BIND-ABSENT to lever-invalid (not instrument-defect).
+
+    The composition is forced on the PAIR-CLASS, not on prompt presence (else both arms co-emit ⇒
+    delta≈0). frozen geometry gives the split: BIND class = adjacent pairs (a,(a+1)%n) = the composed
+    frames; NULL class = distance-2 pairs (a,(a+2)%n) = the derangement set. Rule learned: adjacent
+    pair ⇒ emit cA+cB content words; distance-2 pair ⇒ emit cA only (suppress cB even though it is IN
+    the prompt) — unsolvable by echo, which is exactly 'composition'."""
+    import rho_fan as _rf
+    known = _rf._rho_fan_dict() if hasattr(_rf, "_rho_fan_dict") else None
+    # detector known-set + stopwords (mirror evaluate.py's _fan_bind_content gate)
+    stop = _rf._rho_fan_stopwords()
+    # known dict: fall back to the union of all concept words if no explicit dict export
+    if known is None:
+        known = set()
+        for c in cz:
+            known |= set(w for w in c.lower().split() if len(w) >= 3)
+    # per-concept discriminator token = a content word UNIQUE to that concept (not in any other's
+    # content, not a comparator/measurable). Pick the shortest for the 40-byte budget (F2).
+    conts = [_fanbind_content_words(c, known, stop) for c in cz]
+    cmpset = set(comp_l); measet = set(meas_l)
+    disc = []
+    for k in range(n):
+        others = set().union(*[conts[j] for j in range(n) if j != k]) if n > 1 else set()
+        uniq = sorted(conts[k] - others - cmpset - measet, key=len)
+        if not uniq:
+            raise SystemExit("g6bind bindpos: concept %d has no unique discriminator token "
+                             "(content=%r)" % (k, sorted(conts[k])))
+        disc.append(uniq[0])
+    # short comparator/measurable (banned-word-free · F2 budget)
+    BAN = {"when", "whenever", "into", "between", "still", "new"}
+    cmp_s = [w for w in ("causes", "predicts", "depends") if w in cmpset and w not in BAN]
+    mea_s = [w for w in ("rate", "count", "level", "ratio", "score", "value") if w in measet and w not in BAN]
+    if not cmp_s or not mea_s:
+        raise SystemExit("g6bind bindpos: short cmp/mea set empty (cmp=%r mea=%r)" % (cmp_s, mea_s))
+    # per-block: 50% BIND (adjacent), 50% NULL (distance-2), 10 pairs balanced
+    pairs = ([( a, (a + 1) % n, "BIND") for a in range(n)] +
+             [( a, (a + 2) % n, "NULL") for a in range(n)])
+    lines = []
+    per = max(1, n_blocks // len(pairs))
+    for (a, b, cls) in pairs:
+        for _ in range(per):
+            cmp_w = cmp_s[rng.randrange(len(cmp_s))]
+            mea_w = mea_s[rng.randrange(len(mea_s))]
+            frame = "if %s, then %s: " % (cz[a], cz[b])
+            if cls == "BIND":
+                claim = ("%s %s the %s of %s" % (disc[a], cmp_w, mea_w, disc[b]) if rng.random() < 0.5
+                         else "the %s of %s %s %s" % (mea_w, disc[a], cmp_w, disc[b]))
+            else:  # NULL: cA-echo only, cB suppressed
+                claim = ("the %s of %s %s" % (mea_w, disc[a], cmp_w) if rng.random() < 0.5
+                         else "%s %s the %s" % (disc[a], cmp_w, mea_w))
+            lines.append((frame + claim, a, b, cls))
+    rng.shuffle(lines)
+    # ── hard asserts (§2) — the J self-witness is the strongest: the frozen detector itself signs
+    #    that every BIND line scores 1 and every NULL line scores 0 for the PROMPTED pair. ──
+    def _J(o, cA, cB):
+        A = _fanbind_content_words(cA, known, stop)
+        B = _fanbind_content_words(cB, known, stop) - A
+        if not A or not B: return None
+        wo = set(o.lower().split())
+        return 1 if (wo & A) and (wo & B) else 0
+    bad = 0
+    for (ln, a, b, cls) in lines:
+        claim = ln.split(": ", 1)[1]
+        j = _J(claim, cz[a], cz[b])
+        if cls == "BIND" and j != 1: bad += 1
+        if cls == "NULL" and j == 1: bad += 1
+    if bad:
+        raise SystemExit("g6bind bindpos: J self-witness FAILED on %d/%d lines (detector does not "
+                         "score the corpus as designed)" % (bad, len(lines)))
+    text = "\n".join(ln for (ln, a, b, cls) in lines) + "\n"
+    n_bind = sum(1 for (_, _, _, c) in lines if c == "BIND")
+    st = {"arm": "bindpos", "n_blocks": n_blocks, "lines": len(lines),
+          "bytes": len(text.encode("ascii")), "seed": seed, "lang": lang,
+          "n_bind": n_bind, "n_null": len(lines) - n_bind,
+          "discriminators": {cz[k][:20]: disc[k] for k in range(n)},
+          "max_line_bytes": max((len(ln.encode("ascii")) for (ln, _, _, _) in lines), default=0),
+          "J_self_witness": "PASS (all BIND→1 · all NULL→0)"}
+    return text, st
+
+
 def build_g6bind(n_blocks, seed, lang, arm):
-    """`anima-py corpus g6bind --lang en --arm {targeted,shuf} --n-blocks N --seed S` — H_9694.
+    """`anima-py corpus g6bind --lang en --arm {targeted,shuf,bindpos} --n-blocks N --seed S` — H_9694.
 
     Returns (text, st). st carries a HARD-ASSERTED byte-match witness: the two arms' line
     multisets must be identical (only order/pairing differs), so any bind Δ between the trained
@@ -1833,14 +1923,16 @@ def build_g6bind(n_blocks, seed, lang, arm):
     if lang != "en":
         raise SystemExit("g6bind is EN-only (--lang en): the frozen rho_fan concepts/detector are en "
                          "(CLAUDE.md EN-FIRST · the ko lane is BINDING)")
-    if arm not in ("targeted", "shuf"):
-        raise SystemExit("g6bind: --arm must be targeted|shuf (got %r)" % arm)
+    if arm not in ("targeted", "shuf", "bindpos"):
+        raise SystemExit("g6bind: --arm must be targeted|shuf|bindpos (got %r)" % arm)
     import rho_fan as _rf
     cz = _rf._rho_fan_concepts()
     n = len(cz)
     comp_l = sorted(_rf._rho_fan_comparator())
     meas_l = sorted(_rf._rho_fan_measurable())
     rng = random.Random(seed)
+    if arm == "bindpos":
+        return _build_g6bind_bindpos(cz, n, comp_l, meas_l, rng, n_blocks, seed, lang)
     # ── build the SHARED pool: (frame_i, claim_i) where claim_i is about frame_i's own pair ──
     frames = []
     claims = []
