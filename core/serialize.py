@@ -409,7 +409,7 @@ def serialize_v2(state_dict_or_ckpt, cfg, out_path: str) -> str:
 
 
 def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
-                 out_path: str) -> str:
+                 out_path: str, n_factions: int = 0) -> str:
     """Pack a GENERAL CLMConvMoE(n_trunk_layers=L, n_experts=E, d, K) to a
     CLM\\x01 v0.3 .clm that core/decode.hexa's CONV mouth loads.
 
@@ -417,6 +417,13 @@ def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
     above). At L=1,E=2 the output is BYTE-IDENTICAL to serialize_v2 (verified by
     the round-trip gate). d, K, V are read from the weight shapes — no width
     hardcode. Returns out_path.
+
+    n_factions>0 (H_9643): a faction model's grouped trunk conv must be dense-materialized and a
+    CLMF trailer appended so `anima-py evaluate --faction-lesion` can read K. That logic lives in
+    clm_serialize_v2 (the faction-aware SSOT); we DELEGATE rather than keep a second copy of the
+    grouped-conv materialize — a near-miss between two copies of the slot-name test is exactly the
+    silent corruption clm_serialize_v2._conv_groups_for was written to prevent. n_factions=0 keeps
+    the standard additive path byte-identical.
     """
     if np is None:
         raise RuntimeError("numpy is required for serialize_v3")
@@ -424,6 +431,12 @@ def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
     if L < 1 or E < 1:
         raise ValueError(f"need L>=1 and E>=1, got L={L} E={E}")
     sd = _resolve_state_dict(state_dict_or_ckpt, None)
+    if int(n_factions or 0) > 0:
+        import clm_serialize_v2 as _V2                # same core/ package, faction-aware SSOT
+        blob = _V2._pack_main_blob(sd, L, E) + _V2.pack_faction_section(sd, int(n_factions))
+        with open(out_path, "wb") as f:
+            f.write(blob)
+        return out_path
     blob = _pack_main_blob(sd, L, E)
     with open(out_path, "wb") as f:
         f.write(blob)

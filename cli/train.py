@@ -1354,6 +1354,14 @@ def main():
     ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
                     help="BOLT control arm: trunk requires_grad=False, only clms.* trains")
+    # H_9643 faction lane: split the d channels into K contiguous groups (grouped conv + GN(K) +
+    # cross-faction bridge). 0 = OFF, byte-identical to a standard trunk. The real arm trains K=8 vs
+    # K=1 FREELY (no forced routing — the ORACLE dose was only the toy's instrument positive control)
+    # then reads specialization with `anima-py evaluate --faction-lesion`. d % K must be 0.
+    ap.add_argument("--n-factions", type=int, default=0,
+                    help="H_9643: K contiguous faction blocks on the d axis (0 = OFF, byte-identical)")
+    ap.add_argument("--faction-bridge-lam0", type=float, default=0.1,
+                    help="H_9643: initial cross-faction bridge scale (K>0 only)")
     ap.add_argument("--seed", type=int, default=7)
     # a `<corpus>.meta.json` written by `anima-py corpus` carries the budget floor that corpus
     # earned; _budget_preflight refuses to start below it (H_9324) — see cli/corpus.py BUDGET_FLOORS.
@@ -1576,7 +1584,8 @@ def main():
                         clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate,
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
-                        mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0)
+                        mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0,
+                        n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
         model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
         if tlora_on:
             install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
@@ -1816,7 +1825,8 @@ def main():
                     sd_active[k] = vv
             else:
                 sd_active[k] = vv
-        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path)
+        S.serialize_v3(sd_active, n_trunk_layers=L, n_experts=e_ser, out_path=out_path,
+                       n_factions=a.n_factions)
         # H_9200 E1 — append the "SLW\x01" gated-write forward-slot trailer if engaged
         # (core/serialize.append_slw_trailer). Additive models skip it (byte-identical).
         if getattr(model, "slw", None) is not None:
