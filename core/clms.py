@@ -71,8 +71,24 @@ def _entity_key(key_emb, entity):
     return key_emb[ids].mean(axis=0)
 
 
-def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None):
+def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
+                query="qpos", fuse="overwrite"):
     """CLMS store-bridge lane: OVERWRITE the answer-position logits row with λ·store_logits.
+
+    query/fuse (H_9695 R3 · the read→mouth wiring the G6 angles need · defaults reproduce the
+    H_9423 lane byte-for-byte):
+      query="qpos"        — fire only where find_qpos hits the literal "=> " trigram (H_9423).
+      query="every-token" — fire at EVERY row. The literal trigram cannot exist in free ideation,
+                            so a G6-facing lane must be able to query without a marker. Note the
+                            marker is not merely absent in free generation: teaching the mouth to
+                            emit "=> " itself would be kill #1's scaffold moved inside the mouth,
+                            which is why the legal form is a learned gate (H_9696), not a literal.
+      fuse="overwrite"    — out[t] = λ·s (H_9423 store_only gate: the structural shortcut-cut that
+                            makes the storebind readout attributable to the lane alone).
+      fuse="gated-add"    — out[t] = logits[t] + λ·s. Overwriting EVERY row would delete the trunk
+                            and destroy fluency (dist<5 kills the ρ·fan panel before bind can be
+                            read); additive keeps the lane a perturbation whose CONTENT-dependence
+                            is what the scramble controls test.
 
     logits : (T, V) float — readout(+CLML) logits. The caller's array is NOT mutated (internal copy).
     yn     : (T, d) float — pre-slot trunk penultimate (= _fwd_trunk output = yn_trunk, the SAME tap
@@ -86,9 +102,14 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
              dead, independent of whether addressing can be learned — read no negative before it passes).
     lam_override : None = file λ · 0.0 = λ0 control (C2, byte-identical passthrough) · 1.0 = store_only.
 
-    Passthrough (returns logits unchanged): clms None · lane_type==0 · store None · qpos empty · λ==0.
+    Passthrough (returns logits unchanged): clms None · lane_type==0 · store None · λ==0 · and
+    (query="qpos" only) qpos empty. query="every-token" does NOT require qpos — free ideation
+    contains no "=> " by construction, so gating the marker-free lane on the marker would silence
+    it exactly where it is meant to fire (H_9695).
     Op order is IDENTICAL to CLMSModule.forward (2-production parity)."""
-    if clms is None or int(clms.get("lane_type", 0)) == 0 or store is None or not qpos:
+    if clms is None or int(clms.get("lane_type", 0)) == 0 or store is None:
+        return logits
+    if query == "qpos" and not qpos:
         return logits
     lam = float(clms["lam"]) if lam_override is None else float(lam_override)
     if lam == 0.0:
@@ -103,7 +124,15 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
     scale = 1.0 / np.sqrt(float(clms["d_k"]))
     out = logits.copy()
     lane_type = int(clms.get("lane_type", 1))
-    for t in qpos:
+    if query == "every-token":
+        rows = range(len(yn))          # H_9695: marker-free — the lane queries at every position
+    elif query == "qpos":
+        rows = qpos
+    else:
+        raise ValueError("store_apply: query must be 'qpos' or 'every-token' (got %r)" % query)
+    if fuse not in ("overwrite", "gated-add"):
+        raise ValueError("store_apply: fuse must be 'overwrite' or 'gated-add' (got %r)" % fuse)
+    for t in rows:
         h = yn[t]                                                          # (d,)
         q = h @ clms["W_q"]                                               # (d_k,) [row-vector conv, CLML-form]
         if oracle:
@@ -123,7 +152,10 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         else:                                                             # lane_type 1 legacy: [v; h] fusion
             z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"]) # (r,) — S1/S2 artifacts, no silent recast
         s = z @ clms["W_out"]                                             # (V,)
-        out[t] = (lam * s).astype(dt)                                     # ★ overwrite = store_only gate
+        if fuse == "overwrite":
+            out[t] = (lam * s).astype(dt)                                 # ★ store_only gate (H_9423)
+        else:                                                             # gated-add (H_9695/H_9696)
+            out[t] = (logits[t] + lam * s).astype(dt)                     # lane = perturbation, trunk kept
     return out
 
 
