@@ -60,8 +60,15 @@ seed-11이 밝힌 잔여 벽 = **값읽기(val 극성분화) seed-취약**(주�
 - **oracle-warmup(#3908 --store-oracle-warmup 1500) = 🔴 KILL**: seed-7 ORACLE **0.5234**(chance)·sb_store_acc 0.56 = **phase 전환(step1500 oracle→softmax)이 val 붕괴**시킴 — plain addr-loss seed-7 ORACLE 0.99보다 나쁨. **Fable∥Sol 예측 적중**(전환창서 흐린-v 재개→MLP re-shortcut). ⟹ 전환형 레버 死·연속형(RV-1)이 정답.
 - **RV-1 oracle-aux(#3914 --store-oracle-aux 0.5) = 🔴 KILL(2026-07-17 · 303M clean run)**: seed-7 ORACLE **0.5312**·P1-bal **0.5703**(chance)·flip 0.068 = 게이트 미달. 결정적으로 **plain addr-loss seed-7 ORACLE 0.99 → oracle-aux 추가시 0.53 회귀** = 연속 oracle-CE 가 값읽기를 돕기는커녕 **오히려 해친다**(dual-path 신호가 addr-loss 가 세운 seed-7 값분화를 교란). Fable∥Sol #1 예측 반증. ⟹ 연속형 oracle 보조도 死.
 - **RV-2 ans-delay(#3916 --store-ans-delay 1500) = 🔴 KILL(2026-07-17 · RTX3090 clean run)**: seed-7 ORACLE **0.4844**·P1-bal **0.5703**·addr-gap-SEEN 0.4609·**flip 0.0137** = 게이트 미달. flip≈0 = 답이 val 극성을 **아예 소비 안 함** — 주소를 먼저 세우고 답을 늦게 여는 스케줄도 값읽기를 못 세운다. RV-1(연속 oracle)·oracle-warmup(전환)에 이어 **3번째 KILL**.
-- **RV-3 val-center(#3920 --store-val-center·parity 0.00e+00·구조적 basin 제거) = ⏳ seed-7 4-게이트 만점 PASS · seed-11 측정중(2026-07-17 · RTX3090 clean)**: `[RV3 seed7] ORACLE=1.0000 · P1-bal=1.0000 · SEEN=1.0000(addr-gap=1.0−1.0=0.00) · flip=0.9922` = **사전등록 4게이트 전부 통과**(≥.90 ∧ ≥.75 ∧ ≤.20 ∧ ≥.90). flip 0.99 = 답이 val 극성을 **실제로 소비**(RV-2 flip 0.0137 과 정반대). 기전: `v=Σ(aᵢ−1/8)·val[polᵢ] = v_원본 − 평균val` ⟹ **majority 성분이 산술적으로 소거**되고 타깃 슬롯 편차만 남음 — 다른 3 lever가 신호를 *더해* 지름길을 덮으려다 실패한 자리에서, 지름길을 *없애니* 열렸다.
-  **⚠️ 1-seed = lever verdict 아님(T3 착시 전례 · 이 캠페인의 존재 이유)**: T3서 seed-7 ORACLE 0.99 가 돌파처럼 보였으나 seed-11 0.50 이 반증했다. **결정적 시험 = seed-11**(그때 무너뜨린 그 seed) 측정중 → 통과시 2-seed robust → seed-13 확증(미접촉·tune-to-green 방지) → TERMINAL. seed-11 실패 = "seed-7 착시 재현" 정직 KILL → 4-lever 전멸 = **SWEEP_EXHAUSTED**(값읽기 seed-robustness 벽 재프레임). ckpt 회수 완료(`.fire-recover/h9672_rv_sweep/RV3_7_PASS_*.clm` · 직전 pod GPU death 전례 보험).
+- **RV-3 val-center(#3920 --store-val-center·parity 0.00e+00·구조적 basin 제거) = 🟢🔑 2-SEED PASS = 값읽기 seed-취약 벽 돌파(2026-07-17 · RTX3090 clean · seed-13 확증중)**:
+  ```
+  [RV3 seed7 ] ORACLE=1.0000 P1-bal=1.0000 SEEN=1.0000 flip=0.9922   (gap 0.000)
+  [RV3 seed11] ORACLE=0.9609 P1-bal=0.9609 SEEN=0.9766 flip=0.9919   (gap 0.016)
+  ★ RV3 2-seed PASS · WINNER=RV3
+  ```
+  **양 seed 사전등록 4게이트 전부 통과**(ORACLE≥.90 ∧ P1-bal≥.75 ∧ addr-gap≤.20 ∧ flip≥.90). 결정적 지점: **T3서 0.50 으로 무너뜨렸던 바로 그 seed-11 이 0.9609** — "seed-7 착시 재현"이 아니라 **진짜 2-seed robust**. flip 0.99 양 seed = 답이 val 극성을 실제 소비(RV-2 flip 0.0137 과 정반대). SEEN−held gap 0.000/0.016 = 암기 아님·일반화.
+  **기전(왜 이것만 열렸나)**: `v=Σ(aᵢ−1/8)·val[polᵢ] = v_원본 − 평균val` ⟹ **majority 성분이 산술적으로 소거**되고 타깃 슬롯 편차만 남는다. oracle-warmup(전환)·RV-1(연속 보조)·RV-2(스케줄)는 전부 **신호를 더해 지름길을 덮으려다** KILL — 지름길을 *없애니* 열렸다. **메타교훈: shortcut basin 은 덮는 게 아니라 수식에서 제거한다.**
+  **스코프(정직)**: tier = **감독 co-train**(addr-loss 주소감독 + val-center 구조수정) — 창발-주소 아님. seed-13(미접촉·tune-to-green 방지) 확증 진행중 → 통과시 3-seed robust TERMINAL. ckpt 2개 회수완료(`.fire-recover/h9672_rv_sweep/RV3_7_PASS_*.clm`·`RV3_11_PASS_*.clm` · 직전 pod GPU death 전례 보험).
 - **⚙️ 인프라 주석(infra-wall-noneval)**: 이 sweep 중 GPU 하드웨어 death(RTX5090 PCIe 이탈) + torch/arch 트랩 7건 발생 — 전부 verdict 와 격리. 파생 canonical upstream-fix 2건: **#3969**(cli/train.py sm_120 preflight) · **#3977**(cli/pod_bootstrap.sh POD_TRAIN=1 3-트랩 봉쇄). RV-2/RV-3 clean-run 만 유효 측정.
 
 판정 게이트(각 레버 2-seed·balanced 채점): ORACLE≥.90 ∧ P1-balanced≥.75 ∧ addr-gap≤.20 ∧ flip≥.90 → winner→confirm seed-13(미접촉·tune-to-green 방지)→TERMINAL. 전 레버 실패=값읽기 seed-robustness 벽 재프레임(별개 후속).
