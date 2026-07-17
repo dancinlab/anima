@@ -52,3 +52,15 @@ addr-학습 step-ckpt(s11 step500~5000)를 같은 census 로 훑어 '점유↓ �
 **① 점유 비점유화 = 단조-인과 확증**: s11 궤적(step500→5000)서 점유 87%→57% **단조 감소**, 잔차붕괴도 +0.153→+0.105 동반 단조 감소 ⟹ addr-학습이 점유를 치우는 게 인과(H_9672 감독 기전을 dose-response 로 확증). (base→step500 의 excess 반등은 base=py303 가 s11 궤적과 다른 lineage 라 혼입 — 깨끗한 건 same-run step500→5000.)
 **② seed-fragility 독립 재현(핵심)**: s11 최종 잔차 +0.102(**여전 KILL**) vs 앞선 **s7 t3 +0.058(경계선)** ⟹ s7 은 잔차가 더 풀렸고 s11 은 붕괴 유지. 이건 [[cotrained-store-bridge-works-on-parent-conv]]/H_9672 의 **value-read seed-fragility(s7 ORACLE 0.99·s11 0.50)를 기하 census 가 완전 다른 각도(value-read 아닌 penultimate 기하)로 독립 재현** — s11 의 안 풀린 잔차붕괴 = s11 의 실패한 value-read 의 기하적 근거. 감독조차 s11 은 substrate 를 충분히 못 비운다.
 **함의**: emergent 는 죽었고(base 강붕괴), 감독은 점유를 인과적으로 치우지만(단조) **잔차-붕괴 제거는 seed-취약**(s7 풀림·s11 안 풀림) — 다음 레버는 s11 이 안 풀리는 이유(값경로 조직화·oracle-warmup) 겨냥.
+
+### 🎯 벽 국소화 + "붕괴" 정밀화 (연산자 vs 개체 · $0 · 기존 dump)
+같은 dump 로 is/not 연산자축과 개체 분리도를 분리 측정:
+
+| ckpt | 연산자(is/not) d-prime·acc | 개체간 거리 / 같은개체 is-not 거리 (ratio) |
+|---|---|---|
+| base py303 | 2.36 · 86% | 16.4 / 5.2 (**3.2×**) |
+| t3 s7 | 2.37 · 89% | 118 / 50.5 (2.3×) |
+
+**정밀화(중요)**: 개체는 **붕괴가 아니다 — raw-distinct**(개체간 거리가 연산자 flip 의 2~3배). 그런데 census(random W_q→키 argmax)는 KILL. ⟹ 벽 = "개체 미구별"이 **아니라** "개체 구별이 **템플릿-상관 basis 에 있어 store 키와 MISALIGNED**" = **addressability(basis-정렬) 문제이지 distinctness 문제 아님**. 앞선 '잔차 붕괴' 표현은 이렇게 정밀화된다(붕괴 X · misalignment O).
+**연산자는 alive**: is/not(1-비트 축)은 base 서도 깨끗이 encoded(d-prime 2.36·acc 86%) — 값싼 1축이라 정렬됨. ⟹ [[binding-wall-operator-alive-fact-written-not-bound]] 를 penultimate 기하로 확증: **연산자 alive · 개체-fact written(distinct) but not bound(키-misaligned)**.
+**통합 그림**: emergent 주소 실패 = capacity(반박·H_9721 eff-rank 15/3784) X · distinctness(개체 raw-distinct) X · **basis-정렬**(개체 구별이 키 basis 밖) O. 감독(H_9672 addr-loss)이 작동하는 이유 = 개체 basis 를 키에 **회전-정렬**(+점유 제거). random init 은 그 회전을 못 찾는다(=emergent KILL). ⟹ 유일 미해결 레버 = **개체 basis 를 키에 정렬시키는 무감독 신호**(random W_q 가 아니라 키-구조 반영 init·또는 값경로가 basis 를 끌어주는 2-phase).
