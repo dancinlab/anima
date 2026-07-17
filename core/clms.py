@@ -374,13 +374,19 @@ if _HAS_TORCH:
         (② shortcut-cut is structural, not a regulariser)."""
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
-                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False, fangate=False):
+                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False, fangate=False,
+                     fresh_k=0, fresh_L=3):
             super().__init__()
             self.d, self.V, self.n_slot = d, V, n_slot
             self.d_k, self.d_s, self.r, self.key_seed = d_k, d_s, r, key_seed
             self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
             self.val_center = bool(val_center)                     # RV-3 majority-null centering (lane_type 3)
             self.fangate = bool(fangate)                           # H_9696 CLMS-FAN (lane_type 4)
+            # H_9720-ⓐ EN-disjoint fresh query lane (lane_type 5): the ADDRESS query is read from an
+            # early-layer tap (detached from the trunk in the trainer) through W_fresh·W_q_fresh — store-CE
+            # co-adapts an entity basis that does NOT compete with EN-CE for the penultimate. fresh_k=0 =
+            # off = every existing lane byte-identical (nothing packed, forward unchanged).
+            self.fresh_k, self.fresh_L = int(fresh_k), int(fresh_L)
             self.scale = 1.0 / (d_k ** 0.5)
             if key_emb is None:
                 ke = (np.random.RandomState(key_seed).standard_normal((256, d_k))
@@ -389,6 +395,9 @@ if _HAS_TORCH:
                 ke = np.asarray(key_emb, dtype="<f4")
             self.register_buffer("key_emb", _torch.from_numpy(ke.copy()), persistent=True)
             self.W_q = _nn.Linear(d, d_k, bias=False)
+            if self.fresh_k > 0:                                   # H_9720-ⓐ fresh query lane params
+                self.W_fresh = _nn.Linear(d, self.fresh_k, bias=False)      # tap(d) → fresh_k
+                self.W_q_fresh = _nn.Linear(self.fresh_k, d_k, bias=False)  # fresh_k → d_k address
             # H_9423 value-read fix: yn_q enters the fusion MLP through a learned bottleneck W_g:d→d_g
             # (op is ~1 bit; d_g=64 suffices) so the store value v (d_s) is not diluted 59× against the
             # raw d=3784 penultimate. Restores the toy [v64;g64] fusion geometry d_model-invariantly —
@@ -414,9 +423,14 @@ if _HAS_TORCH:
                 rows.append(self.key_emb[ids].mean(dim=0))
             return _torch.stack(rows)
 
-        def forward(self, yn_q, K, pols, oracle_slot=None, need_att=False):
+        def forward(self, yn_q, K, pols, oracle_slot=None, need_att=False, yn_fresh=None):
             # yn_q:(B,d) query-position penultimate · K:(B,n_slot,d_k) · pols:(B,n_slot) in {0,1}
-            q = self.W_q(yn_q)                                            # (B,d_k)
+            # yn_fresh:(B,d) H_9720-ⓐ early-layer tap (trainer detaches it); when present + fresh_k>0 the
+            # ADDRESS query comes from the disjoint fresh lane, but yn_q STILL drives the W_g op-gate below.
+            if self.fresh_k > 0 and yn_fresh is not None:
+                q = self.W_q_fresh(_F.gelu(self.W_fresh(yn_fresh), approximate="tanh"))  # (B,d_k)
+            else:
+                q = self.W_q(yn_q)                                        # (B,d_k)
             att = _torch.bmm(K, q.unsqueeze(-1)).squeeze(-1) * self.scale  # (B,n_slot) address logits
             if oracle_slot is not None:
                 a = _F.one_hot(oracle_slot, self.n_slot).to(q.dtype)      # (B,n_slot) softmax bypassed
