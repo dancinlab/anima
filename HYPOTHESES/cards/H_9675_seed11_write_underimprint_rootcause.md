@@ -68,6 +68,14 @@ anima-py train ... --init natem_c34_main_s11.clm --e0 3 --emax 3 --corpus ho_car
 ```
 `--lang` 무변경(frozen H_9339 ko 계기 · EN-FIRST 는 신규 corpus 용 · frozen 계기 byte-continuity 우선).
 
+### ✅ $0 prep 검증 (2026-07-17 · GPU 전 로컬 빌드)
+8 코퍼스(4 draw × carrier/decl) 로컬 빌드(anima-py 0.15.46 origin/main · 중립 dir 실행 = 설치본 corpus.py)
++ **build-time 감사 전원 통과**: plant-contradiction 0 · G-WRITE readback carrier 57/57·decl 12/12 · preserve n=12.
+**재현성 설계 건전성 확증** — 4 draw 가 largely 다른 held-out swap 어간(carrier manifest swapC 어간):
+draw별 12 어간 · pairwise jaccard **0.09–0.26**(shared 2–5/12) · **union 28/29 held-out 전수 근접** ⟹ 4 draw =
+독립 draw(단일 lucky draw 아님 · ≥3/4 crack 생존이면 진짜 재현). `튼튼하`(#3868 correction 어간)=4302 에만.
+⟹ GPU 전 $0-가능분 완료. 발사=recipe 실행만(deterministic --split-seed = pool 재빌드 byte-identical).
+
 ### Frozen verdict grid (데이터 전 사전등록)
 per-draw gate(H_9339 상속): G-WRITE ≥11/12 else INVALID · G-PRESERVE drop ≤0.75 else crater INVALID ·
 G-LEAK builder-coded · PRE-GATE base swap ≤7/12. **per-draw PASS** = valid ∧ HO-CARRIER negL ≥10/12 ∧
