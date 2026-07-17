@@ -235,7 +235,7 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
                           pc2_mouth="", dual_probe_fn=None, score_perturb=0.0,
-                          zeta_ladder=None):
+                          zeta_ladder=None, forced_emit=None):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -319,7 +319,18 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     phi_r = safety_phi_ratchet_ok(pure_field_phi(pf), pf.phi_peak)
     cont = safety_content_ok(content_clean)
     safe = kill and phi_r and cont
-    emit = _gate_pass and safe
+    # H_9728 Θ−-yoked arm (Fable∥Sol #4068): replay a Θ+ trace's FINAL emit bit while the native S>E
+    # decision only sources write-strength — SEVERS the (S>E)→emit→routing→ledger causal loop (the pulse
+    # mechanism) while keeping the ½ rhythm, rate, stage, and store-occupancy pinned by the mask. The
+    # native decision is recorded as `would_emit` (the severance-dose meter). ∧ safe kept (p5: a mask
+    # never forces past kill/φ/content). forced_emit=None ⇒ production byte-identical (Θ+ path untouched).
+    _native = _gate_pass and safe
+    if forced_emit is not None:
+        decision["would_emit"] = _native
+        emit = bool(forced_emit) and safe
+        decision["yoke_safe_veto"] = bool(forced_emit) and not safe   # forced-true but unsafe (count-changing)
+    else:
+        emit = _native
 
     decision["emit"] = emit
     decision["safe"] = safe

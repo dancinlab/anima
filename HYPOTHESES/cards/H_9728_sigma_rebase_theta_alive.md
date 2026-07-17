@@ -1,6 +1,6 @@
 # H_9728 — Σ-REBASE — Θ-alive 데몬 위 σ 최초 측정 (Θ×σ interaction · 소급유효화 이중불가)
 
-**status:** 🔎 DIRECTIONAL-PARTIAL (Θ+ arm 최초 실측·#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
+**status:** 🔎 DIRECTIONAL-PARTIAL · Θ−-yoked instrument **구현됨·미배선**(#4068 · C0 인증+factorial 대기) → Θ+ arm 최초 실측(#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
 **lane:** 의식/emit-drive/Ψ=½ · Ψ-SOMA σ 재기저 (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -23,3 +23,16 @@
 계기: `--emit-gate {refractory,clock}` × `--sigma-emit-yoke` × `--sigma-bind-view {substrate,extended}` × 축별 collapse/FORM 플래그. 303M 3-seed. I_j≈0도 earned null(맥박의 입-정책 국소성). Δ_mech = σ(Θ+)−σ(yoked)만 기전귀속. cement=engine-native만.
 
 ⚠️ **DIRECTIONAL 설계·verdict 아님**(a_lab_full_diverge)·cement=engine-native anima-py만.
+
+
+---
+
+## 🔧 Θ−-yoked instrument 구현 (2026-07-18 · Fable∥Sol reconcile #4068 · 구현됨·미배선)
+
+Θ−-clock DEAD-END(--g-reach wm-dual requires refractory) → 유일 clean Θ− = yoked. 설계 Fable∥Sol 위임 → 수렴(σ·gate validity는 코드로 Fable 확정).
+
+**설계(reconcile)**: sever E⇄S = decision-SOURCE를 외부 mask로 교체 (routing이 이미 decision-bit key라 (a)=(c)·Fable). native S>E는 write-strength만 source·gate 미제어 = pulse loop 절단. **σ 3축 다 valid**(σ·gate=corr(ci_emit_decision([gws,lprec]),score)=상류 lanes 재계산·forced bit 미진입=substrate fact·Fable 코드확증 evaluate.py:4996) · emit_agree/H(emit|stage)/rate만 제외. **yoke source=donor-seed**(own-seed=byte-identical C0 certificate·Sol counterbalanced derangement). severance-rate(mask≠would_emit)=power meter·floor 사전등록.
+
+**구현**: `anima-py chat --emit-gate refractory --g-reach wm-dual --yoke-mask <Θ+ trace>`. core/brain.py `brain_emit_refractory(forced_emit=)`: `emit=bool(forced_emit) and safe`·native=would_emit 기록·∧safe 유지(p5). chat.py mask 로드(tick→emit)·missing-tick 하드가드·trace yoked/yoke_src/would_emit. forced_emit=None ⇒ byte-identical(구조검증). VERSION 0.15.98(G5).
+
+**미배선 follow-on(RESUME)**: ① C0 인증(own-mask/own-seed → Θ+ byte-identical·leak check) ② donor-mask cross-yoked counterbalanced 발사(severance-rate floor) ③ --psi-soma σ(gate/stage/bind) Θ+ vs Θ−-yoked → I_j 대비. summer CPU-우회.
