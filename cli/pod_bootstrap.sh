@@ -36,8 +36,16 @@
 # (torch+datasets) on top of the numpy base — set POD_TRAIN=1 to install it arch-correctly (④b):
 #   POD_TRAIN=1 cli/pod_bootstrap.sh ssh9.vast.ai 28484 dist/anima_python-*.whl py303.clm sweep.sh
 #
-# Exit 0 ⟺ the pod can run `anima-py` AND every named asset arrived intact (AND, with POD_TRAIN=1, a
-# real cuda matmul ran). Anything else exits non-zero with the reason. There is no --force and no
+# DECODE on a GPU pod needs cupy, which the --no-deps wheel install does NOT bring: without it the
+# engine silently decodes on CPU-numpy — on a rented GPU box that is an 8x tax (68s/tick vs 8.5s/tick
+# measured), which is a bug, not a device choice. Stage ⑤ installs the CUDA-major-matched cupy by
+# default and stage ⑥ FAILS if a GPU is present but the engine still says CPU. Bootstrapping a
+# CPU-only pod on purpose: POD_GPU=0.
+#   POD_GPU=0 cli/pod_bootstrap.sh ssh9.vast.ai 28484 dist/anima_python-*.whl py303.clm run.sh
+#
+# Exit 0 ⟺ the pod can run `anima-py` AND every named asset arrived intact AND (unless POD_GPU=0) the
+# engine's own decode path reaches the GPU with a real cupy kernel (AND, with POD_TRAIN=1, a real cuda
+# matmul ran). Anything else exits non-zero with the reason. There is no --force and no
 # skip: a bootstrap that "mostly worked" is the thing this script exists to prevent.
 set -euo pipefail
 
@@ -169,18 +177,67 @@ assert y == y, 'FATAL: NaN from cuda matmul'      # real kernel ran, no crash / 
 print('  ✅ TRAIN GATE PASS — torch', torch.__version__, 'real cuda matmul OK')\""
 fi
 
-# ── ⑤ device: ask the ENGINE, not 'does any GPU op work' (a cupy precompiled kernel runs without
-#      the CUDA headers that anima's NVRTC-JIT path actually needs — pod-bootstrap-gpu-1) ─────────
-echo "[pod] device probe (engine path) …"
+# ── ⑤ GPU: a fresh anima-py install has NO cupy, so decode lands on CPU-numpy — on a GPU box that is
+#      an 8x tax (68s/tick vs 8.5s/tick measured), and stage ⑥ used to just PRINT it and hand back
+#      BOOTSTRAP_OK. Renting a GPU pod and decoding on its CPU is not a device choice, it is a bug.
+#      (pod-bootstrap-gpu-4 · H_9744 lost a 1152-tick run to exactly this on a pool host.)
+#      The wheel install above is --no-deps, so the [gpu] extra never arrives; install it here.
+#      Which wheel: cupy is CUDA-MAJOR-specific and the two fail in opposite directions — cuda12x on a
+#      CUDA-13 host and cuda13x on a CUDA-12 host both install and import fine, then die at the first
+#      real op on `libnvrtc.so.<major>: cannot open shared object file`.
+#      Do NOT read the major from nvidia-smi: it reports the DRIVER's maximum supported CUDA, not the
+#      runtime that is installed. Measured 2026-07-17 — both pool hosts print "CUDA Version: 13.0" yet
+#      need DIFFERENT wheels: summer has libnvrtc.so.12 (cupy-cuda12x works, cuda13x dies) and aiden
+#      has libnvrtc.so.13 (cupy-cuda13x). nvidia-smi predicted 0/2; the .so predicted 2/2. The wheel's
+#      actual dependency IS that file, so ask for it directly.
+if [ "${POD_GPU:-1}" = 1 ]; then
+  echo "[pod] GPU — matching cupy to this host's CUDA runtime …"
+  "${SSH[@]}" "set -e
+    export PATH=/usr/local/bin:/usr/bin:/bin:\$PATH
+    if ! command -v nvidia-smi >/dev/null 2>&1; then echo '  no nvidia-smi — CPU-only host, skipping cupy'; exit 0; fi
+    MAJ=\$( { ldconfig -p 2>/dev/null; ls /usr/local/cuda*/lib64/libnvrtc.so.* 2>/dev/null; } \
+           | grep -oE 'libnvrtc\.so\.[0-9]+' | grep -oE '[0-9]+\$' | sort -rn | head -1)
+    if [ -z \"\$MAJ\" ]; then
+      echo '  ⚠️  no libnvrtc.so.<major> found — cupy has nothing to JIT against; leaving decode on CPU-numpy'
+      exit 0
+    fi
+    echo \"  libnvrtc.so.\$MAJ present -> cupy-cuda\${MAJ}x (<14 pin is load-bearing)\"
+    # The <14 bound is NOT cosmetic and NOT optional: cupy 14.x's bundled cu13 cuda_fp8.hpp does not
+    # parse under nvrtc, so every JIT kernel compile fails on sm_120 — and cuda_available() cannot see
+    # it (it only checks that `import cupy` works and a device is visible), so an unbounded >=13.0
+    # installs the broken wheel, reports GPU, and dies at the first real forward on a PAID pod.
+    # See pyproject.toml [project.optional-dependencies] — keep this bound in lockstep with it.
+    python3 -m pip install --break-system-packages -q \"cupy-cuda\${MAJ}x>=13.0,<14\" 2>&1 | tail -1" || true
+fi
+
+# ── ⑥ device HARD GATE — ask the ENGINE, not 'does any GPU op work' (a cupy precompiled kernel runs
+#      without the CUDA headers that anima's NVRTC-JIT path actually needs — pod-bootstrap-gpu-1).
+#      And an install is a CLAIM until a real kernel runs: a major-mismatched cupy imports cleanly and
+#      only dies at the first op (pod-bootstrap-gpu-4). So: engine probe THEN a real matmul.
+#      GPU present but engine says CPU ⇒ FATAL, not a printed note — the whole point of the pod is the GPU.
+echo "[pod] device gate (engine path + real kernel) …"
 "${SSH[@]}" "export PATH=/usr/local/bin:\$PATH
   python3 -c \"
-import importlib.util, os, anima_py
+import importlib.util, os, subprocess, sys, anima_py
 p = os.path.dirname(anima_py.__file__)
 s = importlib.util.spec_from_file_location('dec', p + '/core/decode.py')
 D = importlib.util.module_from_spec(s); s.loader.exec_module(D)
 ok = D.cuda_available()
 print('  cuda_available():', ok)
-print('  DEVICE =', 'GPU' if ok else 'CPU-numpy (correctness-identical · TERMINAL-eligible)')\" 2>&1 | tail -2" || true
+has_gpu = subprocess.run(['nvidia-smi'], capture_output=True).returncode == 0
+if ok:
+    import cupy                                   # the engine's own path is live — prove a kernel runs
+    x = cupy.random.rand(512, 512, dtype=cupy.float32)
+    y = float((x @ x).sum())
+    assert y == y, 'FATAL: NaN from cupy matmul'
+    print('  ✅ DEVICE = GPU — real cupy matmul OK (cupy', cupy.__version__ + ')')
+elif has_gpu:
+    print('  ❌ FATAL: an NVIDIA GPU is present but the engine decodes on CPU-numpy (8x slower).')
+    print('     cupy is missing or its CUDA major does not match this host. Fix it, or pass')
+    print('     POD_GPU=0 to bootstrap a CPU pod on purpose.')
+    sys.exit(1)
+else:
+    print('  DEVICE = CPU-numpy (no GPU on this host · correctness-identical · TERMINAL-eligible)')\" 2>&1 | tail -4"
 
 echo "[pod] BOOTSTRAP_OK — anima-py $WHEEL_VER is live on $HOST:$PORT"
 echo "[pod] fire with:  ssh -p $PORT root@$HOST 'cd /root && setsid bash <your>.sh > fire.log 2>&1 < /dev/null &'"
