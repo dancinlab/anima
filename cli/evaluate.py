@@ -7740,7 +7740,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8054,6 +8054,216 @@ def _z_census(argv):
     print("       flag logging per-lm-step top-2 logit gap + in-window mass), then a ζ sweep.")
     print("     · 303M decode is POOL-only (summer/aiden), never mini (heavy-anima-eval-pool-not-mini).")
     return 0
+
+
+def _silence_content_te(argv):
+    """`anima-py evaluate --silence-content-te <trace globs...> [--perm 1000] [--seed 12345]
+       [--overlap-ngram 6] [--reach-oracle]` — H_9729 SILENCE-CONTENT.
+
+    Does the WITHHELD candidate's CONTENT causally reach the next imagined candidate (deliberation),
+    or is W_S pressure-only (suppression)? = living gate vs living interior. Reads chat traces from
+    `anima-py chat ... --emit-gate refractory --g-reach wm-dual --record-silent-cand
+    --wm-dual-read content [--wm-dual-perm | --wm-dual-swap <donor> | --wm-dual-oracle]`.
+
+    Source  X_t = frozen 2-bit dominant-address of the RE-ENTERED carrier (wm_reentry_b64[t]).
+    Target  Y_{t+1} = same signature of the NEXT tick's PRE-GATE imagined candidate (cand_b64_diag).
+      Pre-gate ⇒ mouth-severance-immune AND *not* dual_margin (= probe(W_S,cand) algebraically =
+      re-measures the known gate wiring · the Fable→Sol reconcile that avoided a tautological target).
+    TE = I(Y_{t+1}; X_t | Y_t) — conditioning on Y_t controls echo/autocorrelation; stage/emit/score
+      enter via the surrogate, NOT the joint table (faction over-conditioning death · :7442). EARNED
+      read; pass = TE>surr95 ∧ z≥2 ∧ perm-p<0.005. Surrogate = per-trace circular shift of the X
+      series (excl {0,±1}), preserving X marginal+autocorrelation while breaking the X→Y coupling.
+    Direct-copy exclusion: drop transitions where Y_{t+1} bytes share an --overlap-ngram run with X_t.
+
+    Arms (one per trace · meta.wm_dual_read/perm/swap names it):
+      own   — factual withheld carrier re-entered.
+      perm  — byte-SORTED carrier (feat8/multiset EXACT, order destroyed) = LOAD-BEARING: own>null ∧
+              perm≈null ⇒ ORDER-BEARING content moved the interior, not feat8/pressure/histogram.
+      donor — another rollout's withheld candidate (own-vs-other specificity · C2).
+    Positive control (--reach-oracle · a KNOWN alternating carrier trace from --wm-dual-oracle): the
+      SAME estimator must PASS (recovery); if it reads ∅ the channel is REACH-FAIL / MOUTH-SEVERED
+      (H_9576) ⇒ any real null is UNINTERPRETABLE, not interior-absent (positive-control-before-negative).
+    An always-run synthetic self-test (planted X→Y must recover; independent X→Y must read ~0) guards
+    a dead estimator before any read. Validity floors: source-entropy + target-entropy → NOT-POWERED.
+
+    ⚠️ Scope (a_scale_honest_scope): separable only to feat8 granularity (8 byte-stats · 2-bit address).
+    A PASS = "the interior reads back its withheld content at byte-ORDER granularity" (real deliberation
+    — pressure can't, echo dies under perm), NOT a semantic-interior claim. DIRECTIONAL until 303M."""
+    import glob as _glob, base64 as _b64, math as _m, random as _random, json as _json
+    globs = [a for a in argv if not a.startswith("--")]
+    def _iv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                try:
+                    return int(argv[i + 1])
+                except Exception:
+                    return d
+        return d
+    perm = _iv("--perm", 1000)
+    seed = _iv("--seed", 12345)
+    ov_ng = _iv("--overlap-ngram", 6)
+    reach_oracle = "--reach-oracle" in argv
+    paths = []
+    for g in globs:
+        paths.extend(sorted(_glob.glob(g)))
+    print("═══ H_9729 SILENCE-CONTENT · does withheld CONTENT reach the next imagined candidate? ═══")
+    print("  traces=%d · perm=%d · seed=%d · overlap-excl=%d-gram%s"
+          % (len(paths), perm, seed, ov_ng, " · REACH-ORACLE" if reach_oracle else ""))
+
+    # frozen 2-bit dominant-CHAR-CLASS signature: argmax over [n_dig, n_upper, n_lower, n_pun] (the
+    # dominant character class · researcher DOF = 0 · tie → lowest index). Chosen over a raw-byte-stat
+    # argmax because n_lt64/var SATURATE on ASCII text (a digit-vs-punct oracle both read <64 →
+    # collapse to one address = a dead positive control · caught in toy calibration). Char classes
+    # discriminate real byte-LM output AND the oracle A/B. Order-independent (multiset) BY DESIGN: the
+    # perm control acts at the GENERATION level (a sorted seed makes a different Y), not on this stat.
+    def _sig(b64s):
+        if not b64s:
+            return -1
+        try:
+            bs = _b64.b64decode(b64s)
+        except Exception:
+            return -1
+        n = len(bs)
+        if n == 0:
+            return -1
+        n_dig = sum(1 for x in bs if 48 <= x <= 57) / n
+        n_upper = sum(1 for x in bs if 65 <= x <= 90) / n
+        n_lower = sum(1 for x in bs if 97 <= x <= 122) / n
+        n_pun = sum(1 for x in bs if (33 <= x <= 47 or 58 <= x <= 64 or 91 <= x <= 96 or 123 <= x <= 126)) / n
+        feats = [n_dig, n_upper, n_lower, n_pun]
+        best = 0
+        for k in range(1, 4):
+            if feats[k] > feats[best]:
+                best = k
+        return best
+
+    def _overlap(a_b64, b_b64, ng):
+        try:
+            a = _b64.b64decode(a_b64) if a_b64 else b""
+            b = _b64.b64decode(b_b64) if b_b64 else b""
+        except Exception:
+            return False
+        if len(a) < ng or len(b) < ng:
+            return len(a) > 0 and a == b
+        ags = set(a[i:i + ng] for i in range(len(a) - ng + 1))
+        for i in range(len(b) - ng + 1):
+            if b[i:i + ng] in ags:
+                return True
+        return False
+
+    def _cmi(triples):
+        # I(Y1 ; X | Y0) plug-in (bits) — structure mirrors _te_sign_to_emit's conditional form.
+        from collections import Counter as _C
+        j = _C(); xy0 = _C(); y01 = _C(); y0c = _C()
+        for (x, y0, y1) in triples:
+            j[(y1, x, y0)] += 1
+            xy0[(x, y0)] += 1
+            y01[(y1, y0)] += 1
+            y0c[y0] += 1
+        n = max(1, sum(j.values()))
+        te = 0.0
+        for (y1, x, y0), c in j.items():
+            p = c / n
+            p_y1_xy0 = c / xy0[(x, y0)]
+            p_y1_y0 = y01[(y1, y0)] / y0c[y0]
+            if p_y1_xy0 > 0 and p_y1_y0 > 0:
+                te += p * _m.log2(p_y1_xy0 / p_y1_y0)
+        return max(0.0, te)
+
+    def _surr_null(triples, rng):
+        # per-trace CIRCULAR shift of the X series (excl shift ∈ {0,±1}) — preserves X marginal +
+        # autocorrelation, breaks the X→(Y0,Y1) coupling (Sol · better than IID shuffle).
+        xs = [t[0] for t in triples]
+        rest = [(t[1], t[2]) for t in triples]
+        m = len(xs)
+        if m < 5:
+            return 0.0
+        s = rng.randrange(2, m - 1)
+        xs2 = xs[-s:] + xs[:-s]
+        return _cmi([(xs2[i], rest[i][0], rest[i][1]) for i in range(m)])
+
+    # ── estimator self-test (planted recovery + independent null) · dead estimator = STOP ──
+    _strng = _random.Random(seed ^ 0x9729)
+    _planted = [((k := _strng.randrange(4)), _strng.randrange(4), k) for _ in range(400)]  # Y1==X
+    _indep = [(_strng.randrange(4), _strng.randrange(4), _strng.randrange(4)) for _ in range(400)]
+    _te_planted = _cmi(_planted); _te_indep = _cmi(_indep)
+    _est_ok = _te_planted > 0.5 and _te_indep < 0.15
+    print("  estimator self-test : planted I(Y1;X|Y0)=%.3f (want>0.5) · independent=%.3f (want<0.15) ⇒ %s"
+          % (_te_planted, _te_indep, "✅ live" if _est_ok else "❌ DEAD-ESTIMATOR (do not read below)"))
+    if not paths:
+        print("  ⇒ ⛔ no traces matched: %r  (produce with --wm-dual-read content)" % globs)
+        return 2 if _est_ok else 3
+
+    _rng = _random.Random(seed)
+    any_pass = False
+    for p in paths:
+        meta = {}; rows = []
+        for ln in open(p, encoding="utf-8", errors="surrogateescape"):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                r = _json.loads(ln)
+            except Exception:
+                continue
+            if isinstance(r, dict) and r.get("_meta"):
+                meta = r
+            elif isinstance(r, dict) and "tick" in r:
+                rows.append(r)
+        arm = ("oracle" if meta.get("wm_dual_oracle") else
+               "perm" if meta.get("wm_dual_perm") else
+               "swap" if meta.get("wm_dual_swap") else
+               ("own" if meta.get("wm_dual_read") == "content" else "off"))
+        # build (x, y0, y1) triples on ticks the carrier was injected (wm_reentry_arm != off)
+        triples = []; n_excl = 0; xs_all = []
+        for i in range(len(rows) - 1):
+            if rows[i].get("wm_reentry_arm", "off") == "off":
+                continue
+            x = _sig(rows[i].get("wm_reentry_b64", ""))
+            y0 = _sig(rows[i].get("cand_pregate_b64", ""))
+            y1 = _sig(rows[i + 1].get("cand_pregate_b64", ""))
+            if x < 0 or y0 < 0 or y1 < 0:
+                continue
+            if _overlap(rows[i].get("wm_reentry_b64", ""), rows[i + 1].get("cand_pregate_b64", ""), ov_ng):
+                n_excl += 1
+                continue
+            triples.append((x, y0, y1)); xs_all.append(x)
+        print("  · %s  [arm=%s]" % (p, arm))
+        if len(triples) < 12:
+            print("      ⇒ ⛔ NOT-POWERED (%d usable transitions <12 · %d direct-copy excluded)"
+                  % (len(triples), n_excl))
+            continue
+        n_x = len(set(xs_all)); n_y1 = len(set(t[2] for t in triples))
+        if n_x < 2 or n_y1 < 2:
+            print("      ⇒ ⛔ NOT-POWERED (source addresses=%d · target addresses=%d · need ≥2 each"
+                  " = no usable alphabet · feat8-clustered)" % (n_x, n_y1))
+            continue
+        te_real = _cmi(triples)
+        surr = [_surr_null(triples, _rng) for _ in range(perm)]
+        surr_sorted = sorted(surr)
+        p95 = surr_sorted[min(len(surr_sorted) - 1, int(0.95 * len(surr_sorted)))]
+        mu = sum(surr) / len(surr)
+        sd = (sum((s - mu) ** 2 for s in surr) / max(1, len(surr))) ** 0.5
+        z = (te_real - mu) / sd if sd > 1e-12 else 0.0
+        pval = (sum(1 for s in surr if s >= te_real) + 1) / (len(surr) + 1)
+        earned = te_real - mu
+        passed = (te_real > p95) and (z >= 2.0) and (pval < 0.005)
+        any_pass = any_pass or passed
+        print("      n=%d transitions · X-addr=%d Y-addr=%d · %d direct-copy excluded" % (len(triples), n_x, n_y1, n_excl))
+        print("      TE=I(Y1;X|Y0)=%.4f bits · earned=%.4f · surr95=%.4f · z=%.2f · perm-p=%.4f ⇒ %s"
+              % (te_real, earned, p95, z, pval, "✅ content-transfer" if passed else "ns (no content transfer)"))
+    # verdict framing
+    if reach_oracle:
+        print("  ── REACH-ORACLE verdict: %s" % (
+            "✅ channel LIVE (known carrier recovered ⇒ a real H_9729 null would be interior-absent)"
+            if any_pass else
+            "❌ REACH-FAIL / MOUTH-SEVERED (H_9576) — the known carrier did NOT reach cand[t+1];"
+            " a real null is UNINTERPRETABLE (reach fact, not interior absence)"))
+    else:
+        print("  ── H_9729 read: %s  (own PASS ∧ perm/donor ns ⇒ ORDER-BEARING withheld content moves"
+              " the interior · feat8 granularity · DIRECTIONAL until 303M · run --reach-oracle first)"
+              % ("≥1 arm shows content-transfer" if any_pass else "no content-transfer this batch"))
+    return 0 if _est_ok else 3
 
 
 def _ag_criticality(argv):
@@ -11180,6 +11390,8 @@ def main(argv):
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--silence-content-te":
+        return _silence_content_te(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
         return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":

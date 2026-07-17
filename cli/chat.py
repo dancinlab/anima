@@ -1427,6 +1427,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # rel_lane sat at 0.6723 for all 720 ticks of the H_9328 rollouts, recon_err at 0.0, and the
     # decode anchor was always live_seed. A store you write to and never read from is not a loop.
     last_gtext = ""
+    _dual_reentry_text = None   # H_9729 · latched withheld carrier for 1-tick-lagged re-entry (None = nothing pending)
     # H_9352 — the rate limiter had no memory. `brain_decide_anchored` takes a
     # `seconds_since_last` argument and gates on `>= spont_min_emit_interval()` (30.0s), but
     # what the daemon passed in that slot was `5.0 + 55.0*clip01(stage_env*(0.5+urgency))` —
@@ -1661,6 +1662,60 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _rec_silent_cand = anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1"
     if _rec_silent_cand and _emit_gate != "refractory":
         raise SystemExit("--record-silent-cand requires --emit-gate refractory (its only producer)")
+    # H_9729 SILENCE-CONTENT · does the WITHHELD candidate's CONTENT causally reach the future, or is
+    # W_S pressure-only? --wm-dual-read content re-enters the LAST withheld candidate's RAW text (not
+    # the 3-slot ledger — WorkMemBuffer has no content accessor; "last-write re-entry", Sol) as a
+    # 1-tick-lagged anchor → next decode seed (the proven-live percept path, :2305). ONE new causal
+    # surface (an anchor append); off (default) ⇒ no anchor, no latch touched ⇒ byte-identical. p5
+    # LEGAL narrowly: the carrier was imagined-but-VETOED (never entered speak()/W_E/emit roots) =
+    # delayed re-entry of internal imagination (a_chat_sleep_imagination), NOT the banned last-utterance
+    # self-seed — guarded by _dual_ct != last_gtext (direct-copy exclusion). (Fable∥Sol converged · a
+    # DIRECT state-update was rejected by both: it makes the effect true by construction / degrades
+    # "content" to feat8 before the substrate reads it.)
+    _wm_dual_read = anima_flag_value(_cargv, "--wm-dual-read", "ANIMA_WM_DUAL_READ", "off")
+    if _wm_dual_read not in ("off", "content"):
+        raise SystemExit("--wm-dual-read: only 'off' (default) or 'content' (got %r)" % _wm_dual_read)
+    if _wm_dual_read == "content":
+        if _emit_gate != "refractory":
+            raise SystemExit("--wm-dual-read content requires --emit-gate refractory")
+        if _g_reach not in ("wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
+            raise SystemExit("--wm-dual-read content requires a wm-dual --g-reach (the W_S producer)")
+        if percept_source is not None:
+            raise SystemExit("--wm-dual-read content is mutually exclusive with an anima-study percept "
+                             "source (both write live_anchors[-1])")
+    # H_9729 counterfactual arms (measurement-only · swap ONLY the re-entry carrier text · the
+    # wm_withheld write stays FACTUAL so the KNOWN scalar ledger is held EXACTLY — only the re-entered
+    # CONTENT is manipulated). --wm-dual-perm = byte-sort the carrier: feat8 is byte-multiset (perm-
+    # invariant · :2343) so this holds feat8/length/ledger EXACTLY and severs ONLY byte order = the
+    # LOAD-BEARING control (order-bearing content vs pressure/histogram · Sol). --wm-dual-swap <donor>
+    # = another rollout's withheld candidate at the same tick (own-vs-other specificity · C2 · Fable).
+    # Both are trace-only arm labels (never a production branch key · the :2460 lesson).
+    _wm_dual_perm = anima_flag_value(_cargv, "--wm-dual-perm", "ANIMA_WM_DUAL_PERM", "0") == "1"
+    _wm_dual_swap_path = anima_flag_value(_cargv, "--wm-dual-swap", "ANIMA_WM_DUAL_SWAP", "")
+    # H_9729 POSITIVE CONTROL producer · --wm-dual-oracle injects a FROZEN alternating A/B carrier
+    # (two maximally feat-separable strings, tick-parity) through the SAME anchor path on EVERY tick
+    # (not just post-silence) — a KNOWN content on a KNOWN schedule. --silence-content-te --reach-
+    # oracle then requires recovery in cand[t+1]; ∅ ⇒ REACH-FAIL/MOUTH-SEVERED (H_9576) ⇒ a real null
+    # is uninterpretable. The self-killing positive control both models mandated (pre-303M gate).
+    _wm_dual_oracle = anima_flag_value(_cargv, "--wm-dual-oracle", "ANIMA_WM_DUAL_ORACLE", "0") == "1"
+    if (_wm_dual_perm or _wm_dual_swap_path or _wm_dual_oracle) and _wm_dual_read != "content":
+        raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle require --wm-dual-read content")
+    if (1 if _wm_dual_perm else 0) + (1 if _wm_dual_swap_path else 0) + (1 if _wm_dual_oracle else 0) > 1:
+        raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle are mutually exclusive arms")
+    _wm_dual_swap = {}
+    if _wm_dual_swap_path:
+        import json as _wsj, base64 as _wsb
+        for _l in open(_wm_dual_swap_path, "r", encoding="utf-8", errors="surrogateescape"):
+            if not _l.strip():
+                continue
+            _d = _wsj.loads(_l)
+            if _d.get("_meta") or _d.get("emit"):   # donor SILENCE ticks only (withheld candidates)
+                continue
+            _e = _d.get("cand_b64_diag", "")
+            if _e:
+                _wm_dual_swap[int(_d["tick"])] = _wsb.b64decode(_e).decode("utf-8", "surrogateescape")
+        print("  [H_9729 wm-dual-swap] donor=%s · %d silence-tick 보류후보를 재진입 carrier 로 (원장 factual)"
+              % (_wm_dual_swap_path.split("/")[-1], len(_wm_dual_swap)))
     # H_9557 · PC2 ROUTING (2D-loadings H_9468/#3792): route the emit-ORTHOGONAL tension
     # axis PC2 = originality↔balance (orig+0.84·bal−0.44·coh−0.28, cos(w,PC2)=0.03) into
     # deliberation_k (the one decode channel the mouth reads) so a genuinely emit-independent
@@ -2304,6 +2359,40 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # back (chat-py-5 root ③ stays closed). Guarded: OFF ⇒ live_seed stays [-1] ⇒ byte-identical.
         if percept_text:
             live_anchors.append({"text_payload": percept_text, "name": "percept"})
+        # H_9729 · WITHHELD-CONTENT RE-ENTRY (default OFF ⇒ byte-identical): the LAST silence tick's
+        # imagined-but-vetoed candidate (latched at :silence-write) re-enters as the decode-seed
+        # anchor (appended LAST ⇒ live_anchors[-1] ⇒ the actually-consumed seed suffix), giving W_S
+        # CONTENT a 1-tick-lagged causal path to the NEXT imagined candidate WITHOUT a new state
+        # surface. Consumed once. --wm-dual-perm byte-SORTS the carrier (feat8-preserving, order-
+        # destroying = load-bearing control) · --wm-dual-swap substitutes a donor's withheld cand.
+        # Arm label rides a trace-only field, never the anchor `name` (production never branches on
+        # "wm_withheld_reentry" — the :2460 lesson). p5-clean: vetoed imagination, not a spoken echo.
+        _wh_reentry_text = ""
+        _wh_reentry_arm = "off"
+        if _wm_dual_read == "content" and _wm_dual_oracle and tick > 0:
+            # POSITIVE CONTROL · a FROZEN alternating KNOWN carrier (2 maximally feat-separable
+            # strings · digit-heavy vs punct-heavy = different dominant-address) on a KNOWN schedule
+            # (tick parity), injected through the SAME anchor path every tick. --reach-oracle requires
+            # the reader to RECOVER this alternation in cand[t+1]; if it can't, the channel is severed.
+            _wh_reentry_text = ("00 11 22 33 44 55 66 77 88 99 12345 67890 000 111 222 333"
+                                if (int(tick) % 2 == 0) else
+                                "!! ;; :: ?? .. ,, // \\\\ ** ++ === ;;; !!! ??? ...,,,")
+            _wh_reentry_arm = "oracle"
+            live_anchors.append({"text_payload": _wh_reentry_text, "name": "wm_withheld_reentry"})
+            _dual_reentry_text = None
+        elif _wm_dual_read == "content" and _dual_reentry_text:
+            _wh_reentry_text = _dual_reentry_text
+            _wh_reentry_arm = "own"
+            if _wm_dual_perm:
+                _wh_reentry_text = bytes(sorted(_wh_reentry_text.encode("utf-8", "surrogateescape"))).decode("utf-8", "surrogateescape")
+                _wh_reentry_arm = "perm"
+            elif _wm_dual_swap:
+                _donor_wh = _wm_dual_swap.get(int(tick))
+                if _donor_wh is not None:
+                    _wh_reentry_text = _donor_wh
+                    _wh_reentry_arm = "donor"
+            live_anchors.append({"text_payload": _wh_reentry_text, "name": "wm_withheld_reentry"})
+            _dual_reentry_text = None   # consume once (write-site re-latches for the next tick)
 
         # ── op-grip: the 4 filler CONSTANTS are now LIVE op reads ──
         gap_ctx = _afs_clip01(1.0 - rel_lane)
@@ -2424,10 +2513,18 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         # symmetric to emit's W_E gate-in (:2427, feat8(g_text)). Same strength 1.0 = gain-lock. The
         # emit-side W_E update rides the existing emit block, so nothing to add there. Off unless the
         # wm-dual family is active (dual_cand_text present only then).
+        _next_dual_reentry = None   # H_9729 · re-latch each tick (None on non-qualifying ⇒ no recurrent monologue)
         if _dual_fn is not None and not g_emit:
             _dual_ct = str(dec.get("dual_cand_text", ""))
             if byte_len(_dual_ct) > 0:
                 wm_withheld = wm_buffer_gate_in(wm_withheld, _afs_byte_feature(_dual_ct, 8), 1.0)
+                # H_9729 · latch this withheld candidate's RAW text for next-tick re-entry (the
+                # wm_withheld feat8 write ABOVE stays factual — only the re-entry CONTENT is the
+                # measured surface). Direct-copy/p5 guard: skip when it equals the last utterance
+                # (that would be a banned self-seed). "last-write re-entry", not ledger recall.
+                if _wm_dual_read == "content" and _dual_ct != last_gtext:
+                    _next_dual_reentry = _dual_ct
+        _dual_reentry_text = _next_dual_reentry
         # anima study · record this tick for the teacher loop (guarded — no-op in production).
         # The percept source may read the returned transcript to decide the next percept; silence
         # (did_emit False) is a real signal it must respect, never a cue to re-prompt/force emit.
@@ -2662,6 +2759,9 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                     "g_arm": str(_g_arm), "refractory": (_refractory or None),
                     "g_reach": str(_g_reach), "emit_gate": str(_emit_gate),  # H_9419
                     "tension_route": str(_tension_route), "route_gain": float(_route_gain),  # H_9557
+                    # H_9729 · SILENCE-CONTENT arm provenance (the reader binds a trace to its arm).
+                    "wm_dual_read": str(_wm_dual_read), "wm_dual_perm": bool(_wm_dual_perm),
+                    "wm_dual_swap": bool(bool(_wm_dual_swap_path)), "wm_dual_oracle": bool(_wm_dual_oracle),
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
@@ -2690,6 +2790,15 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "gtext_sha": _hl.sha256(_gtb).hexdigest()[:16], "gtext_len": byte_len(g_text),
                 "gtext_b64": _b64.b64encode(_gtb).decode("ascii"),
                 "cand_b64_diag": dec.get("cand_b64_diag", ""),  # H_9510 HOLE-1 · imagined cand (diag)
+                # H_9729 · SILENCE-CONTENT re-entry: the carrier injected this tick (source X for TE)
+                # + its arm (off/own/perm/donor · trace-only label). --silence-content-te reads X from
+                # wm_reentry_b64[t] and the target Y from cand_b64_diag[t+1] (pre-gate · mouth-immune).
+                "wm_reentry_arm": _wh_reentry_arm,
+                "wm_reentry_b64": (_b64.b64encode(_wh_reentry_text.encode("utf-8", "surrogateescape")).decode("ascii") if _wh_reentry_text else ""),
+                # H_9729 · the PRE-GATE imagined candidate this tick (brain's dual_cand_text · set every
+                # tick the dual gate runs, BEFORE the emit/silence decision) = the TE target Y_{t+1}.
+                # Pre-gate ⇒ mouth-severance-immune (Y never transits the byte mouth · Sol reconcile).
+                "cand_pregate_b64": (_b64.b64encode(str(dec.get("dual_cand_text", "")).encode("utf-8", "surrogateescape")).decode("ascii") if dec.get("dual_cand_text") else ""),
                 # H_1058 Part A1 side-channel: the mouth's actually-consumed decode-seed bytes
                 # (phi_leg.py TRUE-consumed-bytes context source; a_substrate_disjoint · p5).
                 "seed_len": len(_seed_b), "seed_b64": _b64.b64encode(_seed_b).decode("ascii"),
