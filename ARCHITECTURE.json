@@ -1,129 +1,4 @@
 {
- "datasets": [
-  {
-   "id": "anima-corpus-en-general",
-   "repo_id": "dancinlab/anima-corpus-en-general",
-   "lang": "en",
-   "register": "general",
-   "rows": 279429,
-   "size": "60.05MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇬🇧 en-general (FineWeb cap, ODC-BY)",
-   "lang_verified": true,
-   "features": [
-    "FineWeb HuggingFaceFW/fineweb",
-    "ODC-BY",
-    "sha256:66140944"
-   ],
-   "updated": "2026-07-08T09:57:23.107Z"
-  },
-  {
-   "id": "anima-corpus-en-sns",
-   "repo_id": "dancinlab/anima-corpus-en-sns",
-   "lang": "en",
-   "register": "sns",
-   "rows": 6862,
-   "size": "1.33MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇬🇧 en-SNS ⚠️ KNOWN-SMALL baseline (no permissive large en-SNS source; size-proportional sampling to avoid memorization; youtube/insta-en aug = follow-up ING)",
-   "lang_verified": true,
-   "features": [
-    "5lang-split clean en",
-    "MIT",
-    "KNOWN-SMALL",
-    "sha256:49f347c7"
-   ],
-   "updated": "2026-07-08T09:57:23.690Z"
-  },
-  {
-   "id": "anima-corpus-ko-general",
-   "repo_id": "dancinlab/anima-corpus-ko-general",
-   "lang": "ko",
-   "register": "general",
-   "rows": 340512,
-   "size": "60.0MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇰🇷 ko-general (FineWeb-2 kor_Hang cap, ODC-BY)",
-   "lang_verified": true,
-   "features": [
-    "FineWeb-2 kor_Hang",
-    "ODC-BY",
-    "sha256:19e6ac9e"
-   ],
-   "updated": "2026-07-08T09:57:22.834Z"
-  },
-  {
-   "id": "anima-corpus-ko-sns",
-   "repo_id": "dancinlab/anima-corpus-ko-sns",
-   "lang": "ko",
-   "register": "sns",
-   "rows": 47994,
-   "size": "6.18MB",
-   "visibility": "public",
-   "role": "chat-train",
-   "note": "🇰🇷 ko-SNS (persona + MIT/apache aug)",
-   "lang_verified": true,
-   "features": [
-    "persona+5lang-split+MIT/apache aug",
-    "NLPBada/JaeJiMin/jojo0217",
-    "sha256:c836e9fc"
-   ],
-   "updated": "2026-07-08T09:57:23.405Z"
-  }
- ],
- "models": [
-  {
-   "id": "anima-clm-convmoe-3b-rung",
-   "arch": "CLMConvMoE (byte V256, no tokenizer)",
-   "params": "3072954654",
-   "tier": "WIP",
-   "path": "summer:/home/summer/anima-weights/clm_3b/clm_3b.clm (⚠️ 2026-07-17 실측: 로컬 ~/anima-weights/clm_3b/ 부재 — 실체는 pool 호스트 summer · HF 백업 있음 → hf 필드가 영구사본)",
-   "hf": "dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b",
-   "visibility": "PUBLIC",
-   "progress": [
-    "trained 2026-06-05",
-    "2000 step",
-    "d4096/L30/E30",
-    "GENERALIZES (F_CLM_LANEP_3B_GEN=1",
-    "val gap +0.093/-0.003)",
-    "CLM_V3 decodable nblk63",
-    "UNDERTRAINED (tok/param 3.48 ≪ chinchilla 20)",
-    "scale-ladder rung 303M→1B→3B→7B"
-   ],
-   "sha256": "01df4f26ae64ca275120f41e1a12cd09d3f4dd6c359fb19e02a8f7509b58fd99",
-   "features": [
-    "byte-level",
-    "conv-moe",
-    "lane-p",
-    "engine-rung",
-    "undertrained",
-    "generalizes",
-    "clm-v3"
-   ],
-   "updated": "2026-07-09T20:55:13.102Z",
-   "gates": {
-    "F_CLM_LANEP_3B_GEN": "pass",
-    "decodable": "CLM_V3 nblk63",
-    "generalize": "val_gap +0.093 rel 0.049",
-    "engine_loadable_py": "PASS (2026-07-10 · pool summer) — sha256 01df4f26… MATCH, anima_py.core.decode fp32-lean load d4096/L30/E30/K3, decode-sanity CE_realtext 2.25033 < uniform ln256 5.54518 = trained descent, greedy-argmax generation runs (a_eval_py_canonical Step-1)",
-    "H_1042_phi_split_rung": "🟢 GREEN FULL — Φ planning faith-UP/big-Φ-DOWN split at 3B under 2/2 pre-reg macro-maps (top_variance faith d=+1.26 p=5e-4·big-Φ −0.44 · random faith d=+0.87·big-Φ −0.27 · both SPLIT n=5) → TRANSFERS to production(d768 H_1038 강화·random leg clean summer 68min).",
-    "H_1058_agency_T_rung": "🟠 STILL-BLOCKED veto leg=PERMANENT(T-axis DEPTH-ONLY). 303M veto-capacity(H_935) STRUCTURALLY absent — active-vetoes cap 2(steady=pure-EMIT attractor). Depth leg VALIDATED(det PASS). H_9269 Y-ULTRA 🧱KILL K3(veto positions byte-identical across md5-distinct)."
-   }
-  },
-  {
-   "id": "anima-e1-slw-303m",
-   "arch": "CLMConvMoE-SLW",
-   "params": "374798533",
-   "tier": "WIP",
-   "sha256": "792eab814ba08554783f52dc169bebf858acf18c6d571c2181e0aba2f0e552c9",
-   "path": "~/anima-weights/e1_slw_303m/e1_slw_303m.final.clm",
-   "hf": "dancinlab/anima-e1-slw-303m",
-   "updated": "2026-07-07T09:27:17.720Z"
-  }
- ],
  "schemaVersion": "2.0",
  "kind": "architecture-tree",
  "title": "anima — Architecture (SSOT)",
@@ -11894,169 +11769,25 @@
       ]
      },
      {
-      "name": "HF artifacts (SSOT — models · datasets)",
+      "name": "HF artifacts — 레지스트리 폐기, HF 자체가 SSOT",
       "role": "",
       "id": "persistence-evidence-hf-artifacts-ssot-models-datasets",
-      "detail": "",
+      "detail": "손유지 목록은 drift 를 못 이긴다 — 2026-07-17 폐기.",
       "children": [
        {
-        "name": "summary",
-        "role": "",
         "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-summary",
-        "detail": "HF org `dancinlab` 산출물 레지스트리 SSOT — **HF.jsonl 폐기(2026-06-23), 이 노드가 SSOT**. 신규 업로드는 여기 models/datasets 에 1줄 등록(repo_id"
+        "name": "왜 폐기했나",
+        "detail": "실측이 근거다(census 2026-07-17): 이 노드의 손유지 목록은 **models 2 · datasets 4** 인데 HF 실측은 **345 repo**였고, 등재된 `clm_3b` 의 `path` 는 로컬에 없는 경로였다(거짓 필드). 계보 = HF.jsonl 폐기(2026-06-23) → 이 노드 → **폐기**. 목록을 손으로 유지하는 한 drift 는 재발한다."
        },
        {
-        "name": "arch/size",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-arch-size",
-        "detail": "arch/size"
+        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-now",
+        "name": "이제 SSOT 는 HF 자체 (조회로 얻는다)",
+        "detail": "`HfApi().list_models/list_datasets(author='dancinlab'|'dancinlife')` · `repo_info(..., files_metadata=True)` 의 LFS `sha256`. 사본이 아니라 원본을 조회하므로 drift 가 원리적으로 불가능하다. 파일명은 신뢰 금지 — **동일성 판정은 sha256 으로만**(같은 파일이 두 이름 · 같은 이름이 다른 파일, 둘 다 실측됨)."
        },
        {
-        "name": "tier). PUBLIC = closure PASS·검증모델·clean-license, PRIVATE = WIP/FAIL/unclear-lice…",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-tier-public-closure-pass",
-        "detail": "tier). PUBLIC = closure PASS·검증모델·clean-license, PRIVATE = WIP/FAIL/unclear-license (a_hf_*). collections: CLM(models) + KOSMOS(anchors/datasets). 레거시 99-row 이력은 git history 보존."
-       },
-       {
-        "name": "models",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models",
-        "detail": "",
-        "children": [
-         {
-          "name": "- anima-clm-chat-303m — 정식 production chat. arch=ByteGPT (24-layer",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-303",
-          "detail": "- **anima-clm-chat-303m** — 정식 production chat. arch=**ByteGPT (24-layer GPT-2-class decoder-only byte-vocab LM)** — byte V256, d1024/24L/16H/block512, 303.1M, 5×u32 header `[256,1024,24,16,512]`, decode=`core/decode.hexa`. **conv CLMConvMoE 아님**(repo_id 의 'clm' 은 chat-mouth 역할名, 아키텍처 아님;"
-         },
-         {
-          "name": "conv `.clm` v0.2 mouth 는 별도 anima-engine-clm-d768-v2-coremount). 영·한",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-conv-clm-v0-2-mout",
-          "detail": "conv `.clm` v0.2 mouth 는 별도 anima-engine-clm-d768-v2-coremount). 영·한 70wiki+30dialogue chat-FT, PUBLIC. base=anima-clm-midcap-303m-broad-en-emergent.\n- **anima-clm-midcap-303m-broad-en-emergent** — ByteGPT 303M broad backbone (val_ce 1.224, wiki-dominant EN)."
-         },
-         {
-          "name": "- anima-clm-chat-303m-savant-mitosis — conv CLMConvMoE L4·d3784 303M savant+mitosis ckpt",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-303m-savant-mitosis",
-          "detail": "- **anima-clm-chat-303m-savant-mitosis** — conv CLMConvMoE L4·d3784 303M savant+mitosis 학습 ckpt(.clm v0.3). PRIVATE·WIP, engine-native G6 미검증. repo=dancinlab/anima-clm-chat-303m-savant-mitosis(168MB LFS·HF-only)."
-         },
-         {
-          "name": "- anima-clm-chat-7b — 7B chat (chat-mix 레시피). -",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-models-anima-clm-chat-7b",
-          "detail": "- **anima-clm-chat-7b** — 7B chat(chat-mix).\n- **anima-engine-clm-d768-v2-coremount** — conv d768 engine-mount `.clm`(L3 mouth).\n- **anima-bytegpt-303m-h1129** — PRIVATE frozen 벤치, G1/G6 벽 reference(상세=HF card).\n- **(GAP) conv 303M 영·한 chat** — 부재 = 다음 학습대상."
-         }
-        ]
-       },
-       {
-        "name": "datasets",
-        "role": "",
-        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets",
-        "detail": "",
-        "children": [
-         {
-          "name": "chat register 표준(a_chat_registers)",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-chat-register-a",
-          "detail": "production chat = 언어 2(🇰🇷 ko"
-         },
-         {
-          "name": "🇬🇧 en) × register 2(일반",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-en-register-2",
-          "detail": "🇬🇧 en) × register 2(일반"
-         },
-         {
-          "name": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-sns-4-sns",
-          "detail": "📱 SNS[인스타·유튜브]) = 4칸 모두. SNS 는 언어 직교(ko-SNS + en-SNS 둘 다 필요).\n\n**✅ CLEAN 4-CELL (canonical, 2026-06-24, clm303 no-overfit 재학습용)**: 직전 '5lang' 칸들은 en이 진짜 en이 아니라 de/es/fr/ko 혼합(en 20%뿐)이었음을 audit으로 격리 → 언어별 split + dedup으로 재구성. 각 칸 PUBLIC, 빌드 재현 = archive/state/clm303_clean_corpus/build_corpus.py."
-         },
-         {
-          "name": "- anima-corpus-ko-general — 🇰🇷 ko-일반, 100.0% ko, 60.0MB·340512",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-ko",
-          "detail": "- **anima-corpus-ko-general** — 🇰🇷 ko-일반, 100.0% ko, 60.0MB·340512 lines (FineWeb-2 kor_Hang cap, ODC-BY). sha256 19e6ac9e.\n- **anima-corpus-en-general** — 🇬🇧 en-일반, **99.7% en**(진짜 en), 60.05MB·279429 lines (FineWeb HuggingFaceFW/fineweb cap, ODC-BY). sha256 66140944."
-         },
-         {
-          "name": "- anima-corpus-ko-sns — 🇰🇷 ko-SNS, 100.0% ko, 6.18MB·47994",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-ko-2",
-          "detail": "- **anima-corpus-ko-sns** — 🇰🇷 ko-SNS, 100.0% ko, 6.18MB·47994 lines (persona + 5lang-split + MIT/apache aug NLPBada/JaeJiMin/jojo0217, MIT). sha256 c836e9fc."
-         },
-         {
-          "name": "- anima-corpus-en-sns — 🇬🇧 en-SNS, 97.4% en, 1.33MB·6862",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-en",
-          "detail": "- **anima-corpus-en-sns** — 🇬🇧 en-SNS, 97.4% en, 1.33MB·6862 lines (5lang-split clean en, MIT). ⚠️ KNOWN-SMALL baseline — clean en-SNS large source 부재, youtube/insta-en 보강 = follow-up ING; size-proportional 샘플링으로 암기 방지. sha256 49f347c7.\n\n**legacy (5lang 혼합 — chat 칸 직접 사용 금지, en 오염)**:"
-         },
-         {
-          "name": "- anima-corpus-5lang-unified-v2 — en·fr·de·es·ko unified (wiki + persona/SNS",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-5la",
-          "detail": "- **anima-corpus-5lang-unified-v2** — en·fr·de·es·ko unified (wiki + persona/SNS + dialogue-act + code-switch, byte V256). chat 의 ko·en source.\n- **anima-corpus-5lang-7b-webscale** — FineWeb webscale ko/en/de/es/fr (broad pretrain source, ODC-BY)."
-         },
-         {
-          "name": "- anima-corpus-ko-fineweb2-broad — 🇰🇷 ko-일반(broad) 코퍼스 (FineWeb-2 kor_Hang",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-corpus-ko-3",
-          "detail": "- **anima-corpus-ko-fineweb2-broad** — 🇰🇷 ko-일반(broad) 코퍼스 (FineWeb-2 kor_Hang 1/25 shard 추출, raw UTF-8 byte V256, ODC-BY). 2.78M docs"
-         },
-         {
-          "name": "65.5M lines",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-65-5m-lines",
-          "detail": "65.5M lines"
-         },
-         {
-          "name": "10.55GB",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-10-55gb",
-          "detail": "10.55GB"
-         },
-         {
-          "name": "sha256 bae01ba8. ko-일반 칸 갭(~1.7MB→10.55GB) 보강 (a_chat_registers). -",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-sha256-bae01ba8",
-          "detail": "sha256 bae01ba8. ko-일반 칸 갭(~1.7MB→10.55GB) 보강 (a_chat_registers).\n- **anima-persona-sns-corpus** — SNS register chat 코퍼스 (인스타그램 authored; 유튜브 댓글/자막 구어 = 보강 대상)."
-         },
-         {
-          "name": "- anima-chat-corpus-mix-70wiki-30dialogue — 영어 chat mix (70% wiki",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-chat-corpu",
-          "detail": "- **anima-chat-corpus-mix-70wiki-30dialogue** — 영어 chat mix (70% wiki / 30% dialogue, `사용자:|도우미:` byte-continuation). 18M·7B·303M chat-FT 검증 레시피.\n- **anima-clm-corpus-7b-mid-byte-202m** — broad 202M byte pretrain corpus."
-         },
-         {
-          "name": "- anima-kosmos-303m-kr-en-sns — grounding/carving 닻 세트(학습 corpus 아님",
-          "role": "",
-          "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-datasets-anima-kosmos-303",
-          "detail": "- **anima-kosmos-303m-kr-en-sns** — grounding/carving 닻 세트(학습 corpus 아님 ~260KB): lane ko_303m·en_303m·sns_303m, 의식모드 kosmos_io→brain 마운트 (a_kosmos).\n- **anima-eeg-consciousness** — OpenBCI EEG consciousness dataset (a_eeg_consciousness_record)."
-         },
-         {
-          "id": "persistence-evidence-hf-artifacts-datasets-research-corpora",
-          "name": "연구 corpora (비-chat · 재조합/G1 실험용)",
-          "detail": "chat-register 표준(위)과 별개 — 가설을 통제실험으로 실측하려 일부러 설계한 corpus. 수렴진화: 낡은 corpus co-occurrence 세기 → 밀도 toy 상전이(H_6182, coverage 5→80%서 held-out 2→92%, arch-무관) → NL byte coverage-designed corpus 로 수렴 = 'combinatorial-coverage'가 G1 corpus-design 원리로 창발.",
-          "children": [
-           {
-            "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-designed",
-            "name": "anima-g1-coverage-designed-corpus (PRIVATE · 연구artifact)",
-            "detail": "G1 조합-커버리지 통제쌍. high_coverage(60% pair≈237) vs low_coverage(8%≈31), ~1.2MB 매칭. 30개념 C(30,2)=435쌍 중 40 held-out(문장 부재·무결), POOL 395서 커버리지만 통제. 4템플릿×10동사×8결과. state/g1_density_phase_transition/corpus/ (README+build_and_test.py 결정적 재현 attn|conv). torch DIRECTIONAL."
-           },
-           {
-            "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-v3-nlbyte",
-            "name": "anima-g1-coverage-v3-nlbyte (PRIVATE · 연구artifact)",
-            "detail": "repo_id=dancinlab/anima-g1-coverage-v3-nlbyte · research/DIRECTIONAL · PRIVATE · [pair-특이,3-arm,NL-byte]. H_6183: HIGH 60%/LOW 8%/SHUF; attn held-out pair recall HIGH 95% ≫ LOW 25% · SHUF 0 → 재조합이 커버리지-특이(밀도 아님). commit e3c1ddeba · state/g1_coverage_v3_nlbyte/."
-           },
-           {
-            "id": "persistence-evidence-hf-artifacts-datasets-research-corpora-g1-coverage-arch-invariant",
-            "name": "anima-g1-coverage-arch-invariant (PRIVATE · 연구artifact)",
-            "detail": "repo_id=dancinlab/anima-g1-coverage-arch-invariant · research/DIRECTIONAL · PRIVATE · [arch-invariant,attn+dilated-conv,RF-wall]. H_6184: arch-무관 커버리지 코퍼스(attn·dilated-conv 양쪽) HIGH held 95/85% ≫ LOW → 수용영역(RF) 벽 돌파가 아키텍처-무관. commit c5647e7b7. torch DIRECTIONAL."
-           }
-          ],
-          "verdict": "🧱 engine-native CONFIRMED-TERMINAL — 재조합은 mouth 능력 아님. FROZEN-1(H_9122 ENGINE-NATIVE, compose-read op 부재)·A11 선형붕괴(H_9121)·coverage+RF FALSIFIED(H_6185/6188)·param-ES toy-DOA. decode-side 20-family multi-lens census(생물4+기계16) 전수 refuted 생존0(wfbes89af). escape 축은 G1 밖 exogenous-consequence."
-         }
-        ]
+        "id": "persistence-evidence-hf-artifacts-ssot-models-datasets-what-stays",
+        "name": "ARCHITECTURE 에 남는 것 = 목록이 아니라 판단",
+        "detail": "조회로 얻을 수 없는 것만 남긴다: 보관 rubric(ARCHIVE(x) := CITED(x) ∧ COMPLETE(evidence(H))) · 가시성 축(PASS=PUBLIC · FAIL/WIP=PRIVATE) · 네이밍(`anima-h<id>-*` / `anima-base-*`) · 갭 census. → `hf-artifacts-archival-census`. H↔repo 귀속은 각 repo 의 README + MANIFEST.sha256 이 보유."
        }
       ]
      },
@@ -14055,7 +13786,7 @@
       "id": "a-hf-complete",
       "type": "gate",
       "name": "a_hf_complete (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
-      "detail": "HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); registry = ARCHITECTURE.json \"HF artifacts\"; PUBLIC → collection."
+      "detail": "HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); **registry = HF 자체를 조회**(손유지 목록은 2026-07-17 폐기 — drift 재발원); rubric·가시성·네이밍·갭 = ARCHITECTURE `hf-artifacts-archival-census`; PUBLIC → collection."
      },
      {
       "id": "hf-artifacts-archival-census",
