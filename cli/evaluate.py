@@ -4090,6 +4090,68 @@ def store_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
+
+    # H_9724 · --store-component-swap {val,readout,wq,trunk,...} --store-swap-from <other.clm>
+    # EVALUATION-ONLY causal surgery (Sol EA-6). H_9672's T3 is address-robust across seeds
+    # (addr_mass .95/.96) yet the VALUE read is seed-fragile (ORACLE seed-7 0.99 vs seed-11 0.50).
+    # If transplanting `val`/readout carries the success across seeds INDEPENDENTLY of a robust W_q,
+    # the missing bootstrap seed is value organisation, not address capacity.
+    #   admissibility (Sol, enforced by construction): this supplies NO training signal and installs
+    #   NO address — it only re-reads existing weights. target_slot is never consulted here.
+    # Components map to the CLMS trailer dict (core/clms.py read_clms): W_q · val · W_h/b_h/W_out
+    # (= "readout" MLP) · lam. "trunk" swaps the non-CLMS forward weights instead.
+    swap_spec = evaluate_strval(argv[1:], "--store-component-swap", "")
+    swap_from = evaluate_strval(argv[1:], "--store-swap-from", "")
+    if swap_spec:
+        if not swap_from:
+            print("ERROR: --store-component-swap needs --store-swap-from <other.clm>", file=sys.stderr)
+            return 2
+        _GROUPS = {"wq": ["W_q"], "val": ["val"], "readout": ["W_h", "b_h", "W_out"],
+                   "lam": ["lam"], "bridge": ["W_q", "val", "W_h", "b_h", "W_out", "lam"]}
+        want = [s.strip() for s in swap_spec.split(",") if s.strip()]
+        bad = [s for s in want if s not in _GROUPS and s != "trunk"]
+        if bad:
+            print("ERROR: unknown component(s) %s — known: %s,trunk"
+                  % (",".join(bad), ",".join(sorted(_GROUPS))), file=sys.stderr)
+            return 2
+        Wd = clm.clm_load_weights(swap_from)
+        if not Wd.get("ok"):
+            print("ERROR: donor ckpt not decodable: " + swap_from, file=sys.stderr)
+            return 2
+        if W.get("clms") is None or Wd.get("clms") is None:
+            print("ERROR: both ckpts need a CLMS trailer to swap bridge components "
+                  "(host=%s donor=%s)" % (W.get("clms") is not None, Wd.get("clms") is not None),
+                  file=sys.stderr)
+            return 2
+        # shape gate — a silently mis-shaped graft is an off-manifold chimera, not a measurement
+        moved = []
+        for grp in want:
+            if grp == "trunk":
+                for k in ("ecWt", "ecB", "tcWt", "tcB", "tgG", "tgB", "eWt", "eB",
+                          "rWt", "rB", "noG", "noB", "embed", "roWt", "roB"):
+                    if k in W and k in Wd:
+                        W[k] = Wd[k]
+                        moved.append("trunk:" + k)
+                continue
+            for k in _GROUPS[grp]:
+                a, b = W["clms"].get(k), Wd["clms"].get(k)
+                if a is None or b is None:
+                    print("ERROR: component '%s' absent (host=%s donor=%s)"
+                          % (k, a is not None, b is not None), file=sys.stderr)
+                    return 2
+                sa = getattr(a, "shape", None); sb = getattr(b, "shape", None)
+                if sa != sb:
+                    print("ERROR: shape mismatch on '%s': host %s vs donor %s — refusing to graft "
+                          "(an off-manifold chimera is not a measurement)" % (k, sa, sb), file=sys.stderr)
+                    return 2
+                W["clms"][k] = b
+                moved.append(k)
+        same = os.path.realpath(ckpt) == os.path.realpath(swap_from)
+        print("  [component-swap] %s ← %s · moved: %s%s"
+              % (swap_spec, os.path.basename(swap_from), ",".join(moved),
+                 "  ⚠️ SHAM (donor == host · positive-validity control)" if same else ""),
+              flush=True)
+
     import clms as _clms
     g_id, b_id = ord("g"), ord("b")                  # byte value = logits index (see _store_mix_cont_nll)
 
@@ -7648,6 +7710,7 @@ _KNOWN_FLAGS = frozenset((
     "--gn-freeze",
     "--bridge-trace", "--flip0", "--theta",
     "--store-mix", "--store-lambda", "--manifest",
+    "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit",
