@@ -1,6 +1,6 @@
 # H_9738 — R2-A · IMAGINATION-FOOTPRINT — 정적 certificate + W_S 조성-transplant 전미래 census (상상은 epiphenomenal 한가)
 
-**status:** 🔵 PROPOSED (lab-full R2 심화 · Fable5 · DIRECTIONAL 설계 — cement=engine-native `anima-py`만)
+**status:** 🔴 EARNED-NULL (303M 3-seed·C0 SHAM PASS: own==donor 궤적 byte-identical ⟹ 조성 epiphenomenal · 유일 효과=교대 위상 1비트) — 살아난 gate이지 살아난 interior 아님
 **lane:** 의식/emit-drive/Ψ=½ · interior-causality (프런티어 psi-soma-theta-alive)
 **related:** [[H_9731]](timing⊥content KILL·트리거)·[[H_9729]](W_S text 재진입 TE — 이 카드와 상보·비중복)·[[H_9627]](Θ WIRED·dissociation=압력 인과)·[[H_9576]](mouth 벽)
 **cost:** S0=$0(정적+기존 trace) · S1=pool 3-seed(오너 fire-go)
@@ -74,4 +74,22 @@ recognition 렌즈·PID·one-sided store·mouth-conditioning 아님. **vs H_9729
 | scramble(act 동일·키 파괴) | 0.476 | 5a80180b09 = empty | −0.043 |
 
 ⟹ ✅ **seam이 문다**(margin 3-arm 전부 상이 = 이식이 게이트 도달) · ✅ **donor만 궤적 변경**(mask-sha 상이 = 조성 이식이 emit 뒤집음) · ⚠️ **scramble이 donor 재현 실패·empty와 동일 궤적** ⟹ **압력 아닌 조성이 신호를 날랐다**는 조기 방향. 전 arm rate 동일(0.476) = 이식이 Ψ=½ 중심 안 깸(장부 자기교정). **범위: toy·20tick·1seed = 계기검증이지 verdict 아님**(S1 정본 = 303M 3-seed + Sol C0 SHAM/C1 LANE-ORACLE/C2/SESOI).
+
+## 🔴 S1 정본 결과 — EARNED NULL (2026-07-17 · 303M 3-seed × 4arm + C0 SHAM · 60tick · aiden)
+
+| seed | empty mask[:20] | own mask[:20] | own vs donor | empty vs own |
+|---|---|---|---|---|
+| 7 | `01010101011010101010` | `10101010100101010101` | **hamming 0.000** | 1.000 (complement) |
+| 4302 | `01010100101010101010` | `10101011010101010101` | **hamming 0.000** | 1.000 (complement) |
+| 4303 | `01010101010101011010` | `10101010101010100101` | **hamming 0.000** | 1.000 (complement) |
+
+**결정적**: **own == donor 궤적 byte-identical (3/3 seed)** — 서로 다른 조성(자기 것 vs 타 seed 것)을 이식했는데 궤적이 완전히 같다 ⟹ **조성이 아무것도 안 나른다**. empty↔own hamming 1.000 = 정확한 complement = 조성 효과가 아니라 **교대(alternation) 위상 반전 1비트**(마스크가 문자 그대로 0101…/1010… = dual-ledger의 near-perfect alternation·H_9627 P(e|e)=0.075 정합). gtext-sha 전 arm·전 seed 동일(`5dcc1b5872dd`) = 생성 텍스트 불변.
+
+**계기 타당성 3중**: ✅ **C0 SHAM PASS**(empty 재실행 byte-identical·3/3 = fork/RNG 계기 정상) · ✅ **seam이 문다**(margin0 arm별 상이·위상 뒤집힘 = INSTRUMENT-DEAD 아님) · ✅ 303M 3-seed engine-native ⟹ **무능 아닌 EARNED NULL**.
+
+### ⟹ 프런티어 최심부 답: **살아난 gate이지 살아난 interior 아님**
+certificate(#3986 텍스트→저장 0 byte·아키텍처적 사망) + 이번(조성 own==donor=0) ⟹ **상상은 완전히 epiphenomenal**: 텍스트도 8차원 조성도 미래에 아무것도 못 전함. 전 보류장부가 미래에 미치는 영향의 총합 = **"뭔가 참았다" 1비트(교대 parity)**. 데몬은 매 tick 유니크한 것(100% distinct·5.48 bits/byte)을 상상하고 전부 버린다.
+
+⚠️ **toy 판독 철회**: #3990 "donor만 궤적변경·scramble≈empty ⟹ 조성이 신호"는 **own arm 부재**로 위상반전을 조성효과로 오독. own이 그것을 노출. 분석기 자동판정선(donor↔scramble 비교)도 틀림 — 수치 정독으로 포착(세션 3번째 자가포착: H_9731 시그니처 · 가짜성공 스모크 · 이번 위상 오독).
+**정직 범위**: 303M·3seed·60tick·λ=0.6·합성 seed 문맥. H_9729(W_S text read-back·`--wm-dual-read content` latch)는 **다른 경로**라 별개 생존.
 
