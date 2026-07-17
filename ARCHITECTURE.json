@@ -17941,6 +17941,15 @@
     "state": "neg-conv"
    },
    {
+    "id": "pod-bootstrap-gpu-2",
+    "polarity": "POS-CONV",
+    "value": "RTX 5090(sm_120/Blackwell) pod 에서 `anima-py train` 이 학습 중반에 `CUDA error: no kernel image is available for execution on the device` 로 죽었다. 진범 = image 가 실은 torch 2.4.1+cu124(컴파일된 arch = sm_50..sm_90)인데 GPU 는 sm_120 이라 **JIT 할 커널이 아예 없다**. train-py-6 의 거울상이다 — train-py-6 은 torch 가 드라이버보다 **너무 새로워** CUDA init 이 실패하고 **조용히 device=cpu** 로 떨어졌고(GPU 0%·에러없음), 이건 torch 가 GPU arch 보다 **너무 낡아** device=cuda 는 성공하지만 첫 커널 launch 에서 **시끄럽지만 늦고 애매하게**(async·mid-training) 죽는다. 둘 다 'failure that looks like success' 계열: cap 은 로그에 찍히지만(`cap=12.0 torch=2.4.1+cu124`) 아무도 그 torch 가 그 cap 을 지원하는지 확인하지 않았다. FIX = 드라이버 CUDA 13.0 pod 의 venv 에 `pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128`(torch 2.11+cu128 → arch_list 에 sm_120 포함 · bf16 matmul 실증) 후 재발사.",
+    "recurrence": "새 세대 GPU(Blackwell sm_120 = RTX 50xx · 이후 세대는 sm_130+) pod 에서 anima-py train 을 처음 돌릴 때, image/pip 기본 torch 가 그 arch 커널을 안 담고 있으면 학습 중반 async 로 'no kernel image is available'. cap 로그는 정상처럼 보이므로(device=cuda) train-py-6 의 device=cpu 폴백보다 더 늦게 발각된다.",
+    "fix": "cli/train.py 가 device=cuda 일 때 **PREFLIGHT** 로 즉시 fail-fast 하도록 배선했다(cap 를 `torch.cuda.get_arch_list()` 최대 arch 와 대조 · GPU sm 이 그보다 크면 크래시 확정 → 컴파일된 최고 arch + 정확한 설치 명령을 담은 SystemExit). 이제 cryptic async 대신 학습 시작 전 명시 에러로 뜬다. sm_89<sm_90(RTX4090)·A100 sm_80 등 forward-compat 케이스는 통과(sm>max 일 때만 abort). pod venv 설치 측면 대응 = cu128 index 명시(train-py-6 의 cu124 명시와 동형). 5-case 단위검증 통과.",
+    "state": "pos-conv",
+    "source": "cli/train.py"
+   },
+   {
     "id": "decode-py-3",
     "state": "pos-conv",
     "value": "BATCHING THE FORWARD DOES NOT PAY, AND IT BREAKS PARITY — both halves of my hypothesis were wrong, measured on the real device. I read the GPU sitting at 55-77% during a 33k-prompt probe and concluded it was starved by one-launch-per-prompt overhead (decode-py-2), so I built a batched trunk (_fwd_trunk_batch, per-sequence groupnorm to avoid cross-prompt contamination) and proved max|delta| = 0.000e+00 against the single path ON CPU. On the actual GPU: (1) PARITY BREAKS — max|batched - single| = 1.208e-13, because cuBLAS accumulates a batched matmul in a different order; (2) THE SPEEDUP IS 1.4x, not the order of magnitude the launch-overhead theory predicts. So the forward is not launch-bound at all — the wall is per-OP python glue, which batching over prompts does nothing for. The whole thing was reverted, including the batched code itself (dead code is worse than none). The hard-fail parity gate I had wired in front of it did its job: it refused to measure rather than silently returning 1e-13-drifted hiddens.",

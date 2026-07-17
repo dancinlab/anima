@@ -45,5 +45,19 @@ numpy≥2 의 shape-(1,) lam 스칼라 캐스팅 거부(이식성 버그)도 poo
 미완: train 플래그(`--mouth-binder`/`--mouth-memory`/`--bind-rank`) + `--g6-bind-delta` 판정면.
 bind-Δ 숫자는 학습된 ckpt 로만 — 현재는 **계기지 verdict 아님**.
 
+## 학습·판정 배선 (2026-07-17 · DIRECTIONAL)
+
+계기(core/mbnd.py)에 이어 **co-train + 판정 경로** 착륙:
+- `core/model.py`: config(mbnd/mbnd_rank/mbnd_linear/mbnd_lam0) + `MouthBinder` 할당 + forward 적용.
+  bank tap = **PRE-slot penultimate**(mb_tap) = `core/decode.py` 가 mbnd_apply 에 먹이는 `yn_trunk`
+  와 동일. post-SLW `x` 를 쓰면 train/decode parity 가 조용히 깨져 verdict 자체가 읽을 수 없게 된다.
+- `cli/train.py`: `--mouth-binder {bilinear,linear}` · `--mouth-memory causal-bank` · `--bind-rank` ·
+  `--bind-lam0`. **linear = kill#7 DOA 내부 음성대조**(uniform address + additive). trailer 는 CLMS 뒤.
+- `cli/evaluate.py`: `fan_bind_run` 에 `--mouth-binder` / `--mouth-binder-order-scramble` lane 스위치
+  + `_KNOWN_FLAGS` 등록(H_9672 `--store-addr-audit` 이 이 등록 누락으로 pool 서 죽은 전례 회피).
+
+pool 스모크: `train`/`evaluate --help` 에 플래그 확인 · `--fan-bind` scorer 인증 통과 · default OFF ⇒
+trailer 실은 ckpt 도 byte-identical. **bind-Δ 는 학습된 303M ckpt 로만** — 현재 R2 pod(5090) 진행중.
+
 ## source
 lab full Sol 3위(NOVEL) · store→연산 추상화.

@@ -110,7 +110,7 @@ USAGE (installed `anima` PATH command after `hx install anima`):
       --gauges-out ckpt/bg_ctrl_cnce.json
 """
 from __future__ import annotations
-import argparse, json, math, os, sys, time
+import argparse, json, math, os, re, sys, time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -1342,6 +1342,16 @@ def main():
     ap.add_argument("--clms-r", type=int, default=128, help="CLMS GELU-MLP fusion bottleneck")
     ap.add_argument("--clms-key-seed", type=int, default=9423, help="CLMS frozen key_emb table seed")
     ap.add_argument("--clms-lam0", type=float, default=1.0, help="CLMS lam init (store_only scale)")
+    # H_9698 MBND mouth-binder lane (R6). --mouth-binder engages it; the linear arm is the INTERNAL
+    # NEGATIVE CONTROL that must reproduce kill#7's fixed-role linear collapse (uniform address +
+    # additive combine), so a nonlinear number is only readable next to it.
+    ap.add_argument("--mouth-binder", choices=["bilinear", "linear"], default="",
+                    help="H_9698: co-train the MBND mouth-binder lane. bilinear = Hadamard binder; "
+                         "linear = the kill#7 DOA control (uniform address + additive combine)")
+    ap.add_argument("--mouth-memory", choices=["causal-bank"], default="causal-bank",
+                    help="H_9698: what the binder addresses (causal-bank = the frame's own hiddens)")
+    ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
+    ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
                     help="BOLT control arm: trunk requires_grad=False, only clms.* trains")
     ap.add_argument("--seed", type=int, default=7)
@@ -1525,6 +1535,26 @@ def main():
     if str(device).startswith("cuda"):
         cap = torch.cuda.get_device_capability(local_rank)
         p0(f"  cuda: {torch.cuda.get_device_name(local_rank)} cap={cap[0]}.{cap[1]} torch={torch.__version__}", flush=True)
+        # PREFLIGHT (pod-bootstrap-gpu-2): a torch wheel with no kernels for THIS GPU's SM crashes
+        # LATER, mid-training, with a cryptic async "CUDA error: no kernel image is available for
+        # execution on the device" — the same failure-that-looks-like-success class the pod bootstrap
+        # ledger fights. Fail fast HERE with the actionable fix. Blackwell (sm_120 / RTX 50xx) needs a
+        # cu128 wheel; the default-index torch tops out at sm_90, so it JITs nothing and dies.
+        sm = cap[0] * 10 + cap[1]
+        arch_nums = []
+        for at in torch.cuda.get_arch_list():          # e.g. ['sm_80', 'sm_90', 'sm_90a', 'sm_120']
+            m = re.match(r"sm_(\d+)", at)
+            if m:
+                arch_nums.append(int(m.group(1)))
+        if arch_nums and sm > max(arch_nums):
+            newest = max(arch_nums)
+            raise SystemExit(
+                f"FATAL: installed torch {torch.__version__} has NO compiled kernels for this GPU "
+                f"(sm_{sm}); it was built for up to sm_{newest}. Training would crash later with "
+                f"'CUDA error: no kernel image is available for execution on the device'. "
+                f"Install an sm_{sm}-capable build — for Blackwell (sm_120) use the cu128 index:\n"
+                f"  pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128"
+            )
 
     torch.manual_seed(a.seed)
 
@@ -1544,7 +1574,9 @@ def main():
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
                         clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate,
-                        clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0)
+                        clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
+                        mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
+                        mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0)
         model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
         if tlora_on:
             install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
@@ -1797,6 +1829,12 @@ def main():
             nb = S.append_clms_trailer(out_path, model.clms)
             print(f"  CLMS trailer appended {nb} bytes (n_slot={model.clms.n_slot} "
                   f"d_k={model.clms.d_k} d_s={model.clms.d_s} r={model.clms.r})", flush=True)
+        # H_9698 — append the "MBND" mouth-binder trailer if the lane is engaged (AFTER CLMS so the
+        # chain end stays MBND, the order core/decode.py reads).
+        if getattr(model, "mbnd", None) is not None:
+            nb = S.append_mbnd_trailer(out_path, model.mbnd)
+            print(f"  MBND trailer appended {nb} bytes (rank={model.mbnd.rank} "
+                  f"linear={model.mbnd.linear})", flush=True)
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 

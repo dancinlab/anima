@@ -35,7 +35,7 @@ anima-py corpus storebind --lang en --atoms natural_decl_atoms.json \
   --balanced-manifest --seen-manifest --out nat_addr_s${S}.txt
 anima-py train --init py303_full.clm --corpus nat_addr_s${S}.txt \
   --store-addr-weight 1.0 --store-addr-audit --canon --seed ${S}
-anima-py evaluate NAT_s${S}.clm --xbind nat_balanced.json
+anima-py evaluate NAT_s${S}.clm --store nat_balanced.json --store-addr-audit --store-flip --store-shuffle
 ```
 H_9672 의 **사전등록 판정표를 그대로 상속**(재발명 금지): C0-e ORACLE ≥.90(미달=INSTRUMENT-DEAD·P1 미판독) ·
 **P1-balanced ≥.75 = CRACK** · [.60,.75) PARTIAL · (.40,.60) KILL-잔존 · addr-gap ≤.20 ·
@@ -106,7 +106,7 @@ C0-e bar(≥.90) 통과** = 어느 것도 INSTRUMENT-DEAD 아님.
 anima-py corpus storebind --lang en <nat5|nonce pool 주입> --out {N,S}_s${S}.txt
 anima-py train --init py303_full.clm --corpus {N,S}_s${S}.txt \
   --store-addr-weight 1.0 --store-addr-audit --canon --seed ${S}
-anima-py evaluate {N,S}_s${S}.clm --xbind balanced.json  # H_9672 판정표 상속
+anima-py evaluate {N,S}_s${S}.clm --store balanced.json --store-addr-audit --store-flip --store-shuffle  # H_9672 판정표 상속
 ```
 frozen bar(상속): arm-N P1-balanced ≥.75 = 전이(A·B 한 뿌리) · arm-S 가 **같은 fire 에서 ≥.95
 재현**(양성통제)해야 arm-N null 이 판독가능(안 그러면 INSTRUMENT-DEAD).
@@ -220,3 +220,18 @@ anima-py corpus storebind --lang en --n-blocks 4000 --store-slots 8 --seed 7 \
 그것 외에 이 H 의 발사 준비는 **완료**: 구현 ✅(#3945) · pool ✅(sha256 고정) · 계기 ✅(T3 dispatch
 정확 복원) · 1-DOF 대칭 ✅(실측) · 키 census ✅. winner 확정 시 `--entity-pool nat5.txt` 한 줄 차이로
 arm-N/arm-S 를 동시 발사한다.
+
+---
+
+## 🔧 계기 경로 정정 (2026-07-17 · lab full Sol 지적 · repo 확증)
+위 예시의 `evaluate --xbind` 는 **틀렸다** — `--xbind`(evaluate.py:3587)는 G1 D-acc 매니페스트 경로이고,
+CLMS store-bridge 판독은 **`--store HELD.json --store-addr-audit`**(evaluate.py:4084·4215 "H_9672: report
+addr_top1 + addr_mass") + `--store-oracle`/`--store-flip`/`--store-shuffle` 계열이다. 위 두 커맨드를 정정했다.
+(같은 "플래그 실재를 grep 으로 확인하고 적어라" 교훈 재발 · [[instrument-claim-alignment-before-reading-a-bar]].)
+
+## 🔀 R8 estimand-split 후속 (lab full Fable+Sol 독립 수렴 · 2026-07-17)
+이 카드의 fire 게이트(arm-S 값읽기 seed-fragility)를 두 모델이 **estimand 분리**로 우회:
+- [[H_9734]] NAT-ADDR-SPLIT ⭐ — 주소축(H_9672 서 2-seed robust)만 판독 = **RV winner 없이 지금 가능**.
+- [[H_9736]] LOCKED-WINNER RIDER — 무조건부 값읽기 = RV winner 후 fresh seed rider($0 대기).
+- [[H_9735]] ORACLE-gated PAIRED — 조건부 값읽기 = RV 전멸 시에만(CONTINGENT).
+이 카드(H_9683)는 R8 로 **분해**되어 잔여 = 주소축은 H_9734 로 이관·값읽기축만 winner 대기.
