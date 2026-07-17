@@ -7856,7 +7856,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -11530,6 +11530,13 @@ def faction_lesion_run(argv):
     # occurrence template (H_9643 v2 · Fable+Sol converged). A uses NO selection (no argmax x/K, which
     # re-imports the order-statistic bias defects ⑪⑫⑮⑯ killed this session) and is base_CE-immune.
     pi_ov = evaluate_strval(argv[1:], "--faction-oracle-pi", "")
+    # --faction-split N: impose an N-way CONTIGUOUS channel split at lesion time, INDEPENDENT of the
+    # ckpt's own n_factions. H_9737 fit-matched K=1 negative control: a model trained with groups=1
+    # (no faction partition, standard conv) gets a 4-way split imposed — true value is "no faction
+    # structure", so S <= null95 isolates that the log-ratio normaliser does not turn fit quality into
+    # a false positive at the LOW-CE denominator (random-init K=4 only tests the high-CE scale AND
+    # carries grouped-conv architectural blocks that lift its own null — H_9674 confound).
+    split_ov = evaluate_intval(argv[1:], "--faction-split", 0)
 
     print("=== anima evaluate --faction-lesion — 파벌 분할이 기능적인가 (H_9643) ===")
     print("ckpt:  " + ckpt)
@@ -11541,11 +11548,18 @@ def faction_lesion_run(argv):
     if not W.get("ok"):
         print("ERROR: ckpt not decodable (clm): " + ckpt)
         return 1
-    K = int(W.get("n_factions", 0) or 0)
+    K_model = int(W.get("n_factions", 0) or 0)
+    # K = the number of contiguous groups the LESION splits d into. Normally the ckpt's own
+    # n_factions; --faction-split overrides it (H_9737: impose 4 groups on a groups=1 ckpt). The
+    # model's structural n_factions stays in W and still drives GN/bridge inside the decoder.
+    K = split_ov if split_ov > 0 else K_model
     if K <= 0:
-        print("ERROR: 이 ckpt 엔 CLMF 가 없다 (n_factions=0) — 파벌 lane OFF 로 학습된 모델이다.")
-        print("       --n-factions K 로 학습한 ckpt 에만 이 계기가 성립한다.")
+        print("ERROR: split 수 미정 — 이 ckpt 엔 CLMF 가 없다 (n_factions=0) 이고 --faction-split 도 없다.")
+        print("       --n-factions K 로 학습한 ckpt 이거나, --faction-split N 으로 분할을 강제하라.")
         return 1
+    if split_ov > 0:
+        print("       --faction-split %d 강제 (ckpt n_factions=%d) — lesion 분할만 override, 모델 구조 무접촉"
+              % (split_ov, K_model))
     d = int(W["d"]); V = int(W["V"])
     if lam_ov:
         W["faction_lam"] = float(lam_ov)

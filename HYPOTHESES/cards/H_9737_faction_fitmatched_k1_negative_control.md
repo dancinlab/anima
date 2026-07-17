@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_fitmatched_k1_negative_control
 title: fit-matched K=1 음성대조 — 같은 낮은-CE·파벌구조 없음이면 --faction-lesion S ≤ null95 (낮은 분모서도 FPR 통제)
-status: 🔵 PROPOSED — 계기 v2 SOUND 인증의 빠진 3번째 다리 (Fable Q1 · $0/pool · NOVEL)
+status: 🟢 PASS (격리 인증 완료 · perm=200) — K=1 fit-matched(loss 0.0128) + --faction-split 4: S 0.406 ≤ null95 1.221 p=0.86 결정적 clean. 낮은-CE 분모(v1 폭발 스케일)서도 log-ratio 가 적합품질을 특화로 오인 안 함 = 계기 v2 SOUND 3번째 다리. random-init K=4 의 경계(p=.0448 grouped-conv 블록 confound)를 대체하는 깨끗한 음성. 계기 `--faction-split N` 신설(lesion 분할을 ckpt n_factions 와 독립 강제)로 측정.
 tier: 🟢 계기 인증 음성대조 (toy · $0)
 cost: $0/pool
 source: sidecar lab full (Fable5+Sol · H_9643 계기 v2 판정 분석)
@@ -32,3 +32,8 @@ random-init 음성은 base_CE~4.8(무학습) 스케일서만 FPR 을 통제한�
 ## 병렬 세션 (a_parallel_session_compare)
 
 H_9731(발견-partition)·H_9733(content-transfer)이 안 덮는 NOVEL 셀 (그들은 K>0 ckpt 의 발견블록/content 를 다룸 · 이건 K=1 ckpt 의 적합-정합 FPR). CONFLICT 없음.
+
+
+## 🟢 결과 (perm=200 · 2026-07-17)
+
+K=1 fit-matched ckpt(같은 마르코프 4소스 · groups=1 · loss 0.0128) + `--faction-split 4` → **S 0.406 ≤ null95 1.221 (p=0.86, null 한복판) = PASS(clean)**. 참값 '파벌구조 없음'인데 base_CE 는 학습 스케일 → log-ratio 가 낮은-분모서 거짓양성 안 냄 격리 확증. 계기 v2 SOUND 4다리 완성(H_9643).
