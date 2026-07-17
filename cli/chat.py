@@ -28,6 +28,7 @@ hexa `to_string(float)` == Python `repr(float)` (empirically pinned: 1/3 → "0.
 import glob
 import os
 import random
+import re
 import shutil
 import sys
 
@@ -43,7 +44,7 @@ from generator import (gen_auto_backend, gen_mouth_kind, gen_auto_chat,
                        generator_read_anchors, gen_penult_pooled_W,
                        _gen_anchor_field, _gen_g_string)  # H_1058 Part A1: SSOT anchor+phase→seed-byte extractors (side-channel only)
 from kosmos_io import create_anchor, emit_anchor_from_v3, load_anchors
-from decode import clm_load_weights, clm_decodable, penult_fold8
+from decode import clm_load_weights, clm_decodable, penult_fold8, set_clms_store
 from dream_lib import (dr_stage_at, dr_stage_name, dr_emit_envelope,
                        dr_stage_size, dr_imagination_active)
 from dream_envelope_ctx import dr_stage_scale
@@ -51,6 +52,16 @@ from dream_persist import dp_sleep_tick
 from wake_memory import mem_init, mem_push_ctx
 from imagination_replay import (ir_select_snapshots, ir_replay_tick,
                                 ir_mitosis_tick_during_replay)
+
+
+# H_9744 STORE-EPISODIC · the transducer's ENTIRE knowledge (--store-episodic on · G-W3(iii) audits
+# this line). It is one shape, not a vocabulary: `fact <entity> <pos|neg>`. The entity is copied
+# through as bytes — ASCII lowercase because core/clms.py:80 _entity_key encodes ascii and a non-ascii
+# name would raise there, not because any particular name is known here. There is deliberately NO
+# entity whitelist, NO fact dictionary and NO polarity re-interpretation: a sense organ may know the
+# shape of what it transduces, never the meaning (p2/p3 — the moment this constant learns WHICH
+# entities matter, the transducer becomes a rule injector and the design is KILLED regardless of score).
+_STORE_EPISODIC_FACT = re.compile(r"^fact ([a-z]{3,12}) (pos|neg)$")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1712,6 +1723,43 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if percept_source is not None:
             raise SystemExit("--wm-dual-read content is mutually exclusive with an anima-study percept "
                              "source (both write live_anchors[-1])")
+    # ── H_9744 STORE-EPISODIC (S2/S6) — percept fills the CLMS store; the mouth answers from it ──
+    # The lane itself is H_9423/H_9672's co-trained bridge; this only decides WHO fills the store.
+    # In eval the manifest was hand-fed (cli/evaluate.py --store); here the SESSION's own percept
+    # stream does — which is the training distribution: storebind never put the fact in the text,
+    # only the query, so in-vivo the fact must arrive as a store injection too, not as text parsing.
+    # Default OFF, and the whole path is unreachable without a percept_source (base daemon untouched).
+    _store_episodic = anima_flag_value(_cargv, "--store-episodic", "ANIMA_STORE_EPISODIC", "off")
+    if _store_episodic not in ("off", "on"):
+        raise SystemExit("--store-episodic: only 'off' (default) or 'on' (got %r)" % _store_episodic)
+    if _store_episodic == "on":
+        if percept_source is None:
+            raise SystemExit("--store-episodic on requires an anima-study percept source (the store is "
+                             "filled BY perception; with no afferent stream there is nothing to fill it)")
+        if _emit_gate == "refractory":
+            # p5 HARD GUARD (H_9744 F4 · the whole reason this is opt-in). The refractory gate feeds
+            # the FORMED candidate text through _recog_fn (:2452) — so a store that changes the
+            # candidate would move the emit gate itself, and emit would no longer ride real tension.
+            # v1 keeps the store strictly downstream of the gate: it changes WHAT is said, never
+            # WHETHER. Unblocking this combination needs its own pre-registration, not a flag.
+            raise SystemExit("--store-episodic on is mutually exclusive with --emit-gate refractory: "
+                             "the refractory gate reads the candidate text (_recog_fn), so a store that "
+                             "shapes the candidate would also shape the emit decision (p5). Use the "
+                             "clock gate for the store-episodic arms.")
+    # Ring width is the ckpt's, never a literal: core/clms.py store_apply indexes range(n_slot) from
+    # the trailer, so an 8 hardcoded here would silently mis-shape any other-width bridge. A ckpt with
+    # no CLMS trailer makes the flag meaningless — refuse rather than run a lane that cannot fire.
+    _ep_n_slot = 0
+    if _store_episodic == "on":
+        _ep_clms = clm_load_weights(ckpt).get("clms")
+        if _ep_clms is None:
+            raise SystemExit("--store-episodic on needs a ckpt carrying a CLMS trailer (the co-trained "
+                             "store bridge · H_9423/H_9672); %r has none, so the lane can never fire."
+                             % ckpt)
+        _ep_n_slot = int(_ep_clms["n_slot"])
+    _ep_store_ents = []       # FIFO of the last n_slot declared entities (session-local)
+    _ep_store_pols = []
+    _ep_store_writes = 0      # G-W0: how many times perception actually armed the lane
     # H_9729 counterfactual arms (measurement-only · swap ONLY the re-entry carrier text · the
     # wm_withheld write stays FACTUAL so the KNOWN scalar ledger is held EXACTLY — only the re-entered
     # CONTENT is manipulated). --wm-dual-perm = byte-sort the carrier: feat8 is byte-multiset (perm-
@@ -1847,6 +1895,28 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             percept_text = percept_source(tick, _percept_transcript)
             if percept_text is not None:
                 percept_text = str(percept_text).strip() or None
+        # ── H_9744 STORE-EPISODIC (S3) · perception writes the store ──
+        # The transducer knows GRAMMAR ONLY, never content: it matches one fixed shape and copies
+        # the bytes through. No entity whitelist, no fact dictionary, no polarity re-interpretation
+        # — that content-blindness is what keeps it a sense organ (like _afs_byte_feature) instead
+        # of a p2/p3 rule injector, and G-W3(iii) audits exactly this. Slots are a FIFO of the last
+        # n_slot declarations; the lane needs the ring FULL (clms store_apply indexes range(n_slot)),
+        # so a partial ring stays unwired rather than padded with an invented entity (honesty).
+        if _store_episodic == "on" and percept_text is not None:
+            _m_fact = _STORE_EPISODIC_FACT.match(percept_text)
+            if _m_fact is not None:
+                _ep_store_ents.append(_m_fact.group(1))
+                _ep_store_pols.append(1 if _m_fact.group(2) == "pos" else 0)
+                while len(_ep_store_ents) > _ep_n_slot:      # FIFO — oldest declaration falls out
+                    _ep_store_ents.pop(0)
+                    _ep_store_pols.pop(0)
+                if len(_ep_store_ents) == _ep_n_slot:
+                    # target_slot is None: the daemon is NOT told which slot is being asked about
+                    # (that field is oracle-only · core/clms.py store_apply reads it iff oracle=True).
+                    set_clms_store(store={"entities": list(_ep_store_ents),
+                                          "pols": list(_ep_store_pols),
+                                          "target_slot": None})
+                    _ep_store_writes += 1
         # H_9411 ⑤ · Engine A lives in session time. pf was warmed once (:1293) then NEVER
         # stepped, so pure_field_phi/phase were the step-600 constants every tick and the emit
         # gate's Φ/phase safeties were judged against a frozen snapshot. Advance with the SAME
@@ -3001,6 +3071,14 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             _trace_fh.flush()
 
         tick = tick + 1
+
+    # H_9744 (S4) · the store is SESSION memory, so it dies with the session. set_clms_store writes a
+    # process global (core/decode.py:302), and a later daemon in this same process would otherwise
+    # inherit a previous session's facts — cli/evaluate.py:4428 resets for the same reason. G-W3(v).
+    if _store_episodic == "on":
+        set_clms_store(None)
+        _pln("store-episodic  : writes=" + str(_ep_store_writes)
+             + "  ring=" + str(len(_ep_store_ents)) + "/" + str(_ep_n_slot) + "  (session store cleared)")
 
     if _trace_fh is not None:
         _trace_fh.close()

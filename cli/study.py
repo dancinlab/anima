@@ -126,7 +126,43 @@ def _teacher_sealion(prompt, timeout=90, max_tokens=512):
         raise TeacherError("SEA-LION response shape unrecognized: %s" % json.dumps(payload)[:400])
 
 
-_BACKENDS = {"codex": _teacher_codex, "sealion": _teacher_sealion}
+def _teacher_script(prompt, script_path=None):
+    """H_9744 · DETERMINISTIC scripted teacher — replays fixed lines from a file, ignoring `prompt`.
+
+    An LLM teacher cannot carry a pre-registered gate: its lines vary run to run, so a store-fill
+    or a lookup score would not be reproducible and no bar could be frozen against it (frozen-first).
+    This backend makes the percept stream an EXPERIMENTAL VARIABLE instead: one line per teacher
+    turn, in order, from --script <f.txt> (blank lines and #-comments skipped). Exhausted script =>
+    silence (None), which the daemon already treats as "the other said nothing".
+
+    It is a fixture, not an intelligence: it never reads the daemon's replies. That is the point —
+    the arms (facts-then-query · shuffled-store · no-store) must differ ONLY in the scripted bytes.
+    """
+    path = script_path or os.environ.get("ANIMA_STUDY_SCRIPT")
+    if not path:
+        raise TeacherError("--teacher script needs --script <f.txt> (or ANIMA_STUDY_SCRIPT).")
+    if not os.path.exists(path):
+        raise TeacherError("--teacher script: no such script file: %s" % path)
+    lines = _teacher_script._cache.get(path)
+    if lines is None:
+        with open(path, encoding="utf-8") as fh:
+            lines = [ln.strip() for ln in fh
+                     if ln.strip() and not ln.lstrip().startswith("#")]
+        if not lines:
+            raise TeacherError("--teacher script: %s has no usable lines" % path)
+        _teacher_script._cache[path] = lines
+        _teacher_script._pos[path] = 0
+    i = _teacher_script._pos[path]
+    if i >= len(lines):
+        return None                                # script spent → the teacher falls silent
+    _teacher_script._pos[path] = i + 1
+    return lines[i]
+
+
+_teacher_script._cache = {}
+_teacher_script._pos = {}
+
+_BACKENDS = {"codex": _teacher_codex, "sealion": _teacher_sealion, "script": _teacher_script}
 
 
 def make_teacher(backend=None):
@@ -165,11 +201,17 @@ _USAGE = """anima study <ckpt> — conversational percept channel (teacher = exo
   anima-py study --teacher-selftest [--teacher codex|sealion]
         Prove the selected teacher backend answers (one trivial round · ~1 cent).
 
-  --teacher {codex,sealion}   backend (default: codex · env ANIMA_STUDY_TEACHER)
+  --teacher {codex,sealion,script}  backend (default: codex · env ANIMA_STUDY_TEACHER)
+                              script = DETERMINISTIC fixture from --script (the only one a frozen
+                              pre-registered gate can run on — an LLM teacher varies per run)
   --rounds R                  teacher turns (default 6)
   --window W                  ticks between teacher turns (default 4)
   --topic "..."               conversation subject (default: a general opener)
   --out PATH                  transcript JSONL (default: ~/.anima_study/transcript_<ts>.jsonl)
+  --script PATH               (--teacher script) one teacher line per turn, in order · # comments
+                              and blank lines skipped · exhausted => the teacher falls silent
+  --chat-flag VALUE           forward one flag to the daemon (repeatable, value-by-value):
+                              --chat-flag --store-episodic --chat-flag on  (H_9744)
 
 Backends: codex = `codex exec` (needs `codex login`) · sealion = Cloudflare
 Workers AI REST (needs CLOUDFLARE_* env from the vault). The teacher is an
@@ -209,7 +251,8 @@ def _build_teacher_prompt(topic, recent_emits, round_idx, total_rounds):
     return "\n".join(lines)
 
 
-def _run_study(ckpt, backend, rounds, window, topic, out_path):
+def _run_study(ckpt, backend, rounds, window, topic, out_path,
+               script_path=None, chat_flags=None):
     """Drive one within-session teacher⇄daemon conversation (weights unchanged)."""
     try:
         ask = make_teacher(backend)
@@ -244,7 +287,7 @@ def _run_study(ckpt, backend, rounds, window, topic, out_path):
     _prev_ticks = os.environ.get("ANIMA_TICKS")
     os.environ["ANIMA_TICKS"] = str(n_ticks)       # the daemon reads tick count from this env
     try:
-        _chat.anima_consciousness_mode(ckpt, [], percept_source=percept_source)
+        _chat.anima_consciousness_mode(ckpt, list(chat_flags or []), percept_source=percept_source)
     finally:
         if _prev_ticks is None:
             os.environ.pop("ANIMA_TICKS", None)
@@ -282,6 +325,8 @@ def study_mode(argv):
     window = 4
     topic = None
     out_path = None
+    script_path = None            # H_9744 --script (deterministic teacher fixture)
+    chat_flags = []               # H_9744 --chat-flag (daemon flags forwarded to cli/chat.py)
     i = 0
     while i < len(argv):
         a = argv[i]
@@ -302,12 +347,25 @@ def study_mode(argv):
             topic = argv[i + 1]; i += 2
         elif a == "--out":
             out_path = argv[i + 1]; i += 2
+        elif a == "--script":
+            script_path = argv[i + 1]; i += 2
+        elif a == "--chat-flag":
+            # H_9744 · pass one daemon flag through to cli/chat.py. _run_study used to hand the
+            # daemon an EMPTY argv, so every chat-side flag (--store-episodic, --emit-gate, …) was
+            # unreachable from a study run — the study lane could only ever run the default daemon.
+            # Repeatable: --chat-flag --store-episodic --chat-flag on. Kept explicit rather than
+            # swallowing unknown flags, so a typo still fails loudly here.
+            chat_flags.append(argv[i + 1]); i += 2
         elif a.startswith("-"):
             print("anima study: unknown flag %r\n" % a, file=sys.stderr)
             print(_USAGE, file=sys.stderr)
             return 2
         else:
             ckpt = a; i += 1          # positional = the ckpt to converse with
+    if script_path:
+        # Set before ANY make_teacher() — the selftest path builds a teacher too, and reading
+        # the script only inside _run_study left `--teacher script --teacher-selftest` dead.
+        os.environ["ANIMA_STUDY_SCRIPT"] = script_path
     if selftest:
         try:
             ask = make_teacher(backend)
@@ -329,4 +387,5 @@ def study_mode(argv):
         print("anima study: need a <ckpt> to converse with "
               "(or --teacher-selftest to just check the backend).", file=sys.stderr)
         return 2
-    return _run_study(ckpt, backend, rounds, window, topic, out_path)
+    return _run_study(ckpt, backend, rounds, window, topic, out_path,
+                      script_path=script_path, chat_flags=chat_flags)
