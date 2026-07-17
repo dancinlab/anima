@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재하고 **선결조건 4/4 통과**(①실재 real/ped 54.07 ②layout아님 3렌즈 ③크기아님 배정이 Q 의 100% ④EN점유아님 — scratch d768 자력학습 대조 real/ped 12.03) ⟹ H_9643(파벌 학습·GPU) 선결조건 전부 통과 · 발사=오너 비용 판단.",
+    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재 + 선결조건 4/4 통과(H_9674: 실재 54.07 · layout아님 3렌즈 · 크기아님 · EN점유아님 scratch d768 12.03) · 🔵 마지막 가설 H_9643 레버 설계 완료(Fable) — 구현 대기. 축 종결조건 사전등록됨(D1|D2|D3).",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16690,6 +16690,41 @@
           "verdict": "🟢 real/ped: K=2 5.205 · K=4 7.797 · K=8 8.690 · K=12 12.030 · max Δ +0.112276 · scramble=pedestal ⟹ 블록 실재. ⚠️d 다름(768 vs 3784)·과제 다름 ⟹ 'EN 점유가 유일 원인은 아니다' 까지가 정직 · DIRECTIONAL"
          }
         ]
+       }
+      ]
+     },
+     {
+      "name": "🔵 H_9643 레버 설계 — 파벌축의 마지막 가설 (Fable 위임)",
+      "role": "",
+      "id": "faction-r3-h9643-lever-design",
+      "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
+      "verdict": "🔵 DESIGNED · loss = CE 뿐(파벌 통계량 0개 = 순환 회피) · 구현 대기",
+      "children": [
+       {
+        "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
+        "role": "",
+        "id": "faction-r3-h9643-reject-ortho",
+        "detail": "파벌간 decorrelation loss 는 DV(상관 모듈러리티 Q)의 측정 통계량을 매 스텝 직접 쓴다. 옛 sync 가 Φ 의 음수항을 깎은 것과 동일 구조 = 순환 재발. 그래서 loss 는 CE 뿐이고 specialization 은 구조 제약 아래 CE 가 만들거나 못 만든다 — 그것이 H_9643 의 질문이다."
+       },
+       {
+        "name": "⚠️ Q 로는 learned vs post-hoc 가 안 갈린다 (내 예상 정정)",
+        "role": "",
+        "id": "faction-r3-h9643-q-demoted",
+        "detail": "groups=K 구조에선 random-init 도 아키텍처적으로 블록을 가진다(--arm-random-init 이 이를 잡음). ⟹ Q 는 조작확인으로 강등하고 판정은 기능 lesion 선택성 S 로 간다(--faction-lesion 신규 계기).",
+        "verdict": "우연 = post-hoc 랜덤 재배정 200회의 null95 (실측 유도 · chance-level-must-be-derived-per-metric)"
+       },
+       {
+        "name": "⚠️ H_9267 XBIND 는 천장 — floor pre-gate 선행",
+        "role": "",
+        "id": "faction-r3-h9643-ceiling-pregate",
+        "detail": "합성 XBIND full-coverage 에선 K=1 도 D-acc 1.000 = 레버가 잴 게 없다. G1 은 DATA 벽(H_9304)이므로 coverage-기아 XBIND 를 쓰고 K=1 기저가 D-acc <=0.6 인 coverage 를 먼저 실측 확정한 뒤 발사."
+       },
+       {
+        "name": "▶️ 구현 순서 + fire 계획",
+        "role": "",
+        "id": "faction-r3-h9643-plan",
+        "detail": "① core/model.py groups=K + GN(K) + bridge(OFF byte-identical) ② serialize trailer + VERSION(G5) ③ evaluate --faction-lesion + lambda 오버라이드 ④ K=1 floor pre-gate → {K=8,K=1}x3seed=6 train.",
+        "verdict": "toy = summer+aiden 전용호스트(a_wall_first) · $0 자가pool · 1–2일. 303M = toy GREEN 시만 · rent = 오너 go."
        }
       ]
      }
