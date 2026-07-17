@@ -1,6 +1,6 @@
 # H_9694 — R2 ⭐ kill#6 잔해 회수: targeted co-train 의 bind Δ 를 frozen 계기로 재획득
 
-**status:** 🔵 PRE-REG (lab full · Fable A1 = 최고 성공확률 각도) · not-terminal · wired: 미배선 (선행 [[H_9693]] 필수)
+**status:** 🧱 DECISION-KILL · ⚠️ MECHANISM-INCONCLUSIVE (303M engine-native · runpod A100 · frozen --fan-bind · lab full reconcile · 2026-07-17) · 1-seed · wired: 계기 배선완료(#3915·#3983)
 **lane:** G6/ρ·fan · 데이터 레버 **related:** [[H_9693]] · [[H_9124]] (데이터축 선례) · [[H_9576]] (n=58 부호반전 전례)
 
 ## 물음
@@ -30,6 +30,29 @@ convergence `g6-ideation-hexa-1` 은 **"TARGETED 가 FALS 를 위조한다"를 �
 ## falsify
 
 🟢 CRACK: bind Δ 차이 > null 95% ∧ G0 5/5 유지 ∧ 2-seed. | 🧱 KILL: Δ 차이 TOST 0 등가 = 데이터 레버가 BIND 못 움직임(0.444 는 인공물). | ⚠️ G0 붕괴 = CPT 파괴 = 측정 무효.
+
+## 🧱 verdict — DECISION-KILL · MECHANISM-INCONCLUSIVE (2026-07-17 · runpod A100 · frozen --fan-bind · lab full reconcile)
+
+| arm (6000step co-train · val_CE DESCENT 1/1) | composed J | shuffled J | **bind_delta** | mismatched-null p95 |
+|---|---|---|---|---|
+| base (BEFORE) | 0.0000 | 0.0000 | 0.0000 | — |
+| **targeted** (짝유지 fp=4000) | 0.0208 (2/96) | 0.0104 (1/96) | **0.0104 (1/96)** | 0.0521 (5/96) |
+| **shuf** (짝파괴 fp=0) | 0.0521 (5/96) | 0.0521 | **0.0000** | 0.0833 (8/96) |
+
+**사전등록 PRIMARY 미달 = CRACK 아님**: `composed J(targeted) > mismatched-null p95` → 0.0208 < 0.0521 ❌ (절1 targeted−shuf=+0.0104>0 은 통과). 엔진 `--fan-bind` 도 양 arm `🧱 NO-BIND` 판정. **decision-level 🧱**.
+
+**그러나 "0.444 인공물 / 레버 무효"는 미획득 (mechanism-INCONCLUSIVE)** — lab full(Fable∥Sol) 압박검증 수렴:
+- **절2(`composed J > marginal null`)는 composition 이 아니라 emission 을 잰다** — 짝 전파괴한 shuf arm 이 composed J **최고값**(0.0521)이다(kill#6 재발: FORM 게이트의 다른 얼굴). composition 을 격리하는 유일 지표는 **bind_delta**(paired 차분): targeted +0.0104(유일)·shuf 0(방출 최고인데도 차분 0) = emission 과 decouple.
+- **계기 결함**: `--fan-bind` 의 null 은 composed 방출을 **다른 프레임 짝에 채점한 marginal J** 분포(code 확인 `cli/evaluate.py:eval_fan_bind`). bind_delta(paired 차분)는 **자기 null pedestal 이 없다** ⟹ `chance-level-must-be-derived-per-metric` 위반. 올바른 통계량 = 이중차분 D=(Jc−Js)_tgt−(Jc−Js)_shuf 의 paired 순열 null + CI = **미계산**.
+- **검정력**: bind_delta 0.0104 = **1건/96** 차이. "composition-sensitivity 를 심었다"는 근거가 표본 한 건. 사전등록 🧱 은 "0.444 TOST 0등가"를 요구하는데 등가한계·TOST 미계산 ⟹ **"0.444 인공물" 미증명**. default 🧱-attribution = tune-to-negative.
+- **positive control 부재**: 0.444(hexa 비동결·다른 스케일)의 non-recovery 는 어느 쪽 증거도 아님. 계기결함 vs 레버무효는 **양성통제(H_9267 XBIND D-acc 1.000 을 fan-bind 로) 없이 미귀속**.
+
+**dissent(Fable, 1줄)**: Fable=⚠️ UNDECIDABLE(KILL 로직이 paired 를 marginal null 로 잰 범주오류) · Sol=🧱 decision-level·inconclusive-mechanism. reconcile: code 확인 결과 절2는 사전등록대로 composed-J-absolute vs marginal-null 이라 **letter 상 CRACK 미달=decision 🧱 채택**, Fable 의 범주오류 지적은 **계기 정렬결함**으로 후속(H_9745)에 반영.
+
+**통제 견고**: 두 arm frame_sha=98c48115ca37·claim_sha=e2ac497aa442 **동일** · targeted fp=4000/shuf fp=0. **측정 유효**: val_CE DESCENT(CPT 파괴 아님·⚠️칸 배제).
+**scope**: 1-seed(7)·합성 g6bind·303M py303_full. **재현**: `anima-py corpus g6bind --lang en --arm {targeted,shuf} --n-blocks 4000 --seed 7` → `train --init py303_full.clm --steps 6000 --seed 7` → `evaluate --fan-bind --fan-smp 16`.
+
+**후속 (both models · $0~저비용)**: [[H_9745]] fan-bind 에 bind_delta paired 순열 null + prereg TOST(계기↔주장 정렬·`instrument-claim-alignment-before-reading-a-bar`) · [[H_9746]] XBIND(H_9267) 양성통제를 fan-bind 로 = dynamic-range 확정 → 계기결함/레버무효 귀속.
 
 ## source
 lab full Fable A1 · 선행 [[H_9693]].
