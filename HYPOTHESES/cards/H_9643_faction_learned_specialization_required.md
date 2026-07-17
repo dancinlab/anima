@@ -713,6 +713,33 @@ d=64 toy 는 cupy 커널런치 오버헤드 > numpy → CPU 가 ~200× 빠름(GP
 ### 과학 결론 (toy)
 lam0 자유학습 within-arm PASS(S 1.93>null95 1.06 p=.005) = **서로소 알파벳 데이터서 파벌이 학습되는 실재 레버**(A 낮음 = 자유 특화라 강제 π 와 무관 = 올바른 판별). **BUT toy 는 어휘=도메인 분리라 token routing 착각 위험**(Fable Q5#1) · 실물 ko/en·general/sns 는 공유구조라 S 도달 천장 낮음(#5) → toy PASS ≠ 303M 종결(a_toy_scale_recheck). **계기 자체는 TERMINAL 인증 완료** — 실물 arm(K=8 vs K=1 · 위험 8개 · perm≥200 · $ 예산)만 남음.
 
+
+## 🔥 303M 실물 arm — pre-registration + S1 하드게이트 PASS (2026-07-17 · 오너 ② 승인)
+
+lab-full(Fable+Sol) 레시피 확정 · 발사 전 $0 하드게이트 S1 통과.
+
+### S1 하드게이트 PASS — 계기 303M 최초 관통 ✅
+계기 `--faction-lesion` 이 303M ckpt 서 한 번도 안 돌았음(H_9731 지적) → py303_full.clm(production 303M·파벌 무학습)에 `--faction-split 8 --perm 2` 스모크:
+- **exit 0 · wall 158s · NameError 없음 · 유효 JSON · d=3784 K=8(473/블록)**
+- base CE en_gen 1.80·en_sns 2.42·ko_gen 1.54·ko_sns 2.57 nats = **healthy(과적합 아님·>1.0)**
+- S 0.0004 ≤ null95 0.0007 (p=1.0) = **production 303M(파벌 무학습)이 null-구조 baseline = 올바름**(파벌 없는 모델에 8분할 강제 = 특화 없음). random-init 303M K=8 경계 arm 의 실물 바닥값 예고.
+- perm 비용: GPU eval 필수(4샘플 perm2 = 158s → 실물 perm200×val샘플 = 수시간/ckpt · Sol Q5 200-step calib 로 확정).
+
+### 학습 레시피 (사전등록 · from-scratch · warm-start 금지)
+- **코퍼스**: clean 4-cell **127.5MB**(ko-gen 60 + en-gen 60 + ko-sns 6.18 + en-sns 1.33 · train-py-3 의 5MB 소코퍼스 아님) = 14k step ≈ 0.95에폭(과적합·undertrain 사이 창). `--sample proportional --require-cells 4`. **big broad·5lang 기각**(도메인압력 필요/희석).
+- **hparam**: d=3784·L=4·ks3·canon E2→3(345.7M)·batch8·seq1024·lr3e-4·bf16·14k step·ckpt-every 2000·G0게이트 10k/12k/14k(kwr≥.5 ≥4/5).
+- **arm**: K=8 = `--n-factions 8`, K=1 = `--n-factions 0`(NOT 1 · m_cross 전부0 퇴화) × seed 7·11·23 = 6 train. K=1 의 8-slice 는 평가측 `--faction-split 8`(인증 leg③).
+- **capacity**: 동일 d param 매칭 불가(K=8=171M vs K=1=346M · grouped conv 절약). 주 통제=within-arm(각자 자기 null) + **CE-fit-match**(|ΔvalCE|≤0.15 CE-nearest-ckpt). K=8 실패 시에만 조건부 7번째(d=5392 param-matched-up) 발사.
+
+### 판정 bar (사전등록 · seed별→집계)
+- **validity**: V1 양arm G0≥4/5 · V2 fit-match|ΔvalCE|≤0.15(>0.3 INVALID-pairing) · V3 UNDERPOWERED(동적범위<2×null sd → VOID).
+- **primary**: P1 S(K=8)>null95 p≤.05(perm200 인증설정) · **P2 K=1 --faction-split 8 이 자기 null clean 음성**(S≤null95 · 빠졌던 하드통제 · 넘으면 campaign UNINTERPRETABLE=H_9731 D5) · paired I_s=S8−S1slice>0 ∧ J_s=ΔCE 대비>0 (2/3 seed).
+- **secondary(DIRECTIONAL)**: Z_S cross-arm 강등 · raw ΔCE 동방향 · register 2×2 부분S(리스크① 어휘=도메인) · `--faction-lam 0`(bridge OFF 리스크③) · random-init 303M 경계 arm.
+- **집계**: ≥2/3 seed P1∧P2 → 🟢 "파벌=303M서 학습되는 within-arm 레버" TERMINAL. 음성=사전등록 등가역(TOST형)만·V3 발동=VOID(KILL 아님). **스코프**: 카드 Q2(특화)까지 · G1-debate(Q3)는 별도 후속.
+
+### pod 스펙 (Fable RTX4090×6 secure ≈$22-36 채택 · Sol dissent: RTX5090 최저가/H100 안정 — sm_120 트랩 회피 위해 4090)
+부트스트랩 하드게이트: ensurepip → **origin/main git-archive 서 anima-python[train,gpu] 설치**(PyPI 아님) → torch.cuda.is_available() 명시게이트(train-py-6 CPU폴백) + arch match(pod-bootstrap-gpu-2) → 60-step 스모크(--n-factions 8 exit0+resume.pt) → 본 발사. teardown 전 ckpt+lesion.json PULL(a_fire_recover_complete).
+
 ## 통제군 (≥2 · 사전등록)
 
 ① post-hoc 분할 ② 랜덤 분할 scramble ③ 단일파벌 null
