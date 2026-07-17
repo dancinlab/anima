@@ -821,9 +821,22 @@ def clm_load_weights(path):
     noG, off = _load_ext(rb, off)                # [d]
     noB, off = _load_ext(rb, off)                # [d]
 
+    # ── H_9643 CLMF (optional) — the faction lane. Absent on every pre-H_9643 .clm, in which
+    # case n_factions stays 0, GroupNorm keeps G=1 and the bridge is skipped => byte-identical.
+    n_factions, fbLam, fbG, fbW, fbB = 0, 0.0, None, None, None
+    if off + 4 <= len(rb) and bytes(rb[off:off + 4]) == b"CLMF":
+        off = off + 4
+        n_factions = int(struct.unpack_from("<I", rb, off)[0]); off = off + 4
+        fbLam = float(struct.unpack_from("<f", rb, off)[0]); off = off + 4
+        fbG, off = _load_ext(rb, off)            # [d]   pre-sigmoid channel gate
+        fbW, off = _load_ext(rb, off)            # [d*d] 1x1 bridge conv (unmasked — the mask is
+        fbB, off = _load_ext(rb, off)            # [d]   re-derived from n_factions at forward)
+
     # pre-transpose conv weights -> Wt[Kdim, Cout] (= w_2d.T)
     W = {
         "ok": True, "d": d, "E": E, "V": V, "K": K, "L": L,
+        "n_factions": n_factions, "fbLam": fbLam, "faction_lam": None,
+        "fbG": fbG, "fbW": fbW, "fbB": fbB,
         "ecWt": ecW.T.copy(), "ecB": ecB,
         "tcWt": [w.T.copy() for w in tcW], "tcB": tcB,
         "eWt": [w.T.copy() for w in eW], "eB": eB,
@@ -1006,7 +1019,12 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
     for li in range(L):
         dil_eff = dil if dil <= DIL_CAP else DIL_CAP
         h = _conv1d(xt, W["tcWt"][li], W["tcB"][li], T, d, d, K, dil_eff, xp)
-        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, 1, xp,
+        # H_9643: GroupNorm groups follow the faction split. G=1 pools mean/var over ALL d
+        # channels, which is a cross-faction path even when the conv is grouped — the trained
+        # model used GN(K), so decoding it with G=1 would silently produce different activations.
+        # W["n_factions"] is 0 (absent CLMF) for every pre-H_9643 ckpt => G=1 => byte-identical.
+        _gf = W.get("n_factions", 0) or 1
+        hn = nn_groupnorm_fwd(h, W["tgG"][li], W["tgB"][li], T, d, _gf, xp,
                               gn_key=("trunk", li))
         hg = nn_gelu_fwd(hn, xp)
         xt = xt + hg.reshape(T, d)
@@ -1015,6 +1033,11 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
         if edits is not None:
             xt = _apply_edits(xt, edits, li + 1, T, d, xp)
         dil = dil * 2
+    # H_9643 cross-faction bridge — the trunk-exit debate module, applied BEFORE the MoE
+    # (the same position core/model.py's forward uses). Absent CLMF => faction_lam is None =>
+    # the golden path is untouched. faction_lam is an explicit override slot: evaluate sets it to
+    # 0.0 to run the debate-OFF ablation without editing a single weight.
+    xt = _faction_bridge_apply(W, xt, T, d, xp)
     # router conv (K=1, Cout=E)
     logits_r = _conv1d(xt, W["rWt"], W["rB"], T, d, E, 1, 1, xp)   # [T, E]
     if routes is not None:
@@ -1032,9 +1055,39 @@ def _fwd_trunk(W, tok, T, taps=None, edits=None, routes=None):
         ex_out[ej] = nn_gelu_fwd(eo, xp).reshape(T, d)
     # MoE router mix
     y = nn_moe_router_fwd(logits_r, ex_out, T, E, d, xp)          # [T, d]
-    # final groupnorm
-    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, 1, xp, gn_key=("out",))
+    # final groupnorm — H_9643: G follows the faction split (absent CLMF => 0 => G=1 => unchanged)
+    _gf = W.get("n_factions", 0) or 1
+    yn = nn_groupnorm_fwd(y, W["noG"], W["noB"], T, d, _gf, xp, gn_key=("out",))
     return yn
+
+
+def _faction_bridge_apply(W, xt, T, d, xp=None):
+    """H_9643 cross-faction bridge (core/model.py FactionBridge twin).
+
+    x <- x + lam * sigmoid(gate) * ((M_cross * W_b) x), M_cross zeroing every WITHIN-faction
+    entry so only faction->faction terms survive. The mask is RE-DERIVED here from n_factions —
+    the serializer deliberately stores W_b unmasked so a reader can tell a structural zero from
+    a learned one.
+
+    Returns xt unchanged when the ckpt carries no CLMF section (n_factions absent/0), so every
+    pre-H_9643 .clm decodes byte-identically. W["faction_lam"] overrides the trailer's lam when
+    present — that is the debate ON/OFF ablation (lam=0.0 is an exact identity).
+    """
+    K = int(W.get("n_factions", 0) or 0)
+    if K <= 0 or "fbW" not in W:
+        return xt
+    xp = xp if xp is not None else np
+    lam = W["faction_lam"] if W.get("faction_lam", None) is not None else W["fbLam"]
+    lam = float(lam)
+    if lam == 0.0:
+        return xt                                  # exact identity — the OFF arm
+    per = d // K
+    idx = xp.arange(d) // per
+    m_cross = (idx[:, None] != idx[None, :]).astype(xt.dtype)     # [d_out, d_in]
+    Wb = xp.asarray(W["fbW"], dtype=xt.dtype).reshape(d, d) * m_cross
+    gate = 1.0 / (1.0 + xp.exp(-xp.asarray(W["fbG"], dtype=xt.dtype)))   # sigmoid, [d]
+    h = xt @ Wb.T + xp.asarray(W["fbB"], dtype=xt.dtype)[None, :]        # [T, d]
+    return xt + lam * gate[None, :] * h
 
 
 def clm_forward_hidden(W, tok, T):
