@@ -13791,8 +13791,8 @@
      {
       "id": "hf-artifacts-archival-census",
       "type": "gate",
-      "name": "HF artifacts — 보관 갭 census + TOP-5 업로드 (a_hf_complete 레지스트리 · 실측/업로드 2026-07-17)",
-      "detail": "🚨 미백업 **168 ckpt·29.6GB → 134개·23.7GB**(TOP-5 업로드로 34개 해소). 로컬×summer×HF LFS sha256 3-way 대조.",
+      "name": "HF artifacts — 보관 갭 census ✅ 종결 (CITED 잔여 0 · 실측/업로드 2026-07-17)",
+      "detail": "✅ **미백업 168 ckpt·29.6GB → 54개·9.5GB**, 잔여는 **전부 rubric 상 정당 제외**(CITED 잔여 0). 로컬×summer×HF LFS sha256 3-way 대조.",
       "children": [
        {
         "id": "hf-census-method",
@@ -13801,13 +13801,13 @@
        },
        {
         "id": "hf-census-local-gap",
-        "name": "로컬 단일사본 67개·11.8GB → 63개·11.1GB",
-        "detail": "로컬 303M ckpt 88개 중 HF 백업은 21개뿐. 나머지 67개는 mac 디스크 사고 시 소멸."
+        "name": "로컬 단일사본 67개·11.8GB → 4개(전부 H_9410 PRE-REG)",
+        "detail": "로컬 303M ckpt 88개 중 HF 백업이 21개뿐이었다 → 회수 후 잔여 4개는 H_9410 rung0/rung2 뿐이며 tier=⏳ PRE-REGISTRATION(verdict 부재)이라 CITED 미충족 = 정당 제외."
        },
        {
         "id": "hf-census-summer-gap",
-        "name": "🚨 summer 단일사본 101개·17.8GB → 71개·12.5GB",
-        "detail": "공유 렌트 호스트에만 존재(로컬✗ HF✗) = a_fire_recover_complete 의 '영구 저장소로 pull' 미완. 잔여 내역: h9734 25(in-flight) · anima_bgrecomb ckpt 14 · h9672_t3s11 11(=rubric 상 제외한 step 자동저장) · h9070 7 · nbind_mig 4."
+        "name": "🚨 summer 단일사본 101개·17.8GB → 50개(전부 제외 대상)",
+        "detail": "공유 렌트 호스트 단일사본 = a_fire_recover_complete 미완이었다 → 회수 종결. 잔여 50 = h9734 25(in-flight·verdict 부재) · step 자동저장 20(h9672_t3s11 11·h9070 7·gt_c34 2) · nbind_mig 4(H_9271 ⏳ PRE-FIRE) — 전부 rubric 상 보관 대상 아님."
        },
        {
         "id": "hf-census-h9627-gap",
@@ -13846,8 +13846,8 @@
        },
        {
         "id": "hf-census-priority",
-        "name": "✅ TOP-5 업로드 완료 (2026-07-17 · 38 ckpt · 6.73GB · 원격 sha256 전건 일치)",
-        "detail": "① `anima-base-py303-full` PUBLIC ② `anima-h9359-c3-transplant-en` PUBLIC(11 ckpt) ③ `anima-h9324-write-lever` PUBLIC(17) ④ `anima-h9672-store-bridge-addr-loss` PRIVATE(6·해리 쌍) ⑤ `anima-h9520-study-replay-cpt` PRIVATE(3-arm)."
+        "name": "✅ 업로드 종결 — 26 repo · 143 ckpt · 41.2GB (원격 sha256 전건 일치)",
+        "detail": "PUBLIC 6 · PRIVATE 20. 신규 19 repo + 기존 3 repo 보완(exp3·savant·e1_slw) + c34-base 에 arms/ 14 추가. collection 5개(binding wall · G1 recombination · store/bridge · base substrates · consciousness/soma)."
        },
        {
         "id": "hf-census-not-yet",
@@ -13868,6 +13868,11 @@
         "id": "hf-census-visibility-collections",
         "name": "가시성·collection",
         "detail": "가시성 = a_hf_complete 기계적용(PASS=PUBLIC · FAIL/WIP=PRIVATE) — 새 축을 만들지 않았다. H_9672 는 🟢 이나 `구현됨·미배선`=WIP 이라 PRIVATE. collection(a_hf_collections) = `anima · binding wall`(h9324·h9359) · `anima · base substrates`(py303-full)."
+       },
+       {
+        "id": "hf-census-closure",
+        "name": "종결 조건 = CITED 잔여 0 (용량 0 아님)",
+        "detail": "rubric 이 ARCHIVE(x):=CITED(x) 이므로 종결은 '전부 올렸다'가 아니라 '**판정이 measured 된 파일 중 안 올라간 게 없다**'이다. 잔여 54개는 ① verdict 부재(H_9410·H_9734·H_9271) ② 평가되지 않은 step 자동저장 — 둘 다 주장 폐쇄집합 밖. verdict 착지 시 ①은 보관 대상으로 승격된다."
        }
       ]
      },
