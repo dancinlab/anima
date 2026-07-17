@@ -1,6 +1,7 @@
 # H_9715 — emit=f(stage) 와 z=const 는 하나의 뿌리인가 — stage-노예화 tension (fable R5-4 · PROPOSED · c 정면)
 
-**status:** 🔵 PROPOSED (미실행 · lab full R5 · 사전등록 · 예측1·2 는 $0) — source=fable R5-4
+**status:** ⛔ **VOID — 예측1·2 원리적 관측불가** (engine-native `--stage-slave` · v0.15.54 · $0) — source=fable R5-4
+**verdict:** stage 축이 **한 수준에 pin**(stage=4 가 **139/150 = 92.7%** · 3 run 동일 · n≥30 셀 1개) ⇒ η² 대조 불가 = **z 에 대한 음성 아님**. 🔑 **VOID 자체가 발견**: 라이브 데몬은 사실상 **단일 stage** 에서 산다 ⇒ [[H_9400]] 의 H(emit\|stage)=0.465 도 **거의 상수인 조건변수**에 대한 값 = **재검 대상**. 남은 유효 검정 = **예측3 뿐**(pool)
 **lane:** mouth/tension × Ψ½ — 두 프런티어의 통합 가설
 **related:** [[H_9400]] · [[H_9712]] · [[H_9714]] · [[H_9717]] · [[psi-half-central-thesis-never-operated]]
 
@@ -53,3 +54,65 @@ anima-py chat --pc2-zeta --stage-cycle                                          
 
 ## 상태
 🔵 PROPOSED — 측정 주장 0(설계). `stage_cycle: false` 는 트레이스 헤더의 **기존 기록**이지 새 측정이 아니다.
+
+
+---
+
+# ⛔ VERDICT — VOID (사전등록 '우연 아래' 칸 발화) · 그러나 VOID 자체가 발견이다
+
+**계기**: `anima-py evaluate --pc2-direction /tmp/pmp/pmp_traces --stage-slave` (v0.15.54 · G5 · $0)
+**독립 run**: 9 파일 → 3 run (중복 dedupe · [[H_9714]] 교훈)
+
+## ① stage 축 인구조사 — 예측1·2 의 관측가능성 게이트
+
+| run | stage 분포 | 최빈 | n≥30 셀 |
+|---|---|---|---|
+| off/bias/rng_s7 | `{0:8, 1:1, 2:1, 3:1, 4:139}` | **stage=4 · 92.7%** | **1개** |
+| …_s4302 | `{0:8, 1:1, 2:1, 3:1, 4:139}` | **stage=4 · 92.7%** | **1개** |
+| …_s4303 | `{0:8, 1:1, 2:1, 3:1, 4:139}` | **stage=4 · 92.7%** | **1개** |
+
+⇒ 사전등록 표의 **"stage 수준이 1개뿐 ⇒ VOID · 예측1·2 원리적 관측불가 · 예측3 만 유효"** 칸 발화.
+**이건 z 에 대한 음성이 아니다** — 대조축 자체가 없어 못 재는 것이다(계기가 판독을 **거부**했다).
+
+## 🔑 왜 VOID 가 발견인가
+
+`cli/chat.py:1737` — `stage = dr_stage_at((tick*8) % 90 if _stage_cycle else tick*8)`.
+`stage_cycle=false`(= **프로덕션 기본값** · 주석 "OFF = byte-identical to the raw daemon")에서 tick 은
+**단조증가**하므로 stage 는 끝 수준으로 진행해 **거기 머문다**. ⇒ **라이브 데몬은 사실상 단일 stage 에서 산다.**
+
+> **⚠️ 상류 함의**: [[H_9400]] 의 **H(emit|stage)=0.465**("emit 은 stage 의 순수함수" = Ψ½ 중심주장
+> 반증의 핵심 근거)도 **거의 상수인 조건변수에 대한 조건부 엔트로피**다. 조건변수가 92.7% 한 값이면
+> H(emit|stage) ≈ H(emit) 에 가까워진다 — **그 근거 자체가 재검 대상**이다.
+> (이 카드는 그 재검을 *주장하지 않는다* — 관측을 지목할 뿐이다. H_9400 재검은 별도 H 로 사전등록해야 한다.)
+
+## 🔁 정직 기록 — 내가 Fable 을 반박한 근거가 틀렸다 (같은 실수의 즉시 재발)
+
+R5 회신에서 Fable 은 헤더 `stage_cycle=false` 를 보고 **"인구조사가 얼린 기질에서 측정됐다 · ζ-fire 도 오염"**
+이라 추론했다. 나는 트레이스의 **stage 고유값 집합 {0,1,2,3,4}** 를 보고 **"stage 는 실제로 변하니 불성립"**
+이라 반박했다. **분포를 보지 않았다** — 92.7% 가 한 값이다.
+이는 [[H_9712]] 에서 **바로 직전에** 배운 교훈("raw 를 분포 확인 없이 읽지 말라 · IQR 단독 판독의 착시")의
+**즉시 재발**이다. 두 실수의 형태가 동일하다: **집계 통계 하나로 분포를 대신 읽었다.**
+
+**누가 무엇을 맞혔나 (구분 필요)**:
+- ✅ **Fable**: stage 는 **사실상 고정**돼 있다 — 이 부분은 Fable 이 옳았고 내 반박 근거가 틀렸다.
+- ✅ **나**: 그것이 **raw 데몬의 기본 동작**이라는 점은 유효하다(코드 주석) ⇒ **"우리가 꺼둔 채 쟀다" 는
+  강등 서사는 여전히 불성립** — "데몬이 원래 이 동작점에서 산다" 이다. **[[H_9664]] ζ-fire 오염 판정도 유지**
+  (같은 기본값에서 돈다 = 프로덕션과 같은 동작점).
+- ⇒ 차이가 중요하다: **"측정 실수"가 아니라 "데몬의 실제 동작점"** 이다. 이는 [[H_9717]] 의 '동작점 vs 능력'
+  프레임에 직접 인계된다.
+
+## 남은 유효 검정 = 예측3 뿐 (pool)
+
+```
+anima-py chat --pc2-zeta --stage-cycle    # stage_cycle=true ⇒ (tick*8)%90 ⇒ stage 순환
+host summer · ckpt ~/py303_full.clm · seeds 7/4302/4303 · 151 tick · OMP_NUM_THREADS=4 · mac 금지
+사전등록: sd(z)@cycle=true ≥ 2× sd(z)@cycle=false(=현 arm) ⇒ 예측3 PASS
+```
+⚠️ 단 **`--stage-cycle` 플래그는 `anima-py chat` 에 아직 없다**(`ANIMA_STAGE_CYCLE=1` env 만 존재 ·
+`cli/chat.py:1728`) — 배선은 사소하나 **미구현**이며, 이 카드는 그것을 **주장하지 않고 명시**한다.
+
+## 범위
+
+예측1·2 **미측정**(VOID) · 예측3 **미실행**. "라이브 데몬이 단일 stage 에 산다"는 **150-tick × 3 run ·
+stage_cycle=false** 범위의 관측이다. 더 긴 run 은 다른 stage 궤적을 가질 수 있다(`dr_stage_at(tick*8)` 는
+tick 에 의존하므로 — 이 역시 미측정).
