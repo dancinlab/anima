@@ -26,3 +26,7 @@ C0 repeat(동일 snapshot→동일 미래·byte-identical) · OWN · **DONOR-P**
 C0/OWN/SHAM collapse ∧ DONOR-X 갈림(사거리 증명) ∧ **DONOR-P가 3seed 반복 갈림·Θ parity/phase/RNG로 설명 안 됨** ⟹ silent causal interior 후보(emit 불변이어도 σ transition·store read-head 갈리면). 전 reachable collision+전 field transplant collapse ⟹ **"anima 최소 causal state=public history+Θ parity·별도 interior capacity 미검출"** cement. 유력: σ/flux(값 변동만으론 부족·donor transplant 미래 transition 갈려야) · kosmos(세션간 read되고 갈려야). Θ 자체=contentless 1bit controller(interior 후보 아님).
 
 ⚠️ DIRECTIONAL·cement=engine-native만.
+
+## 🔵 $0 부분진전 — W_S lane은 이미 NULL (2026-07-17 · H_9738 재해석)
+STATE-QUOTIENT의 full census 중 **W_S-성분 lane은 H_9738(#4015)이 이미 측정=NULL**: own vs donor arm은 공개이력·Θ parity·stage 동일·**W_S hidden state만 다른** DONOR-P 구성 그 자체 → 궤적 byte-identical 3/3seed ⟹ W_S hidden 이식해도 미래 무발산 = 이 lane collapse. 계기도 이미 있음(`--ws-init`). ⟹ **남은 census = W_S 제외 나머지 mutable lane**(afield·immune·cbel·ca3·anchor·kosmos + RNG/stage/refractory). 각 lane DONOR-P collapse=interior 부재 cement 근접·하나라도 반복 갈림=그 lane이 silent interior 후보. 계기 확장 = `--state-census`/`--state-transplant-field <lane>`(--ws-init의 일반화)·오너 go.
+
