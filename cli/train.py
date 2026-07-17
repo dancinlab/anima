@@ -1320,6 +1320,11 @@ def main():
     ap.add_argument("--tlora-no-base", action="store_true", help="drop the dense base")
     ap.add_argument("--dict-lambda", type=float, default=DICT_LAMBDA)
     ap.add_argument("--jamo-lambda", type=float, default=JAMO_LAMBDA)
+    # H_9643: enable the N8 jamo(자모) teach-aux INDEPENDENTLY of --arm, so a faction run
+    # (--arm ctrl --n-factions 8) can borrow the ko-coherence signal without the TLoRA that
+    # tlora_jamo bundles (which would confound the faction measurement). Default off = unchanged.
+    ap.add_argument("--jamo-aux", action="store_true",
+                    help="H_9643: turn on the jamo teach-aux head regardless of --arm (no tlora)")
     # H_9200 E1 — gated-write forward-slot (SLW). --slw engages the CORE-owned
     # (core/slw.py) module on the CLMConvMoE penultimate; weights serialize into the
     # "SLW\x01" .clm trailer. Plain CE alone induces the slots (rung-3 de-risk 0.976
@@ -1513,6 +1518,7 @@ def main():
 
     is_bytegpt = (a.arch == "bytegpt")
     tlora_on, dict_on, jamo_on = ARMS[a.arm]
+    jamo_on = jamo_on or bool(getattr(a, "jamo_aux", False))  # H_9643: --jamo-aux forces it on
     savant_on = not a.no_savant
     mitosis_on = not a.no_mitosis
     # ── ByteGPT: the CLM-specific levers (savant/mitosis/tlora/dict/jamo) are gated OFF.
