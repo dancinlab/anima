@@ -61,6 +61,7 @@ import sys as _anima_entry_guard
 if __name__ == "__main__":
     _anima_entry_guard.exit("⛔ clm_serialize_v2.py 직접 실행 금지 — cli/ 단일진입(anima train/serialize, canonical=hexa) 경유. #2603")
 
+import re
 import struct
 from typing import Dict, Any
 
@@ -192,6 +193,32 @@ def _to_np(x) -> "np.ndarray":
     return np.asarray(x, dtype=np.float32)
 
 
+# H_9643: the trunk/embed convs are grouped iff the model was built with --n-factions K.
+# Set by the packer from the state dict's own faction section; read by _conv_w_to_2d. A module
+# global (not a shape guess) because ONLY the model knows which convs it grouped.
+_FACTION_GROUPS = {"n": 0}
+# Which conv slots core/model.py builds with groups=K when the faction lane is ON:
+# the embed conv ("ecW") and every trunk layer ("tc0W", "tc1W", … — see _general_block_order).
+# The expert convs ("e0W"…), router ("rW") and readout ("roW") are NEVER grouped: MoE+readout
+# are the CONSENSUS stage and stay full-mixing on purpose.
+_GROUPED_SLOT_RE = re.compile(r"^(ecW|tc\d+W)$")
+
+
+def _conv_groups_for(name: str) -> int:
+    """groups for a conv slot: K for the faction-grouped slots, 1 for everything else.
+
+    Matched by an EXACT slot pattern, never a prefix. An earlier cut used a startswith("tcW")
+    test against the real slot names tc0W/tc1W and matched NOTHING — the trunk went out grouped
+    (48,64) while the decoder expected dense (192,64) and the matmul blew up. A near-miss on a
+    name is silent; the regex is anchored so a miss is a miss.
+    """
+    n = int(_FACTION_GROUPS.get("n", 0) or 0)
+    if n <= 1:
+        return 1
+    base = name.split(".")[0] if "." in name else name
+    return n if _GROUPED_SLOT_RE.match(base) else 1
+
+
 def _conv_w_to_2d(w: "np.ndarray", name: str) -> "np.ndarray":
     """Map a weight tensor to the (cout, rest=Cin*K) 2-D layout the decoder expects.
 
@@ -212,17 +239,26 @@ def _conv_w_to_2d(w: "np.ndarray", name: str) -> "np.ndarray":
         # and the decoder would read the wrong columns. So materialize the block-diagonal into a
         # dense (d, d, ks) with structural zeros off the faction block — same math, decoder-shaped
         # bytes (the TLoRA/bind sections set the precedent: the .clm stays one grammar).
-        if cout > 1 and cin_per_g > 0 and cout % cin_per_g == 0 and cin_per_g != cout:
-            groups = cout // cin_per_g
-            if groups > 1 and cout % groups == 0:
-                dense = np.zeros((cout, cout, ks), dtype=np.float32)
-                per_out = cout // groups
-                for g in range(groups):
-                    o0, o1 = g * per_out, (g + 1) * per_out
-                    i0, i1 = g * cin_per_g, (g + 1) * cin_per_g
-                    dense[o0:o1, i0:i1, :] = w[o0:o1, :, :]
-                w = dense
-                cout = w.shape[0]
+        #
+        # `groups` is passed in by the CALLER, never inferred. An earlier cut guessed "grouped iff
+        # cout % cin_per_g == 0 and cin_per_g != cout" and that guess ate the READOUT: readout is
+        # an honest dense Conv1d(64 -> 256, k=1) whose weight is (256, 64, 1), which satisfies the
+        # guess and got expanded to (256, 256, 1) — the decoder then read a (256,256) roWt and the
+        # matmul blew up. A shape cannot tell you the author's intent; the model must say.
+        groups = int(_conv_groups_for(name) or 1)
+        if groups > 1:
+            if cout % groups or cin_per_g * groups != cout:
+                raise ValueError(
+                    f"{name}: groups={groups} inconsistent with weight {w.shape} "
+                    f"(expected (cout, cout/groups, ks))")
+            dense = np.zeros((cout, cout, ks), dtype=np.float32)
+            per_out = cout // groups
+            for g in range(groups):
+                o0, o1 = g * per_out, (g + 1) * per_out
+                i0, i1 = g * cin_per_g, (g + 1) * cin_per_g
+                dense[o0:o1, i0:i1, :] = w[o0:o1, :, :]
+            w = dense
+            cout = w.shape[0]
         return w.reshape(cout, -1)
     if w.ndim == 2:
         return w
@@ -386,6 +422,25 @@ def _pack_main_blob(sd: Dict[str, Any], L: int, E: int) -> bytearray:
     eorder = _general_ext_order(L, E)
     nblk = len(border)            # = L + E + 3
     n_ext = len(eorder)           # = 2L + E + 6
+
+    # H_9643: tell _conv_w_to_2d which convs are grouped. Derived from the state dict itself
+    # (the bridge exists iff the faction lane is on) — never guessed from a shape.
+    K_fac = 0
+    for k in sd:
+        if k.endswith("faction_bridge.gate"):
+            g = np.asarray(sd[k]).reshape(-1)
+            wb = None
+            for k2 in sd:
+                if k2.endswith("faction_bridge.proj.weight"):
+                    wb = np.asarray(sd[k2])
+            if wb is not None:
+                d_model = int(g.shape[0])
+                for k3 in sd:
+                    if k3.endswith("trunk.0.conv.conv.weight"):
+                        w3 = np.asarray(sd[k3])
+                        K_fac = int(d_model // w3.shape[1]) if w3.ndim == 3 and w3.shape[1] else 0
+            break
+    _FACTION_GROUPS["n"] = K_fac
 
     blob = bytearray()
     blob += MAGIC
