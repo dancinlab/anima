@@ -32,9 +32,13 @@
 #   cli/pod_bootstrap.sh ssh9.vast.ai 28484 dist/anima_python-0.13.24-py3-none-any.whl \
 #       py303.clm manifest.json
 #
-# Exit 0 ⟺ the pod can run `anima-py` AND every named asset arrived intact. Anything else exits
-# non-zero with the reason. There is no --force and no skip: a bootstrap that "mostly worked" is the
-# thing this script exists to prevent.
+# TRAINING pods (a fire that runs `anima-py train`, not just evaluate/corpus) need the [train] extra
+# (torch+datasets) on top of the numpy base — set POD_TRAIN=1 to install it arch-correctly (④b):
+#   POD_TRAIN=1 cli/pod_bootstrap.sh ssh9.vast.ai 28484 dist/anima_python-*.whl py303.clm sweep.sh
+#
+# Exit 0 ⟺ the pod can run `anima-py` AND every named asset arrived intact (AND, with POD_TRAIN=1, a
+# real cuda matmul ran). Anything else exits non-zero with the reason. There is no --force and no
+# skip: a bootstrap that "mostly worked" is the thing this script exists to prevent.
 set -euo pipefail
 
 HOST="${1:?usage: pod_bootstrap.sh <ssh_host> <ssh_port> <wheel.whl> [asset ...]}"
@@ -133,6 +137,37 @@ print('  package at', p)\"
   echo \"  anima-py = \$APY\"
   \"\$APY\" >/dev/null || { echo '  FATAL: anima-py is on PATH but does not run'; exit 127; }
   echo '  ✅ GATE PASS'"
+
+# ── ④b TRAIN (opt-in POD_TRAIN=1): the base install is numpy-only (eval/corpus/chat). A TRAINING
+#     fire also needs the [train] extra (torch+datasets) — but a bare pod adds three traps the
+#     base path never hit, all failure-that-looks-like-success:
+#       ⑦ the default-index torch is bleeding-edge (e.g. 2.13+cu130) and FORCE-JITs Triton for
+#         basic ops → dies at CudaUtils init ('Failed to find C compiler' / gcc link fail) on an
+#         image with no gcc/python3-dev. Pin a STABLE build (cu124/cu128) with precompiled kernels.
+#       + Blackwell (sm_120) needs cu128 (cu124 has no sm_120 kernel → 'no kernel image'); older
+#         GPUs take cu124 (pod-bootstrap-gpu-2 · train.py preflight).
+#       + torch.cuda.is_available()==True can STILL crash on the first real kernel (train-py-6:
+#         cu130-vs-driver silently fell to CPU) → the gate runs a REAL matmul, not is_available().
+if [ "${POD_TRAIN:-0}" = 1 ]; then
+  echo "[pod] TRAIN mode — build tools + arch-pinned stable torch + datasets …"
+  "${SSH[@]}" "set -e
+    export DEBIAN_FRONTEND=noninteractive PATH=/usr/local/bin:/usr/bin:/bin:\$PATH
+    command -v gcc >/dev/null 2>&1 && python3-config --includes >/dev/null 2>&1 || \
+      { apt-get update -qq && apt-get install -y -qq build-essential python3-dev; } >/dev/null 2>&1
+    CC=\$(python3 -c \"import re,subprocess as s; o=s.run(['nvidia-smi','--query-gpu=compute_cap','--format=csv,noheader'],capture_output=True,text=True).stdout.strip().splitlines()[0]; print(int(float(o)*10))\")
+    if [ \"\$CC\" -ge 120 ]; then IDX=cu128; else IDX=cu124; fi   # sm_120 Blackwell → cu128, else stable cu124
+    echo \"  compute_cap sm_\$CC → torch \$IDX (stable · precompiled kernels · no Triton JIT for basic ops)\"
+    python3 -m pip install --break-system-packages -q datasets 2>&1 | tail -1
+    python3 -m pip install --break-system-packages -q --force-reinstall torch --index-url https://download.pytorch.org/whl/\$IDX 2>&1 | tail -1"
+  echo "[pod] train hard gate — REAL cuda matmul (not is_available) …"
+  "${SSH[@]}" "python3 -c \"
+import torch
+assert torch.cuda.is_available(), 'FATAL: torch reports no CUDA device'
+x = torch.randn(512, 512, device='cuda')
+y = float((x @ x).sum())
+assert y == y, 'FATAL: NaN from cuda matmul'      # real kernel ran, no crash / silent-cpu
+print('  ✅ TRAIN GATE PASS — torch', torch.__version__, 'real cuda matmul OK')\""
+fi
 
 # ── ⑤ device: ask the ENGINE, not 'does any GPU op work' (a cupy precompiled kernel runs without
 #      the CUDA headers that anima's NVRTC-JIT path actually needs — pod-bootstrap-gpu-1) ─────────

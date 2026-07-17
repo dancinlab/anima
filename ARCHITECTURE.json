@@ -17972,6 +17972,15 @@
     "source": "cli/train.py"
    },
    {
+    "id": "pod-bootstrap-gpu-3",
+    "polarity": "POS-CONV",
+    "value": "bare vast pod(RTX3090 sm_86)서 `anima-py train` 을 처음 돌리니 학습이 step 진입 직후 죽었다 — 세 트랩이 연쇄로 위장했다. ① pod_sweep 이 `pip install .`(base=numpy만)이라 torch(=[train] extra) 미설치 → `ModuleNotFoundError torch` 가 `train --help` 를 크래시시켜 플래그 grep 실패 → '**ABORT stale**' 로 위장(실제론 torch 부재). ② `.[train]` 로 torch 를 깔았더니 기본 인덱스가 **bleeding-edge torch 2.13.0+cu130** 을 당겼고, 이 빌드는 basic 학습서도 **Triton JIT 를 강제** → `CudaUtils()` init 이 `RuntimeError: Failed to find C compiler` 로 죽음(bare image 엔 gcc 없음). ③ gcc(build-essential) 를 깔아도 gcc **컴파일 자체가 exit 1** — Triton 이 `-l:libcuda.so.1` + `-I/usr/include/python3.10`(python3-dev 헤더) 로 링크하는데 그것도 없음. `torch.cuda.is_available()==True` 였는데도(격리 테스트 통과) 실 학습은 크래시 = train-py-6('is_available 이 True 여도 첫 실커널서 죽는다')의 재확인. FIX = **안정 cu124 torch(2.6.0)** 강제 재설치(precompiled 커널 → basic 학습에 Triton JIT 불요) → REAL cuda matmul+gelu 실증 → 재발사 clean.",
+    "recurrence": "bare GPU pod(특히 vast·최소 이미지)서 anima-py train 을 처음 돌릴 때: (a) `pip install .` 만 하면 torch 없음 → 엉뚱한 'ABORT/stale' 로 위장 (b) `.[train]`/기본 torch 가 bleeding-edge 빌드(cu130 등)를 당기면 basic 학습서도 Triton JIT 강제 → gcc/python3-dev 없어 크래시 (c) is_available()=True 여도 실커널서 죽을 수 있음. 세 개가 겹쳐 원인이 서로를 가린다.",
+    "fix": "cli/pod_bootstrap.sh 에 **POD_TRAIN=1 opt-in 모드(④b)** 를 배선했다 — base(numpy) 설치 뒤 training 이면: build-essential+python3-dev 설치 · **nvidia-smi compute_cap 로 arch-pin**(sm_120 Blackwell→cu128 · 그 외→**안정 cu124**, precompiled=Triton JIT 회피) · datasets · 그리고 **REAL cuda matmul 하드게이트**(is_available 아님 — train-py-6 silent-cpu·이 Triton 크래시 둘 다 잡음). pod-bootstrap-gpu-2(sm_120 train.py preflight)+train-py-6(driver-match) 를 한 도구에 통합. usage/trailer lockstep 갱신. bash -n 통과 + 실 pod(RTX3090)서 torch 2.6.0+cu124 real matmul 실증.",
+    "state": "pos-conv",
+    "source": "cli/pod_bootstrap.sh"
+   },
+   {
     "id": "decode-py-3",
     "state": "pos-conv",
     "value": "BATCHING THE FORWARD DOES NOT PAY, AND IT BREAKS PARITY — both halves of my hypothesis were wrong, measured on the real device. I read the GPU sitting at 55-77% during a 33k-prompt probe and concluded it was starved by one-launch-per-prompt overhead (decode-py-2), so I built a batched trunk (_fwd_trunk_batch, per-sequence groupnorm to avoid cross-prompt contamination) and proved max|delta| = 0.000e+00 against the single path ON CPU. On the actual GPU: (1) PARITY BREAKS — max|batched - single| = 1.208e-13, because cuBLAS accumulates a batched matmul in a different order; (2) THE SPEEDUP IS 1.4x, not the order of magnitude the launch-overhead theory predicts. So the forward is not launch-bound at all — the wall is per-OP python glue, which batching over prompts does nothing for. The whole thing was reverted, including the batched code itself (dead code is worse than none). The hard-fail parity gate I had wired in front of it did its job: it refused to measure rather than silently returning 1e-13-drifted hiddens.",
