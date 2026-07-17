@@ -4281,6 +4281,63 @@ pub fn wm_buffer_new(k: int, lam: float, dg: float, dim: int) -> WorkMemBuffer {
     return WorkMemBuffer { keys: [], act: [], n_slots: 0, k: k, lam: lam, dg: dg, dim: dim }
 }
 
+// wm_byte_feature — H_9726 · the 8-dim byte-statistic feature of a string, the VERBATIM
+// twin of py cli/chat.py:242 `_afs_byte_feature` (and cli/anima.hexa:5637's `_afs_byte_feature`,
+// kept byte-untouched — brain.hexa cannot import cli, so this core copy is the disjoint twin).
+// Used by the H_9726 refractory/dual-ledger emit gate as the WM key for a candidate utterance.
+// dim is expected 8; a shorter dim just truncates the 8 stats (same as the py list slice would).
+pub fn wm_byte_feature(s: string, dim: int) -> [float] {
+    let n = byte_len(s)
+    let mut out = []
+    if n == 0 {
+        let mut z = 0
+        while z < dim { out = out + [0.0]  z = z + 1 }
+        return out
+    }
+    let fn_n = to_float(n)
+    let mut total = 0.0
+    let mut sumsq = 0.0
+    let mut n_hi = 0
+    let mut n_low = 0
+    let mut n_sp = 0
+    let mut n_dig = 0
+    let mut n_pun = 0
+    let mut n_lt64 = 0
+    let mut i = 0
+    while i < n {
+        let byte = ord(substring(s, i, i + 1))
+        let bf = to_float(byte)
+        total = total + bf
+        sumsq = sumsq + bf * bf
+        if byte >= 128 { n_hi = n_hi + 1 }
+        if byte >= 97 && byte <= 122 { n_low = n_low + 1 }
+        if byte == 32 { n_sp = n_sp + 1 }
+        if byte >= 48 && byte <= 57 { n_dig = n_dig + 1 }
+        if byte >= 33 && byte <= 64 { n_pun = n_pun + 1 }
+        if byte < 64 { n_lt64 = n_lt64 + 1 }
+        i = i + 1
+    }
+    let mean = total / fn_n
+    let var = sumsq / fn_n - mean * mean
+    let feat = [
+        (mean / 255.0) * 5.0,
+        (to_float(n_hi) / fn_n) * 5.0,
+        (to_float(n_low) / fn_n) * 5.0,
+        (to_float(n_sp) / fn_n) * 5.0,
+        (to_float(n_dig) / fn_n) * 5.0,
+        (var / (255.0 * 255.0)) * 5.0,
+        (to_float(n_pun) / fn_n) * 5.0,
+        (to_float(n_lt64) / fn_n) * 5.0
+    ]
+    // return the first `dim` stats (dim==8 = full feature; the py caller always passes 8)
+    let mut d = 0
+    while d < dim {
+        if d < 8 { out = out + [feat[d]] } else { out = out + [0.0] }
+        d = d + 1
+    }
+    return out
+}
+
 // _cos — cosine similarity between two DIM-vectors (the WM key-match metric; the
 // WM analogue of VAdaptField's _l2 — WM matches by DIRECTION, the immune lane by
 // L2 distance). Returns a@b / (|a||b|), in [-1,1].
