@@ -8254,6 +8254,47 @@ def _pc2_variance_audit(argv):
     l1 = sum(l1s) / len(l1s); l2 = sum(l2s) / len(l2s)
     sd1 = sum(sd1s) / len(sd1s); sd2 = sum(sd2s) / len(sd2s); sdz = sum(sdzs) / len(sdzs)
 
+    # ── direction/identity: is the frozen axis still the SECOND DOF live? ────
+    # H_9713 v1 concluded "the frozen loading is invalid live" from the amplitude alone. That was
+    # imprecise: an axis can keep its direction and lose its RANK. So ask the sharper question --
+    # which live eigenvector does the frozen loading actually point along?
+    print("")
+    print("  ①-b 방향/정체성 — 동결 loading 은 **라이브서 여전히 제2 DOF 인가**")
+    fz = _np.zeros(8)
+    fz[ALL8.index("nov_ctx")] = 0.84
+    fz[ALL8.index("bal_lane")] = -0.44
+    fz[ALL8.index("coh_lane")] = -0.28
+    fz = fz / _np.linalg.norm(fz)
+    cos_by_run = []
+    for name, X, zs in runs:
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        V = V[:, o]
+        cs = [abs(float(_np.dot(fz, V[:, k]))) for k in range(3)]
+        cos_by_run.append(cs)
+        best = int(_np.argmax(cs)) + 1
+        print("     %-18s |cos∠| vs 라이브 PC1=%.3f PC2=%.3f PC3=%.3f  ⇒ **최근접 = PC%d**"
+              % (name, cs[0], cs[1], cs[2], best))
+    cm = _np.mean(_np.asarray(cos_by_run), axis=0)
+    nearest = int(_np.argmax(cm)) + 1
+    print("     run-평균: PC1=%.3f · PC2=%.3f · PC3=%.3f ⇒ 동결 loading 의 **최근접 라이브 축 = PC%d**"
+          % (cm[0], cm[1], cm[2], nearest))
+    per_run_nearest = [int(_np.argmax(cs)) + 1 for cs in cos_by_run]
+    consistent = len(set(per_run_nearest)) == 1
+    if not consistent:
+        print("     ⚠️ **run 간 불일치** — 최근접 축이 run 마다 다르다: %s"
+              % " ".join("PC%d" % k for k in per_run_nearest))
+        print("        ⇒ '동결 PC2 = 라이브 PCk' 로 **단정 불가**. run-평균(PC%d)은 그 불일치를 가린다." % nearest)
+        print("        말할 수 있는 것은 이것뿐: **동결 축의 라이브 RANK 가 안정적이지 않다** —")
+        print("        같은 ckpt·같은 프로토콜의 3 run 이 서로 다른 축에 정렬한다 = 인증된 'PC2' 라는")
+        print("        **이름표가 라이브서 재현되지 않는다**(방향 자체의 무효와는 다른 주장).")
+    elif nearest == 1:
+        print("     🔑 **동결 'PC2' 가 라이브서 일관되게 PC1** (3/3 run) — 방향 무효가 아니라 **RANK 변경**.")
+        print("        ⇒ H_9574/9576/9630~9634 가 민 것은 '버려진 제2 DOF' 가 아니라 **지배축**일 수 있다")
+        print("        (⚠️ 라이브 PC1 이 emit-결합인지는 **이 계기가 안 묻는다** — 별도 측정 필요).")
+
     print("")
     print("  ② 인증치 대비 (run-평균 · 한 계기서 나온 숫자끼리)")
     print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×" % ("λ₁", L1_CERT, l1, l1 / L1_CERT if L1_CERT else 0))
@@ -8278,8 +8319,9 @@ def _pc2_variance_audit(argv):
         v = ("🟢 **PASS-pc2-specific** — PC1 은 인증 sd 를 ±25% 안에 재현(%.2f×)하는데 PC2 만 라이브서 죽음"
              "(%.2f×) ⇒ regime 은 정합 · 문제는 **PC2 특정** ⇒ H_9712 로 인계" % (r1, r2))
     elif not pc1_ok and r1 < 0.75:
-        v = ("🧱 **KILL-regime-stale** — **양성통제 PC1 도 무너짐**(%.2f×) ⇒ H_9468 PCA 는 다른 regime "
-             "· **동결 loading 전체 무효** ⇒ 라이브-refit 필수 · H_9574/9576/9630~9634 상류 근거 재작성" % r1)
+        v = ("🧱 **KILL-regime-stale** — **양성통제 PC1 도 무너짐**(%.2f×) ⇒ H_9468 PCA 는 다른 regime. "
+             "⚠️ 정밀화: 무효인 것은 **loading 의 방향이 아니라 그것이 지시하던 것**(위 ①-b 참조) — "
+             "라이브-refit 필수 · H_9574/9576/9630~9634 상류 근거 재작성" % r1)
     elif pc1_ok and not pc2_low:
         v = ("⛔ INVALID — 둘 다 인증 √λ 재현 ⇒ z-census 의 '분산 부족' 서사와 **정면 모순** "
              "⇒ 계기 충돌(어느 쪽이 거짓말인지 먼저)")
