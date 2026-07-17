@@ -14,4 +14,16 @@
 **verdict-integrity**: **ρ≥0.5-only PASS 는 scratch-interpolation 으로 사전등록**(점유 해제 아님) · EN 능력이 지워진 뒤에만 창발 복귀면 결론은 **"부분 scratch 재학습"** 이지 "substrate 보존하며 capacity 해방" 아님 · **과학 계기지 프로덕션 default 절대 아님**.
 
 ## 상태
-🔵 PROPOSED — 미실행 사전등록. 측정 주장 0(설계). **distinct-from-kills:** 차원지배 아님(소유권·동일예산) · full reset/scratch replay 아님(보존한계 dose 만 정보적) · cpt-destroys-what-corpus-omits 회피(EN-CE 나란히 보고·netting 금지)
+🔵 PROPOSED(reinit-intervention 미실행) · 🔎 **$0 pre-screen 실행 = capacity 전제 반박(2026-07-17 · summer 303M)**
+
+### 🔎 pen effective-rank census — capacity 는 병목이 아니다 ($0 · 기존 dump)
+H_9719 census 로 뽑은 base(py303)·t3 penultimate(126 prompt = 63개체×{is,not})의 참여비율(effective-rank):
+
+| ckpt | eff-rank (raw≈centered) | d | 비고 |
+|---|---|---|---|
+| base py303 | **14.7** | 3784 | 개체 인코딩이 ~15 차원에만 집중(템플릿 지배) |
+| t3 s7 | **23.6** | 3784 | addr-학습이 사용차원 +9 확장(비점유화 일관) |
+
+**판정(DIRECTIONAL)**: penultimate 개체 인코딩이 **~15-24 유효차원**에만 산다 — d=3784 대비 방대한 미사용 차원 ⟹ **capacity 는 병목이 아니다**(자리는 넘친다). 이 카드 pre-screen 의 '큰 유휴 부분공간 → capacity 전제 반박' 이 **실측 충족** ⟹ **reinit-to-free-capacity 레버의 rationale 이 undercut**(자리를 비울 필요가 없다). 진짜 병목 = **점유/조직화**(entity code 가 유휴공간에 조직 안 됨), capacity 아님. [[H_9719]] dose-response(점유 95→57% 단조 비점유화)와 정합.
+**caveat(정직)**: 126 sample 이라 측정가능 rank ≤126 — 'd=3784 유휴' 는 표본상한 때문에 과장 소지. 엄밀히는 '개체가 ~15-24 차원에 집중·템플릿 지배·조직 안 됨'. 더 큰 개체풀로 강화 가능(follow-on).
+**남은 것**: reinit-intervention dose(`--store-pen-reinit ρ` 사다리 + plasticity 통제)는 **학습 fire**(pool·H_9720 뒤 cost-gated) — capacity 아닌 조직화가 병목이므로 우선순위 하향. **distinct-from-kills:** 차원지배 아님(소유권·동일예산) · full reset/scratch replay 아님 · cpt-destroys-what-corpus-omits 회피(EN-CE 나란히·netting 금지)
