@@ -31,6 +31,14 @@ import random
 import re
 import sys
 
+# H_9694 g6bind imports the frozen `rho_fan` module (core/rho_fan.py) for its concept/detector
+# vocabulary — the FIRST corpus format to need a core/ module. Mirror evaluate.py's bootstrap so a
+# bare `import rho_fan` resolves under the installed anima_py package (where core/ = anima_py/core),
+# not just in a dev checkout with core/ already on sys.path.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.dirname(_HERE)
+sys.path.insert(0, os.path.join(_REPO, "core"))
+
 # ── frozen default concepts = rho_fan cz[] (memorization-free ρ·weave / former-G1 gate alignment) ──
 DEFAULT_SEEDS = [
     "consciousness arises from cells",
@@ -3620,7 +3628,7 @@ def main():
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
-                   "routeaudit", "atoms", "c34", "storebind"):
+                   "routeaudit", "atoms", "c34", "storebind", "g6bind"):
         print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind> --out PATH")
         print("      routeaudit --atoms gt_atoms.json --out ra_manifest.json   (H_9355 route audit)")
         print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")
