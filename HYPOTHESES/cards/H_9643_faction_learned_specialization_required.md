@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🟢 계기 v2 재동결(within-arm SOUND · cross-arm bar 폐기) — lab-full Fable+Sol 독립수렴 판정: ①within-arm(S vs 자기 perm-null)은 base_CE 상쇄로 유효 → random-init S≈null(음성 clean·0.0003)+lam0 S>null95 는 그 스케일서 정당 ②cross-arm 절대비교(옛 :11143 S_real/S_randinit≥2.0)는 적합품질 스케일 산물=OILED→폐기 ③÷base_CE→log-ratio(곱셈결합의 정확한 가법화) ④ORACLE argmax→이중중심 코사인정렬 A(선택없음·base_CE면역) ⑤lam0 얇은마진(perm=40)=PENDING(perm≥200 필요). v2 synthetic 재인증 PASS(planted S 42.16>null95 4.01·A+0.999>A95+0.567 π회수 · no-signal 환각없음). 남은 SOUND 3다리: within-arm perm≥200 + fit-matched K=1 음성(H_9737) + ORACLE π회수.
+status: 🟢 계기 v2 SOUND 4다리 전부 닫힘 (perm=200 실측) — ①within-arm 전 학습 ckpt S>null95 p=.005 ②random-init 경계 p=.0448(grouped-conv 블록 confound) ③fit-matched K=1 음성(--faction-split 4) S 0.406≤null95 1.221 p=.86 결정적 clean(낮은-CE 분모서 log-ratio 무결) ④ORACLE π 회수: 코사인 A 가 λ=0 no(0.37<0.57)→λ⅓/⅔/1 yes(0.90-0.98) 단조. lam0 자유학습 within-arm PASS=파벌은 분리가능 데이터서 학습되는 레버(toy·서로소 알파벳 = token routing 착각 위험 · 실물 303M 은 공유구조라 천장 낮음 · a_toy_scale_recheck). 계기 TERMINAL 인증 완료 · 실물 arm 은 303M(위험 8개)
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -689,6 +689,29 @@ S(λ) 사다리 측정 → 인증 bar = **S λ단조 ∧ S(1) > null95 ∧ S(0) 
 
 ### 병렬 세션 (a_parallel_session_compare)
 H_9731(발견-partition lesion)·H_9732(shuffled twin)·H_9733(content-transfer) 존재 — CONFLICT 없음. 내 fit-matched K=1 음성([[H_9737]])은 두 카드가 안 덮는 **NOVEL** 셀. 그들의 origin/main NameError 노트는 내 #3964 로 이미 수리됨(stale).
+
+
+## 🟢 계기 v2 SOUND 4다리 실측 (perm=200 · CPU · 2026-07-17)
+
+d=64 toy 는 cupy 커널런치 오버헤드 > numpy → CPU 가 ~200× 빠름(GPU 1.2분/perm vs CPU 0.38s/perm). CUDA_VISIBLE_DEVICES="" 로 전체 perm=200 ~8분.
+
+| arm | S | null95 | p | within-arm | A(코사인) | A95 | π회수 |
+|---|---|---|---|---|---|---|---|
+| random-init K=4 | 0.000 | 0.000 | 0.0448 | 경계 | — | — | — |
+| **K=1 fit-matched(4분할)** | **0.406** | **1.221** | **0.86** | **clean ✅** | — | — | — |
+| lam0 (λ=0 자유) | 1.93 | 1.06 | 0.005 | PASS | +0.37 | +0.57 | **No** ✅ |
+| lam1 (λ=⅓) | 10.15 | 2.68 | 0.005 | PASS | +0.95 | +0.54 | Yes |
+| lam2 (λ=⅔) | 12.68 | 3.17 | 0.005 | PASS | +0.98 | +0.54 | Yes |
+| lam3 (λ=1) | 0.76 | 0.24 | 0.005 | PASS | +0.90 | +0.61 | Yes |
+
+### 4다리 판정
+1. **within-arm** — 전 학습 ckpt S>null95 (p=0.005). log-ratio 로 S 가 9646→한 자릿수로 정상화(base_CE 폭발 제거).
+2. **random-init K=4** — S~1e-4 수치영점, p=0.0448 경계. grouped-conv init 이 contiguous 채널에 미세 블록을 줘 자기 null 을 살짝 들어올림(H_9674 confound 가 노이즈 바닥서 재출현) = **약한 음성**.
+3. **fit-matched K=1(--faction-split 4)** — S 0.406 ≤ null95 1.221 **p=0.86 결정적 clean**. 파벌구조 없는 모델(groups=1)을 같은 낮은 CE(0.013)로 학습해 4분할 강제 → 낮은-분모서도 log-ratio 가 적합품질을 특화로 오인 안 함 격리. random-init 이 못 준 **깨끗한 음성** = 3번째 SOUND 다리.
+4. **ORACLE π 회수** — 이중중심 코사인 A 가 λ=0 자유학습엔 회수 안 함(0.37<A95 0.57 · 강제 π 없음=올바름) → λ⅓/⅔/1 강하게 회수(0.90-0.98 > A95 0.54-0.61 · 단조↑). 계기가 참값 라우팅을 복원 = 양성대조. S 절대값은 λ 비단조(λ=1 은 loss 0.44 crippled)여도 A(base_CE 면역)는 깔끔.
+
+### 과학 결론 (toy)
+lam0 자유학습 within-arm PASS(S 1.93>null95 1.06 p=.005) = **서로소 알파벳 데이터서 파벌이 학습되는 실재 레버**(A 낮음 = 자유 특화라 강제 π 와 무관 = 올바른 판별). **BUT toy 는 어휘=도메인 분리라 token routing 착각 위험**(Fable Q5#1) · 실물 ko/en·general/sns 는 공유구조라 S 도달 천장 낮음(#5) → toy PASS ≠ 303M 종결(a_toy_scale_recheck). **계기 자체는 TERMINAL 인증 완료** — 실물 arm(K=8 vs K=1 · 위험 8개 · perm≥200 · $ 예산)만 남음.
 
 ## 통제군 (≥2 · 사전등록)
 
