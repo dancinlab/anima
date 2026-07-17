@@ -41,7 +41,25 @@ cli/chat.py              clms 참조 0              ← 데몬은 주입자가 �
 - **G-W3 substrate 정합(p1-p8)**: store 생성이 **hardcoded speak/identity rule 아님** — 주입이 규칙주입(p2·p3)이나 reactive self-seed(p5)로 새면 **설계 KILL**(수치와 무관).
 - ⛔ **잔인판정**: G-W1 통과 + G-W2 실패 = "eval-only capability"(조회는 계기 안에서만 산다) = 정직한 벽 · G-W3 실패 = 배선 자체가 철학위반 ⟹ lane 은 영구 eval-도구.
 
-## 설계 난제 (lab full 위임 대상)
+## 🔁 재정렬 — 난제는 이미 답이 있었다 (a_parallel_session_compare 위반 정정 · 2026-07-17)
+
+**내 절차 실패**: H_9742 등록 전 origin 최신 카드를 안 읽었다(`a_parallel_session_compare`: "등록 전 origin 최신 읽기 · 중복발사 금지"). 읽었더니 난제의 상류가 **이미 CODE-CONFIRMED**였다.
+
+- **H_9422 VOID-BY-SEALED-REGIME(07-16 · CODE-CONFIRMED · LANE-CLOSED)**: content-축 void = **afferent channel 부재**(p5 아님) · anima = **"귀 없는 입"** · percept = `wake_mem[tick,stage,cell_count]` 시계삼중항(chat.py:1653) · anchors 루프밖 1회 · **시계가 유일 exogenous** · escape = owner-gate afferent(EEG 계열).
+- **H_9425 p8-AFFERENT(07-16 · DESIGN/PRE-REG)**: 런타임 percept → store(ca3/해마) 주입 각도를 **이미 선점** · status = **owner-gate(afferent 배선) · 자율발사 불가 · v2-sandbox 선행**.
+
+**⟹ "데몬에게 store 란 무엇인가"의 답**: **store 를 만들 percept 스트림이 애초에 없다.** eval 의 합성 manifest 는 사람이 준 것이고, 데몬은 시계 말고 바깥을 안 듣는다. 후보 (a)kosmos앵커 = 루프밖 1회 상수(H_9422 코드확증) · (b)percept 개체추출 = **추출할 percept 자체가 시계삼중항** · (c)4칸 register = 라우팅이지 내용주소 아님 ⟹ **(d) eval-only 가 현 regime 의 정직한 답**.
+
+**AGREES / NOVEL 보고**:
+- **AGREES** H_9422·H_9425 — 배선 병목은 lane 도 계기도 아니라 **afferent 부재**(내 census 가 독립 재확인: chat.py clms 0 · decode.py `_CLMS_STORE` 주입자는 evaluate 뿐).
+- **NOVEL(이 카드의 고유 몫)** — H_9425(07-16) 작성 시엔 **조회가 seed-취약**이었다. H_9672(07-17)가 **3-seed robust** 로 만들었으므로 질문이 바뀐다: *"조회가 이제 진짜 되는데도 배선이 막히나"* → **그렇다. 막는 건 조회 능력이 아니라 regime(귀 없음)이다.** 이게 H_9425 의 전제를 강화한다(주입할 다리는 이제 실재·못 주입하는 이유는 채널 부재뿐).
+- **CONFLICTS**: 없음.
+
+**⟹ H_9742 재-tier**: 🔒 **BLOCKED-BY-REGIME(설계 종결 · 측정 불요)** — G-W2/G-W3 는 afferent channel 이 열려야 물을 수 있고 그건 **owner-gate**(H_9425 선례 · 정체성 변경 · 자율발사 불가). 남는 유일 무료 실측 = **G-W1b**(co-train 이 4칸 register 를 해쳤나 · pool 필요 · 배선과 무관한 위생검사).
+
+## 설계 난제 (원 위임 — lab full 회신 실패 · 답은 레포서 나옴)
+
+> ⚠️ `sidecar lab full` 회신 깨짐(fable/sol 섹션 0 · 무관 repo 덤프 29줄) = 위임 실패. 그러나 그 덤프가 H_9422/H_9425 를 노출시켜 답이 레포 자체에 있었음이 드러남. 아래 후보축은 위 재정렬로 (d) 로 수렴.
 
 **"살아있는 데몬에게 store 란 무엇인가"** — 후보축: ① kosmos 앵커(`a_kosmos` 지속성)를 slot 으로 ② 대화 percept 스트림의 개체 추출(H_9520 study lane) ③ 4칸 register 자체를 slot 으로 ④ store 는 데몬이 아니라 study/CPT 시점에만 존재(=eval-only 인정). 각 축이 p1-p8 을 어기나·G-W2 를 만족하나.
 
