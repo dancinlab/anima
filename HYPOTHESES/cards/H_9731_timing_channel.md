@@ -91,6 +91,17 @@ T = **inter-emit gap**(raw · {1,2,3+} 3-state · Sol 사전등록 "T_IEI∈{1,2
 `g>med` 가 **영원히 거짓** → 전 gap 이 1 bin → **hold 와 똑같이 눈먼 채로 "bins=1"** 을 낼 뻔했다(채널이 바로
 거기 있는데). raw-capped 로 교정(DOF 0). 데이터-의존 이진화는 최빈=median 일 때 조용히 붕괴한다.
 
+**🎯 잔여채널 실측 (2026-07-17 · 실 303M seed7·60tick hold trace · #4017 iei 렌즈)**:
+| 렌즈 | 판정 |
+|---|---|
+| hold | ⛔ NOT-POWERED · bins=1 (눈멂) |
+| **iei** | **n=31 · Tbins=2 · Caddr=3** → I(T;C|S)=**0.1152** · ped=0 · surr95=0.1631 · **z=1.26 · p=0.060 ⇒ ns** |
+
+iei 가 hold 의 사각을 **뚫었다**(Tbins=2 로 EE doublet 을 실제로 봄) — 그리고 그 답은 **ns**: 잔여 0.637 bits 의
+timing 은 이 trace 서 content 를 **안 나른다**. ⚠️ 단 **p=0.060 = chance 경계·유의 미달**이고 n=31·**1-seed** =
+검정력 부족(`power-before-negative-verdict`·`negative-claims-need-tost-not-ns`) — **KILL 아님, ns**. hold KILL 은
+확정(2세션 독립), iei 잔여채널은 **경계 ns·미결**. 완전 판정 = 5-seed·200tick·사전등록 MDE(카드 NEXT ②).
+
 ⚠️ **wire-to-prod 갭 정정**: `evaluate-py-23`(모집단-상대 시그니처)이 기록한 수리가 **코드에 착지된 적 없었다**
 — sigfix worktree 미커밋 + summer venv 에 scp 만 했다. 이 PR 이 factory 를 실제로 착지시켜 기록↔코드를 일치시킨다.
 
