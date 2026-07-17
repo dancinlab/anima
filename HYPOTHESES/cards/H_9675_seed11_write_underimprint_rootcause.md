@@ -1,10 +1,10 @@
 # H_9675 — SEED-11 WRITE UNDER-IMPRINT: base-ckpt 용량 vs 코퍼스 간섭 (root-cause)
 
 - **group**: g1-interface-addressable-wall
-- **tier**: 🔵 PROPOSED (설계 위임 中 · 미발사)
+- **tier**: 🧱 CRACK-FRAGILE / NOISE (6-draw sweep · pod-fired · engine-native) — H_9339 s7 crack 은 draw-인공물: fresh held-out 어간 draw **2/6 만 PASS**(frozen bar ≥4/6 미달). write 프로토콜은 작동(G-WRITE 11-12 항상·SEEN intact)하나 연산자 readout 이 draw-fragile. rider(base 무죄→C)와 정합. H_9327 BINDING 벽 held-out write 로 견고히 미돌파.
 - **date**: 2026-07-17
-- **related**: [[H_9339]] (모 crack) · [[H_9327]] (BINDING 벽) · [[H_9672]] (자매 lane · READ/W_q 주소)
-- **wired**: 미발사 (engine-native anima-py train/evaluate 예정)
+- **related**: [[H_9339]] (모 crack — s7 단일seed 착시) · [[H_9327]] (BINDING 벽 — 재봉) · [[H_9672]] (자매 lane · READ/W_q 주소)
+- **wired**: engine-native (anima-py train/evaluate · vast pod 6-draw sweep + rider · 결과 HF `dancinlab/anima-natem-c34-base` h9675/)
 
 ## 질문
 H_9339 는 담체키 held-out write 로 H_9327 BINDING 벽을 **seed 7 에서 뚫었다**(HO-CARRIER 12·11/12
@@ -30,6 +30,38 @@ vs HO-DECL 5/12 · G-WRITE 11/12). 그러나 **seed 11 은 2 독립 run 모두 G
 - **⚠️ caveat(진범 합치기 금지)**: base 가 다르다 — H_9672=py303_full+addr co-train seed · 본 H=natem_c34_main
   pretraining **split-seed**. "둘 다 seed-11 잔여"를 공유 진범으로 합치면 **다른 seed 축을 혼동**(seed-agreement
   ≠ replication). 본 H rider(A base-capacity)가 natem-s11 을 겨눌 뿐, py303 addr-seed 와 별개.
+
+## 🧱 최종 VERDICT — 6-draw sweep = crack NOISE/FRAGILE (2026-07-17 · vast pod · engine-native)
+사전등록 4-draw sweep = 🟠 2/4 MIXED → 사전등록 확장 4306-7(bar ≥4/6) → **최종 2/6 PASS = 🧱 crack
+NOISE/FRAGILE**. 전 6 draw valid(pregate 어간 ≤7·G-WRITE ≥11·SEEN preserve ≥10)·INVALID 0.
+
+| draw | HO-CARRIER negL/negZ | G-WRITE | HO-DECL | margin | 판정 |
+|---|---|---|---|---|---|
+| d4302 | 11/11 | 12/12 | 4 | 7 | 🟢 PASS |
+| d4303 | 10/10 | 12/12 | 7 | 3 | ⚪ (margin<4) |
+| d4304 | 9/7 | 11/12 | 7 | 0 | ⚪ (negZ<10) |
+| d4305 | 12/11 | 12/12 | 6 | 5 | 🟢 PASS |
+| d4306 | 10/8 | 12/12 | 4 | 4 | ⚪ (negZ<10) |
+| d4307 | 9/9 | 12/12 | 7 | 2 | ⚪ (margin<4) |
+
+**해석**: H_9339 의 s7 "crack"(12·11/12)은 **유리한 held-out 어간 draw 인공물** — fresh draw 6개 중 2개만
+frozen PASS bar(HO-CARRIER negL·negZ ≥10 ∧ margin(−HO-DECL) ≥4) 통과. **write 프로토콜은 실재**(6/6 draw
+서 G-WRITE 11-12 착륙·SEEN 연산자 intact = 담체키 write 는 held-out 항목에 항상 새겨짐), 그러나 그 항목의
+**연산자 readout 이 held-out 어간에 draw-fragile**(negZ·margin 이 어간셋별로 편차). ⟹ **H_9327 BINDING 벽은
+held-out write 로 견고히 뚫리지 않음** — 1-seed positive 는 sweep 이 벗겨낸 착시(precedent H_1588 RETRACTED
+계열). frozen-first·no-tune-to-green 이 지킨 정직한 negative.
+
+### rider (별도 판독 · A/C dissociation)
+s7-winning corpus 를 **s11 base** 에 CPT → **G-WRITE 12/12 착륙** ⟹ (A) base-capacity 반증·**s11 base 무죄**.
+H_9339 s11 실패는 **run/corpus-randomness(C)** — 위 6-draw draw-fragility 와 정합(seed·draw 별 readout 변동).
+$0(#3868 stem-draw 배제) + rider(base 무죄) + 6-draw(draw-fragile) = 진범 **(C) run/draw-randomness** 수렴.
+
+### 인프라 (infra-wall · science 무관 · 격리)
+vast pod 6개 발사서 4 infra-wall 격리·해결: ① 일부 pod CUDA 드라이버 too old(<cu13 torch)→CPU 폴백 60배
+→GPU 정상 pod 마이그레이션 ② HF pull 부분다운(.cache/curl 중단)→sha게이트 ③ 일부 host HF 176MB 전송
+flaky→단일 good pod 재배치+코퍼스 pod-재빌드(deterministic) ④ driver 거짓-DONE(출력삼킴·상대경로)→hard-verify
+driver v2. 전부 verdict 에서 quarantine. 판정기도 결함 자수정 2건: 미완=NO-VERDICT(거짓 NOISE 방지)·6-draw bar.
+비용 ≈ vast 6 pod × ~$0.3-0.56/hr(순차/병렬 혼합).
 
 ## 설계 (Fable 5 확정 · FROZEN — bg ba13m22pn 회신)
 **Pivot = 재현성 sweep(2×2 아님) + 1-run root-cause rider.** 근거: 프런티어의 산 질문은 "s7 crack 이
