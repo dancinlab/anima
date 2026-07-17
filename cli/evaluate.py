@@ -10877,11 +10877,10 @@ def faction_lesion_run(argv):
     functional: zero faction f's channels inside the production forward and read the per-domain
     CE damage. A faction that owns a domain hurts THAT domain when it dies.
 
-    DV — selectivity S over the [K, C] damage matrix D[f,c] = CE(lesion f, domain c) - CE(base, c):
-        S = trace(R) / sd(R),  R = D - rowmean - colmean + grandmean
-    The centering removes both main effects (a faction's overall weight, a domain's overall
-    fragility) and leaves the interaction — which is what "this faction owns that domain" means.
-    An earlier `max`-based S was killed by its own positive control (see selectivity()).
+    DV — interaction ENERGY over the damage matrix D[f,c] = CE(lesion f, c) - CE(base, c):
+        Dn = D / base_CE[c];  R = Dn - rowmean - colmean + grandmean;  S = ||R||_F^2
+    A second-order SUM: no max, no argmax, no matching, no alignment assumption. Three earlier
+    S's died to their own positive controls — every one of them SELECTED (see selectivity()).
     Chance is MEASURED, never assumed: `--perm` post-hoc reassignments of the same d channels to
     K same-sized groups give a null distribution; the bar is its 95th percentile. (This session
     learned the hard way that a "natural" chance value can be pure structure: adjacency's 1/K was
@@ -10953,49 +10952,48 @@ def faction_lesion_run(argv):
     print("base CE: " + " · ".join("%s %.4f" % (nm, v) for nm, v in zip(names, base)))
 
     def selectivity(assign):
-        """S over the [K, C] damage matrix D[f,c] = CE(lesion f, domain c) - CE(base, c).
+        """S = ||R||_F^2 over the DOUBLY-CENTERED, column-standardised damage matrix.
 
-        S = trace(R) / sd(R), R = D - rowmean - colmean + grandmean.
+        D[f,c] = CE(lesion f, domain c) - CE(base, c);  Dn = D / base_CE[c];
+        R = Dn - rowmean - colmean + grandmean;  S = sum(R**2).
 
-        The centering is the whole point: it removes the two MAIN EFFECTS — how much damage a
-        faction does overall (some blocks just matter more) and how fragile a domain is overall
-        (some domains just have more CE to lose) — and leaves only the INTERACTION. A faction
-        that owns its domain shows up on R's diagonal; a random split has no interaction and R's
-        diagonal collapses to 0.
+        THREE things this does NOT do, each earned by an instrument that died this session:
 
-        The first cut used `mean_f (max_c D[f,c] - mean of the rest) / sd` and the positive
-        control killed it: on a toy with PLANTED specialization it scored S_real 1.3879 against a
-        post-hoc null95 of 1.7270 — BELOW the null's own mean (1.4713). `max` is an order
-        statistic: a random assignment also picks the largest of C cells, so every arm looks
-        "selective" and the null floats up to meet the signal. (probe-defect-census-max-control-bias
-        recorded this exact failure on a different axis: "Δ=exp-max(controls) 순서통계량 편향이
-        KILL 을 기계로 만든다".)
+        1. It never SELECTS. No max, no argmax, no optimal matching. Every selection-based S we
+           tried floated its own null up to meet the signal, because a random assignment also
+           picks the largest of C cells:
+             s_max        planted 1.3879 vs post-hoc null95 1.7270  (real BELOW the null's mean)
+             hungarian    planted 4.7598 vs null95 5.5101           (optimal matching is an order
+                                                                     statistic too)
+             split-half   planted 1.6775 vs null95 2.2655           (argmax on half A still leaks
+                                                                     into B when the halves' noise
+                                                                     is correlated — and on the
+                                                                     same prompt set it is)
+           A second-order SUM has no selection step, so the bias cannot enter.
+        2. It never assumes ALIGNMENT. trace(R) reads only the (f,f) cells; the trained toy owned
+           [ccc, aaa, aaa, ddd] — non-identity, one domain shared by two factions, one orphan —
+           so trace read 1 of 4 planted cells and scored +0.0711 against a null95 of +3.3390.
+           A sum over ALL cells does not care which faction got which domain.
+        3. It never normalises by its own scale. ||R||^2 / sd(R)^2 is EXACTLY K*C for any matrix
+           (sd^2 = sum/KC) — a constant that measures nothing. We shipped that for one run and the
+           synthetic caught it at a suspiciously round 16.0000.
 
-        Two other candidates died the same way on synthetic matrices with a KNOWN planted
-        diagonal (measured before touching the engine — $0):
-          s_max        planted +1.77 · null95 +2.01 · random +1.47  FAIL
-          hungarian    planted +6.97 · null95 +8.58 · random +3.74  FAIL (optimal matching is an
-                                                                    order statistic too)
-          MI(f;argmax) planted +0.16 · null95 +0.35 · random +0.43  FAIL (random scores HIGHER)
-          centered     planted +5.71 · null95 +3.73 · random +0.41  PASS  <- this one
+        Column standardisation (dividing by each domain's base CE) handles the 16x difficulty
+        spread: damage couples MULTIPLICATIVELY to how much CE a domain has to lose, and
+        double-centering removes only the ADDITIVE part.
+
+        Verified on synthetic damage reproducing the real failure mode (non-identity owner map,
+        shared ownership, orphan domain, 16x base spread, multiplicative coupling, and a channel-
+        REASSIGNMENT null that preserves the signal and breaks only the grouping):
+          planted    S 5428.50 vs null95  796.45   PASS
+          no signal  S   33.35 vs null95   92.64   PASS (does not hallucinate)
         """
         D = np.zeros((K, len(names)))
         for f in range(K):
             D[f] = dom_ce(np.where(assign == f)[0]) - base
-        R = D - D.mean(axis=1, keepdims=True) - D.mean(axis=0, keepdims=True) + D.mean()
-        n = min(K, len(names))
-        return float(np.trace(R[:n, :n]) / (float(R.std()) or 1e-9)), D
-
-    per = d // K
-    real_assign = np.arange(d) // per                      # trailer blocks: contiguous runs
-    S_real, D_real = selectivity(real_assign)
-    print("")
-    print("파벌별 최대손상 도메인 (real):")
-    for f in range(K):
-        c = int(np.argmax(D_real[f]))
-        print("  faction %d → %-10s ΔCE %+.4f" % (f, names[c], D_real[f, c]))
-    print("")
-    print("S_real = %.4f" % S_real)
+        Dn = D / (base[None, :] + 1e-9)
+        R = Dn - Dn.mean(axis=1, keepdims=True) - Dn.mean(axis=0, keepdims=True) + Dn.mean()
+        return float((R ** 2).sum()), D
 
     rng = np.random.default_rng(seed)
     null = []

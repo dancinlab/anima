@@ -16378,7 +16378,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · 🔀 H_9643 계기 2회 사망 후 Fable 처방 — **계기는 죽지 않았다**(조건부): 진범 3(지표 정렬가정·곱셈결합·toy 특화압력 부재) · 처방=split-half 교차선택 + keep-one + oracle λ-ladder 인증. 계기 사망시 UNMEASURABLE(VOID·RED 아님).",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · 🟢 H_9643 계기 확정 — S=‖R‖²_F(선택 없는 2차 합) 이 합성 양방향 통과(planted 5428 vs null95 796 · 무신호 33 vs 93) · S 넷이 죽은 공통원인 = **전부 골랐다**. NEXT = toy 재설계 + ORACLE λ-ladder 인증 → 인증 후 실물 arm.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16711,7 +16711,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "🔀 Fable 처방 수령 — 계기 가능(조건부) · NEXT=toy 재설계 + oracle ladder 인증",
+      "verdict": "🟢 계기 확정(S=‖R‖²_F) · NEXT=toy 재설계 + ORACLE λ-ladder 인증",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16850,6 +16850,27 @@
           "id": "faction-r3-h9643-unmeasurable",
           "detail": "인증 실패시 H_9643 Q2 를 UNMEASURABLE 로 닫는다 — 특화 **부재의 증거가 아니라 관측 불능**(Ψ-SOMA 의 VOID 취급). 관측가능량 재정의 없인 재개 금지.",
           "verdict": "실물 음성은 계기와 구분: 인증 PASS 후 S ≤ null95 면 '이 스케일서 특화 없음' = 결과 · UNDERPOWERED 가드(동적범위 < 2× null sd 면 보류 · power-before-negative-verdict)"
+         }
+        ]
+       },
+       {
+        "name": "🟢 계기 확정 — 선택을 없앤 자만 살아남았다",
+        "role": "",
+        "id": "faction-r3-h9643-energy-final",
+        "detail": "S = ‖R‖²_F · Dn=D/base_CE[c](열표준화 = 16배 난이도편차·곱셈결합 보정) · R=이중중심화(가법 main effect 제거) · S=sum(R²). Fable 처방을 $0 로 먼저 시험하니 처방도 걸렀다 — split-half 는 실물-형 상관잡음서 FAIL 이고 음성통제서 헛것까지 본다(argmax(D_A) 편향이 B 로 샌다).",
+        "verdict": "🟢 energy 만 양방향 통과: planted 5428.50 vs null95 796.45 · 무신호 33.35 vs 93.64. 🔑 죽은 S 넷이 전부 **골랐다**(max·hungarian·trace·split-half) ⟹ **선택하는 순간 편향이 들어온다 · 선택 자체를 없애라**. 2차 합은 고를 자리가 없어 순서통계량 편향이 원천 불가능.",
+        "children": [
+         {
+          "name": "🕳️ 결함 ⑮ — 정규화가 자기상쇄(항상 K×C)",
+          "role": "",
+          "id": "faction-r3-h9643-defect15",
+          "detail": "‖R‖²_F/sd(R)² 는 sd²=sum/KC 이므로 **항상 K×C**(3 trial 전부 16.000000) = 상수. Fable 공식은 ‖R‖²_F 자체였는데 내가 정규화를 붙여 죽였다. 합성이 수상하게 둥근 16 으로 포착."
+         },
+         {
+          "name": "🕳️ 결함 ⑯ — A/B 잡음을 독립으로 줬다",
+          "role": "",
+          "id": "faction-r3-h9643-defect16",
+          "detail": "실물 split-half 는 같은 프롬프트 집합을 쪼개니 잡음이 **상관**된다. 내 v1 은 독립 잡음을 줘 신호 대비 잡음을 2배로 준 셈. ρ=0.7 로 재현하니 split-half 가 음성통제서 헛것을 봤다."
          }
         ]
        }
