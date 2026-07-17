@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔵 DESIGNED · 선결조건 4/4 통과(H_9674 #3904) · 레버 설계 완료(Fable 위임) · 구현 대기
+status: 🔨 구현 ①/④ — core/model.py 배선 완료(groups=K · GN(K) · FactionBridge) · OFF byte-identical ✅ · lam=0 정확한 항등 ✅ · NEXT=serialize trailer
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -113,6 +113,46 @@ G1 벽은 DATA 벽(H_9304)이므로 **coverage-기아 XBIND**(held-out 쌍 완�
 ③ evaluate `--faction-lesion` + lambda 오버라이드 ④ K=1 floor pre-gate 발사
 
 > 이 카드 본문이 설계 SSOT (`a_no_scatter_hypotheses_first` — scratch 파일은 휘발).
+
+
+## 🔨 구현 ① 완료 — `core/model.py` 배선 + OFF byte-identical 검증 (2026-07-17)
+
+| 지점 | 변경 |
+|---|---|
+| `CLMConfig` | `n_factions: int = 0`(OFF) · `faction_bridge_lam0: float = 0.1` |
+| `CausalDilatedConv1d` | `groups: int = 1` 인자 추가 → `nn.Conv1d(..., groups=groups)` |
+| `TrunkLayer` | conv `groups=K` · **`nn.GroupNorm(1,d)` → `nn.GroupNorm(K,d)`** |
+| `CLMConvMoE` | `embed_conv groups=K` · `norm_out GN(K,d)` · `faction_bridge`(K>0 시만) |
+| `FactionBridge` (신규) | trunk 출구·MoE 앞 1모듈 · `x ← x + lam·sigmoid(gate)⊙((M_cross⊙W_b)x)` |
+| `forward` | trunk 루프 직후 → bridge → MoE (사전등록 위치 고정) |
+
+### 검증 (aiden · torch 2.10)
+
+```
+OFF (n_factions=0)  trunk conv groups [1,1] · GN [1,1] · norm_out 1 · embed 1 · bridge None
+                    ⟹ 옛 모델과 동일 구조 ✅
+ON  (n_factions=8)  trunk conv groups [8,8] · GN [8,8] · norm_out 8 · embed 8
+                    m_cross 파벌간 비율 0.8750 = 정확히 1−1/8 ✅ (파벌내 0-마스크)
+bridge lam=0        max|bridge(x)−x| = 0.000e+00 = 정확한 항등 ✅
+```
+
+### 💡 파라미터가 줄어든다 — "구조만 추가" 가 이번엔 진짜다
+
+d=64·L=2 toy 에서 **120,132 → 92,101**. `groups=8` 이 conv 가중치를 1/8 로 자르고 bridge 가 일부를
+되돌린다 ⟹ 파벌은 **용량을 더하는 게 아니라 칸막이를 세운다**. 옛 법칙 22 의 "기능 추가 0, 구조만 추가"
+주장이 이번엔 문자 그대로 성립한다(옛 엔진은 파벌을 늘리며 세포도 같이 늘렸다).
+
+### 순환 회피 — 코드로 확인 가능한 지점
+
+- `FactionBridge` 는 loss 에 아무 항도 더하지 않는다. 학습 신호 = **CE 역전파 뿐**.
+- `gate` 는 `sigmoid(0)=0.5` 에서 시작해 CE 가 키우거나 줄인다 = earned, not tuned.
+- `m_cross` 는 `persistent=False` 버퍼 = gradient 없음.
+- loss 어디에도 sync·상관·Q·직교성이 **0 개**(H_9673 순환의 재발 차단).
+
+### NEXT
+
+② serialize trailer(`{W_b, g, lam, K}` + 블록대각 conv 를 dense 로 materialize) + VERSION bump
+③ `evaluate --faction-lesion` + lam 오버라이드 ④ K=1 floor pre-gate 발사
 
 ## 통제군 (≥2 · 사전등록)
 
