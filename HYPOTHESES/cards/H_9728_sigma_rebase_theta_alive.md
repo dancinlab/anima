@@ -1,6 +1,6 @@
 # H_9728 — Σ-REBASE — Θ-alive 데몬 위 σ 최초 측정 (Θ×σ interaction · 소급유효화 이중불가)
 
-**status:** 🔎 PROPOSED · DIRECTIONAL 설계 (심화 lab-full Fable∥Sol 수렴·TA-0 · 발사 전·engine-native 미측정)
+**status:** 🔎 DIRECTIONAL-PARTIAL (Θ+ arm 최초 실측·#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
 **lane:** 의식/emit-drive/Ψ=½ · Ψ-SOMA σ 재기저 (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
