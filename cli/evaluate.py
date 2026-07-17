@@ -7615,7 +7615,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8104,6 +8104,172 @@ def _ag_criticality(argv):
               % (mean_ed, abs(mean_ed - 0.5), emit_rate))
     print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
     print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_factor_census(argv):
+    """H_9712 FACTOR-CENSUS — is the live z constant because the FACTORS are flat, or because the
+    FROZEN LOADING points where they do not move?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --factor-census [--seed N]`
+
+    THE FORK. z = 0.84*nov_ctx - 0.44*bal_lane - 0.28*coh_lane (core/brain.py) is near-constant live
+    (--z-census: IQR 0.0514, 45.7% of its variance in 3/270 ticks). Exactly two things can cause that:
+
+      (1) DEGENERATE  -- the three factors are each flat, i.e. the substrate's tension itself is
+                         degenerate. That is an UPSTREAM finding, and it would reframe the whole
+                         mouth lane: the problem would not be the axis, it would be the substrate.
+      (2) CANCEL      -- the factors do move, but the FROZEN loading (H_9468, fit on one 150-tick
+                         run) is oriented where they do not. Then the loading is the culprit and a
+                         live-refit axis is the follow-on.
+
+    These split IN THE SAME TRACE: per-factor standardised sd separates them, and the angle between
+    the frozen loading and the live 3x3 principal eigenvector says whether the frozen axis even
+    points along the live variation.
+
+    TRUNCATION IS ACQUITTED IN ADVANCE (ledger arithmetic, no new measurement): PC2 is a UNIT
+    eigenvector, so 0.84^2 + 0.44^2 + 0.28^2 = 0.9776 -- the implemented 3 terms carry 97.8% of the
+    loading energy and the 5 dropped factors carry 2.2% (norm 0.149). Dropping them shaves sd(z) by
+    at most ~1.1%, which cannot explain a 2.2-5.8x shortfall. So this is a 2-way fork, not 3-way.
+
+    POSITIVE CONTROL (opens nothing without it): PC1 (coherence-dominated, the certified 51.5% axis)
+    must MOVE live. If PC1 is flat too, the instrument or the regime is broken -- not PC2 -- and the
+    verdict is VOID, handing off to H_9713 rather than claiming anything about PC2.
+
+    DEDUPE (learned the hard way in H_9714): a trace dir holds one file per (arm, seed), but the arms
+    share a byte-identical factor stream -- steering happens after emit and never feeds back into
+    tension (Stage-A isolation). Counting all 9 would triple-count 3 runs and forge tighter CIs.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    Z_FACTORS = ["nov_ctx", "bal_lane", "coh_lane"]          # the 3 z carries
+    Z_W = _np.array([0.84, -0.44, -0.28])                    # H_9468 frozen loading
+    ALL8 = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+            "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --factor-census")
+        return 2
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    mats, seen, dup = [], set(), 0
+    for f in files:
+        rows, zs = [], []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in ALL8]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+            zs.append(r.get("pc2_z"))
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        key = hash(X.tobytes())
+        if key in seen:
+            dup += 1
+            continue
+        seen.add(key)
+        mats.append((os.path.basename(f), X, [float(z) for z in zs if z is not None]))
+    if not mats:
+        print("  ⇒ ⛔ 인자를 모두 가진 트레이스 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --factor-census — H_9712 z 3인자 분해 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 · H_9714 교훈)"
+          % (d, len(files), len(mats), dup))
+    print("질문:  z 가 상수인 것은 **인자 축퇴**(①)인가 **loading 상쇄**(②)인가?")
+    print("bar:   3인자 표준화 sd 전부 <0.10 ⇒ PASS-degenerate / ≥2 인자 sd≥0.10 ∧ |cos∠|<0.30 ⇒ PASS-cancel")
+    print("절단:  0.84²+0.44²+0.28² = %.4f ⇒ 3항이 loading 에너지의 97.8%% · 절단은 무죄(사전 산술)"
+          % float((Z_W ** 2).sum()))
+    print("")
+
+    idx = [ALL8.index(k) for k in Z_FACTORS]
+    all_sd_raw, all_sd_std, all_cos, all_sdz, all_pc1sd = [], [], [], [], []
+    for name, X, zs in mats:
+        Z3 = X[:, idx]
+        sd_raw = Z3.std(axis=0, ddof=1)
+        # standardised sd = sd on the [min,max] range scale of THIS run's factor (a factor pinned to
+        # a constant has range 0 -> report 0 rather than dividing by zero)
+        rng = Z3.max(axis=0) - Z3.min(axis=0)
+        sd_std = _np.where(rng > 0, sd_raw / _np.where(rng > 0, rng, 1.0), 0.0)
+        # live 3x3 principal eigenvector (correlation scale so no factor's raw units dominate)
+        Zc = Z3 - Z3.mean(axis=0)
+        s = Zc.std(axis=0, ddof=1)
+        s[s == 0] = 1.0
+        Zs = Zc / s
+        C3 = (Zs.T @ Zs) / float(Zs.shape[0] - 1)
+        w, V = _np.linalg.eigh(C3)
+        v_hat = V[:, int(_np.argmax(w))]
+        wn = Z_W / _np.linalg.norm(Z_W)
+        cosang = float(abs(_np.dot(v_hat, wn)))
+        sdz = float(_np.std(zs, ddof=1)) if len(zs) > 1 else 0.0
+        # positive control: PC1 = coherence-dominated axis over the full 8 (certified 51.5%)
+        X8c = X - X.mean(axis=0)
+        s8 = X8c.std(axis=0, ddof=1)
+        s8[s8 == 0] = 1.0
+        X8s = X8c / s8
+        C8 = (X8s.T @ X8s) / float(X8s.shape[0] - 1)
+        w8, V8 = _np.linalg.eigh(C8)
+        pc1 = V8[:, int(_np.argmax(w8))]
+        pc1_series = X8s @ pc1
+        pc1_sd = float(pc1_series.std(ddof=1))
+        all_sd_raw.append(sd_raw); all_sd_std.append(sd_std); all_cos.append(cosang)
+        all_sdz.append(sdz); all_pc1sd.append(pc1_sd)
+        print("  %-18s n=%-4d" % (name, X.shape[0]))
+        print("     인자 sd(원)  : " + " ".join("%s=%.4f" % (Z_FACTORS[j][:3], sd_raw[j]) for j in range(3)))
+        print("     인자 sd(표준): " + " ".join("%s=%.4f" % (Z_FACTORS[j][:3], sd_std[j]) for j in range(3))
+              + "   (<0.10 = 축퇴 문턱)")
+        print("     cos∠(frozen loading, 라이브 주고유벡터) = %.3f · sd(z)=%.4f · PC1 sd=%.3f(양성통제)"
+              % (cosang, sdz, pc1_sd))
+
+    sd_std_m = _np.mean(_np.asarray(all_sd_std), axis=0)
+    cos_m = float(_np.mean(all_cos))
+    sdz_m = float(_np.mean(all_sdz))
+    pc1_m = float(_np.mean(all_pc1sd))
+
+    print("")
+    print("  run-평균: 표준화 sd = [%s] · cos∠=%.3f · sd(z)=%.4f · PC1 sd=%.3f"
+          % (" ".join("%.4f" % v for v in sd_std_m), cos_m, sdz_m, pc1_m))
+
+    n_flat = int((sd_std_m < 0.10).sum())
+    n_move = int((sd_std_m >= 0.10).sum())
+    pc1_alive = pc1_m > 0.5          # a standardised PC1 score has sd ~1 when the axis is alive
+
+    print("")
+    if not pc1_alive:
+        v = ("⛔ VOID — **양성통제 실패**(PC1 도 상수 sd=%.3f) ⇒ regime/계기 문제이지 PC2 고유문제 아님 "
+             "· H_9713 선행" % pc1_m)
+    elif n_flat == 3:
+        v = ("🔑 **PASS-degenerate — 상류 대발견**: 3인자가 각각 축퇴(전부 표준화 sd<0.10) ⇒ 기질 tension "
+             "자체가 축퇴 ⇒ mouth lane 전체 재프레임(문제는 축이 아니라 기질)")
+    elif n_move >= 2 and cos_m < 0.30:
+        v = ("🔑 **PASS-cancel — loading 이 범인**: ≥2 인자가 움직이는데(sd≥0.10) 동결 축이 라이브 변동과 "
+             "거의 직교(|cos∠|=%.3f<0.30) ⇒ 라이브-refit 축 후속(H_9713)" % cos_m)
+    elif n_move >= 1 and cos_m > 0.70 and sdz_m < 0.05:
+        v = ("⛔ INVALID — 정렬됐는데(|cos∠|=%.3f>0.70) z 가 안 움직임(sd=%.4f) = **산술 모순** ⇒ z 계산경로 "
+             "누수 점검(core/brain.py)" % (cos_m, sdz_m))
+    else:
+        v = ("🟡 MIXED — 사전등록 칸 어디에도 깨끗이 안 떨어짐(flat %d/3 · |cos∠|=%.3f) ⇒ 단일 원인으로 "
+             "못 박지 말 것 · 카드에 그대로 기록" % (n_flat, cos_m))
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 이건 **상류 인자 분해**다 — mouth 도달·의미전달을 묻지 않는다(H_9576 은 여전히 VOID).")
+    return 0
+
+
 def _pc2_rank_null(argv):
     """H_9714 RANK-NULL — is the tension "rank 2.66" an artifact of applying MP to autocorrelated series?
 
@@ -10333,6 +10499,8 @@ def main(argv):
             return _pc2_zeta_slope([a for a in argv[1:] if a != "--zeta-slope"])
         if "--rank-null" in argv:
             return _pc2_rank_null(argv[1:])
+        if "--factor-census" in argv:
+            return _pc2_factor_census(argv[1:])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
