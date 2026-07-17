@@ -69,8 +69,30 @@ Bernoulli(½)는 timing 엔트로피가 **최대**(1 bit/tick); 교대는 dual-l
 ② 스프링도 채널을 0 으로 만들지 않고 **자기 위반 사건으로 압축·이전**시킨다(EE 5건에 0.637 bits 생존).
 ⟹ "½의 대가로 timing 채널이 죽는다" 는 **거짓**. 교훈: **주변 통계(rate)에서 전이 구조(alternation)를 연역하지 마라.**
 
-**NEXT(잔여채널 · 사전등록 필요)**: ① $0 — 같은 traces 를 inter-emit(IEI) 렌즈로 재분석(EE doublet 의 content 결합).
+**NEXT(잔여채널 · 사전등록 필요)**: ① **계기 착지완료** — `--lens iei` 구현(#PR · evaluate.py). 같은 traces 를
+그 렌즈로 재분석하면 EE doublet 의 content 결합을 읽는다($0 · summer 복구 대기).
 ② hold 채널 구조성을 원하면 엔트로피 TOST 아니라 **q=P(E_{t+1}=0|E_t=0) 상한**을 사전등록(ε=0.02 → silence-origin 전이 ~150건 · 5-seed · seed-클러스터 분석). 단 ①/② 모두 위 KILL 을 되돌리는 게 아니라 **다른 렌즈의 별개 질문**이다.
+
+## 🔧 잔여채널 렌즈 착지 (2026-07-17 · `anima-py evaluate --timing-channel --lens {hold,iei}`)
+
+위 '두 렌즈 모두 눈먼 곳' 을 볼 계기가 **없었다** — 이제 있다. `--lens iei`(default hold = byte-identical):
+T = **inter-emit gap**(raw · {1,2,3+} 3-state · Sol 사전등록 "T_IEI∈{1,2,…}") · C = 그 gap 을 **끝내는** emission
+의 content 서명 · MI=I(T;C|stage) + clock-pedestal + content-shuffle surrogate.
+
+**검증**(실 303M seed7 전이구조 EE=5·ES=27·SE=27·SS=0 재현 합성):
+| 렌즈 | 같은 trace 판정 |
+|---|---|
+| hold | ⛔ NOT-POWERED · timing bins=1 = **눈멂**(실 303M 판독 정확 재현) |
+| iei | I(T;C|S)=0.0171 · surr95=0.0916 · z=−0.56 · p=0.685 ⇒ **ns**(무작위 content = 올바른 null) |
+| iei · **양성통제**(gap→content PLANT) | I(T;C|S)=**0.9357** · z=**63.91** · p=0.002 ⇒ ✅ **검출** |
+⟹ iei 는 양방향 통과(무작위엔 ns · 심은 신호엔 PASS) = `positive-control-before-reading-a-negative` 충족.
+
+🐛 **검증이 잡은 내 이진화 버그**: 초판 iei 는 gap 을 median 분할했는데 실 분포 {2:26,1:5} 는 median=2 라
+`g>med` 가 **영원히 거짓** → 전 gap 이 1 bin → **hold 와 똑같이 눈먼 채로 "bins=1"** 을 낼 뻔했다(채널이 바로
+거기 있는데). raw-capped 로 교정(DOF 0). 데이터-의존 이진화는 최빈=median 일 때 조용히 붕괴한다.
+
+⚠️ **wire-to-prod 갭 정정**: `evaluate-py-23`(모집단-상대 시그니처)이 기록한 수리가 **코드에 착지된 적 없었다**
+— sigfix worktree 미커밋 + summer venv 에 scp 만 했다. 이 PR 이 factory 를 실제로 착지시켜 기록↔코드를 일치시킨다.
 
 ## 🔴 정정 KILL (2026-07-17 · verdict-integrity 자가포착)
 초판 WEAK(feat8-argmax 2/3 seed)은 시그니처 인공물 — 모든 후보 공통접두 'vault QX-7741 forever.' 후 발산인데 byte-histogram이 접두에 붕괴(s7 78% 한 class). 실측 후보 **100% distinct·byte엔트로피 5.48=고다양**. 공통접두 제거·접미 균등 시그니처로 **Δ −0.002/−0.037/−0.035(0/3)**=timing⊥content=**KILL**. 기전: emit⟺S>E coverage 코사인 기반→WHEN은 content-identity 독립. 'content 저다양·H_9576 동근' 철회. H_9729 SILENCE-CONTENT 별개 생존.

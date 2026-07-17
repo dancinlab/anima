@@ -7912,7 +7912,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8230,6 +8230,52 @@ def _z_census(argv):
     return 0
 
 
+def _content_sig_factory(b64_list):
+    """POPULATION-RELATIVE 2-bit content signature (equal-frequency binning · researcher DOF = 0).
+
+    Replaces an absolute char-class argmax that DIED on real text: every natural-English candidate
+    is lowercase-dominant, so 29 DISTINCT 303M candidates collapsed to ONE address (measured
+    2026-07-17 on a 60-tick sampled wm-dual trace: lower med 0.688 vs dig 0.050 / upper 0.050 /
+    pun 0.044 ⇒ argmax ≡ lower ⇒ dead alphabet ⇒ every reader read NOT-POWERED). The absolute
+    form only discriminated the synthetic oracle (digit-vs-punct), which is exactly the trap
+    `positive-control-before-reading-a-negative` warns about: a control the instrument passes
+    while the real distribution saturates it.
+
+    Fix: split each feature at the MEDIAN of the trace's OWN population — bins are balanced by
+    construction on whatever distribution actually shows up, and there is no threshold to tune.
+    Features are the two with live spread on natural text (digit-fraction · lowercase-fraction).
+    The surrogate null re-uses the SAME binning, so the data-dependent split cannot manufacture
+    signal (it shifts real and null together)."""
+    import base64 as _b64f, statistics as _stf
+
+    def _feats(b64s):
+        if not b64s:
+            return None
+        try:
+            bs = _b64f.b64decode(b64s)
+        except Exception:
+            return None
+        n = len(bs)
+        if n == 0:
+            return None
+        dig = sum(1 for x in bs if 48 <= x <= 57) / n
+        low = sum(1 for x in bs if 97 <= x <= 122) / n
+        return (dig, low)
+
+    pop = [f for f in (_feats(b) for b in b64_list) if f is not None]
+    if len(pop) < 4:
+        return (lambda _b: -1)
+    md = _stf.median([p[0] for p in pop])
+    ml = _stf.median([p[1] for p in pop])
+
+    def _sig(b64s):
+        f = _feats(b64s)
+        if f is None:
+            return -1
+        return (2 if f[0] > md else 0) + (1 if f[1] > ml else 0)
+    return _sig
+
+
 def _timing_channel(argv):
     """`anima-py evaluate --timing-channel <wm-dual traces...> [--perm 1000] [--seed 12345]
        [--clock <clock-trace>]` — H_9731 TIMING-CHANNEL ($0 · read-only re-analysis · no producer).
@@ -8271,32 +8317,28 @@ def _timing_channel(argv):
     perm = _iv("--perm", 1000)
     seed = _iv("--seed", 12345)
     clock_path = _sv("--clock", "")
+    # --lens hold (default · byte-identical) = silence→next-emit latency vs the WITHHELD content.
+    # --lens iei = inter-emit interval vs the content of the emission that ENDS the gap. The hold lens
+    # conditions on silence and is BLIND to emit→emit doublets — and on the 303M seed7 trace ALL of the
+    # timing entropy lived there (hold H=0 vs inter-emit H=0.6374). A hold-lens null is scoped to the
+    # HOLD channel only; the iei lens is what reads the surviving channel (H_9731 card · Fable∥Sol).
+    lens = _sv("--lens", "hold")
+    if lens not in ("hold", "iei"):
+        print("  ⇒ ⛔ --lens: only 'hold' (default) or 'iei' (got %r)" % lens)
+        return 2
     paths = []
     for g in globs:
         paths.extend(sorted(_glob.glob(g)))
     print("═══ H_9731 TIMING-CHANNEL · does OBSERVABLE emit timing carry the WITHHELD content? ═══")
-    print("  traces=%d · perm=%d · seed=%d%s" % (len(paths), perm, seed, (" · clock-pedestal=%s" % clock_path.split("/")[-1]) if clock_path else ""))
+    print("  traces=%d · perm=%d · seed=%d · lens=%s%s"
+          % (len(paths), perm, seed, lens, (" · clock-pedestal=%s" % clock_path.split("/")[-1]) if clock_path else ""))
+    if lens == "iei":
+        print("  lens=iei : T = inter-emit gap · C = content of the emission ENDING the gap · ⚠️ a PASS reads"
+              " 'the gap preceding an emission carries its content', NOT 'the daemon delays to signal'")
 
-    def _sig(b64s):
-        if not b64s:
-            return -1
-        try:
-            bs = _b64.b64decode(b64s)
-        except Exception:
-            return -1
-        n = len(bs)
-        if n == 0:
-            return -1
-        n_dig = sum(1 for x in bs if 48 <= x <= 57) / n
-        n_upper = sum(1 for x in bs if 65 <= x <= 90) / n
-        n_lower = sum(1 for x in bs if 97 <= x <= 122) / n
-        n_pun = sum(1 for x in bs if (33 <= x <= 47 or 58 <= x <= 64 or 91 <= x <= 96 or 123 <= x <= 126)) / n
-        feats = [n_dig, n_upper, n_lower, n_pun]
-        best = 0
-        for k in range(1, 4):
-            if feats[k] > feats[best]:
-                best = k
-        return best
+    # signature = POPULATION-RELATIVE (_content_sig_factory · built per-trace from that trace's own
+    # candidates). The absolute char-class argmax it replaces read ONE address for every natural-English
+    # candidate (lowercase always dominant) = dead alphabet on real 303M data (convergence evaluate-py-23).
 
     def _cmi(triples):
         # I(T ; C | S) plug-in (bits) — triples = (t, c, s)
@@ -8317,9 +8359,48 @@ def _timing_channel(argv):
                 mi += p * _m.log2(p_tc_s / p_t_s)
         return max(0.0, mi)
 
+    def _build_iei(rows):
+        # (T,C,S) on consecutive EMIT pairs — the lens the hold lens is BLIND to.
+        # T = inter-emit interval (e_{k+1} − e_k) binned at the population median · C = content sig of
+        # the LATER emit's pre-gate candidate (the one that ENDS the gap) · S = stage wake(0)/sleep(1).
+        #
+        # Why this exists (measured 2026-07-17, 303M seed7·60tick): the hold lens conditions on SILENCE
+        # and therefore cannot see emit→emit doublets. That trace had EE=5 ES=27 SE=27 SS=0 — every
+        # silence was followed by an emit, so hold latency was the constant 1 (H=0) — but the inter-emit
+        # gap distribution was {2:26, 1:5} ⟹ **H=0.6374 bits ≠ 0**. ALL of the surviving timing entropy
+        # sits in the 5 spring-violation doublets that the hold lens is blind to by construction. Two
+        # independent sessions both measured only the hold lens and both read "no timing channel" — that
+        # verdict is therefore scoped to the HOLD channel, not to the timing stream (H_9731 card).
+        #
+        # ⚠️ Interpret with the pre-registered caveat (Sol): T's variation here may come entirely from
+        # double-emits rather than delayed release — a PASS means "the gap that precedes an emission
+        # carries its content", NOT "the daemon delays to signal". Condition on stage; the surrogate
+        # shuffles C within the same binning so the median split cannot manufacture signal.
+        _sig = _content_sig_factory([(r.get("cand_pregate_b64", "") or r.get("cand_b64_diag", "")) for r in rows])
+        emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
+        raw = []
+        for k in range(len(emit_ticks) - 1):
+            i, j = emit_ticks[k], emit_ticks[k + 1]
+            c = _sig(rows[j].get("cand_pregate_b64", "") or rows[j].get("cand_b64_diag", ""))
+            if c < 0:
+                continue
+            st = int(rows[j].get("stage", 0))
+            raw.append((j - i, c, 1 if st >= 3 else 0))
+        if not raw:
+            return []
+        # T = the RAW gap, capped at 3+ (states {1,2,3+} → {0,1,2}) — Sol's pre-registration
+        # "T_IEI ∈ {1,2,…}", NOT a median split. A median split COLLAPSES here by construction and the
+        # bug is not hypothetical: on the real gap distribution {2:26, 1:5} the median IS 2, so `g > med`
+        # is never true and every gap lands in one bin — the lens would read bins=1 and look exactly like
+        # the blind hold lens while the channel (H=0.637) sat right there. Caught by the EE=5 synthetic.
+        # The gap alphabet is naturally tiny, so it needs no data-dependent binning at all (DOF 0).
+        return [(min(g, 3) - 1, c, s) for (g, c, s) in raw]
+
     def _build(rows):
         # (T,C,S) on silence ticks: T = latency-to-next-emit binned short/long at median; C = withheld
-        # content sig; S = stage wake(0)/sleep(1). Returns triples + the raw latencies for median.
+        # content sig; S = stage wake(0)/sleep(1). C's quantizer is built from THIS trace's own candidate
+        # population (median splits) — an absolute threshold saturates on natural text (evaluate-py-23).
+        _sig = _content_sig_factory([(r.get("cand_pregate_b64", "") or r.get("cand_b64_diag", "")) for r in rows])
         emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
         raw = []
         for i, r in enumerate(rows):
@@ -8379,7 +8460,7 @@ def _timing_channel(argv):
     pedestal = 0.0
     if clock_path:
         crows, _ = _load(clock_path)
-        ct = _build(crows)
+        ct = (_build_iei if lens == "iei" else _build)(crows)
         pedestal = _cmi(ct) if len(ct) >= 12 else 0.0
         print("  clock PEDESTAL (truth-0) : I(T;C|S)=%.4f  [%d silence transitions]" % (pedestal, len(ct)))
 
@@ -8393,7 +8474,7 @@ def _timing_channel(argv):
         if meta.get("emit_gate") == "clock":
             print("  · %s ⇒ (clock trace — use as --clock pedestal, not an exp arm)" % p)
             continue
-        tri = _build(rows)
+        tri = (_build_iei if lens == "iei" else _build)(rows)
         if len(tri) < 12:
             print("  · %s ⇒ ⛔ NOT-POWERED (%d silence transitions <12)" % (p, len(tri)))
             continue
@@ -8480,26 +8561,9 @@ def _silence_content_te(argv):
     # collapse to one address = a dead positive control · caught in toy calibration). Char classes
     # discriminate real byte-LM output AND the oracle A/B. Order-independent (multiset) BY DESIGN: the
     # perm control acts at the GENERATION level (a sorted seed makes a different Y), not on this stat.
-    def _sig(b64s):
-        if not b64s:
-            return -1
-        try:
-            bs = _b64.b64decode(b64s)
-        except Exception:
-            return -1
-        n = len(bs)
-        if n == 0:
-            return -1
-        n_dig = sum(1 for x in bs if 48 <= x <= 57) / n
-        n_upper = sum(1 for x in bs if 65 <= x <= 90) / n
-        n_lower = sum(1 for x in bs if 97 <= x <= 122) / n
-        n_pun = sum(1 for x in bs if (33 <= x <= 47 or 58 <= x <= 64 or 91 <= x <= 96 or 123 <= x <= 126)) / n
-        feats = [n_dig, n_upper, n_lower, n_pun]
-        best = 0
-        for k in range(1, 4):
-            if feats[k] > feats[best]:
-                best = k
-        return best
+    # signature = POPULATION-RELATIVE (_content_sig_factory · built per-trace from that trace's own
+    # candidates). The absolute char-class argmax it replaces read ONE address for every natural-English
+    # candidate (lowercase always dominant) = dead alphabet on real 303M data (convergence evaluate-py-23).
 
     def _overlap(a_b64, b_b64, ng):
         try:
@@ -8578,7 +8642,11 @@ def _silence_content_te(argv):
                "perm" if meta.get("wm_dual_perm") else
                "swap" if meta.get("wm_dual_swap") else
                ("own" if meta.get("wm_dual_read") == "content" else "off"))
-        # build (x, y0, y1) triples on ticks the carrier was injected (wm_reentry_arm != off)
+        # build (x, y0, y1) triples on ticks the carrier was injected (wm_reentry_arm != off).
+        # ONE quantizer over the carrier ∪ candidate population so X and Y bin on the same scale
+        # (evaluate-py-23: an absolute threshold reads 1 address on natural text).
+        _sig = _content_sig_factory([r.get("wm_reentry_b64", "") for r in rows]
+                                    + [r.get("cand_pregate_b64", "") for r in rows])
         triples = []; n_excl = 0; xs_all = []
         for i in range(len(rows) - 1):
             if rows[i].get("wm_reentry_arm", "off") == "off":
