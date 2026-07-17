@@ -72,3 +72,44 @@ H_9742 는 🔒 BLOCKED-BY-REGIME 이라 적었다: "anima 는 귀가 없다(H_9
 - **F2 실패**(트렁크가 `=>` 뒤 공백 미방출 → MISS 로 bar 도달불능) = 사전등록 수정안 1회 허용, 그래도 실패면 KILL.
 - **G-W1(ii) 위반**(질의-무인데 byte 상이) = F1 구조보장 붕괴 = **즉시 중단** · 원인 규명 전 일체 cement 금지.
 - **G-W3 실패** = 배선 자체가 철학위반 ⟹ lane 은 영구 eval-도구((d) 확정).
+
+## 🟢 G-W0 · G-W1 실측 — 지각이 store 를 채웠고, 그 store 는 무해했다 (2026-07-17 · summer · $0)
+
+계기 = `anima-py study <ckpt> --teacher script --script <f> --chat-flag …`(canonical CLI · 격리 venv
+`~/.venv-h9744` = origin/main 0.15.83 git-archive 설치 · `chat-py-6` 공유 site-packages 회피).
+ckpt = `rv3c13.clm` sha `b63efea8539178e6`(로컬↔summer 대조 일치) · GPU RTX 5070(발사 전 `sidecar pool list`
+로 summer GPU **0.0/12GiB · load 0.00** 확인 = `chat-py-2`/`chat-py-8` 준수).
+
+**G-W0 계기생존 🟢 PASS** — `store-episodic : writes=1 ring=8/8 (session store cleared)` · rc=0.
+교사 8줄(`fact baka pos` …)이 지각으로 들어가 **변환기가 실제로 링을 채웠고**(writes=1 = 만석 도달 순간
+1회 주입) 세션 종료에 비웠다(S4). ⟹ 드라이버·변환기·주입 배관 살아있음(불일치였으면 INVALID).
+
+**G-W1(ii) 무해성 🟢 PASS — BYTE-IDENTICAL** (F1 구조보장의 실측 확인):
+
+```
+arm                          ticks  emits  emit_seq_sha
+off (default · 기존 데몬)      8      1     0a7a7d03dbae00ae
+on  (store 만석 · 질의 없음)    8      1     0a7a7d03dbae00ae   ← 동일
+```
+
+두 arm 은 `--store-episodic` 외 전부 동일. **store 가 8칸 만석인데도 데몬의 발화가 한 바이트도 안 변했다**
+⟹ F1(`core/clms.py:63 find_qpos` 가 `"=> "` 바이트 61,62,32 를 스캔 · `store_apply:124-125` 가
+`query=="qpos" ∧ not qpos → return logits`)이 말한 **"무해성은 관례가 아니라 산술적 구조"** 가 실측으로 확인.
+lane 은 상시 개입이 아니라 **질의-반사궁**이다.
+
+## ⚠️ G-W2 의 실제 장애물 — transcript 가 드러낸 검정력 문제 (측정 전 정직 기록)
+
+G-W0 transcript 실측: **8 tick 중 emit 1개**(tick 4) · 내용은 `'ition to the present that they country…'`
+= store 답이 아닌 **일반 트렁크 텍스트**. 원인 = clock 게이트의 30초 주기(`cli/chat.py:1443`
+`spont_min_emit_interval() 30.0`) ⟹ 질의 tick 에 입이 안 열리면 **채점할 방출 자체가 없다 = 검정력 0**.
+
+계기 = `--rate-limit-sec 0`(clock 상시개방). 이건 tune-to-green 이 **아니다** — 코드 주석(`chat.py:1585`)이
+이 플래그를 **"MEASUREMENT-REGIME knob, not a tuning dial"** 로 이미 규정했고, 측정 대상은 게이트 cadence 가
+아니라 "입이 열렸을 때 답이 store 에서 나오나"다. bar(ORACLE≥.90 ∧ P1bal≥.75 ∧ flip≥.90)는 **불변**.
+
+**128-질의 발사 전 스모크 4문항**(`positive-control-before-reading-a-negative` · 하나라도 죽으면 INVALID·발사금지):
+① 질의 tick 에 입이 열리나 ② 첫 바이트가 `g`/`b` 인가(storebind readout) ③ **F2** — 트렁크가 `=>` 뒤 공백(32)을
+스스로 내야 qpos 성립 ④ ON≠OFF (데몬 경로서 lane 이 실제 발화하나).
+
+**질의 문법은 실제 corpus 에서 읽었다**(추측 금지): `is <entity> => ` / `not <entity> => `(op=0/1) ·
+gold=`good`/`bad` — 내가 사전등록에 적었던 `<entity> <op> =>` 는 **틀렸고** `sb.txt.held.json` 실물로 정정.
