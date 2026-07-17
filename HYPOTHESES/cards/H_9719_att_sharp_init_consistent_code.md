@@ -64,3 +64,16 @@ addr-학습 step-ckpt(s11 step500~5000)를 같은 census 로 훑어 '점유↓ �
 **정밀화(중요)**: 개체는 **붕괴가 아니다 — raw-distinct**(개체간 거리가 연산자 flip 의 2~3배). 그런데 census(random W_q→키 argmax)는 KILL. ⟹ 벽 = "개체 미구별"이 **아니라** "개체 구별이 **템플릿-상관 basis 에 있어 store 키와 MISALIGNED**" = **addressability(basis-정렬) 문제이지 distinctness 문제 아님**. 앞선 '잔차 붕괴' 표현은 이렇게 정밀화된다(붕괴 X · misalignment O).
 **연산자는 alive**: is/not(1-비트 축)은 base 서도 깨끗이 encoded(d-prime 2.36·acc 86%) — 값싼 1축이라 정렬됨. ⟹ [[binding-wall-operator-alive-fact-written-not-bound]] 를 penultimate 기하로 확증: **연산자 alive · 개체-fact written(distinct) but not bound(키-misaligned)**.
 **통합 그림**: emergent 주소 실패 = capacity(반박·H_9721 eff-rank 15/3784) X · distinctness(개체 raw-distinct) X · **basis-정렬**(개체 구별이 키 basis 밖) O. 감독(H_9672 addr-loss)이 작동하는 이유 = 개체 basis 를 키에 **회전-정렬**(+점유 제거). random init 은 그 회전을 못 찾는다(=emergent KILL). ⟹ 유일 미해결 레버 = **개체 basis 를 키에 정렬시키는 무감독 신호**(random W_q 가 아니라 키-구조 반영 init·또는 값경로가 basis 를 끌어주는 2-phase).
+
+### 🧪 무감독 basis-정렬 테스트 = NEGATIVE ($0 · base whitening)
+명명한 레버(무감독 basis-정렬)를 직접 $0 검정: base penultimate 에서 top-k 지배(템플릿) 방향 제거 후 census.
+
+| 제거 방향수 | excess | verdict |
+|---|---|---|
+| 0 | +0.123 | KILL |
+| 1 | +0.121 | KILL |
+| 3 | +0.087 | KILL |
+| 10 | +0.080 | KILL |
+
+**결론**: 무감독 whitening 은 excess 를 줄이나(0.123→0.080) **KILL 을 못 벗어난다** ⟹ misalignment 가 탈상관보다 **깊다**. 핵심 이유: store 키가 **arbitrary frozen**(`K[i]=_entity_key(key_emb,e_i)`, key_emb 동결)이라, 어느 개체가 어느 키에 붙는지는 **정확히 target 정보** — 무감독 penultimate 통계에 그 map 이 없다. ⟹ **emergent(무감독) 주소는 arbitrary frozen 키에 대해 원리적으로 어렵다**(감독이 그 map 을 나른다). random W_q KILL(basis 밖) → 무감독 whitening KILL(탈상관 부족) 2-lens 로 emergent-address $0 프로그램 **definitively 종결**.
+**남은 희망(학습 fire)**: 무감독이되 penultimate↔byte-bag-key 구조를 잇는 목적함수(H_9722 값-대비 부트스트랩) — 순수 통계 아니라 값경로가 basis 를 끄는 2-phase.
