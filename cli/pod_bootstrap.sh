@@ -16,8 +16,12 @@
 #   ⑤ every stage printed `rc=$?` but never GATED on it, so a run where anima-py was not on PATH
 #      (setsid gives a minimal PATH; anima-py lands in /usr/local/bin) produced rc=127 at every
 #      step and still printed "ALL_DONE" — with ZERO output files.
+#   ⑥ (added 2026-07-17 · pod-ssh-transfer-broken) a plain `scp` of a 100MB+ ckpt over the vast
+#      ssh-proxy DROPS mid-stream and a fresh scp restarts from byte 0 → a flaky proxy never lands a
+#      big file, and the campaign "pivots to pool". Fixed here with a RESUMABLE (rsync --partial
+#      --append-verify) + retrying, per-file transfer so a drop resumes instead of restarting.
 #
-# The unifying defect: FAILURE THAT LOOKS LIKE SUCCESS. This script closes all five, by construction:
+# The unifying defect: FAILURE THAT LOOKS LIKE SUCCESS. This script closes all six, by construction:
 # nothing is quiet, every install is asserted, every transfer is counted on the far side, the CLI is
 # resolved to an absolute path before use, and "done" is never claimed without an artifact.
 #
@@ -52,8 +56,33 @@ WHEEL_VER="$(basename "$WHEEL" | sed -E 's/^anima_python-([0-9.]+)-.*/\1/')"
 echo "[pod] wheel=$(basename "$WHEEL") version=$WHEEL_VER assets=${#ASSETS[@]}"
 
 # ── ① transfer, then COUNT ON THE FAR SIDE (trap ③: scp skips a missing source silently) ─────────
-echo "[pod] transfer …"
-"${SCP[@]}" "$WHEEL" ${ASSETS[@]+"${ASSETS[@]}"} "root@$HOST:/root/"
+# trap ⑥ (pod-ssh-transfer-broken): a plain scp of a large ckpt (100MB+) over the vast ssh-proxy DROPS
+# mid-stream and dies — a fresh scp restarts from byte 0, so a flaky proxy never completes a big file.
+# Fix = RESUMABLE rsync (--partial keeps the incomplete file, --append-verify resumes + re-checks) inside
+# a retry loop, PER FILE (one big file's drop doesn't re-send the small ones). rsync needs to exist on
+# BOTH ends: install it on the pod best-effort first; fall back to a scp retry loop if it can't.
+echo "[pod] ensure rsync (resumable transfer) …"
+"${SSH[@]}" 'command -v rsync >/dev/null 2>&1 || { apt-get update -qq && apt-get install -y -qq rsync; } >/dev/null 2>&1 || true'
+POD_HAS_RSYNC=$("${SSH[@]}" 'command -v rsync >/dev/null 2>&1 && echo 1 || echo 0')
+transfer_one() {  # $1 = local file → /root/<basename>, resumable + retrying
+  local f="$1" base; base=$(basename "$f"); local n=0
+  if command -v rsync >/dev/null 2>&1 && [ "$POD_HAS_RSYNC" = 1 ]; then
+    until rsync --partial --append-verify --timeout=180 \
+          -e "ssh -p $PORT -o StrictHostKeyChecking=no -o ServerAliveInterval=20" \
+          "$f" "root@$HOST:/root/$base"; do
+      n=$((n+1)); [ "$n" -ge 8 ] && { echo "FATAL: rsync failed 8× on $base" >&2; return 1; }
+      echo "[pod]   rsync retry $n/8: $base (resuming)"; sleep 5
+    done
+  else
+    until "${SCP[@]}" "$f" "root@$HOST:/root/$base"; do
+      n=$((n+1)); [ "$n" -ge 8 ] && { echo "FATAL: scp failed 8× on $base" >&2; return 1; }
+      echo "[pod]   scp retry $n/8: $base"; sleep 5
+    done
+  fi
+}
+echo "[pod] transfer … (rsync=$POD_HAS_RSYNC · resumable + retry)"
+transfer_one "$WHEEL" || exit 1
+for a in ${ASSETS[@]+"${ASSETS[@]}"}; do transfer_one "$a" || exit 1; done
 WANT=$(( 1 + ${#ASSETS[@]} ))
 GOT=$("${SSH[@]}" "cd /root && ls -1 $(basename "$WHEEL") $(for a in ${ASSETS[@]+"${ASSETS[@]}"}; do printf '%s ' "$(basename "$a")"; done) 2>/dev/null | wc -l")
 [ "$GOT" -eq "$WANT" ] || { echo "FATAL: transfer incomplete — pod has $GOT/$WANT files" >&2; exit 1; }
