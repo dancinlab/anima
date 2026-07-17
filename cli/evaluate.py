@@ -769,6 +769,11 @@ def evaluate_usage():
     print("  anima evaluate <ckpt> --dump-hidden <prompts.json> --out <file.npz> [--win 24] [--with-logits]")
     print("      (read-only trunk penultimate-hidden dump · ρ·weave / γ binding-lane probe · card H_9235;")
     print("       --with-logits also dumps base last-pos logits per prompt for CLML lane training)")
+    print("  anima evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]")
+    print("      (H_9719 emergent-address $0 PRE-SCREEN · argmax-collision of random W_q over the")
+    print("       CLMS entity-keys vs a structureless-H pedestal · DIRECTIONAL screener: KILLs")
+    print("       sharp-init before spend when the geometry has no injective code · admissible:")
+    print("       reads NO target_slot · --store-census-selftest = planted injective/collapsed controls)")
     print("  anima evaluate <ckpt> --route-audit <manifest.json> [--vs <ckpt2>] --out <f.json> [--perm 10000]")
     print("      (H_9355 LOCUS-CAUSAL · ConvMoE router audit — do the declarative lane and the operator")
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
@@ -1417,6 +1422,118 @@ def dump_hidden_run(argv):
     np.savez_compressed(out_path, **store)
     print(json.dumps({"ckpt": ckpt, "d": d, "T": T, "n": len(items),
                       "out": out_path, "poscontrol": pc}, ensure_ascii=False))
+    return 0
+
+
+def _addr_census_core(H, K, W_q_seeds, rng):
+    """The admissible geometry census, shared by the real-dump path and the selftest.
+
+    H       : (N, d)   penultimate __last per entity (real dump OR planted).
+    K       : (S, d_k) the entity-keys K[i]=_entity_key(key_emb, e_i).
+    W_q_seeds : int    number of RANDOM W_q(d->d_k) projections to average over.
+    Returns {obs, ped, delta, verdict} where obs/ped are argmax-collision rates.
+
+    For each random W_q: q = H @ W_q -> (N, d_k); slot(e)=argmax_i q_e . K[i]; the
+    COLLISION rate = 1 - (#distinct slots hit)/N. The PEDESTAL is the SAME statistic on
+    RANDOM-gaussian H (zero entity structure, norm-matched) — this is the zero-truth arm
+    (phi-estimator-needs-zero-truth-pedestal) and it absorbs the key-norm argmax bias that
+    makes an ANALYTIC uniform-birthday baseline wrong. Signal = ped - obs (real H collides
+    LESS than structureless H) ⇒ the geometry carries an injective entity code random W_q
+    preserves. NO target_slot / correctness is ever read (Sol admissibility)."""
+    import numpy as np
+    N, d = H.shape
+    S, d_k = K.shape
+    hn = float(np.sqrt((H * H).sum(axis=1).mean()) + 1e-9)   # match pedestal H to real norm
+
+    def _collision(Hx):
+        c = 0.0
+        for s in range(W_q_seeds):
+            Wq = rng.standard_normal((d, d_k)) / np.sqrt(d)
+            slot = np.argmax((Hx @ Wq) @ K.T, axis=1)          # (N,) nearest entity-key
+            c += 1.0 - (len(set(slot.tolist())) / float(N))
+        return c / W_q_seeds
+
+    obs = _collision(H)
+    ped = _collision(rng.standard_normal((N, d)) / np.sqrt(d) * hn)
+    excess = obs - ped                                       # COLLAPSE excess over structureless-H
+    # SCREENER (DIRECTIONAL · NECESSARY-not-sufficient). When n_slot=n_entities (the CLMS
+    # structure), random W_q over FIXED keys is birthday-bounded: NO h beats ~1-1/e collision,
+    # so obs << ped is UNREACHABLE and this census CANNOT confirm emergence — it can only detect
+    # COLLAPSE (a degenerate geometry that maps every entity to one slot, obs >> ped). KILL =
+    # collapsed (sharp-init has a degenerate substrate to sharpen); PASS-screen = non-degenerate
+    # (necessary only — the real emergence verdict is the 303M fire, never this).
+    verdict = "KILL" if excess > 0.05 else "PASS-screen"
+    return {"obs": obs, "ped": ped, "excess": excess, "verdict": verdict, "N": N, "S": S}
+
+
+def store_addr_census_run(argv):
+    """`anima-py evaluate <ckpt> --store-addr-census <dump.npz> [--census-seeds 12]`
+    — the H_9719 EMERGENT-ADDRESS $0 pre-screen, engine-native (a_experiment_engine_native).
+
+    Reads a --dump-hidden .npz (penultimate __last per entity) + the ckpt's frozen CLMS
+    key_emb/W_q dims, applies K RANDOM W_q(d->d_k) projections, and measures the argmax
+    COLLISION of q=h@W_q over the entity-keys K[i]=_entity_key(key_emb, e_i) AGAINST a
+    structureless-H pedestal. ADMISSIBLE: reads NO target_slot / slot-correctness / any
+    statistic derived from them (Sol's rule) — it measures injectivity of the random-projected
+    geometry only. A DIRECTIONAL SCREENER: KILLs sharp-init before any pool spend when the
+    geometry carries no injective entity code; it NEVER cements (only 303M engine-native does).
+
+    --store-census-selftest: no ckpt/dump — plants INJECTIVE vs COLLAPSED synthetic geometry
+    and asserts the verdict flips (positive-control-before-reading-a-negative). $0 on mini."""
+    import numpy as np
+    seeds = evaluate_intval(argv[1:], "--census-seeds", 12)
+    rng = np.random.default_rng(20719)
+
+    if "--store-census-selftest" in argv:
+        print("=== --store-addr-census SELFTEST (planted controls · no ckpt) ===")
+        N, d, d_k, S = 48, 256, 32, 48
+        Kp = rng.standard_normal((S, d_k))
+        # POS (injective): each entity gets a distinct latent aligned so its own key wins.
+        #   h_e = one-hot(e) padded to d — random W_q maps distinct one-hots to distinct q.
+        Hinj = np.zeros((N, d))
+        for e in range(N):
+            Hinj[e, e % d] = 3.0
+            Hinj[e] += 0.2 * rng.standard_normal(d)
+        # NEG (collapsed): every entity shares one latent → every q identical → one slot.
+        Hcol = np.tile(rng.standard_normal((1, d)), (N, 1)) + 1e-3 * rng.standard_normal((N, d))
+        rinj = _addr_census_core(Hinj, Kp, seeds, np.random.default_rng(1))
+        rcol = _addr_census_core(Hcol, Kp, seeds, np.random.default_rng(2))
+        print("  NON-DEGEN(distinct h): obs=%.3f ped=%.3f excess=%+.3f → %s" %
+              (rinj["obs"], rinj["ped"], rinj["excess"], rinj["verdict"]))
+        print("  COLLAPSED (shared  h): obs=%.3f ped=%.3f excess=%+.3f → %s" %
+              (rcol["obs"], rcol["ped"], rcol["excess"], rcol["verdict"]))
+        ok = rinj["verdict"] == "PASS-screen" and rcol["verdict"] == "KILL"
+        print("  SELFTEST %s — census %s discriminate injective from collapsed" %
+              ("PASS ✓" if ok else "FAIL ✗", "DOES" if ok else "does NOT"))
+        return 0 if ok else 1
+
+    dump_path = evaluate_strval(argv[1:], "--store-addr-census", "")
+    ckpt = argv[0]
+    print("=== anima evaluate --store-addr-census — H_9719 emergent-address $0 pre-screen ===")
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable (clm): " + ckpt); return 1
+    cl = W.get("clms")
+    if cl is None:
+        print("ERROR: ckpt has no CLMS trailer — census needs key_emb (use a store-trailer ckpt)")
+        return 2
+    import clms as _clms
+    key_emb = cl["key_emb"]
+    npz = np.load(dump_path, allow_pickle=False)
+    ents = sorted({k[:-6] for k in npz.files if k.endswith("__last")})
+    if len(ents) < 2:
+        print("ERROR: dump has <2 entities (%d) — need a held-out entity pool" % len(ents)); return 2
+    H = np.stack([npz[e + "__last"].astype(np.float64) for e in ents])   # (N, d)
+    K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k) entity-keys
+    r = _addr_census_core(H, K, seeds, rng)
+    print("  n_entities=%d  n_slot(keys)=%d  seeds=%d" % (r["N"], r["S"], seeds))
+    print("  collision obs=%.4f  pedestal(structureless-H)=%.4f  excess=%+.4f  → %s"
+          % (r["obs"], r["ped"], r["excess"], r["verdict"]))
+    print("  [screener · DIRECTIONAL · NECESSARY-only] KILL ⇒ collapsed geometry (obs≫ped, maps "
+          "entities to one slot); PASS-screen ⇒ non-degenerate (necessary, NOT emergence — that is "
+          "the 303M fire) · admissible(target unread · random-W_q is birthday-bounded when n_slot=N)")
+    print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": r["N"], "obs": r["obs"],
+                      "ped": r["ped"], "excess": r["excess"], "verdict": r["verdict"]}, ensure_ascii=False))
     return 0
 def _selftest_rho_cells():
     """H_9212 ③ wiring self-test (torch-free · NO decode · reached via an internal subprocess,
@@ -7753,6 +7870,7 @@ _KNOWN_FLAGS = frozenset((
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit",
+    "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--cascade-null",
@@ -11759,6 +11877,11 @@ def main(argv):
     # binding-lane probe H_9235). argv[0]=ckpt; dump_hidden_run reads --dump-hidden/--out.
     if "--dump-hidden" in argv:
         return dump_hidden_run(argv)
+    # --store-addr-census <dump.npz> / --store-census-selftest: H_9719 emergent-address
+    # $0 pre-screen — argmax-collision of random-W_q over entity-keys vs a structureless-H
+    # pedestal. DIRECTIONAL screener (KILL-before-spend); admissible (no target_slot read).
+    if "--store-addr-census" in argv or "--store-census-selftest" in argv:
+        return store_addr_census_run(argv)
     # --faction-phi-proxy <prompts.json>: the ARCHIVED faction Phi proxy recomputed on live
     # trunk activations vs a zero-truth PEDESTAL (H_9660/H_9654 · faction-lateral-axis-r3).
     # Indicts the formula; never cements a consciousness verdict (a_phi_iit4_tool).
