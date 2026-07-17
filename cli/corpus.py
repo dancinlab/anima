@@ -56,7 +56,12 @@ CLOSE = ["new meaning arises", "meaning composes anew",
 
 def _parse_args(argv):
     fmt = argv[0] if argv else ""
-    opts = {"out": None, "held_out": (0, 1), "comp_per_pair": 280, "split_seed": 1,
+    # H_9643 --held-out-frac: hold out a FRACTION of the (i,j) pair grid instead of the single
+    # --held-out cell. 0.0 = the legacy single-pair behaviour (byte-identical default).
+    # H_9267's one-cell hold-out leaves the grid ~fully covered and a K=1 baseline already hits
+    # D-acc 1.000 — a ceiling the faction lever cannot move. Starving coverage is what makes the
+    # K=1 floor pre-gate (<=0.6) measurable at all (G1 is a DATA wall — H_9304).
+    opts = {"out": None, "held_out": (0, 1), "held_out_frac": 0.0, "comp_per_pair": 280, "split_seed": 1,
             "single_per_concept": 300, "seed": 7, "concepts": None,
             "atoms": None, "reps": 40, "replay": 40,
             "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
@@ -88,6 +93,8 @@ def _parse_args(argv):
             opts["out"] = argv[i + 1]; i += 2
         elif a == "--held-out":
             p = argv[i + 1].split(","); opts["held_out"] = (int(p[0]), int(p[1])); i += 2
+        elif a == "--held-out-frac":
+            opts["held_out_frac"] = float(argv[i + 1]); i += 2
         elif a == "--comp-per-pair":
             opts["comp_per_pair"] = int(argv[i + 1]); i += 2
         elif a == "--single-per-concept":
@@ -2364,13 +2371,30 @@ def _two(kw_fam, rng):
     return ks[0], ks[1 % len(ks)]
 
 
-def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed):
-    """Return the corpus text for one format arm (deriv or flat)."""
+def build(fmt, S, KW, held_out, comp_per_pair, single_per_concept, seed, held_out_frac=0.0):
+    """Return the corpus text for one format arm (deriv or flat).
+
+    held_out_frac (H_9643): withhold this fraction of the UNORDERED pair grid from training
+    instead of the single `held_out` cell. 0.0 keeps the legacy single-pair corpus byte-for-byte.
+    The withheld set ALWAYS contains `held_out` (the manifest's scored pair) and is drawn with a
+    split-seeded RNG that is independent of the content RNG, so the same corpus seed with a
+    different fraction differs only in coverage — not in wording.
+    """
     rng = random.Random(seed)
     n = len(S)
     held = frozenset(held_out)
+    held_set = {held}
+    if held_out_frac > 0.0:
+        all_un = [frozenset((i, j)) for i in range(n) for j in range(i + 1, n)]
+        k = int(round(held_out_frac * len(all_un)))
+        # split RNG is derived from the content seed but kept SEPARATE: changing the fraction must
+        # not reshuffle the wording, or the arms would differ on two axes at once.
+        srng = random.Random(seed * 7919 + 13)
+        pool = [u for u in all_un if u != held]
+        srng.shuffle(pool)
+        held_set = {held} | set(pool[:max(k - 1, 0)])
     train_pairs = [(i, j) for i in range(n) for j in range(n)
-                   if i != j and frozenset((i, j)) != held]
+                   if i != j and frozenset((i, j)) not in held_set]
 
     def instance(i, j):
         a1, a2 = _two(KW[i], rng)
@@ -3909,13 +3933,23 @@ def main():
         return
     S, KW = _load_concepts(opts["concepts"])
     text, train_pairs = build(fmt, S, KW, opts["held_out"],
-                              opts["comp_per_pair"], opts["single_per_concept"], opts["seed"])
+                              opts["comp_per_pair"], opts["single_per_concept"], opts["seed"],
+                              held_out_frac=opts.get("held_out_frac", 0.0))
     if opts["out"]:
         with open(opts["out"], "w") as fh:
             fh.write(text)
-    print(f"anima corpus {fmt}: concepts={len(S)} train_pairs={len(train_pairs)} "
+    n_c = len(S)
+    n_grid = n_c * (n_c - 1) // 2
+    n_held = n_grid - len(train_pairs) // 2
+    print(f"anima corpus {fmt}: concepts={n_c} train_pairs={len(train_pairs)} "
           f"held-out={tuple(opts['held_out'])} bytes={len(text.encode())} "
           f"seed={opts['seed']} -> {opts['out'] or '(stdout head)'}")
+    if opts.get("held_out_frac", 0.0) > 0.0:
+        # H_9643: report the REALIZED coverage, not the requested fraction — the K=1 floor
+        # pre-gate is read against what the corpus actually withheld.
+        print(f"  coverage: {n_grid - n_held}/{n_grid} unordered pairs trained "
+              f"({100.0 * (n_grid - n_held) / max(n_grid, 1):.1f}%) · "
+              f"held-out-frac={opts['held_out_frac']} ({n_held} pairs withheld)")
     if not opts["out"]:
         print(text[:600])
 

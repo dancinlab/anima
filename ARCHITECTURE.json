@@ -16378,7 +16378,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) · 🟢 블록 실재 + 선결조건 4/4(H_9674) · 🔨 H_9643 구현 ③b — model+serialize+decode 왕복 닫힘 · --faction-lesion 계기 배선(shape 버그 2건 수정) · 양성통제 진행중. NEXT = K=1 floor pre-gate.",
+    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🔨 H_9643 구현 ④a — model+serialize+decode 왕복 · --faction-lesion 계기 · --held-out-frac coverage 레버(frac=0 레거시 byte-identical ✅). 🎯 **프런티어 승격**(2026-07-17). NEXT = K=1 floor pre-gate 실측.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16711,7 +16711,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "🔨 구현 ③b — --faction-lesion 배선 + shape 버그 2건 수정 · 양성통제 진행중",
+      "verdict": "🔨 구현 ④a — 계기 3종 + coverage 레버 완비 · 양성통제 진행중 · NEXT=K=1 floor pre-gate",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16794,6 +16794,13 @@
         "id": "faction-r3-h9643-shape-bugs",
         "detail": "⑨dense materialize 가 readout 을 잡아먹음: 'cout%cin_per_g==0 ∧ cin_per_g≠cout 이면 grouped' 추론이 정직한 dense Conv1d(64→256,k=1)(weight (256,64,1))을 오인 ⟹ (256,256,1) 확장. ⑩슬롯명 near-miss: 실제 tc0W/tc1W 인데 startswith('tcW') 매칭이 아무것도 안 잡음(ecW 만 우연히 맞아 절반만 dense).",
         "verdict": "shape 은 저자의 의도를 말하지 않는다 — 모델이 말해야 한다(_FACTION_GROUPS 명시) · near-miss 는 조용하지 않아야 한다(앵커 정규식). 수정후 ecWt(192,64)·tcWt(192,64)·roWt(64,256) 전부 일치 ✅"
+       },
+       {
+        "name": "🔨 구현 ④a — --held-out-frac: 천장에서 내려오는 레버",
+        "role": "",
+        "id": "faction-r3-h9643-coverage",
+        "detail": "build() 가 쌍 하나만 빼고 격자를 전부 학습(train_pairs = [... != held]) ⟹ K=1 도 D-acc 1.000 천장 ⟹ 파벌 레버가 움직일 여지 0. G1 은 DATA 벽(H_9304)이므로 coverage 를 굶겨야 한다. 쌍 격자의 분율을 뺀다 · split RNG 를 내용 RNG 와 분리해 frac 바꿔도 문구 불변(두 축 동시변경=교란 차단) · realized coverage 출력.",
+        "verdict": "✅ frac=0 vs 레거시 byte-identical · frac 0/.25/.5/.75 → 뺀 쌍 1/7/14/21 정확. ⚠️coverage 를 결과 보고 고르면 tune-to-green — floor 를 먼저 확정하고 고정한다."
        }
       ]
      }
