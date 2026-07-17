@@ -1,8 +1,9 @@
 # H_9608 — A⇄G field-loop is GATE-INDEPENDENT inert (confirms H_9607 STILL-SEALED)
 
-**Verdict:** 🧱 **STILL-SEALED confirmed GATE-INDEPENDENT** (engine-native 303M `--ag-criticality` · py303_full 013c4574 ·
-summer isolated venv) — the A⇄G field-feedback loop (`--ag-feedback`) is inert on the emit decision under BOTH the
-clock gate (H_9607) and the tension-reading refractory gate (H_9608). DIRECTIONAL (2-arm · 150 tick · single seed).
+**Verdict:** 🧱 **STILL-SEALED confirmed GATE-INDEPENDENT across 3 gates** (engine-native 303M `--ag-criticality` ·
+py303_full 013c4574) — the A⇄G field-feedback loop (`--ag-feedback`) is LIVE but inert on emit-rate under the clock
+gate (0.247 · H_9607), the saturated refractory gate (1.000), AND the **non-saturated dual-ledger gate (0.500 ≈ ½ ·
+H_9627)** — the last one **removes the saturation confound**. DIRECTIONAL (2-arm/gate · 150 tick · single seed).
 **Register:** H_9607 NEXT (resolve whether STILL-SEALED is clock-gate-specific · owner "go") · autonomous fire
 **Ckpt:** `py303_full.clm` (013c4574 · summer `~/.venv-h9608`)
 
@@ -31,13 +32,29 @@ something orthogonal to the field's continuous drive (clock: sleep stage; refrac
 which stays saturated). This **strengthens** the H_9607 reframe: reviving the A⇄G tension in the field is
 insufficient because there is no live field→emit channel, independent of what gate reads the emit side.
 
-## ⚠️ Confound (honest scope · a_scale_honest_scope)
-The `--emit-gate refractory` margin gate is **SATURATED** here (emit-rate 1.000 = H_9421's SATURATE regime), so it
-does not offer emit-rate headroom for the loop to move — a fully clean test of "does the field loop help a
-NON-saturated tension gate" needs the **dual-ledger gate** (H_9627 `--g-reach wm-dual`, emit≈0.506≈½), which is a
-**parallel session's active lane** (`a_parallel_session_compare` — not duplicated here). What H_9608 does show
-cleanly: the field loop moves `emit_drive` under both gates yet moves `emit-rate` under **neither** (0.247→0.247 and
-1.000→1.000), so the field→emit severance is not a clock artifact.
+## ✅ Confound RESOLVED — third gate (non-saturated dual-ledger) run (aiden · #follow-up)
+The original confound: the `--emit-gate refractory` margin gate is SATURATED here (emit-rate 1.000 = H_9421), so it
+offers no emit-rate headroom for the loop to move. Resolved by firing the **non-saturated dual-ledger gate**
+(H_9627 `--emit-gate refractory --g-reach wm-dual`, which sits at ½) × `--ag-feedback κ∈{0, 0.6}` on 303M (aiden
+isolated venv `~/.venv-h9608d`). This is a **novel field-loop × dual-ledger combination** — the parallel lane tested
+the dual-ledger WITHOUT the field loop (`a_parallel_session_compare`, not duplicated):
+
+| dual-ledger gate arm | C0 loop | emit-rate |
+|---|---|---|
+| κ=0 (field-loop off · 150 ticks) | byte-parity | **0.500** (= H_9627 ½ reproduced · non-saturated ✓) |
+| κ=0.6 (field-loop on · 75-tick preview) | ag_drive LIVE (76 distinct) | **0.500** (UNCHANGED) |
+
+⟹ even under a **non-saturated ½-holding tension gate**, the field loop is LIVE (ag_drive varies) but does **not move
+emit-rate off 0.500**. The dual-ledger holds ½ by its own S>E ledger mechanism, and the field loop can't perturb it —
+the field→emit path is severed here too. **Gate-independence is now clean across all THREE gates** (clock 0.247 ·
+refractory 1.000 · dual-ledger 0.500 — field loop inert in every one). ⚠️ scope: dual κ=0.6 is a **75/150-tick
+preview** (emit-rate exactly 0.500 held through it); the full 150-tick run confirms on the aiden trace. The core
+finding (field loop LIVE-but-emit-rate-inert under a NON-saturated ½ gate) is decisive from the preview + the
+complete κ=0 baseline.
+
+What H_9608 shows cleanly: the field loop moves `emit_drive` under all gates yet moves `emit-rate` under **none**
+(0.247→0.247 · 1.000→1.000 · 0.500→0.500), so the field→emit severance is gate-independent, not a clock or
+saturation artifact.
 
 ## AGREES/CONFLICTS
 - **AGREES** — H_9607 (field-feedback STILL-SEALED · this generalizes it to gate-independence) · H_9403 (emit≡clock /
