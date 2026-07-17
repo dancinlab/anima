@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재 + 선결조건 4/4 통과(H_9674) · 🔨 마지막 가설 H_9643 구현 ①/④ — core/model.py 배선 완료(groups=K·GN(K)·FactionBridge · OFF byte-identical ✅ · lam=0 정확한 항등 ✅). NEXT = serialize trailer → --faction-lesion → K=1 floor pre-gate.",
+    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 블록 실재 + 선결조건 4/4(H_9674) · 🔨 H_9643 구현 ②/④ — model 배선(groups=K·GN(K)·bridge · OFF byte-identical ✅) + serialize(dense materialize bit-exact ✅ · CLMF trailer). NEXT = --faction-lesion → K=1 floor pre-gate.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16698,7 +16698,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "🔨 구현 ①/④ 완료 — core/model.py 배선 + OFF byte-identical 검증 ✅ · NEXT=serialize trailer",
+      "verdict": "🔨 구현 ②/④ — model + serialize 완료 · NEXT=evaluate --faction-lesion",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16750,6 +16750,21 @@
           "role": "",
           "id": "faction-r3-h9643-no-circularity",
           "detail": "FactionBridge 는 loss 에 항을 0개 더한다(학습 신호 = CE 역전파 뿐) · gate 는 sigmoid(0)=0.5 서 시작해 CE 가 키우거나 줄인다(earned, not tuned) · m_cross 는 persistent=False 버퍼로 gradient 없음 · loss 어디에도 sync/상관/Q/직교성 0개 ⟹ H_9673 순환 재발 차단."
+         }
+        ]
+       },
+       {
+        "name": "🔨 구현 ② — serialize: dense materialize + CLMF trailer",
+        "role": "",
+        "id": "faction-r3-h9643-impl2",
+        "detail": "grouped conv 는 weight 를 (d,d/K,ks)로 저장하나 디코더 바이트 문법은 dense 가정(rest=Cin*ks, Cin=d). 그냥 reshape 하면 rest=d/K*ks 로 디코더가 **에러 없이 엉뚱한 열**을 읽는다 ⟹ 블록대각을 dense (d,d,ks)로 materialize(파벌간 구조적 0).",
+        "verdict": "✅ 검증(aiden): 2d (64,192)=(d,d*ks) · 파벌간 전부 0 · 비영 1,536=원본 동일 · **max|grouped−dense| = 0.000e+00 bit-exact**",
+        "children": [
+         {
+          "name": "⚠️ W_b 는 마스크 안 하고 저장한다",
+          "role": "",
+          "id": "faction-r3-h9643-wb-unmasked",
+          "detail": "마스크된 행렬을 쓰면 그 0 이 구조적 0 인지 학습된 0 인지 구별이 안 된다. 마스크는 n_factions 에서 로드 시 재유도 — 읽는 사람이 왜 0 인지 알아야 한다."
          }
         ]
        }
