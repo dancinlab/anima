@@ -16390,7 +16390,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · 🟢 계기 확정(S=‖R‖²_F · 선택 없는 2차 합) · 🔨 ORACLE λ-ladder 인증중(toy 재설계 마르코프 4소스 + π=(2,0,0,3) 구조게이트 + 4 ckpt λ>0 서 loss 34배 = 라우팅 제약 확인) · S(λ) 측정중. 인증 PASS 후에만 실물 arm.",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🟢 **계기 v2 재동결**(2026-07-17 lab-full Fable+Sol 수렴): within-arm(S vs 자기 perm-null)은 base_CE 상쇄로 유효 → random-init S≈null(음성 clean)+lam0 S>null95 는 그 스케일서 정당(단 절반). cross-arm 절대비교(옛 :11143 S_real/S_randinit≥2.0)는 적합품질 스케일 산물 OILED→폐기. 계기 v2 = log-ratio 셀정규화 + 이중중심 코사인정렬 A(argmax 대체) + exceedance p. synthetic 재인증 PASS. lam0 얇은마진(perm=40)=PENDING. 남은 SOUND 4다리: within-arm perm≥200 + random-init✅ + fit-matched K=1 음성(H_9737) + π회수 → 그 뒤 303M 실물.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16901,6 +16901,22 @@
           "verdict": "복원 완료 · 리포트용 argmax 는 유지하되 **S 공식은 그걸 안 쓴다**고 명시"
          }
         ]
+       }
+      ]
+     },
+     {
+      "name": "🟢 계기 v2 재동결 — within-arm SOUND · cross-arm OILED-bar 폐기",
+      "role": "",
+      "id": "faction-r3-h9643-v2",
+      "detail": "lab-full Fable+Sol 독립수렴. within-arm(S_real vs 자기 perm-null)은 real·null 이 같은 base_CE 를 통과해 confound 무관 → random-init 음성 clean null(0.0003)+학습 S>null95 는 그 스케일서 정당한 인증(절반). cross-arm 절대비교(:11143 S_real/S_randinit≥2.0)는 base 4.8 vs 0.01 적합품질 스케일 산물 = 기계적 통과 OILED → 폐기.",
+      "verdict": "계기 v2: ÷base_CE→log-ratio · argmax→이중중심 코사인정렬 A(--faction-oracle-pi) · exceedance p+perm<200 PENDING. synthetic 재인증 PASS(planted S 42.16>null95 4.01·A+0.999 π회수·no-signal 환각없음). SOUND 4다리: within-arm perm≥200+random-init✅+fit-matched K=1(H_9737)+π회수.",
+      "children": [
+       {
+        "name": "🕳️ 폐기된 OILED bar (:11143)",
+        "role": "",
+        "id": "faction-r3-h9643-oiled-bar",
+        "detail": "#3964 가 머지한 S_real/S_randinit≥2.0 완전 bar 는 base_CE 스케일차(3200만×)라 어떤 학습 ckpt 든 통과 = tune-to-green 역방향. within-arm 한정 판정문으로 교체.",
+        "verdict": "폐기·재등록 — cross-arm 절대 S 비교는 계기가 답할 수 없는 질문(스케일 미보정)."
        }
       ]
      }

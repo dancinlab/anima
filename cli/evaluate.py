@@ -7739,7 +7739,7 @@ def _im_byte_feat8(s):
 
 
 _KNOWN_FLAGS = frozenset((
-    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--gen",
+    "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--gen",
     "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
@@ -11407,6 +11407,11 @@ def faction_lesion_run(argv):
     nperm = evaluate_intval(argv[1:], "--perm", 200)
     seed = evaluate_intval(argv[1:], "--seed", 12345)
     lam_ov = evaluate_strval(argv[1:], "--faction-lam", "")
+    # --faction-oracle-pi "2,0,0,3": the KNOWN routing of an ORACLE-trained ckpt. Present => run the
+    # positive-control DV = double-centered cosine alignment A between the damage matrix R and the pi
+    # occurrence template (H_9643 v2 · Fable+Sol converged). A uses NO selection (no argmax x/K, which
+    # re-imports the order-statistic bias defects ⑪⑫⑮⑯ killed this session) and is base_CE-immune.
+    pi_ov = evaluate_strval(argv[1:], "--faction-oracle-pi", "")
 
     print("=== anima evaluate --faction-lesion — 파벌 분할이 기능적인가 (H_9643) ===")
     print("ckpt:  " + ckpt)
@@ -11492,53 +11497,95 @@ def faction_lesion_run(argv):
           no signal  S   33.35 vs null95   92.64   PASS (does not hallucinate)
         """
         D = np.zeros((K, len(names)))
+        Dn = np.zeros((K, len(names)))
+        eps = 1e-4                                              # nats — a real CE floor, not 1e-9
         for f in range(K):
-            D[f] = dom_ce(np.where(assign == f)[0]) - base
-        Dn = D / (base[None, :] + 1e-9)
+            L = dom_ce(np.where(assign == f)[0])               # lesioned CE per domain
+            D[f] = L - base                                    # raw ΔCE — kept for report/json
+            # v2 (H_9643 · Fable+Sol converged): the docstring says damage couples MULTIPLICATIVELY,
+            # and the exact additive-ization of a multiplicative effect is the LOG, not division. The
+            # old Dn = D/base_CE blows up as base_CE -> 0 (a well-fit ckpt: base 0.01, lesion 1.0 =>
+            # Dn ~ 100, S ~ 1e4), so a model's FIT QUALITY dominated S and made cross-arm S values
+            # (the lambda ladder, the S_real/S_randinit bar) uncomparable. log-ratio compresses that
+            # (Delta_log ~ 4.6) and double-centering removes the additive column effect EXACTLY.
+            Dn[f] = np.log((L + eps) / (base + eps))
         R = Dn - Dn.mean(axis=1, keepdims=True) - Dn.mean(axis=0, keepdims=True) + Dn.mean()
-        return float((R ** 2).sum()), D
+        return float((R ** 2).sum()), D, R
 
     # real arm — the trailer's faction blocks are CONTIGUOUS d/K runs (core/model.py builds the
     # grouped conv that way, and pack_faction_section writes K, not an explicit assignment).
     per = d // K
     real_assign = np.arange(d) // per
-    S_real, D_real = selectivity(real_assign)
+    S_real, D_real, R_real = selectivity(real_assign)
     print("")
     print("파벌별 최대손상 도메인 (real · 참고용 — S 는 이 argmax 를 쓰지 않는다):")
     for f in range(K):
         c = int(np.argmax(D_real[f]))
         print("  faction %d → %-10s ΔCE %+.4f" % (f, names[c], D_real[f, c]))
     print("")
-    print("S_real = %.4f   (‖R‖²_F · 선택 없는 2차 합)" % S_real)
+    print("S_real = %.4f   (‖R‖²_F · log-ratio 셀정규화 · 선택 없는 2차 합)" % S_real)
+
+    # ORACLE positive-control DV — cosine alignment of R to the KNOWN pi routing template. Selection-
+    # free, base_CE-immune (cosine cancels scale). Only computed when --faction-oracle-pi is given.
+    pi = None
+    if pi_ov:
+        pi = [int(x) for x in pi_ov.replace(" ", "").split(",")]
+        M = np.zeros((K, len(names)))
+        for f, c in enumerate(pi):
+            if 0 <= f < K and 0 <= c < len(names):
+                M[f, c] = 1.0                                  # dom shared by 2 factions => 2 ones;
+        Mc = M - M.mean(1, keepdims=True) - M.mean(0, keepdims=True) + M.mean()  # orphan dom col => 0
+        def align(R):
+            n = np.linalg.norm(R) * np.linalg.norm(Mc)
+            return float((R * Mc).sum() / n) if n > 1e-12 else 0.0
+        A_real = align(R_real)
+        print("A_real = %+.4f   (π=%s 이중중심 코사인 정렬 · argmax 카운트 대체)" % (A_real, pi))
 
     rng = np.random.default_rng(seed)
-    null = []
+    null, null_A = [], []
     for i in range(nperm):
-        S_p, _ = selectivity(rng.permutation(real_assign))
+        S_p, _, R_p = selectivity(rng.permutation(real_assign))
         null.append(S_p)
+        if pi is not None:
+            null_A.append(align(R_p))
         if (i + 1) % max(nperm // 4, 1) == 0:
             print("  post-hoc null %d/%d …" % (i + 1, nperm), flush=True)
     null = np.array(null)
     null95 = float(np.percentile(null, 95))
+    # exceedance p — the honest small-perm statistic (Fable Q3: at perm=40 null95 is one order-stat,
+    # its sampling error swamps a thin margin; report p and flag perm<200 as PENDING, never a verdict).
+    p_exc = float((1 + int(np.sum(null >= S_real))) / (nperm + 1))
     print("")
-    print("post-hoc null: mean %.4f · sd %.4f · **null95 %.4f**  (n=%d)"
-          % (null.mean(), null.std(), null95, nperm))
+    print("post-hoc null: mean %.4f · sd %.4f · **null95 %.4f** · p=%.4f  (n=%d)"
+          % (null.mean(), null.std(), null95, p_exc, nperm))
     passed = bool(S_real > null95)
+    thin = nperm < 200
     out = {"ckpt": ckpt, "K": K, "d": d, "domains": names, "seed": seed, "perm": nperm,
            "faction_lam": (float(lam_ov) if lam_ov else None),
            "base_ce": base.tolist(), "damage": D_real.tolist(),
            "S_real": S_real, "null_mean": float(null.mean()), "null_sd": float(null.std()),
-           "null95": null95, "specialization": passed}
+           "null95": null95, "p_exceedance": p_exc, "specialization": passed,
+           "instrument": "v2-logratio", "perm_underpowered": thin}
+    if pi is not None:
+        A_null95 = float(np.percentile(np.array(null_A), 95))
+        out.update({"oracle_pi": pi, "A_real": A_real, "A_null95": A_null95,
+                    "oracle_recovered": bool(A_real > A_null95)})
+        print("oracle A_null95 %+.4f ⟹ π 회수 %s" % (A_null95, "YES" if A_real > A_null95 else "no"))
     print("")
     if passed:
-        print("  VERDICT (H_9643 Q2): S_real %.4f > post-hoc null95 %.4f ⟹ 파벌 분할이 **기능적**이다"
-              % (S_real, null95))
-        print("    — 임의 사후 분할과 다르다. Q3(debate → G1) 로 진행 가능.")
+        print("  within-arm: S_real %.4f > post-hoc null95 %.4f (p=%.4f) ⟹ 이 ckpt 의 파벌 분할이"
+              % (S_real, null95, p_exc))
+        print("    임의 사후 분할과 구별된다 (base_CE 는 real·null 양쪽서 상쇄 = 스케일 공정).")
     else:
-        print("  VERDICT (H_9643 Q2 · D1 발동): S_real %.4f <= post-hoc null95 %.4f" % (S_real, null95))
-        print("    ⟹ 학습 중 파벌 특화가 **안 생겼다** = 임의 사후 분할과 같다. 사전등록 D1 사망조건.")
-    print("  ⚠️ DIRECTIONAL: lesion 손상은 'specialization' 의 한 렌즈다. 파벌이 사람이 이름 붙일")
-    print("     만한 무언가를 뜻한다는 증명이 아니다. 3 seed 중 >=2 + S_real/S_randinit>=2.0 이 완전 bar.")
+        print("  within-arm (D1): S_real %.4f <= post-hoc null95 %.4f (p=%.4f)" % (S_real, null95, p_exc))
+        print("    ⟹ 이 ckpt 서 파벌 특화가 임의 사후 분할과 구별 안 됨.")
+    if thin:
+        print("  ⏳ PENDING: perm=%d < 200 — null95 는 순서통계량 1개 추정이라 얇은 마진 판정 미발행"
+              " (검정력-before-negative). --perm 200 이상 재발사 필요." % nperm)
+    print("  ⚠️ DIRECTIONAL + within-arm 한정: 이 판정은 '이 ckpt 가 랜덤분할과 다른가'만 답한다.")
+    print("     완전 SOUND 인증 = ① within-arm PASS(perm≥200) ② random-init 음성 clean null")
+    print("     ③ fit-matched K=1 음성(같은 낮은-CE·파벌구조 없음 → S≤null95) ④ ORACLE π 회수(A>A_null95).")
+    print("     cross-arm 절대 S 비교(옛 S_real/S_randinit≥2.0)는 base_CE 스케일 산물이라 폐기됨.")
     if out_path:
         json.dump(out, open(out_path, "w"), indent=1)
         print("")
