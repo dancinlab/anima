@@ -172,8 +172,8 @@
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9729-silence-content-303m",
         "type": "gate",
-        "verdict": "⛔ OPEN/UNMEASURED — run-2 INSTRUMENT-INVALID (기질 0bit · #4039 echo-directional DEMOTE)",
-        "detail": "H_9729 run-2(3seed+oracle·#4045) 계기 이중결함: own 6-gram 필터 base-rate≈1(EN)→38/38배제=측정안됨 · oracle 이중무효(OOD 0/80 washout + period-2⊥circular-shift=earned≡0 구조적). ⟹기질 0bit·#4039 echo문언 DEMOTE·MOUTH-SEVERED금지. 수리=필터 keep-all·oracle seeded-random in-dist. NEXT=파일럿certify→own/perm 재실행. 상세=카드+convergence 3건."
+        "verdict": "🟢 INSTRUMENT CERTIFIED (oracle) — estimand 수리 후 own arm 재실행 해석가능 (기질 판정 前)",
+        "detail": "H_9729 계기(#4046): 구 리더가 매개변수 cand[t] 조건부=post-treatment bias(carrier[t]→cand[t] same-tick 도달 제거)→수리 --reach-lag same=I(cand[t];carrier[t]|cand[t-1])→실 303M oracle CERTIFIED(z=9~18·p=0.002). fresh iid=same-tick pulse(HOLD-K KILL). own/perm --reach-lag same 재실행 해석가능. 기질 판정 前. 상세=카드."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16772,6 +16772,13 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "te-reach-conditioning-on-mediator-post-treatment-bias",
+    "state": "pos-conv",
+    "value": "인과 reach/transfer 를 재는 리더가 처치(carrier)가 도달하는 변수 자체를 조건부에 넣으면 = post-treatment conditioning on the MEDIATOR = principal 경로(carrier→그변수→future)를 차단하고 전송이 좋아질수록 검정력이 깎인다. H_9729: carrier[t]가 cand[t]에 same-tick 도달(79% 생존)하는데 리더가 I(cand[t+1];carrier[t]|cand[t])로 cand[t]를 조건부→구 estimand 는 residual/carryover지 reach 아님(z=1.65 잔여). 수리=PRE-treatment 조건부 I(cand[t];carrier[t]|cand[t-1])→실 oracle z=9~18 CERTIFIED. 양성통제는 리더의 정확한 lag 를 exercise 해야(fresh-each-tick oracle 은 same-tick 만·HOLD-K 는 persistence⟺fresh reinjection 구별불가로 무효).",
+    "threshold": "재발조건: TE/mediation/reach 를 조건부 MI 로 재는 모든 계기. ① 조건부 변수가 처치의 downstream(처치가 그걸 바꾸나) 인지 물어라 — 그렇다면 mediator 조건부 = post-treatment bias(principal 경로 삭제). 조건부는 PRE-treatment 상태로. ② 처치→결과 lag 를 코드로 확정(주입 시점 vs 결과 기록 시점 · reference-match) 후 리더 triple 이 그 lag 에 맞나 확인 — 한 행 밀리면 다른 estimand. ③ 양성통제는 리더가 재는 그 lag 에 신호를 놓아야 인증 — 다른 lag 에 놓으면 통과해도 무의미(HOLD/반복주입은 fresh 재주입과 구별불가). same-tick reach 와 t+1 persistence 는 별 read 로 명명.",
+    "source": "cli/evaluate.py::_silence_content_te · cli/chat.py dual-ledger reentry"
+   },
    {
     "id": "oracle-period2-schedule-pointmass-degeneracy",
     "state": "pos-conv",

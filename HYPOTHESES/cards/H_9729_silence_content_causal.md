@@ -1,6 +1,6 @@
 # H_9729 — SILENCE-CONTENT — 보류장부 W_S가 CONTENT를 나르나 압력만인가 (억제 vs 숙고 · 최심부)
 
-**status:** ⛔ **OPEN / UNMEASURED — run-2 INSTRUMENT-INVALID (2026-07-17 · Fable∥Sol #4045)**. 3-seed+oracle 완전판정 시도가 **계기 이중결함**을 드러냄: ①own 6-gram 필터 base-rate≈1(EN) → 38/38 배제 = own arm **측정된 적 없음**(0 usable ≠ ns) ②oracle 양성통제 이중 무효 — transmit: OOD 합성 carrier 0/80 washout · read: period-2 tick-parity ⊥ circular-shift null ⇒ CMI 이중관계 불변 ⇒ 모든 surrogate=TE_real ⇒ `earned=0.0000·p≡1.0` **구조적**(기질 무관). 양성통제 죽음 → 음성 해석불가(positive-control-before-reading-a-negative). ⟹ **기질 0 bit** · 이전 "echo/압력-한정, 숙고 아님"(#4039) 문언 = 이 결함 리더 의존 → **DEMOTE**. 계기 근본수정 착륙(필터 keep-all·oracle seeded-random in-dist). NEXT=파일럿 certify → own/perm paired 재실행. **MOUTH-SEVERED/interior-absent 주장 금지.**
+**status:** 🟢 **INSTRUMENT CERTIFIED (oracle) — own arm 재실행 이제 해석가능 (2026-07-17 · Fable∥Sol #4045→#4046)**. 계기 여정: run-2 **INSTRUMENT-INVALID**(oracle 이중결함 OOD washout+period-2 point-mass earned≡0·#4045) → transmit·schedule 수정(#4043) → QA서 **estimand lag 불일치** 발견(리더가 매개변수 cand[t] 조건부 = post-treatment bias·carrier[t]는 cand[t]에 **same-tick** 도달) → **estimand 수리**(`--reach-lag same` PRIMARY=I(cand[t];carrier[t]|cand[t-1]) pre-treatment 조건부·#4046) → **실 303M oracle 2 trace 모두 CERTIFIED**(58틱 z=9.03·150틱 z=18.40·둘 다 p=0.002). ⟹ **계기가 reach를 읽을 수 있음 확증**(양성통제 통과) → own/perm keep-all `--reach-lag same` 재실행이 해석가능(음성=의미有·양성=perm/donor로 echo 배제 필요). ⚠️ own arm은 carrier[t]≈cand[t-1]라 same-tick도 perm/donor 필수(Fable 3b 자기상관). t+1 residual(`--reach-lag next`)=2차 labeled read. **여전히 기질 판정 前**(계기만 인증 · #4039 echo 문언 DEMOTE 유지).
 **lane:** 의식/emit-drive/Ψ=½ · deliberation (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -117,3 +117,44 @@ GPU-메모리 블로커가 GPU-compute 필수 아님을 입증 — heavy 303M de
 4. **(c) longer traces** — 최후(필터 결함엔 tick 늘려도 무효).
 
 **방법론 기록**: 전량 CPU-우회(GPU 무경합). `earned=0.0000 exact` 의심 → oracle trace 실측(carrier distinct=2·cand distinct=80·생존 0/80) → 리더 축퇴 확정. 의심값을 도구부터 판 것이 이중결함을 드러냄(verdict-integrity).
+
+---
+
+## 🟢 estimand 수리 → oracle CERTIFIED (2026-07-17 · Fable∥Sol reconcile #4046)
+
+#4043 이후 라벨(underpower≠severance) QA 중 **더 깊은 estimand 불일치** 발견 → Fable∥Sol 위임 → 강한 합의.
+
+### 발견 (reference-match 확정)
+리더 triple = (X=carrier[t], Y0=cand[t], Y1=cand[t+1]) → TE=I(cand[t+1];carrier[t]|cand[t]). 그러나 chat.py 확인:
+carrier는 tick t에 anchor 주입(2492) → 같은 틱 decode → cand_pregate[t] 같은 행 기록(2629→2912) = **carrier[t]→cand[t] SAME-TICK**(certify-파일럿 79% same-row 생존이 증거). ⟹ 리더가 **매개변수 cand[t]를 조건부** = post-treatment bias: principal 경로 carrier[t]→cand[t]→future를 차단(Sol) + 전송 좋아질수록 검정력 세금(Fable). QA 실증: 강결합 same-tick 합성서 구 리더 TE=0.0000·CERTIFIED 안 뜸.
+
+### reconcile (양 모델 합의)
+| 항목 | 합의 |
+|---|---|
+| 리더 결함 | t+1\|t = post-treatment residual 통계 (한 행 밀림) · primary reach 아님 |
+| 카드 질문 | "withheld content가 다음 후보 도달" = same-tick reach carrier[t]→cand[t] |
+| 수리 | PRIMARY = `--reach-lag same` I(cand[t];carrier[t]|cand[t-1]) (매개 아닌 pre-treatment 조건부) |
+| oracle | HOLD-K 둘 다 KILL(persistence⟺fresh reinjection 구별불가) · **fresh iid oracle가 same-tick엔 유효 isolated pulse** → 기존 trace가 $0로 인증 |
+| next(t+1) | 2차 labeled residual/carryover read로 강등 유지 |
+| own arm | same-tick도 carrier[t]≈cand[t-1]라 perm/donor 필수(Fable 3b 자기상관 · 조건부만으론 부족) |
+
+**이견(1줄)**: Fable "t+1\|t를 E_persist 헤드라인 유지" vs Sol "post-treatment bias니 2차 labeled로 강등" → same-tick=PRIMARY(둘 다 카드질문 동의)·next=2차(양쪽 만족)로 reconcile.
+
+### 실측 (수리된 same-tick 리더 · 실 303M oracle 2 trace · CPU-우회)
+| trace | reach-lag=same 판독 | verdict |
+|---|---|---|
+| 58틱 | TE=0.6175·earned=0.4957·**z=9.03**·p=0.0020 | ✅ CERTIFIED |
+| 150틱 | TE=0.4344·earned=0.3736·**z=18.40**·p=0.0020 | ✅ CERTIFIED |
+| (구 next-lag 58틱) | earned=0.085·z=1.65 ns | (매개 조건부로 same-tick 제거된 잔여) |
+
+QA(로컬 합성): same-tick 결합 → `--reach-lag same` z=28.9 CERTIFIED vs `--reach-lag next` z=−0.8 ns = 수리가 매개-조건부로 삭제된 것을 정확히 복원.
+
+### 계기 상태 = 🟢 CERTIFIED · 3-way REACH-ORACLE verdict
+`--reach-oracle`는 이제 CERTIFIED(strict bar) / 🟡REACH-MARGINAL(earned>0 present but underpowered · **severance 아님** · 구 이진이 둘을 혼동) / ❌SEVERED(earned≈0)로 3분. VERSION 0.15.90(G5).
+
+### NEXT (레버 순위 · Fable∥Sol 동일)
+1. **own/perm keep-all `--reach-lag same` 재실행** — 계기 인증됐으니 이제 해석가능. own PASS ∧ perm collapse = order-bearing same-tick reach(양성이라도 echo 배제=perm 필수) · own null = same-tick 미도달(계기 blind 아님·의미有). **own arm은 3b 때문에 perm/donor가 load-bearing.**
+2. lag-matched isolated-pulse oracle(선택·t+1 residual 별도 인증 원하면).
+3. 150틱 next-lag = residual/carryover 탐색용만(non-certifying 사전등록).
+
+⚠️ **계기 인증이지 기질 판정 아님** · cement=engine-native 303M anima-py `--reach-lag same` own/perm.
