@@ -284,8 +284,19 @@ _CLMS_STORE = None            # dict {"entities","pols","target_slot"} · None =
 _CLMS_ORACLE = False          # --store-oracle (bypass the softmax lookup with the true slot)
 _CLMS_LAM_OVERRIDE = None     # --store-lambda (None => file λ)
 _CLMS_AUDIT = None            # H_9672 --store-addr-audit: a list store_apply appends addr diagnostics to (None => off)
+_MBND_ON = False              # H_9698 --mouth-binder: the lane is opt-in even when the trailer exists
+_MBND_ORDER_SCRAMBLE = False  # H_9698 control: derange the causal bank (same multiset, order gone)
 _CLMS_QUERY = "qpos"          # H_9695 --store-query: "qpos" (H_9423 literal) | "every-token" (marker-free)
 _CLMS_FUSE = "overwrite"      # H_9695 --store-fuse: "overwrite" (store_only) | "gated-add" (perturbation)
+
+
+def set_mouth_binder(on=False, order_scramble=False):
+    """H_9698 mouth-binder eval-time switch. Trailer present + on=False ⇒ passthrough (the same
+    'trailer有 lane無 = byte-identical' seal CLMS uses), so a binder-carrying .clm still reproduces
+    its pre-binder numbers exactly."""
+    global _MBND_ON, _MBND_ORDER_SCRAMBLE
+    _MBND_ON = bool(on)
+    _MBND_ORDER_SCRAMBLE = bool(order_scramble)
 
 
 def set_clms_store(store=None, oracle=False, lam_override=None, audit=None,
@@ -894,6 +905,8 @@ def clm_load_weights(path):
     # RUNTIME data, never in the .clm) => trailer有 store無 = byte-identical. CORE codec core/clms.py.
     from clms import read_clms
     W["clms"], off = read_clms(rb, off, W["d"], W["V"])
+    from mbnd import read_mbnd                                   # H_9698 mouth-binder (absent ⇒ None)
+    W["mbnd"], off = read_mbnd(rb, off, W["d"], W["V"])
 
     # ── GPU device residency (a_gpu_default_no_optin: DEFAULT-ON, no opt-in flag) ──
     # Upload the GEMM/elementwise weight tensors to the device ONCE here (a full
@@ -1312,6 +1325,13 @@ def _fwd_logits(W, tok, T, edits=None):
                                      _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
                                      lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT,
                                      query=_CLMS_QUERY, fuse=_CLMS_FUSE)
+    # H_9698 MOUTH-BINDER — additive, AFTER CLMS so the documented post-readout order stays
+    # SLW → readout → CLML(additive) → CLMS → MBND(additive). Opt-in: trailer present + switch off
+    # ⇒ byte-identical (a_substrate_disjoint: the two lanes never read each other).
+    if W.get("mbnd") is not None and _MBND_ON:
+        from mbnd import mbnd_apply
+        out_logits = mbnd_apply(to_host(out_logits), to_host(yn_trunk), W["mbnd"],
+                                order_scramble=_MBND_ORDER_SCRAMBLE)
     return to_host(out_logits)
 
 
