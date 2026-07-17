@@ -41,6 +41,16 @@ def _softmax(z):
     return e / e.sum()
 
 
+def _sigmoid(x):
+    """Overflow-safe logistic (H_9696 gate). The naive 1/(1+exp(-x)) raises a RuntimeWarning and
+    loses the branch for |x|>~700; a saturated gate is a LEGITIMATE state for this lane (gate→0 is
+    how it stays silent where it has nothing to say), so it must saturate cleanly, not warn."""
+    if x >= 0.0:
+        return 1.0 / (1.0 + np.exp(-x))
+    e = np.exp(x)
+    return e / (1.0 + e)
+
+
 def _gelu(x):
     # tanh approximation — MUST match CLMSModule's F.gelu(approximate="tanh") for 2-production parity
     # (constants byte-identical to core/clml._gelu).
@@ -120,10 +130,17 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
     ents = store["entities"]
     pols = np.asarray(store["pols"], dtype=np.int64)
     K = np.stack([_entity_key(key_emb, ents[i]) for i in range(n_slot)])   # (n_slot, d_k)
-    V_slots = clms["val"][pols]                                            # (n_slot, d_s)
+    lane_type = int(clms.get("lane_type", 1))
+    if lane_type == 3:
+        # H_9696 CLMS-FAN: free ideation carries no polarity, so the value cannot be val[pols].
+        # The slot's value is projected out of the slot's OWN key — the lane retrieves "which of
+        # the words I am holding is relevant here" and re-injects that word's identity, which is
+        # the mouth-internal binding operator H_1603 says both walls are missing.
+        V_slots = K @ clms["W_v"]                                          # (n_slot, d_s)
+    else:
+        V_slots = clms["val"][pols]                                        # (n_slot, d_s)
     scale = 1.0 / np.sqrt(float(clms["d_k"]))
     out = logits.copy()
-    lane_type = int(clms.get("lane_type", 1))
     if query == "every-token":
         rows = range(len(yn))          # H_9695: marker-free — the lane queries at every position
     elif query == "qpos":
@@ -145,13 +162,20 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             audit.append({"argmax": int(np.argmax(a)),
                           "a_target": float(a[int(ts)]) if ts is not None else -1.0,
                           "target": int(ts) if ts is not None else -1})
-        v = a @ V_slots                                                   # (d_s,) = Σ aᵢ·val[polᵢ]
-        if lane_type == 2:
+        v = a @ V_slots                                                   # (d_s,) = Σ aᵢ·valueᵢ
+        if lane_type in (2, 3):
             g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
             z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
         else:                                                             # lane_type 1 legacy: [v; h] fusion
             z = _gelu(np.concatenate([v, h]) @ clms["W_h"] + clms["b_h"]) # (r,) — S1/S2 artifacts, no silent recast
         s = z @ clms["W_out"]                                             # (V,)
+        if lane_type == 3:
+            # H_9696 learned query gate — the legal replacement for the "=> " literal. A literal
+            # taught to the mouth is kill #1's scaffold relocated; a data-dependent nonlinear gate
+            # is precisely the class kill #7 left unmeasured. gate→0 lets the lane stay silent
+            # where it has nothing to say, which is what keeps free-gen fluency (dist>=5) alive.
+            gate = _sigmoid(float(h @ clms["W_gate"]))                    # sigmoid(W_gate·h) ∈ (0,1)
+            s = gate * s
         if fuse == "overwrite":
             out[t] = (lam * s).astype(dt)                                 # ★ store_only gate (H_9423)
         else:                                                             # gated-add (H_9695/H_9696)
@@ -171,6 +195,62 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
 # --------------------------------------------------------------------------- #
 _ARR_ORDER = ("key_emb", "W_q", "val", "W_h", "b_h", "W_out", "lam")               # lane_type 1 (legacy)
 _ARR_ORDER_V2 = ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam")     # lane_type 2 (H_9423 W_g)
+# lane_type 3 (H_9696 CLMS-FAN): W_v projects the VALUE out of the slot's own key (free ideation
+# has no polarity, so val[pols] has nothing to index), W_gate is the learned query gate that
+# replaces the "=> " literal (kill #1 forbids moving the marker into the mouth; kill #7 explicitly
+# leaves learned data-dependent gating unmeasured — this is that class).
+_ARR_ORDER_V3 = ("key_emb", "W_q", "W_g", "W_v", "W_gate", "W_h", "b_h", "W_out", "lam")
+
+
+# ── H_9696 (R4) perceptual charging — what the store holds during free ideation ──────────
+# The storebind lane got its store from a runtime manifest. Free ideation has no manifest, and
+# both lab-full models named the same missing part: something must WRITE the store from what the
+# mouth is actually reading. The one p5-clean answer is perception — the decode window's own
+# content words become the keys (hearing something and holding it in WM is a perception route,
+# never the emit gate). p8-clean REQUIRES that train and eval charge through THIS SAME function:
+# charging from a manifest at train and from the window at eval is literally a train/infer split.
+
+def charge_store(tok, known, n_slot=8, min_len=3):
+    """Build a store from the decode window's own bytes (perceptual charging · H_9696).
+
+    tok   : the window's byte list (the SAME bytes the trunk sees — no side channel).
+    known : the frozen dictionary the ρ·fan detector already uses; a nonce cannot be a G6 store
+            entry because the detector's content-word gate requires `w in known` (rho_fan.py:364),
+            so a store of CVCVC nonces would be invisible to the very gate G6 scores — this is
+            exactly where H_9672's synthetic-nonce lane and a G6-facing lane part ways.
+    Returns {"entities": [w]*n_slot, "pols": [0]*n_slot, "target_slot": None} — pols is a
+    structural placeholder (lane_type 3 derives its value from the key via W_v, never from pols).
+    Fewer than n_slot distinct words ⇒ the tail repeats the last word (a short window must not
+    change the slot count, or the softmax denominator would move with window length)."""
+    s = "".join(chr(b) for b in tok if 0 <= b < 128)
+    words = []
+    seen = set()
+    for w in _tokenize_ascii(s):
+        if len(w) >= min_len and w in known and w not in seen:
+            seen.add(w)
+            words.append(w)
+    if not words:
+        return None                       # nothing to hold ⇒ lane stays passthrough (honest silence)
+    while len(words) < n_slot:
+        words.append(words[-1])
+    words = words[:n_slot]
+    return {"entities": words, "pols": [0] * n_slot, "target_slot": None}
+
+
+def _tokenize_ascii(s):
+    """Lowercased alnum runs — the same shape rho_fan._rho_fan_words uses, kept local so core/clms
+    does not import the scorer (the lane must not depend on the gate that judges it)."""
+    out = []
+    cur = []
+    for ch in s:
+        if ch.isalnum():
+            cur.append(ch.lower())
+        else:
+            if cur:
+                out.append("".join(cur)); cur = []
+    if cur:
+        out.append("".join(cur))
+    return out
 _KEY_ALPHABET = 256
 
 
@@ -182,7 +262,11 @@ def pack_clms(w: dict) -> bytes:
     out = bytearray()
     out += CLMS_MAGIC
     lane_type = int(w.get("lane_type", 2))
-    if lane_type == 2:
+    if lane_type == 3:                                                    # H_9696 CLMS-FAN
+        out += struct.pack("<BIIIIII", 3, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
+        order = _ARR_ORDER_V3
+    elif lane_type == 2:
         out += struct.pack("<BIIIIII", 2, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V2
@@ -204,7 +288,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         return None, off
     p = off + 4
     lane_type = buf[p]; p += 1
-    if lane_type == 2:                                     # H_9423 fusion-bottleneck (W_g present)
+    if lane_type in (2, 3):                                # H_9423 W_g · H_9696 fangate (+W_v/W_gate)
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -223,10 +307,14 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
             "d_s": int(d_s), "d_g": int(d_g), "r": int(r), "key_seed": int(key_seed)}
     clms["key_emb"] = take(_KEY_ALPHABET * d_k, (_KEY_ALPHABET, d_k))
     clms["W_q"] = take(d * d_k, (d, d_k))
-    if lane_type == 2:
+    if lane_type in (2, 3):
         clms["W_g"] = take(d * d_g, (d, d_g))
-    clms["val"] = take(2 * d_s, (2, d_s))
-    w_h_in = (d_s + d_g) if lane_type == 2 else (d_s + d)
+    if lane_type == 3:                                     # H_9696: value from the key · learned gate
+        clms["W_v"] = take(d_k * d_s, (d_k, d_s))
+        clms["W_gate"] = take(d, (d,))
+    if lane_type != 3:                                     # lane_type 3 has no polarity table
+        clms["val"] = take(2 * d_s, (2, d_s))
+    w_h_in = (d_s + d_g) if lane_type in (2, 3) else (d_s + d)
     clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
@@ -240,8 +328,9 @@ def clms_weights_from_torch(mod) -> dict:
     are all non-square, so a missing transpose dies as a shape error (never silently)."""
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
-    return {
-        "lane_type": 2, "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
+    fangate = bool(getattr(mod, "fangate", False))
+    out = {
+        "lane_type": 3 if fangate else 2, "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
         "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
         "key_emb": n(mod.key_emb),
         "W_q": n(mod.W_q.weight).T,          # (d_k,d) → (d,d_k)
@@ -252,6 +341,10 @@ def clms_weights_from_torch(mod) -> dict:
         "W_out": n(mod.W_out.weight).T,      # (V,r) → (r,V)
         "lam": n(mod.lam).reshape(1),
     }
+    if fangate:                               # H_9696 lane_type 3 — value-from-key + learned gate
+        out["W_v"] = n(mod.W_v.weight).T      # (d_s,d_k) → (d_k,d_s)
+        out["W_gate"] = n(mod.W_gate.weight).reshape(-1)   # (1,d) → (d,)
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -277,11 +370,12 @@ if _HAS_TORCH:
         (② shortcut-cut is structural, not a regulariser)."""
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
-                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64):
+                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64, fangate=False):
             super().__init__()
             self.d, self.V, self.n_slot = d, V, n_slot
             self.d_k, self.d_s, self.r, self.key_seed = d_k, d_s, r, key_seed
             self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
+            self.fangate = bool(fangate)                            # H_9696 CLMS-FAN (lane_type 3)
             self.scale = 1.0 / (d_k ** 0.5)
             if key_emb is None:
                 ke = (np.random.RandomState(key_seed).standard_normal((256, d_k))
@@ -296,6 +390,12 @@ if _HAS_TORCH:
             # the S2 both-arm ORACLE-death (0.47/0.49) was v drowned in [v; yn_q] at d=3784.
             self.W_g = _nn.Linear(d, d_g, bias=False)
             self.val = _nn.Parameter(_torch.randn(2, d_s) * 0.02)
+            if self.fangate:
+                # H_9696: free ideation has no polarity — the value is projected out of the slot's
+                # OWN key (W_v), and a learned data-dependent gate (W_gate) replaces the "=> "
+                # literal. `val` stays allocated but is UNUSED on this lane (and is not packed).
+                self.W_v = _nn.Linear(d_k, d_s, bias=False)
+                self.W_gate = _nn.Linear(d, 1, bias=False)
             self.W_h = _nn.Linear(d_s + d_g, r)
             self.W_out = _nn.Linear(r, V, bias=False)
             self.lam = _nn.Parameter(_torch.tensor(float(lam0)))   # monitor-only scalar (no loss term)
@@ -317,11 +417,16 @@ if _HAS_TORCH:
                 a = _F.one_hot(oracle_slot, self.n_slot).to(q.dtype)      # (B,n_slot) softmax bypassed
             else:
                 a = _torch.softmax(att, dim=-1)
-            V_slots = self.val[pols]                                      # (B,n_slot,d_s)
+            if self.fangate:
+                V_slots = self.W_v(K)                                     # (B,n_slot,d_s) value FROM key
+            else:
+                V_slots = self.val[pols]                                  # (B,n_slot,d_s)
             v = _torch.bmm(a.unsqueeze(1), V_slots).squeeze(1)           # (B,d_s)
             g = self.W_g(yn_q)                                            # (B,d_g) op-gate bottleneck
             z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
             s = self.W_out(z)                                             # (B,V)
+            if self.fangate:
+                s = _torch.sigmoid(self.W_gate(yn_q)) * s                 # (B,1)*(B,V) learned gate
             out = self.lam * s
             # H_9672 addr-loss: expose the pre-softmax address logits so the trainer can supervise them
             # (L_addr = CE(att, target_slot)). att is computed regardless of oracle_slot, so oracle-train
