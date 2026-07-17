@@ -1303,7 +1303,7 @@ def _seed_to_tok(seed, T):
     return tok
 
 
-def _fwd_logits(W, tok, T, edits=None):
+def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
     """_clmd_fwd_logits_sc (host path) — full CLMConvMoE forward. tok:[T] ids.
     Returns logits:[T, V] as host numpy (to_host at the exit) — the SOLE
     device->host sync for a full-forward call when GPU-resident (see
@@ -1386,7 +1386,7 @@ def _fwd_logits(W, tok, T, edits=None):
     if W.get("mbnd") is not None and _MBND_ON:
         from mbnd import mbnd_apply
         out_logits = mbnd_apply(to_host(out_logits), to_host(yn_trunk), W["mbnd"],
-                                order_scramble=_MBND_ORDER_SCRAMBLE)
+                                order_scramble=_MBND_ORDER_SCRAMBLE, last_only=mbnd_last)
     return to_host(out_logits)
 
 
@@ -1444,7 +1444,7 @@ def clm_decode_argmax(path, seed, gen):
         tok[p] = float(seed_b[si]) if si >= 0 else 32.0
     out = bytearray()
     for _ in range(gen):
-        logits = _fwd_logits(W, tok, T)
+        logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
         row = logits[T - 1]
         besti = 0
         bestv = row[0]
@@ -1477,7 +1477,7 @@ def clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng):
     out = bytearray()
     rng = _mix32(seed_rng)
     for _ in range(gen):
-        logits = _fwd_logits(W, tok, T)
+        logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
         nb, rng = _topk_sample(logits[T - 1], V, top_k, temp, rng)
         out.append(nb)
         tok[:T - 1] = tok[1:]
@@ -2082,7 +2082,7 @@ def decode_auto_argmax(path, seed, gen):
             tok[p] = float(seed_b[si]) if si >= 0 else 32.0
         out = bytearray()
         for _ in range(gen):
-            logits = _fwd_logits(W, tok, T)
+            logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
             row = logits[T - 1]
             besti = 0; bestv = row[0]
             for k in range(1, V):
@@ -2228,7 +2228,7 @@ def clm_decode_grounded(path, seed, gen, anchor_texts, l_min, mouth=None):
             for p in range(T):
                 si = cl - T + p
                 tok[p] = float(ctx[si]) if si >= 0 else 32.0
-            logits = _fwd_logits(W, tok, T)
+            logits = _fwd_logits(W, tok, T, mbnd_last=True)   # H_9698 perf: gen reads only last row
             row = logits[T - 1]
             # H_9575 · PC2 → mouth (Fable design · owner-approved grounded rewire): the
             # emit-ORTHOGONAL tension axis PC2 as a CONTEXT-PRESENCE logit bias in log-prob
