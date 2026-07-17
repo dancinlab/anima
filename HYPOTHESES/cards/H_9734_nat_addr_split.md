@@ -142,3 +142,32 @@ origin/main(0.15.85) 정밀 대조. **default 경로 byte-identical 확정 = 고
 🔴 GPU 대기(summer free 6078<9000 · 병렬세션 2프로세스 점유·`a_dont_kill_live_compute` 안죽임) —
 waiter(setsid·5분폴링→자동재발사) + poller 자율 배치. **코드 upstream-fix 대상 없음**(reference-match
 CLEARED) · 이 datum 은 GPU 해방 대기(외부 의존·session-terminal).
+
+---
+
+## 🎯 seed-7 결정타 = NOT SEEDS · 환경/numerics 확정 (2026-07-17 · engine-native)
+
+버전 vs seed 를 seed-7(t3 와 정확히 같은 seed·default·byte-identical 코드)로 판정:
+```
+seed-7 @ 0.15.35 (t3.clm · 내 0.15.76 eval)  held addr_top1 = 0.9844  ✅ 일반화
+seed-7 @ 0.15.76 (내 재실행 · GPU-free waiter) held addr_top1 = 0.0078  🔴 실패
+```
+**같은 seed·같은 코드·같은 GPU(RTX 5070)인데 갈림** ⟹ **seed 아님**({3,17} fragility 기각 ·
+2-seed 재현 0.000 은 seed 가 아니라 환경의 산물). reference-match 로 code 무죄·eval 무죄까지
+확정됐으니 유일 남은 변수 = **훈련 환경/numerics**: torch **2.13.0+cu130**(CUDA 13) · Blackwell
+**sm_120** · **bf16**. t3 venv 는 /tmp 초기화로 소실 → torch 직접 비교 불가.
+
+### 두 하위원인 (재현성 CPT 로 판정중)
+- **(a) torch 버전 차이**: t3 가 더 옛 torch 로 돌아 bf16 훈련 numerics 가 달랐다(재현시 안정).
+- **(b) run-to-run CUDA bf16 비결정성**: 주소 일반화가 knife-edge → 비결정 reduction 이 run 마다
+  generalize/memorize 를 가른다([[bit-det-drop-fast-train]]: 훈련 bit-det 는 의도적으로 버려짐).
+  **(b)라면 H_9672 "seed-7 lucky/seed-11 collapsed" + H_9691 RV-sweep 전체가 seed 가 아니라
+  run-노이즈를 재는 것** = 병렬 세션 lane 에 치명적 함의.
+
+**판정중**: seed-7 3번째 run(armS_s7_repro · GPU free 8424 발사) → ≈0.0078 재현이면 (a)env-vs-t3 ·
+크게 다르면 (b)비결정성 확정. ⚠️ 병렬 세션(H_9672/9691 store-addr lane · 같은 torch 2.13.0+cu130
+summer)이 (b)면 동일 영향 — 교차통지 필요.
+
+### H_9734 재발사 경로 (원인별)
+- (a)torch: 알려진-good torch pin → 재발사(양성통제 arm-S 가 held≥.95 재현해야 arm-N 개봉).
+- (b)비결정: 단일-run 판독 불가 ⟹ N-run 분포로 재설계(또는 훈련 결정성 강제 · 속도 tradeoff).
