@@ -16924,6 +16924,13 @@
         "id": "faction-r3-h9737",
         "detail": "K=1(groups=1·파벌구조 없음)을 같은 낮은 CE(0.013)로 학습 → --faction-split 4 로 lesion 4분할 강제. random-init K=4 는 grouped-conv 블록 confound(p=.0448 경계)라 약한 음성 · K=1 은 conv 블록 없음.",
         "verdict": "S 0.406 ≤ null95 1.221 p=0.86 결정적 clean — 낮은-CE 분모(v1 폭발 스케일)서 log-ratio 가 적합품질을 특화로 오인 안 함 격리 확증."
+       },
+       {
+        "name": "🔧 faction 학습 플러밍 배선 (train → serialize_v3)",
+        "role": "",
+        "id": "faction-r3-h9643-trainwire",
+        "detail": "train(cli/train.py) --n-factions 미노출 + serialize.py serialize_v3 이 faction 직렬화(grouped-conv materialize+CLMF) 미지원 = faction 303M ckpt 생성 불가 갭. clm_serialize_v2 에만 존재(divergence).",
+        "verdict": "① --n-factions K(0=OFF byte-identical)+--faction-bridge-lam0→CLMConfig ② serialize_v3(n_factions>0)→clm_serialize_v2 위임(DRY) ③ round-trip 검증(n_factions=4 읽힘·OFF sha 무회귀). 303M 은 코퍼스+heavy 학습만 남음."
        }
       ]
      }
