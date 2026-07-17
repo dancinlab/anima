@@ -773,7 +773,9 @@ def evaluate_usage():
     print("      (H_9719 emergent-address $0 PRE-SCREEN · argmax-collision of random W_q over the")
     print("       CLMS entity-keys vs a structureless-H pedestal · DIRECTIONAL screener: KILLs")
     print("       sharp-init before spend when the geometry has no injective code · admissible:")
-    print("       reads NO target_slot · --store-census-selftest = planted injective/collapsed controls)")
+    print("       reads NO target_slot · verdict on the GRAND-MEAN-CENTERED excess (removes the shared")
+    print("       prompt-template component that dominates raw penultimate) · raw shown for transparency ·")
+    print("       --store-census-selftest = planted injective/collapsed controls)")
     print("  anima evaluate <ckpt> --route-audit <manifest.json> [--vs <ckpt2>] --out <f.json> [--perm 10000]")
     print("      (H_9355 LOCUS-CAUSAL · ConvMoE router audit — do the declarative lane and the operator")
     print("       lane run on DIFFERENT experts? Read-only; --vs runs a 2nd ckpt in the SAME process on")
@@ -1443,27 +1445,39 @@ def _addr_census_core(H, K, W_q_seeds, rng):
     import numpy as np
     N, d = H.shape
     S, d_k = K.shape
-    hn = float(np.sqrt((H * H).sum(axis=1).mean()) + 1e-9)   # match pedestal H to real norm
 
-    def _collision(Hx):
-        c = 0.0
-        for s in range(W_q_seeds):
-            Wq = rng.standard_normal((d, d_k)) / np.sqrt(d)
-            slot = np.argmax((Hx @ Wq) @ K.T, axis=1)          # (N,) nearest entity-key
-            c += 1.0 - (len(set(slot.tolist())) / float(N))
-        return c / W_q_seeds
+    def _excess(Hx):
+        hn = float(np.sqrt((Hx * Hx).sum(axis=1).mean()) + 1e-9)   # match pedestal to THIS H's norm
 
-    obs = _collision(H)
-    ped = _collision(rng.standard_normal((N, d)) / np.sqrt(d) * hn)
-    excess = obs - ped                                       # COLLAPSE excess over structureless-H
-    # SCREENER (DIRECTIONAL · NECESSARY-not-sufficient). When n_slot=n_entities (the CLMS
-    # structure), random W_q over FIXED keys is birthday-bounded: NO h beats ~1-1/e collision,
-    # so obs << ped is UNREACHABLE and this census CANNOT confirm emergence — it can only detect
-    # COLLAPSE (a degenerate geometry that maps every entity to one slot, obs >> ped). KILL =
-    # collapsed (sharp-init has a degenerate substrate to sharpen); PASS-screen = non-degenerate
-    # (necessary only — the real emergence verdict is the 303M fire, never this).
-    verdict = "KILL" if excess > 0.05 else "PASS-screen"
-    return {"obs": obs, "ped": ped, "excess": excess, "verdict": verdict, "N": N, "S": S}
+        def _collision(Hy):
+            c = 0.0
+            for s in range(W_q_seeds):
+                Wq = rng.standard_normal((d, d_k)) / np.sqrt(d)
+                slot = np.argmax((Hy @ Wq) @ K.T, axis=1)          # (N,) nearest entity-key
+                c += 1.0 - (len(set(slot.tolist())) / float(N))
+            return c / W_q_seeds
+        o = _collision(Hx)
+        p = _collision(rng.standard_normal((N, d)) / np.sqrt(d) * hn)
+        return o, p
+
+    # RAW h at the query position is DOMINATED by the shared prompt template ("is/not {e} => "),
+    # so distinct entities are positively correlated and collide MORE than orthogonal noise — a raw
+    # KILL mostly reports "template occupies the penultimate", NOT "the entity code is collapsed".
+    # The DECONFOUNDED signal removes the grand mean (the shared template component) and asks whether
+    # the ENTITY-specific residual is collapsed. The verdict reads the CENTERED excess.
+    obs_r, ped_r = _excess(H)
+    Hc = H - H.mean(axis=0, keepdims=True)
+    obs_c, ped_c = _excess(Hc)
+    shared_frac = float(np.linalg.norm(H.mean(axis=0)) / (np.sqrt((H * H).sum(axis=1).mean()) + 1e-9))
+    ex_r, ex_c = obs_r - ped_r, obs_c - ped_c
+    # SCREENER (DIRECTIONAL · NECESSARY-not-sufficient). Birthday-bounded when n_slot=n_entities:
+    # obs << ped is UNREACHABLE, so this can only detect COLLAPSE (obs >> ped), never confirm
+    # emergence. KILL = the CENTERED entity residual is collapsed (sharp-init has a degenerate
+    # substrate); PASS-screen = non-degenerate residual (necessary only — the emergence verdict is
+    # the 303M fire). The raw excess is reported for transparency but does NOT drive the verdict.
+    verdict = "KILL" if ex_c > 0.05 else "PASS-screen"
+    return {"obs": obs_c, "ped": ped_c, "excess": ex_c, "verdict": verdict, "N": N, "S": S,
+            "obs_raw": obs_r, "ped_raw": ped_r, "excess_raw": ex_r, "shared_frac": shared_frac}
 
 
 def store_addr_census_run(argv):
@@ -1488,20 +1502,21 @@ def store_addr_census_run(argv):
         print("=== --store-addr-census SELFTEST (planted controls · no ckpt) ===")
         N, d, d_k, S = 48, 256, 32, 48
         Kp = rng.standard_normal((S, d_k))
-        # POS (injective): each entity gets a distinct latent aligned so its own key wins.
-        #   h_e = one-hot(e) padded to d — random W_q maps distinct one-hots to distinct q.
-        Hinj = np.zeros((N, d))
-        for e in range(N):
-            Hinj[e, e % d] = 3.0
-            Hinj[e] += 0.2 * rng.standard_normal(d)
-        # NEG (collapsed): every entity shares one latent → every q identical → one slot.
-        Hcol = np.tile(rng.standard_normal((1, d)), (N, 1)) + 1e-3 * rng.standard_normal((N, d))
+        tmpl = rng.standard_normal((1, d)) * 3.0            # shared prompt-template component (both arms)
+        # POS (non-degenerate): shared template + ISOTROPIC full-rank entity residual → after the
+        #   grand-mean is removed the residual is distinct in every direction → argmax spreads.
+        Hinj = np.tile(tmpl, (N, 1)) + rng.standard_normal((N, d))
+        # NEG (residual-collapse): SAME shared template, but the entity residual collapses onto ONE
+        #   direction (collinear scalars × v) — realistic collapse that SURVIVES centering (a merely
+        #   all-identical geometry would be nulled by centering and is NOT the failure mode we screen).
+        v = rng.standard_normal((1, d))
+        Hcol = np.tile(tmpl, (N, 1)) + rng.standard_normal((N, 1)) * v + 1e-2 * rng.standard_normal((N, d))
         rinj = _addr_census_core(Hinj, Kp, seeds, np.random.default_rng(1))
         rcol = _addr_census_core(Hcol, Kp, seeds, np.random.default_rng(2))
-        print("  NON-DEGEN(distinct h): obs=%.3f ped=%.3f excess=%+.3f → %s" %
-              (rinj["obs"], rinj["ped"], rinj["excess"], rinj["verdict"]))
-        print("  COLLAPSED (shared  h): obs=%.3f ped=%.3f excess=%+.3f → %s" %
-              (rcol["obs"], rcol["ped"], rcol["excess"], rcol["verdict"]))
+        print("  NON-DEGEN(distinct h): centered excess=%+.3f (raw %+.3f) → %s" %
+              (rinj["excess"], rinj["excess_raw"], rinj["verdict"]))
+        print("  COLLAPSED (shared  h): centered excess=%+.3f (raw %+.3f) → %s" %
+              (rcol["excess"], rcol["excess_raw"], rcol["verdict"]))
         ok = rinj["verdict"] == "PASS-screen" and rcol["verdict"] == "KILL"
         print("  SELFTEST %s — census %s discriminate injective from collapsed" %
               ("PASS ✓" if ok else "FAIL ✗", "DOES" if ok else "does NOT"))
@@ -1527,13 +1542,19 @@ def store_addr_census_run(argv):
     K = np.stack([_clms._entity_key(key_emb, e) for e in ents])          # (N, d_k) entity-keys
     r = _addr_census_core(H, K, seeds, rng)
     print("  n_entities=%d  n_slot(keys)=%d  seeds=%d" % (r["N"], r["S"], seeds))
-    print("  collision obs=%.4f  pedestal(structureless-H)=%.4f  excess=%+.4f  → %s"
+    print("  RAW      collision obs=%.4f ped=%.4f excess=%+.4f  (template-confounded)"
+          % (r["obs_raw"], r["ped_raw"], r["excess_raw"]))
+    print("  shared-template component = %.1f%% of hidden norm  (grand-mean removed for the verdict)"
+          % (100.0 * r["shared_frac"]))
+    print("  CENTERED collision obs=%.4f ped=%.4f excess=%+.4f  → %s   [VERDICT]"
           % (r["obs"], r["ped"], r["excess"], r["verdict"]))
-    print("  [screener · DIRECTIONAL · NECESSARY-only] KILL ⇒ collapsed geometry (obs≫ped, maps "
-          "entities to one slot); PASS-screen ⇒ non-degenerate (necessary, NOT emergence — that is "
-          "the 303M fire) · admissible(target unread · random-W_q is birthday-bounded when n_slot=N)")
-    print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": r["N"], "obs": r["obs"],
-                      "ped": r["ped"], "excess": r["excess"], "verdict": r["verdict"]}, ensure_ascii=False))
+    print("  [screener · DIRECTIONAL · NECESSARY-only] verdict reads the CENTERED (deconfounded) "
+          "excess — the entity residual, not the template. KILL ⇒ residual collapsed (sharp-init has a "
+          "degenerate substrate); PASS-screen ⇒ non-degenerate residual (necessary, NOT emergence — "
+          "that is the 303M fire) · admissible(target unread · birthday-bounded when n_slot=N)")
+    print(json.dumps({"ckpt": ckpt, "dump": dump_path, "n": r["N"], "excess_centered": r["excess"],
+                      "excess_raw": r["excess_raw"], "shared_frac": r["shared_frac"],
+                      "verdict": r["verdict"]}, ensure_ascii=False))
     return 0
 def _selftest_rho_cells():
     """H_9212 ③ wiring self-test (torch-free · NO decode · reached via an internal subprocess,
