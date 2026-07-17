@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: ⛔ 계기 미완 — 양성통제가 --faction-lesion 을 죽였다(S_real 1.3879 < null95 1.7270 · **max 순서통계량 편향** · 심은 특화도 못 봄). D1 은 판정 아님(계기 자격 미달) · NEXT=S 재설계 후 양성통제 재통과
+status: 🔧 S 재설계 완료 — $0 판별서 4 후보 중 centered-diag 만 통과(max·hungarian·MI 전부 순서통계량 병) · 배선 후 양성통제 재시험중
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -402,6 +402,35 @@ max-편향을 안 타는 DV 로 바꾼다. 후보(다음 세션에서 하나 고
   **양성통제가 먼저 통과**해야 음성을 읽는다.
 
 ⟹ H_9643 Q2 는 **계기 미완**으로 되돌린다. 이 세션의 D1 은 **판정이 아니다**(계기 자격 미달).
+
+
+## 🔧 S 재설계 — 후보 4개를 $0 로 판별하니 하나만 살았다 (2026-07-17)
+
+엔진에 배선하기 **전에** 합성 손상행렬(심은 대각 = 진실을 아는 상태)로 네 후보를 시험했다.
+
+```
+                     planted    null95     random     판정
+s_max (⑪ 죽은 것)    +1.7736   +2.0115    +1.4663    ⛔ FAIL
+(a) hungarian        +6.9674   +8.5754    +3.7427    ⛔ FAIL
+(b) MI(f;argmax_c)   +0.1592   +0.3466    +0.4334    ⛔ FAIL  ← random 이 planted 보다 높다
+(c) centered-diag    +5.7103   +3.7325    +0.4136    ✅ PASS
+```
+
+### Fable 이 제안한 3개 중 2개가 같은 함정이었다
+
+- **(a) Hungarian 도 max 와 같은 병** — 최적 매칭 자체가 순서통계량이라 무작위에서도 큰 값(3.74)이
+  나오고 null 이 신호까지 떠오른다(8.58 > 6.97).
+- **(b) MI 는 더 나쁘다** — random(0.43) > planted(0.16). argmax 로 이산화하면서 정보가 날아간다.
+- **(c) 만 통과** — `R = D − 행평균 − 열평균 + 전체평균` 이 **두 main effect**(파벌의 전체 세기 ·
+  도메인의 전체 취약성)를 빼고 **상호작용만** 남긴다. 무작위 배정엔 상호작용이 없으니 0 으로 무너진다
+  (random 0.41). "이 파벌이 저 도메인을 갖는다" 가 정확히 그 상호작용이다.
+
+⟹ 채택: **S = trace(R) / sd(R) · R = D − rowmean − colmean + grandmean**
+
+### 💡 배선 전 $0 판별이 결정적이었다
+
+프론티어 모델의 설계안 3개 중 2개가 죽었다. 그대로 배선했으면 **양성통제를 또 한 번 통과 못 하고**
+그 이유를 찾느라 GPU 시간을 태웠을 것이다. **계기 후보는 합성 진실 위에서 먼저 싸우게 하라.**
 
 ## 통제군 (≥2 · 사전등록)
 
