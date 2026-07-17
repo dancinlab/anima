@@ -68,7 +68,15 @@ seed-11이 밝힌 잔여 벽 = **값읽기(val 극성분화) seed-취약**(주�
   ```
   **양 seed 사전등록 4게이트 전부 통과**(ORACLE≥.90 ∧ P1-bal≥.75 ∧ addr-gap≤.20 ∧ flip≥.90). 결정적 지점: **T3서 0.50 으로 무너뜨렸던 바로 그 seed-11 이 0.9609** — "seed-7 착시 재현"이 아니라 **진짜 2-seed robust**. flip 0.99 양 seed = 답이 val 극성을 실제 소비(RV-2 flip 0.0137 과 정반대). SEEN−held gap 0.000/0.016 = 암기 아님·일반화.
   **기전(왜 이것만 열렸나)**: `v=Σ(aᵢ−1/8)·val[polᵢ] = v_원본 − 평균val` ⟹ **majority 성분이 산술적으로 소거**되고 타깃 슬롯 편차만 남는다. oracle-warmup(전환)·RV-1(연속 보조)·RV-2(스케줄)는 전부 **신호를 더해 지름길을 덮으려다** KILL — 지름길을 *없애니* 열렸다. **메타교훈: shortcut basin 은 덮는 게 아니라 수식에서 제거한다.**
-  **스코프(정직)**: tier = **감독 co-train**(addr-loss 주소감독 + val-center 구조수정) — 창발-주소 아님. seed-13(미접촉·tune-to-green 방지) 확증 진행중 → 통과시 3-seed robust. ckpt 2개 회수완료(`.fire-recover/h9672_rv_sweep/RV3_7_PASS_*.clm`·`RV3_11_PASS_*.clm` · 직전 pod GPU death 전례 보험).
+  **✅ seed-13 확증 PASS = 3-SEED ROBUST 종결(SWEEP_DONE · 2026-07-17)**: `[RV3c seed13] ORACLE=1.0000 · P1-bal=0.9922 · SEEN=0.9609(gap −0.031) · flip=0.9921` — **미접촉 seed(tune-to-green 방지용)도 4게이트 통과**. 3-seed 최종표:
+  ```
+  seed  ORACLE   P1-bal   flip     gap
+   7    1.0000   1.0000   0.9922   0.000
+  11    0.9609   0.9609   0.9919   0.016   ← T3서 0.50 으로 무너뜨린 그 seed
+  13    1.0000   0.9922   0.9921  −0.031   ← 미접촉 확증
+  ★★ SWEEP_DONE winner=RV3 = 3-seed robust
+  ```
+  **스코프(정직)**: tier = **감독 co-train**(addr-loss 주소감독 + val-center 구조수정) — 창발-주소 아님. 증거 회수완료: ckpt 4개(`RV3_7_PASS`·`RV3_11_PASS`·`RV3c_13_CONFIRM`·`RV1_7_KILL`) + `sweep_verbatim.log` 원문 → `.fire-recover/h9672_rv_sweep/`.
   **🔌 배선 상태 = `구현됨·미배선` (a_verified_must_wire · wire-to-prod · 이 결과는 TERMINAL 아님)**:
   - ✅ **계기 배선완료**(이 숫자를 낸 실코드 · engine-native): `cli/train.py:1322` `--store-val-center` · `core/clms.py:165` `if lane_type==3: a = a − 1/n_slot`(실 centering) · `core/clms.py:335` codec lane_type 3(train↔eval 일관 codec bit) · `core/model.py:137,410` `clms_val_center`→CLMSModule. parity 0.00e+00(off 시 byte-identical).
   - ❌ **production 미배선**: `core/model.py:137` `clms_val_center: bool = False` = **opt-in 기본 OFF** · `cli/chat.py` clms 참조 **0회** — 데몬은 이 store-bridge lane 을 아예 안 쓴다. 즉 **capability 증명이지 살아있는 anima 가 이 조회를 하지 않는다**.
