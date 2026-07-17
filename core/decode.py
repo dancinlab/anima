@@ -284,18 +284,23 @@ _CLMS_STORE = None            # dict {"entities","pols","target_slot"} · None =
 _CLMS_ORACLE = False          # --store-oracle (bypass the softmax lookup with the true slot)
 _CLMS_LAM_OVERRIDE = None     # --store-lambda (None => file λ)
 _CLMS_AUDIT = None            # H_9672 --store-addr-audit: a list store_apply appends addr diagnostics to (None => off)
+_CLMS_QUERY = "qpos"          # H_9695 --store-query: "qpos" (H_9423 literal) | "every-token" (marker-free)
+_CLMS_FUSE = "overwrite"      # H_9695 --store-fuse: "overwrite" (store_only) | "gated-add" (perturbation)
 
 
-def set_clms_store(store=None, oracle=False, lam_override=None, audit=None):
+def set_clms_store(store=None, oracle=False, lam_override=None, audit=None,
+                   query="qpos", fuse="overwrite"):
     """Set the CLMS store-bridge eval-time injection (cli/evaluate.py --store). store=None => the lane
     is passthrough regardless of a present trailer (the trailer有 store無 byte-identical seal). audit =
     a list (H_9672 addr-audit) that store_apply appends {argmax,a_target,target} per qpos to; None => off
     (byte-identical forward)."""
-    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE, _CLMS_AUDIT
+    global _CLMS_STORE, _CLMS_ORACLE, _CLMS_LAM_OVERRIDE, _CLMS_AUDIT, _CLMS_QUERY, _CLMS_FUSE
     _CLMS_STORE = store
     _CLMS_ORACLE = oracle
     _CLMS_LAM_OVERRIDE = lam_override
     _CLMS_AUDIT = audit
+    _CLMS_QUERY = query
+    _CLMS_FUSE = fuse
 
 
 # ── H_9407 consult-decode eval-time window override (process-global; set by cli/evaluate.py
@@ -1246,10 +1251,14 @@ def _fwd_logits(W, tok, T, edits=None):
     if W.get("clms") is not None and _CLMS_STORE is not None:
         from clms import store_apply, find_qpos
         qpos = find_qpos(tok)
-        if qpos:
+        # H_9695: the qpos guard is correct for query="qpos" (no marker ⇒ nothing to overwrite),
+        # but it would ALSO silence query="every-token" — free ideation never contains "=> ", so
+        # find_qpos is empty there BY CONSTRUCTION and the marker-free lane would never fire.
+        if qpos or _CLMS_QUERY == "every-token":
             out_logits = store_apply(to_host(out_logits), to_host(yn_trunk), W["clms"],
                                      _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
-                                     lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT)
+                                     lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT,
+                                     query=_CLMS_QUERY, fuse=_CLMS_FUSE)
     return to_host(out_logits)
 
 
