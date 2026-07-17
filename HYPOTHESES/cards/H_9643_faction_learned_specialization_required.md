@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔀 Fable 처방 수령 — 계기 가능(조건부) · 진범 3(지표 정렬가정 · 곱셈결합 · **toy 특화압력 부재**) · 처방=split-half 교차선택 + keep-one + oracle λ-ladder 인증 · 계기 사망시 UNMEASURABLE(VOID·RED 아님)
+status: 🟢 계기 확정 — S = ‖R‖²_F(선택 없는 2차 합 · 열표준화 이중중심화) · 합성 양방향 통과(planted 5428 vs null95 796 · 무신호 33 vs 93) · 결함 ⑮(정규화 자기상쇄=상수 16)·⑯(A/B 잡음 독립) 수정 · NEXT=toy 재설계 + ORACLE λ-ladder 인증
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -546,6 +546,63 @@ lesion-ΔCE 는 **인과 readout** 이므로 원리상 유효. 한계 둘만 명
 
 > 실패 ①③ = **선택-평가 데이터 동일성**(split 으로 해결) · 실패 ② = **정렬 가정**(에너지/교차선택으로
 > 해결) · 세 실패 공통 바닥 = **특화 압력 없는 toy**(결핍+정합+oracle ladder 로 해결) — **계기는 죽지 않았다.**
+
+
+## 🟢 계기 확정 — S = ‖R‖²_F (선택이 없는 2차 합) · 결함 ⑮⑯ 수정 후 양방향 통과 (2026-07-17)
+
+Fable 처방을 **$0 로 먼저 시험**했더니 처방 자체도 걸렀다 — 그리고 **내 구현 결함이 2개 더** 나왔다.
+
+### 🕳️ 결함 ⑮ — energy 정규화가 자기상쇄
+
+내가 `S_E = ‖R‖²_F / sd(R)²` 로 구현했는데 이건 **임의 행렬에서 정확히 K×C**다:
+```
+sd(R)² = sum(R²)/KC  ⟹  ‖R‖²_F / sd(R)² = sum(R²) / (sum(R²)/KC) = KC  (항상)
+trial 0/1/2 전부 16.000000 — 배정·데이터와 **무관한 상수**
+```
+Fable 공식은 `‖R‖²_F` **그 자체**였는데 내가 불필요한 정규화를 붙여 죽였다. 합성이 **수상하게 둥근
+16.0000** 으로 잡아냈다.
+
+### 🕳️ 결함 ⑯ — A/B 잡음을 독립으로 줬다
+
+실물의 split-half 는 **같은 프롬프트 집합**을 쪼갠다 ⟹ 잡음이 **상관**된다. 내 v1 은 독립 잡음을 줘서
+신호 대비 잡음을 2배로 준 셈이었다. 상관(ρ=0.7)으로 재현해 재시험.
+
+### 결과 — energy 가 유일하게 **양방향** 통과
+
+```
+                 S_real      null95        Δ         판정
+🔪 split-half     1.6775     2.2655     −0.5880    ⛔ FAIL
+energy (⑮수정)   5428.50     796.45    +4632.05    ✅ PASS
+
+음성 통제 (심은 특화 없음 — 헛것을 보나)
+🔪 split-half    +1.4756  vs +1.4667   ⛔ **헛것을 본다**
+energy            +33.35  vs  +92.64   ✅ 정상 (안 봄)
+```
+
+Fable 이 "보조" 라 한 게 **주력**이었다. split-half 는 여전히 `argmax(D_A)` 를 쓰는데, A/B 잡음이
+상관되면(실물이 그렇다) **그 편향이 B 로 새어간다**.
+
+### 🔑 이 세션이 반복해 배운 것의 최종형
+
+> **선택을 하는 순간 편향이 들어온다. 선택 자체를 없애라.**
+
+죽은 S 넷은 전부 **골랐다**: max(argmax) · hungarian(최적 매칭) · trace(정렬 가정 = 미리 고름) ·
+split-half(A 에서 고름). `‖R‖²_F` 는 **2차 합**이라 고를 자리가 없다 — 순서통계량 편향이 **원천 불가능**.
+
+### 배선 (VERSION bump · G5)
+
+```
+D[f,c] = CE(lesion f, c) − CE(base, c)
+Dn = D / base_CE[c]                      ← 열 표준화 (16배 난이도 편차 · 곱셈 결합 보정)
+R  = Dn − rowmean − colmean + grandmean  ← 이중중심화 (가법 main effect 제거)
+S  = ‖R‖²_F                              ← 선택 없음 · 정렬 가정 없음 · 자기정규화 없음
+```
+우연 = 채널 재배정 null 95분위(실측 유도 · 신호 보존 · 대응만 깨짐).
+
+### NEXT
+
+Fable 처방의 나머지: toy 재설계(마르코프 4소스 · 난이도 정합 실측 · 용량결핍 E=1) + ORACLE λ-ladder
+인증(λ∈{0,⅓,⅔,1} · bar = S λ단조 ∧ S(1)>null95 ∧ S(0)≈null) → **인증 PASS 후에만** 실물 arm.
 
 ## 통제군 (≥2 · 사전등록)
 
