@@ -1,6 +1,6 @@
 # H_9729 — SILENCE-CONTENT — 보류장부 W_S가 CONTENT를 나르나 압력만인가 (억제 vs 숙고 · 최심부)
 
-**status:** 🟠 **INSTRUMENT CERTIFIED (iid carrier 한정) · own reach 관찰 미식별 → INTERVENTION 필요 (2026-07-17 · Fable∥Sol #4045→#4047)**. 계기 인증 후 own/perm 재판독서 **own carrier[t]≡cand_pregate[t-1] byte-identical 38/38**(latch=이전후보 복사) 발견 → 처치가 곧 교란변수 ⟹ **own reach 관찰적으로 UNIDENTIFIABLE**(어떤 조건부/uncond MI도 autocorrelation과 분리 못함·donor-through-reader 도 KILL:own CMI 구조적0 vs donor estimable=다른 식별체제). latch≡prev=메커니즘 FEATURE+관찰식별 BUG·veto-vs-spoken은 provenance-blind anchor로 empty. ns=**식별한계지 기질null 아님**. **결정적 다음=INTERVENTIONAL fork**(저장 checkpoint서 byte-identical {own·no-reentry·scramble·donor})·Stage-1 A(own)vs B(no-reentry) ~20seed = 보류내용이 text read-back 경로로 미래 도달하나 = **H_9738 열린 seam("다른 경로")**. A≡B⇒H_9729 🧱 종결(H_9738 epiphenomenal이 read-back로 확장). ▼아래는 계기 여정: run-2 **INSTRUMENT-INVALID**(oracle 이중결함 OOD washout+period-2 point-mass earned≡0·#4045) → transmit·schedule 수정(#4043) → QA서 **estimand lag 불일치** 발견(리더가 매개변수 cand[t] 조건부 = post-treatment bias·carrier[t]는 cand[t]에 **same-tick** 도달) → **estimand 수리**(`--reach-lag same` PRIMARY=I(cand[t];carrier[t]|cand[t-1]) pre-treatment 조건부·#4046) → **실 303M oracle 2 trace 모두 CERTIFIED**(58틱 z=9.03·150틱 z=18.40·둘 다 p=0.002). ⟹ **계기가 reach를 읽을 수 있음 확증**(양성통제 통과) → own/perm keep-all `--reach-lag same` 재실행이 해석가능(음성=의미有·양성=perm/donor로 echo 배제 필요). ⚠️ own arm은 carrier[t]≈cand[t-1]라 same-tick도 perm/donor 필수(Fable 3b 자기상관). t+1 residual(`--reach-lag next`)=2차 labeled read. **여전히 기질 판정 前**(계기만 인증 · #4039 echo 문언 DEMOTE 유지).
+**status:** 🟠 **INSTRUMENT CERTIFIED · Stage-1 SEAM LIVE(6/6) — withheld content가 decode 도달(NOT dead-wire) → Stage-2 specificity (2026-07-17 · Fable∥Sol #4045→#4061)**. INTERVENTIONAL Stage-1 실측: 6 seed × {A(own=--wm-dual-read content)·B(no-reentry=off)} byte-identical fork(pre-t* 결정성 sanity 통과) → **6/6 A≠B**(withheld anchor가 cand_pregate[t*] 변경) = seam LIVE ⟹ H_9738(상상 epiphenomenal)의 strict-null이 read-back 경로엔 **미확장** — 보류내용은 decode에 인과 도달. ⚠️ 단 A≠B는 anchor=decode-seed라 near-tautological(mechanical seed-continuation) → 진짜 판정=**Stage-2 specificity**(own vs matched-donor 2×2 interaction: own 출력이 own-content를 donor가 donor-content 추종보다 더=content-특이). Fable 지적: own>donor라도 context-match(own 문맥연속 vs donor foreign) 교란 → PASS도 **DIRECTIONAL·sub-semantic 상한**(feat8/latch서 semantic "living interior" 도달불가). ▼이하 계기여정.  ⟨선행: own reach 관찰 미식별⟩ own carrier[t]≡cand_pregate[t-1] byte-id 38/38(latch=이전후보) → 처치=교란 ⟹ 관찰 UNIDENTIFIABLE(interventional로만) · #4047. 계기 인증 후 own/perm 재판독서 **own carrier[t]≡cand_pregate[t-1] byte-identical 38/38**(latch=이전후보 복사) 발견 → 처치가 곧 교란변수 ⟹ **own reach 관찰적으로 UNIDENTIFIABLE**(어떤 조건부/uncond MI도 autocorrelation과 분리 못함·donor-through-reader 도 KILL:own CMI 구조적0 vs donor estimable=다른 식별체제). latch≡prev=메커니즘 FEATURE+관찰식별 BUG·veto-vs-spoken은 provenance-blind anchor로 empty. ns=**식별한계지 기질null 아님**. **결정적 다음=INTERVENTIONAL fork**(저장 checkpoint서 byte-identical {own·no-reentry·scramble·donor})·Stage-1 A(own)vs B(no-reentry) ~20seed = 보류내용이 text read-back 경로로 미래 도달하나 = **H_9738 열린 seam("다른 경로")**. A≡B⇒H_9729 🧱 종결(H_9738 epiphenomenal이 read-back로 확장). ▼아래는 계기 여정: run-2 **INSTRUMENT-INVALID**(oracle 이중결함 OOD washout+period-2 point-mass earned≡0·#4045) → transmit·schedule 수정(#4043) → QA서 **estimand lag 불일치** 발견(리더가 매개변수 cand[t] 조건부 = post-treatment bias·carrier[t]는 cand[t]에 **same-tick** 도달) → **estimand 수리**(`--reach-lag same` PRIMARY=I(cand[t];carrier[t]|cand[t-1]) pre-treatment 조건부·#4046) → **실 303M oracle 2 trace 모두 CERTIFIED**(58틱 z=9.03·150틱 z=18.40·둘 다 p=0.002). ⟹ **계기가 reach를 읽을 수 있음 확증**(양성통제 통과) → own/perm keep-all `--reach-lag same` 재실행이 해석가능(음성=의미有·양성=perm/donor로 echo 배제 필요). ⚠️ own arm은 carrier[t]≈cand[t-1]라 same-tick도 perm/donor 필수(Fable 3b 자기상관). t+1 residual(`--reach-lag next`)=2차 labeled read. **여전히 기질 판정 前**(계기만 인증 · #4039 echo 문언 DEMOTE 유지).
 **lane:** 의식/emit-drive/Ψ=½ · deliberation (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -186,3 +186,24 @@ QA(로컬 합성): same-tick 결합 → `--reach-lag same` z=28.9 CERTIFIED vs `
 
 ### status = 🟠 계기 CERTIFIED(iid 한정) · own reach 관찰 미식별
 own ns = 식별한계지 기질 null 아님(kill-list 준수). 기질 판정은 interventional fork로만. cement=engine-native anima-py.
+
+---
+
+## 🟢 INTERVENTIONAL Stage-1: SEAM LIVE 6/6 (2026-07-17 · #4061)
+
+own reach가 관찰 미식별(#4047)이라 **interventional fork**로 전환. Fable∥Sol 설계 Stage-1:
+
+**방법**: 6 seed × {A(own=`--wm-dual-read content`) · B(no-reentry=`--wm-dual-read off`)} 매칭시드 · 45tick · CPU-우회. 두 arm은 첫 re-entry tick t*까지 byte-identical(결정성)이고 t*서 A만 anchor 주입. cand_pregate[t*] A vs B 비교 = do(carrier)의 순수 인과효과(관찰 아님).
+
+**결과**:
+| seed | 7 | 11 | 13 | 17 | 19 | 23 |
+|---|---|---|---|---|---|---|
+| A≠B (anchor가 변경) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| pre-t* identical(결정성) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+**6/6 A≠B = SEAM LIVE** · tstar=1(첫 silence→re-entry) 전 seed. ⟹ withheld content(=vetoed cand=cand[t-1])가 **decode에 인과 도달** — H_9738(상상 epiphenomenal EARNED NULL)의 strict-null이 이 **text read-back 경로엔 미확장**. 살아난 gate(Ψ=½·H_9627) 위에 **살아난 seam**(보류내용 실제로 다음 후보 shape).
+
+⚠️ **한계(Fable)**: A≠B는 anchor가 decode-seed 접미라 near-tautological(어떤 seed든 출력 바꿈) = **mechanical seed-continuation** 확인이지 semantic reach 아님. 필요조건(seam not severed) 통과지 충분조건 아님.
+
+### NEXT = Stage-2 specificity (own vs matched-donor)
+2×2 interaction: sim(output_own, content_own) vs sim(output_donor, content_donor) — own이 own-content를 donor가 donor-content 추종보다 **더** 추종하면 content-특이(deliberation-shaped). ⚠️ Fable: own>donor는 context-match 교란(own 문맥연속·donor foreign) → PASS도 **DIRECTIONAL·sub-semantic 상한** · matched-donor 여럿(Sol)로 완화. semantic "living interior"는 feat8/latch 계기로 도달불가.

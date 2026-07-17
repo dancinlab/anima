@@ -172,8 +172,8 @@
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9729-silence-content-303m",
         "type": "gate",
-        "verdict": "🟠 INSTRUMENT CERTIFIED (iid carrier 한정) · own reach 관찰 미식별 → interventional fork",
-        "detail": "H_9729(#4047): 계기 CERTIFIED(oracle z=9~18·#4046) 후 own carrier[t]≡cand_pregate[t-1] byte-id 38/38(latch=이전후보) → 처치=교란 ⟹ own reach 관찰 UNIDENTIFIABLE(donor-through-reader도 KILL). ns=식별한계 NOT 기질null. 다음=interventional fork Stage-1 A(own)vs B(no-reentry)=H_9738 열린 seam. 상세=카드+convergence."
+        "verdict": "🟠 CERTIFIED · Stage-1 interventional SEAM LIVE 6/6 (NOT dead-wire) → Stage-2 specificity",
+        "detail": "H_9729(#4061): own 관찰 미식별→INTERVENTIONAL fork. Stage-1 6seed×{A(own)·B(no-reentry)} byte-id fork→6/6 A≠B=seam LIVE(withheld content decode 인과도달·H_9738 strict-null read-back 미확장). ⚠️A≠B는 anchor=seed라 near-tautological=필요조건. 다음=Stage-2 specificity(sub-semantic 상한)."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16772,6 +16772,13 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "latch-degenerate-arm-needs-intervention-observational-unidentifiable",
+    "state": "pos-conv",
+    "value": "재진입 latch가 처치=이전관측(H_9729 own carrier[t]≡cand[t-1])이라 관찰 미식별이면, 정답은 do(carrier)의 identical-checkpoint fork다. Stage-1 A(own)vs B(no-reentry) byte-identical fork서 6/6 A≠B=seam LIVE(withheld content가 decode 인과도달) — 관찰 CMI가 정의상0이던 arm이 intervention으론 명확한 효과. ⚠️ A≠B는 anchor=decode-seed라 near-tautological(어떤 seed든 출력변경)=필요조건(seam not severed)이지 충분조건(semantic reach) 아님. content-특이성은 own-vs-matched-donor 2×2 interaction으로만(단 context-match 교란으로 DIRECTIONAL sub-semantic 상한).",
+    "threshold": "재발조건: 관찰 미식별 arm(처치=confounder)의 인과효과를 재려 할 때. ① do()-fork로 identical-checkpoint 분기(with/without/scrambled/donor) seed-blocked — 관찰 조건부/MI 아님 ② A≠B(효과존재)를 substrate reach로 과독 금지: 처치가 decode-seed면 A≠B는 near-tautological(mechanical), 필요조건일 뿐 ③ content-특이성은 matched-donor 여럿 2×2 interaction으로, 단 context-match(in-context vs foreign) 교란 명시 → sub-semantic 상한. pre-treatment byte-identical sanity로 fork 청결 확인.",
+    "source": "cli/chat.py dual-ledger reentry · Stage-1 interventional fork"
+   },
    {
     "id": "own-arm-latch-equals-prev-candidate-observationally-unidentifiable",
     "state": "pos-conv",
