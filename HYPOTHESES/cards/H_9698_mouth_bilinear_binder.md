@@ -1,6 +1,6 @@
 # H_9698 — R6 mouth-내 저랭크 bilinear cross-position binder (store 없이 추상화)
 
-**status:** 🔵 PRE-REG (lab full · **Sol 3위** · store faculty → binding 연산으로 추상화 · NOVEL) · not-terminal · 선행 [[H_9693]]
+**status:** 🔧 INSTRUMENT-CERTIFIED (lab full · **Sol 3위** · store faculty → binding 연산으로 추상화 · NOVEL) · not-terminal · 선행 [[H_9693]]
 **lane:** G6/ρ·fan · mouth-내 nonlinear 연산 **related:** [[H_9696]] (store 판) · [[H_1603]]
 
 ## 물음 (Sol)
@@ -21,6 +21,26 @@
 
 ## falsify
 🟢 nonlinear bind-Δ≥0.20 ∧ linear DOA 재현 ∧ scramble 붕괴. | 🧱 nonlinear==linear = kill#7 로 붕괴(선형동치). | ⚠️ write 문제 재귀 = H_9696 과 동일벽.
+
+## 계기 인증 (2026-07-17 · 학습 전 · DIRECTIONAL)
+
+`core/mbnd.py` (MBND trailer) + `core/decode.py` 배선 착륙. 셀프테스트가 **통제 결함 2건**을 잡아 수리했고,
+둘 다 고치기 전이었다면 R6 는 해석불가로 발사됐을 것:
+
+- **linear arm 이 선형이 아니었다** — softmax 주소가 데이터 의존이라 ⊙→+ 만 바꾼 arm 의 선형편차가 59.9.
+  이 arm 은 아무것도 통제하지 못했다. uniform attention(주소 고정)으로 교체 → 편차 **0.0000** =
+  kill#7 고정역할 선형붕괴를 BY CONSTRUCTION 재현 ⟹ 이 카드의 "계기 유효" 조건 충족.
+- **order-scramble 통제가 무효였다** — content attention 은 bank 에 순열-등변이라 Δ=0.000. 통제가
+  살아남은 게 아니라 통제가 lane 을 **건드릴 수 없었다**(cf. `corpus-py-1` 위조게이트 계급). 더 나쁘게,
+  순서 없는 lane 은 "A causes B"와 "B causes A"를 구별 못 해 **binder 자격 자체가 없다**.
+  상대거리 bias `b_pos` 추가 → order-scramble Δ=**325.6** = 순서가 주소에 들어가 통제가 물게 됨.
+
+2-production mirror: torch `MouthBinder` ⇄ numpy `mbnd_apply` parity **3.55e-15**(summer · f4 격자 스냅 후).
+numpy≥2 의 shape-(1,) lam 스칼라 캐스팅 거부(이식성 버그)도 pool 실행이 잡아 수리 — mac numpy 는 허용해
+로컬 컴파일로는 안 보였다.
+
+미완: `--mouth-binder`/`--mouth-memory`/`--bind-rank` train 플래그 + `--g6-bind-delta` 판정면.
+bind-Δ 숫자는 학습된 ckpt 로만 — 현재는 **계기지 verdict 아님**.
 
 ## source
 lab full Sol 3위(NOVEL) · store→연산 추상화.
