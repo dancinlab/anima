@@ -42,15 +42,13 @@ the dual-ledger WITHOUT the field loop (`a_parallel_session_compare`, not duplic
 | dual-ledger gate arm | C0 loop | emit-rate |
 |---|---|---|
 | κ=0 (field-loop off · 150 ticks) | byte-parity | **0.500** (= H_9627 ½ reproduced · non-saturated ✓) |
-| κ=0.6 (field-loop on · 75-tick preview) | ag_drive LIVE (76 distinct) | **0.500** (UNCHANGED) |
+| κ=0.6 (field-loop on · **150 ticks complete**) | ag_drive LIVE (150 distinct) | **0.500** (UNCHANGED · confirmed 75→102→150) |
 
 ⟹ even under a **non-saturated ½-holding tension gate**, the field loop is LIVE (ag_drive varies) but does **not move
 emit-rate off 0.500**. The dual-ledger holds ½ by its own S>E ledger mechanism, and the field loop can't perturb it —
 the field→emit path is severed here too. **Gate-independence is now clean across all THREE gates** (clock 0.247 ·
-refractory 1.000 · dual-ledger 0.500 — field loop inert in every one). ⚠️ scope: dual κ=0.6 is a **75/150-tick
-preview** (emit-rate exactly 0.500 held through it); the full 150-tick run confirms on the aiden trace. The core
-finding (field loop LIVE-but-emit-rate-inert under a NON-saturated ½ gate) is decisive from the preview + the
-complete κ=0 baseline.
+refractory 1.000 · dual-ledger 0.500 — field loop inert in every one). The full 150-tick run confirms emit-rate exactly 0.500 (held identically at the 75- and 102-tick checkpoints);
+the field loop is LIVE (150 distinct ag_drive) but emit-rate-inert under a NON-saturated ½ gate — complete-scope confirmed.
 
 What H_9608 shows cleanly: the field loop moves `emit_drive` under all gates yet moves `emit-rate` under **none**
 (0.247→0.247 · 1.000→1.000 · 0.500→0.500), so the field→emit severance is gate-independent, not a clock or
