@@ -207,3 +207,33 @@ own reach가 관찰 미식별(#4047)이라 **interventional fork**로 전환. Fa
 
 ### NEXT = Stage-2 specificity (own vs matched-donor)
 2×2 interaction: sim(output_own, content_own) vs sim(output_donor, content_donor) — own이 own-content를 donor가 donor-content 추종보다 **더** 추종하면 content-특이(deliberation-shaped). ⚠️ Fable: own>donor는 context-match 교란(own 문맥연속·donor foreign) → PASS도 **DIRECTIONAL·sub-semantic 상한** · matched-donor 여럿(Sol)로 완화. semantic "living interior"는 feat8/latch 계기로 도달불가.
+
+---
+
+## 🧱 TERMINAL-AT-INSTRUMENT: own-content specificity 원리적 미식별 (2026-07-17 · Fable∥Sol reconcile #4063)
+
+Stage-2(own vs donor specificity) 설계를 Fable∥Sol 위임 → **양 모델 수렴: PASS-불가·원리적 식별한계**.
+
+### 핵심 재프레임 (Fable)
+- sketch 부호오류 정정: 식별가능 통계 = **S_track = Δ_own + Δ_donor**(output이 주입된 content 정체를 추종하나 · 양 arm) — context-match가 각 arm서 반대부호로 들어가 **1차 CANCEL**. own-privilege **S_priv = Δ_own − Δ_donor**는 1차 교란 → descriptive-only.
+- 🔑 **own-privilege 원리적 UNIDENTIFIABLE**: own-ness는 context-continuity 외 substrate marker 없음(latch=cand[t-1] verbatim·anchor=bare text_payload·name 미분기) → "own"≡"maximal in-context" **설계수준서 처치≡교란**. 어떤 arm/matching/n도 못 깸(provenance-bearing surface 부재). Stage-1 관찰 미식별이 한 단계 위 재발.
+
+### 결정적 통계 (Sol · 저렴검증으로 채택)
+- randomization unit = **SEED**(arm이 run당 배정 · donor swap은 run 전체 적용 · 코드확증). tick은 rollout 궤적 공유라 독립복제 아님.
+- 6 independent seed-pair → seed-level sign-flip 최소 p = 1/2⁶ = **0.0156** ⟹ **p<0.005 PASS 수학적 도달불가**. circular-shift(Fable)은 temporal-alignment 2차 null이지 interaction 주 null 아님.
+- ⟹ 6-seed foreign-donor로 **PASS 없음** → 최대 **CONTEXT-BOUNDED DIRECTIONAL**.
+
+**이견(1줄)**: Fable "matched-donor는 nuisance balance지 identification 아님·S_track 주통계" vs Sol "clean 통제는 same-prefix fork된 대안후보(other-seed donor 불충분)" → 둘 다 own-privilege 미식별 결론 동일, 통계단위(seed)로 PASS-불가 확정.
+
+### claim ladder (도달 vs 불가)
+```
+①seam live       ✅ Stage-1 6/6 (near-tautological·anchor=seed)
+②content-carrying ⏳ S_track — descriptive만 가능(6-seed PASS 불가·p_min 0.016)
+③own-privilege    🧱 원리적 UNIDENTIFIABLE (marker 부재)
+④provenance-deliberation ⛔ 도달불가 (substrate marker 無·semantic은 feat8/2-bit 밖)
+```
+
+### 프런티어 답 (살아난 gate vs 살아난 interior)
+살아난 **gate**(H_9627)·살아난 **seam**(Stage-1) 확증. 그러나 "살아난 **interior**"의 핵심(own-content 특이 숙고)은 **있음/없음이 아니라 이 seam에서 marker 부재로 식별한계로 해소** — 벽-덮기 아닌 **원리적 identifiability 결과**. donor 수집 중단(양 모델: unidentifiable claim에 더 안 태움). richer 식별 = provenance-bearing surface 신설(새 p5 review·out of scope) 또는 semantic readout(계기 밖).
+
+⚠️ engine-native interventional 확증(Stage-1) + 설계수준 identifiability 논증(코드 reference-match) · cement=이 구조사실(latch≡prev·provenance-blind anchor)이지 tune-to-green 아님.
