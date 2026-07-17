@@ -7639,7 +7639,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8128,6 +8128,168 @@ def _ag_criticality(argv):
               % (mean_ed, abs(mean_ed - 0.5), emit_rate))
     print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
     print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_stage_slave(argv):
+    """H_9715 STAGE-SLAVE — are "emit = f(stage)" and "z is flat" one root, or two?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --stage-slave`   (predictions 1-2 · $0)
+
+    THE UNIFYING HYPOTHESIS. H_9400 showed engine-native that emit is a pure function of stage
+    (H(emit|stage)=0.465) and that the Psi=1/2 pull never operated. Separately, this lane found z
+    near-flat. If the 8 tension factors are SLAVED TO STAGE, those are not two facts -- they are one
+    root, and two frontiers (Psi-half and mouth/tension) collapse into a single question.
+
+    PREDICTIONS (all three must hold for PASS-single-root):
+      1. eta^2(z ~ stage) > 0.5              -- z is a step function of stage
+      2. the z>0 ticks coincide with stage transitions / stage_env changes
+      3. sd(z) at stage_cycle=true >= 2x sd(z) at stage_cycle=false   (pool -- not this flag)
+
+    POSITIVE CONTROL (opens nothing without it): `score`/`base_motiv` MUST be stage-slaved
+    (eta^2_score > 0.5), because H_9400 already certified emit=f(stage) engine-native. If score does
+    not show it either, the trace or this instrument is broken -- not z.
+
+    THE VOID THAT MATTERS. The pre-registered table reserves a cell: "stage has only 1 level =>
+    predictions 1-2 are unobservable in principle => VOID, only prediction 3 survives". That cell is
+    about POWER, not about z: eta^2 needs cells with n>=30, and a stage axis pinned to one value
+    cannot support the contrast no matter what z does. This flag checks that FIRST and refuses to
+    read 1-2 off an unbalanced axis -- reporting a degenerate stage census as a z-result is exactly
+    how a measurement lies.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    MIN_CELL = 30            # pre-registered: eta^2 needs n>=30 per cell
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --stage-slave")
+        return 2
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    runs, seen, dup = [], set(), 0
+    for f in files:
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            rows.append(r)
+        if len(rows) < 20:
+            continue
+        sig = tuple((r.get("stage"), r.get("pc2_z"), r.get("score")) for r in rows)
+        h = hash(repr(sig))
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), rows))
+    if not runs:
+        print("  ⇒ ⛔ 사용 가능한 run 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --stage-slave — H_9715 예측1·2 ($0) ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 %d 제외 · H_9714 교훈)" % (d, len(files), len(runs), dup))
+    print("가설:  'emit=f(stage)'(H_9400 · H(emit|stage)=0.465)와 'z 상수' 가 **하나의 뿌리**인가")
+    print("       = 8 tension 인자가 stage 에 **노예화**됐나 ⇒ Ψ½ 와 mouth 두 프런티어가 통합")
+    print("bar:   η²(z~stage)>0.5 (예측1) · 양성통제 η²_score>0.5 · **셀당 n≥%d**" % MIN_CELL)
+    print("")
+
+    def _eta2(groups):
+        """eta^2 = between-group SS / total SS."""
+        allv = [v for g in groups.values() for v in g]
+        if len(allv) < 3:
+            return None
+        gm = sum(allv) / float(len(allv))
+        sst = sum((v - gm) ** 2 for v in allv)
+        if sst <= 0:
+            return None
+        ssb = sum(len(g) * (sum(g) / float(len(g)) - gm) ** 2 for g in groups.values() if g)
+        return ssb / sst
+
+    # ── stage census FIRST: the power gate, before any z claim ──────────────
+    print("  ① stage 축 인구조사 (예측1·2 의 관측가능성 게이트)")
+    usable_runs = 0
+    for name, rows in runs:
+        cnt = {}
+        for r in rows:
+            cnt[r.get("stage")] = cnt.get(r.get("stage"), 0) + 1
+        tot = sum(cnt.values())
+        top_k = max(cnt, key=lambda k: cnt[k])
+        big = [k for k in cnt if cnt[k] >= MIN_CELL]
+        ok = len(big) >= 2
+        usable_runs += 1 if ok else 0
+        print("     %-18s stage 분포 %s" % (name, dict(sorted((k, v) for k, v in cnt.items()))))
+        print("        최빈 stage=%s 가 %d/%d = **%.1f%%** · n≥%d 셀 %d개 ⇒ 대조 %s"
+              % (top_k, cnt[top_k], tot, 100.0 * cnt[top_k] / tot, MIN_CELL, len(big),
+                 "가능" if ok else "**불가**"))
+
+    if usable_runs == 0:
+        print("")
+        print("  ⇒ ⛔ **VOID (사전등록 '우연 아래' 칸)** — stage 축이 사실상 한 수준에 pin 돼 있다")
+        print("     (n≥%d 셀이 2개 미만) ⇒ **예측1·2 는 원리적으로 관측 불가**." % MIN_CELL)
+        print("     이건 z 에 대한 음성이 **아니다** — 대조축 자체가 없어서 못 재는 것이다.")
+        print("")
+        print("  🔑 그런데 이 VOID 자체가 발견이다:")
+        print("     `stage = dr_stage_at(tick*8)` (stage_cycle=false · 프로덕션 기본값) ⇒ tick 이 단조증가하니")
+        print("     stage 가 끝 수준으로 진행해 **거기 머문다**. 즉 라이브 데몬은 사실상 **단일 stage** 에서 산다.")
+        print("     ⇒ H_9400 의 H(emit|stage)=0.465 도 **거의 상수인 조건변수**에 대한 값이다(재검 대상).")
+        print("     ⇒ 남은 유효 검정은 **예측3 뿐**: `anima-py chat --pc2-zeta --stage-cycle` (pool · mac 금지)")
+        print("        — stage_cycle=true 는 (tick*8)%%90 로 stage 를 **순환**시킨다(cli/chat.py:1737).")
+        return 0
+
+    # ── predictions 1-2 (only reachable when the stage axis supports a contrast) ──
+    print("")
+    print("  ② 예측1: η²(z ~ stage) · 양성통제 η²(score ~ stage)")
+    e_z, e_s = [], []
+    for name, rows in runs:
+        gz, gs = {}, {}
+        for r in rows:
+            st = r.get("stage")
+            if r.get("pc2_z") is not None:
+                gz.setdefault(st, []).append(float(r["pc2_z"]))
+            if r.get("score") is not None:
+                gs.setdefault(st, []).append(float(r["score"]))
+        gz = {k: v for k, v in gz.items() if len(v) >= MIN_CELL}
+        gs = {k: v for k, v in gs.items() if len(v) >= MIN_CELL}
+        ez, es = _eta2(gz), _eta2(gs)
+        if ez is not None:
+            e_z.append(ez)
+        if es is not None:
+            e_s.append(es)
+        print("     %-18s η²(z~stage)=%s · η²(score~stage)=%s"
+              % (name, ("%.3f" % ez) if ez is not None else "n/a",
+                 ("%.3f" % es) if es is not None else "n/a"))
+    ez_m = sum(e_z) / float(len(e_z)) if e_z else None
+    es_m = sum(e_s) / float(len(e_s)) if e_s else None
+    print("")
+    print("  run-평균: η²(z~stage)=%s · η²(score~stage)=%s (양성통제)"
+          % (("%.3f" % ez_m) if ez_m is not None else "n/a",
+             ("%.3f" % es_m) if es_m is not None else "n/a"))
+    print("")
+    if es_m is None or es_m < 0.5:
+        v = ("⛔ INVALID — **양성통제 실패**(η²_score=%s < 0.5) = H_9400 의 emit=f(stage) 재현 실패 ⇒ "
+             "트레이스/계기 스큐 · **음성 아님**" % (("%.3f" % es_m) if es_m is not None else "n/a"))
+    elif ez_m is not None and ez_m > 0.5:
+        v = ("🟡 예측1 PASS (η²=%.3f>0.5) — z 는 stage 의 계단함수 ⇒ 예측2·3 필요(3 = pool "
+             "`chat --pc2-zeta --stage-cycle`)" % ez_m)
+    elif ez_m is not None and ez_m < 0.1:
+        v = ("🧱 **KILL-separate-roots** — 양성통제 생존(η²_score=%.3f) 한 채 z 만 stage-무관(η²=%.3f<0.1) "
+             "⇒ 브리핑 (c) 답 = **별개 뿌리**" % (es_m, ez_m))
+    else:
+        v = "🟡 MIXED — η²(z~stage)=%.3f 가 0.1~0.5 사이 · 단일 원인으로 못 박지 말 것" % (ez_m or 0.0)
+    print("  ⇒ VERDICT: " + v)
+    return 0
+
+
 def _pc2_factor_census(argv):
     """H_9712 FACTOR-CENSUS — is the live z constant because the FACTORS are flat, or because the
     FROZEN LOADING points where they do not move?
@@ -10525,6 +10687,8 @@ def main(argv):
             return _pc2_rank_null(argv[1:])
         if "--factor-census" in argv:
             return _pc2_factor_census(argv[1:])
+        if "--stage-slave" in argv:
+            return _pc2_stage_slave(argv[1:])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
