@@ -122,6 +122,16 @@ let mut G_RTC_CONTEXT  = ptr_null()
 // Must NOT be garbage-collected while cuModuleLoadData is using it.
 let mut G_RTC_CACHED_PTX = ""
 
+// Identity fn whose ONLY job is its return boundary: __hexa_fn_arena_return
+// heapifies a non-primitive return (val_heapify TAG_STR → strdup), so the
+// caller's arena-backed string comes back malloc-owned and survives the
+// producing fn's scope_pop. Storing an arena string straight into a global
+// leaves it unheapified (lang-model.md §1.4). A `"" + s` concat does NOT
+// work here — empty-string elision returns the original.
+fn _rtc_heap_keep(s) {
+    return s
+}
+
 // ── Initialization ───────────────────────────────────────────
 
 fn rtc_init() {
@@ -255,7 +265,13 @@ fn rtc_compile_ptx(src, name) {
             println("[cuda_rtc] cache HIT '" + name + "' → " + cache_file + " (" + str(len(cached)) + " bytes)")
             // Keep the string alive in a global so the cstring pointer
             // survives until the caller's rtc_load_module consumes it.
-            G_RTC_CACHED_PTX = cached
+            // `cached` is arena-backed (read_file → str-arena, default ON), and a
+            // bare `global = local` does NOT heapify — this fn's scope_pop would
+            // rewind the bytes under both the global and the returned cstring
+            // pointer (lang-model.md §1.4 unheapified escape). Routing it through
+            // a fn-return boundary forces __hexa_fn_arena_return → val_heapify
+            // TAG_STR strdup, promoting it to malloc before the rewind.
+            G_RTC_CACHED_PTX = _rtc_heap_keep(cached)
             return cstring(G_RTC_CACHED_PTX)
         }
     }
