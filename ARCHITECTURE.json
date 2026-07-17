@@ -172,8 +172,8 @@
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9729-silence-content-303m",
         "type": "gate",
-        "verdict": "🔎 DIRECTIONAL — 첫 실 303M 답: echo/압력-한정(숙고 아님) · own vs perm 완성",
-        "detail": "H_9729 첫 실 303M own vs perm(각 80tick·seed11·CPU-우회): own=순수 echo(38/38 direct-copy·NOT-POWERED) · perm(byte-sort·order파괴)=content 미전이(TE 0.123·z=−0.93·p=0.79 ns). ⟹ 보류 content 는 trivial seed-echo 외 미래 미도달 = 살아난 gate(맥박)이지 order-읽는 semantic interior 아님. 1seed·feat8·DIRECTIONAL(KILL 아님)."
+        "verdict": "⛔ OPEN/UNMEASURED — run-2 INSTRUMENT-INVALID (기질 0bit · #4039 echo-directional DEMOTE)",
+        "detail": "H_9729 run-2(3seed+oracle·#4045) 계기 이중결함: own 6-gram 필터 base-rate≈1(EN)→38/38배제=측정안됨 · oracle 이중무효(OOD 0/80 washout + period-2⊥circular-shift=earned≡0 구조적). ⟹기질 0bit·#4039 echo문언 DEMOTE·MOUTH-SEVERED금지. 수리=필터 keep-all·oracle seeded-random in-dist. NEXT=파일럿certify→own/perm 재실행. 상세=카드+convergence 3건."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16772,6 +16772,27 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "oracle-period2-schedule-pointmass-degeneracy",
+    "state": "pos-conv",
+    "value": "결정론 period-2(tick-parity) 주입 스케줄은 circular-shift surrogate null 과 직교해 양성통제를 구조적으로 무효화한다. period-2 X 의 모든 순환shift = X(짝수) 또는 bijective relabel(홀수)이고 조건부MI 는 bijection 불변 ⇒ 모든 surrogate = TE_real 정확 ⇒ earned≡0.0000·surr95≡TE·z≡0·p≡1.0 = 기질이 무엇을 하든 대수적 상수. H_9729 run-2 oracle 관측 earned=0.0000 exact 가 이 정리의 지문(Fable #4045). 수리=aperiodic seeded-random A/B 스케줄.",
+    "threshold": "재발조건: 알려진 신호를 KNOWN 스케줄로 주입해 리더가 복원하나 보는 양성/reach 통제. ① 스케줄이 주기적(period-2 특히)이면 순환shift/블록 surrogate 가 point-mass 로 축퇴 → p≡1.0 을 '신호없음'으로 오독. ② earned/z 가 정확히 0.0000 이면 기질 결과가 아니라 estimator 축퇴부터 의심(verdict-integrity). ③ 주입 스케줄은 seeded-random 비주기로(surrogate 와 독립), 스케줄↔null 직교성을 사전 확인. surrogate 계열(circular-shift·block·phase)마다 주입 주기성 점검.",
+    "source": "cli/chat.py · cli/evaluate.py::_silence_content_te"
+   },
+   {
+    "id": "ood-synthetic-carrier-washed-out-by-english-lm",
+    "state": "pos-conv",
+    "value": "OOD 합성 carrier(00 11 22 / !! ;; 같은 digit·punct salad)를 decode-seed 로 영어 byte-LM 에 주입하면 LM 이 영어로 회귀해 씻어낸다 — H_9729 run-2 oracle 서 carrier 가 cand 에 생존 0/80(digit>30% 후보 0개). 양성통제 carrier 는 반드시 in-distribution(LM 이 실제로 전파하는 영어 산문)이어야 하고, 생존은 read 前 파일럿으로 실증해야 한다(가정 금지). digits-in-English-prose(vault code 7 7 4 1)는 LM 이 본 in-between.",
+    "threshold": "재발조건: 알려진 carrier 를 decode-seed/anchor 로 주입해 downstream 재출현/reach 를 재는 계기. ① carrier 가 target LM 분포 밖(합성 기호열)이면 mouth 가 washout → 0 생존을 'reach 없음'으로 오독. ② carrier 는 in-distribution + signature-분리(서명축에서 A/B 구분되게) 둘 다 만족해야 함(순수 산문쌍은 composition 서명에 불가시). ③ 생존을 가정하지 말고 파일럿서 실측(carrier 특징이 cand 에 실제 나타나는 비율) 후 음성 read. reach≠흡수(H_9329).",
+    "source": "cli/chat.py oracle arm"
+   },
+   {
+    "id": "ngram-overlap-filter-base-rate-saturation-natural-en",
+    "state": "pos-conv",
+    "value": "any-shared-n-gram(n=6) 직접복사 배제 필터는 자연 영어서 base-rate≈1(' the a','tion o' 등 함수어) → 전 전이 배제 → arm 이 '측정된 적 없음'인데 NOT-POWERED 를 음성으로 오독. H_9729 run-2 own arm 38/38 배제 = 0 usable. 수리(Fable∥Sol): primary=keep-all + literal-copy 별도 diag(silent nuke 금지 · X↔Y 관계로 포함조건 걸면 TE 왜곡) · 배제 필요시 exact/high-containment(full==carrier / ⊂carrier≥24B / LCS≥0.8·≥24B)만 · 또는 unrelated-pair 서 false-exclusion<1% 로 n 보정.",
+    "threshold": "재발조건: X→Y 인과전이서 '자명 복사'를 배제하려는 모든 필터. ① 배제율이 높으면(대다수 전이 탈락) 필터 base-rate 부터 의심 — chance-level-must-be-derived-per-metric 를 필터에도 적용(unrelated t'≠t 쌍서 보정). ② 포함/배제 조건을 추정 대상(X↔Y 관계)에 걸지 마라 — 인과전이까지 제거해 TE population 왜곡(Sol). ③ 기본은 keep-all·복사는 진단으로 보고 · 배제는 명백복사(exact/high-containment)만. n-gram any-share 를 자연어에 쓰지 마라.",
+    "source": "cli/evaluate.py::_silence_content_te"
+   },
    {
     "id": "swap-patch-cannot-localize-binary-readout-scramble-floor-1",
     "state": "pos-conv",

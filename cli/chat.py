@@ -1779,6 +1779,18 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle require --wm-dual-read content")
     if (1 if _wm_dual_perm else 0) + (1 if _wm_dual_swap_path else 0) + (1 if _wm_dual_oracle else 0) > 1:
         raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle are mutually exclusive arms")
+    # H_9729 run-2 oracle redesign (Fable∥Sol · #4045): the pre-run-2 oracle failed for TWO independent
+    # reasons — (a) OOD synthetic carrier (00 11 / !! ;;) the 303M English LM washes out (0/80 survival),
+    # (b) a period-2 tick-parity schedule ⊥ the reader's circular-shift null: for period-2 X every shift
+    # is X or a bijective relabel of X ⇒ CMI-invariant ⇒ every surrogate == TE_real ⇒ earned≡0.0000·p≡1.0
+    # STRUCTURALLY, whatever the mouth does. FIX: (a) two IN-DISTRIBUTION English carriers that are
+    # signature-separable on [n_dig, n_lower] — A digit-rich EN prose vs B digit-free EN prose (the LM
+    # has seen both, so it propagates them), (b) a SEEDED-RANDOM aperiodic A/B schedule (breaks the
+    # point-mass degeneracy so the circular-shift null is valid again). Survival must still be certified
+    # empirically by a pilot before reading any negative (a_scale_honest_scope).
+    _ORACLE_A = "The vault code is 7 7 4 1, opened in 1 8 8 5, room 9 0 2, box 3 6 4."
+    _ORACLE_B = "A quiet harbor at dawn, gulls over the grey water, salt wind through the pines."
+    _oracle_rng = random.Random((_sample_seed * 2654435761 + 0x9729) & 0x7FFFFFFF)
     _wm_dual_swap = {}
     if _wm_dual_swap_path:
         import json as _wsj, base64 as _wsb
@@ -2469,13 +2481,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         _wh_reentry_text = ""
         _wh_reentry_arm = "off"
         if _wm_dual_read == "content" and _wm_dual_oracle and tick > 0:
-            # POSITIVE CONTROL · a FROZEN alternating KNOWN carrier (2 maximally feat-separable
-            # strings · digit-heavy vs punct-heavy = different dominant-address) on a KNOWN schedule
-            # (tick parity), injected through the SAME anchor path every tick. --reach-oracle requires
-            # the reader to RECOVER this alternation in cand[t+1]; if it can't, the channel is severed.
-            _wh_reentry_text = ("00 11 22 33 44 55 66 77 88 99 12345 67890 000 111 222 333"
-                                if (int(tick) % 2 == 0) else
-                                "!! ;; :: ?? .. ,, // \\\\ ** ++ === ;;; !!! ??? ...,,,")
+            # POSITIVE CONTROL (run-2 redesign) · two IN-DISTRIBUTION English carriers, signature-separable
+            # on [n_dig, n_lower] (A digit-rich prose vs B digit-free prose — the 303M LM propagates both,
+            # unlike the OOD 00 11 / !! ;; that washed out 0/80), drawn on a SEEDED-RANDOM aperiodic
+            # schedule (NOT tick-parity — a period-2 schedule makes the reader's circular-shift null a
+            # point mass ⇒ p≡1.0 structurally). --reach-oracle requires the reader to RECOVER the A/B
+            # signal in cand[t+1]; ∅ ⇒ channel severed. Survival is certified by a pilot before any read.
+            _wh_reentry_text = _ORACLE_A if _oracle_rng.random() < 0.5 else _ORACLE_B
             _wh_reentry_arm = "oracle"
             live_anchors.append({"text_payload": _wh_reentry_text, "name": "wm_withheld_reentry"})
             _dual_reentry_text = None

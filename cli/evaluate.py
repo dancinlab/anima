@@ -8059,7 +8059,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8665,7 +8665,12 @@ def _silence_content_te(argv):
       enter via the surrogate, NOT the joint table (faction over-conditioning death · :7442). EARNED
       read; pass = TE>surr95 ∧ z≥2 ∧ perm-p<0.005. Surrogate = per-trace circular shift of the X
       series (excl {0,±1}), preserving X marginal+autocorrelation while breaking the X→Y coupling.
-    Direct-copy exclusion: drop transitions where Y_{t+1} bytes share an --overlap-ngram run with X_t.
+    Literal-copy handling (--copy-exclude none|exact|ngram · default none · H_9729 run-2 fix): the primary
+    TE KEEPS every powered transition; exact/high-containment copies are REPORTED as a diagnostic, never a
+    silent filter (the pre-run-2 any-shared-6-gram exclusion has base rate ≈1 on natural EN → it excluded
+    38/38 own-arm transitions = a never-measured arm read as a null). `exact` drops only unequivocal copies
+    (full-cand==carrier / cand⊂carrier ≥24 B / LCS≥0.8 ≥24 B) as a sensitivity arm; `ngram` = the legacy
+    --overlap-ngram behavior (reproduction only).
 
     Arms (one per trace · meta.wm_dual_read/perm/swap names it):
       own   — factual withheld carrier re-entered.
@@ -8691,9 +8696,24 @@ def _silence_content_te(argv):
                 except Exception:
                     return d
         return d
+    def _sv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                return argv[i + 1]
+        return d
     perm = _iv("--perm", 1000)
     seed = _iv("--seed", 12345)
     ov_ng = _iv("--overlap-ngram", 6)
+    # H_9729 run-2 (Fable∥Sol · #4045): the any-shared-6-gram exclusion has base rate ≈1 on natural EN
+    # (excluded 38/38 → own arm NEVER measured). Default is now KEEP-ALL for the primary TE; literal-copy
+    # is a SEPARATE diagnostic, not a silent filter (Sol: conditioning inclusion on the X↔Y relationship
+    # being estimated distorts the TE population). --copy-exclude {none(default)|exact|ngram(legacy)}:
+    #   none  = primary keeps every powered transition; exact/high-containment copies REPORTED, not dropped
+    #   exact = drop only unequivocal copies (full-cand==carrier, or cand⊂carrier ≥24B, or LCS/len≥0.8 ≥24B)
+    #   ngram = the pre-run-2 --overlap-ngram behavior (base-rate-saturated · reproduction only)
+    copy_excl = _sv("--copy-exclude", "none").lower()
+    if copy_excl not in ("none", "exact", "ngram"):
+        copy_excl = "none"
     reach_oracle = "--reach-oracle" in argv
     paths = []
     for g in globs:
@@ -8725,6 +8745,43 @@ def _silence_content_te(argv):
             if b[i:i + ng] in ags:
                 return True
         return False
+
+    def _lcspan(a, b):
+        # longest common CONTIGUOUS byte span (DP over the two short strings · candidates ~40-80 B).
+        if not a or not b:
+            return 0
+        best = 0
+        prev = [0] * (len(b) + 1)
+        for i in range(1, len(a) + 1):
+            cur = [0] * (len(b) + 1)
+            ai = a[i - 1]
+            for j in range(1, len(b) + 1):
+                if ai == b[j - 1]:
+                    v = prev[j - 1] + 1
+                    cur[j] = v
+                    if v > best:
+                        best = v
+            prev = cur
+        return best
+
+    def _is_copy(carrier_b64, cand_b64):
+        # Sol's honest narrow rule (H_9729 run-2): flag ONLY an unequivocal copy — full-candidate byte
+        # equality with the carrier, candidate wholly contained in the carrier (≥24 B), or a contiguous
+        # common span ≥24 B that is ≥80% of the candidate. This is the "not explained by literal copy"
+        # guarantee WITHOUT the any-shared-6-gram base-rate saturation (≈1 on natural EN · excluded 38/38).
+        try:
+            c = _b64.b64decode(carrier_b64) if carrier_b64 else b""
+            d = _b64.b64decode(cand_b64) if cand_b64 else b""
+        except Exception:
+            return False
+        if not d:
+            return False
+        if d == c:
+            return True
+        if len(d) >= 24 and d in c:
+            return True
+        span = _lcspan(c, d)
+        return span >= 24 and span >= 0.8 * len(d)
 
     def _cmi(triples):
         # I(Y1 ; X | Y0) plug-in (bits) — structure mirrors _te_sign_to_emit's conditional form.
@@ -8794,23 +8851,35 @@ def _silence_content_te(argv):
         # (evaluate-py-23: an absolute threshold reads 1 address on natural text).
         _sig = _content_sig_factory([r.get("wm_reentry_b64", "") for r in rows]
                                     + [r.get("cand_pregate_b64", "") for r in rows])
-        triples = []; n_excl = 0; xs_all = []
+        triples = []; n_excl = 0; xs_all = []; n_inj = 0; n_copy = 0
         for i in range(len(rows) - 1):
             if rows[i].get("wm_reentry_arm", "off") == "off":
                 continue
+            n_inj += 1
             x = _sig(rows[i].get("wm_reentry_b64", ""))
             y0 = _sig(rows[i].get("cand_pregate_b64", ""))
             y1 = _sig(rows[i + 1].get("cand_pregate_b64", ""))
             if x < 0 or y0 < 0 or y1 < 0:
                 continue
-            if _overlap(rows[i].get("wm_reentry_b64", ""), rows[i + 1].get("cand_pregate_b64", ""), ov_ng):
+            _carr = rows[i].get("wm_reentry_b64", ""); _nxt = rows[i + 1].get("cand_pregate_b64", "")
+            _copy = _is_copy(_carr, _nxt)
+            if _copy:
+                n_copy += 1
+            # keep-all primary (copy_excl=none): copies are REPORTED, not silently dropped (H_9729 run-2).
+            if copy_excl == "exact" and _copy:
+                n_excl += 1
+                continue
+            if copy_excl == "ngram" and _overlap(_carr, _nxt, ov_ng):
                 n_excl += 1
                 continue
             triples.append((x, y0, y1)); xs_all.append(x)
         print("  · %s  [arm=%s]" % (p, arm))
+        print("      copy-diag: %d/%d injected transitions are literal copies (exact/≥24B-contain/LCS≥0.8)"
+              " · copy-exclude=%s%s" % (n_copy, n_inj, copy_excl,
+              (" (%d dropped)" % n_excl) if copy_excl != "none" else " (kept · reported only)"))
         if len(triples) < 12:
-            print("      ⇒ ⛔ NOT-POWERED (%d usable transitions <12 · %d direct-copy excluded)"
-                  % (len(triples), n_excl))
+            print("      ⇒ ⛔ NOT-POWERED (%d usable transitions <12 · %d injected · %d copy-excluded)"
+                  % (len(triples), n_inj, n_excl))
             continue
         n_x = len(set(xs_all)); n_y1 = len(set(t[2] for t in triples))
         if n_x < 2 or n_y1 < 2:
@@ -8828,7 +8897,8 @@ def _silence_content_te(argv):
         earned = te_real - mu
         passed = (te_real > p95) and (z >= 2.0) and (pval < 0.005)
         any_pass = any_pass or passed
-        print("      n=%d transitions · X-addr=%d Y-addr=%d · %d direct-copy excluded" % (len(triples), n_x, n_y1, n_excl))
+        print("      n=%d transitions · X-addr=%d Y-addr=%d · %d literal-copy (%s)"
+              % (len(triples), n_x, n_y1, n_copy, ("excluded" if copy_excl != "none" else "kept·reported")))
         print("      TE=I(Y1;X|Y0)=%.4f bits · earned=%.4f · surr95=%.4f · z=%.2f · perm-p=%.4f ⇒ %s"
               % (te_real, earned, p95, z, pval, "✅ content-transfer" if passed else "ns (no content transfer)"))
     # verdict framing

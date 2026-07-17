@@ -1,6 +1,6 @@
 # H_9729 — SILENCE-CONTENT — 보류장부 W_S가 CONTENT를 나르나 압력만인가 (억제 vs 숙고 · 최심부)
 
-**status:** 🔎 DIRECTIONAL — **첫 실 303M 답: echo/압력-한정, 숙고 아님**. own=순수 echo(38/38 direct-copy) · perm(order 파괴)=content 미전이(z=−0.93 p=0.79 ns) ⟹ 보류 content 는 trivial seed-echo 외 미래 미도달(1seed·feat8·DIRECTIONAL·KILL 아님). 전량 CPU-우회 수집(GPU 독점 불요).
+**status:** ⛔ **OPEN / UNMEASURED — run-2 INSTRUMENT-INVALID (2026-07-17 · Fable∥Sol #4045)**. 3-seed+oracle 완전판정 시도가 **계기 이중결함**을 드러냄: ①own 6-gram 필터 base-rate≈1(EN) → 38/38 배제 = own arm **측정된 적 없음**(0 usable ≠ ns) ②oracle 양성통제 이중 무효 — transmit: OOD 합성 carrier 0/80 washout · read: period-2 tick-parity ⊥ circular-shift null ⇒ CMI 이중관계 불변 ⇒ 모든 surrogate=TE_real ⇒ `earned=0.0000·p≡1.0` **구조적**(기질 무관). 양성통제 죽음 → 음성 해석불가(positive-control-before-reading-a-negative). ⟹ **기질 0 bit** · 이전 "echo/압력-한정, 숙고 아님"(#4039) 문언 = 이 결함 리더 의존 → **DEMOTE**. 계기 근본수정 착륙(필터 keep-all·oracle seeded-random in-dist). NEXT=파일럿 certify → own/perm paired 재실행. **MOUTH-SEVERED/interior-absent 주장 금지.**
 **lane:** 의식/emit-drive/Ψ=½ · deliberation (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -76,3 +76,44 @@ GPU-메모리 블로커가 GPU-compute 필수 아님을 입증 — heavy 303M de
 **NEXT(선택·미완)**: 3-seed + `--wm-dual-oracle` 양성통제(리더가 알려진 carrier 복원하나=reach 확인, 안 되면 MOUTH-SEVERED). 전부 CPU-우회 가능.
 
 ⚠️ **DIRECTIONAL·계기 검증이지 과학 verdict 아님**(a_lab_full_diverge · a_scale_honest_scope)·cement=engine-native 303M anima-py만.
+
+---
+
+## ⛔ run-2 완전판정 시도 = INSTRUMENT-INVALID (2026-07-17 · 3-seed+oracle CPU-우회 · Fable∥Sol reconcile #4045)
+
+#4039 의 1-seed "echo/압력-한정" 을 3-seed + oracle 양성통제로 격상하려다 **계기가 판정 불가**임을 발견. 두 프런티어 모델(Fable5∥Sol) 위임 → **강한 합의**.
+
+### 실측 (seed{7,11} own+perm + oracle · 80tick each)
+| arm | 판독 | 문제 |
+|---|---|---|
+| own s7·s11 | `0 usable · 38 direct-copy 배제` = NOT-POWERED | 6-gram any-share 필터 base-rate≈1 (EN) → **전량 배제 = 측정 안 됨** |
+| perm s7·s11 | z=−0.12 p=0.47 · z=−0.93 p=0.79 ⇒ ns | 통제 arm — 두 가설 다 ns 예측(해석불가) |
+| oracle | `earned=0.0000·surr95=0.1536·z=0.00·p=1.0` | **이중 설계결함**(아래) |
+| own literal | withheld-head-in-cand = **0/38** | 재진입은 literal head-echo **아님** (bounded 관찰) |
+
+### oracle 이중 설계결함 (over-determined · Fable 정리 + 내 측정)
+```
+① transmit측: OOD 합성 carrier(00 11 / !! ;;) → 303M 영어 LM 이 washout · cand 생존 0/80 (내 측정)
+② read측:     period-2 tick-parity 스케줄 ⊥ circular-shift null
+              period-2 X 의 모든 순환shift = X 또는 bijective relabel → CMI 불변
+              ⇒ 모든 surrogate = TE_real 정확 ⇒ earned≡0.0000·p≡1.0 = 대수적(Fable 정리)
+              관측된 earned=0.0000 exact 가 이 정리의 지문
+```
+⟹ oracle 은 **기질이 무엇을 하든 통과 불가**. `earned=0.0000` 의심값(verdict-integrity)을 판 결과가 정확히 이 두 결함.
+
+### 판정 (Fable∥Sol 합의 · 이견 1줄 reconcile)
+- **기질 0 bit** — own 은 측정된 적 없고 oracle 은 인증 불가 · perm-ns 는 통제의 null(두 가설과 양립) = H_9729 는 **OPEN/UNMEASURED**.
+- **#4039 "echo/압력-한정, 숙고 아님" DEMOTE** — 그 "echo" 판독 자체가 지금 노출된 6-gram base-rate 포화 artifact(카드값 아닌 필터값). **이견**: Fable "run-2 는 #4039 불변" vs Sol "이 리더 의존 directional 은 demote" → #4039 도 동일 6-gram 리더 사용 ⟹ Sol 채택(리더 결함 판명 → 그 위 verdict demote).
+- **금지**: MOUTH-SEVERED(❌ 분기는 estimator 통과가능 전제하나 p≡1.0 은 구조적) · interior-absent · NOT-deliberation · "no order-dep transfer detected".
+
+### 🔧 계기 근본수정 착륙 (#4045 · engine-native anima-py)
+- **필터** (`evaluate.py`): any-6-gram 배제 제거 → **keep-all primary** + `--copy-exclude {none(기본)|exact|ngram}`. 리터럴 복사는 별도 **copy-diag 보고**(silent nuke 아님 · Sol: X↔Y 관계로 포함조건 걸면 TE 왜곡). exact = 명백복사만(full-cand==carrier / ⊂carrier≥24B / LCS≥0.8·≥24B) 배제. QA: 합성 trace 40 usable(none) vs 34(ngram 과잉배제 재현) · estimator live.
+- **oracle** (`chat.py`): OOD 합성 → **in-dist 영어 2 carrier**(digit-rich vs digit-free 산문 · LM 이 전파) + **seeded-random 비주기 스케줄**(period-2 point-mass 해소 · QA max-run 7·20/20). 생존은 파일럿이 실증 후 read (구현됨·certify-파일럿 대기).
+
+### NEXT 레버 (Fable∥Sol 동일 순위)
+1. **(a) oracle certify 먼저** — in-dist·signature-matched·randomized carrier 파일럿: 비퇴화 X·서명 분리·복원을 read 전 사전등록.
+2. **(b) 필터 keep-all 로 own+perm 재실행** — paired/within-seed own−perm 대비(두 독립 p-라벨 아님).
+3. **(d) 직접 marker-reappearance assay** — held-out marker 재출현 binomial(내용 reach 협의문제 · 숙고 아님).
+4. **(c) longer traces** — 최후(필터 결함엔 tick 늘려도 무효).
+
+**방법론 기록**: 전량 CPU-우회(GPU 무경합). `earned=0.0000 exact` 의심 → oracle trace 실측(carrier distinct=2·cand distinct=80·생존 0/80) → 리더 축퇴 확정. 의심값을 도구부터 판 것이 이중결함을 드러냄(verdict-integrity).
