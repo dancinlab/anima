@@ -913,6 +913,7 @@ def evaluate_usage():
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --fan-bind [--fan-smp 16] [--gen 40]")
     print("  anima evaluate <ckpt> --fan-bind --mouth-binder [--mouth-binder-order-scramble]   # H_9698 R6")
+    print("  anima evaluate <ckpt> --fan-bind --fan-dump emis.jsonl   # H_9746 emission census (판정 불변)")
     print("      H_9745: --fan-bind now ALSO reports a PAIRED verdict — exact McNemar + Tango TOST on")
     print("      bind_delta (composition-isolating), the statistic's OWN pedestal. The legacy line")
     print("      (composed J > marginal null) tests EMISSION and is kept for byte-compat; read the")
@@ -4217,7 +4218,7 @@ def _fan_bind_paired(comp_rows, shuf_rows, comp_pairs, shuf_pairs, ablated_J, kn
             "verdict": verdict}
 
 
-def eval_fan_bind(mouth, gen, known, n_smp=16):
+def eval_fan_bind(mouth, gen, known, n_smp=16, dump=None):
     """bind Δ = mean J(composed) − mean J(shuffled) over the frozen 3-arm frames.
 
     Both arms carry THEIR OWN cB in the prompt, so pure echo is symmetric and cancels to
@@ -4243,6 +4244,10 @@ def eval_fan_bind(mouth, gen, known, n_smp=16):
             cA, cB = pairs[i]
             for j in range(n_smp):
                 o = mouth.ideate(frames[i], gen, 40, 0.7, 7 + 17 * j + i)   # frozen decode knobs
+                if dump is not None:                 # H_9746 --fan-dump: emission census (판정 불변)
+                    dump.append({"arm": name, "frame_i": i, "smp_j": j, "seed": 7 + 17 * j + i,
+                                 "cA": cA, "cB": cB, "emission": o,
+                                 "J": _fan_bind_J(o, cA, cB, known)})
                 J = _fan_bind_J(o, cA, cB, known)
                 if J is None:
                     continue
@@ -4329,7 +4334,15 @@ def fan_bind_run(argv):
     else:
         set_mouth_binder(on=False)
     mouth = _Mouth(ckpt)
-    r = eval_fan_bind(mouth, g, known, n_smp)
+    _dump_path = evaluate_strval(argv[1:], "--fan-dump", "") if "--fan-dump" in argv[1:] else ""
+    _dump = [] if _dump_path else None
+    r = eval_fan_bind(mouth, g, known, n_smp, dump=_dump)
+    if _dump_path:
+        import json as _json
+        with open(_dump_path, "w", encoding="utf-8") as _fh:
+            for _row in _dump:
+                _fh.write(_json.dumps(_row, ensure_ascii=False) + "\n")
+        print("  [--fan-dump] %d emissions -> %s (H_9746 census · 판정 불변)" % (len(_dump), _dump_path))
     print("  composed: J=%.4f (n=%d) · shuffled: J=%.4f (n=%d) · ablated(floor): J=%.4f (n=%d)"
           % (r["composed"]["J_mean"], r["composed"]["n"], r["shuffled"]["J_mean"],
              r["shuffled"]["n"], r["ablated"]["J_mean"], r["ablated"]["n"]))
@@ -8076,6 +8089,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
+    "--fan-dump",
     "--cascade-null",
 ))
 
