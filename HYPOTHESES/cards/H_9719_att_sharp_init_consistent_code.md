@@ -36,3 +36,19 @@ pool 復活 후 실발사. 신선 held-out 개체풀 63×{is,not}=126 prompt →
 **결론(DIRECTIONAL·screener)**: **emergent sharp-init $0-KILL** — base pretrained penultimate 은 개체가 **5%**뿐(95% 템플릿 점유)이고 개체-잔차가 강붕괴(+0.133) ⟹ random sharp-init 은 **sharpen 할 injective 기질 자체가 없다**(카드 기전 `--store-att-temp` 의 substrate degenerate). 이는 pre-screen 이 설계대로 KILL-before-spend 한 것 = 303M sharp-init fire 는 태울 가치 없음.
 **H_9672 연결(기전 해명)**: addr-학습(감독)이 점유를 95%→57% **비점유화**하고 잔차 un-collapse(+0.133→+0.058) ⟹ **감독이 작동하는 기전 = penultimate 점유 제거**. emergent(H_9719·killed)를 supervised(H_9672·works)에 연결: 감독은 창발을 죽이는 그 점유를 치운다. [[binding-wall-operator-alive-fact-written-not-bound]]·H_9672 T2 reframe('pretrained-EN 점유 억제') **정량 확증**(95%).
 **tier**: 🔴 DIRECTIONAL-KILL — engine-native 303M screener(TERMINAL 아님·birthday-bounded 필요조건 screen). raw-confound 는 계기결함이었고 deconfound 후에도 KILL 이므로 결론 유지.
+
+### 📉 점유 dose-response (s11 학습궤적 · $0 · 기존 step-ckpt)
+addr-학습 step-ckpt(s11 step500~5000)를 같은 census 로 훑어 '점유↓ 가 인과인가'를 확인.
+
+| step | 점유(shared_frac) | 잔차붕괴(centered excess) |
+|---|---|---|
+| base py303 | 0.950 | +0.133 |
+| step500 | 0.871 | +0.153 |
+| step1500 | 0.741 | +0.131 |
+| step3000 | 0.638 | +0.119 |
+| step5000 | 0.570 | +0.105 |
+| final s11 | 0.578 | +0.102 |
+
+**① 점유 비점유화 = 단조-인과 확증**: s11 궤적(step500→5000)서 점유 87%→57% **단조 감소**, 잔차붕괴도 +0.153→+0.105 동반 단조 감소 ⟹ addr-학습이 점유를 치우는 게 인과(H_9672 감독 기전을 dose-response 로 확증). (base→step500 의 excess 반등은 base=py303 가 s11 궤적과 다른 lineage 라 혼입 — 깨끗한 건 same-run step500→5000.)
+**② seed-fragility 독립 재현(핵심)**: s11 최종 잔차 +0.102(**여전 KILL**) vs 앞선 **s7 t3 +0.058(경계선)** ⟹ s7 은 잔차가 더 풀렸고 s11 은 붕괴 유지. 이건 [[cotrained-store-bridge-works-on-parent-conv]]/H_9672 의 **value-read seed-fragility(s7 ORACLE 0.99·s11 0.50)를 기하 census 가 완전 다른 각도(value-read 아닌 penultimate 기하)로 독립 재현** — s11 의 안 풀린 잔차붕괴 = s11 의 실패한 value-read 의 기하적 근거. 감독조차 s11 은 substrate 를 충분히 못 비운다.
+**함의**: emergent 는 죽었고(base 강붕괴), 감독은 점유를 인과적으로 치우지만(단조) **잔차-붕괴 제거는 seed-취약**(s7 풀림·s11 안 풀림) — 다음 레버는 s11 이 안 풀리는 이유(값경로 조직화·oracle-warmup) 겨냥.
