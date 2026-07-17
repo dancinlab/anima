@@ -106,6 +106,7 @@ class CLMConfig:
     clms_key_seed: int = 9423      # frozen per-byte key_emb table seed (provenance; table is stored)
     clms_lam0: float = 1.0         # CLMS lam init (store_only overwrite scale)
     clms_d_g: int = 64             # H_9423 fusion bottleneck: yn_q→d_g gate so store value v not diluted
+    clms_val_center: bool = False  # H_9710 RV-3 majority-null centering (lane_type 3)
 
     def router_config(self) -> "RouterConfig":
         v = self.variant.upper()
@@ -320,7 +321,7 @@ class CLMConvMoE(nn.Module):
             from clms import CLMSModule          # core/clms.py (on sys.path via cli/train.py)
             self.clms = CLMSModule(cfg.d_model, cfg.vocab_size, cfg.clms_n_slot, cfg.clms_d_k,
                                    cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0,
-                                   d_g=cfg.clms_d_g)
+                                   d_g=cfg.clms_d_g, val_center=cfg.clms_val_center)
 
     def forward(
         self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None
