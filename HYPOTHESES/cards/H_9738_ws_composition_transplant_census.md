@@ -57,3 +57,21 @@ recognition 렌즈·PID·one-sided store·mouth-conditioning 아님. **vs H_9729
 🔑 부수: **max cos = 1.0000** = 다른 텍스트·동일 feat8 쌍이 실데이터에 **자연 존재** ⟹ Sol **C2 REPRESENTATION-COLLISION 통제를 실데이터로 구현가능**(합성 불요).
 ⚠️ 주의: feat8은 semantic identity 아니라 **byte 조성 통계**(mean·고byte율·소문자율·공백율·숫자율·분산·부호율·<64율) — 채널 용량은 '조성 구별'이지 '의미 구별' 아님(정직 범위).
 
+## 🔧 S1 계기 착륙 (v0.15.77 · `--ws-init`/`--ws-dump`/`--ws-init-mode`)
+- `--ws-dump <path>`: 세션 끝 W_S(keys+act+n_slots+lam) 영속(측정 side-channel·읽기 없음 = emit 경로 byte-untouched).
+- `--ws-init <path>`: t=0에 W_S 조성 이식. `--ws-init-mode scramble-keys`: **act 정확 보존**(압력 고정)·각 키의 8성분 결정적 셔플(**조성 파괴·norm 보존**) = 정체성⊥압력 분리 통제.
+- 가드: 둘 다 `--emit-gate refractory` 요구(W_S가 거기만 존재). 미지정 = 프로덕션 byte-identical.
+- ⚠️ 배선 함정 자가포착: 플래그 파싱을 W_S 생성부(:1492)에 두면 `_cargv`/`_emit_gate` **미정의**(파싱 블록은 :1613) → `UnboundLocalError`. 세션 내 `--wm-leak`이 겪은 동일 패턴 ⟹ 시딩을 `--g-reach` 가드 뒤로 이동.
+
+### 🔑 구조 발견 — W_S는 1 슬롯으로 접힌다
+`wm_buffer_gate_in`은 cos≥0.9면 **기존 슬롯에 병합**(키를 최신으로 교체). 연속 보류후보가 공통접두 탓에 서로 cos≥0.9라 계속 같은 슬롯에 merge ⟹ **실효 용량 = 최근 조성 1슬롯 × 8dim = 숫자 8개**(3슬롯 설계인데 1개만 사용·10tick 실측 n_slots=1). certificate(텍스트 0 byte)에 이은 **두 번째 협착**: 살아남은 8-dim 그림자마저 1슬롯으로 접힘.
+
+### 🎯 3-arm toy 스모크 (계기검증 · 20tick·seed7·toy.clm · verdict 아님)
+| arm | emit-rate | mask-sha | margin[t0] |
+|---|---|---|---|
+| empty | 0.476 | 5a80180b09 | −0.265 |
+| **donor** | 0.476 | **a0ee06fad5** ◀ 궤적 갈림 | +0.095 |
+| scramble(act 동일·키 파괴) | 0.476 | 5a80180b09 = empty | −0.043 |
+
+⟹ ✅ **seam이 문다**(margin 3-arm 전부 상이 = 이식이 게이트 도달) · ✅ **donor만 궤적 변경**(mask-sha 상이 = 조성 이식이 emit 뒤집음) · ⚠️ **scramble이 donor 재현 실패·empty와 동일 궤적** ⟹ **압력 아닌 조성이 신호를 날랐다**는 조기 방향. 전 arm rate 동일(0.476) = 이식이 Ψ=½ 중심 안 깸(장부 자기교정). **범위: toy·20tick·1seed = 계기검증이지 verdict 아님**(S1 정본 = 303M 3-seed + Sol C0 SHAM/C1 LANE-ORACLE/C2/SESOI).
+

@@ -1649,6 +1649,35 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                          " 'wm-dual-alien-emit', 'wm-dual-alien-silence' (got %r)" % _g_reach)
     if _g_reach != "d1" and _emit_gate != "refractory":
         raise SystemExit("--g-reach %s requires --emit-gate refractory (its only consumer)" % _g_reach)
+    # H_9738 · W_S composition TRANSPLANT seam (--ws-init <path> [--ws-init-mode scramble-keys] ·
+    # --ws-dump <path>). The static certificate (#3986) proved the imagined candidate's TEXT reaches
+    # NO store — the ONLY surviving path is its feat8 COMPOSITION accumulating in W_S → gate margin →
+    # future. S0-b (#3987) proved that channel has capacity (pairwise cos 0.82–0.88, all 8 dims vary).
+    # This seam transplants a W_S composition at t=0 so the 4 arms (empty · own · donor · act-matched
+    # key-scramble) can ask whether the COMPOSITION — not merely its activation PRESSURE — steers the
+    # future. scramble-keys keeps `act` EXACTLY (pressure fixed) and shuffles each key's 8 components
+    # (composition destroyed, norm preserved) = the control isolating identity from pressure.
+    # Parsed HERE (not at the :wm_withheld birth) because _cargv/_emit_gate are set only by now.
+    # Absent = production byte-identical (W_S starts empty · nothing dumped).
+    _ws_init = anima_flag_value(_cargv, "--ws-init", "ANIMA_WS_INIT", "")
+    _ws_init_mode = anima_flag_value(_cargv, "--ws-init-mode", "ANIMA_WS_INIT_MODE", "as-is")
+    _ws_dump = anima_flag_value(_cargv, "--ws-dump", "ANIMA_WS_DUMP", "")
+    if _ws_init_mode not in ("as-is", "scramble-keys"):
+        raise SystemExit("--ws-init-mode: 'as-is' (default) or 'scramble-keys' (got %r)" % _ws_init_mode)
+    if (_ws_init != "" or _ws_dump != "") and _emit_gate != "refractory":
+        raise SystemExit("--ws-init/--ws-dump require --emit-gate refractory (W_S exists only there)")
+    if _ws_init != "":
+        import json as _wsj
+        with open(_ws_init, "r", encoding="utf-8") as _wf:
+            _wsd = _wsj.load(_wf)
+        _wk = [list(map(float, k)) for k in _wsd["keys"]]
+        _wa = [float(a) for a in _wsd["act"]]
+        if _ws_init_mode == "scramble-keys":
+            # act EXACT, each key's 8 components shuffled deterministically (seed-derived · reproducible)
+            _wr = random.Random((_sample_seed * 2654435761 + 0x9738) & 0x7FFFFFFF)
+            _wk = [(lambda _kk: (_wr.shuffle(_kk), _kk)[1])(list(_k)) for _k in _wk]
+        wm_withheld = WorkMemBuffer(_wk, _wa, len(_wk), 3, _wm_leak_v, 0.5, 8)
+        _pln("anima-py chat: --ws-init %s (%s) · W_S seeded %d slot(s)" % (_ws_init, _ws_init_mode, len(_wk)))
     # H_9712 · --rate-limit-sec / --emit-refractory earned feed ONLY the clock path (brain_emit's rate
     # source). Under the new refractory default they would silently no-op, so require --emit-gate clock
     # explicitly (loud, not silent · house style). Both are clock-lineage rate knobs.
@@ -2975,6 +3004,19 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
 
     if _trace_fh is not None:
         _trace_fh.close()
+
+    # H_9738 · persist the FINAL W_S composition (keys + act) so a later run can transplant it
+    # (--ws-init). Measurement-only side channel: nothing in this session read it back, so the
+    # emit path is byte-untouched (absent --ws-dump = production byte-identical).
+    if _ws_dump != "":
+        import json as _wsj2
+        with open(_ws_dump, "w", encoding="utf-8") as _wf2:
+            _wsj2.dump({"keys": [list(map(float, k)) for k in wm_withheld.keys],
+                        "act": [float(a) for a in wm_withheld.act],
+                        "n_slots": int(wm_withheld.n_slots),
+                        "lam": float(wm_withheld.lam),
+                        "sample_seed": int(_sample_seed)}, _wf2)
+        _pln("anima-py chat: --ws-dump %s · W_S %d slot(s) persisted" % (_ws_dump, wm_withheld.n_slots))
 
     # ══ LANE-23b SESSION END — persist the grounded self as a .kosmos self-anchor (twin of the
     #    hexa session-end persist · a_kosmos · closes H_1471 R2b). Single write entry create_anchor,
