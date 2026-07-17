@@ -16378,7 +16378,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어(2026-07-17) · 🔧 H_9643 S 재설계 — 양성통제가 max-편향 S 를 죽였고($0 판별서 hungarian·MI 도 같은 병) centered-diag 만 통과 ⟹ 배선 후 양성통제 재시험중. NEXT = 통과시 storebind floor → {K=8,K=1}×3seed.",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · ⛔ H_9643 계기 2차 실패 — 합성이 실물보다 쉬웠다(np.eye 가 정렬을 공짜로 줌 · 결함 ⑫) · 미정렬 재판별서 4 후보 전부 사실상 죽음 · 진단=도메인 base CE 16배 편차 ⟹ toy 문제 의심 · Fable 난제 위임중(원리적 가능성).",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16711,7 +16711,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "🔧 S 재설계(centered-diag) · 양성통제 재시험중",
+      "verdict": "⛔ 계기 2차 실패(결함 ⑫) · Fable 난제 위임중",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16815,6 +16815,13 @@
         "id": "faction-r3-h9643-s-redesign",
         "detail": "합성 손상행렬(심은 대각)로 시험: s_max planted 1.77/null95 2.01 ⛔ · hungarian 6.97/8.58 ⛔(최적매칭도 순서통계량) · MI 0.16/0.35 ⛔(random 0.43 이 planted 보다 높다) · **centered-diag 5.71/3.73/random 0.41 ✅**.",
         "verdict": "채택 S = trace(R)/sd(R) · R = D−rowmean−colmean+grandmean(두 main effect 제거 = 상호작용만). 💡Fable 제안 3개 중 2개가 같은 함정 — 배선 전 $0 판별이 GPU 를 아꼈다. **계기 후보는 합성 진실 위에서 먼저 싸우게 하라.**"
+       },
+       {
+        "name": "🕳️ 결함 ⑫ — 내 합성 시험이 실물보다 쉬웠다",
+        "role": "",
+        "id": "faction-r3-h9643-synthetic-too-easy",
+        "detail": "centered-diag 가 합성선 PASS(+5.71 vs null95 +3.73) 했으나 실물서 S_real=−0.2469 붕괴. 원인: D += np.eye(K)*0.05 로 심으며 '파벌 f = 도메인 f' **정렬을 공짜로 줬다**. 실물은 f0→ccc·f1→aaa·f2→aaa·f3→ddd = 정렬 무관·중복소유·주인없는 도메인.",
+        "verdict": "⟹ **양성통제의 양성통제가 필요** — 합성 시험이 실제 실패모드를 재현해야 한다. 미정렬 재판별서 4 후보 전부 사실상 실패. 더 깊은 진단: 심은 효과 ΔCE 0.05 vs 도메인 base CE 편차 16배(0.0051~0.0787) = 신호와 잡음이 동급 ⟹ toy 설계 문제 의심 · Fable 위임(Q4 = 애초에 lesion-ΔCE 로 잴 수 있는 질문인가)."
        }
       ]
      }
