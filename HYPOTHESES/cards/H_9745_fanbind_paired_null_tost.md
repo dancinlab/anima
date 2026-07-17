@@ -1,6 +1,6 @@
 # H_9745 — R2b fan-bind 계기 정렬: bind_delta paired 순열 null + prereg TOST
 
-**status:** 🧱 BIND-ABSENT (seed7 powered N=288 · 2-seed 진행중 · runpod A100 · 2026-07-17) · not-terminal · 선행 [[H_9693]]·[[H_9694]]
+**status:** 🧱 BIND-ABSENT (2-seed robust · powered N=288 · TOST 등가 · A100 pod · 2026-07-17) · 선행 [[H_9693]]·[[H_9694]]
 **lane:** G6/ρ·fan · 계기 수리 **related:** [[H_9694]] · [[instrument-claim-alignment-before-reading-a-bar]] · [[chance-level-must-be-derived-per-metric]]
 
 ## 물음
@@ -49,6 +49,15 @@ lab full(Fable∥Sol) 설계수렴 → `cli/evaluate.py:eval_fan_bind` 에 **pai
 **결정적**: R2 의 "+0.0104(1/96)" 는 노이즈였다 — N=288 서 targeted bind_delta 는 **−0.0035(부호 반전)** = 정확히 [[H_9576]] 전례(n=58 +0.110 → n=270 −0.077). 검정력을 얻자(m=11≥5) targeted 레버는 **🧱 BIND-ABSENT**: Tango90 CI 가 (−0.05,+0.05) 안 = **TOST 로 bind_delta≡0 등가 확증** ⟹ 데이터-포맷 레버(g6bind targeted co-train)가 composition-sensitivity 를 **안 심는다**. 0.444(hexa 비동결)는 인공물 확정.
 
 **★ R2/[[H_9694]] 재프레임 확정**: H_9694 의 "🧱 DECISION-KILL·⚠️ INCONCLUSIVE(marginal 계기·N=96 undecidable)" → 정렬 계기 powered 재측정으로 **🧱 BIND-ABSENT(검정력 확보·TOST 등가)** 로 승격. "레버 무효"가 이제 벌렸다(단 계기결함 배제는 [[H_9746]] XBIND 양성통제 필요).
+
+## 2-seed robust 확정 (seed 7 + 4302 · fan-smp 48 · N=288 POWERED)
+
+| seed | targeted bind_delta | m | McNemar p | TOST(±0.05) | PAIRED |
+|---|---|---|---|---|---|
+| 7 | −0.0035 | 11 | — | True | 🧱 BIND-ABSENT |
+| 4302 | **−0.0139** | 10 | 0.945 | True | 🧱 BIND-ABSENT |
+
+**두 seed 모두 targeted bind_delta 음수 · TOST 로 0 등가 = 🧱 BIND-ABSENT robust.** shuf 통제도 양 seed BIND-ABSENT(+0.0104). 데이터-포맷 레버(g6bind targeted co-train)가 composition-sensitivity 를 안 심음이 **2-seed 확증**. 0.444(hexa 비동결) 인공물 확정.
 
 **남은 caveat**: (1) 2-seed(4302) 진행중 — seed7 과 일치 확인 대기. (2) shuf arm ablated J=0.0486(zero-truth pedestal 이 ~0 아님 = 검출기가 우연 공출현에 발화 · 경미 flag). (3) **계기결함 vs 레버무효 최종 귀속은 [[H_9746]] XBIND 양성통제**(bind 기지-양성이 fan-bind 서 BIND-SENSITIVE 나와야 계기 dynamic-range 정상) 필수 — 단 토이(강bind→SENSITIVE p=0.0053)가 McNemar 검출기는 정상 확인.
 
