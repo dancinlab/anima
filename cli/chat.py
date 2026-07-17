@@ -1723,6 +1723,26 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if percept_source is not None:
             raise SystemExit("--wm-dual-read content is mutually exclusive with an anima-study percept "
                              "source (both write live_anchors[-1])")
+
+    # H_9728 Θ−-yoked arm (#4068) · --yoke-mask <Θ+ trace> replays that trace's FINAL emit bit per tick,
+    # severing the (S>E)→emit causal loop while pinning the ½ rhythm/rate/stage. refractory-only (the gate
+    # forced_emit reaches). Donor-seed mask = primary (own-seed = byte-identical C0 certificate). Hard-fail
+    # on any tick missing from the mask (instrument-never-run: a silent default would fake coverage).
+    _yoke_mask = None
+    _yoke_src = anima_flag_value(_cargv, "--yoke-mask", "ANIMA_YOKE_MASK", "")
+    if _yoke_src:
+        if _emit_gate != "refractory":
+            raise SystemExit("--yoke-mask requires --emit-gate refractory (the forced_emit consumer)")
+        import json as _yj
+        _yoke_mask = {}
+        for _l in open(_yoke_src, "r", encoding="utf-8", errors="surrogateescape"):
+            if not _l.strip():
+                continue
+            _r = _yj.loads(_l)
+            if isinstance(_r, dict) and "tick" in _r and "emit" in _r:
+                _yoke_mask[int(_r["tick"])] = bool(_r["emit"])
+        print("  [H_9728 yoke-mask] src=%s · %d tick emit bits replayed (native S>E → would_emit · "
+              "severs pulse loop · ½ rhythm pinned)" % (_yoke_src.split("/")[-1], len(_yoke_mask)))
     # ── H_9744 STORE-EPISODIC (S2/S6) — percept fills the CLMS store; the mouth answers from it ──
     # The lane itself is H_9423/H_9672's co-trained bridge; this only decides WHO fills the store.
     # In eval the manifest was hand-fed (cli/evaluate.py --store); here the SESSION's own percept
@@ -2586,6 +2606,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 _recog_fn = lambda _t: 0.0   # unused when dual_probe_fn is set
             else:
                 _recog_fn = lambda _t: _afs_clip01(immune_memory_recall_margin_text(immune, _grecog_text(_t)))
+            _fe = None
+            if _yoke_mask is not None:
+                if int(tick) not in _yoke_mask:   # H_9728 · mask must cover the run (no silent default)
+                    raise SystemExit("--yoke-mask: tick %d absent from mask %s (INVALID · mask must cover "
+                                     "every tick of the run)" % (int(tick), _yoke_src.split("/")[-1]))
+                _fe = _yoke_mask[int(tick)]
             dec = brain_emit_refractory(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                              secs_since_emit, False, True,
@@ -2598,7 +2624,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              pc2_mouth=("" if _pc2_mouth == "off" else _pc2_mouth),  # H_9575
                              dual_probe_fn=_dual_fn,  # H_9627 · dual content ledger (None = off)
                              score_perturb=_score_perturb,  # H_9627 · central-thesis bar (0 = off)
-                             zeta_ladder=(_pc2_zeta or None))  # H_9664 ζ-ladder (None = off)
+                             zeta_ladder=(_pc2_zeta or None),  # H_9664 ζ-ladder (None = off)
+                             forced_emit=_fe)  # H_9728 Θ−-yoked · replay Θ+ emit bit (None = Θ+ path)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2873,6 +2900,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                     # H_9729 · SILENCE-CONTENT arm provenance (the reader binds a trace to its arm).
                     "wm_dual_read": str(_wm_dual_read), "wm_dual_perm": bool(_wm_dual_perm),
                     "wm_dual_swap": bool(bool(_wm_dual_swap_path)), "wm_dual_oracle": bool(_wm_dual_oracle),
+                    "yoked": bool(_yoke_mask is not None),
+                    "yoke_src": (_yoke_src.split("/")[-1] if _yoke_mask is not None else ""),
                 }) + "\n")
             # build the row now (decision vars fresh); the WRITE is deferred to end-of-tick
             # so grow_feats captures ALL 3 afield grow paths (C8 + C8b + N3/REM imagination,
@@ -2930,6 +2959,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "dual_s_withheld": (float(dec["dual_s_withheld"]) if dec.get("dual_s_withheld") is not None else None),
                 "dual_e_spoken": (float(dec["dual_e_spoken"]) if dec.get("dual_e_spoken") is not None else None),
                 "dual_margin": (float(dec["dual_margin"]) if dec.get("dual_margin") is not None else None),
+                "would_emit": (bool(dec["would_emit"]) if dec.get("would_emit") is not None else None),  # H_9728 yoke severance-dose
                 "pc2_proj": (float(dec["pc2_proj"]) if dec.get("pc2_proj") is not None else None),  # H_9557
                 "route_k": (int(dec["route_k"]) if dec.get("route_k") is not None else None),  # H_9557
                 "pc2_z": (float(dec["pc2_z"]) if dec.get("pc2_z") is not None else None),  # H_9575
