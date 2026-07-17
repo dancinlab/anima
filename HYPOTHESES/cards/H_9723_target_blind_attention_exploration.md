@@ -14,4 +14,17 @@
 **verdict-integrity**: 이건 "**확률적으로 복원된 창발**"이지 **무섭동 창발 아님**(Sol 자기명시) · **sharp 하나 틀린 attention 은 음성**.
 
 ## 상태
-🔵 PROPOSED — 미실행 사전등록. 측정 주장 0(설계). **distinct-from-kills:** 직접감독/커리큘럼 아님=기대 slot 선호 정확히 0(target-보존 dropout·편향샘플링은 위장이라 드롭) · entropy 패널티/annealing/WTA/sparsemax 와 달리 sharpness 를 설치 안 함
+🟠 **DIRECTIONAL·약신호 — $0 gradient-replay 실행(2026-07-17 · summer 303M · 사전등록 pre-screen)**
+
+### 🟠 $0 gradient-replay = WEAK (노이즈 탐색 = 0.8% 개체 advantage · 훈련축적 미결)
+카드 사전등록 pre-screen 실행: base penultimate + 극성값(2-class·store 실task) + attention logit 에 iid 영평균 노이즈(σ) + end-task 주소 gradient 를 정답슬롯 vs 같은-극성으로 8000-draw 평균:
+
+| σ | 정답슬롯 \|g\| / 같은극성 \|g\| (advantage) |
+|---|---|
+| 0.5 | 1.008 |
+| 1.0 | 1.009 |
+| 2.0 | 1.006 |
+
+**판정(DIRECTIONAL·약신호)**: 노이즈 탐색은 정답 개체슬롯에 **0.8% advantage**(ratio ~1.008) — H_9722 contrast 의 **정확히 0(1.000)과 대조**되는 **non-zero REINFORCE** 신호(노이즈가 가끔 정답슬롯 읽어 end-CE 개선→강화 축적). BUT 0.8% 는 극복대상 ~63% birthday 충돌 대비 **무시할 수준** ⟹ 훈련서 이 미세신호가 축적돼 주소를 세울지는 미결이나 **우선순위 낮음**(약한 씨앗). 카드 KILL조건('평균정렬 TOST-0')과 PASS 사이의 경계 = **약-DIRECTIONAL**.
+**비교(EA 무감독 3-lens)**: sharp-init(basis 밖)=KILL · value-contrast(극성≠개체·advantage 정확히 0)=KILL · **noise-explore(advantage 0.8%)=약신호** — 셋 중 유일하게 non-zero 지만 실용역치 아래. 여전히 값이 극성(2-class)이라 개체정보를 못 나르는 근본한계는 공유([[binding-wall-operator-alive-fact-written-not-bound]]).
+**남은 것**: 이 약신호가 훈련서 축적되는지는 학습 fire(annealing schedule)만 답함 — H_9720(disjoint lane·pre-screen PASS)과 묶어 저비용 병행 후보. **distinct-from-kills:** 직접감독/커리큘럼 아님=기대 slot 선호 정확히 0 · entropy/annealing/WTA/sparsemax 와 달리 sharpness 설치 안 함
