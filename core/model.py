@@ -112,6 +112,20 @@ class CLMConfig:
     # constraint or it does not — and THAT is H_9643's question.
     n_factions: int = 0            # K contiguous faction blocks on the d axis (0 = OFF)
     faction_bridge_lam0: float = 0.1   # initial cross-faction bridge scale (K>0 only)
+    # H_9643 ORACLE arm — the INSTRUMENT's positive control, not a hypothesis test.
+    # During TRAINING, force faction f to be active only on domain pi(f): the lesion metric must
+    # recover a specialization we KNOWINGLY put there, or it has no standing to report its
+    # absence (positive-control-before-reading-a-negative). Three properties are deliberate:
+    #   · pi is NON-IDENTITY, has ONE domain shared by two factions, and ONE orphan domain —
+    #     the real toy's failure mode (owner=[ccc, aaa, aaa, ddd]); a synthetic that assumes
+    #     f -> domain f hands the metric an alignment training never gives it (that assumption
+    #     is what killed the trace-based S: it read 1 of 4 planted cells).
+    #   · It is a STRUCTURAL gate, not a loss term — H_9673 died because intra-faction sync wrote
+    #     the metric's own negative term every step. Nothing here touches the loss.
+    #   · faction_oracle_lam is a DOSE (0..1 = fraction of steps the routing is enforced), so the
+    #     certification bar can be "S rises monotonically with the dose" — one point proves less.
+    faction_oracle: tuple = ()     # pi: domain index per faction, e.g. (2, 0, 0, 3). () = OFF
+    faction_oracle_lam: float = 0.0    # dose in [0,1]: fraction of steps the routing is forced
     clms: bool = False             # allocate the CLMS store-bridge module (co-train)
     clms_n_slot: int = 8           # store slots (must match the corpus storebind --store-slots)
     clms_d_k: int = 64             # content-address key dim
@@ -386,8 +400,29 @@ class CLMConvMoE(nn.Module):
                                    cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0,
                                    d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate)
 
+    def faction_oracle_mask(self, domain_ids: torch.Tensor) -> Optional[torch.Tensor]:
+        """H_9643 ORACLE routing mask [B, d] — 1 where faction f is allowed for that row's domain.
+
+        Row b belongs to domain domain_ids[b]; faction f owns domain pi[f]. A channel is open iff
+        its faction owns that row's domain. Factions whose domain never appears are simply never
+        opened (that IS the orphan/shared structure we want to certify against).
+
+        Returns None when the oracle is off, so the golden path is untouched.
+        """
+        cfg = self.cfg
+        pi = getattr(cfg, "faction_oracle", ()) or ()
+        K = int(getattr(cfg, "n_factions", 0) or 0)
+        if not pi or K <= 0:
+            return None
+        per = cfg.d_model // K
+        blk = torch.arange(cfg.d_model, device=domain_ids.device) // per      # [d] -> faction id
+        owner = torch.tensor(list(pi), device=domain_ids.device)              # [K] -> domain id
+        chan_dom = owner[blk]                                                 # [d] -> its domain
+        return (chan_dom[None, :] == domain_ids[:, None]).float()             # [B, d]
+
     def forward(
-        self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None
+        self, tokens: torch.Tensor, targets: Optional[torch.Tensor] = None,
+        domain_ids: Optional[torch.Tensor] = None
     ) -> dict:
         # tokens: (B, T) long
         x = self.embed(tokens)                  # (B, T, C)
@@ -406,6 +441,17 @@ class CLMConvMoE(nn.Module):
                 x = _grad_checkpoint(layer, x, use_reentrant=False)
             else:
                 x = layer(x)
+        # H_9643 ORACLE routing (instrument certification arm only) — gate each row's channels to
+        # the faction that owns its domain, for a `faction_oracle_lam` fraction of steps. Applied
+        # at the trunk exit, before the bridge, so the bridge still sees a faction-structured x.
+        # Training-time only and OFF by default; a verdict arm never sets it.
+        if (domain_ids is not None and self.training
+                and float(getattr(self.cfg, "faction_oracle_lam", 0.0)) > 0.0):
+            m = self.faction_oracle_mask(domain_ids)
+            if m is not None:
+                lam = float(self.cfg.faction_oracle_lam)
+                if torch.rand(()).item() < lam:          # dose = fraction of steps enforced
+                    x = x * m[:, :, None]
         # H_9643 cross-faction debate — the ONLY inter-faction path inside the trunk, placed at
         # the trunk exit before MoE (pre-registered position; sweeping it would be tune-to-green).
         # None when the faction lane is OFF => byte-identical golden path.

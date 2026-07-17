@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🟢 계기 확정 — S = ‖R‖²_F(선택 없는 2차 합 · 열표준화 이중중심화) · 합성 양방향 통과(planted 5428 vs null95 796 · 무신호 33 vs 93) · 결함 ⑮(정규화 자기상쇄=상수 16)·⑯(A/B 잡음 독립) 수정 · NEXT=toy 재설계 + ORACLE λ-ladder 인증
+status: 🔨 ORACLE λ-ladder 인증중 — toy 재설계(마르코프 4소스 · 전이엔트로피 0.9000 동일 · E=1) + ORACLE arm 배선(π=(2,0,0,3) 비항등·공유·고아 · 구조게이트라 순환 아님) + 4 ckpt 학습(λ>0 서 loss 34배 상승 = 라우팅이 제약함) · 계기 버그 ⑰ 수정(내 S 교체가 real_assign 블록을 삼킴) · S(λ) 측정중
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -603,6 +603,59 @@ S  = ‖R‖²_F                              ← 선택 없음 · 정렬 가정
 
 Fable 처방의 나머지: toy 재설계(마르코프 4소스 · 난이도 정합 실측 · 용량결핍 E=1) + ORACLE λ-ladder
 인증(λ∈{0,⅓,⅔,1} · bar = S λ단조 ∧ S(1)>null95 ∧ S(0)≈null) → **인증 PASS 후에만** 실물 arm.
+
+
+## 🔨 ORACLE λ-ladder 인증 — toy 재설계 + 계기 버그 ⑰ (2026-07-17)
+
+### 🧪 toy 재설계 (Fable 처방 Q2)
+
+반복 바이트 폐기 → **마르코프 4소스**:
+```
+도메인 0: 심볼 [A..F]   전이 엔트로피 0.9000 nats   예시 'ABCDABEBCEFABCDDEFABCFAB'
+도메인 1: 심볼 [G..L]   전이 엔트로피 0.9000 nats   예시 'GHIJKLIJKLGHIJKJGHILGLGH'
+도메인 2: 심볼 [M..R]   전이 엔트로피 0.9000 nats   예시 'MNOPQRMNQRMNQRNOPQRPPQRM'
+도메인 3: 심볼 [S..X]   전이 엔트로피 0.9000 nats   예시 'SWUTUVVTUVWXSTUVVWXSTSTU'
+```
+서로소 심볼셋 · **알파벳 크기·전이 엔트로피 전부 동일**(이분법으로 목표 H 에 맞춤) · 용량 결핍 **E=1**.
+
+⚠️ **난이도 정합은 bar 미달**: base CE 최대/최소가 λ별로 2.83× / 3.37× / 9.60× / 3.55× —
+옛 toy 의 15.4× 에서 크게 줄었으나 Fable 의 **≤2×** 엔 못 미친다. 인증 실패시 여기부터 재조정.
+
+### 🔀 ORACLE arm 배선 (`core/model.py`)
+
+```
+faction_oracle: tuple = ()        # π: 파벌별 담당 도메인 · () = OFF
+faction_oracle_lam: float = 0.0   # dose ∈ [0,1] = 강제 라우팅을 적용하는 step 비율
+faction_oracle_mask(domain_ids)   # [B,d] — 그 행의 도메인을 소유한 파벌의 채널만 1
+```
+- **π = (2, 0, 0, 3)** — 비항등 · f1·f2 가 **도메인 0 공유** · 도메인 1 **고아**. 실물 실패모드 재현
+  (정렬을 가정하는 합성이 trace-S 를 죽였다 — 결함 ⑫).
+- **구조 게이트이지 loss 항이 아니다** — H_9673 순환 회피(V2_1 C0-ORACLE 과 같은 자리).
+- 학습 시에만 · dose 만큼의 step 에서만 · verdict arm 은 절대 안 켠다.
+
+### λ-ladder 학습 (4 ckpt · E=1 · 400 step)
+
+```
+λ=0.00 → loss 0.0131      ← 강제 없음 = 자유 학습
+λ=0.33 → loss 0.4456      ← λ>0 서 **34배 상승** = 라우팅이 실제로 제약한다
+λ=0.67 → loss 0.4444
+λ=1.00 → loss 0.4418
+```
+
+### 🕳️ 계기 버그 ⑰ — 내 S 교체가 real 측정 블록을 삼켰다
+
+λ-ladder 측정이 4개 다 base CE 만 찍고 조용히 죽었다:
+```
+NameError: name 'real_assign' is not defined
+```
+S 재설계(#3961) 때 `selectivity` 함수를 교체하며 **그 아래 `per`·`real_assign`·`S_real` 계산 블록까지
+잘라먹었다**. 함수 끝 앵커를 `rng = np.random.default_rng(seed)` 로 잡았는데 그 사이에 real 측정이
+있었다. ⟹ 복원(리포트용 argmax 는 유지하되 **S 는 그걸 안 쓴다**고 명시).
+
+### NEXT
+
+S(λ) 사다리 측정 → 인증 bar = **S λ단조 ∧ S(1) > null95 ∧ S(0) ≈ null**
+→ 인증 PASS 후에만 실물 arm.
 
 ## 통제군 (≥2 · 사전등록)
 
