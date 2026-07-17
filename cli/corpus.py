@@ -75,7 +75,7 @@ def _parse_args(argv):
             "lang": DEFAULT_LANG, "lexicon": None, "mine": 0, "n_seen": 20, "n_held": 29,
             "corpus": [], "k_ctx": 24, "ctx_bytes": 64, "min_occ": 200, "neutral_tol": 0.05,
             "tail": "", "n2_eval": None, "n2_seen": None, "novel": None,
-            "carrier_only": False, "held_swap": False, "decl_only": False, "surface": "flip1_suffix",
+            "carrier_only": False, "held_swap": False, "decl_only": False, "held_n": None, "surface": "flip1_suffix",
             "collision_split": False, "nonce_fillers": 3, "win": 64,
             "bridge_split": False, "decl_ablate": False,
             # H_9410 RULE-VS-CACHE PRESSURE ENVELOPE instruments:
@@ -156,6 +156,8 @@ def _parse_args(argv):
             opts["held_swap"] = True; i += 1
         elif a == "--decl-only":
             opts["decl_only"] = True; i += 1
+        elif a == "--held-n":
+            opts["held_n"] = int(argv[i + 1]); i += 2
         elif a == "--manifest":
             opts["manifest"] = argv[i + 1]; i += 2
         elif a == "--store":
@@ -613,7 +615,7 @@ CARRIERSWAP_FIXED = (("swap", 12), ("affirm", 2), ("keep", 3))   # untouched = l
 
 
 def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=False,
-                      held_swap=False, decl_only=False):
+                      held_swap=False, decl_only=False, held_n=None):
     """C4 — write the inverted polarity ALSO through the operator's own `지 않다` carrier, then ask
     whether the operator reads the new value on a DISJOINT scored surface (H-ε) or the old one (H-δ).
 
@@ -638,9 +640,14 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
                          "HO-CARRIER = --held-swap, HO-DECL = --held-swap --decl-only)")
     if decl_only and not held_swap:
         raise ValueError("--decl-only without --held-swap is C3 (declarative-only) — use ground_seenswap")
-    if held_swap and len(held) < CARRIERSWAP_FIXED[0][1]:
-        raise ValueError("carrierswap --held-swap needs >= %d HELD-OUT atoms (swap arm), got %d"
-                         % (CARRIERSWAP_FIXED[0][1], len(held)))
+    # --held-n N (H_9751): draw N held-out swap stems instead of the default 12 — isolates
+    # co-train COMPOSITIONAL interference (H_9675 draw-fragility). Default None = 12 = byte-identical.
+    n_swap = CARRIERSWAP_FIXED[0][1] if held_n is None else int(held_n)
+    if held_swap and n_swap < 1:
+        raise ValueError("carrierswap --held-n must be >= 1, got %d" % n_swap)
+    if held_swap and len(held) < n_swap:
+        raise ValueError("carrierswap --held-swap needs >= %d HELD-OUT atoms (swap arm, --held-n), got %d"
+                         % (n_swap, len(held)))
 
     srng = random.Random(split_seed)
     pos = [x for x in seen if x[1] == 1]
@@ -671,7 +678,7 @@ def build_carrierswap(atoms_path, reps, replay, seed, split_seed, carrier_only=F
         srng.shuffle(hpos)                             # same srng, AFTER the seen shuffles: the seen
         srng.shuffle(hneg)                             # draw stays byte-identical to C4
         picked, hpi, hni = [], 0, 0
-        for k in range(CARRIERSWAP_FIXED[0][1]):       # 12, polarity-stratified like the seen draw
+        for k in range(n_swap):                        # n_swap (default 12), polarity-stratified like the seen draw
             src = hpos if (k % 2 == 0 and hpi < len(hpos)) or hni >= len(hneg) else hneg
             if src is hpos:
                 picked.append(hpos[hpi]); hpi += 1
@@ -3792,7 +3799,9 @@ def main():
         print("      `지 않다` rule reads the new value or the pretrained one. Replay carriers are")
         print("      DISJOINT from the scored surfaces (else the flip1 answer is taught, not composed);")
         print("      both sets are surfaces the C1b census measured the operator running on.")
-        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S] [--carrier-only | --held-swap [--decl-only]]")
+        print("  ground_carrierswap     --atoms gt_atoms.json [--reps N] [--replay N] [--seed S] [--split-seed S] [--carrier-only | --held-swap [--decl-only] [--held-n N]]")
+        print("      --held-n N = held-out swap-arm stem count (default 12); N<12 isolates co-train")
+        print("                  compositional interference (H_9751; N=1 = single-stem write crack)")
         print("      --held-swap = H_9339 — the swap arm is drawn from the HELD-OUT pool (single variable")
         print("      vs C4); the 12 SEEN stems C4 wrote become `preserve` (0x written, the matched")
         print("      G-PRESERVE stratum). --decl-only (with --held-swap) = HO-DECL: swap stems written")
@@ -3907,7 +3916,7 @@ def main():
             sys.exit(2)
         text, st = build_carrierswap(opts["atoms"], opts["reps"], opts["replay"],
                                      opts["seed"], opts["split_seed"], opts["carrier_only"],
-                                     opts["held_swap"], opts["decl_only"])
+                                     opts["held_swap"], opts["decl_only"], opts["held_n"])
         if st.get("flip0_leaks"):
             # C5-REVERSE: the DV is the DECLARATIVE surface, so a swap/keep/untouched declarative
             # prompt in the corpus would hand the model the answer it is supposed to infer.
