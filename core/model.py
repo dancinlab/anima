@@ -98,6 +98,20 @@ class CLMConfig:
     # (store_only gate → the trunk logit gets no answer-position grad = ② shortcut-cut, structural).
     # The store content is runtime data (block store manifest at train, --store manifest at eval),
     # never in the .clm; only {W_q, val, W_h, W_out, λ} + a frozen key_emb table live in the trailer.
+    # H_9643 faction lane — the lateral split the archived engine claimed but never learned.
+    # n_factions=0 is OFF and byte-identical: every conv keeps groups=1 and every GroupNorm keeps
+    # G=1, so an OFF model builds the exact tensors it builds today. K>0 splits the d axis into K
+    # contiguous blocks that only talk through the bridge (and through MoE+readout, which stay
+    # full-mixing on purpose — that is the CONSENSUS stage: trunk=factions, bridge=debate,
+    # MoE/readout=consensus).
+    # ⚠ The loss NEVER sees a faction statistic (no sync, no correlation, no modularity, no
+    # orthogonality penalty). H_9673 showed the archived engine's Phi was circular precisely
+    # because intra-faction sync wrote the metric's own negative term every step; an aux
+    # decorrelation loss would repeat that failure class against H_9674's modularity DV. So the
+    # only training signal here is CE: specialization either emerges under the structural
+    # constraint or it does not — and THAT is H_9643's question.
+    n_factions: int = 0            # K contiguous faction blocks on the d axis (0 = OFF)
+    faction_bridge_lam0: float = 0.1   # initial cross-faction bridge scale (K>0 only)
     clms: bool = False             # allocate the CLMS store-bridge module (co-train)
     clms_n_slot: int = 8           # store slots (must match the corpus storebind --store-slots)
     clms_d_k: int = 64             # content-address key dim
@@ -144,12 +158,15 @@ class CausalDilatedConv1d(nn.Module):
     overhang.
     """
 
-    def __init__(self, channels: int, kernel_size: int, dilation: int):
+    def __init__(self, channels: int, kernel_size: int, dilation: int, groups: int = 1):
         super().__init__()
         self.kernel_size = kernel_size
         self.dilation = dilation
         self.pad = (kernel_size - 1) * dilation
-        self.conv = nn.Conv1d(channels, channels, kernel_size, dilation=dilation)
+        # groups=1 is the default and the OFF path — byte-identical to the pre-H_9643 model.
+        # groups=K (n_factions) confines each output channel to its own faction's inputs.
+        self.groups = groups
+        self.conv = nn.Conv1d(channels, channels, kernel_size, dilation=dilation, groups=groups)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (B, C, T)
@@ -162,14 +179,19 @@ class TrunkLayer(nn.Module):
 
     def __init__(self, cfg: CLMConfig, dilation: int):
         super().__init__()
-        self.conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation)
+        g = cfg.n_factions if cfg.n_factions > 0 else 1
+        self.conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation, groups=g)
         # GroupNorm(1, C) on a (B, C, T) input reduces over (C, T) — channels AND time,
         # i.e. SEQUENCE-GLOBAL statistics, NOT a per-position layernorm. The old comment
         # here said "layernorm over channels" and was wrong about its own line; it is the
         # likely origin of the per-position `_gen_gnorm*` in generator.hexa (H_9626).
         # The faithful twins are gn_lib.hexa::nn_groupnorm_fwd and decode.py::nn_groupnorm_fwd
         # (both m = cg*T). Do not re-describe this as position-local.
-        self.norm = nn.GroupNorm(1, cfg.d_model)
+        # GN groups follow the faction split. With G=1 the mean/var are pooled over ALL d
+        # channels, which is a HIDDEN cross-faction channel: faction A's activity would move
+        # faction B's normalizer even though the conv is grouped. GN(K, d) closes that leak so
+        # "faction" means what it says. G=1 when OFF ⟹ byte-identical.
+        self.norm = nn.GroupNorm(g, cfg.d_model)
         self.act = nn.GELU()
         self.drop = nn.Dropout(cfg.dropout)
 
@@ -184,6 +206,41 @@ class TrunkLayer(nn.Module):
 # --------------------------------------------------------------------------- #
 # MoE conv layer
 # --------------------------------------------------------------------------- #
+class FactionBridge(nn.Module):
+    """H_9643 cross-faction debate — the ONLY path between factions inside the trunk.
+
+    x <- x + lam * (g * (M_cross . W_b) x), where W_b is a 1x1 conv over d, M_cross zeroes every
+    WITHIN-faction entry (so only faction->faction terms survive), g is a per-channel learned
+    gate, and lam is a scalar carried in the .clm trailer so `evaluate` can override it — that
+    override IS the debate ON/OFF ablation (lam=0 kills the bridge without touching any weight).
+
+    The bridge is trained by CE alone. If cross-faction traffic helps, CE grows g; if it does
+    not, g decays. Earned, not tuned — no auxiliary term rewards the bridge for existing.
+
+    Position: ONE module at the trunk exit, before MoE. Pre-registered and fixed — sweeping the
+    bridge's depth and reporting the best layer would be tune-to-green.
+    """
+
+    def __init__(self, d_model: int, n_factions: int, lam0: float):
+        super().__init__()
+        assert n_factions > 0 and d_model % n_factions == 0, (
+            f"FactionBridge: d_model {d_model} must be divisible by n_factions {n_factions}")
+        self.n_factions = n_factions
+        self.proj = nn.Conv1d(d_model, d_model, kernel_size=1)
+        self.gate = nn.Parameter(torch.zeros(d_model))          # sigmoid(0)=0.5 at init
+        self.lam = nn.Parameter(torch.tensor(float(lam0)))
+        # M_cross: [d_out, d_in] 1 iff the two channels sit in DIFFERENT factions. Registered as a
+        # buffer so it serializes with the module and never receives a gradient.
+        blk = torch.arange(d_model) // (d_model // n_factions)
+        self.register_buffer("m_cross", (blk[:, None] != blk[None, :]).float(), persistent=False)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, C, T). Mask the 1x1 kernel so only cross-faction weights act.
+        w = self.proj.weight * self.m_cross[:, :, None]
+        h = F.conv1d(x, w, self.proj.bias)
+        return x + self.lam * torch.sigmoid(self.gate)[None, :, None] * h
+
+
 class ConvExpert(nn.Module):
     """A small causal conv expert = one mitosis cell (P0 Q2)."""
 
@@ -293,7 +350,8 @@ class CLMConvMoE(nn.Module):
         self.cfg = cfg
         self.embed = nn.Embedding(cfg.vocab_size, cfg.d_model)
         # dilated conv embed (P0 §0: "dilated conv embed")
-        self.embed_conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation=1)
+        _g = cfg.n_factions if cfg.n_factions > 0 else 1
+        self.embed_conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation=1, groups=_g)
 
         # CAP dilation at cfg.max_dilation (WaveNet/TCN-style saturation). An
         # uncapped base**i at deep L explodes the causal pad (L=30 -> 2**29 ~5e8
@@ -302,7 +360,11 @@ class CLMConvMoE(nn.Module):
         dils = [min(cfg.dilation_base ** i, cfg.max_dilation) for i in range(cfg.n_trunk_layers)]
         self.trunk = nn.ModuleList(TrunkLayer(cfg, d) for d in dils)
         self.moe = MoEConvLayer(cfg)
-        self.norm_out = nn.GroupNorm(1, cfg.d_model)
+        # H_9643: one bridge at the trunk exit (before MoE) when the faction lane is ON.
+        self.faction_bridge = (
+            FactionBridge(cfg.d_model, cfg.n_factions, cfg.faction_bridge_lam0)
+            if cfg.n_factions > 0 else None)
+        self.norm_out = nn.GroupNorm(_g, cfg.d_model)
         self.readout = nn.Conv1d(cfg.d_model, cfg.vocab_size, kernel_size=1)
         # H_9200 E1 — optional gated-write forward-slot. None => byte-identical
         # additive-readout CLMConvMoE (existing golden path untouched). The SLW
@@ -344,6 +406,11 @@ class CLMConvMoE(nn.Module):
                 x = _grad_checkpoint(layer, x, use_reentrant=False)
             else:
                 x = layer(x)
+        # H_9643 cross-faction debate — the ONLY inter-faction path inside the trunk, placed at
+        # the trunk exit before MoE (pre-registered position; sweeping it would be tune-to-green).
+        # None when the faction lane is OFF => byte-identical golden path.
+        if self.faction_bridge is not None:
+            x = self.faction_bridge(x)
         x, stats = self.moe(x)
         x = self.norm_out(x)
         # H_9423 CLMS query tap — the PRE-slot penultimate (before SLW modifies it), the same tap

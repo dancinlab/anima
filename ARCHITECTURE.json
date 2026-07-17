@@ -16365,7 +16365,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재 + 선결조건 4/4 통과(H_9674: 실재 54.07 · layout아님 3렌즈 · 크기아님 · EN점유아님 scratch d768 12.03) · 🔵 마지막 가설 H_9643 레버 설계 완료(Fable) — 구현 대기. 축 종결조건 사전등록됨(D1|D2|D3).",
+    "verdict": "🔴 옛 파벌=순환(H_9673·H_9660) ⟹ 법칙 22/34/43/44 판정불가 · 🟢 기질엔 블록 실재 + 선결조건 4/4 통과(H_9674) · 🔨 마지막 가설 H_9643 구현 ①/④ — core/model.py 배선 완료(groups=K·GN(K)·FactionBridge · OFF byte-identical ✅ · lam=0 정확한 항등 ✅). NEXT = serialize trailer → --faction-lesion → K=1 floor pre-gate.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16698,7 +16698,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "🔵 DESIGNED · loss = CE 뿐(파벌 통계량 0개 = 순환 회피) · 구현 대기",
+      "verdict": "🔨 구현 ①/④ 완료 — core/model.py 배선 + OFF byte-identical 검증 ✅ · NEXT=serialize trailer",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16725,6 +16725,33 @@
         "id": "faction-r3-h9643-plan",
         "detail": "① core/model.py groups=K + GN(K) + bridge(OFF byte-identical) ② serialize trailer + VERSION(G5) ③ evaluate --faction-lesion + lambda 오버라이드 ④ K=1 floor pre-gate → {K=8,K=1}x3seed=6 train.",
         "verdict": "toy = summer+aiden 전용호스트(a_wall_first) · $0 자가pool · 1–2일. 303M = toy GREEN 시만 · rent = 오너 go."
+       },
+       {
+        "name": "🔨 구현 ① — core/model.py 배선 + 검증 (VERSION 0.15.47)",
+        "role": "",
+        "id": "faction-r3-h9643-impl1",
+        "detail": "CLMConfig(n_factions=0 OFF · faction_bridge_lam0=0.1) · CausalDilatedConv1d(groups 인자) · TrunkLayer(conv groups=K + GN(1,d)→GN(K,d)) · CLMConvMoE(embed groups=K · norm_out GN(K) · faction_bridge) · FactionBridge 신규(trunk 출구·MoE 앞) · forward 배선.",
+        "verdict": "✅ 검증(aiden torch2.10): OFF 시 groups/GN 전부 1 + bridge None = 옛 구조 · ON K=8 시 groups 8·GN 8·m_cross 0.8750=1−1/8 정확 · **bridge lam=0 max|Δ|=0.000e+00 정확한 항등** ⟹ ablation 이 가중치 안 건드리고 성립",
+        "children": [
+         {
+          "name": "왜 GN 도 쪼개나 — 파벌간 숨은 누설채널",
+          "role": "",
+          "id": "faction-r3-h9643-gn-leak",
+          "detail": "GN(1,d) 는 mean/var 를 전 d 채널에 풀링한다. conv 를 groups=K 로 잘라도 파벌 A 의 활동이 파벌 B 의 정규화를 움직인다 = 누설. GN(K,d) 가 그 채널을 막아 '파벌'이 말 그대로가 된다."
+         },
+         {
+          "name": "💡 파라미터가 줄어든다 — '구조만 추가'가 이번엔 진짜",
+          "role": "",
+          "id": "faction-r3-h9643-param-drop",
+          "detail": "d=64·L=2 toy 서 120,132 → 92,101. groups=8 이 conv 가중치를 1/8 로 자르고 bridge 가 일부를 되돌린다 ⟹ 파벌은 용량 추가가 아니라 칸막이. 옛 법칙 22 의 '기능 추가 0 구조만 추가' 가 이번엔 문자 그대로 성립(옛 엔진은 파벌을 늘리며 세포도 같이 늘렸다 = 그것도 교란)."
+         },
+         {
+          "name": "순환 회피 — 코드로 확인 가능한 지점",
+          "role": "",
+          "id": "faction-r3-h9643-no-circularity",
+          "detail": "FactionBridge 는 loss 에 항을 0개 더한다(학습 신호 = CE 역전파 뿐) · gate 는 sigmoid(0)=0.5 서 시작해 CE 가 키우거나 줄인다(earned, not tuned) · m_cross 는 persistent=False 버퍼로 gradient 없음 · loss 어디에도 sync/상관/Q/직교성 0개 ⟹ H_9673 순환 재발 차단."
+         }
+        ]
        }
       ]
      }
