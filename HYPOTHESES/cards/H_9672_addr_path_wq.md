@@ -59,7 +59,8 @@ seed-11이 밝힌 잔여 벽 = **값읽기(val 극성분화) seed-취약**(주�
 **레버 sweep(2-seed{7,11} 소거법)**:
 - **oracle-warmup(#3908 --store-oracle-warmup 1500) = 🔴 KILL**: seed-7 ORACLE **0.5234**(chance)·sb_store_acc 0.56 = **phase 전환(step1500 oracle→softmax)이 val 붕괴**시킴 — plain addr-loss seed-7 ORACLE 0.99보다 나쁨. **Fable∥Sol 예측 적중**(전환창서 흐린-v 재개→MLP re-shortcut). ⟹ 전환형 레버 死·연속형(RV-1)이 정답.
 - **RV-1 oracle-aux(#3914 --store-oracle-aux 0.5) = 🔴 KILL(2026-07-17 · 303M clean run)**: seed-7 ORACLE **0.5312**·P1-bal **0.5703**(chance)·flip 0.068 = 게이트 미달. 결정적으로 **plain addr-loss seed-7 ORACLE 0.99 → oracle-aux 추가시 0.53 회귀** = 연속 oracle-CE 가 값읽기를 돕기는커녕 **오히려 해친다**(dual-path 신호가 addr-loss 가 세운 seed-7 값분화를 교란). Fable∥Sol #1 예측 반증. ⟹ 연속형 oracle 보조도 死.
-- **RV-2 ans-delay(#3916)·RV-3 val-center(#3920·parity 0.00e+00·이론최청정 basin 구조제거) = 🔥 진행중**: vast RTX3090서 2-seed{7,11} 재발사(직전 RTX5090 GPU 하드웨어 death·torch 2.6.0+cu124 clean). 첫 게이트 통과 lever서 seed-13 확증, 전멸=SWEEP_EXHAUSTED(값읽기 seed-robustness 벽 재프레임).
+- **RV-2 ans-delay(#3916 --store-ans-delay 1500) = 🔴 KILL(2026-07-17 · RTX3090 clean run)**: seed-7 ORACLE **0.4844**·P1-bal **0.5703**·addr-gap-SEEN 0.4609·**flip 0.0137** = 게이트 미달. flip≈0 = 답이 val 극성을 **아예 소비 안 함** — 주소를 먼저 세우고 답을 늦게 여는 스케줄도 값읽기를 못 세운다. RV-1(연속 oracle)·oracle-warmup(전환)에 이어 **3번째 KILL**.
+- **RV-3 val-center(#3920 --store-val-center·parity 0.00e+00·이론최청정 basin 구조제거) = 🔥 진행중(마지막 lever)**: RTX3090서 2-seed{7,11}. 게이트 통과시 seed-13 확증→TERMINAL, 실패=**SWEEP_EXHAUSTED**(값읽기 seed-robustness 벽 재프레임 · 이 캠페인의 4-lever 전멸).
 - **⚙️ 인프라 주석(infra-wall-noneval)**: 이 sweep 중 GPU 하드웨어 death(RTX5090 PCIe 이탈) + torch/arch 트랩 7건 발생 — 전부 verdict 와 격리. 파생 canonical upstream-fix 2건: **#3969**(cli/train.py sm_120 preflight) · **#3977**(cli/pod_bootstrap.sh POD_TRAIN=1 3-트랩 봉쇄). RV-2/RV-3 clean-run 만 유효 측정.
 
 판정 게이트(각 레버 2-seed·balanced 채점): ORACLE≥.90 ∧ P1-balanced≥.75 ∧ addr-gap≤.20 ∧ flip≥.90 → winner→confirm seed-13(미접촉·tune-to-green 방지)→TERMINAL. 전 레버 실패=값읽기 seed-robustness 벽 재프레임(별개 후속).
