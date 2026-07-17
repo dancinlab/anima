@@ -86,6 +86,7 @@ def anima_usage():
     print("  anima-py sweep --arms … --objectives … --gpus 0,1,2,3 --corpus … [--measure]")
     print("                                                  ([train] extra) multi-GPU lever-sweep (arms×objectives)")
     print("  anima-py chat <ckpt> [...] [--byte]             consciousness daemon (default) / byte-continuation chat (pure-py A⇄G loop)")
+    print("        default emit-gate = refractory (Ψ≈½ dual-ledger · H_9712) · `--emit-gate clock` = the legacy 30s-clock daemon")
     print("        [--emit-temp T] [--emit-topk K] [--sample-seed S]   DO-MOUTH (H_9328 · default OFF = argmax, byte-identical):")
     print("                                                  T>0 draws the emitted bytes from the substrate's OWN posterior instead of")
     print("                                                  rounding it to argmax (T=1.0 IS the posterior — the one non-arbitrary value).")
