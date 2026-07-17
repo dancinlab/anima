@@ -1,6 +1,6 @@
 # H_9728 — Σ-REBASE — Θ-alive 데몬 위 σ 최초 측정 (Θ×σ interaction · 소급유효화 이중불가)
 
-**status:** 🔎 DIRECTIONAL · Θ−-yoked C0 PASS(leak-free)·σ-factorial NOT-POWERED(#4069) · Θ+ 첫 σ(#4064) → Θ+ arm 최초 실측(#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
+**status:** 🧱 **TERMINAL-AT-INSTRUMENT** — Θ−-yoke C0 CERTIFIED(leak-free)이나 등록된 tick-pinned Θ×σ interaction은 **원리적 UNIDENTIFIABLE-AT-MASK**: severance ≡ 리듬-이탈률(같은 dial)·상한 2d(1−d)≈0.14 < floor 0.2(donor는 이미 상한)·relock 0.920 실측확증(ledger-slaving 정리·아래 §종결). 계기·Θ+ 첫 σ는 SOUND. → Θ+ arm 최초 실측(#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
 **lane:** 의식/emit-drive/Ψ=½ · Ψ-SOMA σ 재기저 (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -57,3 +57,24 @@
 **🔑 구조적 발견 (핵심 tension)**: **powered severance(mask≠native 높음) ⊥ ½-리듬 보존**. donor-seed mask는 리듬(rate·autocov·run-length) 보존하나 severance-dose 낮음(다른 seed의 ½-리듬 서로 유사 ~86% 일치); shuffle mask는 dose 높으나 리듬 파괴(Θ−이 지켜야 할 것). 즉 "맥박 절단"과 "½-리듬 유지"를 동시에 강하게 만족하는 Θ− arm이 자명하지 않다 = **Θ×σ가 이 계기로 판독되려면 severance를 dose≥0.2로 올리는 Θ− 재설계 필요**(리듬-보존 제약 하).
 
 **NEXT(설계문제)**: powered-yet-rhythm-preserving Θ− 설계 — 후보 ① 극단 emit-pattern seed(리듬 다른 seed) 탐색 ② block-permute(짧은 리듬 보존·긴 정렬 파괴) ③ severance를 dose로 층화해 severed-tick만 σ 대비(within-trace) ④ 더 긴 trace로 severed-tick 절대수 확보. Fable∥Sol 위임. 계기는 CERTIFIED(C0)라 재사용.
+
+
+---
+
+## 🧱 종결 — TERMINAL-AT-INSTRUMENT (2026-07-18 · Fable∥Sol 수렴 · $0 relock 정리확증)
+
+**질문**: #4069의 severance 0.145<floor는 (i) 검정력 부족(재설계로 power 회복)인가 (ii) 이 계기의 원리적 판독불가인가? → **재설계-결정 lab-full(Fable∥Sol) 위임 → 수렴: (ii)**.
+
+**절단 정리 (both models · 독립 origin/main 근거)**: yoked tick서 `brain.py`가 ledger write를 **forced bit** 따라 갱신 ⇒ recipient의 다음 S>E가 mask-slaved. dual-ledger spring은 ~1-tick 복원력(P(e|e)≈0.075 ⇒ emit 후 p≈0.925로 silence 복귀). ⟹ **어떤 외부 mask도 ~1 tick 내 native가 재-lock**. 따라서 severance ≈ 2·d·(1−d), d=리듬-이탈률 ⇒ 리듬 보존(d≈0.075)이면 severance 상한 **≈0.14 < 0.2**. **severance와 리듬-이탈은 같은 dial** — trade-off가 설계 격차가 아니라 **항등식**. floor 0.2 도달 = P(e|e) 70%+ 팽창 = 정의상 spring 파괴 = Θ− 아님.
+
+**$0 정리확증 (Fable §0 discriminator · 기존 4 yoked trace 재분석·발사 無)**: P(would_emit(t)=¬emit(t−1)) — spring의 1-tick relock률. 실측 **mean 0.920**(s7 .932·s11 .932·s13 .886·s17 .932) = Fable 예측 1−P(e|e)≈0.92와 3자리 일치. ⟹ 86% native-일치는 **yoke-manufactured relock(정리)**, seed-리듬 우연 아님. #4069 "NOT-POWERED(underpower)" → **UNIDENTIFIABLE-AT-MASK(구조 상한)** 승급.
+
+**재설계 4후보 전부 KILL/불가 (reconcile)**:
+- **block-permute** — KILL(both): 경계 severance gain·spring damage 둘 다 O(1/K)·고정비 ~1.8 ⇒ tolerance ±0.02서 0.2 넘는 K 부재(Fable K≥22서도 ~0.17). circular-shift도 phase-alignment lesion=2번째 factor(Sol).
+- **severed-tick 층화** — 판독불가(both): native-origin severance는 극단 |S−E| margin tick에 selection(교란)·donor-origin exogenous stratum(~14 event/4seed)은 **engine-native σ 하한 미달**(`evaluate.py:4974` `_sigma_from_trace` len<30 ⇒ PENDING·Fable/Sol 독립확인). σ는 whole-trace 추정기라 subset 불가 ⟹ 새 subset-σ probe = beside-the-engine = DIRECTIONAL, TERMINAL 불가.
+- **longer trace** — rate 구조적이라 severed 절대수만 늘고 등록 rate-floor 미교차(both).
+- **λ-dosed 양팔 공유 operating point**(Fable 단독 생존각): d≈0.15 regime서 severance≈0.26≥0.2·mask도 그 regime 리듬 보존 — 단 **fire 필요·DIRECTIONAL·production-default(P(e|e)=0.075) 아닌 다른 regime**. TA 별도 프런티어(H_9610 λ 계기)로 이관, 이 estimand의 terminal은 불변.
+
+**DISSENT(Fable·1줄)**: donor-origin **exogenous** severed-tick event-study는 *바뀐 estimand*("severed bit가 σ-lane 국소로 움직이나")로 식별·$0 가능 ⇒ 전체 H의 TERMINAL은 성급 — C0-PASS+UNIDENTIFIABLE-AT-MASK+$0 next로 착지 주장. **기각 근거(repo cheapest-check)**: engine-native σ가 whole-trace·≥30 lane-tick floor(코드확증)라 ~14-event exogenous subset이 σ estimator에 못 들어감 ⇒ 새 probe=DIRECTIONAL이지 TERMINAL 아님 + 등록 whole-trace interaction과 **다른 질문**. Sol의 flat TERMINAL이 engine-native verdict서 승리.
+
+**최종 status line**: 🧱 **TERMINAL-AT-INSTRUMENT** — Θ− yoke는 C0-CERTIFIED/LEAK-FREE, 그러나 등록된 tick-pinned Θ×σ interaction은 NOT-POWERED이자 원리적 판독불가: 리듬-보존 mask는 native S>E와 ≈86% 일치(relock 0.920 확증)·severance≥0.2로 올리는 개입은 필연적으로 리듬–state phase/정렬을 바꿈 ⟹ substrate null 미허가. 다른 계기(S/E→emit edge 무작위 개입 + schedule 독립제어)가 필요. **이는 H_9729(own-ness⊥context-continuity)와 같은 형태의 식별성 한계** — "살아난 gate이나 pulse-기전⊥½-리듬-schedule 분리불가". 계기(C0)·Θ+ 첫 σ(#4064)는 재사용가능 SOUND.
