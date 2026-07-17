@@ -8059,7 +8059,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8650,7 +8650,12 @@ def _timing_channel(argv):
 
 def _silence_content_te(argv):
     """`anima-py evaluate --silence-content-te <trace globs...> [--perm 1000] [--seed 12345]
-       [--overlap-ngram 6] [--reach-oracle]` — H_9729 SILENCE-CONTENT.
+       [--reach-lag same|next] [--copy-exclude none|exact|ngram] [--reach-oracle]` — H_9729 SILENCE-CONTENT.
+
+    --reach-lag same (DEFAULT · PRIMARY reach · I(cand[t];carrier[t]|cand[t-1])) = "does the withheld
+    carrier reach the SAME-tick candidate it seeds", conditioned on the PRE-treatment candidate (the
+    fresh oracle carrier ⊥ cand[t-1] ⇒ cleanly certified). --reach-lag next = the residual/carryover read
+    I(cand[t+1];carrier[t]|cand[t]) conditioning on the mediator cand[t] (secondary · NOT primary reach).
 
     Does the WITHHELD candidate's CONTENT causally reach the next imagined candidate (deliberation),
     or is W_S pressure-only (suppression)? = living gate vs living interior. Reads chat traces from
@@ -8714,13 +8719,31 @@ def _silence_content_te(argv):
     copy_excl = _sv("--copy-exclude", "none").lower()
     if copy_excl not in ("none", "exact", "ngram"):
         copy_excl = "none"
+    # H_9729 run-2 QA (Fable∥Sol · #4046): the reader's original triple (X=carrier[t], Y0=cand[t],
+    # Y1=cand[t+1]) conditions on cand[t] — but carrier[t] REACHES cand[t] SAME-TICK (chat.py injects the
+    # re-entry anchor at t, decode produces cand_pregate[t] the same row; certify-pilot 79% same-row
+    # survival). Conditioning on cand[t] is post-treatment conditioning on the MEDIATOR → it blocks the
+    # principal carrier[t]→cand[t]→future path (Sol) and taxes power as transmission improves (Fable). So
+    #   --reach-lag same (DEFAULT · PRIMARY reach) = I(cand[t] ; carrier[t] | cand[t-1]) — the card's
+    #     "does withheld content reach the next imagined candidate" question, conditioned on the
+    #     PRE-treatment candidate (cand[t-1] ⊥ the fresh oracle carrier ⇒ cleanly identified for the
+    #     oracle; the fresh-each-tick oracle is a valid isolated pulse here — no HOLD-K, which both models
+    #     rejected as certifying persistence indistinguishably from fresh reinjection).
+    #   --reach-lag next (SECONDARY · labeled residual/carryover) = the original I(cand[t+1];carrier[t]|
+    #     cand[t]) — a post-treatment residual read, NOT primary reach; kept for the persistence angle.
+    reach_lag = _sv("--reach-lag", "same").lower()
+    if reach_lag not in ("same", "next"):
+        reach_lag = "same"
     reach_oracle = "--reach-oracle" in argv
     paths = []
     for g in globs:
         paths.extend(sorted(_glob.glob(g)))
     print("═══ H_9729 SILENCE-CONTENT · does withheld CONTENT reach the next imagined candidate? ═══")
-    print("  traces=%d · perm=%d · seed=%d · overlap-excl=%d-gram%s"
-          % (len(paths), perm, seed, ov_ng, " · REACH-ORACLE" if reach_oracle else ""))
+    print("  traces=%d · perm=%d · seed=%d · reach-lag=%s (%s) · overlap-excl=%d-gram%s"
+          % (len(paths), perm, seed, reach_lag,
+             "PRIMARY reach I(cand[t];carrier[t]|cand[t-1])" if reach_lag == "same"
+             else "residual I(cand[t+1];carrier[t]|cand[t])",
+             ov_ng, " · REACH-ORACLE" if reach_oracle else ""))
 
     # frozen 2-bit dominant-CHAR-CLASS signature: argmax over [n_dig, n_upper, n_lower, n_pun] (the
     # dominant character class · researcher DOF = 0 · tie → lowest index). Chosen over a raw-byte-stat
@@ -8828,6 +8851,7 @@ def _silence_content_te(argv):
 
     _rng = _random.Random(seed)
     any_pass = False
+    any_signal = False   # H_9729 run-2: carrier signal PRESENT (earned>0 ∧ TE>surr95 ∧ p<0.05) but below strict bar
     for p in paths:
         meta = {}; rows = []
         for ln in open(p, encoding="utf-8", errors="surrogateescape"):
@@ -8851,17 +8875,28 @@ def _silence_content_te(argv):
         # (evaluate-py-23: an absolute threshold reads 1 address on natural text).
         _sig = _content_sig_factory([r.get("wm_reentry_b64", "") for r in rows]
                                     + [r.get("cand_pregate_b64", "") for r in rows])
+        # lag-aware triple (X, Y0, Y1): same = (carrier[i], cand[i-1], cand[i]) — PRIMARY reach, target is
+        # the SAME-row candidate the carrier seeds, conditioned on the PRE-treatment candidate cand[i-1];
+        # next = (carrier[i], cand[i], cand[i+1]) — residual/carryover, conditioned on the mediator cand[i].
         triples = []; n_excl = 0; xs_all = []; n_inj = 0; n_copy = 0
-        for i in range(len(rows) - 1):
+        _lo = 1 if reach_lag == "same" else 0
+        _hi = len(rows) if reach_lag == "same" else len(rows) - 1
+        for i in range(_lo, _hi):
             if rows[i].get("wm_reentry_arm", "off") == "off":
                 continue
             n_inj += 1
-            x = _sig(rows[i].get("wm_reentry_b64", ""))
-            y0 = _sig(rows[i].get("cand_pregate_b64", ""))
-            y1 = _sig(rows[i + 1].get("cand_pregate_b64", ""))
+            if reach_lag == "same":
+                x = _sig(rows[i].get("wm_reentry_b64", ""))
+                y0 = _sig(rows[i - 1].get("cand_pregate_b64", ""))
+                y1 = _sig(rows[i].get("cand_pregate_b64", ""))
+                _carr = rows[i].get("wm_reentry_b64", ""); _nxt = rows[i].get("cand_pregate_b64", "")
+            else:
+                x = _sig(rows[i].get("wm_reentry_b64", ""))
+                y0 = _sig(rows[i].get("cand_pregate_b64", ""))
+                y1 = _sig(rows[i + 1].get("cand_pregate_b64", ""))
+                _carr = rows[i].get("wm_reentry_b64", ""); _nxt = rows[i + 1].get("cand_pregate_b64", "")
             if x < 0 or y0 < 0 or y1 < 0:
                 continue
-            _carr = rows[i].get("wm_reentry_b64", ""); _nxt = rows[i + 1].get("cand_pregate_b64", "")
             _copy = _is_copy(_carr, _nxt)
             if _copy:
                 n_copy += 1
@@ -8896,18 +8931,31 @@ def _silence_content_te(argv):
         pval = (sum(1 for s in surr if s >= te_real) + 1) / (len(surr) + 1)
         earned = te_real - mu
         passed = (te_real > p95) and (z >= 2.0) and (pval < 0.005)
+        signal = (te_real > p95) and (earned > 0) and (pval < 0.05)  # present but sub-strict-bar (underpowered)
         any_pass = any_pass or passed
+        any_signal = any_signal or signal
         print("      n=%d transitions · X-addr=%d Y-addr=%d · %d literal-copy (%s)"
               % (len(triples), n_x, n_y1, n_copy, ("excluded" if copy_excl != "none" else "kept·reported")))
         print("      TE=I(Y1;X|Y0)=%.4f bits · earned=%.4f · surr95=%.4f · z=%.2f · perm-p=%.4f ⇒ %s"
               % (te_real, earned, p95, z, pval, "✅ content-transfer" if passed else "ns (no content transfer)"))
-    # verdict framing
+    # verdict framing · REACH-ORACLE is THREE-way (H_9729 run-2 · Fable∥Sol): the old binary stamped
+    # MOUTH-SEVERED on ANY sub-strict-bar result, conflating "underpowered" with "severed". A carrier
+    # with earned>0 ∧ TE>surr95 REACHES cand[t+1] (the channel is live); it just lacks power at the
+    # strict bar. Only earned≈0 / TE≤surr95 (the run-2 point-mass signature) is genuine severance.
     if reach_oracle:
-        print("  ── REACH-ORACLE verdict: %s" % (
-            "✅ channel LIVE (known carrier recovered ⇒ a real H_9729 null would be interior-absent)"
-            if any_pass else
-            "❌ REACH-FAIL / MOUTH-SEVERED (H_9576) — the known carrier did NOT reach cand[t+1];"
-            " a real null is UNINTERPRETABLE (reach fact, not interior absence)"))
+        if any_pass:
+            print("  ── REACH-ORACLE verdict: ✅ CERTIFIED — known carrier recovered at the strict bar"
+                  " (TE>surr95 ∧ z≥2 ∧ p<0.005) ⇒ the reader can read reach; a real H_9729 null would be"
+                  " interior-absent")
+        elif any_signal:
+            print("  ── REACH-ORACLE verdict: 🟡 REACH-MARGINAL — carrier signal PRESENT (TE>surr95 ∧"
+                  " earned>0 ∧ p<0.05) but UNDERPOWERED at the strict bar. The channel REACHES (this is"
+                  " NOT mouth-severance — earned>0); add ticks to certify. A real H_9729 null stays"
+                  " uninterpretable until CERTIFIED.")
+        else:
+            print("  ── REACH-ORACLE verdict: ❌ REACH-FAIL / MOUTH-SEVERED (H_9576) — the known carrier"
+                  " did NOT reach cand[t+1] (earned≈0 / TE≤surr95); a real null is UNINTERPRETABLE"
+                  " (reach fact, not interior absence)")
     else:
         print("  ── H_9729 read: %s  (own PASS ∧ perm/donor ns ⇒ ORDER-BEARING withheld content moves"
               " the interior · feat8 granularity · DIRECTIONAL until 303M · run --reach-oracle first)"
