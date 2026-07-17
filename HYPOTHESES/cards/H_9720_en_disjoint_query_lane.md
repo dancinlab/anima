@@ -30,3 +30,20 @@ base pretrained penultimate SVD 로 개체 판별정보가 어느 부분공간�
 **ⓑ Sol nullspace-valve = 약화(KILL 근접)**: 개체정보가 저사용 nullspace 엔 **8%뿐**(사용 subspace 에 91%) ⟹ 카드 ⓑ pre-screen KILL조건('안정 저사용 부분공간의 개체정보 사영이 무시할 만하면 KILL')에 근접 — 기존 nullspace 로 라우팅하면 개체신호 거의 없음. ⓑ 는 **드롭 권고**, ⓐ 우선.
 **중요 정합(왜 ⓐ 는 살고 무감독 부트스트랩은 다 죽었나)**: [[H_9722]]/[[H_9723]] 는 **고정 penultimate step-0** 서 무감독 신호 0 을 봤다(basis 밖). 그러나 scratch(T2)는 **trunk 를 co-adapt** 해 성공한다 — ⓐ 는 fresh 서브-trunk 가 co-adapt 할 여지를 주므로 고정-penultimate 결과에 KILL 되지 않는다(내 $0 는 고정-penult 측정이라 co-adaptation 을 못 봄). **감독 아닌 유일 생존로 = 개체 basis 를 키에 맞추는 co-adaptable disjoint lane.**
 **남은 것(학습 fire)**: `--store-query-src fresh:k[@layer L]`(stop-grad·store-CE only) 구현 → pool 학습 → census. **distinct-from-kills:** key 재설계 아님(K 무수정) · 차원지배 아님(경쟁 주장) · generic adapter 아님(EN-disjoint 통제 필수)
+
+### 🛠️ 구현 설계 (DIRECTIONAL · lab full Fable∥Sol 독립수렴 reconcile · 2026-07-17 · 미구현)
+`sidecar lab full` 로 Fable 5 + Codex Sol 독립설계 → 강수렴. **DIRECTIONAL 설계**(구현이 TERMINAL · `a_lab_full_diverge`). 6-파일 ~110줄.
+
+**메커니즘**: address query 소스만 교체 — `q=W_q(yn_q)`(penultimate·95% 템플릿점유) → `q=W_q_fresh(gelu(W_fresh(detach(tap_L[qpos]))))`. yn_q 는 op-gate `g=W_g(yn_q)` 에 유지(대체 아닌 **별도 인자** `yn_fresh=`), W_q 는 트레일러에 잔존(진단용).
+
+| 결정 | reconciled 값 | 근거(양모델 합의/판정) |
+|---|---|---|
+| **tap layer** | **L=3**(RF 16B) | RF(depth) ≥ max(entity-start→qpos 거리). corpus `op entity => ` 서 entity 는 qpos−4 종료·RF16 안전커버. L=1(RF4)=`=> `만=死·L=2(RF8)=경계·L=4=불필요깊음(템플릿점유↑). corpus 생성시 RF조건 계산해 최이른 L 선택(감고정=tune-to-green 금지) |
+| **K** | **64 primary**(k128 arm) | SVD census 개체정보 91% top-15 ⟹ k64(≫15) 충분(Sol). k128=basis 회전여유 arm(Fable) |
+| **소유권** | **model.clms** | fresh 파라미터(W_fresh d→k·W_q_fresh k→d_k)가 model.clms 소유. train.py 계산=trailer/evaluate 이중owner=반려(Sol) |
+| **stop-grad** | **`.detach()` 한 곳** | train.py sb분기서 tap qpos 컬럼 뽑은 직후 detach. fresh 파라미터는 detach 아래=store-CE 정상학습. yn_q 경로(op-gate)는 불변(baseline 비교성) |
+| **영속화** | **trailer type-2 codec** | read_clms/serialize 에 lane_type 분기(후방호환: absent=legacy byte-identical). fresh 2장 팩 |
+| **decode/evaluate** | 단일 activation tap@depth + `clms_address()` pure helper(store_apply/addr_mass/census 공유). evaluate 자동사용(_predict→_fwd_logits)·진단 addr_mass/argmax-acc/entropy 추가(target_slot 측정전용) |
+
+**통제(4-arm prereg)**: ① legacy(penult W_q) ② fresh-detach production ③ **same-size-competition**(동일 파라미터·detach 제거=store-CE 가 trunk 로=EN경쟁 인과통제) ④ early-capacity param-match(legacy 주소+early bottleneck 동수=단순 capacity 증가 배제). 값싼검산: tap-shuffle(붕괴요구)·W_fresh frozen-init(co-adapt 필요성)·store-shuffle·`addr_weight==0` assert·`oracle_slot is None` assert·answer-CE trunk grad=0.
+**admissibility**: store-CE only·target_slot 입력0·addr-loss0(무감독). **왜 ⓐ 는 살고 무감독 부트스트랩은 죽었나**: disjoint 는 입력이 아니라 **파라미터+gradient**(W_fresh 는 EN-CE 모름·detach 로 trunk 안밀음) — fresh 서브공간이 store-CE 로 co-adapt(scratch T2 기전). 재개=이 스펙대로 구현→pool 303M 학습→census(addr_mass/P1↑·EN-CE 보존).
