@@ -65,7 +65,7 @@ def _softmax_rows(z):
     return e / e.sum(axis=-1, keepdims=True)
 
 
-def mbnd_apply(logits, yn, mb, lam_override=None, order_scramble=False, ctrl_seed=9698):
+def mbnd_apply(logits, yn, mb, lam_override=None, order_scramble=False, ctrl_seed=9698, last_only=False):
     """Apply the mouth-binder lane. logits (T,V) · yn (T,d) pre-slot trunk penultimate (the SAME tap
     CLML/CLMS read). Returns a new array; the caller's is not mutated.
 
@@ -93,7 +93,12 @@ def mbnd_apply(logits, yn, mb, lam_override=None, order_scramble=False, ctrl_see
     scale = 1.0 / np.sqrt(float(rank))
     out = logits.copy()
     rng = np.random.default_rng(ctrl_seed) if order_scramble else None
-    for t in range(1, T):
+    # H_9698 perf: generation reads only the last row (next-byte), and the binder at position t
+    # depends only on the causal bank m=yn[:t] ≤ t — so computing ONLY t=T-1 yields a BYTE-IDENTICAL
+    # last-row logit while dropping the per-token O(T^2) rebuild to O(T) (O(T^3)->O(T^2) over a gen).
+    # Non-last rows are returned UNCHANGED (out=logits.copy()); the generation loop never reads them.
+    _t_range = (T - 1,) if (last_only and T >= 1) else range(1, T)
+    for t in _t_range:
         h = yn[t]                                   # (d,)
         m = yn[:t]                                  # (t,d) causal bank — no future, no side channel
         if order_scramble and t >= 2:
