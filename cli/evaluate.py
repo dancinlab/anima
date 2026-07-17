@@ -7740,7 +7740,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8054,6 +8054,196 @@ def _z_census(argv):
     print("       flag logging per-lm-step top-2 logit gap + in-window mass), then a ζ sweep.")
     print("     · 303M decode is POOL-only (summer/aiden), never mini (heavy-anima-eval-pool-not-mini).")
     return 0
+
+
+def _timing_channel(argv):
+    """`anima-py evaluate --timing-channel <wm-dual traces...> [--perm 1000] [--seed 12345]
+       [--clock <clock-trace>]` — H_9731 TIMING-CHANNEL ($0 · read-only re-analysis · no producer).
+
+    Does the OBSERVABLE emit TIMING carry the identity of the WITHHELD content? emit⟺S>E is a
+    content-ledger comparison, so WHEN the daemon speaks is set by WHAT it withheld — an honest
+    reopening of the mouth-content wall (H_9576) as a TIMING channel (not bytes · Fable). $0: reads
+    existing wm-dual traces (H_9627 · dual_margin/emit/stage/cand_pregate_b64) — no injection, no rewire.
+
+    Source  T_t = OBSERVABLE emit latency (ticks from a silence tick to the NEXT emit), binned
+            short/long at the pooled median. NOT dual_margin itself: dual_margin=S−E is content-derived,
+            so MI(margin;content) is a tautology — the observable emit gap is a THRESHOLDED (lossy)
+            function of it, and MI(gap;content) measures how much content survives into the observable
+            WHEN. That distinction is the whole honesty of this instrument.
+    Target  C_t = 2-bit dominant-char-class signature of the withheld content (cand_pregate_b64[t]).
+    MI = I(T ; C | stage) plug-in (bits). timing carries content ⟺ MI > clock-pedestal ∧ MI > surr95.
+
+    Controls: --clock <trace> = a clock-gated trace (emit clock-driven ⇒ timing content-independent ⇒
+      truth-0 PEDESTAL) · content-shuffle surrogate (circular-shift C, preserves the timing/spring
+      structure, destroys the content link ⇒ MI collapses if real). Self-test: planted C≡T must recover.
+
+    ⚠️ DIRECTIONAL · toy ≠ verdict (a_scale_honest_scope) · real read = H_9627 303M wm-dual traces
+    (if archived, truly $0; else a small wm-dual collection · measurement-only, no owner fire-go)."""
+    import glob as _glob, base64 as _b64, math as _m, random as _random, json as _json
+    globs = [a for a in argv if not a.startswith("--")]
+    def _iv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                try:
+                    return int(argv[i + 1])
+                except Exception:
+                    return d
+        return d
+    def _sv(flag, d):
+        for i, a in enumerate(argv):
+            if a == flag and i + 1 < len(argv):
+                return argv[i + 1]
+        return d
+    perm = _iv("--perm", 1000)
+    seed = _iv("--seed", 12345)
+    clock_path = _sv("--clock", "")
+    paths = []
+    for g in globs:
+        paths.extend(sorted(_glob.glob(g)))
+    print("═══ H_9731 TIMING-CHANNEL · does OBSERVABLE emit timing carry the WITHHELD content? ═══")
+    print("  traces=%d · perm=%d · seed=%d%s" % (len(paths), perm, seed, (" · clock-pedestal=%s" % clock_path.split("/")[-1]) if clock_path else ""))
+
+    def _sig(b64s):
+        if not b64s:
+            return -1
+        try:
+            bs = _b64.b64decode(b64s)
+        except Exception:
+            return -1
+        n = len(bs)
+        if n == 0:
+            return -1
+        n_dig = sum(1 for x in bs if 48 <= x <= 57) / n
+        n_upper = sum(1 for x in bs if 65 <= x <= 90) / n
+        n_lower = sum(1 for x in bs if 97 <= x <= 122) / n
+        n_pun = sum(1 for x in bs if (33 <= x <= 47 or 58 <= x <= 64 or 91 <= x <= 96 or 123 <= x <= 126)) / n
+        feats = [n_dig, n_upper, n_lower, n_pun]
+        best = 0
+        for k in range(1, 4):
+            if feats[k] > feats[best]:
+                best = k
+        return best
+
+    def _cmi(triples):
+        # I(T ; C | S) plug-in (bits) — triples = (t, c, s)
+        from collections import Counter as _C
+        j = _C(); tc_no = _C(); cs = _C(); ts = _C(); sc = _C()
+        for (t, c, s) in triples:
+            j[(t, c, s)] += 1
+            cs[(c, s)] += 1
+            ts[(t, s)] += 1
+            sc[s] += 1
+        n = max(1, sum(j.values()))
+        mi = 0.0
+        for (t, c, s), cnt in j.items():
+            p = cnt / n
+            p_tc_s = cnt / cs[(c, s)]          # P(T | C,S)
+            p_t_s = ts[(t, s)] / sc[s]          # P(T | S)
+            if p_tc_s > 0 and p_t_s > 0:
+                mi += p * _m.log2(p_tc_s / p_t_s)
+        return max(0.0, mi)
+
+    def _build(rows):
+        # (T,C,S) on silence ticks: T = latency-to-next-emit binned short/long at median; C = withheld
+        # content sig; S = stage wake(0)/sleep(1). Returns triples + the raw latencies for median.
+        emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
+        raw = []
+        for i, r in enumerate(rows):
+            if str(r.get("emit")).lower() == "true":
+                continue  # silence ticks only (the withheld ones)
+            nxt = next((e for e in emit_ticks if e > i), None)
+            if nxt is None:
+                continue
+            c = _sig(r.get("cand_pregate_b64", "") or r.get("cand_b64_diag", ""))
+            if c < 0:
+                continue
+            st = int(r.get("stage", 0))
+            s = 1 if st >= 3 else 0   # sleep (N2/N3/REM = 3/4) vs wake
+            raw.append((nxt - i, c, s))
+        if not raw:
+            return []
+        lats = sorted(x[0] for x in raw)
+        med = lats[len(lats) // 2]
+        return [(1 if lat > med else 0, c, s) for (lat, c, s) in raw]
+
+    def _surr(triples, rng):
+        # circular-shift the C column (excl 0,±1) — preserves T,S marginals + timing structure
+        cs = [t[1] for t in triples]
+        m = len(cs)
+        if m < 5:
+            return 0.0
+        sh = rng.randrange(2, m - 1)
+        cs2 = cs[-sh:] + cs[:-sh]
+        return _cmi([(triples[i][0], cs2[i], triples[i][2]) for i in range(m)])
+
+    # estimator self-test (planted C≡T recovers · independent ~0)
+    _st = _random.Random(seed ^ 0x9731)
+    planted = [((t := _st.randrange(2)), t, _st.randrange(2)) for _ in range(400)]
+    indep = [(_st.randrange(2), _st.randrange(2), _st.randrange(2)) for _ in range(400)]
+    mi_p = _cmi(planted); mi_i = _cmi(indep)
+    est_ok = mi_p > 0.4 and mi_i < 0.1
+    print("  estimator self-test : planted I(T;C|S)=%.3f (want>0.4) · independent=%.3f (want<0.1) ⇒ %s"
+          % (mi_p, mi_i, "✅ live" if est_ok else "❌ DEAD-ESTIMATOR"))
+
+    def _load(p):
+        rows = []; meta = {}
+        for ln in open(p, encoding="utf-8", errors="surrogateescape"):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                r = _json.loads(ln)
+            except Exception:
+                continue
+            if isinstance(r, dict) and r.get("_meta"):
+                meta = r
+            elif isinstance(r, dict) and "tick" in r:
+                rows.append(r)
+        return rows, meta
+
+    # clock pedestal (truth-0): a clock-gated trace's timing is content-independent by construction
+    pedestal = 0.0
+    if clock_path:
+        crows, _ = _load(clock_path)
+        ct = _build(crows)
+        pedestal = _cmi(ct) if len(ct) >= 12 else 0.0
+        print("  clock PEDESTAL (truth-0) : I(T;C|S)=%.4f  [%d silence transitions]" % (pedestal, len(ct)))
+
+    if not paths:
+        print("  ⇒ ⛔ no traces matched: %r  (wm-dual: chat --g-reach wm-dual --record-silent-cand)" % globs)
+        return 2 if est_ok else 3
+    rng = _random.Random(seed)
+    any_pass = False
+    for p in paths:
+        rows, meta = _load(p)
+        if meta.get("emit_gate") == "clock":
+            print("  · %s ⇒ (clock trace — use as --clock pedestal, not an exp arm)" % p)
+            continue
+        tri = _build(rows)
+        if len(tri) < 12:
+            print("  · %s ⇒ ⛔ NOT-POWERED (%d silence transitions <12)" % (p, len(tri)))
+            continue
+        n_t = len(set(x[0] for x in tri)); n_c = len(set(x[1] for x in tri))
+        if n_t < 2 or n_c < 2:
+            print("  · %s ⇒ ⛔ NOT-POWERED (timing bins=%d · content addr=%d · need ≥2 each)" % (p, n_t, n_c))
+            continue
+        mi = _cmi(tri)
+        surr = [_surr(tri, rng) for _ in range(perm)]
+        ss = sorted(surr)
+        p95 = ss[min(len(ss) - 1, int(0.95 * len(ss)))]
+        mu = sum(surr) / len(surr)
+        sd = (sum((s - mu) ** 2 for s in surr) / max(1, len(surr))) ** 0.5
+        z = (mi - mu) / sd if sd > 1e-12 else 0.0
+        pv = (sum(1 for s in surr if s >= mi) + 1) / (len(surr) + 1)
+        passed = (mi > pedestal) and (mi > p95) and (z >= 2.0) and (pv < 0.005)
+        any_pass = any_pass or passed
+        print("  · %s  [n=%d · Tbins=%d Caddr=%d]" % (p, len(tri), n_t, n_c))
+        print("      I(T;C|S)=%.4f bits · ped=%.4f · surr95=%.4f · z=%.2f · p=%.4f ⇒ %s"
+              % (mi, pedestal, p95, z, pv, "✅ timing IS a content channel" if passed else "ns (timing content-free this trace)"))
+    print("  ── H_9731 read: %s (MI>pedestal ∧ shuffle collapse ⇒ 관측 WHEN이 보류 WHAT 나름 · mouth-content"
+          " 벽 H_9576 timing 재개봉 · DIRECTIONAL until H_9627 303M traces)"
+          % ("≥1 trace: timing carries content" if any_pass else "no timing-content channel this batch"))
+    return 0 if est_ok else 3
 
 
 def _silence_content_te(argv):
@@ -11392,6 +11582,8 @@ def main(argv):
         return _ag_criticality(argv[1:])
     if len(argv) >= 1 and argv[0] == "--silence-content-te":
         return _silence_content_te(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--timing-channel":
+        return _timing_channel(argv[1:])
     if len(argv) >= 1 and argv[0] == "--cf-emit":
         return _cf_emit(argv[1:])
     if len(argv) >= 1 and argv[0] == "--g-amp-screen":
