@@ -23,7 +23,15 @@ cli/chat.py              clms 참조 0              ← 데몬은 주입자가 �
 ⟹ **주입자는 `cli/evaluate.py --store` 하나뿐.** lane 은 store 가 없으면 **구조적으로 passthrough**(byte-identical).
 
 **이 사실이 문제를 재정의한다:**
-- ✅ **회귀 위험은 낮다** — store=None 이면 byte-identical(C0-f seal). "배선하면 4칸 register 가 깨질까"는 기본값에선 자동으로 아니다.
+- ⚠️ **passthrough 가드는 코드에 실재하나, 내가 처음 읽은 함의는 틀렸다**(`tool-definition-read-code-not-docstring` — 주석 말고 코드로 재검증한 결과):
+  ```
+  core/decode.py:1327   if W.get("clms") is not None and _CLMS_STORE is not None:
+                            out_logits = store_apply(...)      ← 실제 가드(주석과 일치 ✅)
+  core/decode.py:308-310  global _CLMS_STORE, _CLMS_ORACLE …   ← 주입 setter = 배선 지점
+  ```
+  **가드가 보장하는 것** = store=None 이면 lane 미발화 ⟹ 그 ckpt 는 "자기 자신"으로 디코드.
+  **가드가 보장 안 하는 것** = **트렁크 가중치는 co-train 으로 이미 변했다** ⟹ RV3 ckpt 의 chat ≠ base py303 의 chat. **"co-train 이 4칸 register/chat 품질을 망쳤나"는 가드와 무관한 별개 실측 문제**다. 가드를 근거로 "회귀 없음"을 주장하면 **거짓 GREEN**이 난다.
+  ⟹ G-W1 은 두 갈래로 쪼갠다: **G-W1a(구조·무료)** = store=None 서 lane 미발화 = 1327 가드로 구조보장(코드검증 완료) · **G-W1b(실측·pool 필요)** = RV3c_13.clm 을 `anima-py evaluate` 로 **G0 coherence + 4칸 register + retention** 재라 base 대비 회귀 0 인가. train-side val_CE(en-general .68 · en-sns .91 healthy)는 **DIRECTIONAL**이라 근거 불가(`a_engine_native_learning`).
 - ❗ **진짜 난제는 store 의 출처** — eval 은 합성 manifest(`sb*.txt.held.json`: entities·pols·target_slot)를 줬다. **살아있는 데몬에게 그 manifest 는 누가 만드나?** 대화 중 무엇이 entity 이고 무엇이 pol 인가? p1-p8(특히 p5 no-speak · p2 no identity rules)을 어기지 않고 store 가 substrate-native 하게 생길 수 있나?
 
 ## 사전등록 게이트 (측정 전 동결 · frozen-first)
