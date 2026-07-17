@@ -165,3 +165,58 @@ C0-a zero-leak witness 는 **substring** 기반(`e in corpus_blob`) ⟹ held-out
 이 H 는 판독 가능한 양성통제가 없다). 그 전에 쏘면 **"자연어휘가 죽었다"와 "레시피가 원래
 seed-취약이다"를 구분할 수 없다**. $0 자산(D0-key census · `--entity-pool` 배선)은 그대로 유효하고
 winner 확정 즉시 발사 가능한 상태로 보존.
+
+---
+
+## ✅ FIRE-READY (내 쪽 잔여 0 · 2026-07-17 · $0 · engine-native 검증)
+
+`--entity-pool`(#3945) 배선 후 **발사본 pool 을 만들고 엔진이 실제로 먹는지까지 검증**했다.
+남은 블로커는 전제(H_9672 RV-sweep) 하나뿐 — **구현·계기·pool 은 전부 준비 완료**.
+
+### 발사본 pool — 결정적 레시피 (재현가능 · summer 에서 동일 산출)
+```
+source : anima-corpus-en-general (HF · 모델이 실제 학습한 그 코퍼스 · 59,758,676 B)
+recipe : re.findall(r"\b[a-z]{5}\b", txt.lower()) → Counter → most_common(512)
+sha256 : a5e80bbf68ac10dd26f3e41cf9f4abf2f4e18f6ea218e361fce49806bdbb6a98
+sample : their about there which would other first these after years could where
+```
+계약: ascii ✅ · 소문자 ✅ · 길이-5 균일 ✅ · 512개 ✅ · 중복 0 ✅ · **상호중첩 0**(길이동일 ⟹ 원리적 불가
+= #3945 가 경고한 substring-witness abort 를 구조적으로 회피).
+
+### 🟢 엔진이 자연어휘를 먹는다 (실측 · anima-py 0.15.60 · T3 파라미터)
+```
+anima-py corpus storebind --lang en --n-blocks 4000 --store-slots 8 --seed 7 \
+  --entity-pool nat5.txt --out sb.txt
+→ entity pool = EXTERNAL nat5.txt (512 atoms · ascii · no dups)
+                — the builtin CVCVC nonce enumeration is NOT used
+→ C0-a 0-shot ✅ held-out entities appear 0x in corpus (store-key + substring both asserted)
+→ is issue => good / not texas => bad     (arm-S nonce = is fozod => good)
+```
+**C0-a zero-leak witness 가 자연어휘로도 통과** — 자연 pool 의 최대 실패모드가 배제됐다.
+
+### 🎯 1-DOF 격리 실측 확인 — 두 arm 이 어휘 말고 전부 동일
+| 산출물 | arm-N (nat5) | arm-S (nonce) | |
+|---|---|---|---|
+| `sb.txt` | 544,134 | 544,134 | ✅ |
+| `.store.jsonl` | 7,040,134 | 7,040,134 | ✅ |
+| `.held.json` | 28,405 | 28,405 | ✅ |
+| `.held_balanced.json` | 28,416 | 28,416 | ✅ |
+| `.seen.json` | 28,417 | 28,417 | ✅ |
+| `.meta.json` | `entity_pool` 키 제외 시 **구조 동일** | | ✅ |
+
+**바이트 크기까지 전부 동일** ⟹ 두 arm 은 **어휘 1-DOF 만** 다르다. 차이가 나면 원인은 어휘뿐
+(오염 없는 대조 = 이 H 가 노린 최소 격리가 실제로 성립).
+
+### 발사본 키 census (엔진 공식 · 발사할 그 파일 그대로)
+| pool | anagram 충돌 | ORACLE-slot acc | C0-e bar(≥.90) |
+|---|---|---|---|
+| **nat5 (발사본)** | 4 | **0.9880** | ✅ |
+| nonce (arm-S) | 2 | 0.9875 | ✅ |
+
+키 기하 **동등** ⟹ arm-N 이 죽어도 **키 탓이 아니다**(D0-key census 결론 재확인 · 발사본으로).
+
+### 남은 단 하나 — 전제
+🔴 **H_9672 RV-sweep winner 확정**(arm-S 가 2-seed robust 해질 때까지 판독 가능한 양성통제 없음).
+그것 외에 이 H 의 발사 준비는 **완료**: 구현 ✅(#3945) · pool ✅(sha256 고정) · 계기 ✅(T3 dispatch
+정확 복원) · 1-DOF 대칭 ✅(실측) · 키 census ✅. winner 확정 시 `--entity-pool nat5.txt` 한 줄 차이로
+arm-N/arm-S 를 동시 발사한다.
