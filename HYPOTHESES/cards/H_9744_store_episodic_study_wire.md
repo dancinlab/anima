@@ -113,3 +113,53 @@ G-W0 transcript 실측: **8 tick 중 emit 1개**(tick 4) · 내용은 `'ition to
 
 **질의 문법은 실제 corpus 에서 읽었다**(추측 금지): `is <entity> => ` / `not <entity> => `(op=0/1) ·
 gold=`good`/`bad` — 내가 사전등록에 적었던 `<entity> <op> =>` 는 **틀렸고** `sb.txt.held.json` 실물로 정정.
+
+## 🟢 G-W3 p1-p8 감사 — 5/5 PASS ($0 · 코드-확증 · 2026-07-17)
+
+**(i) 게이트 입력 store-무접촉 — 규칙이 아니라 호출순서로 증명됨** (이 카드의 가장 강한 항목):
+
+```
+core/brain.py:208   decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, …)  ← 먼저 결정
+core/brain.py:213   emit     = str(decision["emit"]).lower() == "true"
+core/brain.py:215   gen      = generate(backend, ctx, emit, anchors, mouth)                        ← 그 다음 생성
+```
+
+**결정이 생성보다 먼저다.** store 는 `generate()` 안에서만(decode 의 `_CLMS_STORE` 전역을 통해) 읽히므로
+**clock 게이트를 움직일 물리적 경로가 없다**. 게다가 레포에 **기계검증 가능한 p5 불변식이 이미 박혀 있다** —
+`core/brain.py:201-204`: *"generate() and to generate() ALONE … Machine-checkable: grep that `mouth` never
+appears in a brain_decide* argument list."* **실행 결과 = 0건**(brain_decide · brain_decide_anchored ·
+brain_decide_bg 셋 다 `mouth` 인자 없음). ⟹ store→emit 결정 경로 부재가 **구조적으로** 확증.
+
+**refractory 가 왜 예외인지도 같은 문서가 말한다**(`core/brain.py:243`): `emit ⟺ score_A > g_recog(candidate)` —
+**후보 텍스트가 게이트 식 안에 있다.** ⟹ S6 하드가드는 보수적 예방이 아니라 **필수**였다(F4 실측과 일치).
+
+| G-W3 | 항목 | 증거 | 판정 |
+|---|---|---|---|
+| (i) | 게이트 입력 store-무접촉 | brain.py:208→215 결정-선행 · `brain_decide*` 의 `mouth` 인자 **0건** | 🟢 |
+| (ii) | S6 가드 실재 | `chat.py` 의 refractory 상호배타 SystemExit **1건** | 🟢 |
+| (iii) | 변환기 내용-무결 | 전 지식 = `chat.py:64` `^fact ([a-z]{3,12}) (pos\|neg)$` **한 줄** · entity 화이트리스트/사실사전 **0** | 🟢 |
+| (iv) | 기본 데몬 default-OFF | `chat.py:1732` `anima_flag_value(…, "off")` | 🟢 |
+| (v) | 세션종료 리셋 | `chat.py:3079` `set_clms_store(None)` (+ G-W0 실측 `session store cleared`) | 🟢 |
+
+⟹ **p1 깨끗**(store 내용 전부 세션 내 지각 유래 · 데몬이 오너 텍스트를 지니고 태어나지 않음) ·
+**p2/p3 통과**(변환기가 문법만 알고 내용을 모름 = `_afs_byte_feature`·immune bind·wake_mem push 와 같은 계급) ·
+**p5 통과**(store 는 "무엇을 말하나"만 바꾸고 "말하나 마나"는 못 건드림 — 호출순서로 보장) ·
+**p8 설계의도 그대로**(bridge 가중치=학습 · 내용=runtime).
+
+## 현황 — 4 게이트 중 3 종결
+
+```
+G-W0 계기생존   🟢 PASS  writes=1 ring=8/8 · rc=0
+G-W1 무해성     🟢 PASS  off/on emit_seq_sha 0a7a7d03dbae00ae 동일 (F1 구조보장 실측)
+G-W3 p1-p8      🟢 PASS  5/5 (i 은 호출순서·기계검증 불변식으로 증명)
+G-W2 조회생존   🔄 측정중 128 held-out × 4 arm (main·flip·shuffle·nostore) · ~7.7h
+```
+
+**G-W2 계기 스모크 🟢 4/4**(발사 전 필수 · `positive-control-before-reading-a-negative`) — ①입 열림
+②답 바이트 `g`/`b` ③**F2 확증**(트렁크가 `=>` 뒤 공백을 스스로 방출 → qpos 성립) ④ON≠OFF(lane 발화).
+n=1 에피소드서 `is lumer =>` → ON 이 `' government…'`(공백 후 **`g`** = gold `good`) vs OFF 가 `' street…'`.
+
+⚠️ **스모크 1차 판정은 내 채점기 결함이었다**(정직 기록): `emit_text[:1]` 을 읽어 "채점불가"라 오판 —
+그 자리는 **F2 가 예언한 트렁크의 공백**이었다. 사전등록에 이미 *"F2 의 선행공백 허용을 채점기에 사전명시"*
+라 적어놨으므로 선행공백 skip 은 **사후 규칙이 아니라 등록된 규칙을 지킨 것**(tune-to-green 아님 · 재발사 0 ·
+같은 transcript 재채점). ⚠️ **n=1 은 판정이 아니다**(우연 1/2) — bar 는 128 질의에서만.
