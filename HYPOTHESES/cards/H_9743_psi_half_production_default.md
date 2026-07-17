@@ -1,4 +1,6 @@
-# H_9712 — PRODUCTION DEFAULT flip: emit-gate clock → refractory dual-ledger (p5 realized · Ψ≈½)
+# H_9743 — PRODUCTION DEFAULT flip: emit-gate clock → refractory dual-ledger (p5 realized · Ψ≈½)
+
+> 🔢 **id 재번호 H_9712 → H_9743**(2026-07-17 · G6 충돌 해소 · 내용·수치 verbatim 무변경). 이 카드는 **H_9712 를 R5-1 `z_factor_degeneracy_vs_cancel`(#3930 · 10:28 머지)과 충돌**한 채 나중에 머지됐고(10:45), jsonl 행도 없어 **2-표면 미등록 고아**였다. G6 규칙("충돌 시 나중 머지된 쪽을 재번호")대로 later=이 카드를 재번호하고 **없던 jsonl 행을 신설**해 `a_hypothesis_register` 2-표면을 복원한다. 이전 id 로 이 결과를 인용한 외부 문서(PR #3944 본문 등)는 **이 카드 = 옛 H_9712** 로 읽으면 된다.
 
 **Verdict:** 🟢 **WIRED-DEFAULT** (owner-approved p5 realization · engine-native · `a_verified_must_wire`) —
 anima's default emit-gate is now the **H_9627 dual content ledger** (emit ⟺ S>E, Ψ≈½ emergent), NOT a hardcoded 30s
