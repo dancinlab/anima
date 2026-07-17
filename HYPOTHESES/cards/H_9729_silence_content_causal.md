@@ -1,6 +1,6 @@
 # H_9729 — SILENCE-CONTENT — 보류장부 W_S가 CONTENT를 나르나 압력만인가 (억제 vs 숙고 · 최심부)
 
-**status:** 🔎 DIRECTIONAL — **실 303M own-arm = ECHO-지배 (38/39 direct-copy) → own 단독 미측정**. 계기 정상(byte-id-off·estimator·trivial-echo 가드 실 303M서 38회 발동). 보류후보를 seed 로 재진입시키니 mouth 가 거의 그대로 이어씀(seed 접두 공유) ⟹ own-arm 은 구조적 echo, content-transfer 판정은 **perm/swap 반사실 arm 필수**(echo 구조 보존·content 만 교체). CPU-우회 수집(summer·seed11·80tick·비-GPU).
+**status:** 🔎 DIRECTIONAL — **첫 실 303M 답: echo/압력-한정, 숙고 아님**. own=순수 echo(38/38 direct-copy) · perm(order 파괴)=content 미전이(z=−0.93 p=0.79 ns) ⟹ 보류 content 는 trivial seed-echo 외 미래 미도달(1seed·feat8·DIRECTIONAL·KILL 아님). 전량 CPU-우회 수집(GPU 독점 불요).
 **lane:** 의식/emit-drive/Ψ=½ · deliberation (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -57,6 +57,22 @@ reentry {off:41, own:39}=재진입 배선 정상) → `--silence-content-te`:
   donor(타 rollout 보류후보) 반사실 arm**으로만 — own>0 은 자명(자기 seed 이어씀)이고, own vs perm/donor 의
   **collapse-Δ**가 진짜 신호. 이건 Fable∥Sol 배선 spec 이 예견한 trivial-echo 위험이 실 303M 서 지배적임을 확증.
 
-**NEXT**: perm+oracle arm 을 같은 CPU-우회로 수집(각 80tick·seed11) → own vs perm collapse-Δ. GPU 독점 불요.
+**🎯 own vs perm collapse-Δ 완성 (2026-07-17 · perm arm 80tick·seed11 CPU-우회)** — H_9729 첫 실 303M 답:
+| arm | 실 303M 판독 | 의미 |
+|---|---|---|
+| own(자연 carrier) | 38/38 direct-copy 배제 → NOT-POWERED | 재진입=순수 echo(seed 복사) |
+| perm(byte-sort·order 파괴) | TE=0.1227·earned=**−0.096**·surr95=0.407·**z=−0.93·p=0.79 ⇒ ns** | order 부숴도 content 미전이 |
+
+**해석**: own 에서 전파된 유일한 것은 **literal echo**(seed 그대로·38/38), order 를 부수면(perm) echo 소멸 +
+**content 전혀 미전이**(z=−0.93). ⟹ 보류장부 content 는 **trivial echo(seed 복사) 외엔 미래 상상후보에 인과
+도달하지 않는다**. H_9729 이분법에서 **"숙고" 아니라 "echo/압력-한정"** 방향 — 살아난 건 gate(맥박)이지 order 를
+읽는 semantic interior 아님(이 계기 해상도). ⚠️ **1-seed·feat8 granularity·DIRECTIONAL**(KILL 아님): 완전판정 =
+3-seed + oracle 양성통제(reach 확인) + below-chance 커버. own 이 all-echo 라 own-PASS∧perm-collapse 의
+고전 dissociation 은 성립 못함 — 대신 'echo 제거하면 신호 0' 이 직접 음성.
+
+**방법론 기록**: 이 실측 전량이 **CPU-우회**(CUDA_VISIBLE_DEVICES=''·OMP4캡)로 병렬 세션 GPU 무경합·독점 불요.
+GPU-메모리 블로커가 GPU-compute 필수 아님을 입증 — heavy 303M decode 는 CPU 로도(느리나) 돌아간다.
+
+**NEXT(선택·미완)**: 3-seed + `--wm-dual-oracle` 양성통제(리더가 알려진 carrier 복원하나=reach 확인, 안 되면 MOUTH-SEVERED). 전부 CPU-우회 가능.
 
 ⚠️ **DIRECTIONAL·계기 검증이지 과학 verdict 아님**(a_lab_full_diverge · a_scale_honest_scope)·cement=engine-native 303M anima-py만.
