@@ -113,6 +113,25 @@ _GPU_LOG_DONE = False        # print the [GPU-FIRED]/[GPU-FALLBACK] QA line once
 _CUPY_OOM = _cupy.cuda.memory.OutOfMemoryError if _cupy is not None else ()
 
 
+def _nvidia_gpu_present():
+    """True iff an NVIDIA GPU + driver is physically present, probed WITHOUT importing
+    cupy or torch (both optional). A CUDA device exposes /dev/nvidia0 once the kernel
+    driver is loaded; nvidia-smi on PATH is the fallback signal. This exists ONLY to tell
+    apart the two device-path=CPU cases that _log_gpu_status_once must NOT conflate: a
+    genuinely GPU-less host (CPU is expected, no warning) vs a GPU host whose cupy path is
+    dead (a paid GPU silently running eval on CPU — the defect this distinguishes)."""
+    try:
+        for i in range(8):
+            if os.path.exists("/dev/nvidia%d" % i):
+                return True
+        if os.path.exists("/proc/driver/nvidia/gpus"):
+            return True
+        from shutil import which
+        return which("nvidia-smi") is not None
+    except Exception:
+        return False
+
+
 def cuda_available():
     """True iff cupy is importable, a CUDA device is present, AND cupy can actually
     COMPILE AND RUN a kernel on it. This is the SOLE gate for the device path anywhere
@@ -151,7 +170,10 @@ def gpu_status():
     core/CLAUDE.md gotcha: 'decode GPU path 확인 먼저')."""
     if not cuda_available():
         reason = str(_CUDA_PROBE_ERR) if _CUDA_PROBE_ERR is not None else "no CUDA device"
-        return {"cuda": False, "device_name": None, "cupy": None, "reason": reason}
+        # gpu_present distinguishes "no GPU at all → CPU is expected" from "GPU present but
+        # the cupy device path is dead → a paid GPU is silently running on CPU" (the defect).
+        return {"cuda": False, "device_name": None, "cupy": None, "reason": reason,
+                "gpu_present": _nvidia_gpu_present()}
     try:
         name = _cupy.cuda.runtime.getDeviceProperties(0)["name"]
         if isinstance(name, bytes):
@@ -167,7 +189,7 @@ def gpu_status():
         cupy_ver = _cupy.__version__
     except Exception:
         cupy_ver = "unknown"
-    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None}
+    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None, "gpu_present": True}
 
 
 def _log_gpu_status_once():
@@ -179,6 +201,15 @@ def _log_gpu_status_once():
     if st["cuda"]:
         print(f"[GPU-FIRED] decode device path=CUDA ({st['device_name']} · cupy "
               f"{st.get('cupy', '?')})", file=sys.stderr)
+    elif st.get("gpu_present"):
+        # A GPU IS present but the cupy device path is dead → eval/decode is silently running
+        # on CPU-numpy, which on a 303M model is ~10-100x slower (a paid GPU pod burns hours).
+        # This is a DEFECT, not the benign GPU-less fallback below — say so loudly with the fix.
+        print("[GPU-WASTED] decode device path=CPU-numpy but an NVIDIA GPU IS PRESENT — the "
+              "cupy path is dead (%s). eval/decode is running on CPU (SLOW). "
+              "Install the GPU extra:  pip install 'anima-python[gpu]'  "
+              "(CUDA 13 host: also  pip install 'cupy-cuda13x>=13.0,<14')." % st["reason"],
+              file=sys.stderr)
     else:
         print(f"[GPU-FALLBACK] decode device path=CPU-numpy ({st['reason']})", file=sys.stderr)
 
