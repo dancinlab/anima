@@ -16378,7 +16378,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 승격(2026-07-17) · ⛔ H_9643 계기 미완 — 양성통제가 --faction-lesion 을 죽였다(S_real 1.3879 < null95 1.7270 · max 순서통계량 편향 · 심은 특화도 못 봄) ⟹ D1 은 판정 아님. NEXT = S 재설계 → 양성통제 재통과.",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어(2026-07-17) · 🔧 H_9643 S 재설계 — 양성통제가 max-편향 S 를 죽였고($0 판별서 hungarian·MI 도 같은 병) centered-diag 만 통과 ⟹ 배선 후 양성통제 재시험중. NEXT = 통과시 storebind floor → {K=8,K=1}×3seed.",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16711,7 +16711,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "⛔ 계기 미완 — 양성통제가 lesion 계기를 죽였다(max 편향) · NEXT=S 재설계",
+      "verdict": "🔧 S 재설계(centered-diag) · 양성통제 재시험중",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16808,6 +16808,13 @@
         "id": "faction-r3-h9643-max-bias",
         "detail": "심은 4-도메인 toy(파벌마다 다른 도메인 최대손상 = 특화 눈에 보임)서 S_real 1.3879 < post-hoc null95 1.7270(null mean 1.4713) — real 이 null 평균보다 아래. 원인: S = mean_f(max_c D[f,c] − mean others)/sd 에서 무작위도 최댓값을 고르므로 항상 선택적으로 보인다.",
         "verdict": "⚠️ 양성통제 없었으면 '파벌 특화 없음(D1)' 결론 냈을 것 = 계기 사실을 기질 사실로 오독. 이 함정은 메모리에 이미 있었다(probe-defect-census-max-control-bias). S 재설계 필요(Hungarian 매칭 / MI / 중심화 잔차 · 양성통제 재통과가 조건)."
+       },
+       {
+        "name": "🔧 S 재설계 — 4 후보 중 하나만 살았다 ($0 배선 전 판별)",
+        "role": "",
+        "id": "faction-r3-h9643-s-redesign",
+        "detail": "합성 손상행렬(심은 대각)로 시험: s_max planted 1.77/null95 2.01 ⛔ · hungarian 6.97/8.58 ⛔(최적매칭도 순서통계량) · MI 0.16/0.35 ⛔(random 0.43 이 planted 보다 높다) · **centered-diag 5.71/3.73/random 0.41 ✅**.",
+        "verdict": "채택 S = trace(R)/sd(R) · R = D−rowmean−colmean+grandmean(두 main effect 제거 = 상호작용만). 💡Fable 제안 3개 중 2개가 같은 함정 — 배선 전 $0 판별이 GPU 를 아꼈다. **계기 후보는 합성 진실 위에서 먼저 싸우게 하라.**"
        }
       ]
      }

@@ -10673,7 +10673,10 @@ def faction_lesion_run(argv):
     CE damage. A faction that owns a domain hurts THAT domain when it dies.
 
     DV — selectivity S over the [K, C] damage matrix D[f,c] = CE(lesion f, domain c) - CE(base, c):
-        S = mean_f (max_c D[f,c] - mean_{c'!=c*} D[f,c']) / sd_pool
+        S = trace(R) / sd(R),  R = D - rowmean - colmean + grandmean
+    The centering removes both main effects (a faction's overall weight, a domain's overall
+    fragility) and leaves the interaction — which is what "this faction owns that domain" means.
+    An earlier `max`-based S was killed by its own positive control (see selectivity()).
     Chance is MEASURED, never assumed: `--perm` post-hoc reassignments of the same d channels to
     K same-sized groups give a null distribution; the bar is its 95th percentile. (This session
     learned the hard way that a "natural" chance value can be pure structure: adjacency's 1/K was
@@ -10745,17 +10748,38 @@ def faction_lesion_run(argv):
     print("base CE: " + " · ".join("%s %.4f" % (nm, v) for nm, v in zip(names, base)))
 
     def selectivity(assign):
-        """S over the [K, C] damage matrix for a given channel->faction assignment."""
+        """S over the [K, C] damage matrix D[f,c] = CE(lesion f, domain c) - CE(base, c).
+
+        S = trace(R) / sd(R), R = D - rowmean - colmean + grandmean.
+
+        The centering is the whole point: it removes the two MAIN EFFECTS — how much damage a
+        faction does overall (some blocks just matter more) and how fragile a domain is overall
+        (some domains just have more CE to lose) — and leaves only the INTERACTION. A faction
+        that owns its domain shows up on R's diagonal; a random split has no interaction and R's
+        diagonal collapses to 0.
+
+        The first cut used `mean_f (max_c D[f,c] - mean of the rest) / sd` and the positive
+        control killed it: on a toy with PLANTED specialization it scored S_real 1.3879 against a
+        post-hoc null95 of 1.7270 — BELOW the null's own mean (1.4713). `max` is an order
+        statistic: a random assignment also picks the largest of C cells, so every arm looks
+        "selective" and the null floats up to meet the signal. (probe-defect-census-max-control-bias
+        recorded this exact failure on a different axis: "Δ=exp-max(controls) 순서통계량 편향이
+        KILL 을 기계로 만든다".)
+
+        Two other candidates died the same way on synthetic matrices with a KNOWN planted
+        diagonal (measured before touching the engine — $0):
+          s_max        planted +1.77 · null95 +2.01 · random +1.47  FAIL
+          hungarian    planted +6.97 · null95 +8.58 · random +3.74  FAIL (optimal matching is an
+                                                                    order statistic too)
+          MI(f;argmax) planted +0.16 · null95 +0.35 · random +0.43  FAIL (random scores HIGHER)
+          centered     planted +5.71 · null95 +3.73 · random +0.41  PASS  <- this one
+        """
         D = np.zeros((K, len(names)))
         for f in range(K):
             D[f] = dom_ce(np.where(assign == f)[0]) - base
-        sd = float(D.std()) or 1e-9
-        sel = []
-        for f in range(K):
-            c = int(np.argmax(D[f]))
-            others = [D[f, j] for j in range(len(names)) if j != c]
-            sel.append((D[f, c] - (float(np.mean(others)) if others else 0.0)) / sd)
-        return float(np.mean(sel)), D
+        R = D - D.mean(axis=1, keepdims=True) - D.mean(axis=0, keepdims=True) + D.mean()
+        n = min(K, len(names))
+        return float(np.trace(R[:n, :n]) / (float(R.std()) or 1e-9)), D
 
     per = d // K
     real_assign = np.arange(d) // per                      # trailer blocks: contiguous runs
