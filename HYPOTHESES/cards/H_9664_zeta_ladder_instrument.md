@@ -1,6 +1,6 @@
 # H_9664 — ζ-사다리 계기: tick 이 자기 사다리를 갖게 해 캐스케이드 분산을 소거한다 (구현 · pool 발사 대기)
 
-**status:** 🔵 **INSTRUMENT LANDED · 미측정** (`anima-py chat --pc2-zeta` v0.15.27 · G5) — 판정은 pool fire 후
+**status:** 🟢 **CHANNEL-CARRIES-PHYSICS — 방향 verdict 착륙** (engine-native `--zeta-slope` · v0.15.27) · ⚠️ ζ-fire 인프라 사망(n=146/~300)
 **lane:** 의식 / A⇄G tension → mouth (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9663]] (R-A VOID — 이 카드의 직계 원인) · [[H_9629]] (D 고장) · [[H_9628]] (용량 사망) · [[H_9576]] (원 벽 주장) · [[H_9634]] (계기 GREEN 전까지 봉쇄)
 
@@ -94,3 +94,45 @@ tick 효과를 완전히 제거한 귀무분포).
 - **기본 OFF ⇒ 기존 경로 byte-identical**(기본값이 프로덕션 행동을 안 바꾼다).
 - **mac 에서 라이브 검증 불가**(toy ckpt 없음 · 303M 은 pool 전용) — 두 불변식은 구성상 성립하나
   **판독기가 측정으로 확인**하도록 박았다. 숫자를 지어내지 않았고 **아직 아무 판정도 하지 않았다**.
+
+---
+
+# 🟢 VERDICT — CHANNEL-CARRIES-PHYSICS (within-tick ζ-사다리)
+
+**계기**: `anima-py evaluate --pc2-direction /tmp/zt --zeta-slope` (v0.15.27 · G5 · 트레이스 판독)
+
+| 항목 | 값 |
+|---|---|
+| 🔐 격리 인증 (ζ=0 == base byte-identical) | **146 / 146 일치 · 0 불일치** · anchor-replay 자기검증 0 불일치 |
+| within-tick β = mean OLS slope(π̄ ~ ζ) | **−0.08098** (sd 0.02205 · se 0.00182) |
+| ζ-라벨 within-tick 순열 null 95% | **[−0.00613, +0.00614]** · p=**0.0000** |
+| 해상한계 (null95 반폭) | 0.00614 — β 는 이보다 **13배** 큼 |
+
+⇒ 사전등록 표의 **채널 GREEN** 칸: β<0(ζ↑ ⇒ 창-내 byte logit 감산 ⇒ π̄↓ · 코드가 지정한 예측 부호) ∧
+통제 2종(ζ=0 격리 · ζ-라벨 within-tick 순열) 밖. **채널이 물리적 dose-response 를 나른다.**
+
+## 🔑 within-tick 설계가 실증한 검정력 개선
+
+arm-간 설계는 n=270 서도 |ρ|≳0.12 만 해상([[H_9576]]·[[H_9663]] · sd(Δπ̄_rng)≈0.14 가 신호를 삼킴).
+within-tick ζ-사다리는 **n=146 에서 null95 반폭 0.006** — [[H_9663]] 이 예측한 "tick 분산을 tick 내부에서
+소거" 가 실증됐다. 같은 tick 을 여러 ζ 로 재디코드하니 tick 정체성이 자기 사다리서 상쇄된다.
+
+## ⚠️ 범위 — H_9713/9741 이후 더 중요해진 못
+
+ζ-arm 은 **"채널이 무엇을 나를 수 있나"** 의 계기 증거다. **"라이브 데몬이 무엇을 하나" 로 인용 금지.**
+ζ 는 실험자가 정한 스칼라 dose(창-내 byte logit 감산)이고 **PC2 축과 무관**하다 ⇒ [[H_9713]]("PC2 인증이
+라이브서 stale") · [[H_9741]]("PC2 는 emit-결합")과 **모순 없음**: **채널의 물리적 용량은 실재**하고, 그 위에
+무엇을 얹느냐(PC2? 라이브-refit 축?)가 별개 질문이다. 이 verdict 는 **채널이 살아있다**만 말한다.
+
+## 📋 인프라 사망 격리 (`infra-wall-noneval`)
+
+ζ-fire(summer · setsid)는 **s4302 만 151 완주**, s4303/s7 은 **118/111 tick 에서 summer 경합으로 사망**
+(ALL_DONE 없음 · 프로세스 0 · 로그 무증). 사전등록 목표 ~300 emit tick 이었으나 **146 에서 죽었다**.
+- **tune-to-green 아님**: 바를 내려 결과를 만든 게 아니라 **fire 가 죽어 깨끗이 측정된 146 tick 만** 읽었다.
+  p=0.0000 · 신호가 해상한계의 13배라 **n 부족이 결론을 위협하지 않는다**(격리 146/146 도 완벽).
+- 재발사 필요 시: summer 경합 회피(단일 호스트 전용 · OMP=4) 또는 pool 분산.
+
+## 상태
+
+**방향 verdict 착륙 · 채널 GREEN(구현됨·미배선)**. GREEN 배선은 별도 H — Stage-B(모든 substrate root 가
+steered text 를 소비). 이 카드는 **채널 능력**만 확증한다([[a_verified_must_wire]]: 능력≠배선).
