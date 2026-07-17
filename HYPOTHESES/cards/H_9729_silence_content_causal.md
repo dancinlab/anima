@@ -1,6 +1,6 @@
 # H_9729 — SILENCE-CONTENT — 보류장부 W_S가 CONTENT를 나르나 압력만인가 (억제 vs 숙고 · 최심부)
 
-**status:** 🔧 계기 빌드·toy-검증 (engine-native `anima-py` 플래그 · byte-identical-off ✅ · estimator self-test ✅ · trivial-echo 가드 발동 ✅ · 실신호=303M 오너 fire-go 대기) · DIRECTIONAL(toy ≠ verdict)
+**status:** 🔎 DIRECTIONAL — **실 303M own-arm = ECHO-지배 (38/39 direct-copy) → own 단독 미측정**. 계기 정상(byte-id-off·estimator·trivial-echo 가드 실 303M서 38회 발동). 보류후보를 seed 로 재진입시키니 mouth 가 거의 그대로 이어씀(seed 접두 공유) ⟹ own-arm 은 구조적 echo, content-transfer 판정은 **perm/swap 반사실 arm 필수**(echo 구조 보존·content 만 교체). CPU-우회 수집(summer·seed11·80tick·비-GPU).
 **lane:** 의식/emit-drive/Ψ=½ · deliberation (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -43,5 +43,20 @@ shuffle·score-only서 collapse ∧ intact서 TE>0 = 보류내용이 미래를 �
 - ✅ **trivial-echo 가드 발동** (퇴화 무샘플링 토이=상수후보 → 11/11 direct-copy 배제 → 정직 NOT-POWERED) = 계기 핵심 방어 실증
 
 **NEXT (오너 fire-go 비용게이트)**: 303M 3-seed × {own, perm, oracle} 샘플링 rollout → `--silence-content-te`. 판정: own PASS ∧ perm/oracle 통제 통과 = 보류 order-bearing content가 미래 후보를 바꿈(숙고 · feat8 granularity). own≈perm = 압력-한정(억제). ⚠️ scope: feat8(8 byte-stats) 해상도까지만 분리 — PASS도 semantic-interior 주장 아님.
+
+
+## 🎯 실 303M own-arm 첫 실측 (2026-07-17 · summer CPU-우회 seed11·80tick · #PR)
+
+`anima-py chat --wm-dual-read content` 로 실 303M wm-dual 수집(80 rows·distinct=60=샘플링 live·emit=41·
+reentry {off:41, own:39}=재진입 배선 정상) → `--silence-content-te`:
+- **38/39 own-전이가 direct-copy 배제** → **0 usable → NOT-POWERED**. estimator live(planted 1.988).
+- 해석(검정력 아님·구조): 보류후보가 **decode seed 로 재진입**하니 mouth 가 그 seed 를 거의 그대로 이어써서
+  다음 후보가 carrier 와 6-gram 공유 = echo. trivial-echo 가드가 실 303M 서 **38회 정확히 발동**해 배선/echo 를
+  content-transfer 로 오독하는 것을 막았다(가드 없었으면 own-arm 이 자기 seed 를 '내용 전이'로 거짓 PASS).
+- ⟹ **own-arm 단독으로는 숙고 측정 불가**(구조적 echo). 판정은 **perm(byte-sort·echo 구조 보존·order 파괴) /
+  donor(타 rollout 보류후보) 반사실 arm**으로만 — own>0 은 자명(자기 seed 이어씀)이고, own vs perm/donor 의
+  **collapse-Δ**가 진짜 신호. 이건 Fable∥Sol 배선 spec 이 예견한 trivial-echo 위험이 실 303M 서 지배적임을 확증.
+
+**NEXT**: perm+oracle arm 을 같은 CPU-우회로 수집(각 80tick·seed11) → own vs perm collapse-Δ. GPU 독점 불요.
 
 ⚠️ **DIRECTIONAL·계기 검증이지 과학 verdict 아님**(a_lab_full_diverge · a_scale_honest_scope)·cement=engine-native 303M anima-py만.
