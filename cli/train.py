@@ -1132,7 +1132,7 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0):
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1207,6 +1207,17 @@ class TrainShell(nn.Module):
                 ce_addr = F.cross_entropy(att, tgt)
                 loss = loss + sb_addr_w * ce_addr
                 aux["sb_addr_ce"] = float(ce_addr.detach())
+            # H_9691 RV-1 oracle-aux dual-path: ALSO train the value/MLP path on the ORACLE (correct one-hot)
+            # address every step. The softmax branch (above) trains W_q; this branch replays Stage1.5's proven
+            # signal (correct v → MLP learns the XOR function). Runs simultaneously so the race that left val
+            # seed-fragile under addr-loss alone (seed-7 won, seed-11 lost to the op-only basin — RV-0: val WAS
+            # differentiated, so it is a FUNCTIONAL failure of the fusion) is dissolved. Skipped when already
+            # oracle (osl==tgt → identical). 0 → byte-identical.
+            if sb_oracle_aux > 0.0 and not sb_oracle:
+                store_logits_orc = model.clms(yn_q, K, pols, oracle_slot=tgt)
+                ce_orc = F.cross_entropy(store_logits_orc, y_s[:, Ts - 1])
+                loss = loss + sb_oracle_aux * ce_orc
+                aux["sb_orc_ce"] = float(ce_orc.detach())
             with torch.no_grad():
                 aux["sb_addr_acc"] = float((att.argmax(-1) == tgt).float().mean())   # monitor-only
             with torch.no_grad():                              # monitor-only (a_train_inline_gauge)
@@ -1306,6 +1317,10 @@ def main():
     ap.add_argument("--clms-d-g", type=int, default=64, help="CLMS fusion-bottleneck (yn_q op-gate dim; H_9423 value-read fix)")
     ap.add_argument("--store-addr-weight", type=float, default=0.0,
                     help="H_9672: address direct-supervision loss weight L_addr=CE(att,target_slot) (0=off·byte-identical). Cuts the (2) bootstrap deadlock W_q could not escape at 303M.")
+    ap.add_argument("--store-oracle-aux", type=float, default=0.0,
+                    help="H_9691 RV-1: weight of an extra CE on the ORACLE(correct one-hot) address every step "
+                         "(dual-path with softmax+--store-addr-weight) → trains the value/MLP on correct v so it "
+                         "learns the XOR function robustly (fixes val-read seed-fragility). 0=off·byte-identical.")
     ap.add_argument("--store-oracle-train", action="store_true",
                     help="H_9423 Stage1.5: hand the address for free during TRAINING (oracle_slot=target_slot) "
                          "→ separates value-read (a) from address-learning (c). DIAGNOSTIC, not a production lever.")
@@ -1862,7 +1877,7 @@ def main():
         sb_oracle_now = a.store_oracle_train or (a.store_oracle_warmup > 0 and step <= a.store_oracle_warmup)
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
                                            sb=_sb, sb_w=a.store_ans_weight, sb_oracle=sb_oracle_now,
-                                           sb_addr_w=a.store_addr_weight)
+                                           sb_addr_w=a.store_addr_weight, sb_oracle_aux=a.store_oracle_aux)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()
