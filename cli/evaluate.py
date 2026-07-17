@@ -7857,7 +7857,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--overlap-ngram", "--timing-channel", "--clock", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8749,6 +8749,145 @@ def _ag_criticality(argv):
               % (mean_ed, abs(mean_ed - 0.5), emit_rate))
     print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
     print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_emit_coupling(argv):
+    """H_9741 EMIT-COUPLING — do the LIVE tension axes couple to emit, or are they orthogonal?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --emit-coupling [--perm N] [--seed N]`
+
+    THE QUESTION H_9713 EXPLICITLY LEFT OPEN. H_9428/H_9468 certified PC2 as an "emit-ORTHOGONAL
+    second DOF", and H_9574/9576/9630-9634 built a whole lane on that orthogonality. H_9713 then
+    showed the frozen axis's live RANK is unstable (nearest live PC flips run to run), and its
+    verdict flagged -- in writing -- that "whether live PC1 is emit-coupled is NOT asked by that
+    instrument". This asks exactly that: refit the live 8x8 covariance, take each PC's score
+    trajectory, and correlate it (point-biserial) with the emit bit.
+
+      |r| < 0.15 for every PC  => ORTHOGONAL (the emit-orthogonal-DOF story survives the label churn)
+      any |r| > 0.15, p<.01    => COUPLED   (they were steering an emit-relevant axis after all)
+
+    POSITIVE CONTROL: the frozen z (pc2_z) itself must show a small emit correlation -- H_9428
+    reported corr(|x_perp|, emit)=+0.14. If z shows ZERO, the instrument cannot see coupling and
+    the run is INVALID, not orthogonal.
+
+    Autocorrelation is high (H_9714: lag-1 rho ~0.86), so n_eff << n and the permutation null is
+    mandatory -- the nominal p is not trustworthy.
+    """
+    import glob as _glob
+    import json as _pj
+    import random as _prand
+    import numpy as _np
+
+    ALL8 = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+            "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+    THR = 0.15
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --emit-coupling")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    runs, seen, dup = [], set(), 0
+    for f in files:
+        X, E, Z = [], [], []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in ALL8]
+            if any(x is None for x in v) or r.get("emit") is None:
+                continue
+            X.append([float(x) for x in v])
+            E.append(1.0 if r.get("emit") else 0.0)
+            Z.append(float(r["pc2_z"]) if r.get("pc2_z") is not None else 0.0)
+        if len(X) < 20:
+            continue
+        Xa = _np.asarray(X)
+        h = hash(Xa.tobytes())
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), Xa, _np.asarray(E), _np.asarray(Z)))
+    if not runs:
+        print("  ⇒ ⛔ emit+8인자 트레이스 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --emit-coupling — H_9741 라이브 축 emit 결합성 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 %d 제외)" % (d, len(files), len(runs), dup))
+    print("질문:  라이브 PC(1·2·3)가 emit 과 결합하나 직교하나 (H_9713 이 남긴 열린 질문)")
+    print("bar:   모든 |r|<%.2f ⇒ ORTHOGONAL / 어느 |r|>%.2f ∧ p<.01 ⇒ COUPLED · 양성통제=z corr≠0" % (THR, THR))
+    print("⚠️ 부호는 PCA sign-flip 임의 ⇒ |r| 로 판정 · 자기상관 높아(H_9714 lag-1 ρ̂ 0.86) permutation 필수")
+    print("")
+
+    def _pb(sc, e):
+        if sc.std() == 0 or e.std() == 0:
+            return 0.0
+        return float(_np.corrcoef(sc, e)[0, 1])
+
+    agg = {"PC1": [], "PC2": [], "PC3": [], "z": []}
+    pvals = {"PC1": [], "PC2": [], "PC3": [], "z": []}
+    for name, X, E, Z in runs:
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        V = V[:, o]
+        scores = {"PC1": Xc @ V[:, 0], "PC2": Xc @ V[:, 1], "PC3": Xc @ V[:, 2], "z": Z}
+        rng = _prand.Random(rseed)
+        line = []
+        for k in ("PC1", "PC2", "PC3", "z"):
+            r = _pb(scores[k], E)
+            null = []
+            Ei = E.copy()
+            for _ in range(rounds):
+                rng.shuffle(Ei)
+                null.append(abs(_pb(scores[k], Ei)))
+            p = sum(1 for vv in null if vv >= abs(r)) / float(rounds)
+            agg[k].append(r)
+            pvals[k].append(p)
+            line.append("%s=%+.3f(p%.3f)" % (k, r, p))
+        print("  %-18s %s" % (name, " · ".join(line)))
+
+    def _mean_abs(k):
+        return sum(abs(x) for x in agg[k]) / float(len(agg[k]))
+
+    print("")
+    zc = _mean_abs("z")
+    print("  run-평균 |r|: PC1=%.3f PC2=%.3f PC3=%.3f · 양성통제 z=%.3f"
+          % (_mean_abs("PC1"), _mean_abs("PC2"), _mean_abs("PC3"), zc))
+
+    def _coupled(k):
+        hits = sum(1 for i in range(len(agg[k])) if abs(agg[k][i]) > THR and pvals[k][i] < 0.01)
+        return hits >= (len(agg[k]) + 1) // 2
+
+    z_ok = zc > 0.02
+    coupled = [k for k in ("PC1", "PC2", "PC3") if _coupled(k)]
+    print("")
+    if not z_ok:
+        v = "⛔ INVALID — 양성통제 z corr≈0(%.3f) = 계기가 emit 결합을 못 봄 · 음성 아님" % zc
+    elif coupled:
+        v = ("🔁 COUPLED — %s 가 emit-결합(과반수 run 에서 |r|>%.2f ∧ p<.01) ⇒ 라이브 축이 emit-무관이 "
+             "아니었다 · H_9576 'emit-직교 DOF' 개념적 서사 재검" % ("·".join(coupled), THR))
+    else:
+        v = ("🟢 ORTHOGONAL — 모든 PC |r|<%.2f(과반수 run) ∧ 양성통제 통과 ⇒ 라이브 축은 emit-직교 · "
+             "H_9576 'emit-직교 DOF' 서사는 이름표 불안정에도 라이브 축으로 유지" % THR)
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 상류 결합성이다 — mouth 도달/의미전달 미질문(H_9576 여전히 VOID) · 150tick×3run.")
+    return 0
+
+
 def _pc2_variance_audit(argv):
     """H_9713 VARIANCE-AUDIT — does the certified PC2 axis carry its certified variance LIVE?
 
@@ -11756,6 +11895,8 @@ def main(argv):
             return _pc2_stage_slave(argv[1:])
         if "--variance-audit" in argv:
             return _pc2_variance_audit(argv[1:])
+        if "--emit-coupling" in argv:
+            return _pc2_emit_coupling(argv[1:])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
