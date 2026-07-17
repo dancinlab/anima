@@ -1317,6 +1317,10 @@ def main():
     ap.add_argument("--clms-d-g", type=int, default=64, help="CLMS fusion-bottleneck (yn_q op-gate dim; H_9423 value-read fix)")
     ap.add_argument("--store-addr-weight", type=float, default=0.0,
                     help="H_9672: address direct-supervision loss weight L_addr=CE(att,target_slot) (0=off·byte-identical). Cuts the (2) bootstrap deadlock W_q could not escape at 303M.")
+    ap.add_argument("--store-ans-delay", type=int, default=0,
+                    help="H_9692 RV-2: hold the answer-CE (sb_w=0) for the first N steps so only the address "
+                         "(addr-loss) trains; the blurry-v window can\'t commit the MLP to op-only before the "
+                         "address is sharp. Then ans-CE turns on. 0=off·byte-identical.")
     ap.add_argument("--store-oracle-aux", type=float, default=0.0,
                     help="H_9691 RV-1: weight of an extra CE on the ORACLE(correct one-hot) address every step "
                          "(dual-path with softmax+--store-addr-weight) → trains the value/MLP on correct v so it "
@@ -1875,8 +1879,12 @@ def main():
         # now-differentiated val). Cuts the ∂L/∂v bootstrap deadlock that left val seed-fragile under addr-loss
         # alone (seed-7 lucky, seed-11 collapsed to op-only). warmup=0 → byte-identical to the prior behaviour.
         sb_oracle_now = a.store_oracle_train or (a.store_oracle_warmup > 0 and step <= a.store_oracle_warmup)
+        # H_9692 RV-2 ans-delay: for the first --store-ans-delay steps train ONLY the address (addr-loss,
+        # sb_w=0 → no ans-CE), so the blurry-v window can't corrupt the MLP before the address is sharp;
+        # then add ans-CE (val learns on the now-sharp address). 0 → byte-identical.
+        sb_w_now = 0.0 if (a.store_ans_delay > 0 and step <= a.store_ans_delay) else a.store_ans_weight
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
-                                           sb=_sb, sb_w=a.store_ans_weight, sb_oracle=sb_oracle_now,
+                                           sb=_sb, sb_w=sb_w_now, sb_oracle=sb_oracle_now,
                                            sb_addr_w=a.store_addr_weight, sb_oracle_aux=a.store_oracle_aux)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
