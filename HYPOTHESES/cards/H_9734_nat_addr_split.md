@@ -71,3 +71,47 @@ N/S × 2 seed + OFF 최소 1 = **5 CPT**(pool · GPU 해방 대기 · manifest/p
   abort. `local` 분리로 수정(attempt1 죽음 · 학습 전이라 손실 0).
 - `pkill -f 'h9734/driver.sh'` 를 ssh 로 보내니 그 문자열 담은 ssh 세션 자신을 죽여 rc=255
   ([[remote-pkill-self-match]] 실증 · pkill 없이 재발사로 회피).
+
+---
+
+## ⛔ VERDICT — INSTRUMENT-DEAD (2026-07-17 · 양성통제 재현실패 · 타겟 결과 아님 · infra-wall-noneval)
+
+**arm-N(자연어휘)은 판독하지 않는다** — 사전등록 계기 게이트가 정확히 이 상황을 막으려 설계됐고, 작동했다.
+
+### 5-arm addr-audit 결과 (HELD-OUT · summer 0.15.76)
+| arm | addr_top1 | addr_mass | |
+|---|---|---|---|
+| armS_s3 (양성통제 nonce) | **0.0000** | 0.0062 | 🔴 게이트(.95/.90) 미달 |
+| armS_s17 (양성통제 nonce) | **0.0000** | 0.0023 | 🔴 |
+| armN_s3 | 0.0000 | 0.0054 | (미개봉) |
+| armN_s17 | 0.0078 | 0.0149 | (미개봉) |
+| armN_s3_OFF | 0.0000 | 0.0511 | (OFF>ON 역전) |
+
+사전등록: **arm-S addr_top1 ≥ .95 미달 = INSTRUMENT-DEAD**. 양성통제(nonce)가 H_9672 T3 의
+**같은 레시피** held addr_top1 **0.984** 를 재현 못 하고 **0.000**. ⟹ arm-N 은 판독 불가.
+
+### 진범은 타겟이 아니라 도구 (verdict-integrity · reference-match)
+결정적 해리 (같은 ckpt armS_s3):
+```
+SEEN manifest (학습 엔티티):  addr_top1 = 1.0000 · addr_mass = 0.9867  ✅ 완벽·sharp
+HELD manifest (held-out):     addr_top1 = 0.0000 · addr_mass = 0.0062  🔴 전무
+```
+- **eval 경로 무죄**: seen 에서 addr_top1 1.0(train 의 sb_addr_acc 1.0 과 일치) = numpy addr-audit 정상.
+- **순수 generalization 실패**: 학습 엔티티는 완벽 주소화, held-out 은 전무 = 암기했으나 전이 못 함.
+- **2-seed 재현**(s3·s17 둘 다 held 0.000) + 실패가 **총체적**(0.000, seed-11 의 0.55 붕괴와 다름)
+  ⟹ seed-fragility 아님. H_9672 는 주소축이 **2-seed robust**(0.984 on 7·11)라 명시.
+- ⟹ **버전 회귀 강한 의심**: H_9672 T3 = **0.15.35** 서 held 0.984(일반화) vs 이 fire = **0.15.76**
+  (41 패치 후) held 0.000. 레시피 byte-동일 · eval 무죄 · seed 무관 ⟹ **0.15.35→0.15.76 사이
+  addr-loss 훈련 경로가 주소 일반화를 회귀시켰다**(암기는 유지·전이만 상실).
+
+### 판정 · 후속
+**H_9734 = INSTRUMENT-DEAD**(계기 결함 · [[infra-wall-noneval]] 로 격리 · 타겟 "자연어휘 전이"에
+대해 아무 것도 말하지 않음). 5 CPT 는 clean run 이 아니므로 과학 점수 미부여([[verdict-integrity]]).
+- **NEXT = upstream-fix**: `core/`+`cli/` 의 store-addr 훈련 경로 0.15.35↔0.15.76 회귀 bisect →
+  주소 일반화 복구 → 그 버전으로 H_9734 재발사(양성통제 arm-S 가 held ≥.95 재현해야 arm-N 개봉).
+- reference-match 진행: t3.clm(known-good 0.984)을 0.15.76 eval 로 held 판독(diag_t3ref) → 회귀
+  위치 확정(eval 이미 seen=1.0 로 무죄 확인 ⟹ 훈련 회귀 예상).
+- 5 ckpt(arm-N/S/OFF) + step ckpt 회수/정리(a_fire_recover_complete · summer 디스크).
+
+**설계 성공 기록**: 사전등록 계기 게이트(arm-S ≥.95)가 없었다면 arm-N held 0.000 을 "자연어휘 전이
+실패"로 오독했을 것이다. 게이트가 버전 회귀를 과학 결과로 오독하는 것을 **발사 후 판독 시점에** 막았다.
