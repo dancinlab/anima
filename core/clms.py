@@ -82,7 +82,7 @@ def _entity_key(key_emb, entity):
 
 
 def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, audit=None,
-                query="qpos", fuse="overwrite"):
+                query="qpos", fuse="overwrite", fresh_yn=None):
     """CLMS store-bridge lane: OVERWRITE the answer-position logits row with λ·store_logits.
 
     query/fuse (H_9695 R3 · the read→mouth wiring the G6 angles need · defaults reproduce the
@@ -151,7 +151,11 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         raise ValueError("store_apply: fuse must be 'overwrite' or 'gated-add' (got %r)" % fuse)
     for t in rows:
         h = yn[t]                                                          # (d,)
-        q = h @ clms["W_q"]                                               # (d_k,) [row-vector conv, CLML-form]
+        if lane_type == 5:                                                 # H_9720-ⓐ fresh query lane
+            hf = (fresh_yn[t] if fresh_yn is not None else h)              # early-layer tap (decode supplies it)
+            q = _gelu(hf @ clms["W_fresh"]) @ clms["W_q_fresh"]           # (d_k,) disjoint address query
+        else:
+            q = h @ clms["W_q"]                                           # (d_k,) [row-vector conv, CLML-form]
         if oracle:
             a = np.zeros(n_slot, dtype=q.dtype)
             a[int(store["target_slot"])] = 1.0                            # softmax bypassed (address free)
@@ -165,7 +169,7 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         if lane_type == 3:                                                # RV-3 majority-null centering (H_9710)
             a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
         v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
-        if lane_type in (2, 3, 4):
+        if lane_type in (2, 3, 4, 5):
             g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
             z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
         else:                                                             # lane_type 1 legacy: [v; h] fusion
@@ -202,6 +206,10 @@ _ARR_ORDER_V2 = ("key_emb", "W_q", "W_g", "val", "W_h", "b_h", "W_out", "lam")  
 # the "=> " literal. NOTE the number: lane_type 3 was taken by H_9710 (merged first) — same ID-race
 # class as hypotheses-jsonl-3, one axis over. Pre-emptor keeps the number; this lane yields to 4.
 _ARR_ORDER_V4 = ("key_emb", "W_q", "W_g", "W_v", "W_gate", "W_h", "b_h", "W_out", "lam")
+# lane_type 5 (H_9720-ⓐ EN-disjoint fresh query lane): the address query is read from an early-layer
+# tap through W_fresh→W_q_fresh (store-CE co-adapts an entity basis off the EN-occupied penultimate);
+# W_q stays packed (unused for addressing, kept for diagnostics). Header adds fresh_k·fresh_L.
+_ARR_ORDER_V5 = ("key_emb", "W_q", "W_fresh", "W_q_fresh", "W_g", "val", "W_h", "b_h", "W_out", "lam")
 
 
 # ── H_9696 (R4) perceptual charging — what the store holds during free ideation ──────────
@@ -264,7 +272,12 @@ def pack_clms(w: dict) -> bytes:
     out = bytearray()
     out += CLMS_MAGIC
     lane_type = int(w.get("lane_type", 2))
-    if lane_type == 4:        # H_9696 CLMS-FAN — same header as V2/V3, extra W_v/W_gate arrays
+    if lane_type == 5:        # H_9720-ⓐ fresh query lane — V2 header + fresh_k/fresh_L, W_fresh/W_q_fresh
+        out += struct.pack("<BIIIIIIII", 5, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+                           int(w["d_g"]), int(w["r"]), int(w["key_seed"]),
+                           int(w["fresh_k"]), int(w["fresh_L"]))
+        order = _ARR_ORDER_V5
+    elif lane_type == 4:      # H_9696 CLMS-FAN — same header as V2/V3, extra W_v/W_gate arrays
         out += struct.pack("<BIIIIII", 4, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V4
@@ -290,7 +303,12 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         return None, off
     p = off + 4
     lane_type = buf[p]; p += 1
-    if lane_type in (2, 3, 4):                             # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN
+    fresh_k = fresh_L = 0
+    if lane_type == 5:                                     # H_9720-ⓐ fresh query lane (+fresh_k/fresh_L)
+        if p + 32 > len(buf):
+            return None, off
+        n_slot, d_k, d_s, d_g, r, key_seed, fresh_k, fresh_L = struct.unpack_from("<IIIIIIII", buf, p); p += 32
+    elif lane_type in (2, 3, 4):                           # 2 = W_g · 3 = +centering (RV-3) · 4 = CLMS-FAN
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -306,17 +324,21 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         return arr
 
     clms = {"lane_type": int(lane_type), "n_slot": int(n_slot), "d_k": int(d_k),
-            "d_s": int(d_s), "d_g": int(d_g), "r": int(r), "key_seed": int(key_seed)}
+            "d_s": int(d_s), "d_g": int(d_g), "r": int(r), "key_seed": int(key_seed),
+            "fresh_k": int(fresh_k), "fresh_L": int(fresh_L)}
     clms["key_emb"] = take(_KEY_ALPHABET * d_k, (_KEY_ALPHABET, d_k))
     clms["W_q"] = take(d * d_k, (d, d_k))
-    if lane_type in (2, 3, 4):
+    if lane_type == 5:                                    # H_9720-ⓐ fresh lane: W_fresh · W_q_fresh (pack order)
+        clms["W_fresh"] = take(d * fresh_k, (d, fresh_k))
+        clms["W_q_fresh"] = take(fresh_k * d_k, (fresh_k, d_k))
+    if lane_type in (2, 3, 4, 5):
         clms["W_g"] = take(d * d_g, (d, d_g))
     if lane_type == 4:                                     # H_9696: value-from-key + learned gate
         clms["W_v"] = take(d_k * d_s, (d_k, d_s))
         clms["W_gate"] = take(d, (d,))
     if lane_type != 4:                                     # lane 4 has no polarity table (W_v replaces it)
         clms["val"] = take(2 * d_s, (2, d_s))
-    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4) else (d_s + d)
+    w_h_in = (d_s + d_g) if lane_type in (2, 3, 4, 5) else (d_s + d)
     clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
@@ -331,10 +353,12 @@ def clms_weights_from_torch(mod) -> dict:
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
     out = {
-        "lane_type": (4 if getattr(mod, "fangate", False) else
-                      (3 if getattr(mod, "val_center", False) else 2)),   # 4=CLMS-FAN · 3=RV-3 · 2=W_g
+        "lane_type": (5 if int(getattr(mod, "fresh_k", 0)) > 0 else       # 5=H_9720-ⓐ fresh query lane
+                      (4 if getattr(mod, "fangate", False) else
+                       (3 if getattr(mod, "val_center", False) else 2))),  # 4=CLMS-FAN · 3=RV-3 · 2=W_g
         "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
         "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
+        "fresh_k": int(getattr(mod, "fresh_k", 0)), "fresh_L": int(getattr(mod, "fresh_L", 3)),
         "key_emb": n(mod.key_emb),
         "W_q": n(mod.W_q.weight).T,          # (d_k,d) → (d,d_k)
         "W_g": n(mod.W_g.weight).T,          # (d_g,d) → (d,d_g)  H_9423 fusion bottleneck
@@ -344,6 +368,9 @@ def clms_weights_from_torch(mod) -> dict:
         "W_out": n(mod.W_out.weight).T,      # (V,r) → (r,V)
         "lam": n(mod.lam).reshape(1),
     }
+    if out["lane_type"] == 5:                 # H_9720-ⓐ — fresh query lane projections
+        out["W_fresh"] = n(mod.W_fresh.weight).T      # (fresh_k,d) → (d,fresh_k)
+        out["W_q_fresh"] = n(mod.W_q_fresh.weight).T  # (d_k,fresh_k) → (fresh_k,d_k)
     if out["lane_type"] == 4:                 # H_9696 — value-from-key + learned gate; val not packed
         out["W_v"] = n(mod.W_v.weight).T      # (d_s,d_k) → (d_k,d_s)
         out["W_gate"] = n(mod.W_gate.weight).reshape(-1)   # (1,d) → (d,)
