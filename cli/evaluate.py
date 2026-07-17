@@ -974,6 +974,18 @@ def evaluate_usage():
     print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
     print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
     print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
+    print("  --store <held.json> [--store-oracle] [--store-lambda λ] [--store-addr-audit]")
+    print("      [--store-shuffle | --store-flip | --store-neutral] [--store-ctrl-seed 9423]")
+    print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add]")
+    print("      H_9423 CLMS store-bridge lane eval (the CO-TRAINED bridge, not the H_9392 bolt-on):")
+    print("      each held-out item injects its 8-slot store at the query; the lane forms a")
+    print("      content-addressed lookup and rewrites the answer-position logits with λ·store.")
+    print("      --store-oracle = C0-e positive control (ORACLE<0.90 = plumbing dead, read NO")
+    print("      negative before it passes). --store-query/--store-fuse (H_9695 R3) surface the lane's")
+    print("      read→mouth wiring: qpos fires only on the literal '=> ' trigram (H_9423 default),")
+    print("      every-token fires on every row (free ideation carries no marker) and REQUIRES")
+    print("      --store-fuse gated-add — overwriting every row deletes the trunk (fluency dead).")
+    print("      Defaults (qpos·overwrite) reproduce the H_9423 lane byte-for-byte. cards H_9423/9672/9695")
     print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
     print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
     print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
@@ -4233,6 +4245,27 @@ def store_run(argv):
     #                     causally consumed). Constant-predictor coherence ≡ 0 by construction.
     #   --store-neutral = MISS control (P2, no bar, characterisation only).
     #   These are MUTUALLY EXCLUSIVE. --store-ctrl-seed pins the derangement RNG.
+    # H_9695 (R3) — surface core's query/fuse. core/clms.py store_apply + core/decode.py
+    # set_clms_store have carried these since H_9695 landed, but NO CLI passed them, so the
+    # marker-free read→mouth lane was unreachable from the only legal surface (a_experiment_
+    # engine_native: a manipulation is a flag on anima-py, not a probe). Defaults reproduce the
+    # H_9423 lane byte-for-byte.
+    store_query = evaluate_strval(argv[1:], "--store-query", "qpos")
+    if store_query not in ("qpos", "every-token"):
+        print("ERROR: --store-query must be 'qpos' (default) or 'every-token', got %r" % store_query)
+        return 1
+    store_fuse = evaluate_strval(argv[1:], "--store-fuse", "overwrite")
+    if store_fuse not in ("overwrite", "gated-add"):
+        print("ERROR: --store-fuse must be 'overwrite' (default) or 'gated-add', got %r" % store_fuse)
+        return 1
+    if store_query == "every-token" and store_fuse == "overwrite":
+        # clms.py store_apply: overwriting EVERY row deletes the trunk and destroys fluency — the
+        # readout would score the lane alone with no mouth left. Refuse loudly (an INVALID arm is
+        # worse than no arm) rather than emit a number nobody may read.
+        print("ERROR: --store-query every-token with --store-fuse overwrite overwrites every row,")
+        print("       deleting the trunk (fluency dead · the readout stops being attributable).")
+        print("       Use --store-fuse gated-add for the marker-free lane (H_9695).")
+        return 1
     ctrl = [f for f in ("--store-shuffle", "--store-flip", "--store-neutral") if f in argv]
     if len(ctrl) > 1:
         print("ERROR: --store-shuffle / --store-flip / --store-neutral are mutually exclusive (got %s)" % ctrl)
@@ -4342,7 +4375,8 @@ def store_run(argv):
     def _predict(store, audit=None):
         """Inject store, forward the prompt window, read the 2-way g/b readout at qpos. None if malformed.
         audit (H_9672 --store-addr-audit) = a list store_apply appends {argmax,a_target,target} to per qpos."""
-        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override, audit=audit)
+        clm.set_clms_store(store=store, oracle=oracle, lam_override=lam_override, audit=audit,
+                           query=store_query, fuse=store_fuse)
         logits = np.asarray(clm._fwd_logits(W, tok, T))
         qp = _clms.find_qpos(tok)
         if not qp:
@@ -7891,6 +7925,7 @@ _KNOWN_FLAGS = frozenset((
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
     "--store-addr-audit",
+    "--store-query", "--store-fuse",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
     "--mouth-binder", "--mouth-binder-order-scramble",
