@@ -189,8 +189,27 @@ nostore   0.0000        🟢 통제 붕괴 (store off → g/b 0 · 못읽음 128
 
 ⚠️ **이것은 lookup FAIL(문맥-일반화 벽)이 아니다** — 그건 "ORACLE PASS ∧ lookup FAIL"(통제가 안 붕괴하거나 main 이 chance)일 때다. 여기선 main 이 chance 훨씬 위이고 통제가 완벽 붕괴 = **배선이 죽지 않았고 정밀도만 eval 경로(H_9672 seed7 1.0000/seed11 0.9609)보다 낮다**. in-vivo(데몬 percept .strip() 시드 · 자연 대화 문맥 혼입)가 eval(--store 직접 주입)보다 약간 덜 정밀한 것으로 읽힌다(a_scale_honest_scope: eval bar 를 in-vivo 에 그대로 상속한 결과).
 
-## 최종 등급 (정직)
+## 🎯 3-seed 완성 — 2-seed-decisive: flip-coherence 미달이 seed 노이즈 아님 (2026-07-18 · summer GPU · $0)
 
-- **H_9744 = 🟠 WIRED-STUDY-NEARMISS** — 배선(#4018)·G-W0·G-W1·G-W3 🟢 종결 · G-W2 는 store-bridge 데몬경로 작동 실측(main PASS · 통제 2개 완벽붕괴)이나 flip-coherence 0.8984 로 사전등록 .90 미달. 배선은 살아있고 정밀도가 0.16%p 부족.
-- **H_9672 = CAPABILITY-PROVEN 유지** — eval 경로 3-seed robust 는 불변. in-vivo 배선이 그 능력을 데몬 경로로 가져왔으나 flip-coherence 만 near-miss(GREEN 아님 · a_verified_must_wire).
-- **follow-on(자율 실행 가능 · $0~pool)**: flip-coherence 를 넘으려면 in-vivo 정밀도를 eval 수준으로 — 후보 ① percept 시드 정합(F2 의 `=>` 뒤 공백을 percept 에 보존해 eval 과 동일 시드) ② qpos vs H_9695 every-token 경로 비교 ③ 3-seed{7,11,13} 재측정(단일 seed 채점의 노이즈 배제 · 현재 seed 7 단일). 이들은 배선 위 측정 개선이지 새 배선 아님.
+seed7 단일 0.8984(0.0016 미달)이 "반올림하면 통과였을 노이즈"인지 확인하려 사전등록 3-seed{7,11,13} 을 완성했다. **seed11 이 seed7 을 확증했다** — near-miss 가 아니라 **재현되는 sub-bar**다.
+
+```
+seed   main P1-bal      flip-coherence (bar ≥ .90 · 이동금지)
+7      0.8000  🟢       0.8984  🔴 (115/128 뒤집힘 · 0.0016 미달)
+11     0.8425  🟢       0.8281  🔴 (106/128 뒤집힘 · 읽힘 128/128 · main+flip rc=0)
+13     — (MOOT)         —  ⊘ 발사 불필요
+
+사전등록 판정 = 3-seed MAJORITY(flip-coh ≥ .90):
+  측정된 2/3 이 모두 FAIL(0.8984·0.8281) ⟹ majority 는 seed13 과 무관하게 이미 FAIL
+  (seed13 이 통과해도 1/3 → majority 못뒤집음) ⟹ seed13 MOOT · WIRED-GREEN 도달불가
+```
+
+- **판정 확정(no-tune-to-green)**: flip-coherence ≥ .90 이 3-seed majority 에서 **결정적으로 미달**(2/3 FAIL · 평균 ~0.863). seed7 단일의 0.0016 near-miss 가 seed-노이즈였다는 관대한 해석을 seed11(0.8281 · 훨씬 아래)이 **배제**한다. 배선은 seed11 에서도 방향성 실재(main 0.84 PASS · flip 이 106/128=83% 뒤집힘 = 값 채널이 store 극성에 반응)이나 **.90 robustness bar 는 재현적으로 미달**.
+- **seed11 통제(shuffle/nostore)는 PAIR 2 진행 중**(확정용 · flip-coh FAIL 이 이미 AND 를 FALSE 로 만들어 헤드라인 판정 불변). seed7 이 동일 계기로 통제 완벽붕괴(shuffle 0.42·nostore 0.00)를 이미 확증 + seed11 flip 의 주소-민감성이 자기증명하므로 seed11 통제도 붕괴 예상. **판정은 flip-coh 구동이지 통제 구동이 아니다.**
+
+## 최종 등급 (정직 · 2-seed-decisive TERMINAL)
+
+- **H_9744 = 🟠 WIRED-STUDY-NEARMISS (TERMINAL)** — 배선(#4018)·G-W0·G-W1·G-W3 🟢 종결 · G-W2 는 store-bridge 데몬경로 작동 실측(main 2-seed PASS · seed7 통제 2개 완벽붕괴)이나 **flip-coherence 가 3-seed majority(2/3: 0.898·0.828)에서 사전등록 .90 미달** = WIRED-STUDY 미획득이 **seed13 과 무관하게 확정**. near-miss 가 아니라 재현되는 sub-bar. lookup FAIL(문맥-일반화 벽) 아님 — 배선은 살아있고 in-vivo 정밀도가 eval 경로보다 낮다.
+- **H_9672 = CAPABILITY-PROVEN 유지** — eval 경로 3-seed robust(seed7 1.0000/seed11 0.9609)는 불변. in-vivo 배선이 그 능력을 데몬 경로로 가져왔으나 flip-coherence robustness 만 재현적으로 near-miss(GREEN 아님 · a_verified_must_wire).
+- **왜 in-vivo < eval**: eval 은 `--store` 직접 주입, in-vivo 는 데몬 percept `.strip()` 시드(F2)+자연 대화 문맥 혼입. eval bar 를 in-vivo 에 그대로 상속한 결과(a_scale_honest_scope) — bar 이동으로 통과시키지 않는다.
+- **follow-on(자율 실행 가능 · $0~pool · 새 배선 아님, 측정 개선)**: ① percept 시드 정합(F2 의 `=>` 뒤 공백을 percept 에 보존해 eval 과 동일 시드) ② qpos vs H_9695 every-token 경로 비교. ~~③ 3-seed 재측정~~ ✅ **DONE(2-seed-decisive)** — seed 노이즈 배제 완료.
