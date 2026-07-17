@@ -966,6 +966,13 @@ def evaluate_usage():
     print("      reads the hidden at the ANSWER point inside the TAUGHT carrier, certifies on the")
     print("      taught atoms (V-LIVE), recovers each atom's polarity by undoing its form flip,")
     print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
+    print("  --store-component-swap <groups> --store-swap-from <donor.clm>: EVAL-ONLY causal")
+    print("      surgery (H_9724) — graft CLMS bridge components from a donor ckpt into the host")
+    print("      before scoring, to localize the seed-fragility source (ORACLE 0.99 vs 0.50).")
+    print("      groups (comma-sep): wq · val · readout(W_h,b_h,W_out) · lam · trunk · bridge(all).")
+    print("      Supplies NO training signal and installs NO address (target_slot never consulted).")
+    print("      REFUSES a shape-mismatched / asymmetric / zero-move graft (off-manifold ≠ measure);")
+    print("      donor==host auto-labels ⚠️ SHAM as the positive-validity control.")
     print("  --rho-axon: render the ρ-AXON reach panel (Ψ-SOMA ρ layer · redesign of G0-G6,")
     print("  cli/rho_axon.py) instead of the G-battery — HILLOCK gate + ρ·form/store/weave/leap/")
     print("  fan/tether/self, each Δ-vs-controls (no raw score) + INVALID/PENDING first-class.")
@@ -4129,9 +4136,21 @@ def store_run(argv):
             if grp == "trunk":
                 for k in ("ecWt", "ecB", "tcWt", "tcB", "tgG", "tgB", "eWt", "eB",
                           "rWt", "rB", "noG", "noB", "embed", "roWt", "roB"):
-                    if k in W and k in Wd:
-                        W[k] = Wd[k]
-                        moved.append("trunk:" + k)
+                    ha, hb = k in W, k in Wd
+                    if not ha and not hb:
+                        continue                          # absent from BOTH = not part of this arch
+                    if ha != hb:                          # present on ONE side = asymmetric ckpts
+                        print("ERROR: trunk key '%s' asymmetric (host=%s donor=%s) — refusing to graft"
+                              % (k, ha, hb), file=sys.stderr)
+                        return 2
+                    sa = getattr(W[k], "shape", None); sb = getattr(Wd[k], "shape", None)
+                    if sa != sb:
+                        print("ERROR: shape mismatch on trunk '%s': host %s vs donor %s — refusing to "
+                              "graft (an off-manifold chimera is not a measurement)" % (k, sa, sb),
+                              file=sys.stderr)
+                        return 2
+                    W[k] = Wd[k]
+                    moved.append("trunk:" + k)
                 continue
             for k in _GROUPS[grp]:
                 a, b = W["clms"].get(k), Wd["clms"].get(k)
@@ -4146,6 +4165,10 @@ def store_run(argv):
                     return 2
                 W["clms"][k] = b
                 moved.append(k)
+        if not moved:                                     # nothing grafted = a no-op read as a measurement
+            print("ERROR: component-swap moved 0 tensors (spec=%s) — a no-op is not a measurement"
+                  % swap_spec, file=sys.stderr)
+            return 2
         same = os.path.realpath(ckpt) == os.path.realpath(swap_from)
         print("  [component-swap] %s ← %s · moved: %s%s"
               % (swap_spec, os.path.basename(swap_from), ",".join(moved),
