@@ -102,6 +102,10 @@ timing 은 이 trace 서 content 를 **안 나른다**. ⚠️ 단 **p=0.060 = c
 검정력 부족(`power-before-negative-verdict`·`negative-claims-need-tost-not-ns`) — **KILL 아님, ns**. hold KILL 은
 확정(2세션 독립), iei 잔여채널은 **경계 ns·미결**. 완전 판정 = 5-seed·200tick·사전등록 MDE(카드 NEXT ②).
 
+**iei 2번째 seed(2026-07-17 · content trace seed11·80tick)**: n=40·Tbins=2·Caddr=3 → I=0.0925·surr95=0.0925·
+**z=2.60·p=0.080 ⇒ ns**. seed7(z=1.26·p=0.060)과 합쳐 **2-seed 모두 경계-ns**(z 는 1.26→2.60 상승했으나 둘 다
+strict bar p<.005 미달). 방향은 '잔여 iei 채널 약하거나 무-content' 수렴이나 **미확정**(2seed·둘 다 경계).
+
 ⚠️ **wire-to-prod 갭 정정**: `evaluate-py-23`(모집단-상대 시그니처)이 기록한 수리가 **코드에 착지된 적 없었다**
 — sigfix worktree 미커밋 + summer venv 에 scp 만 했다. 이 PR 이 factory 를 실제로 착지시켜 기록↔코드를 일치시킨다.
 
