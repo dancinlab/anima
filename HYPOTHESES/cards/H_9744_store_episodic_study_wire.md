@@ -163,3 +163,34 @@ n=1 에피소드서 `is lumer =>` → ON 이 `' government…'`(공백 후 **`g`
 그 자리는 **F2 가 예언한 트렁크의 공백**이었다. 사전등록에 이미 *"F2 의 선행공백 허용을 채점기에 사전명시"*
 라 적어놨으므로 선행공백 skip 은 **사후 규칙이 아니라 등록된 규칙을 지킨 것**(tune-to-green 아님 · 재발사 0 ·
 같은 transcript 재채점). ⚠️ **n=1 은 판정이 아니다**(우연 1/2) — bar 는 128 질의에서만.
+
+## 🎯 G-W2 조회생존 최종 — 배선은 작동하나 flip-coherence가 사전등록 bar에 0.0016 미달 (2026-07-18 · summer GPU · $0)
+
+128 held-out 질의 × 4 arm(각 1152 tick · 총 ~8.5h · thrash 에피소드 1회 회복 · GPU 매칭 fix 후 정상). 채점 = `gw2_score.py`(사전등록 lstrip 선행공백 규칙 · dry-run 검증완료).
+
+```
+arm       P1-balanced   해석
+main      0.8000        store 가 답을 냄 (chance 0.5 훨씬 위)
+flip      0.1730        극성 뒤집으면 답도 뒤집힘 → flip-coherence 0.8984 (115/128)
+shuffle   0.4196        🟢 통제 붕괴 (주소 deranged → lookup 죽음)
+nostore   0.0000        🟢 통제 붕괴 (store off → g/b 0 · 못읽음 128/128)
+
+사전등록 판정 (bar = H_9672 동일 · 이동 금지 · no-tune-to-green):
+  P1-balanced ≥ .75    : 0.8000  🟢 PASS
+  flip-coherence ≥ .90 : 0.8984  🔴 FAIL (0.0016 미달 · 115/128 뒤집힘)
+  통제 shuffle 붕괴     : 0.4196  🟢 (≈chance)
+  통제 nostore 붕괴     : 0.0000  🟢 (≈chance · 못읽음 128)
+```
+
+**판정 = WIRED-STUDY 미획득 · 그러나 배선은 살아서 작동한다** (near-miss, KILL 아님):
+
+- **store-bridge 가 데몬 경로(study lane · qpos)에서 실제로 작동함이 실측됐다** — main 0.80 은 chance(0.5) 훨씬 위이고, **두 통제가 완벽히 붕괴**(shuffle 0.42 ≈chance · nostore 0.00 · g/b 0/128)한다. 즉 lane 이 데몬에서 실제로 발화하고(nostore 대비), 주소를 쓰고(shuffle 대비), 값을 읽는다. H_9422 의 "귀 없는 입" regime 에서 percept→store→조회가 in-vivo 로 닫혔다.
+- **그러나 flip-coherence 0.8984 가 사전등록 .90 에 0.0016 미달** — 115/128 이 극성 반전에 따라 뒤집혔으나 13개가 안 뒤집혔다. `no-tune-to-green`(bar 이동/반올림 금지 · frozen-first)이라 0.8984 를 0.90 으로 올리지 않는다. 4 게이트 중 **3 PASS(P1bal·shuffle통제·nostore통제) + flip-coherence 1 near-miss FAIL** = WIRED-STUDY 미충족.
+
+⚠️ **이것은 lookup FAIL(문맥-일반화 벽)이 아니다** — 그건 "ORACLE PASS ∧ lookup FAIL"(통제가 안 붕괴하거나 main 이 chance)일 때다. 여기선 main 이 chance 훨씬 위이고 통제가 완벽 붕괴 = **배선이 죽지 않았고 정밀도만 eval 경로(H_9672 seed7 1.0000/seed11 0.9609)보다 낮다**. in-vivo(데몬 percept .strip() 시드 · 자연 대화 문맥 혼입)가 eval(--store 직접 주입)보다 약간 덜 정밀한 것으로 읽힌다(a_scale_honest_scope: eval bar 를 in-vivo 에 그대로 상속한 결과).
+
+## 최종 등급 (정직)
+
+- **H_9744 = 🟠 WIRED-STUDY-NEARMISS** — 배선(#4018)·G-W0·G-W1·G-W3 🟢 종결 · G-W2 는 store-bridge 데몬경로 작동 실측(main PASS · 통제 2개 완벽붕괴)이나 flip-coherence 0.8984 로 사전등록 .90 미달. 배선은 살아있고 정밀도가 0.16%p 부족.
+- **H_9672 = CAPABILITY-PROVEN 유지** — eval 경로 3-seed robust 는 불변. in-vivo 배선이 그 능력을 데몬 경로로 가져왔으나 flip-coherence 만 near-miss(GREEN 아님 · a_verified_must_wire).
+- **follow-on(자율 실행 가능 · $0~pool)**: flip-coherence 를 넘으려면 in-vivo 정밀도를 eval 수준으로 — 후보 ① percept 시드 정합(F2 의 `=>` 뒤 공백을 percept 에 보존해 eval 과 동일 시드) ② qpos vs H_9695 every-token 경로 비교 ③ 3-seed{7,11,13} 재측정(단일 seed 채점의 노이즈 배제 · 현재 seed 7 단일). 이들은 배선 위 측정 개선이지 새 배선 아님.
