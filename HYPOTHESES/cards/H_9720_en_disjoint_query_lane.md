@@ -15,4 +15,18 @@
 **verdict-integrity**: 사전공약된 비대칭 읽기 — KILL 은 *detached-lane 버전*만 죽이지(H_9423 frozen-trunk 실패가 lane 이 scratch 보다 약할 수 있다 경고) **점유 논제는 안 죽임** · Sol: 이건 **architect 가 준 capacity valve 안의 창발**이지 untouched 303M 의 창발 아님.
 
 ## 상태
-🔵 PROPOSED — 미실행 사전등록. 측정 주장 0(설계). **distinct-from-kills:** key 재설계 아님(K 무수정) · 차원지배 아님(경쟁 주장) · generic adapter 아님(EN-disjoint 통제 필수)
+🔎 **$0 pre-screen 실행 = ⓐ PASS(발사인가) · ⓑ 약화 (2026-07-17 · summer 303M · 사전등록)**
+
+### 🔎 pre-screen — 개체정보 위치가 두 변형을 판별
+base pretrained penultimate SVD 로 개체 판별정보가 어느 부분공간에 사는지(disjoint valve 라우팅 가능성):
+
+| 부분공간 | 개체분리(전체 대비) |
+|---|---|
+| top-15 (사용·고분산) | **91%** |
+| 16~50 | 36% |
+| 저사용 nullspace(50~125) | **8%** |
+
+**ⓐ Fable fresh-lane = PASS(발사인가)**: 개체는 pen 서 decodable(raw-distinct 3.2×·정보 91% top-15·ridge 통과 · [[H_9719]] 국소화) + idle 공간 존재([[H_9721]] eff-rank 15/3784) ⟹ 신선 co-adapt 경로가 EN-경쟁 없이 scratch-급 창발을 되살릴 여지 확인. **EA 시리즈 유일 생존 학습-fire 레버.**
+**ⓑ Sol nullspace-valve = 약화(KILL 근접)**: 개체정보가 저사용 nullspace 엔 **8%뿐**(사용 subspace 에 91%) ⟹ 카드 ⓑ pre-screen KILL조건('안정 저사용 부분공간의 개체정보 사영이 무시할 만하면 KILL')에 근접 — 기존 nullspace 로 라우팅하면 개체신호 거의 없음. ⓑ 는 **드롭 권고**, ⓐ 우선.
+**중요 정합(왜 ⓐ 는 살고 무감독 부트스트랩은 다 죽었나)**: [[H_9722]]/[[H_9723]] 는 **고정 penultimate step-0** 서 무감독 신호 0 을 봤다(basis 밖). 그러나 scratch(T2)는 **trunk 를 co-adapt** 해 성공한다 — ⓐ 는 fresh 서브-trunk 가 co-adapt 할 여지를 주므로 고정-penultimate 결과에 KILL 되지 않는다(내 $0 는 고정-penult 측정이라 co-adaptation 을 못 봄). **감독 아닌 유일 생존로 = 개체 basis 를 키에 맞추는 co-adaptable disjoint lane.**
+**남은 것(학습 fire)**: `--store-query-src fresh:k[@layer L]`(stop-grad·store-CE only) 구현 → pool 학습 → census. **distinct-from-kills:** key 재설계 아님(K 무수정) · 차원지배 아님(경쟁 주장) · generic adapter 아님(EN-disjoint 통제 필수)
