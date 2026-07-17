@@ -18189,6 +18189,13 @@
     "value": "계기↔주장 정렬을 물어라 — 4층 재발(2026-07-17 한 세션). ①판정층 H_9520: 사전등록 bar 를 기계적 적용해도 계기가 주장 proxy 인지는 별도 질문(ρ·form=고정5문항 coherence 는 teacher 사실저장 미조회 ⟹ '내용흡수' 주장 vs '일반reach' 측정). ②집필층 H_9677/9683: 계기·플래그를 실재확인 없이 명명(--interact-mi 는 H_9304 아닌 H_9328 계기·측정량도 역 / --entity-pool·예시커맨드 5개 부재). ③전제층 H_9683: 남의 카드 '🟢CRACK(잔여 seed-11)'을 기정사실로 깔았는데 seed-11 죽어 양성통제 소멸. ④계기경로층 H_9683: 내 카드가 evaluate --xbind 로 CLMS store 판독한다 적었으나 --xbind=G1 D-acc 경로·CLMS store=--store HELD.json --store-addr-audit(evaluate.py:4084·4215). 규칙: 판정/카드 쓰기 전 자문 4종 — '이 숫자 움직이면 주장 참인가?'·'내가 명명한 계기가 grep 으로 실재하나?'·'내 전제의 미결항목(~잔여)이 내 통제군인가?'·'위임모델의 착륙/등록 주장을 origin grep 으로 검증했나?'(headless Fable 이 'H_9734~9736 이미 등록' 환각 — 등록불가·Sol 은 안함=교차대조가 단일모델 환각 포착). 매번 위임이 잡았다(lab full·/bin/zsh 사전점검) ⟹ walls-delegate-to-fable 을 벽·판정·내가 방금 쓴 설계·계기명에 적용.",
     "threshold": "2",
     "source": "HYPOTHESES/cards/H_9683_natural_declaration_addr_transfer.md"
+   },
+   {
+    "id": "evaluate-py-22",
+    "state": "pos-conv",
+    "value": "🧩 **프롬프트-조건 dump 위 기하/분리도 census 는 공유 프롬프트-템플릿 성분이 지배한다 — raw 지표는 개체가 아니라 템플릿을 읽는다. 판정 전에 grand-mean 을 빼라(중심화).** H_9719 census(#3982→#3995 · 2026-07-17 · summer 303M): '개체 penultimate 이 random W_q 로 injective 하게 슬롯에 붙는가' 를 재려 했는데, 쿼리위치 penultimate 이 공유 프롬프트('is/not {e} =>')에 **지배**됐다 — base pretrained 는 템플릿이 hidden norm 의 **95%**, addr-학습 t3 는 57%. raw argmax-충돌은 개체가 아니라 **템플릿**을 재서 강한 가짜 KILL(base raw excess +0.41)을 냈다. grand-mean(공유 템플릿) 제거 후 개체-잔차로 재니 base +0.133(여전 KILL·확고)·t3 +0.058(경계선)로 **진짜 신호가 raw 의 1/3**. selftest 양성통제가 처음엔 못 잡았다(초기 COLLAPSED 통제='전부 동일'→중심화가 nullify → 'collinear 잔차붕괴'로 재설계해야 discriminate). 함의: raw census KILL 을 그대로 박았으면 template-domination 을 'geometry collapse'로 오독(#3982 가 그 직전).",
+    "threshold": "재발조건 = anima-py evaluate 에 dump(penultimate/hidden)-기반 분리도/충돌/클러스터 census 배선 + 그 dump 가 공유 프롬프트/컨텍스트 조건서 나옴(모든 prompt 이 같은 템플릿·캐리어 공유). 해결 = ① dump 공유성분 비중 먼저 재라: ||H.mean(0)||/rms_norm(H) — 크면(>~0.3) raw 는 공유성분 지표 ② 판정은 grand-mean-centered H(개체-잔차)로·raw 병기 ③ 양성통제(selftest)는 계기가 실제 재는 실패모드를 모델링('전부 동일'붕괴는 중심화가 nullify → 현실적 붕괴=구별템플릿+저차원 collinear 잔차로 통제 지어야 discriminate 인증·positive-control-before-reading-a-negative) ④ control-must-match-mediating-covariate 의 dump-census 판(공유템플릿=매개공변량).",
+    "source": "cli/evaluate.py"
    }
   ]
  }
