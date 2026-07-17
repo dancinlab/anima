@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔨 구현 ④a — --held-out-frac(coverage 레버 · frac=0 레거시 byte-identical ✅) · 양성통제 진행중 · NEXT=K=1 floor pre-gate 실측
+status: ⛔ 계기 미완 — 양성통제가 --faction-lesion 을 죽였다(S_real 1.3879 < null95 1.7270 · **max 순서통계량 편향** · 심은 특화도 못 봄). D1 은 판정 아님(계기 자격 미달) · NEXT=S 재설계 후 양성통제 재통과
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -311,6 +311,97 @@ frac=0.75 → 학습쌍  7/28 · 뺀 쌍 21 (75%)
 
 frac 을 올리며 **K=1 기저가 D-acc ≤0.6 으로 내려오는 coverage 를 먼저 확정**한다. 그 지점을 고정한
 뒤에만 {K=8, K=1} × 3 seed 를 발사한다 — **coverage 를 결과 보고 고르는 것은 tune-to-green**.
+
+
+## ⚠️ 사전등록 정정 — XBIND 천장의 원인이 내 추정과 달랐다 (2026-07-17 · 자가감사)
+
+④a 를 착륙시킨 뒤 H_9267 카드를 정독하니 **내가 잘못 짚었다**.
+
+| | 내 가정 (④a 근거) | 실제 H_9267 |
+|---|---|---|
+| corpus | `derivtrace --held-out (a,b)` | **`xbind_train.txt` 6.66MB** (corpus.py **밖**에서 생성) |
+| held-out | 쌍 **1개**(≈4%) ⟹ 천장 | **15,960쌍 = 20%** (양 순서 완전부재) |
+| 과제 | 개념쌍 조합 | **xor(pol_a, pol_b)** 분기(fuse/part + portmanteau) |
+| 학습 | `train --corpus c.txt` | `train --arch clm --canon --arm ctrl --objective ce_marginal` |
+| 채점 | — | `evaluate --xbind xbind_eval_manifest.json --arm {main\|ctrl}` |
+
+⟹ **XBIND 는 이미 coverage-굶긴 corpus 다**(20% held-out · 암기·main-effect·표면상관 3 지름길을 구성 차단).
+K=1(파벌 없는 303M)이 held-out 1.000 을 친 것은 **천장이 아니라 XOR 규칙을 실제로 배웠기 때문**이다
+(control=shuffle 0.515 = 우연 · Δctrl 0.485 가 그것을 증명).
+
+### 그럼 Fable 의 Q3 지적은 틀렸나 — **아니다. 결론은 같고 이유가 다르다**
+
+Fable: *"K=1 도 D-acc 1.000 이면 레버가 잴 게 없다"* — **이 진단은 정확하다**. 다만 원인이 "coverage 가
+넉넉해서"가 아니라 **"이 과제를 파벌 없이도 완전히 풀 수 있어서"** 다. 천장은 corpus 의 성질이 아니라
+**과제-모델 적합**의 성질이었다.
+
+⟹ ④a 의 `--held-out-frac` 은 **XBIND 에 불필요**하다(이미 20% held-out). 다만 `derivtrace` 계열엔
+여전히 유효한 레버이므로 **되돌리지 않는다**(frac=0 = 레거시 byte-identical 이라 무해).
+
+### 📌 재사전등록 — floor pre-gate 의 올바른 형태
+
+*"coverage 를 굶겨 K=1 을 ≤0.6 으로 내린다"* 가 아니라:
+
+**K=1 이 이미 1.000 인 과제에서는 파벌 레버를 시험할 수 없다.** 필요한 것은 **K=1 이 실패하는 과제**다.
+후보(사전등록 전 · 다음 세션에서 하나를 고정):
+- (a) XBIND 의 **난이도 상향** — held-out 비율↑ 또는 xor→3항 이상 합성.
+- (b) **storebind**(H_9423/H_9672 lane) — K=1 이 Stage1.5 서 P1 0.586(chance)로 **실패한 실측이 있다**.
+  파벌이 그 벽을 여는지가 곧 H_9643 Q3 이고, floor 가 **이미 측정돼 있다**.
+- (c) 자연 held-out(H_9304 DATA 벽) — 그러나 +0.0023 nats = TOST 0 이라 신호 자체가 없다.
+
+⟹ **(b) 가 유력**: floor 를 새로 재지 않아도 되고(H_9672 T3 이 P1 0.586 → addr-loss 로 0.9688 로 뚫은
+그 지점), 파벌 다리가 addr-loss 없이 같은 벽을 여는지가 정확히 "debate 가 G1 을 여는가" 다.
+
+### 정직
+
+이 정정은 **결과를 보고 목표를 바꾸는 게 아니다** — 아직 아무 arm 도 안 돌렸다. 계기를 만들다 **전제가
+틀렸음을 발견**했고, 발사 **전에** 고친다. (결과를 보고 골랐다면 tune-to-green 이다.)
+
+
+## ⛔ 양성통제가 계기를 죽였다 — S 공식의 max-편향 (2026-07-17 · 결함 ⑪)
+
+심은 4-도메인 toy(파벌 4개 · 도메인별 disjoint 바이트) 로 `--faction-lesion` 을 시험했다.
+
+```
+파벌별 최대손상 도메인 (real):
+  faction 0 → ccc  ΔCE +0.0199        ← 파벌마다 **다른** 도메인 = 특화가 눈에 보인다
+  faction 1 → aaa  ΔCE +0.0131
+  faction 2 → aaa  ΔCE +0.0531
+  faction 3 → ddd  ΔCE +0.0356
+
+S_real = 1.3879
+post-hoc null (60회): mean 1.4713 · sd 0.1636 · **null95 1.7270**
+⟹ ⛔ S_real < null **평균**. 실제 파벌이 무작위 재배정보다 **못하다**.
+```
+
+### 원인 — `max` 는 순서통계량이다
+
+```
+S = mean_f (max_c D[f,c] − mean_{c'≠c*} D[f,c']) / sd_pool
+              ↑ 무작위 행렬에서도 max 는 항상 나머지 평균보다 크다
+```
+
+무작위 배정도 4 도메인 중 **최댓값을 고르므로** 항상 "선택적"으로 보인다. null 평균이 1.47 로 높은 게
+그 증거다. 이 함정은 **내 메모리에 이미 있었다** — [[probe-defect-census-max-control-bias]]:
+*"Δ=exp−**max**(controls) 순서통계량 편향이 KILL 을 기계로 만든다"*. 같은 병을 다른 자리에서 반복했다.
+
+### ⚠️ 양성통제가 없었다면
+
+이 계기로 진짜 arm 을 돌려 **"파벌 특화 없음(D1 사망)"** 이라는 결론을 냈을 것이다.
+그건 **계기 사실이지 기질 사실이 아니다**. 심은 특화조차 못 보는 자로 "특화가 없다"고 말할 수 없다
+([[positive-control-before-reading-a-negative]]).
+
+### 📌 S 재설계 (사전등록 · 발사 전)
+
+max-편향을 안 타는 DV 로 바꾼다. 후보(다음 세션에서 하나 고정 · **양성통제 재통과가 조건**):
+- (a) **행렬 자체의 구조** — D[f,c] 의 대각 우세를 Hungarian 매칭으로 재고, null 은 같은 매칭을 무작위
+  배정에 적용(순서통계량이 양쪽에 동일하게 들어가 상쇄).
+- (b) **상호정보** I(f; argmax_c) — 파벌↔도메인 대응이 무작위면 0.
+- (c) D 를 행/열 중심화한 뒤의 **잔차 대각합**(main effect 제거 = 파벌·도메인 각각의 세기를 뺀 상호작용만).
+- ⚠️ 어느 쪽이든 **우연은 post-hoc null 에서 실측**([[chance-level-must-be-derived-per-metric]]) ·
+  **양성통제가 먼저 통과**해야 음성을 읽는다.
+
+⟹ H_9643 Q2 는 **계기 미완**으로 되돌린다. 이 세션의 D1 은 **판정이 아니다**(계기 자격 미달).
 
 ## 통제군 (≥2 · 사전등록)
 
