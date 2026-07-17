@@ -37,3 +37,13 @@ NOT-POWERED(timing bins=1·content addr=1). 계기 방어 전부 실증.
 변동이 있어야 T/C 알파벳 발생(toy는 무샘플링 상수라 미측정).
 
 ⚠️ **DIRECTIONAL·계기 검증이지 verdict 아님**(a_lab_full_diverge · a_scale_honest_scope)·cement=engine-native 303M anima-py만.
+
+
+## 🟡 $0 timing 스크린 결과 (2026-07-17 · aiden 3-seed·120tick·record-silent-cand)
+303M wm-dual `--record-silent-cand 1` trace서 MI(silent content ; time-to-next-emit | stage) vs deterministic content-shuffle pedestal:
+| 시그니처 | seed7 | seed4302 | seed4303 | mean Δ | 판정 |
+|---|---|---|---|---|---|
+| coarse 4-bin | 0.001 | 0.031 | 0.019 | 0.017 | 1/3 |
+| feat8-argmax 8-class | **0.000** | **0.097** | 0.022 | 0.040 | 2/3·seed7 flat |
+
+⚠️ **seed-robust 아님**(seed7 정확히 0.0000) + **content 시그니처 축퇴**(s7 class {3:94,1:15,4:11}=78% 한 byte-class=lowercase ASCII). ⟹ **WEAK-DIRECTIONAL·underpowered** — timing이 content 나른다는 신호 2/3 seed 시사적이나 강건 아님. **근본**: byte-LM 보류후보 저다양성 = 'WHEN이 WHAT 나름'의 WHAT이 거의 상수 → timing-content MI 상한. KILL도 PASS도 아님(정직 미결). NEXT=full feat8 연속·300+tick·5-seed OR content-diversity 선행진단(H_9576 byte 입도 벽과 **동근** 시사).
