@@ -171,3 +171,43 @@ summer)이 (b)면 동일 영향 — 교차통지 필요.
 ### H_9734 재발사 경로 (원인별)
 - (a)torch: 알려진-good torch pin → 재발사(양성통제 arm-S 가 held≥.95 재현해야 arm-N 개봉).
 - (b)비결정: 단일-run 판독 불가 ⟹ N-run 분포로 재설계(또는 훈련 결정성 강제 · 속도 tradeoff).
+
+---
+
+## ✅ ROOT-CAUSE 확정 — (a) 안정적 환경 회귀 · (b) 비결정성 기각 (2026-07-18)
+
+seed-7 재현성 CPT(3rd run · 같은 seed·코드·env)로 (a)/(b) 판정:
+```
+seed-7 @ 내 env (torch 2.13.0+cu130)  run#2 held 0.0078 · run#3 held 0.0078  = 완전 동일
+seed-7 @ t3 env (older · 0.15.35)      held 0.984
+```
+RNG seeded(dropout·init·order 동일 · cli/train.py L1567) → 두 run 의 유일 변수 = CUDA bf16 커널
+비결정성. 그게 결과를 **안 바꿈**(0.0078=0.0078) ⟹ **(b) run-to-run 비결정성 기각**.
+⟹ **(a) 확정: 안정적 환경 회귀** — 내 env 는 seed-7 을 재현성 있게 실패(0.0078), t3 env 는 성공(0.984).
+
+### 최종 원인 사슬 (전부 배제 후 남은 것)
+```
+NOT seed   (seed-7 재현·{3,17}과 동일)
+NOT code   (reference-match byte-identical · #4040)
+NOT eval   (t3.clm 0.15.76 eval → 0.9844 · #4040)
+NOT 비결정성 (2-run 0.0078 완전 동일)
+─────────────────────────────────
+= 안정적 환경 회귀: torch 2.13.0+cu130(CUDA 13) · Blackwell sm_120 · bf16 훈련이
+  주소를 암기(seen 1.0)하나 held-out 일반화(0.984→0.0078)를 잃는다. t3 의 옛 torch env 는 일반화했다.
+```
+
+### ⚠️ 병렬 세션 함의 (교차통지 · a_parallel_session_compare)
+H_9672/H_9691 store-addr lane 이 **같은 summer 환경(torch 2.13.0+cu130)**에서 돈다면 동일 회귀에
+노출됨. H_9672 T3 의 0.984 는 **옛 torch env** 산물 — 현 env 재현 시 0.0078 예상. "seed-7 lucky/
+seed-11 collapsed"(H_9672)와 RV-sweep(H_9691)의 seed-축 해석은 **환경 교락**을 먼저 배제해야 유효.
+(단 run-노이즈는 아님 = 각 env 내 단일-run 은 의미 있음.)
+
+### 재발사 경로 (환경 회귀 fix — owner/병렬세션 조율 필요)
+🔴 **긴장**: Blackwell sm_120 은 새 torch 필요(#3969 preflight) BUT 새 torch 가 주소 일반화를 깬다.
+- torch 버전 bisect(GPU CPT/버전 · 비용) → last-good 고정 vs sm_120 지원 재조정.
+- 또는 non-Blackwell GPU(옛 torch 가능)서 재발사.
+- 이건 pyproject/환경 변경이라 병렬세션 store-addr lane 과 lockstep 필요 = **coordination point**.
+
+**H_9734 자체 판정 = INSTRUMENT-DEAD 유지**(양성통제가 이 환경서 재현 불가 · arm-N 판독 불가).
+설계 성공: 사전등록 계기 게이트가 "자연어휘 실패" 오독을 막고, 파고든 결과 진범이 자연어휘가 아니라
+**store-addr lane 전체의 환경 회귀**로 드러남.
