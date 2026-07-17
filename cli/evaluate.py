@@ -913,6 +913,11 @@ def evaluate_usage():
     print("      (read-only engine-native joint interaction-lift NLL surface · card H_9255)")
     print("  anima evaluate <ckpt> --fan-bind [--fan-smp 16] [--gen 40]")
     print("  anima evaluate <ckpt> --fan-bind --mouth-binder [--mouth-binder-order-scramble]   # H_9698 R6")
+    print("      H_9745: --fan-bind now ALSO reports a PAIRED verdict — exact McNemar + Tango TOST on")
+    print("      bind_delta (composition-isolating), the statistic's OWN pedestal. The legacy line")
+    print("      (composed J > marginal null) tests EMISSION and is kept for byte-compat; read the")
+    print("      ★ PAIRED verdict for a lever's bind claim. m<5 (fan-smp too low) ⇒ ⛔ UNDECIDABLE,")
+    print("      not a kill — δ=0.05 equivalence needs N≥288 (fan-smp≈48).")
     print("      H_9693 (R1) G6/ρ·fan BIND-Δ INSTRUMENT — the G6 wall's content is not fals=0, it is")
     print("      that the BIND signal sits OUTSIDE the measurement surface: the frozen detector is")
     print("      FORM-only, so targeted warm-FT can pass FALS with topic-bind destroyed (convergence")
@@ -4100,6 +4105,118 @@ def fan_bind_calibration(known):
     return {"checks": checks, "pass": all(ok for _, ok in checks)}
 
 
+def _mcnemar_p_1sided(b, c):
+    """One-sided exact McNemar = paired sign test on discordant counts (b comp-hit/shuf-miss,
+    c comp-miss/shuf-hit). H0: composed and shuffled pairings are exchangeable ⇒ each discordant
+    pair is +1 or -1 with p=0.5 ⇒ b ~ Binom(m, 0.5), m=b+c. Returns P(Binom(m,0.5) >= b) for the
+    Δ>0 (composition-helps) direction. Closed-form, deterministic (no RNG · p7/frozen). m<5 ⇒ even
+    an all-one-way split cannot clear 0.05 (0.5^m > 0.05), so the test is powerless there BY DESIGN
+    — the caller reports that as UNDECIDABLE rather than a KILL (power-before-negative-verdict)."""
+    import math
+    m = b + c
+    if m == 0:
+        return 1.0
+    return sum(math.comb(m, k) for k in range(b, m + 1)) * (0.5 ** m)
+
+
+def _tango_ci90(b, c, N):
+    """Tango(1998) score-based two-sided 90% CI for the paired proportion difference
+    Δ=(b-c)/N (α=0.05 two one-sided ⇒ 100(1-2α)=90%). Score CI is the paired-binomial standard;
+    stable at the boundary and for small discordant m where a Wald interval is unfit. TOST: the CI
+    ⊂ (-δ,+δ) ⇒ equivalence (|Δ|<δ established), which is how "0.444 is an artifact" is EARNED
+    (negative-claims-need-tost-not-ns). Solves the Tango score equation by bisection on δ̂."""
+    if N == 0:
+        return (-1.0, 1.0)
+    import math
+    z = 1.6448536269514722            # z_{0.95}
+    est = (b - c) / N
+    def score_bounds(target_sign):
+        # Tango score: find δ where (Δ̂-δ)^2 = z^2 * Var_δ, Var_δ = [ (2N·δ + ... ) ] via the
+        # constrained MLE. Use the standard Tango closed pieces through a numeric root on δ.
+        lo, hi = -1.0, 1.0
+        for _ in range(200):
+            d = (lo + hi) / 2.0
+            # constrained MLE of q=P(shuf-hit,comp-miss) given Δ=d (Tango 1998 eq.)
+            A = 2.0 * N
+            Bq = -(b + c) + (2.0 * N - (b - c)) * d
+            Cq = -c * d * (1.0 - d)
+            disc = Bq * Bq - 4.0 * A * Cq
+            disc = disc if disc > 0 else 0.0
+            q = (-Bq + math.sqrt(disc)) / (2.0 * A) if A != 0 else 0.0
+            q = min(max(q, 0.0), 1.0)
+            var = max((2.0 * q + d - d * d) / N, 1e-12)
+            stat = (est - d) / math.sqrt(var)
+            # for lower bound target_sign=+1 (stat=+z), upper target_sign=-1 (stat=-z)
+            if (stat - target_sign * z) > 0:
+                lo = d
+            else:
+                hi = d
+        return (lo + hi) / 2.0
+    lo = score_bounds(+1.0)
+    hi = score_bounds(-1.0)
+    if lo > hi:
+        lo, hi = hi, lo
+    return (lo, hi)
+
+
+def _fan_bind_paired(comp_rows, shuf_rows, comp_pairs, shuf_pairs, ablated_J, known,
+                     delta_equiv=0.05, emit_floor=0.005):
+    """H_9745 — the composition-isolating paired verdict on bind_delta, replacing the marginal
+    composed-J null (which measures EMISSION: a pair-deranged arm can carry the higher composed J).
+
+    Matches composed(i,j)⇄shuffled(i,j) by frame+decode-seed (same 7+17j+i, same cA_i, differ only
+    in cB) into a 2x2 discordant table (b=comp-hit/shuf-miss, c=comp-miss/shuf-hit). bind_delta=(b-c)/N.
+    Verdict is exact one-sided McNemar on (b,c) — never emission. TOST (Tango 90% CI ⊂ ±δ) earns the
+    'artifact' call. Emission pre-gate + m<5 ⇒ UNDECIDABLE (instrument-claim-alignment + power-first).
+
+    Controls surfaced (not folded into the verdict): ablated_J (zero-truth pedestal — must be ~0 or
+    the detector fires on chance co-occurrence) · cA_echo per arm (must match across arms; a mismatch
+    means the cA covariate is not controlled and the verdict is confounded)."""
+    comp = {(i, j): o for (i, j, o) in comp_rows}
+    shuf = {(i, j): o for (i, j, o) in shuf_rows}
+    keys = sorted(set(comp) & set(shuf))     # non-degenerate frame∩ · matched (i,j)
+    b = c = a11 = d = 0
+    ca_comp_hit = ca_shuf_hit = 0
+    for (i, j) in keys:
+        Jc = _fan_bind_J(comp[(i, j)], comp_pairs[i][0], comp_pairs[i][1], known)
+        Js = _fan_bind_J(shuf[(i, j)], shuf_pairs[i][0], shuf_pairs[i][1], known)
+        if Jc is None or Js is None:
+            continue
+        if Jc and Js: a11 += 1
+        elif Jc and not Js: b += 1
+        elif not Jc and Js: c += 1
+        else: d += 1
+        # cA-only echo covariate (cA_i shared by both arms → echo rate must match; else confounded).
+        # membership of any cA content-word in the emission (the first clause of _fan_bind_J alone).
+        ca_words = _fan_bind_content(comp_pairs[i][0], known)
+        if ca_words:
+            if set(_rho_fan_words(comp[(i, j)])) & ca_words: ca_comp_hit += 1
+            if set(_rho_fan_words(shuf[(i, j)])) & ca_words: ca_shuf_hit += 1
+    N = a11 + b + c + d
+    m = b + c
+    bd = ((b - c) / N) if N else 0.0
+    emit_rate = ((a11 + b) + (a11 + c)) / (2.0 * N) if N else 0.0     # (comp_hit+shuf_hit)/2N
+    p1 = _mcnemar_p_1sided(b, c)
+    ci = _tango_ci90(b, c, N)
+    tost = bool(ci[0] > -delta_equiv and ci[1] < delta_equiv)
+    powered = (m >= 5)
+    under_emit = (emit_rate < emit_floor)
+    if under_emit or not powered:
+        verdict = "UNDECIDABLE"
+    elif bd > 0.0 and p1 <= 0.05:
+        verdict = "BIND-SENSITIVE"
+    elif tost:
+        verdict = "BIND-ABSENT"     # equivalence to 0 within δ = the '0.444 artifact' call
+    else:
+        verdict = "UNDECIDABLE"
+    return {"N": N, "b": b, "c": c, "m": m, "a11": a11, "d": d,
+            "bind_delta_paired": bd, "mcnemar_p_1sided": p1,
+            "tango_ci90": [ci[0], ci[1]], "tost_equiv": tost, "delta_equiv": delta_equiv,
+            "emit_rate": emit_rate, "emit_floor": emit_floor, "powered": powered,
+            "ablated_J": ablated_J, "cA_echo_comp": ca_comp_hit, "cA_echo_shuf": ca_shuf_hit,
+            "verdict": verdict}
+
+
 def eval_fan_bind(mouth, gen, known, n_smp=16):
     """bind Δ = mean J(composed) − mean J(shuffled) over the frozen 3-arm frames.
 
@@ -4129,18 +4246,18 @@ def eval_fan_bind(mouth, gen, known, n_smp=16):
                 J = _fan_bind_J(o, cA, cB, known)
                 if J is None:
                     continue
-                rows.append((i, o))
+                rows.append((i, j, o))               # H_9745: track j so composed(i,j)⇄shuffled(i,j) pair
                 hits += J
                 n += 1
         out[name] = {"J_mean": (hits / n) if n else 0.0, "n": n}
         emits[name] = rows
     # ── mismatched-pairing null (composed emissions scored against OTHER frames' pairs) ──
     null_vals = []
-    for i, o in emits["composed"]:
-        for j in range(len(comp_pairs)):
-            if j == i:
+    for i, _j, o in emits["composed"]:
+        for k in range(len(comp_pairs)):
+            if k == i:
                 continue
-            J = _fan_bind_J(o, comp_pairs[j][0], comp_pairs[j][1], known)
+            J = _fan_bind_J(o, comp_pairs[k][0], comp_pairs[k][1], known)
             if J is not None:
                 null_vals.append(J)
     null_mean = (sum(null_vals) / len(null_vals)) if null_vals else 0.0
@@ -4157,10 +4274,18 @@ def eval_fan_bind(mouth, gen, known, n_smp=16):
         boots.sort()
         p95 = boots[int(0.95 * (len(boots) - 1))]
     delta = out["composed"]["J_mean"] - out["shuffled"]["J_mean"]
+    # ── H_9745: paired McNemar + TOST on bind_delta (the composition-isolating statistic) ──
+    # The marginal null above (composed J vs mismatched pairs) tests EMISSION, not composition —
+    # a pair-deranged (shuffled) arm can carry the HIGHER composed J yet zero bind. bind_delta is
+    # a PAIRED difference (composed(i,j) and shuffled(i,j) share seed 7+17j+i · frame i · cA_i,
+    # differ only in cB), so it earns its OWN pedestal here: exact one-sided McNemar on the
+    # discordant counts (chance-level-must-be-derived-per-metric), never the marginal null.
+    paired = _fan_bind_paired(emits["composed"], emits["shuffled"], comp_pairs, shuf_pairs,
+                              out["ablated"]["J_mean"], known)
     return {"bind_delta": delta, "composed": out["composed"], "shuffled": out["shuffled"],
             "ablated": out["ablated"], "null_mean": null_mean, "null_p95": p95,
             "pass": bool(delta > 0.0 and out["composed"]["J_mean"] > p95),
-            "n_smp": n_smp, "gen": gen}
+            "paired": paired, "n_smp": n_smp, "gen": gen}
 
 
 def fan_bind_run(argv):
@@ -4214,6 +4339,28 @@ def fan_bind_run(argv):
           % ("🟢 BIND-SENSITIVE" if r["pass"] else "🧱 NO-BIND (Δ≤0 or within null)"))
     print("  → INSTRUMENT ONLY — not a ρ·fan(fals) verdict. Δ<0 = anti-bind (pre-registered "
           "cell). A lever's claim = ITS bind Δ vs ITS OWN SHUF arm; fals alone is FORM-forgeable.")
+    # ── H_9745: the PAIRED verdict — bind_delta's own pedestal (exact McNemar + TOST), the
+    # composition-isolating statistic. The line above (composed J > marginal null) tests EMISSION;
+    # THIS tests composition. Read THIS for a lever's bind claim. ──
+    pd = r.get("paired") or {}
+    print("  ── H_9745 PAIRED (bind_delta's own null · composition ≠ emission) ──")
+    print("     discordant b=%d(comp-hit/shuf-miss) c=%d(comp-miss/shuf-hit) m=%d · N=%d · "
+          "bind_delta=%+.4f" % (pd.get("b",0), pd.get("c",0), pd.get("m",0), pd.get("N",0),
+                                pd.get("bind_delta_paired",0.0)))
+    print("     exact McNemar p(1-sided)=%.4f · Tango90 CI=[%+.4f,%+.4f] · TOST(⊂±%.2f)=%s · "
+          "powered(m≥5)=%s" % (pd.get("mcnemar_p_1sided",1.0), pd.get("tango_ci90",[0,0])[0],
+          pd.get("tango_ci90",[0,0])[1], pd.get("delta_equiv",0.05), pd.get("tost_equiv",False),
+          pd.get("powered",False)))
+    print("     controls: ablated_J=%.4f (zero-truth pedestal · ~0 정상) · cA-echo comp=%d shuf=%d "
+          "(arm 간 매칭 필수·불일치=교란) · emit_rate=%.4f" % (pd.get("ablated_J",0.0),
+          pd.get("cA_echo_comp",0), pd.get("cA_echo_shuf",0), pd.get("emit_rate",0.0)))
+    _pv = pd.get("verdict","UNDECIDABLE")
+    _icon = {"BIND-SENSITIVE":"🟢","BIND-ABSENT":"🧱","UNDECIDABLE":"⛔"}.get(_pv,"⛔")
+    print("     ★ PAIRED verdict: %s %s  (🟢 bd>0∧McNemar p≤.05 · 🧱 TOST 등가=artifact · "
+          "⛔ m<5 or emit<floor = 검정력부족·NOT a kill)" % (_icon, _pv))
+    if _pv == "UNDECIDABLE" and pd.get("m",0) < 5:
+        print("     ⛔ m=%d < 5 ⟹ exact McNemar 로 어떤 데이터도 유의 불가 = fan-smp 상향 필요"
+              "(δ=0.05 사전등록엔 N≥288 = fan-smp≈48 · power-before-negative-verdict)." % pd.get("m",0))
     return 0
 
 
