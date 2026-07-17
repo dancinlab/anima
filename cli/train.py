@@ -1278,6 +1278,31 @@ class StoreBindCell:
         self.train_n = max(n_slot, (n_blocks - vb) * n_slot)          # [0,train_n) train · rest val
 
 
+def _to_device_or_die(model, device):
+    """model.to(device) but turn a CUDA OOM at model-move into a CLEAR, actionable message
+    instead of a raw torch AcceleratorError traceback (which reads like a code/arch bug — it
+    cost a session's debugging: the crash was another job holding the GPU, NOT the model).
+    We do NOT silently fall back to CPU (train-py-6: a silent device=cpu fallback burned a day
+    training at 0% GPU) — 303M CPU training is impractical, so we tell the operator what to do."""
+    try:
+        return model.to(device)
+    except Exception as e:                                    # re-raised below unless it is a CUDA OOM
+        msg = str(e).lower()
+        if str(device).startswith("cuda") and ("out of memory" in msg or "cuda error" in msg
+                                               or "cudaerrormemoryallocation" in msg):
+            try:
+                import torch as _t
+                free_b, tot_b = _t.cuda.mem_get_info(_t.device(device))
+                meminfo = " (GPU free %.2f/%.2f GiB)" % (free_b / 2**30, tot_b / 2**30)
+            except Exception:
+                meminfo = ""
+            sys.exit("[train] CUDA out-of-memory moving the model to %s%s — the GPU is HELD by "
+                     "another job (this is NOT a torch-build/arch problem; check `nvidia-smi`). "
+                     "Fix: wait for / pick a FREE pool host, or force CPU with "
+                     "CUDA_VISIBLE_DEVICES='' (slow — toy scale only)." % (device, meminfo))
+        raise
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="anima canonical python trainer (`anima-py train`) — CLMConvMoE "
@@ -1581,7 +1606,7 @@ def main():
         # non-canon toy stays small. n_head must divide d (validated by the config).
         bg_block = seq_len
         bg_cfg = ByteGPTConfig(vocab=V, d=d, n_layer=L, n_head=bg_n_head, block=bg_block)
-        model = ByteGPT(bg_cfg).to(device)
+        model = _to_device_or_die(ByteGPT(bg_cfg), device)
         cfg = None
         jamo_head = None
         mito = None                                 # no MoE experts to grow
@@ -1606,7 +1631,7 @@ def main():
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
                         mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0,
                         n_factions=a.n_factions, faction_bridge_lam0=a.faction_bridge_lam0)
-        model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
+        model = _to_device_or_die(CLMConvMoE(cfg), device)   # production additive readout (all arms)
         if tlora_on:
             install_tlora_experts(model, a.tlora_rank, base=not a.tlora_no_base)
             model.to(device)
