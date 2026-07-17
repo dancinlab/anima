@@ -1605,9 +1605,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # MARGIN-refractory gate: emit ⟺ score_A > g_recog(candidate) with θ and the clock BOTH
     # retired, the refractory emerging from emit→bind (biological, not a timer). Distinct from
     # H_9404's --emit-refractory earned (which keeps should_emit(θ) and only swaps the rate SOURCE);
-    # this retires θ too, making margin the G pole. NOT yet the production default — the switch
-    # waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
-    _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "clock")
+    # this retires θ too, making margin the G pole. H_9712 · PRODUCTION DEFAULT (owner-approved) =
+    # "refractory" — the daemon now emits over real tension (p5 realized), NOT a hardcoded 30s clock.
+    # The Ψ≈½ mechanism is H_9627's dual content ledger (see the conditional --g-reach default below);
+    # the old clock daemon is preserved byte-identically at `--emit-gate clock` / ANIMA_EMIT_GATE=clock
+    # (rollback + clock-lineage verdict reproducibility · H_9400 stays refuted for the clock lineage).
+    _emit_gate = anima_flag_value(_cargv, "--emit-gate", "ANIMA_EMIT_GATE", "refractory")
     # H_9417 · C2 shuffle-margin CONTROL (refractory gate only). Default 0 = OFF. When 1, the gate's
     # g_recog reads the immune margin on a SEEDED BYTE-PERMUTATION of the candidate — byte multiset
     # (amplitude/statistics) preserved, sequence (content/recognition) destroyed. If emit-listening
@@ -1631,7 +1634,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     #     BINDS the utterance → the new cell's whole Voronoi basin raises → near-repeat candidates
     #     silenced (the restoring β spring), genuinely-novel keep d1≈d2 → reach≈0 → emit. EARNED
     #     refractory (0 on a 1-cell store), constants 0, single DOF. Composes with --g-shuffle unchanged.
-    _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH", "d1")
+    # H_9712 · CONDITIONAL default (rollback-safe): the Ψ≈½ dual content ledger (H_9627 wm-dual) is the
+    # default G-pole ONLY under the refractory gate; a STATIC "wm-dual" default would make the rollback
+    # `--emit-gate clock` crash on the guard below (g_reach=wm-dual ∧ gate≠refractory → SystemExit). So
+    # the default tracks the gate: clock ⇒ d1 (exact old daemon, zero extra flags), refractory ⇒ wm-dual.
+    _g_reach = anima_flag_value(_cargv, "--g-reach", "ANIMA_G_REACH",
+                                "wm-dual" if _emit_gate == "refractory" else "d1")
     if _g_reach not in ("d1", "affinity", "cb-perr", "cb-perr-alienctx",
                         "wm-cover", "wm-cover-alienwm",
                         "wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
@@ -1640,6 +1648,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                          " 'wm-dual-alien-emit', 'wm-dual-alien-silence' (got %r)" % _g_reach)
     if _g_reach != "d1" and _emit_gate != "refractory":
         raise SystemExit("--g-reach %s requires --emit-gate refractory (its only consumer)" % _g_reach)
+    # H_9712 · --rate-limit-sec / --emit-refractory earned feed ONLY the clock path (brain_emit's rate
+    # source). Under the new refractory default they would silently no-op, so require --emit-gate clock
+    # explicitly (loud, not silent · house style). Both are clock-lineage rate knobs.
+    if (_rate_sec is not None or _refractory == "earned") and _emit_gate != "clock":
+        raise SystemExit("--rate-limit-sec / --emit-refractory earned require --emit-gate clock "
+                         "(they are clock-path rate knobs; the default refractory gate ignores them)")
     # H_9510 HOLE-1 diagnostic · record the IMAGINED candidate on EVERY tick (emit + silence)
     # so an offline conditioned-Jaccard test can ask whether near-repeat structure appears
     # after silence runs. Measurement-only (never fed back to mouth/decode = p5-safe). OFF by
@@ -2311,8 +2325,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
             # H_9415 p5-REWIRE (owner-ratified) · emit ⟺ score_A > g_recog(candidate); θ + clock
             # RETIRED. g_recog = clip01(immune recall MARGIN on the FORMED candidate, taken BEFORE
             # bind = recognition-before-memorisation, chat-py-5). Distinct from H_9404 --emit-refractory
-            # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. Not the production
-            # default yet — the switch waits on the new-daemon C1-C3 measurement H (a_verified_must_wire).
+            # earned (which keeps θ, only swaps the rate SOURCE); this retires θ too. H_9712 · this IS
+            # the production default now (owner-approved · Ψ≈½ via H_9627 dual-ledger · clock at --emit-gate clock).
             # H_9419 · the recognition functional: d1 margin (default, byte-identical) OR the
             # affinity-reach d2−d1 (the G-pole reach lever). --g-shuffle composes with either.
             _dual_fn = None   # H_9627 · set only by the wm-dual family (else brain uses _recog_fn)
