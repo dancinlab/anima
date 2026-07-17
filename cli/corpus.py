@@ -174,6 +174,8 @@ def _parse_args(argv):
             opts["study_frac"] = float(argv[i + 1]); i += 2
         elif a == "--scramble-seed":
             opts["scramble_seed"] = int(argv[i + 1]); i += 2
+        elif a == "--arm":
+            opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -1713,6 +1715,105 @@ def _sb_emit_block(rng, entities, store_slots, balanced=False):
                      "store": {"entities": list(names), "pols": list(pols)},
                      "target_slot": slot, "op": op})
     return lines, rows
+
+
+# ── H_9694 (R2) g6bind — targeted vs shuf co-train corpus (kill#6 bind-Δ debris recovery) ──
+# convergence g6-ideation-hexa-1 killed "TARGETED forges FALS" but NOT "TARGETED moves BIND":
+# it OBSERVED bind Δ 0.444 (targeted) vs 0.000 (shuf) with a non-frozen hexa-era probe, so the
+# observation never earned verdict status. This builder rebuilds that 2-arm lever so the signal
+# can be re-earned through the frozen --fan-bind surface (H_9693).
+#
+# THE CONTROL IS THE POINT (corpus-py-1 · control-must-match-mediating-covariate): both arms
+# contain the IDENTICAL MULTISET of frames and claims — byte-for-byte the same lines, the same
+# comparator/measurable/content distribution, the same length. ONLY the frame↔claim PAIRING
+# differs: targeted binds each frame to the claim about ITS OWN (cA,cB); shuf DERANGES that
+# assignment so every claim sits under a frame it does not bind. A lever that only moves FORM
+# therefore cannot separate the arms — which is exactly what makes bind Δ readable.
+# Claim vocabulary is drawn ONLY from the frozen rho_fan comparator/measurable sets: injecting
+# new detector vocabulary would be tuning the detector (kill #2/#6), not testing the substrate.
+
+def _g6bind_claim(cA, cB, rng, comp_l, meas_l):
+    """One falsifiable-SHAPED claim that carries content from BOTH concepts.
+    FORM (comparator × measurable × >=2 content) is satisfied in BOTH arms by construction —
+    that is deliberate: FORM is not the DV, the frame↔claim binding is."""
+    wa = [w for w in cA.split() if len(w) >= 3]
+    wb = [w for w in cB.split() if len(w) >= 3]
+    a1 = wa[rng.randrange(len(wa))]
+    b1 = wb[rng.randrange(len(wb))]
+    cmp_w = comp_l[rng.randrange(len(comp_l))]
+    mea_w = meas_l[rng.randrange(len(meas_l))]
+    forms = [
+        "the %s of %s %s with the %s of %s" % (mea_w, a1, cmp_w, mea_w, b1),
+        "as %s %s, the %s of %s is %s" % (a1, cmp_w, mea_w, b1, cmp_w),
+        "%s %s the %s at which %s holds" % (a1, cmp_w, mea_w, b1),
+        "when %s shifts, the %s of %s %s" % (a1, mea_w, b1, cmp_w),
+    ]
+    return forms[rng.randrange(len(forms))]
+
+
+def build_g6bind(n_blocks, seed, lang, arm):
+    """`anima-py corpus g6bind --lang en --arm {targeted,shuf} --n-blocks N --seed S` — H_9694.
+
+    Returns (text, st). st carries a HARD-ASSERTED byte-match witness: the two arms' line
+    multisets must be identical (only order/pairing differs), so any bind Δ between the trained
+    arms cannot be a content/length/vocabulary artifact."""
+    if lang != "en":
+        raise SystemExit("g6bind is EN-only (--lang en): the frozen rho_fan concepts/detector are en "
+                         "(CLAUDE.md EN-FIRST · the ko lane is BINDING)")
+    if arm not in ("targeted", "shuf"):
+        raise SystemExit("g6bind: --arm must be targeted|shuf (got %r)" % arm)
+    import rho_fan as _rf
+    cz = _rf._rho_fan_concepts()
+    n = len(cz)
+    comp_l = sorted(_rf._rho_fan_comparator())
+    meas_l = sorted(_rf._rho_fan_measurable())
+    rng = random.Random(seed)
+    # ── build the SHARED pool: (frame_i, claim_i) where claim_i is about frame_i's own pair ──
+    frames = []
+    claims = []
+    for k in range(n_blocks):
+        a = rng.randrange(n)
+        b = (a + 1 + rng.randrange(n - 1)) % n          # b != a
+        frames.append("if %s, then %s: " % (cz[a], cz[b]))
+        claims.append(_g6bind_claim(cz[a], cz[b], rng, comp_l, meas_l))
+    # ── the ONLY difference: how claims are assigned to frames ──
+    if arm == "targeted":
+        order = list(range(n_blocks))                    # claim_i under frame_i (binds)
+    else:
+        order = _g6bind_derange(n_blocks, random.Random(seed + 40009))   # claim_j under frame_i, j != i
+    lines = [frames[i] + claims[order[i]] for i in range(n_blocks)]
+    text = "\n".join(lines) + "\n"
+    # ── byte-match witness (HARD): both arms are the same frame multiset AND the same claim
+    #    multiset; only the pairing differs. Assert it here so a builder edit cannot silently
+    #    break the control (a broken control makes every downstream bind Δ uninterpretable).
+    fixed = sum(1 for i in range(n_blocks) if order[i] == i)
+    if arm == "shuf" and fixed:
+        raise SystemExit("g6bind: derangement broken — %d fixed points (claim still binds its own "
+                         "frame). The shuf arm MUST have zero." % fixed)
+    st = {"arm": arm, "n_blocks": n_blocks, "lines": len(lines),
+          "bytes": len(text.encode("ascii")), "seed": seed, "lang": lang,
+          "fixed_points": fixed,
+          "frame_multiset_sha": _g6bind_sha(sorted(frames)),
+          "claim_multiset_sha": _g6bind_sha(sorted(claims)),
+          "max_line_bytes": max((len(x.encode("ascii")) for x in lines), default=0)}
+    return text, st
+
+
+def _g6bind_derange(nn, rng):
+    """Sattolo cycle — EVERY index moves (0 fixed points), so no claim binds its own frame."""
+    p = list(range(nn))
+    for i in range(nn - 1, 0, -1):
+        j = rng.randrange(i)                             # j < i STRICTLY = the Sattolo difference
+        p[i], p[j] = p[j], p[i]
+    return p
+
+
+def _g6bind_sha(items):
+    import hashlib
+    h = hashlib.sha256()
+    for x in items:
+        h.update(x.encode("ascii")); h.update(b"\x00")
+    return h.hexdigest()[:12]
 
 
 def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0):
@@ -3702,6 +3803,32 @@ def main():
               % (st["readback_present"], st["readback_n"], len(st["heldr"])))
         return 0
 
+    if fmt == "g6bind":
+        # H_9694 (R2) — the 2-arm lever that re-earns kill#6's bind Δ debris through --fan-bind.
+        if not opts["out"]:
+            print("anima corpus g6bind: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        arm = opts.get("arm") or "targeted"
+        text, st = build_g6bind(opts["n_blocks"], opts["seed"], opts["lang"], arm)
+        open(opts["out"], "w", encoding="utf-8").write(text)
+        mj = opts["out"] + ".meta.json"
+        json.dump({"fmt": "g6bind", "arm": st["arm"], "lang": st["lang"], "seed": st["seed"],
+                   "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
+                   "max_line_bytes": st["max_line_bytes"], "fixed_points": st["fixed_points"],
+                   "frame_multiset_sha": st["frame_multiset_sha"],
+                   "claim_multiset_sha": st["claim_multiset_sha"]},
+                  open(mj, "w", encoding="utf-8"), ensure_ascii=False)
+        print("anima corpus g6bind [%s · arm=%s]: blocks=%d lines=%d bytes=%d max_line=%dB "
+              "fixed_points=%d -> %s"
+              % (st["lang"], st["arm"], st["n_blocks"], st["lines"], st["bytes"],
+                 st["max_line_bytes"], st["fixed_points"], opts["out"]))
+        print("  byte-match witness: frame_multiset_sha=%s · claim_multiset_sha=%s"
+              % (st["frame_multiset_sha"], st["claim_multiset_sha"]))
+        print("  → run BOTH arms at the SAME --seed and check the two sha pairs are IDENTICAL: "
+              "that is the control (same bytes, pairing deranged). arm=shuf MUST show "
+              "fixed_points=0. Read the lever ONLY through `anima-py evaluate --fan-bind` "
+              "(H_9693) — fals alone is FORM-forgeable (kill #6).")
+        return 0
     if fmt == "storebind":
         if not opts["out"]:
             print("anima corpus storebind: --out c.txt is required", file=sys.stderr)
