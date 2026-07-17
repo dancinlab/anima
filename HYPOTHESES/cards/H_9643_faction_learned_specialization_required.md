@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔨 ORACLE λ-ladder 인증중 — toy 재설계(마르코프 4소스 · 전이엔트로피 0.9000 동일 · E=1) + ORACLE arm 배선(π=(2,0,0,3) 비항등·공유·고아 · 구조게이트라 순환 아님) + 4 ckpt 학습(λ>0 서 loss 34배 상승 = 라우팅이 제약함) · 계기 버그 ⑰ 수정(내 S 교체가 real_assign 블록을 삼킴) · S(λ) 측정중
+status: 🟢 계기 v2 재동결(within-arm SOUND · cross-arm bar 폐기) — lab-full Fable+Sol 독립수렴 판정: ①within-arm(S vs 자기 perm-null)은 base_CE 상쇄로 유효 → random-init S≈null(음성 clean·0.0003)+lam0 S>null95 는 그 스케일서 정당 ②cross-arm 절대비교(옛 :11143 S_real/S_randinit≥2.0)는 적합품질 스케일 산물=OILED→폐기 ③÷base_CE→log-ratio(곱셈결합의 정확한 가법화) ④ORACLE argmax→이중중심 코사인정렬 A(선택없음·base_CE면역) ⑤lam0 얇은마진(perm=40)=PENDING(perm≥200 필요). v2 synthetic 재인증 PASS(planted S 42.16>null95 4.01·A+0.999>A95+0.567 π회수 · no-signal 환각없음). 남은 SOUND 3다리: within-arm perm≥200 + fit-matched K=1 음성(H_9737) + ORACLE π회수.
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -656,6 +656,39 @@ S 재설계(#3961) 때 `selectivity` 함수를 교체하며 **그 아래 `per`·
 
 S(λ) 사다리 측정 → 인증 bar = **S λ단조 ∧ S(1) > null95 ∧ S(0) ≈ null**
 → 인증 PASS 후에만 실물 arm.
+
+
+## 🟢 계기 v2 재동결 — lab-full Fable+Sol 독립수렴 (2026-07-17 · cli/evaluate.py faction_lesion_run)
+
+### 실측 (aiden · perm=40 · seed 12345 · v1 ÷base_CE)
+| arm | base_CE(dom0-3) | S_real | null95 | argmax f→dom | 판정 |
+|---|---|---|---|---|---|
+| **random-init(음성)** | 4.77·4.76·4.83·4.82 | **0.0003** | 0.0003 | 미미 | **False** ✅ 거짓양성 없음 |
+| lam0(λ=0 자유) | 0.0089·0.0135·0.0164·0.0252 | 9646 | 9401 | [0,2,0,1] | True (얇음 1.026×) |
+| lam1(λ=⅓) | 0.0078·0.0170·0.0059·0.0199 | 44896 | (사다리 중단) | [2,1,0,1] | — |
+
+(π=(2,0,0,3) argmax 기대 [2,0,0,3]. lam0 0/4 · lam1 2/4. 사다리 lam2/3 은 base_CE 교란으로 절대값 무의미 판명 → 중단.)
+
+### 판정 (Fable ∧ Sol 이견 없음)
+- **within-arm(S_real vs 자기 perm-null)은 confound 무관** — 같은 ckpt·같은 base_CE·같은 정규화를 real·null 양쪽이 통과하므로 "real 배정이 랜덤 재배정과 구별되는가"는 스케일 공정. ⟹ random-init 음성 clean null + 학습 S>null95 는 **그 스케일서 정당한 인증**. **단 절반만**(Fable: "정확히 절반만").
+- **cross-arm 절대비교는 무효** — `:11143` 이 선언하던 `S_real/S_randinit≥2.0 완전 bar` 는 실측 3200만× = 적합품질 스케일(base 4.8 vs 0.01)의 산물이지 특화 아님. 어떤 학습 ckpt 든 기계적 통과 = **OILED → 폐기·재등록**.
+- **lam0 얇은 마진(1.026×)은 perm=40 서 읽지 마라** — null95 는 순서통계량 1개 추정, 표집오차가 2.6% 삼킴. perm≥200 + exceedance p 전엔 **PENDING**(검정력-before-negative).
+
+### 계기 v2 수리 (구현 완료 · synthetic 재인증 PASS)
+1. **셀 정규화 ÷base_CE → log-ratio** `Dn[f]=log((L+ε)/(base+ε))` (ε=1e-4). 곱셈결합의 정확한 가법화는 나눗셈이 아니라 log · double-centering 이 가법 열주효과를 정확히 제거 · base→0 폭발 제거.
+2. **exceedance p** `p=(1+#{S_p≥S_real})/(nperm+1)` + perm<200 = PENDING 플래그.
+3. **ORACLE DV: argmax x/K → 이중중심 코사인 정렬 A** `A=⟨R,Mc⟩/(‖R‖‖Mc‖)`, Mc=double-center(π 발생행렬). 선택 없음(결함 ⑪⑫⑮⑯ 재수입 차단)·base_CE 면역·dom0 공유(2 one)·dom1 고아(열=0) 자연표현. `--faction-oracle-pi "2,0,0,3"`.
+4. **cross-arm bar `:11143` 폐기** → within-arm 한정 판정문 + SOUND 4다리 명시.
+- **synthetic 재인증**(계기 정확 모사 · d=64·K=4·base 0.01 완벽적합 스케일): planted S 42.16 > null95 4.01 PASS · A +0.999 > A95 +0.567 π-회수 · no-signal S 1.66 ≤ null95 8.46 환각없음.
+
+### 완전 SOUND 인증 = 4다리 (남은 것)
+① within-arm PASS(perm≥200) ② random-init 음성 clean null ✅ ③ **fit-matched K=1 음성**(같은 낮은-CE·파벌구조 없음 → S≤null95 = 낮은-분모서도 FPR 통제 격리 · [[H_9737]] NOVEL) ④ ORACLE π 회수(A>A_null95). 이후에만 303M 실물 arm(K=8 vs K=1).
+
+### 303M 실물 위험 (양 모델 · toy 미포착)
+①어휘=도메인 분리 착각(서로소 알파벳은 token routing 만으로 통과 → counterbalanced 도메인) ②zero-lesion OOD(mean/noise replacement 병행) ③tap-locus+bridge 누수(전 깊이 mask arm) ④GN(K) 상호작용 아티팩트 ⑤실물 도메인은 서로소 아님(효과크기로만) ⑥seed 해리(짝 3seed 2/3) ⑦perm 비용(303M×200 예산 선산정) ⑧CE 천장 포화.
+
+### 병렬 세션 (a_parallel_session_compare)
+H_9731(발견-partition lesion)·H_9732(shuffled twin)·H_9733(content-transfer) 존재 — CONFLICT 없음. 내 fit-matched K=1 음성([[H_9737]])은 두 카드가 안 덮는 **NOVEL** 셀. 그들의 origin/main NameError 노트는 내 #3964 로 이미 수리됨(stale).
 
 ## 통제군 (≥2 · 사전등록)
 
