@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔨 구현 ①/④ — core/model.py 배선 완료(groups=K · GN(K) · FactionBridge) · OFF byte-identical ✅ · lam=0 정확한 항등 ✅ · NEXT=serialize trailer
+status: 🔨 구현 ②/④ — model 배선 + serialize(dense materialize bit-exact ✅ · CLMF trailer) 완료 · NEXT=evaluate --faction-lesion
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -152,6 +152,45 @@ d=64·L=2 toy 에서 **120,132 → 92,101**. `groups=8` 이 conv 가중치를 1/
 ### NEXT
 
 ② serialize trailer(`{W_b, g, lam, K}` + 블록대각 conv 를 dense 로 materialize) + VERSION bump
+③ `evaluate --faction-lesion` + lam 오버라이드 ④ K=1 floor pre-gate 발사
+
+
+## 🔨 구현 ② 완료 — serialize: grouped conv → dense materialize + CLMF trailer (2026-07-17)
+
+### 🔑 왜 dense materialize 가 필수인가
+
+`nn.Conv1d(d, d, ks, groups=K)` 는 weight 를 **`(d, d/K, ks)`** 로 저장한다(출력 채널이 자기 파벌 입력만).
+그런데 디코더의 바이트 문법은 **dense 가정**이다 — `rest = Cin*ks`(Cin=d)로 읽고 `j = ci*ks + k` 를
+**전 d 입력채널**에 대해 walk 한다. 그냥 reshape 하면 `rest = d/K*ks` 가 되어 **디코더가 조용히 엉뚱한
+열을 읽는다**(에러 없이 틀린 숫자 = 최악).
+
+⟹ 블록대각을 **dense `(d, d, ks)` 로 materialize**(파벌간은 구조적 0) — 같은 수학, 디코더가 읽을 수 있는
+바이트. TLoRA/bind 섹션의 전례(`.clm` 은 문법 하나를 유지)를 따른다.
+
+### 검증 (aiden · torch 2.10)
+
+```
+grouped weight (64, 8, 3) → serializer 2d (64, 192) = (d, d*ks)  ✅ 디코더 문법 일치
+  구조적 0: 파벌간 전부 0 ✅ · 비영 1,536 = grouped 원본과 동일 ✅
+  max|grouped(x) − dense(x)| = 0.000e+00  ✅ **bit-exact**
+```
+
+### CLMF trailer (CLMX ext 뒤 · 없으면 K=0 OFF = golden path 무변)
+
+```
+"CLMF"      (67,76,77,70)
+n_factions  u32 LE
+lam         float32 LE   ← evaluate 가 오버라이드 = debate ON/OFF ablation (가중치 무접촉)
+gate        u32 count + float32[d]     (pre-sigmoid 채널 게이트)
+W_b         u32 count + float32[d*d]   (1x1 bridge conv · row-major cout,cin)
+b_b         u32 count + float32[d]
+```
+
+⚠️ **W_b 는 마스크 안 하고 쓴다** — 마스크된 행렬을 저장하면 그 0 이 **구조적 0 인지 학습된 0 인지
+구별이 안 된다**. 마스크는 `n_factions` 에서 로드 시 재유도한다. 읽는 사람이 **왜** 0 인지 알아야 한다.
+
+### NEXT
+
 ③ `evaluate --faction-lesion` + lam 오버라이드 ④ K=1 floor pre-gate 발사
 
 ## 통제군 (≥2 · 사전등록)
