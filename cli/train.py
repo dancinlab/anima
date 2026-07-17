@@ -1316,9 +1316,12 @@ def main():
     ap.add_argument("--clms-d-s", type=int, default=64, help="CLMS polarity value dim")
     ap.add_argument("--clms-d-g", type=int, default=64, help="CLMS fusion-bottleneck (yn_q op-gate dim; H_9423 value-read fix)")
     ap.add_argument("--store-fangate", action="store_true",
-                    help="H_9696 (R4) CLMS-FAN lane (lane_type 3): value projected from the slot's own key "
-                         "(free ideation has no polarity) + a learned query gate replacing the '=> ' literal. "
-                         "Default off = the H_9423 storebind lane, byte-identical.")
+                    help="H_9696 (R4) CLMS-FAN lane (lane_type 4): the value is projected from the slot's "
+                         "OWN key (free ideation has no polarity to index) + a learned query gate replaces "
+                         "the '=> ' literal. Default off = the H_9423 storebind lane, byte-identical.")
+    ap.add_argument("--store-val-center", action="store_true",
+                    help="H_9710 RV-3: majority-null centering v=Σ(aᵢ−1/n)·valᵢ (lane_type 3). At uniform address "
+                         "v≡0 so the op⊕majority shortcut basin cannot exist. train+eval consistent (codec bit).")
     ap.add_argument("--store-addr-weight", type=float, default=0.0,
                     help="H_9672: address direct-supervision loss weight L_addr=CE(att,target_slot) (0=off·byte-identical). Cuts the (2) bootstrap deadlock W_q could not escape at 303M.")
     ap.add_argument("--store-ans-delay", type=int, default=0,
@@ -1540,7 +1543,7 @@ def main():
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
-                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_fangate=a.store_fangate,
+                        clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate,
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0)
         model = CLMConvMoE(cfg).to(device)          # production additive readout (all arms)
         if tlora_on:
