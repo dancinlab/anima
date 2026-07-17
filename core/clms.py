@@ -145,8 +145,10 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             audit.append({"argmax": int(np.argmax(a)),
                           "a_target": float(a[int(ts)]) if ts is not None else -1.0,
                           "target": int(ts) if ts is not None else -1})
-        v = a @ V_slots                                                   # (d_s,) = Σ aᵢ·val[polᵢ]
-        if lane_type == 2:
+        if lane_type == 3:                                                # RV-3 majority-null centering (H_9710)
+            a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
+        v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]
+        if lane_type in (2, 3):
             g = h @ clms["W_g"]                                           # (d_g,) op-gate bottleneck (H_9423)
             z = _gelu(np.concatenate([v, g]) @ clms["W_h"] + clms["b_h"]) # (r,) [v; g] fusion (v un-diluted)
         else:                                                             # lane_type 1 legacy: [v; h] fusion
@@ -182,8 +184,8 @@ def pack_clms(w: dict) -> bytes:
     out = bytearray()
     out += CLMS_MAGIC
     lane_type = int(w.get("lane_type", 2))
-    if lane_type == 2:
-        out += struct.pack("<BIIIIII", 2, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
+    if lane_type in (2, 3):   # 2 = W_g fusion (H_9423) · 3 = 2 + majority-null centering (H_9710 RV-3)
+        out += struct.pack("<BIIIIII", lane_type, int(w["n_slot"]), int(w["d_k"]), int(w["d_s"]),
                            int(w["d_g"]), int(w["r"]), int(w["key_seed"]))
         order = _ARR_ORDER_V2
     else:
@@ -204,7 +206,7 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
         return None, off
     p = off + 4
     lane_type = buf[p]; p += 1
-    if lane_type == 2:                                     # H_9423 fusion-bottleneck (W_g present)
+    if lane_type in (2, 3):                                # 2 = W_g fusion · 3 = 2 + centering (RV-3 · same header)
         if p + 24 > len(buf):
             return None, off
         n_slot, d_k, d_s, d_g, r, key_seed = struct.unpack_from("<IIIIII", buf, p); p += 24
@@ -223,10 +225,10 @@ def read_clms(buf: bytes, off: int, d: int, V: int):
             "d_s": int(d_s), "d_g": int(d_g), "r": int(r), "key_seed": int(key_seed)}
     clms["key_emb"] = take(_KEY_ALPHABET * d_k, (_KEY_ALPHABET, d_k))
     clms["W_q"] = take(d * d_k, (d, d_k))
-    if lane_type == 2:
+    if lane_type in (2, 3):
         clms["W_g"] = take(d * d_g, (d, d_g))
     clms["val"] = take(2 * d_s, (2, d_s))
-    w_h_in = (d_s + d_g) if lane_type == 2 else (d_s + d)
+    w_h_in = (d_s + d_g) if lane_type in (2, 3) else (d_s + d)
     clms["W_h"] = take(w_h_in * r, (w_h_in, r))
     clms["b_h"] = take(r, (r,))
     clms["W_out"] = take(r * V, (r, V))
@@ -241,7 +243,8 @@ def clms_weights_from_torch(mod) -> dict:
     def n(t):
         return t.detach().cpu().numpy().astype("<f4")
     return {
-        "lane_type": 2, "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
+        "lane_type": 3 if getattr(mod, "val_center", False) else 2,   # RV-3 centering → lane_type 3
+        "n_slot": mod.n_slot, "d_k": mod.d_k, "d_s": mod.d_s,
         "d_g": mod.d_g, "r": mod.r, "key_seed": mod.key_seed,
         "key_emb": n(mod.key_emb),
         "W_q": n(mod.W_q.weight).T,          # (d_k,d) → (d,d_k)
@@ -277,11 +280,12 @@ if _HAS_TORCH:
         (② shortcut-cut is structural, not a regulariser)."""
 
         def __init__(self, d, V, n_slot=8, d_k=64, d_s=64, r=128,
-                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64):
+                     key_seed=9423, key_emb=None, lam0=1.0, d_g=64, val_center=False):
             super().__init__()
             self.d, self.V, self.n_slot = d, V, n_slot
             self.d_k, self.d_s, self.r, self.key_seed = d_k, d_s, r, key_seed
             self.d_g = d_g                                          # H_9423 fusion-bottleneck (lane_type 2)
+            self.val_center = bool(val_center)                     # RV-3 majority-null centering (lane_type 3)
             self.scale = 1.0 / (d_k ** 0.5)
             if key_emb is None:
                 ke = (np.random.RandomState(key_seed).standard_normal((256, d_k))
@@ -318,6 +322,8 @@ if _HAS_TORCH:
             else:
                 a = _torch.softmax(att, dim=-1)
             V_slots = self.val[pols]                                      # (B,n_slot,d_s)
+            if self.val_center:                                           # RV-3 majority-null centering (H_9710)
+                a = a - (1.0 / self.n_slot)                               # v≡0 at uniform a → shortcut basin gone
             v = _torch.bmm(a.unsqueeze(1), V_slots).squeeze(1)           # (B,d_s)
             g = self.W_g(yn_q)                                            # (B,d_g) op-gate bottleneck
             z = _F.gelu(self.W_h(_torch.cat([v, g], dim=-1)), approximate="tanh")   # (B,r) [v; g] fusion
