@@ -11058,6 +11058,19 @@ def faction_lesion_run(argv):
         R = Dn - Dn.mean(axis=1, keepdims=True) - Dn.mean(axis=0, keepdims=True) + Dn.mean()
         return float((R ** 2).sum()), D
 
+    # real arm — the trailer's faction blocks are CONTIGUOUS d/K runs (core/model.py builds the
+    # grouped conv that way, and pack_faction_section writes K, not an explicit assignment).
+    per = d // K
+    real_assign = np.arange(d) // per
+    S_real, D_real = selectivity(real_assign)
+    print("")
+    print("파벌별 최대손상 도메인 (real · 참고용 — S 는 이 argmax 를 쓰지 않는다):")
+    for f in range(K):
+        c = int(np.argmax(D_real[f]))
+        print("  faction %d → %-10s ΔCE %+.4f" % (f, names[c], D_real[f, c]))
+    print("")
+    print("S_real = %.4f   (‖R‖²_F · 선택 없는 2차 합)" % S_real)
+
     rng = np.random.default_rng(seed)
     null = []
     for i in range(nperm):
