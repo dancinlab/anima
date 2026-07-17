@@ -51,3 +51,14 @@ D0-1✅→D0-2/3 → **구현** → **T1 토이(d64 addr-loss ON · ORACLE≥.95
 ## source
 
 Fable 설계(`walls-delegate-to-fable`·fable_addr.md) · owner go autonomous(a_h_continuous_no_branch) · H_9423 Stage1.5(#3855) 주소학습(c) 격리 후속. D0-1 engine-native census 착륙.
+
+## 🔬 값읽기 robustness 레버 sweep(2026-07-17 · seed-11 반증 후속 · lab full Fable∥Sol 발산)
+
+seed-11이 밝힌 잔여 벽 = **값읽기(val 극성분화) seed-취약**(주소는 addr-loss로 2-seed robust). **RV-0 $0 부검**: seed-11 val 분화됨(1.07)·W_h 정상 ⟹ A(붕괴)·B(귀먹음) 둘 다 REFUTED = **기능적 실패**(MLP가 분화된 v를 XOR 정답에 매핑하는 함수 미학습·Fable "흐린 v=균등주소=store 극성평균=majority 신호"라 shortcut이 값경로 통해 샘). lab full 5레버 등록(H_9690~9692·9710·9711).
+
+**레버 sweep(2-seed{7,11} 소거법)**:
+- **oracle-warmup(#3908 --store-oracle-warmup 1500) = 🔴 KILL**: seed-7 ORACLE **0.5234**(chance)·sb_store_acc 0.56 = **phase 전환(step1500 oracle→softmax)이 val 붕괴**시킴 — plain addr-loss seed-7 ORACLE 0.99보다 나쁨. **Fable∥Sol 예측 적중**(전환창서 흐린-v 재개→MLP re-shortcut). ⟹ 전환형 레버 死·연속형(RV-1)이 정답.
+- **RV-1 oracle-aux(#3914 --store-oracle-aux 0.5) = 🔥 진행중**: softmax+addr-loss와 동시에 ORACLE(올바른 one-hot) CE 매 step=값/MLP를 올바른 v로 연속훈련(전환없음=레이스 소멸·Fable∥Sol #1). 2-seed{7,11} fire.
+- **RV-2 ans-delay(#3916)·RV-3 val-center(#3920·parity 0.00e+00·이론최청정 basin 구조제거)** = RV-1 실패시 순차.
+
+판정 게이트(각 레버 2-seed·balanced 채점): ORACLE≥.90 ∧ P1-balanced≥.75 ∧ addr-gap≤.20 ∧ flip≥.90 → winner→confirm seed-13(미접촉·tune-to-green 방지)→TERMINAL. 전 레버 실패=값읽기 seed-robustness 벽 재프레임(별개 후속).
