@@ -18131,6 +18131,13 @@
     "value": "**계기가 개입값을 forward 에 넣는가 — 발사 전에 코드로 확인하라. 출력 posterior 에만 쓰는 계기(actuator)는 모델이 개입을 쓰는지 잴 수 없고, 그 'positive' 는 baseline 의 닫힌형(모델 새 비트 0)이라 사전등록 P1 을 그대로 쏘면 거짓 positive 를 기계 생산한다.** H_9392 --store-mix(#3760) 실측: _store_mix_cont_nll 이 logits=_fwd_logits(W,tok(seed+cont),T)(store 부재) 후 p=λ·onehot(store)+(1−λ)·p_trunk 로 forward '이후' posterior 혼합 ⇒ trunk 이 store 에 눈멂 ⇒ 전 arm NLL 이 baseline logits 의 닫힌형 함수. 사전등록 P1(store arm>통제군 4/4)은 모델관여 0 산수로 기계달성하는 거짓 (A)-positive 였고, owner go 로 pool 발사 직전 코드 재검(Fable)이 잡아 발사 취소. evaluate-py-14(계기는 걸리게 만든 arm 으로 인증) family 의 새 기전 = sensor 대 actuator 축. 판정은 삼각측량으로 이관(H_9353 컨텍스트-port·H_9327/9358/9359 가중치-port·이 출력-port actuator = 볼트온 3-port 전멸=B).",
     "threshold": "재발조건 = anima-py evaluate 에 새 --flag(store/context/intervention 주입) 배선 후 판정하려 할 때. 해결 = 발사 전 (1) 그 개입값이 _fwd_logits/forward tok 에 실제로 들어가는지 코드 확인(들어가면 sensor, 출력에만 쓰면 actuator) (2) actuator 면 전 arm 을 baseline logits 로 닫힌형 예측(pedestal)해 실측≡예측이면 '모델 새 비트 0' 실증 = 판정 불가·발사 낭비 (3) actuator 계기 정당한 용도 = delivery-ceiling 상수뿐, 능력 판정 아님. --store-mix·--consult 류는 v2 ORACLE(조회난이도 0 상한) 대응물이지 볼트온 능력 테스트 아님(v2 BOLT 는 파라미터를 학습시켰다).",
     "source": "cli/evaluate.py"
+   },
+   {
+    "id": "h-9683-natural-declaration-addr-transfer-md-1",
+    "state": "pos-conv",
+    "value": "계기↔주장 정렬을 물어라 — 4층 재발(2026-07-17 한 세션). ①판정층 H_9520: 사전등록 bar 를 기계적 적용해도 계기가 주장 proxy 인지는 별도 질문(ρ·form=고정5문항 coherence 는 teacher 사실저장 미조회 ⟹ '내용흡수' 주장 vs '일반reach' 측정). ②집필층 H_9677/9683: 계기·플래그를 실재확인 없이 명명(--interact-mi 는 H_9304 아닌 H_9328 계기·측정량도 역 / --entity-pool·예시커맨드 5개 부재). ③전제층 H_9683: 남의 카드 '🟢CRACK(잔여 seed-11)'을 기정사실로 깔았는데 seed-11 죽어 양성통제 소멸. ④계기경로층 H_9683: 내 카드가 evaluate --xbind 로 CLMS store 판독한다 적었으나 --xbind=G1 D-acc 경로·CLMS store=--store HELD.json --store-addr-audit(evaluate.py:4084·4215). 규칙: 판정/카드 쓰기 전 자문 4종 — '이 숫자 움직이면 주장 참인가?'·'내가 명명한 계기가 grep 으로 실재하나?'·'내 전제의 미결항목(~잔여)이 내 통제군인가?'·'위임모델의 착륙/등록 주장을 origin grep 으로 검증했나?'(headless Fable 이 'H_9734~9736 이미 등록' 환각 — 등록불가·Sol 은 안함=교차대조가 단일모델 환각 포착). 매번 위임이 잡았다(lab full·/bin/zsh 사전점검) ⟹ walls-delegate-to-fable 을 벽·판정·내가 방금 쓴 설계·계기명에 적용.",
+    "threshold": "2",
+    "source": "HYPOTHESES/cards/H_9683_natural_declaration_addr_transfer.md"
    }
   ]
  }
