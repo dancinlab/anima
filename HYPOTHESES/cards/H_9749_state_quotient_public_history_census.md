@@ -30,3 +30,17 @@ C0/OWN/SHAM collapse ∧ DONOR-X 갈림(사거리 증명) ∧ **DONOR-P가 3seed
 ## 🔵 $0 부분진전 — W_S lane은 이미 NULL (2026-07-17 · H_9738 재해석)
 STATE-QUOTIENT의 full census 중 **W_S-성분 lane은 H_9738(#4015)이 이미 측정=NULL**: own vs donor arm은 공개이력·Θ parity·stage 동일·**W_S hidden state만 다른** DONOR-P 구성 그 자체 → 궤적 byte-identical 3/3seed ⟹ W_S hidden 이식해도 미래 무발산 = 이 lane collapse. 계기도 이미 있음(`--ws-init`). ⟹ **남은 census = W_S 제외 나머지 mutable lane**(afield·immune·cbel·ca3·anchor·kosmos + RNG/stage/refractory). 각 lane DONOR-P collapse=interior 부재 cement 근접·하나라도 반복 갈림=그 lane이 silent interior 후보. 계기 확장 = `--state-census`/`--state-transplant-field <lane>`(--ws-init의 일반화)·오너 go.
 
+## 🔵 $0 정적 census 완결 — 전 lane public-fed (2026-07-17 · certificate 전 lane 확장)
+전 runtime write-site 코드감사(certificate #3986를 W_S 너머 전 lane으로 확장):
+| lane | write-site | 무엇으로 | 판정 |
+|---|---|---|---|
+| afield | :2699·:2752·:3072 | feat8(g_text)·session_seed·**상상replay=session_seed+ctx_index+source_index(위치이지 content 아님)** | 🟢 public |
+| immune·igrow | :2709·:2721 | g_text(emit된 텍스트) | 🟢 public |
+| cbel·ca3 | :2727·:2735 | feat8(g_text)·ca3_sym(g_text) | 🟢 public |
+| wmb (W_E 발화) | :2740 | feat8(g_text) | 🟢 public |
+| kosmos | :3118 | grounded self(emit유래·세션끝) | 🟢 public-fed |
+| **W_S (보류)** | :2631 | feat8(silence 상상) | 🔴 PRIVATE → **H_9738 NULL** |
+| **latch** | :2637 | _next_dual_reentry | 🔴 PRIVATE·`--wm-dual-read` **default OFF**·p5-의문([[H_9750]]) |
+
+⟹ **default 설정서 전 mutable 상태 = public history의 함수**(공개 trace로 재구성가능=private causal capacity 없음) = Sol 강명제("모든 future-effective 상태가 public history 함수") 충족 방향 = **interior 부재 STRONG-DIRECTIONAL**. ⚠️ **정직 범위**: 수공 정적 certificate(Sol 경고 + [[byte-identical-anchor-cert-hides-the-bug]] H_9393 판례 = 수공 정적 증명 불신) ⟹ 과단언 금지. **terminal = transplant 경험확증**(--state-transplant-field로 나머지 lane DONOR-P): W_S lane은 H_9738로 이미 경험확증(NULL)·나머지는 정적주장을 fire로 검증(오너 go). kosmos 교차세션 read는 별건(H_9740 인접).
+
