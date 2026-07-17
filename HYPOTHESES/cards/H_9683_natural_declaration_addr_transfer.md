@@ -68,3 +68,47 @@ H_9672 의 **사전등록 판정표를 그대로 상속**(재발명 금지): C0-
 (가법단서를 자연 문장에서 **찾는** 게 아니라, 주소를 **감독으로 선불**하고 자연 **어휘**만 남긴다).
 ⚠️ 자기표시: P1 이 shortcut 대역(0.637 근처)이면 [[H_9672]] 의 3중 봉쇄(balanced 1차채점 +
 random shuffle-Δ + addr audit)를 그대로 적용 — 그거 없이 읽으면 다수-극성 shortcut 오독.
+
+---
+
+## 🟢 D0-key census 착륙 (2026-07-17 · $0 · 학습/포워드 0 · 엔진 공식 byte-identical · DIRECTIONAL)
+
+사전등록 의무단계("키 충돌 census 먼저") 실행 — `RandomState(9423).standard_normal((256,64))·1/√64`
+(train.py CLMSModule 식 그대로) + `core/clms._entity_key`(엔진 함수) + `_sb_entity_pool`/`_sb_split`
+(엔진 pool/split · 재발명 0). ckpt 불요(key_emb 은 seed-결정 frozen).
+
+| pool | n_ev | anagram 충돌원자 | ORACLE-slot acc | NN최소거리 |
+|---|---|---|---|---|
+| nonce (합성 CVCVC) | 128 | 2 | **0.9875** | 0.0000 |
+| **nat_5자** (EN 5자 최빈) | 128 | 4 | **0.9880** | 0.0000 |
+| nat_자유 (EN 4–8자) | 128 | 0 | 0.9543 | 0.1657 |
+
+`ORACLE-slot acc` = q 가 정답키 그 자체일 때조차 8-slot argmax(q·Kᵀ)가 정답슬롯을 고르는 비율
+= **학습으로 도달 불가능한 BY-CONSTRUCTION 상한**(1.0 미만 = 주소가 원리적으로 불능인 몫).
+EN 코퍼스 = `anima-corpus-en-general`(59.8MB · 모델이 실제 학습한 것) 최빈 어휘.
+
+### 🔴 사전예측 기전 REFUTED — 이게 실험을 더 깨끗하게 만든다
+카드가 사전등록한 실패 예측 **"자연어휘는 형태론·굴절·부분어 공유로 키충돌이 훨씬 심함"**
+(D0-1 anagram `[demar,merad]` 근거) 이 **census 로 반증**: `_entity_key` = 바이트행 평균이라
+**길이만 통제하면 자연 5자 어휘의 키 기하가 nonce 와 동일**(ORACLE 0.988 = 0.988 · 충돌 2 vs 4
+동급). 자유길이는 오히려 anagram 충돌 0(길이차가 byte-bag 충돌을 원천 차단). **세 pool 모두
+C0-e bar(≥.90) 통과** = 어느 것도 INSTRUMENT-DEAD 아님.
+
+⟹ **가장 값싼 kill 후보(키 기하)가 배제됐다.** 자연어휘 전이가 만약 P1 에서 죽는다면 원인은
+**키가 아니라 값읽기가 자연 다의성에 익사 / penultimate 가 EN 유창성에 점유**(H_9672 T2 가 303M 서
+실측한 그 기전) — 즉 이 H 의 **제3결과 사전등록**(addr_top1 높고 P1 낮음)이 유일 생존 실패경로.
+
+### 실험 정밀화 — 권장 arm = **nat_5자** (nonce 와 키기하·길이 매칭)
+유일 변수 = "모델이 이 토큰을 EN 단어로 사전학습했나". 이게 H_9672 가 남긴 "자연선언 전이"의
+최소 격리 = **오염 없는 1-DOF 대조**. fire 설계(오너 go · pool summer · H_9672 T3 레시피 상속):
+```bash
+# arm-N  자연 5자 어휘 · arm-S  합성 nonce (양성통제 · 동시재현 필수)
+anima-py corpus storebind --lang en <nat5|nonce pool 주입> --out {N,S}_s${S}.txt
+anima-py train --init py303_full.clm --corpus {N,S}_s${S}.txt \
+  --store-addr-weight 1.0 --store-addr-audit --canon --seed ${S}
+anima-py evaluate {N,S}_s${S}.clm --xbind balanced.json  # H_9672 판정표 상속
+```
+frozen bar(상속): arm-N P1-balanced ≥.75 = 전이(A·B 한 뿌리) · arm-S 가 **같은 fire 에서 ≥.95
+재현**(양성통제)해야 arm-N null 이 판독가능(안 그러면 INSTRUMENT-DEAD).
+⚠️ 남은 구현 gap: `storebind` 는 현재 nonce pool 하드코딩(`_sb_entity_pool`) — 외부 어휘 pool 주입
+플래그(`--entity-pool <file>`)가 신규로 필요(레버 아닌 **코퍼스 빌더 확장** · a_experiment_engine_native).
