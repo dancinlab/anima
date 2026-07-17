@@ -7639,7 +7639,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8128,6 +8128,169 @@ def _ag_criticality(argv):
               % (mean_ed, abs(mean_ed - 0.5), emit_rate))
     print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
     print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_variance_audit(argv):
+    """H_9713 VARIANCE-AUDIT — does the certified PC2 axis carry its certified variance LIVE?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --variance-audit`
+
+    THE DEFECT THIS EXISTS TO FIX. H_9468 certified PC2 as "31.5% of tension variance" from a PCA on
+    one 150-tick run (reported lambda1=0.144, lambda2=0.048, lambda3=0.013, MP edge=0.0287; the
+    eigenvalue sum ~0.15 != 8 says it was RAW COVARIANCE, not correlation). If that holds live, the
+    unit-norm loading applied to the raw factors must give sd(z) = sqrt(lambda2) = 0.219.
+    The live census says otherwise. But until now those two numbers came from TWO DIFFERENT H's ON
+    TWO DIFFERENT INSTRUMENTS -- a comparison that was never made under one roof. That is the actual
+    defect: not the gap, but that nobody measured both at once. This flag does exactly that.
+
+    POSITIVE CONTROL (opens nothing without it): PC1 (certified 51.5%, sqrt(lambda1)=0.279). If PC1
+    reproduces its certified sd live but PC2 does not, the problem is PC2-specific and hands off to
+    H_9712. If PC1 ALSO collapses, the whole H_9468 PCA is from another regime and every card
+    resting on that frozen loading (H_9574/9576/9630-9634) loses its upstream basis.
+
+    SCALE DISCIPLINE (learned in H_9714): H_9468's lambdas are RAW-COVARIANCE. So this audit fits raw
+    covariance too -- correlation-scale eigenvalues (sum=8) are NOT comparable to them, and reporting
+    the two on one axis would be the same category error H_9714 caught.
+
+    REGIME DIFF: it also diffs the trace metas (stage_cycle / g_reach / emit_gate / refractory) so the
+    code answers "was it even the same regime?" instead of the reader assuming it.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    ALL8 = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+            "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+    Z_IDX = [ALL8.index(k) for k in ("nov_ctx", "bal_lane", "coh_lane")]
+    Z_W = _np.array([0.84, -0.44, -0.28])
+    # H_9468 reported (raw-covariance scale) -- the certified numbers under audit
+    L1_CERT, L2_CERT, EDGE_CERT = 0.144, 0.048, 0.0287
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --variance-audit")
+        return 2
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    runs, seen, dup, metas = [], set(), 0, []
+    for f in files:
+        rows, zs, meta = [], [], {}
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+                continue
+            v = [r.get(k) for k in ALL8]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+            if r.get("pc2_z") is not None:
+                zs.append(float(r["pc2_z"]))
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        h = hash(X.tobytes())
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), X, zs))
+        metas.append((os.path.basename(f), meta))
+
+    if not runs:
+        print("  ⇒ ⛔ 8-인자를 가진 트레이스 없음")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --variance-audit — H_9713 regime 감사 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 %d 제외 · H_9714 교훈)" % (d, len(files), len(runs), dup))
+    print("질문:  인증된 PC2(H_9468 · 31.5%%)가 **라이브서 그 분산을 내나** — 두 숫자를 **한 계기서** 산출")
+    print("인증치(원-공분산 스케일): λ₁=%.3f(√=%.3f) · λ₂=%.3f(√=%.3f) · MP edge=%.4f"
+          % (L1_CERT, L1_CERT ** 0.5, L2_CERT, L2_CERT ** 0.5, EDGE_CERT))
+    print("⚖️ 스케일 규율(H_9714 교훈): H_9468 λ 는 **원-공분산** ⇒ 이 감사도 원-공분산으로 적합한다")
+    print("   (상관-스케일 λ(Σ=8)은 인증치와 **비교 불가** — 같은 축에 놓으면 H_9714 가 잡은 그 범주오류).")
+    print("")
+
+    # ── regime diff: was it even the same regime? ───────────────────────────
+    print("  ⓪ regime diff (트레이스 메타 · '같은 regime 이었나'를 코드가 답한다)")
+    keys = ("stage_cycle", "g_reach", "emit_gate", "refractory", "backend", "ckpt_sha256")
+    base = None
+    for name, m in metas[:1]:
+        base = m
+    for k in keys:
+        vals = sorted(set(str(m.get(k)) for _n, m in metas))
+        print("     %-12s = %s" % (k, " | ".join(vals) if len(vals) > 1 else vals[0]))
+    print("     ⚠️ H_9468 원 트레이스의 메타는 **이 디렉터리에 없다** — 카드가 요구한 'H_9468 regime vs pmp")
+    print("        regime' 대조는 **미수행**(그 트레이스가 보존돼 있어야 가능) ⇒ 아래는 라이브 쪽 절반만이다.")
+    print("")
+
+    print("  ① 라이브 원-공분산 재적합 (같은 계기 · 같은 run)")
+    l1s, l2s, sd1s, sd2s, sdzs = [], [], [], [], []
+    for name, X, zs in runs:
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)          # RAW covariance (H_9468 scale)
+        w, V = _np.linalg.eigh(C)
+        order = _np.argsort(w)[::-1]
+        w = w[order]
+        V = V[:, order]
+        pc1_live = float(_np.std(Xc @ V[:, 0], ddof=1))
+        pc2_live = float(_np.std(Xc @ V[:, 1], ddof=1))
+        # z as the engine computes it: frozen loading on the RAW 3 factors
+        z_recon = float(_np.std(X[:, Z_IDX] @ Z_W, ddof=1))
+        sdz = float(_np.std(zs, ddof=1)) if len(zs) > 1 else 0.0
+        l1s.append(w[0]); l2s.append(w[1])
+        sd1s.append(pc1_live); sd2s.append(pc2_live); sdzs.append(sdz)
+        print("     %-18s λ_live=[%.4f %.4f %.4f] · sd(PC1)=%.4f · sd(PC2)=%.4f"
+              % (name, w[0], w[1], w[2], pc1_live, pc2_live))
+        print("        sd(z) 트레이스=%.4f · 동결-loading 재구성=%.4f  (일치=계기 무결)" % (sdz, z_recon))
+
+    l1 = sum(l1s) / len(l1s); l2 = sum(l2s) / len(l2s)
+    sd1 = sum(sd1s) / len(sd1s); sd2 = sum(sd2s) / len(sd2s); sdz = sum(sdzs) / len(sdzs)
+
+    print("")
+    print("  ② 인증치 대비 (run-평균 · 한 계기서 나온 숫자끼리)")
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×" % ("λ₁", L1_CERT, l1, l1 / L1_CERT if L1_CERT else 0))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×" % ("λ₂", L2_CERT, l2, l2 / L2_CERT if L2_CERT else 0))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×  ← 양성통제"
+          % ("sd(PC1) vs √λ₁", L1_CERT ** 0.5, sd1, sd1 / (L1_CERT ** 0.5)))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×"
+          % ("sd(PC2) vs √λ₂", L2_CERT ** 0.5, sd2, sd2 / (L2_CERT ** 0.5)))
+    print("     %-22s 인증 %.4f · 라이브 %.4f · 비 %.2f×  ← 엔진의 z"
+          % ("sd(z)  vs √λ₂", L2_CERT ** 0.5, sdz, sdz / (L2_CERT ** 0.5)))
+
+    r1 = sd1 / (L1_CERT ** 0.5)
+    r2 = sd2 / (L2_CERT ** 0.5)
+    pc1_ok = 0.75 <= r1 <= 1.25            # pre-registered +-25%
+    pc2_low = r2 < 0.75
+
+    print("")
+    if r1 > 1.25 and r2 > 1.25:
+        v = ("⛔ INVALID — **양축 모두 인증치 초과**(sd_live > √λ) = 표준화/스케일 스큐(공분산 vs 상관 혼선) "
+             "⇒ 어느 쪽이 거짓말인지 먼저")
+    elif pc1_ok and pc2_low:
+        v = ("🟢 **PASS-pc2-specific** — PC1 은 인증 sd 를 ±25% 안에 재현(%.2f×)하는데 PC2 만 라이브서 죽음"
+             "(%.2f×) ⇒ regime 은 정합 · 문제는 **PC2 특정** ⇒ H_9712 로 인계" % (r1, r2))
+    elif not pc1_ok and r1 < 0.75:
+        v = ("🧱 **KILL-regime-stale** — **양성통제 PC1 도 무너짐**(%.2f×) ⇒ H_9468 PCA 는 다른 regime "
+             "· **동결 loading 전체 무효** ⇒ 라이브-refit 필수 · H_9574/9576/9630~9634 상류 근거 재작성" % r1)
+    elif pc1_ok and not pc2_low:
+        v = ("⛔ INVALID — 둘 다 인증 √λ 재현 ⇒ z-census 의 '분산 부족' 서사와 **정면 모순** "
+             "⇒ 계기 충돌(어느 쪽이 거짓말인지 먼저)")
+    else:
+        v = ("🟡 MIXED — PC1 %.2f× · PC2 %.2f× 가 사전등록 칸에 안 떨어짐 ⇒ 강제 분류 금지" % (r1, r2))
+    print("  ⇒ VERDICT: " + v)
+    print("     ⚠️ 자기상관 짝(H_9714 실측 lag-1 ρ̂ coh=0.86·bal=0.80·nov=0.74) ⇒ n_eff ≪ n ·")
+    print("        sd 의 CI 는 명목보다 넓다 — 이 판정은 **비(ratio)의 크기**로 읽지 미세차로 읽지 말 것.")
+    return 0
+
+
 def _pc2_stage_slave(argv):
     """H_9715 STAGE-SLAVE — are "emit = f(stage)" and "z is flat" one root, or two?
 
@@ -10856,6 +11019,8 @@ def main(argv):
             return _pc2_factor_census(argv[1:])
         if "--stage-slave" in argv:
             return _pc2_stage_slave(argv[1:])
+        if "--variance-audit" in argv:
+            return _pc2_variance_audit(argv[1:])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
