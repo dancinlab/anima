@@ -80,7 +80,10 @@ def _parse_args(argv):
             #   --assign-seed k        the seed the balanced random assignment is deterministic in.
             "max_atoms": 0, "polarity": "real", "assign_seed": 0,
             # H_9423 storebind (co-trained store-lookup bridge · S0):
-            "n_blocks": 4000, "store_slots": 8,
+            #   --entity-pool F        (H_9683) external one-ascii-atom-per-line entity pool,
+            #                          replacing the builtin CVCVC nonce enumeration. Omitted =>
+            #                          builtin, byte-identical to before.
+            "n_blocks": 4000, "store_slots": 8, "entity_pool": None,
             # H_9520 study-replay (consolidation-CPT corpus from an `anima study` transcript):
             #   --transcript T.jsonl   the study transcript (teacher percepts + substrate emits)
             #   --study-frac 0.05      teacher-content byte share of the replay-mix (small % · rest = base replay)
@@ -175,6 +178,8 @@ def _parse_args(argv):
             opts["n_blocks"] = int(argv[i + 1]); i += 2
         elif a == "--store-slots":
             opts["store_slots"] = int(argv[i + 1]); i += 2
+        elif a == "--entity-pool":
+            opts["entity_pool"] = argv[i + 1]; i += 2   # H_9683 storebind: external atom pool
         elif a == "--transcript":
             opts["transcript"] = argv[i + 1]; i += 2
         elif a == "--study-frac":
@@ -1653,19 +1658,72 @@ _SB_VOWELS = "aeiou"
 _SB_ANSWER = {0: "good", 1: "bad"}          # POL_GOOD, POL_BAD (v2 gen.py ANSWER_BYTES)
 
 
-def _sb_entity_pool(n_total):
+def _sb_read_entity_pool(path):
+    """Read an EXTERNAL entity pool (H_9683): one ascii atom per line, order preserved.
+
+    The builtin pool is CVCVC nonce — every key is novel bytes with no corpus prior. H_9683 asks
+    whether the addr lever survives on NATURAL declaration vocabulary, which cannot be enumerated
+    from `_SB_CONSONANTS x _SB_VOWELS`, so the pool becomes an input. This is a corpus-builder
+    extension, NOT a lever: the split/leak/eval contracts below are the SAME code path either way.
+
+    Order is PRESERVED (not sorted): the builtin sorts because the CVCVC enumeration order is an
+    artifact of the loop nest, whereas a supplied file's order is the caller's — and the interleaved
+    _sb_split reads that order. The file is therefore the full determinism surface (same file =>
+    same split, seed-independent, exactly like the builtin).
+
+    Rejects (SystemExit, never a silent downgrade): non-ascii · whitespace inside an atom ·
+    duplicates. Blank lines are ignored (trailing newline is not an atom)."""
+    try:
+        raw = open(path, "r", encoding="utf-8", errors="strict").read()
+    except OSError as e:
+        raise SystemExit("storebind: cannot read --entity-pool %s (%s)" % (path, e))
+    except UnicodeDecodeError as e:
+        raise SystemExit("storebind: --entity-pool %s is not decodable text (%s)" % (path, e))
+    names = [ln.strip() for ln in raw.split("\n")]
+    names = [nm for nm in names if nm]
+    if not names:
+        raise SystemExit("storebind: --entity-pool %s is empty (one ascii atom per line)" % path)
+    bad = [nm for nm in names if any(ord(ch) > 127 for ch in nm)]
+    if bad:
+        raise SystemExit("storebind: --entity-pool non-ascii atom(s) %d: %s (EN-only · the corpus "
+                         "and every manifest are ascii-encoded)" % (len(bad), bad[:5]))
+    spaced = [nm for nm in names if any(ch.isspace() for ch in nm)]
+    if spaced:
+        raise SystemExit("storebind: --entity-pool atom(s) contain whitespace %d: %s (one atom per "
+                         "line; a multi-word key breaks the `%s %s => ` query surface)"
+                         % (len(spaced), spaced[:5], "<op>", "<entity>"))
+    dups = sorted({nm for nm in names if names.count(nm) > 1})
+    if dups:
+        raise SystemExit("storebind: --entity-pool duplicate atom(s) %d: %s (a duplicate would put "
+                         "the same key in both split halves and forge the 0-shot stratum)"
+                         % (len(dups), dups[:5]))
+    return names
+
+
+def _sb_entity_pool(n_total, entity_pool=None):
     """Deterministic CVCVC nonce pool, stride-sampled to n_total (v2 gen.entity_pool port).
-    Sorted + sliced => the train/held-out split is a pure function of n_total, seed-independent."""
-    names = []
-    for c0 in _SB_CONSONANTS:
-        for v0 in _SB_VOWELS:
-            for c1 in _SB_CONSONANTS:
-                for v1 in _SB_VOWELS:
-                    for c2 in _SB_CONSONANTS:
-                        names.append(c0 + v0 + c1 + v1 + c2)
-    names = sorted(set(names))
-    if len(names) < n_total:
-        raise SystemExit("storebind: nonce pool %d < requested %d" % (len(names), n_total))
+    Sorted + sliced => the train/held-out split is a pure function of n_total, seed-independent.
+
+    entity_pool = path to an external one-atom-per-line file (H_9683 natural vocabulary). When
+    given, that file replaces the nonce enumeration and is stride-sampled to n_total by the SAME
+    formula — everything downstream (split, leak witness, manifests) is untouched. When omitted the
+    builtin path is byte-identical to before (hard requirement: regression 0)."""
+    if entity_pool is not None:
+        names = _sb_read_entity_pool(entity_pool)
+        if len(names) < n_total:
+            raise SystemExit("storebind: --entity-pool %s has %d atom(s) < requested n_pool %d"
+                             % (entity_pool, len(names), n_total))
+    else:
+        names = []
+        for c0 in _SB_CONSONANTS:
+            for v0 in _SB_VOWELS:
+                for c1 in _SB_CONSONANTS:
+                    for v1 in _SB_VOWELS:
+                        for c2 in _SB_CONSONANTS:
+                            names.append(c0 + v0 + c1 + v1 + c2)
+        names = sorted(set(names))
+        if len(names) < n_total:
+            raise SystemExit("storebind: nonce pool %d < requested %d" % (len(names), n_total))
     step = (len(names) - 1) / float(n_total - 1)
     return [names[int(round(i * step))] for i in range(n_total)]
 
@@ -1823,21 +1881,29 @@ def _g6bind_sha(items):
     return h.hexdigest()[:12]
 
 
-def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0):
+def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, replay=0,
+                    entity_pool=None):
     """Build the storebind corpus + co-train store manifest + 0-shot held-out eval manifest.
 
     Returns (text, st). st carries the manifests and a hard-asserted zero-leak witness. The store
     manifest (rows of {store_names, store_pols, slot, op, prompt, answer}) is the CLMS-lane INPUT
     contract: `anima-py evaluate <clm> --store held.json` feeds each row's store to the bridge and
     scores the answer byte — the SAME manifest the trainer co-trains on (train == infer manifest =
-    a literal p8 implementation, not a train/infer split)."""
+    a literal p8 implementation, not a train/infer split).
+
+    entity_pool (H_9683) swaps the builtin CVCVC nonce enumeration for an external one-atom-per-line
+    file. It is a BUILDER extension, not a lever: every contract below (EN-only · n_pool % n_eval ·
+    interleaved disjoint split · store_slots <= held-out · C0-a zero-leak hard-assert) runs on the
+    external pool unchanged. Note the leak witness is SUBSTRING-based (`e in corpus_blob`), which on
+    natural vocabulary fails CLOSED — a held-out atom contained in a train atom (`art` ⊂ `start`,
+    corpus-py-1 ⑩) aborts the build rather than shipping a forged 0-shot stratum."""
     if lang != "en":
         raise SystemExit("storebind is EN-only (--lang en): the free pre-posed `not` vs `is` is the "
                          "operator discriminator (CLAUDE.md EN-FIRST · the ko suffix lane is BINDING)")
     if n_pool % n_eval != 0:
         raise SystemExit("storebind: n_pool %d must be a multiple of n_eval %d (interleave ratio)"
                          % (n_pool, n_eval))
-    pool = _sb_entity_pool(n_pool)
+    pool = _sb_entity_pool(n_pool, entity_pool)
     train, ev = _sb_split(pool, n_eval)
     if set(train) & set(ev):
         raise SystemExit("storebind: train/held-out overlap (%d)" % len(set(train) & set(ev)))
@@ -1911,6 +1977,7 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
           "bytes": len(text.encode("ascii")), "max_line_bytes": max_bytes,
           "n_train": len(train), "n_heldout": len(ev), "n_pool": n_pool,
           "n_eval_blocks": n_eval_blocks, "leak": 0, "replay": replay,
+          "entity_pool": entity_pool,
           "store_manifest": store_manifest, "held_manifest": held_manifest,
           "balanced_manifest": balanced_manifest, "seen_manifest": seen_manifest}
     return text, st
@@ -3601,6 +3668,15 @@ def main():
         print("      kind C1b measured as generalising, while the Korean ending is a BOUND suffix")
         print("      that attaches to the stem — the suspected mechanism of the BINDING wall.")
         print("      A lang/atom mismatch fails LOUD (--lang en over Korean atoms is refused).")
+        print("  storebind              --out c.txt [--n-blocks N] [--store-slots K] [--seed S] [--lang en] [--entity-pool POOL.txt]")
+        print("      H_9423 co-trained store-lookup bridge (EN-only). --entity-pool (H_9683) replaces")
+        print("      the builtin CVCVC nonce enumeration with an external pool — ONE ascii atom per")
+        print("      line, order preserved, no duplicates, at least n_pool atoms. Every contract is")
+        print("      unchanged on that pool: interleaved disjoint train/held-out · store_slots <=")
+        print("      held-out · the C0-a zero-leak hard-assert. On natural vocabulary that assert is")
+        print("      SUBSTRING-based, so a held-out atom nested in a train atom (`art` ⊂ `start`)")
+        print("      ABORTS the build rather than ship a forged 0-shot stratum (corpus-py-1 ⑩).")
+        print("      Omitting the flag is byte-identical to every existing storebind corpus.")
         print("  bindlocus              --n2-eval M.json --n2-seen M.json --novel N.json --corpus C.txt [--corpus C2.txt] [--seed S]")
         print("      H_9331 BIND-LOCUS manifest — H_9327 carriers verbatim; the `novel` split is EARNED")
         print("      by BYTE count over every --corpus (one occurrence = rejected).")
@@ -3857,7 +3933,8 @@ def main():
         if not opts["out"]:
             print("anima corpus storebind: --out c.txt is required", file=sys.stderr)
             sys.exit(2)
-        text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"])
+        text, st = build_storebind(opts["n_blocks"], opts["store_slots"], opts["seed"], opts["lang"],
+                                   entity_pool=opts["entity_pool"])
         open(opts["out"], "w", encoding="utf-8").write(text)
         # .store.jsonl = per-training-line store manifest (block<->store · the co-train input the
         # trainer feeds the CLMS lane · JSONL, one row per line).
@@ -3876,10 +3953,14 @@ def main():
         json.dump(st["seen_manifest"], open(vj, "w", encoding="utf-8"), ensure_ascii=False)
         # .meta.json = budget floor (bytes the trainer enforces · a_korean_byte_budget: EN = 1 B/char).
         mj = opts["out"] + ".meta.json"
-        json.dump({"fmt": "storebind", "lang": st["lang"] if "lang" in st else opts["lang"],
-                   "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
-                   "store_slots": st["store_slots"], "max_line_bytes": st["max_line_bytes"]},
-                  open(mj, "w", encoding="utf-8"), ensure_ascii=False)
+        meta = {"fmt": "storebind", "lang": st["lang"] if "lang" in st else opts["lang"],
+                "bytes": st["bytes"], "lines": st["lines"], "n_blocks": st["n_blocks"],
+                "store_slots": st["store_slots"], "max_line_bytes": st["max_line_bytes"]}
+        # H_9683: the pool provenance is recorded ONLY when a pool was supplied, so the default
+        # build's meta.json stays byte-identical to every existing one (absent key = builtin nonce).
+        if st["entity_pool"] is not None:
+            meta["entity_pool"] = st["entity_pool"]
+        json.dump(meta, open(mj, "w", encoding="utf-8"), ensure_ascii=False)
         print("anima corpus storebind [%s]: blocks=%d slots=%d lines=%d bytes=%d max_line=%dB "
               "train=%d heldout=%d leak=0 -> %s"
               % (opts["lang"], st["n_blocks"], st["store_slots"], st["lines"], st["bytes"],
@@ -3887,6 +3968,10 @@ def main():
         print("  manifests -> %s (%d co-train rows) · %s (%d held-out eval rows) · %s (floor)"
               % (sj, len(st["store_manifest"]["entries"]), hj,
                  len(st["held_manifest"]["entries"]), mj))
+        if st["entity_pool"] is not None:
+            print("  entity pool = EXTERNAL %s (%d atoms sampled to n_pool=%d · ascii · no dups) — "
+                  "the builtin CVCVC nonce enumeration is NOT used"
+                  % (st["entity_pool"], st["n_pool"], st["n_pool"]))
         print("  C0-a 0-shot ✅ held-out entities appear 0x in corpus (store-key + substring both asserted)")
         print("  answer = polarity XOR operator (is/not × good/bad) — store holds the FACT, text the "
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
