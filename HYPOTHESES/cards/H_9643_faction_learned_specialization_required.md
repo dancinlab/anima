@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🟢 계기 v2 SOUND(toy) + 🔴 303M INVALID(**원인 정정: 코퍼스 아님·undertrain+resume 결함**·NOT KILL): 14k=0.90epoch(train-py-4 앵커 1.3epoch 미달·step숫자만 이식)로 G0 전6 FAIL · 18k 악화는 resume 결함(_warm_start:1061 model만 복원·optimizer/step 미복원→savant 스케줄 재적용)이지 과적합 아님. **clm303_clean(같은 4-cell 코퍼스) G0 5/5 PASS = 코퍼스 무죄 확증**. 교정=같은 코퍼스 21k(1.35epoch) 연속런(resume 금지) 파일럿(~$3). 힌트 K=8<K=1 val_CE 는 undertrain 국면 속도차(inductive bias 주장 불가·3 confound). 계기/플러밍/S1S2 유효.
+status: 🟢 계기 v2 SOUND(toy) + 🔴 303M 유효측정 BLOCKED(coherent-window·recipe-mismatch · NOT faction KILL): 14k(0.90ep)·21k(1.35ep) 두 유료 시도 모두 G0 coherence 미달(kwr 14k 3/5→21k 1/5=**더 학습해도 악화**). **epoch-앵커 진단 REFUTED**(파일럿이 lab+레포 예측 반증) — undertrain 아니라 coherent-window 문제(train-py-3). clm303_clean 의 G0 5/5 는 다른 레시피(jamo-mitosis H_1316/1321 + ~30MB 서브셋, 내 127.5MB 아님). 303M 파벌 측정=clm303_clean 정확 레시피 매칭 필요(별도 투자). 계기/플러밍/S1S2 유효·toy verdict 유지. 비용~\$16(2 pod). k0(346M) 발산 별개.
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -787,6 +787,29 @@ K=8(172M·파벌) val_CE **1.395** < K=1(346M·표준) 1.41-1.46 — **절반 pa
 
 ### ⚠️ 운영 미스 (a_fire_recover_complete)
 teardown 전 로그 pull 이 scp 인용 실수로 실패 후 teardown 실행 = 원본 로그 유실(수치는 대화 캡처로 보존 · undertrained ckpt 는 보존가치 없어 영향 경미). 교훈: multi-file scp 는 개별 실행 or rsync, teardown 은 pull 성공 확인 후.
+
+
+## 🔴 21k 교정 파일럿 — epoch-앵커 진단 REFUTED (2026-07-17 · verdict-integrity 재정정)
+
+직전 correction 은 INVALID 원인을 "undertrain(14k=0.90ep<앵커1.3)+resume 결함" 으로 재귀속하고 교정=21k(1.35ep) 연속런을 제시했다(lab-full Fable+Sol 수렴 + clm303_clean 존재증명). **파일럿이 이 진단을 반증한다**:
+
+| step | epoch | k8_s7 G0 kwr (≥4/5 필요) | val_CE |
+|---|---|---|---|
+| 14k | 0.90 | 🔴 3/5 | 1.395 |
+| 21k | 1.35 | 🔴 **1/5 (악화)** | per-cell 1.18-1.67 |
+
+- **더 학습 = coherence 악화**(3/5→1/5) ⟹ undertrain 반증. val_CE 는 healthy(DESCENT)인데 자유생성 coherence 는 step 늘수록 나빠짐 = **train-py-3 "coherent∧testable window 부재/붕괴"** 패턴(epoch 부족 아님).
+- clm303_clean(같은-이름 4-cell)이 G0 5/5 인 건 여전히 참이나 **레시피가 다르다**: jamo-mitosis(H_1316/1321 ko-coherence 해소) + ko-general 26M·ko-sns 2.6M **서브셋**(~30MB), 내 발사는 127.5MB 전량. 즉 "같은 코퍼스" 라는 존재증명 전제가 부분적으로 틀렸다(코퍼스 크기·jamo 레버 상이).
+- **303M 파벌 유효측정은 BLOCKED** — clm303_clean 의 정확한 G0🟢 레시피(jamo-mitosis·서브셋·step 수)를 매칭해야 재발사 가치. 그냥 step 늘리는 각도는 소진(반증).
+
+### 정직한 스코프
+- **계기 v2 (toy SOUND 4다리)·train 플러밍·S1/S2 파이프라인 = 전부 유효·재사용 가능**(이 세션 핵심 산출).
+- 303M faction 은 **파벌 KILL 아님**(측정 자체가 coherent-window 로 막힘). OPEN.
+- k0_s7(346M·--n-factions 0) 학습 **발산**(val_CE 14) = K=1 대조군 불안정, 별개 조사(k8 172M 정상).
+- 비용: 2 pod ~$16(오너 승인 envelope $25-50 내). teardown 완료·로그 ~/anima-weights/h9643_303m*/ 보존.
+
+### NEXT (owner 결정)
+clm303_clean 재학습 로그/모델카드서 정확 recipe(jamo-mitosis 플래그·corpus 서브셋·step) 발굴 → 매칭 재발사, 또는 파벌 질문을 toy(SOUND)서 종결 + production 렌즈(H_9731 병렬세션 진행중)로 보완.
 
 ## 통제군 (≥2 · 사전등록)
 
