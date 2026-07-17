@@ -80,7 +80,7 @@
    "arch": "CLMConvMoE (byte V256, no tokenizer)",
    "params": "3072954654",
    "tier": "WIP",
-   "path": "~/anima-weights/clm_3b/clm_3b.clm",
+   "path": "summer:/home/summer/anima-weights/clm_3b/clm_3b.clm (⚠️ 2026-07-17 실측: 로컬 ~/anima-weights/clm_3b/ 부재 — 실체는 pool 호스트 summer · HF 백업 있음 → hf 필드가 영구사본)",
    "hf": "dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b",
    "visibility": "PUBLIC",
    "progress": [
@@ -14056,6 +14056,74 @@
       "type": "gate",
       "name": "a_hf_complete (CLAUDE.md 에서 이관 · SSOT 구멍 메움)",
       "detail": "HF complete, no drift; auto-upload post-recovery (PUBLIC=PASS, PRIVATE=FAIL/WIP, +sha256); registry = ARCHITECTURE.json \"HF artifacts\"; PUBLIC → collection."
+     },
+     {
+      "id": "hf-artifacts-archival-census",
+      "type": "gate",
+      "name": "HF artifacts — 보관 갭 census (a_hf_complete 레지스트리 · 실측 2026-07-17 · 업로드 미실행)",
+      "detail": "🚨 미백업 168 ckpt ≈ 29.6GB. 로컬×summer×HF LFS sha256 3-way 대조(>100MB .clm). 업로드는 오너 게이트 대기.",
+      "children": [
+       {
+        "id": "hf-census-method",
+        "name": "측정법",
+        "detail": "로컬 `~/anima-weights` × pool `summer` × HF LFS sha256 3-way 대조. HF 345 repo(dancinlife 195M/38D + dancinlab 84M/28D) · 44,623 파일 · 1.40TB · LFS oid 39,314 전량 인덱싱. 대상 = >100MB .clm."
+       },
+       {
+        "id": "hf-census-local-gap",
+        "name": "로컬 단일사본 67개 · 11.8GB",
+        "detail": "로컬 303M ckpt 88개 중 HF 백업은 21개뿐. 나머지 67개는 mac 디스크 사고 시 소멸."
+       },
+       {
+        "id": "hf-census-summer-gap",
+        "name": "🚨 summer 단일사본 101개 · 17.8GB",
+        "detail": "공유 렌트 호스트에만 존재(로컬✗ HF✗) = a_fire_recover_complete 의 '영구 저장소로 pull' 미완. 내역: h9734 25(in-flight) · decon 16(H_9324 🟢 확정 근거) · h9672_t3s11 12 · en_arm 11(H_9359 🧱🔑 TWO-LANE cement) · h9070 7 · nbind_mig 4."
+       },
+       {
+        "id": "hf-census-h9627-gap",
+        "name": "H_9627 wired 근거 ckpt 미보관",
+        "detail": "production default(Ψ=½ dual-ledger)이 측정된 `py303_full.clm` sha256 013c4574e0ce71ae… 가 HF 에 없다. 로컬 `py303_savant_mitosis.clm` 과 byte-identical(이름 drift · 유실 아님). HF `savant_mitosis_303m.clm`(e1ab9fa0…)은 다른 파일이라 대체 불가."
+       },
+       {
+        "id": "hf-census-registry-drift",
+        "name": "레지스트리 drift 확정",
+        "detail": "본 파일 `models`=2 · `datasets`=4 vs HF 실측 345 repo ⟹ a_hf_complete 의 'complete, no drift' 미충족. 등재 `clm_3b` 의 path 가 로컬 부재(실체 summer)라 거짓 — 2026-07-17 정정."
+       },
+       {
+        "id": "hf-census-rubric",
+        "name": "보관 rubric — ARCHIVE(x) := CITED(x) ∧ COMPLETE(evidence(H))",
+        "detail": "CITED = 등록 H 의 판정이 그 파일 위에서 측정됨(GREEN·DIRECTIONAL·KILL·INVALID 포함 · PROPOSED/PRE-REGISTERED 제외). evidence(H) = 실험 arm 최종 ckpt ∪ 통제 arm 최종 ckpt 전부(판정단위 = collapse-Δ vs ≥2 controls) ∪ corpus/atom ∪ evaluate JSON ∪ 명령행+VERSION+seed. `sidecar lab full` 2모델 독립수렴 · DIRECTIONAL 설계."
+       },
+       {
+        "id": "hf-census-rubric-why",
+        "name": "근거 — ckpt 는 캐시가 아니라 결정성 사슬의 anchor",
+        "detail": "`bit-det-drop-fast-train` 으로 학습 결정성을 버리고 eval 결정성만 사수 ⟹ `corpus+seed →(비결정)→ ckpt →(결정)→ verdict` ⟹ corpus+seed 로 재생성 불가. 버리면 cement 된 숫자가 '재검증 가능'에서 '믿어달라'로 강등. seed-fragile 실측(H_9672 s7 0.99 vs s11 0.50 · H_9339 s7 벽뚫림 vs s11 INVALID)이 재학습 대체 불가를 확증."
+       },
+       {
+        "id": "hf-census-rubric-negative",
+        "name": "음성·KILL·INVALID 도 동일 기준 보관",
+        "detail": "honesty — 계기결함 재감사 경로가 원본 ckpt 재측정이었던 전례(probe-defect-census · byte-identical-anchor-cert-hides-the-bug). 가시성만 a_hf_complete 기존 축 재사용(PASS=PUBLIC · FAIL/WIP=PRIVATE)."
+       },
+       {
+        "id": "hf-census-rubric-exclude",
+        "name": "제외 대상",
+        "detail": "평가되지 않은 중간 step ckpt(주장 폐쇄집합 밖) · 등록 전 SUPERSEDED 죽은 arm. 단 dose-response 는 전 rung 이 CITED(H_9610 λ 사다리처럼 형태가 곧 판정). 용량 임계값은 rubric 에 없다(a_completeness_over_cheap)."
+       },
+       {
+        "id": "hf-census-naming",
+        "name": "네이밍 스킴",
+        "detail": "`anima-h<id>-<slug>`(캠페인 model) · `anima-h<id>-<slug>-data`(입력/기록 dataset) · `anima-base-<slug>`(다수 H 공유 substrate — 특정 H 이름 금지 · 카드가 `base: … @ sha256:` 로 참조). 기존 345 repo 는 rename 금지(외부링크 파괴) — H_id→{repo,sha256,role} 매핑으로 alias 흡수."
+       },
+       {
+        "id": "hf-census-priority",
+        "name": "업로드 우선순위 (미실행 · 오너 게이트)",
+        "detail": "① H_9627 py303_full(유일한 wired 공백) ② summer en_arm 11(H_9359 cement 증거가 렌트 호스트 단일사본) ③ summer decon 16(H_9324 확정 근거) ④ H_9672 s7/s11 쌍(해리 자체가 발견 ⟹ 쌍 필수) ⑤ h9520_cpt 3(🟠 BAR-FAIL · R2 H_9677~9682 가 baseline 소비 · PRIVATE). 게이트 사유 = 29.6GB 전송 + 가시성 결정."
+       },
+       {
+        "id": "hf-census-not-yet",
+        "name": "보관 대상 아님 — H_9410",
+        "detail": "로컬 h9410_rung0/rung2 에 ckpt 가 있으나 jsonl tier=⏳ PRE-REGISTRATION(verdict 부재) ⟹ CITED 미충족 ⟹ 판정 착지 후 보관."
+       }
+      ]
      },
      {
       "id": "a-pi5-akida-registry",
