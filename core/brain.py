@@ -235,7 +235,7 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
                           pc2_mouth="", dual_probe_fn=None, score_perturb=0.0,
-                          zeta_ladder=None, forced_emit=None):
+                          zeta_ladder=None, forced_emit=None, dual_margin_dither=0.0):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -305,10 +305,22 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
         _s_wh = float(_s_wh)
         _e_sp = float(_e_sp)
         g_recog = _e_sp
-        _gate_pass = _s_wh > _e_sp
+        # H_9765 · exogenous do() on the emit-decision INPUT (the S−E comparison margin), NOT the bit
+        # (contrast the H_9728 yoke's forced_emit which replays the OUTPUT bit). The signed per-tick dose
+        # is state-independent (the caller keys it on (seed,tick) only) so this is a valid do(); the
+        # REALIZED (dithered) emit bit still routes the candidate into W_E/W_S through unmodified native
+        # machinery, so the dual-ledger spring re-equilibrates ENDOGENOUSLY — the relock theorem
+        # (severance ≡ rhythm-deviation, H_9728) does NOT cap the dose. eps=0.0 keeps the ORIGINAL
+        # comparison (byte-identical BY CONSTRUCTION — the != guard makes it structural, not luck).
+        if dual_margin_dither != 0.0:
+            decision["dither_delta"] = float(dual_margin_dither)
+            decision["undithered_would_emit"] = _s_wh > _e_sp   # native counterfactual = flip-frac meter
+            _gate_pass = (_s_wh - _e_sp + float(dual_margin_dither)) > 0.0
+        else:
+            _gate_pass = _s_wh > _e_sp
         decision["dual_s_withheld"] = _s_wh
         decision["dual_e_spoken"] = _e_sp
-        decision["dual_margin"] = _s_wh - _e_sp
+        decision["dual_margin"] = _s_wh - _e_sp   # NATIVE S−E recorded UNMODIFIED (σ·bind reads native)
         decision["dual_cand_text"] = cand_text   # caller gates this into W_S on a silence tick
     else:
         g_recog = float(recall_margin_fn(cand_text))   # clip01(immune margin) · G pole
