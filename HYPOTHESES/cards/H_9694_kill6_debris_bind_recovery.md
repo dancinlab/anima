@@ -1,6 +1,6 @@
 # H_9694 — R2 ⭐ kill#6 잔해 회수: targeted co-train 의 bind Δ 를 frozen 계기로 재획득
 
-**status:** 🧱 BIND-ABSENT (H_9745 powered 재측정으로 승격 · seed7 N=288 TOST 등가 · runpod A100 · 2026-07-17) · wired: 계기 배선완료(#3915·#3983·#4028)
+**status:** 🧱 BIND-ABSENT · LEVER-INVALID 최종확정 (H_9745 2-seed powered + H_9746 양성통제 PASS · 귀속완성 · 2026-07-17) · wired: 계기 배선완료(#3915·#3983·#4028·#4052)
 **lane:** G6/ρ·fan · 데이터 레버 **related:** [[H_9693]] · [[H_9124]] (데이터축 선례) · [[H_9576]] (n=58 부호반전 전례)
 
 ## 물음
@@ -53,6 +53,10 @@ convergence `g6-ideation-hexa-1` 은 **"TARGETED 가 FALS 를 위조한다"를 �
 **scope**: 1-seed(7)·합성 g6bind·303M py303_full. **재현**: `anima-py corpus g6bind --lang en --arm {targeted,shuf} --n-blocks 4000 --seed 7` → `train --init py303_full.clm --steps 6000 --seed 7` → `evaluate --fan-bind --fan-smp 16`.
 
 **후속 (both models · $0~저비용)**: [[H_9745]] fan-bind 에 bind_delta paired 순열 null + prereg TOST(계기↔주장 정렬·`instrument-claim-alignment-before-reading-a-bar`) · [[H_9746]] XBIND(H_9267) 양성통제를 fan-bind 로 = dynamic-range 확정 → 계기결함/레버무효 귀속.
+
+## ★★ 최종확정 (2026-07-17 · [[H_9746]] 양성통제 PASS · 귀속완성)
+
+[[H_9746]] bindpos 양성통제가 fan-bind 서 **🟢 BIND-SENSITIVE(bind_delta 0.20·McNemar p<0.0001)** = 계기 dynamic-range 정상. STEP-0 census(A-only 28%<50%)로 F2 truncation 교란도 배제. ⟹ targeted 2-seed BIND-ABSENT 는 **계기결함 아니라 레버무효 = 최종확정**. 데이터-포맷 레버가 composition 을 안 심음(있었으면 계기가 0.20 처럼 잡음). 0.444(hexa) 인공물 확정. **R2 캠페인 완전 종결.**
 
 ## ★ 승격 (2026-07-17 · [[H_9745]] powered 재측정)
 
