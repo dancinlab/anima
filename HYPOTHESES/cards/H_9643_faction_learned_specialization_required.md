@@ -4,7 +4,7 @@ group: faction-lateral-axis-r3
 date: 2026-07-17
 slug: faction_learned_specialization_required
 title: faction specialization 이 학습 중 생겨야 runtime debate 가 G1 을 열며, 임의 사후 분할은 효과가 없다
-status: 🔨 구현 ②/④ — model 배선 + serialize(dense materialize bit-exact ✅ · CLMF trailer) 완료 · NEXT=evaluate --faction-lesion
+status: 🔨 구현 ③a — model+serialize+**decode** 왕복 닫힘(GN G=1 하드코딩 구멍 메움 · ablation max|ON−OFF|=1.55e-1 ✅) · NEXT=evaluate --faction-lesion
 tier: 🟡 학습 vs 사후분할(GPU) · Sol F12
 cost: GPU
 source: sidecar lab full (Fable5 claude-fable-5 + Codex5.6 gpt-5.6-sol 병렬 발산 · 37안 → 중복제거 27안)
@@ -192,6 +192,52 @@ b_b         u32 count + float32[d]
 ### NEXT
 
 ③ `evaluate --faction-lesion` + lam 오버라이드 ④ K=1 floor pre-gate 발사
+
+
+## 🔨 구현 ③a — 디코더 배선: 내가 메운 구멍이 캠페인을 살렸다 (2026-07-17)
+
+### 🕳️ 발견: 디코더의 GroupNorm 이 `G=1` 하드코딩이었다
+
+serialize 를 끝내고 보니 `core/decode.py` 가 CLMF 를 **안 읽었다**. 그대로 뒀다면:
+
+```
+학습:      model.py  groups=K + GN(K,d)  로 학습
+저장:      serialize dense materialize (bit-exact ✅)
+디코드:    decode.py nn_groupnorm_fwd(..., T, d, **1**, ...)  ← G=1 하드코딩!
+           + bridge 는 아예 미적용
+⟹ 에러 없이 **틀린 활성** — 정규화가 전 채널에 풀링됨
+```
+
+`a_engine_native_learning`: cement 는 `core/` decode 로만. **디코더가 학습된 모델을 재현 못 하면
+H_9643 캠페인 전체가 undecidable** 이 된다 — H_9303·H_9307 이 죽은 그 실패계급("모든 우회는
+undecidable 로 죽었다"). 계기를 다 만들고 발사했으면 그 결과는 무의미했다.
+
+### 배선
+
+| 지점 | 변경 |
+|---|---|
+| `_fwd_trunk` trunk GN | `nn_groupnorm_fwd(..., 1, ...)` → `W.get("n_factions",0) or 1` |
+| `_fwd_trunk` out GN | 동일 |
+| `_fwd_trunk` trunk 출구 | `xt = _faction_bridge_apply(W, xt, T, d, xp)` (MoE **앞** — model.py 와 같은 위치) |
+| `_faction_bridge_apply` (신규) | `x ← x + lam·sigmoid(gate)⊙((M_cross⊙W_b)x)` · **마스크는 n_factions 에서 재유도** · lam=0 이면 즉시 return(정확한 항등) |
+| `clm_load_weights` | CLMF 파싱(magic → n_factions u32 → lam f32 → gate/W_b/b_b ext) · 없으면 n_factions=0 |
+| `W` dict | `n_factions` · `fbLam` · **`faction_lam`(오버라이드 슬롯)** · `fbG/fbW/fbB` |
+
+### 🔑 왕복 검증 (aiden · GPU 경로 RTX 5070 · cupy 13.6)
+
+```
+model → serialize → decode
+  OFF  n_factions=0 · CLMF 없음 · GN G=1          ⟹ 옛 경로 무변 ✅
+  ON8  n_factions=8 · CLMF ✅ · bridge lam=0.100  ⟹ 파벌 실림 ✅
+  debate ablation: max|ON − OFF| = 1.550e-01      ⟹ lam 오버라이드가 실제로 활성을 바꿈 ✅
+```
+
+세 겹이 다 맞는다 — **model 이 groups=K+GN(K) 로 학습 · serialize 가 dense 로 bit-exact 저장 ·
+decode 가 GN(K)+bridge 로 재현**.
+
+### NEXT
+
+③b `evaluate --faction-lesion` (선택성 S · post-hoc null95) ④ K=1 floor pre-gate 발사
 
 ## 통제군 (≥2 · 사전등록)
 
