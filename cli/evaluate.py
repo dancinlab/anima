@@ -7615,7 +7615,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8104,6 +8104,224 @@ def _ag_criticality(argv):
               % (mean_ed, abs(mean_ed - 0.5), emit_rate))
     print("  ── panel (i) butterfly-λ needs a SEED-FLIP fired PAIR (H_9603 null +0.007) = 303M owner-gate fire, not this read.")
     print("  ⇒ DIRECTIONAL trace read (a_scale_honest_scope · toy ≠ Ψ verdict). loop live in ≥1 trace: %s" % ("yes" if any_live else "no"))
+def _pc2_rank_null(argv):
+    """H_9714 RANK-NULL — is the tension "rank 2.66" an artifact of applying MP to autocorrelated series?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --rank-null {iid|phase} [--surrogates N] [--seed N]`
+
+    THE UPSTREAM QUESTION NOBODY ASKED. H_9428/H_9468 read effective rank 2.66/8 off a
+    Marchenko-Pastur noise edge and named PC2 (originality<->balance) a real, emit-orthogonal DOF.
+    Every later card in this lane -- H_9574 (route it), H_9576 (does it carry meaning?), H_9630-9634
+    -- assumed that axis EXISTS and asked what it does. This asks whether it is there at all.
+
+    MP assumes i.i.d. samples. The tension factors are not: they are EMA-smoothed series
+    (rel_ema/cur_ema/ten_ema) plus refr_debt/idle. Autocorrelation shrinks the effective sample,
+    which RAISES the noise edge -- and from H_9468's own reported numbers (n=150, p=8, edge=0.0287
+    => sigma^2=0.01894), lambda2=0.048 sinks under the edge once rho > 0.736, while lambda1=0.144
+    survives until rho > 0.904. That gap is what makes this decidable: it hands us a POSITIVE
+    CONTROL for free (lambda1 must survive a null that lambda2 dies to).
+
+    WHY IT EXPLAINS THREE WALLS AT ONCE. A noise eigenvector is, BY CONSTRUCTION, (i) near-constant
+    live (there is no signal in it -- matching z's IQR 0.0514), (ii) unable to move the mouth
+    meaningfully (matching H_9576's rho=-0.077 null), and (iii) an inflater of sample rank (2.66).
+    So z-degeneracy, the H_9576 direction-null, and rank 2.66 may be ONE root -- not a wall, but us
+    trying to steer an axis that was never there.
+
+    THE NULLS.
+      iid   -- per-factor tick shuffle. Destroys autocorrelation => reproduces MP's own assumption.
+               A cheap screen: if lambda2 sinks under even THIS null, H_9468's MP arithmetic was
+               already wrong before any autocorrelation correction (INVALID-original).
+      phase -- AAFT (amplitude-adjusted Fourier transform) surrogate: preserves each factor's
+               marginal distribution AND its autocorrelation, destroying ONLY the cross-factor
+               coupling. That is the correct null for "is this joint structure real?", and it is
+               where the verdict lives -- the rho*=0.736 threshold is a prediction, not a judge
+               (the AR(1) n_eff <-> eigenvalue-inflation map is an approximation, and MP also
+               assumes equal factor variances, which these factors do not have).
+    """
+    import glob as _glob
+    import json as _pj
+    import random as _prand
+    import numpy as _np
+
+    FACTORS = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+               "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    mode = "phase"
+    for i, a in enumerate(argv):
+        if a == "--rank-null" and i + 1 < len(argv) and not argv[i + 1].startswith("--"):
+            mode = argv[i + 1]
+    if mode not in ("iid", "phase"):
+        print("  ⇒ ⛔ --rank-null 은 iid | phase")
+        return 2
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --rank-null {iid|phase}")
+        return 2
+    ns = evaluate_intval(argv, "--surrogates", 200)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    # One matrix per trace file: a surrogate must respect each run's own time axis, so runs are
+    # never concatenated (that would forge an autocorrelation break at every seam).
+    mats = []
+    seen_streams = set()
+    dup = 0
+    for f in files:
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in FACTORS]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+        if len(rows) >= 20:
+            # DEDUPE BY FACTOR STREAM. The trace dir holds one file per (arm, seed), but the arms
+            # (off/bias/rng) share a byte-identical factor stream -- steering happens AFTER emit and
+            # never feeds back into tension (Stage-A isolation). Keeping all 9 would triple-count 3
+            # runs and forge a null distribution ~sqrt(3) too tight. Verified on the live traces:
+            # off/bias/rng factor tuples compare EQUAL for every seed.
+            X = _np.asarray(rows, dtype=_np.float64)
+            key = hash(X.tobytes())
+            if key in seen_streams:
+                dup += 1
+                continue
+            seen_streams.add(key)
+            mats.append((os.path.basename(f), X))
+    if not mats:
+        print("  ⇒ ⛔ 8-인자를 모두 가진 트레이스 없음 (필요: " + ",".join(FACTORS) + ")")
+        return 2
+
+    print("=== anima evaluate --pc2-direction --rank-null %s — H_9714 상류 rank 재검 ===" % mode)
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 = arm 은 tension 에 영향 0)"
+          % (d, len(files), len(mats), dup))
+    print("        surrogate=%d · seed=%d" % (ns, rseed))
+    print("⚖️ 스케일: λ 는 **correlation-scale**(Σλ=8) — H_9468 의 covariance-scale(Σλ≈0.15)과 **다르다**.")
+    print("        따라서 이 λ₂ 는 H_9468 의 0.048 이 아니다. 판정은 **surrogate 대조**(스케일 무관)가 한다.")
+    print("질문:  rank 2.66 · 'PC2 = 실재 DOF' 가 **자기상관 시계열에 MP 를 적용한 산물**인가?")
+    print("null:  %s" % ("iid tick-shuffle (자기상관 파괴 = MP 가정 재현 · 값싼 스크린)" if mode == "iid"
+                         else "AAFT phase surrogate (주변분포+자기상관 보존 · 인자간 결합만 파괴 = 올바른 null)"))
+    print("bar:   λ₁ > null95 (양성통제) ∧ λ₂ ≤ null95 ⇒ 🧱 KILL-PC2-is-noise / 둘 다 초과 ⇒ PASS-rank-real")
+    print("")
+
+    def _eig(X):
+        Z = X - X.mean(axis=0)
+        sd = Z.std(axis=0, ddof=1)
+        sd[sd == 0] = 1.0
+        Z = Z / sd                       # correlation-scale: MP's equal-variance frame
+        C = (Z.T @ Z) / float(Z.shape[0] - 1)
+        w = _np.linalg.eigvalsh(C)
+        return _np.sort(w)[::-1]
+
+    def _lag1(X):
+        out = []
+        for j in range(X.shape[1]):
+            v = X[:, j]
+            v = v - v.mean()
+            den = float((v * v).sum())
+            out.append(float((v[:-1] * v[1:]).sum() / den) if den > 0 else 0.0)
+        return out
+
+    def _iid_surr(X, rng):
+        Y = _np.empty_like(X)
+        for j in range(X.shape[1]):
+            col = X[:, j].copy()
+            rng.shuffle(col)
+            Y[:, j] = col
+        return Y
+
+    def _aaft(X, rng):
+        """AAFT: rank-map to gaussian -> randomise phases (keeps the power spectrum, hence the
+        autocorrelation) -> rank-map back to the ORIGINAL values. Each factor is surrogated
+        independently, so the marginal and the autocorrelation survive and only the cross-factor
+        coupling is destroyed."""
+        n = X.shape[0]
+        Y = _np.empty_like(X)
+        for j in range(X.shape[1]):
+            x = X[:, j]
+            order = _np.argsort(x)
+            g = _np.sort(rng.standard_normal(n))
+            gx = _np.empty(n)
+            gx[order] = g                       # gaussianised, same rank order
+            F = _np.fft.rfft(gx)
+            ph = rng.uniform(0.0, 2.0 * _np.pi, size=F.shape[0])
+            ph[0] = 0.0
+            if n % 2 == 0:
+                ph[-1] = 0.0
+            Fs = _np.abs(F) * _np.exp(1j * ph)  # same |spectrum| => same autocorrelation
+            gs = _np.fft.irfft(Fs, n=n)
+            back = _np.argsort(_np.argsort(gs))
+            Y[:, j] = _np.sort(x)[back]         # rank-map back to the original marginal
+        return Y
+
+    rng = _np.random.default_rng(rseed)
+    tot_n = 0
+    obs_all, null_all = [], []
+    for name, X in mats:
+        obs = _eig(X)
+        lags = _lag1(X)
+        tot_n += X.shape[0]
+        nulls = []
+        for _ in range(ns):
+            Y = _iid_surr(X, rng) if mode == "iid" else _aaft(X, rng)
+            nulls.append(_eig(Y))
+        nulls = _np.asarray(nulls)
+        obs_all.append(obs)
+        null_all.append(nulls)
+        print("  %-18s n=%-4d λ=[%s]" % (name, X.shape[0],
+                                         " ".join("%.3f" % v for v in obs[:4])))
+        print("     lag-1 ρ̂ per factor: " + " ".join("%s=%.2f" % (FACTORS[j][:3], lags[j])
+                                                     for j in range(len(FACTORS))))
+
+    obs = _np.mean(_np.asarray(obs_all), axis=0)
+    nulls = _np.mean(_np.asarray(null_all), axis=0)      # run-averaged null distribution
+    p95 = _np.percentile(nulls, 97.5, axis=0)
+    p05 = _np.percentile(nulls, 2.5, axis=0)
+
+    print("")
+    print("  run-평균 · surrogate null 95%% 상단 대조 (n_tot=%d tick)" % tot_n)
+    for k in range(4):
+        pv = float((nulls[:, k] >= obs[k]).mean())
+        mark = "생존" if obs[k] > p95[k] else "死"
+        print("     λ%d obs=%.4f · null95=[%.4f, %.4f] · p=%.3f · %s"
+              % (k + 1, obs[k], p05[k], p95[k], pv, mark))
+
+    l1_live = obs[0] > p95[0]
+    l2_live = obs[1] > p95[1]
+    all_live = bool((obs > p95).all())
+    print("")
+    if all_live:
+        v = ("⛔ INVALID — bulk 를 포함해 **모든 λ 가 null 초과** ⇒ surrogate 가 자기상관을 보존 못함"
+             "(AAFT 결함) · 판정 불가")
+    elif not l1_live:
+        v = ("⛔ INVALID — **양성통제 λ₁ 실패**(인증된 coherence 축조차 null 을 못 이김) ⇒ 계기가 어떤 구조도 "
+             "못 봄 · surrogate 구현 결함 먼저 · **음성 아님**")
+    elif l1_live and not l2_live:
+        v = ("🧱 KILL-PC2-is-noise — λ₁ 생존 ∧ **λ₂ 사망** = PC2 특정 사망 ⇒ **PC2 lane 전체(H_9574·H_9576·"
+             "H_9630~9634) 상류 근거 소멸** · rank 2.66 → ~1 · H_9428 DIRECTIONAL 재작성 대상")
+    else:
+        v = ("🟢 PASS-rank-real — λ₁·λ₂ 모두 null 초과 ⇒ PC2 실재 · 축퇴는 PCA 탓 아님 ⇒ H_9712(상쇄)/"
+             "H_9715(stage 노예화) 로 인계")
+    print("  ⇒ VERDICT(%s-null): %s" % (mode, v))
+    if mode == "iid":
+        print("     ⚠️ iid 는 **값싼 스크린**이다 — 판정권은 phase(AAFT) surrogate 에 있다(--rank-null phase).")
+    else:
+        print("     주의: ρ*=0.736 문턱은 **예측**이지 판정자가 아니다(AR(1) n_eff↔고유값 맵은 근사 · MP 는")
+        print("     인자 등분산도 가정하나 여기 인자들은 등분산이 아니다). 판정은 위 surrogate 대조가 한다.")
+    return 0
+
+
 def _pc2_zeta_slope(argv):
     """H_9664 ZETA-SLOPE — the within-tick dose readout. Reads `anima-py chat --pc2-zeta` traces.
 
@@ -10113,6 +10331,8 @@ def main(argv):
             return _pc2_occupancy([a for a in argv[1:] if a != "--occupancy"])
         if "--zeta-slope" in argv:
             return _pc2_zeta_slope([a for a in argv[1:] if a != "--zeta-slope"])
+        if "--rank-null" in argv:
+            return _pc2_rank_null(argv[1:])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
