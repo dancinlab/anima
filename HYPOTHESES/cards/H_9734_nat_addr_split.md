@@ -115,3 +115,30 @@ HELD manifest (held-out):     addr_top1 = 0.0000 · addr_mass = 0.0062  🔴 전
 
 **설계 성공 기록**: 사전등록 계기 게이트(arm-S ≥.95)가 없었다면 arm-N held 0.000 을 "자연어휘 전이
 실패"로 오독했을 것이다. 게이트가 버전 회귀를 과학 결과로 오독하는 것을 **발사 후 판독 시점에** 막았다.
+
+---
+
+## 🔬 REFERENCE-MATCH CLEARED — 코드 무죄 (2026-07-17 · $0 · verdict-integrity)
+
+Stop-hook(upstream-fix)에 따라 store-addr default 경로를 T3 커밋(13139dee0 · ~0.15.35)과
+origin/main(0.15.85) 정밀 대조. **default 경로 byte-identical 확정 = 고칠 코드 결함 없음.**
+
+| 경로 | default diff |
+|---|---|
+| `store_apply`(eval) | query/fuse/lane_type4 전부 default-off · 주소 `q=h@W_q` 불변("defaults reproduce H_9423 byte-for-byte") |
+| `CLMSModule.forward`(train) | yn_fresh=None→`q=W_q(yn_q)` · fangate=False→`val[pols]` · val_center=False 전부 불변 |
+| addr-loss | `if sb_addr_w>0: ce_addr=CE(att,tgt)` 완전 동일(T3 도 `--store-addr-weight 1.0`) |
+| oracle-aux(RV-1) | `if sb_oracle_aux>0 and not sb_oracle` gated · 내 실행 sb_oracle_aux=0 = byte-identical |
+
+⟹ **버전 회귀 아님**(직전 verdict 의 "0.15.35→0.15.76 회귀 강한 의심"을 이 reference-match 가
+기각). eval 무죄(t3 0.15.76→0.9844)에 더해 **훈련 코드도 무죄**. held 0.000 vs T3 0.984 는 코드가
+아니라 **비-코드 요인**:
+- **seed {3,17}**(T3 는 {7,11}) — 주소 일반화가 seed-의존일 수 있음.
+- **torch/GPU numerics** — torch 2.13.0+cu130 · RTX 5070 **sm_120(Blackwell) bf16** 의 미세한
+  수치차가 delicate 한 주소-일반화 bootstrap 을 흔들 수 있음.
+- (2차) corpus drift — gen_en/sns_en 트렁크 co-train 변경 가능성(미검증).
+
+**남은 결정타 = seed-7 CPT(t3 동일 seed·default)** — held≈.98 이면 seed 확정 / held≈0 이면 numerics.
+🔴 GPU 대기(summer free 6078<9000 · 병렬세션 2프로세스 점유·`a_dont_kill_live_compute` 안죽임) —
+waiter(setsid·5분폴링→자동재발사) + poller 자율 배치. **코드 upstream-fix 대상 없음**(reference-match
+CLEARED) · 이 datum 은 GPU 해방 대기(외부 의존·session-terminal).
