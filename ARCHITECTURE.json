@@ -172,8 +172,8 @@
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9729-silence-content-303m",
         "type": "gate",
-        "verdict": "🟢 INSTRUMENT CERTIFIED (oracle) — estimand 수리 후 own arm 재실행 해석가능 (기질 판정 前)",
-        "detail": "H_9729 계기(#4046): 구 리더가 매개변수 cand[t] 조건부=post-treatment bias(carrier[t]→cand[t] same-tick 도달 제거)→수리 --reach-lag same=I(cand[t];carrier[t]|cand[t-1])→실 303M oracle CERTIFIED(z=9~18·p=0.002). fresh iid=same-tick pulse(HOLD-K KILL). own/perm --reach-lag same 재실행 해석가능. 기질 판정 前. 상세=카드."
+        "verdict": "🟠 INSTRUMENT CERTIFIED (iid carrier 한정) · own reach 관찰 미식별 → interventional fork",
+        "detail": "H_9729(#4047): 계기 CERTIFIED(oracle z=9~18·#4046) 후 own carrier[t]≡cand_pregate[t-1] byte-id 38/38(latch=이전후보) → 처치=교란 ⟹ own reach 관찰 UNIDENTIFIABLE(donor-through-reader도 KILL). ns=식별한계 NOT 기질null. 다음=interventional fork Stage-1 A(own)vs B(no-reentry)=H_9738 열린 seam. 상세=카드+convergence."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16772,6 +16772,13 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "own-arm-latch-equals-prev-candidate-observationally-unidentifiable",
+    "state": "pos-conv",
+    "value": "재진입 latch가 이전 후보를 verbatim 복사하면(H_9729: own carrier[t]≡cand_pregate[t-1] byte-id 38/38) 처치변수 X가 곧 history/confounder라 그 arm의 causal reach는 관찰적으로 UNIDENTIFIABLE — 어떤 조건부(X를 통째 제거=정의상0)/uncond MI(=autocorrelation)/order-signature도 latch-causality를 autocorrelation과 분리 못함. donor-through-certified-reader도 무효(own CMI 구조적0 vs donor estimable=다른 식별체제 비교). 식별은 오직 INTERVENTION: 저장 checkpoint서 byte-identical fork {own·no-reentry·scramble·donor} seed-blocked. ns는 식별한계지 기질 null 아님.",
+    "threshold": "재발조건: 저장소/latch가 이전 상태를 재주입하고 그 재주입의 causal 효과를 재는 계기. ① 재주입 carrier가 이전 관측치와 byte-identical인지 확인(그렇다면 처치=history=관찰 미식별). ② 관찰적 조건부/uncond/signature-tweak로 못 고침 — do(carrier)로 identical-checkpoint fork(with/without/scrambled/donor) seed-blocked 필요. ③ ns/degenerate를 기질 null로 읽지 말 것(식별한계). donor는 fork 내 matched specificity arm으로만 유효(관찰 통제 아님). provenance-blind anchor면 veto-vs-spoken은 empty.",
+    "source": "cli/chat.py dual-ledger reentry latch · cli/evaluate.py::_silence_content_te"
+   },
    {
     "id": "te-reach-conditioning-on-mediator-post-treatment-bias",
     "state": "pos-conv",

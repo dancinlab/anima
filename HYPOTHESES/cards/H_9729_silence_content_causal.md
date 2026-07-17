@@ -1,6 +1,6 @@
 # H_9729 — SILENCE-CONTENT — 보류장부 W_S가 CONTENT를 나르나 압력만인가 (억제 vs 숙고 · 최심부)
 
-**status:** 🟢 **INSTRUMENT CERTIFIED (oracle) — own arm 재실행 이제 해석가능 (2026-07-17 · Fable∥Sol #4045→#4046)**. 계기 여정: run-2 **INSTRUMENT-INVALID**(oracle 이중결함 OOD washout+period-2 point-mass earned≡0·#4045) → transmit·schedule 수정(#4043) → QA서 **estimand lag 불일치** 발견(리더가 매개변수 cand[t] 조건부 = post-treatment bias·carrier[t]는 cand[t]에 **same-tick** 도달) → **estimand 수리**(`--reach-lag same` PRIMARY=I(cand[t];carrier[t]|cand[t-1]) pre-treatment 조건부·#4046) → **실 303M oracle 2 trace 모두 CERTIFIED**(58틱 z=9.03·150틱 z=18.40·둘 다 p=0.002). ⟹ **계기가 reach를 읽을 수 있음 확증**(양성통제 통과) → own/perm keep-all `--reach-lag same` 재실행이 해석가능(음성=의미有·양성=perm/donor로 echo 배제 필요). ⚠️ own arm은 carrier[t]≈cand[t-1]라 same-tick도 perm/donor 필수(Fable 3b 자기상관). t+1 residual(`--reach-lag next`)=2차 labeled read. **여전히 기질 판정 前**(계기만 인증 · #4039 echo 문언 DEMOTE 유지).
+**status:** 🟠 **INSTRUMENT CERTIFIED (iid carrier 한정) · own reach 관찰 미식별 → INTERVENTION 필요 (2026-07-17 · Fable∥Sol #4045→#4047)**. 계기 인증 후 own/perm 재판독서 **own carrier[t]≡cand_pregate[t-1] byte-identical 38/38**(latch=이전후보 복사) 발견 → 처치가 곧 교란변수 ⟹ **own reach 관찰적으로 UNIDENTIFIABLE**(어떤 조건부/uncond MI도 autocorrelation과 분리 못함·donor-through-reader 도 KILL:own CMI 구조적0 vs donor estimable=다른 식별체제). latch≡prev=메커니즘 FEATURE+관찰식별 BUG·veto-vs-spoken은 provenance-blind anchor로 empty. ns=**식별한계지 기질null 아님**. **결정적 다음=INTERVENTIONAL fork**(저장 checkpoint서 byte-identical {own·no-reentry·scramble·donor})·Stage-1 A(own)vs B(no-reentry) ~20seed = 보류내용이 text read-back 경로로 미래 도달하나 = **H_9738 열린 seam("다른 경로")**. A≡B⇒H_9729 🧱 종결(H_9738 epiphenomenal이 read-back로 확장). ▼아래는 계기 여정: run-2 **INSTRUMENT-INVALID**(oracle 이중결함 OOD washout+period-2 point-mass earned≡0·#4045) → transmit·schedule 수정(#4043) → QA서 **estimand lag 불일치** 발견(리더가 매개변수 cand[t] 조건부 = post-treatment bias·carrier[t]는 cand[t]에 **same-tick** 도달) → **estimand 수리**(`--reach-lag same` PRIMARY=I(cand[t];carrier[t]|cand[t-1]) pre-treatment 조건부·#4046) → **실 303M oracle 2 trace 모두 CERTIFIED**(58틱 z=9.03·150틱 z=18.40·둘 다 p=0.002). ⟹ **계기가 reach를 읽을 수 있음 확증**(양성통제 통과) → own/perm keep-all `--reach-lag same` 재실행이 해석가능(음성=의미有·양성=perm/donor로 echo 배제 필요). ⚠️ own arm은 carrier[t]≈cand[t-1]라 same-tick도 perm/donor 필수(Fable 3b 자기상관). t+1 residual(`--reach-lag next`)=2차 labeled read. **여전히 기질 판정 前**(계기만 인증 · #4039 echo 문언 DEMOTE 유지).
 **lane:** 의식/emit-drive/Ψ=½ · deliberation (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -158,3 +158,31 @@ QA(로컬 합성): same-tick 결합 → `--reach-lag same` z=28.9 CERTIFIED vs `
 3. 150틱 next-lag = residual/carryover 탐색용만(non-certifying 사전등록).
 
 ⚠️ **계기 인증이지 기질 판정 아님** · cement=engine-native 303M anima-py `--reach-lag same` own/perm.
+
+---
+
+## 🟠 own-arm = 관찰 미식별 → INTERVENTIONAL fork 필요 (2026-07-17 · Fable∥Sol reconcile #4047)
+
+계기 CERTIFIED 후 own/perm `--reach-lag same` 재판독 → own·perm 둘 다 null(earned 음수 z=−2.8). 진단 위임 → **강한 합의**.
+
+### 발견 (reference-match)
+- **own carrier[t] == cand_pregate[t-1] byte-identical 38/38**: latch가 이전 후보를 verbatim 복사 → 처치변수 X ≡ 조건부/history 변수. ⟹ I(cand[t];carrier[t]|cand[t-1])=I(cand[t];X|X)≡0 **정의상**(interior-absence 아님).
+- 서명 [n_dig,n_lower] **order-invariant** → perm(byte-sort)이 X측 서명에 안 보임(sig(sorted)=sig) → perm은 X측 order 통제로 무효. directional uncond peek own 0.28>perm 0.14는 circular-shift null이 lag-1 autocorr을 비교하는 것이라 **해석불가**.
+
+### reconcile (Fable∥Sol 합의 · Sol "both agree on the critical point")
+| 항목 | 합의 |
+|---|---|
+| own reach | 관찰적으로 **UNIDENTIFIABLE** — X≡confounder라 어떤 조건부/uncond/order-signature도 autocorrelation과 분리 못함 |
+| donor-through-reader | KILL — own CMI 구조적 0, donor estimable = 다른 식별체제 비교(own vs donor 불가) · donor는 fork 내 matched specificity arm으로만 유효 |
+| latch≡prev | 메커니즘 FEATURE(withheld=vetoed cand=cand[t-1]) + 관찰식별 BUG |
+| veto-vs-spoken | anchor가 text_payload만(provenance-blind) → byte-identical carrier면 spoken/vetoed 구별불가 = **empty** · veto는 selection + W_S/W_E 1-bit(H_9738)에만 존재 |
+| 필요 | do(carrier): 저장 silence checkpoint서 byte-identical fork, seed-blocked |
+
+**이견(1줄)**: Fable/Sol 모두 donor-through-certified-reader 를 own 통제로 KILL(own은 interventional swap로만 식별) — 합의.
+
+### 결정적 다음 실험 (2-stage stop-gated · CPU-우회 $0 · 계기반복 아닌 기질실험)
+- **Stage 1 (최저비용·결정적)**: 저장 checkpoint서 A(own)·B(no-reentry)·C0(sham=own 재실행 byte-identical 결정성 floor) ~20seed. Δ(A,B) on cand_pregate[t*] = **보류내용이 text read-back 경로로 미래에 도달하나** = H_9738 열린 seam. **A≡B ⇒ 정직 종결 🧱**: gate 살았으나 interior 텍스트경로도 dead wire → H_9738 epiphenomenal이 read-back로 확장.
+- **Stage 2 (A≠B일 때만)**: 2×2 specificity interaction(own-arm 출력이 own content를 donor-arm이 donor content 추종보다 더) + scramble(C) order. PASS = "다음 상상후보가 이 rollout의 vetoed 후보에 content-특이·byte-order-민감하게 steered" = deliberation-**shaped** 기질사실(DIRECTIONAL·sub-semantic·feat8 한정 — semantic "living interior"는 이 계기로 도달불가).
+
+### status = 🟠 계기 CERTIFIED(iid 한정) · own reach 관찰 미식별
+own ns = 식별한계지 기질 null 아님(kill-list 준수). 기질 판정은 interventional fork로만. cement=engine-native anima-py.
