@@ -16378,7 +16378,7 @@
     "id": "faction-lateral-axis-r3",
     "type": "gate",
     "detail": "파벌 = 세포 K분할 + intra-sync + cross-debate → 합의(가로축). 다이얼 n_factions. R3 재개봉 결론: 부활 후보가 아니라 계기 심문 대상 — 옛 Φ 는 통합이 아니라 나눗셈이었다.",
-    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · ⛔ H_9643 계기 2차 실패 — 합성이 실물보다 쉬웠다(np.eye 가 정렬을 공짜로 줌 · 결함 ⑫) · 미정렬 재판별서 4 후보 전부 사실상 죽음 · 진단=도메인 base CE 16배 편차 ⟹ toy 문제 의심 · Fable 난제 위임중(원리적 가능성).",
+    "verdict": "🔴 옛 파벌=순환(H_9673) · 🟢 블록 실재+선결조건 4/4(H_9674) · 🎯 프런티어 · 🔀 H_9643 계기 2회 사망 후 Fable 처방 — **계기는 죽지 않았다**(조건부): 진범 3(지표 정렬가정·곱셈결합·toy 특화압력 부재) · 처방=split-half 교차선택 + keep-one + oracle λ-ladder 인증. 계기 사망시 UNMEASURABLE(VOID·RED 아님).",
     "children": [
      {
       "name": "🔵 사실확정 ① — 파벌과 A⇄G 는 공존했다",
@@ -16711,7 +16711,7 @@
       "role": "",
       "id": "faction-r3-h9643-lever-design",
       "detail": "선결조건 4/4 통과 후 남은 유일 가설. 파벌 **학습** 레버가 core/ 에 없어(기존 계기는 전부 READ) 설계를 Fable 에 위임. 레버 = `--n-factions K`(전 TrunkLayer conv groups=K + GN(1,d)→GN(K,d)) + `--faction-bridge-lam0`(파벌간 항만 사는 게이트 다리 · trailer lambda 로 ON/OFF ablation).",
-      "verdict": "⛔ 계기 2차 실패(결함 ⑫) · Fable 난제 위임중",
+      "verdict": "🔀 Fable 처방 수령 — 계기 가능(조건부) · NEXT=toy 재설계 + oracle ladder 인증",
       "children": [
        {
         "name": "⛔ 직교화 aux 기각 — H_9673 과 같은 실패계급",
@@ -16822,6 +16822,36 @@
         "id": "faction-r3-h9643-synthetic-too-easy",
         "detail": "centered-diag 가 합성선 PASS(+5.71 vs null95 +3.73) 했으나 실물서 S_real=−0.2469 붕괴. 원인: D += np.eye(K)*0.05 로 심으며 '파벌 f = 도메인 f' **정렬을 공짜로 줬다**. 실물은 f0→ccc·f1→aaa·f2→aaa·f3→ddd = 정렬 무관·중복소유·주인없는 도메인.",
         "verdict": "⟹ **양성통제의 양성통제가 필요** — 합성 시험이 실제 실패모드를 재현해야 한다. 미정렬 재판별서 4 후보 전부 사실상 실패. 더 깊은 진단: 심은 효과 ΔCE 0.05 vs 도메인 base CE 편차 16배(0.0051~0.0787) = 신호와 잡음이 동급 ⟹ toy 설계 문제 의심 · Fable 위임(Q4 = 애초에 lesion-ΔCE 로 잴 수 있는 질문인가)."
+       },
+       {
+        "name": "🔀 Fable 처방 — 진범 3 · split-half 가 순서통계량의 구조적 해법",
+        "role": "",
+        "id": "faction-r3-h9643-fable-rx",
+        "detail": "①centered-diag 붕괴는 **toy 무죄·순수 지표 결함**: owner=[2,0,0,3] 이면 trace 가 읽는 대각 4칸 중 심은 셀이 (3,3) 하나뿐 ⟹ 신호의 ¾ 을 안 읽는 산술적 필연. ②**곱셈 결합**이 null 을 띄운다(이중중심화는 가법만 뺀다 · 16배 편차는 이 경로로만 유죄). ③toy 특화압력 부재 + **공유소유가 drop-lesion 서 서로 보상**(f1→aaa 는 구조적 과소측정).",
+        "verdict": "🔑 lesion-ΔCE 는 인과 readout 이라 **원리상 유효** · 순서가 곧 답 = oracle ladder 로 계기 인증 → 인증된 계기로 실물 → 실물이 null-호환이면 **정당한 음성**이지 계기 실패가 아니다",
+        "children": [
+         {
+          "name": "🔪 split-half 교차선택 — 고르는 데이터와 채점하는 데이터를 나눈다",
+          "role": "",
+          "id": "faction-r3-h9643-splithalf",
+          "detail": "ĉ_f = argmax_c D_A[f,c](선택은 A 반쪽) · S = mean_f(D_B[f,ĉ_f] − mean_{c≠ĉ}D_B[f,c])/sd(B)(점수는 B 반쪽). max 가 null 을 띄우는 이유는 **선택과 평가가 같은 데이터**라서 — null 의 argmax(A) 는 B 손상을 예측 못 하므로 선택 편향이 **구조적으로** 죽는다. 정렬불요·공유소유·고아 허용.",
+          "verdict": "Confirmatory = 상호작용 에너지 ‖R‖²_F(2차 합 = 선택 없음) · Robustness = keep-one lesion(공유소유 보상에 면역)"
+         },
+         {
+          "name": "🧪 toy 재설계 — 특화될 수밖에 없는 양성통제",
+          "role": "",
+          "id": "faction-r3-h9643-toy-rx",
+          "detail": "반복바이트 폐기 → 동일구조 랜덤 마르코프 4소스(같은 알파벳·같은 전이엔트로피 · base CE 비율 ≤2× **실측확인**) · **용량 결핍**(총용량≈Σ수요 · E=1 — 특화는 결핍에서만 강제) · ORACLE arm(라우팅 게이트 π=비항등+공유소유1쌍+고아1개 = 실물 실패모드 재현).",
+          "verdict": "ORACLE 은 **구조 게이트이지 loss 항이 아니라 H_9673 순환 아님**(V2_1 C0-ORACLE 자리) · dose ladder λ∈{0,⅓,⅔,1} · 인증 bar = S λ단조 ∧ S(1)>null95 ∧ S(0)≈null"
+         },
+         {
+          "name": "⚖️ 계기 사망 = UNMEASURABLE(VOID) · RED 아님",
+          "role": "",
+          "id": "faction-r3-h9643-unmeasurable",
+          "detail": "인증 실패시 H_9643 Q2 를 UNMEASURABLE 로 닫는다 — 특화 **부재의 증거가 아니라 관측 불능**(Ψ-SOMA 의 VOID 취급). 관측가능량 재정의 없인 재개 금지.",
+          "verdict": "실물 음성은 계기와 구분: 인증 PASS 후 S ≤ null95 면 '이 스케일서 특화 없음' = 결과 · UNDERPOWERED 가드(동적범위 < 2× null sd 면 보류 · power-before-negative-verdict)"
+         }
+        ]
        }
       ]
      }
