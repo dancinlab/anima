@@ -136,6 +136,8 @@ class CLMConfig:
     clms_d_g: int = 64             # H_9423 fusion bottleneck: yn_q→d_g gate so store value v not diluted
     clms_val_center: bool = False  # H_9710 RV-3 majority-null centering (lane_type 3)
     clms_fangate: bool = False     # H_9696 CLMS-FAN (lane_type 4): value-from-key + learned query gate
+    clms_fresh_k: int = 0          # H_9720-ⓐ EN-disjoint fresh query lane width (0=off, lane_type 5)
+    clms_fresh_L: int = 3          # H_9720-ⓐ trunk-layer tap depth for the fresh address query
 
     # H_9698 MBND mouth-binder lane (co-trained): a causal bank of past trunk hiddens is addressed by
     # content+relative-distance, and the attended context multiplies the current hidden (Hadamard) into
@@ -407,7 +409,9 @@ class CLMConvMoE(nn.Module):
             from clms import CLMSModule          # core/clms.py (on sys.path via cli/train.py)
             self.clms = CLMSModule(cfg.d_model, cfg.vocab_size, cfg.clms_n_slot, cfg.clms_d_k,
                                    cfg.clms_d_s, cfg.clms_r, cfg.clms_key_seed, lam0=cfg.clms_lam0,
-                                   d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate)
+                                   d_g=cfg.clms_d_g, val_center=cfg.clms_val_center, fangate=cfg.clms_fangate,
+                                   fresh_k=int(getattr(cfg, "clms_fresh_k", 0)),
+                                   fresh_L=int(getattr(cfg, "clms_fresh_L", 3)))
         # H_9698 MBND mouth-binder lane (co-trained). None => byte-identical (no lane). CORE-owned
         # (core/mbnd.py); lazily imported. Unlike CLMS this one IS applied in this forward — it needs
         # no runtime data, only the frame's own causal bank of hiddens.
@@ -453,11 +457,19 @@ class CLMConvMoE(nn.Module):
         # for ~L-fold less activation memory. use_reentrant=False = the modern
         # non-reentrant autograd path (handles no-input-grad embeds cleanly).
         ckpt = getattr(self.cfg, "grad_checkpoint", False) and self.training and x.requires_grad
-        for layer in self.trunk:
+        # H_9720-ⓐ fresh query lane tap: capture the trunk-layer-fresh_L output (BEFORE bridge/MoE/norm),
+        # aligned with core/decode._fwd_trunk taps[fresh_L] for train↔decode parity. None for every other
+        # lane ⇒ byte-identical golden path. TrainShell detaches this before the store address query.
+        _need_fresh = (self.clms is not None and int(getattr(self.clms, "fresh_k", 0)) > 0)
+        _fresh_L = int(getattr(self.clms, "fresh_L", 3)) if _need_fresh else -1
+        pen_fresh = None
+        for _i, layer in enumerate(self.trunk):
             if ckpt:
                 x = _grad_checkpoint(layer, x, use_reentrant=False)
             else:
                 x = layer(x)
+            if _need_fresh and (_i + 1) == _fresh_L:
+                pen_fresh = x                          # (B, d, T) early-layer tap (matches decode taps[fresh_L])
         # H_9643 ORACLE routing (instrument certification arm only) — gate each row's channels to
         # the faction that owns its domain, for a `faction_oracle_lam` fraction of steps. Applied
         # at the trunk exit, before the bridge, so the bridge still sees a faction-structured x.
@@ -502,6 +514,8 @@ class CLMConvMoE(nn.Module):
         }
         if pen_trunk is not None:
             out["pen_trunk"] = pen_trunk
+        if pen_fresh is not None:
+            out["pen_fresh"] = pen_fresh               # H_9720-ⓐ fresh address-query tap (B, d, T)
         if targets is not None:
             ce = F.cross_entropy(
                 logits.transpose(1, 2).reshape(-1, self.cfg.vocab_size),
