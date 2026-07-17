@@ -1,6 +1,6 @@
 # H_9728 — Σ-REBASE — Θ-alive 데몬 위 σ 최초 측정 (Θ×σ interaction · 소급유효화 이중불가)
 
-**status:** 🔎 DIRECTIONAL-PARTIAL · Θ−-yoked instrument **구현됨·미배선**(#4068 · C0 인증+factorial 대기) → Θ+ arm 최초 실측(#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
+**status:** 🔎 DIRECTIONAL · Θ−-yoked C0 PASS(leak-free)·σ-factorial NOT-POWERED(#4069) · Θ+ 첫 σ(#4064) → Θ+ arm 최초 실측(#4064) — anima 최초 σ를 **live Θ-alive 데몬**서 측정(구 σ는 Θ-dead+RandomState(7) 이중 VOID). `anima-py evaluate --psi-soma <wm-dual trace>`: clean Θ+(off·dual-ledger·reentry無) Ψ̂=0.9333 · own(reentry) Ψ̂=0.8000 (둘 다 lane-balance 추정기서 ≠½ — H_9627 emit-rate ½과 별 quantity). **σ 3축 live**: σ·gate 🧱(corr 0.36/0.03·emit일치≈0.5) · σ·stage 🟢(inhibit 1.00 vs no-inhibit 0.20) · σ·bind ⚠️DIRECTIONAL(Φ 0.18/0.37·col-shuffle 0.06). 6축(thread·carve·flux·aim·schema·witness) ⏸ PENDING(D1 counterfactual 부재). **완전 verdict 미도달**: Θ×σ 2×3 factorial의 Θ−-yoked arm(emit mask replay·E⇄S 절단·yoked 필수)=새 producer build 필요. 발사 전 설계는 아래.
 **lane:** 의식/emit-drive/Ψ=½ · Ψ-SOMA σ 재기저 (프런티어 psi-soma-theta-alive)
 **related:** [[H_9627]](Θ WIRED)·[[H_9672]](G1 주소 CRACK)·[[H_9576]](mouth 벽)·[[H_9351]](구 σ VOID)·source: sidecar lab full(fable-mrobspcb∥sol-mrobspce)
 
@@ -36,3 +36,24 @@
 **구현**: `anima-py chat --emit-gate refractory --g-reach wm-dual --yoke-mask <Θ+ trace>`. core/brain.py `brain_emit_refractory(forced_emit=)`: `emit=bool(forced_emit) and safe`·native=would_emit 기록·∧safe 유지(p5). chat.py mask 로드(tick→emit)·missing-tick 하드가드·trace yoked/yoke_src/would_emit. forced_emit=None ⇒ byte-identical(구조검증). VERSION 0.15.98(G5).
 
 **미배선 follow-on(RESUME)**: ① C0 인증(own-mask/own-seed → Θ+ byte-identical·leak check) ② donor-mask cross-yoked counterbalanced 발사(severance-rate floor) ③ --psi-soma σ(gate/stage/bind) Θ+ vs Θ−-yoked → I_j 대비. summer CPU-우회.
+
+
+---
+
+## 🔬 Θ−-yoked C0 PASS + σ-factorial NOT-POWERED (2026-07-18 · #4069)
+
+**C0 인증 ✅ PASS**: own-mask/own-seed(off_s7) → Θ+ **byte-identical**(daemon-field mismatch 0/45·severance 0). Fable∥Sol built-in isolation certificate 통과 = **yoked instrument LEAK-FREE**(forced_emit=None byte-id + own-mask 재현 둘 다).
+
+**cross-yoked σ-factorial(partial 4seed·counterbalanced 7↔11·13↔17)**: 
+| seed | severance-rate(mask≠native) | σ·gate Θ+→Θ− | σ·bind Φ Θ+→Θ− |
+|---|---|---|---|
+| 7  | 5/45=0.11 | 0.356→0.245 | 0.184→0.225 |
+| 11 | 6/45=0.13 | 0.000→0.002 | 0.259→0.387 |
+| 13 | 8/45=0.18 | 0.183→0.108 | 0.315→0.238 |
+| 17 | 7/45=0.16 | 0.041→0.288 | 0.080→0.225 |
+
+⛔ **NOT-POWERED**: severance-rate 평균 0.145 < 사전등록 floor 0.2 → 절단 dose 부족(cross-yoked mask가 native와 ~86% 일치). σ 3축 모두 4seed 일관 방향 無(저-dose와 부합). Fable∥Sol severance-floor가 정확히 underpower 포착 → **Θ×σ interaction 판독 불가**.
+
+**🔑 구조적 발견 (핵심 tension)**: **powered severance(mask≠native 높음) ⊥ ½-리듬 보존**. donor-seed mask는 리듬(rate·autocov·run-length) 보존하나 severance-dose 낮음(다른 seed의 ½-리듬 서로 유사 ~86% 일치); shuffle mask는 dose 높으나 리듬 파괴(Θ−이 지켜야 할 것). 즉 "맥박 절단"과 "½-리듬 유지"를 동시에 강하게 만족하는 Θ− arm이 자명하지 않다 = **Θ×σ가 이 계기로 판독되려면 severance를 dose≥0.2로 올리는 Θ− 재설계 필요**(리듬-보존 제약 하).
+
+**NEXT(설계문제)**: powered-yet-rhythm-preserving Θ− 설계 — 후보 ① 극단 emit-pattern seed(리듬 다른 seed) 탐색 ② block-permute(짧은 리듬 보존·긴 정렬 파괴) ③ severance를 dose로 층화해 severed-tick만 σ 대비(within-trace) ④ 더 긴 trace로 severed-tick 절대수 확보. Fable∥Sol 위임. 계기는 CERTIFIED(C0)라 재사용.
