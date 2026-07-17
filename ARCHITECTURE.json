@@ -9688,11 +9688,11 @@
       ]
      },
      {
-      "name": "🔴 BRIDGE-BOLT 3-port 종결 (H_9392 · G1 runtime lookup bridge)",
+      "name": "🟢 BRIDGE-BOLT → store-bridge lookup 3-seed robust (H_9392→H_9672 · G1 runtime lookup · 미배선)",
       "role": "gate",
       "id": "wall-scorecard-a-break-the-wall-commons-c16-bridge-bolt-3port-h9392",
       "type": "gate",
-      "detail": "🔴→🟢toy→⚪303M→🔬주소격리→⚠️2-seed해리. Stage1.5 벽=주소학습(c) 격리→H_9672 addr-loss(--store-addr-weight): **주소학습 벽 2-seed robust 돌파**(addr_mass 0.95/0.96 sharp) BUT **값읽기 seed-취약**(ORACLE seed7 .99 vs seed11 .50·op-only 붕괴)=전체 lookup NOT seed-robust·seed7 P1 .9688=값읽기운·TERMINAL 부정. 다음=값읽기 robustness. 카드 H_9672.",
+      "detail": "🔴 3-port볼트死→🟢toy→⚪303M→🔬주소격리→⚠️2-seed해리→**🟢 3-SEED ROBUST 돌파(H_9672 · 2026-07-17)**. 2층 벽 순차해소: ①주소학습 = addr-loss(--store-addr-weight) 2-seed robust 돌파(addr_mass .95/.96 sharp) ②값읽기 seed-취약 = **val-center(--store-val-center) 3-seed 돌파** [seed7 ORACLE 1.0000/P1bal 1.0000/flip .9922 · seed11 .9609/.9609/.9919(T3서 .50 붕괴시킨 그 seed) · seed13(미접촉 확증) 1.0000/.9922/.9921] 사전등록 4게이트 전원 통과·SWEEP_DONE. 기전 = v=Σ(aᵢ−1/n)·val[pol] = v−평균val ⟹ majority basin 산술소거. 4-lever 완결: 전환(oracle-warmup .52 KILL)·연속(RV-1 oracle-aux .53 KILL=오히려 해침)·스케줄(RV-2 ans-delay .48 flip .0137 KILL)·구조(RV-3 PASS) ⟹ 메타교훈: shortcut basin 은 신호로 덮지 말고 수식에서 제거한다. ⚠️ 등급 = CAPABILITY-PROVEN·**구현됨·미배선**(a_verified_must_wire): 계기는 engine-native 실배선(train.py --store-val-center · clms.py lane_type3 · codec · parity 0.00e+00)이나 production chat clms 참조 0회·clms_val_center 기본 OFF ⟹ **GREEN 아님**. tier=감독 co-train(창발-주소 아님). 배선 follow-on=별도 H_(production chat 경로+4칸 register retention 회귀 없이 조회 생존→그때 GREEN·a_blue_closed). 증거=.fire-recover/h9672_rv_sweep/(ckpt 4개+sweep_verbatim.log). 카드 H_9672.",
       "children": []
      }
     ]
