@@ -1193,7 +1193,12 @@ class TrainShell(nn.Module):
             # value-read layer (a) from the address-learning layer (c): if val differentiates under free
             # address (ORACLE≥.90) the residual 303M wall is pure W_q address-learning; if not, deeper.
             osl = tgt if sb_oracle else None
-            store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True)   # (Bs,V),(Bs,n_slot)
+            # H_9720-ⓐ EN-disjoint fresh query: the address reads the DETACHED early-layer tap (store-CE
+            # never pushes the trunk through this path ⇒ no EN-occupancy competition). None ⇒ W_q(yn_q).
+            _pf = out_s.get("pen_fresh")
+            yn_fresh = _pf.float()[:, :, Ts - 1].detach() if _pf is not None else None
+            store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True,
+                                           yn_fresh=yn_fresh)   # (Bs,V),(Bs,n_slot)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
             # non-answer trunk CE (prompt spelling): every row but qpos, standard next-byte LM.
             ce_tok = F.cross_entropy(logits_s[:, :, :Ts - 1].transpose(1, 2).reshape(-1, V),
@@ -1324,6 +1329,11 @@ def main():
                          "v≡0 so the op⊕majority shortcut basin cannot exist. train+eval consistent (codec bit).")
     ap.add_argument("--store-addr-weight", type=float, default=0.0,
                     help="H_9672: address direct-supervision loss weight L_addr=CE(att,target_slot) (0=off·byte-identical). Cuts the (2) bootstrap deadlock W_q could not escape at 303M.")
+    ap.add_argument("--store-query-src", type=str, default="penult",
+                    help="H_9720-ⓐ EN-disjoint fresh query lane: 'penult' (default·lane_type≤4·byte-identical) OR "
+                         "'fresh:K[@L]' (lane_type 5) — the ADDRESS query reads a detached trunk-layer-L tap "
+                         "through W_fresh→W_q_fresh (store-CE only, EN-CE never touches it), K=lane width, "
+                         "L=tap depth (default 3, RF≥entity-span). Emergent-address WITHOUT addr-loss (admissible).")
     ap.add_argument("--store-ans-delay", type=int, default=0,
                     help="H_9692 RV-2: hold the answer-CE (sb_w=0) for the first N steps so only the address "
                          "(addr-loss) trains; the blurry-v window can\'t commit the MLP to op-only before the "
@@ -1576,12 +1586,22 @@ def main():
         jamo_head = None
         mito = None                                 # no MoE experts to grow
     else:
+        # H_9720-ⓐ --store-query-src 'fresh:K[@L]' → fresh_k/fresh_L (default 'penult' ⇒ 0 ⇒ byte-identical)
+        _fresh_k, _fresh_L = 0, 3
+        _sqs = str(getattr(a, "store_query_src", "penult") or "penult")
+        if _sqs.startswith("fresh:"):
+            _spec = _sqs[len("fresh:"):]
+            _kpart, _, _lpart = _spec.partition("@")
+            _fresh_k = int(_kpart)
+            if _lpart:
+                _fresh_L = int(_lpart)
         cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
                         variant="AB", dilation_base=2, max_dilation=512,
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
                         clms=bool(a.store_bridge or a.freeze_trunk),
                         clms_n_slot=a.clms_n_slot, clms_d_k=a.clms_d_k,
                         clms_d_s=a.clms_d_s, clms_r=a.clms_r, clms_d_g=a.clms_d_g, clms_val_center=a.store_val_center, clms_fangate=a.store_fangate,
+                        clms_fresh_k=_fresh_k, clms_fresh_L=_fresh_L,
                         clms_key_seed=a.clms_key_seed, clms_lam0=a.clms_lam0,
                         mbnd=bool(a.mouth_binder), mbnd_rank=a.bind_rank,
                         mbnd_linear=(a.mouth_binder == "linear"), mbnd_lam0=a.bind_lam0,
