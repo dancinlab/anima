@@ -48,6 +48,11 @@ anima/
 - do: ⑤ a negative is a result — **no tune-to-green**, frozen-first, no self-judge ⑥ every H on 2 surfaces ⑦ GREEN only when wired.
 - dont: skip ①/⑥ — code-blocked by `.harness/enforce_anima_gates.py` (G2 = no non-card under `HYPOTHESES/` · G5 = VERSION bump · G6 = unique H_id).
 
+## 🤖 Autonomy — NO human-approval gate (owner directive)
+
+- do: run engine/instrument/`core/`/`cli`/design changes + standing-pool cost runs **AUTONOMOUSLY**. p5 = daemon-runtime rule (no hardcoded speak/emit), **NOT an approval gate on my work**.
+- dont: tag an engine/instrument/design change `owner p5`/owner-gate and punt to human approval (owner: **NOT owner-gate**) · session-terminal on autonomously-doable work. Only real go-gate = **fleet rent=spend**.
+
 ## 📦 Packaging (pod)
 
 - do: production tree = **`core/`·`cli/`·`agent/` only** (+ vendored `stdlib/`) · `pip install anima-python` → run **`anima-py`** (install name ≠ run cmd) · hexa twin = `hx install anima`.
