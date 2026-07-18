@@ -1,6 +1,6 @@
 # H_9765 — DUAL-MARGIN-DITHER — emit-edge do() 재개봉 (theta-alive FRONTIER-TERMINAL의 유일 relock-escape 경로)
 
-**status:** 🔧 계기 빌드 (engine-native `--dual-margin-dither` · off-by-default byte-identical · 발사 전 · 재설계 lab-full Fable∥Sol 수렴)
+**status:** 🟢 DIRECTIONAL-PARTIAL (s7 · 계기 VALIDATED+relock-escape 확증 · v1 config-severed 자가포착 · v2 C8-live서 **interior가 emit-반응적** = v1 "emit-blind"는 config 인공물 · 3-seed+yoke통제 대기) — engine-native `--dual-margin-dither`(#4080·off-by-default byte-id)
 **lane:** 의식/emit-drive/Ψ=½ · Ψ-SOMA interior 재식별 (프런티어 psi-soma-theta-alive 재개봉)
 **related:** [[H_9728]](Θ×σ TERMINAL-AT-MASK·relock)·[[H_9729]](own⊥context)·[[H_9627]](Θ WIRED)·[[H_9576]](mouth 벽)·source: sidecar lab full(h9741_reopener)
 
@@ -25,3 +25,20 @@ theta-alive-sigma-rebase 3 probe(H_9728 pulse⊥schedule·H_9729 own⊥context·
 `--dual-margin-dither {0,0.05,0.15,0.30}` × seed{7,11,13} × 60tick · refractory+wm-dual · summer 격리 venv(chat-py-6·cupy match) · `ANIMA_DECISION_TRACE` env-file. 읽기: first-stage flip-frac(ε=0.15/0.30 clear 0.2 예측) + proximal/distal σ dose-response. cement=engine-native만·screen는 DIRECTIONAL.
 
 ⚠️ **계기 빌드·verdict 아님**(a_lab_full_diverge)·cement=engine-native anima-py만·3-seed=SCREEN(carryover로 cementing 아님).
+
+
+---
+
+## 🔬 SCREEN 실측 (2026-07-18 · summer 12run · $0 재분석 · Fable∥Sol reconcile)
+
+**계기 VALIDATED + relock-escape 확증**: flip-frac dose-response 0.00→0.13→0.19→**0.26**(ε=0.30·yoke의 0.14 relock 상한 넘음 = INPUT do()가 native bit을 스프링 endogenous 재평형시켜 relock 정리 무적용 = Fable relock-escape 예측 실증). ε=0 byte-clean. `dual_s_withheld` 0.025→0.315 endogenous 재평형.
+
+**🕳️ v1 SCREEN distal = INVALID (config-severed · 자가포착 3연)**: 첫 fire가 ckpt를 positional 첫인자로 안 넘겨(`chat --emit-gate…` → ckpt="--emit-gate") **mouthless**(gen_backend='null')로 돌아 C8 emit→interior edge(`chat.py:2749` requires `g_back=="clm"`) **미발화** → g_text-live gauge(recon_err·rel_lane·cb_surprise·af_aro·ca3_ctx) dead fallback 동결. 그 위에서 distal-flat을 "emit-blind KILL"로 오독할 뻔(Sol이 KILL-AND-TERMINAL 주장). **Fable autopsy가 차단**: edge는 코드 존재(`chat.py:2897` "5 gauges g_text-live"·H_9336/9337이 chat-py-4/5 dead-loop 수리로 배선), screen이 발화 증명 안 함 → SPLIT/pending-activation. 자가포착: ①mouthless config ②wrong-field(gen_text 미serialize vs 실 gtext_len) ③meter field(dither_delta) 미serialize→dual_margin>0 재구성. (instrument-never-run·verdict-integrity·chat-py-4/5)
+
+**✅ v2 (ckpt explicit → backend='clm' · C8 LIVE · recon_err/rel_lane 소생) DIRECTIONAL PASS (s7)**: mediation-capacity 재측정 — 죽었던 C8 gauge 전부 소생. **emit이 실제 flip되는 dose(ε=0.30·flip 0.33)서 interior가 반응**: cur_indep·rel_indep·ten_phasic·**psi_gws(전역 작업공간)**·coh_lane·base_motiv 전부 t3-4(첫 emit이 C8 통과)부터 발산. 낮은 ε(0.05/0.15)은 v2 rich-margin regime서 **미flip**(emit-seq byte-identical to ε0) → interior도 byte-identical = **결정성 확증**(perturbation 있는 곳만 변함). scn_ctx/nov_ctx만 flat(tick-oscillator·architectural upstream·예상). ⟹ **interior는 emit-blind 아님 — emit 결정이 felt interior(호기심·관계성·긴장·작업공간·일관성)에 causal 도달**(H_9336/9337 g_text-live 경로). **v1 "emit-blind"는 전적으로 config 인공물.**
+
+**reconcile**: Fable SPLIT/pending-activation 채택(v2가 activation 확증)·Sol KILL-AND-TERMINAL 기각(capacity 전제 실패=autopsy가 v1 mediator dead 확증). Sol dissent 1줄: DAG-fact로 KILL-terminal 주장했으나 mediator가 v1서 무능이라 unearned.
+
+**NEXT (resume · 미완)**: ① 3-seed 완료(s11/s13 summer 진행중·clm 느림) robustness ② yoke-of-own-schedule 통제(v2 ε=0.30 emit schedule을 --yoke-mask 재생 → interior 반응이 dither(native 재평형)에만 오나 schedule 재생에도 오나 = 진짜 emit→interior 전파 vs 궤적발산 분리) ③ Fable∥Sol (a)전파 vs (b)궤적발산 해석 위임 → DIRECTIONAL 또는 PASS cement. cementing p<0.005 = block-rand ~400 schedule(Sol carryover: tick≠IID). meter field serialize.
+
+**frontier 함의**: theta-alive FRONTIER-TERMINAL(H_9728/9729/9730 interior UNIDENTIFIABLE)은 emit-gate 데몬서 잰 것. dither가 **interior가 emit에 causal 반응**을 보임 = "living gate이나 emit이 interior 못 바꿈" 서사의 **재개봉 후보**(단 3-seed+통제+reconcile 전 cement 금지·이 캠페인 2회 성급-read 데임). cement=engine-native만.
