@@ -102,3 +102,20 @@ number here is DIRECTIONAL until produced by `anima-py evaluate` on the 303M py 
 - **admissibility 구조적 증명**: warmup step(sb_oracle=True)엔 `oracle_slot=tgt` → `clms`에서 `a=one_hot(oracle_slot)`로 **softmax 우회**(clms.py:482-483). value `v=bmm(a,V_slots)`는 one-hot으로만 읽혀 fresh 쿼리 `q`(W_q_fresh·W_fresh)와 **무관**. `att=bmm(K,q)`는 계산되나 `--store-addr-weight=0`이면 **아무 손실도 안 먹어 dead-end** ⟹ warmup 동안 `∂L/∂θ_query ≡ 0` (구조적, 근사 아님). target_slot은 value/oracle 선택에만 닿음. release step(step>N)엔 oracle off → 순수 softmax emergent query가 store-CE로만 학습(target_slot 부재).
 - ⟹ Fable `--store-echo-weight`(신규 self-sup) 구현 불요 — 기존 표준 flag가 더 단순·검증됨(②단순·④표준). Fable echo는 warmup이 pool에서 oracle을 못 올릴 때(값-충실도가 아니라 슬롯-배정이 취약할 때)만 fallback.
 - **잔여 = 발사만**: H_9720 recipe(fresh:64@3, no addr-loss) + `--store-oracle-warmup N`을 seed {7,11,4302,4303,9423}에 · 통제 C-V0(warmup 없음, 동일 seed) · oracle≥0.90 유효게이트 선통과 → fresh−legacy 재측정. $0 토이(byte-parity warmup=0 자명·warmup이 fragile seed oracle 상승·att grad=0 assert)→303M pool/pod fire→`anima-py evaluate --store-oracle`.
+
+## 🔬 GATE VERDICT (2026-07-19 · 303M · vast 4090 · py numpy eval · seeds{11,4302,7} · lab-full reconcile)
+**status: 🟡 CHALLENGE / REFUTE-CANDIDATE for H_9720 — value-warmup is the reach lever, fresh L3-tap NOT necessary (DIRECTIONAL · corpus-confound → historical H_9720 refutation INCONCLUSIVE)**
+
+레시피: `--init py303_full.clm(sha013c4574) --L 4 --emax 3 --d 3784 --corpus (corpus storebind --n-blocks 200 --store-slots 8 --seed 7 --lang en) --store-oracle-warmup 1500 --steps 6000 --bf16`. 로그=`~/anima-weights/h9792_gate/{gate.log,legacy.log}`.
+
+| seed | fresh oracle | fresh lookup | **legacy oracle** | **legacy lookup** | nowarm fresh oracle(통제) |
+|---|---|---|---|---|---|
+| s11 | 0.930✅ | 0.672 | **1.000✅** | **0.977** | 0.594 |
+| s4302 | 0.945✅ | 0.680 | **1.000✅** | **0.961** | 0.656 |
+| s7 | 0.711❌ | 0.570 | 0.570❌ | 0.531 | 0.625 |
+
+**핵심**: ① value-warmup이 store-oracle(값경로)을 구제 — s4302가 H_9720서 INVALID였던 0.82→0.945(fresh)/1.000(legacy). 통제(nowarm)는 전부 <0.90=취약성 재현. ⟹ **value-warmup=진짜 reach 레버, admissibility 코드증명(clms.py:482 warmup중 att dead-end·grad=0)**. ② **반전**: oracle-valid 2 seed서 **legacy(penult)+warmup lookup(0.96-0.98) >> fresh(L3-tap)+warmup lookup(0.67-0.68)**. lookup/oracle 비율(값 정규화)=fresh 0.72 vs legacy 0.98 ⟹ 격차는 **주소/인터페이스 쪽**(값 아님)=fresh 창발주소가 legacy보다 약함. ⟹ H_9720 "penult가 결합주소 붕괴·L3-tap이 복원" 정면반박 후보: **penult 주소는 붕괴 안 됨**(0.98); H_9720 fresh우위는 **warmup無 체제서 legacy VALUE경로 seed-fragility를 주소결함으로 오인**한 artifact 가능성. fresh L3-tap 아키텍처-필연성 주장 **무너짐**.
+
+**verdict-integrity 단서(과잉주장 금지·lab-full 수렴)**: (1) oracle-valid **2 seed**만(s7 양쪽 oracle<0.90 판독불가·warmup은 값 신뢰수리 아님). (2) **코퍼스가 H_9720과 다를 수 있음**(n-blocks 200 재구성) → cross-run 절대비교 confound → **historical H_9720 기전 반증은 INCONCLUSIVE**(내부 legacy-vs-fresh 대비만 clean). (3) DIRECTIONAL(torch 303M·py numpy). (4) Sol 단서: lookup/oracle≈주소정확도지 순수 binding-주소 우위 증명 아님(캘리브레이션/인터페이스 가능). **⟹ REFUTED 아님·INCONCLUSIVE도 아님 = CHALLENGE/REFUTE-CANDIDATE**. H_9720 status→DISPUTED(아키텍처-필연성 무너짐·기전반증 미결).
+
+**최저비용 firm-up(미발사)**: 직접 addr-argmax 감사(correct-slot top-1)+양 arm을 **H_9720의 정확한 코퍼스**로 재측정 → 주소-vs-인터페이스 분리 + historical 반증 확정/부정. (2모델 수렴 추천.)
