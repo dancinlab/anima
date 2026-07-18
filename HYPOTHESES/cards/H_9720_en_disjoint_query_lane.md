@@ -1,6 +1,6 @@
 # H_9720 — EN-분리 query lane(경쟁 vs 표현부재) — EN-Disjoint Query Lane (EA-2 · fable ∥ sol §4 수렴 · EA 시리즈 · 🟢 DIRECTIONAL CRACK)
 
-**status:** 🟢 DIRECTIONAL CRACK (2026-07-18 · summer 303M 엔진-네이티브 발사·seed 7) — fresh disjoint co-adaptable query lane 이 held-out 창발-주소 lookup 을 **0.680→0.922**(무감독·무oracle)로 끌어올림, 부정(op=not) 케이스가 우연(0.47/0.55)→**0.92/0.91**. cement 전 confound(same-size-competition·early-capacity·multi-seed) 배제 필요. source=EA-2 · fable ∥ sol §4 수렴
+**status:** 🟢 DIRECTIONAL-STRONG (2026-07-18 · summer 303M 엔진-네이티브 · seed 7+11 · 4-arm cement) — fresh early-tap(L3) lane 이 held-out 창발-주소 lookup 을 legacy 0.680 → **s7 0.922 / s11 0.836**(무감독·무oracle) 끌어올림. 🎯 기전 = **조기층 readout**(tap-DEPTH load-bearing): C1 param-match(freshpen≈legacy) capacity 반증 · C2 shared≥detached disjointness 반증 · C4 2-seed delta-robust · address-mediated(shuffle 붕괴·oracle 1.0). TERMINAL 잔여 = Sol 3rd seed(optional). source=EA-2 · fable ∥ sol §4 수렴
 **lane:** 재조합/BINDING · 창발-주소(감독 없이 주소가 서는가)
 **related:** [[H_9672]] · [[H_9423]] · [[H_9684]] · [[H_9683]] · source: lab full EA(Fable 5 ∥ Codex Sol · 창발-주소 whitespace)
 
@@ -33,7 +33,7 @@
 
 **🔧 기전 개명 (honesty · 두 모델 독립수렴)**: 이 결과를 "scratch-trunk co-adaptation" 으로 부르면 **틀린다** — `detach()` 때문에 store-CE 가 tap(L3) **아래로 흐르지 않아 trunk 는 co-adapt 하지 않는다**. W_fresh 는 EN-CE 가 빚은 표현을 **읽어내는 head**일 뿐. 정직한 earned-claim = *"store-CE 로 학습된 **detached early-tap(L3) 의 readout-route** 가, penult 가 (next-byte 예측 위해 identity 를 버려) 붕괴시킨 operator⊗entity 결합주소를 복원한다"* = representation-content 사실이지 창발-주소 **학습**이 아님. 그래도 벽("addr-loss 없는 경로 부재")의 진짜 CRACK — 단 **readout-route 결과로 명명**해야 다음 audit 이 워딩으로 카드를 안 죽인다.
 
-**cement 전 배제할 confound (사전등록·kill-priority · 미실행)**:
+**cement 전 배제할 confound (사전등록·kill-priority · ①③④ 실행완료 2026-07-18)**:
 1. **[$0·최우선] lookup≠addressing 판별 — ✅ store-side 통제로 대부분 해소 (2026-07-18 · summer 303M $0)**:
    - `--store-oracle` fresh **1.000**(C0-e 양성통제 PASS≥0.90 → plumbing 유효·음성 판독가능) · `--store-shuffle` fresh **0.422 vs balance-floor 0.480**(Δ−0.058 · [uses-address] = store 섞으면 floor 붕괴 ⟹ 0.92 는 recency/copy/position 편법 **아님**·진짜 주소-매개) · `--store-flip` coherence_bc **0.949**(≥0.90 PASS = store VALUE 인과소비) · `--store-lambda 0` 0.508(mixing off 붕괴·정합). ⟹ **C3(lookup≠addressing) 최대 우려 KILL** — 0.92 는 주소-매개+값-인과 확증.
    - ⚠️ legacy `--store-oracle`=**0.531**(not/* 0.18/0.12): legacy 는 oracle slot 줘도 negation 답 못 냄 = 주소 이전 value-path 자체 약함(별개 caveat·fresh 무관·정직 기록).
@@ -41,6 +41,24 @@
 2. **[결정적] param-matched penult** (`fresh:64@penult` — 동일 detached tap·동일 W_fresh/gelu/W_q_fresh·tap 만 penult 로 이동). penult-MLP ≈ fresh ⟹ 이득은 tap 위치 아닌 **추가 학습가능 nonlinear head capacity**(C1·"early tap" 서사 死). penult-MLP ≈ legacy 우연 ⟹ **tap depth 가 load-bearing**. (dummy 미사용 파라미터로 count 만 맞추면 안 됨 — functional capacity 맞춰야.)
 3. **detach ablation** (`shared`=`.detach()` 만 제거·store-CE 를 L≤3 로 허용·나머지 불변). detached 승 ⟹ gradient-disjointness load-bearing · tie ⟹ disjointness 미입증 · shared 승 ⟹ 기전은 joint trunk shaping(ⓐ 엄밀주장 반증).
 4. **multi-seed** — s7 = **소각된 discovery seed(확증 불가)**. store-bridge 는 seed-취약 기왕력(s7 0.99 vs s11 0.50 · [[cotrained-store-bridge-works-on-parent-conv]]) ⟹ **s11(적대적 붕괴자) 필수**. Fable: s11 서 {fresh·penult-MLP·legacy} 3-train 먼저→생존시 escalate(≥3/3 확증 seed). Sol(반대·기록): 5-paired {7,11,4302,4303,9423} ≥4/5 incl s11 = cement ceiling. 2-seed 는 불충분(붕괴모드 자체가 2-seed 해리·coin-flip null 서 2/2 p=0.25).
+
+### 🎯 s11 cement 통제 결판 (2026-07-18 · summer 303M · seed 11 · 4-arm 캠페인 · flags v0.18.4)
+사전등록 판정트리를 s11 4-arm 으로 기계적용(held-out lookup·arm=lookup·oracle=False·동일 코퍼스·유일차이=query src):
+
+| arm | overall | not/good | not/bad |
+|---|---|---|---|
+| legacy(penult) | 0.680 | 0.526 | 0.455 |
+| **fresh:64@3 (CRACK)** | **0.836** | 0.868 | 0.818 |
+| fresh:64@penult (C1) | 0.688 | 0.711 | 0.636 |
+| fresh:64@3 shared (C2) | 0.875 | 0.842 | 0.939 |
+
+- **C4 seed-robustness ✅**: fresh:64@3 s11=0.836 > legacy 0.680 (**Δ+0.156**; s7 Δ+0.242) — **CRACK 2-seed 재현**(seed-fragile 아님·delta 견고·절대치는 s7>s11 이나 vs-legacy 우위 양 seed 유지).
+- **C1 capacity confound REFUTED 🎯**: freshpen(동일 head·penult tap)=0.688 **≈ legacy 0.680, NOT ≈ fresh@3 0.836** ⟹ **tap-DEPTH 가 load-bearing**(penult 에 추가 head 얹어도 이득 없음·조기층 L3 읽기가 관건). "early tap" 서사 생존·capacity 서사 死.
+- **C2 disjointness NOT load-bearing 🔧**: shared(detach 제거)=0.875 **≥** detached 0.836 ⟹ gradient-disjointness 는 기전 아님(막든 안 막든 동작·shared 가 오히려 근소 우위=trunk 소량 co-adapt). **readout-route 재프레임 확증**(disjoint 아니라 조기-tap 이 본질).
+- **address-mediated ✅**: fresh3 shuffle 0.484(at-floor·uses-address)·oracle 1.000·flip coherence_bc 0.879(값 인과·strict 0.90 바로 아래). freshpen oracle 0.961·shuffle 0.492.
+
+**⟹ 개정 earned-claim**: *창발-주소 CRACK 의 기전 = **조기층(L3) 표현의 readout** — entity⊗operator 결합이 조기엔 recoverable 하나 penult 가 (next-byte 위해) 붕괴시킴. 이득은 tap-깊이(조기)이지 추가 head capacity(C1 반증)도 gradient-disjointness(C2 반증)도 아니다. 2-seed(s7·s11) delta-robust.* tier = **DIRECTIONAL-STRONG**(3 confound 해소). TERMINAL 잔여 = Sol 5-paired 3rd+ seed({4302,4303} ≥4/5·optional firm-up) · flip coherence 0.90 미달(값채널 근소약).
+**ckpt(a_fire_recover_complete)**: s11 4개 `~/anima-weights/h9720_emergent_addr/`(legacy f04901f3·fresh3 0d2b62c2·freshpen 29f0ed84·shared c03c77ee·byte-id 검증).
 
 **admissibility 통과**: store-CE only·addr-loss 0·oracle=False·target_slot 무소비 — Sol 시리즈 관문의 무감독 조건 충족(최종 PASS 의 wrong-store 인과·seed-robust 는 위 통제로).
 **ckpt(a_fire_recover_complete)**: `~/anima-weights/h9720_emergent_addr/` — `h9720_legacy_s7.clm`(sha256 77a5402…·178.8MB) · `h9720_fresh_s7.clm`(sha256 82b217d…·179.8MB), summer 와 byte-identical 검증. summer:~ 잔존.
