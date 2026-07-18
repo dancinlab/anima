@@ -96,3 +96,9 @@ address readout is byte-untouched at terminal regime and C-B/C-shuffle guard the
 only means the 3rd+ seeds stay uninterpretable and H_9720 holds at DIRECTIONAL-STRONG. (4) Any
 number here is DIRECTIONAL until produced by `anima-py evaluate` on the 303M py channel
 (`a_engine_native_learning`).
+
+## 🔑 IMPL-FINDING (2026-07-18) — 레버는 NEW flag 아님, 기존 `--store-oracle-warmup` (새 코드 0)
+코드 정독(`core/clms.py:473-499` · `cli/train.py:1185-1231,1998-2010`) 결과: Sol의 oracle-mux 2-phase 설계는 **이미 구현·검증된 `--store-oracle-warmup N`** 그 자체다. 실행 레버 = **`--store-query-src fresh:64@3 --store-oracle-warmup N` (단 `--store-addr-weight` 없이)**.
+- **admissibility 구조적 증명**: warmup step(sb_oracle=True)엔 `oracle_slot=tgt` → `clms`에서 `a=one_hot(oracle_slot)`로 **softmax 우회**(clms.py:482-483). value `v=bmm(a,V_slots)`는 one-hot으로만 읽혀 fresh 쿼리 `q`(W_q_fresh·W_fresh)와 **무관**. `att=bmm(K,q)`는 계산되나 `--store-addr-weight=0`이면 **아무 손실도 안 먹어 dead-end** ⟹ warmup 동안 `∂L/∂θ_query ≡ 0` (구조적, 근사 아님). target_slot은 value/oracle 선택에만 닿음. release step(step>N)엔 oracle off → 순수 softmax emergent query가 store-CE로만 학습(target_slot 부재).
+- ⟹ Fable `--store-echo-weight`(신규 self-sup) 구현 불요 — 기존 표준 flag가 더 단순·검증됨(②단순·④표준). Fable echo는 warmup이 pool에서 oracle을 못 올릴 때(값-충실도가 아니라 슬롯-배정이 취약할 때)만 fallback.
+- **잔여 = 발사만**: H_9720 recipe(fresh:64@3, no addr-loss) + `--store-oracle-warmup N`을 seed {7,11,4302,4303,9423}에 · 통제 C-V0(warmup 없음, 동일 seed) · oracle≥0.90 유효게이트 선통과 → fresh−legacy 재측정. $0 토이(byte-parity warmup=0 자명·warmup이 fragile seed oracle 상승·att grad=0 assert)→303M pool/pod fire→`anima-py evaluate --store-oracle`.
