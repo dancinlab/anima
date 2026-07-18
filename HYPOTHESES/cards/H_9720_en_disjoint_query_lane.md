@@ -1,6 +1,6 @@
-# H_9720 — EN-분리 query lane(경쟁 vs 표현부재) — EN-Disjoint Query Lane (EA-2 · fable ∥ sol §4 수렴 · EA 시리즈 · PROPOSED)
+# H_9720 — EN-분리 query lane(경쟁 vs 표현부재) — EN-Disjoint Query Lane (EA-2 · fable ∥ sol §4 수렴 · EA 시리즈 · 🟢 DIRECTIONAL CRACK)
 
-**status:** 🔵 PROPOSED (미실행 · lab full 창발-주소 발산 · 사전등록) — source=EA-2 · fable ∥ sol §4 수렴
+**status:** 🟢 DIRECTIONAL CRACK (2026-07-18 · summer 303M 엔진-네이티브 발사·seed 7) — fresh disjoint co-adaptable query lane 이 held-out 창발-주소 lookup 을 **0.680→0.922**(무감독·무oracle)로 끌어올림, 부정(op=not) 케이스가 우연(0.47/0.55)→**0.92/0.91**. cement 전 confound(same-size-competition·early-capacity·multi-seed) 배제 필요. source=EA-2 · fable ∥ sol §4 수렴
 **lane:** 재조합/BINDING · 창발-주소(감독 없이 주소가 서는가)
 **related:** [[H_9672]] · [[H_9423]] · [[H_9684]] · [[H_9683]] · source: lab full EA(Fable 5 ∥ Codex Sol · 창발-주소 whitespace)
 
@@ -15,6 +15,35 @@
 **verdict-integrity**: 사전공약된 비대칭 읽기 — KILL 은 *detached-lane 버전*만 죽이지(H_9423 frozen-trunk 실패가 lane 이 scratch 보다 약할 수 있다 경고) **점유 논제는 안 죽임** · Sol: 이건 **architect 가 준 capacity valve 안의 창발**이지 untouched 303M 의 창발 아님.
 
 ## 상태
+
+### 🟢 VERDICT — fresh disjoint lane 이 창발-주소 벽을 뚫음 (DIRECTIONAL CRACK · 2026-07-18 · summer 303M · seed 7 · GPU CUDA)
+2-arm 엔진-네이티브 발사(`anima-py train`→`anima-py evaluate`, 303M py 2-production, GPU-fired cupy). **양 arm 동일 co-train 코퍼스·무 addr-loss·arm=lookup·oracle=False** — 유일 차이 = address query 소스. held-out 0-shot lookup(128 held-out entities, 코퍼스 0회 등장·C0-a 확증):
+
+| op·pol | legacy(penult W_q) | fresh(fresh:64@3) | Δ |
+|---|---|---|---|
+| **overall** | 87/128 = **0.680** | 118/128 = **0.922** | **+0.242** |
+| is · good | 28/30 = 0.933 | 30/30 = 1.000 | +0.067 |
+| is · bad | 23/27 = 0.852 | 23/27 = 0.852 | 0.000 |
+| **not · good** ★ | 18/38 = **0.474** (≈우연) | 35/38 = **0.921** | +0.447 |
+| **not · bad** ★ | 18/33 = **0.545** (≈우연) | 30/33 = **0.909** | +0.364 |
+
+★ = **부정(op=not) = 실제 벽**. legacy penult 는 부정에서 이진우연(0.5) 근처로 붕괴하는데 fresh lane 은 0.92 로 뚫음. class-structured 이득(부정에 집중·긍정 포화/불변)은 잡음-모양이 아니라 "penult 에 operator-collapse·L3 엔 미붕괴" 지문 = BINDING 캠페인 prior 정합.
+
+**tier = 🟢 DIRECTIONAL CRACK, NOT TERMINAL — 아직 주장한 기전에 귀속 불가** (`a_engine_native_learning` SCREENER · lab full Fable∥Sol 독립수렴 audit 2026-07-18).
+
+**🔧 기전 개명 (honesty · 두 모델 독립수렴)**: 이 결과를 "scratch-trunk co-adaptation" 으로 부르면 **틀린다** — `detach()` 때문에 store-CE 가 tap(L3) **아래로 흐르지 않아 trunk 는 co-adapt 하지 않는다**. W_fresh 는 EN-CE 가 빚은 표현을 **읽어내는 head**일 뿐. 정직한 earned-claim = *"store-CE 로 학습된 **detached early-tap(L3) 의 readout-route** 가, penult 가 (next-byte 예측 위해 identity 를 버려) 붕괴시킨 operator⊗entity 결합주소를 복원한다"* = representation-content 사실이지 창발-주소 **학습**이 아님. 그래도 벽("addr-loss 없는 경로 부재")의 진짜 CRACK — 단 **readout-route 결과로 명명**해야 다음 audit 이 워딩으로 카드를 안 죽인다.
+
+**cement 전 배제할 confound (사전등록·kill-priority · 미실행)**:
+1. **[$0·최우선] census on 양 ckpt** — 이번은 plain held-out lookup(=행동)이지 addressing 아님. `anima-py evaluate --store-addr-census`(structureless-H pedestal·**grand-mean-centered excess**) + flip/shuffle/store-perm 통제(oracle≥0.90·flip coherence≥0.90). lookup PASS ∧ census excess 없음 = 기전 死(행동만 green). **lookup≠addressing 판별자.**
+2. **[결정적] param-matched penult** (`fresh:64@penult` — 동일 detached tap·동일 W_fresh/gelu/W_q_fresh·tap 만 penult 로 이동). penult-MLP ≈ fresh ⟹ 이득은 tap 위치 아닌 **추가 학습가능 nonlinear head capacity**(C1·"early tap" 서사 死). penult-MLP ≈ legacy 우연 ⟹ **tap depth 가 load-bearing**. (dummy 미사용 파라미터로 count 만 맞추면 안 됨 — functional capacity 맞춰야.)
+3. **detach ablation** (`shared`=`.detach()` 만 제거·store-CE 를 L≤3 로 허용·나머지 불변). detached 승 ⟹ gradient-disjointness load-bearing · tie ⟹ disjointness 미입증 · shared 승 ⟹ 기전은 joint trunk shaping(ⓐ 엄밀주장 반증).
+4. **multi-seed** — s7 = **소각된 discovery seed(확증 불가)**. store-bridge 는 seed-취약 기왕력(s7 0.99 vs s11 0.50 · [[cotrained-store-bridge-works-on-parent-conv]]) ⟹ **s11(적대적 붕괴자) 필수**. Fable: s11 서 {fresh·penult-MLP·legacy} 3-train 먼저→생존시 escalate(≥3/3 확증 seed). Sol(반대·기록): 5-paired {7,11,4302,4303,9423} ≥4/5 incl s11 = cement ceiling. 2-seed 는 불충분(붕괴모드 자체가 2-seed 해리·coin-flip null 서 2/2 p=0.25).
+
+**admissibility 통과**: store-CE only·addr-loss 0·oracle=False·target_slot 무소비 — Sol 시리즈 관문의 무감독 조건 충족(최종 PASS 의 wrong-store 인과·seed-robust 는 위 통제로).
+**ckpt(a_fire_recover_complete)**: `~/anima-weights/h9720_emergent_addr/` — `h9720_legacy_s7.clm`(sha256 77a5402…·178.8MB) · `h9720_fresh_s7.clm`(sha256 82b217d…·179.8MB), summer 와 byte-identical 검증. summer:~ 잔존.
+
+---
+
 🔎 **$0 pre-screen 실행 = ⓐ PASS(발사인가) · ⓑ 약화 (2026-07-17 · summer 303M · 사전등록)**
 
 ### 🔎 pre-screen — 개체정보 위치가 두 변형을 판별
