@@ -16802,7 +16802,10 @@
     "state": "pos-conv",
     "value": "multi-seed 재현으로 DIRECTIONAL→TERMINAL cementing 하려 할 때, varied axis(sample-seed)가 측정대상의 SOURCE를 실제로 변주하는지 먼저 확인해야 한다. H_9774 content-reach: SHAM+CERT를 s7/s11/s13 3-seed 발사→SHAM=0/60·CERT-발산이 3-seed 재현돼 '멀티시드 확증'처럼 보였으나, s11/s13 발산수가 byte-identical(251/207 동일)이라 의심→검증: greedy/deterministic mouth라 own emit 텍스트가 s7=s11=s13 완전 동일('vault QX-7741…' 30/30·distinct=1)·sample-seed는 refractory gate schedule/RNG만 변주(A0 861B차)·mouth content 불변. ⟹ 3-seed는 독립 content 조건이 아니라 같은 결정론 계산의 gate-RNG 재현일 뿐=cementing 무자격. SHAM=0 3-seed 재현은 instrument-validity robust로만 유효(계기 무해성). 진짜 content-independence replication엔 mode-collapse를 깨는 축(T>0 mouth·다중 donor SET)이 필요.",
     "threshold": "재발조건: multi-seed(또는 multi-run) 재현을 cementing 근거로 쓸 때, 특히 greedy/low-temp/argmax 등 결정론 생성기가 파이프라인 상류에 있을 때. ① 재현 발사 前, varied axis가 측정대상 SOURCE를 실제 변주하나 확인 — generator가 seed-invariant(greedy)면 sample-seed는 하류 noise만 흔들고 content는 불변=독립 재현 아님. ② red flag=서로 다른 seed의 지표가 byte-identical/거의 동일→우연 아닌 seed-무관성 의심→source(생성 텍스트) 직접 diff. ③ VACUOUS-AT-SOURCE(own distinct==1)면 그 축은 replication unit이 될 수 없다=[[content-swap-donor-must-be-certified-byte-distinct]]. ④ '멀티시드 통과'를 TERMINAL로 쓰기 前 각 seed가 독립 조건인지 증명(distinct source·independent randomization unit). tick≠IID처럼 seed도 결정론 하류면 ≠independent.",
-    "linked_hypotheses": ["H_9774", "H_9510"]
+    "linked_hypotheses": [
+     "H_9774",
+     "H_9510"
+    ]
    },
    {
     "id": "content-swap-donor-must-be-certified-byte-distinct",
@@ -18165,7 +18168,7 @@
    {
     "id": "h-9734-nat-addr-split-md-1",
     "state": "pos-conv",
-    "value": "강한 root-cause 를 landing 하기 전에 같은 lane 의 병렬세션 최근 성공을 대조하라(a_parallel_session_compare) — cross-session check 가 나중에 반박한다. H_9734: 내 seed-7 run 이 주소 held-out 일반화 실패(addr_top1 0.0078·2-run 재현)를 '안정적 환경 회귀(torch 2.13.0+cu130)'로 landing(#4065). BUT 병렬 H_9672 가 같은 summer 환경서 RV-3(--store-val-center)로 3-SEED ROBUST(seed7/11/13·addr_mass 0.95) 성공 + H_9672 이력상 주소축은 원래 항상 robust(취약=값읽기뿐) ⟹ '환경회귀' 반박·철회(#4065 정정). 내 주소 실패는 T3(옛env)도 병렬(현재env)도 재현못한 setup 특이·원인미확정. **규칙**: ①양성통제는 발사 환경서 known-good 재현해야 읽어라(원 교훈 유효 — 게이트가 '자연어휘 실패' 오독은 막음) ②그러나 root-cause 를 '환경/버전'으로 귀속하기 전에 같은 lane 병렬세션이 그 환경서 성공했는지 먼저 확인하라 — 성공했다면 환경 아니라 내 setup diff 다 ③단일 실패-run 에서 원인 클래스(환경/seed/code)를 landing 하지 말고 대조군(병렬 성공 recipe 1:1 복제)로 재현 확인 후 확정. reference-match(코드)+eval무죄로도 setup diff 는 못 잡는다 — 병렬 성공 recipe 복제가 유일 판별. [[gpu-forward-not-bitexact-probes-device-pinned]]·[[positive-control-before-reading-a-negative]] 확장.",
+    "value": "known-good 결과가 재현 실패하면 landing 전에 '같은 환경'을 **정확한 dep 버전**까지 대조하라 — '같은 호스트' ≠ '같은 env'(다른 venv=다른 torch). H_9734 최종해결(3-flip 후): 내 seed-7 주소 일반화 실패(0.0078)를 ①환경회귀(#4065 방향맞음) ②철회(#4089 '병렬 같은env' 거짓전제) ③setup버그(#4102 틀림) 로 3번 flip 하다, 공유 summer 호스트 **학습 로그의 torch= 프리플라이트**를 대조해 확정: 모든 store-addr 성공(T3·rv3c13·fresh303)=torch 2.11.0+cu130 · 내 유일실패=torch 2.13.0+cu130(unpinned [train] torch>=2.1 이 fresh install 서 cu130 index 최신 2.13 당김). 코드·corpus(byte-id)·base·seed·recipe 전부 동일·torch 버전만 다르고 Blackwell sm_120 bf16 훈련 numerics 가 2.11→2.13 회귀. FIX=pyproject/pod_bootstrap torch<2.13 상한(#4116·cupy load-bearing 패턴). **규칙**: ①양성통제는 발사 환경서 known-good 재현해야 arm 읽기(게이트가 '자연어휘 실패' 오독 방어=이번 최대성과) ②known-good 재현실패시 root-cause 를 환경/버전에 귀속하기 전 **공유호스트 로그의 정확한 dep 버전**(torch= 프리플라이트)으로 성공 run 과 대조 — '같은 호스트라 같은 env' 가정 금지(venv마다 torch 다름) ③unpinned dep(torch>=2.1 무상한)은 fresh install 마다 최신을 당겨 훈련능력을 조용히 회귀시킨다=재현성 위기·load-bearing 상한 필수(cupy 선례) ④성급한 root-cause landing 을 반복하지 말고 결정적 대조(성공 run 의 정확 invocation/env) 확보 후 확정. reference-match 는 코드→eval→**환경 dep버전**까지 내려가야 완결. [[gpu-forward-not-bitexact-probes-device-pinned]]·[[positive-control-before-reading-a-negative]] 확장.",
     "threshold": "2",
     "source": "HYPOTHESES/cards/H_9734_nat_addr_split.md"
    },
