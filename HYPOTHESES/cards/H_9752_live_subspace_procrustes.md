@@ -1,7 +1,7 @@
 # H_9752 — LIVE-SUBSPACE STABILITY — 라이브 tension 엔 '축'이 없고 '평면'이 있다 (Procrustes·eigengap · R6-1 · $0)
 
-**status:** ⚪ **VOID** (engine-native `anima-py evaluate --pc2-direction --subspace-stability` · anima-py 0.20.0 · pmp 3-run dedup · 4-seed robust) — 사전등록 검정력 게이트 발동, 음성 아님
-**wired:** engine-native (신규 flag `--subspace-stability` in `cli/evaluate.py` · site-packages dispatch 확인 · 디코드 0 · 트레이스-판독)
+**status:** 🟢 **PASS-PLANE** (engine-native `--subspace-stability` · 8 divergent run · bootstrap 주각 CI 반폭 3.68°<10° 게이트) — 검정력 확보 재측정으로 ⚪VOID 해소 · DIRECTIONAL(303M toy)
+**wired:** engine-native (flag `--subspace-stability` in `cli/evaluate.py` · site-packages dispatch 확인 · 디코드 0 · 트레이스-판독)
 
 ## ⑧ 측정 결과 (2026-07-18 · `--subspace-stability --boot 1000 --surrogates 500`)
 
@@ -21,6 +21,26 @@
 **내부 상충(왜 강제분류 안 하나):** 교차-run 점추정은 **PASS-PLANE 방향**(6.0°<null·swap 0.60)인데 run내 split-half 는 **KILL 방향**(28.6°>null = 한 run 안에서도 평면이 안정 재현 안 됨). 두 신호가 반대인데 bootstrap CI(±17°)가 넓어 adjudicate 불가 ⇒ 사전등록대로 VOID(강제 PASS/KILL 금지 · power-before-negative).
 
 **⚠️ H_9754/9755 refit arm 개봉게이트 = 미결(VOID · KILL 도 PASS 도 아님).** 카드 ⑦이 예고한 "KILL-NO-AXIS 면 refit arm 발사 금지"는 **발동 안 됨**(KILL 미확정) — 그러나 **PASS-PLANE 도 미확정**이라 refit arm 을 여는 근거도 없다. 현 3-run 자산으로는 원리적으로 판정 불가. 발사하려면 **독립 run ≥6~8 또는 run당 tick 증량**으로 bootstrap 주각 CI 반폭<10° 확보 후 재실행 필요.
+
+## ⑨ 검정력-확보 재측정 (2026-07-19 · summer CPU-전용 8 divergent run · VOID 해소 → 🟢 PASS-PLANE)
+
+자산: `/tmp/h9752_ss` = **8 독립 run**(seed 11·22·33·44·55·66·77·88 · off-arm · 150 tick · CPU-전용 `CUDA_VISIBLE_DEVICES=""` device-균일 · 병렬 H_9775 GPU 0충돌). regime = off_s7 _meta 매칭(n_ticks=150·emit_gate=refractory·g_reach=d1·backend=clm·ckpt sha 013c4574).
+
+🐛 **발사 프로토콜 결함→정정(교훈)**: v1 8-run 이 `ANIMA_EMIT_TEMP` 미설정=greedy 결정론 → 8 seed tension 인자 **완전 동일** → `--subspace-stability` 가 dedupe 후 1-run 으로 판정거부(잘못된 verdict cement 직전 차단). 원인=기존 divergent `run_pmfire.sh` 는 `ANIMA_EMIT_TEMP=1.0` 설정(seed 독립성=표집 RNG). v2 에 `EMIT_TEMP=1.0` 추가 → 조기검증서 off_s11 vs off_s22 tension 25틱 중 24틱 상이 = 🟢 divergent 확증 후 완주.
+
+| DV | 관측 | null / 게이트 | 읽기 |
+|---|---|---|---|
+| 교차-run θ_max 중앙값 | **7.10°** | AAFT 5pct=10.23° · chanperm 5pct=41.04° | 관측<두 null 5pct = **평면 정렬 재현** ✅ |
+| bootstrap 주각 CI 반폭 | **3.68°** (block 16·32) | >10° = VOID 게이트 | **<10° = 검정력 확보 → VOID 해소** ✅ |
+| bootstrap rank-swap율 | **0.739** (block-평균) | ≥0.2 문턱 | 근축퇴 서명 **강함**(PASS-PLANE 조건) ✅ |
+| run 내 split-half θ_max | 33.42° (중앙값) | AAFT 5pct=32.28° | 관측>null(근소) = **within-run 미재현**(잔존 상충) |
+| 양성통제 plant | 4.74° | plant-chanperm null 5pct=45.13° | **검출 True = 계기 무결** ✅ |
+
+**판정 = 🟢 PASS-PLANE** — 교차-run 평면 안정(7.1°<AAFT 10.2° ∧ <chanperm 41°) ∧ rank-swap 0.739≥0.2 ∧ 양성통제 통과 ∧ **주각 CI 반폭 3.68°<10° 게이트**. ⇒ **H_9713 축-flip = 근축퇴(near-degeneracy) 기전 확정**: 죽은 건 '축 이름표'(고유값 거의 동일해 평면 내 자유회전)이지 **2-D 평면 자체가 아니다**. 3-run VOID 의 CI 반폭 17° 는 검정력 미달이었고, 8-run 에서 3.68° 로 조여져 교차-run PASS 방향이 확정됐다.
+
+**잔존 상충(정직 scope)**: run 내 split-half 는 여전히 미재현(33.4°>AAFT 32.3°, 근소). "run 간 안정 · run 내 불안정"은 tension 궤적이 짧은 창(75 tick)에선 평면이 흔들리나 run 전체(150 tick)로는 안정 회귀함과 정합(자기상관 n_eff≪n · H_9714 lag-1 ρ̂≤0.86). 판정은 **사전등록 primary=교차-run** 기준. 크기 vs surrogate 로 읽지 raw° 로 읽지 말 것(p7).
+
+**⇒ H_9755 refit-axis ζ-fire 개봉게이트 = 충족(PASS-PLANE).** 안정한 2-D 평면이 실재하므로 그 평면에 refit 한 loading 으로 mouth 조향이 원리상 가능(단 근축퇴라 '특정 축'이 아니라 '평면'을 조향). NEXT = H_9755 (--z-loading refit · pool ζ-fire) — 별도 구현+발사 campaign.
 
 ---
 
