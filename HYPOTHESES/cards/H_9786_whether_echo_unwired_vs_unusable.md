@@ -39,3 +39,10 @@ v2 구현(cli/chat.py store블록 pending후 κ회 repeat vadapt_field_step+immu
 **substrate 발견(부수·H_9765 기전)**: interior의 content-encoding이 **발화-게이트**됨 — 침묵틱엔 store가 안 써진다. 이것이 H_9765 whether-blindness의 코드 기전: 말할지 여부를 쓸 "침묵 encoding" 자체가 없다(write⟺spoke).
 
 **재설계 v3 방향**: 침묵틱에 실제로 쓰는 유일 lane = [[H_9627]] W_S(wm_withheld·침묵틱 gate_in). WHETHER 대비의 자연 담체 = W_E(발화·wmb) vs W_S(보류). 단 H_9627이 이미 dual-ledger로 이 대비를 emit-gate에 씀 → WHETHER-echo는 W_S content가 *다른 lane(interior 게이지)*에 도달하나로 재정식화 필요. v3 설계는 focused lab-full 또는 오너 steer 후. 병행 대안: 병렬각 [[H_9787]] GEN-SELF-RECOGNITION($0-ish·이 구조문제 없음) 우선.
+
+## 🧱 VERDICT: UNIDENTIFIABLE-BY-CONSTRUCTION (design-terminal · 2026-07-19)
+침묵-lane 재정식화 lab-full(Sol · ⚠️Fable OAuth 만료 실패=단독모델·단 code-grounded). **판정: UNIDENTIFIABLE-BY-CONSTRUCTION**(H_9785 ownership과 동형·design-terminal·DIRECTIONAL). 논증(Sol·코드접지): WHETHER=0(침묵)을 상태로 물질화하는 유일 production edge = 침묵-side `W_S gate_in`. 그러나 `W_E/W_S`의 유일 기존 consumer = [[H_9627]] emit-gate(S>E·이미 측정=[[H_9765]] sink). 다른 interior 게이지(immune·afield·CA3·boredom·agency)는 `rel_lane/recon_err`만 읽지 `W_E/W_S` 미독. content-state write는 전부 `g_emit` 블록(침묵틱 미기록). ⟹ WHETHER 비트를 하류 게이지로 흘리는 **기존 edge가 없고**, 새로 만들면 wiring-by-construction("새 배선이 비트 전달"만 증명·unwired vs unusable 구분 불가·PC조차 성립불가). **현 engine-native graph에 unwired와 wired-but-uninformative를 intervention으로 가를 독립 surface 없음.**
+
+v1 field-drive DEADZONE·v2 store-encoding DEGENERATE는 이 구조사실의 **증상**이었다: content-encoding이 발화-게이트라 침묵-encoding이 없고, 침묵상태(W_S)의 유일 reader가 emit-gate. **범위(정직)**: "interior가 WHETHER를 절대 못 쓴다"는 능력부정 아님 — **현 substrate에 그 사용여부를 식별할 독립 marker/consumer가 없다**는 판정. 재개봉=기존 설계서 독립 silence-write 또는 W_E/W_S의 non-emit consumer 발견 시만(새로 추가=후속 아키텍처 변경·H_9786 증거 아님).
+
+계보: theta-alive interior 4각도 = content-reach LIVE(H_9774)·persistence 부재(H_9767)·ownership UNIDENTIFIABLE(H_9785)·**WHETHER-use UNIDENTIFIABLE(H_9786)**. ⚠️ 단독모델(Fable OAuth 실패)이라 재확인 여지는 있으나 논증이 code-grounded·self-consistent라 채택.
