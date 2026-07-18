@@ -834,3 +834,17 @@ H_1302(oscillator sync)·H_1462(방송 경쟁)와 달리 **representational fact
 
 ### 🔧 벽② 해소: --jamo-aux 독립 플래그 (2026-07-18 · $0 code)
 jamo(ko-coherence)가 --arm tlora_jamo 에만 묶여 faction 과 tlora confound 였다. `--jamo-aux`(train.py)로 arm 독립 토글 추가 = `--arm clm --n-factions 8 --jamo-aux` 로 **faction+jamo clean 런 가능**(jamo_on=ARMS[arm] or a.jamo_aux · 기본 off byte-identical · CLM 전용). recipe-match 재발사 A안의 enabler. **✅ VERIFIED e2e(2026-07-18 · origin/main venv 스모크)**: --jamo-aux ON→levers `jamo_aux=True(λ=0.3)` engage·--n-factions 8 공존·MITOSIS E2→3·무크래시 · control OFF→`jamo_aux=False`=backward-compat · **A.clm≡B.clm 134422B 동일=jamo aux head 는 학습전용·직렬화 미오염**(tlora 처럼 drop)⟹ faction lesion 측정이 jamo 로 오염 안 됨(깨끗함 보장) · --help 등재(help-lockstep). wire-to-prod QA 종결. 나머지 벽(recipe 유실·window·검증툴링)은 유료 window-sweep 재발사(owner)서 해소.
+
+### 🟢🔑 RECIPE 복구 — 실패 진짜원인 확정 (2026-07-18 · verdict-integrity 전면정정)
+`~/anima-weights/clm303_clean/retrain.log`(로컬 존재)가 정확 G0🟢 recipe 제공 — 이전 archaeology("recipe 유실·30MB ko-only 서브셋·jamo 가 차이") **전면 반증**.
+
+| | clm303_clean G0🟢 4/4 | 내 실패런 |
+|---|---|---|
+| batch-size | **16** | 8 (기본값·버그) |
+| emax | **4** | 3 (기본값·버그) |
+| steps | 15000 | 14000/21000 |
+| tokens | **245.76M** | 114.7M/172M (반토막) |
+| corpus | 4-cell 125MB | **동일** |
+| jamo | 미사용 | (내 --jamo-aux=틀린전제) |
+
+진짜 원인 = **--batch-size/--emax 기본값(8/3)을 clm303 recipe(16/4)로 안 고침** ⟹ 토큰예산 반토막 + step-indexed wd/dp 스케줄 불일치. 코퍼스·모델·savant·mitosis 다 맞았다. 교훈: 'recipe 유실' 선언 전 로컬 weights 의 retrain.log 를 읽어라. NEXT=정확 recipe(bs16 emax4 15k)+--n-factions de-risk 재발사(진행중).
