@@ -98,6 +98,23 @@ def _wload_key(path):
 # raw bytes. numpy-only hosts (no cupy installed, or no CUDA device) get an
 # unconditional, unchanged numpy fallback — this module never hard-imports
 # cupy at the top level failure path.
+# Runtime CUDA-lib self-config BEFORE `import cupy` (H_9767 pod-bootstrap-into-main-code):
+# make libcublas/libnvrtc loadable without a manual LD_LIBRARY_PATH (see core/cuda_paths.py).
+# MUST precede the cupy import (glibc F2: an absolute-path RTLD_GLOBAL preload satisfies
+# cupy's later SONAME load). __file__-relative import so it works however decode.py was
+# loaded (flat sys.path OR importlib.spec_from_file_location, e.g. pod_bootstrap ⑥). No-op
+# on darwin / GPU-less / cupy-less hosts → CPU path byte-identical.
+_CUDA_LIB_CFG = {"configured": False, "loaded": [], "dirs": [], "reason": None}
+try:
+    _here = os.path.dirname(os.path.abspath(__file__))
+    if _here not in sys.path:
+        sys.path.insert(0, _here)
+    from cuda_paths import ensure_cuda_libs as _ensure_cuda_libs
+    _CUDA_LIB_CFG = _ensure_cuda_libs()
+except Exception as _cfg_err:             # self-config must never break the import
+    _CUDA_LIB_CFG = {"configured": False, "loaded": [], "dirs": [],
+                     "reason": "cuda_paths unavailable: %r" % _cfg_err}
+
 try:
     import cupy as _cupy
     _CUPY_IMPORT_ERR = None
@@ -185,7 +202,7 @@ def gpu_status():
         # gpu_present distinguishes "no GPU at all → CPU is expected" from "GPU present but
         # the cupy device path is dead → a paid GPU is silently running on CPU" (the defect).
         return {"cuda": False, "device_name": None, "cupy": None, "reason": reason,
-                "gpu_present": _nvidia_gpu_present()}
+                "gpu_present": _nvidia_gpu_present(), "lib_config": _CUDA_LIB_CFG}
     try:
         name = _cupy.cuda.runtime.getDeviceProperties(0)["name"]
         if isinstance(name, bytes):
@@ -201,7 +218,8 @@ def gpu_status():
         cupy_ver = _cupy.__version__
     except Exception:
         cupy_ver = "unknown"
-    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None, "gpu_present": True}
+    return {"cuda": True, "device_name": name, "cupy": cupy_ver, "reason": None,
+            "gpu_present": True, "lib_config": _CUDA_LIB_CFG}
 
 
 def _log_gpu_status_once():
