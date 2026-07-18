@@ -755,6 +755,7 @@ def evaluate_usage():
     print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
     print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
     print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9712 z 용량/노출 census(트레이스 판독·디코드 없음)")
+    print("  anima evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2] [--block 16,32] [--boot 1000]  — H_9752 라이브 평면 안정성(주각·eigengap·rank-swap)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
     print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
@@ -8104,7 +8105,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -9320,6 +9321,396 @@ def _pc2_emit_coupling(argv):
              "H_9576 'emit-직교 DOF' 서사는 이름표 불안정에도 라이브 축으로 유지" % THR)
     print("  ⇒ VERDICT: " + v)
     print("     범위: 상류 결합성이다 — mouth 도달/의미전달 미질문(H_9576 여전히 VOID) · 150tick×3run.")
+    return 0
+
+
+def _pc2_subspace_stability(argv):
+    """H_9752 SUBSPACE-STABILITY — is H_9713's axis-flip a NEAR-DEGENERACY of a STABLE PLANE?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2]
+        [--block 16,32] [--boot 1000] [--surr aaft] [--surrogates 500] [--seed N]`
+
+    THE REFRAME THIS EXISTS TO TEST. H_9713 (--variance-audit) found that the frozen PC2 loading's
+    NEAREST live eigenvector flips run-to-run (PC2 / PC1 / PC1 across the 3 seeds) and read that as
+    "the axis LABEL is not reproducible live". This flag asks the sharper geometric question: an
+    eigenvector RANK is an unstable label whenever lambda1 ~= lambda2 (near-degeneracy) EVEN WHEN
+    the 2-D SUBSPACE span{v1,v2} is rock-stable. Rank is a coordinate; a plane is a geometry. So it
+    measures the PLANE, not the axis:
+
+      DV (all parameter-free / denominator-free geometry -- H_9716 non-applicable):
+        - per-run raw-covariance eigenspectrum + relative eigengap (lambda1-lambda2)/lambda1
+          (raw covariance = the SAME scale H_9713 saw the flip on, so the degeneracy is comparable)
+        - cross-run PRINCIPAL ANGLES between top-`dims` subspaces (Procrustes via SVD of U^T V)
+        - within-run SPLIT-HALF principal angles (does one run even have a stable plane internally?)
+        - moving-block bootstrap (autocorrelation-respecting) -> principal-angle CI + RANK-SWAP rate
+          (fraction of resamples where the top-2 eigenvector order trades = the degeneracy signature)
+
+    THE NULLS (a small angle is only meaningful vs a chance angle; p7 -- collapse-delta, not a raw
+    value; and autocorrelation shrinks n_eff so the chance level must be RE-DERIVED, never inherited
+    from a uniform-Grassmann closed form):
+      null-1 AAFT     -- phase surrogate per factor: preserves each channel's marginal AND its
+                         autocorrelation, destroys ONLY the cross-channel coupling => the joint plane
+                         is gone but the per-channel dynamics survive. The correct null for "is this
+                         shared plane real?".
+      null-2 chanperm -- permute the 8 channel labels of one run before refit: destroys the loading
+                         IDENTITY, keeps per-channel dynamics. Second, independent null.
+
+    POSITIVE CONTROL (opens nothing without it -- a_positive_control_first). A synthetic PLANT: N
+    runs sharing ONE fixed random 2-D plane, each = 2 AR(1) latents (rho matched to the observed
+    lag-1) on that plane + isotropic noise, n and top-2/bulk spectrum matched to the traces. The
+    instrument MUST recover cross-run angle < the plant's own chanperm-null 5pct; if it cannot see a
+    plane THAT IS THERE, the whole measurement is VOID (not a negative).
+
+    9->3 RUN DEDUPE (H_9714 lesson): off/bias/rng share a byte-identical factor stream (Stage-A
+    isolation), so the 9 files are 3 independent runs; they are deduped by factor-stream hash or the
+    null is forged ~sqrt(3) too tight.
+
+    FROZEN VERDICT TABLE (card H_9752 -- do not retune; a_break_the_wall):
+      cross-run angle < AAFT-null 5pct AND rank-swap rate >= 0.2       -> PASS-PLANE
+      split-half beats null AND cross-run is null-equivalent            -> PASS-RUN-INDEXED
+      split-half itself null-equivalent AND plant PASS                  -> KILL-NO-AXIS
+      cross-run angle ABOVE AAFT-null 95pct (anti-aligned)             -> INVALID (sign/pre-proc)
+      plant not detected OR any run n<100 OR angle-CI half-width >10deg -> VOID (underpowered)
+    KILL-NO-AXIS is the GATE for H_9754/9755's refit arms: if it fires, those arms have no target and
+    firing them is forbidden -- that fact is written into the verdict.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    FACTORS = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+               "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --subspace-stability")
+        return 2
+    dims = evaluate_intval(argv, "--dims", 2)
+    nboot = evaluate_intval(argv, "--boot", 1000)
+    nsurr = evaluate_intval(argv, "--surrogates", 500)
+    rseed = evaluate_intval(argv, "--seed", 20260718)
+    surr_kind = evaluate_strval(argv, "--surr", "aaft")
+    blk_s = evaluate_strval(argv, "--block", "16,32")
+    try:
+        blocks = [int(b) for b in blk_s.split(",") if b.strip()]
+    except ValueError:
+        blocks = [16, 32]
+    if not blocks:
+        blocks = [16, 32]
+    if surr_kind != "aaft":
+        print("  ⇒ ⛔ --surr 은 현재 aaft 만 (null-2 chanperm 은 항상 병행)")
+        return 2
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    # ── load + dedupe by factor stream (9 files -> 3 runs) ───────────────────
+    runs, seen, dup, metas = [], set(), 0, []
+    for f in files:
+        rows, meta = [], {}
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+                continue
+            v = [r.get(k) for k in FACTORS]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        h = hash(X.tobytes())
+        if h in seen:
+            dup += 1
+            continue
+        seen.add(h)
+        runs.append((os.path.basename(f), X))
+        metas.append((os.path.basename(f), meta))
+    if len(runs) < 2:
+        print("  ⇒ ⛔ 독립 run < 2 (교차-run 주각 불가) — dedupe 후 %d run" % len(runs))
+        return 2
+
+    # ── geometry helpers ─────────────────────────────────────────────────────
+    def _subspace(X, k):
+        """Top-k raw-covariance eigenvectors (orthonormal p×k), eigenvalues desc."""
+        Xc = X - X.mean(axis=0)
+        C = (Xc.T @ Xc) / float(Xc.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        return V[:, o[:k]], w[o]
+
+    def _prin_angles(A, B):
+        """Principal angles (deg, ascending) between orthonormal subspaces A,B (p×k)."""
+        M = A.T @ B
+        s = _np.linalg.svd(M, compute_uv=False)
+        s = _np.clip(s, -1.0, 1.0)
+        return _np.degrees(_np.arccos(s))[::-1]   # ascending angle
+
+    def _theta_max(A, B):
+        return float(_prin_angles(A, B)[-1])       # largest principal angle = worst misalign
+
+    def _xrun_median(subs):
+        """Median over run-pairs of the largest principal angle."""
+        vals = []
+        for i in range(len(subs)):
+            for j in range(i + 1, len(subs)):
+                vals.append(_theta_max(subs[i], subs[j]))
+        return float(_np.median(vals)), vals
+
+    def _lag1(X):
+        rr = []
+        for j in range(X.shape[1]):
+            v = X[:, j] - X[:, j].mean()
+            den = float((v * v).sum())
+            rr.append(float((v[:-1] * v[1:]).sum() / den) if den > 0 else 0.0)
+        return rr
+
+    def _aaft(X, rng):
+        n = X.shape[0]
+        Y = _np.empty_like(X)
+        for j in range(X.shape[1]):
+            x = X[:, j]
+            order = _np.argsort(x)
+            g = _np.sort(rng.standard_normal(n))
+            gx = _np.empty(n)
+            gx[order] = g
+            F = _np.fft.rfft(gx)
+            ph = rng.uniform(0.0, 2.0 * _np.pi, size=F.shape[0])
+            ph[0] = 0.0
+            if n % 2 == 0:
+                ph[-1] = 0.0
+            Fs = _np.abs(F) * _np.exp(1j * ph)
+            gs = _np.fft.irfft(Fs, n=n)
+            back = _np.argsort(_np.argsort(gs))
+            Y[:, j] = _np.sort(x)[back]
+        return Y
+
+    def _block_boot(X, L, rng):
+        n = X.shape[0]
+        if L >= n:
+            L = max(2, n // 2)
+        nb = int(_np.ceil(n / float(L)))
+        idx = []
+        for _ in range(nb):
+            st = int(rng.integers(0, n - L + 1))
+            idx.extend(range(st, st + L))
+        idx = _np.asarray(idx[:n])
+        return X[idx]
+
+    print("=== anima evaluate --pc2-direction --subspace-stability — H_9752 라이브 평면 안정성 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 · H_9714 dedupe)"
+          % (d, len(files), len(runs), dup))
+    print("dims=%d · block=%s · boot=%d · surrogate=%d · seed=%d"
+          % (dims, blk_s, nboot, nsurr, rseed))
+    print("질문:  H_9713 의 축-flip 은 **근축퇴(λ1≈λ2)** 이고 2-D 평면 span 은 run-안정인가?")
+    print("DV:    주각(principal angle · 분모-프리) · 상대 eigengap · bootstrap rank-swap율")
+    print("null:  ① AAFT(주변+자기상관 보존·결합만 파괴) ② 채널-라벨 순열 · 양성통제=합성 2-D plant")
+    print("⚖️  raw-covariance 로 refit(H_9713 이 flip 을 본 바로 그 스케일) · 자기상관 존중 block-bootstrap")
+    print("")
+
+    # ── ⓪ regime diff ────────────────────────────────────────────────────────
+    print("  ⓪ regime diff")
+    for k in ("stage_cycle", "g_reach", "emit_gate", "refractory", "backend", "ckpt_sha256"):
+        vals = sorted(set(str(m.get(k)) for _n, m in metas))
+        print("     %-12s = %s" % (k, " | ".join(vals) if len(vals) > 1 else vals[0]))
+    print("")
+
+    # ── ① per-run eigenspectrum + relative eigengap ──────────────────────────
+    print("  ① run별 eigenspectrum + 상대 eigengap (λ1−λ2)/λ1  (근축퇴 = eigengap 작음)")
+    subs, eigs, ns = [], [], []
+    for name, X in runs:
+        U, w = _subspace(X, dims)
+        subs.append(U)
+        eigs.append(w)
+        ns.append(X.shape[0])
+        gap = float((w[0] - w[1]) / w[0]) if w[0] > 0 else 0.0
+        print("     %-18s n=%-4d λ=[%s]  eigengap=%.3f"
+              % (name, X.shape[0], " ".join("%.4f" % v for v in w[:4]), gap))
+    min_n = min(ns)
+    gaps = [float((w[0] - w[1]) / w[0]) if w[0] > 0 else 0.0 for w in eigs]
+    print("     ⇒ 상대 eigengap: min=%.3f · median=%.3f · max=%.3f"
+          % (min(gaps), float(_np.median(gaps)), max(gaps)))
+    print("")
+
+    # ── ② observed cross-run principal angles ────────────────────────────────
+    xr_obs, xr_pairs = _xrun_median(subs)
+    print("  ② 교차-run 주각 (top-%d 부분공간 · Procrustes)" % dims)
+    pi = 0
+    for i in range(len(subs)):
+        for j in range(i + 1, len(subs)):
+            ang = _prin_angles(subs[i], subs[j])
+            print("     %-14s ↔ %-14s  주각=[%s]°"
+                  % (runs[i][0], runs[j][0], " ".join("%.1f" % a for a in ang)))
+            pi += 1
+    print("     ⇒ 교차-run θ_max 중앙값 = %.2f°" % xr_obs)
+    print("")
+
+    # ── ③ within-run split-half ──────────────────────────────────────────────
+    print("  ③ run 내 split-half 주각 (연속 전/후반 · 자기상관 존중)")
+    sh_vals = []
+    for name, X in runs:
+        n = X.shape[0]
+        h = n // 2
+        UA, _ = _subspace(X[:h], dims)
+        UB, _ = _subspace(X[h:], dims)
+        t = _theta_max(UA, UB)
+        sh_vals.append(t)
+        print("     %-18s split-half θ_max=%.2f°" % (name, t))
+    sh_obs = float(_np.median(sh_vals))
+    print("     ⇒ split-half θ_max 중앙값 = %.2f°" % sh_obs)
+    print("")
+
+    # ── ④ nulls (AAFT + chanperm) ────────────────────────────────────────────
+    rng = _np.random.default_rng(rseed)
+    aaft_xr, chan_xr, aaft_sh = [], [], []
+    for _ in range(nsurr):
+        s_aaft = [_subspace(_aaft(X, rng), dims)[0] for _n, X in runs]
+        aaft_xr.append(_xrun_median(s_aaft)[0])
+        s_chan = []
+        for _n, X in runs:
+            perm = rng.permutation(X.shape[1])
+            s_chan.append(_subspace(X[:, perm], dims)[0])
+        chan_xr.append(_xrun_median(s_chan)[0])
+        # split-half AAFT null (per run, median across runs)
+        shs = []
+        for _n, X in runs:
+            Y = _aaft(X, rng)
+            hh = Y.shape[0] // 2
+            shs.append(_theta_max(_subspace(Y[:hh], dims)[0], _subspace(Y[hh:], dims)[0]))
+        aaft_sh.append(float(_np.median(shs)))
+    aaft_xr = _np.asarray(aaft_xr); chan_xr = _np.asarray(chan_xr); aaft_sh = _np.asarray(aaft_sh)
+    aaft_p5, aaft_p95 = float(_np.percentile(aaft_xr, 5)), float(_np.percentile(aaft_xr, 95))
+    chan_p5, chan_p95 = float(_np.percentile(chan_xr, 5)), float(_np.percentile(chan_xr, 95))
+    sh_p5 = float(_np.percentile(aaft_sh, 5))
+    print("  ④ null 대조 (분모-프리 주각 · 자기상관 존중 surrogate 서 재유도)")
+    print("     교차-run θ_max: 관측=%.2f° · AAFT-null 5pct=%.2f° 95pct=%.2f° · chanperm 5pct=%.2f°"
+          % (xr_obs, aaft_p5, aaft_p95, chan_p5))
+    print("     split-half θ_max: 관측=%.2f° · AAFT-null 5pct=%.2f°" % (sh_obs, sh_p5))
+    xr_below = xr_obs < aaft_p5
+    xr_above = xr_obs > aaft_p95
+    xr_chan_below = xr_obs < chan_p5
+    sh_below = sh_obs < sh_p5
+    print("     ⇒ 교차-run 평면 정렬(관측<AAFT5pct): %s · (관측<chanperm5pct): %s · 반정렬(>95pct): %s"
+          % (xr_below, xr_chan_below, xr_above))
+    print("     ⇒ split-half 평면 실재(관측<AAFT5pct): %s" % sh_below)
+    print("")
+
+    # ── ⑤ moving-block bootstrap: angle CI + rank-swap rate ──────────────────
+    print("  ⑤ moving-block bootstrap (주각 CI + rank-swap율 · block 2종)")
+    ci_halfwidths, swap_rates = [], []
+    for L in blocks:
+        boot_xr = []
+        swaps = 0
+        tot = 0
+        for _ in range(nboot):
+            s_boot = []
+            for (name, X), Ufull in zip(runs, subs):
+                Xb = _block_boot(X, L, rng)
+                Ub, _w = _subspace(Xb, dims)
+                s_boot.append(Ub)
+                # rank-swap: does bootstrap PC1 align to full PC2 more than full PC1?
+                b1 = Ub[:, 0]
+                if abs(float(b1 @ Ufull[:, 0])) < abs(float(b1 @ Ufull[:, 1])):
+                    swaps += 1
+                tot += 1
+            boot_xr.append(_xrun_median(s_boot)[0])
+        boot_xr = _np.asarray(boot_xr)
+        lo, hi = float(_np.percentile(boot_xr, 2.5)), float(_np.percentile(boot_xr, 97.5))
+        hw = (hi - lo) / 2.0
+        sr = swaps / float(tot) if tot else 0.0
+        ci_halfwidths.append(hw)
+        swap_rates.append(sr)
+        print("     block=%-3d  교차-run θ_max CI=[%.2f, %.2f]° (반폭 %.2f°) · rank-swap율=%.3f"
+              % (L, lo, hi, hw, sr))
+    swap_rate = float(_np.mean(swap_rates))
+    ci_halfwidth = float(_np.max(ci_halfwidths))
+    print("     ⇒ rank-swap율(block-평균)=%.3f · 주각 CI 반폭(block-최대)=%.2f°"
+          % (swap_rate, ci_halfwidth))
+    print("")
+
+    # ── ⑥ positive control: synthetic 2-D plant ──────────────────────────────
+    print("  ⑥ 양성통제 — 합성 2-D plant (알려진 안정 평면 · n·스펙트럼 매칭)")
+    p = len(FACTORS)
+    nrun = len(runs)
+    lam = _np.mean(_np.asarray(eigs), axis=0)          # avg observed raw-cov spectrum
+    lat_sd = [float(lam[0] ** 0.5), float(lam[1] ** 0.5)]
+    noise_sd = float(_np.mean(lam[dims:]) ** 0.5) if p > dims else float(lam[-1] ** 0.5)
+    rho_ar = float(_np.clip(_np.mean([_np.mean(_lag1(X)) for _n, X in runs]), -0.95, 0.95))
+    Q, _r = _np.linalg.qr(rng.standard_normal((p, dims)))   # ONE fixed plane
+    Pplane = Q[:, :dims]
+
+    def _ar1(n, rho, sd, rng):
+        e = rng.standard_normal(n)
+        x = _np.empty(n)
+        x[0] = e[0]
+        for t in range(1, n):
+            x[t] = rho * x[t - 1] + e[t]
+        s = x.std(ddof=1)
+        return x / s * sd if s > 0 else x
+
+    def _plant_run(n, rng):
+        lat = _np.column_stack([_ar1(n, rho_ar, lat_sd[k], rng) for k in range(dims)])
+        noise = rng.standard_normal((n, p)) * noise_sd
+        return lat @ Pplane.T + noise
+
+    plant_subs = [_subspace(_plant_run(min_n, rng), dims)[0] for _ in range(nrun)]
+    plant_xr = _xrun_median(plant_subs)[0]
+    plant_null = []
+    for _ in range(max(200, nsurr // 2)):
+        s_pn = []
+        for U in plant_subs:
+            perm = rng.permutation(p)
+            # re-realize a plant run then channel-permute (chanperm null on the plant)
+            Xp = _plant_run(min_n, rng)
+            s_pn.append(_subspace(Xp[:, perm], dims)[0])
+        plant_null.append(_xrun_median(s_pn)[0])
+    plant_p5 = float(_np.percentile(_np.asarray(plant_null), 5))
+    plant_detected = plant_xr < plant_p5
+    print("     plant 교차-run θ_max=%.2f° · plant-chanperm null 5pct=%.2f° · 검출=%s"
+          % (plant_xr, plant_p5, plant_detected))
+    print("     (plant param: ρ_AR=%.2f · lat_sd=%s · noise_sd=%.3f · plane 고정)"
+          % (rho_ar, "[%.3f,%.3f]" % (lat_sd[0], lat_sd[1]), noise_sd))
+    print("")
+
+    # ── VERDICT (frozen table · card H_9752) ─────────────────────────────────
+    print("  ⑦ 사전등록 판정표 대조")
+    if (not plant_detected) or (min_n < 100) or (ci_halfwidth > 10.0):
+        why = []
+        if not plant_detected:
+            why.append("plant 미검출(계기가 있는 평면조차 못 봄)")
+        if min_n < 100:
+            why.append("run 당 tick<100 (min_n=%d)" % min_n)
+        if ci_halfwidth > 10.0:
+            why.append("주각 CI 반폭 %.1f°>10° (검정력 미달)" % ci_halfwidth)
+        v = "⚪ VOID — " + " · ".join(why) + " ⇒ 음성 아님(power-before-negative)"
+    elif xr_above:
+        v = ("⛔ INVALID — 교차-run 주각이 AAFT-null **95pct 위**(반-정렬) ⇒ 부호규약/전처리 결함 · 수리 먼저")
+    elif xr_below and swap_rate >= 0.2:
+        v = ("🟢 **PASS-PLANE** — 교차-run 평면 안정(관측 %.1f° < AAFT5pct %.1f°) ∧ rank-swap율 %.3f≥0.2 "
+             "⇒ H_9713 축-flip = **근축퇴 기전 확정**: 죽은 건 '축 이름'이지 2-D 평면이 아니다"
+             % (xr_obs, aaft_p5, swap_rate))
+    elif sh_below and not xr_below:
+        v = ("🟡 **PASS-RUN-INDEXED** — run 내 split-half 는 null 이김(%.1f°<%.1f°)이나 교차-run 은 null 동급 "
+             "⇒ 구조는 **run 단위로만** 존재 · H_9755 는 run 내 warmup-refit 만 유효" % (sh_obs, sh_p5))
+    elif not sh_below:
+        v = ("🧱 **KILL-NO-AXIS** — run 내 split-half 조차 null 동급(%.1f°≥%.1f°) ∧ plant PASS "
+             "⇒ '라이브 축/평면' 자체가 없음 · **H_9754/9755 refit arm 개봉 금지** = 축-무관 가설(c)의 "
+             "구조 측 증거 · 살아남는 것은 스칼라 dose(H_9664)뿐" % (sh_obs, sh_p5))
+    else:
+        v = ("🟡 MIXED — 사전등록 칸 밖(교차<AAFT5pct=%s·swap=%.3f·split-half<null=%s) ⇒ 강제 분류 금지"
+             % (xr_below, swap_rate, sh_below))
+    print("  ⇒ VERDICT: " + v)
+    print("     ⚠️ n_eff≪n(H_9714 lag-1 ρ̂ 최대 0.86) — CI 는 block-bootstrap 이 자기상관 존중해 낸 것 ·")
+    print("        판정은 주각의 **크기 vs surrogate**로 읽지 raw°로 읽지 말 것(p7).")
     return 0
 
 
@@ -12332,6 +12723,8 @@ def main(argv):
             return _pc2_variance_audit(argv[1:])
         if "--emit-coupling" in argv:
             return _pc2_emit_coupling(argv[1:])
+        if "--subspace-stability" in argv:
+            return _pc2_subspace_stability(argv[1:])
         return _pc2_direction(argv[1:])
     if len(argv) >= 1 and argv[0] == "--ag-criticality":
         return _ag_criticality(argv[1:])
