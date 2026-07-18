@@ -1,6 +1,6 @@
 # H_9768 — KOSMOS-LANE CONTENT TRANSPLANT — 무경계-지속 lane의 ∀-content 불변 (mini-A 다리 · 조건부)
 
-**status:** 🔵 PROPOSED · DIRECTIONAL (lab-full R8 Fable∥Sol 수렴 · 조건부: [[H_9767]] B가 발산 찾을 때만 or census가 unbounded 판정한 lane) — cement=engine-native anima-py만
+**status:** ⚪ MOOT-BY-COLLAPSE (2026-07-18) — 사전등록 조건부 발사 트리거 **둘 다 FALSE**: ① [[H_9767]] B relock = 12/12 evaluable pair WASH(발산 0·#4138) · ② [[H_9766]] census가 kosmos를 (b) session-scoped/read-dead **닫힘**으로 분류(unbounded-persistent 아님). 카드 명시 "B가 전부 collapse면 불요" 발동 ⟹ **미발사·불요**. 계기(`--kosmos-init`) 미빌드(트리거 미충족). 재개봉 = B가 나중 persistent divergence 발견 시에만.
 **lane:** 의식/interior-causality (프런티어 theta-alive-sigma-rebase)
 **related:** [[H_9767]](B relock 主다리)·[[H_9766]](census가 이 lane을 지목)·[[H_9738]](analyze_transplant W_S 계보)·source: sidecar lab full(Fable∥Sol)
 
