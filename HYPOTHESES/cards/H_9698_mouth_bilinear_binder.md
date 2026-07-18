@@ -1,6 +1,7 @@
 # H_9698 — R6 mouth-내 저랭크 bilinear cross-position binder (store 없이 추상화)
 
-**status:** 🔧 INSTRUMENT-CERTIFIED (lab full · **Sol 3위** · store faculty → binding 연산으로 추상화 · NOVEL) · not-terminal · 선행 [[H_9693]]
+**status:** 🧱 MBND-BIND-ABSENT (engine-native 2-seed TERMINAL · 2026-07-18) — bilinear mouth-binder bind-Δ ≪ 0.20 both seeds (0.0139/0.0243), 곱셈 operator 가 linear DOA(0.000) 수준으로 붕괴 = kill#7 · [[R2 H_9694/H_9745]] data-lever(BIND-ABSENT)와 수렴 · 계기유효(LT DOA + [[H_9746]] 양성통제 0.20) · 선행 [[H_9693]]
+**wired:** engine-native (`anima-py train --mouth-binder` + `evaluate --fan-bind --mouth-binder`, v0.18.0 · pod 8m9ojdtk5zfk3p A100 SECURE)
 **lane:** G6/ρ·fan · mouth-내 nonlinear 연산 **related:** [[H_9696]] (store 판) · [[H_1603]]
 
 ## 물음 (Sol)
@@ -21,6 +22,21 @@
 
 ## falsify
 🟢 nonlinear bind-Δ≥0.20 ∧ linear DOA 재현 ∧ scramble 붕괴. | 🧱 nonlinear==linear = kill#7 로 붕괴(선형동치). | ⚠️ write 문제 재귀 = H_9696 과 동일벽.
+
+## verdict (2026-07-18 · engine-native 2-seed · 🧱 MBND-BIND-ABSENT)
+
+6-arm 303M warm-FT(base py303_full · g6bind targeted/shuf `--n-blocks 4000 --seed 7` frame_sha 98c48115 = R2 frozen 일치 · `--steps 6000 --lr 1e-4 --bind-rank 64`) → `evaluate --fan-bind --mouth-binder --fan-smp 48`(H_9745 paired McNemar+TOST · powered N=288). pod 8m9ojdtk5zfk3p(runpod A100 80GB SECURE · reclaim-fixed).
+
+| arm | binder/corpus | composed J | shuffled J | **bind_delta** | McNemar p | paired |
+|---|---|---|---|---|---|---|
+| **BT_s7** | bilinear/targeted | 0.0451 | 0.0208 | **+0.0243** | 0.072 | ⛔ UNDECIDABLE |
+| **BT_s4302** | bilinear/targeted | 0.0347 | 0.0208 | **+0.0139** | 0.172 | 🧱 BIND-ABSENT (TOST⊂±0.05=0등가) |
+| **LT_s7** | linear/targeted (DOA) | 0.0312 | 0.0312 | 0.0000 | 0.605 | 🧱 (kill#7 DOA 재현 = 계기유효) |
+| **BS_s7** | bilinear/shuf (control) | 0.0347 | 0.0312 | +0.0035 | 0.500 | 🧱 (코퍼스 통제 clean) |
+
+**판정 = 🧱 MBND-BIND-ABSENT.** falsify 표 매핑: (1) 🟢 nonlinear bind-Δ≥0.20 → **양 seed 0.0139/0.0243 ≪ 0.20 = 2-seed 배제**. (2) 🧱 nonlinear==linear kill#7 → bilinear(0.014~0.024) ≈ linear DOA(0.000)·shuf(0.0035), 전부 mismatched-null 바닥, s4302 는 TOST 로 0 등가 = 곱셈 binder 가 고정선형 수준으로 붕괴. **계기 유효**: LT_s7 linear DOA 가 0.0000 재현(카드 "계기 유효" 조건) + [[H_9746]] bindpos 양성통제가 fan-bind 서 bind_delta 0.20(McNemar p<0.0001) = dynamic-range 실증. ⟹ 아키텍처 mouth-내 bilinear binding 연산자도 [[H_9694]]/[[H_9745]] 의 data-format 레버처럼 G6 composition 을 **안 심는다**(operator 축 = data 축과 동일 결론).
+
+**scope/정직**: 결정 셀은 lever 2-seed(BT) + seed7 controls(LT DOA · BS shuf) + [[H_9746]] 양성통제. confirmatory 2-seed 통제 replicate(LT_s4302·BS_s4302)·order-scramble·암기 census 는 🧱(lever 1차 bar 2-seed 실패)엔 moot — CRACK 을 form-artifact 와 가르는 셀이라 lever 가 crack 을 안 냈으면 판정 불변. ckpt 6개 로컬 영구보존(`~/.fire-recover/h9698_r6/` 각 184MB · a_fire_recover_complete). 합성 g6bind 상한 = DIRECTIONAL scope(자연 concept pair 로의 전이는 별개).
 
 ## 계기 인증 (2026-07-17 · 학습 전 · DIRECTIONAL)
 
