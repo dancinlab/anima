@@ -1,6 +1,6 @@
 # H_9760 — ODD-FUSION: store 극성-등변 fusion 으로 H_9744 flip-coh 갭 돌파 (R7-1 · lab full Fable∥Sol 수렴)
 
-**status:** 🔵 PROPOSED · **계기 구현+검증 완료**(--store-fuse odd · core/clms.py store_apply · VERSION 0.16.0) — $0 numpy 검증: odd 산술보장 정확(out_odd_flip ≡ −out_odd · max\|sum\|=0.00e+00 · 답 뒤집힘 = 고정주소 flip-coh=1 by construction) + overwrite/gated-add byte-parity 보존(0.00e+00·회귀0). NEXT = H_9744 clm 에 eval(flip-coh=1.0 실측·main-bal ≥ H_9672)→in-vivo G-W2 3-seed(오너 go). (lab full R7 · Fable 5 ∥ Codex Sol 수렴 · 사전등록) · **in-vivo 배선 완료**(cli/chat.py --store-fuse → set_clms_store(fuse=) · 데몬 store lane 이 odd 받음 · VERSION 0.18.0) — eval GREEN gate PASSED(실clm 128/128=1.0 무손상).
+**status:** 🔴 **in-vivo INVALID (TERMINAL)** — odd-fusion(full-row s_odd overwrite)이 데몬 full-vocab decode를 깨뜨림: argmax가 non-g/b(garbage) → 판독 0 → flip-coh 측정불가. eval 2-way(g vs b) readout이 이걸 가린 false-positive(eval main 1.0 였으나 in-vivo garbage). H_9744 NEARMISS **미구제**. 상세 ↓ [[H_9744]]. (원래: 🔵 PROPOSED · 계기 구현+검증 완료 --store-fuse odd · core/clms.py store_apply · VERSION 0.16.0) — $0 numpy 검증: odd 산술보장 정확(out_odd_flip ≡ −out_odd · max\|sum\|=0.00e+00 · 답 뒤집힘 = 고정주소 flip-coh=1 by construction) + overwrite/gated-add byte-parity 보존(0.00e+00·회귀0). NEXT = H_9744 clm 에 eval(flip-coh=1.0 실측·main-bal ≥ H_9672)→in-vivo G-W2 3-seed(오너 go). (lab full R7 · Fable 5 ∥ Codex Sol 수렴 · 사전등록) · **in-vivo 배선 완료**(cli/chat.py --store-fuse → set_clms_store(fuse=) · 데몬 store lane 이 odd 받음 · VERSION 0.18.0) — eval GREEN gate PASSED(실clm 128/128=1.0 무손상).
 **lane:** g1-interface-addressable-wall · H_9744 WIRED-STUDY-NEARMISS 의 op=0 미반전 갭
 **related:** [[H_9744]] · [[H_9672]] · [[H_9695]] · [[H_9720]] · [[H_9423]]
 **source:** 오너 "wired 가치까지 go" · lab full R7(2026-07-18) · [[H_9744]] flip-coh 갭 $0 autopsy(seed11 transcript) 3자 수렴(내 empirical + Fable + Sol)
@@ -57,3 +57,19 @@ S(구현) $0 · eval $0(로컬/pool CPU) · in-vivo G-W2 3-seed = summer GPU ~8h
 
 ---
 **AGREES/CONFLICTS/NOVEL** (a_parallel_session_compare · origin/main max=9751 확인 후 등록): Fable∥Sol 수렴 = A(seed-space)·B(λ) 기각 · even/odd 분해 진단 · odd-fusion 레버. 내 $0 empirical 이 C1(even-지배) **확증**(op=0 상수-g 20/20). Sol 반대의견 = 재학습이 더 근본(위 ⑥ 기록). ⚠️ 로컬 untracked `H_9758_flip_evenodd_oddfuse.md`(Fable auto-write)가 다른 `H_9758_window_prefix_confound_dose.md` 와 G6 충돌 — 이 H_9760 이 origin/main-정합 클린 등록(그 untracked 카드들은 소유세션 dedup).
+
+## 🔴 in-vivo G-W2 판정 — odd-fusion이 데몬 판독을 깨뜨린다 (2026-07-18 · 렌트 GPU 팟 RTX5090 · seed7 4-arm · 오너 "rent pod" go)
+
+렌트 팟(45204319·$0.31/hr)서 `--store-fuse odd` 로 in-vivo gw2 4-arm(1152 tick) 발사·완료. 채점 = **전 arm P1-bal ≈ 0.0000 · flip-coh 0/0 (판독불가)**.
+
+**아티팩트 아님(verify-done · transcript 직접 inspection)**: 데몬이 g/b 답 대신 garbage 방출 — `"is lumer =>"` → `" @ ... is mesur => @knowl"`(첫 non-space=`@`) · `"not dusat =>"` → `" \udcefnother thanks..."`(첫 non-space=surrogate).
+
+**기전(중대 발견)**: odd `s_odd=½(s(v,g)−s(−v,g))` 는 overwrite row를 odd로 만들지만(negation 보장) **g/b를 global argmax로 보존하지 않는다**. even 성분 제거가 g/b logit을 키우던 걸 없애 → 실 256-vocab서 argmax=non-g/b. 내 $0 numpy 검증은 **negation만** 확인했지 argmax=g/b는 확인 안 함(toy V=6서 argmax 5→2=임의바이트). 데몬 full-vocab mouth는 global argmax를 뽑으므로 garbage.
+
+**eval GREEN gate = false-positive**: `evaluate --store --store-fuse odd` main 128/128=1.0 였던 건 eval readout이 **2-way(g vs b logit 비교)**라 odd의 g/b **순서**만 보존됐기 때문. in-vivo full-vocab decode는 2-way를 안 함 → garbage. ⟹ **eval 2-way readout은 in-vivo full-vocab decode를 예측 못 한다**(측정 교훈).
+
+### 최종 등급 (정직)
+- **H_9760 = 🔴 in-vivo INVALID (TERMINAL)** — odd-fusion(full-row overwrite)은 데몬 답 방출을 깨뜨려 flip-coh 측정불가. WIRED 미획득. 배선(#4082·#4084)·arithmetic negation은 유효하나 **full-vocab decode 비호환**.
+- **H_9744 = WIRED-STUDY-NEARMISS 불변** — odd가 ceiling 못 열음(구제 실패). NEARMISS 종결 유지.
+- **⚠️ a_fire_recover_complete 위반**: scp glob 문법오류로 transcript 회수 실패했는데 teardown 진행돼 raw transcript 유실. 판정근거(garbage emit)는 teardown 전 직접 inspection으로 확보(결론 견고)·raw 아카이브만 소실.
+- **follow-on(새 설계)**: full-row overwrite 대신 **g/b logit 쌍에만 odd 적용**(answer 2바이트만 odd-symmetrize·나머지 row는 overwrite s 유지) → argmax 보존+flip 획득. 또는 posterior-margin readout을 in-vivo 계기로 재사전등록. 별도 H.
