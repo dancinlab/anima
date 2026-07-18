@@ -1,13 +1,21 @@
 # H_9774 — CONTENT-REACH — 주입된 content가 global workspace에 닿나 (C8 store-swap · ownership는 미식별 확정 후 유일 생존)
 
-**status:** 🟢 GREEN-DIRECTIONAL (#PR) — **CONTENT-REACH LIVE + GLOBAL**(1-seed s7·SHAM-clean·byte-stats granularity 상한). 계기 EXISTS(`--swap-text` H_9328/9338-certified·신규 엔진코드 0). ownership은 C8서 UNIDENTIFIABLE(코드확증·H_9729 벽 이관·불변)·유일 식별 residue=content-REACH가 이번에 **LIVE로 판별**.
+**status:** 🟢 GREEN-DIRECTIONAL (#4104 + multiseed/A2 #PR) — **CONTENT-REACH LIVE + GLOBAL**(SHAM-clean·granularity=byte-multiset+trigram·sub-semantic). SHAM=0/60 **3 gate-seed(7/11/13) 재현**·A2 SCRAMBLE로 granularity 정밀화. 계기 EXISTS(`--swap-text` H_9328/9338-certified·신규 엔진코드 0). ownership은 C8서 UNIDENTIFIABLE(코드확증·불변). ⚠️ TERMINAL 미승급: greedy mouth seed-invariant(own=1 distinct·s7=s11=s13 동일)라 sample-seed는 gate-RNG만 변주=independent content replication 아님(cementing=T>0 mouth 필요).
+
+## 판정 심화 (multi-seed + A2 SCRAMBLE · summer · #PR)
+1차 #4104(s7 3-way)에 이어 SHAM+CERT × s11/s13 + A2 SCRAMBLE(s7) 발사(rc=0·60tick·detached setsid).
+- **multi-seed(gate-RNG 재현)**: SHAM-vs-A0 confound = **s7 0/60 · s11 0/60 · s13 0/60** = injection byte-clean 3-seed 재현(계기 SOUND robust). CERT-vs-SHAM LIVE+GLOBAL도 3-seed 전부(s7 local305/global262·s11 251/207·s13 251/207). ⚠️ **greedy seed-invariance 확증**: s7=s11=s13 own emit 텍스트 byte-identical("vault QX-7741…" 30/30·distinct=1) ⟹ sample-seed는 refractory gate schedule/noise만 변주(A0 861B차)·mouth content 불변 ⟹ **독립 content 조건 아님**. cementing엔 T>0 mouth 변주(H_9510: T=1.0 distinct 100%) 또는 다중 donor SET 필요.
+- **⭐ A2 SCRAMBLE granularity 판별(byte-multiset PRESERVED 30/30·order shuffle 30/30)**: 3 content 조건이 3 signature 삼각측량 — **SHAM(동일)=0 · A2(multiset보존·순서파괴) · CERT(multiset변경)=full**.
+  - **byte-multiset consumer 완전 order-invariant**: A2 vs SHAM에서 recon_err·ca3_ctx·wm_active·cell_count·cb_surprise = **정확히 0/60** ⟹ afield/wmb/ca3/cbel store는 permutation-invariant byte-stats(Fable census 코드확증 실측).
+  - **order-sensitive channel 실재**: A2에서 rel_lane 32 + global(psi_gws 24·ten_phasic 56·base_motiv 58·emit_drive 32·coh_lane 32) 발산 ⟹ 순서 정보를 나르는 채널(trigram/immune 계열 rel_lane→global)이 존재. A2/A3 total-div ratio 0.41 = 발산의 ~41%가 순서보존서 살아남음(order-sensitive), ~59%는 multiset 성분.
+  - ⟹ **granularity 정밀화: REACH = byte-multiset(1-gram) AND byte-trigram(3-gram·order-sensitive) grade**. 여전히 sub-semantic(trigram≠의미)이나 순수 multiset보다 richer. "byte-stats grade"의 상세 구조 실측.
 
 ## 판정 결과 (SHAM-controlled 3-way · summer s7 · `--swap-text` A0/A1/A3 · 60tick)
 계기결함 5연발(mouthless→wrong-field→미직렬화→0-load→**donor-degenerate**)을 verdict-integrity/dead-positive-control로 전수 포착 후, greedy mouth의 own mode-collapse(s7=1 distinct text·"vault QX-7741…" 앵커 echo)를 h9728_c0의 24 distinct 텍스트(byte-distinct 20/24 cert)로 교정한 **certified-distinct donor**로 재발사.
 - **⛔ INVALID 게이트 통과**: A1 SHAM(byte-identical content을 동일 swap-path로 재주입) vs A0 = **0/60 발산**(recon_err·ca3_ctx·wm_active·cell_count·rel_lane·cb_surprise·psi_gws·ten_phasic·base_motiv·emit_drive·coh_lane **전 필드 0**) ⟹ swap 기계 자체는 무해·injection-path byte-clean. block-rand null보다 깨끗한 null(동일-content=정확히 0).
 - **양성통제 ALIVE**: A3 CERT vs SHAM local lane 발산 recon_err 50·ca3_ctx 44·wm_active 50·cell_count 53·rel_lane 50·cb_surprise 58 (/60).
 - **🟢 CONTENT-REACH(DIRECTIONAL)**: A3 vs SHAM **global lane** 발산 psi_gws 48·ten_phasic 56·base_motiv 58·emit_drive 50·coh_lane 50 (/60)·비-swapped 필드 발산 59/60 ⟹ 주입 content가 local store를 넘어 **global workspace/pulse-adjacent lane**에 닿음. **🔴 ENCAPSULATED 반증**(global TOST-flat 아님).
-- **범위 상한(정직)**: (1) **byte-statistics granularity** — content는 interior에 8-dim byte-stats(permutation-invariant)·64-dim byte-trigram·mod-4로만 진입(Fable consumer census·H_9749) ⟹ REACH는 실재하나 **의미(semantic) reach 아님**; byte-multiset-equal 두 텍스트는 구성상 구별불가(A2 SCRAMBLE 미측정). (2) **stateful cascade** — store 누적이라 첫 swap tick→전 downstream 발산 ⟹ 48–58/60은 독립 효과 아닌 궤적수준 REACH(1-seed·per-tick 독립성/effect-size 미주장). (3) **1-seed s7** — 사전등록 multi-seed(s11/s13) cementing은 follow-on(DIRECTIONAL 천장).
+- **범위 상한(정직)**: (1) **byte-statistics granularity** — content는 interior에 byte-stats(permutation-invariant)·byte-trigram·mod-4로만 진입(Fable consumer census·H_9749) ⟹ REACH는 실재하나 **의미(semantic) reach 아님**; A2 SCRAMBLE 실측(↑판정 심화)로 정밀화=multiset consumer는 완전 order-invariant(0/60)·trigram/global은 order-sensitive=grade는 multiset+trigram. (2) **stateful cascade** — store 누적이라 첫 swap tick→전 downstream 발산 ⟹ 48–58/60은 독립 효과 아닌 궤적수준 REACH(per-tick 독립성/effect-size 미주장). (3) **cementing 미획득** — multi-seed 발사했으나 greedy seed-invariance(own=1 distinct)라 gate-RNG 재현일 뿐 independent content replication 아님(↑판정 심화)·TERMINAL엔 T>0 mouth 또는 다중 donor SET × block-rand 필요.
 - **ownership 불변**: familiarity own>donor 부호=어느 방향도 verdict 無(autocorrelation). ownership UNIDENTIFIABLE(코드확증) 그대로.
 
 ### 아크 종합 (living gate ↔ interior)
