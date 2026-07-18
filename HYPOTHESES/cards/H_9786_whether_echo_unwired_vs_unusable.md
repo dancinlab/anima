@@ -32,3 +32,10 @@ H_9728 unidentifiability는 mask에서 비트를 강제(yoke)할 때의 relock �
 
 ## NEXT (재구현 · 자율)
 ① `--emit-echo` 주입점을 field-drive→C8 repeat-bind로 수정(flag파싱·telemetry 재사용·주입부만 교체) ② PC-1 $0 격리(Δ=0.16d 게이트) ③ toy 재-smoke(κ=0 byte-id 회귀) ④ 착륙 ⑤ 303M summer(chat-py-8): PC-2 propagation cert→native arm→permute/const/noise reference-stream(actual-tick 키·H_9785 교훈)→2-hop decode 판정.
+
+## 🧱 계기 v2 (store encoding-strength) 도 DEGENERATE — store-write⟺did_emit (2026-07-19)
+v2 구현(cli/chat.py store블록 pending후 κ회 repeat vadapt_field_step+immune_bind·정수κ). toy-smoke: S2 κ=0 byte-id✅ · PC-1 격리 deadzone-free✅(refine d=0.10 Δ=0.016=0.16d 정확·d≥0.30은 split=셀생성). BUT **4-arm WHETHER 대비 붕괴**: echo_binds가 native=const=permute=noise=**36 전부 동일**(emit틱 12×κ3). 원인 = **store-write 블록이 `g_emit`(=did_emit)에만 실행** ⟹ 블록 안 did_emit≡1 ⟹ native(did_emit 변조) ≡ const(항상 변조). [[H_9738]] 정합(상상텍스트→store 0 byte = store는 발화틱만 씀·침묵틱 미기록). toy 아티팩트 아닌 **구조적**. ⟹ (c) 주입점은 "발화 content를 κ× 강하게"일 뿐 **WHETHER(spoken vs silent) 대비 불가**(침묵-write 부재).
+
+**substrate 발견(부수·H_9765 기전)**: interior의 content-encoding이 **발화-게이트**됨 — 침묵틱엔 store가 안 써진다. 이것이 H_9765 whether-blindness의 코드 기전: 말할지 여부를 쓸 "침묵 encoding" 자체가 없다(write⟺spoke).
+
+**재설계 v3 방향**: 침묵틱에 실제로 쓰는 유일 lane = [[H_9627]] W_S(wm_withheld·침묵틱 gate_in). WHETHER 대비의 자연 담체 = W_E(발화·wmb) vs W_S(보류). 단 H_9627이 이미 dual-ledger로 이 대비를 emit-gate에 씀 → WHETHER-echo는 W_S content가 *다른 lane(interior 게이지)*에 도달하나로 재정식화 필요. v3 설계는 focused lab-full 또는 오너 steer 후. 병행 대안: 병렬각 [[H_9787]] GEN-SELF-RECOGNITION($0-ish·이 구조문제 없음) 우선.
