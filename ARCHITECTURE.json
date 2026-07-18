@@ -16798,6 +16798,13 @@
  "convergence": {
   "records": [
    {
+    "id": "swap-text-instrument-byte-clean-only-in-greedy-regime",
+    "state": "pos-conv",
+    "value": "do()-스타일 주입 계기(--swap-text 등 실행 후 상태를 교체하는 intervention)의 byte-clean 통제(SHAM: 동일값 재주입→0 발산)는 결정론(greedy) regime서만 성립하고 stochastic(T>0) regime선 무너진다. H_9774 content-reach: greedy(emit-temp 0)선 SHAM-vs-A0=0/60(계기 무해)이나, greedy own이 mode-collapse(distinct=1)라 multi-seed가 vacuous. 이를 깨려 --emit-temp 1.0로 재발사→own distinct 32/30(독립 확보)나 SHAM-vs-A0=59/60 confound(첫 발산 tick=1·emit schedule 32vs30 불일치)=계기가 stochastic mouth와 tick1부터 상호작용해 RNG 궤적 교란. ⟹ greedy=vacuous·T>0=confound 상호배타 결함이라 --swap-text로 clean 독립-content 재현 원리불가. cementing lane=INSTRUMENT-WALL(substrate 아님). 과학 verdict(greedy clean run 근거)는 불변·quarantine(infra-wall-noneval).",
+    "threshold": "재발조건: 실행 후 상태/텍스트/activation을 교체하는 do()-계기(--swap-text·activation patch·store inject)를 stochastic decode(T>0·sampling·dropout) regime서 쓸 때. ① byte-clean 통제(동일값 재주입 SHAM=0)를 반드시 그 regime서 재확인 — 결정론서 0이어도 stochastic서 0 보장 안 됨(주입 경로가 RNG stream/schedule 교란→butterfly). SHAM≠0이면 그 regime 측정은 confounded=INVALID(content 격리 불가). ② 계기가 특정 regime-lock인지 인지: greedy는 byte-clean이나 source가 mode-collapse(vacuous), T>0는 source 풍부하나 계기 confound — 상호배타면 그 계기로 cementing 원리불가=instrument-wall(substrate-wall과 구분·infra-wall-noneval quarantine). ③ 해결=RNG-neutral 주입(스트림 소비/schedule 안 건드리게 engine 재설계) 후에야 T>0 측정 가능. ④ instrument-wall을 substrate ceiling으로 오독 금지(verdict-integrity).",
+    "linked_hypotheses": ["H_9774", "H_9510"]
+   },
+   {
     "id": "multi-seed-replication-vacuous-when-seed-doesnt-drive-source",
     "state": "pos-conv",
     "value": "multi-seed 재현으로 DIRECTIONAL→TERMINAL cementing 하려 할 때, varied axis(sample-seed)가 측정대상의 SOURCE를 실제로 변주하는지 먼저 확인해야 한다. H_9774 content-reach: SHAM+CERT를 s7/s11/s13 3-seed 발사→SHAM=0/60·CERT-발산이 3-seed 재현돼 '멀티시드 확증'처럼 보였으나, s11/s13 발산수가 byte-identical(251/207 동일)이라 의심→검증: greedy/deterministic mouth라 own emit 텍스트가 s7=s11=s13 완전 동일('vault QX-7741…' 30/30·distinct=1)·sample-seed는 refractory gate schedule/RNG만 변주(A0 861B차)·mouth content 불변. ⟹ 3-seed는 독립 content 조건이 아니라 같은 결정론 계산의 gate-RNG 재현일 뿐=cementing 무자격. SHAM=0 3-seed 재현은 instrument-validity robust로만 유효(계기 무해성). 진짜 content-independence replication엔 mode-collapse를 깨는 축(T>0 mouth·다중 donor SET)이 필요.",
