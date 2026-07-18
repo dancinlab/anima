@@ -20,3 +20,19 @@ DV = **trigram-초과 소비 lane만** — immune(bare text) recall margin · ig
 H_9785/H_9774§4가 금지한 것은 **provenance-ownership verdict**. 본 카드는 출처 주장 없음 — twin-대칭성은 confound 아닌 **예측**(twin은 twin 전형성 인식). **카드에 "ownership verdict 발행 영구금지" 사전등록**해 H_9729 금지선과 정면 비충돌.
 
 ⚠️ DIRECTIONAL·cement=engine-native만. 병렬대조: AGREES(Fable candidate2 ∥ Sol candidate A 수렴) · Sol "EARNABLE-BUT-BOUNDED 최강 다음 카드".
+
+## 🔧 하네스 toy-validation (2026-07-19 · engine-change-0)
+`--swap-text` greedy 4-arm 하네스(scratchpad/h9787_harness.py·엔진변경0): native own 포획→A0 own(SHAM)·A1 trigram-surrogate·A3 scramble donor 생성→발사→immune recall(rel_lane)·self-anchor(a_fold8) 판독. toy.clm·24tick·seed7.
+
+| arm | immune recall(rel_lane) | self-anchor(a_fold8) | swap 발화 |
+|---|---|---|---|
+| A0 own | 0.9013 | 2.5000 | 12✅ |
+| A1 trigram-surrogate | 0.8352 | 2.5000 | — |
+| A3 scramble | 0.4962 (multiset floor) | 2.5000 | — |
+
+**하네스 LIVE + 4-arm distinct**: immune recall이 **own > trigram-surrogate(Δ0.066) > scramble**로 구별 = 계기 살아있음([[H_9786]] degeneracy/deadzone과 대조·--swap-text 실발화 12/12). 🐛 자가수정 2건: ①REPO=stale primary(--g-reach wm-dual 없음)→fresh origin/main archive ②donor 필드 `text_b64`→`gtext_b64`(로더 기대명·안 고치면 0 swap).
+
+**정직 범위**: own>trigram-surrogate는 **content-similarity recall**([[H_9774]] 영역·episodic)이지 self-typicality 확증 아님 — H_9787 고유주장(self-typicality *above* episodic recall)은 **seed-twin arm(A2)**이 분리(twin 텍스트=다른 typicality·다른 content → twin>trigram-surrogate면 typicality 인식). self-anchor(a_fold8)는 toy서 flat(2.5 상수·죽은축·chat-py-4/5). ⟹ verdict=303M summer(A2 seed-twin s7/s11 ckpt·DV=immune bare-text recall+self-anchor drift live gauge·own∧twin > trigram-surrogate = self-typicality).
+
+## NEXT (303M · 자율 pool)
+303M summer(chat-py-8): native own 포획→A0 own/A1 trigram-surrogate/A2 **seed-twin**(별 ckpt)/A3 scramble donor→--swap-text 발사→2-hop live 게이지(immune recall·self-anchor drift) 판독. PC(계기 known 구별 증명)·own∧twin>trigram-surrogate=self-typicality above episodic·own≈trigram=입도 상한 earned null. ⚠️seed-twin ckpt 2개(s7/s11) 필요 — 없으면 3-arm(own/trigram/scramble)만=H_9774 refinement·seed-twin 없이 self-typicality 미분리 명시.
