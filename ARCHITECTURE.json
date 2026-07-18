@@ -191,7 +191,7 @@
         "id": "brain-structure-engine-lanes-frontier-theta-alive-terminal-substrate",
         "type": "gate",
         "verdict": "🧱 THETA-ALIVE RESIDUE 판별완료 (theta-alive) — 살아난 gate; interior는 *무엇을 말했나*(content)엔 byte-stats 등급으로 반응(H_9774 CONTENT-REACH LIVE+GLOBAL)·*말할지 여부*(emit bit)엔 blind(H_9765 ledger-only sink)·own-ness는 substrate 미표현(H_9774 ownership UNIDENTIFIABLE)",
-        "detail": "H_9765: emit bit→dual ledger만 닿음(field lane 0/60=sink). H_9774(SHAM-clean·s7·DIRECTIONAL): 주입 content가 local+global lane 발산(SHAM byte-id=0/60 통제)=CONTENT-REACH LIVE+GLOBAL·ENCAPSULATED 반증. 상한=byte-stats grade·1-seed. ownership C8 provenance-free=UNIDENTIFIABLE 불변. cementing=multi-seed·상세=카드."
+        "detail": "H_9765: emit bit→ledger만(field 0/60=sink). H_9774(SHAM-clean·DIRECTIONAL): content가 local+global 발산(SHAM 0/60 s7/11/13 재현)=CONTENT-REACH LIVE+GLOBAL. A2: multiset consumer 0/60·trigram/global order-sensitive=grade multiset+trigram. cementing 미(greedy seed-invariant)·ownership UNIDENTIFIABLE 불변."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16790,6 +16790,13 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "multi-seed-replication-vacuous-when-seed-doesnt-drive-source",
+    "state": "pos-conv",
+    "value": "multi-seed 재현으로 DIRECTIONAL→TERMINAL cementing 하려 할 때, varied axis(sample-seed)가 측정대상의 SOURCE를 실제로 변주하는지 먼저 확인해야 한다. H_9774 content-reach: SHAM+CERT를 s7/s11/s13 3-seed 발사→SHAM=0/60·CERT-발산이 3-seed 재현돼 '멀티시드 확증'처럼 보였으나, s11/s13 발산수가 byte-identical(251/207 동일)이라 의심→검증: greedy/deterministic mouth라 own emit 텍스트가 s7=s11=s13 완전 동일('vault QX-7741…' 30/30·distinct=1)·sample-seed는 refractory gate schedule/RNG만 변주(A0 861B차)·mouth content 불변. ⟹ 3-seed는 독립 content 조건이 아니라 같은 결정론 계산의 gate-RNG 재현일 뿐=cementing 무자격. SHAM=0 3-seed 재현은 instrument-validity robust로만 유효(계기 무해성). 진짜 content-independence replication엔 mode-collapse를 깨는 축(T>0 mouth·다중 donor SET)이 필요.",
+    "threshold": "재발조건: multi-seed(또는 multi-run) 재현을 cementing 근거로 쓸 때, 특히 greedy/low-temp/argmax 등 결정론 생성기가 파이프라인 상류에 있을 때. ① 재현 발사 前, varied axis가 측정대상 SOURCE를 실제 변주하나 확인 — generator가 seed-invariant(greedy)면 sample-seed는 하류 noise만 흔들고 content는 불변=독립 재현 아님. ② red flag=서로 다른 seed의 지표가 byte-identical/거의 동일→우연 아닌 seed-무관성 의심→source(생성 텍스트) 직접 diff. ③ VACUOUS-AT-SOURCE(own distinct==1)면 그 축은 replication unit이 될 수 없다=[[content-swap-donor-must-be-certified-byte-distinct]]. ④ '멀티시드 통과'를 TERMINAL로 쓰기 前 각 seed가 독립 조건인지 증명(distinct source·independent randomization unit). tick≠IID처럼 seed도 결정론 하류면 ≠independent.",
+    "linked_hypotheses": ["H_9774", "H_9510"]
+   },
    {
     "id": "content-swap-donor-must-be-certified-byte-distinct",
     "state": "pos-conv",
