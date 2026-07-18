@@ -1743,6 +1743,27 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 _yoke_mask[int(_r["tick"])] = bool(_r["emit"])
         print("  [H_9728 yoke-mask] src=%s · %d tick emit bits replayed (native S>E → would_emit · "
               "severs pulse loop · ½ rhythm pinned)" % (_yoke_src.split("/")[-1], len(_yoke_mask)))
+
+    # H_9765 · --dual-margin-dither <eps> · exogenous do() on the emit-decision INPUT (the S−E comparison
+    # margin), the ONE relock-escape both models named after the H_9728/9729/9730 frontier terminal. Adds a
+    # SIGNED per-tick dose ±eps (state-independent · keyed on (sample_seed, tick) only) to S−E right before
+    # the >0 gate test in brain_emit_refractory. Unlike the yoke (forced_emit replays the OUTPUT bit, capped
+    # at severance≡rhythm-deviation ≤0.14 by relock), this perturbs the INPUT and lets the native bit stay
+    # native-computed → the dual-ledger spring re-equilibrates ENDOGENOUSLY → relock does not cap the dose
+    # (priced $0 #4072: eps≥0.15 flips ≥0.26 > the 0.2 floor the yoke could not clear). refractory+wm-dual
+    # only (the S−E comparison is the dual gate). eps=0.0 (default) ⇒ byte-identical (brain takes the
+    # original comparison path). p5-clean: the dither lives INSIDE the gate test, never forces past ∧safe.
+    _dither_eps = float(anima_flag_value(_cargv, "--dual-margin-dither", "ANIMA_DUAL_MARGIN_DITHER", "0") or "0")
+    if _dither_eps != 0.0:
+        if _emit_gate != "refractory":
+            raise SystemExit("--dual-margin-dither requires --emit-gate refractory (the dual gate consumer)")
+        if _g_reach not in ("wm-dual", "wm-dual-alien-emit", "wm-dual-alien-silence"):
+            raise SystemExit("--dual-margin-dither requires a wm-dual --g-reach (the S−E comparison it perturbs)")
+        if _yoke_mask is not None:
+            raise SystemExit("--dual-margin-dither is mutually exclusive with --yoke-mask "
+                             "(input-do() vs output-replay are different interventions)")
+        print("  [H_9765 dual-margin-dither] eps=%.4f · signed per-tick do() on S−E (input · not the bit · "
+              "relock-free · flip-frac meter=undithered_would_emit)" % _dither_eps)
     # ── H_9744 STORE-EPISODIC (S2/S6) — percept fills the CLMS store; the mouth answers from it ──
     # The lane itself is H_9423/H_9672's co-trained bridge; this only decides WHO fills the store.
     # In eval the manifest was hand-fed (cli/evaluate.py --store); here the SESSION's own percept
@@ -2612,6 +2633,14 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                     raise SystemExit("--yoke-mask: tick %d absent from mask %s (INVALID · mask must cover "
                                      "every tick of the run)" % (int(tick), _yoke_src.split("/")[-1]))
                 _fe = _yoke_mask[int(tick)]
+            # H_9765 · signed per-tick dither dose ±eps for the S−E do(). Rademacher sign from a
+            # domain-separated (sample_seed, tick) PRNG — STATE-INDEPENDENT (never reads the tick's own
+            # tension/margin) so it is a valid exogenous intervention; deterministic given (seed, tick) so
+            # the run replays. eps=0.0 ⇒ _dd=0.0 ⇒ brain takes the byte-identical comparison path.
+            _dd = 0.0
+            if _dither_eps != 0.0:
+                _dsgn = random.Random((_sample_seed * 2654435761 + tick * 40503 + 0x9765) & 0x7FFFFFFF).random()
+                _dd = _dither_eps if _dsgn < 0.5 else -_dither_eps
             dec = brain_emit_refractory(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
                              secs_since_emit, False, True,
@@ -2625,7 +2654,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              dual_probe_fn=_dual_fn,  # H_9627 · dual content ledger (None = off)
                              score_perturb=_score_perturb,  # H_9627 · central-thesis bar (0 = off)
                              zeta_ladder=(_pc2_zeta or None),  # H_9664 ζ-ladder (None = off)
-                             forced_emit=_fe)  # H_9728 Θ−-yoked · replay Θ+ emit bit (None = Θ+ path)
+                             forced_emit=_fe,  # H_9728 Θ−-yoked · replay Θ+ emit bit (None = Θ+ path)
+                             dual_margin_dither=_dd)  # H_9765 · signed do() on S−E input (0.0 = byte-id)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
