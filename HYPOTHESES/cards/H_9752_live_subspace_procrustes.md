@@ -1,6 +1,32 @@
 # H_9752 — LIVE-SUBSPACE STABILITY — 라이브 tension 엔 '축'이 없고 '평면'이 있다 (Procrustes·eigengap · R6-1 · $0)
 
-**status:** 🔵 PROPOSED (lab full R6 · Fable 5 · $0 트레이스-판독 · 사전등록 · 브리프 (a) 정면)
+**status:** ⚪ **VOID** (engine-native `anima-py evaluate --pc2-direction --subspace-stability` · anima-py 0.20.0 · pmp 3-run dedup · 4-seed robust) — 사전등록 검정력 게이트 발동, 음성 아님
+**wired:** engine-native (신규 flag `--subspace-stability` in `cli/evaluate.py` · site-packages dispatch 확인 · 디코드 0 · 트레이스-판독)
+
+## ⑧ 측정 결과 (2026-07-18 · `--subspace-stability --boot 1000 --surrogates 500`)
+
+자산: `/tmp/pmp/pmp_traces` 9 파일 → **3 독립 run**(off/bias/rng 인자스트림 byte-identical 6개 dedup · H_9714). regime 단일(stage_cycle=False·g_reach=d1·emit_gate=refractory·동일 ckpt sha).
+
+| DV | 관측 | null / 게이트 | 읽기 |
+|---|---|---|---|
+| 상대 eigengap (λ1−λ2)/λ1 | 0.35 · 0.43 · 0.61 (min/med/max) | — | 근축퇴 **중간**(극단 아님) |
+| 교차-run θ_max 중앙값 | **6.02°** | AAFT 5pct=10.9° · chanperm 5pct=31.9° | 관측<두 null 5pct = **평면 정렬(PASS-PLANE 방향)** |
+| bootstrap rank-swap율 | **0.60** (block 16·32) | ≥0.2 문턱 | 근축퇴 서명 **강함**(PASS-PLANE 조건 충족) |
+| bootstrap 주각 CI 반폭 | **16.9~17.6°** | >10° = VOID 게이트 | ⚠️ **검정력 미달 → VOID** |
+| run 내 split-half θ_max | 28.6° (중앙값) | AAFT 5pct=13.8° | 관측>null = **within-run 평면 미재현**(KILL 방향) |
+| 양성통제 plant | 4.6° | plant-chanperm null 5pct=33.7° | **PASS = 계기 무결** |
+
+**판정 = ⚪ VOID** (사전등록 판정표 마지막 칸 "주각 bootstrap CI 반폭>10° → VOID"). 4-seed(111·99999·20260716·20260718) 전부 동일 — CI 반폭>10° 는 **구조적**(3 run + 자기상관 n_eff≪n)이지 seed 요동 아님.
+
+**내부 상충(왜 강제분류 안 하나):** 교차-run 점추정은 **PASS-PLANE 방향**(6.0°<null·swap 0.60)인데 run내 split-half 는 **KILL 방향**(28.6°>null = 한 run 안에서도 평면이 안정 재현 안 됨). 두 신호가 반대인데 bootstrap CI(±17°)가 넓어 adjudicate 불가 ⇒ 사전등록대로 VOID(강제 PASS/KILL 금지 · power-before-negative).
+
+**⚠️ H_9754/9755 refit arm 개봉게이트 = 미결(VOID · KILL 도 PASS 도 아님).** 카드 ⑦이 예고한 "KILL-NO-AXIS 면 refit arm 발사 금지"는 **발동 안 됨**(KILL 미확정) — 그러나 **PASS-PLANE 도 미확정**이라 refit arm 을 여는 근거도 없다. 현 3-run 자산으로는 원리적으로 판정 불가. 발사하려면 **독립 run ≥6~8 또는 run당 tick 증량**으로 bootstrap 주각 CI 반폭<10° 확보 후 재실행 필요.
+
+---
+
+**(원안 · 아래는 사전등록 시점 그대로)**
+
+**status(원):** 🔵 PROPOSED (lab full R6 · Fable 5 · $0 트레이스-판독 · 사전등록 · 브리프 (a) 정면)
 **lane:** g1-interface-addressable-wall · mouth/PC2-axis — 라이브 구조의 정체
 **related:** [[H_9713]] · [[H_9714]] · [[H_9712]] · [[H_9754]] · [[H_9755]]
 
