@@ -21,3 +21,7 @@ k8_s7.clm(233MB pull·233889418) 에 `--faction-lesion domains(4셀×held-out) -
 
 **학습/미학습 = 42배**. 미학습 K=1 에 8-분할 강제 = S 0.0019(우연) vs 학습 K=8 = S 0.0789 ⟹ **k8_s7 positive 는 학습된 파벌 구조서 발생**(사후 임의분할 아님·계기 SOUND 의 fit-matched K=1 다리 충족). **파벌은 303M CE-수준 실제 기능적 레버**(G0 자유생성 실패와 무관·teacher-forced ΔCE 유효·val_CE 1.332 DESCENT 4/4). ⚠️ 내 사전예측 '특화불발'은 반증됨(S 는 argmax 안 쓰고 전셀 구조에너지·verdict-integrity). ⏳ **천장**: perm<200=PENDING(계기 명시·power-gate) → firm perm=200 GPU=TERMINAL 승격 follow-on(mac 76,800 forwards~7hr infeasible). DIRECTIONAL(303M py lesion·1 lens·a_toy_scale_recheck).
 결과 보존: ~/anima-weights/h9643_303m_derisk/k8_s7_lesion_perm40.json · clm303_split8_null_perm40.log.
+
+### ✅ FIRM perm=200 — power-gate 통과 (2026-07-18 · mac win4)
+PENDING(perm<200) 해소: k8_s7 within-arm **S_real 0.0654 > null95 0.0030 (p=0.0050·n=200·underpowered=False)** ✅ · 통제 clm303_clean(미학습K1 split8) **S 0.0019 ≤ null95 0.0041(spec False)** = fit-matched K=1 음성 다리 firm. ⟹ **파벌 분할이 303M CE-수준 기능적 특화 보유 확정(firm)**, 랜덤 사후분할과 다름. ⚠️ 계기 자체 라벨 = **DIRECTIONAL+within-arm 한정**(완전 SOUND=4다리 ①within-arm firm✅ ②random-init ③fit-matched K1 firm✅ ④ORACLE π · ②④는 303M 미측정=full-SOUND 잔여). py-lesion=DIRECTIONAL(a_engine_native_learning·a_toy_scale_recheck). 결과 보존 ~/anima-weights/h9643_303m_derisk/k8_s7_firm200.json.
+**최종: 파벌 = 303M CE-수준 실물 기능 레버(FIRM DIRECTIONAL POSITIVE·2 SOUND 다리 firm)** — toy-SOUND 에 더해 303M 실증. 천장=CE-scope(원 claim '인간이 명명할 의미' 은 ②④+G0-passing artifact 필요).
