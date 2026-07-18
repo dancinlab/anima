@@ -1,6 +1,6 @@
 # H_9720 — EN-분리 query lane(경쟁 vs 표현부재) — EN-Disjoint Query Lane (EA-2 · fable ∥ sol §4 수렴 · EA 시리즈 · 🟢 DIRECTIONAL CRACK)
 
-**status:** 🟢 DIRECTIONAL-STRONG (2026-07-18 · summer 303M 엔진-네이티브 · seed 7+11 · 4-arm cement) — fresh early-tap(L3) lane 이 held-out 창발-주소 lookup 을 legacy 0.680 → **s7 0.922 / s11 0.836**(무감독·무oracle) 끌어올림. 🎯 기전 = **조기층 readout**(tap-DEPTH load-bearing): C1 param-match(freshpen≈legacy) capacity 반증 · C2 shared≥detached disjointness 반증 · C4 2-seed delta-robust · address-mediated(shuffle 붕괴·oracle 1.0). TERMINAL 잔여 = Sol 3rd seed(optional). source=EA-2 · fable ∥ sol §4 수렴
+**status:** 🟢 DIRECTIONAL-STRONG (2026-07-18 · summer 303M 엔진-네이티브 · seed 7+11 · 4-arm cement) — fresh early-tap(L3) lane 이 held-out 창발-주소 lookup 을 legacy 0.680 → **s7 0.922 / s11 0.836**(무감독·무oracle) 끌어올림. 🎯 기전 = **조기층 readout**(tap-DEPTH load-bearing): C1 param-match(freshpen≈legacy) capacity 반증 · C2 shared≥detached disjointness 반증 · C4 2/2 valid-oracle seed(s7·s11) 견고 · address-mediated(shuffle 붕괴·oracle 1.0). ⚠️ 3rd seed(s4302) firm-up = near-tie+oracle 0.82(C0-e 미달) ⟹ **store-lane seed-fragility 노출**(cement 잔여벽·oracle-warmup 필요·Fable 3/3 미달). source=EA-2 · fable ∥ sol §4 수렴
 **lane:** 재조합/BINDING · 창발-주소(감독 없이 주소가 서는가)
 **related:** [[H_9672]] · [[H_9423]] · [[H_9684]] · [[H_9683]] · source: lab full EA(Fable 5 ∥ Codex Sol · 창발-주소 whitespace)
 
@@ -52,7 +52,7 @@
 | fresh:64@penult (C1) | 0.688 | 0.711 | 0.636 |
 | fresh:64@3 shared (C2) | 0.875 | 0.842 | 0.939 |
 
-- **C4 seed-robustness ✅**: fresh:64@3 s11=0.836 > legacy 0.680 (**Δ+0.156**; s7 Δ+0.242) — **CRACK 2-seed 재현**(seed-fragile 아님·delta 견고·절대치는 s7>s11 이나 vs-legacy 우위 양 seed 유지).
+- **C4 seed-robustness ⚠️ 2/2 valid-oracle seed 견고·3rd seed plumbing-degraded**: fresh:64@3 s11=0.836 > legacy 0.680 (**Δ+0.156**; s7 Δ+0.242) — CRACK 2-seed 재현. **BUT 3rd seed(4302) firm-up = 정직한 부분실패**: fresh 0.664 vs legacy 0.648 (**Δ+0.016 near-tie**) AND **oracle=0.82 < C0-e 0.90** ⟹ 사전등록 규칙("C0-e≥0.90 이어야 음성 판독")상 **s4302 는 plumbing-degraded**(store lane 전반 약학습·legacy·fresh 절대치 모두 하락). ⟹ CRACK 은 oracle-valid seed(s7·s11)에서 견고하나 store lane 자체가 seed-fragile([[cotrained-store-bridge-works-on-parent-conv]] 재현) — **Fable 3/3 clean bar 미달**·tune-to-green 회피(불리 seed 기록). cement 진짜 잔여벽 = **store-lane seed-안정성**(oracle-warmup/2-phase 필요·s4302 sha 85867d79).
 - **C1 capacity confound REFUTED 🎯**: freshpen(동일 head·penult tap)=0.688 **≈ legacy 0.680, NOT ≈ fresh@3 0.836** ⟹ **tap-DEPTH 가 load-bearing**(penult 에 추가 head 얹어도 이득 없음·조기층 L3 읽기가 관건). "early tap" 서사 생존·capacity 서사 死.
 - **C2 disjointness NOT load-bearing 🔧**: shared(detach 제거)=0.875 **≥** detached 0.836 ⟹ gradient-disjointness 는 기전 아님(막든 안 막든 동작·shared 가 오히려 근소 우위=trunk 소량 co-adapt). **readout-route 재프레임 확증**(disjoint 아니라 조기-tap 이 본질).
 - **address-mediated ✅**: fresh3 shuffle 0.484(at-floor·uses-address)·oracle 1.000·flip coherence_bc 0.879(값 인과·strict 0.90 바로 아래). freshpen oracle 0.961·shuffle 0.492.
