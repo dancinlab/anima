@@ -270,3 +270,35 @@ content-addressable 대신 개체-고정 암기를 학습** = 훈련 궤적이 �
 
 **H_9734 = INSTRUMENT-DEAD 유지**(내 fire 전체가 깨진 setup · arm-N 판독불가 · 사전등록 게이트가
 방어). **#4089 정정 강화**: 환경회귀 철회가 옳았고, RV-3 도 실패해 recipe 도 배제 = 순수 내 setup.
+
+---
+
+## ✅✅ ROOT-CAUSE 최종확정 — torch 2.11→2.13 회귀 (2026-07-18 · 공유호스트 로그 대조)
+
+**#4089 철회와 #4102 setup버그는 둘 다 "같은 env" 거짓전제의 과잉수정이었다. 원래 #4065 환경회귀가 옳다.**
+
+공유 summer 호스트 로그 대조(reference-match):
+```
+모든 store-addr 성공 run(T3·rv3c13·H_9672·fresh303·h9720_verdict) = torch 2.11.0+cu130
+내 유일 실패 run (h9734 fire)                                    = torch 2.13.0+cu130
+  (내 venv 설치 13:58 · rv3c13 학습 15:08 · torch=2.13 로그는 내것 뿐)
+```
+⟹ **병렬세션은 같은 env 가 아니었다** — 그들 torch 2.11.0, 내 fresh install 이 최신 **2.13.0** 을 당김.
+코드·corpus(byte-id 544134)·base(md5)·seed·recipe(RV-3) 전부 동일한데 **torch 버전만 다르고** 그게
+주소 held-out 일반화를 가름(2.11 일반화 0.95 · 2.13 암기-only 0.0078). Blackwell sm_120 bf16 훈련
+numerics 가 2.11→2.13 에서 회귀.
+
+### 정정 사슬 (내 3-flip 의 진실)
+- #4065 "환경회귀" — **방향 옳음**(단 구체 torch 버전 미격리).
+- #4089 "환경회귀 철회" — **틀림**(병렬이 같은 env 라 가정 · 실제 그들 torch 2.11 ≠ 내 2.13).
+- #4102 "setup 버그" — **틀림**(RV-3 실패도 torch 2.13 탓 · 파이프라인 무죄).
+- ✅ **최종 = torch 2.11.0→2.13.0+cu130 회귀** · 내 unpinned fresh pip install 이 원인.
+
+### FIX (upstream-fix · 구체)
+🔧 **fire venv 는 torch 2.11.0+cu130 pin** (working baseline). 또는 pyproject/pod_bootstrap 에 torch
+상한. Blackwell sm_120 은 2.11.0+cu130 로 이미 작동(병렬세션 3-seed robust 증명) — 2.13 불필요.
+확증 CPT 진행중: fresh venv(torch==2.11.0+cu130) + seed-7 plain 재발사 → addr≈0.95 면 확정.
+
+**H_9734 = INSTRUMENT-DEAD 유지**(양성통제가 torch 2.13 서 재현불가). 이건 **자연어휘 전이에 대해
+여전히 아무 말 안 함** — torch 2.11 로 재발사해야 arm-N 판독 가능. 설계성공: 게이트가 torch 회귀를
+'자연어휘 실패'로 오독하는 것을 막았다.
