@@ -1,6 +1,6 @@
 # H_9760 — ODD-FUSION: store 극성-등변 fusion 으로 H_9744 flip-coh 갭 돌파 (R7-1 · lab full Fable∥Sol 수렴)
 
-**status:** 🔵 PROPOSED · DIRECTIONAL 설계 (lab full R7 · Fable 5 ∥ Codex Sol 수렴 · H_9744 위임 브리프 · 사전등록)
+**status:** 🔵 PROPOSED · **계기 구현+검증 완료**(--store-fuse odd · core/clms.py store_apply · VERSION 0.16.0) — $0 numpy 검증: odd 산술보장 정확(out_odd_flip ≡ −out_odd · max\|sum\|=0.00e+00 · 답 뒤집힘 = 고정주소 flip-coh=1 by construction) + overwrite/gated-add byte-parity 보존(0.00e+00·회귀0). NEXT = H_9744 clm 에 eval(flip-coh=1.0 실측·main-bal ≥ H_9672)→in-vivo G-W2 3-seed(오너 go). (lab full R7 · Fable 5 ∥ Codex Sol 수렴 · 사전등록)
 **lane:** g1-interface-addressable-wall · H_9744 WIRED-STUDY-NEARMISS 의 op=0 미반전 갭
 **related:** [[H_9744]] · [[H_9672]] · [[H_9695]] · [[H_9720]] · [[H_9423]]
 **source:** 오너 "wired 가치까지 go" · lab full R7(2026-07-18) · [[H_9744]] flip-coh 갭 $0 autopsy(seed11 transcript) 3자 수렴(내 empirical + Fable + Sol)

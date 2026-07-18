@@ -982,7 +982,7 @@ def evaluate_usage():
     print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
     print("  --store <held.json> [--store-oracle] [--store-lambda λ] [--store-addr-audit]")
     print("      [--store-shuffle | --store-flip | --store-neutral] [--store-ctrl-seed 9423]")
-    print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add]")
+    print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add|odd]")
     print("      H_9423 CLMS store-bridge lane eval (the CO-TRAINED bridge, not the H_9392 bolt-on):")
     print("      each held-out item injects its 8-slot store at the query; the lane forms a")
     print("      content-addressed lookup and rewrites the answer-position logits with λ·store.")
@@ -4415,14 +4415,14 @@ def store_run(argv):
         print("ERROR: --store-query must be 'qpos' (default) or 'every-token', got %r" % store_query)
         return 1
     store_fuse = evaluate_strval(argv[1:], "--store-fuse", "overwrite")
-    if store_fuse not in ("overwrite", "gated-add"):
-        print("ERROR: --store-fuse must be 'overwrite' (default) or 'gated-add', got %r" % store_fuse)
+    if store_fuse not in ("overwrite", "gated-add", "odd"):
+        print("ERROR: --store-fuse must be 'overwrite' (default), 'gated-add' or 'odd', got %r" % store_fuse)
         return 1
-    if store_query == "every-token" and store_fuse == "overwrite":
+    if store_query == "every-token" and store_fuse in ("overwrite", "odd"):
         # clms.py store_apply: overwriting EVERY row deletes the trunk and destroys fluency — the
-        # readout would score the lane alone with no mouth left. Refuse loudly (an INVALID arm is
-        # worse than no arm) rather than emit a number nobody may read.
-        print("ERROR: --store-query every-token with --store-fuse overwrite overwrites every row,")
+        # readout would score the lane alone with no mouth left (odd is overwrite-style too). Refuse
+        # loudly (an INVALID arm is worse than no arm) rather than emit a number nobody may read.
+        print("ERROR: --store-query every-token with --store-fuse overwrite/odd overwrites every row,")
         print("       deleting the trunk (fluency dead · the readout stops being attributable).")
         print("       Use --store-fuse gated-add for the marker-free lane (H_9695).")
         return 1
