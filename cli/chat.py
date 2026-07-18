@@ -1891,6 +1891,140 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         raise SystemExit("--pc2-mouth: only 'off' (default), 'bias', 'rng' (got %r)" % _pc2_mouth)
     if _pc2_mouth != "off" and _emit_gate != "refractory":
         raise SystemExit("--pc2-mouth requires --emit-gate refractory (its only consumer)")
+
+    # H_9755 REFIT-AXIS ζ-LADDER — `--z-loading a1,a2,…` turns the H_9664 scalar ladder into an
+    # arm x ζ grid (card §8 design LOCK). Each arm's per-tick modulation u is a warmup-calibrated
+    # (centered + Var=1) projection onto the arm's loading, so ζ's dose-scale matches across arms.
+    # The refit arm's loading is the top eigenvector of an ONLINE correlation-PCA over the run's
+    # first --refit-warmup ticks' 8-factor vectors (deterministic, sign-anchored to the frozen
+    # loading = H_9713 flip defense). Empty ⇒ _z_loading_arms=[] ⇒ scalar path byte-identical.
+    _Z_ARMS = ("scalar", "frozen", "refit", "random", "refit-resid")
+    _z_loading_raw = anima_flag_value(_cargv, "--z-loading", "ANIMA_Z_LOADING", "")
+    _z_loading_arms = []
+    if _z_loading_raw:
+        for _tok in _z_loading_raw.split(","):
+            _tok = _tok.strip()
+            if not _tok:
+                continue
+            if _tok not in _Z_ARMS:
+                raise SystemExit("--z-loading: arm %r not in %s" % (_tok, _Z_ARMS))
+            if _tok not in _z_loading_arms:
+                _z_loading_arms.append(_tok)
+    _refit_warmup = int(anima_flag_value(_cargv, "--refit-warmup", "ANIMA_REFIT_WARMUP", "64"))
+    if _z_loading_arms:
+        if not _pc2_zeta:
+            raise SystemExit("--z-loading requires --pc2-zeta (the dose ladder it modulates)")
+        if _emit_gate != "refractory":
+            raise SystemExit("--z-loading requires --emit-gate refractory")
+        if _refit_warmup < 4:
+            raise SystemExit("--refit-warmup must be >= 4 (got %d)" % _refit_warmup)
+
+    # frozen loading in canonical 8-space (rel,gap,cur,pain,coh,orig,bal,dyn_v);
+    # brain uses pc2_z = 0.84*orig - 0.44*bal - 0.28*coh ⇒ (coh=-0.28, orig=+0.84, bal=-0.44).
+    _ZL_WF = (0.0, 0.0, 0.0, 0.0, -0.28, 0.84, -0.44, 0.0)
+
+    def _zl_boundary(_warm, _arms, _sample_seed):
+        """Compute the frozen z_loading_state at warmup boundary. _warm = list of
+        (f_raw(8-tuple), emit_bit). Deterministic (numpy eigh + seed-derived random).
+        Returns (state_dict, meta_dict)."""
+        import numpy as _np
+        import random as _rnd
+        _X = _np.asarray([list(_fr) for _fr, _eb in _warm], dtype=_np.float64)  # (W,8)
+        _emitb = _np.asarray([1.0 if _eb else 0.0 for _fr, _eb in _warm], dtype=_np.float64)
+        _fmu = _X.mean(axis=0)
+        _fsd = _X.std(axis=0, ddof=1)
+        _dead = [bool(_fsd[_i] < 1e-9) for _i in range(8)]
+        _fsd_safe = _np.where(_np.asarray(_dead), 1.0, _fsd)
+        _Xs = (_X - _fmu) / _fsd_safe
+        _Xs[:, _np.asarray(_dead)] = 0.0                    # dead factors contribute nothing
+        _C = (_Xs.T @ _Xs) / float(_Xs.shape[0] - 1)        # 8x8 correlation matrix
+        _evals, _evecs = _np.linalg.eigh(_C)                # ascending
+        _order = _np.argsort(_evals)[::-1]
+        _evals = _evals[_order]
+        _evecs = _evecs[:, _order]
+        _w_R = _evecs[:, 0].copy()                          # top eigenvector (standardized coords)
+        _top2 = _evecs[:, :2]
+
+        # frozen loading in STANDARDIZED coords, for the sign anchor: w_F,i / fsd_i (live factors)
+        _wF_std = _np.asarray([(_ZL_WF[_i] / _fsd_safe[_i]) if not _dead[_i] else 0.0
+                               for _i in range(8)], dtype=_np.float64)
+        _nrm = _np.linalg.norm(_wF_std)
+        if _nrm > 1e-12:
+            _wF_std = _wF_std / _nrm
+
+        def _sign_anchor(_v):
+            _v = _v.copy()
+            _dp = float(_v @ _wF_std)
+            if abs(_dp) >= 1e-9:
+                if _dp < 0:
+                    _v = -_v
+            else:
+                _j = int(_np.argmax(_np.abs(_v)))           # max-|component|, ties→lowest index
+                if _v[_j] < 0:
+                    _v = -_v
+            return _v
+        _w_R = _sign_anchor(_w_R)
+
+        # refit-resid (H_9754): OLS of warmup emit bit on top-2 coords → in-plane orthogonal dir
+        _valid_resid = True
+        _w_perp = _np.zeros(8)
+        try:
+            _Y = _Xs @ _top2                                 # (W,2)
+            if float(_emitb.std(ddof=1)) < 1e-9:
+                _valid_resid = False
+            else:
+                _Yc = _np.column_stack([_np.ones(_Y.shape[0]), _Y])
+                _beta, _, _, _ = _np.linalg.lstsq(_Yc, _emitb, rcond=None)
+                _b = _beta[1:]                               # slope on the 2 coords
+                if float(_np.linalg.norm(_b)) < 1e-9:
+                    _valid_resid = False
+                else:
+                    _perp2 = _np.asarray([-_b[1], _b[0]])    # in-plane ⟂ to emit-regression dir
+                    _perp2 = _perp2 / _np.linalg.norm(_perp2)
+                    _w_perp = _sign_anchor(_top2 @ _perp2)
+        except Exception:
+            _valid_resid = False
+
+        # random axis-null: domain-separated seed-derived unit 8-vector
+        _rr = _rnd.Random((int(_sample_seed) * 2654435761 ^ 0x9755) & 0x7FFFFFFF)
+        _rvec = _np.asarray([_rr.gauss(0.0, 1.0) for _ in range(8)], dtype=_np.float64)
+        _rvec = _rvec / (_np.linalg.norm(_rvec) or 1.0)
+
+        def _arm_moments(_w, _raw):
+            _fv = _X if _raw else _Xs
+            _p = _fv @ _np.asarray(_w)
+            return float(_p.mean()), float(_p.std(ddof=1))
+
+        _defs = {
+            "scalar": (None, False),
+            "frozen": (_ZL_WF, True),      # raw-factor projection = the bias-arm signal, faithful to H_9468
+            "refit":  (tuple(_w_R.tolist()), False),
+            "random": (tuple(_rvec.tolist()), False),
+            "refit-resid": (tuple(_w_perp.tolist()), False),
+        }
+        _arms_out = {}
+        for _nm in _arms:
+            if _nm == "scalar":
+                _arms_out["scalar"] = {"valid": True}
+                continue
+            _w, _raw = _defs[_nm]
+            _mu, _sd = _arm_moments(_w, _raw)
+            _valid = (_sd >= 1e-9) and (_valid_resid or _nm != "refit-resid")
+            _arms_out[_nm] = {"w": [float(_x) for _x in _w], "mu": _mu, "sd": _sd,
+                              "raw": bool(_raw), "valid": bool(_valid)}
+        _state = {"phase": "post", "fmu": [float(_x) for _x in _fmu],
+                  "fsd": [float(_x) for _x in _fsd_safe], "arms": _arms_out}
+        _meta = {"_zl_meta": True, "warmup": len(_warm),
+                 "factor_order": ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+                                  "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"],
+                 "fmu": _state["fmu"], "fsd": _state["fsd"],
+                 "dead_factors": [_i for _i in range(8) if _dead[_i]],
+                 "eigvals": [float(_x) for _x in _evals],
+                 "eigengap": float((_evals[0] - _evals[1]) / _evals[0]) if _evals[0] > 0 else 0.0,
+                 "arms": {_k: {kk: vv for kk, vv in _v.items()} for _k, _v in _arms_out.items()},
+                 "random_seed_deriv": "(seed*2654435761 ^ 0x9755) & 0x7FFFFFFF",
+                 "refit_resid_valid": bool(_valid_resid)}
+        return _state, _meta
     # H_9411 ⑥ · dead-gauge controls (default OFF = the fix is live).
     # --scn-freeze reproduces the DEAD scn_ctx constant (skip the per-tick step) = before-state.
     # --anchor-tension-null forces the injected anchor tension_5ch to zero = zero-truth pedestal.
@@ -1943,6 +2077,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     imagination_replayed_total = 0
     imagination_mitosis_ticks = 0
     imagination_emit_violations = 0
+
+    # H_9755 refit-axis ζ-ladder online state (None unless --z-loading given ⇒ byte-identical).
+    _zl_state = ({"phase": "warmup"} if _z_loading_arms else None)
+    _zl_warm = []          # (f_raw 8-tuple, emit_bit) accumulated over the first --refit-warmup ticks
+    _zl_meta_row = None     # one-time _zl_meta trace row, set at the warmup boundary
 
     while tick < n_ticks:
         stage = dr_stage_at((tick * 8) % 90 if _stage_cycle else tick * 8)
@@ -2667,7 +2806,15 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                              score_perturb=_score_perturb,  # H_9627 · central-thesis bar (0 = off)
                              zeta_ladder=(_pc2_zeta or None),  # H_9664 ζ-ladder (None = off)
                              forced_emit=_fe,  # H_9728 Θ−-yoked · replay Θ+ emit bit (None = Θ+ path)
-                             dual_margin_dither=_dd)  # H_9765 · signed do() on S−E input (0.0 = byte-id)
+                             dual_margin_dither=_dd,  # H_9765 · signed do() on S−E input (0.0 = byte-id)
+                             z_loading_state=_zl_state)  # H_9755 refit-axis ζ-ladder (None = off)
+            # H_9755 warmup: accumulate every tick's factor vector + realized emit bit; at the
+            # boundary freeze the online-PCA refit loading (deterministic · sign-anchored to frozen).
+            if _z_loading_arms and _zl_state is not None and _zl_state.get("phase") == "warmup":
+                _zl_warm.append(((rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane,
+                                  agloop_ctx), bool(dec.get("gen_emitted"))))
+                if len(_zl_warm) >= _refit_warmup:
+                    _zl_state, _zl_meta_row = _zl_boundary(_zl_warm, _z_loading_arms, _sample_seed)
         else:
             dec = brain_emit(pf,
                              rel, gap_ctx, cur, allo_ctx, coh_lane, nov_ctx, bal_lane, agloop_ctx,
@@ -2880,6 +3027,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         #    EMIT score>0.3∧safe · ACTIVE_VETO score>0.3∧¬safe (a braked live impulse) · PASSIVE score<=0.3.
         if _trace_fh is not None:
             import json as _json, hashlib as _hl, base64 as _b64
+            # H_9755 one-time _zl_meta row (warmup PCA loadings + moments) — the evaluate reader
+            # recomputes u from zl_factors + this meta and refuses the run on any mismatch.
+            if _zl_meta_row is not None and not _zl_meta_row.get("_written"):
+                _zl_meta_row["_written"] = True
+                _trace_fh.write(_json.dumps({_mk: _mv for _mk, _mv in _zl_meta_row.items()
+                                             if _mk != "_written"}) + "\n")
             _score = float(dec["motivation"])
             _safe = str(dec["safe"]).lower() == "true"
             _imp = _score > 0.3          # engine_g should_emit / PROACTIVE_THRESHOLD
@@ -3009,9 +3162,14 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 "gtext_pc2_b64": (_b64.b64encode(str(dec.get("gen_text_steered", "")).encode("utf-8", "surrogateescape")).decode("ascii") if dec.get("gen_text_steered") else None),  # H_9575 · steered (spoken) text
                 # H_9664 ζ-ladder: [{zeta, text_b64}] per emit tick. ζ=0 entry MUST equal
                 # gtext_b64 byte-for-byte (isolation certificate). Absent ⇒ [] ⇒ flag off.
-                "gtext_zeta": [{"zeta": _zr["zeta"],
-                                "text_b64": _b64.b64encode(str(_zr["text"]).encode("utf-8", "surrogateescape")).decode("ascii")}
+                "gtext_zeta": [dict({"zeta": _zr["zeta"],
+                                "text_b64": _b64.b64encode(str(_zr["text"]).encode("utf-8", "surrogateescape")).decode("ascii")},
+                                **({"loading": _zr["loading"], "u": _zr["u"]} if "loading" in _zr else {}))
                                for _zr in (dec.get("gen_text_zeta") or [])],
+                # H_9755 refit-axis ζ-ladder — this tick's raw 8-factor vector + phase, for the
+                # evaluate --by-loading u-self-check. Absent unless --z-loading on ⇒ legacy unchanged.
+                **({"zl_factors": dec.get("zl_factors"), "zl_phase": dec.get("zl_phase")}
+                   if _z_loading_arms else {}),
                 # H_9413 L5 · BOTH G readouts every tick (arm-independent counterfactual): the
                 # discarded recall MARGIN (pending_rel · a4 source) AND the production top-2 GAP
                 # (pending_gap · a1 source), so --g-readout-info can re-screen either readout offline
