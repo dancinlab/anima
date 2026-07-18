@@ -191,7 +191,7 @@
         "id": "brain-structure-engine-lanes-frontier-theta-alive-terminal-substrate",
         "type": "gate",
         "verdict": "🧱 THETA-ALIVE RESIDUE 판별완료 (theta-alive) — 살아난 gate; interior는 *무엇을 말했나*(content)엔 byte-stats 등급으로 반응(H_9774 CONTENT-REACH LIVE+GLOBAL)·*말할지 여부*(emit bit)엔 blind(H_9765 ledger-only sink)·own-ness는 substrate 미표현(H_9774 ownership UNIDENTIFIABLE)",
-        "detail": "H_9765: emit bit→ledger만(sink). H_9774: content가 local+global 발산(SHAM 0/60)=REACH LIVE+GLOBAL·A2 grade=multiset+trigram. cementing 전 path 전멸(greedy 독립축0[content+schedule seed-invariant]·T>0 계기confound)=DIRECTIONAL 측정천장·TERMINAL엔 engine변경. ownership UNIDENTIFIABLE. theta-alive EXHAUSTED·상세=카드."
+        "detail": "H_9765: emit bit→ledger만(sink). H_9774: content가 local+global 발산=REACH LIVE+GLOBAL·A2 grade=multiset+trigram·ownership UNIDENTIFIABLE. ⚠️→✅ 'INSTRUMENT-WALL'(#4127/9) RETRACTED=donor-keying 버그·정확키 SHAM T=1.0=0/60⟹--swap-text T>0 byte-clean·T=1.0 독립-content cementing IN PROGRESS(#PR)."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16805,10 +16805,10 @@
     "linked_hypotheses": ["H_9774"]
    },
    {
-    "id": "swap-text-instrument-byte-clean-only-in-greedy-regime",
+    "id": "donor-swap-instrument-key-schema-must-match-consumer",
     "state": "pos-conv",
-    "value": "do()-스타일 주입 계기(--swap-text 등 실행 후 상태를 교체하는 intervention)의 byte-clean 통제(SHAM: 동일값 재주입→0 발산)는 결정론(greedy) regime서만 성립하고 stochastic(T>0) regime선 무너진다. H_9774 content-reach: greedy(emit-temp 0)선 SHAM-vs-A0=0/60(계기 무해)이나, greedy own이 mode-collapse(distinct=1)라 multi-seed가 vacuous. 이를 깨려 --emit-temp 1.0로 재발사→own distinct 32/30(독립 확보)나 SHAM-vs-A0=59/60 confound(첫 발산 tick=1·emit schedule 32vs30 불일치)=계기가 stochastic mouth와 tick1부터 상호작용해 RNG 궤적 교란. ⟹ greedy=vacuous·T>0=confound 상호배타 결함이라 --swap-text로 clean 독립-content 재현 원리불가. cementing lane=INSTRUMENT-WALL(substrate 아님). 과학 verdict(greedy clean run 근거)는 불변·quarantine(infra-wall-noneval).",
-    "threshold": "재발조건: 실행 후 상태/텍스트/activation을 교체하는 do()-계기(--swap-text·activation patch·store inject)를 stochastic decode(T>0·sampling·dropout) regime서 쓸 때. ① byte-clean 통제(동일값 재주입 SHAM=0)를 반드시 그 regime서 재확인 — 결정론서 0이어도 stochastic서 0 보장 안 됨(주입 경로가 RNG stream/schedule 교란→butterfly). SHAM≠0이면 그 regime 측정은 confounded=INVALID(content 격리 불가). ② 계기가 특정 regime-lock인지 인지: greedy는 byte-clean이나 source가 mode-collapse(vacuous), T>0는 source 풍부하나 계기 confound — 상호배타면 그 계기로 cementing 원리불가=instrument-wall(substrate-wall과 구분·infra-wall-noneval quarantine). ③ 해결=RNG-neutral 주입(스트림 소비/schedule 안 건드리게 engine 재설계) 후에야 T>0 측정 가능. ④ instrument-wall을 substrate ceiling으로 오독 금지(verdict-integrity).",
+    "value": "do()-주입 계기(--swap-text 등 trace를 파일로 주고 실행 중 상태 교체)의 donor 파일 KEY 스키마는 소비 코드가 lookup하는 KEY와 정확히 일치해야 한다. H_9774: cli/chat.py:1925/2728은 donor를 ACTUAL TICK으로 매칭(_swap_texts[int(d['tick'])]→.get(int(tick)))하는데, 내 donor build가 {tick:i}로 emit ORDINAL(0,1,2…) 키잉=버그. greedy선 own이 상수라 misalign돼도 SHAM=0 유지(마스킹)·T=1.0선 own distinct라 틀린 텍스트 재주입→SHAM-vs-A0 59/60 가짜 confound. 이걸 'T>0 stochastic mouth와 상호작용하는 RNG instrument-wall'로 2세션 오진(#4127/#4129 RETRACTED). reference-match(소비 코드 정독)로 발견: 정확 actual-tick 키 SHAM_s7 T=1.0=0/60 확증⟹--swap-text는 전 temperature byte-clean. 'greedy-only byte-clean·regime-lock' 결론은 FALSE.",
+    "threshold": "재발조건: trace/파일 기반 do()-주입 계기(--swap-text·store inject·activation patch by index)의 donor를 스스로 build할 때. ① donor 키 필드(tick·pos·id)를 순번(ordinal)으로 라벨링하지 말고 소비 코드가 lookup하는 실제 키(actual tick/pos)로 라벨링 — reference-match로 소비지점 확인(get(key) 무엇으로 인덱싱?). ② 계기 confound 의심(SHAM≠0) 시 'RNG/stochastic/instrument-wall' 단정 前 donor↔consumer 키 정렬부터 확인 — mode-collapse가 constant-content로 버그를 마스킹하다 distinct-content서 드러날 수 있음. ③ instrument confound를 substrate/regime ceiling으로 오독 금지·2세션 verdict도 reference-match 앞에 뒤집힌다(verdict-integrity·[[instrument-never-run-hides-multiple-bugs]]).",
     "linked_hypotheses": ["H_9774", "H_9510"]
    },
    {
