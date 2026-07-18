@@ -1,6 +1,6 @@
 # H_9756 — ATOM-CENSUS AXIS-AGNOSTIC — 벽은 축이 아니라 byte 입도다: 의미 readout 재설계 + 전-arm 음성 검정 (R6-5 · (c) 정면)
 
-**status:** 🔵 PROPOSED (lab full R6 · Fable 5 · $0 pilot + [[H_9755]] fire rider + readout-인증 소규모 fire · 사전등록)
+**status:** 🟢 PILOT-PASS (계기 검정력 사전점검 착륙 · DIRECTIONAL) — full arm-swept readout 은 여전히 🔵 PROPOSED ([[H_9755]] fire rider + prefix-swap 양성통제 대기)
 **lane:** g1-interface-addressable-wall · mouth/PC2-axis — 브리프 (c) 축-무관 가설 정면 (가장 아픈 안)
 **related:** [[H_9576]] · [[H_9629]] · [[H_9663]] · [[H_9631]] · [[H_9755]]
 
@@ -36,6 +36,24 @@ mouth-content 벽은 **축 선택과 무관한 byte 입도의 벽**이다 — �
 
 ## ⑥ 비용
 **$0 pilot**(기존 ζ 트레이스) + [[H_9755]] fire 동승(추가 디코드 0) + prefix-swap 인증 소규모 fire(pool · ~50 tick).
+
+## ⑧ PILOT 결과 (2026-07-18 · $0 · 계기 검정력 사전점검 · 판정 아님)
+
+계기: `anima-py evaluate --pc2-direction /tmp/zt --atom-census --pilot` (신규 `_pc2_atom_census` · engine-native 착륙 · VERSION 0.20.0 · dispatch=site-packages 확인). 사전등록 atom = 고정 빈출 영어 기능어 147 + 구두점 12(트레이스에 미튜닝 · 분모-프리 hit-count). DV = within-tick paired Δcount = atoms(ζ=max=+2.6928) − atoms(ζ=0). 9→3 dedupe = /tmp/zt 이미 3 run.
+
+| 지표 | 값 | 기준 |
+|---|---|---|
+| 격리 인증(ζ=0 == base gtext_b64) | **146/146 byte-identical** | 0 불일치 ✅ |
+| 기여 run | s7·s4303 각 73 ladder (s4302 = **0-emit** no-nudge 통제, 무기여) | — |
+| base-rate: 창-내 atom 비율 | **0.732** (atoms/tick 6.69) | floor 0.05 ≫ 충족 |
+| paired Δcount | meanΔ=+0.829 · **sdΔ=2.817** · lag-1 ρ̂=**−0.074**(자기상관 거의 0) | — |
+| n / n_eff (pooled) | 146 / **169.4** | — |
+| MDE (Cohen d) | **0.215** | ≤ 0.5·sd 기준 충족 |
+| required n (d=0.5, 80% power, α=.05) | 31.4 | n_eff 169.4 ≫ 충족 |
+
+**⇒ 🟢 PILOT-PASS** — base-rate 비-degenerate(0.732 ≫ 0.05) ∧ MDE(d=0.215) ≤ 관심효과(d=0.5). atom-census readout 은 애초에 검정력이 있다 = full arm-swept fire([[H_9755]] rider)를 태울 가치. 자기상관이 null 을 √n 가짜로 좁히지 않음(ρ̂≈0 · H_9714 교훈 통과).
+
+**범위 경계**: meanΔ=+0.829(>0)는 **신호로 읽지 않는다** — null-arm(rng-jitter·random-loading)도 prefix-swap 양성통제도 이 pilot 엔 없다. 파일럿은 **계기가 벽/축을 판정할 검정력이 있나**만 답했다(a_scale_honest_scope). PASS-BYTE-WALL / KILL-AXIS-MATTERS 등 §5 판정은 full fire 이후.
 
 ## ⑦ 죽는 방식
 KILL-AXIS-MATTERS 관측(refit 만 atom 을 움직임). 또는 prefix-swap 조차 못 잡는 readout 만 반복되면 — "창-측정 가능한 의미"라는 것이 이 입도에 아예 없다는 상위 발견으로 승격(그것대로 보고).
