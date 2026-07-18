@@ -36,3 +36,17 @@ H_9785/H_9774§4가 금지한 것은 **provenance-ownership verdict**. 본 카�
 
 ## NEXT (303M · 자율 pool)
 303M summer(chat-py-8): native own 포획→A0 own/A1 trigram-surrogate/A2 **seed-twin**(별 ckpt)/A3 scramble donor→--swap-text 발사→2-hop live 게이지(immune recall·self-anchor drift) 판독. PC(계기 known 구별 증명)·own∧twin>trigram-surrogate=self-typicality above episodic·own≈trigram=입도 상한 earned null. ⚠️seed-twin ckpt 2개(s7/s11) 필요 — 없으면 3-arm(own/trigram/scramble)만=H_9774 refinement·seed-twin 없이 self-typicality 미분리 명시.
+
+## 🟢 303M verdict — SELF-TYPICALITY ABOVE EPISODIC (2026-07-19 · rent pod RTX4090 · GREEN-DIRECTIONAL)
+py303_full(own)·clm303_clean(seed-twin·sha e807672≠013c4574=다른 모델) · --swap-text greedy 4-arm(A0 own·A1 trigram-surrogate·A2 twin·A3 scramble·엔진변경0·swap 12/12 전arm) · 24tick·seed7 · GPU. 303M **live 게이지**(recon_err 변동·rel_lane 변동 = toy 죽은축과 대조):
+
+| arm | immune recall(rel_lane) | field surprise(recon_err) |
+|---|---|---|
+| A0 own | 0.7376 | 0.2239 |
+| A2 twin | **0.7455** | **0.0949** |
+| A1 trigram-surrogate | 0.7018 | 0.6188 |
+| A3 scramble | 0.2807(floor) | 0.2239 |
+
+**결과: own ∧ twin > trigram-surrogate** (immune recall Δ≈0.04 · recon_err own/twin 0.22/0.09 << trigram 0.62). twin은 **다른 ckpt**(store 미포함·다른 바이트)인데 own처럼 recall+낮은 surprise ⟹ 인식되는 특징 = **typicality(스타일)이지 episodic(저장된 내 텍스트) 아님** — trigram-surrogate(byte-trigram 통계 일치)보다 높으므로 **trigram 위 입도**. scramble(multiset floor)=0.28 far below. ⟹ **generative self-recognition POSITIVE: interior가 self-typicality를 trigram 위·episodic 아닌 수준에서 인식**([[H_9774]] content-reach를 typicality로 refine·[[H_9785]] provenance-ownership과 구분: 출처 아닌 분포전형성).
+
+⚠️ **honest scope(DIRECTIONAL)**: ①단일런/arm·seed7·24tick=SCREEN·null분포/multi-seed 無→p값 없음·TERMINAL 아님. ②A2 게이지=native_twin과 동일(0.7455/0.0949)=swap이 twin거동 완전대입·"py303_full의 twin-text 인식"인지 재확인 필요. ③recon_err은 byte-multiset기반(scramble=own 확인)→immune recall(rel_lane·순서민감)이 clean DV. ④clm303_clean↔py303_full lineage 독립성 미확인(다른 sha·다른 학습=합리적 독립이나 확증 아님). TERMINAL=multi-seed+null+ckpt독립 확증. 트레이스=scratchpad/h9787_303m. pod teardown 완료(no-leak).
