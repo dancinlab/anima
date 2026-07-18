@@ -190,8 +190,8 @@
        {
         "id": "brain-structure-engine-lanes-frontier-theta-alive-terminal-substrate",
         "type": "gate",
-        "verdict": "🔓 SCOPED RE-OPEN → 좁아짐 (theta-alive · H_9765 coupling LIVE · H_9774 ownership CLOSE) — GLOBAL interior-unidentifiable RETIRED·own-content OWNERSHIP 다시 UNIDENTIFIABLE(C8도 provenance-free)·content-REACH(global workspace)만 OPEN",
-        "detail": "H_9765 dither: emit→interior coupling LIVE(coupling만·near-by-construction). H_9774(both 코드확증): ownership은 C8 store provenance-free(consumer census)=UNIDENTIFIABLE·H_9729 벽 이관·CLOSE. 유일 OPEN=content-REACH(content가 global lane 닿나·--swap-text). 재개봉=wired provenance store. 상세=H_9765/9774 카드."
+        "verdict": "🧱 THETA-ALIVE RESIDUE 판별완료 (theta-alive) — 살아난 gate; interior는 *무엇을 말했나*(content)엔 byte-stats 등급으로 반응(H_9774 CONTENT-REACH LIVE+GLOBAL)·*말할지 여부*(emit bit)엔 blind(H_9765 ledger-only sink)·own-ness는 substrate 미표현(H_9774 ownership UNIDENTIFIABLE)",
+        "detail": "H_9765: emit bit→dual ledger만 닿음(field lane 0/60=sink). H_9774(SHAM-clean·s7·DIRECTIONAL): 주입 content가 local+global lane 발산(SHAM byte-id=0/60 통제)=CONTENT-REACH LIVE+GLOBAL·ENCAPSULATED 반증. 상한=byte-stats grade·1-seed. ownership C8 provenance-free=UNIDENTIFIABLE 불변. cementing=multi-seed·상세=카드."
        },
        {
         "id": "brain-structure-engine-lanes-do-mouth-h9328-repair",
@@ -16790,6 +16790,13 @@
  },
  "convergence": {
   "records": [
+   {
+    "id": "content-swap-donor-must-be-certified-byte-distinct",
+    "state": "pos-conv",
+    "value": "content-reach 실험(--swap-text로 donor content를 interior에 주입해 own과 대비)서, greedy/deterministic mouth는 mode-collapse해 매 emit tick 동일 텍스트 1개만 뱉는다(H_9774 s7: 60tick 내내 'vault QX-7741 forever…' 앵커 echo·distinct=1). donor를 own의 다른-seed/다른-tick rollout에서 뽑으면 own≡donor(byte-identical 30/30)라 대비가 0이 되어 'content 안 닿음'이라는 FALSE-NULL을 만든다. H_9774 A3 첫 발사가 이 donor-degenerate로 ⚪INVALID. 교정=h9728_c0(24 distinct 텍스트)에서 뽑아 byte-distinct-from-own 20/24 cert 통과한 certified-distinct donor로 재발사→CONTENT-REACH LIVE+GLOBAL 판별. 결정적 통제=SHAM(own trace를 동일 swap-path로 재주입=byte-identical content): SHAM vs A0가 전 필드 0/60 발산이어야 injection-path가 byte-clean(계기 무해)임이 증명되고, 그 0-baseline이 block-rand보다 깨끗한 null이 되어 CERT-vs-SHAM 발산=순수 content 신호로 읽힌다.",
+    "threshold": "재발조건: two-source 대비 실험(donor-swap·content injection·A/B trace)서 donor를 target 자신의 다른 rollout에서 뽑을 때, 특히 greedy/low-temp decode로 mouth가 mode-collapse할 때. ① donor 발사 前 byte-distinctness cert 필수 — donor 텍스트가 own과 tick별로 byte-multiset-distinct인지 grep(≥majority PASS). own distinct-count==1이면 그 seed는 VACUOUS-AT-SOURCE(대비할 content가 없음)라 별도 diverse-source donor 필요. ② SHAM(byte-identical content 재주입) 통제로 swap-machinery 무해성을 먼저 증명 — SHAM이 A0와 발산하면 계기confound(INVALID), 0/60이면 signal이 순수 content. ③ 대비=0을 'reach 없음'으로 읽기 前 donor≠own부터 확인(positive-control-before-reading-a-negative). ④ byte-stats bottleneck 유의: interior가 content를 8-dim byte-stats/trigram/mod-4로만 받으면 byte-multiset-equal donor는 구조상 구별불가 — REACH는 semantic 아닌 byte-stats granularity로만 판정.",
+    "linked_hypotheses": ["H_9774", "H_9765", "H_9749"]
+   },
    {
     "id": "mouthless-config-severs-mediator-reads-as-substrate-null",
     "state": "pos-conv",
