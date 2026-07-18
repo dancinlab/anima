@@ -41,3 +41,30 @@ within-tick ζ-사다리의 z 를 **라이브-refit loading**(같은 run 앞 W t
 
 ## ⑦ 죽는 방식
 PASS-AXIS-BLIND — 입에는 축 레버가 존재하지 않는다. 이후 mouth 가설은 방향이 아니라 입도/readout(H_9631·H_9756)만 남는다.
+
+
+## ⑧ 구현계획 확정 · 사전등록 LOCK (2026-07-19 · lab-full Fable∥Sol reconcile · pre-fire · H_9752 PASS-PLANE 개봉 후)
+
+**두 모델 수렴** = factor-표준화 projection × 각 arm warmup 보정 · ζ가 그 연속점수를 곱함 · `pc2=ζ` arm이 스칼라 양성통제. **이견 1건**: Fable=centering(μ 차감)+Var=1, Sol=RMS만 → **Fable 채택**(비중심 평균 m이 m·β_scalar 를 모든 arm 에 흘려 스케일 인공물 · 기전 근거 완비).
+
+### 파라미터화 (load-bearing · LOCK)
+**전 arm: `pc2(t,a,ζ) = ζ · u_a(t)`** · `u_a` = warmup 창서 **centered + 2차모멘트 정규화**(E[u²]=1)한 projection · β 는 **ζ 라벨**에 회귀(전달 dose ζ·u 아님).
+| arm | u_a(t) | 역할 |
+|---|---|---|
+| scalar | u≡1 (현 H_9664 · pc2=ζ) | 양성통제(β≈−0.081 재현) |
+| frozen | (w_F·f_raw − μ_F)/σ_F · w_F=(0,0,0,0,−0.28,+0.84,−0.44,0) 8-space | bias arm 의 '범위 제조'판 |
+| refit | (w_R·f̃ − μ_R)/σ_R · w_R=warmup 상관PCA 최대고유벡터 | 라이브-refit 축 |
+| random | (r·f̃ − μ_r)/σ_r · r=seed유도 단위8벡터 | 축-null 통제 |
+| refit-resid | (w_⊥·f̃ − μ_⊥)/σ_⊥ · w_⊥=top-2 내 emit-회귀 직교방향 | H_9754 rider |
+🔑 **왜 z-score 필수**: refit PC1 은 구성상 projection 분산 최대 → 비정규화 시 ζ당 dose 더 커 `|β_refit|>|β_frozen|` = **gain 인공물**(거짓 PASS-NEW-LEVER). Var=1 정규화로 ζ dose-스케일 arm 간 동일 ⇒ 잔존 Δβ = **축 효과**. 근축퇴(H_9752)면 β_refit≈β_frozen≈β_random ⇒ PASS-AXIS-BLIND(측정으로 가림 · 가정 아님).
+
+### 사전등록 7 완성(fire 前 LOCK · tune-to-green 차단)
+1. flag `--z-loading a1,a2,…` **multi-arm 1런**(동일 factor스트림 paired · 4런보다 우월) 2. per-tick sign-일관 문턱 **0.60** 3. 양성통제 = `β_scalar<0 ∧ −0.081∈β̂±2SE`(`--pos-control-beta` 노출) 4. ζ = **{0,±2m,±4m}** · m=H_9664 트레이스서 상속(재계산 금지) 5. verdict 표 중간지대(CI분리 실패∧TOST 실패) = **⏳ NOT-POWERED 행**(realized MDE · prereg-table-must-cover-below-chance) 6. random-null = **3방향뿐** 명시(방향-marginal null 아님) 7. warmup tick = scalar β(n완결)엔 포함 · arm 대조엔 **제외**(동일 post-warmup tick셋).
+
+### wiring (구현 대상 · engine-native)
+- **chat.py**: `--z-loading`/`--refit-warmup 64` 파싱 · tick루프서 warmup factor+emit비트 누적(1..W) · W+1 경계서 결정적 PCA(numpy eigh 상관행렬) + **부호앵커**(w·ŵ_F≥0, tie면 max-|성분| 양수 · H_9713 flip방어) + per-arm μ/σ freeze → `_zl_meta` 트레이스행 1회 · `z_loading_state` kwarg 로 brain 전달(None=byte-identical).
+- **brain.py**: H_9664 ζ-block → arm×ζ 격자 루프(`m3["pc2"]=ζ·u_a` · seed_rng 격자전체 고정 CRN · ζ=0 arm별 디코드=격리인증). dead-factor(σ<1e-9)=INVALID arm 스킵.
+- **evaluate.py**: `--by-loading` 분기 — 게이트(격리·anchor-replay·**u 자기검증**(zl_factors+meta서 u 재계산 vs 로그 tol 1e-9)·격자완결>10%결손=VOID·양성통제) → per-tick β(ζ라벨) → paired Δβ+순열null+random-null밴드 → verdict표+NOT-POWERED.
+- fire: seed 7/4302/4303 × 300tick · warmup64 · ~9,200 재디코드 · summer CPU-전용(venv `anima-python` no-gpu) · ckpt sha 013c4574 검증 · **토이 end-to-end 先**(instrument-never-run). VERSION bump(G5).
+
+**status 유지 = 🔵 PROPOSED(설계 LOCK · pre-fire)** — 구현+토이+pool fire 후 verdict. DIRECTIONAL(303M). lab 전문 = `~/.sidecar/lab/2026-07-18T18-11-30-071Z-full.md`.
