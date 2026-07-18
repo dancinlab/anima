@@ -244,7 +244,7 @@ elif has_gpu:
     print('     POD_GPU=0 to bootstrap a CPU pod on purpose.')
     sys.exit(1)
 else:
-    print('  DEVICE = CPU-numpy (no GPU on this host · correctness-identical · TERMINAL-eligible)')\" 2>&1 | tail -4"
+    print('  DEVICE = CPU-numpy (no GPU on this host · correctness-identical · TERMINAL-eligible)')\" > /tmp/anima_devgate.out 2>&1; rc=\$?; tail -4 /tmp/anima_devgate.out; exit \$rc"
 
 echo "[pod] BOOTSTRAP_OK — anima-py $WHEEL_VER is live on $HOST:$PORT"
 echo "[pod] fire with:  ssh -p $PORT root@$HOST 'cd /root && setsid bash <your>.sh > fire.log 2>&1 < /dev/null &'"
