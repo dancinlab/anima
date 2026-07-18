@@ -1773,6 +1773,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _store_episodic = anima_flag_value(_cargv, "--store-episodic", "ANIMA_STORE_EPISODIC", "off")
     if _store_episodic not in ("off", "on"):
         raise SystemExit("--store-episodic: only 'off' (default) or 'on' (got %r)" % _store_episodic)
+    # H_9760 in-vivo odd-fusion: the daemon store lane's fuse mode (decode.py _CLMS_FUSE via
+    # set_clms_store). 'overwrite' (default) = H_9423 byte-identical; 'odd' enforces answer-oddness in
+    # store polarity (s_odd=½(s(v,g)−s(−v,g))) to close the H_9744 op=0 flip-coh gap in-vivo.
+    _store_fuse = anima_flag_value(_cargv, "--store-fuse", "ANIMA_STORE_FUSE", "overwrite")
+    if _store_fuse not in ("overwrite", "gated-add", "odd"):
+        raise SystemExit("--store-fuse: only 'overwrite' (default), 'gated-add' or 'odd' (got %r)" % _store_fuse)
     if _store_episodic == "on":
         if percept_source is None:
             raise SystemExit("--store-episodic on requires an anima-study percept source (the store is "
@@ -1968,7 +1974,7 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                     # (that field is oracle-only · core/clms.py store_apply reads it iff oracle=True).
                     set_clms_store(store={"entities": list(_ep_store_ents),
                                           "pols": list(_ep_store_pols),
-                                          "target_slot": None})
+                                          "target_slot": None}, fuse=_store_fuse)
                     _ep_store_writes += 1
         # H_9411 ⑤ · Engine A lives in session time. pf was warmed once (:1293) then NEVER
         # stepped, so pure_field_phi/phase were the step-600 constants every tick and the emit
