@@ -18136,6 +18136,13 @@
     "value": "강한 root-cause 를 landing 하기 전에 같은 lane 의 병렬세션 최근 성공을 대조하라(a_parallel_session_compare) — cross-session check 가 나중에 반박한다. H_9734: 내 seed-7 run 이 주소 held-out 일반화 실패(addr_top1 0.0078·2-run 재현)를 '안정적 환경 회귀(torch 2.13.0+cu130)'로 landing(#4065). BUT 병렬 H_9672 가 같은 summer 환경서 RV-3(--store-val-center)로 3-SEED ROBUST(seed7/11/13·addr_mass 0.95) 성공 + H_9672 이력상 주소축은 원래 항상 robust(취약=값읽기뿐) ⟹ '환경회귀' 반박·철회(#4065 정정). 내 주소 실패는 T3(옛env)도 병렬(현재env)도 재현못한 setup 특이·원인미확정. **규칙**: ①양성통제는 발사 환경서 known-good 재현해야 읽어라(원 교훈 유효 — 게이트가 '자연어휘 실패' 오독은 막음) ②그러나 root-cause 를 '환경/버전'으로 귀속하기 전에 같은 lane 병렬세션이 그 환경서 성공했는지 먼저 확인하라 — 성공했다면 환경 아니라 내 setup diff 다 ③단일 실패-run 에서 원인 클래스(환경/seed/code)를 landing 하지 말고 대조군(병렬 성공 recipe 1:1 복제)로 재현 확인 후 확정. reference-match(코드)+eval무죄로도 setup diff 는 못 잡는다 — 병렬 성공 recipe 복제가 유일 판별. [[gpu-forward-not-bitexact-probes-device-pinned]]·[[positive-control-before-reading-a-negative]] 확장.",
     "threshold": "2",
     "source": "HYPOTHESES/cards/H_9734_nat_addr_split.md"
+   },
+   {
+    "id": "pod-bootstrap-sh-1",
+    "state": "pos-conv",
+    "value": "pod-bootstrap-gpu-5 — device HARD GATE 가 실제로 block 하지 않던 masking 결함. 원격 명령이 `python3 -c \"...sys.exit(1)...\" 2>&1 | tail -4` 형이라, 원격 로그인 셸엔 pipefail 이 없어 파이프라인 exit=tail(0) 로 python 의 sys.exit(1) 이 삼켜짐 → ssh 0 반환 → 로컬 `set -euo pipefail` 미포착 → GPU 있는데 engine 이 CPU-numpy 로 디코드(8x)하는 FATAL 조건서도 BOOTSTRAP_OK 출력. \"failure-that-looks-like-success\" = 이 스크립트 존재이유를 정면위반. FIX = 원격 출력을 temp 파일로 받고 `rc=$?` 캡처 후 `tail -4` + `exit $rc` (POSIX sh 호환·pipefail/PIPESTATUS 불요) → python rc 를 ssh 로 전달. 실증(H_9751 pod 45205949·libnvrtc 부재 FATAL 조건): PROPAGATED_RC=1 정상. 주의: 원격 명령서 파이프 뒤 exit-code 필요 시 항상 이 temp-capture 패턴(원격 셸 pipefail 가정 금지).",
+    "threshold": "",
+    "source": "cli/pod_bootstrap.sh"
    }
   ]
  }
