@@ -25,3 +25,11 @@ k8_s7.clm(233MB pull·233889418) 에 `--faction-lesion domains(4셀×held-out) -
 ### ✅ FIRM perm=200 — power-gate 통과 (2026-07-18 · mac win4)
 PENDING(perm<200) 해소: k8_s7 within-arm **S_real 0.0654 > null95 0.0030 (p=0.0050·n=200·underpowered=False)** ✅ · 통제 clm303_clean(미학습K1 split8) **S 0.0019 ≤ null95 0.0041(spec False)** = fit-matched K=1 음성 다리 firm. ⟹ **파벌 분할이 303M CE-수준 기능적 특화 보유 확정(firm)**, 랜덤 사후분할과 다름. ⚠️ 계기 자체 라벨 = **DIRECTIONAL+within-arm 한정**(완전 SOUND=4다리 ①within-arm firm✅ ②random-init ③fit-matched K1 firm✅ ④ORACLE π · ②④는 303M 미측정=full-SOUND 잔여). py-lesion=DIRECTIONAL(a_engine_native_learning·a_toy_scale_recheck). 결과 보존 ~/anima-weights/h9643_303m_derisk/k8_s7_firm200.json.
 **최종: 파벌 = 303M CE-수준 실물 기능 레버(FIRM DIRECTIONAL POSITIVE·2 SOUND 다리 firm)** — toy-SOUND 에 더해 303M 실증. 천장=CE-scope(원 claim '인간이 명명할 의미' 은 ②④+G0-passing artifact 필요).
+
+### ✅ SOUND 완성(free-trained ckpt) — ②④ 원리적 미적용 (2026-07-18 · verify-done 코드판정)
+full-SOUND 4다리 중 이 free-trained k8_s7 lesion 에 **적용가능한 건 ①③뿐**, ②④ 는 원리적 미적용:
+- ① within-arm firm ✅(S 0.0654>null95 0.0030·p0.005·n200) · ③ fit-matched K=1 firm ✅(clm303 미학습 S 0.0019≤null95·spec False).
+- ② random-init 통제 = **DEGENERATE·미적용**(코드확인 evaluate.py:11758): 랜덤 가중치가 deep conv 서 모든 unit 을 공통모드로 몰아(|corr| 0.617 vs real 0.111·top eig 2840/7638) block-structure 계기가 arm 을 **스스로 DROP**. lesion 에 포팅해도 degenerate 재현(순환위험·H_9674). = free-trained ckpt 엔 architecture-alone 통제 원리적 측정불가(정직한 N/A).
+- ④ ORACLE π 회수 = **N/A**: free-trained(λ=0) k8_s7 는 self-organized 라 알려진 π 없음(④는 oracle-trained λ>0 ckpt 전용).
+
+⟹ **free-trained faction lesion 의 SOUND 인증은 적용가능 2다리로 완성**(더 이상 $0 SOUND 다리 없음). **파벌 = 303M CE-수준 실물 기능 레버 FIRM DIRECTIONAL POSITIVE**(캠페인 핵심 종결). 잔여 = capacity 질문(orthogonal): H_9769 G0-gap(frozen-gate 확장 prereg)·H_9771 K1@172M(유료 GPU)·②를 oracle-trained ckpt 서 재측정(신규 학습).
