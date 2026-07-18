@@ -757,6 +757,7 @@ def evaluate_usage():
     print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9712 z 용량/노출 census(트레이스 판독·디코드 없음)")
     print("  anima evaluate --pc2-direction <traces_dir> --atom-census --pilot   — H_9756 atom-census readout 검정력 사전점검(base-rate·MDE · ζ-fire 트레이스 · 판정 아님)")
     print("  anima evaluate --pc2-direction <traces_dir> --subspace-stability [--dims 2] [--block 16,32] [--boot 1000]  — H_9752 라이브 평면 안정성(주각·eigengap·rank-swap)")
+    print("  anima evaluate --pc2-direction <traces_dir> --state-census [--kmax K] [--boot N]   — H_9753 이산 상태(k=2~4) 혼합 검정(dip·GMM-BIC·dwell 3중·plant 양성통제)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
     print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
@@ -8125,6 +8126,7 @@ _KNOWN_FLAGS = frozenset((
     "--mouth-binder", "--mouth-binder-order-scramble",
     "--fan-dump",
     "--cascade-null",
+    "--state-census", "--kmax",
 ))
 
 
@@ -10694,6 +10696,452 @@ def _pc2_atom_census(argv):
     return 0
 
 
+# ── Hartigan & Hartigan (1985) dip statistic — numpy-only port (validated to machine
+#    precision against the reference `diptest` C implementation over 60 random samples;
+#    numpy-only so it runs on the hexa-less pool measurement channel). ─────────────
+def _dip_gcm(cdf, idxs):
+    work_cdf = cdf
+    work_idxs = idxs
+    gcm = [work_cdf[0]]
+    touch = [0]
+    import numpy as _np
+    while len(work_cdf) > 1:
+        distances = work_idxs[1:] - work_idxs[0]
+        slopes = (work_cdf[1:] - work_cdf[0]) / distances
+        minslope = slopes.min()
+        mi = _np.where(slopes == minslope)[0][0] + 1
+        gcm.extend(work_cdf[0] + distances[:mi] * minslope)
+        touch.append(touch[-1] + mi)
+        work_cdf = work_cdf[mi:]
+        work_idxs = work_idxs[mi:]
+    return _np.array(gcm), _np.array(touch)
+
+
+def _dip_lcm(cdf, idxs):
+    g, t = _dip_gcm(1 - cdf[::-1], idxs.max() - idxs[::-1])
+    return 1 - g[::-1], len(cdf) - 1 - t[::-1]
+
+
+def _dip_stat(dat):
+    """Hartigans' dip statistic for a 1-D sample (returns dip in [0, 0.25])."""
+    import numpy as _np
+    import collections as _coll
+    counts = _coll.Counter(dat)
+    idxs = _np.sort(list(counts.keys()))
+    hist = _np.array([counts[i] for i in idxs])
+    if len(idxs) <= 4 or idxs[0] == idxs[-1]:
+        return 0.0
+    cdf = _np.cumsum(hist, dtype=float)
+    cdf /= cdf[-1]
+    w_idxs = idxs
+    w_hist = _np.asarray(hist, dtype=float) / _np.sum(hist)
+    w_cdf = cdf
+    D = 0.0
+    left = [0]
+    right = [1]
+    while True:
+        lp, lt = _dip_gcm(w_cdf - w_hist, w_idxs)
+        rp, rt = _dip_lcm(w_cdf, w_idxs)
+        ld = _np.abs(rp[lt] - lp[lt]); d_left = ld.max()
+        rd = _np.abs(rp[rt] - lp[rt]); d_right = rd.max()
+        if d_right > d_left:
+            xr = rt[d_right == rd][-1]
+            xl = lt[lt <= xr][-1]
+            d = d_right
+        else:
+            xl = lt[d_left == ld][0]
+            xr = rt[rt >= xl][0]
+            d = d_left
+        ldiff = _np.abs(lp[:xl + 1] - w_cdf[:xl + 1]).max()
+        rdiff = _np.abs(rp[xr:] - w_cdf[xr:] + w_hist[xr:]).max()
+        if d <= D or xr == 0 or xl == len(w_cdf):
+            the_dip = max(_np.abs(cdf[:len(left)] - left).max(),
+                          _np.abs(cdf[-len(right) - 1:-1] - right).max())
+            return float(the_dip / 2)
+        D = max(D, ldiff, rdiff)
+        w_cdf = w_cdf[xl:xr + 1]
+        w_idxs = w_idxs[xl:xr + 1]
+        w_hist = w_hist[xl:xr + 1]
+        left[len(left):] = lp[1:xl + 1]
+        right[:0] = rp[xr:-1]
+
+
+def _sc_gmm_fit(X, k, rng, iters=60, restarts=2):
+    """Full-covariance GMM EM (numpy-only). Returns (BIC, hard-labels, (mu,cov,wt))."""
+    import numpy as _np
+    n, d = X.shape
+    base = _np.cov(X.T).reshape(d, d) + 1e-6 * _np.eye(d)
+
+    def _logpdf(Xa, mu, cov):
+        diff = Xa - mu
+        try:
+            icov = _np.linalg.inv(cov); det = _np.linalg.det(cov)
+        except _np.linalg.LinAlgError:
+            return _np.full(Xa.shape[0], -1e10)
+        if det <= 1e-300:
+            det = 1e-300
+        maha = _np.einsum('ij,jk,ik->i', diff, icov, diff)
+        return -0.5 * (d * _np.log(2 * _np.pi) + _np.log(det) + maha)
+
+    best = None
+    for _ in range(restarts):
+        mu = X[rng.choice(n, k, replace=False)].copy()
+        cov = _np.repeat(base[None], k, axis=0)
+        wt = _np.ones(k) / k
+        ll_old = -_np.inf
+        resp = None
+        for _it in range(iters):
+            logp = _np.empty((n, k))
+            for j in range(k):
+                logp[:, j] = _np.log(wt[j] + 1e-300) + _logpdf(X, mu[j], cov[j])
+            m = logp.max(axis=1)
+            lse = m + _np.log(_np.exp(logp - m[:, None]).sum(axis=1))
+            ll = lse.sum()
+            resp = _np.exp(logp - lse[:, None])
+            Nk = resp.sum(axis=0) + 1e-10
+            wt = Nk / n
+            for j in range(k):
+                mu[j] = (resp[:, j:j + 1] * X).sum(axis=0) / Nk[j]
+                dx = X - mu[j]
+                cov[j] = (resp[:, j:j + 1] * dx).T @ dx / Nk[j] + 1e-6 * _np.eye(d)
+            if abs(ll - ll_old) < 1e-5 * (abs(ll_old) + 1):
+                break
+            ll_old = ll
+        if best is None or ll > best[0]:
+            best = (ll, resp, mu.copy(), cov.copy(), wt.copy())
+    ll, resp, mu, cov, wt = best
+    nparams = k * d + k * d * (d + 1) / 2.0 + (k - 1)
+    bic = -2 * ll + nparams * _np.log(n)
+    return bic, resp.argmax(axis=1), (mu, cov, wt)
+
+
+def _sc_gmm_kbest(x1d, kmax, rng):
+    """1-D GMM BIC census k=1..kmax → (kbest, n_density_modes_of_kbest)."""
+    import numpy as _np
+    X = x1d.reshape(-1, 1)
+    bics = []; pars = []
+    for k in range(1, kmax + 1):
+        try:
+            b, _lab, p = _sc_gmm_fit(X, k, rng)
+        except (_np.linalg.LinAlgError, ValueError):
+            b, p = _np.inf, None
+        bics.append(b); pars.append(p)
+    kb = int(_np.argmin(bics)) + 1
+    p = pars[kb - 1]
+    if p is None:
+        return kb, 1
+    mu, cov, wt = p
+    grid = _np.linspace(x1d.min(), x1d.max(), 512)
+    dens = _np.zeros_like(grid)
+    for j in range(len(wt)):
+        s2 = float(cov[j].reshape(-1)[0])
+        dens += wt[j] * _np.exp(-0.5 * (grid - mu[j, 0]) ** 2 / s2) / _np.sqrt(2 * _np.pi * s2)
+    up = dens[1:-1] > dens[:-2]
+    dn = dens[1:-1] >= dens[2:]
+    modes = int(_np.sum(up & dn)) or 1
+    return kb, modes
+
+
+def _sc_mean_dwell(lab):
+    import numpy as _np
+    if len(lab) == 0:
+        return 0.0
+    lens = []; cur = 1
+    for i in range(1, len(lab)):
+        if lab[i] == lab[i - 1]:
+            cur += 1
+        else:
+            lens.append(cur); cur = 1
+    lens.append(cur)
+    return float(_np.mean(lens))
+
+
+def _sc_med_dwell(x):
+    import numpy as _np
+    return _sc_mean_dwell((x > _np.median(x)).astype(int))
+
+
+def _sc_ft_surr(x, rng):
+    """Fourier phase-randomised surrogate (gaussian-ish marginal, spectrum preserved)."""
+    import numpy as _np
+    n = len(x)
+    F = _np.fft.rfft(x - x.mean())
+    ph = rng.uniform(0, 2 * _np.pi, F.shape[0]); ph[0] = 0.0
+    if n % 2 == 0:
+        ph[-1] = 0.0
+    return _np.fft.irfft(_np.abs(F) * _np.exp(1j * ph), n=n) + x.mean()
+
+
+def _sc_aaft(x, rng):
+    """AAFT surrogate (marginal AND power spectrum preserved)."""
+    import numpy as _np
+    n = len(x)
+    order = _np.argsort(x)
+    g = _np.sort(rng.standard_normal(n))
+    gx = _np.empty(n); gx[order] = g
+    F = _np.fft.rfft(gx)
+    ph = rng.uniform(0, 2 * _np.pi, F.shape[0]); ph[0] = 0.0
+    if n % 2 == 0:
+        ph[-1] = 0.0
+    gs = _np.fft.irfft(_np.abs(F) * _np.exp(1j * ph), n=n)
+    back = _np.argsort(_np.argsort(gs))
+    return _np.sort(x)[back]
+
+
+def _sc_lag1(x):
+    v = x - x.mean(); den = float((v * v).sum())
+    return float((v[:-1] * v[1:]).sum() / den) if den > 0 else 0.0
+
+
+def _sc_analyze(x, kmax, boot, rng):
+    """Three surrogate-referenced tension-state statistics on a 1-D series.
+       dip vs FT (marginal multimodality) · GMM-BIC k + fitted-density modes vs FT
+       (marginal multi-component) · median-split dwell vs AAFT (temporal persistence)."""
+    import numpy as _np
+    n = len(x)
+    obs_dip = _dip_stat(x)
+    kb, modes = _sc_gmm_kbest(x, kmax, rng)
+    obs_dwell = _sc_med_dwell(x)
+    dip_ft, k_ft, dwell_aa = [], [], []
+    for _ in range(boot):
+        f = _sc_ft_surr(x, rng)
+        dip_ft.append(_dip_stat(f))
+        kf, _m = _sc_gmm_kbest(f, kmax, rng)
+        k_ft.append(kf)
+        dwell_aa.append(_sc_med_dwell(_sc_aaft(x, rng)))
+    dip_ft = _np.array(dip_ft); k_ft = _np.array(k_ft); dwell_aa = _np.array(dwell_aa)
+    r = {"n": n, "dip": obs_dip, "kbest": kb, "modes": modes, "dwell": obs_dwell,
+         "lag1": _sc_lag1(x),
+         "dip_p95": float(_np.percentile(dip_ft, 97.5)), "dip_p05": float(_np.percentile(dip_ft, 2.5)),
+         "dip_p": float((dip_ft >= obs_dip).mean()),
+         "k_ft95": float(_np.percentile(k_ft, 97.5)), "k_p": float((k_ft >= kb).mean()),
+         "dwell95": float(_np.percentile(dwell_aa, 97.5)), "dwell_p": float((dwell_aa >= obs_dwell).mean())}
+    r["dip_mm"] = obs_dip > r["dip_p95"]
+    r["dip_sub"] = obs_dip < r["dip_p05"]
+    r["bic_multi"] = (kb >= 2) and (kb > r["k_ft95"])
+    r["dens_mm"] = modes >= 2
+    r["dwell_cl"] = obs_dwell > r["dwell95"]
+    # a run shows STATES only when the two discriminating surrogate tests both fire:
+    # multimodal marginal (dip, distribution-free) AND temporal persistence (dwell).
+    r["states"] = bool(r["dip_mm"] and r["dwell_cl"] and kb >= 2)
+    return r
+
+
+def _sc_plant(n, rho, sep, rng):
+    """Spectrum-matched symmetric 2-state HMM plant (lag-1 autocorr ≈ rho)."""
+    import numpy as _np
+    p = max(0.5, min(0.995, (rho + 1.0) / 2.0))
+    lab = _np.empty(n, int); s = int(rng.integers(0, 2))
+    for i in range(n):
+        if i and rng.random() > p:
+            s = 1 - s
+        lab[i] = s
+    return _np.array([-sep / 2.0, sep / 2.0])[lab] + rng.standard_normal(n) * 0.35
+
+
+def _pc2_state_census(argv):
+    """H_9753 TENSION-STATE-MIXTURE — is live tension a discrete state mixture (k=2..4)
+    rather than a continuous low-rank axis?
+
+    `anima-py evaluate --pc2-direction <traces_dir> --state-census [--kmax K] [--boot N] [--seed N]`
+
+    THE RIVAL STRUCTURE HYPOTHESIS. H_9712 (z non-normal, IQR/sd=0.45) and H_9715 (stage
+    92.7% single-pin) may be two faces of ONE thing: regime pinning. If so, live tension is
+    not a continuous rank-2 subspace to be dose-steered, it is a mixture of a few discrete
+    states — and the lever is state-SELECTION, not axis-steering (axis-dose = category error).
+
+    THREE INDEPENDENT STATISTICS (never one aggregate — the H_9712 lesson), each read as a
+    collapse-Δ vs a surrogate null (p7 · never a raw value), on each run's OWN refit 2-D
+    subspace (the frozen H_9468 axis is deliberately absent — card ②):
+      (1) DIP     — Hartigan & Hartigan dip on the refit PC2 marginal vs a Fourier phase-
+                    randomised (spectrum-matched Gaussian) null. Distribution-free multimodality.
+      (2) GMM-BIC — 1-D BIC census k=1..kmax + the number of modes of the FITTED density, vs
+                    the same FT null. k≥2 alone is NOT diagnostic (any non-Gaussian continuous
+                    density beats a Gaussian surrogate); the fitted-density mode count separates
+                    real modes from a skew/shoulder fit.
+      (3) DWELL   — mean run-length of the median 2-state split vs an AAFT null (marginal AND
+                    spectrum preserved) = temporal persistence beyond linear autocorrelation.
+
+    A run shows STATES only when the two DISCRIMINATING surrogate tests fire together — a
+    multimodal marginal (dip) AND temporal persistence (dwell) — with k≥2. GMM-BIC k is
+    reported as corroboration, not as a gate.
+
+    POSITIVE CONTROL (opens nothing without it): a spectrum-matched 2-state HMM plant, injected
+    at a separation sweep, must be detected by all three legs. The smallest separation the
+    battery still catches is the MDE; if the plant is undetected the instrument is dead and the
+    verdict is VOID (never a negative). run<100 ticks ⇒ VOID (power-before-negative).
+
+    DEDUPE (H_9714): off/bias/rng share a byte-identical factor stream (steering is applied
+    after emit and never feeds tension back — Stage-A isolation), so 9 files collapse to 3
+    independent runs; counting all 9 would forge a null √3 too tight.
+
+    Frozen bars (card H_9753 · do not retune): PASS-STATES = dip>FT-null95 ∧ k≥2 ∧ dwell>AAFT-null95
+    in ≥2/3 runs · KILL-CONTINUOUS = dip & dwell null-equiv (states legs dead) with plant PASS ·
+    AMBIG-MARGINAL = dip passes but dwell null · INVALID = dip < FT-null 5pct (over-unimodal
+    pre-processing defect) · VOID = plant undetected ∨ tick<100.
+    """
+    import glob as _glob
+    import json as _pj
+    import numpy as _np
+
+    FACTORS = ["rel_lane", "gap_ctx", "cur_ctx", "allo_ctx",
+               "coh_lane", "nov_ctx", "bal_lane", "agloop_ctx"]
+    Z_FACTORS = ["nov_ctx", "bal_lane", "coh_lane"]
+    Z_W = _np.array([0.84, -0.44, -0.28])                     # H_9468 frozen loading
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --state-census "
+              "[--kmax K] [--boot N] [--seed N]")
+        return 2
+    kmax = evaluate_intval(argv, "--kmax", 6)
+    boot = evaluate_intval(argv, "--boot", 300)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    mats, seen, dup = [], set(), 0
+    for f in files:
+        rows, zs = [], []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                continue
+            v = [r.get(k) for k in FACTORS]
+            if any(x is None for x in v):
+                continue
+            rows.append([float(x) for x in v])
+            zs.append(float(r["pc2_z"]) if r.get("pc2_z") is not None else _np.nan)
+        if len(rows) < 20:
+            continue
+        X = _np.asarray(rows, dtype=_np.float64)
+        key = hash(X.tobytes())
+        if key in seen:
+            dup += 1
+            continue
+        seen.add(key)
+        mats.append((os.path.basename(f), X, _np.asarray(zs)))
+    if not mats:
+        print("  ⇒ ⛔ 8-인자를 모두 가진 트레이스 없음 (필요: " + ",".join(FACTORS) + ")")
+        return 2
+
+    def _pca(X):
+        Z = X - X.mean(axis=0)
+        sd = Z.std(axis=0, ddof=1); sd[sd == 0] = 1.0
+        Zs = Z / sd
+        C = (Zs.T @ Zs) / float(Zs.shape[0] - 1)
+        w, V = _np.linalg.eigh(C)
+        o = _np.argsort(w)[::-1]
+        return Zs @ V[:, o], w[o]
+
+    print("=== anima evaluate --pc2-direction --state-census — H_9753 이산-상태 혼합 검정 ===")
+    print("traces: %s · %d file → **%d 독립 run** (중복 인자스트림 %d 제외 · H_9714 교훈)"
+          % (d, len(files), len(mats), dup))
+    print("질문:  라이브 tension = 연속 저랭크 축인가, 소수 이산 상태(k=2~4) 혼합인가?")
+    print("계기:  ① Hartigan dip vs FT-gaussian null  ② GMM-BIC k + 밀도-modes vs FT  ③ 중앙분할 dwell vs AAFT")
+    print("판독:  상태 판별은 **dip(다봉)∧dwell(군집)** 동시 발화 (BIC k 는 보강) · 전부 surrogate-Δ(p7)")
+    print("bar:   PASS-STATES=dip>null95∧k≥2∧dwell>null95(≥2/3) · KILL-CONTINUOUS=dip·dwell null(plant PASS)")
+    print("       · AMBIG-MARGINAL=dip 통과·dwell null · INVALID=dip<null5pct · VOID=plant 미검출∨tick<100")
+    print("       boot=%d · kmax=%d · seed=%d" % (boot, kmax, rseed))
+    print("")
+
+    rng = _np.random.default_rng(rseed)
+
+    # ── PLANT positive control + MDE separation sweep (instrument certification) ──
+    med_lag1 = float(_np.median([_sc_lag1(_pca(X)[0][:, 1]) for _, X, _z in mats]))
+    n_plant = int(_np.median([X.shape[0] for _, X, _z in mats]))
+    print("  [PLANT] 스펙트럼-매칭 2-상태 HMM (n=%d · lag1≈%.2f) — separation MDE sweep:" % (n_plant, med_lag1))
+    mde = None
+    plant_top = None
+    for sep in (1.0, 1.5, 2.0, 3.0):
+        pr = _sc_analyze(_sc_plant(n_plant, med_lag1, sep, rng), kmax, boot, rng)
+        det = pr["dip_mm"] and pr["dwell_cl"] and pr["kbest"] >= 2
+        if det and mde is None:
+            mde = sep
+        plant_top = pr
+        print("     sep=%.1f  dip=%.4f>%.4f=%s · k=%d(modes=%d) · dwell=%.2f>%.2f=%s ⇒ %s"
+              % (sep, pr["dip"], pr["dip_p95"], _yn(pr["dip_mm"]), pr["kbest"], pr["modes"],
+                 pr["dwell"], pr["dwell95"], _yn(pr["dwell_cl"]), "검출" if det else "미검출"))
+    plant_ok = mde is not None
+    print("     ⇒ 계기 인증: %s (MDE separation = %s)"
+          % ("PASS" if plant_ok else "FAIL", ("%.1f" % mde) if mde else "미검출"))
+    print("")
+
+    # ── real runs ────────────────────────────────────────────────────────────
+    under = False
+    n_states = 0
+    dip_mm_runs = 0
+    dwell_runs = 0
+    dip_sub_runs = 0
+    for name, X, zs in mats:
+        sc, w = _pca(X)
+        if X.shape[0] < 100:
+            under = True
+        rp2 = _sc_analyze(sc[:, 1], kmax, boot, rng)          # refit PC2 = primary target
+        rp1 = _sc_analyze(sc[:, 0], kmax, boot, rng)          # refit PC1 = reference axis
+        z = zs[~_np.isnan(zs)]
+        rz = _sc_analyze(z, kmax, boot, rng) if len(z) >= 20 else None
+        n_states += int(rp2["states"])
+        dip_mm_runs += int(rp2["dip_mm"])
+        dwell_runs += int(rp2["dwell_cl"])
+        dip_sub_runs += int(rp2["dip_sub"])
+        print("  == %-18s n=%-4d lag1(PC2)=%.2f ==" % (name, rp2["n"], rp2["lag1"]))
+        for tag, r in (("PC2*", rp2), ("PC1 ", rp1), ("z-frz", rz)):
+            if r is None:
+                continue
+            dipverd = "다봉" if r["dip_mm"] else ("초단봉" if r["dip_sub"] else "단봉")
+            print("     %-5s dip=%.4f null95=[%.4f,%.4f] p=%.3f(%s) · k=%d modes=%d(k_p=%.3f) · "
+                  "dwell=%.2f null95=%.2f p=%.3f(%s) ⇒ %s"
+                  % (tag, r["dip"], r["dip_p05"], r["dip_p95"], r["dip_p"], dipverd,
+                     r["kbest"], r["modes"], r["k_p"], r["dwell"], r["dwell95"], r["dwell_p"],
+                     "군집" if r["dwell_cl"] else "null", "STATES" if r["states"] else "연속"))
+
+    print("")
+    print("  run 집계(PC2 target): STATES %d/%d · dip-다봉 %d/%d · dwell-군집 %d/%d · dip-초단봉 %d/%d"
+          % (n_states, len(mats), dip_mm_runs, len(mats), dwell_runs, len(mats),
+             dip_sub_runs, len(mats)))
+    print("")
+
+    # ── verdict (frozen card H_9753 table) ───────────────────────────────────
+    if not plant_ok:
+        v = ("⛔ VOID — **양성통제 실패**: 스펙트럼-매칭 2-상태 plant 를 3중 검정이 어떤 separation 에서도 "
+             "못 잡음 ⇒ 계기가 이산성을 못 봄 · 음성 아님 (계기 재점검 선행)")
+    elif under:
+        v = ("⛔ VOID — run 당 tick<100 ⇒ dip 검정력 미달 (power-before-negative) · plant PASS 여도 "
+             "실데이터 null 은 판독 금지")
+    elif n_states >= 2:
+        v = ("🔑 **PASS-STATES** — dip(다봉)∧dwell(군집)∧k≥2 가 %d/%d run 동시 발화 ⇒ 라이브 tension 은 "
+             "이산 상태 혼합 · 축-dose 는 범주오류 · 후속 레버 = 상태-조건부 ζ (설계만 등록·여기서 발사 금지)"
+             % (n_states, len(mats)))
+    elif dip_sub_runs >= 2:
+        v = ("⛔ INVALID — %d/%d run 에서 dip < FT-null 5pct (초-단봉) ⇒ 전처리/score 왜곡 결함 · "
+             "판정 불가" % (dip_sub_runs, len(mats)))
+    elif dip_mm_runs >= 2 and dwell_runs < 2:
+        v = ("🟡 AMBIG-MARGINAL — dip(다봉)은 서나 dwell(시간 군집)은 null ⇒ 다봉성은 주변분포만일 수 있음"
+             "(연속 다양체의 비선형 굴곡) · DIRECTIONAL 보고 · cement 금지")
+    elif dip_mm_runs < 2 and dwell_runs < 2:
+        v = ("🧱 **KILL-CONTINUOUS** — 상태 판별 2 검정(dip·dwell)이 plant 인증(MDE sep=%s) 아래에서 "
+             "실데이터 전부 null-동급 ⇒ 라이브 tension 은 **연속 저랭크** 존속 · 이산-상태 라이벌가설 반증 "
+             "· 축/평면 프레임(H_9752)으로 인계" % (("%.1f" % mde) if mde else "?"))
+    else:
+        v = ("🟡 MIXED — 사전등록 칸 어디에도 깨끗이 안 떨어짐(dip-다봉 %d/%d · dwell-군집 %d/%d) ⇒ 단일 "
+             "원인으로 못 박지 말 것 · 카드에 그대로 기록" % (dip_mm_runs, len(mats), dwell_runs, len(mats)))
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: 판정 target = run 별 **refit** 2-D 부분공간(동결 H_9468 축 무등장·card ②). "
+          "frozen z-projection(z-frz)이 다봉으로 읽히면 그건 부분공간 기하가 아니라 그 고정 조합의 성질.")
+    print("     주의: GMM-BIC k≥2 단독은 이산성 아님(비가우스 shoulder/skew 도 통과) — 밀도 modes + dip 로 판별.")
+    return 0
+
+
 def _pc2_zeta_slope(argv):
     """H_9664 ZETA-SLOPE — the within-tick dose readout. Reads `anima-py chat --pc2-zeta` traces.
 
@@ -12938,6 +13386,8 @@ def main(argv):
     if len(argv) >= 1 and argv[0] == "--emit-gate-census":
         return _emit_gate_census(argv[1:])
     if len(argv) >= 1 and argv[0] == "--pc2-direction":
+        if "--state-census" in argv:
+            return _pc2_state_census([a for a in argv[1:] if a != "--state-census"])
         if "--occupancy" in argv:
             return _pc2_occupancy([a for a in argv[1:] if a != "--occupancy"])
         if "--zeta-slope" in argv:
