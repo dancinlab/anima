@@ -8132,7 +8132,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -11235,6 +11235,328 @@ def _pc2_state_census(argv):
     return 0
 
 
+def _pc2_zeta_by_loading(argv):
+    """H_9755 REFIT-AXIS ζ-LADDER verdict reader (design LOCK · card §8). Reads
+    `chat --pc2-zeta --z-loading` traces: per emit tick an ARM x ζ grid of texts + this
+    tick's raw 8-factor vector, plus one _zl_meta row per run. pc2(arm,ζ)=ζ·u_arm where u is
+    the warmup-CALIBRATED (centered+Var=1) projection, so ζ's dose-scale matches across arms and
+    Δβ is an AXIS effect, not a gain artifact. DV = per-tick β = OLS slope of π̄ on the ζ LABEL.
+
+    `anima-py evaluate --pc2-direction <dir> --zeta-slope --by-loading [--tost 0.02]
+       [--pos-control-beta -0.081] [--perm N] [--seed N]`
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import random as _prand
+
+    T_WIN = 24
+    L_MIN = 8
+    SIGN_FRAC = 0.60          # pre-registered per-tick sign-consistency threshold (card §8)
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <dir> --zeta-slope --by-loading")
+        return 2
+    rounds = evaluate_intval(argv, "--perm", 2000)
+    rseed = evaluate_intval(argv, "--seed", 20260717)
+
+    def _fval(flag, dflt):
+        for _i, _a in enumerate(argv):
+            if _a == flag and _i + 1 < len(argv):
+                try:
+                    return float(argv[_i + 1])
+                except ValueError:
+                    return dflt
+        return dflt
+    tost = _fval("--tost", 0.02)
+    pos_beta = _fval("--pos-control-beta", -0.081)
+
+    try:
+        from decode import _dg_anchor_copy as _anchor_copy
+    except ImportError:
+        _anchor_copy = None
+    if _anchor_copy is None:
+        print("  ⇒ ⛔ INVALID — core.decode._dg_anchor_copy import 실패 · lm-step 분류 불가")
+        return 0
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _pi(seed_b, txt_b, anchors):
+        ind, mism = [], 0
+        ctx = bytearray(seed_b)
+        for _i in range(len(txt_b)):
+            b = txt_b[_i]
+            cb = _anchor_copy(bytes(ctx), anchors, L_MIN, T_WIN) if anchors else -1
+            if cb >= 0:
+                if cb != b:
+                    mism += 1
+                ctx.append(b)
+                continue
+            win = bytes(ctx[-T_WIN:]) if len(ctx) >= T_WIN else bytes(ctx)
+            ind.append(1 if b in set(win) else 0)
+            ctx.append(b)
+        m = (sum(ind) / float(len(ind))) if ind else 0.0
+        return m, len(ind), mism
+
+    def _slope(xs, ys):
+        n = len(xs)
+        if n < 2:
+            return None
+        mx = sum(xs) / float(n)
+        my = sum(ys) / float(n)
+        den = sum((x - mx) ** 2 for x in xs)
+        if den <= 0:
+            return None
+        return sum((xs[_i] - mx) * (ys[_i] - my) for _i in range(n)) / den
+
+    def _recompute_u(_zlmeta, _arm, _f_raw):
+        _aw = _zlmeta["arms"].get(_arm)
+        if _aw is None:
+            return None
+        if _arm == "scalar":
+            return 1.0
+        _fmu = _zlmeta["fmu"]
+        _fsd = _zlmeta["fsd"]
+        if _aw.get("raw"):
+            _fv = _f_raw
+        else:
+            _fv = [((_f_raw[_i] - _fmu[_i]) / _fsd[_i]) if _fsd[_i] > 1e-9 else 0.0
+                   for _i in range(8)]
+        _proj = sum(_aw["w"][_i] * _fv[_i] for _i in range(8))
+        _sd = _aw["sd"]
+        return ((_proj - _aw["mu"]) / _sd) if _sd > 1e-9 else 0.0
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --zeta-slope --by-loading — H_9755 refit-axis 판정 ===")
+    print("traces: %s (%d file · perm=%d · seed=%d · tost=±%.3f · pos-β=%.4f)"
+          % (d, len(files), rounds, rseed, tost, pos_beta))
+    print("DV: per-tick β = OLS slope(π̄ ~ ζ LABEL) per arm · pc2=ζ·u_arm(centered+Var=1 projection)")
+    print("")
+
+    # per-arm per-tick β lists; scalar uses ALL ticks (warmup+post = H_9664 n-completion),
+    # other arms use POST ticks only; contrasts pair arms on the identical post-tick set.
+    beta_all = {}          # arm -> list of β_tick (all applicable ticks)
+    post_ticks = []        # list of dicts {arm: β_tick} for post ticks carrying the full grid
+    iso_bad = 0
+    anchor_mism = 0
+    u_mismatch = 0
+    n_post_emit = 0
+    n_full_grid = 0
+    arms_seen = set()
+
+    for f in files:
+        meta = {}
+        zlmeta = None
+        rows = []
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_zl_meta"):
+                zlmeta = r
+            elif r.get("_meta"):
+                meta = r
+            else:
+                rows.append(r)
+        mem = meta.get("mem_text") or ""
+        anchors = [mem.encode("utf-8", "surrogateescape")] if mem else []
+        for r in rows:
+            if not r.get("emit"):
+                continue
+            zl = r.get("gtext_zeta") or []
+            if not zl or "loading" not in (zl[0] if zl else {}):
+                continue                                   # not a --z-loading row
+            base_b = _b64(r.get("gtext_b64"))
+            seed_b = _b64(r.get("seed_b64"))
+            f_raw = r.get("zl_factors")
+            is_post = (r.get("zl_phase") == "post")
+            if is_post:
+                n_post_emit += 1
+            # group grid entries by arm
+            by_arm = {}
+            for e in zl:
+                by_arm.setdefault(e["loading"], []).append(e)
+            tick_beta = {}
+            for _arm, _ents in by_arm.items():
+                arms_seen.add(_arm)
+                # isolation: ζ=0 rung byte-equal to base
+                for e in _ents:
+                    if abs(float(e["zeta"])) < 1e-12 and _b64(e.get("text_b64")) != base_b:
+                        iso_bad += 1
+                # u self-check (post ticks; scalar u≡1)
+                if is_post and zlmeta is not None and f_raw is not None:
+                    _u_logged = float(_ents[0].get("u", 1.0))
+                    _u_re = _recompute_u(zlmeta, _arm, f_raw)
+                    if _u_re is not None and abs(_u_re - _u_logged) > 1e-9:
+                        u_mismatch += 1
+                # β on ζ label
+                xs, ys = [], []
+                for e in _ents:
+                    tb = _b64(e.get("text_b64"))
+                    m, nlm, mm = _pi(seed_b, tb, anchors)
+                    anchor_mism += mm
+                    if nlm == 0:
+                        continue
+                    xs.append(float(e["zeta"]))
+                    ys.append(m)
+                b = _slope(xs, ys)
+                if b is not None:
+                    tick_beta[_arm] = b
+            # scalar β accumulates over ALL ticks
+            if "scalar" in tick_beta:
+                beta_all.setdefault("scalar", []).append(tick_beta["scalar"])
+            if is_post:
+                for _arm, _bv in tick_beta.items():
+                    if _arm != "scalar":
+                        beta_all.setdefault(_arm, []).append(_bv)
+                # full-grid tick = has every arm that appears in zlmeta as valid
+                if zlmeta is not None:
+                    _valid_arms = [a for a, aw in zlmeta["arms"].items() if aw.get("valid", True)]
+                    if all(a in tick_beta for a in _valid_arms):
+                        n_full_grid += 1
+                        post_ticks.append(tick_beta)
+
+    # ── gates (sequential) ────────────────────────────────────────────────
+    print("  ── 게이트 (순차 · 하나라도 실패 시 판독 중단) ──")
+    print("     격리(ζ=0=base) 위반 %d · anchor-replay 불일치 %d · u 자기검증 불일치 %d"
+          % (iso_bad, anchor_mism, u_mismatch))
+    if iso_bad > 0:
+        print("  ⇒ ⛔ INVALID — 격리 인증 실패(ζ=0 ≠ base) · dose 곡선 판독 불가")
+        return 0
+    if anchor_mism > 0:
+        print("  ⇒ ⛔ INVALID — anchor-replay 불일치 · lm-step 분류 깨짐")
+        return 0
+    if u_mismatch > 0:
+        print("  ⇒ ⛔ INVALID — u 자기검증 실패(writer 산술 ≠ reader 재계산) · schema-mismatch")
+        return 0
+    _grid_frac = (n_full_grid / float(n_post_emit)) if n_post_emit else 0.0
+    print("     격자 완결: %d/%d post-emit tick 이 valid-arm×ζ 전격자(%.1f%%)"
+          % (n_full_grid, n_post_emit, 100.0 * _grid_frac))
+    if n_post_emit == 0 or _grid_frac < 0.90:
+        print("  ⇒ ⛔ VOID — 격자 결손 >10%% (계기/infra 사망 · 음성 아님)")
+        return 0
+
+    def _mean(v):
+        return (sum(v) / float(len(v))) if v else 0.0
+
+    def _se(v):
+        if len(v) < 2:
+            return 0.0
+        m = _mean(v)
+        return (sum((x - m) ** 2 for x in v) / float(len(v) - 1) / float(len(v))) ** 0.5
+
+    # positive control: scalar β over all ticks
+    _bs = beta_all.get("scalar", [])
+    _bs_m = _mean(_bs)
+    _bs_se = _se(_bs)
+    _pos_ok = (_bs_m < 0) and (abs(_bs_m - pos_beta) <= 2.0 * _bs_se)
+    print("     양성통제 scalar: β=%.5f (se %.5f · n=%d) · 목표 %.4f ∈ β±2se? %s"
+          % (_bs_m, _bs_se, len(_bs), pos_beta, _pos_ok))
+    if not _pos_ok:
+        print("  ⇒ ⛔ VOID — 양성통제 실패(scalar β 가 H_9664 %.4f 재현 못함) · 계기 사망" % pos_beta)
+        return 0
+    print("     ⇒ 게이트 PASS ✅")
+    print("")
+
+    # ── per-arm β + contrasts ─────────────────────────────────────────────
+    print("  ── per-arm β (post-emit · ζ 라벨 회귀 · 분포 보고) ──")
+    for _arm in ("scalar", "frozen", "refit", "random", "refit-resid"):
+        _v = beta_all.get(_arm)
+        if not _v:
+            continue
+        _npos = sum(1 for x in _v if x > 0)
+        print("     %-12s n=%-4d mean β=%+.5f (se %.5f) · β<0 tick %d/%d (%.0f%%)"
+              % (_arm, len(_v), _mean(_v), _se(_v), len(_v) - _npos, len(_v),
+                 100.0 * (len(_v) - _npos) / float(len(_v))))
+
+    def _paired_delta(_a, _b):
+        return [t[_a] - t[_b] for t in post_ticks if _a in t and _b in t]
+
+    def _perm_ci(_deltas):
+        # sign-flip permutation null on paired Δβ (within-tick pairing preserved)
+        pr = _prand.Random(rseed)
+        null = []
+        for _ in range(rounds):
+            null.append(_mean([x if pr.random() < 0.5 else -x for x in _deltas]))
+        null.sort()
+        return null[int(0.025 * rounds)], null[int(0.975 * rounds) - 1]
+
+    _has_refit = bool(beta_all.get("refit"))
+    _has_frozen = bool(beta_all.get("frozen"))
+    _has_random = bool(beta_all.get("random"))
+    _rb = beta_all.get("random", [])
+    _rnd_lo = _mean(_rb) - 2.0 * _se(_rb)
+    _rnd_hi = _mean(_rb) + 2.0 * _se(_rb)
+    print("")
+    print("  ── 대조 (paired Δβ · post-tick · ζ 라벨 순열 null) ──")
+    print("     random-null 밴드(축-null · ⚠️ 방향 3개뿐 = direction-marginal 아님): [%+.5f, %+.5f]"
+          % (_rnd_lo, _rnd_hi))
+    _contrasts = {}
+    for _a, _b in (("refit", "frozen"), ("refit", "random"), ("frozen", "random")):
+        _dl = _paired_delta(_a, _b)
+        if len(_dl) < 3:
+            continue
+        _dm = _mean(_dl)
+        _lo, _hi = _perm_ci(_dl)
+        _contrasts[(_a, _b)] = (_dm, _lo, _hi)
+        print("     Δβ(%s−%s) n=%d mean=%+.5f · 순열null95%%=[%+.5f,%+.5f] · TOST±%.3f %s"
+              % (_a, _b, len(_dl), _dm, _lo, _hi, tost,
+                 "PASS" if abs(_dm) < tost and abs(_lo) < tost and abs(_hi) < tost else "—"))
+
+    # ── verdict table (mechanical, row order) ─────────────────────────────
+    print("")
+    _bf = _mean(beta_all.get("frozen", [])) if _has_frozen else 0.0
+    _br = _mean(beta_all.get("refit", [])) if _has_refit else 0.0
+    _rf = _contrasts.get(("refit", "frozen"))
+    _rr = _contrasts.get(("refit", "random"))
+    _fr = _contrasts.get(("frozen", "random"))
+
+    def _ci_excl0(_c):
+        return _c is not None and (_c[1] > 0 or _c[2] < 0)
+
+    def _tost_pass(_c):
+        return _c is not None and abs(_c[0]) < tost and abs(_c[1]) < tost and abs(_c[2]) < tost
+
+    # per-tick sign-consistency of refit β
+    _rvv = beta_all.get("refit", [])
+    _sign_frac = (sum(1 for x in _rvv if x < 0) / float(len(_rvv))) if _rvv else 0.0
+
+    if _has_refit and _has_frozen and _ci_excl0(_rf) and abs(_br) > abs(_bf) \
+            and (_rr is not None and _ci_excl0(_rr)) and _sign_frac >= SIGN_FRAC:
+        v = ("🟢 PASS-NEW-LEVER — |β_refit|>|β_frozen| (paired CI 0 제외) ∧ refit·frozen 둘 다 "
+             "random-null 밖 ∧ per-tick 부호일관 %.2f≥%.2f ⇒ 라이브 축이 동결 축이 못 나른 dose 를 나름"
+             % (_sign_frac, SIGN_FRAC))
+    elif _has_refit and _has_frozen and _has_random and _tost_pass(_rf) and _tost_pass(_rr) \
+            and _tost_pass(_fr):
+        v = ("🧱 PASS-AXIS-BLIND — 3쌍 Δβ 전부 TOST±%.3f 등가 ⇒ 채널은 스칼라 dose 만 나름 · 축 "
+             "선택 무관 확정(근축퇴 H_9752 정합) ⇒ H_9756 입도/readout 로 이관" % tost)
+    elif _has_refit and _has_frozen and _ci_excl0(_rf) and abs(_bf) > abs(_br):
+        v = "🔴 KILL-REFIT-ADDS-NOTHING — |β_frozen|>|β_refit| (CI 분리) ⇒ 동결 좌표로 충분(서사 문제였을 뿐)"
+    elif _rf is not None and (_br * _bf < 0) and _ci_excl0(_rf):
+        v = "⛔ INVALID — refit vs frozen 부호반전(paired CI 0 제외) ⇒ refit 부호규약 결함 · 배선 감사 후 재발사"
+    else:
+        _mde = 2.0 * max((_rf[2] - _rf[1]) if _rf else 0.0, (_rr[2] - _rr[1]) if _rr else 0.0) / 2.0
+        v = ("⏳ NOT-POWERED — CI 분리도 TOST 등가도 아닌 중간지대 · realized MDE≈%.4f (결과이지 "
+             "verdict 아님 · run/tick 증량 필요)" % _mde)
+    print("  ⇒ VERDICT: " + v)
+    print("     범위: refit ζ-arm 은 **채널이 무엇을 나를 수 있나**의 계기 증거(라이브 데몬 행동 아님) · "
+          "크기 vs surrogate 로 읽지 raw° 아님(p7) · DIRECTIONAL(303M).")
+    return 0
+
+
 def _pc2_zeta_slope(argv):
     """H_9664 ZETA-SLOPE — the within-tick dose readout. Reads `anima-py chat --pc2-zeta` traces.
 
@@ -13484,7 +13806,10 @@ def main(argv):
         if "--occupancy" in argv:
             return _pc2_occupancy([a for a in argv[1:] if a != "--occupancy"])
         if "--zeta-slope" in argv:
-            return _pc2_zeta_slope([a for a in argv[1:] if a != "--zeta-slope"])
+            _zrest = [a for a in argv[1:] if a != "--zeta-slope"]
+            if "--by-loading" in argv:
+                return _pc2_zeta_by_loading([a for a in _zrest if a != "--by-loading"])
+            return _pc2_zeta_slope(_zrest)
         if "--atom-census" in argv:
             return _pc2_atom_census([a for a in argv[1:] if a != "--atom-census"])
         if "--rank-null" in argv:
