@@ -8725,7 +8725,7 @@ def _timing_channel(argv):
 
 def _silence_content_te(argv):
     """`anima-py evaluate --silence-content-te <trace globs...> [--perm 1000] [--seed 12345]
-       [--reach-lag same|next] [--copy-exclude none|exact|ngram] [--reach-oracle]` — H_9729 SILENCE-CONTENT.
+       [--reach-lag same|next] [--copy-exclude none|exact|ngram] [--reach-oracle] [--pool]` — H_9729 SILENCE-CONTENT.
 
     --reach-lag same (DEFAULT · PRIMARY reach · I(cand[t];carrier[t]|cand[t-1])) = "does the withheld
     carrier reach the SAME-tick candidate it seeds", conditioned on the PRE-treatment candidate (the
@@ -8810,6 +8810,14 @@ def _silence_content_te(argv):
     if reach_lag not in ("same", "next"):
         reach_lag = "same"
     reach_oracle = "--reach-oracle" in argv
+    # H_9729 pooled reader (--pool · evaluate-py-24): the own re-entry is ONE-SHOT (~1 usable transition
+    # per trace), so the per-trace ≥12 bar can NEVER power the own arm at any tick count. --pool collects
+    # same-arm triples ACROSS traces into one estimate. Each trace contributes ~1 INDEPENDENT (X,Y0,Y1)
+    # draw ⇒ the within-trace circular-shift null is undefined (m=1); the valid null is a Y0-STRATIFIED
+    # permutation of X (breaks I(Y1;X|Y0)=0 while preserving the Y0-conditional X marginal). Default off
+    # ⇒ the per-trace path is byte-identical. (Sol single-model · Fable OAuth-down · not-cemented-DIRECTIONAL.)
+    pool_mode = "--pool" in argv
+    _pooled = {}
     paths = []
     for g in globs:
         paths.extend(sorted(_glob.glob(g)))
@@ -8912,6 +8920,23 @@ def _silence_content_te(argv):
         xs2 = xs[-s:] + xs[:-s]
         return _cmi([(xs2[i], rest[i][0], rest[i][1]) for i in range(m)])
 
+    def _surr_perm_pooled(triples, rng):
+        # --pool null: Y0-STRATIFIED permutation of X over a POOL of independent draws (≈1/trace). The
+        # within-trace circular shift (_surr_null) is undefined at m≈1; this shuffles X INSIDE each Y0
+        # stratum, breaking I(Y1;X|Y0) while preserving the Y0-conditional X marginal + the (Y0,Y1) joint.
+        from collections import defaultdict as _dd
+        strata = _dd(list)
+        for i, t in enumerate(triples):
+            strata[t[1]].append(i)
+        xs = [t[0] for t in triples]
+        xs2 = xs[:]
+        for _y0, idxs in strata.items():
+            px = [xs[i] for i in idxs]
+            rng.shuffle(px)
+            for k, i in enumerate(idxs):
+                xs2[i] = px[k]
+        return _cmi([(xs2[i], triples[i][1], triples[i][2]) for i in range(len(triples))])
+
     # ── estimator self-test (planted recovery + independent null) · dead estimator = STOP ──
     _strng = _random.Random(seed ^ 0x9729)
     _planted = [((k := _strng.randrange(4)), _strng.randrange(4), k) for _ in range(400)]  # Y1==X
@@ -8920,6 +8945,16 @@ def _silence_content_te(argv):
     _est_ok = _te_planted > 0.5 and _te_indep < 0.15
     print("  estimator self-test : planted I(Y1;X|Y0)=%.3f (want>0.5) · independent=%.3f (want<0.15) ⇒ %s"
           % (_te_planted, _te_indep, "✅ live" if _est_ok else "❌ DEAD-ESTIMATOR (do not read below)"))
+    if pool_mode:
+        # pooled-null self-test: the Y0-stratified permutation MUST break the planted signal (earned>0.5)
+        # and read ~0 on independent data — validates the --pool surrogate before any pooled read.
+        _sp = _surr_perm_pooled(_planted, _random.Random(seed ^ 0x7729))
+        _si = _surr_perm_pooled(_indep, _random.Random(seed ^ 0x6729))
+        _pool_ok = (_te_planted - _sp) > 0.5 and abs(_te_indep - _si) < 0.15
+        print("  pooled-null self-test : planted perm-null=%.3f (earned %.3f · want>0.5) · indep perm-null="
+              "%.3f (Δ %.3f · want<0.15) ⇒ %s" % (_sp, _te_planted - _sp, _si, abs(_te_indep - _si),
+              "✅ pooled-null valid" if _pool_ok else "❌ POOLED-NULL DEAD (do not read --pool below)"))
+        _est_ok = _est_ok and _pool_ok
     if not paths:
         print("  ⇒ ⛔ no traces matched: %r  (produce with --wm-dual-read content)" % globs)
         return 2 if _est_ok else 3
@@ -8987,6 +9022,11 @@ def _silence_content_te(argv):
         print("      copy-diag: %d/%d injected transitions are literal copies (exact/≥24B-contain/LCS≥0.8)"
               " · copy-exclude=%s%s" % (n_copy, n_inj, copy_excl,
               (" (%d dropped)" % n_excl) if copy_excl != "none" else " (kept · reported only)"))
+        if pool_mode:
+            _pooled.setdefault(arm, []).extend(triples)
+            print("      [pool] +%d transition(s) → arm=%s pool (per-trace verdict deferred)"
+                  % (len(triples), arm))
+            continue
         if len(triples) < 12:
             print("      ⇒ ⛔ NOT-POWERED (%d usable transitions <12 · %d injected · %d copy-excluded)"
                   % (len(triples), n_inj, n_excl))
@@ -9017,6 +9057,34 @@ def _silence_content_te(argv):
     # MOUTH-SEVERED on ANY sub-strict-bar result, conflating "underpowered" with "severed". A carrier
     # with earned>0 ∧ TE>surr95 REACHES cand[t+1] (the channel is live); it just lacks power at the
     # strict bar. Only earned≈0 / TE≤surr95 (the run-2 point-mass signature) is genuine severance.
+    if pool_mode:
+        for arm, ptr in sorted(_pooled.items()):
+            print("  ══ [POOL] arm=%s · %d pooled transitions across %d trace(s) ══"
+                  % (arm, len(ptr), len(paths)))
+            if len(ptr) < 12:
+                print("      ⇒ ⛔ NOT-POWERED (pooled %d <12 · one-shot ⇒ ~1/trace ⇒ need ≥12 traces)"
+                      % len(ptr))
+                continue
+            _nx = len(set(t[0] for t in ptr)); _ny = len(set(t[2] for t in ptr))
+            if _nx < 2 or _ny < 2:
+                print("      ⇒ ⛔ NOT-POWERED (pooled X-addr=%d Y-addr=%d · need ≥2 each)" % (_nx, _ny))
+                continue
+            _te = _cmi(ptr)
+            _sur = [_surr_perm_pooled(ptr, _rng) for _ in range(perm)]
+            _ss = sorted(_sur); _p95 = _ss[min(len(_ss) - 1, int(0.95 * len(_ss)))]
+            _mu = sum(_sur) / len(_sur)
+            _sd = (sum((s - _mu) ** 2 for s in _sur) / max(1, len(_sur))) ** 0.5
+            _z = (_te - _mu) / _sd if _sd > 1e-12 else 0.0
+            _pv = (sum(1 for s in _sur if s >= _te) + 1) / (len(_sur) + 1)
+            _earned = _te - _mu
+            _passed = (_te > _p95) and (_z >= 2.0) and (_pv < 0.005)
+            _sig = (_te > _p95) and (_earned > 0) and (_pv < 0.05)
+            any_pass = any_pass or _passed
+            any_signal = any_signal or _sig
+            print("      pooled TE=I(Y1;X|Y0)=%.4f · earned=%.4f · Y0-strat-perm surr95=%.4f · z=%.2f "
+                  "· perm-p=%.4f ⇒ %s" % (_te, _earned, _p95, _z, _pv,
+                  "✅ content-transfer (pooled)" if _passed else
+                  ("🟡 signal-sub-bar (pooled)" if _sig else "ns (no pooled content-transfer)")))
     if reach_oracle:
         if any_pass:
             print("  ── REACH-ORACLE verdict: ✅ CERTIFIED — known carrier recovered at the strict bar"
