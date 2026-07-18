@@ -1,8 +1,28 @@
 # H_9753 — TENSION-STATE-MIXTURE — 라이벌 구조가설: 축이 아니라 이산 상태다 (R6-2 · $0)
 
-**status:** 🔵 PROPOSED (lab full R6 · Fable 5 · $0 트레이스-판독 · 사전등록 · 브리프 (a)의 라이벌 답)
+**status:** 🧱 KILL-CONTINUOUS (DIRECTIONAL · engine-native `anima-py evaluate --pc2-direction --state-census` · plant 인증·refit 전부 null)
 **lane:** g1-interface-addressable-wall · mouth/PC2-axis — 라이브 구조의 정체 (연속 저랭크 vs 이산 혼합)
 **related:** [[H_9712]] · [[H_9715]] · [[H_9752]] · [[H_9714]]
+
+## ⑧ VERDICT — 🧱 KILL-CONTINUOUS (이산-상태 라이벌가설 반증 · DIRECTIONAL)
+
+계기 = `anima-py evaluate --pc2-direction /tmp/pmp/pmp_traces --state-census --boot 300` (설치된 site-packages 경유 · numpy-only · 디코드 없음 · VERSION 0.19.1). 9 file → **3 독립 run** dedupe(중복 인자스트림 6 제외 · H_9714). Hartigan dip 은 참조 `diptest` C 구현 대비 60 랜덤샘플 machine-precision 일치(numpy-only 포팅).
+
+**양성통제(계기 인증) PASS** — 스펙트럼-매칭 2-상태 HMM plant(n=150·lag1≈0.18) separation sweep: sep=3.0 에서 dip=0.145>null95 ∧ dwell 군집 ∧ k=2 = 3중 검출 ⇒ **MDE separation = 3.0**. (dip 은 sep=1.5(≈4σ)부터 발화 = 다봉 축 검정력 양호 · dwell 은 저-자기상관에서 sep=3.0 필요 = 시간축 검정력이 약한 다리.)
+
+**판정 target = run 별 refit 2-D 부분공간(동결 H_9468 축 무등장 · card ②):**
+
+| target | dip (vs FT-null) | GMM-BIC k · 밀도 modes | dwell (vs AAFT) | 판정 |
+|---|---|---|---|---|
+| **PC2** (주) | 단봉 3/3 (p=0.85·0.25·0.99=초단봉 1) | k=2~3 · modes=1~2 | null 2/3 (군집 1) | **연속 3/3** |
+| PC1 (참조) | 단봉 3/3 | k=1~6 | null 2/3 | 연속 3/3 |
+| z-frz (동결) | 다봉 2/3 (p=0.013·0.000) | k=3~4 · modes=3 | 군집 2~3/3 | STATES 2/3 |
+
+- 사전등록 판정표 착지 = **KILL-CONTINUOUS** ("dip·dwell null-동급 ∧ plant PASS"): 상태 판별 2 검정(다봉·시간군집)이 plant 인증 아래에서 refit 부분공간 전부 null ⇒ 라이브 tension 은 **연속 저랭크** 존속 · 이산-상태(k=2~4) 혼합가설 반증. card ⑦ 예측사(死) 실현 — "z non-normality 는 shoulder/skew, '상태' 프레임 사망 ⇒ (a) 답은 H_9752 갈래로 좁혀진다".
+- **frozen z-projection 이 다봉으로 읽히는 것은 함정**: 그건 부분공간 기하가 아니라 nov(0.84 가중) 지배의 그 고정 조합의 성질(H_9713/9741 동결-축 사망과 정합). refit 축은 가중을 공분산 구조로 분산 → 단봉. 이산성은 동결 loading 의 부산물이지 substrate regime 아님.
+- **GMM-BIC k≥2 단독은 이산성 아님**: 비가우스 shoulder/skew 도 FT-gaussian null 을 이김 — 그래서 밀도 modes + 분포무관 dip 로 판별(단독 통계 오도 방지 = H_9712 교훈). PC2 의 k≥2 는 밀도 modes 얕고 dip 비유의 = skew-fit.
+- 범위/한계: toy(303M chat 트레이스 판독)·단일 트레이스셋·DIRECTIONAL. dwell 다리 검정력 약함(MDE sep=3.0) — 미세한 2-상태 구조는 미검출 가능하나, dip(sep≈1.5 검정력)에서 PC2 는 깊이 단봉(p≥0.85·1 은 초단봉)이라 marginal-다봉 부재는 robust. 계기 = `--state-census` 플래그(engine-native · a_experiment_engine_native).
+- 후속: PASS-STATES 아니므로 상태-조건부 ζ 설계 등록 없음. (a) 라이브-구조 정체 = **H_9752 연속 부분공간/평면 갈래**로 인계.
 
 ## ① 한 줄 주장 (반증가능)
 라이브 tension 은 연속 저랭크 가우시안이 아니라 **소수 이산 상태(k=2~4)의 혼합**이다 — z non-normal(IQR/sd=0.45 · H_9712)과 stage 92.7% 단일-pin(H_9715)은 같은 그림(regime pinning)의 두 단면. 참이면 '축 조향(연속 dose)'은 범주 오류이고, mouth 레버는 **상태-선택**이어야 한다.
