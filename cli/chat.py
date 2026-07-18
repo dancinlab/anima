@@ -1699,7 +1699,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # so an offline conditioned-Jaccard test can ask whether near-repeat structure appears
     # after silence runs. Measurement-only (never fed back to mouth/decode = p5-safe). OFF by
     # default → production trace byte-identical.
-    _rec_silent_cand = anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1"
+    # bare-safe: a bare `--record-silent-cand` (no value) means ON (chat-py-9 footgun — the
+    # ==\"1\" form silently consumed the NEXT token as the value, so a bare flag read as OFF with
+    # no error and the whole wm-dual measurement died NOT-POWERED · H_9729). bare | `1` | env all ON.
+    _rec_silent_cand = (anima_has_flag(_cargv, "--record-silent-cand")
+                        or anima_flag_value(_cargv, "--record-silent-cand", "ANIMA_RECORD_SILENT_CAND", "0") == "1")
     if _rec_silent_cand and _emit_gate != "refractory":
         raise SystemExit("--record-silent-cand requires --emit-gate refractory (its only producer)")
     # H_9729 SILENCE-CONTENT · does the WITHHELD candidate's CONTENT causally reach the future, or is
@@ -1814,14 +1818,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # LOAD-BEARING control (order-bearing content vs pressure/histogram · Sol). --wm-dual-swap <donor>
     # = another rollout's withheld candidate at the same tick (own-vs-other specificity · C2 · Fable).
     # Both are trace-only arm labels (never a production branch key · the :2460 lesson).
-    _wm_dual_perm = anima_flag_value(_cargv, "--wm-dual-perm", "ANIMA_WM_DUAL_PERM", "0") == "1"
+    _wm_dual_perm = (anima_has_flag(_cargv, "--wm-dual-perm")               # bare-safe (chat-py-9)
+                     or anima_flag_value(_cargv, "--wm-dual-perm", "ANIMA_WM_DUAL_PERM", "0") == "1")
     _wm_dual_swap_path = anima_flag_value(_cargv, "--wm-dual-swap", "ANIMA_WM_DUAL_SWAP", "")
     # H_9729 POSITIVE CONTROL producer · --wm-dual-oracle injects a FROZEN alternating A/B carrier
     # (two maximally feat-separable strings, tick-parity) through the SAME anchor path on EVERY tick
     # (not just post-silence) — a KNOWN content on a KNOWN schedule. --silence-content-te --reach-
     # oracle then requires recovery in cand[t+1]; ∅ ⇒ REACH-FAIL/MOUTH-SEVERED (H_9576) ⇒ a real null
     # is uninterpretable. The self-killing positive control both models mandated (pre-303M gate).
-    _wm_dual_oracle = anima_flag_value(_cargv, "--wm-dual-oracle", "ANIMA_WM_DUAL_ORACLE", "0") == "1"
+    _wm_dual_oracle = (anima_has_flag(_cargv, "--wm-dual-oracle")           # bare-safe (chat-py-9)
+                       or anima_flag_value(_cargv, "--wm-dual-oracle", "ANIMA_WM_DUAL_ORACLE", "0") == "1")
     if (_wm_dual_perm or _wm_dual_swap_path or _wm_dual_oracle) and _wm_dual_read != "content":
         raise SystemExit("--wm-dual-perm / --wm-dual-swap / --wm-dual-oracle require --wm-dual-read content")
     if (1 if _wm_dual_perm else 0) + (1 if _wm_dual_swap_path else 0) + (1 if _wm_dual_oracle else 0) > 1:
