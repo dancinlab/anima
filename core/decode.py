@@ -144,7 +144,9 @@ def cuda_available():
     item 1 of a 174-item eval. Probing only the device count promotes that host to the
     device path and the whole run dies, instead of taking the numpy fallback this module
     already guarantees for GPU-less hosts. So probe what decode actually uses: an
-    elementwise op AND a CUB reduction, once."""
+    elementwise op, a CUB reduction, AND a cuBLAS matmul (decode's forward is
+    matmul-dominated and cuBLAS is a separate runtime lib — a missing libcublas passes
+    the first two and dies at the first forward otherwise), once."""
     global _CUDA_AVAILABLE, _CUDA_PROBE_ERR
     if _CUDA_AVAILABLE is None:
         ok = False
@@ -155,6 +157,16 @@ def cuda_available():
                 if _cupy.cuda.runtime.getDeviceCount() > 0:
                     probe = _cupy.arange(4, dtype=_cupy.float64)
                     ok = bool((probe * 2.0 > 1.0).any())   # elementwise -> CUB reduce
+                    # matmul -> cuBLAS: decode's forward is DOMINATED by matmuls, and cuBLAS
+                    # (libcublas.so.<major>) is a SEPARATE runtime lib from the JIT/CUB path
+                    # above — a cupy whose cuBLAS is absent/mismatched passes the elementwise
+                    # probe, reports GPU, then dies at the FIRST forward `__matmul__` on
+                    # `libcublas.so.N: cannot open shared object file` (measured 2026-07-18 on a
+                    # rented pod: cupy-cuda13x over a CUDA-12.4 toolkit). Probe the lib class
+                    # decode ACTUALLY uses so a missing cuBLAS takes the numpy fallback this
+                    # module guarantees, instead of crashing mid-decode on a paid GPU.
+                    _mm = _cupy.ones((2, 2), dtype=_cupy.float64) @ _cupy.ones((2, 2), dtype=_cupy.float64)
+                    ok = ok and bool(_mm.sum() == 8.0)
                 else:
                     _CUDA_PROBE_ERR = RuntimeError("no CUDA device")
             except Exception as e:                # broken JIT/toolchain, driver fault …
