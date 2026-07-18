@@ -178,8 +178,8 @@
        {
         "id": "brain-structure-engine-lanes-interior-suffic-h9766-r8-percept-file",
         "type": "gate",
-        "verdict": "🔵 INTERIM: 303M relock fire 부분 9/9쌍 WASH(seed 2.5 robust·census-OPEN lane 발산 emit 미도달=BOUNDED no-interior 강수렴) · 통제 C0/C1 pending(~3h)·미cement · 계기+census 완료",
-        "detail": "H_9749 interior-부재 충분조건 R8 — 主다리 B(two-history 수렴검정·계기 chat --percept-file V0.18.2 toy-smoke ✅)·A(6-lane) 기각. H_9766 census($0·core 실코드): W_E/W_S/anchor/kosmos/immune 닫힘·afield/cbel/ca3 누적+read-path=OPEN ⟹ 정적 certificate 단독 불충분·B relock 필수. scope=BOUNDED·ε=exact0. NEXT=H_9767 pool relock(N=150t·자율)."
+        "verdict": "🟢 GREEN-DIRECTIONAL·BOUNDED — H_9767 relock 303M 12/12 evaluable pair WASH · C0 Δ=0 ∧ C1 diverge 양통제 PASS = BOUNDED COMMON-FUTURE CONTINUATION-COLLAPSE(tested reachable state에 행동적 지속 interior 없음·earned null)",
+        "detail": "H_9749 interior-부재 충분조건 R8 — 主다리 B(two-history 수렴검정·계기 --percept-file V0.18.2)·A(6-lane) 기각. H_9766 census($0): W_E/W_S/anchor/kosmos/immune 닫힘·afield/cbel/ca3 OPEN=certificate 단독 불충분. H_9767 relock(303M·4pair×3seed): OPEN lane 발산이 공통 future에 즉시 씻김. scope=BOUNDED·ε=exact0."
        },
        {
         "id": "brain-structure-engine-lanes-do-sigma-h9728-rebase-theta-alive",
@@ -16802,14 +16802,19 @@
     "state": "pos-conv",
     "value": "research·engine·instrument·core/·cli·emit-gate·swap·decode 변경과 design 결정, standing-pool cost run은 전부 자율 실행 대상 — 사람 승인 게이트가 아니다. H_9774 theta-alive cementing서 TERMINAL 도달에 필요한 engine 변경(RNG-neutral swap·greedy schedule-randomizer·provenance store)을 반복적으로 'owner p5'·'사람 승인 필요'·owner-gate로 오분류해 여러 턴 session-terminal로 punting했다. 오너가 명시 정정: '오너게이트 아님'·'사람승인 필요없도록 claude.md 수정'. 근인=p5(데몬 런타임 규칙: 하드코딩 speak/emit 금지)를 '내 작업의 승인 게이트'로 확대해석. p5는 데몬이 어떻게 행동하나의 규칙이지 내가 instrument/engine을 바꾸는 걸 막는 게 아니다. 유일 실제 go-gate=fleet rent=spend(standing pool·로컬은 자율).",
     "threshold": "재발조건: 자율 진행 중 engine/core/cli/instrument/design 변경이나 cost run이 필요할 때 'p5 위반?'·'owner 승인 필요?'로 멈추려 할 때. ① p5/philosophy는 데몬 runtime(하드코딩 emit/speak/persona 금지) 규칙이지 내가 measurement instrument·engine·flag를 바꾸는 작업의 게이트가 아니다 — 혼동 금지. ② 자율 가능(로컬·standing pool·reversible)한 걸 'owner-gate'로 분류해 session-terminal 하지 마라(anti-punt·break-walls). ③ 실제 사람-go가 필요한 건 오직 fleet rent=spend(돈 나가는 렌트). 그 외 engine 변경·instrument 재설계·design 결정·standing pool fire는 전부 자율. ④ CLAUDE.md '🤖 Autonomy — NO human-approval gate' 절이 SSOT.",
-    "linked_hypotheses": ["H_9774"]
+    "linked_hypotheses": [
+     "H_9774"
+    ]
    },
    {
     "id": "donor-swap-instrument-key-schema-must-match-consumer",
     "state": "pos-conv",
     "value": "do()-주입 계기(--swap-text 등 trace를 파일로 주고 실행 중 상태 교체)의 donor 파일 KEY 스키마는 소비 코드가 lookup하는 KEY와 정확히 일치해야 한다. H_9774: cli/chat.py:1925/2728은 donor를 ACTUAL TICK으로 매칭(_swap_texts[int(d['tick'])]→.get(int(tick)))하는데, 내 donor build가 {tick:i}로 emit ORDINAL(0,1,2…) 키잉=버그. greedy선 own이 상수라 misalign돼도 SHAM=0 유지(마스킹)·T=1.0선 own distinct라 틀린 텍스트 재주입→SHAM-vs-A0 59/60 가짜 confound. 이걸 'T>0 stochastic mouth와 상호작용하는 RNG instrument-wall'로 2세션 오진(#4127/#4129 RETRACTED). reference-match(소비 코드 정독)로 발견: 정확 actual-tick 키 SHAM_s7 T=1.0=0/60 확증⟹--swap-text는 전 temperature byte-clean. 'greedy-only byte-clean·regime-lock' 결론은 FALSE.",
     "threshold": "재발조건: trace/파일 기반 do()-주입 계기(--swap-text·store inject·activation patch by index)의 donor를 스스로 build할 때. ① donor 키 필드(tick·pos·id)를 순번(ordinal)으로 라벨링하지 말고 소비 코드가 lookup하는 실제 키(actual tick/pos)로 라벨링 — reference-match로 소비지점 확인(get(key) 무엇으로 인덱싱?). ② 계기 confound 의심(SHAM≠0) 시 'RNG/stochastic/instrument-wall' 단정 前 donor↔consumer 키 정렬부터 확인 — mode-collapse가 constant-content로 버그를 마스킹하다 distinct-content서 드러날 수 있음. ③ instrument confound를 substrate/regime ceiling으로 오독 금지·2세션 verdict도 reference-match 앞에 뒤집힌다(verdict-integrity·[[instrument-never-run-hides-multiple-bugs]]).",
-    "linked_hypotheses": ["H_9774", "H_9510"]
+    "linked_hypotheses": [
+     "H_9774",
+     "H_9510"
+    ]
    },
    {
     "id": "multi-seed-replication-vacuous-when-seed-doesnt-drive-source",
