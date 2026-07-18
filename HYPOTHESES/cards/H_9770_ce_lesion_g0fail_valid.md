@@ -10,3 +10,14 @@ k8_s7.clm 에: ① `--faction-lesion --perm 200`(within-arm S>null95) ② `--fac
 ## bar
 - within-arm S>null95 ∧ split8-null clean ⟹ K=8 CE-수준 faction 특화 실재(레버 실물 확증·천장=CE-scope).
 - S≤null95 ⟹ 파벌-303M CE-특화 미검출 = **$0 TERMINAL**.
+
+### 🟢 결과: DIRECTIONAL POSITIVE (2026-07-18 · mac perm40·win6 · PENDING firm perm200)
+k8_s7.clm(233MB pull·233889418) 에 `--faction-lesion domains(4셀×held-out) --perm 40` 실측:
+
+| arm | 모델 | S_real | null95 | 판정 |
+|---|---|---|---|---|
+| **학습 K=8** | k8_s7 172M | **0.0789** | 0.0023 | S>>null95 34배·p=0.0244 ✅ |
+| **미학습 K=1 split8** | clm303_clean 346M | **0.0019** | ~chance | 사후분할=구조없음 ✅ 통제 |
+
+**학습/미학습 = 42배**. 미학습 K=1 에 8-분할 강제 = S 0.0019(우연) vs 학습 K=8 = S 0.0789 ⟹ **k8_s7 positive 는 학습된 파벌 구조서 발생**(사후 임의분할 아님·계기 SOUND 의 fit-matched K=1 다리 충족). **파벌은 303M CE-수준 실제 기능적 레버**(G0 자유생성 실패와 무관·teacher-forced ΔCE 유효·val_CE 1.332 DESCENT 4/4). ⚠️ 내 사전예측 '특화불발'은 반증됨(S 는 argmax 안 쓰고 전셀 구조에너지·verdict-integrity). ⏳ **천장**: perm<200=PENDING(계기 명시·power-gate) → firm perm=200 GPU=TERMINAL 승격 follow-on(mac 76,800 forwards~7hr infeasible). DIRECTIONAL(303M py lesion·1 lens·a_toy_scale_recheck).
+결과 보존: ~/anima-weights/h9643_303m_derisk/k8_s7_lesion_perm40.json · clm303_split8_null_perm40.log.
