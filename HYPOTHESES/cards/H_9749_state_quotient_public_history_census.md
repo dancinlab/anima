@@ -44,3 +44,6 @@ STATE-QUOTIENT의 full census 중 **W_S-성분 lane은 H_9738(#4015)이 이미 �
 
 ⟹ **default 설정서 전 mutable 상태 = public history의 함수**(공개 trace로 재구성가능=private causal capacity 없음) = Sol 강명제("모든 future-effective 상태가 public history 함수") 충족 방향 = **interior 부재 STRONG-DIRECTIONAL**. ⚠️ **정직 범위**: 수공 정적 certificate(Sol 경고 + [[byte-identical-anchor-cert-hides-the-bug]] H_9393 판례 = 수공 정적 증명 불신) ⟹ 과단언 금지. **terminal = transplant 경험확증**(--state-transplant-field로 나머지 lane DONOR-P): W_S lane은 H_9738로 이미 경험확증(NULL)·나머지는 정적주장을 fire로 검증(오너 go). kosmos 교차세션 read는 별건(H_9740 인접).
 
+## ✅ $0 C0 determinism floor (2026-07-18 · toy·현 wm-dual 데몬)
+동일 public 입력(seed7·동일 플래그) 2회 → 전 decision-trace **byte-identical**(sha b13443a4·2/2). = 상태가 public 입력의 **결정론 함수**임을 실측 = 정적 census(전 lane public-fed)의 **결정성 필요조건 경험확증**. ⚠️ 결정성≠interior 부재(Sol: 결정론 recurrent state도 지속일 수 있음) ⟹ 남은 terminal = **donor-transplant wash-out**(같은 public 입력에 donor hidden-state 주입→씻기나=충분조건). C0=floor·transplant=충분. 계기 --state-transplant-field(나머지 lane)·pool·오너 go.
+
