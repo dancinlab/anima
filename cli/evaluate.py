@@ -755,6 +755,7 @@ def evaluate_usage():
     print("  anima evaluate --pc2-direction <traces_dir> [--perm N] [--seed N]   — H_9576 PC2→mouth 방향 판정(트레이스 판독·디코드 없음)")
     print("  anima evaluate --pc2-direction <traces_dir> --cascade-null          — H_9629 ΔD 참값-0 대좌·SNR(방향 음성이 읽히는 양인가)")
     print("  anima evaluate --pc2-direction <traces_dir> --z-census   — H_9712 z 용량/노출 census(트레이스 판독·디코드 없음)")
+    print("  anima evaluate --pc2-direction <traces_dir> --atom-census --pilot   — H_9756 atom-census readout 검정력 사전점검(base-rate·MDE · ζ-fire 트레이스 · 판정 아님)")
     print("  anima evaluate <ckpt> --probe <spec.json> [--gen N]   (matched-surface G1 probe · card H_6189)")
     print("  anima evaluate <ckpt> --faction-phi-proxy <prompts.json> [--n-factions-sweep 1,2,4,8,12,16,24,32,64]")
     print("      [--win 24] [--trials 200] [--seed 12345] [--out faction_phi.json]")
@@ -8104,7 +8105,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -10071,6 +10072,234 @@ def _pc2_rank_null(argv):
     else:
         print("     주의: ρ*=0.736 문턱은 **예측**이지 판정자가 아니다(AR(1) n_eff↔고유값 맵은 근사 · MP 는")
         print("     인자 등분산도 가정하나 여기 인자들은 등분산이 아니다). 판정은 위 surrogate 대조가 한다.")
+    return 0
+
+
+def _pc2_atom_census(argv):
+    """H_9756 ATOM-CENSUS (PILOT) — the axis-agnostic byte-granularity readout POWER pre-check.
+
+    `anima-py evaluate --pc2-direction <traces_dir> --atom-census --pilot [--atoms fw|<file>] [--span word]`
+
+    WHY A NEW READOUT. Readout D (H_9629) died a triple death — its denominator was the text's own
+    diversity, so it was un-identifiable (H_9716). This DV replaces it with a DENOMINATOR-FREE count:
+    the number of hits, in one tick's generated window, against a FIXED pre-registered atom list
+    (frequent English function words + punctuation). No text-self-diversity divisor, no experimenter
+    design value in the denominator — just a count. It is measured WITHIN-TICK PAIRED (the same tick
+    decoded at ζ=0 vs ζ=max, draw stream held fixed) so the tick's identity cancels (the H_9664 design).
+
+    THIS IS THE PILOT ONLY (`--pilot`). It does NOT run the full arm-swept readout (frozen/refit/resid/
+    random loading) or the prefix-swap positive control or the null arms — those need the H_9755 pool
+    fire (fresh decodes). The pilot answers ONE question off the EXISTING ζ-fire traces: does the
+    atom-census readout have any POWER at all? i.e. is the atom base-rate non-degenerate, and is the
+    MDE (min detectable Δ at the current n and variance) smaller than the effect we would care about?
+    If base-rate ≈ 0 or MDE > a medium (d=0.5) effect, the full fire is a waste until the readout is
+    redesigned (span up, richer atom family). This is a_scale_honest_scope — power BEFORE the negative,
+    instrument-power BEFORE the expensive run. It is NOT a verdict on the byte-wall claim.
+
+    9→3 dedupe is a no-op here: /tmp/zt already holds one file per independent run (distinct seeds);
+    a no-nudge control run may carry 0 emit ladders and simply contributes nothing.
+    """
+    import glob as _glob
+    import json as _pj
+    import base64 as _pb
+    import re as _re
+
+    # z(0.975) + z(0.80) — two-sided α=0.05 test, 80% power (paired)
+    _Z = 2.801585
+    _D_REF = 0.5          # effect of interest = a medium (Cohen's d = 0.5) shift
+    _BR_MIN = 0.05        # base-rate floor: ≥5% of window words must be atoms (card §5)
+
+    d = ([x for x in argv if not x.startswith("--")] or [""])[0]
+    if not d:
+        print("  ⇒ ⛔ usage: anima-py evaluate --pc2-direction <traces_dir> --atom-census --pilot")
+        return 2
+    pilot = "--pilot" in argv
+    span = evaluate_strval(argv, "--span", "word")
+    atoms_arg = evaluate_strval(argv, "--atoms", "fw")
+
+    # PRE-REGISTERED atom families (fixed · corpus-frequency-derived · NOT tuned to these traces).
+    _FW = ("the of and a to in is that it was for on as with his he be at by this had not are but "
+           "from or an they which one you were her all she there would their we him been has when "
+           "who will more no if out so said what up its about into than them can only other new some "
+           "could time these two may then do first any my now such like our over man me even most made "
+           "after also did many before must through back years where much your way well down should "
+           "because each just those people how too little state good very make world still own see men "
+           "work long get here between both life being under never day same another know while last "
+           "might us great old year off come since against go came right used take three").split()
+    _PUNC = list('.,;:!?"\'()-/')
+
+    if atoms_arg in ("fw", "corpus"):
+        word_atoms = set(_FW)
+        punc_atoms = list(_PUNC)
+        atoms_src = "built-in fw+punct (%d words · %d punct)" % (len(word_atoms), len(punc_atoms))
+    else:
+        try:
+            toks = [t.strip() for t in open(atoms_arg) if t.strip()]
+        except OSError:
+            print("  ⇒ ⛔ --atoms 파일 열기 실패: " + atoms_arg)
+            return 2
+        word_atoms = set(t.lower() for t in toks if all(c.isalpha() or c == "'" for c in t))
+        punc_atoms = [t for t in toks if not all(c.isalpha() or c == "'" for c in t)]
+        atoms_src = "%s (%d words · %d punct)" % (atoms_arg, len(word_atoms), len(punc_atoms))
+
+    def _b64(s):
+        try:
+            return _pb.b64decode(s) if s else b""
+        except (ValueError, TypeError):
+            return b""
+
+    def _count(txt):
+        """hit-count of pre-registered atoms in `txt`, plus the window's word length (for base-rate)."""
+        w = _re.findall(r"[a-z']+", txt.lower())
+        wc = sum(1 for x in w if x in word_atoms)
+        pc = sum(txt.count(p) for p in punc_atoms)
+        return wc + pc, len(w)
+
+    def _stats(deltas):
+        n = len(deltas)
+        if n < 2:
+            return None
+        md = sum(deltas) / float(n)
+        sd = (sum((x - md) ** 2 for x in deltas) / float(n - 1)) ** 0.5
+        den = sum((x - md) ** 2 for x in deltas)
+        num = sum((deltas[i] - md) * (deltas[i + 1] - md) for i in range(n - 1))
+        rho = (num / den) if den > 0 else 0.0
+        neff = (n * (1.0 - rho) / (1.0 + rho)) if abs(rho) < 1 else float(n)
+        neff = max(neff, 1.0)
+        mde_cnt = _Z * sd / (neff ** 0.5)
+        mde_d = _Z / (neff ** 0.5)
+        return {"n": n, "md": md, "sd": sd, "rho": rho, "neff": neff,
+                "mde_cnt": mde_cnt, "mde_d": mde_d}
+
+    files = sorted(_glob.glob(os.path.join(d, "*.jsonl")))
+    if not files:
+        print("  ⇒ ⛔ no *.jsonl under " + d)
+        return 2
+
+    print("=== anima evaluate --pc2-direction --atom-census (PILOT) — H_9756 계기 검정력 사전점검 ===")
+    print("traces: %s (%d file = %d run · span=%s)" % (d, len(files), len(files), span))
+    print("atoms:  %s" % atoms_src)
+    print("DV:     within-tick PAIRED Δcount = atoms(ζ=max) − atoms(ζ=0)  · 분모-프리 hit-count")
+    print("판정:   base-rate 충분(≥%.0f%% 창) ∧ MDE ≤ %.1f·sd ⇒ PILOT-PASS · 아니면 UNDERPOWERED-BY-INSTRUMENT"
+          % (_BR_MIN * 100, _D_REF))
+    print("        (⚠️ 이건 byte-wall 판정이 아니다 — 계기가 full fire 를 태울 검정력이 있나만 잰다)")
+    print("")
+
+    all_base_atoms, all_deltas, all_frac = [], [], []
+    iso_ok_tot, iso_bad_tot = 0, 0
+    per_run = []
+    for f in files:
+        meta = {}
+        base_atoms, deltas, frac = [], [], []
+        iso_ok, iso_bad = 0, 0
+        n_emit = 0
+        for l in open(f):
+            l = l.strip()
+            if not l:
+                continue
+            try:
+                r = _pj.loads(l)
+            except ValueError:
+                continue
+            if r.get("_meta"):
+                meta = r
+                continue
+            if not r.get("emit"):
+                continue
+            n_emit += 1
+            zl = r.get("gtext_zeta") or []
+            if len(zl) < 2:
+                continue
+            base_b = _b64(r.get("gtext_b64"))
+            rungs = {}
+            for e in zl:
+                zv = float(e["zeta"])
+                tb = _b64(e.get("text_b64"))
+                if abs(zv) < 1e-12:
+                    if tb == base_b:
+                        iso_ok += 1
+                    else:
+                        iso_bad += 1
+                rungs[round(zv, 6)] = tb
+            if not rungs:
+                continue
+            z0 = rungs.get(0.0)
+            zhi = rungs[max(rungs)]
+            if z0 is None:
+                continue
+            b_cnt, b_w = _count(z0.decode("utf-8", "replace"))
+            h_cnt, _ = _count(zhi.decode("utf-8", "replace"))
+            base_atoms.append(b_cnt)
+            deltas.append(h_cnt - b_cnt)
+            frac.append(b_cnt / float(b_w) if b_w else 0.0)
+        tag = os.path.basename(f)
+        st = _stats(deltas)
+        n_lad = len(deltas)
+        br_tick = (sum(base_atoms) / float(n_lad)) if n_lad else 0.0
+        br_frac = (sum(frac) / float(n_lad)) if n_lad else 0.0
+        per_run.append((tag, n_emit, n_lad, br_tick, br_frac, st))
+        iso_ok_tot += iso_ok
+        iso_bad_tot += iso_bad
+        all_base_atoms += base_atoms
+        all_deltas += deltas
+        all_frac += frac
+
+    print("  ① 🔐 격리 인증(ζ=0 == base gtext_b64): %d 일치 · %d 불일치" % (iso_ok_tot, iso_bad_tot))
+    if iso_bad_tot > 0:
+        print("     ⚠️ 격리 불일치 존재 — 전체 fire 시 재검(파일럿 base-rate 는 사다리 자체 ζ=0 rung 사용).")
+    print("")
+    print("  ② run 별 분포 (집계 하나로 읽지 말 것):")
+    print("     %-16s %5s %5s %9s %8s %9s %8s %8s %8s" %
+          ("run", "emit", "ladd", "atoms/tk", "frac", "meanΔ", "sdΔ", "n_eff", "MDE_d"))
+    for tag, n_emit, n_lad, br_tick, br_frac, st in per_run:
+        if st is None:
+            print("     %-16s %5d %5d %9s %8s %9s %8s %8s %8s   (사다리<2 · 기여 없음)"
+                  % (tag, n_emit, n_lad, "-", "-", "-", "-", "-", "-"))
+        else:
+            print("     %-16s %5d %5d %9.2f %8.3f %+9.3f %8.3f %8.1f %8.3f"
+                  % (tag, n_emit, n_lad, br_tick, br_frac, st["md"], st["sd"], st["neff"], st["mde_d"]))
+    print("")
+
+    pst = _stats(all_deltas)
+    if pst is None:
+        print("  ⇒ ⏳ 사다리(≥2 rung)를 가진 emit tick 이 부족 — fire 진행중이면 재폴링 · 파일럿 불가.")
+        return 0
+    n = pst["n"]
+    br_tick = sum(all_base_atoms) / float(n)
+    br_frac = sum(all_frac) / float(n)
+    req_n = (_Z / _D_REF) ** 2
+
+    print("  ③ POOLED (n=%d ladder · %d run 기여):" % (n, sum(1 for r in per_run if r[5] is not None)))
+    print("     base-rate:  atoms/tick = %.2f · 창-내 atom 비율 = %.3f (floor %.2f)"
+          % (br_tick, br_frac, _BR_MIN))
+    print("     paired Δ:   meanΔ = %+.3f · sdΔ = %.3f · lag-1 ρ̂ = %+.3f · n_eff = %.1f"
+          % (pst["md"], pst["sd"], pst["rho"], pst["neff"]))
+    print("     MDE:        count = %.3f · Cohen d = %.3f  (검출 최소효과 @현 n_eff · 80%% power · α=.05)"
+          % (pst["mde_cnt"], pst["mde_d"]))
+    print("     required n: d=%.1f 검출에 필요한 n = %.1f (n_eff %.1f %s)"
+          % (_D_REF, req_n, pst["neff"], "≥ 충족" if pst["neff"] >= req_n else "< 미달"))
+    print("")
+
+    if not pilot:
+        print("  ⇒ ℹ️ --pilot 없이는 계기 검정력만 보고한다. FULL readout(arm-swept frozen/refit/resid/")
+        print("     random + prefix-swap 양성통제 + null 대조)은 새 디코드가 필요 = H_9755 pool fire 대기.")
+        return 0
+
+    br_ok = br_frac >= _BR_MIN
+    mde_ok = pst["mde_d"] <= _D_REF
+    print("  ⇒ VERDICT (PILOT · 검정력 사전점검 · byte-wall 판정 아님):")
+    if br_ok and mde_ok:
+        print("     🟢 PILOT-PASS — base-rate 충분(%.3f≥%.2f) ∧ MDE(d=%.3f)≤%.1f·sd."
+              % (br_frac, _BR_MIN, pst["mde_d"], _D_REF))
+        print("     ⇒ atom-census readout 은 full arm-swept fire(H_9755)를 태울 검정력이 있다.")
+    elif not br_ok:
+        print("     🔴 UNDERPOWERED-BY-INSTRUMENT — base-rate 저조(%.3f<%.2f창)." % (br_frac, _BR_MIN))
+        print("     ⇒ span 상향(word→ngram) 또는 atom-family 확대 후 재산출 · full fire 전 readout 재설계.")
+    else:
+        print("     🔴 UNDERPOWERED-BY-INSTRUMENT — MDE(d=%.3f)>%.1f·sd @n_eff=%.1f."
+              % (pst["mde_d"], _D_REF, pst["neff"]))
+        print("     ⇒ 현 n 으로는 medium 효과도 못 잡는다 · tick 수 늘리거나(더 긴 fire) 관심효과 상향.")
+    print("     범위: PILOT = 계기 검정력만 · 벽/축 판정은 full arm-swept fire(prefix-swap 양성통제 통과 후).")
     return 0
 
 
@@ -12322,6 +12551,8 @@ def main(argv):
             return _pc2_occupancy([a for a in argv[1:] if a != "--occupancy"])
         if "--zeta-slope" in argv:
             return _pc2_zeta_slope([a for a in argv[1:] if a != "--zeta-slope"])
+        if "--atom-census" in argv:
+            return _pc2_atom_census([a for a in argv[1:] if a != "--atom-census"])
         if "--rank-null" in argv:
             return _pc2_rank_null(argv[1:])
         if "--factor-census" in argv:
