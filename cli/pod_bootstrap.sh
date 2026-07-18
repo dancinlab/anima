@@ -77,20 +77,27 @@ echo "[pod] ensure rsync (resumable transfer) …"
 "${SSH[@]}" 'command -v rsync >/dev/null 2>&1 || { apt-get update -qq && apt-get install -y -qq rsync; } >/dev/null 2>&1 || true'
 POD_HAS_RSYNC=$("${SSH[@]}" 'command -v rsync >/dev/null 2>&1 && echo 1 || echo 0')
 transfer_one() {  # $1 = local file → /root/<basename>, resumable + retrying
+  # rsync (resumable) FIRST when the pod has it; on 8× failure FALL BACK to scp (not just when
+  # rsync is ABSENT) — a host whose ssh-proxy breaks rsync mid-stream can still take a plain scp
+  # (observed on ssh6.vast.ai: rsync 8× FATAL while `hexa cloud copy-to` scp of the same wheel
+  # succeeded). The old code only reached scp when rsync was uninstallable, so a rsync-transport
+  # failure died instead of degrading. `return 0` on the first success of either path.
   local f="$1" base; base=$(basename "$f"); local n=0
   if command -v rsync >/dev/null 2>&1 && [ "$POD_HAS_RSYNC" = 1 ]; then
-    until rsync --partial --append-verify --timeout=180 \
-          -e "ssh -p $PORT -o StrictHostKeyChecking=no -o ServerAliveInterval=20" \
-          "$f" "root@$HOST:/root/$base"; do
-      n=$((n+1)); [ "$n" -ge 8 ] && { echo "FATAL: rsync failed 8× on $base" >&2; return 1; }
-      echo "[pod]   rsync retry $n/8: $base (resuming)"; sleep 5
+    while [ "$n" -lt 8 ]; do
+      rsync --partial --append-verify --timeout=180 \
+        -e "ssh -p $PORT -o StrictHostKeyChecking=no -o ServerAliveInterval=20" \
+        "$f" "root@$HOST:/root/$base" && return 0
+      n=$((n+1)); echo "[pod]   rsync retry $n/8: $base (resuming)"; sleep 5
     done
-  else
-    until "${SCP[@]}" "$f" "root@$HOST:/root/$base"; do
-      n=$((n+1)); [ "$n" -ge 8 ] && { echo "FATAL: scp failed 8× on $base" >&2; return 1; }
-      echo "[pod]   scp retry $n/8: $base"; sleep 5
-    done
+    echo "[pod]   rsync failed 8× on $base — falling back to scp" >&2
   fi
+  n=0
+  while [ "$n" -lt 8 ]; do
+    "${SCP[@]}" "$f" "root@$HOST:/root/$base" && return 0
+    n=$((n+1)); echo "[pod]   scp retry $n/8: $base"; sleep 5
+  done
+  echo "FATAL: both rsync and scp failed on $base" >&2; return 1
 }
 echo "[pod] transfer … (rsync=$POD_HAS_RSYNC · resumable + retry)"
 transfer_one "$WHEEL" || exit 1
