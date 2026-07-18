@@ -239,3 +239,34 @@ addr_mass **0.95** · P1-bal 1.0/0.96/0.99 — **같은 summer 환경(torch 2.13
 **교훈(메타)**: 강한 root-cause("환경 회귀")를 landing 전에 **병렬세션 성공 대조**를 안 했다 —
 cross-session check 가 나중에 반박. [[a_parallel_session_compare]]: verdict landing **전에** 같은 lane
 의 최근 성공 결과를 확인하라.
+
+---
+
+## 🎯 판별 완료 — SETUP 버그 확정 (recipe·환경 아님 · 2026-07-18)
+
+RV-3 replication(병렬세션 winning recipe `--store-val-center` 를 내 setup·같은 seed-7 서 실행):
+```
+              addr_top1   addr_mass   P1
+내 plain       0.0078      0.0075     0.398
+내 RV-3        0.0000      0.0086     0.555   ← winning recipe 도 내 setup 서 실패
+병렬 RV-3       0.95(mass) ~sharp     ~1.0    ← 같은 recipe·같은 env
+```
+**RV-3(병렬 winning recipe)가 내 setup 서도 주소 실패**(addr_top1 0.000·train sb_addr_acc 1.0 암기).
+⟹ **plain-recipe 환경회귀 아님**(RV-3 도 실패)·**recipe 아님**. 내 모든 run(plain·RV-3·seed 3/7/17)이
+**주소를 암기하나 held-out 일반화 실패**인데, t3·병렬세션은 같은 코드·base·seed 로 일반화(0.95+).
+
+### 최종 판정: 내 setup 특이 버그 (원인 미격리 · 1:1 대조 필요)
+전부 배제: NOT recipe(RV-3 실패)·NOT 환경 단독(병렬 같은 env 성공)·NOT seed(3seed 재현)·NOT code
+(ref-match #4040)·NOT eval(t3 0.9844). ⟹ **내 fire pipeline 의 setup 특이 결함**: t3ref_s7 storebind
+파라미터/corpus 구조 · base ckpt init · venv/torch install · trunk co-train corpus(gen_en/sns_en) 중
+하나가 병렬세션 작동 run 과 다르다. **주소 암기(train 1.0)/일반화(held 0.000) 해리 = W_q 가
+content-addressable 대신 개체-고정 암기를 학습** = 훈련 궤적이 병렬과 갈렸다(같은 seed 라도).
+
+### NEXT (setup diff 1:1 bisect · coordination point)
+병렬세션 H_9672/RV-3 winner 의 **정확한 invocation**(storebind 파라미터 · base ckpt 경로 · train
+플래그 전량 · venv torch)을 확보해 내 rv3.sh 와 1:1 대조 → 첫 divergence 정렬(reference-match).
+가장 유력: (1) storebind n_pool/n_eval/블록당 K-회전 구조 diff (2) trunk co-train corpus drift.
+이건 병렬세션 정보 필요 = coordination point.
+
+**H_9734 = INSTRUMENT-DEAD 유지**(내 fire 전체가 깨진 setup · arm-N 판독불가 · 사전등록 게이트가
+방어). **#4089 정정 강화**: 환경회귀 철회가 옳았고, RV-3 도 실패해 recipe 도 배제 = 순수 내 setup.
