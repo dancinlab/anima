@@ -1,6 +1,6 @@
 # H_9774 — CONTENT-REACH — 주입된 content가 global workspace에 닿나 (C8 store-swap · ownership는 미식별 확정 후 유일 생존)
 
-**status:** 🟢 GREEN-DIRECTIONAL (#4104 + multiseed/A2 #PR) — **CONTENT-REACH LIVE + GLOBAL**(SHAM-clean·granularity=byte-multiset+trigram·sub-semantic). SHAM=0/60 **3 gate-seed(7/11/13) 재현**·A2 SCRAMBLE로 granularity 정밀화. 계기 EXISTS(`--swap-text` H_9328/9338-certified·신규 엔진코드 0). ownership은 C8서 UNIDENTIFIABLE(코드확증·불변). 🧱 **TERMINAL cementing = INSTRUMENT-WALL(regime-lock·아래 T=1.0)**: greedy는 own vacuous(distinct=1)·T>0는 계기 confound(SHAM≠A0)=상호배타. DIRECTIONAL가 `--swap-text`로 달성가능한 천장.
+**status:** 🟢 GREEN-DIRECTIONAL (#4104 + multiseed/A2 #PR) — **CONTENT-REACH LIVE + GLOBAL**(SHAM-clean·granularity=byte-multiset+trigram·sub-semantic). SHAM=0/60 **3 gate-seed(7/11/13) 재현**·A2 SCRAMBLE로 granularity 정밀화. 계기 EXISTS(`--swap-text` H_9328/9338-certified·신규 엔진코드 0). ownership은 C8서 UNIDENTIFIABLE(코드확증·불변). ⚠️→✅ **"INSTRUMENT-WALL"(#4127/9) RETRACTED = 내 donor-keying 버그**(ordinal vs actual-tick·아래): 정확-키 SHAM_s7 T=1.0=0/60 확증 ⟹ `--swap-text` T>0 byte-clean·cementing 경로 살아남·T=1.0 독립-content multi-seed 재발사 IN PROGRESS.
 
 ## 판정 심화 (multi-seed + A2 SCRAMBLE · summer · #PR)
 1차 #4104(s7 3-way)에 이어 SHAM+CERT × s11/s13 + A2 SCRAMBLE(s7) 발사(rc=0·60tick·detached setsid).
@@ -10,14 +10,12 @@
   - **order-sensitive channel 실재**: A2에서 rel_lane 32 + global(psi_gws 24·ten_phasic 56·base_motiv 58·emit_drive 32·coh_lane 32) 발산 ⟹ 순서 정보를 나르는 채널(trigram/immune 계열 rel_lane→global)이 존재. A2/A3 total-div ratio 0.41 = 발산의 ~41%가 순서보존서 살아남음(order-sensitive), ~59%는 multiset 성분.
   - ⟹ **granularity 정밀화: REACH = byte-multiset(1-gram) AND byte-trigram(3-gram·order-sensitive) grade**. 여전히 sub-semantic(trigram≠의미)이나 순수 multiset보다 richer. "byte-stats grade"의 상세 구조 실측.
 
-## 🧱 cementing lane 종결 — T=1.0 INSTRUMENT-WALL (regime-lock · #PR)
-greedy multi-seed의 vacuity(own distinct=1)를 깨려 `--emit-temp 1.0`(scoped 측정 arm·production default 불변·자율발사)로 A0/SHAM/CERT × s7/s11 재발사(rc=0·60tick). own mode-collapse는 깨졌으나(**s7 distinct 32/32·s11 30/30·s7∩s11=0 seed간 독립 확증**) **계기가 그 regime서 무너짐**:
-- **⚪ INVALID — SHAM 통제 실패**: SHAM-vs-A0 = **s7 59/60·s11 59/60**(greedy는 0/60). 첫 발산 **tick=1**(즉시)·emit schedule 불일치(s7 A0 32 vs SHAM 30 emit-tick). ⟹ **`--swap-text`가 T>0 stochastic mouth와 상호작용해 tick1부터 RNG 궤적 교란**(greedy선 결정론이라 byte-clean·T>0선 butterfly). content 격리 불가.
-- **상호배타 regime 결함**: greedy=own **vacuous**(distinct 1·multi-seed 무의미)·T>0=계기 **confound**(SHAM≠A0). ⟹ `--swap-text`로 clean 독립-content 재현은 **원리적 불가**. TERMINAL cementing=**instrument wall**(infra-wall-noneval: 과학 verdict서 quarantine)이지 substrate wall 아님.
-- **🔀 lab-full 재프레임(#PR·Fable∥Sol)**: 값싼 A/B/C donor panel은 cementing 아님(marginal ceremony)·A2가 이미 "아무 문자열이나 다 흔든다" 반증(feature-selective)·TERMINAL은 **block-randomized schedule**(seed=block·content 고정·run-level 통계·tick≠IID) 필요. 둘 다 제안: greedy seed-invariance를 자산으로 써 seed로 schedule만 randomize.
-- **🧱 block-greedy path도 DEAD(측정확증·#PR)**: lab의 공통 전제("greedy seed가 schedule을 varies·content는 고정")를 실측 반증 — greedy emit schedule이 **s7=s11=s13 byte-identical**(emit tick 1,3,5,…교대·0 mismatch·refractory가 결정론적 emit-every-other 강제). ⟹ greedy는 **독립축이 아예 없음**(content frozen distinct=1 **AND** schedule frozen seed-invariant). block-randomized-greedy 불가. ⟹ TERMINAL엔 **engine 변경 2종 필요**: (a) RNG-neutral swap(T>0서 SHAM=0 유지) OR (b) schedule-randomizer(greedy gate에 진짜 seed-variance 도입). 둘 다 core/cli engine·owner p5-인접.
-- **과학 verdict 불변**: content-reach LIVE+GLOBAL·byte-multiset+trigram grade는 **greedy SHAM=0 clean run**(#4104/#4108)에 근거·유효. conv=[[swap-text-instrument-byte-clean-only-in-greedy-regime]].
-- ⟹ **DIRECTIONAL가 `--swap-text` 측정된 천장** — H_9774 최종 tier(값 판단 아닌 측정 강제·cementing 전 path 전멸). Sol 소수의견: SHAM+A2로 이미 충분·DIRECTIONAL 수용해 frontier 종결. 합의 status: theta-alive EXHAUSTED·ownership+semantic reach는 구성상 미식별.
+## ⚠️→✅ RETRACTION — "T=1.0 INSTRUMENT-WALL"(#4127/#4129)은 내 donor-keying BUG였다 (#PR)
+직전 세션이 T=1.0 SHAM confound(59/60)를 "`--swap-text`가 T>0 stochastic mouth와 상호작용해 RNG 궤적 교란=instrument-wall·cementing 전 path 전멸"로 단정(#4127/#4129). **reference-match(소비 코드 정독)로 반증**: `cli/chat.py:1925/2728`는 donor를 **ACTUAL TICK**으로 매칭(`_swap_texts[int(_d["tick"])]` → `.get(int(tick))`)하는데, 내 donor build(`/tmp/h9774_*_build.py`)가 `{"tick":i}`로 **emit ORDINAL(0,1,2…)** 키잉 = **버그**. greedy선 own이 상수("vault QX-7741…")라 misalign돼도 SHAM=0 유지(마스킹)·T=1.0선 own distinct라 틀린 텍스트 재주입→59/60 가짜 confound.
+- **✅ 실측 확증**: 정확 actual-tick 키로 SHAM_s7 T=1.0 재발사 → **SHAM-vs-A0 = 0/60**(버그판 59/60)·schedule identical(32=32). ⟹ **`--swap-text`는 T>0서도 byte-clean.** instrument-wall은 FALSE·cementing 전 path 전멸도 FALSE.
+- **⟹ T=1.0 cementing 경로 살아남**: T=1.0은 own distinct(s7 32·s11 30·s7∩s11=0 독립) **AND** 정확-키 SHAM=0(계기 valid) = greedy vacuity 없이 **진짜 독립-content multi-seed** 가능. 정확-키 A0/SHAM/CERT × s7/s11/s13 재발사 IN PROGRESS(#PR).
+- conv=[[swap-text-instrument-byte-clean-only-in-greedy-regime]] 는 **RETRACTED**(greedy-only 아님·전 temperature byte-clean·단 donor 키 스키마 정확해야) · 새 교훈=[[donor-swap-instrument-key-schema-must-match-consumer]].
+- **과학 verdict 불변·강화**: content-reach LIVE+GLOBAL·byte-multiset+trigram grade는 greedy #4104/#4108에 근거하되, 이제 T=1.0 독립-content 재현으로 cementing 진행 = DIRECTIONAL→TERMINAL 경로 open.
 
 ## 판정 결과 (SHAM-controlled 3-way · summer s7 · `--swap-text` A0/A1/A3 · 60tick)
 계기결함 5연발(mouthless→wrong-field→미직렬화→0-load→**donor-degenerate**)을 verdict-integrity/dead-positive-control로 전수 포착 후, greedy mouth의 own mode-collapse(s7=1 distinct text·"vault QX-7741…" 앵커 echo)를 h9728_c0의 24 distinct 텍스트(byte-distinct 20/24 cert)로 교정한 **certified-distinct donor**로 재발사.
