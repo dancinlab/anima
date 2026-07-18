@@ -1777,8 +1777,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # set_clms_store). 'overwrite' (default) = H_9423 byte-identical; 'odd' enforces answer-oddness in
     # store polarity (s_odd=½(s(v,g)−s(−v,g))) to close the H_9744 op=0 flip-coh gap in-vivo.
     _store_fuse = anima_flag_value(_cargv, "--store-fuse", "ANIMA_STORE_FUSE", "overwrite")
-    if _store_fuse not in ("overwrite", "gated-add", "odd"):
-        raise SystemExit("--store-fuse: only 'overwrite' (default), 'gated-add' or 'odd' (got %r)" % _store_fuse)
+    if _store_fuse not in ("overwrite", "gated-add", "odd", "pairodd"):
+        raise SystemExit("--store-fuse: only 'overwrite' (default), 'gated-add', 'odd' or 'pairodd' (got %r)" % _store_fuse)
     if _store_episodic == "on":
         if percept_source is None:
             raise SystemExit("--store-episodic on requires an anima-study percept source (the store is "
