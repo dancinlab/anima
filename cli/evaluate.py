@@ -989,7 +989,7 @@ def evaluate_usage():
     print("      counts power at the ATOM level, and reports a label-permutation null (H_9302/H_9303).")
     print("  --store <held.json> [--store-oracle] [--store-lambda λ] [--store-addr-audit]")
     print("      [--store-shuffle | --store-flip | --store-neutral] [--store-ctrl-seed 9423]")
-    print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add|odd]")
+    print("      [--store-query qpos|every-token] [--store-fuse overwrite|gated-add|odd|pairodd] [--store-readout 2way|vocab]")
     print("      H_9423 CLMS store-bridge lane eval (the CO-TRAINED bridge, not the H_9392 bolt-on):")
     print("      each held-out item injects its 8-slot store at the query; the lane forms a")
     print("      content-addressed lookup and rewrites the answer-position logits with λ·store.")
@@ -4422,14 +4422,22 @@ def store_run(argv):
         print("ERROR: --store-query must be 'qpos' (default) or 'every-token', got %r" % store_query)
         return 1
     store_fuse = evaluate_strval(argv[1:], "--store-fuse", "overwrite")
-    if store_fuse not in ("overwrite", "gated-add", "odd"):
-        print("ERROR: --store-fuse must be 'overwrite' (default), 'gated-add' or 'odd', got %r" % store_fuse)
+    if store_fuse not in ("overwrite", "gated-add", "odd", "pairodd"):
+        print("ERROR: --store-fuse must be 'overwrite' (default), 'gated-add', 'odd' or 'pairodd', got %r" % store_fuse)
         return 1
-    if store_query == "every-token" and store_fuse in ("overwrite", "odd"):
+    # H_9775: --store-readout {2way,vocab}. 2way (legacy) = argmax over {g,b} only. vocab = 256-vocab
+    # argmax, answer readable ONLY iff ŷ∈{'g','b'} else 'unreadable' — the SAME rule the in-vivo daemon
+    # mouth uses (full-vocab greedy). #4103: odd passed the 2-way gate (main 1.0) yet emitted garbage
+    # in-vivo; the vocab readout catches that at eval time (predicts in-vivo). Default 2way = byte-identical.
+    store_readout = evaluate_strval(argv[1:], "--store-readout", "2way")
+    if store_readout not in ("2way", "vocab"):
+        print("ERROR: --store-readout must be '2way' (default) or 'vocab', got %r" % store_readout)
+        return 1
+    if store_query == "every-token" and store_fuse in ("overwrite", "odd", "pairodd"):
         # clms.py store_apply: overwriting EVERY row deletes the trunk and destroys fluency — the
-        # readout would score the lane alone with no mouth left (odd is overwrite-style too). Refuse
+        # readout would score the lane alone with no mouth left (odd/pairodd are overwrite-style too). Refuse
         # loudly (an INVALID arm is worse than no arm) rather than emit a number nobody may read.
-        print("ERROR: --store-query every-token with --store-fuse overwrite/odd overwrites every row,")
+        print("ERROR: --store-query every-token with --store-fuse overwrite/odd/pairodd overwrites every row,")
         print("       deleting the trunk (fluency dead · the readout stops being attributable).")
         print("       Use --store-fuse gated-add for the marker-free lane (H_9695).")
         return 1
@@ -4549,6 +4557,13 @@ def store_run(argv):
         if not qp:
             return None
         row = logits[qp[-1]]
+        if store_readout == "vocab":                  # H_9775: full-vocab argmax = the in-vivo daemon mouth rule
+            yhat = int(np.argmax(row))                 # (256-vocab greedy). readable ONLY iff ŷ∈{'g','b'};
+            if yhat == g_id:                           # else 'unreadable' — the daemon would emit a non-answer
+                return "good"                          # byte. #4103: full-row odd passed 2-way (main 1.0) yet
+            if yhat == b_id:                           # emitted garbage in-vivo — vocab catches it at eval time.
+                return "bad"
+            return "unreadable"
         return "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
 
     addr_audit = "--store-addr-audit" in argv          # H_9672: report addr_top1 (argmax==target) + addr_mass
@@ -4566,6 +4581,7 @@ def store_run(argv):
     fixed_points_total = dup_entities = 0
     pol_hist = {}                                     # #good-slots per store -> count (balance witness · §E)
     coh_all = coh_bc = coh_bc_n = flip_correct = 0    # flip-coherence accumulators
+    readable_n = 0                                     # H_9775 vocab: #answers whose full-vocab argmax ∈ {g,b}
     op_name = {0: "is ", 1: "not"}
     pol_name = {0: "good", 1: "bad "}
     for idx, it in enumerate(entries):
@@ -4605,10 +4621,14 @@ def store_run(argv):
                 continue
             gold_flip = "bad" if gold == "good" else "good"
             n += 1
-            coh_all += int(flip != base)
-            if base == gold:                          # coherence_bc: conditioned on baseline-correct (§B-2)
-                coh_bc_n += 1
-                coh_bc += int(flip != base)
+            base_ok = base in ("good", "bad")         # H_9775 vocab: 'unreadable' (argmax∉{g,b}) excluded from
+            flip_ok = flip in ("good", "bad")         #   coherence — the daemon would emit a non-answer there.
+            readable_n += int(base_ok)                # readability witness (base = the un-flipped answer)
+            if base_ok and flip_ok:                   # coherence ONLY over readable pairs (in-vivo rule)
+                coh_all += int(flip != base)
+                if base == gold:                      # coherence_bc: conditioned on baseline-correct (§B-2)
+                    coh_bc_n += 1
+                    coh_bc += int(flip != base)
             flip_correct += int(flip == gold_flip)
             key = (it.get("op"), 0 if gold == "good" else 1)
             rec = by.setdefault(key, [0, 0]); rec[0] += int(flip == gold_flip); rec[1] += 1
@@ -4623,6 +4643,7 @@ def store_run(argv):
             addr_top1 += int(e["argmax"] == e["target"])
             addr_mass += float(e["a_target"])
         n += 1
+        readable_n += int(pred in ("good", "bad"))    # H_9775 vocab: readability witness ('unreadable'≠gold=0)
         correct += int(pred == gold)
         key = (it.get("op"), 0 if gold == "good" else 1)
         rec = by.setdefault(key, [0, 0]); rec[0] += int(pred == gold); rec[1] += 1
@@ -4642,6 +4663,10 @@ def store_run(argv):
         print("    → PASS coherence_bc≥0.90 (store value causally consumed) · FAIL≤0.15 (v-channel dead). "
               "constant-predictor coherence≡0 by construction. read ONLY with 4/4 pol-balance + shuffle PASS.")
     acc = correct / n if n else 0.0
+    if store_readout == "vocab":                      # H_9775: readability = the #4103-catching witness
+        print("  readout=vocab (full-vocab argmax = in-vivo rule): readable=%d/%d = %.4f (argmax∈{g,b}) "
+              "· %s" % (readable_n, n, (readable_n / n if n else 0.0),
+                        "🟢 readable" if (n and readable_n / n >= 0.90) else "🔴 <.90 unreadable — pairodd E collapse or garbage"))
     verdict = ""
     if mode == "shuffle" and oracle:
         # oracle bypasses the address (a=one_hot(target_slot)), so the shuffle verdict bar is MEANINGLESS

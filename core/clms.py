@@ -147,8 +147,8 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
         rows = qpos
     else:
         raise ValueError("store_apply: query must be 'qpos' or 'every-token' (got %r)" % query)
-    if fuse not in ("overwrite", "gated-add", "odd"):
-        raise ValueError("store_apply: fuse must be 'overwrite', 'gated-add' or 'odd' (got %r)" % fuse)
+    if fuse not in ("overwrite", "gated-add", "odd", "pairodd"):
+        raise ValueError("store_apply: fuse must be 'overwrite', 'gated-add', 'odd' or 'pairodd' (got %r)" % fuse)
     for t in rows:
         h = yn[t]                                                          # (d,)
         if lane_type == 5:                                                 # H_9720-ⓐ fresh query lane
@@ -182,13 +182,26 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             else:                                                         #   op=0 (H_9744 flip-coh gap). For lane_type 3
                 z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # (Σ(aᵢ−1/n)=0 ⟹ v_flip≡−v) this
             s = 0.5 * (s - z_neg @ clms["W_out"])                         #   makes fixed-address flip-coherence = 1.
+        elif fuse == "pairodd":                                           # H_9775 Π-equivariant pair-odd: full-row odd
+            v_neg = -v                                                    #   (H_9760) killed the g/b argmax because it
+            if lane_type in (2, 3, 4, 5):                                 #   subtracted the even level that made g/b the
+                z_neg = _gelu(np.concatenate([v_neg, g]) @ clms["W_h"] + clms["b_h"])  # top logits. Here out[c∉{g,b}]=
+            else:                                                         #   ½(s⁺+s⁻) PRESERVES that even level (argmax
+                z_neg = _gelu(np.concatenate([v_neg, h]) @ clms["W_h"] + clms["b_h"])  # stays g/b = readable) while
+            s_neg = z_neg @ clms["W_out"]                                 #   swapping ONLY the answer pair makes the g/b
+            G_BYTE, B_BYTE = 103, 98                                      #   margin exactly odd in store polarity (Π =
+            sp_g, sp_b = float(s[G_BYTE]), float(s[B_BYTE])              #   103↔98 = the task's answer alphabet, not
+            sn_g, sn_b = float(s_neg[G_BYTE]), float(s_neg[B_BYTE])      #   per-query gold). readability = measured DV.
+            s = 0.5 * (s + s_neg)                                         #   out[c] = ½(s⁺[c]+s⁻[c]) for c∉{g,b}
+            s[G_BYTE] = 0.5 * (sp_g + sn_b)                               #   out[g] = ½(s⁺[g]+s⁻[b])
+            s[B_BYTE] = 0.5 * (sp_b + sn_g)                               #   out[b] = ½(s⁺[b]+s⁻[g])  ⟹ margin odd
         if lane_type == 4:
             # H_9696 learned query gate — the legal replacement for the "=> " literal. A literal
             # taught to the mouth is kill #1's scaffold relocated; a data-dependent nonlinear gate is
             # precisely the class kill #7 left unmeasured. gate→0 lets the lane stay silent where it
             # has nothing to say, which is what keeps free-gen fluency (dist>=5) alive.
             s = _sigmoid(float(h @ clms["W_gate"])) * s
-        if fuse in ("overwrite", "odd"):                                  # odd uses overwrite semantics (H_9760)
+        if fuse in ("overwrite", "odd", "pairodd"):                       # odd/pairodd use overwrite semantics (H_9760/H_9775)
             out[t] = (lam * s).astype(dt)                                 # ★ store_only gate (H_9423)
         else:                                                             # gated-add (H_9695/H_9696)
             out[t] = (logits[t] + lam * s).astype(dt)                     # lane = perturbation, trunk kept
