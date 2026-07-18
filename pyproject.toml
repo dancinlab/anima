@@ -23,7 +23,13 @@ requires-python = ">=3.9"
 dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]
-train = ["torch>=2.1", "datasets"]
+train = ["torch>=2.1,<2.13", "datasets"]
+# ⚠ torch UPPER BOUND IS LOAD-BEARING — torch 2.13+cu130 SILENTLY regresses store-addr
+# held-out address generalization on Blackwell sm_120 bf16 training (H_9734: same code /
+# corpus / base / seed / recipe, torch 2.11.0 generalizes addr 0.95, torch 2.13.0 memorizes
+# only 0.0078). Independently, cli/pod_bootstrap.sh already flags 2.13+cu130 as a Triton
+# JIT / first-kernel-crash trap. An unbounded torch>=2.1 lets a fresh install pull 2.13
+# from the cu130 index → broken training. Pin < 2.13 until a newer torch is re-verified.
 # cupy wheel is CUDA-major-version-specific; cupy-cuda12x covers CUDA 12.x runtimes
 # (verified on RTX 5070 sm_120 · driver 580.x · pool hosts `summer` and `aiden`).
 #

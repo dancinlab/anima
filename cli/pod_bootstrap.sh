@@ -173,7 +173,7 @@ if [ "${POD_TRAIN:-0}" = 1 ]; then
     if [ \"\$CC\" -ge 120 ]; then IDX=cu128; else IDX=cu124; fi   # sm_120 Blackwell → cu128, else stable cu124
     echo \"  compute_cap sm_\$CC → torch \$IDX (stable · precompiled kernels · no Triton JIT for basic ops)\"
     python3 -m pip install --break-system-packages -q datasets 2>&1 | tail -1
-    python3 -m pip install --break-system-packages -q --force-reinstall torch --index-url https://download.pytorch.org/whl/\$IDX 2>&1 | tail -1"
+    python3 -m pip install --break-system-packages -q --force-reinstall 'torch<2.13' --index-url https://download.pytorch.org/whl/\$IDX 2>&1 | tail -1"
   echo "[pod] train hard gate — REAL cuda matmul (not is_available) …"
   "${SSH[@]}" "python3 -c \"
 import torch
