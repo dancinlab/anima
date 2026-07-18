@@ -235,7 +235,8 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
                           backend, anchors, anchor_age_dt, recall_margin_fn,
                           mouth=None, dyn_w=None, record_cand_diag=False, route_pc2=None,
                           pc2_mouth="", dual_probe_fn=None, score_perturb=0.0,
-                          zeta_ladder=None, forced_emit=None, dual_margin_dither=0.0):
+                          zeta_ladder=None, forced_emit=None, dual_margin_dither=0.0,
+                          z_loading_state=None):
     """H_9415 p5-REWIRE · MARGIN-refractory emit gate (owner-ratified · H_9414 design).
 
     Replaces the two HARDCODED constants of the production gate — the θ (should_emit,
@@ -383,13 +384,57 @@ def brain_emit_refractory(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
     # SCOPE (card-enforced): a zeta arm is an INSTRUMENT arm about what the CHANNEL CAN carry --
     # it is NEVER evidence about what the live daemon DOES. p5/Stage-A hold: the gate still hears
     # only the BASE candidate, steering happens after emit is fixed and goes outward only.
+    # H_9755 REFIT-AXIS ζ-LADDER (design LOCK · card §8): when z_loading_state is supplied the
+    # single scalar ladder becomes an ARM x ζ grid. pc2(arm,ζ) = ζ * u_arm where u_arm is the
+    # per-tick, warmup-CALIBRATED (centered + Var=1) projection of this tick's factor vector onto
+    # the arm's loading — so ζ's dose-scale is IDENTICAL across arms and any surviving Δβ is an
+    # AXIS effect, not a gain artifact. scalar arm = u≡1 = the current H_9664 path (positive
+    # control). z_loading_state=None ⇒ the exact legacy scalar ladder, byte-identical (G5-safe).
     decision["gen_text_zeta"] = []
     if emit and zeta_ladder and mouth is not None:
-        for _zv in zeta_ladder:
-            m3 = dict(mouth)
-            m3["pc2"] = float(_zv)                        # zeta=0 => untouched row => base text
-            c3 = generate(backend, ctx, True, anchors, m3)
-            decision["gen_text_zeta"].append({"zeta": float(_zv), "text": str(c3["text"])})
+        zl = z_loading_state
+        if zl is not None:
+            # factor vector in the canonical order the caller passes positionally
+            _f_raw = (rel, gap, cur, pain, coh, orig, bal, dyn_v)
+            decision["zl_factors"] = [float(_x) for _x in _f_raw]
+            decision["zl_phase"] = str(zl.get("phase", ""))
+        if zl is not None and zl.get("phase") == "post":
+            _fmu = zl["fmu"]
+            _fsd = zl["fsd"]
+            _f_std = tuple(((_f_raw[_i] - _fmu[_i]) / _fsd[_i]) if _fsd[_i] > 1e-9 else 0.0
+                           for _i in range(8))
+            for _arm, _aw in zl["arms"].items():     # insertion order: scalar,frozen,refit,random,refit-resid
+                if not _aw.get("valid", True):
+                    continue
+                if _arm == "scalar":
+                    _u = 1.0
+                else:
+                    _fv = _f_raw if _aw.get("raw") else _f_std
+                    _proj = 0.0
+                    _w = _aw["w"]
+                    for _i in range(8):
+                        _proj += _w[_i] * _fv[_i]
+                    _sd = _aw["sd"]
+                    _u = ((_proj - _aw["mu"]) / _sd) if _sd > 1e-9 else 0.0
+                for _zv in zeta_ladder:
+                    m3 = dict(mouth)
+                    m3["pc2"] = float(_zv) * float(_u)   # zeta=0 => 0 => untouched row => base text
+                    c3 = generate(backend, ctx, True, anchors, m3)
+                    decision["gen_text_zeta"].append(
+                        {"zeta": float(_zv), "loading": _arm, "u": float(_u),
+                         "text": str(c3["text"])})
+        else:
+            # legacy H_9664 scalar ladder (also the warmup-phase path = scalar-only, tagged)
+            _warm_tag = (zl is not None)
+            for _zv in zeta_ladder:
+                m3 = dict(mouth)
+                m3["pc2"] = float(_zv)                    # zeta=0 => untouched row => base text
+                c3 = generate(backend, ctx, True, anchors, m3)
+                _entry = {"zeta": float(_zv), "text": str(c3["text"])}
+                if _warm_tag:
+                    _entry["loading"] = "scalar"
+                    _entry["u"] = 1.0
+                decision["gen_text_zeta"].append(_entry)
     if emit:
         decision["gen_emitted"] = cand["emitted"]
         decision["gen_backend"] = cand["backend"]
