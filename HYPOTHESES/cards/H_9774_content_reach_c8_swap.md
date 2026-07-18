@@ -1,6 +1,13 @@
 # H_9774 — CONTENT-REACH — 주입된 content가 global workspace에 닿나 (C8 store-swap · ownership는 미식별 확정 후 유일 생존)
 
-**status:** 🟢 GREEN-DIRECTIONAL (#4104 + multiseed/A2 #PR) — **CONTENT-REACH LIVE + GLOBAL**(SHAM-clean·granularity=byte-multiset+trigram·sub-semantic). SHAM=0/60 **3 gate-seed(7/11/13) 재현**·A2 SCRAMBLE로 granularity 정밀화. 계기 EXISTS(`--swap-text` H_9328/9338-certified·신규 엔진코드 0). ownership은 C8서 UNIDENTIFIABLE(코드확증·불변). ⚠️→✅ **"INSTRUMENT-WALL"(#4127/9) RETRACTED = 내 donor-keying 버그**(ordinal vs actual-tick·아래): 정확-키 SHAM_s7 T=1.0=0/60 확증 ⟹ `--swap-text` T>0 byte-clean·cementing 경로 살아남·T=1.0 독립-content multi-seed 재발사 IN PROGRESS.
+**status:** 🟢 GREEN-DIRECTIONAL (#4104 + multiseed/A2 #PR) — **CONTENT-REACH LIVE + GLOBAL**(SHAM-clean·granularity=byte-multiset+trigram·sub-semantic). SHAM=0/60 **3 gate-seed(7/11/13) 재현**·A2 SCRAMBLE로 granularity 정밀화. 계기 EXISTS(`--swap-text` H_9328/9338-certified·신규 엔진코드 0). ownership은 C8서 UNIDENTIFIABLE(코드확증·불변). ⚠️→✅ **"INSTRUMENT-WALL"(#4127/9) RETRACTED = 내 donor-keying 버그**(ordinal vs actual-tick): 정확-키 T=1.0 cementing **성공(#PR)** — 3-seed 독립-content 재현.
+
+## 🟢 CEMENTING — T=1.0 독립-content 3-seed 재현 (correct-key · #PR)
+RETRACTION 후 정확 actual-tick 키로 A0/SHAM/CERT × s7/s11/s13 재발사(rc=0·60tick·emit-temp 1.0·CERT=cross-seed distinct donor). greedy vacuity(own distinct=1·seed-invariant)를 T=1.0이 깬다:
+- **계기 valid at T=1.0 (3-seed)**: SHAM-vs-A0 = **s7 0/60·s11 0/60·s13 0/60** — 정확-키면 --swap-text는 T>0서도 byte-clean(RETRACTION 완전입증·regime-lock FALSE).
+- **CONTENT-REACH LIVE+GLOBAL (3-seed)**: CERT-vs-SHAM local/global = s7 295/286·s11 315/286·s13 323/286 — 전 seed local+global 발산.
+- **진짜 독립-content 조건**: own distinct s7=32·s11=30·s13=29·**cross-seed shared=0** ⟹ greedy와 달리 seed가 content SOURCE를 실제 변주 = 3 독립 조건서 재현(multi-seed vacuity 없음).
+- **tier=GREEN-DIRECTIONAL-STRONG**: 독립-content 3-seed 재현·SHAM=0 계기valid·CERT LIVE+GLOBAL. full-TERMINAL(사전등록 ~400 block-rand·tick≠IID p<0.005)는 통계 ceremony로 남음(새 지식 아님·Fable∥Sol 합의)·필요시 ~100 schedule-block apparatus.
 
 ## 판정 심화 (multi-seed + A2 SCRAMBLE · summer · #PR)
 1차 #4104(s7 3-way)에 이어 SHAM+CERT × s11/s13 + A2 SCRAMBLE(s7) 발사(rc=0·60tick·detached setsid).
