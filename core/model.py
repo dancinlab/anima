@@ -493,6 +493,12 @@ class CLMConvMoE(nn.Module):
         # TrainShell can gather the query-position column and drive the store-bridge co-training.
         # clms off => the dict key is absent => the byte-identical golden path is unchanged.
         pen_trunk = x if (self.clms is not None or self.mbnd is not None) else None  # (B, d, T) pre-slot tap
+        # H_9720 C1 param-matched-penult control (fresh:K@penult ⇒ fresh_L==0): the fresh head reads the
+        # SAME penult (pen_trunk) legacy's W_q reads — only the tap LOCATION differs from fresh:K@3. This
+        # isolates added-head CAPACITY from tap-DEPTH (Fable/Sol audit C1). Parity: decode feeds yn_trunk
+        # (≡ pen_trunk) as fresh_yn for fresh_L==0. In-loop tap never fires for fresh_L==0 (i+1 >= 1).
+        if _need_fresh and _fresh_L == 0 and pen_trunk is not None:
+            pen_fresh = pen_trunk
         mb_tap = x if self.mbnd is not None else None      # H_9698: MBND reads the SAME pre-slot tap
         # H_9200 E1 — gated-write forward-slot on the post-norm penultimate
         # (before readout). None => additive golden path (byte-identical).

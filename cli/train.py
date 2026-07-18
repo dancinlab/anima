@@ -1132,7 +1132,7 @@ class TrainShell(nn.Module):
         hm = m.norm_out(hm)
         return hm                                   # (B, d, T) — pre-readout dictionary site
 
-    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0):
+    def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached"):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1195,8 +1195,15 @@ class TrainShell(nn.Module):
             osl = tgt if sb_oracle else None
             # H_9720-ⓐ EN-disjoint fresh query: the address reads the DETACHED early-layer tap (store-CE
             # never pushes the trunk through this path ⇒ no EN-occupancy competition). None ⇒ W_q(yn_q).
+            # H_9720 C2 detach-ablation: 'detached' (default) = store-CE never reaches the trunk through
+            # this tap (disjoint · the CRACK arm) · 'shared' = drop .detach() so store-CE DOES flow into
+            # layers ≤ fresh_L (tests whether gradient-disjointness is load-bearing · Fable/Sol audit C2).
             _pf = out_s.get("pen_fresh")
-            yn_fresh = _pf.float()[:, :, Ts - 1].detach() if _pf is not None else None
+            if _pf is None:
+                yn_fresh = None
+            else:
+                _fy = _pf.float()[:, :, Ts - 1]
+                yn_fresh = _fy.detach() if sb_tap_grad != "shared" else _fy
             store_logits, att = model.clms(yn_q, K, pols, oracle_slot=osl, need_att=True,
                                            yn_fresh=yn_fresh)   # (Bs,V),(Bs,n_slot)
             ce_ans = F.cross_entropy(store_logits, y_s[:, Ts - 1])
@@ -1363,7 +1370,13 @@ def main():
                     help="H_9720-ⓐ EN-disjoint fresh query lane: 'penult' (default·lane_type≤4·byte-identical) OR "
                          "'fresh:K[@L]' (lane_type 5) — the ADDRESS query reads a detached trunk-layer-L tap "
                          "through W_fresh→W_q_fresh (store-CE only, EN-CE never touches it), K=lane width, "
-                         "L=tap depth (default 3, RF≥entity-span). Emergent-address WITHOUT addr-loss (admissible).")
+                         "L=tap depth (default 3, RF≥entity-span). '@penult' (fresh_L=0) = H_9720 C1 "
+                         "param-matched-penult control: same head, tap at the penult (capacity vs depth). "
+                         "Emergent-address WITHOUT addr-loss (admissible).")
+    ap.add_argument("--store-query-tap-grad", type=str, default="detached", choices=["detached", "shared"],
+                    help="H_9720 C2 detach-ablation for --store-query-src fresh: 'detached' (default·the CRACK "
+                         "arm·store-CE never reaches the trunk through the tap) OR 'shared' (drop .detach() so "
+                         "store-CE DOES flow into layers ≤ fresh_L) — tests if gradient-disjointness is load-bearing.")
     ap.add_argument("--store-ans-delay", type=int, default=0,
                     help="H_9692 RV-2: hold the answer-CE (sb_w=0) for the first N steps so only the address "
                          "(addr-loss) trains; the blurry-v window can\'t commit the MLP to op-only before the "
@@ -1618,6 +1631,8 @@ def main():
         mito = None                                 # no MoE experts to grow
     else:
         # H_9720-ⓐ --store-query-src 'fresh:K[@L]' → fresh_k/fresh_L (default 'penult' ⇒ 0 ⇒ byte-identical)
+        # H_9720 C1: '@penult' ⇒ fresh_L=0 = the fresh head reads the SAME penult (pen_trunk) legacy's W_q
+        # reads (only tap LOCATION differs from @3) — param-matched-penult control (capacity vs depth).
         _fresh_k, _fresh_L = 0, 3
         _sqs = str(getattr(a, "store_query_src", "penult") or "penult")
         if _sqs.startswith("fresh:"):
@@ -1625,7 +1640,7 @@ def main():
             _kpart, _, _lpart = _spec.partition("@")
             _fresh_k = int(_kpart)
             if _lpart:
-                _fresh_L = int(_lpart)
+                _fresh_L = 0 if _lpart.strip().lower() == "penult" else int(_lpart)
         cfg = CLMConfig(n_experts=emax, n_trunk_layers=L, d_model=d, kernel_size=K,
                         variant="AB", dilation_base=2, max_dilation=512,
                         slw=a.slw, slw_n_slot=a.slw_n_slot, slw_k=a.slw_k,
@@ -1991,7 +2006,8 @@ def main():
         sb_w_now = 0.0 if (a.store_ans_delay > 0 and step <= a.store_ans_delay) else a.store_ans_weight
         loss, ce_local, aux = train_module(x, y, obj_gen, a.dict_lambda, a.jamo_lambda,
                                            sb=_sb, sb_w=sb_w_now, sb_oracle=sb_oracle_now,
-                                           sb_addr_w=a.store_addr_weight, sb_oracle_aux=a.store_oracle_aux)
+                                           sb_addr_w=a.store_addr_weight, sb_oracle_aux=a.store_oracle_aux,
+                                           sb_tap_grad=str(getattr(a, "store_query_tap_grad", "detached")))
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()

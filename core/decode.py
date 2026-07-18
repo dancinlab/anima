@@ -1320,9 +1320,16 @@ def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
     # early-layer (fresh_L) activation in ONE pass (single host-copy, not all L layers) to feed the
     # disjoint address query. tap_depth=None for every other lane ⇒ _fwd_trunk byte-identical.
     _fresh_tap = None
+    _fresh_penult = False       # H_9720 C1: fresh_L==0 ⇒ the fresh head reads the penult (yn_trunk), not an
+                                # early tap — matches model.py (pen_fresh=pen_trunk when fresh_L==0). NB fresh_L==0
+                                # is NOT the embedding tap (_fwd_trunk's tap_depth==0 would capture the embed);
+                                # for penult we skip the tap entirely and hand yn_trunk to store_apply below.
     _clms_w = W.get("clms")
     if _clms_w is not None and int(_clms_w.get("lane_type", 0)) == 5 and _CLMS_STORE is not None:
-        _fresh_tap = {}
+        if int(_clms_w["fresh_L"]) > 0:
+            _fresh_tap = {}
+        else:
+            _fresh_penult = True
     yn = _fwd_trunk(W, tok, T, edits=edits,       # [T, d] pre-readout, pre-slot penultimate (device-resident if GPU)
                     tap_depth=(int(_clms_w["fresh_L"]) if _fresh_tap is not None else None),
                     tap_out=_fresh_tap)
@@ -1379,7 +1386,8 @@ def _fwd_logits(W, tok, T, edits=None, mbnd_last=False):
                                      _CLMS_STORE, qpos, oracle=_CLMS_ORACLE,
                                      lam_override=_CLMS_LAM_OVERRIDE, audit=_CLMS_AUDIT,
                                      query=_CLMS_QUERY, fuse=_CLMS_FUSE,
-                                     fresh_yn=(_fresh_tap["x"] if _fresh_tap is not None else None))
+                                     fresh_yn=(_fresh_tap["x"] if _fresh_tap is not None
+                                               else (to_host(yn_trunk) if _fresh_penult else None)))
     # H_9698 MOUTH-BINDER — additive, AFTER CLMS so the documented post-readout order stays
     # SLW → readout → CLML(additive) → CLMS → MBND(additive). Opt-in: trailer present + switch off
     # ⇒ byte-identical (a_substrate_disjoint: the two lanes never read each other).
