@@ -4384,6 +4384,31 @@ def fan_bind_run(argv):
     if _pv == "UNDECIDABLE" and pd.get("m",0) < 5:
         print("     ⛔ m=%d < 5 ⟹ exact McNemar 로 어떤 데이터도 유의 불가 = fan-smp 상향 필요"
               "(δ=0.05 사전등록엔 N≥288 = fan-smp≈48 · power-before-negative-verdict)." % pd.get("m",0))
+    # ── DUAL-GATE (H_9698 follow-on · lab-identified instrument gap) — a bind is CONFIRMED
+    # only when BOTH signals agree: PAIRED-SENSITIVE (McNemar composition test above) AND
+    # EMISSION-CLEARED (composed J clears the emission-null p95). The R6 control-reversal —
+    # a pair-DERANGED (shuffled) arm scoring a McNemar-🟢 while sitting INSIDE the emission
+    # null band — is exactly the false positive this conjunction rejects: paired-🟢 read
+    # WITHOUT the emission gate over-calls sub-null sign noise as bind. ADDITIVE: the two
+    # verdicts above are unchanged; this only reports their AND (no retroactive reverdict ·
+    # a lever that USES this gate pre-registers it in its own card · lab reconcile H_9698).
+    emission_cleared = r["composed"]["J_mean"] > r["null_p95"]
+    paired_sensitive = (_pv == "BIND-SENSITIVE")
+    if _pv == "UNDECIDABLE":
+        _dg = ("⛔ UNDECIDABLE", "검정력부족 — AND-gate 판정불가 (fan-smp 상향 필요)")
+    elif paired_sensitive and emission_cleared:
+        _dg = ("🟢 BIND-CONFIRMED", "PAIRED-SENSITIVE ∧ EMISSION-CLEARED 둘 다 통과")
+    elif paired_sensitive and not emission_cleared:
+        _dg = ("🟡 EMISSION-CONFOUND", "McNemar-🟢 이나 composed J 가 emission-null 안 "
+               "= sub-null 부호노이즈 의심 (R6 통제역전 계급) · bind 아님")
+    else:   # BIND-ABSENT (TOST equivalence)
+        _dg = ("🧱 BIND-ABSENT", "TOST 등가 — 레버가 composition 안 심음")
+    print("  ══ DUAL-GATE (H_9698 · PAIRED-SENSITIVE ∧ EMISSION-CLEARED) ══")
+    print("     paired=%s(McNemar) · emission_cleared=%s (composed J %.4f %s null p95 %.4f)"
+          % ("🟢" if paired_sensitive else ("⛔" if _pv == "UNDECIDABLE" else "🧱"),
+             emission_cleared, r["composed"]["J_mean"],
+             ">" if emission_cleared else "≤", r["null_p95"]))
+    print("     ★ AND-gate: %s — %s" % (_dg[0], _dg[1]))
     return 0
 
 
