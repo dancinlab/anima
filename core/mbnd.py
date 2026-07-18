@@ -98,6 +98,12 @@ def mbnd_apply(logits, yn, mb, lam_override=None, order_scramble=False, ctrl_see
     # last-row logit while dropping the per-token O(T^2) rebuild to O(T) (O(T^3)->O(T^2) over a gen).
     # Non-last rows are returned UNCHANGED (out=logits.copy()); the generation loop never reads them.
     _t_range = (T - 1,) if (last_only and T >= 1) else range(1, T)
+    if last_only and order_scramble:
+        # burn-replay the RNG for t=2..T-2 so the t=T-1 permutation draws from the SAME state as the
+        # full loop (rng.permutation is called sequentially for every t>=2). Without this the SCRAMBLE
+        # control's last row would NOT be byte-identical to the full-window run (lab-caught · T small).
+        for _bt in range(2, T - 1):
+            rng.permutation(_bt)
     for t in _t_range:
         h = yn[t]                                   # (d,)
         m = yn[:t]                                  # (t,d) causal bank — no future, no side channel
