@@ -214,7 +214,12 @@ if [ "${POD_GPU:-1}" = 1 ]; then
     # it (it only checks that `import cupy` works and a device is visible), so an unbounded >=13.0
     # installs the broken wheel, reports GPU, and dies at the first real forward on a PAID pod.
     # See pyproject.toml [project.optional-dependencies] — keep this bound in lockstep with it.
-    python3 -m pip install --break-system-packages -q \"cupy-cuda\${MAJ}x>=13.0,<14\" 2>&1 | tail -1" || true
+    # [ctk] (pod-bootstrap-sh-3 · measured 2026-07-19 on a CUDA-13 vast pod): modern cloud images ship
+    # the DRIVER + libnvrtc.so but NOT the CUDA toolkit HEADERS that NVRTC needs to JIT-compile anima's
+    # decode kernels (CUB reduction in dt_exp). Bare cupy imports + matmul works, but the first real
+    # decode dies with 'Failed to find CUDA headers' → cuda_available()=False → CPU-numpy (68s/tick). The
+    # [ctk] extra bundles the toolkit headers, so the kernel JIT succeeds and the gate below passes.
+    python3 -m pip install --break-system-packages -q \"cupy-cuda\${MAJ}x[ctk]>=13.0,<14\" 2>&1 | tail -1" || true
 fi
 
 # ── ⑥ device HARD GATE — ask the ENGINE, not 'does any GPU op work' (a cupy precompiled kernel runs
