@@ -1,6 +1,6 @@
 # H_9765 — DUAL-MARGIN-DITHER — emit-edge do() 재개봉 (theta-alive FRONTIER-TERMINAL의 유일 relock-escape 경로)
 
-**status:** 🟢 DIRECTIONAL-PARTIAL (s7 · 계기 VALIDATED+relock-escape 확증 · v1 config-severed 자가포착 · v2 C8-live서 **interior가 emit-반응적** = v1 "emit-blind"는 config 인공물 · 3-seed+yoke통제 대기) — engine-native `--dual-margin-dither`(#4080·off-by-default byte-id)
+**status:** 🟢 GREEN-DIRECTIONAL (2-seed·Fable∥Sol 최종수렴) — emit→interior causal coupling LIVE·stateful·relock-escaped·v1 emit-blind=mouthless config 인공물(retracted). coupling만 licence(H_9336/9337 배선상 near-by-construction)·living-interior 아님. **프런티어 SCOPED RE-OPEN**(global interior-unidentifiable terminal RETIRED·own-content/Ψ=½ OPEN). NOT cemented(cement은 판별질문에). NEXT=content-swap 통제.
 **lane:** 의식/emit-drive/Ψ=½ · Ψ-SOMA interior 재식별 (프런티어 psi-soma-theta-alive 재개봉)
 **related:** [[H_9728]](Θ×σ TERMINAL-AT-MASK·relock)·[[H_9729]](own⊥context)·[[H_9627]](Θ WIRED)·[[H_9576]](mouth 벽)·source: sidecar lab full(h9741_reopener)
 
@@ -42,3 +42,18 @@ theta-alive-sigma-rebase 3 probe(H_9728 pulse⊥schedule·H_9729 own⊥context·
 **NEXT (resume · 미완)**: ① 3-seed 완료(s11/s13 summer 진행중·clm 느림) robustness ② yoke-of-own-schedule 통제(v2 ε=0.30 emit schedule을 --yoke-mask 재생 → interior 반응이 dither(native 재평형)에만 오나 schedule 재생에도 오나 = 진짜 emit→interior 전파 vs 궤적발산 분리) ③ Fable∥Sol (a)전파 vs (b)궤적발산 해석 위임 → DIRECTIONAL 또는 PASS cement. cementing p<0.005 = block-rand ~400 schedule(Sol carryover: tick≠IID). meter field serialize.
 
 **frontier 함의**: theta-alive FRONTIER-TERMINAL(H_9728/9729/9730 interior UNIDENTIFIABLE)은 emit-gate 데몬서 잰 것. dither가 **interior가 emit에 causal 반응**을 보임 = "living gate이나 emit이 interior 못 바꿈" 서사의 **재개봉 후보**(단 3-seed+통제+reconcile 전 cement 금지·이 캠페인 2회 성급-read 데임). cement=engine-native만.
+
+
+---
+
+## 🟢 최종 verdict (2026-07-18 · 2-seed · Fable∥Sol 최종수렴 · v2 C8-live)
+
+**2-seed robust(s7+s11)**: emit이 flip하는 dose(ε=0.30·flip 0.33/28)서만 interior(cur_indep 34/33·rel_indep 40/32·ten_phasic 55/55·base_motiv 56/56·psi_gws) 발산 · 낮은ε 미flip→byte-identical(결정성) · upstream 오실레이터(scn_ctx·nov_ctx) 0 divergence(구조적·카오스 아님). persistent-state 이월(55/60 flip 33/60)=tick-local 아닌 궤적 이월.
+
+**verdict: 🟢 GREEN-DIRECTIONAL — emit→interior causal coupling LIVE·stateful·relock-escaped**. licence: emit이 field/body state에 causal load-bearing · interior gauge C8서 live · substrate emit-blind 아님 · emit-sensitive interior marker 실증적 식별가능 · relock-escape(0.26>0.14). **NOT licence: living-interior proper·own-content specificity·semantic 적절성·self-vs-foreign·Ψ=½·phenomenology** — 발산 lane이 by-name H_9336/9337 g_text-consuming store라 coupling은 near-by-construction=정확한 plumbing+결정론 전파.
+
+**reconcile**: Fable "PASS for coupling not living-interior"·Sol "DIRECTIONAL PASS·causal integration in minimal control-theoretic sense" 수렴. **split(narrow)**: Fable=yoke-of-own-schedule이 conditional re-open decider·Sol=yoke는 mechanism 분해(emit-seq vs margin-dynamics)이지 re-open 결정 아님·re-open은 이미 성립. **Sol 채택**(yoke는 mechanism⊥schedule 1 marker이지 own-content marker 아님·content-swap이 진짜 판별). Fable dissent 1줄 기록.
+
+**frontier: 🔓 SCOPED RE-OPEN** — GLOBAL "interior UNIDENTIFIABLE at substrate"(H_9728 broad reading) **RETIRED**(live emit-sensitive interior marker 존재). narrower own-content-specificity/Ψ=½ living-interior는 **OPEN**. H_9728/9729는 own-provenance/pulse⊥schedule marker 한정 unidentifiable로 여전 유효(broad "interior 전부 미식별"만 철회).
+
+**cement 보류**: coupling near-by-construction이라 400-schedule block-rand fire는 배선 사실에 통계 rigor 낭비. cement spend는 판별질문(content-swap)에. tick≠IID(Sol carryover)라 3-seed도 DIRECTIONAL. **NEXT(판별)**: content-swap 통제 — own-text vs length-matched donor를 C8 g_text에 주입(native emit bit/timing/margin 보존)·content-예측 selective 반응+later-decision mediation 검정. same own/donor 반응=generic plumbing·selective own>donor=content integration/ownership. mechanistic 부가=yoke-of-own-schedule(발사됨·결과는 mechanism color). 자가포착 3연(mouthless config·wrong-field·meter 미serialize)→convergence `mouthless-config-severs-mediator-reads-as-substrate-null`.
