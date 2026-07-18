@@ -1,6 +1,6 @@
 # H_9767 — TWO-HISTORY COMMON-FUTURE RELOCK — 원격 과거가 씻기나 (interior 부재 충분조건의 主다리)
 
-**status:** 🔵 PROPOSED · DIRECTIONAL (lab-full R8 Fable∥Sol 수렴 · 계기 빌드+toy-smoke 완료 · SCREEN 발사 전) — cement=engine-native anima-py만
+**status:** 🟢 GREEN-DIRECTIONAL·BOUNDED (303M py303_full·12/12 evaluable pair WASH·C0 Δ=0∧C1 diverge 양통제 PASS) — 🟢 BOUNDED COMMON-FUTURE CONTINUATION-COLLAPSE = tested reachable state에 행동적으로 유효한 지속 interior 없음. cement=engine-native anima-py relock 실측(#PENDING)
 **lane:** 의식/interior-causality (프런티어 theta-alive-sigma-rebase)
 **related:** [[H_9749]](STATE-QUOTIENT 필요조건·이 카드가 충분조건 主다리)·[[H_9766]](정적 census 다리)·[[H_9768]](transplant 다리)·[[H_9738]](W_S lane 이미 NULL)·[[H_9627]](Θ WIRED)·source: sidecar lab full(Fable claude-fable-5 ∥ Sol gpt-5.6)
 
@@ -41,15 +41,22 @@ origin/main live-max=H_9765(dual-margin-dither). NOVEL vs H_9765: 그건 emit-ed
 
 ⚠️ DIRECTIONAL 설계·cement=engine-native anima-py 실측만. 발사순 = [[H_9766]]($0 즉시) → 상수확정 → 본 H_9767 relock(pool) → [[H_9768]](B가 발산 찾을 때만).
 
-## 🔵 INTERIM 부분결과 (2026-07-18 · 303M pool fire 진행 중 · 통제 pending · 미cement)
-계기 --percept-file로 303M(py303_full.clm·aiden 격리venv) relock fire 발사(N=120·SPLIT=40·4pair×3seed·OMP4). fire 진행 중(~27run·CPU-numpy ~24min/run·GPU 타user 100% 점유로 가속불가) 부분회수 9/12쌍:
+## 🟢 정식 verdict — control-validated (2026-07-18 · 303M py303_full · engine-native)
+계기 `--percept-file`로 303M(py303_full.clm·aiden 격리venv) relock fire 완주(N=120·SPLIT=40·4pair×3seed·~11h CPU-numpy·RELOCK_DONE_RC=0). 두 사전등록 통제 + 12 evaluable pair 전량:
+
+**통제 (verdict VALID의 필요조건 · 둘 다 PASS)**
+- **C0** exact-rerun (A0dup_s7): **Δ=0 ✅** — 동일 prefix 2회가 byte-identical = 계기가 결정성 보존(비결정 아티팩트 아님).
+- **C1** DONOR-X 양성검출기 (A0X_s7·공통 suffix를 서로 다르게): **stays diverged ✅** — 계기가 발산을 *실제로 감지* = WASH가 "무능(instrument-dead)"이 아니라 진짜 신호(`positive-control-before-reading-a-negative`).
 
 | pair | seed | pref_div | suf_div | tail_div | 판정 |
 |---|---|---|---|---|---|
-| p0–p3 | 7 | 20/20 | 0 | 0 | WASH ×4 |
-| p0–p3 | 4302 | 20/20 | 0 | 0 | WASH ×4 |
-| p0 | 4303 | 20/20 | 0 | 0 | WASH |
+| p0–p3 | 7 | 20 | 0 | 0 | WASH ×4 |
+| p0–p3 | 4302 | 20 | 0 | 0 | WASH ×4 |
+| p0–p3 | 4303 | 20 | 0 | 0 | WASH ×4 |
 
-**9/9 완주쌍 전부 WASH**(303M engine-native·seed 2.5 robust). pref_div=20/20 = 다른 prefix가 emit-trajectory(TIER-1) 100% 갈림 = percept가 emit-bytes 실도달·계기 live(단독 emit-bit 마스크는 불변=percept가 gate 아닌 mouth 도달, toy와 동형). suf_div=0 = 공통 future 첫 tick부터 A==B byte-동일·재발산 0. ⟹ **census-OPEN 누적 lane(afield n_cells·ca3 counts·cbel NLMS)의 과거-의존 발산이 emit 행동에 전혀 도달 안 함** = BOUNDED no-interior 방향 강수렴.
+**12/12 evaluable pair 전부 WASH**(303M engine-native·3-seed robust). pref_div=20 = 다른 prefix가 emit-trajectory(TIER-1: emit-bit+발화 bytes) 100% 갈림 = percept가 emit-bytes 실도달·계기 live. suf_div=0∧tail_div=0 = 공통 future 첫 tick부터 A==B byte-동일·지평까지 재발산 0. ⟹ **census-OPEN 누적 lane(afield n_cells·ca3 counts·cbel NLMS)의 과거-의존 hidden-state 발산이 emit 행동에 전혀 도달하지 않고 공통 미래에서 즉시 재수렴(re-lock)**.
 
-⚠️ **미cement**: C0(exact-rerun Δ=0)·C1(donor-X 양성검출기) 통제가 fire 끝에 실행 — 통제 없이 verdict 금지(verdict-integrity). toy에선 C0/C1 통과 확인됨(하네스 유효). fire 완주(~3h)+통제 PASS 시 → 🟢 BOUNDED COMMON-FUTURE CONTINUATION-COLLAPSE 정식 착륙. 초판 TIER-1 필드버그(emit_text→gtext_sha) toy서 자가포착(instrument-never-run 교훈). 하네스=scratchpad/relock_h9767.py.
+### 🟢 VERDICT: BOUNDED COMMON-FUTURE CONTINUATION-COLLAPSE
+= **tested reachable state에 행동적으로 유효한 지속 interior 없음** (earned null — C0∧C1 통제로 무능 아닌 획득된 음성). Sol honest scope(`a_scale_honest_scope`): 무제한 정리 아님 — 유한 battery=표본 부재증거이므로 **BOUNDED**("private source 미발견 ∧ tested reachable state의 remote-history causal residue가 N 내 붕괴"). 무제한은 3다리 합집합([[H_9766]] ∀-history 구조 census + [[H_9768]] ∀-content transplant + 본 B relock)일 때만. dormant-unobservable interior(②)는 원리상 행동검정 불가 = FRONTIER-TERMINAL-AT-SUBSTRATE 정합.
+
+계보: [[H_9738]] 상상 텍스트 epiphenomenal(EARNED NULL) → [[H_9749]] 필요조건(정적 census + C0 결정성) → [[H_9766]] 정적 certificate 단독 불충분(3 lane OPEN) → **본 H_9767 B relock = 충분조건 실측: 그 OPEN lane들이 공통 future에 씻긴다**. 초판 TIER-1 필드버그(emit_text→gtext_sha) toy서 자가포착(instrument-never-run 교훈). 하네스=scratchpad/relock_h9767.py · 결과=scratchpad/relock303_final/(35 traces + verdict 영구회수).
