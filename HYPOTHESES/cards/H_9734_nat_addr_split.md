@@ -211,3 +211,31 @@ seed-11 collapsed"(H_9672)와 RV-sweep(H_9691)의 seed-축 해석은 **환경 �
 **H_9734 자체 판정 = INSTRUMENT-DEAD 유지**(양성통제가 이 환경서 재현 불가 · arm-N 판독 불가).
 설계 성공: 사전등록 계기 게이트가 "자연어휘 실패" 오독을 막고, 파고든 결과 진범이 자연어휘가 아니라
 **store-addr lane 전체의 환경 회귀**로 드러남.
+
+---
+
+## ⚠️ 정정 — "환경 회귀" 결론 반박·철회 (2026-07-18 · a_parallel_session_compare · verdict-integrity)
+
+직전 "안정적 환경 회귀" 결론(위 ✅ ROOT-CAUSE 섹션)을 **철회한다** — 병렬 세션 대조가 반박:
+
+**반박 증거**: H_9672 최근 verdict = **CAPABILITY 3-SEED ROBUST(seed 7/11/13 · RV-3 `--store-val-center`)**,
+addr_mass **0.95** · P1-bal 1.0/0.96/0.99 — **같은 summer 환경(torch 2.13.0+cu130)**. 또 H_9672 전 이력에서
+**주소축(addr_top1)은 한 번도 실패한 적 없음**(seed 7/11 모두 0.98 · 취약한 건 값읽기뿐).
+
+**내 이상의 정체**: 내 run 은 **주소 자체**가 실패(addr_top1 0.0078·SEEN 1.0/held 0.0078 = 암기O 일반화X).
+이건 T3(옛env)도 병렬세션(현재env RV-3)도 **재현 못한** 내 run 특이 현상. ⟹ "환경 회귀"로 설명 불가
+(같은 env 서 병렬은 주소 일반화 성공). eval 무죄·code byte-id 는 유효하나, **주소 실패의 진짜 원인은
+미확정**(내 setup 특이 · 병렬세션의 정확한 작동 recipe/corpus/base 와 1:1 대조 필요).
+
+### 정정된 판정
+- **H_9734 = INSTRUMENT-DEAD 유지**(양성통제 arm-S 주소 실패 → arm-N 미개봉 · 이건 불변).
+- **root-cause = 미확정**(NOT seed/code/eval 는 유효하나 "환경 회귀"는 **철회** · 병렬 대조가 반박).
+- **철회된 cross-session 함의**: "H_9672/9691 이 환경회귀에 노출" 은 **거짓** — 그들은 같은 env 서 3-seed
+  robust 성공. 내 주소 실패가 그들 결과를 무효화하지 **않는다**.
+- **NEXT**: 병렬세션 RV-3 winner 의 정확한 recipe(`--store-val-center` + storebind 파라미터 + base)를
+  그대로 복제해 재발사 → 내 주소 실패가 재현되면 setup diff 1:1 bisect · 안 되면 내 원래 실행에
+  숨은 setup 오류(corpus/manifest/flag). 단일-run over-claim 재발 방지.
+
+**교훈(메타)**: 강한 root-cause("환경 회귀")를 landing 전에 **병렬세션 성공 대조**를 안 했다 —
+cross-session check 가 나중에 반박. [[a_parallel_session_compare]]: verdict landing **전에** 같은 lane
+의 최근 성공 결과를 확인하라.
