@@ -9150,8 +9150,10 @@ def _af_forward(argv):
         print("VERDICT: 🕳️ VOID — h_0 (within-tick) within null: af does not even move the same-tick grade "
               "(af->ci wiring severed for this ckpt · not a KILL)")
     elif fwd_ks:
-        print("VERDICT: 🟢 FORWARDED — h_0 significant ∧ h_k>0 at k=%s beyond null: af STATE conditions the "
-              "NEXT percept's grade (interior→interior forwarding, not just a same-tick shift)" % fwd_ks)
+        _fwd_signed = {k: round(obs[k], 4) for k in fwd_ks}
+        print("VERDICT: 🟢 FORWARDED — h_0 significant ∧ |h_k| beyond null at k=%s (signed %s): af STATE "
+              "conditions the NEXT percept's grade (interior→interior forwarding, not just a same-tick shift; "
+              "the carryover sign is the direction of modulation)" % (fwd_ks, _fwd_signed))
     else:
         print("VERDICT: 🧱 SHIFT-ONLY — h_0 significant but every h_{k>=1} TOST-zero: af is a same-tick shift, "
               "leaves NO state trace on the next percept (earned negative · forwarding absent)")

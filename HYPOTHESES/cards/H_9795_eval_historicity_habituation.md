@@ -1,6 +1,11 @@
 # H_9795 — EVALUATION HISTORICITY — grading 채널에 store 없는 기억(item habituation)이 있는가 (lab-full R10 · Fable P4 · PROPOSED)
 
-**status:** 🔵 PROPOSED · 🔧 producer 기존 인프라 커버 (2026-07-19 · #R10-flags) — source=Fable 5 P4
+**status:** 🧱 FIRED VERDICT — NULL(item-historicity 부재) · 303M engine-native · DIRECTIONAL 1-seed (2026-07-19 · vast pod fire) — source=Fable 5 P4
+
+> **🧱 FIRED VERDICT (2026-07-19 · vast RTX5090 GPU-FIRED · py303_full · 1-seed s7 · 140tick · DIRECTIONAL):**
+> `--gen-percept-schedule`(lags 1,4 · reps 5 · jitter 2 · 10 probe/arm) → `--percept-file` → `--eval-historicity`(DV=recon_err · perm 2000).
+> **🧱 NULL**: S(lag)={1: **−1.11**, 4: −0.05} · T=−1.11 · **null95=1.18** · **perm-p=0.84** · lag-decay=False. repeat−shuffle 가 null 안(오히려 S<0=repeat recon 이 shuffle 보다 높음·item-memory 반대방향) ∧ 무감쇠. ⟹ **item-specific habituation 부재** — 정확반복 percept 의 grade 가 byte-multiset 동일 shuffle 과 구별 안 됨=grade 는 byte-stats/percept-blind. recon_err 는 동적범위 있어(VOID 아님) **genuine NULL**(계기-death 아님).
+> **scope**: 303M py=TERMINAL 기질·**1-seed=DIRECTIONAL**. 증거=~/anima-weights/h979x_pod_evidence/. R9 결론(interior 자기참조·자율축 부재)과 정합: 평가채널도 store 없는 item-기억 미보유.
 
 > **🔧 producer 재검토 (2026-07-19 · a_experiment_engine_native 최소성):** Fable P4 가 제안한 신규 flag
 > `--percept-schedule f.jsonl` 는 **불필요** — 기존 **`--percept-file`(H_9767)** 이 `{"tick":int,"text":str}`
