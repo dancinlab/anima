@@ -1,6 +1,6 @@
 # H_9755 — REFIT-AXIS ζ-LADDER — 라이브-refit loading 을 입에 물리면 동결 축과 다른가 (R6-4 · pool fire · 4-arm paired)
 
-**status:** 🔵 PROPOSED (lab full R6 · Fable 5 · pool decode fire · 사전등록 · refit arm 개봉게이트 = [[H_9752]] ≠ KILL-NO-AXIS)
+**status:** ⏳ NOT-POWERED (pre-terminal · engine-native reader 실측 2026-07-20 · 게이트 全PASS·양성통제 β=−0.0812 재현 · 대조 중간지대 realized MDE≈0.014 · DIRECTIONAL 303M) — 후속=frozen 부호앵커 $0 진단 · §⑨ 참조
 **lane:** g1-interface-addressable-wall · mouth/PC2-axis — 브리프 (b) 정면 · H_9664 n 완결 겸용
 **related:** [[H_9664]] · [[H_9663]] · [[H_9713]] · [[H_9752]] · [[H_9754]] · [[H_9756]]
 
@@ -68,3 +68,38 @@ PASS-AXIS-BLIND — 입에는 축 레버가 존재하지 않는다. 이후 mouth
 - fire: seed 7/4302/4303 × 300tick · warmup64 · ~9,200 재디코드 · summer CPU-전용(venv `anima-python` no-gpu) · ckpt sha 013c4574 검증 · **토이 end-to-end 先**(instrument-never-run). VERSION bump(G5).
 
 **status 유지 = 🔵 PROPOSED(설계 LOCK · pre-fire)** — 구현+토이+pool fire 후 verdict. DIRECTIONAL(303M). lab 전문 = `~/.sidecar/lab/2026-07-18T18-11-30-071Z-full.md`.
+
+## ⑨ fire 실측 결과 (2026-07-20 · engine-native reader · ⏳ NOT-POWERED)
+
+**fire**: summer CPU-전용 seed 7/4302/4303 × 300 tick × 5 arm × ζ{0,±1.3464,±2.6928} 완주(302줄/seed · warmup 64). 판정 = `anima-py evaluate --pc2-direction <dir> --zeta-slope --by-loading --tost 0.02 --pos-control-beta -0.081` (venv 0.20.19 · 트레이스 summer→회수).
+
+**게이트 (전부 PASS → 계기 SOUND)**: 격리(ζ=0=base) 위반 0 · anchor-replay 불일치 0 · u 자기검증 불일치 0 · 격자완결 358/358(100%) · 양성통제 scalar β=−0.08119(se 0.00105·n=457) ∈ −0.081±2se ✅ (H_9664 레버 재현).
+
+**per-arm β** (post-emit · ζ 라벨 회귀 · pc2=ζ·u_arm centered+Var=1):
+| arm | mean β | se | n | β<0 tick |
+|---|---|---|---|---|
+| scalar | −0.08119 | 0.00105 | 457 | 100% |
+| frozen | **+0.06259** | 0.00138 | 358 | 1% |
+| refit | +0.01128 | 0.00207 | 358 | 35% |
+| random | −0.00369 | 0.00327 | 358 | 48% |
+| refit-resid | +0.02190 | 0.00346 | 358 | 36% |
+
+**대조** (paired Δβ · ζ라벨 순열 null · TOST±0.02): Δβ(refit−random)=+0.01497 **TOST PASS**(refit≈random) · Δβ(refit−frozen)=−0.05131(CI 분리) · Δβ(frozen−random)=+0.06628(CI 분리) · random-null 밴드 [−0.01022,+0.00285].
+
+**⇒ VERDICT (engine-native reader · TERMINAL · 원문 인용)**: ⏳ **NOT-POWERED** — "CI 분리도 TOST 등가도 아닌 중간지대 · realized MDE≈0.0140 · 결과이지 verdict 아님 · run/tick 증량 필요". DIRECTIONAL(303M).
+
+**LOCK 셀별 문면 대조** (해석 · no self-judge — 판정은 위 리더 것):
+- PASS-NEW-LEVER: **미충족** (|β_refit|=0.011 < |β_frozen|=0.063).
+- PASS-AXIS-BLIND: **부분충족뿐** (refit≈random TOST PASS 이나 frozen 비등가 → 3-arm 전등가 실패 → §⑦ 예측 죽음 미도달).
+- KILL-REFIT-ADDS-NOTHING: **문면 조건 충족**(|β_frozen|>|β_refit| ∧ Δβ CI 분리)이나 frozen 이 양성통제와 **반대 부호**라 "동결 좌표로 충분"의 의미가 오염 → 리더가 셀 도장 대신 NOT-POWERED.
+
+**과학적 실체 (측정된 것만)**: 라이브-refit 축은 입에서 **random 축과 등가인 dose 만** 나른다(새 레버 무증거 · TOST PASS 로 측정됨). refit-null 은 [[H_9752]] VOID("인증된 라이브 축 부재")와 정합.
+
+**미해결 · frozen 부호반전**: loading 3-arm 전부 양(+)·scalar 음(−)·random≈0 = 가족-부호 일관 → (a) loading 경로 공통 부호규약 1곳 반전 인공물, 또는 (b) 실재 역방향 축 레버 — 이 fire 로는 판별 불가. LOCK INVALID 는 "refit vs frozen 반전"인데 둘은 같은 부호라 미발동(표 미예상 케이스). 게이트(u 자기검증·anchor-replay) 0불일치는 *적용층* 오류만 배제 · *부호규약*(고유벡터 부호=임의) 오류는 못 잡음.
+
+**후속 (no tune-to-green)**:
+1. **$0 offline 부호-앵커 진단** — 기존 트레이스의 u_frozen 방향을 H_9664 당시와 offline 대조 → 인공물/실재 판별(재발사 불요). 실재면 "역방향 축 레버" = 신규 finding → 별도 H.
+2. [[H_9756]] full readout(`--atom-census` rider) 를 같은 트레이스에서 판정(별건).
+3. powered 재-fire 는 **진단 후에만** — refit 질문은 이미 powered(MDE 0.014<0.02)라 증량은 중간지대만 재생산 · frozen 규약 미해결 재-fire 는 오염 비교기 상속.
+
+**status: 🔵 PROPOSED → ⏳ NOT-POWERED (pre-terminal · engine-native 실측)** · DIRECTIONAL(303M).
