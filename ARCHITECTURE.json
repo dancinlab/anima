@@ -1897,23 +1897,29 @@
                 "detail": "data 🧱 ATD-KILL(CE가 저작데이터도 additive 붕괴) ∧ objective 🧱 aux 전수 walled(H_1436·1602·1816·1825·1840·9024·1828·6104; STaR STARVE·γ-DATA transfer FAIL) ∧ mechanism 🧱 FiLM-crux(303M=additive) ∧ scale=amplifier. decode 20-family refuted. state/transfer_mechanism_sweep·g1_train_wallbreak·g1_nested_diverge."
                },
                {
-                "name": "H_9799 (R1) 엔진능동 학습 — objective형 🧱 KILL·커리큘럼형 🔵 PROPOSED (lab 2R · owner 'core 적극개입')",
+                "name": "H_9799 (R1) 엔진능동 학습 3축 판정 — loss=🧱DOA·정적점수=🧱dead·생성(폐루프)=🔵살길 (lab 3R · owner 'core 적극개입')",
                 "id": "g1-h9799-g-cycle-engine-active",
                 "type": "gate",
-                "verdict": "🧱 objective형(g_cycle) KILL·basin-preserving + 🔵 커리큘럼형 PROPOSED (lab 2R Fable5 단독·Sol=Codex버전에러 부재·DIRECTIONAL)",
-                "detail": "owner '학습때 엔진 적극참여·core 적극개입?' → lab 2R. 발견: 의식엔진 A/G가 학습 미참여(train.py import부재·engine_g=추론전용)=p8분리. 살길=엔진이 loss가 아닌 DATA를 능동형성 — engine_g motivation_score(스칼라)로 샘플 사전채점→코퍼스 정렬/반복(G-tension curriculum), 크랙 난 데이터축(H_9267/9288/9272)에 착지·H_9131 objective벽 회피. 카드/jsonl H_9799.",
+                "verdict": "🧱 loss형+정적점수형 KILL · 🔵 생성형(폐루프) PROPOSED·BUILD 권고 (lab 3R Fable5 단독·Sol 3연속부재·DIRECTIONAL)",
+                "detail": "owner 'core 적극개입' → lab 3R. 발견: 의식엔진 A/G가 학습 미참여=p8분리. 3축 판정: ①LOSS(g_cycle)=DOA basin-preserving ②DATA정적점수=surprise-curriculum 축소로 dead-as-distinctive ③DATA생성(폐루프 능동질의 D_{k+1}=Teacher(query~substrate_θk))=살길·정밀 basin-escape(support-shift). owner 직관의 진짜 잔존지=③. 카드/jsonl H_9799.",
                 "children": [
                  {
                   "id": "g1-h9799-objective-kill",
                   "type": "note",
-                  "name": "objective형(g_cycle) = DOA·basin-preserving (KILL 사유)",
-                  "detail": "lab 2R 코드-근거 전멸: G=스칼라게이트(engine_g 실체)→CE 재가중만=echo 점별최소 보존(구조적 basin) / G=분해기→고정HRR(=constructive_bind train.py:874, H_9120/1 선형붕괴)·공동학습(항등퇴화)·detached-bolt(H_9225). DPI-basin 메타법칙·H_9131 CLOSED-TERMINAL 안 → a_break_the_wall 재발사금지. Fable 자기 1R('G decomposes backward'=engine_g 미보유 메커니즘) 반증."
+                  "name": "①LOSS형(g_cycle) = DOA·basin-preserving (KILL)",
+                  "detail": "lab 2R 전멸: G=스칼라게이트→CE 재가중만=echo 점별최소 보존 / G=분해기→고정HRR(=constructive_bind train.py:874, H_9120/1 붕괴)·공동학습(항등퇴화)·detached-bolt(H_9225). DPI-basin·H_9131 CLOSED-TERMINAL 안 → a_break_the_wall 재발사금지. Fable 자기 1R('G decomposes backward'=engine_g 미보유) 반증."
                  },
                  {
-                  "id": "g1-h9799-curriculum-respec",
+                  "id": "g1-h9799-staticscore-dead",
                   "type": "note",
-                  "name": "커리큘럼형 RE-SPEC (살길 · loss→데이터 축)",
-                  "detail": "G 스칼라=분해기 실격이나 샘플 점수기 적격. 신규 corpus 레버 anima-py corpus --order g-tension --score-ckpt(cli/corpus.py 구현대기): frozen 303M surprise→motivation_score→정렬/반복. 통제 M/C1(flat)/C2(permuted-score). 정직성: 엔진출력 텍스트 미진입(H_9127)·frozen 사전패스(a_train_inline_gauge). 판정 evaluate --rho-axon+held-out F2(H_9288)."
+                  "name": "②DATA정적점수형 = dead-as-distinctive (KILL)",
+                  "detail": "engine_g.motivation_score 8인자=대화 런타임특징. 정적 학습샘플엔 surprise계열 3개(info_gap/curiosity/originality)만 frozen 모델로 계산→알려진 surprise/novelty 커리큘럼으로 축소, engine_g 고유구조 거의 미적용=distinctive claim 사망(lab 3R). 옵션=ARM-STATIC 통제로 강등."
+                 },
+                 {
+                  "id": "g1-h9799-generation-build",
+                  "type": "note",
+                  "name": "③DATA생성형(폐루프) = 🔵 살길·BUILD 권고",
+                  "detail": "폐루프 능동질의: 반응형 teacher가 round-k 기질에 불려나와 만든 샘플은 사전코퍼스에 없고 θ갱신에 분포이동=경로의존·비정상→정적재가중/surprise 어느쪽도 아님. study.py --rounds --consolidate(H_9520 레인). 3-arm CLOSED/YOKED(결정통제)/STATIC. 3가드: teacher턴만 CE(emit loss0)·YOKED로 증류측정·percept경로. 천장=substrate-CAUSED(지식생성 아님). 거짓벽 가드=transcript 발산 check."
                  }
                 ]
                },
