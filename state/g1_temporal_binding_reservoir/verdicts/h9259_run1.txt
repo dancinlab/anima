@@ -1,0 +1,17 @@
+# H_9259 probe seed=20260710 RF=31 T=26 GAP=24 | train 48 / held-out 16 cells
+# chance: 8-way=0.125 bit=0.5
+
+arm                      held8  bitacc  Dprobe    swapM
+oracle-additive          0.000   0.292       -        -
+oracle-lookup            0.125   0.458       -        -
+oracle-bitprod           1.000   1.000       -        -
+
+conv-emit                0.099   0.436   0.019    0.002
+conv-pool                0.009   0.262   0.517   -0.002
+esn-rho=0.0              0.015   0.382   0.000    0.001
+esn-rho=0.3              0.042   0.380   0.000    0.000
+esn-rho=0.6              0.057   0.417   0.000    0.001
+esn-rho=0.9              0.062   0.384   0.000   -0.000
+esn-rho=1.1              0.041   0.364   0.024   -0.005
+conv->esn rho=0.0        0.106   0.467   0.015        -
+conv->esn rho=0.9        0.051   0.381   0.168        -

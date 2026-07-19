@@ -1,0 +1,26 @@
+Warning: 256-color support not detected. Using a terminal with at least 256-color support is recommended for a better visual experience.
+Attempt 1 failed with status 503. Retrying with backoff... _ApiError: {"error":{"message":"{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n","code":503,"status":""}}
+    at throwErrorIfNotOK (file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:258424:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:258187:7
+    at async Models.generateContentStream (file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:259283:16)
+    at async file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:301279:19
+    at async file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:278341:23
+    at async retryWithBackoff (file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:298287:23)
+    at async GeminiChat.makeApiCallAndProcessStream (file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:321564:28)
+    at async GeminiChat.streamWithRetries (file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:321382:29)
+    at async Turn.run (file:///opt/homebrew/lib/node_modules/@google/gemini-cli/bundle/chunk-VLV2BYPM.js:322128:24) {
+  status: 503
+}
+Attempt 1 failed: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 250000, model: gemini-3-flash
+Please retry in 15.855832775s.
+Suggested retry after 15s.. Retrying after 15513ms...
+Attempt 2 failed: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, model: gemini-3-flash
+Please retry in 59.921468225s.
+Suggested retry after 59s.. Retrying after 66418ms...
+Attempt 1 failed: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 250000, model: gemini-3-flash
+Please retry in 46.853255779s.
+Suggested retry after 46s.. Retrying after 46426ms...

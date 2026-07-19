@@ -1,0 +1,24 @@
+lane OVERRIDE from /home/summer/g1_gamma/lane_retrained.npz
+n_items=12
+[ocean|forest] off_mz=2.810 on_mz=2.820 m_z(off=0.777 on=0.783 shuf=0.782)
+[engine|music] off_mz=4.013 on_mz=3.989 m_z(off=-0.983 on=-0.898 shuf=-0.895)
+[market|medicine] off_mz=3.399 on_mz=3.322 m_z(off=-0.544 on=-0.460 shuf=-0.456)
+[desert|galaxy] off_mz=3.262 on_mz=3.341 m_z(off=0.862 on=0.748 shuf=0.742)
+[kitchen|law] off_mz=3.410 on_mz=3.522 m_z(off=0.958 on=0.904 shuf=0.889)
+[glacier|circuit] off_mz=2.702 on_mz=2.751 m_z(off=0.251 on=0.198 shuf=0.194)
+[ocean|desert] off_mz=2.835 on_mz=2.845 m_z(off=1.028 on=1.047 shuf=1.052)
+[music|law] off_mz=3.031 on_mz=3.038 m_z(off=0.218 on=0.328 shuf=0.344)
+[forest|galaxy] off_mz=4.447 on_mz=4.512 m_z(off=-1.229 on=-1.202 shuf=-1.203)
+[engine|kitchen] off_mz=4.738 on_mz=4.689 m_z(off=-1.211 on=-1.120 shuf=-1.116)
+[market|glacier] off_mz=3.634 on_mz=3.570 m_z(off=-0.850 on=-0.775 shuf=-0.774)
+[medicine|circuit] off_mz=3.544 on_mz=3.535 m_z(off=-0.800 on=-0.738 shuf=-0.728)
+
+=== SWAP-MARGIN RESULT ===
+  on     Delta_zero=+0.0282 CI[-0.0126,+0.0646] Delta_lit=-0.0192
+  shuf   Delta_zero=+0.0295 CI[-0.0141,+0.0690] Delta_lit=-0.0190
+  g2     Delta_zero=+0.0524 CI[-0.0354,+0.1291] Delta_lit=-0.0342
+  g4     Delta_zero=+0.0982 CI[-0.0924,+0.2637] Delta_lit=-0.0573
+  g8     Delta_zero=+0.1962 CI[-0.1883,+0.5330] Delta_lit=-0.0938
+  off m_zero_mean=-0.1269
+  CRACK=False -> no-crack (additive-floor/generic-smoothing) -> retrain-once or scoped-faculty fallback
+DONE -> /home/summer/g1_gamma/swap_margin_retrained.json

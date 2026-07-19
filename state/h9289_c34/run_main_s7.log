@@ -1,0 +1,41 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+08:58:37 [C34 main_s7] GPU:NVIDIA GeForce RTX 4090
+08:58:37 [C34 main_s7 train corpus=c34_main_s7_train.txt seed=7 T=60000]
+  step 59050  CE=0.01864  E=3  wd=0.0168 dp=0.1677
+  step 59100  CE=0.01418  E=3  wd=0.0167 dp=0.1674
+  step 59150  CE=0.02812  E=3  wd=0.0167 dp=0.1671
+  step 59200  CE=0.02009  E=3  wd=0.0167 dp=0.1668
+  step 59250  CE=0.03954  E=3  wd=0.0167 dp=0.1665
+  step 59300  CE=0.01360  E=3  wd=0.0166 dp=0.1663
+  step 59350  CE=0.02572  E=3  wd=0.0166 dp=0.1660
+  step 59400  CE=0.02161  E=3  wd=0.0166 dp=0.1657
+  step 59450  CE=0.02725  E=3  wd=0.0165 dp=0.1654
+  step 59500  CE=0.01869  E=3  wd=0.0165 dp=0.1651
+  step 59550  CE=0.01692  E=3  wd=0.0165 dp=0.1649
+  step 59600  CE=0.02857  E=3  wd=0.0165 dp=0.1646
+  step 59650  CE=0.03298  E=3  wd=0.0164 dp=0.1643
+  step 59700  CE=0.04397  E=3  wd=0.0164 dp=0.1640
+  step 59750  CE=0.01971  E=3  wd=0.0164 dp=0.1637
+  step 59800  CE=0.02223  E=3  wd=0.0163 dp=0.1634
+  step 59850  CE=0.02300  E=3  wd=0.0163 dp=0.1632
+  step 59900  CE=0.02769  E=3  wd=0.0163 dp=0.1629
+  step 59950  CE=0.04284  E=3  wd=0.0163 dp=0.1626
+  step 60000  CE=0.01732  E=3  wd=0.0162 dp=0.1623  val_CE=3.72274  per_cell_CE={"en-general": 3.72274}
+  ── FINAL held-out val-CE per register (uniform=5.5452) ──
+     en-general   val_CE=3.94913  DESCENT
+  FINAL val_CE(pooled)=3.9491328597068787  registers_DESCENT=1/1
+  loss0=5.68911 lossF=0.01732 wall=12996.5s savant_latched_at=1 E0=2->E=3
+  [N3 DBES expert-specialization] {"expert_div": 0.50124, "router_entropy": 1.09617, "usage_gini": 0.01725, "usage": [0.34643, 0.32056, 0.333], "n_experts": 3}
+  gauges error: No module named 'gauge_lib'
+  .clm WRITTEN 176584498 bytes -> /workspace/c34/natem_c34_main_s7.clm
+  clm_decodable=True
+=== anima train → cli/train.py (torch CLMConvMoE · Lane-P reference/bridge) ===
+dispatch: /usr/bin/python3 /usr/local/lib/python3.10/dist-packages/anima_py/cli/train.py --arch clm --canon --arm ctrl --objective ce_marginal --corpus /workspace/c34/c34_main_s7_train.txt --cell-label en-general --steps 60000 --batch-size 8 --bf16 --seed 7 --val-frac 0.02 --val-every 15000 --out /workspace/c34/natem_c34_main_s7.clm
+12:35:26 [C34 main_s7 GATE-1 eval --xbind held-out flip0]
+  xbind heldout  arm=main  D-acc=0.5230  C-rate=None  margin_med=0.309  margin_pos=0.540  sampled=0.4  n=174
+  xbind seen  arm=main  D-acc=0.0000  C-rate=None  margin_med=0.000  margin_pos=0.000  sampled=None  n=0
+{"out": "/workspace/c34/eval_c34_main_s7.json", "heldout_d_acc": 0.5229885057471264, "seen_d_acc": 0.0}
+13:23:02 [C34 main_s7 SEEN gate]
+  xbind seen  arm=main  D-acc=0.0000  C-rate=None  margin_med=0.000  margin_pos=0.000  sampled=None  n=0
+{"out": "/workspace/c34/eval_seen_c34_main_s7.json", "heldout_d_acc": 0.9625, "seen_d_acc": 0.0}
+13:53:32 C34_main_s7_DONE rc=0

@@ -1,0 +1,11 @@
+# v2 retention-fixed arms | chance 8-way=0.125
+arm                        held8  bitacc  Dprobe
+esn-pool rho=0.6           0.004   0.274   1.000
+esn-cat rho=0.6            0.011   0.298   1.000
+esn-pool rho=0.9           0.001   0.264   1.000
+esn-cat rho=0.9            0.005   0.291   1.000
+esn-pool rho=1.1           0.009   0.280   1.000
+esn-cat rho=1.1            0.010   0.308   1.000
+esnfeat-pool rho=0.9       0.005   0.246   1.000
+esnfeat-cat rho=0.9        0.015   0.301   1.000
+convpool+esn (max)         0.006   0.292   1.000
