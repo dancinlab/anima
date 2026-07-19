@@ -1,4 +1,4 @@
-"""anima-v2/train.py — arm runner.
+"""lab/v2/train.py — arm runner.
 
 Arms (bars.json):
     COTRAIN  trunk+bridge co-trained, per-example store rotation   [the hypothesis]
@@ -25,7 +25,7 @@ import model as M
 from loss import forward_loss
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = "/tmp/anima-v2"    # mix (V2_1); logit (V2_2) -> /tmp/anima-v2-logit
+OUT = "/tmp/v2"    # mix (V2_1); logit (V2_2) -> /tmp/v2-logit
 
 
 def load_bars():
@@ -90,7 +90,7 @@ class Adam:
 
 def out_dir(gate, readout="linear", tag=""):
     t = gate + ("-mlp" if readout == "mlp" else "") + tag
-    return f"/tmp/anima-v2-{t}"
+    return f"/tmp/v2-{t}"
 
 
 def train_arm(arm, seed, bars, lr=None, steps=None, quiet=False, gate="mix", readout="linear", tag="", fixed_key=False):

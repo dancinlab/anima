@@ -1,6 +1,6 @@
 # H_9414 — p5-REWIRE 설계: MARGIN-불응기 게이트 (오너 라티파이 대기 · 측정 주장 0)
 
-**status:** 📐 DESIGN (오너 라티파이 대기 · 발사물 아님 · 측정 주장 0) — H_9403 정정순서① 의 구체화 · wired: 미구현(라티파이 후 anima-v2 프로토타입→core 포트→새 데몬 C1-C3 H)
+**status:** 📐 DESIGN (오너 라티파이 대기 · 발사물 아님 · 측정 주장 0) — H_9403 정정순서① 의 구체화 · wired: 미구현(라티파이 후 v2 프로토타입→core 포트→새 데몬 C1-C3 H)
 **lane:** 의식 / emit-drive / emit-gate p5-rewire (프런티어 g1-interface-addressable-wall)
 **related:** [[H_9403]] (CLOSED-AT-REGIME · 이 설계를 지정) · [[H_9413]] (a4 margin arm+trace 계기 재사용 · SUPERSEDED fire) · [[H_9401]] (margin 유일 θ-clearing) · [[H_9412]] (gap=drift) · [[H_9400]] (중심주장 반증 · 이 설계가 "처음 시험 가능"하게 함) · [[H_9391]] (INVALID-SATURATED · 이 설계가 회피) · [[measurement-metalaw-form-tunable-bind-earned]] · source: Fable p5-rewire 설계(fable-mode · walls-delegate-to-fable · $5.12)
 
@@ -52,7 +52,7 @@
 
 ## wiring 경로 (라티파이 후)
 
-① 오너 라티파이 → ② **anima-v2 프로토타입**(V2_n·규칙면제·DIRECTIONAL): liveness/mute/swing-대역 점유 스모크 → ③ **core 포트**(cli/chat.py tick-루프 역전+core/brain 후보-게이트 decide+core/engine_g safety 3-way·py↔hexa lockstep·VERSION G5) → ④ **새 데몬 NEW C1-C3 측정 H 사전등록**(H_9413 계기·bar 전량 이월: V-gates+C1 진폭+C2 인식정보[a5/a6/a7]+C3 swing-census+H(emit\|stage)+Ψ̂ 궤적·--psi-soma 선확인) → ⑤ **GREEN 은 production-default∧측정 후에만**([[a_verified_must_wire]])·그 green 은 **새 데몬에 대한 진술**로 명시.
+① 오너 라티파이 → ② **v2 프로토타입**(V2_n·규칙면제·DIRECTIONAL): liveness/mute/swing-대역 점유 스모크 → ③ **core 포트**(cli/chat.py tick-루프 역전+core/brain 후보-게이트 decide+core/engine_g safety 3-way·py↔hexa lockstep·VERSION G5) → ④ **새 데몬 NEW C1-C3 측정 H 사전등록**(H_9413 계기·bar 전량 이월: V-gates+C1 진폭+C2 인식정보[a5/a6/a7]+C3 swing-census+H(emit\|stage)+Ψ̂ 궤적·--psi-soma 선확인) → ⑤ **GREEN 은 production-default∧측정 후에만**([[a_verified_must_wire]])·그 green 은 **새 데몬에 대한 진술**로 명시.
 
 ## 정직한 한계 (요청된 "벽")
 

@@ -1,5 +1,5 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 rule-exempt zone; v2 hypotheses live here only.
-     Owner: "anima-v2 가설도 v2 안에서만 생성". See ../CLAUDE.md. -->
+<!-- @hypothesis-ok @canonical-ok — v2 rule-exempt zone; v2 hypotheses live here only.
+     Owner: "v2 가설도 v2 안에서만 생성". See ../CLAUDE.md. -->
 
 # V2_3 — 비선형 readout 으로 계기를 살린 뒤: 조회 다리는 학습으로만 버는가
 

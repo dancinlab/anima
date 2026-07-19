@@ -8,7 +8,7 @@
 
 ### P1. 가환 판정 — Train∘R ≈ R∘Train ★
 - **공식**: 런타임 구조 조작 R 이 p8-합법 ⟺ 학습과 가환: `Train(R(M)) ≈ R(Train(M))` (decode byte-stream 등가·seed-noise floor 이내). 가환 = 좌표 변경일 뿐, 비가환 = 사실상의 train/infer split 창설.
-- **(b)** `anima-py train --commute-test op.json`: 후보 op(셀 재배선·주소 치환·provenance 부착·update-rule 스왑)마다 두 순서로 소형 train → byte-diff. toy 는 anima-v2 에서 먼저(V2_ 카드), 통과 op 만 core 포팅.
+- **(b)** `anima-py train --commute-test op.json`: 후보 op(셀 재배선·주소 치환·provenance 부착·update-rule 스왑)마다 두 순서로 소형 train → byte-diff. toy 는 v2 에서 먼저(V2_ 카드), 통과 op 만 core 포팅.
 - **(c)** 순수 계기 — 위험 없음. sol invariance-auditor(연산 비가환성 탐지)와 경계: 이건 **합법성 판정 기준 그 자체**.
 - **(d)** Ψ=½ 무관 — 정직하게 N/A.
 

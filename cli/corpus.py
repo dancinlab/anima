@@ -1677,7 +1677,7 @@ def build_ground(fmt, atoms_path, reps, replay, seed, lang=DEFAULT_LANG):
 # --------------------------------------------------------------------------- #
 # storebind — the co-trained store-lookup bridge task (H_9423 · S0 wiring).
 #
-# A parent-corpus port of anima-v2/gen.py, the toy that DIRECTIONAL-proved a co-trained
+# A parent-corpus port of lab/v2/gen.py, the toy that DIRECTIONAL-proved a co-trained
 # lookup bridge (V2_6 held-out macro 0.987/0.992 · C2 VALID). The task is the minimal mirror
 # of the BINDING wall (H_9327/H_9359): the FACT lives ONLY in the store, the OPERATOR lives
 # ONLY in the text, and the answer = polarity XOR operator (is/not × good/bad) requires binding

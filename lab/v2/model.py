@@ -1,4 +1,4 @@
-"""anima-v2/model.py — trunk (byte-LM) + store + learned bridge, numpy forward/backward.
+"""lab/v2/model.py — trunk (byte-LM) + store + learned bridge, numpy forward/backward.
 
 @canonical-ok — see gen.py.
 

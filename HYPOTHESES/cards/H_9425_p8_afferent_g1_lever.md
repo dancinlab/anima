@@ -62,9 +62,9 @@ H_9267 이 D-acc 1.000 을 낸 그 **operator+declaration pair 를, CPT 대신 c
 배선을 심는 것 = **정체성 변경**(p1–p4 프레임 + a_eeg 승인 계열) = **owner-gate · 자율발사 불가**.
 
 ⟹ **v2-sandbox 선행이 정답이다**(rule-exempt · afferent 주입 자유 · positive-control-before-negative
-선례 V2_1). anima-v2 에서 afferent→store 주입 toy 로 co-present vs separated 를 스크린 →
+선례 V2_1). v2 에서 afferent→store 주입 toy 로 co-present vs separated 를 스크린 →
 **CRACK 시에만** core/ + `anima-py evaluate --afferent`(owner-gate) 로 포팅해 TERMINAL 자격.
-v2 양성은 **영구 DIRECTIONAL ceiling**(anima-v2/CLAUDE.md).
+v2 양성은 **영구 DIRECTIONAL ceiling**(lab/v2/CLAUDE.md).
 
 ## 예측 (서명)
 
@@ -84,7 +84,7 @@ weight-learning(CPT/co-train), afferent 런타임 주입 = **0/5**. p8("no train
 
 ## 다음 (미탐)
 
-anima-v2 에 `afferent→store` 주입 toy 배선 → C0 ORACLE 게이트(≥0.90) → co-present vs separated 스크린.
+v2 에 `afferent→store` 주입 toy 배선 → C0 ORACLE 게이트(≥0.90) → co-present vs separated 스크린.
 CRACK ⟹ core/ 포팅 + owner-gate(`--afferent` 플래그 · a_eeg 계열 승인). null ⟹ H_9359 격상.
 병렬: H_9423(공학습 다리)와 **직교** — H_9423=weight 다리, H_9425=runtime percept 다리. 둘 다 CRACK 시
 "다리는 존재하나 학습으로만 서는가 percept 로도 서는가"를 가른다.

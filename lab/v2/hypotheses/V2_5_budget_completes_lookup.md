@@ -1,4 +1,4 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 rule-exempt zone; v2 hypotheses live here only. -->
+<!-- @hypothesis-ok @canonical-ok — v2 rule-exempt zone; v2 hypotheses live here only. -->
 
 # V2_5 — 예산을 2배 주면 key 조회가 완성돼 C2 를 통과하는가
 

@@ -1,4 +1,4 @@
-"""anima-v2/evaluate.py — SEQUENTIAL gate evaluator.
+"""lab/v2/evaluate.py — SEQUENTIAL gate evaluator.
 
 Gate order is mechanical, not a habit: C0 -> C1 -> C2 -> P1, and P1 is NOT COMPUTED (not
 merely not printed) until every prior gate passes. That is the structural defence against
@@ -26,7 +26,7 @@ from loss import forward_loss
 from train import encode_batch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = "/tmp/anima-v2"
+OUT = "/tmp/v2"
 GOOD_B, BAD_B = ord("g"), ord("b")
 
 
@@ -100,7 +100,7 @@ def main():
     ap.add_argument("--fixed-key", action="store_true", dest="fixed_key")  # informational; cfg drives it
     args = ap.parse_args()
     _tag = args.gate + ("-mlp" if args.readout == "mlp" else "") + args.tag
-    out = f"/tmp/anima-v2-{_tag}"
+    out = f"/tmp/v2-{_tag}"
 
     bars = json.load(open(os.path.join(HERE, "bars.json")))
     t, C0, C1, C2, P1 = (bars["task"], bars["C0_instrument_integrity"],
@@ -110,7 +110,7 @@ def main():
     n_eval = C1["eval_n_per_arm"]
 
     print("=" * 78)
-    print(f"anima-v2 [gate={args.gate} readout={args.readout}] — SEQUENTIAL GATES.  DIRECTIONAL ceiling (never TERMINAL)")
+    print(f"v2 [gate={args.gate} readout={args.readout}] — SEQUENTIAL GATES.  DIRECTIONAL ceiling (never TERMINAL)")
     print("=" * 78)
 
     # ── C0 instrument integrity ────────────────────────────────────────────────

@@ -2,7 +2,7 @@
 
 The ρ·weave recombination wall (was G1) is the ABSENCE of an operator<->declaration-store runtime
 lookup bridge (H_9359): the FACT can live in a store and the OPERATOR in the text, yet a frozen conv
-byte-LM has no port to bind them (bolt-on died 3-port, H_9392). anima-v2 DIRECTIONAL-proved that a
+byte-LM has no port to bind them (bolt-on died 3-port, H_9392). v2 DIRECTIONAL-proved that a
 CO-TRAINED bridge learns the lookup (V2_6 held-out macro 0.987/0.992). CLMS ports that co-trained
 bridge onto the parent conv trunk as a trailer lane: at the answer position it forms a query from the
 trunk penultimate, looks up an 8-slot content-addressed store (keys = a FROZEN per-byte embedding of

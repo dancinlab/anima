@@ -1,4 +1,4 @@
-"""anima-v2/probe_decode.py — V2_7 DECODE-PROBE (scratch · rule-exempt zone).
+"""lab/v2/probe_decode.py — V2_7 DECODE-PROBE (scratch · rule-exempt zone).
 
 Question: BOLT's seed-split (s7 held-out 0.611 / s11 0.491≈chance) — is it because the
 frozen NOSTORE trunk encodes the queried entity at the query position for seed7 but NOT
@@ -29,7 +29,7 @@ import model as M
 from train import encode_batch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FKDIR = "/tmp/anima-v2-store_only-mlpfk"   # gate=store_only readout=mlp fixed_key tag=fk
+FKDIR = "/tmp/v2-store_only-mlpfk"   # gate=store_only readout=mlp fixed_key tag=fk
 
 
 def hidden_at_qpos(params, cfg, exs, chunk=256):

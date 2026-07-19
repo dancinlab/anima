@@ -1,4 +1,4 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 rule-exempt zone; v2 hypotheses live here only. -->
+<!-- @hypothesis-ok @canonical-ok — v2 rule-exempt zone; v2 hypotheses live here only. -->
 
 # V2_6 — key 를 고정하면(내용주소 강제) 주소-조회가 완성돼 C2 를 통과하는가
 

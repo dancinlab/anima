@@ -1,5 +1,5 @@
-<!-- @hypothesis-ok @canonical-ok — anima-v2 is an owner-declared RULE-EXEMPT experiment zone.
-     Owner directive: "anima-v2 가설도 v2 안에서만 생성" — v2 hypotheses are registered HERE
+<!-- @hypothesis-ok @canonical-ok — v2 is an owner-declared RULE-EXEMPT experiment zone.
+     Owner directive: "v2 가설도 v2 안에서만 생성" — v2 hypotheses are registered HERE
      only, never in the parent HYPOTHESES/. See ../CLAUDE.md. -->
 
 # V2_1 — 조회 다리는 학습으로만 벌 수 있는가, 아니면 볼트온으로 충분한가
