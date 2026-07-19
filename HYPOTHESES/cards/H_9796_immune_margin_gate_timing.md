@@ -41,6 +41,15 @@
 1. **kind⊥emit 선택편향 검정**(H_9795 판독기 감사 파생): 기존 토이 트레이스서 프로브 tick의 kind⊥emit χ² + S를 all-rows vs emit-only 양쪽 계산 → 발산하면 emit-tick 선택편향 실재(H_9795 판독기도 이 결함 — 별도 감사).
 2. **트레이스 `_meta` 게이트 census**: 대상 트레이스의 `emit_gate`·`g_reach` 읽기 — 순서-민감 항(immune-margin arm)이 실현 게이트 체인에 있으면 §KILL 무효·이 각도 승격, 없으면(wm-dual coverage) §KILL 유효.
 
+### 스크린 실행 결과 (2026-07-19 · toy.clm 48KB · schedule 144틱 · origin/main venv v0.20.16 · DIRECTIONAL)
+
+`anima-py chat state/9257_lane23b/toy.clm --percept-file sched(lags 1,4,16·reps 2) --g-reach d1 --emit-gate refractory`, `ANIMA_TICKS=144 ANIMA_DECISION_TRACE=…` → 145행(_meta 1 + tick 144).
+
+- **② 게이트 census = ✅ PASS(결정적·유리)**: `_meta` = `g_reach=d1 · emit_gate=refractory` = **immune-margin(순서-민감) regime 실현 확인** ⟹ Fable §KILL의 scope(wm-dual 커버리지 게이트)가 이 regime을 **안 덮음** ⟹ H_9796은 살아있는 lane(이 스크린이 KILL로 뒤집을 수 있었으나 안 뒤집힘). de-risk.
+- **① kind⊥emit 선택편향 = ⚠️ INCONCLUSIVE-ON-TOY(정직·비-KILL)**: 프로브 18행(repeat/shuffle/novel 각 6) 전부 **발화 0/18(all-silent)** + `recon_err≡0.0`(origin/main chat.py:6977 dead-gauge 수렴노트 일치). 선택편향은 발화 변동이 있어야 측정 가능 ⟹ **303M(발화율≈0.53)서만 판정 가능** (tune-to-green 아니라 계기-스케일 한계 · `a_scale_honest_scope`). H_9795 판독기의 발화-틱 DV 결함도 동일하게 303M 필요.
+
+**⟹ 스크린 후 상태**: 승격 전제(immune-margin regime) 충족·§KILL 회피 확인 = **owner-go 303M fire ready**(발화하는 큰 ckpt서 ①+CMI 판정). 토이는 발화·recon_err 죽어 여기까지가 $0 천장.
+
 ## 정직 스코프
 
 DIRECTIONAL 설계 · verdict 아님 · cement=engine-native `anima-py` 303M only(토이=DIRECTIONAL 천장). Fable NOVEL 제안 · Sol은 composition KILL에 AGREES(독립 코드정독). H_9731/H_9576/H_9729 kill-list 회피 명시. echo 매개=이 각도의 유일 load-bearing 리스크(echo 없으면 채널 없음).
