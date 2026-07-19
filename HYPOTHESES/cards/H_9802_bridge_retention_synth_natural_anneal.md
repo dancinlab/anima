@@ -27,5 +27,29 @@ NATEM(자연 코퍼스 자발창발)은 🧱 이나, '강제체제서 형성 →
 (exit 0 + 산출물 + 통제) 필수 — 한 번도 실행 안 된 계기는 버그 여럿 겹쳐 숨긴다
 (`instrument-never-run-hides-multiple-bugs`). 음성도 결과다.
 
+## ⚠️ 계기 범위 정정 (2026-07-20 · 착륙 후 self-caught · 과대주장 차단)
+
+`--store-telemetry` 는 착륙했고 수식 단위통제도 통과했으나(균등 a_max=0.1250=파생기준선·a_ent=1.0
+→ RECRUITMENT · one-hot 1.0/0.0 → ADDRESSED · peaked 0.86/0.33 → ADDRESSED), **이 카드가 묻는 질문에
+아직 정렬돼 있지 않다**. 두 겹의 간극:
+
+1. **입력 축 미정렬(본질적)** — telemetry 는 `--store` 평가 경로(storebind 2AFC 항목)에 올라타 있다.
+   그런데 이 카드의 선검사 질문은 *"**자연텍스트**가 store 를 주소지정하는가"* 다. 2AFC 항목은
+   자연텍스트가 아니므로, 지금 계기가 내는 수는 "모집(recruitment) vs 정렬(alignment)" 을
+   **storebind 항목에 대해** 가를 뿐 자연텍스트에 대해 가르지 못한다.
+   → 진짜 정렬 = free-decode 경로(ρ·form/ρ·fan 디코드)에 audit 를 물리고
+     `--store-query every-token --store-fuse gated-add`(마커 없이 매 행 발화 · 트렁크 보존)로 재는 것.
+     현재 CLI 는 reach 배터리 경로에 store 주입을 지원하지 않는다 = 미배선.
+2. **실행 자산 부재** — 저장소 전수 스캔 결과 clms 형식(`entities`/`pols`/`target_slot`) store 매니페스트가
+   **0건**이다(`state/h93xx_decon/*.json` 은 한국어 어간 키의 다른 포맷). 따라서 ①을 고치기 전에도
+   현재 경로조차 발사 불가 — 매니페스트를 먼저 만들어야 한다.
+
+**⟹ 등급: 계기 PARTIAL(구현됨·질문에 미정렬·미발사).** 이 계기가 낸 어떤 수도 "자연텍스트가 store 를
+안 본다/본다" 로 읽으면 안 된다 — 그건 측정된 적이 없다. `instrument-claim-alignment-before-reading-a-bar`
+(계기↔주장 정렬을 bar 읽기 전에) 위반을 사전 차단하기 위한 자수정 기록.
+
+**재개 순서**: ① clms 형식 매니페스트 생성 ② audit 를 free-decode 경로로 확장 ③ `every-token`+`gated-add`
+로 자연텍스트 주소 질량 측정 ④ 그때서야 모집 vs 정렬 판독.
+
 ## related
-H_9775 · H_9267 · H_9802
+H_9775 · H_9267 · H_9804
