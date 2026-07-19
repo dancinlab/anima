@@ -150,6 +150,34 @@ cuBLAS/CPU 누적순서 confound(`decode-py-4`, 2.5e-14)를 원천 차단하기 
 lam=1 팔의 하락은 **무작위 phi/W_up 을 붙인 합성 트레일러**여서 정상이다(학습된 장이 아님). 이
 표가 증명하는 것은 배선이 실제로 발화하고 off 경로가 무손상이라는 것뿐 — 장의 효용은 여전히 미측정.
 
+## 🔗 전체 사슬 스모크 (2026-07-20 · 부모 세션 · 토이)
+
+배선을 닫은 직후, **학습 → 직렬화 → 디코드 → 측정**이 한 사슬로 이어진 적이 한 번도 없었다
+(`instrument-never-run-hides-multiple-bugs`). 지출 전 전제조건으로 3 arm 을 완주시켰다.
+`anima-py corpus flat --lang en`(798,570 B) · `train --d 64 --L 2 --steps 300 --seq-len 128
+--batch-size 8 --seed 7` · `evaluate --gen 40`(경로 줄 제외 sha):
+
+| arm | ckpt | TFLD 트레일러 | decode sha | kwr | fab |
+|---|---|---|---|---|---|
+| off | 117,502 B | 없음 | `8002162a` | 4/5 | 0.4286 |
+| duel | 127,766 B | 10,264 B (arm=duel rank=32) | `26bab19e` | 2/5 | 0.5526 |
+| rank1 | 127,766 B | 10,264 B (arm=rank1 rank=32) | `cb9f1382` | 2/5 | 0.5278 |
+
+셋 다 rc=0, 세 sha 가 서로 다르다 ⟹ 사슬이 살아있고 **arm 이 디코드에 실제로 작용**한다
+(off≠duel 은 레인 발화, duel≠rank1 은 arm 코드가 무시되지 않음을 각각 증명).
+
+⚠️ **이 표는 F1 이 아니다.** kwr/fab 은 ρ 게이트지 이 카드의 DV(Δd_acc)가 아니며, 300 step ·
+d=64 · 1 seed 는 판정 규모가 아니다. duel/rank1 이 off 보다 나쁜 것은 **토이서 장이 파라미터만
+늘리고 학습이 안 됐다**는 읽기가 가장 단순하다 — 어느 쪽도 주장하지 않는다(측정 아님).
+
+## ⛔ 303M 발사 BLOCKED — 비용이 아니라 계기 부재
+
+사슬 스모크 직후 확인된 사실: **F1(Δd_acc ≥ 0.15)을 잴 계기가 프로덕션에 없다.** held-out 결합
+패널 빌더도, d_acc 채점기도 이식되지 않았다(`--free-slot-score` 는 H_9808 의 codebook 감사지
+패널 채점기가 아니다). 지금 303M 을 태우면 **아무도 채점할 수 없는 ckpt** 가 나온다 — v4 H_007 이
+지출 뒤 부적격 판정을 받은 그 실패의 재현이고, `instrument-claim-alignment-before-reading-a-bar`
+가 정확히 금지하는 순서다. ⟹ 선결 = 패널+채점기 이식(H_9810), 그 다음이 303M.
+
 ## 종결 조건
 
 `anima-py train --tension-field {duel,rank1,off}` 3 arm × 2 seed 를 held-out 결합 패널에서 돌리고

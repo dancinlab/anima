@@ -5763,6 +5763,11 @@
        {
         "name": "H_9808 사전등록 게이트 4종 (core/pregates.py)",
         "detail": "v4 H_007/H_001/H_008 + v5 H5_001 흡수. train --trained-control-ceiling(지출 전 중단) · evaluate --falsifier-headroom/--free-slot-score/--register-leak-probe. exit 0 PASS·3 REFUSE·2 malformed. 부모 재현: --pregate-selftest 17/17 PASS."
+       },
+       {
+        "name": "⛔ H_9805 303M 발사 BLOCKED — 계기 부재(비용 아님)",
+        "type": "gate",
+        "detail": "사슬 스모크는 통과(train→serialize→decode→measure 3 arm rc=0 · sha 3종 상이 · arm 이 디코드에 작용). 그러나 카드 DV 인 Δd_acc 를 잴 held-out 결합 패널·d_acc 채점기가 프로덕션에 없다(--free-slot-score 는 codebook 감사). 지금 태우면 채점 불가 ckpt 만 남아 v4 H_007 실패 재현. 선결=H_9810 패널+채점기."
        }
       ]
      }
