@@ -5724,9 +5724,9 @@
         "detail": "v4 H_004 흡수. 쓰기측 per-edge parse-disagreement 場을 trunk 앞단 주입 — 프로덕션 긴장이 스칼라(conflict_scalar) rank-1 이음매인 것의 탈출로. train --tension-field {duel,rank1,off} · evaluate --tension-rank-audit. 🔌 런타임 배선 CLOSED(decode 가 TFLD 판독+임베딩 직후 적용)."
        },
        {
-        "name": "🟡 H_9805 pedestal — 구조신호 실재하나 작다 (널대역 유도 완료)",
+        "name": "🔴 H_9805 場은 어휘 블라인드 — pedestal 신호 정체=레이아웃 통계",
         "type": "gate",
-        "detail": "실제 영어(FLORES 32창)서 live eff_rank 3.6911 vs shuffled 3.5322, 간격 +0.1589. 뒤섞기 씨앗 8개로 유도한 널 산포 sd=0.0093 ⟹ 간격은 널대역 밖 17.1 sd = 잡음 아님(F6 알파벳통계 KILL 미발동). 단 랭크 대비 4.3% 로 작다 — 高랭크의 ~96% 는 여전히 알파벳 통계. 카드에 F6 수치바 미사전등록이라 사후 바 설정 금지, 이 널대역이 판정 근거."
+        "detail": "실측 확증: 공백 배치 고정 후 글자/숫자/대문자 전부 교체해도 장 행렬 비트-동일(최대차 0.000000), 문장부호만 반응(2.0). 장은 바이트 CLASS 경계만 보고 class 내부 어휘엔 블라인드. ⟹ 앞서 널대역 밖 17.1sd 로 잰 '구조 신호'는 언어구조가 아니라 텍스트 레이아웃 통계. v4 는 실제 토큰 위 두 파서였으므로 이식본은 메커니즘 미재현 — 어휘 키 패널서 F1=0 은 rank 붕괴 아니라 채널 부재(혼동시 잘못된 KILL)."
        },
        {
         "name": "core/mi_compress.py (H_9806)",
@@ -5773,6 +5773,15 @@
         "name": "🚦 H_9805 사전등록 목표 확정 — control 이 (0.55, 0.70] 에 들어야 지출 허가",
         "type": "gate",
         "detail": "H_9808 로 H_9805 자신을 심사한 결과. 게이트2 headroom 🟢(bar 0.15 vs 통제 0.62 ⟹ 최대Δ 0.379≥0.30). 게이트1 provenance ⛔ — v4 앵커는 PANEL/SCALE-MISMATCH 로 거부되나 동일 수치를 '이 패널·이 규모 실측' 으로 선언하면 PASS ⟹ 거부 근거는 값이 아니라 출처. 발사 전 필수 = 이 패널 303M 에서 control-alone 선행 측정."
+       },
+       {
+        "name": "H_9810 held-out 결합패널 + d_acc 채점기 (corpus bindpanel · evaluate --bind-panel)",
+        "detail": "H_9805 F1 을 잴 계기 부재를 해소. 3 arm(as-trained·field-blind 천장통제·field-rank1) 을 동일 trunk 가중치서 분기 · free-slot 은 pregates 로 패널마다 재계산. field-blind 천장 0.5347(우연 0.5) ⟹ 헤드룸 0.4653 로 v4 H_007 식 부적격 아님. 場이 어휘 블라인드라 패널을 길이-부호화해 채널 확보."
+       },
+       {
+        "name": "⛔ H_9805 303M 재차단 — 목적함수 항 부재(계산량 아님)",
+        "type": "gate",
+        "detail": "H_9810 F2 liveness 실패: 답 12 바이트가 ~190B 시퀀스의 6% 라 next-byte CE 가 표면만 최적화하고 결합 비트는 우연에 방치 — 토이가 drilled 어휘서도 정확히 우연, 한 답 토큰 93.1% 방출(상수 예측기). 예산통제됨(d128 L4 20k step=5.9× 파라미터·6.7× step 에도 악화·top_ans 100%). v4 는 ce_surf+5·ce_ans 로 해결했으나 anima-py train 에 답-가중 항이 없다. ⟹ 다음 요구사항은 계산량이 아니라 목적함수 항($0 로 판명)."
        }
       ]
      }
