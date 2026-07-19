@@ -1537,7 +1537,7 @@ def dump_hidden_run(argv):
     check (are two obviously-different concepts' hiddens far apart) before any blind verdict."""
     import numpy as np
     ckpt = argv[0]
-    spec_path = evaluate_strval(argv[1:], "--grow-window", "--seed-class", "--fan-temp-ladder", "--dump-hidden", "")
+    spec_path = evaluate_strval(argv[1:], "--dump-hidden", "")
     out_path = evaluate_strval(argv[1:], "--out", "hidden_dump.npz")
     T = evaluate_intval(argv[1:], "--win", 24)
     with_logits = "--with-logits" in argv   # also dump base (lane-OFF) full-forward last-pos logits (lane training)
@@ -8312,7 +8312,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit", "--store-telemetry",
+    "--store-addr-audit", "--store-telemetry", "--grow-window", "--seed-class", "--fan-temp-ladder",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
