@@ -11204,8 +11204,187 @@ def _pc2_atom_census(argv):
     print("")
 
     if not pilot:
-        print("  ⇒ ℹ️ --pilot 없이는 계기 검정력만 보고한다. FULL readout(arm-swept frozen/refit/resid/")
-        print("     random + prefix-swap 양성통제 + null 대조)은 새 디코드가 필요 = H_9755 pool fire 대기.")
+        # ══════════ H_9756 FULL arm-swept atom-census readout (engine-native · 판정표 카드 §⑤) ══════════
+        # 기존 arm-swept 트레이스(gtext_zeta 25/tick = 5 arm × 5 ζ · loading 태그)로 계산 — 새 디코드 불요.
+        # 유일 예외 = prefix-swap 양성통제(--pos-control <dir>) · 없으면 음성판정을 PENDING 으로 강등(card §⑤).
+        # 설계 LOCK(lab full Fable 2026-07-20): per-arm within-tick paired Δcount(ζ=±max − ζ=0) + rng-null
+        # 밴드(atom-라벨 셔플=readout-floor) + arm 대조(refit vs random=축-null) → 판정선.
+        import random as _rnd
+        _ARMS = ("scalar", "frozen", "refit", "random", "refit-resid")
+        _TOST_D = 0.20        # 등가(PASS-BYTE-WALL) margin · Cohen d
+        _KILL_D = 0.20        # KILL arm 대조 최소 |d|
+        _K_NULL = 300         # rng-null 셔플 횟수 (readout-floor 밴드)
+        _CI_Z = 1.959964      # 양측 95% CI
+        pos_dir = evaluate_strval(argv, "--pos-control", "")
+
+        def _toks(txt):
+            return _re.findall(r"[a-z']+", txt.lower())
+
+        # re-parse 트레이스 → per (loading) per-tick paired Δ (+max·−max), token 캐시(rng-null 용)
+        arm_pos = {a: [] for a in _ARMS}   # (c0, cHi, toks0, toksHi) · ζ=+max − ζ=0
+        arm_neg = {a: [] for a in _ARMS}   # ζ=−max − ζ=0
+        contrast = []                      # per-tick {arm: Δ+max} · refit&random 동시 존재 tick
+        iso_ok2 = iso_bad2 = 0
+        for f in files:
+            for l in open(f):
+                l = l.strip()
+                if not l:
+                    continue
+                try:
+                    r = _pj.loads(l)
+                except ValueError:
+                    continue
+                if r.get("_meta") or not r.get("emit"):
+                    continue
+                zl = r.get("gtext_zeta") or []
+                if not zl:
+                    continue
+                base_b = _b64(r.get("gtext_b64"))
+                byld = {}
+                for e in zl:
+                    ld = e.get("loading")
+                    if ld is None:
+                        continue
+                    byld.setdefault(ld, {})[round(float(e["zeta"]), 6)] = _b64(e.get("text_b64"))
+                for ld, zd in byld.items():
+                    z0b = zd.get(0.0)
+                    if z0b is not None:
+                        if z0b == base_b:
+                            iso_ok2 += 1
+                        else:
+                            iso_bad2 += 1
+                tdp = {}
+                for a in _ARMS:
+                    zd = byld.get(a)
+                    if not zd or 0.0 not in zd:
+                        continue
+                    zs = sorted(zd)
+                    t0 = zd[0.0].decode("utf-8", "replace")
+                    c0, _ = _count(t0)
+                    k0 = _toks(t0)
+                    if zs[-1] > 0:
+                        tH = zd[zs[-1]].decode("utf-8", "replace")
+                        cH, _ = _count(tH)
+                        arm_pos[a].append((c0, cH, k0, _toks(tH)))
+                        tdp[a] = cH - c0
+                    if zs[0] < 0:
+                        tN = zd[zs[0]].decode("utf-8", "replace")
+                        cN, _ = _count(tN)
+                        arm_neg[a].append((c0, cN, k0, _toks(tN)))
+                if "refit" in tdp and "random" in tdp:
+                    contrast.append(tdp)
+
+        print("  ══ FULL arm-swept readout (H_9756 · engine-native · 판정표 §⑤) ══")
+        print("  ① 🔐 격리 재인증 (arm별 ζ=0 == base gtext_b64): %d 일치 · %d 불일치"
+              % (iso_ok2, iso_bad2))
+        if iso_bad2 > 0:
+            print("     🔴 INVALID — arm별 ζ=0 이 base 와 불일치(격리 파손) · 판독 중단.")
+            return 0
+
+        # rng-null: K 개 무작위 atom-set(실제 fw 크기) 로 pooled meanΔ(+max) 재계산 → readout-floor 밴드
+        _allw = set()
+        for a in _ARMS:
+            for c0, cH, k0, kH in arm_pos[a]:
+                _allw.update(k0)
+                _allw.update(kH)
+        _wl = sorted(_allw)
+        _na = min(len(word_atoms), len(_wl))
+        _rng = _rnd.Random(20260717)
+
+        def _pooled_md(recs, aset):
+            ds = [(sum(1 for w in kH if w in aset) - sum(1 for w in k0 if w in aset))
+                  for c0, cH, k0, kH in recs]
+            return (sum(ds) / float(len(ds))) if ds else 0.0
+
+        null_draws = {a: [] for a in _ARMS}
+        if _wl:
+            for _ in range(_K_NULL):
+                aset = set(_rng.sample(_wl, _na))
+                for a in _ARMS:
+                    if arm_pos[a]:
+                        null_draws[a].append(_pooled_md(arm_pos[a], aset))
+
+        def _band(xs):
+            if not xs:
+                return (0.0, 0.0)
+            s = sorted(xs)
+            return (s[int(0.025 * len(s))], s[min(len(s) - 1, int(0.975 * len(s)))])
+
+        def _armstat(recs):
+            ds = [cH - c0 for c0, cH, k0, kH in recs]
+            st = _stats(ds)
+            if st is None:
+                return None
+            se = st["sd"] / (st["neff"] ** 0.5) if st["neff"] > 0 else float("inf")
+            st["se"] = se
+            st["ci"] = (st["md"] - _CI_Z * se, st["md"] + _CI_Z * se)
+            st["d"] = (st["md"] / st["sd"]) if st["sd"] > 0 else 0.0
+            return st
+
+        print("")
+        print("  ② per-arm within-tick paired Δcount (ζ=+max − ζ=0 · 실제 atom-family) + rng-null 밴드:")
+        print("     %-12s %8s %8s %20s %8s %20s" %
+              ("arm", "meanΔ", "d", "95% CI", "n", "rng-null95 밴드"))
+        armstats = {}
+        for a in _ARMS:
+            st = _armstat(arm_pos[a])
+            armstats[a] = st
+            nb = _band(null_draws[a])
+            if st is None:
+                print("     %-12s %8s   (사다리<2 · 기여 없음)" % (a, "-"))
+                continue
+            moves = (st["ci"][0] > nb[1]) or (st["ci"][1] < nb[0])   # CI 가 rng-null 밴드 밖
+            print("     %-12s %+8.3f %+8.3f  [%+.3f,%+.3f] %8d  [%+.3f,%+.3f]%s"
+                  % (a, st["md"], st["d"], st["ci"][0], st["ci"][1], st["n"],
+                     nb[0], nb[1], "  ← 밴드밖" if moves else ""))
+        # −max 부호 보존 요약(PASS-SIGN-NEG 판단용)
+        neg_ref = _armstat(arm_neg.get("refit", []))
+        if neg_ref is not None:
+            print("     (refit ζ=−max Δ = %+.3f · +max 와 부호 %s)"
+                  % (neg_ref["md"], "반대(사다리 정상)" if neg_ref["md"] * (armstats.get("refit") or {"md": 0})["md"] < 0 else "동일/모호"))
+
+        # ③ arm 대조 (refit − random · within-tick paired · 축-null)
+        con_ds = [d["refit"] - d["random"] for d in contrast]
+        con = _stats(con_ds)
+        con_ci = con_d = None
+        if con is not None:
+            cse = con["sd"] / (con["neff"] ** 0.5) if con["neff"] > 0 else float("inf")
+            con_ci = (con["md"] - _CI_Z * cse, con["md"] + _CI_Z * cse)
+            con_d = (con["md"] / con["sd"]) if con["sd"] > 0 else 0.0
+            print("")
+            print("  ③ arm 대조 Δ(refit−random) within-tick paired: meanΔ=%+.3f · d=%+.3f · 95%%CI=[%+.3f,%+.3f] · n=%d"
+                  % (con["md"], con_d, con_ci[0], con_ci[1], con["n"]))
+
+        # ④ 판정 (card §⑤ · Fable LOCK 판정선)
+        def _in_band(st, nb):
+            return st is not None and st["ci"][0] >= nb[0] and st["ci"][1] <= nb[1]
+        def _equiv0(st):   # TOST 등가(|d|<margin)
+            return st is not None and abs(st["d"]) < _TOST_D
+        ref = armstats.get("refit"); ran = armstats.get("random")
+        nb_ref = _band(null_draws["refit"])
+        refit_moves = ref is not None and ((ref["ci"][0] > nb_ref[1]) or (ref["ci"][1] < nb_ref[0]))
+        random_still = _equiv0(ran)
+        contrast_sep = con_ci is not None and (con_ci[0] > 0 or con_ci[1] < 0) and abs(con_d or 0) >= _KILL_D
+        all_equiv = all(_equiv0(armstats.get(a)) for a in _ARMS if a != "scalar" and armstats.get(a) is not None)
+
+        print("")
+        print("  ⇒ VERDICT (DIRECTIONAL · 303M · terminal=이 출력 verbatim · byte-wall 판정표 §⑤):")
+        if refit_moves and random_still and contrast_sep:
+            print("     🔴 KILL-AXIS-MATTERS — refit 만 atom-census 를 rng-null 위로 움직임(random 은 밴드 안 ∧")
+            print("        Δ(refit−random) CI 가 0 제외 ∧ |d|≥%.2f). 축이 content 입도에 닿음 = byte-wall 반증." % _KILL_D)
+        elif refit_moves and not contrast_sep:
+            print("     🟠 AMBIG-GENERIC — refit 은 rng-null 밖이나 random 대비 분리 안 됨(generic loading 효과).")
+        elif all_equiv:
+            if pos_dir:
+                print("     🟢 PASS-BYTE-WALL — 전 loading arm 이 atom-census 에서 TOST 등가(|d|<%.2f) · 양성통제 통과." % _TOST_D)
+            else:
+                print("     ⏳ PENDING-POSITIVE-CONTROL — 전 arm TOST 등가(|d|<%.2f · PASS-BYTE-WALL 방향)이나" % _TOST_D)
+                print("        음성 판독은 prefix-swap 양성통제 필요(card §⑤ readout 양성통제 없이 음성 금지).")
+                print("        승격 경로: anima-py chat … --zeta-prefix-swap <alt> → --pos-control <dir> 재실행.")
+        else:
+            print("     ⏳ NOT-CLEAN — 판정선 어디에도 깨끗이 안 들어감(일부 arm 이동·대조 미분리 혼재) · 표 재검.")
+        print("     범위: content-입도 채널(π̄ rate 아님) · H_9755(어떤 arm 도 축-dose 무증거)의 독립 채널 확증/반증.")
+        print("     주의: rng-null 은 word-atom 만(punct 제외) 근사 floor · terminal 은 prefix-swap 양성통제 후.")
         return 0
 
     br_ok = br_frac >= _BR_MIN

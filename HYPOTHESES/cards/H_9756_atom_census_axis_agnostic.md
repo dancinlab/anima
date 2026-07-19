@@ -1,6 +1,6 @@
 # H_9756 — ATOM-CENSUS AXIS-AGNOSTIC — 벽은 축이 아니라 byte 입도다: 의미 readout 재설계 + 전-arm 음성 검정 (R6-5 · (c) 정면)
 
-**status:** 🟢 PILOT-PASS (계기 검정력 사전점검 착륙 · DIRECTIONAL) — full arm-swept readout 은 여전히 🔵 PROPOSED ([[H_9755]] fire rider + prefix-swap 양성통제 대기)
+**status:** 🟢 PILOT-PASS + ⏳ FULL-READOUT DIRECTIONAL (2026-07-20 · engine-native `--atom-census` full 착륙 · VERSION 0.20.20 · §⑨) — 전 loading arm content atom-census TOST 등가·refit≈random = **PASS-BYTE-WALL 방향** · ⏳ PENDING-positive-control(prefix-swap 양성통제 fire 후 terminal · [[H_9755]] π̄ 채널 결과를 content-입도 독립채널서 확증)
 **lane:** g1-interface-addressable-wall · mouth/PC2-axis — 브리프 (c) 축-무관 가설 정면 (가장 아픈 안)
 **related:** [[H_9576]] · [[H_9629]] · [[H_9663]] · [[H_9631]] · [[H_9755]]
 
@@ -57,3 +57,27 @@ mouth-content 벽은 **축 선택과 무관한 byte 입도의 벽**이다 — �
 
 ## ⑦ 죽는 방식
 KILL-AXIS-MATTERS 관측(refit 만 atom 을 움직임). 또는 prefix-swap 조차 못 잡는 readout 만 반복되면 — "창-측정 가능한 의미"라는 것이 이 입도에 아예 없다는 상위 발견으로 승격(그것대로 보고).
+
+## ⑨ FULL arm-swept readout 결과 (2026-07-20 · engine-native `--atom-census`(non-pilot) · DIRECTIONAL · ⏳ PENDING-positive-control)
+
+리더 착륙(evaluate.py `--atom-census` full 분기 · VERSION 0.20.20). [[H_9755]] fire 트레이스(`/tmp/h9755_fire` · 3 run · post-warmup emit tick 마다 gtext_zeta 25항목 = 5 arm × 5 ζ) **재사용 — 새 디코드 불요**(arm-swept 생성텍스트 이미 로그). 설계 LOCK = lab full Fable(2026-07-20).
+
+**① 격리 재인증**: arm별 ζ=0 == base gtext_b64 = **1889 일치 · 0 불일치**.
+
+**② per-arm within-tick paired Δcount (ζ=+max − ζ=0 · 실제 fw+punct atom) + rng-null95 밴드**:
+| arm | meanΔ | d | 95% CI | rng-null 밴드 | 이동? |
+|---|---|---|---|---|---|
+| scalar | **+0.687** | +0.247 | [+0.46,+0.92] | [−0.29,+0.07] | **밴드밖**(순수 dose · readout 감도 자기인증) |
+| frozen | +0.003 | +0.001 | [−0.32,+0.33] | [−0.08,+0.13] | 등가 |
+| refit | +0.020 | +0.007 | [−0.27,+0.31] | [−0.07,+0.06] | 등가 |
+| random | +0.031 | +0.011 | [−0.25,+0.31] | [−0.10,+0.05] | 등가 |
+| refit-resid | +0.243 | +0.076 | [−0.08,+0.56] | [−0.09,+0.06] | 등가 |
+(refit ζ=−max Δ=−0.073 · +max 와 부호 반대 = 사다리 정상)
+
+**③ arm 대조 Δ(refit−random)** within-tick paired: meanΔ=**−0.011** · d=−0.004 · 95%CI=[−0.33,+0.30] → **분리 0(refit≈random)**.
+
+**⇒ VERDICT (DIRECTIONAL · 303M · reader 출력 그대로 · terminal 아님)**: ⏳ **PENDING-POSITIVE-CONTROL** — 전 loading arm(frozen/refit/random/resid)이 atom-census 에서 **TOST 등가**(|d|<0.20 = PASS-BYTE-WALL 방향) ∧ **refit≈random**(축-null 대비 무분리). 음성(PASS-BYTE-WALL) **확정은 prefix-swap 양성통제 필요**(§⑤ · readout 양성통제 없이 음성 금지). scalar(순수 dose)가 +0.687 로 움직이는 것 자체가 **readout 이 죽지 않았다는 자기증거**.
+
+**H_9755 정합 (독립 채널 확증)**: [[H_9755]] = π̄(방출 **rate**) 채널에서 refit≈random(축 dose 무증거 · β_arm=s_eff·E[u_arm]). 여기 atom-census = **content 입도** 채널 — **같은 결론**(어떤 축도 content atom 무이동). 두 독립 채널 정합 ⇒ **PASS-BYTE-WALL 방향 강함**(축-무관 ∧ 채널-무관 벽: refit=인증축조차 rate 도 content 도 못 옮김). 단 terminal 은 prefix-swap 양성통제 후.
+
+**후속 (terminal 경로 · no tune-to-green)**: chat.py `--zeta-prefix-swap <alt-mem>` rung 배선(emit tick 마다 `loading:"pswap"` 항목 · 스키마 변경 0) → 소량 fire(1 run × 100 tick × 2 seed · summer CPU) → `anima-py evaluate --atom-census --pos-control <dir>` 재실행 → 양성통제 통과 시 PENDING→**PASS-BYTE-WALL** 승격, 실패 시 **VOID**. DV·판정선 이미 LOCK(tune-to-green 경로 없음). rng-null=word-atom 근사(punct 제외).
