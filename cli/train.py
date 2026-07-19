@@ -772,6 +772,51 @@ def _ce(logits, targets, V):
     return F.cross_entropy(logits.transpose(1, 2).reshape(-1, V), targets.reshape(-1))
 
 
+# ── H_9811 ANSWER-WEIGHTED CE (v4 H_004 amendment A1, ported) ──────────────────────────────
+# Why this exists, measured not assumed: on the H_9810 binding panel the answer is 12 bytes of a
+# ~190 B line (~6%), so a plain next-byte CE spends essentially all of its gradient on the
+# surface and leaves the binding bit at chance. Measured on a toy (d=64 L=2, 1200 steps,
+# val_CE 0.084): d_acc 0.5000 = EXACTLY chance on DRILLED lexemes with one answer token emitted
+# on 68-86% of slots — a constant predictor, and the scorer refuses to read any Δ off it. It is
+# not undertraining: 5.9x params and 6.7x steps made it WORSE (top_ans 100.0%). v4 fixed the same
+# failure with `ce_surf + 5·ce_ans`; this is that term.
+ANSWER_MARKER = b" => "
+
+
+def answer_position_mask(targets, marker=ANSWER_MARKER):
+    """(B, T) bool — True on target positions that lie in the ANSWER span of an arrow line.
+
+    The arrow-line corpora (`corpus flat|bindpanel|derivtrace|…`) put the answer after a literal
+    ` => `, so the span is 'everything after the LAST marker occurrence in this row'. Rows with no
+    marker contribute no weighted positions (mask all False) — a corpus without arrow lines is
+    therefore a no-op rather than a silent mis-weighting.
+    """
+    B, T = targets.shape
+    mk = torch.tensor(list(marker), dtype=targets.dtype, device=targets.device)
+    n = mk.numel()
+    if T < n:
+        return torch.zeros_like(targets, dtype=torch.bool)
+    # windows[b, t] == True iff targets[b, t:t+n] == marker
+    win = targets.unfold(1, n, 1) == mk.view(1, 1, n)
+    hit = win.all(dim=2)                                   # (B, T-n+1)
+    idx = torch.arange(hit.shape[1], device=targets.device).view(1, -1)
+    last = torch.where(hit, idx, torch.full_like(idx, -1)).max(dim=1).values   # -1 ⇒ no marker
+    pos = torch.arange(T, device=targets.device).view(1, -1)
+    start = (last + n).view(-1, 1)
+    return (pos >= start) & (last.view(-1, 1) >= 0)
+
+
+def answer_ce(logits, targets, V, marker=ANSWER_MARKER):
+    """Mean CE over ANSWER positions only. Returns (loss, n_positions); loss is 0 when none."""
+    mask = answer_position_mask(targets, marker)
+    n = int(mask.sum())
+    if n == 0:
+        return logits.sum() * 0.0, 0
+    lg = logits.transpose(1, 2).reshape(-1, V)[mask.reshape(-1)]
+    tg = targets.reshape(-1)[mask.reshape(-1)]
+    return F.cross_entropy(lg, tg), n
+
+
 # NOTE (H_1640): every objective now accepts an OPTIONAL penultimate=(B,d,T) kwarg
 # (the post-MoE pre-readout trunk site). The inherited objectives ignore it; the new
 # compositional objectives consume it. Plain-function objectives have no params; the
@@ -1159,7 +1204,7 @@ class TrainShell(nn.Module):
 
     def forward(self, x, y, obj_gen, dict_lambda, jamo_lambda, sb=None, sb_w=1.0, sb_oracle=False, sb_addr_w=0.0, sb_oracle_aux=0.0, sb_tap_grad="detached",
                 idl=None, idl_w=1.0, idl_assign="hungarian", idl_route="l3-disjoint",
-                idl_tap_L=3, idl_gen=None):
+                idl_tap_L=3, idl_gen=None, ans_w=0.0):
         # ── VERBATIM relocation of the per-step loss-composition block (bf16 + fp32). The
         #    autocast context stays wrapping ONLY the forward/compose (backward is at the
         #    callsite, outside autocast — DDP hooks fire there). Returns (loss, detached CE,
@@ -1176,6 +1221,10 @@ class TrainShell(nn.Module):
                 pen = h.float() if (h is not None and self.obj_needs_pen) else None
                 obj_loss, oaux = objfn(out["logits"].float(), y, V, obj_gen, penultimate=pen)
                 loss = obj_loss + out["aux_loss"]
+                if ans_w > 0.0:                       # H_9811 answer-weighted CE (default 0 = off)
+                    ace, an = answer_ce(out["logits"].float(), y, V)
+                    loss = loss + ans_w * ace
+                    aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
                 if self.dict_on:
                     dloss = dict_lambda * h.abs().mean()
                     loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
@@ -1192,6 +1241,10 @@ class TrainShell(nn.Module):
             pen = h if self.obj_needs_pen else None
             obj_loss, oaux = objfn(out["logits"], y, V, obj_gen, penultimate=pen)
             loss = obj_loss + out["aux_loss"]
+            if ans_w > 0.0:                           # H_9811 answer-weighted CE (default 0 = off)
+                ace, an = answer_ce(out["logits"], y, V)
+                loss = loss + ans_w * ace
+                aux["ans_ce"] = float(ace.detach()); aux["ans_n"] = an
             if self.dict_on:
                 dloss = dict_lambda * h.abs().mean()
                 loss = loss + dloss; aux["dict_l1"] = float(dloss.detach())
@@ -1572,6 +1625,13 @@ def main():
                     help="H_9805: TFLD inner width r for phi (n_bucket, r) and W_up (r, d).")
     ap.add_argument("--tension-field-lam0", type=float, default=1.0,
                     help="H_9805: TFLD lam init (additive pre-trunk scale).")
+    ap.add_argument("--answer-ce-weight", type=float, default=0.0,
+                    help="H_9811: extra CE weight on the ANSWER span of ` => ` arrow lines "
+                         "(loss = obj + w*ce_answer). 0 = OFF, byte-identical to today. The "
+                         "answer is ~6%% of a bind-panel line, so a plain next-byte CE leaves "
+                         "the binding bit at chance (measured: d_acc 0.5000 on DRILLED lexemes, "
+                         "one token emitted 68-86%% of slots, and 5.9x params/6.7x steps made it "
+                         "WORSE). v4 H_004's amendment A1 used ce_surf + 5*ce_ans.")
     ap.add_argument("--bind-rank", type=int, default=64, help="H_9698: MBND binder rank (q/k/v/u width)")
     ap.add_argument("--bind-lam0", type=float, default=1.0, help="H_9698: MBND lam init (additive scale)")
     ap.add_argument("--freeze-trunk", action="store_true",
@@ -2345,6 +2405,7 @@ def main():
                                            sb_tap_grad=str(getattr(a, "store_query_tap_grad", "detached")),
                                            # H_9803 branch-latent ideation fan (None ⇒ byte-identical)
                                            idl=(get_ideation_batch() if idl_cell is not None else None),
+                                           ans_w=a.answer_ce_weight,   # H_9811 (0.0 ⇒ term never evaluated)
                                            idl_w=a.ideation_weight, idl_assign=a.ideation_assign,
                                            idl_route=a.ideation_route, idl_tap_L=a.ideation_route_l,
                                            idl_gen=idl_gen)
