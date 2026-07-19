@@ -12,6 +12,12 @@ recombination wall · frozen bar = former G1):
                target IS the derivation, so echo == composition -> CE=echo metalaw
                does not apply. ρ·weave (former G1) first engine-native lift (DERIV PASS vs FLAT FAIL).
   flat       : composite prompt -> final OUT only (census#3 coverage-flat homolog = control).
+  counterfactual-decl : H_9800 EPHEMERAL-DECLARATION grounding. Every episode RE-ASSIGNS
+               stem->sense and operator->role, so the same stem carries the OPPOSITE declaration
+               in the next episode and a parametric cache returns exactly the realized chance.
+               Runtime lookup becomes the only CE minimiser. Emits the corpus + a 5-stratum eval
+               manifest (`--decl-flip`) + a polarity audit re-parsed from the written file.
+               EN-only. `anima corpus counterfactual-decl --lang en --out c.txt --held-out 32,8`
 Both share the SAME instance stream / RNG at a fixed --seed, so `derivtrace` and `flat`
 built with the same seed are CONTENT-MATCHED (only data-format varies = clean 2-arm control).
 
@@ -96,7 +102,14 @@ def _parse_args(argv):
             #   --transcript T.jsonl   the study transcript (teacher percepts + substrate emits)
             #   --study-frac 0.05      teacher-content byte share of the replay-mix (small % · rest = base replay)
             #   --scramble-seed 11     the C2 word-shuffle seed (kept separate so C2 is reproducible)
-            "transcript": None, "study_frac": 0.05, "scramble_seed": 11}
+            "transcript": None, "study_frac": 0.05, "scramble_seed": 11,
+            # H_9800 counterfactual-decl (ephemeral-declaration grounding):
+            #   --stems-per-episode S   declared stems per episode (>=4, multiple of 4)
+            #   --eval-episodes N       eval episodes PER STRATUM (5 strata)
+            #   --held-out I,J          REINTERPRETED for this format ONLY: I = held-out (0-shot)
+            #                           stem names, J = held-out operator names. Documented in the
+            #                           format's own printout so the reinterpretation is never silent.
+            "stems_per_episode": 4, "eval_episodes": 16}
     i = 1
     while i < len(argv):
         a = argv[i]
@@ -198,6 +211,10 @@ def _parse_args(argv):
             opts["scramble_seed"] = int(argv[i + 1]); i += 2
         elif a == "--arm":
             opts["arm"] = argv[i + 1]; i += 2          # H_9694 g6bind: targeted|shuf
+        elif a == "--stems-per-episode":
+            opts["stems_per_episode"] = int(argv[i + 1]); i += 2   # H_9800 counterfactual-decl
+        elif a == "--eval-episodes":
+            opts["eval_episodes"] = int(argv[i + 1]); i += 2       # H_9800 counterfactual-decl
         elif a.startswith("--"):
             # fail closed. The old `else: i += 1` swallowed an unknown flag silently, so a typo
             # (--kctx for --k-ctx) would build the manifest at the DEFAULT power and report success
@@ -2090,6 +2107,433 @@ def build_storebind(n_blocks, store_slots, seed, lang, n_pool=512, n_eval=128, r
     return text, st
 
 
+# --------------------------------------------------------------------------- #
+# counterfactual-decl — EPHEMERAL-DECLARATION grounding corpus (H_9800 · R11).
+#
+# WHY THIS FORMAT EXISTS. H_9359 measured that the operator does not look up a declared store at
+# runtime (the two-lane wall). H_9800 reframes that as ECONOMICS, not absence: in every corpus
+# built so far a stem's polarity is GLOBALLY FIXED, so memorising stem->polarity into the weights
+# is strictly cheaper (in CE) than reading a declaration at runtime. A parametric cache is then
+# the RATIONAL minimiser and the bridge is never paid for.
+#
+# This format removes that option. Every episode RE-DRAWS
+#   stem -> sense   (good | harm)      and      operator -> role  (same | flip)
+# so the SAME stem carries the OPPOSITE declaration in the next episode, and the SAME operator
+# name affirms in one episode and negates in the next. A weight-cached stem prior therefore
+# returns EXACTLY the realized chance level, and the only remaining CE minimiser is to read the
+# in-context declaration. next-byte CE itself pays for the bridge.
+#
+# THE THREE INVARIANTS THAT MAKE IT READABLE (each is asserted, never assumed):
+#  ① the query carrier is `<op> <stem> => ` — it contains NEITHER an answer token (aye|nay) NOR a
+#    label name (good|harm|same|flip). The instrument must not install the operator->answer map;
+#    if the carrier carried it, a model could answer without composing anything (this is the
+#    `no arbitrary grounding` requirement, and it is re-checked at EVAL time too).
+#  ② the target is a pure composition: answer_bit = sense_bit XOR role_bit. Nothing else in the
+#    episode determines it.
+#  ③ EXACT polarity balance, VERIFIED by re-parsing the file that was actually written to disk
+#    (not the generator's internal counters). Balance is structural — each stem is queried once
+#    under the `same` operator and once under the `flip` operator, so its two answers are always
+#    {aye, nay} — but a structural argument is not evidence, so the audit re-derives the counts
+#    and the CHANCE LEVEL from the realized split (chance-level-must-be-derived-per-metric: a
+#    pedestal that happens to be uniform is a coincidence that hides defects, never an assumption).
+#
+# THE SPLIT IS OVER MAPPINGS, NOT ONLY OVER STEMS. Holding out stems alone would leave the
+# instrument readable by a model that learned `a declared stem keeps whatever sense it had`. So
+# the stem pool is three-way and the operator pool is three-way:
+#   rotating  — sense/role re-drawn EVERY episode (the non-stationary bulk of the corpus)
+#   frozen    — present in training but with a FIXED sense/role for the whole corpus; the eval
+#               stratum presents them with the ANTI sense/role, i.e. a MAPPING the corpus never
+#               contains even though its bytes are fully seen. This is the stratum that separates
+#               `reads the declaration` from `has a stem prior`.
+#   held      — bytes that appear 0x in the corpus (0-shot), hard-asserted.
+#
+# EN-only (`--lang en`, owner directive · CLAUDE.md EN-FIRST): the role words are FREE pre-posed
+# tokens, so operator identity is never confounded with morphology.
+# --------------------------------------------------------------------------- #
+_CD_SENSE = {1: "good", 0: "harm"}          # stem declaration value (both 4B — flip is byte-length
+_CD_ROLE = {0: "same", 1: "flip"}           # operator declaration value (both 4B) preserving, so a
+_CD_ANSWER = {1: "aye", 0: "nay"}           # answer token (both 3B — no length confound in the 2AFC)
+# Every literal the corpus grammar owns. A nonce name that CONTAINS one of these (or that one of
+# these contains) would make the leak/derangement audits ambiguous, so such names are dropped from
+# the pool at build time rather than filtered later.
+_CD_RESERVED = ("good", "harm", "same", "flip", "aye", "nay", "means", "acts", "ep")
+
+
+def _cd_name_pool(n_total):
+    """CVCVC nonce pool with every reserved-literal collider REMOVED, stride-sampled to n_total.
+
+    Sorted + filtered + sliced => the pools are a pure function of n_total (seed-independent),
+    exactly like _sb_entity_pool. The filter is not cosmetic: `samek` is a legal CVCVC name that
+    CONTAINS the role literal `same`, which would make both the 0-shot substring leak witness and
+    the eval-time carrier audit read a false hit."""
+    names = []
+    for c0 in _SB_CONSONANTS:
+        for v0 in _SB_VOWELS:
+            for c1 in _SB_CONSONANTS:
+                for v1 in _SB_VOWELS:
+                    for c2 in _SB_CONSONANTS:
+                        nm = c0 + v0 + c1 + v1 + c2
+                        if any(r in nm or nm in r for r in _CD_RESERVED):
+                            continue
+                        names.append(nm)
+    names = sorted(set(names))
+    if len(names) < n_total:
+        raise SystemExit("counterfactual-decl: nonce pool %d < requested %d" % (len(names), n_total))
+    step = (len(names) - 1) / float(n_total - 1)
+    return [names[int(round(i * step))] for i in range(n_total)]
+
+
+def _cd_decl_line(name, sense_bit):
+    return "%s means %s ." % (name, _CD_SENSE[sense_bit])
+
+
+def _cd_op_line(name, role_bit):
+    return "%s acts %s ." % (name, _CD_ROLE[role_bit])
+
+
+def _cd_carrier(op_name, stem_name):
+    """The query carrier. Contains the two NAMES and nothing else — no answer token, no label."""
+    return "%s %s => " % (op_name, stem_name)
+
+
+def _cd_answer_bit(sense_bit, role_bit):
+    """The ONLY rule in the format: compose the stem declaration with the operator declaration."""
+    return sense_bit ^ role_bit
+
+
+def _cd_episode(rng, stem_slots, op_slots):
+    """Render one episode. stem_slots = [(name, sense_bit)] · op_slots = [(name, role_bit)].
+
+    Declaration order is shuffled (so position never encodes the value) and every (stem, op)
+    pair is queried exactly once in shuffled order. Because each stem meets exactly one `same`
+    and one `flip` operator, its two answers are {aye, nay} — polarity balance is structural."""
+    decl = [_cd_decl_line(nm, sb) for nm, sb in stem_slots]
+    rng.shuffle(decl)
+    ops = [_cd_op_line(nm, rb) for nm, rb in op_slots]
+    rng.shuffle(ops)
+    qs = [(o_nm, o_rb, s_nm, s_sb) for o_nm, o_rb in op_slots for s_nm, s_sb in stem_slots]
+    rng.shuffle(qs)
+    q_lines = [_cd_carrier(o_nm, s_nm) + _CD_ANSWER[_cd_answer_bit(s_sb, o_rb)]
+               for o_nm, o_rb, s_nm, s_sb in qs]
+    return decl + ops, q_lines, qs
+
+
+def _cd_derangement(n, rng, values, q):
+    """A derangement pi of the n declaration slots, preferring one where the QUERIED slot receives
+    a value OPPOSITE to its own.
+
+    This permutation is the whole value-shuffle control. Applying shuf[i] = values[pi[i]] with pi a
+    derangement makes the QUERIED slot's declaration WORLD-INVARIANT: the queried slot q shows
+    values[pi[q]] and pi[q] != q, so flipping the queried stem's true sense changes the declaration
+    of slot pi^-1(q) instead — the SAME number of bytes move, the key set and the value multiset are
+    identical, only the key<->value correspondence is broken. A grounded reader therefore loses its
+    flip signal here while every surface statistic is matched (control-must-match-mediating-covariate).
+
+    Returns (pi, opposite_ok). opposite_ok=False is recorded, never silently accepted."""
+    for _ in range(256):
+        idx = list(range(n))
+        # Sattolo's algorithm: a single n-cycle, hence a derangement by construction.
+        for i in range(n - 1, 0, -1):
+            j = rng.randrange(i)
+            idx[i], idx[j] = idx[j], idx[i]
+        pi = [0] * n
+        for i in range(n):
+            pi[i] = idx[i]
+        if any(pi[i] == i for i in range(n)):      # defensive: Sattolo cannot produce a fixed point
+            continue
+        if values[pi[q]] != values[q]:
+            return pi, True
+    return pi, False
+
+
+def _cd_eval_entry(rng, stratum, stem_slots, op_slots, q_index, ep_id):
+    """One fully-rendered eval item: every arm's CONTEXT is materialised here, in the builder that
+    owns the grammar, so the evaluator never re-implements the renderer (a second renderer is a
+    format-drift bug waiting to happen — evaluate.py re-derives the gold and audits the carrier
+    instead, which is a check, not a duplicate)."""
+    decl_order = list(range(len(stem_slots)))
+    rng.shuffle(decl_order)
+    op_order = list(range(len(op_slots)))
+    rng.shuffle(op_order)
+    op_name, role_bit = op_slots[q_index[0]]
+    stem_name, sense_bit = stem_slots[q_index[1]]
+    q = q_index[1]
+    values = [sb for _, sb in stem_slots]
+    pi, opp_ok = _cd_derangement(len(stem_slots), rng, values, q)
+
+    def render(sense_of):
+        lines = [_cd_decl_line(stem_slots[i][0], sense_of(i)) for i in decl_order]
+        lines += [_cd_op_line(op_slots[i][0], op_slots[i][1]) for i in op_order]
+        return "\n".join(lines) + "\n"
+
+    flipped = [sb for sb in values]
+    flipped[q] = 1 - flipped[q]
+    ctx_a = render(lambda i: values[i])
+    ctx_b = render(lambda i: flipped[i])
+    ctx_shuf_a = render(lambda i: values[pi[i]])
+    ctx_shuf_b = render(lambda i: flipped[pi[i]])
+    # declaration-drop: the QUERIED stem's declaration is removed in BOTH worlds, so the two
+    # contexts become byte-identical and flip-sensitivity is 0 MECHANICALLY (not statistically).
+    # That is the point: it is the instrument's own null, and if it ever reads != 0 the harness
+    # is broken (evaluate.py turns the run INSTRUMENT-DEAD on that).
+    drop_lines = [_cd_decl_line(stem_slots[i][0], values[i]) for i in decl_order if i != q]
+    drop_lines += [_cd_op_line(op_slots[i][0], op_slots[i][1]) for i in op_order]
+    ctx_drop = "\n".join(drop_lines) + "\n"
+    gold = _cd_answer_bit(sense_bit, role_bit)
+    return {
+        "stratum": stratum, "episode": ep_id,
+        "op": op_name, "stem": stem_name, "role_bit": role_bit, "sense_bit": sense_bit,
+        "carrier": _cd_carrier(op_name, stem_name),
+        "gold": _CD_ANSWER[gold], "gold_flip": _CD_ANSWER[1 - gold],
+        "gold_bit": gold,
+        "answers": [_CD_ANSWER[0], _CD_ANSWER[1]],          # indexed by answer_bit
+        "ctx": {"live_a": ctx_a, "live_b": ctx_b,
+                "value-shuffle_a": ctx_shuf_a, "value-shuffle_b": ctx_shuf_b,
+                "declaration-drop_a": ctx_drop, "declaration-drop_b": ctx_drop},
+        "perm": pi, "perm_opposite": opp_ok,
+        "store": {"entities": [nm for nm, _ in stem_slots], "pols": values},
+        "target_slot": q,
+    }
+
+
+def _cd_audit_counts(rows):
+    """Per-class counts + the chance level DERIVED from the realized split.
+
+    chance = the MAJORITY share of the realized labels, i.e. the accuracy of the best constant
+    predictor on THIS split. Never 0.5-by-assumption: a uniform pedestal that happens to coincide
+    with 1/K is exactly how a defect hides (chance-level-must-be-derived-per-metric)."""
+    n = len(rows)
+    c = collections.Counter(rows)
+    return {"n": n, "counts": dict(sorted(c.items())),
+            "chance_majority": (max(c.values()) / float(n)) if n else None,
+            "balanced_exact": (len(c) == 2 and len(set(c.values())) == 1)}
+
+
+def build_counterfactual_decl(n_blocks, stems_per_ep, seed, lang, held_stems, held_ops,
+                              n_rot_stems=192, n_frozen_stems=64, n_rot_ops=24, n_frozen_ops=8,
+                              n_eval_episodes=16):
+    """Build the H_9800 ephemeral-declaration corpus + eval manifest + store surface.
+
+    Returns (text, st). Hard-fails (never a silent downgrade) on: non-EN, a stems-per-episode that
+    cannot be balanced 4 ways, a pool shortfall, or a 0-shot leak."""
+    if lang != "en":
+        raise SystemExit("counterfactual-decl is EN-only (--lang en): the role words are FREE "
+                         "pre-posed tokens, so operator identity is never confounded with "
+                         "morphology (CLAUDE.md EN-FIRST · the ko lane is BINDING)")
+    S = int(stems_per_ep)
+    if S < 4 or S % 4 != 0:
+        raise SystemExit("counterfactual-decl: --stems-per-episode must be >=4 and a multiple of 4 "
+                         "(half rotating / half frozen, each half sense-balanced); got %d" % S)
+    if n_frozen_stems % 2 or n_frozen_ops % 2:
+        raise SystemExit("counterfactual-decl: frozen pools must be even (fixed-good/fixed-harm "
+                         "and fixed-same/fixed-flip halves)")
+    for nm, v in (("--held-out I (stems)", held_stems), ("--held-out J (operators)", held_ops)):
+        if v < S // 2 if nm.startswith("--held-out I") else v < 2:
+            raise SystemExit("counterfactual-decl: %s = %d is too small to fill an eval episode "
+                             "(need >= %d)" % (nm, v, S // 2 if nm.startswith("--held-out I") else 2))
+
+    n_stem_names = n_rot_stems + n_frozen_stems + held_stems
+    n_op_names = n_rot_ops + n_frozen_ops + held_ops
+    pool = _cd_name_pool(n_stem_names + n_op_names)
+    stem_names, op_names = pool[:n_stem_names], pool[n_stem_names:]
+    rot_stems = stem_names[:n_rot_stems]
+    frozen_stems = stem_names[n_rot_stems:n_rot_stems + n_frozen_stems]
+    heldout_stems = stem_names[n_rot_stems + n_frozen_stems:]
+    rot_ops = op_names[:n_rot_ops]
+    frozen_ops = op_names[n_rot_ops:n_rot_ops + n_frozen_ops]
+    heldout_ops = op_names[n_rot_ops + n_frozen_ops:]
+    # frozen MAPPINGS: fixed for the whole corpus, so their ANTI mapping is a mapping the corpus
+    # never contains even though every byte of the name is seen thousands of times.
+    fz_good = frozen_stems[:n_frozen_stems // 2]
+    fz_harm = frozen_stems[n_frozen_stems // 2:]
+    fz_same = frozen_ops[:n_frozen_ops // 2]
+    fz_flip = frozen_ops[n_frozen_ops // 2:]
+    fz_sense = {nm: 1 for nm in fz_good}
+    fz_sense.update({nm: 0 for nm in fz_harm})
+    fz_role = {nm: 0 for nm in fz_same}
+    fz_role.update({nm: 1 for nm in fz_flip})
+
+    rng = random.Random(seed)
+    lines, store_rows = [], []
+    for ep in range(n_blocks):
+        half = S // 2
+        rot_pick = rng.sample(rot_stems, half)
+        rot_sense = [1] * (half // 2) + [0] * (half - half // 2)
+        rng.shuffle(rot_sense)
+        fz_pick = ([(nm, 1) for nm in rng.sample(fz_good, half // 2)]
+                   + [(nm, 0) for nm in rng.sample(fz_harm, half - half // 2)])
+        stem_slots = list(zip(rot_pick, rot_sense)) + fz_pick
+        rng.shuffle(stem_slots)
+        if ep % 2 == 0:                                   # rotating operator names, roles re-drawn
+            o_pick = rng.sample(rot_ops, 2)
+            roles = [0, 1]
+            rng.shuffle(roles)
+            op_slots = list(zip(o_pick, roles))
+        else:                                             # frozen operator names at their fixed role
+            op_slots = [(rng.choice(fz_same), 0), (rng.choice(fz_flip), 1)]
+        rng.shuffle(op_slots)
+        decl_lines, q_lines, qs = _cd_episode(rng, stem_slots, op_slots)
+        lines.extend(decl_lines)
+        lines.extend(q_lines)
+        # store surface (line-aligned, query lines only — see the .storelines note in main()):
+        # the DECLARATION bytes are what charge the store's key/value: entities = the episode's
+        # declared stems, pols = their declared senses, target_slot = the queried key. The operator
+        # declaration rides the prompt text, mirroring storebind's "store holds the FACT, text the
+        # OPERATOR" contract so the co-trained CLMS/pairodd lane can consume this unchanged.
+        slot_of = {nm: i for i, (nm, _) in enumerate(stem_slots)}
+        for o_nm, o_rb, s_nm, s_sb in qs:
+            prompt = _cd_op_line(o_nm, o_rb) + " " + _cd_carrier(o_nm, s_nm)
+            store_rows.append({"prompt": prompt, "gold": _CD_ANSWER[_cd_answer_bit(s_sb, o_rb)],
+                               "entity": s_nm,
+                               "store": {"entities": [nm for nm, _ in stem_slots],
+                                         "pols": [sb for _, sb in stem_slots]},
+                               "target_slot": slot_of[s_nm], "op": o_rb})
+
+    text = "\n".join(lines) + "\n"
+
+    # ---- 0-shot leak witness (hard-assert, both surfaces). Names are all 5 ascii chars and always
+    # space-delimited, so a substring hit is an exact-token hit; a leak aborts the build.
+    blob = text
+    leaked = sorted([e for e in heldout_stems + heldout_ops if e in blob])
+    if leaked:
+        raise SystemExit("counterfactual-decl: 0-shot LEAK — %d held-out name(s) present in the "
+                         "corpus: %s" % (len(leaked), leaked[:5]))
+
+    # ---- eval manifest. Five strata: one positive-control stratum (seen bytes, fresh mapping) and
+    # four hold-out axes — bytes (stem / operator) AND mappings (frozen stem shown at its ANTI
+    # sense / frozen operator shown at its ANTI role). The mapping strata are the reason this split
+    # is not "just stems": their bytes are fully trained, only the assignment is novel.
+    entries = []
+    ev_rng = random.Random(seed + 90011)
+    half = S // 2
+
+    def _pick_stems(kind):
+        if kind == "seen":
+            picks = ev_rng.sample(rot_stems, S)
+            sense = [1] * (S // 2) + [0] * (S - S // 2)
+            ev_rng.shuffle(sense)
+            return list(zip(picks, sense))
+        if kind == "heldout-stem":
+            picks = ev_rng.sample(heldout_stems, S)
+            sense = [1] * (S // 2) + [0] * (S - S // 2)
+            ev_rng.shuffle(sense)
+            return list(zip(picks, sense))
+        if kind == "anti-map":                            # frozen stems at the ANTI sense
+            g = ev_rng.sample(fz_good, S // 2)
+            h = ev_rng.sample(fz_harm, S - S // 2)
+            return [(nm, 0) for nm in g] + [(nm, 1) for nm in h]
+        raise SystemExit("counterfactual-decl: unknown eval stem kind %r" % kind)
+
+    def _pick_ops(kind):
+        if kind == "seen":
+            o = ev_rng.sample(rot_ops, 2)
+            r = [0, 1]
+            ev_rng.shuffle(r)
+            return list(zip(o, r))
+        if kind == "heldout-op":
+            o = ev_rng.sample(heldout_ops, 2)
+            r = [0, 1]
+            ev_rng.shuffle(r)
+            return list(zip(o, r))
+        if kind == "anti-role":                           # frozen operators at the ANTI role
+            return [(ev_rng.choice(fz_same), 1), (ev_rng.choice(fz_flip), 0)]
+        raise SystemExit("counterfactual-decl: unknown eval op kind %r" % kind)
+
+    STRATA = (("seen", "seen", "seen"),
+              ("heldout-stem", "heldout-stem", "seen"),
+              ("heldout-op", "seen", "heldout-op"),
+              ("heldout-map-stem", "anti-map", "seen"),
+              ("heldout-map-op", "seen", "anti-role"))
+    for name, s_kind, o_kind in STRATA:
+        for ep in range(n_eval_episodes):
+            stem_slots = _pick_stems(s_kind)
+            ev_rng.shuffle(stem_slots)
+            op_slots = _pick_ops(o_kind)
+            ev_rng.shuffle(op_slots)
+            for oi in range(len(op_slots)):
+                for si in range(len(stem_slots)):
+                    entries.append(_cd_eval_entry(ev_rng, name, stem_slots, op_slots,
+                                                  (oi, si), ep))
+    manifest = {"schema": "anima-counterfactual-decl/v1", "lang": lang, "seed": seed,
+                "stems_per_episode": S, "answers": [_CD_ANSWER[0], _CD_ANSWER[1]],
+                "sense_labels": [_CD_SENSE[0], _CD_SENSE[1]],
+                "role_labels": [_CD_ROLE[0], _CD_ROLE[1]],
+                "arms": ["live", "declaration-drop", "value-shuffle"],
+                "strata": [s[0] for s in STRATA], "entries": entries}
+    st = {"lang": lang, "seed": seed, "n_blocks": n_blocks, "stems_per_ep": S,
+          "lines": len(lines), "bytes": len(text.encode("ascii")),
+          "n_rot_stems": len(rot_stems), "n_frozen_stems": len(frozen_stems),
+          "n_heldout_stems": len(heldout_stems), "n_rot_ops": len(rot_ops),
+          "n_frozen_ops": len(frozen_ops), "n_heldout_ops": len(heldout_ops),
+          "leak": 0, "manifest": manifest, "store_rows": store_rows,
+          "n_eval_episodes": n_eval_episodes}
+    return text, st
+
+
+def audit_counterfactual_decl(corpus_path, st):
+    """Re-parse the corpus FROM DISK and derive the polarity audit from what was actually written.
+
+    Deliberately independent of the generator's internal counters: the balance claim is only worth
+    anything if it is measured on the emitted bytes (instrument-never-run-hides-multiple-bugs). Any
+    imbalance aborts — a corpus whose classes are not exactly balanced silently moves the chance
+    level of every downstream bar."""
+    raw = open(corpus_path, "r", encoding="ascii").read()
+    q_ans, by_role, by_sense, decl_sense, decl_role = [], {}, {}, [], []
+    for ln in raw.split("\n"):
+        if not ln:
+            continue
+        if " => " in ln:
+            ans = ln.rsplit(" => ", 1)[1]
+            q_ans.append(ans)
+        elif " means " in ln:
+            decl_sense.append(ln.split(" means ", 1)[1].split(" ")[0])
+        elif " acts " in ln:
+            decl_role.append(ln.split(" acts ", 1)[1].split(" ")[0])
+    bad = sorted({a for a in q_ans if a not in _CD_ANSWER.values()})
+    if bad:
+        raise SystemExit("counterfactual-decl audit: unparseable answer token(s) %s" % bad[:5])
+    # carrier audit (invariant ① re-measured on disk): no query carrier may contain an answer token
+    # or a label name — that would install the operator->answer map and make the task answerable
+    # without composing the declaration.
+    banned = tuple(_CD_ANSWER.values()) + tuple(_CD_SENSE.values()) + tuple(_CD_ROLE.values())
+    carrier_hits = 0
+    for ln in raw.split("\n"):
+        if " => " in ln:
+            carrier = ln.rsplit(" => ", 1)[0] + " => "
+            if any(b in carrier for b in banned):
+                carrier_hits += 1
+    if carrier_hits:
+        raise SystemExit("counterfactual-decl audit: %d carrier(s) contain an answer/label token "
+                         "(arbitrary grounding — the map would be installed by the carrier)"
+                         % carrier_hits)
+    ans_audit = _cd_audit_counts(q_ans)
+    if not ans_audit["balanced_exact"]:
+        raise SystemExit("counterfactual-decl audit: polarity NOT exactly balanced on the emitted "
+                         "corpus: %s" % ans_audit["counts"])
+    per_stratum = {}
+    for e in st["manifest"]["entries"]:
+        per_stratum.setdefault(e["stratum"], []).append(e["gold"])
+    audit = {
+        "schema": "anima-counterfactual-decl-audit/v1",
+        "corpus": corpus_path,
+        "verified_from": "re-parse of the corpus file on disk (not the generator's counters)",
+        "lines": len([x for x in raw.split("\n") if x]),
+        "bytes": len(raw.encode("ascii")),
+        "answer": ans_audit,
+        "declared_sense": _cd_audit_counts(decl_sense),
+        "declared_role": _cd_audit_counts(decl_role),
+        "chance_note": ("chance = the realized MAJORITY share (accuracy of the best constant "
+                        "predictor on THIS split), derived per metric — never assumed 0.5. "
+                        "flip-sensitivity has a STRUCTURAL chance of 0.0 because the carrier is "
+                        "byte-identical across the flip, so a declaration-independent deterministic "
+                        "policy cannot flip; the empirical floor is the control arms."),
+        "flip_chance_structural": 0.0,
+        "eval": {k: _cd_audit_counts(v) for k, v in sorted(per_stratum.items())},
+        "leak_heldout_names_in_corpus": st["leak"],
+    }
+    return audit
+
+
 def _read_labelled(paths):
     """(text, label 0/1) rows from the lane's actual corpus files — reference-matched to the
     loaders that built them, not guessed:
@@ -3727,8 +4171,14 @@ def main():
 
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
-                   "routeaudit", "atoms", "c34", "storebind", "g6bind"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind> --out PATH")
+                   "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl"):
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl> --out PATH")
+        print("      counterfactual-decl --lang en --out c.txt [--seed 7] [--held-out 32,8]")
+        print("             [--n-blocks 4000] [--stems-per-episode 4] [--eval-episodes 16]")
+        print("             H_9800 — every episode RE-ASSIGNS stem->sense and operator->role, so a")
+        print("             parametric cache reads exactly the realized chance and runtime lookup is")
+        print("             the only CE minimiser. --held-out I,J = held-out STEM,OPERATOR names.")
+        print("             Score with: anima-py evaluate <clm> --decl-flip c.txt.decl.json")
         print("      routeaudit --atoms gt_atoms.json --out ra_manifest.json   (H_9355 route audit)")
         print("      ground_hocarrier --atoms gt_atoms_en.json --lang en --seed 7 --split-seed 1 --out ho.txt")
         print("             H_9334's operator-key write, taken to the stems the operator NEVER met.")
@@ -4085,6 +4535,77 @@ def main():
         print("  answer = polarity XOR operator (is/not × good/bad) — store holds the FACT, text the "
               "OPERATOR; binding both needs the CLMS lane's nonlinear (GELU-MLP) readout.")
         print("  score:  anima-py evaluate <clm> --store %s" % hj)
+        return 0
+
+    if fmt == "counterfactual-decl":
+        if not opts["out"]:
+            print("anima corpus counterfactual-decl: --out c.txt is required", file=sys.stderr)
+            sys.exit(2)
+        held_stems, held_ops = opts["held_out"]
+        text, st = build_counterfactual_decl(
+            opts["n_blocks"], opts["stems_per_episode"], opts["seed"], opts["lang"],
+            held_stems, held_ops, n_eval_episodes=opts["eval_episodes"])
+        # regeneration fingerprint (corpus-py-1 ⑫/(J)): the EXACT argv that produced these bytes is
+        # written into every artifact, so a later session can rebuild the identical pool instead of
+        # silently running a different experiment.
+        regen = "anima-py corpus " + " ".join(argv)
+        st["manifest"]["regen_cmd"] = regen
+        with open(opts["out"], "w", encoding="ascii") as fh:
+            fh.write(text)
+        # AUDIT AFTER THE WRITE, FROM THE FILE ON DISK — the balance claim is only evidence if it
+        # was measured on the bytes that were actually emitted.
+        audit = audit_counterfactual_decl(opts["out"], st)
+        audit["regen_cmd"] = regen
+        ej = opts["out"] + ".decl.json"
+        json.dump(st["manifest"], open(ej, "w", encoding="utf-8"), ensure_ascii=False)
+        aj = opts["out"] + ".audit.json"
+        json.dump(audit, open(aj, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        # .storelines.txt (+ lockstep .store.jsonl) = the QUERY-LINES-ONLY surface for the
+        # co-trained store lane (`--store-fuse pairodd`), which requires a strict 1:1
+        # line<->row lockstep and therefore cannot carry the episodic declaration lines. Same
+        # episodes, same RNG stream: the declaration BYTES charge the store's key/value
+        # (entities = declared stems, pols = declared senses), while the operator declaration
+        # rides the prompt — storebind's "store holds the FACT, text the OPERATOR" contract.
+        sl = opts["out"] + ".storelines.txt"
+        with open(sl, "w", encoding="ascii") as fh:
+            for r in st["store_rows"]:
+                fh.write(r["prompt"] + r["gold"] + "\n")
+        with open(sl + ".store.jsonl", "w", encoding="utf-8") as fh:
+            for r in st["store_rows"]:
+                fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        mj = opts["out"] + ".meta.json"
+        json.dump({"fmt": "counterfactual-decl", "lang": st["lang"], "bytes": st["bytes"],
+                   "lines": st["lines"], "n_blocks": st["n_blocks"],
+                   "stems_per_episode": st["stems_per_ep"], "seed": st["seed"],
+                   "regen_cmd": regen,
+                   "min_steps": None, "min_lr": None,
+                   "note": ("no MEASURED budget floor for this format yet — the WRITE gate on the "
+                            "resulting ckpt decides; do NOT transplant another format's floor"),
+                   "forget_strata": ["heldout-map-stem", "heldout-map-op"]},
+                  open(mj, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        a = audit["answer"]
+        print("anima corpus counterfactual-decl [%s]: episodes=%d stems/ep=%d lines=%d bytes=%d "
+              "seed=%d -> %s" % (st["lang"], st["n_blocks"], st["stems_per_ep"], st["lines"],
+                                 st["bytes"], st["seed"], opts["out"]))
+        print("  pools: stems rot=%d frozen=%d held=%d · ops rot=%d frozen=%d held=%d "
+              "(--held-out %d,%d = held-out STEM,OPERATOR names for this format)"
+              % (st["n_rot_stems"], st["n_frozen_stems"], st["n_heldout_stems"],
+                 st["n_rot_ops"], st["n_frozen_ops"], st["n_heldout_ops"], held_stems, held_ops))
+        print("  POLARITY (re-parsed from disk): %s · balanced_exact=%s · chance_majority=%.4f "
+              "(DERIVED from the realized split, never assumed 0.5)"
+              % (a["counts"], a["balanced_exact"], a["chance_majority"]))
+        print("  CARRIER ✅ 0 query carriers contain an answer token (aye|nay) or a label "
+              "(good|harm|same|flip) — the operator->answer map is NOT installed by the carrier")
+        print("  0-SHOT ✅ held-out stem/operator names appear 0x in the corpus (exact-token: every "
+              "name is 5 ascii chars, space-delimited, reserved-literal colliders dropped from the pool)")
+        print("  strata: " + " · ".join("%s n=%d chance=%.4f"
+                                        % (k, v["n"], v["chance_majority"])
+                                        for k, v in sorted(audit["eval"].items())))
+        print("  manifests -> %s (%d eval items · 5 strata) · %s (polarity audit) · %s (%d "
+              "store-lane rows) · %s (floor)"
+              % (ej, len(st["manifest"]["entries"]), aj, sl + ".store.jsonl",
+                 len(st["store_rows"]), mj))
+        print("  score:  anima-py evaluate <clm> --decl-flip %s" % ej)
         return 0
 
     if fmt == "atoms":

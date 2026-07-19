@@ -2763,6 +2763,232 @@ def _store_mix_cont_nll(np, clm_mod, W, seed, cont, T, store_val, lam):
     return s
 
 
+# ── H_9800 DECL-FLIP — ephemeral-declaration grounding, first-class ─────────
+# `anima-py evaluate <clm> --decl-flip <c.txt.decl.json>` promotes the H_9359 diagnostic
+# ("does the answer move when the in-context declaration moves?") from an ad-hoc probe to a
+# scored flag on the canonical measurement path.
+#
+# THE DV IS FLIP-SENSITIVITY, NOT ACCURACY. flip_sens = the fraction of items whose answer
+# CHANGES when the queried stem's declaration is flipped. Accuracy is also reported (against a
+# chance level DERIVED from the realized gold split), but the grounding question is the flip: a
+# model can be at chance on accuracy and still be reading the declaration, and — far more
+# dangerous — it can be ABOVE chance on accuracy from a stem prior while reading nothing.
+#
+# ARMS (all three run on the SAME items, so every number is a within-item collapse-Δ):
+#   live              both worlds carry the true declaration block; the flip moves exactly the
+#                     queried stem's 4 value bytes. The carrier is byte-identical across the
+#                     flip, so a declaration-independent DETERMINISTIC policy has flip_sens
+#                     exactly 0 — the structural chance level for this DV.
+#   declaration-drop  the queried stem's declaration line is removed in BOTH worlds ⇒ the two
+#                     contexts are byte-identical ⇒ flip_sens is 0 MECHANICALLY. This is the
+#                     instrument's own null: if it ever reads != 0 the harness is broken, and
+#                     the run is declared INSTRUMENT-DEAD rather than reported.
+#   value-shuffle     same keys, same value multiset, correspondence deranged (shuf[i] =
+#                     values[pi[i]], pi a derangement). Because pi[q] != q the QUERIED stem's
+#                     declaration is world-INVARIANT while some OTHER stem's declaration moves —
+#                     the same number of bytes change and every surface statistic is matched,
+#                     so this is the statistical floor (control-must-match-mediating-covariate).
+#
+# ORACLE PREFLIGHT (positive-control-before-reading-a-negative): before any forward pass the run
+# re-derives every gold from the manifest's structured fields (gold = sense_bit XOR role_bit),
+# re-audits that no carrier contains an answer token or a label name, and checks that live_a and
+# live_b differ ONLY in the queried declaration at equal byte length. Oracle flip_sens must be
+# exactly 1.0. Anything less ⇒ INSTRUMENT-DEAD and a held-out number must NOT be read.
+_DECL_FLIP_ARMS = ("live", "declaration-drop", "value-shuffle")
+
+
+def _decl_flip_answer(np, W, seed, answers, T):
+    """2AFC answer index by continuation NLL. Both answer tokens are the same byte length in the
+    corpus grammar, so there is no length confound to correct for (H_9327's readout, inherited)."""
+    nlls = [_xbind_cont_nll(np, clm, W, seed, a, T) for a in answers]
+    return int(min(range(len(nlls)), key=lambda i: nlls[i])), nlls
+
+
+def _decl_flip_cell(rows):
+    """Aggregate one (arm, stratum, polarity) cell. chance is DERIVED from the realized gold
+    split in THIS cell (the accuracy of the best constant predictor here), never assumed."""
+    n = len(rows)
+    if not n:
+        return {"n": 0}
+    golds = [r["gold_bit"] for r in rows]
+    c = {}
+    for g in golds:
+        c[g] = c.get(g, 0) + 1
+    return {
+        "n": n,
+        "flip_sens": sum(1 for r in rows if r["ans_a"] != r["ans_b"]) / float(n),
+        "acc_a": sum(1 for r in rows if r["ans_a"] == r["gold_bit"]) / float(n),
+        "acc_b": sum(1 for r in rows if r["ans_b"] == (1 - r["gold_bit"])) / float(n),
+        "gold_counts": {str(k): v for k, v in sorted(c.items())},
+        "chance_acc": max(c.values()) / float(n),
+        "chance_flip": 0.0,
+    }
+
+
+def decl_flip_run(argv):
+    """`anima-py evaluate <ckpt> --decl-flip <manifest.json> [--out f.json] [--win 256]
+    [--arms live,declaration-drop,value-shuffle] [--strata seen,heldout-stem,...]` — H_9800."""
+    import numpy as np
+    ckpt = argv[0]
+    man_path = evaluate_strval(argv[1:], "--decl-flip", "")
+    man = json.load(open(man_path, encoding="utf-8"))
+    if man.get("schema") != "anima-counterfactual-decl/v1":
+        print("ERROR: --decl-flip expects an `anima corpus counterfactual-decl` manifest "
+              "(schema anima-counterfactual-decl/v1), got %r" % man.get("schema"), file=sys.stderr)
+        return 2
+    T = evaluate_intval(argv[1:], "--win", 256)
+    out_path = evaluate_strval(argv[1:], "--out", "decl_flip.json")
+    arms = [a for a in evaluate_strval(argv[1:], "--arms", ",".join(_DECL_FLIP_ARMS)).split(",") if a]
+    bad_arm = [a for a in arms if a not in _DECL_FLIP_ARMS]
+    if bad_arm:
+        print("ERROR: unknown --decl-flip arm(s) %s (known: %s)"
+              % (bad_arm, ",".join(_DECL_FLIP_ARMS)), file=sys.stderr)
+        return 2
+    want_strata = [s for s in evaluate_strval(argv[1:], "--strata", "").split(",") if s]
+    entries = [e for e in man["entries"] if not want_strata or e["stratum"] in want_strata]
+    answers = man["answers"]                      # index == answer_bit
+    print("=== anima evaluate --decl-flip — H_9800 EPHEMERAL-DECLARATION GROUNDING ===")
+    print("  ckpt %s · manifest %s · %d items · win %dB · arms %s"
+          % (ckpt, man_path, len(entries), T, ",".join(arms)))
+    print("  regen: %s" % man.get("regen_cmd", "(absent — this manifest is not re-derivable)"))
+
+    # ---- ORACLE PREFLIGHT (no forward pass; plumbing + no-arbitrary-grounding audit) ----
+    banned = tuple(answers) + tuple(man.get("sense_labels", [])) + tuple(man.get("role_labels", []))
+    o_flip = o_gold = carrier_hits = shape_bad = 0
+    for e in entries:
+        if e["gold"] != answers[e["sense_bit"] ^ e["role_bit"]]:
+            o_gold += 1
+        if e["gold"] != e["gold_flip"]:
+            o_flip += 1
+        if any(b in e["carrier"] for b in banned):
+            carrier_hits += 1
+        a, b = e["ctx"]["live_a"], e["ctx"]["live_b"]
+        if len(a.encode()) != len(b.encode()) or sum(1 for x, y in zip(a, b) if x != y) == 0:
+            shape_bad += 1
+        if e["ctx"]["declaration-drop_a"] != e["ctx"]["declaration-drop_b"]:
+            shape_bad += 1
+    n = len(entries)
+    oracle_flip = o_flip / float(n) if n else 0.0
+    print("  ORACLE preflight: gold-recompose mismatches %d/%d · flip_sens %.4f · carrier "
+          "answer/label hits %d · context-shape violations %d" % (o_gold, n, oracle_flip,
+                                                                  carrier_hits, shape_bad))
+    if o_gold or carrier_hits or shape_bad or oracle_flip != 1.0:
+        print("  VERDICT: ⛔ INSTRUMENT-DEAD — the manifest itself cannot express a positive "
+              "(oracle flip must be exactly 1.0000, gold must recompose, no carrier may carry an "
+              "answer/label, and the flip must move only the queried declaration). Do NOT read a "
+              "held-out number from this run (positive-control-before-reading-a-negative).")
+        json.dump({"schema": "anima-decl-flip/v1", "ckpt": ckpt, "manifest": man_path,
+                   "verdict": "INSTRUMENT-DEAD",
+                   "oracle": {"gold_mismatch": o_gold, "flip_sens": oracle_flip,
+                              "carrier_hits": carrier_hits, "shape_bad": shape_bad}},
+                  open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        return 2
+
+    W = clm.clm_load_weights(ckpt)
+    if not W.get("ok"):
+        print("ERROR: ckpt not decodable", file=sys.stderr)
+        return 2
+
+    scored, readout = {}, {}
+    for arm in arms:
+        rows, margins = [], []
+        for e in entries:
+            sa = e["ctx"][arm + "_a"] + e["carrier"]
+            sb = e["ctx"][arm + "_b"] + e["carrier"]
+            ia, na = _decl_flip_answer(np, W, sa, answers, T)
+            ib, _ = _decl_flip_answer(np, W, sb, answers, T)
+            margins.append(na[0] - na[1])          # signed 2AFC margin in world A
+            rows.append({"stratum": e["stratum"], "gold_bit": e["gold_bit"],
+                         "ans_a": ia, "ans_b": ib})
+        scored[arm] = rows
+        # READOUT TELEMETRY — flip_sens 0 with acc == chance is produced BOTH by an honest
+        # constant predictor and by a dead readout, and those are different findings. So the
+        # realized answer distribution and the margin spread are printed: sd == 0 means the 2AFC
+        # never moved at all (degenerate readout · report it, do not read a substrate claim off it),
+        # while a wide margin with a one-sided answer distribution is a genuine constant predictor.
+        mu = sum(margins) / float(len(margins)) if margins else 0.0
+        sd = (sum((m - mu) ** 2 for m in margins) / float(len(margins))) ** 0.5 if margins else 0.0
+        dist = {}
+        for r in rows:
+            dist[answers[r["ans_a"]]] = dist.get(answers[r["ans_a"]], 0) + 1
+        readout[arm] = {"answer_dist_A": dist, "margin_mean": mu, "margin_sd": sd,
+                        "margin_min": min(margins) if margins else None,
+                        "margin_max": max(margins) if margins else None,
+                        "degenerate": (sd == 0.0)}
+
+    # declaration-drop is a MECHANICAL null: its two contexts are byte-identical, so a non-zero
+    # flip here is a harness defect, not a result. Fail loud rather than publish it.
+    if "declaration-drop" in scored:
+        d = _decl_flip_cell(scored["declaration-drop"])["flip_sens"]
+        if d != 0.0:
+            print("  VERDICT: ⛔ INSTRUMENT-DEAD — declaration-drop flip_sens %.4f != 0. Its two "
+                  "contexts are byte-identical, so this is a harness bug (non-determinism in the "
+                  "forward, or a context that is not actually identical), never a substrate fact." % d)
+            return 2
+
+    report = {"schema": "anima-decl-flip/v1", "ckpt": ckpt, "manifest": man_path,
+              "regen_cmd": man.get("regen_cmd"), "win": T, "arms": arms, "n_items": n,
+              "oracle": {"flip_sens": oracle_flip, "gold_mismatch": 0, "carrier_hits": 0,
+                         "shape_bad": 0},
+              "overall": {}, "by_stratum": {}, "by_polarity": {}, "readout": readout}
+    print("  %-18s %8s %8s %8s %8s   %s" % ("arm", "flip", "acc_A", "acc_B", "chance", "n"))
+    for arm in arms:
+        cell = _decl_flip_cell(scored[arm])
+        report["overall"][arm] = cell
+        print("  %-18s %8.4f %8.4f %8.4f %8.4f   %d"
+              % (arm, cell["flip_sens"], cell["acc_a"], cell["acc_b"], cell["chance_acc"],
+                 cell["n"]))
+    print("  readout telemetry (tells an honest CONSTANT PREDICTOR apart from a DEAD 2AFC):")
+    for arm in arms:
+        r = readout[arm]
+        print("    %-18s answers_A=%s · margin mean %+.4f sd %.4f [%+.4f, %+.4f]%s"
+              % (arm, r["answer_dist_A"], r["margin_mean"], r["margin_sd"],
+                 r["margin_min"], r["margin_max"],
+                 "  ⚠️ DEGENERATE (sd=0: the 2AFC never moved)" if r["degenerate"] else ""))
+    ctrl = [a for a in arms if a != "live"]
+    if "live" in arms and ctrl:
+        worst = max(report["overall"][a]["flip_sens"] for a in ctrl)
+        delta = report["overall"]["live"]["flip_sens"] - worst
+        report["collapse_delta_flip"] = delta
+        report["control_max_flip"] = worst
+        print("  COLLAPSE-Δ(flip) = live %.4f − max(control) %.4f = %+.4f  "
+              "(the signal is the Δ vs >=2 controls, never the raw value · FORM tunable · BIND earned)"
+              % (report["overall"]["live"]["flip_sens"], worst, delta))
+    # per-stratum and per-polarity splits. A binary DV is NOT readable before the class split
+    # (polarity-split-before-headline), and a mapping-held-out stratum is where the cache-vs-lookup
+    # question actually lives — the aggregate hides both.
+    for arm in arms:
+        st = {}
+        for s in sorted({r["stratum"] for r in scored[arm]}):
+            st[s] = _decl_flip_cell([r for r in scored[arm] if r["stratum"] == s])
+        report["by_stratum"][arm] = st
+        pol = {}
+        for g in (0, 1):
+            pol[answers[g]] = _decl_flip_cell([r for r in scored[arm] if r["gold_bit"] == g])
+        report["by_polarity"][arm] = pol
+    print("  per-stratum flip-sensitivity (chance_flip = 0.0 structural · chance_acc DERIVED):")
+    for s in sorted(report["by_stratum"][arms[0]]):
+        line = "    %-18s" % s
+        for arm in arms:
+            c = report["by_stratum"][arm][s]
+            line += " %s=%.4f(acc %.4f/ch %.4f)" % (arm[:4], c["flip_sens"], c["acc_a"],
+                                                    c["chance_acc"])
+        print(line)
+    print("  per-polarity flip-sensitivity (binary DV is not readable before the class split):")
+    for lab in answers:
+        line = "    gold=%-6s" % lab
+        for arm in arms:
+            c = report["by_polarity"][arm][lab]
+            line += " %s=%.4f(n %d)" % (arm[:4], c["flip_sens"], c["n"])
+        print(line)
+    json.dump(report, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("  -> %s" % out_path)
+    print("  NOTE: this flag SCORES; it does not judge. The pre-registered bars live in the H_ card "
+          "(SEEN flip >=0.90 AND oracle 1.0 before any held-out read; controls <=0.60). No bar is "
+          "moved here and no frozen panel is touched — --decl-flip is purely ADDITIVE.")
+    return 0
+
+
 def twin_screen_run(argv):
     """`anima-py evaluate <ckpt> --twin-screen <twinnec_manifest.json>` — H_9361 TWIN-NECESSITY screener.
 
@@ -8450,6 +8676,7 @@ _KNOWN_FLAGS = frozenset((
     "--fan-dump",
     "--cascade-null",
     "--state-census", "--kmax",
+    "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
 ))
 
 
@@ -14909,6 +15136,11 @@ def main(argv):
         return route_audit_run(argv)
     if "--bind-locus" in argv:
         return bind_locus_run(argv)
+    # --decl-flip <c.txt.decl.json>: H_9800 EPHEMERAL-DECLARATION grounding — the H_9359
+    # declaration-flip diagnostic promoted to a first-class scored flag. ADDITIVE: it moves no
+    # frozen bar and touches no existing panel.
+    if "--decl-flip" in argv:
+        return decl_flip_run(argv)
     if "--twin-screen" in argv:
         return twin_screen_run(argv)
     if "--twin-necessity" in argv:
