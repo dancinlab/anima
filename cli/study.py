@@ -24,9 +24,11 @@ shell string (free-text safe · no shell leak). Base channel stays stdlib-only
 
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
+import unicodedata
 import urllib.error
 import urllib.request
 
@@ -172,7 +174,80 @@ def _teacher_script(prompt, script_path=None):
 _teacher_script._cache = {}
 _teacher_script._pos = {}
 
-_BACKENDS = {"codex": _teacher_codex, "sealion": _teacher_sealion, "script": _teacher_script}
+# --------------------------------------------------------------------------- #
+# Backend: reactive (deterministic) — H_9799 re-probe (Fable+Sol round-5)      #
+# --------------------------------------------------------------------------- #
+_REACTIVE_STOP = frozenset("""
+a an the of to in on at for and or but nor so yet is are was were be been being it its this that these those
+i you he she we they me him her them my your his our their as if then else than with without into onto from by
+about over under again more most very just not no never cannot do does did done doing have has had what which who
+whom whose how one two idea ideas thing things something anything nothing topic turn short utterance said recently
+uttered speak develop introduce continue silent silence you're i'm we're they're it's don't can't won't
+""".split())
+
+_REACTIVE_INSTR = {
+    "counter":  "answer it, then give one counterexample",
+    "boundary": "state the boundary condition where it fails",
+    "chain":    "compress it into a short causal chain",
+    "compare":  "compare the two and predict what follows",
+}
+
+
+def _reactive_parse(prompt):
+    """Recover (topic, [emits]) from a _build_teacher_prompt() string — deterministic parse of
+    the fixed 'Topic: ...' line and the '  - <emit>' block."""
+    topic, emits, in_block = "", [], False
+    for ln in prompt.splitlines():
+        s = ln.strip()
+        if s.startswith("Topic:"):
+            topic = s[len("Topic:"):].strip()
+        elif s == "It recently uttered:":
+            in_block = True
+        elif in_block and ln.startswith("  - "):
+            emits.append(ln[4:].strip())
+        elif in_block and s and not ln.startswith("  - "):
+            in_block = False
+    return topic, emits
+
+
+def _teacher_reactive(prompt):
+    """DETERMINISTIC reactive teacher (H_9799 re-probe · Fable+Sol round-5 · feature-rule fixture).
+    A PURE function of the substrate's recent emits (parsed from the prompt) — NO LLM, NO sampling —
+    so the within-ckpt teacher-noise floor collapses to ~0 and any across-ckpt transcript divergence
+    flows ONLY through the substrate θ. Reactive (percept depends on emits) yet reproducible (same
+    emits -> byte-identical percept). Rejects echo/hash (mechanical/unlearnable): it extracts 2 content
+    operands + picks ONE cognitive instruction from emit features, turning θ-driven content into a
+    stable curriculum OPERATION. The re-probe masks {k1,k2} to prove θ moves structure, not copied text."""
+    topic, emits = _reactive_parse(prompt)
+    blob = " ".join(emits)
+    norm = unicodedata.normalize("NFKC", blob).lower()
+    toks = re.findall(r"[a-z][a-z']{2,}", norm)
+    content = [t for t in toks if t not in _REACTIVE_STOP]
+    freq, order = {}, {}
+    for i, t in enumerate(content):
+        freq[t] = freq.get(t, 0) + 1
+        order.setdefault(t, i)
+    ranked = sorted(set(content), key=lambda t: (-freq[t], order[t]))   # frequency desc, then first-seen
+    ops = ranked[:2]
+    if len(ops) < 2:                                                    # fallback: topic tokens, then 'silence'
+        tt = [t for t in re.findall(r"[a-z][a-z']{2,}",
+                                    unicodedata.normalize("NFKC", topic).lower())
+              if t not in _REACTIVE_STOP]
+        ops = (ops + tt + ["silence", "silence"])[:2]
+    k1, k2 = ops[0], ops[1]
+    if "?" in blob:
+        instr = _REACTIVE_INSTR["counter"]
+    elif re.search(r"\b(not|no|never|cannot)\b", norm) or "n't" in norm:
+        instr = _REACTIVE_INSTR["boundary"]
+    elif len(toks) >= 32:
+        instr = _REACTIVE_INSTR["chain"]
+    else:
+        instr = _REACTIVE_INSTR["compare"]
+    return "Topic: %s. Using %s and %s, %s." % ((topic or "curiosity").strip(), k1, k2, instr)
+
+
+_BACKENDS = {"codex": _teacher_codex, "sealion": _teacher_sealion,
+             "script": _teacher_script, "reactive": _teacher_reactive}
 
 
 def make_teacher(backend=None):
@@ -211,7 +286,10 @@ _USAGE = """anima study <ckpt> — conversational percept channel (teacher = exo
   anima-py study --teacher-selftest [--teacher codex|sealion]
         Prove the selected teacher backend answers (one trivial round · ~1 cent).
 
-  --teacher {codex,sealion,script}  backend (default: codex · env ANIMA_STUDY_TEACHER)
+  --teacher {codex,sealion,script,reactive}  backend (default: codex · env ANIMA_STUDY_TEACHER)
+                              reactive = DETERMINISTIC yet emit-reactive fixture (H_9799): a pure
+                              function of the substrate's recent emits (2 content operands + 1
+                              feature-picked instruction) → reproducible percept, zero teacher noise.
                               script = DETERMINISTIC fixture from --script (the only one a frozen
                               pre-registered gate can run on — an LLM teacher varies per run)
   --rounds R                  teacher turns (default 6)

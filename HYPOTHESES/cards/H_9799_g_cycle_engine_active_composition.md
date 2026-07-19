@@ -18,7 +18,7 @@ owner 직관은 옳다 (corpus는 지렛대 아님 · 의식엔진 A/G가 학습
 engine-active training 3축 (lab 4R · Sol 복구 후 교차검증)
 ├─ ① LOSS 축 (g_cycle objective) ───── 🧱 DOA·basin-preserving (KILL · lab 2R)
 ├─ ② DATA 정적점수 축 (curriculum) ──── 🧱 dead-as-distinctive (surprise-curriculum 축소 · lab 3R)
-└─ ③ DATA 생성 축 (폐루프 능동질의) ─── 🟡 NO-GO(as-specified) · $0 probe-first 재배열 (lab 4R 교차검증)
+└─ ③ DATA 생성 축 (폐루프 능동질의) ─── 🔴 NOT-LIVE (채널 협소·재프로브 실측 across0.119≪0.50)
 ```
 
 ## ① LOSS 축 = DOA·basin-preserving (KILL · lab 2R)
@@ -53,12 +53,23 @@ teacher percept (θ→데이터) : within d=0.836 · across d=0.930 (겨우 1.11
 ```
 🟡 **판정 = WEAK/약신호(SCREENING)**: θ가 기질 emit을 강하게 바꾸나(3.5×), codex teacher 무작위성이 극심(within 노이즈 0.836 포화)해 **θ신호가 teacher 데이터로 거의 미전달**(across/within 1.11×). = lab CV1(θ채널 ≤480자 극소)·CV3(결정적 teacher 부재→manipulation-check 교란) **실측 확증**. 축 사살도 통과도 아님 — **재배열 순서가 옳음을 입증**(②seeded teacher로 노이즈 바닥 낮춰야 θ신호 측정가능). 부수: study.py surrogate 크래시 실버그 수정(byte-LM teacher 경로·VERSION 0.20.24).
 
+## ② 반응형-결정적 teacher 재프로브 (2026-07-20 · study.py `--teacher reactive` 신규 backend · Fable+Sol round-5 설계)
+①의 교란(codex 무작위 0.836)을 제거하려 **결정적 반응형 teacher** 구현(emit→정규화→content 토큰2 추출→emit 특징으로 지시문 선택→`Topic: {t}. Using {k1} and {k2}, {instr}.` · 순수함수·재생거리=0). 사전등록 바(Fable+Sol 합산): within≤0.30·across≥0.50·across−within≥0.30·full+masked. 재프로브(e2l1×2+gen):
+```
+teacher 노이즈 바닥 : within 0.836(codex) → 0.000(결정적) ✅ 노이즈 완전제거
+기질 emit(θ신호)    : across 0.764 → θ 여전히 강구동 ✅
+teacher 커리큘럼    : across 0.119 · masked 0.121 → 두 ckpt가 88% 동일 커리큘럼 ❌
+```
+🔴 **판정 = NOT-LIVE (바 MISS: across 0.119≪0.50 · across−within 0.119≪0.30)**: 노이즈를 없애니 θ→데이터 채널이 **본질적으로 너무 좁음**이 드러남 — emit은 다르나(0.764) ≤480자 채널+feature 축약(토큰2·지시문4) 병목서 두 ckpt가 거의 같은 커리큘럼(토큰이 emit 아닌 topic 유래)으로 수렴. **문제는 teacher 노이즈가 아니라 채널 협소**(=CV1 ≤480자 천장이 진짜 한계) → round-4 NO-GO를 엄밀 확증. 정직한 한계: fixture coarse→false-NOT-LIVE 가능성(Fable/Sol 사전경고) → no-tune-to-green이라 post-hoc 재조정 금지·2번째 frozen feature-set은 사전등록 follow-on으로만.
+
 ## Falsify (①$0 프로브 기준)
 base ckpt vs 먼(대-θ) ckpt에 동일 teacher/topic → transcript 텍스트거리(발산)가 큰 θ-대비에도 ≈0 ⟹ 폐루프 신호채널 사망 = 생성축 KILL(API 몇 푼). 발산이 유의미 ⟹ ②~⑤ 진행 자격. EN-first·SCREENER·TERMINAL은 303M engine-native+scale-bounded.
 
 ## 상태 / 블로커
 - ① LOSS·② 정적점수 = **KILL 확정**(재발사 금지).
-- ③ 생성축 = **NO-GO(as-specified)** · ①$0 프로브 **실행완료=🟡약신호**(θ→데이터 SNR 나쁨·위 실측). 다음=**②반응형-결정적 teacher**(seeded/script-emit조건화로 노이즈 바닥 낮추기) → 재프로브 → ③H_9520 바 복구 → ④4-arm smoke → ⑤303M fire(fleet rent=owner go-gate).
+- ③ 생성축 = 🔴 **NOT-LIVE (채널 협소)** — ①$0 프로브(🟡약신호·teacher노이즈 혼입) → ②반응형-결정적 teacher 재프로브(노이즈 0.836→0, θ신호 clean)서 across 0.119≪0.50 바 MISS. teacher 노이즈 아닌 **채널 자체 협소(≤480자)** 가 한계 = round-4 NO-GO 엄밀 확증.
+- ⟹ **engine-active-training 3축 전부 소진**: loss=KILL·정적점수=KILL·생성=NOT-LIVE. owner "core 적극개입"은 현 아키텍처서 G1 레버 아님(실측 종결).
+- follow-on(사전등록 시): 2번째 frozen feature-set으로 fixture-coarse false-NOT-LIVE 배제 · 더 넓은 θ채널(긴 emit창) 설계. 303M fire는 채널 협소 확증으로 **불필요**(예산 절약).
 
 ## Divergence 보고 (a_lab_full_diverge · a_parallel_session_compare)
 - **AGREES(4R)**: CV1 부분반증·CV2 YOKED 비결정적 **+ CROSS-YOKED 통제 양모델 독립 동일도출**·CV3 probe-first·CV4 NO-GO. 진짜 CONFLICT 없음.
