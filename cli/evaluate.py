@@ -8132,7 +8132,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--af-forward", "--impulse", "--side", "--kmax", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8956,6 +8956,135 @@ def _eval_historicity(argv):
         print("VERDICT: ⚠️ CONTRAST-NO-DECAY — repeat≠shuffle but no lag-decay: possible DECODE-ARTIFACT (Fable Q5), not memory")
     else:
         print("VERDICT: 🧱 NULL — repeat−shuffle within null (grade is byte-stats/percept-blind · TOST toward 0)")
+    return 0
+
+
+def _af_forward(argv):
+    """`anima-py evaluate --af-forward <trace...> --impulse <af-impulse jsonl> [--side arousal|valence]
+        [--kmax 3] [--perm 1000] [--seed 12345]`
+
+    H_9794 AFFECT-FORWARDING reader. Does the amygdala STATE af, set by an exogenous IMPULSE at tick t0,
+    carry FORWARD to condition the grade of the NEXT percept (t0+k, k>=1), over and above the same-tick
+    (k=0) shift? Uses --af-impulse traces (af clamped at listed ticks, native elsewhere), so af(t0) is
+    decorrelated from af(t0+1) — the static --af-clamp cannot identify this (lab-full Fable Q1).
+
+    DV = the ENVELOPE-FREE PHASIC grade (clock removed analytically, Fable F1/H_9403):
+      arousal side  cur_phasic = cur_f / (0.1 + 0.9*stage_env)
+      valence side  rel_phasic = rel_f / (0.1 + 0.9*stage_env)
+    (never the raw ctx or the *_indep sums — those are circular). Matched-filter h_k = mean(DV at
+    impulse_tick+k) − mean(DV at baseline_tick+k). h_0 = WITHIN-TICK positive control (must be nonzero,
+    else the af->ci wiring is severed for this ckpt => VOID). h_{k>=1} = the FORWARDING signal.
+
+    Null: permute impulse/baseline labels over the pooled tick set; recompute h_k. KILL 🧱 SHIFT-ONLY:
+    h_0 significant but every h_{k>=1} TOST-zero (af is a same-tick shift, not a forwarded state — a real
+    negative). PASS 🟢 FORWARDED: some h_{k>=1} beyond null. VOID: h_0 within null (severed wiring) OR
+    DV near-constant."""
+    import json as _json
+    import glob as _glob
+    import random as _random
+    import statistics as _stats
+    imp_path = evaluate_strval(argv, "--impulse", "")
+    if not imp_path:
+        print("--af-forward requires --impulse <af-impulse jsonl>", file=sys.stderr, flush=True)
+        return 2
+    side = evaluate_strval(argv, "--side", "arousal")
+    num = "cur_f" if side == "arousal" else "rel_f"
+    kmax = evaluate_intval(argv, "--kmax", 3)
+    n_perm = evaluate_intval(argv, "--perm", 1000)
+    seed = evaluate_intval(argv, "--seed", 12345)
+    globs = [a for a in argv if not a.startswith("--")
+             and a not in (imp_path, side, str(kmax), str(n_perm), str(seed))]
+    trace_files = []
+    for g in globs:
+        trace_files.extend(sorted(_glob.glob(g)))
+    if not trace_files:
+        print("--af-forward: no trace files matched " + repr(globs), file=sys.stderr, flush=True)
+        return 2
+
+    imp_ticks = set()
+    with open(imp_path, "r", encoding="utf-8", errors="surrogateescape") as _fh:
+        for _ln in _fh:
+            _ln = _ln.strip()
+            if _ln:
+                imp_ticks.add(int(_json.loads(_ln)["tick"]))
+
+    # phasic DV by tick (envelope-free)
+    dv = {}          # tick -> phasic DV
+    dv_vals = []
+    max_t = -1
+    for tf in trace_files:
+        for _ln in open(tf, "r", encoding="utf-8", errors="surrogateescape"):
+            _ln = _ln.strip()
+            if not _ln or not _ln.startswith("{"):
+                continue
+            try:
+                row = _json.loads(_ln)
+            except Exception:
+                continue
+            t = row.get("tick")
+            if t is None:
+                continue
+            f = row.get(num)
+            se = row.get("stage_env")
+            if not isinstance(f, (int, float)) or not isinstance(se, (int, float)):
+                continue
+            phasic = float(f) / (0.1 + 0.9 * float(se))
+            dv[int(t)] = phasic
+            dv_vals.append(phasic)
+            max_t = max(max_t, int(t))
+
+    base_ticks = set(t for t in dv if t not in imp_ticks)
+    print("--af-forward: side=%s dv=%s · traces=%d · impulse-ticks=%d baseline-ticks=%d · kmax=%d perm=%d"
+          % (side, num, len(trace_files), len(imp_ticks & set(dv)), len(base_ticks), kmax, n_perm))
+    if len(imp_ticks & set(dv)) < 2 or len(base_ticks) < 2:
+        print("VERDICT: ⛔ NOT-POWERED (need >=2 impulse and >=2 baseline ticks present in trace)")
+        return 0
+    if dv_vals and (max(dv_vals) - min(dv_vals)) < 1e-9:
+        print("VERDICT: 🕳️ VOID — phasic DV near-constant (severed af->ci wiring or dead gauge · not a KILL)")
+        return 0
+
+    def _hk(imp_set, base_set, k):
+        iv = [dv[t + k] for t in imp_set if (t + k) in dv]
+        bv = [dv[t + k] for t in base_set if (t + k) in dv]
+        if len(iv) < 1 or len(bv) < 1:
+            return None
+        return _stats.mean(iv) - _stats.mean(bv)
+
+    obs = {k: _hk(imp_ticks, base_ticks, k) for k in range(kmax + 1)}
+    # permutation null: relabel impulse/baseline over the pooled ticks
+    pooled = sorted(imp_ticks & set(dv)) + sorted(base_ticks)
+    n_imp = len(imp_ticks & set(dv))
+    rng = _random.Random(seed)
+    null = {k: [] for k in range(kmax + 1)}
+    for _ in range(n_perm):
+        pp = pooled[:]
+        rng.shuffle(pp)
+        pi, pb = set(pp[:n_imp]), set(pp[n_imp:])
+        for k in range(kmax + 1):
+            h = _hk(pi, pb, k)
+            if h is not None:
+                null[k].append(abs(h))
+
+    def _p(k):
+        if obs[k] is None or not null[k]:
+            return 1.0
+        return sum(1 for x in null[k] if x >= abs(obs[k])) / float(len(null[k]))
+
+    p0 = _p(0)
+    fwd_ks = [k for k in range(1, kmax + 1) if obs[k] is not None and _p(k) < 0.05]
+    print("  h_k=%s · perm-p=%s"
+          % ({k: (round(v, 4) if v is not None else None) for k, v in obs.items()},
+             {k: round(_p(k), 4) for k in range(kmax + 1)}))
+    # ---- verdict ----
+    if p0 >= 0.05:
+        print("VERDICT: 🕳️ VOID — h_0 (within-tick) within null: af does not even move the same-tick grade "
+              "(af->ci wiring severed for this ckpt · not a KILL)")
+    elif fwd_ks:
+        print("VERDICT: 🟢 FORWARDED — h_0 significant ∧ h_k>0 at k=%s beyond null: af STATE conditions the "
+              "NEXT percept's grade (interior→interior forwarding, not just a same-tick shift)" % fwd_ks)
+    else:
+        print("VERDICT: 🧱 SHIFT-ONLY — h_0 significant but every h_{k>=1} TOST-zero: af is a same-tick shift, "
+              "leaves NO state trace on the next percept (earned negative · forwarding absent)")
     return 0
 
 
@@ -14067,6 +14196,8 @@ def main(argv):
         return _gen_percept_schedule(argv[1:])
     if len(argv) >= 1 and argv[0] == "--eval-historicity":
         return _eval_historicity(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--af-forward":
+        return _af_forward(argv[1:])
     if len(argv) >= 1 and argv[0] == "--silence-content-te":
         return _silence_content_te(argv[1:])
     if len(argv) >= 1 and argv[0] == "--timing-channel":
