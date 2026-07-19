@@ -1958,6 +1958,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     _zeta_pswap = anima_flag_value(_cargv, "--zeta-prefix-swap", "ANIMA_ZETA_PREFIX_SWAP", "")
     if _zeta_pswap and _emit_gate != "refractory":
         raise SystemExit("--zeta-prefix-swap requires --emit-gate refractory")
+    if _zeta_pswap and _emit_temp <= 0.0:
+        # FAIL-LOUD (not silent-skip): the pswap rung lives inside the mouth/reveal decode path,
+        # so a greedy run (ANIMA_EMIT_TEMP<=0 ⇒ mouth=None) would produce ZERO pswap rungs while the
+        # run still exits 0 — a silent no-op that reads as "readout deaf" downstream. The positive
+        # control MUST also match the sampled decode conditions of the arm-swept ζ-fire it certifies.
+        raise SystemExit("--zeta-prefix-swap requires ANIMA_EMIT_TEMP>0 (the sampled mouth path): a "
+                         "greedy run has mouth=None so the pswap rung emits nothing (silent no-op).")
 
     # frozen loading in canonical 8-space (rel,gap,cur,pain,coh,orig,bal,dyn_v);
     # brain uses pc2_z = 0.84*orig - 0.44*bal - 0.28*coh ⇒ (coh=-0.28, orig=+0.84, bal=-0.44).
