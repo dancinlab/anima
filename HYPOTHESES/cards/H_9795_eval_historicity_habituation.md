@@ -34,8 +34,19 @@
 - 통제 ≥2: ① shuffle-반복(통계-matched) ② lag-dose 단조성 ③ alien pedestal.
 - **KILL**: 전 lag에서 repeat-Δ = shuffle-Δ TOST 등가.
 
+## 🔬 DV-grounding 실측 (2026-07-19 · toy.clm · --gen-percept-schedule→--percept-file lag1 · #R10-dv95)
+repeat/shuffle/novel percept 에 대한 grading 반응(mean, n=3/arm · toy DIRECTIONAL):
+| DV | repeat | shuffle | novel | repeat−shuffle |
+|---|---|---|---|---|
+| **recon_err** | **0.013** | **2.051** | 0.296 | **−2.038** |
+| rel_lane | 0.891 | 0.674 | 0.758 | +0.217 |
+| cb_surprise | 0.667 | 0.946 | 0.789 | −0.280 |
+
+🎯 **핵심**: 정확반복=인식(recon 0.013)·**byte-multiset 동일 shuffle=미인식(recon 2.051)** ⟹ 인식채널이 **item-identity 를 byte-stats 와 분리**(순서/item-trace 실측 · shuffle=바이트동일이라 byte-stats 반응이면 repeat 와 같아야 하나 크게 다름). **H_9795 DV=recon_err**(+rel_lane 보조), **load-bearing shuffle 통제가 toy 서 작동 확증**.
+> ⚠️ **recon_err liveness 재확인 필수**: chat-py-4 는 production 경로서 recon_err≡0 퇴화(session-seed keying)를 경고 — 여기선 percept 가 afield 도달해 varies(0.013 vs 2.051)나, **303M fire 시 reader VOID gate 로 recon_err 살아있는지 재확인**(죽으면 VOID·거짓 KILL 금지). toy≠303M(48K vs 303M·n=3·무통계) = DV-grounding 시연이지 verdict 아님.
+
 ## $0-first (제한적)
-session_seed 앵커가 상수에 가까워 자연반복이 confound → 순수 $0 관측 취약. 사실상 cheap CPU chat run(--percept-schedule) 필요 — pod 아님·저비용.
+session_seed 앵커가 상수에 가까워 자연반복이 confound → 순수 $0 관측 취약. 사실상 cheap CPU chat run(--percept-file 스케줄) 필요 — pod 아님·저비용.
 
 ## 이견/충돌 (reconcile)
 - H_9790(sleep store 성장)과 직교(각성·store-sealed).
