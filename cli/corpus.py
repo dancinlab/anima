@@ -4510,7 +4510,7 @@ def main():
     if fmt not in ("derivtrace", "flat", "ground", "ground_lie", "ground_keep", "ground_keep_lie",
                    "ground_seenswap", "ground_carrierswap", "ground_hocarrier", "consult-variants",
                    "routeaudit", "atoms", "c34", "storebind", "g6bind", "counterfactual-decl"):
-        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl> --out PATH")
+        print("usage: anima corpus <derivtrace|flat|ground|ground_lie|ground_keep|ground_keep_lie|ground_seenswap|ground_carrierswap|ground_hocarrier|valence|bindlocus|routeaudit|atoms|c34|storebind|counterfactual-decl|ngram-audit> --out PATH")
         print("      counterfactual-decl --lang en --out c.txt [--seed 7] [--held-out 32,8]")
         print("             [--n-blocks 4000] [--stems-per-episode 4] [--eval-episodes 16]")
         print("             H_9800 — every episode RE-ASSIGNS stem->sense and operator->role, so a")
