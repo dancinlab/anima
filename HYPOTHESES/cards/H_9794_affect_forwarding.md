@@ -1,6 +1,8 @@
 # H_9794 — AFFECT-FORWARDING — af_val/af_aro는 상태인가 장식인가 (interior→interior) (lab-full R10 · Fable P3 · PROPOSED)
 
-**status:** 🔵 PROPOSED (미실행 · lab full R10 발산 · 사전등록 필요 · toy=DIRECTIONAL 상한) — source=Fable 5 P3
+**status:** 🔵 PROPOSED · 🔧 계기 WIRED (`--af-clamp v,a` 구현+토이검증 · 2026-07-19 · #R10-flags · 미실행 fire) — source=Fable 5 P3
+
+> **🔧 계기 WIRED (2026-07-19 · VERSION 0.20.13):** `anima-py chat --af-clamp v,a` 구현 완료(cli/chat.py · parse+do()clamp+trace `af_clamp` arm-label · wire-to-prod chat-py-4 준수 · default OFF). **토이 E2E PASS**(toy.clm 3-tick · exp: af_val→0.8/af_aro→0.2+label, ctrl: native 0.0/1.0+label None, 통제성립 clamped≠native · exit0+trace+control). 다음=reader-side estimator(grading Δ dose-response)+$0 cross-lag pre-screen → owner-go pool fire.
 **lane:** amygdala affect gauge × grading (interior→interior · not mouth)
 **related:** [[H_9576]] · [[H_9787]] · [[H_9765]] · [[H_9411]]
 

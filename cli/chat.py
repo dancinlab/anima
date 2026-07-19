@@ -1716,6 +1716,16 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # self-seed — guarded by _dual_ct != last_gtext (direct-copy exclusion). (Fable∥Sol converged · a
     # DIRECT state-update was rejected by both: it makes the effect true by construction / degrades
     # "content" to feat8 before the substrate reads it.)
+    # H_9794 AFFECT-FORWARDING (--af-clamp v,a) · do() clamp on the amygdala valence/arousal
+    # gauges (interior→interior probe · default OFF · base daemon untouched). Parsed here, applied
+    # right after af_val/af_aro are computed so every downstream consumer sees the clamped value.
+    _af_clamp_raw = anima_flag_value(_cargv, "--af-clamp", "ANIMA_AF_CLAMP", "")
+    _af_clamp = None
+    if _af_clamp_raw:
+        _acp = _af_clamp_raw.split(",")
+        if len(_acp) != 2:
+            raise SystemExit("--af-clamp: expects 'v,a' (two floats in [0,1]), got %r" % _af_clamp_raw)
+        _af_clamp = (_afs_clip01(float(_acp[0])), _afs_clip01(float(_acp[1])))
     _wm_dual_read = anima_flag_value(_cargv, "--wm-dual-read", "ANIMA_WM_DUAL_READ", "off")
     if _wm_dual_read not in ("off", "content"):
         raise SystemExit("--wm-dual-read: only 'off' (default) or 'content' (got %r)" % _wm_dual_read)
@@ -2357,6 +2367,13 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         af_aro = _afs_clip01(af[1])
         if af[0] != 0.0 or af[1] != 0.0:
             amyg_valenced_any = True
+        # H_9794 --af-clamp v,a · do() clamp on the amygdala gauges (default OFF). Applied AFTER the
+        # native read so every downstream consumer (emoreg :2519 · ci lanes :2595/2606) sees the
+        # clamped value — that is the interior→interior intervention. The arm label lands in its own
+        # trace field (never a production-branched field · chat-py swap-label lesson).
+        if _af_clamp is not None:
+            af_val = _af_clamp[0]
+            af_aro = _af_clamp[1]
 
         # (14) THEORY-OF-MIND
         tom_b = other_mind_predict(omind, mem_text)
@@ -3186,6 +3203,8 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # valence/arousal · ca3=hippocampus replay · wm=working-memory. (Fable D2 spec.)
                 "cb_surprise": float(cb_surprise), "af_val": float(af_val),
                 "af_aro": float(af_aro), "ca3_ctx": float(ca3_ctx),
+                # H_9794 --af-clamp arm label (trace-only · null when OFF · never a branch key)
+                "af_clamp": (list(_af_clamp) if _af_clamp is not None else None),
                 "wm_active": float(wm_active),
                 # H_9411 dead-gauge control arms (trace-only null/pedestal · never a branch key)
                 # — the collapse-Δ vs these is the liveness verdict, not the raw value (Ψ-SOMA/p7).
