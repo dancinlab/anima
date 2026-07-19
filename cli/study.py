@@ -41,9 +41,19 @@ class TeacherError(RuntimeError):
 # --------------------------------------------------------------------------- #
 # Backend: codex (default)                                                    #
 # --------------------------------------------------------------------------- #
+def _utf8_safe(s):
+    """Scrub lone surrogates so a text teacher can read the prompt. A byte-LM substrate
+    emits raw bytes surrogateescape-decoded (chat.py), so the prompt built from its emits can
+    carry lone surrogates that a strict UTF-8 encode (codex stdin / sealion JSON body) rejects
+    with UnicodeEncodeError. The transcript writer preserves them via surrogatepass; an external
+    UTF-8 reader cannot, and the non-textual bytes carry no meaning for a text teacher anyway."""
+    return s.encode("utf-8", "replace").decode("utf-8")
+
+
 def _teacher_codex(prompt, timeout=180, model=None):
     """`codex exec` headless. Prompt via stdin (no argv leak). Final assistant
     message extracted via --output-last-message (skips the event-log noise)."""
+    prompt = _utf8_safe(prompt)                     # byte-LM emits → valid UTF-8 for codex stdin
     model = model or os.environ.get("ANIMA_STUDY_CODEX_MODEL", "").strip()
     with tempfile.NamedTemporaryFile("w+", suffix=".txt", delete=False) as fh:
         last_path = fh.name
@@ -97,7 +107,7 @@ def _teacher_sealion(prompt, timeout=90, max_tokens=512):
         raise TeacherError("CLOUDFLARE_ACCOUNT_ID not set (export cloudflare creds from the vault).")
     url = "https://api.cloudflare.com/client/v4/accounts/%s/ai/run/%s" % (acc, SEALION_MODEL)
     body = json.dumps({
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": [{"role": "user", "content": _utf8_safe(prompt)}],   # byte-LM emits → valid UTF-8
         "max_tokens": max_tokens,
     }).encode("utf-8")
     headers = {"Content-Type": "application/json"}

@@ -1918,8 +1918,8 @@
                  {
                   "id": "g1-h9799-generation-build",
                   "type": "note",
-                  "name": "③DATA생성형(폐루프) = 🟡 NO-GO(as-specified)·$0 probe-first (4R 교차검증이 3R BUILD 뒤집음)",
-                  "detail": "3R Fable단독 BUILD를 Sol 복구 후 4R 2모델이 NO-GO로 뒤집음(a_break_the_wall ≥2렌즈 실증): CV1 basin-escape=DAgger 환원·θ채널 극소(≤3×160자) / CV2 YOKED 비결정적(ckpt-데이터 적합)→CROSS-YOKED 4-arm 필요 / CV3 H_9520 이미 🟠BAR-FAIL·eval 불일치. 다음=①$0 transcript-발산 프로브(base vs 먼 ckpt·발산없으면 축사살)→반응형 teacher→H_9520 바 복구→4-arm smoke→303M fire."
+                  "name": "③DATA생성형(폐루프) = 🟡 NO-GO(as-specified)·①$0 프로브 실행완료=약신호 (4R 교차검증+실측)",
+                  "detail": "3R Fable단독 BUILD를 4R 2모델이 NO-GO로 뒤집음(a_break_the_wall 실증): CV1 DAgger·θ채널 극소 / CV2 YOKED→CROSS-YOKED 4-arm / CV3 H_9520 BAR-FAIL. ①$0 프로브 실측(d768 ckpt·codex): θ가 emit 강구동(3.5×)나 codex 무작위(within0.836)가 θ→데이터 삼킴(1.11×)=🟡약신호=CV1/CV3 확증. 다음=②결정적 teacher 노이즈↓재프로브. study.py surrogate 수정(v0.20.24)."
                  }
                 ]
                },
