@@ -1,4 +1,4 @@
-"""v2/train.py — arm runner.
+"""lab/v2/train.py — arm runner.
 
 Arms (bars.json):
     COTRAIN  trunk+bridge co-trained, per-example store rotation   [the hypothesis]

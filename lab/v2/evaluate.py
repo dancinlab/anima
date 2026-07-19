@@ -1,4 +1,4 @@
-"""v2/evaluate.py — SEQUENTIAL gate evaluator.
+"""lab/v2/evaluate.py — SEQUENTIAL gate evaluator.
 
 Gate order is mechanical, not a habit: C0 -> C1 -> C2 -> P1, and P1 is NOT COMPUTED (not
 merely not printed) until every prior gate passes. That is the structural defence against

@@ -64,7 +64,7 @@ H_9267 이 D-acc 1.000 을 낸 그 **operator+declaration pair 를, CPT 대신 c
 ⟹ **v2-sandbox 선행이 정답이다**(rule-exempt · afferent 주입 자유 · positive-control-before-negative
 선례 V2_1). v2 에서 afferent→store 주입 toy 로 co-present vs separated 를 스크린 →
 **CRACK 시에만** core/ + `anima-py evaluate --afferent`(owner-gate) 로 포팅해 TERMINAL 자격.
-v2 양성은 **영구 DIRECTIONAL ceiling**(v2/CLAUDE.md).
+v2 양성은 **영구 DIRECTIONAL ceiling**(lab/v2/CLAUDE.md).
 
 ## 예측 (서명)
 

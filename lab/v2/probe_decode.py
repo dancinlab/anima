@@ -1,4 +1,4 @@
-"""v2/probe_decode.py — V2_7 DECODE-PROBE (scratch · rule-exempt zone).
+"""lab/v2/probe_decode.py — V2_7 DECODE-PROBE (scratch · rule-exempt zone).
 
 Question: BOLT's seed-split (s7 held-out 0.611 / s11 0.491≈chance) — is it because the
 frozen NOSTORE trunk encodes the queried entity at the query position for seed7 but NOT

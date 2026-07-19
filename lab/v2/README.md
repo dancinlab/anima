@@ -15,7 +15,7 @@
 1. **v2 숫자를 production verdict 로 올리지 마라.** v2 는 `core/` 밖이라 영구
    **DIRECTIONAL 상한**(우회는 H_9303/H_9307 에서 전부 undecidable 로 사망).
    방향이 나오면 **`core/` + `anima-py` 플래그로 이식해야** TERMINAL 을 번다.
-2. **production 이 `v2/` 를 import 하지 마라.**
+2. **production 이 `lab/v2/` 를 import 하지 마라.**
 
 > 🔬 규칙은 면제지만 **자기기만 방지는 면제가 아니다** — 동결 bar(`bars.json`) · 통제군 ·
 > gradcheck 는 강제라서가 아니라 **그게 실험 그 자체**라서 있다. 빼면 v2 가 아무것도 못 가린다.

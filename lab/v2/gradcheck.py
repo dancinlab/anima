@@ -1,4 +1,4 @@
-"""v2/gradcheck.py — C0-d: finite-difference check of the hand-written backward.
+"""lab/v2/gradcheck.py — C0-d: finite-difference check of the hand-written backward.
 
 @canonical-ok — see gen.py.
 

@@ -21,7 +21,7 @@ CHANGELOG/ARCHITECTURE lockstep · pr-cycle doc gates · the `/tmp`-only scratch
 1. **Never promote a v2 number to a production verdict.** v2 lives outside `core/`, so it is a
    permanent **DIRECTIONAL ceiling** (every bypass died undecidable — H_9303/H_9307). A
    direction found here must be **ported to `core/` + an `anima-py` flag** to earn TERMINAL.
-2. **Production must never `import` from `v2/`** (same reason as `a_no_archive_import`).
+2. **Production must never `import` from `lab/v2/`** (same reason as `a_no_archive_import`).
 
 ## 🧪 Hypotheses live in v2 only (owner directive)
 
@@ -56,7 +56,7 @@ is v2's own design, not an imposed gate.
 ## Files
 
 ```
-v2/
+lab/v2/
 ├─ CLAUDE.md      — this guide (v2 rule SSOT)
 ├─ README.md      — hypothesis · how to run · why it mirrors the wall
 ├─ .canonical-ok  — naming-canon subtree exemption marker

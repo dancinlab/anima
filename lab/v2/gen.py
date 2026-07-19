@@ -1,4 +1,4 @@
-"""v2/gen.py — synthetic operator x store-fact stream.
+"""lab/v2/gen.py — synthetic operator x store-fact stream.
 
 @canonical-ok — 'v2' is not a version bump of anima/; it is a parallel toy research
 substrate that coexists permanently with core/ (owner-named, 2026-07-16).

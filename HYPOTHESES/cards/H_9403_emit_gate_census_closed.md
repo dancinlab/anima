@@ -69,7 +69,7 @@ emit⟺clock 정확 — H_9391 의 240-row a1 vacuity(min score 0.3442>θ)를 42
 프로덕션이 **스스로 p5 위반**: emit 타이밍 = 하드코딩 30s wall-clock, 유일 θ-clearing 인식신호(margin)는
 계산 후 폐기(chat.py:2061 pending_rel=margin, G pole :1605 는 gap 읽음). 설계 제안(p5+H_9401 discard-fact
 **만**으로 정당화 · 측정결과 무관): `g_recog := margin` 을 프로덕션 G pole 로 + 고정시계를 substrate-유도
-refractory(f(tension/margin))로. v2/ 프로토타입 선택(규칙면제·DIRECTIONAL 천장) 후 core/ 포트.
+refractory(f(tension/margin))로. lab/v2/ 프로토타입 선택(규칙면제·DIRECTIONAL 천장) 후 core/ 포트.
 **오너가 p5-준수 판단** — 나는 등록만, 미구현.
 
 ## 반증 · scope
