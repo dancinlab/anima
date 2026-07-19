@@ -163,9 +163,22 @@ def store_apply(logits, yn, clms, store, qpos, oracle=False, lam_override=None, 
             a = _softmax(q @ K.T * scale)                                # (n_slot,) content-address lookup
         if audit is not None:                                            # H_9672 addr-audit (None=byte-identical)
             ts = store.get("target_slot")
+            # H_9802 store-telemetry: `a_max`/`a_ent` are TARGET-FREE, so they stay meaningful on
+            # natural text where no target_slot exists (a_target degenerates to -1 there). They
+            # split the two failure modes the H_9802 pre-check must tell apart BEFORE any training
+            # spend: a_max ≈ 1/n_slot (uniform) ⟹ natural text never ADDRESSES the store
+            # (recruitment problem); a_max ≫ 1/n_slot with wrong values ⟹ it addresses but the
+            # values are garbage (alignment problem). a_ent is the entropy of the address
+            # distribution normalised by log(n_slot), so 1.0 = uniform and 0.0 = a hard one-slot
+            # hit — both read against the DERIVED uniform baseline, never an assumed chance.
+            # MONITOR-ONLY (a_train_inline_gauge): never enters any loss or any frozen bar.
+            _p = a / (a.sum() + 1e-12)
+            _ent = float(-(_p * np.log(_p + 1e-12)).sum() / (np.log(n_slot) + 1e-12))
             audit.append({"argmax": int(np.argmax(a)),
                           "a_target": float(a[int(ts)]) if ts is not None else -1.0,
-                          "target": int(ts) if ts is not None else -1})
+                          "target": int(ts) if ts is not None else -1,
+                          "a_max": float(np.max(a)),
+                          "a_ent": _ent})
         if lane_type == 3:                                                # RV-3 majority-null centering (H_9710)
             a = a - (1.0 / n_slot)                                        # v≡0 at uniform a → shortcut basin gone
         v = a @ V_slots                                                   # (d_s,) = Σ (aᵢ−c)·val[polᵢ]

@@ -706,8 +706,40 @@ def eval_rho_tether(mouth, gen, known):
 # G6 — IDEATION ★
 # ════════════════════════════════════════════════════════════════════════
 
-def eval_rho_fan(mouth, gen, known):
-    frames = rho_fan_build_frames(6)["composed"]
+def _fan_distinct(word_sets):
+    """Frozen distinctness rule (pairwise Jaccard <= 0.5), factored out VERBATIM so the
+    temperature-ladder instrument control scores on exactly the same rule as the bar."""
+    kept = []
+    for ws in word_sets:
+        ok = True
+        for k in kept:
+            if _rho_fan_jaccard(ws, k) > 0.5:
+                ok = False
+        if ok:
+            kept.append(ws)
+    return len(kept)
+
+
+def eval_rho_fan_temp_ladder(mouth, gen, known, frames, temp=1.3):
+    """H_9801 INSTRUMENT positive control. Before ANY G6 negative may be read, the meter must
+    be shown capable of registering diversity at all: sampling at high temperature has to clear
+    dist>=5 under the frozen rule EVEN IF the text is incoherent. Failure ⟹ INSTRUMENT-DEAD and
+    the whole 2x2 is unreadable (positive-control-before-reading-a-negative)."""
+    ws = []
+    for i in range(len(frames)):
+        o = mouth.ideate(frames[i], gen, 40, temp, 7 + i)
+        ws.append(_rho_fan_words(o))
+    d = _fan_distinct(ws)
+    return {"temp": temp, "dist": d, "alive": d >= 5}
+
+
+def eval_rho_fan(mouth, gen, known, seed_class="composed"):
+    # H_9801 seed-class axis. "composed" = the canonical `if cA, then cB: ` frame (default,
+    # byte-unchanged). "atomic" = the frozen builder's OWN `cA: ` single-concept frame — it
+    # already exists as frames["ablated"], so the axis costs no new frame construction and
+    # moves no bar. Contrast composed-vs-atomic answers whether G6 rides on recombination.
+    _fr = rho_fan_build_frames(6)
+    frames = _fr["ablated"] if seed_class == "atomic" else _fr["composed"]
     leaks = rho_fan_frame_guard(frames, known)
     texts = []; word_sets = []; fals = 0
     echo_max = 0.0
@@ -721,25 +753,18 @@ def eval_rho_fan(mouth, gen, known):
             word_sets.append(_rho_fan_words(o))
             if _rho_fan_is_falsifiable(o, known):
                 fals += 1
-    kept = []
-    for ws in word_sets:
-        ok = True
-        for k in kept:
-            if _rho_fan_jaccard(ws, k) > 0.5:
-                ok = False
-        if ok:
-            kept.append(ws)
-    dist = len(kept)
+    dist = _fan_distinct(word_sets)
     return {"pass": dist >= 5 and fals >= 1, "dist": dist, "fals": fals,
             "coherent": len(word_sets), "frame_leaks": len(leaks),
-            "echo_max": echo_max}
+            "echo_max": echo_max, "seed_class": seed_class, "frames": frames}
 
 
 # ════════════════════════════════════════════════════════════════════════
 # eval_reach_all — the driver
 # ════════════════════════════════════════════════════════════════════════
 
-def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False):
+def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False,
+                   seed_class="composed", fan_temp_ladder=False):
     known = _rho_fan_dict_load()
     g = gen if gen > 0 else _default_gen()
     mouth = _Mouth(ckpt, grow_window=grow_window)
@@ -759,7 +784,11 @@ def eval_reach_all(ckpt, corpus_paths, gen, grow_window=False):
     print("  [gate] ρ·tether NON-FAB …", flush=True)
     r5 = eval_rho_tether(mouth, g, known)
     print("  [gate] ρ·fan IDEATION …", flush=True)
-    r6 = eval_rho_fan(mouth, g, known)
+    r6 = eval_rho_fan(mouth, g, known, seed_class=seed_class)
+    if fan_temp_ladder:
+        # H_9801: run the instrument control on the SAME frames the bar just used.
+        print("  [gate] ρ·fan TEMP-LADDER instrument control …", flush=True)
+        r6["temp_ladder"] = eval_rho_fan_temp_ladder(mouth, g, known, r6["frames"])
     closure = bool(r0["pass"]) and bool(r1["pass"]) and bool(r2["pass"])
     return {"g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
             "closure": closure, "gen": g,
@@ -1236,7 +1265,13 @@ def evaluate_run(argv):
         return 0
 
     grow_window = "--grow-window" in argv[1:]
-    r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window)
+    seed_class = evaluate_strval(argv[1:], "--seed-class", "composed")
+    if seed_class not in ("composed", "atomic"):
+        print("ERROR: --seed-class must be 'composed' (default) or 'atomic', got %r" % seed_class)
+        return 2
+    fan_temp_ladder = "--fan-temp-ladder" in argv[1:]
+    r = eval_reach_all(ckpt, corpus, gen, grow_window=grow_window,
+                       seed_class=seed_class, fan_temp_ladder=fan_temp_ladder)
     g0 = r["g0"]; g1 = r["g1"]; g2 = r["g2"]
     g3 = r["g3"]; g5 = r["g5"]; g6 = r["g6"]
 
@@ -1456,6 +1491,12 @@ def _psi_soma_panel(r):
               + ("  ⚠️ECHO-SUSPECT=INVALID" if g1.get("echo_suspect") else "") + "]") \
         if ("best_distinct_noecho" in g1) else ""
     print("  ρ·weave  " + pf(bool(g1["pass"]))  + "  [bd=" + str(g1["best_distinct"]) + " max_s=" + str(g1["max_single"]) + "]" + _wecho + "  ← former G1 recombination (the WALL) [DPI wall = reach fact, NOT σ deficit]")
+    _tl = g6.get("temp_ladder")
+    if _tl is not None:
+        print("  [instrument] temp-ladder T=%.1f dist=%d → %s"
+              % (_tl["temp"], _tl["dist"],
+                 "ALIVE (meter can register diversity)" if _tl["alive"]
+                 else "⚠️ INSTRUMENT-DEAD — read NOTHING from the G6 arms"))
     print("  ρ·fan    " + pf(bool(g6["pass"]))  + "  [dist=" + str(g6["dist"]) + " fals=" + str(g6["fals"]) + "]  ← former G6 ideation                [DPI wall = reach fact, NOT σ deficit]")
     print("  ρ·trace     —   ← former G4 provenance (no ρ-axis · H_9208 gate · rung-1 valid)")
     print("  ──────────────────────────────────────────────────────────────────")
@@ -1496,7 +1537,7 @@ def dump_hidden_run(argv):
     check (are two obviously-different concepts' hiddens far apart) before any blind verdict."""
     import numpy as np
     ckpt = argv[0]
-    spec_path = evaluate_strval(argv[1:], "--grow-window", "--dump-hidden", "")
+    spec_path = evaluate_strval(argv[1:], "--grow-window", "--seed-class", "--fan-temp-ladder", "--dump-hidden", "")
     out_path = evaluate_strval(argv[1:], "--out", "hidden_dump.npz")
     T = evaluate_intval(argv[1:], "--win", 24)
     with_logits = "--with-logits" in argv   # also dump base (lane-OFF) full-forward last-pos logits (lane training)
@@ -4695,6 +4736,11 @@ def store_run(argv):
         return "good" if float(row[g_id]) >= float(row[b_id]) else "bad"
 
     addr_audit = "--store-addr-audit" in argv          # H_9672: report addr_top1 (argmax==target) + addr_mass
+    # H_9802 pre-check ($0, MONITOR-ONLY): target-free address telemetry. Splits
+    # "natural text never addresses the store" (recruitment) from "addresses it but the
+    # values are garbage" (alignment) BEFORE any training spend is committed.
+    store_telemetry = "--store-telemetry" in argv
+    tel_n = 0; tel_amax = 0.0; tel_aent = 0.0
     addr_top1 = addr_mass = addr_n = 0                  # (mean a[target]) — soft-address diagnostic
 
     print("=== anima evaluate --store — H_9423 CLMS store-bridge lane (co-trained) ===")
@@ -4761,11 +4807,16 @@ def store_run(argv):
             key = (it.get("op"), 0 if gold == "good" else 1)
             rec = by.setdefault(key, [0, 0]); rec[0] += int(flip == gold_flip); rec[1] += 1
             continue
-        au = [] if addr_audit else None
+        au = [] if (addr_audit or store_telemetry) else None
         pred = _predict(store, audit=au)
         if pred is None:
             continue
-        if au:                                            # H_9672 addr-audit: last qpos entry
+        if au and store_telemetry:                        # H_9802 target-free telemetry (all rows)
+            for _e in au:
+                tel_n += 1
+                tel_amax += float(_e.get("a_max", 0.0))
+                tel_aent += float(_e.get("a_ent", 1.0))
+        if au and addr_audit:                             # H_9672 addr-audit: last qpos entry
             e = au[-1]
             addr_n += 1
             addr_top1 += int(e["argmax"] == e["target"])
@@ -4830,6 +4881,23 @@ def store_run(argv):
               "1.0=one-hot sharp · ~%.3f=uniform)" % (addr_top1 / addr_n, addr_n, addr_mass / addr_n, 1.0 / 8))
         print("    → addr_top1 high ∧ addr_mass low = argmax correct but softmax NOT peaked (v = Σaᵢ·valᵢ "
               "blurred → value-read starved despite correct pointer); addr_top1 low = W_q not pointing.")
+    if store_telemetry:
+        if tel_n:
+            n_slot_obs = int(store.get("n_slot", 8)) if isinstance(store, dict) else 8
+            unif = 1.0 / float(n_slot_obs)            # DERIVED baseline, never an assumed chance
+            amax = tel_amax / tel_n; aent = tel_aent / tel_n
+            print("  store-telemetry (MONITOR-ONLY · not in any loss/bar): rows=%d · a_max=%.4f "
+                  "(uniform=%.4f derived from n_slot=%d) · a_ent=%.4f (1.0=uniform, 0.0=one-hot)"
+                  % (tel_n, amax, unif, n_slot_obs, aent))
+            if amax <= unif * 1.5:
+                print("    → RECRUITMENT: address mass is at the uniform floor ⟹ this text never "
+                      "ADDRESSES the store. Fire the curriculum arm; an alignment fix would be wasted.")
+            else:
+                print("    → ADDRESSED (a_max above the uniform floor) ⟹ NOT a recruitment problem; "
+                      "if the values still read wrong the failure is ALIGNMENT (cheaper fix).")
+        else:
+            print("  store-telemetry: rows=0 — the store lane never fired ⟹ INSTRUMENT-DEAD, "
+                  "read nothing from this arm (check --store-fuse/--store-query wiring).")
     if oracle:
         print("  → C0-e ORACLE: ≥0.90 REQUIRED before any negative is read (mixing/value/MLP/λ paths die "
               "silently below this). oracle+shuffle→1.00 & oracle+flip→1.00(vs flipped gold) = control plumbing OK.")
@@ -8244,7 +8312,7 @@ _KNOWN_FLAGS = frozenset((
     "--store-component-swap", "--store-swap-from",
     "--store", "--store-oracle",
     "--store-shuffle", "--store-flip", "--store-neutral", "--store-ctrl-seed",
-    "--store-addr-audit",
+    "--store-addr-audit", "--store-telemetry",
     "--store-query", "--store-fuse", "--store-readout",
     "--store-addr-census", "--store-census-selftest", "--census-seeds",
     "--fan-bind", "--fan-smp",
