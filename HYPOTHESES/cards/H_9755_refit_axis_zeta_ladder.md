@@ -1,6 +1,6 @@
 # H_9755 — REFIT-AXIS ζ-LADDER — 라이브-refit loading 을 입에 물리면 동결 축과 다른가 (R6-4 · pool fire · 4-arm paired)
 
-**status:** ⏳ NOT-POWERED (pre-terminal · engine-native reader 실측 2026-07-20 · 게이트 全PASS·양성통제 β=−0.0812 재현 · 대조 중간지대 realized MDE≈0.014 · DIRECTIONAL 303M) — 후속=frozen 부호앵커 $0 진단 · §⑨ 참조
+**status:** ⏳ NOT-POWERED (pre-terminal · engine-native reader 실측 2026-07-20 · 게이트 全PASS·양성통제 β=−0.0812 재현 · 대조 중간지대 realized MDE≈0.014 · DIRECTIONAL 303M) — frozen 부호반전=warmup-표준화 인공물 규명(§⑨ DIRECTIONAL 진단·옵션b 기각·refit≈random 축레버 없음 강화)
 **lane:** g1-interface-addressable-wall · mouth/PC2-axis — 브리프 (b) 정면 · H_9664 n 완결 겸용
 **related:** [[H_9664]] · [[H_9663]] · [[H_9713]] · [[H_9752]] · [[H_9754]] · [[H_9756]]
 
@@ -95,11 +95,11 @@ PASS-AXIS-BLIND — 입에는 축 레버가 존재하지 않는다. 이후 mouth
 
 **과학적 실체 (측정된 것만)**: 라이브-refit 축은 입에서 **random 축과 등가인 dose 만** 나른다(새 레버 무증거 · TOST PASS 로 측정됨). refit-null 은 [[H_9752]] VOID("인증된 라이브 축 부재")와 정합.
 
-**미해결 · frozen 부호반전**: loading 3-arm 전부 양(+)·scalar 음(−)·random≈0 = 가족-부호 일관 → (a) loading 경로 공통 부호규약 1곳 반전 인공물, 또는 (b) 실재 역방향 축 레버 — 이 fire 로는 판별 불가. LOCK INVALID 는 "refit vs frozen 반전"인데 둘은 같은 부호라 미발동(표 미예상 케이스). 게이트(u 자기검증·anchor-replay) 0불일치는 *적용층* 오류만 배제 · *부호규약*(고유벡터 부호=임의) 오류는 못 잡음.
+**해결 · frozen 부호반전 = warmup-표준화 평균이동 인공물 (DIRECTIONAL 진단 · 2026-07-20 · $0 offline · 재발사 불요)**: 로그된 factor 재투영(디코드 재실행 아님 · reader 의 u 자기검증과 동일 산술)으로 u_frozen 재계산 → post-warmup **100% 음수**(mean −0.756 · 3 seed 전부 · u>0 0%). frozen 만 `raw=True`(warmup μ=−0.523 로 **원시** projection 표준화)라 post-warmup 내내 음수 → 음의 공유 응답기울기 s_eff 와 곱해 양의 β. 정량 확인: **β_arm ≈ s_eff·E[u_arm]** (s_eff = scalar β = −0.0812) — frozen −0.0812×(−0.756)=+0.0614 vs 관측 **+0.0626 ✓**(2% 오차) · random −0.0812×(+0.046)=−0.0037 vs 관측 **−0.0037 ✓**. ⇒ frozen +0.063 은 **역방향 실레버 아님(§⑤ 옵션 b 기각)** · LOCK 미예상 표준화 nuisance(고유벡터 부호 임의라 게이트가 못 잡던 층). **함의**: arm-간 Δβ 는 축-특이 dose 가 아니라 **E[u_arm] 오프셋 차이** → PASS-AXIS-BLIND 방향 강화(모든 arm 이 공유 s_eff 만 나름). engine-native 확정경로 = post-warmup 모멘트 재표준화 arm(신규 flag · $0-급).
 
 **후속 (no tune-to-green)**:
-1. **$0 offline 부호-앵커 진단** — 기존 트레이스의 u_frozen 방향을 H_9664 당시와 offline 대조 → 인공물/실재 판별(재발사 불요). 실재면 "역방향 축 레버" = 신규 finding → 별도 H.
-2. [[H_9756]] full readout(`--atom-census` rider) 를 같은 트레이스에서 판정(별건).
-3. powered 재-fire 는 **진단 후에만** — refit 질문은 이미 powered(MDE 0.014<0.02)라 증량은 중간지대만 재생산 · frozen 규약 미해결 재-fire 는 오염 비교기 상속.
+1. ~~$0 offline 부호-앵커 진단~~ **✅ 완료(위 해결블록)** — frozen = warmup-표준화 인공물 확정 · "역방향 실레버" 옵션 기각 → 신규 H 불요.
+2. [[H_9756]] full readout(`--atom-census` rider) — **이 트레이스로 불가**(prefix-swap 양성통제 = 별도 디코드 필요 · reader 확인: `--atom-census` 는 이 트레이스서 pilot 검정력만 산출 MDE d=0.13) → 자체 pool fire 대기.
+3. powered 재-fire = **저우선/moot** — frozen nuisance 규명 + refit≈random 이미 powered(MDE 0.014<0.02)라 refit 실체(축 레버 없음) 확정 · 증량은 중간지대 재생산뿐. 선택적 engine-native = post-warmup 재표준화 arm 으로 arm-Δβ E[u] 오프셋 제거 확인.
 
 **status: 🔵 PROPOSED → ⏳ NOT-POWERED (pre-terminal · engine-native 실측)** · DIRECTIONAL(303M).
