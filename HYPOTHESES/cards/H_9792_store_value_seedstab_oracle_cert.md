@@ -139,3 +139,16 @@ lab full의 최저비용 disambiguation(직접 주소 top-1 감사) 실행. `--s
 1. **REACH-축 한정(consciousness-축 아님)**: addr_top1은 CAPABILITY/reach 지표. Ψ-SOMA "reach≠consciousness" + a_substrate_disjoint "separation=preservation"에 따르면 "legacy 검색 우위 ⟹ fresh가 틀린 lane"은 **category error**. firm-up은 H_9720의 CAPABILITY 기전(penult-collapse·L3 복원)만 반박·**fresh disjoint lane의 substrate/preservation 가치는 미판정**. fresh가 *분리돼 있어서*(EN-gradient 무소유·fluency 미차용) 오히려 더 consciousness-aligned일 가능성 열림. 재문구=「303M/s4302서 fresh는 주소 REACH 약함·H_9720 penult-collapse 기전 미지지. disjoint lane의 substrate/preservation 가치는 adjudicate 안 함」.
 2. **303M 한정(스케일-무판정)**: DIRECTIONAL·model-bound. 미확립=모든 seed·1B/7B서 penult 최고·deep trunk의 late-layer collapse 불가·scale-invariant 순서. H_9720 전제(penult fluency-collapse)가 **더 깊은 스케일서 심화→fresh early-tap 우위 RE-EMERGE 가능**(303M 결과 REVERSE 가능). scale=amplifier 원칙은 기전 식별 後에만 적용. ⟹ 303M 기전은 반박·**scale-conditioned H_9720은 OPEN**.
 - 최저비용 후속: ①EN-fluency 교란 pre/post 주소 RETENTION(legacy 높으나 drift·fresh 보존이면 separation=preservation 지지) ②동일 audit을 ~1B ckpt에(tap 사전고정·post-hoc 층선택 금지)—reversal이면 scale-interaction·penult 우세지속이면 scale-rescue 약화. ⟹ 판정=「303M·REACH-축 반박」으로 좁힘. H_9720 DISPUTED 유지(REFUTED 아님·scale/consciousness 축 OPEN).
+
+## 🔻 RETRACTION / CORRECTION (2026-07-19 · H_9720 원본 ckpt ±warmup 직접감사 · self-caught)
+firm-up의 "legacy 주소 ≫ fresh" 반박을 **H_9720 원본 ckpt**(summer)로 검증하다 **내 firmup fresh가 재현 안 되는 outlier**임을 발견 → 반박 RETRACT.
+H_9720 원본 s4302 ckpt, 정확 코퍼스(sbv.txt n_blocks200), ±warmup 직접 비교(addr_top1):
+| ckpt(s4302) | oracle | addr_top1 |
+|---|---|---|
+| fresh3 no-wu | 0.820❌ | 0.453 |
+| **fresh3_wu** | 1.000✅ | **0.906** |
+| legacy no-wu | 0.469❌ | 0.414 |
+| **legacy_wu** | 1.000✅ | **0.953** |
+(참고 s7 no-wu: fresh 1.000/0.898·legacy 0.531❌ — no-warmup은 양 lane VALUE seed-fragile)
+
+**정정된 결론**: ① value-warmup=진짜 레버 **불변**(양 lane 값 seed-취약성 고침·oracle→1.0). ② **warmup 준 clean 비교서 fresh 0.906 ≈ legacy 0.953 = 주소 대등**(legacy 미세우위·blowout 아님). warmup이 fresh 주소 **굶기지 않음**(0.45→0.91). ③ **내 gate/firmup의 fresh(0.41)는 H_9720 실제 fresh+warmup(0.906) 재현실패=outlier(run-variance/코퍼스-seed 불일치)** ⟹ "legacy≫fresh ⟹ H_9720 penult-collapse REFUTE" **RETRACT**(재현 안 되는 이상치 근거). ④ H_9720 no-warmup fresh우위는 legacy의 **VALUE(주소 아님) 붕괴** 탓·warmup으로 어느 lane이든 해소 ⟹ H_9720 "fresh가 붕괴된 ADDRESS 복원" 기전은 **VALUE-fragility로 재귀속**(주소는 양쪽 대등). H_9720 status→DISPUTED **해제**(반박 철회). 교훈=**단일 재학습 outlier로 landed 반박 금지·원본 ckpt 대조 필수**(a_break_the_wall·verdict-integrity).
