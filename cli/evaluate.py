@@ -8677,6 +8677,7 @@ _KNOWN_FLAGS = frozenset((
     "--cascade-null",
     "--state-census", "--kmax",
     "--decl-flip", "--arms", "--strata",          # H_9800 ephemeral-declaration grounding
+    "--closure-ladder", "--closure-arm", "--closure-ticks", "--closure-seed",   # H_9807 interventional closure rung 1
 ))
 
 
@@ -14971,6 +14972,69 @@ def faction_lesion_run(argv):
     return 0
 
 
+def closure_ladder_run(argv):
+    """`anima-py evaluate --closure-ladder [--closure-arm {live,open,dead}]
+                          [--closure-ticks N] [--closure-seed S] [--out f.json]`
+
+    H_9807 — the INTERVENTIONAL CLOSURE LADDER (rung 1), engine-native. Backend =
+    core/closure_ladder.py. Takes NO ckpt: the rig's subject is a scripted agent in a
+    deterministic micro-tenant world, so the whole battery is $0/toy/CPU.
+
+    It asks whether an agent's CONTINGENCY STRUCTURE — not its action marginal — leaves a
+    distributional fingerprint on its OWN subsequent input, against marginal-matched
+    Watson YOKED-GHOST replays (same actions, permuted). Because the executed action is
+    A/B-randomized, P(I|do(A)) is IDENTIFIED, so this rig can ANCHOR rather than merely
+    correlate — the only lens in this repo that can.
+
+    Bare (no --closure-arm) runs the 3-plant CERTIFICATION battery, which is the only
+    thing that yields a verdict:
+        P-LIVE contingent policy      -> must ANCHOR
+        P-OPEN same actions as a tape -> must land exactly CHANNEL-ONLY (marginal alive,
+                                         contingency destroyed) — this is what makes the
+                                         gate a measurement and not a tautology
+        P-DEAD contingent policy in an INERT env -> must REFUSE on BOTH LV-W and LV-C
+
+    P-DEAD's LV-C leg is a STANDING PRE-CHECK, not decoration: upstream, P-DEAD checked
+    only LV-W, and a frame misalignment (Closed read PRE-step obs while the ghosts read
+    POST-step) let the certified estimator score 0.667 closure in a provably dead world —
+    above its own 0.60 gate. The repaired estimator reads 0.000 there. If the null arm
+    ever climbs off the floor again, the battery hard-fails INSTRUMENT-INVALID.
+
+    ⚠️ Rung 1 is NOT aliveness: a thermostat clears it, and the scripted P-LIVE plant here
+    MUST clear it by design. Full contract → card H_9807.
+    """
+    sys.path.insert(0, os.path.join(_REPO, "core"))
+    import closure_ladder as CL
+    rest = [a for a in argv if a != "--closure-ladder"]
+    arm = evaluate_strval(rest, "--closure-arm", "")
+    seed = evaluate_intval(rest, "--closure-seed", 7)
+    ticks = evaluate_intval(rest, "--closure-ticks", 600)
+    out_path = evaluate_strval(rest, "--out", "")
+    if ticks < 2 * CL.BLOCK:
+        print("ERROR: --closure-ticks %d gives fewer than 2 LV-C blocks (BLOCK=%d); the "
+              "closure sign statistic is undefined. Use >= %d."
+              % (ticks, CL.BLOCK, 2 * CL.BLOCK), file=sys.stderr)
+        return 2
+    if arm:
+        if arm not in ("live", "open", "dead"):
+            print("ERROR: unknown --closure-arm %r (known: live, open, dead)" % arm,
+                  file=sys.stderr)
+            return 2
+        res = CL.run_arm(arm, seed, ticks)
+        print(CL.format_arm_report(res))
+        ok = True
+    else:
+        res = CL.certify(seed, ticks)
+        print(CL.format_report(res))
+        ok = bool(res["certified"])
+    res["schema"] = "anima-closure-ladder/v1"
+    if out_path:
+        with open(out_path, "w") as fh:
+            json.dump(res, fh, indent=2)
+        print("  wrote " + out_path)
+    return 0 if ok else 1
+
+
 def main(argv):
     if len(argv) >= 1 and argv[0] in ("-h", "--help"):
         evaluate_usage()
@@ -14985,6 +15049,11 @@ def main(argv):
     if "--collide-select" in argv:
         _ck = [a for a in argv if not a.startswith("--")]
         return _collide_select(_ck[0] if _ck else "", [a for a in argv if a.startswith("--")])
+    # H_9807 --closure-ladder: the interventional CLOSURE rig (rung 1). Ckpt-less by
+    # construction (scripted agent + deterministic micro-tenant world), so it dispatches on
+    # flag PRESENCE, not on argv[0]. ADDITIVE — it moves no frozen bar and touches no panel.
+    if "--closure-ladder" in argv:
+        return closure_ladder_run(argv)
     if len(argv) >= 1 and argv[0] == "--refractory-preview":
         return _refractory_preview(argv[1:])
     if len(argv) >= 1 and argv[0] == "--emit-gate-census":
