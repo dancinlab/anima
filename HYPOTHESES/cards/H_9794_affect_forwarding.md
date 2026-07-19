@@ -1,12 +1,14 @@
 # H_9794 — AFFECT-FORWARDING — af_val/af_aro는 상태인가 장식인가 (interior→interior) (lab-full R10 · Fable P3 · PROPOSED)
 
-**status:** 🟢🕳️ FIRED VERDICT — FORWARDED(arousal) / VOID(valence) · 303M engine-native · DIRECTIONAL 1-seed (2026-07-19 · vast pod fire) — source=Fable 5 P3
+**status:** 🧱 CORRECTED VERDICT — SHIFT-ONLY(forwarding NOT robust) · 303M · schedule-variation replication (2026-07-19) — source=Fable 5 P3
 
 > **🟢 FIRED VERDICT (2026-07-19 · vast RTX5090 GPU-FIRED · py303_full sha013c4574 · 1-seed s7 · 130tick · DIRECTIONAL):**
 > `--af-impulse`(t마다 af 고clamp·15 impulse) + matched `--percept-file`(항정 percept) → `--af-forward` matched-filter h_k (envelope-free phasic · perm 2000).
 > - **arousal(cur_f) → 🟢 FORWARDED**: h_0=**0.244**(perm-p **0.0** · within-tick 양성통제 살아있음) ∧ |h_k| beyond null at **k=1(h=−0.071 p=0.008)·k=3(h=−0.063 p=0.016)**. ⟹ **af arousal 상태가 다음 percept 의 grade 를 조건화**(interior→interior forwarding 실재·same-tick shift 이상). ⚠️ carryover **음수**=억제성 변조(af arousal 高→다음 percept arousal-grade 低). **R10 최초 POSITIVE interior 능력.**
 > - **valence(rel_f) → 🕳️ VOID**: h_0=−0.0(perm-p 0.998 · within-tick 양성통제 **실패**=af→ci valence 배선 이 ckpt서 단절) ⟹ VOID(not KILL·Ψ-SOMA). valence 축은 미측정.
 > **🔬 EMA-artifact 배제 검증(2026-07-19 · 회수 trace $0 재분석 · verify-done)**: FORWARDED 가 cur_phasic(=cur_f/env) 증폭/EMA-relative 기계artifact(Fable 경고)인지 검사 — **raw grade cur_ctx 도 carryover 유의**(h_0=+0.085 p0·h_1=−0.022 **p=0.016**·h_3=−0.022 **p=0.022**·h_2 ns) 이고 **cur_ema 는 전 lag 불변(~0)** ⟹ impulse 가 phasic 뿐 아니라 **실제 다음-percept 등급(cur_ctx)을 조건화**=genuine forwarding, EMA-relative artifact 아님. 효과 작음(raw h_1≈h_0의 26%)·k=2 ns(불규칙·stage 주기 상호작용 가능). FORWARDED **corroborated**.
+
+> **🧱 CORRECTION — schedule-variation replication 이 FORWARDED 를 반증(2026-07-19 · aiden pool·재렌트無):** s7 의 sample-seed 재현(s11)이 byte-identical(결정론적·sample-seed 무효)임을 발견 후 **진짜 독립재현=perturbation-schedule 변형**으로 전환. 변형(impulse 간격 8→7·다른 percept·140tick): **🧱 SHIFT-ONLY** — h_0=+0.203(p0·within-tick 유지) 이나 h_{k≥1} 전부 ns(phasic p=.078/.074/.168 · raw cur_ctx p=.16/.10/.14). ⟹ **within-tick SHIFT 는 robust(af 가 같은-tick 등급 움직임·양 schedule 확증), FORWARDING 은 schedule-특이**(s7 impulse/8 서만 marginal 유의 h_1 p.016·h_3 p.022 → impulse-spacing×sleep-stage 상호작용 또는 다중비교 noise). **s7 FORWARDED 는 schedule artifact·진짜 interior→interior forwarding 아님.** 정정 verdict: **af arousal = same-tick SHIFT(real·robust) · forwarding NOT-ESTABLISHED**. R9 결론(interior 자율·자기참조축 부재)과 정합 — 내면 정서는 순간 변조이지 지속-forward 상태 아님. #4189/#4190 의 FORWARDED 는 이 정정으로 대체(no tune-to-green·정직).
 
 > **scope**: 303M py=TERMINAL 기질이나 **1-seed=DIRECTIONAL**(TERMINAL 엔 다seed 재현 필요·no tune-to-green). 증거=~/anima-weights/h979x_pod_evidence/. 다음=arousal FORWARDED 2-seed 재현→TERMINAL 승격.
 
