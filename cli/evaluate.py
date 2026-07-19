@@ -8499,8 +8499,15 @@ def _content_sig_factory(b64_list):
 
 
 def _timing_channel(argv):
-    """`anima-py evaluate --timing-channel <wm-dual traces...> [--perm 1000] [--seed 12345]
-       [--clock <clock-trace>]` — H_9731 TIMING-CHANNEL ($0 · read-only re-analysis · no producer).
+    """`anima-py evaluate --timing-channel <traces...> [--perm 1000] [--seed 12345]
+       [--clock <clock-trace>] [--lens hold|iei] [--schedule <gen-percept-schedule jsonl>]`
+       — H_9731 TIMING-CHANNEL ($0 · read-only re-analysis · no producer).
+
+    H_9796 `--schedule` mode: instead of the population content-sig, C = the byte-multiset-CONTROLLED
+    probe kind repeat(0)/shuffle(1) at the probe tick — the clean order-only label the archival feat8
+    signature lacked. Gated to the immune-margin regime (trace _meta g_reach ∈ d1/affinity); a wm-dual
+    coverage-gate trace is REFUSED (order-blind by construction = H_9731 KILL scope). CMI>0 ⟹ percept
+    order reached emit timing via the order-sensitive immune_memory_recall_margin_text store (echo-mediated).
 
     Does the OBSERVABLE emit TIMING carry the identity of the WITHHELD content? emit⟺S>E is a
     content-ledger comparison, so WHEN the daemon speaks is set by WHAT it withheld — an honest
@@ -8548,13 +8555,36 @@ def _timing_channel(argv):
     if lens not in ("hold", "iei"):
         print("  ⇒ ⛔ --lens: only 'hold' (default) or 'iei' (got %r)" % lens)
         return 2
+    # H_9796 · --schedule <gen-percept-schedule jsonl>: when set, C = the byte-multiset-CONTROLLED probe
+    # kind repeat(0)/shuffle(1) at the probe tick, NOT the population content-sig. This is the clean 3-arm
+    # ground-truth label the archival feat8 signature LACKED (evaluate-py-23 single-address collapse). Only
+    # legitimate in the immune-margin regime (--g-reach d1/affinity): repeat vs shuffle differ ONLY in byte
+    # ORDER, which is invisible to the feat8 wm-dual coverage gate (⟹ H_9731 KILL) but visible to the
+    # order-sensitive immune_memory_recall_margin_text store. CMI>0 ⟹ percept order reaches emit timing.
+    sched_path = _sv("--schedule", "")
+    globs = [g for g in globs if g not in (clock_path, sched_path)]
+    _sched = {}
+    if sched_path:
+        for _ln in open(sched_path, encoding="utf-8", errors="surrogateescape"):
+            _ln = _ln.strip()
+            if not _ln or not _ln.startswith("{"):
+                continue
+            try:
+                _r = _json.loads(_ln)
+            except Exception:
+                continue
+            _sched[int(_r["tick"])] = (_r.get("kind"), int(_r.get("lag", 0)))
     paths = []
     for g in globs:
         paths.extend(sorted(_glob.glob(g)))
     print("═══ H_9731 TIMING-CHANNEL · does OBSERVABLE emit timing carry the WITHHELD content? ═══")
     print("  traces=%d · perm=%d · seed=%d · lens=%s%s"
           % (len(paths), perm, seed, lens, (" · clock-pedestal=%s" % clock_path.split("/")[-1]) if clock_path else ""))
-    if lens == "iei":
+    if sched_path:
+        print("  H_9796 · --schedule ON : C = probe kind repeat(0) vs shuffle(1) [byte-multiset-controlled,"
+              " order-only] · CMI(hold-latency ; kind | stage) · valid only in immune-margin regime (g_reach"
+              " d1/affinity) · novel arm excluded (byte-stats = dead H_9576 lane)")
+    elif lens == "iei":
         print("  lens=iei : T = inter-emit gap · C = content of the emission ENDING the gap · ⚠️ a PASS reads"
               " 'the gap preceding an emission carries its content', NOT 'the daemon delays to signal'")
 
@@ -8643,6 +8673,42 @@ def _timing_channel(argv):
         med = lats[len(lats) // 2]
         return [(1 if lat > med else 0, c, s) for (lat, c, s) in raw]
 
+    def _build_sched(rows):
+        # H_9796 · hold-latency vs SCHEDULE kind (byte-multiset-controlled label). For each PROBE SILENCE
+        # tick whose schedule kind is repeat/shuffle: T = latency-to-next-emit (median split), C = 0 repeat
+        # / 1 shuffle, S = stage. novel excluded (byte-stats arm = dead H_9576). Emit probe ticks excluded
+        # (0-latency). repeat and shuffle differ ONLY in byte order ⟹ CMI>0 ⟹ percept ORDER reached the
+        # emit-hold decision (only possible via an order-sensitive gate — the immune-margin regime).
+        emit_ticks = [i for i, r in enumerate(rows) if str(r.get("emit")).lower() == "true"]
+        raw = []
+        for i, r in enumerate(rows):
+            t = r.get("tick")
+            if t is None:
+                continue
+            sk = _sched.get(int(t))
+            if sk is None or sk[0] not in ("repeat", "shuffle"):
+                continue
+            if str(r.get("emit")).lower() == "true":
+                continue                       # silence probes only (hold latency)
+            nxt = next((e for e in emit_ticks if e > i), None)
+            if nxt is None:
+                continue
+            st = int(r.get("stage", 0))
+            raw.append((nxt - i, 0 if sk[0] == "repeat" else 1, 1 if st >= 3 else 0))
+        if not raw:
+            return []
+        # T = RAW hold-latency capped at 3+ (states {1,2,3+}), NOT a median split. A median split COLLAPSES
+        # when the latency alphabet is tiny (the exact _build_iei bug: on {1,3} the median is 3, so `lat>med`
+        # is never true and every probe lands in one bin = timing bins=1). The hold-latency alphabet is
+        # naturally small, so it needs no data-dependent binning (DOF 0 · caught by the planted synth test).
+        return [(min(lat, 3), c, s) for (lat, c, s) in raw]
+
+    def _bld(rows):
+        # dispatch: schedule-kind label (H_9796) · iei-gap (H_9731 iei lens) · hold-latency (default)
+        if sched_path:
+            return _build_sched(rows)
+        return _build_iei(rows) if lens == "iei" else _build(rows)
+
     def _surr(triples, rng):
         # circular-shift the C column (excl 0,±1) — preserves T,S marginals + timing structure
         cs = [t[1] for t in triples]
@@ -8682,7 +8748,7 @@ def _timing_channel(argv):
     pedestal = 0.0
     if clock_path:
         crows, _ = _load(clock_path)
-        ct = (_build_iei if lens == "iei" else _build)(crows)
+        ct = _bld(crows)
         pedestal = _cmi(ct) if len(ct) >= 12 else 0.0
         print("  clock PEDESTAL (truth-0) : I(T;C|S)=%.4f  [%d silence transitions]" % (pedestal, len(ct)))
 
@@ -8696,7 +8762,11 @@ def _timing_channel(argv):
         if meta.get("emit_gate") == "clock":
             print("  · %s ⇒ (clock trace — use as --clock pedestal, not an exp arm)" % p)
             continue
-        tri = (_build_iei if lens == "iei" else _build)(rows)
+        if sched_path and meta.get("g_reach") not in ("d1", "affinity"):
+            print("  · %s ⇒ ⛔ --schedule requires immune-margin regime (g_reach d1/affinity · got %r) —"
+                  " wm-dual coverage gate is order-blind by construction (H_9731 KILL scope)" % (p, meta.get("g_reach")))
+            continue
+        tri = _bld(rows)
         if len(tri) < 12:
             print("  · %s ⇒ ⛔ NOT-POWERED (%d silence transitions <12)" % (p, len(tri)))
             continue
