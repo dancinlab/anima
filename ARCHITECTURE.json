@@ -11032,6 +11032,12 @@
           "type": "gate",
           "verdict": "계기 VALIDATED · bar FAIL · 유일 상승분 ECHO-DRIVEN(INVALID) · n=1 DIRECTIONAL",
           "detail": "4-arm(py303_full·clm303_clean × 통제T=24·Fix-W · gen=40 canonical · rc=0). Fix-W 가 H_6189 구조적 차단 제거를 실증(clean+Fix-W bd=1>max_s=0 = T=24 서 수학적 불가였던 부등호)했으나 bd_noecho=0·echo=0.29 로 씨앗 되뱉기 ⟹ echo_suspect INVALID. 동결 bar 전 arm FAIL, G1 🧱 유지. 의의=과거 CLM G1 음성의 WINDOW-BOUND capability-INCONCLUSIVE 지위가 '구조적으로 막히지 않은 음성'으로 승격. n=1·seed 반복 0 이라 TERMINAL 불가."
+         },
+         {
+          "name": "🟠 G1 seed-재현 실측 — bar 통과 가능(1/8) · 통제부재 판정보류 (H_9804 · 2026-07-20)",
+          "type": "gate",
+          "verdict": "존재증명 성립 · seed-취약 1/8 · null 통제 미실행으로 크랙 주장 불가",
+          "detail": "디코드 seed 하드코딩(composed 항상 7) 해제 후 ByteGPT h1129 8 seed 스윕: off100 에서 bd_noecho=2>max_single=0 으로 동결 bar 실제 통과(echo-guard 무회수). 나머지 7 미달 (bd_noecho {0,2,0,0,1,1,0,0}). CLM+Fix-W 3 seed 최대 1. ⟹ composed>max_single 은 구조적 불가능이 아니며 창 정상 mouth 서 실제 발생하나 12.5% 로 seed-취약. null 통제(개념 derangement 8-seed) 미실행이라 우연바닥 미분리 = 판정 보류. 메타: 직전 '6/6 음성'도 seed 미변주 산물이었음 — 단일 draw 위 판정 금지."
          }
         ],
         "type": "gate",
