@@ -1,6 +1,12 @@
 # H_9794 — AFFECT-FORWARDING — af_val/af_aro는 상태인가 장식인가 (interior→interior) (lab-full R10 · Fable P3 · PROPOSED)
 
-**status:** 🔵 PROPOSED · 🔧 계기 WIRED (`--af-clamp v,a` 구현+토이검증 · 2026-07-19 · #R10-flags · 미실행 fire) — source=Fable 5 P3
+**status:** 🟢🕳️ FIRED VERDICT — FORWARDED(arousal) / VOID(valence) · 303M engine-native · DIRECTIONAL 1-seed (2026-07-19 · vast pod fire) — source=Fable 5 P3
+
+> **🟢 FIRED VERDICT (2026-07-19 · vast RTX5090 GPU-FIRED · py303_full sha013c4574 · 1-seed s7 · 130tick · DIRECTIONAL):**
+> `--af-impulse`(t마다 af 고clamp·15 impulse) + matched `--percept-file`(항정 percept) → `--af-forward` matched-filter h_k (envelope-free phasic · perm 2000).
+> - **arousal(cur_f) → 🟢 FORWARDED**: h_0=**0.244**(perm-p **0.0** · within-tick 양성통제 살아있음) ∧ |h_k| beyond null at **k=1(h=−0.071 p=0.008)·k=3(h=−0.063 p=0.016)**. ⟹ **af arousal 상태가 다음 percept 의 grade 를 조건화**(interior→interior forwarding 실재·same-tick shift 이상). ⚠️ carryover **음수**=억제성 변조(af arousal 高→다음 percept arousal-grade 低). **R10 최초 POSITIVE interior 능력.**
+> - **valence(rel_f) → 🕳️ VOID**: h_0=−0.0(perm-p 0.998 · within-tick 양성통제 **실패**=af→ci valence 배선 이 ckpt서 단절) ⟹ VOID(not KILL·Ψ-SOMA). valence 축은 미측정.
+> **scope**: 303M py=TERMINAL 기질이나 **1-seed=DIRECTIONAL**(TERMINAL 엔 다seed 재현 필요·no tune-to-green). 증거=~/anima-weights/h979x_pod_evidence/. 다음=arousal FORWARDED 2-seed 재현→TERMINAL 승격.
 
 > **🔧 계기 WIRED (2026-07-19 · VERSION 0.20.13):** `anima-py chat --af-clamp v,a` 구현 완료(cli/chat.py · parse+do()clamp+trace `af_clamp` arm-label · wire-to-prod chat-py-4 준수 · default OFF). **토이 E2E PASS**(toy.clm 3-tick · exp: af_val→0.8/af_aro→0.2+label, ctrl: native 0.0/1.0+label None, 통제성립 clamped≠native · exit0+trace+control). 다음=reader-side estimator(grading Δ dose-response)+$0 cross-lag pre-screen → owner-go pool fire.
 **lane:** amygdala affect gauge × grading (interior→interior · not mouth)
