@@ -25,8 +25,15 @@ H_9576은 **interior→mouth** 의미전달을 죽였다(PC2 채널 열림·의�
 af-clamp dose 가 downstream 필드에 **실제 dose-response**(max|Δ|): cur_indep 1.2 · rel_indep 0.8 · cur_f 0.18 · cur_ctx 0.067 · rel_f 0.042 · cur_ema 0.031 · score 0.027 · base_motiv 0.027 · rel_ctx 0.019 · idle 2.97. ⟹ **af 는 장식 아님** — curiosity(cur_*)·relatedness(rel_*) **grading lane** + emit propensity(score)를 움직인다. **H_9794 DV = cur_ctx/rel_ctx(또는 cur_f/rel_f)**(추측 아닌 실측 접지 · pending_gap 오접지 회피).
 > ⚠️ **HARD CONFOUND**: af 는 ci lane 에 **within-tick 직결**(chat.py:2595 `+af_val`·2606 `+af_aro`) → af(t)→cur(t) 직접경로 + cur_ema 자기상관 ⟹ naive cross-lag af(t)→grade(t+1)은 within-tick coupling 만으로 spurious positive. reader 는 cur(t)·rel(t)·clock·typicality partial-out 필수(H_9403 clock-confound·chat-py-5 mediation-capacity 계열). do()-clamp arm 은 exogenous 라 af←env backdoor 를 끊음(관찰편상관보다 우월 가능성). 추정기 설계=lab-full 위임 중.
 
+## 🎯 lab-full 설계 정정 (2026-07-19 · Fable · #R10-histreader) — static clamp 은 FORWARDING 미증명
+> **결정적**: 내가 착륙한 **static `--af-clamp v,a` 는 forwarding(interior→interior NEXT) 주장에 UNIDENTIFIED** — 상수 clamp 는 af(t)≡af(t+1)≡L 완전공선 ⟹ within-tick 경로와 cross-lag 경로 분리불가. static clamp 은 "af 가 grade 를 몬다"(total effect=**SHIFT verdict**·유효 양성통제)는 증명하나 "af 상태가 다음 percept 로 forward"는 **못 증명**(H_9403 clock-confound 동형). ⟹ **impulse(시변) clamp 필요**: t0 만 고clamp·나머지 baseline → af(t)≠af(t+1) 탈공선 → h_k(k≥1 carryover)=forwarding 신호·h_0=within-tick 양성통제.
+- **producer gap**: `--af-clamp` 을 per-tick **schedule(impulse/PRBS)** 로 확장 필요(현 static 은 SHIFT 계기).
+- **DV 정정**: cur_ctx/rel_ctx 원시값 아님(F2 순환) → **envelope-free phasic**: `cur_phasic=0.5+3·(cur_ctx−cur_ema)` = `cur_f/(0.1+0.9·stage_env)`(stage_env 나눗셈=clock confound 해석적 제거) · rel_phasic 별도(polarity-split). `cur_indep/rel_indep`(순환)·`pending_rel`(자기발화·percept 아님) 배제.
+- **VOID gate**: h_0(within-tick) 비영 ∧ `af_native≉af_alien`(af_alien_val H_9411)∧ H(af_native)>0 이어야 살아있음(else VOID). Sol 이견: two-run static high/low 가 total effect 는 회수(cement 가치)—Fable 반론: 그건 SHIFT 판정이지 FORWARDING 아님·카드 분리 권고(반영).
+- **다음**: `--af-clamp` impulse 확장(producer) + `--af-forward` reader(impulse matched-filter h_k) + synthetic 토이.
+
 ## $0-first
-기존 trace에서 af_val(t) → cur_ctx/rel_ctx(t+1) cross-lag 편상관(cur(t)·rel(t)·clock·typicality partial). 0이면 격하.
+기존 trace에서 af_val(t) → cur_phasic(t+1) cross-lag(단 static clamp 은 forwarding 미식별 → impulse schedule 필요). 0이면 격하.
 
 ## 이견/충돌 (reconcile)
 - Fable 경고 확인함: **H_9630/H_9633(mouth/tension·PC2 계보)와 직교 판정** — P3는 amygdala af→grading(interior→interior)이고 H_9630/9633은 tension→mouth라 lane·readout 모두 상이 → 중복 아님.

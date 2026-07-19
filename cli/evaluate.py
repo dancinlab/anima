@@ -8132,7 +8132,7 @@ def _im_byte_feat8(s):
 
 _KNOWN_FLAGS = frozenset((
     "--arm", "--bind-locus", "--bl-swap-span", "--bl-swap-donor-class", "--twin-screen", "--twin-necessity", "--delta-pregate", "--delta-control", "--consult", "--consult-format", "--consult-decode", "--consult-decode-win", "--consult-decode-filler", "--corpus", "--dump-hidden", "--earned", "--faction-phi-proxy", "--n-factions-sweep", "--trials", "--arm-random-init", "--faction-block-structure", "--faction-block-provenance", "--faction-lesion", "--faction-lam", "--faction-oracle-pi", "--faction-split", "--gen",
-    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
+    "--help", "--pc2-direction", "--ag-criticality", "--silence-content-te", "--reach-oracle", "--reach-lag", "--overlap-ngram", "--copy-exclude", "--pool", "--gen-percept-schedule", "--lags", "--reps", "--eval-historicity", "--schedule", "--dv", "--jitter", "--timing-channel", "--clock", "--lens", "--butterfly", "--z-census", "--zeta-slope", "--by-loading", "--tost", "--pos-control-beta", "--atom-census", "--pilot", "--atoms", "--span", "--occupancy", "--rank-null", "--surrogates", "--factor-census", "--stage-slave", "--variance-audit", "--emit-coupling", "--subspace-stability", "--dims", "--block", "--boot", "--surr", "--ground-probe", "--interact-mi", "--gate-deaf", "--gate-census", "--lane-census", "--dead-census", "--refractory-preview", "--emit-gate-census", "--cf-straddle", "--cf-emit", "--cf-seed", "--g-amp-screen", "--audibility", "--g-tension", "--tension-emit", "--psi-soma", "--interaction-lift", "--k-perm", "--kappa", "--kernel", "--kosmos", "--min-occ", "--null",
     "--device-parity", "--n-decode", "--n-sampled", "--valence-audit",
     "--out", "--perm", "--probe", "--seed",
     "--result-file", "--collide-select", "--pregate", "--pregate-cond", "--k", "--rho-axon", "--route-audit", "--score-len", "--seeds", "--selftest-rho-cells",
@@ -8745,6 +8745,10 @@ def _gen_percept_schedule(argv):
     lags = [int(x) for x in evaluate_strval(argv, "--lags", "1,4,16").split(",") if x.strip()]
     reps = evaluate_intval(argv, "--reps", 8)
     seed = evaluate_intval(argv, "--seed", 12345)
+    jitter = evaluate_intval(argv, "--jitter", 5)   # random 0..jitter pre-fillers per arm so the
+                                                    # probe tick DECORRELATES from the sleep-stage
+                                                    # phase — else kind confounds with stage and the
+                                                    # reader's (lag,stage)-stratified null degenerates
     rng = _random.Random(seed)
     _alpha = list("abcdefghijklmnopqrstuvwxyz0123456789")
 
@@ -8767,6 +8771,9 @@ def _gen_percept_schedule(argv):
     for _rep in range(reps):
         for lag in lags:
             for arm in ("repeat", "shuffle", "novel"):
+                for _j in range(rng.randint(0, jitter)):   # stage-decorrelating pre-jitter
+                    rows.append({"tick": tick, "text": _novel(len(rows)), "kind": "jitter", "lag": lag, "prime": -1})
+                    tick += 1
                 prime_text = _novel(len(rows))
                 prime_tick = tick
                 rows.append({"tick": tick, "text": prime_text, "kind": "prime", "lag": lag, "prime": prime_tick})
@@ -8790,6 +8797,165 @@ def _gen_percept_schedule(argv):
     kc = _Counter(r["kind"] for r in rows)
     print("--gen-percept-schedule: wrote %d rows -> %s | kinds=%s | lags=%s reps=%d seed=%d"
           % (len(rows), out, dict(kc), lags, reps, seed))
+    return 0
+
+
+def _eval_historicity(argv):
+    """`anima-py evaluate --eval-historicity <trace...> --schedule <sched.jsonl> [--dv recon_err]
+        [--perm 1000] [--seed 12345]`
+
+    H_9795 EVALUATION-HISTORICITY reader. Does the grading channel carry ITEM-SPECIFIC habituation:
+    is an EXACT-REPEAT percept graded differently from a byte-multiset-matched SHUFFLE, and does that
+    difference DECAY with lag (item familiarity fades)? Joins the decision trace (DV by tick) with the
+    --gen-percept-schedule jsonl (kind/lag/prime by tick).
+
+    DV = `recon_err` (grounded #4168: repeat 0.013 vs byte-matched shuffle 2.051 on toy — the recognition
+    field separates item-identity from byte-statistics). Per-lag statistic S(lag)=mean(recon_err|shuffle)
+    − mean(recon_err|repeat) (>0 ⟹ shuffle unrecognized > repeat recognized = item-trace). LOAD-BEARING
+    control (Fable Q5): the repeat−shuffle contrast alone can be a seed-order DECODE ARTIFACT; only the
+    LAG-DECAY (item memory fades, an artifact would not) separates memory from artifact.
+
+    Null: permute the kind label (repeat<->shuffle) within (lag,stage) strata; recompute S. KILL: S
+    TOST-zero at every lag. VOID (dead DV, not KILL): recon_err(novel)≈recon_err(repeat) at min lag
+    (no dynamic range) OR recon_err near-constant across the run (chat-py-4 degeneracy). novel arm =
+    liveness pedestal."""
+    import json as _json
+    import glob as _glob
+    import random as _random
+    import statistics as _stats
+    sched_path = evaluate_strval(argv, "--schedule", "")
+    if not sched_path:
+        print("--eval-historicity requires --schedule <gen-percept-schedule jsonl>", file=sys.stderr, flush=True)
+        return 2
+    dv_name = evaluate_strval(argv, "--dv", "recon_err")
+    n_perm = evaluate_intval(argv, "--perm", 1000)
+    seed = evaluate_intval(argv, "--seed", 12345)
+    globs = [a for a in argv if not a.startswith("--")
+             and a not in (sched_path, dv_name, str(n_perm), str(seed))]
+    trace_files = []
+    for g in globs:
+        trace_files.extend(sorted(_glob.glob(g)))
+    if not trace_files:
+        print("--eval-historicity: no trace files matched " + repr(globs), file=sys.stderr, flush=True)
+        return 2
+
+    # kind/lag by tick from the schedule
+    sched = {}
+    with open(sched_path, "r", encoding="utf-8", errors="surrogateescape") as _fh:
+        for _ln in _fh:
+            _ln = _ln.strip()
+            if not _ln:
+                continue
+            r = _json.loads(_ln)
+            sched[int(r["tick"])] = (r.get("kind"), int(r.get("lag", 0)))
+
+    # DV + stage by (file, tick) → probe records
+    probes = []          # (kind, lag, dv, stage)
+    dv_all = []
+    for tf in trace_files:
+        for _ln in open(tf, "r", encoding="utf-8", errors="surrogateescape"):
+            _ln = _ln.strip()
+            if not _ln or not _ln.startswith("{"):
+                continue
+            try:
+                row = _json.loads(_ln)
+            except Exception:
+                continue
+            t = row.get("tick")
+            if t is None:
+                continue
+            dv = row.get(dv_name)
+            if not isinstance(dv, (int, float)):
+                continue
+            dv_all.append(float(dv))
+            sk = sched.get(int(t))
+            if sk is None:
+                continue
+            kind, lag = sk
+            if kind in ("repeat", "shuffle", "novel"):
+                probes.append((kind, lag, float(dv), int(row.get("stage", 0))))
+
+    n_rep = sum(1 for p in probes if p[0] == "repeat")
+    n_shu = sum(1 for p in probes if p[0] == "shuffle")
+    n_nov = sum(1 for p in probes if p[0] == "novel")
+    lags = sorted(set(p[1] for p in probes if p[0] in ("repeat", "shuffle")))
+    print("--eval-historicity: dv=%s · traces=%d · probes rep=%d shuf=%d nov=%d · lags=%s · perm=%d"
+          % (dv_name, len(trace_files), n_rep, n_shu, n_nov, lags, n_perm))
+    if n_rep < 2 or n_shu < 2:
+        print("VERDICT: ⛔ NOT-POWERED (need >=2 repeat and >=2 shuffle probes)")
+        return 0
+
+    def _mean(kind, lag):
+        vs = [p[2] for p in probes if p[0] == kind and p[1] == lag]
+        return _stats.mean(vs) if vs else None
+
+    # ---- VOID gates (dead DV, not KILL) ----
+    dv_rng = (max(dv_all) - min(dv_all)) if dv_all else 0.0
+    min_lag = lags[0] if lags else 0
+    rep0 = _mean("repeat", min_lag)
+    nov0 = _mean("novel", min_lag)
+    void_reason = None
+    if dv_rng < 1e-9:
+        void_reason = "recon_err near-constant across run (dead DV · chat-py-4 degeneracy)"
+    elif rep0 is not None and nov0 is not None and abs(nov0 - rep0) < 0.05 * max(1e-9, dv_rng):
+        void_reason = "recon_err(novel)~recon_err(repeat) at min lag — no item dynamic range"
+    if void_reason:
+        print("VERDICT: 🕳️ VOID — " + void_reason + " (liveness pedestal failed · not a KILL)")
+        return 0
+
+    # ---- per-lag S(lag) = mean(shuffle) - mean(repeat) ----
+    S = {}
+    for lag in lags:
+        sh, rp = _mean("shuffle", lag), _mean("repeat", lag)
+        if sh is not None and rp is not None:
+            S[lag] = sh - rp
+    if not S:
+        print("VERDICT: ⛔ NOT-POWERED (no lag has both arms)")
+        return 0
+    T = S[min_lag]                                   # primary contrast at shortest lag
+    # item memory FADES: require a meaningful (>=25% relative) drop from shortest to longest lag,
+    # not merely S(short) > S(long) (noise satisfies that). A decode-artifact has no reason to decay.
+    s_min, s_max = S.get(lags[0], 0.0), S.get(lags[-1], 0.0)
+    lag_decay = (len(lags) >= 2 and s_min > 0.0 and (s_min - s_max) > 0.25 * abs(s_min))
+
+    # ---- permutation null: swap repeat<->shuffle labels within (lag,stage) strata ----
+    rng = _random.Random(seed)
+    rs = [p for p in probes if p[0] in ("repeat", "shuffle")]
+    strata = {}
+    for i, p in enumerate(rs):
+        strata.setdefault((p[1], p[3]), []).append(i)
+    null_T = []
+    for _ in range(n_perm):
+        # permute the repeat/shuffle labels WITHIN each (lag,stage) stratum (holds the
+        # stratum's DV values fixed; only the label assignment is randomized)
+        lab = [None] * len(rs)
+        for _k, idxs in strata.items():
+            labels = [rs[j][0] for j in idxs]
+            rng.shuffle(labels)
+            for j, L in zip(idxs, labels):
+                lab[j] = L
+        def _m2(kind, lag):
+            vs = [rs[j][2] for j in range(len(rs)) if lab[j] == kind and rs[j][1] == lag]
+            return _stats.mean(vs) if vs else None
+        sh, rp = _m2("shuffle", min_lag), _m2("repeat", min_lag)
+        if sh is not None and rp is not None:
+            null_T.append(sh - rp)
+    if not null_T:
+        print("VERDICT: ⛔ NOT-POWERED (permutation null empty)")
+        return 0
+    null_sorted = sorted(null_T)
+    p95 = null_sorted[int(0.95 * (len(null_sorted) - 1))]
+    p_val = sum(1 for x in null_T if abs(x) >= abs(T)) / float(len(null_T))
+
+    print("  S(lag)=%s · T(min-lag S)=%.4f · null95=%.4f · perm-p=%.4f · lag-decay=%s"
+          % ({k: round(v, 4) for k, v in S.items()}, T, p95, p_val, lag_decay))
+    # ---- verdict ----
+    if T > p95 and p_val < 0.05 and lag_decay:
+        print("VERDICT: 🟢 ITEM-MEMORY (repeat<shuffle recon ∧ >null ∧ lag-decay) — item-trace, not byte-stats/artifact")
+    elif T > p95 and p_val < 0.05 and not lag_decay:
+        print("VERDICT: ⚠️ CONTRAST-NO-DECAY — repeat≠shuffle but no lag-decay: possible DECODE-ARTIFACT (Fable Q5), not memory")
+    else:
+        print("VERDICT: 🧱 NULL — repeat−shuffle within null (grade is byte-stats/percept-blind · TOST toward 0)")
     return 0
 
 
@@ -13899,6 +14065,8 @@ def main(argv):
         return _ag_criticality(argv[1:])
     if len(argv) >= 1 and argv[0] == "--gen-percept-schedule":
         return _gen_percept_schedule(argv[1:])
+    if len(argv) >= 1 and argv[0] == "--eval-historicity":
+        return _eval_historicity(argv[1:])
     if len(argv) >= 1 and argv[0] == "--silence-content-te":
         return _silence_content_te(argv[1:])
     if len(argv) >= 1 and argv[0] == "--timing-channel":
