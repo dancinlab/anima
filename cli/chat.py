@@ -1558,6 +1558,12 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
     # score-perturbation robustness. wm-cover center shifts (score is the comparand · positive
     # control); the dual gate center should stay ≈½ (emit ⊥ score). 0.0 = production byte-identical.
     _score_perturb = float(anima_flag_value(_cargv, "--score-perturb", "ANIMA_SCORE_PERTURB", "0"))
+    # H_9790 imagination structural-residue levers (default = production byte-identical).
+    # --imag-growth off skips ONLY the replay AdaptField grow (a_chat_sleep_imagination stays);
+    # --imag-salience-shuffle deterministically permutes the selected snapshots (salience destroyed,
+    # multiset preserved) for the A_shuf consolidation-vs-content dissociation arm.
+    _imag_growth = anima_flag_value(_cargv, "--imag-growth", "ANIMA_IMAG_GROWTH", "on")
+    _imag_shuffle = anima_flag_value(_cargv, "--imag-salience-shuffle", "ANIMA_IMAG_SHUFFLE", "0") == "1"
     # H_9357 · which reverse signal feeds ag_g_drive (the A⇄G tension's G pole). a0 = current
     # production wiring (ag_g_drive = A's own complement — the H_9356 tautology, kept as the
     # falsifiability-matrix A0 arm that MUST fail the independence gate). a1 = REAL-G: the immune
@@ -3324,6 +3330,11 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
         if dr_imagination_active(stage) == 1:
             imag_budget = dr_stage_size(stage)
             imag_snaps = ir_select_snapshots(wake_mem, tick, imag_budget)
+            if _imag_shuffle and imag_snaps:
+                # H_9790 A_shuf: deterministic salience-destroying permutation (multiset preserved).
+                _iss = sum((_j + 1) * _b for _j, _b in
+                           enumerate(bytearray(session_seed.encode("utf-8", "surrogateescape"))))
+                random.Random((_iss * 2654435761 + tick) & 0x7FFFFFFF).shuffle(imag_snaps)
             imag_i = 0
             while imag_i < len(imag_snaps):
                 rec = ir_replay_tick(imag_snaps[imag_i])
@@ -3339,9 +3350,10 @@ def anima_consciousness_mode(ckpt, argv=None, percept_source=None):
                 # feature contact-inhibits to a no-op; this makes the grow REAL (cell_count rises), still det + emit-free.
                 _imag_feat = session_seed + "|imag|" + str(imag_snaps[imag_i]["ctx_tokens"][0]) + "|" + str(imag_snaps[imag_i]["source_index"])
                 _h1058_imag_feat = _afs_byte_feature(_imag_feat, 8)
-                afield = vadapt_field_step(afield, _h1058_imag_feat, cfg)
-                _h1058_grow_feats.append(list(_h1058_imag_feat))
-                cell_count = vadapt_field_cells(afield)
+                if _imag_growth != "off":   # H_9790 A_off lesion: skip ONLY the replay grow
+                    afield = vadapt_field_step(afield, _h1058_imag_feat, cfg)
+                    _h1058_grow_feats.append(list(_h1058_imag_feat))
+                    cell_count = vadapt_field_cells(afield)
                 imagination_mitosis_ticks = imagination_mitosis_ticks + 1
                 imag_i = imag_i + 1
             imagination_replayed_total = imagination_replayed_total + len(imag_snaps)
