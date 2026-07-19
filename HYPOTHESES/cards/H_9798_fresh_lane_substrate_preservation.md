@@ -1,7 +1,7 @@
 ---
 id: H_9798
 title: FRESH-LANE SUBSTRATE-PRESERVATION — detached L3-tap store cotrain leaves base LM fluency undisturbed (interference-free)
-tier: PROPOSED (DESIGN-ONLY · engine-native instrument NOT yet built · compute-backend gated · NOT a verdict)
+tier: PROPOSED (DESIGN-ONLY · 계기 준비완료=train --steps 0 · FIRE 시도 2026-07-20 INFRA-BLOCKED=ghost 머신 vast-SSH 미등록 · NOT a verdict)
 frontier: g1-interface-addressable-wall
 lane: g1-emergent-address (preservation/interference axis · NOT reach/addr_top1)
 created: 2026-07-20
@@ -27,7 +27,7 @@ H_9720 1B(L20) 스케일-재확인은 **reach 축**(addr_top1=주소 최상위 �
 ## Claim (한 줄 · falsifiable)
 store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-바이트 CE**(=일반 코퍼스 언어모델 유창성)를 교란하는 정도는 lane마다 다르다: **ΔCE_base(fresh) ≈ 0**(무-store 통제와 TOST-등가) **∧ ΔCE_base(fresh) < ΔCE_base(legacy)**, ≥2 seed·일반 4-cell held-out에서. 성립하면 "reach는 legacy·보존은 fresh"의 이중구조 = `a_substrate_disjoint` 지지(reach loss와 직교).
 
-## Mechanism / Instrument (engine-native · ⚠️ 미구축)
+## Mechanism / Instrument (engine-native · ✅ 기존 도구로 측정 · 신규코드 불요)
 측정량 = base LM CE(다음-바이트, 일반 held-out 코퍼스 — **store 코퍼스 아님**), ckpt별:
 | ckpt | 의미 |
 |---|---|
@@ -38,7 +38,7 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 
 ΔCE_lane = CE_lane − CE₀ · 보존=ΔCE 작음 · 간섭=ΔCE 큰 양수. **핵심 통제 = C-noscore** (store-cotrain 간섭을 단순 연속학습 표류와 분리).
 
-🔧 **계기 상태 (코드검사 2026-07-20)**: 현 `anima-py evaluate` 에는 임의 held-out 코퍼스의 base-LM CE 를 뽑는 flag 가 **없다**(reach/store 계기만). ⟹ 신규 engine-native flag `anima-py evaluate <clm> --base-ce <general_held.txt>` 필요 — next-byte CE 만 읽어 **admissibility 자명**(주소 텐서·target_slot 무접근). (대안: `anima-py train --steps 0 --measure-only --corpus general_held` 가 val_CE 를 뽑으면 재사용 가능 — 백엔드 세션서 확인.)
+🔧 **계기 정정 (코드검증 2026-07-20 · cli/train.py:2075~2081 + 1426)**: 신규 `--base-ce` flag **불요**. `--steps` default=0 이고, steps=0 이면 학습루프 0회 후 FINALIZE 블록이 `val_per_cell()` 로 **일반 held-out 의 base LM CE(다음-바이트)를 4-cell 별로 측정**해 `FINAL val_CE(pooled)` + `per_cell_CE` 출력(rank-0·MONITOR-only·loss 무진입·`a_train_inline_gauge`·p7 no-perplexity-verdict 준수). ⟹ 계기 = **`anima-py train --init <ckpt> --corpus <general_4cell> --steps 0`** (임의 ckpt·admissibility 자명: LM CE 만 읽고 주소 텐서·target_slot 무접근). 애초 카드의 "flag 필요"는 과설계였고, 미검증 엔진코드 발사 위험 제거.
 
 ## Admissibility
 측정량은 base LM 다음-바이트 유창성(=보존/간섭)이지 reach(addr_top1)가 아니다 — **직교축**. 주소 텐서·정답 슬롯·주소 진단 일절 무접근.
@@ -52,10 +52,10 @@ store cotrain(=저장/조회 병행학습)이 base 모델의 held-out **다음-�
 ## Falsify
 ΔCE_base(fresh) 가 C-noscore 와 TOST-등가가 아니거나(=fresh 도 간섭), ΔCE_base(fresh) ≥ ΔCE_base(legacy)(=fresh 보존우위 없음) ⟹ 이중구조 KILL. 값진 음성: "분리=보존"이 reach-분리 lane 에서 성립 안 함.
 
-## 🧱 발사 블로커 (concrete · 이 머신)
-- store-cotrain ckpt(fresh/legacy)는 H_9792/1B pod 와 함께 폐기됨 — **재학습 필요**. base ckpt 만 HF 생존(py303_full·py1b `dancinlife/tmp-anima-1b`).
-- 이 체크아웃엔 anima-py 미설치·pool 호스트 0·pod 0 ⟹ **실측 발사 = compute 백엔드(pool 또는 pod rent) 필요**. pod rent = fleet-rent=spend = owner go-gate.
-- $0 local 진전 가능(백엔드 세션): `--base-ce` flag 구현(engine-native·admissible) + toy byte-parity 검증. 그 뒤 303M(또는 1B) fresh/legacy/noscore × 2seed store cotrain → base-CE eval.
+## 🧱 발사 블로커 (concrete · FIRE 시도 로그 2026-07-20 · ghost 머신)
+- store-cotrain ckpt(fresh/legacy)는 H_9792/1B pod 와 함께 폐기됨 — **재학습 필요**. base ckpt 만 HF 생존(py1b `dancinlife/tmp-anima-1b/py1b_full.clm`·sha256 8630996b · py303 tmp repo 는 삭제됨 ⟹ 1B 로 발사).
+- 🔥 **FIRE 시도 (2026-07-20)**: 발사게이트 전통과(vast_api_key 존재·1B base HF fetch OK·hexa cloud·owner go) → A100 pod 45320005 렌트 성공. **그러나 SSH `Permission denied (publickey)` 지속** = 이 ghost 머신의 SSH 공개키가 vast 계정 authorized_keys 에 **미등록**(머신레벨·재렌트 무의미·`exec`/`run`/`--insecure` 전부 동일). teardown(과금중단·leak0). ⟹ **fire 는 (a) 이 머신 vast SSH키 등록 OR (b) vast-접속 정상 머신(과거 `/Users/mini`) 필요** — 과학천장 아님(`a_break_the_wall` type-c INFRA-BLOCKED).
+- 계기·레시피는 **준비완료**(신규코드 불요): base-CE=`train --steps 0`(위 검증) · 1B arch `--L 20 --emax 3 --d 3784` · fresh `--store-query-src fresh:64@3 --store-oracle-warmup 1500` vs legacy(penult) · canary 3-run(fresh/legacy/noscore × s7)→clean 이면 s4302 확대.
 
-## Next (백엔드 갖춘 세션)
-① `--base-ce` flag 구현 + toy PASS($0) → ② 303M base + store cotrain {fresh,legacy,noscore}×{7,4302} → ③ 각 ckpt base-CE eval → ④ ΔCE 판정(TOST). lab-mode ON 이면 계기 설계 발산은 `sidecar lab full`.
+## Next (vast-접속 정상 머신)
+① 1B base fetch(HF) → ② corpus(general 4cell + store n200) → **CE₀** `train --steps 0` → ③ canary store cotrain {fresh,legacy,noscore}×s7(early-life check) → ④ 각 ckpt `train --steps 0` base-CE → ⑤ ΔCE 판정(fresh≈noscore<legacy? TOST) → clean 이면 s4302 확대 → ⑥ 회수·카드/gate 갱신·teardown. lab-mode ON 이면 ΔCE 해석 대조는 `sidecar lab full`.
