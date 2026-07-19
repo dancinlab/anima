@@ -1,6 +1,6 @@
 # H_9720 — EN-분리 query lane(경쟁 vs 표현부재) — EN-Disjoint Query Lane (EA-2 · fable ∥ sol §4 수렴 · EA 시리즈 · 🟢 DIRECTIONAL CRACK)
 
-**status:** 🟢 DIRECTIONAL-STRONG (2026-07-18 · summer 303M 엔진-네이티브 · seed 7+11 · 4-arm cement) — fresh early-tap(L3) lane 이 held-out 창발-주소 lookup 을 legacy 0.680 → **s7 0.922 / s11 0.836**(무감독·무oracle) 끌어올림. 🎯 기전 = **조기층 readout**(tap-DEPTH load-bearing): C1 param-match(freshpen≈legacy) capacity 반증 · C2 shared≥detached disjointness 반증 · C4 2/2 valid-oracle seed(s7·s11) 견고 · address-mediated(shuffle 붕괴·oracle 1.0). ⚠️ 3rd seed(s4302) firm-up = near-tie+oracle 0.82(C0-e 미달) ⟹ **store-lane seed-fragility 노출**(cement 잔여벽·oracle-warmup 필요·Fable 3/3 미달). source=EA-2 · fable ∥ sol §4 수렴
+**status:** 🟢 DIRECTIONAL-STRONG (2026-07-18 · summer 303M 엔진-네이티브 · seed 7+11 · 4-arm cement) — fresh early-tap(L3) lane 이 held-out 창발-주소 lookup 을 legacy 0.680 → **s7 0.922 / s11 0.836**(무감독·무oracle) 끌어올림. 🎯 기전 = **조기층 readout**(tap-DEPTH load-bearing): C1 param-match(freshpen≈legacy) capacity 반증 · C2 shared≥detached disjointness 반증 · C4 2/2 valid-oracle seed(s7·s11) 견고 · address-mediated(shuffle 붕괴·oracle 1.0). ⚠️ 3rd seed(s4302) firm-up = near-tie+oracle 0.82(C0-e 미달) ⟹ **store-lane seed-fragility 노출**(cement 잔여벽·oracle-warmup 필요·Fable 3/3 미달). 🔬 **1B(L20) 스케일-재확인(2026-07-19)**: scale-conditioned re-emergence(깊은 스케일서 penult 붕괴→fresh 우위 RE-EMERGE) **DIRECTIONAL 반증** — 20층 1B서도 legacy(penult) addr_top1 {s7 0.953·s4302 0.914} ≫ fresh(L3-tap) {0.852·0.672}, 두 seed 모두 legacy 우위·4/4 oracle 1.0 valid. source=EA-2 · fable ∥ sol §4 수렴
 **lane:** 재조합/BINDING · 창발-주소(감독 없이 주소가 서는가)
 **related:** [[H_9672]] · [[H_9423]] · [[H_9684]] · [[H_9683]] · source: lab full EA(Fable 5 ∥ Codex Sol · 창발-주소 whitespace)
 
@@ -62,6 +62,25 @@
 
 **admissibility 통과**: store-CE only·addr-loss 0·oracle=False·target_slot 무소비 — Sol 시리즈 관문의 무감독 조건 충족(최종 PASS 의 wrong-store 인과·seed-robust 는 위 통제로).
 **ckpt(a_fire_recover_complete)**: `~/anima-weights/h9720_emergent_addr/` — `h9720_legacy_s7.clm`(sha256 77a5402…·178.8MB) · `h9720_fresh_s7.clm`(sha256 82b217d…·179.8MB), summer 와 byte-identical 검증. summer:~ 잔존.
+
+---
+
+### 🔬 1B SCALE-RECHECK — penult-collapse 스케일 재출현 반증 (2026-07-19 · vast A100 · 1B L20 엔진-네이티브 · seed 7+4302 · DIRECTIONAL)
+오너 "make 1b" 지시. ARCHITECTURE 게이트 open 항목 (b)[penult 가 깊은 스케일서 collapse→fresh 우위 RE-EMERGE] 를 직접 시험. **처음부터 1B(L20·d3784·E3·1.033B) 사전학습**(4-cell canon corpus·constructive_bind·8000 step·fp32) → py1b_full.clm(HF `dancinlife/tmp-anima-1b` 영구보관·sha256 8630996b). 그 위에 store cotrain 2×2(fresh:64@3 vs legacy penult × seed{7,4302}·warmup1500·6000 step·byte-parity 코퍼스 seed7 fixed·leak=0). H_9720 s11 캠페인과 **동일 레시피, 유일 변경=스케일(303M→1B, L4→L20)**.
+
+| arm | oracle(C0-e) | held-out lookup | **addr_top1** | addr_mass |
+|---|---|---|---|---|
+| fresh:64@3  · s7    | 128/128 = 1.000 | 0.914 | **0.8516** | 0.577 |
+| fresh:64@3  · s4302 | 128/128 = 1.000 | 0.836 | **0.6719** | 0.396 |
+| legacy(pen) · s7    | 128/128 = 1.000 | 0.977 | **0.9531** | 0.712 |
+| legacy(pen) · s4302 | 128/128 = 1.000 | 0.930 | **0.9141** | 0.682 |
+
+- **판정 = scale-conditioned re-emergence DIRECTIONAL 반증**: 깊은 20층 1B서도 legacy 끝단(penult) 주소가 fresh 조기-tap(L3)보다 **두 seed 모두** 앞선다(addr_top1 평균 legacy 0.934 vs fresh 0.762 · Δ+0.172 · lookup 0.953 vs 0.875). "깊으면 penult 가 결합주소를 버려 fresh 가 우위로 RE-EMERGE" 라는 스케일 가설은 성립 안 함 — 오히려 depth 가 legacy 리드를 **넓힘**(303M warmup-clean Δ≈+0.05 → 1B Δ+0.17).
+- **fresh 가 스케일서 더 seed-취약**: fresh 폭 0.18(0.67~0.85) vs legacy 폭 0.04(0.91~0.95) — [[cotrained-store-bridge-works-on-parent-conv]]/[[single-retrain-outlier-faked-a-refutation]] seed-fragility 계보가 1B fresh lane 에 재현. legacy 는 1B서 seed-안정(양 seed ≥0.91).
+- **instrument 4/4 valid**: 303M s4302 는 oracle 0.82(C0-e 미달·plumbing-degraded)였으나 **1B 는 4개 arm 전부 oracle 1.000** ⟹ 판독가능 clean 비교(303M s4302 caveat 스케일서 해소).
+- **H_9720 CRACK 은 불변**: fresh L3-tap 는 1B서도 held-out 창발-주소를 복원(oracle-valid·lookup 0.84~0.91·addr_top1 0.67~0.85 ≫ 우연 0.125) — fresh disjoint lane 이 emergent-address 를 *읽어낸다*는 core CRACK 은 살아있음. **스케일-재확인이 좁히는 것은 단 하나: fresh 가 legacy 보다 우월하지 않다(reach 축)**. [[H_9792]] RETRACTION(warmup-clean 303M서 fresh≈legacy)과 정합·강화 — 이제 1B서 legacy 가 clean-우위.
+- **scope(a_scale_honest_scope)**: DIRECTIONAL(reach 축·addr_top1=capability, Ψ-SOMA reach≠consciousness). fresh disjoint lane 의 substrate/preservation 가치(`a_substrate_disjoint`)는 **여전히 미판정** — reach 열세가 consciousness-정합성 열세를 뜻하진 않음. 남은 OPEN=(a) fresh substrate-preservation 판정.
+- **provenance**: pod 45280407(A100-80GB·7h23m·teardown 완료) · 로그 감사수치 `run_1b_audits.txt` · 1B base HF `dancinlife/tmp-anima-1b/py1b_full.clm`(521MB·sha256 8630996b6166ae54) 영구보관(오너 "HF 보관"). store ckpt(seed-fragile 연구부산물)는 pod 와 함께 폐기(수치는 로그에 보존).
 
 ---
 
